@@ -2,7 +2,7 @@
 /* Copyright (C) 2018-2020  Thibault FOUCART            <support@ptibogxiv.net>
  * Copyright (C) 2018-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2023       Laurent Destailleur         <eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -141,7 +141,7 @@ try {
 	dol_syslog("***** Stripe IPN was called with SignatureVerificationException service=".$service);
 	dol_syslog("***** Stripe IPN was called with SignatureVerificationException service=".$service, LOG_DEBUG, 0, '_payment');
 	httponly_accessforbidden('Invalid signature. May be a hook for an event created by another Stripe env or a hack attempt ? Check setup of your keys whsec_...', 400);
-} catch (Exception $e) {
+} catch (Exception $e) {  // @phpstan-ignore catch.neverThrown
 	dol_syslog("***** Stripe IPN was called with Exception (".$e->getMessage().") service=".$service);
 	dol_syslog("***** Stripe IPN was called with Exception (".$e->getMessage().") service=".$service, LOG_DEBUG, 0, '_payment');
 	httponly_accessforbidden('Error '.$e->getMessage(), 400);
@@ -181,14 +181,15 @@ if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
 	$societeName = getDolGlobalString('MAIN_APPLICATION_TITLE');
 }
 
+
+// Add a delay to be sure that any Stripe action from webhooks are executed after interactive actions that also trigger a webhook
+sleep(2);
+
+
 top_httphead();
 
 dol_syslog("***** Stripe IPN was called with event->type=".$event->type." service=".$service);
 dol_syslog("***** Stripe IPN was called with event->type=".$event->type." service=".$service, LOG_DEBUG, 0, '_payment');
-
-
-// Add a delay to be sure that any Stripe action from webhooks are executed after interactive actions
-sleep(2);
 
 
 // Hook to allow external modules to handle Stripe webhook events
@@ -282,7 +283,7 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 			$typefrom = 'PRE';
 			$typeto = 'VIR';
 
-			$numChqOrOpe = '';	// TODO Store the po ref from $event->data
+			$numChqOrOpe = $event->data->object->id;	// Store the payout reference (po_...) as the bank transfer number
 
 			$db->begin();
 
@@ -383,6 +384,7 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 	$objectType = $object->metadata->dol_type;
 	$TRANSACTIONID = $object->id;	// Example 'pi_123456789...'
 	$ipaddress = $object->metadata->ipaddress;
+	$remoteipaddress = getUserRemoteIP();
 	$now = dol_now();
 	$currencyCodeType = strtoupper($object->currency);
 	$paymentmethodstripeid = $object->payment_method;
@@ -535,7 +537,7 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 
 			$paiement->num_payment = '';
 			$paiement->note_public = '';
-			$paiement->note_private = 'Stripe Sepa payment received by IPN service listening webhooks - ' . dol_print_date($now, 'standard') . ' (TZ server) using servicestatus=' . $servicestatus . ($ipaddress ? ' from ip ' . $ipaddress : '') . ' - Transaction ID = ' . $TRANSACTIONID;
+			$paiement->note_private = 'Stripe Sepa payment received by IPN service listening webhooks - ' . dol_print_date($now, 'standard') . ' (TZ server) using servicestatus=' . $servicestatus . ($remoteipaddress ? ' remote ip ' . $remoteipaddress : '').($ipaddress ? ' user ip ' . $ipaddress : '') . ' - Transaction ID = ' . $TRANSACTIONID;
 
 			$paiement->ext_payment_id = $TRANSACTIONID.':'.$customer_id.'@'.$stripearrayofkeysbyenv[$servicestatus]['publishable_key'];		// May be we should store py_... instead of pi_... but we started with pi_... so we continue.
 			$paiement->ext_payment_site = $service;
@@ -560,7 +562,9 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 				dol_syslog('* Record payment type PRE for invoice id ' . $invoice_id . '. It includes closing of invoice and regenerating document.', LOG_DEBUG, 0, '_payment');
 
 				// This include closing invoices to 'paid' (and trigger including unsuspending) and regenerating document
-				$paiement_id = $paiement->create($user, 1);
+				$thirdpartyofpayment = null;	// TODO Load thirdparty from $invoice_id
+
+				$paiement_id = $paiement->create($user, 1, $thirdpartyofpayment);
 				if ($paiement_id < 0) {
 					$postactionmessages[] = $paiement->error . ($paiement->error ? ' ' : '') . implode("<br>\n", $paiement->errors);
 					$ispostactionok = -1;
@@ -702,10 +706,10 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 				$outputlangs->loadLangs(array("main", "members", "bills"));
 
 				// Get email content from template
-				$arraydefaultmessage=null;
+				$arraydefaultmessage = null;
 
 				include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-				$formmail=new FormMail($db);
+				$formmail = new FormMail($db);
 
 				$arraydefaultmessage = $formmail->getEMailTemplate($db, 'facture_send', $user, $outputlangs, 0, 1, $labeltouse);
 
@@ -747,9 +751,9 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 				$texttosend = make_substitutions($msg, $substitutionarray, $outputlangs);
 
 				// Attach a file ?
-				$listofpaths=array();
-				$listofnames=array();
-				$listofmimes=array();
+				$listofpaths = array();
+				$listofnames = array();
+				$listofmimes = array();
 
 				/*
 				$invoicediroutput = $conf->invoice->dir_output;
@@ -809,6 +813,7 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 
 	$object = $event->data->object;
 	$ipaddress = $object->metadata->ipaddress;
+	$remoteipaddress = getUserRemoteIP();
 	$currencyCodeType = strtoupper($object->currency);
 	$paymentmethodstripeid = $object->payment_method;
 	$customer_id = $object->customer;
@@ -881,7 +886,7 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 			$actioncomm->ip = getUserRemoteIP();
 		}
 
-		$actioncomm->note_private = 'Error returned on payment id '.$objpayid.' after SEPA payment request '.$objpaydesc.'<br>Error code is: '.$objerrcode.'<br>Error message is: '.$objerrmessage;
+		$actioncomm->note_private = 'Stripe Sepa payment error received by IPN service listening webhooks - ' . dol_print_date($now, 'standard') . ' (TZ server) using servicestatus=' . $servicestatus . ($remoteipaddress ? ' remote ip ' . $remoteipaddress : '').($ipaddress ? ' user ip ' . $ipaddress : '').' - Payment id '.$objpayid.' after SEPA payment request '.$objpaydesc.'<br>Error code is: '.$objerrcode.'<br>Error message is: '.$objerrmessage;
 		$actioncomm->label = 'Payment error (SEPA Stripe)';
 
 		$result = $actioncomm->create($user);
@@ -892,6 +897,13 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 		}
 
 		if (! $error) {
+			// Option: Force status of invoice to "dispute on"
+			//$invoice->dispute_status = 1;
+			//$invoice->update($user);
+
+			// Option: Sen email to customer
+			// TODO
+
 			$db->commit();
 		} else {
 			$db->rollback();
@@ -1021,6 +1033,7 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 	$object = $event->data->object;
 	$TRANSACTIONID = $object->payment_intent;
 	$ipaddress = $object->metadata->ipaddress;
+	$remoteipaddress = getUserRemoteIP();
 	$now = dol_now();
 	$currencyCodeType = strtoupper($object->currency);
 	$paymentmethodstripeid = $object->payment_method;
@@ -1205,7 +1218,10 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 		*/
 		$paiement->paiementid   = dol_getIdFromCode($db, 'PRE', 'c_paiement', 'code', 'id', 1);
 		$paiement->num_payment  = $object->id;	// A string like 'du_...'
-		$paiement->note_private = 'Fund withdrawn by bank with id='.$object->id.'. Reason: '.$reason.'. A fee of '.$fees.' may have been charged by Stripe.';
+
+		$paiement->note_private = 'Stripe fund withdrawn message received by IPN service listening webhooks - ' . dol_print_date($now, 'standard') . ' (TZ server) using servicestatus=' . $servicestatus . ($remoteipaddress ? ' remote ip ' . $remoteipaddress : '').($ipaddress ? ' user ip ' . $ipaddress : '');
+		$paiement->note_private .= ' - Fund withdrawn by bank with id='.$object->id.'. Reason: '.$reason.'. A fee of '.$fees.' may have been charged by Stripe.';
+
 		$paiement->fk_account   = $accountfrom->id;
 
 		$paiement->ext_payment_id   = $object->payment_intent;

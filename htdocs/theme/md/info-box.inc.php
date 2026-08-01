@@ -60,11 +60,12 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 }
 
 .nonature-back {
-	background-color: #EEE;
+	background-color: var(--colorwhitelight);
 	padding: 2px;
 	margin: 2px;
 	border-radius: 3px;
 }
+
 .prospect-back {
 	background-color: #a7c5b0 !important;
 	color: #FFF !important;
@@ -210,7 +211,7 @@ a.info-box-text-a i.fa.fa-exclamation-triangle, span.badge i.fa.fa-exclamation-t
 	min-height: <?php echo $heightbox; ?>px;
 	background: var(--colorbacklineimpair2);
 	width: 100%;
-	/* box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1); */
+	box-shadow: 1px 1px 3px rgba(128, 128, 128, 0.1);
 	border-radius: 2px;
 	margin-bottom: 15px;
 	border: 1px solid #e9e9e9;
@@ -454,10 +455,10 @@ a.info-box-text-a i.fa.fa-exclamation-triangle, span.badge i.fa.fa-exclamation-t
 	width: calc(100% - 20px);
 }
 .info-box-text{
-	font-size: 0.90em;
+	font-size: 0.88em;
 }
 .info-box-desc {
-	font-size: 0.92em;
+	font-size: 0.91em;
 }
 /* Force values for small screen 480 */
 /*

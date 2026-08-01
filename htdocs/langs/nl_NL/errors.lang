@@ -154,6 +154,10 @@ ErrUnzipFails=uitpakken %s mislukt met ZipArchive
 ErrNoZipEngine=Geen engine om een ​​%s bestand in dit PHP te zip / unzippen
 ErrorFileMustBeADolibarrPackage=Het bestand %s moet een Dolibarr zip-pakket zijn
 ErrorModuleFileRequired=U moet een Dolibarr-modulepakketbestand selecteren
+ErrorFailToDownloadModuleFromSource=Het downloaden van de module is mislukt. Controleer uw internetverbinding of de bron-URL en probeer het opnieuw.
+extModuleConfirmInstallTitle = Bevestig de module-installatie
+extModuleConfirmInstallText  = U staat op het punt de volgende module te installeren:<br><br><b>Naam:</b> %s<br><b>Versie:</b> %s<br><b>Referentie:</b> %s<br><b>Laatste update:</b> %s<br><br>Deze actie is niet ongedaan te maken. Bevestigt u de installatie van deze module?
+install=Installeren
 ErrorPhpCurlNotInstalled=De PHP CURL is niet geïnstalleerd, dit is van essentieel belang met Paypal te communiceren
 ErrorFailedToAddToMailmanList=Kan record %s niet toevoegen aan Mailman-lijst %s of SPIP-basis
 ErrorFailedToRemoveToMailmanList=Kan record %s niet verwijderen naar Mailman-lijst %s of SPIP-basis
@@ -168,6 +172,8 @@ ErrorPaymentModeDefinedToWithoutSetup=Er is een betalingsmodus ingesteld om %s t
 ErrorPHPNeedModule=Fout, op uw PHP moet module <b>%s zijn</b> geïnstalleerd om deze functie te gebruiken.
 ErrorOpenIDSetupConfNotComplete=Om veiligheidsredenen moet u ook het Dolibarr-configuratiebestand conf.php zo instellen dat OpenID Authenticatie is toegestaan.
 ErrorOpenIDSetupNotComplete=U stelt het Dolibarr-configuratiebestand in om OpenID-authenticatie toe te staan, maar de URL van de OpenID-service is niet gedefinieerd als een constante %s
+OIDCAutocreateUserDisabled=Het automatisch aanmaken van gebruikers bij het inloggen via OIDC is momenteel uitgeschakeld. Om dit in te schakelen, voegt u `$dolibarr_main_authentication_autocreateuser=1` toe aan uw `conf.php`-bestand.
+OIDCAutocreateUserEnabled=Het automatisch aanmaken van gebruikers bij het inloggen via OIDC is ingeschakeld ($dolibarr_main_authentication_autocreateuser=1 is ingesteld in conf.php).
 ErrorWarehouseMustDiffers=Bron en doel magazijnen moeten verschillend zijn
 ErrorBadFormat=Verkeerd formaat!
 ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst=Fout, dit lid is nog niet gekoppeld aan derden. Koppel een lid aan een bestaande derde of maak een nieuwe derde aan voordat u een abonnement met factuur maakt.
@@ -363,7 +369,7 @@ ErrorTooManyAttempts= Te veel pogingen. Probeer het later opnieuw
 ErrorThisContactXIsAlreadyDefinedAsThisType=%s is al gedefinieerd als contactpersoon voor dit type.
 ErrorThisGroupIsAlreadyDefinedAsThisType=De contacten met deze groep zijn al gedefinieerd als contact voor dit type.
 ErrorIsNotInError=%s is niet fout
-ErrorFilenameExtensionNotAllowed=Bestand %s heeft een verboden bestandsextensie
+ErrorFilenameExtensionNotAllowed=Het bestand %s heeft een verboden bestandsextensie.
 ErrorNoValueForSelectListType=Fout, een waarde voor dit type veld is verplicht
 ErrorPaymentAmountMustNotBeNull=Fout, het betalingsbedrag moet worden opgegeven en mag niet nul zijn.
 ErrorOneLineContainsADisactivatedProduct=Foutmelding: ten minste één product is niet of niet meer in de aanbieding of te koop.
@@ -376,11 +382,18 @@ ErrorBadParameterWhenCallingCreateOfBlockedLog=Ongeldige parameter bij het aanro
 ErrorMaxDecimalsShownTooLowComparedToUnitOrTotal=De waarde voor 'Max. aantal decimalen voor prijzen weergegeven op het scherm' (%s) moet gelijk zijn aan of groter zijn dan zowel 'Max. aantal decimalen voor eenheidsprijzen' (%s) als 'Max. aantal decimalen voor totaalprijzen' (%s). Dit is vereist om afrondingsfouten in documenten te voorkomen.
 ErrorOnlyDraftStatusCanBeDeletedInMassAction=Alleen elementen met de status 'concept' kunnen in een massabewerking worden verwijderd.
 ErrorLDAPFunctionsAreDisabledOnThisPHP=LDAP-functies zijn uitgeschakeld in deze PHP-versie.
+ErrorFailedToGetTokenFromClientIdAndSecret=Het is niet gelukt om een %s token te verkrijgen op basis van de client-ID en het clientgeheim.
+ErrorModuleBuilderNoFieldProperty=Eigenschappenarray -> velden niet gevonden in de klasse. De klasse is waarschijnlijk niet gegenereerd door modulebuilder.
+ErrorModuleBuilderFailedToInit=Het is niet gelukt om het object te initialiseren met de nieuwe %s (%s).
+ErrorThirdPartyNotFound=Fout: Derde partij niet gevonden
+ErrorDynamicPHPContentNotAllowed=Error: %s=1 so dynamic PHP content is allowed only if RCE PHP functions (exec, shell_exec, ...) are all disabled.
+ErrorTooManyLinksIntoHTMLString=The HTML content contains too many links or images. Reduce the number or raise MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT.
+ErrorDeletingAClosedCashControlIsNotPossible=Deleting a closed cash control is not possible
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Uw PHP-parameter upload_max_filesize (%s) is hoger dan PHP-parameter post_max_size (%s). Dit is geen consistente opstelling.
 WarningPasswordSetWithNoAccount=Er is een wachtwoord ingesteld voor dit lid. Er is echter geen gebruikersaccount gemaakt. Dus dit wachtwoord is opgeslagen maar kan niet worden gebruikt om in te loggen bij Dolibarr. Het kan worden gebruikt door een externe module / interface, maar als u geen gebruikersnaam of wachtwoord voor een lid hoeft aan te maken, kunt u de optie "Beheer een login voor elk lid" in de module-setup van Member uitschakelen. Als u een login moet beheren maar geen wachtwoord nodig heeft, kunt u dit veld leeg houden om deze waarschuwing te voorkomen. Opmerking: e-mail kan ook worden gebruikt als login als het lid aan een gebruiker is gekoppeld.
-WarningMandatorySetupNotComplete=Klik hier om de belangrijkste parameters in te stellen
+WarningMandatorySetupNotComplete=De installatie is nog niet voltooid! Klik hier om de belangrijkste parameters in te stellen.
 WarningEnableYourModulesApplications=Klik hier om uw modules en applicaties in te schakelen
 WarningSafeModeOnCheckExecDir=Waarschuwing, de instelling <b>safe_mode</b> van PHP staat aan daarom moet het commando opgeslagen worden in een map die gedeclareerd is door de PHP instelling <b>safe_mode_exec_dir.</b>
 WarningBookmarkAlreadyExists=Een weblink met deze titel of dit doel (URL) bestaat al.
@@ -426,9 +439,10 @@ WarningReadBankAlsoAllowedIfUserHasPermission=Waarschuwing: het lezen van bankre
 WarningNoDataTransferedInAccountancyYet=Let op: er staan geen gegevens in de boekhoudtabel. Breng uw in de applicatie geregistreerde gegevens over naar het boekhoudgedeelte of wijzig de berekeningsmodus om de gegevens te analyseren die buiten de boekhouding zijn geregistreerd.
 WarningChangingThisMayBreakStopTaskScheduler=Waarschuwing: het wijzigen van deze waarde kan de planner uitschakelen
 WarningAmountOfFileDiffersFromSumOfLines=Waarschuwing, de hoeveelheid van het bestand (%s) verschilt van de som van de regels (%s)
-WarningModuleAffiliatedToAReportedCompany=Let op, deze module is bij de Dolibarr Foundation gemeld als gepubliceerd door een bedrijf die gebruikmaakt van illegale praktijken (het niet naleven van de regels voor het gebruik van het merk Dolibarr, het verzamelen van uw gegevens zonder uw toestemming of het installeren van malware).
+WarningModuleAffiliatedToAReportedCompany=Waarschuwing: deze module is bij de Dolibarr Foundation gemeld omdat deze is gepubliceerd door een bedrijf die illegale praktijken hanteert (niet-naleving van de regels voor het gebruik van het Dolibarr-merk, schending van de GPL-licentie, het verzamelen van gegevens zonder uw toestemming OF het verspreiden van malware).
 WarningModuleAffiliatedToAPiratPlatform=Wees voorzichtig wanneer u een module (betaald of gratis) downloadt van een verdacht niet-officieel platform zoals %s
 WarningDNSServerNotAvailable=Waarschuwing: DNS-server niet beschikbaar
+WarningSecureKeyNotSet=De waarde van de securekey mag niet leeg zijn.
 
 SwissQrOnlyVIR = SwissQR-factuur kan alleen worden toegevoegd aan facturen die zijn ingesteld om te worden betaald met overboekingen.
 SwissQrCreditorAddressInvalid = Crediteur adres is ongeldig (zijn postcode en plaats ingesteld? (%s)
@@ -467,4 +481,4 @@ SomeShipmentExists=Fout, er is een zending gekoppeld aan Bestelling. Verwijderin
 WarningEvaluationEmptyValidate=Evaluatie kan niet gevalideerd worden, vaardigheidsniveaus niet gedefinieerd
 ErrorBadParametersForDirectDebitFileCreate=Kan geen bankoverschrijvingsbestand aanmaken: de verwachte formaatparameter ontbreekt.
 ErrorBadParametersForDirectDebitFileCreateDids=Kan geen bankoverschrijvingsbestand aanmaken: de ID's van bestaande betalingsverzoeken ontbreken.
-UserDoesNotHaveRightsToChangeHisPassword=That user doesn't have the rights to change his own password
+ErrorExpeditionQtyTooHigh=De verzonden hoeveelheid (%s) overschrijdt de resterende te leveren hoeveelheid (%s).

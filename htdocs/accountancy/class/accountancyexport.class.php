@@ -5,11 +5,11 @@
  * Copyright (C) 2015		Florian Henry				<florian.henry@open-concept.pro>
  * Copyright (C) 2015		Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016		Pierre-Henry Favre			<phf@atm-consulting.fr>
- * Copyright (C) 2016-2025	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2016-2026	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2022		Lionel Vessiller			<lvessiller@open-dsi.fr>
  * Copyright (C) 2013-2017	Olivier Geffroy				<jeff@jeffinfo.com>
  * Copyright (C) 2017		Elarifr. Ari Elbaz			<github@accedinfo.com>
- * Copyright (C) 2017-2024	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2017-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2017		André Schild				<a.schild@aarboard.ch>
  * Copyright (C) 2020		Guillaume Alexandre			<guillaume@tag-info.fr>
  * Copyright (C) 2022		Joachim Kueter				<jkueter@gmx.de>
@@ -950,7 +950,15 @@ class AccountancyExport
 				}
 
 				$tab['filler2'] = str_repeat(' ', 110);
-				$tab['Maj'] = 2; // Partial update (alpha key, label, address, collectif, RIB)
+
+				// Field "Maj" (static position 1 char):
+				// blank = no update if account already exists
+				// 2 = partial update (alpha key, label, address, collectif, RIB)
+				if (getDolGlobalString('ACCOUNTING_EXPORT_QUADRATUS_DISABLE_THIRDPARTY_UPDATE')) {
+					$tab['Maj'] = ' ';
+				} else {
+					$tab['Maj'] = 2;
+				}
 
 				if ($line->doc_type == 'customer_invoice') {
 					$tab['type_compte'] = 'C';
@@ -2234,7 +2242,7 @@ class AccountancyExport
 		foreach ($objectLines as $line) {
 			// TYPE C
 			if ($last_codeinvoice != $line->doc_ref) {
-				//recherche societe en fonction de son code client
+				//search company by customer code
 				$sql = "SELECT code_client, fk_forme_juridique, nom, address, zip, town, fk_pays, phone, siret FROM ".MAIN_DB_PREFIX."societe";
 				$sql .= " WHERE code_client = '".$this->db->escape($line->thirdparty_code)."'";
 				$resql = $this->db->query($sql);
@@ -2654,22 +2662,22 @@ class AccountancyExport
 				} else {
 					$tab[] = substr(length_accountg($line->numero_compte), 0, 15);
 				}
-				//Libellé Auto
+				//Auto label
 				$tab[] = "";
 				//print '"'.dol_trunc(str_replace('"', '', $line->label_operation),40,'right','UTF-8',1).'"';
-				//Libellé manual
+				//Manual label
 				$tab[] = dol_trunc(str_replace('"', '', $invoice_ref . (!empty($company_name) ? ' - ' : '') . $company_name), 40, 'right', 'UTF-8', 1);
-				//Numéro de pièce
+				//Document number
 				$tab[] = dol_trunc(str_replace('"', '', (string) $line->piece_num), 10, 'right', 'UTF-8', 1);
-				//Devise
+				//Currency
 				$tab[] = 'EUR';
 				//Amount
 				$tab[] = price2num(abs($line->debit - $line->credit));
-				//Sens
+				//Direction
 				$tab[] = $line->sens;
-				//Code lettrage
+				//Matching code
 				$tab[] = "";
-				//Date Echéance
+				//Due date
 				$tab[] = $date_echeance;
 
 				$output = implode($separator, $tab).$end_line;
@@ -2760,10 +2768,10 @@ class AccountancyExport
 			// Convert the UTF-8 string in latin9
 			$tab[] = mb_convert_encoding(str_replace(' - Compte auxiliaire', '', $line->label_operation), "Windows-1252", 'UTF-8');
 
-			//Calcul de la longueur des numéros de comptes
+			//Calculate account number length
 			$taille_numero = strlen(length_accountg($line->numero_compte));
 
-			//Création du numéro de client et fournisseur générique
+			//Build generic customer and supplier account number
 			$numero_cpt_client = '411';
 			$numero_cpt_fourn = '401';
 			for ($i = 1; $i <= ($taille_numero - 3); $i++) {
@@ -2771,7 +2779,7 @@ class AccountancyExport
 				$numero_cpt_fourn .= '0';
 			}
 
-			//Création des comptes auxiliaire des clients et fournisseur
+			//Build auxiliary accounts for customers and suppliers
 			if (length_accountg($line->numero_compte) == $numero_cpt_client || length_accountg($line->numero_compte) == $numero_cpt_fourn) {
 				$tab[] = rtrim(length_accounta($line->subledger_account), "0");
 			} else {

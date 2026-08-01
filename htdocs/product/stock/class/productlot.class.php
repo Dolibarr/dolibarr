@@ -3,9 +3,10 @@
  * Copyright (C) 2014       Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2023	   	Gauthier VERDOL		<gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026	   	Charlene Benke		<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -120,7 +121,7 @@ class Productlot extends CommonObject
 
 	/**
 	 *  'type' if the field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
-	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
+	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalString("MY_SETUP_PARAM")'
 	 *  'position' is the sort order of field.
@@ -144,7 +145,7 @@ class Productlot extends CommonObject
 	 */
 
 	/**
-	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>,searchmulti?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,visible:int<-6,6>|string,langfile?:string,notnull?:int<-1,1>,noteditable?:int<0,1>,alwayseditable?:int<0,1>|string,default?:string|int,index?:int<0,1>,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,helplist?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>|string,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>|string,showonheader?:int<0,1>,searchmulti?:int<0,1>,picto?:string,required?:int<0,1>,placeholder?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid'         => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'noteditable' => 1, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id', 'css' => 'left'),
@@ -242,6 +243,7 @@ class Productlot extends CommonObject
 		$this->db = $db;
 
 		$this->ismultientitymanaged = 1;
+		$this->isextrafieldmanaged = 1;
 	}
 
 	/**
@@ -430,8 +432,8 @@ class Productlot extends CommonObject
 			$sql .= 'fk_user_modif,';
 			$sql .= 'import_key';
 			$sql .= ') VALUES (';
-			$sql .= ' ' . (!isset($this->entity) ? $conf->entity : $this->entity) . ',';
-			$sql .= ' ' . (!isset($this->fk_product) ? 'NULL' : $this->fk_product) . ',';
+			$sql .= ' ' . (!isset($this->entity) ? ((int) $conf->entity) : ((int) $this->entity)) . ',';
+			$sql .= ' ' . (!isset($this->fk_product) ? 'NULL' : ((int) $this->fk_product)) . ',';
 			$sql .= ' ' . (!isset($this->batch) ? 'NULL' : "'" . $this->db->escape($this->batch) . "'") . ',';
 			$sql .= ' ' . (!isset($this->eatby) || dol_strlen($this->eatby) == 0 ? 'NULL' : "'" . $this->db->idate($this->eatby) . "'") . ',';
 			$sql .= ' ' . (!isset($this->sellby) || dol_strlen($this->sellby) == 0 ? 'NULL' : "'" . $this->db->idate($this->sellby) . "'") . ',';
@@ -439,12 +441,12 @@ class Productlot extends CommonObject
 			$sql .= ' ' . (!isset($this->manufacturing_date) || dol_strlen($this->manufacturing_date) == 0 ? 'NULL' : "'" . $this->db->idate($this->manufacturing_date) . "'") . ',';
 			$sql .= ' ' . (!isset($this->scrapping_date) || dol_strlen($this->scrapping_date) == 0 ? 'NULL' : "'" . $this->db->idate($this->scrapping_date) . "'") . ',';
 			//$sql .= ' '.(!isset($this->commissionning_date) || dol_strlen($this->commissionning_date) == 0 ? 'NULL' : "'".$this->db->idate($this->commissionning_date)."'").',';
-			$sql .= ' '.(empty($this->qc_frequency) ? 'NULL' : $this->qc_frequency).',';
-			$sql .= ' '.(empty($this->lifetime) ? 'NULL' : $this->lifetime).',';
+			$sql .= ' '.(empty($this->qc_frequency) ? 'NULL' : ((int) $this->qc_frequency)).',';
+			$sql .= ' '.(empty($this->lifetime) ? 'NULL' : ((int) $this->lifetime)).',';
 			$sql .= ' ' . "'" . $this->db->idate(dol_now()) . "'" . ',';
-			$sql .= ' ' . (!isset($this->fk_user_creat) ? 'NULL' : $this->fk_user_creat) . ',';
-			$sql .= ' ' . (!isset($this->fk_user_modif) ? 'NULL' : $this->fk_user_modif) . ',';
-			$sql .= ' ' . (!isset($this->import_key) ? 'NULL' : $this->import_key);
+			$sql .= ' ' . (!isset($this->fk_user_creat) ? 'NULL' : ((int) $this->fk_user_creat)) . ',';
+			$sql .= ' ' . (!isset($this->fk_user_modif) ? 'NULL' : ((int) $this->fk_user_modif)) . ',';
+			$sql .= ' ' . (!isset($this->import_key) ? 'NULL' : '"'.$this->db->escape($this->import_key).'"');
 			$sql .= ')';
 
 			$this->db->begin();
@@ -635,8 +637,8 @@ class Productlot extends CommonObject
 		if (!$error) {
 			// Update request
 			$sql = 'UPDATE ' . $this->db->prefix() . $this->table_element . ' SET';
-			$sql .= ' entity = ' . (isset($this->entity) ? $this->entity : "null") . ',';
-			$sql .= ' fk_product = ' . (isset($this->fk_product) ? $this->fk_product : "null") . ',';
+			$sql .= ' entity = ' . (isset($this->entity) ? ((int) $this->entity) : "null") . ',';
+			$sql .= ' fk_product = ' . (isset($this->fk_product) ? ((int) $this->fk_product) : "null") . ',';
 			$sql .= ' batch = ' . (isset($this->batch) ? "'" . $this->db->escape($this->batch) . "'" : "null") . ',';
 			$sql .= ' eatby = ' . (!isset($this->eatby) || dol_strlen($this->eatby) != 0 ? "'" . $this->db->idate($this->eatby) . "'" : 'null') . ',';
 			$sql .= ' sellby = ' . (!isset($this->sellby) || dol_strlen($this->sellby) != 0 ? "'" . $this->db->idate($this->sellby) . "'" : 'null') . ',';
@@ -648,9 +650,9 @@ class Productlot extends CommonObject
 			$sql .= ' lifetime = '.(!empty($this->lifetime) ? (int) $this->lifetime : 'null').',';
 			$sql .= ' datec = ' . (dol_strlen((string) $this->datec) != 0 ? "'" . $this->db->idate($this->datec) . "'" : 'null') . ',';
 			$sql .= ' tms = ' . (dol_strlen((string) $this->tms) != 0 ? "'" . $this->db->idate($this->tms) . "'" : "'" . $this->db->idate(dol_now()) . "'") . ',';
-			$sql .= ' fk_user_creat = ' . (isset($this->fk_user_creat) ? $this->fk_user_creat : "null") . ',';
-			$sql .= ' fk_user_modif = ' . (isset($this->fk_user_modif) ? $this->fk_user_modif : "null") . ',';
-			$sql .= ' import_key = ' . (isset($this->import_key) ? $this->import_key : "null");
+			$sql .= ' fk_user_creat = ' . (isset($this->fk_user_creat) ? ((int) $this->fk_user_creat) : "null") . ',';
+			$sql .= ' fk_user_modif = ' . (isset($this->fk_user_modif) ? ((int) $this->fk_user_modif) : "null") . ',';
+			$sql .= ' import_key = ' . (isset($this->import_key) ? '"'.$this->db->escape($this->import_key).'"' : "null");
 			$sql .= ' WHERE rowid=' . ((int) $this->id);
 
 			$this->db->begin();
@@ -836,7 +838,7 @@ class Productlot extends CommonObject
 	}
 
 	/**
-	 *  Charge tableau des stats expedition pour le lot/numéro de série
+	 *  Load the array of shipment stats for the lot/serial number
 	 *
 	 * @param  int $socid Id societe
 	 * @return int                     Array of stats in $this->stats_expedition, <0 if ko or >0 if ok
@@ -910,7 +912,7 @@ class Productlot extends CommonObject
 	}
 
 	/**
-	 *  Charge tableau des stats commande fournisseur pour le lot/numéro de série
+	 *  Load the array of supplier order stats for the lot/serial number
 	 *
 	 * @param  int $socid Id societe
 	 * @return int                     Array of stats in $this->stats_expedition, <0 if ko or >0 if ok
@@ -985,7 +987,7 @@ class Productlot extends CommonObject
 	}
 
 	/**
-	 *  Charge tableau des stats expedition pour le lot/numéro de série
+	 *  Load the array of shipment stats for the lot/serial number
 	 *
 	 * @param  int $socid Id societe
 	 * @return int                     Array of stats in $this->stats_expedition, <0 if ko or >0 if ok
@@ -1058,7 +1060,7 @@ class Productlot extends CommonObject
 	}
 
 	/**
-	 *  Charge tableau des stats expedition pour le lot/numéro de série
+	 *  Load the array of shipment stats for the lot/serial number
 	 *
 	 * @param  int $socid Id societe
 	 * @return int                     Array of stats in $this->stats_expedition, <0 if ko or >0 if ok
@@ -1315,7 +1317,7 @@ class Productlot extends CommonObject
 		$langs->loadLangs(array('stocks', 'productbatch', "products"));
 		$outputlangs->loadLangs(array('stocks', 'productbatch', "products"));
 
-		// Positionne le modele sur le nom du modele a utiliser
+		// Set the model to the name of the model to use
 		if (!dol_strlen($modele)) {
 			$modele = '';
 

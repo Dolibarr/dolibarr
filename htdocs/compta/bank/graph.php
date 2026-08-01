@@ -2,7 +2,7 @@
 /* Copyright (C) 2005     	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010	Laurent Destailleur 	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009	Regis Houssin       	<regis.houssin@inodbox.com>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026	Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -49,6 +49,7 @@ $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height', '200');
 $hookmanager->initHooks(array('bankstats', 'globalcard'));
 
 // Security check
+$id = 0;
 if (GETPOST('account') || GETPOST('ref')) {
 	$id = GETPOST('account') ? GETPOST('account') : GETPOST('ref');
 }
@@ -111,7 +112,7 @@ if ($result < 0) {
 	$error++;
 	setEventMessages($langs->trans("ErrorFailedToCreateDir"), null, 'errors');
 } else {
-	// Calcul $min and $max
+	// Calculate $min and $max
 	$sql = "SELECT MIN(b.datev) as min, MAX(b.datev) as max";
 	$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
 	$sql .= ", ".MAIN_DB_PREFIX."bank_account as ba";
@@ -122,6 +123,11 @@ if ($result < 0) {
 	}
 
 	$resql = $db->query($sql);
+
+	// Defaults
+	$max = dol_now();
+	$min = $max - 3600 * 24;
+
 	if ($resql) {
 		$num = $db->num_rows($resql);
 		$obj = $db->fetch_object($resql);
@@ -129,9 +135,6 @@ if ($result < 0) {
 		$max = dol_get_last_hour($db->jdate($obj->max));
 	} else {
 		dol_print_error($db);
-	}
-	if (empty($min)) {
-		$min = dol_now() - 3600 * 24;
 	}
 
 	$log = "graph.php: min=".$min." max=".$max;
@@ -159,8 +162,8 @@ if ($result < 0) {
 		$sql .= ", ".MAIN_DB_PREFIX."bank_account as ba";
 		$sql .= " WHERE b.fk_account = ba.rowid";
 		$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
-		$sql .= " AND b.datev >= '".$db->escape($year)."-".$db->escape($month)."-01 00:00:00'";
-		$sql .= " AND b.datev < '".$db->escape($yearnext)."-".$db->escape($monthnext)."-01 00:00:00'";
+		$sql .= " AND b.datev >= '".$db->escape($year."-".$month."-01 00:00:00")."'";
+		$sql .= " AND b.datev < '".$db->escape($yearnext."-".$monthnext."-01 00:00:00")."'";
 		if ($account && GETPOST("option") != 'all') {
 			$sql .= " AND b.fk_account IN (".$db->sanitize($account).")";
 		}
@@ -188,7 +191,7 @@ if ($result < 0) {
 		$sql .= ", ".MAIN_DB_PREFIX."bank_account as ba";
 		$sql .= " WHERE b.fk_account = ba.rowid";
 		$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
-		$sql .= " AND b.datev < '".$db->escape($year)."-".sprintf("%02s", $month)."-01'";
+		$sql .= " AND b.datev < '".$db->escape($year)."-".sprintf("%02u", ((int) $month))."-01'";
 		if ($account && GETPOST("option") != 'all') {
 			$sql .= " AND b.fk_account IN (".$db->sanitize($account).")";
 		}
@@ -467,7 +470,7 @@ if ($result < 0) {
 			dol_print_error($db);
 		}
 
-		// Calcul de $solde avant le debut du graphe
+		// Calculate $solde before the start of the graph
 		$solde = 0;
 
 		// Loading labels and datas for dashboard 3
@@ -558,7 +561,7 @@ if ($result < 0) {
 	// Graph input/output - Credit/Debit for the month
 
 	if ($mode == 'standard') {
-		// Chargement du tableau $credits, $debits
+		// Load the $credits, $debits arrays
 		$credits = array();
 		$debits = array();
 
@@ -614,8 +617,8 @@ if ($result < 0) {
 		$sql .= ", ".MAIN_DB_PREFIX."bank_account as ba";
 		$sql .= " WHERE b.fk_account = ba.rowid";
 		$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
-		$sql .= " AND b.datev >= '".$db->escape($year)."-".$db->escape($month)."-01 00:00:00'";
-		$sql .= " AND b.datev < '".$db->escape($yearnext)."-".$db->escape($monthnext)."-01 00:00:00'";
+		$sql .= " AND b.datev >= '".$db->escape($year."-".$month."-01 00:00:00")."'";
+		$sql .= " AND b.datev < '".$db->escape($yearnext."-".$monthnext."-01 00:00:00")."'";
 		$sql .= " AND b.amount < 0";
 		if ($account && GETPOST("option") != 'all') {
 			$sql .= " AND b.fk_account IN (".$db->sanitize($account).")";
@@ -679,7 +682,7 @@ if ($result < 0) {
 	// Tableau 4b - Credit/Debit
 
 	if ($mode == 'standard') {
-		// Chargement du tableau $credits, $debits
+		// Load the $credits, $debits arrays
 		$credits = array();
 		$debits = array();
 		$sql = "SELECT date_format(b.datev,'%m')";

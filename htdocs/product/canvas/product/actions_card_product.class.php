@@ -96,7 +96,7 @@ class ActionsCardProduct
 	public $tpl = array();
 
 	/**
-	 * array<array{id:int,name:string,alias:string,title:string,align:string,sort:string,search:string,visible:int<-2,5>,enabled:int<0,1>,order:int}> List of fields for action=list
+	 * @var array<array{id:int,name:string,alias:string,title:string,align:string,sort:string,search:string,visible:int<-2,5>,enabled:int<0,1>,order:int}> List of fields for action=list
 	 */
 	public $field_list = array();
 
@@ -313,7 +313,7 @@ class ActionsCardProduct
 		$sql = "SELECT rowid, name, alias, title, align, sort, search, visible, enabled, rang";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_field_list";
 		$sql .= " WHERE element = '".$this->db->escape($this->fieldListName)."'";
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " AND entity = ".((int) $conf->entity);
 		$sql .= " ORDER BY rang ASC";
 
 		$resql = $this->db->query($sql);

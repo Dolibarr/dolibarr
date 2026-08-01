@@ -75,7 +75,7 @@ class Users extends DolibarrApi
 	 * @param int		$page		Page number
 	 * @param string	$user_ids   User ids filter field. Example: '1' or '1,2,3'          {@pattern /^[0-9,]*$/i}
 	 * @param int       $category   Use this param to filter list by category
-	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:>:'20160101')"
 	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array               Array of User objects
 	 * @phan-return Object[]
@@ -361,11 +361,6 @@ class Users extends DolibarrApi
 				// This properties can't be set/modified with API
 				throw new RestException(405, 'The property '.$field." can't be set/modified using the APIs");
 			}
-			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->useraccount->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
-				continue;
-			}
 			/*if ($field == 'pass') {
 				if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'password')) {
 					throw new RestException(403, 'You are not allowed to modify/set password of other users');
@@ -373,6 +368,21 @@ class Users extends DolibarrApi
 				}
 			}
 			*/
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
+				$this->useraccount->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
+				continue;
+			}
+
+			if (DolibarrApiAccess::$user->admin) {	// If user for API is admin
+				if ($field == 'admin' && $value != $this->useraccount->admin && empty($value)) {
+					throw new RestException(403, 'Reseting the admin status of a user is not possible using the API');
+				}
+			} else {
+				if ($field == 'admin' && $value != $this->useraccount->admin) {
+					throw new RestException(403, 'Only an admin user can modify the admin status of another user');
+				}
+			}
 
 			$this->useraccount->$field = $this->_checkValForAPI($field, $value, $this->useraccount);
 		}
@@ -401,8 +411,21 @@ class Users extends DolibarrApi
 	 */
 	public function put($id, $request_data = null)
 	{
+		$isSelfUpdate = ((int) $id === (int) DolibarrApiAccess::$user->id);
+
 		// Check user authorization
-		if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'creer') && empty(DolibarrApiAccess::$user->admin)) {
+		if (
+			!DolibarrApiAccess::$user->hasRight('user', 'user', 'creer')
+			&& !DolibarrApiAccess::$user->hasRight('user', 'user', 'write')
+			&& !(
+				$isSelfUpdate
+				&& (
+					DolibarrApiAccess::$user->hasRight('user', 'self', 'creer')
+					|| DolibarrApiAccess::$user->hasRight('user', 'self', 'write')
+				)
+			)
+			&& empty(DolibarrApiAccess::$user->admin)
+		) {
 			throw new RestException(403, "User update not allowed");
 		}
 
@@ -438,7 +461,7 @@ class Users extends DolibarrApi
 			}
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->useraccount->array_options[$index] = $this->_checkValForAPI($field, $val, $this->useraccount);
+					$this->useraccount->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->useraccount);
 				}
 				continue;
 			}
@@ -494,12 +517,10 @@ class Users extends DolibarrApi
 	 */
 	public function setPassword($id, $send_password = false)
 	{
-		//$conf->global->API_DISABLE_LOGIN_API = 1;
-		if (getDolGlobalString('API_DISABLE_LOGIN_API')) {
+		if (!getDolGlobalInt('API_ENABLE_LOGIN_API')) {
 			throw new RestException(403, "Error: login and password reset APIs are disabled. You can get access token from the backoffice to get access permission but permission and password manipulation from APIs are forbidden.");
 		}
 
-		//$conf->global->API_ALLOW_PASSWORD_RESET = 1;
 		if (!getDolGlobalString('API_ALLOW_PASSWORD_RESET')) {
 			throw new RestException(403, "Error: password reset APIs are disabled by default. To allow this, the option API_ALLOW_PASSWORD_RESET must be set.");
 		}
@@ -772,7 +793,7 @@ class Users extends DolibarrApi
 	 * @param int		$limit		Limit for list
 	 * @param int		$page		Page number
 	 * @param string	$group_ids   Groups ids filter field. Example: '1' or '1,2,3'          {@pattern /^[0-9,]*$/i}
-	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:>:'20160101')"
 	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array               Array of User objects
 	 * @phan-return Object[]
@@ -878,6 +899,12 @@ class Users extends DolibarrApi
 
 		if ($includepermissions) {
 			$group_static->loadRights();
+		}
+
+		if ($load_members > 0 && is_array($group_static->members) && count($group_static->members) > 0) {
+			foreach ($group_static->members as &$member) {
+				$member = $this->_cleanObjectDatas($member);
+			}
 		}
 
 		return $this->_cleanUserGroup($group_static);
@@ -1069,7 +1096,7 @@ class Users extends DolibarrApi
 		$notification->fk_user = $id;
 
 		foreach ($request_data as $field => $value) {
-			$notification->$field = $value;
+			$notification->$field = $this->_checkValForAPI($field, $value, $notification);
 		}
 
 		$event = $notification->event;
@@ -1144,7 +1171,7 @@ class Users extends DolibarrApi
 			if ($field === 'fk_action') {
 				throw new RestException(500, 'Error creating User Notification, request_data contains fk_action key');
 			}
-			$notification->$field = $value;
+			$notification->$field = $this->_checkValForAPI($field, $value, $notification);
 		}
 
 		$event = $notification->event;
@@ -1239,7 +1266,7 @@ class Users extends DolibarrApi
 		}
 
 		foreach ($request_data as $field => $value) {
-			$notification->$field = $value;
+			$notification->$field = $this->_checkValForAPI($field, $value, $notification);
 		}
 
 		if ($notification->update(DolibarrApiAccess::$user) < 0) {

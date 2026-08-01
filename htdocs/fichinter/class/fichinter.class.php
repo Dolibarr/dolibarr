@@ -4,10 +4,10 @@
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2020  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2015-2025  Charlene Benke          <charlene@patas-monkey.com>
+ * Copyright (C) 2015-2026  Charlene Benke          <charlene@patas-monkey.com>
  * Copyright (C) 2018       Nicolas ZABOURI	        <info@inovea-conseil.com>
  * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2023-2024  William Mead            <william.mead@manchenumerique.fr>
+ * Copyright (C) 2023-2026  William Mead            <william@m34d.com>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -42,7 +42,8 @@ require_once DOL_DOCUMENT_ROOT.'/subtotals/class/commonsubtotal.class.php';
  */
 class Fichinter extends CommonObject
 {
-	use CommonSignedObject, CommonSubtotal;
+	use CommonSignedObject;
+	use CommonSubtotal;
 
 	/**
 	 * @var string		Prefix to check for any trigger code of any business class to prevent bad value for trigger code.
@@ -85,6 +86,11 @@ class Fichinter extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element = 'fichinter';
+
+	/**
+	 * @var string Name of field in database that is used as reference when object is linked to another one.
+	 */
+	public $fk_element = 'fk_fichinter';
 
 	/**
 	 * @var string Name of table without prefix where object is stored
@@ -346,7 +352,7 @@ class Fichinter extends CommonObject
 		$sql .= ", note_public";
 		$sql .= ") ";
 		$sql .= " VALUES (";
-		$sql .= $this->socid;
+		$sql .= ((int) $this->socid);
 		$sql .= ", '".$this->db->idate($now)."'";
 		$sql .= ", '".$this->db->escape($this->ref)."'";
 		$sql .= ", ".($this->ref_client ? "'".$this->db->escape($this->ref_client)."'" : "null");
@@ -504,9 +510,10 @@ class Fichinter extends CommonObject
 	public function fetch($rowid, $ref = '', $ref_ext = '')
 	{
 		$sql = "SELECT f.rowid, f.ref, f.ref_client, f.description, f.fk_soc, f.fk_statut as status, f.signed_status,";
-		$sql .= " f.datec, f.dateo, f.datee, f.datet, f.fk_user_author,";
+		$sql .= " f.datec, f.dateo, f.datee, f.datet,";
 		$sql .= " f.date_valid as datev,";
 		$sql .= " f.tms as datem,";
+		$sql .= " f.fk_user_author, f.fk_user_modif,";
 		$sql .= " f.duree, f.fk_projet as fk_project, f.note_public, f.note_private, f.model_pdf, f.last_main_doc, f.extraparams, fk_contrat, f.entity as entity";
 		$sql .= " FROM ".MAIN_DB_PREFIX."fichinter as f";
 		$sql .= " WHERE f.entity IN (".getEntity('intervention').")";
@@ -545,7 +552,8 @@ class Fichinter extends CommonObject
 				$this->fk_contrat = $obj->fk_contrat;
 				$this->entity = $obj->entity;
 
-				$this->user_creation_id = $obj->fk_user_author;
+				$this->user_author_id = $this->user_creation_id = $obj->fk_user_author;
+				$this->user_modification_id = $obj->fk_user_modif;
 
 				$this->extraparams = is_null($obj->extraparams) ? [] : (array) json_decode($obj->extraparams, true);
 
@@ -654,7 +662,7 @@ class Fichinter extends CommonObject
 			$sql .= ", date_valid = '".$this->db->idate($now)."'";
 			$sql .= ", fk_user_valid = ".($user->id > 0 ? (int) $user->id : "null");
 			$sql .= " WHERE rowid = ".((int) $this->id);
-			$sql .= " AND entity = ".((int) $this->entity);
+			$sql .= " AND entity IN (".getEntity('intervention').")";
 
 			$sql .= " AND fk_statut = 0";
 
@@ -690,7 +698,7 @@ class Fichinter extends CommonObject
 						$this->error = $this->db->lasterror();
 					}
 					$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'ficheinter/".$this->db->escape($this->newref)."'";
-					$sql .= " WHERE filepath = 'ficheinter/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+					$sql .= " WHERE filepath = 'ficheinter/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 					$resql = $this->db->query($sql);
 					if (!$resql) {
 						$error++;
@@ -765,7 +773,7 @@ class Fichinter extends CommonObject
 			$sql .= " fk_user_modif = " . ((int) $user->id);
 			$sql .= " WHERE rowid = " . ((int) $this->id);
 			$sql .= " AND fk_statut > " . self::STATUS_DRAFT;
-			$sql .= " AND entity = " . ((int) $conf->entity);
+			$sql .= " AND entity IN (".getEntity('intervention').")";
 
 			if ($this->db->query($sql)) {
 				if (!$notrigger) {
@@ -1368,6 +1376,7 @@ class Fichinter extends CommonObject
 		$this->user_validation_id = 0;
 		$this->date_creation = '';
 		$this->date_validation = '';
+		$this->signed_status = 0;
 
 		$this->ref_client = '';
 
@@ -1602,6 +1611,22 @@ class Fichinter extends CommonObject
 		);
 
 		return CommonObject::commonReplaceThirdparty($dbs, $origin_id, $dest_id, $tables);
+	}
+
+	/**
+	 * Sets object to given categories.
+	 *
+	 * Adds it to non existing supplied categories.
+	 * Existing categories are left untouch.
+	 *
+	 * @param int[]|int $categories Category or categories IDs
+	 *
+	 * @return int Return integer <0 if KO, >0 if OK
+	 */
+	public function setCategories($categories)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+		return parent::setCategoriesCommon($categories, Categorie::TYPE_FICHINTER);
 	}
 
 	/**

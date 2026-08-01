@@ -1,7 +1,7 @@
 <?php
 /* Copyright (c) 2015-2019  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,7 +59,7 @@ class FormMargin
 	 *
 	 * 	@param	CommonObject	$object			Object we want to get margin information for
 	 * 	@param 	bool			$force_price	True of not
-	 *	@return	array{pa_products:float,pv_products:float, margin_on_products:float, margin_rate_products :string, mark_rate_products :string, pa_services:float, pv_services:float, margin_on_services:float, margin_rate_services :string, mark_rate_services :string, pa_total:float, pv_total:float, total_margin:float, total_margin_rate :string, total_mark_rate :string}		Array with info
+	 *	@return	array{pa_products:float,pv_products:float, margin_on_products:float, margin_rate_products :float|'', mark_rate_products :float|string, pa_services:float, pv_services:float, margin_on_services:float, margin_rate_services :float|'', mark_rate_services :float|'', pa_total:float, pv_total:float, total_margin:float, total_margin_rate :float|'', total_mark_rate :float|''}		Array with info
 	 */
 	public function getMarginInfosArray($object, $force_price = false)
 	{
@@ -112,8 +112,14 @@ class FormMargin
 				/** @var Facture $object */
 				if (($object->element == 'facture' && $object->type == $object::TYPE_SITUATION)
 					|| ($object->element == 'facture' && $object->type == $object::TYPE_CREDIT_NOTE && getDolGlobalInt('INVOICE_USE_SITUATION_CREDIT_NOTE') && $object->situation_counter > 0)) {
-					// We need a compensation relative to $line->situation_percent
-					$pa = $line->qty * $pa_ht * ($line->situation_percent / 100);
+					// We need only the delta between this situation and the previous one to avoid cumulating margins across situation invoices
+					// total_ht is stored cumulatively (e.g. 60% of full price), so we extract only this invoice's share using the delta percent
+					$prevPercent = $line->get_prev_progress($object->id);
+					$deltaPercent = $line->situation_percent - $prevPercent;
+					if ($line->situation_percent > 0) {
+						$pv *= ($deltaPercent / $line->situation_percent);
+					}
+					$pa = $line->qty * $pa_ht * ($deltaPercent / 100);
 				} else {
 					$pa = $line->qty * $pa_ht;
 				}
@@ -123,7 +129,7 @@ class FormMargin
 
 			// calcul des marges
 			if (isset($line->fk_remise_except) && isset($conf->global->MARGIN_METHODE_FOR_DISCOUNT)) {    // remise
-				if (getDolGlobalString('MARGIN_METHODE_FOR_DISCOUNT') == '1') { // remise globale considérée comme produit
+				if (getDolGlobalString('MARGIN_METHODE_FOR_DISCOUNT') == '1') { // global discount treated as product
 					$marginInfos['pa_products'] += $pa;
 					$marginInfos['pv_products'] += $pv;
 					$marginInfos['pa_total'] += $pa;
@@ -135,7 +141,7 @@ class FormMargin
 					//}
 					//else
 					$marginInfos['margin_on_products'] += $pv - $pa;
-				} elseif (getDolGlobalString('MARGIN_METHODE_FOR_DISCOUNT') == '2') { // remise globale considérée comme service
+				} elseif (getDolGlobalString('MARGIN_METHODE_FOR_DISCOUNT') == '2') { // global discount treated as service
 					$marginInfos['pa_services'] += $pa;
 					$marginInfos['pv_services'] += $pv;
 					$marginInfos['pa_total'] += $pa;

@@ -11,6 +11,7 @@
  * Copyright (C) 2017       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2018-2022  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2022 		Antonin MARCHAL         <antonin@letempledujeu.fr>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -455,11 +456,10 @@ class FieldsManager
 	 */
 	public function getFieldsInfos($key, &$object, &$extrafields = null, $mode = 'view', $params = array())
 	{
-		global $langs;
-
 		$fieldInfos = null;
 
 		$patternObjectPrefix = getDolGlobalInt('MAIN_FIELDS_NEW_OBJECT_KEY_PREFIX') ? 'object_' : '';
+		$matches = array();
 		if (preg_match('/^options_(.*)/i', $key, $matches)) {
 			$fieldKey = $matches[1];
 			$fieldInfos = $this->getFieldInfosFromExtraField($object, $extrafields, $fieldKey, $mode, $params);
@@ -500,7 +500,7 @@ class FieldsManager
 		$fieldInfos->size = $attributes['length'] ?? '';
 		$fieldInfos->label = $attributes['label'] ?? '';
 		$fieldInfos->langFile = $attributes['langfile'] ?? '';
-		$fieldInfos->sqlAlias = $attributes['alias'] ?? null;
+		$fieldInfos->sqlAlias = $attributes['alias'] ?? null;  // @phan-suppress-current-line SqlInjection
 		$fieldInfos->picto = $attributes['picto'] ?? '';
 		$fieldInfos->position = $attributes['position'] ?? 0;
 		$fieldInfos->required = ($attributes['notnull'] ?? 0) > 0;

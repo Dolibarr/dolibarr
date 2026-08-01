@@ -7,7 +7,7 @@
  * Copyright (C) 2014       Cedric Gross            <c.gross@kreiz-it.fr>
  * Copyright (C) 2016       Florian Henry           <florian.henry@atm-consulting.fr>
  * Copyright (C) 2017-2022  Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2019-2020  Christophe Battarel	    <christophe@altairis.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -33,6 +33,13 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/modules/supplier_order/modules_commandefournisseur.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
@@ -44,14 +51,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/sendings.lib.php';
 if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array("sendings", "companies", "bills", 'orders', 'stocks', 'other', 'propal', 'receptions'));
@@ -745,13 +744,15 @@ if ($object->id > 0 || !empty($object->ref)) {
 								$tmpproduct = $conf->cache['product'][$objp->fk_product];
 							}
 
-							$linktoprod = $tmpproduct->getNomUrl(1);
-							$linktoprod .= ' - '.$objp->label."\n";
+							$linktoprod = '<div class="twolinesmax lineheightsmall">';
+							$linktoprod .= $tmpproduct->getNomUrl(1);
+							$linktoprod .= '<br><span class="opacitymedium small">'.dolPrintHTML($objp->label)."</span>\n";
+							$linktoprod .= '</div>';
 
 							if ($is_mod_batch_enabled) {
 								if ($objp->tobatch) {
 									// Product
-									print '<td id="product_'.$i.'" data-idproduct="'.$objp->fk_product.'" data-barcode="'.$objp->barcode.'">';
+									print '<td class="tdoverflowbydiv nopaddingtopimp nopaddingbottomimp" id="product_'.$i.'" data-idproduct="'.$objp->fk_product.'" data-barcode="'.$objp->barcode.'">';
 									print $linktoprod;
 									print "</td>";
 									print '<td class="dispatch_batch_number"></td>';
@@ -1701,7 +1702,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 		print $formother->getHTMLScannerForm("barcodescannerjs", 'all', 1);
 	}
 
-	// traitement entrepot par défaut
+	// default warehouse handling
 	print '<script type="text/javascript">
 		$(document).ready(function () {
 			$("select[name=fk_default_warehouse]").change(function() {

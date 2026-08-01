@@ -6,14 +6,15 @@
  * Copyright (C) 2014		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2015-2016	Marcos García		<marcosgdf@gmail.com>
- * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2018       Ferran Marcet       <fmarcet@2byte.es>
  * Copyright (C) 2019       Nicolas ZABOURI     <info@inovea-conseil.com>
  * Copyright (C) 2022       OpenDSI             <support@open-dsi.fr>
  * Copyright (C) 2022       Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024       Alexandre Spangaro  <alexandre@inovea-conseil.com>
- * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Lenin Rivas			<lenin.rivas777@gmail.com>
+ * Copyright (C) 2026		Jose MARTINEZ			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +35,7 @@
  * @var CommonObject|Facture $this
  * @var CommonObject $object
  * @var CommonObjectLine $line
- * @var ExtraFields $extrafields
+ * @var ?ExtraFields $extrafields
  * @var Form $form
  * @var HookManager $hookmanager
  * @var Translate $langs
@@ -60,7 +61,7 @@ if (empty($object) || !is_object($object)) {
 @phan-var-force CommonObject|Facture $this
 @phan-var-force CommonObject $object
 @phan-var-force CommonObjectLine $line
-@phan-var-force ExtraFields $extrafields
+@phan-var-force ?ExtraFields $extrafields
 @phan-var-force Societe $buyer
 @phan-var-force Societe $seller
 @phan-var-force int<0,1> $usehm
@@ -376,25 +377,21 @@ if ($nolinesbefore) {
 					echo '</div>';
 				} else {
 					if ($addproducton) {
-						$url = '/product/card.php?leftmenu=product&action=create&type=0&backtopage='.urlencode($_SERVER["PHP_SELF"]);
+						$url = '/product/card.php?leftmenu=product&action=create&type=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id);
 						$newbutton = '<span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("NewProduct").'"></span>';
 						if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
-							// @FIXME Not working yet
-							$jsonclode = 'jsRefreshProductCombo';
-							// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
-							print dolButtonToOpenUrlInDialogPopup('addproduct', $langs->transnoentitiesnoconv('AddProduct'), $newbutton, $url, '', '', $jsonclode);
+							// The popup child page (product/card.php) reloads the parent itself after a successful creation
+							print dolButtonToOpenUrlInDialogPopup('addproduct', $langs->transnoentitiesnoconv('AddProduct'), $newbutton, $url);
 						} else {
 							print '<a href="'.DOL_URL_ROOT.'/product/card.php?action=create&type=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'" title="'.dol_escape_htmltag($langs->trans("NewProduct")).'"><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
 						}
 					}
 					if ($addserviceon) {
-						$url = '/product/card.php?leftmenu=product&action=create&type=1&backtopage='.urlencode($_SERVER["PHP_SELF"]);
+						$url = '/product/card.php?leftmenu=product&action=create&type=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id);
 						$newbutton = '<span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("NewService").'"></span>';
 						if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
-							// @FIXME Not working yet
-							$jsonclode = 'jsRefreshServiceCombo';
-							// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
-							print dolButtonToOpenUrlInDialogPopup('addproduct', $langs->transnoentitiesnoconv('AddService'), $newbutton, $url, '', '', $jsonclode);
+							// The popup child page (product/card.php) reloads the parent itself after a successful creation
+							print dolButtonToOpenUrlInDialogPopup('addproduct', $langs->transnoentitiesnoconv('AddService'), $newbutton, $url);
 						} else {
 							print '<a href="'.DOL_URL_ROOT.'/product/card.php?action=create&type=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'" title="'.dol_escape_htmltag($langs->trans("NewService")).'"><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
 						}
@@ -469,7 +466,7 @@ if ($nolinesbefore) {
 			echo $form->selectyesno('date_end_fill', $line->date_end_fill, 1);
 			echo '</div>';
 		}
-		if (is_object($objectline)) {
+		if (is_object($objectline) && $extrafields instanceof ExtraFields) {
 			$temps = $objectline->showOptionals($extrafields, 'create', array(), '', '', '1', 'line');
 
 			if (!empty($temps)) {
@@ -708,8 +705,8 @@ $jsConf = [
 		'getSupplierPrices' => DOL_URL_ROOT . '/fourn/ajax/getSupplierPrices.php?bestpricefirst=1'
 	],
 	'mySoc' => [
-		'country_code' =>$mysoc->country_code,
-		'state_code' =>$mysoc->state_code,
+		'country_code' => $mysoc->country_code,
+		'state_code' => $mysoc->state_code,
 	],
 	'docObject' => [
 		'table_element_line' => $this->table_element_line,
@@ -732,7 +729,7 @@ $jsConf = [
 	]
 ];
 
-if ( !empty($object->thirdparty) ) {
+if (!empty($object->thirdparty)) {
 	$jsConf['docObject']['thirdparty'] = [
 		'state_code' => $object->thirdparty->state_code,
 		'country_code' => $object->thirdparty->country_code,
@@ -1019,6 +1016,7 @@ if ( !empty($object->thirdparty) ) {
 						if (isNaN(pbq)) { console.log("We use experimental option PRODUIT_CUSTOMER_PRICES_BY_QTY or PRODUIT_CUSTOMER_PRICES_BY_QTY but we could not get the id of pbq from product combo list, so load of price may be 0 if product has different prices"); }
 					}
 
+					let idProdFournPrice = $(this).val();
 					// Get the price for the product and display it
 					console.log("Load unit price and set it into #price_ht or #price_ttc for product id="+$(this).val()+" socid=" + jsConf.docObject.socid);
 					$.post(jsConf.url.fetchProductUrl,
@@ -1056,6 +1054,20 @@ if ( !empty($object->thirdparty) ) {
 							} else {
 								console.log("objectline_create.tpl set content of price_ht");
 								jQuery("#price_ht").val(data.price_ht);
+							}
+
+							// useful to retrieve percent from customer specific price
+							if (typeof data.discount !== 'undefined' && data.discount !== null && data.discount !== '') {
+								var remisePercentInput = jQuery('#remise_percent');
+								if (remisePercentInput.length > 0) {
+									console.log("Remise spécifique client trouvée : " + data.discount + "%");
+									remisePercentInput
+									.val(data.discount)
+									.trigger('input')
+									.trigger('change');
+								} else {
+									console.warn("Champ #remise_percent introuvable, remise non appliquée");
+								}
 							}
 
 							// Set values for any fields in the form options_SOMETHING
@@ -1102,27 +1114,42 @@ if ( !empty($object->thirdparty) ) {
 									}
 								}
 							}
-							// Set vat rate if field is an input box
-							$('#tva_tx').val(tva_tx);
-							// Set vat rate by selecting the combo
-							//$('#tva_tx option').val(tva_tx);	// This is bugged, it replaces the vat key of all options
-							$('#tva_tx option').removeAttr('selected');
-							console.log("stringforvatrateselection="+stringforvatrateselection+" -> value of option label for this key="+$('#tva_tx option[value="'+stringforvatrateselection+'"]').val());
-							$('#tva_tx option[value="'+stringforvatrateselection+'"]').prop('selected', true);
+							// Set vat rate: handle both input box and combo cases
+							if ($('#tva_tx option').length) {
+								// It is a combo: try exact match first (rate + code), fallback to numeric match
+								if ($('#tva_tx option[value="' + stringforvatrateselection + '"]').length) {
+									$('#tva_tx').val(stringforvatrateselection);
+								} else {
+									$('#tva_tx option').filter(function () {
+										return parseFloat($(this).val()) === parseFloat(tva_tx);
+									}).first().prop('selected', true);
+								}
+							} else {
+								// It is an input box
+								$('#tva_tx').val(tva_tx);
+							}
 
-							if(jsConf.conf.PRODUIT_AUTOFILL_DESC == 1) {
+							// Sync the measuring unit dropdown with the product's default fk_unit
+							// (issue #34610). Without this, the dropdown keeps the static initial
+							// value (the first c_units row, typically "Kg") regardless of what
+							// the selected product is configured with.
+							if (typeof data.fk_unit != 'undefined' && data.fk_unit != null && $("#units").length) {
+								$("#units").val(data.fk_unit).trigger('change');
+							} else if (typeof data.default_unit != 'undefined' && data.default_unit != null && $("#units").length) {
+								$("#units").val(data.default_unit).trigger('change');
+							}
+
+							if (jsConf.conf.PRODUIT_AUTOFILL_DESC == 1) {
 								if(jsConf.conf.MAIN_MULTILANGS && jsConf.conf.PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE) {
 									var proddesc = data.desc_trans;
-								}
-								else {
+								} else {
 									var proddesc = data.desc;
 								}
 
 								console.log("objectline_create.tpl Load description into text area : "+proddesc);
 
-								if(jsConf.conf.FCKEDITOR_ENABLE_DETAILS) {
-									if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined")
-									{
+								if (jsConf.conf.FCKEDITOR_ENABLE_DETAILS) {
+									if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined") {
 										var editor = CKEDITOR.instances['dp_desc'];
 										if (editor) {
 											editor.setData(proddesc);
@@ -1138,6 +1165,11 @@ if ( !empty($object->thirdparty) ) {
 									jQuery('div[class*="det'+key.replace('options_','_extras_')+'"] > #'+key).val(value);
 								});
 							}
+
+							// Execute js context Dolibarr Hooks
+							if (typeof Dolibarr != 'undefined') {
+								Dolibarr.executeHook('objectLineCreate:LoadUnitPrice', {idProdFournPrice, 'socid': jsConf.docObject.socid,ajaxResultData : data, jsConf});
+							}
 						},
 						'json'
 					);
@@ -1150,10 +1182,11 @@ if ( !empty($object->thirdparty) ) {
 				$("#fournprice_predef").find("option").remove();
 				$("#fournprice_predef").hide();
 				$("#buying_price").val("").show();
+				let idProd = $(this).val();
 
 				/* Call post to load content of combo list fournprice_predef */
 				var token = jsConf.conf.token;		// For AJAX Call we use old 'token' and not 'newtoken'
-				$.post(jsConf.url.getSupplierPrices, { 'idprod': $(this).val(), 'token': token }, function(data) {
+				$.post(jsConf.url.getSupplierPrices, { 'idprod': idProd, 'token': token }, function(data) {
 					if (data && data.length > 0)
 					{
 						var options = ''; var defaultkey = ''; var defaultprice = ''; var bestpricefound = 0;
@@ -1241,6 +1274,28 @@ if ( !empty($object->thirdparty) ) {
 								$('#buying_price').hide();
 							}
 						});
+
+						// Execute js context Dolibarr Hooks
+						if (typeof Dolibarr != 'undefined') {
+							Dolibarr.executeHook('objectLineCreate:GetSupplierPrices', {'idprod': idProd, ajaxResultData : data, jsConf});
+						}
+
+						<?php if (getDolGlobalString('PRODUCT_USE_UNITS')) { ?>
+						// Sync the measuring unit dropdown with the product's default fk_unit
+						// for the supplier-side line picker (issue #38636), mirroring the
+						// customer-side behaviour from issue #34610. Look at the first
+						// non-pmp/non-cost row of the AJAX response (all rows for a given
+						// product carry the same fk_unit since it comes from llx_product).
+						var firstFkUnit = null;
+						$(data).each(function() {
+							if (this.id != 'pmpprice' && this.id != 'costprice' && typeof this.fk_unit != 'undefined' && this.fk_unit != null && firstFkUnit === null) {
+								firstFkUnit = this.fk_unit;
+							}
+						});
+						if (firstFkUnit !== null && $("#units").length) {
+							$("#units").val(firstFkUnit).trigger('change');
+						}
+						<?php } ?>
 					}
 				},
 				'json');
@@ -1276,10 +1331,16 @@ if ( !empty($object->thirdparty) ) {
 						jQuery("#remise_percent").val(pbqpercent);
 					}
 				} else { jQuery("#pbq").val(''); }
+
+				// Execute js context Dolibarr Hooks
+				if (typeof Dolibarr != 'undefined') {
+					Dolibarr.executeHook('objectLineCreate:CustomerPriceByQty', { pbq, pbqup, pbqbase, pbqqty, pbqpercent });
+				}
 			}
 
 			// Deal with supplier ref price (idprodfournprice = int)
-			if (jQuery('#idprodfournprice').val() > 0)
+			var supplierVal = jQuery('#idprodfournprice').val();
+			if (supplierVal && supplierVal !== '-1' && (supplierVal > 0 || supplierVal.indexOf('idprod_') === 0))
 			{
 				console.log("objectline_create.tpl #idprodfournprice is an ID > 0, so we set some properties into page");
 
@@ -1312,7 +1373,7 @@ if ( !empty($object->thirdparty) ) {
 					"invoice_supplier_rec"
 				];
 
-				// seller.tva_assuj -> à injecter dans jsConf ou ailleurs
+				// seller.tva_assuj -> to inject into jsConf or elsewhere
 				if (supplierElements.includes(jsConf.docObject.element) && !jsConf.docObject.seller_tva_assuj) {
 					if (tva_tx !== 0) {
 						tva_tx = 0;
@@ -1348,9 +1409,13 @@ if ( !empty($object->thirdparty) ) {
 
 				if (has_multicurrency_up === false) {
 					if (typeof up_locale === 'undefined') {
-						jQuery("#price_ht").val(up);
+						if (!Number.isNaN(up)) {
+							jQuery("#price_ht").val(up);
+						}
 					} else {
-						jQuery("#price_ht").val(up_locale);
+						if (!Number.isNaN(up_locale)) {
+							jQuery("#price_ht").val(up_locale);
+						}
 					}
 				}
 
@@ -1390,7 +1455,6 @@ if ( !empty($object->thirdparty) ) {
 						jQuery('#dp_desc').text(description);
 					}
 				}
-
 			} else if (jQuery('#idprodfournprice').length > 0) {
 				console.log("objectline_create.tpl #idprodfournprice is not an int but is a string so we set only few properties into page");
 
@@ -1458,6 +1522,10 @@ if ( !empty($object->thirdparty) ) {
 			setforpredef();
 		}
 
+		// Execute js context Dolibarr Hooks
+		if (typeof Dolibarr != 'undefined') {
+			Dolibarr.executeHook('objectLineCreate:ProductSelectionChange');
+		}
 	});
 
 	/* Function to set fields visibility after selecting a free product */
@@ -1511,7 +1579,7 @@ if ( !empty($object->thirdparty) ) {
 			jQuery("#np_markRate, .np_markRate").hide();
 		}
 
-		jQuery("#units, #title_units").hide();
+		jQuery("#units, #title_units, .linecoluseunit .selection").hide();
 		jQuery("#buying_price").show();
 		jQuery('#trlinefordates, .divlinefordates').show();
 	}

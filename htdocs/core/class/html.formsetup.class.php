@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2021  John BOTELLA    <john.botella@atm-consulting.fr>
- * Copyright (C) 2024-2025	MDW			<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2021       John BOTELLA            <john.botella@atm-consulting.fr>
+ * Copyright (C) 2024-2026	MDW                     <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026       Alexandre Spangaro      <alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -172,7 +173,7 @@ class FormSetup
 			$out .= $this->htmlBeforeOutputForm;
 
 			if ($editMode) {
-				$out .= '<form ' . self::generateAttributesStringFromArray($this->formAttributes) . ' >';
+				$out .= '<form ' . self::generateAttributesStringFromArray($this->formAttributes) . ' autocomplete="off">';
 				$out .= '<input type="hidden" name="page_y" value="">';
 
 				// generate hidden values from $this->formHiddenInputs
@@ -243,7 +244,8 @@ class FormSetup
 		if ($reshook > 0) {
 			return $hookmanager->resPrint;
 		} else {
-			$out = '<table class="noborder centpercent">';
+			$out = '<div class="div-table-responsive-no-min">';
+			$out .= '<table class="noborder centpercent">';
 			if (empty($hideTitle)) {
 				if (empty($title)) {
 					$title = $this->langs->transnoentitiesnoconv("Parameter");
@@ -266,6 +268,7 @@ class FormSetup
 			$out .= '</tbody>';
 
 			$out .= '</table>';
+			$out .= '</div>';
 			return $out;
 		}
 	}
@@ -337,15 +340,30 @@ class FormSetup
 		$out = '';
 		if ($item->enabled == 1) {
 			$trClass = 'oddeven';
+			$tdOutputFieldClass = '';
 			if ($item->getType() == 'title') {
 				$trClass = 'liste_titre';
 			}
 			if (!empty($item->fieldParams['trClass'])) {
 				$trClass .= ' '.$item->fieldParams['trClass'];
 			}
+			if (!empty($item->fieldParams['tdOutputFieldClass'])) {
+				$tdOutputFieldClass .= ' class="'.$item->fieldParams['tdOutputFieldClass'].'"';
+			}
 
 			$this->setupNotEmpty++;
-			$out .= '<tr class="'.$trClass.'">';
+
+			$tableLineAttr = [
+				'id' => 'setup-line-item_'. preg_replace('/[^a-zA-Z_]/', '', $item->confKey),
+				'class' => $trClass
+			];
+
+			if ($item->getType() !== 'title') {
+				$tableLineAttr['data-conf-key'] = $item->confKey;
+			}
+
+			$tableLineAttrCompiled = commonHtmlAttributeBuilder($tableLineAttr);
+			$out .= '<tr '. implode(' ', $tableLineAttrCompiled).' >';
 
 			$out .= '<td class="col-setup-title'.(!empty($item->fieldParams['isMandatory']) ? ' fieldrequired' : '').'">';
 			$out .= '<span id="helplink'.$item->confKey.'" class="spanforparamtooltip">';
@@ -353,7 +371,7 @@ class FormSetup
 			$out .= '</span>';
 			$out .= '</td>';
 
-			$out .= '<td>';
+			$out .= '<td'.$tdOutputFieldClass.'>';
 
 			if ($editMode) {
 				$out .= $item->generateInputField();
@@ -362,7 +380,7 @@ class FormSetup
 			}
 
 			if (!empty($item->errors)) {
-				// TODO : move set event message in a methode to be called by cards not by this class
+				// TODO : move set event message in a method to be called by cards not by this class
 				setEventMessages(null, $item->errors, 'errors');
 			}
 
@@ -627,7 +645,7 @@ class FormSetupItem
 	/** @var string the conf key used in database */
 	public $confKey;
 
-	/** @var string|false */
+	/** @var string|false 	The label of field */
 	public $nameText = false;
 
 	/** @var string */
@@ -645,22 +663,28 @@ class FormSetupItem
 	/** @var array{name?:string,id?:string,value?:mixed,class?:string,disabled?:?int<0,1>,type?:string,size?:int,placeholder?:string,step?:float|string,min?:int,max?:int}  fields attribute only for compatible fields like input text */
 	public $fieldAttr = array();
 
-	/** @var bool|string set this var to override field output will override and too */
+	/** @var bool|string set this var to override field value on both input and output */
 	public $fieldOverride = false;
 
 	/** @var bool|string set this var to override field input */
 	public $fieldInputOverride = false;
 
+	/** @var callable this will be call before fieldInputOverride */
+	public $fieldInputCallBack;
+
 	/** @var bool|string set this var to override field output */
 	public $fieldOutputOverride = false;
+
+	/** @var callable this will be call before fieldOutputCallBack  */
+	public $fieldOutputCallBack;
 
 	/** @var int  */
 	public $rank = 0;
 
-	/** @var array<string,string|array{id:int|string,label:string,color:string,picto:string,labelhtml:string}> set this var for options on select and multiselect items   */
+	/** @var array<int|string,string|array{id:int|string,label:string,color:string,picto:string,labelhtml:string}> set this var for options on select and multiselect items   */
 	public $fieldOptions = array();
 
-	/** @var array<string,string|int|array{id:int|string,label:string,color:string,picto:string,labelhtml:string}> set this var to add more parameters */
+	/** @var array<int|string,string|int|array{id:int|string,label:string,color:string,picto:string,labelhtml:string}> set this var to add more parameters */
 	public $fieldParams = array();
 
 	/** @var callable  */
@@ -764,8 +788,7 @@ class FormSetupItem
 			return $reshook;
 		}
 
-
-		if (!empty($this->saveCallBack) && is_callable($this->saveCallBack)) {
+		if ($this->saveCallBack !== null && is_callable($this->saveCallBack)) {
 			return call_user_func($this->saveCallBack, $this);
 		}
 
@@ -811,7 +834,7 @@ class FormSetupItem
 	 */
 	public function setValueFromPost()
 	{
-		if (!empty($this->setValueFromPostCallBack) && is_callable($this->setValueFromPostCallBack)) {
+		if ($this->setValueFromPostCallBack !== null && is_callable($this->setValueFromPostCallBack)) {
 			return call_user_func($this->setValueFromPostCallBack);
 		}
 
@@ -890,6 +913,14 @@ class FormSetupItem
 	public function generateInputField()
 	{
 		global $conf;
+
+		if ($this->fieldInputCallBack !== null && is_callable($this->fieldInputCallBack)) {
+			// can be used to populate fieldInputOverride, fieldOverride or change stuff
+			$resCallback = call_user_func($this->fieldInputCallBack, $this);
+			if (!empty($resCallback)) {
+				return $resCallback;
+			}
+		}
 
 		if (!empty($this->fieldOverride)) {
 			return $this->fieldOverride;
@@ -999,7 +1030,7 @@ class FormSetupItem
 		if (empty($this->fieldAttr) || empty($this->fieldAttr['class'])) {
 			$this->fieldAttr['class'] = 'flat '.(empty($this->cssClass) ? 'minwidth200' : $this->cssClass);
 		}
-		return '<input '.FormSetup::generateAttributesStringFromArray($this->fieldAttr).' />';
+		return '<input '.FormSetup::generateAttributesStringFromArray($this->fieldAttr).' spellcheck="false">';
 	}
 
 	/**
@@ -1015,7 +1046,7 @@ class FormSetupItem
 			$this->fieldAttr['class'] = 'flat '.(empty($this->cssClass) ? 'minwidth40 maxwidth75' : $this->cssClass);
 		}
 		//return img_picto('', 'currency', 'class="pictofixedwidth"').'<input '.FormSetup::generateAttributesStringFromArray($this->fieldAttr).' /> '.$langs->getCurrencySymbol($mysoc->currency_code);
-		return '<input '.FormSetup::generateAttributesStringFromArray($this->fieldAttr).' /> '.$langs->getCurrencySymbol($mysoc->currency_code);
+		return '<input '.FormSetup::generateAttributesStringFromArray($this->fieldAttr).' spellcheck="false"> '.$langs->getCurrencySymbol($mysoc->currency_code);
 	}
 
 	/**
@@ -1028,7 +1059,7 @@ class FormSetupItem
 		if (empty($this->fieldAttr) || empty($this->fieldAttr['class'])) {
 			$this->fieldAttr['class'] = 'flat '.(empty($this->cssClass) ? 'minwidth100 maxwidth500' : $this->cssClass);
 		}
-		return img_picto('', 'email', 'class="pictofixedwidth"').'<input '.FormSetup::generateAttributesStringFromArray($this->fieldAttr).' />';
+		return img_picto('', 'email', 'class="pictofixedwidth"').'<input '.FormSetup::generateAttributesStringFromArray($this->fieldAttr).' spellcheck="false">';
 	}
 
 	/**
@@ -1041,7 +1072,7 @@ class FormSetupItem
 		if (empty($this->fieldAttr) || empty($this->fieldAttr['class'])) {
 			$this->fieldAttr['class'] = 'flat '.(empty($this->cssClass) ? 'minwidth100 maxwidth500' : $this->cssClass);
 		}
-		return img_picto('', 'url', 'class="pictofixedwidth"').'<input '.FormSetup::generateAttributesStringFromArray($this->fieldAttr).' />';
+		return img_picto('', 'url', 'class="pictofixedwidth"').'<input '.FormSetup::generateAttributesStringFromArray($this->fieldAttr).' spellcheck="false">';
 	}
 
 	/**
@@ -1051,7 +1082,7 @@ class FormSetupItem
 	 */
 	public function generateInputFieldTextarea()
 	{
-		$out = '<textarea class="flat" name="'.$this->confKey.'" id="'.$this->confKey.'" cols="50" rows="5" wrap="soft">' . "\n";
+		$out = '<textarea class="flat" name="'.$this->confKey.'" id="'.$this->confKey.'" cols="50" rows="5" wrap="soft" spellcheck="false">' . "\n";
 		$out .= dol_htmlentities($this->fieldValue);
 		$out .= "</textarea>\n";
 		return $out;
@@ -1302,6 +1333,14 @@ class FormSetupItem
 	public function generateOutputField()
 	{
 		global $conf, $user, $langs;
+
+		if ($this->fieldOutputCallBack !== null && is_callable($this->fieldOutputCallBack)) {
+			// can be used to populate fieldOutputOverride, fieldOverride or change stuff
+			$resCallback = call_user_func($this->fieldOutputCallBack, $this);
+			if (!empty($resCallback)) {
+				return $resCallback;
+			}
+		}
 
 		if (!empty($this->fieldOverride)) {
 			return $this->fieldOverride;
@@ -1690,7 +1729,7 @@ class FormSetupItem
 	/**
 	 * Set type of input as a multiselect list.
 	 *
-	 * @param array<string,string|array{id:string,label:string,color:string,picto:string,labelhtml:string}> $fieldOptions A table of field options
+	 * @param array<int|string,string|array{id:string,label:string,color:string,picto:string,labelhtml:string}> $fieldOptions A table of field options
 	 * @return self
 	 */
 	public function setAsMultiSelect($fieldOptions)
@@ -1706,7 +1745,7 @@ class FormSetupItem
 	/**
 	 * Set type of input as a select list.
 	 *
-	 * @param ?array<string,string|array{id:string,label:string,color:string,picto:string,labelhtml:string}>  $fieldOptions  A table of field options
+	 * @param ?array<int|string,string|array{id:string,label:string,color?:string,picto?:string,labelhtml?:string,note?:string}>  $fieldOptions  A table of field options
 	 * @return self
 	 */
 	public function setAsSelect($fieldOptions)
@@ -1723,7 +1762,7 @@ class FormSetupItem
 	/**
 	 * Set type of input as a radio button.
 	 *
-	 * @param  ?array<string,string|array{id:string,label:string,picto?:string,labelIsHtml?:bool}> $fieldOptions  A table of field options
+	 * @param  ?array<int|string,string|array{id:string,label:string,picto?:string,labelIsHtml?:bool}> $fieldOptions  A table of field options
 	 * @return self
 	 */
 	public function setAsRadio($fieldOptions)

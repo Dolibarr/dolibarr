@@ -4,7 +4,7 @@
  * Copyright (C) 2019		Cedric Ancelin			<icedo.anc@gmail.com>
  * Copyright (C) 2020-2025  Frédéric France     	<frederic.france@free.fr>
  * Copyright (C) 2023       Alexandre Janniaux  	<alexandre.janniaux@gmail.com>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024      Jon Bendtsen             <jon.bendtsen.github@jonb.dk>
  * Copyright (C) 2025		William Mead			<william@m34d.com>
  * Copyright (C) 2025		Charlene Benke			<charlene@patas-monkey.com>
@@ -132,21 +132,25 @@ class Thirdparties extends DolibarrApi
 	 * Get a list of third parties
 	 *
 	 * @since	3.8.0	Initial implementation
+	 * @since	21.0.0	Data pagination
 	 *
-	 * @param	string	$sortfield		S	ort field
+	 * @param	string	$sortfield			Sort field
 	 * @param	string	$sortorder			Sort order
 	 * @param	int		$limit				List limit
 	 * @param	int		$page				Page number
-	 * @param	int		$mode				Set to 0 to show all third parties, Set to 1 to show only customers, 2 for prospects, 3 for neither customer or prospect, 4 for suppliers
+	 * @param	int		$mode				Set to 0 to show all third parties, Set to 1 to show only customers, 2 for prospects, 3 for neither customer nor prospect, 4 for suppliers
 	 * @param	int		$category			Use this param to filter the list by category
 	 * @param	string	$sqlfilters			Other criteria to filter answers separated by a comma. Syntax example "((t.nom:like:'TheCompany%') or (t.name_alias:like:'TheCompany%')) and (t.datec:<:'20160101')"
 	 * @param	string	$properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
-	 * @param	bool	$pagination_data	If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
-	 * @return	array						Array of thirdparty objects
+	 * @param	bool	$pagination_data	If this parameter is set to true, the response will include pagination data. The default value is false. Page starts from 0*
+	 * @return	array						Array of third party objects
 	 * @phan-return Societe[]|array{data:Societe[],pagination:array{total:int,page:int,page_count:int,limit:int}}
 	 * @phpstan-return Societe[]|array{data:Societe[],pagination:array{total:int,page:int,page_count:int,limit:int}}
 	 *
-	 * @throws RestException
+	 * @throws RestException 400
+	 * @throws RestException 403
+	 * @throws RestException 404
+	 * @throws RestException 503
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $mode = 0, $category = 0, $sqlfilters = '', $properties = '', $pagination_data = false)
 	{
@@ -176,9 +180,7 @@ class Thirdparties extends DolibarrApi
 				$sql .= ", ".MAIN_DB_PREFIX."categorie_fournisseur as cc";
 			}
 		}
-		$sql .= ", ".MAIN_DB_PREFIX."c_stcomm as st";
 		$sql .= " WHERE t.entity IN (".getEntity('societe').")";
-		$sql .= " AND t.fk_stcomm = st.id";
 		if ($mode == 1) {
 			$sql .= " AND t.client IN (1, 3)";
 		} elseif ($mode == 2) {
@@ -188,7 +190,7 @@ class Thirdparties extends DolibarrApi
 		} elseif ($mode == 4) {
 			$sql .= " AND t.fournisseur IN (1)";
 		}
-		// Select thirdparties of given category
+		// Select third parties of a given category
 		if ($category > 0) {
 			if (!empty($mode) && $mode != 4) {
 				$sql .= " AND c.fk_categorie = ".((int) $category)." AND c.fk_soc = t.rowid";
@@ -248,7 +250,7 @@ class Thirdparties extends DolibarrApi
 				$i++;
 			}
 		} else {
-			throw new RestException(503, 'Error when retrieve thirdparties : '.$this->db->lasterror());
+			throw new RestException(503, 'Error when retrieve third parties : '.$this->db->lasterror());
 		}
 		if (!count($obj_ret)) {
 			$message = '';
@@ -271,7 +273,7 @@ class Thirdparties extends DolibarrApi
 			throw new RestException(404, $message);
 		}
 
-		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
+		//if $pagination_data is true, the response will contain element data with all values and element pagination with pagination data(total,page,limit)
 		if ($pagination_data) {
 			$totalsResult = $this->db->query($sqlTotals);
 			$total = $this->db->fetch_object($totalsResult)->total;
@@ -329,8 +331,10 @@ class Thirdparties extends DolibarrApi
 				continue;
 			}
 			if ($field == 'array_options' && is_array($value)) {
+				$this->company->fetch_optionals();	// To force the load of the extrafields definition by fetch_name_optionals_label()
+
 				foreach ($value as $index => $val) {
-					$this->company->array_options[$index] = $this->_checkValForAPI('extrafields', $val, $this->company);
+					$this->company->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->company);
 				}
 				continue;
 			}
@@ -391,7 +395,7 @@ class Thirdparties extends DolibarrApi
 			}
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->company->array_options[$index] = $this->_checkValForAPI($field, $val, $this->company);
+					$this->company->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->company);
 				}
 				continue;
 			}
@@ -538,7 +542,7 @@ class Thirdparties extends DolibarrApi
 			throw new RestException(501, 'Module "Products" needed for this request');
 		}
 
-		if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
+		if (!getDolGlobalString('PRODUIT_MULTIPRICES') && !getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 			throw new RestException(501, 'Multiprices features activation needed for this request');
 		}
 
@@ -569,6 +573,37 @@ class Thirdparties extends DolibarrApi
 		}
 
 		return $this->_cleanObjectDatas($this->company);
+	}
+
+	/**
+	 * Get a customer representative to a third party
+	 *
+	 * @since	24.0.0	Initial implementation
+	 *
+	 * @param	int		$id					ID of the third party
+	 * @return	array<array{id:int,lastname:string,firstname:string,email:string,phone:string,office_phone:string,office_fax:string,user_mobile:string,personal_mobile:string,job:string,statut:int,status:int,entity:int,login:string,photo:string,gender:string}>			Return array of representatives if OK, < 0 if KO
+	 *
+	 * @url		GET		{id}/representative
+	 *
+	 * @throws RestException 401 Access not allowed for your login
+	 * @throws RestException 404 User or Third party not found
+	 */
+	public function getRepresentative($id)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('societe', 'reader')) {
+			throw new RestException(403);
+		}
+		$result = $this->company->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Thirdparty not found');
+		}
+		if (!DolibarrApi::_checkAccessToResource('societe', $this->company->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+		$result = $this->company->getSalesRepresentatives(DolibarrApiAccess::$user);
+		/** @var array<array{id:int,lastname:string,firstname:string,email:string,phone:string,office_phone:string,office_fax:string,user_mobile:string,personal_mobile:string,job:string,statut:int,status:int,entity:int,login:string,photo:string,gender:string}> $result */
+
+		return $result;
 	}
 
 	/**
@@ -672,6 +707,11 @@ class Thirdparties extends DolibarrApi
 			throw new RestException(404, 'Thirdparty not found');
 		}
 
+		// Check that user has permission on thirdparty ID
+		if (!DolibarrApi::_checkAccessToResource('societe', $this->company)) {
+			throw new RestException(404, 'Third party not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		$categories = new Categorie($this->db);
 
 		$arrayofcateg = $categories->getListForItem($id, 'customer', $sortfield, $sortorder, $limit, $page);
@@ -711,7 +751,7 @@ class Thirdparties extends DolibarrApi
 
 		$result = $this->company->fetch($id);
 		if (!$result) {
-			throw new RestException(404, 'Thirdparty not found');
+			throw new RestException(404, 'Third party not found');
 		}
 		$category = new Categorie($this->db);
 		$result = $category->fetch($category_id);
@@ -803,6 +843,11 @@ class Thirdparties extends DolibarrApi
 		$result = $this->company->fetch($id);
 		if (!$result) {
 			throw new RestException(404, 'Thirdparty not found');
+		}
+
+		// Check that user has permission on thirdparty ID
+		if (!DolibarrApi::_checkAccessToResource('societe', $this->company)) {
+			throw new RestException(404, 'Third party not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$categories = new Categorie($this->db);
@@ -1078,7 +1123,7 @@ class Thirdparties extends DolibarrApi
 		}
 
 		$result = $this->company->fetch($id);
-		if (!is_array($result)) {
+		if ($result <= 0) {
 			throw new RestException(404, 'Thirdparty not found');
 		}
 
@@ -1339,7 +1384,7 @@ class Thirdparties extends DolibarrApi
 			throw new RestException(405, 'Discount not owned by this thirdpartie');
 		}
 
-		if ( price2num((float) $amount_ttc_1 + (float) $amount_ttc_2) != $discount->amount_ttc) {
+		if (price2num((float) $amount_ttc_1 + (float) $amount_ttc_2) != $discount->amount_ttc) {
 			throw new RestException(405, 'Sum of the 2 discounts is different that the original discount');
 		}
 		if ($discount->fk_facture_line) {
@@ -1429,7 +1474,7 @@ class Thirdparties extends DolibarrApi
 
 		$sql = "SELECT f.ref, f.type as factype, re.fk_facture_source, re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc, re.description, re.fk_facture, re.fk_facture_line";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as re, ".MAIN_DB_PREFIX."facture as f";
-		$sql .= " WHERE re.rowid IN ( $newid1, $newid2 ) AND f.rowid = re.fk_facture_source AND re.fk_soc = ".((int) $id);
+		$sql .= " WHERE re.rowid IN (".((int) $newid1).",".((int) $newid2).") AND f.rowid = re.fk_facture_source AND re.fk_soc = ".((int) $id);
 
 		$sql .= $this->db->order("f.type", "ASC");
 
@@ -1648,7 +1693,7 @@ class Thirdparties extends DolibarrApi
 		$notification->socid = $id;
 
 		foreach ($request_data as $field => $value) {
-			$notification->$field = $value;
+			$notification->$field = $this->_checkValForAPI($field, $value, $notification);
 		}
 
 		$event = $notification->event;
@@ -1725,7 +1770,7 @@ class Thirdparties extends DolibarrApi
 			if ($field === 'fk_action') {
 				throw new RestException(500, 'Error creating Thirdparty Notification, request_data contains fk_action key');
 			}
-			$notification->$field = $value;
+			$notification->$field = $this->_checkValForAPI($field, $value, $notification);
 		}
 
 		$event = $notification->event;
@@ -1822,7 +1867,7 @@ class Thirdparties extends DolibarrApi
 		}
 
 		foreach ($request_data as $field => $value) {
-			$notification->$field = $value;
+			$notification->$field = $this->_checkValForAPI($field, $value, $notification);
 		}
 
 		if ($notification->update(DolibarrApiAccess::$user) < 0) {
@@ -2387,7 +2432,7 @@ class Thirdparties extends DolibarrApi
 			throw new RestException(403);
 		}
 
-		$sql = "SELECT rowid, fk_user_creat, date_creation FROM ".MAIN_DB_PREFIX."societe_account WHERE fk_soc = $id AND site = '".$this->db->escape($site)."'";
+		$sql = "SELECT rowid, fk_user_creat, date_creation FROM ".MAIN_DB_PREFIX."societe_account WHERE fk_soc = ".((int) $id)." AND site = '".$this->db->escape($site)."'";
 		$result = $this->db->query($sql);
 
 		// We do not found an existing SocieteAccount entity for this fk_soc and site ; we then create a new one.
@@ -2549,7 +2594,7 @@ class Thirdparties extends DolibarrApi
 			throw new RestException(403);
 		}
 
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_account WHERE fk_soc  = $id AND site = '".$this->db->escape($site)."'";
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_account WHERE fk_soc = ".((int) $id)." AND site = '".$this->db->escape($site)."'";
 		$result = $this->db->query($sql);
 
 		if ($result && $this->db->num_rows($result) == 0) {

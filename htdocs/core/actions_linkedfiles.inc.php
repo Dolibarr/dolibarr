@@ -38,6 +38,8 @@
  */
 '
 @phan-var-force string $upload_dir
+@phan-var-force string $upload_dirold
+@phan-var-force string $confirm
 @phan-var-force string $forceFullTextIndexation
 ';
 
@@ -55,8 +57,8 @@ if ((GETPOST('sendit', 'alpha')
 	|| ($action == 'confirm_deletefile' && $confirm == 'yes')
 	|| ($action == 'confirm_updateline' && GETPOST('save', 'alpha') && GETPOST('link', 'alpha'))
 	|| ($action == 'renamefile' && GETPOST('renamefilesave', 'alpha'))) && empty($permissiontoadd)) {
-	dol_syslog('The file actions_linkedfiles.inc.php was included but parameter $permissiontoadd was not set before.');
-	print 'The file actions_linkedfiles.inc.php was included but parameter $permissiontoadd was not set before.';
+	dol_syslog('The file actions_linkedfiles.inc.php was included but parameter $permissiontoadd was not set before or is set to false.');
+	print 'The file actions_linkedfiles.inc.php was included but parameter $permissiontoadd was not set before or is set to false.';
 	die;
 }
 
@@ -117,7 +119,10 @@ if (GETPOST('sendit', 'alpha') && getDolGlobalString('MAIN_UPLOAD_DOC') && !empt
 } elseif (GETPOST('linkit', 'restricthtml') && getDolGlobalString('MAIN_UPLOAD_DOC') && !empty($permissiontoadd)) {
 	$link = GETPOST('link', 'alpha');
 	if ($link) {
-		if (substr($link, 0, 7) != 'http://' && substr($link, 0, 8) != 'https://' && substr($link, 0, 7) != 'file://' && substr($link, 0, 7) != 'davs://') {
+		if (substr($link, 0, 7) != 'http://'
+			&& substr($link, 0, 8) != 'https://'
+			&& substr($link, 0, 7) != 'davs://'
+			&& (substr($link, 0, 7) != 'file://' || !getDolGlobalString('MAIN_ALLOW_LINK_STARTING_WITH_FILE'))) {
 			$link = 'http://'.$link;
 		}
 
@@ -163,9 +168,9 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes' && !empty($permissionto
 		$dir = dirname($file).'/'; // Path to the folder containing the original image
 		$dirthumb = $dir.'/thumbs/'; // Path to the folder containing the thumbnail (if file is an image)
 
-		$ret = dol_delete_file($file, 0, 0, 0, (is_object($object) ? $object : null));
+		$ret = dol_delete_file($file, 1, 0, 0, (is_object($object) ? $object : null));
 		if (!empty($fileold)) {
-			dol_delete_file($fileold, 0, 0, 0, (is_object($object) ? $object : null)); // Delete file using old path
+			dol_delete_file($fileold, 1, 0, 0, (is_object($object) ? $object : null)); // Delete file using old path
 		}
 
 		if ($ret) {
@@ -221,7 +226,10 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes' && !empty($permissionto
 	$f = $link->fetch(GETPOSTINT('linkid'));
 	if ($f) {
 		$link->url = GETPOST('link', 'alpha');
-		if (substr($link->url, 0, 7) != 'http://' && substr($link->url, 0, 8) != 'https://' && substr($link->url, 0, 7) != 'file://') {
+		if (substr($link->url, 0, 7) != 'http://'
+			&& substr($link->url, 0, 8) != 'https://'
+			&& substr($link->url, 0, 7) != 'davs://'
+			&& (substr($link->url, 0, 7) != 'file://' || !getDolGlobalString('MAIN_ALLOW_LINK_STARTING_WITH_FILE'))) {
 			$link->url = 'http://'.$link->url;
 		}
 		$link->label = GETPOST('label', 'alphanohtml');

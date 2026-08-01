@@ -258,7 +258,7 @@ OtherFilteredTasks=Egyéb szűrt feladatok
 NoAssignedTasks=Nem található hozzárendelt feladat (rendelje hozzá a projektet/feladatokat az aktuális felhasználóhoz a felső jelölőnégyzetből az idő megadásához)
 ThirdPartyRequiredToGenerateIntervention=A beavatkozás létrehozásához a projektben meg kell határozni a partner értéket.
 ThirdPartyRequiredToGenerateInvoice=Egy harmadik félnek meg kell határoznia a projektet, hogy ki tudja számlázni.
-ChooseANotYetAssignedTask=Válasszon egy olyan feladatot, amely még nincs hozzád rendelve
+ChooseANotYetAssignedTask=Tasks not yet assigned to you
 # Comments trans
 AllowCommentOnTask=A felhasználók megjegyzéseinek engedélyezése a feladatokhoz
 AllowCommentOnProject=Felhasználói megjegyzések engedélyezése a projektekhez

@@ -1,5 +1,6 @@
 # Dolibarr language file - Source file is en_US - products
 ProductRef=Product ref.
+ServiceRef=Service ref.
 ProductLabel=Product label
 ProductLabelTranslated=Translated product label
 ProductDescription=Product description
@@ -359,6 +360,7 @@ QtyRecalculatedWithPackaging=The quantity of the line were recalculated accordin
 
 #Attributes
 Attributes=Attributes
+TranslationsExtrafields=Product translation attributes extrafields
 ProductAttributeExtrafields=Variant attributes extrafields
 ProductAttributeExtrafieldsSetup=Setup of Variant attributes extrafields
 ProductAttributeValueExtrafields=Variant attributes values extrafields
@@ -414,9 +416,9 @@ ProductLevelExtraFields=Additional Attributes (Level price)
 ProductCustomerExtraFields=Additional Attributes (Customer price)
 ProductSupplierExtraFields=Additional Attributes (Supplier Prices)
 DeleteLinkedProduct=Delete the child product linked to the combination
-AmountUsedToUpdateWAP=Unit amount to use to update the Weighted Average Price
-PMPValue=Weighted average price
-PMPValueShort=WAP
+AmountUsedToUpdateWAP=Unit amount to use to update the Weighted Average Cost
+PMPValue=Weighted average cost
+PMPValueShort=WAC
 mandatoryperiod=Mandatory periods
 mandatoryPeriodNeedTobeSet=Note: Period (start and end date) must be defined
 mandatoryPeriodNeedTobeSetMsgValidate=A service requires a start and end period
@@ -453,6 +455,7 @@ AllowStockMovementVariantParentHelp=By default, a parent of a variant is a virtu
 ConfirmSetToDraftInventory=Are you sure you want to go back to Draft status?<br>The quantities currently set in the inventory will be reset.
 WarningLineProductNotToSell=Product or service "%s" is not to sell and was cloned
 PriceLabel=Price label
+PotentialKitsFromStock=Potential stock of Kits available using the components in stock
 StockableProduct=Stock management
 StockableProductDescription=If this option is enabled, the stock modification for this product is retained. If not, all stock modifications will be disabled for this product.
 StockDisabled=Stock disabled
@@ -466,3 +469,4 @@ ProductType=Type of product
 UseBarCodeForProducts=Use barcode for products
 UseBarCodeForThirdParties=Use barcode for third parties
 NotSupportedOnKits=Not supported on kits
+ProductLangExtrafieldsSetup=Product translations Extrafields

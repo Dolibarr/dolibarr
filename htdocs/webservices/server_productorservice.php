@@ -934,7 +934,7 @@ function getListOfProductsOrServices($authentication, $filterproduct)
 	if (!$error) {
 		$sql = "SELECT rowid, ref, ref_ext";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product";
-		$sql .= " WHERE entity=".$conf->entity;
+		$sql .= " WHERE entity=".((int) $conf->entity);
 		foreach ($filterproduct as $key => $val) {
 			if ($key == 'type' && $val >= 0) {
 				$sql .= " AND fk_product_type = ".((int) $val);
@@ -1028,9 +1028,9 @@ function getProductsForCategory($authentication, $id, $lang = '')
 			if ($result > 0) {
 				$table = "product";
 				$field = "product";
-				$sql  = "SELECT fk_".$field." FROM ".MAIN_DB_PREFIX."categorie_".$table;
+				$sql  = "SELECT fk_".$db->sanitize($field)." FROM ".MAIN_DB_PREFIX."categorie_".$db->sanitize($table);
 				$sql .= " WHERE fk_categorie = ".((int) $id);
-				$sql .= " ORDER BY fk_".$field." ASC";
+				$sql .= " ORDER BY fk_".$db->sanitize($field)." ASC";
 
 
 				dol_syslog("getProductsForCategory get id of product into category", LOG_DEBUG);

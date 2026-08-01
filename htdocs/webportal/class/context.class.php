@@ -253,6 +253,8 @@ class Context
 		$this->addControllerDefinition('propallist', $defaultControllersPath . 'propallist.controller.class.php', 'PropalListController');
 		$this->addControllerDefinition('orderlist', $defaultControllersPath . 'orderlist.controller.class.php', 'OrderListController');
 		$this->addControllerDefinition('invoicelist', $defaultControllersPath . 'invoicelist.controller.class.php', 'InvoiceListController');
+		$this->addControllerDefinition('ficheinterlist', $defaultControllersPath . 'ficheinterlist.controller.class.php', 'FicheinterListController');
+		$this->addControllerDefinition('ticketlist', $defaultControllersPath . 'ticketlist.controller.class.php', 'TicketListController');
 		$this->addControllerDefinition('membercard', $defaultControllersPath . 'membercard.controller.class.php', 'MemberCardController');
 		$this->addControllerDefinition('partnershipcard', $defaultControllersPath . 'partnershipcard.controller.class.php', 'PartnershipCardController');
 		//** below the addition of DocumentListController adding files by third party attached documents
@@ -664,7 +666,8 @@ class Context
 			}
 
 			// Save what will be next token. Into forms, we will add param $context->newToken();
-			$token = dol_hash(uniqid((string) mt_rand(), true)); // Generate
+
+			$token = bin2hex(random_bytes(32));
 			$_SESSION['newtoken'] = $token;
 
 			return $token;

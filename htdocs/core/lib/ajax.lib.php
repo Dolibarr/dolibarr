@@ -2,8 +2,9 @@
 /* Copyright (C) 2007-2010  Laurent Destailleur  	<eldy@users.sourceforge.net>
  * Copyright (C) 2007-2015  Regis Houssin        	<regis.houssin@inodbox.com>
  * Copyright (C) 2012       Christophe Battarel  	<christophe.battarel@altairis.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2026		Open-Dsi				<support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,12 +38,12 @@
  * @param string		$urloption			More parameters on URL request
  * @param int			$minLength			Minimum number of chars to trigger that Ajax search
  * @param int			$autoselect			Automatic selection if just one value (trigger("change") on field is done if search return only 1 result)
- * @param array<string,string|string[]>	$ajaxoptions	Multiple options array
- *                                                      - Ex: array('update'=>array('field1','field2'...)) will reset field1 and field2 once select done
- *                                                      - Ex: array('disabled'=> )
- *                                                      - Ex: array('show'=> )
- *                                                      - Ex: array('update_textarea'=> )
- *                                                      - Ex: array('option_disabled'=> id to disable and warning to show if we select a disabled value (this is possible when using autocomplete ajax)
+ * @param array<string,string|array<int|string,string|array<string,string>>>	$ajaxoptions	Multiple options array
+ *                                                                                              - Ex: array('update'=>array('field1','field2'...)) will reset field1 and field2 once select done
+ *                                                                                              - Ex: array('disabled'=> )
+ *                                                                                              - Ex: array('show'=> )
+ *                                                                                              - Ex: array('update_textarea'=> )
+ *                                                                                              - Ex: array('option_disabled'=> id to disable and warning to show if we select a disabled value (this is possible when using autocomplete ajax)
  * @param string		$moreparams			More params provided to ajax call
  * @return string   						Script
  */
@@ -290,12 +291,16 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
     						$("#search_'.$htmlnamejquery.'").trigger("change");	// We have changed value of the combo select, we must be sure to trigger all js hook binded on this event. This is required to trigger other javascript change method binded on original field by other code.
     					}
     					,delay: 500
-					}).data("'.$dataforrenderITem.'")._renderItem = function( ul, item ) {
-						return $("<li>")
-						.data( "'.$dataforitem.'", item ) // jQuery UI > 1.10.0
-						.append( \'<a><span class="tag">\' + item.label + "</span></a>" )
-						.appendTo(ul);
-					};
+					});
+					const widgetData = $("input#search_'.$htmlnamejquery.'").data("'.$dataforrenderITem.'");
+					if (widgetData) {
+						widgetData._renderItem = function( ul, item ) {
+							return $("<li>")
+							.data( "'.$dataforitem.'", item ) // jQuery UI > 1.10.0
+							.append( \'<a><span class="tag">\' + item.label + "</span></a>" )
+							.appendTo(ul);
+						};
+					}
 
   				});';
 	$script .= '</script>';
@@ -516,11 +521,13 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
 	if (getDolGlobalString('MAIN_ENABLE_ACCENT_INSENSITIVE_SEARCH')) {	// lowercase + remove accents
 		$msg .= '
 				var term = params.term.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase()
-				var text = (data.text || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase() || "";';
+				var searchText = data.element ? $(data.element).attr("data-search") : undefined;
+				var text = (searchText !== undefined ? searchText : (data.text || "")).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase() || "";';
 	} else {															// lowercase only (accent kept)
 		$msg .= '
 				var term = params.term.toLowerCase();
-				var text = (data.text || "").toLowerCase();';
+				var searchText = data.element ? $(data.element).attr("data-search") : undefined;
+				var text = (searchText !== undefined ? searchText : (data.text || "")).toLowerCase();';
 	}
 	$msg .= '
 				var keywords = term.split(" ");
@@ -553,6 +560,11 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
 			},
 			templateSelection: function (selection) {		/* Format visible output of selected value */
 				if (selection.id == \''.(dol_escape_js($idforemptyvalue)).'\') return \'<span class="placeholder">\'+selection.text+\'</span>\';
+				if (selection.element && $(selection.element).attr("data-select-html") != undefined) {
+					if (typeof htmlEntityDecodeJs === "function") {
+						return htmlEntityDecodeJs($(selection.element).attr("data-select-html"));
+					}
+				}
 				return selection.text;
 			},
 			escapeMarkup: function(markup) {
@@ -811,8 +823,15 @@ function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input =
                     element: \''.dol_escape_js((empty($object->module) || $object->module == $object->element) ? $object->element : $object->element.'@'.$object->module).'\',
                     id: \''.((int) $object->id).'\',
 					token: \''.currentToken().'\'
-                },
-                function() {
+                }).done(
+                function(response) {
+				    try {
+				        var data = JSON.parse(response);
+						console.log(data);
+				    } catch (e) {
+				        console.log(response);
+				    }
+
                     $("#set_'.$htmlname.'_'.$object->id.'").hide();
                     $("#del_'.$htmlname.'_'.$object->id.'").show();
                     // Enable another element
@@ -830,7 +849,13 @@ function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input =
                             $("#" + value).show();
                         });
                     }
-                });
+                }).fail(
+					function(response) {
+						//alert(response.responseText);
+						console.warn(response.responseText);
+						Dolibarr.tools.setEventMessage(response.responseText, "errors");
+					}
+				);
             });
 
             // Del constant
@@ -843,8 +868,15 @@ function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input =
                     element: \''.dol_escape_js((empty($object->module) || $object->module == $object->element) ? $object->element : $object->element.'@'.$object->module).'\',
                     id: \''.((int) $object->id).'\',
 					token: \''.currentToken().'\'
-                },
-                function() {
+                }).done(
+				function(response) {
+				    try {
+				        var data = JSON.parse(response);
+						console.log(data);
+				    } catch (e) {
+				        console.log(response);
+				    }
+
                     $("#del_'.$htmlname.'_'.$object->id.'").hide();
                     $("#set_'.$htmlname.'_'.$object->id.'").show();
                     // Disable another element
@@ -862,7 +894,13 @@ function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input =
                             $("#" + value).hide();
                         });
                     }
-                });
+                }).fail(
+					function(response) {
+						//alert(response.responseText);
+						console.warn(response.responseText);
+						Dolibarr.tools.setEventMessage(response.responseText, "errors");
+					}
+				);
             });
         });
     </script>';
@@ -892,12 +930,12 @@ function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input =
 	if (empty($conf->use_javascript_ajax) || $forcenojs) {
 		$url = DOL_URL_ROOT.'/core/ajax/objectonoff.php?action=set&token='.newToken().'&id='.((int) $object->id).'&element='.urlencode($object->element).'&field='.urlencode($field).'&value=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id.($moreparam ? '&'.$moreparam : ''));
 		if ($readonly) {
-			$url ='#';
+			$url = '#';
 		}
 		$out .= '<a id="set_'.$htmlname.'_'.$object->id.'" class="linkobject '.($object->$code == 1 ? 'hideobject' : '').($morecss ? ' '.$morecss : '').'" href="'.$url.'">'.img_picto($langs->trans($text_off), $switchoff, '', 0, 0, 0, '', $cssswitchoff).'</a>';
 		$url = DOL_URL_ROOT.'/core/ajax/objectonoff.php?action=set&token='.newToken().'&id='.((int) $object->id).'&element='.urlencode($object->element).'&field='.urlencode($field).'&value=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id.($moreparam ? '&'.$moreparam : ''));
 		if ($readonly) {
-			$url ='#';
+			$url = '#';
 		}
 		$out .= '<a id="del_'.$htmlname.'_'.$object->id.'" class="linkobject '.($object->$code == 1 ? '' : 'hideobject').($morecss ? ' '.$morecss : '').'" href="'.$url.'">'.img_picto($langs->trans($text_on), $switchon, '', 0, 0, 0, '', $cssswitchon).'</a>';
 	} else {

@@ -168,6 +168,10 @@ ExperimentalUxContributionEnd = This structure ensures a clear and modular organ
 UxDolibarrContext = JS Dolibarr context
 UxDolibarrContextHowItWork = How it's work
 UxDolibarrContextLangsTool = Langs tool
+UxDolibarrContextKnowsHooks = Common JS Hooks list
+
+UxMenuTooltipTheme = Tooltips & themes
+TooltipThemesAndOrientation = Tooltip Themes and orientation
 
 # Start experiements menu title
 ExperimentalUxInputAjaxFeedback = Input feedback

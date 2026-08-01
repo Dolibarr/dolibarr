@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2011 		Auguria 				<anthony.poiret@auguria.net>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2026       Lenin Rivas         	<frederic.france@free.fr>
  *
@@ -59,7 +59,7 @@ $langs->load('compta');
 //init var
 $invoice_type = GETPOSTINT('invoice_type');
 $amountPayment = GETPOST('amountPayment');
-$amounts = GETPOST('amounts'); // from text inputs : invoice amount payment (check required)
+$amounts = GETPOST('amounts', 'array'); // from text inputs : invoice amount payment (check required)
 $remains = GETPOST('remains'); // from dolibarr's object (no need to check)
 $currentInvId = GETPOST('imgClicked'); // from DOM elements : imgId (equals invoice id)
 
@@ -69,7 +69,7 @@ $amountPayment = $amountPayment != '' ? (is_numeric(price2num($amountPayment)) ?
 // Multicurrency LRR
 $multicurrency = GETPOSTINT('multicurrency');
 $multicurrencyAmountPayment = GETPOST('multicurrency_amountPayment');
-$multicurrencyAmounts = GETPOST('multicurrency_amounts'); // from text inputs : invoice amount payment (check required)
+$multicurrencyAmounts = GETPOST('multicurrency_amounts', 'array'); // from text inputs : invoice amount payment (check required)
 $multicurrencyRemains = GETPOST('multicurrency_remains'); // from dolibarr's object (no need to check)
 
 // Getting the posted keys=>values, sanitize the ones who are from text inputs

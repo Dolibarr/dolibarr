@@ -166,7 +166,7 @@ if (getDolGlobalInt('WEBPORTAL_LOGIN_BY_MODULE') && !empty($conf->modules_parts[
 			if ($action == 'login') {
 				$login = GETPOST('login', 'alphanohtml');
 				$password = GETPOST('password', 'password');
-				// $security_code = GETPOST('security_code', 'alphanohtml');
+				$security_code = GETPOST('security_code', 'alphanohtml');
 
 				if (empty($login)) {
 					$context->setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Login")), 'errors');
@@ -181,13 +181,16 @@ if (getDolGlobalInt('WEBPORTAL_LOGIN_BY_MODULE') && !empty($conf->modules_parts[
 					$error++;
 				}
 				// check security graphic code
-				//if (!$error && (array_key_exists($anti_spam_session_key, $_SESSION) === false ||
-				//		(strtolower($_SESSION[$anti_spam_session_key]) !== strtolower($security_code)))
-				//) {
-				//	$context->setEventMessage($langs->trans("ErrorBadValueForCode"), 'errors');
-				//	if (empty($focus_element)) $focus_element = 'security_code';
-				//	$error++;
-				//}
+				if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_WEBPORTAL')) {
+					$ok = (array_key_exists($anti_spam_session_key, $_SESSION) && (strtolower($_SESSION[$anti_spam_session_key]) == strtolower($security_code)));
+					if (!$ok) {
+						$error++;
+						$context->setEventMessage($langs->trans("ErrorBadValueForCode"), 'errors');
+						if (empty($focus_element)) {
+							$focus_element = 'security_code';
+						}
+					}
+				}
 
 				if (!$error && (isModEnabled('societe') && !getDolGlobalInt('WEBPORTAL_LOGIN_BY_MEMBER_ACCOUNT'))) {
 					// fetch third-party account from login and account type
@@ -246,11 +249,7 @@ if (getDolGlobalInt('WEBPORTAL_LOGIN_BY_MODULE') && !empty($conf->modules_parts[
 					$error++;
 
 					// Account has been removed after login
-					dol_syslog("Can't load member account (ID: $webportal_logged_member_account_id) even if session logged.", LOG_WARNING);
-					session_destroy();
-					session_set_cookie_params(0, '/', null, !empty($dolibarr_main_force_https), true); // Add tag secure and httponly on session cookie
-					session_name($sessionname);
-					session_start();
+					dol_syslog("Can't load member account (ID: $webportal_logged_member_account_id) even if session logged.", LOG_ERR);
 
 					$error_msg = $langs->transnoentitiesnoconv('WebPortalErrorFetchLoggedMember', (string) $webportal_logged_member_account_id);
 					dol_syslog($error_msg, LOG_ERR);
@@ -264,11 +263,7 @@ if (getDolGlobalInt('WEBPORTAL_LOGIN_BY_MODULE') && !empty($conf->modules_parts[
 					$error++;
 
 					// Account has been removed after login
-					dol_syslog("Can't load third-party account (ID: $webportal_logged_thirdparty_account_id) even if session logged.", LOG_WARNING);
-					session_destroy();
-					session_set_cookie_params(0, '/', null, !empty($dolibarr_main_force_https), true); // Add tag secure and httponly on session cookie
-					session_name($sessionname);
-					session_start();
+					dol_syslog("Can't load third-party account (ID: $webportal_logged_thirdparty_account_id) even if session logged.", LOG_ERR);
 
 					$context->setEventMessage($langs->transnoentitiesnoconv('WebPortalErrorFetchLoggedThirdPartyAccount', $webportal_logged_thirdparty_account_id), 'errors');
 				}
@@ -291,6 +286,16 @@ if (getDolGlobalInt('WEBPORTAL_LOGIN_BY_MODULE') && !empty($conf->modules_parts[
 						$error_msg = $langs->transnoentitiesnoconv('WebPortalErrorFetchLoggedUser', (string) $user_id);
 						dol_syslog($error_msg, LOG_ERR);
 						$context->setEventMessages($error_msg, null, 'errors');
+					} else {
+						$logged_user->socid = !empty($logged_member) && $logged_member->socid > 0
+							? $logged_member->socid
+							: (!empty($websiteaccount) && $websiteaccount->fk_soc > 0 ? $websiteaccount->fk_soc : 0);
+						if ($logged_user->socid <= 0) {
+							$error++;
+							$error_msg = $langs->transnoentitiesnoconv('WebPortalErrorNoThirdPartyScope');
+							dol_syslog($error_msg, LOG_ERR);
+							$context->setEventMessage($error_msg, 'errors');
+						}
 					}
 				}
 
@@ -364,6 +369,14 @@ if (getDolGlobalInt('WEBPORTAL_LOGIN_BY_MODULE') && !empty($conf->modules_parts[
 					global $user; // set global user as logged user (used for hooks in external modules)
 					$user = $context->logged_user;
 				}
+			}
+
+			if ($error) {
+				// Authentication context could not be fully rebuilt for this already-logged session: destroy the session to force re-authentication and avoid leaving the user in a half-authenticated state.
+				session_destroy();
+				session_set_cookie_params(0, '/', null, !empty($dolibarr_main_force_https), true); // Add tag secure and httponly on session cookie
+				session_name($sessionname);
+				session_start();
 			}
 		}
 	}

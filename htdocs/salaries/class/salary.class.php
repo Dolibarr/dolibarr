@@ -523,7 +523,7 @@ class Salary extends CommonObject
 		$sql .= ", entity";
 		$sql .= ") ";
 		$sql .= " VALUES (";
-		$sql .= "'".((int) $this->fk_user)."'";
+		$sql .= ((int) $this->fk_user);
 		//$sql .= ", '".$this->db->idate($this->datep)."'";
 		//$sql .= ", '".$this->db->idate($this->datev)."'";
 		$sql .= ", ".((float) $this->amount);
@@ -537,7 +537,7 @@ class Salary extends CommonObject
 		$sql .= ", '".$this->db->escape($this->label)."'";
 		$sql .= ", '".$this->db->idate($this->datesp)."'";
 		$sql .= ", '".$this->db->idate($this->dateep)."'";
-		$sql .= ", '".((int) $user->id)."'";
+		$sql .= ", ".((int) $user->id);
 		$sql .= ", '".$this->db->idate($now)."'";
 		$sql .= ", NULL";
 		$sql .= ", ".((int) $conf->entity);
@@ -723,13 +723,10 @@ class Salary extends CommonObject
 	 */
 	public function getSommePaiement($multicurrency = 0)
 	{
-		$table = 'payment_salary';
-		$field = 'fk_salary';
-
 		$sql = "SELECT sum(amount) as amount";
 		//sum(multicurrency_amount) as multicurrency_amount		// Not yet supported
-		$sql .= " FROM ".MAIN_DB_PREFIX.$table;
-		$sql .= " WHERE ".$field." = ".((int) $this->id);
+		$sql .= " FROM ".MAIN_DB_PREFIX."payment_salary";
+		$sql .= " WHERE fk_salary = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::getSommePaiement for salary id=".((int) $this->id), LOG_DEBUG);
 

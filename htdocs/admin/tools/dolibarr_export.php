@@ -155,7 +155,7 @@ print '</div>';
 print '<br>';
 
 print "<!-- Dump of a server -->\n";
-print '<form method="post" action="'.DOL_URL_ROOT.'/admin/tools/export.php" name="dump">';
+print '<form method="post" action="'.DOL_URL_ROOT.'/admin/tools/export.php" name="dump" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'" />';
 print '<input type="hidden" name="export_type" value="server" />';
 print '<input type="hidden" name="page_y" value="" />';
@@ -629,7 +629,7 @@ $title = $langs->trans("BackupZipWizard");
 print "<br>\n";
 print "<!-- Dump of a server -->\n";
 
-print '<form method="post" action="'.DOL_URL_ROOT.'/admin/tools/export_files.php" name="dump">';
+print '<form method="post" action="'.DOL_URL_ROOT.'/admin/tools/export_files.php" name="dump" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'" />';
 print '<input type="hidden" name="export_type" value="server" />';
 print '<input type="hidden" name="page_y" value="" />';
@@ -714,7 +714,7 @@ print '<fieldset><legend class="legendforfieldsetstep" style="font-size: 3em">3<
 print '<br>';
 
 print '<span class="opacitymedium">';
-print $langs->trans("BackupDesc4", 'dolibarr_main_dolcrypt_key').'<br>';
+print $langs->trans("BackupDesc4", 'dolibarr_main_dolcrypt_key or dolibarr_main_instance_unique_id').'<br>';
 print '</span>';
 
 print '<br>';

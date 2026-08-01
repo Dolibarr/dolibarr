@@ -258,7 +258,7 @@ OtherFilteredTasks=Beste zeregin iragazi batzuk
 NoAssignedTasks=Ez da esleitutako zereginik aurkitu (esleitu proiektua/zereginak uneko erabiltzaileari goiko hautaketa-koadrotik denbora sartzeko)
 ThirdPartyRequiredToGenerateIntervention=Hirugarren bat definitu behar da proiektuan esku-hartzea sortu ahal izateko.
 ThirdPartyRequiredToGenerateInvoice=Hirugarren bat definitu behar da proiektuan fakturatu ahal izateko.
-ChooseANotYetAssignedTask=Aukeratu oraindik esleitu ez zaizun zeregin bat
+ChooseANotYetAssignedTask=Tasks not yet assigned to you
 # Comments trans
 AllowCommentOnTask=Erabiltzaileen iruzkinak zereginetan baimendu
 AllowCommentOnProject=Erabiltzaileen iruzkinak proiektuetan baimendu

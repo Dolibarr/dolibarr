@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2014-2024	Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2014-2026	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -152,11 +152,16 @@ if ($mode == 'setup' && $user->admin) {
 			$dirmodels = array('/core/modules/printing/');
 		}
 
+		$classfile = null;
 		foreach ($dirmodels as $dir) {
 			if (file_exists(dol_buildpath($dir, 0).$driver.'.modules.php')) {
 				$classfile = dol_buildpath($dir, 0).$driver.'.modules.php';
 				break;
 			}
+		}
+		if ($classfile === null) {
+			dol_syslog("Could not load printing module".$driver, LOG_ERR);
+			exit(1);
 		}
 		require_once $classfile;
 		$classname = 'printing_'.$driver;
@@ -169,7 +174,7 @@ if ($mode == 'setup' && $user->admin) {
 				case "text":
 				case "password":
 					print '<tr class="oddeven">';
-					print '<td'.($key['required'] ? ' class=required' : '').'>'.$langs->trans($key['varname']).'</td>';
+					print '<td'.(!empty($key['required']) ? ' class=required' : '').'>'.$langs->trans($key['varname']).'</td>';
 					print '<td><input class="width100" type="'.(empty($key['type']) ? 'text' : $key['type']).'" name="setupdriver['.$i.'][value]" value="'.getDolGlobalString($key['varname']).'"';
 					print isset($key['moreattributes']) ? ' '.$key['moreattributes'] : '';
 					print '><input type="hidden" name="setupdriver['.$i.'][varname]" value="'.$key['varname'].'"></td>';
@@ -178,7 +183,7 @@ if ($mode == 'setup' && $user->admin) {
 					break;
 				case "checkbox":
 					print '<tr class="oddeven">';
-					print '<td'.($key['required'] ? ' class=required' : '').'>'.$langs->trans($key['varname']).'</td>';
+					print '<td'.(!empty($key['required']) ? ' class=required' : '').'>'.$langs->trans($key['varname']).'</td>';
 					print '<td><input class="width100" type="'.(empty($key['type']) ? 'text' : $key['type']).'" name="setupdriver['.$i.'][value]" value="1" '.((getDolGlobalInt($key['varname'])) ? 'checked' : '');
 					print isset($key['moreattributes']) ? ' '.$key['moreattributes'] : '';
 					print '><input type="hidden" name="setupdriver['.$i.'][varname]" value="'.$key['varname'].'"></td>';
@@ -187,7 +192,7 @@ if ($mode == 'setup' && $user->admin) {
 					break;
 				case "info":    // Google Api setup or Google OAuth Token
 					print '<tr class="oddeven">';
-					print '<td'.($key['required'] ? ' class=required' : '').'>';
+					print '<td'.(!empty($key['required']) ? ' class=required' : '').'>';
 					if ($key['varname'] == 'PRINTGCP_TOKEN_ACCESS') {
 						print $langs->trans("IsTokenGenerated");
 					} else {
@@ -296,11 +301,16 @@ if ($mode == 'config' && $user->admin) {
 	}
 
 	foreach ($result as $tmpdriver) {
+		$classfile = null;
 		foreach ($dirmodels as $dir) {
 			if (file_exists(dol_buildpath($dir, 0).$tmpdriver.'.modules.php')) {
 				$classfile = dol_buildpath($dir, 0).$tmpdriver.'.modules.php';
 				break;
 			}
+		}
+		if ($classfile === null) {
+			dol_syslog("Could not load printing module".$driver, LOG_ERR);
+			exit(1);
 		}
 		require_once $classfile;
 		$classname = 'printing_'.$tmpdriver;
@@ -343,11 +353,16 @@ if ($mode == 'test' && $user->admin) {
 			$dirmodels = array('/core/modules/printing/');
 		}
 
+		$classfile = null;
 		foreach ($dirmodels as $dir) {
 			if (file_exists(dol_buildpath($dir, 0).$driver.'.modules.php')) {
 				$classfile = dol_buildpath($dir, 0).$driver.'.modules.php';
 				break;
 			}
+		}
+		if ($classfile === null) {
+			dol_syslog("Could not load printing module".$driver, LOG_ERR);
+			exit(1);
 		}
 		require_once $classfile;
 		$classname = 'printing_'.$driver;
