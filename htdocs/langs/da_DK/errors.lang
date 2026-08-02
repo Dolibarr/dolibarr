@@ -155,9 +155,6 @@ ErrNoZipEngine=Modul til pakning/udpakning af %s findes ikke i PHP
 ErrorFileMustBeADolibarrPackage=Filen %s skal være en Dolibarr zip pakke
 ErrorModuleFileRequired=Du skal vælge en Dolibarr modul pakke fil
 ErrorFailToDownloadModuleFromSource=Modulet kunne ikke downloades fra kildekoden. Kontroller din internetforbindelse eller kilde-URL'en, og prøv igen.
-extModuleConfirmInstallTitle = Bekræft installation af modulet
-extModuleConfirmInstallText  = Du er ved at installere følgende modul:<br><br><b>Navn:</b> %s<br><b>Version:</b> %s<br><b>Reference:</b> %s</span class='notranslate'><br><b>Senest opdateret:</b> %s<br><br>Denne handling kan ikke fortrydes. Bekræfter du installationen af dette modul?
-install=Installere
 ErrorPhpCurlNotInstalled=PHP CURL modulet er ikke installeret, dette er nødvendigt for at kommunikere med Paypal
 ErrorFailedToAddToMailmanList=Tilføjelsen af posten %s til Mailman listen %s eller SPIP basen fejlede
 ErrorFailedToRemoveToMailmanList=Sletning af posten %s fra Mailman listen %s eller SPIP basen fejlede
