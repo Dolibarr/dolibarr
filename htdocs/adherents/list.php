@@ -1160,7 +1160,7 @@ if ($massaction == 'createsubscription') {
 			$duration_unit = '';
 			if (!empty($adht->duration)) {
 				if (preg_match('/^(\d+)([dwmy])$/', $adht->duration, $matches)) {
-					$duration_value = (int)$matches[1];
+					$duration_value = (int) $matches[1];
 					$duration_unit = $matches[2];
 				}
 			}
