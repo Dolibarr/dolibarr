@@ -11,6 +11,7 @@
  * Copyright (C) 2023       Sylvain Legrand		    <technique@infras.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026       Lionel Vessiller		<lvessiller@open-dsi.fr>
+ * Copyright (C) 2026		José MARTINEZ		<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -197,8 +198,44 @@ class PaiementFourn extends Paiement
 			if (empty($value)) {
 				continue;
 			}
+			// Option MULTICURRENCY_PAYMENT_USE_REAL_AMOUNTS: if both the amount in the invoice currency and the real
+			// amount in the company currency have been provided for this invoice, we keep both amounts as entered (no
+			// derivation at the invoice rate) and we derive the exchange rate from them.
+			$userealamounts = false;
+			if (getDolGlobalInt('MULTICURRENCY_PAYMENT_USE_REAL_AMOUNTS')
+				&& (float) price2num(isset($this->amounts[$key]) ? $this->amounts[$key] : 0) != 0
+				&& (float) price2num(isset($this->multicurrency_amounts[$key]) ? $this->multicurrency_amounts[$key] : 0) != 0) {
+				$userealamounts = true;
+			}
+			$invoiceidfortrans = $key; // intermediate name: phan flags a variable named key passed to trans()
+
 			// $key is id of invoice, $value is amount, $way is a 'dolibarr' if amount is in main currency, 'customer' if in foreign currency
-			$value_converted = MultiCurrency::getAmountConversionFromInvoiceRate((int) $key, $value ? $value : 0, $way, 'facture_fourn');
+			if ($userealamounts) {
+				$realcompanyamount = (float) price2num($this->amounts[$key], 'MU');
+				$realforeignamount = (float) price2num($this->multicurrency_amounts[$key], 'MU');
+				// Both real amounts must share the same sign
+				if (($realcompanyamount > 0) != ($realforeignamount > 0)) {
+					$this->error = $langs->trans('ErrorPaymentRealAmountsMustHaveSameSign', (string) $invoiceidfortrans);
+					return -1;
+				}
+				// The counterpart amount is the real amount entered by the user, not a value derived at the invoice rate
+				$value_converted = ($way == 'dolibarr') ? $realforeignamount : $realcompanyamount;
+				// Derived exchange rate, Dolibarr convention: multicurrency_tx = amount in invoice currency / amount in company currency
+				$derived_tx = (float) price2num(abs($realforeignamount) / abs($realcompanyamount), 'MU');
+				if ($derived_tx <= 0) {
+					$this->error = $langs->trans('FailedToFoundTheConversionRateForInvoice');
+					return -1;
+				}
+				$this->multicurrency_tx[$key] = $derived_tx;
+				// Non-blocking warning if the derived rate is far (> 50%) from the invoice rate (probable swap of the two amounts)
+				$tmprate = MultiCurrency::getInvoiceRate((int) $key, 'facture_fourn');
+				$invoice_multicurrency_tx = is_array($tmprate) ? $tmprate['invoice_multicurrency_tx'] : 0;
+				if ($invoice_multicurrency_tx && abs($derived_tx - $invoice_multicurrency_tx) > (0.5 * $invoice_multicurrency_tx)) {
+					setEventMessages($langs->trans('WarningPaymentDerivedRateFarFromInvoiceRate', (string) $invoiceidfortrans, price2num($derived_tx, 'MU'), price2num($invoice_multicurrency_tx, 'MU')), null, 'warnings');
+				}
+			} else {
+				$value_converted = MultiCurrency::getAmountConversionFromInvoiceRate((int) $key, $value ? $value : 0, $way, 'facture_fourn');
+			}
 			// Add controls of input validity
 			if ($value_converted === false) {
 				// We failed to find the conversion for one invoice
@@ -290,8 +327,13 @@ class PaiementFourn extends Paiement
 					$facid = $key;
 					if (is_numeric($amount) && $amount != 0) {
 						$amount = price2num($amount);
+						// Under MULTICURRENCY_PAYMENT_USE_REAL_AMOUNTS, store the per-invoice exchange rate derived from the real amounts instead of the single payment rate
+						$multicurrencytxtostore = $currencytxofpayment;
+						if (getDolGlobalInt('MULTICURRENCY_PAYMENT_USE_REAL_AMOUNTS') && !empty($this->multicurrency_tx[$key])) {
+							$multicurrencytxtostore = $this->multicurrency_tx[$key];
+						}
 						$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'paiementfourn_facturefourn (fk_facturefourn, fk_paiementfourn, amount, multicurrency_amount, multicurrency_code, multicurrency_tx)';
-						$sql .= " VALUES (".((int) $facid).", ".((int) $this->id).", ".((float) $amount).', '.((float) $this->multicurrency_amounts[$key]).', '.($currencyofpayment ? "'".$this->db->escape($currencyofpayment)."'" : 'NULL').', '.(!empty($currencytxofpayment) ? (float) $currencytxofpayment : 1).')';
+						$sql .= " VALUES (".((int) $facid).", ".((int) $this->id).", ".((float) $amount).', '.((float) $this->multicurrency_amounts[$key]).', '.($currencyofpayment ? "'".$this->db->escape($currencyofpayment)."'" : 'NULL').', '.(!empty($multicurrencytxtostore) ? (float) $multicurrencytxtostore : 1).')';
 						$resql = $this->db->query($sql);
 						if ($resql) {
 							$invoice = new FactureFournisseur($this->db);
@@ -306,7 +348,19 @@ class PaiementFourn extends Paiement
 								// $deposits = 0;
 								$alreadypayed = price2num($paiement + $creditnotes + $deposits, 'MT');
 								$remaintopay = price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits, 'MT');
-								if ($remaintopay == 0) {
+
+								// Under MULTICURRENCY_PAYMENT_USE_REAL_AMOUNTS, a multicurrency invoice paid at the real amounts keeps a
+								// residual amount in company currency (the exchange-rate difference), so the "paid" status must be decided
+								// on the balance in the invoice currency and not on the balance in the company currency.
+								$remaintopayforclosure = $remaintopay;
+								if (getDolGlobalInt('MULTICURRENCY_PAYMENT_USE_REAL_AMOUNTS') && isModEnabled('multicurrency')
+									&& !empty($invoice->multicurrency_code) && $invoice->multicurrency_code != $conf->currency) {
+									$multicurrency_paiement = $invoice->getSommePaiement(1);
+									$multicurrency_creditnotes = $invoice->getSumCreditNotesUsed(1);
+									$multicurrency_deposits = $invoice->getSumDepositsUsed(1);
+									$remaintopayforclosure = price2num($invoice->multicurrency_total_ttc - $multicurrency_paiement - $multicurrency_creditnotes - $multicurrency_deposits, 'MT');
+								}
+								if ($remaintopayforclosure == 0) {
 									// If invoice is a down payment, we also convert down payment to discount
 									if ($invoice->type == FactureFournisseur::TYPE_DEPOSIT) {
 										$amount_ht = $amount_tva = $amount_ttc = array();
@@ -355,10 +409,30 @@ class PaiementFourn extends Paiement
 												}
 											}
 
+											// Option MULTICURRENCY_PAYMENT_USE_REAL_AMOUNTS: carry the invoice currency and the real exchange
+											// rate onto the discount, and scale its company-currency value to the real amount paid, so the real
+											// cost propagates when the deposit is later consumed in a final invoice. Without the option, nothing changes.
+											$discountmccode = '';
+											$discountmctx = null;
+											$discountrealratio = 1;
+											if (getDolGlobalInt('MULTICURRENCY_PAYMENT_USE_REAL_AMOUNTS') && isModEnabled('multicurrency')
+												&& !empty($invoice->multicurrency_code) && $invoice->multicurrency_code != $conf->currency) {
+												$discountmccode = $invoice->multicurrency_code;
+												$discountmctx = $invoice->multicurrency_tx;
+												$realeurpaid = (float) price2num($invoice->getSommePaiement(0), 'MT');
+												$realfxpaid = (float) price2num($invoice->getSommePaiement(1), 'MT');
+												if ($realeurpaid != 0 && $realfxpaid != 0) {
+													$discountmctx = (float) price2num($realfxpaid / $realeurpaid, 'MU');
+													if ((float) $invoice->total_ttc != 0) {
+														$discountrealratio = $realeurpaid / (float) $invoice->total_ttc;
+													}
+												}
+											}
+
 											foreach ($amount_ht as $tva_tx => $xxx) {
-												$discount->total_ht = abs($amount_ht[$tva_tx]);
-												$discount->total_tva = abs($amount_tva[$tva_tx]);
-												$discount->total_ttc = abs($amount_ttc[$tva_tx]);
+												$discount->total_ht = abs($amount_ht[$tva_tx] * $discountrealratio);
+												$discount->total_tva = abs($amount_tva[$tva_tx] * $discountrealratio);
+												$discount->total_ttc = abs($amount_ttc[$tva_tx] * $discountrealratio);
 
 												// keep compatibility
 												$discount->amount_ht = $discount->total_ht;
@@ -374,6 +448,11 @@ class PaiementFourn extends Paiement
 												$discount->multicurrency_amount_ht = $discount->multicurrency_total_ht;
 												$discount->multicurrency_amount_tva = $discount->multicurrency_total_tva;
 												$discount->multicurrency_amount_ttc = $discount->multicurrency_total_ttc;
+
+												if ($discountmccode !== '') {
+													$discount->multicurrency_code = $discountmccode;
+													$discount->multicurrency_tx = $discountmctx;
+												}
 
 												$discount->tva_tx = abs((float) $tva_tx);
 
@@ -728,6 +807,12 @@ class PaiementFourn extends Paiement
 		}
 		if ($this->amount) {
 			$datas['amount'] = '<br><strong>'.$langs->trans("Amount").':</strong> '.price($this->amount, 0, $langs, 1, -1, -1, $conf->currency);
+		}
+		// Amount in the invoice currency and derived rate (option MULTICURRENCY_PAYMENT_USE_REAL_AMOUNTS)
+		if (getDolGlobalInt('MULTICURRENCY_PAYMENT_USE_REAL_AMOUNTS') && isModEnabled('multicurrency') && !empty($this->multicurrency_amount) && (float) $this->amount != 0 && abs((float) $this->multicurrency_amount - (float) $this->amount) > 0.0001) {
+			$langs->load("multicurrency");
+			$datas['multicurrencyamount'] = '<br><strong>'.$langs->trans("MulticurrencyPaymentAmount").':</strong> '.price($this->multicurrency_amount, 0, $langs, 1);
+			$datas['multicurrencyrate'] = '<br><strong>'.$langs->trans("Rate").':</strong> '.price2num((float) $this->multicurrency_amount / (float) $this->amount, 'MU');
 		}
 
 		return $datas;
