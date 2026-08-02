@@ -4025,7 +4025,7 @@ if ($action == 'create') {
 
 			$sql = 'SELECT p.datep as dp, p.ref, p.num_paiement as num_payment, p.rowid, p.fk_bank,';
 			$sql .= ' c.id as payment_type, c.code as payment_code,';
-			$sql .= ' pf.amount,';
+			$sql .= ' pf.amount, pf.multicurrency_amount, pf.multicurrency_code,';
 			$sql .= ' ba.rowid as baid, ba.ref as baref, ba.label, ba.number as banumber, ba.account_number, ba.fk_accountancy_journal';
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'paiementfourn as p';
 			$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid';
@@ -4063,6 +4063,8 @@ if ($action == 'create') {
 						$paymentstatic->datepaye = $db->jdate($objp->dp);
 						$paymentstatic->ref = ($objp->ref ? $objp->ref : $objp->rowid);
 						$paymentstatic->num_payment = $objp->num_payment;
+						$paymentstatic->amount = $objp->amount;
+						$paymentstatic->multicurrency_amount = $objp->multicurrency_amount;
 
 						$paymentstatic->paiementcode = $objp->payment_code;
 						$paymentstatic->type_code = $objp->payment_code;
@@ -4106,7 +4108,14 @@ if ($action == 'create') {
 						}
 						print '</td>';
 						// Amount
-						print '<td class="right">'.price($sign * $objp->amount).'</td>';
+						print '<td class="right">'.price($sign * $objp->amount);
+						// Amount in the invoice currency and derived rate as a sub-line (option MULTICURRENCY_PAYMENT_USE_REAL_AMOUNTS)
+						if (getDolGlobalInt('MULTICURRENCY_PAYMENT_USE_REAL_AMOUNTS') && isModEnabled('multicurrency') && !empty($object->multicurrency_code) && $object->multicurrency_code != $conf->currency && (float) $objp->amount != 0 && abs((float) $objp->multicurrency_amount - (float) $objp->amount) > 0.0001) {
+							print '<br><span class="opacitymedium small">'.price($objp->multicurrency_amount, 0, $langs, 1, -1, -1, $object->multicurrency_code);
+							print '<br>'.$langs->trans('Rate').' : '.price2num((float) $objp->multicurrency_amount / (float) $objp->amount, 'MU');
+							print '</span>';
+						}
+						print '</td>';
 						print '</tr>';
 						$totalpaid += $objp->amount;
 						$i++;
