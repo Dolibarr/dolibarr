@@ -33,6 +33,8 @@ class PasswordResetTest extends CommonClassTest
 {
 	/**
 	 * Hash round-trip: possession OK, wrong hash and wrong user rejected.
+	 *
+	 * @return void
 	 */
 	public function testResetHashRoundtrip()
 	{
@@ -51,6 +53,8 @@ class PasswordResetTest extends CommonClassTest
 
 	/**
 	 * Expired token is rejected with -1.
+	 *
+	 * @return void
 	 */
 	public function testResetHashExpired()
 	{
@@ -64,6 +68,8 @@ class PasswordResetTest extends CommonClassTest
 
 	/**
 	 * Legacy pass_temp (no r: prefix) never expires (backward-compat).
+	 *
+	 * @return void
 	 */
 	public function testResetHashLegacyNoTtl()
 	{
@@ -77,6 +83,8 @@ class PasswordResetTest extends CommonClassTest
 
 	/**
 	 * Full arm -> verify -> confirm cycle on a real user.
+	 *
+	 * @return void
 	 */
 	public function testRequestPasswordResetCycle()
 	{
@@ -116,6 +124,8 @@ class PasswordResetTest extends CommonClassTest
 
 	/**
 	 * The reset email body carries the link and never a cleartext password.
+	 *
+	 * @return void
 	 */
 	public function testResetEmailBodyIsLinkOnly()
 	{
