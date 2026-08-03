@@ -2549,7 +2549,7 @@ class Form
 			$sql .= " AND " . $sanitizedfilter;
 		}
 		if ($projectid > 0) {
-			$sql .= " ORDER BY CASE WHEN source_invoice.fk_projet = " . ((int) $projectid) . " THEN 0 ELSE 1 END,";
+			$sql .= " ORDER BY " . $this->db->ifsql("source_invoice.fk_projet = " . ((int) $projectid), "0", "1") . ",";
 		} else {
 			$sql .= " ORDER BY";
 		}
