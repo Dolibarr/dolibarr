@@ -105,18 +105,8 @@ if ($reshook < 0) {
 
 if (empty($reshook)) {
 	// Set the user-chosen new password (posted from the passwordreset.tpl.php page)
-	if ($action == 'setnewpassword' && $username && $passworduidhash) {	// Security is managed by $passworduidhash
-		$sessionkey = 'dol_antispam_value';
-		$ok = true;
-		// Only enforce the captcha code when a captcha was actually presented (the handler may be disabled by config)
-		if (array_key_exists($sessionkey, $_SESSION)) {
-			$ok = (strtolower($_SESSION[$sessionkey]) == strtolower(GETPOST('code')));
-		}
-
-		if (!$ok) {
-			dol_syslog('Bad value for code, password reset refused', LOG_NOTICE);
-			$message = '<div class="error">'.$langs->trans("ErrorBadValueForCode").'</div>';
-		} elseif ($newpass1 === '' || $newpass2 === '') {
+	if ($action == 'setnewpassword' && $username && $passworduidhash) {	// Security is managed by $passworduidhash (proof of possession of the emailed link); no captcha needed on this step
+		if ($newpass1 === '' || $newpass2 === '') {
 			$message = '<div class="error">'.$langs->trans("NewPasswordEmpty").'</div>';
 		} elseif ($newpass1 !== $newpass2) {
 			$message = '<div class="error">'.$langs->trans("NewPasswordMismatch").'</div>';
