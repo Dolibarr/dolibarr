@@ -2538,6 +2538,7 @@ class Form
 
 		// Search for the discounts
 		$sql = "SELECT re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc,";
+		$sql .= " re.multicurrency_amount_ttc, re.multicurrency_code, re.multicurrency_tx,";
 		$sql .= " re.description, re.fk_facture_source";
 		$sql .= " FROM " . $this->db->prefix() . "societe_remise_except as re";
 		$sql .= " WHERE re.fk_soc = " . (int) $socid;
@@ -2593,7 +2594,17 @@ class Form
 						}
 					}
 
-					print '<option value="' . $obj->rowid . '"' . $selectstring . $disabled . '>' . $desc . ' (' . price($obj->amount_ht) . ' ' . $langs->trans("HT") . ' - ' . price($obj->amount_ttc) . ' ' . $langs->trans("TTC") . ')</option>';
+					// Under MULTICURRENCY_PAYMENT_USE_REAL_AMOUNTS, append the foreign amount and rate of the credit
+					$multicurrencyinfo = '';
+					if (getDolGlobalInt('MULTICURRENCY_PAYMENT_USE_REAL_AMOUNTS') && isModEnabled('multicurrency') && !empty($obj->multicurrency_code)) {
+						$multicurrencyinfo = ' (' . price($obj->multicurrency_amount_ttc, 0, $langs, 1, -1, -1, $obj->multicurrency_code);
+						if (!empty($obj->multicurrency_tx) && $obj->multicurrency_tx > 0) {
+							$multicurrencyinfo .= ' - ' . $langs->trans('Rate') . ' : ' . price2num($obj->multicurrency_tx, 'MU');
+						}
+						$multicurrencyinfo .= ')';
+					}
+
+					print '<option value="' . $obj->rowid . '"' . $selectstring . $disabled . '>' . $desc . ' (' . price($obj->amount_ht) . ' ' . $langs->trans("HT") . ' - ' . price($obj->amount_ttc) . ' ' . $langs->trans("TTC") . ')' . $multicurrencyinfo . '</option>';
 					$i++;
 				}
 			}
@@ -7593,6 +7604,8 @@ class Form
 				}
 			}
 			print $langs->trans($translationKey, price($amount, 0, $langs, 0, 0, -1, $conf->currency));
+			// Under MULTICURRENCY_PAYMENT_USE_REAL_AMOUNTS, also show the foreign-currency value and rate of the available credits
+			print $this->getMulticurrencyCreditsInfo($socid, $discount_type, $filter);
 			if (empty($hidelist)) {
 				print ' ';
 			}
@@ -7637,6 +7650,62 @@ class Form
 				print "0";
 			}
 		}
+	}
+
+	/**
+	 * Build a short HTML label with the foreign-currency value and the exchange rate of the available
+	 * multicurrency credits of a third party, to enrich the "available discounts/credits" messages.
+	 * Returns an empty string when the option MULTICURRENCY_PAYMENT_USE_REAL_AMOUNTS is off, the
+	 * multicurrency module is disabled, or no available credit carries a currency code.
+	 *
+	 * @param	int		$socid			Third party id
+	 * @param	int		$discount_type	0 = customer discount, 1 = supplier discount
+	 * @param	string	$filter			Same SQL filter used to compute the company-currency total
+	 * @return	string					HTML fragment (empty string if nothing to show)
+	 */
+	public function getMulticurrencyCreditsInfo($socid, $discount_type = 0, $filter = '')
+	{
+		global $langs;
+
+		if (!getDolGlobalInt('MULTICURRENCY_PAYMENT_USE_REAL_AMOUNTS') || !isModEnabled('multicurrency')) {
+			return '';
+		}
+
+		$sql = "SELECT multicurrency_code, SUM(multicurrency_amount_ttc) as mc_total, MIN(multicurrency_tx) as mintx, MAX(multicurrency_tx) as maxtx";
+		$sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except";
+		$sql .= " WHERE fk_soc = ".((int) $socid);
+		$sql .= " AND discount_type = ".((int) $discount_type);
+		if (!empty($discount_type)) {
+			$sql .= " AND fk_invoice_supplier IS NULL AND fk_invoice_supplier_line IS NULL";
+		} else {
+			$sql .= " AND fk_facture IS NULL AND fk_facture_line IS NULL";
+		}
+		if ($filter) {
+			$sql .= " AND (".$filter.")";  // @phan-suppress-current-line SqlInjection
+		}
+		$sql .= " AND multicurrency_code IS NOT NULL AND multicurrency_code <> ''";
+		$sql .= " GROUP BY multicurrency_code";
+
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			return '';
+		}
+
+		$tmparray = array();
+		while ($obj = $this->db->fetch_object($resql)) {
+			$txt = price($obj->mc_total, 0, $langs, 1, -1, -1, $obj->multicurrency_code);
+			if ($obj->mintx > 0 && $obj->mintx == $obj->maxtx) {
+				$txt .= ' - '.$langs->trans('Rate').' : '.price2num($obj->mintx, 'MU');
+			}
+			$tmparray[] = $txt;
+		}
+		$this->db->free($resql);
+
+		if (empty($tmparray)) {
+			return '';
+		}
+
+		return ' <span class="opacitymedium">('.implode(', ', $tmparray).')</span>';
 	}
 
 
