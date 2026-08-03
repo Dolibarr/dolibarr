@@ -2945,20 +2945,27 @@ class Product extends CommonObject
 
 			$this->db->begin();
 
+			// The price columns of the table product hold the default price of the product, that is the price of the level 1
+			// when multiprices are enabled (level is 0 when they are not). So they must not be overwritten by another level.
+			// The vat columns are however shared by all levels, so they are always updated.
+			$updatedefaultprice = (empty($level) || $level == 1);
+
 			// Don't put quotes here on decimal numbers.
 			// This causes storage with base rounding instead of exact values.
 			$sql = "UPDATE ".$this->db->prefix()."product SET";
-			$sql .= " price_base_type = '".$this->db->escape($newpricebase)."',";
-			$sql .= " price = ".(float) $price.",";
-			$sql .= " price_ttc = ".(float) $price_ttc.",";
-			$sql .= " price_min = ".(float) $price_min.",";
-			$sql .= " price_min_ttc = ".(float) $price_min_ttc.",";
+			if ($updatedefaultprice) {
+				$sql .= " price_base_type = '".$this->db->escape($newpricebase)."',";
+				$sql .= " price = ".(float) $price.",";
+				$sql .= " price_ttc = ".(float) $price_ttc.",";
+				$sql .= " price_min = ".(float) $price_min.",";
+				$sql .= " price_min_ttc = ".(float) $price_min_ttc.",";
+				$sql .= " price_label = ".(!empty($price_label) ? "'".$this->db->escape($price_label)."'" : "null").",";
+			}
 			$sql .= " localtax1_tx = ".($localtax1 >= 0 ? (float) $localtax1 : 'NULL').",";
 			$sql .= " localtax2_tx = ".($localtax2 >= 0 ? (float) $localtax2 : 'NULL').",";
 			$sql .= " localtax1_type = ".($localtaxtype1 != '' ? "'".$this->db->escape($localtaxtype1)."'" : "'0'").",";
 			$sql .= " localtax2_type = ".($localtaxtype2 != '' ? "'".$this->db->escape($localtaxtype2)."'" : "'0'").",";
 			$sql .= " default_vat_code = ".($newdefaultvatcode ? "'".$this->db->escape($newdefaultvatcode)."'" : "null").",";
-			$sql .= " price_label = ".(!empty($price_label) ? "'".$this->db->escape($price_label)."'" : "null").",";
 			$sql .= " tva_tx = ".(float) price2num($newvat).",";
 			$sql .= " recuperableonly = '".$this->db->escape((string) $newnpr)."'";
 			$sql .= " WHERE rowid = ".((int) $id);
@@ -2974,6 +2981,10 @@ class Product extends CommonObject
 				$this->multiprices_default_vat_code[$level] = $newdefaultvatcode;
 				$this->multiprices_tva_tx[$level] = $newvat;
 				$this->multiprices_recuperableonly[$level] = $newnpr;
+
+				// Save the default price of the product to restore it after the log if we are updating another level
+				// (_log_price() reads the price into the properties of the object to save the price of the level).
+				$savdefaultprice = array($this->price, $this->price_label, $this->price_ttc, $this->price_min, $this->price_min_ttc, $this->price_base_type);
 
 				$this->price = $price;
 				$this->price_label = $price_label;
@@ -2998,6 +3009,11 @@ class Product extends CommonObject
 				$newPriceData = $this->getArrayForPriceCompare($level);
 				if (!empty(array_diff_assoc($newPriceData, $lastPriceData)) || (!getDolGlobalString('PRODUIT_MULTIPRICES') && !getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES'))) {
 					$this->_log_price($user, $level); // Save price for level into table product_price
+				}
+
+				if (!$updatedefaultprice) {
+					// The price of the level is now saved, so we can restore the default price of the product
+					list($this->price, $this->price_label, $this->price_ttc, $this->price_min, $this->price_min_ttc, $this->price_base_type) = $savdefaultprice;
 				}
 
 				$this->level = $level; // Store level of price edited for trigger
