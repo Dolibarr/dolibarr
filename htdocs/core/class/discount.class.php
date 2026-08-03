@@ -6,6 +6,7 @@
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Noé Cendrier		<noe.cendrier@altairis.fr>
  * Copyright (C) 2026		Vincent de Grandpré	<vincent@de-grandpre.quebec>
+ * Copyright (C) 2026		José MARTINEZ		<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -109,6 +110,16 @@ class DiscountAbsolute extends CommonObject
 	 * @var float
 	 */
 	public $multicurrency_subprice;
+
+	/**
+	 * @var string Currency code of the credit (invoice currency)
+	 */
+	public $multicurrency_code;
+
+	/**
+	 * @var float Exchange rate of the credit
+	 */
+	public $multicurrency_tx;
 
 	/**
 	 * @var int
@@ -235,6 +246,7 @@ class DiscountAbsolute extends CommonObject
 		$sql .= " sr.fk_user,";
 		$sql .= " sr.amount_ht, sr.amount_tva, sr.amount_localtax1, sr.amount_localtax2, sr.amount_ttc, sr.tva_tx, sr.localtax1_tx, sr.localtax1_type, sr.localtax2_tx, sr.localtax2_type, sr.vat_src_code,";
 		$sql .= " sr.multicurrency_amount_ht, sr.multicurrency_amount_tva, sr.multicurrency_amount_ttc,";
+		$sql .= " sr.multicurrency_code, sr.multicurrency_tx,";
 		$sql .= " sr.fk_facture_line, sr.fk_facture, sr.fk_facture_source, sr.fk_invoice_supplier_line, sr.fk_invoice_supplier, sr.fk_invoice_supplier_source, sr.description,";
 		$sql .= " sr.datec,";
 		$sql .= " f.ref as ref_facture_source, f.type as type_facture_source,";
@@ -281,6 +293,8 @@ class DiscountAbsolute extends CommonObject
 				$this->multicurrency_amount_ht = $this->multicurrency_total_ht;
 				$this->multicurrency_amount_tva = $this->multicurrency_total_tva;
 				$this->multicurrency_amount_ttc = $this->multicurrency_total_ttc;
+				$this->multicurrency_code = $obj->multicurrency_code;
+				$this->multicurrency_tx = $obj->multicurrency_tx;
 
 				$this->tva_tx = $obj->tva_tx;
 				$this->localtax1_tx = $obj->localtax1_tx;
@@ -1127,6 +1141,11 @@ class DiscountAbsolute extends CommonObject
 		$newdiscount2->localtax2_tx = $this->localtax2_tx;
 		$newdiscount1->vat_src_code = $this->vat_src_code;
 		$newdiscount2->vat_src_code = $this->vat_src_code;
+		// Carry the currency and rate so generateFromAmount() recomputes the foreign-currency amount of each part (was lost on split)
+		$newdiscount1->multicurrency_code = $this->multicurrency_code;
+		$newdiscount2->multicurrency_code = $this->multicurrency_code;
+		$newdiscount1->multicurrency_tx = $this->multicurrency_tx;
+		$newdiscount2->multicurrency_tx = $this->multicurrency_tx;
 
 		$newdiscount1->generateFromAmount($amount_ttc1, 1, $newdiscount1->tva_tx, $newdiscount1->localtax1_tx, $newdiscount1->localtax2_tx, $this->localtax1_type, $this->localtax2_type);
 		$newdiscount2->generateFromAmount($amount_ttc2, 1, $newdiscount2->tva_tx, $newdiscount2->localtax1_tx, $newdiscount2->localtax2_tx, $this->localtax1_type, $this->localtax2_type);
