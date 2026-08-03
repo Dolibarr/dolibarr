@@ -232,16 +232,12 @@ if (!empty($disablenofollow)) {
 <!-- New pass 1 -->
 <div class="trinputlogin">
 <div class="tagtd nowraponall center valignmiddle tdinputlogin">
-<!-- <span class="span-icon-user">-->
-<span class="fa fa-user"></span>
-<input type="password" maxlength="255" placeholder="<?php echo $langs->trans("NewPassword"); ?>" <?php echo $disabled; ?> id="newpass1" name="newpass1" class="flat input-icon-user minwidth150" value="<?php echo dol_escape_htmltag($newpass1); ?>" tabindex="1" autofocus />
+<input type="password" maxlength="255" placeholder="<?php echo $langs->trans("NewPassword"); ?>" <?php echo $disabled; ?> id="newpass1" name="newpass1" class="flat minwidth150" value="<?php echo dol_escape_htmltag($newpass1); ?>" tabindex="1" autofocus />
 </div>
 </div>
 <div class="trinputlogin">
 <div class="tagtd nowraponall center valignmiddle tdinputlogin">
-<!-- <span class="span-icon-user">-->
-<span class="fa fa-user"></span>
-<input type="password" maxlength="255" placeholder="<?php echo $langs->trans("PasswordRetype"); ?>" <?php echo $disabled; ?> id="newpass2" name="newpass2" class="flat input-icon-user minwidth150" value="<?php echo dol_escape_htmltag($newpass2); ?>" tabindex="1" />
+<input type="password" maxlength="255" placeholder="<?php echo $langs->trans("PasswordRetype"); ?>" <?php echo $disabled; ?> id="newpass2" name="newpass2" class="flat minwidth150" value="<?php echo dol_escape_htmltag($newpass2); ?>" tabindex="1" />
 </div>
 </div>
 
