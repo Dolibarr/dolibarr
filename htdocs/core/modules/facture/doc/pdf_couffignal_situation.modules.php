@@ -2286,7 +2286,7 @@ class pdf_couffignal_situation extends ModelePDFFactures
 			$vatrate = $object->lines[$i]->tva_tx;
 			$line_amount_vat = (isModEnabled('multicurrency') && $object->multicurrency_tx != 1) ? $object->lines[$i]->multicurrency_total_tva : $object->lines[$i]->total_tva;
 			$prev_progress = $object->lines[$i]->get_prev_progress($object->id);
-			if ($object->lines[$i]->situation_percent > 0) {
+			if (abs($object->lines[$i]->situation_percent) > 0.01) {
 				$progress = ($object->lines[$i]->situation_percent - $prev_progress) / $object->lines[$i]->situation_percent; // TODO - Control, here another formula was used, dividing by $object->lines[$i]->situation_percent
 			} else {
 				$progress = 0;
@@ -2294,7 +2294,7 @@ class pdf_couffignal_situation extends ModelePDFFactures
 
 			// Compute VAT
 			$tvaligne = $sign * $line_amount_vat * $progress * $prorata_effective_rate;
-			if ($object->lines[$i]->situation_percent == 0 && $prev_progress > 0) {
+			if ($object->lines[$i]->situation_percent == 0 && abs($prev_progress) > 0.01) {
                  $tmp_totline = ($object->lines[$i]->qty * $object->lines[$i]->subprice) *$object->lines[$i]->tva_tx/100 ;
                  $tvaligne = -1 * $sign * $tmp_totline * $prev_progress/100 * $prorata_effective_rate;
             }
