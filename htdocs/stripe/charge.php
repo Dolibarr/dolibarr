@@ -2,6 +2,7 @@
 /* Copyright (C) 2018-2022  Thibault FOUCART        <support@ptibogxiv.net>
  * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Jose Martinez				<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -120,6 +121,8 @@ if (!$rowid) {
 
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, 'title_accountancy.png', 0, '', 'hidepaginationprevious', $limit);
 
+	$hookmanager->initHooks(array('stripechargelist'));
+
 	print '<div class="div-table-responsive">';
 	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
@@ -128,6 +131,7 @@ if (!$rowid) {
 	print_liste_field_titre("StripeCustomerId", $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder);
 	print_liste_field_titre("Customer", $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder);
 	print_liste_field_titre("Origin", $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder);
+	print_liste_field_titre("Description", $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder);
 	print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder, 'center ');
 	print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder, 'left ');
 	print_liste_field_titre("Paid", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder, 'right ');
@@ -152,7 +156,7 @@ if (!$rowid) {
 		$param .= '&starting_after_'.($page + 1).'='.$list->data[($limit - 1)]->id;
 		//$param.='&ending_before_'.($page+1).'='.$list->data[($limit-1)]->id;
 	} catch (Exception $e) {
-		print '<tr><td colspan="8">'.$e->getMessage().'</td></td>';
+		print '<tr><td colspan="9">'.$e->getMessage().'</td></td>';
 	}
 
 	//print $list;
@@ -256,17 +260,27 @@ if (!$rowid) {
 			}
 			print "</td>\n";
 
-			// Link
+			// Customer
 			print '<td class="tdoverflowmax200">';
-			if ($societestatic->id > 0) {
-				print $societestatic->getNomUrl(1);
-			} elseif ($memberstatic->id > 0) {
-				print $memberstatic->getNomUrl(1);
+			// Allow a module to fill this cell (e.g. charges without Dolibarr metadata)
+			$parameters = array('charge' => $charge, 'field' => 'customer');
+			$reshook = $hookmanager->executeHooks('printStripeChargeField', $parameters);
+			print $hookmanager->resPrint;
+			if ($reshook <= 0) {
+				if ($societestatic->id > 0) {
+					print $societestatic->getNomUrl(1);
+				} elseif ($memberstatic->id > 0) {
+					print $memberstatic->getNomUrl(1);
+				}
 			}
 			print "</td>\n";
 
 			// Origin
 			print '<td class="nowraponall">';
+			$parameters = array('charge' => $charge, 'field' => 'origin');
+			$reshook = $hookmanager->executeHooks('printStripeChargeField', $parameters);
+			print $hookmanager->resPrint;
+			if ($reshook <= 0) {
 			if ($charge->metadata->dol_type == "order" || $charge->metadata->dol_type == "commande") {
 				$object = new Commande($db);
 				$object->fetch($charge->metadata->dol_id);
@@ -286,7 +300,11 @@ if (!$rowid) {
 			} else {
 				print $FULLTAG;
 			}
+			}
 			print "</td>\n";
+
+			// Description
+			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($charge->description).'">'.dol_escape_htmltag($charge->description).'</td>'."\n";
 
 			// Date payment
 			print '<td class="center nowraponall">'.dol_print_date($charge->created, 'dayhour')."</td>\n";
