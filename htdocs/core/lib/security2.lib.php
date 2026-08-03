@@ -645,10 +645,10 @@ function showEyeForField($htmlname, $htmlnameofinput)
  * @param	int		$userid		Target user rowid
  * @return	string				Hash to put in the reset link (passworduidhash)
  */
-function dolGetPasswordResetHash($secret, $userid)
+function dolGetPasswordResetHash(string $secret, int $userid): string
 {
 	global $conf;
-	return dol_hash($secret.'-'.((int) $userid).'-'.$conf->file->instance_unique_id);
+	return dol_hash($secret.'-'.$userid.'-'.$conf->file->instance_unique_id);
 }
 
 /**
@@ -664,12 +664,12 @@ function dolGetPasswordResetHash($secret, $userid)
  * @param	string	$hashtotest		Hash received from the reset link
  * @return	int						1 if valid, 0 if bad possession, -1 if expired
  */
-function dolVerifyPasswordResetHash($secret, $userid, $hashtotest)
+function dolVerifyPasswordResetHash(string $secret, int $userid, string $hashtotest): int
 {
 	if ($secret === '' || $hashtotest === '') {
 		return 0;
 	}
-	if (!dol_verifyHash($secret.'-'.((int) $userid).'-'.$GLOBALS['conf']->file->instance_unique_id, $hashtotest)) {
+	if (!dol_verifyHash($secret.'-'.$userid.'-'.$GLOBALS['conf']->file->instance_unique_id, $hashtotest)) {
 		return 0;
 	}
 	$reg = array();
