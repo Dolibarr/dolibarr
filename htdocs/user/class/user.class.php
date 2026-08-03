@@ -38,6 +38,7 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonpeople.class.php';
@@ -2784,10 +2785,8 @@ class User extends CommonObject
 	 * @param	int		$ttlseconds		Link validity in seconds (0 = USER_PASSWORD_RESET_LINK_VALIDITY, default 3600)
 	 * @return	string|int				Stored pass_temp value, or < 0 on error
 	 */
-	public function requestPasswordReset($ttlseconds = 0)
+	public function requestPasswordReset(int $ttlseconds = 0)
 	{
-		require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-
 		if (empty($ttlseconds)) {
 			$ttlseconds = getDolGlobalInt('USER_PASSWORD_RESET_LINK_VALIDITY', 3600);
 		}
@@ -2816,7 +2815,7 @@ class User extends CommonObject
 	 * @param	string		$link			Absolute reset link
 	 * @return	string						HTML email body
 	 */
-	public function getPasswordResetEmailContent($outputlangs, $link)
+	public function getPasswordResetEmailContent(Translate $outputlangs, string $link): string
 	{
 		$mesg  = $outputlangs->transnoentitiesnoconv("RequestToResetPasswordReceived")."<br>\n<br>\n";
 		$mesg .= $outputlangs->transnoentitiesnoconv("YouMustClickToChange")." :<br>\n";
@@ -2865,8 +2864,6 @@ class User extends CommonObject
 		// Define $urlwithroot
 		$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
 		$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
-
-		require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 
 		// Link-only email in every mode: never send a cleartext password (the user chooses it on the reset page).
 		// $password is the armed pass_temp value produced by User::requestPasswordReset().
