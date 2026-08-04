@@ -98,3 +98,6 @@ phpstan_custom.neon
 
 # Agent workflow artifacts (specs/plans), not product documentation
 docs/superpowers/
+
+# Claude Code
+.claude
