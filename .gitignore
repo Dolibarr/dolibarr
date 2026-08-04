@@ -95,3 +95,6 @@ phpstan_custom.neon
 
 # Mistral Vibe
 .vibe
+
+# Claude Code
+.claude
