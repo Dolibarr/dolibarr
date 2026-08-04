@@ -66,7 +66,4 @@ ALTER TABLE llx_element_element ADD COLUMN date_creation datetime;
 ALTER TABLE llx_element_element ADD COLUMN fk_user_modif integer;
 ALTER TABLE llx_element_element ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 
-ALTER TABLE llx_element_element ADD CONSTRAINT fk_element_element_fk_user_creat FOREIGN KEY (fk_user_creat) REFERENCES llx_user (rowid);
-ALTER TABLE llx_element_element ADD CONSTRAINT fk_element_element_fk_user_modif FOREIGN KEY (fk_user_modif) REFERENCES llx_user (rowid);
-
 -- end of migration
