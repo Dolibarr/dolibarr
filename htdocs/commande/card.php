@@ -251,7 +251,7 @@ if (empty($reshook)) {
 					header("Location: ".$_SERVER['PHP_SELF'].'?id='.$result);
 					exit;
 				} else {
-					setEventMessages($object->error, $object->errors, 'errors');
+					setEventMessages($objectutil->error, $objectutil->errors, 'errors');
 					$action = '';
 				}
 			}
