@@ -3352,7 +3352,7 @@ if (empty($reshook)) {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
-	} elseif ($action == 'updatealllines' && $usercancreate && GETPOST('all_percent') == $langs->trans('Modify')) {	// Update all lines of situation invoice
+	} elseif ($action == 'updatealllines' && $usercancreate && GETPOSTISSET('all_percent')) {	// Update all lines of situation invoice
 		if (!$object->fetch($id) > 0) {
 			dol_print_error($db);
 		}
