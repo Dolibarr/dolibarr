@@ -1669,14 +1669,12 @@ if ($action == 'create') {
 
 			print '<tr>';
 			print '<td>'.$langs->trans("Project").'</td><td colspan="2">';
-			if (!empty($user->socid)) { // external user: restrict to their own third party
-				$projSocFilter = $user->socid;
-			} elseif (getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') || $socid == 0) {
-				// Give priority to the constant (as on supplier invoice), so a supplier document created from a
-				// customer project keeps that project selected after the supplier is chosen.
+			if ($socid > 0) { // external user
+				$projSocFilter = $socid;
+			} elseif ((int) $soc->id == 0 || getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS')) {
 				$projSocFilter = -1;
 			} else {
-				$projSocFilter = $socid;
+				$projSocFilter = $soc->id;
 			}
 			print img_picto('', 'project', 'class="pictofixedwidth"').$formproject->select_projects($projSocFilter, $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
 			print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.((int) $soc->id).'&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id).'"><span class="fa fa-plus-circle valignmiddle" title="'.$langs->trans("AddProject").'"></span></a>';

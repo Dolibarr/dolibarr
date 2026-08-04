@@ -1,6 +1,5 @@
 <?php
 /* Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -264,9 +263,9 @@ function filecheckCollapseContext($diff, $context = 3)
 	$keep = array_fill(0, $n, false);
 	for ($i = 0; $i < $n; $i++) {
 		if ($diff[$i][0] !== ' ') {
-			$from_line = max(0, $i - $context);
-			$to_line = min($n - 1, $i + $context);
-			for ($k = $from_line; $k <= $to_line; $k++) {
+			$from = max(0, $i - $context);
+			$to = min($n - 1, $i + $context);
+			for ($k = $from; $k <= $to; $k++) {
 				$keep[$k] = true;
 			}
 		}
@@ -386,7 +385,7 @@ llxFooterFragment();
 /**
  * Close the fragment output and stop the script.
  *
- * @return never
+ * @return void
  */
 function llxFooterFragment()
 {
