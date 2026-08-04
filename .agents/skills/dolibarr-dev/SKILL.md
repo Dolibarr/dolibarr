@@ -76,16 +76,11 @@ This details the preferred mechanical steps:
 ### Extrafields Best Practices
 **IMPORTANT**: When working with extrafields (custom fields), follow these patterns from the [Dolibarr Extrafields Wiki](https://wiki.dolibarr.org/index.php/Extrafields):
 
-#### Loading Extrafields
-After fetching an object, load its extrafields:
+#### Loading & Accessing Extrafields
 ```php
-$extrafields = new ExtraFields($db);
-// MANDATORY: must be table_element value of object with extrafields:
-$extralabels = $extrafields->fetch_name_optionals_label($object->table_element, true);
-if (count($extralabels) > 0) {
-    $object->fetch_optionals($object->id, $extralabels);
-}
-// Access extrafield values via: $object->array_options['options_FIELDNAME']
+$object->fetch(); // CommonObject fetch loads its extrafields
+// Access extrafield values via:
+$field_copy = $object->array_options['options_FIELDNAME']
 ```
 
 #### Saving Extrafields
@@ -115,7 +110,7 @@ if (empty($reshook) && !empty($extrafields->attribute_label)) {
 ```
 
 #### Extrafields Table Structure
-Each object type has its own extrafields table:
+Each CommonObject objecttype has its own extrafields table:
 ```sql
 llx_{objecttype}_extrafields
 - rowid (AUTO_INCREMENT PRIMARY KEY)
@@ -174,124 +169,66 @@ Dolibarr provides type-safe input handling functions. **Always use these instead
 The ExtraFields class lacks a method to check if a field exists. Use this pattern:
 
 ```php
-// Check if extrafield exists, create if not
+global $db;
+
 $extrafields = new ExtraFields($db);
-$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+$extralabels = $extrafields->fetch_name_optionals_label($elementtype);
 
-// Check if our field exists
-$field_exists = false;
-if (is_array($extralabels) && isset($extralabels['tracking_awb'])) {
-    $field_exists = true;
-}
+// Tracking extrafields configuration
+$my_fields = array(
+	'custom_name_1' => array(
+		'label' => 'CustomLabel1',
+		'type' => 'varchar',
+		'size' => '64',
+		'enabled' => '1'
+	),
+	'custom_name_2' => array(
+		'label' => 'CustomLabel2',
+		'type' => 'url',
+		'size' => '255',
+		'enabled' => '1'
+	),
+);
 
-// If not, create it
-if (!$field_exists) {
-    $extrafields->addExtraField(
-        'tracking_awb',           // name
-        'TrackingAWB',            // label (translation key)
-        'varchar',               // type
-        0,                       // pos (0 = auto)
-        64,                      // size
-        $object->table_element,  // elementtype
-        0,                       // unique
-        0,                       // required
-        '',                      // param
-        '',                      // default_value
-        0,                       // perms
-        '',                      // list ('-1' = not in list)
-        1                        // enabled
-    );
-}
-```
+foreach ($tracking_fields as $name => $config) {
+	// Check if extrafield exists, create if not
+	if (!isset($extralabels[$name])) {
+		// Naming the arguments to get help from static analysis
+		$pos = 0;  // 0 = auto
+		$unique = 0;
+		$required = 0;
+		$default_value = '0';
+		$param = '';
+		$alwayseditable = 0;
+		$perms = '0';
+		$list = '0';  // '0' = never visible
+		$help = '';
+		$computed = '';
+		$entity = '';
+		$langfile = '';
+		$enabled = $config['enabled'];
 
-#### Adding Tracking Methods to Object Classes
-When adding tracking functionality to object classes (e.g., CommandeFournisseur, FactureFournisseur):
-
-```php
-// In the class file (e.g., htdocs/fourn/class/fournisseur.commande.class.php)
-
-/**
- * Set tracking information for this order
- *
- * @param string $awb Tracking number/AWB
- * @param string $carrierCode Carrier code
- * @param string $trackingLink Optional tracking link
- * @return int <0 if KO, >0 if OK
- */
-public function setTrackingInfo($awb, $carrierCode, $trackingLink = '')
-{
-    global $db;
-    
-    require_once DOL_DOCUMENT_ROOT.'/core/lib/handlers/shipping_handler.php';
-    
-    // Ensure extrafields exist
-    $this->ensureTrackingExtrafields();
-    
-    // Set tracking data
-    $this->array_options['options_tracking_awb'] = $awb;
-    $this->array_options['options_carrier_code'] = $carrierCode;
-    
-    if (empty($trackingLink)) {
-        $this->array_options['options_tracking_link'] = generate_tracking_link($awb, $carrierCode);
-    } else {
-        $this->array_options['options_tracking_link'] = $trackingLink;
-    }
-    
-    return $this->update($user);
-}
-
-/**
- * Ensure tracking extrafields are defined
- *
- * @return void
- */
-private function ensureTrackingExtrafields()
-{
-    global $db;
-    
-    $extrafields = new ExtraFields($db);
-    $extralabels = $extrafields->fetch_name_optionals_label($this->table_element);
-    
-    $fields_to_create = array(
-        'tracking_awb' => array(
-            'label' => 'TrackingAWB',
-            'type' => 'varchar',
-            'size' => 64,
-            'enabled' => 1
-        ),
-        'tracking_link' => array(
-            'label' => 'TrackingLink',
-            'type' => 'varchar',
-            'size' => 255,
-            'enabled' => 1
-        ),
-        'carrier_code' => array(
-            'label' => 'CarrierCode',
-            'type' => 'varchar',
-            'size' => 16,
-            'enabled' => 1
-        )
-    );
-    
-    foreach ($fields_to_create as $name => $config) {
-        if (!isset($extralabels[$name])) {
-            $extrafields->addExtraField(
-                $name,
-                $config['label'],
-                $config['type'],
-                0,  // pos
-                $config['size'],
-                $this->table_element,
-                0,  // unique
-                0,  // required
-                '', // param
-                '', // default_value
-                0,  // perms
-                '-1', // list
-                $config['enabled']
-            );
-        }
-    }
+		$result = $extrafields->addExtraField(
+			$name,
+			$config['label'],
+			$config['type'],
+			$pos,  // pos (0 = auto)
+			$config['size'],
+			$elementtype,
+			$unique,  // unique
+			$required,  // required
+			$default_value, // default_value
+			$param, // param
+			$alwayseditable,
+			$perms,  // perms
+			$list, // list ('0' = never visible)
+			$help,
+			$computed,
+			$entity,
+			$langfile,
+			$enabled
+		);
+	}
 }
 ```
 
