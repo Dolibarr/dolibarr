@@ -3,7 +3,7 @@
  * Copyright (C) 2011		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2015		Raphaël Doursenaud	<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2021		Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2024-2026  Frédéric France		<frederic.france@free.fr>
+ * Copyright (C) 2024		Frédéric France		<frederic.france@free.fr>
  * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Anthony Berton		<anthony.berton@bb2a.fr>
  *
@@ -143,15 +143,17 @@ if ($what == 'mysql') {
 		}
 	}
 
-	if ($cmddump) {
+	if (!$errormsg && $cmddump) {
 		dolibarr_set_const($db, 'SYSTEMTOOLS_MYSQLDUMP', $cmddump, 'chaine', 0, '', 0);
 	}
 
-	$result = $utils->dumpDatabase(GETPOST('compression', 'alpha'), $what, 0, $file, 0, 0, $lowmemorydump);
+	if (!$errormsg) {
+		$result = $utils->dumpDatabase(GETPOST('compression', 'alpha'), $what, 0, $file, 0, 0, $lowmemorydump);
 
-	$errormsg = $utils->error;
-	$_SESSION["commandbackuplastdone"] = $utils->result['commandbackuplastdone'];
-	$_SESSION["commandbackuptorun"] = $utils->result['commandbackuptorun'];
+		$errormsg = $utils->error;
+		$_SESSION["commandbackuplastdone"] = $utils->result['commandbackuplastdone'];
+		$_SESSION["commandbackuptorun"] = $utils->result['commandbackuptorun'];
+	}
 }
 
 // MYSQL NO BIN

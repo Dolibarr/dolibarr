@@ -46,10 +46,12 @@ $export->load_arrays($user);
 $import = new Import($db);
 $import->load_arrays($user);
 
-$usercanimport = isModEnabled('import') && restrictedArea($user, 'import', 0, '', '', 'fk_soc', 'rowid', 0, 1);
-$usercanexport = isModEnabled('export') && restrictedArea($user, 'export', 0, '', '', 'fk_soc', 'rowid', 0, 1);
-if (!$usercanimport && !$usercanexport) {
-	accessforbidden();
+if (isModEnabled('import')) {
+	//$usercanimport = restrictedArea($user, 'import', 0, '', 'run');
+	$usercanimport = restrictedArea($user, 'import');
+}
+if (isModEnabled('export')) {
+	$usercanexport = restrictedArea($user, 'export');
 }
 
 
@@ -73,7 +75,7 @@ print load_fiche_titre($langs->trans($title));
 
 
 // List of available import format
-if ($usercanimport) {
+if (isModEnabled('import')) {
 	$out = '';
 	$out .= '<div class="div-table-responsive-no-min">';
 	$out .= '<table class="noborder centpercent nomarginbottom">';
@@ -120,7 +122,7 @@ if ($usercanimport) {
 
 
 // List of available export formats
-if ($usercanexport) {
+if (isModEnabled('export')) {
 	$out = '';
 	$out .= '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	$out .= '<table class="noborder centpercent nomarginbottom">';
