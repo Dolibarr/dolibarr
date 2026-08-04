@@ -160,12 +160,10 @@ Dolibarr provides type-safe input handling functions. **Always use these instead
 |----------|------|---------|-------|
 | `GETPOST($param, $type)` | Mixed | `GETPOST('id', 'int')` | Returns GET or POST value with type conversion |
 | `GETPOSTINT($param)` | Integer | `GETPOSTINT('socid')` | Shorthand for `GETPOST($param, 'int')` |
-| `GETPOSTALPHA($param)` | String | `GETPOSTALPHA('name')` | Shorthand for `GETPOST($param, 'alpha')` |
 | `GETPOSTARRAY($param)` | Array | `GETPOSTARRAY('selected')` | For multi-select inputs |
 
 **Best Practice:** Use the type-specific shorthand functions when possible:
 - `GETPOSTINT()` for integers (IDs, counts, etc.)
-- `GETPOSTALPHA()` for alphanumeric strings
 - `GETPOST()` with type for other cases
 
 **Never use:** `$_GET['param']` or `$_POST['param']` directly - always use GETPOST functions for proper escaping and type conversion.
