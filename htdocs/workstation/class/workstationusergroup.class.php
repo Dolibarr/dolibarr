@@ -95,7 +95,11 @@ class WorkstationUserGroup extends CommonObject
 		global $db;
 
 		$obj = new self($db);
-		return array_map('intval', parent::getAllItemsLinkedByObjectID($fk_workstation, 'fk_usergroup', 'fk_workstation', $obj->table_element));
+		$TRes = parent::getAllItemsLinkedByObjectID($fk_workstation, 'fk_usergroup', 'fk_workstation', $obj->table_element);
+		if (!is_array($TRes)) {	// getAllItemsLinkedByObjectID() returns -1 when $fk_workstation is empty
+			return [];
+		}
+		return array_map('intval', $TRes);
 	}
 
 	/**
