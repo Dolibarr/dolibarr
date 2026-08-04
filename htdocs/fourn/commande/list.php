@@ -468,16 +468,26 @@ if (empty($reshook)) {
 					$objecttmp->note_public =  $langs->transnoentities("Orders");
 				}
 
+				$now = dol_now();
+
 				$sql = "INSERT INTO ".MAIN_DB_PREFIX."element_element (";
 				$sql .= "fk_source";
 				$sql .= ", sourcetype";
 				$sql .= ", fk_target";
 				$sql .= ", targettype";
+				$sql .= ", fk_user_creat";
+				$sql .= ", date_creation";
+				$sql .= ", fk_user_modif";
+				$sql .= ", tms";
 				$sql .= ") VALUES (";
 				$sql .= ((int) $id_order);
 				$sql .= ", '".$db->escape($objecttmp->origin)."'";
 				$sql .= ", ".((int) $objecttmp->id);
 				$sql .= ", '".$db->escape($objecttmp->element)."'";
+				$sql .= ", ".((int) $user->id);
+				$sql .= ", '".$db->idate($now)."'";
+				$sql .= ", ".((int) $user->id);
+				$sql .= ", '".$db->idate($now)."'";
 				$sql .= ")";
 
 				if (!$db->query($sql)) {

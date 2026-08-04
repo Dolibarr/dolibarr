@@ -4411,16 +4411,26 @@ abstract class CommonObject
 		$this->db->begin();
 		$error = 0;
 
+		$now = dol_now();
+
 		$sql = "INSERT INTO " . $this->db->prefix() . "element_element (";
 		$sql .= "fk_source";
 		$sql .= ", sourcetype";
 		$sql .= ", fk_target";
 		$sql .= ", targettype";
+		$sql .= ", fk_user_creat";
+		$sql .= ", date_creation";
+		$sql .= ", fk_user_modif";
+		$sql .= ", tms";
 		$sql .= ") VALUES (";
 		$sql .= ((int) $origin_id);
 		$sql .= ", '" . $this->db->escape($origin) . "'";
 		$sql .= ", " . ((int) $this->id);
 		$sql .= ", '" . $this->db->escape($targettype) . "'";
+		$sql .= ", ".($f_user->id > 0 ? ((int) $f_user->id) : "NULL");
+		$sql .= ", '".$this->db->idate($now)."'";
+		$sql .= ", ".($f_user->id > 0 ? ((int) $f_user->id) : "NULL");
+		$sql .= ", '".$this->db->idate($now)."'";
 		$sql .= ")";
 
 		dol_syslog(get_class($this) . "::add_object_linked", LOG_DEBUG);
@@ -4473,8 +4483,25 @@ abstract class CommonObject
 							continue;
 						}
 
-						$sqladd = "INSERT INTO " . $this->db->prefix() . "element_element (fk_source, sourcetype, fk_target, targettype)";
-						$sqladd .= " VALUES (".((int) $origin_id).", '".$this->db->escape($origin)."', ".((int) $srcid).", '".$this->db->escape($targettype)."')";
+						$sqladd = "INSERT INTO " . $this->db->prefix() . "element_element (";
+						$sqladd .= "fk_source";
+						$sqladd .= ", sourcetype";
+						$sqladd .= ", fk_target";
+						$sqladd .= ", targettype";
+						$sqladd .= ", fk_user_creat";
+						$sqladd .= ", date_creation";
+						$sqladd .= ", fk_user_modif";
+						$sqladd .= ", tms";
+						$sqladd .= ") VALUES (";
+						$sqladd .= ((int) $origin_id);
+						$sqladd .= ", '".$this->db->escape($origin)."'";
+						$sqladd .= ", ".((int) $srcid);
+						$sqladd .= ", '".$this->db->escape($targettype)."'";
+						$sqladd .= ", ".($f_user->id > 0 ? ((int) $f_user->id) : "NULL");
+						$sqladd .= ", '".$this->db->idate($now)."'";
+						$sqladd .= ", ".($f_user->id > 0 ? ((int) $f_user->id) : "NULL");
+						$sqladd .= ", '".$this->db->idate($now)."'";
+						$sqladd .= ")";
 						$this->db->query($sqladd); // Best-effort: do not fail original link action
 					}
 				}
@@ -4753,6 +4780,8 @@ abstract class CommonObject
 		$error = 0;
 
 		$sql = "UPDATE " . $this->db->prefix() . "element_element SET ";
+		$sql .= " fk_user_modif = ".($f_user->id > 0 ? ((int) $f_user->id) : "NULL");
+		$sql .= " tms = '".$this->db->idate(dol_now())."'";
 		if ($updatesource) {
 			$sql .= "fk_source = " . ((int) $sourceid);
 			$sql .= ", sourcetype = '" . $this->db->escape($sourcetype) . "'";
