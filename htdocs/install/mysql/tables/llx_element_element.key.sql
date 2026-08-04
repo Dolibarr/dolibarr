@@ -23,3 +23,6 @@ ALTER TABLE llx_element_element ADD UNIQUE INDEX idx_element_element_idx1 (fk_so
 ALTER TABLE llx_element_element ADD INDEX idx_element_element_fk_target (fk_target);
 
 -- Pas de contraite sur fk_source et fk_target car pointe sur differentes tables
+
+ALTER TABLE llx_element_element ADD CONSTRAINT fk_element_element_fk_user_creat FOREIGN KEY (fk_user_creat) REFERENCES llx_user (rowid);
+ALTER TABLE llx_element_element ADD CONSTRAINT fk_element_element_fk_user_modif FOREIGN KEY (fk_user_modif) REFERENCES llx_user (rowid);

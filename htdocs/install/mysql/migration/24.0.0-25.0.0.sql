@@ -60,5 +60,13 @@ CREATE TABLE llx_links_extrafields
 ) ENGINE=innodb;
 ALTER TABLE llx_links_extrafields ADD UNIQUE INDEX uk_links_extrafields (fk_object);
 
+-- Add user/tms information to element_element
+ALTER TABLE llx_element_element ADD COLUMN fk_user_creat integer AFTER relationtype;
+ALTER TABLE llx_element_element ADD COLUMN date_creation datetime NOT NULL DEFAULT CURRENT_TIMESTAMP AFTER fk_user_creat;
+ALTER TABLE llx_element_element ADD COLUMN fk_user_modif integer AFTER date_creation;
+ALTER TABLE llx_element_element ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP AFTER fk_user_modif;
+
+ALTER TABLE llx_element_element ADD CONSTRAINT fk_element_element_fk_user_creat FOREIGN KEY (fk_user_creat) REFERENCES llx_user (rowid);
+ALTER TABLE llx_element_element ADD CONSTRAINT fk_element_element_fk_user_modif FOREIGN KEY (fk_user_modif) REFERENCES llx_user (rowid);
 
 -- end of migration

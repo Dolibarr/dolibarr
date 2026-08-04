@@ -27,5 +27,9 @@ create table llx_element_element
   sourcetype		varchar(64) NOT NULL,
   fk_target			integer NOT NULL,
   targettype		varchar(64) NOT NULL,
-  relationtype		varchar(64) DEFAULT NULL
+  relationtype		varchar(64) DEFAULT NULL,
+	fk_user_creat	  integer,							                                            -- User id making creation
+  date_creation	  datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,                      -- Creation date
+	fk_user_modif	  integer,							                                            -- User id making last change
+	tms     		    timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP 	-- Last modification date
 ) ENGINE=innodb;
