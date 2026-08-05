@@ -2761,6 +2761,7 @@ class Contrat extends CommonObject
 			$num = $this->db->num_rows($resql);
 
 			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+			include_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
 			$i = 0;
 			while ($i < $num) {

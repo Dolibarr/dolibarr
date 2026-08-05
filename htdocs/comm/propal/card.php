@@ -1780,7 +1780,7 @@ if (empty($reshook)) {
 				} else {
 					setEventMessages($prod->error, $prod->errors, 'errors');
 				}
-			} else {
+			} elseif ($line->fk_product) { // Display errors only for non-free lines
 				setEventMessages($prod->error, $prod->errors, 'errors');
 			}
 
@@ -2336,6 +2336,9 @@ if ($action == 'create') {
 		if (GETPOSTISSET('fk_account')) {
 			$fk_account = GETPOSTINT('fk_account');
 		}
+		if (GETPOSTISSET('shipping_method_id')) {
+			$shipping_method_id = GETPOSTINT('shipping_method_id');
+		}
 	}
 	// Warehouse default if null
 	if ($soc->fk_warehouse > 0) {
@@ -2484,7 +2487,7 @@ if ($action == 'create') {
 			}
 			print '<tr class="field_shipping_method_id"><td class="titlefieldcreate">' . $langs->trans('SendingMethod') . '</td><td class="valuefieldcreate">';
 			print img_picto('', 'dolly', 'class="pictofixedwidth"');
-			$form->selectShippingMethod((string) (GETPOSTISSET('shipping_method_id') ? GETPOSTINT('shipping_method_id') : $shipping_method_id), 'shipping_method_id', '', 1, '', 0, 'maxwidth200 widthcentpercentminusx');
+			$form->selectShippingMethod((string) $shipping_method_id, 'shipping_method_id', '', 1, '', 0, 'maxwidth200 widthcentpercentminusx');
 			print '</td></tr>';
 		}
 

@@ -1709,14 +1709,14 @@ class CommandeFournisseur extends CommonOrder
 						(int) $line->product_type,
 						(int) $line->info_bits,
 						0,
-						$line->date_start,
-						$line->date_end,
-						$line->array_options,
-						$line->fk_unit,
+						$line->date_start ?? null,
+						$line->date_end ?? null,
+						$line->array_options ?? [],
+						$line->fk_unit ?? null,
 						(float) $line->multicurrency_subprice,  // pu_ht_devise
-						(string) $line->origin,     // origin
+						(string) $line->origin,  // origin
 						(int) $line->origin_id,  // origin_id
-						(int) $line->rang,       // rang
+						(int) ($line->rang ?? -1),       // rang
 						(int) $line->special_code
 					);
 					if ($result < 0) {
