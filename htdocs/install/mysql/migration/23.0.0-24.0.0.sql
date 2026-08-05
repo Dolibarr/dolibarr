@@ -563,8 +563,6 @@ ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_max_participants (max_partic
 
 ALTER TABLE llx_c_tva ADD COLUMN einvoice_vatex	varchar(32);
 
-INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) VALUES ('ECMFILES_CREATE','Supplier order document uploaded','Executed when a document is uploaded to a supplier order','order_supplier',70);
-
 
 -- SQL with disabled check must be at end
 --noqa:disable=PRS
