@@ -258,7 +258,7 @@ OtherFilteredTasks=مهام أخرى تمت تصفيتها
 NoAssignedTasks=لم يتم العثور على مهام معينة (قم بتعيين مشروع / مهام إلى المستخدم الحالي من مربع التحديد العلوي لإدخال الوقت فيه)
 ThirdPartyRequiredToGenerateIntervention=يجب تعريف الطرف الثالث على مشروع حتى يتمكن من إنشاء التدخل.
 ThirdPartyRequiredToGenerateInvoice=يجب تحديد طرف ثالث في المشروع حتى يتمكن من إصدار فاتورة به.
-ChooseANotYetAssignedTask=اختر مهمة لم يتم تعيينها لك بعد
+ChooseANotYetAssignedTask=Tasks not yet assigned to you
 # Comments trans
 AllowCommentOnTask=السماح بتعليقات المستخدمين على المهام
 AllowCommentOnProject=السماح بتعليقات المستخدمين على المشاريع

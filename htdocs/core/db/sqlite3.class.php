@@ -766,9 +766,9 @@ class DoliDBSqlite3 extends DoliDB
 	 * Encrypt sensitive data in database
 	 * Warning: This function includes the escape and add the SQL simple quotes on strings.
 	 *
-	 * @param	string	$fieldorvalue	Field name or value to encrypt
-	 * @param	int		$withQuotes		Return string including the SQL simple quotes. This param must always be 1 (Value 0 is bugged and deprecated).
-	 * @return	string					XXX(field) or XXX('value') or field or 'value'
+	 * @param	string		$fieldorvalue	Field name or value to encrypt
+	 * @param	int<1,1>	$withQuotes		Return string including the SQL simple quotes. This param must always be 1 (Value 0 is bugged and deprecated).
+	 * @return	string						XXX(field) or XXX('value') or field or 'value'
 	 */
 	public function encrypt($fieldorvalue, $withQuotes = 1)
 	{

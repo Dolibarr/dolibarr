@@ -62,3 +62,4 @@ EmailSomeoneVoted=%s បានបំពេញបន្ទាត់មួយ។\n
 ShowSurvey=បង្ហាញការស្ទង់មតិ
 UserMustBeSameThanUserUsedToVote=អ្នក​ត្រូវ​តែ​បាន​បោះឆ្នោត និង​ប្រើ​ឈ្មោះ​អ្នក​ប្រើ​ដូច​គ្នា​ដែល​អ្នក​ធ្លាប់​បោះឆ្នោត​ដើម្បី​បង្ហោះ​មតិ
 ListOfOpenSurveys=បញ្ជីនៃការស្ទង់មតិបើកចំហ
+AddTheVote=Click to add the vote

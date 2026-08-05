@@ -173,3 +173,5 @@ ErrorObjectMustNotBeFinishedToModifyDateEnd = El objeto %s no debe estar termina
 ErrorObjectMustNotBeFinishedToModifyDateStart = El objeto %s no debe estar terminado para modificar la fecha de inicio.
 BOM_SUB_BOM=Utilizar sub-boms
 UseSearchToSelectBom=Espere hasta que se presione una tecla antes de cargar el contenido de la lista combinada de Boms.<br>Esto puede mejorar el rendimiento si tiene una gran cantidad de proyectos, pero es menos conveniente.
+ReInitialize=Reiniciar
+ReInitializeHelp=Reinicializa las líneas de consumo y producción (si la lista de materiales ha cambiado y la producción no ha comenzado).

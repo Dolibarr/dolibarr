@@ -103,7 +103,13 @@ ConfirmCloneContract=کیا آپ واقعی <b> %s </b> معاہدہ کلون ک
 LowerDateEndPlannedShort=فعال خدمات کی کم منصوبہ بند اختتامی تاریخ
 SendContractRef=معاہدے کی معلومات __REF__
 OtherContracts=دوسرے معاہدے
-##### Types de contacts #####
+##### Statistics #####
+ContractsStatistics=Contract's statistics
+NbOfContracts=Nb of contracts
+NumberOfContractsByMonth=Number of contracts by month
+AmountOfServices=Number of services
+AmountOfServicesByMonthHT=Number of services (excl. tax) by month
+##### Types of contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=سیلز کا نمائندہ معاہدہ پر دستخط کرتا ہے۔
 TypeContact_contrat_internal_SALESREPFOLL=سیلز کے نمائندے فالو اپ معاہدہ
 TypeContact_contrat_external_BILLING=بلنگ کسٹمر رابطہ

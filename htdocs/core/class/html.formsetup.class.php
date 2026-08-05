@@ -173,7 +173,7 @@ class FormSetup
 			$out .= $this->htmlBeforeOutputForm;
 
 			if ($editMode) {
-				$out .= '<form ' . self::generateAttributesStringFromArray($this->formAttributes) . ' >';
+				$out .= '<form ' . self::generateAttributesStringFromArray($this->formAttributes) . ' autocomplete="off">';
 				$out .= '<input type="hidden" name="page_y" value="">';
 
 				// generate hidden values from $this->formHiddenInputs

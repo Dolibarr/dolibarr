@@ -27,6 +27,7 @@
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  * Copyright (C) 2026		Lenin Rivas				<lenin.rivas777@gmail.com>
  * Copyright (C) 2026		Open-Dsi				<support@open-dsi.fr>
+ * Copyright (C) 2026		Jose MARTINEZ				<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -4423,6 +4424,13 @@ class Form
 				require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 				$producttmpselect = new Product($this->db);
 				$producttmpselect->fetch((int) $selected);
+				$selected_input_value = $producttmpselect->ref;
+				unset($producttmpselect);
+			} elseif (preg_match('/^idprod_([0-9]+)$/', (string) $selected, $regtmpsel)) {
+				// Preselect when a product without supplier price was just created ('idprod_ID' value, used by backtopage of creation popup)
+				require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+				$producttmpselect = new Product($this->db);
+				$producttmpselect->fetch((int) $regtmpsel[1]);
 				$selected_input_value = $producttmpselect->ref;
 				unset($producttmpselect);
 			}

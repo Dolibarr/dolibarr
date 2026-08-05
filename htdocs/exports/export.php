@@ -325,7 +325,7 @@ if ($step == 5 && $action == 'confirm_deletefile' && $confirm == 'yes' && $user-
 
 	$file = $upload_dir."/".GETPOST('file');
 
-	$ret = dol_delete_file($file);
+	$ret = dol_delete_file($file, 1);
 	if ($ret) {
 		setEventMessages($langs->trans("FileWasRemoved", GETPOST('file')), null, 'mesgs');
 	} else {

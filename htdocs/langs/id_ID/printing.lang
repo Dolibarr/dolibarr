@@ -46,6 +46,10 @@ IPP_Color=Warna
 IPP_Device=Alat
 IPP_Media=Media printer
 IPP_Supported=Jenis media
+STATE_IPP_idle=Idle printer
+STATE_IPP_none=None
+IPP_COLOR_print-black=Black and White
+IPP_COLOR_print-color=Color
 DirectPrintingJobsDesc=Halaman ini berisi daftar pekerjaan pencetakan yang ditemukan untuk printer yang tersedia.
 GoogleAuthNotConfigured=Google OAuth belum disiapkan. Aktifkan modul OAuth dan tetapkan Google ID / Secret.
 GoogleAuthConfigured=Kredensial Google OAuth ditemukan dalam pengaturan modul OAuth.
@@ -53,4 +57,4 @@ PrintingDriverDescprintgcp=Variabel konfigurasi untuk driver pencetakan Google C
 PrintingDriverDescprintipp=Variabel konfigurasi untuk driver Piala cetak.
 PrintTestDescprintgcp=Daftar Printer untuk Google Cloud Print.
 PrintTestDescprintipp=Daftar Printer untuk Piala.
-Testbbbb
+PrinterLocation=Printer location

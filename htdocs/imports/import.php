@@ -268,7 +268,7 @@ if ($step == 2 && $datatoimport) {
 		}
 
 		$file = $conf->import->dir_temp.'/'.GETPOST('urlfile');
-		$ret = dol_delete_file($file);
+		$ret = dol_delete_file($file, 1);
 		if ($ret) {
 			setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
 		} else {

@@ -12,7 +12,7 @@ Security report are valid only on any current stable version for the last 5 majo
 
 To report a vulnerability, for a private report, you can:
 
-- Send your report as an issue on https://github.com/Dolibarr/dolibarr/issues or on GitHub Vulnerability Disclosure Program tool (VDP): https://github.com/Dolibarr/dolibarr/security/advisories (recommended). Do 1 report only per vulnerability. Reports combining several vulnerabilities, as well as reports generated using IA will be rejected. 
+- Send your report as an issue on https://github.com/Dolibarr/dolibarr/issues or, if you have an allowed account, on GitHub Vulnerability Disclosure Program tool (VDP): https://github.com/Dolibarr/dolibarr/security/advisories (recommended). Do 1 report only per vulnerability. Reports combining several vulnerabilities, as well as reports generated using IA will be rejected. 
 
 NOTE: This is a private vulnerability report process: Advisories are sent to users by our internal channel (RSS at https://cti.dolibarr.org/index-security.rss), we do not publish CVE reports.
 
