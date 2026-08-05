@@ -310,7 +310,7 @@ class MoLine extends CommonObjectLine
 					} elseif (strpos($key, 'date') !== false) {
 						$sqlwhere[] = $this->db->sanitize($key)." = '".$this->db->idate((int) $value)."'";
 					} else {
-						$sqlwhere[] = $this->db->sanitize($key)." LIKE '%".$this->db->escape($this->db->escapeforlike($value))."%'";
+						$sqlwhere[] = $this->db->sanitize($key)." LIKE '%".$this->db->escape($this->db->escapeforlike((string) $value))."%'";
 					}
 				}
 			}
