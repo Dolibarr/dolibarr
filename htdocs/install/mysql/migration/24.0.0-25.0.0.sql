@@ -66,6 +66,4 @@ ALTER TABLE llx_element_element ADD COLUMN date_creation datetime;
 ALTER TABLE llx_element_element ADD COLUMN fk_user_modif integer;
 ALTER TABLE llx_element_element ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 
-INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) VALUES ('ECMFILES_CREATE','Supplier order document uploaded','Executed when a document is uploaded to a supplier order','order_supplier',70);
-
 -- end of migration
