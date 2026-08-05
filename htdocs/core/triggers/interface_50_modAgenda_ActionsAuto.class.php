@@ -1449,7 +1449,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			}
 
 			$object->sendtoid = array();
-		} elseif ($action == 'ECMFILES_CREATE' && $object instanceof EcmFiles && getDolGlobalString('AGENDA_TRACK_UPLOAD_ON_OBJECTS') {
+		} elseif ($action == 'ECMFILES_CREATE' && $object instanceof EcmFiles && getDolGlobalString('AGENDA_TRACK_UPLOAD_ON_OBJECTS')) {
 			if ($object->src_object_type !== 'commande_fournisseur' || $object->src_object_id <= 0 || $object->gen_or_uploaded !== 'uploaded') {
 				return 0;
 			}
