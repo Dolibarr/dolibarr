@@ -66,4 +66,6 @@ ALTER TABLE llx_element_element ADD COLUMN date_creation datetime;
 ALTER TABLE llx_element_element ADD COLUMN fk_user_modif integer;
 ALTER TABLE llx_element_element ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 
+ALTER TABLE llx_c_action_trigger ADD COLUMN enabled varchar(255);
+
 -- end of migration
