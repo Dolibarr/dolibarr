@@ -49,6 +49,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commontrigger.class.php';
 /**
  *	Parent class of all other business classes (invoices, contracts, proposals, orders, ...)
  *
+ * @property-deprecated int|string $cond_reglement  Use $cond_reglement_id methodology instead
+ *
  * @phan-forbid-undeclared-magic-properties
  */
 abstract class CommonObject
@@ -560,15 +562,14 @@ abstract class CommonObject
 	public $transport_mode_id;
 
 	/**
-	 * @var int|string 		Payment terms ID
-	 * @deprecated  Use $cond_reglement_id instead - Kept for compatibility
+	 * var int|string 		Payment terms ID
+	 * @deprecated  Use $cond_reglement_id instead - Kept for compatibility (was sometimes _label)
 	 * @see $cond_reglement_id
 	 *
 	 * Note: cond_reglement can not be aliased to cond_reglement!!!
-	 */
-	private $cond_reglement;  // Private to call DolDeprecationHandler
-	/**
-	 * @var int|string Internal to detect deprecated access
+	 * private $cond_reglement;  // Not set (and not private) to call DolDeprecationHandler
+	 *
+	 * @var int|string Internal to detect deprecated access, renamed to depre_cond_reglement
 	 */
 	protected $depr_cond_reglement;  // Internal value for deprecation
 
