@@ -98,4 +98,9 @@ phpstan_custom.neon
 
 # Superpowers subagent-driven-development scratch workspace
 /.superpowers
-/docs
+
+# Agent workflow artifacts (specs/plans), not product documentation
+docs/superpowers/
+
+# Claude Code
+.claude

@@ -17,7 +17,7 @@
  * Copyright (C) 2019-2023  Thibault Foucart            <support@ptibogxiv.net>
  * Copyright (C) 2020       Open-Dsi         			<support@open-dsi.fr>
  * Copyright (C) 2021       Gauthier VERDOL         	<gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2022       Anthony Berton	         	<anthony.berton@bb2a.fr>
+ * Copyright (C) 2022-2026  Anthony Berton	         	<anthony.berton@bb2a.fr>
  * Copyright (C) 2022       Ferran Marcet           	<fmarcet@2byte.es>
  * Copyright (C) 2022-2026  Charlene Benke           	<charlene@patas-monkey.com>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
@@ -10226,6 +10226,10 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		//var_dump($onlykey);
 		$emailsendersignature = $user->signature; //  By default, we use the signature of current user. We must complete substitution with signature in c_email_senderprofile of array after calling getCommonSubstitutionArray()
 		$usersignature = $user->signature;
+		if (getDolGlobalString('MAIN_MAIL_DEFAULT_SIGNATURE_FOR_ALL_USERS') && !empty($user->employee)) {
+			$emailsendersignature = getDolGlobalString('MAIN_MAIL_DEFAULT_SIGNATURE_FOR_ALL_USERS');
+			$usersignature = getDolGlobalString('MAIN_MAIL_DEFAULT_SIGNATURE_FOR_ALL_USERS');
+		}
 		$substitutionarray = array_merge($substitutionarray, array(
 			'__SENDEREMAIL_SIGNATURE__' => (string) ((!getDolGlobalString('MAIN_MAIL_DO_NOT_USE_SIGN')) ? ($onlykey == 2 ? dol_trunc('SignatureFromTheSelectedSenderProfile', 30) : $emailsendersignature) : ''),
 			'__USER_SIGNATURE__' => (string) (($usersignature && !getDolGlobalString('MAIN_MAIL_DO_NOT_USE_SIGN')) ? ($onlykey == 2 ? dol_trunc(dol_string_nohtmltag($usersignature), 30) : $usersignature) : '')
@@ -11361,8 +11365,8 @@ function dolGetFirstLastname($firstname, $lastname, $nameorder = -1)
  *  Note: Calling dol_htmloutput_events is done into pages by standard llxFooter() function.
  *  Note: Prefer to use setEventMessages instead.
  *
- *	@param	string|string[] $mesgs			Message string or array
- *  @param  string          $style      	Which style to use ('mesgs' by default, 'warnings', 'errors')
+ *	@param	string|string[]	$mesgs			Message string or array
+ *  @param  ''|'mesgs'|'warnings'|'errors'   $style		Which style to use ('mesgs' by default, 'warnings', 'errors')
  *  @param	int				$noduplicate	1 means we do not add the message if already present in session stack
  *  @param	int				$attop			Add the message in the top of the stack (at bottom by default)
  *  @return	void
@@ -11408,7 +11412,7 @@ function setEventMessage($mesgs, $style = 'mesgs', $noduplicate = 0, $attop = 0)
  *
  *	@param	string|null		$mesg			Message string
  *	@param	string[]|null	$mesgs			Message array
- *  @param  string			$style     		Which style to use ('mesgs' by default, 'warnings', 'errors')
+ *  @param  ''|'mesgs'|'warnings'|'errors'   $style		Which style to use ('mesgs' by default, 'warnings', 'errors')',
  *  @param	string			$messagekey		A key to be used to allow the feature "Never show this message during this session again"
  *  @param	int				$noduplicate	1 means we do not add the message if already present in session stack
  *  @param	int				$attop			Add the message in the top of the stack (at bottom by default)

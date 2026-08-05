@@ -50,8 +50,20 @@ ALTER TABLE llx_societe_perentity ADD COLUMN cond_reglement tinyint DEFAULT NULL
 ALTER TABLE llx_societe_perentity ADD COLUMN mode_reglement_supplier tinyint DEFAULT NULL;
 ALTER TABLE llx_societe_perentity ADD COLUMN cond_reglement_supplier tinyint DEFAULT NULL;
 
+-- extrafields for links
+CREATE TABLE llx_links_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                             -- import key
+) ENGINE=innodb;
+ALTER TABLE llx_links_extrafields ADD UNIQUE INDEX uk_links_extrafields (fk_object);
 
-
-
+-- Add user/tms information to element_element
+ALTER TABLE llx_element_element ADD COLUMN fk_user_creat integer;
+ALTER TABLE llx_element_element ADD COLUMN date_creation datetime;
+ALTER TABLE llx_element_element ADD COLUMN fk_user_modif integer;
+ALTER TABLE llx_element_element ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 
 -- end of migration
