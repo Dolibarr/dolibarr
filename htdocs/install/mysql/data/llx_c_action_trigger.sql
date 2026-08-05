@@ -86,7 +86,11 @@ insert into llx_c_action_trigger (code,label,description,elementtype,rang) value
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('ORDER_SUPPLIER_SENTBYMAIL','Purchase order sent by mail','Executed when a supplier order is sent by mail','order_supplier',67);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('ORDER_SUPPLIER_CLASSIFY_BILLED','Purchase order set billed','Executed when a supplier order is set as billed','order_supplier',68);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('ORDER_SUPPLIER_DELETE','Purchase order deleted','Executed when a supplier order is deleted','order_supplier',69);
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('ECMFILES_CREATE','Supplier order document uploaded','Executed when a document is uploaded to a supplier order','order_supplier',70);
+
+
+-- For the moment we do not enable this as there is troubles in how we can manage all type of objects.
+--insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('ECMFILES_CREATE','Document uploaded','Executed when a document is uploaded','all',2500);
+
 
 --insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('BILL_SUPPLIER_CREATE','Supplier invoice created','Executed when a supplier invoice is created','order_supplier',80);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('BILL_SUPPLIER_VALIDATE','Supplier invoice validated','Executed when a supplier invoice is validated','invoice_supplier',81);
