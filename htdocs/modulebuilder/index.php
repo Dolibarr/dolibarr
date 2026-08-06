@@ -62,7 +62,7 @@ $action  = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $cancel  = GETPOST('cancel', 'alpha');
 
-$sortfield = GETPOST('sortfield', 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09');
 
 $module = (string) GETPOST('module', 'alpha');
@@ -1853,10 +1853,17 @@ if ($dirins && $action == 'addproperty' && empty($cancel) && !empty($module) && 
 
 
 		if (!$error && !GETPOST('regenerateclasssql') && !GETPOST('regeneratemissing')) {
+			// Preserve case for composite types such as 'integer:Societe:societe/class/societe.class.php:1:(...__SHARED_ENTITIES__...)'
+			// because the colon-separated parts include PHP class names (case-sensitive) and __XXX__ substitution
+			// tokens that are uppercase by convention. Only lowercase simple atomic types (#34602).
+			$proptype = GETPOST('proptype', 'alpha');
+			if (strpos($proptype, ':') === false && strpos($proptype, '_') === false) {
+				$proptype = strtolower($proptype);
+			}
 			$addfieldentry = array(
 				'name' => GETPOST('propname', 'aZ09'),
 				'label' => GETPOST('proplabel', 'alpha'),
-				'type' => strtolower(GETPOST('proptype', 'alpha')),
+				'type' => $proptype,
 				'arrayofkeyval' => GETPOST('proparrayofkeyval', 'nohtml'), 	// Example json string '{"0":"Draft","1":"Active","-1":"Cancel"}'
 				'visible' => GETPOST('propvisible', 'alphanohtml'),
 				'enabled' => GETPOST('propenabled', 'alphanohtml'),
@@ -2061,6 +2068,7 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname /* && $user->has
 			'myobject_agenda.php' => strtolower($objectname).'_agenda.php',
 			'myobject_list.php' => strtolower($objectname).'_list.php',
 			'admin/myobject_extrafields.php' => 'admin/'.strtolower($objectname).'_extrafields.php',
+			'ajax/myobject.lib.php' => 'ajax/'.strtolower($objectname).'.php',
 			'lib/mymodule_myobject.lib.php' => 'lib/'.strtolower($module).'_'.strtolower($objectname).'.lib.php',
 			'test/phpunit/MyObjectTest.php' => 'test/phpunit/'.strtolower($objectname).'Test.php',
 			'sql/llx_mymodule_myobject.sql' => 'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.sql',

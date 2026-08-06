@@ -235,6 +235,7 @@ if (empty($reshook)) {
 		}
 		$toselect = array();
 		$search_array_options = array();
+		$search_societe = '';
 		$search_date_start = '';
 		$search_date_end = '';
 		$search_dateread_start = '';
@@ -298,7 +299,9 @@ if (empty($reshook)) {
 			$result = $objecttmp->fetch($toselectid);
 			if ($result > 0) {
 				if ($objecttmp->status == Ticket::STATUS_CLOSED || $objecttmp->status == Ticket::STATUS_CANCELED) {
-					$result = $objecttmp->setStatut(Ticket::STATUS_ASSIGNED);
+					// Set status
+					$result = $objecttmp->setStatut(Ticket::STATUS_ASSIGNED, null, '', 'TICKET_MODIFY');
+
 					if ($result < 0) {
 						setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
 						$error++;
@@ -777,7 +780,7 @@ if ($projectid) {
 	print '<input type="hidden" name="projectid" value="'.$projectid.'" >';
 }
 
-$url = DOL_URL_ROOT.'/ticket/card.php?action=create'.($socid ? '&socid='.$socid : '').($projectid ? '&origin=projet_project&originid='.$projectid : '');
+$url = DOL_URL_ROOT.'/ticket/card.php?action=create&mode=init'.($socid ? '&socid='.$socid : '').($projectid ? '&origin=projet_project&originid='.$projectid : '');
 if (!empty($socid)) {
 	$url .= '&socid='.$socid;
 }
@@ -898,12 +901,13 @@ foreach ($object->fields as $key => $val) {
 			print '</td>';
 		} elseif ($key == 'fk_statut') {
 			$arrayofstatus = array();
-			$arrayofstatus['openall'] = '-- '.$langs->trans('OpenAll').' --';
+			$langs->load("ticket");
+			$arrayofstatus['openall'] = array('id' => 'openall', 'labelhtml' => '<b>-- '.$langs->trans('OpenAll').'</b>', 'label' => '-- '.$langs->trans('OpenAll'));
 			foreach ($object->labelStatusShort as $key2 => $val2) {
 				if ($key2 == Ticket::STATUS_CLOSED) {
-					$arrayofstatus['closeall'] = '-- '.$langs->trans('ClosedAll').' --';
+					$arrayofstatus['closeall'] = array('id' => 'closeall', 'labelhtml' => '<b>-- '.$langs->trans('ClosedAll').'</b>', 'label' => '-- '.$langs->trans('ClosedAll'));
 				}
-				$arrayofstatus[$key2] = $val2;
+				$arrayofstatus[$key2] = array('id' => $key2, 'labelhtml' => $val2, 'label' => $val2);
 			}
 			print '<td class="liste_titre center parentonrightofpage'.($cssforfield ? ' '.$cssforfield : '').'">';
 			//var_dump($arrayofstatus);

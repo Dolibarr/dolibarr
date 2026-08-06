@@ -334,6 +334,9 @@ input[type="text"]:not(.input-icon-security, .input-icon-user, .input-icon-passw
 input[type="password"]:not(.input-icon-security, .input-icon-user, .input-icon-password) {
 	height: 28px;
 }
+input.downloadexternallink {
+	padding-left: 3px;
+}
 .input-icon-user, .input-icon-password {
 	padding-right: 28px !important;
 }
@@ -461,9 +464,12 @@ input {
 	padding-left: 6px;
 }
 .refidno .button.smallpaddingimp {
-	padding: 3px !important;
+	padding: 4px !important;
 	padding-left: 6px !important;
 	padding-right: 6px !important;
+}
+.refid input[type="text"] {
+	height:22px;
 }
 
 select {
@@ -657,8 +663,11 @@ span.userimg.notfirst, div.userimg.notfirst {
 div.userimg.notfirst {
 	display: block-inline;
 }
+.cell2linesheight {
+	line-height: 1.4em;
+}
 .center.inline-block.dateheight {
-	line-height: 1.2em;
+	line-height: 1.1em;
 }
 .smallheight {
 	line-height: 1em;
@@ -809,11 +818,14 @@ input.pageplusone {
 .undertopmenu {
 	scroll-margin-top: 80px;
 }
+.banner-object-label {
+	opacity: 0.8;
+}
 
 select:invalid, select.--error {
 	color: gray;
 }
-input:disabled, textarea:disabled, select[disabled='disabled']
+input:disabled:not(.colorthumb), textarea:disabled, select[disabled='disabled']
 {
 	/* background: var(--inputbackgroundcolordisabled); */
 	/* color: var(--inputcolordisabled); */
@@ -874,12 +886,18 @@ input#onlinepaymenturl, input#directdownloadlink {
 
 
 .formconsumeproduce {
-	border-left: solid 5px #87cfd2;		/* like for div.info */
-	background: #eff8fc;				/* like for div.info */
+	border-left: solid 5px #666;
+	background: #efefef;
 	/* background: #f3f3f3; */
 
 	padding: 20px 0px 20px 0px;
 	border-radius: 8px;
+}
+.formborder {
+	border: solid 2px #444;
+	padding: 20px;
+	border-radius: 8px;
+	background-color: #fffff4;
 }
 
 div#moretabsList, div#moretabsListaction {
@@ -1006,7 +1024,7 @@ button:focus {
 
 th .button {
 	box-shadow: none !important;
-	border-radius:0px !important;
+	border-radius: 0px;
 }
 .maxwidthsearch {		/* Max width of column with the search picto */
 	width: 54px;
@@ -1328,6 +1346,11 @@ td.wordbreak img, td.wordbreakimp img {
 	overflow-y: auto;
 	word-break: break-word;
 }
+.overflowellipsis {
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
 div.urllink {
 	padding: 5px;
 	margin-top: 5px;
@@ -1342,6 +1365,9 @@ div.urllink {
 	justify-content: flex-start;
 	align-items: center;
 	height: 2em;
+}
+div.urllink.unsetheight {
+	height: unset;
 }
 div.urllink span.fa, div.urllink span.fas, div.urllink span.far {
 	width: 22px;
@@ -1362,7 +1388,7 @@ div.urllink input {
 }
 
 i.fa-mars::before, i.fa-venus::before, i.fa-genderless::before, i.fa-transgender::before  {
-	color: #888 !important;
+	/* color: #888 !important; */
 	opacity: 0.4;
 	padding-<?php echo $left; ?>: 3px;
 }
@@ -1886,7 +1912,16 @@ select.flat.selectlimit {
 	margin-top: 25px !important;
 }
 .navselectiondate {
-	width: 250px;
+	min-width: 250px;
+}
+
+.showonhover:hover *::before {
+	visibility: visible !important;
+	display: inline-block !important;
+}
+.showonhover:not(:hover) *::before {
+	visibility: hidden;
+	display: inline-block !important;
 }
 
 /* Styles for amount on card */
@@ -2605,6 +2640,7 @@ td.showDragHandle {
 	display: table-cell;
 <?php } ?>
 	border-<?php echo $right; ?>: 1px solid #ECECEC;
+	border-bottom: 1px solid #ECECEC;
 	box-shadow: 3px 0 6px -2px #eee;
 	background: var(--colorbackvmenu1);
 	transition: left 0.5s ease;
@@ -2989,8 +3025,9 @@ span.widthpictotitle.pictotitle {
 	/* padding-right: 0; */
 }
 img.pictofixedwidth {
-	width: 18px;	/* Do not use em unit here */
-	padding-right: 2px;
+	width: 16px;	/* Do not use em unit here */
+	padding-right: 6px;		/* width of img + padding-right must be equal to width of .pictofixedwidth */
+	margin-right: 4px;
 }
 
 .colorthumb {
@@ -3525,7 +3562,7 @@ form#login {
 	max-width: 560px;
 <?php
 if (getDolGlobalString('MAIN_LOGIN_BACKGROUND')) {
-	print '	background-color: rgba(255, 255, 255, 0.9);';
+	print '	background-color: rgba(255, 255, 255, 0.99);';
 } else {
 	print '	background-color: var(--colorbackbody);';
 }
@@ -3819,6 +3856,9 @@ img.userphotopublicvcard {
 }
 img.userphoto[alt="Gravatar avatar"], img.photouserphoto.dropdown-user-image[alt="Gravatar avatar"] {
 	background: #fff;
+}
+img.gravatar.photouserphoto {
+	filter: grayscale(50%);
 }
 form[name="addtime"] img.userphoto, form[name="addtime"] img.userphotosmall {
 	border: 1px solid #444;
@@ -4157,8 +4197,8 @@ div.fiche table:not(.table-fiche-title) tr.titre td {
 }
 div.fiche >.table-fiche-title tr.toptitle td.col-picto,
 div.fiche >.table-fiche-title tr.toptitle td.col-title,
-div.fiche >form >.table-fiche-title tr.toptitle td.col-picto,
-div.fiche >form >.table-fiche-title tr.toptitle td.col-title {
+div.fiche >form >.table-fiche-title:not(.nogreyscale) tr.toptitle td.col-picto,
+div.fiche >form >.table-fiche-title:not(.nogreyscale) tr.toptitle td.col-title {
 	filter: grayscale(90%);
 }
 
@@ -4211,7 +4251,7 @@ div.popuptab {
 /* ============================================================================== */
 
 div.tabsAction {
-	margin: 20px 0em 30px 0em;
+	margin: 20px 0em 40px 0em;
 	padding: 0em 0em;
 	text-align: right;
 }
@@ -4220,6 +4260,9 @@ div.tabsActionNoBottom {
 }
 div.tabsAction > a {
 	margin-bottom: 16px !important;
+}
+div.tabsAction .dropdown .textbutton {
+	text-align: <?php echo $left; ?>;
 }
 
 a.tabTitle {
@@ -4351,9 +4394,11 @@ tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 }
 
 .smallpaddingimp {
-	padding: 4px !important;
+	padding: 7px !important;
 	padding-left: 7px !important;
 	padding-right: 7px !important;
+	line-height: 1em !important;
+	border-radius: 3px !important;
 }
 input.button.smallpaddingimp, input.buttonreset.smallpaddingimp {
 	font-size: 0.8em;
@@ -4381,20 +4426,8 @@ input.buttonreset {
 	background-color: transparent;
 	cursor: pointer;
 }
-.nopaddingleft {
-	padding-<?php print $left; ?>: 0px;
-}
 div.tabs.nopaddingleft {
 	padding-<?php print $left; ?>: 0px;
-}
-.nopaddingright {
-	padding-<?php print $right; ?>: 0px;
-}
-.nopaddingtopimp {
-	padding-top: 0px !important;
-}
-.nopaddingbottomimp {
-	padding-bottom: 0px !important;
 }
 .notopnoleft {
 	border-collapse: collapse;
@@ -4667,6 +4700,9 @@ div.tabBar div.fichehalfright table.noborder:not(.margintable):not(.paymenttable
 	border-bottom: 1px solid var(--colortopbordertitle1);
 }
 */
+div.tabBar .lastrecordtable {
+	margin-bottom: 15px;
+}
 div.tabBar table:not(.nobottom).border>tbody>tr:last-of-type>td {
 	border-bottom-width: 1px;
 	border-bottom-color: var(--colortopbordertitle1);
@@ -4788,6 +4824,7 @@ table.listwithfilterbefore {
 .tagtd, .table-border-col, .table-key-border-col, .table-val-border-col { display: table-cell; }
 .confirmquestions .tagtr .tagtd:not(:first-child)  { padding-left: 10px; }
 .confirmquestions { margin-top: 5px; }
+.confirmquestions .tagtr .tagtd { height: 2em; vertical-align: middle; }
 
 /* Pagination */
 div.refidpadding  {
@@ -5350,6 +5387,8 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 
 	.clearbothonsmartphone {
 		clear: both;
+	}
+	.clearbothonsmartphone:not(.hideonsmartphone) {
 		display: block !important;
 	}
 
@@ -5764,6 +5803,15 @@ div.boximport {
 .product_line_stock_too_low { color: var(--productlinestocktoolow); }
 
 .fieldrequired { font-weight: bold; color: var(--fieldrequiredcolor) !important; }
+#tablesubscribe .fieldrequired {
+	font-weight: inherit !important;
+	color: inherit !important;
+}
+#tablesubscribe .fieldrequired:after {
+	content: " *";
+	color: #660000;
+	font-weight: bold;
+}
 
 td.widthpictotitle, .table-fiche-title img.widthpictotitle { width: 34px; text-align: <?php echo $left; ?>; }
 span.widthpictotitle { font-size: 1.5em; }
@@ -6737,8 +6785,14 @@ span.jPicker {
 	border-collapse: collapse;
 	border: none;
 }
+.jPicker tr.Hex td.Text input {
+	width: 60px !important;
+}
 .jPicker td.Text input {
-	width: 35px !important;
+	min-width: 40px;
+	padding: 8px;
+	border: 1px solid #bbb !important;
+	border-radius: 4px;
 }
 
 A.color, A.color:active, A.color:visited {
@@ -7850,6 +7904,8 @@ select.multiselectononeline {
 	box-shadow: none !important;
 	margin-top: 1px !important;
 	margin-bottom: 0 !important;
+	margin-<?php echo $left ?>: 0px !important;
+	margin-<?php echo $right ?>: 3px !important;
 }
 span.noborderoncategories a, li.noborderoncategories a {
 	line-height: normal;

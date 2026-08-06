@@ -197,4 +197,4 @@ FieldsEdit=Edición de campos
 FieldsInsert=Inserción de campos
 FieldsView=Vista de campos
 AIPromptExtrafield=Aviso de IA
-AIPromptExtrafieldDesc=Las constantes utilizadas en este campo serán reemplazadas con el valor correspondiente.
+AIPromptExtrafieldDesc=Introduzca aquí un prompt que devuelva un valor y solo el valor. Las variables de sustitución se reemplazan en el prompt antes de llamar a la API de IA.

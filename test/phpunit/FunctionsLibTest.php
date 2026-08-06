@@ -1453,6 +1453,84 @@ class FunctionsLibTest extends CommonClassTest
 	}
 
 	/**
+	 * testGetDefaultTvaForBuyerState
+	 *
+	 * Covers VATRULE 2: when the buyer department (state/province) has a VAT rule in the
+	 * dictionary, it becomes the default VAT rate. Also checks that only active rates of the
+	 * current entity are considered (an inactive rate must never be selected).
+	 *
+	 * @return	void
+	 */
+	public function testGetDefaultTvaForBuyerState()
+	{
+		global $conf,$user,$langs,$db;
+		$this->savconf = $conf;
+		$this->savuser = $user;
+		$this->savlangs = $langs;
+		$this->savdb = $db;
+
+		// Make sure the ecommerce directive left on by a previous test does not interfere with VATRULE 2
+		unset($conf->global->SERVICE_ARE_ECOMMERCE_200238EC);
+
+		// Seller subject to VAT in France
+		$companyfr = new Societe($db);
+		$companyfr->country_code = 'FR';
+		$companyfr->tva_assuj = 1;
+		$companyfr->tva_intra = 'FR9999';
+
+		// Find an existing department (state/province) to attach a VAT rule to, and the France country id
+		$stateid = 0;
+		$sql = "SELECT rowid FROM ".$db->prefix()."c_departements WHERE code_departement = '75'";
+		$resql = $db->query($sql);
+		if ($resql && $db->num_rows($resql)) {
+			$objdep = $db->fetch_object($resql);
+			$stateid = (int) $objdep->rowid;
+		}
+		if (empty($stateid)) {
+			$this->markTestSkipped('No department found in c_departements to run the VATRULE 2 test.');
+			return;
+		}
+
+		$frpaysid = 0;
+		$sql = "SELECT rowid FROM ".$db->prefix()."c_country WHERE code = 'FR'";
+		$resql = $db->query($sql);
+		if ($resql && $db->num_rows($resql)) {
+			$objpays = $db->fetch_object($resql);
+			$frpaysid = (int) $objpays->rowid;
+		}
+
+		// Insert two temporary VAT rules attached to that department:
+		//  - an ACTIVE one at 12 that must be selected
+		//  - an INACTIVE one at 25 (higher, so it would win the taux DESC sort) that must be ignored
+		$db->query("DELETE FROM ".$db->prefix()."c_tva WHERE code IN ('TESTVATACT', 'TESTVATINACT')");
+		$db->query("INSERT INTO ".$db->prefix()."c_tva (entity, fk_pays, fk_department_buyer, code, type_vat, taux, use_default, recuperableonly, active) VALUES (1, ".$frpaysid.", ".$stateid.", 'TESTVATACT', 0, 12, 0, 0, 1)");
+		$db->query("INSERT INTO ".$db->prefix()."c_tva (entity, fk_pays, fk_department_buyer, code, type_vat, taux, use_default, recuperableonly, active) VALUES (1, ".$frpaysid.", ".$stateid.", 'TESTVATINACT', 0, 25, 0, 0, 0)");
+
+		// Buyer located in that department
+		$buyer = new Societe($db);
+		$buyer->country_code = 'FR';
+		$buyer->tva_assuj = 1;
+		$buyer->state_id = $stateid;
+
+		// Case 1: an active department rate exists -> VATRULE 2 returns it, ignoring the inactive (higher) one
+		$vatactive = get_default_tva($companyfr, $buyer, 0);
+
+		// Case 2: no active department rate remains -> VATRULE 2 must not fire on the inactive rows
+		$db->query("UPDATE ".$db->prefix()."c_tva SET active = 0 WHERE code = 'TESTVATACT'");
+		$vatinactive = get_default_tva($companyfr, $buyer, 0);
+
+		// Cleanup fixtures before asserting so a failed assertion never leaves test data behind
+		$db->query("DELETE FROM ".$db->prefix()."c_tva WHERE code IN ('TESTVATACT', 'TESTVATINACT')");
+
+		// The active department rate is selected...
+		$this->assertStringContainsString('TESTVATACT', $vatactive, 'VATRULE 2 must select the active department VAT rate');
+		// ...and the inactive one is never selected (this is the fix)
+		$this->assertStringNotContainsString('TESTVATINACT', $vatactive, 'An inactive department VAT rate must not be selected by VATRULE 2');
+		// When no active department rate remains, VATRULE 2 does not select the (now inactive) rate either
+		$this->assertStringNotContainsString('TESTVATACT', $vatinactive, 'An inactive department VAT rate must not be selected by VATRULE 2');
+	}
+
+	/**
 	 * testGetDefaultLocalTax
 	 *
 	 * @return	void

@@ -9,6 +9,7 @@
  * Copyright (C) 2017       Open-DSI                <support@open-dsi.fr>
  * Copyright (C) 2021-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Anthony Berton		<anthony.berton@bb2a.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -460,6 +461,9 @@ if ($mode == 'show_day' || $mode == 'show_week' || $mode == 'show_month') {
 if ($search_categ_cus != 0) {
 	$param .= '&search_categ_cus='.urlencode((string) ($search_categ_cus));
 }
+if ($check_holiday) {
+	$param .= '&check_holiday=1';
+}
 
 // Show navigation bar
 $nav = '';
@@ -629,7 +633,7 @@ if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 	$s .= '<script type="text/javascript">'."\n";
 	$s .= 'jQuery(document).ready(function () {'."\n";
 	$s .= 'jQuery(".check_birthday").click(function() { console.log("Toggle class .family_birthday"); jQuery(".family_birthday").toggle(); });'."\n";
-	$s .= 'jQuery(".check_holiday").click(function() { console.log("Toggle class .family_holiday"); jQuery(".family_holiday").toggle(); });'."\n";
+	$s .= 'jQuery(".check_holiday").click(function() { console.log("Toggle class .family_holiday"); jQuery(".family_holiday").toggle(); jQuery(this).closest("form").submit(); });'."\n";
 	if (isModEnabled("bookcal") && !empty($bookcalcalendars["calendars"])) {
 		foreach ($bookcalcalendars["calendars"] as $key => $value) {
 			$s .= 'jQuery(".check_bookcal_calendar_'.$value['id'].'").click(function() { console.log("Toggle Bookcal Calendar '.$value['id'].'"); jQuery(".family_bookcal_calendar_'.$value['id'].'").toggle(); });'."\n";
@@ -857,7 +861,7 @@ if ($search_sale && $search_sale != '-1') {
 	if ($search_sale == -2) {
 		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = a.fk_soc)";
 	} elseif ($search_sale > 0) {
-		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = a.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+		$sql .= " AND (a.fk_soc IS NULL OR EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = a.fk_soc AND sc.fk_user = ".((int) $search_sale)."))";
 	}
 }
 // Search on socid
@@ -1173,8 +1177,13 @@ if ($user->hasRight("holiday", "read")) {
 		$sql .= " AND x.date_debut <= '".$db->idate(dol_get_last_day($year, $month))."'";
 		$sql .= " AND x.date_fin >= '".$db->idate(dol_get_first_day($year, $month))."'";
 	}
-	if (!$user->hasRight('holiday', 'readall')) {
+	if (!$user->hasRight('holiday', 'readall') || $filtert == '-3') {
+		// Restrict on users of current user and his children
 		$sql .= " AND x.fk_user IN(".$db->sanitize(implode(", ", $user->getAllChildIds(1))).") ";
+	}
+	if ($filtert > 0) {
+		// Restrict on user
+		$sql .= " AND x.fk_user = ".((int) $filtert);
 	}
 
 	$resql = $db->query($sql);
@@ -1941,8 +1950,8 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 	}
 
 	$dateint = sprintf("%04d", $year).sprintf("%02d", $month).sprintf("%02d", $day);
-
-	//print 'show_day_events day='.$day.' month='.$month.' year='.$year.' dateint='.$dateint;
+	$datenowint = dol_print_date(dol_now(), "%Y%m%d");
+	//print 'show_day_events day='.$day.' month='.$month.' year='.$year.' dateint='.$dateint.' datenowint='.$datenowint;
 
 	print "\n";
 
@@ -1961,11 +1970,13 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 	if ($nonew <= 0) {
 		print '<div class="tagtr cursorpointer" onclick="window.location=\''.$urltocreate.'\';"><div class="nowrap tagtd"><div class="left inline-block">';
 		print '<a class="dayevent-aday" style="color: #666" href="'.$urltoshow.'">';
+		print ($datenowint == $dateint ? '<span class="badgeneutral">' : '');
 		if ($showinfo) {
 			print dol_print_date($curtime, 'daytextshort');
 		} else {
 			print dol_print_date($curtime, '%d');
 		}
+		print ($datenowint == $dateint ? '</span>' : '');
 		print '</a>';
 		print '</div><div class="nowrap floatright inline-block marginrightonly">';
 		if ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create')) {

@@ -207,6 +207,7 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 
+
 $sectionwithinvoicelink = '';
 $CUSTOMER_DISPLAY_line1 = '';
 $CUSTOMER_DISPLAY_line2 = '';
@@ -214,6 +215,16 @@ $headerorder = '';
 $footerorder = '';
 $printer = null;
 $idoflineadded = 0;
+
+// Enforce the "edit lines" permission on every action that modifies an existing line
+// (delete, quantity, price, discount). Adding a line, a free zone or a note is gated by
+// the "run" permission elsewhere and must stay available to a plain cashier (#38949).
+if (in_array($action, array('deleteline', 'updateqty', 'updateprice', 'updatereduction', 'update_reduction_global')) && !$user->hasRight('takepos', 'editlines')) {
+	dol_htmloutput_errors($langs->trans("NotEnoughPermissions", "TakePos"), array(), 1);
+	$action = '';
+}
+
+
 if (empty($reshook)) {
 	// Action to record a payment on a TakePOS invoice
 	if ($action == 'valid' && $user->hasRight('facture', 'creer')) {
@@ -322,7 +333,8 @@ if (empty($reshook)) {
 		// Add the payment
 		if (!$error && $res >= 0) {
 			$remaintopay = $invoice->getRemainToPay();
-			if ($remaintopay > 0) {
+			// Credit notes have negative remaintopay; regular invoices have positive
+			if (($remaintopay > 0 && $invoice->type != Facture::TYPE_CREDIT_NOTE) || ($remaintopay < 0 && $invoice->type == Facture::TYPE_CREDIT_NOTE)) {
 				$payment = new Paiement($db);
 
 				$payment->datepaye = $now;
@@ -341,7 +353,7 @@ if (empty($reshook)) {
 
 				$payment->paiementid = $paiementid;
 				$payment->paiementcode = $paycode;
-				$payment->num_payment = $invoice->ref;
+				$payment->num_payment = '';
 
 				if ($pay != "delayed") {
 					$res = $payment->create($user);		// This record payment and regenerate the PDF
@@ -970,7 +982,7 @@ if (empty($reshook)) {
 		$invoice->fetch($placeid);
 	}
 
-	if ($action == "deleteline" && ($user->hasRight('takepos', 'run') || defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE'))) {
+	if ($action == "deleteline" && ($user->hasRight('takepos', 'editlines') || defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE'))) {
 		/*
 		$permissiontoupdateline = ($user->hasRight('takepos', 'editlines') && ($user->hasRight('takepos', 'editorderedlines') || $line->special_code != "4"));
 		if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
@@ -994,14 +1006,22 @@ if (empty($reshook)) {
 		}
 
 		if (count($invoice->lines) == 0) {
-			$invoice->delete($user);
+			// Keep an empty draft invoice alive when a non-default customer was
+			// already attached so deleting the last line does not silently lose
+			// the customer that was just selected (#38219). Only drop the invoice
+			// when it is still on the default cashdesk thirdparty (or none).
+			$defaultsocid = (int) getDolGlobalString('CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"]);
+			$invoicesocid = (int) $invoice->socid;
+			if ($invoicesocid === 0 || $invoicesocid === $defaultsocid) {
+				$invoice->delete($user);
 
-			if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
-				header("Location: ".DOL_URL_ROOT."/takepos/public/auto_order.php");
-			} else {
-				header("Location: ".DOL_URL_ROOT."/takepos/invoice.php");
+				if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
+					header("Location: ".DOL_URL_ROOT."/takepos/public/auto_order.php");
+				} else {
+					header("Location: ".DOL_URL_ROOT."/takepos/invoice.php");
+				}
+				exit;
 			}
-			exit;
 		}
 	}
 
@@ -2008,6 +2028,9 @@ if ($placeid > 0) {
 		$htmlsupplements = array();
 		foreach ($tmplines as $line) {
 			if ($line->fk_parent_line != false) {
+				if (!isset($htmlsupplements[$line->fk_parent_line])) {
+					$htmlsupplements[$line->fk_parent_line] = '';
+				}
 				$htmlsupplements[$line->fk_parent_line] .= '<tr class="drag drop oddeven posinvoiceline';
 				if ($line->special_code == "4") {
 					$htmlsupplements[$line->fk_parent_line] .= ' order';
@@ -2018,7 +2041,7 @@ if ($placeid > 0) {
 				}
 				$htmlsupplements[$line->fk_parent_line] .= '>';
 				$htmlsupplements[$line->fk_parent_line] .= '<td class="left">';
-				$htmlsupplements[$line->fk_parent_line] .= img_picto('', 'rightarrow');
+				$htmlsupplements[$line->fk_parent_line] .= img_picto('', 'rightarrow.png');
 				if ($line->product_label) {
 					$htmlsupplements[$line->fk_parent_line] .= $line->product_label;
 				}

@@ -81,7 +81,7 @@ class ViewImageController extends Controller
 	{
 		global $conf, $hookmanager, $dolibarr_nocache, $user;
 
-		define('MAIN_SECURITY_FORCECSP', "default-src: 'none'");
+		define('MAIN_SECURITY_FORCECSP', "default-src 'none'");
 
 		if (!defined('NOREQUIRESOC')) {
 			define('NOREQUIRESOC', '1');

@@ -1212,9 +1212,15 @@ class DoliDBPgsql extends DoliDB
 		// cles recherchees dans le tableau des descriptions (field_desc) : type,value,attribute,null,default,extra
 		// ex. : $field_desc = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
 		$sql = "ALTER TABLE ".$this->sanitize($table)." ADD ".$this->sanitize($field_name)." ";
-		$sql .= $this->sanitize($field_desc['type']);
+
+		if ($field_desc['type'] !== 'datetimegmt') {
+			$sql .= $this->sanitize($field_desc['type']);
+		} else {
+			$sql .= 'datetime';
+		}
+
 		if (isset($field_desc['value']) && preg_match("/^[^\s]/i", $field_desc['value'])) {
-			if (!in_array($field_desc['type'], array('tinyint', 'smallint', 'int', 'date', 'datetime')) && $field_desc['value']) {
+			if (!in_array($field_desc['type'], array('tinyint', 'smallint', 'int', 'date', 'datetime', 'datetimegmt')) && $field_desc['value']) {
 				$sql .= "(".$this->sanitize($field_desc['value']).")";
 			}
 		}
@@ -1262,9 +1268,16 @@ class DoliDBPgsql extends DoliDB
 	{
 		// phpcs:enable
 		$sql = "ALTER TABLE ".$this->sanitize($table);
-		$sql .= " ALTER COLUMN ".$this->sanitize($field_name)." TYPE ".$this->sanitize($field_desc['type']);
+		$sql .= " ALTER COLUMN ".$this->sanitize($field_name)." TYPE ";
+
+		if ($field_desc['type'] !== 'datetimegmt') {
+			$sql .= $this->sanitize($field_desc['type']);
+		} else {
+			$sql .= 'datetime';
+		}
+
 		if (isset($field_desc['value']) && preg_match("/^[^\s]/i", $field_desc['value'])) {
-			if (!in_array($field_desc['type'], array('smallint', 'int', 'date', 'datetime')) && $field_desc['value']) {
+			if (!in_array($field_desc['type'], array('smallint', 'int', 'date', 'datetime', 'datetimegmt')) && $field_desc['value']) {
 				$sql .= "(".$this->sanitize($field_desc['value']).")";
 			}
 		}

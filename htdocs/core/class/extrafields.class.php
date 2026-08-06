@@ -1525,15 +1525,19 @@ class ExtraFields
 					$parentField = '';
 					$keyList = (empty($InfoFieldList[2]) ? 'rowid' : $InfoFieldList[2].' as rowid');
 
-					if (count($InfoFieldList) > 3 && !empty($InfoFieldList[3])) {
-						list($parentName, $parentField) = explode('|', $InfoFieldList[3]);
-						$keyList .= ', '.$parentField;
-					}
 					if (count($InfoFieldList) > 4 && !empty($InfoFieldList[4])) {
 						if (strpos($InfoFieldList[4], 'extra.') !== false) {
 							$keyList = 'main.'.$InfoFieldList[2].' as rowid';
 						} else {
 							$keyList = $InfoFieldList[2].' as rowid';
+						}
+					}
+					if (count($InfoFieldList) > 3 && !empty($InfoFieldList[3])) {
+						list($parentName, $parentField) = explode('|', $InfoFieldList[3]);
+						if (!empty($InfoFieldList[4]) && strpos($InfoFieldList[4], 'extra.') !== false) {
+							$keyList .= ', main.'.$parentField;
+						} else {
+							$keyList .= ', '.$parentField;
 						}
 					}
 
@@ -1662,6 +1666,7 @@ class ExtraFields
 								if (is_array($fields_label) && count($fields_label) > 1) {
 									$notrans = true;
 									foreach ($fields_label as $field_toshow) {
+										$field_toshow = preg_replace('/^.*\./', '', $field_toshow);
 										$labeltoshow .= $obj->$field_toshow.' ';
 									}
 								} else {
@@ -1751,16 +1756,25 @@ class ExtraFields
 				$tmpparamoptions = array_keys($param['options']);
 				$paramoptions = preg_split('/[\r\n]+/', $tmpparamoptions[0]);
 
-				$InfoFieldList = explode(":", $paramoptions[0], 5);
+				$InfoFieldList = explode(":", $paramoptions[0], 5);		// We will extract field at position 6,7... later from the 5th one.
 				// 0 : tableName
 				// 1 : label field name
-				// 2 : key fields name (if different of rowid)
-				// optional parameters...
+				// 2 : rowid field name (if different of rowid)
+				// Optional parameters...
 				// 3 : key field parent (for dependent lists). How this is used ?
 				// 4 : where clause filter on column or table extrafield, syntax field='value' or extra.field=value. Or use USF on the second line.
-				// 5 : string category type. This replace the filter.
-				// 6 : ids categories list separated by comma for category root. This replace the filter.
+
+				// To add a filter on category (not possible with USF restricted to table)
+				// 5 : string category type ('product', 'customer', ...). This is added to the filter.
+				// 6 : list of parent categories ids. This replace the filter.
 				// 7 : sort field (not used here but used into format for commobject)
+
+				// For backward compatibility when tableName = 'category', so when we want a list of categories
+				// 5 : string category type ('product', 'customer', ...). This replace the filter.
+				// 6 : list of parent categories ids. This replace the filter.
+				// 7 : sort field (not used here but used into format for commobject)
+
+				// Example with extrafield value = "societe:nom:rowid" or "categorie:label:rowid:::product"
 
 				// If there is a filter, we extract it by taking all content inside parenthesis.
 				if (! empty($InfoFieldList[4])) {
@@ -1783,9 +1797,9 @@ class ExtraFields
 						$InfoFieldList = array_merge($InfoFieldList, explode(':', $tmpafter));
 					}
 
-					// Fix better compatibility with some old extrafield syntax filter "(field=123)"
+					// Fix better compatibility with some old extrafield syntax filter "(field_name=123)"
 					$reg = array();
-					if (preg_match('/^\(?([a-z0-9]+)([=<>]+)(\d+)\)?$/i', $InfoFieldList[4], $reg)) {
+					if (preg_match('/^\(?([a-z0-9_]+)([=<>]+)(\d+)\)?$/i', $InfoFieldList[4], $reg)) {
 						$InfoFieldList[4] = '('.$reg[1].':'.$reg[2].':'.$reg[3].')';
 					}
 
@@ -1794,14 +1808,11 @@ class ExtraFields
 
 				//$Usf = empty($paramoptions[1]) ? '' :$paramoptions[1];
 
+
 				$parentName = '';
 				$parentField = '';
 				$keyList = (empty($InfoFieldList[2]) ? 'rowid' : $InfoFieldList[2].' as rowid');
 
-				if (count($InfoFieldList) > 3 && !empty($InfoFieldList[3])) {
-					list($parentName, $parentField) = explode('|', $InfoFieldList[3]);
-					$keyList .= ', '.$parentField;
-				}
 				if (count($InfoFieldList) > 4 && !empty($InfoFieldList[4])) {
 					if (strpos($InfoFieldList[4], 'extra.') !== false) {
 						$keyList = 'main.'.$InfoFieldList[2].' as rowid';
@@ -1809,13 +1820,26 @@ class ExtraFields
 						$keyList = $InfoFieldList[2].' as rowid';
 					}
 				}
-
-				$filter_categorie = false;
-				if (count($InfoFieldList) > 5) {
-					if ($InfoFieldList[0] == 'categorie') {
-						$filter_categorie = true;
+				if (count($InfoFieldList) > 3 && !empty($InfoFieldList[3])) {
+					list($parentName, $parentField) = explode('|', $InfoFieldList[3]);
+					if (!empty($InfoFieldList[4]) && strpos($InfoFieldList[4], 'extra.') !== false) {
+						$keyList .= ', main.'.$parentField;
+					} else {
+						$keyList .= ', '.$parentField;
 					}
 				}
+
+				$InfoFieldList[5] = (string) ($InfoFieldList[5]??'');
+
+				$filter_categorie = false;
+				if (count($InfoFieldList) > 5 && ($InfoFieldList[5] != '')) {
+					if ($InfoFieldList[0] == 'categorie') {
+						$filter_categorie = true;	// The combo list is a list of categories
+					} else {
+						$filter_categorie = false;	// We have a filter on category for another table
+					}
+				}
+
 
 				if (!$filter_categorie) {
 					$fields_label = explode('|', $InfoFieldList[1]);
@@ -1868,6 +1892,20 @@ class ExtraFields
 						$sqlwhere .= ' WHERE 1=1';
 					}
 
+
+					if ($InfoFieldList[5] != '') {
+						// We have a filter on category for another table
+						require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+						$tmpcategory = new Categorie($this->db);
+						$tablesuffixcategory = empty($tmpcategory->MAP_CAT_TABLE[$InfoFieldList[5]]) ? $InfoFieldList[5] : $tmpcategory->MAP_CAT_TABLE[$InfoFieldList[5]];
+						$fksuffixcategory = empty($tmpcategory->MAP_CAT_FK[$InfoFieldList[5]]) ? $InfoFieldList[5] : $tmpcategory->MAP_CAT_FK[$InfoFieldList[5]];
+
+						$sqlwhere .= ' AND EXISTS (SELECT fk_categorie as categid FROM '.MAIN_DB_PREFIX.'categorie_'.$this->db->sanitize($tablesuffixcategory);
+						$sqlwhere .= ' WHERE fk_categorie IN ('.$this->db->sanitize($InfoFieldList[6]).')';
+						$sqlwhere .= ' AND fk_'.$this->db->sanitize($fksuffixcategory).' = rowid)';
+						//var_dump($sqlwhere);exit;
+					}
+
 					// Add Usf filter on second line
 					/*
 					 if ($Usf) {
@@ -1892,6 +1930,7 @@ class ExtraFields
 					$sql .= ' ORDER BY '.implode(', ', $fields_label);
 
 					dol_syslog(get_class($this).'::showInputField type=chkbxlst', LOG_DEBUG);
+
 					$resql = $this->db->query($sql);
 					if ($resql) {
 						$num = $this->db->num_rows($resql);
@@ -2087,9 +2126,10 @@ class ExtraFields
 	 * @param	string				$extrafieldsobjectkey	Required (for example $object->table_element).
 	 * @param 	Translate|null 		$outputlangs 			Output
 	 * @param	CommonObject|null	$object					The parent object of field to show
+	 * @param	string				$mode					'' or 'list'
 	 * @return	string										Formatted value
 	 */
-	public function showOutputField($key, $value, $moreparam = '', $extrafieldsobjectkey = '', $outputlangs = null, $object = null)
+	public function showOutputField($key, $value, $moreparam = '', $extrafieldsobjectkey = '', $outputlangs = null, $object = null, $mode = '')
 	{
 		global $conf, $langs, $hookmanager;
 
@@ -2145,7 +2185,8 @@ class ExtraFields
 			return ''; // This is a protection. If field is hidden, we should just not call this method.
 		}
 
-		//if ($computed) $value =		// $value is already calculated into $value before calling this method
+		//print $key.' '.$type.'<br>';
+
 		$showsize = 0;
 		if ($type == 'date') {
 			$showsize = 10;
@@ -2254,16 +2295,16 @@ class ExtraFields
 				$sql .= ' as main';
 			}
 			if ($selectkey == 'rowid' && empty($value)) {
-				$sql .= " WHERE ".$selectkey." = 0";
+				$sql .= " WHERE ".$this->db->sanitize($selectkey)." = 0";
 			} elseif ($selectkey == 'rowid') {
-				$sql .= " WHERE ".$selectkey." = ".((int) $value);
+				$sql .= " WHERE ".$this->db->sanitize($selectkey)." = ".((int) $value);
 			} else {
-				$sql .= " WHERE ".$selectkey." = '".$this->db->escape($value)."'";
+				$sql .= " WHERE ".$this->db->sanitize($selectkey)." = '".$this->db->escape($value)."'";
 			}
-
 			//$sql.= ' AND entity = '.$conf->entity;
 
 			dol_syslog(get_class($this).':showOutputField:$type=sellist', LOG_DEBUG);
+
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				if (!$filter_categorie) {
@@ -2277,6 +2318,7 @@ class ExtraFields
 					if (is_array($fields_label) && count($fields_label) > 1) {
 						foreach ($fields_label as $field_toshow) {
 							$translabel = '';
+							$field_toshow = preg_replace('/^.*\./', '', $field_toshow);
 							if (!empty($obj->$field_toshow)) {
 								$translabel = $outputlangs->trans($obj->$field_toshow);
 
@@ -2310,7 +2352,7 @@ class ExtraFields
 						if ($result > 0) {
 							$ways = $c->print_all_ways(); // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formatted text
 							foreach ($ways as $way) {
-								$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories"' . ($c->color ? ' style="background: #' . $c->color . ';"' : ' style="background: #bbb"') . '>' . img_object('', 'category') . ' ' . $way . '</li>';
+								$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories'.($mode ? ' '.$mode : '').'"' . ($c->color ? ' style="background: #' . $c->color . ';"' : ' style="background: #bbb"') . '>' . img_object('', 'category') . ' ' . $way . '</li>';
 							}
 						}
 					}
@@ -2337,108 +2379,137 @@ class ExtraFields
 			if (is_array($value_arr)) {
 				foreach ($value_arr as $keyval => $valueval) {
 					if (!empty($valueval)) {
-						$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #bbb">'.$param['options'][$valueval].'</li>';
+						$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories'.($mode ? ' '.$mode : '').'" style="background: #bbb">'.$param['options'][$valueval].'</li>';
 					}
 				}
 			}
 			$value = '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">'.implode(' ', $toprint).'</ul></div>';
-		} elseif ($type == 'chkbxlst') {
-			$value_arr = explode(',', $value);
+		} elseif ($type == 'chkbxlst') {				// Example with extrafield value = "societe:nom:rowid" or "categorie:label:rowid:::product"
+			// Only if something to display (perf)
+			if (!is_null($value) && $value != '') {
+				$value_arr = explode(',', $value);
 
-			$param_list = array_keys($param['options']);
-			$InfoFieldList = explode(":", $param_list[0]);
+				$param_list = array_keys($param['options']);
+				$InfoFieldList = explode(":", $param_list[0]);
 
-			$selectkey = "rowid";
-			$keyList = 'rowid';
+				$selectkey = "rowid";
+				$keyList = 'rowid';
 
-			if (count($InfoFieldList) >= 3) {
-				$selectkey = $InfoFieldList[2];
-				$keyList = $InfoFieldList[2].' as rowid';
-			}
-
-			$fields_label = explode('|', $InfoFieldList[1]);
-			if (is_array($fields_label)) {
-				$keyList .= ', ';
-				$keyList .= implode(', ', $fields_label);
-			}
-
-			$filter_categorie = false;
-			if (count($InfoFieldList) > 5) {
-				if ($InfoFieldList[0] == 'categorie') {
-					$filter_categorie = true;
+				if (count($InfoFieldList) >= 3) {
+					$selectkey = $InfoFieldList[2];
+					$keyList = $InfoFieldList[2].' as rowid';
 				}
-			}
 
-			$sql = "SELECT ".$keyList;
-			$sql .= " FROM ".$this->db->prefix().$InfoFieldList[0];
-			if (strpos($InfoFieldList[4], 'extra.') !== false) {
-				$sql .= ' as main';
-			}
-			// $sql.= " WHERE ".$selectkey."='".$this->db->escape($value)."'";
-			// $sql.= ' AND entity = '.$conf->entity;
+				$fields_label = explode('|', $InfoFieldList[1]);
+				if (is_array($fields_label)) {
+					$keyList .= ', ';
+					$keyList .= implode(', ', $fields_label);
+				}
 
-			dol_syslog(get_class($this).':showOutputField:$type=chkbxlst', LOG_DEBUG);
-			$resql = $this->db->query($sql);
-			if ($resql) {
-				if (!$filter_categorie) {
-					$value = ''; // value was used, so now we reset it to use it to build final output
-					$toprint = array();
-					while ($obj = $this->db->fetch_object($resql)) {
-						// Several field into label (eq table:code|label:rowid)
-						$fields_label = explode('|', $InfoFieldList[1]);
-						if (is_array($value_arr) && in_array($obj->rowid, $value_arr)) {
-							if (is_array($fields_label) && count($fields_label) > 1) {
-								$label = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #bbb">';
-								foreach ($fields_label as $field_toshow) {
-									$translabel = '';
-									if (!empty($obj->$field_toshow)) {
-										$translabel = $outputlangs->trans($obj->$field_toshow);
-									}
-									if ($translabel != $field_toshow) {
-										$label .= ' '.dol_trunc($translabel, 18);
+				$filter_categorie = false;
+				if (count($InfoFieldList) > 5 && ((string) $InfoFieldList[5] != '')) {
+					if ($InfoFieldList[0] == 'categorie') {
+						$filter_categorie = true;
+					}
+				}
+
+				$sql = "SELECT ".$keyList;
+				$sql .= " FROM ".$this->db->prefix().$InfoFieldList[0];
+				if (strpos($InfoFieldList[4], 'extra.') !== false) {
+					$sql .= ' as main';
+				}
+				$sql .= " WHERE ".$this->db->sanitize($selectkey)." IN (".$this->db->sanitize(implode(',', $value_arr)).")";
+
+				dol_syslog(get_class($this).':showOutputField type=chkbxlst', LOG_DEBUG);
+
+				$resql = $this->db->query($sql);
+
+				if ($resql) {
+					if (!$filter_categorie) {
+						$value = ''; // value was used, so now we reset it to use it to build final output
+						$toprint = array();
+						$numOfElem = $this->db->num_rows($resql);
+						while ($obj = $this->db->fetch_object($resql)) {
+							// Several field into label (eq table:code|label:rowid)
+							$fields_label = explode('|', $InfoFieldList[1]);
+							$txtcolor = '#bbb';
+							//var_dump($key, $type, $InfoFieldList, $fields_label, $object);
+							if (count($fields_label) > 0) {
+								if ($InfoFieldList[0] == 'societe' && $InfoFieldList[1] == 'nom' && $InfoFieldList[2] == 'rowid') {
+									// Special cas for thirdparties
+									require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+									$tmpthirdpartystatic = new Societe($this->db);
+									$tmpthirdpartystatic->id = $obj->rowid;
+									$tmpthirdpartystatic->name = $obj->nom;
+									if ($numOfElem >= 3) {
+										$tmpthirdpartystatic->name = $obj->nom;
+										$label = $tmpthirdpartystatic->getNomUrl(2);
+									} elseif ($numOfElem >= 2) {
+										$tmpthirdpartystatic->name = dol_trunc($obj->nom, 5);
+										$label = $tmpthirdpartystatic->getNomUrl(1);
 									} else {
-										$label .= ' '.$obj->$field_toshow;
+										$tmpthirdpartystatic->name = $obj->nom;
+										$label = $tmpthirdpartystatic->getNomUrl(1);
 									}
-								}
-								$label .= '</li>';
-								$toprint[] = $label;
-							} else {
-								$translabel = '';
-								if (!empty($obj->{$InfoFieldList[1]})) {
-									$translabel = $outputlangs->trans($obj->{$InfoFieldList[1]});
-								}
-								if ($translabel != $obj->{$InfoFieldList[1]}) {
-									$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #bbb">'.dol_trunc($translabel, 18).'</li>';
 								} else {
-									$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #bbb">'.$obj->{$InfoFieldList[1]}.'</li>';
+									$label = '<li class="select2-search-choice-dolibarr noborderoncategories'.($mode ? ' '.$mode : '').'" style="background: '.$txtcolor.'">';
+									foreach ($fields_label as $field_toshow) {
+										$translabel = '';
+										if (!empty($obj->$field_toshow)) {
+											$translabel = $outputlangs->trans($obj->$field_toshow);
+										}
+										if ($translabel != $field_toshow) {
+											$label .= ' '.dol_trunc($translabel, 18);
+										} else {
+											$label .= ' '.$obj->$field_toshow;
+										}
+									}
+									$label .= '</li>';
 								}
+								$toprint[] = $label;
 							}
 						}
-					}
-				} else {
-					require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+					} else {
+						require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
-					$toprint = array();
-					while ($obj = $this->db->fetch_object($resql)) {
-						if (is_array($value_arr) && in_array($obj->rowid, $value_arr)) {
+						$toprint = array();
+						$numElem = $this->db->num_rows($resql);
+						while ($obj = $this->db->fetch_object($resql)) {
 							$c = new Categorie($this->db);
 							$c->fetch($obj->rowid);
-							$ways = $c->print_all_ways(); // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formatted text
-							foreach ($ways as $way) {
-								$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories"'.($c->color ? ' style="background: #'.$c->color.';"' : ' style="background: #bbb"').'>'.img_object('', 'category').' '.$way.'</li>';
+							if ((string) $mode != 'list') {
+								$ways = $c->print_all_ways(); // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formatted text
+								foreach ($ways as $way) {
+									$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories'.($mode ? ' '.$mode : '').'"'.($c->color ? ' style="background: #'.$c->color.';"' : ' style="background: #bbb"').'>'.img_object('', 'category').' '.$way.'</li>';
+								}
+							} else {
+								// Check contrast with background and correct text color
+								$forced_color = 'categtextwhite'; // We want color white because the getNomUrl of a tag is always called inside a dark background like '<span color="bbb"></span>' to show it as a tag. TODO Add this in param to force when called outside of span.
+								if ($c->color) {
+									if (colorIsLight($c->color)) {
+										$forced_color = 'categtextblack';
+									}
+								}
+
+								$s = '<li class="select2-search-choice-dolibarr noborderoncategories '.$forced_color.' list"'.($c->color ? ' style="background: #'.$c->color.';"' : ' style="background: #bbb"').'>';
+								if ($numElem >= 2) {
+									$s .= img_object($c->label, 'category', 'class="small"');
+								} else {
+									$s .= img_object($c->label, 'category', 'class="small"').' '.$c->label;
+								}
+								$s .= '</li>';
+								$toprint[] = $s;
 							}
 						}
 					}
+					if (!empty($toprint)) {
+						$value = '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">'.implode(' ', $toprint).'</ul></div>';
+					}
+				} else {
+					dol_syslog(get_class($this).'::showOutputField error '.$this->db->lasterror(), LOG_WARNING);
 				}
-				if (!empty($toprint)) {
-					$value = '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">'.implode(' ', $toprint).'</ul></div>';
-				}
-			} else {
-				dol_syslog(get_class($this).'::showOutputField error '.$this->db->lasterror(), LOG_WARNING);
 			}
 		} elseif ($type == 'link') {
-			$out = '';
-
 			// Only if something to display (perf)
 			if ($value) {		// If we have -1 here, pb is into insert, not into output (fix insert instead of changing code here to compensate)
 				$param_list = array_keys($param['options']); // $param_list='ObjectName:classPath'
@@ -2843,7 +2914,7 @@ class ExtraFields
 				} elseif (in_array($key_type, array('price', 'double'))) {
 					$value_arr = GETPOST("options_".$key, 'alpha');
 					$value_key = price2num($value_arr);
-				} elseif (in_array($key_type, array('pricecy', 'double'))) {
+				} elseif (in_array($key_type, array('pricecy'))) {
 					$value_key = price2num(GETPOST("options_".$key, 'alpha')).':'.GETPOST("options_".$key."currency_id", 'alpha');
 				} elseif (in_array($key_type, array('html'))) {
 					$value_key = GETPOST("options_".$key, 'restricthtml');
@@ -2998,6 +3069,16 @@ class ExtraFields
 					// Make sure we get an array even if there's only one checkbox
 					$value_arr = (array) $value_arr;
 					$value_key = implode(',', $value_arr);
+				} elseif (in_array($key_type, array('pricecy'))) {
+					if (!GETPOSTISSET($keyprefix."options_".$key.$keysuffix)) {
+						continue; // Value was not provided, we should not set it.
+					}
+					$value_arr = GETPOST($keyprefix."options_".$key.$keysuffix);
+					if ($keyprefix != 'search_') {    // If value is for a search, we must keep complex string like '>100 <=150'
+						$value_key = price2num($value_arr).':'.GETPOST($keyprefix."options_".$key.$keysuffix."currency_id", 'alpha');
+					} else {
+						$value_key = $value_arr;
+					}
 				} elseif (in_array($key_type, array('price', 'double', 'int'))) {
 					if (!GETPOSTISSET($keyprefix."options_".$key.$keysuffix)) {
 						continue; // Value was not provided, we should not set it.

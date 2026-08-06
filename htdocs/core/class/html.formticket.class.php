@@ -863,8 +863,8 @@ class FormTicket
 	 *      Return html list of tickets type
 	 *
 	 *      @param  string|int[]	$selected		Id of preselected field or array of Ids
-	 *      @param  string			$htmlname		Nom de la zone select
-	 *      @param  string			$filtertype		To filter on field type in llx_c_ticket_type (array('code'=>xx,'label'=>zz))
+	 *      @param  string			$htmlname		Name of select component
+	 *      @param  string			$filtertype		To filter on some codes in llx_c_ticket_type ('code1,code2...')
 	 *      @param  int				$format			0=id+label, 1=code+code, 2=code+label, 3=id+code
 	 *      @param  int|string		$empty      	1 = can be empty or 'string' to show the string as the empty value, 0 = can't be empty, 'ifone' = can be empty but autoselected if there is one only
 	 *      @param  int				$noadmininfo	0=Add admin info, 1=Disable admin info
@@ -897,8 +897,8 @@ class FormTicket
 
 		if (is_array($ticketstat->cache_types_tickets) && count($ticketstat->cache_types_tickets)) {
 			foreach ($ticketstat->cache_types_tickets as $id => $arraytypes) {
-				// On passe si on a demande de filtrer sur des modes de paiments particuliers
-				if (count($filterarray) && !in_array($arraytypes['type'], $filterarray)) {
+				// We stop if we astto filter on some ticket type and code is not one requested.
+				if (count($filterarray) && !in_array($arraytypes['code'], $filterarray)) {
 					continue;
 				}
 
@@ -1866,14 +1866,15 @@ class FormTicket
 			if (getDolGlobalString('TICKET_MESSAGE_MAIL_INTRO') || getDolGlobalString('TICKET_MESSAGE_MAIL_SIGNATURE')) {
 				$texttooltip .= '<br><br>'.$langs->trans("ForEmailMessageWillBeCompletedWith").'...';
 			}
+			$allowedmailtags = array('a', 'div', 'strong', 'em', 'i', 'u', 'p', 'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'img');
 			if (getDolGlobalString('TICKET_MESSAGE_MAIL_INTRO')) {
 				$mail_intro = make_substitutions(getDolGlobalString('TICKET_MESSAGE_MAIL_INTRO'), $this->substit);
-				print '<input type="hidden" name="mail_intro" value="'.dolPrintHTMLForAttribute($mail_intro).'">';
+				print '<input type="hidden" name="mail_intro" value="'.dolPrintHTMLForAttribute($mail_intro, 0, $allowedmailtags).'">';
 				$texttooltip .= '<br><u>'.$langs->trans("TicketMessageMailIntro").'</u><br>'.$mail_intro;
 			}
 			if (getDolGlobalString('TICKET_MESSAGE_MAIL_SIGNATURE')) {
 				$mail_signature = make_substitutions(getDolGlobalString('TICKET_MESSAGE_MAIL_SIGNATURE'), $this->substit);
-				print '<input type="hidden" name="mail_signature" value="'.dolPrintHTMLForAttribute($mail_signature).'">';
+				print '<input type="hidden" name="mail_signature" value="'.dolPrintHTMLForAttribute($mail_signature, 0, $allowedmailtags).'">';
 				$texttooltip .= '<br><br><u>'.$langs->trans("TicketMessageMailFooter").'</u><br>'.$mail_signature;
 			}
 			print $form->textwithpicto('', $texttooltip, 1, 'help');

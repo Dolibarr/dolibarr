@@ -14,6 +14,7 @@
  * Copyright (C) 2022-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Nick Fragoulis
+ * Copyright (C) 2026		Mathieu Moulin			<mathieu@iprospective.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,6 +39,7 @@
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT."/core/class/commonobjectline.class.php";
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonincoterm.class.php';
+require_once DOL_DOCUMENT_ROOT.'/reception/class/receptionlinebatch.class.php';
 if (isModEnabled("propal")) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 }

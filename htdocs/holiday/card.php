@@ -537,15 +537,20 @@ if (empty($reshook)) {
 					}
 				}
 
+
 				// option to notify the validator if the balance is less than the request
+				// (only for leave types that actually use the balance counter)
 				if (!getDolGlobalString('HOLIDAY_HIDE_APPROVER_ABOUT_NEGATIVE_BALANCE')) {
-					$tmpUser = new User($db);
-					$tmpUser->fetch($object->fk_user);
+					$affectingtypes = $object->getTypes(1, 1);
+					if (!empty($affectingtypes[$object->fk_type])) {
+						$tmpUser = new User($db);
+						$tmpUser->fetch($object->fk_user);
 
-					$nbopenedday = num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday, $tmpUser->country_id);
+						$nbopenedday = num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday, $tmpUser->country_id);
 
-					if ($nbopenedday > $object->getCPforUser($object->fk_user, $object->fk_type)) {
-						$message .= "<p>".$langs->transnoentities("HolidaysToValidateAlertSolde")."</p>\n";
+						if ($nbopenedday > $object->getCPforUser($object->fk_user, $object->fk_type)) {
+							$message .= "<p>".$langs->transnoentities("HolidaysToValidateAlertSolde")."</p>\n";
+						}
 					}
 				}
 
@@ -1127,8 +1132,12 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 				$nb_type = $object->getCPforUser(($fuserid ? $fuserid : $user->id), $val['rowid']);
 				$nb_holiday += $nb_type;
 
-				$out .= ' - '.($langs->trans($val['code']) != $val['code'] ? $langs->trans($val['code']) : $val['label']).': <strong>'.($nb_type ? price2num($nb_type) : 0).'</strong><br>';
-				//$out .= ' - '.$val['label'].': <strong>'.($nb_type ?price2num($nb_type) : 0).'</strong><br>';
+				$out .= ' - '.($langs->trans($val['code']) != $val['code'] ? $langs->trans($val['code']) : $val['label']).': <strong>'.($nb_type ? price2num($nb_type) : 0).'</strong>';
+				if ($val['newbymonth'] > 0) {
+					$out .= ' &nbsp; <span class="opacitymedium">+'.$val['newbymonth'].' / '.$langs->trans("Month").'</span>';
+				}
+				$out .= '';
+				$out .= '<br>';
 			}
 			print ' &nbsp; &nbsp; ';
 

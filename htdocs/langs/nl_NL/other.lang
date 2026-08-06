@@ -268,6 +268,7 @@ RequestToResetPasswordReceived=Er is een verzoek ontvangen om uw wachtwoord te w
 NewKeyIs=Dit is uw nieuwe sleutel om in te loggen
 NewKeyWillBe=Uw nieuwe sleutel in te loggen zal zijn
 ClickHereToGoTo=Klik hier om naar %s
+ClickHereToGoToDictionary=Klik hier om de woordenboekinstellingen te bewerken (ook beschikbaar via het menu %s - %s - %s)
 YouMustClickToChange=Je moet echter wel eerst klikken op de volgende link om de wachtwoord wijziging te valideren
 ConfirmPasswordChange=Wachtwoord wijzigen bevestigen
 ForgetIfNothing=Als u deze wijziging niet heeft aangevraagd, negeer deze e-mail. Uw referenties blijven veilig bewaard.
@@ -385,6 +386,7 @@ FillExtrafieldWithAi=Vul extraveld met AI-inhoud
 ExtrafieldFiller=Extrafield-vuller
 OurProductSelection=Het product om te ontdekken
 NoSupportedModulesHaveBeenActivated=De rapportagetool kan alleen dynamische rapporten genereren voor bepaalde modules. Er is nog geen ondersteunde module ingeschakeld.
+TryAnotherConnectionMode=Probeer een andere verbindingsmodus.
 # Bookmarks
 BehaviourOnClick = Gedrag wanneer een bladwijzer-URL is geselecteerd
 BookmarkTargetNewWindowShort = Nieuw tabblad

@@ -82,7 +82,7 @@ class box_lastlogin extends ModeleBoxes
 			'text' => $langs->trans("PreviousConnexion"),
 		);
 		if ($user->datepreviouslogin) {
-			$tmp = dol_print_date($user->datepreviouslogin, "dayhour", 'tzuserrel').' - <span class="opacitymedium">'.$langs->trans("FromIP").' '.dol_print_ip($user->ippreviouslogin).'</span>';
+			$tmp = dol_print_date((int) $user->datepreviouslogin, "dayhour", 'tzuserrel').' - <span class="opacitymedium">'.$langs->trans("FromIP").' '.dol_print_ip($user->ippreviouslogin).'</span>';
 		} else {
 			$tmp = '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>';
 		}
@@ -98,7 +98,7 @@ class box_lastlogin extends ModeleBoxes
 			'text' => $langs->trans("LastPasswordChange"),
 		);
 		if ($user->datelastpassvalidation) {
-			$tmp = dol_print_date($user->datelastpassvalidation, "dayhour", 'tzuserrel');
+			$tmp = dol_print_date((int) $user->datelastpassvalidation, "dayhour", 'tzuserrel');
 		} else {
 			$tmp = '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>';
 		}

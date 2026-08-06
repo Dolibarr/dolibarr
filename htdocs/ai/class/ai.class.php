@@ -252,7 +252,11 @@ class Ai
 				}
 			}
 
-			$localurl = 2;	// Accept both local and external endpoints
+			// By default, we accept only external endpoints ($dolibarr_ai_allow_local_endpoints is not set).
+			// To allow local endpoints, we must set $dolibarr_ai_allow_local_endpoints to 1 or 2 in conf.php.
+			global $dolibarr_ai_allow_local_endpoints;
+			$localurl = $dolibarr_ai_allow_local_endpoints ?? 0;
+
 			$response = getURLContent($this->apiEndpoint, 'POST', $payload, 1, $headers, array('http', 'https'), $localurl);
 
 			if (empty($response['http_code'])) {

@@ -43,7 +43,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/import.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('exports', 'compta', 'errors', 'projects', 'admin'));
+$langs->loadLangs(array('exports', 'compta', 'errors', 'projects', 'admin', 'products', 'margins'));
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('imports'));
@@ -1239,6 +1239,7 @@ if ($step == 4 && $datatoimport) {
 			$htmltext .= $langs->trans("InformationOnTargetTables").': &nbsp; <b>'.$tablename."->".preg_replace('/^.*\./', '', $tmpcode)."</b>";
 
 			$labelhtml = $label.' '.$form->textwithpicto('', $htmltext, 1, 'help', '', 1);
+
 
 			$selectforline .= '<option value="'.$tmpcode.'"';
 			if ($modetoautofillmapping == 'orderoftargets') {

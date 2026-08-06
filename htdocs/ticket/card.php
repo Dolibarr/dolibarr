@@ -461,7 +461,7 @@ if (empty($reshook)) {
 			$object->context['contact_id'] = GETPOSTINT('contactid');
 		}
 
-		if ($object->close($user, ($action == "confirm_abandon" ? 1 : 0))) {	// Test on pemrission already done
+		if ($object->close($user, ($action == "confirm_abandon" ? 1 : 0)) > 0) {	// Test on pemrission already done
 			setEventMessages($langs->trans('TicketMarkedAsClosed'), null, 'mesgs');
 
 			$url = 'card.php?track_id=' . GETPOST('track_id', 'alpha');
@@ -478,13 +478,15 @@ if (empty($reshook)) {
 		if ($_SESSION['email_customer'] == $object->origin_email || $_SESSION['email_customer'] == $object->thirdparty->email) {
 			$object->context['contact_id'] = GETPOSTINT('contactid');
 
-			$object->close($user);
+			if ($object->close($user) > 0) {
+				setEventMessages('<div class="confirm">' . $langs->trans('TicketMarkedAsClosed') . '</div>', null, 'mesgs');
 
-			setEventMessages('<div class="confirm">' . $langs->trans('TicketMarkedAsClosed') . '</div>', null, 'mesgs');
-
-			$url = 'card.php?track_id=' . GETPOST('track_id', 'alpha');
-			header("Location: " . $url);
-			exit;
+				$url = 'card.php?track_id=' . GETPOST('track_id', 'alpha');
+				header("Location: " . $url);
+				exit;
+			}
+			setEventMessages($object->error, $object->errors, 'errors');
+			$action = '';
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 			$action = '';
@@ -634,8 +636,9 @@ if (empty($reshook)) {
 		// Reopen ticket
 		if ($object->fetch(GETPOSTINT('id'), GETPOST('track_id', 'alpha')) >= 0) {
 			$new_status = GETPOSTINT('new_status');
-			//$old_status = $object->status;
-			$res = $object->setStatut($new_status);
+
+			$res = $object->setStatut($new_status, null, '', 'TICKET_MODIFY');
+
 			if ($res) {
 				$url = 'card.php?track_id=' . $object->track_id;
 				header("Location: " . $url);
@@ -694,6 +697,9 @@ if (empty($reshook)) {
 	$permissiondellink = $user->hasRight('ticket', 'write');
 	include DOL_DOCUMENT_ROOT . '/core/actions_dellink.inc.php'; // Must be 'include', not 'include_once'
 
+	// Actions when printing a doc from card
+	include DOL_DOCUMENT_ROOT . '/core/actions_printing.inc.php';
+
 	// Actions to build doc
 	include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
 
@@ -739,6 +745,11 @@ if ($action == 'create' || $action == 'presend') {
 	print load_fiche_titre($langs->trans('NewTicket'), '', 'ticket');
 
 	$formticket->trackid = '';		// TODO Use a unique key 'tic' to avoid conflict in upload file feature
+
+	if (GETPOST("mode", "aZ09") == 'init' && empty($_POST)) {
+		$formticket->clear_attached_files();
+	}
+
 	$formticket->withfromsocid = $socid ? $socid : $user->socid;
 	$formticket->withfromcontactid = $contactid ? $contactid : '';
 	$formticket->withtitletopic = 1;
@@ -789,7 +800,7 @@ if ($action == 'create' || $action == 'presend') {
 	$formticket->showForm(0, 'edit', 0, null, $action, $object);
 
 	print dol_get_fiche_end();
-} elseif (empty($action) || in_array($action, ['builddoc', 'view', 'addlink', 'addlinkbyref', 'dellink', 'presend', 'presend_addmessage', 'close', 'abandon', 'clone', 'delete', 'editcustomer', 'progression', 'categories', 'reopen', 'edit_contrat', 'editsubject', 'edit_extras', 'update_extras', 'edit_extrafields', 'set_extrafields', 'classify', 'sel_contract', 'edit_message_init', 'set_status'])) {
+} elseif ($object->id) {
 	if (!empty($res) && $res > 0) {
 		// or for unauthorized internals users
 		if (!$user->socid && (getDolGlobalString('TICKET_LIMIT_VIEW_ASSIGNED_ONLY') && $object->fk_user_assign != $user->id) && !$user->hasRight('ticket', 'manage')) {
@@ -956,7 +967,7 @@ if ($action == 'create' || $action == 'presend') {
 			$morehtmlref .= '<input type="hidden" name="id" value="'.$object->id.'">';
 			$morehtmlref .= '<input type="text" class="minwidth300" id="subject" name="subject" value="'.$object->subject.'" autofocus="">';
 			$morehtmlref .= '<input type="submit" class="smallpaddingimp button valignmiddle" name="modify" value="'.$langs->trans("Modify").'">';
-			$morehtmlref .= '<input type="submit" class="smallpaddingimp button button-cancel vlignmiddle" name="cancel" value="'.$langs->trans("Cancel").'">';
+			$morehtmlref .= '<input type="submit" class="smallpaddingimp button button-cancel valignmiddle" name="cancel" value="'.$langs->trans("Cancel").'">';
 			$morehtmlref .= '</form>';
 		}
 

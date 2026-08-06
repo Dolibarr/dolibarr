@@ -165,3 +165,6 @@ HolidayMailSenderAdress=休暇申請用のメールアドレス
 HolidayMailSenderAdressHelp=このフィールドを空白のままにすると、デフォルトの電子メール アドレスが使用される。
 WrongAmount=日数が間違っている
 ErrorUpdatingUsersCP=ユーザーの有給休暇の更新中にエラーが発生した
+LeaveBalance=残高を残す
+ListeLB=休暇残高一覧
+LeaveType = 休暇残高の種類

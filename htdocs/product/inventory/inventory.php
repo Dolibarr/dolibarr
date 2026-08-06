@@ -90,10 +90,6 @@ if (!$sortorder) {
 	$sortorder = "ASC";
 }
 
-// Sort by warehouse/product or product/warehouse, then by batch.
-$sortfield .= ',' . ($sortfield == 'e.ref' ? 'p.ref' : 'e.ref') . ',id.batch,id.rowid';
-$sortorder .= ',' . $sortorder.",ASC,ASC";
-
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
@@ -127,6 +123,9 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 	$paramwithsearch .= '&limit='.((int) $limit);
 }
 
+// Sort by warehouse/product or product/warehouse
+$sortfield .= ',' . ($sortfield == 'e.ref' ? 'p.ref' : 'e.ref') . ',id.batch,id.rowid';
+$sortorder .= ',' . $sortorder.",ASC,ASC";
 
 if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 	$permissiontoadd = $user->hasRight('stock', 'creer');
@@ -262,7 +261,12 @@ if (empty($reshook)) {
 							setEventMessages($db->lasterror(), null, 'errors');
 							break;
 						}
-						if (getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
+						// Mirror Product::fetch (product.class.php:2995-2997) which reads pmp from
+						// llx_product_perentity only when MULTICOMPANY_PRODUCT_SHARING_ENABLED and
+						// MULTICOMPANY_PMP_PER_ENTITY_ENABLED are both set. MAIN_PRODUCT_PERENTITY_SHARED
+						// is the accountancy-codes flag; using it to gate the pmp write here means we
+						// silently write into a row that fetch never looks at (#37773).
+						if (getDolGlobalString('MULTICOMPANY_PRODUCT_SHARING_ENABLED') && getDolGlobalString('MULTICOMPANY_PMP_PER_ENTITY_ENABLED')) {
 							$sqlpmp = 'UPDATE '.MAIN_DB_PREFIX.'product_perentity SET pmp = '.((float) $line->pmp_real).' WHERE fk_product = '.((int) $line->fk_product).' AND entity='.$conf->entity;
 							$resqlpmp = $db->query($sqlpmp);
 							if (! $resqlpmp) {
@@ -1127,7 +1131,7 @@ if ($resql) {
 			if (isModEnabled('productbatch') && $product_static->hasbatch()) {
 				$valuetoshow = $product_static->stock_warehouse[$obj->fk_warehouse]->detail_batch[$obj->batch]->qty ?? 0;
 			} else {
-				$valuetoshow = $product_static->stock_warehouse[$obj->fk_warehouse]->real ?? 0;
+				$valuetoshow = !empty($product_static->stock_warehouse[$obj->fk_warehouse]->real) ? $product_static->stock_warehouse[$obj->fk_warehouse]->real : 0;
 			}
 		}
 		print price2num($valuetoshow, 'MS');
@@ -1302,10 +1306,11 @@ print '<script type="text/javascript">
         					success: function(result){
            				 	window.location.href = "'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&page='.($page + 1).$paramwithsearch.'";
     						}});
+							return false;
     					});
 
 
-                         $(".paginationprevious:last").click(function(e){
+                        $(".paginationprevious:last").click(function(e){
                             var form = $("#formrecord");
    							var actionURL = "'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&page='.($page).$paramwithsearch.'";
    							$.ajax({
@@ -1315,19 +1320,22 @@ print '<script type="text/javascript">
         					success: function(result){
            				 	window.location.href = "'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&page='.($page - 1).$paramwithsearch.'";
        					 	}});
-						 });
+							return false;
+						});
 
-                          $("#idbuttonmakemovementandclose").click(function(e){
+                        $("#idbuttonmakemovementandclose").click(function(e){
                             var form = $("#formrecord");
    							var actionURL = "'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&page='.($page).$paramwithsearch.'";
    							$.ajax({
       					 	url: actionURL,
+        					type: "POST",
         					data: form.serialize(),
         					cache: false,
         					success: function(result){
-           				 	window.location.href = "'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&page='.($page - 1).$paramwithsearch.'&action=record";
+           				 	window.location.href = "'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&page='.($page).$paramwithsearch.'&action=record";
        					 	}});
-						 });
+							return false;
+						});
 					});
 </script>';
 

@@ -42,7 +42,7 @@ create table llx_facture
   date_valid			date,									-- date validation
   tms					timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,								-- last modification date
   date_closing			datetime,								-- date de cloture
-  paye					smallint DEFAULT 0 NOT NULL,
+  paye					smallint DEFAULT 0 NOT NULL,			-- 1 if invoice is payed completely. Deprecated. Use instead statut = 2 and close_code is null or = ''
 
   remise_percent		real     DEFAULT 0,						-- remise relative
   remise_absolue		real     DEFAULT 0,						-- remise absolue
@@ -59,7 +59,7 @@ create table llx_facture
   total_ht				double(24,8)     DEFAULT 0,				-- amount total ht apres remise totale
   total_ttc				double(24,8)     DEFAULT 0,				-- amount total ttc apres remise totale
 
-  fk_statut				smallint DEFAULT 0 NOT NULL,
+  fk_statut				smallint DEFAULT 0 NOT NULL,			-- 2 means closed, but it may be closed payed partially if close_code has a code value.
 
   fk_user_author		integer,								-- user making creation
   fk_user_modif         integer,                                -- user making last change

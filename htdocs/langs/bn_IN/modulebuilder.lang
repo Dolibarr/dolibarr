@@ -197,4 +197,4 @@ FieldsEdit=ক্ষেত্র সম্পাদনা
 FieldsInsert=ক্ষেত্র সন্নিবেশ করান
 FieldsView=ক্ষেত্রের দৃশ্য
 AIPromptExtrafield=AI প্রম্পট
-AIPromptExtrafieldDesc=এই ক্ষেত্রে ব্যবহৃত ধ্রুবকগুলি সংশ্লিষ্ট মান দিয়ে প্রতিস্থাপিত হবে।
+AIPromptExtrafieldDesc=Enter here a prompt that should return a value and only the value. The substition variables are replaced into the prompt before calling the AI API.

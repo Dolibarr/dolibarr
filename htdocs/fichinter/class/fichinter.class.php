@@ -87,6 +87,11 @@ class Fichinter extends CommonObject
 	public $element = 'fichinter';
 
 	/**
+	 * @var string Name of field in database that is used as reference when object is linked to another one.
+	 */
+	public $fk_element = 'fk_fichinter';
+
+	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'fichinter';
@@ -654,7 +659,7 @@ class Fichinter extends CommonObject
 			$sql .= ", date_valid = '".$this->db->idate($now)."'";
 			$sql .= ", fk_user_valid = ".($user->id > 0 ? (int) $user->id : "null");
 			$sql .= " WHERE rowid = ".((int) $this->id);
-			$sql .= " AND entity = ".((int) $this->entity);
+			$sql .= " AND entity IN (".getEntity('intervention').")";
 
 			$sql .= " AND fk_statut = 0";
 
@@ -765,7 +770,7 @@ class Fichinter extends CommonObject
 			$sql .= " fk_user_modif = " . ((int) $user->id);
 			$sql .= " WHERE rowid = " . ((int) $this->id);
 			$sql .= " AND fk_statut > " . self::STATUS_DRAFT;
-			$sql .= " AND entity = " . ((int) $conf->entity);
+			$sql .= " AND entity IN (".getEntity('intervention').")";
 
 			if ($this->db->query($sql)) {
 				if (!$notrigger) {

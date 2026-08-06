@@ -268,6 +268,7 @@ RequestToResetPasswordReceived=Une requête pour changer de mot de passe a été
 NewKeyIs=Voici vos nouveaux identifiants pour vous connecter
 NewKeyWillBe=Vos nouveaux identifiants pour vous connecter à l'application seront
 ClickHereToGoTo=Cliquez ici pour aller sur %s
+ClickHereToGoToDictionary=Cliquez ici pour modifier la configuration du dictionnaire (également disponible dans le menu %s - %s - %s)
 YouMustClickToChange=Vous devez toutefois auparavant cliquer sur le lien suivant, afin de valider ce changement de mot de passe
 ConfirmPasswordChange=Confirmer la modification du mot de passe
 ForgetIfNothing=Si vous n'êtes pas à l'origine de cette demande, ignorez simplement ce message. Vos identifiants restent sécurisés.
@@ -385,6 +386,7 @@ FillExtrafieldWithAi=Remplissez le champ supplémentaire avec du contenu IA
 ExtrafieldFiller=Remplissage de champ supplémentaire
 OurProductSelection=Le produit pour découvrir
 NoSupportedModulesHaveBeenActivated=L'outil de reporting ne peut générer des rapports dynamiques que pour certains modules. Aucun module pris en charge n'est encore activé.
+TryAnotherConnectionMode=Essayez un autre mode de connexion
 # Bookmarks
 BehaviourOnClick = Comportement sur sélection de l'URL
 BookmarkTargetNewWindowShort = Nouvelle fenêtre

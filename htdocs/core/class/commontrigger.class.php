@@ -93,9 +93,10 @@ trait CommonTrigger
 			}
 		}
 		if (!is_object($langs)) {	// If lang was not defined, we set it. It is required by run_triggers().
-			dol_syslog("call_trigger was called with no langs variable defined".getCallerInfoString(), LOG_WARNING);
+			dol_syslog("call_trigger was called with no langs variable defined so we init one. ".getCallerInfoString());
 			include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
 			$langs = new Translate('', $conf);
+			$langs->setDefaultLang('');
 			$langs->load("main");
 		}
 

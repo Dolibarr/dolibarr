@@ -3,6 +3,7 @@
  * Copyright (C) 2012 Laurent Destailleur  	<eldy@users.sourceforge.net>
  * Copyright (C) 2024 MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024 Frédéric France       <frederic.france@free.fr>
+ * Copyright (C) 2026 Juan Pablo Farber     <jfarber55@hotmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +44,7 @@ $action = GETPOST('action', 'aZ09');
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 
-$mine = (isset($_REQUEST['mode']) && $_REQUEST['mode'] == 'mine') ? 1 : 0;
+$mine = (GETPOST('mode', 'alpha') == 'mine') ? 1 : 0;
 
 $object = new Project($db);
 

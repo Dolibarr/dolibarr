@@ -76,7 +76,7 @@ if (isModEnabled('category')) {
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array('bills', 'companies', 'products', 'categories'));
+$langs->loadLangs(array('bills', 'companies', 'products', 'categories', 'cashdesk'));
 
 $search_all = trim(GETPOST('search_all', 'alphanohtml'));
 
@@ -220,6 +220,7 @@ $diroutputmassaction = $conf->invoice->dir_output.'/temp/massgeneration/'.$user-
 
 $now = dol_now();
 $error = 0;
+$sql = '';
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new Facture($db);
@@ -247,6 +248,9 @@ if (empty($user->socid)) {
 	$fieldstosearchall["f.note_private"] = "NotePrivate";
 }
 
+// Show POS fields if cashdesk or takepos module enabled or if global configuration to show POS fields on order list is enabled
+$showpos = (isModEnabled('cashdesk') || isModEnabled('takepos') || getDolGlobalInt('INVOICE_SHOW_POS')) ? '1' : '0';
+
 $checkedtypetiers = '0';
 $arrayfields = array(
 	'f.ref' => array('label' => "Ref", 'checked' => '1', 'position' => 5),
@@ -257,8 +261,8 @@ $arrayfields = array(
 	'f.date_valid' => array('label' => "DateValidation", 'checked' => '0', 'position' => 22),
 	'f.date_lim_reglement' => array('label' => "DateDue", 'checked' => '1', 'position' => 25),
 	'f.date_closing' => array('label' => "DateClosing", 'checked' => '0', 'position' => 30),
-	'p.ref' => array('label' => "ProjectRef", 'langfile' => 'projects', 'checked' => '1', 'enabled' => (!isModEnabled('project') ? '0' : '1'), 'position' => 40),
-	'p.title' => array('label' => "ProjectLabel", 'langfile' => 'projects', 'checked' => '0', 'enabled' => (!isModEnabled('project') ? '0' : '1'), 'position' => 41),
+	'p.ref' => array('label' => "ProjectRef", 'langfile' => 'projects', 'checked' => '1', 'enabled' => (isModEnabled('project') ? '1' : '0'), 'position' => 40),
+	'p.title' => array('label' => "ProjectLabel", 'langfile' => 'projects', 'checked' => '0', 'enabled' => (isModEnabled('project') ? '1' : '0'), 'position' => 41),
 	's.nom' => array('label' => "ThirdParty", 'checked' => '1', 'position' => 50),
 	's.name_alias' => array('label' => "AliasNameShort", 'checked' => '-1', 'position' => 51),
 	's.code_client' => array('label' => "CustomerCodeShort", 'checked' => '-1', 'position' => 52),
@@ -269,10 +273,10 @@ $arrayfields = array(
 	'country.code_iso' => array('label' => "Country", 'checked' => '0', 'position' => 70),
 	'typent.code' => array('label' => "ThirdPartyType", 'checked' => $checkedtypetiers, 'position' => 75),
 	'f.fk_mode_reglement' => array('label' => "PaymentMode", 'checked' => '1', 'position' => 80),
-	'f.fk_cond_reglement' => array('label' => "PaymentConditionsShort", 'checked' => '1', 'position' => 85),
+	'f.fk_cond_reglement' => array('label' => "PaymentConditionsShort", 'checked' => '0', 'position' => 85),
 	'f.fk_input_reason' => array('label' => "Source", 'checked' => 0, 'enabled' => 1, 'position' => 88),
-	'f.module_source' => array('label' => "POSModule", 'langfile' => 'cashdesk', 'checked' => ($contextpage == 'poslist' ? '1' : '0'), 'enabled' => "(isModEnabled('cashdesk') || isModEnabled('takepos') || getDolGlobalInt('INVOICE_SHOW_POS'))", 'position' => 90),
-	'f.pos_source' => array('label' => "POSTerminal", 'langfile' => 'cashdesk', 'checked' => ($contextpage == 'poslist' ? '1' : '0'), 'enabled' => "(isModEnabled('cashdesk') || isModEnabled('takepos') || getDolGlobalInt('INVOICE_SHOW_POS'))", 'position' => 91),
+	'f.module_source' => array('label' => "POSModule", 'langfile' => 'cashdesk', 'checked' => ($contextpage == 'poslist' ? '1' : '0'), 'enabled' => $showpos, 'position' => 90),
+	'f.pos_source' => array('label' => "POSTerminal", 'langfile' => 'cashdesk', 'checked' => ($contextpage == 'poslist' ? '1' : '0'), 'enabled' => $showpos, 'position' => 91),
 	'f.total_ht' => array('label' => "AmountHT", 'checked' => '1', 'position' => 95),
 	'f.total_tva' => array('label' => "AmountVAT", 'checked' => '0', 'position' => 100),
 	'f.total_localtax1' => array('label' => $langs->transcountry("AmountLT1", $mysoc->country_code), 'checked' => '0', 'enabled' => ($mysoc->localtax1_assuj == "1"), 'position' => 110),
@@ -293,7 +297,7 @@ $arrayfields = array(
 	'total_mark_rate' => array('label' => 'MarkRate', 'langfile' => 'margins', 'checked' => '0', 'position' => 303, 'enabled' => (!isModEnabled('margin') || !$user->hasRight('margins', 'liretous') || !getDolGlobalString('DISPLAY_MARK_RATES') ? '0' : '1')),
 	'f.datec' => array('label' => "DateCreation", 'checked' => '0', 'position' => 500),
 	'f.tms' => array('type' => 'timestamp', 'label' => 'DateModificationShort', 'enabled' => '1', 'visible' => -1, 'notnull' => 1, 'position' => 502),
-	'u.login' => array('label' => "UserAuthor", 'checked' => '1', 'visible' => -1, 'position' => 504),
+	'u.login' => array('label' => "UserAuthor", 'checked' => '0', 'visible' => -1, 'position' => 504),
 	'sale_representative' => array('label' => "SaleRepresentativesOfThirdParty", 'checked' => '0', 'position' => 506),
 	//'f.fk_user_author' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-1, 'position'=>506),
 	//'f.fk_user_modif' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-1, 'notnull'=>-1, 'position'=>508),
@@ -343,6 +347,9 @@ foreach ($object->fields as $key => $val) {
 }
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 // For POS context, we force some fields
 if ($contextpage == 'poslist') {
@@ -3048,7 +3055,7 @@ if ($num > 0) {
 			if (!empty($arrayfields['f.dispute_status']['checked'])) {
 				print '<td class="nowrap center">';
 				if ($facturestatic->dispute_status) {
-					$liststatus = array('0' => "None", '1' => "DisputeOpen", '8' => "DisputeWon", '9' => "DisputeLost");
+					$liststatus = array('0' => "None", '1' => "DisputeOpen", '8' => "DisputeLost", '9' => "DisputeWon");
 					print $langs->trans($liststatus[$facturestatic->dispute_status]);
 				}
 				print "</td>";

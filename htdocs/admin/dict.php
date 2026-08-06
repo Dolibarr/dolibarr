@@ -1029,6 +1029,12 @@ if (empty($reshook)) {
 			if ($resql) {	// Add is ok
 				setEventMessages($langs->transnoentities("RecordCreatedSuccessfully"), null, 'mesgs');
 
+				// PostgreSQL: when we forced the rowid we must bump the matching <table>_<rowid_col>_seq
+				// so the next auto-increment insert does not collide with our chosen value (#36510).
+				if ($db->type == 'pgsql' && $tabrowid[$id] && !in_array($tabrowid[$id], $listfieldinsert)) {
+					$db->query("SELECT setval(pg_get_serial_sequence('".$db->escape(MAIN_DB_PREFIX.$db->sanitize($tablename))."', '".$db->escape($tabrowid[$id])."'), GREATEST((SELECT MAX(".$db->sanitize($tabrowid[$id]).") FROM ".MAIN_DB_PREFIX.$db->sanitize($tablename)."), 1))");
+				}
+
 				// Clean $_POST array, we keep only id of dictionary
 				if ($id == DICT_TVA && GETPOSTINT('country') > 0) {
 					$search_country_id = GETPOSTINT('country');
@@ -1053,7 +1059,7 @@ if (empty($reshook)) {
 
 			// Modify entry
 			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET ";
-			// Modifie valeur des champs
+			// Modifie value of fields
 			if ($tabrowid[$id] && !in_array($tabrowid[$id], $listfieldmodify)) {
 				$sql .= $tabrowid[$id]."=";
 				$sql .= "'".$db->escape($rowid)."', ";
@@ -1478,7 +1484,11 @@ if ($id > 0) {
 		$sql .= " WHERE 1 = 1";
 	}
 	if ($search_country_id > 0) {
-		$sql .= " AND c.rowid = ".((int) $search_country_id);
+		if ($id == DICT_HRM_PUBLIC_HOLIDAY || $id == DICT_HOLIDAY_TYPES) {
+			$sql .= " AND (c.rowid IS NULL OR c.rowid = 0 OR c.rowid = ".((int) $search_country_id).")";
+		} else {
+			$sql .= " AND c.rowid = ".((int) $search_country_id);
+		}
 	}
 	if ($search_code != '') {
 		$sql .= natural_search($tablecode, $search_code);
@@ -2389,7 +2399,10 @@ if ($id > 0) {
 					print '</td>';
 				}
 
-				if ($action == 'edit' && ($rowid == (!empty($obj->rowid) ? $obj->rowid : $obj->code))) {
+				// Use isset() rather than !empty() so a dictionary row with rowid = 0
+				// (for example ST_NEVER in llx_c_stcomm) is treated as a real rowid and
+				// not fallen back to the code, which would make it un-editable (#38781).
+				if ($action == 'edit' && ($rowid == (isset($obj->rowid) ? $obj->rowid : $obj->code))) {
 					$tmpaction = 'edit';
 					$parameters = array('fieldlist' => $fieldlist, 'tabname' => $tabname[$id]);
 					$reshook = $hookmanager->executeHooks('editDictionaryFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
@@ -2402,8 +2415,8 @@ if ($id > 0) {
 					}
 
 					print '<td colspan="3" class="center">';
-					print '<div name="'.(!empty($obj->rowid) ? $obj->rowid : $obj->code).'"></div>';
-					print '<input type="hidden" name="page" value="'.dol_escape_htmltag((string) $page).'">';
+					print '<div name="'.(isset($obj->rowid) ? $obj->rowid : $obj->code).'"></div>';
+					print '<input type="hidden" name="page" value="'.((int) $page).'">';
 					print '<input type="hidden" name="rowid" value="'.dol_escape_htmltag($rowid).'">';
 					if (!is_null($withentity)) {
 						print '<input type="hidden" name="entity" value="'.$withentity.'">';
@@ -2599,6 +2612,10 @@ if ($id > 0) {
 								$valuetoshow = $langs->trans($valuetoshow ? $valuetoshow : $tmpid);
 							} elseif ($tabname[$id] == 'c_exp_tax_cat') {
 								$valuetoshow = $langs->trans($valuetoshow);
+							} elseif ($value == 'libelle' && ($tabname[$id] == 'c_stcomm' || $tabname[$id] == 'c_stcommcontact')) {
+								$key = 'StatusProspect'.$obj->rowid;
+								$trans = $langs->trans($key);
+								$valuetoshow = ($trans != $key ? $trans : $obj->{$value});
 							} elseif ($value == 'label' && $tabname[$id] == 'c_units') {
 								$langs->load('other');
 								$key = $langs->trans($obj->label);

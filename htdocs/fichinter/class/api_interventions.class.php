@@ -606,7 +606,7 @@ class Interventions extends DolibarrApi
 
 		$updateRes = $objectline->deleteLine(DolibarrApiAccess::$user);
 
-		if ($updateRes > 0) {
+		if ($updateRes >= 0) {
 			return $this->_cleanObjectDatas($this->fichinter);
 		} else {
 			throw new RestException(405, $this->fichinter->error);
@@ -789,7 +789,7 @@ class Interventions extends DolibarrApi
 	 * @param	array $request_data   InternventionalLine data
 	 * @phan-param ?array<string,string> $request_data
 	 * @phpstan-param ?array<string,string> $request_data
-	 * @return	Object|false		  Object with cleaned properties
+	 * @return	Object		  Object with cleaned properties
 	 *
 	 * @throws RestException
 	 *
@@ -816,17 +816,31 @@ class Interventions extends DolibarrApi
 		}
 		$request_data = (object) $request_data;
 
-		$request_data->desc = sanitizeVal($request_data->desc, 'restricthtml');
-		$request_data->date = sanitizeVal($request_data->date);
-		$request_data->duration = sanitizeVal($request_data->duration);
-		$request_data->rang = sanitizeVal($request_data->rang);
+		if (isset($request_data->desc) || isset($request_data->description)) {
+			$objectline->desc = sanitizeVal($request_data->desc ?? $request_data->description, 'restricthtml');
+		}
+		if (isset($request_data->date)) {
+			$objectline->date = (int) sanitizeVal($request_data->date);
+		}
+		if (isset($request_data->duration)) {
+			$objectline->duration = (int) sanitizeVal($request_data->duration);
+		}
+		if (isset($request_data->rang)) {
+			$objectline->rang = (int) sanitizeVal($request_data->rang);
+		}
 
 		$updateRes = $objectline->update(DolibarrApiAccess::$user);
 
-		if ($updateRes > 0) {
-			return $this->_cleanObjectDatas($this->fichinter);
+		if ($updateRes >= 0) {
+			$result = $this->fichinter->fetch($id);
+			if ($result > 0) {
+				return $this->_cleanObjectDatas($this->fichinter);
+			} else {
+				throw new RestException(500, $this->fichinter->error);
+			}
+		} else {
+			throw new RestException(500, $objectline->error);
 		}
-		return false;
 	}
 
 

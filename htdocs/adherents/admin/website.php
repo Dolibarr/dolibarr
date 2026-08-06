@@ -107,6 +107,9 @@ if ($action == 'update') {
 	} else {
 		$res = dolibarr_set_const($db, "MEMBER_NEWFORM_FORCEMORPHY", $forcemorphy, 'chaine', 0, '', $conf->entity);
 	}
+	if (GETPOSTISSET('MEMBER_SEARCH_MEMBER_PUBLIC_FORM_CREATE')) {
+		$res = dolibarr_set_const($db, "MEMBER_SEARCH_MEMBER_PUBLIC_FORM_CREATE", GETPOST('MEMBER_SEARCH_MEMBER_PUBLIC_FORM_CREATE') == 'yes' ? 1 : 0, 'chaine', 0, '', $conf->entity);
+	}
 
 	if (!($res > 0)) {
 		$error++;
@@ -318,9 +321,9 @@ if (getDolGlobalString('MEMBER_ENABLE_PUBLIC')) {
 
 	// Search a member after member creation form
 	print '<tr class="oddeven" id="trpayment"><td>';
-	print $langs->trans("MEMBER_SEARCH_MEMBER_PUBLIC_FORM_CREATE");
+	print $form->textwithpicto($langs->trans("MEMBER_SEARCH_MEMBER_PUBLIC_FORM_CREATE"), $langs->trans("MEMBER_SEARCH_MEMBER_PUBLIC_FORM_CREATEDesc"));
 	print '</td><td>';
-	print $form->selectyesno("MEMBER_SEARCH_MEMBER_PUBLIC_FORM_CREATE"); // Reverse the logic "hide -> show" for retrocompatibility
+	print $form->selectyesno("MEMBER_SEARCH_MEMBER_PUBLIC_FORM_CREATE", getDolGlobalInt("MEMBER_SEARCH_MEMBER_PUBLIC_FORM_CREATE")); // Reverse the logic "hide -> show" for retrocompatibility
 	print "</td></tr>\n";
 
 	print '</table>';

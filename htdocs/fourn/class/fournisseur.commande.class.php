@@ -17,6 +17,7 @@
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  * Copyright (C) 2025		Noé Cendrier			<noe.cendrier@altairis.fr>
+ * Copyright (C) 2026		Pierre Ardoin			<developpeur@lesmetiersdubatiment.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -163,7 +164,7 @@ class CommandeFournisseur extends CommonOrder
 	public $date_approve2;
 
 	/**
-	 * @var int|'' Date of the purchase order ordering
+	 * @var int|''|null 	Date of the purchase order ordering
 	 */
 	public $date_commande;
 
@@ -1043,6 +1044,7 @@ class CommandeFournisseur extends CommonOrder
 				$datas['date'] = '<br><b>'.$langs->trans('Date').':</b> '.dol_print_date($this->date, 'day');
 			}
 			if (!empty($this->delivery_date)) {
+				$langs->load("sendings");
 				$datas['deliverydate'] = '<br><b>'.$langs->trans('DeliveryDate').':</b> '.dol_print_date($this->delivery_date, 'dayhour');
 			}
 		}
@@ -1692,30 +1694,30 @@ class CommandeFournisseur extends CommonOrder
 
 					// This include test on qty if option SUPPLIER_ORDER_WITH_NOPRICEDEFINED is not set
 					$result = $this->addline(
-						$line->desc,
-						$line->subprice,
-						$line->qty,
+						(string) $line->desc,
+						(float) $line->subprice,
+						(float) $line->qty,
 						$line->tva_tx,
-						$line->localtax1_tx,
-						$line->localtax2_tx,
-						$line->fk_product,
+						(float) $line->localtax1_tx,
+						(float) $line->localtax2_tx,
+						(int) $line->fk_product,
 						0,
-						$line->ref_supplier ? $line->ref_supplier : $line->ref_fourn, 			// $line->ref_fourn comes from field ref into table of lines. Value may be a ref that does not exists anymore, so we first try with value of product
-						$line->remise_percent,
+						(string) ($line->ref_supplier ? $line->ref_supplier : $line->ref_fourn), 			// $line->ref_fourn comes from field ref into table of lines. Value may be a ref that does not exists anymore, so we first try with value of product
+						(float) $line->remise_percent,
 						'HT',
+						(float) $line->subprice_ttc,
+						(int) $line->product_type,
+						(int) $line->info_bits,
 						0,
-						$line->product_type,
-						$line->info_bits,
-						0,
-						$line->date_start,
-						$line->date_end,
-						$line->array_options,
-						$line->fk_unit,
-						$line->multicurrency_subprice,  // pu_ht_devise
-						$line->origin,     // origin
-						$line->origin_id,  // origin_id
-						$line->rang,       // rang
-						$line->special_code
+						$line->date_start ?? null,
+						$line->date_end ?? null,
+						$line->array_options ?? [],
+						$line->fk_unit ?? null,
+						(float) $line->multicurrency_subprice,  // pu_ht_devise
+						(string) $line->origin,  // origin
+						(int) $line->origin_id,  // origin_id
+						(int) ($line->rang ?? -1),       // rang
+						(int) $line->special_code
 					);
 					if ($result < 0) {
 						dol_syslog(get_class($this)."::create ".$this->error, LOG_WARNING); // do not use dol_print_error here as it may be a functional error
@@ -1953,7 +1955,7 @@ class CommandeFournisseur extends CommonOrder
 		$this->date               = dol_now();
 		$this->date_creation      = 0;
 		$this->date_validation    = 0;
-		$this->date_commande      = 0;
+		$this->date_commande      = null;
 		$this->ref_supplier       = '';
 		$this->user_approve_id    = 0;
 		$this->user_approve_id2   = 0;
@@ -2148,14 +2150,32 @@ class CommandeFournisseur extends CommonOrder
 					$prod = new Product($this->db);
 					$prod->get_buyprice($fk_prod_fourn_price, (float) $qty, $fk_product, 'none', (empty($this->fk_soc) ? $this->socid : $this->fk_soc));
 
-					if ($qty < $prod->packaging) {
+					// Align messaging, type and float-safety with the customer-order path at commande.class.php:1720
+					// (#38782 bugs 1, 2, 6).
+					if (abs((float) $qty) < $prod->packaging) {
 						$qty = (float) $prod->packaging;
+						setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'warnings');
 					} else {
-						if (!empty($prod->packaging) && (fmod((float) $qty, (float) $prod->packaging)  > 0.000001)) {
-							$coeff = intval((float) $qty / $prod->packaging) + 1;
-							$qty = (float) $prod->packaging * $coeff;
-							setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'mesgs');
+						if (!empty($prod->packaging) && (float) price2num(fmod((float) $qty, (float) $prod->packaging), 'MS')) {
+							$coeff = intval(abs((float) $qty) / $prod->packaging) + 1;
+							$qty = price2num((float) $prod->packaging * $coeff, 'MS');
+							setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'warnings');
 						}
+					}
+
+					// Enforce the supplier minimum purchase quantity on top of packaging
+					// rounding. The packaging block above only ensures qty is a packaging
+					// multiple, not that it satisfies pfp.quantity (=qty_min). If the line
+					// is below the supplier minimum, round qty_min itself up to the next
+					// packaging multiple so we end up with the smallest valid order qty (#38783).
+					if (!empty($prod->fourn_qty) && abs((float) $qty) < (float) $prod->fourn_qty) {
+						if (!empty($prod->packaging) && (float) price2num(fmod((float) $prod->fourn_qty, (float) $prod->packaging), 'MS')) {
+							$coeff = intval((float) $prod->fourn_qty / (float) $prod->packaging) + 1;
+							$qty = (float) price2num((float) $prod->packaging * $coeff, 'MS');
+						} else {
+							$qty = (float) $prod->fourn_qty;
+						}
+						setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'mesgs');
 					}
 				}
 			}
@@ -2187,12 +2207,15 @@ class CommandeFournisseur extends CommonOrder
 			$total_localtax1 = $tabprice[9];
 			$total_localtax2 = $tabprice[10];
 			$pu = $pu_ht = $tabprice[3];
+			$pu_tva = $tabprice[4];
+			$pu_ttc = $tabprice[5];
 
 			// MultiCurrency
 			$multicurrency_total_ht = $tabprice[16];
 			$multicurrency_total_tva = $tabprice[17];
 			$multicurrency_total_ttc = $tabprice[18];
 			$pu_ht_devise = $tabprice[19];
+			$multicurrency_pu_ttc = $tabprice[21];
 
 			$localtax1_type = empty($localtaxes_type[0]) ? '' : $localtaxes_type[0];
 			$localtax2_type = empty($localtaxes_type[2]) ? '' : $localtaxes_type[2];
@@ -2222,6 +2245,8 @@ class CommandeFournisseur extends CommonOrder
 			$this->line->product_type = $product_type;
 			$this->line->remise_percent = $remise_percent;
 			$this->line->subprice = (float) $pu_ht;
+			$this->line->subprice_ttc = (float) $pu_ttc;
+
 			$this->line->rang = $rang;
 			$this->line->info_bits = $info_bits;
 
@@ -2245,6 +2270,7 @@ class CommandeFournisseur extends CommonOrder
 			$this->line->fk_multicurrency = $this->fk_multicurrency;
 			$this->line->multicurrency_code = $this->multicurrency_code;
 			$this->line->multicurrency_subprice	= (float) $pu_ht_devise;
+			$this->line->multicurrency_subprice_ttc	= (float) $multicurrency_pu_ttc;
 			$this->line->multicurrency_total_ht 	= (float) $multicurrency_total_ht;
 			$this->line->multicurrency_total_tva 	= (float) $multicurrency_total_tva;
 			$this->line->multicurrency_total_ttc 	= (float) $multicurrency_total_ttc;
@@ -2988,7 +3014,7 @@ class CommandeFournisseur extends CommonOrder
 			$sql = "INSERT INTO ".$this->db->prefix()."commande_fournisseurdet";
 			$sql .= " (fk_commande, label, description, fk_product, price, qty, tva_tx, localtax1_tx, localtax2_tx, remise_percent, subprice, remise, ref)";
 			$sql .= " VALUES (".((int) $idc).", '".$this->db->escape($label)."', '".$this->db->escape($comclient->lines[$i]->desc)."'";
-			$sql .= ",".$comclient->lines[$i]->fk_product.", ".price2num($comclient->lines[$i]->price, 'MU');
+			$sql .= ",".((int) $comclient->lines[$i]->fk_product).", ".price2num($comclient->lines[$i]->price, 'MU');
 			$sql .= ", ".price2num($comclient->lines[$i]->qty, 'MS').", ".price2num($comclient->lines[$i]->tva_tx, 5).", ".price2num($comclient->lines[$i]->localtax1_tx, 5).", ".price2num($comclient->lines[$i]->localtax2_tx, 5).", ".price2num($comclient->lines[$i]->remise_percent, 3);
 			$sql .= ", '".price2num($comclient->lines[$i]->subprice, 'MT')."','0', '".$this->db->escape($ref)."');";
 			if ($this->db->query($sql)) {
@@ -3177,6 +3203,7 @@ class CommandeFournisseur extends CommonOrder
 			$multicurrency_total_tva = $tabprice[17];
 			$multicurrency_total_ttc = $tabprice[18];
 			$pu_ht_devise = $tabprice[19];
+			$multicurrency_pu_ttc = $tabprice[21];
 
 			$localtax1_type = empty($localtaxes_type[0]) ? '' : $localtaxes_type[0];
 			$localtax2_type = empty($localtaxes_type[2]) ? '' : $localtaxes_type[2];
@@ -3195,20 +3222,19 @@ class CommandeFournisseur extends CommonOrder
 			$this->line->desc = $desc;
 
 			// redefine quantity according to packaging
+			// Mirror commande.class.php::updateline at line 3289: surface the auto-correction
+			// to the user with a warning, float-safe the fmod / coeff arithmetic and use
+			// abs() so negative qty is handled too (#38782 bugs 3, 4, 5, 6).
 			if (getDolGlobalString('PRODUCT_USE_SUPPLIER_PACKAGING')) {
-				if ($qty < $this->line->packaging) {
+				if (abs((float) $qty) < $this->line->packaging) {
 					$qty = $this->line->packaging;
+					setEventMessage($langs->trans('QtyRecalculatedWithPackaging'), 'warnings');
 				} else {
-					// Ensure packaging is numeric, positive, and use fmod instead of %, to prevent error with decimal packaging values (resulting in division by zero)
-					if (
-						!empty($this->line->packaging)
-						&& is_numeric($this->line->packaging)
-						&& (float) $this->line->packaging > 0
-						&& fmod((float) $qty, (float) $this->line->packaging) > 0
-					) {
-						$coeff = intval($qty / $this->line->packaging) + 1;
-						$qty = $this->line->packaging * $coeff;
-						setEventMessage($langs->trans('QtyRecalculatedWithPackaging'), 'mesgs');
+					if (!empty($this->line->packaging) && is_numeric($this->line->packaging) && (float) $this->line->packaging > 0
+						&& (float) price2num(fmod((float) $qty, (float) $this->line->packaging), 'MS')) {
+						$coeff = intval(abs((float) $qty) / $this->line->packaging) + 1;
+						$qty = price2num((float) $this->line->packaging * $coeff, 'MS');
+						setEventMessage($langs->trans('QtyRecalculatedWithPackaging'), 'warnings');
 					}
 				}
 			}
@@ -3224,6 +3250,7 @@ class CommandeFournisseur extends CommonOrder
 			$this->line->localtax2_type = empty($localtaxes_type[2]) ? '' : $localtaxes_type[2];
 			$this->line->remise_percent = $remise_percent;
 			$this->line->subprice       = (float) $pu_ht;
+			$this->line->subprice_ttc   = (float) $pu_ttc;
 			$this->line->info_bits      = $info_bits;
 			$this->line->total_ht       = (float) $total_ht;
 			$this->line->total_tva      = (float) $total_tva;
@@ -3243,11 +3270,13 @@ class CommandeFournisseur extends CommonOrder
 			$this->line->fk_multicurrency = $this->fk_multicurrency;
 			$this->line->multicurrency_code = $this->multicurrency_code;
 			$this->line->multicurrency_subprice		= (float) $pu_ht_devise;
+			$this->line->multicurrency_subprice_ttc	= (float) $multicurrency_pu_ttc;
 			$this->line->multicurrency_total_ht 	= (float) $multicurrency_total_ht;
 			$this->line->multicurrency_total_tva 	= (float) $multicurrency_total_tva;
 			$this->line->multicurrency_total_ttc 	= (float) $multicurrency_total_ttc;
 
 			$this->line->subprice = (float) $pu_ht;
+			$this->line->subprice_ttc = (float) $pu_ttc;
 			$this->line->price = $this->line->subprice;
 
 			$this->line->remise_percent = $remise_percent;

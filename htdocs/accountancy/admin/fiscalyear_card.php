@@ -25,10 +25,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-
-require_once DOL_DOCUMENT_ROOT.'/core/lib/fiscalyear.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/fiscalyear.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -36,13 +32,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/fiscalyear.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/fiscalyear.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/fiscalyear.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "compta"));
 
 // Get parameters
 $id = GETPOSTINT('id');
-$ref = GETPOST('ref', 'alpha');
+$ref = GETPOST('ref', 'alpha') ? GETPOST('ref', 'alpha') : GETPOST('label', 'alpha');
 
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
@@ -62,17 +60,16 @@ $extrafields = new ExtraFields($db);
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 // List of status
+/*
 static $tmpstatus2label = array(
-		'0' => 'OpenFiscalYear',
-		'1' => 'CloseFiscalYear'
+	'0' => 'OpenFiscalYear',
+	'1' => 'CloseFiscalYear'
 );
-$status2label = array(
-		'' => ''
-);
+$status2label = array('' => '');
 foreach ($tmpstatus2label as $key => $val) {
 	$status2label[$key] = $langs->trans($val);
 }
-
+*/
 $date_start = dol_mktime(0, 0, 0, GETPOSTINT('fiscalyearmonth'), GETPOSTINT('fiscalyearday'), GETPOSTINT('fiscalyearyear'));
 $date_end = dol_mktime(0, 0, 0, GETPOSTINT('fiscalyearendmonth'), GETPOSTINT('fiscalyearendday'), GETPOSTINT('fiscalyearendyear'));
 
@@ -128,16 +125,19 @@ if ($action == 'confirm_delete' && $confirm == "yes" /* && $permissiontoadd // a
 			$db->begin();
 
 			$id = $object->create($user);
-
 			if ($id > 0) {
 				$db->commit();
-
-				header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
-				exit();
+				header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
+				exit;
 			} else {
 				$db->rollback();
 
-				setEventMessages($object->error, $object->errors, 'errors');
+				// Handle overlap error
+				if ($id == -5 && !empty($object->errors[0])) {
+					setEventMessages($langs->trans($object->error, $object->errors[0]), null, 'errors');
+				} else {
+					setEventMessages($object->error, $object->errors, 'errors');
+				}
 				$action = 'create';
 			}
 		} else {
@@ -145,7 +145,7 @@ if ($action == 'confirm_delete' && $confirm == "yes" /* && $permissiontoadd // a
 		}
 	} else {
 		header("Location: ./fiscalyear.php");
-		exit();
+		exit;
 	}
 } elseif ($action == 'update' /* && $permissiontoadd // always true */) {
 	// Update record
@@ -158,16 +158,20 @@ if ($action == 'confirm_delete' && $confirm == "yes" /* && $permissiontoadd // a
 		$object->status = GETPOSTINT('status');
 
 		$result = $object->update($user);
-
 		if ($result > 0) {
-			header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
-			exit();
+			header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
+			exit;
 		} else {
-			setEventMessages($object->error, $object->errors, 'errors');
+			// Handle overlap error
+			if ($result == -5 && !empty($object->errors[0])) {
+				setEventMessages($langs->trans($object->error, $object->errors[0]), null, 'errors');
+			} else {
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
 		}
 	} else {
-		header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
-		exit();
+		header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
+		exit;
 	}
 } elseif ($action == 'reopen' /* && $permissiontoadd // always true */ && getDolGlobalString('ACCOUNTING_CAN_REOPEN_CLOSED_PERIOD')) {
 	$result = $object->fetch($id);
@@ -343,6 +347,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<div class="fichecenter">';
 	print '<div class="fichehalfleft">';
 	print '<div class="underbanner clearboth"></div>';
+
 	print '<table class="border centpercent tableforfield">'."\n";
 
 	// Id
@@ -373,6 +378,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '</td></tr>';
 
 	print '</table>';
+
 	print '</div>';
 	print '</div>';
 

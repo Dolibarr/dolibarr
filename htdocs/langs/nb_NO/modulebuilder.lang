@@ -197,4 +197,4 @@ FieldsEdit=Feltredigering
 FieldsInsert=Feltinnsetting
 FieldsView=Feltvisning
 AIPromptExtrafield=AI-spørsmål
-AIPromptExtrafieldDesc=Konstantene som brukes i dette feltet vil bli erstattet med den tilsvarende verdien.
+AIPromptExtrafieldDesc=Skriv inn en ledetekst her som skal returnere verdien og bare verdien. Substitusjonsvariablene erstattes i ledeteksten før AI API-et kalles.

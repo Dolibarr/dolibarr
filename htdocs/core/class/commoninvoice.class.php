@@ -694,9 +694,7 @@ abstract class CommonInvoice extends CommonObject
 	 *  Return if an invoice can be set back to draft.
 	 *	Rule is:
 	 *  If invoice is draft and has a temporary ref -> yes (1)
-	 *  If hidden option INVOICE_CAN_NEVER_BE_REMOVED is 1 -> no (0)
 	 *  If invoice is transferred in bookkeeping -> no (-1)
-	 *  If invoice has a definitive ref, is not last in ref -> no (-2)
 	 *  If invoice has a definitive ref, is not last in a situation cycle -> no (-3)
 	 *  If there is one payment -> no (-4)
 	 *  If already sent by email -> no (-5)
@@ -708,9 +706,96 @@ abstract class CommonInvoice extends CommonObject
 	 */
 	public function isEditable()
 	{
-		$test = $this->is_erasable();
+		// phpcs:enable
+		global $hookmanager, $action;
 
-		return $test;
+		// We check if invoice is a temporary number (PROVxxxx)
+		$tmppart = substr($this->ref, 1, 4);
+
+		if ($this->status == self::STATUS_DRAFT && $tmppart === 'PROV') { // If draft invoice and ref not yet defined
+			return 1;
+		}
+
+		/*
+		if (getDolGlobalInt('INVOICE_CAN_NEVER_BE_REMOVED')) {
+			return 0;
+		}
+		*/
+
+		// If not a draft invoice and not temporary invoice
+		if ($tmppart !== 'PROV') {
+			if ($this instanceOf Facture) {
+				/* @var Facture $this */
+				// If sent by email, we refuse
+				if ((int) $this->email_sent_counter > 0) {
+					return -5;
+				}
+
+				// If printed, we refuse
+				if ((int) $this->pos_print_counter > 0) {
+					return -6;
+				}
+
+				include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
+				if (isALNERunningVersion()) {
+					$this->error = 'Action not allowed on the certified version';
+					return -7;
+				}
+			}
+
+			// If in accountancy, we refuse
+			$ventilExportCompta = $this->getVentilExportCompta();
+			if ($ventilExportCompta != 0) {
+				return -1;
+			}
+
+			// Get last number of validated invoice
+			if ($this->element != 'invoice_supplier') {
+				/*
+				if (empty($this->thirdparty)) {
+					$this->fetch_thirdparty(); // We need to have this->thirdparty defined, in case of the numbering rule uses tags that depend on thirdparty (like {t} tag).
+				}
+				$maxref = $this->getNextNumRef($this->thirdparty, 'last');
+				// $maxref can be '' (means not found) if there is no invoice yet, but also if there is no invoice for the new period when there is a reset at each period
+
+				// If invoice to delete is not the last one, we refuse
+				if ($maxref != '' && $maxref != $this->ref) {
+					return -2;
+				}
+				*/
+
+				// TODO If there is payment in bookkeeping, check the payment is not dispatched in accounting and return -2.
+				// ...
+
+				// If invoice is situation type, we refuse if it is not the last in situation cycle
+				if (!getDolGlobalString('INVOICE_SITUATION_CAN_BE_REMOVED_EVEN_IF_NOT_LAST') && $this->situation_cycle_ref && method_exists($this, 'is_last_in_cycle')) {
+					$last = $this->is_last_in_cycle();
+					if (!$last) {
+						return -3;
+					}
+				}
+			}
+
+			// Test if there is at least one payment. If yes, we refuse.
+			if ($this->getSommePaiement() > 0) {
+				return -4;
+			}
+
+			$parameters = array();
+			$reshook = $hookmanager->executeHooks('isEditable', $parameters, $this, $action);
+			if (!empty($hookmanager->resArray['result'])) {
+				$this->error = $hookmanager->resArray['error'];
+				if (!empty($hookmanager->resArray['errors'])) {
+					$this->errors = array_merge($this->errors, $hookmanager->resArray['errors']);
+				}
+				if (!in_array($this->error, $this->errors)) {
+					$this->errors[] = $this->error;
+				}
+				return $hookmanager->resArray['result'];
+			}
+		}
+
+		return 2;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -726,6 +811,7 @@ abstract class CommonInvoice extends CommonObject
 	 *  If already sent by email -> no (-5)
 	 *  If already printed -> no (-6)
 	 *  If running a LNE version and customer invoice was validated -> no (-7)
+	 *  Other value (may be returned by a hook -10, -11, ...)
 	 *  Otherwise -> yes (2)
 	 *
 	 *  @return    int         Return integer <=0 if no, >0 if yes
@@ -733,6 +819,7 @@ abstract class CommonInvoice extends CommonObject
 	public function is_erasable()
 	{
 		// phpcs:enable
+		global $hookmanager, $action;
 
 		// We check if invoice is a temporary number (PROVxxxx)
 		$tmppart = substr($this->ref, 1, 4);
@@ -761,6 +848,7 @@ abstract class CommonInvoice extends CommonObject
 
 				include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
 				if (isALNERunningVersion()) {
+					$this->error = 'Action not allowed on the certified version';
 					return -7;
 				}
 			}
@@ -787,7 +875,7 @@ abstract class CommonInvoice extends CommonObject
 				// TODO If there is payment in bookkeeping, check the payment is not dispatched in accounting and return -2.
 				// ...
 
-				// If invoice is situation type, we refuse it it is not the last in situation cycle
+				// If invoice is situation type, we refuse if it is not the last in situation cycle
 				if (!getDolGlobalString('INVOICE_SITUATION_CAN_BE_REMOVED_EVEN_IF_NOT_LAST') && $this->situation_cycle_ref && method_exists($this, 'is_last_in_cycle')) {
 					$last = $this->is_last_in_cycle();
 					if (!$last) {
@@ -796,9 +884,22 @@ abstract class CommonInvoice extends CommonObject
 				}
 			}
 
-			// Test if there is at least one payment. If yes, we refuse to delete.
+			// Test if there is at least one payment. If yes, we refuse.
 			if ($this->getSommePaiement() > 0) {
 				return -4;
+			}
+
+			$parameters = array();
+			$reshook = $hookmanager->executeHooks('isErasable', $parameters, $this, $action);
+			if (!empty($hookmanager->resArray['result'])) {
+				$this->error = $hookmanager->resArray['error'];
+				if (!empty($hookmanager->resArray['errors'])) {
+					$this->errors = array_merge($this->errors, $hookmanager->resArray['errors']);
+				}
+				if (!in_array($this->error, $this->errors)) {
+					$this->errors[] = $this->error;
+				}
+				return $hookmanager->resArray['result'];
 			}
 		}
 
@@ -814,6 +915,10 @@ abstract class CommonInvoice extends CommonObject
 	 */
 	public function getVentilExportCompta($mode = 0)
 	{
+		if (!isModEnabled('accounting')) {
+			return 0;
+		}
+
 		$alreadydispatched = 0;
 
 		$type = 'customer_invoice';
@@ -1108,11 +1213,6 @@ abstract class CommonInvoice extends CommonObject
 			$paramsBadge['badgeParams' ]['attr']['title'] = $titlestringtoshow;
 		}
 
-		/*
-		if (isset($moreparams['dispute_status'])) {
-			$statusdispute = $moreparams['dispute_status'] ? img_picto($langs->trans("DisputeOpen"), 'warning') : '';
-		}
-		*/
 		if (isset($moreparams['dispute_status']) && $moreparams['dispute_status']) {
 			$labelStatus .= ' - ';
 			if ($moreparams['dispute_status'] == 8) {
@@ -1179,7 +1279,7 @@ abstract class CommonInvoice extends CommonObject
 		}
 		$this->db->free($resqltemp);
 
-		/* Definition de la date limit */
+		/* Define date limit */
 
 		// 0 : adding the number of days
 		if ($cdr_type == 0) {

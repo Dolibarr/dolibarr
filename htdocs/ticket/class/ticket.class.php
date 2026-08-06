@@ -298,7 +298,7 @@ class Ticket extends CommonObject
 		'subject' => array('type' => 'varchar(255)', 'label' => 'Subject', 'visible' => 1, 'enabled' => 1, 'position' => 19, 'notnull' => -1, 'searchall' => 1, 'help' => "", 'css' => 'maxwidth200 tdoverflowmax200', 'csslist' => 'tdoverflowmax250', 'autofocusoncreate' => 1),
 		'type_code' => array('type' => 'varchar(32)', 'label' => 'Type', 'visible' => 1, 'enabled' => 1, 'position' => 20, 'notnull' => -1, 'help' => "", 'csslist' => 'tdoverflowmax100'),
 		'category_code' => array('type' => 'varchar(32)', 'label' => 'TicketCategory', 'visible' => -1, 'enabled' => 1, 'position' => 21, 'notnull' => -1, 'help' => "", 'css' => 'maxwidth100 tdoverflowmax200'),
-		'severity_code' => array('type' => 'varchar(32)', 'label' => 'Severity', 'visible' => 1, 'enabled' => 1, 'position' => 22, 'notnull' => -1, 'help' => "", 'css' => 'maxwidth100'),
+		'severity_code' => array('type' => 'varchar(32)', 'label' => 'Severity', 'visible' => 1, 'enabled' => 1, 'position' => 22, 'notnull' => -1, 'help' => "", 'css' => 'maxwidth100 tdoverflowmax100'),
 		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php', 'label' => 'ThirdParty', 'visible' => 1, 'enabled' => 'isModEnabled("societe")', 'position' => 50, 'notnull' => -1, 'index' => 1, 'searchall' => 1, 'help' => "OrganizationEventLinkToThirdParty", 'css' => 'tdoverflowmax150 maxwidth150onsmartphone'),
 		'notify_tiers_at_create' => array('type' => 'integer', 'label' => 'NotifyThirdparty', 'visible' => -1, 'enabled' => 0, 'position' => 51, 'notnull' => 1, 'index' => 1),
 		'fk_project' => array('type' => 'integer:Project:projet/class/project.class.php', 'label' => 'Project', 'visible' => -1, 'enabled' => 'isModEnabled("project")', 'position' => 52, 'notnull' => -1, 'index' => 1, 'help' => "LinkToProject"),
@@ -413,7 +413,9 @@ class Ticket extends CommonObject
 		if (isset($this->message)) {
 			$this->message = trim($this->message);
 			if (dol_strlen($this->message) > 65000) {
-				$this->errors[] = 'ErrorFieldTooLong';
+				global $langs;
+				$langs->loadLangs(array('errors', 'ticket'));
+				$this->errors[] = $langs->trans('ErrorFieldTooLong', $langs->transnoentitiesnoconv('InitialMessage'));
 				dol_syslog(get_class($this).'::create error -1 message too long', LOG_ERR);
 				$result = -1;
 			}
@@ -1048,7 +1050,9 @@ class Ticket extends CommonObject
 		if (isset($this->message)) {
 			$this->message = trim($this->message);
 			if (dol_strlen($this->message) > 65000) {
-				$this->errors[] = 'ErrorFieldTooLong';
+				global $langs;
+				$langs->loadLangs(array('errors', 'ticket'));
+				$this->errors[] = $langs->trans('ErrorFieldTooLong', $langs->transnoentitiesnoconv('InitialMessage'));
 				dol_syslog(get_class($this).'::update error -1 message too long', LOG_ERR);
 				return -1;
 			}
@@ -1278,6 +1282,19 @@ class Ticket extends CommonObject
 		$object->ref = $object->getDefaultRef();
 		$object->track_id = generate_random_id(16);
 		$object->progress = 0;
+		// Reset lifecycle timestamps so the clone starts fresh: datec is filled by
+		// create() with dol_now() when empty, date_read and date_close stay null
+		// because the new ticket has not been read or closed yet (see issue #38559).
+		// Reset lifecycle timestamps and resolution so the clone starts fresh.
+		// datec stays at 0 so Ticket::create()'s `if (empty($this->datec))` guard
+		// fills it with dol_now(). date_read / date_close / resolution are unset
+		// so the SQL writers' `!isset` checks emit NULL. We use these forms
+		// rather than `= null` so phpstan stays happy with the int-typed
+		// property declarations.
+		$object->datec = 0;
+		unset($object->date_read);
+		unset($object->date_close);
+		unset($object->resolution);
 
 		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';
@@ -1717,7 +1734,7 @@ class Ticket extends CommonObject
 			$this->status = Ticket::STATUS_READ;
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."ticket";
-			$sql .= " SET fk_statut = ".Ticket::STATUS_READ.", date_read = '".$this->db->idate(dol_now())."'";
+			$sql .= " SET fk_statut = ".((int) $this->status) .", date_read = '".$this->db->idate(dol_now())."'";
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::markAsRead");
@@ -1742,7 +1759,9 @@ class Ticket extends CommonObject
 					$this->status = $this->oldcopy->status;
 
 					$this->db->rollback();
+
 					$this->error = implode(',', $this->errors);
+
 					dol_syslog(get_class($this)."::markAsRead ".$this->error, LOG_ERR);
 					return -1;
 				}
@@ -1834,8 +1853,8 @@ class Ticket extends CommonObject
 		$now = dol_now();
 
 		// Clean parameters
-		if (isset($this->fk_track_id)) {
-			$this->fk_track_id = trim($this->fk_track_id);
+		if (isset($this->track_id)) {
+			$this->track_id = trim($this->track_id);
 		}
 
 		if (isset($this->message)) {
@@ -2008,8 +2027,11 @@ class Ticket extends CommonObject
 		if ($this->status != Ticket::STATUS_CLOSED && $this->status != Ticket::STATUS_CANCELED) { // not closed
 			$this->db->begin();
 
+			$this->oldcopy = dol_clone($this);
+			$this->status = ($mode ? Ticket::STATUS_CANCELED : Ticket::STATUS_CLOSED);
+
 			$sql = "UPDATE ".MAIN_DB_PREFIX."ticket";
-			$sql .= " SET fk_statut=".($mode ? Ticket::STATUS_CANCELED : Ticket::STATUS_CLOSED).", progress=100, date_close='".$this->db->idate(dol_now())."'";
+			$sql .= " SET fk_statut = ".((int) $this->status).", progress=100, date_close='".$this->db->idate(dol_now())."'";
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::close mode=".$mode);
@@ -2937,13 +2959,13 @@ class Ticket extends CommonObject
 							if (is_array($external_contacts) && count($external_contacts) === 0) {
 								if (!empty($object->fk_soc)) {
 									$object->fetch_thirdparty($object->fk_soc);
-									$array_company = array(array('firstname' => '', 'lastname' => $object->thirdparty->name, 'email' => $object->thirdparty->email, 'libelle' => $langs->transnoentities('Customer'), 'socid' => $object->thirdparty->id));
+									$array_company = array(array('id' => -1, 'firstname' => '', 'lastname' => $object->thirdparty->name, 'email' => $object->thirdparty->email, 'libelle' => $langs->transnoentities('Customer'), 'socid' => $object->thirdparty->id));
 									$external_contacts = array_merge($external_contacts, $array_company);
 								} elseif (empty($object->fk_soc) && !empty($object->origin_replyto)) {
-									$array_external = array(array('firstname' => '', 'lastname' => $object->origin_replyto, 'email' => $object->origin_replyto, 'libelle' => $langs->transnoentities('Customer'), 'socid' => 0));
+									$array_external = array(array('id' => -1, 'firstname' => '', 'lastname' => $object->origin_replyto, 'email' => $object->origin_replyto, 'libelle' => $langs->transnoentities('Customer'), 'socid' => 0));
 									$external_contacts = array_merge($external_contacts, $array_external);
 								} elseif (empty($object->fk_soc) && !empty($object->origin_email)) {
-									$array_external = array(array('firstname' => '', 'lastname' => $object->origin_email, 'email' => $object->thirdparty->email, 'libelle' => $langs->transnoentities('Customer'), 'socid' => $object->thirdparty->id));
+									$array_external = array(array('id' => -1, 'firstname' => '', 'lastname' => $object->origin_email, 'email' => $object->thirdparty->email, 'libelle' => $langs->transnoentities('Customer'), 'socid' => $object->thirdparty->id));
 									$external_contacts = array_merge($external_contacts, $array_external);
 								}
 							}
@@ -3067,9 +3089,11 @@ class Ticket extends CommonObject
 				if ((getDolGlobalInt('TICKET_SET_STATUS_ON_ANSWER', -1) < 0
 				&& ($object->status < self::STATUS_IN_PROGRESS && !$user->socid && !$private))
 				|| ($object->status > self::STATUS_IN_PROGRESS && $public_area)) {
-					$object->setStatut($object::STATUS_IN_PROGRESS);
+					// Set status
+					$object->setStatut($object::STATUS_IN_PROGRESS, null, '', 'TICKET_MODIFY');
 				} elseif (getDolGlobalInt('TICKET_SET_STATUS_ON_ANSWER', -1) >= 0 && empty($user->socid) && empty($private)) {
-					$object->setStatut(getDolGlobalInt('TICKET_SET_STATUS_ON_ANSWER'));
+					// Set status
+					$object->setStatut(getDolGlobalInt('TICKET_SET_STATUS_ON_ANSWER'), null, '', 'TICKET_MODIFY');
 				}
 
 				return 1;
@@ -3204,8 +3228,11 @@ class Ticket extends CommonObject
 					if ($mailfile->error) {
 						setEventMessages($langs->trans('ErrorFailedToSendMail', $from, $receiverstring), null, 'errors');
 						dol_syslog($langs->trans('ErrorFailedToSendMail', $from, $receiverstring).' : '.$mailfile->error);
-					} else {
+					} elseif (getDolGlobalString('MAIN_DISABLE_ALL_MAILS')) {
 						setEventMessages('No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS', null, 'errors');
+					} else {
+						setEventMessages($langs->trans('ErrorFailedToSendMail', $from, $receiverstring), null, 'errors');
+						dol_syslog('ErrorFailedToSendMail (no error details) from='.$from.' to='.$receiverstring, LOG_WARNING);
 					}
 				}
 			}

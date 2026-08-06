@@ -1360,8 +1360,10 @@ if (empty($reshook)) {
 						dol_syslog("Try to find source object origin=".$object->origin_type." originid=".$object->origin_id." to add lines");
 						$result = $srcobject->fetch($object->origin_id);
 						if ($result > 0) {
-							$tmpdate = $srcobject->delivery_date;
-							$object->setDeliveryDate($user, $tmpdate);
+							if (empty($object->delivery_date)) {
+								$tmpdate = $srcobject->delivery_date;
+								$object->setDeliveryDate($user, $tmpdate);
+							}
 							$object->set_id_projet($user, $srcobject->fk_project);
 
 							$lines = $srcobject->lines;
@@ -1374,14 +1376,18 @@ if (empty($reshook)) {
 							$num = count($lines);
 
 							for ($i = 0; $i < $num; $i++) {
-								if ((empty($lines[$i]->subprice) || $lines[$i]->qty <= 0 || !in_array($lines[$i]->id, $selectedLines)) && $lines[$i]->product_type != 9) {
+								if (
+									empty($lines[$i]->subprice)
+									|| $lines[$i]->qty < 0
+									|| !in_array($lines[$i]->id, $selectedLines)
+									|| $lines[$i]->special_code == SUBTOTALS_SPECIAL_CODE
+								) {
 									continue;
 								}
 
 								$label = (!empty($lines[$i]->label) ? $lines[$i]->label : '');
 								$desc = (!empty($lines[$i]->desc) ? $lines[$i]->desc : '');
 								$product_type = (!empty($lines[$i]->product_type) ? $lines[$i]->product_type : 0);
-
 								// Reset fk_parent_line for no child products and special product
 								if (($lines[$i]->product_type != 9 && empty($lines[$i]->fk_parent_line)) || $lines[$i]->product_type == 9) {
 									$fk_parent_line = 0;
@@ -1832,12 +1838,14 @@ if ($action == 'create') {
 
 			$langs->load('projects');
 			print '<tr><td>'.$langs->trans('Project').'</td><td>';
-			if ($socid > 0) { // external user
-				$projSocFilter = $socid;
-			} elseif ((int) $societe->id == 0 || getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS')) {
+			if (!empty($user->socid)) { // external user: restrict to their own third party
+				$projSocFilter = $user->socid;
+			} elseif (getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') || $socid == 0) {
+				// Give priority to the constant (as on supplier invoice), so a supplier document created from a
+				// customer project keeps that project selected after the supplier is chosen.
 				$projSocFilter = -1;
 			} else {
-				$projSocFilter = $societe->id;
+				$projSocFilter = $socid;
 			}
 			print img_picto('', 'project', 'class="pictofixedwidth"').$formproject->select_projects($projSocFilter, $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
 			print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?action=create&status=1'.(!empty($societe->id) ? '&socid='.$societe->id : "").'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create'.(!empty($societe->id) ? '&socid='.$societe->id : "")).'"><span class="fa fa-plus-circle valignmiddle" title="'.$langs->trans("AddProject").'"></span></a>';
@@ -2186,7 +2194,7 @@ if ($action == 'create') {
 		}
 		$morehtmlref .= $object->thirdparty->getNomUrl(1, 'supplier');
 		if (!getDolGlobalString('MAIN_DISABLE_OTHER_LINK') && $object->thirdparty->id > 0) {
-			$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/fourn/commande/list.php?socid='.$object->thirdparty->id.'&search_company='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherOrders").'</a>)';
+			$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/fourn/commande/list.php?socid='.$object->thirdparty->id.'">'.$langs->trans("OtherOrders").'</a>)';
 		}
 	}
 

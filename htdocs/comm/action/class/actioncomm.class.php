@@ -36,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncommreminder.class.php'
 
 
 /**
- *		Class to manage agenda events (actions)
+ *	Class to manage agenda events (actions)
  */
 class ActionComm extends CommonObject
 {
@@ -426,12 +426,12 @@ class ActionComm extends CommonObject
 		"id" => array("type" => "integer", "label" => "Ref", "enabled" => "1", 'position' => 10, 'notnull' => 1, "visible" => "1",),
 		"ref" => array("type" => "varchar(30)", "label" => "Ref", "enabled" => "1", 'position' => 15, 'notnull' => 1, "visible" => "0", "csslist" => "tdoverflowmax150", "showoncombobox" => "1",),
 		"ref_ext" => array("type" => "varchar(255)", "label" => "Refext", "enabled" => "1", 'position' => 20, 'notnull' => 0, "visible" => "0",),
+		"datep" => array("type" => "datetime", "label" => "DateStart", "enabled" => "1", 'position' => 25, 'notnull' => 0, "visible" => "1",),
+		"datep2" => array("type" => "datetime", "label" => "DateEnd", "enabled" => "1", 'position' => 26, 'notnull' => 0, "visible" => "-1",),
 		"fk_action" => array("type" => "integer", "label" => "Fkaction", "enabled" => "1", 'position' => 40, 'notnull' => 0, "visible" => "0", "css" => "maxwidth500 widthcentpercentminusxx",),
 		"code" => array("type" => "varchar(50)", "label" => "Code", "enabled" => "1", 'position' => 45, 'notnull' => 0, "visible" => "0", "showoncombobox" => "1",),
 		"label" => array("type" => "varchar(255)", "label" => "Title", "enabled" => "1", 'position' => 50, 'notnull' => 1, "visible" => "1", "alwayseditable" => "1", "css" => "minwidth300", "cssview" => "wordbreak", "csslist" => "tdoverflowmax150",),
 		"note" => array("type" => "mediumtext", "label" => "Description", "enabled" => "1", 'position' => 51, 'notnull' => 0, "visible" => "-1",),
-		"datep" => array("type" => "datetime", "label" => "DateStart", "enabled" => "1", 'position' => 53, 'notnull' => 0, "visible" => "1",),
-		"datep2" => array("type" => "datetime", "label" => "DateEnd", "enabled" => "1", 'position' => 54, 'notnull' => 0, "visible" => "1",),
 		"fk_project" => array("type" => "integer", "label" => "Project", "picto" => "project", "enabled" => "1", 'position' => 75, 'notnull' => 0, "visible" => "0", "css" => "maxwidth500 widthcentpercentminusxx",),
 		"fk_soc" => array("type" => "integer", "label" => "ThirdParty", "picto" => "company", "enabled" => "1", 'position' => 80, 'notnull' => 0, "visible" => "0", "css" => "maxwidth500 widthcentpercentminusxx",),
 		"fk_contact" => array("type" => "integer", "label" => "Contact", "picto" => "contact", "enabled" => "1", 'position' => 85, 'notnull' => 0, "visible" => "-1", "css" => "maxwidth500 widthcentpercentminusxx",),
@@ -457,7 +457,7 @@ class ActionComm extends CommonObject
 		"recurid" => array("type" => "varchar(128)", "label" => "Recurid", "enabled" => "1", 'position' => 195, 'notnull' => 0, "visible" => "0",),
 		"recurrule" => array("type" => "varchar(128)", "label" => "Recurrule", "enabled" => "1", 'position' => 200, 'notnull' => 0, "visible" => "0",),
 		"recurdateend" => array("type" => "datetime", "label" => "Recurdateend", "enabled" => "1", 'position' => 205, 'notnull' => 0, "visible" => "0",),
-		"import_key" => array("type" => "varchar(14)", "label" => "ImportId", "enabled" => "1", 'position' => 900, 'notnull' => 0, "visible" => "0",),
+		"import_key" => array("type" => "varchar(14)", "label" => "ImportId", "enabled" => "1", 'position' => 900, 'notnull' => 0, "visible" => "-1",),
 		"extraparams" => array("type" => "varchar(255)", "label" => "Extraparams", "enabled" => "1", 'position' => 215, 'notnull' => 0, "visible" => "0",),
 		"calling_duration" => array("type" => "integer", "label" => "Callingduration", "enabled" => "1", 'position' => 220, 'notnull' => 0, "visible" => "0",),
 		"visibility" => array("type" => "varchar(12)", "label" => "Visibility", "enabled" => "1", 'position' => 225, 'notnull' => 0, "visible" => "0",),
@@ -621,6 +621,7 @@ class ActionComm extends CommonObject
 		$sql .= "fk_contact,";
 		$sql .= "fk_user_author,";
 		$sql .= "fk_user_action,";
+		$sql .= "fk_task,";
 		$sql .= "label,percent,priority,fulldayevent,location,";
 		$sql .= "transparency,";
 		$sql .= "fk_element,";
@@ -659,6 +660,7 @@ class ActionComm extends CommonObject
 		$sql .= ((isset($this->contact_id) && $this->contact_id > 0) ? ((int) $this->contact_id) : "null").", "; // deprecated, use ->socpeopleassigned
 		$sql .= (isset($user->id) && $user->id > 0 ? $user->id : "null").", ";
 		$sql .= ($userownerid > 0 ? $userownerid : "null").", ";
+		$sql .= (!empty($this->fk_task) ? ((int) $this->fk_task) : "null").", ";
 		$sql .= "'".$this->db->escape($this->label)."', ";
 		$sql .= "'".$this->db->escape((string) $this->percentage)."', ";
 		$sql .= "'".$this->db->escape((string) $this->priority)."', ";
@@ -891,6 +893,7 @@ class ActionComm extends CommonObject
 		$sql .= " a.fk_project,";
 		$sql .= " a.fk_user_author, a.fk_user_mod,";
 		$sql .= " a.fk_user_action,";
+		$sql .= " a.fk_task,";
 		$sql .= " a.fk_contact, a.percent as percentage,";
 		$sql .= " a.fk_element as elementid, a.elementtype,";
 		$sql .= " a.priority, a.fulldayevent, a.location, a.transparency,";
@@ -962,6 +965,7 @@ class ActionComm extends CommonObject
 				$this->usermod->id = $obj->fk_user_mod; // deprecated
 
 				$this->userownerid = $obj->fk_user_action;
+				$this->fk_task = $obj->fk_task;
 				$this->priority				= $obj->priority;
 				$this->fulldayevent			= $obj->fulldayevent;
 				$this->location				= $obj->location;
@@ -1281,6 +1285,7 @@ class ActionComm extends CommonObject
 		$sql .= ", transparency = '".$this->db->escape((string) $this->transparency)."'";
 		$sql .= ", fk_user_mod = ".((int) $user->id);
 		$sql .= ", fk_user_action = ".($userownerid > 0 ? ((int) $userownerid) : "null");
+		$sql .= ", fk_task = ".(!empty($this->fk_task) ? ((int) $this->fk_task) : "null");
 		if (!empty($this->fk_element)) {
 			$sql .= ", fk_element=".($this->fk_element ? ((int) $this->fk_element) : "null");
 		}
@@ -1525,7 +1530,7 @@ class ActionComm extends CommonObject
 			if ($search_sale == -2) {
 				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = a.fk_soc)";
 			} elseif ($search_sale > 0) {
-				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = a.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+				$sql .= " AND (a.fk_soc IS NULL OR EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = a.fk_soc AND sc.fk_user = ".((int) $search_sale)."))";
 			}
 		}
 
@@ -1934,7 +1939,8 @@ class ActionComm extends CommonObject
 	}
 
 	/**
-	 *  Return Picto of type of event
+	 *  Return Picto of type of event.
+	 *  It used the property type_color, type_code, type
 	 *
 	 *  @param	string		$morecss			More CSS
 	 *  @param	string		$titlealt			Title alt
@@ -1951,19 +1957,19 @@ class ActionComm extends CommonObject
 			if ($this->type_picto) {
 				$imgpicto = img_picto($titlealt, $this->type_picto, '', 0, 0, 0, '', ($morecss ? ' '.$morecss : ''));
 			} else {
-				if ($this->type_code == 'AC_RDV') {
+				if ($this->type_code === 'AC_RDV') {
 					$imgpicto = img_picto($titlealt, 'meeting', $color, 0, 0, 0, '', ($morecss ? ' '.$morecss : ''));
-				} elseif ($this->type_code == 'AC_TEL') {
+				} elseif ($this->type_code === 'AC_TEL') {
 					$imgpicto = img_picto($titlealt, 'object_phoning', $color, 0, 0, 0, '', ($morecss ? ' '.$morecss : ''));
-				} elseif ($this->type_code == 'AC_FAX') {
+				} elseif ($this->type_code === 'AC_FAX') {
 					$imgpicto = img_picto($titlealt, 'object_phoning_fax', $color, 0, 0, 0, '', ($morecss ? ' '.$morecss : ''));
-				} elseif ($this->type_code == 'AC_EMAIL' || $this->type_code == 'AC_EMAIL_IN' || $this->type_code == 'AC_EMAILING' || (!empty($this->code) && preg_match('/_SENTBYMAIL/', $this->code))) {
+				} elseif ($this->type_code === 'AC_EMAIL' || $this->type_code === 'AC_EMAIL_IN' || $this->type_code === 'AC_EMAILING' || (!empty($this->code) && preg_match('/_SENTBYMAIL/', $this->code))) {
 					$imgpicto = img_picto($titlealt, 'object_email', $color, 0, 0, 0, '', ($morecss ? ' '.$morecss : ''));
-				} elseif ($this->type_code == 'AC_INT') {
+				} elseif ($this->type_code === 'AC_INT') {
 					$imgpicto = img_picto($titlealt, 'object_intervention', $color, 0, 0, 0, '', ($morecss ? ' '.$morecss : ''));
 				} elseif (!empty($this->code) && preg_match('/^TICKET_MSG/', $this->code)) {
 					$imgpicto = img_picto($titlealt, 'object_conversation', $color, 0, 0, 0, '', ($morecss ? ' '.$morecss : ''));
-				} elseif ($this->type != 'systemauto') {
+				} elseif ((string) $this->type != 'systemauto') {
 					$imgpicto = img_picto($titlealt, 'user-cog', $color, 0, 0, 0, '', ($morecss ? ' '.$morecss : ''));
 				} else {
 					$imgpicto = img_picto($titlealt, 'cog', $color, 0, 0, 0, '', ($morecss ? ' '.$morecss : ''));
@@ -1985,7 +1991,7 @@ class ActionComm extends CommonObject
 	/**
 	 *  Return label of type of event
 	 *
-	 *  @param	int		$mode			0=Mode short, 1=Mode long
+	 *  @param	int		$mode			0=Mode short, 1=Mode long, 2=Mode very long
 	 *  @return	string					HTML String
 	 */
 	public function getTypeLabel($mode = 0)
@@ -2019,6 +2025,11 @@ class ActionComm extends CommonObject
 
 		if ($this->type == 'systemauto' && $mode == 1) {
 			$labeltype .= ' ('.$langs->trans("auto").')';
+		}
+		if ($this->type == 'systemauto' && $mode == 2) {
+			$labeltype = $langs->trans("AutoActions").($this->type_code == 'AC_OTH_AUTO' ? '' : ': '.$labeltype);
+		} elseif ($this->type != 'systemauto' && $mode == 2) {
+			$labeltype = $langs->trans("ManualActions").($this->type_code == 'AC_OTH' ? '' : ': '.$labeltype);
 		}
 
 
@@ -3088,7 +3099,7 @@ class ActionComm extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."actioncomm ";
 		$sql .= " SET percent = ".(int) $percent;
 		if ($usermodid > 0) {
-			$sql .= ", fk_user_mod = ".$usermodid;
+			$sql .= ", fk_user_mod = ".((int) $usermodid);
 		}
 		$sql .= " WHERE id = ".((int) $id);
 

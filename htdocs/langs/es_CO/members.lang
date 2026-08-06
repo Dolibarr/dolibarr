@@ -152,4 +152,3 @@ XSubsriptionCreated=%s suscripción(es) creada(s)
 XSubsriptionErrors=%s suscripción(es) en las que se produjo un error
 CreateSubscription=Crear suscripción
 WarningNoComplementaryActionDone=No se ejecutará ninguna acción complementaria sobre la grabación con esta acción masiva.
-MergeOriginMemberIsMAndatory=Origin member is mendatory for merging

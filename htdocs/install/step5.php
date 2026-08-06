@@ -39,7 +39,6 @@
 
 define('ALLOWED_IF_UPGRADE_UNLOCK_FOUND', 1);
 include_once 'inc.php';
-
 /**
  * @var string	$conffile
  * @var string	$conffiletoshow
@@ -64,6 +63,8 @@ if (file_exists($conffile)) {
  * @var string	$dolibarr_main_db_cryptkey
  * @var string	$dolibarr_main_url_root
  * @var string	$modulesdir
+ * @var int		$force_install_noedit
+ * @var string	$force_install_dolibarrpassword
  */
 require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
 require_once $dolibarr_main_document_root.'/core/lib/security.lib.php'; // for dol_hash
@@ -144,6 +145,14 @@ if (@file_exists($forcedfile)) {
 
 $force_install_lockinstall = (int) (!empty($force_install_lockinstall) ? $force_install_lockinstall : (GETPOST('installlock', 'aZ09') ? GETPOST('installlock', 'aZ09') : (empty($argv[8]) ? '' : $argv[8])));
 
+
+// Case the password was in forced mode
+if (@$force_install_noedit == 2 && isset($force_install_dolibarrpassword)) {
+	$pass = $force_install_dolibarrpassword;
+	$pass_verif = $force_install_dolibarrpassword;
+}
+
+
 dolibarr_install_syslog("--- step5: entering step5.php page ".$versionfrom." ".$versionto);
 
 $error = 0;
@@ -167,6 +176,10 @@ if ($action == "set") {		// Test on permissions not required here
 
 	if (dol_strlen(trim($login)) == 0) {
 		header("Location: step4.php?error=3&selectlang=$setuplang".(isset($login) ? '&login='.$login : ''));
+		exit;
+	}
+	if ($pass === '**********' || $pass_verif == '**********') {
+		header("Location: step4.php?error=2&selectlang=$setuplang".(isset($login) ? '&login='.$login : ''));
 		exit;
 	}
 }
@@ -260,7 +273,11 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 				$numrows = $db->num_rows($resql);
 				if ($numrows == 0) {
 					// Define default setup for password encryption
-					dolibarr_set_const($db, "DATABASE_PWD_ENCRYPTED", "1", 'chaine', 0, '', $conf->entity);
+					// DATABASE_PWD_ENCRYPTED is shared across all entities (admin/security.php:75
+					// stores it with entity=0). Use entity 0 here too, otherwise an install only
+					// records the flag for entity 1 and later created entities default to
+					// unencrypted passwords until an admin re-toggles the setting (#34680).
+					dolibarr_set_const($db, "DATABASE_PWD_ENCRYPTED", "1", 'chaine', 0, '', 0);
 					dolibarr_set_const($db, "MAIN_SECURITY_SALT", dol_print_date(dol_now(), 'dayhourlog'), 'chaine', 0, '', 0); // All entities
 					if (function_exists('password_hash')) {
 						dolibarr_set_const($db, "MAIN_SECURITY_HASH_ALGO", 'password_hash', 'chaine', 0, '', 0); // All entities

@@ -290,12 +290,16 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
     						$("#search_'.$htmlnamejquery.'").trigger("change");	// We have changed value of the combo select, we must be sure to trigger all js hook binded on this event. This is required to trigger other javascript change method binded on original field by other code.
     					}
     					,delay: 500
-					}).data("'.$dataforrenderITem.'")._renderItem = function( ul, item ) {
-						return $("<li>")
-						.data( "'.$dataforitem.'", item ) // jQuery UI > 1.10.0
-						.append( \'<a><span class="tag">\' + item.label + "</span></a>" )
-						.appendTo(ul);
-					};
+					});
+					const widgetData = $("input#search_'.$htmlnamejquery.'").data("'.$dataforrenderITem.'");
+					if (widgetData) {
+						widgetData._renderItem = function( ul, item ) {
+							return $("<li>")
+							.data( "'.$dataforitem.'", item ) // jQuery UI > 1.10.0
+							.append( \'<a><span class="tag">\' + item.label + "</span></a>" )
+							.appendTo(ul);
+						};
+					}
 
   				});';
 	$script .= '</script>';
@@ -782,10 +786,11 @@ function ajax_constantonoff($code, $input = array(), $entity = null, $revertonof
  *  @param	string	$htmlname	Name of HTML component. Keep '' or use a different value if you need to use this component several time on the same page for the same field.
  *  @param	int		$forcenojs	Force the component to work as link post (without javascript) instead of ajax call
  *  @param	string	$moreparam	When $forcenojs=1 then we can add more parameters to the backtopage URL. String must url encoded. Example: 'abc=def&fgh=ijk'
+ *  @param	int     $readonly	Use 1 if button not allowed.
  *  @return string              html for button on/off
  *  @see ajax_constantonoff() to update that value of a constant
  */
-function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input = array(), $morecss = '', $htmlname = '', $forcenojs = 0, $moreparam = '')
+function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input = array(), $morecss = '', $htmlname = '', $forcenojs = 0, $moreparam = '', $readonly = 0)
 {
 	global $conf, $langs;
 
@@ -795,7 +800,7 @@ function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input =
 
 	$out = '';
 
-	if (!empty($conf->use_javascript_ajax) && empty($forcenojs)) {
+	if (!empty($conf->use_javascript_ajax) && empty($forcenojs) && empty($readonly)) {
 		$out .= '<script>
         $(function() {
             var input = '.json_encode($input).';
@@ -810,8 +815,15 @@ function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input =
                     element: \''.dol_escape_js((empty($object->module) || $object->module == $object->element) ? $object->element : $object->element.'@'.$object->module).'\',
                     id: \''.((int) $object->id).'\',
 					token: \''.currentToken().'\'
-                },
-                function() {
+                }).done(
+                function(response) {
+				    try {
+				        var data = JSON.parse(response);
+						console.log(data);
+				    } catch (e) {
+				        console.log(response);
+				    }
+
                     $("#set_'.$htmlname.'_'.$object->id.'").hide();
                     $("#del_'.$htmlname.'_'.$object->id.'").show();
                     // Enable another element
@@ -829,7 +841,13 @@ function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input =
                             $("#" + value).show();
                         });
                     }
-                });
+                }).fail(
+					function(response) {
+						//alert(response.responseText);
+						console.warn(response.responseText);
+						Dolibarr.tools.setEventMessage(response.responseText, "errors");
+					}
+				);
             });
 
             // Del constant
@@ -842,8 +860,15 @@ function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input =
                     element: \''.dol_escape_js((empty($object->module) || $object->module == $object->element) ? $object->element : $object->element.'@'.$object->module).'\',
                     id: \''.((int) $object->id).'\',
 					token: \''.currentToken().'\'
-                },
-                function() {
+                }).done(
+				function(response) {
+				    try {
+				        var data = JSON.parse(response);
+						console.log(data);
+				    } catch (e) {
+				        console.log(response);
+				    }
+
                     $("#del_'.$htmlname.'_'.$object->id.'").hide();
                     $("#set_'.$htmlname.'_'.$object->id.'").show();
                     // Disable another element
@@ -861,7 +886,13 @@ function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input =
                             $("#" + value).hide();
                         });
                     }
-                });
+                }).fail(
+					function(response) {
+						//alert(response.responseText);
+						console.warn(response.responseText);
+						Dolibarr.tools.setEventMessage(response.responseText, "errors");
+					}
+				);
             });
         });
     </script>';
@@ -889,8 +920,16 @@ function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input =
 	}
 
 	if (empty($conf->use_javascript_ajax) || $forcenojs) {
-		$out .= '<a id="set_'.$htmlname.'_'.$object->id.'" class="linkobject '.($object->$code == 1 ? 'hideobject' : '').($morecss ? ' '.$morecss : '').'" href="'.DOL_URL_ROOT.'/core/ajax/objectonoff.php?action=set&token='.newToken().'&id='.((int) $object->id).'&element='.urlencode($object->element).'&field='.urlencode($field).'&value=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id.($moreparam ? '&'.$moreparam : '')).'">'.img_picto($langs->trans($text_off), $switchoff, '', 0, 0, 0, '', $cssswitchoff).'</a>';
-		$out .= '<a id="del_'.$htmlname.'_'.$object->id.'" class="linkobject '.($object->$code == 1 ? '' : 'hideobject').($morecss ? ' '.$morecss : '').'" href="'.DOL_URL_ROOT.'/core/ajax/objectonoff.php?action=set&token='.newToken().'&id='.((int) $object->id).'&element='.urlencode($object->element).'&field='.urlencode($field).'&value=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id.($moreparam ? '&'.$moreparam : '')).'">'.img_picto($langs->trans($text_on), $switchon, '', 0, 0, 0, '', $cssswitchon).'</a>';
+		$url = DOL_URL_ROOT.'/core/ajax/objectonoff.php?action=set&token='.newToken().'&id='.((int) $object->id).'&element='.urlencode($object->element).'&field='.urlencode($field).'&value=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id.($moreparam ? '&'.$moreparam : ''));
+		if ($readonly) {
+			$url ='#';
+		}
+		$out .= '<a id="set_'.$htmlname.'_'.$object->id.'" class="linkobject '.($object->$code == 1 ? 'hideobject' : '').($morecss ? ' '.$morecss : '').'" href="'.$url.'">'.img_picto($langs->trans($text_off), $switchoff, '', 0, 0, 0, '', $cssswitchoff).'</a>';
+		$url = DOL_URL_ROOT.'/core/ajax/objectonoff.php?action=set&token='.newToken().'&id='.((int) $object->id).'&element='.urlencode($object->element).'&field='.urlencode($field).'&value=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id.($moreparam ? '&'.$moreparam : ''));
+		if ($readonly) {
+			$url ='#';
+		}
+		$out .= '<a id="del_'.$htmlname.'_'.$object->id.'" class="linkobject '.($object->$code == 1 ? '' : 'hideobject').($morecss ? ' '.$morecss : '').'" href="'.$url.'">'.img_picto($langs->trans($text_on), $switchon, '', 0, 0, 0, '', $cssswitchon).'</a>';
 	} else {
 		$out .= '<span id="set_'.$htmlname.'_'.$object->id.'" class="linkobject '.($object->$code == 1 ? 'hideobject' : '').($morecss ? ' '.$morecss : '').'">'.img_picto($langs->trans($text_off), $switchoff, '', 0, 0, 0, '', $cssswitchoff).'</span>';
 		$out .= '<span id="del_'.$htmlname.'_'.$object->id.'" class="linkobject '.($object->$code == 1 ? '' : 'hideobject').($morecss ? ' '.$morecss : '').'">'.img_picto($langs->trans($text_on), $switchon, '', 0, 0, 0, '', $cssswitchon).'</span>';

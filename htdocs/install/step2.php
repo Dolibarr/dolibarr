@@ -612,7 +612,8 @@ $conf->file->instance_unique_id = (empty($dolibarr_main_instance_unique_id) ? (e
 
 $hash_unique_id = dol_hash('dolibarr'.$conf->file->instance_unique_id, 'sha256');	// Note: if the global salt changes, this hash changes too so ping may be counted twice. We don't mind. It is for statistics purpose only.
 
-$out  = '<input type="checkbox" name="dolibarrpingno" id="dolibarrpingno"'.((getDolGlobalString('MAIN_FIRST_PING_OK_ID') == 'disabled') ? '' : ' value="checked" checked="true"').'> ';
+$out = '<br>';
+$out .= '<input type="checkbox" name="dolibarrpingno" id="dolibarrpingno"'.((getDolGlobalString('MAIN_FIRST_PING_OK_ID') == 'disabled') ? '' : ' value="checked" checked="true"').'> ';
 $out .= '<label for="dolibarrpingno">'.$langs->trans("MakeAnonymousPing").'</label>';
 
 $out .= '<!-- Add js script to manage the uncheck of option to not send the ping -->';

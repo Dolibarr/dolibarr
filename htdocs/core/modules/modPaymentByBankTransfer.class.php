@@ -77,14 +77,6 @@ class modPaymentByBankTransfer extends DolibarrModules
 		$this->const = array();
 		$r = 0;
 
-		/*$this->const[$r][0] = "BANK_ADDON_PDF";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "sepamandate";
-		$this->const[$r][3] = 'Name of manager to generate SEPA mandate';
-		$this->const[$r][4] = 0;
-		$r++;*/
-
-
 		// Boxes
 		$this->boxes = array();
 

@@ -29,6 +29,15 @@
 
 use Luracast\Restler\Format\UploadFormat;
 
+// API endpoints return JSON (or XML). A stray PHP warning or notice in the
+// response body corrupts the parser on the caller side. Silence the display
+// of PHP messages here while keeping them in the server log so that the
+// problem is still observable to the operator (filefunc.inc.php only does
+// this when dolibarr_main_prod is set, which leaves development setups
+// emitting HTML into every API answer).
+@ini_set('display_errors', '0');
+@ini_set('log_errors', '1');
+
 if (!defined('NOCSRFCHECK')) {
 	define('NOCSRFCHECK', '1'); // Do not check anti CSRF attack test
 }
@@ -116,10 +125,6 @@ call_user_func(
 require_once DOL_DOCUMENT_ROOT.'/api/class/api.class.php';
 require_once DOL_DOCUMENT_ROOT.'/api/class/api_access.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-
-
-// In API context, we force the protection to avoid forging of criteria including bind SQL injection
-$conf->global->MAIN_DISALLOW_UNSECURED_SELECT_INTO_EXTRAFIELDS_FILTER = 1;
 
 
 // In API context, we force the protection to avoid forging of criteria including bind SQL injection
@@ -414,7 +419,13 @@ if (!empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/swagger.json' && 
 		exit(0);
 	}
 
-	if (class_exists($classname)) {
+	// Match the discovery loop above which accepts both "Foo" and "FooApi" class
+	// names (see line ~308). Without the Api suffix branch, a module file named
+	// api_mymodule.class.php exposing class MyModuleApi cannot be dispatched
+	// even though the api explorer lists it (#37282).
+	if (class_exists($classname.'Api')) {
+		$api->r->addAPIClass($classname.'Api');
+	} elseif (class_exists($classname)) {
 		$api->r->addAPIClass($classname);
 	}
 }

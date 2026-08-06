@@ -91,7 +91,7 @@ class DocumentController extends Controller
 	{
 		global $conf, $hookmanager;
 
-		define('MAIN_SECURITY_FORCECSP', "default-src: 'none'");
+		define('MAIN_SECURITY_FORCECSP', "default-src 'none'");
 
 		if (!defined('NOTOKENRENEWAL')) {
 			define('NOTOKENRENEWAL', '1');

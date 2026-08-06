@@ -1,5 +1,4 @@
 <?php
-
 /* Copyright (C) 2003-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2003       Xavier Dutoit           <doli@sydesy.com>
  * Copyright (C) 2004-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
@@ -706,6 +705,9 @@ class Conf extends stdClass
 			if (!isset($this->global->FACTURE_TVAOPTION)) {
 				$this->global->FACTURE_TVAOPTION = 1;
 			}
+			/*if (!isset($this->global->INVOICE_CHECK_POSTERIOR_DATE)) {
+				$this->global->INVOICE_CHECK_POSTERIOR_DATE = 1;
+			}*/
 
 			// Variable globales LDAP
 			if (empty($this->global->LDAP_FIELD_FULLNAME)) {
@@ -1354,6 +1356,12 @@ class Conf extends stdClass
 				// Note value is always forced to 1 in API context to avoid bind SQL injection into API filters.
 				$this->global->MAIN_DISALLOW_UNSECURED_SELECT_INTO_EXTRAFIELDS_FILTER = 0;		// TODO Move this into 1 by default
 			}
+
+			if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
+				// In on of this customer price modes, option PRODUCT_USE_CUSTOMER_PACKAGING is not implemented/supported, so we disable it
+				$this->global->PRODUCT_USE_CUSTOMER_PACKAGING = 0;
+			}
+
 
 			// For backward compatibility
 			if (!empty($this->global->LDAP_SYNCHRO_ACTIVE)) {

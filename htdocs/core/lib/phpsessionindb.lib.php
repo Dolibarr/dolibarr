@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2020       Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,7 +67,6 @@ function dolSessionOpen($save_path, $session_name)
 	if (empty($dolibarr_session_db_port)) {
 		$dolibarr_session_db_port = $dolibarr_main_db_port;
 	}
-	//var_dump('open '.$database_name.' '.$table_name);
 
 	$dbsession = getDoliDBInstance($dolibarr_session_db_type, $dolibarr_session_db_host, $dolibarr_session_db_user, $dolibarr_session_db_pass, $dolibarr_session_db_name, (int) $dolibarr_session_db_port);
 
@@ -166,7 +165,6 @@ function dolSessionWrite($sess_id, $val)
 			$insert_query = "INSERT INTO ".MAIN_DB_PREFIX."session";
 			$insert_query .= "(session_id, session_variable, last_accessed, fk_user, remote_ip, user_agent)";
 			$insert_query .= " VALUES ('".$dbsession->escape($sess_id)."', '".$dbsession->escape($val)."', '".$dbsession->idate($time_stamp)."', 0, '".$dbsession->escape(getUserRemoteIP())."', '".$dbsession->escape(substr($_SERVER['HTTP_USER_AGENT'], 0, 255)."')";
-			//var_dump($insert_query);
 			$result = $dbsession->query($insert_query);
 			if (!$result) {
 				dol_print_error($dbsession);
@@ -178,7 +176,7 @@ function dolSessionWrite($sess_id, $val)
 			$update_query = "UPDATE ".MAIN_DB_PREFIX."session";
 			$update_query .= " SET session_variable = '".$dbsession->escape($val)."',";
 			$update_query .= " last_accessed = '".$dbsession->idate($time_stamp)."',";
-			$update_query .= " fk_user = ".(int) $user->id.",";
+			$update_query .= " fk_user = ".(int) (!empty($user->id) ? $user->id : 0).",";
 			$update_query .= " remote_ip = '".$dbsession->escape(getUserRemoteIP())."',";
 			$update_query .= " user_agent = '".$dbsession->escape($_SERVER['HTTP_USER_AGENT'])."'";
 			$update_query .= " WHERE session_id = '".$dbsession->escape($sess_id)."'";

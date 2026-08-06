@@ -501,6 +501,22 @@ class Account extends CommonObject
 	public function add_url_line($line_id, $url_id, $url, $label, $type)
 	{
 		// phpcs:enable
+		// Avoid uk_bank_url collision when the same target (line_id, url_id, type) is linked twice
+		// e.g. two distinct credit transfers for the same employee dispatched on the same bank line.
+		$sqlcheck = "SELECT rowid FROM ".MAIN_DB_PREFIX."bank_url";
+		$sqlcheck .= " WHERE fk_bank = ".((int) $line_id);
+		$sqlcheck .= " AND url_id = ".((int) $url_id);
+		$sqlcheck .= " AND type = '".$this->db->escape($type)."'";
+		$resqlcheck = $this->db->query($sqlcheck);
+		if ($resqlcheck) {
+			$obj = $this->db->fetch_object($resqlcheck);
+			if ($obj) {
+				$this->db->free($resqlcheck);
+				return (int) $obj->rowid;
+			}
+			$this->db->free($resqlcheck);
+		}
+
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_url (";
 		$sql .= "fk_bank";
 		$sql .= ", url_id";
@@ -2572,7 +2588,7 @@ class AccountLine extends CommonObjectLine
 		$sql .= " rappro = ".((int) $conciliated);
 		$sql .= ", num_releve = '".$this->db->escape($this->num_releve)."'";
 		if ($conciliated) {
-			$sql .= ", fk_user_rappro = ".$user->id;
+			$sql .= ", fk_user_rappro = ".((int) $user->id);
 		}
 		$sql .= " WHERE rowid = ".((int) $this->id);
 

@@ -26,12 +26,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
-require_once DOL_DOCUMENT_ROOT.'/partnership/class/partnership.class.php';
-require_once DOL_DOCUMENT_ROOT.'/partnership/lib/partnership.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -40,6 +34,11 @@ require_once DOL_DOCUMENT_ROOT.'/partnership/lib/partnership.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+require_once DOL_DOCUMENT_ROOT.'/partnership/class/partnership.class.php';
+require_once DOL_DOCUMENT_ROOT.'/partnership/lib/partnership.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("partnership", "other"));

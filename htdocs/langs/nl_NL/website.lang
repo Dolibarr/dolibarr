@@ -118,7 +118,8 @@ ThisPageHasTranslationPages=Deze pagina / container heeft vertaling
 NoWebSiteCreateOneFirst=Er is nog geen website gemaakt. Maak er eerst een.
 GoTo=Ga naar
 DynamicPHPCodeContainsAForbiddenInstruction=U voegt dynamische PHP-code toe die de PHP-instructie '<strong>%s</strong> 'bevat die standaard als dynamische inhoud is verboden (zie verborgen opties WEBSITE_PHP_ALLOW_xxx om de lijst met toegestane opdrachten te vergroten).
-NotAllowedToAddDynamicContent=U hebt geen toestemming om dynamische PHP-inhoud op websites toe te voegen of te bewerken. Vraag toestemming of houd code gewoon ongewijzigd in php-tags.
+NotAllowedToAddDynamicContent=You don't have permission to add or edit dynamic PHP content in websites. Ask permission or just keep code into php tags unmodified.
+NotAllowedToAddDynamicContentDisabledGlobaly=You currently can't add or edit dynamic PHP content in this website (even if you have permission to), because this feature must be first enabled globally by setting the parameter %s=1 int the conf.php file.<br>Edit your conf.php file to add this parameter, or ask your administrator or support to do it for you.
 ReplaceWebsiteContent=Zoek of vervang website-inhoud
 DeleteAlsoJs=Ook alle JavaScript-bestanden specifiek voor deze website verwijderen?
 DeleteAlsoMedias=Ook alle mediabestanden specifiek voor deze website verwijderen?

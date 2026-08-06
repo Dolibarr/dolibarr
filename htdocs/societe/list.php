@@ -111,7 +111,7 @@ $search_vat = trim(GETPOST('search_vat', 'alpha'));
 $search_sale = "";
 if (GETPOSTISARRAY('search_sale')) {
 	$search_sale = GETPOST('search_sale', 'array:int');
-} elseif (GETPOSTISSET('search_sale')) {
+} elseif (GETPOSTISSET('search_sale') && GETPOSTINT('search_sale') > 0) {
 	$search_sale = array(GETPOSTINT('search_sale'));
 }
 $search_categ_cus = GETPOSTINT("search_categ_cus");
@@ -347,6 +347,9 @@ $arrayfields['sales.representative'] = array('label' => $langs->trans("SalesRepr
 
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 // @phpstan-ignore-next-line
 $object->fields = dol_sort_array($object->fields, 'position');
@@ -2179,7 +2182,8 @@ while ($i < $imaxinloop) {
 		}
 		// Email
 		if (!empty($arrayfields['s.email']['checked'])) {
-			print '<td class="tdoverflowmax150">'.dol_print_email($obj->email, $obj->rowid, $obj->rowid, 1, 0, 0, 1)."</td>\n";
+			$showinvalidemail = (int) !getDolGlobalInt('MAIN_SHOW_INVALID_EMAIL_IN_LIST'); // to avoid slow display
+			print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute($obj->email).'">'.dol_print_email($obj->email, $obj->rowid, $obj->rowid, 1, 0, $showinvalidemail, 1)."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

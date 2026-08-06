@@ -1041,7 +1041,7 @@ class Commande extends CommonOrder
 		$sql .= ", multicurrency_tx";
 		$sql .= ", import_key";
 		$sql .= ")";
-		$sql .= " VALUES ('(PROV)', ".((int) $this->socid).", '".$this->db->idate($this->date_creation)."', ".((int) $user->id);
+		$sql .= " VALUES ('(PROV)', ".((int) $this->socid).", '".$this->db->idate($this->date_creation)."', ".($user->id > 0 ? ((int) $user->id) : "null");
 		$sql .= ", ".($this->fk_project > 0 ? ((int) $this->fk_project) : "null");
 		$sql .= ", '".$this->db->idate($date)."'";
 		$sql .= ", ".($this->source >= 0 && $this->source != '' ? $this->db->escape((string) $this->source) : 'null');
@@ -1717,14 +1717,14 @@ class Commande extends CommonOrder
 			if (getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING')) {
 				$tmpproduct = new Product($this->db);
 				$result = $tmpproduct->fetch($fk_product);
-				if (abs($qty) < $tmpproduct->packaging) {
+				if (abs((float) $qty) < $tmpproduct->packaging) {
 					$qty = (float) $tmpproduct->packaging;
-					setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'mesgs');
+					setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'warnings');
 				} else {
-					if (!empty($tmpproduct->packaging) && $qty > $tmpproduct->packaging) {
-						$coeff = intval(abs($qty) / $tmpproduct->packaging) + 1;
+					if (!empty($tmpproduct->packaging) && (float) price2num(fmod((float) $qty, (float) $tmpproduct->packaging), 'MS')) {
+						$coeff = intval(abs((float) $qty) / $tmpproduct->packaging) + 1;
 						$qty = price2num((float) $tmpproduct->packaging * $coeff, 'MS');
-						setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'mesgs');
+						setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'warnings');
 					}
 				}
 			}
@@ -1763,7 +1763,7 @@ class Commande extends CommonOrder
 			// Rang to use
 			$ranktouse = $rang;
 
-			if ($ranktouse == -1) {
+			if (empty($ranktouse) || $ranktouse == -1) {
 				$rangmax = $this->line_max($fk_parent_line);
 				$ranktouse = $rangmax + 1;
 			}
@@ -1798,6 +1798,9 @@ class Commande extends CommonOrder
 			$this->line->total_localtax2 = (float) $total_localtax2;
 			$this->line->total_ttc = (float) $total_ttc;
 			$this->line->special_code = $special_code;
+			if (empty($qty) && empty($special_code)) {
+				$this->line->special_code = 3;
+			}
 			$this->line->origin = $origin;
 			$this->line->origin_id = $origin_id;
 			$this->line->fk_parent_line = $fk_parent_line;
@@ -2209,10 +2212,10 @@ class Commande extends CommonOrder
 		$this->lines = array();
 
 		$sql = 'SELECT l.rowid, l.fk_product, l.fk_parent_line, l.product_type, l.fk_commande, l.label as custom_label, l.description, l.price, l.qty, l.vat_src_code, l.tva_tx, l.ref_ext,';
-		$sql .= ' l.localtax1_tx, l.localtax2_tx, l.localtax1_type, l.localtax2_type, l.fk_remise_except, l.remise_percent, l.subprice, l.fk_product_fournisseur_price as fk_fournprice, l.buy_price_ht as pa_ht, l.rang, l.info_bits, l.special_code,';
+		$sql .= ' l.localtax1_tx, l.localtax2_tx, l.localtax1_type, l.localtax2_type, l.fk_remise_except, l.remise_percent, l.subprice, l.subprice_ttc, l.fk_product_fournisseur_price as fk_fournprice, l.buy_price_ht as pa_ht, l.rang, l.info_bits, l.special_code,';
 		$sql .= ' l.total_ht, l.total_ttc, l.total_tva, l.total_localtax1, l.total_localtax2, l.date_start, l.date_end,';
 		$sql .= ' l.fk_unit, l.extraparams,';
-		$sql .= ' l.fk_multicurrency, l.multicurrency_code, l.multicurrency_subprice, l.multicurrency_total_ht, l.multicurrency_total_tva, l.multicurrency_total_ttc,';
+		$sql .= ' l.fk_multicurrency, l.multicurrency_code, l.multicurrency_subprice, l.multicurrency_subprice_ttc, l.multicurrency_total_ht, l.multicurrency_total_tva, l.multicurrency_total_ttc,';
 		$sql .= ' p.ref as product_ref, p.description as product_desc, p.fk_product_type, p.label as product_label, p.tosell as product_tosell, p.tobuy as product_tobuy, p.tobatch as product_tobatch, p.barcode as product_barcode,';
 		$sql .= ' p.customcode, p.fk_country as country_id, c.code as country_code,';
 		$sql .= ' p.weight, p.weight_units, p.volume, p.volume_units, p.packaging';
@@ -2258,7 +2261,8 @@ class Commande extends CommonOrder
 				$line->total_tva        = $objp->total_tva;
 				$line->total_localtax1  = $objp->total_localtax1;
 				$line->total_localtax2  = $objp->total_localtax2;
-				$line->subprice         = $objp->subprice;
+				$line->subprice         = (float) $objp->subprice;
+				$line->subprice_ttc     = (float) $objp->subprice_ttc;
 				$line->fk_remise_except = $objp->fk_remise_except;
 				$line->remise_percent   = $objp->remise_percent;
 				$line->price            = $objp->price;
@@ -2305,6 +2309,7 @@ class Commande extends CommonOrder
 				$line->fk_multicurrency = $objp->fk_multicurrency;
 				$line->multicurrency_code = $objp->multicurrency_code;
 				$line->multicurrency_subprice 	= $objp->multicurrency_subprice;
+				$line->multicurrency_subprice_ttc 	= $objp->multicurrency_subprice_ttc;
 				$line->multicurrency_total_ht 	= $objp->multicurrency_total_ht;
 				$line->multicurrency_total_tva 	= $objp->multicurrency_total_tva;
 				$line->multicurrency_total_ttc 	= $objp->multicurrency_total_ttc;
@@ -3159,8 +3164,11 @@ class Commande extends CommonOrder
 			if (empty($remise_percent)) {
 				$remise_percent = 0;
 			}
-			if (empty($special_code) || $special_code == 3) {
-				$special_code = 0;
+			if (empty($qty) && empty($special_code)) {
+				$special_code = 3; // Set option tag
+			}
+			if (!empty($qty) && $special_code == 3) {
+				$special_code = 0; // Remove option tag
 			}
 			if (empty($ref_ext)) {
 				$ref_ext = '';
@@ -3278,16 +3286,19 @@ class Commande extends CommonOrder
 			}
 
 			if (getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING')) {
-				if ($qty < $this->line->packaging) {
+				if (abs((float) $qty) < $this->line->packaging) {
 					$qty = $this->line->packaging;
+					setEventMessage($langs->trans('QtyRecalculatedWithPackaging'), 'warnings');
 				} else {
 					if (!empty($this->line->packaging)
 						&& is_numeric($this->line->packaging)
 						&& (float) $this->line->packaging > 0
-						&& fmod((float) $qty, (float) $this->line->packaging) > 0) {
-						$coeff = intval($qty / $this->line->packaging) + 1;
-						$qty = $this->line->packaging * $coeff;
-						setEventMessage($langs->trans('QtyRecalculatedWithPackaging'), 'mesgs');
+						&& (float) price2num(fmod((float) $qty, (float) $this->line->packaging), 'MS')) {
+						// Use abs() to keep the rounding consistent for negative qty,
+						// matching what addline() at line 1725 already does (#38782 bug 5).
+						$coeff = intval(abs((float) $qty) / $this->line->packaging) + 1;
+						$qty = price2num((float) $this->line->packaging * $coeff, 'MS');
+						setEventMessage($langs->trans('QtyRecalculatedWithPackaging'), 'warnings');
 					}
 				}
 			}

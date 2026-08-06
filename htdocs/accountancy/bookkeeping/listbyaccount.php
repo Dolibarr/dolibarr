@@ -246,7 +246,11 @@ $error = 0;
 $result = -1; // For static analysis
 $documentlink = ''; // For static analysis
 
+// Permissions
+$permissiontoread = $user->hasRight('accounting', 'mouvements', 'lire');
 $permissiontoadd = $user->hasRight('accounting', 'mouvements', 'creer');
+$permissiontodelete = $user->hasRight('accounting', 'mouvements', 'supprimer');
+$permissiontoexport = $user->hasRight('accounting', 'mouvements', 'export');
 
 
 /*
@@ -460,11 +464,6 @@ if (empty($reshook)) {
 	if (!empty($type)) {
 		$param = '&type='.$type.$param;
 	}
-
-	// Permissions
-	$permissiontoread = $user->hasRight('societe', 'lire');
-	$permissiontodelete = $user->hasRight('societe', 'supprimer');
-	$permissiontoadd = $user->hasRight('societe', 'creer');
 
 	// Actions
 	if ($action === 'exporttopdf' && $permissiontoadd) {
@@ -750,7 +749,8 @@ if (!empty($socid)) {
 		print '</div>';
 		print dol_get_fiche_end();
 
-		print info_admin($langs->trans("WarningThisPageContainsOnlyEntriesTransferredInAccounting")).'';
+		print info_admin($langs->trans("WarningThisPageContainsOnlyEntriesTransferredInAccounting"));
+		print '<br>';
 
 		// Choice of mode (customer / supplier)
 		if (!empty($conf->dol_use_jmobile)) {
@@ -906,7 +906,7 @@ if (empty($reshook)) {
 			$newcardbutton .= dolGetButtonTitle($langs->trans('GroupBySubAccountAccounting'), '', 'fa fa-align-left vmirror paddingleft imgforviewmode', DOL_URL_ROOT . '/accountancy/bookkeeping/listbyaccount.php?type=sub&' . $url_param, '', 1, array('morecss' => 'marginleftonly'));
 		}
 	}
-	$newcardbutton .= dolGetButtonTitle($langs->trans('ExportToPdf'), '', 'fa fa-file-pdf paddingleft', $_SERVER['PHP_SELF'] . '?action=exporttopdf'.(!empty($type) ? '&type=sub' : '').'&' . $url_param, '', 1, array('morecss' => 'marginleftonly'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ExportToPdf'), '', 'fa fa-file-pdf paddingleft', $_SERVER['PHP_SELF'] . '?action=exporttopdf'.(!empty($type) ? '&type=sub' : '').'&' . $url_param, '', $permissiontoexport, array('morecss' => 'marginleftonly'));
 
 	$newcardbutton .= dolGetButtonTitleSeparator();
 
@@ -1420,17 +1420,19 @@ while ($i < min($num, $limit)) {
 	}
 	// Piece number
 	if (!empty($arrayfields['t.piece_num']['checked'])) {
-		print '<td>';
+		print '<td class="nowraponall">';
 		$object->id = $line->id;
 		$object->piece_num = $line->piece_num;
 		$object->ref = $line->ref;
 		print $object->getNomUrl(1, '', 0, '', 1);
+		print '<span class="hideonsmartphone">';
 		if (!empty($line->date_export)) {
 			print img_picto($langs->trans("DateExport").": ".dol_print_date($line->date_export, 'dayhour')." (".$langs->trans("TransactionExportDesc").")", 'fa-file-export', 'class="paddingleft pictofixedwidth opacitymedium"');
 		}
 		if (!empty($line->date_validation)) {
 			print img_picto($langs->trans("DateValidation").": ".dol_print_date($line->date_validation, 'dayhour')." (".$langs->trans("TransactionBlockedLockedDesc").")", 'fa-lock', 'class="paddingleft pictofixedwidth opacitymedium"');
 		}
+		print '</span>';
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;

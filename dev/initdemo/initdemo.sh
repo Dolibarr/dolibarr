@@ -37,8 +37,8 @@ fi
 # ----------------------------- command line params
 confirm=$1
 dumpfile=$2
-base=$3
-port=$4
+base="${3:-dolibarrdemo}"
+port="${4:-3306}"
 admin=$5
 passwd=$6
 
@@ -91,7 +91,7 @@ then
 	fichtemp=$(mktemp 2>/dev/null) || fichtemp=/tmp/test$$
 	# shellcheck disable=2064,2172
 	trap "rm -f '$fichtemp'" 0 1 2 5 15
-	$DIALOG --title "Init Dolibarr with demo values" --clear --inputbox "Mysql database name :" 16 55 dolibarrdemo 2> "$fichtemp"
+	$DIALOG --title "Init Dolibarr with demo values" --clear --inputbox "Mysql database name :" 16 55 $base 2> "$fichtemp"
 	valret=$?
 	case $valret in
 		0)
@@ -107,7 +107,7 @@ then
 	fichtemp=$(mktemp 2>/dev/null) || fichtemp=/tmp/test$$
 	# shellcheck disable=2064,2172
 	trap "rm -f '$fichtemp'" 0 1 2 5 15
-	$DIALOG --title "Init Dolibarr with demo values" --clear --inputbox "Mysql port (ex: 3306):" 16 55 3306 2> "$fichtemp"
+	$DIALOG --title "Init Dolibarr with demo values" --clear --inputbox "Mysql port (ex: 3306):" 16 55 $port 2> "$fichtemp"
 	valret=$?
 
 	case $valret in

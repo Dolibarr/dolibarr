@@ -373,6 +373,7 @@ class PropaleLigne extends CommonObjectLine
 		$sql .= ' pd.localtax1_tx, pd.localtax2_tx, pd.total_localtax1, pd.total_localtax2,';
 		$sql .= ' pd.fk_multicurrency, pd.multicurrency_code, pd.multicurrency_subprice, pd.multicurrency_total_ht, pd.multicurrency_total_tva, pd.multicurrency_total_ttc,';
 		$sql .= ' p.ref as product_ref, p.label as product_label, p.description as product_desc,p.barcode as product_barcode,';
+		$sql .= ' p.weight, p.weight_units, p.volume, p.volume_units,';
 		$sql .= ' p.customcode, p.fk_country as country_id, c.code as country_code,';
 		$sql .= ' p.packaging,';
 		$sql .= ' pd.date_start, pd.date_end, pd.product_type, pd.extraparams';
@@ -427,7 +428,12 @@ class PropaleLigne extends CommonObjectLine
 				$this->product_custom_code = $objp->customcode;
 				$this->product_custom_country_id = $objp->country_id;
 				$this->product_custom_country_code = $objp->country_code;
+
 				$this->fk_unit          = $objp->fk_unit;
+				$this->weight = $objp->weight;
+				$this->weight_units = $objp->weight_units;
+				$this->volume = $objp->volume;
+				$this->volume_units = $objp->volume_units;
 
 				$this->packaging      	= $objp->packaging;
 
@@ -465,7 +471,7 @@ class PropaleLigne extends CommonObjectLine
 	 */
 	public function insert($notrigger = 0)
 	{
-		global $conf, $user;
+		global $user;
 
 		$error = 0;
 
@@ -764,27 +770,27 @@ class PropaleLigne extends CommonObjectLine
 
 		// Mise a jour ligne en base
 		$sql = "UPDATE ".MAIN_DB_PREFIX."propaldet SET";
-		$sql .= " description='".$this->db->escape($this->desc)."'";
-		$sql .= ", label=".(!empty($this->label) ? "'".$this->db->escape($this->label)."'" : "null");
-		$sql .= ", product_type=".$this->product_type;
+		$sql .= " description = '".$this->db->escape($this->desc)."'";
+		$sql .= ", label = ".(!empty($this->label) ? "'".$this->db->escape($this->label)."'" : "null");
+		$sql .= ", product_type = ".((int) $this->product_type);
 		$sql .= ", vat_src_code = '".(empty($this->vat_src_code) ? '' : $this->vat_src_code)."'";
 		$sql .= ", tva_tx='".price2num($this->tva_tx)."'";
 		$sql .= ", localtax1_tx=".price2num($this->localtax1_tx);
 		$sql .= ", localtax2_tx=".price2num($this->localtax2_tx);
 		$sql .= ", localtax1_type='".$this->db->escape($this->localtax1_type)."'";
 		$sql .= ", localtax2_type='".$this->db->escape($this->localtax2_type)."'";
-		$sql .= ", qty='".price2num($this->qty)."'";
-		$sql .= ", subprice=".price2num($this->subprice);
-		$sql .= ", remise_percent=".price2num($this->remise_percent);
-		$sql .= ", price=".(float) price2num($this->price); // TODO A virer
-		$sql .= ", remise=".(float) price2num($this->remise); // TODO A virer
-		$sql .= ", info_bits='".$this->db->escape((string) $this->info_bits)."'";
+		$sql .= ", qty = ".((float) price2num($this->qty));
+		$sql .= ", subprice = ".price2num($this->subprice);
+		$sql .= ", remise_percent = ".price2num($this->remise_percent);
+		$sql .= ", price = ".(float) price2num($this->price); // TODO A virer
+		$sql .= ", remise = ".(float) price2num($this->remise); // TODO A virer
+		$sql .= ", info_bits = '".$this->db->escape((string) $this->info_bits)."'";
 		if (empty($this->skip_update_total)) {
-			$sql .= ", total_ht=".price2num($this->total_ht);
-			$sql .= ", total_tva=".price2num($this->total_tva);
-			$sql .= ", total_ttc=".price2num($this->total_ttc);
-			$sql .= ", total_localtax1=".price2num($this->total_localtax1);
-			$sql .= ", total_localtax2=".price2num($this->total_localtax2);
+			$sql .= ", total_ht = ".price2num($this->total_ht);
+			$sql .= ", total_tva = ".price2num($this->total_tva);
+			$sql .= ", total_ttc = ".price2num($this->total_ttc);
+			$sql .= ", total_localtax1 = ".price2num($this->total_localtax1);
+			$sql .= ", total_localtax2 = ".price2num($this->total_localtax2);
 		}
 		$sql .= ", fk_product_fournisseur_price=".(!empty($this->fk_fournprice) ? "'".$this->db->escape((string) $this->fk_fournprice)."'" : "null");
 		$sql .= ", buy_price_ht=".price2num($this->pa_ht);

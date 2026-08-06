@@ -397,7 +397,9 @@ if (isModEnabled('stripe') && $paymentmethod === 'stripe') {
 	}
 
 	// Check we are coming from the newpaymentpage
-	if (GETPOST('paymentoksessioncode') !== $_SESSION['paymentoksessioncode']) {
+	// Bypass session check when returning from Stripe confirmPayment() (mode STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION=2)
+	// In that case, payment_intent is passed in GET by Stripe and PaymentIntent::retrieve() below acts as verification
+	if (!GETPOST('payment_intent', 'alphanohtml') && GETPOST('paymentoksessioncode') !== $_SESSION['paymentoksessioncode']) {
 		$error++;
 		$errmsg = 'Attempted direct access to the paymentok page without a valid session.';
 		dol_syslog($errmsg, LOG_ERR, 0, '_payment');
@@ -2334,7 +2336,7 @@ if (!empty($doactionsthenredirect)) {
 	if ($ispaymentok) {
 		// Redirect to a success page
 		$randomseckey = getRandomPassword(true, null, 20);
-		$_SESSION['paymentoksessioncode'] = $randomseckey;		// key between paymentok.php to another page like a paymentok of the website.
+		$_SESSION['paymentoksessioncode'] = $randomseckey;		// key propagated between paymentok.php to another page like a paymentok of the website.
 
 		// Paymentok page must be created for the specific website
 		if (!defined('USEDOLIBARRSERVER') && !empty($ws_virtuelhost)) {
@@ -2349,7 +2351,7 @@ if (!empty($doactionsthenredirect)) {
 	} else {
 		// Redirect to an error page
 		$randomseckey = getRandomPassword(true, null, 20);
-		$_SESSION['paymentkosessioncode'] = $randomseckey;		// key between paymentok.php to another page like a paymentko of the website.
+		$_SESSION['paymentkosessioncode'] = $randomseckey;		// key propagated between paymentok.php to another page like a paymentko of the website.
 
 		// Paymentko page must be created for the specific website
 		if (!defined('USEDOLIBARRSERVER') && !empty($ws_virtuelhost)) {

@@ -506,7 +506,7 @@ if ($search_all) {
 		$setupstring .= $key."=".$val.";";
 	}
 	print '<!-- Search done like if STOCK_QUICKSEARCH_ON_FIELDS = '.$setupstring.' -->'."\n";
-	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall).implode(', ', $fieldstosearchall).'</div>';
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).implode(', ', $fieldstosearchall).'</div>';
 }
 
 $moreforfilter = '';
@@ -845,7 +845,7 @@ while ($i < $imaxinloop) {
 		// Selling value
 		if (!empty($arrayfields["estimatedstockvaluesell"]['checked'])) {
 			print '<td class="right">';
-			if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
+			if (!getDolGlobalString('PRODUIT_MULTIPRICES') && !getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 				if ($obj->sellvalue) {
 					print '<span class="amount">'.price(price2num($obj->sellvalue, 'MT'), 1).'</span>';
 				}

@@ -80,7 +80,7 @@ UnsignShipping=De-semnare livrare
 # Deliveries
 Delivery=Livrare
 DeliveryRef=Ref livrare
-DeliveryCard=Notă de livrare
+DeliveryCard=Aviz de Expeditie
 DeliveryOrder=Notă de livrare
 DeliveryDate=Dată de livrare
 CreateDeliveryOrder=Generare notă de livrare

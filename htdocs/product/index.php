@@ -362,7 +362,7 @@ if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight("pr
 			$lastmodified .= '<table class="noborder centpercent">';
 
 			$colnb = 2;
-			if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
+			if (!getDolGlobalString('PRODUIT_MULTIPRICES') && !getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 				$colnb++;
 			}
 
@@ -431,7 +431,7 @@ if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight("pr
 				$lastmodified .= dol_print_date($db->jdate($objp->datem), 'day', 'tzuserrel');
 				$lastmodified .= "</td>";
 				// Sell price
-				if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
+				if (!getDolGlobalString('PRODUIT_MULTIPRICES') && !getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 					if (isModEnabled('dynamicprices') && !empty($objp->fk_price_expression)) {
 						$product = new Product($db);
 						$product->fetch($objp->rowid);

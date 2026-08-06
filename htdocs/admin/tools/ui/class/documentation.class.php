@@ -17,7 +17,7 @@
  */
 
 /**
- *    \file       htdocs/admint/tools/ui/class/uidoc.class.php
+ *    \file       htdocs/admint/tools/ui/class/documentation.class.php
  *    \ingroup    ui
  *    \brief      File of class to manage UI documentation
  */

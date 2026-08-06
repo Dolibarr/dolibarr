@@ -178,7 +178,7 @@ if ($action == 'deletefilter') {
 if (GETPOST('addoperation', 'alpha')) {
 	$emailcollectoroperation = new EmailCollectorAction($db);
 	$emailcollectoroperation->type = GETPOST('operationtype', 'aZ09');
-	$emailcollectoroperation->actionparam = GETPOST('operationparam', 'restricthtml');
+	$emailcollectoroperation->actionparam = GETPOST('operationparam', 'alphawithlgt');
 	$emailcollectoroperation->fk_emailcollector = $object->id;
 	$emailcollectoroperation->status = 1;
 	$emailcollectoroperation->position = 50;

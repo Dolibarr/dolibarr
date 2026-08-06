@@ -919,7 +919,7 @@ if ($order_id > 0 || !empty($ref)) {
 				if ($toBeShippedTotal <= 0) {
 					print ' '.img_warning($langs->trans("WarningNoQtyLeftToSend"));
 				}
-				print '<br><br>';
+
 				print '</div>';
 				print "</form>\n";
 

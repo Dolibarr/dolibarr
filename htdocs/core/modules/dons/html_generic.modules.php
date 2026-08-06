@@ -159,7 +159,7 @@ class html_generic extends ModeleDon
 		if (getDolGlobalString('DONATION_MESSAGE')) {
 			$donationMessage = '<div id="donation-message"><p>' . getDolGlobalString('DONATION_MESSAGE').'</p></div>';
 		}
-		$form = str_replace('__DONATION_MESAGE__', $donationMessage, $form);
+		$form = str_replace('__DONATION_MESSAGE__', $donationMessage, $form);
 
 		return $form;
 	}

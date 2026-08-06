@@ -551,7 +551,7 @@ class modProduct extends DolibarrModules
 			'p.price_min' => "MinPrice",
 			'p.price_ttc' => "SellingPriceTTC", //with tax
 			'p.price_min_ttc' => "SellingMinPriceTTC",
-			'p.price_base_type' => "PriceBaseType", //price base: with-tax (TTC) or without (HT) tax. Displays accordingly in Product card
+			'p.price_base_type' => "PriceBaseType*", //price base: with-tax (TTC) or without (HT) tax. Displays accordingly in Product card
 			'p.tva_tx' => 'VATRate',
 			'p.default_vat_code' => 'VATCode',		// to use the correct vat line when there is several lines with the same vat rate for your country
 			'p.datec' => 'DateCreation',
@@ -639,17 +639,20 @@ class modProduct extends DolibarrModules
 			'p.recuperableonly' => '^[0|1]$',
 		);
 
-		if (isModEnabled('stock')) {//if Stock module enabled
+		// Complete if Stock module enabled
+		if (isModEnabled('stock')) {
 			$this->import_fields_array[$r] = array_merge($this->import_fields_array[$r], array(
 				'p.fk_default_warehouse' => 'DefaultWarehouse',
 				'p.tobatch' => 'ManageLotSerial',
+				'p.sell_or_eat_by_mandatory' => 'SellOrEatByMandatory',
 				'p.seuil_stock_alerte' => 'StockLimit', //lower limit for warning
 				'p.pmp' => 'PMPValue', //weighted average price
 				'p.desiredstock' => 'DesiredStock'//desired stock for replenishment feature
 			));
 
 			$this->import_regex_array[$r] = array_merge($this->import_regex_array[$r], array(
-				'p.tobatch' => '^[0|1|2]$'
+				'p.tobatch' => '^[0|1|2]$',
+				'p.sell_or_eat_by_mandatory' => '^[0-3]$'
 			));
 
 			$this->import_convertvalue_array[$r] = array_merge($this->import_convertvalue_array[$r], array(
@@ -749,6 +752,7 @@ class modProduct extends DolibarrModules
 		if (isModEnabled('stock')) {
 			$import_sample = array_merge($import_sample, array(
 				'p.tobatch' => "0 (don't use) / 1 (use batch) / 2 (use serial number)",
+				'p.sell_or_eat_by_mandatory' => "0 (none) / 1 (sell-by) / 2 (eat-by) / 3 (sell+eat)",
 				'p.seuil_stock_alerte' => '',
 				'p.pmp' => '0',
 				'p.desiredstock' => ''
@@ -994,7 +998,11 @@ class modProduct extends DolibarrModules
 			// End add extra fields
 			$this->import_fieldshidden_array[$r] = array('extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'product_price'); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
 
-			$this->import_regex_array[$r] = array('pr.datec' => '^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$', 'pr.recuperableonly' => '^[0|1]$');
+			$this->import_regex_array[$r] = array(
+				'pr.datec' => '^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$',
+				'pr.recuperableonly' => '^[0|1]$'
+			);
+
 			$this->import_convertvalue_array[$r] = array(
 				'pr.fk_product' => array('rule' => 'fetchidfromref', 'classfile' => '/product/class/product.class.php', 'class' => 'Product', 'method' => 'fetch', 'element' => 'Product')
 			);

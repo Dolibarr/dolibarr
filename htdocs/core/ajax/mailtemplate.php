@@ -162,6 +162,9 @@ if (GETPOSTISSET('template')) {
 	$selectedIdsStr = GETPOST('selectedPosts', 'alpha');
 	//$selectedPosts = array();
 	$selectedIds = json_decode($selectedIdsStr);
+	if (is_numeric($selectedIds)) {
+		$selectedIds = array($selectedIds);
+	}
 	/*if (is_array($selectedPostsStr)) {
 		$selectedPosts = explode(',', $selectedPostsStr);
 	}*/

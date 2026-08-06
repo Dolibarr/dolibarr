@@ -1,0 +1,3 @@
+# Dolibarr language file - Source file is en_US - exports
+NowClickToTestTheImport=Check that the file format (field and string delimiters) of your file matches the options shown and that you have omitted the header line, or these will be flagged as errors in the following simulation.<br>Click on the "<b>%s</b>" button to simulate the import process.<br><b>No data will be changed in your database</b>.
+SelectPrimaryColumnsForUpdateAttempt=Select column(s) to use as primary key to check if the record already exists. If a record is already found with this key(s), an UPDATE will be performed instead of an INSERT.

@@ -56,7 +56,7 @@ $listofexamplesforlink = 'Societe:societe/class/societe.class.php<br>Contact:con
 	jQuery(document).ready(function() {
 		function init_typeoffields(type)
 		{
-			console.log("select a new type (add) = "+type);
+			console.log("admin_extrafields_add select a new type (add) = "+type);
 			var size = jQuery("#size");
 			var computed_value = jQuery("#computed_value");
 			var ai_prompt = jQuery("#ai_prompt");
@@ -178,7 +178,7 @@ $listofexamplesforlink = 'Societe:societe/class/societe.class.php<br>Contact:con
 
 <table summary="listofattributes" class="border centpercent">
 <!-- Label -->
-<tr><td class="titlefieldcreate fieldrequired"><?php echo $langs->trans("LabelOrTranslationKey"); ?></td><td class="valeur"><input type="text" name="label" id="label" class="width200" value="<?php echo GETPOST('label', 'alpha'); ?>" autofocus></td></tr>
+<tr><td class="titlefieldcreate fieldrequired"><?php echo $langs->trans("LabelOrTranslationKey"); ?></td><td class="valeur"><input type="text" name="label" id="label" class="width200" value="<?php echo GETPOST('label', 'alpha'); ?>" autofocus spellcheck="false"></td></tr>
 <!-- Code -->
 <tr><td class="fieldrequired"><?php echo $form->textwithpicto($langs->trans("AttributeCode"), $langs->trans("AttributeCodeHelp")); ?></td><td class="valeur"><input type="text" name="attrname" id="attrname"  size="10" value="<?php echo GETPOST('attrname', 'alpha'); ?>" pattern="\w+"> <span class="opacitymedium">(<?php echo $langs->trans("AlphaNumOnlyLowerCharsAndNoSpace"); ?>)</span></td></tr>
 <!-- Type -->
@@ -193,7 +193,7 @@ print $formadmin->selectTypeOfFields('type', GETPOST('type', 'alpha'));
 ?>
 </td></tr>
 <!-- Size -->
-<tr class="extra_size"><td class="fieldrequired"><?php echo $langs->trans("Size"); ?></td><td class="valeur"><input id="size" type="text" name="size" class="width50" value="<?php echo(GETPOST('size', 'alpha') ? GETPOST('size', 'alpha') : ''); ?>"></td></tr>
+<tr class="extra_size"><td><?php echo $langs->trans("Size"); ?></td><td class="valeur"><input id="size" type="text" name="size" class="width50" value="<?php echo(GETPOST('size', 'alpha') ? GETPOST('size', 'alpha') : ''); ?>"></td></tr>
 <!-- Default Value (for select list / radio/ checkbox) -->
 <tr id="value_choice">
 <td>
@@ -267,7 +267,7 @@ print $formadmin->selectTypeOfFields('type', GETPOST('type', 'alpha'));
 <tr class="extra_emptyonclone"><td><?php echo $form->textwithpicto($langs->trans("EmptyOnClone"), $langs->trans("EmptyOnCloneDesc")); ?></td><td class="valeur"><input id="emptyonclone" type="checkbox" name="emptyonclone"<?php echo((GETPOST('emptyonclone', 'alpha')) ? ' checked' : ''); ?>></td></tr>
 <!-- Visibility -->
 <tr><td class="extra_list"><?php echo $form->textwithpicto($langs->trans("Visibility"), $langs->trans("VisibleDesc").'<br><br>'.$langs->trans("ItCanBeAnExpression")); ?>
-</td><td class="valeur"><input id="list" class="width50" type="text" name="list" value="<?php echo GETPOSTISSET('list') ? GETPOSTINT('list') : '1'; ?>"></td></tr>
+</td><td class="valeur"><input id="list" class="minwidth200" type="text" name="list" value="<?php echo GETPOSTISSET('list') ? GETPOST('list') : '1'; ?>"></td></tr>
 <!-- Visibility for PDF-->
 <tr><td class="extra_pdf"><?php echo $form->textwithpicto($langs->trans("DisplayOnPdf"), $langs->trans("DisplayOnPdfDesc")); ?>
 </td><td class="valeur"><input id="printable" class="width50" type="text" name="printable" value="<?php echo dolPrintHTMLForAttribute(GETPOSTISSET('printable') ? GETPOST('printable') : '0'); ?>"></td></tr>

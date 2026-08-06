@@ -67,6 +67,7 @@ ListShippingAssociatedProject=Liste des expéditions liées au projet
 ListFichinterAssociatedProject=Liste des interventions liées au projet
 ListExpenseReportsAssociatedProject=Liste des rapports de dépenses liés au projet
 ListDonationsAssociatedProject=Liste des dons liés au projet
+ListVariousPaymentsAssociatedProject=Liste des écritures de journal manuelles relatives au projet
 ListActionsAssociatedProject=Liste des événements liés au projet
 ListMOAssociatedProject=Liste des commandes de fabrication liées au projet
 ListTaskTimeUserProject=Liste des temps consacrés aux tâches du projet

@@ -477,11 +477,11 @@ class BlockedLog
 
 	/**
 	 *	Populate properties of an unalterable log entry from object data.
-	 *  This populates ->object_data but also other fields like ->action, ->module_source, ->amounts_taxexcl,  ->amounts and ->linktoref and ->linktype
+	 *  This populates ->object_data but also other fields like ->action, ->module_source, ->amounts_taxexcl, ->amounts and ->linktoref and ->linktype
 	 *  It also populates some debug info like ->element and ->fk_object
 	 *
 	 *	@param	CommonObject|stdClass		$object				Object to store
-	 *	@param	string						$action				Action code
+	 *	@param	string						$action				Action code ('BILL_VALIDATE', 'BILL_SENTBYMAIL', ...)
 	 *	@param	float|int					$amounts			amounts (incl tax)
 	 *	@param	?User						$fuser				User object (forced)
 	 *	@param	float|int|null				$amounts_taxexcl	amounts (excl tax or null if not relevant)
@@ -1151,7 +1151,7 @@ class BlockedLog
 	{
 		$aaa = null;
 		try {
-			$aaa = (object) jsonOrUnserialize($data);
+			$aaa = (object) jsonOrUnserialize($data, false);
 		} catch (Exception $e) {
 			// print $e->getErrs);
 		}
@@ -1467,7 +1467,7 @@ class BlockedLog
 			}
 			$hmac_secret_key = dolDecrypt($hmac_encoded_secret_key);
 			if (!preg_match('/^BLOCKEDLOGHMAC/', $hmac_secret_key)) {
-				throw new Exception('Error: Failed to decode the crypted value of the parameter BLOCKEDLOG_HMAC_KEY using the $dolibarr_main_crypt_key. A value was found but decoding failed. May be the database data were restored onto another environment and the coding/decoding key $dolibarr_main_dolcrypt_key was not restored with the same value in conf.php file.');
+				throw new Exception('Error: Failed to decode the crypted value of the parameter BLOCKEDLOG_HMAC_KEY using the $dolibarr_main_crypt_key. A value was found but decoding failed. May be the database data were restored onto another environment and the coding/decoding key $dolibarr_main_dolcrypt_key or $dolibarr_main_instance_unique_id was not restored with the same value in conf.php file.');
 			}
 
 			return hash_hmac('sha256', $clearstring, $hmac_secret_key);
@@ -1527,7 +1527,8 @@ class BlockedLog
 					$previoussignature = $obj->signature;
 				}
 			} else {
-				dol_print_error($this->db);
+				dol_print_error($this->db);		// can happen after a deadlock when too many requests do create into blocked log happen at the same time.
+				http_response_code(503);
 				exit;
 			}
 		}

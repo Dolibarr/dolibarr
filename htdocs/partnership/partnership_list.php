@@ -26,7 +26,13 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -35,14 +41,6 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/partnership/class/partnership.class.php';
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array("partnership", "members", "other"));
@@ -629,6 +627,9 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.((int) $limit);
 }
+if ($optioncss != '') {
+	$param .= '&optioncss='.urlencode($optioncss);
+}
 if ($socid) {
 	$param .= '&socid='.urlencode((string) ($socid));
 }
@@ -649,9 +650,6 @@ foreach ($search as $key => $val) {
 	} elseif ($search[$key] != '') {
 		$param .= '&search_'.$key.'='.urlencode($search[$key]);
 	}
-}
-if ($optioncss != '') {
-	$param .= '&optioncss='.urlencode($optioncss);
 }
 if ($search_filter && $search_filter != '-1') {
 	$param .= "&search_filter=".urlencode($search_filter);
@@ -704,7 +702,7 @@ $newcardbutton = '';
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitleSeparator();
-$newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', dol_buildpath('/partnership/partnership_card.php', 1).'?action=create&backtopage='.urlencode($_SERVER['PHP_SELF'].($socid > 0 ? '?socid='.$socid : '')), '', $permissiontoadd);
+$newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', dol_buildpath('/partnership/partnership_card.php', 1).'?action=create'.($socid > 0 ? '&fk_soc='.$socid : '').'&backtopage='.urlencode($_SERVER['PHP_SELF'].($socid > 0 ? '?socid='.$socid : '')), '', $permissiontoadd);
 
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'object_'.$object->picto, 0, $newcardbutton, '', $limit, 0, 0, 1);

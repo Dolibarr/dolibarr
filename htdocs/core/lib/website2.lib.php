@@ -144,7 +144,7 @@ function dolSavePageAlias($filealias, $object, $objectpage)
  */
 function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, $backupold = 0)
 {
-	global $db;
+	global $conf, $db;
 
 	// Now create the .tpl file (duplicate code with actions updatesource or updatecontent but we need this to save new header)
 	dol_syslog("dolSavePageContent We regenerate the tpl page filetpl=".$filetpl);
@@ -221,8 +221,10 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 		$tplcontent .= '<meta name="generator" content="'.DOL_APPLICATION_TITLE.' '.DOL_VERSION.' (https://www.dolibarr.org)" />'."\n";
 		$tplcontent .= '<meta name="dolibarr:pageid" content="'.((int) $objectpage->id).'" />'."\n";
 
-		// Add favicon
-		if (in_array($objectpage->type_container, array('page', 'blogpost'))) {
+		// Add favicon if not already done in htmlheader
+		$htmldeaderindestdir = dol_sanitizePathName($conf->website->dir_temp.'/'.$object->ref.'/containers/htmlheader.html');
+		$htmlheader = file_get_contents($htmldeaderindestdir);
+		if (in_array($objectpage->type_container, array('page', 'blogpost')) && !preg_match('/'.preg_quote('rel="icon"', '/').'/', $htmlheader)) {
 			$tplcontent .= '<link rel="icon" type="image/png" href="/favicon.png" />'."\n";
 		}
 
@@ -935,7 +937,7 @@ function showWebsiteTemplates(Website $website, int $refresh)
 
 
 /**
- * Check a new string containing only php code (including <php tag)
+ * Check that the new string $phpfullcodestring contains only php code (including <php tag)
  * - Block if user has no permission to change PHP code.
  * - Block also if bad code found in the new string.
  *
@@ -956,6 +958,11 @@ function checkPHPCode(&$phpfullcodestringold, &$phpfullcodestring)
 
 	// First check permission
 	if ($phpfullcodestringold != $phpfullcodestring) {
+		global $dolibarr_website_allow_custom_php;
+		if (empty($dolibarr_website_allow_custom_php)) {
+			$error++;
+			setEventMessages($langs->trans("NotAllowedToAddDynamicContentDisabledGlobaly", 'dolibarr_website_allow_custom_php'), null, 'errors');
+		}
 		if (!$error && !$user->hasRight('website', 'writephp')) {
 			$error++;
 			setEventMessages($langs->trans("NotAllowedToAddDynamicContent"), null, 'errors');

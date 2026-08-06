@@ -1,11 +1,12 @@
 <?php
-/* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2019      Markus Welters       <markus@welters.de>
- * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2005       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2014  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2010  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2010-2013  Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2019       Markus Welters          <markus@welters.de>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025       MDW                     <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026       Alexandre Spangaro      <alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -110,7 +111,7 @@ if ($action == "set") {
 		if (!($res > 0)) $error++;
 	}
 	*/
-	if (GETPOST("PAYMENTBYBANKTRANSFER_ADDDAYS") || GETPOST("PAYMENTBYBANKTRANSFER_ADDDAYS") == "") {
+	if (GETPOST("PAYMENTBYBANKTRANSFER_ADDDAYS") !== null && GETPOST("PAYMENTBYBANKTRANSFER_ADDDAYS") !== '') {
 		$res = dolibarr_set_const($db, "PAYMENTBYBANKTRANSFER_ADDDAYS", GETPOST("PAYMENTBYBANKTRANSFER_ADDDAYS"), 'chaine', 0, '', $conf->entity);
 		if (!($res > 0)) {
 			$error++;
@@ -206,12 +207,11 @@ print '</td></tr>';
 */
 
 //ADDDAYS
+$addDaysValue = getDolGlobalInt('PAYMENTBYBANKTRANSFER_ADDDAYS', 0);
+
 print '<tr class="oddeven"><td>'.$langs->trans("ADDDAYS").'</td>';
 print '<td class="left">';
-if (!$conf->global->PAYMENTBYBANKTRANSFER_ADDDAYS) {
-	$conf->global->PAYMENTBYBANKTRANSFER_ADDDAYS = 0;
-}
-print '<input type="text" name="PAYMENTBYBANKTRANSFER_ADDDAYS" value="' . getDolGlobalString('PAYMENTBYBANKTRANSFER_ADDDAYS').'" class="width50"></td>';
+print '<input type="number" name="PAYMENTBYBANKTRANSFER_ADDDAYS" value="' . $addDaysValue .'" class="width50" min="0"></td>';
 print '</td></tr>';
 print '</table>';
 

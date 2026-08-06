@@ -276,7 +276,7 @@ class FormActions
 			print getTitleFieldOfList('Ref', 0, $_SERVER["PHP_SELF"], '', (string) $page, $param, '', $sortfield, $sortorder, '', 1);
 			print getTitleFieldOfList('Date', 0, $_SERVER["PHP_SELF"], 'a.datep', (string) $page, $param, '', $sortfield, $sortorder, 'center ', 1);
 			print getTitleFieldOfList('By', 0, $_SERVER["PHP_SELF"], '', (string) $page, $param, '', $sortfield, $sortorder, '', 1);
-			print getTitleFieldOfList('Type', 0, $_SERVER["PHP_SELF"], '', (string) $page, $param, '', $sortfield, $sortorder, '', 1);
+			print getTitleFieldOfList('Type', 0, $_SERVER["PHP_SELF"], '', (string) $page, $param, '', $sortfield, $sortorder, 'center ', 1);
 			print getTitleFieldOfList('Title', 0, $_SERVER["PHP_SELF"], '', (string) $page, $param, '', $sortfield, $sortorder, '', 1);
 			print getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], '', (string) $page, $param, '', $sortfield, $sortorder, 'right ', 1);
 			print '</tr>';
@@ -298,41 +298,43 @@ class FormActions
 
 					// Date
 					print '<td class="center nowraponall nopaddingtopimp nopaddingbottomimp">';
+					$tmpa = dol_getdate($actioncomm->datep);
 					if ($actioncomm->datef) {	// There is also a end date
-						$tmpa = dol_getdate($actioncomm->datep);
 						$tmpb = dol_getdate($actioncomm->datef);
-						if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year']) {
-							// The same day
-							print '<div class="center inline-block dateheight">';
-							if ($tmpa['hours'] != $tmpb['hours'] || $tmpa['minutes'] != $tmpb['minutes']) {
-								print dol_print_date($actioncomm->datep, 'dayreduceformat', 'tzuserrel');
-								print '<br><span class="small opacitymedium">';
-								print dol_print_date($actioncomm->datep, 'hourreduceformat', 'tzuserrel');
-								print '-'.dol_print_date($actioncomm->datef, 'hourreduceformat', 'tzuserrel');
-								print '</span>';
-							} else {
-								print dol_print_date($actioncomm->datep, 'dayreduceformat', 'tzuserrel');
-								print '<br><span class="small opacitymedium">';
-								print dol_print_date($actioncomm->datep, 'hourreduceformat', 'tzuserrel');
-								print '</span>';
-							}
-							print '</div>';
+					} else {
+						$tmpb = $tmpa;
+					}
+					if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year']) {
+						// The same day
+						print '<div class="center inline-block dateheight">';
+						if ($tmpa['hours'] != $tmpb['hours'] || $tmpa['minutes'] != $tmpb['minutes']) {
+							print dol_print_date($actioncomm->datep, 'dayreduceformat', 'tzuserrel');
+							print '<br><span class="small opacitymedium">';
+							print dol_print_date($actioncomm->datep, 'hourreduceformat', 'tzuserrel');
+							print '-'.dol_print_date($actioncomm->datef, 'hourreduceformat', 'tzuserrel');
+							print '</span>';
 						} else {
-							// Not the same day
-							print '<div class="center inline-block">';
 							print dol_print_date($actioncomm->datep, 'dayreduceformat', 'tzuserrel');
 							print '<br><span class="small opacitymedium">';
 							print dol_print_date($actioncomm->datep, 'hourreduceformat', 'tzuserrel');
 							print '</span>';
-							print '</div>';
-							print ' ';
-							print '<div class="center inline-block">';
-							print dol_print_date($actioncomm->datef, 'dayreduceformat', 'tzuserrel');
-							print '<br><span class="small opacitymedium">';
-							print dol_print_date($actioncomm->datef, 'hourreduceformat', 'tzuserrel');
-							print '</span>';
-							print '</div>';
 						}
+						print '</div>';
+					} else {
+						// Not the same day
+						print '<div class="center inline-block">';
+						print dol_print_date($actioncomm->datep, 'dayreduceformat', 'tzuserrel');
+						print '<br><span class="small opacitymedium">';
+						print dol_print_date($actioncomm->datep, 'hourreduceformat', 'tzuserrel');
+						print '</span>';
+						print '</div>';
+						print ' ';
+						print '<div class="center inline-block">';
+						print dol_print_date($actioncomm->datef, 'dayreduceformat', 'tzuserrel');
+						print '<br><span class="small opacitymedium">';
+						print dol_print_date($actioncomm->datef, 'hourreduceformat', 'tzuserrel');
+						print '</span>';
+						print '</div>';
 					}
 					print '</td>';
 
@@ -357,10 +359,11 @@ class FormActions
 					//$actionstatic->type_code = 'AC_OTHER_AUTO'
 
 					// Type
-					$labeltype = $actioncomm->getTypeLabel(0);
-					print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($labeltype).'">';
-					print $actioncomm->getTypePicto();
-					print $labeltype;
+					$labeltypelong = $actioncomm->getTypeLabel(2);
+					print '<td class="tdoverflowmax100 center" title="'.dolPrintHTML($labeltypelong).'">';
+					print $actioncomm->getTypePicto('valignmiddle');
+					//$labeltype = $actioncomm->getTypeLabel(0);
+					//print $labeltype;
 					print '</td>';
 
 					// Label / Title

@@ -165,3 +165,6 @@ HolidayMailSenderAdress=Dirección de correo electrónico para solicitudes de va
 HolidayMailSenderAdressHelp=Si deja este campo en blanco, se utilizará la dirección de correo electrónico predeterminada.
 WrongAmount=Cantidad incorrecta de días
 ErrorUpdatingUsersCP=Error al actualizar las licencias pagadas de los usuarios
+LeaveBalance=Saldo de Dias libres
+ListeLB=Listado de saldos de días libres
+LeaveType = Tipo de saldo de días libres

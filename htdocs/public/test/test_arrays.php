@@ -40,11 +40,14 @@ require '../../main.inc.php';
  * @var Translate $langs
  *
  * @var string $dolibarr_main_prod
+ * @var string $dolibarr_main_test
  */
+
 // Security
-if ($dolibarr_main_prod) {
+if (!empty($dolibarr_main_prod) || empty($dolibarr_main_test)) {
 	accessforbidden('Access forbidden when $dolibarr_main_prod is set to 1');
 }
+
 $optioncss = GETPOST('optioncss', 'alpha');
 
 

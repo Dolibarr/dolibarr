@@ -155,6 +155,7 @@ $arrayfields = array(
 	'u.thm' => array('label' => "THM", 'langs' => 'salaries', 'checked' => '-1', 'position' => 82, 'enabled' => '1', 'isameasure' => 1),
 	'u.datec' => array('label' => "DateCreation", 'checked' => '0', 'position' => 500),
 	'date_modification' => array('label' => "DateModificationShort", 'checked' => '0', 'position' => 500),
+	'u.import_key' => array('label' => "ImportId", 'checked' => '-1', 'position' => 800, 'enabled' => '1'),
 	'u.statut' => array('label' => "Status", 'checked' => '1', 'position' => 1000),
 );
 
@@ -393,7 +394,7 @@ $sql = "SELECT DISTINCT u.rowid, u.lastname, u.firstname, u.admin, u.fk_soc, u.l
 $sql .= " u.fk_user,";
 $sql .= " u.ref_employee, u.national_registration_number, u.job, u.salary, u.thm, u.datelastlogin, u.datepreviouslogin,";
 $sql .= " u.datestartvalidity, u.dateendvalidity,";
-$sql .= " u.ldap_sid, u.statut as status, u.entity,";
+$sql .= " u.ldap_sid, u.statut as status, u.entity, u.import_key,";
 $sql .= " GREATEST(u.tms, ef.tms) as date_modification, u.datec as date_creation,";
 $sql .= " u2.rowid as id2, u2.login as login2, u2.firstname as firstname2, u2.lastname as lastname2, u2.admin as admin2, u2.fk_soc as fk_soc2, u2.office_phone as ofice_phone2, u2.user_mobile as user_mobile2, u2.email as email2, u2.gender as gender2, u2.photo as photo2, u2.entity as entity2, u2.statut as status2,";
 $sql .= " s.nom as name, s.canvas,";
@@ -871,6 +872,11 @@ if (!empty($arrayfields['date_modification']['checked'])) {
 	print '<td class="liste_titre">';
 	print '</td>';
 }
+if (!empty($arrayfields['u.import_key']['checked'])) {
+	// Import ID
+	print '<td class="liste_titre">';
+	print '</td>';
+}
 if (!empty($arrayfields['u.statut']['checked'])) {
 	// Status
 	print '<td class="liste_titre center parentonrightofpage">';
@@ -997,6 +1003,14 @@ if (!empty($arrayfields['u.datec']['checked'])) {
 }
 if (!empty($arrayfields['date_modification']['checked'])) {
 	print_liste_field_titre("DateModificationShort", $_SERVER["PHP_SELF"], "date_modification", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['import_key']['checked'])) {
+	print_liste_field_titre("ImportId", $_SERVER["PHP_SELF"], "u.import_key", "", $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['u.import_key']['checked'])) {
+	print_liste_field_titre("ImportId", $_SERVER["PHP_SELF"], "u.import_key", "", $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['u.statut']['checked'])) {
@@ -1232,7 +1246,8 @@ while ($i < $imaxinloop) {
 		}
 		// Email
 		if (!empty($arrayfields['u.email']['checked'])) {
-			print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute($obj->email).'">'.dol_print_email($obj->email, $obj->rowid, $obj->fk_soc, 1, 0, 0, 1)."</td>\n";
+			$showinvalidemail = (int) !getDolGlobalInt('MAIN_SHOW_INVALID_EMAIL_IN_LIST'); // to avoid slow display
+			print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute($obj->email).'">'.dol_print_email($obj->email, $obj->rowid, $obj->fk_soc, 1, 0, $showinvalidemail, 1)."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1399,6 +1414,13 @@ while ($i < $imaxinloop) {
 			print '<td class="center nowraponall">';
 			print dol_print_date($db->jdate($obj->date_modification), 'dayhour', 'tzuser');
 			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Import
+		if (!empty($arrayfields['u.import_key']['checked'])) {
+			print '<td class="center">'.dolPrintHTML($obj->import_key).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

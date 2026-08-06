@@ -722,9 +722,9 @@ class FormMail extends Form
 							'global_aliases' => getDolGlobalString('MAIN_INFO_SOCIETE_MAIL_ALIASES'),
 						);
 
-						if (!empty($arraydefaultmessage->email_from)) {
+						if (!empty($arraydefaultmessage->email_from) && !empty($arraydefaultmessage->id)) {
 							$templatemailfrom = ' &lt;'.$arraydefaultmessage->email_from.'&gt;';
-							$liste['from_template_'.$arraydefaultmessage->id] = array('label' => $templatemailfrom, 'data-html' => $templatemailfrom);
+							$liste['from_template_'.((int) $arraydefaultmessage->id)] = array('label' => $templatemailfrom, 'data-html' => $templatemailfrom);
 						}
 
 						// Also add robot email
@@ -783,7 +783,7 @@ class FormMail extends Form
 								$liste[$key]['data-html'] = str_replace(array('__LTCHAR__', '__GTCHAR__'), array('<span class="opacitymedium">(', ')</span>'), $liste[$key]['data-html']);
 							}
 						}
-						$out .= ' '.$form->selectarray('fromtype', $liste, empty($arraydefaultmessage->email_from) ? $this->fromtype : 'from_template_'.$arraydefaultmessage->id, 0, 0, 0, '', 0, 0, 0, '', 'fromforsendingprofile maxwidth200onsmartphone', 1, '', $disablebademails);
+						$out .= ' '.$form->selectarray('fromtype', $liste, (empty($arraydefaultmessage->email_from) || empty($arraydefaultmessage->id)) ? $this->fromtype : 'from_template_'.((int) $arraydefaultmessage->id), 0, 0, 0, '', 0, 0, 0, '', 'fromforsendingprofile maxwidth200onsmartphone', 1, '', $disablebademails);
 					}
 
 					$out .= "</td></tr>\n";
@@ -836,7 +836,7 @@ class FormMail extends Form
 					//$out .= '</span>';
 					if (getDolGlobalString('MASS_ACTION_EMAIL_ON_DIFFERENT_THIRPARTIES_ADD_CUSTOM_EMAIL')) {
 						if (!empty($this->withto) && !is_array($this->withto)) {
-							$out .= ' '.$langs->trans("or").' <input type="email" name="emailto" value="">';
+							$out .= ' <span class="opacitymedium">'.$langs->trans("or").'</span> <input type="email" name="emailto" value="">';
 						}
 					}
 					$out .= '</td></tr>';
@@ -1042,7 +1042,7 @@ class FormMail extends Form
 				$defaultlines = $arraydefaultmessage->content_lines;
 				if (isset($defaultlines)) {
 					foreach ($this->substit_lines as $lineid => $substit_line) {
-						$lines .= make_substitutions($defaultlines, $substit_line)."\n";
+						$lines .= make_substitutions($defaultlines, $substit_line, $outputlangs)."\n";
 					}
 				}
 				$this->substit['__LINES__'] = $lines;
@@ -1087,7 +1087,10 @@ class FormMail extends Form
 				if (GETPOSTISSET("message") && !GETPOST('modelselected')) {
 					$defaultmessage = GETPOST("message", "restricthtml");
 				} else {
-					$defaultmessage = make_substitutions($defaultmessage, $this->substit);
+					// Pass $outputlangs so __(TranslationKey)__ in the template body is resolved
+					// in the language of the selected email template, not the operator's language
+					// (see issue #34540).
+					$defaultmessage = make_substitutions($defaultmessage, $this->substit, $outputlangs);
 					// Clean first \n and br (to avoid empty line when CONTACTCIVNAME is empty)
 					$defaultmessage = preg_replace("/^(<br>)+/", "", $defaultmessage);
 					$defaultmessage = preg_replace("/^\n+/", "", $defaultmessage);
@@ -1231,7 +1234,7 @@ class FormMail extends Form
 			// The select combo
 			if (!empty($this->withto) && is_array($this->withto)) {
 				if (!empty($this->withtofree)) {
-					$out .= " ".$langs->trans("and")."/".$langs->trans("or")." ";
+					$out .= ' <span class="opacitymedium">'.$langs->trans("and")."/".$langs->trans("or")."</span> ";
 				}
 
 				$tmparray = $this->withto;
@@ -1285,7 +1288,7 @@ class FormMail extends Form
 		} else {
 			$out .= '<input class="minwidth200" id="sendtocc" name="sendtocc" value="'.(GETPOST("sendtocc", "alpha") ? GETPOST("sendtocc", "alpha") : ((!is_array($this->withtocc) && !is_numeric($this->withtocc)) ? $this->withtocc : '')).'" />';
 			if (!empty($this->withtocc) && is_array($this->withtocc)) {
-				$out .= " ".$langs->trans("and")."/".$langs->trans("or")." ";
+				$out .= ' <span class="opacitymedium">'.$langs->trans("and")."/".$langs->trans("or")."</span> ";
 
 				$tmparray = $this->withtocc;
 				foreach ($tmparray as $key => $val) {
@@ -1335,7 +1338,7 @@ class FormMail extends Form
 		} else {
 			$out .= '<input class="minwidth200" id="sendtoccc" name="sendtoccc" value="'.(GETPOSTISSET("sendtoccc") ? GETPOST("sendtoccc", "alpha") : ((!is_array($this->withtoccc) && !is_numeric($this->withtoccc)) ? $this->withtoccc : '')).'" />';
 			if (!empty($this->withtoccc) && is_array($this->withtoccc)) {
-				$out .= " ".$langs->trans("and")."/".$langs->trans("or")." ";
+				$out .= ' <span class="opacitymedium">'.$langs->trans("and")."/".$langs->trans("or")."</span> ";
 
 				$tmparray = $this->withtoccc;
 				foreach ($tmparray as $key => $val) {
@@ -1468,7 +1471,7 @@ class FormMail extends Form
 	 */
 	public function getHtmlForTopic($arraydefaultmessage, $helpforsubstitution)
 	{
-		global $langs, $form;
+		global $conf, $langs, $form;
 
 		$defaulttopic = GETPOST('subject', 'restricthtml');
 
@@ -1480,7 +1483,17 @@ class FormMail extends Form
 			}
 		}
 
-		$defaulttopic = make_substitutions($defaulttopic, $this->substit);
+		// Resolve __(TranslationKey)__ in the language of the selected template
+		// (see issue #34540). Falls back to the caller's language when the template
+		// has no explicit language pinned.
+		$outputlangs = $langs;
+		if (is_object($arraydefaultmessage) && !empty($arraydefaultmessage->lang)) {
+			$outputlangs = new Translate("", $conf);
+			$outputlangs->setDefaultLang($arraydefaultmessage->lang);
+			$outputlangs->load('other');
+		}
+
+		$defaulttopic = make_substitutions($defaulttopic, $this->substit, $outputlangs);
 
 		$out = '<tr>';
 		$out .= '<td class="fieldrequired">';
@@ -1503,6 +1516,7 @@ class FormMail extends Form
 	 * @param   string      $htmlContent    	HTML name of WYSIWYG field to fill once layout has been chosen
 	 * @param	string		$showlinktolayout	Show link to layout
 	 * @return  string                      	HTML for model email boxes
+	 * @see getContentPageTemplate()
 	 */
 	public function getEmailLayoutSelector($htmlContent = 'message', $showlinktolayout = 'email')
 	{
@@ -1837,27 +1851,25 @@ class FormMail extends Form
 					if ($type_template == 'body') {
 						// Special case to use this->withbody as content
 						$defaultmessage = (string) $this->withbody;
-					} elseif ($type_template == 'facture_send') {
+					} elseif ($type_template == 'facture_send' || $type_template == 'facture' || $type_template == 'facture_relance') {
 						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendInvoice");
-					} elseif ($type_template == 'facture_relance') {
-						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendInvoiceReminder");
-					} elseif ($type_template == 'propal_send') {
+					} elseif ($type_template == 'propal_send' || $type_template == 'propal') {
 						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendProposal");
-					} elseif ($type_template == 'supplier_proposal_send') {
+					} elseif ($type_template == 'supplier_proposal_send' || $type_template == 'supplier_proposal') {
 						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendSupplierProposal");
-					} elseif ($type_template == 'order_send') {
+					} elseif ($type_template == 'order_send' || $type_template == 'order') {
 						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendOrder");
-					} elseif ($type_template == 'order_supplier_send') {
+					} elseif ($type_template == 'order_supplier_send' || $type_template == 'order_supplier') {
 						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendSupplierOrder");
-					} elseif ($type_template == 'invoice_supplier_send') {
+					} elseif ($type_template == 'invoice_supplier_send' || $type_template == 'invoice_supplier') {
 						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendSupplierInvoice");
-					} elseif ($type_template == 'shipping_send') {
+					} elseif ($type_template == 'shipping_send' || $type_template == 'shipping') {
 						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendShipping");
-					} elseif ($type_template == 'reception_send') {
+					} elseif ($type_template == 'reception_send' || $type_template == 'reception') {
 						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendReception");
-					} elseif ($type_template == 'fichinter_send') {
+					} elseif ($type_template == 'fichinter_send' || $type_template == 'fichinter') {
 						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendFichInter");
-					} elseif ($type_template == 'actioncomm_send') {
+					} elseif ($type_template == 'actioncomm_send' || $type_template == 'actioncomm') {
 						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendActionComm");
 					} elseif (!empty($type_template)) {
 						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentGeneric");

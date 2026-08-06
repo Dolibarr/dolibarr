@@ -141,8 +141,8 @@ class Invoices extends DolibarrApi
 		if (!DolibarrApiAccess::$user->hasRight('facture', 'lire')) {
 			throw new RestException(403);
 		}
-		if ($id == 0) {
-			throw new RestException(400, 'No invoice with id=0 can exist');
+		if (empty($id) && empty($ref)&& empty($ref_ext)) {
+			throw new RestException(400, 'No invoice can be found with no criteria');
 		}
 		$result = $this->invoice->fetch($id, $ref, $ref_ext);
 		if (!$result) {
@@ -361,6 +361,17 @@ class Invoices extends DolibarrApi
 		// Check mandatory fields (not using output, only possible exception is important)
 		$this->_validate($request_data);
 
+		// Check thirdparty validity
+		$socid = (int) $request_data['socid'];
+		$thirdpartytmp = new Societe($this->db);
+		$thirdparty_result = $thirdpartytmp->fetch($socid);
+		if ($thirdparty_result < 1) {
+			throw new RestException(404, 'Thirdparty with id='.$socid.' not found or not allowed');
+		}
+		if (!DolibarrApi::_checkAccessToResource('societe', $thirdpartytmp->id)) {
+			throw new RestException(404, 'Thirdparty with id='.$thirdpartytmp->id.' not found or not allowed');
+		}
+
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
@@ -429,6 +440,12 @@ class Invoices extends DolibarrApi
 		$result = $order->fetch($orderid);
 		if (!$result) {
 			throw new RestException(404, 'Order not found');
+		}
+
+		// Refuse orders that cannot be billed, to mirror the GUI (order card "CreateBill" button and list mass action):
+		// this excludes draft and canceled orders, as well as orders already classified as billed.
+		if ($order->status <= Commande::STATUS_DRAFT || !empty($order->billed)) {
+			throw new RestException(405, 'Order '.$order->ref.' is not eligible for invoicing: its status does not allow creating an invoice');
 		}
 
 		$result = $this->invoice->createFromOrder($order, DolibarrApiAccess::$user);

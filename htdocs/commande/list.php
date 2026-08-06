@@ -216,6 +216,9 @@ if (empty($user->socid)) {
 	$fieldstosearchall["c.note_private"] = "NotePrivate";
 }
 
+// Show POS fields if cashdesk or takepos module enabled or if global configuration to show POS fields on order list is enabled
+$showpos = (isModEnabled('cashdesk') || isModEnabled('takepos') || getDolGlobalInt('ORDER_SHOW_POS')) ? '1' : '0';
+
 $checkedtypetiers = '0';
 $arrayfields = array(
 	'c.rowid' => array('label' => "ID", 'checked' => '1', 'enabled' => (string) getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID'), 'position' => 1),
@@ -238,8 +241,8 @@ $arrayfields = array(
 	'c.fk_cond_reglement' => array('label' => "PaymentConditionsShort", 'checked' => '-1', 'position' => 67),
 	'c.fk_mode_reglement' => array('label' => "PaymentMode", 'checked' => '-1', 'position' => 68),
 	'c.fk_input_reason' => array('label' => "Origin", 'checked' => '-1', 'position' => 69),
-	'c.module_source' => array('label' => "POSModule", 'langfile' => 'cashdesk', 'checked' => ($contextpage == 'poslist' ? '1' : '0'), 'enabled' => "(isModEnabled('cashdesk') || isModEnabled('takepos') || getDolGlobalInt('ORDER_SHOW_POS'))", 'position' => 90),
-	'c.pos_source' => array('label' => "POSTerminal", 'langfile' => 'cashdesk', 'checked' => ($contextpage == 'poslist' ? '1' : '0'), 'enabled' => "(isModEnabled('cashdesk') || isModEnabled('takepos') || getDolGlobalInt('ORDER_SHOW_POS'))", 'position' => 91),
+	'c.module_source' => array('label' => "POSModule", 'langfile' => 'cashdesk', 'checked' => ($contextpage == 'poslist' ? '1' : '0'), 'enabled' => $showpos, 'position' => 90),
+	'c.pos_source' => array('label' => "POSTerminal", 'langfile' => 'cashdesk', 'checked' => ($contextpage == 'poslist' ? '1' : '0'), 'enabled' => $showpos, 'position' => 91),
 	'c.total_ht' => array('label' => "AmountHT", 'checked' => '1', 'position' => 75),
 	'c.total_vat' => array('label' => "AmountVAT", 'checked' => '0', 'position' => 80),
 	'c.total_ttc' => array('label' => "AmountTTC", 'checked' => '0', 'position' => 85),
@@ -431,6 +434,15 @@ if (empty($reshook)) {
 			if ($cmd->fetch($id_order) <= 0) {
 				continue;
 			}
+
+			// Skip orders that cannot be billed, to mirror the "CreateBill" button availability on the order card
+			// (card.php only shows it when status > STATUS_DRAFT and the order is not already billed): this excludes
+			// draft and canceled orders, as well as orders already classified as billed.
+			if ($cmd->status <= Commande::STATUS_DRAFT || !empty($cmd->billed)) {
+				setEventMessages($langs->trans('WarningOrderNotEligibleForInvoicing', $cmd->ref), null, 'warnings');
+				continue;
+			}
+
 			$cmd->fetch_thirdparty();
 
 			$objecttmp = new Facture($db);
@@ -690,6 +702,7 @@ if (empty($reshook)) {
 				}
 
 				$id = $objecttmp->id; // For builddoc action
+				$lastref = $objecttmp->ref; // Refresh ref after validation (was the draft PROVxxxx ref set at creation)
 
 				// Builddoc
 				$donotredirect = 1;
@@ -3000,6 +3013,8 @@ while ($i < $imaxinloop) {
 					$generic_commande->getLinesArray(); 	// Load array ->lines
 					$generic_commande->loadExpeditions();	// Load array ->expeditions
 
+					$stock = [];
+
 					$numlines = count($generic_commande->lines); // Loop on each line of order
 					for ($lig = 0; $lig < $numlines; $lig++) {
 						$orderLine = $generic_commande->lines[$lig];
@@ -3024,9 +3039,15 @@ while ($i < $imaxinloop) {
 								$generic_product->stock_theorique = $productstat_cachevirtual[$orderLine->fk_product]['stock_reel'];
 							}
 
-							if ($reliquat > $generic_product->stock_reel) {
+							if (!array_key_exists($orderLine->fk_product, $stock)) {
+								$stock[$orderLine->fk_product] = $generic_product->stock_reel;
+							}
+
+							if ($reliquat > $stock[$orderLine->fk_product]) {
 								$notshippable++;
 							}
+
+							$stock[$orderLine->fk_product] = $stock[$orderLine->fk_product] - $reliquat;
 							if (!getDolGlobalString('SHIPPABLE_ORDER_ICON_IN_LIST')) {  // Default code. Default should be this case.
 								$text_info .= $reliquat.' x '.$orderLine->product_ref.'&nbsp;'.dol_trunc($orderLine->product_label, 20);
 								$text_info .= ' - '.$langs->trans("Stock").': <span class="'.($generic_product->stock_reel > 0 ? 'ok' : 'error').'">'.$generic_product->stock_reel.'</span>';

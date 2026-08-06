@@ -28,6 +28,13 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/modules/mailings/modules_mailings.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmailing.class.php';
@@ -36,20 +43,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
-
 // Load translation files required by the page
 $langs->loadLangs(array("mails", "admin"));
 
 $action = GETPOST('action', 'aZ09');
 $toselect   = GETPOST('toselect', 'array:int'); // Array of ids of elements selected into a list
+$contextpage = GETPOST('contextpage', 'aZ');
 $massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
 $mode       = GETPOST('mode', 'aZ'); // The display mode ('list', 'kanban', 'hierarchy', 'calendar', 'gantt', ...)
 
@@ -778,7 +777,8 @@ if ($object->fetch($id) >= 0) {
 		if ($object->status == $object::STATUS_DRAFT) {
 			$morehtmlcenter = '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ToClearAllRecipientsClickHere").'</span> <a href="'.$_SERVER["PHP_SELF"].'?clearlist=1&id='.$object->id.'" class="button reposition smallpaddingimp">'.$langs->trans("TargetsReset").'</a>';
 		}
-		$morehtmlcenter .= ' &nbsp; <a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=exportcsv&token='.newToken().'&exportcsv=1&id='.$object->id.'">'.img_picto('', 'download', 'class="pictofixedwidth"').$langs->trans("Download").'</a>';
+
+		$morehtmlright = '<a class="reposition marginrightonly" href="'.$_SERVER["PHP_SELF"].'?action=exportcsv&token='.newToken().'&exportcsv=1&id='.$object->id.'">'.img_picto('', 'download', 'class="pictofixedwidth"').$langs->trans("Download").'</a>&nbsp;';
 
 		print '</form>';
 
@@ -793,7 +793,7 @@ if ($object->fetch($id) >= 0) {
 		print '<input type="hidden" name="page_y" value="">';
 
 		// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
-		print_barre_liste($langs->trans("MailSelectedRecipients"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $morehtmlcenter, $num, $nbtotalofrecords, 'generic', 0, $newcardbutton, '', $limit, 0, 0, 1);
+		print_barre_liste($langs->trans("MailSelectedRecipients"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $morehtmlcenter, $num, $nbtotalofrecords, 'generic', 0, $newcardbutton, '', $limit, 0, 0, 1, $morehtmlright);
 
 		if ($massaction == 'reset_target') {
 			// Confirm reset

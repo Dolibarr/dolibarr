@@ -803,6 +803,10 @@ if (isModEnabled('project')) {
 	$formproject = new FormProjets($db);
 }
 
+// Same check as the email templates editor in admin/mails_templates.php so the
+// local media browser is shown consistently in both places.
+$acceptlocallinktomedia = (acceptLocalLinktoMedia() > 0 ? 1 : 0);
+
 $help_url = 'EN:Module_EMailing|FR:Module_Mailing|ES:M&oacute;dulo_Mailing';
 llxHeader(
 	'',
@@ -833,10 +837,7 @@ if ($action == 'create') {	// aaa
 	}
 	$htmltext .= '</span></i>';
 
-
-	$availablelink = $form->textwithpicto('<span class="opacitymedium hideonsmartphone small">'.$langs->trans("AvailableVariables").'</span>', $htmltext, 1, 'helpclickable', '', 0, 2, 'availvar');
-	//print '<a href="javascript:document_preview(\''.DOL_URL_ROOT.'/admin/modulehelp.php?id='.$objMod->numero.'\',\'text/html\',\''.dol_escape_js($langs->trans("Module")).'\')">'.img_picto($langs->trans("ClickToShowDescription"), $imginfo).'</a>';
-
+	$availablelink = '<span class="opacitymedium hideonsmartphone small">'.$form->textwithpicto($langs->trans("AvailableVariables"), $htmltext, 1, 'helpclickable', '', 0, 2, 'availvar').'</span>';
 
 	// Print mail form
 	print load_fiche_titre($langs->trans("NewMailing"), $availablelink, 'object_email');
@@ -962,7 +963,7 @@ if ($action == 'create') {	// aaa
 	print '<div style="padding-top: 10px">';
 	// wysiwyg editor
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor('bodyemail', GETPOST('bodyemail', 'restricthtmlallowunvalid'), '', 600, 'dolibarr_mailings', '', true, -1, getDolGlobalInt('FCKEDITOR_ENABLE_MAILING'), 20, '100%');
+	$doleditor = new DolEditor('bodyemail', GETPOST('bodyemail', 'restricthtmlallowunvalid'), '', 600, 'dolibarr_mailings', '', true, $acceptlocallinktomedia, getDolGlobalInt('FCKEDITOR_ENABLE_MAILING'), 20, '100%');
 	$doleditor->Create();
 	print '</div>';
 
@@ -1064,7 +1065,10 @@ if ($action == 'create') {	// aaa
 						$text .= '<br><textarea class="quatrevingtpercent" rows="'.ROWS_2.'" wrap="soft" disabled>php ./scripts/emailings/mailing-send.php '.$object->id.' '.$user->login.'</textarea>';
 					}
 
-					print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('SendMailing'), $text, 'sendallconfirmed', '', '', 1, 380, 660, 0, $langs->trans("Confirm"), $langs->trans("Cancel"));
+					$labelbuttonyes = $langs->transnoentities('Confirm');
+					$labelbuttonno  = $langs->transnoentities('Cancel');
+
+					print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('SendMailing'), $text, 'sendallconfirmed', '', '', 1, 380, 660, 0, $labelbuttonyes, $labelbuttonno);
 				}
 			}
 
@@ -1074,7 +1078,6 @@ if ($action == 'create') {	// aaa
 			// Ref customer
 			$morehtmlref .= $form->editfieldkey("", 'title', $object->title, $object, $user->hasRight('mailing', 'creer'), 'string', '', 0, 1);
 			$morehtmlref .= $form->editfieldval("", 'title', $object->title, $object, $user->hasRight('mailing', 'creer'), 'string', '', null, null, '', 1);
-			$morehtmlref .= '</div>';
 
 			$morehtmlstatus = '';
 			$nbtry = $nbok = 0;
@@ -1109,6 +1112,7 @@ if ($action == 'create') {	// aaa
 					}
 				}
 			}
+			$morehtmlref .= '</div>';
 
 			dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlstatus);
 
@@ -1387,8 +1391,10 @@ if ($action == 'create') {	// aaa
 			}
 			$htmltext .= '</span></i>';
 
+			$availablelink = '<span class="opacitymedium hideonsmartphone">'.$form->textwithpicto($langs->trans("AvailableVariables"), $htmltext, 1, 'helpclickable', '', 0, 3, 'emailsubstitionhelp').'</span>';
+
 			// Print mail content
-			print load_fiche_titre($langs->trans("EMail"), $form->textwithpicto('<span class="opacitymedium hideonsmartphone">'.$langs->trans("AvailableVariables").'</span>', $htmltext, 1, 'helpclickable', '', 0, 3, 'emailsubstitionhelp'), 'generic');
+			print load_fiche_titre($langs->trans("EMail"), $availablelink, 'generic');
 
 			print dol_get_fiche_head([], '', '', -1);
 
@@ -1430,7 +1436,7 @@ if ($action == 'create') {	// aaa
 				$readonly = 1;
 				// wysiwyg editor
 				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-				$doleditor = new DolEditor('bodyemail', $object->body, '', 600, 'dolibarr_mailings', '', false, -1, getDolGlobalInt('FCKEDITOR_ENABLE_MAILING'), 20, '100%', $readonly);
+				$doleditor = new DolEditor('bodyemail', $object->body, '', 600, 'dolibarr_mailings', '', false, $acceptlocallinktomedia, getDolGlobalInt('FCKEDITOR_ENABLE_MAILING'), 20, '100%', $readonly);
 				$doleditor->Create();
 			} else {
 				print dol_htmlentitiesbr($object->body);
@@ -1451,7 +1457,6 @@ if ($action == 'create') {	// aaa
 			// Ref customer
 			$morehtmlref .= $form->editfieldkey("", 'title', $object->title, $object, $user->hasRight('mailing', 'creer'), 'string', '', 0, 1);
 			$morehtmlref .= $form->editfieldval("", 'title', $object->title, $object, $user->hasRight('mailing', 'creer'), 'string', '', null, null, '', 1);
-			$morehtmlref .= '</div>';
 
 			$morehtmlstatus = '';
 			$nbtry = $nbok = 0;
@@ -1485,6 +1490,7 @@ if ($action == 'create') {	// aaa
 					}
 				}
 			}
+			$morehtmlref .= '</div>';
 
 			dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlstatus);
 
@@ -1549,19 +1555,24 @@ if ($action == 'create') {	// aaa
 			print '<tr><td>';
 			print $langs->trans("MAIN_MAIL_SENDMODE");
 			print '</td><td>';
-			if (getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') && getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') != 'default') {
-				$text = $listofmethods[getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING')];
-			} elseif (getDolGlobalString('MAIN_MAIL_SENDMODE')) {
-				$text = $listofmethods[getDolGlobalString('MAIN_MAIL_SENDMODE')];
-			} else {
-				$text = $listofmethods['mail'];
-			}
-			print $text;
-			if (getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') != 'default') {
-				if (getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') != 'mail') {
-					print ' <span class="opacitymedium">('.getDolGlobalString('MAIN_MAIL_SMTP_SERVER_EMAILING').')</span>';
+			if ($object->messtype != 'sms') {
+				if (getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') && getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') != 'default') {
+					$text = $listofmethods[getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING')];
+				} elseif (getDolGlobalString('MAIN_MAIL_SENDMODE')) {
+					$text = $listofmethods[getDolGlobalString('MAIN_MAIL_SENDMODE')];
+				} else {
+					$text = $listofmethods['mail'];
 				}
-			} elseif (getDolGlobalString('MAIN_MAIL_SENDMODE') != 'mail' && getDolGlobalString('MAIN_MAIL_SMTP_SERVER')) {
+				print $text;
+				if (getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') != 'default') {
+					if (getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') != 'mail') {
+						print ' <span class="opacitymedium">('.getDolGlobalString('MAIN_MAIL_SMTP_SERVER_EMAILING', getDolGlobalString('MAIN_MAIL_SMTP_SERVER')).')</span>';
+					}
+				} elseif (getDolGlobalString('MAIN_MAIL_SENDMODE') != 'mail' && getDolGlobalString('MAIN_MAIL_SMTP_SERVER')) {
+					print ' <span class="opacitymedium">('.getDolGlobalString('MAIN_MAIL_SMTP_SERVER').')</span>';
+				}
+			} else {
+				print 'SMS ';
 				print ' <span class="opacitymedium">('.getDolGlobalString('MAIN_MAIL_SMTP_SERVER').')</span>';
 			}
 			print '</td></tr>';
@@ -1598,8 +1609,10 @@ if ($action == 'create') {	// aaa
 			}
 			$htmltext .= '</span></i>';
 
+			$availablelink = '<span class="opacitymedium small">'.$form->textwithpicto($langs->trans("AvailableVariables"), $htmltext, 1, 'helpclickable', '', 0, 2, 'emailsubstitionhelp').'</span>';
+
 			// Print mail content
-			print load_fiche_titre($langs->trans("EMail"), '<span class="opacitymedium small">'.$form->textwithpicto($langs->trans("AvailableVariables").'</span>', $htmltext, 1, 'help', '', 0, 2, 'emailsubstitionhelp'), 'generic');
+			print load_fiche_titre($langs->trans("EMail"), $availablelink, 'generic');
 
 			print dol_get_fiche_head([], '', '', -1);
 
@@ -1703,19 +1716,19 @@ if ($action == 'create') {	// aaa
 						$object->body = '<div style="background-color: #'.$object->bgcolor.'; margin-bottom:-20px; margin-left:-10px; margin-right:-10px; margin-top:-10px; padding: 10px;">'.$object->body.'</div>';
 					}
 				}
-				$doleditor = new DolEditor('bodyemail', $object->body, '', 600, 'dolibarr_mailings', '', true, -1, getDolGlobalInt('FCKEDITOR_ENABLE_MAILING'), 20, '100%');
+				$doleditor = new DolEditor('bodyemail', $object->body, '', 600, 'dolibarr_mailings', '', true, $acceptlocallinktomedia, getDolGlobalInt('FCKEDITOR_ENABLE_MAILING'), 20, '100%');
 				$doleditor->Create();
 			}
 			if ($action == 'edittxt') {
 				// wysiwyg editor
 				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-				$doleditor = new DolEditor('bodyemail', $object->body, '', 600, 'dolibarr_mailings', '', true, -1, 0, 20, '100%');
+				$doleditor = new DolEditor('bodyemail', $object->body, '', 600, 'dolibarr_mailings', '', true, $acceptlocallinktomedia, 0, 20, '100%');
 				$doleditor->Create();
 			}
 			if ($action == 'edithtml') {
 				// HTML source editor
 				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-				$doleditor = new DolEditor('bodyemail', $object->body, '', 600, 'dolibarr_mailings', '', true, -1, 'ace', 20, '100%');
+				$doleditor = new DolEditor('bodyemail', $object->body, '', 600, 'dolibarr_mailings', '', true, $acceptlocallinktomedia, 'ace', 20, '100%');
 				$doleditor->Create(0, '', false, 'HTML Source', 'php');
 			}
 

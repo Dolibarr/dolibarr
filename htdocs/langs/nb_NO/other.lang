@@ -268,6 +268,7 @@ RequestToResetPasswordReceived=En forespørsel om å endre passordet ditt er mot
 NewKeyIs=Dette er din nye innloggingsnøkkel
 NewKeyWillBe=Ny nøkkel for innlogging er
 ClickHereToGoTo=Klikk her for å gå til %s
+ClickHereToGoToDictionary=Klikk her for å redigere ordboksoppsettet (også tilgjengelig fra menyen %s - %s - %s)
 YouMustClickToChange=Du må først klikke på følgende lenke for å validere passord-endringen
 ConfirmPasswordChange=Bekreft endring av passord
 ForgetIfNothing=Hvis det ikke er du som har bedt om endringen, kan du glemme denne e-posten. Dine opplysninger er trygge
@@ -385,6 +386,7 @@ FillExtrafieldWithAi=Fyll ekstrafeltet med AI-innhold
 ExtrafieldFiller=Ekstrafeltfyll
 OurProductSelection=Vare å oppdage
 NoSupportedModulesHaveBeenActivated=Rapporteringsverktøyet kan bare generere dynamiske rapporter for enkelte moduler. Ingen støttede moduler er aktivert ennå.
+TryAnotherConnectionMode=Prøv en annen tilkoblingsmodus
 # Bookmarks
 BehaviourOnClick = Atferd når en bokmerke-URL er valgt
 BookmarkTargetNewWindowShort = Ny fane

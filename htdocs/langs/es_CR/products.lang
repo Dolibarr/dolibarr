@@ -173,7 +173,6 @@ ErrorProductCombinationNotFound=Variante del producto no encontrada
 PMPValue=Precio promedio ponderado
 ConfirmMergeProducts=¿Está seguro de que desea fusionar el tercero elegido con el actual? Todos los objetos vinculados (facturas, pedidos, ...) se moverán al producto actual, después de lo cual se eliminará el producto elegido.
 ProductsMergeSuccess=Los productos han sido fusionados
-SwitchOnPurchaseStatus=Activar el estado de compra
 PMPExpected=PMP. Esperado
 ExpectedValuation=Valoración esperada
 ConfirmEditExtrafield =Seleccione el extracampo que desea modificar

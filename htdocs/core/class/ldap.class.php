@@ -312,7 +312,6 @@ class Ldap
 	 * Use this->server, this->serverPort, this->ldapProtocolVersion, this->serverType, this->searchUser, this->searchPassword
 	 * After return, this->connection and $this->bind are defined
 	 *
-	 * @see connect_bind renamed
 	 * @return		int		if KO: <0 || if bind anonymous: 1 || if bind auth: 2
 	 */
 	public function connectBind()
@@ -359,7 +358,10 @@ class Ldap
 						dol_syslog(get_class($this)."::connectBind serverPing true, we try ldap_connect to ".$host, LOG_DEBUG);
 					}
 					if (version_compare(PHP_VERSION, '8.3.0', '>=')) {
-						$uri = $host.':'.$this->serverPort;
+						// Since PHP 8.3, ldap_connect() expects a single URI argument. A scheme-less
+						// host (ex: localhost, 192.168.0.2) must be turned into a valid ldap:// URI,
+						// otherwise the host is parsed as the URI scheme and the later bind fails.
+						$uri = preg_match('/^ldaps?:\/\//i', $host) ? $host : 'ldap://'.$host.':'.$this->serverPort;
 						$this->connection = ldap_connect($uri);
 					} else {
 						$this->connection = ldap_connect($host, $this->serverPort);
@@ -372,7 +374,7 @@ class Ldap
 							dol_syslog(get_class($this)."::connectBind serverPing false, we try ldap_connect to ".$host, LOG_DEBUG);
 						}
 						if (version_compare(PHP_VERSION, '8.3.0', '>=')) {
-							$uri = $host.':'.$this->serverPort;
+							$uri = preg_match('/^ldaps?:\/\//i', $host) ? $host : 'ldap://'.$host.':'.$this->serverPort;
 							$this->connection = ldap_connect($uri);
 						} else {
 							$this->connection = ldap_connect($host, $this->serverPort);
@@ -1103,6 +1105,13 @@ class Ldap
 		if (!$this->bind) {
 			$this->error = "NotConnected";
 			return -3;
+		}
+
+		// Honor the admin-configured user search filter (LDAP_FILTER_CONNECTION)
+		// so an identifier match outside the configured scope does not leak
+		// attributes for an unrelated LDAP user (see #37120).
+		if (!empty($this->filter) && !preg_match('/^\s*\(\s*&\s*\(/', $filter)) {
+			$filter = '(&(' . $this->filter . ')' . $filter . ')';
 		}
 
 		$search = @ldap_search($this->connection, $dn, $filter);

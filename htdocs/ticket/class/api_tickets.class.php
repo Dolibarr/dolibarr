@@ -348,8 +348,22 @@ class Tickets extends DolibarrApi
 		if (!DolibarrApiAccess::$user->hasRight('ticket', 'write')) {
 			throw new RestException(403);
 		}
+
 		// Check mandatory fields
-		$result = $this->_validate($request_data);
+		$this->_validate($request_data);
+
+		// Check thirdparty validity
+		$socid = (int) $request_data['socid'];
+		if ($socid > 0) {
+			$thirdpartytmp = new Societe($this->db);
+			$thirdparty_result = $thirdpartytmp->fetch($socid);
+			if ($thirdparty_result < 1) {
+				throw new RestException(404, 'Thirdparty with id='.$socid.' not found or not allowed');
+			}
+			if (!DolibarrApi::_checkAccessToResource('societe', $thirdpartytmp->id)) {
+				throw new RestException(404, 'Thirdparty with id='.$thirdpartytmp->id.' not found or not allowed');
+			}
+		}
 
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
@@ -384,10 +398,10 @@ class Tickets extends DolibarrApi
 	 */
 	public function postNewMessage($request_data = null)
 	{
-		$ticketstatic = new Ticket($this->db);
 		if (!DolibarrApiAccess::$user->hasRight('ticket', 'write')) {
 			throw new RestException(403);
 		}
+
 		// Check mandatory fields
 		$result = $this->_validateMessage($request_data);
 
@@ -405,6 +419,11 @@ class Tickets extends DolibarrApi
 		if (!$result) {
 			throw new RestException(404, 'Ticket not found');
 		}
+
+		if (!DolibarrApi::_checkAccessToResource('ticket', $this->ticket->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		$this->ticket->message = $ticketMessageText;
 		if (!$this->ticket->createTicketMessage(DolibarrApiAccess::$user)) {
 			throw new RestException(500, 'Error when creating ticket');
@@ -434,6 +453,19 @@ class Tickets extends DolibarrApi
 
 		if (!DolibarrApi::_checkAccessToResource('ticket', $this->ticket->id)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		// Check thirdparty validity
+		$socid = (int) $request_data['socid'];
+		if ($socid > 0) {
+			$thirdpartytmp = new Societe($this->db);
+			$thirdparty_result = $thirdpartytmp->fetch($socid);
+			if ($thirdparty_result < 1) {
+				throw new RestException(404, 'Thirdparty with id='.$socid.' not found or not allowed');
+			}
+			if (!DolibarrApi::_checkAccessToResource('societe', $thirdpartytmp->id)) {
+				throw new RestException(404, 'Thirdparty with id='.$thirdpartytmp->id.' not found or not allowed');
+			}
 		}
 
 		foreach ($request_data as $field => $value) {

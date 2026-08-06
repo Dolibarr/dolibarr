@@ -58,7 +58,7 @@ $listofexamplesforlink = 'Societe:societe/class/societe.class.php<br>Contact:con
 	jQuery(document).ready(function() {
 		function init_typeoffields(type)
 		{
-			console.log("select a new type (edit) = "+type);
+			console.log("admin_extrafields_edit select a new type (edit) = "+type);
 			var size = jQuery("#size");
 			var computed_value = jQuery("#computed_value");
 			var langfile = jQuery("#langfile");
@@ -256,7 +256,7 @@ if (in_array($type, array_keys($typewecanchangeinto))) {
 </td></tr>
 
 <!-- Size -->
-<tr class="extra_size"><td class="fieldrequired"><?php echo $langs->trans("Size"); ?></td><td><input id="size" type="text" name="size" class="width50" value="<?php echo $size; ?>"></td></tr>
+<tr class="extra_size"><td><?php echo $langs->trans("Size"); ?></td><td><input id="size" type="text" name="size" class="width50" value="<?php echo $size; ?>"></td></tr>
 
 <!--  Value (for some fields like password, select list, radio, ...) -->
 <tr id="value_choice">
@@ -344,7 +344,7 @@ if (in_array($type, array_keys($typewecanchangeinto))) {
 
 <!-- Visibility -->
 <tr><td class="extra_list"><?php echo $form->textwithpicto($langs->trans("Visibility"), $langs->trans("VisibleDesc").'<br><br>'.$langs->trans("ItCanBeAnExpression")); ?>
-</td><td class="valeur"><input id="list" class="width50" type="text" name="list" value="<?php echo($list != '' ? $list : '1'); ?>"></td></tr>
+</td><td class="valeur"><input id="list" class="minwidth200" type="text" name="list" value="<?php echo($list != '' ? $list : '1'); ?>"></td></tr>
 
 <!-- Visibility for PDF-->
 <tr><td class="extra_pdf"><?php echo $form->textwithpicto($langs->trans("DisplayOnPdf"), $langs->trans("DisplayOnPdfDesc")); ?>
@@ -352,6 +352,9 @@ if (in_array($type, array_keys($typewecanchangeinto))) {
 
 <!-- Can be summed -->
 <tr class="extra_totalizable"><td><?php echo $form->textwithpicto($langs->trans("Totalizable"), $langs->trans("TotalizableDesc")); ?></td><td class="valeur"><input id="totalizable" type="checkbox" name="totalizable"<?php echo($totalizable ? ' checked' : ''); ?>></td></tr>
+
+<!-- Help tooltip -->
+<tr class="help"><td><?php echo $form->textwithpicto($langs->trans("HelpOnTooltip"), $langs->trans("HelpOnTooltipDesc")); ?></td><td class="valeur"><input id="help" class="quatrevingtpercent" type="text" name="help" value="<?php echo dol_escape_htmltag($help); ?>"></td></tr>
 
 <!-- Css edit -->
 <tr class="extra_css"><td><?php echo $form->textwithpicto($langs->trans("CssOnEdit"), $langs->trans("HelpCssOnEditDesc")); ?></td><td class="valeur"><input id="css" type="text" class="minwidth200" name="css" value="<?php echo $css ?>"></td></tr>
@@ -361,9 +364,6 @@ if (in_array($type, array_keys($typewecanchangeinto))) {
 
 <!-- Css list -->
 <tr class="extra_csslist"><td><?php echo $form->textwithpicto($langs->trans("CssOnList"), $langs->trans("HelpCssOnListDesc")); ?></td><td class="valeur"><input id="csslist" class="minwidth200" type="text" name="csslist" value="<?php echo $csslist; ?>"></td></tr>
-
-<!-- Help tooltip -->
-<tr class="help"><td><?php echo $form->textwithpicto($langs->trans("HelpOnTooltip"), $langs->trans("HelpOnTooltipDesc")); ?></td><td class="valeur"><input id="help" class="quatrevingtpercent" type="text" name="help" value="<?php echo dol_escape_htmltag($help); ?>"></td></tr>
 
 <?php if (isModEnabled('multicompany')) { ?>
 	<!-- Multicompany entity -->

@@ -165,3 +165,6 @@ HolidayMailSenderAdress=Enderezo de correo electrónico para solicitudes de día
 HolidayMailSenderAdressHelp=Se deixa este campo en branco, usarase o enderezo de correo electrónico predeterminado.
 WrongAmount=Cantidade incorrecta de días
 ErrorUpdatingUsersCP=Produciuse un erro ao actualizar os días libres remunerados dos usuarios
+LeaveBalance=Saldo de vacacións
+ListeLB=Lista de saldo de vacacións
+LeaveType = Tipo de saldo de vacacións

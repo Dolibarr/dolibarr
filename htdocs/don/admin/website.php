@@ -29,12 +29,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/donation.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -44,6 +38,11 @@ require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
  *
  * @var string $dolibarr_main_url_root
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/donation.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "donations"));
@@ -120,7 +119,7 @@ print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="action" value="update">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
-print dol_get_fiche_head($head, 'website', $langs->trans("Donations"), -1, 'user');
+print dol_get_fiche_head($head, 'website', $langs->trans("Donations"), -1, 'payment');
 
 if ($conf->use_javascript_ajax) {
 	print "\n".'<script type="text/javascript">';

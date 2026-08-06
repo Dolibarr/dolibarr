@@ -554,7 +554,7 @@ print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre">';
 print '<input type="text" class="flat width75" name="search_label" value="'.$search_label.'">';
 print '</td>';
-//print '<td class="liste_titre">&nbsp;</td>';
+print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre"><input type="text" class="width50" name="search_module_name" value="'.$search_module_name.'"></td>';
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre">&nbsp;</td>';
@@ -591,7 +591,7 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 }
 print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "t.rowid", "", $param, '', $sortfield, $sortorder);
 print_liste_field_titre("CronLabel", $_SERVER["PHP_SELF"], "t.label", "", $param, '', $sortfield, $sortorder);
-//print_liste_field_titre("Priority", $_SERVER["PHP_SELF"], "t.priority", "", $param, '', $sortfield, $sortorder);
+print_liste_field_titre("Priority", $_SERVER["PHP_SELF"], "t.priority", "", $param, '', $sortfield, $sortorder);
 print_liste_field_titre("CronModule", $_SERVER["PHP_SELF"], "t.module_name", "", $param, '', $sortfield, $sortorder);
 print_liste_field_titre("", '', '', "", $param, '', $sortfield, $sortorder, 'tdoverflowmax50 ');
 print_liste_field_titre("CronFrequency", '', "", "", $param, '', $sortfield, $sortorder);
@@ -695,9 +695,9 @@ if ($num > 0) {
 		}
 
 		// Priority
-		/*print '<td class="right">';
+		print '<td class="right">';
 		print dol_escape_htmltag($object->priority);
-		print '</td>';*/
+		print '</td>';
 
 		// Module
 		print '<td>';

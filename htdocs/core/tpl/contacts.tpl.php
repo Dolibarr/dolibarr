@@ -358,7 +358,7 @@ foreach ($list as $entry) {
 		print ($tmpuser->id > 0 ? img_picto($langs->trans("ThisContactHasAUser", $tmpuser->getFullName($langs), $entry->contact_name), 'info') : '');
 	}
 	print '</td>';
-	print '<td class="tdoverflowmax200" data-type_id="' . ((int) $entry->type_id) . '" data-type="' . dol_escape_htmltag($entry->type) . '">'.dol_escape_htmltag($entry->type).'</td>';
+	print '<td class="tdoverflowmax200" data-type_id="' . ((int) $entry->type_id) . '" data-type="' . dol_escape_htmltag($entry->type) . '">'.dol_escape_htmltag($langs->trans($entry->type)).'</td>';
 	print '<td class="tdoverflowmax200 center" data-status_id="' . ((int) $entry->status) . '">'.$entry->status_html.'</td>';
 
 	if ($permission) {

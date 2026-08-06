@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2016  Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2013-2016  Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2025  Alexandre Spangaro      <alexandre@inovea-conseil.com>
+ * Copyright (C) 2013-2026  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2022  		Lionel Vessiller        <lvessiller@open-dsi.fr>
  * Copyright (C) 2016-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
@@ -31,6 +31,13 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfiscalyear.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
@@ -41,14 +48,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/lettering.class.php';
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array("accountancy", "categories", "compta", "other"));
@@ -228,7 +227,11 @@ if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
 	accessforbidden();
 }
 
+// Permissions
+$permissiontoread = $user->hasRight('accounting', 'mouvements', 'lire');
 $permissiontoadd = $user->hasRight('accounting', 'mouvements', 'creer');
+$permissiontodelete = $user->hasRight('accounting', 'mouvements', 'supprimer');
+$permissiontoexport = $user->hasRight('accounting', 'mouvements', 'export');
 
 
 /*
@@ -460,11 +463,6 @@ if (empty($reshook)) {
 		$param .= '&search_import_key='.urlencode($search_import_key);
 	}
 
-	// Permissions
-	$permissiontoread = $user->hasRight('societe', 'lire');
-	$permissiontodelete = $user->hasRight('societe', 'supprimer');
-	$permissiontoadd = $user->hasRight('societe', 'creer');
-
 	// Actions
 	if ($action === 'exporttopdf' && $permissiontoadd) {
 		$object->fetchAll('ASC,ASC,ASC', 'code_journal,doc_date,piece_num', 0, 0, $filter);
@@ -489,6 +487,7 @@ if (empty($reshook)) {
 	$uploaddir = $conf->societe->dir_output;
 
 	global $error;
+	/** @var int $error */
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
 	if (!$error && $action == 'deletebookkeepingwriting' && $confirm == "yes" && $user->hasRight('accounting', 'mouvements', 'supprimer')) {
@@ -887,7 +886,7 @@ if (empty($reshook)) {
 	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewFlatList'), '', 'fa fa-list paddingleft imgforviewmode', DOL_URL_ROOT.'/accountancy/bookkeeping/list.php?'.$param, '', 1, array('morecss' => 'marginleftonly btnTitleSelected'));
 	$newcardbutton .= dolGetButtonTitle($langs->trans('GroupByAccountAccounting'), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT.'/accountancy/bookkeeping/listbyaccount.php?'.$param, '', 1, array('morecss' => 'marginleftonly'));
 	$newcardbutton .= dolGetButtonTitle($langs->trans('GroupBySubAccountAccounting'), '', 'fa fa-align-left vmirror paddingleft imgforviewmode', DOL_URL_ROOT.'/accountancy/bookkeeping/listbyaccount.php?type=sub'.$param, '', 1, array('morecss' => 'marginleftonly'));
-	$newcardbutton .= dolGetButtonTitle($langs->trans('ExportToPdf'), '', 'fa fa-file-pdf paddingleft', $_SERVER['PHP_SELF'] . '?action=exporttopdf&' . $param, '', 1, array('morecss' => 'marginleftonly'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ExportToPdf'), '', 'fa fa-file-pdf paddingleft', $_SERVER['PHP_SELF'] . '?action=exporttopdf&' . $param, '', $permissiontoexport, array('morecss' => 'marginleftonly'));
 
 	$url = './card.php?action=create'.(!empty($type) ? '&type=sub' : '').'&backtopage='.urlencode($_SERVER['PHP_SELF']);
 	if (!empty($socid)) {
@@ -1272,17 +1271,19 @@ while ($i < min($num, $limit)) {
 
 	// Piece number
 	if (!empty($arrayfields['t.piece_num']['checked'])) {
-		print '<td>';
+		print '<td class="nowraponall">';
 		$object->id = $line->id;
 		$object->piece_num = $line->piece_num;
 		$object->ref = $line->ref;
 		print $object->getNomUrl(1, '', 0, '', 1);
+		print '<span class="hideonsmartphone">';
 		if (!empty($line->date_export)) {
 			print img_picto($langs->trans("DateExport").": ".dol_print_date($line->date_export, 'dayhour')." (".$langs->trans("TransactionExportDesc").")", 'fa-file-export', 'class="paddingleft pictofixedwidth opacitymedium"');
 		}
 		if (!empty($line->date_validation)) {
 			print img_picto($langs->trans("DateValidation").": ".dol_print_date($line->date_validation, 'dayhour')." (".$langs->trans("TransactionBlockedLockedDesc").")", 'fa-lock', 'class="paddingleft pictofixedwidth opacitymedium"');
 		}
+		print '</span>';
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;

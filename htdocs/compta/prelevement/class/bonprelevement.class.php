@@ -7,7 +7,7 @@
  * Copyright (C) 2018      Nicolas ZABOURI      <info@inovea-conseil.com>
  * Copyright (C) 2019       JC Prieto			<jcprieto@virtual20.com><prietojc@gmail.com>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -708,7 +708,7 @@ class BonPrelevement extends CommonObject
 					$paiement->num_payment = $this->ref; // Set ref of direct debit note
 					$paiement->id_prelevement = $this->id;
 
-					$result = $paiement->create($user); // This use ->paiementid, that is ID of payment mode
+					$result = $paiement->create($user, 1); // This use ->paiementid, that is ID of payment mode. closepaidinvoices=1 to convert deposit invoice to available credit
 
 					if ($result < 0) {
 						$error++;
@@ -1161,7 +1161,7 @@ class BonPrelevement extends CommonObject
 		$factures_prev = array();
 		$factures_prev_id = array();
 
-		dol_syslog(__METHOD__ . " Read invoices for did=" . ((int) $did), LOG_DEBUG);
+		dol_syslog(__METHOD__ . " Read invoices/salaries for did=" . ((int) $did), LOG_DEBUG);
 
 		$sql = "SELECT f.rowid, pd.rowid as pfdrowid";
 		$sql .= ", f.".$this->db->sanitize($socOrUser);		// fk_soc or fk_user
@@ -1222,7 +1222,7 @@ class BonPrelevement extends CommonObject
 			while ($i < $num) {
 				$row = $this->db->fetch_row($resql);	// TODO Replace with fetch_object()
 				'@phan-var-force array<int<0,12>,string> $row';
-				/** @var array{0:int|string,1:int,2:int,3:string,4:string,5:string,6,string,7:float,8:string,9:string,10:string,11:string,12:string,13:string,14:string,15:int} $row */
+				/** @var array{0:int|string,1:int,2:int,3:string,4:string,5:string,6:string,7:float,8:string,9:string,10:string,11:string,12:string,13:string,14:string,15:int} $row */
 
 				// All fields:
 				// 0=rowid, 1=pfdrowid, 2=$socOrUser, 3=code_banque, 4=code_guichet, 5=number, 6=key,
@@ -1234,7 +1234,7 @@ class BonPrelevement extends CommonObject
 
 				if ($row[7] == 0) {
 					$error++;
-					dol_syslog(__METHOD__ . " Read invoices/salary error Found a null amount", LOG_ERR);
+					dol_syslog(__METHOD__ . " Read invoices/salaries error Found a null amount", LOG_WARNING);
 					$this->invoice_in_error[$row[0]] = "Error for invoice or salary id " . $row[0] . ", found a null amount";
 					break;
 				}
@@ -1242,10 +1242,10 @@ class BonPrelevement extends CommonObject
 			}
 
 			$this->db->free($resql);
-			dol_syslog(__METHOD__ . " Read invoices/salary, " . $i . " invoices/salary to withdraw", LOG_DEBUG);
+			dol_syslog(__METHOD__ . " Read invoices/salaries, " . $i . " invoices/salaries to withdraw", LOG_DEBUG);
 		} else {
 			$this->error = $this->db->lasterror();
-			dol_syslog(__METHOD__ . " Read invoices/salary error " . $this->db->lasterror(), LOG_ERR);
+			dol_syslog(__METHOD__ . " Read invoices/salaries error " . $this->db->lasterror(), LOG_ERR);
 			return -1;
 		}
 
@@ -1261,7 +1261,7 @@ class BonPrelevement extends CommonObject
 
 			// Check BAN
 			$i = 0;
-			dol_syslog(__METHOD__ . " Check BAN for each invoices or salary", LOG_DEBUG);
+			dol_syslog(__METHOD__ . " Check BAN for each invoices or salaries", LOG_DEBUG);
 
 			if (count($factures) > 0) {
 				foreach ($factures as $key => $fac) {
@@ -1388,21 +1388,25 @@ class BonPrelevement extends CommonObject
 			if (!$error) {
 				$ref = substr($year, -2) . $month;
 
+				$prefixt = "T";
+
 				// Get next free number for the ref of bon prelevement
-				$sql = "SELECT substring(ref from char_length(ref) - 1)";	// To extract "YYMMXX" from "TYYMMXX"
+				$sql = "SELECT SUBSTRING(ref, 6) AS refnumber";		// To suppress "TYYMM" from "TYYMMXXX"
 				$sql .= " FROM " . MAIN_DB_PREFIX . "prelevement_bons";
-				$sql .= " WHERE ref LIKE '_" . $this->db->escape($ref) . "%'";
+				$sql .= " WHERE ref LIKE '" . $this->db->escape($prefixt . $ref) . "%'";
 				$sql .= " AND entity = " . ((int) $conf->entity);
-				$sql .= " ORDER BY ref DESC LIMIT 1";
+				$sql .= " ORDER BY LENGTH(ref) DESC, ref DESC";
+				$sql .= " LIMIT 1";
 
 				dol_syslog(get_class($this) . " get next free number", LOG_DEBUG);
+
 				$resql = $this->db->query($sql);
 
 				if ($resql) {
 					$row = $this->db->fetch_row($resql);
 
 					// Build the new ref
-					$ref = "T" . $ref . sprintf("%02d", (intval($row[0]) + 1));
+					$ref = $prefixt . $ref . sprintf("%03d", (intval($row[0]) + 1));
 
 					// $conf->abc->dir_output may be:
 					// /home/ldestailleur/git/dolibarr_15.0/documents/abc/
@@ -1437,17 +1441,18 @@ class BonPrelevement extends CommonObject
 
 					$resql = $this->db->query($sql);
 
-
 					if ($resql) {
 						$prev_id = $this->db->last_insert_id(MAIN_DB_PREFIX . "prelevement_bons");
 						$this->id = $prev_id;
 						$this->ref = $ref;
 					} else {
 						$error++;
+						$this->errors[] = $this->db->lasterror();
 						dol_syslog(__METHOD__ . " Create withdraw receipt " . $this->db->lasterror(), LOG_ERR);
 					}
 				} else {
 					$error++;
+					$this->errors[] = $this->db->lasterror();
 					dol_syslog(__METHOD__ . " Get last withdraw receipt " . $this->db->lasterror(), LOG_ERR);
 				}
 			}
@@ -1548,7 +1553,7 @@ class BonPrelevement extends CommonObject
 					if ($sourcetype == 'salary') {
 						$userid = $this->context['factures_prev'][0][2];
 					}
-					$result = $this->generate($format, $executiondate, $type, $fk_bank_account, $userid, $thirdpartyBANId);
+					$result = $this->generate($format, $executiondate, $type, $fk_bank_account, $userid, (int) $thirdpartyBANId);
 					if ($result < 0) {
 						//var_dump($this->error);
 						//var_dump($this->invoice_in_error);
@@ -2249,8 +2254,8 @@ class BonPrelevement extends CommonObject
 
 		$pre = substr(dol_string_nospecial(dol_string_unaccent($langs->transnoentitiesnoconv('RUM'))), 0, 3); // Must always be on 3 char ('RUM' or 'UMR'. This is a protection against bad translation)
 
-		// 3 char + '-' + 12 + '-' + id + '-' + code 		Must be lower than 32.
-		return $pre . '-' . dol_print_date($row_datec, 'dayhourlogsmall') . '-' . dol_trunc($row_drum . ($row_code_client ? '-' . $row_code_client : ''), 13, 'right', 'UTF-8', 1);
+		// 3 char + '-' + 10 (yymmddHHMM) + '-' + id + '-' + code. Must be under 32 (SEPA char limit for MndtId is however 35).
+		return $pre . '-' . dol_print_date($row_datec, 'dayhourlogsmall') . '-' . dol_trunc($row_drum . ($row_code_client ? '-' . $row_code_client : ''), 17, 'right', 'UTF-8', 1);
 	}
 
 

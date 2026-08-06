@@ -1775,8 +1775,12 @@ class Project extends CommonObject
 		$clone_project->id = 0;
 		if ($move_date) {
 			$clone_project->date_start = $now;
-			if (!(empty($clone_project->date_end))) {
-				$clone_project->date_end += ($now - $orign_dt_start);
+			if (!empty($clone_project->date_end)) {
+				if (!empty($orign_dt_start)) {
+					$clone_project->date_end += ($now - (int) $orign_dt_start);
+				} elseif (!empty($clone_project->date_c)) {
+					$clone_project->date_end += ($now - (int) $clone_project->date_c);
+				}
 			}
 		}
 
@@ -2042,7 +2046,7 @@ class Project extends CommonObject
 	public function update_element($tableName, $elementSelectId)
 	{
 		// phpcs:enable
-		$sql = "UPDATE ".MAIN_DB_PREFIX.$tableName;
+		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->db->sanitize($tableName);
 
 		if ($tableName == "actioncomm") {
 			$sql .= " SET fk_project=".$this->id;
@@ -2078,14 +2082,14 @@ class Project extends CommonObject
 	public function remove_element($tableName, $elementSelectId, $projectfield = 'fk_projet')
 	{
 		// phpcs:enable
-		$sql = "UPDATE ".MAIN_DB_PREFIX.$tableName;
+		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->db->sanitize($tableName);
 
 		if ($tableName == "actioncomm") {
-			$sql .= " SET fk_project=NULL";
-			$sql .= " WHERE id=".((int) $elementSelectId);
+			$sql .= " SET fk_project = NULL";
+			$sql .= " WHERE id = ".((int) $elementSelectId);
 		} else {
-			$sql .= " SET ".$projectfield."=NULL";
-			$sql .= " WHERE rowid=".((int) $elementSelectId);
+			$sql .= " SET ".$this->db->sanitize($projectfield)." = NULL";
+			$sql .= " WHERE rowid = ".((int) $elementSelectId);
 		}
 
 		dol_syslog(get_class($this)."::remove_element", LOG_DEBUG);

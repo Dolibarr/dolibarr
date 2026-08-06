@@ -105,7 +105,7 @@ class ExpenseReports extends DolibarrApi
 			throw new RestException(404, 'Expense report not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('expensereport', $this->expensereport->id)) {
+		if (!DolibarrApi::_checkAccessToResource('expensereport', $this->expensereport)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -280,10 +280,10 @@ class ExpenseReports extends DolibarrApi
 
 		$result = $this->expensereport->fetch($id);
 		if (!$result) {
-			throw new RestException(404, 'expensereport not found');
+			throw new RestException(404, 'Expense report not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('expensereport', $this->expensereport->id)) {
+		if (!DolibarrApi::_checkAccessToResource('expensereport', $this->expensereport)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 		$this->expensereport->fetch_lines();
@@ -323,7 +323,7 @@ class ExpenseReports extends DolibarrApi
 			throw new RestException(404, 'Expense report not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('expensereport', $this->expensereport->id)) {
+		if (!DolibarrApi::_checkAccessToResource('expensereport', $this->expensereport)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -382,10 +382,10 @@ class ExpenseReports extends DolibarrApi
 
 		$result = $this->expensereport->fetch($id);
 		if (!$result) {
-			throw new RestException(404, 'expensereport not found');
+			throw new RestException(404, 'Expense report not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('expensereport', $this->expensereport->id)) {
+		if (!DolibarrApi::_checkAccessToResource('expensereport', $this->expensereport)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -453,7 +453,7 @@ class ExpenseReports extends DolibarrApi
 			throw new RestException(404, 'Expense report not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('expensereport', $this->expensereport->id)) {
+		if (!DolibarrApi::_checkAccessToResource('expensereport', $this->expensereport)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -508,10 +508,10 @@ class ExpenseReports extends DolibarrApi
 
 		$result = $this->expensereport->fetch($id);
 		if (!$result) {
-			throw new RestException(404, 'expensereport not found');
+			throw new RestException(404, 'Expense report not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('expensereport', $this->expensereport->id)) {
+		if (!DolibarrApi::_checkAccessToResource('expensereport', $this->expensereport)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 		foreach ($request_data as $field => $value) {
@@ -561,10 +561,10 @@ class ExpenseReports extends DolibarrApi
 
 		$result = $this->expensereport->fetch($id);
 		if (!$result) {
-			throw new RestException(404, 'Expense Report not found');
+			throw new RestException(404, 'Expense report not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('expensereport', $this->expensereport->id)) {
+		if (!DolibarrApi::_checkAccessToResource('expensereport', $this->expensereport)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -605,7 +605,7 @@ class ExpenseReports extends DolibarrApi
 			throw new RestException(404, 'Expense report not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('expensereport', $this->expensereport->id)) {
+		if (!DolibarrApi::_checkAccessToResource('expensereport', $this->expensereport)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -649,7 +649,7 @@ class ExpenseReports extends DolibarrApi
 			throw new RestException(404, 'Expense report not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('expensereport', $this->expensereport->id)) {
+		if (!DolibarrApi::_checkAccessToResource('expensereport', $this->expensereport)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -694,7 +694,7 @@ class ExpenseReports extends DolibarrApi
 			throw new RestException(404, 'Expense report not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('expensereport', $this->expensereport->id)) {
+		if (!DolibarrApi::_checkAccessToResource('expensereport', $this->expensereport)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -740,7 +740,7 @@ class ExpenseReports extends DolibarrApi
 			throw new RestException(404, 'Expense report not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('expensereport', $this->expensereport->id)) {
+		if (!DolibarrApi::_checkAccessToResource('expensereport', $this->expensereport)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -784,7 +784,7 @@ class ExpenseReports extends DolibarrApi
 			throw new RestException(404, 'Expense report not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('expensereport', $this->expensereport->id)) {
+		if (!DolibarrApi::_checkAccessToResource('expensereport', $this->expensereport)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 

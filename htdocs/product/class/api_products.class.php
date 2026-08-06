@@ -438,8 +438,8 @@ class Products extends DolibarrApi
 
 		$result = $this->product->update($id, DolibarrApiAccess::$user, 1, 'update', $updatetype);
 
-		// If price mode is 1 price per product
-		if ($result > 0 && getDolGlobalString('PRODUCT_PRICE_UNIQ')) {
+		// If price mode is 1 price per product or price by client
+		if ($result > 0 && (getDolGlobalString('PRODUCT_PRICE_UNIQ') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES'))) {
 			// We update price only if it was changed
 			$pricemodified = false;
 			if ($this->product->price_base_type != $oldproduct->price_base_type) {
@@ -750,7 +750,7 @@ class Products extends DolibarrApi
 			throw new RestException(403);
 		}
 
-		if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
+		if (!getDolGlobalString('PRODUIT_MULTIPRICES') && !getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 			throw new RestException(400, 'API not available: this mode of pricing is not enabled by setup');
 		}
 
@@ -796,7 +796,7 @@ class Products extends DolibarrApi
 			throw new RestException(403);
 		}
 
-		if (!getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
+		if (!getDolGlobalString('PRODUIT_CUSTOMER_PRICES') && !getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 			throw new RestException(400, 'API not available: this mode of pricing is not enabled by setup');
 		}
 

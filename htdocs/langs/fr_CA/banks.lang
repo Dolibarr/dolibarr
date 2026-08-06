@@ -1,5 +1,7 @@
 # Dolibarr language file - Source file is en_US - banks
 MenuBankCash=Banques | Encaisse
+MenuVariousPayment=Saisie manuelle des entrées du journal
+MenuNewVariousPayment=Nouvelle entrée de journal manuel
 BankAccountsAndGateways=Comptes bancaires | Passerelles
 DateInitialBalance=Date du solde initial
 SwiftValid=BIC / SWIFT valide
@@ -76,9 +78,12 @@ CheckRejected=Chèque renvoyé
 CheckRejectedAndInvoicesReopened=Chèque retourné et factures réouvertes
 DocumentModelSepaMandate=Modèle de mandat SEPA. Utile uniquement pour les pays européens de la CEE.
 DocumentModelBan=Modèle pour imprimer une page avec des informations BAN.
+NewVariousPayment=Nouveau paiement divers
 VariousPayments=Paiements divers
-VariousPaymentId=ID de paiement divers
-VariousPaymentLabel=Étiquette de paiement divers
+ShowVariousPayment=Afficher les entrées du journal manuel
+AddVariousPayment=Ajouter des entrées de journal manuelles
+VariousPaymentId=ID d'entrée de journal manuelle
+VariousPaymentLabel=Étiquette d'entrée de journal manuel
 ConfirmCloneVariousPayment=Confirmer le clone d'un paiement divers
 FindYourSEPAMandate=Il s'agit de votre mandat SEPA autorisant notre société à effectuer un ordre de prélèvement auprès de votre banque. Renvoyez-le signé (scan du document signé) ou envoyez-le par courrier à
 AutoReportLastAccountStatement=Remplir automatiquement le champ « numéro de relevé bancaire » avec le dernier numéro de relevé lors du rapprochement

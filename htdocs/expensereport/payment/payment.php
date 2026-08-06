@@ -26,10 +26,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
-require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -37,6 +33,9 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
+require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'banks', 'trips'));
@@ -48,11 +47,22 @@ $amounts = array();
 $accountid = GETPOSTINT('accountid');
 $cancel = GETPOST('cancel');
 
+$object = new PaymentExpenseReport($db);
+
+if ($id > 0) {
+	$result = $object->fetch($id);
+	if (!$result) {
+		dol_print_error($db, 'Failed to get payment id '.$id);
+	}
+}
+
 // Security check
 $socid = 0;
 if ($user->socid > 0) {
 	$socid = $user->socid;
 }
+
+$result = restrictedArea($user, 'expensereport', $object->fk_expensereport, 'expensereport');
 
 $permissiontoadd = $user->hasRight('expensereport', 'creer');
 

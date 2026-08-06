@@ -173,3 +173,5 @@ RefSalary=Salaire
 NoSalaryInvoiceToWithdraw=Aucun salaire n'attend un '%s'. Allez sur l'onglet '%s' sur la fiche salaire pour faire une demande.
 SalaryInvoiceWaitingWithdraw=Salaires en attente de paiement par virement bancaire
 ErrorBankTransferNoPaymentRequestSelected=Aucune demande de paiement sélectionnée.
+AmountRequestedAlreadyReachesTotal=Le montant total de facture a déjà été demandé pour paiement.
+AmountExceedsRemainingToRequest=Le montant demandé dépasse le montant restant disponible pour les demandes de paiement

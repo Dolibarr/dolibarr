@@ -46,6 +46,10 @@ IPP_Color=Màu
 IPP_Device=Thiết bị
 IPP_Media=Phương tiện máy in
 IPP_Supported=Loại phương tiện
+STATE_IPP_idle=Idle printer
+STATE_IPP_none=Không
+IPP_COLOR_print-black=Black and White
+IPP_COLOR_print-color=Màu
 DirectPrintingJobsDesc=Trang này liệt kê các công việc in được tìm thấy cho các máy in có sẵn.
 GoogleAuthNotConfigured=Google OAuth chưa được thiết lập. Kích hoạt mô-đun OAuth và đặt ID Google / Bảo mật.
 GoogleAuthConfigured=Thông tin đăng nhập Google OAuth đã được tìm thấy khi thiết lập mô-đun OAuth.
@@ -53,4 +57,4 @@ PrintingDriverDescprintgcp=Biến cấu hình cho trình điều khiển in Goog
 PrintingDriverDescprintipp=Các biến cấu hình để in Cup driver.
 PrintTestDescprintgcp=Danh sách các máy in cho Google Cloud Print.
 PrintTestDescprintipp=Danh sách các máy in cho Cups
-Testbbbb
+PrinterLocation=Printer location

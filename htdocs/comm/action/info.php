@@ -26,6 +26,13 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
@@ -36,18 +43,11 @@ if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
-
 // Load translation files required by the page
 $langs->load("commercial");
 
 $id = GETPOSTINT('id');
+$socid = 0;
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('actioncard', 'globalcard'));

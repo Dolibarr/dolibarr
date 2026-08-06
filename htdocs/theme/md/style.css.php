@@ -563,9 +563,14 @@ input {
 .tableforfield input{
 	padding: 2px;
 }
+input.downloadexternallink {
+	padding-left: 3px;
+}
+
 .refidno input {
 	margin-top: 0 !important;
 	padding: 0;
+	padding-left: 6px;
 }
 .refidno .button.smallpaddingimp {
 	padding: 3px !important;
@@ -833,7 +838,7 @@ div.userimg.notfirst {
 	display: block-inline;
 }
 .center.inline-block.dateheight {
-	line-height: 1.2em;
+	line-height: 1.1em;
 }
 
 /* Used by timesheets */
@@ -973,11 +978,14 @@ input.pageplusone {
 .undertopmenu {
 	scroll-margin-top: 80px;
 }
+.banner-object-label {
+	opacity: 0.8;
+}
 
 select:invalid, select.--error {
 	color: gray;
 }
-input:disabled, textarea:disabled, select[disabled='disabled']
+input:disabled:not(.colorthumb), textarea:disabled, select[disabled='disabled']
 {
 	background: var(--inputbackgroundcolordisabled);
 	color: var(--inputcolordisabled);
@@ -1044,6 +1052,12 @@ input#onlinepaymenturl, input#directdownloadlink {
 
 	padding: 20px 0px 20px 0px;
 	border-radius: 8px;
+}
+.formborder {
+	border: solid 2px #444;
+	padding: 20px;
+	border-radius: 8px;
+	background-color: #fffff4;
 }
 
 div#moretabsList, div#moretabsListaction {
@@ -1428,6 +1442,9 @@ td.wordbreak img, td.wordbreakimp img {
 .nowidthimp {
 	width: unset !important;
 }
+.noheightimp {
+	height: unset !important;
+}
 
 .cursordefault {
 	cursor: default;
@@ -1470,6 +1487,10 @@ td.wordbreak img, td.wordbreakimp img {
 	overflow-y: auto;
 	word-break: break-word;
 }
+.overflowellipsis {
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
 div.urllink {
 	padding: 5px;
 	margin-top: 5px;
@@ -1501,7 +1522,7 @@ div.urllink, div.urllink a {
 }
 
 i.fa-mars::before, i.fa-venus::before, i.fa-genderless::before, i.fa-transgender::before  {
-	color: #888 !important;
+	/* color: #888 !important; */
 	opacity: 0.4;
 	padding-<?php echo $left; ?>: 3px;
 }
@@ -2010,6 +2031,10 @@ select.flat.selectlimit {
 .tablelistofcalendars {
 	margin-top: 25px !important;
 }
+.navselectiondate {
+	min-width: 250px;
+}
+
 .amountalreadypaid {
 	white-space: nowrap;
 }
@@ -2058,6 +2083,16 @@ select.flat.selectlimit {
 	padding: 5px;
 	border-radius: 5px;
 }
+
+.showonhover:hover *::before {
+	visibility: visible !important;
+	display: inline-block !important;
+}
+.showonhover:not(:hover) *::before {
+	visibility: hidden;
+	display: inline-block !important;
+}
+
 
 .savingdocmask {
 	margin-top: 6px;
@@ -3043,12 +3078,13 @@ img.hideonsmartphone.pictoactionview {
 
 .pictofixedwidth {
 	text-align: start;
-	width: 22px;	/* do not use em unit here */
+	width: 22px;	/* Do not use em unit here */
 	/* padding-right: 0; */
 }
 img.pictofixedwidth {
-	width: 18px;	/* Do not use em unit here */
-	padding-right: 2px;
+	width: 16px;	/* Do not use em unit here */
+	padding-right: 6px;		/* width of img + padding-right must be equal to width of .pictofixedwidth */
+	margin-right: 4px;
 }
 
 .colorthumb {
@@ -3872,6 +3908,9 @@ img.userphotosmall {			/* size for user photo in lists */
 img.userphoto[alt="Gravatar avatar"], img.photouserphoto.dropdown-user-image[alt="Gravatar avatar"] {
 	background: #fff;
 }
+img.gravatar.photouserphoto {
+	filter: grayscale(50%);
+}
 img.userphotopublicvcard {
 	width: 60px;
 	height: 60px;
@@ -4329,6 +4368,10 @@ div.tabsActionNoBottom {
 div.tabsAction > a {
 	margin-bottom: 16px !important;
 }
+div.tabsAction .dropdown .textbutton {
+	text-align: <?php echo $left; ?>;
+}
+
 
 div.popuptabset {
 	padding: 6px;
@@ -4606,6 +4649,12 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 
 	border-radius: 0.1em;
 }
+table.tagtable.liste.listwithfilterbefore {
+	margin-bottom: 8px;
+}
+table.noborder.boxtable {
+	margin-bottom: 2px;
+}
 table.noborder tr, div.noborder form {
 	border-top-color: #FEFEFE;
 
@@ -4811,6 +4860,7 @@ table.listwithfilterbefore {
 .tagtd, .table-border-col, .table-key-border-col, .table-val-border-col { display: table-cell; }
 .confirmquestions .tagtr .tagtd:not(:first-child)  { padding-left: 10px; }
 .confirmquestions { margin-top: 5px; }
+.confirmquestions .tagtr .tagtd { height: 2em; vertical-align: middle; }
 
 
 /* Pagination */
@@ -5337,6 +5387,8 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 
 	.clearbothonsmartphone {
 		clear: both;
+	}
+	.clearbothonsmartphone:not(.hideonsmartphone) {
 		display: block !important;
 	}
 
@@ -5583,12 +5635,12 @@ div.ok {
 }
 
 div.info, div.warning, div.error, div.green, div.neutral {
-	padding-top: 8px;
+	padding-top: 16px;
 	padding-left: 10px;
 	padding-right: 4px;
-	padding-bottom: 8px;
+	padding-bottom: 16px;
 	margin: 1em 0em 1em 0em;
-	border-radius: 1px;
+	border-radius: 4px;
 }
 
 div.fiche div.info, div.fiche div.warning, div.fiche div.neutral {
@@ -5683,6 +5735,15 @@ div.boximport {
 .product_line_stock_too_low { color: #884400; }
 
 .fieldrequired { font-weight: bold; color: #000055; }
+#tablesubscribe .fieldrequired {
+	font-weight: inherit !important;
+	color: inherit !important;
+}
+#tablesubscribe .fieldrequired:after {
+	content: " *";
+	color: #660000;
+	font-weight: bold;
+}
 
 td.widthpictotitle, .table-fiche-title img.widthpictotitle { width: 32px; font-size: 1.4em; text-align: <?php echo $left; ?>; }
 table.titlemodulehelp tr td img.widthpictotitle { width: 80px; }
@@ -6332,7 +6393,8 @@ table.cal_month.cal_peruser td { padding-left: 0 !important; padding-right: 0 !i
 .cal_today_peruser { background: #FDFDF0; border-right: solid 1px #E0E0E0; border-bottom: solid 1px #E0E0E0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_today_peruser_peruserleft { background: #FDFDF0; border-left: solid 2px #6C7C7B; border-right: solid 1px #E0E0E0; border-bottom: solid 1px #E0E0E0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_past          { }
-.cal_peruser       { padding: 0px; }
+.cal_peruser         { padding: 0px; height: 22px !important; }
+.cal_peruserviewname { max-width: 140px; height: 22px !important; }
 .cal_impair        { background: #F8F8F8; }
 .cal_today_peruser_impair { background: #F8F8F0; }
 .peruser_busy      { background: #CC8888; }
@@ -6348,7 +6410,6 @@ table.cal_event td.cal_event_right { padding: 4px 4px !important; }
 .cal_event a:active     { color: #111111; font-weight: normal !important; }
 .cal_event_busy a:hover { color: #111111; font-weight: normal !important; color:rgba(255,255,255,.75); }
 .cal_event_busy      { }
-.cal_peruserviewname { max-width: 140px; height: 22px; }
 a.dayevent-aday {
 	margin-left: 8px;
 }
@@ -6612,8 +6673,14 @@ span.jPicker {
 	border-collapse: collapse;
 	border: none;
 }
+.jPicker tr.Hex td.Text input {
+	width: 60px !important;
+}
 .jPicker td.Text input {
-	width: 35px !important;
+	min-width: 40px;
+	padding: 8px;
+	border: 1px solid #bbb !important;
+	border-radius: 4px;
 }
 
 A.color, A.color:active, A.color:visited {
@@ -7674,6 +7741,8 @@ select.multiselectononeline {
 	box-shadow: none !important;
 	margin-top: 1px !important;
 	margin-bottom: 0 !important;
+	margin-<?php echo $left ?>: 0px !important;
+	margin-<?php echo $right ?>: 3px !important;
 }
 span.noborderoncategories a, li.noborderoncategories a {
 	line-height: normal;

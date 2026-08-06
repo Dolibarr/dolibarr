@@ -28,10 +28,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/expensereport.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -39,6 +35,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/expensereport.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/expensereport.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'trips'));
@@ -47,6 +46,23 @@ $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
+
+$object = new PaymentExpenseReport($db);
+
+if ($id > 0) {
+	$result = $object->fetch($id);
+	if (!$result) {
+		dol_print_error($db, 'Failed to get payment id '.$id);
+	}
+}
+
+// Security check
+if ($user->socid) {
+	$socid = $user->socid;
+}
+
+$result = restrictedArea($user, 'expensereport', $object->fk_expensereport, 'expensereport');
+
 
 /*
  * Actions
@@ -61,8 +77,6 @@ $confirm = GETPOST('confirm', 'alpha');
 
 llxHeader('', $langs->trans("Payment"));
 
-$object = new PaymentExpenseReport($db);
-$object->fetch($id);
 $object->info($object->id);
 
 $head = payment_expensereport_prepare_head($object);

@@ -755,7 +755,8 @@ class pdf_crabe extends ModelePDFFactures
 					}
 					// Collection of totals by value of VAT in $this->tva["taux"]=total_tva
 					$prev_progress = $object->lines[$i]->get_prev_progress($object->id);
-					if ($prev_progress > 0 && !empty($object->lines[$i]->situation_percent)) { // Compute progress from previous situation
+					// Lines are already stored as delta (not cumulative) once INVOICE_USE_SITUATION=2, so no ratio must be reapplied here (same guard as CommonObject::update_price())
+					if ($prev_progress > 0 && !empty($object->lines[$i]->situation_percent) && getDolGlobalInt('INVOICE_USE_SITUATION') != 2) { // Compute progress from previous situation
 						if (isModEnabled("multicurrency") && $object->multicurrency_tx != 1) {
 							$tvaligne = $sign * $object->lines[$i]->multicurrency_total_tva * ($object->lines[$i]->situation_percent - $prev_progress) / $object->lines[$i]->situation_percent;
 						} else {
@@ -1257,7 +1258,7 @@ class pdf_crabe extends ModelePDFFactures
 		if (in_array($this->emetteur->country_code, array('FR')) && empty($object->total_tva)) {
 			$pdf->SetFont('', '', $default_font_size - 2);
 			$pdf->SetXY($this->marge_gauche, $posy);
-			if (!empty($mysoc->tva_assuj)) {
+			if (empty($mysoc->tva_assuj)) {
 				if ($mysoc->forme_juridique_code == 92) {
 					$pdf->MultiCell(100, 3, $outputlangs->transnoentities("VATIsNotUsedForInvoiceAsso"), 0, 'L', false);
 				} else {
@@ -1676,7 +1677,7 @@ class pdf_crabe extends ModelePDFFactures
 					}
 
 					foreach ($localtax_rate as $tvakey => $tvaval) {
-						if ($tvakey != 0) {    // On affiche pas taux 0
+						if ($tvakey != 0 || getDolGlobalString('INVOICE_SHOW_ALSO_LOCALTAX1_LINE_IF_ZERO')) {
 							//$this->atleastoneratenotnull++;
 
 							$index++;
@@ -1714,7 +1715,7 @@ class pdf_crabe extends ModelePDFFactures
 					}
 
 					foreach ($localtax_rate as $tvakey => $tvaval) {
-						if ($tvakey != 0) {    // On affiche pas taux 0
+						if ($tvakey != 0 || getDolGlobalString('INVOICE_SHOW_ALSO_LOCALTAX2_LINE_IF_ZERO')) {
 							//$this->atleastoneratenotnull++;
 
 							$index++;
@@ -1747,7 +1748,7 @@ class pdf_crabe extends ModelePDFFactures
 				if (!getDolGlobalInt('PDF_INVOICE_SHOW_VAT_ANALYSIS')) {
 					// VAT
 					foreach ($this->tva_array as $tvakey => $tvaval) {
-						if ($tvakey != 0) {    // On affiche pas taux 0
+						if ($tvakey != 0 || getDolGlobalString('INVOICE_SHOW_ALSO_VAT_LINE_IF_ZERO')) {
 							$this->atleastoneratenotnull++;
 
 							$index++;
@@ -1783,7 +1784,7 @@ class pdf_crabe extends ModelePDFFactures
 					}
 
 					foreach ($localtax_rate as $tvakey => $tvaval) {
-						if ($tvakey != 0) {    // On affiche pas taux 0
+						if ($tvakey != 0 || getDolGlobalString('INVOICE_SHOW_ALSO_LOCALTAX1_LINE_IF_ZERO')) {
 							//$this->atleastoneratenotnull++;
 
 							$index++;
@@ -1819,30 +1820,32 @@ class pdf_crabe extends ModelePDFFactures
 					}
 
 					foreach ($localtax_rate as $tvakey => $tvaval) {
-						//$this->atleastoneratenotnull++;
+						if ($tvakey != 0 || getDolGlobalString('INVOICE_SHOW_ALSO_LOCALTAX2_LINE_IF_ZERO')) {
+							//$this->atleastoneratenotnull++;
 
-						$index++;
-						$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
+							$index++;
+							$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 
-						$tvacompl = '';
-						if (preg_match('/\*/', (string) $tvakey)) {
-							$tvakey = str_replace('*', '', (string) $tvakey);
-							$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
+							$tvacompl = '';
+							if (preg_match('/\*/', (string) $tvakey)) {
+								$tvakey = str_replace('*', '', (string) $tvakey);
+								$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
+							}
+							$totalvat = $outputlangs->transcountrynoentities("TotalLT2", $mysoc->country_code).' ';
+
+							if (getDolGlobalString('PDF_LOCALTAX2_LABEL_IS_CODE_OR_RATE') == 'nocodenorate') {
+								$totalvat .= $tvacompl;
+							} else {
+								$totalvat .= vatrate((string) abs((float) $tvakey), true).$tvacompl;
+							}
+
+							$pdf->MultiCell($col2x - $col1x, $tab2_hl, $totalvat, 0, 'L', true);
+
+							$total_localtax = ((isModEnabled("multicurrency") && isset($object->multicurrency_tx) && $object->multicurrency_tx != 1) ? price2num($tvaval * $object->multicurrency_tx, 'MT') : $tvaval);
+
+							$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
+							$pdf->MultiCell($largcol2, $tab2_hl, price($total_localtax, 0, $outputlangs), 0, 'R', true);
 						}
-						$totalvat = $outputlangs->transcountrynoentities("TotalLT2", $mysoc->country_code).' ';
-
-						if (getDolGlobalString('PDF_LOCALTAX2_LABEL_IS_CODE_OR_RATE') == 'nocodenorate') {
-							$totalvat .= $tvacompl;
-						} else {
-							$totalvat .= vatrate((string) abs((float) $tvakey), true).$tvacompl;
-						}
-
-						$pdf->MultiCell($col2x - $col1x, $tab2_hl, $totalvat, 0, 'L', true);
-
-						$total_localtax = ((isModEnabled("multicurrency") && isset($object->multicurrency_tx) && $object->multicurrency_tx != 1) ? price2num($tvaval * $object->multicurrency_tx, 'MT') : $tvaval);
-
-						$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-						$pdf->MultiCell($largcol2, $tab2_hl, price($total_localtax, 0, $outputlangs), 0, 'R', true);
 					}
 				}
 

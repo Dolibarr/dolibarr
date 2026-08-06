@@ -526,8 +526,8 @@ class ContratLigne extends CommonObjectLine
 				$this->ref   = $obj->rowid;
 
 				$this->tms = $this->db->jdate($obj->tms);
-				$this->fk_contrat = $obj->fk_contrat;
-				$this->fk_product = $obj->fk_product;
+				$this->fk_contrat = (int) $obj->fk_contrat;
+				$this->fk_product = (int) $obj->fk_product;
 				$this->statut = $obj->statut;
 				$this->product_ref = $obj->product_ref;
 				$this->product_label = $obj->product_label;
@@ -834,7 +834,7 @@ class ContratLigne extends CommonObjectLine
 		if ($this->date_end > 0) {
 			$sql .= ",date_fin_validite";
 		}
-		$sql .= ") VALUES ($this->fk_contrat, '', '".$this->db->escape($this->description)."',";
+		$sql .= ") VALUES (".((int) $this->fk_contrat).", '', '".$this->db->escape($this->description)."',";
 		$sql .= ($this->fk_product > 0 ? $this->fk_product : "null").",";
 		$sql .= " '".$this->db->escape((string) $this->qty)."',";
 		$sql .= " '".$this->db->escape($this->vat_src_code)."',";
@@ -937,9 +937,9 @@ class ContratLigne extends CommonObjectLine
 		if ($resql) {
 			if ($date_end >= 0) {
 				// Update column llx_contrat.denormalized_lower_panned_end_date with next expiration date of an open contract
-				$sqltoupdatecontract = "UPDATE ".MAIN_DB_PREFIX."contrat as c";
-				$sqltoupdatecontract .= " SET c.denormalized_lower_planned_end_date = (SELECT MIN(date_fin_validite) FROM ".MAIN_DB_PREFIX."contratdet as cd WHERE cd.fk_contrat = ".((int) $this->fk_contrat)." AND cd.statut = ".ContratLigne::STATUS_OPEN.")";
-				$sqltoupdatecontract .= " WHERE c.rowid = ".((int) $this->fk_contrat);
+				$sqltoupdatecontract = "UPDATE ".MAIN_DB_PREFIX."contrat";
+				$sqltoupdatecontract .= " SET denormalized_lower_planned_end_date = (SELECT MIN(date_fin_validite) FROM ".MAIN_DB_PREFIX."contratdet as cd WHERE cd.fk_contrat = ".((int) $this->fk_contrat)." AND cd.statut = ".ContratLigne::STATUS_OPEN.")";
+				$sqltoupdatecontract .= " WHERE rowid = ".((int) $this->fk_contrat);
 				$resqltoupdatecontract = $this->db->query($sqltoupdatecontract);
 				if (!$resqltoupdatecontract) {
 					$this->error = $this->db->lasterror();
@@ -1002,9 +1002,9 @@ class ContratLigne extends CommonObjectLine
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			// Update column llx_contrat.denormalized_lower_panned_end_date with next expiration date of an open contract
-			$sqltoupdatecontract = "UPDATE ".MAIN_DB_PREFIX."contrat as c";
-			$sqltoupdatecontract .= " SET c.denormalized_lower_planned_end_date = (SELECT MIN(date_fin_validite) FROM ".MAIN_DB_PREFIX."contratdet as cd WHERE cd.fk_contrat = ".((int) $this->fk_contrat)." AND cd.statut = ".ContratLigne::STATUS_OPEN.")";
-			$sqltoupdatecontract .= " WHERE c.rowid = ".((int) $this->fk_contrat);
+			$sqltoupdatecontract = "UPDATE ".MAIN_DB_PREFIX."contrat";
+			$sqltoupdatecontract .= " SET denormalized_lower_planned_end_date = (SELECT MIN(date_fin_validite) FROM ".MAIN_DB_PREFIX."contratdet as cd WHERE cd.fk_contrat = ".((int) $this->fk_contrat)." AND cd.statut = ".ContratLigne::STATUS_OPEN.")";
+			$sqltoupdatecontract .= " WHERE rowid = ".((int) $this->fk_contrat);
 			$resqltoupdatecontract = $this->db->query($sqltoupdatecontract);
 			if (!$resqltoupdatecontract) {
 				$this->error = $this->db->lasterror();

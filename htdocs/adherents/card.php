@@ -1076,7 +1076,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 			$generated_password = getRandomPassword(false);
 			print '<tr><td><span class="fieldrequired">'.$langs->trans("Password").'</span></td><td>';
-			print '<input type="text" class="minwidth300" maxlength="50" name="password" value="'.dol_escape_htmltag($generated_password).'">';
+			print '<input type="password" class="minwidth300" maxlength="50" name="password" value="'.dol_escape_htmltag(GETPOST('password') ? GETPOST('password') : $generated_password).'">';
 			print '</td></tr>';
 		}
 

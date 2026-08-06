@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2017-2025   Laurent Destailleur  <eldy@users.sourcefore.net>
+/* Copyright (C) 2017-2025	Laurent Destailleur	<eldy@users.sourcefore.net>
+ * Copyright (C) 2026		Regis Houssin		<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -194,7 +195,7 @@ class modBlockedLog extends DolibarrModules
 			// Add key
 			$hmac_secret_key = 'BLOCKEDLOGHMAC'.getRandomPassword(true);		// This is using random_int for 32 chars
 
-			$result = dolibarr_set_const($this->db, 'BLOCKEDLOG_HMAC_KEY', $hmac_secret_key, 'chaine', 0, 'The secret key for HMAC used for blockedlog record', 0);	// Will encrypt the value using dolCrypt and store it.
+			$result = dolibarr_set_const($this->db, 'BLOCKEDLOG_HMAC_KEY', $hmac_secret_key, 'chaine', 0, 'The secret key for HMAC used for blockedlog record', $conf->entity);	// Will encrypt the value using dolCrypt and store it.
 
 			if ($result < 0) {
 				dol_print_error($this->db);
@@ -253,7 +254,7 @@ class modBlockedLog extends DolibarrModules
 	 * The remove function removes tabs, constants, boxes, permissions and menus from Dolibarr database.
 	 * Data directories are not deleted
 	 *
-	 * @param      string	$options    Options when enabling module ('', 'noboxes')
+	 * @param      string	$options    Options when enabling module ('', 'noboxes', 'forcedisable')
 	 * @return     int             		1 if OK, 0 if KO
 	 */
 	public function remove($options = '')
@@ -264,6 +265,8 @@ class modBlockedLog extends DolibarrModules
 
 		// If already used, we add an entry to show we enable module
 		require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
+
+		dol_syslog("modBlockedLog::remove option=".$options, LOG_DEBUG);
 
 		$object = new stdClass();
 		$object->id = 1;
@@ -283,7 +286,7 @@ class modBlockedLog extends DolibarrModules
 
 		if ($b->alreadyUsed(1)) {
 			// Unalterable log was already used.
-			if (!$b->canBeDisabled()) {
+			if ($options != 'forcedisable' && !$b->canBeDisabled()) {
 				// Case we refuse to disable it
 				global $langs;
 				$this->error = $langs->trans('DisablingBlockedLogIsNotallowedOnceUsedExceptOnFullreset', $langs->transnoentitiesnoconv('BlockedLog'));

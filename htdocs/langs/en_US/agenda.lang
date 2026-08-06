@@ -29,6 +29,7 @@ ViewWeek=Week view
 ViewPerUser=Per user view
 ViewPerType=Per type view
 AutoActions= Automatic filling
+ManualActions=Created manually by a user
 AgendaAutoActionDesc= Here you may define events which you want Dolibarr to create automatically  in Agenda. If nothing is checked, only manual actions will be included in logs and displayed in Agenda. Automatic tracking of business actions done on objects (validation, status change) will not be saved.
 AgendaSetupOtherDesc= This page provides options to allow the export of your Dolibarr events into an external calendar (Thunderbird, Google Calendar etc...)
 AgendaExtSitesDesc=This page allows to declare external sources of calendars to see their events into Dolibarr agenda.

@@ -28,12 +28,6 @@
  */
 
 require_once '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-require_once DOL_DOCUMENT_ROOT.'/exports/class/export.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/modules/export/modules_export.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -41,6 +35,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/exports/class/export.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/export/modules_export.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 // Load translation files required by the page
 $langs->loadlangs(array('admin', 'exports', 'other', 'users', 'companies', 'projects', 'suppliers', 'products', 'bank', 'bills'));
@@ -90,7 +89,8 @@ $entitytoicon = array(
 	'bomline'      => 'bom',
 	'conferenceorboothattendee' => 'contact',
 	'inventory_line' => 'inventory',
-	'mrp_line' => 'mrp'
+	'mrp_line' => 'mrp',
+	'task_time'    => 'clock',
 );
 
 // Translation code, array duplicated in import.php, was not synchronized, TODO put it somewhere only once
@@ -666,7 +666,13 @@ if ($step == 2 && $datatoexport) {
 		$tablename = getablenamefromfield($code, $sqlmaxforexport);
 		$htmltext = '<b>'.$langs->trans("Name").":</b> ".$text.'<br>';
 		if (!empty($objexport->array_export_special[0][$code])) {
-			$htmltext .= '<b>'.$langs->trans("ComputedField")." -> ".$langs->trans("Method")." :</b> ".$objexport->array_export_special[0][$code]."<br>";
+			$htmltext .= '<b>'.$langs->trans("ComputedField")." -> ".$langs->trans("Method")." :</b> ";
+			if (isset($objexport->array_export_special[0][$code]['method'])) {
+				$htmltext .= $objexport->array_export_special[0][$code]['method'];
+			} elseif (!is_array($objexport->array_export_special[0][$code])) {
+				$htmltext .= $objexport->array_export_special[0][$code];
+			}
+			$htmltext .= "<br>";
 		} else {
 			$htmltext .= '<b>'.$langs->trans("Table")." -> ".$langs->trans("Field").":</b> ".$tablename." -> ".preg_replace('/^.*\./', '', $code)."<br>";
 		}
@@ -862,7 +868,13 @@ if ($step == 3 && $datatoexport) {
 		$tablename = getablenamefromfield($code, $sqlmaxforexport);
 		$htmltext = '<b>'.$langs->trans("Name").':</b> '.$text.'<br>';
 		if (!empty($objexport->array_export_special[0][$code])) {
-			$htmltext .= '<b>'.$langs->trans("ComputedField")." -> ".$langs->trans("Method")." :</b> ".$objexport->array_export_special[0][$code]."<br>";
+			$htmltext .= '<b>'.$langs->trans("ComputedField")." -> ".$langs->trans("Method")." :</b> ";
+			if (isset($objexport->array_export_special[0][$code]['method'])) {
+				$htmltext .= $objexport->array_export_special[0][$code]['method'];
+			} elseif (!is_array($objexport->array_export_special[0][$code])) {
+				$htmltext .= $objexport->array_export_special[0][$code];
+			}
+			$htmltext .= "<br>";
 		} else {
 			$htmltext .= '<b>'.$langs->trans("Table")." -> ".$langs->trans("Field").":</b> ".$tablename." -> ".preg_replace('/^.*\./', '', $code)."<br>";
 		}
@@ -1072,7 +1084,13 @@ if ($step == 4 && $datatoexport) {
 		$tablename = getablenamefromfield($code, $sqlmaxforexport);
 		$htmltext = '<b>'.$langs->trans("Name").':</b> '.$text.'<br>';
 		if (!empty($objexport->array_export_special[0][$code])) {
-			$htmltext .= '<b>'.$langs->trans("ComputedField")." -> ".$langs->trans("Method")." :</b> ".$objexport->array_export_special[0][$code]."<br>";
+			$htmltext .= '<b>'.$langs->trans("ComputedField")." -> ".$langs->trans("Method")." :</b> ";
+			if (isset($objexport->array_export_special[0][$code]['method'])) {
+				$htmltext .= $objexport->array_export_special[0][$code]['method'];
+			} elseif (!is_array($objexport->array_export_special[0][$code])) {
+				$htmltext .= $objexport->array_export_special[0][$code];
+			}
+			$htmltext .= "<br>";
 		} else {
 			$htmltext .= '<b>'.$langs->trans("Table")." -> ".$langs->trans("Field").":</b> ".$tablename." -> ".preg_replace('/^.*\./', '', $code)."<br>";
 		}

@@ -28,6 +28,7 @@ IPP_State=État de l'imprimante
 IPP_State_reason=Raison de l'état
 IPP_State_reason1=Motif de l'État1
 IPP_Media=Imprimante média
+IPP_COLOR_print-black=Noir et blanc
 DirectPrintingJobsDesc=Cette page répertorie les travaux d'impression trouvés pour les imprimantes disponibles.
 GoogleAuthNotConfigured=Google OAuth n'a pas été configuré. Activez le module OAuth et définissez un identifiant/secret Google.
 GoogleAuthConfigured=Les informations d'identification de Google OAuth ont été trouvées dans la configuration du module OAuth.

@@ -1005,8 +1005,11 @@ function num_public_holiday($timestampStart, $timestampEnd, $countryCodeOrId = '
 		}
 
 		// Increase number of days (on go up into loop)
+		// Advance by exactly one GMT day. We can use += instead of dol_time_plus_duree() here because
+		// inputs of this function are GMT dates (checked above), so a day
+		// is always exactly 86400 seconds.
 		//var_dump("before ".$jour.' '.$mois.' '.$annee.' '.$timestampStart);
-		$timestampStart = dol_time_plus_duree($timestampStart, 1, 'd');
+		$timestampStart += 86400;
 		//var_dump("after ".$jour.' '.$mois.' '.$annee.' '.$timestampStart);
 
 		$i++;
@@ -1455,7 +1458,7 @@ function getWeekNumbersOfMonth($month, $year)
 {
 	$nb_days = cal_days_in_month(CAL_GREGORIAN, $month, $year);
 	$TWeek = array();
-	for ($day = 1; $day < $nb_days; $day++) {
+	for ($day = 1; $day <= $nb_days; $day++) {
 		$week_number = getWeekNumber($day, $month, $year);
 		$TWeek[$week_number] = $week_number;
 	}
@@ -1472,11 +1475,20 @@ function getWeekNumbersOfMonth($month, $year)
 function getFirstDayOfEachWeek($TWeek, $year)
 {
 	$TFirstDayOfWeek = array();
+	// When a month overlaps 2 years, the weeks 52/53 of previous year and the week 01 of next year are present together in $TWeek.
+	// If $TWeek starts with week 52 or 53 (a January), these first weeks belong to previous year.
+	// If $TWeek ends with week 01 (a December), this last week belongs to next year.
+	$startwithweeksofpreviousyear = ((int) reset($TWeek) >= 52 && in_array('01', $TWeek));
 	foreach ($TWeek as $weekNb) {
-		if (in_array('01', $TWeek) && in_array('52', $TWeek) && $weekNb == '01') {
-			$year++; //Si on a la 1re semaine et la semaine 52 c'est qu'on change d'année
+		$yeartouse = $year;
+		if ($startwithweeksofpreviousyear) {
+			if ((int) $weekNb >= 52) {
+				$yeartouse = $year - 1;
+			}
+		} elseif ($weekNb == '01' && in_array('52', $TWeek)) {
+			$yeartouse = $year + 1;
 		}
-		$TFirstDayOfWeek[$weekNb] = date('d', strtotime($year.'W'.$weekNb));
+		$TFirstDayOfWeek[$weekNb] = date('d', strtotime($yeartouse.'W'.$weekNb));
 	}
 	return $TFirstDayOfWeek;
 }
@@ -1491,8 +1503,18 @@ function getFirstDayOfEachWeek($TWeek, $year)
 function getLastDayOfEachWeek($TWeek, $year)
 {
 	$TLastDayOfWeek = array();
+	// Same rule as in getFirstDayOfEachWeek() to find the year each week belongs to
+	$startwithweeksofpreviousyear = ((int) reset($TWeek) >= 52 && in_array('01', $TWeek));
 	foreach ($TWeek as $weekNb) {
-		$TLastDayOfWeek[$weekNb] = date('d', strtotime($year.'W'.$weekNb.'+6 days'));
+		$yeartouse = $year;
+		if ($startwithweeksofpreviousyear) {
+			if ((int) $weekNb >= 52) {
+				$yeartouse = $year - 1;
+			}
+		} elseif ($weekNb == '01' && in_array('52', $TWeek)) {
+			$yeartouse = $year + 1;
+		}
+		$TLastDayOfWeek[$weekNb] = date('d', strtotime($yeartouse.'W'.$weekNb.'+6 days'));
 	}
 	return $TLastDayOfWeek;
 }

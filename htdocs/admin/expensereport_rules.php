@@ -156,7 +156,7 @@ if (empty($reshook)) {
 			}
 
 			if (!$error) {
-				header('Location: ' . $_SERVER['PHP_SELF']);
+				header('Location: '.DOL_URL_ROOT.'/admin/expensereport_rules.php');
 				exit;
 			} else {
 				$action = '';
@@ -170,7 +170,7 @@ if (empty($reshook)) {
 			dol_print_error($object->db);
 		}
 
-		header('Location: ' . $_SERVER['PHP_SELF']);
+		header('Location: ' . DOL_URL_ROOT.'/admin/expensereport_rules.php');
 		exit;
 	}
 

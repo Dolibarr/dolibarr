@@ -1,19 +1,12 @@
 # Dolibarr language file - Source file is en_US - blockedlog
-BlockedLog=Logs nao modificaveis
 Fingerprints=Eventos e impressoes digitais arquivados
 CompanyInitialKey=Chave inicial da empresa (hash do bloco genesis)
-BrowseBlockedLog=Logs nao modificaveis
 OkCheckFingerprintValidity=O registro de log arquivado é válido. Os dados nesta linha não foram modificados e a entrada segue a anterior.
 OkCheckFingerprintValidityButChainIsKo=O log arquivado parece válido em comparação com o anterior, mas a cadeia foi previamente corrompida.
 AddedByAuthority=Salvo na autoridade remota
-ImpossibleToReloadObject=Objeto original (tipo %s, id %s) não vinculado (consulte a coluna 'Dados completos' para obter dados salvos inalterados)
-BlockedLogActivatedBecauseRequiredByYourCountryLegislation=O módulo Logs Inalteráveis ​​foi ativado por causa da legislação do seu país. A desativação deste módulo pode invalidar quaisquer transações futuras com relação à lei e ao uso de software legal, já que elas não podem ser validadas por uma auditoria fiscal.
 OnlyNonValid=Nao valido
 RestrictYearToExport=Limitar mes / ano a se exportar
-BlockedLogEnabled=O sistema para rastrear eventos em logs inalteráveis ​​foi ativado
-BlockedLogDisabled=O sistema para rastrear eventos em logs inalteráveis ​​foi desabilitado depois que algumas gravações foram feitas. Salvamos uma impressão digital especial para rastrear a corrente como quebrada
-BlockedLogDisabledBis=O sistema para rastrear eventos em logs inalteráveis ​​foi desabilitado. Isso é possível porque nenhum registro foi feito ainda.
+BLOCKEDLOG_REGISTRATION_EMAIL=E-mail da empresa
 logBILL_SENTBYMAIL=Fatura do cliente enviada por email
 logBILL_VALIDATE=Fatura de cliente confirmada
-logDOC_PREVIEW=Pré -visualização de um documento validado para imprimir ou baixar
 logPAYMENT_VARIOUS_DELETE=Pagamento (não atribuído a uma fatura) exclusão lógica

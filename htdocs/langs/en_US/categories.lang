@@ -21,6 +21,7 @@ NoSubCat=No subcategory.
 SubCatOf=Subcategory
 FoundCats=Found tags/categories
 ImpossibleAddCat=Impossible to add the tag/category %s
+ErrorCategoryCannotBeItsOwnParent=A tag/category cannot be its own parent.
 WasAddedSuccessfully=<b>%s</b> was added successfully.
 ObjectAlreadyLinkedToCategory=Element is already linked to this tag/category.
 ProductIsInCategories=Product/service is linked to following tags/categories

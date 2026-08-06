@@ -875,7 +875,8 @@ class AccountingAccount extends CommonObject
 			}
 
 			// Manage Deposit
-			if (getDolGlobalString('ACCOUNTING_ACCOUNT_' . strtoupper($type) . '_DEPOSIT')) {
+			$account_deposit = getDolGlobalString('ACCOUNTING_ACCOUNT_' . strtoupper($type) . '_DEPOSIT');
+			if (!empty($account_deposit) && $account_deposit != '-1') {
 				if ($factureDet->desc == "(DEPOSIT)" || $facture->type == $facture::TYPE_DEPOSIT) {
 					$accountdeposittoventilated = new self($this->db);
 					if ($type == 'customer') {

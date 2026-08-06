@@ -118,7 +118,8 @@ ThisPageHasTranslationPages=Esta página/contenedor tiene traducción
 NoWebSiteCreateOneFirst=Todavía no se ha creado ningún sitio web. Cree uno primero.
 GoTo=Ir a
 DynamicPHPCodeContainsAForbiddenInstruction=Ha añadido código PHP dinámico que contiene la instrucción de PHP  '<strong>%s</strong>' que está prohibida por defecto como contenido dinámico (vea las opciones ocultas WEBSITE_PHP_ALLOW_xxx para aumentar la lista de comandos permitidos).
-NotAllowedToAddDynamicContent=No tiene permiso para agregar o editar contenido dinámico de PHP en sitios web. Pida permiso o simplemente mantenga el código en las etiquetas php sin modificar.
+NotAllowedToAddDynamicContent=No tienes permiso para agregar ni editar contenido PHP dinámico en sitios web. Solicita permiso o simplemente mantén el código en las etiquetas PHP sin modificar.
+NotAllowedToAddDynamicContentDisabledGlobaly=Actualmente no puedes agregar ni editar contenido PHP dinámico en este sitio web (incluso si tienes permiso para hacerlo), porque esta función debe habilitarse primero de manera global configurando el parámetro %s=1 en el archivo conf.php.<br>Edita tu archivo conf.php para agregar este parámetro o pídele a tu administrador o soporte que lo haga por ti.
 ReplaceWebsiteContent=Buscar o reemplazar el contenido del sitio web
 DeleteAlsoJs=¿Eliminar también todos los archivos JavaScript específicos de este sitio web?
 DeleteAlsoMedias=¿Eliminar también todos los archivos multimedia específicos de este sitio web?

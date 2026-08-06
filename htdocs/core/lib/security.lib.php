@@ -141,7 +141,13 @@ function dolEncrypt($chain, $key = '', $ciphering = '', $forceseed = '')
 	}
 
 	if (empty($key)) {
-		$key = $conf->file->instance_unique_id;
+		if (!empty($conf->file->dolcrypt_key)) {
+			// If dolcrypt_key is defined, we used it in priority. Note: this param was never been set for the moment.
+			$key = $conf->file->dolcrypt_key;
+		} else {
+			// We fall back on the instance_unique_id (coming from $dolibarr_main_instance_unique_id, for backward compatibility).
+			$key = $conf->file->instance_unique_id;
+		}
 	}
 	if (empty($ciphering)) {
 		$ciphering = constant('MAIN_SECURITY_REVERSIBLE_ALGO');
@@ -194,15 +200,22 @@ function dolDecrypt($chain, $key = '')
 
 	if (empty($key)) {
 		if (!empty($conf->file->dolcrypt_key)) {
-			// If dolcrypt_key is defined, we used it in priority (coming from $dolibarr_main_instance_unique_id)
+			// If dolcrypt_key is defined, we used it in priority. Note: this param was never been set for the moment.
 			$key = $conf->file->dolcrypt_key;
 		} else {
-			// We fall back on the instance_unique_id (coming from $dolibarr_main_instance_unique_id)
+			// We fall back on the instance_unique_id (coming from $dolibarr_main_instance_unique_id, for backward compatibility).
 			$key = !empty($conf->file->instance_unique_id) ? $conf->file->instance_unique_id : "";
 		}
 	}
 
 	$reg = array();
+
+	// Old method (no more used, kept for compatibility)
+	if (preg_match('/^crypted:(.+)$/', $chain, $reg)) {
+		return dol_decode($reg[1]);
+	}
+
+	// New method
 	if (preg_match('/^dolcrypt:([^:]+):(.+)$/', $chain, $reg)) {
 		// Do not enable this log, except during debug
 		//dol_syslog("We try to decrypt the chain: ".$chain, LOG_DEBUG);
@@ -996,6 +1009,9 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 		if ($feature == 'member') {
 			$feature = 'adherent';
 		}
+		if ($feature == 'category') {
+			$feature = 'categorie';
+		}
 		if ($feature == 'project') {
 			$feature = 'projet';
 		}
@@ -1191,10 +1207,10 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 				$sql .= " AND dbt.".$dbt_keyfield." = ".((int) $user->socid);
 			} elseif (isModEnabled("societe") && !$user->hasRight('societe', 'client', 'voir')) {
 				// If internal user without permission to see all thirdparties: Check permission for internal users that are restricted on their objects
+				if (empty($dbt_keyfield)) {
+					dol_print_error(null, 'Param dbt_keyfield is required but not defined');
+				}
 				if ($feature != 'ticket') {
-					if (empty($dbt_keyfield)) {
-						dol_print_error(null, 'Param dbt_keyfield is required but not defined');
-					}
 					$sql = "SELECT COUNT(sc.fk_soc) as nb";
 					$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
 					$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -1214,9 +1230,9 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 					$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = dbt.".$dbt_keyfield." AND sc.fk_user = ".((int) $user->id);
 					$sql .= " WHERE dbt.".$dbt_select." IN (".$db->sanitize($objectid, 1).")";
 					$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
-					$sql .= " AND (sc.fk_user = ".((int) $user->id)." OR sc.fk_user IS NULL)";
+					$sql .= " AND (sc.fk_user = ".((int) $user->id)." OR dbt.".$dbt_keyfield." IS NULL OR dbt.".$dbt_keyfield." = 0)";
 				}
-			} elseif (isModEnabled('multicompany')) {
+			} elseif (isModEnabled('multicompany') && (!empty($object->ismultientitymanaged) || !isset($object->ismultientitymanaged))) {
 				// If multicompany, and user is an internal user with all permissions, check that object is in correct entity
 				$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";
 				$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";

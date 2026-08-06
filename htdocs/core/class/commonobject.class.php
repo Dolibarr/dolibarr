@@ -1732,7 +1732,7 @@ abstract class CommonObject
 			$obj = $this->db->fetch_object($resql);
 
 			$transkey = "TypeContact_".$this->element."_".$source."_".$obj->code;
-			$libelle_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->type_label);
+			$libelle_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $langs->trans($obj->type_label));
 			if (empty($option)) {
 				$tab[$obj->rowid] = $libelle_type;
 			} elseif ($option == 1) {
@@ -2238,7 +2238,16 @@ abstract class CommonObject
 	{
 		$result = false;
 		if (!empty($id) && !empty($field) && !empty($table)) {
-			$sql = "SELECT ".$field." FROM ".$this->db->prefix().$table;
+			if (!preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $table)) {
+				dol_syslog(get_class($this).'::getValueFrom Bad table name: '.$table, LOG_WARNING);
+				return -1;
+			}
+			if (!preg_match('/^[a-zA-Z_][a-zA-Z0-9_.]*$/', $field)) {
+				dol_syslog(get_class($this).'::getValueFrom Bad field name: '.$field, LOG_WARNING);
+				return -1;
+			}
+
+			$sql = "SELECT ".$this->db->sanitize($field)." FROM ".$this->db->prefix().$this->db->sanitize($table);
 			$sql .= " WHERE rowid = ".((int) $id);
 
 			dol_syslog(get_class($this).'::getValueFrom', LOG_DEBUG);
@@ -2284,9 +2293,23 @@ abstract class CommonObject
 			$id_field = 'rowid';
 		}
 
+		$propfield = $field;
+
 		// Special case
-		if ($table == 'product' && $field == 'note_private') {
-			$field = 'note';
+		if ($table == 'product') {
+			if ($field == 'note_private') {
+				$field = 'note';
+				$propfield = 'note_private';
+			} elseif ($field == 'status') {
+				$field = 'tosell';
+				$propfield = 'status';
+			} elseif ($field == 'status_buy') {
+				$field = 'tobuy';
+				$propfield = 'status_buy';
+			} elseif ($field == 'status_batch') {
+				$field = 'tobatch';
+				$propfield = 'status_batch';
+			}
 		}
 
 		if (in_array($table, array('actioncomm', 'adherent', 'advtargetemailing', 'cronjob', 'establishment'))) {
@@ -2296,11 +2319,20 @@ abstract class CommonObject
 			$fk_user_field = '';
 		}
 
+		if (!preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $table)) {
+			dol_syslog(get_class($this).'::getValueFrom Bad table name: '.$table, LOG_WARNING);
+			return -1;
+		}
+		if (!preg_match('/^[a-zA-Z_][a-zA-Z0-9_.]*$/', $field)) {
+			dol_syslog(get_class($this).'::getValueFrom Bad field name: '.$field, LOG_WARNING);
+			return -1;
+		}
+
 		$oldvalue = null;
 		if ($trigkey) {
-			$sql = "SELECT " . $field;
-			$sql .= " FROM " . MAIN_DB_PREFIX . $table;
-			$sql .= " WHERE " . $id_field . " = " . ((int) $id);
+			$sql = "SELECT " . $this->db->sanitize($field);
+			$sql .= " FROM " . MAIN_DB_PREFIX . $this->db->sanitize($table);
+			$sql .= " WHERE " . $this->db->sanitize($id_field) . " = " . ((int) $id);
 
 			$resql = $this->db->query($sql);
 			if ($resql) {
@@ -2326,24 +2358,24 @@ abstract class CommonObject
 		$sql = "UPDATE ".$this->db->prefix().$table." SET ";
 
 		if ($format == 'text') {
-			$sql .= $field." = '".$this->db->escape($value)."'";
+			$sql .= $this->db->sanitize($field)." = '".$this->db->escape($value)."'";
 		} elseif ($format == 'int') {
-			$sql .= $field." = ".((int) $value);
+			$sql .= $this->db->sanitize($field)." = ".((int) $value);
 		} elseif ($format == 'date') {
-			$sql .= $field." = ".($value ? "'".$this->db->idate($value)."'" : "null");
+			$sql .= $this->db->sanitize($field)." = ".($value ? "'".$this->db->idate($value)."'" : "null");
 		} elseif ($format == 'dategmt') {
-			$sql .= $field." = ".($value ? "'".$this->db->idate($value, 'gmt')."'" : "null");
+			$sql .= $this->db->sanitize($field)." = ".($value ? "'".$this->db->idate($value, 'gmt')."'" : "null");
 		}
 
 		if ($fk_user_field) {
 			if (!empty($fuser) && is_object($fuser)) {
-				$sql .= ", ".$fk_user_field." = ".((int) $fuser->id);
+				$sql .= ", ".$this->db->sanitize($fk_user_field)." = ".((int) $fuser->id);
 			} elseif (empty($fuser) || $fuser != 'none') {
-				$sql .= ", ".$fk_user_field." = ".((int) $user->id);
+				$sql .= ", ".$this->db->sanitize($fk_user_field)." = ".((int) $user->id);
 			}
 		}
 
-		$sql .= " WHERE ".$id_field." = ".((int) $id);
+		$sql .= " WHERE ".$this->db->sanitize($id_field)." = ".((int) $id);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -2354,9 +2386,17 @@ abstract class CommonObject
 				} else {
 					$result = $this->fetchCommon($id);
 				}
+
 				$this->oldcopy = clone $this;
 				if (property_exists($this->oldcopy, $field)) {
 					$this->oldcopy->$field = $oldvalue;
+				}
+				if ($propfield != $field && property_exists($this->oldcopy, $propfield)) {
+					$this->oldcopy->$propfield = $oldvalue;
+				}
+
+				if (empty($this->context['actionmsgmore'])) {
+					$this->context['actionmsgmore'] = 'Trigger called by setValueFrom';
 				}
 
 				if ($result >= 0) {
@@ -2365,15 +2405,25 @@ abstract class CommonObject
 				if ($result < 0) {
 					$error++;
 				}
-			}
-
-			if (!$error) {
+			} else {
 				if (property_exists($this, $field)) {
 					$this->$field = $value;
 				}
+				if ($propfield != $field && property_exists($this, $propfield)) {
+					$this->$propfield = $value;
+				}
+			}
+
+			if (!$error) {
 				$this->db->commit();
 				return 1;
 			} else {
+				if (property_exists($this, $field)) {
+					$this->$field = $oldvalue;
+				}
+				if ($propfield != $field && property_exists($this, $propfield)) {
+					$this->$propfield = $oldvalue;
+				}
 				$this->db->rollback();
 				return -2;
 			}
@@ -2445,7 +2495,9 @@ abstract class CommonObject
 		}
 		if ($fieldid == 'rowid') {
 			$sql .= " WHERE te.".$fieldid." < ".((int) $this->id);
-		} else {
+		} elseif ($fieldid == 'label') {
+			$sql .= " WHERE te.".$fieldid." < '".$this->db->escape((string) $this->label)."'";
+		} else {	// Should be 'ref' or any other string field
 			$sql .= " WHERE te.".$fieldid." < '".$this->db->escape((string) $this->ref)."'"; // ->ref must always be defined (set to id if field does not exists)
 		}
 		if ($restrictiononfksoc == 1 && !$user->hasRight('societe', 'client', 'voir') && !$socid) {
@@ -2524,7 +2576,9 @@ abstract class CommonObject
 		}
 		if ($fieldid == 'rowid') {
 			$sql .= " WHERE te.".$fieldid." > ".((int) $this->id);
-		} else {
+		} elseif ($fieldid == 'label') {
+			$sql .= " WHERE te.".$fieldid." > '".$this->db->escape((string) $this->label)."'";
+		} else {	// Should be 'ref' or any other string field
 			$sql .= " WHERE te.".$fieldid." > '".$this->db->escape((string) $this->ref)."'"; // ->ref must always be defined (set to id if field does not exists)
 		}
 		if ($restrictiononfksoc == 1 && !$user->hasRight('societe', 'client', 'voir') && !$socid) {
@@ -3854,8 +3908,8 @@ abstract class CommonObject
 			$fieldusermod = "fk_user_modif";
 		}
 		$sql = "UPDATE ".$this->db->prefix().$this->table_element;
-		$sql .= " SET note".$newsuffix." = ".(!empty($note) ? ("'".$this->db->escape($note)."'") : "NULL");
-		$sql .= ", ".$fieldusermod." = ".((int) $user->id);
+		$sql .= " SET note".$this->db->sanitize($newsuffix)." = ".(!empty($note) ? ("'".$this->db->escape($note)."'") : "NULL");
+		$sql .= ", ".$this->db->sanitize($fieldusermod)." = ".((int) $user->id);
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update_note", LOG_DEBUG);
@@ -3921,11 +3975,11 @@ abstract class CommonObject
 	 *	Update total_ht, total_ttc, total_vat, total_localtax1, total_localtax2 for an object (sum of lines).
 	 *  Must be called at end of methods addline or updateline.
 	 *
-	 *	@param	int		$exclspec          	>0 = Exclude special product (product_type=9)
-	 *  @param  'none'|'auto'|'0'|'1'	$roundingadjust		'none'=Do nothing, 'auto'=Use default method (MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND if defined, or '0'), '0'=Force mode Total of rounding, '1'=Force mode Rounding of total
-	 *  @param	int<0,1>	$nodatabaseupdate	1=Do not update database total fields of the main object. Update only properties in memory. Can be used to save SQL when this method is called several times, so we can do it only once at end.
-	 *  @param	?Societe	$seller				If roundingadjust is '0' or '1' or maybe 'auto', it means we recalculate total for lines before calculating total for object and for this, we need seller object (used to analyze lines to check corrupted data).
-	 *	@return	int<-1,1>					Return integer <0 if KO, >0 if OK
+	 *	@param	int						$exclspec          	Use >0 = Exclude special product (product_type=9)
+	 *  @param  'none'|'auto'|'0'|'1'	$roundingadjust		'none'=Do nothing (when properties are already correctly set), 'auto'=Use default method (MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND if defined, or '0'), '0'=Force mode Total of rounding, '1'=Force mode Rounding of total
+	 *  @param	int<0,1>				$nodatabaseupdate	1=Do not update database total fields of the main object. Update only properties in memory. Can be used to save SQL when this method is called several times, so we can do it only once at end.
+	 *  @param	?Societe				$seller				If roundingadjust is '0' or '1' or maybe 'auto', it means we recalculate total for lines before calculating total for object and for this, we need seller object (used to analyze lines to check corrupted data).
+	 *	@return	int<-1,1>									Return integer <0 if KO, >0 if OK
 	 */
 	public function update_price($exclspec = 0, $roundingadjust = 'auto', $nodatabaseupdate = 0, $seller = null)
 	{
@@ -4010,8 +4064,15 @@ abstract class CommonObject
 			$base_price_type = 'TTC';
 		}
 
-		$sql = "SELECT rowid, qty, ".$fieldup." as up, remise_percent, total_ht, ".$fieldtva." as total_tva, total_ttc, ".$fieldlocaltax1." as total_localtax1, ".$fieldlocaltax2." as total_localtax2,";
-		$sql .= ' tva_tx as vatrate, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, info_bits, product_type';
+		$sql = "SELECT rowid, qty, ".$this->db->sanitize($fieldup)." as up, remise_percent,";
+		$sql .= " total_ht, ".$this->db->sanitize($fieldtva)." as total_tva, total_ttc, ".$this->db->sanitize($fieldlocaltax1)." as total_localtax1, ".$this->db->sanitize($fieldlocaltax2)." as total_localtax2,";
+		$sql .= ' tva_tx as vatrate, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type,';
+		$sql .= ' info_bits, product_type,';
+		if ($this->element == 'expensereport') {
+			$sql .= ' comments as description';
+		} else {
+			$sql .= ' description';
+		}
 		if ($this->table_element_line == 'facturedet') {
 			$sql .= ', situation_percent';
 		}
@@ -4069,7 +4130,7 @@ abstract class CommonObject
 					if ($diff_on_current_total) {
 						// This should not happen, we should always have in table: total_ttc = total_ht + total_vat + total_localtax1 + total_localtax2
 						$sqlfix = "UPDATE ".$this->db->prefix().$this->table_element_line;
-						$sqlfix .= " SET ".$fieldtva." = ".price2num((float) $tmpcal[1]).", total_ttc = ".price2num((float) $tmpcal[2]);
+						$sqlfix .= " SET ".$this->db->sanitize($fieldtva)." = ".price2num((float) $tmpcal[1]).", total_ttc = ".price2num((float) $tmpcal[2]);
 						$sqlfix .= ", multicurrency_total_tva = ".price2num((float) $tmpcal[17]).", multicurrency_total_ttc = ".price2num((float) $tmpcal[18]);
 						$sqlfix .= " WHERE rowid = ".((int) $obj->rowid);
 						dol_syslog('Warn1: We found inconsistent data into detailed line (diff_on_current_total = '.$diff_on_current_total.') for line rowid = '.$obj->rowid." (ht=".$obj->total_ht." vat=".$obj->total_tva." tax1=".$obj->total_localtax1." tax2=".$obj->total_localtax2." ttc=".$obj->total_ttc."). We fix the total_vat and total_ttc of line by running sqlfix = ".$sqlfix, LOG_WARNING);
@@ -4083,25 +4144,31 @@ abstract class CommonObject
 						$obj->multicurrency_total_ttc = $tmpcal[18];
 					} elseif ($diff_when_using_price_ht) {
 						// If total_ht calculated from unit price is different than the one in database, we do nothing, this may be a regular case to have also a different VAT, that can be explained
-						// because price was entered included tax and we round the unit price without tax to store it in database (so recalculation will give different results).
+						// because price was entered included tax and we round the unit price without tax to store it in database (so recalculation will give different results),
+						// so we continue only if price HT are same.
 						if ((float) $tmpcal[0] == (float) $obj->total_ht) {
-							// After calculation from HT, total is consistent and total_ht is same, but we have found a difference between VAT part calculated from unit price and the VAT part into database,
-							// and we ask to force the use of rounding on line (like done on calculation) so this should not happen, so we force the update of line to fix.
+							// In rare cases, we can have the unit price that was not saved as original (like when adding a line from a discount of down payment). In this case, recalculation from unit price
+							// will give different results than the one stored in database (the good one are the one in database and we must not fix anything).
+							if ($obj->description != '(DEPOSIT)' && !getDolGlobalInt('MAIN_DISABLE_AUTOFIX_CORRUPTED_LINES_WHEN_TOTAL_DOES_NOT_MATCH_RECALCULATION_FROM_UP')) {
+								// After calculation from HT, totals sum of all part is consistent ($diff_on_current_total) + total_ht is same + we are not on a line with a bad unit amount + we have found a difference between VAT part calculated from unit price and the VAT part into database,
+								// and we ask to force the use of rounding on line (like what we did on initial calculation) so this should not happen, so we force the update of line to fix this.
+								// This part of code must be called only to fix corrupted data due to the use of the old feature to round total instead of rounding lines.
+								$sqlfix = "UPDATE ".$this->db->prefix().$this->table_element_line;
+								$sqlfix .= " SET ".$this->db->sanitize($fieldtva)." = ".price2num((float) $tmpcal[1]).", total_ttc = ".price2num((float) $tmpcal[2]);
+								$sqlfix .= ", multicurrency_total_tva = ".price2num((float) $tmpcal[17]).", multicurrency_total_ttc = ".price2num((float) $tmpcal[18]);
+								$sqlfix .= " WHERE rowid = ".((int) $obj->rowid);
 
-							// This part of code must be called only to fix corrupted data due to the use of the feature to round total instead of rounding lines.
-							$sqlfix = "UPDATE ".$this->db->prefix().$this->table_element_line;
-							$sqlfix .= " SET ".$fieldtva." = ".price2num((float) $tmpcal[1]).", total_ttc = ".price2num((float) $tmpcal[2]);
-							$sqlfix .= ", multicurrency_total_tva = ".price2num((float) $tmpcal[17]).", multicurrency_total_ttc = ".price2num((float) $tmpcal[18]);
-							$sqlfix .= " WHERE rowid = ".((int) $obj->rowid);
-							dol_syslog('Warn2: We found a line with different rounding data into detailed line (diff_when_using_price_ht = '.$diff_when_using_price_ht.' and diff_on_current_total = '.$diff_on_current_total.') for line rowid = '.$obj->rowid." (total vat of line calculated=".$tmpcal[1].", database=".$obj->total_tva."). We fix the total_vat and total_ttc of line by running sqlfix = ".$sqlfix);
-							$resqlfix = $this->db->query($sqlfix);
-							if (!$resqlfix) {
-								dol_print_error($this->db, 'Failed to update line');
+								dol_syslog('Warn2: We found a line with different rounding data into detailed line (diff_when_using_price_ht = '.$diff_when_using_price_ht.' and diff_on_current_total = '.$diff_on_current_total.') for line rowid = '.$obj->rowid." (total vat of line calculated=".$tmpcal[1].", database=".$obj->total_tva."). We fix the total_vat and total_ttc of line by running sqlfix = ".$sqlfix);
+
+								$resqlfix = $this->db->query($sqlfix);
+								if (!$resqlfix) {
+									dol_print_error($this->db, 'Failed to update line');
+								}
+								$obj->total_tva = $tmpcal[1];
+								$obj->total_ttc = $tmpcal[2];
+								$obj->multicurrency_total_tva = $tmpcal[17];
+								$obj->multicurrency_total_ttc = $tmpcal[18];
 							}
-							$obj->total_tva = $tmpcal[1];
-							$obj->total_ttc = $tmpcal[2];
-							$obj->multicurrency_total_tva = $tmpcal[17];
-							$obj->multicurrency_total_ttc = $tmpcal[18];
 						}
 					}
 				}
@@ -4148,10 +4215,10 @@ abstract class CommonObject
 						}
 
 						if ($base_price_type == 'TTC') {
-							$sqlfix = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$fieldtva." = ".price2num($obj->total_tva - (float) $diff).", total_ht = ".price2num($obj->total_ht + (float) $diff)." WHERE rowid = ".((int) $obj->rowid);
+							$sqlfix = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$this->db->sanitize($fieldtva)." = ".price2num($obj->total_tva - (float) $diff).", total_ht = ".price2num($obj->total_ht + (float) $diff)." WHERE rowid = ".((int) $obj->rowid);
 							dol_syslog('We found a difference of '.$diff.' for line rowid = '.$obj->rowid.' between TotalHT('.$total_ht_by_vats[$obj->vatrate].')*VATrate('.$obj->vatrate.')='.$tmpvat.' and total in database='.$total_tva_by_vats[$obj->vatrate]." (calculated with UP*qty). We fix the total_vat and total_ht of line by running sqlfix = ".$sqlfix);
 						} else {
-							$sqlfix = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$fieldtva." = ".price2num($obj->total_tva - (float) $diff).", total_ttc = ".price2num($obj->total_ttc - (float) $diff)." WHERE rowid = ".((int) $obj->rowid);
+							$sqlfix = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$this->db->sanitize($fieldtva)." = ".price2num($obj->total_tva - (float) $diff).", total_ttc = ".price2num($obj->total_ttc - (float) $diff)." WHERE rowid = ".((int) $obj->rowid);
 							dol_syslog('We found a difference of '.$diff.' for line rowid = '.$obj->rowid.' between TotalHT('.$total_ht_by_vats[$obj->vatrate].')*VATrate('.$obj->vatrate.')='.$tmpvat.' and total in database='.$total_tva_by_vats[$obj->vatrate]." (calculated with UP*qty). We fix the total_vat and total_ttc of line by running sqlfix = ".$sqlfix);
 						}
 
@@ -4912,6 +4979,8 @@ abstract class CommonObject
 				$this->context = array_merge($this->context, array('newstatus' => $status));
 
 				if ($trigkey && $trigkey != 'none') {
+					$this->oldcopy = dol_clone($this);
+
 					// Call trigger
 					$result = $this->call_trigger($trigkey, $user);
 					if ($result < 0) {
@@ -5538,7 +5607,16 @@ abstract class CommonObject
 				$description .= (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE') ? '' : (!empty($line->description) ? dol_htmlentitiesbr($line->description) : '')); // Description is what to show on popup. We shown nothing if already into desc.
 			}
 
-			$line->subprice_ttc = (float) price2num((!empty($line->subprice) ? $line->subprice : 0) * (1 + ((!empty($line->tva_tx) ? $line->tva_tx : 0) / 100)), 'MU');
+			// Recalculate unit price with tax if not defined
+			if (empty((float) $line->subprice_ttc) && $line->qty) {	// subprice_ttc may be not stored on old version or not defined for lines with no unit price (like a discount)
+				// So we calculate an estimated value just to show something on screen
+				if ($line->remise_percent != 100) {
+					$line->subprice_ttc = (float) price2num($line->total_ttc / $line->qty / (1 - $line->remise_percent / 100), 'MU');
+				} else {
+					// Other method is less accurate
+					$line->subprice_ttc = (float) price2num((!empty($line->subprice) ? $line->subprice : 0) * (1 + ((!empty($line->tva_tx) ? $line->tva_tx : 0) / 100)), 'MU');
+				}
+			}
 			$line->pu_ttc = $line->subprice_ttc;	// deprecated
 
 			// Output template part (modules that overwrite templates must declare this into descriptor)
@@ -5704,7 +5782,7 @@ abstract class CommonObject
 
 		$this->tpl['label'] = '';
 		if (!empty($line->fk_parent_line)) {
-			$this->tpl['label'] .= img_picto('', 'rightarrow');
+			$this->tpl['label'] .= img_picto('', 'rightarrow.png');
 		}
 
 		if (((int) $line->info_bits & 2) == 2) {  // TODO Not sure this is used for source object
@@ -5790,6 +5868,12 @@ abstract class CommonObject
 		// Is the line strike or not
 		$this->tpl['strike'] = 0;
 		if ($restrictlist == 'services' && $line->product_type != Product::TYPE_SERVICE) {
+			$this->tpl['strike'] = 1;
+		} elseif (defined('SUBTOTALS_SPECIAL_CODE') && $line->special_code == SUBTOTALS_SPECIAL_CODE) {
+			// SUBTOTALS_SPECIAL_CODE is only defined when the subtotals module
+			// is loaded (htdocs/subtotals/class/commonsubtotal.class.php:24).
+			// Without the guard, printing origin lines from a PO into a vendor
+			// invoice fatals (#37663). Other tpl files already follow this pattern.
 			$this->tpl['strike'] = 1;
 		}
 
@@ -6615,12 +6699,12 @@ abstract class CommonObject
 			$sql = "SELECT rowid";
 			foreach ($optionsArray as $name => $label) {
 				if (empty($extrafields->attributes[$this->table_element]['type'][$name]) || (!in_array($extrafields->attributes[$this->table_element]['type'][$name], ['separate', 'point', 'multipts', 'linestrg','polygon']))) {
-					$sql .= ", ".$name;
+					$sql .= ", ".$this->db->sanitize($name);
 				}
 				// use geo sql fonction to read as text
-				if (empty($extrafields->attributes[$this->table_element]['type'][$name]) || in_array($extrafields->attributes[$this->table_element]['type'][$name], array('point', 'multipts', 'linestrg', 'polygon'))) {
+				if (!empty($extrafields->attributes[$this->table_element]['type'][$name]) && in_array($extrafields->attributes[$this->table_element]['type'][$name], array('point', 'multipts', 'linestrg', 'polygon'))) {
 					// TODO Add an abstraction method in the database driver
-					$sql .= ", ST_AsWKT(".$name.") as ".$name;
+					$sql .= ", ST_AsWKT(".$name.") as ".$this->db->sanitize($name);
 				}
 			}
 			$sql .= " FROM ".$this->db->prefix().$table_element."_extrafields";
@@ -6817,10 +6901,17 @@ abstract class CommonObject
 
 			switch ($attributeType) {
 				case 'int':
+				case 'duration':
+				case 'stars':
 					if (!is_numeric($value) && $value != '') {
 						$this->errors[] = $langs->trans("ExtraFieldHasWrongValue", $attributeLabel);
 						return -1;
 					} elseif ($value === '') {
+						$new_array_options[$key] = null;
+					}
+					break;
+				case 'boolean':
+					if ($value === '' || $value === false || $value === null) {
 						$new_array_options[$key] = null;
 					}
 					break;
@@ -7025,6 +7116,15 @@ abstract class CommonObject
 		// if the extrafields row already exists for the object, we update it
 		if ($linealreadyfound) {
 			array_shift($sqlColumnValues); // drop the 'fk_object' column because its value won't change
+			if (empty($sqlColumnValues)) {
+				// No column of the target element to update. This happens when the object was created from
+				// another element whose extrafields do not exist on this element (e.g. invoice created from a
+				// shipment: the source line extrafields are copied into array_options but none match facturedet).
+				// The existing row is already correct, so there is nothing to update: avoid an empty "SET" clause
+				// that would produce an invalid SQL statement.
+				$this->db->commit();
+				return 1;
+			}
 			$sqlColumnValueString = implode(
 				',',
 				/**
@@ -7237,7 +7337,10 @@ abstract class CommonObject
 			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 			$extrafields = new ExtraFields($this->db);
 			$extrafields->fetch_name_optionals_label($this->table_element);
-
+			if (!isset($extrafields->attributes[$this->table_element]['type'][$key])) {
+				// Extrafield not defined for this object type: nothing to update
+				return 0;
+			}
 			$value = $this->array_options["options_".$key];
 
 			$attributeKey      = $key;
@@ -7999,7 +8102,11 @@ abstract class CommonObject
 				}
 				if (count($InfoFieldList) > 3 && !empty($InfoFieldList[3])) {
 					list($parentName, $parentField) = explode('|', $InfoFieldList[3]);
-					$keyList .= ', '.$parentField;
+					if (!empty($InfoFieldList[4]) && strpos($InfoFieldList[4], 'extra.') !== false) {
+						$keyList .= ', main.'.$parentField;
+					} else {
+						$keyList .= ', '.$parentField;
+					}
 				}
 
 				$filter_categorie = false;
@@ -8232,15 +8339,19 @@ abstract class CommonObject
 
 				$keyList = (empty($InfoFieldList[2]) ? 'rowid' : $InfoFieldList[2].' as rowid');
 
-				if (count($InfoFieldList) > 3 && !empty($InfoFieldList[3])) {
-					list($parentName, $parentField) = explode('|', $InfoFieldList[3]);
-					$keyList .= ', '.$parentField;
-				}
 				if (count($InfoFieldList) > 4 && !empty($InfoFieldList[4])) {
 					if (strpos($InfoFieldList[4], 'extra.') !== false) {
 						$keyList = 'main.'.$InfoFieldList[2].' as rowid';
 					} else {
 						$keyList = $InfoFieldList[2].' as rowid';
+					}
+				}
+				if (count($InfoFieldList) > 3 && !empty($InfoFieldList[3])) {
+					list($parentName, $parentField) = explode('|', $InfoFieldList[3]);
+					if (!empty($InfoFieldList[4]) && strpos($InfoFieldList[4], 'extra.') !== false) {
+						$keyList .= ', main.'.$parentField;
+					} else {
+						$keyList .= ', '.$parentField;
 					}
 				}
 
@@ -8420,13 +8531,9 @@ abstract class CommonObject
 
 			// $param_list_array[0] can be the name of object (Example 'User' the field is linked to). Not as taking the information from the record in ->fields found from $objectfield.
 
-			// $valparent is a string 'dataobject@module:keyoffieldinfieldsarray' to find the record field to link to.
-			// $valparent = $this->element.($this->module ? '@'.$this->module : '').':'.$key.$keysuffix;
-
 			// $val is already the record field found at same place than found by $valparent but already loaded and may have been modified by parent caller.
 
-			//$objectfield = $valparent;
-			$objectfield = $val;			// Is better than using old method $valparent
+			$objectfield = $val;
 
 			// @phan-suppress-next-line PhanTypeMismatchArgumentNullable
 			$out = $form->selectForForms($param_list_array[0], $keyprefix.$key.$keysuffix, (int) $value, $showempty, '', '', $morecss, $moreparam, 0, (empty($val['disabled']) ? 0 : 1), '', $objectfield);
@@ -9378,10 +9485,12 @@ abstract class CommonObject
 					if (($mode == 'create') && !in_array(abs($visibility), array(1, 3))) {
 						continue; // <> -1 and <> 1 and <> 3 = not visible on forms, only on list
 					} elseif (($mode == 'edit') && !in_array(abs($visibility), array(1, 3, 4))) {
-						// We need to make sure, that the values of hidden extrafields are also part of $_POST. Otherwise, they would be empty after an update of the object. See also getOptionalsFromPost
+						// We need to make sure, that the values of hidden extrafields are also part of $_POST.
+						// Otherwise, they would be empty after an update of the object. See also getOptionalsFromPost
+						// TODO: We should not have this hidden field, and action='update' should be done only if field was POSTED by form.
 						$ef_name = 'options_' . $key;
-						$ef_value = $this->array_options[$ef_name];
-						$out .= '<input type="hidden" name="' . $ef_name . '" id="' . $ef_name . '" value="' . $ef_value . '" />' . "\n";
+						$ef_value = $this->array_options[$ef_name] ?? '';
+						$out .= '<input type="hidden" name="' . $ef_name . '" id="' . $ef_name . '" value="' . dolPrintHTMLForAttribute($ef_value) . '" />' . "\n";	 // If trouble to preserve content, we can try dol_htmlentities() instead, but real solution is to remove completely the hidden field (see previous TODO).
 						continue; // <> -1 and <> 1 and <> 3 = not visible on forms, only on list and <> 4 = not visible at the creation
 					} elseif ($mode == 'view' && empty($visibility)) {
 						continue;
@@ -9749,7 +9858,7 @@ abstract class CommonObject
 			return $user->hasRight($module, $element);
 		}
 
-		return $user->rights->$element;
+		return isset($user->rights->$element) ? $user->rights->$element : null;
 	}
 
 	/**
@@ -10211,7 +10320,7 @@ abstract class CommonObject
 	public function isInt($info)
 	{
 		if (is_array($info)) {
-			if (isset($info['type']) && (preg_match('/(^int|int$)/i', $info['type']))) {
+			if (isset($info['type']) && (preg_match('/^(?:tiny|small|medium|big)?int|int$/i', $info['type']))) {
 				return true;
 			} else {
 				return false;
@@ -10515,7 +10624,8 @@ abstract class CommonObject
 	 */
 	public function createCommon(User $user, $notrigger = 0)
 	{
-		global $langs;
+		global $conf;
+		//global $langs;  		// Should be able to work with $langs loaded
 
 		dol_syslog(get_class($this)."::createCommon create", LOG_DEBUG);
 
@@ -10583,13 +10693,19 @@ abstract class CommonObject
 
 			if (isset($key_fields['notnull']) && $key_fields['notnull'] == 1 && (!isset($values[$key]) || $values[$key] === 'NULL') && (!isset($key_fields['default']) || is_null($key_fields['default']))) {
 				$error++;
-				$langs->load("errors");
+				global $langs;
+				if (empty($langs)) {
+					require_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
+					$langs = new Translate('', $conf);
+					$langs->setDefaultLang();
+					$langs->load("errors");
+				}
 				dol_syslog("Mandatory field '".$key."' is empty and required into ->fields definition of class");
 				$this->errors[] = $langs->trans("ErrorFieldRequired", isset($key_fields['label']) ? $key_fields['label'] : $key);
 			}
 
 			// If value is null and there is a default value for field @phan-suppress-next-line PhanTypePossiblyInvalidDimOffset
-			if (isset($key_fields['notnull']) && $key_fields['notnull'] == 1 && (!isset($values[$key]) || $values[$key] === 'NULL') && !is_null($key_fields['default'])) {
+			if (isset($key_fields['notnull']) && $key_fields['notnull'] == 1 && (!isset($values[$key]) || $values[$key] === 'NULL') && array_key_exists('default', $key_fields) && !is_null($key_fields['default'])) {
 				$values[$key] = $this->quote($key_fields['default'], $key_fields);
 			}
 
@@ -11462,15 +11578,15 @@ abstract class CommonObject
 		// Get current categories
 		$c = new Categorie($this->db);
 		$existing = $c->containing($this->id, $type_categ, 'id');
+		// containing() returns an integer < 0 on error (e.g. when the categorie_xxx table does not exist).
+		// Normalize to an empty array to avoid array_diff()/foreach() warnings below.
+		if (!is_array($existing)) {
+			$existing = array();
+		}
 		if ($remove_existing) {
 			// Diff
-			if (is_array($existing)) {
-				$to_del = array_diff($existing, $categories);
-				$to_add = array_diff($categories, $existing);
-			} else {
-				$to_del = array(); // Nothing to delete
-				$to_add = $categories;
-			}
+			$to_del = array_diff($existing, $categories);
+			$to_add = array_diff($categories, $existing);
 		} else {
 			$to_del = array(); // Nothing to delete
 			$to_add = array_diff($categories, $existing);
@@ -11681,5 +11797,30 @@ abstract class CommonObject
 		} else {
 			return true;
 		}
+	}
+
+	/**
+	 * Set the error message for the object without logging it.
+	 *
+	 * @param string $message    the error message
+	 * @return void
+	 */
+	public function setErrorWithoutLog($message)
+	{
+		$this->error = $message;
+		$this->errors[] = $message;
+	}
+
+	/**
+	 * Set the error message for the object and log it.
+	 *
+	 * @param string $message      the error message
+	 * @param int<0,7> $loglevel   the log level
+	 * @return void
+	 */
+	public function setErrorWithLog($message, $loglevel = LOG_ERR)
+	{
+		$this->setErrorWithoutLog($message);
+		dol_syslog($message, $loglevel);
 	}
 }

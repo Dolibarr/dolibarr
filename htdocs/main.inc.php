@@ -73,10 +73,17 @@ if (!empty($_SERVER['DOCUMENT_ROOT']) && substr($_SERVER['DOCUMENT_ROOT'], -6) !
 // Include the conf.php and functions.lib.php and security.lib.php. This defined the constants like DOL_DOCUMENT_ROOT, DOL_DATA_ROOT, DOL_URL_ROOT...
 require_once 'filefunc.inc.php';
 /**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ *
  * @var ?string $php_session_save_handler
  * @var ?string $dolibarr_main_force_https
  * @var ?string $dolibarr_main_restrict_ip
  * @var ?string $dolibarr_nocsrfcheck
+ * @var ?string $dolibarr_main_demo
  */
 
 // If there is a POST parameter to tell to save automatically some POST parameters into cookies, we do it.
@@ -437,31 +444,33 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 	// Note: There is another CSRF protection into the filefunc.inc.php
 }
 
-// Disable modules (this must be after session_start and after conf has been loaded)
-if (GETPOSTISSET('disablemodules')) {
-	$_SESSION["disablemodules"] = GETPOST('disablemodules', 'alpha');
-}
-if (!empty($_SESSION["disablemodules"])) {
-	$modulepartkeys = array('css', 'js', 'tabs', 'triggers', 'login', 'substitutions', 'menus', 'theme', 'sms', 'tpl', 'barcode', 'models', 'societe', 'hooks', 'dir', 'syslog', 'tpllinkable', 'contactelement', 'moduleforexternal', 'websitetemplates');
+if (!empty($dolibarr_main_demo)) {
+	// Disable modules (this must be after session_start and after conf has been loaded)
+	if (GETPOSTISSET('disablemodules')) {
+		$_SESSION["disablemodules"] = GETPOST('disablemodules', 'alpha');
+	}
+	if (!empty($_SESSION["disablemodules"])) {
+		$modulepartkeys = array('css', 'js', 'tabs', 'triggers', 'login', 'substitutions', 'menus', 'theme', 'sms', 'tpl', 'barcode', 'models', 'societe', 'hooks', 'dir', 'syslog', 'tpllinkable', 'contactelement', 'moduleforexternal', 'websitetemplates');
 
-	$disabled_modules = explode(',', $_SESSION["disablemodules"]);
-	foreach ($disabled_modules as $module) {
-		if ($module) {
-			if (empty($conf->$module)) {
-				$conf->$module = new stdClass(); 	// To avoid warnings
-			}
+		$disabled_modules = explode(',', $_SESSION["disablemodules"]);
+		foreach ($disabled_modules as $module) {
+			if ($module) {
+				if (empty($conf->$module)) {
+					$conf->$module = new stdClass(); 	// To avoid warnings
+				}
 
-			$conf->$module->enabled = false;		// Old usage
-			unset($conf->modules[$module]);
+				$conf->$module->enabled = false;		// Old usage
+				unset($conf->modules[$module]);
 
-			foreach ($modulepartkeys as $modulepartkey) {
-				unset($conf->modules_parts[$modulepartkey][$module]);
-			}
-			if ($module == 'fournisseur') {		// Special case
-				$conf->supplier_order->enabled = 0;		// Old usage
-				$conf->supplier_invoice->enabled = 0;	// Old usage
-				unset($conf->modules['supplier_order']);
-				unset($conf->modules['supplier_invoice']);
+				foreach ($modulepartkeys as $modulepartkey) {
+					unset($conf->modules_parts[$modulepartkey][$module]);
+				}
+				if ($module == 'fournisseur') {		// Special case
+					$conf->supplier_order->enabled = 0;		// Old usage
+					$conf->supplier_invoice->enabled = 0;	// Old usage
+					unset($conf->modules['supplier_order']);
+					unset($conf->modules['supplier_invoice']);
+				}
 			}
 		}
 	}
@@ -3257,120 +3266,122 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 		}
 
 		// Dolibarr version + help + bug report link
-		print "\n";
-		print "<!-- Begin Help Block-->\n";
-		print '<div id="blockvmenuhelp" class="blockvmenuhelp">'."\n";
+		if (getDolGlobalString('MAIN_SHOW_VERSION') || getDolGlobalString('MAIN_BUGTRACK_ENABLELINK')) {
+			print "\n";
+			print "<!-- Begin Help Block-->\n";
+			print '<div id="blockvmenuhelp" class="blockvmenuhelp">'."\n";
 
-		// Version
-		if (getDolGlobalString('MAIN_SHOW_VERSION')) {    // Version is already on help picto and on login page.
-			$doliurl = 'https://www.dolibarr.org';
-			//local communities
-			if (preg_match('/fr/i', $langs->defaultlang)) {
-				$doliurl = 'https://www.dolibarr.fr';
-			}
-			if (preg_match('/es/i', $langs->defaultlang)) {
-				$doliurl = 'https://www.dolibarr.es';
-			}
-			if (preg_match('/de/i', $langs->defaultlang)) {
-				$doliurl = 'https://www.dolibarr.de';
-			}
-			if (preg_match('/it/i', $langs->defaultlang)) {
-				$doliurl = 'https://www.dolibarr.it';
-			}
-			if (preg_match('/gr/i', $langs->defaultlang)) {
-				$doliurl = 'https://www.dolibarr.gr';
+			// Version
+			if (getDolGlobalString('MAIN_SHOW_VERSION')) {    // Version is already on help picto and on login page.
+				$doliurl = 'https://www.dolibarr.org';
+				//local communities
+				if (preg_match('/fr/i', $langs->defaultlang)) {
+					$doliurl = 'https://www.dolibarr.fr';
+				}
+				if (preg_match('/es/i', $langs->defaultlang)) {
+					$doliurl = 'https://www.dolibarr.es';
+				}
+				if (preg_match('/de/i', $langs->defaultlang)) {
+					$doliurl = 'https://www.dolibarr.de';
+				}
+				if (preg_match('/it/i', $langs->defaultlang)) {
+					$doliurl = 'https://www.dolibarr.it';
+				}
+				if (preg_match('/gr/i', $langs->defaultlang)) {
+					$doliurl = 'https://www.dolibarr.gr';
+				}
+
+				$appli = constant('DOL_APPLICATION_TITLE');
+				$applicustom = getDolGlobalString('MAIN_APPLICATION_TITLE');
+				if ($applicustom) {
+					$appli = (preg_match('/^\+/', $applicustom) ? $appli : '').$applicustom;
+				} else {
+					$appli .= " ".DOL_VERSION;
+				}
+
+				// Clean doliurl if we use a custom application name
+				if ($applicustom) {
+					$doliurl = '';
+				}
+
+				print '<div id="blockvmenuhelpapp" class="blockvmenuhelp">';
+				if ($doliurl) {
+					print '<a class="help" target="_blank" rel="noopener noreferrer" href="'.$doliurl.'">';
+				} else {
+					print '<span class="help">';
+				}
+				print $appli;
+				if ($doliurl) {
+					print '</a>';
+				} else {
+					print '</span>';
+				}
+				print '</div>'."\n";
 			}
 
-			$appli = constant('DOL_APPLICATION_TITLE');
-			$applicustom = getDolGlobalString('MAIN_APPLICATION_TITLE');
-			if ($applicustom) {
-				$appli = (preg_match('/^\+/', $applicustom) ? $appli : '').$applicustom;
-			} else {
-				$appli .= " ".DOL_VERSION;
+			// Link to bugtrack
+			if (getDolGlobalString('MAIN_BUGTRACK_ENABLELINK')) {
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+
+				if (getDolGlobalString('MAIN_BUGTRACK_ENABLELINK') == 'github') {
+					$bugbaseurl = 'https://github.com/Dolibarr/dolibarr/issues/new?labels=Bug';
+					$bugbaseurl .= '&title=';
+					$bugbaseurl .= urlencode("Bug: ");
+					$bugbaseurl .= '&body=';
+					$bugbaseurl .= urlencode("# Instructions\n");
+					$bugbaseurl .= urlencode("*This is a template to help you report good issues. You may use [Github Markdown](https://help.github.com/articles/getting-started-with-writing-and-formatting-on-github/) syntax to format your issue report.*\n");
+					$bugbaseurl .= urlencode("*Please:*\n");
+					$bugbaseurl .= urlencode("- *replace the bracket enclosed texts with meaningful information*\n");
+					$bugbaseurl .= urlencode("- *remove any unused sub-section*\n");
+					$bugbaseurl .= urlencode("\n");
+					$bugbaseurl .= urlencode("\n");
+					$bugbaseurl .= urlencode("# Bug\n");
+					$bugbaseurl .= urlencode("[*Short description*]\n");
+					$bugbaseurl .= urlencode("\n");
+					$bugbaseurl .= urlencode("## Environment\n");
+					$bugbaseurl .= urlencode("- **Version**: ".DOL_VERSION."\n");
+					$bugbaseurl .= urlencode("- **OS**: ".php_uname('s')."\n");
+					$bugbaseurl .= urlencode("- **Web server**: ".$_SERVER["SERVER_SOFTWARE"]."\n");
+					$bugbaseurl .= urlencode("- **PHP**: ".php_sapi_name().' '.phpversion()."\n");
+					$bugbaseurl .= urlencode("- **Database**: ".$db::LABEL.' '.$db->getVersion()."\n");
+					$bugbaseurl .= urlencode("- **URL(s)**: ".$_SERVER["REQUEST_URI"]."\n");
+					$bugbaseurl .= urlencode("\n");
+					$bugbaseurl .= urlencode("## Expected and actual behavior\n");
+					$bugbaseurl .= urlencode("[*Verbose description*]\n");
+					$bugbaseurl .= urlencode("\n");
+					$bugbaseurl .= urlencode("## Steps to reproduce the behavior\n");
+					$bugbaseurl .= urlencode("[*Verbose description*]\n");
+					$bugbaseurl .= urlencode("\n");
+					$bugbaseurl .= urlencode("## [Attached files](https://help.github.com/articles/issue-attachments) (Screenshots, screencasts, dolibarr.log, debugging information…)\n");
+					$bugbaseurl .= urlencode("[*Files*]\n");
+					$bugbaseurl .= urlencode("\n");
+
+					$bugbaseurl .= urlencode("\n");
+					$bugbaseurl .= urlencode("## Report\n");
+				} elseif (getDolGlobalString('MAIN_BUGTRACK_ENABLELINK')) {
+					$bugbaseurl = getDolGlobalString('MAIN_BUGTRACK_ENABLELINK');
+				} else {
+					$bugbaseurl = "";
+				}
+
+				// Execute hook printBugtrackInfo
+				$parameters = array('bugbaseurl' => $bugbaseurl);
+				$reshook = $hookmanager->executeHooks('printBugtrackInfo', $parameters); // Note that $action and $object may have been modified by some hooks
+				if (empty($reshook)) {
+					$bugbaseurl .= $hookmanager->resPrint;
+				} else {
+					$bugbaseurl = $hookmanager->resPrint;
+				}
+
+				print '<div id="blockvmenuhelpbugreport" class="blockvmenuhelp">';
+				print '<a class="help" target="_blank" rel="noopener noreferrer" href="'.$bugbaseurl.'"><i class="fas fa-bug"></i> '.$langs->trans("FindBug").'</a>';
+				print '</div>';
 			}
 
-			// Clean doliurl if we use a custom application name
-			if ($applicustom) {
-				$doliurl = '';
-			}
-
-			print '<div id="blockvmenuhelpapp" class="blockvmenuhelp">';
-			if ($doliurl) {
-				print '<a class="help" target="_blank" rel="noopener noreferrer" href="'.$doliurl.'">';
-			} else {
-				print '<span class="help">';
-			}
-			print $appli;
-			if ($doliurl) {
-				print '</a>';
-			} else {
-				print '</span>';
-			}
-			print '</div>'."\n";
+			print "</div>\n";
+			print "<!-- End Help Block-->\n";
+			print "\n";
 		}
-
-		// Link to bugtrack
-		if (getDolGlobalString('MAIN_BUGTRACK_ENABLELINK')) {
-			require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-
-			if (getDolGlobalString('MAIN_BUGTRACK_ENABLELINK') == 'github') {
-				$bugbaseurl = 'https://github.com/Dolibarr/dolibarr/issues/new?labels=Bug';
-				$bugbaseurl .= '&title=';
-				$bugbaseurl .= urlencode("Bug: ");
-				$bugbaseurl .= '&body=';
-				$bugbaseurl .= urlencode("# Instructions\n");
-				$bugbaseurl .= urlencode("*This is a template to help you report good issues. You may use [Github Markdown](https://help.github.com/articles/getting-started-with-writing-and-formatting-on-github/) syntax to format your issue report.*\n");
-				$bugbaseurl .= urlencode("*Please:*\n");
-				$bugbaseurl .= urlencode("- *replace the bracket enclosed texts with meaningful information*\n");
-				$bugbaseurl .= urlencode("- *remove any unused sub-section*\n");
-				$bugbaseurl .= urlencode("\n");
-				$bugbaseurl .= urlencode("\n");
-				$bugbaseurl .= urlencode("# Bug\n");
-				$bugbaseurl .= urlencode("[*Short description*]\n");
-				$bugbaseurl .= urlencode("\n");
-				$bugbaseurl .= urlencode("## Environment\n");
-				$bugbaseurl .= urlencode("- **Version**: ".DOL_VERSION."\n");
-				$bugbaseurl .= urlencode("- **OS**: ".php_uname('s')."\n");
-				$bugbaseurl .= urlencode("- **Web server**: ".$_SERVER["SERVER_SOFTWARE"]."\n");
-				$bugbaseurl .= urlencode("- **PHP**: ".php_sapi_name().' '.phpversion()."\n");
-				$bugbaseurl .= urlencode("- **Database**: ".$db::LABEL.' '.$db->getVersion()."\n");
-				$bugbaseurl .= urlencode("- **URL(s)**: ".$_SERVER["REQUEST_URI"]."\n");
-				$bugbaseurl .= urlencode("\n");
-				$bugbaseurl .= urlencode("## Expected and actual behavior\n");
-				$bugbaseurl .= urlencode("[*Verbose description*]\n");
-				$bugbaseurl .= urlencode("\n");
-				$bugbaseurl .= urlencode("## Steps to reproduce the behavior\n");
-				$bugbaseurl .= urlencode("[*Verbose description*]\n");
-				$bugbaseurl .= urlencode("\n");
-				$bugbaseurl .= urlencode("## [Attached files](https://help.github.com/articles/issue-attachments) (Screenshots, screencasts, dolibarr.log, debugging information…)\n");
-				$bugbaseurl .= urlencode("[*Files*]\n");
-				$bugbaseurl .= urlencode("\n");
-
-				$bugbaseurl .= urlencode("\n");
-				$bugbaseurl .= urlencode("## Report\n");
-			} elseif (getDolGlobalString('MAIN_BUGTRACK_ENABLELINK')) {
-				$bugbaseurl = getDolGlobalString('MAIN_BUGTRACK_ENABLELINK');
-			} else {
-				$bugbaseurl = "";
-			}
-
-			// Execute hook printBugtrackInfo
-			$parameters = array('bugbaseurl' => $bugbaseurl);
-			$reshook = $hookmanager->executeHooks('printBugtrackInfo', $parameters); // Note that $action and $object may have been modified by some hooks
-			if (empty($reshook)) {
-				$bugbaseurl .= $hookmanager->resPrint;
-			} else {
-				$bugbaseurl = $hookmanager->resPrint;
-			}
-
-			print '<div id="blockvmenuhelpbugreport" class="blockvmenuhelp">';
-			print '<a class="help" target="_blank" rel="noopener noreferrer" href="'.$bugbaseurl.'"><i class="fas fa-bug"></i> '.$langs->trans("FindBug").'</a>';
-			print '</div>';
-		}
-
-		print "</div>\n";
-		print "<!-- End Help Block-->\n";
-		print "\n";
 
 		print "</div>\n";
 		print "<!-- End left menu -->\n";

@@ -113,7 +113,7 @@ function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1, $o
 		if ($mode == 1) {
 			$out .= "hash('".$securekeyseed."' + '".$type."' + proposal_ref)";
 		} else {
-			$out .= '&securekey='.dol_hash($securekeyseed.$type.$ref.(isModEnabled('multicompany') ? (empty($obj->entity) ? '' : $obj->entity) : ''), '0');
+			$out .= '&securekey='.urlencode(dol_hash($securekeyseed.$type.$ref.(isModEnabled('multicompany') ? (empty($obj->entity) ? '' : $obj->entity) : ''), '0'));
 		}
 		/*
 		if ($mode == 1) {
@@ -157,7 +157,7 @@ function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1, $o
 		if ($mode == 1) {
 			$out .= "hash('".$securekeyseed."' + '".$type."' + contract_ref)";
 		} else {
-			$out .= '&securekey='.dol_hash($securekeyseed.$type.$ref.(isModEnabled('multicompany') ? (empty($obj->entity) ? '' : (int) $obj->entity) : ''), '0');
+			$out .= '&securekey='.urlencode(dol_hash($securekeyseed.$type.$ref.(isModEnabled('multicompany') ? (empty($obj->entity) ? '' : (int) $obj->entity) : ''), '0'));
 		}
 	} elseif ($type == 'fichinter') {
 		$securekeyseed = getDolGlobalString('FICHINTER_ONLINE_SIGNATURE_SECURITY_TOKEN');
@@ -177,7 +177,7 @@ function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1, $o
 		if ($mode == 1) {
 			$out .= "hash('".$securekeyseed."' + '".$type."' + fichinter_ref)";
 		} else {
-			$out .= '&securekey='.dol_hash($securekeyseed.$type.$ref.(isModEnabled('multicompany') ? (empty($obj->entity) ? '' : (int) $obj->entity) : ''), '0');
+			$out .= '&securekey='.urlencode(dol_hash($securekeyseed.$type.$ref.(isModEnabled('multicompany') ? (empty($obj->entity) ? '' : (int) $obj->entity) : ''), '0'));
 		}
 	} else {	// For example $type = 'societe_rib'
 		$securekeyseed = getDolGlobalString(dol_strtoupper($type).'_ONLINE_SIGNATURE_SECURITY_TOKEN');
@@ -197,13 +197,18 @@ function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1, $o
 		if ($mode == 1) {
 			$out .= "hash('".$securekeyseed."' + '".$type."' + $type + '_ref)";
 		} else {
-			$out .= '&securekey='.dol_hash($securekeyseed.$type.$ref.(!isModEnabled('multicompany') ? '' : $obj->entity), '0');
+			$out .= '&securekey='.urlencode(dol_hash($securekeyseed.$type.$ref.(!isModEnabled('multicompany') ? '' : $obj->entity), '0'));
 		}
 	}
 
 	// For multicompany
 	if (!empty($out) && isModEnabled('multicompany')) {
 		$out .= "&entity=".(empty($obj->entity) ? '' : (int) $obj->entity); // Check the entity because we may have the same reference in several entities
+	} elseif ($mode == 0) {
+		// Bcrypt output (dol_hash type '0') can legitimately end with '.' or '/', which Gmail and several mobile mail
+		// clients strip from autolinked URLs and break the signature link. Append a stable trailing parameter that
+		// the receiver ignores so the URL never ends with the hash. Only for the real URL (mode 0), not the preview.
+		$out .= "&_=1";
 	}
 
 	return $out;

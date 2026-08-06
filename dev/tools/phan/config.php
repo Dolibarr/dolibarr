@@ -212,7 +212,7 @@ $EXTRAFIELDS_TYPE2LABEL = array(
 	);
 
 
-$moduleNameRegex = '/^(?:'.implode('|', array_merge(array_keys($DEPRECATED_MODULE_MAPPING), array_keys($VALID_MODULE_MAPPING), array('\$modulename'))).')$/';
+$moduleNameRegex = '/^(?:'.implode('|', array_merge(array_keys($DEPRECATED_MODULE_MAPPING), array_keys($VALID_MODULE_MAPPING), array('\$modulename', '\$dirofmodule'))).')$/';
 $deprecatedModuleNameRegex = '/^(?!(?:'.implode('|', array_keys($DEPRECATED_MODULE_MAPPING)).')$).*/';
 
 $extraFieldTypeRegex = '/^(?:'.implode('|', array_keys($EXTRAFIELDS_TYPE2LABEL)).')$/';
@@ -506,6 +506,7 @@ return [
 		'pdo_mysql'  => PHAN_DIR . '/stubs/pdo_mysql.phan_php',
 		'pdo_pgsql'  => PHAN_DIR . '/stubs/pdo_pgsql.phan_php',
 		'pdo_sqlite'  => PHAN_DIR . '/stubs/pdo_sqlite.phan_php',
+		'phpunit'  => PHAN_DIR . '/stubs/phpunit.phan_php',
 		'pgsql'  => PHAN_DIR . '/stubs/pgsql.phan_php',
 		'session'  => PHAN_DIR . '/stubs/session.phan_php',
 		'simplexml'  => PHAN_DIR . '/stubs/SimpleXML.phan_php',

@@ -270,7 +270,6 @@ if (count($echeances->lines) > 0) {
 	print '<input type="hidden" name="action" value="createecheancier">';
 }
 
-//print_fiche_titre($langs->trans("FinancialCommitment"));
 print '<br>';
 
 print '<div class="div-table-responsive-no-min">';

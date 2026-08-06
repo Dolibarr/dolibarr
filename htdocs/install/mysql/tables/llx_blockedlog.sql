@@ -29,7 +29,7 @@ CREATE TABLE llx_blockedlog
 	ref_object varchar(255),					-- field included into line signature (denormalized data from object_data)
 	date_object	datetime,						-- field included into line signature (denormalized data from object_data)
 	user_fullname varchar(255),					-- field included into line signature. User recording the event.
-	linktoref varchar(255),						-- field included into line signature. Link to another ref_object.
+	linktoref text,								-- field included into line signature. Link to another ref_object.
 	linktype varchar(16),						-- field included into line signature. Link type.
 	object_data	mediumtext,						-- field included into line signature
 	-- the signature of line

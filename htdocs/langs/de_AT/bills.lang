@@ -1,6 +1,4 @@
 # Dolibarr language file - Source file is en_US - bills
-BillsLate=Verspätete Zahlungen
-InvoiceStandardDesc=Dies ist die übliche Rechnungsart.
 InvoiceProForma=Proformarechnung
 InvoiceProFormaAsk=Proformarechnung
 InvoiceProFormaDesc=<b>Proformarechnung</b> entspricht dem Wert der echten Rechnung, wird aber nicht verbucht.
@@ -9,17 +7,12 @@ ConsumedBy=Consumed von
 CardBill=Rechnungskarte
 BillShortStatusValidated=Bestätigt
 BillShortStatusClosedUnpaid=geschlossen
-ErrorInvoiceIsNotLastOfSameType=Error: The date of invoice %s  is %s. It must be posterior or equal to last date for same type invoices (%s). Please change the invoice date.
 ValidateBill=Validate Rechnung
 CreditNote=Gutschrift
-NewRelativeDiscount=Neue relative Rabatt
 RelatedBill=Verwandte Rechnung
 PaymentTypeShortTRA=Entwurf
 BIC=BIC
 BICNumber=BIC
-LawApplicationPart2=Die Ware bleibt Eigentum der
-LawApplicationPart4=ihren Preis.
-UseCredit=Verwenden Sie die Credit
 ShowUnpaidLateOnly=Show Ende unbezahlte Rechnung nur
 ValidateInvoice=Validate Rechnung
 DisabledBecausePayments=Nicht möglich, da gibt es einige Zahlungen

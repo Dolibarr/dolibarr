@@ -78,7 +78,7 @@ if (!isset($aiprompt)) {	// Init to empty string if not defined
 	$aiprompt = '';
 }
 // Add link to add layout
-if ($showlinktolayout) {	// May be set only if MAIN_EMAIL_USE_LAYOUT is set
+if (!empty($showlinktolayout)) {	// May be set only if MAIN_EMAIL_USE_LAYOUT is set
 	$out .= '<a href="#" id="linkforlayouttemplates" class="notasortlink inline-block alink marginrightonly">';
 	$out .= img_picto($showlinktolayoutlabel, 'layout', 'class="paddingrightonly"');
 	$out .= '<span class="hideobject hideonsmartphone">'.$showlinktolayoutlabel.'...</span>';
@@ -98,7 +98,7 @@ if ($showlinktolayout) {	// May be set only if MAIN_EMAIL_USE_LAYOUT is set
 					';
 }
 // Add link to add AI content
-if ($showlinktoai) {
+if (!empty($showlinktoai)) {
 	// TODO Diff between showlinktoai and htmlname ? Why not using one key only ?
 	$out .= '<a href="#" id="linkforaiprompt'.$showlinktoai.'" class="notasortlink inline-block alink '.$morecss.'">';
 	$out .= img_picto($showlinktoailabel, 'ai', 'class="paddingrightonly"');
@@ -134,7 +134,7 @@ if ($showlinktoai) {
 					';
 }
 
-if ($showlinktolayout) {
+if (!empty($showlinktolayout)) {
 	if (!empty($formwebsite) && is_object($formwebsite)) {
 		$out .= $formwebsite->getContentPageTemplate($htmlname);
 	} else {
@@ -151,7 +151,7 @@ if ($showlinktolayout) {
 
 /** @var ?FormAI $formai */
 
-if ($showlinktoai) {
+if (!empty($showlinktoai)) {
 	if (empty($formai) || $formai instanceof FormAI) {
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formai.class.php';
 		$formai = new FormAI($db);
@@ -165,7 +165,11 @@ if ($showlinktoai) {
 		$formai->setSubstitFromObject($object, $langs);
 		$aiprompt = make_substitutions($aiprompt, $formai->substit);
 	}
-	$out .= $formai->getSectionForAIEnhancement($showlinktoai, $formmail->withaiprompt, $htmlname, $onlyenhancements, $aiprompt);
+	$format = '';
+	if (is_object($formmail) && !empty($formmail->withaiprompt)) {
+		$format = $formmail->withaiprompt;
+	}
+	$out .= $formai->getSectionForAIEnhancement($showlinktoai, $format, $htmlname, $onlyenhancements, $aiprompt);
 } else {
 	$out .= '<!-- No link to the AI feature, $formmail->withaiprompt must be set to the ai feature and module ai must be enabled -->';
 }

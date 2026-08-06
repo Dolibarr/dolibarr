@@ -165,3 +165,6 @@ HolidayMailSenderAdress=Email address for holiday requests
 HolidayMailSenderAdressHelp=If you leave this field blank, the default e-mail address will be used.
 WrongAmount=Wrong amount of days
 ErrorUpdatingUsersCP=Error updating users paid leaves
+LeaveBalance=Leave balance
+ListeLB=List of leave balance
+LeaveType = Type of leave balance

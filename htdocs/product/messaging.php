@@ -51,10 +51,12 @@ $langs->loadLangs(array('agenda', 'bills', 'companies', 'orders', 'propal'));
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : str_replace('_', '', basename(dirname(__FILE__)).basename(__FILE__, '.php')); // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 
-if (GETPOST('actioncode', 'array')) {
-	$actioncode = GETPOST('actioncode', 'array', 3);
+if (GETPOSTISARRAY('actioncode')) {
+	$actioncode = GETPOST('actioncode', 'array:alpha', 3);
 	if (!count($actioncode)) {
 		$actioncode = '0';
+	} else {
+		$actioncode = implode(',', $actioncode);
 	}
 } else {
 	$actioncode = GETPOST("actioncode", "alpha", 3) ? GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT'));
@@ -241,7 +243,7 @@ if (isModEnabled('agenda')) {
 if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
 	print '<br>';
 
-	$param = '&socid='.urlencode((string) ($socid));
+	$param = 'id='.(int) $object->id;
 	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 		$param .= '&contextpage='.urlencode($contextpage);
 	}

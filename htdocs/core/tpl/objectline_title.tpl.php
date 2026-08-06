@@ -108,7 +108,7 @@ if (in_array($object->element, array('propal', 'commande', 'facture', 'supplier_
 		$societe_acheteuse = strpos($object->element, 'supplier') === false ? $object->thirdparty : $mysoc;
 		$vat_mode = strpos($object->element, 'supplier') === false ? 1 : 2;
 		print $form->load_tva('vatforalllines', '', $societe_vendeuse, $societe_acheteuse, 0, 0, '', false, 1, $vat_mode);
-		print '<input class="inline-block button smallpaddingimp" type="submit" name="submitforalllines" value="'.$langs->trans("Update").'">';
+		print '<input class="inline-block button smallpaddingimp valignmiddle" type="submit" name="submitforalllines" value="'.$langs->trans("Update").'">';
 		print '</div>';
 	}
 }
@@ -120,7 +120,7 @@ print '<th class="linecoluht right nowraponall">'.$langs->trans('PriceUHT').'</t
 // Multicurrency HT / excl tax
 if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicurrency_code != $conf->currency) {
 	print '<th class="linecoluht_currency right" style="width: 80px">'.$langs->trans('PriceUHT');
-	print '&nbsp;<span class="opacitymedium">('.$langs->getCurrencySymbol($this->multicurrency_code).')<span></th>';
+	print '&nbsp;<span class="opacitymedium">('.$langs->getCurrencySymbol($this->multicurrency_code).')</span></th>';
 }
 
 // Price TTC / incl tax
@@ -217,7 +217,7 @@ print '<th class="linecolht right">'.$langs->trans('TotalHTShort').'</th>';
 // Multicurrency
 if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicurrency_code != $conf->currency) {
 	print '<th class="linecoltotalht_currency right">'.$langs->trans('TotalHTShort');
-	print '&nbsp;<span class="opacitymedium">('.$langs->getCurrencySymbol($this->multicurrency_code).')<span></th>';
+	print '&nbsp;<span class="opacitymedium">('.$langs->getCurrencySymbol($this->multicurrency_code).')</span></th>';
 }
 
 if ($outputalsopricetotalwithtax) {

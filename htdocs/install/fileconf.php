@@ -89,6 +89,9 @@ dolibarr_install_syslog("- fileconf: entering fileconf.php page");
 // install.forced.php into directory htdocs/install (This is the case with some wizard
 // installer like DoliWamp, DoliMamp or DoliBuntu).
 // We first init "forced values" to nothing.
+if (!isset($force_install_distrib)) {
+	$force_install_distrib = 'undefined';
+}
 if (!isset($force_install_noedit)) {
 	$force_install_noedit = ''; // 1=To block vars specific to distrib, 2 to block all technical parameters, 3 to block all technical parameters excepted main_url
 }
@@ -150,6 +153,10 @@ if (!is_writable($conffile)) {
 	dolibarr_install_syslog("- fileconf: end");
 	pFooter(1, $setuplang, 'jscheckparam');
 	exit;
+}
+
+if (!empty($force_install_distrib)) {
+	print '<!-- $force_install_distrib = '.dol_escape_htmltag($force_install_distrib).' -->';
 }
 
 if (!empty($force_install_message)) {

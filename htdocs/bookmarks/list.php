@@ -425,7 +425,6 @@ while ($i < $imaxinloop) {
 			print img_picto('', 'url', 'class="pictofixedwidth"');
 			print '<a class="" href="'.$obj->url.'"'.($obj->target ? ' target="newlink" rel="noopener"' : '').'>';
 		} else {
-			//print img_picto('', 'rightarrow', 'class="pictofixedwidth"');
 			print '<a class="" href="'.$obj->url.'">';
 		}
 		print $link;

@@ -4,6 +4,7 @@
  * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+  * Copyright (C) 2026		Anthony Berton			<anthony.berton@bb2a.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,8 +28,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -36,6 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("resource", "companies", "other"));
@@ -630,7 +630,7 @@ while ($i < $imaxinloop) {
 	$objectstatic->max_users = $obj->max_users;
 	$objectstatic->url = $obj->url;
 
-	print '<tr data-rowid="'.$obj->rowid.'"  class="oddeven row-with-select">';
+	print '<tr data-rowid="'.$obj->rowid.'" class="oddeven row-with-select">';
 
 	// Action column
 	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
@@ -705,7 +705,8 @@ while ($i < $imaxinloop) {
 	}
 
 	if (!empty($arrayfields['t.email']['checked'])) {
-		print '<td>'.dol_print_email($objectstatic->email, 0, 0, 1, 0, 0, 1).'</td>';
+		$showinvalidemail = (int) !getDolGlobalInt('MAIN_SHOW_INVALID_EMAIL_IN_LIST'); // to avoid slow display
+		print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute($obj->email).'">'.dol_print_email($objectstatic->email, 0, 0, 1, 0, $showinvalidemail, 1).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}

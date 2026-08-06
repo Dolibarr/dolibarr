@@ -564,19 +564,13 @@ class Facture extends CommonInvoice
 			$previousdaynextdatewhen = null;
 
 			if ($originaldatewhen) {
-				if ($_facrec->rule_for_lines_dates == 'prepaid') {
-					$nextdatewhen = dol_time_plus_duree($originaldatewhen, (int) $_facrec->frequency, $_facrec->unit_frequency);
-				}
-
-				if ($_facrec->rule_for_lines_dates == 'postpaid') {
+				if ($_facrec->rule_for_lines_dates == 'postpaid') {		// Bugged feature, should use different variable nameas we store something different.
 					$previousdaynextdatewhen = dol_time_plus_duree($originaldatewhen, -1, 'd');
-				} elseif ($nextdatewhen) {
+					$originaldatewhen = dol_time_plus_duree($originaldatewhen, -$_facrec->frequency, $_facrec->unit_frequency);
+				} else {
+					$nextdatewhen = dol_time_plus_duree($originaldatewhen, (int) $_facrec->frequency, $_facrec->unit_frequency);
 					$previousdaynextdatewhen = dol_time_plus_duree($nextdatewhen, -1, 'd');
 				}
-
-				$originaldatewhen = $_facrec->rule_for_lines_dates == 'postpaid'
-					? dol_time_plus_duree($originaldatewhen, -$_facrec->frequency, $_facrec->unit_frequency)
-					: $originaldatewhen;
 			}
 
 			// Define thirdparty
@@ -637,8 +631,10 @@ class Facture extends CommonInvoice
 					$_facrec->date_when = $now;
 				}
 				$next_date = $_facrec->getNextDate(); // Calculate next date
+
 				$result = $_facrec->setValueFrom('date_last_gen', $now, '', null, 'date', '', $user, '');
 				//$_facrec->setValueFrom('nb_gen_done', $_facrec->nb_gen_done + 1);		// Not required, +1 already included into setNextDate when second param is 1.
+
 				$result = $_facrec->setNextDate($next_date, 1);
 			}
 
@@ -808,8 +804,8 @@ class Facture extends CommonInvoice
 			}
 
 			// Propagate contacts
-			if (!$error && $this->id && getDolGlobalString('MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN') && !empty($this->origin) && !empty($this->origin_id)) {   // Get contact from origin object
-				$originforcontact = $this->origin;
+			if (!$error && $this->id && getDolGlobalString('MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN') && (!empty($this->origin_type) || !empty($this->origin)) && !empty($this->origin_id)) {   // Get contact from origin object
+				$originforcontact = empty($this->origin_type) ? $this->origin : $this->origin_type;
 				$originidforcontact = $this->origin_id;
 				if ($originforcontact == 'shipping') {     // shipment and order share the same contacts. If creating from shipment we take data of order
 					require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
@@ -857,6 +853,7 @@ class Facture extends CommonInvoice
 					$newinvoiceline->fk_facture = $this->id;
 
 					$newinvoiceline->origin = $this->lines[$i]->element;
+					$newinvoiceline->origin_type = $this->lines[$i]->element;
 					$newinvoiceline->origin_id = $this->lines[$i]->id;
 
 					// Auto set date of service ?
@@ -1182,9 +1179,15 @@ class Facture extends CommonInvoice
 		// Source invoice load
 		$facture = new Facture($this->db);
 
+		// Avoid updating the row ranks
+		$facture->context['createfromclone'] = 1;
+
 		// Retrieve all extrafield
 		// fetch optionals attributes and labels
-		$this->fetch_optionals();
+		// (unless the caller already set array_options, e.g. from a create form, so we don't overwrite them)
+		if (empty($this->array_options)) {
+			$this->fetch_optionals();
+		}
 
 		if (!empty($this->array_options)) {
 			$facture->array_options = $this->array_options;
@@ -1269,9 +1272,10 @@ class Facture extends CommonInvoice
 	 *
 	 *	@param      User	$user        	User that clone
 	 *  @param  	int 	$fromid         Id of object to clone
+	 *  @param		int		$forceentity	Entity id to force (used by multicompany to clone into another entity)
 	 * 	@return		int					    New id of clone
 	 */
-	public function createFromClone(User $user, $fromid = 0)
+	public function createFromClone(User $user, $fromid = 0, $forceentity = null)
 	{
 		global $conf, $hookmanager;
 
@@ -1282,6 +1286,12 @@ class Facture extends CommonInvoice
 		$this->db->begin();
 
 		$object->fetch($fromid);
+		// fetch() clears $object->thirdparty, but the subsequent $object->create() path
+		// reaches addLine() -> getLocalTaxesFromRate() -> get_localtax() and uses the
+		// buyer thirdparty to decide whether IRPF/localtax2 applies. Without this fetch,
+		// get_localtax() sees $thirdparty_buyer = null, returns 0 and the cloned lines
+		// lose their localtax2_tx (see issue #29052).
+		$object->fetch_thirdparty();
 
 		// Load source object
 		$objFrom = clone $object;
@@ -1300,6 +1310,8 @@ class Facture extends CommonInvoice
 
 			// TODO Change product price if multi-prices
 		}
+
+		$object->entity = (!empty($forceentity) ? $forceentity : $object->entity);
 
 		$object->id = 0;
 		$object->statut = self::STATUS_DRAFT;
@@ -1359,6 +1371,9 @@ class Facture extends CommonInvoice
 			}
 
 			$object->lines[$i]->ref_ext = ''; // Do not clone ref_ext
+
+			// Do not clone accountancy ventilation: a cloned invoice must reappear in "to dispatch" list
+			$object->lines[$i]->fk_code_ventilation = 0;
 		}
 
 		// Create clone
@@ -1422,6 +1437,9 @@ class Facture extends CommonInvoice
 		// Closed order
 		$this->date = dol_now();
 		$this->source = 0;
+
+		// Avoid updating the row ranks
+		$this->context['createfromclone'] = 1;
 
 		$num = count($object->lines);
 		for ($i = 0; $i < $num; $i++) {
@@ -1794,6 +1812,10 @@ class Facture extends CommonInvoice
 		$amountdeposit = array();
 		$descriptions = array();
 
+		// Bucket lines by tva_tx + vat_src_code so addline below receives the rate in
+		// the "tva (CODE)" format that Facture::addline knows how to parse. Bucketing
+		// on tva_tx alone wipes out the dictionary Code on the generated deposit line
+		// and on every downstream document derived from it (see issue #38035).
 		if (getDolGlobalString('MAIN_DEPOSIT_MULTI_TVA')) {
 			$amount = $origin->total_ttc * ($origin->deposit_percent / 100);
 
@@ -1802,7 +1824,7 @@ class Facture extends CommonInvoice
 				if (!empty($line->special_code)) {
 					continue;
 				}
-				$key = $line->tva_tx;
+				$key = $line->tva_tx . ($line->vat_src_code ? ' ('.$line->vat_src_code.')' : '');
 				if (!array_key_exists($key, $TTotalByTva)) {
 					$TTotalByTva[$key] = 0;
 					$descriptions[$key] = '';
@@ -1815,10 +1837,11 @@ class Facture extends CommonInvoice
 			}
 
 			foreach ($TTotalByTva as $tva => &$total) {
+				$tva_rate_only = preg_replace('/\s*\(.*\)/', '', (string) $tva);
 				$coef = $total / $origin->total_ttc; // Calc coef
 				$am = $amount * $coef;
 				$amount_ttc_diff += $am;
-				$amountdeposit[$tva] += $am / (1 + $tva / 100); // Convert into HT for the addline
+				$amountdeposit[$tva] += $am / (1 + ((float) $tva_rate_only) / 100); // Convert into HT for the addline
 			}
 		} else {
 			$totalamount = 0;
@@ -1833,19 +1856,23 @@ class Facture extends CommonInvoice
 				}
 
 				$totalamount += $lines[$i]->total_ht; // Fixme : is it not for the customer ? Shouldn't we take total_ttc ?
-				$tva_tx = $lines[$i]->tva_tx;
-				$amountdeposit[$tva_tx] += ((float) $lines[$i]->total_ht * (float) $origin->deposit_percent) / 100;
-				$descriptions[$tva_tx] .= '<li>' . (!empty($lines[$i]->product_ref) ? $lines[$i]->product_ref . ' - ' : '');
-				$descriptions[$tva_tx] .= (!empty($lines[$i]->product_label) ? $lines[$i]->product_label . ' - ' : '');
-				$descriptions[$tva_tx] .= $langs->trans('Qty') . ' : ' . $lines[$i]->qty;
-				$descriptions[$tva_tx] .= ' - ' . $langs->trans('TotalHT') . ' : ' . price($lines[$i]->total_ht) . '</li>';
+				$tva_key = $lines[$i]->tva_tx . ($lines[$i]->vat_src_code ? ' ('.$lines[$i]->vat_src_code.')' : '');
+				if (!isset($amountdeposit[$tva_key])) {
+					$amountdeposit[$tva_key] = 0;
+					$descriptions[$tva_key] = '';
+				}
+				$amountdeposit[$tva_key] += ((float) $lines[$i]->total_ht * (float) $origin->deposit_percent) / 100;
+				$descriptions[$tva_key] .= '<li>' . (!empty($lines[$i]->product_ref) ? $lines[$i]->product_ref . ' - ' : '');
+				$descriptions[$tva_key] .= (!empty($lines[$i]->product_label) ? $lines[$i]->product_label . ' - ' : '');
+				$descriptions[$tva_key] .= $langs->trans('Qty') . ' : ' . $lines[$i]->qty;
+				$descriptions[$tva_key] .= ' - ' . $langs->trans('TotalHT') . ' : ' . price($lines[$i]->total_ht) . '</li>';
 			}
 
 			if ($totalamount == 0) {
 				$amountdeposit[0] = 0;
 			}
 
-			$amount_ttc_diff = $amountdeposit[0];
+			$amount_ttc_diff = $amountdeposit[0] ?? 0;
 		}
 
 		foreach ($amountdeposit as $tva => $amount) {
@@ -1901,6 +1928,9 @@ class Facture extends CommonInvoice
 			$deposit->fetch_lines();
 			$subprice_diff = $deposit->lines[0]->subprice - $diff / (1 + $deposit->lines[0]->tva_tx / 100);
 
+			// Pass tva_tx in the "rate (CODE)" form so updateline preserves the vat_src_code
+			// it received from addline; passing the bare rate would wipe the code.
+			$tva_tx_with_code = $deposit->lines[0]->tva_tx . ($deposit->lines[0]->vat_src_code ? ' ('.$deposit->lines[0]->vat_src_code.')' : '');
 			$updatelineResult = $deposit->updateline(
 				$deposit->lines[0]->id,
 				$deposit->lines[0]->desc,
@@ -1909,7 +1939,7 @@ class Facture extends CommonInvoice
 				$deposit->lines[0]->remise_percent,
 				$deposit->lines[0]->date_start,
 				$deposit->lines[0]->date_end,
-				$deposit->lines[0]->tva_tx,
+				$tva_tx_with_code,
 				0,
 				0,
 				'HT',
@@ -2879,7 +2909,7 @@ class Facture extends CommonInvoice
 			$facligne->desc = $remise->description; // Description ligne
 			$facligne->vat_src_code = $remise->vat_src_code;
 			$facligne->tva_tx = $remise->tva_tx;
-			$facligne->subprice = -(float) $remise->amount_ht;
+			$facligne->subprice = -(float) $remise->total_ht;
 			$facligne->fk_product = 0; // Id produit predefini
 			$facligne->qty = 1;
 			$facligne->remise_percent = 0;
@@ -2904,14 +2934,14 @@ class Facture extends CommonInvoice
 				$facligne->pa_ht = $arraytmp['pa_total'];
 			}
 
-			$facligne->total_ht  = -(float) $remise->amount_ht;
-			$facligne->total_tva = -(float) $remise->amount_tva;
-			$facligne->total_ttc = -(float) $remise->amount_ttc;
+			$facligne->total_ht  = -(float) $remise->total_ht;
+			$facligne->total_tva = -(float) $remise->total_tva;
+			$facligne->total_ttc = -(float) $remise->total_ttc;
 
 			$facligne->multicurrency_subprice = -(float) $remise->multicurrency_subprice;
-			$facligne->multicurrency_total_ht = -(float) $remise->multicurrency_amount_ht;
-			$facligne->multicurrency_total_tva = -(float) $remise->multicurrency_amount_tva;
-			$facligne->multicurrency_total_ttc = -(float) $remise->multicurrency_amount_ttc;
+			$facligne->multicurrency_total_ht = -(float) $remise->multicurrency_total_ht;
+			$facligne->multicurrency_total_tva = -(float) $remise->multicurrency_total_tva;
+			$facligne->multicurrency_total_ttc = -(float) $remise->multicurrency_total_ttc;
 
 			$lineid = $facligne->insert();
 			if ($lineid > 0) {
@@ -4256,7 +4286,9 @@ class Facture extends CommonInvoice
 			$pu_ht_devise = (float) price2num($pu_ht_devise);
 			$pu_ttc = (float) price2num($pu_ttc);
 			$pa_ht = price2num($pa_ht); // do not convert to float here, it breaks the functioning of $pa_ht_isemptystring
-
+			if (strpos((string) $txtva, '*') !== false) {
+				$info_bits |= 1;
+			}
 			if (!preg_match('/\((.*)\)/', (string) $txtva)) {
 				$txtva = price2num($txtva); // $txtva can have format '5.0(XXX)' or '5'
 			}
@@ -4319,24 +4351,24 @@ class Facture extends CommonInvoice
 						return -3;
 					}
 				}
-			}
 
-			$localtaxes_type = getLocalTaxesFromRate($txtva, 0, $this->thirdparty, $mysoc);
-
-			if (getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING')) {
-				$tmpproduct = new Product($this->db);
-				$result = $tmpproduct->fetch($fk_product);
-				if (abs($qty) < $tmpproduct->packaging) {
-					$qty = (float) $tmpproduct->packaging;
-					setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'mesgs');
-				} else {
-					if (!empty($tmpproduct->packaging) && $qty > $tmpproduct->packaging) {
-						$coeff = intval(abs($qty) / $tmpproduct->packaging) + 1;
-						$qty = price2num((float) $tmpproduct->packaging * $coeff, 'MS');
-						setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'mesgs');
+				if (getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING')) {
+					$tmpproduct = new Product($this->db);
+					$result = $tmpproduct->fetch($fk_product);
+					if (abs((float) $qty) < $tmpproduct->packaging) {
+						$qty = (float) $tmpproduct->packaging;
+						setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'warnings');
+					} else {
+						if (!empty($tmpproduct->packaging) && (float) price2num(fmod((float) $qty, (float) $tmpproduct->packaging), 'MS')) {
+							$coeff = intval(abs((float) $qty) / $tmpproduct->packaging) + 1;
+							$qty = price2num((float) $tmpproduct->packaging * $coeff, 'MS');
+							setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'warnings');
+						}
 					}
 				}
 			}
+
+			$localtaxes_type = getLocalTaxesFromRate($txtva, 0, $this->thirdparty, $mysoc);
 
 			// Clean vat code
 			$reg = array();
@@ -4368,7 +4400,7 @@ class Facture extends CommonInvoice
 
 			// Rank to use
 			$ranktouse = $rang;
-			if ($ranktouse == -1) {
+			if (empty($ranktouse) || $ranktouse == -1) {
 				$rangmax = $this->line_max($fk_parent_line);
 				$ranktouse = $rangmax + 1;
 			}
@@ -4577,6 +4609,9 @@ class Facture extends CommonInvoice
 			$pu_ht_devise = (float) price2num($pu_ht_devise);
 			$pa_ht = price2num($pa_ht); // do not convert to float here, it breaks the functioning of $pa_ht_isemptystring
 
+			if (strpos((string) $txtva, '*') !== false) {
+				$info_bits |= 1;
+			}
 			if (!preg_match('/\((.*)\)/', (string) $txtva)) {
 				$txtva = price2num($txtva); // $txtva can have format '5.0(XXX)' or '5'
 			}
@@ -4684,7 +4719,7 @@ class Facture extends CommonInvoice
 				$this->line->rang = $rangmax + 1;
 			}
 			$apply_abs_price_on_credit_note = false;
-			if ($this->type == self::TYPE_CREDIT_NOTE  && !getDolGlobalInt('FACTURE_ENABLE_NEGATIVE_LINES') && !getDolGlobalInt('INVOICE_KEEP_DISCOUNT_LINES_AS_IN_ORIGIN')) {
+			if ($this->type == self::TYPE_CREDIT_NOTE && !(getDolGlobalInt('FACTURE_ENABLE_NEGATIVE_LINES') && getDolGlobalInt('INVOICE_KEEP_DISCOUNT_LINES_AS_IN_ORIGIN'))) {
 				$apply_abs_price_on_credit_note = true;
 			}
 
@@ -4692,14 +4727,15 @@ class Facture extends CommonInvoice
 			if (getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING')) {
 				if ($qty < $this->line->packaging) {
 					$qty = $this->line->packaging;
+					setEventMessage($langs->trans('QtyRecalculatedWithPackaging'), 'warnings');
 				} else {
 					if (!empty($this->line->packaging)
 						&& is_numeric($this->line->packaging)
 						&& (float) $this->line->packaging > 0
-						&& fmod((float) $qty, (float) $this->line->packaging) > 0) {
+						&& (float) price2num(fmod((float) $qty, (float) $this->line->packaging), 'MS')) {
 						$coeff = intval($qty / $this->line->packaging) + 1;
 						$qty = $this->line->packaging * $coeff;
-						setEventMessage($langs->trans('QtyRecalculatedWithPackaging'), 'mesgs');
+						setEventMessage($langs->trans('QtyRecalculatedWithPackaging'), 'warnings');
 					}
 				}
 			}
@@ -4806,7 +4842,7 @@ class Facture extends CommonInvoice
 	 * Update invoice line with percentage
 	 *
 	 * @param  FactureLigne $line       	Invoice line
-	 * @param  int          $percent    	Percentage
+	 * @param  int|float    $percent    	Percentage
 	 * @param  boolean      $update_price   Update object price
 	 * @return void
 	 */
@@ -5109,9 +5145,9 @@ class Facture extends CommonInvoice
 
 			// Clean parameters (if not defined or using deprecated value)
 			if (!getDolGlobalString('FACTURE_ADDON')) {
-				$conf->global->FACTURE_ADDON = 'mod_facture_terre';
-			} elseif (getDolGlobalString('FACTURE_ADDON') == 'terre') {
-				$conf->global->FACTURE_ADDON = 'mod_facture_terre';
+				$conf->global->FACTURE_ADDON = 'mod_facture_mars';
+			} elseif (getDolGlobalString('FACTURE_ADDON') == 'terre') {	// terre is deprecated
+				$conf->global->FACTURE_ADDON = 'mod_facture_mars';
 			} elseif (getDolGlobalString('FACTURE_ADDON') == 'mercure') {
 				$conf->global->FACTURE_ADDON = 'mod_facture_mercure';
 			}

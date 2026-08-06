@@ -36,6 +36,7 @@ $confirm = isset($argv[1]) ? $argv[1] : '';
 
 // Include Dolibarr environment
 $res = 0;
+$reg = array();
 if (!$res && file_exists($path."../../master.inc.php")) {
 	$res = @include $path."../../master.inc.php";
 }
@@ -60,6 +61,9 @@ if (!$res && preg_match('/\/nltechno([^\/]*)\//', $_SERVER["PHP_SELF"], $reg)) {
 if (!$res) {
 	die("Failed to include master.inc.php file\n");
 }
+/**
+ * @var DoliDB $db
+ */
 include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 
@@ -67,17 +71,21 @@ include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
  *	Main
  */
 
-print "***** ".$script_file." *****\n";
-print "Update dates to current year for database name = ".$db->database_name."\n";
+print "***** ".$script_file." ".$confirm." *****\n";
 if (empty($confirm)) {
-	print "Usage: $script_file confirm\n";
+	print "Usage: $script_file confirm|confirmresetblockedlog\n";
 	print "Return code: 0 if success, <>0 if error\n";
 	exit(1);
 }
 
 
-$tmp = dol_getdate(dol_now());
+$dolnow = dol_now();
 
+// Current year
+$tmp = dol_getdate($dolnow);
+
+$year = 2010;					// Old year in demo
+$lastyear = $tmp['year'] - 2;	// New year in demo
 
 $tables = array(
 	'propal' => array(0 => 'datep', 1 => 'fin_validite', 2 => 'date_valid', 3 => 'date_cloture'),
@@ -92,54 +100,196 @@ $tables = array(
 	'ticket' => array(0 => 'datec', 1 => 'date_read', 2 => 'date_close')
 );
 
-$year = 2010;
-$currentyear = $tmp['year'];
-while ($year <= $currentyear) {
-	//$year=2021;
-	$delta1 = ($currentyear - $year);
-	$delta2 = ($currentyear - $year - 1);
-	//$delta=-1;
 
-	if ($delta1) {
-		foreach ($tables as $tablekey => $tableval) {
-			print "Correct ".$tablekey." for year ".$year." and move them to current year ".$currentyear." ";
-			$sql = "select rowid from ".MAIN_DB_PREFIX.$tablekey." where ".$tableval[0]." between '".$year."-01-01' and '".$year."-12-31' and ".$tableval[0]." < DATE_ADD(NOW(), INTERVAL -1 YEAR)";
-			//$sql="select rowid from ".MAIN_DB_PREFIX.$tablekey." where ".$tableval[0]." between '".$year."-01-01' and '".$year."-12-31' and ".$tableval[0]." > NOW()";
-			$resql = $db->query($sql);
-			if ($resql) {
-				$num = $db->num_rows($resql);
-				$i = 0;
-				while ($i < $num) {
-					$obj = $db->fetch_object($resql);
-					if ($obj) {
-						print ".";
-						$sql2 = "UPDATE ".MAIN_DB_PREFIX.$tablekey." set ";
-						$j = 0;
-						foreach ($tableval as $field) {
-							if ($j) {
-								$sql2 .= ", ";
+if ($confirm == 'confirm') {
+	print "Update dates to current year for database name = ".$db->database_name."\n";
+
+	// Upgrade dates from 2010 to current year - 2.
+	while ($year <= $lastyear) {
+		//$year=2021;
+		$delta1 = ($lastyear - $year);
+		$delta2 = ($lastyear - $year - 1);
+		//$delta=-1;
+
+		if ($delta1) {
+			foreach ($tables as $tablekey => $tableval) {
+				print "Correct ".$tablekey." for year ".$year." and move them to current year ".$lastyear." ";
+				$sql = "select rowid from ".MAIN_DB_PREFIX.$tablekey." where ".$tableval[0]." between '".$year."-01-01' and '".$year."-12-31' and ".$tableval[0]." < DATE_ADD(NOW(), INTERVAL -1 YEAR)";
+				//$sql="select rowid from ".MAIN_DB_PREFIX.$tablekey." where ".$tableval[0]." between '".$year."-01-01' and '".$year."-12-31' and ".$tableval[0]." > NOW()";
+				$resql = $db->query($sql);
+				if ($resql) {
+					$num = $db->num_rows($resql);
+					$i = 0;
+					while ($i < $num) {
+						$obj = $db->fetch_object($resql);
+						if ($obj) {
+							print ".";
+							$sql2 = "UPDATE ".MAIN_DB_PREFIX.$tablekey." set ";
+							$j = 0;
+							foreach ($tableval as $field) {
+								if ($j) {
+									$sql2 .= ", ";
+								}
+								$sql2 .= $field." = ".$db->ifsql("DATE_ADD(".$field.", INTERVAL ".$delta1." YEAR) > NOW()", "DATE_ADD(".$field.", INTERVAL ".$delta2." YEAR)", "DATE_ADD(".$field.", INTERVAL ".$delta1." YEAR)");
+								$j++;
 							}
-							$sql2 .= $field." = ".$db->ifsql("DATE_ADD(".$field.", INTERVAL ".$delta1." YEAR) > NOW()", "DATE_ADD(".$field.", INTERVAL ".$delta2." YEAR)", "DATE_ADD(".$field.", INTERVAL ".$delta1." YEAR)");
-							$j++;
+							$sql2 .= " WHERE rowid = ".$obj->rowid;
+							//print $sql2."\n";
+							$resql2 = $db->query($sql2);
+							if (!$resql2) {
+								dol_print_error($db);
+							}
 						}
-						$sql2 .= " WHERE rowid = ".$obj->rowid;
-						//print $sql2."\n";
-						$resql2 = $db->query($sql2);
-						if (!$resql2) {
-							dol_print_error($db);
-						}
+						$i++;
 					}
-					$i++;
+				} else {
+					dol_print_error($db);
 				}
-			} else {
-				dol_print_error($db);
+				print "\n";
 			}
-			print "\n";
 		}
+
+		$year++;
+	}
+}
+
+if ($confirm == 'confirmresetblockedlog') {
+	$year = $tmp['year'];			// Old year in demo
+	$lastyear = $tmp['year'] - 2;	// New year in demo
+
+	// Upgrade dates from current year to current year - 2.
+	while ($year >= $lastyear) {
+		//$year=2021;
+		$delta1 = ($lastyear - $year);			// negative value
+		$delta2 = ($lastyear - $year - 1);		// negative value
+		//$delta=-1;
+
+		if ($delta1) {
+			foreach ($tables as $tablekey => $tableval) {
+				print "Correct ".$tablekey." for year ".$year." and move them to current year ".$lastyear." ";
+				$sql = "select rowid from ".MAIN_DB_PREFIX.$tablekey." where ".$tableval[0]." between '".$year."-01-01' and '".$year."-12-31'";
+				$resql = $db->query($sql);
+				if ($resql) {
+					$num = $db->num_rows($resql);
+					$i = 0;
+					while ($i < $num) {
+						$obj = $db->fetch_object($resql);
+						if ($obj) {
+							print ".";
+							$sql2 = "UPDATE ".MAIN_DB_PREFIX.$tablekey." set ";
+							$j = 0;
+							foreach ($tableval as $field) {
+								if ($j) {
+									$sql2 .= ", ";
+								}
+								$sql2 .= $field." = DATE_ADD(".$field.", INTERVAL ".$delta1." YEAR)";
+								$j++;
+							}
+							$sql2 .= " WHERE rowid = ".$obj->rowid;
+							//print $sql2."\n";
+							$resql2 = $db->query($sql2);
+							if (!$resql2) {
+								dol_print_error($db);
+							}
+						}
+						$i++;
+					}
+				} else {
+					dol_print_error($db);
+				}
+				print "\n";
+			}
+		}
+
+		$year--;
 	}
 
-	$year++;
+
+	$sql = "CREATE TABLE tmp_delete (SELECT pf.fk_paiement FROM llx_paiement_facture as pf WHERE pf.fk_facture IN (SELECT f.rowid FROM llx_facture as f WHERE f.datef < '2024-12-31'))";
+	print $sql;
+	print "\n";
+	$db->query($sql);
+
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."paiement_facture WHERE fk_paiement IN (SELECT fk_paiement FROM tmp_delete)";
+	print $sql;
+	print "\n";
+	$db->query($sql);
+
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."paiement WHERE rowid IN (SELECT fk_paiement FROM tmp_delete)";
+	print $sql;
+	print "\n";
+	$db->query($sql);
+
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."facturedet as fd WHERE fd.fk_facture IN (SELECT rowid FROM ".MAIN_DB_PREFIX."facture WHERE datef < '".$lastyear."-12-31')";
+	print $sql;
+	print "\n";
+	$db->query($sql);
+
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."facture WHERE datef < '".$lastyear."-12-31'";
+	print $sql;
+	print "\n";
+	$db->query($sql);
+
+	$sql = "DROP TABLE tmp_delete";
+	print $sql;
+	print "\n";
+	$db->query($sql);
+
+
+	$sql = "UPDATE ".MAIN_DB_PREFIX."facture SET datef = datec WHERE datef >= NOW()";
+	print $sql;
+	print "\n";
+	$db->query($sql);
+
+	$sql = "UPDATE ".MAIN_DB_PREFIX."paiement as p SET datep = (SELECT datef FROM ".MAIN_DB_PREFIX."facture as f WHERE f.rowid = (SELECT fk_facture FROM ".MAIN_DB_PREFIX."paiement_facture as pf WHERE pf.fk_paiement = p.rowid AND pf.fk_facture = f.rowid) LIMIT 1)";
+	print $sql;
+	print "\n";
+	$db->query($sql);
+
+
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."blockedlog";
+	print $sql;
+	print "\n";
+	$db->query($sql);
+
+	/*
+	// Delete corrupted record no more used that still exists in demo image but can't exist in a production env
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."blockedlog WHERE action LIKE 'PAYMENT_VARIOUS_%'";
+	print $sql;
+	print "\n";
+	$db->query($sql);
+
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."blockedlog WHERE rowid < 199";
+	print $sql;
+	print "\n";
+	$db->query($sql);
+
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."blockedlog WHERE action LIKE 'MODULE_RESET'";
+	print $sql;
+	print "\n";
+	$db->query($sql);
+
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."blockedlog";
+	print $sql;
+	print "\n";
+	$db->query($sql);
+
+	$sql = "UPDATE ".MAIN_DB_PREFIX."blockedlog SET date_creation = tms WHERE date_creation <> tms";
+	print $sql;
+	print "\n";
+
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."blockedlog WHERE date_creation > '".dol_print_date($dolnow, 'day')."'";
+	print $sql;
+	print "\n";
+	$db->query($sql);
+
+	$sql = "UPDATE ".MAIN_DB_PREFIX."blockedlog SET debuginfo = NULL WHERE debuginfo IS NOT NULL";
+	print $sql;
+	print "\n";
+	$db->query($sql);
+	*/
 }
+
 
 print "\n";
 

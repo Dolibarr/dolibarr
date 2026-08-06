@@ -1,9 +1,10 @@
 <?php
-/* Copyright (C) 2017 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2021 NextGestion         <contact@nextgestion.com>
+/* Copyright (C) 2017       Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2021       NextGestion                 <contact@nextgestion.com>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025		Charlene Benke 				<charlene@patas-monkey.com>
+ * Copyright (C) 2024-2025  MDW                         <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Charlene Benke              <charlene@patas-monkey.com>
+ * Copyright (C) 2026       Alexandre Spangaro          <alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -106,7 +107,7 @@ class Partnership extends CommonObject
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'visible' => 0, 'noteditable' => 1, 'index' => 1, 'css' => 'left', 'comment' => "Id"),
 		'ref' => array('type' => 'varchar(128)', 'label' => 'Ref', 'enabled' => 1, 'position' => 10, 'notnull' => 1, 'visible' => 4, 'noteditable' => 1, 'default' => '(PROV)', 'index' => 1, 'searchall' => 1, 'showoncombobox' => 1, 'comment' => "Reference of object", 'csslist' => 'tdoverflowmax150'),
 		'entity' => array('type' => 'integer', 'label' => 'Entity', 'enabled' => 'isModEnabled("multicompany")', 'position' => 15, 'notnull' => 1, 'visible' => -2, 'default' => '1', 'index' => 1,),
-		'fk_type' => array('type' => 'integer:PartnershipType:partnership/class/partnership_type.class.php:0:(active:=:1)', 'label' => 'Type', 'enabled' => 1, 'position' => 20, 'notnull' => 1, 'visible' => 1, 'csslist' => 'tdoverflowmax125', 'help' => 'YouCanChangeValuesForThisListFromDictionarySetup'),
+		'fk_type' => array('type' => 'integer:PartnershipType:partnership/class/partnership_type.class.php:0:(active:=:1)', 'label' => 'Type', 'enabled' => 1, 'position' => 20, 'notnull' => 1, 'visible' => 1, 'csslist' => 'tdoverflowmax100', 'help' => 'YouCanChangeValuesForThisListFromDictionarySetup'),
 		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))', 'label' => 'ThirdParty', 'picto' => 'company', 'enabled' => 1, 'position' => 50, 'notnull' => -1, 'visible' => 1, 'index' => 1, 'css' => 'maxwidth500', 'csslist' => 'tdoverflowmax125',),
 		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'position' => 61, 'notnull' => 0, 'visible' => 0,),
 		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'position' => 62, 'notnull' => 0, 'visible' => 0,),
@@ -1166,6 +1167,12 @@ class Partnership extends CommonObject
 	public function LibStatut($status, $mode = 0)
 	{
 		// phpcs:enable
+
+		// if $status is null or undefined, return empty string
+		if (is_null($status)) {
+			return '';
+		}
+
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("partnership");

@@ -66,7 +66,6 @@ if (!$user->admin) {
 	accessforbidden();
 }
 
-
 /*
  * Action
  */
@@ -433,7 +432,7 @@ if ($mode == 'setup' && $user->admin) {
 			print '<td>';
 			if ($keyforprovider != 'Login') {
 				if (is_object($tokenobj)) {
-					print $form->textwithpicto(yn(1), $langs->trans("HasAccessToken").' : '.dol_print_date($storage->date_modification, 'dayhour').' state='.dol_escape_htmltag($storage->state));
+					print $form->textwithpicto(yn(1), $langs->trans("HasAccessToken").' : '.dol_print_date($storage->date_modification, 'dayhour').'<br>Scopes saved into field state='.dol_escape_htmltag($storage->state));
 				} else {
 					print '<span class="opacitymedium">'.$langs->trans("NoAccessToken").'</span>';
 				}

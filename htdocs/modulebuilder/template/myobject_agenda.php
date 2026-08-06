@@ -101,8 +101,8 @@ $cancel = GETPOST('cancel');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : getDolDefaultContextPage(__FILE__); // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 
-if (GETPOST('actioncode', 'array')) {
-	$actioncode = GETPOST('actioncode', 'array', 3);
+if (GETPOSTISARRAY('actioncode')) {
+	$actioncode = GETPOST('actioncode', 'array:alpha', 3);
 	if (!count($actioncode)) {
 		$actioncode = '0';
 	}
@@ -111,14 +111,19 @@ if (GETPOST('actioncode', 'array')) {
 }
 $search_rowid = GETPOST('search_rowid');
 $search_agenda_label = GETPOST('search_agenda_label');
+$search_complete = GETPOST('search_complete');
+$search_filtert = GETPOSTINT('search_filtert');
+$search_dateevent_start = GETPOSTDATE('dateevent_start');
+$search_dateevent_end = GETPOSTDATE('dateevent_end');
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
+	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
-}     // If $page is not defined, or '' or -1
+}
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -187,7 +192,10 @@ if (empty($reshook)) {
 	// Purge search criteria
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 		$actioncode = '';
+		$search_rowid = '';
 		$search_agenda_label = '';
+		$search_complete = '';
+		$search_filtert = '';
 	}
 }
 
@@ -318,6 +326,31 @@ if ($object->id > 0) {
 		if ($limit > 0 && $limit != $conf->liste_limit) {
 			$param .= '&limit='.((int) $limit);
 		}
+		if ($search_rowid) {
+			$param .= '&search_rowid='.urlencode($search_rowid);
+		}
+		if ($actioncode !== '' && $actioncode !== '-1') {
+			$param .= '&actioncode='.urlencode($actioncode);
+		}
+		if ($search_agenda_label) {
+			$param .= '&search_agenda_label='.urlencode($search_agenda_label);
+		}
+		if ($search_complete != '') {
+			$param .= '&search_complete='.urlencode($search_complete);
+		}
+		if ($search_filtert != '') {
+			$param .= '&search_filtert='.urlencode($search_filtert);
+		}
+		if ($search_dateevent_start != '') {
+			$param .= '&dateevent_startyear='.GETPOSTINT('dateevent_startyear');
+			$param .= '&dateevent_startmonth='.GETPOSTINT('dateevent_startmonth');
+			$param .= '&dateevent_startday='.GETPOSTINT('dateevent_startday');
+		}
+		if ($search_dateevent_end != '') {
+			$param .= '&dateevent_endyear='.GETPOSTINT('dateevent_endyear');
+			$param .= '&dateevent_endmonth='.GETPOSTINT('dateevent_endmonth');
+			$param .= '&dateevent_endday='.GETPOSTINT('dateevent_endday');
+		}
 
 		// Try to know count of actioncomm from cache
 		$nbEvent = 0;
@@ -329,15 +362,16 @@ if ($object->id > 0) {
 			$titlelist = $langs->trans("Actions").(is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">('.$nbEvent.')</span>' : '');
 		}
 
-		print_barre_liste($titlelist, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlright, '', 0, 1, 0);
+		print_barre_liste($titlelist, 0, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlright, '', 0, 1, 0);
 
 		// List of all actions
-		$filters = [
-			'search_agenda_label' => $search_agenda_label,
-			'search_rowid' => $search_rowid,
-		];
+		$filters = array();
+		$filters['search_agenda_label'] = $search_agenda_label;
+		$filters['search_rowid'] = $search_rowid;
+		$filters['search_complete'] = $search_complete;		// Can be 'na', '0', '100', '50'
+		$filters['search_filtert'] = $search_filtert;
 
-		// TODO Replace this with same code than into list.php
+		// TODO Replace this with the same code than into list.php
 		show_actions_done($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder, !empty($object->module) ? $object->module : '');
 	}
 }

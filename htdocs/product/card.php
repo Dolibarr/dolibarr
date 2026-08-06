@@ -977,6 +977,7 @@ if (empty($reshook)) {
 				$clone = dol_clone($object, 1);
 
 				$clone->id = 0;
+				unset($clone->date_creation);
 				$clone->ref = GETPOST('clone_ref', 'alphanohtml');
 				$clone->status = 0;
 				$clone->status_buy = 0;
@@ -1695,7 +1696,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			if ($type == 1) {
 				print '<tr><td>'.$langs->trans("Duration").'</td><td>';
 				print img_picto('', 'clock', 'class="pictofixedwidth"');
-				print '<input name="duration_value" class="width50" value="'.(GETPOSTISSET('duration_value') ? GETPOST('duration_value') : '').'">';
+				print '<input name="duration_value" class="width50 valignmiddle" value="'.(GETPOSTISSET('duration_value') ? GETPOST('duration_value') : '').'">';
 				print $formproduct->selectMeasuringUnits("duration_unit", "time", (GETPOSTISSET('duration_unit') ? GETPOST('duration_unit', 'alpha') : 'h'), 0, 1);
 
 				// Mandatory period
@@ -2025,6 +2026,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 		 * Product card
 		 */
 
+		$iskit = $object->hasFatherOrChild(1);
+
 		// Card in edit mode
 		if ($action == 'edit' && $usercancreate) {
 			//WYSIWYG Editor
@@ -2284,7 +2287,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				}
 
 				// Stock
-				if (($object->isProduct() || getDolGlobalInt('STOCK_SUPPORTS_SERVICES')) && isModEnabled('stock')) {
+				if (isModEnabled('stock')) {
 					if (isModEnabled('productbatch') && $object->hasbatch()) {
 						print '<tr><td><input type="hidden" id="stockable_product" name="stockable_product" value="on" /></td><td></td></tr>';
 					} else {
@@ -2370,7 +2373,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 						// Brut Weight
 						print '<tr><td>'.$langs->trans("Weight").'</td><td>';
 						print '<input name="weight" size="5" value="'.(GETPOSTISSET('weight') ? GETPOST('weight') : $object->weight).'"> ';
-						print $formproduct->selectMeasuringUnits("weight_units", "weight", GETPOSTISSET('weight_units') ? GETPOST('weight_units') : $object->weight_units, 0, 2);
+						print $formproduct->selectMeasuringUnits("weight_units", "weight", GETPOSTISSET('weight_units') ? GETPOST('weight_units') : (int) $object->weight_units, 0, 2);
 						print '</td></tr>';
 					}
 
@@ -2380,21 +2383,21 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 						print '<input name="size" size="5" value="'.(GETPOSTISSET('size') ? GETPOST('size') : $object->length).'">x';
 						print '<input name="sizewidth" size="5" value="'.(GETPOSTISSET('sizewidth') ? GETPOST('sizewidth') : $object->width).'">x';
 						print '<input name="sizeheight" size="5" value="'.(GETPOSTISSET('sizeheight') ? GETPOST('sizeheight') : $object->height).'"> ';
-						print $formproduct->selectMeasuringUnits("size_units", "size", GETPOSTISSET('size_units') ? GETPOST('size_units') : $object->length_units, 0, 2);
+						print $formproduct->selectMeasuringUnits("size_units", "size", GETPOSTISSET('size_units') ? GETPOST('size_units') : (int) $object->length_units, 0, 2);
 						print '</td></tr>';
 					}
 					if (!getDolGlobalString('PRODUCT_DISABLE_SURFACE')) {
 						// Brut Surface
 						print '<tr><td>'.$langs->trans("Surface").'</td><td>';
 						print '<input name="surface" size="5" value="'.(GETPOSTISSET('surface') ? GETPOST('surface') : $object->surface).'"> ';
-						print $formproduct->selectMeasuringUnits("surface_units", "surface", GETPOSTISSET('surface_units') ? GETPOST('surface_units') : $object->surface_units, 0, 2);
+						print $formproduct->selectMeasuringUnits("surface_units", "surface", GETPOSTISSET('surface_units') ? GETPOST('surface_units') : (int) $object->surface_units, 0, 2);
 						print '</td></tr>';
 					}
 					if (!getDolGlobalString('PRODUCT_DISABLE_VOLUME')) {
 						// Brut Volume
 						print '<tr><td>'.$langs->trans("Volume").'</td><td>';
 						print '<input name="volume" size="5" value="'.(GETPOSTISSET('volume') ? GETPOST('volume') : $object->volume).'"> ';
-						print $formproduct->selectMeasuringUnits("volume_units", "volume", GETPOSTISSET('volume_units') ? GETPOST('volume_units') : $object->volume_units, 0, 2);
+						print $formproduct->selectMeasuringUnits("volume_units", "volume", GETPOSTISSET('volume_units') ? GETPOST('volume_units') : (int) $object->volume_units, 0, 2);
 						print '</td></tr>';
 					}
 
@@ -2402,7 +2405,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 						// Net Measure
 						print '<tr><td>'.$langs->trans("NetMeasure").'</td><td>';
 						print '<input name="net_measure" size="5" value="'.(GETPOSTISSET('net_measure') ? GETPOST('net_measure') : $object->net_measure).'"> ';
-						print $formproduct->selectMeasuringUnits("net_measure_units", "", GETPOSTISSET('net_measure_units') ? GETPOST('net_measure_units') : $object->net_measure_units, 0, 0);
+						print $formproduct->selectMeasuringUnits("net_measure_units", "", GETPOSTISSET('net_measure_units') ? GETPOST('net_measure_units') : (int) $object->net_measure_units, 0, 0);
 						print '</td></tr>';
 					}
 				}
@@ -2488,6 +2491,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 						print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellCode").'</td>';
 						print '<td>';
 						print $formaccounting->select_account((GETPOSTISSET('accountancy_code_sell') ? GETPOST('accountancy_code_sell') : $object->accountancy_code_sell), 'accountancy_code_sell', 1, array(), 1, 1, 'minwidth150 maxwidth300');
+						$nb = $formaccounting->nbaccounts;
+						if ($nb == 0) {
+							print ' &nbsp; <a href="'.DOL_URL_ROOT.'/accountancy/admin/account.php">'.$langs->trans("SetupOn", $langs->trans("Chartofaccounts")).'</a>';
+						}
 						print '</td></tr>';
 
 						// Accountancy_code_sell_intra
@@ -2680,6 +2687,27 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					print '</td></tr>'."\n";
 				}
 
+				// Stockable product / default warehouse
+				if (($object->isProduct() || getDolGlobalInt('STOCK_SUPPORTS_SERVICES')) && isModEnabled('stock')) {	// Do not use isStockManaged here.We must sow info even if stock not managed
+					print '<tr><td>' . $form->textwithpicto($langs->trans("StockableProduct"), $langs->trans('StockableProductDescription')) . '</td>';
+					print '<td>';
+					if ($iskit) {
+						print '<input type="checkbox" readonly disabled> <span class="opacitymedium">' . $langs->trans("NotSupportedOnKits").'</span>';
+					} else {
+						print '<input type="checkbox" readonly disabled '.($object->stockable_product == 1 ? 'checked' : '').'>';
+					}
+					print '</td></tr>';
+
+					if ($object->isStockManaged() && !$iskit) {
+						$warehouse = new Entrepot($db);
+						$warehouse->fetch($object->fk_default_warehouse);
+
+						print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
+						print(!empty($warehouse->id) ? $warehouse->getNomUrl(1) : '');
+						print '</td>';
+					}
+				}
+
 				// Batch number management (to batch)
 				if (isModEnabled('productbatch')) {
 					if ($object->isProduct() || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
@@ -2810,21 +2838,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					print '<tr><td>'.$langs->trans("PublicUrl").'</td><td>';
 					print dol_print_url($object->url, '_blank', 128);
 					print '</td></tr>';
-				}
-
-				// Stockable product / default warehouse
-				if (($object->isProduct() || getDolGlobalInt('STOCK_SUPPORTS_SERVICES')) && isModEnabled('stock')) {
-					print '<tr><td>' . $form->textwithpicto($langs->trans("StockableProduct"), $langs->trans('StockableProductDescription')) . '</td>';
-					print '<td><input type="checkbox" readonly disabled '.($object->stockable_product == 1 ? 'checked' : '').'></td></tr>';
-
-					if ($object->isStockManaged()) {
-						$warehouse = new Entrepot($db);
-						$warehouse->fetch($object->fk_default_warehouse);
-
-						print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
-						print(!empty($warehouse->id) ? $warehouse->getNomUrl(1) : '');
-						print '</td>';
-					}
 				}
 
 				if ($object->isService() && isModEnabled('workstation')) {

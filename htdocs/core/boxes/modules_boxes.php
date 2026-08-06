@@ -265,7 +265,7 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 
 		$MAXLENGTHBOX = 0; // When set to 0: no length limit
 
-		$cachetime = 900; // 900 : 15mn
+		$cachetime = getDolGlobalInt('MAIN_ACTIVATE_FILECACHE_DELAY', 900); // 900 : 15mn
 		$cachedir = DOL_DATA_ROOT.'/users/temp/widgets';
 		$fileid = get_class($this).'id-'.$this->box_id.'-e'.$conf->entity.'-u'.$user->id.'-s'.$user->socid.'.cache';
 		$filename = '/box-'.$fileid;

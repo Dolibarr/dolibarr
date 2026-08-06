@@ -133,9 +133,16 @@ $storage = new DoliStorage($db, $conf, $keyforprovider);
 // Instantiate the Api service using the credentials, http client and storage mechanism for the token
 // $requestedpermissionsarray contains list of scopes.
 // Conversion into URL is done by Reflection on constant with name SCOPE_scope_in_uppercase
-$apiService = $serviceFactory->createService('Google', $credentials, $storage, $requestedpermissionsarray);
-'@phan-var-force  OAuth\OAuth2\Service\Google $apiService'; // createService is only ServiceInterface
-
+$apiService = null;
+$nameofservice = 'Google';
+try {
+	//$nameofservice = ucfirst(strtolower($genericstring));
+	$apiService = $serviceFactory->createService($nameofservice, $credentials, $storage, $requestedpermissionsarray);
+	'@phan-var-force  OAuth\OAuth2\Service\Google $apiService'; // createService is only ServiceInterface
+} catch (Exception $e) {
+	print 'Error, failed to create service for provider '.$nameofservice.($keyforprovider ? '-'.$keyforprovider : '').'. Message was: '.$e->getMessage();
+	exit;
+}
 // access type needed to have oauth provider refreshing token
 // also note that a refresh token is sent only after a prompt
 $apiService->setAccessType('offline');

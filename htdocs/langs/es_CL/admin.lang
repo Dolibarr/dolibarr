@@ -1214,7 +1214,6 @@ ResourceSetup=Configuración del módulo de recursos
 UseSearchToSelectResource=Use un formulario de búsqueda para elegir un recurso (en lugar de una lista desplegable).
 DisabledResourceLinkUser=Deshabilitar característica para vincular un recurso a los usuarios
 DisabledResourceLinkContact=Deshabilitar característica para vincular un recurso a contactos
-ConfirmUnactivation=Confirmar restablecimiento del módulo
 OnMobileOnly=Sólo en pantalla pequeña (teléfono inteligente)
 MAIN_OPTIMIZEFORTEXTBROWSER=Simplificar la interfaz para ciegos.
 MAIN_OPTIMIZEFORTEXTBROWSERDesc=Habilite esta opción si es una persona ciega o si utiliza la aplicación desde un navegador de texto como Lynx o Links.

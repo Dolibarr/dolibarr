@@ -27,11 +27,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/holiday.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -40,9 +35,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/holiday.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/holiday.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("admin", "errors", "holiday"));
+$langs->loadLangs(array("admin", "errors", "holiday", "other"));
 
 if (!$user->admin) {
 	accessforbidden();
@@ -199,7 +198,7 @@ print '<td>'.$langs->trans("Description").'</td>';
 print '<td>'.$langs->trans("Example").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Status").'</td>';
 print '<td align="center" width="16">'.$langs->trans("ShortInfo").'</td>';
-print "</tr>\n";
+print '</tr>'."\n";
 
 clearstatcache();
 
@@ -228,7 +227,7 @@ foreach ($dirmodels as $reldir) {
 					}
 
 					if ($module->isEnabled()) {
-						print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
+						print '<tr class="oddeven"><td>'.$module->getName($langs)."</td><td>\n";
 						print $module->info($langs);
 						print '</td>';
 
@@ -446,6 +445,32 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 	print '</div>';
 	print "<br>";
 }
+
+
+/*
+ * Type of leaves
+ */
+
+print load_fiche_titre($langs->trans("LeaveType"), '', '');
+
+print '<div class="urllink">';
+print img_picto('', 'url', 'class="pictofixedwidth"').' <a href="'.DOL_URL_ROOT.'/admin/dict.php?id=28&search_country_id='.($conf->entity).'">'.$langs->trans("ClickHereToGoToDictionary", $langs->transnoentitiesnoconv("Setup"), $langs->transnoentitiesnoconv("Dictionary"), $langs->transnoentitiesnoconv("LeaveType")).'</a>';
+print '</div>';
+
+print '<br><br>';
+
+
+/*
+ * Type of leaves
+ */
+
+print load_fiche_titre($langs->trans("DictionaryPublicHolidays"), '', '');
+
+print '<div class="urllink">';
+print img_picto('', 'url', 'class="pictofixedwidth"').' <a href="'.DOL_URL_ROOT.'/admin/dict.php?id=32&search_country_id='.($conf->entity).'">'.$langs->trans("ClickHereToGoToDictionary", $langs->transnoentitiesnoconv("Setup"), $langs->transnoentitiesnoconv("Dictionary"), $langs->transnoentitiesnoconv("DictionaryPublicHolidays")).'</a>';
+print '</div>';
+
+print '<br><br>';
 
 
 /*

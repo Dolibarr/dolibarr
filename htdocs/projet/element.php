@@ -11,6 +11,8 @@
  * Copyright (C) 2023-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Günter Lukas			<github@gl.co.at>
+ * Copyright (C) 2026		Joachim Kueter       <git-jk@bloxera.com>
+ * Copyright (C) 2026  		Ferran Marcet           <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -197,6 +199,17 @@ $hookmanager->initHooks(array('projectOverview'));
 
 //if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignment.
 $result = restrictedArea($user, 'projet', $object->id, 'projet&project');
+
+// Check if user has access to any financial module (not just project time)
+$canSeeFinancials = (
+	(isModEnabled('invoice') && $user->hasRight('facture', 'lire'))
+	|| (isModEnabled('supplier_invoice') && ($user->hasRight('fournisseur', 'facture', 'lire') || $user->hasRight('supplier_invoice', 'lire')))
+	|| (isModEnabled('salaries') && $user->hasRight('salaries', 'read'))
+	|| (isModEnabled('expensereport') && $user->hasRight('expensereport', 'lire'))
+	|| (isModEnabled('don') && $user->hasRight('don', 'lire'))
+	|| (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire'))
+	|| (isModEnabled('bank') && $user->hasRight('banque', 'lire'))
+);
 
 $total_duration = 0;
 $total_ttc_by_line = 0;
@@ -723,7 +736,7 @@ $listofreferent = array(
 		'margin' => 'minus',
 		'table' => 'projet_task',
 		'datefieldname' => 'element_date',
-		'disableamount' => 0,
+		'disableamount' => ($canSeeFinancials ? 0 : 1),
 		'urlnew' => DOL_URL_ROOT.'/projet/tasks/time.php?withproject=1&action=createtime&projectid='.$id.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
 		'buttonnew' => 'AddTimeSpent',
 		'testnew' => $user->hasRight('project', 'creer'),
@@ -819,7 +832,7 @@ if (!empty($hookmanager->resArray)) {
 }
 
 if ($action == "addelement") {
-	$tablename = GETPOST("tablename");
+	$tablename = GETPOST("tablename", "aZ09");
 	$elementselectid = GETPOSTINT("elementselect");
 	$result = $object->update_element($tablename, $elementselectid);
 	if ($result < 0) {
@@ -935,6 +948,10 @@ foreach ($listofreferent as $key => $value) {
 	$tablename = $value['table'];
 	$datefieldname = $value['datefieldname'];
 	$qualified = $value['test'];
+	// Hide project_task amounts in profit section for users without financial access
+	if ($key === 'project_task' && !$canSeeFinancials) {
+		$qualified = false;
+	}
 	$margin = empty($value['margin']) ? 0 : $value['margin'];
 	$project_field = empty($value['project_field']) ? '' : $value['project_field'];
 	if ($qualified) {		// If this element must be included into profit summary table ($margin is '', 'minus' or 'add')
@@ -1054,8 +1071,11 @@ foreach ($listofreferent as $key => $value) {
 					}
 				}
 
-				// Change sign of $total_ht_by_line and $total_ttc_by_line for supplier proposal and supplier order
-				if ($tablename == 'commande_fournisseur' || $tablename == 'supplier_proposal') {
+				// Change sign of $total_ht_by_line and $total_ttc_by_line for supplier proposal and supplier order.
+				// Skip when the element already participates to the margin computation via margin='minus'
+				// (line 1095 below will revert sign too, and double-negation would silently flip the value
+				// back to positive - see PROJECT_ELEMENTS_FOR_MINUS_MARGIN=order_supplier in #34684).
+				if (($tablename == 'commande_fournisseur' || $tablename == 'supplier_proposal') && $margin !== 'minus') {
 					$total_ht_by_line = -$total_ht_by_line;
 					$total_ttc_by_line = -$total_ttc_by_line;
 				}
@@ -1447,6 +1467,8 @@ foreach ($listofreferent as $key => $value) {
 
 				if ($key == "order_supplier" && ($element->status == 6 || $element->status == 7)) {
 					print '<tr class="oddeven tr_canceled">';
+				} elseif ($key == "order_supplier" && ($element->billed)) {
+					print '<tr class="oddeven tr_paid">';
 				} else {
 					print '<tr class="oddeven" >';
 				}

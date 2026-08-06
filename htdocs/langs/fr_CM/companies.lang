@@ -107,7 +107,6 @@ MonkeyNumRefModelDesc=Renvoie un nombre au format %syymm-nnnn pour le code clien
 LeopardNumRefModelDesc=Code gratuit sans vérification.
 ManagingDirectors=Nom du responsable(s) (CEO, directeur, président...)
 MergeOriginThirdparty=Tiers dupliqué (le tiers que vous souhaitez supprimer)
-BecarefullChangeThirdpartyBeforeAddProductToInvoice=Attention, en fonction des paramètres de prix de vos produits, vous devez modifier le tiers avant d'ajouter le produit au point de vente.
 EmailAlreadyExistsPleaseRewriteYourCompanyName=L'e-mail existe déjà, veuillez réécrire le nom de votre société
 ExternalSystemID=ID du système externe
 ThirdPartyMustBeACustomerToCreateBANOnStripe=Le tiers doit être un client pour permettre la création de ses coordonnées bancaires du côté de Stripe.

@@ -48,6 +48,7 @@
  * @param	''|'systemauto'|'system'	$excludetype	A type to exclude ('systemauto', 'system', '')
  * @param	int   			$resourceid			Preselected value of resource for filter on resource
  * @param	int     		$search_categ_cus	Tag id
+ * @param	string			$search_import_key	Import IDfilter
  * @return	void
  */
 function print_actions_filter(
@@ -69,7 +70,8 @@ function print_actions_filter(
 	$usergroupid = 0,
 	$excludetype = '',
 	$resourceid = 0,
-	$search_categ_cus = 0
+	$search_categ_cus = 0,
+	$search_import_key = ''
 ) {
 	global $user, $langs, $db, $hookmanager;
 	global $massaction;

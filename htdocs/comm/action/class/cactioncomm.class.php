@@ -101,17 +101,22 @@ class CActionComm
 	/**
 	 *  Load action type from database
 	 *
-	 *  @param  int|string	$id     id or code of action type to read
+	 *  @param  int|string	$id     Id or code of action type to read
+	 *  @param	string		$code	Code
 	 *  @return int             	1=ok, 0=not found, -1=error
 	 */
-	public function fetch($id)
+	public function fetch($id, $code = '')
 	{
 		$sql = "SELECT id, code, type, libelle as label, color, active, picto";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_actioncomm";
-		if (is_numeric($id)) {
-			$sql .= " WHERE id=".(int) $id;
+		if (!empty($id)) {
+			if (is_numeric($id)) {
+				$sql .= " WHERE id = ".(int) $id;
+			} else {	// For backward compatibility
+				$sql .= " WHERE code = '".$this->db->escape($id)."'";
+			}
 		} else {
-			$sql .= " WHERE code='".$this->db->escape($id)."'";
+			$sql .= " WHERE code = '".$this->db->escape($code)."'";
 		}
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);

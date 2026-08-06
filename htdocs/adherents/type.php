@@ -40,7 +40,6 @@ require '../main.inc.php';
  * @var Translate $langs
  * @var User $user
  */
-
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
@@ -553,7 +552,7 @@ if ($action == 'create') {
 	print '<table class="border centpercent">';
 	print '<tbody>';
 
-	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" class="minwidth200" name="label" value= "'. $label. '" autofocus="autofocus"></td></tr>';
+	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" class="minwidth300" name="label" value= "'. $label. '" autofocus="autofocus"></td></tr>';
 
 	print '<tr><td>'.$langs->trans("Status").'</td><td>';
 	print $form->selectarray('status', array('0' => $langs->trans('ActivityCeased'), '1' => $langs->trans('InActivity')), 1, 0, 0, 0, '', 0, 0, 0, '', 'minwidth100');
@@ -566,7 +565,7 @@ if ($action == 'create') {
 		"mor" => $langs->trans("Moral"),
 	];
 	print '<tr><td><span>'.$langs->trans("MembersNature").'</span></td><td>';
-	print $form->selectarray("morphy", $morphys, GETPOSTISSET("morphy") ? GETPOST("morphy", 'aZ09') : 'morphy');
+	print $form->selectarray("morphy", $morphys, GETPOSTISSET("morphy") ? GETPOST("morphy", 'aZ09') : 'morphy', 0, 0, 0, '', 0, 0, 0, '', 'minwidth300');
 	print "</td></tr>";
 
 	print '<tr><td>'.$form->textwithpicto($langs->trans("SubscriptionRequired"), $langs->trans("SubscriptionRequiredDesc")).'</td><td>';
@@ -574,7 +573,7 @@ if ($action == 'create') {
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("Amount").'</td><td>';
-	print '<input name="amount" size="5" value="'.(GETPOSTISSET('amount') ? GETPOST('amount') : price($amount)).'">';
+	print '<input name="amount" size="5" value="'.(GETPOSTISSET('amount') ? GETPOST('amount') : '').'">';
 	print '</td></tr>';
 
 	print '<tr><td>'.$form->textwithpicto($langs->trans("CanEditAmountShort"), $langs->transnoentities("CanEditAmount")).'</td><td>';
@@ -586,7 +585,7 @@ if ($action == 'create') {
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("Duration").'</td><td colspan="3">';
-	print '<input name="duration_value" size="5" value="'. $duration_value .'"> ';
+	print '<input name="duration_value" size="5" value="'. ($duration_value ? $duration_value : 1) .'"> ';
 	print $formproduct->selectMeasuringUnits("duration_unit", "time", GETPOSTISSET("duration_unit") ? GETPOST('duration_unit', 'aZ09') : 'y', 0, 1);
 	print '</td></tr>';
 

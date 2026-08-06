@@ -981,10 +981,13 @@ class FormFile
 				foreach ($file_list as $file) {
 					$i++;
 
-					if (!empty($file['rowid'])) {
+					if (!empty($file['rowid']) && $user->hasRight('ecm', 'read')) {
+						// If we have permission to read ECM files, we can use link for ECM file (not blocked by security test),
+						// so it will show the expended information found into ECM table
 						$ecmfile = new EcmFiles($this->db);
 						$ecmfile->fetch($file['rowid']);
 					} else {
+						// If no permission to read ECM files, popup for ECM extended information will not work so we show a simple link with no popup.
 						$ecmfile = null;
 					}
 
@@ -1012,8 +1015,10 @@ class FormFile
 					if (getDolGlobalInt('PREVIEW_PICTO_ON_LEFT_OF_NAME')) {
 						$out .= $imgpreview;
 					}
+
 					if (is_object($ecmfile)) {
-						$out .= $ecmfile->getNomUrl(1, $modulepart, 0, 0, ' documentdownload');
+						$out .= $ecmfile->getNomUrl(1, $modulepart, 0, 0, ' documentdownload');				// We show property in ECM
+						//$out .= $ecmfile->getNomUrl(1, $modulepart, 0, 0, ' documentdownload', $object);	// We show property on object
 					} else {
 						$out .= '<a class="documentdownload paddingright" ';
 						if (getDolGlobalInt('MAIN_DISABLE_FORCE_SAVEAS') == 2) {
@@ -1067,7 +1072,7 @@ class FormFile
 						$fulllink = $urlwithroot.'/document.php'.($paramlink ? '?'.$paramlink : '');
 
 						$out .= '<a href="'.$fulllink.'" target="_blank" rel="noopener">'.img_picto($langs->trans("FileSharedViaALink"), 'globe').'</a> ';
-						$out .= '<input type="text" class="quatrevingtpercentminusx width75 nopadding small" id="downloadlink'.$file['rowid'].'" name="downloadexternallink" title="'.dol_escape_htmltag($langs->trans("FileSharedViaALink")).'" value="'.dol_escape_htmltag($fulllink).'" spellcheck="false">';
+						$out .= '<input type="text" class="quatrevingtpercentminusx width75 nopadding small downloadexternallink" id="downloadlink'.$file['rowid'].'" name="downloadexternallink" title="'.dol_escape_htmltag($langs->trans("FileSharedViaALink")).'" value="'.dol_escape_htmltag($fulllink).'" spellcheck="false">';
 						$out .= ajax_autoselect('downloadlink'.$file['rowid']);
 					} else {
 						//print '<span class="opacitymedium">'.$langs->trans("FileNotShared").'</span>';
@@ -1426,7 +1431,7 @@ class FormFile
 			// Show title of list of existing files
 			$morehtmlright = '';
 			if (!empty($moreoptions['showhideaddbutton']) && $conf->use_javascript_ajax) {
-				$tmpurlforbutton = 'javascript:console.log("open add file form");jQuery(".divattachnewfile").toggle(); if (!jQuery(".divattachnewfile").is(":hidden")) { jQuery("input[type=\'file\']").click(); } void(0);';
+				$tmpurlforbutton = 'javascript:console.log("open add file form");jQuery(".divattachnewfile").toggle(); if (!jQuery(".divattachnewfile").is(":hidden")) { jQuery(".divattachnewfile input[type=\'file\']").first().click();} void(0);';	// scope file picker click to the just-shown form to avoid triggering native file dialog twice when other input[type=file] exist on the page
 				$morehtmlright .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', $tmpurlforbutton, '', $permtoeditline);
 			}
 
@@ -1679,7 +1684,7 @@ class FormFile
 
 								print '<!-- shared link -->';
 								print '<a href="'.$fulllink.'" target="_blank" rel="noopener">'.img_picto($langs->trans("FileSharedViaALink"), 'globe').'</a> ';
-								print '<input type="text" class="centpercentminusx minwidth50imp nopadding small" id="downloadlink'.$filearray[$key]['rowid'].'" name="downloadexternallink" title="'.dol_escape_htmltag($langs->trans("FileSharedViaALink")).'" value="'.dol_escape_htmltag($fulllink).'" spellcheck="false">';
+								print '<input type="text" class="centpercentminusx minwidth50imp nopadding small downloadexternallink" id="downloadlink'.$filearray[$key]['rowid'].'" name="downloadexternallink" title="'.dol_escape_htmltag($langs->trans("FileSharedViaALink")).'" value="'.dol_escape_htmltag($fulllink).'" spellcheck="false">';
 							} else {
 								//print '<span class="opacitymedium">'.$langs->trans("FileNotShared").'</span>';
 							}
@@ -2206,7 +2211,7 @@ class FormFile
 
 					print '<!-- shared link -->';
 					print img_picto($langs->trans("FileSharedViaALink"), 'globe').' ';
-					print '<input type="text" class="quatrevingtpercent width100 nopadding nopadding small" id="downloadlink" name="downloadexternallink" value="'.dol_escape_htmltag($fulllink).'" spellcheck="false">';
+					print '<input type="text" class="quatrevingtpercent width100 nopadding nopadding small downloadexternallink" id="downloadlink" name="downloadexternallink" value="'.dol_escape_htmltag($fulllink).'" spellcheck="false">';
 				}
 				//if (!empty($useinecm) && $useinecm != 6)  print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart;
 				//if ($forcedownload) print '&attachment=1';
@@ -2383,7 +2388,7 @@ class FormFile
 					$fulllink = $urlwithroot.'/document.php?type=link&hashp=' . $link->share;
 
 					print '<a href="'.$fulllink.'" target="_blank" rel="noopener">'.img_picto($langs->trans("FileSharedViaALink"), 'globe').'</a> ';
-					print '<input type="text" class="centpercentminusx minwidth200imp nopadding small" id="downloadlink'.$link->id.'" name="downloadexternallink" title="'.dol_escape_htmltag($langs->trans("LinkSharedViaALink")).'" value="'.dol_escape_htmltag($fulllink).'" spellcheck="false">';
+					print '<input type="text" class="centpercentminusx minwidth200imp nopadding small downloadexternallink" id="downloadlink'.$link->id.'" name="downloadexternallink" title="'.dol_escape_htmltag($langs->trans("LinkSharedViaALink")).'" value="'.dol_escape_htmltag($fulllink).'" spellcheck="false">';
 				}
 				print '</td>';
 				print '<td class="right">';

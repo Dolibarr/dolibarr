@@ -1,10 +1,11 @@
 <?php
-/* Copyright (C) 2006-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2009-2012	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
- * Copyright (C) 2012-2016 Juanjo Menent		<jmenent@2byte.es>
+/* Copyright (C) 2006-2012	Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2009-2012	Regis Houssin               <regis.houssin@inodbox.com>
+ * Copyright (C) 2012       Christophe Battarel         <christophe.battarel@altairis.fr>
+ * Copyright (C) 2012-2016  Juanjo Menent               <jmenent@2byte.es>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       MDW                         <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026       Alexandre Spangaro          <alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -444,7 +445,7 @@ class ImportCsv extends ModeleImports
 										$file = (empty($objimport->array_import_convertvalue[0][$val]['classfile']) ? $objimport->array_import_convertvalue[0][$val]['file'] : $objimport->array_import_convertvalue[0][$val]['classfile']);
 										$class = $objimport->array_import_convertvalue[0][$val]['class'];
 										$method = $objimport->array_import_convertvalue[0][$val]['method'];
-										if ($this->cacheconvert[$file.'_'.$class.'_'.$method.'_'][$newval] != '') {
+										if (isset($this->cacheconvert[$file.'_'.$class.'_'.$method.'_'][$newval]) && $this->cacheconvert[$file.'_'.$class.'_'.$method.'_'][$newval] != $newval) {
 											$newval = $this->cacheconvert[$file.'_'.$class.'_'.$method.'_'][$newval];
 										} else {
 											$resultload = dol_include_once($file);

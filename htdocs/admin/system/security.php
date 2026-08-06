@@ -40,9 +40,11 @@ require '../../main.inc.php';
  * @var string		$dolibarr_main_restrict_ip
  * @var string		$dolibarr_main_db_pass
  * @var string		$dolibarr_main_db_encrypted_pass
- * @var string|string[]		$dolibarr_main_stream_to_disable
+ * @var string		$dolibarr_website_allow_custom_php
  * @var string		$dolibarr_nocsrfcheck
+ * @var string|string[]		$dolibarr_main_stream_to_disable
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -154,7 +156,26 @@ if (getDolGlobalString('MAIN_SECURITY_SHOW_MORE_INFO')) {
 
 print '<br>';
 print "<strong>PHP disable_functions</strong>: ";
-$arrayoffunctionsdisabled = explode(',', ini_get('disable_functions'));
+// The original value is...
+$disablefunctionorign = '';
+$phparray = phpinfo_array();
+foreach ($phparray as $key => $value) {
+	foreach ($value as $keyparam => $keyvalue) {
+		if ($keyparam == 'disable_functions') {
+			if (!empty($keyvalue['master'])) {
+				$disablefunctionorign = $keyvalue['master'];
+				break;
+			}
+		}
+	}
+}
+/*
+if (empty($disablefunctionorign)) {
+	$disablefunctionorign = ini_get('disable_functions');		// Not always the real value
+}
+*/
+$arrayoffunctionsdisabled = explode(',', $disablefunctionorign);
+
 $arrayoffunctionstodisable = explode(',', 'dl,apache_note,apache_setenv,pcntl_alarm,pcntl_fork,pcntl_waitpid,pcntl_wait,pcntl_wifexited,pcntl_wifstopped,pcntl_wifsignaled,pcntl_wifcontinued,pcntl_wexitstatus,pcntl_wtermsig,pcntl_wstopsig,pcntl_signal,pcntl_signal_get_handler,pcntl_signal_dispatch,pcntl_get_last_error,pcntl_strerror,pcntl_sigprocmask,pcntl_sigwaitinfo,pcntl_sigtimedwait,pcntl_exec,pcntl_getpriority,pcntl_setpriority,pcntl_async_signals,show_source,virtual');
 //$arrayoffunctionstodisable[] = 'stream_wrapper_restore';
 //$arrayoffunctionstodisable[] = 'stream_wrapper_register';
@@ -368,13 +389,11 @@ if (empty($dolibarr_main_prod)) {
 }
 print '<br>';
 
-print '<strong>$dolibarr_nocsrfcheck</strong>: '.(empty($dolibarr_nocsrfcheck) ? '0' : $dolibarr_nocsrfcheck);
 if (!empty($dolibarr_nocsrfcheck)) {
+	print '<strong>$dolibarr_nocsrfcheck</strong>: '.(empty($dolibarr_nocsrfcheck) ? '0' : $dolibarr_nocsrfcheck);
 	print ' &nbsp; &nbsp;'.img_picto('', 'error').' '.$langs->trans("IfYouAreOnAProductionSetThis", 0);
-} else {
-	print ' &nbsp; &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': 0)</span>';
+	print '<br>';
 }
-print '<br>';
 
 print '<strong>$dolibarr_main_restrict_ip</strong>: ';
 if (empty($dolibarr_main_restrict_ip)) {
@@ -385,14 +404,16 @@ if (empty($dolibarr_main_restrict_ip)) {
 }
 print '<br>';
 
+
 print '<strong>$dolibarr_main_restrict_os_commands</strong>: ';
 if (empty($dolibarr_main_restrict_os_commands)) {
 	print $langs->trans("None");
 } else {
 	print $dolibarr_main_restrict_os_commands;
 }
-print ' &nbsp; &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", 'mysqldump, mysql, pg_dump, pg_restore, mariadb, mariadb-dump, clamdscan').')</span>';
+print ' &nbsp; &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", 'mariadb-dump, mariadb, mysqldump, mysql, pg_dump, pg_restore, clamdscan').')</span>';
 print '<br>';
+
 
 print '<strong>$dolibarr_main_restrict_eval_methods</strong>: ';
 if (empty($dolibarr_main_restrict_eval_methods)) {
@@ -400,8 +421,28 @@ if (empty($dolibarr_main_restrict_eval_methods)) {
 } else {
 	print $dolibarr_main_restrict_eval_methods;
 }
-print ' &nbsp; &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", 'getDolGlobalString,getDolGlobalInt,getDolCurrency,getDolEntity,getDolDBType,fetchNoCompute,hasRight,isAdmin,isModEnabled,isStringVarMatching,abs,min,max,round,dol_now,dol_concat,preg_match').')</span>';
+print ' &nbsp; &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", 'getDolGlobalString, getDolGlobalInt, getDolCurrency, getDolEntity, getDolDBType, fetchNoCompute, hasRight, isAdmin, isModEnabled, isStringVarMatching, abs, min, max, round, dol_now, dol_concat, preg_match').')</span>';
 print '<br>';
+
+
+print '<strong>$dolibarr_website_allow_custom_php</strong>: ';
+if (!empty($dolibarr_website_allow_custom_php) && $dolibarr_website_allow_custom_php == 2) {
+	print img_picto('', 'warning').' ';
+}
+if (empty($dolibarr_website_allow_custom_php)) {
+	print '0';
+} else {
+	print $dolibarr_website_allow_custom_php;
+}
+print ' &nbsp; &nbsp; <span class="opacitymedium">(';
+if (isModEnabled('website')) {
+	print $langs->trans("RecommendedValueIs", '0 if you don\'t include PHP in your websites, else 1');
+} else {
+	print $langs->trans("RecommendedValueIs", '0');
+}
+print ')</span>';
+print '<br>';
+
 
 if (!getDolGlobalString('SECURITY_DISABLE_TEST_ON_OBFUSCATED_CONF')) {
 	print '<strong>$dolibarr_main_db_pass</strong>: ';
@@ -588,7 +629,7 @@ print '<br>';
 // File extension locked in upload by default
 
 print '<strong>'.$langs->trans("UploadExtensionRestriction").'</strong>: ';
-print implode(', ', explode(',', getDolGlobalString('MAIN_FILE_EXTENSION_UPLOAD_RESTRICTION')));
+print implode(', ', explode(',', getDolGlobalString('MAIN_FILE_EXTENSION_UPLOAD_RESTRICTION', implode(',', getExecutableContent()))));
 print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': '.implode(', ', getExecutableContent()).')</span>';
 print '<br>';
 print '<br>';
@@ -819,7 +860,7 @@ $exampletodecrypt = GETPOST('exampletodecrypt', 'password');
 
 print '<strong>'.$langs->trans("AlgorithmFor", $langs->transnoentitiesnoconv("SensitiveData"));
 print $form->textwithpicto('', 'reversible encryption done with dolEncrypt/dolDecrypt');
-print '</strong> = '.constant('MAIN_SECURITY_REVERSIBLE_ALGO').' with a random seed + a crypt key defined into the conf.php file (in $dolibarr_main_dolcrypt_key or $dolibarr_main_instance_unique_id)<br>';
+print '</strong> = '.constant('MAIN_SECURITY_REVERSIBLE_ALGO').' with a random seed + a crypt key defined into the conf.php file (in $dolibarr_main_instance_unique_id or $dolibarr_main_dolcrypt_key)<br>';
 print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 print '<input type="hidden" name="action" value="doldecrypt">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -1003,6 +1044,32 @@ print '<strong>MAIN_SECURITY_CSRF_TOKEN_RENEWAL_ON_EACH_CALL</strong> = '.getDol
 print '<br>';
 
 print '<strong>MAIN_DOCUMENT_IS_OUTSIDE_WEBROOT_SO_NOEXE_NOT_REQUIRED</strong> = '.getDolGlobalString('MAIN_DOCUMENT_IS_OUTSIDE_WEBROOT_SO_NOEXE_NOT_REQUIRED', '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommended").': '.$langs->trans("Undefined").' '.$langs->trans("or").' 0)</span>')."<br>";
+
+
+
+/*
+ * If we call URL with param security.php/test/test and security.php/test%2Ftest, we can get information if
+ * AllowEncodedSlashes is enabled or not.
+ * Note: When there is a string after the page.php/... and before the ? or #, it is available into the $_SERVER["PATH_INFO"].
+ * Note about $_SERVER:
+ * REQUEST_URI: 	/test/before_rewrite/script.php/path/info?q=helloword
+ * PHP_SELF: 		/test/after_rewrite/script.php/path/info
+ * QUERY_STRING: 	q=helloword
+ * SCRIPT_NAME: 	/test/after_rewrite/script.php
+ * PATH_INFO: 		/path/info  						(usually not defined because there is no text between  page.php/... and before the ? or #)
+ * SCRIPT_FILENAME: /var/www/test/php/script.php
+ * __FILE__ : 		/var/www/test/php/script_included.php
+ */
+$request = $_SERVER['REQUEST_URI'];
+if (strpos($request, '%2F') !== false) {		// It seems than even when AllowEncodedSlashes=NoDecode, behaviour is forced to On on some servers.
+	echo '<br><strong>AllowEncodedSlashes probably enabled (NoDecode)</strong>';
+} elseif (strpos($request, '/test/test') !== false) {
+	echo '<br><strong>AllowEncodedSlashes enabled with decoding On</strong>';
+} else {
+	//echo 'Cannot determine';
+}
+
+
 
 print '</div>';
 

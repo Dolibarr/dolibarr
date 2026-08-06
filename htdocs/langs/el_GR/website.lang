@@ -118,7 +118,8 @@ ThisPageHasTranslationPages=Αυτή η σελίδα / κοντέινερ έχε
 NoWebSiteCreateOneFirst=Δεν έχει δημιουργηθεί ακόμα ιστότοπος. Δημιουργήστε ένα πρώτα.
 GoTo=Μετάβαση σε
 DynamicPHPCodeContainsAForbiddenInstruction=Προσθέσατε δυναμικό κώδικα PHP που περιέχει την εντολή PHP ' <strong> %s </strong> ' αυτό απαγορεύεται ως δυναμικό περιεχόμενο (δείτε κρυφές επιλογές WEBSITE_PHPx για να συμπληρώσετε την λίστα επιτρεπτών εντολών  ALLOW_x).
-NotAllowedToAddDynamicContent=Δεν έχετε δικαίωμα να προσθέσετε ή να επεξεργαστείτε δυναμικό περιεχόμενο PHP σε ιστότοπους. Ζητήστε άδεια ή απλά να διατηρήσετε τον κώδικα σε php tags χωρίς τροποποίηση.
+NotAllowedToAddDynamicContent=You don't have permission to add or edit dynamic PHP content in websites. Ask permission or just keep code into php tags unmodified.
+NotAllowedToAddDynamicContentDisabledGlobaly=You currently can't add or edit dynamic PHP content in this website (even if you have permission to), because this feature must be first enabled globally by setting the parameter %s=1 int the conf.php file.<br>Edit your conf.php file to add this parameter, or ask your administrator or support to do it for you.
 ReplaceWebsiteContent=Αναζήτηση ή Αντικατάσταση περιεχομένου ιστότοπου
 DeleteAlsoJs=Διαγράψτε επίσης όλα τα αρχεία javascript αυτού του ιστότοπου;
 DeleteAlsoMedias=Διαγράψτε επίσης όλα τα αρχεία πολυμέσων που αφορούν συγκεκριμένα αυτόν τον ιστότοπο;

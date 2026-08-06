@@ -457,7 +457,7 @@ class DolEditor
 
 			$out .= 'jQuery(document).ready(function() {';
 			$out .= '	jQuery(".buttonforacesave").click(function() {
-        					console.log("We click on savefile button for component '.dol_escape_js($this->htmlname).'");
+        					console.log("We click on button (with class .buttonforacesave) that must fill ace fields for component '.dol_escape_js($this->htmlname).'");
         					var aceEditor = window.ace.edit("'.dol_escape_js($this->htmlname).'aceeditorid");
 							if (aceEditor) {
 								var cursorPos = aceEditor.getCursorPosition();

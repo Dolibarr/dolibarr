@@ -668,7 +668,10 @@ class Notify
 			$application = (preg_match('/^\+/', $applicationcustom) ? $application : '').$applicationcustom;
 		}
 
-		$from = getDolGlobalString('NOTIFICATION_EMAIL_FROM', getDolGlobalString('MAIN_MAIL_EMAIL_FROM'));
+		$from = getDolGlobalString('NOTIFICATION_EMAIL_FROM');
+		if (empty($from)) {
+			$from = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
+		}
 
 		$object_type = '';
 		$link = '';
@@ -822,26 +825,26 @@ class Notify
 							case 'FICHINTER_ADD_CONTACT':
 								$link = '<a href="'.$urlwithroot.'/fichinter/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 								$dir_output = $conf->ficheinter->dir_output;
-								$object_type = 'ficheinter';
+								$object_type = 'fichinter';
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextInterventionAddedContact", $link);
 								break;
 							case 'FICHINTER_VALIDATE':
 								$link = '<a href="'.$urlwithroot.'/fichinter/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 								$dir_output = $conf->ficheinter->dir_output;
-								$object_type = 'ficheinter';
+								$object_type = 'fichinter';
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextInterventionValidated", $link);
 								break;
 							case 'FICHINTER_MODIFY':
 								$link = '<a href="'.$urlwithroot.'/fichinter/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 								$context_info = array_key_exists('signature', $object->context) ? $object->getLibSignedStatus() : '';
 								$dir_output = $conf->ficheinter->dir_output;
-								$object_type = 'ficheinter';
+								$object_type = 'fichinter';
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextInterventionModified", $link, $context_info);
 								break;
 							case 'FICHINTER_CLOSE':
 								$link = '<a href="'.$urlwithroot.'/fichinter/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 								$dir_output = $conf->ficheinter->dir_output;
-								$object_type = 'ficheinter';
+								$object_type = 'fichinter';
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextInterventionClosed", $link);
 								break;
 							case 'ORDER_SUPPLIER_VALIDATE':
@@ -1147,26 +1150,26 @@ class Notify
 					case 'FICHINTER_ADD_CONTACT':
 						$link = '<a href="'.$urlwithroot.'/fichinter/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 						$dir_output = $conf->ficheinter->dir_output;
-						$object_type = 'ficheinter';
+						$object_type = 'fichinter';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextInterventionAddedContact", $link);
 						break;
 					case 'FICHINTER_VALIDATE':
 						$link = '<a href="'.$urlwithroot.'/fichinter/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 						$dir_output = $conf->facture->dir_output;
-						$object_type = 'ficheinter';
+						$object_type = 'fichinter';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextInterventionValidated", $link);
 						break;
 					case 'FICHINTER_MODIFY':
 						$link = '<a href="'.$urlwithroot.'/fichinter/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 						$context_info = array_key_exists('signature', $object->context) ? $object->getLibSignedStatus() : '';
 						$dir_output = $conf->ficheinter->dir_output;
-						$object_type = 'ficheinter';
+						$object_type = 'fichinter';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextInterventionModified", $link, $context_info);
 						break;
 					case 'FICHINTER_CLOSE':
 						$link = '<a href="'.$urlwithroot.'/fichinter/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 						$dir_output = $conf->facture->dir_output;
-						$object_type = 'ficheinter';
+						$object_type = 'fichinter';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextInterventionClosed", $link);
 						break;
 					case 'ORDER_SUPPLIER_CANCEL':
@@ -1266,7 +1269,7 @@ class Notify
 						break;
 				}
 				$ref = dol_sanitizeFileName($newref);
-				$pdf_path = $dir_output."/".$ref."/".$ref.".pdf";
+				$pdf_path = $dir_output."/".$ref.".pdf";
 				if (!dol_is_file($pdf_path)) {
 					// We can't add PDF as it is not generated yet.
 					$filepdf = '';
@@ -1287,7 +1290,7 @@ class Notify
 				if (!empty($mailTemplateLabel)) {
 					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 					$formmail = new FormMail($this->db);
-					$emailTemplate = $formmail->getEMailTemplate($this->db, $object_type.'_send', $user, $outputlangs, 0, 1, $mailTemplateLabel);
+					$emailTemplate = $formmail->getEMailTemplate($this->db, $object_type, $user, $outputlangs, 0, 1, $mailTemplateLabel);
 				}
 				if (!empty($mailTemplateLabel) && is_object($emailTemplate) && $emailTemplate->id > 0) {
 					if (property_exists($object, 'thirdparty')) {

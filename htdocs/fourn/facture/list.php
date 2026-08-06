@@ -196,7 +196,7 @@ $arrayfields = array(
 	'f.label' => array('label' => "Label", 'checked' => '0', 'position' => 20),
 	'f.datef' => array('label' => "DateInvoice", 'checked' => '1', 'position' => 25),
 	'f.date_lim_reglement' => array('label' => "DateDue", 'checked' => '1', 'position' => 27),
-	'p.ref' => array('label' => "ProjectRef", 'checked' => '0', 'position' => 30),
+	'p.ref' => array('label' => "ProjectRef", 'checked' => '1', 'position' => 30, 'enabled' => (isModEnabled('project') ? '1' : '0')),
 	's.nom' => array('label' => "ThirdParty", 'checked' => '1', 'position' => 41),
 	's.name_alias' => array('label' => "AliasNameShort", 'checked' => '0', 'position' => 42),
 	's.town' => array('label' => "Town", 'checked' => '-1', 'position' => 43),
@@ -205,8 +205,8 @@ $arrayfields = array(
 	'country.code_iso' => array('label' => "Country", 'checked' => '0', 'position' => 46),
 	'typent.code' => array('label' => "ThirdPartyType", 'checked' => $checkedtypetiers, 'position' => 48),
 	'f.vat_reverse_charge' => array('label' => "VATReverseCharge", 'checked' => '0', 'position' => 49, 'enabled' => (getDolGlobalString('ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE') ? '1' : '0')),
-	'f.fk_mode_reglement' => array('label' => "PaymentMode", 'checked' => '1', 'position' => 52),
-	'f.fk_cond_reglement' => array('label' => "PaymentConditionsShort", 'checked' => '1', 'position' => 50),
+	'f.fk_mode_reglement' => array('label' => "PaymentMode", 'checked' => '0', 'position' => 52),
+	'f.fk_cond_reglement' => array('label' => "PaymentConditionsShort", 'checked' => '0', 'position' => 50),
 	'f.total_ht' => array('label' => "AmountHT", 'checked' => '1', 'position' => 105),
 	'f.total_vat' => array('label' => "AmountVAT", 'checked' => '0', 'position' => 110),
 	'f.total_localtax1' => array('label' => $langs->transcountry("AmountLT1", $mysoc->country_code), 'checked' => '0', 'enabled' => (string) (int) ($mysoc->localtax1_assuj == "1"), 'position' => 95),
@@ -231,6 +231,9 @@ $arrayfields = array(
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 $subtypearray = $object->getArrayOfInvoiceSubtypes(0);
 if (empty($subtypearray)) {
@@ -1274,7 +1277,7 @@ if (!empty($arrayfields['p.ref']['checked'])) {
 }
 // Thirpdarty
 if (!empty($arrayfields['s.nom']['checked'])) {
-	print '<td class="liste_titre"><input class="flat maxwidth50" type="text" name="search_company" value="'.dol_escape_htmltag((string) $search_company).'"'.($socid > 0 ? " disabled" : "").'></td>';
+	print '<td class="liste_titre"><input class="flat maxwidth100" type="text" name="search_company" value="'.dol_escape_htmltag((string) $search_company).'"'.($socid > 0 ? " disabled" : "").'></td>';
 }
 // Alias
 if (!empty($arrayfields['s.name_alias']['checked'])) {

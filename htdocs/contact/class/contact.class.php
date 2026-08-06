@@ -1531,7 +1531,7 @@ class Contact extends CommonObject
 	 *  Return name of contact with link (and eventually picto)
 	 *	Use $this->id, $this->lastname, $this->firstname, this->civility_id
 	 *
-	 *	@param		int			$withpicto					Include picto with link (0=no picto, 1=picto + name, 2=picto only, -1=photo+name, -2=photo only)
+	 *	@param		int			$withpicto					Include picto with link (0=no picto, 1=picto + name, 2=picto only, -1=photo+name, -2=photo only, -3=picto small + name)
 	 *	@param		string		$option						Where the link point to ('nolink', ...)
 	 *	@param		int			$notooltip					1=Disable tooltip
 	 *  @param		string		$moreparam					Add more param into URL

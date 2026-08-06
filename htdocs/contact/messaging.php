@@ -86,14 +86,17 @@ if (!empty($canvas)) {
 	$objcanvas->getCanvas('contact', 'contactcard', $canvas);
 }
 
-if (GETPOST('actioncode', 'array')) {
-	$actioncode = GETPOST('actioncode', 'array', 3);
+if (GETPOSTISARRAY('actioncode')) {
+	$actioncode = GETPOST('actioncode', 'array:alpha', 3);
 	if (!count($actioncode)) {
 		$actioncode = '0';
+	} else {
+		$actioncode = implode(',', $actioncode);
 	}
 } else {
 	$actioncode = GETPOST("actioncode", "alpha", 3) ? GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT'));
 }
+
 $search_rowid = GETPOST('search_rowid');
 $search_agenda_label = GETPOST('search_agenda_label');
 
