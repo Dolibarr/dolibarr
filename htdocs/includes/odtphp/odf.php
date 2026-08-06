@@ -589,13 +589,12 @@ IMG;
 			$reg2 = '#\[!--\sBEGIN\s(row.[\S]*)\s--\](.*)\[!--\sEND\s\\1\s--\]#sm';
 			$matches2 = array();
 			if (preg_match($reg2, $matches[0][$i], $matches2)) {
-				$balise = str_replace('row.', '', $matches2[1]);
 				// Move segment tags around the row
 				$replace = array(
-					'[!-- BEGIN ' . $matches2[1] . ' --]'	=> '',
-					'[!-- END ' . $matches2[1] . ' --]'		=> '',
-					'<table:table-row'							=> '[!-- BEGIN ' . $balise . ' --]<table:table-row',
-					'</table:table-row>'						=> '</table:table-row>[!-- END ' . $balise . ' --]'
+				        '[!-- BEGIN ' . $matches2[1] . ' --]'   => '',
+				        '[!-- END ' . $matches2[1] . ' --]'             => '',
+				        '<table:table-row'                                                      => '[!-- BEGIN ' . $matches2[1] . ' --]<table:table-row',
+				        '</table:table-row>'                                            => '</table:table-row>[!-- END ' . $matches2[1] . ' --]'
 				);
 				$replacedXML = str_replace(array_keys($replace), array_values($replace), $matches[0][$i]);
 				$this->contentXml = str_replace($matches[0][$i], $replacedXML, $this->contentXml);
