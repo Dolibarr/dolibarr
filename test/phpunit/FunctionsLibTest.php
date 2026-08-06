@@ -1220,6 +1220,23 @@ class FunctionsLibTest extends CommonClassTest
 		$object->country_code = 'CA';
 		$phone = dol_print_phone('1234567890', $object->country_code, 0, 0, 0, ' ');
 		$this->assertEquals('<span style="margin-right: 10px;">(123) 456-7890</span>', $phone, 'Phone for CA 1');
+
+		// Every digit must appear exactly once, in order, whatever the country format
+		$object->country_code = 'JO';
+		$phone = dol_print_phone('+96212345678', $object->country_code, 0, 0, 0, ' ');
+		$this->assertEquals('<span style="margin-right: 10px;">+962 1 234 56 78</span>', $phone, 'Phone for JO 1');
+
+		$object->country_code = 'PE';
+		$phone = dol_print_phone('987654321', $object->country_code, 0, 0, 0, ' ');
+		$this->assertEquals('<span style="margin-right: 10px;">987 654 321</span>', $phone, 'Phone for PE 1');
+
+		$object->country_code = 'PE';
+		$phone = dol_print_phone('+5111234567', $object->country_code, 0, 0, 0, ' ');
+		$this->assertEquals('<span style="margin-right: 10px;">+511 123 4567</span>', $phone, 'Phone for PE 2');
+
+		$object->country_code = 'PE';
+		$phone = dol_print_phone('+51987654321', $object->country_code, 0, 0, 0, ' ');
+		$this->assertEquals('<span style="margin-right: 10px;">+51 987 654 321</span>', $phone, 'Phone for PE 3');
 	}
 
 
