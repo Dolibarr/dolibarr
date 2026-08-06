@@ -206,6 +206,7 @@ The following changes may create regressions for some external modules, but were
 * Old deprecated module Paybox has been removed.
 * Old deprecated module Deplacement has been removed.
 * User::send_password() no longer includes a cleartext password in any email; it always sends a password-reset LINK. The $changelater parameter is kept for backward compatibility but no longer changes the behavior. The REST call GET users/{id}/setPassword with send_password=true no longer sets a new password immediately — it emails a reset link so the user chooses their own password.
+* The hidden option URL_REDIRECTION_AFTER_CHANGEPASSWORD is now used to redirect the user after the password has been changed on the reset page (it was previously only the "go to application" link of the email that contained the cleartext password).
 
 
 

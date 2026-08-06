@@ -52,6 +52,30 @@ class PasswordResetTest extends CommonClassTest
 	}
 
 	/**
+	 * The hash travels in an URL: it must stay deterministic and free of special chars,
+	 * even when the instance hashes passwords with password_hash.
+	 *
+	 * @return void
+	 */
+	public function testResetHashIsUrlSafe()
+	{
+		global $conf;
+		$conf = $this->savconf;
+
+		$savalgo = getDolGlobalString('MAIN_SECURITY_HASH_ALGO');
+		$conf->global->MAIN_SECURITY_HASH_ALGO = 'password_hash';
+
+		$secret = 'r:20990101000000:abcDEF123456';
+		$hash = dolGetPasswordResetHash($secret, 1);
+
+		$this->assertMatchesRegularExpression('/^[a-zA-Z0-9]+$/', $hash, 'no char that GETPOST(alpha) would strip');
+		$this->assertSame($hash, dolGetPasswordResetHash($secret, 1), 'hash is deterministic');
+		$this->assertSame(1, dolVerifyPasswordResetHash($secret, 1, $hash), 'verify still matches');
+
+		$conf->global->MAIN_SECURITY_HASH_ALGO = $savalgo;
+	}
+
+	/**
 	 * Expired token is rejected with -1.
 	 *
 	 * @return void

@@ -640,6 +640,8 @@ function showEyeForField($htmlname, $htmlnameofinput)
  *
  * The hash binds the secret stored in llx_user.pass_temp to the user id and to
  * the instance unique id, so a link is valid only for one user on one instance.
+ * The 'hash' algorithm is used on purpose: the result must be deterministic and
+ * free of characters that would be mangled once put in an URL.
  *
  * @param	string	$secret		Full value stored in pass_temp (see dolVerifyPasswordResetHash)
  * @param	int		$userid		Target user rowid
@@ -648,7 +650,7 @@ function showEyeForField($htmlname, $htmlnameofinput)
 function dolGetPasswordResetHash(string $secret, int $userid): string
 {
 	global $conf;
-	return dol_hash($secret.'-'.$userid.'-'.$conf->file->instance_unique_id);
+	return dol_hash($secret.'-'.$userid.'-'.$conf->file->instance_unique_id, 'hash');
 }
 
 /**
@@ -658,18 +660,21 @@ function dolGetPasswordResetHash(string $secret, int $userid): string
  *   'r:<YYYYMMDDHHMMSS gmt>:<randomsecret>'.
  * The hash is checked against the WHOLE value, so neither the secret nor the
  * expiry can be altered. Legacy values without the 'r:' prefix have no expiry.
+ * Same 'hash' algorithm as dolGetPasswordResetHash() (deterministic, URL safe).
  *
- * @param	string	$secret			Full value read from pass_temp
+ * @param	?string	$secret			Full value read from pass_temp (null when no reset is pending)
  * @param	int		$userid			Target user rowid
  * @param	string	$hashtotest		Hash received from the reset link
  * @return	int						1 if valid, 0 if bad possession, -1 if expired
  */
-function dolVerifyPasswordResetHash(string $secret, int $userid, string $hashtotest): int
+function dolVerifyPasswordResetHash(?string $secret, int $userid, string $hashtotest): int
 {
-	if ($secret === '' || $hashtotest === '') {
+	global $conf;
+
+	if ($secret === null || $secret === '' || $hashtotest === '') {
 		return 0;
 	}
-	if (!dol_verifyHash($secret.'-'.$userid.'-'.$GLOBALS['conf']->file->instance_unique_id, $hashtotest)) {
+	if (!dol_verifyHash($secret.'-'.$userid.'-'.$conf->file->instance_unique_id, $hashtotest, 'hash')) {
 		return 0;
 	}
 	$reg = array();
