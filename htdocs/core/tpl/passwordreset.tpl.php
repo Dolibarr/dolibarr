@@ -132,7 +132,8 @@ $colorbackhmenu1 = implode(',', colorStringToArray($colorbackhmenu1)); // Normal
 $edituser = new User($db);
 
 
-// Validate parameters
+// Validate parameters. The password fields are shown only if the link is still usable.
+$resetlinkvalid = false;
 if ($setnewpassword && $username && $passworduidhash) {
 	$result = $edituser->fetch(0, $username);
 	if ($result < 0) {
@@ -147,6 +148,7 @@ if ($setnewpassword && $username && $passworduidhash) {
 			unset($_SESSION['dol_login']);
 
 			// Parameters to reset the user are validated
+			$resetlinkvalid = true;
 		} elseif ($resverifytpl == -1) {
 			$langs->load("errors");
 			$message = '<div class="error">'.$langs->trans("PasswordResetLinkExpired").'</div>';
@@ -225,6 +227,7 @@ if (!empty($disablenofollow)) {
 
 <div class="tagtable centpercent" title="Login pass" >
 
+<?php if ($resetlinkvalid) { ?>
 <!-- New pass 1 -->
 <div class="trinputlogin">
 <div class="tagtd nowraponall center valignmiddle tdinputlogin">
@@ -236,6 +239,7 @@ if (!empty($disablenofollow)) {
 <input type="password" maxlength="255" placeholder="<?php echo $langs->trans("PasswordRetype"); ?>" <?php echo $disabled; ?> id="newpass2" name="newpass2" class="flat minwidth150" value="<?php echo dol_escape_htmltag($newpass2); ?>" tabindex="1" />
 </div>
 </div>
+<?php } ?>
 
 
 <?php
@@ -265,7 +269,9 @@ if (!empty($morelogincontent)) {
 <div id="login_line2" style="clear: both">
 
 <!-- Button "Regenerate and Send password" -->
+<?php if ($resetlinkvalid) { ?>
 <br><input type="submit" <?php echo $disabled; ?> class="butAction butActionLogin noborderfocus small" name="button_password" value="<?php echo $langs->trans('Save'); ?>" tabindex="4" />
+<?php } ?>
 
 <br>
 <div class="center" style="margin-top: 15px;">
