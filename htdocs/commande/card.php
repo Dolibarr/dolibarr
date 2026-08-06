@@ -251,7 +251,7 @@ if (empty($reshook)) {
 					header("Location: ".$_SERVER['PHP_SELF'].'?id='.$result);
 					exit;
 				} else {
-					setEventMessages($object->error, $object->errors, 'errors');
+					setEventMessages($objectutil->error, $objectutil->errors, 'errors');
 					$action = '';
 				}
 			}
@@ -828,7 +828,7 @@ if (empty($reshook)) {
 				} else {
 					setEventMessages($prod->error, $prod->errors, 'errors');
 				}
-			} else {
+			} elseif ($line->fk_product) { // Display errors only for non-free lines
 				setEventMessages($prod->error, $prod->errors, 'errors');
 			}
 			// Manage $line->subprice and $line->multicurrency_subprice
@@ -1372,12 +1372,15 @@ if (empty($reshook)) {
 			$currency_tx = $object->multicurrency_tx;
 
 			// Check if we have a foreign currency
-			// If so, we update the pu_equiv as the equivalent price in base currency
+			// If so, we update the pu_equiv as the equivalent price in base currency.
+			// multicurrency_tx is the number of foreign currency units for 1 unit of base
+			// (see calcul_price_total() in price.lib.php which uses $pu = $pu_devise / $multicurrency_tx),
+			// so the conversion back to base must divide, not multiply (see issue #33042).
 			if ($pu_ht == '' && $pu_ht_devise != '' && $currency_tx != '') {
-				$pu_equivalent = (float) $pu_ht_devise * (float) $currency_tx;
+				$pu_equivalent = (float) $pu_ht_devise / (float) $currency_tx;
 			}
 			if ($pu_ttc == '' && $pu_ttc_devise != '' && $currency_tx != '') {
-				$pu_equivalent_ttc = (float) $pu_ttc_devise * (float) $currency_tx;
+				$pu_equivalent_ttc = (float) $pu_ttc_devise / (float) $currency_tx;
 			}
 
 			// TODO $pu_equivalent or $pu_equivalent_ttc must be calculated from the one not null taking into account all taxes
@@ -1597,12 +1600,15 @@ if (empty($reshook)) {
 		$currency_tx = $object->multicurrency_tx;
 
 		// Check if we have a foreign currency
-		// If so, we update the pu_equiv as the equivalent price in base currency
+		// If so, we update the pu_equiv as the equivalent price in base currency.
+		// multicurrency_tx is the number of foreign currency units for 1 unit of base
+		// (see calcul_price_total() in price.lib.php which uses $pu = $pu_devise / $multicurrency_tx),
+		// so the conversion back to base must divide, not multiply (see issue #33042).
 		if ($pu_ht == '' && $pu_ht_devise != '' && $currency_tx != '') {
-			$pu_equivalent = (float) $pu_ht_devise * (float) $currency_tx;
+			$pu_equivalent = (float) $pu_ht_devise / (float) $currency_tx;
 		}
 		if ($pu_ttc == '' && $pu_ttc_devise != '' && $currency_tx != '') {
-			$pu_equivalent_ttc = (float) $pu_ttc_devise * (float) $currency_tx;
+			$pu_equivalent_ttc = (float) $pu_ttc_devise / (float) $currency_tx;
 		}
 
 		// TODO $pu_equivalent or $pu_equivalent_ttc must be calculated from the one not null taking into account all taxes
@@ -2239,7 +2245,7 @@ if ($action == 'create' && $usercancreate) {
 		$mode_reglement_id  = empty($soc->mode_reglement_id) ? $mode_reglement_id : $soc->mode_reglement_id;
 		$fk_account         = empty($soc->mode_reglement_id) ? $fk_account : $soc->fk_account;
 		$availability_id    = 0;
-		$shipping_method_id = $soc->shipping_method_id;
+		$shipping_method_id = empty($soc->shipping_method_id) ? $shipping_method_id : $soc->shipping_method_id;
 		$warehouse_id       = $soc->fk_warehouse;
 		$demand_reason_id   = $soc->demand_reason_id;
 		//$remise_percent     = $soc->remise_percent;
@@ -2417,7 +2423,7 @@ if ($action == 'create' && $usercancreate) {
 		if (isModEnabled('shipping')) {
 			print '<tr><td>'.$langs->trans('SendingMethod').'</td><td>';
 			print img_picto('', 'object_dolly', 'class="pictofixedwidth"');
-			$form->selectShippingMethod(((GETPOSTISSET('shipping_method_id') && GETPOSTINT('shipping_method_id') != 0) ? GETPOST('shipping_method_id') : $shipping_method_id), 'shipping_method_id', '', 1, '', 0, 'maxwidth200 widthcentpercentminusx');
+			$form->selectShippingMethod(((GETPOSTISSET('shipping_method_id') && GETPOSTINT('shipping_method_id') > 0) ? GETPOST('shipping_method_id') : $shipping_method_id), 'shipping_method_id', '', 1, '', 0, 'maxwidth200 widthcentpercentminusx');	// -1 is the "no value" placeholder for this select, not 0, so it must not override the fresh thirdparty default after a company change
 			print '</td></tr>';
 		}
 
@@ -2955,7 +2961,7 @@ if ($action == 'create' && $usercancreate) {
 		// Thirdparty
 		$morehtmlref .= '<br>'.$soc->getNomUrl(1, 'customer');
 		if (!getDolGlobalString('MAIN_DISABLE_OTHER_LINK') && $object->thirdparty->id > 0) {
-			$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->thirdparty->id.'&search_societe='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherOrders").'</a>)';
+			$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->thirdparty->id.'">'.$langs->trans("OtherOrders").'</a>)';
 		}
 		// Project
 		if (isModEnabled('project')) {

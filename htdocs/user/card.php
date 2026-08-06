@@ -164,6 +164,13 @@ if ($id > 0) {
 	$permissiontoeditpasswordandsend = ((($user->id == $id) && $user->hasRight("user", "self", "password")) || (($user->id != $id) && $user->hasRight("user", "user", "password")))&& (empty($user->socid) || $user->socid == $object->socid);
 }
 
+// Permission to read salary and hourly rate
+$permissiontoseesalary = (empty($user->socid) && (
+	(isModEnabled('salaries') && $user->hasRight("salaries", "read") && ($id == 0 || in_array($id, $childids)))		// If user is a manager of employee
+	|| (isModEnabled('salaries') && $user->hasRight("salaries", "readall"))
+	|| (isModEnabled('hrm') && $user->hasRight("hrm", "employee", "read")))
+	|| (!isModEnabled('salaries') && !isModEnabled('hrm') && ($id == 0 || in_array($id, $childids))));
+
 $passwordismodified = false;
 $ldap = null;
 
@@ -317,6 +324,16 @@ if (empty($reshook)) {
 			$object->email = preg_replace('/\s+/', '', GETPOST("email", 'alphanohtml'));
 			$object->job = GETPOST("job", 'alphanohtml');
 			$object->signature = GETPOST("signature", 'restricthtml');
+			// restricthtml may swap the value with the literal 'ErrorTooManyLinksIntoHTMLString'
+			// when the html exceeds MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT (see issue #27987).
+			// Refuse the save so the literal does not end up persisted and later sent as an
+			// email body to customers.
+			if ($object->signature === 'ErrorTooManyLinksIntoHTMLString') {
+				$error++;
+				$langs->load("errors");
+				setEventMessages($langs->trans('ErrorTooManyLinksIntoHTMLString'), null, 'errors');
+				$action = 'create';
+			}
 			$object->accountancy_code = GETPOST("accountancy_code", 'alphanohtml');
 			$object->note_public = GETPOST("note_public", 'restricthtml');
 			$object->note_private = GETPOST("note_private", 'restricthtml');
@@ -326,14 +343,17 @@ if (empty($reshook)) {
 			$object->fk_user_holiday_validator = GETPOSTINT("fk_user_holiday_validator") > 0 ? GETPOSTINT("fk_user_holiday_validator") : 0;
 			$object->employee = GETPOSTINT('employee');
 
-			$object->thm = GETPOST("thm", 'alphanohtml') != '' ? GETPOST("thm", 'alphanohtml') : '';
-			$object->thm = price2num($object->thm);
-			$object->tjm = GETPOST("tjm", 'alphanohtml') != '' ? GETPOST("tjm", 'alphanohtml') : '';
-			$object->tjm = price2num($object->tjm);
-			$object->salary = GETPOST("salary", 'alphanohtml') != '' ? GETPOST("salary", 'alphanohtml') : '';
-			$object->salary = price2num($object->salary);
-			$object->salaryextra = GETPOST("salaryextra", 'alphanohtml') != '' ? GETPOST("salaryextra", 'alphanohtml') : '';
-			$object->weeklyhours = GETPOST("weeklyhours", 'alphanohtml') != '' ? GETPOST("weeklyhours", 'alphanohtml') : '';
+			// Only users allowed to see salary/HR fields can modify them (issue #32909)
+			if ($permissiontoseesalary) {
+				$object->thm = GETPOST("thm", 'alphanohtml') != '' ? GETPOST("thm", 'alphanohtml') : '';
+				$object->thm = price2num($object->thm);
+				$object->tjm = GETPOST("tjm", 'alphanohtml') != '' ? GETPOST("tjm", 'alphanohtml') : '';
+				$object->tjm = price2num($object->tjm);
+				$object->salary = GETPOST("salary", 'alphanohtml') != '' ? GETPOST("salary", 'alphanohtml') : '';
+				$object->salary = price2num($object->salary);
+				$object->salaryextra = GETPOST("salaryextra", 'alphanohtml') != '' ? GETPOST("salaryextra", 'alphanohtml') : '';
+				$object->weeklyhours = GETPOST("weeklyhours", 'alphanohtml') != '' ? GETPOST("weeklyhours", 'alphanohtml') : '';
+			}
 
 			$object->color = GETPOST("color", 'alphanohtml') != '' ? GETPOST("color", 'alphanohtml') : '';
 
@@ -469,7 +489,7 @@ if (empty($reshook)) {
 					$object->pass = GETPOST("password", 'password');
 				}
 				if ($permissiontoeditpasswordandsee || $user->hasRight("api", "apikey", "generate")) {
-					$object->api_key = (GETPOST("api_key", 'alphanohtml')) ? GETPOST("api_key", 'alphanohtml') : $object->api_key;
+					$object->api_key = (GETPOSTISSET("api_key") ? GETPOST("api_key", 'alphanohtml') : $object->api_key);
 				}
 				if (!empty($user->admin) && $user->id != $id) {
 					// admin flag can only be set/unset by an admin user and not four ourself
@@ -500,6 +520,16 @@ if (empty($reshook)) {
 				$object->email = preg_replace('/\s+/', '', GETPOST("email", 'alphanohtml'));
 				$object->job = GETPOST("job", 'alphanohtml');
 				$object->signature = GETPOST("signature", 'restricthtml');
+				// restricthtml may swap the value with the literal 'ErrorTooManyLinksIntoHTMLString'
+				// when the html exceeds MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT (see issue #27987).
+				// Refuse the save so the literal does not end up persisted and later sent as an
+				// email body to customers.
+				if ($object->signature === 'ErrorTooManyLinksIntoHTMLString') {
+					$error++;
+					$langs->load("errors");
+					setEventMessages($langs->trans('ErrorTooManyLinksIntoHTMLString'), null, 'errors');
+					$action = 'edit';
+				}
 				$object->accountancy_code = GETPOST("accountancy_code", 'alphanohtml');
 				$object->openid = GETPOST("openid", 'alphanohtml');
 				$object->fk_user = GETPOSTINT("fk_user") > 0 ? GETPOSTINT("fk_user") : 0;
@@ -507,16 +537,19 @@ if (empty($reshook)) {
 				$object->fk_user_holiday_validator = GETPOSTINT("fk_user_holiday_validator") > 0 ? GETPOSTINT("fk_user_holiday_validator") : 0;
 				$object->employee = GETPOSTINT('employee');
 
-				$object->thm = GETPOST("thm", 'alphanohtml') != '' ? GETPOST("thm", 'alphanohtml') : '';
-				$object->thm = price2num($object->thm);
-				$object->tjm = GETPOST("tjm", 'alphanohtml') != '' ? GETPOST("tjm", 'alphanohtml') : '';
-				$object->tjm = price2num($object->tjm);
-				$object->salary = GETPOST("salary", 'alphanohtml') != '' ? GETPOST("salary", 'alphanohtml') : '';
-				$object->salary = price2num($object->salary);
-				$object->salaryextra = GETPOST("salaryextra", 'alphanohtml') != '' ? GETPOST("salaryextra", 'alphanohtml') : '';
-				$object->salaryextra = price2num($object->salaryextra);
-				$object->weeklyhours = GETPOST("weeklyhours", 'alphanohtml') != '' ? GETPOST("weeklyhours", 'alphanohtml') : '';
-				$object->weeklyhours = price2num($object->weeklyhours);
+				// Only users allowed to see salary/HR fields can modify them (issue #32909)
+				if ($permissiontoseesalary) {
+					$object->thm = GETPOST("thm", 'alphanohtml') != '' ? GETPOST("thm", 'alphanohtml') : '';
+					$object->thm = price2num($object->thm);
+					$object->tjm = GETPOST("tjm", 'alphanohtml') != '' ? GETPOST("tjm", 'alphanohtml') : '';
+					$object->tjm = price2num($object->tjm);
+					$object->salary = GETPOST("salary", 'alphanohtml') != '' ? GETPOST("salary", 'alphanohtml') : '';
+					$object->salary = price2num($object->salary);
+					$object->salaryextra = GETPOST("salaryextra", 'alphanohtml') != '' ? GETPOST("salaryextra", 'alphanohtml') : '';
+					$object->salaryextra = price2num($object->salaryextra);
+					$object->weeklyhours = GETPOST("weeklyhours", 'alphanohtml') != '' ? GETPOST("weeklyhours", 'alphanohtml') : '';
+					$object->weeklyhours = price2num($object->weeklyhours);
+				}
 
 				$object->color = GETPOST("color", 'alphanohtml') != '' ? GETPOST("color", 'alphanohtml') : '';
 				$object->dateemployment = $dateemployment;
@@ -558,6 +591,9 @@ if (empty($reshook)) {
 					$isimage = image_format_supported($_FILES['photo']['name']);
 					if ($isimage > 0) {
 						$object->photo = dol_sanitizeFileName($_FILES['photo']['name']);
+						if ($object->id == $user->id) {
+							$user->photo = $object->photo;
+						}
 					} else {
 						$error++;
 						$langs->load("errors");
@@ -1458,9 +1494,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 	print '<input class="maxwidth200 maxwidth150onsmartphone" type="text" name="job" value="'.dol_escape_htmltag(GETPOST('job', 'alphanohtml')).'">';
 	print '</td></tr>';
 
-	if ((isModEnabled('salaries') && $user->hasRight("salaries", "read") && in_array($id, $childids))
-		|| (isModEnabled('salaries') && $user->hasRight("salaries", "readall"))
-		|| (isModEnabled('hrm') && $user->hasRight("hrm", "employee", "read"))) {
+	if ($permissiontoseesalary) {
 		$langs->load("salaries");
 
 		// THM
@@ -1772,9 +1806,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print "</tr>\n";
 
 			// Sensitive salary/value information
-			if ((empty($user->socid) && in_array($id, $childids))	// A user can always see salary/value information for its subordinates
-				|| (isModEnabled('salaries') && $user->hasRight("salaries", "readall"))
-				|| (isModEnabled('hrm') && $user->hasRight("hrm", "employee", "read"))) {
+			if ($permissiontoseesalary) {
 				$langs->load("salaries");
 
 				// Salary
@@ -2993,9 +3025,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print "</tr>\n";
 
 			// Sensitive salary/value information
-			if ((empty($user->socid) && in_array($id, $childids))	// A user can always see salary/value information for its subordinates
-				|| (isModEnabled('salaries') && $user->hasRight("salaries", "readall"))
-				|| (isModEnabled('hrm') && $user->hasRight("hrm", "employee", "read"))) {
+			if ($permissiontoseesalary) {
 				$langs->load("salaries");
 
 				// Salary

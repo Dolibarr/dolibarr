@@ -416,7 +416,9 @@ class Ticket extends CommonObject
 		if (isset($this->message)) {
 			$this->message = trim($this->message);
 			if (dol_strlen($this->message) > 65000) {
-				$this->errors[] = 'ErrorFieldTooLong';
+				global $langs;
+				$langs->loadLangs(array('errors', 'ticket'));
+				$this->errors[] = $langs->trans('ErrorFieldTooLong', $langs->transnoentitiesnoconv('InitialMessage'));
 				dol_syslog(get_class($this).'::create error -1 message too long', LOG_ERR);
 				$result = -1;
 			}
@@ -1039,7 +1041,9 @@ class Ticket extends CommonObject
 		if (isset($this->message)) {
 			$this->message = trim($this->message);
 			if (dol_strlen($this->message) > 65000) {
-				$this->errors[] = 'ErrorFieldTooLong';
+				global $langs;
+				$langs->loadLangs(array('errors', 'ticket'));
+				$this->errors[] = $langs->trans('ErrorFieldTooLong', $langs->transnoentitiesnoconv('InitialMessage'));
 				dol_syslog(get_class($this).'::update error -1 message too long', LOG_ERR);
 				return -1;
 			}
@@ -2928,13 +2932,13 @@ class Ticket extends CommonObject
 							if (is_array($external_contacts) && count($external_contacts) === 0) {
 								if (!empty($object->fk_soc)) {
 									$object->fetch_thirdparty($object->fk_soc);
-									$array_company = array(array('firstname' => '', 'lastname' => $object->thirdparty->name, 'email' => $object->thirdparty->email, 'libelle' => $langs->transnoentities('Customer'), 'socid' => $object->thirdparty->id));
+									$array_company = array(array('id' => -1, 'firstname' => '', 'lastname' => $object->thirdparty->name, 'email' => $object->thirdparty->email, 'libelle' => $langs->transnoentities('Customer'), 'socid' => $object->thirdparty->id));
 									$external_contacts = array_merge($external_contacts, $array_company);
 								} elseif (empty($object->fk_soc) && !empty($object->origin_replyto)) {
-									$array_external = array(array('firstname' => '', 'lastname' => $object->origin_replyto, 'email' => $object->origin_replyto, 'libelle' => $langs->transnoentities('Customer'), 'socid' => 0));
+									$array_external = array(array('id' => -1, 'firstname' => '', 'lastname' => $object->origin_replyto, 'email' => $object->origin_replyto, 'libelle' => $langs->transnoentities('Customer'), 'socid' => 0));
 									$external_contacts = array_merge($external_contacts, $array_external);
 								} elseif (empty($object->fk_soc) && !empty($object->origin_email)) {
-									$array_external = array(array('firstname' => '', 'lastname' => $object->origin_email, 'email' => $object->thirdparty->email, 'libelle' => $langs->transnoentities('Customer'), 'socid' => $object->thirdparty->id));
+									$array_external = array(array('id' => -1, 'firstname' => '', 'lastname' => $object->origin_email, 'email' => $object->thirdparty->email, 'libelle' => $langs->transnoentities('Customer'), 'socid' => $object->thirdparty->id));
 									$external_contacts = array_merge($external_contacts, $array_external);
 								}
 							}

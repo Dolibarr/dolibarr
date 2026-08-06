@@ -370,6 +370,10 @@ if (empty($reshook)) {
 			$result = $object->closeProposal($user, $object::STATUS_SIGNED);
 		}
 		if ($result >= 0) {
+			$ret = $object->fetch($id);	// Reload to get new records
+			if ($ret > 0) {
+				$object->fetch_thirdparty();
+			}
 			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 				$outputlangs = $langs;
 				$newlang = '';
@@ -384,10 +388,6 @@ if (empty($reshook)) {
 					$outputlangs->setDefaultLang($newlang);
 				}
 				$model = $object->model_pdf;
-				$ret = $object->fetch($id); // Reload to get new records
-				if ($ret > 0) {
-					$object->fetch_thirdparty();
-				}
 
 				$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
@@ -1607,12 +1607,15 @@ if (empty($reshook)) {
 			$currency_tx = $object->multicurrency_tx;
 
 			// Check if we have a foreign currency
-			// If so, we update the pu_equiv as the equivalent price in base currency
+			// If so, we update the pu_equiv as the equivalent price in base currency.
+			// multicurrency_tx is the number of foreign currency units for 1 unit of base
+			// (see calcul_price_total() in price.lib.php which uses $pu = $pu_devise / $multicurrency_tx),
+			// so the conversion back to base must divide, not multiply (see issue #33042).
 			if ($pu_ht == '' && $pu_ht_devise != '' && $currency_tx != '') {
-				$pu_equivalent = (float) $pu_ht_devise * (float) $currency_tx;
+				$pu_equivalent = (float) $pu_ht_devise / (float) $currency_tx;
 			}
 			if ($pu_ttc == '' && $pu_ttc_devise != '' && $currency_tx != '') {
-				$pu_equivalent_ttc = (float) $pu_ttc_devise * (float) $currency_tx;
+				$pu_equivalent_ttc = (float) $pu_ttc_devise / (float) $currency_tx;
 			}
 
 			// TODO $pu_equivalent or $pu_equivalent_ttc must be calculated from the one not null taking into account all taxes
@@ -1739,7 +1742,7 @@ if (empty($reshook)) {
 				} else {
 					setEventMessages($prod->error, $prod->errors, 'errors');
 				}
-			} else {
+			} elseif ($line->fk_product) { // Display errors only for non-free lines
 				setEventMessages($prod->error, $prod->errors, 'errors');
 			}
 
@@ -1894,12 +1897,15 @@ if (empty($reshook)) {
 		$currency_tx = $object->multicurrency_tx;
 
 		// Check if we have a foreign currency
-		// If so, we update the pu_equiv as the equivalent price in base currency
+		// If so, we update the pu_equiv as the equivalent price in base currency.
+		// multicurrency_tx is the number of foreign currency units for 1 unit of base
+		// (see calcul_price_total() in price.lib.php which uses $pu = $pu_devise / $multicurrency_tx),
+		// so the conversion back to base must divide, not multiply (see issue #33042).
 		if ($pu_ht == '' && $pu_ht_devise != '' && $currency_tx != '') {
-			$pu_equivalent = (float) $pu_ht_devise * (float) $currency_tx;
+			$pu_equivalent = (float) $pu_ht_devise / (float) $currency_tx;
 		}
 		if ($pu_ttc == '' && $pu_ttc_devise != '' && $currency_tx != '') {
-			$pu_equivalent_ttc = (float) $pu_ttc_devise * (float) $currency_tx;
+			$pu_equivalent_ttc = (float) $pu_ttc_devise / (float) $currency_tx;
 		}
 
 		// TODO $pu_equivalent or $pu_equivalent_ttc must be calculated from the one not null taking into account all taxes
@@ -2301,6 +2307,9 @@ if ($action == 'create') {
 		if (GETPOSTISSET('fk_account')) {
 			$fk_account = GETPOSTINT('fk_account');
 		}
+		if (GETPOSTISSET('shipping_method_id')) {
+			$shipping_method_id = GETPOSTINT('shipping_method_id');
+		}
 	}
 	// Warehouse default if null
 	if ($soc->fk_warehouse > 0) {
@@ -2442,7 +2451,7 @@ if ($action == 'create') {
 			}
 			print '<tr class="field_shipping_method_id"><td class="titlefieldcreate">'.$langs->trans('SendingMethod').'</td><td class="valuefieldcreate">';
 			print img_picto('', 'dolly', 'class="pictofixedwidth"');
-			$form->selectShippingMethod((string) (GETPOSTISSET('shipping_method_id') ? GETPOSTINT('shipping_method_id') : $shipping_method_id), 'shipping_method_id', '', 1, '', 0, 'maxwidth200 widthcentpercentminusx');
+			$form->selectShippingMethod((string) $shipping_method_id, 'shipping_method_id', '', 1, '', 0, 'maxwidth200 widthcentpercentminusx');
 			print '</td></tr>';
 		}
 
@@ -2964,7 +2973,7 @@ if ($action == 'create') {
 	// Thirdparty
 	$morehtmlref .= '<br>'.$soc->getNomUrl(1, 'customer');
 	if (!getDolGlobalString('MAIN_DISABLE_OTHER_LINK') && $soc->id > 0) {
-		$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/comm/propal/list.php?socid='.$soc->id.'&search_societe='.urlencode($soc->name).'">'.$langs->trans("OtherProposals").'</a>)';
+		$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/comm/propal/list.php?socid='.$soc->id.'">'.$langs->trans("OtherProposals").'</a>)';
 	}
 	// Project
 	if (isModEnabled('project')) {

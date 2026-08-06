@@ -7969,6 +7969,8 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 		$sql .= " FROM ".$db->prefix()."c_tva as t";
 		$sql .= " INNER JOIN ".$db->prefix()."c_departements as d ON t.fk_department_buyer = d.rowid";
 		$sql .= " WHERE d.rowid = ".((int) $thirdparty_buyer->state_id);
+		$sql .= " AND t.active > 0";
+		$sql .= " AND t.entity IN (".getEntity('c_tva').")";
 		$sql .= " ORDER BY t.use_default DESC, t.taux DESC, t.code ASC, t.recuperableonly ASC";
 
 		$res = $db->query($sql);
@@ -8443,9 +8445,9 @@ function dol_string_nohtmltag($stringtoclean, $removelinefeed = 1, $pagecodeto =
 		$temp = str_replace(array("\r\n", "\r", "\n"), " ", $temp);
 	}
 
-	// And double quotes
+	// And double spaces
 	if ($removedoublespaces) {
-		while (strpos($temp, "  ")) {
+		while (strpos($temp, "  ") !== false) {
 			$temp = str_replace("  ", " ", $temp);
 		}
 	}

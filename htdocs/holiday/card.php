@@ -529,6 +529,7 @@ if (empty($reshook)) {
 					}
 				}
 
+
 				// option to notify the validator if the balance is less than the request
 				// (only for leave types that actually use the balance counter)
 				if (!getDolGlobalString('HOLIDAY_HIDE_APPROVER_ABOUT_NEGATIVE_BALANCE')) {
