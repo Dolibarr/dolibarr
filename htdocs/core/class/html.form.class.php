@@ -5359,12 +5359,12 @@ class Form
 
 				// If a translation exists, we use is, otherwise, we take the label by default
 				$label = ($langs->transnoentitiesnoconv("PaymentTypeShort" . $obj->code) != "PaymentTypeShort" . $obj->code ? $langs->transnoentitiesnoconv("PaymentTypeShort" . $obj->code) : ($obj->label != '-' ? $obj->label : ''));
-				$this->cache_types_paiements[$obj->id]['id'] = (int) $obj->id;
-				$this->cache_types_paiements[$obj->id]['code'] = (string) $obj->code;
-				$this->cache_types_paiements[$obj->id]['label'] = (string) $label;
-				$this->cache_types_paiements[$obj->id]['type'] = (int) $obj->type;
-				$this->cache_types_paiements[$obj->id]['entity'] = (int) $obj->entity;
-				$this->cache_types_paiements[$obj->id]['active'] = (int) $obj->active;
+				$this->cache_types_paiements[(int) $obj->id]['id'] = (int) $obj->id;
+				$this->cache_types_paiements[(int) $obj->id]['code'] = (string) $obj->code;
+				$this->cache_types_paiements[(int) $obj->id]['label'] = (string) $label;
+				$this->cache_types_paiements[(int) $obj->id]['type'] = (int) $obj->type;
+				$this->cache_types_paiements[(int) $obj->id]['entity'] = (int) $obj->entity;
+				$this->cache_types_paiements[(int) $obj->id]['active'] = (int) $obj->active;
 				$i++;
 			}
 
@@ -5558,7 +5558,7 @@ class Form
 	 * Return list of payment methods
 	 * Constant MAIN_DEFAULT_PAYMENT_TYPE_ID can used to set default value but scope is all application, probably not what you want.
 	 *
-	 * @param 	string 		$selected 		Id or code or preselected payment mode
+	 * @param 	int|string 	$selected 		Id or code or preselected payment mode
 	 * @param 	string 		$htmlname 		Name of select field
 	 * @param 	string 		$filtertype 	To filter on field type in llx_c_paiement ('CRDT' or 'DBIT' or array('code'=>xx,'label'=>zz))
 	 * @param 	int 		$format 		0=id+label, 1=code+code, 2=code+label, 3=id+code
@@ -7380,17 +7380,17 @@ class Form
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 
 	/**
-	 *    Show form with payment mode
+	 * Show form with payment mode
 	 *
-	 * @param string $page Page
-	 * @param string $selected Preselected Id for mode
-	 * @param string $htmlname Name of select html field
-	 * @param string $filtertype To filter on field type in llx_c_paiement ('CRDT' or 'DBIT' or array('code'=>xx,'label'=>zz))
-	 * @param int<-1,1> $active Active or not, -1 = all
-	 * @param int<0,1> $addempty 1=Add empty entry
-	 * @param string $type Type ('direct-debit' or 'bank-transfer')
-	 * @param int<0,1> $nooutput 1=Return string, no output
-	 * @return    string                    HTML output or ''
+	 * @param 	string 		$page 		Page
+	 * @param 	int|string 	$selected 	Preselected Id for mode
+	 * @param 	string 		$htmlname 	Name of select html field
+	 * @param 	string 		$filtertype To filter on field type in llx_c_paiement ('CRDT' or 'DBIT' or array('code'=>xx,'label'=>zz))
+	 * @param 	int<-1,1> 	$active 	Active or not, -1 = all
+	 * @param 	int<0,1> 	$addempty 	1=Add empty entry
+	 * @param 	string 		$type 		Type ('direct-debit' or 'bank-transfer')
+	 * @param 	int<0,1> 	$nooutput 	1=Return string, no output
+	 * @return	string                  HTML output or ''
 	 */
 	public function form_modes_reglement($page, $selected = '', $htmlname = 'mode_reglement_id', $filtertype = '', $active = 1, $addempty = 0, $type = '', $nooutput = 0)
 	{
@@ -7411,7 +7411,8 @@ class Form
 		} else {
 			if ($selected) {
 				$this->load_cache_types_paiements();
-				$out .= isset($this->cache_types_paiements[$selected]['label']) ? $this->cache_types_paiements[$selected]['label'] : '';
+				// @phan-suppress-next-line PhanTypeMismatchProperty
+				$out .= isset($this->cache_types_paiements[(int) $selected]['label']) ? $this->cache_types_paiements[(int) $selected]['label'] : '';
 			} else {
 				$out .= "&nbsp;";
 			}
@@ -9893,7 +9894,7 @@ class Form
 			'@phan-var-force CommonObjectLine $objecttmp';
 			$parent_properties = getElementProperties($objecttmp->parent_element);
 			// @phan-suppress-next-line SqlInjection
-			$sql .= " INNER JOIN " . $this->db->prefix() . $this->db->sanitize($parent_properties['table_element']) . " as o ON o.rowid = t.".$objecttmp->fk_parent_attribute;
+			$sql .= " INNER JOIN " . $this->db->prefix() . $this->db->sanitize($parent_properties['table_element']) . " as o ON o.rowid = t.".$this->db->sanitize($objecttmp->fk_parent_attribute);
 		}
 		if (!empty($objecttmp->parent_element) && in_array($objecttmp->parent_element, ['commande', 'propal', 'facture', 'expedition'])) {
 			$sql .= " LEFT JOIN " . $this->db->prefix() . "product as p ON p.rowid = t.fk_product";
