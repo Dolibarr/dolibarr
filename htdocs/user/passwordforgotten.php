@@ -63,10 +63,10 @@ if (!$mode) {
 }
 
 $username = GETPOST('username', 'alphanohtml');
-$passworduidhash = GETPOST('passworduidhash', 'alpha');
+$passworduidhash = GETPOST('passworduidhash', 'aZ09');	// dolGetPasswordResetHash() returns an hexadecimal hash
 $setnewpassword = GETPOST('setnewpassword', 'aZ09');
-$newpass1 = GETPOST('newpass1', 'none');
-$newpass2 = GETPOST('newpass2', 'none');
+$newpass1 = GETPOST('newpass1', 'password');
+$newpass2 = GETPOST('newpass2', 'password');
 
 $conf->entity = (GETPOSTINT('entity') ? GETPOSTINT('entity') : 1);
 
@@ -88,6 +88,21 @@ if (GETPOST('dol_no_mouse_hover', 'alpha') || !empty($_SESSION['dol_no_mouse_hov
 }
 if (GETPOST('dol_use_jmobile', 'alpha') || !empty($_SESSION['dol_use_jmobile'])) {
 	$conf->dol_use_jmobile = 1;
+}
+
+// Send password button enabled ?
+$disabled = 'disabled';
+if (preg_match('/dolibarr/i', $mode)) {
+	$disabled = '';
+}
+if (getDolGlobalString('MAIN_SECURITY_ENABLE_SENDPASSWORD')) {
+	$disabled = ''; // To force button enabled
+}
+
+// Security graphical code. Same value is used to render the captcha on the form and to validate the submitted code.
+$captcha = '';
+if (!$disabled) {
+	$captcha = getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_HANDLER', 'standard');
 }
 
 
@@ -131,7 +146,14 @@ if (empty($reshook)) {
 						unset($_SESSION['dol_login']);
 						$_SESSION['dol_loginmesg'] = '<!-- warning -->'.$langs->transnoentitiesnoconv("NewPasswordValidated");
 						dol_syslog("passwordforgotten.php new user-chosen password for user->id=".$edituser->id." set in database");
-						header("Location: ".DOL_URL_ROOT.'/?username='.urlencode($edituser->login));
+
+						// Where to send the user once the password has been changed (setup may point to another front, ie a portal)
+						$urlafterchange = DOL_URL_ROOT.'/?username='.urlencode($edituser->login);
+						if (getDolGlobalString('URL_REDIRECTION_AFTER_CHANGEPASSWORD')) {
+							$urlafterchange = dol_sanitizeUrl(getDolGlobalString('URL_REDIRECTION_AFTER_CHANGEPASSWORD'), 0);
+						}
+
+						header("Location: ".$urlafterchange);
 						exit;
 					}
 				}
@@ -141,11 +163,41 @@ if (empty($reshook)) {
 
 	// Action to set a temporary password and send email for reset
 	if ($action == 'buildnewpassword' && $username) {	// Test on permission not required here. This action is done anonymously.
-		$sessionkey = 'dol_antispam_value';
+		// Validate the captcha code with the active captcha handler (the one that rendered the code on the form).
+		// $captcha is empty only when the setup disabled the captcha, in which case no code can be validated.
 		$ok = true;
-		// Only enforce the captcha code when a captcha was actually presented (the handler may be disabled by config)
-		if (array_key_exists($sessionkey, $_SESSION)) {
-			$ok = (strtolower($_SESSION[$sessionkey]) == strtolower(GETPOST('code')));
+		if (!empty($captcha)) {
+			$ok = false;
+
+			// List of directories where we can find captcha handlers
+			$dirModCaptcha = array_merge(array('main' => '/core/modules/security/captcha/'), (isset($conf->modules_parts['captcha']) && is_array($conf->modules_parts['captcha'])) ? $conf->modules_parts['captcha'] : array());
+			$fullpathclassfile = '';
+			foreach ($dirModCaptcha as $dir) {
+				$fullpathclassfile = dol_buildpath($dir."modCaptcha".ucfirst($captcha).'.class.php', 0, 2);
+				if ($fullpathclassfile) {
+					break;
+				}
+			}
+
+			if ($fullpathclassfile) {
+				include_once $fullpathclassfile;
+				$classname = "modCaptcha".ucfirst($captcha);
+				if (class_exists($classname)) {
+					/** @var ModeleCaptcha $captchaobj */
+					$captchaobj = new $classname($db, $conf, $langs, $user);
+					'@phan-var-force ModeleCaptcha $captchaobj';
+
+					if (method_exists($captchaobj, 'validateCodeAfterLoginSubmit')) {
+						$ok = ($captchaobj->validateCodeAfterLoginSubmit() > 0);	// @phan-suppress-current-line PhanUndeclaredMethod
+					} else {
+						dol_syslog('Error, the captcha handler '.get_class($captchaobj).' does not have any method validateCodeAfterLoginSubmit()', LOG_ERR);
+					}
+				} else {
+					dol_syslog('Error, the captcha handler class '.$classname.' was not found after the include', LOG_ERR);
+				}
+			} else {
+				dol_syslog('Error, the captcha handler '.$captcha.' has no class file found modCaptcha'.ucfirst($captcha), LOG_ERR);
+			}
 		}
 
 		// Verify code
@@ -263,21 +315,6 @@ if (!empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/log
 	$urllogo = DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/dolibarr_logo.svg';
 } elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo.svg')) {
 	$urllogo = DOL_URL_ROOT.'/theme/dolibarr_logo.svg';
-}
-
-// Send password button enabled ?
-$disabled = 'disabled';
-if (preg_match('/dolibarr/i', $mode)) {
-	$disabled = '';
-}
-if (getDolGlobalString('MAIN_SECURITY_ENABLE_SENDPASSWORD')) {
-	$disabled = ''; // To force button enabled
-}
-
-// Security graphical code
-$captcha = '';
-if (!$disabled) {
-	$captcha = getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_HANDLER', 'standard');
 }
 
 // Execute hook getPasswordForgottenPageOptions (for table)

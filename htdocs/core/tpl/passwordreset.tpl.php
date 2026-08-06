@@ -30,7 +30,6 @@ if (!defined('NOBROWSERNOTIF')) {
  * @var Translate $langs
  *
  * @var string $action
- * @var string $captcha
  * @var string $disabled
  * @var string $dol_url_root
  * @var string $focus_element
@@ -46,10 +45,8 @@ if (!defined('NOBROWSERNOTIF')) {
  *
  * @var int $setnewpassword
  */
-// Only vars provided by including page - htdocs/user/passwordforgotten.php:
-// $newpass1 and $newpass2 are not set!!!
+// Only vars provided by including page - htdocs/user/passwordforgotten.php
 '
-@phan-var-force string $captcha
 @phan-var-force string $disabled
 @phan-var-force string $dol_url_root
 @phan-var-force string $focus_element
@@ -107,7 +104,6 @@ if (!empty($conf->dol_use_jmobile)) {
 
 $php_self = $_SERVER['PHP_SELF'];
 $php_self .= dol_escape_htmltag($_SERVER["QUERY_STRING"]) ? '?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]) : '';
-$php_self = str_replace('action=validatenewpassword', '', $php_self);
 
 $titleofpage = $langs->trans('ResetPassword');
 
