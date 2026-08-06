@@ -77,8 +77,9 @@ if (empty($dolibarr_nocache)) {
  * @param	index	int		index of product line. 0 = first product line
  * @param	type	string	type of dispatch (batch = batch dispatch, dispatch = non batch dispatch)
  * @param	mode	string	If mode is 'qtymissing' the split button will create a new line with qty missing, If 'lessone' it will keep 1 in old line and the rest in new one
+ * @param	allowoverconsumption	int		1 to allow over comsumption (for exemple in manufacturing order)
  */
-function addDispatchLine(index, type, mode)
+function addDispatchLine(index, type, mode, allowoverconsumption = 0)
 {
 	mode = mode || 'qtymissing'
 
@@ -133,7 +134,7 @@ function addDispatchLine(index, type, mode)
 			if(count === 0){
 				$("#"+inputId+"-"+index+"-"+nbrTrs).val(qtymax);
 			} else {
-				var res = addDispatchTR(qtyOrdered, qtyDispatched, index, nbrTrs, warehouseId, inputId, type, qtymax, mode, $row);
+				var res = addDispatchTR(qtyOrdered, qtyDispatched, index, nbrTrs, warehouseId, inputId, type, qtymax, mode, $row, allowoverconsumption);
 				if(res === -1){
 					error = 1;
 					break;
@@ -146,10 +147,10 @@ function addDispatchLine(index, type, mode)
 		}
 
 		if (error === 0) {
-			addDispatchTR(qtyOrdered, qtyDispatched, index, nbrTrs, warehouseId, inputId, type, '', mode, $row);
+			addDispatchTR(qtyOrdered, qtyDispatched, index, nbrTrs, warehouseId, inputId, type, '', mode, $row, allowoverconsumption);
 		}
 	} else {
-		addDispatchTR(qtyOrdered, qtyDispatched, index, nbrTrs, warehouseId, inputId, type, qty, mode, $row);
+		addDispatchTR(qtyOrdered, qtyDispatched, index, nbrTrs, warehouseId, inputId, type, qty, mode, $row, allowoverconsumption);
 	}
 
 }
@@ -168,17 +169,18 @@ function addDispatchLine(index, type, mode)
  * @param qty           double
  * @param mode          string
  * @param $row          object
+ * @param allowoverconsumption  int
  */
-function addDispatchTR(qtyOrdered, qtyDispatched, index, nbrTrs, warehouseId, inputId, type, qty, mode, $row) {
-	if (qtyOrdered <= 1) {
+function addDispatchTR(qtyOrdered, qtyDispatched, index, nbrTrs, warehouseId, inputId, type, qty, mode, $row, allowoverconsumption) {
+	if (qtyOrdered <= 0) {
 		let errormsg = '<?php echo dol_escape_js($langs->trans('QtyCantBeSplit')); ?>';
 		$.jnotify(errormsg, 'error', true);
 		return -1;
-	} else if (qtyDispatched >= qtyOrdered) {
+	} else if ((qtyDispatched >= qtyOrdered) && allowoverconsumption==0) {
 		let errormsg = '<?php echo dol_escape_js($langs->trans('NoRemainQtyToDispatch')); ?>';
 		$.jnotify(errormsg, 'error', true);
 		return -1;
-	} else if (qtyDispatched < qtyOrdered) {
+	} else if ((qtyDispatched < qtyOrdered)  || allowoverconsumption) {
 		//replace tr suffix nbr
 		var re1 = new RegExp('_'+index+'_1', 'g');
 		var re2 = new RegExp('-'+index+'-1', 'g');
