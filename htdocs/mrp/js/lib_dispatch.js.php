@@ -146,10 +146,10 @@ function addDispatchLine(index, type, mode)
 		}
 
 		if (error === 0) {
-			addDispatchTR(qtyOrdered, qtyDispatched, index, nbrTrs, warehouseId, inputId, type, '', mode, $row);
+			addDispatchTR(qtyOrdered, qtyDispatched, index, nbrTrs, warehouseId, inputId, type, '', mode, $row, allowoverconsumption);
 		}
 	} else {
-		addDispatchTR(qtyOrdered, qtyDispatched, index, nbrTrs, warehouseId, inputId, type, qty, mode, $row);
+		addDispatchTR(qtyOrdered, qtyDispatched, index, nbrTrs, warehouseId, inputId, type, qty, mode, $row, allowoverconsumption);
 	}
 
 }
@@ -170,7 +170,7 @@ function addDispatchLine(index, type, mode)
  * @param $row          object
  */
 function addDispatchTR(qtyOrdered, qtyDispatched, index, nbrTrs, warehouseId, inputId, type, qty, mode, $row) {
-	if (qtyOrdered <= 1) {
+	if (qtyOrdered <= 0) {
 		let errormsg = '<?php echo dol_escape_js($langs->trans('QtyCantBeSplit')); ?>';
 		$.jnotify(errormsg, 'error', true);
 		return -1;
