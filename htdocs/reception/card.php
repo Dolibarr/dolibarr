@@ -360,6 +360,7 @@ if (empty($reshook)) {
 			$object->size_units = GETPOSTINT('size_units');
 			$object->weight_units = GETPOSTINT('weight_units');
 			$object->ref_supplier = GETPOST('ref_supplier', 'alpha');
+			$object->fk_warehouse = GETPOSTINT('fk_warehouse');	// Default warehouse for the lines
 			$object->model_pdf = GETPOST('model');
 			$object->date_delivery = $date_delivery; // Date delivery planned
 			$object->date_reception = $date_reception;
@@ -401,6 +402,7 @@ if (empty($reshook)) {
 			$object->weight_units = GETPOSTINT('weight_units');
 
 			$object->ref_supplier = GETPOST('ref_supplier', 'alpha');
+			$object->fk_warehouse = GETPOSTINT('fk_warehouse');	// Default warehouse for the lines
 			$object->model_pdf = GETPOST('model');
 			$object->date_delivery = $date_delivery; // Date delivery planned
 			$object->date_reception = $date_reception;
@@ -667,9 +669,14 @@ if (empty($reshook)) {
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	} elseif (in_array($action, array('settracking_number', 'settracking_url', 'settrueWeight', 'settrueWidth', 'settrueHeight', 'settrueDepth', 'setshipping_method_id')) && $permissiontoadd) {
+	} elseif (in_array($action, array('setwarehouse', 'settracking_number', 'settracking_url', 'settrueWeight', 'settrueWidth', 'settrueHeight', 'settrueDepth', 'setshipping_method_id')) && $permissiontoadd) {
 		// Action update
 		$error = 0;
+
+		if ($action == 'setwarehouse') {	// Default warehouse for the lines
+			$object->setValueFrom('fk_warehouse', (GETPOSTINT('warehouse_id') > 0 ? GETPOSTINT('warehouse_id') : null), '', null, 'int', '', $user);
+			$object->fk_warehouse = GETPOSTINT('warehouse_id');
+		}
 
 		if ($action == 'settracking_number') {		// Test on permission already done
 			$object->tracking_number = trim(GETPOST('tracking_number', 'alpha'));
@@ -1259,6 +1266,16 @@ if ($action == 'create' && $permissiontoadd) {
 			print '</td>';
 		}
 		print '</tr>'."\n";
+
+		// Default warehouse for the lines
+		if (isModEnabled('stock')) {
+			$langs->load('stocks');
+			print '<tr><td>'.$langs->trans('Warehouse').'</td>';
+			print '<td>';
+			print img_picto('', 'stock', 'class="pictofixedwidth"');
+			print $formproduct->selectWarehouses(GETPOSTINT('fk_warehouse') > 0 ? GETPOSTINT('fk_warehouse') : 'ifone', 'fk_warehouse', '', 1, 0, 0, '', 1, 0, array(), 'minwidth200');
+			print '</td></tr>'."\n";
+		}
 
 		// Project
 		if (isModEnabled('project') && is_object($formproject)) {
@@ -2325,6 +2342,24 @@ if ($action == 'create' && $permissiontoadd) {
 	print $form->editfieldval("Depth", 'trueDepth', $object->trueDepth, $object, $user->hasRight('reception', 'creer'));
 	print ($object->trueDepth && $object->depth_units != '') ? ' '.measuringUnitString(0, "size", $object->depth_units) : '';
 	print '</td></tr>';
+
+	// Default warehouse for the lines
+	if (isModEnabled('stock')) {
+		$langs->load('stocks');
+		print '<tr><td><table class="nobordernopadding centpercent"><tr><td>';
+		print $langs->trans('Warehouse');
+		print '</td>';
+		if ($action != 'editwarehouse' && $object->statut == Reception::STATUS_DRAFT && $user->hasRight('reception', 'creer')) {
+			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editwarehouse&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetWarehouse'), 1).'</a></td>';
+		}
+		print '</tr></table></td><td colspan="3">';
+		if ($action == 'editwarehouse') {
+			$formproduct->formSelectWarehouses($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_warehouse, 'warehouse_id', 1);
+		} else {
+			$formproduct->formSelectWarehouses($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_warehouse, 'none');
+		}
+		print '</td></tr>';
+	}
 
 	// Volume
 	print '<tr><td>';

@@ -28,6 +28,7 @@ create table llx_reception
   entity                integer  DEFAULT 1 NOT NULL,	-- multi company id
   fk_soc                integer            NOT NULL,
   fk_projet             integer  DEFAULT NULL,
+  fk_warehouse     integer      DEFAULT NULL,				-- default warehouse for the lines
 
   ref_ext               varchar(30),					-- reference into an external system (not used by dolibarr)
   ref_supplier          varchar(255),					-- reference of reception on supplier side

@@ -561,7 +561,11 @@ if ($nolinesbefore) {
 		print '<td class="nobottom linecolwarehouse right">';
 		require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 		$formproductcreate = new FormProduct($object->db);
-		print $formproductcreate->selectWarehouses(GETPOSTINT('entrepot_id') > 0 ? GETPOSTINT('entrepot_id') : '', 'entrepot_id', '', 1, 0, 0, '', 1);
+		$defaultwhline = GETPOSTINT('entrepot_id');
+		if (empty($defaultwhline) && !empty($object->fk_warehouse)) {
+			$defaultwhline = (int) $object->fk_warehouse;	// Default warehouse set on the reception header
+		}
+		print $formproductcreate->selectWarehouses($defaultwhline > 0 ? $defaultwhline : '', 'entrepot_id', '', 1, 0, 0, '', 1);
 		print '</td>';
 		if (isModEnabled('productbatch')) {
 			$coldisplay++;
