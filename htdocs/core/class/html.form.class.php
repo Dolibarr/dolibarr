@@ -3843,8 +3843,9 @@ class Form
 			// include search in supplier ref
 			if (getDolGlobalString('MAIN_SEARCH_PRODUCT_BY_FOURN_REF')) {
 				$sql .= " OR EXISTS (SELECT pfp.fk_product FROM " . $this->db->prefix() . "product_fournisseur_price as pfp WHERE p.rowid = pfp.fk_product";
-				$sql .= " AND (";
+				$sql .= " AND ((";
 				$sql .= $sqlSupplierSearch;
+				$sql .= ")";
 				if (isModEnabled('barcode')) {
 					$sql .= " OR pfp.barcode LIKE '" . $this->db->escape($prefix . $filterkey) . "%'";
 				}
