@@ -7411,7 +7411,7 @@ class Form
 		} else {
 			if ($selected) {
 				$this->load_cache_types_paiements();
-				$out .= isset($this->cache_types_paiements[$selected]['label']) ? $this->cache_types_paiements[$selected]['label'] : '';
+				$out .= isset($this->cache_types_paiements[(int) $selected]['label']) ? $this->cache_types_paiements[(int) $selected]['label'] : '';
 			} else {
 				$out .= "&nbsp;";
 			}
