@@ -1218,7 +1218,7 @@ if ($id > 0 || !empty($ref)) {
 					var baseSplitIdx = parseInt(suffixParts[1], 10);     // 0
 
 					// Identify all lot_number inputs for this product line (original + split rows).
-					// Re-used below for: existing value collection, qty count, and filling results.
+					// Reused below for: existing value collection, qty count, and filling results.
 					var $lotFields = $("input[name]").filter(function() {
 						return /^lot_number_\\d+_/.test(this.name) &&
 							this.name.split("_").pop() === lineIdx;
