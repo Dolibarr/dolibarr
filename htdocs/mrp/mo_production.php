@@ -1973,6 +1973,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							if ($tmpproduct->status_batch) {
 								$preselected = (GETPOSTISSET('batchtoproduce-'.$line->id.'-'.$i) ? GETPOST('batchtoproduce-'.$line->id.'-'.$i) : '');
 								print '<input type="text" class="width75" name="batchtoproduce-'.$line->id.'-'.$i.'" value="'.$preselected.'">';
+								// Show generate button on the first split row only
+								if ($i == 1) {
+									print ' <a href="#" class="generatemo paddingleft"';
+									print ' data-line-id="'.$line->id.'"';
+									print ' data-fk-product="'.$line->fk_product.'"';
+									print ' data-status-batch="'.$tmpproduct->status_batch.'"';
+									print ' title="'.dol_escape_htmltag($langs->trans('Generate')).'"><span class="fas fa-barcode"></span></a>';
+								}
 							}
 							print '</td>';
 							// Batch number in same column than the stock movement picto
@@ -2145,6 +2153,63 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					});
 				});
 			}
+
+			// Generate button: fetch next serial/lot from the configured addon, fill batchtoproduce fields.
+			// SN (status_batch=2): triggers addDispatchLine to split rows, one serial per row.
+			// LOT (status_batch=1): fills the single batchtoproduce field directly.
+			$(document).on('click', '.generatemo', function(e) {
+				e.preventDefault();
+				var $btn = $(this);
+				var lineId = $btn.data('line-id');
+				var fkProduct = $btn.data('fk-product');
+				var statusBatch = parseInt($btn.data('status-batch'), 10);
+
+				// If rows were already split, count them; otherwise use the qty input.
+				var existingRows = $('tr[name^="batch_' + lineId + '_"]').length;
+				var qty;
+				if (existingRows > 1) {
+					qty = existingRows;
+				} else {
+					qty = Math.max(1, parseInt($('#qtytoproduce-' + lineId + '-1').val(), 10) || 1);
+				}
+
+				$btn.css('opacity', '0.4').css('pointer-events', 'none');
+
+				$.getJSON('<?php echo DOL_URL_ROOT ?>/product/ajax/get_next_batch.php', {
+					fk_product: fkProduct,
+					qty: (statusBatch === 2) ? qty : 1
+				}, function(data) {
+					if (data.error) {
+						alert(data.error);
+						$btn.css('opacity', '').css('pointer-events', '');
+						return;
+					}
+					var batches = data.batches;
+					var type = data.type;
+
+					if (type === 'lot') {
+						$('input[name="batchtoproduce-' + lineId + '-1"]').val(batches[0]);
+					} else {
+						if (existingRows <= 1 && qty > 1) {
+							// addDispatchLine creates one extra empty row — remove it after splitting.
+							addDispatchLine(lineId, 'batch', 'alltoproduce');
+							var $allRows = $('tr[name^="batch_' + lineId + '_"]');
+							var $lastRow = $allRows.last();
+							if ($lastRow.find('input[id^="qtytoproduce-' + lineId + '-"]').val() === '') {
+								$lastRow.remove();
+							}
+						}
+						for (var n = 0; n < batches.length; n++) {
+							$('input[name="batchtoproduce-' + lineId + '-' + (n + 1) + '"]').val(batches[n]);
+						}
+					}
+
+					$btn.css('opacity', '').css('pointer-events', '');
+				}).fail(function() {
+					alert('Failed to fetch batch/serial numbers');
+					$btn.css('opacity', '').css('pointer-events', '');
+				});
+			});
 
 		</script>
 
