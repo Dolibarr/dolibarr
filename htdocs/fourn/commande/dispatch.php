@@ -954,7 +954,13 @@ if ($id > 0 || !empty($ref)) {
 							print '</td>';
 
 							print '<td>';
-							print '<input type="text" class="inputlotnumber quatrevingtquinzepercent" id="lot_number'.$suffix.'" name="lot_number'.$suffix.'" value="'.GETPOST('lot_number'.$suffix).'">';
+							print '<input type="text" class="inputlotnumber quatrevingtquinzepercent" id="lot_number'.$suffix.'" name="lot_number'.$suffix.'" value="'.dol_escape_htmltag(GETPOST('lot_number'.$suffix)).'">';
+							// Generate button: clicking the barcode icon fetches the next serial/lot from the configured addon.
+							print ' <a href="#" class="generatedispatchbatch paddingleft"';
+							print ' data-suffix="'.dol_escape_htmltag($suffix).'"';
+							print ' data-fk-product="'.((int) $objp->fk_product).'"';
+							print ' data-status-batch="'.((int) $objp->tobatch).'"';
+							print ' title="'.dol_escape_htmltag($langs->trans('Generate')).'"><span class="fas fa-barcode"></span></a>';
 							print '</td>';
 							if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
 								print '<td class="nowraponall">';
@@ -1190,6 +1196,120 @@ if ($id > 0 || !empty($ref)) {
 					id = id.split("reset_");
 					console.log("Reset trigger for id = qty_"+id[1]);
 					$("#qty_"+id[1]).val("");
+				});
+
+				// Generate button: fetch next serial/lot values from the configured addon.
+				// SN (tobatch=2): clones the row for each serial and forces qty=1.
+				// LOT (tobatch=1): fills the lot_number field directly.
+				// Row suffix "_X_Y": X=split index (0 for original), Y=line index — matches server regex /product_batch_(\\d+)_(\\d+)/.
+				$(document).on("click", ".generatedispatchbatch", function(e) {
+					e.preventDefault();
+					var $btn = $(this);
+					var suffix = $btn.data("suffix");          // e.g. "_0_3"
+					var fkProduct = $btn.data("fk-product");
+					var statusBatch = parseInt($btn.data("status-batch"), 10);
+					var qty = Math.max(1, parseInt($("#qty" + suffix).val(), 10) || 1);
+
+					$btn.css("opacity", "0.4").css("pointer-events", "none");
+
+					// Suffix format "_X_Y": X is split counter, Y is line index
+					var suffixParts = suffix.split("_");           // ["", "0", "3"]
+					var lineIdx = suffixParts[suffixParts.length - 1];   // "3"
+					var baseSplitIdx = parseInt(suffixParts[1], 10);     // 0
+
+					// Identify all lot_number inputs for this product line (original + split rows).
+					// Re-used below for: existing value collection, qty count, and filling results.
+					var $lotFields = $("input[name]").filter(function() {
+						return /^lot_number_\\d+_/.test(this.name) &&
+							this.name.split("_").pop() === lineIdx;
+					});
+
+					// Collect values already in the form so the endpoint can skip them.
+					// getNextValue() only sees the committed DB state; without this, generating
+					// twice in the same session returns the same lot number.
+					var existingLots = [];
+					$lotFields.each(function() {
+						if (this.value) existingLots.push(this.value);
+					});
+
+					$.getJSON("' . DOL_URL_ROOT . '/product/ajax/get_next_batch.php", {
+						fk_product: fkProduct,
+						// SN: one serial per unit.  LOT: one lot per split row.
+						qty: (statusBatch === 2) ? qty : Math.max(1, $lotFields.length),
+						existing_lots: existingLots.join(",")
+					}, function(data) {
+						if (data.error) {
+							alert(data.error);
+							$btn.css("opacity", "").css("pointer-events", "");
+							return;
+						}
+						var batches = data.batches;
+						var type = data.type;
+
+						if (type === "lot") {
+							// Each split row gets its own unique lot number.
+							$lotFields.each(function(i) {
+								$(this).val(batches[i] !== undefined ? batches[i] : batches[batches.length - 1]);
+							});
+						} else {
+							$("#lot_number" + suffix).val(batches[0]);
+							$("#qty" + suffix).val(1);
+
+							// Clone from $originalRow each iteration so the original suffix is always present in the source.
+							var $originalRow = $("tr[name=\\"batch" + suffix + "\\"]");
+							var $currentRow = $originalRow;
+							var warehouseVal = $("select[name=\\"entrepot" + suffix + "\\"]").val();
+
+							for (var n = 1; n < batches.length; n++) {
+								var newSplitIdx = baseSplitIdx + n;
+								var newSuffix = "_" + newSplitIdx + "_" + lineIdx;
+
+								var $newRow = $originalRow.clone(false);
+								$newRow.find("[name]").each(function() {
+									$(this).attr("name", $(this).attr("name").split(suffix).join(newSuffix));
+								});
+								$newRow.find("[id]").each(function() {
+									$(this).attr("id", $(this).attr("id").split(suffix).join(newSuffix));
+								});
+								$newRow.attr("name", "batch" + newSuffix);
+
+								$newRow.find("[name=\\"lot_number" + newSuffix + "\\"]").val(batches[n]);
+								$newRow.find(".qtydispatchinput").val(1);
+								$newRow.find("[name=\\"entrepot" + newSuffix + "\\"]").val(warehouseVal);
+
+								$newRow.find(".generatedispatchbatch").remove();
+								$newRow.find("[name=\\"lot_number" + newSuffix + "\\"]").after(
+									"<a href=\\"#\\" class=\\"removedispatchbatch paddingleft\\" title=\\"Remove\\"><span class=\\"fas fa-times\\"></span></a>"
+								);
+
+								$currentRow.after($newRow);
+								$currentRow = $newRow;
+							}
+						}
+						$btn.css("opacity", "").css("pointer-events", "");
+					}).fail(function() {
+						alert("Failed to fetch batch/serial numbers");
+						$btn.css("opacity", "").css("pointer-events", "");
+					});
+				});
+
+				// Zero the qty so the server skips this row; keep the hidden product_batch field for form discovery.
+				$(document).on("click", ".removedispatchbatch", function(e) {
+					e.preventDefault();
+					var $row = $(this).closest("tr");
+					$row.find(".qtydispatchinput").val(0);
+					$row.hide();
+				});
+
+				// The native resetline handler uses direct .click() binding and only attaches to rows
+				// that exist at page-load time. Cloned SN rows miss it, leaving the button without
+				// type="button" so it submits the form. This delegated handler fixes both cases.
+				$(document).on("click", ".resetline", function(e) {
+					e.preventDefault();
+					var parts = ($(this).attr("id") || "").split("reset_");
+					if (parts[1]) {
+						$("#qty_" + parts[1]).val("");
+					}
 				});
 			});
 		</script>';
