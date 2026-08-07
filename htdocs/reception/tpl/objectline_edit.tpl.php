@@ -141,16 +141,6 @@ if (((int) $line->info_bits & 2) != 2) {
 	print '<input size="3" type="text" class="flat right" name="qty" id="qty" value="'.$line->qty.'">';
 }
 print '</td>';
-print '<td class="nobottom linecolwarehouse right">';
-require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
-$formproductline = new FormProduct($object->db);
-print $formproductline->selectWarehouses(!empty($line->fk_entrepot) ? $line->fk_entrepot : 'ifone', 'entrepot_id', '', 1, 0, (!empty($line->fk_product) ? $line->fk_product : 0), '', 1);
-print '</td>';
-if (isModEnabled('productbatch')) {
-	print '<td class="nobottom linecolbatch">';
-	print '<input size="8" type="text" class="flat" name="batch" id="batch" value="'.dol_escape_htmltag((string) (!empty($line->batch) ? $line->batch : '')).'">';
-	print '</td>';
-}
 
 
 if (getDolGlobalString('PRODUCT_USE_UNITS')) {
@@ -168,6 +158,16 @@ if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 	$coldisplay++;
 	print '<td class="left">';
 	print $form->selectUnits(GETPOSTISSET('units') ? GETPOST('units') : $line->fk_unit, "units", 0, $unit_type);
+	print '</td>';
+}
+print '<td class="nobottom linecolwarehouse right">';
+require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+$formproductline = new FormProduct($object->db);
+print $formproductline->selectWarehouses(!empty($line->fk_entrepot) ? $line->fk_entrepot : '', 'entrepot_id', '', 1, 0, (!empty($line->fk_product) ? $line->fk_product : 0), '', 1);
+print '</td>';
+if (isModEnabled('productbatch')) {
+	print '<td class="nobottom linecolbatch">';
+	print '<input size="8" type="text" class="flat" name="batch" id="batch" value="'.dol_escape_htmltag((string) (!empty($line->batch) ? $line->batch : '')).'">';
 	print '</td>';
 }
 

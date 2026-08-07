@@ -129,6 +129,17 @@ print '<td class="linecolqty nowrap right">';
 $coldisplay++;
 echo price($line->qty, 0, '', 0, 0); // Yes, it is a quantity, not a price, but we just want the formatting role of function price
 print '</td>';
+
+// Unit
+if (getDolGlobalInt('PRODUCT_USE_UNITS')) {		// For product, unit is shown only if option PRODUCT_USE_UNITS is on
+	print '<td class="linecoluseunit nowrap">';
+	$coldisplay++;
+	$label = measuringUnitString((int) $line->fk_unit, '', null, 1);
+	if ($label !== '') {
+		print $langs->trans($label);
+	}
+	print '</td>';
+}
 print '<td class="linecolwarehouse nowrap right">';
 if (!empty($line->fk_entrepot)) {
 	require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
@@ -140,17 +151,6 @@ if (!empty($line->fk_entrepot)) {
 print '</td>';
 if (isModEnabled('productbatch')) {
 	print '<td class="linecolbatch">'.dol_escape_htmltag((string) (!empty($line->batch) ? $line->batch : '')).'</td>';
-}
-
-// Unit
-if (getDolGlobalInt('PRODUCT_USE_UNITS')) {		// For product, unit is shown only if option PRODUCT_USE_UNITS is on
-	print '<td class="linecoluseunit nowrap">';
-	$coldisplay++;
-	$label = measuringUnitString((int) $line->fk_unit, '', null, 1);
-	if ($label !== '') {
-		print $langs->trans($label);
-	}
-	print '</td>';
 }
 
 if ($this->status == 0 && $user->hasRight('reception', 'write') && $action != 'selectlines') {

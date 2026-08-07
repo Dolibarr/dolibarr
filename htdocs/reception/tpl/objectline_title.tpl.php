@@ -78,15 +78,15 @@ print '<th class="linecoldescription">'.$langs->trans('Description');
 print '<th class="linecolrefsupplier">'.$langs->trans('RefSupplier').'</th>';
 print '<th class="linecolcostprice right">'.$langs->trans('BuyingPrice').'</th>';
 print '<th class="linecolqty right">'.$langs->trans('Qty').'</th>';
-print '<th class="linecolwarehouse right">'.$langs->trans('Warehouse').'</th>';
-if (isModEnabled('productbatch')) {
-	print '<th class="linecolbatch">'.$langs->trans('Batch').'</th>';
-}
 
 
 // Unit
 if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 	print '<th class="linecoluseunit left">'.$langs->trans('Unit').'</th>';
+}
+print '<th class="linecolwarehouse right">'.$langs->trans('Warehouse').'</th>';
+if (isModEnabled('productbatch')) {
+	print '<th class="linecolbatch">'.$langs->trans('Batch').'</th>';
 }
 
 print '<td class="linecoledit" style="width: 10px"></td>'; // No width to allow autodim

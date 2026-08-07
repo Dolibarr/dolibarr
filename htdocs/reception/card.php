@@ -814,7 +814,7 @@ if (empty($reshook)) {
 
 
 			if (!$error) {
-				$result = $object->updatelinefree(GETPOSTINT('lineid'), (float) $qty, $element_type, $fk_product, GETPOSTINT('units'), $rang, $description, 0, $array_options, GETPOSTISSET('cost_price') ? price2num(GETPOST('cost_price', 'alpha')) : null, GETPOSTISSET('fourn_ref') ? GETPOST('fourn_ref', 'alphanohtml') : null, GETPOSTINT('entrepot_id'), GETPOSTISSET('batch') ? GETPOST('batch', 'alphanohtml') : null);
+				$result = $object->updatelinefree(GETPOSTINT('lineid'), (float) $qty, $element_type, $fk_product, GETPOSTINT('units'), $rang, $description, 0, $array_options, GETPOSTISSET('cost_price') ? price2num(GETPOST('cost_price', 'alpha')) : null, GETPOSTISSET('fourn_ref') ? GETPOST('fourn_ref', 'alphanohtml') : null, GETPOSTISSET('entrepot_id') ? GETPOSTINT('entrepot_id') : -1, GETPOSTISSET('batch') ? GETPOST('batch', 'alphanohtml') : null);
 
 				if ($result >= 0) {
 					if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
@@ -948,7 +948,7 @@ if (empty($reshook)) {
 		$description = '';
 		$fk_elementdet = '';
 		$element_type = 'reception';
-		$fk_unit = '';
+		$fk_unit = GETPOSTINT('units');
 		$idprod = 0;
 		$fk_product = 0;
 		$fk_entrepot = '';
@@ -1128,10 +1128,7 @@ if (empty($reshook)) {
 				if ($reffourn_line === '' && !empty($reffourn_from_pfp)) {
 					$reffourn_line = $reffourn_from_pfp;
 				}
-				$wh_line = GETPOSTINT('entrepot_id');
-				if (empty($wh_line)) {
-					$wh_line = getDolGlobalInt('MAIN_DEFAULT_WAREHOUSE');
-				}
+				$wh_line = GETPOSTINT('entrepot_id');	// May be empty: a line without warehouse deliberately generates no stock movement
 				$result = $object->addlinefree((float) $qty, $element_type, $idprod, $fk_unit, min($rank, count($object->lines) + 1), $description, $array_options, (float) $finalcost, $reffourn_line, $wh_line, GETPOST('batch', 'alphanohtml'));
 
 				if ($result > 0) {

@@ -1142,11 +1142,11 @@ class Reception extends CommonObject
 	 * @param	array<string,mixed>	$array_options		extrafields array
 	 * @param	float|string|null	$cost_price		Buying price of the line (null = do not change)
 	 * @param	string|null		$ref_fourn		Supplier ref of the product for this line (null = do not change)
-	 * @param	int				$fk_entrepot	Id of destination warehouse (0 = do not change)
+	 * @param	int				$fk_entrepot	Id of destination warehouse (-1 = do not change, 0 = clear)
 	 * @param	string|null		$batch			Batch/serial number (null = do not change)
 	 * @return	int										Return integer <0 if KO, >0 if OK
 	 */
-	public function updatelinefree($rowid, $qty, $element_type, $fk_product, $fk_unit, $rang, $description, $notrigger, $array_options = array(), $cost_price = null, $ref_fourn = null, $fk_entrepot = 0, $batch = null)
+	public function updatelinefree($rowid, $qty, $element_type, $fk_product, $fk_unit, $rang, $description, $notrigger, $array_options = array(), $cost_price = null, $ref_fourn = null, $fk_entrepot = -1, $batch = null)
 	{
 		global $mysoc, $langs, $user;
 
@@ -1187,6 +1187,18 @@ class Reception extends CommonObject
 			$this->line->qty = $qty;
 			$this->line->fk_unit = $fk_unit;
 			$this->line->description = $description;
+			if ($cost_price !== null && $cost_price !== '') {
+				$this->line->cost_price = (float) $cost_price;
+			}
+			if ($ref_fourn !== null) {
+				$this->line->ref_fourn = trim((string) $ref_fourn);
+			}
+			if ((int) $fk_entrepot >= 0) {
+				$this->line->fk_entrepot = ((int) $fk_entrepot > 0 ? (int) $fk_entrepot : 0);	// 0 clears the destination warehouse
+			}
+			if ($batch !== null) {
+				$this->line->batch = trim((string) $batch);
+			}
 
 			if (is_array($array_options) && count($array_options) > 0) {
 				// We replace values in this->line->array_options only for entries defined into $array_options

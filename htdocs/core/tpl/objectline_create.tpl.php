@@ -561,7 +561,7 @@ if ($nolinesbefore) {
 		print '<td class="nobottom linecolwarehouse right">';
 		require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 		$formproductcreate = new FormProduct($object->db);
-		print $formproductcreate->selectWarehouses(GETPOSTINT('entrepot_id') > 0 ? GETPOSTINT('entrepot_id') : 'ifone', 'entrepot_id', '', 1, 0, 0, '', 1);
+		print $formproductcreate->selectWarehouses(GETPOSTINT('entrepot_id') > 0 ? GETPOSTINT('entrepot_id') : '', 'entrepot_id', '', 1, 0, 0, '', 1);
 		print '</td>';
 		if (isModEnabled('productbatch')) {
 			$coldisplay++;
