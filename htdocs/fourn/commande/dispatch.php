@@ -1278,8 +1278,13 @@ if ($id > 0 || !empty($ref)) {
 				if (isModEnabled("reception")) {
 					print '<td class="nowraponall">';
 					if (!empty($objp->fk_reception)) {
-						$reception = new Reception($db);
-						$reception->fetch($objp->fk_reception);
+						if (empty($conf->cache['reception'][$objp->fk_reception])) {
+							$reception = new Reception($db);
+							$reception->fetch($objp->fk_reception);
+							$conf->cache['reception'][$objp->fk_reception] = $reception;
+						} else {
+							$reception = $conf->cache['reception'][$objp->fk_reception];
+						}
 						print $reception->getNomUrl(1);
 					}
 
@@ -1317,8 +1322,14 @@ if ($id > 0 || !empty($ref)) {
 				if (isModEnabled('productbatch')) {
 					if ($objp->batch) {
 						include_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
-						$lot = new Productlot($db);
-						$lot->fetch(0, $objp->pid, $objp->batch);
+						$lotcachekey = $objp->pid.'_'.$objp->batch;
+						if (empty($conf->cache['productlot'][$lotcachekey])) {
+							$lot = new Productlot($db);
+							$lot->fetch(0, $objp->pid, $objp->batch);
+							$conf->cache['productlot'][$lotcachekey] = $lot;
+						} else {
+							$lot = $conf->cache['productlot'][$lotcachekey];
+						}
 						print '<td class="dispatch_batch_number" data-col="batch"  data-batch="' . dolPrintHTMLForAttribute($objp->batch) . '" data-productid="' . $objp->fk_product . '" >'.$lot->getNomUrl(1).'</td>';
 						if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
 							print '<td class="dispatch_dlc">'.dol_print_date($lot->sellby, 'day').'</td>';
