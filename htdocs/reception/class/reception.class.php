@@ -695,6 +695,7 @@ class Reception extends CommonObject
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."commande_fournisseurdet as cd ON cd.rowid = ed.fk_elementdet";
 			$sql .= " WHERE ed.fk_reception = ".((int) $this->id);
 			$sql .= " AND COALESCE(NULLIF(ed.fk_product, 0), cd.fk_product) IS NOT NULL";
+			$sql .= " AND ed.fk_entrepot IS NOT NULL AND ed.fk_entrepot > 0";	// A line without destination warehouse generates no stock movement (sample, servicing, ...)
 
 			dol_syslog(get_class($this)."::valid select details", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -1440,6 +1441,7 @@ class Reception extends CommonObject
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."commande_fournisseurdet as cd ON cd.rowid = ed.fk_elementdet";
 			$sql .= " WHERE ed.fk_reception = ".((int) $this->id);
 			$sql .= " AND COALESCE(NULLIF(ed.fk_product, 0), cd.fk_product) IS NOT NULL";
+			$sql .= " AND ed.fk_entrepot IS NOT NULL AND ed.fk_entrepot > 0";	// A line without destination warehouse generates no stock movement (sample, servicing, ...)
 
 			dol_syslog(get_class($this)."::delete select details", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -2067,6 +2069,7 @@ class Reception extends CommonObject
 				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."commande_fournisseurdet as cd ON cd.rowid = ed.fk_elementdet";
 				$sql .= " WHERE ed.fk_reception = ".((int) $this->id);
 				$sql .= " AND COALESCE(NULLIF(ed.fk_product, 0), cd.fk_product) IS NOT NULL";
+				$sql .= " AND ed.fk_entrepot IS NOT NULL AND ed.fk_entrepot > 0";	// A line without destination warehouse generates no stock movement (sample, servicing, ...)
 
 				dol_syslog(get_class($this)."::valid select details", LOG_DEBUG);
 				$resql = $this->db->query($sql);
@@ -2228,6 +2231,7 @@ class Reception extends CommonObject
 				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."commande_fournisseurdet as cd ON cd.rowid = ed.fk_elementdet";
 				$sql .= " WHERE ed.fk_reception = ".((int) $this->id);
 				$sql .= " AND COALESCE(NULLIF(ed.fk_product, 0), cd.fk_product) IS NOT NULL";
+				$sql .= " AND ed.fk_entrepot IS NOT NULL AND ed.fk_entrepot > 0";	// A line without destination warehouse generates no stock movement (sample, servicing, ...)
 
 				dol_syslog(get_class($this)."::valid select details", LOG_DEBUG);
 				$resql = $this->db->query($sql);
@@ -2365,6 +2369,7 @@ class Reception extends CommonObject
 				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."commande_fournisseurdet as cd ON cd.rowid = ed.fk_elementdet";
 				$sql .= " WHERE ed.fk_reception = ".((int) $this->id);
 				$sql .= " AND COALESCE(NULLIF(ed.fk_product, 0), cd.fk_product) IS NOT NULL";
+				$sql .= " AND ed.fk_entrepot IS NOT NULL AND ed.fk_entrepot > 0";	// A line without destination warehouse generates no stock movement (sample, servicing, ...)
 
 				dol_syslog(get_class($this)."::valid select details", LOG_DEBUG);
 				$resql = $this->db->query($sql);
