@@ -114,7 +114,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $boxes = array();
 
 	/**
-	 * @var	array<int,array{0:string,1:string,2:string|int,3:string,4?:int<0,1>,5?:string,6?:int<0,1>}> Module constants
+	 * @var	array<array{0:string,1:string,2:string|int,3?:string,4?:int<0,1>,5?:string,6?:int<0,1>}> Module constants
 	 *		(0:name,1:type,2:val,3:note,4:visible,5:entity,6:deleteonunactive)
 	 */
 	public $const = array();
@@ -607,15 +607,15 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		$num = count($array_sql);
 		for ($i = 0; $i < $num; $i++) {
 			if (!$err) {
-				$val = $array_sql[$i];
-				$sql = $val;
+				$sql = $array_sql[$i];
+				$val = $sql;
 				$ignoreerror = 0;
 				if (is_array($val)) {
 					$sql = $val['sql'];
 					$ignoreerror = $val['ignoreerror'] ?? 0;
 				}
 				// Add current entity id
-				$sql = str_replace('__ENTITY__', (string) $conf->entity, $sql);
+				$sql = str_replace('__ENTITY__', (string) ((int) $conf->entity), $sql);
 
 				dol_syslog(get_class($this)."::_init ignoreerror=".$ignoreerror, LOG_DEBUG);
 				$result = $this->db->query($sql, $ignoreerror);
@@ -1148,7 +1148,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 		$sql = "SELECT tms, note FROM ".MAIN_DB_PREFIX."const";
 		$sql .= " WHERE ".$this->db->decrypt('name')." = '".$this->db->escape($this->const_name)."'";
-		$sql .= " AND entity IN (0, ".$conf->entity.")";
+		$sql .= " AND entity IN (0, ".((int) $conf->entity).")";
 
 		dol_syslog(get_class($this)."::getLastActiveDate", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -1192,7 +1192,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
 		$sql .= " WHERE ".$this->db->decrypt('name')." = '".$this->db->escape($this->const_name)."'";
-		$sql .= " AND entity IN (0, ".$entity.")";
+		$sql .= " AND entity IN (0, ".((int) $entity).")";
 
 		dol_syslog(get_class($this)."::_active delete activation constant", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -1242,7 +1242,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
 		$sql .= " WHERE ".$this->db->decrypt('name')." = '".$this->db->escape($this->const_name)."'";
-		$sql .= " AND entity IN (0, ".$entity.")";
+		$sql .= " AND entity IN (0, ".((int) $entity).")";
 
 		dol_syslog(get_class($this)."::_unactive", LOG_DEBUG);
 		$this->db->query($sql);
@@ -1259,14 +1259,15 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 * - Then data_xxx.sql (usually provided by external modules only)
 	 * - Then update_xxx.sql (usually provided by external modules only)
 	 * Files must be stored in subdirectory 'tables' or 'data' into directory $reldir (Example: '/install/mysql/' or '/module/sql/')
-	 * This function may also be called by :
-	 * - _load_tables('/install/mysql/', 'modulename') into the this->init() of core module descriptors.
-	 * - _load_tables('/mymodule/sql/') into the this->init() of external module descriptors.
+	 * This function may also be called by:
+	 * - _load_tables('/install/mysql/', 'modulename') in the init() of core module descriptors. This loads only files containing '-modulename.' in their name.
+	 * - _load_tables('/mymodule/sql/') in the init() of external module descriptors. Omitting the suffix loads every matching SQL file.
+	 * When $onlywithsuffix is not empty, files without '-<suffix>.' in their name are silently skipped.
 	 *
 	 * WARNING: This function can break a transaction making a rollback not working !
 	 *
 	 * @param  	string 	$reldir 			Relative directory where to scan files. Example: '/install/mysql/' or '/module/sql/'
-	 * @param	string	$onlywithsuffix		Only with the defined suffix
+	 * @param	string	$onlywithsuffix		Only load filenames containing '-<suffix>.' (empty to disable filtering)
 	 * @return 	int<0,1>             			Return integer <=0 if KO, >0 if OK
 	 */
 	protected function _load_tables($reldir, $onlywithsuffix = '')
@@ -1286,7 +1287,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 		foreach ($conf->file->dol_document_root as $dirroot) {
 			if ($ok == 1) {
-				$dirsql = $dirroot.$reldir;
+				$dirsql = $dirroot.$reldir;   // Not sql, just sql file @phan-suppress-current-line SqlInjection
 				$ok = 0;
 
 				// We will loop on xxx/, xxx/tables/, xxx/data/
@@ -1343,10 +1344,10 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 								}
 							}
 							if (preg_match('/\.key\.sql$/i', $file) && substr($file, 0, 4) == 'llx_') {
-								/*                              $result = run_sql($dir.$file, !getDolGlobalString('MAIN_DISPLAY_SQL_INSTALL_LOG') ? 1 : 0, 0, 1);
+								$result = run_sql($dir.$file, !getDolGlobalString('MAIN_DISPLAY_SQL_INSTALL_LOG') ? 1 : 0, 0, 1);
 								if ($result <= 0) {
 									$error++;
-								}*/
+								}
 							}
 						}
 
@@ -1368,10 +1369,10 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 								}
 							}
 							if (preg_match('/\.sql$/i', $file) && !preg_match('/\.key\.sql$/i', $file) && substr($file, 0, 9) == 'functions') {
-								/*                              $result = run_sql($dir.$file, !getDolGlobalString('MAIN_DISPLAY_SQL_INSTALL_LOG') ? 1 : 0, 0, 1);
+								$result = run_sql($dir.$file, !getDolGlobalString('MAIN_DISPLAY_SQL_INSTALL_LOG') ? 1 : 0, 0, 1);
 								if ($result <= 0) {
 									$error++;
-								}*/
+								}
 							}
 						}
 
@@ -1393,10 +1394,10 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 								}
 							}
 							if (preg_match('/\.sql$/i', $file) && !preg_match('/\.key\.sql$/i', $file) && substr($file, 0, 4) == 'data') {
-								/*                              $result = run_sql($dir.$file, !getDolGlobalString('MAIN_DISPLAY_SQL_INSTALL_LOG') ? 1 : 0, 0, 1);
+								$result = run_sql($dir.$file, !getDolGlobalString('MAIN_DISPLAY_SQL_INSTALL_LOG') ? 1 : 0, 0, 1);
 								if ($result <= 0) {
 									$error++;
-								}*/
+								}
 							}
 						}
 
@@ -1418,10 +1419,10 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 								}
 							}
 							if (preg_match('/\.sql$/i', $file) && !preg_match('/\.key\.sql$/i', $file) && substr($file, 0, 6) == 'update') {
-								/*                              $result = run_sql($dir.$file, !getDolGlobalString('MAIN_DISPLAY_SQL_INSTALL_LOG') ? 1 : 0, 0, 1);
+								$result = run_sql($dir.$file, !getDolGlobalString('MAIN_DISPLAY_SQL_INSTALL_LOG') ? 1 : 0, 0, 1);
 								if ($result <= 0) {
 									$error++;
-								}*/
+								}
 							}
 						}
 
@@ -1479,7 +1480,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				// Search if boxes def already present
 				$sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."boxes_def";
 				$sql .= " WHERE file = '".$this->db->escape($file)."'";
-				$sql .= " AND entity = ".$conf->entity;
+				$sql .= " AND entity = ".((int) $conf->entity);
 				if ($note) {
 					$sql .= " AND note ='".$this->db->escape($note)."'";
 				}
@@ -1493,7 +1494,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 						if (!$err) {
 							$sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes_def (file, entity, note)";
 							$sql .= " VALUES ('".$this->db->escape($file)."', ";
-							$sql .= $conf->entity.", ";
+							$sql .= ((int) $conf->entity).", ";
 							$sql .= $note ? "'".$this->db->escape($note)."'" : "null";
 							$sql .= ")";
 
@@ -1584,13 +1585,13 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 					$sql .= "SELECT ".MAIN_DB_PREFIX."boxes_def.rowid ";
 					$sql .= "FROM ".MAIN_DB_PREFIX."boxes_def ";
 					$sql .= "WHERE ".MAIN_DB_PREFIX."boxes_def.file = '".$this->db->escape($file)."') ";
-					$sql .= "AND ".MAIN_DB_PREFIX."boxes.entity = ".$conf->entity;
+					$sql .= "AND ".MAIN_DB_PREFIX."boxes.entity = ".((int) $conf->entity);
 				} else {
 					$sql = "DELETE FROM ".MAIN_DB_PREFIX."boxes";
 					$sql .= " USING ".MAIN_DB_PREFIX."boxes, ".MAIN_DB_PREFIX."boxes_def";
 					$sql .= " WHERE ".MAIN_DB_PREFIX."boxes.box_id = ".MAIN_DB_PREFIX."boxes_def.rowid";
 					$sql .= " AND ".MAIN_DB_PREFIX."boxes_def.file = '".$this->db->escape($file)."'";
-					$sql .= " AND ".MAIN_DB_PREFIX."boxes.entity = ".$conf->entity;
+					$sql .= " AND ".MAIN_DB_PREFIX."boxes.entity = ".((int) $conf->entity);
 				}
 
 				dol_syslog(get_class($this)."::delete_boxes", LOG_DEBUG);
@@ -1602,7 +1603,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX."boxes_def";
 				$sql .= " WHERE file = '".$this->db->escape($file)."'";
-				$sql .= " AND entity = ".$conf->entity;		// Do not use getEntity here, we want to delete only in current company
+				$sql .= " AND entity = ".((int) $conf->entity);		// Do not use getEntity here, we want to delete only in current company
 
 				dol_syslog(get_class($this)."::delete_boxes", LOG_DEBUG);
 				$resql = $this->db->query($sql);
@@ -1752,7 +1753,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		if (is_array($this->cronjobs)) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."cronjob";
 			$sql .= " WHERE module_name = '".$this->db->escape(empty($this->rights_class) ? strtolower($this->name) : $this->rights_class)."'";
-			$sql .= " AND entity = ".$conf->entity;
+			$sql .= " AND entity = ".((int) $conf->entity);
 			$sql .= " AND test = '1'"; // We delete on lines that are not set with a complete test that is '$conf->module->enabled' so when module is disabled, the cron is also removed.
 			// For crons declared with a '$conf->module->enabled', there is no need to delete the line, so we don't loose setup if we reenable module.
 
@@ -1911,9 +1912,9 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 					if ($row[0] == 0) {   // If not found
 						$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name, type, value, note, visible, entity)";
 						$sql .= " VALUES (";
-						$sql .= $this->db->encrypt($name);
+						$sql .= $this->db->encrypt($name);  // Note: encrypt returns SQL expression or quoted string
 						$sql .= ", '".$this->db->escape($type)."'";
-						$sql .= ", ".(($val != '') ? $this->db->encrypt($val) : "''");
+						$sql .= ", ".(($val != '') ? $this->db->encrypt($val) : "''");  // Note: encrypt returns SQL expression or quoted string
 						$sql .= ", ".($note ? "'".$this->db->escape($note)."'" : "null");
 						$sql .= ", '".$this->db->escape($visible)."'";
 						$sql .= ", ".((int) $entity);
@@ -1961,7 +1962,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 			if ($deleteonunactive) {
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
 				$sql .= " WHERE ".$this->db->decrypt('name')." = '".$this->db->escape($name)."'";
-				$sql .= " AND entity in (0, ".$conf->entity.")";
+				$sql .= " AND entity in (0, ".((int) $conf->entity).")";
 				dol_syslog(get_class($this)."::delete_const", LOG_DEBUG);
 				if (!$this->db->query($sql)) {
 					$this->error = $this->db->lasterror();
@@ -2295,7 +2296,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."menu";
 		$sql .= " WHERE module = '".$this->db->escape($module)."'";
 		$sql .= " AND menu_handler = 'all'";	// We delete only lines that were added manually or by the module activation. We keep entry added by menuhandler like 'auguria'
-		$sql .= " AND entity IN (0, ".$conf->entity.")";
+		$sql .= " AND entity IN (0, ".((int) $conf->entity).")";
 
 		dol_syslog(get_class($this)."::delete_menus", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -2392,7 +2393,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		$sql = "SELECT count(*)";
 		$sql .= " FROM ".MAIN_DB_PREFIX."const";
 		$sql .= " WHERE ".$this->db->decrypt('name')." = '".$this->db->escape($name)."'";
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " AND entity = ".((int) $conf->entity);
 
 		dol_syslog(get_class($this)."::insert_dirs", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -2430,7 +2431,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
 		$sql .= " WHERE ".$this->db->decrypt('name')." LIKE '".$this->db->escape($this->const_name)."_DIR_%'";
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " AND entity = ".((int) $conf->entity);
 
 		dol_syslog(get_class($this)."::delete_dirs", LOG_DEBUG);
 		if (!$this->db->query($sql)) {

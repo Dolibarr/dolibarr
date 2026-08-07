@@ -60,3 +60,4 @@ DefaultModelPropalToBill=النموذج الافتراضي عند إغلاق ع�
 DocModelCyanDescription=نموذج عرض كامل
 ProposalCustomerSignature=قبول خطي وختم الشركة والتاريخ والتوقيع
 ProposalsStatisticsSuppliers=إحصاءات مقترحات البائعين
+PROPOSAL_SHOW_SHIPPING_ADDRESSMore=إلزامي في بعض الدول (فرنسا، ...)

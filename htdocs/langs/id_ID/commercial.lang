@@ -102,3 +102,4 @@ SignedReceiverOnline=Ditandatangani oleh pihak ketiga secara online
 SignedAll=Ditandatangani oleh semua pihak
 SignStatus=Status tanda tangan
 DocumentSigned=Dokumen ditandatangani
+DocumentUnsigned=Document unsigned

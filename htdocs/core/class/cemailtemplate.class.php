@@ -272,7 +272,7 @@ class CEmailTemplate extends CommonObject
 		if (is_null($this->fk_user)) {
 			$sql .= " NULL,";
 		} else {
-			$sql .= " '".((int) $this->fk_user)."',";
+			$sql .= " ".((int) $this->fk_user).",";
 		}
 		if (is_null($this->datec)) {
 			$sql .= " '".$this->db->idate($now)."',";
@@ -284,12 +284,12 @@ class CEmailTemplate extends CommonObject
 		if (is_null($this->enabled)) {
 			$sql .= " 1,";
 		} else {
-			$sql .= " '".((int) $this->enabled)."',";
+			$sql .= " ".((int) $this->enabled).",";
 		}
 		if (is_null($this->active)) {
 			$sql .= " 1,";
 		} else {
-			$sql .= " '".((int) $this->active)."',";
+			$sql .= " ".((int) $this->active).",";
 		}
 		if (is_null($this->email_from)) {
 			$sql .= " NULL,";

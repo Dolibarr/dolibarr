@@ -5,7 +5,6 @@ SupplierInvoices=Sotuvchi hisob-fakturalari
 ShowSupplierInvoice=Sotuvchi fakturasini ko'rsating
 NewSupplier=Yangi sotuvchi
 NewSupplierInvoice = Sotuvchining yangi hisob-fakturasi
-History=Tarix
 ListOfSuppliers=Sotuvchilar ro'yxati
 ShowSupplier=Sotuvchini ko'rsatish
 BuyingPriceMin=Eng yaxshi sotib olish narxi

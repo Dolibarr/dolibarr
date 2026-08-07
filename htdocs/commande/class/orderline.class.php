@@ -158,31 +158,49 @@ class OrderLine extends CommonOrderLine
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
-		'ref' => array('type' => 'varchar(50)', 'label' => 'Ref', 'enabled' => 1, 'visible' => -1, 'showoncombobox' => 1, 'position' => 15, 'searchall' => 1),
-		'ref_ext' => array('type' => 'varchar(255)', 'label' => 'RefExt', 'enabled' => 1, 'visible' => 0, 'position' => 20),
-		'ref_customer' => array('type' => 'varchar(50)', 'label' => 'RefCustomer', 'enabled' => 1, 'visible' => -1, 'position' => 25, 'searchall' => 1),
-		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => '1', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 30, 'index' => 1),
-		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 35),
-		'datec' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -1, 'position' => 40),
-		'fk_commande' => array('type' => 'integer:Commande:commande/class/commande.class.php', 'label' => 'Order', 'enabled' => 'isModEnabled("societe")', 'visible' => -1, 'notnull' => 1, 'position' => 70),
-		'fk_projet' => array('type' => 'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label' => 'Project', 'enabled' => "isModEnabled('project')", 'visible' => -1, 'position' => 75),
-		'fk_product' => array('type' => 'integer:Product:product/class/product.class.php:1', 'label' => 'ProductOrService', 'enabled' => "isModEnabled('product') || isModEnabled('service')", 'visible' => -1, 'position' => 76),
-		//'fk_commercial_signature' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'SaleRepresentative Signature', 'enabled' => 1, 'visible' => -1, 'position' => 80),
-		//'fk_commercial_suivi' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'SaleRepresentative follower', 'enabled' => 1, 'visible' => -1, 'position' => 85),
-		'fk_user_author' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 90),
-		'total_ht' => array('type' => 'double(24,8)', 'label' => 'TotalHT', 'enabled' => 1, 'visible' => -1, 'position' => 125, 'isameasure' => 1),
-		'total_tva' => array('type' => 'double(24,8)', 'label' => 'VAT', 'enabled' => 1, 'visible' => -1, 'position' => 130, 'isameasure' => 1),
-		'localtax1' => array('type' => 'double(24,8)', 'label' => 'LocalTax1', 'enabled' => 1, 'visible' => -1, 'position' => 135, 'isameasure' => 1),
-		'localtax2' => array('type' => 'double(24,8)', 'label' => 'LocalTax2', 'enabled' => 1, 'visible' => -1, 'position' => 140, 'isameasure' => 1),
-		'total_ttc' => array('type' => 'double(24,8)', 'label' => 'TotalTTC', 'enabled' => 1, 'visible' => -1, 'position' => 145, 'isameasure' => 1),
-		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 105, 'searchall' => 1),
-		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 110, 'searchall' => 1),
-		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'Model pdf', 'enabled' => 1, 'visible' => 0, 'position' => 115),
-		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'visible' => -2, 'position' => 120),
-		'extraparams' => array('type' => 'varchar(255)', 'label' => 'Extraparams', 'enabled' => 1, 'visible' => -1, 'position' => 125),
-		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'visible' => -2, 'notnull' => -1, 'position' => 135),
-		'last_main_doc' => array('type' => 'varchar(255)', 'label' => 'Last main doc', 'enabled' => 1, 'visible' => -1, 'position' => 140),
-		'statut' => array('type' => 'smallint(6)', 'label' => 'Statut', 'enabled' => 1, 'visible' => -1, 'position' => 500, 'notnull' => 1, 'arrayofkeyval' => array(0 => 'Draft', 1 => 'Validated', 2 => 'Closed'))
+		'fk_commande' => array('type' => 'integer:Commande:commande/class/commande.class.php', 'label' => 'Order', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 15),
+		'fk_parent_line' => array('type' => 'integer:OrderLine:commande/class/orderline.class.php', 'label' => 'ParentLine', 'enabled' => 1, 'visible' => -1, 'position' => 20),
+		'fk_product' => array('type' => 'integer:Product:product/class/product.class.php:1', 'label' => 'ProductOrService', 'enabled' => "isModEnabled('product') || isModEnabled('service')", 'visible' => -1, 'position' => 25),
+		'label' => array('type' => 'varchar(255)', 'label' => 'Label', 'enabled' => 1, 'visible' => -1, 'position' => 30),
+		'description' => array('type' => 'text', 'label' => 'Description', 'enabled' => 1, 'visible' => -1, 'position' => 35, 'searchall' => 1),
+		'vat_src_code' => array('type' => 'varchar(10)', 'label' => 'VatSrcCode', 'enabled' => 1, 'visible' => -1, 'position' => 40),
+		'tva_tx' => array('type' => 'double(7,4)', 'label' => 'VATRate', 'enabled' => 1, 'visible' => -1, 'position' => 45),
+		'localtax1_tx' => array('type' => 'double(7,4)', 'label' => 'LocalTax1Rate', 'enabled' => 1, 'visible' => -1, 'default' => '0', 'position' => 50),
+		'localtax1_type' => array('type' => 'varchar(10)', 'label' => 'LocalTax1Type', 'enabled' => 1, 'visible' => -1, 'position' => 55),
+		'localtax2_tx' => array('type' => 'double(7,4)', 'label' => 'LocalTax2Rate', 'enabled' => 1, 'visible' => -1, 'default' => '0', 'position' => 60),
+		'localtax2_type' => array('type' => 'varchar(10)', 'label' => 'LocalTax2Type', 'enabled' => 1, 'visible' => -1, 'position' => 65),
+		'qty' => array('type' => 'real', 'label' => 'Qty', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 70),
+		'remise_percent' => array('type' => 'real', 'label' => 'ReductionPercent', 'enabled' => 1, 'visible' => -1, 'default' => '0', 'position' => 75),
+		'remise' => array('type' => 'real', 'label' => 'Remise', 'enabled' => 0, 'visible' => -2, 'default' => '0', 'position' => 80),
+		'fk_remise_except' => array('type' => 'integer:DiscountAbsolute:core/class/discount.class.php', 'label' => 'DiscountAbsolute', 'enabled' => 1, 'visible' => -1, 'position' => 85),
+		'price' => array('type' => 'real', 'label' => 'Price', 'enabled' => 0, 'visible' => -2, 'position' => 90),
+		'subprice' => array('type' => 'double(24,8)', 'label' => 'SubPrice', 'enabled' => 1, 'visible' => -1, 'default' => '0', 'position' => 95),
+		'subprice_ttc' => array('type' => 'double(24,8)', 'label' => 'SubPriceTTC', 'enabled' => 1, 'visible' => -1, 'default' => '0', 'position' => 100),
+		'total_ht' => array('type' => 'double(24,8)', 'label' => 'TotalHT', 'enabled' => 1, 'visible' => -1, 'default' => '0', 'position' => 105, 'isameasure' => 1),
+		'total_tva' => array('type' => 'double(24,8)', 'label' => 'VAT', 'enabled' => 1, 'visible' => -1, 'default' => '0', 'position' => 110, 'isameasure' => 1),
+		'total_localtax1' => array('type' => 'double(24,8)', 'label' => 'LocalTax1', 'enabled' => 1, 'visible' => -1, 'default' => '0', 'position' => 115, 'isameasure' => 1),
+		'total_localtax2' => array('type' => 'double(24,8)', 'label' => 'LocalTax2', 'enabled' => 1, 'visible' => -1, 'default' => '0', 'position' => 120, 'isameasure' => 1),
+		'total_ttc' => array('type' => 'double(24,8)', 'label' => 'TotalTTC', 'enabled' => 1, 'visible' => -1, 'default' => '0', 'position' => 125, 'isameasure' => 1),
+		'product_type' => array('type' => 'integer', 'label' => 'TypeOfLineServiceOrProduct', 'enabled' => 1, 'visible' => -1, 'default' => '0', 'position' => 130),
+		'date_start' => array('type' => 'datetime', 'label' => 'DateStart', 'enabled' => 1, 'visible' => -1, 'position' => 135),
+		'date_end' => array('type' => 'datetime', 'label' => 'DateEnd', 'enabled' => 1, 'visible' => -1, 'position' => 140),
+		'info_bits' => array('type' => 'integer', 'label' => 'InfoBits', 'enabled' => 1, 'visible' => -1, 'default' => '0', 'position' => 145),
+		'buy_price_ht' => array('type' => 'double(24,8)', 'label' => 'BuyingPrice', 'enabled' => 1, 'visible' => -1, 'default' => '0', 'position' => 150),
+		'fk_product_fournisseur_price' => array('type' => 'integer:ProductFournisseur:fourn/class/fournisseur.product.class.php', 'label' => 'SupplierPriceReference', 'enabled' => 1, 'visible' => -1, 'position' => 155),
+		'special_code' => array('type' => 'integer', 'label' => 'SpecialCode', 'enabled' => 1, 'visible' => -1, 'default' => '0', 'position' => 160),
+		'rang' => array('type' => 'integer', 'label' => 'Rank', 'enabled' => 1, 'visible' => -1, 'default' => '0', 'position' => 165),
+		'fk_unit' => array('type' => 'integer:CUnits:core/class/cunits.class.php', 'label' => 'Unit', 'enabled' => 1, 'visible' => -1, 'position' => 170),
+		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'visible' => -2, 'position' => 175),
+		'ref_ext' => array('type' => 'varchar(255)', 'label' => 'RefExt', 'enabled' => 1, 'visible' => 0, 'position' => 180),
+		'fk_commandefourndet' => array('type' => 'integer:CommandeFournisseurLigne:fourn/class/fournisseur.commande.class.php', 'label' => 'SupplierOrderLine', 'enabled' => 1, 'visible' => -1, 'position' => 185),
+		'fk_multicurrency' => array('type' => 'integer:MultiCurrency:multicurrency/class/multicurrency.class.php', 'label' => 'Currency', 'enabled' => 1, 'visible' => -1, 'position' => 190),
+		'multicurrency_code' => array('type' => 'varchar(3)', 'label' => 'CurrencyCode', 'enabled' => 1, 'visible' => -1, 'position' => 195),
+		'multicurrency_subprice' => array('type' => 'double(24,8)', 'label' => 'CurrencyUnitPrice', 'enabled' => 1, 'visible' => -1, 'default' => '0', 'position' => 200),
+		'multicurrency_subprice_ttc' => array('type' => 'double(24,8)', 'label' => 'CurrencyUnitPriceTTC', 'enabled' => 1, 'visible' => -1, 'default' => '0', 'position' => 205),
+		'multicurrency_total_ht' => array('type' => 'double(24,8)', 'label' => 'CurrencyTotalHT', 'enabled' => 1, 'visible' => -1, 'default' => '0', 'position' => 210),
+		'multicurrency_total_tva' => array('type' => 'double(24,8)', 'label' => 'CurrencyTotalVAT', 'enabled' => 1, 'visible' => -1, 'default' => '0', 'position' => 215),
+		'multicurrency_total_ttc' => array('type' => 'double(24,8)', 'label' => 'CurrencyTotalTTC', 'enabled' => 1, 'visible' => -1, 'default' => '0', 'position' => 220),
+		'extraparams' => array('type' => 'varchar(255)', 'label' => 'Extraparams', 'enabled' => 1, 'visible' => -1, 'position' => 225),
 	);
 	// END MODULEBUILDER PROPERTIES
 
@@ -469,7 +487,7 @@ class OrderLine extends CommonOrderLine
 		$sql .= ' fk_unit,';
 		$sql .= ' fk_multicurrency, multicurrency_code, multicurrency_subprice, multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc';
 		$sql .= ')';
-		$sql .= " VALUES (".$this->fk_commande.",";
+		$sql .= " VALUES (".((int) $this->fk_commande).",";
 		$sql .= " ".($this->fk_parent_line > 0 ? "'".$this->db->escape((string) $this->fk_parent_line)."'" : "null").",";
 		$sql .= " ".(!empty($this->label) ? "'".$this->db->escape($this->label)."'" : "null").",";
 		$sql .= " '".$this->db->escape($this->desc)."',";
@@ -481,15 +499,15 @@ class OrderLine extends CommonOrderLine
 		$sql .= " '".price2num($this->localtax2_tx)."',";
 		$sql .= " '".$this->db->escape($this->localtax1_type)."',";
 		$sql .= " '".$this->db->escape($this->localtax2_type)."',";
-		$sql .= ' '.((!empty($this->fk_product) && $this->fk_product > 0) ? $this->fk_product : "null").',';
+		$sql .= ' '.((!empty($this->fk_product) && $this->fk_product > 0) ? ((int) $this->fk_product) : "null").',';
 		$sql .= " ".((int) $this->product_type).",";
 		$sql .= " '".price2num($this->remise_percent)."',";
 		$sql .= " ".(price2num($this->subprice) !== '' ? price2num($this->subprice) : "null").",";
 		$sql .= " ".($this->price != '' ? "'".price2num($this->price)."'" : "null").",";
-		$sql .= ' '.(!empty($this->fk_remise_except) ? $this->fk_remise_except : "null").',';
+		$sql .= ' '.(!empty($this->fk_remise_except) ? ((int) $this->fk_remise_except) : "null").',';
 		$sql .= ' '.((int) $this->special_code).',';
 		$sql .= ' '.((int) $this->rang).',';
-		$sql .= ' '.(!empty($this->fk_fournprice) ? $this->fk_fournprice : "null").',';
+		$sql .= ' '.(!empty($this->fk_fournprice) ? ((int) $this->fk_fournprice) : "null").',';
 		$sql .= ' '.price2num($this->pa_ht).',';
 		$sql .= " ".((int) $this->info_bits).",";
 		$sql .= " ".price2num($this->total_ht, 'MT').",";
@@ -653,14 +671,14 @@ class OrderLine extends CommonOrderLine
 			$sql .= " , total_localtax1=".price2num($this->total_localtax1);
 			$sql .= " , total_localtax2=".price2num($this->total_localtax2);
 		}
-		$sql .= " , fk_product_fournisseur_price=".(!empty($this->fk_fournprice) ? $this->fk_fournprice : "null");
+		$sql .= " , fk_product_fournisseur_price=".(!empty($this->fk_fournprice) ? ((int) $this->fk_fournprice) : "null");
 		$sql .= " , buy_price_ht='".price2num($this->pa_ht)."'";
 		$sql .= " , info_bits=".((int) $this->info_bits);
 		$sql .= " , special_code=".((int) $this->special_code);
 		$sql .= " , date_start=".(!empty($this->date_start) ? "'".$this->db->idate($this->date_start)."'" : "null");
 		$sql .= " , date_end=".(!empty($this->date_end) ? "'".$this->db->idate($this->date_end)."'" : "null");
 		$sql .= " , product_type = ".((int) $this->product_type);
-		$sql .= " , fk_parent_line=".(!empty($this->fk_parent_line) ? $this->fk_parent_line : "null");
+		$sql .= " , fk_parent_line=".(!empty($this->fk_parent_line) ? ((int) $this->fk_parent_line) : "null");
 		if (!empty($this->rang)) {
 			$sql .= ", rang=".((int) $this->rang);
 		}

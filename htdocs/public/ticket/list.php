@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2016	Jean-François FERRY		<jfefe@aternatik.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -155,7 +155,7 @@ if ($action == "view_ticketlist") {
 		$ret = $object->fetch(0, '', $track_id);
 
 		if ($ret && $object->id > 0) {
-			// vérifie si l'adresse email est bien dans les contacts du ticket
+			// checks if the email address is in the ticket contacts
 			$contacts = $object->liste_contact(-1, 'external');
 			foreach ($contacts as $contact) {
 				if (strtolower($contact['email']) == $email) {
@@ -381,7 +381,8 @@ if ($action == "view_ticketlist") {
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as ua ON ua.rowid = t.fk_user_assign";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_contact as ec ON ec.element_id = t.rowid";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_type_contact as tc ON ec.fk_c_type_contact = tc.rowid";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople sp ON ec.fk_socpeople = sp.rowid";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople sp ON ec.fk_socpeople = sp.rowid"; // email found in an external contact
+		// Add fields for extrafields
 		if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."ticket_extrafields as ef on (t.rowid = ef.fk_object)";
 		}
@@ -395,7 +396,7 @@ if ($action == "view_ticketlist") {
 		// Manage filter
 		if (!empty($filter)) {
 			foreach ($filter as $key => $value) {
-				if (strpos($key, 'date')) { // To allow $filter['YEAR(s.dated)']=>$year
+				if (strpos($key, 'date')) { // Allows filtering by date fields like $filter['YEAR(s.dated)']=>$year
 					$sql .= " AND ".$db->sanitize($key)." = '".$db->escape($value)."'";
 				} elseif (($key == 't.fk_user_assign') || ($key == 't.type_code') || ($key == 't.category_code') || ($key == 't.severity_code')) {
 					$sql .= " AND ".$db->sanitize($key)." = '".$db->escape($value)."'";
@@ -408,9 +409,9 @@ if ($action == "view_ticketlist") {
 				} else {
 					$sql .= " AND ".$db->sanitize($key)." LIKE '%".$db->escape($value)."%'";
 				}
-			}
+			} // End of filter loop
 		}
-		//$sql .= " GROUP BY t.track_id";
+		// $sql .= " GROUP BY t.track_id";
 		$sql .= $db->order($sortfield, $sortorder);
 
 		$resql = $db->query($sql);
