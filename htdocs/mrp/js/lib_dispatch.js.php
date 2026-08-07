@@ -146,10 +146,10 @@ function addDispatchLine(index, type, mode)
 		}
 
 		if (error === 0) {
-			addDispatchTR(qtyOrdered, qtyDispatched, index, nbrTrs, warehouseId, inputId, type, '', mode, $row, allowoverconsumption);
+			addDispatchTR(qtyOrdered, qtyDispatched, index, nbrTrs, warehouseId, inputId, type, '', mode, $row);
 		}
 	} else {
-		addDispatchTR(qtyOrdered, qtyDispatched, index, nbrTrs, warehouseId, inputId, type, qty, mode, $row, allowoverconsumption);
+		addDispatchTR(qtyOrdered, qtyDispatched, index, nbrTrs, warehouseId, inputId, type, qty, mode, $row);
 	}
 
 }
