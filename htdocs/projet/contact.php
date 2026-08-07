@@ -310,15 +310,6 @@ if (empty($reshook)) {
 		}
 	}
 
-	// Change contact's status
-	if ($action == 'swapstatut' && $permissiontoadd) {
-		if ($object->fetch($id)) {
-			$result = $object->swapContactStatus(GETPOSTINT('ligne'));
-		} else {
-			dol_print_error($db);
-		}
-	}
-
 	// Delete a contact
 	if (($action == 'deleteline' || $action == 'deletecontact') && $permissiontoadd) {
 		$object->fetch($id);
