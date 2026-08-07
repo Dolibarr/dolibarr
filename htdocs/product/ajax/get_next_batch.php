@@ -106,14 +106,13 @@ if ($isAdvanced) {
  * Both lot addons use this table as their counter source, so any value found here
  * must be skipped to avoid issuing a duplicate lot/serial number.
  *
- * @param DoliDB $db
- * @param string $value
- * @return bool
+ * @param DoliDB $db     Database handler
+ * @param string $value  Batch/serial value to look up
+ * @return bool          True if the value already exists in llx_product_lot
  */
 function batchExistsInDb($db, $value)
 {
-	$sql = "SELECT rowid FROM ".$db->prefix()."product_lot"
-		." WHERE batch = '".$db->escape($value)."'";
+	$sql = "SELECT rowid FROM ".$db->prefix()."product_lot WHERE batch = '".$db->escape($value)."'";
 	$res = $db->query($sql);
 	return ($res && $db->fetch_object($res) !== null);
 }
@@ -165,13 +164,13 @@ if (empty($firstValue) || $firstValue <= 0) {
  * Advance $value past anything in $skipList or already in llx_product_lot.
  * Returns the first candidate that is both absent from the DB and not in $skipList.
  *
- * @param string   $value
- * @param bool     $isAdvanced
- * @param string   $mask
- * @param int      $step
- * @param string[] $skipList
- * @param DoliDB   $db
- * @return string
+ * @param string   $value       Starting value to advance from
+ * @param bool     $isAdvanced  True for mod_*_advanced addons
+ * @param string   $mask        Advanced mask string (ignored for standard addon)
+ * @param int      $step        Increment step
+ * @param string[] $skipList    Values to skip even if not yet in the database
+ * @param DoliDB   $db          Database handler
+ * @return string               First candidate value that is unique
  */
 function nextUniqueBatchValue($value, $isAdvanced, $mask, $step, $skipList, $db)
 {
