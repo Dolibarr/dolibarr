@@ -82,9 +82,11 @@ if (!in_array($addonName, $supportedAddons)) {
 	exit;
 }
 dol_include_once('/core/modules/product_batch/'.$addonName.'.php');
-$addonMod = new $addonName($db);
-// Build a lightweight object so getNextValue() can look up the product-level mask
-$batchObj             = new stdClass();
+$addonMod = new $addonName();
+// Use a real Productlot object (not a bare stdClass) so it matches the ?Productlot
+// phpdoc type declared by getNextValue() in mod_sn_advanced/mod_lot_advanced.
+require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
+$batchObj             = new Productlot($db);
 $batchObj->fk_product = $fk_product;
 // Determine mask and step (used by incrementBatchValue() and the sequence loop)
 $isAdvanced = in_array($addonName, array('mod_sn_advanced', 'mod_lot_advanced'));
@@ -138,6 +140,7 @@ function incrementBatchValue($current, $isAdvanced, $mask, $step)
 			$batch_suf     = substr($current, $maskcounter_start + $maskcounter_len);
 			$batch_counter = substr($current, $maskcounter_start, $maskcounter_len);
 			if (!empty($batch_counter) && $batch_pre !== $current) {
+				// @phan-suppress-next-line PhanPluginPrintfVariableFormatString
 				return $batch_pre.sprintf("%0".$maskcounter_len."d", ((int) $batch_counter + $step)).$batch_suf;
 			}
 		}
