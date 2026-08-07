@@ -41,7 +41,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/contact.lib.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array('companies', 'other'));
+$langs->loadLangs(array('companies', 'other', 'users'));
 
 $id = GETPOSTINT('id');
 $action = GETPOST('action', 'aZ09');
@@ -158,11 +158,6 @@ if ($action == 'edit') {
 
 	print '<table class="border centpercent">';
 
-	// Ref
-	print '<tr><td class="titlefieldcreate">'.$langs->trans("Ref").'</td><td>';
-	print $object->id;
-	print '</td>';
-
 	// Name
 	print '<tr><td>'.$langs->trans("Lastname").' / '.$langs->trans("Label").'</td><td>'.$object->lastname.'</td></tr>';
 	print '<tr><td>'.$langs->trans("Firstname").'</td><td>'.$object->firstname.'</td>';
@@ -182,10 +177,12 @@ if ($action == 'edit') {
 	}
 
 	// Civility
-	print '<tr><td><label for="civility_code">'.$langs->trans("UserTitle").'</label></td><td>';
-	print $object->getCivilityLabel();
-	//print $formcompany->select_civility(GETPOSTISSET("civility_code") ? GETPOST("civility_code", 'alpha') : $object->civility_code, 'civility_code');
-	print '</td></tr>';
+	if (getDolGlobalString('MAIN_USE_TITLE_FOR_CONTACT')) {
+		print '<tr><td><label for="civility_code">'.$langs->trans("UserTitle").'</label></td><td>';
+		print $object->getCivilityLabel();
+		//print $formcompany->select_civility(GETPOSTISSET("civility_code") ? GETPOST("civility_code", 'alpha') : $object->civility_code, 'civility_code');
+		print '</td></tr>';
+	}
 
 	// Photo
 	print '<tr class="hideonsmartphone">';
@@ -292,9 +289,11 @@ if ($action == 'edit') {
 	}*/
 
 	// Civility
-	print '<tr><td class="titlefield">'.$langs->trans("UserTitle").'</td><td colspan="3">';
-	print $object->getCivilityLabel();
-	print '</td></tr>';
+	if (getDolGlobalString('MAIN_USE_TITLE_FOR_CONTACT')) {
+		print '<tr><td class="titlefield">'.$langs->trans("UserTitle").'</td><td colspan="3">';
+		print $object->getCivilityLabel();
+		print '</td></tr>';
+	}
 
 	// Date To Birth
 	print '<tr>';
