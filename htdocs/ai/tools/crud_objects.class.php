@@ -650,10 +650,21 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 			$res = $object->addline($desc, $price, $vat, 0, 0, $qty, $fkProduct, $discount, '', '', 0, 0, 'HT', $prodType);
 		} elseif ($docType === 'supplier_order') {
 			/** @var CommandeFournisseur $object */
-			$res = $object->addline($desc, $price, $qty, $vat, 0, 0, $fkProduct, $discount, 0, 0, 'HT', 0, '', '', $prodType);
+			// IMPORTANT: CommandeFournisseur::addline() signature is:
+			//   ($desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product,
+			//    $fk_prod_fourn_price, $ref_supplier, $remise_percent, $price_base_type, $pu_ttc, $type, ...)
+			// The previous call passed $discount at position 8 ($fk_prod_fourn_price) and
+			// $prodType at position 15 ($notrigger): the discount was ignored (treated as a
+			// supplier-price rowid) and the product/service type was never set on the line.
+			$res = $object->addline($desc, $price, $qty, $vat, 0, 0, $fkProduct, 0, '', $discount, 'HT', 0, $prodType);
 		} elseif ($docType === 'supplier_proposal') {
 			/** @var SupplierProposal $object */
-			$res = $object->addline($desc, $price, $qty, $vat, 0, 0, $fkProduct, $discount, 0, 0, 'HT', 0, '', '', $prodType);
+			// SupplierProposal::addline() signature is:
+			//   ($desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product,
+			//    $remise_percent, $price_base_type, $pu_ttc, $info_bits, $type, ...)
+			// The previous call passed $price_base_type as 0 (instead of 'HT'), 'HT' as
+			// $info_bits, left $type at 0 and leaked $prodType into $fk_parent_line.
+			$res = $object->addline($desc, $price, $qty, $vat, 0, 0, $fkProduct, $discount, 'HT', 0, 0, $prodType);
 		} elseif ($docType === 'shipment') {
 			// Shipment Logic
 			if (! getDolGlobalString('SHIPMENT_STANDALONE')) {
@@ -668,9 +679,10 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 				return ["success" => false, "error" => "Reception standalone mode required to add lines manually."];
 			}
 			require_once DOL_DOCUMENT_ROOT . '/reception/class/receptionlinebatch.class.php';
-			// addlinefree(qty, type, fk_product, fk_unit, weight, desc, weight_units)
+			// Reception::addlinefree(qty, element_type, fk_product, fk_unit, rang, description, array_options)
+			// The last argument is the extrafields array; passing 0 (int) breaks under PHP 8.
 			/** @var Reception $object */
-			$res = $object->addlinefree($qty, 'reception', $fkProduct, $fk_unit, 0, $desc, 0);
+			$res = $object->addlinefree($qty, 'reception', $fkProduct, $fk_unit, 0, $desc, []);
 		} else {
 			return ["success" => false, "error" => "Type $docType not supported for lines"];
 		}
