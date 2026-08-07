@@ -1261,7 +1261,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 		if (empty(getDolGlobalString('SN_ADVANCED_INCREMENT'))) {
 			$counter++;
 		} else {
-			$counter = $counter + getDolGlobalString('SN_ADVANCED_INCREMENT');
+			$counter += (int) getDolGlobalString('SN_ADVANCED_INCREMENT');
 		}
 		//End Customisation
 		$maskrefclient_counter = 0;
