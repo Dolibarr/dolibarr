@@ -1973,14 +1973,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							if ($tmpproduct->status_batch) {
 								$preselected = (GETPOSTISSET('batchtoproduce-'.$line->id.'-'.$i) ? GETPOST('batchtoproduce-'.$line->id.'-'.$i) : '');
 								print '<input type="text" class="width75" name="batchtoproduce-'.$line->id.'-'.$i.'" value="'.$preselected.'">';
-								// Show generate button on the first split row only
-								if ($i == 1) {
-									print ' <a href="#" class="generatemo paddingleft"';
-									print ' data-line-id="'.$line->id.'"';
-									print ' data-fk-product="'.$line->fk_product.'"';
-									print ' data-status-batch="'.$tmpproduct->status_batch.'"';
-									print ' title="'.dol_escape_htmltag($langs->trans('Generate')).'"><span class="fas fa-barcode"></span></a>';
-								}
+								// $i is always 1 in this scope (this row is never split); show the Generate button unconditionally.
+								print ' <a href="#" class="generatemo paddingleft"';
+								print ' data-line-id="'.$line->id.'"';
+								print ' data-fk-product="'.$line->fk_product.'"';
+								print ' data-status-batch="'.$tmpproduct->status_batch.'"';
+								print ' title="'.dol_escape_htmltag($langs->trans('Generate')).'"><span class="fas fa-barcode"></span></a>';
 							}
 							print '</td>';
 							// Batch number in same column than the stock movement picto
