@@ -28,10 +28,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/contact.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -39,6 +35,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/contact.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/contact.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'other', 'users'));
@@ -67,11 +66,15 @@ if ($action == 'update' && !GETPOST("cancel") && $user->hasRight('societe', 'con
 	$object->birthday = dol_mktime(0, 0, 0, GETPOSTINT("birthdaymonth"), GETPOSTINT("birthdayday"), GETPOSTINT("birthdayyear"));
 	$object->birthday_alert = GETPOSTINT("birthday_alert");
 
+	$oldphoto = $object->photo;
+
 	if (GETPOST('deletephoto')) {
 		$object->photo = '';
 	} elseif (!empty($_FILES['photo']['name'])) {
 		$object->photo = dol_sanitizeFileName($_FILES['photo']['name']);
 	}
+
+	$db->begin();
 
 	$result = $object->update_perso($id, $user);
 	if ($result > 0) {
@@ -84,9 +87,10 @@ if ($action == 'update' && !GETPOST("cancel") && $user->hasRight('societe', 'con
 		if ($file_OK) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
-			if (GETPOST('deletephoto')) {
-				$fileimg = $conf->societe->dir_output.'/contact/'.get_exdir($object->id, 0, 0, 1, $object, 'contact').'/photos/'.$object->photo;
-				$dirthumbs = $conf->societe->dir_output.'/contact/'.get_exdir($object->id, 0, 0, 1, $object, 'contact').'/photos/thumbs';
+
+			if (GETPOST('deletephoto') || ($oldphoto != $object->photo)) {
+				$fileimg = $dir.'/'.$oldphoto;
+				$dirthumbs = $dir.'/thumbs';
 				dol_delete_file($fileimg);
 				dol_delete_dir_recursive($dirthumbs);
 			}
@@ -117,8 +121,10 @@ if ($action == 'update' && !GETPOST("cancel") && $user->hasRight('societe', 'con
 					break;
 			}
 		}
+
+		$db->commit();
 	} else {
-		$error = $object->error;
+		$db->rollback();
 	}
 }
 
