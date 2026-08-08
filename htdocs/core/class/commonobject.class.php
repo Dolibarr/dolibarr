@@ -9289,7 +9289,7 @@ abstract class CommonObject
 				$value = showValueWithClipboardCPButton(dol_escape_htmltag($value), 0, 'none') . $value;
 			}
 			if ($val['copytoclipboard'] == 2) {
-				$value = $value . showValueWithClipboardCPButton(dol_escape_htmltag($value), 0, 'none');
+				$value .= showValueWithClipboardCPButton(dol_escape_htmltag($value), 0, 'none');
 			}
 		}
 
