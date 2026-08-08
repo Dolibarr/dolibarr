@@ -9259,6 +9259,16 @@ abstract class CommonObject
 		}
 
 		//print $type.'-'.$size.'-'.$value;
+
+		if (!empty($val['copytoclipboard']) && !empty($value)) {
+			if ($val['copytoclipboard'] == 1) {
+				$value = showValueWithClipboardCPButton(dol_escape_htmltag($value), 0, 'none') . $value;
+			}
+			if ($val['copytoclipboard'] == 2) {
+				$value = $value . showValueWithClipboardCPButton(dol_escape_htmltag($value), 0, 'none');
+			}
+		}
+
 		$out = $value;
 
 		return is_null($out) ? '' : $out;
