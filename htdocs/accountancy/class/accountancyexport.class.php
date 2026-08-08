@@ -386,8 +386,9 @@ class AccountancyExport
 		global $search_date_end, $hookmanager;	// Used into /accountancy/tpl/export_journal.tpl.php
 
 		// Define name of file to save
-		$filename = 'general_ledger-'.$this->getFormatCode($formatexportset);		// Used into /accountancy/tpl/export_journal.tpl.php
-		$type_export = 'general_ledger';											// Used into /accountancy/tpl/export_journal.tpl.php
+		$formatcode = $this->getFormatCode($formatexportset);
+		$filename = 'general_ledger-'.(!empty($formatcode) ? $formatcode : $formatexportset);	// Used into /accountancy/tpl/export_journal.tpl.php
+		$type_export = 'general_ledger';														// Used into /accountancy/tpl/export_journal.tpl.php
 
 		$completefilename = '';
 		$exportFile = null;
@@ -460,28 +461,31 @@ class AccountancyExport
 					return -1;
 				}
 
-				if (!empty($completefilename)) {
-					// create export file
-					$exportFileFullName = $completefilename;
-					$exportFileBaseName = basename($exportFileFullName);
-					$exportFileName = pathinfo($exportFileBaseName, PATHINFO_FILENAME);
-					$exportFilePath = $outputDir . '/' . $exportFileFullName;
-					$exportFile = fopen($exportFilePath, 'w');
-					if (!$exportFile) {
-						$this->errors[] = $langs->trans('ErrorFileNotFound', $exportFilePath);
-						return -1;
-					}
+				// Fallback if template did not set $completefilename
+				if (empty($completefilename)) {
+					$completefilename = dol_sanitizeFileName($filename).'_'.dol_print_date(dol_now(), '%Y%m%d%H%M%S').'.txt';
+				}
 
-					if ($withAttachment == 1) {
-						$archiveFileList[0] = array(
-							'path' => $exportFilePath,
-							'name' => $exportFileFullName,
-						);
+				// create export file
+				$exportFileFullName = $completefilename;
+				$exportFileBaseName = basename($exportFileFullName);
+				$exportFileName = pathinfo($exportFileBaseName, PATHINFO_FILENAME);
+				$exportFilePath = $outputDir . '/' . $exportFileFullName;
+				$exportFile = fopen($exportFilePath, 'w');
+				if (!$exportFile) {
+					$this->errors[] = $langs->trans('ErrorFileNotFound', $exportFilePath);
+					return -1;
+				}
 
-						// archive name and path
-						$archiveFullName = $exportFileName . '.zip';
-						$archivePath = $outputDir . '/' . $archiveFullName;
-					}
+				if ($withAttachment == 1) {
+					$archiveFileList[0] = array(
+						'path' => $exportFilePath,
+						'name' => $exportFileFullName,
+					);
+
+					// archive name and path
+					$archiveFullName = $exportFileName . '.zip';
+					$archivePath = $outputDir . '/' . $archiveFullName;
 				}
 			}
 		}
@@ -553,11 +557,19 @@ class AccountancyExport
 				break;
 			default:
 				global $hookmanager;
-				$parameters = array('format' => $formatexportset, 'exportFile' => $exportFile);
-				// file contents will be created in the hooked function via print
+				$parameters = array(
+					'format' => $formatexportset,
+					'file' => $exportFile,
+					'filepath' => $exportFilePath,
+					'filefullname' => $exportFileFullName,
+				);
+				// file contents will be created in the hooked function via print and name will be returned.
 				$reshook = $hookmanager->executeHooks('export', $parameters, $TData);
 				if ($reshook != 1) {
 					$this->errors[] = $langs->trans('accountancy_error_modelnotfound');
+				} elseif (!empty($hookmanager->resArray['downloadFileFullName']) && !empty($hookmanager->resArray['downloadFilePath'])) {
+					$exportFileFullName = $hookmanager->resArray['downloadFileFullName'];
+					$exportFilePath = $hookmanager->resArray['downloadFilePath'];
 				}
 				break;
 		}

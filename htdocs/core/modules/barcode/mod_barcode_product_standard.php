@@ -4,7 +4,7 @@
  * Copyright (C) 2007-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2011       Juanjo Menent	        <jmenent@2byte.es>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -300,7 +300,7 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 		$sql .= " AND entity IN (".getEntity('product').")";
 
 		if ($product->id > 0) {
-			$sql .= " AND rowid <> ".$product->id;
+			$sql .= " AND rowid <> ".((int) $product->id);
 		}
 
 		$resql = $db->query($sql);

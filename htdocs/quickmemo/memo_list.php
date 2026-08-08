@@ -223,7 +223,7 @@ if (empty($reshook)) {
 	// You can add more action here
 	// if ($action == 'xxx' && $permissiontoxxx) ...
 
-	if ($massaction === 'unarchive') {
+	if ($massaction === 'unarchive' && $permissiontoadd) {
 		if (!empty($toselect)) {
 			$countUnarchived = 0;
 			foreach ($toselect as $idMemo) {
@@ -240,7 +240,7 @@ if (empty($reshook)) {
 					continue;
 				}
 
-				if ($user->id != $selectdModel->fk_user_creat && $selectdModel->private_tpl) {
+				if ($user->id != $selectdModel->fk_user_creat && $selectdModel->private) {
 					setEventMessage($langs->trans('QuickMemoCantChangeThisPrivateNote').' : '. (int) $idMemo, 'errors');
 					continue;
 				}

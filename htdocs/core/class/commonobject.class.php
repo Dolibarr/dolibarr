@@ -49,6 +49,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commontrigger.class.php';
 /**
  *	Parent class of all other business classes (invoices, contracts, proposals, orders, ...)
  *
+ * @property-deprecated int|string $cond_reglement  Use $cond_reglement_id methodology instead
+ *
  * @phan-forbid-undeclared-magic-properties
  */
 abstract class CommonObject
@@ -560,15 +562,14 @@ abstract class CommonObject
 	public $transport_mode_id;
 
 	/**
-	 * @var int|string 		Payment terms ID
-	 * @deprecated  Use $cond_reglement_id instead - Kept for compatibility
+	 * var int|string 		Payment terms ID
+	 * @deprecated  Use $cond_reglement_id instead - Kept for compatibility (was sometimes _label)
 	 * @see $cond_reglement_id
 	 *
 	 * Note: cond_reglement can not be aliased to cond_reglement!!!
-	 */
-	private $cond_reglement;  // Private to call DolDeprecationHandler
-	/**
-	 * @var int|string Internal to detect deprecated access
+	 * private $cond_reglement;  // Not set (and not private) to call DolDeprecationHandler
+	 *
+	 * @var int|string Internal to detect deprecated access, renamed to depre_cond_reglement
 	 */
 	protected $depr_cond_reglement;  // Internal value for deprecation
 
@@ -9628,7 +9629,7 @@ abstract class CommonObject
 						// TODO: We should not have this hidden field, and action='update' should be done only if field was POSTED by form.
 						$ef_name = 'options_' . $key;
 						$ef_value = $this->array_options[$ef_name] ?? '';
-						$out .= '<input type="hidden" name="' . $ef_name . '" id="' . $ef_name . '" value="' . dol_htmlentities($ef_value) . '" />' . "\n";	 // If trouble to preserve content, we can try dol_htmlentities() instead, but real solution is to remove completely the hidden field (see previous TODO).
+						$out .= '<input type="hidden" name="' . $ef_name . '" id="' . $ef_name . '" value="' . dolPrintHTMLForAttribute($ef_value) . '" />' . "\n";	 // If trouble to preserve content, we can try dol_htmlentities() instead, but real solution is to remove completely the hidden field (see previous TODO).
 						continue; // <> -1 and <> 1 and <> 3 = not visible on forms, only on list and <> 4 = not visible at the creation
 					} elseif ($mode == 'view' && empty($visibility)) {
 						continue;
@@ -9998,7 +9999,7 @@ abstract class CommonObject
 			return $user->hasRight($module, $element);
 		}
 
-		return $user->rights->$element;
+		return isset($user->rights->$element) ? $user->rights->$element : null;
 	}
 
 	/**
