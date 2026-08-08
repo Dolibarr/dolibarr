@@ -7383,16 +7383,18 @@ class Form
 	 *    Show form with payment mode
 	 *
 	 * @param string $page Page
-	 * @param string $selected Preselected Id for mode
+	 * @param string|int $selected Preselected Id for mode
+	 * @phpstan-param ($htmlname is 'none' ? int : string) $selected
+	 * @phan-param ($htmlname is 'none' ? int : string) $selected
 	 * @param string $htmlname Name of select html field
 	 * @param string $filtertype To filter on field type in llx_c_paiement ('CRDT' or 'DBIT' or array('code'=>xx,'label'=>zz))
 	 * @param int<-1,1> $active Active or not, -1 = all
 	 * @param int<0,1> $addempty 1=Add empty entry
-	 * @param string $type Type ('direct-debit' or 'bank-transfer')
+	 * @param ''|'direct-debit'|'bank-transfer' $type Type ('direct-debit' or 'bank-transfer')
 	 * @param int<0,1> $nooutput 1=Return string, no output
 	 * @return    string                    HTML output or ''
 	 */
-	public function form_modes_reglement($page, $selected = '', $htmlname = 'mode_reglement_id', $filtertype = '', $active = 1, $addempty = 0, $type = '', $nooutput = 0)
+	public function form_modes_reglement($page, $selected = 0, $htmlname = 'mode_reglement_id', $filtertype = '', $active = 1, $addempty = 0, $type = '', $nooutput = 0)
 	{
 		// phpcs:enable
 		global $langs;
@@ -7405,7 +7407,7 @@ class Form
 			if ($type) {
 				$out .= '<input type="hidden" name="type" value="' . dol_escape_htmltag($type) . '">';
 			}
-			$out .= $this->select_types_paiements($selected, $htmlname, $filtertype, 0, $addempty, 0, 0, $active, '', 1);
+			$out .= $this->select_types_paiements((string) $selected, $htmlname, $filtertype, 0, $addempty, 0, 0, $active, '', 1);
 			$out .= '<input type="submit" class="button smallpaddingimp valignmiddle" value="' . $langs->trans("Modify") . '">';
 			$out .= '</form>';
 		} else {
