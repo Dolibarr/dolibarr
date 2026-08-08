@@ -76,29 +76,29 @@ class modFacture extends DolibarrModules
 		$this->config_page_url = array("invoice.php");
 
 		// Constants
-		$this->const = array();
-		$r = 0;
-
-		$this->const[$r][0] = "FACTURE_ADDON";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "mod_facture_terre";
-		$this->const[$r][3] = 'Name of numbering numerotation rules of invoice';
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "FACTURE_ADDON_PDF";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "sponge";
-		$this->const[$r][3] = 'Name of PDF model of invoice';
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "FACTURE_ADDON_PDF_ODT_PATH";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/invoices";
-		$this->const[$r][3] = "";
-		$this->const[$r][4] = 0;
-		$r++;
+		$this->const = [
+			[
+				"FACTURE_ADDON",
+				"chaine",
+				"mod_facture_terre",
+				'Name of numbering numerotation rules of invoice',
+				0,
+			],
+			[
+				"FACTURE_ADDON_PDF",
+				"chaine",
+				"sponge",
+				'Name of PDF model of invoice',
+				0,
+			],
+			[
+				"FACTURE_ADDON_PDF_ODT_PATH",
+				"chaine",
+				"DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/invoices",
+				"",
+				0,
+			],
+		];
 
 		// Boxes
 		//$this->boxes = array(0=>array(1=>'box_factures_imp.php'),1=>array(1=>'box_factures.php'));
