@@ -103,7 +103,13 @@ ConfirmCloneContract=<b>%s</b> sözleşmesinin kopyasını oluşturmak istediği
 LowerDateEndPlannedShort=Aktif hizmetlerin planlı alt bitiş tarihi
 SendContractRef=Sözleşme bilgileri __REF__
 OtherContracts=Diğer sözleşmeler
-##### Types de contacts #####
+##### Statistics #####
+ContractsStatistics=Contract's statistics
+NbOfContracts=Nb of contracts
+NumberOfContractsByMonth=Number of contracts by month
+AmountOfServices=Number of services
+AmountOfServicesByMonthHT=Number of services (excl. tax) by month
+##### Types of contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Sözleşmeyi imzalalayacak satış temsilcisi
 TypeContact_contrat_internal_SALESREPFOLL=Sözleşmeyi izleyecek satış temsilcisi
 TypeContact_contrat_external_BILLING=Müşteri fatura ilgilisi

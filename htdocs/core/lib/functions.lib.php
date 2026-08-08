@@ -17,7 +17,7 @@
  * Copyright (C) 2019-2023  Thibault Foucart            <support@ptibogxiv.net>
  * Copyright (C) 2020       Open-Dsi         			<support@open-dsi.fr>
  * Copyright (C) 2021       Gauthier VERDOL         	<gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2022       Anthony Berton	         	<anthony.berton@bb2a.fr>
+ * Copyright (C) 2022-2026  Anthony Berton	         	<anthony.berton@bb2a.fr>
  * Copyright (C) 2022       Ferran Marcet           	<fmarcet@2byte.es>
  * Copyright (C) 2022-2026  Charlene Benke           	<charlene@patas-monkey.com>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
@@ -8613,6 +8613,8 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 		$sql .= " FROM " . $db->prefix() . "c_tva as t";
 		$sql .= " INNER JOIN " . $db->prefix() . "c_departements as d ON t.fk_department_buyer = d.rowid";
 		$sql .= " WHERE d.rowid = " . ((int) $thirdparty_buyer->state_id);
+		$sql .= " AND t.active > 0";
+		$sql .= " AND t.entity IN (".getEntity('c_tva').")";
 		$sql .= " ORDER BY t.use_default DESC, t.taux DESC, t.code ASC, t.recuperableonly ASC";
 
 		$res = $db->query($sql);
@@ -9779,13 +9781,15 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 			// Now remove js
 			// List of dom events is on https://www.w3schools.com/jsref/dom_obj_event.asp and https://developer.mozilla.org/en-US/docs/Web/Events
 			$out = preg_replace('/on(mouse|drag|key|load|touch|pointer|select|transition)[a-z]*\s*=/i', '', $out); // onmousexxx can be set on img or any html tag like <img title='...' onmouseover=alert(1)>
-			$out = preg_replace('/on(abort|after|animation|auxclick|before|blur|cancel|canplay|canplaythrough|change|click|close|contextmenu|cuechange|copy|cut)[a-z]*\s*=/i', '', $out);
+			$out = preg_replace('/on(abort|after|animation|auxclick|before|blur|cancel|canplay|canplaythrough|change|click|close|command|contentvisibility|context|cuechange|copy|cut)[a-z]*\s*=/i', '', $out);
 			$out = preg_replace('/on(dblclick|drop|durationchange|emptied|end|ended|error|focus(in|out)?|formdata|gotpointercapture|hashchange|input|invalid)[a-z]*\s*=/i', '', $out);
-			$out = preg_replace('/on(lostpointercapture|offline|online|pagehide|pageshow)[a-z]*\s*=/i', '', $out);
-			$out = preg_replace('/on(paste|pause|play|playing|progress|ratechange|reset|resize|scroll|search|seeked|seeking|show|stalled|start|submit|suspend)[a-z]*\s*=/i', '', $out);
-			$out = preg_replace('/on(timeupdate|toggle|unload|volumechange|waiting|wheel)[a-z]*\s*=/i', '', $out);
+			$out = preg_replace('/on(lost|offline|online|message|pagehide|pageshow)[a-z]*\s*=/i', '', $out);
+			$out = preg_replace('/on(paste|pause|play|playing|progress|ratechange|rejectionn|reset|resize|scroll|search|security|seeked|seeking|show|stalled|start|submit|suspend)[a-z]*\s*=/i', '', $out);
+			$out = preg_replace('/on(timeupdate|toggle|unhandled|unload|volumechange|waiting|wheel)[a-z]*\s*=/i', '', $out);
 			// More not into the previous list
 			$out = preg_replace('/on(repeat|begin|finish|beforeinput)[a-z]*\s*=/i', '', $out);
+			// Add also a generic removal of any onxxx= attribute
+			$out = preg_replace('/\son[a-z]+\s*=/i', ' ', $out);
 		} while ($oldstringtoclean != $out);
 
 		// Check the limit of external links that are automatically executed in a Rich text content. We count:
@@ -10224,6 +10228,10 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		//var_dump($onlykey);
 		$emailsendersignature = $user->signature; //  By default, we use the signature of current user. We must complete substitution with signature in c_email_senderprofile of array after calling getCommonSubstitutionArray()
 		$usersignature = $user->signature;
+		if (getDolGlobalString('MAIN_MAIL_DEFAULT_SIGNATURE_FOR_ALL_USERS') && !empty($user->employee)) {
+			$emailsendersignature = getDolGlobalString('MAIN_MAIL_DEFAULT_SIGNATURE_FOR_ALL_USERS');
+			$usersignature = getDolGlobalString('MAIN_MAIL_DEFAULT_SIGNATURE_FOR_ALL_USERS');
+		}
 		$substitutionarray = array_merge($substitutionarray, array(
 			'__SENDEREMAIL_SIGNATURE__' => (string) ((!getDolGlobalString('MAIN_MAIL_DO_NOT_USE_SIGN')) ? ($onlykey == 2 ? dol_trunc('SignatureFromTheSelectedSenderProfile', 30) : $emailsendersignature) : ''),
 			'__USER_SIGNATURE__' => (string) (($usersignature && !getDolGlobalString('MAIN_MAIL_DO_NOT_USE_SIGN')) ? ($onlykey == 2 ? dol_trunc(dol_string_nohtmltag($usersignature), 30) : $usersignature) : '')
@@ -10840,7 +10848,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 					$substitutionarray['__URL_SHIPMENT__'] = DOL_MAIN_URL_ROOT . "/expedition/card.php?id=" . $object->id;
 					if (getDolGlobalInt('EXPEDITION_ALLOW_ONLINESIGN')) {
 						require_once DOL_DOCUMENT_ROOT . '/core/lib/signature.lib.php';
-						$substitutionarray['__ONLINE_SIGN_URL__'] = getOnlineSignatureUrl(0, 'expedition', $object->ref, 1, $object);
+						$substitutionarray['__ONLINE_SIGN_URL__'] = getOnlineSignatureUrl(0, 'expedition', (string) $object->ref, 1, $object);
 					}
 				}
 			}
@@ -11359,8 +11367,8 @@ function dolGetFirstLastname($firstname, $lastname, $nameorder = -1)
  *  Note: Calling dol_htmloutput_events is done into pages by standard llxFooter() function.
  *  Note: Prefer to use setEventMessages instead.
  *
- *	@param	string|string[] $mesgs			Message string or array
- *  @param  string          $style      	Which style to use ('mesgs' by default, 'warnings', 'errors')
+ *	@param	string|string[]	$mesgs			Message string or array
+ *  @param  ''|'mesgs'|'warnings'|'errors'   $style		Which style to use ('mesgs' by default, 'warnings', 'errors')
  *  @param	int				$noduplicate	1 means we do not add the message if already present in session stack
  *  @param	int				$attop			Add the message in the top of the stack (at bottom by default)
  *  @return	void
@@ -11406,7 +11414,7 @@ function setEventMessage($mesgs, $style = 'mesgs', $noduplicate = 0, $attop = 0)
  *
  *	@param	string|null		$mesg			Message string
  *	@param	string[]|null	$mesgs			Message array
- *  @param  string			$style     		Which style to use ('mesgs' by default, 'warnings', 'errors')
+ *  @param  ''|'mesgs'|'warnings'|'errors'   $style		Which style to use ('mesgs' by default, 'warnings', 'errors')',
  *  @param	string			$messagekey		A key to be used to allow the feature "Never show this message during this session again"
  *  @param	int				$noduplicate	1 means we do not add the message if already present in session stack
  *  @param	int				$attop			Add the message in the top of the stack (at bottom by default)
@@ -12348,6 +12356,11 @@ function dol_eval_standard($s, $hideerrors = 1, $onlysimplestring = '1')
 		// Check if there is a < or <= without spaces after
 		if (preg_match('/<=?[^\s]/', $s)) {
 			return 'Bad string syntax to evaluate (mode ' . $onlysimplestring . ', found a < or <= without space after): ' . $s;
+		}
+
+		// Check if there is an include or a require
+		if (preg_match('/(include|include_once|require|require_once)/', $s)) {
+			return 'Bad string syntax to evaluate (found not allowed key include|include_once|require|require_once): ' . $s;
 		}
 
 		// Check if there is dynamic call (first we use black list patterns)
@@ -14694,7 +14707,7 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 				}
 				$subbuttonparam['isDropDown'] = (empty($params['isDropDown']) ? ($subbutton['isDropDown'] ?? false) : $params['isDropDown']);
 
-				$out .= dolGetButtonAction($subbutton['text'], $langs->trans($subbutton['label']), 'default', $tmpurl, $subbutton['id'] ?? '', $subbutton['perm'], $subbuttonparam);
+				$out .= dolGetButtonAction($subbutton['text'] ?? '', $langs->trans($subbutton['label']), 'default', $tmpurl, $subbutton['id'] ?? '', $subbutton['perm'], $subbuttonparam);
 			}
 			$out .= "</div>";
 			$out .= "</div>";

@@ -2033,6 +2033,14 @@ class Invoices extends DolibarrApi
 			throw new RestException(404, 'Payment not found');
 		}
 
+		// Check all invoices of the payment to see if the user has permission on them for the object level permission test
+		$tmparray = $paymentobj->getBillsArray();
+		foreach ($tmparray as $tmpinvoiceid) {
+			if (!DolibarrApi::_checkAccessToResource('facture', $tmpinvoiceid)) {
+				throw new RestException(403, 'Payment is on invoices that are not all allowed for login '.DolibarrApiAccess::$user->login);
+			}
+		}
+
 		if (!empty($num_payment)) {
 			$result = $paymentobj->update_num($num_payment);
 			if ($result < 0) {

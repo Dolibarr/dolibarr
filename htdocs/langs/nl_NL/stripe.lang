@@ -109,3 +109,4 @@ PAYBOX_PBX_SITE=Waarde PBX SITE
 PAYBOX_PBX_RANG=Waarde PBX Rang
 PAYBOX_PBX_IDENTIFIANT=Waarde PBX ID
 PAYBOX_HMAC_KEY=HMAC-sleutel
+FeatureNotUsedAccordingtoSetup=Deze functie wordt niet gebruikt volgens uw %s-instellingen.

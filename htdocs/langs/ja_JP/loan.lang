@@ -23,7 +23,7 @@ AddLoan=ローンを作成する
 FinancialCommitment=財政的コミットメント
 InterestAmount=興味
 CapitalRemain=資本は残る
-TermPaidAllreadyPaid = この期間は既に支払われている
+TermPaidAllreadyPaid = この期間はすでに支払われている
 CantUseScheduleWithLoanStartedToPaid = 支払いが開始されたローンのタイムラインを生成できません
 CantModifyInterestIfScheduleIsUsed = スケジュールを使用する場合、利息を変更することはできない
 # Admin

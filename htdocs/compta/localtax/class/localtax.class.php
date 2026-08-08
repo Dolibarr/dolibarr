@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2011-2014	Juanjo Menent	<jmenent@2byte.es>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -209,7 +209,7 @@ class Localtax extends CommonObject
 		$sql .= " tms='".$this->db->idate($this->tms)."',";
 		$sql .= " datep='".$this->db->idate($this->datep)."',";
 		$sql .= " datev='".$this->db->idate($this->datev)."',";
-		$sql .= " amount=".price2num($this->amount).",";
+		$sql .= " amount='".$this->db->escape($this->amount)."',";
 		$sql .= " label='".$this->db->escape($this->label)."',";
 		$sql .= " note='".$this->db->escape($this->note)."',";
 		$sql .= " fk_bank=".(int) $this->fk_bank.",";
@@ -514,7 +514,7 @@ class Localtax extends CommonObject
 		}
 
 		// Insertion dans table des paiement localtax
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."localtax (localtaxtype, datep, datev, amount";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."localtax(localtaxtype, datep, datev, amount";
 		if ($this->note) {
 			$sql .= ", note";
 		}
@@ -523,15 +523,15 @@ class Localtax extends CommonObject
 		}
 		$sql .= ", fk_user_creat, fk_bank";
 		$sql .= ") ";
-		$sql .= " VALUES (".$this->ltt.", '".$this->db->idate($this->datep)."',";
-		$sql .= "'".$this->db->idate($this->datev)."',".$this->amount;
+		$sql .= " VALUES(".((int) $this->ltt).", '".$this->db->idate($this->datep)."', ";
+		$sql .= "'".$this->db->idate($this->datev)."', ".((float) $this->amount);
 		if ($this->note) {
 			$sql .= ", '".$this->db->escape($this->note)."'";
 		}
 		if ($this->label) {
 			$sql .= ", '".$this->db->escape($this->label)."'";
 		}
-		$sql .= ", ".((int) $user->id).", NULL";
+		$sql .= ", ".((int) $user->id).", null";
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::addPayment", LOG_DEBUG);
