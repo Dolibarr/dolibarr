@@ -35,6 +35,9 @@ class mod_holiday_madonna extends ModelNumRefHolidays
 	public $name = 'Madonna';
 	public $version = 'dolibarr';
 
+	/**
+	 * @var int position
+	 */
 	public $position = 10;
 
 
