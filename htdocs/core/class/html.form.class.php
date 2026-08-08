@@ -7409,9 +7409,9 @@ class Form
 			$out .= '<input type="submit" class="button smallpaddingimp valignmiddle" value="' . $langs->trans("Modify") . '">';
 			$out .= '</form>';
 		} else {
-			if ($selected) {
+			if ((int) $selected) {
 				$this->load_cache_types_paiements();
-				$out .= isset($this->cache_types_paiements[$selected]['label']) ? $this->cache_types_paiements[$selected]['label'] : '';
+				$out .= $this->cache_types_paiements[(int) $selected]['label'] ?? '&nbsp;';
 			} else {
 				$out .= "&nbsp;";
 			}
