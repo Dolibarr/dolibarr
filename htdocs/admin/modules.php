@@ -8,8 +8,8 @@
  * Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2015		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018		Nicolas ZABOURI 		<info@inovea-conseil.com>
- * Copyright (C) 2021-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2021-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026		Charlene Benke	 		<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -432,8 +432,7 @@ if ($action == 'install' && $allowonlineinstall) {
 			'search_nature' => '-1',
 			'search_version' => '-1'
 		);
-		$queryString = http_build_query($searchParams);
-		$redirectUrl = DOL_URL_ROOT . '/admin/modules.php?' . $queryString;
+		$redirectUrl = dolBuildUrl(DOL_URL_ROOT . '/admin/modules.php', $searchParams);
 
 		$message = $langs->trans("SetupIsReadyForUse", $redirectUrl, $langs->transnoentitiesnoconv("Home").' - '.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("Modules"));
 
@@ -1255,7 +1254,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 				}
 
 				$urltogo = $_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&token='.newToken().'&module_position='.$module_position.'&action=set&token='.newToken().'&value='.$modName.'&mode='.$mode.$param;
-				$popupWidth = 500;
+				$popupWidth = 600;
 				$popupHeight = 300;
 				$codeenabledisable .= '<!-- Message to show: '.$warningmessage.' -->'."\n";
 				$codeenabledisable .= '<a class="reposition" id="idqualified'.$objMod->numero.'" data-alreadyclicked="0" href="'.$urltogo.'"';
@@ -1307,7 +1306,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			print '<a href="javascript:document_preview(\''.DOL_URL_ROOT.'/admin/modulehelp.php?id='.((int) $objMod->numero).'\',\'text/html\',\''.dol_escape_js($langs->trans("Module")).'\')">';
 			print img_picto(($objMod->isCoreOrExternalModule() == 'external' ? $langs->trans("ExternalModule").' - ' : '').$langs->trans("ClickToShowDescription"), $imginfo, '', 0, 0, 0, '', 'purple');
 			print '</a>';
-			print ($timestoinit[$modName] > 500 ? img_picto($langs->trans('InitModuleIsSlow'), 'fa-exclamation-circle') : '');
+			print($timestoinit[$modName] > 500 ? img_picto($langs->trans('InitModuleIsSlow'), 'fa-exclamation-circle') : '');
 			print '</td>';
 
 			// Version
@@ -1492,11 +1491,11 @@ if ($mode == 'marketplace') {
 					</div>
 		<?php
 			$totalnboflines = '<span class="product-count opacitymedium paddingleft">';
-			$totalnboflines .= $langs->trans("itemFound", $remotestore->numberTotalOfProducts);
-			$totalnboflines .= '</span>';
+		$totalnboflines .= $langs->trans("itemFound", $remotestore->numberTotalOfProducts);
+		$totalnboflines .= '</span>';
 
-			print $totalnboflines;
-			print $remotestore->getPagination();
+		print $totalnboflines;
+		print $remotestore->getPagination();
 		print '</form>';
 
 		print '</div>';
@@ -1663,7 +1662,7 @@ if ($mode == 'deploy') {
 					});
 				});
 				</script>'."\n";
-				// MAX_FILE_SIZE doit précéder le champ input de type file
+				// MAX_FILE_SIZE must come before the file input field
 				print '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';
 			}
 

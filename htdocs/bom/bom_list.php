@@ -73,7 +73,7 @@ $pagenext = $page + 1;
 
 // Initialize a technical objects
 $object = new BOM($db);
-$diroutputmassaction = getMultidirOutput($object) . '/temp/massgeneration/'.$user->id;
+$diroutputmassaction = getMultidirOutput($object, '', 0, 'temp') . 'massgeneration/'.$user->id;
 $hookmanager->initHooks(array('bomlist')); // Note that conf->hooks_modules contains array
 
 // Fetch optionals attributes and labels
