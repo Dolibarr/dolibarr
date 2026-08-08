@@ -171,7 +171,7 @@ class Users extends DolibarrApi
 			throw new RestException(400, 'No user with id=0 can exist');
 		}
 
-		if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'lire') && empty(DolibarrApiAccess::$user->admin) && $id != 0 && DolibarrApiAccess::$user->id != $id) {
+		if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'lire') && empty(DolibarrApiAccess::$user->admin) && DolibarrApiAccess::$user->id != $id) {
 			throw new RestException(403, 'Not allowed');
 		}
 
@@ -185,7 +185,7 @@ class Users extends DolibarrApi
 		}
 
 		if ($id > 0 && !DolibarrApi::_checkAccessToResource('user', $this->useraccount->id, 'user')) {
-			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access on this object not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		if ($includepermissions) {
@@ -228,7 +228,7 @@ class Users extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('user', $this->useraccount->id, 'user')) {
-			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access on this object not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		if ($includepermissions) {
@@ -271,7 +271,7 @@ class Users extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('user', $this->useraccount->id, 'user')) {
-			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access on this object not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		if ($includepermissions) {
@@ -310,7 +310,7 @@ class Users extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('user', $this->useraccount->id, 'user')) {
-			throw new RestException(403, 'Access not allowed to current logged user');
+			throw new RestException(403, 'Access on this object not allowed to current logged user');
 		}
 
 		if ($includepermissions) {
@@ -435,7 +435,7 @@ class Users extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('user', $this->useraccount->id, 'user')) {
-			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access on this object not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		foreach ($request_data as $field => $value) {
@@ -584,7 +584,10 @@ class Users extends DolibarrApi
 		$user = new User($this->db);
 		$result = $user->fetch($id);
 		if (!$result) {
-			throw new RestException(404, 'user not found');
+			throw new RestException(404, 'User not found');
+		}
+		if (!DolibarrApi::_checkAccessToResource('user', $user->id, 'user')) {
+			throw new RestException(403, 'Access on this object not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$usergroup = new UserGroup($this->db);
@@ -627,7 +630,7 @@ class Users extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('user', $this->useraccount->id, 'user')) {
-			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access on this object not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && !empty(DolibarrApiAccess::$user->admin) && empty(DolibarrApiAccess::$user->entity)) {
@@ -1016,7 +1019,7 @@ class Users extends DolibarrApi
 			throw new RestException(403);
 		}
 		if (!DolibarrApi::_checkAccessToResource('user', $id)) {
-			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access on this object not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		/**
