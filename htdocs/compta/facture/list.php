@@ -2399,7 +2399,8 @@ if ($resql) {
 
 				// Pending amount
 				if (!empty($arrayfields['rtp']['checked'])) {
-					print '<td class="right nowraponall amount">';
+					$cssamountorstrike = (empty($obj->paye) ? 'amount' : 'colorgrey strikefordisabled');
+					print '<td class="right nowraponall '.$cssamountorstrike.'">';
 					print (!empty($remaintopay) ? price($remaintopay, 0, $langs) : '&nbsp;');
 					print '</td>'; // TODO Use a denormalized field
 					if (!$i) {
@@ -2407,6 +2408,9 @@ if ($resql) {
 					}
 					if (!$i) {
 						$totalarray['pos'][$totalarray['nbfield']] = 'rtp';
+					}
+					if (!empty($obj->paye)) {
+						$remaintopay = 0; // remove from total
 					}
 					$totalarray['val']['rtp'] += $remaintopay;
 				}
@@ -2465,7 +2469,8 @@ if ($resql) {
 
 				// Pending amount
 				if (!empty($arrayfields['multicurrency_rtp']['checked'])) {
-					print '<td class="right nowraponall">';
+					$cssamountorstrike = (empty($obj->paye) ? '' : ' colorgrey strikefordisabled');
+					print '<td class="right nowraponall'.$cssamountorstrike.'">';
 					print (!empty($multicurrency_remaintopay) ? price($multicurrency_remaintopay, 0, $langs) : '&nbsp;');
 					print '</td>'; // TODO Use a denormalized field ?
 					if (!$i) {
