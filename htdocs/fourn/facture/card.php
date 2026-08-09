@@ -1326,12 +1326,12 @@ if (empty($reshook)) {
 									array(), // array_options
 									null,
 									$object->origin_id,
+									$object->origin_type,
 									0,
 									'',
 									0, // special_code
 									0,
-									0,
-									$object->origin_type
+									0
 								);
 							}
 
@@ -1440,6 +1440,7 @@ if (empty($reshook)) {
 									$lines[$i]->array_options,
 									$lines[$i]->fk_unit,
 									$lines[$i]->id,
+									'',
 									$pu_currency,
 									$lines[$i]->ref_supplier,
 									$lines[$i]->special_code
@@ -1888,6 +1889,7 @@ if (empty($reshook)) {
 					$array_options,
 					$productsupplier->fk_unit,
 					0,
+					'',
 					$pu_devise,
 					GETPOST('fourn_ref', 'alpha'),
 					0
@@ -1932,7 +1934,7 @@ if (empty($reshook)) {
 			$price_base_type = 'HT';
 			$pu_devise = price2num($price_ht_devise, 'CU');
 
-			$result = $object->addline($line_desc, (float) $pu_ht, $tva_tx, $localtax1_tx, $localtax2_tx, (float) $qty, 0, $remise_percent, $date_start, $date_end, 0, $tva_npr, $price_base_type, $type, -1, 0, $array_options, $fk_unit, 0, (float) $pu_devise, $ref_supplier);
+			$result = $object->addline($line_desc, (float) $pu_ht, $tva_tx, $localtax1_tx, $localtax2_tx, (float) $qty, 0, $remise_percent, $date_start, $date_end, 0, $tva_npr, $price_base_type, $type, -1, 0, $array_options, $fk_unit, 0, '', (float) $pu_devise, $ref_supplier);
 		}
 
 		//print "xx".$tva_tx; exit;

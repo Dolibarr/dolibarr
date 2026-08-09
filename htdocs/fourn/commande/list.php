@@ -578,8 +578,9 @@ if (empty($reshook)) {
 								0,
 								$lines[$i]->array_options,
 								$lines[$i]->fk_unit,
-								// we use the id of each order, not the id of the first one stored in $objecttmp->origin_id
-								$lines[$i]->fk_commande,
+								// Keep the source line id to preserve line-level traceability from the originating supplier order.
+								$lines[$i]->id,
+								'supplier_order_line',
 								$lines[$i]->pa_ht,
 								$lines[$i]->ref_supplier,
 								$lines[$i]->special_code,

@@ -779,6 +779,7 @@ class SupplierInvoices extends DolibarrApi
 			$request_data->array_options,
 			$request_data->fk_unit,
 			$request_data->origin_id,
+			$request_data->origin_type ? $request_data->origin_type : '',
 			$request_data->multicurrency_subprice,
 			$request_data->ref_supplier,
 			$request_data->special_code

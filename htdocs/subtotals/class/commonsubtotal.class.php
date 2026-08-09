@@ -281,6 +281,7 @@ trait CommonSubtotal
 				[],						// array_options
 				null,					// fk_unit
 				0,						// origin id
+				'',						// origin type
 				0,						// pu ht devise
 				'',						// ref supplier
 				SUBTOTALS_SPECIAL_CODE	// Special code
