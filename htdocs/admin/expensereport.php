@@ -177,7 +177,10 @@ if ($action == 'updateMask') {
 	$linesblocked = GETPOSTINT('EXPENSEREPORT_BLOCK_LINE_CREATION_IF_NOT_BETWEEN_DATES');
 	$res6 = dolibarr_set_const($db, 'EXPENSEREPORT_BLOCK_LINE_CREATION_IF_NOT_BETWEEN_DATES', intval($linesblocked), 'chaine', 0, '', $conf->entity);
 
-	if (!($res1 > 0) || !($res2 > 0) || !($res3 >= 0) || !($res4 > 0) || !($res5 > 0) || !($res6 > 0)) {
+	$disablemails = GETPOSTINT('EXPENSEREPORT_DISABLE_ALL_MAILS');
+	$res7 = dolibarr_set_const($db, 'EXPENSEREPORT_DISABLE_ALL_MAILS', intval($disablemails), 'chaine', 0, '', $conf->entity);
+
+	if (!($res1 > 0) || !($res2 > 0) || !($res3 >= 0) || !($res4 > 0) || !($res5 > 0) || !($res6 > 0) || !($res7 > 0)) {
 		$error++;
 	}
 
@@ -522,6 +525,12 @@ print '<tr class="oddeven"><td>';
 print $langs->trans('BlockExpenseReportLineCreationIfNotBetweenDates');
 print '</td><td class="right">';
 print $form->selectyesno('EXPENSEREPORT_BLOCK_LINE_CREATION_IF_NOT_BETWEEN_DATES', getDolGlobalString('EXPENSEREPORT_BLOCK_LINE_CREATION_IF_NOT_BETWEEN_DATES') ? 1 : 0, 1);
+print '</td></tr>';
+
+print '<tr class="oddeven"><td>';
+print $form->textwithpicto($langs->trans('ExpenseReportDisableAllMails'), $langs->trans('ExpenseReportDisableAllMailsHelp'));
+print '</td><td class="right">';
+print $form->selectyesno('EXPENSEREPORT_DISABLE_ALL_MAILS', getDolGlobalString('EXPENSEREPORT_DISABLE_ALL_MAILS') ? 1 : 0, 1);
 print '</td></tr>';
 
 print '</table>';

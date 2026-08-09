@@ -159,3 +159,5 @@ TF_TRIP=Transportation
 FailedToSetPaid=Failed to set as paid
 FailedToSetToCancel=Failed to cancel
 NobodyHasPermissionToValidateExpenseReport=Nobody has permission to validate expensereport
+ExpenseReportDisableAllMails=Disable all automatic emails related to expense reports
+ExpenseReportDisableAllMailsHelp=If enabled, no email will be sent automatically on expense report status changes (submission, approval, refusal, cancellation, payment).
