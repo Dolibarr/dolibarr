@@ -365,10 +365,10 @@ foreach ($search as $key => $val) {
 			$columnName = preg_replace('/(_dtstart|_dtend)$/', '', $key);
 			if ($columnName == 'eatby' || $columnName == 'sellby') {
 				if (preg_match('/_dtstart$/', $key)) {
-					$sql .= " AND pl.".$db->escape($columnName)." >= '".$db->idate($search[$key])."'";
+					$sql .= " AND pl.".$db->sanitize($columnName)." >= '".$db->idate($search[$key])."'";
 				}
 				if (preg_match('/_dtend$/', $key)) {
-					$sql .= " AND pl.".$db->escape($columnName)." <= '".$db->idate($search[$key])."'";
+					$sql .= " AND pl.".$db->sanitize($columnName)." <= '".$db->idate($search[$key])."'";
 				}
 			}
 		}
@@ -402,7 +402,7 @@ if ($search_stock_physique != '') {
 	} else {
 		$sql_having .= " HAVING";
 	}
-	$sql_having .= $natural_search_physique;
+	$sql_having .= $natural_search_physique;  // natural_search gives save sql @phan-suppress-current-line SqlInjection
 }
 // Add HAVING from hooks
 $parameters = array();

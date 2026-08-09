@@ -388,6 +388,7 @@ ErrorModuleBuilderFailedToInit=Échec de l'initialisation de l'objet avec le nou
 ErrorThirdPartyNotFound=Erreur : Tiers introuvable
 ErrorDynamicPHPContentNotAllowed=Erreur : %s=1, le contenu PHP dynamique n'est donc autorisé que si les fonctions PHP RCE (exec, shell_exec, ...) sont toutes désactivées.
 ErrorTooManyLinksIntoHTMLString=Le contenu HTML contient trop de liens ou d'images. Réduisez leur nombre ou augmentez la valeur de MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT.
+ErrorDeletingAClosedCashControlIsNotPossible=La suppression d'une clôture de caisse est impossible.
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Votre paramètre PHP upload_max_filesize (%s) est supérieur au paramètre PHP post_max_size (%s). Ceci n'est pas une configuration cohérente.

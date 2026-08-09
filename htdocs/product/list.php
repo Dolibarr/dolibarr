@@ -68,7 +68,7 @@ if (isModEnabled('category')) {
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array('products', 'stocks', 'suppliers', 'companies', 'margins'));
+$langs->loadLangs(array('products', 'stocks', 'suppliers', 'companies', 'margins', 'other'));
 if (isModEnabled('productbatch')) {
 	$langs->load("productbatch");
 }
@@ -146,12 +146,12 @@ $type = GETPOST("type", 'alpha');
 // Show/hide child product variants
 $show_childproducts = 0;
 if (isModEnabled('variants')) {
-	// An HTML checkbox does not submit anything when unchecked, so a hidden
-	// "search_show_childproducts=0" companion field is emitted next to the
-	// checkbox (see below). GETPOSTISSET() then let's us distinguish a
-	// resubmission with the checkbox off from a request that does not carry
-	// the filter at all, and the value is read as a strict 0/1 flag.
-	if (GETPOSTISSET('search_show_childproducts')) {
+	// An HTML checkbox does not submit anything when unchecked, so a hidden "search_show_childproducts_flag=1" companion field is emitted next to the
+	// checkbox (see below). GETPOSTISSET() then let's us distinguish a resubmission with the checkbox off from a request that does not carry
+	// the filter at all, and the value is read as a strict 0/1 flag taking account of possible default values or not.
+	if (GETPOSTISSET('search_show_childproducts_flag')) {
+		$show_childproducts = GETPOSTINT('search_show_childproducts', 0, 1);
+	} else {
 		$show_childproducts = GETPOSTINT('search_show_childproducts');
 	}
 }
@@ -649,7 +649,7 @@ if (isset($search_tobuy) && dol_strlen($search_tobuy) > 0 && $search_tobuy != -1
 	$sql .= " AND p.tobuy = ".((int) $search_tobuy);
 }
 if (isset($search_stockable_product) && dol_strlen($search_stockable_product) > 0 && $search_stockable_product != -1) {
-	$sql .= " AND p.stockable_product = '". ((int) $search_stockable_product) . "'";
+	$sql .= " AND p.stockable_product = ". ((int) $search_stockable_product);
 }
 if (isset($search_tobatch) && dol_strlen($search_tobatch) > 0 && $search_tobatch != -1) {
 	$sql .= " AND p.tobatch = ".((int) $search_tobatch);
@@ -1092,7 +1092,7 @@ if (isModEnabled('variants')) {
 	// Companion hidden field ensures search_show_childproducts is always
 	// posted, even when the checkbox below is unchecked, so the unchecked
 	// state survives the filter/pagination submit and is parsed as 0/1.
-	$moreforfilter .= '<input type="hidden" name="search_show_childproducts" value="0">';
+	$moreforfilter .= '<input type="hidden" name="search_show_childproducts_flag" value="1">';
 	$moreforfilter .= '<input type="checkbox" id="search_show_childproducts" name="search_show_childproducts" value="1"'.($show_childproducts ? ' checked="checked"' : '').'>';
 	$moreforfilter .= ' <label for="search_show_childproducts">'.$langs->trans('ShowChildProducts').'</label>';
 	$moreforfilter .= '</div>';

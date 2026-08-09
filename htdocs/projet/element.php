@@ -216,6 +216,9 @@ $othermessage = '';
 $tmpprojtime = array();
 $nbAttendees = 0;
 
+$extrafields->fetch_name_optionals_label($object->table_element);
+$object->fetch_optionals();
+
 $permissiontoadd = $user->hasRight('projet', 'creer');
 $permissiontodelete = $user->hasRight('projet', 'supprimer');
 $permissiondellink = $user->hasRight('projet', 'creer');	// Used by the include of actions_dellink.inc.php
@@ -838,6 +841,17 @@ if ($action == "addelement") {
 	}
 } elseif ($action == "unlink") {
 	$tablename = GETPOST("tablename", "aZ09");
+	$referentTables = array_values(array_map(
+	/**
+	 * @param array{table: string} $definition
+	 * @return string
+	 */
+	function ($definition) {
+		return $definition['table'];
+	}, $listofreferent));
+	if (!in_array($tablename, $referentTables)) {
+		accessforbidden('', 0, 0);
+	}
 	$projectField = GETPOSTISSET('projectfield') ? GETPOST('projectfield', 'aZ09') : 'fk_projet';
 	$elementselectid = GETPOSTINT("elementselect");
 

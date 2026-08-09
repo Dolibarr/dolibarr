@@ -172,3 +172,6 @@ SalaryWaitingWithdraw=Plate čekaju na isplatu kreditnim transferom
 RefSalary=Plata
 NoSalaryInvoiceToWithdraw=Nema plate koja čeka '%s'. Idite na karticu '%s' na platnoj kartici da napravite zahtjev.
 SalaryInvoiceWaitingWithdraw=Plate čekaju na isplatu kreditnim transferom
+ErrorBankTransferNoPaymentRequestSelected=No payment request selected.
+AmountRequestedAlreadyReachesTotal=The total invoice amount has already been requested for payment
+AmountExceedsRemainingToRequest=The requested amount exceeds the remaining amount available for payment requests
