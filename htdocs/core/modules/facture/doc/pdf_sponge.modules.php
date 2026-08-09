@@ -711,6 +711,14 @@ class pdf_sponge extends ModelePDFFactures
 				$pageposbeforeprintlines = $pdf->getPage();
 				$pagenb = $pageposbeforeprintlines;
 
+				// If option is on, load linked shipments once so we can print lots/serials below each line description
+				if (getDolGlobalInt('INVOICE_INCLUDE_DETAILS_OF_LOTS_SERIALS')) {
+					$outputlangs->load('productbatch');
+					if (empty($object->linkedObjects)) {
+						$object->fetchObjectLinked();
+					}
+				}
+
 				$pdf_sub_options = array();
 				$pdf_sub_options['titleshowuponpdf'] = 1;
 				$pdf_sub_options['titleshowtotalexludingvatonpdf'] = 1;
@@ -806,6 +814,38 @@ class pdf_sponge extends ModelePDFFactures
 
 					// restore Page orientation for text
 					$pdf->setPageOrientation('', true, $this->heightforfooter); // The only function to edit the bottom margin of current page to set it.
+
+					// If option is on, append the lots/serials of linked shipments to the line description
+					// so they are rendered in the normal description flow (row height is recomputed accordingly)
+					if (getDolGlobalInt('INVOICE_INCLUDE_DETAILS_OF_LOTS_SERIALS')
+						&& $object->lines[$i]->special_code != SUBTOTALS_SPECIAL_CODE
+						&& !empty($object->lines[$i]->fk_product)
+						&& !empty($object->linkedObjects['shipping'])) {
+						$batch_content = '';
+						foreach ($object->linkedObjects['shipping'] as $ship) {
+							if (empty($ship->lines)) {
+								continue;
+							}
+							foreach ($ship->lines as $shipline) {
+								if ($object->lines[$i]->fk_product != $shipline->fk_product) {
+									continue;
+								}
+								if (empty($shipline->detail_batch)) {
+									continue;
+								}
+								foreach ($shipline->detail_batch as $linebatch) {
+									if (empty($linebatch->batch)) {
+										continue;
+									}
+									$batch_content .= '<br>'.$outputlangs->transnoentities('Batch').': '.$linebatch->batch;
+									$batch_content .= ' - '.$outputlangs->transnoentities('Qty').': '.$linebatch->qty;
+								}
+							}
+						}
+						if ($batch_content !== '') {
+							$object->lines[$i]->desc .= $batch_content;
+						}
+					}
 
 					// Description of product line
 					if ($this->getColumnStatus('desc')) {
