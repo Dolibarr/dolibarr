@@ -170,6 +170,7 @@ class Notify
 		'HOLIDAY_APPROVE',
 		'ACTION_CREATE',
 		'CONTRACT_MODIFY',
+		'CONTRACT_VALIDATE',
 		'STOCKTRANSFER_CREATE',
 		'STOCKTRANSFER_MODIFY',
 		'STOCKTRANSFER_VALIDATE',
@@ -186,6 +187,7 @@ class Notify
 	{
 		$this->db = $db;
 	}
+
 
 
 	/**
@@ -936,11 +938,12 @@ class Notify
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextActionAdded", $link);
 								break;
 							case 'CONTRACT_MODIFY':
+							case 'CONTRACT_VALIDATE':
 								$link = '<a href="'.$urlwithroot.'/contrat/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
-								$context_info = array_key_exists('signature', $object->context) ? $object->getLibSignedStatus() : '';
+								$context_info = (is_array($object->context) && array_key_exists('signature', $object->context) && getDolGlobalString('CONTRACT_SHOW_SIGNATURE_STATUS_WITH_SERVICE_STATUS')) ? $object->getLibSignedStatus() : '';
 								$dir_output = $conf->contract->multidir_output;
 								$object_type = 'contract';
-								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextContractModified", $link, $context_info);
+								$mesg = $outputlangs->transnoentitiesnoconv('Notify_'.$notifcode).' '.$link.(!empty($context_info) ? ' '.$context_info : '');
 								break;
 							default:
 								$object_type = $object->element;
@@ -1247,11 +1250,12 @@ class Notify
 						$mesg = $langs->transnoentitiesnoconv("EMailTextActionAdded", $link);
 						break;
 					case 'CONTRACT_MODIFY':
+					case 'CONTRACT_VALIDATE':
 						$link = '<a href="'.$urlwithroot.'/contrat/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
-						$context_info = array_key_exists('signature', $object->context) ? $object->getLibSignedStatus() : '';
+						$context_info = (is_array($object->context) && array_key_exists('signature', $object->context) && getDolGlobalString('CONTRACT_SHOW_SIGNATURE_STATUS_WITH_SERVICE_STATUS')) ? $object->getLibSignedStatus() : '';
 						$dir_output = $conf->contract->multidir_output;
-						$object_type = 'contrat';
-						$mesg = $langs->transnoentitiesnoconv("EMailTextContractModified", $link, $context_info);
+						$object_type = 'contract';
+						$mesg = $langs->transnoentitiesnoconv('Notify_'.$notifcode).' '.$link.(!empty($context_info) ? ' '.$context_info : '');
 						break;
 					default:
 						$object_type = $object->element;

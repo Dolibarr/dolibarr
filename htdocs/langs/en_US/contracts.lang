@@ -120,3 +120,4 @@ ShowClosedServices=Show Closed Services
 HideClosedServices=Hide Closed Services
 UserStartingService=User starting service
 UserClosingService=User closing service
+ContractShowSignatureStatus=Show signature status with service status

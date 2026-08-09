@@ -15,6 +15,7 @@
  * Copyright (C) 2024-2026  MDW                     <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026       Charlene Benke          <charlene@patas-monkey.com>
  * Copyright (C) 2026       Alexandre Spangaro      <alexandre@inovea-conseil.com
+ * Copyright (C) 2026       Pierre Ardoin        		<developpeur@lesmetiersdubatiment.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -446,6 +447,14 @@ class Contrat extends CommonObject
 			}
 		}
 
+		if (!$error && !$notrigger) {
+			$this->context['contract_service_status'] = 'activate_all';
+			$result = $this->call_trigger('CONTRACT_MODIFY', $user);
+			if ($result < 0) {
+				$error++;
+			}
+		}
+
 		if (!$error) {
 			$this->db->commit();
 			return 1;
@@ -501,6 +510,14 @@ class Contrat extends CommonObject
 
 		if (!$error && $this->status == 0) {
 			$result = $this->validate($user, '', $notrigger);
+			if ($result < 0) {
+				$error++;
+			}
+		}
+
+		if (!$error && !$notrigger) {
+			$this->context['contract_service_status'] = 'close_all';
+			$result = $this->call_trigger('CONTRACT_MODIFY', $user);
 			if ($result < 0) {
 				$error++;
 			}

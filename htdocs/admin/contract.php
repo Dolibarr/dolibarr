@@ -1,8 +1,10 @@
 <?php
 /* Copyright (C) 2011-2013      Juanjo Menent	    <jmenent@2byte.es>
- * Copyright (C) 2011-2018      Philippe Grand	    <philippe.grand@atoo-net.com>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2011-2018      Philippe Grand	  <philippe.grand@atoo-net.com>
+ * Copyright (C) 2024-2025	    MDW						  	<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026      Frédéric France   <frederic.france@free.fr>
+ * Copyright (C) 2026		        Pierre Ardoin     <developpeur@lesmetiersdubatiment.fr>
+
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -561,6 +563,13 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->trans("AllowExternalDownload").'</td>';
 print '<td class="right">';
 print ajax_constantonoff('CONTRACT_ALLOW_EXTERNAL_DOWNLOAD', array(), null, 0, 0, 0, 2, 0, 1);
+print '</td>';
+print '</tr>';
+// Show signature status
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("ContractShowSignatureStatus").'</td>';
+print '<td class="right">';
+print ajax_constantonoff('CONTRACT_SHOW_SIGNATURE_STATUS_WITH_SERVICE_STATUS', array(), null, 0, 0, 0, 2, 0, 1);
 print '</td>';
 print '</tr>';
 print '</table>';
