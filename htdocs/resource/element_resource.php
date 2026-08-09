@@ -32,6 +32,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/resource.lib.php';
 if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
@@ -155,45 +156,19 @@ if (empty($reshook)) {
 					}
 				}
 
-				$sql  = "SELECT er.rowid, r.ref as r_ref, ac.id as ac_id, ac.label as ac_label";
-				$sql .= " FROM ".MAIN_DB_PREFIX."element_resources as er";
-				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."resource as r ON r.rowid = er.resource_id AND er.resource_type = '".$db->escape($resource_type)."'";
-				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm as ac ON ac.id = er.element_id AND er.element_type = '".$db->escape($objstat->element)."'";
-				$sql .= " WHERE er.resource_id = ".((int) $resource_id);
-				$sql .= " AND er.busy = 1";
-				$sql .= " AND (";
-
-				// event date start between ac.datep and ac.datep2 (if datep2 is null we consider there is no end)
-				$sql .= " (ac.datep <= '".$db->idate($eventDateStart)."' AND (ac.datep2 IS NULL OR ac.datep2 >= '".$db->idate($eventDateStart)."'))";
-				// event date end between ac.datep and ac.datep2
-				if (!empty($eventDateEnd)) {
-					$sql .= " OR (ac.datep <= '".$db->idate($eventDateEnd)."' AND (ac.datep2 >= '".$db->idate($eventDateEnd)."'))";
-				}
-				// event date start before ac.datep and event date end after ac.datep2
-				$sql .= " OR (";
-				$sql .= "ac.datep >= '".$db->idate($eventDateStart)."'";
-				if (!empty($eventDateEnd)) {
-					$sql .= " AND (ac.datep2 IS NOT NULL AND ac.datep2 <= '".$db->idate($eventDateEnd)."')";
-				}
-				$sql .= ")";
-
-				$sql .= ")";
-				$resql = $db->query($sql);
-				if (!$resql) {
+				$conflicts = getBusyResourcesInPeriod($eventDateStart, $eventDateEnd, $resource_id, 0, 0, $resource_type, $objstat->element, 0, getDolGlobalInt('RESOURCE_SELECT_LIMIT', 100));
+				if ($conflicts === null) {
 					$error++;
-					$objstat->error    = $db->lasterror();
+					$objstat->error = $db->lasterror();
 					$objstat->errors[] = $objstat->error;
-				} else {
-					if ($db->num_rows($resql) > 0) {
-						// Resource already in use
-						$error++;
-						$objstat->error = $langs->trans('ErrorResourcesAlreadyInUse').' : ';
-						while ($obj = $db->fetch_object($resql)) {
-							$objstat->error .= '<br> - '.$langs->trans('ErrorResourceUseInEvent', $obj->r_ref, $obj->ac_label.' ['.$obj->ac_id.']');
-						}
-						$objstat->errors[] = $objstat->error;
+				} elseif (count($conflicts) > 0) {
+					// Resource already in use
+					$error++;
+					$objstat->error = $langs->trans('ErrorResourcesAlreadyInUse').' : ';
+					foreach ($conflicts as $obj) {
+						$objstat->error .= '<br> - '.$langs->trans('ErrorResourceUseInEvent', $obj->r_ref, $obj->ac_label.' ['.$obj->ac_id.']');
 					}
-					$db->free($resql);
+					$objstat->errors[] = $objstat->error;
 				}
 			}
 
@@ -230,46 +205,19 @@ if (empty($reshook)) {
 					}
 				}
 
-				$sql  = "SELECT er.rowid, r.ref as r_ref, ac.id as ac_id, ac.label as ac_label";
-				$sql .= " FROM ".MAIN_DB_PREFIX."element_resources as er";
-				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."resource as r ON r.rowid = er.resource_id AND er.resource_type = '".$db->escape($object->resource_type)."'";
-				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm as ac ON ac.id = er.element_id AND er.element_type = '".$db->escape($object->element_type)."'";
-				$sql .= " WHERE er.resource_id = ".((int) $object->resource_id);
-				$sql .= " AND ac.id <> ".((int) $object->element_id);
-				$sql .= " AND er.busy = 1";
-				$sql .= " AND (";
-
-				// event date start between ac.datep and ac.datep2 (if datep2 is null we consider there is no end)
-				$sql .= " (ac.datep <= '".$db->idate($eventDateStart)."' AND (ac.datep2 IS NULL OR ac.datep2 >= '".$db->idate($eventDateStart)."'))";
-				// event date end between ac.datep and ac.datep2
-				if (!empty($eventDateEnd)) {
-					$sql .= " OR (ac.datep <= '".$db->idate($eventDateEnd)."' AND (ac.datep2 IS NULL OR ac.datep2 >= '".$db->idate($eventDateEnd)."'))";
-				}
-				// event date start before ac.datep and event date end after ac.datep2
-				$sql .= " OR (";
-				$sql .= "ac.datep >= '".$db->idate($eventDateStart)."'";
-				if (!empty($eventDateEnd)) {
-					$sql .= " AND (ac.datep2 IS NOT NULL AND ac.datep2 <= '".$db->idate($eventDateEnd)."')";
-				}
-				$sql .= ")";
-
-				$sql .= ")";
-				$resql = $db->query($sql);
-				if (!$resql) {
+				$conflicts = getBusyResourcesInPeriod($eventDateStart, $eventDateEnd, $object->resource_id, 0, $object->element_id, $object->resource_type, $object->element_type, 1, getDolGlobalInt('RESOURCE_SELECT_LIMIT', 100));
+				if ($conflicts === null) {
 					$error++;
 					$object->error = $db->lasterror();
 					$object->errors[] = $object->error;
-				} else {
-					if ($db->num_rows($resql) > 0) {
-						// Resource already in use
-						$error++;
-						$object->error = $langs->trans('ErrorResourcesAlreadyInUse').' : ';
-						while ($obj = $db->fetch_object($resql)) {
-							$object->error .= '<br> - '.$langs->trans('ErrorResourceUseInEvent', $obj->r_ref, $obj->ac_label.' ['.$obj->ac_id.']');
-						}
-						$object->errors[] = $object->error;
+				} elseif (count($conflicts) > 0) {
+					// Resource already in use
+					$error++;
+					$object->error = $langs->trans('ErrorResourcesAlreadyInUse').' : ';
+					foreach ($conflicts as $obj) {
+						$object->error .= '<br> - '.$langs->trans('ErrorResourceUseInEvent', $obj->r_ref, $obj->ac_label.' ['.$obj->ac_id.']');
 					}
-					$db->free($resql);
+					$object->errors[] = $object->error;
 				}
 			}
 
