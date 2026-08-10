@@ -1065,7 +1065,7 @@ if (empty($reshook)) {
 		$result = $object->updateline(
 			$lineid,
 			GETPOST('product_desc', 'restricthtml'),
-			$ht,
+			(float) $ht,
 			(float) price2num(GETPOST('qty'), 'MS'),
 			(float) price2num(GETPOST('remise_percent'), '', 2),
 			$vat_rate,
