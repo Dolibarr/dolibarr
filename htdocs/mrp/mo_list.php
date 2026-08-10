@@ -253,34 +253,39 @@ if (empty($reshook)) {
 			if (!empty($toselect)) {
 				foreach ($toselect as $key => $idMo) {
 					if ($objMo->fetch($idMo)) {
-						if ($objMo->status == Mo::STATUS_DRAFT) {
-							if (!empty($changeDate)) {
-								if ($action == 'changedatestart_confirm') {			// Test on permission not required
-									if ($newDate < $objMo->date_end_planned) {
-										$objMo->date_start_planned = $newDate;
-									} else {
-										setEventMessages($langs->trans('ErrorModifyMoDateStart', $objMo->ref), null, 'errors');
-										break;
-									}
-								} elseif ($action == 'changedateend_confirm') {		// Test on permission not required
-									if ($newDate > $objMo->date_start_planned) {
-										$objMo->date_end_planned = $newDate;
-									} else {
-										setEventMessages($langs->trans('ErrorModifyMoDateEnd', $objMo->ref), null, 'errors');
-										break;
-									}
-								}
-								if ($objMo->update($user)) {
-									setEventMessages($langs->trans('ModifyMoDate', $objMo->ref), null, 'mesgs');
+						if (in_array($action, array('changedatestart_confirm', 'changedateend_confirm'), true) && $objMo->status == Mo::STATUS_PRODUCED) {
+							$errorKey = $action == 'changedatestart_confirm'
+								? 'ErrorObjectMustNotBeFinishedToModifyDateStart'
+								: 'ErrorObjectMustNotBeFinishedToModifyDateEnd';
+							setEventMessages($langs->trans($errorKey, $objMo->ref), null, 'errors');
+							continue;
+						}
+						if (!empty($changeDate)) {
+							if ($action == 'changedatestart_confirm') { 		// Test on permission not required
+								// The start date can be set IF (the end date is empty OR the new date is BEFORE the existing end date).
+								if (empty($objMo->date_end_planned) || $newDate < $objMo->date_end_planned) {
+									$objMo->date_start_planned = $newDate;
 								} else {
-									setEventMessages($langs->trans('ErrorModifyMoDate', $objMo->ref), null, 'errors');
+									setEventMessages($langs->trans('ErrorModifyMoDateStart', $objMo->ref), null, 'errors');
+									break;
 								}
+							} elseif ($action == 'changedateend_confirm') {	// Test on permission not required
+								// The end date can be set IF (the start date is empty OR the new date is AFTER the existing start date).
+								if (empty($objMo->date_start_planned) || $newDate > $objMo->date_start_planned) {
+									$objMo->date_end_planned = $newDate;
+								} else {
+									setEventMessages($langs->trans('ErrorModifyMoDateEnd', $objMo->ref), null, 'errors');
+									break;
+								}
+							}
+							if ($objMo->update($user)) {
+								setEventMessages($langs->trans('ModifyMoDate', $objMo->ref), null, 'mesgs');
 							} else {
-								setEventMessages($langs->trans('ErrorEmptyChangeDate'), null, 'errors');
-								break;
+								setEventMessages($langs->trans('ErrorModifyMoDate', $objMo->ref), null, 'errors');
 							}
 						} else {
-							setEventMessages($langs->trans('ErrorObjectMustHaveStatusDraftToModifyDate', $objMo->ref), null, 'errors');
+							setEventMessages($langs->trans('ErrorEmptyChangeDate'), null, 'errors');
+							break;
 						}
 					}
 				}
@@ -357,7 +362,7 @@ foreach ($search as $key => $val) {
 			continue;
 		}
 		if ($key == 'status') {
-			$sql .= natural_search('t.status', (string) $search[$key], 0);
+			$sql .= natural_search('t.status', (string) $search[$key], 1);
 			continue;
 		}
 

@@ -56,7 +56,10 @@ $confirm = GETPOST('confirm', 'alpha');
 $type = GETPOST('type', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 if (empty($backtopage)) {
-	$backtopage = '/accountancy/bookkeeping/list.php';
+	// Prefix with DOL_URL_ROOT so the redirect works when Dolibarr is installed
+	// under a subpath (e.g. https://host/dolibarr/). A bare /accountancy/...
+	// lands the browser at host root and breaks the redirect (see issue #38478).
+	$backtopage = DOL_URL_ROOT.'/accountancy/bookkeeping/list.php';
 }
 
 $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')

@@ -55,7 +55,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 		} ?>
 		</td>
 		<td class="linkedcol-name tdoverflowmax150"><?php echo $objectlink->getNomUrl(1); ?></td>
-		<td class="linkedcol-ref center"><?php echo $objectlink->ref_client; ?></td>
+		<td class="linkedcol-ref tdoverflowmax150 center"><?php echo $objectlink->ref_client; ?></td>
 		<td class="linkedcol-date center"><?php echo dol_print_date($objectlink->datec, 'day'); ?></td>
 		<?php
 		//$objectlink->socid = $objectlink->fk_soc;

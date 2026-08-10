@@ -66,7 +66,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	}
 	echo '</td>';
 	echo '<td class="linkedcol-name tdoverflowmax150" >'.$objectlink->getNomUrl(1).'</td>';
-	echo '<td class="linkedcol-ref" align="center">'.$objectlink->label.'</td>';
+	echo '<td class="linkedcol-ref tdoverflowmax150" align="center">'.$objectlink->label.'</td>';
 	echo '<td class="linkedcol-date" align="center">'.dol_print_date($objectlink->date_start, 'day').'</td>';
 	echo '<td class="linkedcol-amount right">';
 	if ($user->hasRight('asset', 'read')) {

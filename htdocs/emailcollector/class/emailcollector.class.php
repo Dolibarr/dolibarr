@@ -1766,7 +1766,7 @@ class EmailCollector extends CommonObject
 				$headers = array_combine($matches[1], $matches[2]);
 
 
-				$richarrayofemail[] = array('imapemail' => $imapemail, 'header' => $header, 'headers' => $headers, 'overview' => $overview, 'date' => strtotime($headers['Date']));
+				$richarrayofemail[] = array('imapemail' => $imapemail, 'header' => $header, 'headers' => $headers, 'overview' => $overview, 'date' => empty($headers['Date']) ? false : strtotime($headers['Date']));
 			}
 
 
@@ -1873,9 +1873,28 @@ class EmailCollector extends CommonObject
 				}
 
 				if ($searchfilterisanswer > 0) {
-					if (empty($headers['In-Reply-To'])) {
+					$referencesforanswer = '';
+					if (!empty($headers['References'])) {
+						$referencesforanswer .= $headers['References'].' ';
+					}
+					if (!empty($headers['In-Reply-To'])) {
+						$referencesforanswer .= $headers['In-Reply-To'];
+					}
+
+					$hasdolibarrreference = 0;
+					if (!empty($referencesforanswer)) {
+						if (preg_match('/dolibarr-([a-z]+)([0-9]+)@'.preg_quote($host, '/').'/', $referencesforanswer)) {
+							$hasdolibarrreference = 1;
+						} elseif (getDolGlobalString('EMAIL_ALTERNATIVE_HOST_SIGNATURE')) {
+							if (preg_match('/dolibarr-([a-z]+)([0-9]+)@'.preg_quote(getDolGlobalString('EMAIL_ALTERNATIVE_HOST_SIGNATURE'), '/').'/', $referencesforanswer)) {
+								$hasdolibarrreference = 1;
+							}
+						}
+					}
+
+					if (empty($headers['In-Reply-To']) && empty($hasdolibarrreference)) {
 						$nbemailprocessed++;
-						dol_syslog(" Discarded - Email is not an answer (no In-Reply-To header)");
+						dol_syslog(" Discarded - Email is not an answer (no In-Reply-To header and no Dolibarr reference)");
 						continue; // Exclude email
 					}
 					$isanswer = 0;
@@ -1888,6 +1907,9 @@ class EmailCollector extends CommonObject
 						if (!empty($headers['In-Reply-To'])) {
 							$isanswer = 1;
 						}
+					}
+					if ($hasdolibarrreference) {
+						$isanswer = 1;
 					}
 					//if ($headers['In-Reply-To'] != $headers['Message-ID'] && empty($headers['References'])) $isanswer = 1;	// If in-reply-to differs of message-id, this is a reply
 					//if ($headers['In-Reply-To'] != $headers['Message-ID'] && !empty($headers['References']) && strpos($headers['References'], $headers['Message-ID']) !== false) $isanswer = 1;
@@ -1949,7 +1971,9 @@ class EmailCollector extends CommonObject
 
 
 				if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
-					$dateformated = dol_print_date($overview['date'], 'dayrfc', 'gmt');		// May generate a warning "dol_print_date($overview['date'], 'dayrfc', 'gmt')" in log
+					// $overview['date'] is a DateTime/Carbon object when using the PHPIMAP driver, not a timestamp, so it must be converted first
+					$overviewdate = ($overview['date'] instanceof DateTimeInterface) ? $overview['date']->getTimestamp() : $overview['date'];
+					$dateformated = dol_print_date($overviewdate, 'dayrfc', 'gmt');
 					dol_syslog("msgid=".$overview['message_id']." date=".$dateformated." from=".$overview['from']." to=".$overview['to']." subject=".$overview['subject']);
 
 					// Removed emojis
@@ -2083,7 +2107,7 @@ class EmailCollector extends CommonObject
 					$sendtocc = empty($overview['cc']) ? '' : $overview['cc'];
 					$sendtobcc = empty($overview['bcc']) ? '' : $overview['bcc'];
 
-					$tmpdate = $overview['date']->toDate();  // @phan-suppress-current-line PhanPluginUnknownObjectMethodCall
+					$tmpdate = $overview['date']->toDate();  // @phan-suppress-current-line PhanPluginUnknownObjectMethodCall,PhanUndeclaredMethod
 					$tmptimezone = $tmpdate->getTimezone()->getName();  // @phan-suppress-current-line PhanPluginUnknownObjectMethodCall
 
 					$dateemail = dol_stringtotime((string) $overview['date'], 'gmt');    // if $overview['timezone'] is "+00:00"
@@ -3449,7 +3473,7 @@ class EmailCollector extends CommonObject
 										$sender_contact = new Contact($this->db);
 										$sender_contact->fetch(0, null, '', $from);
 										if (!empty($sender_contact->id)) {
-											$tickettocreate->context['contactid'] = $sender_contact->id;
+											$tickettocreate->context['contact_id'] = $sender_contact->id;
 										}
 
 										$result = $tickettocreate->create($user);
@@ -3682,7 +3706,7 @@ class EmailCollector extends CommonObject
 					// Stop the loop to process email if we reach maximum collected per collect
 					if ($this->maxemailpercollect > 0 && $nbemailok >= $this->maxemailpercollect) {
 						dol_syslog("EmailCollect::doCollectOneCollector We reach maximum of ".$nbemailok." collected with success, so we stop this collector now.");
-						$datelastok = strtotime($headers['Date']); // Set datetime
+						$datelastok = empty($headers['Date']) ? false : strtotime($headers['Date']); // Set datetime
 						break;
 					}
 				} else {

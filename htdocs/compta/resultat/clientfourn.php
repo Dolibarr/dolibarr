@@ -309,16 +309,19 @@ if ($modecompta == 'BOOKKEEPING') {
 	if ($showaccountdetail == 'no') {
 		$sql .= ", f.thirdparty_code as name";
 	}
-	$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as f";
-	$sql .= ", ".MAIN_DB_PREFIX."accounting_account as aa";
-	$sql .= " WHERE f.numero_compte = aa.account_number";
+	$sql .= " FROM ".$db->prefix()."accounting_bookkeeping as f";
+	$sql .= " INNER JOIN ".$db->prefix()."accounting_account as aa";
+	$sql .= "   ON aa.account_number = f.numero_compte";
+	$sql .= " 	AND aa.entity = f.entity"; // Security prevents duplicate.
+	$sql .= " WHERE 1=1";
 	$sql .= " AND ".$predefinedgroupwhere;
-	$sql .= " AND fk_pcg_version = '".$db->escape($charofaccountstring)."'";
+	$sql .= " AND aa.fk_pcg_version = '".$db->escape($charofaccountstring)."'";
 	$sql .= " AND f.entity = ".$conf->entity;
 	if (!empty($date_start) && !empty($date_end)) {
-		$sql .= " AND f.doc_date >= '".$db->idate($date_start)."' AND f.doc_date <= '".$db->idate($date_end)."'";
+		$sql .= " AND f.doc_date >= '".$db->idate($date_start)."'";
+		$sql .= " AND f.doc_date <= '".$db->idate($date_end)."'";
 	}
-	$sql .= " GROUP BY pcg_type";
+	$sql .= " GROUP BY aa.pcg_type";
 	if ($showaccountdetail == 'no') {
 		$sql .= ", name, socid";	// group by "accounting group" (INCOME/EXPENSE), then "customer".
 	}
@@ -383,7 +386,7 @@ if ($modecompta == 'BOOKKEEPING') {
 					$cpts = $AccCat->getCptsCat(0, $tmppredefinedgroupwhere);
 
 					foreach ($cpts as $j => $cpt) {
-						$return = $AccCat->getSumDebitCredit((int) $cpt['account_number'], $date_start, $date_end, (empty($cpt['dc']) ? 0 : $cpt['dc']));
+						$return = $AccCat->getSumDebitCredit($cpt['account_number'], $date_start, $date_end, (empty($cpt['dc']) ? 0 : $cpt['dc']));
 						if ($return < 0) {
 							setEventMessages(null, $AccCat->errors, 'errors');
 							$resultN = 0;

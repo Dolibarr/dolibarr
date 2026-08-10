@@ -46,6 +46,8 @@ passwd=$6
 if [ "$confirm" != "confirm" ]
 then
 	echo "----- $0 -----"
+	echo "Usage: initdemo.sh confirm "
+	echo " or"
 	echo "Usage: initdemo.sh confirm [mysqldump_dolibarr_x.x.x.sql database port login pass]"
 	exit
 fi
@@ -56,6 +58,8 @@ command -v dialog >/dev/null 2>&1 || {
 	echo "Error: command dialog not found. On Linux, you can install it with: apt install dialog"
 	exit
 }
+DIALOG=${DIALOG:=dialog}
+DIALOG="$DIALOG --ascii-lines"
 
 
 # ----------------------------- if no params on command line
@@ -67,8 +71,7 @@ then
 	dumpfile=$(basename "$dumpfile")
 
 	# ----------------------------- input file
-	DIALOG=${DIALOG:=dialog}
-	DIALOG="$DIALOG --ascii-lines"
+
 	fichtemp=$(mktemp 2>/dev/null) || fichtemp=/tmp/test$$
 	# shellcheck disable=2064,2172
 	trap "rm -f $fichtemp" 0 1 2 5 15
@@ -85,8 +88,6 @@ then
 	rm "$fichtemp"
 
 	# ----------------------------- database name
-	DIALOG=${DIALOG:=dialog}
-	DIALOG="$DIALOG --ascii-lines"
 	fichtemp=$(mktemp 2>/dev/null) || fichtemp=/tmp/test$$
 	# shellcheck disable=2064,2172
 	trap "rm -f '$fichtemp'" 0 1 2 5 15
@@ -103,13 +104,10 @@ then
 	rm "$fichtemp"
 
 	# ---------------------------- database port
-	DIALOG=${DIALOG:=dialog}
 	fichtemp=$(mktemp 2>/dev/null) || fichtemp=/tmp/test$$
 	# shellcheck disable=2064,2172
 	trap "rm -f '$fichtemp'" 0 1 2 5 15
-	$DIALOG --title "Init Dolibarr with demo values" --clear \
-		--inputbox "Mysql port (ex: 3306):" 16 55 3306 2> "$fichtemp"
-
+	$DIALOG --title "Init Dolibarr with demo values" --clear --inputbox "Mysql port (ex: 3306):" 16 55 3306 2> "$fichtemp"
 	valret=$?
 
 	case $valret in
@@ -123,13 +121,10 @@ then
 	rm "$fichtemp"
 
 	# ---------------------------- compte admin mysql
-	DIALOG=${DIALOG:=dialog}
 	fichtemp=$(mktemp 2>/dev/null) || fichtemp=/tmp/test$$
 	# shellcheck disable=2064,2172
 	trap "rm -f '$fichtemp'" 0 1 2 5 15
-	$DIALOG	 --title "Init Dolibarr with demo values" --clear \
-		--inputbox "Mysql user login (ex: root):" 16 55 root 2> "$fichtemp"
-
+	$DIALOG	 --title "Init Dolibarr with demo values" --clear --inputbox "Mysql user login (ex: root):" 16 55 root 2> "$fichtemp"
 	valret=$?
 
 	case $valret in
@@ -143,13 +138,10 @@ then
 	rm "$fichtemp"
 
 	# ---------------------------- password admin mysql (root)
-	DIALOG=${DIALOG:=dialog}
 	fichtemp=$(mktemp 2>/dev/null) || fichtemp=/tmp/test$$
 	# shellcheck disable=2064,2172
 	trap "rm -f '$fichtemp'" 0 1 2 5 15
-	$DIALOG --title "Init Dolibarr with demo values" --clear \
-		--passwordbox "Password for Mysql user login :" 16 55 2> "$fichtemp"
-
+	$DIALOG --title "Init Dolibarr with demo values" --clear --passwordbox "Password for Mysql user login :" 16 55 2> "$fichtemp"
 	valret=$?
 
 	case $valret in
@@ -169,9 +161,7 @@ then
 
 
 	# ---------------------------- confirmation
-	DIALOG=${DIALOG:=dialog}
-	$DIALOG --title "Init Dolibarr with demo values" --clear \
-		--yesno "Do you confirm ? \n Dump file : '$dumpfile' \n Dump dir : '$mydir' \n Document dir : '$documentdir' \n Mysql database : '$base' \n Mysql port : '$port' \n Mysql login: '$admin' \n Mysql password : --hidden--" 15 55
+	$DIALOG --title "Init Dolibarr with demo values" --clear --yesno "Do you confirm ? \n Dump file : '$dumpfile' \n Dump dir : '$mydir' \n Document dir : '$documentdir' \n Mysql database : '$base' \n Mysql port : '$port' \n Mysql login: '$admin' \n Mysql password : --hidden--" 15 55
 
 	case $? in
 		0)      echo "Ok, start process..." ;;
@@ -211,25 +201,20 @@ export documentdir
 documentdir=$(< "$mydir/../../htdocs/conf/conf.php" grep '^\$dolibarr_main_data_root' | sed -e 's/$dolibarr_main_data_root=//' | sed -e 's/;//' | sed -e "s/'//g" | sed -e 's/"//g')
 if [ "$documentdir" != "" ]
 then
-	"$DIALOG" --title "Reset document directory" --clear \
-		--inputbox "DELETE and recreate document directory '$documentdir/':" 16 55 n 2> "$fichtemp"
-
+	$DIALOG --title "Reset document directory" --clear --yesno "DELETE and recreate document directory '$documentdir/':" 16 55
 	valret=$?
 
 	case $valret in
 		0)
-			rep=$(cat "$fichtemp") ;;
+			#  YES
+			echo "RECREATE $documentdir"
+			echo "  rm -fr '$documentdir/'*"
+			rm -fr "${documentdir:?}/"* ;;
 		1)
 			exit ;;
 		255)
 			exit ;;
 	esac
-
-	echo "rep=$rep"
-	if [ "$rep" = "y" ]; then
-		echo "rm -fr '$documentdir/'*"
-		rm -fr "${documentdir:?}/"*
-	fi
 
 	echo "cp -pr '$mydir/documents_demo/'* '$documentdir/'"
 	cp -pr "$mydir/documents_demo/"* "$documentdir/"

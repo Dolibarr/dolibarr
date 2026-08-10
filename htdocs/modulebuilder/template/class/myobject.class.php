@@ -794,7 +794,7 @@ class MyObject extends CommonObject
 			$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		}
 		if (property_exists($this, 'label')) {
-			$datas['ref'] = '<br>'.$langs->trans('Label').':</b> '.$this->label;
+			$datas['label'] = '<br>'.$langs->trans('Label').':</b> '.$this->label;
 		}
 
 		return $datas;

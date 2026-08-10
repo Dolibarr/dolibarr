@@ -58,7 +58,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	}
 	echo '</td>';
 	echo '<td class="linkedcol-name tdoverflowmax150" >'.$objectlink->getNomUrl(1).'</td>';
-	echo '<td class="linkedcol-ref">'.$objectlink->ref.'</td>';
+	echo '<td class="linkedcol-ref tdoverflowmax150">'.$objectlink->ref.'</td>';
 	echo '<td class="linkedcol-date center">'.dol_print_date($objectlink->date_delivery, 'day').'</td>';
 	echo '<td class="linkedcol-amount right">';
 	if ($user->hasRight('delivery', 'read')) {

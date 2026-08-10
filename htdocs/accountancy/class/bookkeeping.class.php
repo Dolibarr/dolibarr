@@ -1,11 +1,11 @@
 <?php
 /* Copyright (C) 2014-2017	Olivier Geffroy			<jeff@jeffinfo.com>
- * Copyright (C) 2015-2025	Alexandre Spangaro		<alexandre@inovea-conseil.com>
+ * Copyright (C) 2015-2026	Alexandre Spangaro		<alexandre@inovea-conseil.com>
  * Copyright (C) 2015-2020	Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2018-2025	Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Jose MARTINEZ	    	<jose.martinez@pichinov.com>
- * Copyright (C) 2025		Nicolas Barrouillet 	<nicolas@pragma-tech.fr>
+ * Copyright (C) 2024		Jose MARTINEZ			<jose.martinez@pichinov.com>
+ * Copyright (C) 2025		Nicolas Barrouillet		<nicolas@pragma-tech.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -3505,7 +3505,7 @@ class BookKeeping extends CommonObject
 					$journal_label = getDolGlobalString('ACCOUNTING_CLONING_ENABLE_INPUT_JOURNAL') ? $accountingJournal->label : $bookKeeping->journal_label;
 
 					$sql = "SELECT piece_num, label_operation, numero_compte, label_compte, doc_type, code_journal, fk_user_author, doc_ref,";
-					$sql .= " fk_doc, fk_docdet, debit, credit, journal_label, sens, montant";
+					$sql .= " fk_doc, fk_docdet, debit, credit, journal_label, sens, montant, subledger_account, subledger_label";
 					$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping";
 					$sql .= " WHERE rowid = " . ((int) $toselectid);
 					$resql = $this->db->query($sql);
@@ -3516,10 +3516,10 @@ class BookKeeping extends CommonObject
 
 							$sql_insert = "INSERT INTO " . MAIN_DB_PREFIX . "accounting_bookkeeping";
 							$sql_insert .= " (piece_num, label_operation, numero_compte, label_compte, doc_type, code_journal, doc_date, fk_user_author, doc_ref,";
-							$sql_insert .= " fk_doc, fk_docdet, debit, credit, date_creation, journal_label, sens, montant)";
+							$sql_insert .= " fk_doc, fk_docdet, debit, credit, date_creation, journal_label, sens, montant, subledger_account, subledger_label)";
 							$sql_insert .= " VALUES";
 							$sql_insert .= " (" . ((int) $pieceNumNext) . ", '" . $this->db->escape($obj->label_operation) . "', '" . $this->db->escape($obj->numero_compte) . "', '" . $this->db->escape($obj->label_compte) . "', '" . $this->db->escape($obj->doc_type) . "', '" . $this->db->escape($code_journal) . "', '" . $this->db->idate($docdate) . "', '" . $this->db->escape($obj->fk_user_author) . "', '" . $this->db->escape($docRef) . "', ";
-							$sql_insert .= " ". ((int) $obj->fk_doc) . ", " . ((int) $obj->fk_docdet) . ", " . (float) $obj->debit . ", " . (float) $obj->credit . ", '" . $this->db->idate($docdate) . "', '" . $this->db->escape($journal_label) . "', '" . $this->db->escape($obj->sens) . "', " . (float) $obj->montant . ")";
+							$sql_insert .= " ". ((int) $obj->fk_doc) . ", " . ((int) $obj->fk_docdet) . ", " . (float) $obj->debit . ", " . (float) $obj->credit . ", '" . $this->db->idate($docdate) . "', '" . $this->db->escape($journal_label) . "', '" . $this->db->escape($obj->sens) . "', " . (float) $obj->montant . ", '" . $this->db->escape($obj->subledger_account) . "', '" . $this->db->escape($obj->subledger_label) . "')";
 
 							$resqlInsert = $this->db->query($sql_insert);
 
@@ -3756,7 +3756,7 @@ class BookKeeping extends CommonObject
 									$newBookKeeping->sens = 'D';
 								}
 
-								$newBookKeeping->label_operation = "Extourne " . $bookKeeping->piece_num . " - " . $bookKeeping->numero_compte . " - " . date('d/m/Y', dol_now()) . " - " . $i;
+								$newBookKeeping->label_operation = $langs->trans("ReturnAccount") . " " . $bookKeeping->piece_num . " - " . $bookKeeping->numero_compte . " - " . date('d/m/Y', dol_now()) . " - " . $i;
 
 								$newBookKeeping->numero_compte = $bookKeeping->numero_compte;
 								$newBookKeeping->label_compte = $bookKeeping->label_compte;
@@ -3772,14 +3772,14 @@ class BookKeeping extends CommonObject
 							}
 							$createResult = $newBookKeeping->create($user);
 
-							if ($createResult > 0) {
+							if ($createResult >= 0) {
 								$newBookKeeping->piece_num = $pieceNumNext;
 								$newBookKeeping->fk_doc = $bookKeeping->fk_doc;
 								$newBookKeeping->fk_docdet = $bookKeeping->fk_docdet;
-								$result = $newBookKeeping->update($user);
+								$newBookKeeping->update($user);
 								setEventMessages($langs->trans("SuccessReturnedAccount", $bookKeeping->piece_num), null, 'mesgs');
 							} else {
-								setEventMessages($langs->trans("ErrorWhileCreating", $newBookKeeping->error), null, 'errors');
+								setEventMessages($langs->trans("ErrorWhileCreating", $newBookKeeping->error), $newBookKeeping->errors, 'errors');
 								$error++;
 							}
 						}

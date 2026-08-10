@@ -1009,8 +1009,14 @@ class Societe extends CommonObject
 		$this->code_compta_client = trim($this->code_compta_client ?? '');
 
 		$this->accountancy_code_customer_general = trim($this->accountancy_code_customer_general ?? '');
+		if ($this->accountancy_code_customer_general === '-1') {
+			$this->accountancy_code_customer_general = '';
+		}
 		$this->accountancy_code_customer = trim((string) $this->code_compta_client);
 		$this->accountancy_code_supplier_general = trim($this->accountancy_code_supplier_general ?? '');
+		if ($this->accountancy_code_supplier_general === '-1') {
+			$this->accountancy_code_supplier_general = '';
+		}
 		$this->accountancy_code_supplier = trim((string) $this->code_compta_fournisseur);
 		$this->accountancy_code_buy = trim((string) $this->accountancy_code_buy);
 		$this->accountancy_code_sell = trim((string) $this->accountancy_code_sell);
@@ -1500,9 +1506,9 @@ class Societe extends CommonObject
 		$this->order_min_amount = price2num($this->order_min_amount);
 		$this->supplier_order_min_amount = price2num($this->supplier_order_min_amount);
 
-		$this->tva_assuj = (is_numeric($this->tva_assuj)) ? (int) trim((string) $this->tva_assuj) : 0;
-		$this->tva_intra = dol_sanitizeFileName($this->tva_intra ?? '', '');
-		$this->vat_reverse_charge = empty($this->vat_reverse_charge) ? 0 : 1;
+		$this->tva_assuj			= (is_numeric($this->tva_assuj)) ? (int) trim((string) $this->tva_assuj) : 0;
+		$this->tva_intra			= trim((string) $this->tva_intra);
+		$this->vat_reverse_charge	= empty($this->vat_reverse_charge) ? 0 : 1;
 		if (empty($this->status)) {
 			$this->status = 0;
 		}
@@ -1539,8 +1545,14 @@ class Societe extends CommonObject
 		}
 
 		$this->accountancy_code_customer_general = trim((string) $this->accountancy_code_customer_general);
+		if ($this->accountancy_code_customer_general === '-1') {
+			$this->accountancy_code_customer_general = '';
+		}
 		$this->code_compta_client = trim((string) $this->code_compta_client);
 		$this->accountancy_code_supplier_general = trim((string) $this->accountancy_code_supplier_general);
+		if ($this->accountancy_code_supplier_general === '-1') {
+			$this->accountancy_code_supplier_general = '';
+		}
 		$this->code_compta_fournisseur = trim((string) $this->code_compta_fournisseur);
 
 		// Check parameters. More tests are done later in the ->verify()
@@ -1663,9 +1675,9 @@ class Societe extends CommonObject
 			$sql .= ",localtax2_assuj = ".($this->localtax2_assuj != '' ? "'".$this->db->escape((string) $this->localtax2_assuj)."'" : "null");
 			if ($this->localtax1_assuj == 1) {
 				if ($this->localtax1_value != '') {
-					$sql .= ",localtax1_value =".$this->localtax1_value;
+					$sql .= ", localtax1_value = ".((float) $this->localtax1_value);
 				} else {
-					$sql .= ",localtax1_value =0.000";
+					$sql .= ", localtax1_value = 0.000";
 				}
 			} else {
 				$sql .= ",localtax1_value =0.000";
@@ -1673,12 +1685,12 @@ class Societe extends CommonObject
 
 			if ($this->localtax2_assuj == 1) {
 				if ($this->localtax2_value != '') {
-					$sql .= ",localtax2_value =".$this->localtax2_value;
+					$sql .= ",localtax2_value = ".((float) $this->localtax2_value);
 				} else {
-					$sql .= ",localtax2_value =0.000";
+					$sql .= ",localtax2_value = 0.000";
 				}
 			} else {
-				$sql .= ",localtax2_value =0.000";
+				$sql .= ",localtax2_value = 0.000";
 			}
 
 			$sql .= ",capital = ".($this->capital === null ? "null" : $this->capital);
@@ -1823,7 +1835,7 @@ class Societe extends CommonObject
 					$sql .= ", accountancy_code_sell";
 					$sql .= ") VALUES (";
 					$sql .= $this->id;
-					$sql .= ", ".$conf->entity;
+					$sql .= ", ".((int) $conf->entity);
 					$sql .= ", ".(empty($this->vat_reverse_charge) ? '0' : '1');
 					$sql .= ", '".$this->db->escape($this->accountancy_code_customer_general)."'";
 					$sql .= ", '".$this->db->escape($this->code_compta_client)."'";
@@ -2749,22 +2761,31 @@ class Societe extends CommonObject
 			$discount->multicurrency_tx = $this->multicurrency_tx;
 
 			if ($price_base_type == 'TTC') {
-				$discount->multicurrency_amount_ttc = price2num($remise * (float) $discount->multicurrency_tx, 'MT');
-				$discount->multicurrency_amount_ht = price2num(((float) $remise / (1 + (float) $vatrate / 100)) * (float) $discount->multicurrency_tx, 'MT');
-				$discount->multicurrency_amount_tva = price2num(((float) $discount->amount_ttc - (float) $discount->amount_ht) * (float) $discount->multicurrency_tx, 'MT');
+				$discount->total_ttc = (float) price2num($remise, 'MT');
+				$discount->total_ht = (float) price2num((float) $remise / (1 + (float) $vatrate / 100), 'MT');
+				$discount->total_tva = (float) price2num((float) $discount->total_ttc - (float) $discount->total_ht, 'MT');
 
-				$discount->amount_ttc = price2num($remise, 'MT');
-				$discount->amount_ht = price2num((float) $remise / (1 + (float) $vatrate / 100), 'MT');
-				$discount->amount_tva = price2num((float) $discount->amount_ttc - (float) $discount->amount_ht, 'MT');
+				$discount->multicurrency_total_ttc = (float) price2num((float) $remise * (float) $discount->multicurrency_tx, 'MT');
+				$discount->multicurrency_total_ht = (float) price2num(((float) $remise / (1 + (float) $vatrate / 100)) * (float) $discount->multicurrency_tx, 'MT');
+				$discount->multicurrency_total_tva = (float) price2num(((float) $discount->total_ttc - (float) $discount->total_ht) * (float) $discount->multicurrency_tx, 'MT');
 			} else {
-				$discount->amount_ht = price2num($remise, 'MT');
-				$discount->amount_tva = price2num((float) $remise * (float) $vatrate / 100, 'MT');
-				$discount->amount_ttc = price2num((float) $discount->amount_ht + (float) $discount->amount_tva, 'MT');
+				$discount->total_ht = (float) price2num($remise, 'MT');
+				$discount->total_tva = (float) price2num((float) $remise * (float) $vatrate / 100, 'MT');
+				$discount->total_ttc = (float) price2num((float) $discount->total_ht + (float) $discount->total_tva, 'MT');
 
-				$discount->multicurrency_amount_ht = price2num($remise * (float) $discount->multicurrency_tx, 'MT');
-				$discount->multicurrency_amount_tva = price2num(((float) $remise * (float) $vatrate / 100) * (float) $discount->multicurrency_tx, 'MT');
-				$discount->multicurrency_amount_ttc = price2num(((float) $discount->amount_ht + (float) $discount->amount_tva) * (float) $discount->multicurrency_tx, 'MT');
+				$discount->multicurrency_total_ht = (float) price2num((float) $remise * (float) $discount->multicurrency_tx, 'MT');
+				$discount->multicurrency_total_tva = (float) price2num(((float) $remise * (float) $vatrate / 100) * (float) $discount->multicurrency_tx, 'MT');
+				$discount->multicurrency_total_ttc = (float) price2num(((float) $discount->total_ht + (float) $discount->total_tva) * (float) $discount->multicurrency_tx, 'MT');
 			}
+
+			// For backward compatibility
+			$discount->amount_ht = $discount->total_ht;
+			$discount->amount_tva = $discount->total_tva;
+			$discount->amount_ttc = $discount->total_ttc;
+			$discount->multicurrency_amount_ht = $discount->multicurrency_total_ht;
+			$discount->multicurrency_amount_tva = $discount->multicurrency_total_tva;
+			$discount->multicurrency_amount_ttc = $discount->multicurrency_total_ttc;
+
 
 			$discount->tva_tx = (float) price2num($vatrate);
 			$discount->vat_src_code = $vat_src_code;
@@ -2828,7 +2849,7 @@ class Societe extends CommonObject
 		if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
 			$sql .= " WHERE u.rowid IN (SELECT ug.fk_user FROM ".$this->db->prefix()."usergroup_user as ug WHERE ug.entity IN (".getEntity('usergroup')."))";
 		} else {
-			$sql .= " WHERE entity IN (0, ".$this->db->sanitize((string) $conf->entity).")";
+			$sql .= " WHERE entity IN (0, ".((int) $conf->entity).")";
 		}
 
 		$sql .= " AND u.rowid = sc.fk_user AND sc.fk_soc = ".((int) $this->id);
@@ -5179,6 +5200,8 @@ class Societe extends CommonObject
 	 */
 	public function getOutstandingBills($mode = 'customer', $late = 0)
 	{
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+
 		$table = 'facture';
 		if ($mode == 'supplier') {
 			$table = 'facture_fourn';

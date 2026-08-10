@@ -365,13 +365,13 @@ if (empty($reshook)) {
 				setEventMessages($langs->trans("ErrorOppStatusRequiredIfAmount"), null, 'errors');
 			}
 
-			if (!$error) {
-				if ((int) $object->thirdparty->client == 0 || (int) $object->thirdparty->client == 2) {		// If not yet customer
-					// Get ID of the special opportunity status code 'WON'
-					$idoppstatuswon = (int) dol_getIdFromCode($db, 'WON', 'c_lead_status', 'code', 'rowid');
+			if (!$error && !is_null($object->thirdparty) && ((int) $object->thirdparty->client == 0 || (int) $object->thirdparty->client == 2)) {		// If not yet customer
+				// Get ID of the special opportunity status code 'WON'
+				$idoppstatuswon = (int) dol_getIdFromCode($db, 'WON', 'c_lead_status', 'code', 'rowid');
 
-					if ($object->opp_status == $idoppstatuswon) {
-						// Switch the thirdparty into a customer
+				if ($object->opp_status == $idoppstatuswon) {
+					// Switch the thirdparty into a customer (only if thirdparty exists)
+					if (!empty($object->thirdparty) && !empty($object->thirdparty->id)) {
 						$object->thirdparty->setAsCustomer();
 					}
 				}
@@ -463,13 +463,15 @@ if (empty($reshook)) {
 
 			// If opportunities are used and the customer is not yet a customer
 			if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES') && $object->usage_opportunity) {
-				if ((int) $object->thirdparty->client == 0 || (int) $object->thirdparty->client == 2) {		// If not yet customer
+				if (!is_null($object->thirdparty) && ((int) $object->thirdparty->client == 0 || (int) $object->thirdparty->client == 2)) {		// If not yet customer
 					// Get ID of the special opportunity status code 'WON'
 					$idoppstatuswon = (int) dol_getIdFromCode($db, 'WON', 'c_lead_status', 'code', 'rowid');
 
 					if (!$error && $object->opp_status == $idoppstatuswon) {
-						// Switch the thirdparty into a customer
-						$object->thirdparty->setAsCustomer();
+						// Switch the thirdparty into a customer (only if thirdparty exists)
+						if (!empty($object->thirdparty) && !empty($object->thirdparty->id)) {
+							$object->thirdparty->setAsCustomer();
+						}
 					}
 				}
 			}
@@ -501,6 +503,8 @@ if (empty($reshook)) {
 		if ($result <= 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 			$action = '';
+		} else {
+			setEventMessages($langs->trans("FileGenerated"), null, 'mesgs');
 		}
 	}
 

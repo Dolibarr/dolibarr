@@ -1311,8 +1311,8 @@ class Utils
 
 		if (!empty($from)) {
 			$from = dol_escape_htmltag($from);
-		} elseif (getDolGlobalString('MAIN_INFO_SOCIETE_MAIL')) {
-			$from = dol_escape_htmltag(getDolGlobalString('MAIN_INFO_SOCIETE_MAIL'));
+		} elseif (getDolGlobalString('MAIN_MAIL_EMAIL_FROM')) {
+			$from = dol_escape_htmltag(getDolGlobalString('MAIN_MAIL_EMAIL_FROM'));
 		} else {
 			$error++;
 		}
@@ -1376,7 +1376,8 @@ class Utils
 		$mailfile = null;
 		if (!$error) {
 			include_once DOL_DOCUMENT_ROOT . '/core/class/CMailFile.class.php';
-			$mailfile = new CMailFile($subject, $sendto, $from, $message, $filepath, $mimetype, $filename, '', '', 0, -1);
+			$mailfile = new CMailFile($subject, $sendto, $from, $message, $filepath, $mimetype, $filename, '', '', 0, 1);
+			// $mailfile = new CMailFile($subject, $sendto, $from, $message, $filepath, $mimetype, $filename, '', '', 0, 1);
 			if ($mailfile->error) {
 				$error++;
 				$output = $mailfile->error;

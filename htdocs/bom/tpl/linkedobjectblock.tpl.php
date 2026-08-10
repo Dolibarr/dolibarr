@@ -58,7 +58,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	echo '</td>';
 	echo '<td class="linkedcol-name tdoverflowmax150" >'.$objectlink->getNomUrl(1).'</td>';
 
-	echo '<td class="linkedcol-ref">';
+	echo '<td class="linkedcol-ref tdoverflowmax150">';
 	$result = $product_static->fetch($objectlink->fk_product);
 	if ($result < 0) {
 		setEventMessage($product_static->error, 'errors');
