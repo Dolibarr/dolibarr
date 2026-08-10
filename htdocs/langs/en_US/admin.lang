@@ -1891,6 +1891,8 @@ SendingsAbility=Support shipping sheets for customer deliveries
 NoNeedForDeliveryReceipts=In most cases, shipping sheets are used both as sheets for customer deliveries (list of products to send) and sheets that are received and signed by customer. Hence the product deliveries receipt is a duplicated feature and is rarely activated.
 FreeLegalTextOnShippings=Free text on shipments
 DontPrefillShipmentQty = Don't prefill lines quantities at shipment creation
+ShipmentSupportsServices = Allow services on shipments
+ShipmentSupportsServicesDesc = By default, only products can be included on shipments. Enable this option to also include services on shipments (without stock management). This allows partial delivery and invoicing of services from shipments. If you also need stock management for services, use the stock option "Stock management supports Services" instead.
 ##### Deliveries #####
 DeliveryOrderNumberingModules=Products deliveries receipt numbering module
 DeliveryOrderModel=Products deliveries receipt model

@@ -54,6 +54,7 @@ require_once DOL_DOCUMENT_ROOT . '/expedition/class/expedition.class.php';
 require_once DOL_DOCUMENT_ROOT . '/product/class/html.formproduct.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/sendings.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/expedition.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/modules/expedition/modules_expedition.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT . '/product/stock/class/entrepot.class.php';
@@ -1902,7 +1903,7 @@ if ($action == 'create' && $usercancreate) {
 
 			if ($numAsked) {
 				if (isModEnabled('subtotals')) {
-					if (!(getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES') || getDolGlobalString('STOCK_SUPPORTS_SERVICES'))) {
+					if (!getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES') && !getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 						$title_lines_to_disable = $object->getDisabledShippmentSubtotalLines();
 					}
 					foreach ($object->lines as $line) {
@@ -2092,7 +2093,7 @@ if ($action == 'create' && $usercancreate) {
 
 					// Qty to ship
 					$quantityAsked = $line->qty;
-					if ($line->product_type == Product::TYPE_SERVICE && !getDolGlobalString('STOCK_SUPPORTS_SERVICES') && !getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES')) {
+					if (!isProductLineShippable($line->product_type)) {
 						$quantityToBeDelivered = 0;
 					} else {
 						if (is_numeric($quantityDelivered)) {
@@ -2118,7 +2119,7 @@ if ($action == 'create' && $usercancreate) {
 						if (!isModEnabled('productbatch') || !$product->hasbatch()) {
 							// Quantity to send
 							print '<td class="center">';
-							if ($line->product_type == Product::TYPE_PRODUCT || getDolGlobalString('STOCK_SUPPORTS_SERVICES') || ($line->product_type == Product::TYPE_SERVICE && getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES'))) {
+							if (isProductLineShippable($line->product_type)) {
 								if (GETPOSTISSET('qtyl'.$indiceAsked) && GETPOST('qtyl'.$indiceAsked) !== '') {
 									$deliverableQty = GETPOSTFLOAT('qtyl'.$indiceAsked, 'MS');
 								}
@@ -2359,7 +2360,7 @@ if ($action == 'create' && $usercancreate) {
 									// Quantity to send
 									print '<!-- subj=' . $subj . '/' . $nbofsuggested . ' --><tr ' . ((($subj + 1) == $nbofsuggested) ? 'oddeven' : '') . '>';
 									print '<td colspan="3" ></td><td class="center"><!-- qty to ship (no lot management for product line indiceAsked=' . $indiceAsked . ') -->';
-									if ($line->product_type == Product::TYPE_PRODUCT || getDolGlobalString('STOCK_SUPPORTS_SERVICES') || getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES')) {
+									if (isProductLineShippable($line->product_type)) {
 										// For a virtual product (kit), $deliverableQty is already min($quantityToBeDelivered, $stock) computed above
 										// and the per-warehouse "stock" returned by loadStockForVirtualProduct() is $qtyWish, not a shared physical
 										// stock. The cross-line $alreadyQtySetted cap must not be applied for kits, otherwise the 2nd and next order
