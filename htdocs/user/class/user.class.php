@@ -2291,10 +2291,10 @@ class User extends CommonObject
 		if (!empty($user->admin) && empty($user->entity) && $user->id != $this->id) {
 			$sql .= ", entity = ".((int) $this->entity); // entity flag can be set/unset only by an another superadmin user
 		}
-		$sql .= ", default_range = ".($this->default_range > 0 ? $this->default_range : 'null');
-		$sql .= ", default_c_exp_tax_cat = ".($this->default_c_exp_tax_cat > 0 ? $this->default_c_exp_tax_cat : 'null');
-		$sql .= ", fk_warehouse = ".($this->fk_warehouse > 0 ? $this->fk_warehouse : "null");
-		$sql .= ", fk_establishment = ".($this->fk_establishment > 0 ? $this->fk_establishment : "null");
+		$sql .= ", default_range = ".($this->default_range > 0 ? (int) $this->default_range : 'null');
+		$sql .= ", default_c_exp_tax_cat = ".($this->default_c_exp_tax_cat > 0 ? (int) $this->default_c_exp_tax_cat : 'null');
+		$sql .= ", fk_warehouse = ".($this->fk_warehouse > 0 ? (int) $this->fk_warehouse : "null");
+		$sql .= ", fk_establishment = ".($this->fk_establishment > 0 ? (int) $this->fk_establishment : "null");
 		$sql .= ", lang = ".($this->lang ? "'".$this->db->escape($this->lang)."'" : "null");
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
