@@ -2377,7 +2377,7 @@ class CommandeFournisseur extends CommonOrder
 
 			// We remove directory
 			$ref = dol_sanitizeFileName($this->ref);
-			if ($conf->fournisseur->commande->dir_output) {
+			if ($conf->fournisseur->commande->dir_output && !empty($ref)) {
 				$dir = $conf->fournisseur->commande->dir_output."/".$ref;
 				$file = $dir."/".$ref.".pdf";
 				if (file_exists($file)) {
