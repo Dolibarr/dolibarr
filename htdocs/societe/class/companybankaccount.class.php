@@ -405,7 +405,7 @@ class CompanyBankAccount extends Account
 		$this->db->begin();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_rib (fk_soc, type, datec, model_pdf)";
-		$sql .= " VALUES (".((int) $this->socid).", '".$this->type."', '".$this->db->idate($this->datec)."',";
+		$sql .= " VALUES (".((int) $this->socid).", '".$this->db->escape($this->type)."', '".$this->db->idate($this->datec)."',";
 		$sql .= " '".$this->db->escape(getDolGlobalString("BANKADDON_PDF"))."'";
 		$sql .= ")";
 		$resql = $this->db->query($sql);
@@ -476,9 +476,9 @@ class CompanyBankAccount extends Account
 		$sql .= ",bic='".$this->db->escape($this->bic)."'";
 		$sql .= ",iban_prefix = '".$this->db->escape(dolEncrypt($this->iban))."'";
 		$sql .= ",currency_code = '".$this->db->escape($this->currency_code)."'";
-		$sql .= ",fk_country = '".((int) $this->fk_country)."'";
-		$sql .= ",state_id = '".((int) $this->state_id)."'";
-		$sql .= ",status = '".((int) $this->status)."'";
+		$sql .= ",fk_country = ".((int) $this->fk_country);
+		$sql .= ",state_id = ".((int) $this->state_id);
+		$sql .= ",status = ".((int) $this->status);
 		$sql .= ",domiciliation = '".$this->db->escape($this->address)."'";
 		$sql .= ",proprio = '".$this->db->escape($this->owner_name)."'";
 		$sql .= ",owner_address = '".$this->db->escape($this->owner_address)."'";
@@ -693,7 +693,7 @@ class CompanyBankAccount extends Account
 	public function setAsDefault($rib = 0, $resetolddefaultfor = 'ban')
 	{
 		$sql1 = "SELECT rowid as id, fk_soc as socid FROM ".MAIN_DB_PREFIX."societe_rib";
-		$sql1 .= " WHERE rowid = ".((int) ($rib ? $rib : $this->id));
+		$sql1 .= " WHERE rowid = ".((int) ($rib ? $rib : ((int) $this->id)));
 
 		dol_syslog(get_class($this).'::setAsDefault', LOG_DEBUG);
 		$result1 = $this->db->query($sql1);

@@ -566,7 +566,9 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 						$companytouseforaddress = $targetcontact->thirdparty;
 					}
 
-					$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->convToOutputCharset(dol_format_address($companytouseforaddress))."\n";
+					if (is_object($companytouseforaddress)) {
+						$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->convToOutputCharset(dol_format_address($companytouseforaddress))."\n";
+					}
 				}
 				// Country
 				if (!empty($targetcontact->country_code) && $targetcontact->country_code != $sourcecompany->country_code) {
@@ -3228,9 +3230,11 @@ function pdfGetLineTotalDiscountAmount($object, $i, $outputlangs, $hidedetails =
 
 		if (empty($hidedetails) || $hidedetails > 1) {
 			if (empty($multicurrency)) {
-				return (float) price2num($sign * (($object->lines[$i]->subprice * (float) $object->lines[$i]->qty) - $object->lines[$i]->total_ht), 'MT', 1);
+				$diff = (float) price2num($sign * $object->lines[$i]->subprice * (float) $object->lines[$i]->qty, 'MT', 1) - $object->lines[$i]->total_ht;
+				return (float) price2num($diff, 'MT', 1);
 			} else {
-				return (float) price2num($sign * (($object->lines[$i]->multicurrency_subprice * (float) $object->lines[$i]->qty) - $object->lines[$i]->multicurrency_total_ht), 'MT', 1);
+				$diff = (float) price2num($sign * $object->lines[$i]->multicurrency_subprice * (float) $object->lines[$i]->qty, 'MT', 1) - $object->lines[$i]->multicurrency_total_ht;
+				return (float) price2num($diff, 'MT', 1);
 			}
 		}
 	}

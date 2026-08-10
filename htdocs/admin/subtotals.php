@@ -195,12 +195,12 @@ if (empty($conf->use_javascript_ajax)) {
 		print $value_subtotal == 0 ? img_picto($langs->trans("Disabled"), 'switch_off') : img_picto($langs->trans("Enabled"), 'switch_on') . '</a>';
 		print '</td>';
 
-		print '<td class="center">';
+		print '<td class="center nowraponall">';
 		$can_modify = !($value_subtotal == 0 && $value_title == 0);
 		print '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '" >';
 		print '<input type="hidden" name="token" value="' . newToken() . '">';
 		print '<input type="hidden" name="action" value="SUBTOTAL_' . $const . '_MAX_DEPTH">';
-		print '<input size="3" type="text"';
+		print '<input size="3" type="text" class="center"';
 		print $can_modify ? '' : ' disabled="disabled" ';
 		print 'name="SUBTOTAL_' . $const . '_MAX_DEPTH" value="' . getDolGlobalString('SUBTOTAL_' . $const . '_MAX_DEPTH', $can_modify ? 2 : 0) . '">';
 		print $can_modify ? '<input type="submit" class="button button-edit reposition smallpaddingimp" name="Button"value="' . $langs->trans("Modify") . '">' : '';

@@ -325,7 +325,7 @@ if ($step == 5 && $action == 'confirm_deletefile' && $confirm == 'yes' && $user-
 
 	$file = $upload_dir."/".GETPOST('file');
 
-	$ret = dol_delete_file($file);
+	$ret = dol_delete_file($file, 1);
 	if ($ret) {
 		setEventMessages($langs->trans("FileWasRemoved", GETPOST('file')), null, 'mesgs');
 	} else {
@@ -692,7 +692,13 @@ if ($step == 2 && $datatoexport) {
 		$tablename = getablenamefromfield($code, $sqlmaxforexport);
 		$htmltext = '<b>'.$langs->trans("Name").":</b> ".$text.'<br>';
 		if (!empty($objexport->array_export_special[0][$code])) {
-			$htmltext .= '<b>'.$langs->trans("ComputedField")." -> ".$langs->trans("Method")." :</b> ".$objexport->array_export_special[0][$code]."<br>";
+			$htmltext .= '<b>'.$langs->trans("ComputedField")." -> ".$langs->trans("Method")." :</b> ";
+			if (isset($objexport->array_export_special[0][$code]['method'])) {
+				$htmltext .= $objexport->array_export_special[0][$code]['method'];
+			} elseif (!is_array($objexport->array_export_special[0][$code])) {
+				$htmltext .= $objexport->array_export_special[0][$code];
+			}
+			$htmltext .= "<br>";
 		} else {
 			$htmltext .= '<b>'.$langs->trans("Table")." -> ".$langs->trans("Field").":</b> ".$tablename." -> ".preg_replace('/^.*\./', '', $code)."<br>";
 		}
@@ -887,7 +893,13 @@ if ($step == 3 && $datatoexport) {
 		$tablename = getablenamefromfield($code, $sqlmaxforexport);
 		$htmltext = '<b>'.$langs->trans("Name").':</b> '.$text.'<br>';
 		if (!empty($objexport->array_export_special[0][$code])) {
-			$htmltext .= '<b>'.$langs->trans("ComputedField")." -> ".$langs->trans("Method")." :</b> ".$objexport->array_export_special[0][$code]."<br>";
+			$htmltext .= '<b>'.$langs->trans("ComputedField")." -> ".$langs->trans("Method")." :</b> ";
+			if (isset($objexport->array_export_special[0][$code]['method'])) {
+				$htmltext .= $objexport->array_export_special[0][$code]['method'];
+			} elseif (!is_array($objexport->array_export_special[0][$code])) {
+				$htmltext .= $objexport->array_export_special[0][$code];
+			}
+			$htmltext .= "<br>";
 		} else {
 			$htmltext .= '<b>'.$langs->trans("Table")." -> ".$langs->trans("Field").":</b> ".$tablename." -> ".preg_replace('/^.*\./', '', $code)."<br>";
 		}
@@ -1098,7 +1110,13 @@ if ($step == 4 && $datatoexport) {
 		$tablename = getablenamefromfield($code, $sqlmaxforexport);
 		$htmltext = '<b>'.$langs->trans("Name").':</b> '.$text.'<br>';
 		if (!empty($objexport->array_export_special[0][$code])) {
-			$htmltext .= '<b>'.$langs->trans("ComputedField")." -> ".$langs->trans("Method")." :</b> ".$objexport->array_export_special[0][$code]."<br>";
+			$htmltext .= '<b>'.$langs->trans("ComputedField")." -> ".$langs->trans("Method")." :</b> ";
+			if (isset($objexport->array_export_special[0][$code]['method'])) {
+				$htmltext .= $objexport->array_export_special[0][$code]['method'];
+			} elseif (!is_array($objexport->array_export_special[0][$code])) {
+				$htmltext .= $objexport->array_export_special[0][$code];
+			}
+			$htmltext .= "<br>";
 		} else {
 			$htmltext .= '<b>'.$langs->trans("Table")." -> ".$langs->trans("Field").":</b> ".$tablename." -> ".preg_replace('/^.*\./', '', $code)."<br>";
 		}
@@ -1390,14 +1408,14 @@ if ($step == 5 && $datatoexport) {
 	$htmltabloflibs .= '</table><br>';
 
 	print '<br>';
-	print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("NowClickToGenerateToBuildExportFile"), $htmltabloflibs, 1, 'help', '', 0, 2, 'helphonformat').'</span>';
+	print '<div class="info"><span class="">'.$form->textwithpicto($langs->trans("NowClickToGenerateToBuildExportFile"), $htmltabloflibs, 1, 'help', '', 0, 2, 'helphonformat').'</span></div>';
 	//print $htmltabloflibs;
 
 	print '</div>';
 
 
 	if ($sqlusedforexport && $user->admin) {
-		print info_admin($langs->trans("SQLUsedForExport").':<br> '.$sqlusedforexport, 0, 0, '1', '', 'TechnicalInformation').'<br>';
+		print info_admin($langs->trans("SQLUsedForExport").':<br><span class="small">'.$sqlusedforexport.'</span>', 0, 0, 'info', '', 'TechnicalInformation').'<br>';
 		print '<br>';
 	}
 

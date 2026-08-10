@@ -1170,7 +1170,7 @@ if ($user->hasRight("holiday", "read")) {
 	$sql .= " AND (x.statut = '2' OR x.statut = '3')"; // Show only public leaves (2 = leave wait for approval, 3 = leave approved)
 	if ($mode == 'show_day') {
 		// Request only leaves for the current selected day
-		$sql .= " AND '".$db->escape($year)."-".$db->escape($month)."-".$db->escape($day)."' BETWEEN x.date_debut AND x.date_fin";	// date_debut and date_fin are date without time
+		$sql .= " AND '".$db->escape($year."-".$month."-".$day)."' BETWEEN x.date_debut AND x.date_fin";	// date_debut and date_fin are date without time
 	} elseif ($mode == 'show_week') {
 		// Restrict on current month (we get more, but we will filter later)
 		$sql .= " AND x.date_debut < '".$db->idate(dol_get_last_day($year, $month))."'";
@@ -1826,7 +1826,7 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 	$arraytimestamp = dol_getdate($timestamp);
 
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
-	print_actions_filter($form, $canedit, $status, $year, $month, $day, $check_birthday, '', $filtert, '', $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid);
+	print_actions_filter($form, $canedit, $status, $year, $month, $day, $check_birthday, '', $filtert, '', $pid, $socid, $action, -1, $actioncode, $usergroupids, '', $resourceid);
 	print '</div>';
 
 	print '<div class="div-table-responsive-no-min sectioncalendarbyday maxscreenheightless300">';

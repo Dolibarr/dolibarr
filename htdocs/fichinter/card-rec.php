@@ -748,7 +748,7 @@ if ($action == 'create') {
 			$num = count($object->lines);
 			$i = 0;
 			while ($i < $num) {
-				$type =0;
+				$type = 0;
 				// Show product and description
 				if (isset($object->lines[$i]->product_type)) {
 					$type = $object->lines[$i]->product_type;
@@ -808,7 +808,7 @@ if ($action == 'create') {
 			$sql .= " , ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 		$sql .= " WHERE f.fk_soc = s.rowid";
-		$sql .= " AND f.entity = ".$conf->entity;
+		$sql .= " AND f.entity = ".((int) $conf->entity);
 		if (!empty($socid)) {
 			$sql .= " AND s.rowid = ".((int) $socid);
 		}
@@ -840,7 +840,7 @@ if ($action == 'create') {
 
 			print_barre_liste($langs->trans("RepeatableIntervention"), $page, $_SERVER['PHP_SELF'], "&socid=$socid", $sortfield, $sortorder, '', $num, '', 'intervention');
 
-			print '<span class="opacitymedium">'.$langs->trans("ToCreateAPredefinedIntervention").'</span><br><br>';
+			print '<div class="info"><span class="">'.$langs->trans("ToCreateAPredefinedIntervention").'</span></div><br>';
 
 			$i = 0;
 			print '<table class="noborder centpercent">';

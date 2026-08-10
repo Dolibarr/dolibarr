@@ -102,3 +102,4 @@ SignedReceiverOnline=অনলাইনে তৃতীয় পক্ষের
 SignedAll=সকল পক্ষের স্বাক্ষরিত
 SignStatus=স্বাক্ষরের অবস্থা
 DocumentSigned=ডকুমেন্ট স্বাক্ষরিত
+DocumentUnsigned=Document unsigned

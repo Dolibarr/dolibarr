@@ -61,6 +61,8 @@ $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
 $type = 'propal';
 
+$propal = new Propal($db);
+
 
 /*
  * Actions
@@ -91,7 +93,6 @@ if ($action == 'updateMask') {
 } elseif ($action == 'specimen') {
 	$modele = GETPOST('module', 'alpha');
 
-	$propal = new Propal($db);
 	$propal->initAsSpecimen();
 
 	// Search template files
@@ -348,7 +349,7 @@ foreach ($dirmodels as $reldir) {
 						$htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
 						$propal->type = 0;
 						$nextval = $module->getNextValue($mysoc, $propal);
-						if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
+						if ((string) $nextval != $langs->trans("NotAvailable")) {  // Keep " on nextval
 							$htmltooltip .= ''.$langs->trans("NextValue").': ';
 							if ($nextval) {
 								if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
@@ -653,7 +654,7 @@ print '<td>';
 print "<input size=\"3\" class=\"flat\" type=\"text\" name=\"PROPALE_VALIDITY_DURATION\" value=\"" . getDolGlobalString('PROPALE_VALIDITY_DURATION')."\"></td>";
 print '</tr>';
 
-$substitutionarray = pdf_getSubstitutionArray($langs, null, null, 2);
+$substitutionarray = pdf_getSubstitutionArray($langs, null, $propal, 2);
 $substitutionarray['__(AnyTranslationKey)__'] = $langs->trans("Translation");
 $htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
 foreach ($substitutionarray as $key => $val) {

@@ -68,3 +68,4 @@ ApplyJobCandidature=التقدم لهذه الوظيفة
 ErrorRecruitmmentCandidatureAlreadyExists= المرشح لهذه الوظيفة موجود بالفعل لهذا البريد الإلكتروني %s
 RecruitmentCandidatureSaved=تم حفظ المرشح للوظيفة بنجاح
 NoOpenJobOffer=لا توجد عروض عمل مفتوحة في الوقت الحالي
+ShowPositionToBeFilled=Show Position to be filled

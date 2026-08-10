@@ -31,9 +31,9 @@ UseDiscountOnTotal=เกี่ยวกับผลรวมย่อย
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=กำหนดถ้าลดราคาทั่วโลกจะถือว่าเป็นสินค้าบริการหรือเพียง แต่ในผลรวมย่อยสำหรับการคำนวณอัตรากำไรขั้นต้น
 MARGIN_TYPE=ราคาซื้อ/ต้นทุนที่แนะนำโดยค่าเริ่มต้นสำหรับการคำนวณมาร์จิ้น
 MargeType1=มาร์จิ้นจากราคาผู้ขายที่ดีที่สุด
-MargeType2=มาร์จิ้นจากราคาถัวเฉลี่ยถ่วงน้ำหนัก (WAP)
+MargeType2=Margin on Weighted Average Cost (WAC)
 MargeType3=อัตรากำไรจากราคาต้นทุน
-MarginTypeDesc=* อัตรากำไรจากราคาซื้อที่ดีที่สุด = ราคาขาย - ราคาผู้ขายที่ดีที่สุดที่กำหนดบนการ์ดผลิตภัณฑ์<br>* อัตรากำไรจากราคาถัวเฉลี่ยถ่วงน้ำหนัก (WAP) = ราคาขาย - ราคาเฉลี่ยถ่วงน้ำหนักผลิตภัณฑ์ (WAP) หรือราคาผู้ขายที่ดีที่สุดหากยังไม่ได้กำหนด WAP<br>* ส่วนต่างจากราคาต้นทุน = ราคาขาย - ราคาต้นทุนที่กำหนดบนการ์ดผลิตภัณฑ์ หรือ WAP หากไม่ได้กำหนดราคาต้นทุน หรือราคาผู้ขายที่ดีที่สุดหาก WAP ยังไม่ได้กำหนด
+MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Cost (WAC) = Selling price - Product Weighted Average Price (WAP) or best vendor price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAC if cost price not defined, or best vendor price if WAC not yet defined
 CostPrice=ราคาทุน
 UnitCharges=ค่าใช้จ่ายต่อหน่วย
 Charges=ค่าใช้จ่าย

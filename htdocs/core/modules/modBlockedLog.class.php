@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2017-2025   Laurent Destailleur  <eldy@users.sourcefore.net>
- * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2017-2025	Laurent Destailleur	<eldy@users.sourcefore.net>
+ * Copyright (C) 2026		Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2026		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

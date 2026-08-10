@@ -1,8 +1,5 @@
 # Dolibarr language file - Source file is en_US - admin
 Foundation=Company
-VersionProgram=Program Version
-VersionLastInstall=Version Initially Installed
-PurgeSessions=Purge sessions
 ErrorModuleRequirePHPVersion=Error: This module requires PHP version %s or higher
 ErrorModuleRequireDolibarrVersion=Error: This module requires Dolibarr version %s or higher
 ErrorDecimalLargerThanAreForbidden=Error: A precision higher than <b>%s</b> is not supported.

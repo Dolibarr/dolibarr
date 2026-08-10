@@ -53,7 +53,7 @@ $cancel     = GETPOST('cancel');
 $backtopage = GETPOST('backtopage', 'alpha');
 $confirm    = GETPOST('confirm', 'alpha');
 
-$module  = GETPOST('module', 'alpha');
+$module  = GETPOST('module', 'aZ09arobase');
 $website = GETPOST('website', 'alpha');
 $pageid  = GETPOSTINT('pageid');
 if (empty($module)) {
