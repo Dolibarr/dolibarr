@@ -17,7 +17,7 @@
  * Copyright (C) 2019-2023  Thibault Foucart            <support@ptibogxiv.net>
  * Copyright (C) 2020       Open-Dsi         			<support@open-dsi.fr>
  * Copyright (C) 2021       Gauthier VERDOL         	<gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2022-2025  Anthony Berton	         	<anthony.berton@bb2a.fr>
+ * Copyright (C) 2022-2026  Anthony Berton	         	<anthony.berton@bb2a.fr>
  * Copyright (C) 2022       Ferran Marcet           	<fmarcet@2byte.es>
  * Copyright (C) 2022-2026  Charlene Benke           	<charlene@patas-monkey.com>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
@@ -8612,6 +8612,8 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 		$sql .= " FROM " . $db->prefix() . "c_tva as t";
 		$sql .= " INNER JOIN " . $db->prefix() . "c_departements as d ON t.fk_department_buyer = d.rowid";
 		$sql .= " WHERE d.rowid = " . ((int) $thirdparty_buyer->state_id);
+		$sql .= " AND t.active > 0";
+		$sql .= " AND t.entity IN (".getEntity('c_tva').")";
 		$sql .= " ORDER BY t.use_default DESC, t.taux DESC, t.code ASC, t.recuperableonly ASC";
 
 		$res = $db->query($sql);
@@ -10225,6 +10227,10 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		//var_dump($onlykey);
 		$emailsendersignature = $user->signature; //  By default, we use the signature of current user. We must complete substitution with signature in c_email_senderprofile of array after calling getCommonSubstitutionArray()
 		$usersignature = $user->signature;
+		if (getDolGlobalString('MAIN_MAIL_DEFAULT_SIGNATURE_FOR_ALL_USERS') && !empty($user->employee)) {
+			$emailsendersignature = getDolGlobalString('MAIN_MAIL_DEFAULT_SIGNATURE_FOR_ALL_USERS');
+			$usersignature = getDolGlobalString('MAIN_MAIL_DEFAULT_SIGNATURE_FOR_ALL_USERS');
+		}
 		$substitutionarray = array_merge($substitutionarray, array(
 			'__SENDEREMAIL_SIGNATURE__' => (string) ((!getDolGlobalString('MAIN_MAIL_DO_NOT_USE_SIGN')) ? ($onlykey == 2 ? dol_trunc('SignatureFromTheSelectedSenderProfile', 30) : $emailsendersignature) : ''),
 			'__USER_SIGNATURE__' => (string) (($usersignature && !getDolGlobalString('MAIN_MAIL_DO_NOT_USE_SIGN')) ? ($onlykey == 2 ? dol_trunc(dol_string_nohtmltag($usersignature), 30) : $usersignature) : '')
@@ -11371,8 +11377,8 @@ function dolGetFirstLastname($firstname, $lastname, $nameorder = -1)
  *  Note: Calling dol_htmloutput_events is done into pages by standard llxFooter() function.
  *  Note: Prefer to use setEventMessages instead.
  *
- *	@param	string|string[] $mesgs			Message string or array
- *  @param  string          $style      	Which style to use ('mesgs' by default, 'warnings', 'errors')
+ *	@param	string|string[]	$mesgs			Message string or array
+ *  @param  ''|'mesgs'|'warnings'|'errors'   $style		Which style to use ('mesgs' by default, 'warnings', 'errors')
  *  @param	int				$noduplicate	1 means we do not add the message if already present in session stack
  *  @param	int				$attop			Add the message in the top of the stack (at bottom by default)
  *  @return	void
@@ -11418,7 +11424,7 @@ function setEventMessage($mesgs, $style = 'mesgs', $noduplicate = 0, $attop = 0)
  *
  *	@param	string|null		$mesg			Message string
  *	@param	string[]|null	$mesgs			Message array
- *  @param  string			$style     		Which style to use ('mesgs' by default, 'warnings', 'errors')
+ *  @param  ''|'mesgs'|'warnings'|'errors'   $style		Which style to use ('mesgs' by default, 'warnings', 'errors')',
  *  @param	string			$messagekey		A key to be used to allow the feature "Never show this message during this session again"
  *  @param	int				$noduplicate	1 means we do not add the message if already present in session stack
  *  @param	int				$attop			Add the message in the top of the stack (at bottom by default)
@@ -16085,11 +16091,12 @@ function jsonOrUnserialize($stringtodecode, $assoc = true)
  * @param	int<0,1>	$noand		1=Do not add the AND before the condition string.
  * @param	int<0,1>	$nopar		1=Do not add the parenthesis around the final condition string.
  * @param	int<0,1>	$noerror	1=If search criteria is not valid, does not return an error string but invalidate the SQL
+ * @param 	string[]	$forbiddenfields		List of fields that we can't use in the filter
  * @return	string					Return forged SQL string
  * @see dolSqlDateFilter()
  * @see natural_search()
  */
-function forgeSQLFromUniversalSearchCriteria($filter, &$errorstr = '', $noand = 0, $nopar = 0, $noerror = 0)
+function forgeSQLFromUniversalSearchCriteria($filter, &$errorstr = '', $noand = 0, $nopar = 0, $noerror = 0, $forbiddenfields = array())
 {
 	global $db, $user;
 
@@ -16114,8 +16121,8 @@ function forgeSQLFromUniversalSearchCriteria($filter, &$errorstr = '', $noand = 
 	// Test the filter syntax
 	$t = preg_replace_callback('/' . $regexstring . '/i', 'dolForgeDummyCriteriaCallback', $filter);
 	$t = str_ireplace(array('and', 'or', ' '), '', $t);		// Remove the only strings allowed between each () criteria
-	// If the string result contains something else than '()', the syntax was wrong
 
+	// If the string result contains something else than '()', the syntax was wrong
 	if (preg_match('/[^\(\)]/', $t)) {
 		$tmperrorstr = 'Bad syntax of the search string';
 		$errorstr = 'Bad syntax of the search string: ' . $filter;
@@ -16127,7 +16134,12 @@ function forgeSQLFromUniversalSearchCriteria($filter, &$errorstr = '', $noand = 
 		}
 	}
 
-	$ret = ($noand ? "" : " AND ") . ($nopar ? "" : '(') . preg_replace_callback('/' . $regexstring . '/i', 'dolForgeSQLCriteriaCallback', $filter) . ($nopar ? "" : ')');
+	global $globalforbiddenfields;	// For use by dolForgeSQLCriteriaCallback()
+	$globalforbiddenfields = $forbiddenfields;
+
+	$ret = ($noand ? "" : " AND ") . ($nopar ? "" : '(');
+	$ret .= preg_replace_callback('/' . $regexstring . '/i', 'dolForgeSQLCriteriaCallback', $filter);
+	$ret .= ($nopar ? "" : ')');
 
 	if (is_object($db)) {
 		$ret = str_replace('__NOW__', "'" . $db->idate(dol_now()) . "'", $ret);
@@ -16291,14 +16303,15 @@ function dolForgeDummyCriteriaCallback($matches)
  * Function to forge a SQL criteria from a USF (Universal Filter Syntax) string.
  * This method is called by forgeSQLFromUniversalSearchCriteria()
  *
- * @param  string[]	$matches       	Array of found string by regex search.
- * 									Example: "t.ref:like:'SO-%'" or "t.date_creation:>:'20160101'" or "t.date_creation:<:'2016-01-01 12:30:00'" or "t.nature:is:NULL"
+ * @param  string[]	$matches       	Array of found strings by regex search.
+ * 									Example: $matches[1] = "t.ref:like:'SO-%'" or "t.date_creation:>:'20160101'" or "t.date_creation:<:'2016-01-01 12:30:00'" or "t.nature:is:NULL"
  * @return string                  	Forged criteria. Example: "t.field LIKE 'abc%'"
  * @see forgeSQLFromUniversalSearchCriteria()
  */
 function dolForgeSQLCriteriaCallback($matches)
 {
 	global $db;
+	global $globalforbiddenfields;
 
 	//dol_syslog("Convert matches ".$matches[1]);
 	if (empty($matches[1])) {
@@ -16309,7 +16322,26 @@ function dolForgeSQLCriteriaCallback($matches)
 		return '';
 	}
 
+	// Add fields that are forbidden by the caller when using USF search criteria
+	// so we can't guess them using sequantial comparisons
+	$newforbiddenfields = $globalforbiddenfields;
+	if (!is_array($newforbiddenfields)) {
+		$newforbiddenfields = array();
+	}
+	// Add fields that are ALWAYS forbidden when using USF search criteria
+	$newforbiddenfields[] = 'pass';
+	$newforbiddenfields[] = 'pass_crypted';
+	$newforbiddenfields[] = 'api_key';
+
 	$operand = preg_replace('/[^a-z0-9\._]/i', '', trim($tmp[0]));
+
+	// Test that operand is not a forbidden search field
+	if (!empty($newforbiddenfields)) {
+		$operandwithoutprefix = preg_replace('/^[a-z0-9_]+\./i', '', $operand);	// Remove prefix like t. or o. or s. or u. or d. or ...
+		if (in_array($operandwithoutprefix, $newforbiddenfields)) {
+			return '1=1';
+		}
+	}
 
 	$operator = strtoupper(preg_replace('/[^a-z<>!=]/i', '', trim($tmp[1])));
 
