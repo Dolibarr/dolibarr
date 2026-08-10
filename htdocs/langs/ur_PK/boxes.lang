@@ -116,6 +116,7 @@ BoxLastCustomerShipments=آخری کسٹمر کی ترسیل
 BoxTitleLastCustomerShipments=تازہ ترین %s ترمیم شدہ کسٹمر کی ترسیل
 BoxTitleLastLeaveRequests=تازہ ترین %s ترمیم شدہ چھٹی کی درخواستیں
 NoRecordedShipments=کوئی ریکارڈ شدہ کسٹمر شپمنٹ نہیں۔
+NoUpcomingEvent=No upcoming events
 BoxCustomersOutstandingBillReached=بقایا حد کے ساتھ صارفین پہنچ گئے۔
 BoxTitleLastFediverseInfos=آخری %s پوسٹس از %s
 BoxLastFediverseInfos=تازہ ترین فیڈیوورس اپ ڈیٹس: خبریں اور رجحانات

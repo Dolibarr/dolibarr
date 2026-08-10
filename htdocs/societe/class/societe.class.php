@@ -1708,15 +1708,10 @@ class Societe extends CommonObject
 			$sql .= ",fk_forme_juridique = ".(!empty($this->forme_juridique_code) ? "'".$this->db->escape((string) $this->forme_juridique_code)."'" : "null");
 			$sql .= ",birth = ".(!empty($this->birth) ? "'".$this->db->idate($this->birth)."'" : "null");
 
-			$sql .= ",mode_reglement = ".(!empty($this->mode_reglement_id) ? "'".$this->db->escape((string) $this->mode_reglement_id)."'" : "null");
-			$sql .= ",cond_reglement = ".(!empty($this->cond_reglement_id) ? "'".$this->db->escape((string) $this->cond_reglement_id)."'" : "null");
 			$sql .= ",deposit_percent = ".(!empty($this->deposit_percent) ? "'".$this->db->escape((string) $this->deposit_percent)."'" : "null");
 			$sql .= ",transport_mode = ".(!empty($this->transport_mode_id) ? "'".$this->db->escape((string) $this->transport_mode_id)."'" : "null");
-			$sql .= ",mode_reglement_supplier = ".(!empty($this->mode_reglement_supplier_id) ? "'".$this->db->escape((string) $this->mode_reglement_supplier_id)."'" : "null");
-			$sql .= ",cond_reglement_supplier = ".(!empty($this->cond_reglement_supplier_id) ? "'".$this->db->escape((string) $this->cond_reglement_supplier_id)."'" : "null");
 			$sql .= ",transport_mode_supplier = ".(!empty($this->transport_mode_supplier_id) ? "'".$this->db->escape((string) $this->transport_mode_supplier_id)."'" : "null");
 			$sql .= ",fk_shipping_method = ".(!empty($this->shipping_method_id) ? "'".$this->db->escape((string) $this->shipping_method_id)."'" : "null");
-			$sql .= ",fk_account = ".($this->fk_account > 0 ? (int) $this->fk_account : "null");
 
 			$sql .= ",client = ".(!empty($this->client) ? ((int) $this->client) : 0);
 			$sql .= ",fournisseur = ".(!empty($this->fournisseur) ? ((int) $this->fournisseur) : 0);
@@ -1731,6 +1726,11 @@ class Societe extends CommonObject
 			if (!getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 				$sql .= ", accountancy_code_buy = '" . $this->db->escape($this->accountancy_code_buy) . "'";
 				$sql .= ", accountancy_code_sell= '" . $this->db->escape($this->accountancy_code_sell) . "'";
+				$sql .= ", mode_reglement = ".(!empty($this->mode_reglement_id) ? "'".$this->db->escape((string) $this->mode_reglement_id)."'" : "null");
+				$sql .= ", cond_reglement = ".(!empty($this->cond_reglement_id) ? "'".$this->db->escape((string) $this->cond_reglement_id)."'" : "null");
+				$sql .= ", mode_reglement_supplier = ".(!empty($this->mode_reglement_supplier_id) ? "'".$this->db->escape((string) $this->mode_reglement_supplier_id)."'" : "null");
+				$sql .= ", cond_reglement_supplier = ".(!empty($this->cond_reglement_supplier_id) ? "'".$this->db->escape((string) $this->cond_reglement_supplier_id)."'" : "null");
+				$sql .= ", fk_account = ".($this->fk_account > 0 ? (int) $this->fk_account : "null");
 				if ($customer) {
 					$sql .= ", accountancy_code_customer_general = ".(!empty($this->accountancy_code_customer_general) ? "'".$this->db->escape($this->accountancy_code_customer_general)."'" : "null");
 					$sql .= ", code_compta = ".(!empty($this->code_compta_client) ? "'".$this->db->escape($this->code_compta_client)."'" : "null");
@@ -1834,6 +1834,11 @@ class Societe extends CommonObject
 					$sql .= ", accountancy_code_supplier";
 					$sql .= ", accountancy_code_buy";
 					$sql .= ", accountancy_code_sell";
+					$sql .= ", fk_account";
+					$sql .= ", mode_reglement";
+					$sql .= ", cond_reglement";
+					$sql .= ", mode_reglement_supplier";
+					$sql .= ", cond_reglement_supplier";
 					$sql .= ") VALUES (";
 					$sql .= ((int) $this->id);
 					$sql .= ", ".((int) $conf->entity);
@@ -1844,6 +1849,11 @@ class Societe extends CommonObject
 					$sql .= ", '".$this->db->escape($this->code_compta_fournisseur)."'";
 					$sql .= ", '".$this->db->escape($this->accountancy_code_buy)."'";
 					$sql .= ", '".$this->db->escape($this->accountancy_code_sell)."'";
+					$sql .= ", ".($this->fk_account > 0 ? (int) $this->fk_account : "null");
+					$sql .= ", ".(!empty($this->mode_reglement_id) ? (int) $this->mode_reglement_id : "null");
+					$sql .= ", ".(!empty($this->cond_reglement_id) ? (int) $this->cond_reglement_id : "null");
+					$sql .= ", ".(!empty($this->mode_reglement_supplier_id) ? (int) $this->mode_reglement_supplier_id : "null");
+					$sql .= ", ".(!empty($this->cond_reglement_supplier_id) ? (int) $this->cond_reglement_supplier_id : "null");
 					$sql .= ")";
 					$result = $this->db->query($sql);
 					if (!$result) {
@@ -1950,16 +1960,20 @@ class Societe extends CommonObject
 			$sql .= ', s.accountancy_code_supplier_general, s.code_compta_fournisseur';
 			$sql .= ', s.accountancy_code_buy, s.accountancy_code_sell';
 			$sql .= ', s.vat_reverse_charge as soc_vat_reverse_charge';
+			$sql .= ', s.mode_reglement, s.cond_reglement, s.fk_account';
+			$sql .= ', s.mode_reglement_supplier, s.cond_reglement_supplier';
 		} else {
 			$sql .= ', spe.accountancy_code_customer_general, spe.accountancy_code_customer as code_compta';
 			$sql .= ', spe.accountancy_code_supplier_general, spe.accountancy_code_supplier as code_compta_fournisseur';
 			$sql .= ', spe.accountancy_code_buy, spe.accountancy_code_sell';
 			$sql .= ', spe.vat_reverse_charge as spe_vat_reverse_charge';
+			$sql .= ', spe.mode_reglement, spe.cond_reglement, spe.fk_account';
+			$sql .= ', spe.mode_reglement_supplier, spe.cond_reglement_supplier';
 		}
 		$sql .= ', s.code_client, s.code_fournisseur, s.parent, s.barcode';
-		$sql .= ', s.fk_departement as state_id, s.fk_pays as country_id, s.fk_stcomm, s.mode_reglement, s.cond_reglement, s.deposit_percent, s.transport_mode';
-		$sql .= ', s.fk_account, s.tva_assuj';
-		$sql .= ', s.mode_reglement_supplier, s.cond_reglement_supplier, s.transport_mode_supplier';
+		$sql .= ', s.fk_departement as state_id, s.fk_pays as country_id, s.fk_stcomm, s.deposit_percent, s.transport_mode';
+		$sql .= ', s.tva_assuj';
+		$sql .= ', s.transport_mode_supplier';
 		$sql .= ', s.localtax1_assuj, s.localtax1_value, s.localtax2_assuj, s.localtax2_value, s.fk_prospectlevel, s.default_lang, s.logo, s.logo_squarred';
 		$sql .= ', s.fk_shipping_method';
 		$sql .= ', s.outstanding_limit, s.import_key, s.canvas, s.fk_incoterms, s.location_incoterms';
@@ -2229,6 +2243,163 @@ class Societe extends CommonObject
 		}
 
 		return $result;
+	}
+
+	/**
+	 *  Change the bank account.
+	 *  Overridden to store the value per entity into llx_societe_perentity when MAIN_COMPANY_PERENTITY_SHARED is on
+	 *  (the thirdparty is shared between entities but not its default bank account).
+	 *
+	 *  @param		int		$fk_account		Id of bank account
+	 *  @param      int    	$notrigger      0=launch triggers after, 1=disable triggers
+	 *  @param      User	$userused		Object user
+	 *  @return		int						1 if OK, 0 if KO
+	 */
+	public function setBankAccount($fk_account, $notrigger = 0, $userused = null)
+	{
+		if (!getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
+			return parent::setBankAccount($fk_account, $notrigger, $userused);
+		}
+
+		global $conf, $user;
+
+		if (empty($userused)) {
+			$userused = $user;
+		}
+
+		if ($fk_account < 0) {
+			$fk_account = 'NULL';
+		}
+		dol_syslog(get_class($this).'::setBankAccount('.$fk_account.')');
+
+		$this->db->begin();
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX."societe_perentity SET fk_account = ".((int) $fk_account);
+		$sql .= " WHERE fk_soc = ".((int) $this->id)." AND entity = ".((int) $conf->entity);
+		$resql = $this->db->query($sql);
+		if ($resql && !$this->db->affected_rows($resql)) {
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_perentity (fk_soc, entity, fk_account)";
+			$sql .= " VALUES (".((int) $this->id).", ".((int) $conf->entity).", ".((int) $fk_account).")";
+			$resql = $this->db->query($sql);
+		}
+
+		if (!$resql) {
+			dol_syslog(get_class($this).'::setBankAccount Error '.$this->db->error());
+			$this->error = $this->db->lasterror();
+			$this->db->rollback();
+			return -1;
+		}
+
+		if (!$notrigger) {
+			$this->context['bankaccountupdate'] = 1;
+			$result = $this->call_trigger(strtoupper(get_class($this)).'_MODIFY', $userused);
+			if ($result < 0) {
+				$this->db->rollback();
+				return -1;
+			}
+		}
+
+		$this->fk_account = ($fk_account == 'NULL') ? null : $fk_account;
+		$this->db->commit();
+		return 1;
+	}
+
+	/**
+	 *  Change the payments terms.
+	 *  Overridden to store cond_reglement(_supplier) per entity into llx_societe_perentity when MAIN_COMPANY_PERENTITY_SHARED is on.
+	 *  deposit_percent stays global (not part of the per-entity fields) and is always updated on llx_societe.
+	 *
+	 *  @param		int		$id					Id of new payment terms
+	 *  @param		float	$deposit_percent	% of deposit if needed by payment terms
+	 *  @return		int							>0 if OK, <0 if KO
+	 */
+	public function setPaymentTerms($id, $deposit_percent = null)
+	{
+		if (!getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
+			return parent::setPaymentTerms($id, $deposit_percent);
+		}
+
+		global $conf;
+
+		dol_syslog(get_class($this).'::setPaymentTerms('.$id.', '.formatLogObject($deposit_percent).')');
+
+		$fieldname = (get_class($this) == 'Fournisseur') ? 'cond_reglement_supplier' : 'cond_reglement';
+
+		if (empty($deposit_percent) || $deposit_percent < 0) {
+			$deposit_percent = (float) getDictionaryValue('c_payment_term', 'deposit_percent', $id);
+		}
+		if ($deposit_percent > 100) {
+			$deposit_percent = 100;
+		}
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET deposit_percent = ".(empty($deposit_percent) ? 'NULL' : "'".$this->db->escape((string) $deposit_percent)."'");
+		$sql .= " WHERE rowid = ".((int) $this->id);
+		$resql = $this->db->query($sql);
+
+		if ($resql) {
+			$sql = "UPDATE ".MAIN_DB_PREFIX."societe_perentity SET ".$this->db->sanitize($fieldname)." = ".(($id > 0 || $id == '0') ? ((int) $id) : 'NULL');
+			$sql .= " WHERE fk_soc = ".((int) $this->id)." AND entity = ".((int) $conf->entity);
+			$resql = $this->db->query($sql);
+			if ($resql && !$this->db->affected_rows($resql)) {
+				$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_perentity (fk_soc, entity, ".$this->db->sanitize($fieldname).")";
+				$sql .= " VALUES (".((int) $this->id).", ".((int) $conf->entity).", ".(($id > 0 || $id == '0') ? ((int) $id) : 'NULL').")";
+				$resql = $this->db->query($sql);
+			}
+		}
+
+		if (!$resql) {
+			dol_syslog(get_class($this).'::setPaymentTerms Error '.$this->db->error());
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+
+		$this->cond_reglement_id = $id;
+		if (get_class($this) == 'Fournisseur') {
+			$this->cond_reglement_supplier_id = $id;
+		}
+		$this->deposit_percent = $deposit_percent;
+		return 1;
+	}
+
+	/**
+	 *  Change the payments methods.
+	 *  Overridden to store mode_reglement(_supplier) per entity into llx_societe_perentity when MAIN_COMPANY_PERENTITY_SHARED is on.
+	 *
+	 *  @param		int		$id		Id of new payment method
+	 *  @return		int				>0 if OK, <0 if KO
+	 */
+	public function setPaymentMethods($id)
+	{
+		if (!getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
+			return parent::setPaymentMethods($id);
+		}
+
+		global $conf;
+
+		dol_syslog(get_class($this).'::setPaymentMethods('.$id.')');
+
+		$fieldname = (get_class($this) == 'Fournisseur') ? 'mode_reglement_supplier' : 'mode_reglement';
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX."societe_perentity SET ".$this->db->sanitize($fieldname)." = ".(($id > 0 || $id == '0') ? ((int) $id) : 'NULL');
+		$sql .= " WHERE fk_soc = ".((int) $this->id)." AND entity = ".((int) $conf->entity);
+		$resql = $this->db->query($sql);
+		if ($resql && !$this->db->affected_rows($resql)) {
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_perentity (fk_soc, entity, ".$this->db->sanitize($fieldname).")";
+			$sql .= " VALUES (".((int) $this->id).", ".((int) $conf->entity).", ".(($id > 0 || $id == '0') ? ((int) $id) : 'NULL').")";
+			$resql = $this->db->query($sql);
+		}
+
+		if (!$resql) {
+			dol_syslog(get_class($this).'::setPaymentMethods Error '.$this->db->error());
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+
+		$this->mode_reglement_id = $id;
+		if (get_class($this) == 'Fournisseur') {
+			$this->mode_reglement_supplier_id = $id;
+		}
+		return 1;
 	}
 
 	/**

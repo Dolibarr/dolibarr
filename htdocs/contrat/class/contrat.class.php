@@ -589,14 +589,14 @@ class Contrat extends CommonObject
 				if (preg_match('/^[\(]?PROV/i', $this->ref)) {
 					// Now we rename also files into index
 					$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files SET filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'contract/".$this->db->escape($this->newref)."'";
-					$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'contract/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+					$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'contract/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 					$resql = $this->db->query($sql);
 					if (!$resql) {
 						$error++;
 						$this->error = $this->db->lasterror();
 					}
 					$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files SET filepath = 'contract/".$this->db->escape($this->newref)."'";
-					$sql .= " WHERE filepath = 'contract/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+					$sql .= " WHERE filepath = 'contract/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 					$resql = $this->db->query($sql);
 					if (!$resql) {
 						$error++;
@@ -1086,7 +1086,7 @@ class Contrat extends CommonObject
 
 				if (!empty($modCodeContract->code_auto)) {
 					// Force the ref to a draft value if numbering module is an automatic numbering
-					$sql = 'UPDATE '.MAIN_DB_PREFIX."contrat SET ref='(PROV".$this->id.")' WHERE rowid=".((int) $this->id);
+					$sql = 'UPDATE '.MAIN_DB_PREFIX."contrat SET ref='(PROV".((int) $this->id).")' WHERE rowid=".((int) $this->id);
 					if ($this->db->query($sql)) {
 						if ($this->id) {
 							$this->ref = "(PROV".$this->id.")";
@@ -1249,9 +1249,9 @@ class Contrat extends CommonObject
 		// Delete lines
 		if (!$error) {
 			// Delete contratdet extrafields
-			$main = MAIN_DB_PREFIX.'contratdet';
-			$ef = $main."_extrafields";
-			$sql = "DELETE FROM ".$this->db->sanitize($ef)." WHERE fk_object IN (SELECT rowid FROM ".$main." WHERE fk_contrat = ".((int) $this->id).")";
+			$sql_main_table = MAIN_DB_PREFIX.'contratdet';
+			$ef = $sql_main_table."_extrafields";
+			$sql = "DELETE FROM ".$this->db->sanitize($ef)." WHERE fk_object IN (SELECT rowid FROM ".$sql_main_table." WHERE fk_contrat = ".((int) $this->id).")";
 
 			dol_syslog(get_class($this)."::delete contratdet_extrafields", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -1405,11 +1405,11 @@ class Contrat extends CommonObject
 		$sql .= " ref_ext=".(isset($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "null").",";
 		$sql .= " entity=".((int) $conf->entity).",";
 		$sql .= " date_contrat=".(dol_strlen($this->date_contrat) != 0 ? "'".$this->db->idate($this->date_contrat)."'" : 'null').",";
-		$sql .= " statut=".(isset($this->statut) ? $this->statut : (isset($this->status) ? $this->status : "null")).",";
-		$sql .= " fk_soc=".($this->socid > 0 ? $this->socid : "null").",";
-		$sql .= " fk_projet=".($this->fk_project > 0 ? $this->fk_project : "null").",";
-		$sql .= " fk_commercial_signature=".(isset($this->fk_commercial_signature) ? $this->fk_commercial_signature : "null").",";
-		$sql .= " fk_commercial_suivi=".(isset($this->fk_commercial_suivi) ? $this->fk_commercial_suivi : "null").",";
+		$sql .= " statut=".(isset($this->statut) ? ((int) $this->statut) : (isset($this->status) ? ((int) $this->status) : "null")).",";
+		$sql .= " fk_soc=".($this->socid > 0 ? ((int) $this->socid) : "null").",";
+		$sql .= " fk_projet=".($this->fk_project > 0 ? ((int) $this->fk_project) : "null").",";
+		$sql .= " fk_commercial_signature=".(isset($this->fk_commercial_signature) ? ((int) $this->fk_commercial_signature) : "null").",";
+		$sql .= " fk_commercial_suivi=".(isset($this->fk_commercial_suivi) ? ((int) $this->fk_commercial_suivi) : "null").",";
 		$sql .= " note_private=".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
 		$sql .= " note_public=".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
 		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null").",";
@@ -1608,8 +1608,8 @@ class Contrat extends CommonObject
 			$sql .= ", fk_unit";
 			$sql .= ", rang";
 			$sql .= ") VALUES (";
-			$sql .= $this->id.", '', '".$this->db->escape($desc)."',";
-			$sql .= ($fk_product > 0 ? $fk_product : "null").",";
+			$sql .= ((int) $this->id).", '', '".$this->db->escape($desc)."',";
+			$sql .= ($fk_product > 0 ? ((int) $fk_product) : "null").",";
 			$sql .= " ".((float) $qty).",";
 			$sql .= " ".((float) $txtva).",";
 			$sql .= " ".($vat_src_code ? "'".$this->db->escape($vat_src_code)."'" : "null").",";
@@ -1787,7 +1787,7 @@ class Contrat extends CommonObject
 		$sql .= ", total_localtax1 = ".((float) price2num($total_localtax1));
 		$sql .= ", total_localtax2 = ".((float) price2num($total_localtax2));
 		$sql .= ", total_ttc = ".((float) price2num($total_ttc));
-		$sql .= ", fk_product_fournisseur_price=".($fk_fournprice > 0 ? $fk_fournprice : "null");
+		$sql .= ", fk_product_fournisseur_price=".($fk_fournprice > 0 ? ((int) $fk_fournprice) : "null");
 		$sql .= ", buy_price_ht = ".((float) price2num($pa_ht));
 		if ($date_start > 0) {
 			$sql .= ",date_ouverture_prevue = '".$this->db->idate($date_start)."'";
@@ -2771,6 +2771,7 @@ class Contrat extends CommonObject
 			$num = $this->db->num_rows($resql);
 
 			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+			include_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
 			$i = 0;
 			while ($i < $num) {

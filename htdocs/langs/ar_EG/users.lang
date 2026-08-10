@@ -108,3 +108,4 @@ CloneUserRights=نسخ صلاحيات المستخدم
 CloneCategoriesUser=نسخ تصنيفات المستخدم
 ConfirmUserClone=هل أنت متأكد أنك تريد استنساخ المستخدم: <b>%s</b>؟
 SocialNetworksUser=حسابات التواصل الاجتماعي للمستخدم
+NumberOfPermissions=عدد الصلاحيات

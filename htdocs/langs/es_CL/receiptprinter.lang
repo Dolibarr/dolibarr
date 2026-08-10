@@ -6,7 +6,6 @@ ListPrinters=Lista de impresoras
 SetupReceiptTemplate=Configuración de plantilla
 CONNECTOR_DUMMY=Impresora simulada
 CONNECTOR_FILE_PRINT=Impresora local
-CONNECTOR_DUMMY_HELP=Impresora falsa para prueba, no hace nada
 CONNECTOR_NETWORK_PRINT_HELP=10.x.x.x: 9100
 CONNECTOR_FILE_PRINT_HELP=/ dev / usb / lp0, / dev / usb / lp1
 PROFILE_EPOSTEP=Perfil de Epos Tep

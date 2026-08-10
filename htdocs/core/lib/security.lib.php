@@ -174,7 +174,7 @@ function dolGetLdapPasswordHash($password, $type = 'md5')
  *  @param  string				$dbt_select     Field rowid name, for select into tableandshare if not "rowid". Not used if objectid is null (optional)
  *  @param	int<0,1>			$isdraft		1=The object with id=$objectid is a draft
  *  @param	int<0,1>			$mode			Mode (0=default, 1=return without dying)
- * 	@return	int									If mode = 0 (default): Always 1, die process if not allowed. If mode = 1: Return 0 if access not allowed.
+ * 	@return	int									If mode = 0 (default): die process if not allowed (else return 1). If mode = 1: Return 0 if access not allowed (else return 1).
  *  @see dol_check_secure_access_document(), checkUserAccessToObject()
  */
 function restrictedArea(User $user, $features, $object = 0, $tableandshare = '', $feature2 = '', $dbt_keyfield = 'fk_soc', $dbt_select = 'rowid', $isdraft = 0, $mode = 0)
@@ -209,54 +209,39 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 		$tableandshare = 'actioncomm&societe';
 		$feature2 = 'myactions|allactions';
 		$dbt_select = 'id';
-	}
-	if ($features == 'bank') {
+	} elseif ($features == 'bank') {
 		$features = 'banque';
-	}
-	if ($features == 'facturerec') {
+	} elseif ($features == 'facturerec') {
 		$features = 'facture';
-	}
-	if ($features == 'supplier_invoicerec') {
+	} elseif ($features == 'supplier_invoicerec') {
 		$features = 'fournisseur';
 		$feature2 = 'facture';
-	}
-	if ($features == 'mo') {
+	} elseif ($features == 'mo') {
 		$features = 'mrp';
-	}
-	if ($features == 'member') {
+	} elseif ($features == 'member') {
 		$features = 'adherent';
-	}
-	if ($features == 'subscription') {
+	} elseif ($features == 'subscription') {
 		$features = 'adherent';
 		$feature2 = 'cotisation';
-	}
-	if ($features == 'website' && is_object($object) && $object->element == 'websitepage') {
+	} elseif ($features == 'website' && is_object($object) && $object->element == 'websitepage') {
 		$parentfortableentity = 'fk_website@website';
-	}
-	if ($features == 'project') {
+	} elseif ($features == 'project') {
 		$features = 'projet';
-	}
-	if ($features == 'product') {
+	} elseif ($features == 'product') {
 		$features = 'produit';
-	}
-	if ($features == 'productbatch') {
+	} elseif ($features == 'productbatch') {
 		$features = 'produit';
-	}
-	if ($features == 'tax') {
+	} elseif ($features == 'tax') {
 		$feature2 = 'charges';
-	}
-	if ($features == 'workstation') {
+	} elseif ($features == 'workstation') {
 		$feature2 = 'workstation';
-	}
-	if ($features == 'fournisseur') {	// When vendor invoice and purchase order are into module 'fournisseur'
-		$features = 'fournisseur';
+	} elseif ($features == 'fournisseur') {	// When vendor invoice and purchase order are into module 'fournisseur'
 		if (is_object($object) && $object->element == 'invoice_supplier') {
 			$feature2 = 'facture';
 		} elseif (is_object($object) && $object->element == 'order_supplier') {
 			$feature2 = 'commande';
 		}
-	}
-	if ($features == 'payment_sc') {
+	} elseif ($features == 'payment_sc') {
 		$tableandshare = 'paiementcharge';
 		$parentfortableentity = 'fk_charge@chargesociales';
 	}

@@ -68,3 +68,4 @@ ApplyJobCandidature=Lamar pekerjaan ini
 ErrorRecruitmmentCandidatureAlreadyExists= Kandidat rekrutmen sudah ada dengan email %s
 RecruitmentCandidatureSaved=Kandidat rekrutmen berhasil disimpan
 NoOpenJobOffer=Tidak ada lowongan pekerjaan yang tersedia saat ini
+ShowPositionToBeFilled=Show Position to be filled

@@ -10,7 +10,6 @@ ActionsOnFicheInter=Ereignisse zu diesem Serviceauftrag
 LastInterventions=%s neueste Serviceaufträge
 AllInterventions=Alle Serviceaufträge
 CreateDraftIntervention=Entwurf erstellen
-InterventionContact=Kontakte/Adressen
 DeleteIntervention=Serviceauftrag löschen
 ValidateIntervention=Serviceauftrag freigeben
 SignIntervention=Serviceauftrag unterzeichnen

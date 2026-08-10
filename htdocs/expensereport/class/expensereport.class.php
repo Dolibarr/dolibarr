@@ -1373,7 +1373,7 @@ class ExpenseReport extends CommonObject
 		// Validate
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
 		$sql .= " SET ref = '".$this->db->escape($num)."',";
-		$sql .= " fk_statut = ".self::STATUS_VALIDATED.",";
+		$sql .= " fk_statut = ".((int) self::STATUS_VALIDATED).",";
 		$sql .= " date_valid = '".$this->db->idate($this->date_valid)."',";
 		$sql .= " fk_user_valid = ".((int) $user->id);
 		$sql .= " WHERE rowid = ".((int) $this->id);
@@ -1480,7 +1480,7 @@ class ExpenseReport extends CommonObject
 
 		if ($this->status != self::STATUS_VALIDATED) {
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-			$sql .= " SET fk_statut = ".self::STATUS_VALIDATED;
+			$sql .= " SET fk_statut = ".((int) self::STATUS_VALIDATED);
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::set_save_from_refuse", LOG_DEBUG);
@@ -1513,7 +1513,7 @@ class ExpenseReport extends CommonObject
 		if ($this->status != self::STATUS_APPROVED) {
 			$this->db->begin();
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-			$sql .= " SET ref = '".$this->db->escape($this->ref)."', fk_statut = ".self::STATUS_APPROVED.", fk_user_approve = ".((int) $fuser->id).",";
+			$sql .= " SET ref = '".$this->db->escape($this->ref)."', fk_statut = ".((int) self::STATUS_APPROVED).", fk_user_approve = ".((int) $fuser->id).",";
 			$sql .= " date_approve='".$this->db->idate($now)."'";
 			$sql .= " WHERE rowid = ".((int) $this->id);
 			if ($this->db->query($sql)) {
@@ -1959,7 +1959,7 @@ class ExpenseReport extends CommonObject
 	 */
 	public function addline($qty = 0, $up = 0, $fk_c_type_fees = 0, $vatrate = 0, $date = '', $comments = '', $fk_project = 0, $fk_c_exp_tax_cat = 0, $type = 0, $fk_ecm_files = 0)
 	{
-		global $langs, $mysoc;
+		global $mysoc;
 
 		dol_syslog(get_class($this)."::addline qty=$qty, up=$up, fk_c_type_fees=$fk_c_type_fees, vatrate=$vatrate, date=$date, fk_project=$fk_project, type=$type, comments=$comments", LOG_DEBUG);
 
