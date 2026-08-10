@@ -506,6 +506,13 @@ print '<td>';
 print ajax_constantonoff('SHIPMENT_DONT_PREFILL_QTY', array(), null, 0, 0, 0, 2, 0, 1, '', '', 'inline-block', 0, '');
 print '</td></tr>';
 
+// Allow services on shipments (without stock management)
+print '<tr class="oddeven">';
+print '<td>'.$form->textwithpicto($langs->trans("ShipmentSupportsServices"), $langs->trans("ShipmentSupportsServicesDesc"));
+print '</td>';
+print '<td>';
+print ajax_constantonoff('SHIPMENT_SUPPORTS_SERVICES', array(), null, 0, 0, 0, 2, 0, 1, '', '', 'inline-block', 0, '');
+print '</td></tr>';
 
 // Notifications
 print '<tr class="oddeven">';
