@@ -700,7 +700,7 @@ class ContratLigne extends CommonObjectLine
 		$sql .= " remise_percent = ".price2num($this->remise_percent).",";
 		$sql .= " fk_remise_except = ".($this->fk_remise_except > 0 ? ((int) $this->fk_remise_except) : "null").",";
 		$sql .= " subprice = ".($this->subprice != '' ? ((float) $this->subprice) : "null").",";
-		$sql .= " subprice_ttc = ".($this->subprice_ttc != '' ? $this->subprice_ttc : "0").",";
+		$sql .= " subprice_ttc = ".($this->subprice_ttc != '' ? ((float) $this->subprice_ttc) : "0").",";
 		$sql .= " total_ht = ".((float) $this->total_ht).",";
 		$sql .= " total_tva = ".((float) $this->total_tva).",";
 		$sql .= " total_localtax1 = ".((float) $this->total_localtax1).",";
