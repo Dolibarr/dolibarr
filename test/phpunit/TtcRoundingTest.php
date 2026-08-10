@@ -89,6 +89,12 @@ class TtcRoundingTest extends CommonClassTest
 	const LINE_TVA_REMISE = 341.70;
 	const LINE_TTC_REMISE = 2050.20;
 
+	// Expected per priced line entered in HT mode (pu_ht = PU_HT). subprice_ttc must be 0 (not marked as
+	// TTC entry), so HT lines are never hijacked by the TTC preservation and the total keeps its HT rounding.
+	const LINE_HT_HTMODE = 1898.34;
+	const LINE_TVA_HTMODE = 379.66;
+	const LINE_TTC_HTMODE = 2278.00;
+
 	/** @var int Shared thirdparty (customer and supplier) created once for the whole class */
 	protected static $socid;
 
@@ -206,7 +212,7 @@ class TtcRoundingTest extends CommonClassTest
 
 	/**
 	 * Assert both priced lines of a credit note built by inverting an invoice: the TTC entry mode
-	 * is kept with the inverted sign so there is no rounding drift. See #1882.
+	 * is kept with the inverted sign so there is no rounding drift.
 	 *
 	 * @param	CommonObject	$object		Reloaded credit note (lines loaded)
 	 * @param	string			$tag		Message prefix
@@ -222,6 +228,26 @@ class TtcRoundingTest extends CommonClassTest
 			$this->assertEquals(-self::LINE_HT, (float) $line->total_ht, $tag." line $k total_ht (inverted)");
 			$this->assertEquals(-self::LINE_TVA, (float) $line->total_tva, $tag." line $k total_tva (inverted)");
 			$this->assertEquals(-self::LINE_TTC, (float) $line->total_ttc, $tag." line $k total_ttc (inverted)");
+		}
+	}
+
+	/**
+	 * Assert both priced lines were entered in HT mode: subprice_ttc must be 0 (not a TTC entry marker),
+	 * subprice = PU_HT and the total keeps its HT-mode rounding (never hijacked by TTC preservation).
+	 *
+	 * @param	CommonObject	$object		Reloaded object (lines loaded)
+	 * @param	string			$tag		Message prefix
+	 * @return	void
+	 */
+	private function assertBothHtLines($object, $tag)
+	{
+		$priced = $this->pricedLines($object);
+		$this->assertCount(2, $priced, $tag.' must have 2 priced lines');
+		foreach ($priced as $k => $line) {
+			$this->assertEquals(0, (float) ($line->subprice_ttc ?? 0), $tag." line $k subprice_ttc must be 0 (HT entry mode, not marked TTC)");
+			$this->assertEquals(self::PU_HT, (float) $line->subprice, $tag." line $k subprice (HT unit price)");
+			$this->assertEquals(self::LINE_HT_HTMODE, (float) $line->total_ht, $tag." line $k total_ht (HT mode)");
+			$this->assertEquals(self::LINE_TTC_HTMODE, (float) $line->total_ttc, $tag." line $k total_ttc (HT mode)");
 		}
 	}
 
@@ -336,7 +362,7 @@ class TtcRoundingTest extends CommonClassTest
 
 	/**
 	 * Customer proposal - clone must preserve the TTC entry mode (subprice_ttc) so the cloned
-	 * line keeps the same totals with no rounding drift. See #1881.
+	 * line keeps the same totals with no rounding drift.
 	 *
 	 * @return void
 	 */
@@ -436,7 +462,7 @@ class TtcRoundingTest extends CommonClassTest
 	}
 
 	/**
-	 * Customer order - clone must preserve the TTC entry mode (subprice_ttc). See #1881.
+	 * Customer order - clone must preserve the TTC entry mode (subprice_ttc).
 	 *
 	 * @return void
 	 */
@@ -536,7 +562,7 @@ class TtcRoundingTest extends CommonClassTest
 	}
 
 	/**
-	 * Customer invoice - clone must preserve the TTC entry mode (subprice_ttc). See #1881.
+	 * Customer invoice - clone must preserve the TTC entry mode (subprice_ttc).
 	 *
 	 * @return void
 	 */
@@ -697,7 +723,7 @@ class TtcRoundingTest extends CommonClassTest
 	}
 
 	/**
-	 * Customer contract - clone must preserve the TTC entry mode (subprice_ttc). See #1881.
+	 * Customer contract - clone must preserve the TTC entry mode (subprice_ttc).
 	 *
 	 * @return void
 	 */
@@ -798,7 +824,7 @@ class TtcRoundingTest extends CommonClassTest
 	}
 
 	/**
-	 * Supplier proposal - clone must preserve the TTC entry mode (subprice_ttc). See #1881.
+	 * Supplier proposal - clone must preserve the TTC entry mode (subprice_ttc).
 	 *
 	 * @return void
 	 */
@@ -898,7 +924,7 @@ class TtcRoundingTest extends CommonClassTest
 	}
 
 	/**
-	 * Supplier order - clone must preserve the TTC entry mode (subprice_ttc). See #1881.
+	 * Supplier order - clone must preserve the TTC entry mode (subprice_ttc).
 	 *
 	 * @return void
 	 */
@@ -906,10 +932,6 @@ class TtcRoundingTest extends CommonClassTest
 	{
 		global $user,$db;
 		$this->restoreGlobals();
-		// Skipped for now: the clone keeps subprice_ttc, but total_ht still drifts by 0.01 because the
-		// supplier buy-price recomputation in addline() prevents recreating the cloned line in TTC mode.
-		// This is a supplier-pricing limitation, out of the subprice_ttc scope. See #1881.
-		$this->markTestSkipped('Supplier order clone: residual 0.01 total_ht drift (supplier buy-price), see #1881');
 		if (!isModEnabled('fournisseur') && !isModEnabled('supplier_order')) {
 			$this->markTestSkipped('Module supplier order disabled');
 			return;
@@ -1003,7 +1025,7 @@ class TtcRoundingTest extends CommonClassTest
 	}
 
 	/**
-	 * Supplier invoice - clone must preserve the TTC entry mode (subprice_ttc). See #1881.
+	 * Supplier invoice - clone must preserve the TTC entry mode (subprice_ttc).
 	 *
 	 * @return void
 	 */
@@ -1011,10 +1033,6 @@ class TtcRoundingTest extends CommonClassTest
 	{
 		global $user,$db;
 		$this->restoreGlobals();
-		// Skipped for now: the clone keeps subprice_ttc, but total_ht still drifts by 0.01 because the
-		// supplier buy-price recomputation in addline() prevents recreating the cloned line in TTC mode.
-		// This is a supplier-pricing limitation, out of the subprice_ttc scope. See #1881.
-		$this->markTestSkipped('Supplier invoice clone: residual 0.01 total_ht drift (supplier buy-price), see #1881');
 		if (!isModEnabled('fournisseur') && !isModEnabled('supplier_invoice')) {
 			$this->markTestSkipped('Module supplier invoice disabled');
 			return;
@@ -1026,6 +1044,7 @@ class TtcRoundingTest extends CommonClassTest
 		$object = new FactureFournisseur($db);
 		$object->initAsSpecimen();
 		$object->socid = $socid;
+		$object->ref_supplier = 'TTCCLONE'.substr(uniqid(), -8);
 		$object->lines = array();
 		$id = $object->create($user);
 		$this->assertGreaterThan(0, $id, 'Supplier invoice clone create source');
@@ -1049,7 +1068,7 @@ class TtcRoundingTest extends CommonClassTest
 	}
 
 	/**
-	 * Customer proposal -> order (Commande::createFromProposal) must preserve the TTC entry mode. See #1882.
+	 * Customer proposal -> order (Commande::createFromProposal) must preserve the TTC entry mode.
 	 *
 	 * @return void
 	 */
@@ -1096,7 +1115,7 @@ class TtcRoundingTest extends CommonClassTest
 	}
 
 	/**
-	 * Customer order -> invoice (Facture::createFromOrder) must preserve the TTC entry mode. See #1882.
+	 * Customer order -> invoice (Facture::createFromOrder) must preserve the TTC entry mode.
 	 *
 	 * @return void
 	 */
@@ -1144,7 +1163,7 @@ class TtcRoundingTest extends CommonClassTest
 	}
 
 	/**
-	 * Customer contract -> invoice (Facture::createFromContract) must preserve the TTC entry mode. See #1882.
+	 * Customer contract -> invoice (Facture::createFromContract) must preserve the TTC entry mode.
 	 *
 	 * @return void
 	 */
@@ -1193,7 +1212,7 @@ class TtcRoundingTest extends CommonClassTest
 
 	/**
 	 * Customer invoice -> credit note (Facture::createFromCurrent with invertdetail) must keep the TTC
-	 * entry mode with the inverted sign. See #1882.
+	 * entry mode with the inverted sign.
 	 *
 	 * @return void
 	 */
@@ -1237,5 +1256,104 @@ class TtcRoundingTest extends CommonClassTest
 		}
 		$this->assertBothPricedLinesInverted($credit, 'Invoice to credit note');
 		print __METHOD__." invoice=".$id." creditnote=".$creditId."\n";
+	}
+
+	/**
+	 * Supplier order - a line entered in HT must keep subprice_ttc = 0 (not marked TTC) on create and on
+	 * clone, so it is never hijacked by the TTC preservation. Guards the supplier socle gating.
+	 *
+	 * @return void
+	 */
+	public function testSupplierOrderHtLineClone()
+	{
+		global $user,$db;
+		$this->restoreGlobals();
+		if (!isModEnabled('fournisseur') && !isModEnabled('supplier_order')) {
+			$this->markTestSkipped('Module supplier order disabled');
+			return;
+		}
+
+		$socid = self::$socid;
+		$pid = self::$productid;
+
+		$object = new CommandeFournisseur($db);
+		$object->initAsSpecimen();
+		$object->socid = $socid;
+		$object->ref = 'TTCHT'.substr(uniqid(), -8);
+		$object->lines = array();
+		$id = $object->create($user);
+		$this->assertGreaterThan(0, $id, 'Supplier order HT create source');
+
+		$object->addline('Product HT', self::PU_HT, self::QTY, self::VAT, 0, 0, $pid, 0, '', 0, 'HT', 0);
+		$object->addline('Free HT', self::PU_HT, self::QTY, self::VAT, 0, 0, 0, 0, '', 0, 'HT', 0);
+
+		$reloaded = new CommandeFournisseur($db);
+		$reloaded->fetch($id);
+		if (method_exists($reloaded, 'fetch_lines')) {
+			$reloaded->fetch_lines();
+		}
+		$this->assertBothHtLines($reloaded, 'Supplier order HT create');
+
+		$source = new CommandeFournisseur($db);
+		$source->fetch($id);
+		$clonedId = $source->createFromClone($user, $socid);
+		$this->assertGreaterThan(0, $clonedId, 'Supplier order HT createFromClone');
+
+		$clone = new CommandeFournisseur($db);
+		$clone->fetch($clonedId);
+		if (method_exists($clone, 'fetch_lines')) {
+			$clone->fetch_lines();
+		}
+		$this->assertBothHtLines($clone, 'Supplier order HT clone');
+		print __METHOD__." id=".$id." clone=".$clonedId."\n";
+	}
+
+	/**
+	 * Supplier invoice - a line entered in HT must keep subprice_ttc = 0 on create (via
+	 * SupplierInvoiceLine::insert) and on clone. Guards the supplier invoice socle gating.
+	 *
+	 * @return void
+	 */
+	public function testSupplierInvoiceHtLineClone()
+	{
+		global $user,$db;
+		$this->restoreGlobals();
+		if (!isModEnabled('fournisseur') && !isModEnabled('supplier_invoice')) {
+			$this->markTestSkipped('Module supplier invoice disabled');
+			return;
+		}
+
+		$socid = self::$socid;
+		$pid = self::$productid;
+
+		$object = new FactureFournisseur($db);
+		$object->initAsSpecimen();
+		$object->socid = $socid;
+		$object->ref_supplier = 'TTCHT'.substr(uniqid(), -8);
+		$object->lines = array();
+		$id = $object->create($user);
+		$this->assertGreaterThan(0, $id, 'Supplier invoice HT create source');
+
+		$object->addline('Product HT', self::PU_HT, self::VAT, 0, 0, self::QTY, $pid, 0, 0, 0, 0, 0, 'HT');
+		$object->addline('Free HT', self::PU_HT, self::VAT, 0, 0, self::QTY, 0, 0, 0, 0, 0, 0, 'HT');
+
+		$reloaded = new FactureFournisseur($db);
+		$reloaded->fetch($id);
+		if (method_exists($reloaded, 'fetch_lines')) {
+			$reloaded->fetch_lines();
+		}
+		$this->assertBothHtLines($reloaded, 'Supplier invoice HT create');
+
+		$cloner = new FactureFournisseur($db);
+		$clonedId = $cloner->createFromClone($user, $id);
+		$this->assertGreaterThan(0, $clonedId, 'Supplier invoice HT createFromClone');
+
+		$clone = new FactureFournisseur($db);
+		$clone->fetch($clonedId);
+		if (method_exists($clone, 'fetch_lines')) {
+			$clone->fetch_lines();
+		}
+		$this->assertBothHtLines($clone, 'Supplier invoice HT clone');
+		print __METHOD__." id=".$id." clone=".$clonedId."\n";
 	}
 }

@@ -659,16 +659,19 @@ class FactureFournisseur extends CommonInvoice
 					if ($resql_insert) {
 						$idligne = $this->db->last_insert_id(MAIN_DB_PREFIX.'facture_fourn_det');
 
+						// Preserve the original entry mode of the line so the total is computed from the typed value (no rounding drift).
+						$line_price_base_type = (isset($this->lines[$i]->subprice_ttc) && (float) $this->lines[$i]->subprice_ttc != 0) ? 'TTC' : 'HT';
+						$line_pu = ($line_price_base_type === 'TTC') ? (float) $this->lines[$i]->subprice_ttc : $this->lines[$i]->subprice;
 						$res = $this->updateline(
 							$idligne,
 							$this->lines[$i]->desc ? $this->lines[$i]->desc : $this->lines[$i]->description,
-							$this->lines[$i]->subprice,
+							$line_pu,
 							$this->lines[$i]->tva_tx.($this->lines[$i]->vat_src_code ? ' ('.$this->lines[$i]->vat_src_code.')' : ''),
 							$this->lines[$i]->localtax1_tx,
 							$this->lines[$i]->localtax2_tx,
 							$this->lines[$i]->qty,
 							$this->lines[$i]->fk_product,
-							'HT',
+							$line_price_base_type,
 							(!empty($this->lines[$i]->info_bits) ? $this->lines[$i]->info_bits : ''),
 							$this->lines[$i]->product_type,
 							$this->lines[$i]->remise_percent,
@@ -2286,6 +2289,8 @@ class FactureFournisseur extends CommonInvoice
 
 			$supplierinvoiceline->qty = ($this->type == self::TYPE_CREDIT_NOTE ? abs((float) $qty) : (float) $qty); // For credit note, quantity is always positive and unit price negative
 			$supplierinvoiceline->subprice = ($this->type == self::TYPE_CREDIT_NOTE ? -abs((float) $pu_ht) : (float) $pu_ht); // For credit note, unit price always negative, always positive otherwise
+			// Only keep the TTC unit price when the line was entered including tax, so it acts as a reliable "TTC entry mode" marker.
+			$supplierinvoiceline->subprice_ttc = ($price_base_type === 'TTC') ? ($this->type == self::TYPE_CREDIT_NOTE ? -abs((float) $tabprice[5]) : (float) $tabprice[5]) : 0;
 
 			$supplierinvoiceline->vat_src_code = $vat_src_code;
 			$supplierinvoiceline->tva_tx = $txtva;
@@ -2494,7 +2499,8 @@ class FactureFournisseur extends CommonInvoice
 
 		$line->subprice = ($this->type == self::TYPE_CREDIT_NOTE ? -abs((float) $pu_ht) : (float) $pu_ht); // For credit note, unit price always negative, always positive otherwise
 		$line->pu_ht = $line->subprice;  // deprecated
-		$line->subprice_ttc = ($this->type == self::TYPE_CREDIT_NOTE ? -abs((float) $pu_ttc) : (float) $pu_ttc); // For credit note, unit price always negative, always positive otherwise
+		// Only keep the TTC unit price when the line was entered including tax, so it acts as a reliable "TTC entry mode" marker.
+		$line->subprice_ttc = ($price_base_type === 'TTC') ? ($this->type == self::TYPE_CREDIT_NOTE ? -abs((float) $pu_ttc) : (float) $pu_ttc) : 0; // For credit note, unit price always negative, always positive otherwise
 		$line->pu_ttc = $line->subprice_ttc;  // deprecated
 
 		$line->remise_percent = $remise_percent;
