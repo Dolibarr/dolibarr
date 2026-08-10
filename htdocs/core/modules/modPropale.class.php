@@ -74,53 +74,51 @@ class modPropale extends DolibarrModules
 		$this->langfiles = array("propal", "bills", "companies", "sendings", "products");
 
 		// Constants
-		$this->const = array();
-		$r = 0;
-
-		$this->const[$r][0] = "PROPALE_ADDON_PDF";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "cyan";
-		$this->const[$r][3] = 'Name of the proposal generation manager in PDF format';
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "PROPALE_ADDON";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "mod_propale_marbre";
-		$this->const[$r][3] = 'Name of proposal numbering manager';
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "PROPALE_VALIDITY_DURATION";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "15";
-		$this->const[$r][3] = 'Duration of validity of business proposals';
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "PROPALE_ADDON_PDF_ODT_PATH";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/proposals";
-		$this->const[$r][3] = "";
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "PROPOSAL_ALLOW_ONLINESIGN";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "1";
-		$this->const[$r][3] = "";
-		$this->const[$r][4] = 0;
-		$r++;
-
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-		$this->const[$r][0] = "PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = getRandomPassword(true);
-		$this->const[$r][3] = "";
-		$this->const[$r][4] = 0;
-		$r++;
-
-
+		$this->const = [
+			[
+				"PROPALE_ADDON_PDF",
+				"chaine",
+				"cyan",
+				'Name of the proposal generation manager in PDF format',
+				0,
+			],
+			[
+				"PROPALE_ADDON",
+				"chaine",
+				"mod_propale_marbre",
+				'Name of proposal numbering manager',
+				0,
+			],
+			[
+				"PROPALE_VALIDITY_DURATION",
+				"chaine",
+				"15",
+				'Duration of validity of business proposals',
+				0,
+			],
+			[
+				"PROPALE_ADDON_PDF_ODT_PATH",
+				"chaine",
+				"DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/proposals",
+				"",
+				0,
+			],
+			[
+				"PROPOSAL_ALLOW_ONLINESIGN",
+				"chaine",
+				"1",
+				"",
+				0,
+			],
+			[
+				"PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN",
+				"chaine",
+				getRandomPassword(true),
+				"",
+				0,
+			],
+		];
 
 		/*$this->const[$r][0] = "PROPALE_DRAFT_WATERMARK";
 		$this->const[$r][2] = "__(Draft)__";
