@@ -1657,7 +1657,7 @@ class Societe extends CommonObject
 			$sql .= ",socialnetworks = '".$this->db->escape(json_encode($this->socialnetworks))."'";
 			$sql .= ",url = ".(!empty($this->url) ? "'".$this->db->escape($this->url)."'" : "null");
 
-			$sql .= ",parent = ".($this->parent > 0 ? $this->parent : "null");
+			$sql .= ",parent = ".($this->parent > 0 ? (int) $this->parent : "null");
 
 			$sql .= ",note_private = ".(!empty($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null");
 			$sql .= ",note_public = ".(!empty($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null");
