@@ -165,10 +165,71 @@ class modFicheinter extends DolibarrModules
 		$this->rights[$r][5] = 'unvalidate';
 
 
-		// Menus
-		//-------
-		$this->menu = 1; // This module add menu entries. They are coded into menu manager.
+		// Main menu entries
+		$this->menu = []; // List of menus to add
+		$r = 0;
 
+		$this->menu[$r] = [
+			'fk_menu' => 'fk_mainmenu=support',
+			'type' => 'left',
+			'titre' => 'Interventions',
+			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth em092"'),
+			'mainmenu' => 'support',
+			'leftmenu' => 'ficheinter',
+			'url' => '/ficheinter/index.php',
+			'langs' => 'ficheinter',
+			'position' => 101,
+			'enabled' => 'isModEnabled("intervention")',
+			'perms' => '$user->hasRight("ficheinter","read")',
+			'target' => '',
+			'user' => 2,
+		];
+		$r++;
+
+		$this->menu[$r] = [
+			'fk_menu' => 'fk_mainmenu=support,fk_leftmenu=ficheinter',
+			'type' => 'left',
+			'titre' => 'NewIntervention',
+			'mainmenu' => 'support',
+			'url' => '/ficheinter/card.php?action=create',
+			'langs' => 'ficheinter',
+			'position' => 102,
+			'enabled' => 'isModEnabled("intervention")',
+			'perms' => '$user->hasRight("ficheinter", "write")',
+			'target' => '',
+			'user' => 2,
+		];
+		$r++;
+
+		$this->menu[$r] = [
+			'fk_menu' => 'fk_mainmenu=support,fk_leftmenu=ficheinter',
+			'type' => 'left',
+			'titre' => 'List',
+			'mainmenu' => 'support',
+			'url' => '/ficheinter/list.php',
+			'langs' => 'ficheinter',
+			'position' => 103,
+			'enabled' => 'isModEnabled("intervention")',
+			'perms' => '$user->hasRight("ficheinter","read")',
+			'target' => '',
+			'user' => 2,
+		];
+		$r++;
+
+		$this->menu[$r] = [
+			'fk_menu' => 'fk_mainmenu=support,fk_leftmenu=ficheinter',
+			'type' => 'left',
+			'titre' => 'Statistics',
+			'mainmenu' => 'support',
+			'url' => '/ficheinter/stats/index.php',
+			'langs' => 'ficheinter',
+			'position' => 104,
+			'enabled' => 'isModEnabled("intervention") && getDolGlobalString("MAIN_STATISTICS_IN_MENU")',
+			'perms' => '$user->hasRight("ficheinter","read")',
+			'target' => '',
+			'user' => 0,
+		];
+		$r++;
 
 		//Exports
 		//--------

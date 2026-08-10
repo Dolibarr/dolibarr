@@ -407,34 +407,43 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'submenus' => array(),
 	);
 
-	// Tickets and Knowledge base
+	// Support
 	$tmpentry = array(
-		'enabled' => (int) (isModEnabled('ticket') || isModEnabled('knowledgemanagement')),
-		'perms' => (string) (int) ($user->hasRight('ticket', 'read') || $user->hasRight('knowledgemanagement', 'knowledgerecord', 'read')),
-		'module' => 'ticket|knowledgemanagement'
+		'enabled' => (int) (isModEnabled('ticket')
+		|| isModEnabled('knowledgemanagement')
+		|| isModEnabled('intervention')
+		) ? 1 : 0,
+		'perms' => (string) (int) (
+			$user->hasRight('ticket', 'read')
+			|| $user->hasRight('knowledgemanagement', 'knowledgerecord', 'read')
+			|| $user->hasRight('ficheinter', 'read')
+			),
+		'module' => 'ticket|knowledgemanagement|ficheinter'
 	);
 	$link = '';
 	if (isModEnabled('ticket')) {
-		$link = dolBuildUrl('/ticket/index.php', ['mainmenu' => 'ticket', 'leftmenu' => '']);
+		$link = dolBuildUrl('/ticket/index.php', ['mainmenu' => 'support', 'leftmenu' => '']);
+	} elseif (isModEnabled('knowledgemanagement')) {
+		$link = dolBuildUrl('/knowledgemanagement/knowledgerecord_list.php', ['mainmenu' => 'support', 'leftmenu' => '']);
 	} else {
-		$link = dolBuildUrl('/knowledgemanagement/knowledgerecord_list.php', ['mainmenu' => 'ticket', 'leftmenu' => '']);
+		$link = dolBuildUrl('/ficheinter/index.php', ['mainmenu' => 'support', 'leftmenu' => '']);
 	}
 	$menu_arr[] = array(
-		'name' => 'Ticket',
+		'name' => 'Support',
 		'link' => $link,
-		'title' =>  isModEnabled('ticket') ? "Tickets" : "MenuKnowledgeRecordShort",
+		'title' =>  "Support",
 		'level' => 0,
 		'enabled' => (int) ($showmode = isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal)),
 		'target' => $atarget,
-		'mainmenu' => "ticket",
+		'mainmenu' => "support",
 		'leftmenu' => '',
 		'position' => 88,
 		'id' => $id,
-		'idsel' => 'ticket',
-		'classname' =>  $classname = (!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "ticket") ? 'class="tmenusel"' : 'class="tmenu"',
+		'idsel' => 'support',
+		'classname' =>  $classname = (!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "support") ? 'class="tmenusel"' : 'class="tmenu"',
 		'prefix' => img_picto('', 'ticket', 'class="fa-fw pictofixedwidth"'),
-		'session' => ((!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "ticket") ? 0 : 1),
-		'loadLangs' => array("ticket", "knowledgemanagement"),
+		'session' => ((!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "support") ? 0 : 1),
+		'loadLangs' => array("ticket", "knowledgemanagement", "ficheinter"),
 		'submenus' => array(),
 	);
 
@@ -1524,18 +1533,6 @@ function get_left_menu_commercial($mainmenu, &$newmenu, $usemenuhider = 1, $left
 			}
 			if (getDolGlobalString('MAIN_STATISTICS_IN_MENU')) {
 				$newmenu->add("/contrat/stats/index.php", $langs->trans("Statistics"), 1, $user->hasRight('contrat', 'lire'));
-			}
-		}
-
-		// Interventions
-		if (isModEnabled('intervention')) {
-			$langs->load("interventions");
-			$newmenu->add("/fichinter/index.php?leftmenu=ficheinter", $langs->trans("Interventions"), 0, $user->hasRight('ficheinter', 'lire'), '', $mainmenu, 'ficheinter', 2200, '', '', '', img_picto('', 'intervention', 'class="paddingright pictofixedwidth"'));
-			$newmenu->add("/fichinter/card.php?action=create&amp;leftmenu=ficheinter", $langs->trans("NewIntervention"), 1, $user->hasRight('ficheinter', 'creer'), '', '', '', 201);
-			$newmenu->add("/fichinter/list.php?leftmenu=ficheinter", $langs->trans("List"), 1, $user->hasRight('ficheinter', 'lire'), '', '', '', 202);
-			$newmenu->add("/fichinter/card-rec.php?leftmenu=ficheinter", $langs->trans("ListOfTemplates"), 1, $user->hasRight('ficheinter', 'lire'), '', '', '', 203);
-			if (getDolGlobalString('MAIN_STATISTICS_IN_MENU')) {
-				$newmenu->add("/fichinter/stats/index.php?leftmenu=ficheinter", $langs->trans("Statistics"), 1, $user->hasRight('ficheinter', 'lire'), '', '', '', 204);
 			}
 		}
 	}

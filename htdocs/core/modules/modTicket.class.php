@@ -275,11 +275,11 @@ class modTicket extends DolibarrModules
 		$r = 0;
 
 		$this->menu[$r] = [
-			'fk_menu' => 'fk_mainmenu=ticket',
+			'fk_menu' => 'fk_mainmenu=support',
 			'type' => 'left',
 			'titre' => 'Ticket',
 			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth em092"'),
-			'mainmenu' => 'ticket',
+			'mainmenu' => 'support',
 			'leftmenu' => 'ticket',
 			'url' => '/ticket/index.php',
 			'langs' => 'ticket',
@@ -292,10 +292,11 @@ class modTicket extends DolibarrModules
 		$r++;
 
 		$this->menu[$r] = [
-			'fk_menu' => 'fk_mainmenu=ticket,fk_leftmenu=ticket',
+			'fk_menu' => 'fk_mainmenu=support,fk_leftmenu=ticket',
 			'type' => 'left',
 			'titre' => 'NewTicket',
-			'mainmenu' => 'ticket',
+			'mainmenu' => 'support',
+			'leftmenu' => 'ticket_new',
 			'url' => '/ticket/card.php?action=create&mode=init',
 			'langs' => 'ticket',
 			'position' => 102,
@@ -307,10 +308,10 @@ class modTicket extends DolibarrModules
 		$r++;
 
 		$this->menu[$r] = [
-			'fk_menu' => 'fk_mainmenu=ticket,fk_leftmenu=ticket',
+			'fk_menu' => 'fk_mainmenu=support,fk_leftmenu=ticket',
 			'type' => 'left',
 			'titre' => 'List',
-			'mainmenu' => 'ticket',
+			'mainmenu' => 'support',
 			'leftmenu' => 'ticketlist',
 			'url' => '/ticket/list.php?search_fk_statut=openall',
 			'langs' => 'ticket',
@@ -323,10 +324,10 @@ class modTicket extends DolibarrModules
 		$r++;
 
 		$this->menu[$r] = [
-			'fk_menu' => 'fk_mainmenu=ticket,fk_leftmenu=ticket',
+			'fk_menu' => 'fk_mainmenu=support,fk_leftmenu=ticket',
 			'type' => 'left',
 			'titre' => 'MenuTicketMyAssign',
-			'mainmenu' => 'ticket',
+			'mainmenu' => 'support',
 			'leftmenu' => 'ticketmy',
 			'url' => '/ticket/list.php?mode=mine&search_fk_statut=openall',
 			'langs' => 'ticket',
@@ -339,10 +340,10 @@ class modTicket extends DolibarrModules
 		$r++;
 
 		$this->menu[$r] = [
-			'fk_menu' => 'fk_mainmenu=ticket,fk_leftmenu=ticket',
+			'fk_menu' => 'fk_mainmenu=support,fk_leftmenu=ticket',
 			'type' => 'left',
 			'titre' => 'Statistics',
-			'mainmenu' => 'ticket',
+			'mainmenu' => 'support',
 			'url' => '/ticket/stats/index.php',
 			'langs' => 'ticket',
 			'position' => 107,
@@ -354,10 +355,10 @@ class modTicket extends DolibarrModules
 		$r++;
 
 		$this->menu[$r] = [
-			'fk_menu' => 'fk_mainmenu=ticket,fk_leftmenu=ticket',
+			'fk_menu' => 'fk_mainmenu=support,fk_leftmenu=ticket',
 			'type' => 'left',
 			'titre' => 'Categories',
-			'mainmenu' => 'ticket',
+			'mainmenu' => 'support',
 			'url' => '/categories/categorie_list.php?type=12',
 			'langs' => 'ticket',
 			'position' => 107,

@@ -287,12 +287,12 @@ class modKnowledgeManagement extends DolibarrModules
 
 		$this->menu[$r++] = array(
 			// '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'fk_menu' => 'fk_mainmenu=ticket',
+			'fk_menu' => 'fk_mainmenu=support',
 			// This is a Left menu entry
 			'type' => 'left',
 			'titre' => 'MenuKnowledgeRecord',
 			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth em092"'),
-			'mainmenu' => 'ticket',
+			'mainmenu' => 'support',
 			'leftmenu' => 'knowledgemanagement_knowledgerecord',
 			'url' => '/knowledgemanagement/knowledgerecord_list.php',
 			// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
@@ -308,31 +308,11 @@ class modKnowledgeManagement extends DolibarrModules
 		);
 		$this->menu[$r++] = array(
 			// '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'fk_menu' => 'fk_mainmenu=ticket,fk_leftmenu=knowledgemanagement_knowledgerecord',
-			// This is a Left menu entry
-			'type' => 'left',
-			'titre' => 'ListKnowledgeRecord',
-			'mainmenu' => 'ticket',
-			'leftmenu' => 'knowledgemanagement_list',
-			'url' => '/knowledgemanagement/knowledgerecord_list.php',
-			// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-			'langs' => 'knowledgemanagement',
-			'position' => 111,
-			// Define condition to show or hide menu entry. Use '$conf->knowledgemanagement->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'enabled' => 'isModEnabled("knowledgemanagement")',
-			// Use 'perms'=>'$user->rights->knowledgemanagement->level1->level2' if you want your menu with a permission rules
-			'perms' => '$user->hasRight("knowledgemanagement", "knowledgerecord", "read")',
-			'target' => '',
-			// 0=Menu for internal users, 1=external users, 2=both
-			'user' => 2,
-		);
-		$this->menu[$r++] = array(
-			// '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'fk_menu' => 'fk_mainmenu=ticket,fk_leftmenu=knowledgemanagement_knowledgerecord',
+			'fk_menu' => 'fk_mainmenu=support,fk_leftmenu=knowledgemanagement_knowledgerecord',
 			// This is a Left menu entry
 			'type' => 'left',
 			'titre' => 'NewKnowledgeRecord',
-			'mainmenu' => 'ticket',
+			'mainmenu' => 'support',
 			'leftmenu' => 'knowledgemanagement_new',
 			'url' => '/knowledgemanagement/knowledgerecord_card.php?action=create',
 			// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
@@ -347,10 +327,30 @@ class modKnowledgeManagement extends DolibarrModules
 			'user' => 2
 		);
 		$this->menu[$r++] = array(
-			'fk_menu' => 'fk_mainmenu=ticket,fk_leftmenu=knowledgemanagement_knowledgerecord',
+			// '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+			'fk_menu' => 'fk_mainmenu=support,fk_leftmenu=knowledgemanagement_knowledgerecord',
+			// This is a Left menu entry
+			'type' => 'left',
+			'titre' => 'ListKnowledgeRecord',
+			'mainmenu' => 'support',
+			'leftmenu' => 'knowledgemanagement_list',
+			'url' => '/knowledgemanagement/knowledgerecord_list.php',
+			// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+			'langs' => 'knowledgemanagement',
+			'position' => 111,
+			// Define condition to show or hide menu entry. Use '$conf->knowledgemanagement->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+			'enabled' => 'isModEnabled("knowledgemanagement")',
+			// Use 'perms'=>'$user->rights->knowledgemanagement->level1->level2' if you want your menu with a permission rules
+			'perms' => '$user->hasRight("knowledgemanagement", "knowledgerecord", "read")',
+			'target' => '',
+			// 0=Menu for internal users, 1=external users, 2=both
+			'user' => 2,
+		);
+		$this->menu[$r++] = array(
+			'fk_menu' => 'fk_mainmenu=support,fk_leftmenu=knowledgemanagement_knowledgerecord',
 			'type' => 'left',
 			'titre' => 'Categories',
-			'mainmenu' => 'ticket',
+			'mainmenu' => 'support',
 			'url' => '/categories/categorie_list.php?type=13',
 			'langs' => 'knowledgemanagement',
 			'position' => 112,
