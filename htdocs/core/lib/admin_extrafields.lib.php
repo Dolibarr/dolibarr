@@ -581,5 +581,27 @@ function getExtrafieldsAdminMap()
 			'helpurl'      => '',
 			'langs'        => array('workstation', 'admin'),
 		),
+		'categorie' => array(
+			'headfunction' => 'categoriesadmin_prepare_head',
+			'headfile'     => 'core/lib/categories.lib.php',
+			'tabid'        => 'attributes_categories',
+			'headlabel'    => 'Categories',
+			'textobject'   => 'Categories',
+			'headpicto'    => 'category',
+			'title'        => 'Categories',
+			'helpurl'      => 'EN:Module Categories|FR:Module Catégories|ES:Módulo Categorías|DE:Modul_Kategorien',
+			'langs'        => array('categories', 'admin'),
+		),
+		'categorie_lang' => array(
+			'headfunction' => 'categoriesadmin_prepare_head',
+			'headfile'     => 'core/lib/categories.lib.php',
+			'tabid'        => 'translationAttributes',
+			'headlabel'    => 'CategoriesTranslationsExtrafields',
+			'textobject'   => 'Category',
+			'headpicto'    => 'categorie',
+			'title'        => 'CategoriesTranslationsExtrafields',
+			'helpurl'      => '',
+			'langs'        => array('admin', 'categories'),
+		),
 	);
 }
