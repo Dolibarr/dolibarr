@@ -440,5 +440,16 @@ function getExtrafieldsAdminMap()
 			'helpurl'      => '',
 			'langs'        => array('admin', 'errors', 'holiday', 'other'),
 		),
+		'knowledgemanagement_knowledgerecord' => array(
+			'headfunction' => 'knowledgemanagementAdminPrepareHead',
+			'headfile'     => 'knowledgemanagement/lib/knowledgemanagement.lib.php',
+			'tabid'        => 'extra',
+			'headlabel'    => 'KnowledgeRecordExtraFields',
+			'textobject'   => 'KnowledgeRecord',
+			'headpicto'    => 'knowledgemanagement',
+			'title'        => 'KnowledgeManagementSetup',
+			'helpurl'      => '',
+			'langs'        => array('knowledgemanagement', 'admin'),
+		),
 	);
 }
