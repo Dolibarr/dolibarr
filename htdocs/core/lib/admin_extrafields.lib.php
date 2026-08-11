@@ -221,5 +221,26 @@ function getExtrafieldsAdminMap()
 			'helpurl'      => '',
 			'langs'        => array('admin', 'other', 'sendings'),
 		),
+		'adherent' => array(
+			'headfunction' => 'member_admin_prepare_head',
+			'headfile'     => 'core/lib/member.lib.php',
+			'tabid'        => 'attributes',
+			'headlabel'    => 'Members',
+			'headpicto'    => 'user',
+			'title'        => 'MembersSetup',
+			'helpurl'      => 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros|DE:Modul_Mitglieder',
+			'langs'        => array('admin', 'members'),
+		),
+		'adherent_type' => array(
+			'headfunction' => 'member_admin_prepare_head',
+			'headfile'     => 'core/lib/member.lib.php',
+			'tabid'        => 'attributes_type',
+			'headlabel'    => 'Members',
+			'textobject'   => 'MembersTypes',
+			'headpicto'    => 'user',
+			'title'        => 'MembersSetup',
+			'helpurl'      => 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros|DE:Modul_Mitglieder',
+			'langs'        => array('admin', 'members'),
+		),
 	);
 }
