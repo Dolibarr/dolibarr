@@ -1,9 +1,5 @@
 <?php
-/* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2003		Jean-Louis Bergamo		<jlb@j1b.org>
- * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2026  Frédéric France  <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,15 +16,18 @@
  */
 
 /**
- *      \file       htdocs/societe/admin/societe_extrafields.php
- *		\ingroup    societe
- *		\brief      Page to setup extra fields of third party
+ *      \file       htdocs/admin/extrafields.php
+ *		\ingroup    core
+ *		\brief      Single, secured admin page to create/edit/delete the
+ *		            extrafields of any registered object type. The set of
+ *		            accepted object types is a closed whitelist — see
+ *		            core/lib/admin_extrafields.lib.php.
  */
 
 // Load Dolibarr environment
-require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin_extrafields.lib.php';
 
 /**
  * @var Conf $conf
@@ -38,7 +37,19 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
  * @var User $user
  */
 
-$langs->loadLangs(array("companies", "admin", "members"));
+if (!$user->admin) {
+	accessforbidden();
+}
+
+$elementtype = GETPOST('elementtype', 'aZ09');
+
+$extrafieldsadminmap = getExtrafieldsAdminMap();
+if ($elementtype === '' || !array_key_exists($elementtype, $extrafieldsadminmap)) {
+	accessforbidden('Bad or missing value for parameter elementtype');
+}
+$pagedef = $extrafieldsadminmap[$elementtype];
+
+$langs->loadLangs($pagedef['langs']);
 
 $extrafields = new ExtraFields($db);
 $form = new Form($db);
@@ -48,11 +59,6 @@ $type2label = ExtraFields::getListOfTypesLabels();
 
 $action = GETPOST('action', 'aZ09');
 $attrname = GETPOST('attrname', 'alpha');
-$elementtype = 'societe'; //Must be the $element of the class that manage extrafield
-
-if (!$user->admin) {
-	accessforbidden();
-}
 
 
 /*
@@ -62,24 +68,24 @@ if (!$user->admin) {
 require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
 
 
-
 /*
  * View
  */
 
-$textobject = $langs->transnoentitiesnoconv("ThirdParty");
+$title = is_callable($pagedef['title']) ? $pagedef['title']() : $langs->trans($pagedef['title']);
+$textobject = $langs->transnoentitiesnoconv($pagedef['headlabel']);
 
-$help_url = 'EN:Module Third Parties setup|FR:Paramétrage_du_module_Tiers';
-llxHeader('', $langs->trans("CompanySetup"), $help_url);
+$help_url = $pagedef['helpurl'];
+llxHeader('', $title, $help_url);
 
 $linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 
-print load_fiche_titre($langs->trans("CompanySetup"), $linkback, 'title_setup');
+print load_fiche_titre($title, $linkback, 'title_setup');
 
+require_once DOL_DOCUMENT_ROOT.'/'.$pagedef['headfile'];
+$head = call_user_func($pagedef['headfunction']);
 
-$head = societe_admin_prepare_head();
-
-print dol_get_fiche_head($head, 'attributes', $langs->trans("ThirdParties"), -1, 'company');
+print dol_get_fiche_head($head, $pagedef['tabid'], $textobject, -1, $pagedef['headpicto']);
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 
