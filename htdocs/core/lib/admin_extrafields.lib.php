@@ -542,6 +542,60 @@ function getExtrafieldsAdminMap()
 			'helpurl'      => '',
 			'langs'        => array('admin', 'other', 'orders'),
 		),
+		// The supplier invoice module is mid-transition between the legacy 'fournisseur'
+		// module (core/lib/fourn.lib.php, function supplierorder_admin_prepare_head())
+		// and the new split 'supplier_invoice' module (core/lib/supplier_invoice.lib.php,
+		// function supplier_invoice_admin_prepare_head()), selected at runtime by the
+		// MAIN_USE_NEW_SUPPLIERMOD conf option — this mirrors the exact conditional
+		// the original (now-deleted) per-object supplier invoice extrafields admin wrapper
+		// files used to pick which lib file to require and which head function
+		// to call. Both functions build a $head array containing the same
+		// 'supplierinvoice' / 'supplierinvoicedet' / 'attributesrec' / 'attributeslinesrec'
+		// tab ids, so only headfunction/headfile need to vary.
+		'facture_fourn' => array(
+			'headfunction' => getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD') ? 'supplier_invoice_admin_prepare_head' : 'supplierorder_admin_prepare_head',
+			'headfile'     => getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD') ? 'core/lib/supplier_invoice.lib.php' : 'core/lib/fourn.lib.php',
+			'tabid'        => 'supplierinvoice',
+			'headlabel'    => 'Suppliers',
+			'textobject'   => 'BillsSuppliers',
+			'headpicto'    => 'company',
+			'title'        => 'SuppliersSetup',
+			'helpurl'      => '',
+			'langs'        => array('admin', 'other', 'bills', 'orders', 'suppliers'),
+		),
+		'facture_fourn_det' => array(
+			'headfunction' => getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD') ? 'supplier_invoice_admin_prepare_head' : 'supplierorder_admin_prepare_head',
+			'headfile'     => getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD') ? 'core/lib/supplier_invoice.lib.php' : 'core/lib/fourn.lib.php',
+			'tabid'        => 'supplierinvoicedet',
+			'headlabel'    => 'Suppliers',
+			'textobject'   => 'BillsSuppliers',
+			'headpicto'    => 'company',
+			'title'        => 'SuppliersSetup',
+			'helpurl'      => '',
+			'langs'        => array('admin', 'other', 'bills', 'orders', 'suppliers'),
+		),
+		'facture_fourn_rec' => array(
+			'headfunction' => getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD') ? 'supplier_invoice_admin_prepare_head' : 'supplierorder_admin_prepare_head',
+			'headfile'     => getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD') ? 'core/lib/supplier_invoice.lib.php' : 'core/lib/fourn.lib.php',
+			'tabid'        => 'attributesrec',
+			'headlabel'    => 'Suppliers',
+			'textobject'   => 'BillsSuppliers',
+			'headpicto'    => 'company',
+			'title'        => 'SuppliersSetup',
+			'helpurl'      => '',
+			'langs'        => array('admin', 'other', 'bills', 'orders', 'suppliers'),
+		),
+		'facture_fourn_det_rec' => array(
+			'headfunction' => getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD') ? 'supplier_invoice_admin_prepare_head' : 'supplierorder_admin_prepare_head',
+			'headfile'     => getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD') ? 'core/lib/supplier_invoice.lib.php' : 'core/lib/fourn.lib.php',
+			'tabid'        => 'attributeslinesrec',
+			'headlabel'    => 'Suppliers',
+			'textobject'   => 'BillsSuppliers',
+			'headpicto'    => 'company',
+			'title'        => 'SuppliersSetup',
+			'helpurl'      => '',
+			'langs'        => array('admin', 'other', 'bills', 'orders', 'suppliers'),
+		),
 		'resource' => array(
 			'headfunction' => 'resource_admin_prepare_head',
 			'headfile'     => 'core/lib/resource.lib.php',
