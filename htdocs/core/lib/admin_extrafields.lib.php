@@ -723,5 +723,16 @@ function getExtrafieldsAdminMap()
 			'helpurl'      => 'EN:Module_Contracts|FR:Module_Contrat|ES:Contratos_de_servicio',
 			'langs'        => array('companies', 'admin', 'contracts'),
 		),
+		'don' => array(
+			'headfunction' => 'donation_admin_prepare_head',
+			'headfile'     => 'core/lib/donation.lib.php',
+			'tabid'        => 'attributes',
+			'headlabel'    => 'Donations',
+			'textobject'   => 'Donations',
+			'headpicto'    => 'payment',
+			'title'        => 'DonationsSetup',
+			'helpurl'      => '',
+			'langs'        => array('companies', 'admin', 'donations'),
+		),
 	);
 }
