@@ -11,6 +11,7 @@
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2025       Josep Lluís Amador          <joseplluis@lliuretic.cat>
+ * Copyright (C) 2026		Anthony Berton				<anthony.berton@bb2a.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -407,34 +408,43 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'submenus' => array(),
 	);
 
-	// Tickets and Knowledge base
+	// Support
 	$tmpentry = array(
-		'enabled' => (int) (isModEnabled('ticket') || isModEnabled('knowledgemanagement')),
-		'perms' => (string) (int) ($user->hasRight('ticket', 'read') || $user->hasRight('knowledgemanagement', 'knowledgerecord', 'read')),
-		'module' => 'ticket|knowledgemanagement'
+		'enabled' => (int) (isModEnabled('ticket')
+		|| isModEnabled('knowledgemanagement')
+		|| isModEnabled('intervention')
+		) ? 1 : 0,
+		'perms' => (string) (int) (
+			$user->hasRight('ticket', 'read')
+			|| $user->hasRight('knowledgemanagement', 'knowledgerecord', 'read')
+			|| $user->hasRight('ficheinter', 'read')
+			),
+		'module' => 'ticket|knowledgemanagement|ficheinter'
 	);
 	$link = '';
 	if (isModEnabled('ticket')) {
-		$link = dolBuildUrl('/ticket/index.php', ['mainmenu' => 'ticket', 'leftmenu' => '']);
+		$link = dolBuildUrl('/ticket/index.php', ['mainmenu' => 'support', 'leftmenu' => '']);
+	} elseif (isModEnabled('knowledgemanagement')) {
+		$link = dolBuildUrl('/knowledgemanagement/knowledgerecord_list.php', ['mainmenu' => 'support', 'leftmenu' => '']);
 	} else {
-		$link = dolBuildUrl('/knowledgemanagement/knowledgerecord_list.php', ['mainmenu' => 'ticket', 'leftmenu' => '']);
+		$link = dolBuildUrl('/ficheinter/index.php', ['mainmenu' => 'support', 'leftmenu' => '']);
 	}
 	$menu_arr[] = array(
-		'name' => 'Ticket',
+		'name' => 'Support',
 		'link' => $link,
-		'title' =>  isModEnabled('ticket') ? "Tickets" : "MenuKnowledgeRecordShort",
+		'title' =>  "Support",
 		'level' => 0,
 		'enabled' => (int) ($showmode = isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal)),
 		'target' => $atarget,
-		'mainmenu' => "ticket",
+		'mainmenu' => "support",
 		'leftmenu' => '',
 		'position' => 88,
 		'id' => $id,
-		'idsel' => 'ticket',
-		'classname' =>  $classname = (!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "ticket") ? 'class="tmenusel"' : 'class="tmenu"',
+		'idsel' => 'support',
+		'classname' =>  $classname = (!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "support") ? 'class="tmenusel"' : 'class="tmenu"',
 		'prefix' => img_picto('', 'ticket', 'class="fa-fw pictofixedwidth"'),
-		'session' => ((!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "ticket") ? 0 : 1),
-		'loadLangs' => array("ticket", "knowledgemanagement"),
+		'session' => ((!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "support") ? 0 : 1),
+		'loadLangs' => array("ticket", "knowledgemanagement", "ficheinter"),
 		'submenus' => array(),
 	);
 
