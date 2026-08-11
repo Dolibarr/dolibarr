@@ -143,17 +143,15 @@ if ($what == 'mysql') {
 		}
 	}
 
-	if (!$errormsg && $cmddump) {
+	if ($cmddump) {
 		dolibarr_set_const($db, 'SYSTEMTOOLS_MYSQLDUMP', $cmddump, 'chaine', 0, '', 0);
 	}
 
-	if (!$errormsg) {
-		$result = $utils->dumpDatabase(GETPOST('compression', 'alpha'), $what, 0, $file, 0, 0, $lowmemorydump);
+	$result = $utils->dumpDatabase(GETPOST('compression', 'alpha'), $what, 0, $file, 0, 0, $lowmemorydump);
 
-		$errormsg = $utils->error;
-		$_SESSION["commandbackuplastdone"] = $utils->result['commandbackuplastdone'];
-		$_SESSION["commandbackuptorun"] = $utils->result['commandbackuptorun'];
-	}
+	$errormsg = $utils->error;
+	$_SESSION["commandbackuplastdone"] = $utils->result['commandbackuplastdone'];
+	$_SESSION["commandbackuptorun"] = $utils->result['commandbackuptorun'];
 }
 
 // MYSQL NO BIN
