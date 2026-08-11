@@ -451,5 +451,27 @@ function getExtrafieldsAdminMap()
 			'helpurl'      => '',
 			'langs'        => array('knowledgemanagement', 'admin'),
 		),
+		'mrp_mo' => array(
+			'headfunction' => 'mrpAdminPrepareHead',
+			'headfile'     => 'mrp/lib/mrp.lib.php',
+			'tabid'        => 'mrp_extrafields',
+			'headlabel'    => 'ExtraFields',
+			'textobject'   => 'ManufacturingOrder',
+			'headpicto'    => 'account',
+			'title'        => 'MrpSetupPage',
+			'helpurl'      => '',
+			'langs'        => array('mrp', 'admin'),
+		),
+		'mrp_production' => array(
+			'headfunction' => 'mrpAdminPrepareHead',
+			'headfile'     => 'mrp/lib/mrp.lib.php',
+			'tabid'        => 'mrp_production_extrafields',
+			'headlabel'    => 'ExtraFields',
+			'textobject'   => 'ManufacturingOrder',
+			'headpicto'    => 'account',
+			'title'        => 'MrpSetupPage',
+			'helpurl'      => '',
+			'langs'        => array('mrp', 'admin'),
+		),
 	);
 }
