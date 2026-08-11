@@ -73,7 +73,7 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
  */
 
 $title = is_callable($pagedef['title']) ? $pagedef['title']() : $langs->trans($pagedef['title']);
-$textobject = $langs->transnoentitiesnoconv($pagedef['headlabel']);
+$textobject = $langs->transnoentitiesnoconv($pagedef['textobject'] ?? $pagedef['headlabel']);
 
 $help_url = $pagedef['helpurl'];
 llxHeader('', $title, $help_url);
@@ -85,7 +85,7 @@ print load_fiche_titre($title, $linkback, 'title_setup');
 require_once DOL_DOCUMENT_ROOT.'/'.$pagedef['headfile'];
 $head = call_user_func($pagedef['headfunction']);
 
-print dol_get_fiche_head($head, $pagedef['tabid'], $textobject, -1, $pagedef['headpicto']);
+print dol_get_fiche_head($head, $pagedef['tabid'], $langs->trans($pagedef['headlabel']), -1, $pagedef['headpicto']);
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 

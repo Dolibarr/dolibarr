@@ -34,7 +34,17 @@
  * htdocs/admin/extrafields.php, and the page metadata needed to render
  * each one (which tab-bar function to call, which lang files to load, ...).
  *
- * @return array<string,array{headfunction:string,headfile:string,tabid:string,headlabel:string,headpicto:string,title:string|callable,helpurl:string,langs:string[]}>
+ * `headlabel` is the string passed to dol_get_fiche_head()'s $title argument
+ * (shown only as the tab-head picto's alt/title tooltip). `textobject` is the
+ * string shown in the "Define any additional / custom attributes that must be
+ * added to: %s" sentence rendered by core/tpl/admin_extrafields_view.tpl.php.
+ * The two original per-object wrapper files each set these independently and
+ * they are frequently NOT the same lang key — do not assume they match.
+ * `textobject` is optional and falls back to `headlabel` when omitted, which
+ * is safe only when the source wrapper file passed the same string to both,
+ * or never set $textobject at all.
+ *
+ * @return array<string,array{headfunction:string,headfile:string,tabid:string,headlabel:string,headpicto:string,title:string|callable,helpurl:string,langs:string[],textobject?:string}>
  */
 function getExtrafieldsAdminMap()
 {
@@ -43,7 +53,8 @@ function getExtrafieldsAdminMap()
 			'headfunction' => 'societe_admin_prepare_head',
 			'headfile'     => 'core/lib/company.lib.php',
 			'tabid'        => 'attributes',
-			'headlabel'    => 'ThirdParty',
+			'headlabel'    => 'ThirdParties',
+			'textobject'   => 'ThirdParty',
 			'headpicto'    => 'company',
 			'title'        => 'CompanySetup',
 			'helpurl'      => 'EN:Module Third Parties setup|FR:Paramétrage_du_module_Tiers',
@@ -53,7 +64,8 @@ function getExtrafieldsAdminMap()
 			'headfunction' => 'societe_admin_prepare_head',
 			'headfile'     => 'core/lib/company.lib.php',
 			'tabid'        => 'attributes_contacts',
-			'headlabel'    => 'ContactsAddresses',
+			'headlabel'    => 'ThirdParties',
+			'textobject'   => 'ContactsAddresses',
 			'headpicto'    => 'company',
 			'title'        => 'CompanySetup',
 			'helpurl'      => 'EN:Module Third Parties setup|FR:Paramétrage_du_module_Tiers',
