@@ -548,5 +548,16 @@ function getExtrafieldsAdminMap()
 			'helpurl'      => 'FR:Module_Ticket',
 			'langs'        => array('ticket', 'admin'),
 		),
+		'workstation_workstation' => array(
+			'headfunction' => 'workstationAdminPrepareHead',
+			'headfile'     => 'workstation/lib/workstation.lib.php',
+			'tabid'        => 'workstation_extrafields',
+			'headlabel'    => 'WorkstationSetup',
+			'textobject'   => 'Workstation',
+			'headpicto'    => 'workstation',
+			'title'        => 'WorkstationSetup',
+			'helpurl'      => '',
+			'langs'        => array('workstation', 'admin'),
+		),
 	);
 }
