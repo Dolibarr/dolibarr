@@ -844,5 +844,16 @@ function getExtrafieldsAdminMap()
 			'helpurl'      => '',
 			'langs'        => array('recruitment', 'admin'),
 		),
+		'salary' => array(
+			'headfunction' => 'salaries_admin_prepare_head',
+			'headfile'     => 'core/lib/salaries.lib.php',
+			'tabid'        => 'attributes',
+			'headlabel'    => 'Salaries',
+			'textobject'   => 'Salaries',
+			'headpicto'    => 'payment',
+			'title'        => 'SalariesSetup',
+			'helpurl'      => '',
+			'langs'        => array('admin', 'salaries'),
+		),
 	);
 }
