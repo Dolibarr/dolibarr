@@ -647,5 +647,61 @@ function getExtrafieldsAdminMap()
 			'helpurl'      => '',
 			'langs'        => array('admin', 'other', 'supplier_proposal'),
 		),
+		'facture' => array(
+			'headfunction' => 'invoice_admin_prepare_head',
+			'headfile'     => 'core/lib/invoice.lib.php',
+			'tabid'        => 'attributes',
+			'headlabel'    => 'Invoices',
+			'textobject'   => function () {
+				global $langs;
+				return strtolower($langs->transnoentitiesnoconv("BillsCustomers"));
+			},
+			'headpicto'    => 'bill',
+			'title'        => 'BillsSetup',
+			'helpurl'      => '',
+			'langs'        => array('companies', 'admin', 'bills'),
+		),
+		'facturedet' => array(
+			'headfunction' => 'invoice_admin_prepare_head',
+			'headfile'     => 'core/lib/invoice.lib.php',
+			'tabid'        => 'attributeslines',
+			'headlabel'    => 'Invoices',
+			'textobject'   => function () {
+				global $langs;
+				return strtolower($langs->transnoentitiesnoconv("BillsCustomers"));
+			},
+			'headpicto'    => 'bill',
+			'title'        => 'BillsSetup',
+			'helpurl'      => '',
+			'langs'        => array('companies', 'admin', 'bills'),
+		),
+		'facture_rec' => array(
+			'headfunction' => 'invoice_admin_prepare_head',
+			'headfile'     => 'core/lib/invoice.lib.php',
+			'tabid'        => 'attributesrec',
+			'headlabel'    => 'Invoices',
+			'textobject'   => function () {
+				global $langs;
+				return strtolower($langs->transnoentitiesnoconv("BillsCustomers"));
+			},
+			'headpicto'    => 'bill',
+			'title'        => 'BillsSetup',
+			'helpurl'      => '',
+			'langs'        => array('companies', 'admin', 'bills'),
+		),
+		'facturedet_rec' => array(
+			'headfunction' => 'invoice_admin_prepare_head',
+			'headfile'     => 'core/lib/invoice.lib.php',
+			'tabid'        => 'attributeslinesrec',
+			'headlabel'    => 'Invoices',
+			'textobject'   => function () {
+				global $langs;
+				return strtolower($langs->transnoentitiesnoconv("BillsCustomers"));
+			},
+			'headpicto'    => 'bill',
+			'title'        => 'BillsSetup',
+			'helpurl'      => '',
+			'langs'        => array('companies', 'admin', 'bills'),
+		),
 	);
 }
