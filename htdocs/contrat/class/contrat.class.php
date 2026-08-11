@@ -2688,7 +2688,7 @@ class Contrat extends CommonObject
 				// Preserve the original entry mode of the line. Contrat::addline() stores subprice from the
 				// $pu_ht argument as-is (like the card, which pre-computes it), so we pass the stored HT and
 				// flag TTC + subprice_ttc so the total is computed from the typed value (no rounding drift).
-				$line_price_base_type = (isset($line->subprice_ttc) && (float) $line->subprice_ttc != 0) ? 'TTC' : 'HT';
+				$line_price_base_type = $line->getPriceBaseType();
 				$result = $clonedObj->addline($line->description, (float) $line->subprice, $line->qty, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, $line->fk_product, $line->remise_percent, $line->date_start, $line->date_cloture, $line_price_base_type, (float) $line->subprice_ttc, $line->info_bits, $line->fk_fournprice, $line->pa_ht, $line->array_options, $line->fk_unit, $line->rang);
 				if ($result < 0) {
 					$error++;

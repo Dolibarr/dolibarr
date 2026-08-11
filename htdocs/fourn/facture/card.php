@@ -1412,7 +1412,7 @@ if (empty($reshook)) {
 
 								// FIXME If currency different from main currency, take multicurrency price
 								// Preserve the original entry mode of the line so the total is computed from the typed value (no rounding drift).
-								$line_price_base_type = (isset($lines[$i]->subprice_ttc) && (float) $lines[$i]->subprice_ttc != 0) ? 'TTC' : 'HT';
+								$line_price_base_type = $lines[$i]->getPriceBaseType();
 								if ($line_price_base_type === 'TTC') {
 									// TTC mode: use the local TTC unit price; the currency price is re-derived (no rounding drift).
 									$pu = (float) $lines[$i]->subprice_ttc;
@@ -1642,7 +1642,7 @@ if (empty($reshook)) {
 		foreach ($object->lines as $line) {
 			if ($line->product_type == 1) { // only service line
 				// Preserve the original entry mode of the line so the total is not drifted by rounding.
-				$line_price_base_type = $line->wasEnteredIncludingTax() ? 'TTC' : 'HT';
+				$line_price_base_type = $line->getPriceBaseType();
 				$line_pu = ($line_price_base_type === 'TTC') ? (float) $line->subprice_ttc : (float) $line->subprice;
 				$result = $object->updateline($line->id, $line->desc, $line_pu, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, $line->qty, $line->fk_product, $line_price_base_type, $line->info_bits, $line->product_type, $line->remise_percent, 0, $alldate_start, $alldate_end, $line->array_options, $line->fk_unit, $line->multicurrency_subprice, $line->ref_supplier, $line->rang);
 			}
@@ -1653,7 +1653,7 @@ if (empty($reshook)) {
 		$remise_percent = (float) str_replace('*', '', $remise_percent);
 		foreach ($object->lines as $line) {
 			// Preserve the original entry mode of the line so the total is not drifted by rounding.
-			$line_price_base_type = $line->wasEnteredIncludingTax() ? 'TTC' : 'HT';
+			$line_price_base_type = $line->getPriceBaseType();
 			$line_pu = ($line_price_base_type === 'TTC') ? (float) $line->subprice_ttc : (float) $line->subprice;
 			$result = $object->updateline($line->id, $line->desc, $line_pu, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, $line->qty, $line->fk_product, $line_price_base_type, $line->info_bits, $line->product_type, $remise_percent, 0, $line->date_start, $line->date_end, $line->array_options, $line->fk_unit, $line->multicurrency_subprice, $line->ref_supplier, $line->rang);
 		}
@@ -1665,7 +1665,7 @@ if (empty($reshook)) {
 		$localtax2_rate = get_localtax($vat_rate, 2, $object->thirdparty, $mysoc);
 		foreach ($object->lines as $line) {
 			// Preserve the original entry mode of the line so the total is not drifted by rounding.
-			$line_price_base_type = $line->wasEnteredIncludingTax() ? 'TTC' : 'HT';
+			$line_price_base_type = $line->getPriceBaseType();
 			$line_pu = ($line_price_base_type === 'TTC') ? (float) $line->subprice_ttc : (float) $line->subprice;
 			$result = $object->updateline($line->id, $line->desc, $line_pu, $vat_rate, $localtax1_rate, $localtax2_rate, $line->qty, $line->fk_product, $line_price_base_type, $line->info_bits, $line->product_type, $line->remise_percent, 0, $line->date_start, $line->date_end, $line->array_options, $line->fk_unit, $line->multicurrency_subprice, $line->ref_supplier, $line->rang);
 		}

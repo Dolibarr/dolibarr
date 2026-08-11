@@ -1370,7 +1370,7 @@ class Propal extends CommonObject
 						}
 
 						// Preserve the original entry mode of the line so the total is computed from the typed value (no rounding drift).
-						$line_price_base_type = (isset($line->subprice_ttc) && (float) $line->subprice_ttc != 0) ? 'TTC' : 'HT';
+						$line_price_base_type = $line->getPriceBaseType();
 						$result = $this->addline(
 							$line->desc,
 							(float) $line->subprice,

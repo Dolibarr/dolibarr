@@ -654,7 +654,7 @@ trait CommonSubtotal
 			} else {
 				if ($current_module == 'facture' && $this instanceof Facture) {
 					// Preserve the original entry mode of the line so the total is not drifted by rounding.
-					$line_price_base_type = $this->lines[$i]->wasEnteredIncludingTax() ? 'TTC' : 'HT';
+					$line_price_base_type = $this->lines[$i]->getPriceBaseType();
 					$line_pu = ($line_price_base_type === 'TTC') ? $this->lines[$i]->subprice_ttc : $this->lines[$i]->subprice;
 					$result = $this->updateline(
 						$this->lines[$i]->id,
@@ -683,7 +683,7 @@ trait CommonSubtotal
 					);
 				} elseif ($current_module == 'commande' && $this instanceof Commande) {
 					// Preserve the original entry mode of the line so the total is not drifted by rounding.
-					$line_price_base_type = $this->lines[$i]->wasEnteredIncludingTax() ? 'TTC' : 'HT';
+					$line_price_base_type = $this->lines[$i]->getPriceBaseType();
 					$line_pu = ($line_price_base_type === 'TTC') ? $this->lines[$i]->subprice_ttc : $this->lines[$i]->subprice;
 					$result = $this->updateline(
 						$this->lines[$i]->id,
@@ -711,7 +711,7 @@ trait CommonSubtotal
 					);
 				} elseif ($current_module == 'propal' && $this instanceof Propal) {
 					// Preserve the original entry mode of the line so the total is not drifted by rounding.
-					$line_price_base_type = $this->lines[$i]->wasEnteredIncludingTax() ? 'TTC' : 'HT';
+					$line_price_base_type = $this->lines[$i]->getPriceBaseType();
 					$line_pu = ($line_price_base_type === 'TTC') ? $this->lines[$i]->subprice_ttc : $this->lines[$i]->subprice;
 					$result = $this->updateline(
 						$this->lines[$i]->id,

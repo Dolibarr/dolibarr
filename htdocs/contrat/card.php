@@ -428,8 +428,7 @@ if (empty($reshook)) {
 
 								// Preserve the TTC entry mode of the source line: a line entered including tax must
 								// stay in TTC so its total is computed from the typed value, without rounding drift.
-								$line_price_base_type = $lines[$i]->wasEnteredIncludingTax() ? 'TTC' : 'HT';
-
+								$line_price_base_type = $lines[$i]->getPriceBaseType();
 								$result = $object->addline(
 									$desc,
 									$lines[$i]->subprice,
@@ -442,7 +441,7 @@ if (empty($reshook)) {
 									$lines[$i]->date_start,
 									$lines[$i]->date_end,
 									$line_price_base_type,
-									($line_price_base_type === 'TTC' ? (float) $lines[$i]->subprice_ttc : 0),
+									(float) $lines[$i]->subprice_ttc,
 									$lines[$i]->info_bits,
 									$lines[$i]->fk_fournprice,
 									$lines[$i]->pa_ht,

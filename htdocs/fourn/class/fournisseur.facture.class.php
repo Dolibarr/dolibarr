@@ -660,7 +660,7 @@ class FactureFournisseur extends CommonInvoice
 						$idligne = $this->db->last_insert_id(MAIN_DB_PREFIX.'facture_fourn_det');
 
 						// Preserve the original entry mode of the line so the total is computed from the typed value (no rounding drift).
-						$line_price_base_type = (isset($this->lines[$i]->subprice_ttc) && (float) $this->lines[$i]->subprice_ttc != 0) ? 'TTC' : 'HT';
+						$line_price_base_type = $this->lines[$i]->getPriceBaseType();
 						$line_pu = ($line_price_base_type === 'TTC') ? (float) $this->lines[$i]->subprice_ttc : $this->lines[$i]->subprice;
 						$res = $this->updateline(
 							$idligne,

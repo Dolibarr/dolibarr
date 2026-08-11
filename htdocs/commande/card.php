@@ -496,7 +496,7 @@ if (empty($reshook)) {
 								}
 
 								// Preserve the original entry mode of the line so the total is computed from the typed value (no rounding drift).
-								$line_price_base_type = (isset($lines[$i]->subprice_ttc) && (float) $lines[$i]->subprice_ttc != 0) ? 'TTC' : 'HT';
+								$line_price_base_type = $lines[$i]->getPriceBaseType();
 								$result = $object->addline(
 									$desc,
 									$lines[$i]->subprice,
@@ -770,7 +770,7 @@ if (empty($reshook)) {
 			}
 			if ($line->product_type == 1) { // only service line
 				// Preserve the original entry mode of the line so the total is not drifted by rounding.
-				$line_price_base_type = $line->wasEnteredIncludingTax() ? 'TTC' : 'HT';
+				$line_price_base_type = $line->getPriceBaseType();
 				$line_pu = ($line_price_base_type === 'TTC') ? (float) $line->subprice_ttc : (float) $line->subprice;
 				$result = $object->updateline($line->id, $line->desc, $line_pu, $line->qty, $line->remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, $line_price_base_type, $line->info_bits, $alldate_start, $alldate_end, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->fk_unit, $line->multicurrency_subprice);
 			}
@@ -786,7 +786,7 @@ if (empty($reshook)) {
 				continue;
 			}
 			// Preserve the original entry mode of the line so the total is not drifted by rounding.
-			$line_price_base_type = $line->wasEnteredIncludingTax() ? 'TTC' : 'HT';
+			$line_price_base_type = $line->getPriceBaseType();
 			$line_pu = ($line_price_base_type === 'TTC') ? (float) $line->subprice_ttc : (float) $line->subprice;
 			$result = $object->updateline($line->id, $line->desc, $line_pu, $line->qty, $line->remise_percent, $vat_rate, $localtax1_rate, $localtax2_rate, $line_price_base_type, $line->info_bits, $line->date_start, $line->date_end, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->fk_unit, $line->multicurrency_subprice);
 		}
@@ -803,7 +803,7 @@ if (empty($reshook)) {
 				$tvatx .= ' (' . $line->vat_src_code . ')';
 			}
 			// Preserve the original entry mode of the line so the total is not drifted by rounding.
-			$line_price_base_type = $line->wasEnteredIncludingTax() ? 'TTC' : 'HT';
+			$line_price_base_type = $line->getPriceBaseType();
 			$line_pu = ($line_price_base_type === 'TTC') ? (float) $line->subprice_ttc : (float) $line->subprice;
 			$result = $object->updateline($line->id, $line->desc, $line_pu, $line->qty, (float) $remise_percent, $tvatx, $line->localtax1_tx, $line->localtax2_tx, $line_price_base_type, $line->info_bits, $line->date_start, $line->date_end, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->fk_unit, $line->multicurrency_subprice);
 		}

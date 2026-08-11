@@ -900,7 +900,7 @@ class Facture extends CommonInvoice
 						}
 
 						// Preserve the original entry mode of the line so the total is computed from the typed value (no rounding drift).
-						$line_price_base_type = (isset($newinvoiceline->subprice_ttc) && (float) $newinvoiceline->subprice_ttc != 0) ? 'TTC' : 'HT';
+						$line_price_base_type = $newinvoiceline->getPriceBaseType();
 						$result = $this->addline(
 							$newinvoiceline->desc,
 							(float) $newinvoiceline->subprice,

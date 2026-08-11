@@ -648,7 +648,7 @@ class ContratLigne extends CommonObjectLine
 		$localtaxes_type = getLocalTaxesFromRate($this->tva_tx, 0, $this->thirdparty, $mysoc);
 
 		// Compute the total from the value the user actually entered, to avoid a rounding drift.
-		$line_price_base_type = $this->wasEnteredIncludingTax() ? 'TTC' : 'HT';
+		$line_price_base_type = $this->getPriceBaseType();
 		$pu_for_calc = $this->wasEnteredIncludingTax() ? (float) $this->subprice_ttc : (float) $this->subprice;
 
 		$tabprice = calcul_price_total($this->qty, $pu_for_calc, $this->remise_percent, (float) $this->tva_tx, $this->localtax1_tx, $this->localtax2_tx, 0, $line_price_base_type, 0, 1, $mysoc, $localtaxes_type);

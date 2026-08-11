@@ -1706,7 +1706,7 @@ class CommandeFournisseur extends CommonOrder
 					// In TTC mode, do not forward the HT currency price as pu_ht_devise: under multicurrency it would
 					// reset the local price and recompute from the HT currency amount (read as TTC) -> 0.01 drift.
 					// Like SupplierProposal (which does not pass it), the currency price is re-derived from the local price.
-					$line_price_base_type = (isset($line->subprice_ttc) && (float) $line->subprice_ttc != 0) ? 'TTC' : 'HT';
+					$line_price_base_type = $line->getPriceBaseType();
 					$line_pu_devise = ($line_price_base_type === 'TTC') ? 0 : (float) $line->multicurrency_subprice;
 					$result = $this->addline(
 						(string) $line->desc,

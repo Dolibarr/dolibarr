@@ -471,6 +471,9 @@ if (empty($reshook)) {
 									$array_options = array();
 								}
 
+								// Preserve the TTC entry mode of the source line: a line entered including tax must
+								// stay in TTC so its total is computed from the typed value, without rounding drift.
+								$line_price_base_type = $lines[$i]->getPriceBaseType();
 								$result = $object->addline(
 									$desc,
 									$lines[$i]->subprice,
@@ -480,8 +483,8 @@ if (empty($reshook)) {
 									$lines[$i]->localtax2_tx,
 									$lines[$i]->fk_product,
 									$lines[$i]->remise_percent,
-									'HT',
-									0,
+									$line_price_base_type,
+									(float) $lines[$i]->subprice_ttc,
 									$lines[$i]->info_bits,
 									$product_type,
 									$lines[$i]->rang,
@@ -663,7 +666,7 @@ if (empty($reshook)) {
 				continue;
 			}
 			// Preserve the original entry mode of the line so the total is not drifted by rounding.
-			$line_price_base_type = $line->wasEnteredIncludingTax() ? 'TTC' : 'HT';
+			$line_price_base_type = $line->getPriceBaseType();
 			$line_pu = ($line_price_base_type === 'TTC') ? (float) $line->subprice_ttc : (float) $line->subprice;
 			// In TTC mode, do not forward the HT currency price: under multicurrency updateline() would reset
 			// the local price and recompute from the HT currency amount (read as TTC) -> the TTC value is lost.

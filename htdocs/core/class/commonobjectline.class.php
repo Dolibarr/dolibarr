@@ -431,4 +431,16 @@ abstract class CommonObjectLine extends CommonObject
 	{
 		return isset($this->subprice_ttc) && (float) $this->subprice_ttc != 0;
 	}
+
+	/**
+	 *	Return the price base type ('TTC' or 'HT') matching how the unit price was entered.
+	 *	Shortcut over wasEnteredIncludingTax() to keep the entry mode when re-adding a line
+	 *	(clone, conversion, bulk action) so the total is recomputed from the typed value.
+	 *
+	 *	@return	string	'TTC' if entered including tax, 'HT' otherwise
+	 */
+	public function getPriceBaseType()
+	{
+		return $this->wasEnteredIncludingTax() ? 'TTC' : 'HT';
+	}
 }
