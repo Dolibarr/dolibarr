@@ -107,7 +107,7 @@ foreach ($object->fields as $key => $val) {
 		print ' '.$val['cssview'];
 	}
 	print '">';
-	if (empty($val['alwayseditable'])) {
+	if (empty($val['alwayseditable'])) { // TODO : use $object->isFieldEditAllowed($user, $key)  ( or $object->isFieldBlockedByObjectState($key))
 		if (preg_match('/^(text|html)/', $val['type'])) {
 			print '<div class="longmessagecut">';
 		}

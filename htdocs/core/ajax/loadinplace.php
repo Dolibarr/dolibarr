@@ -18,6 +18,7 @@
  */
 
 /**
+ * 		@deprecated see GitHub PR #32640 : QUAL remove unused jQuery-Jeditable: see new file htdocs/core/ajax/editinplace.php
  *       \file      htdocs/core/ajax/loadinplace.php
  *       \brief     File to load (loadinplace.php) or update (saveinplace.php) a field value.
  *       			Was used in past when option "Edit In Place" is set (MAIN_USE_EDIT_IN_PLACE).
