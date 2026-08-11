@@ -822,5 +822,27 @@ function getExtrafieldsAdminMap()
 			'helpurl'      => '',
 			'langs'        => array('project', 'admin'),
 		),
+		'recruitment_recruitmentjobposition' => array(
+			'headfunction' => 'recruitmentAdminPrepareHead',
+			'headfile'     => 'recruitment/lib/recruitment.lib.php',
+			'tabid'        => 'jobposition_extrafields',
+			'headlabel'    => '',
+			'textobject'   => 'JobPosition',
+			'headpicto'    => '',
+			'title'        => 'RecruitmentSetup',
+			'helpurl'      => '',
+			'langs'        => array('recruitment', 'admin'),
+		),
+		'recruitment_recruitmentcandidature' => array(
+			'headfunction' => 'recruitmentAdminPrepareHead',
+			'headfile'     => 'recruitment/lib/recruitment.lib.php',
+			'tabid'        => 'candidature_extrafields',
+			'headlabel'    => '',
+			'textobject'   => 'Candidature',
+			'headpicto'    => '',
+			'title'        => 'RecruitmentSetup',
+			'helpurl'      => '',
+			'langs'        => array('recruitment', 'admin'),
+		),
 	);
 }
