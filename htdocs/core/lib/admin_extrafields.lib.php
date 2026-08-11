@@ -703,5 +703,25 @@ function getExtrafieldsAdminMap()
 			'helpurl'      => '',
 			'langs'        => array('companies', 'admin', 'bills'),
 		),
+		'contrat' => array(
+			'headfunction' => 'contract_admin_prepare_head',
+			'headfile'     => 'core/lib/contract.lib.php',
+			'tabid'        => 'attributes',
+			'headlabel'    => 'Contracts',
+			'headpicto'    => 'contract',
+			'title'        => 'ContractsSetup',
+			'helpurl'      => 'EN:Module_Contracts|FR:Module_Contrat|ES:Contratos_de_servicio',
+			'langs'        => array('companies', 'admin', 'contracts'),
+		),
+		'contratdet' => array(
+			'headfunction' => 'contract_admin_prepare_head',
+			'headfile'     => 'core/lib/contract.lib.php',
+			'tabid'        => 'attributeslines',
+			'headlabel'    => 'Contracts',
+			'headpicto'    => 'contract',
+			'title'        => 'ContractsSetup',
+			'helpurl'      => 'EN:Module_Contracts|FR:Module_Contrat|ES:Contratos_de_servicio',
+			'langs'        => array('companies', 'admin', 'contracts'),
+		),
 	);
 }
