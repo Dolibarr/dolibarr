@@ -396,5 +396,27 @@ function getExtrafieldsAdminMap()
 			'helpurl'      => '',
 			'langs'        => array('admin', 'other', 'ecm'),
 		),
+		'actioncomm' => array(
+			'headfunction' => 'eventorganizationAdminPrepareHead',
+			'headfile'     => 'core/lib/eventorganization.lib.php',
+			'tabid'        => 'eventorganization_extrafields',
+			'headlabel'    => 'ExtraFields',
+			'textobject'   => 'ConferenceOrBooth',
+			'headpicto'    => 'eventorganization',
+			'title'        => 'EventOrganizationSetup',
+			'helpurl'      => '',
+			'langs'        => array('eventorganization', 'admin'),
+		),
+		'eventorganization_conferenceorboothattendee' => array(
+			'headfunction' => 'eventorganizationAdminPrepareHead',
+			'headfile'     => 'core/lib/eventorganization.lib.php',
+			'tabid'        => 'conferenceorboothattendee_extrafields',
+			'headlabel'    => 'ConferenceOrBoothAttendeeExtraFields',
+			'textobject'   => 'ConferenceOrBoothAttendee',
+			'headpicto'    => 'eventorganization',
+			'title'        => 'EventOrganizationSetup',
+			'helpurl'      => '',
+			'langs'        => array('eventorganization', 'admin'),
+		),
 	);
 }
