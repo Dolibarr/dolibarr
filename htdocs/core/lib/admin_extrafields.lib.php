@@ -625,5 +625,27 @@ function getExtrafieldsAdminMap()
 			'helpurl'      => '',
 			'langs'        => array('admin', 'other', 'propal'),
 		),
+		'supplier_proposal' => array(
+			'headfunction' => 'supplier_proposal_admin_prepare_head',
+			'headfile'     => 'core/lib/supplier_proposal.lib.php',
+			'tabid'        => 'attributes',
+			'headlabel'    => 'CommRequests',
+			'textobject'   => 'CommRequests',
+			'headpicto'    => 'supplier_proposal',
+			'title'        => 'SupplierProposalSetup',
+			'helpurl'      => '',
+			'langs'        => array('companies', 'admin', 'supplier_proposal'),
+		),
+		'supplier_proposaldet' => array(
+			'headfunction' => 'supplier_proposal_admin_prepare_head',
+			'headfile'     => 'core/lib/supplier_proposal.lib.php',
+			'tabid'        => 'attributeslines',
+			'headlabel'    => 'CommRequests',
+			'textobject'   => 'CommRequests',
+			'headpicto'    => 'supplier_proposal',
+			'title'        => 'SupplierProposalSetup',
+			'helpurl'      => '',
+			'langs'        => array('admin', 'other', 'supplier_proposal'),
+		),
 	);
 }
