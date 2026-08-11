@@ -473,5 +473,58 @@ function getExtrafieldsAdminMap()
 			'helpurl'      => '',
 			'langs'        => array('mrp', 'admin'),
 		),
+		'commande' => array(
+			'headfunction' => 'order_admin_prepare_head',
+			'headfile'     => 'core/lib/order.lib.php',
+			'tabid'        => 'attributes',
+			'headlabel'    => 'Orders',
+			'textobject'   => 'Orders',
+			'headpicto'    => 'order',
+			'title'        => 'OrdersSetup',
+			'helpurl'      => '',
+			'langs'        => array('admin', 'other', 'orders'),
+		),
+		'commandedet' => array(
+			'headfunction' => 'order_admin_prepare_head',
+			'headfile'     => 'core/lib/order.lib.php',
+			'tabid'        => 'attributeslines',
+			'headlabel'    => 'Orders',
+			'textobject'   => 'Orders',
+			'headpicto'    => 'order',
+			'title'        => 'OrdersSetup',
+			'helpurl'      => '',
+			'langs'        => array('admin', 'other', 'orders'),
+		),
+		// The supplier order module is mid-transition between the legacy 'fournisseur'
+		// module (core/lib/fourn.lib.php, function supplierorder_admin_prepare_head())
+		// and the new split 'supplier_order' module (core/lib/supplier_order.lib.php,
+		// function supplier_order_admin_prepare_head()), selected at runtime by the
+		// MAIN_USE_NEW_SUPPLIERMOD conf option — this mirrors the exact conditional
+		// the original (now-deleted) per-object supplier order extrafields admin wrapper
+		// files used to pick which lib file to require and which head function
+		// to call. Both functions build a $head array containing the same 'supplierorder'
+		// / 'supplierorderdet' tab id, so only headfunction/headfile need to vary.
+		'commande_fournisseur' => array(
+			'headfunction' => getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD') ? 'supplier_order_admin_prepare_head' : 'supplierorder_admin_prepare_head',
+			'headfile'     => getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD') ? 'core/lib/supplier_order.lib.php' : 'core/lib/fourn.lib.php',
+			'tabid'        => 'supplierorder',
+			'headlabel'    => 'Suppliers',
+			'textobject'   => 'SuppliersOrders',
+			'headpicto'    => 'company',
+			'title'        => 'SuppliersSetup',
+			'helpurl'      => '',
+			'langs'        => array('admin', 'other', 'orders'),
+		),
+		'commande_fournisseurdet' => array(
+			'headfunction' => getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD') ? 'supplier_order_admin_prepare_head' : 'supplierorder_admin_prepare_head',
+			'headfile'     => getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD') ? 'core/lib/supplier_order.lib.php' : 'core/lib/fourn.lib.php',
+			'tabid'        => 'supplierorderdet',
+			'headlabel'    => 'Suppliers',
+			'textobject'   => 'SuppliersOrders',
+			'headpicto'    => 'company',
+			'title'        => 'SuppliersSetup',
+			'helpurl'      => '',
+			'langs'        => array('admin', 'other', 'orders'),
+		),
 	);
 }
