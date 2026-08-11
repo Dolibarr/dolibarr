@@ -201,5 +201,25 @@ function getExtrafieldsAdminMap()
 			'helpurl'      => '',
 			'langs'        => array('stock@stock', 'admin'),
 		),
+		'product_attribute' => array(
+			'headfunction' => 'adminProductAttributePrepareHead',
+			'headfile'     => 'variants/lib/variants.lib.php',
+			'tabid'        => 'product_attribute',
+			'headlabel'    => 'ProductAttributeExtrafieldsSetup',
+			'headpicto'    => 'product',
+			'title'        => 'ProductAttributeExtrafieldsSetup',
+			'helpurl'      => '',
+			'langs'        => array('admin', 'other', 'product'),
+		),
+		'product_attribute_value' => array(
+			'headfunction' => 'adminProductAttributePrepareHead',
+			'headfile'     => 'variants/lib/variants.lib.php',
+			'tabid'        => 'product_attribute_value',
+			'headlabel'    => 'ProductAttributeValueExtrafieldsSetup',
+			'headpicto'    => 'product',
+			'title'        => 'ProductAttributeValueExtrafieldsSetup',
+			'helpurl'      => '',
+			'langs'        => array('admin', 'other', 'sendings'),
+		),
 	);
 }
