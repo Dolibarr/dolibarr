@@ -426,6 +426,10 @@ if (empty($reshook)) {
 								$localtax1_tx = get_localtax($txtva, 1, $object->thirdparty);
 								$localtax2_tx = get_localtax($txtva, 2, $object->thirdparty);
 
+								// Preserve the TTC entry mode of the source line: a line entered including tax must
+								// stay in TTC so its total is computed from the typed value, without rounding drift.
+								$line_price_base_type = $lines[$i]->wasEnteredIncludingTax() ? 'TTC' : 'HT';
+
 								$result = $object->addline(
 									$desc,
 									$lines[$i]->subprice,
@@ -437,8 +441,8 @@ if (empty($reshook)) {
 									$lines[$i]->remise_percent,
 									$lines[$i]->date_start,
 									$lines[$i]->date_end,
-									'HT',
-									0,
+									$line_price_base_type,
+									($line_price_base_type === 'TTC' ? (float) $lines[$i]->subprice_ttc : 0),
 									$lines[$i]->info_bits,
 									$lines[$i]->fk_fournprice,
 									$lines[$i]->pa_ht,
