@@ -173,6 +173,7 @@ $listofexamplesforlink = 'Societe:societe/class/societe.class.php<br>Contact:con
 <form action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="post">
 <input type="hidden" name="token" value="<?php echo newToken(); ?>">
 <input type="hidden" name="action" value="add">
+<input type="hidden" name="elementtype" value="<?php echo dol_escape_htmltag($elementtype); ?>">
 
 <?php print dol_get_fiche_head(); ?>
 
