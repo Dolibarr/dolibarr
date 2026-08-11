@@ -352,5 +352,27 @@ function getExtrafieldsAdminMap()
 			'helpurl'      => '',
 			'langs'        => array('admin', 'other', 'sendings'),
 		),
+		'reception' => array(
+			'headfunction' => 'reception_admin_prepare_head',
+			'headfile'     => 'core/lib/reception.lib.php',
+			'tabid'        => 'attributes_reception',
+			'headlabel'    => 'Receptions',
+			'textobject'   => 'Receptions',
+			'headpicto'    => 'reception',
+			'title'        => 'ReceptionsSetup',
+			'helpurl'      => '',
+			'langs'        => array('admin', 'other', 'receptions', 'sendings'),
+		),
+		'receptiondet_batch' => array(
+			'headfunction' => 'reception_admin_prepare_head',
+			'headfile'     => 'core/lib/reception.lib.php',
+			'tabid'        => 'attributeslines_reception',
+			'headlabel'    => 'Receptions',
+			'textobject'   => 'Receptions',
+			'headpicto'    => 'reception',
+			'title'        => 'ReceptionsSetup',
+			'helpurl'      => '',
+			'langs'        => array('admin', 'other', 'receptions'),
+		),
 	);
 }
