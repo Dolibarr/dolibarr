@@ -429,5 +429,16 @@ function getExtrafieldsAdminMap()
 			'helpurl'      => '',
 			'langs'        => array('admin', 'errors', 'trips', 'other'),
 		),
+		'holiday' => array(
+			'headfunction' => 'holiday_admin_prepare_head',
+			'headfile'     => 'core/lib/holiday.lib.php',
+			'tabid'        => 'attributes',
+			'headlabel'    => 'Holidays',
+			'textobject'   => 'Holidays',
+			'headpicto'    => 'holiday',
+			'title'        => 'HolidaySetup',
+			'helpurl'      => '',
+			'langs'        => array('admin', 'errors', 'holiday', 'other'),
+		),
 	);
 }
