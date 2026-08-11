@@ -789,5 +789,16 @@ function getExtrafieldsAdminMap()
 			'helpurl'      => '',
 			'langs'        => array('hrm', 'admin'),
 		),
+		'partnership' => array(
+			'headfunction' => 'partnershipAdminPrepareHead',
+			'headfile'     => 'partnership/lib/partnership.lib.php',
+			'tabid'        => 'partnership_extrafields',
+			'headlabel'    => 'PartnershipSetup',
+			'textobject'   => 'Partnership',
+			'headpicto'    => 'partnership',
+			'title'        => 'PartnershipSetup',
+			'helpurl'      => '',
+			'langs'        => array('partnership', 'admin'),
+		),
 	);
 }
