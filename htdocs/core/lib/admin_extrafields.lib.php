@@ -374,5 +374,27 @@ function getExtrafieldsAdminMap()
 			'helpurl'      => '',
 			'langs'        => array('admin', 'other', 'receptions'),
 		),
+		'ecm_directories' => array(
+			'headfunction' => 'ecm_admin_prepare_head',
+			'headfile'     => 'core/lib/ecm.lib.php',
+			'tabid'        => 'attributes_ecm_directories',
+			'headlabel'    => '',
+			'textobject'   => 'ECM',
+			'headpicto'    => '',
+			'title'        => 'ECMSetup',
+			'helpurl'      => '',
+			'langs'        => array('admin', 'other', 'ecm'),
+		),
+		'ecm_files' => array(
+			'headfunction' => 'ecm_admin_prepare_head',
+			'headfile'     => 'core/lib/ecm.lib.php',
+			'tabid'        => 'attributes_ecm_files',
+			'headlabel'    => '',
+			'textobject'   => 'ECM',
+			'headpicto'    => '',
+			'title'        => 'ECMSetup',
+			'helpurl'      => '',
+			'langs'        => array('admin', 'other', 'ecm'),
+		),
 	);
 }
