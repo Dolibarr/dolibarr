@@ -30,21 +30,57 @@
  */
 
 /**
+ * Build a closure that mirrors the isModEnabled("product")/isModEnabled("service")
+ * conditional found across the product/service family of extrafields admin wrapper
+ * pages: the base translation key applies when both modules are enabled, and each
+ * of the other two keys applies when only one of the two modules is enabled.
+ *
+ * This exists purely to avoid repeating the same 8-line conditional in every
+ * `title`/`headlabel` closure of the product-family registry entries below —
+ * the original wrapper files all contained this exact conditional shape
+ * verbatim, only the translation keys (and, for the base key, trans() vs
+ * transnoentitiesnoconv()) differ between $title and $textobject.
+ *
+ * @param string $keyBoth          Translation key when both product and service are enabled
+ * @param string $keyServiceOnly   Translation key when only the service module is enabled
+ * @param string $keyProductOnly   Translation key when only the product module is enabled
+ * @param bool   $noconv           Use transnoentitiesnoconv() instead of trans() for $keyBoth,
+ *                                 matching the original wrapper files' $textobject assignment
+ * @return callable
+ */
+function extrafieldsAdminProductServiceLabel($keyBoth, $keyServiceOnly, $keyProductOnly, $noconv = false)
+{
+	return function () use ($keyBoth, $keyServiceOnly, $keyProductOnly, $noconv) {
+		global $langs;
+		$label = $noconv ? $langs->transnoentitiesnoconv($keyBoth) : $langs->trans($keyBoth);
+		if (!isModEnabled("product")) {
+			$label = $langs->trans($keyServiceOnly);
+		} elseif (!isModEnabled("service")) {
+			$label = $langs->trans($keyProductOnly);
+		}
+		return $label;
+	};
+}
+
+/**
  * Return the whitelist of elementtype values accepted by
  * htdocs/admin/extrafields.php, and the page metadata needed to render
  * each one (which tab-bar function to call, which lang files to load, ...).
  *
- * `headlabel` is the string passed to dol_get_fiche_head()'s $title argument
- * (shown only as the tab-head picto's alt/title tooltip). `textobject` is the
- * string shown in the "Define any additional / custom attributes that must be
- * added to: %s" sentence rendered by core/tpl/admin_extrafields_view.tpl.php.
- * The two original per-object wrapper files each set these independently and
- * they are frequently NOT the same lang key — do not assume they match.
- * `textobject` is optional and falls back to `headlabel` when omitted, which
- * is safe only when the source wrapper file passed the same string to both,
- * or never set $textobject at all.
+ * `headlabel` is the string (or no-arg callable returning an already-translated
+ * string) passed to dol_get_fiche_head()'s $title argument (the tab-head picto's
+ * alt/title tooltip). `textobject` is the string (or callable) shown in the
+ * "Define any additional / custom attributes that must be added to: %s" sentence
+ * rendered by core/tpl/admin_extrafields_view.tpl.php. The two original per-object
+ * wrapper files each set these independently and they are frequently NOT the same
+ * lang key — do not assume they match. `textobject` is optional and falls back to
+ * the *resolved* `headlabel` value when omitted, which is safe only when the source
+ * wrapper file passed the same string (or the same variable) to both, or never set
+ * $textobject at all. Like `title`, `headlabel`/`textobject` callables are called
+ * with no arguments and their return value is used as-is (already translated) —
+ * they are NOT passed through $langs->trans()/transnoentitiesnoconv() again.
  *
- * @return array<string,array{headfunction:string,headfile:string,tabid:string,headlabel:string,headpicto:string,title:string|callable,helpurl:string,langs:string[],textobject?:string}>
+ * @return array<string,array{headfunction:string,headfile:string,tabid:string,headlabel:string|callable,headpicto:string,title:string|callable,helpurl:string,langs:string[],textobject?:string|callable}>
  */
 function getExtrafieldsAdminMap()
 {
@@ -75,18 +111,9 @@ function getExtrafieldsAdminMap()
 			'headfunction' => 'product_admin_prepare_head',
 			'headfile'     => 'core/lib/product.lib.php',
 			'tabid'        => 'attributes',
-			'headlabel'    => 'ProductsAndServices',
+			'headlabel'    => extrafieldsAdminProductServiceLabel('ProductsAndServices', 'Services', 'Products', true),
 			'headpicto'    => 'product',
-			'title'        => function () {
-				global $langs;
-				$title = $langs->trans('ProductServiceSetup');
-				if (!isModEnabled("product")) {
-					$title = $langs->trans('ServiceSetup');
-				} elseif (!isModEnabled("service")) {
-					$title = $langs->trans('ProductSetup');
-				}
-				return $title;
-			},
+			'title'        => extrafieldsAdminProductServiceLabel('ProductServiceSetup', 'ServiceSetup', 'ProductSetup'),
 			'helpurl'      => '',
 			'langs'        => array('companies', 'admin', 'products'),
 		),
@@ -105,18 +132,9 @@ function getExtrafieldsAdminMap()
 			'headfunction' => 'product_admin_prepare_head',
 			'headfile'     => 'core/lib/product.lib.php',
 			'tabid'        => 'levelAttributes',
-			'headlabel'    => 'ProductsAndServices',
+			'headlabel'    => extrafieldsAdminProductServiceLabel('ProductsAndServices', 'Services', 'Products', true),
 			'headpicto'    => 'product',
-			'title'        => function () {
-				global $langs;
-				$title = $langs->trans('ProductServiceSetup');
-				if (!isModEnabled("product")) {
-					$title = $langs->trans('ServiceSetup');
-				} elseif (!isModEnabled("service")) {
-					$title = $langs->trans('ProductSetup');
-				}
-				return $title;
-			},
+			'title'        => extrafieldsAdminProductServiceLabel('ProductServiceSetup', 'ServiceSetup', 'ProductSetup'),
 			'helpurl'      => '',
 			'langs'        => array('companies', 'admin', 'products'),
 		),
@@ -124,18 +142,9 @@ function getExtrafieldsAdminMap()
 			'headfunction' => 'product_admin_prepare_head',
 			'headfile'     => 'core/lib/product.lib.php',
 			'tabid'        => 'customerAttributes',
-			'headlabel'    => 'ProductsAndServices',
+			'headlabel'    => extrafieldsAdminProductServiceLabel('ProductsAndServices', 'Services', 'Products', true),
 			'headpicto'    => 'product',
-			'title'        => function () {
-				global $langs;
-				$title = $langs->trans('ProductServiceSetup');
-				if (!isModEnabled("product")) {
-					$title = $langs->trans('ServiceSetup');
-				} elseif (!isModEnabled("service")) {
-					$title = $langs->trans('ProductSetup');
-				}
-				return $title;
-			},
+			'title'        => extrafieldsAdminProductServiceLabel('ProductServiceSetup', 'ServiceSetup', 'ProductSetup'),
 			'helpurl'      => '',
 			'langs'        => array('companies', 'admin', 'products'),
 		),
@@ -143,18 +152,9 @@ function getExtrafieldsAdminMap()
 			'headfunction' => 'product_admin_prepare_head',
 			'headfile'     => 'core/lib/product.lib.php',
 			'tabid'        => 'supplierAttributes',
-			'headlabel'    => 'ProductsAndServices',
+			'headlabel'    => extrafieldsAdminProductServiceLabel('ProductsAndServices', 'Services', 'Products', true),
 			'headpicto'    => 'product',
-			'title'        => function () {
-				global $langs;
-				$title = $langs->trans('ProductServiceSetup');
-				if (!isModEnabled("product")) {
-					$title = $langs->trans('ServiceSetup');
-				} elseif (!isModEnabled("service")) {
-					$title = $langs->trans('ProductSetup');
-				}
-				return $title;
-			},
+			'title'        => extrafieldsAdminProductServiceLabel('ProductServiceSetup', 'ServiceSetup', 'ProductSetup'),
 			'helpurl'      => '',
 			'langs'        => array('companies', 'admin', 'products'),
 		),
