@@ -800,5 +800,27 @@ function getExtrafieldsAdminMap()
 			'helpurl'      => '',
 			'langs'        => array('partnership', 'admin'),
 		),
+		'projet' => array(
+			'headfunction' => 'project_admin_prepare_head',
+			'headfile'     => 'core/lib/project.lib.php',
+			'tabid'        => 'attributes',
+			'headlabel'    => 'Projects',
+			'textobject'   => 'Project',
+			'headpicto'    => 'project',
+			'title'        => 'ProjectsSetup',
+			'helpurl'      => '',
+			'langs'        => array('project', 'admin'),
+		),
+		'projet_task' => array(
+			'headfunction' => 'project_admin_prepare_head',
+			'headfile'     => 'core/lib/project.lib.php',
+			'tabid'        => 'attributes_task',
+			'headlabel'    => 'Projects',
+			'textobject'   => 'Project',
+			'headpicto'    => 'project',
+			'title'        => 'ProjectsSetup',
+			'helpurl'      => '',
+			'langs'        => array('project', 'admin'),
+		),
 	);
 }
