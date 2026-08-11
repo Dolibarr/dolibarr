@@ -286,5 +286,27 @@ function getExtrafieldsAdminMap()
 			'helpurl'      => '',
 			'langs'        => array('admin', 'banks', 'other'),
 		),
+		'bom_bom' => array(
+			'headfunction' => 'bomAdminPrepareHead',
+			'headfile'     => 'bom/lib/bom.lib.php',
+			'tabid'        => 'bom_extrafields',
+			'headlabel'    => 'ExtraFields',
+			'textobject'   => 'BOM',
+			'headpicto'    => 'account',
+			'title'        => 'BOMsSetup',
+			'helpurl'      => '',
+			'langs'        => array('mrp', 'admin'),
+		),
+		'bom_bomline' => array(
+			'headfunction' => 'bomAdminPrepareHead',
+			'headfile'     => 'bom/lib/bom.lib.php',
+			'tabid'        => 'bomline_extrafields',
+			'headlabel'    => 'ExtraFields',
+			'textobject'   => 'BOM',
+			'headpicto'    => 'account',
+			'title'        => 'BOMsSetup',
+			'helpurl'      => '',
+			'langs'        => array('mrp', 'admin'),
+		),
 	);
 }
