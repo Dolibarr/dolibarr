@@ -12055,7 +12055,7 @@ function printCommonFooter($zone = 'private')
 
 										if (tmptypefield == 'textarea') {
 											// We must instead check the content of ckeditor
-											var tmpeditor = CKEDITOR.instances['".dol_escape_js($paramkey)."'];
+											var tmpeditor = (typeof CKEDITOR !== 'undefined') ? CKEDITOR.instances['".dol_escape_js($paramkey)."'] : null;
 										    if (tmpeditor) {
         										tmpvalue = tmpeditor.getData();
 												console.log('For textarea tmpvalue is '+tmpvalue);
@@ -12063,7 +12063,7 @@ function printCommonFooter($zone = 'private')
 										}
 
 										let tmpvalueisempty = false;
-										if (tmpvalue === null || tmpvalue === undefined || tmpvalue === '' || tmpvalue === -1) {
+										if (tmpvalue === null || tmpvalue === undefined || tmpvalue === '' || tmpvalue === -1 || tmpvalue === '-1') {
 											tmpvalueisempty = true;
 										}
 										if (tmpvalue === '0' && (tmptypefield == 'select' || tmptypefield == 'input')) {
