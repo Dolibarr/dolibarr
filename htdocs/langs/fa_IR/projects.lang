@@ -258,7 +258,7 @@ OtherFilteredTasks=سایر وظایف گُزیده شده
 NoAssignedTasks=هیچ وظیفه‌ای نسبت داده نشده ( طرح/وظیفه را از بالا به کاربر فعلی نسبت دهید تا زمان را روی آن وارد کنید)
 ThirdPartyRequiredToGenerateIntervention=A third party must be defined on project to be able to create intervention.
 ThirdPartyRequiredToGenerateInvoice=یک طرف سوم باید روی طرح تعریف شود تا امکان صورت‌حساب درست کردن برای آن وجود داشته باشد
-ChooseANotYetAssignedTask=Choose a task not yet assigned to you
+ChooseANotYetAssignedTask=Tasks not yet assigned to you
 # Comments trans
 AllowCommentOnTask=اجازۀ یادداشت نویسی کاربران روی وظایف
 AllowCommentOnProject=امکان توضیح نویسی بر روی طرح‌ها

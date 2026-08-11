@@ -162,8 +162,8 @@ if ($result < 0) {
 		$sql .= ", ".MAIN_DB_PREFIX."bank_account as ba";
 		$sql .= " WHERE b.fk_account = ba.rowid";
 		$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
-		$sql .= " AND b.datev >= '".$db->escape($year)."-".$db->escape($month)."-01 00:00:00'";
-		$sql .= " AND b.datev < '".$db->escape($yearnext)."-".$db->escape($monthnext)."-01 00:00:00'";
+		$sql .= " AND b.datev >= '".$db->escape($year."-".$month."-01 00:00:00")."'";
+		$sql .= " AND b.datev < '".$db->escape($yearnext."-".$monthnext."-01 00:00:00")."'";
 		if ($account && GETPOST("option") != 'all') {
 			$sql .= " AND b.fk_account IN (".$db->sanitize($account).")";
 		}
@@ -580,8 +580,8 @@ if ($result < 0) {
 		$sql .= ", ".MAIN_DB_PREFIX."bank_account as ba";
 		$sql .= " WHERE b.fk_account = ba.rowid";
 		$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
-		$sql .= " AND b.datev >= '".$db->escape($year)."-".$db->escape($month)."-01 00:00:00'";
-		$sql .= " AND b.datev < '".$db->escape($yearnext)."-".$db->escape($monthnext)."-01 00:00:00'";
+		$sql .= " AND b.datev >= '".$db->escape($year."-".$month."-01 00:00:00")."'";
+		$sql .= " AND b.datev < '".$db->escape($yearnext."-".$monthnext."-01 00:00:00")."'";
 		$sql .= " AND b.amount > 0";
 		if ($account && GETPOST("option") != 'all') {
 			$sql .= " AND b.fk_account IN (".$db->sanitize($account).")";
@@ -617,8 +617,8 @@ if ($result < 0) {
 		$sql .= ", ".MAIN_DB_PREFIX."bank_account as ba";
 		$sql .= " WHERE b.fk_account = ba.rowid";
 		$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
-		$sql .= " AND b.datev >= '".$db->escape($year)."-".$db->escape($month)."-01 00:00:00'";
-		$sql .= " AND b.datev < '".$db->escape($yearnext)."-".$db->escape($monthnext)."-01 00:00:00'";
+		$sql .= " AND b.datev >= '".$db->escape($year."-".$month."-01 00:00:00")."'";
+		$sql .= " AND b.datev < '".$db->escape($yearnext."-".$monthnext."-01 00:00:00")."'";
 		$sql .= " AND b.amount < 0";
 		if ($account && GETPOST("option") != 'all') {
 			$sql .= " AND b.fk_account IN (".$db->sanitize($account).")";

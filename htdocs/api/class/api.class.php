@@ -307,6 +307,7 @@ class DolibarrApi
 		unset($object->table_rowid);
 		unset($object->pass);
 		unset($object->pass_indatabase);
+		unset($object->pass_indatabase_crypted);
 
 		// Remove linkedObjects. We should already have and keep only linkedObjectsIds that avoid huge responses
 		unset($object->linkedObjects);

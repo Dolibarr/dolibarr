@@ -630,17 +630,6 @@ class pdf_azur extends ModelePDFPropales
 					$localtax1_type = $object->lines[$i]->localtax1_type;
 					$localtax2_type = $object->lines[$i]->localtax2_type;
 
-					// TODO remise_percent is an obsolete field for object parent
-					/*if ($object->remise_percent) {
-						$tvaligne -= ($tvaligne * $object->remise_percent) / 100;
-					}
-					if ($object->remise_percent) {
-						$localtax1ligne -= ($localtax1ligne * $object->remise_percent) / 100;
-					}
-					if ($object->remise_percent) {
-						$localtax2ligne -= ($localtax2ligne * $object->remise_percent) / 100;
-					}*/
-
 					$vatrate = (string) $object->lines[$i]->tva_tx;
 
 					// Retrieve type from database for backward compatibility with old records

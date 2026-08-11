@@ -154,6 +154,7 @@ ErrUnzipFails=Udpakning fejlede for %s med ZipArchive
 ErrNoZipEngine=Modul til pakning/udpakning af %s findes ikke i PHP
 ErrorFileMustBeADolibarrPackage=Filen %s skal være en Dolibarr zip pakke
 ErrorModuleFileRequired=Du skal vælge en Dolibarr modul pakke fil
+ErrorFailToDownloadModuleFromSource=Modulet kunne ikke downloades fra kildekoden. Kontroller din internetforbindelse eller kilde-URL'en, og prøv igen.
 ErrorPhpCurlNotInstalled=PHP CURL modulet er ikke installeret, dette er nødvendigt for at kommunikere med Paypal
 ErrorFailedToAddToMailmanList=Tilføjelsen af posten %s til Mailman listen %s eller SPIP basen fejlede
 ErrorFailedToRemoveToMailmanList=Sletning af posten %s fra Mailman listen %s eller SPIP basen fejlede
@@ -168,8 +169,8 @@ ErrorPaymentModeDefinedToWithoutSetup=En betalingsmetode var sat til typen %s me
 ErrorPHPNeedModule=Fejl, din PHP skal have modulet <b>%s</b> installeret for at benytte denne funktion.
 ErrorOpenIDSetupConfNotComplete=Af sikkerhedsmæssige årsager skal du også konfigurere Dolibarr-konfigurationsfilen conf.php til at tillade OpenID-godkendelse.
 ErrorOpenIDSetupNotComplete=Do hare opsat din Dolibarr konfigurations fil til at tillade OpenID autentificering, men URL'en til OpenID servicen er ikke defineret i konstanten %s
-OIDCAutocreateUserDisabled=Auto-creation of users on OIDC login is currently disabled. To enable it, add $dolibarr_main_authentication_autocreateuser=1 to your conf.php file.
-OIDCAutocreateUserEnabled=Auto-creation of users on OIDC login is enabled ($dolibarr_main_authentication_autocreateuser=1 is set in conf.php).
+OIDCAutocreateUserDisabled=Automatisk oprettelse af brugere ved OIDC-login er i øjeblikket deaktiveret. For at aktivere det skal du tilføje $dolibarr_main_authentication_autocreateuser=1 til din conf.php-fil.
+OIDCAutocreateUserEnabled=Automatisk oprettelse af brugere ved OIDC-login er aktiveret ($dolibarr_main_authentication_autocreateuser=1 er indstillet i conf.php).
 ErrorWarehouseMustDiffers=Kilde og destinations varehus skal være forskellige
 ErrorBadFormat=Forkert format!
 ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst=Fejl, dette medlem er endnu ikke knyttet til en tredjepart. Knyt medlem til en eksisterende tredjepart eller opret en ny tredjepart før oprettelsen af et abonnement med faktura.
@@ -365,7 +366,7 @@ ErrorTooManyAttempts= For mange forsøg, prøv venligst igen senere
 ErrorThisContactXIsAlreadyDefinedAsThisType=%s er allerede defineret som kontaktperson for denne type.
 ErrorThisGroupIsAlreadyDefinedAsThisType=Kontakterne med denne gruppe er allerede defineret som kontaktpersoner for denne type.
 ErrorIsNotInError=%s er ikke i fejl
-ErrorFilenameExtensionNotAllowed=Filen %s har en forbudt filtypenavn
+ErrorFilenameExtensionNotAllowed=Filen %s har en forbudt filtypenavn.
 ErrorNoValueForSelectListType=Fejl, en værdi for denne type felt er obligatorisk
 ErrorPaymentAmountMustNotBeNull=Fejl, betalingsbeløbet skal være defineret og ikke nul
 ErrorOneLineContainsADisactivatedProduct=Fejl, mindst ét produkt er ikke eller ikke længere på udsalg eller til køb
@@ -378,11 +379,18 @@ ErrorBadParameterWhenCallingCreateOfBlockedLog=Forkert parameter ved kald af opr
 ErrorMaxDecimalsShownTooLowComparedToUnitOrTotal=Værdien for 'Maks. decimaler for priser vist på skærmen' (%s) skal være lig med eller større end både 'Maks. decimaler for enhedspriser' (%s) og 'Maks. decimaler for samlede priser' (%s). Dette er nødvendigt for at forhindre afrundingsuoverensstemmelser på dokumenter.
 ErrorOnlyDraftStatusCanBeDeletedInMassAction=Kun elementer i udkaststatus kan slettes i masseaktion
 ErrorLDAPFunctionsAreDisabledOnThisPHP=LDAP-funktioner er deaktiveret på denne PHP.
+ErrorFailedToGetTokenFromClientIdAndSecret=Kunne ikke hente et %s-token fra klient-ID og klienthemmelighed
+ErrorModuleBuilderNoFieldProperty=Egenskabsarray ->felter blev ikke fundet i klassen. Klassen blev sandsynligvis ikke genereret af modulbyggeren.
+ErrorModuleBuilderFailedToInit=Kunne ikke starte objektet med den nye %s (%s)
+ErrorThirdPartyNotFound=Fejl Tredjepart ikke fundet
+ErrorDynamicPHPContentNotAllowed=Fejl: %s=1, så dynamisk PHP-indhold er kun tilladt, hvis RCE PHP-funktioner (exec, shell_exec, ...) alle er deaktiveret.
+ErrorTooManyLinksIntoHTMLString=HTML-indholdet indeholder for mange links eller billeder. Reducer antallet eller øg MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT.
+ErrorDeletingAClosedCashControlIsNotPossible=Det er ikke muligt at slette en lukket kassekontrol
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Din PHP-parameter upload_max_filesize (%s) er højere end PHP-parameter post_max_size (%s). Dette er ikke en ensartet opsætning.
 WarningPasswordSetWithNoAccount=Der blev angivet en adgangskode til dette medlem. Der blev dog ikke oprettet en brugerkonto. Så denne adgangskode er gemt, men kan ikke bruges til at logge ind på Dolibarr. Det kan bruges af et eksternt modul/interface, men hvis du ikke behøver at definere noget login eller adgangskode for et medlem, kan du deaktivere muligheden "Administrer et login for hvert medlem" fra medlemsmodulets opsætning. Hvis du har brug for at administrere et login, men ikke har brug for nogen adgangskode, kan du holde dette felt tomt for at undgå denne advarsel. Bemærk: E-mail kan også bruges som login, hvis medlemmet er knyttet til en bruger.
-WarningMandatorySetupNotComplete=Klik her for at indstille hovedparametre
+WarningMandatorySetupNotComplete=Opsætningen er ikke fuldført! Klik her for at indstille hovedparametrene
 WarningEnableYourModulesApplications=Klik her for at aktivere dine moduler og applikationer
 WarningSafeModeOnCheckExecDir=Advarsel, PHP option <b>safe_mode</b> er på så kommandoen skal opbevares i en mappe angivet af php parameter <b>safe_mode_exec_dir.</b>
 WarningBookmarkAlreadyExists=Et bogmærke med denne titel eller dette mål (URL), der allerede eksisterer.
@@ -428,9 +436,10 @@ WarningReadBankAlsoAllowedIfUserHasPermission=Advarsel, læsning af bankkonto er
 WarningNoDataTransferedInAccountancyYet=Bemærk venligst, at der ikke er data i regnskabstabellen. Overfør venligst dine data, der er registreret i applikationen, til regnskabssektionen, eller skift beregningstilstanden for at analysere de data, der er registreret uden for regnskabet.
 WarningChangingThisMayBreakStopTaskScheduler=Advarsel, ændring af denne værdi kan deaktivere skemalæggeren
 WarningAmountOfFileDiffersFromSumOfLines=Advarsel, mængden af fil (%s) adskiller sig fra summen af linjer (%s)
-WarningModuleAffiliatedToAReportedCompany=Advarsel, dette modul er blevet rapporteret til Dolibarr-fonden som udgivet af en virksomhed, der bruger ulovlig praksis (manglende overholdelse af reglerne for brug af Dolibarr-mærket, indsamling af dine data uden dit samtykke eller implementering af malware).
+WarningModuleAffiliatedToAReportedCompany=Advarsel, dette modul er blevet rapporteret til Dolibarr-fonden som værende udgivet af en virksomhed, der bruger ulovlige metoder (manglende overholdelse af reglerne for brug af Dolibarr-mærket, krænkelse af GPL-licensen, indsamling af data uden dit samtykke ELLER implementering af malware).
 WarningModuleAffiliatedToAPiratPlatform=Vær forsigtig, når du får et modul (betalt eller gratis) fra en mistænkelig ikke-officiel platform som %s
 WarningDNSServerNotAvailable=Advarsel, DNS-serveren er ikke tilgængelig
+WarningSecureKeyNotSet=Værdien for sikkerhedsnøglen må ikke være tom
 
 SwissQrOnlyVIR = SwissQR-faktura kan kun tilføjes på fakturaer, der skal betales med kreditoverførselsbetalinger.
 SwissQrCreditorAddressInvalid = Kreditoradressen er ugyldig (er postnummer og by angivet? (%s)
@@ -469,4 +478,4 @@ SomeShipmentExists=Fejl, der er en forsendelse knyttet til ordren. Sletning afvi
 WarningEvaluationEmptyValidate=Kan ikke validere evalueringen, niveauer af færdigheder er ikke defineret
 ErrorBadParametersForDirectDebitFileCreate=Kan ikke oprette bankoverførselsfil: Forventet formatparameter er ikke angivet.
 ErrorBadParametersForDirectDebitFileCreateDids=Kan ikke oprette bankoverførselsfil: ID'er for eksisterende betalingsanmodninger er ikke angivet.
-UserDoesNotHaveRightsToChangeHisPassword=Den bruger har ikke rettigheder til at ændre sin egen adgangskode
+ErrorExpeditionQtyTooHigh=Den afsendte mængde (%s) overstiger den resterende mængde, der skal leveres (%s).

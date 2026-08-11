@@ -11,7 +11,7 @@
  * Copyright (C) 2015       Claudio Aschieri        <c.aschieri@19.coop>
  * Copyright (C) 2016-2024	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2018       Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020       Lenin Rivas         	<lenin@leninrivas.com>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
@@ -1282,13 +1282,13 @@ class Expedition extends CommonObject
 			$product = new Product($this->db);
 			$product->fetch($orderline->fk_product);
 
-			if (!($entrepot_id > 0) && !getDolGlobalString('STOCK_WAREHOUSE_NOT_REQUIRED_FOR_SHIPMENTS') && !(getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES') && $line->product_type == Product::TYPE_SERVICE) && $product->stockable_product == Product::ENABLED_STOCK) {
+			if (!($entrepot_id > 0) && !getDolGlobalString('STOCK_WAREHOUSE_NOT_REQUIRED_FOR_SHIPMENTS') && !(getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES') && $line->product_type == Product::TYPE_SERVICE) && $product->stockable_product == Product::ENABLED_STOCK && !empty($line->qty)) {
 				$langs->load("errors");
 				$this->error = $langs->trans("ErrorWarehouseRequiredIntoShipmentLine");
 				return -1;
 			}
 
-			if (getDolGlobalString('STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT')) {
+			if (getDolGlobalString('STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT') && ($qty > 0 || !getDolGlobalString('SHIPMENT_GETS_ALL_ORDER_PRODUCTS'))) {
 				$productChildrenNb = 0;
 				if (getDolGlobalInt('PRODUIT_SOUSPRODUITS')) {
 					$productChildrenNb = $product->hasFatherOrChild(1);
@@ -1562,7 +1562,7 @@ class Expedition extends CommonObject
 					}
 					$tab[] = $linebatch;
 
-					if (getDolGlobalString("STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT", '0')) {
+					if (getDolGlobalString("STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT", '0') && ($linebatch->qty > 0 || !getDolGlobalString('SHIPMENT_GETS_ALL_ORDER_PRODUCTS'))) {
 						require_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
 						$prod_batch = new Productbatch($this->db);
 						$prod_batch->fetch($value['id_batch']);
@@ -2041,6 +2041,9 @@ class Expedition extends CommonObject
 							// We increment stock of batches
 							// We use warehouse selected for each line
 							foreach ($lotArray as $lot) {
+								if (empty($lot->qty)) {
+									continue;
+								}
 								$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $lot->qty, 0, $langs->trans("ShipmentDeletedInDolibarr", $this->ref), $lot->eatby, $lot->sellby, (string) $lot->batch, '', 0, '', 0, (empty($obj->iskit) ? 1 : 0)); // Price is set to 0, because we don't want to see WAP changed
 								if ($result < 0) {
 									$error++;
@@ -2781,11 +2784,14 @@ class Expedition extends CommonObject
 	 *
 	 *	@param      User			$user        		Object user that modify
 	 *	@param      integer 		$delivery_date     Date of delivery
+	 *	@param      int<0,1>		$notrigger			Disable the trigger
 	 *	@return     int         						Return integer <0 if KO, >0 if OK
 	 */
-	public function setDeliveryDate($user, $delivery_date)
+	public function setDeliveryDate($user, $delivery_date, $notrigger = 0)
 	{
 		if ($user->hasRight('expedition', 'creer')) {
+			$this->db->begin();
+
 			$sql = "UPDATE ".MAIN_DB_PREFIX."expedition";
 			$sql .= " SET date_delivery = ".($delivery_date ? "'".$this->db->idate($delivery_date)."'" : 'null');
 			$sql .= " WHERE rowid = ".((int) $this->id);
@@ -2794,9 +2800,22 @@ class Expedition extends CommonObject
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$this->date_delivery = $delivery_date;
+
+				if (!$notrigger) {
+					// Call trigger
+					$result = $this->call_trigger('SHIPPING_MODIFY', $user);
+					if ($result < 0) {
+						$this->db->rollback();
+						return -1;
+					}
+					// End call triggers
+				}
+
+				$this->db->commit();
 				return 1;
 			} else {
 				$this->error = $this->db->error();
+				$this->db->rollback();
 				return -1;
 			}
 		} else {
@@ -2809,11 +2828,14 @@ class Expedition extends CommonObject
 	 *
 	 *	@param      User			$user        		Object user that modify
 	 *	@param      integer 		$shipping_date		Date of shipping
+	 *	@param      int<0,1>		$notrigger			Disable the trigger
 	 *	@return     int         						Return integer <0 if KO, >0 if OK
 	 */
-	public function setShippingDate($user, $shipping_date)
+	public function setShippingDate($user, $shipping_date, $notrigger = 0)
 	{
 		if ($user->hasRight('expedition', 'creer')) {
+			$this->db->begin();
+
 			$sql = "UPDATE ".MAIN_DB_PREFIX."expedition";
 			$sql .= " SET date_expedition = ".($shipping_date ? "'".$this->db->idate($shipping_date)."'" : 'null');
 			$sql .= " WHERE rowid = ".((int) $this->id);
@@ -2822,9 +2844,22 @@ class Expedition extends CommonObject
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$this->date_shipping = $shipping_date;
+
+				if (!$notrigger) {
+					// Call trigger
+					$result = $this->call_trigger('SHIPPING_MODIFY', $user);
+					if ($result < 0) {
+						$this->db->rollback();
+						return -1;
+					}
+					// End call triggers
+				}
+
+				$this->db->commit();
 				return 1;
 			} else {
 				$this->error = $this->db->error();
+				$this->db->rollback();
 				return -1;
 			}
 		} else {

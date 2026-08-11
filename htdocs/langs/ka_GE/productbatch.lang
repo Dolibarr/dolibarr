@@ -22,7 +22,7 @@ printSellby=გაყიდვა თარიღამდე: %s
 printQty=რაოდენობა: %d
 printPlannedWarehouse=საწყობი: %s
 AddDispatchBatchLine=დაამატეთ ხაზი შენახვის ვადის დისპეტჩერიზაციისთვის
-WhenProductBatchModuleOnOptionAreForced=When module Lot/Serial is on, automatic stock decrease  is forced to '%s' and automatic increase mode is forced to '%s'. Some choices may be not available. Other options can be defined as you want.
+WhenProductBatchModuleOnOptionAreForced=When module Lot/Serial is on, some modes for automatic stock decrease or increase may be not available. The other options have no restriction.
 ProductDoesNotUseBatchSerial=ეს პროდუქტი არ იყენებს ლოტის/სერიულ ნომერს
 ProductLotSetup=მოდულის ლოტის/სერიულის დაყენება
 ShowCurrentStockOfLot=მიმდინარე მარაგის ჩვენება წყვილი პროდუქტის/ლოტისთვის
@@ -50,3 +50,6 @@ ToReplace=ჩანაცვლება
 CantMoveNonExistantSerial=Error. You ask a move on a record for a serial that does not exists anymore. May be you take the same serial on same warehouse several times in same shipment or it was used by another shipment. Remove this shipment and prepare another one.
 TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=არასრული ლოტის ცხრილი გაუშვით შეკეთების პარამეტრი '...repair.php?standard=confirmed'
 IlligalQtyForSerialNumbers= საჭიროა მარაგის კორექტირება უნიკალური სერიული ნომრით.
+ErrorBatchesNeedStockManagement=Error. A product with batch/lot management must also be managed in stock.
+ForceBatchesNeedStockManagement=A product with batch/lot management must be managed in stock (stock management force to yes)
+BatchInformationNotfound=Batch information not found

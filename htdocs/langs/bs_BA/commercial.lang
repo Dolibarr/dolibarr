@@ -102,3 +102,4 @@ SignedReceiverOnline=Potpisano od strane treće strane online
 SignedAll=Potpisano od svih stranaka
 SignStatus=Status potpisa
 DocumentSigned=Dokument potpisan
+DocumentUnsigned=Document unsigned
