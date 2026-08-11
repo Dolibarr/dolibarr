@@ -167,7 +167,7 @@ class FormProduct
 			}
 		}
 		$sortfield = implode(',', $arraysortfield);
-		$sortorder_unsanitized = implode(',', $arraysortorder); // $db->order sanitizes
+		$sortorder_unsanitized = implode(',', $arraysortorder); // $db->order sanitizes  @phan-suppress-current-line SqlInjection
 		$sql .= $this->db->order($sortfield, $sortorder_unsanitized);
 
 		dol_syslog(get_class($this).'::loadWarehouses', LOG_DEBUG);
