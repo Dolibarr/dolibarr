@@ -526,5 +526,16 @@ function getExtrafieldsAdminMap()
 			'helpurl'      => '',
 			'langs'        => array('admin', 'other', 'orders'),
 		),
+		'resource' => array(
+			'headfunction' => 'resource_admin_prepare_head',
+			'headfile'     => 'core/lib/resource.lib.php',
+			'tabid'        => 'attributes',
+			'headlabel'    => 'ResourceSingular',
+			'textobject'   => 'ResourceSingular',
+			'headpicto'    => 'action',
+			'title'        => 'ResourceSetup',
+			'helpurl'      => '',
+			'langs'        => array('admin', 'other', 'resource'),
+		),
 	);
 }
