@@ -537,5 +537,16 @@ function getExtrafieldsAdminMap()
 			'helpurl'      => '',
 			'langs'        => array('admin', 'other', 'resource'),
 		),
+		'ticket' => array(
+			'headfunction' => 'ticketAdminPrepareHead',
+			'headfile'     => 'core/lib/ticket.lib.php',
+			'tabid'        => 'attributes',
+			'headlabel'    => 'Module56000Name',
+			'textobject'   => 'Ticket',
+			'headpicto'    => 'ticket',
+			'title'        => 'TicketSetup',
+			'helpurl'      => 'FR:Module_Ticket',
+			'langs'        => array('ticket', 'admin'),
+		),
 	);
 }
