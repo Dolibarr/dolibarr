@@ -22,7 +22,6 @@
  */
 
 use Luracast\Restler\RestException;
-use PhpParser\Node\Name;
 
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
