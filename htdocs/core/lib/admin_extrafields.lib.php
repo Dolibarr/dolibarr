@@ -603,5 +603,27 @@ function getExtrafieldsAdminMap()
 			'helpurl'      => '',
 			'langs'        => array('admin', 'categories'),
 		),
+		'propal' => array(
+			'headfunction' => 'propal_admin_prepare_head',
+			'headfile'     => 'core/lib/propal.lib.php',
+			'tabid'        => 'attributes',
+			'headlabel'    => 'Proposals',
+			'textobject'   => 'Proposals',
+			'headpicto'    => 'propal',
+			'title'        => 'PropalSetup',
+			'helpurl'      => '',
+			'langs'        => array('companies', 'admin', 'propal'),
+		),
+		'propaldet' => array(
+			'headfunction' => 'propal_admin_prepare_head',
+			'headfile'     => 'core/lib/propal.lib.php',
+			'tabid'        => 'attributeslines',
+			'headlabel'    => 'Proposals',
+			'textobject'   => 'Proposals',
+			'headpicto'    => 'propal',
+			'title'        => 'PropalSetup',
+			'helpurl'      => '',
+			'langs'        => array('admin', 'other', 'propal'),
+		),
 	);
 }
