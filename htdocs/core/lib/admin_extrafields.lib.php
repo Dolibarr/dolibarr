@@ -418,5 +418,16 @@ function getExtrafieldsAdminMap()
 			'helpurl'      => '',
 			'langs'        => array('eventorganization', 'admin'),
 		),
+		'expensereport' => array(
+			'headfunction' => 'expensereport_admin_prepare_head',
+			'headfile'     => 'core/lib/expensereport.lib.php',
+			'tabid'        => 'attributes',
+			'headlabel'    => 'ExpenseReports',
+			'textobject'   => 'ExpenseReports',
+			'headpicto'    => 'trip',
+			'title'        => 'ExpenseReportsSetup',
+			'helpurl'      => '',
+			'langs'        => array('admin', 'errors', 'trips', 'other'),
+		),
 	);
 }
