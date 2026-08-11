@@ -82,54 +82,61 @@ class modFournisseur extends DolibarrModules
 		$this->config_page_url = array("supplier_order.php");
 
 		// Constants
-		$this->const = array();
-		$r = 0;
-
-		$this->const[$r][0] = "COMMANDE_SUPPLIER_ADDON_PDF";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "cornas";
-		$this->const[$r][3] = 'Nom du gestionnaire de generation des bons de commande en PDF';
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "COMMANDE_SUPPLIER_ADDON_NUMBER";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "mod_commande_fournisseur_muguet";
-		$this->const[$r][3] = 'Nom du gestionnaire de numerotation des commandes fournisseur';
-		$this->const[$r][4] = 0;
-		$r++;
+		// 0:name
+		// 1:type
+		// 2:val
+		// 3:note
+		// 4:visible
+		// 5:entity
+		// 6:deleteonunactive
+		$this->const = [
+			[
+				"COMMANDE_SUPPLIER_ADDON_PDF",
+				"chaine",
+				"cornas",
+				'Nom du gestionnaire de generation des bons de commande en PDF',
+				0,
+			],
+			[
+				"COMMANDE_SUPPLIER_ADDON_NUMBER",
+				"chaine",
+				"mod_commande_fournisseur_muguet",
+				'Nom du gestionnaire de numerotation des commandes fournisseur',
+				0,
+			],
+			[
+				"INVOICE_SUPPLIER_ADDON_NUMBER",
+				"chaine",
+				"mod_facture_fournisseur_cactus",
+				'Nom du gestionnaire de numerotation des factures fournisseur',
+				0,
+			],
+			[
+				// Add ability ODT for Supplier orders
+				"SUPPLIER_ORDER_ADDON_PDF_ODT_PATH",
+				"chaine",
+				"DOL_DATA_ROOT" . ($conf->entity > 1 ? '/' . $conf->entity : '') . "/doctemplates/supplier_orders",
+				'',
+				0,
+			],
+			[
+				// Add ability ODT for Supplier Invoices
+				"SUPPLIER_INVOICE_ADDON_PDF_ODT_PATH",
+				"chaine",
+				"DOL_DATA_ROOT" . ($conf->entity > 1 ? '/' . $conf->entity : '') . "/doctemplates/supplier_invoices",
+				"",
+				0,
+			],
+		];
 
 		/* For supplier invoice, we must not have default pdf template on. In most cases, we need to join PDF from supplier, not have a document generated.
 		$this->const[$r][0] = "INVOICE_SUPPLIER_ADDON_PDF";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "canelle";
-		$this->const[$r][3] = 'Nom du gestionnaire de generation des factures fournisseur en PDF';
+		$this->const[$r][3] = 'Name of the generator for PDF supplier invoices';
 		$this->const[$r][4] = 0;
 		$r++;
 		*/
-
-		$this->const[$r][0] = "INVOICE_SUPPLIER_ADDON_NUMBER";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "mod_facture_fournisseur_cactus";
-		$this->const[$r][3] = 'Nom du gestionnaire de numerotation des factures fournisseur';
-		$this->const[$r][4] = 0;
-		$r++;
-
-		// Add ability ODT for Supplier orders
-		$this->const[$r][0] = "SUPPLIER_ORDER_ADDON_PDF_ODT_PATH";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/supplier_orders";
-		$this->const[$r][3] = '';
-		$this->const[$r][4] = 0;
-		$r++;
-
-		// Add ability ODT for Supplier Invoices
-		$this->const[$r][0] = "SUPPLIER_INVOICE_ADDON_PDF_ODT_PATH";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/supplier_invoices";
-		$this->const[$r][3] = "";
-		$this->const[$r][4] = 0;
-		$r++;
 
 		// Boxes
 		$this->boxes = array(
