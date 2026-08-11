@@ -151,6 +151,7 @@ class TtcRoundingTest extends CommonClassTest
 		$db = $this->savdb;
 
 		$conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND = 0;
+		$conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND_SUPPLIER = 0;
 	}
 
 	/**
@@ -249,6 +250,75 @@ class TtcRoundingTest extends CommonClassTest
 			$this->assertEquals(self::LINE_HT_HTMODE, (float) $line->total_ht, $tag." line $k total_ht (HT mode)");
 			$this->assertEquals(self::LINE_TTC_HTMODE, (float) $line->total_ttc, $tag." line $k total_ttc (HT mode)");
 		}
+	}
+
+	/**
+	 * Snapshot the priced lines (subprice, subprice_ttc and totals) for later stability comparison.
+	 * Used for the "rounding of total" mode where absolute totals are not deterministic, so we assert
+	 * a no-op / clone does not change the stored values rather than hardcoding them.
+	 *
+	 * @param	CommonObject	$object		Reloaded object (lines loaded)
+	 * @return	array<int,array<string,float>>
+	 */
+	private function snapshotPricedLines($object)
+	{
+		$snap = array();
+		foreach ($this->pricedLines($object) as $line) {
+			$snap[] = array(
+				'subprice' => (float) $line->subprice,
+				'subprice_ttc' => (float) ($line->subprice_ttc ?? 0),
+				'total_ht' => (float) $line->total_ht,
+				'total_tva' => (float) $line->total_tva,
+				'total_ttc' => (float) $line->total_ttc,
+			);
+		}
+		return $snap;
+	}
+
+	/**
+	 * Assert two priced-line snapshots are identical (no rounding drift on a no-op / clone).
+	 *
+	 * @param	array<int,array<string,float>>	$before	Snapshot before the operation
+	 * @param	array<int,array<string,float>>	$after	Snapshot after the operation
+	 * @param	string							$tag	Message prefix
+	 * @return	void
+	 */
+	private function assertLinesUnchanged($before, $after, $tag)
+	{
+		$this->assertCount(count($before), $after, $tag.' same number of priced lines');
+		foreach ($before as $k => $b) {
+			foreach (array('subprice', 'subprice_ttc', 'total_ht', 'total_tva', 'total_ttc') as $f) {
+				$this->assertEquals($b[$f], $after[$k][$f], $tag." line $k $f stable");
+			}
+		}
+	}
+
+	/**
+	 * Assert the mixed 4-line layout kept each entry mode: exactly 2 HT lines (subprice_ttc = 0, subprice =
+	 * PU_HT) and 2 TTC lines (subprice_ttc = PU_TTC), whatever the round-of-total totals are.
+	 *
+	 * @param	CommonObject	$object		Reloaded object (lines loaded)
+	 * @param	string			$tag		Message prefix
+	 * @return	void
+	 */
+	private function assertMixedSubpriceTtc($object, $tag)
+	{
+		$priced = $this->pricedLines($object);
+		$this->assertCount(4, $priced, $tag.' must have 4 priced lines');
+		$htCount = 0;
+		$ttcCount = 0;
+		foreach ($priced as $k => $line) {
+			$stt = (float) ($line->subprice_ttc ?? 0);
+			if ($stt == 0.0) {
+				$htCount++;
+				$this->assertEquals(self::PU_HT, (float) $line->subprice, $tag." line $k HT subprice (PU_HT kept)");
+			} else {
+				$ttcCount++;
+				$this->assertEquals(self::PU_TTC, $stt, $tag." line $k TTC subprice_ttc (PU_TTC kept)");
+			}
+		}
+		$this->assertEquals(2, $htCount, $tag.' must have 2 HT-entered lines');
+		$this->assertEquals(2, $ttcCount, $tag.' must have 2 TTC-entered lines');
 	}
 
 	/**
@@ -1354,6 +1424,417 @@ class TtcRoundingTest extends CommonClassTest
 			$clone->fetch_lines();
 		}
 		$this->assertBothHtLines($clone, 'Supplier invoice HT clone');
+		print __METHOD__." id=".$id." clone=".$clonedId."\n";
+	}
+
+	/**
+	 * Customer proposal - with MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND = 1 (rounding of total), a mixed order
+	 * (2 lines entered HT + 2 lines entered TTC, like customer proposal id=205) must survive create /
+	 * no-op / clone with no drift, and a discount keeps each entry mode.
+	 *
+	 * @return void
+	 */
+	public function testCustomerProposalRoundOfTotalStable()
+	{
+		global $conf,$user,$db;
+		$this->restoreGlobals();
+		if (!isModEnabled('propal')) {
+			$this->markTestSkipped('Module propal disabled');
+			return;
+		}
+		$conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND = 1;
+
+		$socid = self::$socid;
+		$pid = self::$productid;
+
+		$object = new Propal($db);
+		$object->initAsSpecimen();
+		$object->socid = $socid;
+		$object->ref = 'TTCROT'.substr(uniqid(), -8);
+		$object->lines = array();
+		$id = $object->create($user);
+		$this->assertGreaterThan(0, $id, 'Customer proposal ROT create');
+		$object->addline('Product HT', self::PU_HT, self::QTY, self::VAT, 0, 0, $pid, 0, 'HT', 0);
+		$object->addline('Free HT', self::PU_HT, self::QTY, self::VAT, 0, 0, 0, 0, 'HT', 0);
+		$object->addline('Product TTC', 0, self::QTY, self::VAT, 0, 0, $pid, 0, 'TTC', self::PU_TTC);
+		$object->addline('Free TTC', 0, self::QTY, self::VAT, 0, 0, 0, 0, 'TTC', self::PU_TTC);
+
+		$reloaded = new Propal($db);
+		$reloaded->fetch($id);
+		$reloaded->fetch_lines();
+		$this->assertMixedSubpriceTtc($reloaded, 'Customer proposal ROT create');
+		$s0 = $this->snapshotPricedLines($reloaded);
+
+		foreach ($this->pricedLines($reloaded) as $line) {
+			$ttc = $line->wasEnteredIncludingTax();
+			$pu = $ttc ? (float) $line->subprice_ttc : (float) $line->subprice;
+			$object->updateline($line->id, $pu, $line->qty, $line->remise_percent, $line->tva_tx, 0, 0, $line->desc, $ttc ? 'TTC' : 'HT');
+		}
+		$afterNoop = new Propal($db);
+		$afterNoop->fetch($id);
+		$afterNoop->fetch_lines();
+		$this->assertLinesUnchanged($s0, $this->snapshotPricedLines($afterNoop), 'Customer proposal ROT no-op');
+
+		$source = new Propal($db);
+		$source->fetch($id);
+		$clonedId = $source->createFromClone($user, $socid);
+		$this->assertGreaterThan(0, $clonedId, 'Customer proposal ROT clone');
+		$clone = new Propal($db);
+		$clone->fetch($clonedId);
+		$clone->fetch_lines();
+		$this->assertLinesUnchanged($s0, $this->snapshotPricedLines($clone), 'Customer proposal ROT clone');
+
+		foreach ($this->pricedLines($afterNoop) as $line) {
+			$ttc = $line->wasEnteredIncludingTax();
+			$pu = $ttc ? (float) $line->subprice_ttc : (float) $line->subprice;
+			$object->updateline($line->id, $pu, $line->qty, self::REMISE, $line->tva_tx, 0, 0, $line->desc, $ttc ? 'TTC' : 'HT');
+		}
+		$afterRemise = new Propal($db);
+		$afterRemise->fetch($id);
+		$afterRemise->fetch_lines();
+		$this->assertMixedSubpriceTtc($afterRemise, 'Customer proposal ROT discount');
+		print __METHOD__." id=".$id." clone=".$clonedId."\n";
+	}
+
+	/**
+	 * Customer order - mixed HT/TTC order, MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND = 1.
+	 *
+	 * @return void
+	 */
+	public function testCustomerOrderRoundOfTotalStable()
+	{
+		global $conf,$user,$db;
+		$this->restoreGlobals();
+		if (!isModEnabled('order')) {
+			$this->markTestSkipped('Module order disabled');
+			return;
+		}
+		$conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND = 1;
+
+		$socid = self::$socid;
+		$pid = self::$productid;
+
+		$object = new Commande($db);
+		$object->initAsSpecimen();
+		$object->socid = $socid;
+		$object->ref = 'TTCROT'.substr(uniqid(), -8);
+		$object->lines = array();
+		$id = $object->create($user);
+		$this->assertGreaterThan(0, $id, 'Customer order ROT create');
+		$object->addline('Product HT', self::PU_HT, self::QTY, self::VAT, 0, 0, $pid, 0, 0, 0, 'HT', 0);
+		$object->addline('Free HT', self::PU_HT, self::QTY, self::VAT, 0, 0, 0, 0, 0, 0, 'HT', 0);
+		$object->addline('Product TTC', 0, self::QTY, self::VAT, 0, 0, $pid, 0, 0, 0, 'TTC', self::PU_TTC);
+		$object->addline('Free TTC', 0, self::QTY, self::VAT, 0, 0, 0, 0, 0, 0, 'TTC', self::PU_TTC);
+
+		$reloaded = new Commande($db);
+		$reloaded->fetch($id);
+		$reloaded->fetch_lines();
+		$this->assertMixedSubpriceTtc($reloaded, 'Customer order ROT create');
+		$s0 = $this->snapshotPricedLines($reloaded);
+
+		foreach ($this->pricedLines($reloaded) as $line) {
+			$ttc = $line->wasEnteredIncludingTax();
+			$pu = $ttc ? (float) $line->subprice_ttc : (float) $line->subprice;
+			$object->updateline($line->id, $line->desc, $pu, $line->qty, $line->remise_percent, $line->tva_tx, 0, 0, $ttc ? 'TTC' : 'HT');
+		}
+		$afterNoop = new Commande($db);
+		$afterNoop->fetch($id);
+		$afterNoop->fetch_lines();
+		$this->assertLinesUnchanged($s0, $this->snapshotPricedLines($afterNoop), 'Customer order ROT no-op');
+
+		$source = new Commande($db);
+		$source->fetch($id);
+		$clonedId = $source->createFromClone($user, $socid);
+		$this->assertGreaterThan(0, $clonedId, 'Customer order ROT clone');
+		$clone = new Commande($db);
+		$clone->fetch($clonedId);
+		$clone->fetch_lines();
+		$this->assertLinesUnchanged($s0, $this->snapshotPricedLines($clone), 'Customer order ROT clone');
+
+		foreach ($this->pricedLines($afterNoop) as $line) {
+			$ttc = $line->wasEnteredIncludingTax();
+			$pu = $ttc ? (float) $line->subprice_ttc : (float) $line->subprice;
+			$object->updateline($line->id, $line->desc, $pu, $line->qty, self::REMISE, $line->tva_tx, 0, 0, $ttc ? 'TTC' : 'HT');
+		}
+		$afterRemise = new Commande($db);
+		$afterRemise->fetch($id);
+		$afterRemise->fetch_lines();
+		$this->assertMixedSubpriceTtc($afterRemise, 'Customer order ROT discount');
+		print __METHOD__." id=".$id." clone=".$clonedId."\n";
+	}
+
+	/**
+	 * Customer invoice - mixed HT/TTC order, MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND = 1.
+	 *
+	 * @return void
+	 */
+	public function testCustomerInvoiceRoundOfTotalStable()
+	{
+		global $conf,$user,$db;
+		$this->restoreGlobals();
+		if (!isModEnabled('invoice')) {
+			$this->markTestSkipped('Module invoice disabled');
+			return;
+		}
+		$conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND = 1;
+
+		$socid = self::$socid;
+		$pid = self::$productid;
+
+		$object = new Facture($db);
+		$object->initAsSpecimen();
+		$object->socid = $socid;
+		$object->ref = 'TTCROT'.substr(uniqid(), -8);
+		$object->lines = array();
+		$id = $object->create($user);
+		$this->assertGreaterThan(0, $id, 'Customer invoice ROT create');
+		$object->addline('Product HT', self::PU_HT, self::QTY, self::VAT, 0, 0, $pid, 0, '', '', 0, 0, 0, 'HT', 0);
+		$object->addline('Free HT', self::PU_HT, self::QTY, self::VAT, 0, 0, 0, 0, '', '', 0, 0, 0, 'HT', 0);
+		$object->addline('Product TTC', 0, self::QTY, self::VAT, 0, 0, $pid, 0, '', '', 0, 0, 0, 'TTC', self::PU_TTC);
+		$object->addline('Free TTC', 0, self::QTY, self::VAT, 0, 0, 0, 0, '', '', 0, 0, 0, 'TTC', self::PU_TTC);
+
+		$reloaded = new Facture($db);
+		$reloaded->fetch($id);
+		$reloaded->fetch_lines();
+		$this->assertMixedSubpriceTtc($reloaded, 'Customer invoice ROT create');
+		$s0 = $this->snapshotPricedLines($reloaded);
+
+		foreach ($this->pricedLines($reloaded) as $line) {
+			$ttc = $line->wasEnteredIncludingTax();
+			$pu = $ttc ? (float) $line->subprice_ttc : (float) $line->subprice;
+			$object->updateline($line->id, $line->desc, $pu, $line->qty, $line->remise_percent, $line->date_start, $line->date_end, $line->tva_tx, 0, 0, $ttc ? 'TTC' : 'HT');
+		}
+		$afterNoop = new Facture($db);
+		$afterNoop->fetch($id);
+		$afterNoop->fetch_lines();
+		$this->assertLinesUnchanged($s0, $this->snapshotPricedLines($afterNoop), 'Customer invoice ROT no-op');
+
+		$source = new Facture($db);
+		$source->fetch($id);
+		$clonedId = $source->createFromClone($user, $id);
+		$this->assertGreaterThan(0, $clonedId, 'Customer invoice ROT clone');
+		$clone = new Facture($db);
+		$clone->fetch($clonedId);
+		$clone->fetch_lines();
+		$this->assertLinesUnchanged($s0, $this->snapshotPricedLines($clone), 'Customer invoice ROT clone');
+
+		foreach ($this->pricedLines($afterNoop) as $line) {
+			$ttc = $line->wasEnteredIncludingTax();
+			$pu = $ttc ? (float) $line->subprice_ttc : (float) $line->subprice;
+			$object->updateline($line->id, $line->desc, $pu, $line->qty, self::REMISE, $line->date_start, $line->date_end, $line->tva_tx, 0, 0, $ttc ? 'TTC' : 'HT');
+		}
+		$afterRemise = new Facture($db);
+		$afterRemise->fetch($id);
+		$afterRemise->fetch_lines();
+		$this->assertMixedSubpriceTtc($afterRemise, 'Customer invoice ROT discount');
+		print __METHOD__." id=".$id." clone=".$clonedId."\n";
+	}
+
+	/**
+	 * Supplier proposal - mixed HT/TTC order, MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND_SUPPLIER = 1.
+	 *
+	 * @return void
+	 */
+	public function testSupplierProposalRoundOfTotalStable()
+	{
+		global $conf,$user,$db;
+		$this->restoreGlobals();
+		if (!isModEnabled('supplier_proposal')) {
+			$this->markTestSkipped('Module supplier_proposal disabled');
+			return;
+		}
+		$conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND_SUPPLIER = 1;
+
+		$socid = self::$socid;
+		$pid = self::$productid;
+
+		$object = new SupplierProposal($db);
+		$object->initAsSpecimen();
+		$object->socid = $socid;
+		$object->ref = 'TTCROT'.substr(uniqid(), -8);
+		$object->lines = array();
+		$id = $object->create($user);
+		$this->assertGreaterThan(0, $id, 'Supplier proposal ROT create');
+		$object->addline('Product HT', self::PU_HT, self::QTY, self::VAT, 0, 0, $pid, 0, 'HT', 0);
+		$object->addline('Free HT', self::PU_HT, self::QTY, self::VAT, 0, 0, 0, 0, 'HT', 0);
+		$object->addline('Product TTC', 0, self::QTY, self::VAT, 0, 0, $pid, 0, 'TTC', self::PU_TTC);
+		$object->addline('Free TTC', 0, self::QTY, self::VAT, 0, 0, 0, 0, 'TTC', self::PU_TTC);
+
+		$reloaded = new SupplierProposal($db);
+		$reloaded->fetch($id);
+		if (method_exists($reloaded, 'fetch_lines')) {
+			$reloaded->fetch_lines();
+		}
+		$this->assertMixedSubpriceTtc($reloaded, 'Supplier proposal ROT create');
+		$s0 = $this->snapshotPricedLines($reloaded);
+
+		foreach ($this->pricedLines($reloaded) as $line) {
+			$ttc = $line->wasEnteredIncludingTax();
+			$pu = $ttc ? (float) $line->subprice_ttc : (float) $line->subprice;
+			$object->updateline($line->id, $pu, $line->qty, $line->remise_percent, $line->tva_tx, 0, 0, $line->desc, $ttc ? 'TTC' : 'HT');
+		}
+		$afterNoop = new SupplierProposal($db);
+		$afterNoop->fetch($id);
+		if (method_exists($afterNoop, 'fetch_lines')) {
+			$afterNoop->fetch_lines();
+		}
+		$this->assertLinesUnchanged($s0, $this->snapshotPricedLines($afterNoop), 'Supplier proposal ROT no-op');
+
+		$source = new SupplierProposal($db);
+		$source->fetch($id);
+		$clonedId = $source->createFromClone($user, $socid);
+		$this->assertGreaterThan(0, $clonedId, 'Supplier proposal ROT clone');
+		$clone = new SupplierProposal($db);
+		$clone->fetch($clonedId);
+		if (method_exists($clone, 'fetch_lines')) {
+			$clone->fetch_lines();
+		}
+		$this->assertLinesUnchanged($s0, $this->snapshotPricedLines($clone), 'Supplier proposal ROT clone');
+
+		foreach ($this->pricedLines($afterNoop) as $line) {
+			$ttc = $line->wasEnteredIncludingTax();
+			$pu = $ttc ? (float) $line->subprice_ttc : (float) $line->subprice;
+			$object->updateline($line->id, $pu, $line->qty, self::REMISE, $line->tva_tx, 0, 0, $line->desc, $ttc ? 'TTC' : 'HT');
+		}
+		$afterRemise = new SupplierProposal($db);
+		$afterRemise->fetch($id);
+		if (method_exists($afterRemise, 'fetch_lines')) {
+			$afterRemise->fetch_lines();
+		}
+		$this->assertMixedSubpriceTtc($afterRemise, 'Supplier proposal ROT discount');
+		print __METHOD__." id=".$id." clone=".$clonedId."\n";
+	}
+
+	/**
+	 * Supplier order - mixed HT/TTC order, MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND_SUPPLIER = 1.
+	 *
+	 * @return void
+	 */
+	public function testSupplierOrderRoundOfTotalStable()
+	{
+		global $conf,$user,$db;
+		$this->restoreGlobals();
+		if (!isModEnabled('fournisseur') && !isModEnabled('supplier_order')) {
+			$this->markTestSkipped('Module supplier order disabled');
+			return;
+		}
+		$conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND_SUPPLIER = 1;
+
+		$socid = self::$socid;
+		$pid = self::$productid;
+
+		$object = new CommandeFournisseur($db);
+		$object->initAsSpecimen();
+		$object->socid = $socid;
+		$object->ref = 'TTCROT'.substr(uniqid(), -8);
+		$object->lines = array();
+		$id = $object->create($user);
+		$this->assertGreaterThan(0, $id, 'Supplier order ROT create');
+		$object->addline('Product HT', self::PU_HT, self::QTY, self::VAT, 0, 0, $pid, 0, '', 0, 'HT', 0);
+		$object->addline('Free HT', self::PU_HT, self::QTY, self::VAT, 0, 0, 0, 0, '', 0, 'HT', 0);
+		$object->addline('Product TTC', 0, self::QTY, self::VAT, 0, 0, $pid, 0, '', 0, 'TTC', self::PU_TTC);
+		$object->addline('Free TTC', 0, self::QTY, self::VAT, 0, 0, 0, 0, '', 0, 'TTC', self::PU_TTC);
+
+		$reloaded = new CommandeFournisseur($db);
+		$reloaded->fetch($id);
+		$reloaded->fetch_lines();
+		$this->assertMixedSubpriceTtc($reloaded, 'Supplier order ROT create');
+		$s0 = $this->snapshotPricedLines($reloaded);
+
+		foreach ($this->pricedLines($reloaded) as $line) {
+			$ttc = $line->wasEnteredIncludingTax();
+			$pu = $ttc ? (float) $line->subprice_ttc : (float) $line->subprice;
+			$object->updateline($line->id, $line->desc, $pu, $line->qty, $line->remise_percent, $line->tva_tx, 0, 0, $ttc ? 'TTC' : 'HT');
+		}
+		$afterNoop = new CommandeFournisseur($db);
+		$afterNoop->fetch($id);
+		$afterNoop->fetch_lines();
+		$this->assertLinesUnchanged($s0, $this->snapshotPricedLines($afterNoop), 'Supplier order ROT no-op');
+
+		$source = new CommandeFournisseur($db);
+		$source->fetch($id);
+		$clonedId = $source->createFromClone($user, $socid);
+		$this->assertGreaterThan(0, $clonedId, 'Supplier order ROT clone');
+		$clone = new CommandeFournisseur($db);
+		$clone->fetch($clonedId);
+		$clone->fetch_lines();
+		$this->assertLinesUnchanged($s0, $this->snapshotPricedLines($clone), 'Supplier order ROT clone');
+
+		foreach ($this->pricedLines($afterNoop) as $line) {
+			$ttc = $line->wasEnteredIncludingTax();
+			$pu = $ttc ? (float) $line->subprice_ttc : (float) $line->subprice;
+			$object->updateline($line->id, $line->desc, $pu, $line->qty, self::REMISE, $line->tva_tx, 0, 0, $ttc ? 'TTC' : 'HT');
+		}
+		$afterRemise = new CommandeFournisseur($db);
+		$afterRemise->fetch($id);
+		$afterRemise->fetch_lines();
+		$this->assertMixedSubpriceTtc($afterRemise, 'Supplier order ROT discount');
+		print __METHOD__." id=".$id." clone=".$clonedId."\n";
+	}
+
+	/**
+	 * Supplier invoice - mixed HT/TTC order, MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND_SUPPLIER = 1.
+	 *
+	 * @return void
+	 */
+	public function testSupplierInvoiceRoundOfTotalStable()
+	{
+		global $conf,$user,$db;
+		$this->restoreGlobals();
+		if (!isModEnabled('fournisseur') && !isModEnabled('supplier_invoice')) {
+			$this->markTestSkipped('Module supplier invoice disabled');
+			return;
+		}
+		$conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND_SUPPLIER = 1;
+
+		$socid = self::$socid;
+		$pid = self::$productid;
+
+		$object = new FactureFournisseur($db);
+		$object->initAsSpecimen();
+		$object->socid = $socid;
+		$object->ref_supplier = 'TTCROT'.substr(uniqid(), -8);
+		$object->lines = array();
+		$id = $object->create($user);
+		$this->assertGreaterThan(0, $id, 'Supplier invoice ROT create');
+		$object->addline('Product HT', self::PU_HT, self::VAT, 0, 0, self::QTY, $pid, 0, 0, 0, 0, 0, 'HT');
+		$object->addline('Free HT', self::PU_HT, self::VAT, 0, 0, self::QTY, 0, 0, 0, 0, 0, 0, 'HT');
+		$object->addline('Product TTC', self::PU_TTC, self::VAT, 0, 0, self::QTY, $pid, 0, 0, 0, 0, 0, 'TTC');
+		$object->addline('Free TTC', self::PU_TTC, self::VAT, 0, 0, self::QTY, 0, 0, 0, 0, 0, 0, 'TTC');
+
+		$reloaded = new FactureFournisseur($db);
+		$reloaded->fetch($id);
+		$reloaded->fetch_lines();
+		$this->assertMixedSubpriceTtc($reloaded, 'Supplier invoice ROT create');
+		$s0 = $this->snapshotPricedLines($reloaded);
+
+		foreach ($this->pricedLines($reloaded) as $line) {
+			$ttc = $line->wasEnteredIncludingTax();
+			$pu = $ttc ? (float) $line->subprice_ttc : (float) $line->subprice;
+			$object->updateline($line->id, $line->desc, $pu, $line->tva_tx, 0, 0, $line->qty, 0, $ttc ? 'TTC' : 'HT', 0, 0, $line->remise_percent);
+		}
+		$afterNoop = new FactureFournisseur($db);
+		$afterNoop->fetch($id);
+		$afterNoop->fetch_lines();
+		$this->assertLinesUnchanged($s0, $this->snapshotPricedLines($afterNoop), 'Supplier invoice ROT no-op');
+
+		$cloner = new FactureFournisseur($db);
+		$clonedId = $cloner->createFromClone($user, $id);
+		$this->assertGreaterThan(0, $clonedId, 'Supplier invoice ROT clone');
+		$clone = new FactureFournisseur($db);
+		$clone->fetch($clonedId);
+		$clone->fetch_lines();
+		$this->assertLinesUnchanged($s0, $this->snapshotPricedLines($clone), 'Supplier invoice ROT clone');
+
+		foreach ($this->pricedLines($afterNoop) as $line) {
+			$ttc = $line->wasEnteredIncludingTax();
+			$pu = $ttc ? (float) $line->subprice_ttc : (float) $line->subprice;
+			$object->updateline($line->id, $line->desc, $pu, $line->tva_tx, 0, 0, $line->qty, 0, $ttc ? 'TTC' : 'HT', 0, 0, self::REMISE);
+		}
+		$afterRemise = new FactureFournisseur($db);
+		$afterRemise->fetch($id);
+		$afterRemise->fetch_lines();
+		$this->assertMixedSubpriceTtc($afterRemise, 'Supplier invoice ROT discount');
 		print __METHOD__." id=".$id." clone=".$clonedId."\n";
 	}
 }
