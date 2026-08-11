@@ -734,5 +734,27 @@ function getExtrafieldsAdminMap()
 			'helpurl'      => '',
 			'langs'        => array('companies', 'admin', 'donations'),
 		),
+		'fichinter' => array(
+			'headfunction' => 'fichinter_admin_prepare_head',
+			'headfile'     => 'core/lib/fichinter.lib.php',
+			'tabid'        => 'attributes',
+			'headlabel'    => 'Interventions',
+			'textobject'   => 'Interventions',
+			'headpicto'    => 'intervention',
+			'title'        => 'InterventionsSetup',
+			'helpurl'      => '',
+			'langs'        => array('companies', 'admin', 'members', 'interventions'),
+		),
+		'fichinterdet' => array(
+			'headfunction' => 'fichinter_admin_prepare_head',
+			'headfile'     => 'core/lib/fichinter.lib.php',
+			'tabid'        => 'attributesdet',
+			'headlabel'    => 'Interventions',
+			'textobject'   => 'Interventions',
+			'headpicto'    => 'intervention',
+			'title'        => 'InterventionsSetup',
+			'helpurl'      => '',
+			'langs'        => array('companies', 'admin', 'members', 'interventions'),
+		),
 	);
 }
