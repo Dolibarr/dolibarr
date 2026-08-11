@@ -71,5 +71,102 @@ function getExtrafieldsAdminMap()
 			'helpurl'      => 'EN:Module Third Parties setup|FR:Paramétrage_du_module_Tiers',
 			'langs'        => array('companies', 'admin'),
 		),
+		'product' => array(
+			'headfunction' => 'product_admin_prepare_head',
+			'headfile'     => 'core/lib/product.lib.php',
+			'tabid'        => 'attributes',
+			'headlabel'    => 'ProductsAndServices',
+			'headpicto'    => 'product',
+			'title'        => function () {
+				global $langs;
+				$title = $langs->trans('ProductServiceSetup');
+				if (!isModEnabled("product")) {
+					$title = $langs->trans('ServiceSetup');
+				} elseif (!isModEnabled("service")) {
+					$title = $langs->trans('ProductSetup');
+				}
+				return $title;
+			},
+			'helpurl'      => '',
+			'langs'        => array('companies', 'admin', 'products'),
+		),
+		'product_lang' => array(
+			'headfunction' => 'product_admin_prepare_head',
+			'headfile'     => 'core/lib/product.lib.php',
+			'tabid'        => 'translationAttributes',
+			'headlabel'    => 'ProductLangExtrafieldsSetup',
+			'textobject'   => 'Product',
+			'headpicto'    => 'product',
+			'title'        => 'ProductLangExtrafieldsSetup',
+			'helpurl'      => '',
+			'langs'        => array('admin', 'products'),
+		),
+		'product_price' => array(
+			'headfunction' => 'product_admin_prepare_head',
+			'headfile'     => 'core/lib/product.lib.php',
+			'tabid'        => 'levelAttributes',
+			'headlabel'    => 'ProductsAndServices',
+			'headpicto'    => 'product',
+			'title'        => function () {
+				global $langs;
+				$title = $langs->trans('ProductServiceSetup');
+				if (!isModEnabled("product")) {
+					$title = $langs->trans('ServiceSetup');
+				} elseif (!isModEnabled("service")) {
+					$title = $langs->trans('ProductSetup');
+				}
+				return $title;
+			},
+			'helpurl'      => '',
+			'langs'        => array('companies', 'admin', 'products'),
+		),
+		'product_customer_price' => array(
+			'headfunction' => 'product_admin_prepare_head',
+			'headfile'     => 'core/lib/product.lib.php',
+			'tabid'        => 'customerAttributes',
+			'headlabel'    => 'ProductsAndServices',
+			'headpicto'    => 'product',
+			'title'        => function () {
+				global $langs;
+				$title = $langs->trans('ProductServiceSetup');
+				if (!isModEnabled("product")) {
+					$title = $langs->trans('ServiceSetup');
+				} elseif (!isModEnabled("service")) {
+					$title = $langs->trans('ProductSetup');
+				}
+				return $title;
+			},
+			'helpurl'      => '',
+			'langs'        => array('companies', 'admin', 'products'),
+		),
+		'product_fournisseur_price' => array(
+			'headfunction' => 'product_admin_prepare_head',
+			'headfile'     => 'core/lib/product.lib.php',
+			'tabid'        => 'supplierAttributes',
+			'headlabel'    => 'ProductsAndServices',
+			'headpicto'    => 'product',
+			'title'        => function () {
+				global $langs;
+				$title = $langs->trans('ProductServiceSetup');
+				if (!isModEnabled("product")) {
+					$title = $langs->trans('ServiceSetup');
+				} elseif (!isModEnabled("service")) {
+					$title = $langs->trans('ProductSetup');
+				}
+				return $title;
+			},
+			'helpurl'      => '',
+			'langs'        => array('companies', 'admin', 'products'),
+		),
+		'product_lot' => array(
+			'headfunction' => 'product_lot_admin_prepare_head',
+			'headfile'     => 'core/lib/product.lib.php',
+			'tabid'        => 'attributes',
+			'headlabel'    => 'Batch',
+			'headpicto'    => 'lot',
+			'title'        => 'ProductLotSetup',
+			'helpurl'      => '',
+			'langs'        => array('companies', 'admin', 'products', 'productbatch'),
+		),
 	);
 }
