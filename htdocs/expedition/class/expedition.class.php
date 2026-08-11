@@ -11,7 +11,7 @@
  * Copyright (C) 2015       Claudio Aschieri        <c.aschieri@19.coop>
  * Copyright (C) 2016-2024	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2018       Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020       Lenin Rivas         	<lenin@leninrivas.com>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
@@ -2784,11 +2784,14 @@ class Expedition extends CommonObject
 	 *
 	 *	@param      User			$user        		Object user that modify
 	 *	@param      integer 		$delivery_date     Date of delivery
+	 *	@param      int<0,1>		$notrigger			Disable the trigger
 	 *	@return     int         						Return integer <0 if KO, >0 if OK
 	 */
-	public function setDeliveryDate($user, $delivery_date)
+	public function setDeliveryDate($user, $delivery_date, $notrigger = 0)
 	{
 		if ($user->hasRight('expedition', 'creer')) {
+			$this->db->begin();
+
 			$sql = "UPDATE ".MAIN_DB_PREFIX."expedition";
 			$sql .= " SET date_delivery = ".($delivery_date ? "'".$this->db->idate($delivery_date)."'" : 'null');
 			$sql .= " WHERE rowid = ".((int) $this->id);
@@ -2797,9 +2800,22 @@ class Expedition extends CommonObject
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$this->date_delivery = $delivery_date;
+
+				if (!$notrigger) {
+					// Call trigger
+					$result = $this->call_trigger('SHIPPING_MODIFY', $user);
+					if ($result < 0) {
+						$this->db->rollback();
+						return -1;
+					}
+					// End call triggers
+				}
+
+				$this->db->commit();
 				return 1;
 			} else {
 				$this->error = $this->db->error();
+				$this->db->rollback();
 				return -1;
 			}
 		} else {
@@ -2812,11 +2828,14 @@ class Expedition extends CommonObject
 	 *
 	 *	@param      User			$user        		Object user that modify
 	 *	@param      integer 		$shipping_date		Date of shipping
+	 *	@param      int<0,1>		$notrigger			Disable the trigger
 	 *	@return     int         						Return integer <0 if KO, >0 if OK
 	 */
-	public function setShippingDate($user, $shipping_date)
+	public function setShippingDate($user, $shipping_date, $notrigger = 0)
 	{
 		if ($user->hasRight('expedition', 'creer')) {
+			$this->db->begin();
+
 			$sql = "UPDATE ".MAIN_DB_PREFIX."expedition";
 			$sql .= " SET date_expedition = ".($shipping_date ? "'".$this->db->idate($shipping_date)."'" : 'null');
 			$sql .= " WHERE rowid = ".((int) $this->id);
@@ -2825,9 +2844,22 @@ class Expedition extends CommonObject
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$this->date_shipping = $shipping_date;
+
+				if (!$notrigger) {
+					// Call trigger
+					$result = $this->call_trigger('SHIPPING_MODIFY', $user);
+					if ($result < 0) {
+						$this->db->rollback();
+						return -1;
+					}
+					// End call triggers
+				}
+
+				$this->db->commit();
 				return 1;
 			} else {
 				$this->error = $this->db->error();
+				$this->db->rollback();
 				return -1;
 			}
 		} else {
