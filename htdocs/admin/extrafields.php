@@ -49,6 +49,16 @@ if ($elementtype === '' || !array_key_exists($elementtype, $extrafieldsadminmap)
 }
 $pagedef = $extrafieldsadminmap[$elementtype];
 
+// A registry entry may present a different, developer-authored real elementtype than its
+// own map key (e.g. two entries with two different tab-bar presentations both operating on
+// the same underlying table). The whitelist check above already gated on the untrusted
+// $elementtype from GETPOST(); this override can only ever come from a hardcoded registry
+// value, never from user input, so it cannot be used to smuggle an unvalidated elementtype
+// into core/actions_extrafields.inc.php / the ExtraFields class below.
+if (isset($pagedef['elementtype'])) {
+	$elementtype = $pagedef['elementtype'];
+}
+
 $langs->loadLangs($pagedef['langs']);
 
 $extrafields = new ExtraFields($db);

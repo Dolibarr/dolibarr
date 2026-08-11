@@ -79,8 +79,12 @@ function extrafieldsAdminProductServiceLabel($keyBoth, $keyServiceOnly, $keyProd
  * $textobject at all. Like `title`, `headlabel`/`textobject` callables are called
  * with no arguments and their return value is used as-is (already translated) —
  * they are NOT passed through $langs->trans()/transnoentitiesnoconv() again.
+ * `elementtype` is optional and, when present, overrides the real object-type string passed
+ * to core/actions_extrafields.inc.php and the ExtraFields class — the array KEY is still what
+ * GETPOST('elementtype') must match against the whitelist, letting two map keys (two distinct
+ * tab-bar presentations) legitimately operate on the same underlying table.
  *
- * @return array<string,array{headfunction:string,headfile:string,tabid:string,headlabel:string|callable,headpicto:string,title:string|callable,helpurl:string,langs:string[],textobject?:string|callable}>
+ * @return array<string,array{headfunction:string,headfile:string,tabid:string,headlabel:string|callable,headpicto:string,title:string|callable,helpurl:string,langs:string[],textobject?:string|callable,elementtype?:string}>
  */
 function getExtrafieldsAdminMap()
 {
@@ -417,6 +421,18 @@ function getExtrafieldsAdminMap()
 			'title'        => 'EventOrganizationSetup',
 			'helpurl'      => '',
 			'langs'        => array('eventorganization', 'admin'),
+		),
+		'agenda' => array(
+			'headfunction' => 'agenda_prepare_head',
+			'headfile'     => 'core/lib/agenda.lib.php',
+			'tabid'        => 'attributes',
+			'headlabel'    => 'Agenda',
+			'textobject'   => 'Agenda',
+			'headpicto'    => 'action',
+			'title'        => 'AgendaSetup',
+			'helpurl'      => 'EN:Module_Agenda_En|FR:Module_Agenda|ES:Módulo_Agenda|DE:Modul_Terminplanung',
+			'langs'        => array('admin', 'other', 'agenda'),
+			'elementtype'  => 'actioncomm',
 		),
 		'expensereport' => array(
 			'headfunction' => 'expensereport_admin_prepare_head',
