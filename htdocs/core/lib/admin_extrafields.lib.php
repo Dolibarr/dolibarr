@@ -999,9 +999,9 @@ function getExtrafieldsAdminMap()
 		$hookaction = '';
 		$reshook = $hookmanager->executeHooks('getExtrafieldsAdminMap', $parameters, $tmpobject, $hookaction);
 		if ($reshook >= 0 && !empty($hookmanager->resArray['extrafieldsadminmap']) && is_array($hookmanager->resArray['extrafieldsadminmap'])) {
-			// '+' (array union), not array_merge(): keeps the core (left-hand) entry on key
+			// '+=' (array union), not array_merge(): keeps the core (left-hand) entry on key
 			// collision instead of letting a hook silently redefine an existing core page.
-			$extrafieldsadminmap = $extrafieldsadminmap + $hookmanager->resArray['extrafieldsadminmap'];
+			$extrafieldsadminmap += $hookmanager->resArray['extrafieldsadminmap'];
 		}
 	}
 
