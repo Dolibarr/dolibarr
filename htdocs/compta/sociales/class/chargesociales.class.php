@@ -418,7 +418,6 @@ class ChargeSociales extends CommonObject
 		if ($this->type > 0) {
 			$sql .= ", fk_type = ".((int) $this->type);
 		}
-		$sql .= ", fk_user_modif=".((int) $user->id);
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
