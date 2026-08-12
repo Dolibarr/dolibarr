@@ -84,11 +84,22 @@ function extrafieldsAdminProductServiceLabel($keyBoth, $keyServiceOnly, $keyProd
  * GETPOST('elementtype') must match against the whitelist, letting two map keys (two distinct
  * tab-bar presentations) legitimately operate on the same underlying table.
  *
+ * A module (core or custom/) can contribute additional entries via the 'getExtrafieldsAdminMap'
+ * hook instead of editing this file — see the bottom of this function. A hook-contributed entry
+ * can only ADD a new key: if it reuses a key already defined below, the core definition silently
+ * wins. Whichever entry a request ultimately resolves to, hook-contributed or not, it is always
+ * developer-authored PHP from an installed, enabled module — never derived from request input —
+ * so this stays a closed whitelist in the sense that matters: only entries a module explicitly
+ * chose to declare, never an attacker-supplied string, can ever reach ExtraFields::addExtraField()
+ * /update()/delete() or the raw SQL in core/actions_extrafields.inc.php.
+ *
  * @return array<string,array{headfunction:string,headfile:string,tabid:string,headlabel:string|callable,headpicto:string,title:string|callable,helpurl:string,langs:string[],textobject?:string|callable,elementtype?:string}>
  */
 function getExtrafieldsAdminMap()
 {
-	return array(
+	global $hookmanager;
+
+	$extrafieldsadminmap = array(
 		'societe' => array(
 			'headfunction' => 'societe_admin_prepare_head',
 			'headfile'     => 'core/lib/company.lib.php',
@@ -979,4 +990,19 @@ function getExtrafieldsAdminMap()
 			'langs'        => array('quickmemo', 'admin'),
 		),
 	);
+
+	// Let hooked modules contribute additional elementtype entries without editing this file.
+	// See the docblock above for the required entry shape and the core-wins collision rule.
+	if ($hookmanager instanceof HookManager) {
+		$parameters = array('extrafieldsadminmap' => $extrafieldsadminmap);
+		$tmpobject = new stdClass();
+		$reshook = $hookmanager->executeHooks('getExtrafieldsAdminMap', $parameters, $tmpobject, '');
+		if ($reshook >= 0 && !empty($hookmanager->resArray['extrafieldsadminmap']) && is_array($hookmanager->resArray['extrafieldsadminmap'])) {
+			// '+' (array union), not array_merge(): keeps the core (left-hand) entry on key
+			// collision instead of letting a hook silently redefine an existing core page.
+			$extrafieldsadminmap = $extrafieldsadminmap + $hookmanager->resArray['extrafieldsadminmap'];
+		}
+	}
+
+	return $extrafieldsadminmap;
 }
