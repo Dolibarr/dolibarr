@@ -187,6 +187,12 @@ function getMultidirOutput($object, $module = '', $forobject = 0, $mode = 'outpu
 			$module = 'knowledgemanagement';
 			$subdirectory = '/knowledgerecord';
 			break;
+		case 'partnership':
+			$subdirectory = '/partnership';
+			break;
+		case 'stocktransfer':
+			$subdirectory = '/stocktransfer';
+			break;
 		case 'commande_fournisseur':
 			$module = 'fournisseur';
 			$subdirectory = '/commande';
@@ -207,10 +213,20 @@ function getMultidirOutput($object, $module = '', $forobject = 0, $mode = 'outpu
 		case 'project_task':
 			$module = 'projet';
 
-			// Fetch the project to build the correct path
-			$object->fetchProject();
+			// Fetch the project to build the correct path. The signature of this function accepts an object
+			// that is not a CommonObject, and even a null when a module is given, so we must not call a method
+			// that only a CommonObject owns without testing it exists.
+			if (is_object($object) && method_exists($object, 'fetchProject')) {
+				$object->fetchProject();
+			}
 
-			$subdirectory = '/'.$object->project->ref;
+			// The ref must be sanitized with dol_sanitizeFileName() and not only with dol_sanitizePathName()
+			// done at the end of this function, because a project ref is a user input that may contain a '/',
+			// a ':' or an accented char. dol_sanitizePathName() keeps them, so we would not return the
+			// directory used by projet/tasks/document.php, that sanitizes the ref with dol_sanitizeFileName().
+			if (!empty($object->project->ref)) {
+				$subdirectory = '/'.dol_sanitizeFileName($object->project->ref);
+			}
 			break;
 		case 'action':
 		case 'actioncomm':
@@ -226,7 +242,23 @@ function getMultidirOutput($object, $module = '', $forobject = 0, $mode = 'outpu
 		if (isset($conf->$module) && property_exists($conf->$module, 'multidir_output')) {
 			$s = '';
 			if ($mode != 'outputrel') {
-				$s = $conf->$module->multidir_output[(empty($object->entity) ? $conf->entity : $object->entity)] . $subdirectory;
+				// The entity of the object may have no directory declared, for example when the object is shared
+				// by another entity, so we fall back on the directory of the current entity. Without this, we
+				// returned an undefined index, so a relative path that made the caller read or write into the
+				// directory of the web server. The fallback is logged, because the directory is then not the
+				// one of the entity of the object, which matters for a caller that deletes files.
+				$entity = (empty($object->entity) ? $conf->entity : $object->entity);
+				if (!isset($conf->$module->multidir_output[$entity])) {
+					dol_syslog("getMultidirOutput module=".$module." has no directory for entity ".$entity.", using the directory of the current entity ".$conf->entity." instead", LOG_WARNING);
+					$entity = $conf->entity;
+				}
+				if (!isset($conf->$module->multidir_output[$entity])) {
+					// The current entity has no directory either, so we have nothing to return. Answer the same
+					// error than when the module declares no directory at all, otherwise we would return the
+					// sub directory alone, that is a relative path a caller could read or write into.
+					return 'error-diroutput-not-defined-for-this-object=' . $module;
+				}
+				$s = $conf->$module->multidir_output[$entity] . $subdirectory;
 			}
 			if ($forobject && $object->id > 0) {
 				$s .= ($mode != 'outputrel' ? '/' : '') . get_exdir(0, 0, 0, 0, $object);
@@ -246,7 +278,16 @@ function getMultidirOutput($object, $module = '', $forobject = 0, $mode = 'outpu
 		}
 	} elseif ($mode == 'temp') {
 		if (isset($conf->$module) && property_exists($conf->$module, 'multidir_temp')) {
-			return dol_sanitizePathName($conf->$module->multidir_temp[(empty($object->entity) ? $conf->entity : $object->entity)]);
+			// Same fallback as the 'output' mode above, see the comment there
+			$entity = (empty($object->entity) ? $conf->entity : $object->entity);
+			if (!isset($conf->$module->multidir_temp[$entity])) {
+				dol_syslog("getMultidirOutput module=".$module." has no temporary directory for entity ".$entity.", using the directory of the current entity ".$conf->entity." instead", LOG_WARNING);
+				$entity = $conf->entity;
+			}
+			if (!isset($conf->$module->multidir_temp[$entity])) {
+				return 'error-dirtemp-not-defined-for-this-object=' . $module;	// See the comment of the 'output' mode above
+			}
+			return dol_sanitizePathName($conf->$module->multidir_temp[$entity]);
 		} elseif (isset($conf->$module) && property_exists($conf->$module, 'dir_temp')) {
 			return dol_sanitizePathName($conf->$module->dir_temp);
 		} else {
