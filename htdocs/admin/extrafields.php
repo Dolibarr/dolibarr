@@ -41,6 +41,11 @@ if (!$user->admin) {
 	accessforbidden();
 }
 
+// Load modules that declared the 'extrafieldsadmin' or 'globaladmin' hook context, so their
+// 'getExtrafieldsAdminMap' hook (fired inside getExtrafieldsAdminMap() below) can contribute
+// additional whitelist entries — see the docblock on getExtrafieldsAdminMap() for the shape.
+$hookmanager->initHooks(array('extrafieldsadmin', 'globaladmin'));
+
 $elementtype = GETPOST('elementtype', 'aZ09');
 
 $extrafieldsadminmap = getExtrafieldsAdminMap();
