@@ -6151,7 +6151,10 @@ abstract class CommonObject
 			$modele = $tmp[0];
 			$srctemplatepath = $tmp[1];
 
-			var_dump($modelspath, $srctemplatepath);exit;
+			if (!preg_match('/^'.preg_quote(DOL_DATA_ROOT, '/').'\/(ecm|doctemplates)/', $srctemplatepath)) {
+				$this->error = 'BadDirForTemplateFile';
+				return -1;
+			}
 		}
 
 		// Search template files
