@@ -6150,6 +6150,8 @@ abstract class CommonObject
 		if (!empty($tmp[1])) {
 			$modele = $tmp[0];
 			$srctemplatepath = $tmp[1];
+
+			var_dump($modelspath, $srctemplatepath);exit;
 		}
 
 		// Search template files
