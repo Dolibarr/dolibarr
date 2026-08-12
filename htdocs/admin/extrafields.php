@@ -108,7 +108,7 @@ $linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore
 
 print load_fiche_titre($title, $linkback, 'title_setup');
 
-require_once DOL_DOCUMENT_ROOT.'/'.$pagedef['headfile'];
+dol_include_once($pagedef['headfile']);
 $head = call_user_func($pagedef['headfunction']);
 
 print dol_get_fiche_head($head, $pagedef['tabid'], $headlabel, -1, $pagedef['headpicto']);
