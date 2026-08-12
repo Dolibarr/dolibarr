@@ -4046,6 +4046,14 @@ function dragAndDropFileUpload($htmlname)
 {
 	global $object, $langs;
 
+	// Every generated javascript string that carries an interpolated value is delimited by a single quote, so
+	// dol_escape_js() is called with the mode 1 everywhere below: it escapes a single quote and leaves a double
+	// quote alone. The default mode would rewrite a double quote into an escaped single quote, which is safe
+	// inside a '...' string but silently alters the value.
+	// dol_escape_js() escapes the quotes but not '</', and PHP_SELF holds the path info of the request on a
+	// server that accepts it, so a request could close the script tag below and open one of its own.
+	$pageurl = str_replace('</', '<\\/', dol_escape_js($_SERVER["PHP_SELF"], 1));
+
 	$out = "";
 	$out .= '<div id="'.$htmlname.'Message" class="dragDropAreaMessage hidden"><span>'.img_picto("", 'download').'<br>'.$langs->trans("DropFileToAddItToObject").'</span></div>';
 	$out .= "\n<!-- JS CODE TO ENABLE DRAG AND DROP OF FILE -->\n";
@@ -4054,7 +4062,7 @@ function dragAndDropFileUpload($htmlname)
 		jQuery(document).ready(function() {
 			var enterTargetDragDrop = null;
 
-			$("#'.$htmlname.'").addClass("cssDragDropArea");
+			$(\'#'.$htmlname.'\').addClass(\'cssDragDropArea\');
 
 			$(".cssDragDropArea").on("dragenter", function(ev, ui) {
 				var dataTransfer = ev.originalEvent.dataTransfer;
@@ -4072,7 +4080,7 @@ function dragAndDropFileUpload($htmlname)
 				console.log("dragAndDropFileUpload: We add class highlightDragDropArea")
 				enterTargetDragDrop = ev.target;
 				$(this).addClass("highlightDragDropArea");
-				$("#'.$htmlname.'Message").removeClass("hidden");
+				$(\'#'.$htmlname.'Message\').removeClass(\'hidden\');
 				ev.preventDefault();
 			});
 
@@ -4080,7 +4088,7 @@ function dragAndDropFileUpload($htmlname)
 				// Going out of drop area. Remove Highlight
 				if (enterTargetDragDrop == ev.target){
 					console.log("dragAndDropFileUpload: We remove class highlightDragDropArea")
-					$("#'.$htmlname.'Message").addClass("hidden");
+					$(\'#'.$htmlname.'Message\').addClass(\'hidden\');
 					$(this).removeClass("highlightDragDropArea");
 				}
 			});
@@ -4091,12 +4099,12 @@ function dragAndDropFileUpload($htmlname)
 			});
 
 			$(".cssDragDropArea").on("drop", function(e) {
-				console.log("Trigger event file dropped. fk_element='.dol_escape_js((string) $object->id).' element='.dol_escape_js($object->element).'");
+				console.log(\'Trigger event file dropped. fk_element='.dol_escape_js((string) $object->id, 1).' element='.dol_escape_js($object->element, 1).'\');
 				e.preventDefault();
 				fd = new FormData();
-				fd.append("fk_element", "'.dol_escape_js((string) $object->id).'");
-				fd.append("element", "'.dol_escape_js($object->element).'");
-				fd.append("token", "'.currentToken().'");
+				fd.append(\'fk_element\', \''.dol_escape_js((string) $object->id, 1).'\');
+				fd.append(\'element\', \''.dol_escape_js($object->element, 1).'\');
+				fd.append(\'token\', \''.currentToken().'\');
 				fd.append("action", "linkit");
 
 				var dataTransfer = e.originalEvent.dataTransfer;
@@ -4110,7 +4118,7 @@ function dragAndDropFileUpload($htmlname)
 				$(".cssDragDropArea").removeClass("highlightDragDropArea");
 				counterdragdrop = 0;
 				$.ajax({
-					url: "'.DOL_URL_ROOT.'/core/ajax/fileupload.php",
+					url: \''.DOL_URL_ROOT.'/core/ajax/fileupload.php\',
 					type: "POST",
 					processData: false,
 					contentType: false,
@@ -4119,7 +4127,16 @@ function dragAndDropFileUpload($htmlname)
 						console.log("Uploaded.", arguments);
 						/* arguments[0] is the json string of files */
 						/* arguments[1] is the value for variable "success", can be 0 or 1 */
-						let listoffiles = JSON.parse(arguments[0]);
+						let listoffiles = [];
+						/* The answer is not the expected json when php stopped before answering, for example when
+						   post_max_size was reached. Without this, the exception of JSON.parse() would leave the
+						   user on a page with no message at all, thinking the file was added. */
+						try {
+							listoffiles = JSON.parse(arguments[0]);
+						} catch (e) {
+							window.location.href = \''.$pageurl.'?id='.dol_escape_js((string) $object->id, 1).'&seteventmessages=ErrorUploadFileDragDrop:errors\';
+							return;
+						}
 						console.log(listoffiles);
 						let nboferror = 0;
 						for (let i = 0; i < listoffiles.length; i++) {
@@ -4129,18 +4146,23 @@ function dragAndDropFileUpload($htmlname)
 							}
 						}
 						console.log(nboferror);
-						if (nboferror > 0) {
-							window.location.href = "'.$_SERVER["PHP_SELF"].'?id='.dol_escape_js((string) $object->id).'&seteventmessages=ErrorOnAtLeastOneFileUpload:warnings";
+						/* An empty list means no file was stored at all, so it is an error and not a success:
+						   php empties $_FILES when post_max_size is reached. */
+						if (listoffiles.length == 0) {
+							window.location.href = \''.$pageurl.'?id='.dol_escape_js((string) $object->id, 1).'&seteventmessages=ErrorUploadFileDragDrop:errors\';
+						} else if (nboferror > 0) {
+							window.location.href = \''.$pageurl.'?id='.dol_escape_js((string) $object->id, 1).'&seteventmessages=ErrorOnAtLeastOneFileUpload:warnings\';
 						} else {
-							window.location.href = "'.$_SERVER["PHP_SELF"].'?id='.dol_escape_js((string) $object->id).'&seteventmessages=UploadFileDragDropSuccess:mesgs";
+							window.location.href = \''.$pageurl.'?id='.dol_escape_js((string) $object->id, 1).'&seteventmessages=UploadFileDragDropSuccess:mesgs\';
 						}
 					},
-					error:function() {
+					error:function(jqXHR) {
 						console.log("Error Uploading.", arguments)
-						if (arguments[0].status == 403) {
-							window.location.href = "'.$_SERVER["PHP_SELF"].'?id='.dol_escape_js((string) $object->id).'&seteventmessages=ErrorUploadPermissionDenied:errors";
+						if (jqXHR.status == 403) {
+							window.location.href = \''.$pageurl.'?id='.dol_escape_js((string) $object->id, 1).'&seteventmessages=ErrorUploadFileDragDropPermissionDenied:errors\';
+						} else {
+							window.location.href = \''.$pageurl.'?id='.dol_escape_js((string) $object->id, 1).'&seteventmessages=ErrorUploadFileDragDrop:errors\';
 						}
-						window.location.href = "'.$_SERVER["PHP_SELF"].'?id='.dol_escape_js((string) $object->id).'&seteventmessages=ErrorUploadFileDragDropPermissionDenied:errors";
 					},
 				})
 			});
