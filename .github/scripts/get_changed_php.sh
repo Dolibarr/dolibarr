@@ -62,13 +62,15 @@ while true; do
 
 
 	# Filter for files ending with .php and add them to the list
-	mapfile -t files < <(echo "$response" | jq -r '.[] | select((.filename | test("\\.php$")) and (.filename | test("^dev/") | not)) | .filename')
+	# Deleted files (status "removed") are excluded: they no longer exist on disk, so
+	# passing them to phpstan/phan would just fail trying to analyse a missing path.
+	mapfile -t files < <(echo "$response" | jq -r '.[] | select((.filename | test("\\.php$")) and (.filename | test("^dev/") | not) and (.status != "removed")) | .filename')
 	changed_php_files+=("${files[@]}")
 
-	mapfile -t files < <(echo "$response" | jq -r '.[] | select((.filename | test("\\.php$")) and (.filename | test("'"$phan_directory_list"'"))) | .filename' | grep -vP "$phan_exclude_file_regex")
+	mapfile -t files < <(echo "$response" | jq -r '.[] | select((.filename | test("\\.php$")) and (.filename | test("'"$phan_directory_list"'")) and (.status != "removed")) | .filename' | grep -vP "$phan_exclude_file_regex")
 	changed_phan_files+=("${files[@]}")
 
-	mapfile -t files < <(echo "$response" | jq -r '.[] | select(.filename | test("\\.lang$")) | .filename')
+	mapfile -t files < <(echo "$response" | jq -r '.[] | select((.filename | test("\\.lang$")) and (.status != "removed")) | .filename')
 	changed_lang_files+=("${files[@]}")
 
 	# Check if we have reached the last page (less than per_page results)
