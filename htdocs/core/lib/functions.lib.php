@@ -15305,6 +15305,7 @@ function getElementProperties($elementType)
 		$module = 'societe';
 		$subelement = 'contact';
 		$table_element = 'socpeople';
+		$subdir = '/contact';
 	} elseif ($elementType == 'inventory') {
 		$module = 'product';
 		$classpath = 'product/inventory/class';
@@ -15520,6 +15521,45 @@ function getElementProperties($elementType)
 		$classfile = 'paymentsalary';
 		$classname = 'PaymentSalary';
 		$module = 'salaries';
+	} elseif ($elementType == 'payment') {
+		$classpath = 'compta/paiement/class';
+		$classfile = 'paiement';
+		$classname = 'Paiement';
+		$module = 'facture';	// A customer payment belongs to the invoice module, there is no 'compta' module
+		$element = 'payment';
+		$subelement = 'payment';
+		$table_element = 'paiement';
+	} elseif ($elementType == 'payment_supplier') {
+		$classpath = 'fourn/class';
+		$classfile = 'paiementfourn';
+		$classname = 'PaiementFourn';
+		$module = 'fournisseur';
+		$element = 'payment_supplier';
+		$subelement = 'payment_supplier';
+		$table_element = 'paiementfourn';
+	} elseif ($elementType == 'payment_various') {
+		$classpath = 'compta/bank/class';
+		$classfile = 'paymentvarious';
+		$classname = 'PaymentVarious';
+		$module = 'bank';	// We need $conf->bank->dir_output and not $conf->banque->dir_output
+		$element = 'payment_various';
+		$subelement = 'payment_various';
+		$table_element = 'payment_various';
+	} elseif ($elementType == 'stocktransfer') {
+		$classpath = 'product/stock/stocktransfer/class';
+		$classfile = 'stocktransfer';
+		$classname = 'StockTransfer';	// Not the ucfirst() of the element, so it must be set explicitly
+		$module = 'stocktransfer';
+		$subelement = 'stocktransfer';
+		$table_element = 'stocktransfer_stocktransfer';
+	} elseif ($elementType == 'job' || $elementType == 'position' || $elementType == 'skill' || $elementType == 'evaluation') {
+		$classpath = 'hrm/class';
+		$classfile = $elementType;
+		$classname = ucfirst($elementType);
+		$module = 'hrm';
+		$subelement = $elementType;
+		$table_element = ($elementType == 'position' ? 'hrm_job_user' : 'hrm_'.$elementType);
+		$subdir = '/'.$elementType;
 	} elseif ($elementType == 'productlot') {
 		$module = 'productbatch';
 		$classpath = 'product/stock/class';
@@ -15570,6 +15610,7 @@ function getElementProperties($elementType)
 		$classfile = 'conferenceorbooth';
 		$classname = 'ConferenceOrBooth';
 		$module = 'eventorganization';
+		$subdir = '/conferenceorbooth';
 	} elseif ($elementType == 'ccountry') {
 		$module = '';
 		$classpath = 'core/class';
@@ -15659,9 +15700,24 @@ function getElementProperties($elementType)
 	} elseif ($element == 'invoice_supplier' && isModEnabled('fournisseur')) {
 		$dir_output = $conf->fournisseur->facture->dir_output;
 		$dir_temp = $conf->fournisseur->facture->dir_temp;
+	} elseif ($elementType == 'payment' && isModEnabled('invoice') && isset($conf->compta->payment)) {
+		// A customer payment is stored into a sub object of $conf, not handled by the generic case.
+		// Note: we must test $elementType and not $element, because the 'myobject_mysubobject' rule above
+		// rewrites $element to 'payment' for the element 'payment_salary' too, which is stored elsewhere.
+		$dir_output = $conf->compta->payment->dir_output;
+		$dir_temp = $conf->compta->payment->dir_temp;
+	} elseif ($elementType == 'payment_supplier' && isModEnabled('fournisseur') && isset($conf->fournisseur->payment)) {
+		$dir_output = $conf->fournisseur->payment->dir_output;
+		$dir_temp = $conf->fournisseur->payment->dir_temp;
 	}
-	$dir_output .= $subdir;
-	$dir_temp .= $subdir;
+	// The sub directory must not be appended when the module is disabled, because $dir_output is then empty
+	// and we would return a path at the root of the file system instead of an empty string.
+	if (!empty($dir_output)) {
+		$dir_output .= $subdir;
+	}
+	if (!empty($dir_temp)) {
+		$dir_temp .= $subdir;
+	}
 
 	$elementProperties = array(
 		'module' => $module,
