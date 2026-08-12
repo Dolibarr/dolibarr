@@ -69,7 +69,7 @@ if ($usesublevelpermission && !$user->hasRight($module, $element)) {	// There is
 // Security check
 if (!empty($user->socid)) {
 	$socid = $user->socid;
-	if (!empty($object->socid) && $socid != $object->socid) {	// @phan-suppress-current-line PhanUndeclaredProperty
+	if (property_exists($object, 'socid') && !empty($object->socid) && $socid != $object->socid) {	// @phan-suppress-current-line PhanUndeclaredProperty
 		httponly_accessforbidden("Access on object not allowed for this external user.");	// This includes the exit.
 	}
 }
