@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2011-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2025-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -33,11 +33,13 @@
  *
  * @var int $error
  * @var string $action
+ * @var ?string $pagekey
  * @var string $elementtype
  * @var string $value
  */
 '@phan-var-force int $error';
 '@phan-var-force string $action';
+'@phan-var-force ?string $pagekey';
 '@phan-var-force string $elementtype';
 '@phan-var-force string $value';
 
