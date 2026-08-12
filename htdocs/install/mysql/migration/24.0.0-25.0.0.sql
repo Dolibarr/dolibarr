@@ -72,10 +72,12 @@ ALTER TABLE llx_c_action_trigger ADD COLUMN enabled varchar(255);
 -- entered excluding tax). Supplier lines used to store it unconditionally (even for lines entered excluding
 -- tax), so reset it on existing supplier lines to avoid them being wrongly treated as entered including tax
 -- on clone/edit/bulk actions. A line can be re-entered including tax to set the value again.
--- Guarded on the upgrade source version (MAIN_VERSION_LAST_UPGRADE is still the source version at this point,
--- updated only at the end of step5) so re-running the migration on a 25.x base does NOT wipe values set since.
-UPDATE llx_commande_fournisseurdet SET subprice_ttc = 0 WHERE subprice_ttc <> 0 AND EXISTS (SELECT c.rowid FROM llx_const as c WHERE c.name = 'MAIN_VERSION_LAST_UPGRADE' AND c.value < '25.0.0');
-UPDATE llx_facture_fourn_det SET pu_ttc = 0 WHERE pu_ttc <> 0 AND EXISTS (SELECT c.rowid FROM llx_const as c WHERE c.name = 'MAIN_VERSION_LAST_UPGRADE' AND c.value < '25.0.0');
-UPDATE llx_supplier_proposaldet SET subprice_ttc = 0 WHERE subprice_ttc <> 0 AND EXISTS (SELECT c.rowid FROM llx_const as c WHERE c.name = 'MAIN_VERSION_LAST_UPGRADE' AND c.value < '25.0.0');
+-- Guarded by a one-shot constant so the reset runs exactly once per database, whatever the upgrade path: once
+-- the constant is set, this block (or the same block in another version's migration) is skipped, so a value
+-- re-entered including tax afterwards is never wiped.
+UPDATE llx_commande_fournisseurdet SET subprice_ttc = 0 WHERE subprice_ttc <> 0 AND NOT EXISTS (SELECT rowid FROM llx_const WHERE __DECRYPT('name')__ = 'MAIN_SUPPLIER_TTC_ENTRY_MODE_RESET_DONE');
+UPDATE llx_facture_fourn_det SET pu_ttc = 0 WHERE pu_ttc <> 0 AND NOT EXISTS (SELECT rowid FROM llx_const WHERE __DECRYPT('name')__ = 'MAIN_SUPPLIER_TTC_ENTRY_MODE_RESET_DONE');
+UPDATE llx_supplier_proposaldet SET subprice_ttc = 0 WHERE subprice_ttc <> 0 AND NOT EXISTS (SELECT rowid FROM llx_const WHERE __DECRYPT('name')__ = 'MAIN_SUPPLIER_TTC_ENTRY_MODE_RESET_DONE');
+INSERT INTO llx_const (name, entity, value, type, visible, note) SELECT DISTINCT __ENCRYPT('MAIN_SUPPLIER_TTC_ENTRY_MODE_RESET_DONE')__, 0, __ENCRYPT('1')__, 'chaine', 0, 'Supplier line TTC entry-mode marker reset done once (fix #37658)' FROM llx_const WHERE NOT EXISTS (SELECT rowid FROM llx_const WHERE __DECRYPT('name')__ = 'MAIN_SUPPLIER_TTC_ENTRY_MODE_RESET_DONE');
 
 -- end of migration
