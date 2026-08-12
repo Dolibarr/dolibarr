@@ -246,7 +246,7 @@ function member_admin_prepare_head()
 	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'member_admin');
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/admin/extrafields.php', array('elementtype' => 'adherent'));
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'adherent'));
 	$head[$h][1] = $langs->trans("ExtraFieldsMember");
 	$nbExtrafields = $extrafields->attributes['adherent']['count'];
 	if ($nbExtrafields > 0) {
@@ -255,7 +255,7 @@ function member_admin_prepare_head()
 	$head[$h][2] = 'attributes';
 	$h++;
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/admin/extrafields.php', array('elementtype' => 'adherent_type'));
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'adherent_type'));
 	$head[$h][1] = $langs->trans("ExtraFieldsMemberType");
 	$nbExtrafields = $extrafields->attributes['adherent_type']['count'];
 	if ($nbExtrafields > 0) {

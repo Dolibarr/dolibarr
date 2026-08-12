@@ -44,6 +44,9 @@ if (empty($conf) || !is_object($conf)) {
 	exit(1);
 }
 
+// Prefer $pagekey (the whitelisted request key) for self-referencing links; fall back to
+// $elementtype for older-style callers of this shared template that don't define $pagekey.
+$pagekeyforurl = isset($pagekey) ? $pagekey : $elementtype;
 
 $langs->load("modulebuilder");
 
@@ -173,7 +176,7 @@ $listofexamplesforlink = 'Societe:societe/class/societe.class.php<br>Contact:con
 <form action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="post">
 <input type="hidden" name="token" value="<?php echo newToken(); ?>">
 <input type="hidden" name="action" value="add">
-<input type="hidden" name="elementtype" value="<?php echo dol_escape_htmltag($elementtype); ?>">
+<input type="hidden" name="elementtype" value="<?php echo dol_escape_htmltag($pagekeyforurl); ?>">
 
 <?php print dol_get_fiche_head(); ?>
 

@@ -52,6 +52,9 @@ if (empty($conf) || !is_object($conf)) {
 	exit(1);
 }
 
+// Prefer $pagekey (the whitelisted request key) for self-referencing links; fall back to
+// $elementtype for older-style callers of this shared template that don't define $pagekey.
+$pagekeyforurl = isset($pagekey) ? $pagekey : $elementtype;
 
 $langs->load("modulebuilder");
 $langs->load("admin");
@@ -168,11 +171,11 @@ $listofexamplesforlink = 'Societe:societe/class/societe.class.php<br>Contact:con
 </script>
 
 <!-- Form to edit an extra field -->
-<form action="<?php echo $_SERVER["PHP_SELF"]; ?>?attrname=<?php echo $attrname; ?>&elementtype=<?php echo urlencode($elementtype); ?>" id="formeditextrafield" method="post">
+<form action="<?php echo $_SERVER["PHP_SELF"]; ?>?attrname=<?php echo $attrname; ?>&elementtype=<?php echo urlencode($pagekeyforurl); ?>" id="formeditextrafield" method="post">
 <input type="hidden" name="token" value="<?php echo newToken(); ?>">
 <input type="hidden" name="attrname" value="<?php echo $attrname; ?>">
 <input type="hidden" name="action" value="update">
-<input type="hidden" name="elementtype" value="<?php echo dol_escape_htmltag($elementtype); ?>">
+<input type="hidden" name="elementtype" value="<?php echo dol_escape_htmltag($pagekeyforurl); ?>">
 <input type="hidden" name="rowid" value="<?php echo(empty($rowid) ? '' : $rowid) ?>">
 <input type="hidden" name="enabled" value="<?php echo dol_escape_htmltag((string) $extrafields->attributes[$elementtype]['enabled'][$attrname]); ?>">
 

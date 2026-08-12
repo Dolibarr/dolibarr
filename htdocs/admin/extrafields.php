@@ -49,6 +49,12 @@ if ($elementtype === '' || !array_key_exists($elementtype, $extrafieldsadminmap)
 }
 $pagedef = $extrafieldsadminmap[$elementtype];
 
+// $pagekey is the whitelisted map key from the request, before any override below — it must
+// be used for every self-referencing URL/redirect/hidden-field so navigation and post-save
+// redirects return to the SAME registry entry the user started on (see $elementtype override
+// just below, which can make $elementtype diverge from $pagekey for one registry entry).
+$pagekey = $elementtype;
+
 // A registry entry may present a different, developer-authored real elementtype than its
 // own map key (e.g. two entries with two different tab-bar presentations both operating on
 // the same underlying table). The whitelist check above already gated on the untrusted
@@ -82,16 +88,16 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
  * View
  */
 
-$title = is_callable($pagedef['title']) ? $pagedef['title']() : $langs->trans($pagedef['title']);
-$headlabel = is_callable($pagedef['headlabel']) ? $pagedef['headlabel']() : $langs->trans($pagedef['headlabel']);
+$title = $pagedef['title'] instanceof Closure ? $pagedef['title']() : $langs->trans($pagedef['title']);
+$headlabel = $pagedef['headlabel'] instanceof Closure ? $pagedef['headlabel']() : $langs->trans($pagedef['headlabel']);
 if (isset($pagedef['textobject'])) {
-	$textobject = is_callable($pagedef['textobject']) ? $pagedef['textobject']() : $langs->transnoentitiesnoconv($pagedef['textobject']);
+	$textobject = $pagedef['textobject'] instanceof Closure ? $pagedef['textobject']() : $langs->transnoentitiesnoconv($pagedef['textobject']);
 } else {
 	$textobject = $headlabel;
 }
 
 $help_url = $pagedef['helpurl'];
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-admin page-extrafields');
 
 $linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 
