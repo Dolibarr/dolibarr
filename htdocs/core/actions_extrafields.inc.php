@@ -199,7 +199,7 @@ if ($action == 'add') {
 			// attrname must be alphabetical and lower case only
 			if (GETPOSTISSET("attrname") && preg_match("/^[a-z0-9_]+$/", GETPOST('attrname', 'aZ09')) && !is_numeric(GETPOST('attrname', 'aZ09'))) {
 				// Construct array for parameter (value of select list)
-				$default_value = GETPOST('default_value', 'alpha');
+				$default_value = GETPOST('default_value', 'nohtml');
 				$parameters = $param;
 				$parameters_array = explode("\r\n", $parameters);
 				$params = array();
@@ -232,7 +232,7 @@ if ($action == 'add') {
 
 				$result = $extrafields->addExtraField(
 					GETPOST('attrname', 'aZ09'),
-					GETPOST('label', 'alpha'),
+					GETPOST('label', 'nohtml'),
 					$type,
 					GETPOSTINT('pos'),
 					$extrasize,
@@ -242,10 +242,10 @@ if ($action == 'add') {
 					$default_value,
 					$params,
 					(GETPOST('alwayseditable', 'alpha') ? 1 : 0),
-					(GETPOST('perms', 'alpha') ? GETPOST('perms', 'alpha') : ''),
+					(GETPOST('perms', 'nohtml') ? GETPOST('perms', 'nohtml') : ''),
 					$visibility,
-					GETPOST('help', 'alpha'),
-					GETPOST('computed_value', 'alpha'),
+					GETPOST('help', 'nohtml'),
+					GETPOST('computed_value', 'nohtml'),
 					(GETPOST('entitycurrentorall', 'alpha') ? 0 : ''),
 					GETPOST('langfile', 'alpha'),
 					'1',
@@ -420,7 +420,7 @@ if ($action == 'update') {
 
 				$result = $extrafields->update(
 					GETPOST('attrname', 'aZ09'),
-					GETPOST('label', 'alpha'),
+					GETPOST('label', 'nohtml'),
 					$type,
 					$extrasize,
 					$elementtype,
@@ -429,10 +429,10 @@ if ($action == 'update') {
 					$pos,
 					$params,
 					(GETPOST('alwayseditable', 'alpha') ? 1 : 0),
-					(GETPOST('perms', 'alpha') ? GETPOST('perms', 'alpha') : ''),
+					(GETPOST('perms', 'nohtml') ? GETPOST('perms', 'nohtml') : ''),
 					$visibility,
-					GETPOST('help', 'alpha'),
-					GETPOST('default_value', 'alpha'),
+					GETPOST('help', 'nohtml'),
+					GETPOST('default_value', 'nohtml'),
 					$computedvalue,
 					(GETPOST('entitycurrentorall', 'alpha') ? 0 : ''),
 					GETPOST('langfile'),
