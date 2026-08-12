@@ -27,6 +27,7 @@
  */
 require_once DOL_DOCUMENT_ROOT.'/core/modules/dons/modules_don.php';
 require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 
@@ -121,12 +122,16 @@ class html_cerfafr extends ModeleDon
 				// This is not the proper way to do it but $formclass->form_modes_reglement
 				// prints the translation instead of returning it
 				$formclass->load_cache_types_paiements();
-				if ($don->modepaymentid) {
-					$paymentmode = $formclass->cache_types_paiements[$don->modepaymentid]['label'];
+				// Don::fetch() stores the payment mode into mode_reglement_id. The modepaymentid property is only
+				// set by the create/update forms, so it is always empty when the document is built from a fetched
+				// donation and no payment mode checkbox was ever ticked on the receipt.
+				$modepaymentid = !empty($don->mode_reglement_id) ? $don->mode_reglement_id : $don->modepaymentid;
+				if ($modepaymentid) {
+					$paymentmode = !empty($formclass->cache_types_paiements[$modepaymentid]['label']) ? $formclass->cache_types_paiements[$modepaymentid]['label'] : '';
 				} else {
 					$paymentmode = '';
 				}
-				$modepaymentcode = !empty($formclass->cache_types_paiements[$don->modepaymentid]['code']) ? $formclass->cache_types_paiements[$don->modepaymentid]['code'] : "";
+				$modepaymentcode = !empty($formclass->cache_types_paiements[$modepaymentid]['code']) ? $formclass->cache_types_paiements[$modepaymentid]['code'] : "";
 				if ($modepaymentcode == 'CHQ') {
 					$ModePaiement = '<td width="25%"><input type="checkbox"> Remise d\'espèces</td><td width="25%"><input type="checkbox" disabled="true" checked="checked"> Chèque</td><td width="50%"><input type="checkbox"> Virement, prélèvement, carte bancaire</td>';
 				} elseif ($modepaymentcode == 'LIQ') {
@@ -147,6 +152,43 @@ class html_cerfafr extends ModeleDon
 					$CodeDon = '<td width="33%"><input type="checkbox" disabled="true" > 200 du CGI</td><td width="33%"><input type="checkbox" disabled="true" checked="checked" > 238 bis du CGI</td><td width="33%"><input type="checkbox" disabled="true" > 978 du CGI</td>';
 				}
 				*/
+				// Donator identity.
+				// When option DONATION_USE_THIRDPARTIES is on, the donation form does not show the name/address
+				// inputs at all, so llx_don only holds fk_soc and every donator field stays empty. The receipt
+				// would then be issued without the mandatory identity of the donator, so fall back on the linked
+				// third party for each field left empty.
+				$donatorsociete = (string) $don->societe;
+				$donatorlastname = (string) $don->lastname;
+				$donatorfirstname = (string) $don->firstname;
+				$donatoraddress = (string) $don->address;
+				$donatorzip = (string) $don->zip;
+				$donatortown = (string) $don->town;
+
+				if (!empty($don->socid) && $don->socid > 0) {
+					$donatorthirdparty = new Societe($this->db);
+					if ($donatorthirdparty->fetch($don->socid) > 0) {
+						if (dol_strlen(trim($donatorsociete.$donatorlastname.$donatorfirstname)) == 0) {
+							// A third party holds a single name field, even for a private individual, so it goes
+							// to the "Nom" cell of the form and the "Prénoms" cell is left empty.
+							$donatorsociete = (string) $donatorthirdparty->name;
+						}
+						if (dol_strlen(trim($donatoraddress)) == 0) {
+							$donatoraddress = (string) $donatorthirdparty->address;
+						}
+						if (dol_strlen(trim($donatorzip)) == 0) {
+							$donatorzip = (string) $donatorthirdparty->zip;
+						}
+						if (dol_strlen(trim($donatortown)) == 0) {
+							$donatortown = (string) $donatorthirdparty->town;
+						}
+					} else {
+						dol_syslog("html_cerfafr::write_file Failed to load thirdparty ".$don->socid." linked to donation ".$don->id.", donator block will remain empty - ".$donatorthirdparty->error, LOG_ERR);
+					}
+				}
+
+				if (dol_strlen(trim($donatorsociete.$donatorlastname.$donatorfirstname)) == 0) {
+					dol_syslog("html_cerfafr::write_file No name found for the donator of donation ".$don->id.", the receipt will not be compliant", LOG_WARNING);
+				}
 
 				// Define contents
 				$donmodel = DOL_DOCUMENT_ROOT."/core/modules/dons/html_cerfafr.html";
@@ -163,13 +205,16 @@ class html_cerfafr extends ModeleDon
 				$form = str_replace('__MAIN_INFO_SOCIETE_ZIP__', $mysoc->zip, $form);
 				$form = str_replace('__MAIN_INFO_SOCIETE_TOWN__', $mysoc->town, $form);
 				$form = str_replace('__MAIN_INFO_SOCIETE_OBJECT__', $mysoc->socialobject, $form);
-				$form = str_replace('__DONATOR_FIRSTNAME__', $don->firstname, $form);
-				$form = str_replace('__DONATOR_LASTNAME__', $don->lastname, $form);
-				$form = str_replace('__DONATOR_SOCIETE__', $don->societe, $form);
+				$form = str_replace('__DONATOR_FIRSTNAME__', dol_escape_htmltag($donatorfirstname), $form);
+				// The template concatenates __DONATOR_SOCIETE__ and __DONATOR_LASTNAME__ with no separator,
+				// so add a line break when both are filled in.
+				$donatorlastnameprefix = (dol_strlen(trim($donatorsociete)) > 0 && dol_strlen(trim($donatorlastname)) > 0) ? '<br>' : '';
+				$form = str_replace('__DONATOR_LASTNAME__', $donatorlastnameprefix.dol_escape_htmltag($donatorlastname), $form);
+				$form = str_replace('__DONATOR_SOCIETE__', dol_escape_htmltag($donatorsociete), $form);
 				$form = str_replace('__DONATOR_STATUT__', $don->statut, $form);
-				$form = str_replace('__DONATOR_ADDRESS__', $don->address, $form);
-				$form = str_replace('__DONATOR_ZIP__', $don->zip, $form);
-				$form = str_replace('__DONATOR_TOWN__', $don->town, $form);
+				$form = str_replace('__DONATOR_ADDRESS__', dol_nl2br(dol_escape_htmltag($donatoraddress, 0, 1)), $form);
+				$form = str_replace('__DONATOR_ZIP__', dol_escape_htmltag($donatorzip), $form);
+				$form = str_replace('__DONATOR_TOWN__', dol_escape_htmltag($donatortown), $form);
 				$form = str_replace('__PAYMENTMODE_LIB__ ', $paymentmode, $form);
 				$form = str_replace('__NOW__', dol_print_date($now, 'day', false, $outputlangs), $form);
 				$form = str_replace('__DonationRef__', $outputlangs->trans("DonationRef"), $form);
