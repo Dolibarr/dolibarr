@@ -859,8 +859,8 @@ class DoliDBSqlite3 extends DoliDB
 		}
 
 		// ALTER DATABASE dolibarr_db DEFAULT CHARACTER SET latin DEFAULT COLLATE latin1_swedish_ci
-		$sql = "CREATE DATABASE ".$this->escape($database);
-		$sql .= " DEFAULT CHARACTER SET ".$this->escape($charset)." DEFAULT COLLATE ".$this->escape($collation);
+		$sql = "CREATE DATABASE ".$this->sanitize($database);
+		$sql .= " DEFAULT CHARACTER SET ".$this->sanitize($charset)." DEFAULT COLLATE ".$this->sanitize($collation);
 
 		dol_syslog($sql, LOG_DEBUG);
 		$ret = $this->query($sql);
