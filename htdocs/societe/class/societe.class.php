@@ -2743,6 +2743,8 @@ class Societe extends CommonObject
 	 */
 	public function setAsCustomer()
 	{
+		global $user;
+
 		if ($this->id) {
 			$newclient = 1;
 			if (($this->client == 2 || $this->client == 3) && !getDolGlobalInt('SOCIETE_DISABLE_PROSPECTSCUSTOMERS')) {
@@ -2752,11 +2754,24 @@ class Societe extends CommonObject
 			$sql .= " SET client = ".((int) $newclient);
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
+			$this->db->begin();
+
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$this->client = $newclient;
+
+				// Call trigger
+				$result = $this->call_trigger('COMPANY_MODIFY', $user);
+				if ($result < 0) {
+					$this->db->rollback();
+					return -1;
+				}
+				// End call triggers
+
+				$this->db->commit();
 				return 1;
 			} else {
+				$this->db->rollback();
 				return -1;
 			}
 		}

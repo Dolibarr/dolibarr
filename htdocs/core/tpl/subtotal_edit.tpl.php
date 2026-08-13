@@ -141,10 +141,15 @@ if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 		print '<div><ul class="ecmjqft">';
 		foreach ($line_options as $key => $value) {
 			if (in_array($line_type, $value['type'])) {
-				print '<li><label for="' . $key . '">' . $langs->trans($value['trans_key']) . '</label>';
-				print '<input style="float: left;margin-top: 9px;" id="' . $key . '" type="checkbox" name="' . $key . '" value="' . $value['value'] . '" ';
-				print $value['checked'] ? 'checked' : '';
-				print '></li>';
+				if ($line_type == 'title') {
+					print '<li><label for="' . $key . '">' . $langs->trans($value['trans_key']) . '</label>';
+					print '<input style="float: left;margin-top: 9px;" id="' . $key . '" type="checkbox" name="' . $key . '" value="' . $value['value'] . '" ';
+					print $value['checked'] ? 'checked' : '';
+					print '></li>';
+				}
+				if ($line_type == 'subtotal') {
+					print '<input style="float: left;margin-top: 9px;" id="' . $key . '" type="hidden" name="' . $key . '" value="' . $value['value'] . '">';
+				}
 			}
 		}
 		print '</ul></div></td>';

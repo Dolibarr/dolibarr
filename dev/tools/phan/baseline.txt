@@ -22,6 +22,7 @@ return [
     // PhanTypeMismatchArgumentNullable : 2 occurrences
     // PhanTypeMismatchArgumentProbablyReal : 2 occurrences
     // PhanParamTooMany : 1 occurrence
+    // PhanPluginSuspiciousParamPosition : 1 occurrence
     // PhanTypeExpectedObjectPropAccessButGotNull : 1 occurrence
     // PhanTypeMismatchReturn : 1 occurrence
 
@@ -58,6 +59,7 @@ return [
         'htdocs/core/class/ctyperesource.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/class/dolgraph.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/class/emailsenderprofile.class.php' => ['PhanUndeclaredProperty'],
+        'htdocs/core/class/html.form.class.php' => ['PhanParamTooMany', 'PhanPluginSuspiciousParamPosition', 'PhanTypeMismatchArgument'],
         'htdocs/core/class/html.formcompany.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/class/html.formmail.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/class/timespent.class.php' => ['PhanUndeclaredMethod', 'PhanUndeclaredProperty'],
