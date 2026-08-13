@@ -6,6 +6,7 @@
  * Copyright (C) 2018-2024	Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Nicolas Barrouillet		<nicolas@pragma-tech.fr>
+ * Copyright (C) 2026       Jose Martinez       <jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1513,7 +1514,7 @@ while ($i < min($num, $limit)) {
 		} elseif ($line->doc_type == 'bank') {
 			print $objectstatic->getNomUrl(1);
 			$bank_ref = strstr($line->doc_ref, '-');
-			print " " . $bank_ref;
+			print ' <span class="classfortooltip" title="'.dol_escape_htmltag($line->doc_ref).'">'.dol_escape_htmltag($bank_ref).'</span>';
 		} else {
 			print $line->doc_ref;
 		}
