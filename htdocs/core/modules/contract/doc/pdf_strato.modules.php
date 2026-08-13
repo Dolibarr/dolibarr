@@ -674,6 +674,10 @@ class pdf_strato extends ModelePDFContract
 		$pdf->SetXY($this->marge_gauche, $posy);
 
 		// Logo
+		$logodir = $conf->mycompany->dir_output;
+		if (getMultidirOutput($object, 'mycompany')) {
+			$logodir = getMultidirOutput($object, 'mycompany');
+		}
 		pdf_writeLogoOrCompanyName($pdf, $outputlangs, $this->emetteur, $logodir, $this->marge_gauche, $posy, $w, $default_font_size, $ltrdirection);
 
 		$pdf->SetFont('', 'B', $default_font_size + 3);
