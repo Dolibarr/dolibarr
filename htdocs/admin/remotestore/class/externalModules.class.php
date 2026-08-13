@@ -588,8 +588,13 @@ class ExternalModules
 
 						$reg = array();
 						$urlview = $product["dolistore-download"];		// View on Dolistore
-						if (preg_match('/https:.*\?id=(\d+)$/', $urlview, $reg)) {
-							$urldownload = 'https://www.dolistore.com/_service_download.php?t=free&p='.$reg[1];
+
+						// For community modules, we download from community repo.
+						// But we can force to download from dolistore if MAIN_DOWNLOAD_FROM_DOLISTORE_IN_PRIORITY is set (less reliable, less up to date)
+						if (getDolGlobalString("MAIN_DOWNLOAD_FROM_DOLISTORE_IN_PRIORITY")) {
+							if (preg_match('/https:.*\?id=(\d+)$/', $urlview, $reg)) {
+								$urldownload = 'https://www.dolistore.com/_service_download.php?t=free&p='.$reg[1];
+							}
 						}
 					}
 					if ($product['source'] === 'dolistore') {
