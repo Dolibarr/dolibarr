@@ -102,3 +102,4 @@ SignedReceiverOnline=Được bên thứ ba ký trực tuyến
 SignedAll=Đã được tất cả các bên ký kết
 SignStatus=Trạng thái chữ ký
 DocumentSigned=Tài liệu đã ký
+DocumentUnsigned=Document unsigned

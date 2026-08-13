@@ -209,54 +209,39 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 		$tableandshare = 'actioncomm&societe';
 		$feature2 = 'myactions|allactions';
 		$dbt_select = 'id';
-	}
-	if ($features == 'bank') {
+	} elseif ($features == 'bank') {
 		$features = 'banque';
-	}
-	if ($features == 'facturerec') {
+	} elseif ($features == 'facturerec') {
 		$features = 'facture';
-	}
-	if ($features == 'supplier_invoicerec') {
+	} elseif ($features == 'supplier_invoicerec') {
 		$features = 'fournisseur';
 		$feature2 = 'facture';
-	}
-	if ($features == 'mo') {
+	} elseif ($features == 'mo') {
 		$features = 'mrp';
-	}
-	if ($features == 'member') {
+	} elseif ($features == 'member') {
 		$features = 'adherent';
-	}
-	if ($features == 'subscription') {
+	} elseif ($features == 'subscription') {
 		$features = 'adherent';
 		$feature2 = 'cotisation';
-	}
-	if ($features == 'website' && is_object($object) && $object->element == 'websitepage') {
+	} elseif ($features == 'website' && is_object($object) && $object->element == 'websitepage') {
 		$parentfortableentity = 'fk_website@website';
-	}
-	if ($features == 'project') {
+	} elseif ($features == 'project') {
 		$features = 'projet';
-	}
-	if ($features == 'product') {
+	} elseif ($features == 'product') {
 		$features = 'produit';
-	}
-	if ($features == 'productbatch') {
+	} elseif ($features == 'productbatch') {
 		$features = 'produit';
-	}
-	if ($features == 'tax') {
+	} elseif ($features == 'tax') {
 		$feature2 = 'charges';
-	}
-	if ($features == 'workstation') {
+	} elseif ($features == 'workstation') {
 		$feature2 = 'workstation';
-	}
-	if ($features == 'fournisseur') {	// When vendor invoice and purchase order are into module 'fournisseur'
-		$features = 'fournisseur';
+	} elseif ($features == 'fournisseur') {	// When vendor invoice and purchase order are into module 'fournisseur'
 		if (is_object($object) && $object->element == 'invoice_supplier') {
 			$feature2 = 'facture';
 		} elseif (is_object($object) && $object->element == 'order_supplier') {
 			$feature2 = 'commande';
 		}
-	}
-	if ($features == 'payment_sc') {
+	} elseif ($features == 'payment_sc') {
 		$tableandshare = 'paiementcharge';
 		$parentfortableentity = 'fk_charge@chargesociales';
 	}

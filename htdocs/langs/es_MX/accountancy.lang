@@ -6,7 +6,6 @@ ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Exportación con cuenta global
 ACCOUNTING_EXPORT_ENDLINE=Seleccione el estilo del salto de línea
 Chartofaccounts=Gráfico de cuentas
 CurrentDedicatedAccountingAccount=Cuenta actual dedicada 
-AssignDedicatedAccountingAccount=Nueva cuenta para asignar
 InvoiceLabel=Etiqueta de factura
 OverviewOfAmountOfLinesNotBound=Resumen de la cantidad de líneas no vinculadas a una cuenta contable
 OverviewOfAmountOfLinesBound=Resumen de la cantidad de líneas ya vinculadas a una cuenta contable

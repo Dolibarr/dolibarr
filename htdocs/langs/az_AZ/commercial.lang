@@ -102,3 +102,4 @@ SignedReceiverOnline=Üçüncü tərəf tərəfindən onlayn imzalanmışdır
 SignedAll=Bütün tərəflər tərəfindən imzalanmışdır
 SignStatus=İmza statusu
 DocumentSigned=Sənəd imzalanıb
+DocumentUnsigned=Document unsigned

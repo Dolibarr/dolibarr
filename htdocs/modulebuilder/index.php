@@ -1060,14 +1060,14 @@ if ($dirins && $action == 'confirm_removefile' && !empty($module) /* && $user->h
 			$removeFile = removeObjectFromApiFile($file_api, $objects, $objectname);
 
 			if (count($objects) == 0) {
-				$result = dol_delete_file($filetodelete);
+				$result = dol_delete_file($filetodelete, 1);
 			}
 
 			if ($removeFile) {
 				setEventMessages($langs->trans("ApiObjectDeleted"), null);
 			}
 		} else {
-			$result = dol_delete_file($filetodelete);
+			$result = dol_delete_file($filetodelete, 1);
 		}
 
 		if (!$result) {
@@ -1078,11 +1078,11 @@ if ($dirins && $action == 'confirm_removefile' && !empty($module) /* && $user->h
 				if (preg_match('/\.key\.sql$/', $relativefilename)) {
 					$relativefilename = preg_replace('/\.key\.sql$/', '.sql', $relativefilename);
 					$filetodelete = $dirins.'/'.$relativefilename;
-					$result = dol_delete_file($filetodelete);
+					$result = dol_delete_file($filetodelete, 1);
 				} elseif (preg_match('/\.sql$/', $relativefilename)) {
 					$relativefilename = preg_replace('/\.sql$/', '.key.sql', $relativefilename);
 					$filetodelete = $dirins.'/'.$relativefilename;
-					$result = dol_delete_file($filetodelete);
+					$result = dol_delete_file($filetodelete, 1);
 				}
 			}
 
@@ -2393,8 +2393,8 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname /* && $user->has
 			}
 			$resultko = 0;
 			foreach ($filetodelete as $tmpfiletodelete) {
-				$resulttmp = dol_delete_file($dir.'/'.$tmpfiletodelete, 0, 0, 1);
-				$resulttmp = dol_delete_file($dir.'/'.$tmpfiletodelete.'.back', 0, 0, 1);
+				$resulttmp = dol_delete_file($dir.'/'.$tmpfiletodelete, 1, 0, 1);
+				$resulttmp = dol_delete_file($dir.'/'.$tmpfiletodelete.'.back', 1, 0, 1);
 				if (!$resulttmp) {
 					$resultko++;
 				}

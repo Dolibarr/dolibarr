@@ -48,6 +48,7 @@ ConferenceOrBoothTab = Конференция немесе стенд
 AmountPaid = Төленген сома
 DateOfRegistration = Тіркеу күні
 ConferenceOrBoothAttendee = Конференцияға немесе стендке қатысушы
+ConferenceOrBoothAttendeesShort = Conf. or Booth Attendees
 ApplicantOrVisitor=Өтініш беруші немесе келуші
 Speaker=Спикер
 # Template Mail
@@ -81,8 +82,8 @@ ListOfAttendeesOfEvent=Іс-шара жобаларына қатысушылар
 ListOfConfOrBoothOfEvent=Конференциялар тізімі немесе оқиға жобаларының стендтері
 DownloadICSLink=Download ICS file
 EVENTORGANIZATION_SECUREKEY=Конференцияны ұсыну үшін жалпыға ортақ тіркеу бетінің кілтін қорғау үшін Seed
-SERVICE_BOOTH_LOCATION=Кабинаның орналасқан жері туралы шот -фактура жолы үшін қолданылатын қызмет
-SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION=Қатысушының оқиғаға жазылуы туралы шот-фактура жолында қолданылатын қызмет
+SERVICE_BOOTH_LOCATION=Service to use on the invoice line for the sale of a booth.
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION=Service to use on the invoice line for the participation fees.
 NbVotes=Дауыстар саны
 # Status
 EvntOrgDraft = Жоба
@@ -122,7 +123,7 @@ NewSubscription=Тіркеу
 OrganizationEventConfRequestWasReceived=Конференцияға қатысты ұсынысыңыз қабылданды
 OrganizationEventBoothRequestWasReceived=Сіздің стенд туралы өтінішіңіз қабылданды
 OrganizationEventPaymentOfBoothWasReceived=Сіздің стенд үшін төлеміңіз жазылды
-OrganizationEventPaymentOfRegistrationWasReceived=Оқиғаны тіркеу үшін төлеген төлеміңіз жазылды
+OrganizationEventPaymentOfRegistrationWasReceived=Your payment for your registration to the event has been recorded
 OrganizationEventBulkMailToAttendees=Бұл сіздің іс-шараға қатысушы ретінде қатысқаныңызды еске салады
 OrganizationEventBulkMailToSpeakers=Бұл іс-шараға спикер ретінде қатысқаныңыз туралы еске салу
 OrganizationEventLinkToThirdParty=Үшінші тарапқа сілтеме (тұтынушы, жеткізуші немесе серіктес)
