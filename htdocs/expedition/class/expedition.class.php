@@ -1058,7 +1058,7 @@ class Expedition extends CommonObject
 		if (!$error && isModEnabled('stock') && getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT')) {
 			$result = $this->manageStockMvtOnEvt($user, "ShipmentValidatedInDolibarr");
 			if ($result < 0) {
-				return -2;
+				$error++;
 			}
 		}
 
@@ -1071,9 +1071,11 @@ class Expedition extends CommonObject
 		}
 
 		// TODO : load the origin object to trigger the right setStatus according to origin object
-		$ret = $this->setStatut(Commande::STATUS_SHIPMENTONPROCESS, $this->origin_id, $this->origin, $triggerKey);
-		if (!$ret) {
-			$error++;
+		if (!$error) {
+			$ret = $this->setStatut(Commande::STATUS_SHIPMENTONPROCESS, $this->origin_id, $this->origin, $triggerKey);
+			if (!$ret) {
+				$error++;
+			}
 		}
 
 		if (!$error && !$notrigger) {
