@@ -66,6 +66,7 @@ IfZeroItIsNotAVirtualProduct=Wenn hier "0" steht, ist es kein Produktpaket.
 IfZeroItIsNotUsedByVirtualProduct=Wenn hier "0" steht, kommt dieses Produkt in keinem Produktsatz vor.
 ListOfProductsServices=Liste der Produkte und Dienstleistungen
 ProductAssociationList=Produkte und Diensleistungen in diesem Paket
+DeleteProductLine=Produktlinie löschen
 QtyMin=Mindestmenge
 PriceQtyMin=Mindestmengenpreis
 DiscountQtyMin=Mengenrabatt

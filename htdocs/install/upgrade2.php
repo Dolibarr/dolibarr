@@ -720,7 +720,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 				'MAIN_MODULE_RESOURCE' => 'noboxes',
 				'MAIN_MODULE_SALARIES' => 'newboxdefonly',
 				'MAIN_MODULE_SERVICE' => 'newboxdefonly',
-				'MAIN_MODULE_SYSLOG' => 'newboxdefonly',
+				//'MAIN_MODULE_SYSLOG' => 'newboxdefonly',		This enabled the module syslog, but we don't want to do that.
 				'MAIN_MODULE_SOCIETE' => 'newboxdefonly',
 				'MAIN_MODULE_STRIPE' => 'menuonly',
 				'MAIN_MODULE_TICKET' => 'newboxdefonly',
@@ -731,6 +731,14 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			);
 
 			$result = migrate_reload_modules($db, $langs, $conf, $listofmodule);
+			if ($result < 0) {
+				$error++;
+			}
+
+			// Grant the supplier prices permissions added in 23.0 to users/groups that already have
+			// the matching product/service rights (ids resolved by name from the rights_def reloaded
+			// just above), so nobody loses access to supplier prices on upgrade. Idempotent.
+			$result = migrate_supplier_prices_permissions($db, $langs, $conf);
 			if ($result < 0) {
 				$error++;
 			}
@@ -4072,6 +4080,115 @@ function migrate_remise_except_entity($db, $langs, $conf)
 
 
 	print '</td></tr>';
+}
+
+/**
+ * Grant the "supplier prices" advanced permissions introduced in 23.0 (product/service
+ * read_supplier_prices and product write_supplier_prices) to the users and groups that already
+ * hold the matching product/service "read"/"create" rights.
+ *
+ * Before 23.0, access to supplier (purchase) prices followed the general product/service read and
+ * create rights. In "Advanced permissions" mode these are now gated by dedicated permissions that
+ * are not granted by default, so without this migration every user/group silently loses access to
+ * supplier prices on upgrade. Permission ids are resolved by name from llx_rights_def (populated by
+ * the module reload done just before this call) to avoid hardcoded permission ids. Idempotent.
+ *
+ * @param	DoliDB		$db		Database handler
+ * @param	Translate	$langs	Object langs
+ * @param	Conf		$conf	Object conf
+ * @return	int					Return integer <0 if KO, >=0 if OK
+ */
+function migrate_supplier_prices_permissions($db, $langs, $conf)
+{
+	dolibarr_install_syslog("upgrade2::migrate_supplier_prices_permissions");
+
+	// Grant each target permission to holders of any of its source permissions.
+	// Format: array('to' => array(module, perms, subperms), 'from' => array(array(module, perms, subperms), ...))
+	$rules = array(
+		array('to' => array('produit', 'product_advance', 'read_supplier_prices'), 'from' => array(array('produit', 'lire', ''), array('produit', 'creer', ''))),
+		array('to' => array('produit', 'product_advance', 'write_supplier_prices'), 'from' => array(array('produit', 'creer', ''))),
+		array('to' => array('service', 'service_advance', 'read_supplier_prices'), 'from' => array(array('service', 'lire', ''))),
+	);
+
+	$error = 0;
+	$db->begin();
+
+	foreach ($rules as $rule) {
+		// Resolve the target permission id by name (skip if the module/permission is not present)
+		$targetid = migrate_get_rights_def_id($db, $rule['to'][0], $rule['to'][1], $rule['to'][2]);
+		if ($targetid <= 0) {
+			continue;
+		}
+
+		// Resolve the source permission ids by name
+		$sourceids = array();
+		foreach ($rule['from'] as $from) {
+			$id = migrate_get_rights_def_id($db, $from[0], $from[1], $from[2]);
+			if ($id > 0) {
+				$sourceids[] = $id;
+			}
+		}
+		if (empty($sourceids)) {
+			continue;
+		}
+		$sourcelist = implode(',', $sourceids);
+
+		// Grant to groups that hold a source permission but not yet the target
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."usergroup_rights (entity, fk_usergroup, fk_id)";
+		$sql .= " SELECT DISTINCT gr.entity, gr.fk_usergroup, ".((int) $targetid);
+		$sql .= " FROM ".MAIN_DB_PREFIX."usergroup_rights as gr";
+		$sql .= " WHERE gr.fk_id IN (".$db->sanitize($sourcelist).")";
+		$sql .= " AND NOT EXISTS (SELECT 1 FROM ".MAIN_DB_PREFIX."usergroup_rights as ex WHERE ex.fk_usergroup = gr.fk_usergroup AND ex.entity = gr.entity AND ex.fk_id = ".((int) $targetid).")";
+		if (!$db->query($sql)) {
+			$error++;
+			break;
+		}
+
+		// Grant to users that hold a source permission but not yet the target
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."user_rights (entity, fk_user, fk_id)";
+		$sql .= " SELECT DISTINCT ur.entity, ur.fk_user, ".((int) $targetid);
+		$sql .= " FROM ".MAIN_DB_PREFIX."user_rights as ur";
+		$sql .= " WHERE ur.fk_id IN (".$db->sanitize($sourcelist).")";
+		$sql .= " AND NOT EXISTS (SELECT 1 FROM ".MAIN_DB_PREFIX."user_rights as ex WHERE ex.fk_user = ur.fk_user AND ex.entity = ur.entity AND ex.fk_id = ".((int) $targetid).")";
+		if (!$db->query($sql)) {
+			$error++;
+			break;
+		}
+	}
+
+	if ($error) {
+		$db->rollback();
+		return -1;
+	}
+	$db->commit();
+	return 0;
+}
+
+/**
+ * Return the permission id (llx_rights_def.id) matching a module/perms/subperms triplet, or 0 if none.
+ *
+ * @param	DoliDB	$db			Database handler
+ * @param	string	$module		Module (rights_def.module)
+ * @param	string	$perms		First level permission (rights_def.perms)
+ * @param	string	$subperms	Second level permission (rights_def.subperms), '' for none
+ * @return	int					Permission id, or 0 if not found
+ */
+function migrate_get_rights_def_id($db, $module, $perms, $subperms)
+{
+	$sql = "SELECT id FROM ".MAIN_DB_PREFIX."rights_def";
+	$sql .= " WHERE module = '".$db->escape($module)."'";
+	$sql .= " AND perms = '".$db->escape($perms)."'";
+	if ($subperms === '') {
+		$sql .= " AND (subperms IS NULL OR subperms = '')";
+	} else {
+		$sql .= " AND subperms = '".$db->escape($subperms)."'";
+	}
+	$resql = $db->query($sql);
+	if (!$resql) {
+		return 0;
+	}
+	$obj = $db->fetch_object($resql);
+	return $obj ? (int) $obj->id : 0;
 }
 
 /**

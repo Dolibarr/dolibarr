@@ -29,7 +29,6 @@ SendShippingByEMail=Enviar envío por correo electrónico
 SendShippingRef=Presentación del envío %s
 ActionsOnShipping=Eventos en el envío
 LinkToTrackYourPackage=Enlace para rastrear su paquete
-ShipmentCreationIsDoneFromOrder=Por el momento, la creación de un nuevo envío se realiza a partir del registro de pedidos de venta.
 ShipmentLine=Línea de envío
 ProductQtyInCustomersOrdersRunning=Cantidad de producto de órdenes de venta abiertas
 ProductQtyInSuppliersOrdersRunning=Cantidad de producto de órdenes de compra abiertas

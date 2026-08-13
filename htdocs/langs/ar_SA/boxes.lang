@@ -116,6 +116,7 @@ BoxLastCustomerShipments=آخر شحنات العميل
 BoxTitleLastCustomerShipments=أحدث %s شحنة/شحنات العملاء المعدلة
 BoxTitleLastLeaveRequests=Latest %s modified leave requests
 NoRecordedShipments=لا توجد شحنة مسجلة للعملاء
+NoUpcomingEvent=No upcoming events
 BoxCustomersOutstandingBillReached=العملاء الذين وصلوا إلى الحد الأقصى المستحق
 BoxTitleLastFediverseInfos=آخر %s مشاركة/مشاركات من %s
 BoxLastFediverseInfos=أحدث تحديثات فيدافيرس -Fediverse-: الأخبار و الميول

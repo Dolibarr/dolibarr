@@ -584,6 +584,7 @@ class DoliDBMysqli extends DoliDB
 				1217 => 'DB_ERROR_CHILD_EXISTS',
 				1396 => 'DB_ERROR_USER_ALREADY_EXISTS', // When creating a user that already existing
 				1451 => 'DB_ERROR_CHILD_EXISTS',
+				1824 => 'DB_ERROR_CANNOT_CREATE',		// When creating a constraint on a parent table that does not exists
 				1826 => 'DB_ERROR_KEY_NAME_ALREADY_EXISTS'
 			);
 
@@ -628,9 +629,9 @@ class DoliDBMysqli extends DoliDB
 	 * Encrypt sensitive data in database
 	 * Warning: This function includes the escape and add the SQL simple quotes on strings.
 	 *
-	 * @param	string	$fieldorvalue	Field name or value to encrypt
-	 * @param	int		$withQuotes		Return string including the SQL simple quotes. This param must always be 1 (Value 0 is bugged and deprecated).
-	 * @return	string					XXX(field) or XXX('value') or field or 'value'
+	 * @param	string		$fieldorvalue	Field name or value to encrypt
+	 * @param	int<1,1>	$withQuotes		Return string including the SQL simple quotes. This param must always be 1 (Value 0 is bugged and deprecated).
+	 * @return	string						XXX(field) or XXX('value') or field or 'value'
 	 */
 	public function encrypt($fieldorvalue, $withQuotes = 1)
 	{
@@ -726,14 +727,14 @@ class DoliDBMysqli extends DoliDB
 		}
 
 		// ALTER DATABASE dolibarr_db DEFAULT CHARACTER SET latin DEFAULT COLLATE latin1_swedish_ci
-		$sql = "CREATE DATABASE `".$this->escape($database)."`";
-		$sql .= " DEFAULT CHARACTER SET `".$this->escape($charset)."` DEFAULT COLLATE `".$this->escape($collation)."`";
+		$sql = "CREATE DATABASE `".$this->sanitize($database)."`";
+		$sql .= " DEFAULT CHARACTER SET `".$this->sanitize($charset)."` DEFAULT COLLATE `".$this->sanitize($collation)."`";
 
 		dol_syslog($sql, LOG_DEBUG);
 		$ret = $this->query($sql);
 		if (!$ret) {
 			// We try again for compatibility with Mysql < 4.1.1
-			$sql = "CREATE DATABASE `".$this->escape($database)."`";
+			$sql = "CREATE DATABASE `".$this->sanitize($database)."`";
 			dol_syslog($sql, LOG_DEBUG);
 			$ret = $this->query($sql);
 		}
@@ -1129,7 +1130,7 @@ class DoliDBMysqli extends DoliDB
 		$sql = "CREATE USER '".$this->escape($dolibarr_main_db_user)."'@'localhost' IDENTIFIED BY '".$this->escape($dolibarr_main_db_pass)."'";
 		$resql = $this->query($sql);
 
-		$sql = "GRANT ALL PRIVILEGES ON ".$this->escape($dolibarr_main_db_name).".* TO '".$this->escape($dolibarr_main_db_user)."'@'".$this->escape($dolibarr_main_db_host)."'";
+		$sql = "GRANT ALL PRIVILEGES ON `".$this->sanitize($dolibarr_main_db_name)."`.* TO '".$this->escape($dolibarr_main_db_user)."'@'".$this->escape($dolibarr_main_db_host)."'";
 		dol_syslog(get_class($this)."::DDLCreateUser", LOG_DEBUG); // No sql to avoid password in log
 		$resql = $this->query($sql);
 		if (!$resql) {

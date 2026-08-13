@@ -796,7 +796,7 @@ class EcmDirectory extends CommonObject
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."ecm_directories SET";
-		$sql .= " cachenbofdoc = '".count($filelist)."'";
+		$sql .= " cachenbofdoc = ".count($filelist);
 		if (empty($all)) {  // By default
 			$sql .= " WHERE rowid = ".((int) $this->id);
 		} else {

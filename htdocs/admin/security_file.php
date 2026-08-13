@@ -117,7 +117,7 @@ if ($action == 'updateform') {
 	// Delete file
 	$langs->load("other");
 	$file = $conf->admin->dir_temp.'/'.GETPOST('urlfile', 'alpha');
-	$ret = dol_delete_file($file);
+	$ret = dol_delete_file($file, 1);
 	if ($ret) {
 		setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile', 'alpha')), null, 'mesgs');
 	} else {

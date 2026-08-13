@@ -1,0 +1,2 @@
+# Add all files of vendor dirs (To rename into .claudeignore or .vibeignore, ...)
+htdocs/includes/
