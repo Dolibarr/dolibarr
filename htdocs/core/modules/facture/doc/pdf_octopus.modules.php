@@ -166,7 +166,7 @@ class pdf_octopus extends ModelePDFFactures
 	 */
 	public function __construct($db)
 	{
-		global $conf, $langs, $mysoc, $object;
+		global $conf, $langs, $mysoc;
 
 		// for retro compatibility
 		if (getDolGlobalString('INVOICE_USE_SITUATION_RETAINED_WARRANTY') && !getDolGlobalString('INVOICE_USE_RETAINED_WARRANTY')) {
@@ -241,12 +241,6 @@ class pdf_octopus extends ModelePDFFactures
 		$this->atleastoneratenotnull = 0;
 		$this->atleastonediscount = 0;
 		$this->situationinvoice = true;
-
-		if ($object instanceof Facture) {
-			$this->TDataSituation = $this->getDataSituation($object);
-		} else {
-			dol_syslog("object is not qualified, do not call getDataSituation...");
-		}
 	}
 
 
@@ -292,6 +286,9 @@ class pdf_octopus extends ModelePDFFactures
 			setEventMessage($langs->trans('WarningsObjectIsNotASituation'), 'warnings');
 			return 1;
 		}
+
+		$this->TDataSituation = $this->getDataSituation($object);
+
 		// Show Draft Watermark
 		if ($object->status == $object::STATUS_DRAFT && (getDolGlobalString('FACTURE_DRAFT_WATERMARK'))) {
 			$this->watermark = getDolGlobalString('FACTURE_DRAFT_WATERMARK');
