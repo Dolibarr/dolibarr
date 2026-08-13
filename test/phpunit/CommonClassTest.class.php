@@ -137,9 +137,9 @@ abstract class CommonClassTest extends TestCase
 	 *	This method is called when a test fails
 	 *
 	 *  @param	Throwable	$t		Throwable object
-	 *  @return void
+	 *  @return never
 	 */
-	protected function onNotSuccessfulTest(Throwable $t): void
+	protected function onNotSuccessfulTest(Throwable $t): never
 	{
 		global $db;
 
@@ -630,27 +630,5 @@ abstract class CommonClassTest extends TestCase
 			return true;
 		}
 		return false;
-	}
-
-	/**
-	 * PHPUnit compatibility helper for assertMatchesRegularExpression
-	 *
-	 * assertMatchesRegularExpression was introduced in PHPUnit 8.0.
-	 * This method provides backward compatibility with PHPUnit 7.x which only has assertRegExp.
-	 *
-	 * @param string $pattern Regular expression pattern
-	 * @param string $string  String to match against
-	 * @param string $message Optional message
-	 * @return void
-	 */
-	public static function assertMatchesRegularExpression(string $pattern, string $string, string $message = ''): void
-	{
-		if (method_exists('PHPUnit\Framework\Assert', 'assertMatchesRegularExpression')) {
-			// PHPUnit 8.0+: call parent's method
-			PHPUnit\Framework\Assert::assertMatchesRegularExpression($pattern, $string, $message);
-		} else {
-			// PHPUnit 7.x and earlier: use assertRegExp
-			PHPUnit\Framework\Assert::assertRegExp($pattern, $string, $message);
-		}
 	}
 }
