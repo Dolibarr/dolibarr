@@ -48,6 +48,7 @@ ConferenceOrBoothTab = כנס או דוכן
 AmountPaid = סכום ששולם
 DateOfRegistration = תאריך רישום
 ConferenceOrBoothAttendee = משתתף בכנס או בדוכן
+ConferenceOrBoothAttendeesShort = Conf. or Booth Attendees
 ApplicantOrVisitor=מבקש או מבקר
 Speaker=רַמקוֹל
 # Template Mail
@@ -81,8 +82,8 @@ ListOfAttendeesOfEvent=List of attendees of event projects
 ListOfConfOrBoothOfEvent=List of conferences or booths of event projects
 DownloadICSLink=Download ICS file
 EVENTORGANIZATION_SECUREKEY=Seed כדי לאבטח את המפתח לדף ההרשמה הציבורי כדי להציע כנס
-SERVICE_BOOTH_LOCATION=שירות המשמש עבור שורת החשבונית לגבי מיקום דוכן
-SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION=שירות המשמש עבור שורת החשבונית על מנוי משתתף לאירוע
+SERVICE_BOOTH_LOCATION=Service to use on the invoice line for the sale of a booth.
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION=Service to use on the invoice line for the participation fees.
 NbVotes=מספר קולות
 # Status
 EvntOrgDraft = טְיוּטָה
@@ -122,7 +123,7 @@ NewSubscription=הַרשָׁמָה
 OrganizationEventConfRequestWasReceived=הצעתך לכנס התקבלה
 OrganizationEventBoothRequestWasReceived=בקשתך לדוכן התקבלה
 OrganizationEventPaymentOfBoothWasReceived=התשלום שלך עבור הדוכן שלך נרשם
-OrganizationEventPaymentOfRegistrationWasReceived=התשלום שלך עבור רישום האירוע שלך נרשם
+OrganizationEventPaymentOfRegistrationWasReceived=Your payment for your registration to the event has been recorded
 OrganizationEventBulkMailToAttendees=זוהי תזכורת לגבי השתתפותך באירוע בתור משתתף
 OrganizationEventBulkMailToSpeakers=זוהי תזכורת על השתתפותך באירוע כדובר
 OrganizationEventLinkToThirdParty=קישור לצד שלישי (לקוח, ספק או שותף)

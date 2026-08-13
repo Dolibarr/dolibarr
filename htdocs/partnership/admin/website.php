@@ -193,9 +193,6 @@ if (getDolGlobalString('PARTNERSHIP_ENABLE_PUBLIC')) {
 	$listofval = array();
 	$listofval['-1'] = $langs->trans('No');
 	$listofval['all'] = $langs->trans('Yes').' ('.$langs->trans("VisitorCanChooseItsPaymentMode").')';
-	if (isModEnabled('paybox')) {
-		$listofval['paybox'] = 'Paybox';
-	}
 	if (isModEnabled('paypal')) {
 		$listofval['paypal'] = 'PayPal';
 	}

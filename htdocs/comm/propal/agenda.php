@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2023 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Jose MARTINEZ			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +24,14 @@
  *  \brief      Tab of events on Proposal
  */
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT . '/comm/propal/class/propal.class.php';
 require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
@@ -30,13 +39,6 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/propal.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
 
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array("propal", "other"));
@@ -80,7 +82,6 @@ if (!$sortorder) {
 
 // Initialize a technical objects
 $object = new Propal($db);
-$extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->propal->multidir_output[$conf->entity] . '/temp/massgeneration/' . $user->id;
 $hookmanager->initHooks(array('propalagenda', 'globalcard')); // Note that conf->hooks_modules contains array
 // Fetch optionals attributes and labels
@@ -96,6 +97,7 @@ $permissiontoread = $user->hasRight("propal", "lire");
 $permissiontoadd = $user->hasRight("propal", "creer");
 
 // Security check
+$socid = '';
 if (!empty($user->socid)) {
 	$socid = $user->socid;
 }
@@ -150,7 +152,11 @@ if ($object->id > 0) {
 
 	// Object card
 	// ------------------------------------------------------------
-	$linkback = '<a href="' . DOL_URL_ROOT . '/comm/propal/list.php?restore_lastsearch_values=1' . (!empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+	$query = ['restore_lastsearch_values' => 1];
+	if (!empty($socid) && $socid > 0) {
+		$query += ['socid' => $socid];
+	}
+	$linkback = '<a href="' . dolBuildUrl(DOL_URL_ROOT . '/comm/propal/list.php', $query) . '">' . $langs->trans("BackToList") . '</a>';
 
 	$morehtmlref = '<div class="refidno">';
 	// Ref customer
@@ -167,7 +173,7 @@ if ($object->id > 0) {
 			if ($action != 'classify') {
 				$morehtmlref .= '<a class="editfielda" href="' . dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true) . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> ';
 			}
-			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+			$morehtmlref .= $form->form_project(dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id]), $object->socid, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
@@ -260,6 +266,15 @@ if ($object->id > 0) {
 		require_once DOL_DOCUMENT_ROOT . '/core/lib/memory.lib.php';
 		$cachekey = 'count_events_propal_' . $object->id;
 		$nbEvent = dol_getcache($cachekey);
+
+		// Hook to let external modules add buttons to the object right toolbar. Works on any object page; the hook gets the context (elementtype) so a module can scope itself (e.g. only on event pages).
+		$parameters = array('morehtmlright' => &$morehtmlright, 'elementtype' => $object->element);
+		$reshook = $hookmanager->executeHooks('printObjectRightToolbar', $parameters, $object, $action);
+		if ($reshook < 0) {
+			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+		} else {
+			$morehtmlright .= $hookmanager->resPrint;
+		}
 
 		print_barre_liste($langs->trans("ActionsOnPropal") . (is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">(' . $nbEvent . ')</span>' : ''), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlright, '', 0, 1, 0);
 		//print_barre_liste($langs->trans("ActionsOnPropal"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlright, '', 0, 1, 1);

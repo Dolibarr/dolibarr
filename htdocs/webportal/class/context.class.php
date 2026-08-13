@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2023-2024 	Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Schaffhauser sébastien		<sebastien@webmaster67.fr>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -253,12 +253,14 @@ class Context
 		$this->addControllerDefinition('propallist', $defaultControllersPath . 'propallist.controller.class.php', 'PropalListController');
 		$this->addControllerDefinition('orderlist', $defaultControllersPath . 'orderlist.controller.class.php', 'OrderListController');
 		$this->addControllerDefinition('invoicelist', $defaultControllersPath . 'invoicelist.controller.class.php', 'InvoiceListController');
+		$this->addControllerDefinition('ficheinterlist', $defaultControllersPath . 'ficheinterlist.controller.class.php', 'FicheinterListController');
+		$this->addControllerDefinition('ticketlist', $defaultControllersPath . 'ticketlist.controller.class.php', 'TicketListController');
 		$this->addControllerDefinition('membercard', $defaultControllersPath . 'membercard.controller.class.php', 'MemberCardController');
 		$this->addControllerDefinition('partnershipcard', $defaultControllersPath . 'partnershipcard.controller.class.php', 'PartnershipCardController');
 		//** below the addition of DocumentListController adding files by third party attached documents
 		$this->addControllerDefinition('documentlist', $defaultControllersPath . 'documentlist.controller.class.php', 'DocumentListController');
 		//** Below is the addition to the menu of the DocumentUtileController.class.php controller in order to share via the GED (documents) "Documentscomptes"
-		$this->addControllerDefinition('documentutile', $defaultControllersPath . 'documentutile.controller.class.php', 'DocumentUtileController');
+		$this->addControllerDefinition('shareddocuments', $defaultControllersPath . 'shareddocuments.controller.class.php', 'SharedDocumentsController');
 		$this->addControllerDefinition('viewimage', $defaultControllersPath . 'viewimage.controller.class.php', 'ViewImageController');
 
 		// Hooks for init controller
@@ -555,7 +557,7 @@ class Context
 	 * Note: Calling dol_htmloutput_events is done into pages by standard llxFooter() function.
 	 *
 	 * @param	string|string[]	$mesgs	Message string or array
-	 * @param	string			$style	Which style to use ('mesgs' by default, 'warnings', 'errors')
+	 * @param	''|'mesgs'|'warnings'|'errors'   $style		Which style to use ('mesgs' by default, 'warnings', 'errors')
 	 * @return	void
 	 */
 	public function setEventMessage($mesgs, $style = 'mesgs')
@@ -588,7 +590,7 @@ class Context
 	 *
 	 * @param	string			$mesg	Message string
 	 * @param	string[]|null	$mesgs	Message array
-	 * @param	string			$style	Which style to use ('mesgs' by default, 'warnings', 'errors')
+	 * @param	''|'mesgs'|'warnings'|'errors'   $style		Which style to use ('mesgs' by default, 'warnings', 'errors')
 	 * @return	void
 	 */
 	public function setEventMessages($mesg, $mesgs, $style = 'mesgs')
@@ -664,7 +666,8 @@ class Context
 			}
 
 			// Save what will be next token. Into forms, we will add param $context->newToken();
-			$token = dol_hash(uniqid((string) mt_rand(), true)); // Generate
+
+			$token = bin2hex(random_bytes(32));
 			$_SESSION['newtoken'] = $token;
 
 			return $token;

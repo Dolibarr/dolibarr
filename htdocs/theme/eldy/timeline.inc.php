@@ -50,8 +50,8 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 	clear: both;
 }
 .timeline > li > .timeline-item {
-	box-shadow:  0 1px 3px rgba(0, 0, 0, 0.1);
-	border:1px solid #d2d2d2;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+	border: 1px solid #d2d2d2;
 	border-radius: 3px;
 	margin-top: 0;
 	background: #fff;
@@ -64,8 +64,10 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 
 .timeline > li.timeline-code-ticket_msg_private  > .timeline-item,
 .timeline > li.timeline-code-ticket_msg_private_sentbymail > .timeline-item {
-		background: #fffbe5;
-		border-color: #d0cfc0;
+	/*background: #fffbe5; */
+	background-color: rgba(255, 251, 240, 0.5);
+	opacity: 0.9;
+	border-color: #d0cfc0;
 }
 
 

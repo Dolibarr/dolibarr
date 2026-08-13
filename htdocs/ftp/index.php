@@ -2,7 +2,7 @@
 /* Copyright (C) 2008-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2008-2009  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2019-2024	Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -390,7 +390,7 @@ if (!function_exists('ftp_connect')) {
 			print $form->formconfirm($_SERVER["PHP_SELF"].'?numero_ftp='.$numero_ftp.'&section='.urlencode(GETPOST('section')).'&file='.urlencode(GETPOST('file')), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile', GETPOST('file')), 'confirm_deletefile', '', '', 1);
 		}
 
-		// Confirmation de la suppression d'une ligne categorie
+		// Generate for to confirm deletion of a category line
 		if ($action == 'delete_section') {
 			print $form->formconfirm($_SERVER["PHP_SELF"].'?numero_ftp='.$numero_ftp.'&section='.urlencode(GETPOST('section')).'&file='.urlencode(GETPOST('file')), $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection', GETPOST('file')), 'confirm_deletesection', '', '', 1);
 		}
@@ -466,9 +466,10 @@ if (!function_exists('ftp_connect')) {
 			//$newsection='/home';
 
 			// List content of directory ($newsection = '/', '/home', ...)
-			if (getDolGlobalString('FTP_CONNECT_WITH_SFTP')) {
+			if (getDolGlobalString('FTP_CONNECT_WITH_SFTP') && !empty($conn_id)) {
 				if ($newsection == '/') {
 					//$newsection = '/./';
+					// @phpstan-ignore-next-line argument.type
 					$newsection = ssh2_sftp_realpath($conn_id, ".").'/./'; // workaround for bug https://bugs.php.net/bug.php?id=64169
 				}
 
@@ -476,7 +477,7 @@ if (!function_exists('ftp_connect')) {
 				//$dirHandle = opendir("ssh2.sftp://$conn_id".$newsection);
 				//$dirHandle = opendir("ssh2.sftp://".intval($conn_id).ssh2_sftp_realpath($conn_id, ".").'/./');
 
-				$contents = scandir('ssh2.sftp://'.intval($conn_id).$newsection);
+				$contents = scandir('ssh2.sftp://'.(is_resource($conn_id) ? intval($conn_id) : $conn_id).$newsection);
 				$buff = array();
 				foreach ($contents as $i => $key) {
 					$buff[$i] = "---------- - root root 1234 Aug 01 2000 ".$key;

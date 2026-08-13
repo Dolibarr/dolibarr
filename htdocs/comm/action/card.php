@@ -7,9 +7,9 @@
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2014       Cedric GROSS            <c.gross@kreiz-it.fr>
  * Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2019       Ferran Marcet	        <fmarcet@2byte.es>
- * Copyright (C) 2024-2025  MDW				        <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW				        <mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,11 +36,11 @@ require '../../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
  */
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
@@ -128,12 +128,17 @@ if ($user->socid && ($socid != $user->socid)) {
 
 $error = GETPOST("error");
 $donotclearsession = GETPOST('donotclearsession') ? GETPOST('donotclearsession') : 0;
+// Per-event session keys to avoid cross-tab assignee bleed (see issue #30326).
+// When two tabs edit different events, both used to share the same flat
+// assignedtouser / assignedtoresource session buckets, so saving one event
+// could overwrite its assignees with the working set from the other tab.
+$sessionkeyassignedtouser = 'assignedtouser_'.($id > 0 ? $id : 'new');
+$sessionkeyassignedtoresource = 'assignedtoresource_'.($id > 0 ? $id : 'new');
 
 // Initialize Objects
 $object = new ActionComm($db);
 $cactioncomm = new CActionComm($db);
 $contact = new Contact($db);
-$extrafields = new ExtraFields($db);
 $formfile = new FormFile($db);
 
 $form = new Form($db);
@@ -222,8 +227,8 @@ $assignedtouser = [];
 if (empty($reshook) && (GETPOST('removedassigned') || GETPOST('removedassigned') == '0')) {
 	$idtoremove = GETPOST('removedassigned');
 
-	if (!empty($_SESSION['assignedtouser'])) {
-		$tmpassigneduserids = json_decode($_SESSION['assignedtouser'], true);
+	if (!empty($_SESSION[$sessionkeyassignedtouser])) {
+		$tmpassigneduserids = json_decode($_SESSION[$sessionkeyassignedtouser], true);
 	} else {
 		$tmpassigneduserids = [];
 	}
@@ -234,7 +239,7 @@ if (empty($reshook) && (GETPOST('removedassigned') || GETPOST('removedassigned')
 		}
 	}
 
-	$_SESSION['assignedtouser'] = json_encode($tmpassigneduserids);
+	$_SESSION[$sessionkeyassignedtouser] = json_encode($tmpassigneduserids);
 	$donotclearsession = 1;
 	if ($action == 'add') {		// Test on permission not required here
 		$action = 'create';
@@ -249,8 +254,8 @@ if (empty($reshook) && (GETPOST('removedassigned') || GETPOST('removedassigned')
 if (empty($reshook) && (GETPOST('removedassignedresource') || GETPOST('removedassignedresource') == '0')) {
 	$idtoremove = GETPOST('removedassignedresource');
 
-	if (!empty($_SESSION['assignedtoresource'])) {
-		$tmpassignedresourceids = json_decode($_SESSION['assignedtoresource'], true);
+	if (!empty($_SESSION[$sessionkeyassignedtoresource])) {
+		$tmpassignedresourceids = json_decode($_SESSION[$sessionkeyassignedtoresource], true);
 	} else {
 		$tmpassignedresourceids = [];
 	}
@@ -261,7 +266,7 @@ if (empty($reshook) && (GETPOST('removedassignedresource') || GETPOST('removedas
 		}
 	}
 
-	$_SESSION['assignedtoresource'] = json_encode($tmpassignedresourceids);
+	$_SESSION[$sessionkeyassignedtoresource] = json_encode($tmpassignedresourceids);
 
 	if ($action == 'add' && $usercancreate) {
 		$action = 'create';
@@ -278,11 +283,11 @@ if (empty($reshook) && (GETPOST('addassignedtouser') || GETPOST('updateassignedt
 	// Add a new user
 	if (GETPOST('assignedtouser') > 0) {
 		$assignedtouser = [];
-		if (!empty($_SESSION['assignedtouser'])) {
-			$assignedtouser = json_decode($_SESSION['assignedtouser'], true);
+		if (!empty($_SESSION[$sessionkeyassignedtouser])) {
+			$assignedtouser = json_decode($_SESSION[$sessionkeyassignedtouser], true);
 		}
 		$assignedtouser[GETPOST('assignedtouser')] = array('id' => GETPOSTINT('assignedtouser'), 'transparency' => GETPOST('transparency'), 'mandatory' => 1);
-		$_SESSION['assignedtouser'] = json_encode($assignedtouser);
+		$_SESSION[$sessionkeyassignedtouser] = json_encode($assignedtouser);
 	}
 	$donotclearsession = 1;
 	if ($action == 'add' && $usercancreate) {
@@ -300,11 +305,11 @@ if (empty($reshook) && (GETPOST('addassignedtoresource') || GETPOST('updateassig
 	// Add a new user
 	if (GETPOST('assignedtoresource') > 0) {
 		$assignedtoresource = [];
-		if (!empty($_SESSION['assignedtoresource'])) {
-			$assignedtoresource = json_decode($_SESSION['assignedtoresource'], true);
+		if (!empty($_SESSION[$sessionkeyassignedtoresource])) {
+			$assignedtoresource = json_decode($_SESSION[$sessionkeyassignedtoresource], true);
 		}
 		$assignedtoresource[GETPOST('assignedtoresource')] = array('id' => GETPOSTINT('assignedtoresource'), 'transparency' => GETPOST('transparency'), 'mandatory' => 1);
-		$_SESSION['assignedtoresource'] = json_encode($assignedtoresource);
+		$_SESSION[$sessionkeyassignedtoresource] = json_encode($assignedtoresource);
 	}
 	$donotclearsession = 1;
 	if ($action == 'add' && $usercancreate) {
@@ -334,7 +339,7 @@ if (empty($reshook) && $action == 'confirm_clone' && $confirm == 'yes' && $userc
 			//$object->fetch($id);
 			if (!empty($object->socpeopleassigned)) {
 				reset($object->socpeopleassigned);
-				$object->contact_id = key($object->socpeopleassigned);
+				$object->contact_id = (int) key($object->socpeopleassigned);
 			}
 			$result = $object->createFromClone($user, GETPOSTINT('socid'));
 			if ($result > 0) {
@@ -422,10 +427,21 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 			$elProp = getElementProperties(GETPOST("elementtype", 'alpha'));
 			$modulecodetouseforpermissioncheck = $elProp['module'];
 			// Keep permission check aligned with rights class aliases (see restrictedArea()).
-			if ($modulecodetouseforpermissioncheck == 'productbatch') {
-				$modulecodetouseforpermissioncheck = 'produit';
-			}
 			$submodulecodetouseforpermissioncheck = $elProp['subelement'];
+
+			switch ($modulecodetouseforpermissioncheck) {
+				case 'productbatch':
+					$modulecodetouseforpermissioncheck = 'produit';
+					break;
+				case 'eventorganization':
+					// Event organization relies on Project permissions
+					$modulecodetouseforpermissioncheck = 'projet';
+					$submodulecodetouseforpermissioncheck = ''; // Project doesn't use submodules for read
+					break;
+				default:
+					// No mapping needed, keep original values
+					break;
+			}
 
 			$hasPermissionOnLinkedObject = 0;
 			if ($user->hasRight($modulecodetouseforpermissioncheck, 'read')) {
@@ -475,12 +491,12 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 		$transparency = (GETPOST("transparency") == 'on' ? 1 : 0);
 
 		$listofuserid = [];
-		if (!empty($_SESSION['assignedtouser'])) {
-			$listofuserid = json_decode($_SESSION['assignedtouser'], true);
+		if (!empty($_SESSION[$sessionkeyassignedtouser])) {
+			$listofuserid = json_decode($_SESSION[$sessionkeyassignedtouser], true);
 		}
 
-		if (!empty($_SESSION['assignedtoresource'])) {
-			$listofresourceid = json_decode($_SESSION['assignedtoresource'], true);
+		if (!empty($_SESSION[$sessionkeyassignedtoresource])) {
+			$listofresourceid = json_decode($_SESSION[$sessionkeyassignedtoresource], true);
 		}
 
 		$i = 0;
@@ -511,7 +527,7 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 	}
 
 	// Check parameters
-	if (empty($object->userownerid) && empty($_SESSION['assignedtouser'])) {
+	if (empty($object->userownerid) && empty($_SESSION[$sessionkeyassignedtouser])) {
 		$error++;
 		$donotclearsession = 1;
 		$action = 'create';
@@ -668,7 +684,7 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 					}
 				}
 
-				unset($_SESSION['assignedtoresource']);
+				unset($_SESSION[$sessionkeyassignedtoresource]);
 
 
 				// Category association
@@ -677,7 +693,7 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 					$object->setCategories($categories);
 				}
 
-				unset($_SESSION['assignedtouser']);
+				unset($_SESSION[$sessionkeyassignedtouser]);
 
 				if ($user->id != $object->userownerid) {
 					$moreparam = "filtert=-1"; // We force to remove filter so created record is visible when going back to per user view.
@@ -798,7 +814,7 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 						$categories = GETPOST('categories', 'array');
 						$finalobject->setCategories($categories);
 
-						unset($_SESSION['assignedtouser']);
+						unset($_SESSION[$sessionkeyassignedtouser]);
 
 						$moreparam = '';
 						if ($user->id != $finalobject->userownerid) {
@@ -982,7 +998,7 @@ if (empty($reshook) && $action == 'update' && $usercancreate) {
 		$object->contact_id = GETPOSTINT("contactid");
 		if (empty($object->contact_id) && !empty($object->socpeopleassigned)) {
 			reset($object->socpeopleassigned);
-			$object->contact_id = key($object->socpeopleassigned);
+			$object->contact_id = (int) key($object->socpeopleassigned);
 		}
 		$object->fk_project  = GETPOSTINT("projectid");
 		$taskid = GETPOSTINT('taskid');
@@ -1003,8 +1019,20 @@ if (empty($reshook) && $action == 'update' && $usercancreate) {
 			$elProp = getElementProperties(GETPOST("elementtype", 'alpha'));
 			$modulecodetouseforpermissioncheck = $elProp['module'];
 			// Keep permission check aligned with rights class aliases (see restrictedArea()).
-			if ($modulecodetouseforpermissioncheck == 'productbatch') {
-				$modulecodetouseforpermissioncheck = 'produit';
+			$submodulecodetouseforpermissioncheck = $elProp['subelement'];
+
+			switch ($modulecodetouseforpermissioncheck) {
+				case 'productbatch':
+					$modulecodetouseforpermissioncheck = 'produit';
+					break;
+				case 'eventorganization':
+					// Event organization relies on Project permissions
+					$modulecodetouseforpermissioncheck = 'projet';
+					$submodulecodetouseforpermissioncheck = ''; // Project doesn't use submodules for read
+					break;
+				default:
+					// No mapping needed, keep original values
+					break;
 			}
 
 			$hasPermissionOnLinkedObject = 0;
@@ -1023,9 +1051,9 @@ if (empty($reshook) && $action == 'update' && $usercancreate) {
 
 		// Users
 		$listofuserid = [];
-		if (!empty($_SESSION['assignedtouser'])) {	// Now concat assigned users
+		if (!empty($_SESSION[$sessionkeyassignedtouser])) {	// Now concat assigned users
 			// Restore array with key with same value than param 'id'
-			$tmplist1 = json_decode($_SESSION['assignedtouser'], true);
+			$tmplist1 = json_decode($_SESSION[$sessionkeyassignedtouser], true);
 			foreach ($tmplist1 as $key => $val) {
 				if ($val['id'] > 0 && $val['id'] != $assignedtouser) {
 					$listofuserid[$val['id']] = $val;
@@ -1195,8 +1223,8 @@ if (empty($reshook) && $action == 'update' && $usercancreate) {
 				}
 
 				if (!$error) {
-					unset($_SESSION['assignedtouser']);
-					unset($_SESSION['assignedtoresource']);
+					unset($_SESSION[$sessionkeyassignedtouser]);
+					unset($_SESSION[$sessionkeyassignedtoresource]);
 
 					$db->commit();
 				} else {
@@ -1212,7 +1240,7 @@ if (empty($reshook) && $action == 'update' && $usercancreate) {
 
 	if (!$error) {
 		if (!empty($backtopage)) {
-			unset($_SESSION['assignedtouser']);
+			unset($_SESSION[$sessionkeyassignedtouser]);
 			header("Location: ".$backtopage);
 			exit;
 		}
@@ -1257,7 +1285,7 @@ if (empty($reshook) && GETPOST('actionmove', 'alpha') == 'mupdate' && $usercancr
 
 	if ($datep != $object->datep) {
 		if (!empty($object->datef)) {
-			$object->datef += $datep - $object->datep;
+			$object->datef += (int) $datep - $object->datep;
 		}
 		$object->datep = $datep;
 
@@ -1487,7 +1515,10 @@ if ($action == 'create') {
 	// Type of event
 	if (getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
 		print '<tr><td class="titlefieldcreate"><span class="fieldrequired">'.$langs->trans("Type").'</span></b></td><td>';
-		$default = getDolGlobalString('AGENDA_USE_EVENT_TYPE_DEFAULT', 'AC_RDV');
+		$default = getDolGlobalString('AGENDA_USE_EVENT_TYPE_DEFAULT', 'AC_OTH');
+		if (empty($default)) {
+			$default = 'AC_OTH';
+		}
 		print img_picto($langs->trans("ActionType"), 'square', 'class="fawidth30 inline-block" style="color: #ddd;"');
 		$selectedvalue = GETPOSTISSET("actioncode") ? GETPOST("actioncode", 'aZ09') : ($object->type_code ? $object->type_code : $default);
 		print $formactions->select_type_actions($selectedvalue, "actioncode", "systemauto", 0, -1, 0, 1);	// TODO Replace 0 with -2 in onlyautoornot
@@ -1585,7 +1616,7 @@ if ($action == 'create') {
 		*/
 
 		// limit date
-		$repeateventlimitdate = empty($repeateventlimitdate) ?  (dol_now() + ((24 * 3600 * 365) + 1)) : $repeateventlimitdate;
+		$repeateventlimitdate = empty($repeateventlimitdate) ? (dol_now() + ((24 * 3600 * 365) + 1)) : $repeateventlimitdate;
 
 		print '<div class="hidden marginrightonly inline-block repeateventlimitdate">';
 		print $langs->trans("Until")." ";
@@ -1667,10 +1698,10 @@ if ($action == 'create') {
 		}
 		//$listofuserid[$user->id] = array('id'=>$user->id, 'mandatory'=>0, 'transparency'=>(GETPOSTISSET('transparency') ? GETPOST('transparency', 'alpha') : 1)); // 1 by default at first init
 		$listofuserid[$assignedtouser]['transparency'] = (GETPOSTISSET('transparency') ? GETPOST('transparency', 'alpha') : 1); // 1 by default at first init
-		$_SESSION['assignedtouser'] = json_encode($listofuserid);
+		$_SESSION[$sessionkeyassignedtouser] = json_encode($listofuserid);
 	} else {
-		if (!empty($_SESSION['assignedtouser'])) {
-			$listofuserid = json_decode($_SESSION['assignedtouser'], true);
+		if (!empty($_SESSION[$sessionkeyassignedtouser])) {
+			$listofuserid = json_decode($_SESSION[$sessionkeyassignedtouser], true);
 		}
 		if (!is_array($listofuserid)) {
 			$listofuserid = [];
@@ -1696,10 +1727,10 @@ if ($action == 'create') {
 			if ($assignedtoresource) {
 				$listofresourceid[$assignedtoresource] = array('id' => $assignedtoresource, 'mandatory' => 0); // Owner first
 			}
-			$_SESSION['assignedtoresource'] = json_encode($listofresourceid);
+			$_SESSION[$sessionkeyassignedtoresource] = json_encode($listofresourceid);
 		} else {
-			if (!empty($_SESSION['assignedtoresource'])) {
-				$listofresourceid = json_decode($_SESSION['assignedtoresource'], true);
+			if (!empty($_SESSION[$sessionkeyassignedtoresource])) {
+				$listofresourceid = json_decode($_SESSION[$sessionkeyassignedtoresource], true);
 			}
 			if (!is_array($listofresourceid)) {
 				$listofresourceid = [];
@@ -1868,9 +1899,22 @@ if ($action == 'create') {
 		$elProp = getElementProperties($origin);
 		$modulecodetouseforpermissioncheck = $elProp['module'];
 		// Keep permission check aligned with rights class aliases (see restrictedArea()).
-		if ($modulecodetouseforpermissioncheck == 'productbatch') {
-			$modulecodetouseforpermissioncheck = 'produit';
+		$submodulecodetouseforpermissioncheck = $elProp['subelement'];
+
+		switch ($modulecodetouseforpermissioncheck) {
+			case 'productbatch':
+				$modulecodetouseforpermissioncheck = 'produit';
+				break;
+			case 'eventorganization':
+				// Event organization relies on Project permissions
+				$modulecodetouseforpermissioncheck = 'projet';
+				$submodulecodetouseforpermissioncheck = ''; // Project doesn't use submodules for read
+				break;
+			default:
+				// No mapping needed, keep original values
+				break;
 		}
+
 		if ($user->hasRight($modulecodetouseforpermissioncheck, 'read') || $user->hasRight($modulecodetouseforpermissioncheck, $elProp['element'], 'read')) {
 			$hasPermissionOnLinkedObject = 1;
 		}
@@ -1903,7 +1947,7 @@ if ($action == 'create') {
 	// Description
 	print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor('note', (GETPOSTISSET('note') ? GETPOST('note', 'restricthtml') : $object->note_private), '', 100, 'dolibarr_notes', 'In', true, true, isModEnabled('fckeditor'), ROWS_4, '90%');
+	$doleditor = new DolEditor('note', (GETPOSTISSET('note') ? GETPOST('note', 'restricthtml') : $object->note_private), '', 200, 'dolibarr_notes', 'In', true, true, isModEnabled('fckeditor'), ROWS_4, '90%');
 	$doleditor->Create();
 	print '</td></tr>';
 
@@ -2084,7 +2128,7 @@ if ($id > 0 && $action != 'create') {
 	$delay_warning = getDolGlobalInt('MAIN_DELAY_ACTIONS_TODO') * 24 * 60 * 60;
 
 
-	// Confirmation suppression action
+	// Deletion confirmation action
 	if ($action == 'delete') {
 		print $form->formconfirm("card.php?id=".urlencode((string) ($id)), $langs->trans("DeleteAction"), $langs->trans("ConfirmDeleteAction"), "confirm_delete", '', '', 1);
 	}
@@ -2295,10 +2339,10 @@ if ($id > 0 && $action != 'create') {
 					}
 				}
 			}
-			$_SESSION['assignedtouser'] = json_encode($listofuserid);
+			$_SESSION[$sessionkeyassignedtouser] = json_encode($listofuserid);
 		} else {
-			if (!empty($_SESSION['assignedtouser'])) {
-				$listofuserid = json_decode($_SESSION['assignedtouser'], true);
+			if (!empty($_SESSION[$sessionkeyassignedtouser])) {
+				$listofuserid = json_decode($_SESSION[$sessionkeyassignedtouser], true);
 			}
 		}
 
@@ -2474,7 +2518,7 @@ if ($id > 0 && $action != 'create') {
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 		// Wysiwyg editor
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-		$doleditor = new DolEditor('note', $object->note_private, '', 120, 'dolibarr_notes', 'In', true, true, isModEnabled('fckeditor'), ROWS_4, '90%');
+		$doleditor = new DolEditor('note', $object->note_private, '', 200, 'dolibarr_notes', 'In', true, true, isModEnabled('fckeditor'), ROWS_4, '90%');
 		$doleditor->Create();
 		print '</td></tr>';
 
@@ -2807,10 +2851,10 @@ if ($id > 0 && $action != 'create') {
 					}
 				}
 			}
-			$_SESSION['assignedtouser'] = json_encode($listofuserid);
+			$_SESSION[$sessionkeyassignedtouser] = json_encode($listofuserid);
 		} else {
-			if (!empty($_SESSION['assignedtouser'])) {
-				$listofuserid = json_decode($_SESSION['assignedtouser'], true);
+			if (!empty($_SESSION[$sessionkeyassignedtouser])) {
+				$listofuserid = json_decode($_SESSION[$sessionkeyassignedtouser], true);
 			}
 		}
 
@@ -2998,7 +3042,7 @@ if ($id > 0 && $action != 'create') {
 
 			if ($user->hasRight('agenda', 'allactions', 'create') ||
 			   (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->hasRight('agenda', 'myactions', 'create'))) {
-				print '<div class="inline-block divButAction"><a class="butAction" href="card.php?action=clone&object='.$object->element.'&id='.$object->id.'">'.$langs->trans("ToClone").'</a></div>';
+				print '<div class="inline-block divButAction"><a class="butAction butActionClone" href="card.php?action=clone&object='.$object->element.'&id='.$object->id.'">'.$langs->trans("ToClone").'</a></div>';
 			} else {
 				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("ToClone").'</a></div>';
 			}

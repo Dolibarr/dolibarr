@@ -26,10 +26,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -38,6 +34,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "bills", "other", "accountancy", "loans", "banks", "admin", "dict"));
@@ -147,12 +146,13 @@ if (isModEnabled('accounting')) {
 
 	print '<div class="'.($helpisexpanded ? '' : 'hideobject').' idfaq">'; // hideobject is to start hidden
 	print "<br>\n";
-	print '<span class="opacitymedium">'.$langs->trans("AccountancyAreaDescIntro")."</span><br>\n";
+	//print '<span class="opacitymedium">'.$langs->trans("AccountancyAreaDescIntro")."</span><br>\n";
 	if ($user->hasRight('accounting', 'chartofaccount')) {
-		print '<br>';
+		//print '<br>';
+		//print '<br>';
 		print load_fiche_titre('<span class="fa fa-calendar"></span> '.$langs->trans("AccountancyAreaDescActionOnce"), '', '', 0, '', 'nomarginbottom')."\n";
-		print '<hr>';
-		print "<br>\n";
+
+		print '<div class="info">';
 
 		// STEPS
 		$step++;
@@ -199,12 +199,14 @@ if (isModEnabled('accounting')) {
 			print $s;
 			print "<br>\n";
 		}
+		print '</div>';
 
 
 		print "<br>\n";
-		print $langs->trans("AccountancyAreaDescActionOnceBis");
+		print '<span class="opacitymedium">'.$langs->trans("AccountancyAreaDescActionOnceBis").'</span>';
 		print "<br>\n";
-		print "<br>\n";
+
+		print '<div class="info">';
 
 		$step++;
 		$s = img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescDefault", $step, '{s}');
@@ -247,6 +249,8 @@ if (isModEnabled('accounting')) {
 		print $s;
 		print "<br>\n";
 
+		print '</div>';
+
 		print '<br>';
 	}
 
@@ -254,11 +258,12 @@ if (isModEnabled('accounting')) {
 
 	print "<br>\n";
 	print load_fiche_titre('<span class="fa fa-calendar"></span> '.$langs->trans("AccountancyAreaDescActionFreq"), '', '', 0, '', 'nomarginbottom')."\n";
-	print '<hr>';
-	print "<br>\n";
+
 	$step = 0;
 
 	$langs->loadLangs(array('bills', 'trips'));
+
+	print '<div class="info">';
 
 	$step++;
 	$s = img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescBind", chr(64 + $step), $langs->transnoentitiesnoconv("BillsCustomers"), '{s}')."\n";
@@ -292,6 +297,9 @@ if (isModEnabled('accounting')) {
 	$step++;
 	$s = img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescClosePeriod", chr(64 + $step))."<br>\n";
 	print $s;
+
+	print '</div>';
+
 
 	if (!empty($resultboxes['boxlista']) || !empty($resultboxes['boxlistb'])) {
 		print "<br>\n";

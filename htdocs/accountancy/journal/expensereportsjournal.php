@@ -8,7 +8,7 @@
  * Copyright (C) 2013-2016	Florian Henry				<florian.henry@open-concept.pro>
  * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2018		Eric Seigne					<eric.seigne@cap-rel.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -311,7 +311,7 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 					$bookkeeping->doc_ref = $val["ref"];
 					$bookkeeping->date_creation = $now;
 					$bookkeeping->doc_type = 'expense_report';
-					$bookkeeping->fk_doc = $key;
+					$bookkeeping->fk_doc = (int) $key;
 					$bookkeeping->fk_docdet = $val["fk_expensereportdet"];
 
 					$bookkeeping->subledger_account = $tabuser[$key]['user_accountancy_code'];
@@ -372,7 +372,7 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 						$bookkeeping->doc_ref = $val["ref"];
 						$bookkeeping->date_creation = $now;
 						$bookkeeping->doc_type = 'expense_report';
-						$bookkeeping->fk_doc = $key;
+						$bookkeeping->fk_doc = (int) $key;
 						$bookkeeping->fk_docdet = $val["fk_expensereportdet"];
 
 						$bookkeeping->subledger_account = '';
@@ -444,7 +444,7 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 						$bookkeeping->doc_ref = $val["ref"];
 						$bookkeeping->date_creation = $now;
 						$bookkeeping->doc_type = 'expense_report';
-						$bookkeeping->fk_doc = $key;
+						$bookkeeping->fk_doc = (int) $key;
 						$bookkeeping->fk_docdet = $val["fk_expensereportdet"];
 
 						$bookkeeping->subledger_account = '';
@@ -717,7 +717,7 @@ if (empty($action) || $action == 'view') {
 	$bookkeepingstatic = new BookKeeping($db);
 
 	foreach ($taber as $key => $val) {
-		$expensereportstatic->id = $key;
+		$expensereportstatic->id = (int) $key;
 		$expensereportstatic->ref = $val["ref"];
 		$expensereportlinestatic->comments = html_entity_decode(dol_trunc($val["comments"], 32));
 

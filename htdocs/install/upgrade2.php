@@ -5,8 +5,8 @@
  * Copyright (C) 2010       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2015-2016  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2023      	Gauthier VERDOL       	<gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,6 +67,10 @@ require_once $conffile;
  * @var string	$dolibarr_main_db_encrypted_pass
  * @var string	$dolibarr_main_db_cryptkey
  */
+'
+@phan-var-force string $dolibarr_main_db_type
+';
+
 require_once $dolibarr_main_document_root.'/compta/facture/class/facture.class.php';
 require_once $dolibarr_main_document_root.'/comm/propal/class/propal.class.php';
 require_once $dolibarr_main_document_root.'/contrat/class/contrat.class.php';
@@ -77,6 +81,7 @@ require_once $dolibarr_main_document_root.'/core/class/menubase.class.php';
 require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
 require_once $dolibarr_main_document_root.'/core/lib/files.lib.php';
 require_once $dolibarr_main_document_root.'/user/class/user.class.php';
+require_once $dolibarr_main_document_root.'/blockedlog/lib/blockedlog.lib.php';
 
 global $langs;
 
@@ -142,6 +147,8 @@ if ((!$versionfrom || preg_match('/version/', $versionfrom)) && (!$versionto || 
 pHeader('', 'step5', GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'upgrade', 'versionfrom='.$versionfrom.'&versionto='.$versionto, '', 'main-inside main-inside-borderbottom');
 
 
+$db = null;
+
 if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ09'))) {
 	print '<h3><img class="valignmiddle inline-block paddingright" src="../public/theme/common/database.svg" width="20" alt="Database"> ';
 	print '<span class="inline-block valignmiddle">'.$langs->trans('DataMigration').'</span></h3>';
@@ -171,11 +178,11 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 	$conf->db->user = $dolibarr_main_db_user;
 	$conf->db->pass = $dolibarr_main_db_pass;
 
-	$db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, (int) $conf->db->port);
+	$db = getDoliDBInstance($conf->db->type, $conf->db->host, (string) $conf->db->user, (string) $conf->db->pass, (string) $conf->db->name, (int) $conf->db->port);
 
 	if (!$db->connected) {
 		print '<tr><td colspan="4">'.$langs->trans("ErrorFailedToConnectToDatabase", $conf->db->name).'</td><td class="right">'.$langs->trans('Error').'</td></tr>';
-		dolibarr_install_syslog('upgrade2: failed to connect to database :'.$conf->db->name.' on '.$conf->db->host.' for user '.$conf->db->user, LOG_ERR);
+		dolibarr_install_syslog('upgrade2: failed to connect to database :'.(string) $conf->db->name.' on '.(string) $conf->db->host.' for user '.(string) $conf->db->user, LOG_ERR);
 		$error++;
 	}
 
@@ -326,9 +333,9 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			// Version to install is DOL_VERSION
 			$dolibarrlastupgradeversionarray = preg_split('/[\.-]/', getDolGlobalString('MAIN_VERSION_LAST_UPGRADE', getDolGlobalString('MAIN_VERSION_LAST_INSTALL')));
 
-			// Chaque action de migration doit renvoyer une ligne sur 4 colonnes avec
-			// dans la 1ere colonne, la description de l'action a faire
-			// dans la 4eme colonne, le texte 'OK' si fait ou 'AlreadyDone' si rien n'est fait ou 'Error'
+			// Every migration action must return a 4 column line with:
+			// - in the 1st column: the description of the action to do,
+			// - in the 4th column: the text 'OK' if done, or 'AlreadyDone' si nothing is done, or 'Error'
 
 			$versiontoarray = explode('.', $versionto);
 			$versionranarray = explode('.', DOL_VERSION);
@@ -667,6 +674,17 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 
 				migrate_blockedlog_add_hmac_key();
 			}
+
+			// Scripts for 23.0
+			$afterversionarray = explode('.', '23.0.9');
+			$beforeversionarray = explode('.', '24.0.9');
+			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
+				dol_syslog("Run migrate_... versionto is between ".json_encode($afterversionarray)." and ".json_encode($beforeversionarray));
+
+				migrate_rename_directories($db, $langs, $conf, '/banque', '/bank');
+
+				migrate_blockedlog_add_end_file();
+			}
 		}
 
 		// Code executed only if migration is LAST ONE. Must always be done.
@@ -702,7 +720,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 				'MAIN_MODULE_RESOURCE' => 'noboxes',
 				'MAIN_MODULE_SALARIES' => 'newboxdefonly',
 				'MAIN_MODULE_SERVICE' => 'newboxdefonly',
-				'MAIN_MODULE_SYSLOG' => 'newboxdefonly',
+				//'MAIN_MODULE_SYSLOG' => 'newboxdefonly',		This enabled the module syslog, but we don't want to do that.
 				'MAIN_MODULE_SOCIETE' => 'newboxdefonly',
 				'MAIN_MODULE_STRIPE' => 'menuonly',
 				'MAIN_MODULE_TICKET' => 'newboxdefonly',
@@ -879,7 +897,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			});
 		});
 		</script>';
-		print '<a class="trforrunsqlshowhide" href="#">'.$langs->trans("ShowHideDetails").'</a>';
+		print '<a class="reposition trforrunsqlshowhide" href="#">'.$langs->trans("ShowHideDetails").'</a>';
 		//}
 
 		print '</td></tr>'."\n";
@@ -901,7 +919,7 @@ dolibarr_install_syslog("Exit ".$ret);
 dolibarr_install_syslog("--- upgrade2: end");
 pFooter($error ? 2 : 0, $setuplang);
 
-if ($db->connected) {
+if ($db !== null && $db->connected) {
 	$db->close();
 }
 
@@ -1227,7 +1245,7 @@ function migrate_paiements_orphelins_2($db, $langs, $conf)
 
 
 /**
- * Mise a jour des contrats (gestion du contrat + detail de contrat)
+ * Update the contracts (Contract Management + Contract Detail)
  *
  * @param	DoliDB		$db		Database handler
  * @param	Translate	$langs	Object langs
@@ -1353,7 +1371,7 @@ function migrate_links_transfert($db, $langs, $conf)
 				$sql .= "fk_bank, url_id, url, label, type";
 				$sql .= ")";
 				$sql .= " VALUES (";
-				$sql .= $obj->barowid.",".$obj->bbrowid.", '/compta/bank/line.php?rowid=', '(banktransfert)', 'banktransfert'";
+				$sql .= ((int) $obj->barowid).",".((int) $obj->bbrowid).", '/compta/bank/line.php?rowid=', '(banktransfert)', 'banktransfert'";
 				$sql .= ")";
 
 				//print $sql.'<br>';
@@ -1386,7 +1404,7 @@ function migrate_links_transfert($db, $langs, $conf)
 }
 
 /**
- * Mise a jour des date de contrats non renseignees
+ * Update missing Contract Dates
  *
  * @param	DoliDB		$db		Database handler
  * @param	Translate	$langs	Object langs
@@ -1526,7 +1544,7 @@ function migrate_contracts_date3($db, $langs, $conf)
 }
 
 /**
- * Reouverture des contrats qui ont au moins une ligne non fermee
+ * Reopen the contracts that have at least one line that is not closed (/completed).
  *
  * @param	DoliDB		$db		Database handler
  * @param	Translate	$langs	Object langs
@@ -1621,11 +1639,11 @@ function migrate_paiementfourn_facturefourn($db, $langs, $conf)
 			$select_num = $db->num_rows($select_resql);
 			$i = 0;
 
-			// Pour chaque paiement fournisseur, on insere une ligne dans paiementfourn_facturefourn
+			// For every supplier payment, add a line to paiementfourn_facturefourn
 			while (($i < $select_num) && (!$error)) {
 				$select_obj = $db->fetch_object($select_resql);
 
-				// Verifier si la ligne est deja dans la nouvelle table. On ne veut pas inserer de doublons.
+				// Verify if the row is already in the new table - avoid adding duplicates
 				$check_sql = 'SELECT fk_paiementfourn, fk_facturefourn';
 				$check_sql .= ' FROM '.MAIN_DB_PREFIX.'paiementfourn_facturefourn';
 				$check_sql .= ' WHERE fk_paiementfourn = '.((int) $select_obj->rowid).' AND fk_facturefourn = '.((int) $select_obj->fk_facture_fourn);
@@ -1644,9 +1662,9 @@ function migrate_paiementfourn_facturefourn($db, $langs, $conf)
 						print '<td>'.$select_obj->rowid.'</td><td>'.$select_obj->fk_facture_fourn.'</td><td>'.$select_obj->amount.'</td>';
 
 						$insert_sql = 'INSERT INTO '.MAIN_DB_PREFIX.'paiementfourn_facturefourn SET ';
-						$insert_sql .= ' fk_paiementfourn = \''.$select_obj->rowid.'\',';
-						$insert_sql .= ' fk_facturefourn  = \''.$select_obj->fk_facture_fourn.'\',';
-						$insert_sql .= ' amount           = \''.$select_obj->amount.'\'';
+						$insert_sql .= ' fk_paiementfourn = \''.((int) $select_obj->rowid).'\',';
+						$insert_sql .= ' fk_facturefourn  = \''.((int) $select_obj->fk_facture_fourn).'\',';
+						$insert_sql .= ' amount           = \''.((float) $select_obj->amount).'\'';
 						$insert_resql = $db->query($insert_sql);
 
 						if ($insert_resql) {
@@ -1833,7 +1851,7 @@ function migrate_price_propal($db, $langs, $conf)
 				$remise_percent_global = $obj->remise_percent_global;
 				$info_bits = $obj->info_bits;
 
-				// On met a jour les 3 nouveaux champs
+				// Update the 3 new fields
 				$propalligne = new PropaleLigne($db);
 				$propalligne->fetch($rowid);
 
@@ -2197,7 +2215,7 @@ function migrate_modeles($db, $langs, $conf)
 
 
 /**
- * Correspondence des expeditions et des commandes clients dans la table llx_co_exp
+ * Relations between the Shipping and Client Order in the table llx_co_exp
  *
  * @param	DoliDB		$db		Database handler
  * @param	Translate	$langs	Object langs
@@ -2262,7 +2280,7 @@ function migrate_commande_expedition($db, $langs, $conf)
 }
 
 /**
- * Correspondence des livraisons et des commandes clients dans la table llx_co_liv
+ * Correspondence of the deliveries and the Customer Orders in the table llx_co_liv
  *
  * @param	DoliDB		$db		Database handler
  * @param	Translate	$langs	Object langs
@@ -2342,7 +2360,7 @@ function migrate_commande_livraison($db, $langs, $conf)
 }
 
 /**
- * Migration des details commandes dans les details livraisons
+ * Migrate the Order Details in the Delivery Details
  *
  * @param	DoliDB		$db		Database handler
  * @param	Translate	$langs	Object langs
@@ -2444,7 +2462,7 @@ function migrate_detail_livraison($db, $langs, $conf)
 }
 
 /**
- * Migration du champ stock dans produits
+ * Migration of the stock field in the Products table
  *
  * @param	DoliDB		$db		Database handler
  * @param	Translate	$langs	Object langs
@@ -2676,11 +2694,11 @@ function migrate_restore_missing_links($db, $langs, $conf)
 
 	$db->begin();
 
-	$sql = "SELECT t1.rowid, t1.".$field1." as field";
-	$sql .= " FROM ".MAIN_DB_PREFIX.$table1." as t1";
-	$sql .= " WHERE t1.".$field1." IS NOT NULL AND t1.".$field1." NOT IN";
-	$sql .= " (SELECT t2.rowid FROM ".MAIN_DB_PREFIX.$table2." as t2";
-	$sql .= " WHERE t1.rowid = t2.".$field2.")";
+	$sql = "SELECT t1.rowid, t1.".$db->sanitize($field1)." as field";
+	$sql .= " FROM ".MAIN_DB_PREFIX.$db->sanitize($table1)." as t1";
+	$sql .= " WHERE t1.".$db->sanitize($field1)." IS NOT NULL AND t1.".$db->sanitize($field1)." NOT IN";
+	$sql .= " (SELECT t2.rowid FROM ".MAIN_DB_PREFIX.$db->sanitize($table2)." as t2";
+	$sql .= " WHERE t1.rowid = t2.".$db->sanitize($field2).")";
 
 	dolibarr_install_syslog("upgrade2::migrate_restore_missing_links DIRECTION 1");
 	$resql = $db->query($sql);
@@ -2736,11 +2754,11 @@ function migrate_restore_missing_links($db, $langs, $conf)
 
 	$db->begin();
 
-	$sql = "SELECT t1.rowid, t1.".$field1." as field";
-	$sql .= " FROM ".MAIN_DB_PREFIX.$table1." as t1";
-	$sql .= " WHERE t1.".$field1." IS NOT NULL AND t1.".$field1." NOT IN";
-	$sql .= " (SELECT t2.rowid FROM ".MAIN_DB_PREFIX.$table2." as t2";
-	$sql .= " WHERE t1.rowid = t2.".$field2.")";
+	$sql = "SELECT t1.rowid, t1.".$db->sanitize($field1)." as field";
+	$sql .= " FROM ".MAIN_DB_PREFIX.$db->sanitize($table1)." as t1";
+	$sql .= " WHERE t1.".$db->sanitize($field1)." IS NOT NULL AND t1.".$db->sanitize($field1)." NOT IN";
+	$sql .= " (SELECT t2.rowid FROM ".MAIN_DB_PREFIX.$db->sanitize($table2)." as t2";
+	$sql .= " WHERE t1.rowid = t2.".$db->sanitize($field2).")";
 
 	dolibarr_install_syslog("upgrade2::migrate_restore_missing_links DIRECTION 2");
 	$resql = $db->query($sql);
@@ -2828,9 +2846,9 @@ function migrate_project_user_resp($db, $langs, $conf)
 					$sql2 .= ") VALUES (";
 					$sql2 .= "'".$db->idate(dol_now())."'";
 					$sql2 .= ", '4'";
-					$sql2 .= ", ".$obj->rowid;
+					$sql2 .= ", ".((int) $obj->rowid);
 					$sql2 .= ", '160'";
-					$sql2 .= ", ".$obj->fk_user_resp;
+					$sql2 .= ", ".((int) $obj->fk_user_resp);
 					$sql2 .= ")";
 
 					if ($obj->fk_user_resp > 0) {
@@ -2907,9 +2925,9 @@ function migrate_project_task_actors($db, $langs, $conf)
 					$sql2 .= ") VALUES (";
 					$sql2 .= "'".$db->idate(dol_now())."'";
 					$sql2 .= ", '4'";
-					$sql2 .= ", ".$obj->fk_project_task;
+					$sql2 .= ", ".((int) $obj->fk_project_task);
 					$sql2 .= ", '180'";
-					$sql2 .= ", ".$obj->fk_user;
+					$sql2 .= ", ".((int) $obj->fk_user);
 					$sql2 .= ")";
 
 					$resql2 = $db->query($sql2);
@@ -2970,7 +2988,7 @@ function migrate_relationship_tables($db, $langs, $conf, $table, $fk_source, $so
 
 		$db->begin();
 
-		$sqlSelect = "SELECT ".$fk_source.", ".$fk_target;
+		$sqlSelect = "SELECT ".$db->sanitize($fk_source).", ".$db->sanitize($fk_target);
 		$sqlSelect .= " FROM ".MAIN_DB_PREFIX.$table;
 
 		$resql = $db->query($sqlSelect);
@@ -2988,9 +3006,9 @@ function migrate_relationship_tables($db, $langs, $conf, $table, $fk_source, $so
 					$sqlInsert .= ", fk_target";
 					$sqlInsert .= ", targettype";
 					$sqlInsert .= ") VALUES (";
-					$sqlInsert .= $obj->$fk_source;
+					$sqlInsert .= ((int) $obj->$fk_source);
 					$sqlInsert .= ", '".$db->escape($sourcetype)."'";
-					$sqlInsert .= ", ".$obj->$fk_target;
+					$sqlInsert .= ", ".((int) $obj->$fk_target);
 					$sqlInsert .= ", '".$db->escape($targettype)."'";
 					$sqlInsert .= ")";
 
@@ -3007,7 +3025,7 @@ function migrate_relationship_tables($db, $langs, $conf, $table, $fk_source, $so
 			}
 
 			if ($error == 0) {
-				$sqlDrop = "DROP TABLE ".MAIN_DB_PREFIX.$table;
+				$sqlDrop = "DROP TABLE ".MAIN_DB_PREFIX.$db->sanitize($table);
 				if ($db->query($sqlDrop)) {
 					$db->commit();
 				} else {
@@ -3259,9 +3277,9 @@ function migrate_shipping_delivery($db, $langs, $conf)
 					$sqlInsert .= ", fk_target";
 					$sqlInsert .= ", targettype";
 					$sqlInsert .= ") VALUES (";
-					$sqlInsert .= $obj->fk_expedition;
+					$sqlInsert .= ((int) $obj->fk_expedition);
 					$sqlInsert .= ", 'shipping'";
-					$sqlInsert .= ", ".$obj->rowid;
+					$sqlInsert .= ", ".((int) $obj->rowid);
 					$sqlInsert .= ", 'delivery'";
 					$sqlInsert .= ")";
 
@@ -3498,7 +3516,7 @@ function migrate_mode_reglement($db, $langs, $conf)
 
 				if ($resqla && $resql) {
 					foreach ($elements['tables'] as $table) {
-						$sql = "UPDATE ".MAIN_DB_PREFIX.$table." SET ";
+						$sql = "UPDATE ".MAIN_DB_PREFIX.$db->sanitize($table)." SET ";
 						$sql .= "fk_mode_reglement = ".((int) $elements['new_id'][$key]);
 						$sql .= " WHERE fk_mode_reglement = ".((int) $old_id);
 
@@ -3865,14 +3883,14 @@ function migrate_reset_blocked_log($db, $langs, $conf)
 						} else {
 							// Add set line
 							$object = new stdClass();
-							$object->id = 1;
+							$object->id = 0;
 							$object->element = 'module';
 							$object->ref = 'systemevent';
 							$object->entity = $obj->entity;
 							$object->date = dol_now();
 
 							$b = new BlockedLog($db);
-							$b->setObjectData($object, 'MODULE_SET', 0, $user, null);
+							$b->setObjectData($object, 'MODULE_SET', 0, $user, 0);
 
 							$res = $b->create($user);
 							if ($res <= 0) {
@@ -3880,7 +3898,7 @@ function migrate_reset_blocked_log($db, $langs, $conf)
 							}
 						}
 					} else {
-						print ' - '.$langs->trans('AlreadyInV7').'<br>';
+						print ' - '.$langs->trans('AlreadyDone').'<br>';
 					}
 				} else {
 					dol_print_error($db);
@@ -3943,7 +3961,7 @@ function migrate_remise_entity($db, $langs, $conf)
 				$obj = $db->fetch_object($resql);
 
 				$sqlUpdate = "UPDATE ".MAIN_DB_PREFIX."societe_remise SET";
-				$sqlUpdate .= " entity = ".$obj->entity;
+				$sqlUpdate .= " entity = ".((int) $obj->entity);
 				$sqlUpdate .= " WHERE rowid = ".((int) $obj->rowid);
 
 				$result = $db->query($sqlUpdate);
@@ -4320,6 +4338,9 @@ function migrate_rename_directories($db, $langs, $conf, $oldname, $newname)
 	if (is_dir(DOL_DATA_ROOT.$oldname) && !file_exists(DOL_DATA_ROOT.$newname)) {
 		dolibarr_install_syslog("upgrade2::migrate_rename_directories move ".DOL_DATA_ROOT.$oldname.' into '.DOL_DATA_ROOT.$newname);
 		@rename(DOL_DATA_ROOT.$oldname, DOL_DATA_ROOT.$newname);
+	} else {
+		// If new directory already exists, we copy content of old one intotnew one
+		dolCopyDir(DOL_DATA_ROOT.$oldname, DOL_DATA_ROOT.$newname, '0', 1);
 	}
 }
 
@@ -4346,13 +4367,15 @@ function migrate_delete_old_files($db, $langs, $conf)
 		'/core/menus/barre_top/default.php',
 		'/core/modules/modComptabiliteExpert.class.php',
 		'/core/modules/modCommercial.class.php',
+		'/core/modules/modPaybox.class.php',
 		'/core/modules/modProduit.class.php',
 		'/core/modules/modSkype.class.php',
-		'/core/modules/modactivite.class.php',		// A file from external module that should not be here
+		'/core/modules/modactivite.class.php',		// A file from an external module that should not be here
 		'/core/triggers/interface_modWebcalendar_Webcalsynchro.class.php',
 		'/core/triggers/interface_modCommande_Ecotax.class.php',
 		'/core/triggers/interface_modCommande_fraisport.class.php',
 		'/core/triggers/interface_modPropale_PropalWorkflow.class.php',
+		'/core/triggers/interface_50_modBlockedlog_ActionsBlockedLog.class.php', // now has position 99
 		'/core/triggers/interface_99_modWebhook_WebhookTriggers.class.php',
 		'/core/triggers/interface_99_modZapier_ZapierTriggers.class.php',
 		'/core/menus/smartphone/iphone.lib.php',
@@ -4482,7 +4505,7 @@ function migrate_delete_old_dir($db, $langs, $conf)
  * @param	DoliDB		$db				Database handler
  * @param	Translate	$langs			Object langs
  * @param	Conf		$conf			Object conf
- * @param	array<string,'noboxes'|'newboxdefonly'|'forceactivate'>	$listofmodule	List of modules, like array('MODULE_KEY_NAME'=>$reloadmode, ...)
+ * @param	array<string,'noboxes'|'menuonly'|'newboxdefonly'|'forceactivate'>	$listofmodule	List of modules, like array('MODULE_KEY_NAME'=>$reloadmode, ...)
  * @param   int<0,1>	$force          1=Reload module even if not already loaded
  * @return	int							Return integer <0 if KO, >0 if OK
  */
@@ -4522,7 +4545,6 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 		'MAIN_MODULE_HOLIDAY' => array('class' => 'modHoliday', 'remove' => 1),
 		'MAIN_MODULE_KNOWLEDGEMANAGEMENT' => array('class' => 'modKnowledgeManagement', 'remove' => 1),
 		'MAIN_MODULE_LOAN' => array('class' => 'modLoan', 'remove' => 1),
-		'MAIN_MODULE_PAYBOX' => array('class' => 'modPaybox', 'remove' => 1),
 		'MAIN_MODULE_PROPAL' => array('class' => 'modPropale'),
 		'MAIN_MODULE_SUPPLIERPROPOSAL' => array('class' => 'modSupplierProposal', 'remove' => 1),
 		'MAIN_MODULE_OPENSURVEY' => array('class' => 'modOpenSurvey', 'remove' => 1),
@@ -4680,7 +4702,7 @@ function migrate_productlot_path()
 	$resql = $db->query($sql);
 
 	if ($resql) {
-		$modulepart="product_batch";
+		$modulepart = "product_batch";
 
 		$lot = new Productlot($db);
 
@@ -4977,7 +4999,6 @@ function migrate_holiday_path()
 									//print $origin.'/'.$file.' -> '.$destin.'/'.$file.'<br>'."\n";
 									print '.';
 									dol_copy($origin.'/'.$file, $destin.'/'.$file, '0', 0);
-									//var_dump('eee');exit;
 								}
 							}
 						}
@@ -4991,13 +5012,13 @@ function migrate_holiday_path()
 }
 
 
-/* A faire egalement: Modif statut paye et fk_facture des factures payes completement
+/* TODO: Modify the Paid status and `fk_facture` of the invoices paid in full
 
-On recherche facture incorrecte:
+Lookup incorrect invoices:
 select f.rowid, f.total_ttc as t1, sum(pf.amount) as t2 from llx_facture as f, llx_paiement_facture as pf where pf.fk_facture=f.rowid and f.fk_statut in(2,3) and paye=0 and close_code is null group by f.rowid
 having  f.total_ttc = sum(pf.amount)
 
-On les corrige:
+Correct the incorrect invoices:
 update llx_facture set paye=1, fk_statut=2 where close_code is null
 and rowid in (...)
 */
@@ -5026,7 +5047,7 @@ function migrate_users_socialnetworks()
 	$sql .= " OR googleplus IS NOT NULL OR googleplus <> ''";
 	$sql .= " OR youtube IS NOT NULL OR youtube <> ''";
 	$sql .= " OR whatsapp IS NOT NULL OR whatsapp <> ''";
-	//print $sql;
+
 	$resql = $db->query($sql);
 	if ($resql) {
 		while ($obj = $db->fetch_object($resql)) {
@@ -5073,7 +5094,7 @@ function migrate_users_socialnetworks()
 			$sqlupd .= ', youtube=null';
 			$sqlupd .= ', whatsapp=null';
 			$sqlupd .= ' WHERE rowid = '.((int) $obj->rowid);
-			//print $sqlupd."<br>";
+
 			$resqlupd = $db->query($sqlupd);
 			if (!$resqlupd) {
 				dol_print_error($db);
@@ -5305,7 +5326,7 @@ function migrate_thirdparties_socialnetworks()
 	$sql .= " OR googleplus IS NOT NULL OR googleplus <> ''";
 	$sql .= " OR youtube IS NOT NULL OR youtube <> ''";
 	$sql .= " OR whatsapp IS NOT NULL OR whatsapp <> ''";
-	//print $sql;
+
 	$resql = $db->query($sql);
 	if ($resql) {
 		while ($obj = $db->fetch_object($resql)) {
@@ -5687,7 +5708,8 @@ function migrate_apiresttokens()
 			while ($obj = $db->fetch_object($result)) {
 				if (!in_array(dolDecrypt($obj->tokenstring), $allexistingtokens)) {
 					// Load the object of the user of token so we can get the API_COUNT_CALL
-					unset($tmpuser->conf); $tmpuser->conf = new stdClass();
+					unset($tmpuser->conf);
+					$tmpuser->conf = new stdClass();
 					$tmpuser->fetch((int) $obj->fk_user, '', '', 1, ($obj->entity ? $obj->entity : $conf->entity));
 
 					$sqlforinsert = "INSERT INTO ".MAIN_DB_PREFIX."oauth_token (service, tokenstring, fk_user, datec, entity, apicount_total)";
@@ -5727,7 +5749,9 @@ function migrate_apiresttokens()
 
 
 /**
- * Add the HMAC key for blockedlog v2
+ * Add the HMAC key for blockedlog v2+
+ * Note that this is used on old version only. It stores the HMAC with old method but it will be automatically converted in new storing
+ * method once on version of blockedlog 3.0.0
  *
  * @return  int		Return -1 if KO, 1 if OK
  */
@@ -5747,7 +5771,9 @@ function migrate_blockedlog_add_hmac_key()
 	$hmac_encoded_secret_key = getDolGlobalString('BLOCKEDLOG_HMAC_KEY');
 	if (empty($hmac_encoded_secret_key)) {
 		// Add key
-		$hmac_secret_key = 'BLOCKEDLOGHMAC'.getRandomPassword(true);		// This is using random_int for 32 chars
+		$randomsecret = bin2hex(random_bytes(32)); 	// 64 char hex - 256 bits
+
+		$hmac_secret_key = 'BLOCKEDLOGHMAC'.$randomsecret;		// Example: 'BLOCKEDLOGHMACY3Ewx37RXbSd8gL9JV8p7Wqw7qvq2K2A'
 
 		$result = dolibarr_set_const($db, 'BLOCKEDLOG_HMAC_KEY', $hmac_secret_key, 'chaine', 0, 'The secret key for HMAC used for blockedlog record', $conf->entity);	// Will encrypt the value using dolCrypt and store it.
 

@@ -5,10 +5,10 @@
  * Copyright (C) 2013		Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2017-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2014-2017  Ferran Marcet				<fmarcet@2byte.es>
- * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2020-2021  Udo Tamm					<dev@dolibit.de>
  * Copyright (C) 2022		Anthony Berton				<anthony.berton@bb2a.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +32,16 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var Societe $mysoc
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
@@ -41,22 +51,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/holiday.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- *
- * @var Societe $mysoc
- */
 
 // Get parameters
-$action 		= GETPOST('action', 'aZ09');
-$cancel 		= GETPOST('cancel', 'alpha');
-$confirm 		= GETPOST('confirm', 'alpha');
+$action = GETPOST('action', 'aZ09');
+$cancel = GETPOST('cancel', 'alpha');
+$confirm = GETPOST('confirm', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');					// if not set, a default page will be used
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');	// if not set, $backtopage will be used
 
@@ -84,8 +84,6 @@ if (getDolGlobalString('HOLIDAY_HIDE_FOR_NON_SALARIES')) {
 }
 
 $object = new Holiday($db);
-
-$extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -288,7 +286,7 @@ if (empty($reshook)) {
 				}
 			}
 			foreach ($TusersToProcess as $u) {
-				// Check if there is already holiday for this period pour chaque user
+				// Check if there is already holiday for this period for each user
 				$verifCP = $object->verifDateHolidayCP($u, $date_debut, $date_fin, $halfday);
 				if (!$verifCP) {
 					//setEventMessages($langs->trans("alreadyCPexist"), null, 'errors');
@@ -326,13 +324,12 @@ if (empty($reshook)) {
 						setEventMessages($object->error, $object->errors, 'errors');
 						$error++;
 					} else {
-						//@TODO changer le nom si validated
 						if ($autoValidation) {
 							$htemp = new Holiday($db);
 							$htemp->fetch($result);
 
 							$htemp->status = Holiday::STATUS_VALIDATED;
-							$resultValidated = $htemp->update($approverid);
+							$resultValidated = $htemp->validate($approverid);
 
 							if ($resultValidated < 0) {
 								setEventMessages($object->error, $object->errors, 'errors');
@@ -376,6 +373,7 @@ $listhalfday = array('morning' => $langs->trans("Morning"), "afternoon" => $lang
 
 $title = $langs->trans('Leave');
 $help_url = 'EN:Module_Holiday';
+$errors = array();
 
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-holiday page-card_group');
 
@@ -485,7 +483,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
        </script>'."\n";
 
 
-		// Formulaire de demande
+		// Leave request form
 		print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" name="demandeCP">'."\n";
 		print '<input type="hidden" name="token" value="'.newToken().'" />'."\n";
 		print '<input type="hidden" name="action" value="add" />'."\n";
@@ -572,7 +570,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 		print $form->textwithpicto($langs->trans("DateDebCP"), $langs->trans("FirstDayOfHoliday"));
 		print '</td>';
 		print '<td>';
-		// Si la demande ne vient pas de l'agenda
+		// If the request does not come from the agenda
 		if (!GETPOST('date_debut_')) {
 			print $form->selectDate(-1, 'date_debut_', 0, 0, 0, '', 1, 1);
 		} else {
@@ -764,7 +762,7 @@ function sendMail($id, $cancreate, $now, $autoValidation)
 				if (!getDolGlobalString('HOLIDAY_HIDE_APPROVER_ABOUT_NEGATIVE_BALANCE')) {
 					$affectingtypes = $object->getTypes(1, 1);
 					if (!empty($affectingtypes[$object->fk_type])) {
-						$nbopenedday = num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday, $expediteur->country_id);
+						$nbopenedday = num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday, $expediteur->country_id, $object->fk_user);
 
 						if ($nbopenedday > $object->getCPforUser($object->fk_user, $object->fk_type)) {
 							$message .= "<p>".$langs->transnoentities("HolidaysToValidateAlertSolde")."</p>\n";

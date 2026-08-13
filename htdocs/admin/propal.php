@@ -8,7 +8,7 @@
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  * Copyright (C) 2011-2013 Juanjo Menent			   <jmenent@2byte.es>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2025		William Mead				<william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -61,6 +61,8 @@ $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
 $type = 'propal';
 
+$propal = new Propal($db);
+
 
 /*
  * Actions
@@ -91,7 +93,6 @@ if ($action == 'updateMask') {
 } elseif ($action == 'specimen') {
 	$modele = GETPOST('module', 'alpha');
 
-	$propal = new Propal($db);
 	$propal->initAsSpecimen();
 
 	// Search template files
@@ -159,6 +160,18 @@ if ($action == 'updateMask') {
 		$freetext = GETPOST('PROPOSAL_FREE_TEXT', 'restricthtml'); // No alpha here, we want exact string
 		$res = dolibarr_set_const($db, "PROPOSAL_FREE_TEXT", $freetext, 'chaine', 0, '', $conf->entity);
 		if (!($res > 0)) {
+			$error++;
+		}
+	}
+	if (GETPOSTISSET('PROPOSAL_ALLOW_ONLINESIGN')) {
+		$result = dolibarr_set_const($db, "PROPOSAL_ALLOW_ONLINESIGN", GETPOST('PROPOSAL_ALLOW_ONLINESIGN', 'alpha'), 'chaine', 0, '', $conf->entity);
+		if (!($result > 0)) {
+			$error++;
+		}
+	}
+	if (GETPOSTISSET('PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN')) {
+		$result = dolibarr_set_const($db, "PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN", GETPOST('PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN', 'alpha'), 'chaine', 0, '', $conf->entity);
+		if (!($result > 0)) {
 			$error++;
 		}
 	}
@@ -336,7 +349,7 @@ foreach ($dirmodels as $reldir) {
 						$htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
 						$propal->type = 0;
 						$nextval = $module->getNextValue($mysoc, $propal);
-						if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
+						if ((string) $nextval != $langs->trans("NotAvailable")) {  // Keep " on nextval
 							$htmltooltip .= ''.$langs->trans("NextValue").': ';
 							if ($nextval) {
 								if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
@@ -496,7 +509,7 @@ foreach ($dirmodels as $reldir) {
 								// Preview
 								print '<td class="center">';
 								if ($module->type == 'pdf') {
-									print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
+									print '<a href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'specimen', 'module' => $name], true).'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
 								} else {
 									print img_object($langs->transnoentitiesnoconv("PreviewNotAvailable"), 'generic');
 								}
@@ -641,7 +654,7 @@ print '<td>';
 print "<input size=\"3\" class=\"flat\" type=\"text\" name=\"PROPALE_VALIDITY_DURATION\" value=\"" . getDolGlobalString('PROPALE_VALIDITY_DURATION')."\"></td>";
 print '</tr>';
 
-$substitutionarray = pdf_getSubstitutionArray($langs, null, null, 2);
+$substitutionarray = pdf_getSubstitutionArray($langs, null, $propal, 2);
 $substitutionarray['__(AnyTranslationKey)__'] = $langs->trans("Translation");
 $htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
 foreach ($substitutionarray as $key => $val) {
@@ -682,9 +695,20 @@ print '</td></tr>';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("AllowOnLineSign").'</td>';
 print '<td>';
-print ajax_constantonoff('PROPOSAL_ALLOW_ONLINESIGN', array(), null, 0, 0, 0, 2, 0, 1, '', '', 'inline-block', 0, $langs->transnoentitiesnoconv("WarningOnlineSignature", "https://www.dolistore.com"));
+print ajax_constantonoff('PROPOSAL_ALLOW_ONLINESIGN', array(), null, 0, 0, 1, 2, 0, 1, '', '', 'inline-block', 0, $langs->transnoentitiesnoconv("WarningOnlineSignature", "https://www.dolistore.com"));
 print '</td></tr>';
 
+/*
+if (getDolGlobalString('PROPOSAL_ALLOW_ONLINESIGN')) {
+	print '<tr class="oddeven"><td>';
+	print $langs->trans("SecurityToken").'</td><td>';
+	print '<input class="minwidth300"  type="text" id="PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN" name="PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN" value="' . getDolGlobalString('PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN').'" spellcheck="false">';
+	if (!empty($conf->use_javascript_ajax)) {
+		print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
+	}
+	print '</td></tr>';
+}
+*/
 
 // Notifications
 print '<tr class="oddeven">';
@@ -709,6 +733,11 @@ print '</form>';
 
 print "</table>\n<br>";
 
+$constname = 'PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN';
+
+// Add button to autosuggest a key
+include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+print dolJSToSetRandomPassword($constname);
 
 
 // End of page

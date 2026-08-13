@@ -31,14 +31,14 @@ UseDiscountOnTotal=Subtota
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Defineres om en global rabatt skal gjelde for et vare, en tjeneste, eller bare som en subtotal for margin-kalkulasjon
 MARGIN_TYPE=Foreslått innkjøps-/kostpris for utregning av margin
 MargeType1=Margin på beste leverandørpris
-MargeType2=Margin på gjennomsnittspris (Weighted Average Price - WAP)
+MargeType2=Margin on Weighted Average Cost (WAC)
 MargeType3=Marginer på kostpris
-MarginTypeDesc=* Margin på beste innkjøpspris = Salgspris - Beste leverandørpris på varekort - * Margin på vektet gjennomsnittlig pris (WAP) = Salgspris - WAP eller beste leverandørpris dersom WAP ennå ikke er definert <br> * Margin på kostpris = Salgspris - Kostpris på varekort eller WAP hvis kostpris ikke er definert, eller beste leverandørpris dersom WAP ennå ikke er definert
+MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Cost (WAC) = Selling price - Product Weighted Average Price (WAP) or best vendor price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAC if cost price not defined, or best vendor price if WAC not yet defined
 CostPrice=Kostpris
 UnitCharges=Enhets-avgifter
 Charges=Avgifter
 AgentContactType=Kommersiell agent kontakttype
-AgentContactTypeDetails=Definer hvilken kontakttype (lenket på fakturaer) som skal brukes til marginrapport per kontakt/adresse. Vær oppmerksom på at det ikke er pålitelig å lese statistikk for en kontakt siden kontakten i de fleste tilfeller ikke er definert eksplisitt på fakturaene.
+AgentContactTypeDetails=Definer hvilken kontakttype (lenket på fakturaer) som skal brukes for marginrapport per kontakt/adresse. Merk at lesing av statistikk på en kontakt ikke er pålitelig siden kontakten i de fleste tilfeller ikke er definert eksplisitt på fakturaer.
 rateMustBeNumeric=Sats må ha en numerisk verdi
 markRateShouldBeLesserThan100=Dekningsbidrag skal være lavere enn 100
 ShowMarginInfos=Vis info om marginer

@@ -2,7 +2,7 @@
 /* Copyright (C) 2007-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2008-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -95,7 +95,7 @@ class EcmDirectory extends CommonObject
 	public $ref;
 
 	/**
-	 * @var array<int,array{id:int,id_mere:int,fulllabel:string,fullpath:string,fullrelativename:string,label:string,description:string,cachenbofdoc:int,date_c:int,fk_user_c:int,statut_c:int,login_c:int,id_children?:int[],level:int}>	Array of categories
+	 * @var array<int,array{id:int,id_mere:int,fulllabel:string,fullpath:string,fullrelativename:string,label:string,description:string,cachenbofdoc:int,date_c:int,fk_user_c:int,statut_c:int,login_c:string,id_children?:int[],level:int}>	Array of categories
 	 */
 	public $cats = array();
 
@@ -501,7 +501,7 @@ class EcmDirectory extends CommonObject
 	 *  @param	int		$max			Max length
 	 *  @param	string	$more			Add more param on a link
 	 *  @param	int		$notooltip		1=Disable tooltip
-	 *  @return	string					Chaine avec URL
+	 *  @return	string					String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $max = 0, $more = '', $notooltip = 0)
 	{
@@ -599,7 +599,7 @@ class EcmDirectory extends CommonObject
 		$sql = "SELECT fk_parent as id_parent, rowid as id_son";
 		$sql .= " FROM ".MAIN_DB_PREFIX."ecm_directories";
 		$sql .= " WHERE fk_parent != 0";
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " AND entity = ".((int) $conf->entity);
 
 		dol_syslog(get_class($this)."::load_motherof", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -662,7 +662,7 @@ class EcmDirectory extends CommonObject
 	 *
 	 *
 	 *  @param	int		$force	        Force reload of full arbo even if already loaded in cache $this->cats
-	 *	@return array<int,array{id:int,id_mere:int,fulllabel:string,fullpath:string,fullrelativename:string,label:string,description:string,cachenbofdoc:int,date_c:int,fk_user_c:int,statut_c:int,login_c:int,id_children?:int[],level:int}>|int<-1,-1>	Tableau de array if OK, -1 if KO
+	 *	@return array<int,array{id:int,id_mere:int,fulllabel:string,fullpath:string,fullrelativename:string,label:string,description:string,cachenbofdoc:int,date_c:int,fk_user_c:int,statut_c:int,login_c:string,id_children?:int[],level:int}>|int<-1,-1>	Tableau de array if OK, -1 if KO
 	 */
 	public function get_full_arbo($force = 0)
 	{
@@ -688,7 +688,7 @@ class EcmDirectory extends CommonObject
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."ecm_directories as ca";
 		$sql .= " ON c.rowid = ca.fk_parent";
 		$sql .= " WHERE c.fk_user_c = u.rowid";
-		$sql .= " AND c.entity = ".$conf->entity;
+		$sql .= " AND c.entity = ".((int) $conf->entity);
 		$sql .= " ORDER BY c.label, c.rowid";
 
 		dol_syslog(get_class($this)."::get_full_arbo", LOG_DEBUG);
@@ -796,11 +796,11 @@ class EcmDirectory extends CommonObject
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."ecm_directories SET";
-		$sql .= " cachenbofdoc = '".count($filelist)."'";
+		$sql .= " cachenbofdoc = ".count($filelist);
 		if (empty($all)) {  // By default
 			$sql .= " WHERE rowid = ".((int) $this->id);
 		} else {
-			$sql .= " WHERE entity = ".$conf->entity;
+			$sql .= " WHERE entity = ".((int) $conf->entity);
 		}
 
 		dol_syslog(get_class($this)."::refreshcachenboffile", LOG_DEBUG);

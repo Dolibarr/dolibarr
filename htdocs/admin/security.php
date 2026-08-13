@@ -27,11 +27,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-
-$action = GETPOST('action', 'aZ09');
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -41,6 +36,10 @@ $action = GETPOST('action', 'aZ09');
  *
  * @var string $dolibarr_main_db_pass
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+
+$action = GETPOST('action', 'aZ09');
 
 // Load translation files required by the page
 $langs->loadLangs(array("users", "admin", "other"));
@@ -249,9 +248,9 @@ foreach ($arrayhandler as $key => $module) {
 	}
 
 	if ($module->isEnabled()) {
-		print '<tr class="oddeven"><td>';
+		print '<tr class="oddeven"><td class="nowraponall">';
 		print img_picto('', $module->picto, 'class="width25 size15x marginrightonly"').' ';
-		print ucfirst($key);
+		print '<div class="refid inline-block">'.ucfirst($key).'</span>';
 		print "</td><td>\n";
 		print $module->getDescription().'<br>';
 		print $langs->trans("MinLength").': <span class="opacitymedium">'.$module->length.'</span>';

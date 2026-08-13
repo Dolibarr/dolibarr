@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2017       Pierre-Henry Favre      <support@atm-consulting.fr>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,10 +27,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -38,12 +34,15 @@ require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 
 // Load translation files required by the page
-$langs->load("companies");
-if (isModEnabled('invoice')) {
-	$langs->load("bills");
-}
+$langs->loadLangs(array("companies", "bills"));
+
+$action = GETPOST('action');
+$dol_openinpopup = GETPOST('dol_openinpopup', 'aZ09');
 
 $id = GETPOST('id') ? GETPOSTINT('id') : GETPOSTINT('socid');
 
@@ -124,12 +123,17 @@ if ($id > 0) {
 	if ($id > 0) {
 		$param .= '&socid='.$id;
 	}
+	if ($dol_openinpopup) {
+		$param .= '&dol_openinpopup='.urlencode($dol_openinpopup);
+	}
 
-	$head = societe_prepare_head($object);
+	if (empty($dol_openinpopup)) {
+		$head = societe_prepare_head($object);
 
-	print dol_get_fiche_head($head, 'customer', $langs->trans("ThirdParty"), 0, 'company');
-	dol_banner_tab($object, 'socid', '', ($user->socid ? 0 : 1), 'rowid', 'nom', '', '', 0, '', '', 1);
-	print dol_get_fiche_end();
+		print dol_get_fiche_head($head, 'customer', $langs->trans("ThirdParty"), 0, 'company');
+		dol_banner_tab($object, 'socid', '', ($user->socid ? 0 : 1), 'rowid', 'nom', '', '', 0, '', '', 1);
+		print dol_get_fiche_end();
+	}
 
 	if (isModEnabled('invoice') && $user->hasRight('facture', 'lire')) {
 		// Invoice list
@@ -209,7 +213,7 @@ if ($id > 0) {
 				$sql .= " ".MAIN_DB_PREFIX."paiement as p";
 				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON p.fk_user_creat = u.rowid";
 				$sql .= " WHERE pf.fk_paiement = p.rowid";
-				$sql .= " AND p.entity = ".$conf->entity;
+				$sql .= " AND p.entity = ".((int) $conf->entity);
 				$sql .= " AND pf.fk_facture = ".((int) $fac->id);
 				$sql .= " ORDER BY p.datep ASC, p.rowid ASC";
 

@@ -6,7 +6,7 @@
  * Copyright (C) 2011-2014  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -129,11 +129,11 @@ $sql .= " INNER JOIN " . MAIN_DB_PREFIX . "bank as b ON (b.rowid = ptva.fk_bank)
 $sql .= " INNER JOIN " . MAIN_DB_PREFIX . "bank_account as bank ON (bank.rowid = b.fk_account)";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_paiement as pct ON ptva.fk_typepaiement = pct.id";
 $sql .= " WHERE ptva.fk_tva = tva.rowid";
-$sql .= " AND tva.entity = " . $conf->entity;
+$sql .= " AND tva.entity = " . ((int) $conf->entity);
 if ($year > 0) {
 	$sql .= " AND (";
-	// Si period renseignee on l'utilise comme critere de date, sinon on prend date echeance,
-	// ceci afin d'etre compatible avec les cas ou la periode n'etait pas obligatoire
+	// If the date range is provided, use it as a lookup condition.  Otherwise we use the due date.
+	// This ensures compatibilituy for the cases where the period is not mandatory
 	$sql .= "   (tva.datev IS NOT NULL AND tva.datev between '" . $db->idate(dol_get_first_day($year)) . "' AND '" . $db->idate(dol_get_last_day($year)) . "')";
 	$sql .= " OR (tva.datev IS NULL AND tva.datev between '" . $db->idate(dol_get_first_day($year)) . "' AND '" . $db->idate(dol_get_last_day($year)) . "')";
 	$sql .= ")";
@@ -150,6 +150,7 @@ if (preg_match('/^cs\./', $sortfield)
 //print $sql;
 
 dol_syslog("compta/tva/payments.php: select payment", LOG_DEBUG);
+$num = 0;
 $resql = $db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql);
@@ -202,7 +203,7 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 	$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "bank_account as bank ON (bank.rowid = b.fk_account)";
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_paiement as pct ON ptva.fk_typepaiement = pct.id";
 	$sql .= " WHERE ptva.fk_tva = tva.rowid";
-	$sql .= " AND tva.entity = " . $conf->entity;
+	$sql .= " AND tva.entity = " . ((int) $conf->entity);
 	if ($year > 0) {
 		$sql .= " AND (";
 		// We'll use the specified period as the date filter, unless it's missing, in which case we'll use the due date.

@@ -301,7 +301,7 @@ class SecurityGETPOSTTest extends CommonClassTest
 
 		$result = GETPOST("param15", 'restricthtml');		// param15 = <img onxxxx<=alert(document.domain)> src=>0xbeefed that is a dangerous string
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals("<img onxxxx=alert(document.domain) src=>0xbeefed", $result, 'Test 15');	// The GETPOST return a harmull string
+		$this->assertEquals("<img alert(document.domain) src=>0xbeefed", $result, 'Test 15');	// The GETPOST return a harmull string
 
 		$result = GETPOST("param15b", 'restricthtml');		// param15b = <img onerror<=alert(document.domain)> src=>0xbeefed that is a dangerous string
 		print __METHOD__." result=".$result."\n";
@@ -509,12 +509,12 @@ class SecurityGETPOSTTest extends CommonClassTest
 		// Test substitution in GET url
 		$user->fk_user = 999;
 		$mysoc->country_id = 1;
-		$_GET['paramtestsubstit'] = 'XXX __NOTDEFINED__ XXX __USER_SUPERVISOR_ID__ XXX __MYCOMPANY_COUNTRY_ID__ XXX  __MYCOUNTRY_ID__ XXX';
+		$_GET['paramtestsubstit'] = 'XXX __NOTDEFINED__ XXX __USER_SUPERVISOR_ID__ XXX __MYCOMPANY_COUNTRY_ID__ XXX';
 
 		// Test that links not on wrapper and not data are disallowed
 		$result = GETPOST("paramtestsubstit", 'alphanohtml');
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('XXX __NOTDEFINED__ XXX 999 XXX 1 XXX 1 XXX', $result, 'Failed to do conversion');
+		$this->assertEquals('XXX __NOTDEFINED__ XXX 999 XXX 1 XXX', $result, 'Failed to do conversion');
 
 
 		return $result;

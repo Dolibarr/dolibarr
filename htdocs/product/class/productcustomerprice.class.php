@@ -2,7 +2,7 @@
 /* Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2014      Florian Henry   <florian.henry@open-concept.pro>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 
 /**
  * \file htdocs/product/class/productcustomerprice.class.php
- * \ingroup produit
+ * \ingroup product
  * \brief File of class to manage predefined price products or services by customer
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
 class ProductCustomerPrice extends CommonObject
 {
 	/**
-	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>,searchmulti?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,visible:int<-6,6>|string,langfile?:string,notnull?:int<-1,1>,noteditable?:int<0,1>,alwayseditable?:int<0,1>|string,default?:string|int,index?:int<0,1>,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,helplist?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>|string,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>|string,showonheader?:int<0,1>,searchmulti?:int<0,1>,picto?:string,required?:int<0,1>,placeholder?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'ref' => array('type' => 'varchar(128)', 'label' => 'Ref', 'enabled' => 1, 'visible' => 4, 'position' => 10, 'notnull' => 1, 'default' => '(PROV)', 'index' => 1, 'searchall' => 1, 'comment' => "Reference of object", 'showoncombobox' => 1, 'noteditable' => 1),
@@ -360,7 +360,7 @@ class ProductCustomerPrice extends CommonObject
 		$sql .= " ".(empty($this->price_min_ttc) ? '0' : "'".$this->db->escape($this->price_min_ttc)."'").",";
 		$sql .= " ".(!isset($this->price_base_type) ? 'NULL' : "'".$this->db->escape($this->price_base_type)."'").",";
 		$sql .= " ".($this->default_vat_code ? "'".$this->db->escape($this->default_vat_code)."'" : "null").",";
-		$sql .= " ".(!isset($this->tva_tx) ? 'NULL' : (empty($this->tva_tx) ? 0 : $this->tva_tx)).",";
+		$sql .= " ".(!isset($this->tva_tx) ? 'NULL' : (empty($this->tva_tx) ? 0 : ((float) $this->tva_tx))).",";
 		$sql .= " ".(!isset($this->recuperableonly) ? 'NULL' : "'".$this->db->escape($this->recuperableonly)."'").",";
 		$sql .= " ".(empty($this->localtax1_type) ? "'0'" : "'".$this->db->escape($this->localtax1_type)."'").",";
 		$sql .= " ".(!isset($this->localtax1_tx) ? 'NULL' : (empty($this->localtax1_tx) ? "'0'" : "'".$this->db->escape($this->localtax1_tx)."'")).",";
@@ -930,17 +930,17 @@ class ProductCustomerPrice extends CommonObject
 		$sql .= " entity=".((int) $conf->entity).",";
 		$sql .= " datec='".$this->db->idate($now)."',";
 		$sql .= " tms=".(dol_strlen((string) $this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
-		$sql .= " fk_product=".(isset($this->fk_product) ? $this->fk_product : "null").",";
-		$sql .= " fk_soc=".(isset($this->fk_soc) ? $this->fk_soc : "null").",";
+		$sql .= " fk_product=".(isset($this->fk_product) ? ((int) $this->fk_product) : "null").",";
+		$sql .= " fk_soc=".(isset($this->fk_soc) ? ((int) $this->fk_soc) : "null").",";
 		$sql .= " ref_customer=".(isset($this->ref_customer) ? "'".$this->db->escape($this->ref_customer)."'" : "null").",";
-		$sql .= " price=".(isset($this->price) ? $this->price : "null").",";
-		$sql .= " price_ttc=".(isset($this->price_ttc) ? $this->price_ttc : "null").",";
-		$sql .= " price_min=".(isset($this->price_min) ? $this->price_min : "null").",";
-		$sql .= " price_min_ttc=".(isset($this->price_min_ttc) ? $this->price_min_ttc : "null").",";
+		$sql .= " price=".(isset($this->price) ? ((float) $this->price) : "null").",";
+		$sql .= " price_ttc=".(isset($this->price_ttc) ? ((float) $this->price_ttc) : "null").",";
+		$sql .= " price_min=".(isset($this->price_min) ? ((float) $this->price_min) : "null").",";
+		$sql .= " price_min_ttc=".(isset($this->price_min_ttc) ? ((float) $this->price_min_ttc) : "null").",";
 		$sql .= " price_base_type=".(isset($this->price_base_type) ? "'".$this->db->escape($this->price_base_type)."'" : "null").",";
 		$sql .= " default_vat_code = ".($this->default_vat_code ? "'".$this->db->escape($this->default_vat_code)."'" : "null").",";
-		$sql .= " tva_tx=".(isset($this->tva_tx) ? (empty($this->tva_tx) ? 0 : $this->tva_tx) : "null").",";
-		$sql .= " recuperableonly=".(isset($this->recuperableonly) ? $this->recuperableonly : "null").",";
+		$sql .= " tva_tx=".(isset($this->tva_tx) ? (empty($this->tva_tx) ? 0 : ((float) $this->tva_tx)) : "null").",";
+		$sql .= " recuperableonly=".(isset($this->recuperableonly) ? ((int) $this->recuperableonly) : "null").",";
 		$sql .= " localtax1_tx=".(isset($this->localtax1_tx) ? (empty($this->localtax1_tx) ? "'0'" : "'".$this->db->escape($this->localtax1_tx)."'") : "null").",";
 		$sql .= " localtax2_tx=".(isset($this->localtax2_tx) ? (empty($this->localtax2_tx) ? "'0'" : "'".$this->db->escape($this->localtax2_tx)."'") : "null").",";
 		$sql .= " localtax1_type=".(!empty($this->localtax1_type) ? "'".$this->db->escape($this->localtax1_type)."'" : "'0'").",";

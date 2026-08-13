@@ -34,6 +34,7 @@
  * @var string	$forcefieldid
  * @var string	$forceobjectid
  */
+'@phan-var-force array<string,mixed>	$parameters';
 
 // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
@@ -45,8 +46,12 @@ if (!is_object($form)) {
 	$form = new Form($db);
 }
 
+// Ensure $objectoffield is available for dol_eval visibility formulas.
+global $objectoffield;
+$objectoffield = $object;
+
 ?>
-<!-- BEGIN PHP TEMPLATE core/tpl/extrafields_view.tpl.php -->
+<!-- BEGIN PHP TEMPLATE core/tpl/extrafields_view.tpl.php to show formObjectOptions + extrafields -->
 <?php
 if (!isset($parameters) || !is_array($parameters)) {
 	$parameters = array();

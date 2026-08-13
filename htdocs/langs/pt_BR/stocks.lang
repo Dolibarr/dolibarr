@@ -23,6 +23,7 @@ NumberOfProducts=Número total de produtos
 LastMovement=Último movimento
 CorrectStock=Corrigir estoque
 StockTransfer=Banco de transferência
+Stocktransfer=Banco de transferência
 TransferStock=Tranferencia de Estoque
 StockMovement=Movimento de estoque
 StockMovements=Movimentações de estoque

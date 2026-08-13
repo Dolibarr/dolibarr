@@ -3,9 +3,9 @@
  * Copyright (C) 2004-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2017       Olivier Geffroy         <jeff@jeffinfo.com>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024       Benjamin B.             <b.crozon@trebisol.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,9 +28,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -38,6 +35,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+
+require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'bills', 'donation', 'salaries'));
@@ -159,9 +159,10 @@ $exportlink = '';
 $namelink = '';
 $builddate = dol_now();
 $periodlink = '';
+$description = '';
 $name = '';
 
-// Affiche en-tete du rapport
+// Display report header
 if ($modecompta == "CREANCES-DETTES") {
 	$name = $langs->trans("Turnover");
 	$periodlink = ($year_start ? "<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start + $nbofyear - 2)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start + $nbofyear)."&modecompta=".$modecompta."'>".img_next()."</a>" : "");
@@ -219,6 +220,7 @@ if ($modecompta == "RECETTES-DEPENSES" || $modecompta == "BOOKKEEPINGCOLLECTED")
 }
 
 report_header($name, $namelink, $period, $periodlink, $description, $builddate, $exportlink, $moreparam, $calcmode);
+$sql = '';
 
 if (isModEnabled('accounting')) {
 	if ($modecompta != 'BOOKKEEPING') {
@@ -234,9 +236,9 @@ if (isModEnabled('accounting')) {
 		$sql = "SELECT b.rowid ";
 		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as b,";
 		$sql .= " ".MAIN_DB_PREFIX."accounting_account as aa";
-		$sql .= " WHERE b.entity = ".$conf->entity; // In module double party accounting, we never share entities
+		$sql .= " WHERE b.entity = ".((int) $conf->entity); // In module double party accounting, we never share entities
 		$sql .= " AND b.numero_compte = aa.account_number";
-		$sql .= " AND aa.entity = ".$conf->entity;
+		$sql .= " AND aa.entity = ".((int) $conf->entity);
 		$sql .= " AND aa.fk_pcg_version = '".$db->escape($pcgvercode)."'";
 		$sql .= $db->plimit(1);
 
@@ -265,8 +267,8 @@ if ($modecompta == 'CREANCES-DETTES') {
 	}
 } elseif ($modecompta == "RECETTES-DEPENSES") {
 	/*
-	 * Liste des paiements (les anciens paiements ne sont pas vus par cette requete car, sur les
-	 * vieilles versions, ils n'etaient pas lies via paiement_facture. On les ajoute plus loin)
+	 * List of payments (old payments are not seen by this query because, on old
+	 * versions, they were not linked via paiement_facture. We add them later)
 	 */
 	$sql = "SELECT date_format(p.datep, '%Y-%m') as dm, sum(pf.amount) as amount_ttc";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
@@ -288,10 +290,10 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql = "SELECT date_format(b.doc_date, '%Y-%m') as dm, sum(b.credit - b.debit) as amount_ttc";
 	$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as b,";
 	$sql .= " ".MAIN_DB_PREFIX."accounting_account as aa";
-	$sql .= " WHERE b.entity = ".$conf->entity; // In module double party accounting, we never share entities
+	$sql .= " WHERE b.entity = ".((int) $conf->entity); // In module double party accounting, we never share entities
 	$sql .= " AND b.numero_compte = aa.account_number";
 	$sql .= " AND b.doc_type = 'customer_invoice'";
-	$sql .= " AND aa.entity = ".$conf->entity;
+	$sql .= " AND aa.entity = ".((int) $conf->entity);
 	$sql .= " AND aa.fk_pcg_version = '".$db->escape($pcgvercode)."'";
 	$sql .= " AND aa.pcg_type = 'INCOME'";		// TODO Be able to use a custom group
 }
@@ -498,13 +500,13 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++) {
 			//var_dump($annee.' '.$year_end.' '.$mois.' '.$month_end);
 			if ($annee < $year_end || ($annee == $year_end && $mois <= $month_end)) {
 				if ($annee_decalage > $minyear && $case <= $casenow) {
-					if ($modecompta=='CREANCES-DETTES') {
-						$cumulative_previous_year = (!empty($cumulative_ht[$caseprev])?$cumulative_ht[$caseprev]:0);
-						$cumulative_year = (!empty($cumulative_ht[$case])?$cumulative_ht[$case]:0);
+					if ($modecompta == 'CREANCES-DETTES') {
+						$cumulative_previous_year = (!empty($cumulative_ht[$caseprev]) ? $cumulative_ht[$caseprev] : 0);
+						$cumulative_year = (!empty($cumulative_ht[$case]) ? $cumulative_ht[$case] : 0);
 						$isset_cumulative_previous_year = isset($cumulative_ht[$caseprev]);
 					} else {
-						$cumulative_previous_year = (!empty($cumulative[$caseprev])?$cumulative[$caseprev]:0);
-						$cumulative_year = (!empty($cumulative[$case])?$cumulative[$case]:0);
+						$cumulative_previous_year = (!empty($cumulative[$caseprev]) ? $cumulative[$caseprev] : 0);
+						$cumulative_year = (!empty($cumulative[$case]) ? $cumulative[$case] : 0);
 						$isset_cumulative_previous_year = isset($cumulative_ht[$caseprev]);
 					}
 					if (!empty($cumulative_previous_year) && !empty($cumulative_year)) {
@@ -570,11 +572,11 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++) {
  $case = dol_print_date(dol_mktime(1,1,1,$mois,1,$annee),"%Y-%m");
  $caseprev = dol_print_date(dol_mktime(1,1,1,$mois,1,$annee-1),"%Y-%m");
 
- // Valeur CA du mois
+ // Value of CA for the month
  print '<td class="right">';
  if ($cumulative[$case])
  {
- $now_show_delta=1;  // On a trouve le premier mois de la premiere annee generant du chiffre.
+ $now_show_delta=1;  // The first month of the initial year to generate turnover has been identified.
  print '<a href="casoc.php?year='.$annee.'&month='.$mois.'">'.price($cumulative[$case],1).'</a>';
  }
  else
@@ -584,10 +586,9 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++) {
  }
  print "</td>";
 
- // Pourcentage du mois
+ // Percentage of the month
  if ($annee > $minyear && $case <= $casenow) {
- if ($cumulative[$caseprev] && $cumulative[$case])
- {
+ if ($cumulative[$caseprev] && $cumulative[$case]) {
  $percent=(round(($cumulative[$case]-$cumulative[$caseprev])/$cumulative[$caseprev],4)*100);
  //print "X $cumulative[$case] - $cumulative[$caseprev] - $cumulative[$caseprev] - $percent X";
  print '<td class="right">'.($percent>=0?"+$percent":"$percent").'%</td>';
@@ -645,14 +646,14 @@ for ($annee = $year_start; $annee <= $year_end; $annee++) {
 		print '<td>&nbsp;</td>';
 	}
 
-	// Pourcentage total
+	// Percentage total
 	if ($annee > $minyear && $annee <= max($nowyear, $maxyear)) {
 		if ($modecompta == 'CREANCES-DETTES') {
-			$total_previous_year = (!empty($total_ht[$annee - 1])?$total_ht[$annee - 1]:0);
-			$total_year = (!empty($total_ht[$annee])?$total_ht[$annee]:0);
+			$total_previous_year = (!empty($total_ht[$annee - 1]) ? $total_ht[$annee - 1] : 0);
+			$total_year = (!empty($total_ht[$annee]) ? $total_ht[$annee] : 0);
 		} else {
-			$total_previous_year = (!empty($total[$annee - 1])?$total[$annee - 1]:0);
-			$total_year = (!empty($total[$annee])?$total[$annee]:0);
+			$total_previous_year = (!empty($total[$annee - 1]) ? $total[$annee - 1] : 0);
+			$total_year = (!empty($total[$annee]) ? $total[$annee] : 0);
 		}
 		if (!empty($total_previous_year) && !empty($total_year)) {
 			$percent = (round(($total_year - $total_previous_year) / $total_previous_year, 4) * 100);
@@ -689,15 +690,14 @@ print '</div>';
 
 
 /*
- * En mode recettes/depenses, on complete avec les montants factures non regles
- * et les propales signees mais pas facturees. En effet, en recettes-depenses,
- * on comptabilise lorsque le montant est sur le compte donc il est interessant
- * d'avoir une vision de ce qui va arriver.
+ * In cash accounting mode, we include outstanding invoiced amounts and signed proposals
+ * that haven't been invoiced yet. Since cash accounting only records transactions
+ * when funds hit the account, it is useful to have visibility into upcoming cash flow.
  */
 
 /*
- Je commente toute cette partie car les chiffres affichees sont faux - Eldy.
- En attendant correction.
+ Commenting out this entire section because the displayed figures are incorrect - Eldy.
+ Waiting for the fix.
 
  if ($modecompta != 'CREANCES-DETTES')
  {
@@ -733,7 +733,7 @@ print '</div>';
  $i++;
  }
 
- print "<tr class="oddeven"><td class=\"right\" colspan=\"5\"><i>Facture a encaisser : </i></td><td class=\"right\"><i>".price($total_ttc_Rac)."</i></td><td colspan=\"5\"><-- bug ici car n'exclut pas le deja r?gl? des factures partiellement r?gl?es</td></tr>";
+ print "<tr class=\"oddeven\"><td class=\"right\" colspan=\"5\"><i>Invoices to collect: </i></td><td class=\"right\"><i>".price($total_ttc_Rac)."</i></td><td colspan=\"5\"><-- bug here because it does not exclude already paid partially settled invoices</td></tr>";
  }
  $db->free($resql);
  }
@@ -745,13 +745,13 @@ print '</div>';
 
 /*
  *
- * Propales signees, et non facturees
+ * Signed but not invoiced proposals
  *
  */
 
 /*
- Je commente toute cette partie car les chiffres affichees sont faux - Eldy.
- En attendant correction.
+ Commenting out this entire section because the displayed figures are incorrect - Eldy.
+ Waiting for the fix.
 
  $sql = "SELECT sum(f.total_ht) as tot_fht,sum(f.total_ttc) as tot_fttc, p.rowid, p.ref, s.nom, s.rowid as socid, p.total_ht, p.total_ttc
  FROM ".MAIN_DB_PREFIX."commande AS p, ".MAIN_DB_PREFIX."societe AS s
@@ -782,7 +782,7 @@ print '</div>';
  $i++;
  }
 
- print "<tr class="oddeven"><td class=\"right\" colspan=\"5\"><i>Signe et non facture:</i></td><td class=\"right\"><i>".price($total_pr)."</i></td><td colspan=\"5\"><-- bug ici, ca devrait exclure le deja facture</td></tr>";
+ print "<tr class="oddeven"><td class=\"right\" colspan=\"5\"><i>Signe et non facture:</i></td><td class=\"right\"><i>".price($total_pr)."</i></td><td colspan=\"5\"><-- g here, it should exclude already invoiced amount></tr>";
  }
  $db->free($resql);
  }
@@ -790,7 +790,7 @@ print '</div>';
  {
  dol_print_error($db);
  }
- print "<tr class="oddeven"><td class=\"right\" colspan=\"5\"><i>Total CA previsionnel : </i></td><td class=\"right\"><i>".price($total_CA)."</i></td><td colspan=\"3\"><-- bug ici car bug sur les 2 precedents</td></tr>";
+ print "<tr class="oddeven"><td class=\"right\" colspan=\"5\"><i>Total CA previsionnel : </i></td><td class=\"right\"><i>".price($total_CA)."</i></td><td colspan=\"3\"><-- bug here because bug on two previous</td></tr>";
  }
  print "</table>";
 

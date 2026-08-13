@@ -102,3 +102,4 @@ SignedReceiverOnline=Аз ҷониби шахси сеюм онлайн имзо
 SignedAll=Аз ҷониби ҳамаи тарафҳо имзо шудааст
 SignStatus=Ҳолати имзо
 DocumentSigned=Ҳуҷҷат ба имзо расид
+DocumentUnsigned=Document unsigned

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2008-2020	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +30,8 @@
  * - you can set MAIN_SECURITY_ANTI_SSRF_SERVER_IP to set static ip of server
  * - common local lookup ips like 127.*.*.* are automatically added
  *
+ * To test there is no error, you can do:  if (empty($resultget['curl_error_no']) && $resultget['http_code'] == 200) ...
+ *
  * You can enable constant MAIN_CURL_DEBUG to get detail of output/input into dolibarr_curl.log file.
  *
  * @param	string	  					$url 			    URL to call.
@@ -43,9 +45,10 @@
  * @param	int							$timeoutconnect		Timeout for connection time
  * @param	int							$timeoutresponse	Timeout for total time including connection
  * @param	array<int,mixed>|null		$otherCurlOptions	Array of other curl options to set. Example: array(CURLOPT_SSL_VERIFYPEER => false)
+ * @param	string						$morelogsuffix		If set to a string '_suffix', some logs are also added into the file "dolibarr_suffix.log"
  * @return	array{http_code:int,content:string,curl_error_no:int,curl_error_msg:string}    Returns an associative array containing the response from the server array('http_code'=>http response code, 'content'=>response, 'curl_error_no'=>errno, 'curl_error_msg'=>errmsg...)
  */
-function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 1, $addheaders = array(), $allowedschemes = array('http', 'https'), $localurl = 0, $ssl_verifypeer = -1, $timeoutconnect = 0, $timeoutresponse = 0, $otherCurlOptions = array())
+function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 1, $addheaders = array(), $allowedschemes = array('http', 'https'), $localurl = 0, $ssl_verifypeer = -1, $timeoutconnect = 0, $timeoutresponse = 0, $otherCurlOptions = array(), $morelogsuffix = '')
 {
 	// Get global variables for proxy use
 	$USE_PROXY = getDolGlobalInt('MAIN_PROXY_USE');
@@ -58,11 +61,18 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	if (getDolGlobalInt('MAIN_CURL_DEBUG')) {
 		dol_syslog("getURLContent postorget=".$postorget." URL=".$url." json_encode(param)=".json_encode($param), LOG_DEBUG, 0, '_curl');
 	}
+	if ($morelogsuffix) {
+		dol_syslog("getURLContent postorget=".$postorget." URL=".$url." json_encode(param)=".json_encode($param), LOG_DEBUG, 0, $morelogsuffix);
+	}
 
 	if (!function_exists('curl_init')) {
 		if (getDolGlobalInt('MAIN_CURL_DEBUG')) {
 			dol_syslog("getURLContent PHP curl library must be installed", LOG_DEBUG, 0, '_curl');
 		}
+		if ($morelogsuffix) {
+			dol_syslog("getURLContent PHP curl library must be installed", LOG_DEBUG, 0, $morelogsuffix);
+		}
+
 		return array('http_code' => 500, 'content' => '', 'curl_error_no' => 1, 'curl_error_msg' => 'PHP curl library must be installed');
 	}
 
@@ -134,6 +144,8 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 				$redir_list["FTPS"] = 1;
 			}
 		}
+	} else {
+		return array('http_code' => 500, 'content' => '', 'curl_error_no' => 1, 'curl_error_msg' => 'Parameter allowedschemes of getURLContent must be an array of protocol schemes');
 	}
 
 	$newtimeoutconnect = ($timeoutconnect ? $timeoutconnect : getDolGlobalInt('MAIN_USE_CONNECT_TIMEOUT', 5));
@@ -142,9 +154,12 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	if (getDolGlobalInt('MAIN_CURL_DEBUG')) {
 		dol_syslog("getURLContent newtimeoutconnect=".$newtimeoutconnect." newtimeoutresponse=".$newtimeoutresponse, LOG_DEBUG, 0, '_curl');
 	}
+	if ($morelogsuffix) {
+		dol_syslog("getURLContent newtimeoutconnect=".$newtimeoutconnect." newtimeoutresponse=".$newtimeoutresponse, LOG_DEBUG, 0, $morelogsuffix);
+	}
 
-	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $newtimeoutconnect);
-	curl_setopt($ch, CURLOPT_TIMEOUT, $newtimeoutresponse);
+	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $newtimeoutconnect);	// Timeout for connection
+	curl_setopt($ch, CURLOPT_TIMEOUT, $newtimeoutresponse);			// Timeout for total time including connection
 
 	// limit size of downloaded files.
 	$maxsize = getDolGlobalInt('MAIN_SECURITY_MAXFILESIZE_DOWNLOADED');
@@ -192,6 +207,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	} elseif ($postorget == 'HEAD') {
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'HEAD'); // HTTP request is 'HEAD'
 		curl_setopt($ch, CURLOPT_NOBODY, true);
+		curl_setopt($ch, CURLOPT_HEADER, true);
 	} elseif ($postorget == 'DELETE') {
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE'); // POST
 	} else {
@@ -231,7 +247,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 
 		// Parse $newUrl
 		$newUrlArray = parse_url($newUrl);
-		$hosttocheck = $newUrlArray['host'];
+		$hosttocheck = $newUrlArray['host'] ?: $newUrlArray['path'];
 		$hosttocheck = str_replace(array('[', ']'), '', $hosttocheck); // Remove brackets of IPv6
 
 		// Deny some reserved host names
@@ -244,6 +260,11 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 			return array('http_code' => 400, 'content' => $info['content'], 'curl_error_no' => 1, 'curl_error_msg' => $info['content']);
 		}
 
+		/* Discard full numeric hostname */
+		if (preg_match('/^[x0-9a-f]+$/', $hosttocheck)) {
+			return array('http_code' => 400, 'content' => '', 'curl_error_no' => 1, 'curl_error_msg' => 'Host is a numeric address that is not allowed');
+		}
+
 		// Clean host name $hosttocheck to convert it into an IP $iptocheck
 		if (in_array($hosttocheck, array('localhost', 'localhost.domain'))) {
 			$iptocheck = '127.0.0.1';
@@ -251,17 +272,15 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 			$iptocheck = '::1';
 		} else {
 			// Resolve $hosttocheck to get the IP $iptocheck
-			if (function_exists('gethostbyname')) {
-				$iptocheck = gethostbyname($hosttocheck);
-			} else {
-				$iptocheck = $hosttocheck;
-			}
-			// TODO Resolve ip v6
+			// Not that a bad numeric hostname like 2130706433 will be resolved int 127.0.0.1 but
+			// this case is filtered previously.
+			$iptocheck = resolveDns($hosttocheck);
 		}
 
 		// Check $iptocheck is an IP (v4 or v6), if not clear value.
-		if (!filter_var($iptocheck, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_IPV6)) {	// This is not an IP, we clean data
-			$iptocheck = '0'; //
+		if (!filter_var($iptocheck, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_IPV6)) {	// This is not an IP
+			$iptocheck = '0'; // will disabled check on IP
+			return array('http_code' => 400, 'content' => '', 'curl_error_no' => 1, 'curl_error_msg' => 'Host is a numeric address that is not allowed');
 		}
 
 		if ($iptocheck) {
@@ -320,7 +339,13 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		dol_syslog("getURLContent request without body=".$request, LOG_DEBUG, 0, '_curl');
 		dol_syslog("getURLContent response=".$response, LOG_DEBUG, 0, '_curl');
 	}
-	dol_syslog("getURLContent response size=".strlen($response)); // This may contains binary data, so we don't output it
+	if ($morelogsuffix) {
+		// This may contains binary data, so we don't output response by default.
+		dol_syslog("getURLContent request without body=".$request, LOG_DEBUG, 0, $morelogsuffix);
+		dol_syslog("getURLContent response=".$response, LOG_DEBUG, 0, $morelogsuffix);
+	}
+
+	dol_syslog("getURLContent response size=".strlen($response)); // This $response may contains binary data, so we don't output it
 
 	$rep = array();
 	if (curl_errno($ch)) {
@@ -336,8 +361,12 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		$rep['curl_error_msg'] = curl_error($ch);
 
 		dol_syslog("getURLContent response array is ".implode(',', $rep));
+
 		if (getDolGlobalInt('MAIN_CURL_DEBUG')) {
 			dol_syslog("getURLContent curl_error_no=".$rep['curl_error_no']." curl_error_msg=".$rep['curl_error_msg'], LOG_DEBUG, 0, '_curl');
+		}
+		if ($morelogsuffix) {
+			dol_syslog("getURLContent curl_error_no=".$rep['curl_error_no']." curl_error_msg=".$rep['curl_error_msg'], LOG_DEBUG, 0, $morelogsuffix);
 		}
 	} else {
 		//$info = curl_getinfo($ch);
@@ -353,7 +382,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		// Add more keys to $rep
 		if ($response) {
 			$rep['content'] = (string) $response;
-			if (getDolGlobalInt('MAIN_CURL_GET_RESPONSE_HEADER')) { // In this case, response contains header + body
+			if ($postorget == 'HEAD' || getDolGlobalInt('MAIN_CURL_GET_RESPONSE_HEADER')) { // In this case, response contains header + body
 				$rep['header'] = substr($rep['content'], 0, intval($rep['header_size']));
 				$rep['content'] = substr($rep['content'], intval($rep['header_size']));
 			}
@@ -372,6 +401,43 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	// @phpstan-ignore-next-line
 	return $rep;
 }
+
+
+/**
+ * Resolve a hostname into its IP
+ *
+ * @param	string	$hosttocheck		Hostname to check
+ * @return	string						First ip found (IP v4 or IP v6). If resolution fails, the $hosttocheck is returned.
+ */
+function resolveDns($hosttocheck)
+{
+	$iptocheck = null;
+
+	// Resolve $hosttocheck to get the IP $iptocheck
+	if (function_exists('dns_get_record') && !getDolGlobalString('MAIN_DISABLE_DNS_GET_RECORD_FOR_IP_RESOLUTION')) {
+		try {
+			$records = dns_get_record($hosttocheck, DNS_A + DNS_AAAA);
+
+			if (!empty($records[0]) && is_array($records[0]) && !empty($records[0]['ip'])) {			// We take the first one
+				$iptocheck = $records[0]['ip'];
+			} elseif (!empty($records[0]) && is_array($records[0]) && !empty($records[0]['ipv6'])) {	// We take the first one
+				$iptocheck = $records[0]['ipv6'];
+			}
+		} catch (Exception $e) {
+			// Nothing done
+		}
+	} elseif (function_exists('gethostbyname')) {	// resolve only ipv4
+		$iptocheck = gethostbyname($hosttocheck);
+	} else {
+		$iptocheck = $hosttocheck;
+	}
+
+	if ($iptocheck === null) {
+		$iptocheck = $hosttocheck;
+	}
+	return $iptocheck;
+}
+
 
 /**
  * Is IP allowed
@@ -436,6 +502,7 @@ function isIPAllowed($iptocheck, $localurl)
  * @param	string	  $url 				    Full URL or Email.
  * @param	int	 	  $mode					0=return 'mydomain', 1=return 'mydomain.com', 2=return 'abc.mydomain.com'
  * @return	string						    Returns domaine name
+ * @see getRootURLFromURL()
  */
 function getDomainFromURL($url, $mode = 0)
 {
@@ -491,6 +558,7 @@ function getDomainFromURL($url, $mode = 0)
  *
  * @param	string	  $url 				    Full URL.
  * @return	string						    Returns root url
+ * @see getDomainFromURL()
  */
 function getRootURLFromURL($url)
 {

@@ -5,8 +5,8 @@
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (c) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2016-2020 	Ferran Marcet       	<fmarcet@2byte.es>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2025       William Mead            <william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -186,7 +186,7 @@ class ExpenseReport extends CommonObject
 
 	// Refus
 	/**
-	 * @var int|string
+	 * @var int|''
 	 */
 	public $date_refuse;
 
@@ -202,7 +202,7 @@ class ExpenseReport extends CommonObject
 
 	// Annulation
 	/**
-	 * @var int|string
+	 * @var int|''
 	 */
 	public $date_cancel;
 
@@ -631,17 +631,20 @@ class ExpenseReport extends CommonObject
 		$sql .= " total_ht = ".((float) $this->total_ht);
 		$sql .= " , total_ttc = ".((float) $this->total_ttc);
 		$sql .= " , total_tva = ".((float) $this->total_tva);
+		if (!empty($this->date_create)) {
+			$sql .= " , date_create = '".$this->db->idate($this->date_create)."'";
+		}
 		$sql .= " , date_debut = '".$this->db->idate($this->date_debut)."'";
 		$sql .= " , date_fin = '".$this->db->idate($this->date_fin)."'";
 		if ($userofexpensereport && is_object($userofexpensereport)) {
-			$sql .= " , fk_user_author = ".($userofexpensereport->id > 0 ? $userofexpensereport->id : "null"); // Note fk_user_author is not the 'author' but the guy the expense report is for.
+			$sql .= " , fk_user_author = ".($userofexpensereport->id > 0 ? (int) $userofexpensereport->id : "null"); // Note fk_user_author is not the 'author' but the guy the expense report is for.
 		}
-		$sql .= " , fk_user_validator = ".($this->fk_user_validator > 0 ? $this->fk_user_validator : "null");
-		$sql .= " , fk_user_valid = ".($this->fk_user_valid > 0 ? $this->fk_user_valid : "null");
-		$sql .= " , fk_user_approve = ".($this->fk_user_approve > 0 ? $this->fk_user_approve : "null");
+		$sql .= " , fk_user_validator = ".($this->fk_user_validator > 0 ? (int) $this->fk_user_validator : "null");
+		$sql .= " , fk_user_valid = ".($this->fk_user_valid > 0 ? (int) $this->fk_user_valid : "null");
+		$sql .= " , fk_user_approve = ".($this->fk_user_approve > 0 ? (int) $this->fk_user_approve : "null");
 		$sql .= " , fk_user_modif = ".((int) $user->id);
-		$sql .= " , fk_statut = ".($this->fk_statut >= 0 ? $this->fk_statut : '0');
-		$sql .= " , fk_c_paiement = ".($this->fk_c_paiement > 0 ? $this->fk_c_paiement : "null");
+		$sql .= " , fk_statut = ".($this->fk_statut >= 0 ? (int) $this->fk_statut : 0);
+		$sql .= " , fk_c_paiement = ".($this->fk_c_paiement > 0 ? (int) $this->fk_c_paiement : "null");
 		$sql .= " , note_public = ".(!empty($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "''");
 		$sql .= " , note_private = ".(!empty($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "''");
 		$sql .= " , detail_refuse = ".(!empty($this->detail_refuse) ? "'".$this->db->escape($this->detail_refuse)."'" : "''");
@@ -918,7 +921,7 @@ class ExpenseReport extends CommonObject
 		$sql .= " f.fk_user_approve";
 		$sql .= " FROM ".MAIN_DB_PREFIX."expensereport as f";
 		$sql .= " WHERE f.rowid = ".((int) $id);
-		$sql .= " AND f.entity = ".$conf->entity;
+		$sql .= " AND f.entity = ".((int) $conf->entity);
 
 
 
@@ -1128,7 +1131,7 @@ class ExpenseReport extends CommonObject
 		$this->lines = array();
 
 		$sql = ' SELECT de.rowid, de.comments, de.qty, de.value_unit, de.date, de.rang,';
-		$sql .= " de.".$this->fk_element.", de.fk_c_type_fees, de.fk_c_exp_tax_cat, de.fk_projet as fk_project,";
+		$sql .= " de.".$this->db->sanitize($this->fk_element).", de.fk_c_type_fees, de.fk_c_exp_tax_cat, de.fk_projet as fk_project,";
 		$sql .= ' de.tva_tx, de.vat_src_code,';
 		$sql .= ' de.localtax1_tx, de.localtax2_tx, de.localtax1_type, de.localtax2_type,';
 		$sql .= ' de.fk_ecm_files,';
@@ -1136,10 +1139,10 @@ class ExpenseReport extends CommonObject
 		$sql .= ' de.total_localtax1, de.total_localtax2, de.rule_warning_message,';
 		$sql .= ' ctf.code as code_type_fees, ctf.label as label_type_fees, ctf.accountancy_code as accountancy_code_type_fees,';
 		$sql .= ' p.ref as ref_projet, p.title as title_projet';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element_line.' as de';
+		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->db->sanitize($this->table_element_line).' as de';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_fees as ctf ON de.fk_c_type_fees = ctf.id';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet as p ON de.fk_projet = p.rowid';
-		$sql .= " WHERE de.".$this->fk_element." = ".((int) $this->id);
+		$sql .= " WHERE de.".$this->db->sanitize($this->fk_element)." = ".((int) $this->id);
 		if (getDolGlobalString('EXPENSEREPORT_LINES_SORTED_BY_ROWID')) {
 			$sql .= ' ORDER BY de.rang ASC, de.rowid ASC';
 		} else {
@@ -1370,7 +1373,7 @@ class ExpenseReport extends CommonObject
 		// Validate
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
 		$sql .= " SET ref = '".$this->db->escape($num)."',";
-		$sql .= " fk_statut = ".self::STATUS_VALIDATED.",";
+		$sql .= " fk_statut = ".((int) self::STATUS_VALIDATED).",";
 		$sql .= " date_valid = '".$this->db->idate($this->date_valid)."',";
 		$sql .= " fk_user_valid = ".((int) $user->id);
 		$sql .= " WHERE rowid = ".((int) $this->id);
@@ -1402,7 +1405,7 @@ class ExpenseReport extends CommonObject
 						$this->error = $this->db->lasterror();
 					}
 					$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'expensereport/".$this->db->escape($this->newref)."'";
-					$sql .= " WHERE filepath = 'expensereport/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+					$sql .= " WHERE filepath = 'expensereport/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 					$resql = $this->db->query($sql);
 					if (!$resql) {
 						$error++;
@@ -1464,7 +1467,7 @@ class ExpenseReport extends CommonObject
 	public function set_save_from_refuse($fuser)
 	{
 		// phpcs:enable
-		// Sélection de la date de début de la NDF
+		// Select the start date of the expense report
 		$sql = 'SELECT date_debut';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element;
 		$sql .= " WHERE rowid = ".((int) $this->id);
@@ -1477,7 +1480,7 @@ class ExpenseReport extends CommonObject
 
 		if ($this->status != self::STATUS_VALIDATED) {
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-			$sql .= " SET fk_statut = ".self::STATUS_VALIDATED;
+			$sql .= " SET fk_statut = ".((int) self::STATUS_VALIDATED);
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::set_save_from_refuse", LOG_DEBUG);
@@ -1510,7 +1513,7 @@ class ExpenseReport extends CommonObject
 		if ($this->status != self::STATUS_APPROVED) {
 			$this->db->begin();
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-			$sql .= " SET ref = '".$this->db->escape($this->ref)."', fk_statut = ".self::STATUS_APPROVED.", fk_user_approve = ".((int) $fuser->id).",";
+			$sql .= " SET ref = '".$this->db->escape($this->ref)."', fk_statut = ".((int) self::STATUS_APPROVED).", fk_user_approve = ".((int) $fuser->id).",";
 			$sql .= " date_approve='".$this->db->idate($now)."'";
 			$sql .= " WHERE rowid = ".((int) $this->id);
 			if ($this->db->query($sql)) {
@@ -1686,7 +1689,7 @@ class ExpenseReport extends CommonObject
 	{
 		// phpcs:enable
 		$error = 0;
-		$this->date_cancel = $this->db->idate(dol_now());
+		$this->date_cancel = dol_now();
 		if ($this->status != self::STATUS_CANCELED) {
 			$this->db->begin();
 
@@ -1956,7 +1959,7 @@ class ExpenseReport extends CommonObject
 	 */
 	public function addline($qty = 0, $up = 0, $fk_c_type_fees = 0, $vatrate = 0, $date = '', $comments = '', $fk_project = 0, $fk_c_exp_tax_cat = 0, $type = 0, $fk_ecm_files = 0)
 	{
-		global $langs, $mysoc;
+		global $mysoc;
 
 		dol_syslog(get_class($this)."::addline qty=$qty, up=$up, fk_c_type_fees=$fk_c_type_fees, vatrate=$vatrate, date=$date, fk_project=$fk_project, type=$type, comments=$comments", LOG_DEBUG);
 
@@ -2104,7 +2107,7 @@ class ExpenseReport extends CommonObject
 					$this->error = 'ExpenseReportConstraintViolationError';
 					$this->errors[] = $this->error;
 
-					$new_current_total_ttc -= $amount_to_test - $rule->amount; // ex, entered 16€, limit 12€, subtracts 4€;
+					$new_current_total_ttc -= $amount_to_test - $rule->amount; // ex: entered 16 EUR, limit 12 EUR, subtracts 4 EUR
 					$rule_warning_message_tab[] = $langs->trans('ExpenseReportConstraintViolationError', $rule->id, price($amount_to_test, 0, $langs, 1, -1, -1, $conf->currency), price($rule->amount, 0, $langs, 1, -1, -1, $conf->currency));
 				} else {
 					$this->error = 'ExpenseReportConstraintViolationWarning';
@@ -2318,18 +2321,21 @@ class ExpenseReport extends CommonObject
 				$this->db->free($resql);
 			}
 
-			// Select des information du projet
-			$sql = "SELECT p.ref as ref_projet, p.title as title_projet";
-			$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
-			$sql .= " WHERE p.rowid = ".((int) $projet_id);
-			$resql = $this->db->query($sql);
-			if ($resql) {
-				$objp_projet = $this->db->fetch_object($resql);
-				$this->line->projet_ref          = $objp_projet->ref_projet;
-				$this->line->projet_title        = $objp_projet->title_projet;
-				$this->db->free($resql);
+			if ($projet_id > 0) {
+				// Select des information du projet
+				$sql = "SELECT p.ref as ref_projet, p.title as title_projet";
+				$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
+				$sql .= " WHERE p.rowid = ".((int) $projet_id);
+				$resql = $this->db->query($sql);
+				if ($resql) {
+					if ($this->db->num_rows($resql) > 0) {
+						$objp_projet = $this->db->fetch_object($resql);
+						$this->line->projet_ref          = $objp_projet->ref_projet;
+						$this->line->projet_title        = $objp_projet->title_projet;
+					}
+					$this->db->free($resql);
+				}
 			}
-
 			$this->applyOffset();
 			$this->checkRules();
 
@@ -2574,7 +2580,7 @@ class ExpenseReport extends CommonObject
 		global $conf, $langs;
 
 		if ($user->socid) {
-			return -1; // protection pour eviter appel par utilisateur externe
+			return -1; // Protection to prevent calls by external users
 		}
 
 		$now = dol_now();
@@ -2703,7 +2709,7 @@ class ExpenseReport extends CommonObject
 
 		$sql = 'SELECT sum(amount) as amount';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$table;
-		$sql .= " WHERE ".$field." = ".((int) $this->id);
+		$sql .= " WHERE ".$this->db->sanitize($field)." = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::getSumPayments", LOG_DEBUG);
 		$resql = $this->db->query($sql);

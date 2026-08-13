@@ -24,6 +24,8 @@
  * \brief	Asset setup page.
  */
 
+// Load Dolibarr environment
+require '../../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -31,9 +33,6 @@
  * @var Translate $langs
  * @var User $user
  */
-
-// Load Dolibarr environment
-require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/asset.lib.php';
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 
@@ -640,7 +639,7 @@ if ($action == 'edit') {
 					if ($resprod > 0) {
 						print $product->ref;
 					} elseif ($resprod < 0) {
-						setEventMessages(null, $object->errors, "errors");
+						setEventMessages(null, $product->errors, "errors");
 					}
 				} elseif ($val['type'] == 'accountancy_code') {
 					if (isModEnabled('accounting')) {

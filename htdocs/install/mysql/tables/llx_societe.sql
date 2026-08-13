@@ -1,11 +1,11 @@
 -- ========================================================================
--- Copyright (C) 2000-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
--- Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
--- Copyright (C) 2010      Juanjo Menent        <dolibarr@2byte.es>
--- Copyright (C) 2014      Teddy Andreotti      <125155@supinfo.com>
--- Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
--- Copyright (C) 2023      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+-- Copyright (C) 2000-2004	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+-- Copyright (C) 2004-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
+-- Copyright (C) 2005-2010	Regis Houssin			<regis.houssin@inodbox.com>
+-- Copyright (C) 2010		Juanjo Menent			<dolibarr@2byte.es>
+-- Copyright (C) 2014		Teddy Andreotti			<125155@supinfo.com>
+-- Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
+-- Copyright (C) 2023-2026	Alexandre Spangaro		<alexandre@inovea-conseil.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -70,18 +70,19 @@ create table llx_societe
   fk_forme_juridique       integer        DEFAULT 0,            		-- juridical status
   birth                    date,				            			-- date of company creation
   fk_currency			   varchar(3),									-- default currency
-  siren	                   varchar(128),                         		-- IDProf1: depends on country (example: siren or RCS for france, ...)
-  siret                    varchar(128),                         		-- IDProf2: depends on country (example: siret for france, ...)
-  ape                      varchar(128),                         		-- IDProf3: depends on country (example: code ape for france, ...)
-  idprof4                  varchar(128),                         		-- IDProf4: depends on country (example: nu for france, ...)
-  idprof5                  varchar(128),                         		-- IDProf5: depends on country (example: nu for france, ...)
-  idprof6                  varchar(128),                         		-- IDProf6: depends on country (example: nu for france, ...
-  tva_intra                varchar(20),                         		-- vat numero
+  siren	                   varchar(128),                         		-- IDProf1: depends on country (example: Siren for france, ...)
+  siret                    varchar(128),                         		-- IDProf2: depends on country (example: Siret for france, ...)
+  ape                      varchar(128),                         		-- IDProf3: depends on country (example: Code ape for france, ...)
+  idprof4                  varchar(128),                         		-- IDProf4: depends on country (example: Rcs/rm for france, ...)
+  idprof5                  varchar(128),                         		-- IDProf5: depends on country (example: EORI, ...)
+  idprof6                  varchar(128),                         		-- IDProf6: depends on country (example: Not used for france, ...
+  euid                     varchar(64),                         		-- EUID number (European Unique Identifier)
+  tva_intra                varchar(20),                         		-- VAT number (example: FR12345678901 for france, ...)
   capital                  double(24,8)   DEFAULT NULL,        			-- capital of company
   fk_stcomm                integer        DEFAULT 0 NOT NULL,      		-- commercial status
   note_private             text,                                		--
   note_public              text,                                        --
-  model_pdf				   varchar(255),								-- the last tempate used to generate a document
+  model_pdf				   varchar(255),								-- the last template used to generate a document
   last_main_doc			   varchar(255),								-- relative filepath+filename of the last main generated document
   prefix_comm              varchar(5),                          		-- prefix commercial (deprecated)
   client                   tinyint        DEFAULT 0,            		-- client 0/1/2

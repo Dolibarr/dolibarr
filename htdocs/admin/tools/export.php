@@ -3,7 +3,7 @@
  * Copyright (C) 2011		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2015		Raphaël Doursenaud	<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2021		Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2024		Frédéric France		<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France		<frederic.france@free.fr>
  * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Anthony Berton		<anthony.berton@bb2a.fr>
  *
@@ -54,7 +54,7 @@ $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
-if (empty($page) || $page == -1 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha') || (empty($toselect) && $massaction === '0')) {
+if (empty($page) || $page == -1 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
 $offset = $limit * $page;
@@ -127,7 +127,8 @@ $lowmemorydump = (int) (GETPOSTISSET("lowmemorydump") ? GETPOSTINT("lowmemorydum
 // MYSQL
 if ($what == 'mysql') {
 	$cmddump = GETPOST("mysqldump", 'none'); // Do not sanitize here with 'alpha', will be sanitize later by dol_sanitizePathName and escapeshellarg
-	$cmddump = dol_sanitizePathName($cmddump);
+	$cmddump = dol_sanitizePathName($cmddump);											// Sanitize path
+	$cmddump = dol_string_nospecial($cmddump, '', array("|", ";", "<", ">", "&", "+")); // Sanitize command
 	$basenamecmddump = basename(str_replace('\\', '/', $cmddump));
 
 	// Add a fallback when we detect something wrong with the path of the dump command
@@ -136,32 +137,21 @@ if ($what == 'mysql') {
 			$reg = array();
 			if (preg_match('/mysqldump(\.exe)?$/', $cmddump, $reg)) {	// And if command ends with mysqldump
 				$cmddump = 'mysqldump'.(empty($reg[1]) ? '' : $reg[1]);	// Then we try the command with no forced path
+				$langs->load("errors");
+				setEventMessage($langs->trans("WarningFullPathWasNotFoundSoWeUseAnAlternativeValue", $cmddump), 'warnings');
 			}
 		}
 	}
 
-	if (!empty($dolibarr_main_restrict_os_commands)) {
-		$arrayofallowedcommand = explode(',', $dolibarr_main_restrict_os_commands);
-		$arrayofallowedcommand = array_map('trim', $arrayofallowedcommand);
-		dol_syslog("Command are restricted to ".$dolibarr_main_restrict_os_commands.". We check that one of this command is inside ".$cmddump);
-		if (!in_array($basenamecmddump, $arrayofallowedcommand)) {	// the provided command $cmddump must be an allowed command
-			$langs->load("errors");
-			$errormsg = $langs->trans('CommandIsNotInsideAllowedCommands');
-			$errormsg .= '<br>'.$langs->trans('ErrorCheckTheCommandInsideTheAdvancedOptions');
-		}
-	}
-
-	if (!$errormsg && $cmddump) {
+	if ($cmddump) {
 		dolibarr_set_const($db, 'SYSTEMTOOLS_MYSQLDUMP', $cmddump, 'chaine', 0, '', 0);
 	}
 
-	if (!$errormsg) {
-		$result = $utils->dumpDatabase(GETPOST('compression', 'alpha'), $what, 0, $file, 0, 0, $lowmemorydump);
+	$result = $utils->dumpDatabase(GETPOST('compression', 'alpha'), $what, 0, $file, 0, 0, $lowmemorydump);
 
-		$errormsg = $utils->error;
-		$_SESSION["commandbackuplastdone"] = $utils->result['commandbackuplastdone'];
-		$_SESSION["commandbackuptorun"] = $utils->result['commandbackuptorun'];
-	}
+	$errormsg = $utils->error;
+	$_SESSION["commandbackuplastdone"] = $utils->result['commandbackuplastdone'];
+	$_SESSION["commandbackuptorun"] = $utils->result['commandbackuptorun'];
 }
 
 // MYSQL NO BIN
@@ -177,6 +167,7 @@ if ($what == 'mysqlnobin') {
 if ($what == 'postgresql') {
 	$cmddump = GETPOST("postgresqldump", 'none'); // Do not sanitize here with 'alpha', will be sanitize later by dol_sanitizePathName and escapeshellarg
 	$cmddump = dol_sanitizePathName($cmddump);
+	$cmddump = dol_string_nospecial($cmddump, '', array("|", ";", "<", ">", "&", "+")); // Sanitize command
 
 	/* Not required, the command is output on screen but not ran for pgsql
 	if (!empty($dolibarr_main_restrict_os_commands))

@@ -4,8 +4,8 @@
  * Copyright (C) 2021 Greg Rastklan <greg.rastklan@atm-consulting.fr>
  * Copyright (C) 2021 Jean-Pascal BOUDET <jean-pascal.boudet@atm-consulting.fr>
  * Copyright (C) 2021 Grégory BLEMAND <gregory.blemand@atm-consulting.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -211,22 +211,20 @@ if (empty($reshook)) {
 				}
 			} else {
 				//check if the skill is present to use it
-				$find = false;
 				$keyFind = 0;
 				foreach ($SkillrecordsForActiveUser as $k => $sr) {
 					if ($sr->fk_skill == $line->fk_skill) {
 						$keyFind = $k;
-						$find = true;
 						break;
 					}
 				}
 				//we update the skill user
-				if ($find) {
-					$updSkill = $SkillrecordsForActiveUser[$k];
+				if ($keyFind) {
+					$updSkill = $SkillrecordsForActiveUser[$keyFind];
 
 					$updSkill->rankorder = $line->rankorder;
 					$updSkill->update($user);
-				} else { // sinon on ajoute la skill
+				} else { // else we create the skill
 					$newSkill = new SkillRank($db);
 					$resCreate = $newSkill->cloneFromCurrentSkill($line, $object->fk_user);
 				}
@@ -253,7 +251,7 @@ if (empty($reshook)) {
 
 		$upload_dir = $conf->hrm->dir_output;
 		$file = $upload_dir.'/'.GETPOST('file');
-		$ret = dol_delete_file($file, 0, 0, 0, $object);
+		$ret = dol_delete_file($file, 1, 0, 0, $object);
 		if ($ret) {
 			setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
 		} else {
@@ -275,17 +273,18 @@ $help_url = '';
 $css = array();
 $css[] = '/hrm/css/style.css';
 llxHeader('', $title, $help_url, '', 0, 0, '', $css);
-
-print '<script type="text/javascript" language="javascript">
+?>
+<script>
 	$(document).ready(function() {
-	  $("#btn_valid").click(function() {
-		 console.log("Click on btn_valid");
-		 var form = $("#form_save_rank");
-		 form.submit();
-		 return true;
-	   });
+		$("#btn_valid").click(function() {
+			console.log("Click on btn_valid");
+			var form = $("#form_save_rank");
+			form.submit();
+			return true;
+		});
 	});
-</script>';
+</script>
+<?php
 
 // Part to create
 if ($action == 'create') {
@@ -484,7 +483,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
 		}
 
-		$conf->modules_parts['tpl']['hrm'] = '/hrm/core/tpl/'; // Pour utilisation du tpl hrm sur cet écran
+		$conf->modules_parts['tpl']['hrm'] = '/hrm/core/tpl/'; // To use the hrm tpl on this screen
 
 		print '<div class="div-table-responsive-no-min">';
 		if (!empty($object->lines) || ($object->status == $object::STATUS_DRAFT && $permissiontoadd && $action != 'selectlines' && $action != 'editline')) {

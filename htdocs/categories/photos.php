@@ -6,7 +6,7 @@
  * Copyright (C) 2014       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@
 /**
  *       \file       htdocs/categories/photos.php
  *       \ingroup    category
- *       \brief      Gestion des photos d'une categorie
+ *       \brief      Management of photos for a category
  */
 
 // Load Dolibarr environment
@@ -44,7 +44,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/categories.lib.php';
  */
 
 // Load translation files required by the page
-$langs->loadlangs(array('categories', 'bills'));
+$langs->loadlangs(array('categories', 'bills', 'mrp'));
 
 
 $id      = GETPOSTINT('id');
@@ -149,7 +149,7 @@ if ($object->id) {
 	dol_banner_tab($object, 'label', $linkback, ($user->socid ? 0 : 1), 'label', 'label', $morehtmlref, '&type='.$type, 0, '', '', 1);
 
 	/*
-	 * Confirmation deletion of picture
+	 * Confirm photo deletion
 	 */
 	if ($action == 'delete') {
 		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&type='.urlencode($type).'&file='.urlencode(GETPOST("file")), $langs->trans('DeletePicture'), $langs->trans('ConfirmDeletePicture'), 'confirm_delete', '', 0, 1);
@@ -161,11 +161,17 @@ if ($object->id) {
 	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent tableforfield">';
 
-	// Description
+	// Label
 	print '<tr><td class="titlefield notopnoleft">';
-	print $langs->trans("Description").'</td><td>';
-	print dol_htmlentitiesbr($object->description);
+	print $langs->trans("Label").'</td><td>';
+	print dol_htmlentitiesbr($object->label);
 	print '</td></tr>';
+
+	// Description
+	// print '<tr><td class="titlefield notopnoleft">';
+	// print $langs->trans("Description").'</td><td>';
+	// print dol_htmlentitiesbr($object->description);
+	// print '</td></tr>';
 
 	// Color
 	print '<tr><td class="notopnoleft">';
@@ -198,15 +204,15 @@ if ($object->id) {
 	print '</div>'."\n";
 
 	/*
-	 * Ajouter une photo
+	 * Add a photo
 	*/
 	if ($action == 'ajout_photo' && $user->hasRight('categorie', 'creer') && getDolGlobalString('MAIN_UPLOAD_DOC')) {
-		// Affiche formulaire upload
+		// Display upload form
 		$formfile = new FormFile($db);
 		$formfile->form_attach_new_file($_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;type='.$type, $langs->trans("AddPhoto"), 1, 0, $user->hasRight('categorie', 'creer'), 50, $object, '', 0, '', 0);
 	}
 
-	// Affiche photos
+	// Display photos
 	if ($action != 'ajout_photo') {
 		$nbphoto = 0;
 		$nbbyrow = 5;
@@ -235,7 +241,7 @@ if ($object->id) {
 
 				print '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart=category&entity='.$object->entity.'&file='.urlencode($pdir.$obj['photo']).'" alt="Original size" target="_blank" rel="noopener noreferrer">';
 
-				// Si fichier vignette disponible, on l'utilise, sinon on utilise photo origine
+				// Use the file's miniature if it is available, otherwise use the original image
 				if ($obj['photo_vignette']) {
 					$filename = $obj['photo_vignette'];
 				} else {
@@ -256,7 +262,7 @@ if ($object->id) {
 				print '<br>'.$viewfilename;
 				print '<br>';
 
-				// On propose la generation de la vignette si elle n'existe pas et si la taille est superieure aux limites
+				// Suggest generation of the thumbnail if it doesn't exist and if the size exceeds the limits
 				if (!$obj['photo_vignette'] && preg_match('/(\.bmp|\.gif|\.jpg|\.jpeg|\.png)$/i', $obj['photo']) && ($object->imgWidth > $maxWidth || $object->imgHeight > $maxHeight)) {
 					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&token='.newToken().'&action=addthumb&type='.$type.'&file='.urlencode($pdir.$viewfilename).'">'.img_picto($langs->trans('GenerateThumb'), 'refresh').'&nbsp;&nbsp;</a>';
 				}

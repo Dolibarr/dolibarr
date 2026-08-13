@@ -1,18 +1,21 @@
 <?php
-/* Copyright (C) 2003		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012	Destailleur Laurent		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
- * Copyright (C) 2008		Raphael Bertrand		<raphael.bertrand@resultic.fr>
- * Copyright (C) 2010-2016	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2013		Christophe Battarel		<christophe.battarel@altairis.fr>
- * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
- * Copyright (C) 2014-2015	Marcos García			<marcosgdf@gmail.com>
- * Copyright (C) 2018   	Nicolas ZABOURI			<info@inovea-conseil.com>
+/* Copyright (C) 2003       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2012  Destailleur Laurent     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2014  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2006       Andre Cianfarani        <acianfa@free.fr>
+ * Copyright (C) 2008       Raphael Bertrand        <raphael.bertrand@resultic.fr>
+ * Copyright (C) 2010-2016  Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2013       Christophe Battarel     <christophe.battarel@altairis.fr>
+ * Copyright (C) 2013       Florian Henry             <florian.henry@open-concept.pro>
+ * Copyright (C) 2014-2015  Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2015-2018	Ferran Marcet			<fmarcet@2byte.es>
- * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2015-2018  Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2024       William Mead            <william.mead@manchenumerique.fr>
+ * Copyright (C) 2024-2026  MDW                     <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026       Charlene Benke          <charlene@patas-monkey.com>
+ * Copyright (C) 2026       Alexandre Spangaro      <alexandre@inovea-conseil.com
+ * Copyright (C) 2026		Lionel Vessiller		<lvessiller@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -233,7 +236,7 @@ class Contrat extends CommonObject
 
 	/**
 	 *  'type' if the field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
-	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
+	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'enabled' is a condition when the field must be managed.
 	 *  'position' is the sort order of field.
@@ -257,7 +260,7 @@ class Contrat extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>,searchmulti?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,visible:int<-6,6>|string,langfile?:string,notnull?:int<-1,1>,noteditable?:int<0,1>,alwayseditable?:int<0,1>|string,default?:string|int,index?:int<0,1>,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,helplist?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>|string,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>|string,showonheader?:int<0,1>,searchmulti?:int<0,1>,picto?:string,required?:int<0,1>,placeholder?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
@@ -586,14 +589,14 @@ class Contrat extends CommonObject
 				if (preg_match('/^[\(]?PROV/i', $this->ref)) {
 					// Now we rename also files into index
 					$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files SET filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'contract/".$this->db->escape($this->newref)."'";
-					$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'contract/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+					$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'contract/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 					$resql = $this->db->query($sql);
 					if (!$resql) {
 						$error++;
 						$this->error = $this->db->lasterror();
 					}
 					$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files SET filepath = 'contract/".$this->db->escape($this->newref)."'";
-					$sql .= " WHERE filepath = 'contract/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+					$sql .= " WHERE filepath = 'contract/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 					$resql = $this->db->query($sql);
 					if (!$resql) {
 						$error++;
@@ -857,7 +860,7 @@ class Contrat extends CommonObject
 
 		// Selects contract lines related to a product
 		$sql = "SELECT p.label as product_label, p.description as product_desc, p.ref as product_ref, p.fk_product_type as product_type,";
-		$sql .= " d.rowid, d.fk_contrat, d.statut as status, d.description, d.subprice, d.vat_src_code, d.tva_tx, d.localtax1_tx, d.localtax2_tx, d.localtax1_type, d.localtax2_type, d.qty, d.remise_percent, d.fk_product_fournisseur_price as fk_fournprice, d.buy_price_ht as pa_ht,";
+		$sql .= " d.rowid, d.fk_contrat, d.statut as status, d.description, d.subprice, d.subprice_ttc, d.vat_src_code, d.tva_tx, d.localtax1_tx, d.localtax2_tx, d.localtax1_type, d.localtax2_type, d.qty, d.remise_percent, d.fk_product_fournisseur_price as fk_fournprice, d.buy_price_ht as pa_ht,";
 		$sql .= " d.total_ht,";
 		$sql .= " d.total_tva,";
 		$sql .= " d.total_localtax1,";
@@ -905,6 +908,7 @@ class Contrat extends CommonObject
 				$line->localtax1_type	= $objp->localtax1_type;
 				$line->localtax2_type	= $objp->localtax2_type;
 				$line->subprice			= $objp->subprice;
+				$line->subprice_ttc		= $objp->subprice_ttc;
 				$line->statut           = $objp->status; // For backward compatibility
 				$line->status           = $objp->status;
 				$line->remise_percent	= $objp->remise_percent;
@@ -1082,7 +1086,7 @@ class Contrat extends CommonObject
 
 				if (!empty($modCodeContract->code_auto)) {
 					// Force the ref to a draft value if numbering module is an automatic numbering
-					$sql = 'UPDATE '.MAIN_DB_PREFIX."contrat SET ref='(PROV".$this->id.")' WHERE rowid=".((int) $this->id);
+					$sql = 'UPDATE '.MAIN_DB_PREFIX."contrat SET ref='(PROV".((int) $this->id).")' WHERE rowid=".((int) $this->id);
 					if ($this->db->query($sql)) {
 						if ($this->id) {
 							$this->ref = "(PROV".$this->id.")";
@@ -1245,9 +1249,9 @@ class Contrat extends CommonObject
 		// Delete lines
 		if (!$error) {
 			// Delete contratdet extrafields
-			$main = MAIN_DB_PREFIX.'contratdet';
-			$ef = $main."_extrafields";
-			$sql = "DELETE FROM ".$ef." WHERE fk_object IN (SELECT rowid FROM ".$main." WHERE fk_contrat = ".((int) $this->id).")";
+			$sql_main_table = MAIN_DB_PREFIX.'contratdet';
+			$ef = $sql_main_table."_extrafields";
+			$sql = "DELETE FROM ".$this->db->sanitize($ef)." WHERE fk_object IN (SELECT rowid FROM ".$sql_main_table." WHERE fk_contrat = ".((int) $this->id).")";
 
 			dol_syslog(get_class($this)."::delete contratdet_extrafields", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -1260,7 +1264,7 @@ class Contrat extends CommonObject
 		if (!$error) {
 			// Delete contratdet
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."contratdet";
-			$sql .= " WHERE fk_contrat=".((int) $this->id);
+			$sql .= " WHERE fk_contrat = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::delete contratdet", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -1401,11 +1405,11 @@ class Contrat extends CommonObject
 		$sql .= " ref_ext=".(isset($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "null").",";
 		$sql .= " entity=".((int) $conf->entity).",";
 		$sql .= " date_contrat=".(dol_strlen($this->date_contrat) != 0 ? "'".$this->db->idate($this->date_contrat)."'" : 'null').",";
-		$sql .= " statut=".(isset($this->statut) ? $this->statut : (isset($this->status) ? $this->status : "null")).",";
-		$sql .= " fk_soc=".($this->socid > 0 ? $this->socid : "null").",";
-		$sql .= " fk_projet=".($this->fk_project > 0 ? $this->fk_project : "null").",";
-		$sql .= " fk_commercial_signature=".(isset($this->fk_commercial_signature) ? $this->fk_commercial_signature : "null").",";
-		$sql .= " fk_commercial_suivi=".(isset($this->fk_commercial_suivi) ? $this->fk_commercial_suivi : "null").",";
+		$sql .= " statut=".(isset($this->statut) ? ((int) $this->statut) : (isset($this->status) ? ((int) $this->status) : "null")).",";
+		$sql .= " fk_soc=".($this->socid > 0 ? ((int) $this->socid) : "null").",";
+		$sql .= " fk_projet=".($this->fk_project > 0 ? ((int) $this->fk_project) : "null").",";
+		$sql .= " fk_commercial_signature=".(isset($this->fk_commercial_signature) ? ((int) $this->fk_commercial_signature) : "null").",";
+		$sql .= " fk_commercial_suivi=".(isset($this->fk_commercial_suivi) ? ((int) $this->fk_commercial_suivi) : "null").",";
 		$sql .= " note_private=".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
 		$sql .= " note_public=".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
 		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null").",";
@@ -1452,7 +1456,7 @@ class Contrat extends CommonObject
 
 
 	/**
-	 *  Ajoute une ligne de contrat en base
+	 *  Insert contract line into database
 	 *
 	 *  @param	string			$desc            	Description of line
 	 *  @param  float			$pu_ht              Unit price net
@@ -1552,10 +1556,9 @@ class Contrat extends CommonObject
 
 			$localtaxes_type = getLocalTaxesFromRate($txtva.($vat_src_code ? ' ('.$vat_src_code.')' : ''), 0, $this->societe, $mysoc);
 
-			// Calcul du total TTC et de la TVA pour la ligne a partir de
-			// qty, pu, remise_percent et txtva
-			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
-			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
+			// Calculation of the gross total (TTC) and VAT for the line from qty, pu, remise_percent and txtva
+			// VERY IMPORTANT: It's at the time of line insertion that we must store the net, VAT, and gross amounts,
+			// and this is done at the line level, which has its own VAT rate
 
 			$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, 1, $mysoc, $localtaxes_type);
 			$total_ht  = $tabprice[0];
@@ -1563,6 +1566,8 @@ class Contrat extends CommonObject
 			$total_ttc = $tabprice[2];
 			$total_localtax1 = $tabprice[9];
 			$total_localtax2 = $tabprice[10];
+			$pu_ht  = $tabprice[3];
+			$pu_ttc = $tabprice[5];
 
 			if (count($localtaxes_type) > 0) {
 				$localtax1_type = $localtaxes_type[0];
@@ -1579,7 +1584,7 @@ class Contrat extends CommonObject
 
 			// if buy price not defined, define buyprice as configured in margin admin
 			if ($pa_ht == 0) {
-				$result = $this->defineBuyPrice($pu_ht, $remise_percent, $fk_product);
+				$result = $this->defineBuyPrice((float) $pu_ht, $remise_percent, $fk_product);
 				if ($result < 0) {
 					return -1;
 				} else {
@@ -1590,7 +1595,7 @@ class Contrat extends CommonObject
 			// Insertion dans la base
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."contratdet";
 			$sql .= " (fk_contrat, label, description, fk_product, qty, tva_tx, vat_src_code,";
-			$sql .= " localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, remise_percent, subprice,";
+			$sql .= " localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, remise_percent, subprice, subprice_ttc,";
 			$sql .= " total_ht, total_tva, total_localtax1, total_localtax2, total_ttc,";
 			$sql .= " info_bits,";
 			$sql .= " fk_product_fournisseur_price, buy_price_ht";
@@ -1603,8 +1608,8 @@ class Contrat extends CommonObject
 			$sql .= ", fk_unit";
 			$sql .= ", rang";
 			$sql .= ") VALUES (";
-			$sql .= $this->id.", '', '".$this->db->escape($desc)."',";
-			$sql .= ($fk_product > 0 ? $fk_product : "null").",";
+			$sql .= ((int) $this->id).", '', '".$this->db->escape($desc)."',";
+			$sql .= ($fk_product > 0 ? ((int) $fk_product) : "null").",";
 			$sql .= " ".((float) $qty).",";
 			$sql .= " ".((float) $txtva).",";
 			$sql .= " ".($vat_src_code ? "'".$this->db->escape($vat_src_code)."'" : "null").",";
@@ -1614,6 +1619,7 @@ class Contrat extends CommonObject
 			$sql .= " '".$this->db->escape($localtax2_type)."',";
 			$sql .= " ".price2num($remise_percent).",";
 			$sql .= " ".price2num($pu_ht).",";
+			$sql .= " ".($price_base_type === 'TTC' ? price2num($pu_ttc) : "0").",";
 			$sql .= " ".price2num($total_ht).",".price2num($total_tva).",".price2num($total_localtax1).",".price2num($total_localtax2).",".price2num($total_ttc).",";
 			$sql .= " ".((int) $info_bits).",";
 			if (isset($fk_fournprice)) {
@@ -1711,7 +1717,6 @@ class Contrat extends CommonObject
 		$qty = trim((string) $qty);
 		$desc = trim($desc);
 		$desc = trim($desc);
-		$subprice = price2num($pu);
 		$tvatx = price2num($tvatx);
 		$localtax1tx = price2num($localtax1tx);
 		$localtax2tx = price2num($localtax2tx);
@@ -1733,10 +1738,9 @@ class Contrat extends CommonObject
 
 		$this->db->begin();
 
-		// Calcul du total TTC et de la TVA pour la ligne a partir de
-		// qty, pu, remise_percent et tvatx
-		// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
-		// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
+		// Calculation of the gross total (TTC) and VAT for the line from qty, pu, remise_percent and txtva
+		// VERY IMPORTANT: It's at the time of line insertion that we must store the net, VAT, and gross amounts,
+		// and this is done at the line level, which has its own VAT rate
 
 		$localtaxes_type = getLocalTaxesFromRate($tvatx, 0, $this->societe, $mysoc);
 		$tvatx = preg_replace('/\s*\(.*\)/', '', $tvatx); // Remove code into vatrate.
@@ -1747,6 +1751,8 @@ class Contrat extends CommonObject
 		$total_ttc = $tabprice[2];
 		$total_localtax1 = $tabprice[9];
 		$total_localtax2 = $tabprice[10];
+		$pu_ht  = $tabprice[3];
+		$pu_ttc = $tabprice[5];
 
 		$localtax1_type = (empty($localtaxes_type[0]) ? '' : $localtaxes_type[0]);
 		$localtax2_type = (empty($localtaxes_type[2]) ? '' : $localtaxes_type[2]);
@@ -1766,7 +1772,9 @@ class Contrat extends CommonObject
 		}
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."contratdet SET description = '".$this->db->escape($desc)."'";
-		$sql .= ",subprice = ".((float) price2num($subprice));
+		$sql .= ",subprice = ".((float) price2num($pu_ht));
+		// Persist the original entry mode of the line so a no-op edit can preserve it later.
+		$sql .= ",subprice_ttc = ".($price_base_type === 'TTC' ? (float) price2num($pu_ttc) : 0);
 		$sql .= ",remise_percent = ".((float) price2num($remise_percent));
 		$sql .= ",qty = ".((float) $qty);
 		$sql .= ",tva_tx = ".((float) price2num($tvatx));
@@ -1779,7 +1787,7 @@ class Contrat extends CommonObject
 		$sql .= ", total_localtax1 = ".((float) price2num($total_localtax1));
 		$sql .= ", total_localtax2 = ".((float) price2num($total_localtax2));
 		$sql .= ", total_ttc = ".((float) price2num($total_ttc));
-		$sql .= ", fk_product_fournisseur_price=".($fk_fournprice > 0 ? $fk_fournprice : "null");
+		$sql .= ", fk_product_fournisseur_price=".($fk_fournprice > 0 ? ((int) $fk_fournprice) : "null");
 		$sql .= ", buy_price_ht = ".((float) price2num($pa_ht));
 		if ($date_start > 0) {
 			$sql .= ",date_ouverture_prevue = '".$this->db->idate($date_start)."'";
@@ -2078,7 +2086,7 @@ class Contrat extends CommonObject
 	 *	@param	int		$maxlength					Max length of ref
 	 *  @param	int     $notooltip					1=Disable tooltip
 	 *  @param  int     $save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-	 *	@return	string								Chaine avec URL
+	 *	@return	string								String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $maxlength = 0, $notooltip = 0, $save_lastsearch_value = -1)
 	{
@@ -2379,7 +2387,7 @@ class Contrat extends CommonObject
 		global $conf, $user;
 
 		$this->nb = array();
-		$clause = "WHERE";
+		$sanitizedclause = "WHERE";
 
 		$sql = "SELECT count(c.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."contrat as c";
@@ -2387,9 +2395,9 @@ class Contrat extends CommonObject
 		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
-			$clause = "AND";
+			$sanitizedclause = "AND";
 		}
-		$sql .= " ".$clause." c.entity = ".$conf->entity;
+		$sql .= " ".$sanitizedclause." c.entity = ".((int) $conf->entity);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -2635,9 +2643,7 @@ class Contrat extends CommonObject
 			$extrafields->fetch_name_optionals_label($this->table_element);
 			foreach ($clonedObj->array_options as $key => $option) {
 				$shortkey = preg_replace('/options_/', '', $key);
-				//var_dump($shortkey); var_dump($extrafields->attributes[$this->element]['unique'][$shortkey]);
 				if (!empty($extrafields->attributes[$this->element]['unique'][$shortkey])) {
-					//var_dump($key); var_dump($clonedObj->array_options[$key]); exit;
 					unset($clonedObj->array_options[$key]);
 				}
 			}
@@ -2679,7 +2685,11 @@ class Contrat extends CommonObject
 
 		if (!$error) {
 			foreach ($this->lines as $line) {
-				$result = $clonedObj->addline($line->description, $line->subprice, $line->qty, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, $line->fk_product, $line->remise_percent, $line->date_start, $line->date_cloture, 'HT', 0, $line->info_bits, $line->fk_fournprice, $line->pa_ht, $line->array_options, $line->fk_unit, $line->rang);
+				// Preserve the original entry mode of the line. Contrat::addline() stores subprice from the
+				// $pu_ht argument as-is (like the card, which pre-computes it), so we pass the stored HT and
+				// flag TTC + subprice_ttc so the total is computed from the typed value (no rounding drift).
+				$line_price_base_type = $line->getPriceBaseType();
+				$result = $clonedObj->addline($line->description, (float) $line->subprice, $line->qty, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, $line->fk_product, $line->remise_percent, $line->date_start, $line->date_cloture, $line_price_base_type, (float) $line->subprice_ttc, $line->info_bits, $line->fk_fournprice, $line->pa_ht, $line->array_options, $line->fk_unit, $line->rang);
 				if ($result < 0) {
 					$error++;
 					$this->setErrorsFromObject($clonedObj);
@@ -2787,7 +2797,6 @@ class Contrat extends CommonObject
 					$expirationdate = $this->db->jdate($obj->date_fin_validite);
 					$duration_value = preg_replace('/[^0-9]/', '', $obj->duration);
 					$duration_unit = preg_replace('/\d/', '', $obj->duration);
-					//var_dump($expirationdate.' '.$enddatetoscan);
 
 					// Load linked ->linkedObjects (objects linked)
 					// @TODO Comment this line and then make the search if there is n open invoice(s) by doing a dedicated SQL COUNT request to fill $contractcanceled.
@@ -2955,6 +2964,45 @@ class Contrat extends CommonObject
 		$return .= '</div>';
 
 		return $return;
+	}
+
+	/**
+	 *  Return totalized lines
+	 *
+	 *  @param	int		$statut			Status of lines
+	 *  @param	int		$expired		1=expired, 0=not expired
+	 *  @return array<string,mixed>|int		Array of totalized lines or int if error
+	 */
+	public function getTotalizedLines($statut, int $expired)
+	{
+		$sql = "SELECT SUM(cd.qty) as total_qty, SUM(cd.total_ht) as total_ht, SUM(cd.total_tva) as total_tva, SUM(cd.total_ttc) as total_ttc,";
+		$sql .= " SUM(cd.total_localtax1) as total_localtax1, SUM(cd.total_localtax2) as total_localtax2";
+		$sql .= " FROM ".MAIN_DB_PREFIX."contratdet as cd";
+		$sql .= " WHERE cd.fk_contrat =".((int) $this->id);
+		if ($statut >= 0) {
+			$sql .= " AND cd.statut = ".((int) $statut);
+			if ($expired > 0) {
+				$sql .= " AND cd.date_fin_validite < '".$this->db->idate(dol_now())."'";
+			} else {
+				$sql .= " AND cd.date_fin_validite >= '".$this->db->idate(dol_now())."'";
+			}
+		}
+		$ret = $this->db->query($sql);
+		$response = array();
+		if ($ret) {
+			$obj = $this->db->fetch_object($ret);
+			$response['total_qty'] = $obj->total_qty;
+			$response['total_ht'] = $obj->total_ht;
+			$response['total_tva'] = $obj->total_tva;
+			$response['total_localtax1'] = $obj->total_localtax1;
+			$response['total_localtax2'] = $obj->total_localtax2;
+			$response['total_ttc'] = $obj->total_ttc;
+		} else {
+			dol_print_error($this->db);
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+		return $response;
 	}
 
 	// @Todo getLibSignedStatus, LibSignedStatus

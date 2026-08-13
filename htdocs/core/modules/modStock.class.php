@@ -4,8 +4,8 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012	   Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2021	   Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,49 +70,53 @@ class modStock extends DolibarrModules
 		$this->hidden = false; // A condition to hide module
 		$this->depends = array("modProduct"); // List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array("modProductBatch"); // List of module ids to disable if this one is disabled
-		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
-		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
+		$this->conflictwith = []; // List of module class names as string this module is in conflict with
 		$this->langfiles = array("stocks");
 
 		// Constants
-		$this->const = array();
-		$r = 0;
-
-		$this->const[$r] = array('STOCK_DISALLOW_NEGATIVE_TRANSFER', 'chaine', '1', '', 0);
-
-		$r++;
-		$this->const[$r][0] = "STOCK_ADDON_PDF";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "standard_stock";
-		$this->const[$r][3] = 'Name of PDF model of stock';
-		$this->const[$r][4] = 0;
-
-		$r++;
-		$this->const[$r][0] = "MOUVEMENT_ADDON_PDF";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "standard_movement_stock";
-		$this->const[$r][3] = 'Name of PDF model of stock movement';
-		$this->const[$r][4] = 0;
-
-		$r++;
-		$this->const[$r][0] = "STOCK_ADDON_PDF_ODT_PATH";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/stocks";
-		$this->const[$r][3] = "";
-		$this->const[$r][4] = 0;
-
-		$r++;
-		$this->const[$r][0] = "MOUVEMENT_ADDON_PDF_ODT_PATH";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/stocks/movements";
-		$this->const[$r][3] = "";
-		$this->const[$r][4] = 0;
+		$this->const = [
+			[
+				'STOCK_DISALLOW_NEGATIVE_TRANSFER',
+				'chaine',
+				'1',
+				'',
+				0,
+			],
+			[
+				"STOCK_ADDON_PDF",
+				"chaine",
+				"standard_stock",
+				'Name of PDF model of stock',
+				0,
+			],
+			[
+				"MOUVEMENT_ADDON_PDF",
+				"chaine",
+				"standard_movement_stock",
+				'Name of PDF model of stock movement',
+				0,
+			],
+			[
+				"STOCK_ADDON_PDF_ODT_PATH",
+				"chaine",
+				"DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/stocks",
+				"",
+				0,
+			],
+			[
+				"MOUVEMENT_ADDON_PDF_ODT_PATH",
+				"chaine",
+				"DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/stocks/movements",
+				"",
+				0,
+			],
+		];
 
 		// Boxes
-		$this->boxes = array();
+		$this->boxes = [];
 
 		// Permissions
-		$this->rights = array();
+		$this->rights = [];
 		$this->rights_class = 'stock';
 
 		$r = 0;
@@ -205,7 +209,7 @@ class modStock extends DolibarrModules
 		}
 
 		// Main menu entries
-		$this->menu = array(); // List of menus to add
+		$this->menu = []; // List of menus to add
 		$r = 0;
 
 		// Menus
@@ -233,8 +237,8 @@ class modStock extends DolibarrModules
 			'd.code_departement' => 'List:c_departements:code_departement:code_departement:', 'c.code' => 'List:c_country:code:code:',
 			'e.phone' => 'Text', 'e.fax' => 'Text', 'e.statut' => 'Text', 'pe.rowid' => 'List:entrepot:ref:rowid:stock', 'pe.ref' => 'Text'
 		);
-		$this->export_entities_array[$r] = array();	// We define here only fields that use another icon that the one defined into export_icon
-		$this->export_aggregate_array[$r] = array();	// TODO Not used yet
+		$this->export_entities_array[$r] = [];	// We define here only fields that use another icon that the one defined into export_icon
+		$this->export_aggregate_array[$r] = [];	// TODO Not used yet
 		$keyforselect = 'entrepot';
 		$keyforelement = 'entrepot';
 		$keyforaliasextra = 'extra';
@@ -316,7 +320,7 @@ class modStock extends DolibarrModules
 				'e.rowid' => 'IdWarehouse', 'e.ref' => 'LocationSummary', 'e.description' => 'DescWareHouse', 'e.lieu' => 'LieuWareHouse', 'e.address' => 'Address', 'e.zip' => 'Zip', 'e.town' => 'Town',
 				'p.rowid' => "ProductId", 'p.ref' => "Ref", 'p.fk_product_type' => "Type", 'p.label' => "Label", 'p.description' => "Description", 'p.note' => "Note",
 				'p.price' => "Price", 'p.tva_tx' => 'VAT', 'p.tosell' => "OnSell", 'p.tobuy' => 'OnBuy', 'p.duration' => "Duration",
-				'p.datec' => 'DateCreation', 'p.tms' => 'DateModification', 'p.pmp' => 'PMPValue', 'p.cost_price' => 'CostPrice', 'lcpn.label'=>'Nature',
+				'p.datec' => 'DateCreation', 'p.tms' => 'DateModification', 'p.pmp' => 'PMPValue', 'p.cost_price' => 'CostPrice', 'lcpn.label' => 'Nature',
 				'pb.rowid' => 'Id', 'pb.batch' => 'Batch', 'pb.qty' => 'Qty',
 				'pl.eatby' => 'EatByDate', 'pl.sellby' => 'SellByDate', 'none.dateLastMovement' => 'LastMovement'
 			);
@@ -327,7 +331,7 @@ class modStock extends DolibarrModules
 				'e.rowid' => 'List:entrepot:ref::stock', 'e.ref' => 'Text', 'e.lieu' => 'Text', 'e.description' => 'Text', 'e.address' => 'Text', 'e.zip' => 'Text', 'e.town' => 'Text',
 				'p.rowid' => "Numeric", 'p.ref' => "Text", 'p.fk_product_type' => "Text", 'p.label' => "Text", 'p.description' => "Text", 'p.note' => "Text",
 				'p.price' => "Numeric", 'p.tva_tx' => 'Numeric', 'p.tosell' => "Boolean", 'p.tobuy' => "Boolean", 'p.duration' => "Duree",
-				'p.datec' => 'Date', 'p.tms' => 'Date', 'p.pmp' => 'PMPValue', 'p.cost_price' => 'CostPrice', 'lcpn.label'=>'Text',
+				'p.datec' => 'Date', 'p.tms' => 'Date', 'p.pmp' => 'PMPValue', 'p.cost_price' => 'CostPrice', 'lcpn.label' => 'Text',
 				'pb.batch' => 'Text', 'pb.qty' => 'Numeric',
 				'pl.eatby' => 'Date', 'pl.sellby' => 'Date', 'none.dateLastMovement' => 'Date'
 			);
@@ -337,12 +341,12 @@ class modStock extends DolibarrModules
 			$this->export_entities_array[$r] = array(
 				'p.rowid' => "product", 'p.ref' => "product", 'p.fk_product_type' => "product", 'p.label' => "product", 'p.description' => "product", 'p.note' => "product",
 				'p.price' => "product", 'p.tva_tx' => 'product', 'p.tosell' => "product", 'p.tobuy' => "product", 'p.duration' => "product",
-				'p.datec' => 'product', 'p.tms' => 'product', 'p.pmp' => 'product', 'p.cost_price' => 'product', 'lcpn.label'=>'product',
+				'p.datec' => 'product', 'p.tms' => 'product', 'p.pmp' => 'product', 'p.cost_price' => 'product', 'lcpn.label' => 'product',
 				'pb.rowid' => 'batch', 'pb.batch' => 'batch', 'pb.qty' => 'batch', 'none.dateLastMovement' => 'movement',
 				'pl.eatby' => 'batch', 'pl.sellby' => 'batch'
 			);	// We define here only fields that use another icon that the one defined into export_icon
 			$this->export_special_array[$r] = array(
-				'none.dateLastMovement'=>array('rule'=>'compute', 'classfile'=>'/product/stock/class/mouvementstock.class.php', 'class'=>'MouvementStock', 'method'=>'getDateLastMovementProductBatch', 'method_params'=>['e_rowid', 'p_rowid', 'pb_batch']),
+				'none.dateLastMovement' => array('rule' => 'compute', 'classfile' => '/product/stock/class/mouvementstock.class.php', 'class' => 'MouvementStock', 'method' => 'getDateLastMovementProductBatch', 'method_params' => ['e_rowid', 'p_rowid', 'pb_batch']),
 			);
 			if (isModEnabled('barcode')) {
 				$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('p.barcode' => 'product'));
@@ -474,7 +478,7 @@ class modStock extends DolibarrModules
 		$this->import_code[$r] = $this->rights_class.'_'.$r;
 		$this->import_label[$r] = "Warehouses"; // Translation key
 		$this->import_icon[$r] = "warehouse";
-		$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
+		$this->import_entities_array[$r] = []; // We define here only fields that use another icon that the one defined into import_icon
 		$this->import_tables_array[$r] = array('e' => MAIN_DB_PREFIX.'entrepot', 'extra' => MAIN_DB_PREFIX.'entrepot_extrafields');
 		$this->import_tables_creator_array[$r] = array('e' => 'fk_user_author');
 		$this->import_fields_array[$r] = array('e.ref' => "LocationSummary*",
@@ -497,8 +501,8 @@ class modStock extends DolibarrModules
 		);
 		$this->import_regex_array[$r] = array('e.statut' => '^[0|1]');
 		// Add extra fields
-		$import_extrafield_sample = array();
-		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type <> 'separate' AND elementtype = 'entrepot' AND entity IN (0, ".$conf->entity.")";
+		$import_extrafield_sample = [];
+		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type <> 'separate' AND elementtype = 'entrepot' AND entity IN (0, ".((int) $conf->entity).")";
 		$resql = $this->db->query($sql);
 		if ($resql) {    // This can fail when class is used on old database (during migration for example)
 			while ($obj = $this->db->fetch_object($resql)) {
@@ -530,7 +534,7 @@ class modStock extends DolibarrModules
 		$this->import_code[$r] = $this->rights_class.'_'.$r;
 		$this->import_label[$r] = "Stocks"; // Translation key
 		$this->import_icon[$r] = "stock";
-		$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
+		$this->import_entities_array[$r] = []; // We define here only fields that use another icon that the one defined into import_icon
 		$this->import_tables_array[$r] = array('ps' => MAIN_DB_PREFIX.'product_stock');
 		$this->import_fields_array[$r] = array('ps.fk_product' => "Product*", 'ps.fk_entrepot' => "Warehouse*", 'ps.reel' => "Stock*");
 
@@ -584,7 +588,7 @@ class modStock extends DolibarrModules
 			}
 		}
 
-		$sql = array();
+		$sql = [];
 
 		$sql = array(
 			 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[1][2])."' AND type = 'stock' AND entity = ".((int) $conf->entity),
