@@ -591,7 +591,7 @@ class ExternalModules
 
 						// For community modules, we download from community repo.
 						// But we can force to download from dolistore if MAIN_DOWNLOAD_FROM_DOLISTORE_IN_PRIORITY is set (less reliable, less up to date)
-						if ($product["direct-download"] == 'dolistore' || $product['source'] === 'dolistore' || getDolGlobalString("MAIN_DOWNLOAD_FROM_DOLISTORE_IN_PRIORITY")) {
+						if ($product["direct-download"] == 'dolistore' || getDolGlobalString("MAIN_DOWNLOAD_FROM_DOLISTORE_IN_PRIORITY")) {
 							if (preg_match('/https:.*\?id=(\d+)$/', $urlview, $reg)) {
 								$urldownload = 'https://www.dolistore.com/_service_download.php?t=free&p='.$reg[1];
 							}
