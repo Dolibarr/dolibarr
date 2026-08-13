@@ -1071,9 +1071,11 @@ class Expedition extends CommonObject
 		}
 
 		// TODO : load the origin object to trigger the right setStatus according to origin object
-		$ret = $this->setStatut(Commande::STATUS_SHIPMENTONPROCESS, $this->origin_id, $this->origin, $triggerKey);
-		if (!$ret) {
-			$error++;
+		if (!$error) {
+			$ret = $this->setStatut(Commande::STATUS_SHIPMENTONPROCESS, $this->origin_id, $this->origin, $triggerKey);
+			if (!$ret) {
+				$error++;
+			}
 		}
 
 		if (!$error && !$notrigger) {
