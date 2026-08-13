@@ -454,6 +454,7 @@ class BonPrelevement extends CommonObject
 
 			$this->db->begin();
 
+			try {
 			$sql = " UPDATE ".MAIN_DB_PREFIX."prelevement_bons";
 			$sql .= " SET fk_user_credit = ".$user->id;
 			$sql .= ", statut = ".self::STATUS_CREDITED;
@@ -585,6 +586,14 @@ class BonPrelevement extends CommonObject
 				return 0;
 			} else {
 				$this->db->rollback();
+				return -1;
+			}
+			} catch (Exception $e) {
+				// Never leave the transaction open on an uncaught exception (would give a blank page and a "closing a connection with an opened transaction" error)
+				$this->db->rollback();
+				$this->error = $e->getMessage();
+				$this->errors[] = $this->error;
+				dol_syslog("bon-prelevment::set_infocredit exception ".$this->error, LOG_ERR);
 				return -1;
 			}
 		} else {
