@@ -2,7 +2,7 @@
 /* Copyright (C) 2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -137,9 +137,9 @@ abstract class CommonClassTest extends TestCase
 	 *	This method is called when a test fails
 	 *
 	 *  @param	Throwable	$t		Throwable object
-	 *  @return never
+	 *  @return void
 	 */
-	protected function onNotSuccessfulTest(Throwable $t): never
+	protected function onNotSuccessfulTest(Throwable $t): void
 	{
 		global $db;
 
@@ -169,14 +169,18 @@ abstract class CommonClassTest extends TestCase
 
 		// Determine test information to show
 
-		$failedTestMethod = $this->name();
+		// @phan-suppress-next-line PhanUndeclaredMethod
+		// @phpstan-ignore method.notFound
+		$failedTestMethod = $this->getName(false);
 		$className = get_called_class();
 
 		// Get the test method's reflection
 		$reflectionMethod = new ReflectionMethod($className, $failedTestMethod);
 
 		// Get the test method's data set
-		$argsText = $this->dataSetAsStringWithData();
+		// @phan-suppress-next-line PhanUndeclaredMethod
+		// @phpstan-ignore method.notFound
+		$argsText = $this->getDataSetAsString(true);
 
 		$totalLines = count($lines);
 		$first_line = max(0, $totalLines - $nbLinesToShow);
@@ -278,7 +282,8 @@ abstract class CommonClassTest extends TestCase
 		}
 
 		if ((int) getenv('PHPUNIT_DEBUG') > 0) {
-			print get_called_class().'::'.$this->name()."::".__FUNCTION__.PHP_EOL;
+			// @phpstan-ignore method.notFound
+			print get_called_class().'::'.$this->getName(false)."::".__FUNCTION__.PHP_EOL;
 		}
 		//print $db->getVersion()."\n";
 	}
@@ -291,7 +296,8 @@ abstract class CommonClassTest extends TestCase
 	protected function tearDown(): void
 	{
 		if ((int) getenv('PHPUNIT_DEBUG') > 0) {
-			print get_called_class().'::'.$this->name()."::".__FUNCTION__.PHP_EOL;
+			// @phpstan-ignore method.notFound
+			print get_called_class().'::'.$this->getName(false)."::".__FUNCTION__.PHP_EOL;
 		}
 	}
 
@@ -624,5 +630,27 @@ abstract class CommonClassTest extends TestCase
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * PHPUnit compatibility helper for assertMatchesRegularExpression
+	 *
+	 * assertMatchesRegularExpression was introduced in PHPUnit 8.0.
+	 * This method provides backward compatibility with PHPUnit 7.x which only has assertRegExp.
+	 *
+	 * @param string $pattern Regular expression pattern
+	 * @param string $string  String to match against
+	 * @param string $message Optional message
+	 * @return void
+	 */
+	public static function assertMatchesRegularExpression(string $pattern, string $string, string $message = ''): void
+	{
+		if (method_exists('PHPUnit\Framework\Assert', 'assertMatchesRegularExpression')) {
+			// PHPUnit 8.0+: call parent's method
+			PHPUnit\Framework\Assert::assertMatchesRegularExpression($pattern, $string, $message);
+		} else {
+			// PHPUnit 7.x and earlier: use assertRegExp
+			PHPUnit\Framework\Assert::assertRegExp($pattern, $string, $message);
+		}
 	}
 }
