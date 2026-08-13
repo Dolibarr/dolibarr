@@ -4375,7 +4375,7 @@ if ($action == 'create') {
 						$newinvoice_static->type = $valarray ['type'];
 						$newinvoice_static->paye = $valarray ['paye'];
 						$newinvoice_static->paid = $valarray ['paye'];
-						$newinvoice_static->multicurrency_code = $valarray['multicurrency_code'];
+						$newinvoice_static->multicurrency_code = (string) $valarray['multicurrency_code'];
 
 						$optionsav .= '<option value="'.$key.'"';
 						if ($key == GETPOST('fac_avoir')) {
