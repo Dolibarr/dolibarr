@@ -1039,7 +1039,7 @@ class Conf extends stdClass
 			// This value can be overwritten by user choice in main.inc.php
 			$this->liste_limit = getDolGlobalInt('MAIN_SIZE_LISTE_LIMIT', 15);
 			if ((int) $this->liste_limit <= 0) {
-				// Mode automatic. Similar code than into main.inc.php
+				// Mode automatic.
 				$this->liste_limit = getListLimitFromScreenHeight();
 			}
 
@@ -1390,6 +1390,9 @@ class Conf extends stdClass
 			}
 			if (!isset($this->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY) && extension_loaded('tidy') && class_exists("tidy")) {
 				$this->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 1;
+			}
+			if (!isset($this->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES)) {
+				$this->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 0;	// TODO Move this to 1
 			}
 
 			if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {

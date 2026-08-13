@@ -14,6 +14,7 @@
  * Copyright (C) 2024       Alexandre Spangaro  <alexandre@inovea-conseil.com>
  * Copyright (C) 2025-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Lenin Rivas			<lenin.rivas777@gmail.com>
+ * Copyright (C) 2026		Jose MARTINEZ			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -376,25 +377,21 @@ if ($nolinesbefore) {
 					echo '</div>';
 				} else {
 					if ($addproducton) {
-						$url = '/product/card.php?leftmenu=product&action=create&type=0&backtopage='.urlencode($_SERVER["PHP_SELF"]);
+						$url = '/product/card.php?leftmenu=product&action=create&type=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id);
 						$newbutton = '<span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("NewProduct").'"></span>';
 						if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
-							// @FIXME Not working yet
-							$jsonclode = 'jsRefreshProductCombo';
-							// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
-							print dolButtonToOpenUrlInDialogPopup('addproduct', $langs->transnoentitiesnoconv('AddProduct'), $newbutton, $url, '', '', $jsonclode);
+							// The popup child page (product/card.php) reloads the parent itself after a successful creation
+							print dolButtonToOpenUrlInDialogPopup('addproduct', $langs->transnoentitiesnoconv('AddProduct'), $newbutton, $url);
 						} else {
 							print '<a href="'.DOL_URL_ROOT.'/product/card.php?action=create&type=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'" title="'.dol_escape_htmltag($langs->trans("NewProduct")).'"><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
 						}
 					}
 					if ($addserviceon) {
-						$url = '/product/card.php?leftmenu=product&action=create&type=1&backtopage='.urlencode($_SERVER["PHP_SELF"]);
+						$url = '/product/card.php?leftmenu=product&action=create&type=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id);
 						$newbutton = '<span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("NewService").'"></span>';
 						if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
-							// @FIXME Not working yet
-							$jsonclode = 'jsRefreshServiceCombo';
-							// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
-							print dolButtonToOpenUrlInDialogPopup('addproduct', $langs->transnoentitiesnoconv('AddService'), $newbutton, $url, '', '', $jsonclode);
+							// The popup child page (product/card.php) reloads the parent itself after a successful creation
+							print dolButtonToOpenUrlInDialogPopup('addproduct', $langs->transnoentitiesnoconv('AddService'), $newbutton, $url);
 						} else {
 							print '<a href="'.DOL_URL_ROOT.'/product/card.php?action=create&type=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'" title="'.dol_escape_htmltag($langs->trans("NewService")).'"><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
 						}
@@ -891,6 +888,54 @@ if (!empty($object->thirdparty)) {
 	}
 
 
+	/* Function to set the value of an extrafield of a line, whatever the type of the field is */
+	function setExtrafieldValueOnLine(field, key, value) {
+		/* For a radio, there is no field with id=key. Each choice is an input with name=key */
+		if (field.length == 0) {
+			jQuery('input:radio[name="' + key + '"]').filter(function() {
+				return this.value == value;
+			}).prop('checked', true).trigger('change');
+			return;
+		}
+		/* For a checkbox, val() sets the value attribute only, it does not tick the box */
+		if (field.is(':checkbox')) {
+			field.prop('checked', (value == 1)).trigger('change');
+			return;
+		}
+		/* A multiple select (type checkbox or chkbxlst) stores its value as a string like "1,3" */
+		if (field.is('select')) {
+			field.val(field.prop('multiple') ? String(value).split(',') : value).trigger('change');
+			return;
+		}
+		/* For a field of type html, the textarea is managed by CKEditor */
+		if (field.is('textarea') && typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined" && CKEDITOR.instances[key]) {
+			CKEDITOR.instances[key].setData(value ? value : '');
+			return;
+		}
+		/* For a date, the value posted by the form is the one of the hidden day/month/year fields */
+		if (jQuery("#" + key + "day").length > 0) {
+			if (value) {
+				var thedate = new Date(value * 1000);
+				jQuery("#" + key + "day").val(thedate.getDate());
+				jQuery("#" + key + "month").val(thedate.getMonth() + 1);
+				jQuery("#" + key + "year").val(thedate.getFullYear());
+				jQuery("#" + key + "hour").val(thedate.getHours());
+				jQuery("#" + key + "min").val(thedate.getMinutes());
+				/* The format to show is the one given to dpChangeDay by the date input itself */
+				var formatofdate = /dpChangeDay\([^,]*,\s*'([^']+)'/.exec(field.attr('onchange') || '');
+				if (formatofdate) {
+					field.val(formatDate(thedate, formatofdate[1]));
+				}
+			} else {
+				jQuery("#" + key + "day, #" + key + "month, #" + key + "year").val('');
+				field.val('');
+			}
+			return;
+		}
+		field.val(value);
+	}
+
+
 	/* JQuery for product free or predefined select */
 	jQuery(document).ready(function() {
 		jQuery("#price_ht").keyup(function(event) {
@@ -1083,11 +1128,8 @@ if (!empty($object->thirdparty)) {
 							// Set values for any fields in the form options_SOMETHING
 							for (var key in data.array_options) {
 								if (data.array_options.hasOwnProperty(key)) {
-									var field = jQuery("#" + key);
-									if(field.length > 0){
-										console.log("objectline_create.tpl set content of options_" + key);
-										field.val(data.array_options[key]);
-									}
+									console.log("objectline_create.tpl set content of " + key);
+									setExtrafieldValueOnLine(jQuery("#" + key), key, data.array_options[key]);
 								}
 							}
 
@@ -1172,7 +1214,7 @@ if (!empty($object->thirdparty)) {
 
 							if (jsConf.conf.PRODUCT_LOAD_EXTRAFIELD_INTO_OBJECTLINES) {
 								jQuery.each(data.array_options, function( key, value ) {
-									jQuery('div[class*="det'+key.replace('options_','_extras_')+'"] > #'+key).val(value);
+									setExtrafieldValueOnLine(jQuery('div[class*="det'+key.replace('options_','_extras_')+'"] > #'+key), key, value);
 								});
 							}
 

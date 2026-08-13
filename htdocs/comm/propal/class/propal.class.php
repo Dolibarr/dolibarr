@@ -1374,17 +1374,19 @@ class Propal extends CommonObject
 							$origintype = $this->element;
 						}
 
+						// Preserve the original entry mode of the line so the total is computed from the typed value (no rounding drift).
+						$line_price_base_type = $line->getPriceBaseType();
 						$result = $this->addline(
 							$line->desc,
-							$line->subprice,
+							(float) $line->subprice,
 							$line->qty,
 							$vatrate,
 							$line->localtax1_tx,
 							$line->localtax2_tx,
 							$line->fk_product,
 							$line->remise_percent,
-							'HT',
-							0,
+							$line_price_base_type,
+							(float) $line->subprice_ttc,
 							$line->info_bits,
 							$line->product_type,
 							$line->rang,

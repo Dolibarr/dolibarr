@@ -124,7 +124,7 @@ if ($action == 'send' && !$cancel) {
 			$smsfile = new CSMSFile($sendto, $smsfrom, $body, $deliveryreceipt, $deferred, $priority, $class); // This define OvhSms->login, pass, session and account
 		} catch (Exception $e) {
 			$error++;
-			setEventMessages($e->getMessage(), null, 'error');
+			setEventMessages($e->getMessage(), null, 'errors');
 		}
 		if (!$error) {
 			$result = $smsfile->sendfile(); // This send SMS
