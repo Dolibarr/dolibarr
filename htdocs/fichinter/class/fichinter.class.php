@@ -1163,7 +1163,7 @@ class Fichinter extends CommonObject
 
 			// Remove directory with files
 			$fichinterref = dol_sanitizeFileName($this->ref);
-			if ($conf->ficheinter->dir_output) {
+			if ($conf->ficheinter->dir_output && !empty($fichinterref)) {
 				$dir = $conf->ficheinter->dir_output."/".$fichinterref;
 				$file = $conf->ficheinter->dir_output."/".$fichinterref."/".$fichinterref.".pdf";
 				if (file_exists($file)) {

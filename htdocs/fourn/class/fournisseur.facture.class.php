@@ -1535,10 +1535,10 @@ class FactureFournisseur extends CommonInvoice
 			$this->deleteEcmFiles(1); // Deleting files physically is done later with the dol_delete_dir_recursive
 
 			// We remove directory
-			if ($conf->fournisseur->facture->dir_output) {
+			$ref = dol_sanitizeFileName($this->ref);
+			if ($conf->fournisseur->facture->dir_output && !empty($ref)) {
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-				$ref = dol_sanitizeFileName($this->ref);
 				$dir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($this->id, 2, 0, 0, $this, 'invoice_supplier').$ref;
 				$file = $dir."/".$ref.".pdf";
 				if (file_exists($file)) {

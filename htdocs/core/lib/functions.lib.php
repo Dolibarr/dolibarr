@@ -1789,18 +1789,18 @@ function dol_string_unaccent($str)
 		'%C3%88' => 'E', '%C3%89' => 'E', '%C3%8A' => 'E', '%C3%8B' => 'E',
 		'%C3%8C' => 'I', '%C3%8D' => 'I', '%C3%8E' => 'I', '%C3%8F' => 'I',
 		'%C3%91' => 'N',
-		'%C3%92' => 'O', '%C3%93' => 'O', '%C3%94' => 'O', '%C3%95' => 'O', '%C3%96' => 'O',
+		'%C3%92' => 'O', '%C3%93' => 'O', '%C3%94' => 'O', '%C3%95' => 'O', '%C3%96' => 'O', '%C5%90' => 'O',
 		'%C5%A0' => 'S',
-		'%C3%99' => 'U', '%C3%9A' => 'U', '%C3%9B' => 'U', '%C3%9C' => 'U',
+		'%C3%99' => 'U', '%C3%9A' => 'U', '%C3%9B' => 'U', '%C3%9C' => 'U', '%C5%B0' => 'U',
 		'%C3%9D' => 'Y', '%C5%B8' => 'y',
 		'%C3%A0' => 'a', '%C3%A1' => 'a', '%C3%A2' => 'a', '%C3%A3' => 'a', '%C3%A4' => 'a', '%C3%A5' => 'a',
 		'%C3%A7' => 'c',
 		'%C3%A8' => 'e', '%C3%A9' => 'e', '%C3%AA' => 'e', '%C3%AB' => 'e',
 		'%C3%AC' => 'i', '%C3%AD' => 'i', '%C3%AE' => 'i', '%C3%AF' => 'i',
 		'%C3%B1' => 'n',
-		'%C3%B2' => 'o', '%C3%B3' => 'o', '%C3%B4' => 'o', '%C3%B5' => 'o', '%C3%B6' => 'o',
+		'%C3%B2' => 'o', '%C3%B3' => 'o', '%C3%B4' => 'o', '%C3%B5' => 'o', '%C3%B6' => 'o', '%C5%91' => 'o',
 		'%C5%A1' => 's',
-		'%C3%B9' => 'u', '%C3%BA' => 'u', '%C3%BB' => 'u', '%C3%BC' => 'u',
+		'%C3%B9' => 'u', '%C3%BA' => 'u', '%C3%BB' => 'u', '%C3%BC' => 'u', '%C5%B1' => 'u',
 		'%C3%BD' => 'y', '%C3%BF' => 'y'
 		);
 		$string = strtr($string, $replacements);
@@ -4461,7 +4461,7 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 		}
 	} elseif (strtoupper($countrycode) == "JO") {//Jordanie
 		if (dol_strlen($phone) == 12) {//ex: +962_A_BCD_EF_GH
-			$newphone = substr($newphone, 0, 4).$separ.substr($newphone, 4, 1).$separ.substr($newphone, 5, 3).$separ.substr($newphone, 7, 2).$separ.substr($newphone, 9, 2);
+			$newphone = substr($newphone, 0, 4).$separ.substr($newphone, 4, 1).$separ.substr($newphone, 5, 3).$separ.substr($newphone, 8, 2).$separ.substr($newphone, 10, 2);
 		}
 	} elseif (strtoupper($countrycode) == "JM") {//Jamaïque
 		if (dol_strlen($newphone) == 12) {//ex: +1867_ABC_DEFG
@@ -4526,12 +4526,12 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 			$newphone = substr($newphone, 0, 3).$separ.substr($newphone, 3, 4);
 		} elseif (dol_strlen($phone) == 9) {// mobile add code and fix 9 chiffres +51_AAA_BBB_CCC
 			$newphonewa = '+51'.$newphone;
-			$newphone = substr($newphone, 0, 3).$separ.substr($newphone, 3, 3).$separ.substr($newphone, 6, 3).$separ.substr($newphone, 10, 3);
+			$newphone = substr($newphone, 0, 3).$separ.substr($newphone, 3, 3).$separ.substr($newphone, 6, 3);
 		} elseif (dol_strlen($phone) == 11) {// fix 11 chiffres +511_AAA_BBBB
-			$newphone = substr($newphone, 0, 4).$separ.substr($newphone, 4, 3).$separ.substr($newphone, 8, 4);
+			$newphone = substr($newphone, 0, 4).$separ.substr($newphone, 4, 3).$separ.substr($newphone, 7, 4);
 		} elseif (dol_strlen($phone) == 12) {// mobile +51_AAA_BBB_CCC
 			$newphonewa = $newphone;
-			$newphone = substr($newphone, 0, 3).$separ.substr($newphone, 3, 3).$separ.substr($newphone, 6, 3).$separ.substr($newphone, 10, 3).$separ.substr($newphone, 14, 3);
+			$newphone = substr($newphone, 0, 3).$separ.substr($newphone, 3, 3).$separ.substr($newphone, 6, 3).$separ.substr($newphone, 9, 3);
 		}
 	} elseif (strtoupper($countrycode) == "IN") {//India
 		if (dol_strlen($phone) == 13) {
