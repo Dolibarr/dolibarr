@@ -73,6 +73,11 @@ class Facture extends CommonInvoice
 	public $element = 'facture';
 
 	/**
+	 * @var string Prefix used to build trigger event names in generic CommonObject methods (BILL_MODIFY, ...)
+	 */
+	public $TRIGGER_PREFIX = 'BILL';
+
+	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'facture';
