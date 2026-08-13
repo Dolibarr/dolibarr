@@ -5350,7 +5350,7 @@ class Facture extends CommonInvoice
 	 *	(validated + payment on process) or classified (paid completely or paid partiely) + not already replaced + not already a credit note
 	 *
 	 *	@param	int			$socid		Id thirdparty
-	 *	@return	array<int,array{ref:string,status:int,type:int,paye:int<0,1>,paymentornot:int<0,1>}>|int<-1,-1>
+	 *	@return	array<int,array{ref:string,status:int,type:int,paye:int<0,1>,paymentornot:int<0,1>,multicurrency_code:string}>|int<-1,-1>
 	 *	Array of invoices ($id => array('ref'=>,'paymentornot'=>,'status'=>,'paye'=>)
 	 */
 	public function list_qualified_avoir_invoices($socid = 0)
@@ -5359,7 +5359,6 @@ class Facture extends CommonInvoice
 		global $conf;
 
 		$return = array();
-
 
 		$sql = "SELECT f.rowid as rowid, f.ref, f.fk_statut, f.type, f.subtype, f.paye, pf.fk_paiement, f.multicurrency_code";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
