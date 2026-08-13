@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2007  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2013-2015  Juanjo Menent		    <jmenent@2byte.es>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -204,27 +204,34 @@ print '<input type="hidden" name="action" value="update">';
 print '<input type="hidden" name="constname" value="USER_PASSWORD_GENERATED">';
 print '<input type="hidden" name="consttype" value="yesno">';
 
-// Load array with all password generation modules
-$dir = "../core/modules/security/generate";
-clearstatcache();
-$handle = opendir($dir);
-$i = 1;
+// Load array with all password generation modules: scan core/modules/security/generate/
+// plus, for each enabled module declaring module_parts['models'], its own
+// core/modules/security/generate/ subdirectory — same multi-root convention already used
+// by every numbering-module scan in Dolibarr (see e.g. Facture::getNextNumRef()).
+$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 $arrayhandler = array();
-if (is_resource($handle)) {
-	while (($file = readdir($handle)) !== false) {
-		$reg = array();
-		if (preg_match('/(modGeneratePass[a-z]+)\.class\.php$/i', $file, $reg)) {
-			// Charging the numbering class
-			$classname = $reg[1];
-			require_once $dir.'/'.$file;
-
-			$obj = new $classname($db, $conf, $langs, $user);
-			'@phan-var-force ModeleGenPassword $obj';
-			$arrayhandler[$obj->id] = $obj;
-			$i++;
+foreach ($dirmodels as $reldir) {
+	$dir = dol_buildpath($reldir.'core/modules/security/generate/');
+	clearstatcache();
+	$handle = @opendir($dir);
+	if (is_resource($handle)) {
+		while (($file = readdir($handle)) !== false) {
+			$reg = array();
+			if (preg_match('/(modGeneratePass[a-z]+)\.class\.php$/i', $file, $reg)) {
+				// Charging the numbering class
+				$classname = $reg[1];
+				if (!class_exists($classname)) {
+					require_once $dir.$file;
+				}
+				if (class_exists($classname)) {
+					$obj = new $classname($db, $conf, $langs, $user);
+					'@phan-var-force ModeleGenPassword $obj';
+					$arrayhandler[$obj->id] = $obj;
+				}
+			}
 		}
+		closedir($handle);
 	}
-	closedir($handle);
 }
 asort($arrayhandler);
 
