@@ -577,6 +577,10 @@ class pdf_cyan extends ModelePDFPropales
 					$linePosition = $i + 1;
 					$curY = $nexY;
 
+					// Option lines are excluded from the firm total. Resolved once here, at the top of the loop,
+					// because it drives both the muting of the amount columns below and the VAT breakdown further down.
+					$lineisoptionpdf = pdf_isoptionline($object, $i);
+
 					$sub_options = $object->lines[$i]->extraparams["subtotal"] ?? array();
 
 
@@ -703,9 +707,8 @@ class pdf_cyan extends ModelePDFPropales
 
 						$pdf->SetFont('', '', $default_font_size - 1); // We reposition the default font
 
-						// Option lines are excluded from the firm total: mute their amount columns in grey so the
-						// figures do not read as part of the document total (the "Option" tag marks the line itself).
-						$lineisoptionpdf = pdf_isoptionline($object, $i);
+						// Mute the amount columns of an option line in grey so the figures do not read as part of
+						// the document total (the "Option" tag marks the line itself).
 						if ($lineisoptionpdf) {
 							$pdf->SetTextColor(128, 128, 128);
 						}
