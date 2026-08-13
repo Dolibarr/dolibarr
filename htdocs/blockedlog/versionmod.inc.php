@@ -24,6 +24,7 @@
 // The version of the POS system (Immutable Log system)
 // Can be: 3.0.0-beta (beta can't be certified)
 // Or for stable: 3.0.0 (certification mechanism or french attestation mechanism).
+// This is the constant used to build answer of function getBlockedLogVersionToShow().
 define('DOLCERT_VERSION', '3.0.0');
 
 
