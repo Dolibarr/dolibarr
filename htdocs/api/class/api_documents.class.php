@@ -1215,6 +1215,7 @@ class Documents extends DolibarrApi
 
 		if (is_object($object) && $generateThumbs) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';	// image_format_supported() is defined here
 			if (image_format_supported($dest_file)) {
 				$object->addThumbs($dest_file);
 			}
