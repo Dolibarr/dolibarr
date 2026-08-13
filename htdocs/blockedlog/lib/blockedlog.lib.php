@@ -39,7 +39,10 @@ function getBlockedLogVersionToShow()
 	// Protection if we used a past old version not yet certified, we change version shown.
 	if (!constant('CERTIF_LNE')) {	// Hard coded in version
 		// $versionbadge = preg_replace('/^(\d)\./', '\1b.', $versionbadge);	// Not yet required.
-	};
+		if (constant('DOLCERT_NAME') != 'BlockedLog') {
+			$versionbadge = constant('DOLCERT_NAME').'-'.$versionbadge;
+		}
+	}
 
 	return $versionbadge;
 }
