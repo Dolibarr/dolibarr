@@ -343,10 +343,10 @@ function pdf_getHeightForLogo($logo, $url = false)
  * @param	float		$posy				Y position to place the logo image
  * @param	float		$w					Cell width used for the fallback company name / error message text
  * @param	float		$default_font_size	Default font size (used to size the error message font)
- * @param	string		$ltrdirection		Text direction ('L', 'R', or 'J') for the fallback company name text
+ * @param	string		$align				Alignment ('L', 'R', or 'J') for the fallback company name text
  * @return	void
  */
-function pdf_writeLogoOrCompanyName(&$pdf, $outputlangs, $emetteur, $logodir, $posx, $posy, $w, $default_font_size, $ltrdirection)
+function pdf_writeLogoOrCompanyName($pdf, $outputlangs, $emetteur, $logodir, $posx, $posy, $w, $default_font_size, $align)
 {
 	if (!getDolGlobalInt('PDF_DISABLE_MYCOMPANY_LOGO')) {
 		if ($emetteur->logo) {
@@ -366,7 +366,7 @@ function pdf_writeLogoOrCompanyName(&$pdf, $outputlangs, $emetteur, $logodir, $p
 			}
 		} else {
 			$text = (string) $emetteur->name;
-			$pdf->MultiCell($w, 4, $outputlangs->convToOutputCharset($text), 0, $ltrdirection);
+			$pdf->MultiCell($w, 4, $outputlangs->convToOutputCharset($text), 0, $align);
 		}
 	}
 }
