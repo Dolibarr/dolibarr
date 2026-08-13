@@ -560,19 +560,6 @@ ALTER TABLE llx_payment_various_extrafields ADD UNIQUE INDEX uk_payment_various_
 
 ALTER TABLE llx_actioncomm ADD COLUMN max_participants integer DEFAULT NULL AFTER status;
 ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_max_participants (max_participants);
--- Feature date_sent (#34867) - Last email send timestamp on common objects
-ALTER TABLE llx_propal               ADD COLUMN IF NOT EXISTS date_sent datetime DEFAULT NULL;
-ALTER TABLE llx_commande             ADD COLUMN IF NOT EXISTS date_sent datetime DEFAULT NULL;
-ALTER TABLE llx_facture              ADD COLUMN IF NOT EXISTS date_sent datetime DEFAULT NULL;
-ALTER TABLE llx_supplier_proposal    ADD COLUMN IF NOT EXISTS date_sent datetime DEFAULT NULL;
-ALTER TABLE llx_commande_fournisseur ADD COLUMN IF NOT EXISTS date_sent datetime DEFAULT NULL;
-ALTER TABLE llx_facture_fourn        ADD COLUMN IF NOT EXISTS date_sent datetime DEFAULT NULL;
-ALTER TABLE llx_contrat              ADD COLUMN IF NOT EXISTS date_sent datetime DEFAULT NULL;
-ALTER TABLE llx_expedition           ADD COLUMN IF NOT EXISTS date_sent datetime DEFAULT NULL;
-ALTER TABLE llx_delivery             ADD COLUMN IF NOT EXISTS date_sent datetime DEFAULT NULL;
-ALTER TABLE llx_reception            ADD COLUMN IF NOT EXISTS date_sent datetime DEFAULT NULL;
-ALTER TABLE llx_fichinter            ADD COLUMN IF NOT EXISTS date_sent datetime DEFAULT NULL;
-ALTER TABLE llx_projet               ADD COLUMN IF NOT EXISTS date_sent datetime DEFAULT NULL;
 
 ALTER TABLE llx_c_tva ADD COLUMN einvoice_vatex	varchar(32);
 
