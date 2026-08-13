@@ -609,7 +609,7 @@ class pdf_octopus extends ModelePDFFactures
 				$tab_height = 130;
 				$tab_height_newpage = 150;
 
-				$this->tableFirstPage($pdf, $tab_top, $this->page_hauteur - 100 - $this->heightforfreetext - $this->heightforfooter, 0, $outputlangs, 0, 0, $object->multicurrency_code);
+				$this->tableFirstPage($object, $pdf, $tab_top, $this->page_hauteur - 100 - $this->heightforfreetext - $this->heightforfooter, 0, $outputlangs, 0, 0, $object->multicurrency_code);
 
 				$bottomlasttab = $this->page_hauteur - $this->heightforinfotot - $this->heightforfreetext - $this->heightforfooter + 1;
 
@@ -2731,6 +2731,7 @@ class pdf_octopus extends ModelePDFFactures
 	/**
 	 *   Show table for lines
 	 *
+	 *   @param	    Facture		$object			Object to show
 	 *   @param		TCPDI|TCPDF	$pdf			Object PDF
 	 *   @param		float 		$tab_top		Top position of table
 	 *   @param		float		$tab_height		Height of table (rectangle)
@@ -2741,11 +2742,11 @@ class pdf_octopus extends ModelePDFFactures
 	 *   @param		string		$currency		Currency code
 	 *   @return	void
 	 */
-	public function tableFirstPage(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $currency = '')
+	public function tableFirstPage($object, &$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $currency = '')
 	{
-		global $user, $conf, $object, $db;
+		global $user, $conf;
 
-		$form = new Form($db);
+		$form = new Form($this->db);
 
 		$tab_height -= 29; // Reduce the overall table height
 		$displayWarranty = $this->displayRetainedWarranty($object);
