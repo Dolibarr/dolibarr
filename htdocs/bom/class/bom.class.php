@@ -459,7 +459,7 @@ class BOM extends CommonObject
 		$sql = "SELECT ".$objectline->getFieldList('l');
 		$sql .= " FROM ".$this->db->prefix().$objectline->table_element." as l";
 		$sql .= " LEFT JOIN ".$this->db->prefix()."product as p ON p.rowid = l.fk_product";
-		$sql .= " WHERE l.fk_".$this->db->escape($this->element)." = ".((int) $this->id);
+		$sql .= " WHERE l.fk_".$this->db->sanitize($this->element)." = ".((int) $this->id);
 		$sql .= " AND p.fk_product_type = ". ((int) $typeproduct);
 		if (isset($objectline->fields['position'])) {
 			$sql .= $this->db->order('position', 'ASC');

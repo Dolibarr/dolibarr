@@ -31,9 +31,9 @@ UseDiscountOnTotal=välisummasta
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Määrittää, käsitelläänkö globaalia alennusta tuotteena, palveluna vai vain välisummana marginaalin laskennassa.
 MARGIN_TYPE=Osto-/kustannushinta, jota ehdotti oletus marginaalilaskennassa
 MargeType1=Marginaali parhaalla Toimittaja hinnalla
-MargeType2=Painotetun keskihinnan marginaali (WAP)
+MargeType2=Margin on Weighted Average Cost (WAC)
 MargeType3=Omakustannushinnan marginaali
-MarginTypeDesc=* Parhaan ostohinnan marginaali = myyntihinta - paras Toimittaja tuotekortissa määritetty hinta<br>* Painotetun keskihinnan marginaali (WAP) ) = Myyntihinta – tuotteen painotettu keskihinta (WAP) tai paras Toimittaja hinta, jos WAPia ei ole vielä määritetty<br>* Kustannusmarginaali hinta = myyntihinta – omakustannushinta määritetty tuotekortilla tai WAP:lla, jos omakustannushintaa ei ole määritetty, tai paras Toimittaja hinta, jos WAPia ei ole vielä määritetty
+MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Cost (WAC) = Selling price - Product Weighted Average Price (WAP) or best vendor price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAC if cost price not defined, or best vendor price if WAC not yet defined
 CostPrice=Kustannushinta
 UnitCharges=Yksikkömaksut
 Charges=Maksut

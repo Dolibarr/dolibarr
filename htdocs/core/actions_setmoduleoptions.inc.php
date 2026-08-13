@@ -119,7 +119,7 @@ if ($action == 'deletefile' && $modulepart == 'doctemplates' && !empty($user->ad
 	}
 
 	$filetodelete = $tmpdir.'/'.GETPOST('file');
-	$result = dol_delete_file($filetodelete);
+	$result = dol_delete_file($filetodelete, 1);
 	if ($result > 0) {
 		setEventMessages($langs->trans("FileWasRemoved", GETPOST('file')), null, 'mesgs');
 	}

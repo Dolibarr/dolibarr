@@ -154,7 +154,6 @@ Public=%s يمكنه نشر عضويتي في <a target="_blank" href="%s">ال�
 NewMemberbyWeb=تمت إضافة عضو جديد. بانتظار الاعتماد
 NewMemberForm=نموذج عضو جديد
 AmountOfSubscriptions=قيمة المساهمات المُجمعة
-TurnoverOrBudget=الإيرادات (للشركات) أو الميزانية (للمؤسسات)
 DefaultAmount=المبلغ الافتراضي للمساهمة (يُستخدم فقط إذا لم يتم تحديد مبلغ على مستوى نوع العضو)
 CanEditAmount=يمكن للعضو تحديد مبلغ المساهمة
 CanEditAmountDetail=يمكن للزائر اختيار/تعديل مبلغ مساهمته بغض النظر عن نوع العضو

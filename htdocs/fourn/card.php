@@ -324,7 +324,7 @@ if ($object->id > 0) {
 	if (getDolGlobalString('ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE')) {
 		print '<tr>';
 		print '<td class="titlefield">';
-		print $form->textwithpicto($langs->trans('VATReverseChargeByDefault'), $langs->trans('VATReverseChargeByDefaultDesc'));
+		print $form->textwithpicto($langs->trans('VATReverseChargeByDefault'), $langs->trans('VATReverseChargeByDefaultDesc').'<br>'.$langs->trans('ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC'));
 		print '</td><td>';
 		print '<input type="checkbox" name="vat_reverse_charge" ' . ($object->vat_reverse_charge == '1' ? ' checked' : '') . ' disabled>';
 		print '</td>';

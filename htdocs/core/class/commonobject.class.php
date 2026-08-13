@@ -22,7 +22,9 @@
  * Copyright (C) 2025		Alexandre Janniaux	<alexandre.janniaux@gmail.com>
  * Copyright (C) 2025		Vincent Maury		<vmaury@timgroup.fr>
  * Copyright (C) 2026		Pierre Ardoin		<developpeur@lesmetiersdubatiment.fr>
-*
+ * Copyright (C) 2026		Anthony Berton		<anthony.berton@bb2a.fr>
+
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -48,6 +50,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commontrigger.class.php';
 
 /**
  *	Parent class of all other business classes (invoices, contracts, proposals, orders, ...)
+ *
+ * @property-deprecated int|string $cond_reglement  Use $cond_reglement_id methodology instead
  *
  * @phan-forbid-undeclared-magic-properties
  */
@@ -366,6 +370,12 @@ abstract class CommonObject
 	public $product;
 
 	/**
+	 * @var ?Entrepot 	A related warehouse object
+	 * @see fetch_warehouse()
+	 */
+	public $warehouse;
+
+	/**
 	 * @var string 		The type of originating object. Combined with `$origin_type`, it allows to reload `$origin_object`
 	 * @see fetch_origin()
 	 */
@@ -560,15 +570,14 @@ abstract class CommonObject
 	public $transport_mode_id;
 
 	/**
-	 * @var int|string 		Payment terms ID
-	 * @deprecated  Use $cond_reglement_id instead - Kept for compatibility
+	 * var int|string 		Payment terms ID
+	 * @deprecated  Use $cond_reglement_id instead - Kept for compatibility (was sometimes _label)
 	 * @see $cond_reglement_id
 	 *
 	 * Note: cond_reglement can not be aliased to cond_reglement!!!
-	 */
-	private $cond_reglement;  // Private to call DolDeprecationHandler
-	/**
-	 * @var int|string Internal to detect deprecated access
+	 * private $cond_reglement;  // Not set (and not private) to call DolDeprecationHandler
+	 *
+	 * @var int|string Internal to detect deprecated access, renamed to depre_cond_reglement
 	 */
 	protected $depr_cond_reglement;  // Internal value for deprecation
 
@@ -2193,6 +2202,39 @@ abstract class CommonObject
 
 		$this->product = $product;
 		return $result;
+	}
+
+	/**
+	 *	Load the warehouse of object, from id $this->warehouse_id or $this->fk_warehouse, into this->warehouse
+	 *
+	 *	@param		int<0,1>	$force_warehouse_id	Force warehouse id
+	 *	@return		int<-1,1>						Return integer <0 if KO, >0 if OK
+	 */
+	public function fetchWarehouse($force_warehouse_id = 0)
+	{
+		if (empty($this->warehouse_id) && empty($this->fk_warehouse) && empty($force_warehouse_id)) {
+			return 0;
+		}
+
+		include_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
+
+		$idtofetch = isset($this->warehouse_id) ? $this->warehouse_id : (isset($this->fk_warehouse) ? $this->fk_warehouse : 0);
+		if (!empty($force_warehouse_id)) {
+			$idtofetch = $force_warehouse_id;
+		}
+
+		if ($idtofetch) {
+			$warehouse = new Entrepot($this->db);
+			$result = $warehouse->fetch($idtofetch);
+			if ($result < 0) {
+				$this->errors = array_merge($this->errors, $warehouse->errors);
+			}
+			$this->warehouse = $warehouse;
+
+			return $result;
+		} else {
+			return -1;
+		}
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -8308,7 +8350,7 @@ abstract class CommonObject
 
 					// Note: $InfoFieldList can be 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter[:CategoryIdType[:CategoryIdList[:Sortfield]]]]]]'
 					if (isset($InfoFieldList[7]) && preg_match('/^[a-z0-9_\-,]+$/i', $InfoFieldList[7])) {
-						$sql .= " ORDER BY ".$this->db->escape($InfoFieldList[7]);
+						$sql .= " ORDER BY ".$this->db->sanitize($InfoFieldList[7]);
 					} else {
 						$sql .= " ORDER BY ".$this->db->sanitize(implode(', ', $fields_label));
 					}
@@ -9628,7 +9670,7 @@ abstract class CommonObject
 						// TODO: We should not have this hidden field, and action='update' should be done only if field was POSTED by form.
 						$ef_name = 'options_' . $key;
 						$ef_value = $this->array_options[$ef_name] ?? '';
-						$out .= '<input type="hidden" name="' . $ef_name . '" id="' . $ef_name . '" value="' . dol_htmlentities($ef_value) . '" />' . "\n";	 // If trouble to preserve content, we can try dol_htmlentities() instead, but real solution is to remove completely the hidden field (see previous TODO).
+						$out .= '<input type="hidden" name="' . $ef_name . '" id="' . $ef_name . '" value="' . dolPrintHTMLForAttribute($ef_value) . '" />' . "\n";	 // If trouble to preserve content, we can try dol_htmlentities() instead, but real solution is to remove completely the hidden field (see previous TODO).
 						continue; // <> -1 and <> 1 and <> 3 = not visible on forms, only on list and <> 4 = not visible at the creation
 					} elseif ($mode == 'view' && empty($visibility)) {
 						continue;
@@ -9998,7 +10040,7 @@ abstract class CommonObject
 			return $user->hasRight($module, $element);
 		}
 
-		return $user->rights->$element;
+		return isset($user->rights->$element) ? $user->rights->$element : null;
 	}
 
 	/**
@@ -10628,10 +10670,11 @@ abstract class CommonObject
 	/**
 	 * Function to return the array of data key-value from the ->fields and all the ->properties of an object.
 	 *
-	 * Note: $this->${field} are set by the page that make the createCommon() or the updateCommon().
-	 * $this->${field} should be a clean and string value (so date are formatted for SQL insert).
+	 * Note:
+	 * - $this->${field} are set by the page that makes the createCommon() or the updateCommon().
+	 * - $this->${field} should be a clean and string value (so date are formatted for SQL insert).
 	 *
-	 * @return array<string,null|int|float|string>	Array with all values of each property to update
+	 * @return array<string,null|int|float|string>	Array with all values of each property to update - caller is responsible for escaping
 	 */
 	protected function setSaveQuery()
 	{
@@ -10681,7 +10724,7 @@ abstract class CommonObject
 			} else {
 				// Note: If $this->{$field} is not defined, it means there is a bug into definition of ->fields or a missing declaration of property
 				// We should keep the warning generated by this because it is a bug somewhere else in code, not here.
-				$queryarray[$field] = $this->{$field};
+				$queryarray[$field] = $this->{$field};  // @phan-suppress-current-line SqlInjection
 			}
 
 			if (array_key_exists('type', $info) && $info['type'] == 'timestamp' && empty($queryarray[$field])) {
@@ -11109,7 +11152,7 @@ abstract class CommonObject
 
 		$sql = "SELECT ".$objectline->getFieldList('l');
 		$sql .= " FROM ".$this->db->prefix().$objectline->table_element." as l";
-		$sql .= " WHERE l.fk_".$this->db->escape($this->element)." = ".((int) $this->id);
+		$sql .= " WHERE l.fk_".$this->db->sanitize($this->element)." = ".((int) $this->id);
 		if ($morewhere) {
 			$sql .= $morewhere;
 		}
@@ -11918,7 +11961,7 @@ abstract class CommonObject
 			// Delete ecm_files_extrafields with mode 0 (using name)
 			$sql = "DELETE FROM ".$this->db->prefix()."ecm_files_extrafields WHERE fk_object IN (";
 			$sql .= " SELECT rowid FROM ".$this->db->prefix()."ecm_files WHERE filename LIKE '".$this->db->escape($this->ref)."%'";
-			$sql .= " AND filepath = '".$this->db->escape($element)."/".$this->db->escape($this->ref)."' AND entity = ".((int) $conf->entity); // No need of getEntity here
+			$sql .= " AND filepath = '".$this->db->escape($element."/".$this->ref)."' AND entity = ".((int) $conf->entity); // No need of getEntity here
 			$sql .= ")";
 
 			if (!$this->db->query($sql)) {
@@ -11930,7 +11973,7 @@ abstract class CommonObject
 			// Delete ecm_files with mode 0 (using name)
 			$sql = "DELETE FROM ".$this->db->prefix()."ecm_files";
 			$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%'";
-			$sql .= " AND filepath = '".$this->db->escape($element)."/".$this->db->escape($this->ref)."' AND entity = ".((int) $conf->entity); // No need of getEntity here
+			$sql .= " AND filepath = '".$this->db->escape($element."/".$this->ref)."' AND entity = ".((int) $conf->entity); // No need of getEntity here
 
 			if (!$this->db->query($sql)) {
 				$this->error = $this->db->lasterror();

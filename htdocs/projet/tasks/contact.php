@@ -556,7 +556,7 @@ if ($id > 0 || !empty($ref)) {
 				print '<td class="center">';
 				// Activation desativation du contact
 				if ($object->status >= 0) {
-					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=swapstatut&ligne='.$tab[$i]['rowid'].($withproject ? '&withproject=1' : '').'">';
+					print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.((int) $object->id).'&action=swapstatut&token='.newToken().'&ligne='.((int) $tab[$i]['rowid']).($withproject ? '&withproject=1' : '').'">';
 				}
 				print $contactstatic->LibStatut($tab[$i]['status'], 3);
 				if ($object->status >= 0) {
@@ -568,7 +568,7 @@ if ($id > 0 || !empty($ref)) {
 				print '<td class="center nowrap">';
 				if ($user->hasRight('projet', 'creer')) {
 					print '&nbsp;';
-					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deleteline&token='.newToken().'&lineid='.$tab[$i]['rowid'].($withproject ? '&withproject=1' : '').'">';
+					print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deleteline&token='.newToken().'&lineid='.((int) $tab[$i]['rowid']).($withproject ? '&withproject=1' : '').'">';
 					print img_picto($langs->trans('Unlink'), 'unlink');
 					print '</a>';
 				}

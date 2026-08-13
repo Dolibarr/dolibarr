@@ -172,3 +172,6 @@ SalaryWaitingWithdraw=رواتب في انتظار الدفع عن طريق تح
 RefSalary=الراتب
 NoSalaryInvoiceToWithdraw=لا يوجد راتب في انتظار '%s'. انتقل إلى علامة التبويب '%s' على بطاقة راتب لتقديم طلب.
 SalaryInvoiceWaitingWithdraw=رواتب في انتظار الدفع عن طريق تحويل الرصيد
+ErrorBankTransferNoPaymentRequestSelected=No payment request selected.
+AmountRequestedAlreadyReachesTotal=The total invoice amount has already been requested for payment
+AmountExceedsRemainingToRequest=The requested amount exceeds the remaining amount available for payment requests

@@ -57,3 +57,7 @@ donAnonymous=गुमनाम दान
 AnonymousDonationTooltip=यदि आप चाहते हैं कि आपका दान गुमनाम रहे तो इस बॉक्स को चेक करें। आपकी व्यक्तिगत जानकारी नहीं पूछी जाएगी।
 publicDonationFieldHelp=%s मेरे दान को सार्वजनिक रजिस्टर में प्रकाशित कर सकता है
 listOfPublicDonations=सार्वजनिक दान की सूची
+donationErrorMessageContactEmail=An error has occurred. To complete your donation, please contact us at %s
+descDonationLineInInvoice=Donation and contribution
+companyBusinessNumber=Business Registration Number
+companyTIN=Tax Identification Number

@@ -48,6 +48,7 @@ ConferenceOrBoothTab = Konferanse eller messe
 AmountPaid = Beløpet betalt
 DateOfRegistration = Registreringsdato
 ConferenceOrBoothAttendee = Konferanse- eller standdeltaker
+ConferenceOrBoothAttendeesShort = Conf. or Booth Attendees
 ApplicantOrVisitor=Søker eller besøkende
 Speaker=Taler
 # Template Mail
@@ -81,8 +82,8 @@ ListOfAttendeesOfEvent=Liste over deltakere til arrangementsprosjekter
 ListOfConfOrBoothOfEvent=Liste over konferanser eller stander for arrangementsprosjekter
 DownloadICSLink=Last ned ICS-fil
 EVENTORGANIZATION_SECUREKEY=Seed for å sikre nøkkelen til den offentlige registreringssiden for å foreslå en konferanse
-SERVICE_BOOTH_LOCATION=Tjenesten brukt for fakturalinjen om en standplassering
-SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION=Tjenesten som brukes for fakturalinjen om et deltakerabonnement på et arrangement
+SERVICE_BOOTH_LOCATION=Service to use on the invoice line for the sale of a booth.
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION=Service to use on the invoice line for the participation fees.
 NbVotes=Antall stemmer
 # Status
 EvntOrgDraft = Kladd

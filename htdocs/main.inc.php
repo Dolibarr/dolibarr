@@ -19,6 +19,7 @@
  * Copyright (C) 2023       Eric Seigne      		<eric.seigne@cap-rel.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026		William Mead			<william@m34d.com>
+ * Copyright (C) 2026		Jose MARTINEZ			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -398,12 +399,12 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 			$sensitiveget = true;
 		}
 	} elseif (getDolGlobalInt('MAIN_SECURITY_CSRF_WITH_TOKEN') >= 2) {
-		// Few GET actions coded with a &token into url are also processed as sensitive.
+		// We need a valid token for action that are strictly equals to these values.
 		$arrayofactiontoforcetokencheck = array(
 			'activate',
 			'doprev', 'donext', 'dvprev', 'dvnext',
 			'freezone', 'install',
-			'reopen'
+			'reopen', 'swapstatut'
 		);
 		if (in_array($tmpaction, $arrayofactiontoforcetokencheck)) {
 			$sensitiveget = true;
@@ -1084,10 +1085,13 @@ if (!defined('NOLOGIN')) {
 		$_SESSION["dol_company"] = getDolGlobalString("MAIN_INFO_SOCIETE_NOM");
 		$_SESSION["dol_entity"] = $conf->entity;
 		// Store value into session (values stored only if defined)
-		if (!empty($dol_hide_topmenu)) {
+		// Note: do not store the hide-menu flags when the login was done from inside a dialog popup iframe
+		// (dol_openinpopup set, for example after a session timeout inside a popup opened by
+		// dolButtonToOpenUrlInDialogPopup()), otherwise the whole session loses its menus.
+		if (!empty($dol_hide_topmenu) && !GETPOST('dol_openinpopup', 'aZ09')) {
 			$_SESSION['dol_hide_topmenu'] = $dol_hide_topmenu;
 		}
-		if (!empty($dol_hide_leftmenu)) {
+		if (!empty($dol_hide_leftmenu) && !GETPOST('dol_openinpopup', 'aZ09')) {
 			$_SESSION['dol_hide_leftmenu'] = $dol_hide_leftmenu;
 		}
 		if (!empty($dol_optimize_smallscreen)) {

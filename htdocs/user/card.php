@@ -497,7 +497,7 @@ if (empty($reshook)) {
 				if ($permissiontoeditpasswordandsee) {
 					$object->pass = GETPOST("password", 'password');
 				}
-				if ($permissiontoeditpasswordandsee || $user->hasRight("api", "apikey", "generate")) {
+				if ($permissiontoeditpasswordandsee) {
 					$object->api_key = (GETPOSTISSET("api_key") ? GETPOST("api_key", 'alphanohtml') : $object->api_key);
 				}
 				if (!empty($user->admin) && $user->id != $id) {
@@ -2176,7 +2176,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			}
 
 			// Token for API
-			if (isModEnabled('api') && ($user->id == $id || $user->admin || $user->hasRight("api", "apikey", "generate"))) {
+			if (isModEnabled('api') && ($user->id == $id || $user->admin)) {
 				print '<tr class="nooddeven"><td>'.$langs->trans("ApiKey").'</td>';
 				print '<td>';
 				if (getDolGlobalString('API_IN_TOKEN_TABLE')) {
@@ -2826,7 +2826,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				if (isModEnabled('api')) {
 					print '<tr><td>'.$langs->trans("ApiKey").'</td>';
 					print '<td>';
-					if ($permissiontoeditpasswordandsee || $user->hasRight("api", "apikey", "generate")) {
+					if ($permissiontoeditpasswordandsee) {
 						print '<input class="minwidth300 maxwidth400 widthcentpercentminusx" minlength="12" maxlength="128" type="text" id="api_key" name="api_key" value="'.$object->api_key.'" autocomplete="off" spellcheck="false">';
 						if (!empty($conf->use_javascript_ajax)) {
 							print img_picto($langs->transnoentities('Generate'), 'refresh', 'id="generate_api_key" class="linkobject paddingleft"');
