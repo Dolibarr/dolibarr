@@ -114,11 +114,12 @@ class Tasks extends DolibarrApi
 	 * @param	string			$sqlfilters			Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:>:'20160101')"
 	 * @param	string			$properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param	bool			$pagination_data	If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0
+	 * @param	int				$includetimespent	0=Return only task. 1=Include a summary of time spent, 2=Include details of time spent lines
 	 * @return	array								Array of project objects
 	 * @phan-return Task[]
 	 * @phpstan-return Task[]
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '', $pagination_data = false)
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '', $pagination_data = false, $includetimespent = 0)
 	{
 		global $db, $conf;
 
@@ -186,6 +187,12 @@ class Tasks extends DolibarrApi
 				$obj = $this->db->fetch_object($result);
 				$task_static = new Task($this->db);
 				if ($task_static->fetch($obj->rowid)) {
+					if ($includetimespent == 1) {
+						$task_static->getSummaryOfTimeSpent(0);
+					}
+					if ($includetimespent == 2) {
+						$task_static->fetchTimeSpentOnTask();
+					}
 					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($task_static), $properties);
 				}
 				$i++;

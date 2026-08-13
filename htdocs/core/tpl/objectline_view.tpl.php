@@ -661,20 +661,20 @@ if ($this->status == 0 && $tmppermtoedit && $action != 'selectlines') {
 			)
 		) {
 			$accountancy_category_asset = getDolGlobalString('ASSET_ACCOUNTANCY_CATEGORY');
-			$filters = array();
+			$sanitized_filters = array();
 			if (!empty($product_static->accountancy_code_buy)) {
-				$filters[] = "account_number = '" . $this->db->escape($product_static->accountancy_code_buy) . "'";
+				$sanitized_filters[] = "account_number = '" . $this->db->escape($product_static->accountancy_code_buy) . "'";
 			}
 			if (!empty($product_static->accountancy_code_buy_intra)) {
-				$filters[] = "account_number = '" . $this->db->escape($product_static->accountancy_code_buy_intra) . "'";
+				$sanitized_filters[] = "account_number = '" . $this->db->escape($product_static->accountancy_code_buy_intra) . "'";
 			}
 			if (!empty($product_static->accountancy_code_buy_export)) {
-				$filters[] = "account_number = '" . $this->db->escape($product_static->accountancy_code_buy_export) . "'";
+				$sanitized_filters[] = "account_number = '" . $this->db->escape($product_static->accountancy_code_buy_export) . "'";
 			}
 			$sql = "SELECT COUNT(*) AS found";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account";
 			$sql .= " WHERE pcg_type = '" . $this->db->escape($conf->global->ASSET_ACCOUNTANCY_CATEGORY) . "'";
-			$sql .= " AND (" . implode(' OR ', $filters). ")";
+			$sql .= " AND (" . implode(' OR ', $sanitized_filters). ")";
 			$resql_asset = $this->db->query($sql);
 			if (!$resql_asset) {
 				print 'Error SQL: ' . $this->db->lasterror();

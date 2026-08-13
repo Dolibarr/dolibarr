@@ -98,7 +98,6 @@ SkillsExtraFields=Atributos complementarios (Habilidades)
 JobsExtraFields=Atributos complementarios (Perfiles de puesto)
 EvaluationsExtraFields=Atributos complementarios (Evaluaciones de competencias)
 NeedBusinessTravels=viajes de negocios
-NoDescription=Sin descripción
 TheJobProfileHasNoSkillsDefinedFixBefore=El perfil laboral evaluado de este empleado no tiene ninguna habilidad definida. Agregue habilidades, luego elimine y reinicie la evaluación.
 PDFStandardHrmEvaluation=Plantilla estándar para generar un documento PDF para una evaluación de competencias
 SkillNotRequired=No se requiere habilidad

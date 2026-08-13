@@ -20,6 +20,7 @@
  * Copyright (C) 2022      	Gauthier VERDOL     	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2023		William Mead			<william.mead@manchenumerique.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Lionel Vessiller		<lvessiller@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -373,19 +374,6 @@ class PropaleLigne extends CommonObjectLine
 	}
 
 	/**
-	 *	Return true if the unit price was originally entered including tax (TTC mode).
-	 *	Useful to preserve the entry mode on no-op edits and to avoid total drift.
-	 *	Note: cannot use !empty() because MySQL returns doubles as strings like "0.00000000"
-	 *	which empty() treats as non-empty.
-	 *
-	 *	@return	bool
-	 */
-	public function wasEnteredIncludingTax()
-	{
-		return isset($this->subprice_ttc) && (float) $this->subprice_ttc != 0;
-	}
-
-	/**
 	 *	Return whether the line must be treated as an option.
 	 *	Phase N: is_option is the source of truth, legacy special_code=3 is tolerated for backward compatibility.
 	 *
@@ -602,7 +590,7 @@ class PropaleLigne extends CommonObjectLine
 		$sql .= ' fk_unit,';
 		$sql .= ' date_start, date_end';
 		$sql .= ', fk_multicurrency, multicurrency_code, multicurrency_subprice, multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc)';
-		$sql .= " VALUES (".$this->fk_propal.",";
+		$sql .= " VALUES (".((int) $this->fk_propal).",";
 		$sql .= " ".($this->fk_parent_line > 0 ? "'".$this->db->escape((string) $this->fk_parent_line)."'" : "null").",";
 		$sql .= " ".(!empty($this->label) ? "'".$this->db->escape($this->label)."'" : "null").",";
 		$sql .= " '".$this->db->escape($this->desc)."',";
@@ -815,7 +803,7 @@ class PropaleLigne extends CommonObjectLine
 		$sql .= " description = '".$this->db->escape($this->desc)."'";
 		$sql .= ", label = ".(!empty($this->label) ? "'".$this->db->escape($this->label)."'" : "null");
 		$sql .= ", product_type = ".((int) $this->product_type);
-		$sql .= ", vat_src_code = '".(empty($this->vat_src_code) ? '' : $this->vat_src_code)."'";
+		$sql .= ", vat_src_code = '".(empty($this->vat_src_code) ? '' : $this->db->escape($this->vat_src_code))."'";
 		$sql .= ", tva_tx='".price2num($this->tva_tx)."'";
 		$sql .= ", localtax1_tx=".price2num($this->localtax1_tx);
 		$sql .= ", localtax2_tx=".price2num($this->localtax2_tx);

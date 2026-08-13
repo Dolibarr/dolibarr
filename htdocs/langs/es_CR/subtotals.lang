@@ -1,0 +1,20 @@
+# Dolibarr language file - Source file is en_US - subtotals
+SubTotalModuleDesc=Líneas de subtotal y título para ciertos documentos
+NotSupportedByAllPDF=Funcionará con PDFs nuevos pero no con los antiguos %s
+AddTitleLine=Agregar línea de título
+TitleAddedLevelTooHigh=Nivel de título agregado demasiado alto (agregado con nivel %s en su lugar).
+TitleEditedLevelTooHigh=Nivel de título editado demasiado alto (editado con nivel %s en su lugar).
+DeleteCorrespondingSubtotalLine=¿Eliminar la línea de subtotal correspondiente?
+SubtotalLineDesc=Descripción de la línea
+SubtotalLineLevel=Nivel de la línea
+ShowUPOnPDF=Mostrar precio unitario en el PDF
+NoTitleError=No tiene línea de título o ya todas tienen una línea de subtotal correspondiente
+SelectVATRate=Seleccionar tasa de IVA
+EnterRemisePercent=Ingresar porcentaje de descuento
+TitleUnderSameLevelSTLine=El título del mismo nivel debe estar bajo la línea de subtotal del título anterior.
+TitleUnderSameLevelOrGreater=El título debe estar bajo un título del mismo nivel o mayor.
+PreviousTitleLevelTooHigh=El título anterior tiene dos niveles o más de diferencia con la línea movida.
+STLineUnderCorrespondingTitleDesc=La línea de subtotal debe estar bajo un título con el mismo nivel que tiene la misma descripción.
+STLineUnderCorrespondingTitle=La línea de subtotal debe estar bajo un título del mismo nivel y la misma descripción.
+STLineUnderTitle=La línea de subtotal debe estar bajo su título
+UnsupportedModuleError=No puede agregar una línea de subtotal en un módulo no compatible

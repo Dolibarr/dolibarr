@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2017-2020	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -166,9 +166,17 @@ if (empty($reshook)) {
 		foreach ($TBomLineId as $id_bom_line) {
 			$object = new Mo($db);	// modified by the actions_addupdatedelete.inc.php
 
-			$objectbomchildline->fetch($id_bom_line);
+			$objectbomchildline->fetch((int) $id_bom_line);
 
-			$TMoLines = $moline->fetchAll('DESC', 'rowid', 1, 0, array('origin_id' => $id_bom_line));
+			// Find the consume line of the parent MO generated from this BOM line.
+			// The lookup must be scoped to the parent MO and use an exact match on origin_id/origin_type,
+			// otherwise the default 'origin_id LIKE %..%' filter can return an unrelated line (or none),
+			// which would let the child MO be created from the leftover parent POST data (duplicate MO).
+			$TMoLines = $moline->fetchAll('DESC', 'rowid', 1, 0, array('fk_mo' => $mo_parent->id, 'origin_id' => (int) $id_bom_line, 'origin_type' => 'bomline'));
+
+			if (empty($TMoLines)) {
+				continue;
+			}
 
 			foreach ($TMoLines as $tmpmoline) {
 				$_POST['fk_bom'] = $objectbomchildline->fk_bom_child;

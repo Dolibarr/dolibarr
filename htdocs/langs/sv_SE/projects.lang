@@ -258,7 +258,7 @@ OtherFilteredTasks=Andra filtrerade uppgifter
 NoAssignedTasks=Inga tilldelade uppgifter hittades (tilldela projekt / uppgifter till den nuvarande användaren från den övre väljrutan för att ange tid på det)
 ThirdPartyRequiredToGenerateIntervention=En tredje part måste definieras på projektet för att kunna skapa intervention.
 ThirdPartyRequiredToGenerateInvoice=En tredje part måste definieras på projekt för att kunna fakturera det.
-ChooseANotYetAssignedTask=Denna uppgift har inte tilldelats till dig ännu
+ChooseANotYetAssignedTask=Tasks not yet assigned to you
 # Comments trans
 AllowCommentOnTask=Tillåt användar kommentarer på uppgifter
 AllowCommentOnProject=Tillåt användar kommentarer på projekt

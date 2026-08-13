@@ -566,7 +566,9 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 						$companytouseforaddress = $targetcontact->thirdparty;
 					}
 
-					$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->convToOutputCharset(dol_format_address($companytouseforaddress))."\n";
+					if (is_object($companytouseforaddress)) {
+						$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->convToOutputCharset(dol_format_address($companytouseforaddress))."\n";
+					}
 				}
 				// Country
 				if (!empty($targetcontact->country_code) && $targetcontact->country_code != $sourcecompany->country_code) {

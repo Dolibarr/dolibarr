@@ -733,7 +733,7 @@ if (empty($reshook)) {
 
 		$upload_dir = $conf->reception->dir_output;
 		$file = $upload_dir.'/'.GETPOST('file');
-		$ret = dol_delete_file($file, 0, 0, 0, $object);
+		$ret = dol_delete_file($file, 1, 0, 0, $object);
 		if ($ret) {
 			setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
 		} else {
@@ -1305,9 +1305,8 @@ if ($action == 'create' && $permissiontoadd) {
 		// Here $object can be of an object Reception
 		$extrafields->fetch_name_optionals_label($object->table_element);
 		if (empty($reshook) && !empty($extrafields->attributes[$object->table_element]['label'])) {
-			// copy from order
-			if ($objectsrc->fetch_optionals() > 0) {
-				$recept->array_options = array_merge($recept->array_options, $objectsrc->array_options);
+			if ($object->fetch_optionals() > 0) {
+				$recept->array_options = array_merge($recept->array_options, $object->array_options);
 			}
 			print $recept->showOptionals($extrafields, 'create', $parameters);
 		}
@@ -1334,7 +1333,7 @@ if ($action == 'create' && $permissiontoadd) {
 		}
 
 		// Note Public
-		$htmltext ='';
+		$htmltext = '';
 		print '<tr>';
 		print '<td class="tdtop">';
 		print $form->textwithpicto($langs->trans('NotePublic'), $htmltext);
@@ -2585,7 +2584,7 @@ if ($action == 'create' && $permissiontoadd) {
 			$sql .= ', p.description as product_desc';
 			$sql .= " FROM ".MAIN_DB_PREFIX."receptiondet_batch as ed";
 			$sql .= ", ".MAIN_DB_PREFIX."reception as e";
-			$sql .= ", ".MAIN_DB_PREFIX.(($origin == 'supplier_order') ? 'commande_fournisseur' : $origin)."det as obj";
+			$sql .= ", ".MAIN_DB_PREFIX.(($origin == 'supplier_order') ? 'commande_fournisseur' : $origin)."det as obj";  // @phan-suppress-current-line SqlInjection
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON obj.fk_product = p.rowid";
 			$sql .= " WHERE e.entity IN (".getEntity('reception').")";
 			$sql .= " AND obj.fk_commande = ".((int) $origin_id);
@@ -2701,13 +2700,25 @@ if ($action == 'create' && $permissiontoadd) {
 								if ($j > 1) {
 									$htmltooltip .= '<br>';
 								}
-								$reception_static->fetch($receptionline_var['reception_id']);
+								if (empty($conf->cache['reception'][$receptionline_var['reception_id']])) {
+									$reception_static = new Reception($db);
+									$reception_static->fetch($receptionline_var['reception_id']);
+									$conf->cache['reception'][$receptionline_var['reception_id']] = $reception_static;
+								} else {
+									$reception_static = $conf->cache['reception'][$receptionline_var['reception_id']];
+								}
 								$htmltooltip .= $reception_static->getNomUrl(1, 'nolink', 0, 0, 1);
 								$htmltooltip .= ' - '.$receptionline_var['qty'];
 
 								$htmltext = $langs->trans("DateValidation").' : '.(empty($receptionline_var['date_valid']) ? $langs->trans("Draft") : dol_print_date($receptionline_var['date_valid'], 'dayhour'));
 								if (isModEnabled('stock') && $receptionline_var['warehouse'] > 0) {
-									$warehousestatic->fetch($receptionline_var['warehouse']);
+									if (empty($conf->cache['warehouse'][$receptionline_var['warehouse']])) {
+										$warehousestatic = new Entrepot($db);
+										$warehousestatic->fetch($receptionline_var['warehouse']);
+										$conf->cache['warehouse'][$receptionline_var['warehouse']] = $warehousestatic;
+									} else {
+										$warehousestatic = $conf->cache['warehouse'][$receptionline_var['warehouse']];
+									}
 									$htmltext .= '<br>'.$langs->trans("From").' : '.$warehousestatic->getNomUrl(1, '', 0, 1);
 								}
 								$htmltooltip .= ' '.$form->textwithpicto('', $htmltext, 1);

@@ -885,9 +885,9 @@ class DoliDBPgsql extends DoliDB
 	 * Encrypt sensitive data in database
 	 * Warning: This function includes the escape and add the SQL simple quotes on strings.
 	 *
-	 * @param	string	$fieldorvalue	Field name or value to encrypt
-	 * @param	int		$withQuotes		Return string including the SQL simple quotes. This param must always be 1 (Value 0 is bugged and deprecated).
-	 * @return	string					XXX(field) or XXX('value') or field or 'value'
+	 * @param	string		$fieldorvalue	Field name or value to encrypt
+	 * @param	int<1,1>	$withQuotes		Return string including the SQL simple quotes. This param must always be 1 (Value 0 is bugged and deprecated).
+	 * @return	string						XXX(field) or XXX('value') or field or 'value'
 	 */
 	public function encrypt($fieldorvalue, $withQuotes = 1)
 	{
@@ -965,7 +965,7 @@ class DoliDBPgsql extends DoliDB
 		//print $charset.' '.setlocale(LC_CTYPE,'0'); exit;
 
 		// NOTE: Do not use ' around the database name
-		$sql = "CREATE DATABASE ".$this->escape($database)." OWNER '".$this->escape($owner)."' ENCODING '".$this->escape((string) $charset)."'";
+		$sql = "CREATE DATABASE ".$this->sanitize($database)." OWNER '".$this->escape($owner)."' ENCODING '".$this->escape((string) $charset)."'";
 
 		dol_syslog($sql, LOG_DEBUG);
 		$ret = $this->query($sql);
@@ -1287,10 +1287,10 @@ class DoliDBPgsql extends DoliDB
 		if (isset($field_desc['null']) && ($field_desc['null'] == 'not null' || $field_desc['null'] == 'NOT NULL')) {
 			// We will try to change format of column to NOT NULL. To be sure the ALTER works, we try to update fields that are NULL
 			if ($field_desc['type'] == 'varchar' || $field_desc['type'] == 'text') {
-				$sqlbis = "UPDATE ".$this->sanitize($table)." SET ".$this->escape($field_name)." = '".$this->escape(isset($field_desc['default']) ? $field_desc['default'] : '')."' WHERE ".$this->escape($field_name)." IS NULL";
+				$sqlbis = "UPDATE ".$this->sanitize($table)." SET ".$this->sanitize($field_name)." = '".$this->escape(isset($field_desc['default']) ? $field_desc['default'] : '')."' WHERE ".$this->sanitize($field_name)." IS NULL";
 				$this->query($sqlbis);
 			} elseif (in_array($field_desc['type'], array('tinyint', 'smallint', 'int', 'double'))) {
-				$sqlbis = "UPDATE ".$this->sanitize($table)." SET ".$this->escape($field_name)." = ".((float) $this->escape(isset($field_desc['default']) ? $field_desc['default'] : 0))." WHERE ".$this->escape($field_name)." IS NULL";
+				$sqlbis = "UPDATE ".$this->sanitize($table)." SET ".$this->sanitize($field_name)." = ".((float) $this->escape(isset($field_desc['default']) ? $field_desc['default'] : 0))." WHERE ".$this->sanitize($field_name)." IS NULL";
 				$this->query($sqlbis);
 			}
 		}
