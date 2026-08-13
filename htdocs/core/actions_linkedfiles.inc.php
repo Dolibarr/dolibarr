@@ -168,9 +168,9 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes' && !empty($permissionto
 		$dir = dirname($file).'/'; // Path to the folder containing the original image
 		$dirthumb = $dir.'/thumbs/'; // Path to the folder containing the thumbnail (if file is an image)
 
-		$ret = dol_delete_file($file, 0, 0, 0, (is_object($object) ? $object : null));
+		$ret = dol_delete_file($file, 1, 0, 0, (is_object($object) ? $object : null));
 		if (!empty($fileold)) {
-			dol_delete_file($fileold, 0, 0, 0, (is_object($object) ? $object : null)); // Delete file using old path
+			dol_delete_file($fileold, 1, 0, 0, (is_object($object) ? $object : null)); // Delete file using old path
 		}
 
 		if ($ret) {

@@ -461,7 +461,7 @@ class BonPrelevement extends CommonObject
 			$sql .= ", fk_prelevement_demande";
 			$sql .= ($sourcetype == 'salary' ? ", fk_user" : "");
 			$sql .= ") VALUES (";
-			$sql .= $this->id;
+			$sql .= ((int) $this->id);
 			$sql .= ", " . (($sourcetype != 'salary') ? ((int) $client_id) : "0");	// fk_soc can't be null
 			$sql .= ", '" . $this->db->escape($client_nom) . "'";
 			$sql .= ", " . ((float) price2num($amount));
@@ -1099,7 +1099,7 @@ class BonPrelevement extends CommonObject
 		// phpcs:enable
 		global $conf, $langs, $user;
 
-		dol_syslog(__METHOD__ . " mode=".$mode." format=".$format." type=".$type." dids=".$dids." fk_bank_account=".$fk_bank_account." sourcetype=".$sourcetype, LOG_DEBUG);
+		dol_syslog(__METHOD__ . " mode=".$mode." format=".$format." type=".$type." dids=".(is_array($dids) ? implode(',', $dids) : $dids)." fk_bank_account=".$fk_bank_account." sourcetype=".$sourcetype, LOG_DEBUG);
 
 		require_once DOL_DOCUMENT_ROOT . "/compta/facture/class/facture.class.php";
 		require_once DOL_DOCUMENT_ROOT . "/societe/class/societe.class.php";
@@ -1128,12 +1128,12 @@ class BonPrelevement extends CommonObject
 		$error = 0;
 		// Pre-store some values into variables to simplify following sql requests
 		if ($sourcetype != 'salary') {
-			$entities = $type != 'bank-transfer' ? getEntity('invoice', 1) : getEntity('supplier_invoice', 1);	// Return a list of entities
+			$entity = $type != 'bank-transfer' ? getEntity('invoice', 1) : getEntity('supplier_invoice', 1);	// Return entity
 			$sqlTable = $type != 'bank-transfer' ? "facture" : "facture_fourn";
 			$socOrUser = 'fk_soc';
 			$societeOrUser = 'societe';
 		} else {
-			$entities = getEntity('salary', 1);		// Return a list of entities
+			$entity = getEntity('salary', 1);		// Return entity
 			$sqlTable = 'salary';
 			$socOrUser = 'fk_user';
 			$societeOrUser = 'user';
@@ -1214,7 +1214,7 @@ class BonPrelevement extends CommonObject
 			// If we add a test on sr.default_rib = 1, we must also check we have a correct error management to stop if no default BAN is found.
 			// Also it may be found for on thirdparty and not for the other.
 		}
-		$sql .= " WHERE f.entity IN (".$this->db->escape($entities).')';
+		$sql .= " WHERE f.entity IN (".((int) $entity).')';
 		if ($sourcetype != 'salary') {
 			$sql .= " AND f.fk_statut = ".Facture::STATUS_VALIDATED; // Invoice validated
 			$sql .= " AND f.paye = 0";
@@ -1421,7 +1421,7 @@ class BonPrelevement extends CommonObject
 					$row = $this->db->fetch_row($resql);
 
 					// Build the new ref
-					$ref = $prefixt . $ref . sprintf("%03d", (intval($row[0]) + 1));
+					$ref = $prefixt . $ref . sprintf("%03d", (intval($row[0] ?? 0) + 1));
 
 					// $conf->abc->dir_output may be:
 					// /home/ldestailleur/git/dolibarr_15.0/documents/abc/
@@ -1986,10 +1986,39 @@ class BonPrelevement extends CommonObject
 						}
 						$cachearraytotestduplicate[$obj->idfac] = $obj->rowid;
 
+						// Get the default value
 						$daterum = (!empty($obj->date_rum)) ? $this->db->jdate($obj->date_rum) : $this->db->jdate($obj->datec);
 						$iban = dolDecrypt($obj->iban);
+						$bic = $obj->bic;
+						$drum = $obj->drum;
+						$rum = $obj->rum;
 
-						$fileDebiteurSection .= $this->EnregDestinataireSEPA($obj->code, $obj->nom, $obj->address, $obj->zip, $obj->town, $obj->country_code, '', '', '', $obj->somme, $obj->reffac, $obj->idfac, $iban, $obj->bic, $daterum, (string) $obj->drum, $obj->rum, $type);
+						// But if a force bank account is defined, we use it instead
+						if (!empty($obj->fk_prelevement_demande)) {
+							$companybankaccountid = 0;
+
+							$sqltmp = "SELECT fk_societe_rib FROM ".MAIN_DB_PREFIX."prelevement_demande";
+							$sqltmp .= " WHERE rowid = ".((int) $obj->fk_prelevement_demande);
+
+							$resqltmp = $this->db->query($sqltmp);
+
+							$objtmp = $this->db->fetch_object($resqltmp);
+							if ($objtmp) {
+								$companybankaccountid = (int) $objtmp->fk_societe_rib;
+							}
+
+							$bankaccount = new CompanyBankAccount($this->db);
+							$bankaccount->fetch($companybankaccountid);
+							if ($bankaccount->id > 0) {
+								$daterum = $bankaccount->date_rum;
+								$iban = $bankaccount->iban;
+								$bic = $bankaccount->bic;
+								$drum = $bankaccount->id;
+								$rum = $bankaccount->rum;
+							}
+						}
+
+						$fileDebiteurSection .= $this->EnregDestinataireSEPA($obj->code, $obj->nom, $obj->address, $obj->zip, $obj->town, $obj->country_code, '', '', '', $obj->somme, $obj->reffac, $obj->idfac, $iban, $bic, $daterum, (string) $drum, $rum, $type);
 
 						$this->total += $obj->somme;
 						$i++;

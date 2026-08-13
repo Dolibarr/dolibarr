@@ -22,7 +22,9 @@
  * Copyright (C) 2025		Alexandre Janniaux	<alexandre.janniaux@gmail.com>
  * Copyright (C) 2025		Vincent Maury		<vmaury@timgroup.fr>
  * Copyright (C) 2026		Pierre Ardoin		<developpeur@lesmetiersdubatiment.fr>
-*
+ * Copyright (C) 2026		Anthony Berton		<anthony.berton@bb2a.fr>
+
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -48,6 +50,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commontrigger.class.php';
 
 /**
  *	Parent class of all other business classes (invoices, contracts, proposals, orders, ...)
+ *
+ * @property-deprecated int|string $cond_reglement  Use $cond_reglement_id methodology instead
  *
  * @phan-forbid-undeclared-magic-properties
  */
@@ -366,6 +370,12 @@ abstract class CommonObject
 	public $product;
 
 	/**
+	 * @var ?Entrepot 	A related warehouse object
+	 * @see fetch_warehouse()
+	 */
+	public $warehouse;
+
+	/**
 	 * @var string 		The type of originating object. Combined with `$origin_type`, it allows to reload `$origin_object`
 	 * @see fetch_origin()
 	 */
@@ -560,15 +570,14 @@ abstract class CommonObject
 	public $transport_mode_id;
 
 	/**
-	 * @var int|string 		Payment terms ID
-	 * @deprecated  Use $cond_reglement_id instead - Kept for compatibility
+	 * var int|string 		Payment terms ID
+	 * @deprecated  Use $cond_reglement_id instead - Kept for compatibility (was sometimes _label)
 	 * @see $cond_reglement_id
 	 *
 	 * Note: cond_reglement can not be aliased to cond_reglement!!!
-	 */
-	private $cond_reglement;  // Private to call DolDeprecationHandler
-	/**
-	 * @var int|string Internal to detect deprecated access
+	 * private $cond_reglement;  // Not set (and not private) to call DolDeprecationHandler
+	 *
+	 * @var int|string Internal to detect deprecated access, renamed to depre_cond_reglement
 	 */
 	protected $depr_cond_reglement;  // Internal value for deprecation
 
@@ -1342,7 +1351,7 @@ abstract class CommonObject
 			return -2;
 		}
 
-		if ($this->restrictiononfksoc && property_exists($this, 'socid') && !empty($this->socid) && !$user->hasRight('societe', 'client', 'voir')) {
+		if ($this->restrictiononfksoc && property_exists($this, 'socid') && !empty($this->socid) && $user->id > 0 && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql_allowed_contacts = 'SELECT COUNT(*) as cnt FROM '.$this->db->prefix().'societe_commerciaux as sc';
 			$sql_allowed_contacts .= ' WHERE sc.fk_soc = '.(int) $this->socid;
 			$sql_allowed_contacts .= ' AND sc.fk_user = '.(int) $user->id;
@@ -1406,7 +1415,7 @@ abstract class CommonObject
 			// Insert into database
 			$sql = "INSERT INTO ".$this->db->prefix()."element_contact";
 			$sql .= " (element_id, fk_socpeople, datecreate, statut, fk_c_type_contact) ";
-			$sql .= " VALUES (".$this->id.", ".((int) $fk_socpeople)." , ";
+			$sql .= " VALUES (".((int) $this->id).", ".((int) $fk_socpeople)." , ";
 			$sql .= "'".$this->db->idate($datecreate)."'";
 			$sql .= ", 4, ".((int) $id_type_contact);
 			$sql .= ")";
@@ -1751,11 +1760,13 @@ abstract class CommonObject
 		// phpcs:enable
 		global $langs;
 
-		if (empty($order)) {
-			$order = 'position';
+		$sanitized_order = $order;  // @phan-suppress-current-line SqlInjection
+
+		if (empty($sanitized_order)) {
+			$sanitized_order = 'position';
 		}
-		if ($order == 'position') {
-			$order .= ',code';
+		if ($sanitized_order == 'position') {
+			$sanitized_order .= ',code';
 		}
 
 		$tab = array();
@@ -1772,7 +1783,7 @@ abstract class CommonObject
 		if (!empty($code)) {
 			$sql .= " AND tc.code = '".$this->db->escape($code)."'";
 		}
-		$sql .= $this->db->order($order, 'ASC');
+		$sql .= $this->db->order($sanitized_order, 'ASC');
 
 		//print "sql=".$sql;
 		$resql = $this->db->query($sql);
@@ -2193,6 +2204,39 @@ abstract class CommonObject
 		return $result;
 	}
 
+	/**
+	 *	Load the warehouse of object, from id $this->warehouse_id or $this->fk_warehouse, into this->warehouse
+	 *
+	 *	@param		int<0,1>	$force_warehouse_id	Force warehouse id
+	 *	@return		int<-1,1>						Return integer <0 if KO, >0 if OK
+	 */
+	public function fetchWarehouse($force_warehouse_id = 0)
+	{
+		if (empty($this->warehouse_id) && empty($this->fk_warehouse) && empty($force_warehouse_id)) {
+			return 0;
+		}
+
+		include_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
+
+		$idtofetch = isset($this->warehouse_id) ? $this->warehouse_id : (isset($this->fk_warehouse) ? $this->fk_warehouse : 0);
+		if (!empty($force_warehouse_id)) {
+			$idtofetch = $force_warehouse_id;
+		}
+
+		if ($idtofetch) {
+			$warehouse = new Entrepot($this->db);
+			$result = $warehouse->fetch($idtofetch);
+			if ($result < 0) {
+				$this->errors = array_merge($this->errors, $warehouse->errors);
+			}
+			$this->warehouse = $warehouse;
+
+			return $result;
+		} else {
+			return -1;
+		}
+	}
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Load the user with id $userid into this->user
@@ -2572,7 +2616,7 @@ abstract class CommonObject
 			if (!preg_match('/^\s*AND/i', $filtermax)) {
 				$sql .= " AND ";
 			}
-			$sql .= $filtermax;
+			$sql .= $filtermax;  // @phan-suppress-current-line SqlInjection
 		} else {
 			$sql .= $tmpsql;
 		}
@@ -2621,7 +2665,7 @@ abstract class CommonObject
 		$sql .= " FROM ".(empty($nodbprefix) ? $this->db->prefix() : '').$this->table_element." as te";
 		if (isset($this->ismultientitymanaged) && !is_numeric($this->ismultientitymanaged)) {
 			$tmparray = explode('@', $this->ismultientitymanaged);
-			$sql .= ", ".$this->db->prefix().$tmparray[1]." as ".($tmparray[1] == 'societe' ? 's' : 'parenttable'); // If we need to link to this table to limit select to entity
+			$sql .= ", ".$this->db->prefix().$this->db->sanitize($tmparray[1])." as ".($tmparray[1] == 'societe' ? 's' : 'parenttable'); // If we need to link to this table to limit select to entity
 		} elseif ($restrictiononfksoc == 1 && $this->element != 'societe' && !$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= ", ".$this->db->prefix()."societe as s"; // If we need to link to societe to limit select to socid
 		} elseif ($restrictiononfksoc == 2 && $this->element != 'societe' && !$user->hasRight('societe', 'client', 'voir') && !$socid) {
@@ -2658,7 +2702,7 @@ abstract class CommonObject
 			if (!preg_match('/^\s*AND/i', $filtermin)) {
 				$sql .= " AND ";
 			}
-			$sql .= $filtermin;
+			$sql .= $filtermin;  // @phan-suppress-current-line SqlInjection
 
 			$filtermin = '';
 		} else {
@@ -4072,7 +4116,7 @@ abstract class CommonObject
 
 		$multicurrency_tx = !empty($this->multicurrency_tx) ? $this->multicurrency_tx : 1;
 
-		// Define constants to find lines to sum (field name int the table_element_line not into table_element)
+		// Define constants to find lines to sum (field name into the table_element_line not into table_element)
 		$fieldtva = 'total_tva';
 		$fieldlocaltax1 = 'total_localtax1';
 		$fieldlocaltax2 = 'total_localtax2';
@@ -5702,9 +5746,10 @@ abstract class CommonObject
 
 			// Recalculate unit price with tax if not defined
 			if (empty((float) $line->subprice_ttc) && $line->qty) {	// subprice_ttc may be not stored on old version or not defined for lines with no unit price (like a discount)
-				// So we calculate an estimated value just to show something on screen
+				// So we calculate an estimated value just to show something on screen.
+				// Not: the unit price is always for 100% of line, it is not a prorata of situation invoice (when total is)
 				if ($line->remise_percent != 100) {
-					$line->subprice_ttc = (float) price2num($line->total_ttc / $line->qty / (1 - $line->remise_percent / 100), 'MU');
+					$line->subprice_ttc = (float) price2num($line->total_ttc * ($line->situation_percent ? 100 / $line->situation_percent : 1) / $line->qty / (1 - $line->remise_percent / 100), 'MU');
 				} else {
 					// Other method is less accurate
 					$line->subprice_ttc = (float) price2num((!empty($line->subprice) ? $line->subprice : 0) * (1 + ((!empty($line->tva_tx) ? $line->tva_tx : 0) / 100)), 'MU');
@@ -6810,10 +6855,10 @@ abstract class CommonObject
 				if (empty($extrafields->attributes[$this->table_element]['type'][$name]) || (!in_array($extrafields->attributes[$this->table_element]['type'][$name], ['separate', 'point', 'multipts', 'linestrg','polygon']))) {
 					$sql .= ", ".$this->db->sanitize($name);
 				}
-				// use geo sql fonction to read as text
+				// use geo sql function to read as text
 				if (!empty($extrafields->attributes[$this->table_element]['type'][$name]) && in_array($extrafields->attributes[$this->table_element]['type'][$name], array('point', 'multipts', 'linestrg', 'polygon'))) {
 					// TODO Add an abstraction method in the database driver
-					$sql .= ", ST_AsWKT(".$name.") as ".$this->db->sanitize($name);
+					$sql .= ", ST_AsWKT(".$this->db->sanitize($name).") as ".$this->db->sanitize($name);
 				}
 			}
 			$sql .= " FROM ".$this->db->prefix().$table_element."_extrafields";
@@ -7008,6 +7053,8 @@ abstract class CommonObject
 
 			if (!empty($attrfieldcomputed)) {
 				if (getDolGlobalString('MAIN_STORE_COMPUTED_EXTRAFIELDS')) {
+					global $objectoffield;		// We set a global variable to $objectoffield so
+					$objectoffield = $this;		// we can use it inside the computed formula
 					$value = dol_eval((string) $attrfieldcomputed, 1, 0, '2');
 					dol_syslog($langs->trans("Extrafieldcomputed")." on ".$attributeLabel."(".$value.")", LOG_DEBUG);
 					$new_array_options[$key] = $value;
@@ -7208,7 +7255,7 @@ abstract class CommonObject
 			// - multipts => "MULTIPOINT(0 0, 20 20, 60 60)"
 			// - linestrg => "LINESTRING(0 0, 10 10, 20 25, 50 60)"
 			// - polygon  => "POLYGON((0 0,10 0,10 10,0 10,0 0),(5 5,7 5,7 7,5 7, 5 5))"
-			$sqlColumnValues[$attributeKey] = $geoDataType['ST_Function']."('".$this->db->escape($newValue)."')";
+			$sqlColumnValues[$attributeKey] = $geoDataType['ST_Function']."('".$this->db->escape($newValue)."')";  // @phan-suppress-current-line SqlInjection
 		}
 
 		$this->db->begin();
@@ -7234,6 +7281,15 @@ abstract class CommonObject
 		// if the extrafields row already exists for the object, we update it
 		if ($linealreadyfound) {
 			array_shift($sqlColumnValues); // drop the 'fk_object' column because its value won't change
+			if (empty($sqlColumnValues)) {
+				// No column of the target element to update. This happens when the object was created from
+				// another element whose extrafields do not exist on this element (e.g. invoice created from a
+				// shipment: the source line extrafields are copied into array_options but none match facturedet).
+				// The existing row is already correct, so there is nothing to update: avoid an empty "SET" clause
+				// that would produce an invalid SQL statement.
+				$this->db->commit();
+				return 1;
+			}
 			$sqlColumnValueString = implode(
 				',',
 				/**
@@ -7381,7 +7437,7 @@ abstract class CommonObject
 
 					if ($value !== '') {
 						$sql = "INSERT INTO ".$this->db->prefix()."object_lang (fk_object, property, type_object, lang, value";
-						$sql .= ") VALUES (".$this->id.", '".$this->db->escape($key)."', '".$this->db->escape($table_element)."', '".$this->db->escape($langcode)."', '".$this->db->escape($value)."'";
+						$sql .= ") VALUES (".((int) $this->id).", '".$this->db->escape($key)."', '".$this->db->escape($table_element)."', '".$this->db->escape($langcode)."', '".$this->db->escape($value)."'";
 						$sql .= ")";
 
 						$resql = $this->db->query($sql);
@@ -7448,7 +7504,10 @@ abstract class CommonObject
 				$extrafields = new ExtraFields($this->db);
 			}
 			$extrafields->fetch_name_optionals_label($this->table_element);
-
+			if (!isset($extrafields->attributes[$this->table_element]['type'][$key])) {
+				// Extrafield not defined for this object type: nothing to update
+				return 0;
+			}
 			$value = $this->array_options["options_".$key];
 
 			$attributeKey      = $key;
@@ -7484,6 +7543,8 @@ abstract class CommonObject
 			//dol_syslog("attributeType=".$attributeType, LOG_DEBUG);
 			if (!empty($attrfieldcomputed)) {
 				if (getDolGlobalString('MAIN_STORE_COMPUTED_EXTRAFIELDS')) {
+					global $objectoffield;		// We set a global variable to $objectoffield so
+					$objectoffield = $this;		// we can use it inside the computed formula
 					$value = dol_eval((string) $attrfieldcomputed, 1, 0, '2');
 					dol_syslog($langs->trans("Extrafieldcomputed")." on ".$attributeLabel."(".$value.")", LOG_DEBUG);
 
@@ -7678,7 +7739,7 @@ abstract class CommonObject
 
 			//var_dump('linealreadyfound='.$linealreadyfound.' sql='.$sql); exit;
 			if ($linealreadyfound) {
-				$sanitizedGeoDataType = ExtraFields::$geoDataTypes[$attributeType] ?? null;
+				$sanitizedGeoDataType = ExtraFields::$geoDataTypes[$attributeType] ?? null;  // @phan-suppress-current-line SqlInjection
 				if ($this->array_options["options_".$key] === null) {
 					$sql = "UPDATE ".$this->db->prefix().$this->db->sanitize($table_element)."_extrafields";
 					$sql .= " SET ".$this->db->sanitize($key)." = null";
@@ -8289,7 +8350,7 @@ abstract class CommonObject
 
 					// Note: $InfoFieldList can be 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter[:CategoryIdType[:CategoryIdList[:Sortfield]]]]]]'
 					if (isset($InfoFieldList[7]) && preg_match('/^[a-z0-9_\-,]+$/i', $InfoFieldList[7])) {
-						$sql .= " ORDER BY ".$this->db->escape($InfoFieldList[7]);
+						$sql .= " ORDER BY ".$this->db->sanitize($InfoFieldList[7]);
 					} else {
 						$sql .= " ORDER BY ".$this->db->sanitize(implode(', ', $fields_label));
 					}
@@ -9004,7 +9065,7 @@ abstract class CommonObject
 				$sql .= " WHERE ".$this->db->sanitize($selectkey)." = '".$this->db->escape((string) $value)."'";
 			}
 
-			//$sql.= ' AND entity = '.$conf->entity;
+			//$sql.= ' AND entity = '.((int) $conf->entity);
 
 			dol_syslog(get_class($this).':showOutputField:$type=sellist', LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -9107,7 +9168,7 @@ abstract class CommonObject
 				$sql .= ' as main';
 			}
 			// $sql.= " WHERE ".$selectkey."='".$this->db->escape($value)."'";
-			// $sql.= ' AND entity = '.$conf->entity;
+			// $sql.= ' AND entity = '.((int) $conf->entity);
 
 			dol_syslog(get_class($this).':showOutputField:$type=chkbxlst', LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -9604,10 +9665,12 @@ abstract class CommonObject
 					if (($mode == 'create') && !in_array(abs($visibility), array(1, 3))) {
 						continue; // <> -1 and <> 1 and <> 3 = not visible on forms, only on list
 					} elseif (($mode == 'edit') && !in_array(abs($visibility), array(1, 3, 4))) {
-						// We need to make sure, that the values of hidden extrafields are also part of $_POST. Otherwise, they would be empty after an update of the object. See also getOptionalsFromPost
+						// We need to make sure, that the values of hidden extrafields are also part of $_POST.
+						// Otherwise, they would be empty after an update of the object. See also getOptionalsFromPost
+						// TODO: We should not have this hidden field, and action='update' should be done only if field was POSTED by form.
 						$ef_name = 'options_' . $key;
 						$ef_value = $this->array_options[$ef_name] ?? '';
-						$out .= '<input type="hidden" name="' . $ef_name . '" id="' . $ef_name . '" value="' . $ef_value . '" />' . "\n";
+						$out .= '<input type="hidden" name="' . $ef_name . '" id="' . $ef_name . '" value="' . dolPrintHTMLForAttribute($ef_value) . '" />' . "\n";	 // If trouble to preserve content, we can try dol_htmlentities() instead, but real solution is to remove completely the hidden field (see previous TODO).
 						continue; // <> -1 and <> 1 and <> 3 = not visible on forms, only on list and <> 4 = not visible at the creation
 					} elseif ($mode == 'view' && empty($visibility)) {
 						continue;
@@ -9977,7 +10040,7 @@ abstract class CommonObject
 			return $user->hasRight($module, $element);
 		}
 
-		return $user->rights->$element;
+		return isset($user->rights->$element) ? $user->rights->$element : null;
 	}
 
 	/**
@@ -10503,7 +10566,7 @@ abstract class CommonObject
 	public function isInt($info)
 	{
 		if (is_array($info)) {
-			if (isset($info['type']) && (preg_match('/(^int|int$)/i', $info['type']))) {
+			if (isset($info['type']) && (preg_match('/^(?:tiny|small|medium|big)?int|int$/i', $info['type']))) {
 				return true;
 			} else {
 				return false;
@@ -10607,10 +10670,11 @@ abstract class CommonObject
 	/**
 	 * Function to return the array of data key-value from the ->fields and all the ->properties of an object.
 	 *
-	 * Note: $this->${field} are set by the page that make the createCommon() or the updateCommon().
-	 * $this->${field} should be a clean and string value (so date are formatted for SQL insert).
+	 * Note:
+	 * - $this->${field} are set by the page that makes the createCommon() or the updateCommon().
+	 * - $this->${field} should be a clean and string value (so date are formatted for SQL insert).
 	 *
-	 * @return array<string,null|int|float|string>	Array with all values of each property to update
+	 * @return array<string,null|int|float|string>	Array with all values of each property to update - caller is responsible for escaping
 	 */
 	protected function setSaveQuery()
 	{
@@ -10630,7 +10694,7 @@ abstract class CommonObject
 				if ((isset($this->{$field}) && $this->{$field} != '') || !empty($info['notnull'])) {
 					if (!isset($this->{$field})) {
 						if (!empty($info['default'])) {
-							$queryarray[$field] = $info['default'];
+							$queryarray[$field] = $info['default'];  // From safe source @phan-suppress-current-line SqlInjection
 						} else {
 							$queryarray[$field] = 0;
 						}
@@ -10660,7 +10724,7 @@ abstract class CommonObject
 			} else {
 				// Note: If $this->{$field} is not defined, it means there is a bug into definition of ->fields or a missing declaration of property
 				// We should keep the warning generated by this because it is a bug somewhere else in code, not here.
-				$queryarray[$field] = $this->{$field};
+				$queryarray[$field] = $this->{$field};  // @phan-suppress-current-line SqlInjection
 			}
 
 			if (array_key_exists('type', $info) && $info['type'] == 'timestamp' && empty($queryarray[$field])) {
@@ -10850,31 +10914,31 @@ abstract class CommonObject
 
 		unset($fieldvalues['rowid']); // The field 'rowid' is reserved field name for autoincrement field so we don't need it into insert.
 
-		$keys = array();
-		$values = array(); // Array to store string forged for SQL syntax
+		$sanitized_keys = array();
+		$sanitized_values = array(); // Array to store string forged for SQL syntax
 		foreach ($fieldvalues as $k => $v) {
-			$keys[$k] = $k;
+			$sanitized_keys[$k] = $k;  // Safe source @phan-suppress-current-line SqlInjection
 			$value = $this->fields[$k];
 			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-			$values[$k] = $this->quote($v, $value); // May return string 'NULL' if $value is null
+			$sanitized_values[$k] = $this->quote($v, $value); // May return string 'NULL' if $value is null
 		}
 
 		// Clean and check mandatory
-		foreach ($keys as $key) {
+		foreach ($sanitized_keys as $key) {
 			if (!isset($this->fields[$key])) {
 				continue;
 			}
 			$key_fields = $this->fields[$key];
 
 			// If field is an implicit foreign key field (so type = 'integer:...')
-			if (preg_match('/^integer:/i', $key_fields['type']) && $values[$key] == '-1') {
-				$values[$key] = '';
+			if (preg_match('/^integer:/i', $key_fields['type']) && $sanitized_values[$key] == '-1') {
+				$sanitized_values[$key] = '';
 			}
-			if (!empty($key_fields['foreignkey']) && $values[$key] == '-1') {
-				$values[$key] = '';
+			if (!empty($key_fields['foreignkey']) && $sanitized_values[$key] == '-1') {
+				$sanitized_values[$key] = '';
 			}
 
-			if (isset($key_fields['notnull']) && $key_fields['notnull'] == 1 && (!isset($values[$key]) || $values[$key] === 'NULL') && (!isset($key_fields['default']) || is_null($key_fields['default']))) {
+			if (isset($key_fields['notnull']) && $key_fields['notnull'] == 1 && (!isset($sanitized_values[$key]) || $sanitized_values[$key] === 'NULL') && (!isset($key_fields['default']) || is_null($key_fields['default']))) {
 				$error++;
 				global $langs;
 				if (empty($langs)) {
@@ -10888,20 +10952,20 @@ abstract class CommonObject
 			}
 
 			// If value is null and there is a default value for field @phan-suppress-next-line PhanTypePossiblyInvalidDimOffset
-			if (isset($key_fields['notnull']) && $key_fields['notnull'] == 1 && (!isset($values[$key]) || $values[$key] === 'NULL') && array_key_exists('default', $key_fields) && !is_null($key_fields['default'])) {
-				$values[$key] = $this->quote($key_fields['default'], $key_fields);
+			if (isset($key_fields['notnull']) && $key_fields['notnull'] == 1 && (!isset($sanitized_values[$key]) || $sanitized_values[$key] === 'NULL') && array_key_exists('default', $key_fields) && !is_null($key_fields['default'])) {
+				$sanitized_values[$key] = $this->quote($key_fields['default'], $key_fields);
 			}
 
 			// If field is an implicit foreign key field (so type = 'integer:...')
-			if (isset($key_fields['type']) && preg_match('/^integer:/i', $key_fields['type']) && empty($values[$key])) {
+			if (isset($key_fields['type']) && preg_match('/^integer:/i', $key_fields['type']) && empty($sanitized_values[$key])) {
 				if (isset($key_fields['default'])) {
-					$values[$key] = ((int) $key_fields['default']);
+					$sanitized_values[$key] = ((int) $key_fields['default']);
 				} else {
-					$values[$key] = 'null';
+					$sanitized_values[$key] = 'null';
 				}
 			}
-			if (!empty($key_fields['foreignkey']) && empty($values[$key])) {
-				$values[$key] = 'null';
+			if (!empty($key_fields['foreignkey']) && empty($sanitized_values[$key])) {
+				$sanitized_values[$key] = 'null';
 			}
 		}
 
@@ -10913,8 +10977,8 @@ abstract class CommonObject
 
 		if (!$error) {
 			$sql = "INSERT INTO ".$this->db->prefix().$this->table_element;
-			$sql .= " (".implode(", ", $keys).')';
-			$sql .= " VALUES (".implode(", ", $values).")";		// $values can contains 'abc' or 123
+			$sql .= " (".implode(", ", $sanitized_keys).')';
+			$sql .= " VALUES (".implode(", ", $sanitized_values).")";		// $sanitized_values can contains 'abc' or 123
 
 			$res = $this->db->query($sql);
 			if (!$res) {
@@ -11088,7 +11152,7 @@ abstract class CommonObject
 
 		$sql = "SELECT ".$objectline->getFieldList('l');
 		$sql .= " FROM ".$this->db->prefix().$objectline->table_element." as l";
-		$sql .= " WHERE l.fk_".$this->db->escape($this->element)." = ".((int) $this->id);
+		$sql .= " WHERE l.fk_".$this->db->sanitize($this->element)." = ".((int) $this->id);
 		if ($morewhere) {
 			$sql .= $morewhere;
 		}
@@ -11181,7 +11245,7 @@ abstract class CommonObject
 		// Add quotes and escape on fields with type string
 		$keys = array();
 		$values = array();
-		$tmp = array();
+		$sanitized_tmp = array();
 		foreach ($fieldvalues as $k => $v) {
 			$keys[$k] = $k;
 			$value = $this->fields[$k];
@@ -11192,8 +11256,8 @@ abstract class CommonObject
 				$v = preg_replace('/\s/', ',', $v);
 				$v = preg_replace('/,+/', ',', $v);
 			}
-			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-			$tmp[] = $k.'='.$this->quote($v, $this->fields[$k]);
+			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition, SqlInjection
+			$sanitized_tmp[] = $k.'='.$this->quote($v, $this->fields[$k]);
 		}
 
 		// Clean and check mandatory fields
@@ -11214,7 +11278,7 @@ abstract class CommonObject
 			 }*/
 		}
 
-		$sql = 'UPDATE '.$this->db->prefix().$this->table_element.' SET '.implode(', ', $tmp).' WHERE rowid='.((int) $this->id);
+		$sql = 'UPDATE '.$this->db->prefix().$this->table_element.' SET '.implode(', ', $sanitized_tmp).' WHERE rowid='.((int) $this->id);
 
 		$this->db->begin();
 
@@ -11897,7 +11961,7 @@ abstract class CommonObject
 			// Delete ecm_files_extrafields with mode 0 (using name)
 			$sql = "DELETE FROM ".$this->db->prefix()."ecm_files_extrafields WHERE fk_object IN (";
 			$sql .= " SELECT rowid FROM ".$this->db->prefix()."ecm_files WHERE filename LIKE '".$this->db->escape($this->ref)."%'";
-			$sql .= " AND filepath = '".$this->db->escape($element)."/".$this->db->escape($this->ref)."' AND entity = ".((int) $conf->entity); // No need of getEntity here
+			$sql .= " AND filepath = '".$this->db->escape($element."/".$this->ref)."' AND entity = ".((int) $conf->entity); // No need of getEntity here
 			$sql .= ")";
 
 			if (!$this->db->query($sql)) {
@@ -11909,7 +11973,7 @@ abstract class CommonObject
 			// Delete ecm_files with mode 0 (using name)
 			$sql = "DELETE FROM ".$this->db->prefix()."ecm_files";
 			$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%'";
-			$sql .= " AND filepath = '".$this->db->escape($element)."/".$this->db->escape($this->ref)."' AND entity = ".((int) $conf->entity); // No need of getEntity here
+			$sql .= " AND filepath = '".$this->db->escape($element."/".$this->ref)."' AND entity = ".((int) $conf->entity); // No need of getEntity here
 
 			if (!$this->db->query($sql)) {
 				$this->error = $this->db->lasterror();

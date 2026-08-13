@@ -236,9 +236,9 @@ if (isModEnabled('accounting')) {
 		$sql = "SELECT b.rowid ";
 		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as b,";
 		$sql .= " ".MAIN_DB_PREFIX."accounting_account as aa";
-		$sql .= " WHERE b.entity = ".$conf->entity; // In module double party accounting, we never share entities
+		$sql .= " WHERE b.entity = ".((int) $conf->entity); // In module double party accounting, we never share entities
 		$sql .= " AND b.numero_compte = aa.account_number";
-		$sql .= " AND aa.entity = ".$conf->entity;
+		$sql .= " AND aa.entity = ".((int) $conf->entity);
 		$sql .= " AND aa.fk_pcg_version = '".$db->escape($pcgvercode)."'";
 		$sql .= $db->plimit(1);
 
@@ -267,8 +267,8 @@ if ($modecompta == 'CREANCES-DETTES') {
 	}
 } elseif ($modecompta == "RECETTES-DEPENSES") {
 	/*
-	 * Liste des paiements (les anciens paiements ne sont pas vus par cette requete car, sur les
-	 * vieilles versions, ils n'etaient pas lies via paiement_facture. On les ajoute plus loin)
+	 * List of payments (old payments are not seen by this query because, on old
+	 * versions, they were not linked via paiement_facture. We add them later)
 	 */
 	$sql = "SELECT date_format(p.datep, '%Y-%m') as dm, sum(pf.amount) as amount_ttc";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
@@ -290,10 +290,10 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql = "SELECT date_format(b.doc_date, '%Y-%m') as dm, sum(b.credit - b.debit) as amount_ttc";
 	$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as b,";
 	$sql .= " ".MAIN_DB_PREFIX."accounting_account as aa";
-	$sql .= " WHERE b.entity = ".$conf->entity; // In module double party accounting, we never share entities
+	$sql .= " WHERE b.entity = ".((int) $conf->entity); // In module double party accounting, we never share entities
 	$sql .= " AND b.numero_compte = aa.account_number";
 	$sql .= " AND b.doc_type = 'customer_invoice'";
-	$sql .= " AND aa.entity = ".$conf->entity;
+	$sql .= " AND aa.entity = ".((int) $conf->entity);
 	$sql .= " AND aa.fk_pcg_version = '".$db->escape($pcgvercode)."'";
 	$sql .= " AND aa.pcg_type = 'INCOME'";		// TODO Be able to use a custom group
 }
@@ -733,7 +733,7 @@ print '</div>';
  $i++;
  }
 
- print "<tr class="oddeven"><td class=\"right\" colspan=\"5\"><i>Invoice a encaisser : </i></td><td class=\"right\"><i>".price($total_ttc_Rac)."</i></td><td colspan=\"5\"><-- bug ici car n'exclut pas le deja réglé des invoices partiellement réglées</td></tr>";
+ print "<tr class=\"oddeven\"><td class=\"right\" colspan=\"5\"><i>Invoices to collect: </i></td><td class=\"right\"><i>".price($total_ttc_Rac)."</i></td><td colspan=\"5\"><-- bug here because it does not exclude already paid partially settled invoices</td></tr>";
  }
  $db->free($resql);
  }
@@ -745,7 +745,7 @@ print '</div>';
 
 /*
  *
- * Propales signees, et non facturees
+ * Signed but not invoiced proposals
  *
  */
 
@@ -782,7 +782,7 @@ print '</div>';
  $i++;
  }
 
- print "<tr class="oddeven"><td class=\"right\" colspan=\"5\"><i>Signe et non facture:</i></td><td class=\"right\"><i>".price($total_pr)."</i></td><td colspan=\"5\"><-- bug ici, ca devrait exclure le deja facture</td></tr>";
+ print "<tr class="oddeven"><td class=\"right\" colspan=\"5\"><i>Signe et non facture:</i></td><td class=\"right\"><i>".price($total_pr)."</i></td><td colspan=\"5\"><-- g here, it should exclude already invoiced amount></tr>";
  }
  $db->free($resql);
  }
@@ -790,7 +790,7 @@ print '</div>';
  {
  dol_print_error($db);
  }
- print "<tr class="oddeven"><td class=\"right\" colspan=\"5\"><i>Total CA previsionnel : </i></td><td class=\"right\"><i>".price($total_CA)."</i></td><td colspan=\"3\"><-- bug ici car bug sur les 2 precedents</td></tr>";
+ print "<tr class="oddeven"><td class=\"right\" colspan=\"5\"><i>Total CA previsionnel : </i></td><td class=\"right\"><i>".price($total_CA)."</i></td><td colspan=\"3\"><-- bug here because bug on two previous</td></tr>";
  }
  print "</table>";
 

@@ -160,7 +160,7 @@ if ($action == 'confirm_delete' && GETPOST('confirm') == 'yes') {
 	$db->begin();
 
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."boxes";
-	$sql .= " WHERE entity = ".$conf->entity;
+	$sql .= " WHERE entity = ".((int) $conf->entity);
 	$sql .= " AND box_id = ".((int) $key);
 	$resql1 = $db->query($sql);
 

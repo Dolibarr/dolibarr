@@ -10,7 +10,6 @@ ActionsOnFicheInter=การดำเนินการเกี่ยวกั
 LastInterventions=การแทรกแซง %s ล่าสุด
 AllInterventions=การแทรกแซงทั้งหมด
 CreateDraftIntervention=สร้างร่าง
-InterventionContact=ติดต่อแทรกแซง
 DeleteIntervention=ลบแทรกแซง
 ValidateIntervention=การแทรกแซงการตรวจสอบ
 SignIntervention=การแทรกแซงสัญญาณ

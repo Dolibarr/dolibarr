@@ -1427,9 +1427,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<table class="border tableforfield" width="100%">';
 
 		// Civility
-		print '<tr><td class="titlefield">'.$langs->trans("UserTitle").'</td><td>';
-		print $object->getCivilityLabel();
-		print '</td></tr>';
+		if (getDolGlobalString('MAIN_USE_TITLE_FOR_CONTACT')) {
+			print '<tr><td class="titlefield">'.$langs->trans("UserTitle").'</td><td>';
+			print $object->getCivilityLabel();
+			print '</td></tr>';
+		}
 
 		// Job / position
 		print '<tr><td>'.$langs->trans("PostOrFunction").'</td><td>'.$object->poste.'</td></tr>';
@@ -1443,7 +1445,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		if (isModEnabled('mailing')) {
 			$langs->load("mails");
 			print '<tr><td>'.$langs->trans("NbOfEMailingsSend").'</td>';
-			print '<td><a href="'.DOL_URL_ROOT.'/comm/mailing/list.php?filteremail='.urlencode($object->email).'">'.$object->getNbOfEMailings().'</a></td></tr>';
+			print '<td><a class="badge badge-info" href="'.DOL_URL_ROOT.'/comm/mailing/list.php?filteremail='.urlencode($object->email).'">'.$object->getNbOfEMailings().'</a></td></tr>';
 		}
 
 		// Unsubscribe opt-out

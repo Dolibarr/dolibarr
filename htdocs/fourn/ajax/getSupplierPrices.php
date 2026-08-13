@@ -38,7 +38,6 @@ if (!defined('NOREQUIRESOC')) {
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -46,6 +45,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 
 // init getSupplierPrices hook
 $hookmanager->initHooks(array('ajaxGetSupplierPrices'));

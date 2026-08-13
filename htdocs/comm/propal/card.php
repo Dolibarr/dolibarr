@@ -714,7 +714,10 @@ if (empty($reshook)) {
 									$tva_tx .= ' (' . $lines[$i]->vat_src_code . ')';
 								}
 
-								$result = $object->addline($desc, $lines[$i]->subprice, $lines[$i]->qty, $tva_tx, $lines[$i]->localtax1_tx, $lines[$i]->localtax2_tx, $lines[$i]->fk_product, $lines[$i]->remise_percent, 'HT', 0, $lines[$i]->info_bits, $product_type, $lines[$i]->rang, $lines[$i]->special_code, $fk_parent_line, $lines[$i]->fk_fournprice, $lines[$i]->pa_ht, $label, $date_start, $date_end, $array_options, $lines[$i]->fk_unit);
+								// Preserve the TTC entry mode of the source line: a line entered including tax must
+								// stay in TTC so its total is computed from the typed value, without rounding drift.
+								$line_price_base_type = $lines[$i]->getPriceBaseType();
+								$result = $object->addline($desc, $lines[$i]->subprice, $lines[$i]->qty, $tva_tx, $lines[$i]->localtax1_tx, $lines[$i]->localtax2_tx, $lines[$i]->fk_product, $lines[$i]->remise_percent, $line_price_base_type, (float) $lines[$i]->subprice_ttc, $lines[$i]->info_bits, $product_type, $lines[$i]->rang, $lines[$i]->special_code, $fk_parent_line, $lines[$i]->fk_fournprice, $lines[$i]->pa_ht, $label, $date_start, $date_end, $array_options, $lines[$i]->fk_unit);
 
 								if ($result > 0) {
 									$lineid = $result;
@@ -1072,7 +1075,7 @@ if (empty($reshook)) {
 			}
 			if ($line->product_type == 1) { // only service line
 				// Preserve the original entry mode of the line so the total is not drifted by rounding.
-				$line_price_base_type = $line->wasEnteredIncludingTax() ? 'TTC' : 'HT';
+				$line_price_base_type = $line->getPriceBaseType();
 				$line_pu = ($line_price_base_type === 'TTC') ? (float) $line->subprice_ttc : (float) $line->subprice;
 				$result = $object->updateline($line->id, $line_pu, $line->qty, $line->remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, $line->desc, $line_price_base_type, $line->info_bits, $line->special_code, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->product_type, $alldate_start, $alldate_end, $line->array_options, $line->fk_unit, $line->multicurrency_subprice);
 				$object->lines[$key] = $object->line;
@@ -1089,7 +1092,7 @@ if (empty($reshook)) {
 				continue;
 			}
 			// Preserve the original entry mode of the line so the total is not drifted by rounding.
-			$line_price_base_type = $line->wasEnteredIncludingTax() ? 'TTC' : 'HT';
+			$line_price_base_type = $line->getPriceBaseType();
 			$line_pu = ($line_price_base_type === 'TTC') ? (float) $line->subprice_ttc : (float) $line->subprice;
 			$result = $object->updateline($line->id, $line_pu, $line->qty, $line->remise_percent, $vat_rate, $localtax1_rate, $localtax2_rate, $line->desc, $line_price_base_type, $line->info_bits, $line->special_code, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->product_type, $line->date_start, $line->date_end, $line->array_options, $line->fk_unit, $line->multicurrency_subprice);
 			$object->lines[$key] = $object->line;
@@ -1107,7 +1110,7 @@ if (empty($reshook)) {
 				$tvatx .= ' (' . $line->vat_src_code . ')';
 			}
 			// Preserve the original entry mode of the line so the total is not drifted by rounding.
-			$line_price_base_type = $line->wasEnteredIncludingTax() ? 'TTC' : 'HT';
+			$line_price_base_type = $line->getPriceBaseType();
 			$line_pu = ($line_price_base_type === 'TTC') ? (float) $line->subprice_ttc : (float) $line->subprice;
 			$result = $object->updateline($line->id, $line_pu, $line->qty, (float) $remise_percent, $tvatx, $line->localtax1_tx, $line->localtax2_tx, $line->desc, $line_price_base_type, $line->info_bits, $line->special_code, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->product_type, $line->date_start, $line->date_end, $line->array_options, $line->fk_unit, $line->multicurrency_subprice);
 			$object->lines[$key] = $object->line;
@@ -1803,18 +1806,20 @@ if (empty($reshook)) {
 					$line->subprice = (float) $line->pa_ht;
 				}
 
-				$prod = new Product($db);
-				$res = $prod->fetch($line->fk_product);
-				if ($res > 0) {
-					if ($prod->price_min > $line->subprice) {
-						$price_subprice = price($line->subprice, 0, $outlangs, 1, -1, -1, 'auto');
-						$price_price_min = price($prod->price_min, 0, $outlangs, 1, -1, -1, 'auto');
-						setEventMessages($prod->ref . ' - ' . $prod->label . ' (' . $price_subprice . ' < ' . $price_price_min . ' ' . strtolower($langs->trans("MinPrice")) . ')' . "\n", null, 'warnings');
+				if ($line->fk_product > 0) {
+					$prod = new Product($db);
+					$res = $prod->fetch($line->fk_product);
+					if ($res > 0) {
+						if ($prod->price_min > $line->subprice) {
+							$price_subprice = price($line->subprice, 0, $outlangs, 1, -1, -1, 'auto');
+							$price_price_min = price($prod->price_min, 0, $outlangs, 1, -1, -1, 'auto');
+							setEventMessages($prod->ref . ' - ' . $prod->label . ' (' . $price_subprice . ' < ' . $price_price_min . ' ' . strtolower($langs->trans("MinPrice")) . ')' . "\n", null, 'warnings');
+						} else {
+							setEventMessages($prod->error, $prod->errors, 'errors');
+						}
 					} else {
 						setEventMessages($prod->error, $prod->errors, 'errors');
 					}
-				} else {
-					setEventMessages($prod->error, $prod->errors, 'errors');
 				}
 
 				// Manage $line->subprice and $line->multicurrency_subprice
@@ -2385,6 +2390,9 @@ if ($action == 'create') {
 		if (GETPOSTISSET('fk_account')) {
 			$fk_account = GETPOSTINT('fk_account');
 		}
+		if (GETPOSTISSET('shipping_method_id')) {
+			$shipping_method_id = GETPOSTINT('shipping_method_id');
+		}
 	}
 	// Warehouse default if null
 	if ($soc->fk_warehouse > 0) {
@@ -2538,7 +2546,7 @@ if ($action == 'create') {
 			}
 			print '<tr class="field_shipping_method_id"><td class="titlefieldcreate">' . $langs->trans('SendingMethod') . '</td><td class="valuefieldcreate">';
 			print img_picto('', 'dolly', 'class="pictofixedwidth"');
-			$form->selectShippingMethod((string) (GETPOSTISSET('shipping_method_id') ? GETPOSTINT('shipping_method_id') : $shipping_method_id), 'shipping_method_id', '', 1, '', 0, 'maxwidth200 widthcentpercentminusx');
+			$form->selectShippingMethod((string) $shipping_method_id, 'shipping_method_id', '', 1, '', 0, 'maxwidth200 widthcentpercentminusx');
 			print '</td></tr>';
 		}
 
@@ -3077,7 +3085,7 @@ if ($action == 'create') {
 	// Thirdparty
 	$morehtmlref .= '<br>' . $soc->getNomUrl(1, 'customer');
 	if (!getDolGlobalString('MAIN_DISABLE_OTHER_LINK') && $soc->id > 0) {
-		$morehtmlref .= ' (<a href="' . DOL_URL_ROOT . '/comm/propal/list.php?socid=' . $soc->id . '&search_societe=' . urlencode($soc->name) . '">' . $langs->trans("OtherProposals") . '</a>)';
+		$morehtmlref .= ' (<a href="' . DOL_URL_ROOT . '/comm/propal/list.php?socid=' . ((int) $soc->id) . '">' . $langs->trans("OtherProposals") . '</a>)';
 	}
 	// Project
 	if (isModEnabled('project')) {

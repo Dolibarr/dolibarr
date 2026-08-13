@@ -209,15 +209,15 @@ class Website extends CommonObject
 		$sql .= 'position,';
 		$sql .= 'tms';
 		$sql .= ') VALUES (';
-		$sql .= ' '.((empty($this->entity) && $this->entity != '0') ? 'NULL' : $this->entity).',';
+		$sql .= ' '.((empty($this->entity) && $this->entity != '0') ? 'NULL' : ((int) $this->entity)).',';
 		$sql .= ' '.(!isset($this->ref) ? 'NULL' : "'".$this->db->escape($this->ref)."'").',';
 		$sql .= ' '.(!isset($this->description) ? 'NULL' : "'".$this->db->escape($this->description)."'").',';
 		$sql .= ' '.(!isset($this->lang) ? 'NULL' : "'".$this->db->escape($this->lang)."'").',';
 		$sql .= ' '.(!isset($this->otherlang) ? 'NULL' : "'".$this->db->escape($this->otherlang)."'").',';
-		$sql .= ' '.(!isset($this->status) ? '1' : $this->status).',';
-		$sql .= ' '.(!isset($this->fk_default_home) ? 'NULL' : $this->fk_default_home).',';
+		$sql .= ' '.(!isset($this->status) ? '1' : ((int) $this->status)).',';
+		$sql .= ' '.(!isset($this->fk_default_home) ? 'NULL' : ((int) $this->fk_default_home)).',';
 		$sql .= ' '.(!isset($this->virtualhost) ? 'NULL' : "'".$this->db->escape($this->virtualhost)."'").",";
-		$sql .= ' '.(!isset($this->fk_user_creat) ? $user->id : $this->fk_user_creat).',';
+		$sql .= ' '.(!isset($this->fk_user_creat) ? ((int) $user->id) : ((int) $this->fk_user_creat)).',';
 		$sql .= ' '.(!isset($this->date_creation) || dol_strlen((string) $this->date_creation) == 0 ? 'NULL' : "'".$this->db->idate($this->date_creation)."'").",";
 		$sql .= ' '.((int) $this->position).",";
 		$sql .= ' '.(!isset($this->date_modification) || dol_strlen((string) $this->date_modification) == 0 ? 'NULL' : "'".$this->db->idate($this->date_modification)."'");
@@ -422,7 +422,7 @@ class Website extends CommonObject
 				}
 			}
 			if (count($sqlwhere) > 0) {
-				$sql .= ' AND '.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere);
+				$sql .= ' AND '.implode(' '.$this->db->sanitize($filtermode).' ', $sqlwhere);
 			}
 
 			$filter = '';
@@ -533,16 +533,16 @@ class Website extends CommonObject
 
 		// Update request
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET';
-		$sql .= ' entity = '.(isset($this->entity) ? $this->entity : "null").',';
+		$sql .= ' entity = '.(isset($this->entity) ? ((int) $this->entity) : "null").',';
 		$sql .= ' ref = '.(isset($this->ref) ? "'".$this->db->escape($this->ref)."'" : "null").',';
 		$sql .= ' description = '.(isset($this->description) ? "'".$this->db->escape($this->description)."'" : "null").',';
 		$sql .= ' lang = '.(isset($this->lang) ? "'".$this->db->escape($this->lang)."'" : "null").',';
 		$sql .= ' otherlang = '.(isset($this->otherlang) ? "'".$this->db->escape($this->otherlang)."'" : "null").',';
-		$sql .= ' status = '.(isset($this->status) ? $this->status : "null").',';
-		$sql .= ' fk_default_home = '.(($this->fk_default_home > 0) ? $this->fk_default_home : "null").',';
+		$sql .= ' status = '.(isset($this->status) ? ((int) $this->status) : "null").',';
+		$sql .= ' fk_default_home = '.(($this->fk_default_home > 0) ? ((int) $this->fk_default_home) : "null").',';
 		$sql .= ' use_manifest = '.((int) $this->use_manifest).',';
 		$sql .= ' virtualhost = '.(($this->virtualhost != '') ? "'".$this->db->escape($this->virtualhost)."'" : "null").',';
-		$sql .= ' fk_user_modif = '.(!isset($this->fk_user_modif) ? $user->id : $this->fk_user_modif).',';
+		$sql .= ' fk_user_modif = '.(!isset($this->fk_user_modif) ? ((int) $user->id) : ((int) $this->fk_user_modif)).',';
 		$sql .= ' date_creation = '.(!isset($this->date_creation) || dol_strlen($this->date_creation) != 0 ? "'".$this->db->idate($this->date_creation)."'" : 'null').',';
 		$sql .= ' tms = '.(dol_strlen($this->date_modification) != 0 ? "'".$this->db->idate($this->date_modification)."'" : "'".$this->db->idate(dol_now())."'");
 		$sql .= ' WHERE rowid='.((int) $this->id);
@@ -1005,6 +1005,7 @@ class Website extends CommonObject
 	 * Generate a zip with all data of web site.
 	 *
 	 * @return  string						Path to file with zip or '' if error
+	 * @see importWebSite()
 	 */
 	public function exportWebSite()
 	{
@@ -1100,10 +1101,10 @@ class Website extends CommonObject
 		}
 
 		// Build the website_page.sql file
-		$filesql = $conf->website->dir_temp.'/'.$website->ref.'/website_pages.sql';
-		$fp = fopen($filesql, "w");
+		$filesql_path = $conf->website->dir_temp.'/'.$website->ref.'/website_pages.sql';
+		$fp = fopen($filesql_path, "w");
 		if (empty($fp)) {
-			setEventMessages("Failed to create file ".$filesql, null, 'errors');
+			setEventMessages("Failed to create file ".$filesql_path, null, 'errors');
 			return '';
 		}
 
@@ -1246,7 +1247,7 @@ class Website extends CommonObject
 
 		fclose($fp);
 
-		dolChmod($filesql);
+		dolChmod($filesql_path);
 
 		// Build zip file
 		$filedir  = $conf->website->dir_temp.'/'.$website->ref.'/.';
@@ -1272,10 +1273,11 @@ class Website extends CommonObject
 	 *
 	 * @param 	string		$pathtofile		Full path of zip file
 	 * @return  int							Return integer <0 if KO, Id of new website if OK
+	 * @see exportWebSite()
 	 */
 	public function importWebSite($pathtofile)
 	{
-		global $conf, $mysoc;
+		global $conf, $mysoc, $user;
 
 		$error = 0;
 
@@ -1324,6 +1326,21 @@ class Website extends CommonObject
 		// Make replacement into css and htmlheader file
 		$cssindestdir = $conf->website->dir_output.'/'.$object->ref.'/styles.css.php';
 		$result = dolReplaceInFile($cssindestdir, $arrayreplacement);
+
+		// Test if imported CSS page contains dynamic PHP content
+		if (!$user->hasRight('website', 'writephp')) {
+			$newpathofsrcfile = dol_osencode($cssindestdir);
+			$csscontent = file_get_contents($newpathofsrcfile);
+
+			// Check there is no PHP content into the imported file (must be only HTML + JS)
+			$phpcontent = dolKeepOnlyPhpCode($csscontent);
+
+			if ($phpcontent) {
+				$this->error = 'Error: you try to import a website with a page with PHP dynamic content in style sheet without having permissions for that.';
+				$this->errors[] = $this->error;
+				return -1;
+			}
+		}
 
 		$htmldeaderindestdir = $conf->website->dir_output.'/'.$object->ref.'/htmlheader.html';
 		$result = dolReplaceInFile($htmldeaderindestdir, $arrayreplacement);
@@ -1374,9 +1391,9 @@ class Website extends CommonObject
 		}
 
 		// Load sql record
-		$runsql = run_sql($sqlfile, 1, 0, 0, '', 'none', 0, 1, 0, 0, 1, ''); // The maxrowid of table is searched into this function two
-		if ($runsql <= 0) {
-			$this->errors[] = 'Failed to load sql file '.$sqlfile.' (ret='.((int) $runsql).')';
+		$resqlrun = run_sql($sqlfile, 1, 0, 0, '', 'none', 0, 1, 0, 0, 1, ''); // The maxrowid of table is searched into this function two
+		if ($resqlrun <= 0) {
+			$this->errors[] = 'Failed to load sql file '.$sqlfile.' (ret='.((int) $resqlrun).')';
 			$error++;
 		}
 
@@ -1390,7 +1407,7 @@ class Website extends CommonObject
 				$reg = array();
 
 				// Warning fgets with second parameter that is null or 0 hang.
-				$buf = fgets($fp, 65000);	// No needto have a high value here for second parameter. We will process only short lines starting with '-- Page ID ...'
+				$buf = fgets($fp, 65000);	// No need to have a high value here for second parameter. We will process only short lines starting with '-- Page ID ...'
 				$newid = 0;
 
 				// Scan the line
@@ -1414,12 +1431,27 @@ class Website extends CommonObject
 				if ($newid) {
 					$objectpagestatic->fetch($newid);
 
-					// We regenerate the pageX.tpl.php
+					// We write the pageX.tpl.php
 					$filetpl = $conf->website->dir_output.'/'.$object->ref.'/page'.$newid.'.tpl.php';
 					$result = dolSavePageContent($filetpl, $object, $objectpagestatic);
 					if (!$result) {
 						$this->errors[] = 'Failed to write file '.basename($filetpl);
 						$error++;
+					}
+
+					// Test if imported page contains dynamic PHP content
+					if (!$user->hasRight('website', 'writephp')) {
+						$newpathofsrcfile = dol_osencode($filetpl);
+						$tplcontent = file_get_contents($newpathofsrcfile);
+
+						// Check there is no PHP content into the imported file (must be only HTML + JS)
+						$phpcontent = dolKeepOnlyPhpCode($tplcontent);
+
+						if ($phpcontent) {
+							$this->error = 'Error: you try to import a website with a page with PHP dynamic content without having permissions for that.';
+							$this->errors[] = $this->error;
+							$error++;
+						}
 					}
 
 					// Regenerate also the main alias + alternative aliases pages

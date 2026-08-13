@@ -1243,7 +1243,7 @@ class Product extends CommonObject
 								$sql .= ", accountancy_code_sell_intra";
 								$sql .= ", accountancy_code_sell_export";
 								$sql .= ") VALUES (";
-								$sql .= $this->id;
+								$sql .= ((int) $this->id);
 								$sql .= ", " . ((int) $conf->entity);
 								$sql .= ", '" . $this->db->escape($this->accountancy_code_buy) . "'";
 								$sql .= ", '" . $this->db->escape($this->accountancy_code_buy_intra) . "'";
@@ -2945,20 +2945,27 @@ class Product extends CommonObject
 
 			$this->db->begin();
 
+			// The price columns of the table product hold the default price of the product, that is the price of the level 1
+			// when multiprices are enabled (level is 0 when they are not). So they must not be overwritten by another level.
+			// The vat columns are however shared by all levels, so they are always updated.
+			$updatedefaultprice = (empty($level) || $level == 1);
+
 			// Don't put quotes here on decimal numbers.
 			// This causes storage with base rounding instead of exact values.
 			$sql = "UPDATE ".$this->db->prefix()."product SET";
-			$sql .= " price_base_type = '".$this->db->escape($newpricebase)."',";
-			$sql .= " price = ".(float) $price.",";
-			$sql .= " price_ttc = ".(float) $price_ttc.",";
-			$sql .= " price_min = ".(float) $price_min.",";
-			$sql .= " price_min_ttc = ".(float) $price_min_ttc.",";
+			if ($updatedefaultprice) {
+				$sql .= " price_base_type = '".$this->db->escape($newpricebase)."',";
+				$sql .= " price = ".(float) $price.",";
+				$sql .= " price_ttc = ".(float) $price_ttc.",";
+				$sql .= " price_min = ".(float) $price_min.",";
+				$sql .= " price_min_ttc = ".(float) $price_min_ttc.",";
+				$sql .= " price_label = ".(!empty($price_label) ? "'".$this->db->escape($price_label)."'" : "null").",";
+			}
 			$sql .= " localtax1_tx = ".($localtax1 >= 0 ? (float) $localtax1 : 'NULL').",";
 			$sql .= " localtax2_tx = ".($localtax2 >= 0 ? (float) $localtax2 : 'NULL').",";
 			$sql .= " localtax1_type = ".($localtaxtype1 != '' ? "'".$this->db->escape($localtaxtype1)."'" : "'0'").",";
 			$sql .= " localtax2_type = ".($localtaxtype2 != '' ? "'".$this->db->escape($localtaxtype2)."'" : "'0'").",";
 			$sql .= " default_vat_code = ".($newdefaultvatcode ? "'".$this->db->escape($newdefaultvatcode)."'" : "null").",";
-			$sql .= " price_label = ".(!empty($price_label) ? "'".$this->db->escape($price_label)."'" : "null").",";
 			$sql .= " tva_tx = ".(float) price2num($newvat).",";
 			$sql .= " recuperableonly = '".$this->db->escape((string) $newnpr)."'";
 			$sql .= " WHERE rowid = ".((int) $id);
@@ -2974,6 +2981,10 @@ class Product extends CommonObject
 				$this->multiprices_default_vat_code[$level] = $newdefaultvatcode;
 				$this->multiprices_tva_tx[$level] = $newvat;
 				$this->multiprices_recuperableonly[$level] = $newnpr;
+
+				// Save the default price of the product to restore it after the log if we are updating another level
+				// (_log_price() reads the price into the properties of the object to save the price of the level).
+				$savdefaultprice = array($this->price, $this->price_label, $this->price_ttc, $this->price_min, $this->price_min_ttc, $this->price_base_type);
 
 				$this->price = $price;
 				$this->price_label = $price_label;
@@ -2998,6 +3009,11 @@ class Product extends CommonObject
 				$newPriceData = $this->getArrayForPriceCompare($level);
 				if (!empty(array_diff_assoc($newPriceData, $lastPriceData)) || (!getDolGlobalString('PRODUIT_MULTIPRICES') && !getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES'))) {
 					$this->_log_price($user, $level); // Save price for level into table product_price
+				}
+
+				if (!$updatedefaultprice) {
+					// The price of the level is now saved, so we can restore the default price of the product
+					list($this->price, $this->price_label, $this->price_ttc, $this->price_min, $this->price_min_ttc, $this->price_base_type) = $savdefaultprice;
 				}
 
 				$this->level = $level; // Store level of price edited for trigger
@@ -3302,7 +3318,7 @@ class Product extends CommonObject
 							/*
 							 $this->prices_by_qty[$i]=$result["price_by_qty"];
 							 $this->prices_by_qty_id[$i]=$result["rowid"];
-							 // Récuperation de la liste des prix selon qty si flag positionné
+							 // Get the pricelist according to the qty if flag is set
 							 if ($this->prices_by_qty[$i] == 1)
 							 {
 							 $sql = "SELECT rowid, price, unitprice, quantity, remise_percent, remise, price_base_type";
@@ -3357,7 +3373,7 @@ class Product extends CommonObject
 							// Price by quantity
 							$this->prices_by_qty[0] = $result["price_by_qty"];
 							$this->prices_by_qty_id[0] = $result["rowid"];
-							// Récuperation de la liste des prix selon qty si flag positionné
+							// Get the pricelist according to the qty if flag is set
 							if ($this->prices_by_qty[0] == 1) {
 								$sql = "SELECT rowid,price, unitprice, quantity, remise_percent, remise, remise, price_base_type";
 								$sql .= " FROM ".$this->db->prefix()."product_price_by_qty";
@@ -3419,7 +3435,7 @@ class Product extends CommonObject
 							// Price by quantity
 							$this->prices_by_qty[$i] = (!empty($result["price_by_qty"]) ? $result["price_by_qty"] : 0);
 							$this->prices_by_qty_id[$i] = (!empty($result["rowid"]) ? $result["rowid"] : 0);
-							// Récuperation de la liste des prix selon qty si flag positionné
+							// Get the pricelist according to the qty if flag is set
 							if ($this->prices_by_qty[$i] == 1) {
 								$sql = "SELECT rowid, price, unitprice, quantity, remise_percent, remise, price_base_type";
 								$sql .= " FROM ".$this->db->prefix()."product_price_by_qty";
@@ -4034,7 +4050,7 @@ class Product extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Charge tableau des stats réception fournisseur pour le produit/service
+	 * Loads supplier reception statistics table for given product or service
 	 *
 	 * @param	int    	$socid           	Id thirdparty to filter on a thirdparty
 	 * @param	string 	$filtrestatut    	Id status to filter on a status
@@ -4486,7 +4502,7 @@ class Product extends CommonObject
 	/**
 	 *  Load array of statistics for recurring supplier invoice for product/service
 	 *
-	 * 	@param	int	$socid 	Id societe
+	 * 	@param	int	$socid 	Supplier ID
 	 * 	@return	int			Array of stats in $this->stats_facturefournrec, <0 if ko or >0 if ok
 	 */
 	public function load_stats_facturefournrec($socid = 0)
@@ -4656,7 +4672,7 @@ class Product extends CommonObject
 			$sql .= " AND f.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		if ($socid > 0) {
-			$sql .= " AND f.fk_soc = $socid";
+			$sql .= " AND f.fk_soc = ".((int) $socid);
 		}
 		$sql .= $morefilter;
 		$sql .= " GROUP BY date_format(f.datef,'%Y%m')";
@@ -4709,7 +4725,7 @@ class Product extends CommonObject
 			$sql .= " AND f.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		if ($socid > 0) {
-			$sql .= " AND f.fk_soc = $socid";
+			$sql .= " AND f.fk_soc = ".((int) $socid);
 		}
 		$sql .= $morefilter;
 		$sql .= " GROUP BY date_format(f.datef,'%Y%m')";
@@ -7242,6 +7258,16 @@ class Product extends CommonObject
 	 */
 	public static function replaceThirdparty(DoliDB $dbs, $origin_id, $dest_id)
 	{
+		/* we firstly delete origin product prices existing in destination before update */
+		$sql = " DELETE FROM ".$dbs->prefix()."product_customer_price";
+		$sql .= " WHERE fk_soc = ".(int) $origin_id;
+		$sql .= " AND fk_product IN (SELECT fk_product FROM (SELECT fk_product FROM ".$dbs->prefix()."product_customer_price WHERE fk_soc = ".(int) $dest_id.") AS tmp)";
+		//$sql .= ' AND EXISTS (SELECT 1 FROM '.$dbs->prefix().'product_customer_price p_new WHERE p_new.fk_product = p_old.fk_product AND p_new.fk_soc = '.(int) $dest_id.')';
+
+		if (!$dbs->query($sql)) {
+			return false;
+		}
+
 		$tables = array(
 			'product_customer_price',
 			'product_customer_price_log'

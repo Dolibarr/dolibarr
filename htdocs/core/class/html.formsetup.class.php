@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2021       John BOTELLA            <john.botella@atm-consulting.fr>
- * Copyright (C) 2024-2025  MDW                     <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW                     <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2026       Alexandre Spangaro      <alexandre@inovea-conseil.com>
  *
@@ -173,7 +173,7 @@ class FormSetup
 			$out .= $this->htmlBeforeOutputForm;
 
 			if ($editMode) {
-				$out .= '<form ' . self::generateAttributesStringFromArray($this->formAttributes) . ' >';
+				$out .= '<form ' . self::generateAttributesStringFromArray($this->formAttributes) . ' autocomplete="off">';
 				$out .= '<input type="hidden" name="page_y" value="">';
 
 				// generate hidden values from $this->formHiddenInputs
@@ -1745,7 +1745,7 @@ class FormSetupItem
 	/**
 	 * Set type of input as a select list.
 	 *
-	 * @param ?array<int|string,string|array{id:string,label:string,color:string,picto:string,labelhtml:string,note:string}>  $fieldOptions  A table of field options
+	 * @param ?array<int|string,string|array{id:string,label:string,color?:string,picto?:string,labelhtml?:string,note?:string}>  $fieldOptions  A table of field options
 	 * @return self
 	 */
 	public function setAsSelect($fieldOptions)

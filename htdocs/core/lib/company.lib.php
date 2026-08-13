@@ -2140,7 +2140,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 				&& $filterobj->table_element && $filterobj->element
 			) {
 				// Generic case (if there is a $filterobj and a field rowid and (ref or label) exists.
-				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = '" . $db->escape($filterobj->element) . ($module ? "@" . $module : "") . "'";
+				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = '" . $db->escape($filterobj->element. ($module ? "@" . $module : "")) . "'";
 				if ($filterobj->id) {
 					$sql .= " AND a.fk_element = " . ((int) $filterobj->id);
 				}
@@ -2232,7 +2232,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 		$limit = $MAXWITHOUTPAGINATION;
 
 		// Complete request and execute it with limit
-		$sql .= $db->order($sortfield_new, $sortorder);
+		$sql .= $db->order($sortfield_new, $sortorder);  // @phan-suppress-current-line SqlInjection
 		if ($limit) {	// @phpstan-ignore-line
 			$sql .= $db->plimit($limit + 1, $offset);
 		}

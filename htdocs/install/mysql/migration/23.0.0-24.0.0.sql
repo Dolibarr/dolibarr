@@ -50,14 +50,11 @@ ALTER TABLE llx_categorie_project_task DROP FOREIGN KEY fk_categorie_project_tas
 -- VPGSQL8.2 DROP INDEX idx_categorie_project_fk_task;
 ALTER TABLE llx_categorie_project_task ADD INDEX idx_categorie_project_fk_task (fk_project_task);
 ALTER TABLE llx_categorie_project_task ADD CONSTRAINT fk_categorie_project_task_rowid FOREIGN KEY (fk_project_task) REFERENCES llx_projet_task (rowid);
+ALTER TABLE llx_stock_mouvement ADD INDEX idx_stock_mouvement_batch_entrepot_type_datem (batch, fk_entrepot, type_mouvement, datem);
 
 -- V24 migration
 ALTER TABLE llx_expensereport_det ADD COLUMN tcheck_file	integer DEFAULT NULL after fk_ecm_files;
 
--- Add explicit contact address mode flag during 23->24 upgrade.
--- Duplicate-column errors are tolerated by the Dolibarr SQL runner when upgrades are replayed.
--- VMYSQL4.1 ALTER TABLE llx_socpeople ADD COLUMN use_thirdparty_address smallint DEFAULT NULL AFTER fk_soc;
--- VPGSQL8.2 ALTER TABLE llx_socpeople ADD COLUMN use_thirdparty_address smallint DEFAULT NULL;
 ALTER TABLE llx_actioncomm_reminder MODIFY COLUMN fk_user integer DEFAULT NULL;
 ALTER TABLE llx_actioncomm_reminder ADD COLUMN fk_soc integer DEFAULT NULL AFTER fk_user;
 ALTER TABLE llx_actioncomm_reminder ADD COLUMN fk_contact integer DEFAULT NULL AFTER fk_soc;

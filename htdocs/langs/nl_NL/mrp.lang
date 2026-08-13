@@ -173,3 +173,5 @@ ErrorObjectMustNotBeFinishedToModifyDateEnd = Object %s mag niet voltooid zijn o
 ErrorObjectMustNotBeFinishedToModifyDateStart = Object %s mag niet voltooid zijn om de startdatum te kunnen wijzigen.
 BOM_SUB_BOM=Gebruik subbommen
 UseSearchToSelectBom=Wacht tot er een toets wordt ingedrukt voordat de inhoud van de Boms-combolijst wordt geladen.<br>Dit kan de prestaties verbeteren als u een groot aantal projecten hebt, maar het is minder handig.
+ReInitialize=Herinitialiseren
+ReInitializeHelp=Herinitialiseer de verbruiks- en productielijnen (als de stuklijst is gewijzigd en de productie nog niet is gestart).

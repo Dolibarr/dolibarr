@@ -758,12 +758,12 @@ if (isModEnabled('socialnetworks')) {
 		if ($value['active'] && strlen($search_[$key])) {
 			$searchkeyinjsonformat = preg_replace('/"$/', '', preg_replace('/^"/', '', json_encode($search_[$key])));
 			if (in_array($db->type, array('mysql', 'mysqli'))) {
-				$sql .= " AND p.socialnetworks REGEXP '\"".$db->escape($db->escapeforlike($key))."\":\"[^\"]*".$db->escape($db->escapeforlike($searchkeyinjsonformat))."'";
+				$sql .= " AND p.socialnetworks REGEXP '".$db->escape("\"".$db->escapeforlike($key)."\":\"[^\"]*".$db->escapeforlike($searchkeyinjsonformat))."'";
 			} elseif ($db->type == 'pgsql') {
-				$sql .= " AND p.socialnetworks ~ '\"".$db->escape($db->escapeforlike($key))."\":\"[^\"]*".$db->escape($db->escapeforlike($searchkeyinjsonformat))."'";
+				$sql .= " AND p.socialnetworks ~ '".$db->escape("\"".$db->escapeforlike($key)."\":\"[^\"]*".$db->escapeforlike($searchkeyinjsonformat))."'";
 			} else {
-				// Works with all database but not reliable because search only for social network code starting with earched value
-				$sql .= " AND p.socialnetworks LIKE '%\"".$db->escape($db->escapeforlike($key))."\":\"".$db->escape($db->escapeforlike($searchkeyinjsonformat))."%'";
+				// Works with all database but not reliable because search only for social network code starting with searched value
+				$sql .= " AND p.socialnetworks LIKE '".$db->escape("%\"".$db->escapeforlike($key."\":\"".$searchkeyinjsonformat)."%")."'";
 			}
 		}
 	}

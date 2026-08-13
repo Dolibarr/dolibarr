@@ -3,6 +3,7 @@
  * Copyright (C) 2009       Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013 	    Juanjo Menent		 <jmenent@2byte.es>
  * Copyright (C) 2020-2025  Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +21,7 @@
 
 /**
  *       \file       htdocs/admin/sms.php
- *       \brief      Page to setup emails sending
+ *       \brief      Page to set up SMS sending
  */
 
 // Load Dolibarr environment
@@ -123,7 +124,7 @@ if ($action == 'send' && !$cancel) {
 			$smsfile = new CSMSFile($sendto, $smsfrom, $body, $deliveryreceipt, $deferred, $priority, $class); // This define OvhSms->login, pass, session and account
 		} catch (Exception $e) {
 			$error++;
-			setEventMessages($e->getMessage(), null, 'error');
+			setEventMessages($e->getMessage(), null, 'errors');
 		}
 		if (!$error) {
 			$result = $smsfile->sendfile(); // This send SMS
@@ -267,12 +268,12 @@ if ($action == 'edit') {
 	print '</div>';
 
 
-	// Affichage formulaire de TEST simple
+	// Display simple test form
 	if ($action == 'test') {
 		print '<br>';
 		print load_fiche_titre($langs->trans("DoTestSend"));
 
-		// Cree l'objet formulaire mail
+		// Create SMS form object
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formsms.class.php';
 		$formsms = new FormSms($db);
 		$formsms->fromtype = 'user';

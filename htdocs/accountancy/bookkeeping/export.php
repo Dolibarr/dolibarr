@@ -167,7 +167,7 @@ $hookmanager->initHooks(array('bookkeepingexport'));
 $formaccounting = new FormAccounting($db);
 $form = new Form($db);
 
-if (!in_array($action, array('export_file', 'delmouv', 'delmouvconfirm')) && !GETPOSTISSET('begin') && !GETPOSTISSET('formfilteraction') && GETPOSTINT('page') == 0 && !GETPOSTINT('noreset') && $user->hasRight('accounting', 'mouvements', 'export')) {
+if (!in_array($action, array('export_file', 'export_fileconfirm', 'delmouv', 'delmouvconfirm')) && !GETPOSTISSET('begin') && !GETPOSTISSET('formfilteraction') && GETPOSTINT('page') == 0 && !GETPOSTINT('noreset') && $user->hasRight('accounting', 'mouvements', 'export')) {
 	if (empty($search_date_start) && empty($search_date_end) && !GETPOSTISSET('restore_lastsearch_values') && !GETPOST('search_accountancy_code_start')) {
 		$sql = "SELECT date_start, date_end";
 		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_fiscalyear ";
@@ -680,10 +680,10 @@ if ($action == 'export_fileconfirm' && $user->hasRight('accounting', 'mouvements
 						$now = dol_now();
 
 						$sanitizedsetfields = '';
-						if (!empty($notifiedexportdate) && empty($movement->date_export)) {
+						if (!empty($notifiedexportdate) && (empty($movement->date_export) || getDolGlobalString('ACCOUNTING_REEXPORT'))) {
 							$sanitizedsetfields .= ($sanitizedsetfields ? "," : "")." date_export = '".$db->idate($now)."'";
 						}
-						if (!empty($notifiedvalidationdate) && empty($movement->date_validation)) {
+						if (!empty($notifiedvalidationdate) && (empty($movement->date_validation) || getDolGlobalString('ACCOUNTING_REEXPORT'))) {
 							$sanitizedsetfields .= ($sanitizedsetfields ? "," : "")." date_validated = '".$db->idate($now)."'";
 						}
 

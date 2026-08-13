@@ -1,12 +1,14 @@
 # Dolibarr language file - Source file is en_US - commercial
 Commercial=Comercio
 CommercialArea=Área de comercio
+Prospect=Prospecto
 Prospects=Prospectos
 AddActionRendezVous=Crear un evento Rendez-vous
 ConfirmDeleteAction=¿Seguro que quieres eliminar este evento?
 CardAction=Tarjeta de evento
 ActionOnCompany=Compañía vinculada
 TaskRDVWith=Reunión con%s
+ShowTask=Mostrar tarea
 ShowAction=Mostrar evento
 ThirdPartiesOfSaleRepresentative=Cliente/Proveedor con representante de ventas
 SaleRepresentativesOfThirdParty=Representantes de ventas de cliente/proveedor

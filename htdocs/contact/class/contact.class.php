@@ -12,7 +12,7 @@
  * Copyright (C) 2019       Nicolas ZABOURI             <info@inovea-conseil.com>
  * Copyright (C) 2020       Open-Dsi                    <support@open-dsi.fr>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -703,8 +703,8 @@ class Contact extends CommonObject
 		$sql .= ", town='".$this->db->escape($this->town)."'";
 		$sql .= ", use_thirdparty_address=".($this->use_thirdparty_address === null ? "NULL" : (string) ((int) $this->use_thirdparty_address));
 		$sql .= ", ref_ext = ".(!empty($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "NULL");
-		$sql .= ", fk_pays=".($this->country_id > 0 ? $this->country_id : 'NULL');
-		$sql .= ", fk_departement=".($this->state_id > 0 ? $this->state_id : 'NULL');
+		$sql .= ", fk_pays=".($this->country_id > 0 ? ((int) $this->country_id) : 'NULL');
+		$sql .= ", fk_departement=".($this->state_id > 0 ? ((int) $this->state_id) : 'NULL');
 		$sql .= ", poste='".$this->db->escape($this->poste)."'";
 		$sql .= ", fax='".$this->db->escape($this->fax)."'";
 		$sql .= ", email='".$this->db->escape($this->email)."'";
@@ -719,7 +719,7 @@ class Contact extends CommonObject
 		$sql .= ", priv = ".((int) $this->priv);
 		$sql .= ", fk_prospectlevel = '".$this->db->escape($this->fk_prospectlevel)."'";
 		if (isset($this->stcomm_id)) {
-			$sql .= ", fk_stcommcontact = ".($this->stcomm_id > 0 || $this->stcomm_id == -1 ? $this->stcomm_id : "0");
+			$sql .= ", fk_stcommcontact = ".($this->stcomm_id > 0 || $this->stcomm_id == -1 ? ((int) $this->stcomm_id) : "0");
 		}
 		$sql .= ", statut = ".((int) $this->status);
 		$sql .= ", fk_user_modif=".($user->id > 0 ? "'".$this->db->escape((string) $user->id)."'" : "NULL");
@@ -2286,11 +2286,11 @@ class Contact extends CommonObject
 						$sql .= "fk_soc,";
 						$sql .= "fk_c_type_contact,";
 						$sql .= "fk_socpeople) ";
-						$sql .= " VALUES (".$conf->entity.",";
+						$sql .= " VALUES (".((int) $conf->entity).",";
 						$sql .= "'".$this->db->idate(dol_now())."',";
-						$sql .= $socid.", ";
-						$sql .= $idrole." , ";
-						$sql .= $this->id;
+						$sql .= ((int) $socid).", ";
+						$sql .= ((int) $idrole)." , ";
+						$sql .= ((int) $this->id);
 						$sql .= ")";
 
 						$result = $this->db->query($sql);

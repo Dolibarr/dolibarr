@@ -192,7 +192,7 @@ if ($action == 'confirm_split' && GETPOST("confirm", "alpha") == 'yes' && $permi
 	}
 	if (!$error) {
 		// Split a discount in two
-		$newDiscounts = $discount->splitAmount((float) $amount_ttc_1, (float) $amount_ttc_2);
+		$newDiscounts = $discount->splitAmount((float) $amount_ttc_1, (float) $amount_ttc_2);	// Note: splitting this way will result of a total ttc similar to original but total ht and total taxes may differ.
 		$newdiscount1 = $newDiscounts[0];
 		$newdiscount2 = $newDiscounts[1];
 
@@ -1159,18 +1159,18 @@ if ($socid > 0) {
 			$num = $db->num_rows($resql);
 			if ($num > 0) {
 				for ($i = 0; $i < $num; $i++) {
-					$sqlobj = $db->fetch_object($resql);
-					$tab_sqlobj[] = $sqlobj;
-					$tab_sqlobjOrder[] = $db->jdate($sqlobj->dc);
+					$fetched_obj = $db->fetch_object($resql);
+					$tab_sqlobj[] = $fetched_obj;
+					$tab_sqlobjOrder[] = $db->jdate($fetched_obj->dc);
 				}
 			}
 			$db->free($resql);
 
 			$num = $db->num_rows($resql2);
 			for ($i = 0; $i < $num; $i++) {
-				$sqlobj = $db->fetch_object($resql2);
-				$tab_sqlobj[] = $sqlobj;
-				$tab_sqlobjOrder[] = $db->jdate($sqlobj->dc);
+				$fetched_obj = $db->fetch_object($resql2);
+				$tab_sqlobj[] = $fetched_obj;
+				$tab_sqlobjOrder[] = $db->jdate($fetched_obj->dc);
 			}
 			$db->free($resql2);
 			$array1_sort_order = SORT_DESC;
@@ -1266,7 +1266,7 @@ if ($socid > 0) {
 		$sql .= " rc.multicurrency_amount_ht, rc.multicurrency_amount_tva, rc.multicurrency_amount_ttc,";
 		$sql .= " rc.datec as dc, rc.description, rc.fk_invoice_supplier_line,";
 		$sql .= " rc.fk_invoice_supplier_source,";
-		$sql .= " u.login, u.rowid as user_id, u.statut as user_status, u.firstname, u.lastname, u.photo,";
+		$sql .= " u.login, u.rowid as user_id, u.statut as status, u.firstname, u.lastname, u.photo,";
 		$sql .= " f.rowid as invoiceid, f.ref as ref,";
 		$sql .= " fa.ref as invoice_source_ref, fa.type as type";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
@@ -1286,7 +1286,7 @@ if ($socid > 0) {
 		$sql2 .= " rc.multicurrency_amount_ht, rc.multicurrency_amount_tva, rc.multicurrency_amount_ttc,";
 		$sql2 .= " rc.datec as dc, rc.description, rc.fk_invoice_supplier,";
 		$sql2 .= " rc.fk_invoice_supplier_source,";
-		$sql2 .= " u.login, u.rowid as user_id, u.statut as user_status, u.firstname, u.lastname, u.photo,";
+		$sql2 .= " u.login, u.rowid as user_id, u.statut as status, u.firstname, u.lastname, u.photo,";
 		$sql2 .= " f.rowid as invoiceid, f.ref as ref,";
 		$sql2 .= " fa.ref as invoice_source_ref, fa.type as type";
 		$sql2 .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
@@ -1329,18 +1329,18 @@ if ($socid > 0) {
 			$num = $db->num_rows($resql);
 			if ($num > 0) {
 				for ($i = 0; $i < $num; $i++) {
-					$sqlobj = $db->fetch_object($resql);
-					$tab_sqlobj[] = $sqlobj;
-					$tab_sqlobjOrder[] = $db->jdate($sqlobj->dc);
+					$fetched_obj = $db->fetch_object($resql);
+					$tab_sqlobj[] = $fetched_obj;
+					$tab_sqlobjOrder[] = $db->jdate($fetched_obj->dc);
 				}
 			}
 			$db->free($resql);
 
 			$num = $db->num_rows($resql2);
 			for ($i = 0; $i < $num; $i++) {
-				$sqlobj = $db->fetch_object($resql2);
-				$tab_sqlobj[] = $sqlobj;
-				$tab_sqlobjOrder[] = $db->jdate($sqlobj->dc);
+				$fetched_obj = $db->fetch_object($resql2);
+				$tab_sqlobj[] = $fetched_obj;
+				$tab_sqlobjOrder[] = $db->jdate($fetched_obj->dc);
 			}
 			$db->free($resql2);
 			$array1_sort_order = SORT_DESC;

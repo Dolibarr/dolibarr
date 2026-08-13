@@ -15,6 +15,7 @@
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2025		William Mead				<william@m34d.com>
+ * Copyright (C) 2026		Lionel Vessiller			<lvessiller@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -375,6 +376,7 @@ if (empty($reshook)) {
 
 						$fk_parent_line = 0;
 						$num = count($lines);
+						$rang = 0;
 
 						for ($i = 0; $i < $num; $i++) {
 							$product_type = ($lines[$i]->product_type ? $lines[$i]->product_type : 0);
@@ -424,6 +426,9 @@ if (empty($reshook)) {
 								$localtax1_tx = get_localtax($txtva, 1, $object->thirdparty);
 								$localtax2_tx = get_localtax($txtva, 2, $object->thirdparty);
 
+								// Preserve the TTC entry mode of the source line: a line entered including tax must
+								// stay in TTC so its total is computed from the typed value, without rounding drift.
+								$line_price_base_type = $lines[$i]->getPriceBaseType();
 								$result = $object->addline(
 									$desc,
 									$lines[$i]->subprice,
@@ -435,14 +440,14 @@ if (empty($reshook)) {
 									$lines[$i]->remise_percent,
 									$lines[$i]->date_start,
 									$lines[$i]->date_end,
-									'HT',
-									0,
+									$line_price_base_type,
+									(float) $lines[$i]->subprice_ttc,
 									$lines[$i]->info_bits,
 									$lines[$i]->fk_fournprice,
 									$lines[$i]->pa_ht,
 									$array_options,
 									(int) $lines[$i]->fk_unit,
-									$num + 1
+									$rang++
 								);
 
 								if ($result < 0) {
@@ -837,6 +842,11 @@ if (empty($reshook)) {
 			$objectline->fk_product = GETPOSTINT('idprod');
 			$objectline->description = GETPOST('product_desc', 'restricthtml');
 			$objectline->subprice = (float) price2num(GETPOST('elprice'), 'MU');
+			// The contract line edit form is HT-only: if the user actually changed the HT unit price,
+			// the line is no longer in TTC entry mode, so drop the stored TTC value.
+			if (isset($objectline->oldcopy) && (float) $objectline->subprice != (float) $objectline->oldcopy->subprice) {
+				$objectline->subprice_ttc = 0;
+			}
 			$objectline->qty = (float) price2num(GETPOST('elqty'), 'MS');
 			$objectline->remise_percent = $remise_percent;
 			$objectline->tva_tx = ($txtva ? $txtva : 0); // Field may be disabled, so we use vat rate 0
@@ -1521,7 +1531,7 @@ if ($action == 'create') {
 		// Thirdparty
 		$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1);
 		if (!getDolGlobalString('MAIN_DISABLE_OTHER_LINK') && $object->thirdparty->id > 0) {
-			$morehtmlref .= ' <span class="otherlink valignmiddle">(<a href="'.DOL_URL_ROOT.'/contrat/list.php?socid='.$object->thirdparty->id.'&search_name='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherContracts").'</a>)</span>';
+			$morehtmlref .= ' <span class="otherlink valignmiddle">(<a href="'.DOL_URL_ROOT.'/contrat/list.php?socid='.((int) $object->thirdparty->id).'">'.$langs->trans("OtherContracts").'</a>)</span>';
 		}
 		// Project
 		if (isModEnabled('project')) {
@@ -1530,7 +1540,7 @@ if ($action == 'create') {
 			if ($permissiontoadd) {
 				$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 				if ($action != 'classify') {
-					$morehtmlref .= '<a class="editfielda" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true).'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
+					$morehtmlref .= '<a class="editfielda" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => ((int) $object->id)], true).'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 				}
 				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 			} else {
@@ -1609,7 +1619,7 @@ if ($action == 'create') {
 		$expired= $object->getTotalizedLines(4, 1);
 		$close= $object->getTotalizedLines(5, 0);
 
-		print '<tr><td class="titlefield">'.$langs->trans("Lines").'</td>';
+		print '<tr><td class="titlefield">'.$langs->trans("Quantity").'</td>';
 		print '<td class="right nowrap">'.($all['total_qty'] ? price2num($all['total_qty']) : '<span class="opacitymedium">0</span>').'</td>';
 		print '<td class="right">'.($draft['total_qty'] ? price2num($draft['total_qty']) : '<span class="opacitymedium">0</span>').'</td>';
 		print '<td class="right">'.($enabled['total_qty'] ? price2num($enabled['total_qty']) : '<span class="opacitymedium">0</span>').'</td>';
