@@ -100,3 +100,4 @@ ErrorObjectMustHaveStatusValidatedToBeCanceled =L'objet %s doit avoir le statut 
 ErrorObjectMustHaveStatusDraftToModifyDate =L'objet %s doit avoir le statut « Brouillon » pour être modifié
 ConfirmMassChangeDateStartQuestion =Êtes-vous sûr de vouloir modifier le(s) %s enregistrement(s) sélectionné(s) ?
 ConfirmMassChangeDateEndQuestion =Êtes-vous sûr de vouloir modifier le(s) %s enregistrement(s) sélectionné(s) ?
+ReInitializeHelp=Réinitialisez les lignes de consommation et de production (si la nomenclature a été modifiée et que la production n'a pas encore démarré).

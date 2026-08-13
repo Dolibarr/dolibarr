@@ -1,38 +1,38 @@
-IntraCommReport=內部通訊報告
-IntraCommReports=Intracomm reports
+IntraCommReport=內部通報報告
+IntraCommReports=內部通報報告列表
 
-Module68000Name = 內部通訊報告
-Module68000Desc = 內部通訊報告管理（支援法國 DEB/DES 格式）
-IntracommReportSetup = 內部通訊報告模組設定
-IntracommReportAbout = 關於內部通訊報告
+Module68000Name = 內部通報報告
+Module68000Desc = 內部通報報告管理(支援法國 DEB/DES 格式)
+IntracommReportSetup = 內部通報報告模組設定
+IntracommReportAbout = 關於內部通報報告
 
 # Setup
-INTRACOMMREPORT_NUM_AGREMENT=批准文號（由CISD附件簽發）
-INTRACOMMREPORT_TYPE_ACTEUR=發話者類型
-INTRACOMMREPORT_ROLE_ACTEUR=發話者角色
-INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=介紹義務的等級
-INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=裝運義務水平
-INTRACOMMREPORT_CATEG_FRAISDEPORT=“Frais de port”類型的服務類別
+INTRACOMMREPORT_NUM_AGREMENT=授權號碼(由所屬 CISD 發放)
+INTRACOMMREPORT_TYPE_ACTEUR=角色類型
+INTRACOMMREPORT_ROLE_ACTEUR=角色扮演
+INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=輸入義務等級
+INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=輸出義務等級
+INTRACOMMREPORT_CATEG_FRAISDEPORT=「運費」類服務分類
 INTRACOMMREPORT_NUM_DECLARATION=申報人編號
 # Menu
-MenuIntracommReport=內部通訊報告
-MenuIntracommReportNew=新報單
-MenuIntracommReportList=清單
+MenuIntracommReport=內部通報報告
+MenuIntracommReportNew=新增申報
+MenuIntracommReportList=申報列表
 # View
-NewDeclaration=新報單
-Declaration=報單
+NewDeclaration=新增申報
+Declaration=申報
 AnalysisPeriod=分析期間
-TypeOfDeclaration=報單類型
-DEB=貨物交換報關單（DEB）
-DES=服務交換報單(DES)
+TypeOfDeclaration=申報類型
+DEB=貨物交換申報(DEB)
+DES=服務交換申報(DES)
 # Export page
-IntracommReportTitle=準備ProDouane格式的XML檔案
+IntracommReportTitle=準備 ProDouane 格式的 XML 檔案
 # List
-IntracommReportList=已產生報單清單
+IntracommReportList=已產生申報列表
 IntracommReportNumber=申報編號
-IntracommReportPeriod=分析週期
-IntracommReportTypeDeclaration=報單類型
-IntracommReportDownload=下載 XML檔案
+IntracommReportPeriod=分析期間
+IntracommReportTypeDeclaration=申報類型
+IntracommReportDownload=下載 XML 檔案
 # Invoice
 IntracommReportTransportMode=運輸方式
-DeleteIntraCommReport=Delete IntraComm report
+DeleteIntraCommReport=刪除內部通報報告

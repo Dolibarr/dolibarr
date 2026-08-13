@@ -2,6 +2,7 @@
 Order=Orden
 PdfOrderTitle=Orden
 Orders=Órdenes
+OrderDate=Fecha de la Orden
 OrderDateShort=Fecha de la Orden
 OrderToProcess=Orden a procesar
 NewOrder=Nueva Orden

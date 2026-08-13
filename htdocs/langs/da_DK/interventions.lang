@@ -10,7 +10,6 @@ ActionsOnFicheInter=Handlinger om intervention
 LastInterventions=Seneste %s indgreb
 AllInterventions=Alle interventioner
 CreateDraftIntervention=Opret udkast
-InterventionContact=Intervention kontakt
 DeleteIntervention=Slet intervention
 ValidateIntervention=Bekræft intervention
 SignIntervention=Skilteintervention

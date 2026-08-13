@@ -248,7 +248,7 @@ foreach ($arrayhandler as $key => $module) {
 	}
 
 	if ($module->isEnabled()) {
-		print '<tr class="oddeven"><td>';
+		print '<tr class="oddeven"><td class="nowraponall">';
 		print img_picto('', $module->picto, 'class="width25 size15x marginrightonly"').' ';
 		print '<div class="refid inline-block">'.ucfirst($key).'</span>';
 		print "</td><td>\n";

@@ -1254,7 +1254,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 				}
 
 				$urltogo = $_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&token='.newToken().'&module_position='.$module_position.'&action=set&token='.newToken().'&value='.$modName.'&mode='.$mode.$param;
-				$popupWidth = 500;
+				$popupWidth = 600;
 				$popupHeight = 300;
 				$codeenabledisable .= '<!-- Message to show: '.$warningmessage.' -->'."\n";
 				$codeenabledisable .= '<a class="reposition" id="idqualified'.$objMod->numero.'" data-alreadyclicked="0" href="'.$urltogo.'"';

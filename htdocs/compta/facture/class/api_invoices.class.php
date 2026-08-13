@@ -455,6 +455,12 @@ class Invoices extends DolibarrApi
 			throw new RestException(404, 'Order not found');
 		}
 
+		// Refuse orders that cannot be billed, to mirror the GUI (order card "CreateBill" button and list mass action):
+		// this excludes draft and canceled orders, as well as orders already classified as billed.
+		if ($order->status <= Commande::STATUS_DRAFT || !empty($order->billed)) {
+			throw new RestException(405, 'Order '.$order->ref.' is not eligible for invoicing: its status does not allow creating an invoice');
+		}
+
 		$result = $this->invoice->createFromOrder($order, DolibarrApiAccess::$user);
 		if ($result < 0) {
 			throw new RestException(405, $this->invoice->error);
@@ -2025,6 +2031,14 @@ class Invoices extends DolibarrApi
 
 		if (!$result) {
 			throw new RestException(404, 'Payment not found');
+		}
+
+		// Check all invoices of the payment to see if the user has permission on them for the object level permission test
+		$tmparray = $paymentobj->getBillsArray();
+		foreach ($tmparray as $tmpinvoiceid) {
+			if (!DolibarrApi::_checkAccessToResource('facture', $tmpinvoiceid)) {
+				throw new RestException(403, 'Payment is on invoices that are not all allowed for login '.DolibarrApiAccess::$user->login);
+			}
 		}
 
 		if (!empty($num_payment)) {
