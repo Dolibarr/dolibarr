@@ -82,6 +82,7 @@ create table llx_facture
   fk_cond_reglement		integer  DEFAULT 1 NOT NULL,			-- default payment term (30 days, end of month...)
   fk_mode_reglement		integer,								-- default payment mode (cash, card, cheque, ...)
   date_lim_reglement	date,									-- due date
+  date_sent             datetime DEFAULT NULL,               -- date of last email send
 
   payment_reference     varchar(25),                            -- SEPA and any other national or custom payment id (use case for this field is not clear)
   fk_thirdparty_rib_id	integer NULL,							-- ID of thirdparty payment mode in llx_societe_rib

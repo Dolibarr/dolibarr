@@ -78,4 +78,18 @@ UPDATE llx_commande_fournisseurdet SET subprice_ttc = 0 WHERE subprice_ttc <> 0 
 UPDATE llx_facture_fourn_det SET pu_ttc = 0 WHERE pu_ttc <> 0 AND EXISTS (SELECT c.rowid FROM llx_const as c WHERE c.name = 'MAIN_VERSION_LAST_UPGRADE' AND c.value < '25.0.0');
 UPDATE llx_supplier_proposaldet SET subprice_ttc = 0 WHERE subprice_ttc <> 0 AND EXISTS (SELECT c.rowid FROM llx_const as c WHERE c.name = 'MAIN_VERSION_LAST_UPGRADE' AND c.value < '25.0.0');
 
+-- Feature date_sent - Timestamp of the last successful email send on commercial document objects
+ALTER TABLE llx_propal ADD COLUMN date_sent datetime DEFAULT NULL;
+ALTER TABLE llx_commande ADD COLUMN date_sent datetime DEFAULT NULL;
+ALTER TABLE llx_facture ADD COLUMN date_sent datetime DEFAULT NULL;
+ALTER TABLE llx_supplier_proposal ADD COLUMN date_sent datetime DEFAULT NULL;
+ALTER TABLE llx_commande_fournisseur ADD COLUMN date_sent datetime DEFAULT NULL;
+ALTER TABLE llx_facture_fourn ADD COLUMN date_sent datetime DEFAULT NULL;
+ALTER TABLE llx_contrat ADD COLUMN date_sent datetime DEFAULT NULL;
+ALTER TABLE llx_expedition ADD COLUMN date_sent datetime DEFAULT NULL;
+ALTER TABLE llx_delivery ADD COLUMN date_sent datetime DEFAULT NULL;
+ALTER TABLE llx_reception ADD COLUMN date_sent datetime DEFAULT NULL;
+ALTER TABLE llx_fichinter ADD COLUMN date_sent datetime DEFAULT NULL;
+ALTER TABLE llx_projet ADD COLUMN date_sent datetime DEFAULT NULL;
+
 -- end of migration

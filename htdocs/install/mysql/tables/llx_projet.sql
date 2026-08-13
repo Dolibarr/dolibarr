@@ -53,6 +53,7 @@ create table llx_projet
   usage_organize_event integer DEFAULT 0,		-- Set to 1 if you want to use project to organize an event or receive attendees registration
   date_start_event 	datetime,					-- date start event
   date_end_event   	datetime,					-- date end event
+  date_sent        	datetime DEFAULT NULL,				-- date of last email send
   location         	varchar(255),				-- location
   accept_conference_suggestions integer DEFAULT 0,		-- Set to 1 if you want to allow unknown people to suggest conferences
   accept_booth_suggestions integer DEFAULT 0,			-- Set to 1 if you want to Allow unknown people to suggest booth

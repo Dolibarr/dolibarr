@@ -72,6 +72,7 @@ create table llx_commande
   fk_mode_reglement			integer,						-- mode de reglement
 
   date_livraison			datetime DEFAULT NULL,
+  date_sent                 datetime DEFAULT NULL,           -- date of last email send
   fk_shipping_method		integer,						-- shipping method id
   fk_warehouse				integer DEFAULT NULL,
   fk_availability			integer NULL,

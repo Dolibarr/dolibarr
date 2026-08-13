@@ -53,6 +53,7 @@ CREATE TABLE llx_supplier_proposal (
   last_main_doc			varchar(255),					-- relative filepath+filename of last main generated document
 
   date_livraison date DEFAULT NULL,
+  date_sent datetime DEFAULT NULL,                    -- date of last email send
   fk_shipping_method integer DEFAULT NULL,
   import_key varchar(14) DEFAULT NULL,
   extraparams varchar(255) DEFAULT NULL,

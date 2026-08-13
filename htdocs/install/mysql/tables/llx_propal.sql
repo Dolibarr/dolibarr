@@ -73,6 +73,7 @@ create table llx_propal
   last_main_doc			varchar(255),					-- relative filepath+filename of the last main generated document
 
   date_livraison		date DEFAULT NULL,				-- delivery date
+  date_sent             datetime DEFAULT NULL,           -- date of last email send
   fk_shipping_method    integer,                        -- shipping method id
   fk_warehouse		    integer DEFAULT NULL,           -- warehouse id
   fk_availability		integer NULL,

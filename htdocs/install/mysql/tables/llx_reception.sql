@@ -39,6 +39,7 @@ create table llx_reception
   fk_user_valid         integer,						-- valideur
   date_delivery			datetime	DEFAULT NULL,		-- date planned of delivery
   date_reception        datetime,
+  date_sent             datetime DEFAULT NULL,				-- date of last email send
   fk_shipping_method    integer,
   tracking_number       varchar(50),
   fk_statut             smallint	DEFAULT 0,			-- 0 = draft, 1 = validated, 2 = billed or closed depending on WORKFLOW_BILL_ON_SHIPMENT option

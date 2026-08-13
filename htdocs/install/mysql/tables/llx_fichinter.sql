@@ -38,6 +38,7 @@ create table llx_fichinter
   dateo				date,						-- date start intervention
   datee				date,						-- date end intervention
   datet				date,						-- date end intervention
+  date_sent			datetime DEFAULT NULL,       -- date of last email send
   duree				real,                       -- duration total of  intervention
   description		text,
 

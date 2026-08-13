@@ -38,6 +38,7 @@ create table llx_expedition
   fk_user_valid         integer,						-- user that validate
   date_delivery			datetime	DEFAULT NULL,		-- date planned of delivery
   date_expedition       datetime,						-- date real shipment (to implement)
+  date_sent             datetime DEFAULT NULL,				-- date of last email send
   fk_address  			integer		DEFAULT NULL, 		-- delivery address (deprecated)
   fk_shipping_method    integer,
   tracking_number       varchar(50),

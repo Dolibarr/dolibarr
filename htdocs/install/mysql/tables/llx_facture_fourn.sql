@@ -74,6 +74,7 @@ create table llx_facture_fourn
   fk_cond_reglement		integer,   	                   -- condition de reglement (30 jours, fin de mois ...)
   fk_mode_reglement		integer,                	   -- mode de reglement (CHQ, VIR, ...)
   date_lim_reglement 	date,                          -- date limite de reglement
+  date_sent             datetime DEFAULT NULL,          -- date of last email send
 
   payment_reference     varchar(25),                    -- SEPA and any other national or custom payment id (use case for this field is not clear)
   fk_thirdparty_rib_id	integer NULL,					-- ID of thirdparty payment mode in llx_societe_rib
