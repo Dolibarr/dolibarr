@@ -1623,7 +1623,7 @@ if ($action == 'create') {
 		print '<td class="right">'.($close['total_qty'] ? price2num($close['total_qty']) : '<span class="opacitymedium">0</span>').'</td>';
 		print '</tr>';
 
-		if (getDolglobalString("CONTRACT_SHOW_SUMMARY_Of_AMOUNTS")) {
+		if (getDolGlobalString("CONTRACT_SHOW_SUMMARY_Of_AMOUNTS")) {
 			print '<tr><td class="titlefield">'.$langs->trans("TotalHT").'</td>';
 			print '<td class="nowraponall amountcard right">'.($all['total_ht'] ? price($all['total_ht']) : '<span class="opacitymedium">0</span>').'</td>';
 			print '<td class="nowraponall amountcard right">'.($draft['total_ht'] ? price($draft['total_ht']) : '<span class="opacitymedium">0</span>').'</td>';
