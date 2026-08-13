@@ -169,18 +169,14 @@ abstract class CommonClassTest extends TestCase
 
 		// Determine test information to show
 
-		// @phan-suppress-next-line PhanUndeclaredMethod
-		// @phpstan-ignore method.notFound
-		$failedTestMethod = $this->getName(false);
+		$failedTestMethod = $this->name();
 		$className = get_called_class();
 
 		// Get the test method's reflection
 		$reflectionMethod = new ReflectionMethod($className, $failedTestMethod);
 
 		// Get the test method's data set
-		// @phan-suppress-next-line PhanUndeclaredMethod
-		// @phpstan-ignore method.notFound
-		$argsText = $this->getDataSetAsString(true);
+		$argsText = $this->dataSetAsStringWithData();
 
 		$totalLines = count($lines);
 		$first_line = max(0, $totalLines - $nbLinesToShow);
@@ -282,8 +278,7 @@ abstract class CommonClassTest extends TestCase
 		}
 
 		if ((int) getenv('PHPUNIT_DEBUG') > 0) {
-			// @phpstan-ignore method.notFound
-			print get_called_class().'::'.$this->getName(false)."::".__FUNCTION__.PHP_EOL;
+			print get_called_class().'::'.$this->name()."::".__FUNCTION__.PHP_EOL;
 		}
 		//print $db->getVersion()."\n";
 	}
@@ -296,8 +291,7 @@ abstract class CommonClassTest extends TestCase
 	protected function tearDown(): void
 	{
 		if ((int) getenv('PHPUNIT_DEBUG') > 0) {
-			// @phpstan-ignore method.notFound
-			print get_called_class().'::'.$this->getName(false)."::".__FUNCTION__.PHP_EOL;
+			print get_called_class().'::'.$this->name()."::".__FUNCTION__.PHP_EOL;
 		}
 	}
 
