@@ -103,7 +103,13 @@ ConfirmCloneContract=هل انت متأكد من رغبتك في إستنساخ 
 LowerDateEndPlannedShort=تاريخ الانتهاء المخطط الأدنى للخدمات المنشطة
 SendContractRef=معلومات العقد __REF__
 OtherContracts=العقود الاخرى
-##### Types de contacts #####
+##### Statistics #####
+ContractsStatistics=Contract's statistics
+NbOfContracts=Nb of contracts
+NumberOfContractsByMonth=Number of contracts by month
+AmountOfServices=Number of services
+AmountOfServicesByMonthHT=Number of services (excl. tax) by month
+##### Types of contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=ممثل مبيعات توقيع العقد
 TypeContact_contrat_internal_SALESREPFOLL=ممثل مبيعات متابعة العقد
 TypeContact_contrat_external_BILLING=جهة إتصال فوترة العميل

@@ -48,6 +48,7 @@ ConferenceOrBoothTab = Konfrans və ya stend
 AmountPaid = Ödənilmiş məbləğ
 DateOfRegistration = Qeydiyyat tarixi
 ConferenceOrBoothAttendee = Konfrans və ya Stend İştirakçısı
+ConferenceOrBoothAttendeesShort = Conf. or Booth Attendees
 ApplicantOrVisitor=Ərizəçi və ya ziyarətçi
 Speaker=Natiq
 # Template Mail
@@ -81,8 +82,8 @@ ListOfAttendeesOfEvent=Tədbir layihələrinin iştirakçılarının siyahısı
 ListOfConfOrBoothOfEvent=Konfransların və ya tədbir layihələrinin stendlərinin siyahısı
 DownloadICSLink=ICS faylını yükləyin
 EVENTORGANIZATION_SECUREKEY=Konfrans təklif etmək üçün ictimai qeydiyyat səhifəsinin açarını təmin etmək üçün toxum
-SERVICE_BOOTH_LOCATION=Stand yeri haqqında faktura sırası üçün istifadə edilən xidmət
-SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION=Tədbirə iştirakçı abunəliyi haqqında faktura sırası üçün istifadə edilən xidmət
+SERVICE_BOOTH_LOCATION=Service to use on the invoice line for the sale of a booth.
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION=Service to use on the invoice line for the participation fees.
 NbVotes=Səslərin sayı
 # Status
 EvntOrgDraft = Qaralama
@@ -122,7 +123,7 @@ NewSubscription=Qeydiyyat
 OrganizationEventConfRequestWasReceived=Konfrans üçün təklifiniz qəbul edildi
 OrganizationEventBoothRequestWasReceived=Stend üçün müraciətiniz qəbul edildi
 OrganizationEventPaymentOfBoothWasReceived=Stendiniz üçün ödənişiniz qeydə alınıb
-OrganizationEventPaymentOfRegistrationWasReceived=Tədbirin qeydiyyatı üçün ödənişiniz qeydə alınıb
+OrganizationEventPaymentOfRegistrationWasReceived=Your payment for your registration to the event has been recorded
 OrganizationEventBulkMailToAttendees=Bu, tədbirdə iştirakçı kimi iştirakınız haqqında xatırlatmadır
 OrganizationEventBulkMailToSpeakers=Bu, tədbirdə məruzəçi kimi iştirakınız haqqında xatırlatmadır
 OrganizationEventLinkToThirdParty=Üçüncü tərəfə keçid (müştəri, təchizatçı və ya tərəfdaş)

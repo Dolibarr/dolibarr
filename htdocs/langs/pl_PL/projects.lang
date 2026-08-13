@@ -258,7 +258,7 @@ OtherFilteredTasks=Inne filtrowane zadania
 NoAssignedTasks=Nie znaleziono przypisanych zadań (przypisz projekt / zadania do bieżącego użytkownika z górnego pola wyboru, aby wprowadzić czas)
 ThirdPartyRequiredToGenerateIntervention=Aby móc dokonać interwencji, w projekcie musi zostać zdefiniowana strona trzecia.
 ThirdPartyRequiredToGenerateInvoice=Aby móc wystawić fakturę, w projekcie musi być zdefiniowana osoba trzecia.
-ChooseANotYetAssignedTask=Wybierz zadanie, które nie zostało Ci jeszcze przydzielone
+ChooseANotYetAssignedTask=Tasks not yet assigned to you
 # Comments trans
 AllowCommentOnTask=Zezwalaj na komentarze użytkowników do zadań
 AllowCommentOnProject=Zezwalaj na komentarze użytkowników w projektach

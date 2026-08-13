@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2019	Laurent Destailleur (eldy)	<eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,7 +76,7 @@ if ($action == 'updateselectbatchbywarehouse' && $permissiontoproduce) {
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "entrepot as e on e.rowid = ps.fk_entrepot AND e.entity IN (" . getEntity('stock') . ")";
 	$sql .= " WHERE ps.fk_product = " .((int) $fk_product);
 	if ($warehouse_id > 0) {
-		$sql .= " AND fk_entrepot = '" . ((int) $warehouse_id) . "'";
+		$sql .= " AND fk_entrepot = " . ((int) $warehouse_id);
 	}
 	$sql .= " ORDER BY e.ref, pb.batch";
 

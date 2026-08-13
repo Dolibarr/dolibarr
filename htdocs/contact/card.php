@@ -1362,9 +1362,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<table class="border tableforfield" width="100%">';
 
 		// Civility
-		print '<tr><td class="titlefield">'.$langs->trans("UserTitle").'</td><td>';
-		print $object->getCivilityLabel();
-		print '</td></tr>';
+		if (getDolGlobalString('MAIN_USE_TITLE_FOR_CONTACT')) {
+			print '<tr><td class="titlefield">'.$langs->trans("UserTitle").'</td><td>';
+			print $object->getCivilityLabel();
+			print '</td></tr>';
+		}
 
 		// Job / position
 		print '<tr><td>'.$langs->trans("PostOrFunction").'</td><td>'.$object->poste.'</td></tr>';
