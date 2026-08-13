@@ -2391,6 +2391,7 @@ class User extends CommonObject
 		if (!empty($user->admin) && empty($user->entity) && $user->id != $this->id) {
 			$sql .= ", entity = ".((int) $this->entity); // entity flag can be set/unset only by an another superadmin user
 		}
+
 		$sql .= ", default_range = ".($this->default_range > 0 ? ((int) $this->default_range) : 'null');
 		$sql .= ", default_c_exp_tax_cat = ".($this->default_c_exp_tax_cat > 0 ? ((int) $this->default_c_exp_tax_cat) : 'null');
 		$sql .= ", fk_warehouse = ".($this->fk_warehouse > 0 ? ((int) $this->fk_warehouse) : "null");
