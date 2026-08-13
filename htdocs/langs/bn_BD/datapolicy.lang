@@ -56,3 +56,4 @@ MailSent = ইমেল পাঠানো হয়েছে
 NUMBER_MONTH_BEFORE_DELETION = মুছে ফেলার আগে কত মাস
 TheFollowingFieldsAreReplaceWith=Some fields will be replaced by a unique value:
 OtherFieldsAreReplaceWithStaticValues=Some other fields are replaced by a static value:
+QualifiedNumber=Qualified record count

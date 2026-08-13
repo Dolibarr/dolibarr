@@ -1681,10 +1681,10 @@ function dol_delete_file($file, $disableglob = 0, $nophperrors = 0, $nohook = 0,
 			$ok = true;
 			$globencoded = str_replace('[', '\[', $file_osencoded);
 			$globencoded = str_replace(']', '\]', $globencoded);
-			$listofdir = glob($globencoded);	// This scan dir for files. If file does not exists, return empty.
+			$listoffiles = glob($globencoded);	// This scan dir for files. If file does not exists, return empty.
 
-			if (!empty($listofdir) && is_array($listofdir)) {
-				foreach ($listofdir as $filename) {
+			if (!empty($listoffiles) && is_array($listoffiles)) {
+				foreach ($listoffiles as $filename) {
 					if ($nophperrors) {
 						$ok = @unlink($filename);
 					} else {
@@ -1745,12 +1745,48 @@ function dol_delete_file($file, $disableglob = 0, $nophperrors = 0, $nohook = 0,
 			} else {
 				$ok = unlink($file_osencoded);
 			}
+
+			$filename = $file_osencoded;
+
+			// If it fails and it is because of the missing write permission on parent dir
+			if (!$ok && file_exists(dirname($filename)) && !(fileperms(dirname($filename)) & 0200)) {
+				dol_syslog("Error in deletion, but parent directory exists with no permission to write, we try to change permission on parent directory and retry...", LOG_DEBUG);
+				dolChmod(dirname($filename), decoct(fileperms(dirname($filename)) | 0200));
+				// Now we retry deletion
+				if ($nophperrors) {
+					$ok = @unlink($filename);
+				} else {
+					$ok = unlink($filename);
+				}
+			}
+
 			if ($ok) {
 				if (empty($nolog)) {
-					dol_syslog("Removed file ".$file_osencoded, LOG_DEBUG);
+					dol_syslog("Removed file ".$filename, LOG_DEBUG);
+				}
+
+				// Delete entry into ecm database
+				$rel_filetodelete = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $filename);
+				if (!preg_match('/(\/temp\/|\/thumbs\/|\.meta$)/', $rel_filetodelete)) {     // If not a tmp file
+					if (is_object($db) && $indexdatabase) {		// $db may not be defined when lib is in a context with define('NOREQUIREDB',1)
+						$rel_filetodelete = preg_replace('/^[\\/]/', '', $rel_filetodelete);
+						$rel_filetodelete = preg_replace('/\.noexe$/', '', $rel_filetodelete);
+
+						dol_syslog("Try to remove also entries in database for full relative path = ".$rel_filetodelete, LOG_DEBUG);
+						include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
+						$ecmfile = new EcmFiles($db);
+						$entity = (isset($object->entity) ? $object->entity : null);
+						$result = $ecmfile->fetch(0, '', $rel_filetodelete, '', '', '', 0, $entity);
+						if ($result >= 0 && $ecmfile->id > 0) {
+							$result = $ecmfile->delete($user);
+						}
+						if ($result < 0) {
+							setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
+						}
+					}
 				}
 			} else {
-				dol_syslog("Failed to remove file ".$file_osencoded, LOG_WARNING);
+				dol_syslog("Failed to remove file ".$filename, LOG_WARNING);
 			}
 		}
 
@@ -3198,12 +3234,12 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$accessallowed = 1;
 		}
 		$original_file = $conf->order->multidir_output[$entity].'/'.$original_file;
-	} elseif (($modulepart == 'apercufichinter' || $modulepart == 'apercuficheinter') && !empty($conf->ficheinter->dir_output)) {
+	} elseif (($modulepart == 'apercufichinter' || $modulepart == 'apercuficheinter') && !empty($conf->ficheinter->multidir_output[$entity])) {
 		// Wrapping for preview of intervention
 		if ($fuser->hasRight('ficheinter', $lire)) {
 			$accessallowed = 1;
 		}
-		$original_file = $conf->ficheinter->dir_output.'/'.$original_file;
+		$original_file = $conf->ficheinter->multidir_output[$entity].'/'.$original_file;
 	} elseif (($modulepart == 'apercucontract') && !empty($conf->contract->multidir_output[$entity])) {
 		// Wrapping for preview of contracts
 		if ($fuser->hasRight('contrat', $lire)) {
@@ -3476,12 +3512,12 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$accessallowed = 1;
 		}
 		$original_file = $conf->stock->dir_output.'/temp/massgeneration/'.$user->id.'/'.$original_file;
-	} elseif (($modulepart == 'fichinter' || $modulepart == 'ficheinter') && !empty($conf->ficheinter->dir_output)) {
+	} elseif (($modulepart == 'fichinter' || $modulepart == 'ficheinter') && !empty($conf->ficheinter->multidir_output[$entity])) {
 		// Wrapping for interventions
 		if ($fuser->hasRight('ficheinter', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
-		$original_file = $conf->ficheinter->dir_output.'/'.$original_file;
+		$original_file = $conf->ficheinter->multidir_output[$entity].'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='".$db->escape($refname)."' AND entity=".((int) $conf->entity);
 	} elseif ($modulepart == 'deplacement' && !empty($conf->deplacement->dir_output)) {
 		// Wrapping pour les deplacements et notes de frais
@@ -4013,7 +4049,7 @@ function dragAndDropFileUpload($htmlname)
 	$out = "";
 	$out .= '<div id="'.$htmlname.'Message" class="dragDropAreaMessage hidden"><span>'.img_picto("", 'download').'<br>'.$langs->trans("DropFileToAddItToObject").'</span></div>';
 	$out .= "\n<!-- JS CODE TO ENABLE DRAG AND DROP OF FILE -->\n";
-	$out .= "<script>";
+	$out .= '<script nonce="'.getNonce().'">';
 	$out .= '
 		jQuery(document).ready(function() {
 			var enterTargetDragDrop = null;

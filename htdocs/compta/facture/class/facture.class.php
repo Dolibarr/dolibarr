@@ -23,8 +23,9 @@
  * Copyright (C) 2023		Nick Fragoulis
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2025		Lenin Rivas				<lenin.rivas777@gmail.com>
+ * Copyright (C) 2025-2026	Lenin Rivas				<lenin.rivas777@gmail.com>
  * Copyright (C) 2026		Vincent de Grandpré		<vincent@de-grandpre.quebec>
+ * Copyright (C) 2026		Lionel Vessiller		<lvessiller@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -904,9 +905,11 @@ class Facture extends CommonInvoice
 							$newinvoiceline->fk_remise_except = $discountId;
 						}
 
+						// Preserve the original entry mode of the line so the total is computed from the typed value (no rounding drift).
+						$line_price_base_type = $newinvoiceline->getPriceBaseType();
 						$result = $this->addline(
 							$newinvoiceline->desc,
-							$newinvoiceline->subprice,
+							(float) $newinvoiceline->subprice,
 							$newinvoiceline->qty,
 							$vatrate,
 							$newinvoiceline->localtax1_tx,
@@ -918,8 +921,8 @@ class Facture extends CommonInvoice
 							$newinvoiceline->fk_code_ventilation,
 							$newinvoiceline->info_bits,
 							$newinvoiceline->fk_remise_except,
-							'HT',
-							0,
+							$line_price_base_type,
+							(float) $newinvoiceline->subprice_ttc,
 							$newinvoiceline->product_type,
 							$newinvoiceline->rang,
 							$newinvoiceline->special_code,
@@ -1202,7 +1205,10 @@ class Facture extends CommonInvoice
 
 		// Retrieve all extrafield
 		// fetch optionals attributes and labels
-		$this->fetch_optionals();
+		// (unless the caller already set array_options, e.g. from a create form, so we don't overwrite them)
+		if (empty($this->array_options)) {
+			$this->fetch_optionals();
+		}
 
 		if (!empty($this->array_options)) {
 			$facture->array_options = $this->array_options;
@@ -1249,6 +1255,7 @@ class Facture extends CommonInvoice
 			$facture->lines[$i]->fk_prev_id = $this->lines[$i]->rowid;
 			if ($invertdetail) {
 				$facture->lines[$i]->subprice  = -$facture->lines[$i]->subprice;
+				$facture->lines[$i]->subprice_ttc = -$facture->lines[$i]->subprice_ttc;	// Keep the TTC entry mode with the inverted sign so the credit note has no rounding drift.
 				$facture->lines[$i]->total_ht  = -$facture->lines[$i]->total_ht;
 				$facture->lines[$i]->total_tva = -$facture->lines[$i]->total_tva;
 				$facture->lines[$i]->total_localtax1 = -$facture->lines[$i]->total_localtax1;
@@ -1464,6 +1471,7 @@ class Facture extends CommonInvoice
 			$line->label			= $src_line->label;
 			$line->desc				= $src_line->desc;
 			$line->subprice			= $src_line->subprice;
+			$line->subprice_ttc		= $src_line->subprice_ttc;	// Preserve the TTC entry mode so create() keeps the typed value (no rounding drift).
 			$line->total_ht			= $src_line->total_ht;
 			$line->total_tva		= $src_line->total_tva;
 			$line->total_localtax1	= $src_line->total_localtax1;
@@ -1606,6 +1614,7 @@ class Facture extends CommonInvoice
 			$line->label			= $object->lines[$i]->label;
 			$line->desc				= $object->lines[$i]->desc;
 			$line->subprice			= $object->lines[$i]->subprice;
+			$line->subprice_ttc		= $object->lines[$i]->subprice_ttc;	// Preserve the TTC entry mode so create() keeps the typed value (no rounding drift).
 			$line->total_ht			= $object->lines[$i]->total_ht;
 			$line->total_tva		= $object->lines[$i]->total_tva;
 			$line->total_localtax1	= $object->lines[$i]->total_localtax1;
@@ -2533,7 +2542,7 @@ class Facture extends CommonInvoice
 		}
 
 		$sql = 'SELECT l.rowid, l.fk_facture, l.fk_product, l.fk_parent_line, l.label as custom_label, l.description, l.product_type, l.price, l.qty, l.vat_src_code, l.tva_tx,';
-		$sql .= ' l.localtax1_tx, l.localtax2_tx, l.localtax1_type, l.localtax2_type, l.remise_percent, l.fk_remise_except, l.subprice, l.ref_ext,';
+		$sql .= ' l.localtax1_tx, l.localtax2_tx, l.localtax1_type, l.localtax2_type, l.remise_percent, l.fk_remise_except, l.subprice, l.subprice_ttc, l.ref_ext,';
 		$sql .= ' l.situation_percent, l.fk_prev_id,';
 		$sql .= ' l.rang, l.special_code, l.batch, l.fk_warehouse,';
 		$sql .= ' l.date_start as date_start, l.date_end as date_end,';
@@ -2598,6 +2607,7 @@ class Facture extends CommonInvoice
 				$line->fk_product_type  = $objp->fk_product_type; // Type of product
 				$line->qty              = $objp->qty;
 				$line->subprice         = $objp->subprice;
+				$line->subprice_ttc     = $objp->subprice_ttc;
 				$line->ref_ext          = $objp->ref_ext; // line external ref
 
 				$line->vat_src_code = $objp->vat_src_code;
@@ -4441,6 +4451,8 @@ class Facture extends CommonInvoice
 
 			$this->line->qty = ($this->type == self::TYPE_CREDIT_NOTE ? abs((float) $qty) : (float) $qty); // For credit note, quantity is always positive and unit price negative
 			$this->line->subprice = ($this->type == self::TYPE_CREDIT_NOTE ? -abs((float) $pu_ht) : (float) $pu_ht); // For credit note, unit price always negative, always positive otherwise
+			// Persist the original entry mode of the line so updateline() can preserve it later.
+			$this->line->subprice_ttc = ($price_base_type === 'TTC') ? ($this->type == self::TYPE_CREDIT_NOTE ? -abs((float) $pu_ttc) : (float) $pu_ttc) : 0;
 
 			$this->line->vat_src_code = $vat_src_code;
 			$this->line->tva_tx = $txtva;
@@ -4783,6 +4795,8 @@ class Facture extends CommonInvoice
 
 			$this->line->remise_percent		= $remise_percent;
 			$this->line->subprice			= ($apply_abs_price_on_credit_note ? -abs((float) $pu_ht) : (float) $pu_ht); // For credit note, unit price always negative, always positive otherwise
+			// Persist the original entry mode of the line so a no-op edit can preserve it later.
+			$this->line->subprice_ttc		= ($price_base_type === 'TTC') ? ($apply_abs_price_on_credit_note ? -abs((float) $pu_ttc) : (float) $pu_ttc) : 0;
 			$this->line->date_start = $date_start;
 			$this->line->date_end			= $date_end;
 			$this->line->total_ht			= (($apply_abs_price_on_credit_note || $qty < 0) ? -abs((float) $total_ht) : (float) $total_ht); // For credit note and if qty is negative, total is negative
@@ -5359,7 +5373,7 @@ class Facture extends CommonInvoice
 	 *	(validated + payment on process) or classified (paid completely or paid partiely) + not already replaced + not already a credit note
 	 *
 	 *	@param	int			$socid		Id thirdparty
-	 *	@return	array<int,array{ref:string,status:int,type:int,paye:int<0,1>,paymentornot:int<0,1>}>|int<-1,-1>
+	 *	@return	array<int,array{ref:string,status:int,type:int,paye:int<0,1>,paymentornot:int<0,1>,multicurrency_code:string}>|int<-1,-1>
 	 *	Array of invoices ($id => array('ref'=>,'paymentornot'=>,'status'=>,'paye'=>)
 	 */
 	public function list_qualified_avoir_invoices($socid = 0)
@@ -5369,8 +5383,7 @@ class Facture extends CommonInvoice
 
 		$return = array();
 
-
-		$sql = "SELECT f.rowid as rowid, f.ref, f.fk_statut, f.type, f.subtype, f.paye, pf.fk_paiement";
+		$sql = "SELECT f.rowid as rowid, f.ref, f.fk_statut, f.type, f.subtype, f.paye, pf.fk_paiement, f.multicurrency_code";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON f.rowid = pf.fk_facture";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture as ff ON (f.rowid = ff.fk_facture_source AND ff.type=".self::TYPE_REPLACEMENT.")";
@@ -5425,7 +5438,7 @@ class Facture extends CommonInvoice
 				if ($qualified) {
 					//$ref=$obj->ref;
 					$paymentornot = ($obj->fk_paiement ? 1 : 0);
-					$return[$obj->rowid] = array('ref' => $obj->ref, 'status' => $obj->fk_statut, 'type' => $obj->type, 'paye' => $obj->paye, 'paymentornot' => $paymentornot);
+					$return[$obj->rowid] = array('ref' => $obj->ref, 'status' => $obj->fk_statut, 'type' => $obj->type, 'paye' => $obj->paye, 'paymentornot' => $paymentornot, 'multicurrency_code' => $obj->multicurrency_code);
 				}
 			}
 

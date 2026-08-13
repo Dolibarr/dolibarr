@@ -611,7 +611,7 @@ class FactureFournisseur extends CommonInvoice
 		$sql .= ", '".$this->db->escape($this->multicurrency_code)."'";
 		$sql .= ", ".(float) $this->multicurrency_tx;
 		$sql .= ", ".($this->fk_facture_source ? ((int) $this->fk_facture_source) : "null");
-		$sql .= ", ".(isset($this->fk_fac_rec_source) ? $this->fk_fac_rec_source : "NULL");
+		$sql .= ", ".(isset($this->fk_fac_rec_source) ? ((int) $this->fk_fac_rec_source) : "NULL");
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -665,16 +665,19 @@ class FactureFournisseur extends CommonInvoice
 					if ($resql_insert) {
 						$idligne = $this->db->last_insert_id(MAIN_DB_PREFIX.'facture_fourn_det');
 
+						// Preserve the original entry mode of the line so the total is computed from the typed value (no rounding drift).
+						$line_price_base_type = $this->lines[$i]->getPriceBaseType();
+						$line_pu = ($line_price_base_type === 'TTC') ? (float) $this->lines[$i]->subprice_ttc : $this->lines[$i]->subprice;
 						$res = $this->updateline(
 							$idligne,
 							$this->lines[$i]->desc ? $this->lines[$i]->desc : $this->lines[$i]->description,
-							$this->lines[$i]->subprice,
+							$line_pu,
 							$this->lines[$i]->tva_tx.($this->lines[$i]->vat_src_code ? ' ('.$this->lines[$i]->vat_src_code.')' : ''),
 							$this->lines[$i]->localtax1_tx,
 							$this->lines[$i]->localtax2_tx,
 							$this->lines[$i]->qty,
 							$this->lines[$i]->fk_product,
-							'HT',
+							$line_price_base_type,
 							(!empty($this->lines[$i]->info_bits) ? $this->lines[$i]->info_bits : ''),
 							$this->lines[$i]->product_type,
 							$this->lines[$i]->remise_percent,
@@ -994,7 +997,6 @@ class FactureFournisseur extends CommonInvoice
 				$this->fk_project           = $obj->fk_project;
 				$this->cond_reglement_id	= $obj->fk_cond_reglement;
 				$this->cond_reglement_code  = $obj->cond_reglement_code;
-				$this->cond_reglement       = $obj->cond_reglement_label; // deprecated
 				$this->cond_reglement_label = $obj->cond_reglement_label;
 				$this->cond_reglement_doc   = $obj->cond_reglement_doc;
 				$this->fk_account           = $obj->fk_account;
@@ -1538,9 +1540,9 @@ class FactureFournisseur extends CommonInvoice
 		}
 
 		if (!$error) {
-			$main = MAIN_DB_PREFIX.'facture_fourn_det';
-			$ef = $main."_extrafields";
-			$sqlef = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM ".$main." WHERE fk_facture_fourn = ".((int) $rowid).")";
+			$sql_main_table = MAIN_DB_PREFIX.'facture_fourn_det';
+			$sql_ef_table = $sql_main_table."_extrafields";
+			$sqlef = "DELETE FROM $sql_ef_table WHERE fk_object IN (SELECT rowid FROM ".$sql_main_table." WHERE fk_facture_fourn = ".((int) $rowid).")";
 			$resqlef = $this->db->query($sqlef);
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_fourn_det WHERE fk_facture_fourn = '.((int) $rowid);
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
@@ -1966,15 +1968,15 @@ class FactureFournisseur extends CommonInvoice
 				// Rename directory if dir was a temporary ref
 				if (preg_match('/^[\(]?PROV/i', $this->ref)) {
 					// Now we rename also files into index
-					$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'fournisseur/facture/".get_exdir($this->id, 2, 0, 0, $this, 'invoice_supplier').$this->db->escape($this->newref)."'";
-					$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'fournisseur/facture/".get_exdir($this->id, 2, 0, 0, $this, 'invoice_supplier').$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+					$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'fournisseur/facture/".$this->db->escape(get_exdir($this->id, 2, 0, 0, $this, 'invoice_supplier')).$this->db->escape($this->newref)."'";
+					$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'fournisseur/facture/".$this->db->escape(get_exdir($this->id, 2, 0, 0, $this, 'invoice_supplier')).$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 					$resql = $this->db->query($sql);
 					if (!$resql) {
 						$error++;
 						$this->error = $this->db->lasterror();
 					}
-					$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'fournisseur/facture/".get_exdir($this->id, 2, 0, 0, $this, 'invoice_supplier').$this->db->escape($this->newref)."'";
-					$sql .= " WHERE filepath = 'fournisseur/facture/".get_exdir($this->id, 2, 0, 0, $this, 'invoice_supplier').$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+					$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'fournisseur/facture/".$this->db->escape(get_exdir($this->id, 2, 0, 0, $this, 'invoice_supplier')).$this->db->escape($this->newref)."'";
+					$sql .= " WHERE filepath = 'fournisseur/facture/".$this->db->escape(get_exdir($this->id, 2, 0, 0, $this, 'invoice_supplier')).$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 					$resql = $this->db->query($sql);
 					if (!$resql) {
 						$error++;
@@ -2296,6 +2298,8 @@ class FactureFournisseur extends CommonInvoice
 
 			$supplierinvoiceline->qty = ($this->type == self::TYPE_CREDIT_NOTE ? abs((float) $qty) : (float) $qty); // For credit note, quantity is always positive and unit price negative
 			$supplierinvoiceline->subprice = ($this->type == self::TYPE_CREDIT_NOTE ? -abs((float) $pu_ht) : (float) $pu_ht); // For credit note, unit price always negative, always positive otherwise
+			// Only keep the TTC unit price when the line was entered including tax, so it acts as a reliable "TTC entry mode" marker.
+			$supplierinvoiceline->subprice_ttc = ($price_base_type === 'TTC') ? ($this->type == self::TYPE_CREDIT_NOTE ? -abs((float) $tabprice[5]) : (float) $tabprice[5]) : 0;
 
 			$supplierinvoiceline->vat_src_code = $vat_src_code;
 			$supplierinvoiceline->tva_tx = $txtva;
@@ -2504,7 +2508,8 @@ class FactureFournisseur extends CommonInvoice
 
 		$line->subprice = ($this->type == self::TYPE_CREDIT_NOTE ? -abs((float) $pu_ht) : (float) $pu_ht); // For credit note, unit price always negative, always positive otherwise
 		$line->pu_ht = $line->subprice;  // deprecated
-		$line->subprice_ttc = ($this->type == self::TYPE_CREDIT_NOTE ? -abs((float) $pu_ttc) : (float) $pu_ttc); // For credit note, unit price always negative, always positive otherwise
+		// Only keep the TTC unit price when the line was entered including tax, so it acts as a reliable "TTC entry mode" marker.
+		$line->subprice_ttc = ($price_base_type === 'TTC') ? ($this->type == self::TYPE_CREDIT_NOTE ? -abs((float) $pu_ttc) : (float) $pu_ttc) : 0; // For credit note, unit price always negative, always positive otherwise
 		$line->pu_ttc = $line->subprice_ttc;  // deprecated
 
 		$line->remise_percent = $remise_percent;
@@ -2667,7 +2672,7 @@ class FactureFournisseur extends CommonInvoice
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf ON f.rowid = pf.fk_facturefourn";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture_fourn as ff ON f.rowid = ff.fk_facture_source";
 		$sql .= " WHERE (f.fk_statut = ".self::STATUS_VALIDATED." OR (f.fk_statut = ".self::STATUS_ABANDONED." AND f.close_code = '".self::CLOSECODE_ABANDONED."'))";
-		$sql .= " AND f.entity = ".$conf->entity;
+		$sql .= " AND f.entity = ".((int) $conf->entity);
 		$sql .= " AND f.paye = 0"; // Not closed completely
 		$sql .= " AND pf.fk_paiementfourn IS NULL"; // No payment already done
 		$sql .= " AND ff.fk_statut IS NULL"; // Return true (is null) if it is not a replacing invoice (we can't replace a replacing invoice)
@@ -2713,7 +2718,7 @@ class FactureFournisseur extends CommonInvoice
 		$sql = "SELECT f.rowid as rowid, f.ref, f.fk_statut, f.type, f.subtype, f.paye as paid, pf.fk_paiementfourn";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf ON f.rowid = pf.fk_facturefourn";
-		$sql .= " WHERE f.entity = ".$conf->entity;
+		$sql .= " WHERE f.entity = ".((int) $conf->entity);
 		$sql .= " AND f.fk_statut in (".self::STATUS_VALIDATED.",".self::STATUS_CLOSED.")";
 		$sql .= " AND NOT EXISTS (SELECT rowid from ".MAIN_DB_PREFIX."facture_fourn as ff WHERE f.rowid = ff.fk_facture_source";
 		$sql .= " AND ff.type=".self::TYPE_REPLACEMENT.")";
@@ -2766,7 +2771,7 @@ class FactureFournisseur extends CommonInvoice
 		}
 		$sql .= ' WHERE ff.paye = 0';
 		$sql .= " AND ff.fk_statut IN (".self::STATUS_VALIDATED.")";
-		$sql .= " AND ff.entity = ".$conf->entity;
+		$sql .= " AND ff.entity = ".((int) $conf->entity);
 		if ($user->socid) {
 			$sql .= ' AND ff.fk_soc = '.((int) $user->socid);
 		}
@@ -3676,11 +3681,11 @@ class FactureFournisseur extends CommonInvoice
 						}
 
 						// Sender
-						$from = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
+						$email_from = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
 						if (!empty($arraymessage->email_from)) {	// If a sender is defined into template, we use it in priority
-							$from = (string) $arraymessage->email_from;
+							$email_from = (string) $arraymessage->email_from;
 						}
-						if (empty($from)) {
+						if (empty($email_from)) {
 							$errormesg = "Failed to get sender into global setup MAIN_MAIL_EMAIL_FROM";
 							$error++;
 						}
@@ -3710,7 +3715,7 @@ class FactureFournisseur extends CommonInvoice
 							}
 
 							// Mail Creation
-							$cMailFile = new CMailFile($sendTopic, $to, $from, $sendContent, array(), array(), array(), $email_tocc, $email_tobcc, 0, 1, $errors_to, '', $trackid, '', $sendcontext, '');
+							$cMailFile = new CMailFile($sendTopic, $to, $email_from, $sendContent, array(), array(), array(), $email_tocc, $email_tobcc, 0, 1, $errors_to, '', $trackid, '', $sendcontext, '');
 
 							// Sending Mail
 							if ($cMailFile->sendfile()) {
@@ -3738,7 +3743,7 @@ class FactureFournisseur extends CommonInvoice
 								// Fields when action is an email (content should be added into note)
 								$actioncomm->email_msgid = $cMailFile->msgid;
 								$actioncomm->email_subject = $sendTopic;
-								$actioncomm->email_from = $from;
+								$actioncomm->email_from = $email_from;
 								$actioncomm->email_sender = '';
 								$actioncomm->email_to = $to;
 								//$actioncomm->email_tocc = $sendtocc;
@@ -3778,7 +3783,7 @@ class FactureFournisseur extends CommonInvoice
 								$actioncomm->userownerid = $user->id; // Owner of action
 								// Fields when action is an email (content should be added into note)
 								$actioncomm->email_msgid = $cMailFile->msgid;
-								$actioncomm->email_from = $from;
+								$actioncomm->email_from = $email_from;
 								$actioncomm->email_sender = '';
 								$actioncomm->email_to = $to;
 								//$actioncomm->email_tocc = $sendtocc;
