@@ -10,7 +10,6 @@ ActionsOnFicheInter=إجراءات على المداخله
 LastInterventions=أحدث المداخلات %s
 AllInterventions=كل المداخلات
 CreateDraftIntervention=إنشاء مسودة
-InterventionContact=جهة إتصال المداخلة
 DeleteIntervention=حذف المداخلة
 ValidateIntervention=تحقق من المداخلة
 SignIntervention=توقيع المداخلة

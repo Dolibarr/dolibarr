@@ -158,7 +158,7 @@ if ($action == 'confirm_deletefile' && $permissiontodelete) {
 
 		$upload_dir = $conf->ecm->dir_output.($relativepath ? '/'.$relativepath : '');
 		$file = $upload_dir."/".GETPOST('urlfile', 'alpha');
-		$ret = dol_delete_file($file); // This include also the delete from file index in database.
+		$ret = dol_delete_file($file, 1); // This include also the delete from file index in database.
 		if ($ret) {
 			$urlfiletoshow = GETPOST('urlfile', 'alpha');
 			$urlfiletoshow = preg_replace('/\.noexe$/', '', $urlfiletoshow);

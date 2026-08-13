@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - agenda
 ActionsOwnedBy=Evento propiedad de
 ListOfActions=Lista de eventos
+Location=Ubicación
 EventOnFullDay=Evento todo el día(s)
 MenuToDoActions=Todos los eventos incompletos
 MenuDoneActions=Todos los eventos terminados
@@ -55,6 +56,7 @@ ORDER_SUPPLIER_DELETEInDolibarr=Pedido de compra %s eliminado
 SupplierInvoiceSentByEMail=Factura del proveedor %s enviada por correo electrónico
 ShippingSentByEMail=Envío %s enviado por correo electrónico
 ShippingValidated= Se ha validado el envío%s
+InterventionSentByEMail=Intervención %s enviada por correo electrónico
 ProjectDeletedInDolibarr=Proyecto%s eliminado
 ProposalDeleted=Propuesta eliminada
 InvoiceDeleted=Se eliminó la factura
@@ -86,7 +88,6 @@ CANCELInDolibarr=Cancelado
 AgendaModelModule=Plantillas de documento para el evento
 DateActionEnd=Fecha final
 AgendaUrlOptions1=También puede agregar los siguientes parámetros a la salida del filtro:
-AgendaUrlOptions3=<b>logina=%s</b> para restringir la salida a acciones propiedad de un usuario <b>%s</b>.
 AgendaUrlOptions4=<b> logint =%s </ b> para restringir la salida a las acciones asignadas al usuario <b>%s</b> (propietario y otros).
 AgendaUrlOptionsProject=<b>project = __ PROJECT_ID__</b> para restringir el resultado a acciones vinculadas al proyecto <b>__PROJECT_ID__</b>.
 AgendaUrlOptionsIncludeHolidays= <b>includeholidays=1</b> para incluir eventos de vacaciones.

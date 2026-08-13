@@ -532,7 +532,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes' && $permissiontodelete)
 	$langs->load("other");
 
 	$file = $conf->stock->dir_temp.'/'.GETPOST('urlfile');
-	$ret = dol_delete_file($file);
+	$ret = dol_delete_file($file, 1);
 	if ($ret) {
 		setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
 	} else {

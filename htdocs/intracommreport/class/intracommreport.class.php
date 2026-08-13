@@ -473,7 +473,7 @@ class IntracommReport extends CommonObject
 				, c.code
 				, ext.mode_transport
 				FROM ".MAIN_DB_PREFIX.$tabledet." l
-				INNER JOIN ".MAIN_DB_PREFIX.$table." f ON (f.rowid = l.".$this->db->escape($field_link).")
+				INNER JOIN ".MAIN_DB_PREFIX.$table." f ON (f.rowid = l.".$this->db->sanitize($field_link).")
 				LEFT JOIN ".MAIN_DB_PREFIX.$table_extraf." ext ON (ext.fk_object = f.rowid)
 				INNER JOIN ".MAIN_DB_PREFIX."product p ON (p.rowid = l.fk_product)
 				INNER JOIN ".MAIN_DB_PREFIX."societe s ON (s.rowid = f.fk_soc)
@@ -569,7 +569,7 @@ class IntracommReport extends CommonObject
 		foreach ($TLinesFraisDePort as $res) {
 			$sql = "SELECT p.customcode
 					FROM ".MAIN_DB_PREFIX.$tabledet." d
-					INNER JOIN ".MAIN_DB_PREFIX.$table." f ON (f.rowid = d.".$this->db->escape($field_link).")
+					INNER JOIN ".MAIN_DB_PREFIX.$table." f ON (f.rowid = d.".$this->db->sanitize($field_link).")
 					INNER JOIN ".MAIN_DB_PREFIX."product p ON (p.rowid = d.fk_product)
 					WHERE d.fk_product IS NOT NULL
 					AND f.entity = ".((int) $conf->entity)."
@@ -578,7 +578,7 @@ class IntracommReport extends CommonObject
 					(
 						SELECT MAX(d.total_ht)
 						FROM ".MAIN_DB_PREFIX.$tabledet." d
-						INNER JOIN ".MAIN_DB_PREFIX.$table." f ON (f.rowid = d.".$this->db->escape($field_link).")
+						INNER JOIN ".MAIN_DB_PREFIX.$table." f ON (f.rowid = d.".$this->db->sanitize($field_link).")
 						WHERE d.fk_product IS NOT NULL
 						AND ".$more_sql." = '".$this->db->escape($res->refinvoice)."'
 						AND d.fk_product NOT IN

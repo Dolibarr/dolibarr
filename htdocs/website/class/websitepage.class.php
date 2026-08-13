@@ -519,9 +519,9 @@ class WebsitePage extends CommonObject
 			}
 			if (count($sqlwhere) > 0) {
 				if (!empty($websiteid)) {
-					$sql .= " AND (".implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
+					$sql .= " AND (".implode(' '.$this->db->sanitize($filtermode).' ', $sqlwhere).')';
 				} else {
-					$sql .= " WHERE ".implode(' '.$this->db->escape($filtermode).' ', $sqlwhere);
+					$sql .= " WHERE ".implode(' '.$this->db->sanitize($filtermode).' ', $sqlwhere);
 				}
 			}
 
@@ -640,9 +640,9 @@ class WebsitePage extends CommonObject
 			}
 			if (count($sqlwhere) > 0) {
 				if (!empty($websiteid)) {
-					$sql .= " AND (".implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
+					$sql .= " AND (".implode(' '.$this->db->sanitize($filtermode).' ', $sqlwhere).')';
 				} else {
-					$sql .= " WHERE ".implode(' '.$this->db->escape($filtermode).' ', $sqlwhere);
+					$sql .= " WHERE ".implode(' '.$this->db->sanitize($filtermode).' ', $sqlwhere);
 				}
 			}
 
