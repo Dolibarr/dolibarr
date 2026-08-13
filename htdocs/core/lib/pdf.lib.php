@@ -331,6 +331,47 @@ function pdf_getHeightForLogo($logo, $url = false)
 }
 
 /**
+ * Output company logo on top-left of a PDF page header, or the company name as fallback text if no logo is
+ * set, or an error message if the logo file is missing/unreadable. Shared by the page headers of the various
+ * document generators (invoices, orders, proposals, ...).
+ *
+ * @param	TCPDF		$pdf				PDF object
+ * @param	Translate	$outputlangs		Object lang for output
+ * @param	Societe		$emetteur			Emitting company (the PDF generator's $this->emetteur)
+ * @param	string		$logodir			Directory containing the logos subfolder (already resolved by the caller)
+ * @param	float		$posx				X position to place the logo image
+ * @param	float		$posy				Y position to place the logo image
+ * @param	float		$w					Cell width used for the fallback company name / error message text
+ * @param	float		$default_font_size	Default font size (used to size the error message font)
+ * @param	string		$ltrdirection		Text direction ('L', 'R', or 'J') for the fallback company name text
+ * @return	void
+ */
+function pdf_writeLogoOrCompanyName(&$pdf, $outputlangs, $emetteur, $logodir, $posx, $posy, $w, $default_font_size, $ltrdirection)
+{
+	if (!getDolGlobalInt('PDF_DISABLE_MYCOMPANY_LOGO')) {
+		if ($emetteur->logo) {
+			if (!getDolGlobalInt('MAIN_PDF_USE_LARGE_LOGO')) {
+				$logo = $logodir.'/logos/thumbs/'.$emetteur->logo_small;
+			} else {
+				$logo = $logodir.'/logos/'.$emetteur->logo;
+			}
+			if (is_readable($logo)) {
+				$height = pdf_getHeightForLogo($logo);
+				$pdf->Image($logo, $posx, $posy, 0, $height); // width=0 (auto)
+			} else {
+				$pdf->SetTextColor(200, 0, 0);
+				$pdf->SetFont('', 'B', $default_font_size - 2);
+				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("ErrorLogoFileNotFound", $logo), 0, 'L');
+				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("ErrorGoToGlobalSetup"), 0, 'L');
+			}
+		} else {
+			$text = (string) $emetteur->name;
+			$pdf->MultiCell($w, 4, $outputlangs->convToOutputCharset($text), 0, $ltrdirection);
+		}
+	}
+}
+
+/**
  * Function to try to calculate height of a HTML Content.
  * WARNING: Do not use this function inside a TCPDF transaction.
  *
