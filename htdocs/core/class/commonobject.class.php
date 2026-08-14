@@ -175,6 +175,7 @@ abstract class CommonObject
 	 * noteditable?: int<0, 1>,
 	 * alwayseditable?: int<0, 1>|string,
 	 * default?: string|int,
+	 * description?: string,
 	 * index?: int<0, 1>,
 	 * foreignkey?: string,
 	 * searchall?: int<0, 1>,
@@ -235,6 +236,7 @@ abstract class CommonObject
 	 * 'comment' is not used. You can store here any text of your choice. It is not used by application.
 	 * 'validate' is 1 if you need to validate the field with $this->validateField(). Need MAIN_ACTIVATE_VALIDATION_RESULT.
 	 * 'copytoclipboard' is 1 or 2 to allow to add a picto to copy value into clipboard (1=picto after label, 2=picto after value)
+	 * 'description' is a description of the field that must be set to help the MCP server.
 	 *
 	 * Note: To have value dynamic, you can set value to 0 in definition and edit the value on the fly into the constructor.
 	 */
@@ -6192,6 +6194,11 @@ abstract class CommonObject
 		if (!empty($tmp[1])) {
 			$modele = $tmp[0];
 			$srctemplatepath = $tmp[1];
+
+			if (!preg_match('/^'.preg_quote(DOL_DATA_ROOT, '/').'\/(ecm|doctemplates)/', $srctemplatepath)) {
+				$this->error = 'BadDirForTemplateFile';
+				return -1;
+			}
 		}
 
 		// Search template files
