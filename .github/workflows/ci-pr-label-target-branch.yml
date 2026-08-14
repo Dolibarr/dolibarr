@@ -1,0 +1,44 @@
+# Behavior:
+# - On pull_request_target (opened, synchronize, reopened) against a maintenance
+#   branch (pattern "*.0", e.g. 13.0, 18.0, 21.0...):
+#     - Add a label matching the target branch name to the PR (error-tolerant)
+#   The GitHub label-issue API creates the label automatically (default color)
+#   if it does not already exist, so nothing needs to be pre-created.
+#
+name: Label PR with target branch
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+    branches:
+      - "*.0"
+
+permissions:
+  pull-requests: write
+  issues: write
+
+jobs:
+  label-target-branch:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Add branch label to PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          TARGET_BRANCH: ${{ github.event.pull_request.base.ref }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          echo "Adding label '${TARGET_BRANCH}' to PR #${PR_NUMBER}"
+          response=$(curl -s -o /dev/null -w "%{http_code}" -X POST \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${REPO}/issues/${PR_NUMBER}/labels" \
+            -d "{\"labels\": [\"${TARGET_BRANCH}\"]}")
+
+          if [ "$response" -eq 200 ]; then
+            echo "Label added successfully."
+          else
+            echo "Warning: failed to add label '${TARGET_BRANCH}' to PR #${PR_NUMBER} (HTTP $response). Continuing."
+          fi
