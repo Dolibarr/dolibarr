@@ -384,6 +384,10 @@ class Members extends DolibarrApi
 				// This properties can't be set/modified with API
 				throw new RestException(405, 'The property '.$field." can't be set/modified using the APIs");
 			}
+			if (in_array($field, array('user_id') && !DolibarrApiAccess::$user->hasRight('user', 'user', 'creer'))) {
+				// This properties can't be set/modified with API without permission user->user->creer
+				throw new RestException(405, 'The property '.$field." can't be set/modified using the APIs without permission user->user->create");
+			}
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$member->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
@@ -427,10 +431,16 @@ class Members extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
+		$sav_user_id = $member->user_id;
+
 		foreach ($request_data as $field => $value) {
 			if (in_array($field, array('pass', 'pass_crypted', 'pass_indatabase', 'pass_indatabase_crypted', 'pass_temp', 'api_key'))) {
 				// This properties can't be set/modified with API
 				throw new RestException(405, 'The property '.$field." can't be set/modified using the APIs");
+			}
+			if (in_array($field, array('user_id') && !DolibarrApiAccess::$user->hasRight('user', 'user', 'creer'))) {
+				// This properties can't be set/modified with API without permission user->user->creer
+				throw new RestException(405, 'The property '.$field." can't be set/modified using the APIs without the permission user->user->create");
 			}
 			if ($field == 'id') {
 				continue;
@@ -472,7 +482,9 @@ class Members extends DolibarrApi
 
 		// If there is no error, update() returns the number of affected rows
 		// so if the update is a no op, the return value is zero.
-		if ($member->update(DolibarrApiAccess::$user) >= 0) {
+		$nosyncuser = 0;
+		$nosyncpassword = 1;										// Disable password sync. Management of password must be done using the user API only.
+		if ($member->update(DolibarrApiAccess::$user, 0, $nosyncuser, $nosyncpassword) >= 0) {
 			return $this->get($id);
 		} else {
 			throw new RestException(500, 'Error when updating member: '.$member->error);
