@@ -675,8 +675,9 @@ class pdf_strato extends ModelePDFContract
 
 		// Logo
 		$logodir = $conf->mycompany->dir_output;
-		if (getMultidirOutput($object, 'mycompany')) {
-			$logodir = getMultidirOutput($object, 'mycompany');
+		$multidiroutput = getMultidirOutput($object, 'mycompany');
+		if (!empty($multidiroutput)) {
+			$logodir = $multidiroutput;
 		}
 		pdf_writeLogoOrCompanyName($pdf, $outputlangs, $this->emetteur, $logodir, $this->marge_gauche, $posy, $w, $default_font_size, $ltrdirection);
 

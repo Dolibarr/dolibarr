@@ -1642,8 +1642,9 @@ class pdf_eratosthene extends ModelePDFCommandes
 
 		// Logo
 		$logodir = $conf->mycompany->dir_output;
-		if (!empty(getMultidirOutput($mysoc, 'mycompany'))) {
-			$logodir = getMultidirOutput($mysoc, 'mycompany');
+		$multidiroutput = getMultidirOutput($mysoc, 'mycompany');
+		if (!empty($multidiroutput)) {
+			$logodir = $multidiroutput;
 		}
 		pdf_writeLogoOrCompanyName($pdf, $outputlangs, $this->emetteur, $logodir, $this->marge_gauche, $posy, $w, $default_font_size, 'L');
 
