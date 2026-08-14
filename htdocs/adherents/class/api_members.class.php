@@ -380,6 +380,10 @@ class Members extends DolibarrApi
 
 		$member = new Adherent($this->db);
 		foreach ($request_data as $field => $value) {
+			if (in_array($field, array('pass', 'pass_crypted', 'pass_indatabase', 'pass_indatabase_crypted', 'pass_temp', 'api_key'))) {
+				// This properties can't be set/modified with API
+				throw new RestException(405, 'The property '.$field." can't be set/modified using the APIs");
+			}
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$member->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
@@ -568,6 +572,9 @@ class Members extends DolibarrApi
 			unset($object->location_incoterms);
 			unset($object->fk_delivery_address);
 			unset($object->shipping_method_id);
+
+			unset($object->pass);
+			unset($object->pass_crypted);
 
 			unset($object->total_ht);
 			unset($object->total_ttc);
