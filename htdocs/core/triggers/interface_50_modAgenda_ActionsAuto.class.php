@@ -200,6 +200,11 @@ class InterfaceActionsAuto extends DolibarrTriggers
 				$object->actionmsg = $langs->transnoentities("CONTACT_MODIFYInDolibarr", (string) $object->name);
 			}
 
+			// For merge event, we add a mention
+			if (!empty($object->context['mergefromname'])) {
+				$object->actionmsg = dol_concatdesc($object->actionmsg, $langs->transnoentities("DataFromWasMerged", $object->context['mergefromname'].' (id='.$object->context['mergefromid'].')'));
+			}
+
 			$object->sendtoid = array($object->id => $object->id);
 			// $object->socid = $object->socid;
 		} elseif ($action == 'CONTRACT_VALIDATE' && $object instanceof Contrat) {

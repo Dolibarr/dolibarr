@@ -1975,7 +1975,7 @@ class Form
 			$options_only = 0;
 			$limitto = '';
 
-			$out .= $this->selectcontacts($socid, $selected, $htmlname, $showempty, $exclude, $limitto, $showfunction, $morecss, $options_only, $showsoc, $forcecombo, $events, $moreparam, $htmlid, $multiple, $disableifempty);
+			$out .= $this->selectcontacts($socid, $selected, $htmlname, $showempty, $exclude, $limitto, $showfunction, $morecss, $options_only, $showsoc, $forcecombo, $events, $moreparam, $htmlid, $multiple, $disableifempty, $filter);
 		}
 
 		$conf->global->CONTACT_USE_SEARCH_TO_SELECT = $sav;
