@@ -4415,7 +4415,7 @@ if ($action == 'create') {
 						print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=paid&token='.newToken().'">'.$langs->trans('ClassifyPaidPartially').'</a>';
 					} else {
 						if (!getDolGlobalString('INVOICE_CAN_NEVER_BE_CANCELED')) {
-							print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=canceled">'.$langs->trans('ClassifyCanceled').'</a>';
+							print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=canceled&token='.newToken().'">'.$langs->trans('ClassifyCanceled').'</a>';
 						}
 					}
 				}
