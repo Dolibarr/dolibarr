@@ -137,10 +137,10 @@ class DolresourceTest extends CommonClassTest
 		$langs = $this->savlangs;
 		$db = $this->savdb;
 
-		// Note: note_public/note_private are intentionally not changed/asserted here: Dolresource::update()'s
-		// SQL UPDATE does not include these 2 columns, so changes to them are silently not persisted.
 		$localobject->description = 'Updated description after update';
 		$localobject->phone = '0605040302';
+		$localobject->note_public = 'New note public after update';
+		$localobject->note_private = 'New note private after update';
 		$result = $localobject->update($user);
 
 		$this->assertGreaterThan(0, $result, $localobject->errorsToString());
@@ -149,6 +149,8 @@ class DolresourceTest extends CommonClassTest
 		$localobject->fetch($localobject->id);
 		$this->assertSame('Updated description after update', $localobject->description);
 		$this->assertSame('0605040302', $localobject->phone);
+		$this->assertSame('New note public after update', $localobject->note_public);
+		$this->assertSame('New note private after update', $localobject->note_private);
 
 		return $localobject;
 	}
