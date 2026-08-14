@@ -191,11 +191,15 @@ class AllTests
 
 		require_once dirname(__FILE__).'/PricesTest.php';
 		$suite->addTestSuite('PricesTest');
+
 		require_once dirname(__FILE__).'/DiscountTest.php';
 		$suite->addTestSuite('DiscountTest');
 
 		require_once dirname(__FILE__).'/BOMTest.php';
 		$suite->addTestSuite('BOMTest');
+
+		require_once dirname(__FILE__).'/DolresourceTest.php';
+		$suite->addTestSuite('DolresourceTest');
 
 		require_once dirname(__FILE__).'/WorkstationTest.php';
 		$suite->addTestSuite('WorkstationTest');
