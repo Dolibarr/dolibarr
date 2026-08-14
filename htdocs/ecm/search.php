@@ -40,7 +40,9 @@ require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
  * @var User $user
  * @var array<int,string> $bc
  */
-
+'
+@phan-var-force array<int,string> $bc
+';
 // Load translation files required by the page
 $langs->loadLangs(array("ecm", "companies", "other", "users", "orders", "propal", "bills", "contracts"));
 
@@ -260,7 +262,7 @@ foreach ($sectionauto as $sectioncur) {
 	$butshown++;
 }
 
-print '<tr '.$bc[false].'><td colspan="4" class="center"><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
+print '<tr '.$bc[0].'><td colspan="4" class="center"><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
 print "</table></form>";
 //print $langs->trans("ECMSectionAutoDesc");
 
