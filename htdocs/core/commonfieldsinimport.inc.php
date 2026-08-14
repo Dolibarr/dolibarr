@@ -5,7 +5,7 @@
 '@phan-var-force DolibarrModules $this';
 /** @var DolibarrModules $this */
 
-if (empty($keyforclass) || empty($keyforclassfile) || empty($keyforelement) || !isset($r)) {
+if (empty($keyforclass) || empty($keyforclassfile) || empty($keyforelement) || empty($r)) {
 	//print $keyforclass.' - '.$keyforclassfile.' - '.$keyforelement;
 	dol_print_error(null, 'include of file commonfieldsinimport.inc.php was done but var $keyforclass or $keyforclassfile or $keyforelement or $r was not set');
 	exit;

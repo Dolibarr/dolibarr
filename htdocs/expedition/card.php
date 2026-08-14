@@ -3732,7 +3732,7 @@ if ($action == 'create' && $usercancreate) {
 					}
 					print '</td>';
 					// Display lines extrafields
-					if (isset($rowExtrafieldsStart, $rowExtrafieldsView, $rowEnd)) {
+					if (isset($rowExtrafieldsStart, $rowExtrafieldsView, $rowEnd)) {  // @phan-suppress-current-line PhanPluginUndeclaredVariableIsset
 						print $rowExtrafieldsStart;
 						print $rowExtrafieldsView;
 						print $rowEnd;
