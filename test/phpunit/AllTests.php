@@ -197,6 +197,9 @@ class AllTests
 		require_once dirname(__FILE__).'/BOMTest.php';
 		$suite->addTestSuite('BOMTest');
 
+		require_once dirname(__FILE__).'/WorkstationTest.php';
+		$suite->addTestSuite('WorkstationTest');
+
 		require_once dirname(__FILE__).'/OpensurveysondageTest.php';
 		$suite->addTestSuite('OpensurveysondageTest');
 
