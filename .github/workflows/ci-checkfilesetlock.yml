@@ -5,7 +5,7 @@ name: Check fileset lock
 on: [push, pull_request]
 
 concurrency:
-  group: check-${{ github.workflow }}-${{ github.ref }}
+  group: check-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
