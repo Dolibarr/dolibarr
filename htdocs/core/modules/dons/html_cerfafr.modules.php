@@ -133,7 +133,7 @@ class html_cerfafr extends ModeleDon
 				} else {
 					$paymentmode = '';
 				}
-				$modepaymentcode = !empty($formclass->cache_types_paiements[$modepaymentid]['code']) ? $formclass->cache_types_paiements[$modepaymentid]['code'] : "";
+				$modepaymentcode = !empty($formclass->cache_types_paiements[(int) $modepaymentid]['code']) ? $formclass->cache_types_paiements[(int) $modepaymentid]['code'] : "";
 				if ($modepaymentcode == 'CHQ') {
 					$ModePaiement = '<td width="25%"><input type="checkbox"> Remise d\'espèces</td><td width="25%"><input type="checkbox" disabled="true" checked="checked"> Chèque</td><td width="50%"><input type="checkbox"> Virement, prélèvement, carte bancaire</td>';
 				} elseif ($modepaymentcode == 'LIQ') {
