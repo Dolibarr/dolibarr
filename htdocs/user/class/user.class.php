@@ -12,7 +12,7 @@
  * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2018		charlene Benke			<charlie@patas-monkey.com>
  * Copyright (C) 2018-2021	Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2019-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2019-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2019		Abbes Bahfir			<dolipar@dolipar.org>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Lenin Rivas				<lenin.rivas777@gmail.com>
@@ -2656,11 +2656,9 @@ class User extends CommonObject
 		} else {
 			if (getDolGlobalString('USER_PASSWORD_GENERATED')) {
 				// Add a check on rules for password syntax using the setup of the password generator
-				$modGeneratePassClass = 'modGeneratePass'.ucfirst(getDolGlobalString('USER_PASSWORD_GENERATED'));
-
-				include_once DOL_DOCUMENT_ROOT.'/core/modules/security/generate/'.$modGeneratePassClass.'.class.php';
-				if (class_exists($modGeneratePassClass)) {
-					$modGeneratePass = new $modGeneratePassClass($this->db, $conf, $langs, $user);
+				require_once DOL_DOCUMENT_ROOT.'/core/modules/security/generate/modules_genpassword.php';
+				$modGeneratePass = ModeleGenPassword::loadAndInstantiate(getDolGlobalString('USER_PASSWORD_GENERATED'), $this->db, $conf, $langs, $user);
+				if ($modGeneratePass) {
 					'@phan-var-force ModeleGenPassword $modGeneratePass';
 
 					// To check an input user password, we disable the cleaning on ambiguous characters (this is used only for auto-generated password)

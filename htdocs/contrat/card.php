@@ -315,6 +315,7 @@ if (empty($reshook)) {
 			if (!empty($origin) && !empty($originid)) {
 				// Parse element/subelement (ex: project_task)
 				$element = $subelement = $origin;
+				$regs = array();
 				if (preg_match('/^([^_]+)_([^_]+)/i', $origin, $regs)) {
 					$element = $regs[1];
 					$subelement = $regs[2];
@@ -1606,33 +1607,34 @@ if ($action == 'create') {
 		print '<!-- amounts -->'."\n";
 		print '<div class="underbanner clearboth"></div>';
 
-		print '<div class="div-table-responsive-no-min">';
-		print '<table class="border tableforfield centpercent">';
-
-		// Qty by service status
-		print '<tr><td class="titlefield">'."".'</td>';
-		print '<td class=right>'.$langs->trans('Total').'</td>';
-		print '<td class=right>'.$staticcontractline->LibStatut(0, 5, 0).'</td>';
-		print '<td class=right>'.$staticcontractline->LibStatut(4, 5, 0).'</td>';
-		print '<td class=right>'.$staticcontractline->LibStatut(4, 5, 1).'</td>';
-		print '<td class=right>'.$staticcontractline->LibStatut(5, 5, 0).'</td>';
-		print '</tr>';
-
-		$all= $object->getTotalizedLines(-1, 0);
-		$draft= $object->getTotalizedLines(0, 0);
-		$enabled= $object->getTotalizedLines(4, 0);
-		$expired= $object->getTotalizedLines(4, 1);
-		$close= $object->getTotalizedLines(5, 0);
-
-		print '<tr><td class="titlefield">'.$langs->trans("Quantity").'</td>';
-		print '<td class="right nowrap">'.($all['total_qty'] ? price2num($all['total_qty']) : '<span class="opacitymedium">0</span>').'</td>';
-		print '<td class="right">'.($draft['total_qty'] ? price2num($draft['total_qty']) : '<span class="opacitymedium">0</span>').'</td>';
-		print '<td class="right">'.($enabled['total_qty'] ? price2num($enabled['total_qty']) : '<span class="opacitymedium">0</span>').'</td>';
-		print '<td class="right">'.($expired['total_qty'] ? price2num($expired['total_qty']) : '<span class="opacitymedium">0</span>').'</td>';
-		print '<td class="right">'.($close['total_qty'] ? price2num($close['total_qty']) : '<span class="opacitymedium">0</span>').'</td>';
-		print '</tr>';
-
 		if (getDolGlobalString("CONTRACT_SHOW_SUMMARY_Of_AMOUNTS")) {
+			print '<div class="div-table-responsive-no-min">';
+			print '<table class="border tableforfield centpercent">';
+
+			// Qty by service status
+			print '<tr><td class="titlefield">'."".'</td>';
+			print '<td class=right>'.$langs->trans('Total').'</td>';
+			print '<td class=right>'.$staticcontractline->LibStatut(0, 5, 0).'</td>';
+			print '<td class=right>'.$staticcontractline->LibStatut(4, 5, 0).'</td>';
+			print '<td class=right>'.$staticcontractline->LibStatut(4, 5, 1).'</td>';
+			print '<td class=right>'.$staticcontractline->LibStatut(5, 5, 0).'</td>';
+			print '</tr>';
+
+			$all= $object->getTotalizedLines(-1, 0);
+			$draft= $object->getTotalizedLines(0, 0);
+			$enabled= $object->getTotalizedLines(4, 0);
+			$expired= $object->getTotalizedLines(4, 1);
+			$close= $object->getTotalizedLines(5, 0);
+
+			// Note that the line with qty is a duplicate of the same summary information reported in the status banner.
+			print '<tr><td class="titlefield">'.$langs->trans("Quantity").'</td>';
+			print '<td class="right nowrap">'.($all['total_qty'] ? price2num($all['total_qty']) : '<span class="opacitymedium">0</span>').'</td>';
+			print '<td class="right">'.($draft['total_qty'] ? price2num($draft['total_qty']) : '<span class="opacitymedium">0</span>').'</td>';
+			print '<td class="right">'.($enabled['total_qty'] ? price2num($enabled['total_qty']) : '<span class="opacitymedium">0</span>').'</td>';
+			print '<td class="right">'.($expired['total_qty'] ? price2num($expired['total_qty']) : '<span class="opacitymedium">0</span>').'</td>';
+			print '<td class="right">'.($close['total_qty'] ? price2num($close['total_qty']) : '<span class="opacitymedium">0</span>').'</td>';
+			print '</tr>';
+
 			print '<tr><td class="titlefield">'.$langs->trans("TotalHT").'</td>';
 			print '<td class="nowraponall amountcard right">'.($all['total_ht'] ? price($all['total_ht']) : '<span class="opacitymedium">0</span>').'</td>';
 			print '<td class="nowraponall amountcard right">'.($draft['total_ht'] ? price($draft['total_ht']) : '<span class="opacitymedium">0</span>').'</td>';
@@ -1676,11 +1678,11 @@ if ($action == 'create') {
 			print '<td class="nowraponall amountcard right">'.($expired['total_ttc'] ? price($expired['total_ttc']) : '<span class="opacitymedium">0</span>').'</td>';
 			print '<td class="nowraponall amountcard right">'.($close['total_ttc'] ? price($close['total_ttc']) : '<span class="opacitymedium">0</span>').'</td>';
 			print '</tr>';
+
+			print "</table>";
+			print '</div>';
 		}
 
-		print "</table>";
-
-		print '</div>';
 		print '</div>';
 		print '</div>';
 
