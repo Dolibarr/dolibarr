@@ -185,10 +185,12 @@ class PropalCommandeFactureWorkflowTest extends CommonClassTest
 		$facture = new Facture($db);
 		$result = $facture->createFromOrder($commande, $user);
 
+		// createFromOrder() returns a status flag (1/-1), not the new invoice id (unlike
+		// Commande::createFromProposal()) - the created invoice's id must be read from $facture->id.
 		print __METHOD__." commandeid=".$commande->id." result=".$result."\n";
 		$this->assertGreaterThan(0, $result, $facture->errorsToString());
 
-		$facture->fetch($result);
+		$facture->fetch($facture->id);
 
 		$this->assertEquals($commande->socid, $facture->socid, 'Invoice thirdparty must match order thirdparty');
 		$this->assertEquals($commande->note_public, $facture->note_public, 'Invoice public note must be propagated from order');
