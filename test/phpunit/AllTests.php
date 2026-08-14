@@ -200,7 +200,7 @@ class AllTests
 		require_once dirname(__FILE__).'/WorkstationTest.php';
 		$suite->addTestSuite('WorkstationTest');
 
-    require_once dirname(__FILE__).'/OpensurveysondageTest.php';
+		require_once dirname(__FILE__).'/OpensurveysondageTest.php';
 		$suite->addTestSuite('OpensurveysondageTest');
 
 		require_once dirname(__FILE__).'/ContratTest.php';
