@@ -82,8 +82,7 @@ if (!empty($user->socid)) {
 	$socid = $user->socid;
 	// socid is not declared on CommonObject, which is the type fetchObjectByElement() answers, and an object
 	// that has no third party does not own the property at all.
-	// @phan-suppress-next-line PhanUndeclaredProperty
-	if (!empty($object->socid) && $socid != $object->socid) {
+	if (property_exists($object, 'socid') && !empty($object->socid) && $socid != $object->socid) {	// @phan-suppress-current-line PhanUndeclaredProperty
 		// Same message than every other refusal of this page: a distinct one tells an external user that the
 		// object exists but belongs to another third party, which lets him enumerate the records of the others.
 		dol_syslog("fileupload.php object ".$element." with id ".$id." belongs to another third party than the external user", LOG_WARNING);
