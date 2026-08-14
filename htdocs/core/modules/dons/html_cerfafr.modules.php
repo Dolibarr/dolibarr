@@ -129,7 +129,7 @@ class html_cerfafr extends ModeleDon
 				// donation and no payment mode checkbox was ever ticked on the receipt.
 				$modepaymentid = !empty($don->mode_reglement_id) ? $don->mode_reglement_id : $don->modepaymentid;
 				if ($modepaymentid) {
-					$paymentmode = !empty($formclass->cache_types_paiements[$modepaymentid]['label']) ? $formclass->cache_types_paiements[$modepaymentid]['label'] : '';
+					$paymentmode = !empty($formclass->cache_types_paiements[(int) $modepaymentid]['label']) ? $formclass->cache_types_paiements[$modepaymentid]['label'] : '';
 				} else {
 					$paymentmode = '';
 				}
