@@ -221,6 +221,8 @@ class AllTests
 		$suite->addTestSuite('CommonInvoiceTest');
 		require_once dirname(__FILE__).'/FactureTest.php';
 		$suite->addTestSuite('FactureTest');
+		require_once dirname(__FILE__).'/PropalCommandeFactureWorkflowTest.php';
+		$suite->addTestSuite('PropalCommandeFactureWorkflowTest');
 		require_once dirname(__FILE__).'/FactureRecTest.php';
 		$suite->addTestSuite('FactureRecTest');
 		require_once dirname(__FILE__).'/FactureTestRounding.php';
