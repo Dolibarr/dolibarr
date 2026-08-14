@@ -3180,7 +3180,7 @@ function printCodeForPing($constanttosavelastko, $constanttosavefirstok, $arrayo
 						version_full: '<?php echo DOL_VERSION; ?>',
 						versionblockedlog: '<?php echo (float) getBlockedLogVersionToShow(); ?>',
 						versionblockedlog_full: '<?php echo getBlockedLogVersionToShow(); ?>',
-						entity: '<?php echo (int) $conf->entity; ?>',
+						instance_entity: '<?php echo (int) $conf->entity; ?>',
 						dbtype: '<?php echo dol_escape_js($db->type); ?>',
 						php_version: '<?php echo dol_escape_js(phpversion()); ?>',
 						os_version: '<?php echo dol_escape_js(version_os('smr')); ?>',
