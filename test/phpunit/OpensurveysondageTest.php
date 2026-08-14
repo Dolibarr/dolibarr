@@ -53,7 +53,23 @@ class OpensurveysondageTest extends CommonClassTest
 	 */
 	public static function setUpBeforeClass(): void
 	{
+		global $db, $conf;
+
+		if (!isModEnabled('opensurvey')) {
+			// Activating a module re-runs its SQL install scripts (CREATE/ALTER TABLE), which causes an
+			// implicit commit in MySQL/InnoDB: this activation is real and is NOT undone by the
+			// rollback in tearDownAfterClass, exactly like an admin enabling it from Setup > Modules
+			// would be (see also FactureTest::setUpBeforeClass(), which similarly disables the
+			// blockedlog module for real, outside of any transaction). Do this before starting the
+			// test transaction below, so the transaction-open counter stays consistent.
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+			$result = activateModule('modOpenSurvey');
+			self::assertEmpty($result['errors'], 'Failed to activate module opensurvey: '.implode(', ', $result['errors']));
+			$conf->setValues($db);
+		}
+
 		self::assertTrue(isModEnabled('opensurvey'), 'module opensurvey must be enabled');
+
 		parent::setUpBeforeClass();
 	}
 
