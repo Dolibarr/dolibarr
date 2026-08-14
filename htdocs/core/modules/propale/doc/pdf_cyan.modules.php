@@ -583,6 +583,7 @@ class pdf_cyan extends ModelePDFPropales
 					if ($object->lines[$i]->special_code == SUBTOTALS_SPECIAL_CODE) {
 						$level = $object->lines[$i]->qty;
 						if ($sub_options) {
+							$hidenextline = 0;
 							if (isset($sub_options['titleshowuponpdf'])) {
 								$pdf_sub_options['titleshowuponpdf'] = isset($pdf_sub_options['titleshowuponpdf']) && $pdf_sub_options['titleshowuponpdf'] < $level ? $pdf_sub_options['titleshowuponpdf'] : $level;
 							} elseif (isset($pdf_sub_options['titleshowuponpdf']) && abs($level) <= $pdf_sub_options['titleshowuponpdf']) {
@@ -857,7 +858,7 @@ class pdf_cyan extends ModelePDFPropales
 						}
 					}
 
-					if ($object->lines[$i]->special_code == SUBTOTALS_SPECIAL_CODE && isset($sub_options['titleshowuponpdf']) && getDolGlobalString('SUBTOTAL_HIDE_LINES_UNDER_TITLE')) {	// TODO Use $sub_options['titlehidelinesundertitle'] instead of SUBTOTAL_HIDE_LINES_UNDER_TITLE
+					if ($object->lines[$i]->special_code == SUBTOTALS_SPECIAL_CODE && (isset($sub_options['titleshowuponpdf']) || isset($sub_options['titleshowtotalexludingvatonpdf'])) && getDolGlobalString('SUBTOTAL_HIDE_LINES_UNDER_TITLE')) {	// TODO Use $sub_options['titlehidelinesundertitle'] instead of SUBTOTAL_HIDE_LINES_UNDER_TITLE
 						$hidenextline = 1;
 					}
 

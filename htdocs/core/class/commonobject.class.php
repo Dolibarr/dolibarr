@@ -22,7 +22,9 @@
  * Copyright (C) 2025		Alexandre Janniaux	<alexandre.janniaux@gmail.com>
  * Copyright (C) 2025		Vincent Maury		<vmaury@timgroup.fr>
  * Copyright (C) 2026		Pierre Ardoin		<developpeur@lesmetiersdubatiment.fr>
-*
+ * Copyright (C) 2026		Anthony Berton		<anthony.berton@bb2a.fr>
+
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -173,6 +175,7 @@ abstract class CommonObject
 	 * noteditable?: int<0, 1>,
 	 * alwayseditable?: int<0, 1>|string,
 	 * default?: string|int,
+	 * description?: string,
 	 * index?: int<0, 1>,
 	 * foreignkey?: string,
 	 * searchall?: int<0, 1>,
@@ -233,6 +236,7 @@ abstract class CommonObject
 	 * 'comment' is not used. You can store here any text of your choice. It is not used by application.
 	 * 'validate' is 1 if you need to validate the field with $this->validateField(). Need MAIN_ACTIVATE_VALIDATION_RESULT.
 	 * 'copytoclipboard' is 1 or 2 to allow to add a picto to copy value into clipboard (1=picto after label, 2=picto after value)
+	 * 'description' is a description of the field that must be set to help the MCP server.
 	 *
 	 * Note: To have value dynamic, you can set value to 0 in definition and edit the value on the fly into the constructor.
 	 */
@@ -366,6 +370,12 @@ abstract class CommonObject
 	 * @see fetch_product()
 	 */
 	public $product;
+
+	/**
+	 * @var ?Entrepot 	A related warehouse object
+	 * @see fetch_warehouse()
+	 */
+	public $warehouse;
 
 	/**
 	 * @var string 		The type of originating object. Combined with `$origin_type`, it allows to reload `$origin_object`
@@ -2194,6 +2204,39 @@ abstract class CommonObject
 
 		$this->product = $product;
 		return $result;
+	}
+
+	/**
+	 *	Load the warehouse of object, from id $this->warehouse_id or $this->fk_warehouse, into this->warehouse
+	 *
+	 *	@param		int<0,1>	$force_warehouse_id	Force warehouse id
+	 *	@return		int<-1,1>						Return integer <0 if KO, >0 if OK
+	 */
+	public function fetchWarehouse($force_warehouse_id = 0)
+	{
+		if (empty($this->warehouse_id) && empty($this->fk_warehouse) && empty($force_warehouse_id)) {
+			return 0;
+		}
+
+		include_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
+
+		$idtofetch = isset($this->warehouse_id) ? $this->warehouse_id : (isset($this->fk_warehouse) ? $this->fk_warehouse : 0);
+		if (!empty($force_warehouse_id)) {
+			$idtofetch = $force_warehouse_id;
+		}
+
+		if ($idtofetch) {
+			$warehouse = new Entrepot($this->db);
+			$result = $warehouse->fetch($idtofetch);
+			if ($result < 0) {
+				$this->errors = array_merge($this->errors, $warehouse->errors);
+			}
+			$this->warehouse = $warehouse;
+
+			return $result;
+		} else {
+			return -1;
+		}
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -6151,6 +6194,11 @@ abstract class CommonObject
 		if (!empty($tmp[1])) {
 			$modele = $tmp[0];
 			$srctemplatepath = $tmp[1];
+
+			if (!preg_match('/^'.preg_quote(DOL_DATA_ROOT, '/').'\/(ecm|doctemplates)/', $srctemplatepath)) {
+				$this->error = 'BadDirForTemplateFile';
+				return -1;
+			}
 		}
 
 		// Search template files
