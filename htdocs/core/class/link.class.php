@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,6 +39,11 @@ class Link extends CommonObject
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'links';
+
+	/**
+	 * @var int<0,1> Does object support extrafields ? 0=No, 1=Yes
+	 */
+	public $isextrafieldmanaged = 1;
 
 	/**
 	 * @var int Entity
@@ -137,12 +142,20 @@ class Link extends CommonObject
 			$this->id = $this->db->last_insert_id($this->db->prefix()."links");
 
 			if ($this->id > 0) {
-				// Call trigger
-				$result = $this->call_trigger('LINK_CREATE', $user);
+				// Actions on extra fields
+				$result = $this->insertExtraFields();
 				if ($result < 0) {
 					$error++;
 				}
-				// End call triggers
+
+				if (!$error) {
+					// Call trigger
+					$result = $this->call_trigger('LINK_CREATE', $user);
+					if ($result < 0) {
+						$error++;
+					}
+					// End call triggers
+				}
 			} else {
 				$error++;
 			}
@@ -216,7 +229,13 @@ class Link extends CommonObject
 		dol_syslog(get_class($this)."::update sql = ".$sql);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			if ($call_trigger) {
+			// Actions on extra fields
+			$result = $this->insertExtraFields();
+			if ($result < 0) {
+				$error++;
+			}
+
+			if (!$error && $call_trigger) {
 				// Call trigger
 				$result = $this->call_trigger('LINK_MODIFY', $user);
 				if ($result < 0) {
@@ -291,6 +310,10 @@ class Link extends CommonObject
 					$link->objectid = $obj->objectid;
 					$link->share = $obj->share;
 					$link->share_pass = $obj->share_pass;
+
+					// Retrieve all extrafields for link
+					$link->fetch_optionals();
+
 					$links[] = $link;
 				}
 				return 1;
@@ -377,6 +400,10 @@ class Link extends CommonObject
 				$this->objectid = $obj->objectid;
 				$this->share = $obj->share;
 				$this->share_pass = $obj->share_pass;
+
+				// Retrieve all extrafields for link
+				$this->fetch_optionals();
+
 				return 1;
 			} else {
 				return 0;
@@ -416,6 +443,14 @@ class Link extends CommonObject
 		if (!$this->db->query($sql)) {
 			$error++;
 			$this->error = $this->db->lasterror();
+		}
+
+		// Removed extrafields
+		if (!$error) {
+			$result = $this->deleteExtraFields();
+			if ($result < 0) {
+				$error++;
+			}
 		}
 
 		if (!$error) {
