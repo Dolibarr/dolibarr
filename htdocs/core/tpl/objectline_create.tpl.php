@@ -888,6 +888,54 @@ if (!empty($object->thirdparty)) {
 	}
 
 
+	/* Function to set the value of an extrafield of a line, whatever the type of the field is */
+	function setExtrafieldValueOnLine(field, key, value) {
+		/* For a radio, there is no field with id=key. Each choice is an input with name=key */
+		if (field.length == 0) {
+			jQuery('input:radio[name="' + key + '"]').filter(function() {
+				return this.value == value;
+			}).prop('checked', true).trigger('change');
+			return;
+		}
+		/* For a checkbox, val() sets the value attribute only, it does not tick the box */
+		if (field.is(':checkbox')) {
+			field.prop('checked', (value == 1)).trigger('change');
+			return;
+		}
+		/* A multiple select (type checkbox or chkbxlst) stores its value as a string like "1,3" */
+		if (field.is('select')) {
+			field.val(field.prop('multiple') ? String(value).split(',') : value).trigger('change');
+			return;
+		}
+		/* For a field of type html, the textarea is managed by CKEditor */
+		if (field.is('textarea') && typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined" && CKEDITOR.instances[key]) {
+			CKEDITOR.instances[key].setData(value ? value : '');
+			return;
+		}
+		/* For a date, the value posted by the form is the one of the hidden day/month/year fields */
+		if (jQuery("#" + key + "day").length > 0) {
+			if (value) {
+				var thedate = new Date(value * 1000);
+				jQuery("#" + key + "day").val(thedate.getDate());
+				jQuery("#" + key + "month").val(thedate.getMonth() + 1);
+				jQuery("#" + key + "year").val(thedate.getFullYear());
+				jQuery("#" + key + "hour").val(thedate.getHours());
+				jQuery("#" + key + "min").val(thedate.getMinutes());
+				/* The format to show is the one given to dpChangeDay by the date input itself */
+				var formatofdate = /dpChangeDay\([^,]*,\s*'([^']+)'/.exec(field.attr('onchange') || '');
+				if (formatofdate) {
+					field.val(formatDate(thedate, formatofdate[1]));
+				}
+			} else {
+				jQuery("#" + key + "day, #" + key + "month, #" + key + "year").val('');
+				field.val('');
+			}
+			return;
+		}
+		field.val(value);
+	}
+
+
 	/* JQuery for product free or predefined select */
 	jQuery(document).ready(function() {
 		jQuery("#price_ht").keyup(function(event) {
@@ -1073,11 +1121,8 @@ if (!empty($object->thirdparty)) {
 							// Set values for any fields in the form options_SOMETHING
 							for (var key in data.array_options) {
 								if (data.array_options.hasOwnProperty(key)) {
-									var field = jQuery("#" + key);
-									if(field.length > 0){
-										console.log("objectline_create.tpl set content of options_" + key);
-										field.val(data.array_options[key]);
-									}
+									console.log("objectline_create.tpl set content of " + key);
+									setExtrafieldValueOnLine(jQuery("#" + key), key, data.array_options[key]);
 								}
 							}
 
@@ -1162,7 +1207,7 @@ if (!empty($object->thirdparty)) {
 
 							if (jsConf.conf.PRODUCT_LOAD_EXTRAFIELD_INTO_OBJECTLINES) {
 								jQuery.each(data.array_options, function( key, value ) {
-									jQuery('div[class*="det'+key.replace('options_','_extras_')+'"] > #'+key).val(value);
+									setExtrafieldValueOnLine(jQuery('div[class*="det'+key.replace('options_','_extras_')+'"] > #'+key), key, value);
 								});
 							}
 

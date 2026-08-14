@@ -15,6 +15,7 @@
  * Copyright (C) 2024-2026  MDW                     <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026       Charlene Benke          <charlene@patas-monkey.com>
  * Copyright (C) 2026       Alexandre Spangaro      <alexandre@inovea-conseil.com
+ * Copyright (C) 2026		Lionel Vessiller		<lvessiller@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -859,7 +860,7 @@ class Contrat extends CommonObject
 
 		// Selects contract lines related to a product
 		$sql = "SELECT p.label as product_label, p.description as product_desc, p.ref as product_ref, p.fk_product_type as product_type,";
-		$sql .= " d.rowid, d.fk_contrat, d.statut as status, d.description, d.subprice, d.vat_src_code, d.tva_tx, d.localtax1_tx, d.localtax2_tx, d.localtax1_type, d.localtax2_type, d.qty, d.remise_percent, d.fk_product_fournisseur_price as fk_fournprice, d.buy_price_ht as pa_ht,";
+		$sql .= " d.rowid, d.fk_contrat, d.statut as status, d.description, d.subprice, d.subprice_ttc, d.vat_src_code, d.tva_tx, d.localtax1_tx, d.localtax2_tx, d.localtax1_type, d.localtax2_type, d.qty, d.remise_percent, d.fk_product_fournisseur_price as fk_fournprice, d.buy_price_ht as pa_ht,";
 		$sql .= " d.total_ht,";
 		$sql .= " d.total_tva,";
 		$sql .= " d.total_localtax1,";
@@ -907,6 +908,7 @@ class Contrat extends CommonObject
 				$line->localtax1_type	= $objp->localtax1_type;
 				$line->localtax2_type	= $objp->localtax2_type;
 				$line->subprice			= $objp->subprice;
+				$line->subprice_ttc		= $objp->subprice_ttc;
 				$line->statut           = $objp->status; // For backward compatibility
 				$line->status           = $objp->status;
 				$line->remise_percent	= $objp->remise_percent;
@@ -1308,7 +1310,7 @@ class Contrat extends CommonObject
 		if (!$error) {
 			// We remove directory
 			$ref = dol_sanitizeFileName($this->ref);
-			if ($conf->contrat->dir_output) {
+			if ($conf->contrat->dir_output && !empty($ref)) {
 				$dir = $conf->contrat->multidir_output[$this->entity]."/".$ref;
 				if (file_exists($dir)) {
 					$res = @dol_delete_dir_recursive($dir);
@@ -1564,6 +1566,8 @@ class Contrat extends CommonObject
 			$total_ttc = $tabprice[2];
 			$total_localtax1 = $tabprice[9];
 			$total_localtax2 = $tabprice[10];
+			$pu_ht  = $tabprice[3];
+			$pu_ttc = $tabprice[5];
 
 			if (count($localtaxes_type) > 0) {
 				$localtax1_type = $localtaxes_type[0];
@@ -1580,7 +1584,7 @@ class Contrat extends CommonObject
 
 			// if buy price not defined, define buyprice as configured in margin admin
 			if ($pa_ht == 0) {
-				$result = $this->defineBuyPrice($pu_ht, $remise_percent, $fk_product);
+				$result = $this->defineBuyPrice((float) $pu_ht, $remise_percent, $fk_product);
 				if ($result < 0) {
 					return -1;
 				} else {
@@ -1591,7 +1595,7 @@ class Contrat extends CommonObject
 			// Insertion dans la base
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."contratdet";
 			$sql .= " (fk_contrat, label, description, fk_product, qty, tva_tx, vat_src_code,";
-			$sql .= " localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, remise_percent, subprice,";
+			$sql .= " localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, remise_percent, subprice, subprice_ttc,";
 			$sql .= " total_ht, total_tva, total_localtax1, total_localtax2, total_ttc,";
 			$sql .= " info_bits,";
 			$sql .= " fk_product_fournisseur_price, buy_price_ht";
@@ -1615,6 +1619,7 @@ class Contrat extends CommonObject
 			$sql .= " '".$this->db->escape($localtax2_type)."',";
 			$sql .= " ".price2num($remise_percent).",";
 			$sql .= " ".price2num($pu_ht).",";
+			$sql .= " ".($price_base_type === 'TTC' ? price2num($pu_ttc) : "0").",";
 			$sql .= " ".price2num($total_ht).",".price2num($total_tva).",".price2num($total_localtax1).",".price2num($total_localtax2).",".price2num($total_ttc).",";
 			$sql .= " ".((int) $info_bits).",";
 			if (isset($fk_fournprice)) {
@@ -1712,7 +1717,6 @@ class Contrat extends CommonObject
 		$qty = trim((string) $qty);
 		$desc = trim($desc);
 		$desc = trim($desc);
-		$subprice = price2num($pu);
 		$tvatx = price2num($tvatx);
 		$localtax1tx = price2num($localtax1tx);
 		$localtax2tx = price2num($localtax2tx);
@@ -1747,6 +1751,8 @@ class Contrat extends CommonObject
 		$total_ttc = $tabprice[2];
 		$total_localtax1 = $tabprice[9];
 		$total_localtax2 = $tabprice[10];
+		$pu_ht  = $tabprice[3];
+		$pu_ttc = $tabprice[5];
 
 		$localtax1_type = (empty($localtaxes_type[0]) ? '' : $localtaxes_type[0]);
 		$localtax2_type = (empty($localtaxes_type[2]) ? '' : $localtaxes_type[2]);
@@ -1766,7 +1772,9 @@ class Contrat extends CommonObject
 		}
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."contratdet SET description = '".$this->db->escape($desc)."'";
-		$sql .= ",subprice = ".((float) price2num($subprice));
+		$sql .= ",subprice = ".((float) price2num($pu_ht));
+		// Persist the original entry mode of the line so a no-op edit can preserve it later.
+		$sql .= ",subprice_ttc = ".($price_base_type === 'TTC' ? (float) price2num($pu_ttc) : 0);
 		$sql .= ",remise_percent = ".((float) price2num($remise_percent));
 		$sql .= ",qty = ".((float) $qty);
 		$sql .= ",tva_tx = ".((float) price2num($tvatx));
@@ -2542,7 +2550,7 @@ class Contrat extends CommonObject
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		if (!dol_strlen($modele)) {
 			$modele = '';	// No doc template/generation by default
@@ -2677,7 +2685,11 @@ class Contrat extends CommonObject
 
 		if (!$error) {
 			foreach ($this->lines as $line) {
-				$result = $clonedObj->addline($line->description, $line->subprice, $line->qty, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, $line->fk_product, $line->remise_percent, $line->date_start, $line->date_cloture, 'HT', 0, $line->info_bits, $line->fk_fournprice, $line->pa_ht, $line->array_options, $line->fk_unit, $line->rang);
+				// Preserve the original entry mode of the line. Contrat::addline() stores subprice from the
+				// $pu_ht argument as-is (like the card, which pre-computes it), so we pass the stored HT and
+				// flag TTC + subprice_ttc so the total is computed from the typed value (no rounding drift).
+				$line_price_base_type = $line->getPriceBaseType();
+				$result = $clonedObj->addline($line->description, (float) $line->subprice, $line->qty, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, $line->fk_product, $line->remise_percent, $line->date_start, $line->date_cloture, $line_price_base_type, (float) $line->subprice_ttc, $line->info_bits, $line->fk_fournprice, $line->pa_ht, $line->array_options, $line->fk_unit, $line->rang);
 				if ($result < 0) {
 					$error++;
 					$this->setErrorsFromObject($clonedObj);
