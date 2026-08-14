@@ -224,7 +224,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes' && !empty($permissionto
 
 	$link = new Link($db);
 	$f = $link->fetch(GETPOSTINT('linkid'));
-	if ($f) {
+	if ($f > 0) {
 		$link->url = GETPOST('link', 'alpha');
 		if (substr($link->url, 0, 7) != 'http://'
 			&& substr($link->url, 0, 8) != 'https://'
