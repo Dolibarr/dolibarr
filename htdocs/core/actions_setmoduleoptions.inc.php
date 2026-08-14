@@ -48,6 +48,8 @@
 
 '
 @phan-var-force FormSetup $formSetup
+@phan-var-force string $action
+@phan-var-force int $error
 ';
 
 if (($action == 'update' || !empty($websitetemplateconf)) && !empty($formSetup) && is_object($formSetup) && !empty($user->admin)) {
