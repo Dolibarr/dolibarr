@@ -2707,12 +2707,6 @@ parameters:
 			path: ../../../htdocs/core/class/commoninvoice.class.php
 
 		-
-			message: '#^Variable \$stripearrayofkeys might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../../htdocs/core/class/commoninvoice.class.php
-
-		-
 			message: '#^Call to function is_array\(\) with array\<mixed\> will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 4
@@ -3973,12 +3967,6 @@ parameters:
 			path: ../../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php
 
 		-
-			message: '#^Variable \$fac might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php
-
-		-
 			message: '#^Access to constant TYPE_NON on an unknown class Sprain\\SwissQrBill\\DataGroup\\Element\\PaymentReference\.$#'
 			identifier: class.notFound
 			count: 1
@@ -4705,12 +4693,6 @@ parameters:
 			path: ../../../htdocs/expensereport/class/paymentexpensereport.class.php
 
 		-
-			message: '#^Variable \$linkback might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/expensereport/payment/info.php
-
-		-
 			message: '#^Comparison operation "\>" between 1 and 1 is always false\.$#'
 			identifier: greater.alwaysFalse
 			count: 1
@@ -5071,18 +5053,6 @@ parameters:
 			path: ../../../htdocs/holiday/define_holiday.php
 
 		-
-			message: '#^Variable \$search_month_update might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/holiday/list.php
-
-		-
-			message: '#^Variable \$search_year_update might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/holiday/list.php
-
-		-
 			message: '#^Ternary operator condition is always false\.$#'
 			identifier: ternary.alwaysFalse
 			count: 1
@@ -5091,12 +5061,6 @@ parameters:
 		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../../htdocs/hrm/admin/admin_hrm.php
-
-		-
-			message: '#^Variable \$mesg might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/hrm/admin/admin_hrm.php
 
@@ -6457,12 +6421,6 @@ parameters:
 			path: ../../../htdocs/product/reassort.php
 
 		-
-			message: '#^Variable \$type might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/reassort.php
-
-		-
 			message: '#^Comparison operation "\<" between null and 0 is always false\.$#'
 			identifier: smaller.alwaysFalse
 			count: 1
@@ -6471,12 +6429,6 @@ parameters:
 		-
 			message: '#^Ternary operator condition is always true\.$#'
 			identifier: ternary.alwaysTrue
-			count: 1
-			path: ../../../htdocs/product/reassortlot.php
-
-		-
-			message: '#^Variable \$type might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/product/reassortlot.php
 
@@ -6503,18 +6455,6 @@ parameters:
 			identifier: booleanNot.alwaysTrue
 			count: 1
 			path: ../../../htdocs/product/stock/class/productstockentrepot.class.php
-
-		-
-			message: '#^Variable \$action might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/product/stock/info.php
-
-		-
-			message: '#^Variable \$socid might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/stock/info.php
 
 		-
 			message: '#^If condition is always false\.$#'
@@ -6592,12 +6532,6 @@ parameters:
 			message: '#^Right side of && is always true\.$#'
 			identifier: booleanAnd.rightAlwaysTrue
 			count: 1
-			path: ../../../htdocs/product/stock/movement_list.php
-
-		-
-			message: '#^Variable \$productlabelselected might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
 			path: ../../../htdocs/product/stock/movement_list.php
 
 		-
@@ -6819,12 +6753,6 @@ parameters:
 		-
 			message: '#^Call to function method_exists\(\) with Project and ''fetchComments'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/projet/comment.php
-
-		-
-			message: '#^Variable \$mode might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/projet/comment.php
 
@@ -7183,12 +7111,6 @@ parameters:
 			path: ../../../htdocs/public/bookcal/bookcalAjax.php
 
 		-
-			message: '#^Variable \$user might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/public/bookcal/index.php
-
-		-
 			message: '#^Call to function is_numeric\(\) with int will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -7228,12 +7150,6 @@ parameters:
 			message: '#^Right side of \|\| is always false\.$#'
 			identifier: booleanOr.rightAlwaysFalse
 			count: 2
-			path: ../../../htdocs/public/eventorganization/attendee_new.php
-
-		-
-			message: '#^Variable \$tmpcode might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
 			path: ../../../htdocs/public/eventorganization/attendee_new.php
 
 		-
@@ -7477,12 +7393,6 @@ parameters:
 			path: ../../../htdocs/public/project/suggestbooth.php
 
 		-
-			message: '#^Variable \$tmpcode might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/public/project/suggestbooth.php
-
-		-
 			message: '#^Call to function is_numeric\(\) with int will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -7514,12 +7424,6 @@ parameters:
 
 		-
 			message: '#^Variable \$object might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/public/project/suggestconference.php
-
-		-
-			message: '#^Variable \$tmpcode might not be defined\.$#'
 			identifier: variable.undefined
 			count: 2
 			path: ../../../htdocs/public/project/suggestconference.php

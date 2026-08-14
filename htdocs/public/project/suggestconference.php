@@ -249,6 +249,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 		$errmsg .= $langs->trans("ErrorBadEMail", GETPOST("email"))."<br>\n";
 	}
 
+	$tmpcode = '';
 	if (!$error) {
 		// Getting the thirdparty or creating it
 		$thirdparty = new Societe($db);
