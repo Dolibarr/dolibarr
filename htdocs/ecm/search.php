@@ -2,7 +2,7 @@
 /* Copyright (C) 2008-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2008-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,6 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
+ * @var array<int,string> $bc
  */
 
 // Load translation files required by the page

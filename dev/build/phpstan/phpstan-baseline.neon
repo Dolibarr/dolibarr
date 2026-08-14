@@ -2551,12 +2551,6 @@ parameters:
 			path: ../../../htdocs/core/actions_setmoduleoptions.inc.php
 
 		-
-			message: '#^Variable \$tmpdir might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/actions_setmoduleoptions.inc.php
-
-		-
 			message: '#^Loose comparison using \=\= between ''directory'' and ''directory'' will always evaluate to true\.$#'
 			identifier: equal.alwaysTrue
 			count: 1
@@ -2685,12 +2679,6 @@ parameters:
 		-
 			message: '#^Ternary operator condition is always false\.$#'
 			identifier: ternary.alwaysFalse
-			count: 1
-			path: ../../../htdocs/core/class/CMailFile.class.php
-
-		-
-			message: '#^Variable \$result might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/core/class/CMailFile.class.php
 
@@ -3301,12 +3289,6 @@ parameters:
 			path: ../../../htdocs/core/class/utils_diff.class.php
 
 		-
-			message: '#^Variable \$r might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../../htdocs/core/commonfieldsinimport.inc.php
-
-		-
 			message: '#^Call to function is_array\(\) with non\-empty\-array\<string, mixed\> will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -3329,18 +3311,6 @@ parameters:
 			identifier: empty.property
 			count: 1
 			path: ../../../htdocs/core/db/mysqli.class.php
-
-		-
-			message: '#^Variable \$conf might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/filemanagerdol/browser/default/browser.php
-
-		-
-			message: '#^Variable \$langs might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/filemanagerdol/browser/default/browser.php
 
 		-
 			message: '#^Variable \$_FILES in isset\(\) always exists and is not nullable\.$#'
@@ -4519,22 +4489,10 @@ parameters:
 			path: ../../../htdocs/ecm/dir_add_card.php
 
 		-
-			message: '#^Variable \$object might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/ecm/dir_add_card.php
-
-		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 2
 			path: ../../../htdocs/ecm/index_medias.php
-
-		-
-			message: '#^Variable \$bc might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/ecm/search.php
 
 		-
 			message: '#^Call to function is_array\(\) with list\<non\-empty\-string\> will always evaluate to true\.$#'
@@ -4581,12 +4539,6 @@ parameters:
 		-
 			message: '#^Call to function method_exists\(\) with Project and ''fetchComments'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/eventorganization/conferenceorbooth_contact.php
-
-		-
-			message: '#^Variable \$mode might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/eventorganization/conferenceorbooth_contact.php
 
@@ -4651,18 +4603,6 @@ parameters:
 			path: ../../../htdocs/expedition/card.php
 
 		-
-			message: '#^Variable \$rowEnd might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/expedition/card.php
-
-		-
-			message: '#^Variable \$rowExtrafieldsView might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/expedition/card.php
-
-		-
 			message: '#^Left side of && is always true\.$#'
 			identifier: booleanAnd.leftAlwaysTrue
 			count: 1
@@ -4720,18 +4660,6 @@ parameters:
 			message: '#^Ternary operator condition is always false\.$#'
 			identifier: ternary.alwaysFalse
 			count: 3
-			path: ../../../htdocs/expensereport/card.php
-
-		-
-			message: '#^Variable \$date might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/expensereport/card.php
-
-		-
-			message: '#^Variable \$fk_project might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
 			path: ../../../htdocs/expensereport/card.php
 
 		-
@@ -5383,12 +5311,6 @@ parameters:
 			path: ../../../htdocs/hrm/job_card.php
 
 		-
-			message: '#^Variable \$soc might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/hrm/job_card.php
-
-		-
 			message: '#^Comparison operation "\<" between int\<0, max\> and 0 is always false\.$#'
 			identifier: smaller.alwaysFalse
 			count: 1
@@ -5481,12 +5403,6 @@ parameters:
 		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
-			count: 1
-			path: ../../../htdocs/intracommreport/card.php
-
-		-
-			message: '#^Variable \$soc might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/intracommreport/card.php
 
@@ -6297,12 +6213,6 @@ parameters:
 		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
-			count: 1
-			path: ../../../htdocs/partnership/partnership_card.php
-
-		-
-			message: '#^Variable \$soc might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/partnership/partnership_card.php
 
@@ -8849,12 +8759,6 @@ parameters:
 			identifier: booleanAnd.leftAlwaysFalse
 			count: 1
 			path: ../../../htdocs/webhook/class/target.class.php
-
-		-
-			message: '#^Variable \$soc might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/webhook/target_card.php
 
 		-
 			message: '#^Result of && is always false\.$#'

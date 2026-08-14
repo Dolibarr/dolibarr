@@ -3732,7 +3732,7 @@ if ($action == 'create' && $usercancreate) {
 					}
 					print '</td>';
 					// Display lines extrafields
-					if (!empty($rowExtrafieldsStart)) {
+					if (isset($rowExtrafieldsStart, $rowExtrafieldsView, $rowEnd)) {
 						print $rowExtrafieldsStart;
 						print $rowExtrafieldsView;
 						print $rowEnd;

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2014-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -101,6 +101,7 @@ if ($action == 'deletefile' && $modulepart == 'doctemplates' && !empty($user->ad
 	$keyforuploaddir = GETPOST('keyforuploaddir', 'aZ09');
 	$listofdir = explode(',', preg_replace('/[\r\n]+/', ',', trim(getDolGlobalString($keyforuploaddir))));
 
+	$upload_dir = '';
 	foreach ($listofdir as $key => $tmpdir) {
 		$tmpdir = preg_replace('/DOL_DATA_ROOT\/*/', '', $tmpdir);	// Clean string if we found a hardcoded DOL_DATA_ROOT
 		if (!$tmpdir) {
@@ -118,10 +119,12 @@ if ($action == 'deletefile' && $modulepart == 'doctemplates' && !empty($user->ad
 		}
 	}
 
-	$filetodelete = $tmpdir.'/'.GETPOST('file');
-	$result = dol_delete_file($filetodelete, 1);
-	if ($result > 0) {
-		setEventMessages($langs->trans("FileWasRemoved", GETPOST('file')), null, 'mesgs');
+	if ($upload_dir) {
+		$filetodelete = $upload_dir.'/'.GETPOST('file');
+		$result = dol_delete_file($filetodelete, 1);
+		if ($result > 0) {
+			setEventMessages($langs->trans("FileWasRemoved", GETPOST('file')), null, 'mesgs');
+		}
 	}
 }
 
