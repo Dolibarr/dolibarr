@@ -439,7 +439,8 @@ function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir, $object = 
 	$filearrayindatabase = dol_dir_list_in_database(rtrim($relativedir, "/\\"), '', null, 'name', SORT_ASC, 0, '', $object);
 
 	global $modulepart;
-	if ($modulepart == 'produit' && getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {
+	// Note: $modulepart is 'product' when set by product/document.php, but 'produit' in some other contexts, so we accept both.
+	if (in_array($modulepart, array('produit', 'product')) && getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {
 		// TODO Remove this when PRODUCT_USE_OLD_PATH_FOR_PHOTO will be removed
 		global $object;
 		if (!empty($object->id)) {
@@ -452,7 +453,8 @@ function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir, $object = 
 			$relativedirold = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $upload_dirold);
 			$relativedirold = ltrim($relativedirold, "/\\");
 
-			$filearrayindatabase = array_merge($filearrayindatabase, dol_dir_list_in_database($relativedirold, '', null, 'name', SORT_ASC));
+			// Note: $object must be provided so the entity filter matches the one used to forge $upload_dirold (multicompany)
+			$filearrayindatabase = array_merge($filearrayindatabase, dol_dir_list_in_database($relativedirold, '', null, 'name', SORT_ASC, 0, '', $object));
 		}
 	} elseif ($modulepart == 'ticket') {
 		foreach ($filearray as $key => $val) {
@@ -4049,7 +4051,7 @@ function dragAndDropFileUpload($htmlname)
 	$out = "";
 	$out .= '<div id="'.$htmlname.'Message" class="dragDropAreaMessage hidden"><span>'.img_picto("", 'download').'<br>'.$langs->trans("DropFileToAddItToObject").'</span></div>';
 	$out .= "\n<!-- JS CODE TO ENABLE DRAG AND DROP OF FILE -->\n";
-	$out .= "<script>";
+	$out .= '<script nonce="'.getNonce().'">';
 	$out .= '
 		jQuery(document).ready(function() {
 			var enterTargetDragDrop = null;
