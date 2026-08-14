@@ -2767,7 +2767,7 @@ class Form
 		if (getDolGlobalString('USER_HIDE_INACTIVE_IN_COMBOBOX') || $notdisabled) {
 			$sql .= " AND (u.statut <> 0";
 			if (!empty($selected)) {
-				$sql .= " OR rowid IN (".$this->db->sanitize(implode(',', $selected)).")";	// We must always keep the selected users to avoid to loose it/them when updating
+				$sql .= " OR u.rowid IN (".$this->db->sanitize(implode(',', $selected)).")";	// We must always keep the selected users to avoid to loose it/them when updating
 			}
 			$sql .= ")";
 		}
