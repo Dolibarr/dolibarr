@@ -63,6 +63,7 @@ NoProductToShipFoundIntoStock=No product to ship found in warehouse <b>%s</b>. C
 WeightVolShort=Weight/Vol.
 ValidateOrderFirstBeforeShipment=You must first validate the order before being able to make shipments.
 NoLineGoOnTabToAddSome=No line, go on tab "%s" to add
+ShipmentUpdated=Shipment successfully updated
 
 # Sending methods
 # ModelDocument

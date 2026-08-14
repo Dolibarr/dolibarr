@@ -283,6 +283,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$sql_skill .=" FROM ".MAIN_DB_PREFIX."hrm_skillrank AS sr";
 	$sql_skill .=" JOIN ".MAIN_DB_PREFIX."hrm_skill AS s ON sr.fk_skill = s.rowid";
 	$sql_skill .= " AND sr.fk_object = ".((int) $id);
+	$sql_skill .= " AND sr.objecttype = '".$db->escape($objecttype)."'";
 	$result = $db->query($sql_skill);
 	$numSkills = $db->num_rows($result);
 	for ($i=0; $i < $numSkills; $i++) {

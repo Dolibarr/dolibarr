@@ -3,6 +3,7 @@
  * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2016   Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2023   Romain Neil             <contact@romain-neil.fr>
+ * Copyright (C) 2025	William Mead			<william@m34d.com>
  *
  * This program is free software you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -103,6 +104,23 @@ class Documents extends DolibarrApi
 			throw new RestException(401);
 		}
 
+		if (DolibarrApiAccess::$user->socid > 0) {
+			if ($sqlprotectagainstexternals) {
+				$resql = $this->db->query($sqlprotectagainstexternals);
+				if ($resql) {
+					$num = $this->db->num_rows($resql);
+					$i = 0;
+					while ($i < $num) {
+						$obj = $this->db->fetch_object($resql);
+						if (DolibarrApiAccess::$user->socid != $obj->fk_soc) {
+							throw new RestException(403, 'Not allowed to download documents with such a ref');
+						}
+						$i++;
+					}
+				}
+			}
+		}
+
 		$filename = basename($original_file);
 		$original_file_osencoded = dol_osencode($original_file); // New file name encoded in OS encoding charset
 
@@ -178,6 +196,23 @@ class Documents extends DolibarrApi
 		}
 		if (!$accessallowed) {
 			throw new RestException(401);
+		}
+
+		if (DolibarrApiAccess::$user->socid > 0) {
+			if ($sqlprotectagainstexternals) {
+				$resql = $this->db->query($sqlprotectagainstexternals);
+				if ($resql) {
+					$num = $this->db->num_rows($resql);
+					$i = 0;
+					while ($i < $num) {
+						$obj = $this->db->fetch_object($resql);
+						if (DolibarrApiAccess::$user->socid != $obj->fk_soc) {
+							throw new RestException(403, 'Not allowed to download documents with such a ref');
+						}
+						$i++;
+					}
+				}
+			}
 		}
 
 		// --- Generates the document
@@ -497,7 +532,7 @@ class Documents extends DolibarrApi
 		} elseif ($modulepart == 'expensereport') {
 			require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 
-			if (!DolibarrApiAccess::$user->rights->expensereport->read && !DolibarrApiAccess::$user->rights->expensereport->read) {
+			if (!DolibarrApiAccess::$user->rights->expensereport->lire) {
 				throw new RestException(401);
 			}
 
@@ -971,6 +1006,23 @@ class Documents extends DolibarrApi
 		}
 		if (!$accessallowed) {
 			throw new RestException(401);
+		}
+
+		if (DolibarrApiAccess::$user->socid > 0) {
+			if ($sqlprotectagainstexternals) {
+				$resql = $this->db->query($sqlprotectagainstexternals);
+				if ($resql) {
+					$num = $this->db->num_rows($resql);
+					$i = 0;
+					while ($i < $num) {
+						$obj = $this->db->fetch_object($resql);
+						if (DolibarrApiAccess::$user->socid != $obj->fk_soc) {
+							throw new RestException(403, 'Not allowed to download documents with such a ref');
+						}
+						$i++;
+					}
+				}
+			}
 		}
 
 		$filename = basename($original_file);

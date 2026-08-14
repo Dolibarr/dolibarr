@@ -112,7 +112,7 @@ class box_activity extends ModeleBoxes
 
 			$data = array();
 
-			$sql = "SELECT p.fk_statut, SUM(p.total_ttc) as Mnttot, COUNT(*) as nb";
+			$sql = "SELECT p.fk_statut, SUM(p.total_ttc) as mnttot, COUNT(*) as nb";
 			$sql .= " FROM (".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p";
 			if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -172,7 +172,7 @@ class box_activity extends ModeleBoxes
 
 					$this->info_box_contents[$line][3] = array(
 						'td' => 'class="nowraponall right amount"',
-						'text' => price($data[$j]->Mnttot, 1, $langs, 0, 0, -1, $conf->currency),
+						'text' => price($data[$j]->mnttot, 1, $langs, 0, 0, -1, $conf->currency),
 					);
 					$this->info_box_contents[$line][4] = array(
 						'td' => 'class="right" width="18"',
@@ -201,7 +201,7 @@ class box_activity extends ModeleBoxes
 
 			$data = array();
 
-			$sql = "SELECT c.fk_statut, sum(c.total_ttc) as Mnttot, count(*) as nb";
+			$sql = "SELECT c.fk_statut, sum(c.total_ttc) as mnttot, count(*) as nb";
 			$sql .= " FROM (".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as c";
 			if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -258,7 +258,7 @@ class box_activity extends ModeleBoxes
 
 					$this->info_box_contents[$line][3] = array(
 						'td' => 'class="nowraponall right amount"',
-						'text' => price($data[$j]->Mnttot, 1, $langs, 0, 0, -1, $conf->currency),
+						'text' => price($data[$j]->mnttot, 1, $langs, 0, 0, -1, $conf->currency),
 					);
 					$this->info_box_contents[$line][4] = array(
 						'td' => 'class="right" width="18"',
@@ -286,7 +286,7 @@ class box_activity extends ModeleBoxes
 
 			// part 1
 			$data = array();
-			$sql = "SELECT f.fk_statut, SUM(f.total_ttc) as Mnttot, COUNT(*) as nb";
+			$sql = "SELECT f.fk_statut, SUM(f.total_ttc) as mnttot, COUNT(*) as nb";
 			$sql .= " FROM (".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
 			if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -343,7 +343,7 @@ class box_activity extends ModeleBoxes
 
 					$this->info_box_contents[$line][3] = array(
 						'td' => 'class="nowraponall right amount"',
-						'text' => price($data[$j]->Mnttot, 1, $langs, 0, 0, -1, $conf->currency)
+						'text' => price($data[$j]->mnttot, 1, $langs, 0, 0, -1, $conf->currency)
 					);
 
 					// We add only for the current year
@@ -367,7 +367,7 @@ class box_activity extends ModeleBoxes
 
 			// part 2
 			$data = array();
-			$sql = "SELECT f.fk_statut, SUM(f.total_ttc) as Mnttot, COUNT(*) as nb";
+			$sql = "SELECT f.fk_statut, SUM(f.total_ttc) as mnttot, COUNT(*) as nb";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
 			$sql .= " WHERE f.entity IN (".getEntity('invoice').')';
 			$sql .= " AND f.fk_soc = s.rowid";
@@ -416,7 +416,7 @@ class box_activity extends ModeleBoxes
 					$totalnb += $data[$j]->nb;
 					$this->info_box_contents[$line][3] = array(
 						'td' => 'class="nowraponall right amount"',
-						'text' => price($data[$j]->Mnttot, 1, $langs, 0, 0, -1, $conf->currency),
+						'text' => price($data[$j]->mnttot, 1, $langs, 0, 0, -1, $conf->currency),
 					);
 					$this->info_box_contents[$line][4] = array(
 						'td' => 'class="right" width="18"',

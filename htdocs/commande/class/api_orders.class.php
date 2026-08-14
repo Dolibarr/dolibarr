@@ -662,7 +662,13 @@ class Orders extends DolibarrApi
 				continue;
 			}
 
-			$this->commande->$field = $value;
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->commande->array_options[$index] = $this->_checkValForAPI($field, $val, $this->commande);
+				}
+				continue;
+			}
+			$this->commande->$field = $this->_checkValForAPI($field, $value, $this->commande);
 		}
 
 		// Update availability

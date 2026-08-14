@@ -261,7 +261,6 @@ class FormSetup
 			$this->errors = $hookmanager->errors;
 			return -1;
 		}
-
 		if ($reshook > 0) {
 			return $reshook;
 		}

@@ -470,7 +470,7 @@ if (empty($reshook)) {
 	// Action to add a message (private or not, with email or not).
 	// This may also send an email (concatenated with email_intro and email footer if checkbox was selected)
 	if ($action == 'add_message' && GETPOSTISSET('btn_add_message') && $permissiontoread) {
-		$ret = $object->newMessage($user, $action, (GETPOST('private_message', 'alpha') == "on" ? 1 : 0), 0);
+		$ret = $object->newMessage($user, $action, GETPOSTINT('private_message'), 0);
 
 		if ($ret > 0) {
 			if (!empty($backtopage)) {
@@ -642,8 +642,8 @@ if (empty($reshook)) {
 		// Reopen ticket
 		if ($object->fetch(GETPOST('id', 'int'), GETPOST('track_id', 'alpha')) >= 0) {
 			$new_status = GETPOST('new_status', 'int');
-			//$old_status = $object->status;
-			$res = $object->setStatut($new_status);
+
+			$res = $object->setStatut($new_status, null, '', 'TICKET_MODIFY');
 			if ($res) {
 				$url = 'card.php?track_id='.$object->track_id;
 				header("Location: ".$url);
@@ -742,6 +742,11 @@ if ($action == 'create' || $action == 'presend') {
 	print load_fiche_titre($langs->trans('NewTicket'), '', 'ticket');
 
 	$formticket->trackid = '';		// TODO Use a unique key 'tic' to avoid conflict in upload file feature
+
+	if (GETPOST("mode", "aZ09") == 'init' && empty($_POST)) {
+		$formticket->clear_attached_files();
+	}
+
 	$formticket->withfromsocid = $socid ? $socid : $user->socid;
 	$formticket->withfromcontactid = $contactid ? $contactid : '';
 	$formticket->withtitletopic = 1;

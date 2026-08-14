@@ -165,7 +165,7 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 			//case 'ORDER_CLASSIFY_BILLED':
 			//case 'ORDER_SETDRAFT':
 			//case 'LINEORDER_INSERT':
-			//case 'LINEORDER_UPDATE':
+			//case 'LINEORDER_MODIFY':
 			//case 'LINEORDER_DELETE':
 
 			// Supplier orders
@@ -180,7 +180,7 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 			//case 'ORDER_SUPPLIER_RECEIVE':
 			//case 'LINEORDER_SUPPLIER_DISPATCH':
 			//case 'LINEORDER_SUPPLIER_CREATE':
-			//case 'LINEORDER_SUPPLIER_UPDATE':
+			//case 'LINEORDER_SUPPLIER_MODIFY':
 			//case 'LINEORDER_SUPPLIER_DELETE':
 
 			// Proposals
@@ -192,7 +192,7 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 			//case 'PROPAL_CLOSE_REFUSED':
 			//case 'PROPAL_DELETE':
 			//case 'LINEPROPAL_INSERT':
-			//case 'LINEPROPAL_UPDATE':
+			//case 'LINEPROPAL_MODIFY':
 			//case 'LINEPROPAL_DELETE':
 
 			// SupplierProposal
@@ -204,7 +204,7 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 			//case 'SUPPLIER_PROPOSAL_CLOSE_REFUSED':
 			//case 'SUPPLIER_PROPOSAL_DELETE':
 			//case 'LINESUPPLIER_PROPOSAL_INSERT':
-			//case 'LINESUPPLIER_PROPOSAL_UPDATE':
+			//case 'LINESUPPLIER_PROPOSAL_MODIFY':
 			//case 'LINESUPPLIER_PROPOSAL_DELETE':
 
 			// Contracts
@@ -215,7 +215,7 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 			//case 'CONTRACT_CLOSE':
 			//case 'CONTRACT_DELETE':
 			//case 'LINECONTRACT_INSERT':
-			//case 'LINECONTRACT_UPDATE':
+			//case 'LINECONTRACT_MODIFY':
 			//case 'LINECONTRACT_DELETE':
 
 			// Bills
@@ -228,19 +228,19 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 			//case 'BILL_DELETE':
 			//case 'BILL_PAYED':
 			//case 'LINEBILL_INSERT':
-			//case 'LINEBILL_UPDATE':
+			//case 'LINEBILL_MODIFY':
 			//case 'LINEBILL_DELETE':
 
 			//Supplier Bill
 			//case 'BILL_SUPPLIER_CREATE':
-			//case 'BILL_SUPPLIER_UPDATE':
+			//case 'BILL_SUPPLIER_MODIFY':
 			//case 'BILL_SUPPLIER_DELETE':
 			//case 'BILL_SUPPLIER_PAYED':
 			//case 'BILL_SUPPLIER_UNPAYED':
 			//case 'BILL_SUPPLIER_VALIDATE':
 			//case 'BILL_SUPPLIER_UNVALIDATE':
 			//case 'LINEBILL_SUPPLIER_CREATE':
-			//case 'LINEBILL_SUPPLIER_UPDATE':
+			//case 'LINEBILL_SUPPLIER_MODIFY':
 			//case 'LINEBILL_SUPPLIER_DELETE':
 
 			// Payments
@@ -256,7 +256,7 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 
 			// Donation
 			//case 'DON_CREATE':
-			//case 'DON_UPDATE':
+			//case 'DON_MODIFY':
 			//case 'DON_DELETE':
 
 			// Interventions
@@ -265,7 +265,7 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 			//case 'FICHINTER_VALIDATE':
 			//case 'FICHINTER_DELETE':
 			//case 'LINEFICHINTER_CREATE':
-			//case 'LINEFICHINTER_UPDATE':
+			//case 'LINEFICHINTER_MODIFY':
 			//case 'LINEFICHINTER_DELETE':
 
 			// Members

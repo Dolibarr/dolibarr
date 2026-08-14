@@ -180,7 +180,7 @@ class box_validated_projects extends ModeleBoxes
 
 					$this->info_box_contents[$i][] = array(
 						'td' => 'class="center"',
-						'text' => $objp->startDate,
+						'text' => $objp->startdate,
 					);
 
 					$this->info_box_contents[$i][] = array(

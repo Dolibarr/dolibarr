@@ -250,7 +250,6 @@ function dol_dir_list_in_database($path, $filter = "", $excludefilter = null, $s
 	} else {
 		$sql .= " AND filepath = '".$db->escape($path)."'";
 	}
-
 	$resql = $db->query($sql);
 	if ($resql) {
 		$file_list = array();
@@ -310,9 +309,10 @@ function dol_dir_list_in_database($path, $filter = "", $excludefilter = null, $s
  *
  * @param	array	$filearray			Array of files obtained using dol_dir_list
  * @param	string	$relativedir		Relative dir from DOL_DATA_ROOT
+ * @param	int		$noCreateEcmFile	Manages ECM file creation
  * @return	void
  */
-function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir)
+function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir, $noCreateEcmFile = 0)
 {
 	global $conf, $db, $user;
 
@@ -359,7 +359,6 @@ function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir)
 				break;
 			}
 		}
-
 		if (!$found) {    // This happen in transition toward version 6, or if files were added manually into os dir.
 			$filearray[$key]['position'] = '999999'; // File not indexed are at end. So if we add a file, it will not replace an existing position
 			$filearray[$key]['cover'] = 0;
@@ -368,7 +367,7 @@ function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir)
 
 			$rel_filename = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $filearray[$key]['fullname']);
 
-			if (!preg_match('/([\\/]temp[\\/]|[\\/]thumbs|\.meta$)/', $rel_filename)) {     // If not a tmp file
+			if (!preg_match('/([\\/]temp[\\/]|[\\/]thumbs|\.meta$)/', $rel_filename) && $noCreateEcmFile == 0) {     // If not a tmp file
 				dol_syslog("list_of_documents We found a file called '".$filearray[$key]['name']."' not indexed into database. We add it");
 				include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
 				$ecmfile = new EcmFiles($db);
@@ -1450,6 +1449,7 @@ function dol_delete_file($file, $disableglob = 0, $nophperrors = 0, $nohook = 0,
 					}
 				}
 			} else {
+				$ok = true; // nothing to delete when glob is on must return ok
 				dol_syslog("No files to delete found", LOG_DEBUG);
 			}
 		} else {
@@ -2645,7 +2645,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$original_file = $dolibarr_main_data_root.'/doctemplates/'.$original_file;
 	} elseif ($modulepart == 'doctemplateswebsite' && !empty($dolibarr_main_data_root)) {
 		// Wrapping for doctemplates of websites
-		$accessallowed = ($fuser->rights->website->write && preg_match('/\.jpg$/i', basename($original_file)));
+		$accessallowed = ($fuser->hasRight('website', 'write') && preg_match('/\.jpg$/i', basename($original_file)));
 		$original_file = $dolibarr_main_data_root.'/doctemplates/websites/'.$original_file;
 	} elseif ($modulepart == 'packages' && !empty($dolibarr_main_data_root)) {
 		// Wrapping for *.zip package files, like when used with url http://.../document.php?modulepart=packages&file=module_myfile.zip
@@ -2902,7 +2902,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$original_file = $conf->fckeditor->dir_output.'/'.$original_file;
 	} elseif ($modulepart == 'user' && !empty($conf->user->dir_output)) {
 		// Wrapping for users
-		$canreaduser = (!empty($fuser->admin) || $fuser->rights->user->user->{$lire});
+		$canreaduser = (!empty($fuser->admin) || $fuser->hasRight('user', 'user', $lire));
 		if ($fuser->id == (int) $refname) {
 			$canreaduser = 1;
 		} // A user can always read its own card
@@ -3174,16 +3174,20 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	} elseif ($modulepart == 'export' && !empty($conf->export->dir_temp)) {
 		// Wrapping for export module
 		// Note that a test may not be required because we force the dir of download on the directory of the user that export
-		$accessallowed = $user->rights->export->lire;
+		$accessallowed = $user->hasRight('export', 'lire');
 		$original_file = $conf->export->dir_temp.'/'.$fuser->id.'/'.$original_file;
 	} elseif ($modulepart == 'import' && !empty($conf->import->dir_temp)) {
 		// Wrapping for import module
-		$accessallowed = $user->rights->import->run;
+		$accessallowed = $user->hasRight('import', 'run');
 		$original_file = $conf->import->dir_temp.'/'.$original_file;
 	} elseif ($modulepart == 'recruitment' && !empty($conf->recruitment->dir_output)) {
 		// Wrapping for recruitment module
 		$accessallowed = $user->hasRight('recruitment', 'recruitmentjobposition', 'read');
 		$original_file = $conf->recruitment->dir_output.'/'.$original_file;
+	} elseif ($modulepart == 'hrm' && !empty($conf->hrm->dir_output)) {
+		// Wrapping for hrm module
+		$accessallowed = $user->hasRight('hrm', 'all', 'read');
+		$original_file = $conf->hrm->dir_output.'/'.$original_file;
 	} elseif ($modulepart == 'editor' && !empty($conf->fckeditor->dir_output)) {
 		// Wrapping for wysiwyg editor
 		$accessallowed = 1;
@@ -3288,7 +3292,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 				exit;
 			}
 
-			// Check fuser->rights->modulepart->myobject->read and fuser->rights->modulepart->read
+			// Check fuser->hasRight('modulepart', 'myobject', 'read') and fuser->hasRight('modulepart', 'read')
 			$partsofdirinoriginalfile = explode('/', $original_file);
 			if (!empty($partsofdirinoriginalfile[1])) {	// If original_file is xxx/filename (xxx is a part we will use)
 				$partofdirinoriginalfile = $partsofdirinoriginalfile[0];

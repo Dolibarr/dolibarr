@@ -350,33 +350,36 @@ if ($filter_datecloture_start != '' && $filter_opcloture == -1) {
 }
 
 if (!empty($filter_opouvertureprevue) && $filter_opouvertureprevue != -1 && $filter_opouvertureprevue != ' BETWEEN ' && $filter_dateouvertureprevue_start != '') {
-	$sql .= " AND cd.date_ouverture_prevue ".$filter_opouvertureprevue." '".$db->idate($filter_dateouvertureprevue_start)."'";
+	$sql .= " AND cd.date_ouverture_prevue ".preg_replace('/[^<>]/', '', $filter_opouvertureprevue)." '".$db->idate($filter_dateouvertureprevue_start)."'";
 }
 if (!empty($filter_opouvertureprevue) && $filter_opouvertureprevue == ' BETWEEN ') {
-	$sql .= " AND cd.date_ouverture_prevue ".$filter_opouvertureprevue." '".$db->idate($filter_dateouvertureprevue_start)."' AND '".$db->idate($filter_dateouvertureprevue_end)."'";
+	$sql .= " AND cd.date_ouverture_prevue ".$db->sanitize($filter_opouvertureprevue)." '".$db->idate($filter_dateouvertureprevue_start)."' AND '".$db->idate($filter_dateouvertureprevue_end)."'";
 }
 if (!empty($filter_op1) && $filter_op1 != -1 && $filter_op1 != ' BETWEEN ' && $filter_date1_start != '') {
-	$sql .= " AND cd.date_ouverture ".$filter_op1." '".$db->idate($filter_date1_start)."'";
+	$sql .= " AND cd.date_ouverture ".preg_replace('/[^<>]/', '', $filter_op1)." '".$db->idate($filter_date1_start)."'";
 }
 if (!empty($filter_op1) && $filter_op1 == ' BETWEEN ') {
-	$sql .= " AND cd.date_ouverture ".$filter_op1." '".$db->idate($filter_date1_start)."' AND '".$db->idate($filter_date1_end)."'";
+	$sql .= " AND cd.date_ouverture ".$db->sanitize($filter_op1)." '".$db->idate($filter_date1_start)."' AND '".$db->idate($filter_date1_end)."'";
 }
 if (!empty($filter_op2) && $filter_op2 != -1 && $filter_op2 != ' BETWEEN ' && $filter_date2_start != '') {
-	$sql .= " AND cd.date_fin_validite ".$filter_op2." '".$db->idate($filter_date2_start)."'";
+	$sql .= " AND cd.date_fin_validite ".preg_replace('/[^<>]/', '', $filter_op2)." '".$db->idate($filter_date2_start)."'";
 }
 if (!empty($filter_op2) && $filter_op2 == ' BETWEEN ') {
-	$sql .= " AND cd.date_fin_validite ".$filter_op2." '".$db->idate($filter_date2_start)."' AND '".$db->idate($filter_date2_end)."'";
+	$sql .= " AND cd.date_fin_validite ".$db->sanitize($filter_op2)." '".$db->idate($filter_date2_start)."' AND '".$db->idate($filter_date2_end)."'";
 }
 if (!empty($filter_opcloture) && $filter_opcloture != ' BETWEEN ' && $filter_opcloture != -1 && $filter_datecloture_start != '') {
-	$sql .= " AND cd.date_cloture ".$filter_opcloture." '".$db->idate($filter_datecloture_start)."'";
+	$sql .= " AND cd.date_cloture ".preg_replace('/[^<>]/', '', $filter_opcloture)." '".$db->idate($filter_datecloture_start)."'";
 }
 if (!empty($filter_opcloture) && $filter_opcloture == ' BETWEEN ') {
-	$sql .= " AND cd.date_cloture ".$filter_opcloture." '".$db->idate($filter_datecloture_start)."' AND '".$db->idate($filter_datecloture_end)."'";
+	$sql .= " AND cd.date_cloture ".$db->sanitize($filter_opcloture)." '".$db->idate($filter_datecloture_start)."' AND '".$db->idate($filter_datecloture_end)."'";
 }
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 
-//print $sql;
+// Add where from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
 
 // Count total nb of records
 $nbtotalofrecords = '';
@@ -488,6 +491,10 @@ if ($filter_datecloture_start != '') {
 }
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
+// Add $param from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$param .= $hookmanager->resPrint;
 
 // List of mass actions available
 $arrayofmassactions = array(

@@ -516,7 +516,7 @@ class modProduct extends DolibarrModules
 			'p.price_min' => "MinPrice",
 			'p.price_ttc' => "SellingPriceTTC", //with tax
 			'p.price_min_ttc' => "SellingMinPriceTTC",
-			'p.price_base_type' => "PriceBaseType", //price base: with-tax (TTC) or without (HT) tax. Displays accordingly in Product card
+			'p.price_base_type' => "PriceBaseType*", //price base: with-tax (TTC) or without (HT) tax. Displays accordingly in Product card
 			'p.tva_tx' => 'VATRate',
 			'p.datec' => 'DateCreation',
 			'p.cost_price' => "CostPrice"
@@ -603,7 +603,8 @@ class modProduct extends DolibarrModules
 			'p.recuperableonly' => '^[0|1]$',
 		);
 
-		if (isModEnabled('stock')) {//if Stock module enabled
+		// Complete if Stock module enabled
+		if (isModEnabled('stock')) {
 			$this->import_fields_array[$r] = array_merge($this->import_fields_array[$r], array(
 				'p.fk_default_warehouse'=>'DefaultWarehouse',
 				'p.tobatch'=>'ManageLotSerial',
@@ -914,7 +915,10 @@ class modProduct extends DolibarrModules
 			if (is_object($mysoc) && $usenpr) {
 				$this->import_fields_array[$r] = array_merge($this->import_fields_array[$r], array('pr.recuperableonly'=>'NPR'));
 			}
-			$this->import_regex_array[$r] = array('pr.datec'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$', 'pr.recuperableonly'=>'^[0|1]$');
+			$this->import_regex_array[$r] = array(
+				'pr.datec'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$',
+				'pr.recuperableonly'=>'^[0|1]$'
+			);
 			$this->import_convertvalue_array[$r] = array(
 				'pr.fk_product'=>array('rule'=>'fetchidfromref', 'classfile'=>'/product/class/product.class.php', 'class'=>'Product', 'method'=>'fetch', 'element'=>'Product')
 			);

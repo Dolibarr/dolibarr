@@ -43,7 +43,7 @@ if (!$user->admin) {
 
 $usersignature = $user->signature;
 // For action = test or send, we ensure that content is not html, even for signature, because for this we want a test with NO html.
-if ($action == 'test' || ($action == 'send' && $trackid = 'test')) {
+if ($action == 'test' || ($action == 'send' && $trackid == 'test')) {
 	$usersignature = dol_string_nohtmltag($usersignature, 2);
 }
 

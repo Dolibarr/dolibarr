@@ -269,8 +269,12 @@ class CMailFile
 				// Note because media links are public, this should be useless, except avoid blocking images with email browser.
 				// This convert an embedd file with src="/viewimage.php?modulepart... into a cid link
 				// TODO Exclude viewimage used for the read tracker ?
-				$findimg = $this->findHtmlImages($dolibarr_main_data_root.'/medias');
-				if ($findimg<0) {
+				$dolibarr_main_data_root_images=$dolibarr_main_data_root;
+				if ((int) $conf->entity !== 1) {
+					$dolibarr_main_data_root_images.='/'.$conf->entity.'/';
+				}
+				$findimg = $this->findHtmlImages($dolibarr_main_data_root_images.'/medias');
+				if ($findimg < 0) {
 					dol_syslog("CMailFile::CMailfile: Error on findHtmlImages");
 					$this->error = 'ErrorInAddAttachementsImageBaseOnMedia';
 					return;
@@ -321,7 +325,7 @@ class CMailFile
 			foreach ($filename_list as $i => $val) {
 				if ($filename_list[$i]) {
 					$this->atleastonefile = 1;
-					dol_syslog("CMailFile::CMailfile: filename_list[$i]=".$filename_list[$i].", mimetype_list[$i]=".$mimetype_list[$i]." mimefilename_list[$i]=".$mimefilename_list[$i]." cid_list[$i]=".$cid_list[$i], LOG_DEBUG);
+					dol_syslog("CMailFile::CMailfile: filename_list[$i]=".$filename_list[$i].", mimetype_list[$i]=".$mimetype_list[$i]." mimefilename_list[$i]=".$mimefilename_list[$i]." cid_list[$i]=".(empty($cid_list[$i]) ? '' : $cid_list[$i]), LOG_DEBUG);
 				}
 			}
 		}
@@ -694,7 +698,7 @@ class CMailFile
 				$this->error = "Error in hook maildao sendMail ".$reshook;
 				dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
 
-				return $reshook;
+				return false;
 			}
 			if ($reshook == 1) {	// Hook replace standard code
 				return true;

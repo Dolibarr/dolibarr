@@ -217,7 +217,13 @@ class Warehouses extends DolibarrApi
 				continue;
 			}
 
-			$this->warehouse->$field = $value;
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->warehouse->array_options[$index] = $this->_checkValForAPI($field, $val, $this->warehouse);
+				}
+				continue;
+			}
+			$this->warehouse->$field = $this->_checkValForAPI($field, $value, $this->warehouse);
 		}
 
 		if ($this->warehouse->update($id, DolibarrApiAccess::$user)) {

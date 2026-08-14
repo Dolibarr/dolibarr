@@ -170,25 +170,25 @@ function testSqlAndScriptInject($val, $type)
 	$inj += preg_match('/=data:/si', $val);
 	// List of dom events is on https://www.w3schools.com/jsref/dom_obj_event.asp and https://developer.mozilla.org/en-US/docs/Web/Events
 	$inj += preg_match('/on(mouse|drag|key|load|touch|pointer|select|transition)[a-z]*\s*=/i', $val); // onmousexxx can be set on img or any html tag like <img title='...' onmouseover=alert(1)>
-	$inj += preg_match('/on(abort|after|animation|auxclick|before|blur|cancel|canplay|canplaythrough|change|click|close|contextmenu|cuechange|copy|cut)[a-z]*\s*=/i', $val);
+	$inj += preg_match('/on(abort|after|animation|auxclick|before|blur|bounce|cancel|canplay|canplaythrough|change|click|close|contextmenu|cuechange|copy|cut)[a-z]*\s*=/i', $val);
 	$inj += preg_match('/on(dblclick|drop|durationchange|emptied|end|ended|error|focus|focusin|focusout|formdata|gotpointercapture|hashchange|input|invalid)[a-z]*\s*=/i', $val);
 	$inj += preg_match('/on(lostpointercapture|offline|online|pagehide|pageshow)[a-z]*\s*=/i', $val);
 	$inj += preg_match('/on(paste|pause|play|playing|progress|ratechange|reset|resize|scroll|search|seeked|seeking|show|stalled|start|submit|suspend)[a-z]*\s*=/i', $val);
 	$inj += preg_match('/on(timeupdate|toggle|unload|volumechange|waiting|wheel)[a-z]*\s*=/i', $val);
 	// More not into the previous list
-	$inj += preg_match('/on(repeat|begin|finish|beforeinput)[a-z]*\s*=/i', $val);
+	$inj += preg_match('/on(repeat|begin|finish)[a-z]*\s*=/i', $val);
 
 	// We refuse html into html because some hacks try to obfuscate evil strings by inserting HTML into HTML. Example: <img on<a>error=alert(1) to bypass test on onerror
 	$tmpval = preg_replace('/<[^<]+>/', '', $val);
 	// List of dom events is on https://www.w3schools.com/jsref/dom_obj_event.asp and https://developer.mozilla.org/en-US/docs/Web/Events
 	$inj += preg_match('/on(mouse|drag|key|load|touch|pointer|select|transition)[a-z]*\s*=/i', $tmpval); // onmousexxx can be set on img or any html tag like <img title='...' onmouseover=alert(1)>
-	$inj += preg_match('/on(abort|after|animation|auxclick|before|blur|cancel|canplay|canplaythrough|change|click|close|contextmenu|cuechange|copy|cut)[a-z]*\s*=/i', $tmpval);
+	$inj += preg_match('/on(abort|after|animation|auxclick|before|blur|bounce|cancel|canplay|canplaythrough|change|click|close|contextmenu|cuechange|copy|cut)[a-z]*\s*=/i', $tmpval);
 	$inj += preg_match('/on(dblclick|drop|durationchange|emptied|end|ended|error|focus|focusin|focusout|formdata|gotpointercapture|hashchange|input|invalid)[a-z]*\s*=/i', $tmpval);
 	$inj += preg_match('/on(lostpointercapture|offline|online|pagehide|pageshow)[a-z]*\s*=/i', $tmpval);
 	$inj += preg_match('/on(paste|pause|play|playing|progress|ratechange|reset|resize|scroll|search|seeked|seeking|show|stalled|start|submit|suspend)[a-z]*\s*=/i', $tmpval);
 	$inj += preg_match('/on(timeupdate|toggle|unload|volumechange|waiting|wheel)[a-z]*\s*=/i', $tmpval);
 	// More not into the previous list
-	$inj += preg_match('/on(repeat|begin|finish|beforeinput)[a-z]*\s*=/i', $tmpval);
+	$inj += preg_match('/on(repeat|begin|finish)[a-z]*\s*=/i', $tmpval);
 
 	//$inj += preg_match('/on[A-Z][a-z]+\*=/', $val);   // To lock event handlers onAbort(), ...
 	$inj += preg_match('/&#58;|&#0000058|&#x3A/i', $val); // refused string ':' encoded (no reason to have it encoded) to lock 'javascript:...'
@@ -296,6 +296,13 @@ if (!empty($_SERVER['DOCUMENT_ROOT']) && substr($_SERVER['DOCUMENT_ROOT'], -6) !
 
 // Include the conf.php and functions.lib.php and security.lib.php. This defined the constants like DOL_DOCUMENT_ROOT, DOL_DATA_ROOT, DOL_URL_ROOT...
 require_once 'filefunc.inc.php';
+/**
+ * @var ?string $php_session_save_handler
+ * @var ?string $dolibarr_main_force_https
+ * @var ?string $dolibarr_main_restrict_ip
+ * @var ?string $dolibarr_nocsrfcheck
+ * @var ?string $dolibarr_main_demo
+ */
 
 // If there is a POST parameter to tell to save automatically some POST parameters into cookies, we do it.
 // This is used for example by form of boxes to save personalization of some options.
@@ -640,33 +647,38 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 		// Note: There is another CSRF protection into the filefunc.inc.php
 }
 
-		// Disable modules (this must be after session_start and after conf has been loaded)
-if (GETPOSTISSET('disablemodules')) {
-	$_SESSION["disablemodules"] = GETPOST('disablemodules', 'alpha');
-}
-if (!empty($_SESSION["disablemodules"])) {
-	$modulepartkeys = array('css', 'js', 'tabs', 'triggers', 'login', 'substitutions', 'menus', 'theme', 'sms', 'tpl', 'barcode', 'models', 'societe', 'hooks', 'dir', 'syslog', 'tpllinkable', 'contactelement', 'moduleforexternal');
 
-	$disabled_modules = explode(',', $_SESSION["disablemodules"]);
-	foreach ($disabled_modules as $module) {
-		if ($module) {
-			if (empty($conf->$module)) {
-				$conf->$module = new stdClass(); // To avoid warnings
-			}
-			$conf->$module->enabled = false;
-			foreach ($modulepartkeys as $modulepartkey) {
-				unset($conf->modules_parts[$modulepartkey][$module]);
-			}
-			if ($module == 'fournisseur') {		// Special case
-				$conf->supplier_order->enabled = 0;
-				$conf->supplier_invoice->enabled = 0;
+if (!empty($dolibarr_main_demo)) {
+	// Disable modules (this must be after session_start and after conf has been loaded)
+	if (GETPOSTISSET('disablemodules')) {
+		$_SESSION["disablemodules"] = GETPOST('disablemodules', 'alpha');
+	}
+	if (!empty($_SESSION["disablemodules"])) {
+		$modulepartkeys = array('css', 'js', 'tabs', 'triggers', 'login', 'substitutions', 'menus', 'theme', 'sms', 'tpl', 'barcode', 'models', 'societe', 'hooks', 'dir', 'syslog', 'tpllinkable', 'contactelement', 'moduleforexternal');
+
+		$disabled_modules = explode(',', $_SESSION["disablemodules"]);
+		foreach ($disabled_modules as $module) {
+			if ($module) {
+				if (empty($conf->$module)) {
+					$conf->$module = new stdClass(); 	// To avoid warnings
+				}
+
+				$conf->$module->enabled = false;		// Old usage
+
+				foreach ($modulepartkeys as $modulepartkey) {
+					unset($conf->modules_parts[$modulepartkey][$module]);
+				}
+				if ($module == 'fournisseur') {		// Special case
+					$conf->supplier_order->enabled = 0;
+					$conf->supplier_invoice->enabled = 0;
+				}
 			}
 		}
 	}
 }
 
-		// Set current modulepart
-		$modulepart = explode("/", $_SERVER["PHP_SELF"]);
+// Set current modulepart
+$modulepart = explode("/", $_SERVER["PHP_SELF"]);
 if (is_array($modulepart) && count($modulepart) > 0) {
 	foreach ($conf->modules as $module) {
 		if (in_array($module, $modulepart)) {

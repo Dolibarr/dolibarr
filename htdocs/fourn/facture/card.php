@@ -13,6 +13,7 @@
  * Copyright (C) 2019       Ferran Marcet	        <fmarcet@2byte.es>
  * Copyright (C) 2022       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2023		Nick Fragoulis
+ * Copyright (C) 2026		Lionel Vessiller		<lvessiller@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -688,6 +689,15 @@ if (empty($reshook)) {
 				$discount->tva_tx = 0;
 				$discount->vat_src_code = '';
 
+				// multi-currency
+				$discount->multicurrency_code = $object->multicurrency_code;
+				$discount->multicurrency_tx = $object->multicurrency_tx;
+				$discount->multicurrency_total_ht = $discount->multicurrency_total_ttc = (float) price2num((float) $discount->amount_ttc * (float) $object->multicurrency_tx, 'MT');
+				$discount->multicurrency_total_tva = 0;
+				// keep compatibility
+				$discount->multicurrency_amount_ht = $discount->multicurrency_amount_ttc = $discount->multicurrency_total_ttc;
+				$discount->multicurrency_amount_tva = 0;
+
 				$result = $discount->create($user);
 				if ($result < 0) {
 					$error++;
@@ -698,9 +708,16 @@ if (empty($reshook)) {
 					$discount->amount_ht = abs($amount_ht[$tva_tx]);
 					$discount->amount_tva = abs($amount_tva[$tva_tx]);
 					$discount->amount_ttc = abs($amount_ttc[$tva_tx]);
-					$discount->multicurrency_amount_ht = abs($multicurrency_amount_ht[$tva_tx]);
-					$discount->multicurrency_amount_tva = abs($multicurrency_amount_tva[$tva_tx]);
-					$discount->multicurrency_amount_ttc = abs($multicurrency_amount_ttc[$tva_tx]);
+					// multi-currency
+					$discount->multicurrency_code = $object->multicurrency_code;
+					$discount->multicurrency_tx = $object->multicurrency_tx;
+					$discount->multicurrency_total_ht = abs((float) $multicurrency_amount_ht[$tva_tx]);
+					$discount->multicurrency_total_tva = abs((float) $multicurrency_amount_tva[$tva_tx]);
+					$discount->multicurrency_total_ttc = abs((float) $multicurrency_amount_ttc[$tva_tx]);
+					// keep compatibility
+					$discount->multicurrency_amount_ht = $discount->multicurrency_total_ht;
+					$discount->multicurrency_amount_tva = $discount->multicurrency_total_tva;
+					$discount->multicurrency_amount_ttc = $discount->multicurrency_total_ttc;
 
 					// Clean vat code
 					$reg = array();
@@ -1111,7 +1128,7 @@ if (empty($reshook)) {
 					$object->origin_id = GETPOST('originid', 'int');
 
 
-					require_once DOL_DOCUMENT_ROOT.'/'.$element.'/class/'.$subelement.'.class.php';
+					dol_include_once('/'.$element.'/class/'.$subelement.'.class.php');
 					$classname = ucfirst($subelement);
 					if ($classname == 'Fournisseur.commande') {
 						$classname = 'CommandeFournisseur';
@@ -1139,7 +1156,7 @@ if (empty($reshook)) {
 
 					// Add lines
 					if ($id > 0) {
-						require_once DOL_DOCUMENT_ROOT.'/'.$element.'/class/'.$subelement.'.class.php';
+						dol_include_once('/'.$element.'/class/'.$subelement.'.class.php');
 						$classname = ucfirst($subelement);
 						if ($classname == 'Fournisseur.commande') {
 							$classname = 'CommandeFournisseur';
@@ -1324,6 +1341,11 @@ if (empty($reshook)) {
 									$date_end = $lines[$i]->date_end;
 								}
 
+								$tva_tx = $lines[$i]->tva_tx;
+								if (!empty($lines[$i]->vat_src_code) && !preg_match('/\(/', $tva_tx)) {
+									$tva_tx .= ' ('.$lines[$i]->vat_src_code.')';
+								}
+
 								// FIXME Missing special_code  into addline and updateline methods
 								$object->special_code = $lines[$i]->special_code;
 
@@ -1340,7 +1362,7 @@ if (empty($reshook)) {
 								$result = $object->addline(
 									$desc,
 									$pu,
-									$lines[$i]->tva_tx,
+									$tva_tx,
 									$lines[$i]->localtax1_tx,
 									$lines[$i]->localtax2_tx,
 									$lines[$i]->qty,
@@ -2092,7 +2114,7 @@ if ($action == 'create') {
 			$subelement = 'fournisseur.commande';
 		}
 
-		require_once DOL_DOCUMENT_ROOT.'/'.$element.'/class/'.$subelement.'.class.php';
+		dol_include_once('/'.$element.'/class/'.$subelement.'.class.php');
 		$classname = ucfirst($subelement);
 		if ($classname == 'Fournisseur.commande') {
 			$classname = 'CommandeFournisseur';
@@ -2691,7 +2713,9 @@ if ($action == 'create') {
 			require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
 			print '<tr><td>' . $langs->trans('VATReverseCharge') . '</td><td>';
 			// Try to propose to use VAT reverse charge even if the VAT reverse charge is not activated in the supplier card, if this corresponds to the context of use, the activation is proposed
-			if ($vat_reverse_charge == 1 || $societe->vat_reverse_charge == 1 || ($societe->country_code != 'FR' && isInEEC($societe) && !empty($societe->tva_intra))) {
+			if (GETPOSTISSET('vat_reverse_charge')) {  // Check if form was submitted previously
+				$vat_reverse_charge = (GETPOST('vat_reverse_charge', 'alpha') == 'on' || GETPOST('vat_reverse_charge', 'alpha') == '1') ? 1 : 0;
+			} elseif ($vat_reverse_charge == 1 || $societe->vat_reverse_charge == 1 || ($societe->country_code != 'FR' && isInEEC($societe) && !empty($societe->tva_intra))) {
 				$vat_reverse_charge = 1;
 			} else {
 				$vat_reverse_charge = 0;
@@ -3169,14 +3193,12 @@ if ($action == 'create') {
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 0, 1);
 		}
 
-		if (!$formconfirm) {
-			$parameters = array('formConfirm' => $formconfirm, 'lineid'=>$lineid);
-			$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-			if (empty($reshook)) {
-				$formconfirm .= $hookmanager->resPrint;
-			} elseif ($reshook > 0) {
-				$formconfirm = $hookmanager->resPrint;
-			}
+		$parameters = array('formConfirm' => $formconfirm, 'lineid'=>$lineid);
+		$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		if (empty($reshook)) {
+			$formconfirm .= $hookmanager->resPrint;
+		} elseif ($reshook > 0) {
+			$formconfirm = $hookmanager->resPrint;
 		}
 
 		// Print form confirm
@@ -4059,7 +4081,7 @@ if ($action == 'create') {
 				}
 
 				// Reverse back money or convert to reduction
-				if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE || $object->type == FactureFournisseur::TYPE_DEPOSIT || $object->type == FactureFournisseur::TYPE_STANDARD) {
+				if ($object->status != FactureFournisseur::STATUS_DRAFT && ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE || $object->type == FactureFournisseur::TYPE_DEPOSIT || $object->type == FactureFournisseur::TYPE_STANDARD)) {
 					// For credit note only
 					if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE && $object->statut == 1 && $object->paye == 0) {
 						if ($resteapayer == 0) {

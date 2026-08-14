@@ -1766,6 +1766,7 @@ if ($action == 'create') {
 	$fk_account = GETPOST('fk_account', 'int');
 
 	// Load objectsrc
+	$objectsrc = null;
 	if (!empty($origin) && !empty($originid)) {
 		// Parse element/subelement (ex: project_task)
 		$element = $subelement = $origin;
@@ -1777,6 +1778,14 @@ if ($action == 'create') {
 
 		if ($element == 'project') {
 			$projectid = $originid;
+
+			// Fetch project and thirdparty
+			$project = new Project($db);
+			$project->fetch($projectid);
+			if ($project->socid > 0) {
+				$soc = new Societe($db);
+				$soc->fetch($project->socid);
+			}
 		} else {
 			// For compatibility
 			if ($element == 'order' || $element == 'commande') {
@@ -1808,9 +1817,9 @@ if ($action == 'create') {
 
 			$soc = $objectsrc->thirdparty;
 
-			$cond_reglement_id 	= (!empty($objectsrc->cond_reglement_id) ? $objectsrc->cond_reglement_id : (!empty($soc->cond_reglement_id) ? $soc->cond_reglement_id : 0));
-			$mode_reglement_id 	= (!empty($objectsrc->mode_reglement_id) ? $objectsrc->mode_reglement_id : (!empty($soc->mode_reglement_id) ? $soc->mode_reglement_id : 0));
-			$warehouse_id       = (!empty($objectsrc->warehouse_id) ? $objectsrc->warehouse_id : (!empty($soc->warehouse_id) ? $soc->warehouse_id : 0));
+			$cond_reglement_id  = (!empty($objectsrc->cond_reglement_id) ? $objectsrc->cond_reglement_id : (!empty($soc->cond_reglement_id) ? $soc->cond_reglement_id : 0));
+			$mode_reglement_id  = (!empty($objectsrc->mode_reglement_id) ? $objectsrc->mode_reglement_id : (!empty($soc->mode_reglement_id) ? $soc->mode_reglement_id : 0));
+			$warehouse_id      = (!empty($objectsrc->warehouse_id) ? $objectsrc->warehouse_id : (!empty($soc->warehouse_id) ? $soc->warehouse_id : 0));
 
 			// Replicate extrafields
 			$objectsrc->fetch_optionals();
@@ -1825,7 +1834,10 @@ if ($action == 'create') {
 				}
 			}
 		}
-	} else {
+	}
+
+	// Load default values from thirdparty
+	if (!empty($soc)) {
 		$cond_reglement_id  = empty($soc->cond_reglement_id) ? $cond_reglement_id : $soc->cond_reglement_id;
 		$deposit_percent    = empty($soc->deposit_percent) ? $deposit_percent : $soc->deposit_percent;
 		$mode_reglement_id  = empty($soc->mode_reglement_id) ? $mode_reglement_id : $soc->mode_reglement_id;
@@ -3157,7 +3169,7 @@ if ($action == 'create') {
 		if ($object->statut != Propal::STATUS_DRAFT && $useonlinesignature) {
 			print '<br><!-- Link to sign -->';
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
-			print showOnlineSignatureUrl('proposal', $object->ref).'<br>';
+			print showOnlineSignatureUrl('proposal', $object->ref, $object).'<br>';
 		}
 
 		print '</div><div class="fichehalfright">';

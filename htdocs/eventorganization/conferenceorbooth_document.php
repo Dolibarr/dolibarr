@@ -86,6 +86,7 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
 
+$upload_dir = $conf->eventorganization->multidir_output[isset($object->entity) ? $object->entity : 1];
 if ($id > 0 || !empty($ref)) {
 	$upload_dir = $conf->eventorganization->multidir_output[$object->entity ? $object->entity : $conf->entity]."/conferenceorbooth/".get_exdir(0, 0, 0, 1, $object);
 }
@@ -96,7 +97,6 @@ $permissiontoadd = $user->rights->eventorganization->write; // Used by the inclu
 $permissiontodelete = $user->rights->eventorganization->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
 $permissionnote = $user->rights->eventorganization->write; // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $user->rights->eventorganization->write; // Used by the include of actions_dellink.inc.php
-$upload_dir = $conf->eventorganization->multidir_output[isset($object->entity) ? $object->entity : 1];
 
 // Security check
 if ($user->socid > 0) {

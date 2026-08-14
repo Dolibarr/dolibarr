@@ -327,6 +327,7 @@ ErrorGeneratingBarcode=Error while generating the barcode (probably invalid code
 ErrorTypeMenu=Impossible to add another menu for the same module on the navbar, not handle yet 
 ErrorObjectNotFound = The object <b>%s</b> is not found, please check your url
 ErrorCountryCodeMustBe2Char=Country code must be a 2 character string
+SomeShipmentExists=Error, there is some shipment linked to the order. Deletion refused.
 
 ErrorTableExist=Table <b>%s</b> already exist
 ErrorDictionaryNotFound=Dictionary <b>%s</b> not found

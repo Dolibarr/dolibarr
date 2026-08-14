@@ -117,12 +117,14 @@ function getDParameters($part)
  */
 function getAttachments($jk, $mbox)
 {
-	$structure = imap_fetchstructure($mbox, $jk, FT_UID);
+	$structure = imap_fetchstructure($mbox, $jk, FT_UID);  // @phan-suppress-current-line PhanTypeMismatchArgumentInternal
 	$parts = getParts($structure);
 	$fpos = 2;
 	$attachments = array();
-	$nb = count($parts);
-	if ($parts && $nb) {
+
+	if (!empty($parts)) {
+		$nb = count($parts);
+
 		for ($i = 1; $i < $nb; $i++) {
 			$part = $parts[$i];
 
@@ -139,6 +141,7 @@ function getAttachments($jk, $mbox)
 			$fpos++;
 		}
 	}
+
 	return $attachments;
 }
 

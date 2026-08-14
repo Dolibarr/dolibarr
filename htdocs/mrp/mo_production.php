@@ -250,7 +250,7 @@ if (empty($reshook)) {
 
 				$i = 1;
 				while (GETPOSTISSET('qty-'.$line->id.'-'.$i)) {
-					$qtytoprocess = price2num(GETPOST('qty-'.$line->id.'-'.$i));
+					$qtytoprocess = (float) price2num(GETPOST('qty-'.$line->id.'-'.$i));
 
 					if ($qtytoprocess != 0) {
 						// Check warehouse is set if we should have to
@@ -1644,6 +1644,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							$href = $_SERVER["PHP_SELF"];
 							$href .= '?id='.$object->id;
 							$href .= '&action=deleteline';
+							$href .= '&token='.newToken();
 							$href .= '&lineid='.$line->id;
 							print '<td class="center">';
 							print '<a class="reposition" href="'.$href.'">';

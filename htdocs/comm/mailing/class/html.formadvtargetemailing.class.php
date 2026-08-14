@@ -255,7 +255,7 @@ class FormAdvTargetEmailing extends Form
 				}
 			}
 			if (!empty($InfoFieldList[1])) {
-				$sql .= " ORDER BY nom";
+				$sql .= $this->db->order($InfoFieldList[1]);
 			}
 			// $sql.= ' WHERE entity = '.$conf->entity;
 
@@ -266,7 +266,7 @@ class FormAdvTargetEmailing extends Form
 				if ($num) {
 					while ($i < $num) {
 						$obj = $this->db->fetch_object($resql);
-						$labeltoshow = dol_trunc($obj->$InfoFieldList[1], 90);
+						$labeltoshow = dol_trunc($obj->{$InfoFieldList[1]}, 90);
 						$options_array[$obj->rowid] = $labeltoshow;
 						$i++;
 					}
@@ -332,6 +332,20 @@ class FormAdvTargetEmailing extends Form
 		global $conf, $langs;
 
 		$form = new Form($this->db);
+		foreach ($options_array as $okey => $val) {
+			if ((string) $okey == '') {
+				continue;
+			}
+
+			$valarray = explode('|', $val);
+			$val = $valarray[0];
+
+			if ($val) {
+				$options_array[$okey] = $langs->trans($val);
+			} else {
+				$options_array[$okey] = $val;
+			}
+		}
 		$return = $form->multiselectarray($htmlname, $options_array, $selected_array, 0, 0, '', 0, 295);
 		return $return;
 	}

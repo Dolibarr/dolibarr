@@ -196,6 +196,7 @@ class CashControl extends CommonObject
 		$sql .= ", cash";
 		$sql .= ", cheque";
 		$sql .= ", card";
+		$sql .= ", fk_user_creat";
 		$sql .= ") VALUES (";
 		//$sql .= "'(PROV)', ";
 		$sql .= ((int) $conf->entity);
@@ -210,6 +211,7 @@ class CashControl extends CommonObject
 		$sql .= ", ".price2num($this->cash, 'MT');
 		$sql .= ", ".price2num($this->cheque, 'MT');
 		$sql .= ", ".price2num($this->card, 'MT');
+		$sql .= ", ".((int) $user->id);
 		$sql .= ")";
 
 		$this->db->begin();

@@ -842,6 +842,7 @@ if ($action == 'addcontainer' && $usercanedit) {
 				// Remove comments
 				$tmp['content'] = removeHtmlComment($tmp['content']);
 
+				/* disable this, moved into the create() method
 				// Check there is no PHP content into the imported file (must be only HTML + JS)
 				$phpcontent = dolKeepOnlyPhpCode($tmp['content']);
 				if ($phpcontent) {
@@ -849,6 +850,7 @@ if ($action == 'addcontainer' && $usercanedit) {
 					setEventMessages('Error getting '.$urltograb.': file that include PHP content is not allowed', null, 'errors');
 					$action = 'createcontainer';
 				}
+				*/
 			}
 
 			if (!$error) {
@@ -1205,6 +1207,7 @@ if ($action == 'addcontainer' && $usercanedit) {
 	}
 
 	if (!$error) {
+		// Create page. This also check there is no PHP content if user has no pemrissions for that.
 		$pageid = $objectpage->create($user);
 		if ($pageid <= 0) {
 			$error++;

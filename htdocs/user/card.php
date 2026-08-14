@@ -440,7 +440,7 @@ if (empty($reshook)) {
 					$object->pass = GETPOST("password", 'none');	// We can keep 'none' for password fields
 				}
 				if ($caneditpasswordandsee || $user->hasRight("api", "apikey", "generate")) {
-					$object->api_key = (GETPOST("api_key", 'alphanohtml')) ? GETPOST("api_key", 'alphanohtml') : $object->api_key;
+					$object->api_key = (GETPOSTISSET("api_key", 'alphanohtml')) ? GETPOST("api_key", 'alphanohtml') : $object->api_key;
 				}
 				if (!empty($user->admin) && $user->id != $id) {
 					// admin flag can only be set/unset by an admin user and not four ourself
@@ -1094,7 +1094,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 	}
 
 	// Other form for user password
-	$parameters = array('valuetoshow' => $valuetoshow, 'password' => $password);
+	$parameters = array('valuetoshow' => $valuetoshow, 'password' => $password, 'caneditpasswordandsee' => $caneditpasswordandsee, 'caneditpasswordandsend' => $caneditpasswordandsend);
 	$reshook = $hookmanager->executeHooks('printUserPasswordField', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	if ($reshook > 0) {
 		$valuetoshow = $hookmanager->resPrint; // to replace
@@ -1897,7 +1897,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			*/
 
 			// Other form for user password
-			$parameters = array('valuetoshow' => $valuetoshow);
+			$parameters = array('valuetoshow' => $valuetoshow, 'caneditpasswordandsee' => $caneditpasswordandsee, 'caneditpasswordandsend' => $caneditpasswordandsend);
 			$reshook = $hookmanager->executeHooks('printUserPasswordField', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 			if ($reshook > 0) {
 				$valuetoshow = $hookmanager->resPrint; // to replace
@@ -2395,26 +2395,28 @@ if ($action == 'create' || $action == 'adduserldap') {
 					$type = $object->contact_id;
 				}
 
+				$eventsCompanyContact = array();
+				$eventsCompanyContact[] = array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php?showempty=1&token='.currentToken(), 1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
 				if ($object->socid > 0 && !($object->contact_id > 0)) {	// external user but no link to a contact
-					print img_picto('', 'company').$form->select_company($object->socid, 'socid', '', '&nbsp;', 0, 0, null, 0, 'maxwidth300');
+					print img_picto('', 'company').$form->select_company($object->socid, 'socid', '', '&nbsp;', 0, 0, $eventsCompanyContact, 0, 'maxwidth300');
 					print img_picto('', 'contact').$form->selectcontacts(0, 0, 'contactid', 1, '', '', 1, 'maxwidth300', false, 1);
 					if ($object->ldap_sid) {
 						print ' ('.$langs->trans("DomainUser").')';
 					}
 				} elseif ($object->socid > 0 && $object->contact_id > 0) {	// external user with a link to a contact
-					print img_picto('', 'company').$form->select_company($object->socid, 'socid', '', '&nbsp;', 0, 0, null, 0, 'maxwidth300'); // We keep thirdparty empty, contact is already set
+					print img_picto('', 'company').$form->select_company($object->socid, 'socid', '', '&nbsp;', 0, 0, $eventsCompanyContact, 0, 'maxwidth300'); // We keep thirdparty empty, contact is already set
 					print img_picto('', 'contact').$form->selectcontacts(0, $object->contact_id, 'contactid', 1, '', '', 1, 'maxwidth300', false, 1);
 					if ($object->ldap_sid) {
 						print ' ('.$langs->trans("DomainUser").')';
 					}
 				} elseif (!($object->socid > 0) && $object->contact_id > 0) {	// internal user with a link to a contact
-					print img_picto('', 'company').$form->select_company(0, 'socid', '', '&nbsp;', 0, 0, null, 0, 'maxwidth300'); // We keep thirdparty empty, contact is already set
+					print img_picto('', 'company').$form->select_company(0, 'socid', '', '&nbsp;', 0, 0, $eventsCompanyContact, 0, 'maxwidth300'); // We keep thirdparty empty, contact is already set
 					print img_picto('', 'contact').$form->selectcontacts(0, $object->contact_id, 'contactid', 1, '', '', 1, 'maxwidth300', false, 1);
 					if ($object->ldap_sid) {
 						print ' ('.$langs->trans("DomainUser").')';
 					}
 				} else {	// $object->socid is not > 0 here
-					print img_picto('', 'company').$form->select_company(0, 'socid', '', '&nbsp;', 0, 0, null, 0, 'maxwidth300'); // We keep thirdparty empty, contact is already set
+					print img_picto('', 'company').$form->select_company(0, 'socid', '', '&nbsp;', 0, 0, $eventsCompanyContact, 0, 'maxwidth300'); // We keep thirdparty empty, contact is already set
 					print img_picto('', 'contact').$form->selectcontacts(0, 0, 'contactid', 1, '', '', 1, 'maxwidth300', false, 1);
 				}
 			}

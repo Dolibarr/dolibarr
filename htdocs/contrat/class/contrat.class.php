@@ -1305,7 +1305,7 @@ class Contrat extends CommonObject
 		if (!$error) {
 			// We remove directory
 			$ref = dol_sanitizeFileName($this->ref);
-			if ($conf->contrat->dir_output) {
+			if ($conf->contrat->dir_output && !empty($ref)) {
 				$dir = $conf->contrat->multidir_output[$this->entity]."/".$ref;
 				if (file_exists($dir)) {
 					$res = @dol_delete_dir_recursive($dir);
@@ -3273,7 +3273,7 @@ class ContratLigne extends CommonObjectLine
 	 *
 	 *  @param	int		$id         Id object
 	 *  @param	string	$ref		Ref of contract line
-	 *  @return int         		Return integer <0 if KO, >0 if OK
+	 *  @return int         		Return integer <0 if KO, >0 if OK, 0 if not found
 	 */
 	public function fetch($id, $ref = '')
 	{
@@ -3291,7 +3291,7 @@ class ContratLigne extends CommonObjectLine
 		$sql .= " t.label,"; // This field is not used. Only label of product
 		$sql .= " p.ref as product_ref,";
 		$sql .= " p.label as product_label,";
-		$sql .= " p.description as product_desc,";
+		$sql .= " p.description as product_description,";
 		$sql .= " p.fk_product_type as product_type,";
 		$sql .= " t.description,";
 		$sql .= " t.date_commande,";
@@ -3393,6 +3393,9 @@ class ContratLigne extends CommonObjectLine
 				$this->rang = $obj->rang;
 
 				$this->fetch_optionals();
+			} else {
+				$this->db->free($resql);
+				return 0;
 			}
 
 			$this->db->free($resql);
@@ -3675,7 +3678,7 @@ class ContratLigne extends CommonObjectLine
 		if ($this->date_end > 0) {
 			$sql .= ",date_fin_validite";
 		}
-		$sql .= ") VALUES ($this->fk_contrat, '', '".$this->db->escape($this->description)."',";
+		$sql .= ") VALUES (".((int) $this->fk_contrat).", '', '".$this->db->escape($this->description)."',";
 		$sql .= ($this->fk_product > 0 ? $this->fk_product : "null").",";
 		$sql .= " '".$this->db->escape($this->qty)."',";
 		$sql .= " '".$this->db->escape($this->vat_src_code)."',";
@@ -3819,15 +3822,13 @@ class ContratLigne extends CommonObjectLine
 
 		$error = 0;
 
-		// statut actif : 4
-
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."contratdet SET statut = ".((int) ContratLigne::STATUS_CLOSED).",";
 		$sql .= " date_cloture = '".$this->db->idate($date_end_real)."',";
 		$sql .= " fk_user_cloture = ".((int) $user->id).",";
 		$sql .= " commentaire = '".$this->db->escape($comment)."'";
-		$sql .= " WHERE rowid = ".((int) $this->id)." AND statut = ".((int) ContratLigne::STATUS_OPEN);
+		$sql .= " WHERE rowid = ".((int) $this->id)." AND statut <> ".((int) ContratLigne::STATUS_CLOSED);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {

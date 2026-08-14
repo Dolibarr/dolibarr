@@ -345,7 +345,6 @@ class EcmFiles extends CommonObject
 		$sql .= ')';
 
 		$this->db->begin();
-
 		$resql = $this->db->query($sql);
 		if (!$resql) {
 			$error++;
