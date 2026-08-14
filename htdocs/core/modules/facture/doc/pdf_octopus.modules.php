@@ -633,6 +633,12 @@ class pdf_octopus extends ModelePDFFactures
 				$this->_pagehead($pdf, $object, 0, $outputlangs, $outputlangsbis);
 				$pdf->setTopMargin($this->tab_top_newpage);
 
+				// From here we are on the second page, which is the first page of the lines. This page
+				// has the short header (no address blocks), so the content must start at
+				// $this->tab_top_newpage and not at $this->tab_top that was computed for the first page.
+				$this->tab_top = $this->tab_top_newpage;
+				$nexY = $this->tab_top - 1;
+
 				// Incoterm
 				$height_incoterms = 0;
 				if (isModEnabled('incoterm')) {
@@ -806,19 +812,77 @@ class pdf_octopus extends ModelePDFFactures
 				//$this->pdfTabTitles($pdf, $this->tab_top, $tab_height, $outputlangs, $hidetop);
 				//$pdf->rollbackTransaction(true);
 
-				// We start the top of first line at tab_top_newpage and not tab_top because
-				// we are already on second page with this template.
-				$nexY = $this->tab_top_newpage + $this->tabTitleHeight;
+				// $this->tab_top holds the top of the table for this first page of lines (it was moved
+				// down if a note was printed above), the following pages use $this->tab_top_newpage.
+				$nexY = $this->tab_top + $this->tabTitleHeight;
+
+				// _tableau() always repeats the column headers, they occupy $this->tabTitleHeight below the
+				// top of the table. So on a page added in the middle of the table the lines must start below
+				// them, exactly like $nexY does above for the first page of lines, otherwise the line that
+				// triggered the page break is written on top of the column headers.
+				$linetop_newpage = $this->tab_top_newpage + $this->tabTitleHeight;
 
 				// Loop on each lines
 				$pageposbeforeprintlines = $pdf->getPage();
 				$pagenb = $pageposbeforeprintlines;
+
+				// Options of the subtotals module inherited from the current title line.
+				// While set, the lines below the title show their unit price / their total.
+				$pdf_sub_options = array();
+				$pdf_sub_options['titleshowuponpdf'] = 1;
+				$pdf_sub_options['titleshowtotalexludingvatonpdf'] = 1;
+
+				// The external module "subtotal" (htdocs/custom/subtotal) uses its own special code and
+				// blanks the standard columns through its hooks (pdf_getlineqty, pdf_getlineprogress, ...),
+				// but it knows nothing about the BTP situation columns added below. Its title, subtotal and
+				// free text lines carry no amount either, so they must be detected here too.
+				$usecustomsubtotal = isModEnabled('subtotal');
+				if ($usecustomsubtotal) {
+					dol_include_once('/subtotal/class/subtotal.class.php');
+					$usecustomsubtotal = class_exists('TSubtotal');
+				}
 
 				for ($i = 0; $i < $nblines; $i++) {
 					$linePosition = $i + 1;
 					$curY = $nexY;
 
 					$posy = $nexY;
+
+					// Subtotals module: is this line a title or a subtotal line, and which options apply?
+					$sub_options = $object->lines[$i]->extraparams["subtotal"] ?? array();
+					$issubtotalline = ($object->lines[$i]->special_code == SUBTOTALS_SPECIAL_CODE);
+
+					// Title, subtotal or free text line of either subtotals module: such a line carries no
+					// amount, all the amount columns must stay empty for it.
+					$isnoamountline = $issubtotalline || ($usecustomsubtotal && TSubtotal::isModSubtotalLine($object->lines[$i]));
+
+					if ($issubtotalline) {
+						$level = $object->lines[$i]->qty;
+						if ($sub_options) {
+							if (isset($sub_options['titleshowuponpdf'])) {
+								$pdf_sub_options['titleshowuponpdf'] = isset($pdf_sub_options['titleshowuponpdf']) && $pdf_sub_options['titleshowuponpdf'] < $level ? $pdf_sub_options['titleshowuponpdf'] : $level;
+							} elseif (isset($pdf_sub_options['titleshowuponpdf']) && abs($level) <= $pdf_sub_options['titleshowuponpdf']) {
+								unset($pdf_sub_options['titleshowuponpdf']);
+							}
+							if (isset($sub_options['titleshowtotalexludingvatonpdf'])) {
+								$pdf_sub_options['titleshowtotalexludingvatonpdf'] = isset($pdf_sub_options['titleshowtotalexludingvatonpdf']) && $pdf_sub_options['titleshowtotalexludingvatonpdf'] < $level ? $pdf_sub_options['titleshowtotalexludingvatonpdf'] : $level;
+							} elseif (isset($pdf_sub_options['titleshowtotalexludingvatonpdf']) && abs($level) <= $pdf_sub_options['titleshowtotalexludingvatonpdf']) {
+								unset($pdf_sub_options['titleshowtotalexludingvatonpdf']);
+							}
+						} else {
+							if (isset($pdf_sub_options['titleshowuponpdf']) && abs($level) <= $pdf_sub_options['titleshowuponpdf']) {
+								unset($pdf_sub_options['titleshowuponpdf']);
+							}
+							if (isset($pdf_sub_options['titleshowtotalexludingvatonpdf']) && abs($level) <= $pdf_sub_options['titleshowtotalexludingvatonpdf']) {
+								unset($pdf_sub_options['titleshowtotalexludingvatonpdf']);
+							}
+						}
+					}
+
+					// Reset the positions collected for the previous line, otherwise a line that prints
+					// nothing (a title line) would inherit the positions of the previous one.
+					$this->resetAfterColsLinePositionsData($nexY, $pdf->getPage());
+
 					$pdf->SetFont('', '', $default_font_size - 1); // Into loop to work with multipage
 					$pdf->SetTextColor(0, 0, 0);
 
@@ -828,7 +892,7 @@ class pdf_octopus extends ModelePDFFactures
 						$imglinesize = pdf_getSizeForImage($realpatharray[$i]);
 					}
 
-					$pdf->setTopMargin($this->tab_top_newpage);
+					$pdf->setTopMargin($linetop_newpage);
 					$pdf->setPageOrientation('', true, $this->heightforfooter + $this->heightforfreetext + $this->heightforinfotot); // The only function to edit the bottom margin of current page to set it.
 					$pageposbefore = $pdf->getPage();
 
@@ -848,7 +912,7 @@ class pdf_octopus extends ModelePDFFactures
 							}
 							$pdf->setPage($pageposbefore + 1);
 							$pdf->setPageOrientation('', true, $this->heightforfooter); // The only function to edit the bottom margin of current page to set it.
-							$posy = $this->tab_top_newpage;
+							$posy = $linetop_newpage;
 							$showpricebeforepagebreak = 0;
 						}
 
@@ -866,7 +930,16 @@ class pdf_octopus extends ModelePDFFactures
 					$pdf->setPageOrientation('', true, $this->heightforfooter); // The only function to edit the bottom margin of current page to set it.
 
 					// Description of product line
-					if ($this->getColumnStatus('desc')) {
+					if ($this->getColumnStatus('desc') && $issubtotalline) {
+						// Title / subtotal line of the subtotals module: colored background + label.
+						// pdf_render_subtotals() opens its own PDF transaction and TCPDF does not stack
+						// them, so this must stay outside of the transaction used for standard lines.
+						$bg_color = colorStringToArray(getDolGlobalString("SUBTOTAL_BACK_COLOR_LEVEL_".abs($object->lines[$i]->qty), 'ffffff'));
+						pdf_render_subtotals($pdf, $this, $posy, $object, $i, $outputlangs, $hideref, $hidedesc, $bg_color, true, true);
+						$pdf->SetTextColor(0, 0, 0);
+						$pageposafter = $pdf->getPage();
+						$posYAfterDescription = $pdf->GetY();
+					} elseif ($this->getColumnStatus('desc')) {
 						$pdf->startTransaction();
 
 						$this->printColDescContent($pdf, $posy, 'desc', $object, $i, $outputlangs, $hideref, $hidedesc);
@@ -915,7 +988,7 @@ class pdf_octopus extends ModelePDFFactures
 					// We suppose that a too long description or photo were moved completely on next page
 					if ($pageposafter > $pageposbefore && empty($showpricebeforepagebreak)) {
 						$pdf->setPage($pageposafter);
-						$posy = $this->tab_top_newpage;
+						$posy = $linetop_newpage;
 					}
 
 					$pdf->SetFont('', '', $default_font_size - 1); // We reposition the default font
@@ -925,15 +998,19 @@ class pdf_octopus extends ModelePDFFactures
 						$this->printStdColumnContent($pdf, $curY, 'position', strval($linePosition));
 					}
 
+					// Title and subtotal lines of the subtotals module carry no amount, they must leave
+					// the amount columns empty. Only a subtotal line gets amounts back, with the total
+					// of its group of lines.
+
 					// VAT Rate
-					if ($this->getColumnStatus('vat')) {
+					if ($this->getColumnStatus('vat') && !$isnoamountline) {
 						$vat_rate = pdf_getlinevatrate($object, $i, $outputlangs, $hidedetails);
 						$this->printStdColumnContent($pdf, $posy, 'vat', $vat_rate);
 						$nexY = max($pdf->GetY(), $nexY);
 					}
 
 					// Unit price before discount
-					if ($this->getColumnStatus('subprice')) {
+					if ($this->getColumnStatus('subprice') && !$isnoamountline && isset($pdf_sub_options['titleshowuponpdf'])) {
 						$up_excl_tax = pdf_getlineupexcltax($object, $i, $outputlangs, $hidedetails);
 						$this->printStdColumnContent($pdf, $posy, 'subprice', $up_excl_tax);
 						$nexY = max($pdf->GetY(), $nexY);
@@ -941,69 +1018,101 @@ class pdf_octopus extends ModelePDFFactures
 
 					// Quantity
 					// Enough for 6 chars
-					if ($this->getColumnStatus('qty')) {
+					if ($this->getColumnStatus('qty') && !$isnoamountline) {
 						$qty = pdf_getlineqty($object, $i, $outputlangs, $hidedetails);
 						$this->printStdColumnContent($pdf, $posy, 'qty', $qty);
 						$nexY = max($pdf->GetY(), $nexY);
 					}
 
 					// Situation progress
-					if ($this->getColumnStatus('progress')) {
+					if ($this->getColumnStatus('progress') && !$isnoamountline) {
 						$progress = pdf_getlineprogress($object, $i, $outputlangs, $hidedetails);
 						$this->printStdColumnContent($pdf, $posy, 'progress', $progress);
 						$nexY = max($pdf->GetY(), $nexY);
 					}
 
 					// Unit
-					if ($this->getColumnStatus('unit')) {
+					if ($this->getColumnStatus('unit') && !$isnoamountline) {
 						$unit = pdf_getlineunit($object, $i, $outputlangs, $hidedetails);
 						$this->printStdColumnContent($pdf, $posy, 'unit', $unit);
 						$nexY = max($pdf->GetY(), $nexY);
 					}
 
 					// Discount on line
-					if ($this->getColumnStatus('discount') && $object->lines[$i]->remise_percent) {
+					if ($this->getColumnStatus('discount') && $object->lines[$i]->remise_percent && !$isnoamountline) {
 						$remise_percent = pdf_getlineremisepercent($object, $i, $outputlangs, $hidedetails);
 						$this->printStdColumnContent($pdf, $posy, 'discount', $remise_percent);
 						$nexY = max($pdf->GetY(), $nexY);
 					}
 
+					// Amounts of the group of lines, for a subtotal line only
+					$subtotalamounts = array();
+					if ($issubtotalline && $object->lines[$i]->qty < 0 && isset($sub_options['subtotalshowtotalexludingvatonpdf'])) {
+						$subtotalamounts = $this->getSubtotalGroupAmounts($object, $i);
+					}
+
 					// Total excl tax line (HT)
 					if ($this->getColumnStatus('totalexcltax')) {
-						$total_excl_tax = pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails);
-						$this->printStdColumnContent($pdf, $posy, 'totalexcltax', $total_excl_tax);
-						$nexY = max($pdf->GetY(), $nexY);
+						if (!$isnoamountline && isset($pdf_sub_options['titleshowtotalexludingvatonpdf'])) {
+							$total_excl_tax = pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails);
+							$this->printStdColumnContent($pdf, $posy, 'totalexcltax', $total_excl_tax);
+							$nexY = max($pdf->GetY(), $nexY);
+						} elseif (!empty($subtotalamounts)) {
+							if (isModEnabled('multicurrency') && $object->multicurrency_code != $conf->currency) {
+								$total_excl_tax = price($subtotalamounts['multicurrency_total_ht'], 0, '', 1, -1, 2);
+							} else {
+								$total_excl_tax = price($subtotalamounts['total_ht'], 0, '', 1, -1, 2);
+							}
+							$this->printStdColumnContent($pdf, $posy, 'totalexcltax', $total_excl_tax);
+							$nexY = max($pdf->GetY(), $nexY);
+						}
 					}
 
 					// Retrieving information from the previous line
 					$TInfosLigneSituationPrecedente = $this->getInfosLineLastSituation($object, $object->lines[$i]);
+					if (!is_array($TInfosLigneSituationPrecedente)) {
+						// No matching line in the previous situation invoice (new line, title line, ...)
+						$TInfosLigneSituationPrecedente = array('progress_prec' => 0, 'total_ht_without_progress' => 0, 'total_ht' => 0);
+					}
 
 					// Sum
 					$columkey = 'btpsomme';
-					if ($this->getColumnStatus($columkey)) {
+					if ($this->getColumnStatus($columkey) && !$isnoamountline) {
 						$printval = price($TInfosLigneSituationPrecedente['total_ht_without_progress'], 0, '', 1, -1, 2);
+						$this->printStdColumnContent($pdf, $posy, $columkey, $printval);
+						$nexY = max($pdf->GetY(), $nexY);
+					} elseif ($this->getColumnStatus($columkey) && !empty($subtotalamounts)) {
+						$printval = price($subtotalamounts['total_ht_without_progress'], 0, '', 1, -1, 2);
 						$this->printStdColumnContent($pdf, $posy, $columkey, $printval);
 						$nexY = max($pdf->GetY(), $nexY);
 					}
 
 					// Current progress
 					$columkey = 'progress_amount';
-					if ($this->getColumnStatus($columkey)) {
+					if ($this->getColumnStatus($columkey) && !$isnoamountline) {
 						$printval = price($object->lines[$i]->total_ht, 0, '', 1, -1, 2);
+						$this->printStdColumnContent($pdf, $posy, $columkey, $printval);
+						$nexY = max($pdf->GetY(), $nexY);
+					} elseif ($this->getColumnStatus($columkey) && !empty($subtotalamounts)) {
+						$printval = price($subtotalamounts['total_ht'], 0, '', 1, -1, 2);
 						$this->printStdColumnContent($pdf, $posy, $columkey, $printval);
 						$nexY = max($pdf->GetY(), $nexY);
 					}
 					// Previous progress line
 					$columkey = 'prev_progress';
-					if ($this->getColumnStatus($columkey)) {
+					if ($this->getColumnStatus($columkey) && !$isnoamountline) {
 						$printval = $TInfosLigneSituationPrecedente['progress_prec'].'%';
 						$this->printStdColumnContent($pdf, $posy, $columkey, $printval);
 						$nexY = max($pdf->GetY(), $nexY);
 					}
 					// Previous progress amount
 					$columkey = 'prev_progress_amount';
-					if ($this->getColumnStatus($columkey)) {
+					if ($this->getColumnStatus($columkey) && !$isnoamountline) {
 						$printval = price($TInfosLigneSituationPrecedente['total_ht'], 0, '', 1, -1, 2);
+						$this->printStdColumnContent($pdf, $posy, $columkey, $printval);
+						$nexY = max($pdf->GetY(), $nexY);
+					} elseif ($this->getColumnStatus($columkey) && !empty($subtotalamounts)) {
+						$printval = price($subtotalamounts['prev_total_ht'], 0, '', 1, -1, 2);
 						$this->printStdColumnContent($pdf, $posy, $columkey, $printval);
 						$nexY = max($pdf->GetY(), $nexY);
 					}
@@ -1025,75 +1134,80 @@ class pdf_octopus extends ModelePDFFactures
 					if (isset($object->type) && $object->type == 2 && getDolGlobalString('INVOICE_POSITIVE_CREDIT_NOTE')) {
 						$sign = -1;
 					}
-					// Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva
-					$prev_progress = $object->lines[$i]->get_prev_progress($object->id);
-					if ($prev_progress > 0 && !empty($object->lines[$i]->situation_percent)) { // Compute progress from previous situation
-						if (isModEnabled("multicurrency") && $object->multicurrency_tx != 1) {
-							$tvaligne = $sign * $object->lines[$i]->multicurrency_total_tva * ($object->lines[$i]->situation_percent - $prev_progress) / $object->lines[$i]->situation_percent;
+
+					// Title and subtotal lines carry no amount and no VAT, they must not be added to the
+					// VAT summary (and there is no previous situation line to look for either).
+					if (!$isnoamountline) {
+						// Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva
+						$prev_progress = $object->lines[$i]->get_prev_progress($object->id);
+						if ($prev_progress > 0 && !empty($object->lines[$i]->situation_percent)) { // Compute progress from previous situation
+							if (isModEnabled("multicurrency") && $object->multicurrency_tx != 1) {
+								$tvaligne = $sign * $object->lines[$i]->multicurrency_total_tva * ($object->lines[$i]->situation_percent - $prev_progress) / $object->lines[$i]->situation_percent;
+							} else {
+								$tvaligne = $sign * $object->lines[$i]->total_tva * ($object->lines[$i]->situation_percent - $prev_progress) / $object->lines[$i]->situation_percent;
+							}
 						} else {
-							$tvaligne = $sign * $object->lines[$i]->total_tva * ($object->lines[$i]->situation_percent - $prev_progress) / $object->lines[$i]->situation_percent;
+							if (isModEnabled("multicurrency") && $object->multicurrency_tx != 1) {
+								$tvaligne = $sign * $object->lines[$i]->multicurrency_total_tva;
+							} else {
+								$tvaligne = $sign * $object->lines[$i]->total_tva;
+							}
 						}
-					} else {
-						if (isModEnabled("multicurrency") && $object->multicurrency_tx != 1) {
-							$tvaligne = $sign * $object->lines[$i]->multicurrency_total_tva;
+
+						$localtax1ligne = $object->lines[$i]->total_localtax1;
+						$localtax2ligne = $object->lines[$i]->total_localtax2;
+						$localtax1_rate = $object->lines[$i]->localtax1_tx;
+						$localtax2_rate = $object->lines[$i]->localtax2_tx;
+						$localtax1_type = $object->lines[$i]->localtax1_type;
+						$localtax2_type = $object->lines[$i]->localtax2_type;
+
+						$vatrate = (string) $object->lines[$i]->tva_tx;
+
+						// Retrieve type from database for backward compatibility with old records
+						if ((!isset($localtax1_type) || $localtax1_type == '' || !isset($localtax2_type) || $localtax2_type == '') // if tax type not defined
+							&& (!empty($localtax1_rate) || !empty($localtax2_rate))) { // and there is local tax
+							$localtaxtmp_array = getLocalTaxesFromRate($vatrate, 0, $object->thirdparty, $mysoc);
+							$localtax1_type = isset($localtaxtmp_array[0]) ? $localtaxtmp_array[0] : '';
+							$localtax2_type = isset($localtaxtmp_array[2]) ? $localtaxtmp_array[2] : '';
+						}
+
+						// retrieve global local tax
+						if ($localtax1_type && $localtax1ligne != 0) {
+							if (empty($this->localtax1[$localtax1_type][$localtax1_rate])) {
+								$this->localtax1[$localtax1_type][$localtax1_rate] = $localtax1ligne;
+							} else {
+								$this->localtax1[$localtax1_type][$localtax1_rate] += $localtax1ligne;
+							}
+						}
+						if ($localtax2_type && $localtax2ligne != 0) {
+							if (empty($this->localtax2[$localtax2_type][$localtax2_rate])) {
+								$this->localtax2[$localtax2_type][$localtax2_rate] = $localtax2ligne;
+							} else {
+								$this->localtax2[$localtax2_type][$localtax2_rate] += $localtax2ligne;
+							}
+						}
+
+						if (($object->lines[$i]->info_bits & 0x01) == 0x01) {
+							$vatrate .= '*';
+						}
+
+						// Fill $this->tva and $this->tva_array
+						if (!isset($this->tva[$vatrate])) {
+							$this->tva[$vatrate] = 0;
+						}
+						$this->tva[$vatrate] += $tvaligne;	// ->tva is abandoned, we use now ->tva_array that is more complete
+						$vatcode = $object->lines[$i]->vat_src_code;
+						if (empty($this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'])) {
+							$this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'] = 0;
+						}
+						if (getDolGlobalInt('PDF_INVOICE_SHOW_VAT_ANALYSIS')) {
+							if (empty($this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['tot_ht'])) {
+								$this->tva_array[$vatrate . ($vatcode ? ' (' . $vatcode . ')' : '')]['tot_ht'] = 0;
+							}
+							$this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')] = array('vatrate' => $vatrate, 'vatcode' => $vatcode, 'amount' => $this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'] + $tvaligne, 'tot_ht' => $this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['tot_ht'] + $object->lines[$i]->total_ht);
 						} else {
-							$tvaligne = $sign * $object->lines[$i]->total_tva;
+							$this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')] = array('vatrate' => $vatrate, 'vatcode' => $vatcode, 'amount' => $this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'] + $tvaligne);
 						}
-					}
-
-					$localtax1ligne = $object->lines[$i]->total_localtax1;
-					$localtax2ligne = $object->lines[$i]->total_localtax2;
-					$localtax1_rate = $object->lines[$i]->localtax1_tx;
-					$localtax2_rate = $object->lines[$i]->localtax2_tx;
-					$localtax1_type = $object->lines[$i]->localtax1_type;
-					$localtax2_type = $object->lines[$i]->localtax2_type;
-
-					$vatrate = (string) $object->lines[$i]->tva_tx;
-
-					// Retrieve type from database for backward compatibility with old records
-					if ((!isset($localtax1_type) || $localtax1_type == '' || !isset($localtax2_type) || $localtax2_type == '') // if tax type not defined
-						&& (!empty($localtax1_rate) || !empty($localtax2_rate))) { // and there is local tax
-						$localtaxtmp_array = getLocalTaxesFromRate($vatrate, 0, $object->thirdparty, $mysoc);
-						$localtax1_type = isset($localtaxtmp_array[0]) ? $localtaxtmp_array[0] : '';
-						$localtax2_type = isset($localtaxtmp_array[2]) ? $localtaxtmp_array[2] : '';
-					}
-
-					// retrieve global local tax
-					if ($localtax1_type && $localtax1ligne != 0) {
-						if (empty($this->localtax1[$localtax1_type][$localtax1_rate])) {
-							$this->localtax1[$localtax1_type][$localtax1_rate] = $localtax1ligne;
-						} else {
-							$this->localtax1[$localtax1_type][$localtax1_rate] += $localtax1ligne;
-						}
-					}
-					if ($localtax2_type && $localtax2ligne != 0) {
-						if (empty($this->localtax2[$localtax2_type][$localtax2_rate])) {
-							$this->localtax2[$localtax2_type][$localtax2_rate] = $localtax2ligne;
-						} else {
-							$this->localtax2[$localtax2_type][$localtax2_rate] += $localtax2ligne;
-						}
-					}
-
-					if (($object->lines[$i]->info_bits & 0x01) == 0x01) {
-						$vatrate .= '*';
-					}
-
-					// Fill $this->tva and $this->tva_array
-					if (!isset($this->tva[$vatrate])) {
-						$this->tva[$vatrate] = 0;
-					}
-					$this->tva[$vatrate] += $tvaligne;	// ->tva is abandoned, we use now ->tva_array that is more complete
-					$vatcode = $object->lines[$i]->vat_src_code;
-					if (empty($this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'])) {
-						$this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'] = 0;
-					}
-					if (getDolGlobalInt('PDF_INVOICE_SHOW_VAT_ANALYSIS')) {
-						if (empty($this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['tot_ht'])) {
-							$this->tva_array[$vatrate . ($vatcode ? ' (' . $vatcode . ')' : '')]['tot_ht'] = 0;
-						}
-						$this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')] = array('vatrate' => $vatrate, 'vatcode' => $vatcode, 'amount' => $this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'] + $tvaligne, 'tot_ht' => $this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['tot_ht'] + $object->lines[$i]->total_ht);
-					} else {
-						$this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')] = array('vatrate' => $vatrate, 'vatcode' => $vatcode, 'amount' => $this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'] + $tvaligne);
 					}
 
 					$afterPosData = $this->getMaxAfterColsLinePositionsData();
@@ -1158,7 +1272,9 @@ class pdf_octopus extends ModelePDFFactures
 
 				// Show square
 				// special for situation invoices
-				$tabtop = $this->tab_top_newpage;
+				// When everything fits on the first page of lines, the frame of the table must start at
+				// $this->tab_top (below the note) and not at $this->tab_top_newpage.
+				$tabtop = ($pdf->getPage() == $pageposbeforeprintlines) ? $this->tab_top : $this->tab_top_newpage;
 				$tabhauteur = $this->page_hauteur - $tabtop - $this->heightforfooter - $this->heightforinfotot - $this->heightforfreetext;
 				$tabTitleHeight = 0;
 				$this->_tableau($pdf, $tabtop, $tabhauteur, 0, $outputlangs, $hidetop, 1, $object->multicurrency_code, $outputlangsbis);
@@ -3508,6 +3624,54 @@ class pdf_octopus extends ModelePDFFactures
 				);
 			}
 		}
+	}
+
+	/**
+	 * Return the amounts of the group of lines summarized by a subtotal line.
+	 *
+	 * Same walk as CommonSubtotal::getSubtotalLineAmount(): we go up from the subtotal line and
+	 * accumulate every standard line until we meet the title line that opened the group (a title
+	 * line whose level is lower or equal to the level of the subtotal line). Nested title and
+	 * subtotal lines are skipped so nothing is counted twice.
+	 *
+	 * @param	Facture	$object		Invoice
+	 * @param	int		$idx		Index in $object->lines of the subtotal line
+	 * @return	array{total_ht:float,multicurrency_total_ht:float,total_ht_without_progress:float,prev_total_ht:float}
+	 */
+	protected function getSubtotalGroupAmounts($object, $idx)
+	{
+		$res = array(
+			'total_ht' => 0.0,
+			'multicurrency_total_ht' => 0.0,
+			'total_ht_without_progress' => 0.0,
+			'prev_total_ht' => 0.0,
+		);
+
+		$level = abs((float) $object->lines[$idx]->qty);
+
+		for ($j = $idx - 1; $j >= 0; $j--) {
+			$line = $object->lines[$j];
+			if (empty($line)) {
+				continue;
+			}
+			if ($line->special_code == SUBTOTALS_SPECIAL_CODE) {
+				if ($line->qty > 0 && $line->qty <= $level) {
+					break;	// Title line that opened the group: we stop here
+				}
+				continue;	// Nested title or nested subtotal: not a real line, skip it
+			}
+
+			$res['total_ht'] += (float) $line->total_ht;
+			$res['multicurrency_total_ht'] += (float) $line->multicurrency_total_ht;
+
+			$infoprev = $this->getInfosLineLastSituation($object, $line);
+			if (is_array($infoprev)) {
+				$res['total_ht_without_progress'] += (float) $infoprev['total_ht_without_progress'];
+				$res['prev_total_ht'] += (float) $infoprev['total_ht'];
+			}
+		}
+
+		return $res;
 	}
 
 	/**
