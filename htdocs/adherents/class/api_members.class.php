@@ -424,6 +424,10 @@ class Members extends DolibarrApi
 		}
 
 		foreach ($request_data as $field => $value) {
+			if (in_array($field, array('pass', 'pass_crypted', 'pass_indatabase', 'pass_indatabase_crypted', 'pass_temp', 'api_key'))) {
+				// This properties can't be set/modified with API
+				throw new RestException(405, 'The property '.$field." can't be set/modified using the APIs");
+			}
 			if ($field == 'id') {
 				continue;
 			}
