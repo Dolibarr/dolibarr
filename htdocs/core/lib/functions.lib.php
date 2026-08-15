@@ -11938,7 +11938,8 @@ function dol_eval($s, $returnvalue = 1, $hideerrors = 1, $onlysimplestring = '1'
 		dol_syslog("Use of dol_eval with parameter returnvalue = 0 is now forbidden. Please fix this", LOG_ERR);
 	}
 
-	if (getDolGlobalString("MAIN_USE_DOL_EVAL_NEW")) {
+	global $dolibarr_main_use_dol_eval_new;			// experimental option, not yet ready
+	if (!empty($dolibarr_main_use_dol_eval_new)) {
 		return dol_eval_new($s);
 	} else {
 		return dol_eval_standard($s, $hideerrors, $onlysimplestring);
@@ -12413,28 +12414,36 @@ function dol_eval_standard($s, $hideerrors = 1, $onlysimplestring = '1')
 
 			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("override_function", "session_id", "session_create_id", "session_regenerate_id"));
 			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("get_defined_functions", "get_defined_vars", "get_defined_constants", "get_declared_classes"));
-			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("function", "call_user_func", "call_user_func_array"));
+			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("function"));
 
-			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("array_all", "array_any", "array_diff_ukey", "array_filter", "array_find", "array_find_key", "array_map", "array_reduce", "array_intersect_uassoc", "array_intersect_ukey", "array_walk", "array_walk_recursive"));
-			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("usort", "uasort", "uksort", "preg_replace_callback", "preg_replace_callback_array", "header_register_callback"));
-			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("error_log", "set_error_handler", "set_exception_handler", "libxml_set_external_entity_loader", "register_shutdown_function", "register_tick_function", "unregister_tick_function"));
-			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("spl_autoload_register", "spl_autoload_unregister", "iterator_apply", "session_set_save_handler"));
-			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("forward_static_call", "forward_static_call_array", "register_postsend_function"));
+			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("GETPOST"));	// native dolibarr functions
 
 			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("ob_start"));
 
-			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("require", "include", "require_once", "include_once"));
+			// Functions with callable parameters
+			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("call_user_func", "call_user_func_array"));
+			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("array_all", "array_any", "array_diff_ukey", "array_filter", "array_find", "array_find_key", "array_map", "array_reduce", "array_intersect_uassoc", "array_intersect_ukey", "array_walk", "array_walk_recursive"));
+			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("usort", "uasort", "uksort"));
+			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("preg_replace_callback", "preg_replace_callback_array", "header_register_callback"));
+			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("error_log", "set_error_handler", "set_exception_handler", "libxml_set_external_entity_loader", "register_shutdown_function", "register_tick_function", "unregister_tick_function"));
+			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("spl_autoload_register", "spl_autoload_unregister", "iterator_apply", "session_set_save_handler"));
+			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("forward_static_call", "forward_static_call_array", "register_postsend_function"));
+			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("readline_completion_function", "readline_callback_handler_install"));
+
+			// Exec functions
 			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("exec", "passthru", "shell_exec", "system", "proc_open", "popen"));
 			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("pcntl_alarm", "pcntl_exec", "pcntl_fork", "pcntl_waitpid", "pcntl_wait", "pcntl_wifexited", "pcntl_wifstopped", "pcntl_wifsignaled", "pcntl_wifcontinued", "pcntl_wexitstatus", "pcntl_wtermsig", "pcntl_wstopsig", "pcntl_signal"));
 			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("pcntl_signal_get_handler", "pcntl_signal_dispatch", "pcntl_get_last_error", "pcntl_strerror", "pcntl_sigprocmask", "pcntl_sigwaitinfo", "pcntl_sigtimedwait", "pcntl_getpriority", "pcntl_async_signals", "pcntl_unshare", ));
 			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("putenv", "dl", "apache_child_terminate", "apache_setenv"));
-			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("posix_kill", "posix_setuid", "posix_setgid"));
-			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("dol_eval", "dol_eval_new", "dol_eval_standard", "executeCLI", "verifCond", "GETPOST", "dolEncrypt", "dolDecrypt"));	// native dolibarr functions
+			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("dol_eval", "dol_eval_new", "dol_eval_standard", "executeCLI", "verifCond", "dolEncrypt", "dolDecrypt"));	// native dolibarr functions
 			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("eval", "create_function", "assert", "mb_ereg_replace")); // function with eval capabilities
-			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("readline_completion_function", "readline_callback_handler_install"));
+
+			// Include functions
+			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("require", "include", "require_once", "include_once"));
+
 			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("dol_compress_dir", "dol_decode", "dol_dir_list", "dol_dir_list_in_database", "dol_delete_file", "dol_delete_dir", "dol_delete_dir_recursive", "dol_copy", "archiveOrBackupFile")); // more dolibarr functions
-			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("chdir", "dir", "fopen", "file", "file_exists", "file_get_contents", "file_put_contents", "fget", "fgetc", "fgetcsv", "fputs", "fputscsv", "fpassthru", "fscanf", "fseek", "fwrite", "is_file", "is_dir", "is_link", "mkdir", "opendir", "rmdir", "scandir", "symlink", "touch", "unlink", "umask"));
-			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("require", "include"));
+			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("chdir", "dir", "fopen", "file", "file_exists", "file_get_contents", "file_put_contents", "fget", "fgetc", "fgetcsv", "flock", "fputs", "fputscsv", "fpassthru", "fscanf", "fseek", "fwrite", "is_file", "is_dir", "is_link", "mkdir", "opendir", "rmdir", "scandir", "symlink", "touch", "unlink", "umask"));
+
 			if (!getDolGlobalString('MAIN_ALLOW_OBFUSCATION_METHODS_IN_DOL_EVAL')) {	// We disallow all function that allow to obfuscate the real name of a function
 				// @phpcs:ignore
 				$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("base64" . "_" . "decode", "rawurl" . "decode", "url" . "decode", "str" . "_rot13", "hex" . "2bin", "printf", "sprintf")); // name of forbidden functions are split to avoid false positive
@@ -12456,7 +12465,7 @@ function dol_eval_standard($s, $hideerrors = 1, $onlysimplestring = '1')
 			}*/
 
 			$forbiddenphpregex = 'global\s*\$';
-			$forbiddenphpregex .= '|';
+			$forbiddenphpregex .= '|posix_[a-zA-Z0-9_]*|';		// All posix functions
 			$forbiddenphpregex .= '\b(' . implode('|', $forbiddenphpfunctions) . ')\b';
 
 			$forbiddenphpmethodsregex = '->(' . implode('|', $forbiddenphpmethods) . ')';
