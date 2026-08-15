@@ -111,7 +111,7 @@ function stock_admin_prepare_head()
 	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'stock_admin');
 
-	$head[$h][0] = DOL_URL_ROOT.'/product/admin/stock_extrafields.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'entrepot'));
 	$head[$h][1] = $langs->trans("ExtraFields");
 	$nbExtrafields = $extrafields->attributes['entrepot']['count'];
 	if ($nbExtrafields > 0) {
@@ -120,7 +120,7 @@ function stock_admin_prepare_head()
 	$head[$h][2] = 'attributes';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/product/admin/stock_mouvement_extrafields.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'stock_mouvement'));
 	$head[$h][1] = $langs->trans("StockMouvementExtraFields");
 	$nbExtrafields = $extrafields->attributes['stock_mouvement']['count'];
 	if ($nbExtrafields > 0) {
@@ -129,7 +129,7 @@ function stock_admin_prepare_head()
 	$head[$h][2] = 'stockMouvementAttributes';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/product/admin/inventory_extrafields.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'inventory'));
 	$head[$h][1] = $langs->trans("InventoryExtraFields");
 	$nbExtrafields = $extrafields->attributes['inventory']['count'];
 	if ($nbExtrafields > 0) {
