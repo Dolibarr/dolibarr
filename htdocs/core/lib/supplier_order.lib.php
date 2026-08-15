@@ -192,7 +192,7 @@ function supplier_order_admin_prepare_head()
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'supplierorder_admin');
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/supplier_order/admin/supplierorder_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'commande_fournisseur'));
 	$head[$h][1] = $langs->trans("ExtraFieldsSupplierOrders");
 	$nbExtrafields = $extrafields->attributes['commande_fournisseur']['count'];
 	if ($nbExtrafields > 0) {
@@ -201,7 +201,7 @@ function supplier_order_admin_prepare_head()
 	$head[$h][2] = 'supplierorder';
 	$h++;
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/supplier_order/admin/supplierorderdet_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'commande_fournisseurdet'));
 	$head[$h][1] = $langs->trans("ExtraFieldsSupplierOrdersLines");
 	$nbExtrafields = $extrafields->attributes['commande_fournisseurdet']['count'];
 	if ($nbExtrafields > 0) {
