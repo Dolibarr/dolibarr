@@ -43,6 +43,7 @@
  * @var ?int $nomessageinsetmoduleoptions
  * @var ?string $modulepart
  * @var ?string $websitetemplateconf
+ * @var ?string $upload_dir
  * @var ?array<string,mixed> $arrayofparameters
  */
 
@@ -51,14 +52,14 @@
 @phan-var-force string $action
 @phan-var-force int $error
 @phan-var-force ?string $modulepart
+@phan-var-force ?string $websitetemplateconf
+@phan-var-force ?string $upload_dir
 ';
 
 if (($action == 'update' || !empty($websitetemplateconf)) && !empty($formSetup) && is_object($formSetup) && !empty($user->admin)) {
 	$formSetup->saveConfFromPost();
 	return;
 }
-
-$upload_dir = null;
 
 if (($action == 'update' || !empty($websitetemplateconf)) && !empty($arrayofparameters) && is_array($arrayofparameters) && !empty($user->admin)) {
 	$db->begin();
