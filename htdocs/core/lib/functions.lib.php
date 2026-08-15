@@ -11921,6 +11921,7 @@ function verifCond($strToEvaluate, $onlysimplestring = '1')
 /**
  * Replace eval function to add more security.
  * This function is called by verifCond() for example.
+ * To test non-regression on this, run "phpunit test/phpunit/SecurityTest.php"
  *
  * @param 	string		$s					String to evaluate
  * @param	int<0,1>	$returnvalue		0=No return (deprecated, used to execute eval($a=something)). 1=Value of eval is returned (used to eval($something)).
