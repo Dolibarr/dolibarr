@@ -37,6 +37,7 @@
  * @var	string $forceFullTextIndexation
  */
 '
+@phan-var-force CommonObject $object
 @phan-var-force string $upload_dir
 @phan-var-force string $upload_dirold
 @phan-var-force string $confirm

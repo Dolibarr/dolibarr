@@ -47,6 +47,7 @@ return [
         'htdocs/compta/tva/class/paymentvat.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/compta/tva/clients.php' => ['PhanTypeArraySuspiciousNull', 'PhanTypeInvalidDimOffset'],
         'htdocs/core/actions_addupdatedelete.inc.php' => ['PhanUndeclaredProperty'],
+        'htdocs/core/actions_linkedfiles.inc.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/actions_massactions.inc.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/actions_sendmails.inc.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/ajax/ajaxdirtree.php' => ['PhanTypeMismatchArgument'],
