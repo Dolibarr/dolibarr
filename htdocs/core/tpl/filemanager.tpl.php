@@ -55,6 +55,7 @@ if (empty($conf) || !is_object($conf)) {
 @phan-var-force EcmDirectory $ecmdir
 @phan-var-force ?string $module
 @phan-var-force int $section
+@phan-var-force string $websitekey
 ';
 
 ?>
