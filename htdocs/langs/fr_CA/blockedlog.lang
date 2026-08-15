@@ -92,7 +92,6 @@ WeFoundThisFullRegistrationNumberForThisKey=Nous avons trouvé le numéro d'enre
 AuthenticityCantBeVerifiedIfFullRegistrationNumberNotProvided=L'authenticité (instance d'origine utilisée pour la création du fichier) ne peut être vérifiée si le numéro d'enregistrement complet de l'instance n'est pas fourni.
 NoBackupRestorationOrLastLineDeletionDetected=Aucune restauration de sauvegarde (ou suppression des dernières lignes) n'a été détectée pour l'instance avec ce numéro d'enregistrement.
 BlockedLogInstance=Exemple
-IncludesAllHelp=Inclut tous les enregistrements, même ceux effectués avec une version antérieure à la v24. Sur les versions antérieures à la v24, le montant hors taxes nécessaire au calcul rapide du total cumulé n'était pas enregistré dans le journal inaltérable et ne sera donc pas inclus dans le rapport.
 OnlyFromV2Help=Après la version v24, le montant hors taxes pour le calcul rapide du total cumulé a été enregistré dans le journal inaltérable, il est donc rapporté, mais la plage de dates peut être inférieure à celle de l'option « Tout inclut ».
 ForPeriodAndFilters=Pour la période et les filtres
 logBILL_DELETE=Facture client logiquement supprimée
