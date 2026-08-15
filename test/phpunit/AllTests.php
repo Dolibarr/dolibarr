@@ -242,6 +242,8 @@ class AllTests
 		$suite->addTestSuite('TtcRoundingTest');
 		require_once dirname(__FILE__).'/PaiementTest.php';
 		$suite->addTestSuite('PaiementTest');
+		require_once dirname(__FILE__).'/RemiseChequeTest.php';
+		$suite->addTestSuite('RemiseChequeTest');
 		require_once dirname(__FILE__).'/FactureFournisseurTest.php';
 		$suite->addTestSuite('FactureFournisseurTest');
 
