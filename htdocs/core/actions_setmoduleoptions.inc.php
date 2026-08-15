@@ -105,7 +105,6 @@ if ($action == 'deletefile' && $modulepart == 'doctemplates' && !empty($user->ad
 	$keyforuploaddir = GETPOST('keyforuploaddir', 'aZ09');
 	$listofdir = explode(',', preg_replace('/[\r\n]+/', ',', trim(getDolGlobalString($keyforuploaddir))));
 
-	$upload_dir = '';
 	foreach ($listofdir as $key => $tmpdir) {
 		$tmpdir = preg_replace('/DOL_DATA_ROOT\/*/', '', $tmpdir);	// Clean string if we found a hardcoded DOL_DATA_ROOT
 		if (!$tmpdir) {
