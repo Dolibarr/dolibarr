@@ -198,6 +198,9 @@ class AllTests
 		require_once dirname(__FILE__).'/DiscountTest.php';
 		$suite->addTestSuite('DiscountTest');
 
+		require_once dirname(__FILE__).'/MultiCurrencyTest.php';
+		$suite->addTestSuite('MultiCurrencyTest');
+
 		require_once dirname(__FILE__).'/BOMTest.php';
 		$suite->addTestSuite('BOMTest');
 
