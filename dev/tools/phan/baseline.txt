@@ -9,7 +9,7 @@
  */
 return [
     // # Issue statistics:
-    // PhanUndeclaredProperty : 340+ occurrences
+    // PhanUndeclaredProperty : 330+ occurrences
     // PhanTypeMismatchArgument : 25+ occurrences
     // PhanUndeclaredGlobalVariable : 20+ occurrences
     // PhanTypeMismatchProperty : 15+ occurrences
@@ -53,7 +53,6 @@ return [
         'htdocs/core/class/CMailFile.class.php' => ['PhanTypeMismatchArgument'],
         'htdocs/core/class/canvas.class.php' => ['PhanUndeclaredMethod'],
         'htdocs/core/class/cgenericdic.class.php' => ['PhanUndeclaredProperty'],
-        'htdocs/core/class/commonobject.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/class/commonpeople.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/class/conf.class.php' => ['PhanTypeMismatchProperty'],
         'htdocs/core/class/ctyperesource.class.php' => ['PhanUndeclaredProperty'],

@@ -173,6 +173,9 @@ class AllTests
 		require_once dirname(__FILE__).'/CommonObjectTest.php';
 		$suite->addTestSuite('CommonObjectTest');
 
+		require_once dirname(__FILE__).'/ExtraFieldsTest.php';
+		$suite->addTestSuite('ExtraFieldsTest');
+
 		require_once dirname(__FILE__).'/ActionCommTest.php';
 		$suite->addTestSuite('ActionCommTest');
 		require_once dirname(__FILE__).'/SocieteTest.php';
@@ -191,11 +194,18 @@ class AllTests
 
 		require_once dirname(__FILE__).'/PricesTest.php';
 		$suite->addTestSuite('PricesTest');
+
 		require_once dirname(__FILE__).'/DiscountTest.php';
 		$suite->addTestSuite('DiscountTest');
 
+		require_once dirname(__FILE__).'/MultiCurrencyTest.php';
+		$suite->addTestSuite('MultiCurrencyTest');
+
 		require_once dirname(__FILE__).'/BOMTest.php';
 		$suite->addTestSuite('BOMTest');
+
+		require_once dirname(__FILE__).'/DolresourceTest.php';
+		$suite->addTestSuite('DolresourceTest');
 
 		require_once dirname(__FILE__).'/WorkstationTest.php';
 		$suite->addTestSuite('WorkstationTest');
@@ -266,6 +276,8 @@ class AllTests
 
 		require_once dirname(__FILE__).'/ProjectTest.php';
 		$suite->addTestSuite('ProjectTest');
+		require_once dirname(__FILE__).'/CommentTest.php';
+		$suite->addTestSuite('CommentTest');
 
 		require_once dirname(__FILE__).'/KnowledgeRecordTest.php';
 		$suite->addTestSuite('KnowledgeRecordTest');

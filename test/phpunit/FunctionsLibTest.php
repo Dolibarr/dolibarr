@@ -3,7 +3,7 @@
  * Copyright (C) 2015	   	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2023 		Alexandre Janniaux   	<alexandre.janniaux@gmail.com>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -429,7 +429,9 @@ class FunctionsLibTest extends CommonClassTest
 		print __METHOD__." ".$input." result=".$result."\n";
 		$this->assertEquals(0, $result);
 
-		$input = "usace.army.mil";
+		// Note: intentionally not a .mil domain (some CI network environments filter/block .mil DNS
+		// resolution intermittently, which made this assertion flaky without any actual code issue).
+		$input = "microsoft.com";
 		$result = isValidMXRecord($input);
 		print __METHOD__." ".$input." result=".$result."\n";
 		$this->assertEquals(1, $result);
@@ -2243,5 +2245,79 @@ class FunctionsLibTest extends CommonClassTest
 		$s = '/aaa/bbb -a -b';
 		$result = dol_sanitizePathName($s, '_', 0, 1);
 		$this->assertEquals('/aaa/bbb -a -b', $result);
+	}
+
+	/**
+	 * testPrice
+	 *
+	 * @return void
+	 */
+	public function testPrice()
+	{
+		global $conf;
+
+		// English formatting: SeparatorDecimal=. and SeparatorThousand=,
+		$langsus = new Translate('', $conf);
+		$langsus->setDefaultLang('en_US');
+		$langsus->load('main');
+
+		// Default rounding is min(MAIN_MAX_DECIMALS_UNIT, MAIN_MAX_DECIMALS_TOT) = min(5, 2) = 2 (checked in setUpBeforeClass)
+		$this->assertEquals('1,000.00', price(1000, 0, $langsus));
+		$this->assertEquals('0.00', price(0, 0, $langsus));
+		$this->assertEquals('-1,000.00', price(-1000, 0, $langsus));
+		$this->assertEquals('1,234.50', price(1234.5, 0, $langsus));
+		// More decimals than the default rounding are kept, to not lose information
+		$this->assertEquals('1,234.567', price(1234.567, 0, $langsus));
+
+		// French formatting: SeparatorDecimal=, and SeparatorThousand=Space
+		$langsfr = new Translate('', $conf);
+		$langsfr->setDefaultLang('fr_FR');
+		$langsfr->load('main');
+
+		$this->assertEquals('1 234,50', price(1234.5, 0, $langsfr));
+
+		// HTML mode replaces spaces with &nbsp;
+		$this->assertEquals('1&nbsp;234,50', price(1234.5, 1, $langsfr));
+
+		// International separators when $outlangs = 'none'
+		$this->assertEquals('1234.50', price(1234.5, 0, 'none'));
+
+		// forcerounding forces the exact number of decimals shown (0 forces rounding to unit)
+		$this->assertEquals('1,235', price(1234.5, 0, $langsus, 1, -1, 0));
+		// 'MU' forces MAIN_MAX_DECIMALS_UNIT (5, checked in setUpBeforeClass)
+		$this->assertEquals('1,234.56789', price(1234.56789, 0, $langsus, 1, -1, 'MU'));
+
+		// Currency symbol placement: USD is shown before the amount, EUR after
+		$this->assertEquals('$1,000.00', price(1000, 0, $langsus, 1, -1, -1, 'USD'));
+		$this->assertEquals('1,000.00 €', price(1000, 0, $langsus, 1, -1, -1, 'EUR'));
+	}
+
+	/**
+	 * testDolPrintDate
+	 *
+	 * @return void
+	 */
+	public function testDolPrintDate()
+	{
+		// Timestamp for 2020-07-01 00:00:01 UTC (same value already used and verified in testDolGetDate)
+		$timestamp = 1593561601;
+
+		$this->assertEquals('', dol_print_date('', 'standard', true), 'Empty input must return empty string');
+		$this->assertEquals('1970-01-01 00:00:00', dol_print_date(0, 'standard', true), 'Timestamp 0 is a valid date (1970-01-01)');
+
+		// Format shortcuts that are not language-sensitive
+		$this->assertEquals('2020-07-01', dol_print_date($timestamp, 'dayrfc', true));
+		$this->assertEquals('2020-07-01 00:00:01', dol_print_date($timestamp, 'standard', true));
+		$this->assertEquals('2020-07-01T00:00:01Z', dol_print_date($timestamp, 'dayhourrfc', true));
+		$this->assertEquals('20200701000001', dol_print_date($timestamp, 'dayhourlog', true));
+
+		// A literal (non-shortcut) strftime-style format string
+		$this->assertEquals('01/07/2020 00:00', dol_print_date($timestamp, '%d/%m/%Y %H:%M', true));
+
+		// tzoutput=false uses the PHP server timezone instead of GMT: forced to UTC here so both must match
+		$savtz = date_default_timezone_get();
+		date_default_timezone_set('UTC');
+		$this->assertEquals('2020-07-01 00:00:01', dol_print_date($timestamp, 'standard', false));
+		date_default_timezone_set($savtz);
 	}
 }
