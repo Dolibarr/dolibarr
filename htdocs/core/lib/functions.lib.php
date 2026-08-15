@@ -11606,6 +11606,19 @@ function dol_htmloutput_errors($mesgstring = '', $mesgarray = array(), $keepembe
 	dol_htmloutput_mesg($mesgstring, $mesgarray, 'error', $keepembedded);
 }
 
+
+/**
+ *  Sort an array using a user defined function. This function is a wrapper to usort without the callable parameter so we can use it into dol_eval().
+ *  This function is not used in Dolibarr code.
+ *
+ *  @param	array<string|int,mixed>	$arraytosort	Array to sort
+ *  @return	array<string|int,mixed>					Return the sorted array (the source array is not modified)
+ */
+function dolSort($arraytosort)
+{
+	return usort($arraytosort);
+}
+
 /**
  * 	Advanced sort array by the value of a given key, which produces ascending (default) or descending
  *  output and uses optionally natural case insensitive sorting (which can be optionally case sensitive as well).
