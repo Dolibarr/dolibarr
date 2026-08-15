@@ -3,7 +3,7 @@
  * Copyright (C) 2017	    Regis Houssin	        <regis.houssin@inodbox.com>
  * Copyright (C) 2020	    Thibault FOUCART        <support@ptibogxiv.net>
  * Copyright (C) 2020-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -384,7 +384,7 @@ class Members extends DolibarrApi
 				// This properties can't be set/modified with API
 				throw new RestException(405, 'The property '.$field." can't be set/modified using the APIs");
 			}
-			if (in_array($field, array('user_id') && !DolibarrApiAccess::$user->hasRight('user', 'user', 'creer'))) {
+			if (in_array($field, array('user_id')) && !DolibarrApiAccess::$user->hasRight('user', 'user', 'creer')) {
 				// This properties can't be set/modified with API without permission user->user->creer
 				throw new RestException(405, 'The property '.$field." can't be set/modified using the APIs without permission user->user->create");
 			}
@@ -438,7 +438,7 @@ class Members extends DolibarrApi
 				// This properties can't be set/modified with API
 				throw new RestException(405, 'The property '.$field." can't be set/modified using the APIs");
 			}
-			if (in_array($field, array('user_id') && !DolibarrApiAccess::$user->hasRight('user', 'user', 'creer'))) {
+			if (in_array($field, array('user_id')) && !DolibarrApiAccess::$user->hasRight('user', 'user', 'creer')) {
 				// This properties can't be set/modified with API without permission user->user->creer
 				throw new RestException(405, 'The property '.$field." can't be set/modified using the APIs without the permission user->user->create");
 			}
