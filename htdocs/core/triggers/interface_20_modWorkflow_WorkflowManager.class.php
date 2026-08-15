@@ -455,6 +455,11 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 							if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES') && $orderline->product_type > 0) {
 								continue;
 							}
+							// Title and separator lines can never be shipped, so they must never be counted into the expected
+							// quantities (same rule as into ExpeditionLigne::checkQtyVsOrderLine())
+							if ($orderline->product_type == 9) {
+								continue;
+							}
 							if (isset($qtyordred[$orderline->fk_product])) {
 								$qtyordred[$orderline->fk_product] += $orderline->qty;
 							} else {
@@ -532,6 +537,11 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 						foreach ($order->lines as $orderline) {
 							// Exclude lines not qualified for shipment, similar code is found into calcAndSetStatusDispatch() for vendors
 							if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES') && $orderline->product_type > 0) {
+								continue;
+							}
+							// Title and separator lines can never be received, so they must never be counted into the expected
+							// quantities (same rule as into ExpeditionLigne::checkQtyVsOrderLine())
+							if ($orderline->product_type == 9) {
 								continue;
 							}
 							$qtyordred[$orderline->fk_product] += $orderline->qty;
