@@ -2919,5 +2919,5 @@ ViewOnly=Alleen bekijken
 ToolActionType=Actietype
 InitEndFlagFile=Initialiseer het .end-bestand om het einde van de geblokkeerde logketen te beschermen.
 extModuleConfirmInstallTitle = Bevestig de module-installatie
-extModuleConfirmInstallText=U staat op het punt de volgende module te installeren: <br> <br> %s <br> <br> <br> <b> Versie: </b> class='notranslate'>%s<br><b>Referentie:</b> %s<br><b>Laatste update:</b> %s<br>
+extModuleConfirmInstallText=U staat op het punt de volgende module te installeren: <br> <br> %s <br> <br>  <b> Versie: </b>%s<br><b>Referentie:</b> %s<br><b>Laatste update:</b> %s<br>
 Install=Installeren
