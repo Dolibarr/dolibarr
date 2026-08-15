@@ -53,37 +53,14 @@ class MoTest extends CommonClassTest
 	 */
 	public static function setUpBeforeClass(): void
 	{
-		global $db, $conf, $dolibarr_main_db_pass, $mysoc, $user;
+		global $db, $conf;
 
 		if (!isModEnabled('mrp')) {
-			// Defensive: in the full test suite (all classes run in one continuous process,
-			// processIsolation=false), $db can become stale/closed by the time this class runs, for
-			// reasons outside this test's control. modMrp depends on modBom, which itself depends on
-			// modProduct, whose constructor queries the DB via Societe::useNPR() - and would crash on
-			// a dead connection (see https://github.com/Dolibarr/dolibarr/issues/38068 and
-			// https://github.com/Dolibarr/dolibarr/pull/39010 for related "mysqli object is already
-			// closed" reports elsewhere in this codebase, on stricter PHP versions). Reconnect first.
-			$stillconnected = false;
-			try {
-				$stillconnected = (bool) $db->query('SELECT 1');
-			} catch (Throwable $e) {
-				$stillconnected = false;
-			}
-			if (!$stillconnected) {
-				// $conf->db->pass is deliberately unset by master.inc.php right after the initial
-				// connection (to avoid the password lingering in memory) - $dolibarr_main_db_pass is
-				// the one global left available for this exact kind of reconnect.
-				$db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $dolibarr_main_db_pass, $conf->db->name, (int) $conf->db->port);
-			}
-			// Always resync, even if $db itself did not need reconnecting above: $mysoc and $user were
-			// built once at bootstrap (master.inc.php) and each stashed their own reference to $db in
-			// their ->db property, which can go stale independently of the global $db variable (for
-			// example if an earlier test class in the same continuous run already reconnected $db
-			// without going through this same code) - Societe::useNPR(), called from
-			// modProduct::__construct() during the dependency activation below, uses $mysoc->db, not the
-			// global $db, and would still crash on a stale reference otherwise.
-			$mysoc->db = $db;
-			$user->db = $db;
+			// activateModule() below transitively instantiates modProduct (modMrp depends on modBom, which
+			// depends on modProduct), whose constructor queries the DB via Societe::useNPR() - make sure
+			// $db/$mysoc/$user are not stale before that (see CommonClassTest::ensureDbIsConnected() for why
+			// this is needed).
+			self::ensureDbIsConnected();
 
 			// Activating a module re-runs its SQL install scripts (CREATE/ALTER TABLE), which causes an
 			// implicit commit in MySQL/InnoDB: this activation is real and is NOT undone by the
