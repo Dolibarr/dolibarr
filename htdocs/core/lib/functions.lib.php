@@ -11108,11 +11108,6 @@ function dol_eval_new($s)
 		// 'get_defined_functions', 'get_defined_vars', 'get_defined_constants', 'get_declared_classes', // Should we really block the admin from viewing these lists?
 		'override_function', 'session_id', 'session_create_id', 'session_regenerate_id',
 		'call_user_func', 'call_user_func_array',  // PREVENT calling forbidden functions
-		'array_all', 'array_any', 'array_diff_ukey', 'array_filter', 'array_find', 'array_find_key', 'array_map', 'array_reduce', 'array_intersect_uassoc', 'array_intersect_ukey', 'array_walk', 'array_walk_recursive',
-		'usort', 'uasort', 'uksort', 'preg_replace_callback', 'preg_replace_callback_array', 'header_register_callback',
-		'set_error_handler', 'set_exception_handler', 'libxml_set_external_entity_loader', 'register_shutdown_function', 'register_tick_function', 'unregister_tick_function',
-		'spl_autoload_register', 'spl_autoload_unregister', 'iterator_apply', 'session_set_save_handler',
-		'forward_static_call', 'forward_static_call_array',  // PREVENT calling forbidden functions by name-as-data (callable dispatch)
 		'exec', 'passthru', 'shell_exec', 'system', 'proc_open', 'popen',
 		'dol_eval', 'dol_eval_new', 'dol_eval_standard', 'dol_contctdesc', 'executeCLI', 'verifCond', 'GETPOST', // Native Dolibarr functions
 		'create_function', 'assert', 'mb_ereg_replace', 'mb_eregi_replace', // function with eval capabilities
