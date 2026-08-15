@@ -94,6 +94,7 @@ NoBackupRestorationOrLastLineDeletionDetected=Aucune restauration de sauvegarde 
 BlockedLogInstance=Exemple
 OnlyFromV2Help=Après la version v24, le montant hors taxes pour le calcul rapide du total cumulé a été enregistré dans le journal inaltérable, il est donc rapporté, mais la plage de dates peut être inférieure à celle de l'option « Tout inclut ».
 ForPeriodAndFilters=Pour la période et les filtres
+StatusValid=Valider
 logBILL_DELETE=Facture client logiquement supprimée
 logBILL_SENTBYMAIL=Facture client envoyée par courrier
 logCASHCONTROL_VALIDATE=validation de la caisse enregistreuse
