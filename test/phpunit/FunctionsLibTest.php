@@ -3,7 +3,7 @@
  * Copyright (C) 2015	   	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2023 		Alexandre Janniaux   	<alexandre.janniaux@gmail.com>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2243,5 +2243,94 @@ class FunctionsLibTest extends CommonClassTest
 		$s = '/aaa/bbb -a -b';
 		$result = dol_sanitizePathName($s, '_', 0, 1);
 		$this->assertEquals('/aaa/bbb -a -b', $result);
+	}
+
+	/**
+	 * testGetElementProperties
+	 *
+	 * @return void
+	 */
+	public function testGetElementProperties()
+	{
+		// Generic path: no '@'/'_' parsing, no special case branch, so classfile/classname are completed
+		// from subelement (classfile=strtolower(subelement), classname=ucfirst(subelement))
+		$properties = getElementProperties('project');
+		$this->assertEquals('project', $properties['element']);
+		$this->assertEquals('projet', $properties['module']);
+		$this->assertEquals('project', $properties['subelement']);
+		$this->assertEquals('projet', $properties['table_element']);
+		$this->assertEquals('projet/class', $properties['classpath']);
+		$this->assertEquals('project', $properties['classfile']);
+		$this->assertEquals('Project', $properties['classname']);
+
+		// 'myobject@mymodule' syntax to ask a resource from an external module: note that table_element
+		// keeps the full original string (it is never cleaned of the '@mymodule' part)
+		$properties = getElementProperties('myobject@mymodule');
+		$this->assertEquals('myobject', $properties['element']);
+		$this->assertEquals('mymodule', $properties['module']);
+		$this->assertEquals('myobject', $properties['subelement']);
+		$this->assertEquals('myobject@mymodule', $properties['table_element']);
+		$this->assertEquals('mymodule/class', $properties['classpath']);
+		$this->assertEquals('myobject', $properties['classfile']);
+		$this->assertEquals('Myobject', $properties['classname']);
+
+		// 'myobject_mysubobject' syntax: element/module resolved from the string, but the specific
+		// 'project_task' case branch then overrides module (projet, not project) and table_element
+		$properties = getElementProperties('project_task');
+		$this->assertEquals('project', $properties['element']);
+		$this->assertEquals('projet', $properties['module']);
+		$this->assertEquals('task', $properties['subelement']);
+		$this->assertEquals('projet_task', $properties['table_element']);
+		$this->assertEquals('projet/class', $properties['classpath']);
+		$this->assertEquals('task', $properties['classfile']);
+		$this->assertEquals('Task', $properties['classname']);
+
+		// Generic '...det' fallback (no dedicated case branch for this fictional module): module and
+		// subelement are stripped of the 'det' suffix, but element is not, and classname keeps the raw
+		// (non-capitalized) result of the suffix replacement since it is not empty afterwards
+		$properties = getElementProperties('myobjectdet');
+		$this->assertEquals('myobjectdet', $properties['element']);
+		$this->assertEquals('myobject', $properties['module']);
+		$this->assertEquals('myobject', $properties['subelement']);
+		$this->assertEquals('myobjectdet', $properties['table_element']);
+		$this->assertEquals('myobject/class', $properties['classpath']);
+		$this->assertEquals('myobject', $properties['classfile']);
+		$this->assertEquals('myobjectLine', $properties['classname']);
+
+		// 'contratdet': the generic '...det' fallback runs first (module=contrat is in the list of
+		// modules using "Ligne" instead of "Line", so classname=contratLigne), then the dedicated
+		// 'contratdet' case branch only adds parent_element on top, it does not touch classname/classfile
+		$properties = getElementProperties('contratdet');
+		$this->assertEquals('contrat', $properties['module']);
+		$this->assertEquals('contrat', $properties['subelement']);
+		$this->assertEquals('contratdet', $properties['table_element']);
+		$this->assertEquals('contrat', $properties['parent_element']);
+		$this->assertEquals('contrat/class', $properties['classpath']);
+		$this->assertEquals('contrat', $properties['classfile']);
+		$this->assertEquals('contratLigne', $properties['classname']);
+
+		// 'facturedet': same generic fallback runs first, but this time the dedicated 'facturedet' case
+		// branch overrides classpath (fuller 'compta/facture/class' path) and classname (capitalized
+		// 'FactureLigne' instead of the generic fallback's lowercase 'factureLigne')
+		$properties = getElementProperties('facturedet');
+		$this->assertEquals('facture', $properties['module']);
+		$this->assertEquals('facturedet', $properties['table_element']);
+		$this->assertEquals('facture', $properties['parent_element']);
+		$this->assertEquals('compta/facture/class', $properties['classpath']);
+		$this->assertEquals('facture', $properties['classfile']);
+		$this->assertEquals('FactureLigne', $properties['classname']);
+		// facture is a core module, always configured with an output directory
+		$this->assertNotEmpty($properties['dir_output']);
+
+		// 'action'/'actioncomm' special case: note how table_element is corrected to 'actioncomm' even
+		// though the input 'action' is kept as-is in element, and subelement is capitalized 'Actioncomm'
+		$properties = getElementProperties('action');
+		$this->assertEquals('action', $properties['element']);
+		$this->assertEquals('agenda', $properties['module']);
+		$this->assertEquals('Actioncomm', $properties['subelement']);
+		$this->assertEquals('actioncomm', $properties['table_element']);
+		$this->assertEquals('comm/action/class', $properties['classpath']);
+		$this->assertEquals('actioncomm', $properties['classfile']);
+		$this->assertEquals('Actioncomm', $properties['classname']);
 	}
 }
