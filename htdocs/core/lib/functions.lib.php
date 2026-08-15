@@ -12143,7 +12143,7 @@ function dol_eval_new($s)
 
 	$forbiddenphpmethods = array_merge($forbiddenphpmethods, array('invoke', 'invokeArgs'));	// Methods of ReflectionFunction to execute a function
 
-	$prohibited_functions = array($forbiddenphpfunctions, $forbiddenphpfunctions);
+	$prohibited_functions = array_merge($forbiddenphpfunctions, $forbiddenphpmethods);
 
 	$prohibited_token_arrangements = [
 		// Variable functions "$a(", '"$a"(', "'FN_NAME'(", ('FN_NAME')()
@@ -12182,7 +12182,7 @@ function dol_eval_new($s)
 			T_VARIABLE === $token_id
 			&& in_array($token_value, $prohibited_variables, true)
 		) {
-			return "« {$token_value} » is prohibited in « {$s} »";
+			return "Bad string syntax to evaluate. « {$token_value} » is prohibited in « {$s} »";
 		}
 
 		// Prohibited Functions
@@ -12190,7 +12190,7 @@ function dol_eval_new($s)
 			T_STRING === $token_id
 			&& in_array($token_value, $prohibited_functions, true)
 		) {
-			return "« {$token_value} » is prohibited in « {$s} »";
+			return "Bad string syntax to evaluate. « {$token_value} » is prohibited in « {$s} »";
 		}
 	}
 
@@ -12198,7 +12198,7 @@ function dol_eval_new($s)
 	$maxi = count($prohibited_token_ids);
 	for ($i = 0; $i < $maxi; ++$i) {
 		if (false !== strpos($tokens_arrangement, " {$prohibited_token_ids[$i]} ")) {
-			return "« {$prohibited_token_ids[$i]} » is prohibited in « {$s} »";
+			return "Bad string syntax to evaluate. « {$prohibited_token_ids[$i]} » is prohibited in « {$s} »";
 		}
 	}
 
@@ -12206,7 +12206,7 @@ function dol_eval_new($s)
 	$maxi = count($prohibited_token_arrangements);
 	for ($i = 0; $i < $maxi; ++$i) {
 		if (false !== strpos($tokens_arrangement, $prohibited_token_arrangements[$i])) {
-			return "« {$prohibited_token_arrangements[$i]} » is prohibited in « {$s} »";
+			return "Bad string syntax to evaluate. « {$prohibited_token_arrangements[$i]} » is prohibited in « {$s} »";
 		}
 	}
 
@@ -12214,7 +12214,7 @@ function dol_eval_new($s)
 	try {
 		return @eval("return {$s};") ?? '';
 	} catch (Throwable $ex) {
-		return "Exception during evaluation: " . $s . " - " . $ex->getMessage();
+		return "Bad string syntax to evaluate. Exception during evaluation: " . $s . " - " . $ex->getMessage();
 	}
 }
 

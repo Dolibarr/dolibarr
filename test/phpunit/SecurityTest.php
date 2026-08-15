@@ -578,7 +578,11 @@ class SecurityTest extends CommonClassTest
 		include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 		include_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 
-		$conf->global->MAIN_USE_DOL_EVAL_NEW = 0;
+
+		global $dolibarr_main_use_dol_eval_new;
+		$dolibarr_main_use_dol_eval_new = 0;
+
+
 		//$conf->global->MAIN_USE_DOL_EVAL_NEW = 1;
 		$conf->global->MAIN_ALLOW_DOUBLE_COLON_IN_DOL_EVAL = 0;
 		$conf->global->MAIN_ALLOW_OBFUSCATION_METHODS_IN_DOL_EVAL = 1;
@@ -886,6 +890,7 @@ class SecurityTest extends CommonClassTest
 	 * name reached indirectly by a PHP callable-dispatch function like array_map/usort/...
 	 * instead of a direct call.
 	 *
+	 * @depends	testDolEval
 	 * @return void
 	 */
 	public function testDolEvalNew()
@@ -896,11 +901,15 @@ class SecurityTest extends CommonClassTest
 		$langs = $this->savlangs;
 		$db = $this->savdb;
 
-		$conf->global->MAIN_USE_DOL_EVAL_NEW = 1;
 
-		$result = (string) dol_eval("array_map('sys'.'tem', array('id'))", 1, 1, '0');
+		global $dolibarr_main_use_dol_eval_new;
+		$dolibarr_main_use_dol_eval_new = 1;
+
+
+		$s = "array_map('sys'.'tem', array('id'))";
+		$result = (string) dol_eval($s, 1, 1, '0');
 		print "resultnew1 = ".$result."\n";
-		$this->assertStringContainsString('is prohibited', $result, 'The string was not detected as evil - array_map bypass');
+		$this->assertStringContainsString('is prohibited', $result, 'The string '.$s.' returned '.$result.', so was not detected as evil - array_map bypass');
 
 		$result = (string) dol_eval("usort(\$a, 'system')", 1, 1, '0');
 		print "resultnew2 = ".$result."\n";
