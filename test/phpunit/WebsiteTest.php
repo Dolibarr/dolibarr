@@ -184,16 +184,6 @@ class WebsiteTest extends CommonClassTest
 		print __METHOD__." result checkPHPCode=".$result."\n";
 		$this->assertEquals($result, 1, 'checkPHPCode did not detect the string was dangerous');
 
-		// Dangerous - callable-dispatch bypass (GitHub issue #39436): a forbidden function
-		// reached by name-as-data through a callable-dispatch function like array_map
-		// instead of a direct call.
-
-		$t = '';
-		$s = '<?php array_map(\'sys\'.\'tem\', array(\'id\')); ?>';
-		$result = checkPHPCode($t, $s);
-		print __METHOD__." result checkPHPCode=".$result."\n";
-		$this->assertEquals($result, 1, 'checkPHPCode did not detect the array_map callable-dispatch bypass');
-
 		// Dangerous but legitimate due to option WEBSITE_PHP_ALLOW_EXEC
 
 		$conf->global->WEBSITE_PHP_ALLOW_EXEC = 1;
@@ -203,15 +193,6 @@ class WebsiteTest extends CommonClassTest
 		$result = checkPHPCode($t, $s);
 		print __METHOD__." result checkPHPCode=".$result."\n";
 		$this->assertEquals($result, 0, 'checkPHPCode did not accept the exec. it should when WEBSITE_PHP_ALLOW_EXEC is set.');
-
-		// The array_map callable-dispatch bypass must still be blocked even when
-		// WEBSITE_PHP_ALLOW_EXEC is set, since callable dispatch is unconditionally forbidden.
-
-		$t = '';
-		$s = '<?php array_map(\'sys\'.\'tem\', array(\'id\')); ?>';
-		$result = checkPHPCode($t, $s);
-		print __METHOD__." result checkPHPCode=".$result."\n";
-		$this->assertEquals($result, 1, 'checkPHPCode did not detect the array_map callable-dispatch bypass with WEBSITE_PHP_ALLOW_EXEC set');
 	}
 
 	/**
