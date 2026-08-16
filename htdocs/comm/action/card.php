@@ -319,10 +319,7 @@ if (empty($reshook) && (GETPOST('addassignedtogroup') || GETPOST('updateassigned
 		}
 		$transparency = GETPOST('transparency') ? GETPOST('transparency') : 1;
 		$sql = sprintf(
-			"SELECT ug.fk_user FROM %susergroup_user as ug"
-			. " INNER JOIN %suser as u ON u.rowid = ug.fk_user"
-			. " WHERE ug.fk_usergroup IN (%s)"
-			. " AND u.statut <> 0",
+			"SELECT ug.fk_user FROM %susergroup_user as ug INNER JOIN %suser as u ON u.rowid = ug.fk_user WHERE ug.fk_usergroup IN (%s) AND u.statut <> 0",
 			MAIN_DB_PREFIX,
 			MAIN_DB_PREFIX,
 			$db->sanitize(implode(',', $groupids))
@@ -372,10 +369,7 @@ if (empty($reshook) && (GETPOST('addassignedtousertags') || GETPOST('updateassig
 		}
 		$transparency = GETPOST('transparency') ? GETPOST('transparency') : 1;
 		$sql = sprintf(
-			"SELECT cu.fk_user FROM %scategorie_user as cu"
-			. " INNER JOIN %suser as u ON u.rowid = cu.fk_user"
-			. " WHERE cu.fk_categorie IN (%s)"
-			. " AND u.statut <> 0",
+			"SELECT cu.fk_user FROM %scategorie_user as cu INNER JOIN %suser as u ON u.rowid = cu.fk_user WHERE cu.fk_categorie IN (%s) AND u.statut <> 0",
 			MAIN_DB_PREFIX,
 			MAIN_DB_PREFIX,
 			$db->sanitize(implode(',', $tagids))
