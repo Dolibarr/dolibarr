@@ -8,8 +8,8 @@
  * Copyright (C) 2017       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018-2023  Thibault FOUCART        <support@ptibogxiv.net>
  * Copyright (C) 2021       Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025       Josep Lluís Amador      <joseplluis@lliuretic.cat>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -100,6 +100,7 @@ $result = restrictedArea($user, 'societe', '', '');
 $stripe = null;  // Stripe object
 $stripeacc = null; // Stripe Account
 $stripecu = null; // Remote stripe customer
+$service = null;
 
 $servicestatus = 0;
 $site_account = 'UnknownSiteAccount';
@@ -371,7 +372,7 @@ if (empty($reshook)) {
 				if ($result < 0) {
 					$error++;
 					setEventMessages($companybankaccount->error, $companybankaccount->errors, 'errors');
-					$action = 'create'; // Force chargement page création
+					$action = 'create'; // Force loading of creation page
 				}
 
 				if (empty($companybankaccount->rum)) {
@@ -452,7 +453,7 @@ if (empty($reshook)) {
 				if ($result < 0) {
 					$error++;
 					setEventMessages($companypaymentmode->error, $companypaymentmode->errors, 'errors');
-					$action = 'createcard'; // Force chargement page création
+					$action = 'createcard'; // Force loading of creation page
 				}
 			}
 
@@ -672,10 +673,10 @@ if (empty($reshook)) {
 
 			if (empty($newcu)) {
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_account";
-				$sql .= " WHERE site = 'stripe' AND (site_account IS NULL or site_account = '' or site_account = '".$db->escape($tmpsite_account)."') AND fk_soc = ".((int) $object->id)." AND status = ".((int) $tmpservicestatus)." AND entity = ".$conf->entity;
+				$sql .= " WHERE site = 'stripe' AND (site_account IS NULL or site_account = '' or site_account = '".$db->escape($tmpsite_account)."') AND fk_soc = ".((int) $object->id)." AND status = ".((int) $tmpservicestatus)." AND entity = ".((int) $conf->entity);
 			} else {
 				$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX."societe_account";
-				$sql .= " WHERE site = 'stripe' AND (site_account IS NULL or site_account = '' or site_account = '".$db->escape($tmpsite_account)."') AND fk_soc = ".((int) $object->id)." AND status = ".((int) $tmpservicestatus)." AND entity = ".$conf->entity; // Keep the = here for entity. Only 1 record must be modified !
+				$sql .= " WHERE site = 'stripe' AND (site_account IS NULL or site_account = '' or site_account = '".$db->escape($tmpsite_account)."') AND fk_soc = ".((int) $object->id)." AND status = ".((int) $tmpservicestatus)." AND entity = ".((int) $conf->entity); // Keep the = here for entity. Only 1 record must be modified !
 			}
 
 			$resql = $db->query($sql);
@@ -698,7 +699,7 @@ if (empty($reshook)) {
 				} else {
 					$sql = 'UPDATE '.MAIN_DB_PREFIX."societe_account";
 					$sql .= " SET key_account = '".$db->escape($newcu)."', site_account = '".$db->escape($tmpsite_account)."'";
-					$sql .= " WHERE site = 'stripe' AND (site_account IS NULL or site_account = '' or site_account = '".$db->escape($tmpsite_account)."') AND fk_soc = ".((int) $object->id)." AND status = ".((int) $tmpservicestatus)." AND entity = ".$conf->entity; // Keep = here for entity. Only 1 record must be modified !
+					$sql .= " WHERE site = 'stripe' AND (site_account IS NULL or site_account = '' or site_account = '".$db->escape($tmpsite_account)."') AND fk_soc = ".((int) $object->id)." AND status = ".((int) $tmpservicestatus)." AND entity = ".((int) $conf->entity); // Keep = here for entity. Only 1 record must be modified !
 					$resql = $db->query($sql);
 				}
 			}
@@ -743,7 +744,7 @@ if (empty($reshook)) {
 			if (empty($newsup)) {
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX."oauth_token WHERE fk_soc = ".((int) $object->id)." AND service = '".$db->escape($tmpservice)."' AND entity = ".((int) $conf->entity);
 				// TODO Add site and site_account on oauth_token table
-				//$sql = "DELETE FROM ".MAIN_DB_PREFIX."oauth_token WHERE site = 'stripe' AND (site_account IS NULL or site_account = '".$db->escape($site_account)."') AND fk_soc = ".((int) $object->id)." AND service = '".$db->escape($service)."' AND entity = ".$conf->entity;
+				//$sql = "DELETE FROM ".MAIN_DB_PREFIX."oauth_token WHERE site = 'stripe' AND (site_account IS NULL or site_account = '".$db->escape($site_account)."') AND fk_soc = ".((int) $object->id)." AND service = '".$db->escape($service)."' AND entity = ".((int) $conf->entity);
 			} else {
 				try {
 					$stripesup = \Stripe\Account::retrieve($newsup);
@@ -752,9 +753,9 @@ if (empty($reshook)) {
 					$tokenstring['type'] = $stripesup->type;
 					$sql = "UPDATE ".MAIN_DB_PREFIX."oauth_token";
 					$sql .= " SET tokenstring = '".$db->escape(json_encode($tokenstring))."'";
-					$sql .= " WHERE site = 'stripe' AND (site_account IS NULL or site_account = '".$db->escape($tmpsite_account)."') AND fk_soc = ".((int) $object->id)." AND service = '".$db->escape($tmpservice)."' AND entity = ".$conf->entity; // Keep = here for entity. Only 1 record must be modified !
+					$sql .= " WHERE site = 'stripe' AND (site_account IS NULL or site_account = '".$db->escape($tmpsite_account)."') AND fk_soc = ".((int) $object->id)." AND service = '".$db->escape($tmpservice)."' AND entity = ".((int) $conf->entity); // Keep = here for entity. Only 1 record must be modified !
 					// TODO Add site and site_account on oauth_token table
-					$sql .= " WHERE fk_soc = ".((int) $object->id)." AND service = '".$db->escape($tmpservice)."' AND entity = ".$conf->entity; // Keep = here for entity. Only 1 record must be modified !
+					$sql .= " WHERE fk_soc = ".((int) $object->id)." AND service = '".$db->escape($tmpservice)."' AND entity = ".((int) $conf->entity); // Keep = here for entity. Only 1 record must be modified !
 				} catch (Exception $e) {
 					$error++;
 					setEventMessages($e->getMessage(), null, 'errors');
@@ -937,7 +938,7 @@ if (empty($companybankaccount->socid)) {
 }
 
 if ($socid && ($action == 'edit' || $action == 'editcard') && $permissiontoaddupdatepaymentinformation) {
-	print '<form action="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'" method="post">';
+	print '<form action="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'" method="post" spellcheck="false">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	$actionforadd = 'update';
 	if ($action == 'editcard') {		// Test on permission not required
@@ -947,7 +948,7 @@ if ($socid && ($action == 'edit' || $action == 'editcard') && $permissiontoaddup
 	print '<input type="hidden" name="id" value="'.GETPOSTINT("id").'">';
 }
 if ($socid && ($action == 'create' || $action == 'createcard') && $permissiontoaddupdatepaymentinformation) {
-	print '<form action="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'" method="post">';
+	print '<form action="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'" method="post" spellcheck="false">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	$actionforadd = 'add';
 	if ($action == 'createcard') {		// Test on permission not required
@@ -1042,7 +1043,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				print ' <a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe').' - Publishable key = '.$tmpsite_account, 'globe').'</a>';
 			}
 			if (empty($tmpstripecu)) {
-				print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" class="nowraponall">';
+				print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" class="nowraponall" spellcheck="false">';
 				print '<input type="hidden" name="action" value="synccustomertostripetest">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="socid" value="'.$object->id.'">';
@@ -1071,7 +1072,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				print ' <a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe').' - Publishable key = '.$tmpsite_account, 'globe').'</a>';
 			}
 			if (empty($tmpstripecu)) {
-				print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" class="nowraponall">';
+				print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" class="nowraponall" spellcheck="false">';
 				print '<input type="hidden" name="action" value="synccustomertostripe">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="socid" value="'.$object->id.'">';
@@ -1134,7 +1135,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			print ' <a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe').' - Publishable key '.$site_account, 'globe').'</a>';
 		}
 		if (empty($stripesupplieracc)) {
-			print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" class="nowraponall">';
+			print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" class="nowraponall" spellcheck="false">';
 			print '<input type="hidden" name="action" value="syncsuppliertostripe">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="socid" value="'.$object->id.'">';
@@ -1719,7 +1720,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 
 			$out = '';
 			if (is_array($modellist) && count($modellist)) {
-				$out .= '<form action="'.$_SERVER["PHP_SELF"].(!getDolGlobalString('MAIN_JUMP_TAG') ? '' : '#builddoc').'" name="'.$forname.'" id="'.$forname.'_form" method="post">';
+				$out .= '<form action="'.$_SERVER["PHP_SELF"].(!getDolGlobalString('MAIN_JUMP_TAG') ? '' : '#builddoc').'" name="'.$forname.'" id="'.$forname.'_form" method="post" autocomplete="off" spellcheck="false">';
 				$out .= '<input type="hidden" name="action" value="builddocrib">';
 				$out .= '<input type="hidden" name="token" value="'.newToken().'">';
 				$out .= '<input type="hidden" name="socid" value="'.$object->id.'">';
@@ -2009,8 +2010,7 @@ if ($socid && $action == 'edit' && $permissiontoaddupdatepaymentinformation) {
 	print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Label").'</td>';
 	print '<td><input class="minwidth300" type="text" name="label" value="'.$companybankaccount->label.'" spellcheck="false"></td></tr>';
 
-	$required = (getDolGlobalInt('WITHDRAWAL_WITHOUT_BIC') == 0) ? "fieldrequired" : "";
-	print '<tr><td class="'.$required.'">'.$langs->trans("BankName").'</td>';
+	print '<tr><td>'.$langs->trans("BankName").'</td>';
 	print '<td><input class="minwidth200" type="text" name="bank" value="'.$companybankaccount->bank.'" spellcheck="false"></td></tr>';
 
 	// Show fields of bank account

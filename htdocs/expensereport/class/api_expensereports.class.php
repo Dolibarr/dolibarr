@@ -126,7 +126,7 @@ class ExpenseReports extends DolibarrApi
 	 * @param	int			$limit				List limit
 	 * @param	int			$page				Page number
 	 * @param	string		$user_ids   		User ids filter field. Example: '1' or '1,2,3'          {@pattern /^[0-9,]*$/i}
-	 * @param	string		$sqlfilters 		Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param	string		$sqlfilters 		Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:>:'20160101')"
 	 * @param	string		$properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param	bool		$pagination_data	If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @return	array							Array of order objects
@@ -241,7 +241,16 @@ class ExpenseReports extends DolibarrApi
 				continue;
 			}
 
-			$this->expensereport->$field = $this->_checkValForAPI($field, $value, $this->expensereport);
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->expensereport->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->expensereport);
+				}
+				continue;
+			}
+
+			if (!in_array($field, array('fk_statut', 'fk_user_approve'))) {	// Exclude properties that must be set by other workflow methods
+				$this->expensereport->$field = $this->_checkValForAPI($field, $value, $this->expensereport);
+			}
 		}
 		/*if (isset($request_data["lines"])) {
 		  $lines = array();
@@ -344,7 +353,7 @@ class ExpenseReports extends DolibarrApi
 			$request_data->date,
 			$request_data->comments,
 			$request_data->fk_project,
-			$request_data->fk_c_exp_tax_cat,
+			(int) $request_data->fk_c_exp_tax_cat,
 			$request_data->type,
 			$request_data->fk_ecm_files
 		);
@@ -414,7 +423,7 @@ class ExpenseReports extends DolibarrApi
 			$request_data->value_unit,
 			$request_data->date,
 			$id,
-			$request_data->fk_c_exp_tax_cat,
+			(int) $request_data->fk_c_exp_tax_cat,
 			$request_data->fk_ecm_files
 		);
 
@@ -527,12 +536,14 @@ class ExpenseReports extends DolibarrApi
 
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->expensereport->array_options[$index] = $this->_checkValForAPI($field, $val, $this->expensereport);
+					$this->expensereport->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->expensereport);
 				}
 				continue;
 			}
 
-			$this->expensereport->$field = $this->_checkValForAPI($field, $value, $this->expensereport);
+			if (!in_array($field, array('fk_statut', 'fk_user_approve'))) {	// Exclude properties that must be set by other workflow methods
+				$this->expensereport->$field = $this->_checkValForAPI($field, $value, $this->expensereport);
+			}
 		}
 
 		if ($this->expensereport->update(DolibarrApiAccess::$user) > 0) {

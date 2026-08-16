@@ -4,7 +4,7 @@
  * Copyright (C) 2021       Greg Rastklan       <greg.rastklan@atm-consulting.fr>
  * Copyright (C) 2021       Jean-Pascal BOUDET  <jean-pascal.boudet@atm-consulting.fr>
  * Copyright (C) 2021       Grégory BLEMAND     <gregory.blemand@atm-consulting.fr>
- * Copyright (C) 2024-2025  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024       Alexandre Spangaro  <alexandre@inovea-conseil.com>
  * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
@@ -49,6 +49,7 @@ require_once DOL_DOCUMENT_ROOT.'/hrm/class/evaluationdet.class.php';
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
+ * @var ?string $objecttype
  */
 
 // Load translation files required by the page
@@ -76,11 +77,14 @@ $TAuthorizedObjects = array('job', 'user');
 $skill = new SkillRank($db);
 
 // Initialize a technical objects
+$object = null;
 if (in_array($objecttype, $TAuthorizedObjects)) {
 	if ($objecttype == 'job') {
 		$object = new Job($db);
-	} elseif ($objecttype == "user") {
+	} elseif ($objecttype == 'user') {
 		$object = new User($db);
+	} else {
+		accessforbidden('ErrorBadObjectType');
 	}
 } else {
 	accessforbidden('ErrorBadObjectType');
@@ -345,7 +349,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		require_once DOL_DOCUMENT_ROOT . '/hrm/lib/hrm_job.lib.php';
 		$head = jobPrepareHead($object);
 		$listLink = dol_buildpath('/hrm/job_list.php', 1);
-	} elseif ($objecttype == "user") {
+	} elseif ($objecttype == "user") {  // Always true - @phpstan-ignore equal.alwaysTrue
 		require_once DOL_DOCUMENT_ROOT . "/core/lib/usergroups.lib.php";
 		$object->getRights();
 		$head = user_prepare_head($object);
@@ -556,8 +560,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<th>'.$langs->trans('SkillType').'</th>';
 		print '<th>'.$langs->trans('Label').'</th>';
 		print '<th>'.$langs->trans('Description').'</th>';
-		print '<th>'.$langs->trans($objecttype === 'job' ? 'RequiredRank' : 'EmployeeRank').'</th>';
-		if ($objecttype === 'job') {
+		print '<th>'.$langs->trans($objecttype === 'job' ? 'RequiredRank' : 'EmployeeRank').'</th>';  // Always true - @phpstan-ignore identical.alwaysTrue
+		if ($objecttype === 'job') {  // Always true - @phpstan-ignore identical.alwaysTrue
 			print '<th class="linecoledit"></th>';
 			print '<th class="linecoldelete"></th>';
 		}
@@ -577,9 +581,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				print '<td>';
 				print $sk->description;
 				print '</td><td class="linecolrank">';
-				print displayRankInfos($skillElement->rankorder, $skillElement->fk_skill, 'TNote', $objecttype == 'job' && $permissiontoadd ? 'edit' : 'view');
+				print displayRankInfos($skillElement->rankorder, $skillElement->fk_skill, 'TNote', $objecttype == 'job' && $permissiontoadd ? 'edit' : 'view');  // Always true - @phpstan-ignore equal.alwaysTrue
 				print '</td>';
-				if ($objecttype != 'user' && $permissiontoadd) {
+				if ($objecttype != 'user' && $permissiontoadd) {  // Always true - @phpstan-ignore notEqual.alwaysTrue
 					print '<td class="linecoledit"></td>';
 					print '<td class="linecoldelete">';
 					print '<a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?id=' . $skillElement->fk_object . '&amp;objecttype=' . $objecttype . '&amp;action=ask_deleteskill&amp;lineid=' . $skillElement->rowid . '&amp;token='.newToken().'">';
@@ -592,17 +596,17 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		}
 
 		print '</table>';
-		if ($objecttype != 'user' && $permissiontoadd) {
+		if ($objecttype != 'user' && $permissiontoadd) {  // Left always true - @phpstan-ignore notEqual.alwaysTrue
 			print '<td><input class="button pull-right" type="submit" value="' . $langs->trans('SaveRank') . '"></td>';
 		}
 		print '</div>';
-		if ($objecttype != 'user' && $permissiontoadd) {
+		if ($objecttype != 'user' && $permissiontoadd) {  // Left always true - @phpstan-ignore notEqual.alwaysTrue
 			print '</form>';
 		}
 	}
 
 
-	// liste des evaluation liées
+	// list of linked evaluations
 	if ($objecttype == 'user' && $permissiontoadd) {
 		$evaltmp = new Evaluation($db);
 		$job = new Job($db);

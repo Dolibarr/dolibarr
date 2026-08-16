@@ -7,7 +7,7 @@
  * Copyright (C) 2015-2026 Alexandre Spangaro	<alexandre@inovea-conseil.com>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2018-2025 Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2021      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
@@ -36,6 +36,7 @@ require '../../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
@@ -90,7 +91,6 @@ if (!$user->hasRight('banque', 'lire') && !$user->hasRight('banque', 'consolidat
 }
 
 $object = new AccountLine($db);
-$extrafields = new ExtraFields($db);
 $extrafields->fetch_name_optionals_label($object->element);
 
 if ($id > 0) {

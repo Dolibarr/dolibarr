@@ -294,7 +294,7 @@ class Holiday extends CommonObject
 	}
 
 	/**
-	 *   Créer un congés payés dans la base de données
+	 *   Create a paid leave entry in the database
 	 *
 	 *   @param		User	$user        	User that create
 	 *   @param     int		$notrigger	    0=launch triggers after, 1=disable triggers
@@ -544,17 +544,17 @@ class Holiday extends CommonObject
 
 		$sql .= " FROM ".MAIN_DB_PREFIX."holiday as cp, ".MAIN_DB_PREFIX."user as uu, ".MAIN_DB_PREFIX."user as ua";
 		$sql .= " WHERE cp.entity IN (".getEntity('holiday').")";
-		$sql .= " AND cp.fk_user = uu.rowid AND cp.fk_validator = ua.rowid"; // Hack pour la recherche sur le tableau
+		$sql .= " AND cp.fk_user = uu.rowid AND cp.fk_validator = ua.rowid"; // Hack needed for search on the list
 		$sql .= " AND cp.fk_user IN (".$this->db->sanitize($user_id).")";
 
 		// Selection filter
 		if (!empty($filter)) {
-			$sql .= $filter;
+			$sql .= $filter;  // @phan-suppress-current-line SqlInjection
 		}
 
 		// Order of display of the result
 		if (!empty($order)) {
-			$sql .= $order;
+			$sql .= $order;  // @phan-suppress-current-line SqlInjection
 		}
 
 		dol_syslog(get_class($this)."::fetchByUser", LOG_DEBUG);
@@ -632,11 +632,11 @@ class Holiday extends CommonObject
 	/**
 	 *	List all holidays of all users
 	 *
-	 *  @param      string	$order      Sort order
-	 *  @param      string	$filter     SQL Filter
-	 *  @return     int      			-1 if KO, 1 if OK, 2 if no result
+	 *  @param      string	$sqlOrder   Sort order
+	 *  @param      string	$sqlFilter  SQL Filter
+	 *  @return     int<-1,-1>|int<1,2> -1 if KO, 1 if OK, 2 if no result
 	 */
-	public function fetchAll($order, $filter)
+	public function fetchAll($sqlOrder, $sqlFilter)
 	{
 		$sql = "SELECT";
 		$sql .= " cp.rowid,";
@@ -675,16 +675,16 @@ class Holiday extends CommonObject
 
 		$sql .= " FROM ".MAIN_DB_PREFIX."holiday as cp, ".MAIN_DB_PREFIX."user as uu, ".MAIN_DB_PREFIX."user as ua";
 		$sql .= " WHERE cp.entity IN (".getEntity('holiday').")";
-		$sql .= " AND cp.fk_user = uu.rowid AND cp.fk_validator = ua.rowid "; // Hack pour la recherche sur le tableau
+		$sql .= " AND cp.fk_user = uu.rowid AND cp.fk_validator = ua.rowid "; // Hack needed for search on the list
 
 		// Selection filtering
-		if (!empty($filter)) {
-			$sql .= $filter;
+		if (!empty($sqlFilter)) {
+			$sql .= $sqlFilter;
 		}
 
 		// order of display
-		if (!empty($order)) {
-			$sql .= $order;
+		if (!empty($sqlOrder)) {
+			$sql .= $sqlOrder;
 		}
 
 		dol_syslog(get_class($this)."::fetchAll", LOG_DEBUG);
@@ -840,7 +840,7 @@ class Holiday extends CommonObject
 					$this->error = $this->db->lasterror();
 				}
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'holiday/".$this->db->escape($this->newref)."'";
-				$sql .= " WHERE filepath = 'holiday/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$sql .= " WHERE filepath = 'holiday/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++;
@@ -1023,12 +1023,11 @@ class Holiday extends CommonObject
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
-		global $conf, $langs;
 		$error = 0;
 
 		$checkBalance = getDictionaryValue('c_holiday_types', 'block_if_negative', $this->fk_type, true);
 
-		if ($checkBalance > 0 && $this->statut != self::STATUS_DRAFT && $this->statut != self::STATUS_CANCELED) {
+		if ($checkBalance > 0 && $this->status != self::STATUS_DRAFT && $this->status != self::STATUS_CANCELED) {
 			$balance = $this->getCPforUser($this->fk_user, $this->fk_type);
 			$daysAsked = num_open_day($this->date_debut, $this->date_fin, 0, 1, 0, '', $this->fk_user);
 
@@ -1601,7 +1600,7 @@ class Holiday extends CommonObject
 	}
 
 	/**
-	 *  Met à jour une option du module Holiday Payés
+	 *  Update an option of the Holiday module
 	 *
 	 *  @param	string	$name       name settings parameter
 	 *  @param	string	$value      true if update OK else false
@@ -1681,6 +1680,7 @@ class Holiday extends CommonObject
 		$error = 0;
 
 		if (empty($userID) && empty($nbHoliday) && empty($fk_type)) {
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 			$langs->load("holiday");
 
 			$decrease = getDolGlobalInt('HOLIDAY_DECREASE_AT_END_OF_MONTH');
@@ -1922,10 +1922,10 @@ class Holiday extends CommonObject
 	 *
 	 *	@param	boolean		$stringlist	    If true return a string list of id. If false, return an array with detail.
 	 *	@param	boolean		$type			If true, read Dolibarr user list, if false, return vacation balance list.
-	 *	@param	string		$filters        Filters. Warning: This must not contains data from user input.
+	 *	@param	string		$sqlFilters     Filters. Warning: This must not contain data from user input.
 	 *	@return array<array{rowid:int,id:int,name:string,lastname:string,firstname:string,gender:string,status:int,employee:int,photo:string,fk_user:int,type?:int,nb_holiday?:int}>|string|int<-1,-1>	Return an array
 	 */
-	public function fetchUsers($stringlist = true, $type = true, $filters = '')
+	public function fetchUsers($stringlist = true, $type = true, $sqlFilters = '')
 	{
 		dol_syslog(get_class($this)."::fetchUsers", LOG_DEBUG);
 
@@ -1949,8 +1949,8 @@ class Holiday extends CommonObject
 				}
 				$sql .= " AND u.statut > 0";
 				$sql .= " AND u.employee = 1"; // We only want employee users for holidays
-				if ($filters) {
-					$sql .= $filters;
+				if ($sqlFilters) {
+					$sql .= $sqlFilters;
 				}
 
 				$resql = $this->db->query($sql);
@@ -1985,8 +1985,8 @@ class Holiday extends CommonObject
 				$sql = "SELECT DISTINCT cpu.fk_user";
 				$sql .= " FROM ".MAIN_DB_PREFIX."holiday_users as cpu, ".MAIN_DB_PREFIX."user as u";
 				$sql .= " WHERE cpu.fk_user = u.rowid";
-				if ($filters) {
-					$sql .= $filters;
+				if ($sqlFilters) {
+					$sql .= $sqlFilters;
 				}
 
 				$resql = $this->db->query($sql);
@@ -2040,8 +2040,8 @@ class Holiday extends CommonObject
 
 				$sql .= " AND u.statut > 0";
 				$sql .= " AND u.employee = 1"; // We only want employee users for holidays
-				if ($filters) {
-					$sql .= $filters;
+				if ($sqlFilters) {
+					$sql .= $sqlFilters;
 				}
 
 				$resql = $this->db->query($sql);
@@ -2084,8 +2084,8 @@ class Holiday extends CommonObject
 				$sql = "SELECT cpu.fk_type, cpu.nb_holiday, u.rowid, u.lastname, u.firstname, u.gender, u.photo, u.employee, u.statut as status, u.fk_user";
 				$sql .= " FROM ".MAIN_DB_PREFIX."holiday_users as cpu, ".MAIN_DB_PREFIX."user as u";
 				$sql .= " WHERE cpu.fk_user = u.rowid";
-				if ($filters) {
-					$sql .= $filters;
+				if ($sqlFilters) {
+					$sql .= $sqlFilters;
 				}
 
 				$resql = $this->db->query($sql);
@@ -2291,7 +2291,7 @@ class Holiday extends CommonObject
 	 *
 	 *  @param	string	$sqlorder   SQL sort order
 	 *  @param  string	$sqlwhere   SQL where
-	 *  @return int         		-1 si erreur, 1 si OK et 2 si pas de résultat
+	 *  @return int         		-1 if error, 1 if OK, 2 if no result
 	 */
 	public function fetchLog($sqlorder, $sqlwhere)
 	{
@@ -2432,7 +2432,7 @@ class Holiday extends CommonObject
 		$sql .= " f.fk_user_refuse as fk_user_refuse";
 		$sql .= " FROM ".MAIN_DB_PREFIX."holiday as f";
 		$sql .= " WHERE f.rowid = ".((int) $id);
-		$sql .= " AND f.entity = ".$conf->entity;
+		$sql .= " AND f.entity = ".((int) $conf->entity);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {

@@ -230,6 +230,7 @@ if (empty($conf->use_javascript_ajax)) {
 	print '<form name="formeditorbackend" method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="setbackend">';
+	print '<input type="hidden" name="mode" value="'.$mode.'">';
 	print '<input type="hidden" name="page_y" value="">';
 
 	print '<table class="noborder centpercent">';
@@ -245,10 +246,11 @@ if (empty($conf->use_javascript_ajax)) {
 	print $langs->trans("EditorBackend");
 	print '</td>';
 	print '<td class="right">';
-	print '<select name="editorbackend" class="minwidth150">';
-	print '<option value="ckeditor"'.($currentbackend == 'ckeditor' ? ' selected' : '').'>CKEditor 4</option>';
-	print '<option value="tinymce"'.($currentbackend == 'tinymce' ? ' selected' : '').'>TinyMCE (experimental)</option>';
-	print '</select>';
+	$arrayofeditor = array(
+		'ckeditor' => array('label' => 'CKEditor 4'),
+		'tinymce' => array('label' => 'TinyMCE ('.$langs->trans("Experimental").')', 'data-html' => 'TinyMCE <span class="opacitymedium">('.$langs->trans("Experimental").')</span>')
+	);
+	print $form->selectarray("editorbackend", $arrayofeditor, $currentbackend);
 	print ' '.$form->textwithpicto('', $langs->trans("EditorBackendHelp"));
 	print '</td>';
 	print '<td class="center width100"><input type="submit" class="button smallpaddingimp reposition" value="'.dol_escape_htmltag($langs->trans("Save")).'"></td>';

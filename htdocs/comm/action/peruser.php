@@ -390,6 +390,9 @@ if ($end_d != '') {
 if ($search_categ_cus != 0) {
 	$param .= '&search_categ_cus='.urlencode((string) ($search_categ_cus));
 }
+if ($check_holiday) {
+	$param .= '&check_holiday=1';
+}
 $param .= "&maxprint=".urlencode((string) ($maxprint));
 
 $paramnoactionodate = $param;
@@ -579,7 +582,27 @@ if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 	$s .= '<script type="text/javascript">'."\n";
 	$s .= 'jQuery(document).ready(function () {'."\n";
 	$s .= 'jQuery(".check_birthday").click(function() { console.log("Click on .check_birthday so we toggle class .peruser_birthday"); jQuery(".peruser_birthday").addClass("peruser_birthday_imp"); });'."\n";
-	$s .= 'jQuery(".check_holiday").click(function() { console.log("Click on .check_holiday so we toggle class .peruser_holiday"); if (jQuery(".peruser_holiday").hasClass("peruser_holiday_imp")) { jQuery(".peruser_holiday").removeClass("peruser_holiday_imp"); } else { jQuery(".peruser_holiday").addClass("peruser_holiday_imp"); } });'."\n";
+
+	$s .= 'jQuery(".check_holiday").click(function() {';
+	$s .= '	console.log("Click on .check_holiday so we toggle class .peruser_holiday");';
+	$s .= '	if (jQuery(".peruser_holiday").hasClass("peruser_holiday_imp")) {';
+	$s .= '		jQuery(".peruser_holiday").removeClass("peruser_holiday_imp");';
+	$s .= '	} else { ';
+	$s .= '		jQuery(".peruser_holiday").addClass("peruser_holiday_imp");';
+	$s .= '	}';
+	// add check_holiday params to navigation links when click on check holiday input
+	$s .= '	var checkHoliday = jQuery(this).is(":checked") ? 1 : 0;';
+	$s .= '	jQuery(".navselectiondate a, .navmode a").each(function(index, elem) { ';
+	$s .= '		var navLinkElem = jQuery(elem);';
+	$s .= '		var navLinkHref = navLinkElem.attr("href");';
+	$s .= '		var navLinkParts = navLinkHref.split("?");';
+	$s .= '		var navLinkPath = navLinkParts[0];';
+	$s .= '		var navLinkParams = new URLSearchParams(navLinkParts[1] || "");';
+	$s .= '		navLinkParams.set("check_holiday", checkHoliday);';
+	$s .= '		navLinkElem.attr("href", navLinkPath + "?" + navLinkParams.toString());';
+	$s .= '	});';
+	$s .= '});'."\n";
+
 	if (isModEnabled("bookcal") && !empty($bookcalcalendars["calendars"])) {
 		foreach ($bookcalcalendars["calendars"] as $key => $value) {
 			$s .= 'jQuery(".check_bookcal_calendar_'.$value['id'].'").click(function() { console.log("Toggle Bookcal Calendar '.$value['id'].'"); jQuery(".family_bookcal_calendar_'.$value['id'].'").toggle(); });'."\n";
@@ -589,14 +612,14 @@ if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 	$s .= '</script>'."\n";
 
 	// Local calendar
-	$s .= '<div class="nowrap inline-block minheight30 hideonsmartphone"><input type="checkbox" id="check_mytasks" name="check_mytasks" value="1" class="check_mytasks" checked disabled><label class="labelcalendar"><span class="check_holiday_text"> '.$langs->trans("LocalAgenda").' &nbsp; </span></label></div>';
+	$s .= '<div class="nowrap inline-block minheight30 hideonsmartphone"><input type="checkbox" id="check_mytasks" name="check_mytasks" value="1" class="check_mytasks" checked disabled><label class="labelcalendar"><span class="check_local_text small"> '.$langs->trans("LocalAgenda").' &nbsp; </span></label></div>';
 
 	// Holiday calendar
 	if ($user->hasRight("holiday", "read")) {
 		$s .= '
-            <div class="nowrap inline-block minheight30"><input type="checkbox" id="check_holiday" name="check_holiday" value="1" class="marginleftonly check_holiday"' . ($check_holiday ? ' checked' : '') . '>
+            <div class="nowrap inline-block minheight30"><input type="checkbox" id="check_holiday" name="check_holiday small" value="1" class="marginleftonly check_holiday"' . ($check_holiday ? ' checked' : '') . '>
                 <label for="check_holiday" class="labelcalendar">
-                    <span class="check_holiday_text">' . $langs->trans("Holidays") . '</span>
+                    <span class="check_holiday_text small">' . $langs->trans("Holidays") . '</span>
                 </label> &nbsp;
             </div>';
 	}
@@ -632,7 +655,7 @@ if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 
 			$tooltip = $langs->trans("Cache").' '.round($DELAYFORCACHE / 60).'mn';
 
-			$s .= '<div class="nowrap inline-block minheight30"><input type="checkbox" id="check_ext'.$htmlname.'" class="marginleftonly check_ext_'.$htmlname.'" name="check_ext'.$htmlname.'" value="1" '.$default.'><label for="check_ext'.$htmlname.'" title="'.dol_escape_htmltag($tooltip).'" class="labelcalendar">'.dol_escape_htmltag($val['name']).'</label> &nbsp; </div>';
+			$s .= '<div class="nowrap inline-block minheight30"><input type="checkbox" id="check_ext'.$htmlname.'" class="marginleftonly check_ext_'.$htmlname.'" name="check_ext'.$htmlname.'" value="1" '.$default.'><label for="check_ext'.$htmlname.'" title="'.dol_escape_htmltag($tooltip).'" class="labelcalendar"><span class="check_ext_text small">'.dol_escape_htmltag($val['name']).'</small></label> &nbsp; </div>';
 		}
 	}
 
@@ -784,7 +807,7 @@ if ($search_sale && $search_sale != '-1') {
 	if ($search_sale == -2) {
 		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = a.fk_soc)";
 	} elseif ($search_sale > 0) {
-		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = a.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+		$sql .= " AND (a.fk_soc IS NULL OR EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = a.fk_soc AND sc.fk_user = ".((int) $search_sale)."))";
 	}
 }
 // Search on socid
@@ -1126,8 +1149,10 @@ if ($user->hasRight("holiday", "read")) {
 			$event->type = 'holiday';
 			$event->type_picto = 'holiday';
 
-			$event->datep                   = $db->jdate($obj->date_start) + (int) ((empty($obj->halfday) || $obj->halfday == 1 ? 0 : 12) * 60 * 60);
-			$event->datef                   = $db->jdate($obj->date_end) + (int) ((empty($obj->halfday) || $obj->halfday == -1 ? 24 : 12) * 60 * 60 - 1);
+			// date_debut and date_fin are dates without time, so they must be read and rendered in GMT to
+			// stay independent from the server and user timezones (otherwise the calendar day box is shifted).
+			$event->datep                   = (int) $db->jdate($obj->date_start, 'gmt') + ((empty($obj->halfday) || $obj->halfday == 1) ? 0 : 12) * 60 * 60;
+			$event->datef                   = (int) $db->jdate($obj->date_end, 'gmt') + ((empty($obj->halfday) || $obj->halfday == -1) ? 24 : 12) * 60 * 60 - 1;
 			$event->date_start_in_calendar  = $event->datep;
 			$event->date_end_in_calendar    = $event->datef;
 
@@ -1146,14 +1171,14 @@ if ($user->hasRight("holiday", "read")) {
 
 
 			$daycursor = $event->date_start_in_calendar;
-			$annee = (int) dol_print_date($daycursor, '%Y', 'tzuserrel');
-			$mois = (int) dol_print_date($daycursor, '%m', 'tzuserrel');
-			$jour = (int) dol_print_date($daycursor, '%d', 'tzuserrel');
+			$annee = (int) dol_print_date($daycursor, '%Y', 'gmt');
+			$mois = (int) dol_print_date($daycursor, '%m', 'gmt');
+			$jour = (int) dol_print_date($daycursor, '%d', 'gmt');
 
 			$daycursorend = $event->date_end_in_calendar;
-			$anneeend = (int) dol_print_date($daycursorend, '%Y', 'tzuserrel');
-			$moisend = (int) dol_print_date($daycursorend, '%m', 'tzuserrel');
-			$jourend = (int) dol_print_date($daycursorend, '%d', 'tzuserrel');
+			$anneeend = (int) dol_print_date($daycursorend, '%Y', 'gmt');
+			$moisend = (int) dol_print_date($daycursorend, '%m', 'gmt');
+			$jourend = (int) dol_print_date($daycursorend, '%d', 'gmt');
 
 			// daykey must be date that represent day box in calendar so must be a user time
 			$daykey = dol_mktime(0, 0, 0, $mois, $jour, $annee, 'gmt');
@@ -1365,8 +1390,8 @@ if (count($listofextcals)) {
 					}
 					// $buggedfile is set to uselocalandtzdaylight if conf->global->AGENDA_EXT_BUGGEDFILEx = 'uselocalandtzdaylight' (for example with bluemind)
 					if ($buggedfile === 'uselocalandtzdaylight') {	// unixtime is a local date that does take daylight into account, TZID is +2 for example for 'Europe/Paris' in summer
-						$localtzs = new DateTimeZone(preg_replace('/"/', '', $icalevent['DTSTART']['TZID']));
-						$localtze = new DateTimeZone(preg_replace('/"/', '', $icalevent['DTEND']['TZID']));
+						$localtzs = new DateTimeZone((string) preg_replace('/"/', '', $icalevent['DTSTART']['TZID']));
+						$localtze = new DateTimeZone((string) preg_replace('/"/', '', $icalevent['DTEND']['TZID']));
 						$localdts = new DateTime(dol_print_date($datestart, 'dayrfc', 'gmt'), $localtzs);
 						$localdte = new DateTime(dol_print_date($dateend, 'dayrfc', 'gmt'), $localtze);
 						$tmps = -1 * $localtzs->getOffset($localdts);
@@ -2342,11 +2367,15 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 				$title1 .= count($cases1[$h]).' '.(count($cases1[$h]) == 1 ? $langs->trans("Event") : $langs->trans("Events"));
 			}
 
+			$peruserbusyadded = 0;
+			$perusernotbusyadded = 0;
 			foreach ($cases1[$h] as $id => $ev) {
 				if (!empty($ev['busy']) && !getDolGlobalString('AGENDA_NO_TRANSPARENT_ON_NOT_BUSY')) {
-					$style1 .= ' peruser_busy';
+					$style1 .= $peruserbusyadded ? '' : ' peruser_busy';
+					$peruserbusyadded++;
 				} else {
-					$style1 .= 'peruser_notbusy ';
+					$style1 .= $perusernotbusyadded ? '' : 'peruser_notbusy ';
+					$perusernotbusyadded++;
 				}
 				if (!empty($ev['css'])) {
 					$style1 .= $ev['css'].' ';
@@ -2359,11 +2388,15 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 				$title2 .= count($cases2[$h]).' '.(count($cases2[$h]) == 1 ? $langs->trans("Event") : $langs->trans("Events"));
 			}
 
+			$peruserbusyadded = 0;
+			$perusernotbusyadded = 0;
 			foreach ($cases2[$h] as $id => $ev) {
 				if (!empty($ev['busy']) && !getDolGlobalString('AGENDA_NO_TRANSPARENT_ON_NOT_BUSY')) {
-					$style2 .= ' peruser_busy';
+					$style2 .= $peruserbusyadded ? '' : ' peruser_busy';
+					$peruserbusyadded++;
 				} else {
-					$style2 .= 'peruser_notbusy ';
+					$style2 .= $perusernotbusyadded ? '' : 'peruser_notbusy ';
+					$perusernotbusyadded++;
 				}
 				if (!empty($ev['css'])) {
 					$style2 .= $ev['css'].' ';
@@ -2376,11 +2409,15 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 				$title3 .= count($cases3[$h]).' '.(count($cases3[$h]) == 1 ? $langs->trans("Event") : $langs->trans("Events"));
 			}
 
+			$peruserbusyadded = 0;
+			$perusernotbusyadded = 0;
 			foreach ($cases3[$h] as $id => $ev) {
 				if (!empty($ev['busy']) && !getDolGlobalString('AGENDA_NO_TRANSPARENT_ON_NOT_BUSY')) {
-					$style3 .= ' peruser_busy';
+					$style3 .= $peruserbusyadded ? '' : ' peruser_busy';
+					$peruserbusyadded++;
 				} else {
-					$style3 .= 'peruser_notbusy ';
+					$style3 .= $perusernotbusyadded ? '' : 'peruser_notbusy ';
+					$perusernotbusyadded++;
 				}
 				if (!empty($ev['css'])) {
 					$style3 .= $ev['css'].' ';
@@ -2393,11 +2430,15 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 				$title4 .= count($cases4[$h]).' '.(count($cases4[$h]) == 1 ? $langs->trans("Event") : $langs->trans("Events"));
 			}
 
+			$peruserbusyadded = 0;
+			$perusernotbusyadded = 0;
 			foreach ($cases4[$h] as $id => $ev) {
 				if (!empty($ev['busy']) && !getDolGlobalString('AGENDA_NO_TRANSPARENT_ON_NOT_BUSY')) {
-					$style4 .= ' peruser_busy';
+					$style4 .= $peruserbusyadded ? '' : ' peruser_busy';
+					$peruserbusyadded++;
 				} else {
-					$style4 .= 'peruser_notbusy ';
+					$style4 .= $perusernotbusyadded ? '' : 'peruser_notbusy ';
+					$perusernotbusyadded++;
 				}
 				if (!empty($ev['css'])) {
 					$style4 .= $ev['css'].' ';

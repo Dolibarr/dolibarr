@@ -208,12 +208,12 @@ class DolEditor
 		$fullpage = false;
 
 		// syntax is [] for attributes and {} for value inside style
-		$extraAllowedContent = 'a[target];';
+		$extraAllowedContent = 'a[target]{text-decoration};';
 		$extraAllowedContent .= 'section[contenteditable,id];';
 		$extraAllowedContent .= 'table{border-spacing};';
 		$extraAllowedContent .= 'td{padding};';
 		$extraAllowedContent .= 'p{margin-left,margin-right,margin-top,margin-bottom,padding,line-height};';
-		$extraAllowedContent .= 'div{background-color,color,display,float,height,margin,margin-top,margin-bottom,padding,padding-left,padding-right,padding-top,padding-bottom,width,border-top-left-radius,border-top-right-radius,border-bottom-left-radius,border-bottom-right-radius,box-shadow}';
+		$extraAllowedContent .= 'div{background-color,color,display,float,height,margin,margin-top,margin-bottom,padding,padding-left,padding-right,padding-top,padding-bottom,width,border-radius,border-top-left-radius,border-top-right-radius,border-bottom-left-radius,border-bottom-right-radius,box-shadow}';
 
 		if (is_string($restrictContent)) {
 			$extraAllowedContent = $restrictContent;
@@ -396,7 +396,12 @@ class DolEditor
 				$out .= '		entity_encoding: "raw",'."\n";
 				$out .= '		protect: [/<\?[\s\S]*?\?>/g],'."\n";	// protect PHP tags like CKEditor did
 				$out .= '		paste_data_images: true,'."\n";
-				$out .= '		content_style: \'p { margin: unset; line-height: 1.2em; } .mce-content-body { margin: 10px; } \',';
+				$fontlist = 'arial,tahoma,verdana,helvetica';
+				if (getDolGlobalString('THEME_FONT_FAMILY')) {
+					$fontlist = getDolGlobalString('THEME_FONT_FAMILY').', '.$fontlist;
+				}
+
+				$out .= '		content_style: \'p { margin: 6px 0 6px 0; line-height: 1.4em; } .mce-content-body { font-size: 0.94em; margin: 10px; font-family: '.$fontlist.' } \',';
 				$out .= '		toolbar_mode: "sliding",'."\n";
 				$out .= '		browser_spellcheck: '.(getDolGlobalString('CKEDITOR_NATIVE_SPELLCHECKER') ? 'true' : 'false').','."\n";
 				$out .= '		language: (tinyLang && tinyLang.indexOf("en") === 0) ? "en" : tinyLang,'."\n";

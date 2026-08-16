@@ -5,7 +5,7 @@
  * Copyright (C) 2023       Charlene Benke          <charlene@patas_monkey.com>
  * Copyright (C) 2023       Christian Foellmann     <christian@foellmann.de>
  * Copyright (C) 2024-2025	MDW                     <mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024       Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2025		Benjamin Falière		<benjamin@faliere.com>
  *
@@ -34,6 +34,7 @@ require '../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
@@ -45,7 +46,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/project/modules_project.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 // Load translation files required by the page
@@ -84,7 +84,6 @@ $mine = GETPOST('mode') == 'mine' ? 1 : 0;
 $hookmanager->initHooks(array('projectcard', 'globalcard'));
 
 $object = new Project($db);
-$extrafields = new ExtraFields($db);
 
 // Load object
 //include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Can't use generic include because when creating a project, ref is defined and we don't want error if fetch fails from ref.
@@ -503,6 +502,8 @@ if (empty($reshook)) {
 		if ($result <= 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 			$action = '';
+		} else {
+			setEventMessages($langs->trans("FileGenerated"), null, 'mesgs');
 		}
 	}
 
@@ -514,7 +515,7 @@ if (empty($reshook)) {
 			$langs->load("other");
 			$upload_dir = $conf->project->multidir_output[$object->entity ?? $conf->entity];
 			$file = $upload_dir.'/'.GETPOST('file');
-			$ret = dol_delete_file($file, 0, 0, 0, $object);
+			$ret = dol_delete_file($file, 1, 0, 0, $object);
 			if ($ret) {
 				setEventMessages($langs->trans("FileWasRemoved", GETPOST('file')), null, 'mesgs');
 			} else {
@@ -1768,9 +1769,9 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 			// Clone
 			if ($user->hasRight('projet', 'creer')) {
 				if ($userWrite > 0) {
-					print dolGetButtonAction('', $langs->trans('ToClone'), 'default', $_SERVER["PHP_SELF"].'?action=clone&token='.newToken().'&id='.((int) $object->id), '');
+					print dolGetButtonAction('', $langs->trans('ToClone'), 'clone', $_SERVER["PHP_SELF"].'?action=clone&token='.newToken().'&id='.((int) $object->id), '');
 				} else {
-					print dolGetButtonAction($langs->trans('NotOwnerOfProject'), $langs->trans('ToClone'), 'default', $_SERVER['PHP_SELF']. '#', '', false);
+					print dolGetButtonAction($langs->trans('NotOwnerOfProject'), $langs->trans('ToClone'), 'clone', $_SERVER['PHP_SELF']. '#', '', false);
 				}
 			}
 
@@ -1779,7 +1780,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 				if ($userDelete > 0 || ($object->status == Project::STATUS_DRAFT && $user->hasRight('projet', 'creer'))) {
 					print dolGetButtonAction('', $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id, '');
 				} else {
-					print dolGetButtonAction($langs->trans('NotOwnerOfProject'), $langs->trans('Delete'), 'default', $_SERVER['PHP_SELF']. '#', '', false);
+					print dolGetButtonAction($langs->trans('NotOwnerOfProject'), $langs->trans('Delete'), 'delete', $_SERVER['PHP_SELF']. '#', '', false);
 				}
 			}
 		}
@@ -1807,7 +1808,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 				print '</td></tr></table>';
 
 				print '<div class="div-table-responsive-no-min">';
-				print '<table class="centpercent noborder'.($morecss ? ' '.$morecss : '').'">';
+				print '<table class="centpercent noborder'.(!empty($morecss) ? ' '.$morecss : '').'">';
 				print '<tr class="liste_titre">';
 				print getTitleFieldOfList('Ref', 0, $_SERVER["PHP_SELF"], '', '', '', '', '', '', '', 1);
 				print getTitleFieldOfList('Title', 0, $_SERVER["PHP_SELF"], '', '', '', '', '', '', '', 1);

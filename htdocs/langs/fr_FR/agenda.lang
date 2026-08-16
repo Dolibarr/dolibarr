@@ -217,3 +217,8 @@ EventPartOfARecurringSerie=L'événement fait partie d'une série récurrente av
 BookCalSystem=Réservation en ligne
 BookCalInitHelp=Pour commencer, accédez au menu pour créer un nouveau calendrier avec les disponibilités...
 PublicLinkForBooking=Lien public pour la réservation
+STOCKTRANSFER_CLOSEInDolibarr=Transfert de stock %s terminé.
+STOCKTRANSFER_VALIDATEInDolibarr=Transfert de stock %s validé.
+
+STOCKTRANSFER_UNVALIDATEInDolibarr=Transfert de stock %s rétabli à Brouillon.
+STOCKTRANSFER_MODIFYInDolibarr=Transfert de stock %s modifié.

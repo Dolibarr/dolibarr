@@ -68,9 +68,6 @@ if (isModEnabled('order')) {
 if (isModEnabled('contract')) {
 	require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 }
-if (isModEnabled('deplacement')) {
-	require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php';
-}
 if (isModEnabled('don')) {
 	require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 }
@@ -218,6 +215,9 @@ $expensereport = null;
 $othermessage = '';
 $tmpprojtime = array();
 $nbAttendees = 0;
+
+$extrafields->fetch_name_optionals_label($object->table_element);
+$object->fetch_optionals();
 
 $permissiontoadd = $user->hasRight('projet', 'creer');
 $permissiontodelete = $user->hasRight('projet', 'supprimer');
@@ -659,20 +659,6 @@ $listofreferent = array(
 		'nototal' => 1,
 		'test' => isModEnabled('mrp') && $user->hasRight('mrp', 'read')
 	),
-	'trip' => array(
-		'name' => "TripsAndExpenses",
-		'title' => "ListExpenseReportsAssociatedProject",
-		'class' => 'Deplacement',
-		'table' => 'deplacement',
-		'datefieldname' => 'dated',
-		'margin' => 'minus',
-		'disableamount' => 1,
-		'urlnew' => DOL_URL_ROOT.'/deplacement/card.php?action=create&projectid='.$id.'&socid='.$socid.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
-		'lang' => 'trips',
-		'buttonnew' => 'AddTrip',
-		'testnew' => $user->hasRight('deplacement', 'creer'),
-		'test' => isModEnabled('deplacement') && $user->hasRight('deplacement', 'lire')
-	),
 	'expensereport' => array(
 		'name' => "ExpenseReports",
 		'title' => "ListExpenseReportsAssociatedProject",
@@ -855,6 +841,17 @@ if ($action == "addelement") {
 	}
 } elseif ($action == "unlink") {
 	$tablename = GETPOST("tablename", "aZ09");
+	$referentTables = array_values(array_map(
+	/**
+	 * @param array{table: string} $definition
+	 * @return string
+	 */
+	function ($definition) {
+		return $definition['table'];
+	}, $listofreferent));
+	if (!in_array($tablename, $referentTables)) {
+		accessforbidden('', 0, 0);
+	}
 	$projectField = GETPOSTISSET('projectfield') ? GETPOST('projectfield', 'aZ09') : 'fk_projet';
 	$elementselectid = GETPOSTINT("elementselect");
 
@@ -1089,8 +1086,11 @@ foreach ($listofreferent as $key => $value) {
 					}
 				}
 
-				// Change sign of $total_ht_by_line and $total_ttc_by_line for supplier proposal and supplier order
-				if ($tablename == 'commande_fournisseur' || $tablename == 'supplier_proposal') {
+				// Change sign of $total_ht_by_line and $total_ttc_by_line for supplier proposal and supplier order.
+				// Skip when the element already participates to the margin computation via margin='minus'
+				// (line 1095 below will revert sign too, and double-negation would silently flip the value
+				// back to positive - see PROJECT_ELEMENTS_FOR_MINUS_MARGIN=order_supplier in #34684).
+				if (($tablename == 'commande_fournisseur' || $tablename == 'supplier_proposal') && $margin !== 'minus') {
 					$total_ht_by_line = -$total_ht_by_line;
 					$total_ttc_by_line = -$total_ttc_by_line;
 				}
@@ -1410,6 +1410,13 @@ foreach ($listofreferent as $key => $value) {
 			print '</td>';
 		}
 
+		// Additional columns from hooks
+		$parameters = array('key' => $key, 'value' => $value, 'tablename' => $tablename);
+		$reshook = $hookmanager->executeHooks('printOverviewDetailTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		if ($reshook < 0) {
+			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+		}
+		print $hookmanager->resPrint;
 
 		// Amount HT
 		//if (empty($value['disableamount']) && ! in_array($tablename, array('projet_task'))) print '<td class="right" width="120">'.$langs->trans("AmountHT").'</td>';
@@ -1751,6 +1758,13 @@ foreach ($listofreferent as $key => $value) {
 					print '</td>';
 				}
 
+				// Additional columns from hooks
+				$parameters = array('key' => $key, 'value' => $value, 'tablename' => $tablename, 'element' => $element, 'i' => $i, 'qualifiedfortotal' => $qualifiedfortotal);
+				$reshook = $hookmanager->executeHooks('printOverviewDetailValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+				if ($reshook < 0) {
+					setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+				}
+				print $hookmanager->resPrint;
 
 				// Amount without tax
 				$warning = '';
@@ -1977,6 +1991,13 @@ foreach ($listofreferent as $key => $value) {
 				if ($tablename == 'fichinter') {
 					print '<td class="left">'.convertSecondToTime($total_duration, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY).'</td>';
 				}
+				// Additional total columns from hooks
+				$parameters = array('key' => $key, 'value' => $value, 'tablename' => $tablename, 'nbelement' => $i);
+				$reshook = $hookmanager->executeHooks('printOverviewDetailTotal', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+				if ($reshook < 0) {
+					setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+				}
+				print $hookmanager->resPrint;
 				print '<td class="right">';
 				if (empty($value['disableamount'])) {
 					if ($key == 'loan') {

@@ -5,7 +5,6 @@ AddACommentForPoll=Puede agregar un comentario en la encuesta ...
 AddComment=Agregar comentario
 ToReceiveEMailForEachVote=Recibe un correo electrónico por cada voto
 TypeDate=Escriba la fecha
-OpenSurveyStep2=Seleccione sus fechas entre los días libres (gris). Los días seleccionados son verdes. Puede anular la selección de un día seleccionado previamente haciendo clic nuevamente en él.
 CopyHoursOfFirstDay=Copia las horas del primer día
 TheBestChoice=La mejor opción actualmente es
 TheBestChoices=Las mejores opciones actualmente son

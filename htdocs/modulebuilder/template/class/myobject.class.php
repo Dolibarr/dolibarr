@@ -92,7 +92,7 @@ class MyObject extends CommonObject
 	 *  	'date', 'datetime', 'timestamp', 'duration',
 	 *  	'boolean', 'checkbox', 'radio', 'array',
 	 *  	'email', 'phone', 'url', 'password', 'ip'
-	 *		Note: Filter must be a Dolibarr Universal Filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
+	 *		Note: Filter must be a Dolibarr Universal Filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
 	 *  'length' the length of field. Example: 255, '24,8'
 	 *  'label' the translation key.
 	 *  'langfile' the key of the language file for translation.
@@ -119,6 +119,7 @@ class MyObject extends CommonObject
 	 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
 	 *	'validate' is 1 if you need to validate the field with $this->validateField(). Need MAIN_ACTIVATE_VALIDATION_RESULT.
 	 *  'copytoclipboard' is 1 or 2 to allow to add a picto to copy value into clipboard (1=picto after label, 2=picto after value)
+	 *  'description' is a description of the field. Can be used to help the MCP server.
 	 *
 	 *  Note: To have value dynamic, you can set value to 0 in definition and edit the value on the fly into the constructor.
 	 */
@@ -205,43 +206,42 @@ class MyObject extends CommonObject
 	public $import_key;
 	// END MODULEBUILDER PROPERTIES
 
-
+	//BEGIN MODULEBUILDER LINES
 	// If this object has a subtable with lines
 
-	// /**
-	//  * @var string    Name of subtable line
-	//  */
-	// public $table_element_line = 'mymodule_myobjectline';
+	/**
+	 * @var string    Name of subtable line
+	 */
+	public $table_element_line = 'mymodule_myobjectline';
 
-	// /**
-	//  * @var string    Field name with ID of parent key if this object has a parent, Or Field name of in child tables to link to this record.
-	//  */
-	// public $fk_element = 'fk_myobject';
+	/**
+	 * @var string    Field with ID of parent key if this object has a parent
+	 */
+	public $fk_element = 'fk_myobject';
 
-	// /**
-	//  * @var string    Name of subtable class that manage subtable lines
-	//  */
-	// public $class_element_line = 'MyObjectline';
+	/**
+	 * @var string    Name of subtable class that manage subtable lines
+	 */
+	public $class_element_line = 'MyObjectline';
 
-	// /**
-	//  * @var array	List of child tables. To test if we can delete object.
-	//  */
-	// protected $childtables = array('mychildtable' => array('name'=>'MyObject', 'fk_element'=>'fk_myobject'));
+	/**
+	 * @var array<array<string>|string>		List of child tables. To test if we can delete object.
+	 */
+	protected $childtables = array('mychildtable' => array('name' => 'MyObject', 'fk_element' => 'fk_myobject'));
 
-	// /**
-	//  * @var array    List of child tables. To know object to delete on cascade.
-	//  *               If name matches '@ClassName:FilePathClass:ParentFkFieldName' (the recommended mode) it will
-	//  *               call method ClassName->deleteByParentField(parentId, 'ParentFkFieldName') to fetch and delete child object.
-	//  *               Using an array like childtables should not be implemented because a child may have other child, so we must only use the method that call deleteByParentField().
-	//  */
-	// protected $childtablesoncascade = array('mymodule_myobjectdet');
+	/**
+	 * @var string[]	List of child tables. To know object to delete on cascade.
+	 *               	If name matches '@ClassNAme:FilePathClass;ParentFkFieldName' it will
+	 *               	call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object
+	 */
+	protected $childtablesoncascade = array('mymodule_myobjectdet');
 
-	// /**
-	//  * @var MyObjectLine[]     Array of subtable lines
-	//  */
-	// public $lines = array();
+	/**
+	 * @var MyObjectLine[]     Array of subtable lines
+	 */
+	public $lines = array();
 
-
+	//END MODULEBUILDER LINES
 
 	/**
 	 * Constructor
@@ -327,14 +327,16 @@ class MyObject extends CommonObject
 
 		// Load source object
 		$result = $object->fetchCommon($fromid);
+		//BEGIN MODULEBUILDER LINES
 		if ($result > 0 && !empty($object->table_element_line)) {
 			$object->fetchLines();
 		}
 
 		// get lines so they will be clone
-		//foreach($this->lines as $line)
-		//	$line->fetch_optionals();
-
+		foreach ($this->lines as $line) {
+			$line->fetch_optionals();
+		}
+		//END MODULEBUILDER LINES
 		// Reset some properties
 		unset($object->id);
 		unset($object->fk_user_creat);
@@ -418,9 +420,11 @@ class MyObject extends CommonObject
 	public function fetch($id, $ref = null, $noextrafields = 0, $nolines = 0)
 	{
 		$result = $this->fetchCommon($id, $ref, '', $noextrafields);
+		//BEGIN MODULEBUILDER LINES
 		if ($result > 0 && !empty($this->table_element_line) && empty($nolines)) {
 			$this->fetchLines($noextrafields);
 		}
+		//END MODULEBUILDER LINES
 		return $result;
 	}
 
@@ -437,8 +441,7 @@ class MyObject extends CommonObject
 		$result = $this->fetchLinesCommon('', $noextrafields);
 		return $result;
 	}
-
-
+	//END MODULEBUILDER LINES
 	/**
 	 * Load list of objects in memory from the database.
 	 * Using a fetchAll() with limit = 0 is a very bad practice. Instead try to forge yourself an optimized SQL request with
@@ -469,7 +472,7 @@ class MyObject extends CommonObject
 			$sql .= " WHERE t.entity IN (".getEntity($this->element).")";
 		} elseif (preg_match('/^\w+@\w+$/', (string) $this->ismultientitymanaged)) {
 			$tmparray = explode('@', (string) $this->ismultientitymanaged);
-			$sql .= " LEFT JOIN ".$this->db->prefix().$tmparray[1]." as pt ON t.".$this->db->sanitize($tmparray[0])." = pt.rowid";
+			$sql .= " LEFT JOIN ".$this->db->prefix().$this->db->sanitize($tmparray[1])." as pt ON t.".$this->db->sanitize($tmparray[0])." = pt.rowid";
 			$sql .= " WHERE pt.entity IN (".getEntity($this->element).")";
 		} else {
 			$sql .= " WHERE 1 = 1";
@@ -545,6 +548,7 @@ class MyObject extends CommonObject
 		//return $this->deleteCommon($user, $notrigger, 1);
 	}
 
+	//BEGIN MODULEBUILDER LINES
 	/**
 	 *  Delete a line of object in database
 	 *
@@ -562,6 +566,7 @@ class MyObject extends CommonObject
 
 		return $this->deleteLineCommon($user, $idline, $notrigger);
 	}
+	//END MODULEBUILDER LINES
 
 
 	/**
@@ -646,14 +651,14 @@ class MyObject extends CommonObject
 			if (preg_match('/^[\(]?PROV/i', $this->ref)) {
 				// Now we rename also files into index
 				$sql = 'UPDATE '.$this->db->prefix()."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'myobject/".$this->db->escape($this->newref)."'";
-				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'myobject/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'myobject/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++;
 					$this->error = $this->db->lasterror();
 				}
 				$sql = 'UPDATE '.$this->db->prefix()."ecm_files set filepath = 'myobject/".$this->db->escape($this->newref)."'";
-				$sql .= " WHERE filepath = 'myobject/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$sql .= " WHERE filepath = 'myobject/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++;
@@ -1041,7 +1046,7 @@ class MyObject extends CommonObject
 	{
 		$sql = "SELECT t.rowid, t.date_creation as datec";
 		if (!empty($this->isextrafieldmanaged) && $this->isextrafieldmanaged == 1) {
-			$sql .= ", GREATEST(t.tms, te.tms) as datem";
+			$sql .= ", GREATEST(t.tms, COALESCE(te.tms, t.tms)) as datem";
 		} else {
 			$sql .= ", t.tms as datem";
 		}
@@ -1107,10 +1112,11 @@ class MyObject extends CommonObject
 		return $this->initAsSpecimenCommon();
 	}
 
+	//BEGIN MODULEBUILDER LINES
 	/**
 	 * 	Create an array of lines
 	 *
-	 * 	@return	CommonObjectLine[]|int		array of lines if OK, <0 if KO
+	 * 	@return	array<CommonObjectLine>|int		array of lines if OK, <0 if KO
 	 */
 	public function getLinesArray()
 	{
@@ -1123,10 +1129,12 @@ class MyObject extends CommonObject
 			$this->setErrorsFromObject($objectline);
 			return $result;
 		} else {
+			/** @phpstan-ignore-next-line */
 			$this->lines = $result;
 			return $this->lines;
 		}
 	}
+	//END MODULEBUILDER LINES
 
 	/**
 	 *  Returns the reference to the following non used object depending on the active numbering module.
@@ -1273,7 +1281,7 @@ class MyObject extends CommonObject
 
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
-
+//BEGIN MODULEBUILDER LINES
 /**
  * Class MyObjectLine. You can also remove this and generate a CRUD class for lines objects.
  */
@@ -1316,3 +1324,4 @@ class MyObjectLine extends CommonObjectLine
 		$this->db = $db;
 	}
 }
+//END MODULEBUILDER LINES

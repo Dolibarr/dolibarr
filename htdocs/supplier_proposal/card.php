@@ -15,6 +15,7 @@
  * Copyright (C) 2022		Gauthier VERDOL				<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Lionel Vessiller			<lvessiller@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -101,6 +102,7 @@ $object = new SupplierProposal($db);
 $extrafields = new ExtraFields($db);
 
 $objectsrc = null;
+$classname = null;
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -158,6 +160,9 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 
+$fournprice = 0;
+$buyingprice = 0;
+
 if (empty($reshook)) {
 	$backurlforlist = DOL_URL_ROOT.'/supplier_proposal/list.php';
 
@@ -171,7 +176,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($cancel) {
+	if ($cancel && !($action == 'updateline' && $usercancreate)) {
 		if (!empty($backtopageforcancel)) {
 			header("Location: ".$backtopageforcancel);
 			exit;
@@ -425,6 +430,7 @@ if (empty($reshook)) {
 						$object->linked_objects = array_merge($object->linked_objects, GETPOST('other_linked_objects', 'array:int'));
 					}
 
+					$classname = null;
 					$id = $object->create($user);
 					if ($id > 0) {
 						dol_include_once('/'.$element.'/class/'.$subelement.'.class.php');
@@ -465,6 +471,9 @@ if (empty($reshook)) {
 									$array_options = array();
 								}
 
+								// Preserve the TTC entry mode of the source line: a line entered including tax must
+								// stay in TTC so its total is computed from the typed value, without rounding drift.
+								$line_price_base_type = $lines[$i]->getPriceBaseType();
 								$result = $object->addline(
 									$desc,
 									$lines[$i]->subprice,
@@ -474,8 +483,8 @@ if (empty($reshook)) {
 									$lines[$i]->localtax2_tx,
 									$lines[$i]->fk_product,
 									$lines[$i]->remise_percent,
-									'HT',
-									0,
+									$line_price_base_type,
+									(float) $lines[$i]->subprice_ttc,
 									$lines[$i]->info_bits,
 									$product_type,
 									$lines[$i]->rang,
@@ -656,7 +665,13 @@ if (empty($reshook)) {
 			if ($line->special_code == SUBTOTALS_SPECIAL_CODE) {
 				continue;
 			}
-			$result = $object->updateline($line->id, $line->subprice, $line->qty, (float) $line->remise_percent, $vat_rate, $localtax1_rate, $localtax2_rate, $line->desc, 'HT', $line->info_bits, $line->special_code, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->product_type, $line->array_options, $line->ref_fourn, $line->fk_unit, $line->multicurrency_subprice);
+			// Preserve the original entry mode of the line so the total is not drifted by rounding.
+			$line_price_base_type = $line->getPriceBaseType();
+			$line_pu = ($line_price_base_type === 'TTC') ? (float) $line->subprice_ttc : (float) $line->subprice;
+			// In TTC mode, do not forward the HT currency price: under multicurrency updateline() would reset
+			// the local price and recompute from the HT currency amount (read as TTC) -> the TTC value is lost.
+			$line_pu_devise = ($line_price_base_type === 'TTC') ? 0 : (float) $line->multicurrency_subprice;
+			$result = $object->updateline($line->id, $line_pu, $line->qty, (float) $line->remise_percent, $vat_rate, $localtax1_rate, $localtax2_rate, $line->desc, $line_price_base_type, $line->info_bits, $line->special_code, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->product_type, $line->array_options, $line->ref_fourn, $line->fk_unit, $line_pu_devise);
 		}
 	} elseif ($action == 'confirm_addtitleline' && $usercancreate) {
 		// Handling adding a new title line for subtotals module
@@ -1009,14 +1024,18 @@ if (empty($reshook)) {
 				$localtax1_tx = get_localtax($tva_tx, 1, $mysoc, $object->thirdparty);
 				$localtax2_tx = get_localtax($tva_tx, 2, $mysoc, $object->thirdparty);
 
+				// Keep the entry mode chosen by the user so the total is computed from the typed value (no rounding drift).
 				if (GETPOST('price_ht') != '' || GETPOST('multicurrency_price_ht') != '') {
+					$price_base_type = 'HT';
 					$pu_ht = price2num($price_ht, 'MU'); // $pu_ht must be rounded according to settings
+					$pu_ttc = 0;
+					$pu_ht_devise = price2num($price_ht_devise, 'CU');
 				} else {
+					$price_base_type = 'TTC';
 					$pu_ttc = price2num(GETPOST('price_ttc'), 'MU');
-					$pu_ht = price2num((float) $pu_ttc / (1 + ((float) $tva_tx / 100)), 'MU'); // $pu_ht must be rounded according to settings
+					$pu_ht = 0;
+					$pu_ht_devise = price2num($price_ttc_devise, 'CU');
 				}
-				$price_base_type = 'HT';
-				$pu_ht_devise = price2num($price_ht_devise, 'CU');
 				$info_bits = 0;
 
 				$result = $object->addline(
@@ -1212,6 +1231,8 @@ if (empty($reshook)) {
 	} elseif ($action == 'updateline' && $usercancreate && GETPOST('save') == $langs->trans("Save")) {
 		// Update a line within proposal
 		$vat_rate = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
+		$pu_ht = price2num(GETPOST('price_ht'), '', 2);
+		$pu_ttc = price2num(GETPOST('price_ttc'), '', 2);
 
 		// Define info_bits
 		$info_bits = 0;
@@ -1226,22 +1247,6 @@ if (empty($reshook)) {
 		$vat_rate = str_replace('*', '', $vat_rate);
 		$localtax1_rate = get_localtax($vat_rate, 1, $mysoc, $object->thirdparty);
 		$localtax2_rate = get_localtax($vat_rate, 2, $mysoc, $object->thirdparty);
-
-		if (GETPOST('price_ht') != '') {
-			$price_base_type = 'HT';
-			$ht = price2num(GETPOST('price_ht'), '', 2);
-		} else {
-			$reg = array();
-			$vatratecleaned = $vat_rate;
-			if (preg_match('/^(.*)\s*\((.*)\)$/', $vat_rate, $reg)) {      // If vat is "xx (yy)"
-				$vatratecleaned = trim($reg[1]);
-				$vatratecode = $reg[2];
-			}
-
-			$ttc = price2num(GETPOST('price_ttc'), '', 2);
-			$ht = (float) $ttc / (1 + ((float) $vatratecleaned / 100));
-			$price_base_type = 'HT';
-		}
 
 		$pu_ht_devise = price2num(GETPOST('multicurrency_subprice'), 'CU', 2);
 
@@ -1263,6 +1268,27 @@ if (empty($reshook)) {
 		$special_code = GETPOST('special_code');
 		if (!GETPOST('qty')) {
 			$special_code = 3;
+		}
+
+		// The form JS clears the other field when the user edits one of them: only the modified field is filled.
+		// When both fields are submitted, the user did not change the price - we must preserve the original
+		// storage mode of the line, otherwise a no-op save would shift the total by rounding.
+		$ht = $pu_ht;
+		$price_base_type = 'HT';
+		if (empty($pu_ht) && !empty($pu_ttc)) {
+			$ht = $pu_ttc;
+			$price_base_type = 'TTC';
+		} elseif (!empty($pu_ht) && !empty($pu_ttc)) {
+			foreach ($object->lines as $line_obj) {
+				if ($line_obj->id == GETPOSTINT('lineid')) {
+					// Line was originally entered in TTC mode (subprice_ttc filled by addline)
+					if ($line_obj->wasEnteredIncludingTax()) {
+						$ht = $pu_ttc;
+						$price_base_type = 'TTC';
+					}
+					break;
+				}
+			}
 		}
 
 		// Check minimum price
@@ -1303,9 +1329,15 @@ if (empty($reshook)) {
 			$ref_supplier = GETPOST('fourn_ref', 'alpha');
 			$fk_unit = GETPOSTINT('units');
 
+			// In TTC mode, do not forward the HT currency price: under multicurrency updateline() would reset
+			// the local price and recompute from the HT currency amount (read as TTC) -> the TTC value is lost.
+			if ($price_base_type === 'TTC') {
+				$pu_ht_devise = 0;
+			}
+
 			$result = $object->updateline(
 				GETPOSTINT('lineid'),
-				$ht,
+				(float) $ht,
 				(float) price2num(GETPOST('qty'), 'MS', 2),
 				(float) price2num(GETPOST('remise_percent'), '', 2),
 				$vat_rate,
@@ -1374,7 +1406,7 @@ if (empty($reshook)) {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
-	} elseif ($action == 'updateline' && $usercancreate && GETPOST('cancel', 'alpha') == $langs->trans("Cancel")) {
+	} elseif ($action == 'updateline' && $usercancreate && $cancel) {
 		header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id); //  To re-display card in edit mode
 		exit();
 	} elseif ($action == 'classin' && $usercancreate) {
@@ -1664,16 +1696,17 @@ if ($action == 'create') {
 
 			print '<tr>';
 			print '<td>'.$langs->trans("Project").'</td><td colspan="2">';
-			if ($socid > 0) { // external user
-				$projSocFilter = $socid;
-			} elseif ((int) $soc->id == 0 || getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS')) {
+			if (!empty($user->socid)) { // external user: restrict to their own third party
+				$projSocFilter = $user->socid;
+			} elseif (getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') || $socid == 0) {
+				// Give priority to the constant (as on supplier invoice), so a supplier document created from a
+				// customer project keeps that project selected after the supplier is chosen.
 				$projSocFilter = -1;
 			} else {
-				$projSocFilter = $soc->id;
+				$projSocFilter = $socid;
 			}
 			print img_picto('', 'project', 'class="pictofixedwidth"').$formproject->select_projects($projSocFilter, $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
 			print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.((int) $soc->id).'&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id).'"><span class="fa fa-plus-circle valignmiddle" title="'.$langs->trans("AddProject").'"></span></a>';
-
 			print '</td>';
 			print '</tr>';
 		}
@@ -1704,7 +1737,7 @@ if ($action == 'create') {
 
 
 		// Lines from source
-		if (!empty($origin) && !empty($originid) && is_object($objectsrc)) {
+		if (!empty($origin) && !empty($originid) && is_object($objectsrc) && $classname !== null) {
 			// TODO for compatibility
 			if ($origin == 'contrat') {
 				// Calcul contrat->price (HT), contrat->total (TTC), contrat->tva
@@ -1937,7 +1970,7 @@ if ($action == 'create') {
 	// Thirdparty
 	$morehtmlref .= $object->thirdparty->getNomUrl(1, 'supplier');
 	if (!getDolGlobalString('MAIN_DISABLE_OTHER_LINK') && $object->thirdparty->id > 0) {
-		$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/supplier_proposal/list.php?socid='.$object->thirdparty->id.'&search_societe='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherProposals").'</a>)';
+		$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/supplier_proposal/list.php?socid='.$object->thirdparty->id.'">'.$langs->trans("OtherProposals").'</a>)';
 	}
 	// Project
 	if (isModEnabled('project')) {
@@ -1948,7 +1981,11 @@ if ($action == 'create') {
 			if ($action != 'classify') {
 				$morehtmlref .= '<a class="editfielda" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true).'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
-			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') ? $object->socid : -1), $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+			$canLinkAll = getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS');
+			$canLinkAll = ($canLinkAll === '' || $canLinkAll === false) ? 0 : $canLinkAll;
+			$currentSocId = ($object->id > 0) ? $object->socid : $socid;
+			$projectSocId = ((int) $canLinkAll == 1) ? -1 : $currentSocId;
+			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $projectSocId, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
@@ -2217,7 +2254,7 @@ if ($action == 'create') {
 		<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline').'">
 		<input type="hidden" name="mode" value="">
 		<input type="hidden" name="id" value="' . $object->id.'">
-		<input type="hidden" name="backtopage" value="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">
+		<input type="hidden" name="backtopage" value="'.dol_escape_htmltag($backtopage).'">
 		';
 
 		if (!empty($conf->use_javascript_ajax) && $object->status == SupplierProposal::STATUS_DRAFT) {
@@ -2382,7 +2419,7 @@ if ($action == 'create') {
 
 				// Clone
 				if ($usercancreate) {
-					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$object->socid.'&amp;action=clone&object='.$object->element.'&amp;token='.newToken().'">'.$langs->trans("ToClone").'</a></div>';
+					print '<div class="inline-block divButAction"><a class="butAction butActionClone" href="'.$_SERVER['PHP_SELF'].'?id='.((int) $object->id).'&socid='.((int) $object->socid).'&action=clone&object='.urlencode($object->element).'&token='.newToken().'">'.$langs->trans("ToClone").'</a></div>';
 				}
 
 				// Delete

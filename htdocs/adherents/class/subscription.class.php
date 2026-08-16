@@ -78,6 +78,33 @@ class Subscription extends CommonObject
 	public $datef;
 
 	/**
+	 * Alias of $dateh exposed by the REST API GET response so the same payload
+	 * can be sent back to POST /members/{id}/subscriptions without renaming
+	 * client-side. Matches the date_start / date_end naming convention used by
+	 * other Dolibarr objects. Not persisted (see issue #38279).
+	 *
+	 * @var integer
+	 */
+	public $date_start;
+
+	/**
+	 * Alias of $datef exposed by the REST API GET response (see issue #38279).
+	 * Not persisted.
+	 *
+	 * @var integer
+	 */
+	public $date_end;
+
+	/**
+	 * Public note exposed under the documented field name. Already populated by
+	 * fetch() but not declared as a real property; declared here so phpstan and
+	 * phan stop flagging the API setter as touching a dynamic property.
+	 *
+	 * @var string
+	 */
+	public $note_public;
+
+	/**
 	 * @var int ID
 	 */
 	public $fk_type;
@@ -179,7 +206,7 @@ class Subscription extends CommonObject
 		$sql .= " '".$this->db->escape($this->note_public ? $this->note_public : $this->note)."',";
 		$sql .= " '".$this->db->escape($this->note_private)."',";
 		$sql .= " ".(empty($this->ref_ext) ? "null" : "'".$this->db->escape($this->ref_ext)."'").",";
-		$sql .= " ".((int) ($this->user_creation_id > 0 ? $this->user_creation_id : $user->id));
+		$sql .= " ".((int) ($this->user_creation_id > 0 ? $this->user_creation_id : ((int) $user->id)));
 		$sql .= ", ".(!empty($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
 		$sql .= ")";
 
@@ -440,12 +467,14 @@ class Subscription extends CommonObject
 		$result = '';
 
 		$langs->load("members");
+		$langs->load("main");
 
 		$label = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Subscription").'</u>';
 		/*if (isset($this->statut)) {
 			$label .= ' '.$this->getLibStatut(5);
 		}*/
 		$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		$label .= '<br><b>'.$langs->trans('Label').':</b> '.$this->note_public;
 		if (!empty($this->dateh)) {
 			$label .= '<br><b>'.$langs->trans('DateStart').':</b> '.dol_print_date($this->dateh, 'day');
 		}
@@ -518,9 +547,9 @@ class Subscription extends CommonObject
 	 */
 	public function info($id)
 	{
-		$sql = 'SELECT c.rowid, c.datec, c.tms as datem, c.fk_user_creat';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'subscription as c';
-		$sql .= ' WHERE c.rowid = '.((int) $id);
+		$sql = "SELECT c.rowid, c.datec, c.tms as datem, c.fk_user_creat";
+		$sql .= " FROM ".MAIN_DB_PREFIX."subscription as c";
+		$sql .= " WHERE c.rowid = ".((int) $id);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {

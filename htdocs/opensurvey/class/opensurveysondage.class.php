@@ -84,7 +84,7 @@ class Opensurveysondage extends CommonObject
 	 *  	'date', 'datetime', 'timestamp', 'duration',
 	 *  	'boolean', 'checkbox', 'radio', 'array',
 	 *  	'mail', 'phone', 'url', 'password', 'ip'
-	 *		Note: Filter must be a Dolibarr Universal Filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
+	 *		Note: Filter must be a Dolibarr Universal Filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'picto' is code of a picto to show before value in forms
 	 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalInt("MY_SETUP_PARAM")' or 'isModEnabled("multicurrency")' ...)
@@ -347,7 +347,7 @@ class Opensurveysondage extends CommonObject
 		$sql .= " t.sujet,";
 		$sql .= " t.tms";
 		$sql .= " FROM ".MAIN_DB_PREFIX."opensurvey_sondage as t";
-		$sql .= " WHERE t.id_sondage = '".$this->db->escape($id ? $id : $numsurvey)."'";
+		$sql .= " WHERE t.id_sondage = '".$this->db->escape($id ? ((int) $id) : $numsurvey)."'";
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);

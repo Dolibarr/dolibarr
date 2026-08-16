@@ -437,4 +437,20 @@ INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUE
 
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  4, 'PCG08-PYME-CAT', 'The PYME accountancy spanish plan in catalan language', 1);
 
+-- Rename OIDC enable constant: openidconnect was converted from a module to a config-level feature (#36051)
+UPDATE llx_const SET name = 'MAIN_AUTHENTICATION_OIDC_ON' WHERE name = 'MAIN_MODULE_OPENIDCONNECT';
+
+-- this table was created only during fresh install
+CREATE TABLE llx_workstation_workstation_extrafields
+(
+    rowid           integer     AUTO_INCREMENT PRIMARY KEY,
+    tms             timestamp   DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    fk_object       integer     NOT NULL,
+    import_key      varchar(14)                          -- import key
+) ENGINE=innodb;
+
+ALTER TABLE llx_workstation_workstation_extrafields ADD INDEX idx_workstation_workstation_extrafields (fk_object);
+
+ALTER TABLE llx_adherent MODIFY COLUMN societe VARCHAR(128);
+
 -- end of migration

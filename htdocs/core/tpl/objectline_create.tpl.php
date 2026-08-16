@@ -6,7 +6,7 @@
  * Copyright (C) 2014		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2015-2016	Marcos García		<marcosgdf@gmail.com>
- * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2018       Ferran Marcet       <fmarcet@2byte.es>
  * Copyright (C) 2019       Nicolas ZABOURI     <info@inovea-conseil.com>
  * Copyright (C) 2022       OpenDSI             <support@open-dsi.fr>
@@ -14,6 +14,7 @@
  * Copyright (C) 2024       Alexandre Spangaro  <alexandre@inovea-conseil.com>
  * Copyright (C) 2025-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Lenin Rivas			<lenin.rivas777@gmail.com>
+ * Copyright (C) 2026		Jose MARTINEZ			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -376,25 +377,21 @@ if ($nolinesbefore) {
 					echo '</div>';
 				} else {
 					if ($addproducton) {
-						$url = '/product/card.php?leftmenu=product&action=create&type=0&backtopage='.urlencode($_SERVER["PHP_SELF"]);
+						$url = '/product/card.php?leftmenu=product&action=create&type=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id);
 						$newbutton = '<span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("NewProduct").'"></span>';
 						if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
-							// @FIXME Not working yet
-							$jsonclode = 'jsRefreshProductCombo';
-							// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
-							print dolButtonToOpenUrlInDialogPopup('addproduct', $langs->transnoentitiesnoconv('AddProduct'), $newbutton, $url, '', '', $jsonclode);
+							// The popup child page (product/card.php) reloads the parent itself after a successful creation
+							print dolButtonToOpenUrlInDialogPopup('addproduct', $langs->transnoentitiesnoconv('AddProduct'), $newbutton, $url);
 						} else {
 							print '<a href="'.DOL_URL_ROOT.'/product/card.php?action=create&type=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'" title="'.dol_escape_htmltag($langs->trans("NewProduct")).'"><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
 						}
 					}
 					if ($addserviceon) {
-						$url = '/product/card.php?leftmenu=product&action=create&type=1&backtopage='.urlencode($_SERVER["PHP_SELF"]);
+						$url = '/product/card.php?leftmenu=product&action=create&type=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id);
 						$newbutton = '<span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("NewService").'"></span>';
 						if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
-							// @FIXME Not working yet
-							$jsonclode = 'jsRefreshServiceCombo';
-							// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
-							print dolButtonToOpenUrlInDialogPopup('addproduct', $langs->transnoentitiesnoconv('AddService'), $newbutton, $url, '', '', $jsonclode);
+							// The popup child page (product/card.php) reloads the parent itself after a successful creation
+							print dolButtonToOpenUrlInDialogPopup('addproduct', $langs->transnoentitiesnoconv('AddService'), $newbutton, $url);
 						} else {
 							print '<a href="'.DOL_URL_ROOT.'/product/card.php?action=create&type=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'" title="'.dol_escape_htmltag($langs->trans("NewService")).'"><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
 						}
@@ -891,6 +888,54 @@ if (!empty($object->thirdparty)) {
 	}
 
 
+	/* Function to set the value of an extrafield of a line, whatever the type of the field is */
+	function setExtrafieldValueOnLine(field, key, value) {
+		/* For a radio, there is no field with id=key. Each choice is an input with name=key */
+		if (field.length == 0) {
+			jQuery('input:radio[name="' + key + '"]').filter(function() {
+				return this.value == value;
+			}).prop('checked', true).trigger('change');
+			return;
+		}
+		/* For a checkbox, val() sets the value attribute only, it does not tick the box */
+		if (field.is(':checkbox')) {
+			field.prop('checked', (value == 1)).trigger('change');
+			return;
+		}
+		/* A multiple select (type checkbox or chkbxlst) stores its value as a string like "1,3" */
+		if (field.is('select')) {
+			field.val(field.prop('multiple') ? String(value).split(',') : value).trigger('change');
+			return;
+		}
+		/* For a field of type html, the textarea is managed by CKEditor */
+		if (field.is('textarea') && typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined" && CKEDITOR.instances[key]) {
+			CKEDITOR.instances[key].setData(value ? value : '');
+			return;
+		}
+		/* For a date, the value posted by the form is the one of the hidden day/month/year fields */
+		if (jQuery("#" + key + "day").length > 0) {
+			if (value) {
+				var thedate = new Date(value * 1000);
+				jQuery("#" + key + "day").val(thedate.getDate());
+				jQuery("#" + key + "month").val(thedate.getMonth() + 1);
+				jQuery("#" + key + "year").val(thedate.getFullYear());
+				jQuery("#" + key + "hour").val(thedate.getHours());
+				jQuery("#" + key + "min").val(thedate.getMinutes());
+				/* The format to show is the one given to dpChangeDay by the date input itself */
+				var formatofdate = /dpChangeDay\([^,]*,\s*'([^']+)'/.exec(field.attr('onchange') || '');
+				if (formatofdate) {
+					field.val(formatDate(thedate, formatofdate[1]));
+				}
+			} else {
+				jQuery("#" + key + "day, #" + key + "month, #" + key + "year").val('');
+				field.val('');
+			}
+			return;
+		}
+		field.val(value);
+	}
+
+
 	/* JQuery for product free or predefined select */
 	jQuery(document).ready(function() {
 		jQuery("#price_ht").keyup(function(event) {
@@ -1059,14 +1104,25 @@ if (!empty($object->thirdparty)) {
 								jQuery("#price_ht").val(data.price_ht);
 							}
 
+							// useful to retrieve percent from customer specific price
+							if (typeof data.discount !== 'undefined' && data.discount !== null && data.discount !== '') {
+								var remisePercentInput = jQuery('#remise_percent');
+								if (remisePercentInput.length > 0) {
+									console.log("Remise spécifique client trouvée : " + data.discount + "%");
+									remisePercentInput
+									.val(data.discount)
+									.trigger('input')
+									.trigger('change');
+								} else {
+									console.warn("Champ #remise_percent introuvable, remise non appliquée");
+								}
+							}
+
 							// Set values for any fields in the form options_SOMETHING
 							for (var key in data.array_options) {
 								if (data.array_options.hasOwnProperty(key)) {
-									var field = jQuery("#" + key);
-									if(field.length > 0){
-										console.log("objectline_create.tpl set content of options_" + key);
-										field.val(data.array_options[key]);
-									}
+									console.log("objectline_create.tpl set content of " + key);
+									setExtrafieldValueOnLine(jQuery("#" + key), key, data.array_options[key]);
 								}
 							}
 
@@ -1118,19 +1174,27 @@ if (!empty($object->thirdparty)) {
 								$('#tva_tx').val(tva_tx);
 							}
 
-							if(jsConf.conf.PRODUIT_AUTOFILL_DESC == 1) {
+							// Sync the measuring unit dropdown with the product's default fk_unit
+							// (issue #34610). Without this, the dropdown keeps the static initial
+							// value (the first c_units row, typically "Kg") regardless of what
+							// the selected product is configured with.
+							if (typeof data.fk_unit != 'undefined' && data.fk_unit != null && $("#units").length) {
+								$("#units").val(data.fk_unit).trigger('change');
+							} else if (typeof data.default_unit != 'undefined' && data.default_unit != null && $("#units").length) {
+								$("#units").val(data.default_unit).trigger('change');
+							}
+
+							if (jsConf.conf.PRODUIT_AUTOFILL_DESC == 1) {
 								if(jsConf.conf.MAIN_MULTILANGS && jsConf.conf.PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE) {
 									var proddesc = data.desc_trans;
-								}
-								else {
+								} else {
 									var proddesc = data.desc;
 								}
 
 								console.log("objectline_create.tpl Load description into text area : "+proddesc);
 
-								if(jsConf.conf.FCKEDITOR_ENABLE_DETAILS) {
-									if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined")
-									{
+								if (jsConf.conf.FCKEDITOR_ENABLE_DETAILS) {
+									if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined") {
 										var editor = CKEDITOR.instances['dp_desc'];
 										if (editor) {
 											editor.setData(proddesc);
@@ -1143,7 +1207,7 @@ if (!empty($object->thirdparty)) {
 
 							if (jsConf.conf.PRODUCT_LOAD_EXTRAFIELD_INTO_OBJECTLINES) {
 								jQuery.each(data.array_options, function( key, value ) {
-									jQuery('div[class*="det'+key.replace('options_','_extras_')+'"] > #'+key).val(value);
+									setExtrafieldValueOnLine(jQuery('div[class*="det'+key.replace('options_','_extras_')+'"] > #'+key), key, value);
 								});
 							}
 
@@ -1256,11 +1320,27 @@ if (!empty($object->thirdparty)) {
 							}
 						});
 
-
 						// Execute js context Dolibarr Hooks
 						if (typeof Dolibarr != 'undefined') {
 							Dolibarr.executeHook('objectLineCreate:GetSupplierPrices', {'idprod': idProd, ajaxResultData : data, jsConf});
 						}
+
+						<?php if (getDolGlobalString('PRODUCT_USE_UNITS')) { ?>
+						// Sync the measuring unit dropdown with the product's default fk_unit
+						// for the supplier-side line picker (issue #38636), mirroring the
+						// customer-side behaviour from issue #34610. Look at the first
+						// non-pmp/non-cost row of the AJAX response (all rows for a given
+						// product carry the same fk_unit since it comes from llx_product).
+						var firstFkUnit = null;
+						$(data).each(function() {
+							if (this.id != 'pmpprice' && this.id != 'costprice' && typeof this.fk_unit != 'undefined' && this.fk_unit != null && firstFkUnit === null) {
+								firstFkUnit = this.fk_unit;
+							}
+						});
+						if (firstFkUnit !== null && $("#units").length) {
+							$("#units").val(firstFkUnit).trigger('change');
+						}
+						<?php } ?>
 					}
 				},
 				'json');
@@ -1304,7 +1384,8 @@ if (!empty($object->thirdparty)) {
 			}
 
 			// Deal with supplier ref price (idprodfournprice = int)
-			if (jQuery('#idprodfournprice').val() > 0)
+			var supplierVal = jQuery('#idprodfournprice').val();
+			if (supplierVal && supplierVal !== '-1' && (supplierVal > 0 || supplierVal.indexOf('idprod_') === 0))
 			{
 				console.log("objectline_create.tpl #idprodfournprice is an ID > 0, so we set some properties into page");
 
@@ -1337,7 +1418,7 @@ if (!empty($object->thirdparty)) {
 					"invoice_supplier_rec"
 				];
 
-				// seller.tva_assuj -> à injecter dans jsConf ou ailleurs
+				// seller.tva_assuj -> to inject into jsConf or elsewhere
 				if (supplierElements.includes(jsConf.docObject.element) && !jsConf.docObject.seller_tva_assuj) {
 					if (tva_tx !== 0) {
 						tva_tx = 0;
@@ -1373,9 +1454,13 @@ if (!empty($object->thirdparty)) {
 
 				if (has_multicurrency_up === false) {
 					if (typeof up_locale === 'undefined') {
-						jQuery("#price_ht").val(up);
+						if (!Number.isNaN(up)) {
+							jQuery("#price_ht").val(up);
+						}
 					} else {
-						jQuery("#price_ht").val(up_locale);
+						if (!Number.isNaN(up_locale)) {
+							jQuery("#price_ht").val(up_locale);
+						}
 					}
 				}
 
@@ -1539,7 +1624,7 @@ if (!empty($object->thirdparty)) {
 			jQuery("#np_markRate, .np_markRate").hide();
 		}
 
-		jQuery("#units, #title_units").hide();
+		jQuery("#units, #title_units, .linecoluseunit .selection").hide();
 		jQuery("#buying_price").show();
 		jQuery('#trlinefordates, .divlinefordates').show();
 	}

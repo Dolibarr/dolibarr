@@ -8,7 +8,7 @@
  * Copyright (C) 2018 	   Ferran Marcet	    <fmarcet@2byte.es>
  * Copyright (C) 2019 	   Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2020	   Tobias Sean			<tobias.sekan@startmail.com>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		Benjamin Falière	<benjamin.faliere@altairis.fr>
  * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
@@ -153,6 +153,10 @@ if (getDolGlobalInt('PROJECT_ENABLE_SUB_PROJECT')) {
 	$search_omitChildren = GETPOST('search_omitChildren', 'alpha') == 'on' ? 1 : 0;
 }
 
+// Default to no permissions
+$permissiontoread = 0;
+$permissiontoadd = 0;
+
 
 $mine = ((GETPOST('mode') == 'mine') ? 1 : 0);
 if ($mine) {
@@ -183,7 +187,8 @@ $search_date_end_start = GETPOSTDATE('search_date_end_start');	// Use tzserver
 $search_date_end_endmonth = GETPOSTINT('search_date_end_endmonth');
 $search_date_end_endyear = GETPOSTINT('search_date_end_endyear');
 $search_date_end_endday = GETPOSTINT('search_date_end_endday');
-$search_date_end_end = GETPOSTDATE('search_date_end_end', 'end');	;	// Use tzserver
+$search_date_end_end = GETPOSTDATE('search_date_end_end', 'end');
+;	// Use tzserver
 
 $search_date_creation_startmonth = GETPOSTINT('search_date_creation_startmonth');
 $search_date_creation_startyear = GETPOSTINT('search_date_creation_startyear');
@@ -1288,6 +1293,7 @@ $newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-l
 if ($contextpage == 'lead') {
 	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanbanGroupBy'), '', 'fa fa-grip-vertical imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanbangroupby&groupby=p.fk_opp_status'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', ($mode == 'kanbangroupby' ? 2 : 1), array('morecss' => 'reposition'));
 }
+$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', DOL_URL_ROOT.'/projet/stats/index.php?mode=statistics&contextpage='.$contextpage.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', ($mode == 'statistics' ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitleSeparator();
 $newcardbutton .= dolGetButtonTitle($langs->trans('NewProject'), '', 'fa fa-plus-circle', $url, '', $user->hasRight('projet', 'creer'));
 
@@ -1410,10 +1416,11 @@ print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwit
 
 // Fields title search
 // --------------------------------------------------------------------
+print '<thead>';
 print '<tr class="liste_titre_filter">';
 // Action column left
 if ($conf->main_checkbox_left_column) {
-	print '<td class="liste_titre maxwidthsearch" id="action_column_left">';
+	print '<td class="liste_titre center maxwidthsearch" id="action_column_left">';
 	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
 	print '</td>';
@@ -1816,7 +1823,7 @@ if (!$conf->main_checkbox_left_column) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
-print '</tr>'."\n";
+print '</tr></thead>'."\n";
 
 
 $i = 0;
@@ -2112,8 +2119,10 @@ while ($i < $imaxinloop) {
 		}
 		// Project title
 		if (!empty($arrayfields['p.title']['checked'])) {
-			print '<td class="tdoverflowmax250" title="'.dolPrintHTMLForAttribute($obj->title).'">';
+			print '<td class="" title="'.dolPrintHTMLForAttribute($obj->title).'">';
+			print '<div class="twolinesmax-normallineheight minwidth200onall">';
 			print dolPrintHTML($obj->title);
+			print '</div>';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -2138,7 +2147,7 @@ while ($i < $imaxinloop) {
 						print '</a>';
 					}
 				} else {
-					print ((int) $object->fk_project);
+					print((int) $object->fk_project);
 				}
 			}
 
@@ -2213,11 +2222,12 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['commercial']['checked'])) {
 			print '<td class="tdoverflowmax150">';
 			if ($obj->socid) {
+				$PROJECT_MAX_SALES_TO_SHOW_IN_LIST = getDolGlobalInt('PROJECT_MAX_SALES_TO_SHOW_IN_LIST', 5);
 				$companystatic->id = $obj->socid;
 				$companystatic->name = $obj->name;
 				$listsalesrepresentatives = $companystatic->getSalesRepresentatives($user);
 				$nbofsalesrepresentative = count($listsalesrepresentatives);
-				if ($nbofsalesrepresentative > 6) {
+				if ($nbofsalesrepresentative > $PROJECT_MAX_SALES_TO_SHOW_IN_LIST) {
 					// We print only number
 					print $nbofsalesrepresentative;
 				} elseif ($nbofsalesrepresentative > 0) {
@@ -2290,7 +2300,7 @@ while ($i < $imaxinloop) {
 		}
 		// Assigned contacts of project
 		if (!empty($arrayfields['c.assigned']['checked'])) {
-			print '<td class="center nowraponall tdoverflowmax200">';
+			print '<td class="center nowraponall tdoverflowmax150">';
 			print $stringassignedusers;
 			print '</td>';
 			if (!$i) {

@@ -56,6 +56,7 @@ if (! defined("NOSESSION")) {
 
 require_once dirname(__FILE__).'/../../htdocs/main.inc.php';	// We force include of main.inc.php instead of master.inc.php even if we are in CLI mode because it contains a lot of security components we want to test.
 require_once dirname(__FILE__).'/../../htdocs/core/lib/security.lib.php';
+require_once dirname(__FILE__).'/../../htdocs/blockedlog/lib/securitycore.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/security2.lib.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
@@ -101,6 +102,31 @@ class SecurityTest extends CommonClassTest
 	}
 
 
+
+	/**
+	 * testDolEncryptDolDecrypt
+	 *
+	 * @return  void
+	 */
+	public function testDolEncryptDolDecrypt()
+	{
+		$s = 'simple string with no special char a..z 1..0';
+		$es = dolEncrypt($s);
+		$news = dolDecrypt($es);
+
+		print __METHOD__.' testDolEncryptDolDecrypt '.$s.' ==> '.$es.' ==> '.$news."\n";
+		$this->assertEquals($news, $s);
+
+
+		$s = 'string with à é ç';
+		$es = dolEncrypt($s);
+		$news = dolDecrypt($es);
+
+		print __METHOD__.' testDolEncryptDolDecrypt '.$s.' ==> '.$es.' ==> '.$news."\n";
+		$this->assertEquals($news, $s);
+	}
+
+
 	/**
 	 * testSqlAndScriptInjectWithPHPUnit
 	 *
@@ -143,6 +169,10 @@ class SecurityTest extends CommonClassTest
 		$_SERVER["PHP_SELF"] = '/DIR WITH SPACE/htdocs/admin/index.php/<svg>';
 		$result = testSqlAndScriptInject($_SERVER["PHP_SELF"], 2);
 		$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject for PHP_SELF that should detect XSS');
+
+		$_SERVER["PHP_SELF"] = '/dolibarr/htdocs/admin/index.php/aaa%bbb';
+		$result = testSqlAndScriptInject($_SERVER["PHP_SELF"], 2);
+		$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject for PHP_SELF that should detect % inside URL');
 
 		$test = 'select @@version';
 		$result = testSqlAndScriptInject($test, 0);
@@ -447,80 +477,10 @@ class SecurityTest extends CommonClassTest
 		//$dummyuser=new User($db);
 		//$result=restrictedArea($dummyuser,'societe');
 
-		$result = restrictedArea($user, 'societe');
+		$result = restrictedArea($user, 'societe', 0, '', '', 'fk_soc', 'rowid', 0, 1);
 		$this->assertEquals(1, $result);
 	}
 
-
-	/**
-	 * testGetRandomPassword
-	 *
-	 * @return int
-	 */
-	public function testGetURLContent()
-	{
-		global $conf;
-		include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
-
-		$url = 'ftp://mydomain.com';
-		$tmp = getURLContent($url);
-		print __METHOD__." url=".$url."\n";
-
-		$tmpvar = preg_match('/not supported/', $tmp['curl_error_msg']);
-		$this->assertEquals(1, $tmpvar, "Did not find the /not supported/ in getURLContent error message. We should.");
-
-		$DISABLEREMOTEACCESSTODOLIBARRFR = 1;
-
-		if (empty($DISABLEREMOTEACCESSTODOLIBARRFR)) {
-			$url = 'https://www.dolibarr.fr';	// This is a redirect 301 page
-			$tmp = getURLContent($url, 'GET', '', 0);	// We do NOT follow
-			print __METHOD__." url=".$url."\n";
-			$this->assertEquals(301, (empty($tmp['http_code']) ? 0 : $tmp['http_code']), 'Test getURLContent '.$url.' - Should GET url 301 response');
-
-			$url = 'https://www.dolibarr.fr';	// This is a redirect 301 page
-			$tmp = getURLContent($url);		// We DO follow a page with return 300 so result should be 200
-			print __METHOD__." url=".$url."\n";
-			$this->assertEquals(200, (empty($tmp['http_code']) ? 0 : $tmp['http_code']), 'Should GET url 301 with a follow -> 200 but we get '.(empty($tmp['http_code']) ? 0 : $tmp['http_code']));
-		}
-
-		$url = 'http://localhost';
-		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
-		print __METHOD__." url=".$url."\n";
-		$this->assertEquals(400, (empty($tmp['http_code']) ? 0 : $tmp['http_code']), 'Should GET url to '.$url.' that resolves to a local URL');	// Test we receive an error because localtest.me is not an external URL
-
-		$url = 'http://127.0.0.1';
-		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
-		print __METHOD__." url=".$url."\n";
-		$this->assertEquals(400, (empty($tmp['http_code']) ? 0 : $tmp['http_code']), 'Should GET url to '.$url.' that is a local URL');	// Test we receive an error because 127.0.0.1 is not an external URL
-
-		$url = 'http://127.0.2.1';
-		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
-		print __METHOD__." url=".$url."\n";
-		$this->assertEquals(400, (empty($tmp['http_code']) ? 0 : $tmp['http_code']), 'Should GET url to '.$url.' that is a local URL');	// Test we receive an error because 127.0.2.1 is not an external URL
-
-		$url = 'https://169.254.0.1';
-		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
-		print __METHOD__." url=".$url."\n";
-		$this->assertEquals(400, (empty($tmp['http_code']) ? 0 : $tmp['http_code']), 'Should GET url to '.$url.' that is a local URL');	// Test we receive an error because 169.254.0.1 is not an external URL
-
-		$url = 'http://[::1]';
-		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
-		print __METHOD__." url=".$url."\n";
-		$this->assertEquals(400, (empty($tmp['http_code']) ? 0 : $tmp['http_code']), 'Should GET url to '.$url.' that is a local URL');	// Test we receive an error because [::1] is not an external URL
-
-		/*$url = 'localtest.me';
-		 $tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
-		 print __METHOD__." url=".$url."\n";
-		 $this->assertEquals(400, (empty($tmp['http_code']) ? 0 : $tmp['http_code']), 'Should GET url to '.$url.' that resolves to a local URL');	// Test we receive an error because localtest.me is not an external URL
-		 */
-
-		$url = 'http://192.0.0.192';
-		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL but on an IP in blacklist
-		print __METHOD__." url=".$url." tmp['http_code'] = ".(empty($tmp['http_code']) ? 0 : $tmp['http_code'])."\n";
-		$this->assertEquals(400, (empty($tmp['http_code']) ? 0 : $tmp['http_code']), 'Access should be refused and was not');	// Test we receive an error because ip is in blacklist
-
-		return 0;
-	}
 
 	/**
 	 * testDolSanitizeUrl

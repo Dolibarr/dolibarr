@@ -5,6 +5,7 @@
  * Copyright (C) 2019		Nicolas ZABOURI				<info@inovea-conseil.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -190,7 +191,7 @@ if (isModEnabled('supplier_proposal')) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE c.fk_soc = s.rowid";
-	$sql .= " AND c.entity = ".$conf->entity;
+	$sql .= " AND c.entity = ".((int) $conf->entity);
 	$sql .= " AND c.fk_statut = 0";
 	if ($socid) {
 		$sql .= " AND c.fk_soc = ".((int) $socid);
@@ -248,7 +249,7 @@ if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= " WHERE c.fk_soc = s.rowid";
-$sql .= " AND c.entity = ".$conf->entity;
+$sql .= " AND c.entity = ".((int) $conf->entity);
 //$sql.= " AND c.fk_statut > 2";
 if ($socid) {
 	$sql .= " AND c.fk_soc = ".((int) $socid);
@@ -368,7 +369,7 @@ if (isModEnabled('supplier_proposal') && $user->hasRight('supplier_proposal', 'l
 				print $supplier_proposalstatic->getNomUrl(1);
 				print '</td>';
 				print '<td width="18" class="nobordernopadding nowrap">';
-				if ($db->jdate($obj->dfv) < ($now - $conf->supplier_proposal->cloture->warning_delay)) {
+				if (isset($obj->dfv) && $db->jdate($obj->dfv) < ($now - $conf->supplier_proposal->cloture->warning_delay)) {
 					print img_warning($langs->trans("Late"));
 				}
 				print '</td>';

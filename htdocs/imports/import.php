@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2005-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2012      Christophe Battarel	<christophe.battarel@altairis.fr>
- * Copyright (C) 2022      Charlene Benke		<charlene@patas-monkey.com>
- * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2005-2016  Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009  Regis Houssin               <regis.houssin@inodbox.com>
+ * Copyright (C) 2012       Christophe Battarel         <christophe.battarel@altairis.fr>
+ * Copyright (C) 2022       Charlene Benke              <charlene@patas-monkey.com>
+ * Copyright (C) 2024-2026	MDW                         <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -43,7 +43,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/import.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('exports', 'compta', 'errors', 'projects', 'admin'));
+$langs->loadLangs(array('exports', 'compta', 'errors', 'projects', 'admin', 'products', 'margins'));
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('imports'));
@@ -268,7 +268,7 @@ if ($step == 2 && $datatoimport) {
 		}
 
 		$file = $conf->import->dir_temp.'/'.GETPOST('urlfile');
-		$ret = dol_delete_file($file);
+		$ret = dol_delete_file($file, 1);
 		if ($ret) {
 			setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
 		} else {
@@ -528,11 +528,9 @@ if ($step == 2 && $datatoimport) {
 
 	$filetoimport = '';
 
+	// Add format information and link to download example
 	print '<table class="noborder centpercent" cellpadding="4">';
 
-	$filetoimport = '';
-
-	// Add format information and link to download example
 	print '<tr class="liste_titre"><td colspan="4">';
 	print $langs->trans("FileMustHaveOneOfFollowingFormat").'...';
 	print '</td></tr>';
@@ -558,6 +556,7 @@ if ($step == 2 && $datatoimport) {
 	}
 
 	print '</table>';
+
 
 	print '<br>';
 
@@ -704,6 +703,12 @@ if ($step == 3 && $datatoimport) {
 	}
 
 	$model = $format;
+
+	// Fallback: txt to csv (import_txt.modules.php does not exist)
+	if ($model === 'txt') {
+		$model = 'csv';
+	}
+
 	$list = $objmodelimport->listOfAvailableImportFormat($db);
 
 	if (empty($separator)) {
@@ -1537,6 +1542,12 @@ if ($step == 4 && $datatoimport) {
 	}
 
 	$model = $format;
+
+	// Fallback: txt to csv (import_txt.modules.php does not exist)
+	if ($model === 'txt') {
+		$model = 'csv';
+	}
+
 	$list = $objmodelimport->listOfAvailableImportFormat($db);
 
 	// Create class to use for import
@@ -1675,10 +1686,10 @@ if ($step == 4 && $datatoimport) {
 	print $langs->trans("ImportFromToLine");
 	print '</td><td>';
 	if ($action == 'launchsimu') {
-		print '<input type="number" class="maxwidth50 right valignmiddle" name="excludefirstlinebis" disabled="disabled" value="'.$excludefirstline.'">';
+		print '<input type="number" min="1" class="maxwidth50 right valignmiddle" name="excludefirstlinebis" disabled="disabled" value="'.$excludefirstline.'">';
 		print '<input type="hidden" name="excludefirstline" value="'.$excludefirstline.'">';
 	} else {
-		print '<input type="number" class="maxwidth50 right valignmiddle" name="excludefirstline" value="'.$excludefirstline.'">';
+		print '<input type="number" min="1" class="maxwidth50 right valignmiddle" name="excludefirstline" value="'.$excludefirstline.'">';
 		print $form->textwithpicto("", $langs->trans("SetThisValueTo2ToExcludeFirstLine"));
 	}
 	print ' - ';
@@ -2081,6 +2092,12 @@ if ($step == 5 && $datatoimport) {
 	}
 
 	$model = $format;
+
+	// Fallback: txt to csv (import_txt.modules.php does not exist)
+	if ($model === 'txt') {
+		$model = 'csv';
+	}
+
 	$list = $objmodelimport->listOfAvailableImportFormat($db);
 	$importid = GETPOST("importid", 'alphanohtml');
 

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2008-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -26,13 +26,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/ecm.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-require_once DOL_DOCUMENT_ROOT.'/ecm/class/htmlecm.form.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -41,6 +34,12 @@ require_once DOL_DOCUMENT_ROOT.'/ecm/class/htmlecm.form.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/ecm.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+require_once DOL_DOCUMENT_ROOT.'/ecm/class/htmlecm.form.class.php';
 
 // Load translation files required by page
 $langs->loadLangs(array('ecm', 'companies', 'other'));
@@ -50,7 +49,7 @@ $cancel     = GETPOST('cancel');
 $backtopage = GETPOST('backtopage', 'alpha');
 $confirm    = GETPOST('confirm', 'alpha');
 
-$module = GETPOST('module', 'alpha');
+$module = GETPOST('module', 'aZ09arobase');
 $website = GETPOST('website', 'alpha');
 $pageid = GETPOSTINT('pageid');
 if (empty($module)) {
@@ -151,7 +150,7 @@ if (GETPOST("sendit") && getDolGlobalString('MAIN_UPLOAD_DOC') && $permissiontou
 if ($action == 'confirm_deletefile' && $confirm == 'yes' && $permissiontoupload) {
 	$langs->load("other");
 	$file = $upload_dir."/".GETPOST('urlfile'); // Do not use urldecode here
-	$ret = dol_delete_file($file);
+	$ret = dol_delete_file($file, 1);
 	if ($ret) {
 		setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
 	} else {
@@ -293,7 +292,6 @@ $form = new Form($db);
 $formecm = new FormEcm($db);
 
 $object = new EcmDirectory($db); // Need to create a new one instance
-$extrafields = new ExtraFields($db);
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
@@ -465,11 +463,11 @@ if ($action != 'edit' && $action != 'delete' && $action != 'deletefile') {
 	print '<div class="tabsAction">';
 
 	if ($permissiontoadd) {
-		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&token='.newToken().'&module='.$module.'&section='.$section.'">'.$langs->trans('Edit').'</a>';
+		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&token='.newToken().'&module='.urlencode($module).'&section='.urlencode($section).'">'.$langs->trans('Edit').'</a>';
 	}
 
 	if ($permissiontoadd) {
-		print '<a class="butAction" href="'.DOL_URL_ROOT.'/ecm/dir_add_card.php?action=create&token='.newToken().'&module='.$module.'&catParent='.$section.'">'.$langs->trans('ECMAddSection').'</a>';
+		print '<a class="butAction" href="'.DOL_URL_ROOT.'/ecm/dir_add_card.php?action=create&token='.newToken().'&module='.urlencode($module).'&catParent='.urlencode($section).'">'.$langs->trans('ECMAddSection').'</a>';
 	} else {
 		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('ECMAddSection').'</a>';
 	}
@@ -511,7 +509,7 @@ if ($user->hasRight('ecm', 'upload')) {
 
 // List of document
 if ($user->hasRight('ecm', 'read')) {
-	$param = '&amp;section=' . $section;
+	$param = '&section=' . urlencode($section);
 	$formfile->list_of_documents($filearray, '', 'ecm', $param, 1, $relativepath, $user->hasRight("ecm", "upload"));
 }
 */

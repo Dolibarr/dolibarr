@@ -75,7 +75,7 @@ class Users extends DolibarrApi
 	 * @param int		$page		Page number
 	 * @param string	$user_ids   User ids filter field. Example: '1' or '1,2,3'          {@pattern /^[0-9,]*$/i}
 	 * @param int       $category   Use this param to filter list by category
-	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:>:'20160101')"
 	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array               Array of User objects
 	 * @phan-return Object[]
@@ -112,8 +112,24 @@ class Users extends DolibarrApi
 
 		// Add sql filters
 		if ($sqlfilters) {
+			// List of properties we can't filter on, whatever are permissions (to avoid guess by search binary attack)
+			$forbiddenfilterfields = array(
+				'pass',
+				'pass_crypted',
+				'pass_temp',
+				'api_key',
+				'openid'
+			);
+			$canreadsalary = ((isModEnabled('salaries') && DolibarrApiAccess::$user->hasRight('salaries', 'read')) || !isModEnabled('salaries'));
+			if (!$canreadsalary) {
+				$forbiddenfilterfields[] = 'salary';
+				$forbiddenfilterfields[] = 'salaryextra';
+				$forbiddenfilterfields[] = 'thm';
+				$forbiddenfilterfields[] = 'tjm';
+			}
+
 			$errormessage = '';
-			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage, 0, 0, 0, $forbiddenfilterfields);
 			if ($errormessage) {
 				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
@@ -171,7 +187,7 @@ class Users extends DolibarrApi
 			throw new RestException(400, 'No user with id=0 can exist');
 		}
 
-		if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'lire') && empty(DolibarrApiAccess::$user->admin) && $id != 0 && DolibarrApiAccess::$user->id != $id) {
+		if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'lire') && empty(DolibarrApiAccess::$user->admin) && DolibarrApiAccess::$user->id != $id) {
 			throw new RestException(403, 'Not allowed');
 		}
 
@@ -185,7 +201,7 @@ class Users extends DolibarrApi
 		}
 
 		if ($id > 0 && !DolibarrApi::_checkAccessToResource('user', $this->useraccount->id, 'user')) {
-			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access on this object not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		if ($includepermissions) {
@@ -228,7 +244,7 @@ class Users extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('user', $this->useraccount->id, 'user')) {
-			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access on this object not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		if ($includepermissions) {
@@ -271,7 +287,7 @@ class Users extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('user', $this->useraccount->id, 'user')) {
-			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access on this object not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		if ($includepermissions) {
@@ -310,7 +326,7 @@ class Users extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('user', $this->useraccount->id, 'user')) {
-			throw new RestException(403, 'Access not allowed to current logged user');
+			throw new RestException(403, 'Access on this object not allowed to current logged user');
 		}
 
 		if ($includepermissions) {
@@ -435,7 +451,7 @@ class Users extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('user', $this->useraccount->id, 'user')) {
-			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access on this object not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		foreach ($request_data as $field => $value) {
@@ -461,7 +477,7 @@ class Users extends DolibarrApi
 			}
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->useraccount->array_options[$index] = $this->_checkValForAPI($field, $val, $this->useraccount);
+					$this->useraccount->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->useraccount);
 				}
 				continue;
 			}
@@ -584,7 +600,10 @@ class Users extends DolibarrApi
 		$user = new User($this->db);
 		$result = $user->fetch($id);
 		if (!$result) {
-			throw new RestException(404, 'user not found');
+			throw new RestException(404, 'User not found');
+		}
+		if (!DolibarrApi::_checkAccessToResource('user', $user->id, 'user')) {
+			throw new RestException(403, 'Access on this object not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$usergroup = new UserGroup($this->db);
@@ -627,7 +646,7 @@ class Users extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('user', $this->useraccount->id, 'user')) {
-			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access on this object not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && !empty(DolibarrApiAccess::$user->admin) && empty(DolibarrApiAccess::$user->entity)) {
@@ -793,7 +812,7 @@ class Users extends DolibarrApi
 	 * @param int		$limit		Limit for list
 	 * @param int		$page		Page number
 	 * @param string	$group_ids   Groups ids filter field. Example: '1' or '1,2,3'          {@pattern /^[0-9,]*$/i}
-	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:>:'20160101')"
 	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array               Array of User objects
 	 * @phan-return Object[]
@@ -899,6 +918,12 @@ class Users extends DolibarrApi
 
 		if ($includepermissions) {
 			$group_static->loadRights();
+		}
+
+		if ($load_members > 0 && is_array($group_static->members) && count($group_static->members) > 0) {
+			foreach ($group_static->members as &$member) {
+				$member = $this->_cleanObjectDatas($member);
+			}
 		}
 
 		return $this->_cleanUserGroup($group_static);
@@ -1010,7 +1035,7 @@ class Users extends DolibarrApi
 			throw new RestException(403);
 		}
 		if (!DolibarrApi::_checkAccessToResource('user', $id)) {
-			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access on this object not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		/**
@@ -1090,7 +1115,7 @@ class Users extends DolibarrApi
 		$notification->fk_user = $id;
 
 		foreach ($request_data as $field => $value) {
-			$notification->$field = $value;
+			$notification->$field = $this->_checkValForAPI($field, $value, $notification);
 		}
 
 		$event = $notification->event;
@@ -1165,7 +1190,7 @@ class Users extends DolibarrApi
 			if ($field === 'fk_action') {
 				throw new RestException(500, 'Error creating User Notification, request_data contains fk_action key');
 			}
-			$notification->$field = $value;
+			$notification->$field = $this->_checkValForAPI($field, $value, $notification);
 		}
 
 		$event = $notification->event;
@@ -1260,7 +1285,7 @@ class Users extends DolibarrApi
 		}
 
 		foreach ($request_data as $field => $value) {
-			$notification->$field = $value;
+			$notification->$field = $this->_checkValForAPI($field, $value, $notification);
 		}
 
 		if ($notification->update(DolibarrApiAccess::$user) < 0) {
@@ -1307,6 +1332,9 @@ class Users extends DolibarrApi
 		unset($object->ldap_sid);
 		unset($object->clicktodial_loaded);
 
+		unset($object->lines);
+		unset($object->model_pdf);
+
 		// List of properties never returned by API, whatever are permissions
 		unset($object->pass);
 		unset($object->pass_indatabase);
@@ -1316,11 +1344,7 @@ class Users extends DolibarrApi
 		unset($object->clicktodial_password);
 		unset($object->openid);
 
-		unset($object->lines);
-		unset($object->model_pdf);
-
 		$canreadsalary = ((isModEnabled('salaries') && DolibarrApiAccess::$user->hasRight('salaries', 'read')) || !isModEnabled('salaries'));
-
 		if (!$canreadsalary) {
 			unset($object->salary);
 			unset($object->salaryextra);

@@ -189,7 +189,7 @@ class WebsitePage extends CommonObject
 
 	/**
 	 *  'type' if the field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
-	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
+	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalString("MY_SETUP_PARAM")'
 	 *  'position' is the sort order of field.
@@ -507,11 +507,11 @@ class WebsitePage extends CommonObject
 							}
 							$listoflang[] = "'".$this->db->escape(substr(str_replace("'", '', $tmpvalue), 0, 2))."'";
 						}
-						$stringtouse = $this->db->sanitize($key)." IN (".$this->db->sanitize(implode(',', $listoflang), 1).")";
+						$sql_extrawhere = $this->db->sanitize($key)." IN (".$this->db->sanitize(implode(',', $listoflang), 1).")";
 						if ($foundnull) {
-							$stringtouse = "(".$stringtouse." OR ".$this->db->sanitize($key)." IS NULL)";
+							$sql_extrawhere = "(".$sql_extrawhere." OR ".$this->db->sanitize($key)." IS NULL)";
 						}
-						$sqlwhere[] = $stringtouse;
+						$sqlwhere[] = $sql_extrawhere;
 					} else {
 						$sqlwhere[] = $this->db->sanitize($key)." LIKE '%".$this->db->escape($value)."%'";
 					}
@@ -519,9 +519,9 @@ class WebsitePage extends CommonObject
 			}
 			if (count($sqlwhere) > 0) {
 				if (!empty($websiteid)) {
-					$sql .= " AND (".implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
+					$sql .= " AND (".implode(' '.$this->db->sanitize($filtermode).' ', $sqlwhere).')';
 				} else {
-					$sql .= " WHERE ".implode(' '.$this->db->escape($filtermode).' ', $sqlwhere);
+					$sql .= " WHERE ".implode(' '.$this->db->sanitize($filtermode).' ', $sqlwhere);
 				}
 			}
 
@@ -628,11 +628,11 @@ class WebsitePage extends CommonObject
 							}
 							$listoflang[] = "'".$this->db->escape(substr(str_replace("'", '', $tmpvalue), 0, 2))."'";
 						}
-						$stringtouse = $this->db->sanitize($key)." IN (".$this->db->sanitize(implode(',', $listoflang), 1).")";
+						$sql_extrawhere = $this->db->sanitize($key)." IN (".$this->db->sanitize(implode(',', $listoflang), 1).")";
 						if ($foundnull) {
-							$stringtouse = "(".$stringtouse." OR ".$this->db->sanitize($key)." IS NULL)";
+							$sql_extrawhere = "(".$sql_extrawhere." OR ".$this->db->sanitize($key)." IS NULL)";
 						}
-						$sqlwhere[] = $stringtouse;
+						$sqlwhere[] = $sql_extrawhere;
 					} else {
 						$sqlwhere[] = $this->db->sanitize($key)." LIKE '%".$this->db->escape($value)."%'";
 					}
@@ -640,9 +640,9 @@ class WebsitePage extends CommonObject
 			}
 			if (count($sqlwhere) > 0) {
 				if (!empty($websiteid)) {
-					$sql .= " AND (".implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
+					$sql .= " AND (".implode(' '.$this->db->sanitize($filtermode).' ', $sqlwhere).')';
 				} else {
-					$sql .= " WHERE ".implode(' '.$this->db->escape($filtermode).' ', $sqlwhere);
+					$sql .= " WHERE ".implode(' '.$this->db->sanitize($filtermode).' ', $sqlwhere);
 				}
 			}
 

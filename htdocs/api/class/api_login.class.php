@@ -158,12 +158,12 @@ class Login
 			}
 
 			// Generate token for user
-			$token = dol_hash($login.uniqid().getDolGlobalString('MAIN_API_KEY'), '1');
+			$token = dol_hash($login.bin2hex(random_bytes(32)).getDolGlobalString('MAIN_API_KEY'), 'hash');
 
 			// We store API token into database
 			$sql = "UPDATE ".MAIN_DB_PREFIX."user";
 			$sql .= " SET api_key = '".$this->db->escape(dolEncrypt($token, '', '', 'dolibarr'))."'";
-			$sql .= " WHERE login = '".$this->db->escape($login)."'";
+			$sql .= " WHERE rowid = ".((int) $tmpuser->id);
 
 			dol_syslog(get_class($this)."::login", LOG_DEBUG); // No log
 			$result = $this->db->query($sql);

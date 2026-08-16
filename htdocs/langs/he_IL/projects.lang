@@ -258,7 +258,7 @@ OtherFilteredTasks=משימות מסוננות אחרות
 NoAssignedTasks=לא נמצאו משימות שהוקצו (הקצו פרויקט/משימות למשתמש הנוכחי מתיבת הבחירה העליונה כדי להזין זמן עליו)
 ThirdPartyRequiredToGenerateIntervention=A third party must be defined on project to be able to create intervention.
 ThirdPartyRequiredToGenerateInvoice=יש להגדיר צד שלישי בפרויקט כדי להיות מסוגל לחייב אותו.
-ChooseANotYetAssignedTask=בחר משימה שטרם הוקצתה לך
+ChooseANotYetAssignedTask=Tasks not yet assigned to you
 # Comments trans
 AllowCommentOnTask=אפשר הערות משתמשים על משימות
 AllowCommentOnProject=אפשר הערות משתמשים על פרויקטים

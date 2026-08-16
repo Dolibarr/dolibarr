@@ -13,14 +13,14 @@
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2022       ATM Consulting          <contact@atm-consulting.fr>
  * Copyright (C) 2022       OpenDSI                 <support@open-dsi.fr>
  * Copyright (C) 2022      	Gauthier VERDOL     	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		William Mead			<william@m34d.com>
- *
+ * Copyright (C) 2026		Vincent de Grandpré		<vincent@de-grandpre.quebec>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -341,7 +341,7 @@ class Propal extends CommonObject
 
 	/**
 	 *  'type' if the field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
-	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
+	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'enabled' is a condition when the field must be managed.
 	 *  'position' is the sort order of field.
@@ -568,6 +568,10 @@ class Propal extends CommonObject
 			$line->desc = $remise->description; // Line Description
 			$line->vat_src_code = $remise->vat_src_code;
 			$line->tva_tx = $remise->tva_tx;
+			$line->localtax1_tx = $remise->localtax1_tx;
+			$line->localtax1_type = $remise->localtax1_type;
+			$line->localtax2_tx = $remise->localtax1_tx;
+			$line->localtax2_type = $remise->localtax1_type;
 			$line->subprice = -(float) $remise->amount_ht;
 			$line->fk_product = 0; // Product Id predefined
 			$line->qty = 1;
@@ -578,6 +582,8 @@ class Propal extends CommonObject
 			$line->total_ht  = -(float) $remise->amount_ht;
 			$line->total_tva = -(float) $remise->amount_tva;
 			$line->total_ttc = -(float) $remise->amount_ttc;
+			$line->total_localtax1 = -(float) $remise->total_localtax1;
+			$line->total_localtax2 = -(float) $remise->total_localtax2;
 
 			$result = $line->insert();
 			if ($result > 0) {
@@ -782,7 +788,7 @@ class Propal extends CommonObject
 
 			// Rang to use
 			$ranktouse = $rang;
-			if ($ranktouse == -1) {
+			if (empty($ranktouse) || $ranktouse == -1) {
 				$rangmax = $this->line_max($fk_parent_line);
 				$ranktouse = $rangmax + 1;
 			}
@@ -808,6 +814,8 @@ class Propal extends CommonObject
 			$this->line->fk_remise_except = $fk_remise_except;
 			$this->line->remise_percent = $remise_percent;
 			$this->line->subprice = (float) $pu_ht;
+			// Persist the original entry mode of the line so updateline() can preserve it later.
+			$this->line->subprice_ttc = ($price_base_type === 'TTC') ? (float) $pu_ttc : 0;
 			$this->line->rang = $ranktouse;
 			$this->line->info_bits = $info_bits;
 			$this->line->total_ht = (float) $total_ht;
@@ -1040,6 +1048,8 @@ class Propal extends CommonObject
 			$this->line->localtax2_type 	= empty($localtaxes_type[2]) ? '' : $localtaxes_type[2];
 			$this->line->remise_percent		= $remise_percent;
 			$this->line->subprice			= (float) $pu_ht;
+			// Persist the original entry mode of the line so a no-op edit can preserve it later.
+			$this->line->subprice_ttc		= ($price_base_type === 'TTC') ? (float) $pu_ttc : 0;
 			$this->line->info_bits			= $info_bits;
 
 			$this->line->total_ht			= (float) $total_ht;
@@ -1254,7 +1264,7 @@ class Propal extends CommonObject
 		$sql .= ", multicurrency_tx";
 		$sql .= ") ";
 		$sql .= " VALUES (";
-		$sql .= $this->socid;
+		$sql .= ((int) $this->socid);
 		$sql .= ", 0";
 		$sql .= ", 0";
 		$sql .= ", 0";
@@ -1273,11 +1283,11 @@ class Propal extends CommonObject
 		$sql .= ", '".$this->db->escape((string) $this->ref_client)."'";
 		$sql .= ", '".$this->db->escape((string) $this->ref_ext)."'";
 		$sql .= ", ".(!isDolTms($delivery_date) ? "NULL" : "'".$this->db->idate($delivery_date)."'");
-		$sql .= ", ".($this->shipping_method_id > 0 ? $this->shipping_method_id : 'NULL');
-		$sql .= ", ".($this->warehouse_id > 0 ? $this->warehouse_id : 'NULL');
+		$sql .= ", ".($this->shipping_method_id > 0 ? ((int) $this->shipping_method_id) : 'NULL');
+		$sql .= ", ".($this->warehouse_id > 0 ? ((int) $this->warehouse_id) : 'NULL');
 		$sql .= ", ".((int) $this->availability_id);
 		$sql .= ", ".((int) $this->demand_reason_id);
-		$sql .= ", ".($this->fk_project ? $this->fk_project : "null");
+		$sql .= ", ".($this->fk_project ? ((int) $this->fk_project) : "null");
 		$sql .= ", ".(int) $this->fk_incoterms;
 		$sql .= ", '".$this->db->escape($this->location_incoterms)."'";
 		$sql .= ", ".(int) $this->entity;
@@ -1359,17 +1369,19 @@ class Propal extends CommonObject
 							$origintype = $this->element;
 						}
 
+						// Preserve the original entry mode of the line so the total is computed from the typed value (no rounding drift).
+						$line_price_base_type = $line->getPriceBaseType();
 						$result = $this->addline(
 							$line->desc,
-							$line->subprice,
+							(float) $line->subprice,
 							$line->qty,
 							$vatrate,
 							$line->localtax1_tx,
 							$line->localtax2_tx,
 							$line->fk_product,
 							$line->remise_percent,
-							'HT',
-							0,
+							$line_price_base_type,
+							(float) $line->subprice_ttc,
 							$line->info_bits,
 							$line->product_type,
 							$line->rang,
@@ -1941,7 +1953,7 @@ class Propal extends CommonObject
 		// phpcs:enable
 		$this->lines = array();
 
-		$sql = 'SELECT d.rowid, d.fk_propal, d.fk_parent_line, d.label as custom_label, d.description, d.price, d.vat_src_code, d.tva_tx, d.localtax1_tx, d.localtax2_tx, d.localtax1_type, d.localtax2_type, d.qty, d.fk_remise_except, d.remise_percent, d.subprice, d.fk_product,';
+		$sql = 'SELECT d.rowid, d.fk_propal, d.fk_parent_line, d.label as custom_label, d.description, d.price, d.vat_src_code, d.tva_tx, d.localtax1_tx, d.localtax2_tx, d.localtax1_type, d.localtax2_type, d.qty, d.fk_remise_except, d.remise_percent, d.subprice, d.subprice_ttc, d.fk_product,';
 		$sql .= ' d.info_bits, d.total_ht, d.total_tva, d.total_localtax1, d.total_localtax2, d.total_ttc, d.fk_product_fournisseur_price as fk_fournprice, d.buy_price_ht as pa_ht, d.special_code, d.rang, d.product_type,';
 		$sql .= ' d.fk_unit,';
 		$sql .= ' p.ref as product_ref, p.description as product_desc, p.fk_product_type, p.label as product_label, p.tobatch as product_tobatch, p.barcode as product_barcode,';
@@ -1959,7 +1971,7 @@ class Propal extends CommonObject
 		if ($sqlforgedfilters) {
 			$sql .= $sqlforgedfilters;
 		}
-		$sql .= ' ORDER by d.rang';
+		$sql .= ' ORDER BY d.rang, d.rowid';
 
 		dol_syslog(get_class($this)."::fetch_lines", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -1989,6 +2001,7 @@ class Propal extends CommonObject
 				$line->localtax1_type	= $objp->localtax1_type;
 				$line->localtax2_type	= $objp->localtax2_type;
 				$line->subprice         = $objp->subprice;
+				$line->subprice_ttc     = $objp->subprice_ttc;
 				$line->fk_remise_except = $objp->fk_remise_except;
 				$line->remise_percent   = $objp->remise_percent;
 
@@ -2151,7 +2164,7 @@ class Propal extends CommonObject
 					$this->error = $this->db->lasterror();
 				}
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'propale/".$this->db->escape($this->newref)."'";
-				$sql .= " WHERE filepath = 'propale/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$sql .= " WHERE filepath = 'propale/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++;
@@ -2411,7 +2424,7 @@ class Propal extends CommonObject
 			$this->db->begin();
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
-			$sql .= " SET fk_availability = ".((int) ($id > 0 ? $id : 0));
+			$sql .= " SET fk_availability = ".((int) ($id > 0 ? ((int) $id) : 0));
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(__METHOD__.' availability('.$id.')', LOG_DEBUG);
@@ -2679,7 +2692,7 @@ class Propal extends CommonObject
 		$sql  = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
 		$sql .= " SET fk_statut = ".((int) $status).", note_private = '".$this->db->escape($newprivatenote)."', note_public = '".$this->db->escape($newpublicnote)."'";
 		if ($status == self::STATUS_SIGNED) {
-			$sql .= ", date_signature='".$this->db->idate($now)."', fk_user_signature = ".($fk_user_signature);
+			$sql .= ", date_signature='".$this->db->idate($now)."', fk_user_signature = ".((int) $fk_user_signature);
 		}
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
@@ -2742,10 +2755,16 @@ class Propal extends CommonObject
 				$this->db->commit();
 				return 1;
 			} else {
-				$this->statut = $this->oldcopy->status;	// deprecated
-				$this->status = $this->oldcopy->status;
-				$this->date_signature = $this->oldcopy->date_signature;
-				$this->note_private = $this->oldcopy->note_private;
+				foreach ($this->errors as $errmsg) {
+					dol_syslog(__METHOD__.' Error: '.$errmsg, LOG_ERR);
+					$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
+				}
+				if (!empty($this->oldcopy)) {
+					$this->statut = $this->oldcopy->status;	// deprecated
+					$this->status = $this->oldcopy->status;
+					$this->date_signature = $this->oldcopy->date_signature;
+					$this->note_private = $this->oldcopy->note_private;
+				}
 
 				$this->db->rollback();
 				return -1;
@@ -3061,8 +3080,8 @@ class Propal extends CommonObject
 
 		$this->fetchObjectLinked($id, $this->element);
 		foreach ($this->linkedObjectsIds as $objecttype => $objectid) {
-			// Nouveau système du common object renvoi des rowid et non un id linéaire de 1 à n
-			//We are therefore traversing a list of objects as a single object
+			// New system of common object return rowids and no linear id from 1 to n
+			// We are therefore traversing a list of objects as a single object
 			foreach ($objectid as $key => $object) {
 				// Case of invoices directly linked
 				if ($objecttype == 'facture') {
@@ -3093,8 +3112,8 @@ class Propal extends CommonObject
 				$tab_sqlobj = array();
 				$nump = $this->db->num_rows($resql);
 				for ($i = 0; $i < $nump; $i++) {
-					$sqlobj = $this->db->fetch_object($resql);
-					$tab_sqlobj[] = $sqlobj;
+					$obj = $this->db->fetch_object($resql);
+					$tab_sqlobj[] = $obj;
 				}
 				$this->db->free($resql);
 
@@ -3142,6 +3161,19 @@ class Propal extends CommonObject
 				$error++;
 			}
 			// End call triggers
+		}
+
+		// Remove linked categories.
+		if (!$error) {
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_propal";
+			$sql .= " WHERE fk_propal = ".((int) $this->id);
+
+			$result = $this->db->query($sql);
+			if (!$result) {
+				$error++;
+				$this->error = $this->db->lasterror();
+				$this->errors[] = $this->error;
+			}
 		}
 
 		// Delete extrafields of lines and lines
@@ -3562,8 +3594,8 @@ class Propal extends CommonObject
 			$response->warning_delay = $delay_warning / 60 / 60 / 24;
 			$response->label = $label;
 			$response->labelShort = $labelShort;
-			$response->url = DOL_URL_ROOT.'/comm/propal/list.php?search_status='.$status.'&mainmenu=commercial&leftmenu=propals';
-			$response->url_late = DOL_URL_ROOT.'/comm/propal/list.php?search_option=late&mainmenu=commercial&leftmenu=propals&sortfield=p.datep&sortorder=asc';
+			$response->url = dolBuildUrl(DOL_URL_ROOT.'/comm/propal/list.php', ['search_status' => $status, 'mainmenu' => 'commercial', 'leftmenu' => 'propals']);
+			$response->url_late = dolBuildUrl(DOL_URL_ROOT.'/comm/propal/list.php', ['search_option' => 'late', 'mainmenu' => 'commercial', 'leftmenu' => 'propals', 'sortfield' => 'p.datep', 'sortorder' => 'asc']);
 			$response->img = img_object('', "propal");
 
 			// This assignment in condition is not a bug. It allows walking the results.
@@ -3979,7 +4011,7 @@ class Propal extends CommonObject
 
 			if ($txttoshow) {
 				$result .= ' <span class="note inline-block">';
-				$result .= '<a href="'.DOL_URL_ROOT.'/comm/propal/note.php?id='.$this->id.'" class="classfortooltip" title="'.dol_escape_htmltag($txttoshow).'">';
+				$result .= '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/comm/propal/note.php', ['id' => $this->id]).'" class="classfortooltip" title="'.dol_escape_htmltag($txttoshow).'">';
 				$result .= img_picto('', 'note');
 				$result .= '</a>';
 				$result .= '</span>';
@@ -4025,12 +4057,10 @@ class Propal extends CommonObject
 		$outputlangs->loadLangs(array("propale", "products"));
 
 		if (!dol_strlen($modele)) {
-			$modele = 'azur';
+			$modele = getDolGlobalString('PROPALE_ADDON_PDF', 'cyan');
 
 			if ($this->model_pdf) {
 				$modele = $this->model_pdf;
-			} elseif (getDolGlobalString('PROPALE_ADDON_PDF')) {
-				$modele = getDolGlobalString('PROPALE_ADDON_PDF');
 			}
 		}
 

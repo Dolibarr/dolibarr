@@ -55,7 +55,7 @@ class ProductFournisseurPrice extends CommonObject
 
 	/**
 	 *  'type' field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter]]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'text:none', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
-	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
+	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'picto' is code of a picto to show before value in forms
 	 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalString("MY_SETUP_PARAM")'
@@ -449,7 +449,7 @@ class ProductFournisseurPrice extends CommonObject
 				}
 			}
 			if (count($sqlwhere) > 0) {
-				$sql .= ' AND ('.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
+				$sql .= ' AND ('.implode(' '.$this->db->sanitize($filtermode).' ', $sqlwhere).')';
 			}
 
 			$filter = '';
@@ -517,7 +517,29 @@ class ProductFournisseurPrice extends CommonObject
 	 */
 	public function delete(User $user, $notrigger = 0)
 	{
-		return $this->deleteCommon($user, $notrigger);
+		$this->db->begin();
+
+		// Delete log entries first
+		$sql = "DELETE FROM " . $this->db->prefix() . "product_fournisseur_price_log";
+		$sql .= " WHERE fk_product_fournisseur = " . ((int) $this->id);
+
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->db->rollback();
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+
+		// Delete parent record (deleteCommon nests inside our transaction)
+		$result = $this->deleteCommon($user, $notrigger);
+
+		if ($result < 0) {
+			$this->db->rollback();
+			return -1;
+		}
+
+		$this->db->commit();
+		return $result;
 	}
 
 	/**
@@ -591,14 +613,14 @@ class ProductFournisseurPrice extends CommonObject
 			if (preg_match('/^[\(]?PROV/i', $this->ref)) {
 				// Now we rename also files into index
 				$sql = 'UPDATE '.$this->db->prefix()."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'productfournisseurprice/".$this->db->escape($this->newref)."'";
-				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'productfournisseurprice/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'productfournisseurprice/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++;
 					$this->error = $this->db->lasterror();
 				}
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'productfournisseurprice/".$this->db->escape($this->newref)."'";
-				$sql .= " WHERE filepath = 'productfournisseurprice/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$sql .= " WHERE filepath = 'productfournisseurprice/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++;
