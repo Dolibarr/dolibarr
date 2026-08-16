@@ -972,6 +972,7 @@ function showWebsiteTemplates(Website $website, int $refresh)
  * detecting callable function can't be guaranteed. For this reason, application is protected by a global variable $dolibarr_website_allow_custom_php = 0 by default
  * that disallow PHP code. If $dolibarr_website_allow_custom_php=1, PHP code is allowed only if all RCE PHP functions are disabled.
  * Any PHP code is allowed if $dolibarr_website_allow_custom_php=2 but setup explains that an apparmor or SE protection is required to restrict allowed RCE commands.
+ * Called by website->importWebSite() via dolKeepOnlyPhpCode() or when editing a page.
  *
  * @param	string		$phpfullcodestringold		PHP old string (before the change). For example "<?php echo 'a' ?><php echo 'b' ?>"
  * @param	string		$phpfullcodestring			PHP new string. For example "<?php echo 'a' ?><php echo 'c' ?>"
