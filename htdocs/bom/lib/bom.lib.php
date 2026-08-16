@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2019       Maxime Kohlhaas         <maxime@atm-consulting.fr>
- * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2019-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -30,10 +30,8 @@
  */
 function bomAdminPrepareHead()
 {
-	global $langs, $conf;
+	global $langs, $conf, $extrafields;
 
-	global $db;
-	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('bom_bom');
 	$extrafields->fetch_name_optionals_label('bom_bomline');
 
@@ -47,7 +45,7 @@ function bomAdminPrepareHead()
 	$head[$h][2] = 'settings';
 	$h++;
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT."/admin/bom_extrafields.php");
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'bom_bom'));
 	$head[$h][1] = $langs->trans("ExtraFields");
 	$nbExtrafields = (isset($extrafields->attributes['bom_bom']['label']) && is_countable($extrafields->attributes['bom_bom']['label'])) ? count($extrafields->attributes['bom_bom']['label']) : 0;
 	if ($nbExtrafields > 0) {
@@ -56,7 +54,7 @@ function bomAdminPrepareHead()
 	$head[$h][2] = 'bom_extrafields';
 	$h++;
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT."/admin/bomline_extrafields.php");
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'bom_bomline'));
 	$head[$h][1] = $langs->trans("ExtraFieldsLines");
 	$nbExtrafields = (isset($extrafields->attributes['bom_bomline']['label']) && is_countable($extrafields->attributes['bom_bomline']['label'])) ? count($extrafields->attributes['bom_bomline']['label']) : 0;
 	if ($nbExtrafields > 0) {

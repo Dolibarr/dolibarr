@@ -166,7 +166,7 @@ class pdf_octopus extends ModelePDFFactures
 	 */
 	public function __construct($db)
 	{
-		global $conf, $langs, $mysoc, $object;
+		global $conf, $langs, $mysoc;
 
 		// for retro compatibility
 		if (getDolGlobalString('INVOICE_USE_SITUATION_RETAINED_WARRANTY') && !getDolGlobalString('INVOICE_USE_RETAINED_WARRANTY')) {
@@ -241,12 +241,6 @@ class pdf_octopus extends ModelePDFFactures
 		$this->atleastoneratenotnull = 0;
 		$this->atleastonediscount = 0;
 		$this->situationinvoice = true;
-
-		if ($object instanceof Facture) {
-			$this->TDataSituation = $this->getDataSituation($object);
-		} else {
-			dol_syslog("object is not qualified, do not call getDataSituation...");
-		}
 	}
 
 
@@ -292,6 +286,9 @@ class pdf_octopus extends ModelePDFFactures
 			setEventMessage($langs->trans('WarningsObjectIsNotASituation'), 'warnings');
 			return 1;
 		}
+
+		$this->TDataSituation = $this->getDataSituation($object);
+
 		// Show Draft Watermark
 		if ($object->status == $object::STATUS_DRAFT && (getDolGlobalString('FACTURE_DRAFT_WATERMARK'))) {
 			$this->watermark = getDolGlobalString('FACTURE_DRAFT_WATERMARK');
@@ -449,7 +446,7 @@ class pdf_octopus extends ModelePDFFactures
 				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("PdfInvoiceSituationTitle"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
-				$pdf->SetAuthor($mysoc->name.($user->id > 0 ? ' - '.$outputlangs->convToOutputCharset($user->getFullName($outputlangs)) : ''));
+				$pdf->SetAuthor($mysoc->name.($user->id > 0 ? ' - '.$outputlangs->convToOutputCharset($user->getAnonymisableFullName($outputlangs)) : ''));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("PdfInvoiceTitle")." ".$outputlangs->convToOutputCharset($object->thirdparty->name));
 				if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 					$pdf->SetCompression(false);
@@ -534,9 +531,9 @@ class pdf_octopus extends ModelePDFFactures
 
 				// $pdf->GetY() here can't be used. It is bottom of the second address box but first one may be higher
 
-				// $this->tab_top is y where we must continue content (90 = 42 + 48: 42 is height of logo and ref, 48 is address blocks)
-				$this->tab_top = 90 + $top_shift + $shipp_shift;		// top_shift is an addition for linked objects or addons (0 in most cases)
-				$this->tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? 42 + $top_shift : 10);
+				// $this->tab_top is y where we must continue content (80 = 32 + 48: 32 is height of logo and ref, 48 is address blocks)
+				$this->tab_top = $this->marge_haute + 80 + $top_shift + $shipp_shift;		// top_shift is an addition for linked objects or addons (0 in most cases)
+				$this->tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? $this->marge_haute + 32 + $top_shift : $this->marge_haute);
 
 				// You can add more thing under header here, if you increase $extra_under_address_shift too.
 				$extra_under_address_shift = 0;
@@ -609,7 +606,7 @@ class pdf_octopus extends ModelePDFFactures
 				$tab_height = 130;
 				$tab_height_newpage = 150;
 
-				$this->tableFirstPage($pdf, $tab_top, $this->page_hauteur - 100 - $this->heightforfreetext - $this->heightforfooter, 0, $outputlangs, 0, 0, $object->multicurrency_code);
+				$this->tableFirstPage($object, $pdf, $tab_top, $this->page_hauteur - 100 - $this->heightforfreetext - $this->heightforfooter, 0, $outputlangs, 0, 0, $object->multicurrency_code);
 
 				$bottomlasttab = $this->page_hauteur - $this->heightforinfotot - $this->heightforfreetext - $this->heightforfooter + 1;
 
@@ -1560,7 +1557,7 @@ class pdf_octopus extends ModelePDFFactures
 
 			// Show if Option VAT debit option is on also if transmitter is french
 			// Decret n°2099-1299 2022-10-07
-			// French mention : "Option pour le paiement de la taxe d'après les débits"
+			// French legal mention: "Option pour le paiement de la taxe d'apres les debits"
 			if ($this->emetteur->country_code == 'FR') {
 				if (getDolGlobalInt('TAX_MODE') == 1) {
 					$pdf->SetXY($this->marge_gauche, $posy);
@@ -2067,10 +2064,7 @@ class pdf_octopus extends ModelePDFFactures
 			$title = $outputlangs->transnoentities("InvoiceAvoir");
 		}
 		if ($object->type == 3) {
-			$title = $outputlangs->transnoentities("InvoiceDeposit");
-		}
-		if ($object->type == 4) {
-			$title = $outputlangs->transnoentities("InvoiceProForma");
+			$title = $outputlangs->transnoentities("PdfInvoiceDepositTitle");
 		}
 		if ($this->situationinvoice) {
 			$outputlangs->loadLangs(array("other"));
@@ -2267,7 +2261,7 @@ class pdf_octopus extends ModelePDFFactures
 			$carac_emetteur .= pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'source', $object);
 
 			// Show sender
-			$posy = getDolGlobalString('MAIN_PDF_USE_ISO_LOCATION') ? 40 : 42;
+			$posy = getDolGlobalString('MAIN_PDF_USE_ISO_LOCATION') ? $this->marge_haute + 30 : $this->marge_haute + 32;
 			$posy += $top_shift;
 			$posx = $this->marge_gauche;
 			if (getDolGlobalString('MAIN_INVERT_SENDER_RECIPIENT')) {
@@ -2327,7 +2321,7 @@ class pdf_octopus extends ModelePDFFactures
 			if ($this->page_largeur < 210) {
 				$widthrecbox = 84; // To work with US executive format
 			}
-			$posy = getDolGlobalString('MAIN_PDF_USE_ISO_LOCATION') ? 40 : 42;
+			$posy = getDolGlobalString('MAIN_PDF_USE_ISO_LOCATION') ? $this->marge_haute + 30 : $this->marge_haute + 32;
 			$posy += $top_shift;
 			$posx = $this->page_largeur - $this->marge_droite - $widthrecbox;
 			if (getDolGlobalString('MAIN_INVERT_SENDER_RECIPIENT')) {
@@ -2734,6 +2728,7 @@ class pdf_octopus extends ModelePDFFactures
 	/**
 	 *   Show table for lines
 	 *
+	 *   @param	    Facture		$object			Object to show
 	 *   @param		TCPDI|TCPDF	$pdf			Object PDF
 	 *   @param		float 		$tab_top		Top position of table
 	 *   @param		float		$tab_height		Height of table (rectangle)
@@ -2744,16 +2739,16 @@ class pdf_octopus extends ModelePDFFactures
 	 *   @param		string		$currency		Currency code
 	 *   @return	void
 	 */
-	public function tableFirstPage(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $currency = '')
+	public function tableFirstPage($object, &$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $currency = '')
 	{
-		global $user, $conf, $object, $db;
+		global $user, $conf;
 
-		$form = new Form($db);
+		$form = new Form($this->db);
 
-		$tab_height -= 29; // Réduction de la hauteur global du tableau
+		$tab_height -= 29; // Reduce the overall table height
 		$displayWarranty = $this->displayRetainedWarranty($object);
 		if (!$displayWarranty) {
-			$tab_height -= 19; // Réduction de la hauteur global du tableau
+			$tab_height -= 19; // Reduce the overall table height
 		}
 
 
@@ -2840,7 +2835,7 @@ class pdf_octopus extends ModelePDFFactures
 		}
 
 		// Output Rect
-		// KEEPTHIS => Affiche les bords extérieurs
+		// KEEPTHIS => Display outer borders
 		$this->printRoundedRectBtp($pdf, $this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $tab_height, $this->corner_radius, $hidetop, $hidebottom, 'D');	// Rect prend une longueur en 3eme param et 4eme param
 
 		$pdf->line($this->posx_cumul_anterieur - 1, $tab_top, $this->posx_cumul_anterieur - 1, $tab_top + $tab_height);
@@ -2945,7 +2940,7 @@ class pdf_octopus extends ModelePDFFactures
 			$pdf->SetXY($x, $tab_top + 8);
 			$pdf->MultiCell(32, 2, price($this->TDataSituation[$col]['HT'], 0, '', 1, -1, 2), '', 'R');
 
-			// Travaux supplémentaires
+			// Additional work
 			$pdf->SetXY($x, $tab_top + 12);
 			$pdf->MultiCell(32, 2, price($this->TDataSituation[$col]['travaux_sup'], 0, '', 1, -1, 2), '', 'R');
 
@@ -3045,7 +3040,7 @@ class pdf_octopus extends ModelePDFFactures
 
 		$retenue_garantie = 0;
 		$retenue_garantie_anterieure = 0;
-		// Init tous les champs à 0
+		// Initialize all fields to 0
 		$TDataSituation['cumul_anterieur'] = array(
 			'HT' => 0,	//montant HT normal
 			'TVA' => 0,   //montant de la TVA sur le HTnet
@@ -3066,7 +3061,7 @@ class pdf_octopus extends ModelePDFFactures
 
 				// Read each line to
 				// 1. recalculer le total_ht pour chaque taux de TVA
-				// 2. recalculer la TVA associée à ce montant HT
+				// 2. recalculate the VAT associated with this net amount
 				// 3. If applicable, store this information as "travaux_sup" (additional work) if this line is not linked to a line from the previous situation.
 				foreach ($previousInvoice->lines as $k => $l) {
 					$total_ht = (float) $l->total_ht;
@@ -3138,7 +3133,7 @@ class pdf_octopus extends ModelePDFFactures
 			}
 		}
 
-		//Le nouveau cumul = cumul antérieur + current
+		// New cumulative = previous cumulative + current
 		$TDataSituation['nouveau_cumul'] = $this->sumSituation($TDataSituation['current'], $TDataSituation['cumul_anterieur']);
 
 		return $TDataSituation;
@@ -3552,7 +3547,7 @@ class pdf_octopus extends ModelePDFFactures
 
 			$ref = $outputlangs->transnoentities("InvoiceSituation").$outputlangs->convToOutputCharset(" n°".$invoice->situation_counter);
 
-			// TODO Discuss whether to declare a final invoice as a DGD (definitive general statement like 'décompte général définitif') or not.
+			// TODO Discuss whether to declare a final invoice as a DGD (definitive general statement, "decompte general definitif") or not.
 			if (getDolGlobalInt('INVOICE_SITUATION_USE_DGD')) {
 				if ($invoice->situation_final) {
 					$ref .= ' - DGD';

@@ -269,7 +269,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("PdfInvoiceTitle"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
-				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
+				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getAnonymisableFullName($outputlangs)));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("PdfInvoiceTitle")." ".$outputlangs->convToOutputCharset($object->thirdparty->name));
 				if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 					$pdf->SetCompression(false);
@@ -507,11 +507,6 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
 					$localtax1ligne = $object->lines[$i]->total_localtax1;
 					$localtax2ligne = $object->lines[$i]->total_localtax2;
-
-					// TODO remise_percent is an obsolete field for object parent
-					/*if (!empty($object->remise_percent)) {
-						$tvaligne -= ($tvaligne * $object->remise_percent) / 100;
-					}*/
 
 					$vatrate = (string) $object->lines[$i]->tva_tx;
 					$localtax1rate = (string) $object->lines[$i]->localtax1_tx;

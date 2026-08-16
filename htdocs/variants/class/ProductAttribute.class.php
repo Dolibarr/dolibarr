@@ -73,7 +73,7 @@ class ProductAttribute extends CommonObject
 
 	/**
 	 *  'type' field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter]]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'text:none', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
-	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
+	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'picto' is code of a picto to show before value in forms
 	 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalString("MY_SETUP_PARAM")'
@@ -529,10 +529,10 @@ class ProductAttribute extends CommonObject
 	/**
 	 * Load array lines
 	 *
-	 * @param	string		$filters	Filter on other fields
+	 * @param	string		$sql_filters	Filter on other fields
 	 * @return	int						    Return integer <0 if KO, >0 if OK
 	 */
-	public function fetch_lines($filters = '')
+	public function fetch_lines($sql_filters = '')
 	{
 		// phpcs:enable
 		global $langs;
@@ -559,8 +559,8 @@ class ProductAttribute extends CommonObject
 		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . $this->db->sanitize($this->table_element) . " AS t ON t.rowid = td." . $this->db->sanitize($this->fk_element);
 		$sql .= " WHERE t.rowid = " . ((int) $this->id);
 		$sql .= " AND t.entity IN (" . getEntity('product') . ")";
-		if ($filters) {
-			$sql .= $filters;
+		if ($sql_filters) {
+			$sql .= $sql_filters;
 		}
 		$sql .= $this->db->order("td.position", "asc");
 

@@ -4,6 +4,7 @@
  * Copyright (C) 2014       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2019	    Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -138,7 +139,7 @@ if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= ', '.MAIN_DB_PREFIX.'societe_commerciaux as sc';
 }
 $sql .= ' WHERE cf.fk_soc = s.rowid ';
-$sql .= ' AND cf.entity = '.$conf->entity;
+$sql .= ' AND cf.entity = '.((int) $conf->entity);
 if (getDolGlobalString('STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER')) {
 	$sql .= ' AND cf.fk_statut < 3';
 } elseif (getDolGlobalString('STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER') || getDolGlobalString('STOCK_CALCULATE_ON_RECEPTION') || getDolGlobalString('STOCK_CALCULATE_ON_RECEPTION_CLOSE')) {

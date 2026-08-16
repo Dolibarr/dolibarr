@@ -166,6 +166,7 @@ PDFEdisonDescription=Een eenvoudig opdrachtenmodel
 PDFProformaDescription=Een complete Proforma factuursjabloon
 CreateInvoiceForThisCustomer=Factureer orders
 CreateInvoiceForThisSupplier=Factureer orders
+WarningOrderNotEligibleForInvoicing=Order %s has been skipped: its status does not allow creating an invoice
 CreateInvoiceForThisReceptions=Bill recepties
 NoOrdersToInvoice=Geen te factureren orders
 CloseProcessedOrdersAutomatically=Alle geselecteerde orders zijn afgehandeld

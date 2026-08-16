@@ -102,3 +102,4 @@ SignedReceiverOnline=Podpisane przez osobę trzecią online
 SignedAll=Podpisane przez wszystkie strony
 SignStatus=Status podpisu
 DocumentSigned=Dokument podpisany
+DocumentUnsigned=Document unsigned

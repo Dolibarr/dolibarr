@@ -8,6 +8,7 @@
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024	    Irvine FLEITH		    <irvine.fleith@atm-consulting.fr>
  * Copyright (C) 2026		Jon Bendtsen          	<jon.bendtsen.github@jonb.dk>
+ * Copyright (C) 2026		Lenin Rivas          	<lenin.rivas777@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -635,6 +636,18 @@ class FormTicket
 			}
 			$out .= "</td></tr>\n";
 
+			// Improves user experience and prevents human error when creating tickets; files do not load.
+			$out .= '<script nonce="'.getNonce().'" type="text/javascript">
+    			jQuery(document).ready(function () {
+        			jQuery("#addedfile").on("change", function() {
+					// Dispara el clic automáticamente al seleccionar archivo
+            			jQuery("#addfile").click();
+        			});
+        			// Oculta el botón redundante si JS está activo
+        			jQuery("#addfile").hide();
+    			});
+			</script>';
+
 			print $out;
 		}
 
@@ -1200,7 +1213,7 @@ class FormTicket
 				if (!empty($arrayidused)) {
 					$sql .= " AND ctc.fk_parent IN ( ";
 					foreach ($arrayidused as $idused) {
-						$sql .= $idused.", ";
+						$sql .= ((int) $idused).", ";
 					}
 					$sql = substr($sql, 0, -2);
 					$sql .= ")";
@@ -1892,14 +1905,15 @@ class FormTicket
 			if (getDolGlobalString('TICKET_MESSAGE_MAIL_INTRO') || getDolGlobalString('TICKET_MESSAGE_MAIL_SIGNATURE')) {
 				$texttooltip .= '<br><br>'.$langs->trans("ForEmailMessageWillBeCompletedWith").'...';
 			}
+			$allowedmailtags = array('a', 'div', 'strong', 'em', 'i', 'u', 'p', 'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'img');
 			if (getDolGlobalString('TICKET_MESSAGE_MAIL_INTRO')) {
 				$mail_intro = make_substitutions(getDolGlobalString('TICKET_MESSAGE_MAIL_INTRO'), $this->substit);
-				print '<input type="hidden" name="mail_intro" value="'.dolPrintHTMLForAttribute($mail_intro).'">';
+				print '<input type="hidden" name="mail_intro" value="'.dolPrintHTMLForAttribute($mail_intro, 0, $allowedmailtags).'">';
 				$texttooltip .= '<br><u>'.$langs->trans("TicketMessageMailIntro").'</u><br>'.$mail_intro;
 			}
 			if (getDolGlobalString('TICKET_MESSAGE_MAIL_SIGNATURE')) {
 				$mail_signature = make_substitutions(getDolGlobalString('TICKET_MESSAGE_MAIL_SIGNATURE'), $this->substit);
-				print '<input type="hidden" name="mail_signature" value="'.dolPrintHTMLForAttribute($mail_signature).'">';
+				print '<input type="hidden" name="mail_signature" value="'.dolPrintHTMLForAttribute($mail_signature, 0, $allowedmailtags).'">';
 				$texttooltip .= '<br><br><u>'.$langs->trans("TicketMessageMailFooter").'</u><br>'.$mail_signature;
 			}
 			print $form->textwithpicto('', $texttooltip, 1, 'help');

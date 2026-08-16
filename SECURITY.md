@@ -5,14 +5,14 @@ This file contains some policies about the security reports on Dolibarr ERP CRM 
 
 ## Supported Versions for security reports
 
-Security report are valid only on any current stable version for the last 5 major versions (see https://dolibarr.org web site to get current stable version) or on development version (branch "develop" on https://github.com/Dolibarr/dolibarr).
+Security report are valid only on any current stable version for the last 2 major stable versions (see https://dolibarr.org web site to get current stable version) or on development version (branch "develop" on https://github.com/Dolibarr/dolibarr), and ONLY if the vulnerability is also confirmed into the "develop" branch (meaning the vulnerability was already reported).
 
 
 ## Reporting a Vulnerability
 
 To report a vulnerability, for a private report, you can:
 
-- Send your report as an issue on https://github.com/Dolibarr/dolibarr/issues or on GitHub Vulnerability Disclosure Program tool (VDP): https://github.com/Dolibarr/dolibarr/security/advisories (recommended). Do 1 report only per vulnerability. Reports combining several vulnerabilities, as well as reports generated using IA will be rejected. 
+- Send your report as an issue on https://github.com/Dolibarr/dolibarr/issues or, if you have an allowed account, on GitHub Vulnerability Disclosure Program tool (VDP): https://github.com/Dolibarr/dolibarr/security/advisories (recommended). Do 1 report only per vulnerability. Reports combining several vulnerabilities, as well as reports generated using IA will be rejected. 
 
 NOTE: This is a private vulnerability report process: Advisories are sent to users by our internal channel (RSS at https://cti.dolibarr.org/index-security.rss), we do not publish CVE reports.
 
@@ -65,10 +65,16 @@ Reports are processed around once a month.
 
 ONLY vulnerabilities discovered, when the following setup on test platform is used, are "valid":
 
-* The version to analyze must be the last version available in the "develop" branch. Reports on vulnerabilities already fixed (so already reported) in the develop branch will not be validated.   
-* $dolibarr_main_prod must be set to 1 in conf.php
-* $dolibarr_nocsrfcheck must be kept to the value 0 in conf.php (this is the default value)
-* $dolibarr_main_force_https must be set to something else than 0.
+* The version to analyze must be the last version available in the "develop" branch. Also, reports on vulnerabilities already fixed (so already reported) in the develop branch will not be validated.
+* Installation must be done properly for a production usage. This includes:
+** creation of the install.lock in the last step of installation process.
+** $dolibarr_main_prod must be set to 1 in conf.php
+** $dolibarr_nocsrfcheck must be kept to the value 0 in conf.php (this is the default value)
+** $dolibarr_main_force_https must be set to something else than 0.
+** The root of web server must link to htdocs and the documents directory must be outside of the web server root (this is the default when using the default installer but may differs with external installer).
+** The web server setup must be done so that only the documents directory is in write mode and directory listing is not allowed. The directory path htdocs/ must be read-only.
+** The modules DebugBar and ModuleBuilder must NOT be enabled. (by default, these modules are not enabled. They are developer tools)
+** Fail2ban rules for rate limit on the login page, forgotten password page, API calls and all public pages (/public/*) must be installed as recommended in the section "About - Admin tools - Section Access limits and mitigation".
 * Some constant must be set in the backoffice menu Home - Setup - Other
   - MAIN_SECURITY_CSRF_WITH_TOKEN must be set to 3 
   - MAIN_RESTRICTHTML_ONLY_VALID_HTML = 1
@@ -77,10 +83,7 @@ ONLY vulnerabilities discovered, when the following setup on test platform is us
   - MAIN_DISALLOW_URL_INTO_DESCRIPTIONS = 1 (only relative links are allowed in descriptions/notes), or 2 (no links are allowed in descriptions/notes)
   CSRF attacks and HTML injections are accepted but double check this setup that is experimental setup that already fix a lot of case and soon enabled by default.
 * ONLY security reports on modules provided by default and with the "stable" status are valid (troubles in "experimental", "development" or external modules are not valid vulnerabilities).
-* The root of web server must link to htdocs and the documents directory must be outside of the web server root (this is the default when using the default installer but may differs with external installer).
-* The web server setup must be done so that only the documents directory is in write mode and directory listing is not allowed. The directory path htdocs/ must be read-only.
-* The modules DebugBar and ModuleBuilder must NOT be enabled. (by default, these modules are not enabled. They are developer tools)
-* Fail2ban rules for rate limit on the login page, forgotten password page, API calls and all public pages (/public/*) must be installed as recommended in the section "About - Admin tools - Section Access limits and mitigation".
+
 
 Scope is the web application (backoffice) and the APIs.
 
@@ -121,7 +124,8 @@ Scope is the web application (backoffice) and the APIs.
 * SSL/TLS practices (cypher enabled or not)
 * Invalid or missing SPF (Sender Policy Framework) records (Incomplete or missing SPF/DKIM/DMARC)
 * Physical or social engineering attempts or issues that require physical access to a victim’s computer/device
-* Vulnerabilities of type XSS exploited by using javascript into a website page of the website module or by using php code into a website page (being able to set javascript or php code is the expected behaviour in the website module), except if the user does not have the permission to edit page or php code.
+* Vulnerabilities of type XSS exploited by using Javascript into a website page of the website module is not a vulnerability when user has the permission "Edit page" (being able to set javascript in the CMS is the expected behaviour in the website module).
+* Vulnerabilities that allow to run PHP code on the server into a website page is not a vulnerability when user has the superpermission "Edit PHP content in website page" (being able to run php code is the expected behaviour in the website module), except if the command is a RCE command (and $dolibarr_website_allow_custom_php remains to 0 or 1).
 
 
 ## Be informed of a new vulnerability

@@ -4,7 +4,7 @@
  * Copyright (C) 2005       Marc Barilley / Ocebo   <marc@ocebo.com>
  * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2022       Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -181,7 +181,7 @@ $disable_delete = 0;
 $sql = 'SELECT f.rowid as scid, f.libelle as label, f.paye, f.amount as sc_amount, pf.amount, pc.libelle as sc_type';
 $sql .= ' FROM '.MAIN_DB_PREFIX.'paiementcharge as pf,'.MAIN_DB_PREFIX.'chargesociales as f, '.MAIN_DB_PREFIX.'c_chargesociales as pc';
 $sql .= ' WHERE pf.fk_charge = f.rowid AND f.fk_type = pc.id';
-$sql .= ' AND f.entity = '.$conf->entity;
+$sql .= ' AND f.entity = '.((int) $conf->entity);
 $sql .= ' AND pf.rowid = '.((int) $object->id);
 
 dol_syslog("compta/payment_sc/card.php", LOG_DEBUG);

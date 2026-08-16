@@ -98,7 +98,6 @@ SkillsExtraFields=Complementary attributes (Skills)
 JobsExtraFields=Complementary attributes (Job profiles)
 EvaluationsExtraFields=Complementary attributes (Competency assessments)
 NeedBusinessTravels=Business travels
-NoDescription=No description
 TheJobProfileHasNoSkillsDefinedFixBefore=The evaluated job profile of this employee has no skill defined on it. Please add skill(s), then delete and restart the evaluation.
 PDFStandardHrmEvaluation=Standard template to generate a PDF document for a competency assessment
 SkillNotRequired=Skill not required

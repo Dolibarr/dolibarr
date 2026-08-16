@@ -208,7 +208,7 @@ $borderradius = getDolGlobalString('THEME_ELDY_USEBORDERONTABLE') ? getDolGlobal
 	--colortextbacktab: #<?php print $colortextbacktab; ?>;
 	--colorboxiconbg: #eee;
 	--refidnocolor:#444;
-	--tableforfieldcolor:#888;
+	--tableforfieldcolor:#666;
 	--amountremaintopaycolor:#880000;
 	--amountpaymentcomplete:#008855;
 	--amountremaintopaybackcolor:none;
@@ -218,6 +218,7 @@ $borderradius = getDolGlobalString('THEME_ELDY_USEBORDERONTABLE') ? getDolGlobal
 	--tablevalidbgcolor: rgb(252, 248, 227);
 	--colorblack: #000;
 	--colorwhite: #fff;
+	--colorwhitelight: #eee;
 	--heightrow: <?php print $heightrow; ?>;
 }
 
@@ -274,6 +275,7 @@ if (getDolGlobalInt('THEME_DARKMODEENABLED')) {
 				--tablevalidbgcolor: rgb(80, 64, 33);
 				--colorblack: #fff;
 				--colorwhite: #000;
+				--colorwhitelight: #333;
 	      }
 
 		body, button {
@@ -394,11 +396,11 @@ span.massactionselect, input.inputsearch_dropdownselectedfields {
 	border: none;
 	border-style: solid;
 	border<?php echo getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '' : '-bottom'; ?>-width: 1px !important;
-	border-color: var(<?php echo getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '--colorbacktitle1' : '--inputbordercolor'; ?>) !important;
+	border-color: var(<?php echo (getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') && getDolGlobalString('THEME_ELDY_BACKTITLE1') != '255,255,255') ? '--colorbacktitle1' : '--inputbordercolor'; ?>) !important;
 }
 
 .divadvancedsearchfieldcompinput,
-div.tabBar input:not(.pageplusone), div.tabBar input.flat:not(.pageplusone), div.tabBar textarea, div.tabBar textarea.flat, div.tabBar form.flat select, div.tabBar select, div.tabBar select.flat, div.tabBar .dataTables_length label select
+div.tabBar input:not(.pageplusone), div.tabBar input.flat:not(.pageplusone), div.tabBar textarea:not(.cke_source), div.tabBar textarea.flat, div.tabBar form.flat select, div.tabBar select, div.tabBar select.flat, div.tabBar .dataTables_length label select
 {
 	border<?php echo getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '' : '-bottom'; ?>: solid 1px var(--inputbordercolor);
 	<?php if (getDolGlobalString('THEME_ADD_BACKGROUND_ON_INPUT')) { ?>
@@ -517,6 +519,7 @@ section.setupsection {
 	padding: 20px !important;
 	background-color: var(--colorbackgrey);
 	border-radius: 5px;
+	box-shadow: 0 0 4px rgb(0, 0, 0, 0.15);
 }
 section.setupsection:hover {
 	box-shadow: 0 0 5px #aaa;
@@ -694,7 +697,6 @@ tr.tdsmallheight, tr.tdsmallheight td {
 /* Used by timesheets */
 span.timesheetalreadyrecorded input {
 	border: none;
-	border-bottom: solid 1px rgba(0,0,0,0.4);
 	margin-right: 1px !important;
 }
 td.onholidaymorning, td.onholidayafternoon {
@@ -841,6 +843,9 @@ input.pageplusone {
 .anchorundermenu {
 	scroll-margin-top: 80px;
 }
+.banner-object-label {
+	opacity: 0.8;
+}
 
 select:invalid, select.--error {
 	color: gray;
@@ -935,6 +940,7 @@ table.tableforfield .buttonDelete:not(.bordertransp):not(.buttonpayment) {
 }
 
 .button:not(.bordertransp):not(.buttonpayment),
+.buttonCancel:not(.bordertransp):not(.buttonpayment),
 .buttonDelete:not(.bordertransp):not(.buttonpayment) {
 	margin-bottom: 3px;
 	margin-top: 3px;
@@ -976,12 +982,6 @@ table.tableforfield .buttonDelete:not(.bordertransp):not(.buttonpayment) {
 	box-shadow: none;
 	cursor: auto;
 	text-decoration: none;
-}
-.buttonRefused {
-	pointer-events: none;
-	   cursor: default;
-	opacity: 0.4;
-	box-shadow: none;
 }
 .button_search, .button_removefilter {
 	border: unset;
@@ -1099,6 +1099,9 @@ textarea.centpercent {
 }
 .small, small {
 	font-size: 85%;
+}
+.smallimp {
+	font-size: 85% !important;
 }
 .select2-results__option .smallincombo {
 	font-size: 95%;
@@ -2675,8 +2678,8 @@ td.showDragHandle {
 <?php } else { ?>
 	display: table-cell;
 <?php } ?>
-	border-<?php echo $right; ?>: 1px solid #ECECEC;
-	border-bottom: 1px solid #ECECEC;
+	border-<?php echo $right; ?>: 1px solid #F0F0F0;
+	border-bottom: 1px solid #F0F0F0;
 	box-shadow: 3px 0 6px -2px #eee;
 	background: var(--colorbackvmenu1);
 	transition: left 0.5s ease;
@@ -3622,7 +3625,7 @@ if (getDolGlobalString('MAIN_LOGIN_BACKGROUND')) {
 }
 .login_table input#username, .login_table input#password, .login_table input#securitycode {
 	/* border: none; */
-	border-bottom: solid 1px rgba(180,180,180,.4);
+	border-bottom: solid 1px rgba(160,160,160,.4);
 	padding: 8px;
 	padding-left: 12px;
 	margin-left: 5px;
@@ -3656,8 +3659,8 @@ if (getDolGlobalString('MAIN_LOGIN_BACKGROUND')) {
 }
 .login_table #tdpasswordlogin #togglepassword {
 	position: absolute;
-	top: 0.8em;
-	right: 11px;
+	top: 1.1em;
+	right: 20px;
 	background: none;
 	border: none;
 	opacity: 0.3;
@@ -3791,8 +3794,8 @@ div.login_block_other {
 div.login_block_user {
 	display: inline-block;
 	vertical-align: middle;
-	line-height: <?php echo $disableimages ? '25' : '51'; ?>px;
-	height: <?php echo $disableimages ? '25' : '51'; ?>px;
+	line-height: <?php echo $disableimages ? '25' : '50'; ?>px;
+	height: <?php echo $disableimages ? '25' : '50'; ?>px;
 }
 
 .login_block_elem {
@@ -3859,6 +3862,7 @@ img.login, img.printer, img.entity {
 	background-size: contain;
 	border: 1px solid;
 	border-color: rgba(255, 255, 255, 0.2);
+	box-sizing: border-box; /* border is inside */
 }
 img.userphoto {			/* size for user photo in lists */
 	border-radius: 0.72em;
@@ -3866,6 +3870,9 @@ img.userphoto {			/* size for user photo in lists */
 	height: 1.4em;
 	background-size: contain;
 	vertical-align: middle;
+	border: 1px solid;
+	border-color: #ddd;
+	box-sizing: border-box; /* border is inside */
 }
 .userimg.atoplogin span.userphoto, .userimgatoplogin span.userphoto {
 	vertical-align: middle;
@@ -3892,6 +3899,9 @@ img.userphotosmall {			/* size for user photo in lists */
 	background-size: contain;
 	vertical-align: middle;
 	background-color: #FFF;
+	border: 1px solid;
+	border-color: #ddd;
+	box-sizing: border-box; /* border is inside */
 }
 img.userphotopublicvcard {
 	width: 60px;
@@ -4862,6 +4872,7 @@ table.listwithfilterbefore {
 .tagtable, .table-border { display: table; }
 .tagtr, .table-border-row  { display: table-row; }
 .tagtd, .table-border-col, .table-key-border-col, .table-val-border-col { display: table-cell; }
+.tagtd { padding-top: 5px; padding-bottom: 5px; }
 .confirmquestions .tagtr .tagtd:not(:first-child)  { padding-left: 10px; }
 .confirmquestions { margin-top: 5px; }
 .confirmquestions .tagtr .tagtd { height: 2em; vertical-align: middle; }
@@ -5028,7 +5039,8 @@ table.hidepaginationnext .paginationnext {
 
 
 /* Set the color for hover lines */
-.oddeven:hover:not(.nohover), .evenodd:hover:not(.nohover), .oddevenimport:hover:not(.nohover), .evenoddimport:hover:not(.nohover), .impair:hover:not(.nohover), .pair:hover:not(.nohover) {
+table.liste .oddeven:hover:not(.nohover), table.liste .evenodd:hover:not(.nohover), table.liste .oddevenimport:hover:not(.nohover), table.liste .evenoddimport:hover:not(.nohover),
+table.liste .impair:hover:not(.nohover), table.liste .pair:hover:not(.nohover) {
 	background: var(--colorbacklinepairhover) !important;		/* Must be background to be stronger than background of odd or even */
 }
 
@@ -5176,7 +5188,6 @@ tr.liste_titre th, tr.liste_titre td, th.liste_titre
 	border-bottom: 1px solid var(--colortopbordertitle1);
 }
 tr.liste_titre:first-child th, tr:first-child th.liste_titre {
-/*    border-bottom: 1px solid #ddd ! important; */
 	border-bottom: unset;
 }
 tr.liste_titre th, th.liste_titre, tr.liste_titre td, td.liste_titre, form.liste_titre div
@@ -5205,10 +5216,15 @@ tr.liste_titre_topborder td {
 .liste_titre td a.notasortlink:hover {
 	background: transparent;
 }
-tr.liste_titre:last-child th.liste_titre, tr.liste_titre:last-child th.liste_titre_sel, tr.liste_titre td.liste_titre, tr.liste_titre td.liste_titre_sel, form.liste_titre div.tagtd {				/* For last line of table headers only */
-	/* border-bottom: 1px solid #ddd; */
+
+/* For last line of table headers with no thead only */
+table > tr.liste_titre:last-child th.liste_titre, table > tr.liste_titre:last-child th.liste_titre_sel, table > tr.liste_titre td.liste_titre, table > tr.liste_titre td.liste_titre_sel,
+table > tbody > tr.liste_titre:last-child th.liste_titre, table > tbody > tr.liste_titre:last-child th.liste_titre_sel, table > tbody > tr.liste_titre td.liste_titre, table > tbody > tr.liste_titre td.liste_titre_sel,
+form.liste_titre div.tagtd {
 	border-bottom: unset;
 }
+
+
 
 div.liste_titre {
 	padding-left: 3px;
@@ -5390,10 +5406,15 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 	padding-right: 3px;
 	width: 118px;
 }
-
+<?php if (getDolGlobalString('MAIN_CSS_USE_SHADOWS') && getDolGlobalInt('THEME_DARKMODEENABLED') != 2) { ?>
+.boxtable, .firstcolumn table.noborder, .secondcolumn table.noborder {
+	box-shadow: -2px 1px 12px rgba(192, 192, 192, 0.5);
+}
+<?php } ?>
 .boxtable:not(.widgetstats) td.tdboxstats .boxstats {
 	box-shadow: 1px 1px 8px var(--colorboxstatsborder);
 	border-radius: 6px;
+
 }
 
 .tabBar .fichehalfright .boxstats {
@@ -5757,8 +5778,10 @@ div.info, div.warning, div.error, div.green, div.neutral, section.neutral {
 	border-radius: 5px;
 }
 
-div.fiche div.info, div.fiche div.warning, div.fiche div.neutral {
+div.fiche div.info, div.fiche div.warning, div.fiche div.neutral, div.fiche div.green {
+	<?php if (getDolGlobalInt('THEME_DARKMODEENABLED') != 2) { ?>
 	box-shadow: 1px 1px 6px #d4d4d4;
+	<?php } ?>
 	margin: 1em 0em 1.2em 0em;
 }
 
@@ -5936,8 +5959,6 @@ table.table-fiche-title tr.toptitle, table.table-fiche-title tr.toptitle {
 div.titre {
 	font-size: 1.1em;
 	text-decoration: none;
-	/* padding-top: 5px;
-	padding-bottom: 5px; */
 	font-weight: 400;
 }
 div.titre.small {
@@ -5949,7 +5970,7 @@ div.fiche > table.table-fiche-title:first-of-type div, div.fiche > form > table.
 div.fiche > table.table-fiche-title:first-of-type div {
 	color: var(--colortexttitlenotab);
 }
-div.titre {
+div.titre, tr.liste_titre .print-barre-liste {
 	color: var(--colortexttitlenotab);
 }
 
@@ -6001,6 +6022,9 @@ div.backgreypublicpayment {
 	color: #222;
 	opacity: 0.3;
 }
+a.poweredbyhref {
+	text-decoration: none;
+}
 
 #dolpublictable {
 	min-width: 300px; font-size: 16px;
@@ -6016,7 +6040,7 @@ div.backgreypublicpayment {
 	width: 100%;
 	padding: 20px;
 	margin-bottom: 25px;
-	border-radius: 4px;
+	border-radius: 10px;
 }
 #tablepublicpayment .CTableRow1  { background-color: #F0F0F0 !important; }
 #tablepublicpayment tr.liste_total { border-bottom: 1px solid #CCCCCC !important; }
@@ -6190,7 +6214,7 @@ button.ui-button-icon-only.ui-dialog-titlebar-close {
 /* Formulaire confirmation (When HTML is used)                                    */
 /* ============================================================================== */
 
-table.valid {
+table.valid, div.valid {
 	/* border-top: solid 1px #E6E6E6; */
 	border-<?php print $left; ?>: solid 5px #f2cf87;
 	/* border-<?php print $right; ?>: solid 1px #444444;
@@ -6226,7 +6250,7 @@ div.ui-tooltip.mytooltip {
 	border-radius: 4px;
 	margin: 2px;
 	font-stretch: condensed;
-	box-shadow:        0.5px 0.5px 4px 0px rgba(0, 0, 0, 0.5);
+	box-shadow: 0 0 12px rgba(0, 0, 0, 0.25);
 	filter: progid:DXImageTransform.Microsoft.Shadow(color=#656565, Direction=134, Strength=5);
 	background: var(--tooltipbgcolor) !important;
 	color: var(--tooltipfontcolor);
@@ -6574,11 +6598,11 @@ table.cal_month.cal_peruser td { padding-left: 0 !important; padding-right: 0 !i
 .cal_current_month { border-top: 0; border-left: solid 1px #E8E8E8; border-right: 0; border-bottom: solid 1px #E8E8E8; }
 .cal_current_month_peruserleft { border-top: 0; border-left: solid 2px #6C7C7B; border-right: 0; border-bottom: solid 1px #E8E8E8; }
 .cal_current_month_oneday { border-right: solid 1px #E8E8E8; }
-.cal_other_month   { border-top: 0; border-left: solid 1px #C0C0C0; border-right: 0; border-bottom: solid 1px #C0C0C0; }
+.cal_other_month   { border-top: 0; border-left: solid 1px #E8E8E8; border-right: 0; border-bottom: solid 1px #C0C0C0; }
 .cal_other_month_peruserleft { border-top: 0; border-left: solid 2px #6C7C7B !important; border-right: 0; }
 .cal_current_month_right { border-right: solid 1px #E8E8E8; }
 .cal_other_month_right   { border-right: solid 1px #C0C0C0; }
-.cal_other_month   { /* opacity: 0.6; */ background: #FAFAFA; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
+.cal_other_month   { /* opacity: 0.6; */ background: #FCFCFC; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_past_month    { /* opacity: 0.6; */ background: #EEEEEE; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_current_month { background: #FFFFFF; border-left: solid 1px #E8E8E8; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_current_month_peruserleft { background: #FFFFFF; border-left: solid 2px #6C7C7B; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
@@ -6594,6 +6618,7 @@ table.cal_month.cal_peruser td { padding-left: 0 !important; padding-right: 0 !i
 	background: -moz-linear-gradient(bottom, var(--colorbacklinepair2) 85%, var(--colorbacklinepair2) 100%);
 	background: -webkit-linear-gradient(bottom, var(--colorbacklinepair2) 85%, var(--colorbacklinepair2) 100%);
 }
+.cal_showmore      { opacity: 0.5 }
 .peruser_busy      { }
 .peruser_notbusy   { opacity: 0.5; }
 div.event { margin-left: 8px; margin-right: 8px; margin-bottom: 8px; margin-top: 4px; border-radius: 4px; box-shadow: 2px 2px 5px rgba(100, 100, 100, 0.2); }
@@ -6623,7 +6648,7 @@ td.small.cal_event {
 .calendarviewcontainertr { height: 100px; }
 
 td.cal_other_month {
-	opacity: 0.7;
+	/* opacity: 0.7; */
 }
 td.event-past span  {
 	opacity: 0.5;
@@ -6723,7 +6748,7 @@ td.peruser_holiday_imp {
 
 
 /* ============================================================================== */
-/*  jQuery - jeditable for inline edit                                            */
+/*  Edit in place                                                                 */
 /* ============================================================================== */
 
 .editkey_textarea, .editkey_ckeditor, .editkey_string, .editkey_email, .editkey_numeric, .editkey_select, .editkey_autocomplete {
@@ -7052,6 +7077,10 @@ div.cke_notifications_area .cke_notification_warning {
 /*  TinyMCE                                                                       */
 /* ============================================================================== */
 
+td.linecoldescription .tox.tox-tinymce {
+	margin-top: 8px;
+}
+
 .tox .tox-edit-area::before {
 	border: none !important;
 }
@@ -7074,10 +7103,24 @@ button.tox-tbtn.tox-tbtn--select.tox-tbtn--bespoke[data-mce-name="fontsize"] {
 .tox:not(.tox-tinymce-inline) .tox-editor-header {
 	/*border-bottom: 1px solid #ddd !important;
 	box-shadow: unset !important; */
-	box-shadow: 0 2px 2px -2px rgba(34,47,62,.1),0 8px 8px -4px rgba(34,47,62,.07) !important;
+	box-shadow: 0 2px 2px -2px rgba(34,47,62,.1),0 5px 5px -4px rgba(34,47,62,.09) !important;
 }
 .mce-content-body p {
 	margin: unset;
+}
+.tox .tox-button:hover:not(:disabled, .tox-button--secondary, .tox-button--naked) {
+	background-color: var(--butactionbg) !important;
+	border-color: var(--butactionbg) !important;
+}
+.tox .tox-button:not(.tox-button--secondary, .tox-button--naked) {
+	background-color: var(--butactionbg) !important;
+	border-color: var(--butactionbg) !important;
+}
+.tox .tox-custom-editor:focus-within, .tox .tox-listboxfield .tox-listbox--select:focus, .tox .tox-textarea-wrap:focus-within, .tox .tox-textarea:focus, .tox .tox-textfield:focus {
+	background-color: #fff;
+	border-color: var(--butactionbg) !important;
+	box-shadow: 0 0 0 1px var(--butactionbg) !important;
+	outline: 0;
 }
 
 
@@ -7615,8 +7658,10 @@ input.select2-input {
 	border-bottom: solid 1px var(--inputbordercolor) !important;	/* required to avoid to lose bottom line when focus is lost on select2. */
 }
 li.select2-selection__choice {
-	white-space: break-spaces;
+	/* white-space: break-spaces; */
+	white-space: nowrap;
 }
+
 .select2-results .select2-highlighted.optionblue {
 	color: #FFF !important;
 }
@@ -7717,7 +7762,7 @@ li.select2-selection__choice {
 }
 .liste_titre .select2-container--default .select2-selection--single:not(.selectwidget),
 .liste_titre .select2-container--default .select2-selection--multiple {
-	border<?php echo getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '' : '-bottom'; ?>: solid 1px var(--colorbacktitle1);
+	border<?php echo getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '' : '-bottom'; ?>: solid 1px var(<?php echo (getDolGlobalString('THEME_ELDY_BACKTITLE1') != '255,255,255') ? '--colorbacktitle1' : '--inputbordercolor' ?>);
 }
 
 
@@ -7791,9 +7836,10 @@ li.select2-selection__choice {
 .select2-dropdown {
 	/*background-color: var(--colorbackvmenu1);
 	border: 1px solid var(--colorbackvmenu1); */
-	box-shadow: 1px 2px 10px #8884;
+	box-shadow: 0 2px 10px rgb(0, 0, 0, .3);
 	background-color: var(--colorbackbody);
 	color: var(--colortext);
+	border: unset;
 }
 .select2-dropdown-open {
 	background-color: var(--colorbackvmenu1);
@@ -7989,12 +8035,12 @@ select.multiselectononeline {
 {
 	/* CSS to have the dropdown boxes larger that the input search area */
 	.select2-container.select2-container--open:not(.graphtype, .limit, .combolargeelem):not(.yesno) .select2-dropdown.ui-dialog {
-		min-width: 260px !important;
+		min-width: 300px !important;
 		padding: 8px;
 	}
 	.select2-container.select2-container--open:not(.graphtype, .limit, .combolargeelem):not(.yesno) .select2-dropdown--below:not(.onrightofpage),
 	.select2-container.select2-container--open:not(.graphtype, .limit, .combolargeelem):not(.yesno) .select2-dropdown--above:not(.onrightofpage) {
-		min-width: 260px !important;
+		min-width: 300px !important;
 		padding: 8px;
 	}
 	.onrightofpage span.select2-dropdown.ui-dialog.select2-dropdown--below,
@@ -8185,7 +8231,7 @@ dl.dropdown {
 }
 .dropdown dd ul {
 	background-color: var(--inputbackgroundcolor);
-	box-shadow: 1px 1px 10px #aaa;
+	box-shadow: 0 1px 10px rgb(0, 0, 0, 0.3);
 	display:none;
 	<?php echo $right; ?>:0px;						/* pop is align on right */
 	padding: 0 0 0 0;
@@ -8194,7 +8240,7 @@ dl.dropdown {
 	list-style:none;
 	max-height: 264px;
 	overflow: auto;
-	border-radius: 4px;
+	border-radius: 6px;
 	z-index: 1;
 }
 .dropdown dd ul.selectedfieldsleft {

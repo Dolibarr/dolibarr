@@ -12,7 +12,7 @@
  * Copyright (C) 2022       Gauthier VERDOL             <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2022-2026  Charlene Benke              <charlene@patas-monkey.com>
  * Copyright (C) 2023       Joachim Kueter              <git-jk@bloxera.com>
- * Copyright (C) 2024-2025  MDW                         <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW                         <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Nick Fragoulis
  * Copyright (C) 2025-2026  Alexandre Spangaro          <alexandre@inovea-conseil.com>
  * Copyright (C) 2026       William Mead                <william@m34d.com>
@@ -43,6 +43,7 @@ require '../../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Societe $mysoc
  * @var Translate $langs
@@ -115,22 +116,17 @@ $datelivraison = dol_mktime(GETPOSTINT('liv_hour'), GETPOSTINT('liv_min'), GETPO
 
 
 // Security check
-if (!empty($user->socid)) {
-	$socid = $user->socid;
+if ($user->isExternalUser()) {
+	$socid = $user->isExternalUser();
 }
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('ordersuppliercard', 'globalcard'));
 
 $object = new CommandeFournisseur($db);
-$extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
-
-if ($user->socid) {
-	$socid = $user->socid;
-}
 
 // Load object
 if ($id > 0 || !empty($ref)) {
@@ -190,6 +186,7 @@ if (isModEnabled('project')) {
 }
 
 $error = 0;
+$classname = null;
 
 
 /*
@@ -451,7 +448,10 @@ if (empty($reshook)) {
 		$alldate_end = dol_mktime(GETPOSTINT('alldate_endhour'), GETPOSTINT('alldate_endmin'), 0, GETPOSTINT('alldate_endmonth'), GETPOSTINT('alldate_endday'), GETPOSTINT('alldate_endyear'));
 		foreach ($object->lines as $line) {
 			if ($line->product_type == 1) { // only service line
-				$result = $object->updateline($line->id, $line->desc, $line->subprice, $line->qty, (float) $line->remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, 0, $alldate_start, $alldate_end, $line->array_options, $line->fk_unit, $line->multicurrency_subprice, $line->ref_supplier);
+				// Preserve the original entry mode of the line so the total is not drifted by rounding.
+				$line_price_base_type = $line->getPriceBaseType();
+				$line_pu = ($line_price_base_type === 'TTC') ? (float) $line->subprice_ttc : (float) $line->subprice;
+				$result = $object->updateline($line->id, $line->desc, $line_pu, $line->qty, (float) $line->remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, $line_price_base_type, $line->info_bits, $line->product_type, 0, $alldate_start, $alldate_end, $line->array_options, $line->fk_unit, $line->multicurrency_subprice, $line->ref_supplier);
 			}
 		}
 	} elseif ($action == 'addline' && GETPOST('submitforalllines', 'alpha') && GETPOST('remiseforalllines', 'alpha') !== '' && $usercancreate) {
@@ -459,7 +459,10 @@ if (empty($reshook)) {
 		$remise_percent = (GETPOST('remiseforalllines') ? GETPOST('remiseforalllines') : 0);
 		$remise_percent = str_replace('*', '', $remise_percent);
 		foreach ($object->lines as $line) {
-			$result = $object->updateline($line->id, $line->desc, $line->subprice, $line->qty, (float) $remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, 0, $line->date_start, $line->date_end, $line->array_options, $line->fk_unit, $line->multicurrency_subprice, $line->ref_supplier);
+			// Preserve the original entry mode of the line so the total is not drifted by rounding.
+			$line_price_base_type = $line->getPriceBaseType();
+			$line_pu = ($line_price_base_type === 'TTC') ? (float) $line->subprice_ttc : (float) $line->subprice;
+			$result = $object->updateline($line->id, $line->desc, $line_pu, $line->qty, (float) $remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, $line_price_base_type, $line->info_bits, $line->product_type, 0, $line->date_start, $line->date_end, $line->array_options, $line->fk_unit, $line->multicurrency_subprice, $line->ref_supplier);
 		}
 	} elseif ($action == 'addline' && GETPOST('submitforalllines', 'aZ09') && GETPOST('vatforalllines', 'alpha') !== '' && $usercancreate) {
 		// Define new vat_rate for all lines
@@ -471,7 +474,10 @@ if (empty($reshook)) {
 			if ($line->special_code == SUBTOTALS_SPECIAL_CODE) {
 				continue;
 			}
-			$result = $object->updateline($line->id, $line->desc, $line->subprice, $line->qty, (float) $line->remise_percent, $vat_rate, $localtax1_rate, $localtax2_rate, 'HT', $line->info_bits, $line->product_type, 0, $line->date_start, $line->date_end, $line->array_options, $line->fk_unit, $line->multicurrency_subprice, $line->ref_supplier);
+			// Preserve the original entry mode of the line so the total is not drifted by rounding.
+			$line_price_base_type = $line->getPriceBaseType();
+			$line_pu = ($line_price_base_type === 'TTC') ? (float) $line->subprice_ttc : (float) $line->subprice;
+			$result = $object->updateline($line->id, $line->desc, $line_pu, $line->qty, (float) $line->remise_percent, $vat_rate, $localtax1_rate, $localtax2_rate, $line_price_base_type, $line->info_bits, $line->product_type, 0, $line->date_start, $line->date_end, $line->array_options, $line->fk_unit, $line->multicurrency_subprice, $line->ref_supplier);
 		}
 	} elseif ($action == 'confirm_addtitleline' && $usercancreate) {
 		// Handling adding a new title line for subtotals module
@@ -816,15 +822,18 @@ if (empty($reshook)) {
 			$localtax1_tx = get_localtax($tva_tx, 1, $mysoc, $object->thirdparty);
 			$localtax2_tx = get_localtax($tva_tx, 2, $mysoc, $object->thirdparty);
 
+			// Keep the entry mode chosen by the user so the total is computed from the typed value (no rounding drift).
 			if (GETPOST('price_ht') != '' || GETPOST('multicurrency_price_ht') != '') {
+				$price_base_type = 'HT';
 				$pu_ht = price2num($price_ht, 'MU'); // $pu_ht must be rounded according to settings
-				$pu_ttc = '';
+				$pu_ttc = 0;
+				$pu_ht_devise = price2num($price_ht_devise, 'CU');
 			} else {
+				$price_base_type = 'TTC';
 				$pu_ttc = price2num(GETPOST('price_ttc'), 'MU');
-				$pu_ht = price2num((float) $pu_ttc / (1 + ((float) $tva_tx / 100)), 'MU'); // $pu_ht must be rounded according to settings
+				$pu_ht = 0;
+				$pu_ht_devise = price2num($price_ttc_devise, 'CU');
 			}
-			$price_base_type = 'HT';
-			$pu_ht_devise = price2num($price_ht_devise, 'CU');
 
 			$result = $object->addline($desc, (float) $pu_ht, (float) $qty, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, $ref_supplier, $remise_percent, $price_base_type, (float) $pu_ttc, $type, 0, 0, $date_start, $date_end, $array_options, $fk_unit, (float) $pu_ht_devise);
 		}
@@ -890,6 +899,9 @@ if (empty($reshook)) {
 			unset($_POST['date_endday']);
 			unset($_POST['date_endmonth']);
 			unset($_POST['date_endyear']);
+
+			header('Location: '.dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $id]));
+			exit();
 		} else {
 			$db->rollback();
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -1017,20 +1029,28 @@ if (empty($reshook)) {
 		$localtax1_rate = get_localtax($vat_rate, 1, $mysoc, $object->thirdparty);
 		$localtax2_rate = get_localtax($vat_rate, 2, $mysoc, $object->thirdparty);
 
-		if (GETPOST('price_ht') != '') {
-			$price_base_type = 'HT';
-			$ht = price2num(GETPOST('price_ht'), '', 2);
-		} else {
-			$reg = array();
-			$vatratecleaned = $vat_rate;
-			if (preg_match('/^(.*)\s*\((.*)\)$/', $vat_rate, $reg)) {      // If vat is "xx (yy)"
-				$vatratecleaned = trim($reg[1]);
-				$vatratecode = $reg[2];
-			}
+		$pu_ht = price2num(GETPOST('price_ht'), '', 2);
+		$pu_ttc = price2num(GETPOST('price_ttc'), '', 2);
 
-			$ttc = price2num(GETPOST('price_ttc'), '', 2);
-			$ht = (float) $ttc / (1 + ((float) $vatratecleaned / 100));
-			$price_base_type = 'HT';
+		// The form JS clears the other field when the user edits one of them: only the modified field is filled.
+		// When both fields are submitted, the user did not change the price - we must preserve the original
+		// storage mode of the line, otherwise a no-op save would shift the total by rounding.
+		$ht = $pu_ht;
+		$price_base_type = 'HT';
+		if (empty($pu_ht) && !empty($pu_ttc)) {
+			$ht = $pu_ttc;
+			$price_base_type = 'TTC';
+		} elseif (!empty($pu_ht) && !empty($pu_ttc)) {
+			foreach ($object->lines as $line_obj) {
+				if ($line_obj->id == GETPOSTINT('lineid')) {
+					// Line was originally entered in TTC mode (subprice_ttc filled by addline)
+					if ($line_obj->wasEnteredIncludingTax()) {
+						$ht = $pu_ttc;
+						$price_base_type = 'TTC';
+					}
+					break;
+				}
+			}
 		}
 
 		$pu_ht_devise = price2num(GETPOST('multicurrency_subprice'), 'CU', 2);
@@ -1048,7 +1068,7 @@ if (empty($reshook)) {
 		$result = $object->updateline(
 			$lineid,
 			GETPOST('product_desc', 'restricthtml'),
-			$ht,
+			(float) $ht,
 			(float) price2num(GETPOST('qty'), 'MS'),
 			(float) price2num(GETPOST('remise_percent'), '', 2),
 			$vat_rate,
@@ -1689,6 +1709,8 @@ if (empty($reshook)) {
 									$tva_tx = get_default_tva($soc, $mysoc, $lines[$i]->fk_product, $product_fourn_price_id);
 								}
 
+								// Preserve the original entry mode of the line so the total is computed from the typed value (no rounding drift).
+								$line_price_base_type = $lines[$i]->getPriceBaseType();
 								$result = $object->addline(
 									$desc,
 									$lines[$i]->subprice,
@@ -1700,8 +1722,8 @@ if (empty($reshook)) {
 									$product_fourn_price_id,
 									$ref_supplier,
 									$lines[$i]->remise_percent,
-									'HT',
-									0,
+									$line_price_base_type,
+									(float) $lines[$i]->subprice_ttc,
 									$lines[$i]->product_type,
 									0,
 									0,
@@ -1710,12 +1732,12 @@ if (empty($reshook)) {
 									$array_option,
 									$lines[$i]->fk_unit,
 									0,
-										$element,
-										!empty($lines[$i]->id) ? $lines[$i]->id : $lines[$i]->rowid,
-										-1,
-										$lines[$i]->special_code,
-										$label
-									);
+									$element,
+									!empty($lines[$i]->id) ? $lines[$i]->id : $lines[$i]->rowid,
+									-1,
+									$lines[$i]->special_code,
+									$label
+								);
 
 								if ($result < 0) {
 									setEventMessages($object->error, $object->errors, 'errors');
@@ -2080,13 +2102,14 @@ if ($action == 'create') {
 
 			$langs->load('projects');
 			print '<tr><td>'.$langs->trans('Project').'</td><td>';
-
-			if ($socid > 0) { // external user
-				$projSocFilter = $socid;
-			} elseif ((int) $socid == 0 || getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS')) {
+			if (!empty($user->socid)) { // external user: restrict to their own third party
+				$projSocFilter = $user->socid;
+			} elseif (getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') || (int) $socid == 0) {
+				// Give priority to the constant (as on supplier invoice), so a supplier document created from a
+				// customer project keeps that project selected after the supplier is chosen.
 				$projSocFilter = -1;
 			} else {
-				$projSocFilter = $societe->id;
+				$projSocFilter = $socid;
 			}
 			print img_picto('', 'project', 'class="pictofixedwidth"').$formproject->select_projects($projSocFilter, $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
 			print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?action=create&status=1'.(!empty($societe->id) ? '&socid='.$societe->id : "").'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create'.(!empty($societe->id) ? '&socid='.$societe->id : "")).'"><span class="fa fa-plus-circle valignmiddle" title="'.$langs->trans("AddProject").'"></span></a>';
@@ -2138,7 +2161,7 @@ if ($action == 'create') {
 		//print '<td><textarea name="note_private" wrap="soft" cols="60" rows="'.ROWS_5.'"></textarea></td>';
 		print '</tr>';
 
-		if (!empty($origin) && !empty($originid) && is_object($objectsrc)) {
+		if (!empty($origin) && !empty($originid) && is_object($objectsrc) && $classname !== null) {
 			print "\n<!-- ".$classname." info -->";
 			print "\n";
 			print '<input type="hidden" name="amount"         value="'.$objectsrc->total_ht.'">'."\n";
@@ -2224,7 +2247,7 @@ if ($action == 'create') {
 	$head = ordersupplier_prepare_head($object);
 
 	$title = $langs->trans("SupplierOrder");
-	print dol_get_fiche_head($head, 'card', $title, -1, 'order');
+	print dol_get_fiche_head($head, 'card', $title, -1, 'order', 0, '', '', 0, '', 1);
 
 
 	$formconfirm = '';
@@ -2451,7 +2474,7 @@ if ($action == 'create') {
 		}
 		$morehtmlref .= $object->thirdparty->getNomUrl(1, 'supplier');
 		if (!getDolGlobalString('MAIN_DISABLE_OTHER_LINK') && $object->thirdparty->id > 0) {
-			$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/fourn/commande/list.php?socid='.$object->thirdparty->id.'&search_company='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherOrders").'</a>)';
+			$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/fourn/commande/list.php?socid='.$object->thirdparty->id.'">'.$langs->trans("OtherOrders").'</a>)';
 		}
 	}
 
@@ -2881,16 +2904,21 @@ if ($action == 'create') {
 					print dolGetButtonAction('', $langs->trans('Subtotal'), 'default', $url_button, '', true);
 				}
 				// Validate
-				if ($object->status == 0 && $num > 0) {
-					if ($usercanvalidate) {
-						$tmpbuttonlabel = $langs->trans('Validate');
-						if ($usercanapprove && !getDolGlobalString('SUPPLIER_ORDER_NO_DIRECT_APPROVE')) {
-							$tmpbuttonlabel = $langs->trans("ValidateAndApprove");
-						}
+				if ($object->status == 0) {
+					if ($num > 0) {
+						if ($usercanvalidate) {
+							$tmpbuttonlabel = $langs->trans('Validate');
+							if ($usercanapprove && !getDolGlobalString('SUPPLIER_ORDER_NO_DIRECT_APPROVE')) {
+								$tmpbuttonlabel = $langs->trans("ValidateAndApprove");
+							}
 
-						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=valid&token='.newToken().'">';
-						print $tmpbuttonlabel;
-						print '</a>';
+							print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=valid&token='.newToken().'">';
+							print $tmpbuttonlabel;
+							print '</a>';
+						}
+					} else {
+						$langs->load("errors");
+						print dolGetButtonAction($langs->trans("ErrorObjectMustHaveLinesToBeValidated", $object->ref), $langs->trans('Validate'), 'default', $_SERVER["PHP_SELF"] . '?action=validate&token=' . newToken() . '&id=' . $object->id, (string) $object->id, -1);
 					}
 				}
 				// Create event
@@ -3058,7 +3086,7 @@ if ($action == 'create') {
 
 				// Clone
 				if ($usercancreate) {
-					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$object->socid.'&amp;action=clone&amp;token='.newToken().'&amp;object=order">'.$langs->trans("ToClone").'</a>';
+					print '<a class="butAction butActionClone" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$object->socid.'&amp;action=clone&amp;token='.newToken().'&amp;object=order">'.$langs->trans("ToClone").'</a>';
 				}
 
 				// Cancel

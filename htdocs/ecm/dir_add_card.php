@@ -2,7 +2,7 @@
 /* Copyright (C) 2008-2017	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2008-2012	Regis Houssin				<regis.houssin@inodbox.com>
  * Copyright (C) 2015-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2025-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -53,7 +53,7 @@ $cancel     = GETPOST('cancel');
 $backtopage = GETPOST('backtopage', 'alpha');
 $confirm    = GETPOST('confirm', 'alpha');
 
-$module  = GETPOST('module', 'alpha');
+$module  = GETPOST('module', 'aZ09arobase');
 $website = GETPOST('website', 'alpha');
 $pageid  = GETPOSTINT('pageid');
 if (empty($module)) {
@@ -292,7 +292,7 @@ if (empty($action) || $action == 'delete_section') {
 
 	// Generate form to confirm deletion of a category line
 	if ($action == 'delete_section') {
-		print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.$section, $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection', $ecmdir->label), 'confirm_deletesection');
+		print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.urlencode($section), $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection', $ecmdir->label), 'confirm_deletesection');
 	}
 
 
@@ -300,7 +300,7 @@ if (empty($action) || $action == 'delete_section') {
 	print '<div class="tabsAction">';
 
 	// Delete
-	print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), '', $user->hasRight('ecm', 'setup'));
+	print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER["PHP_SELF"].'?section='.urlencode($section).'&action=delete_section&token='.newToken(), '', $user->hasRight('ecm', 'setup'));
 
 	print '</div>';
 }

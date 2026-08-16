@@ -34,6 +34,7 @@ require '../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
@@ -78,7 +79,7 @@ $pagenext = $page + 1;
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new User($db);
-$extrafields = new ExtraFields($db);
+
 $diroutputmassaction = $conf->user->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('userlist'));
 
@@ -1056,8 +1057,8 @@ while ($i < $imaxinloop) {
 	$object->admin = $obj->admin;
 	$object->ref = (string) $obj->rowid;
 	$object->login = $obj->login;
-	$object->statut = $obj->status;
-	$object->status = $obj->status;
+	$object->statut = (int) $obj->status;
+	$object->status = (int) $obj->status;
 	$object->office_phone = $obj->office_phone;
 	$object->user_mobile = $obj->user_mobile;
 	$object->job = $obj->job;
@@ -1246,7 +1247,8 @@ while ($i < $imaxinloop) {
 		}
 		// Email
 		if (!empty($arrayfields['u.email']['checked'])) {
-			print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute($obj->email).'">'.dol_print_email($obj->email, $obj->rowid, $obj->fk_soc, 1, 0, 0, 1)."</td>\n";
+			$showinvalidemail = (int) !getDolGlobalInt('MAIN_SHOW_INVALID_EMAIL_IN_LIST'); // to avoid slow display
+			print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute($obj->email).'">'.dol_print_email($obj->email, $obj->rowid, $obj->fk_soc, 1, 0, $showinvalidemail, 1)."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

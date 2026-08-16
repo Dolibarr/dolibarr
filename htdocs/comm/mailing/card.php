@@ -3,9 +3,9 @@
  * Copyright (C) 2005-2019	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2016	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2021		Waël Almoman            <info@almoman.com>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Jon Bendtsen            <jon.bendtsen.github@jonb.dk>
- * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +36,7 @@ require '../../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
@@ -49,7 +50,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
@@ -63,14 +63,13 @@ $id = (GETPOSTINT('mailid') ? GETPOSTINT('mailid') : GETPOSTINT('id'));
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
-$urlfrom = GETPOST('urlfrom');
 $projectid = GETPOSTINT('projectid');
+$urlfrom = GETPOST('urlfrom');
 $backtopage = GETPOST('backtopage');
 $backtopageforcancel = GETPOST('backtopageforcancel');
 
 // Initialize a technical objects
 $object = new Mailing($db);
-$extrafields = new ExtraFields($db);
 $hookmanager->initHooks(array('mailingcard', 'globalcard'));
 
 // Fetch optionals attributes and labels
@@ -203,7 +202,7 @@ if (empty($reshook)) {
 			$id       = $object->id;
 			$subject  = $object->sujet;
 			$message  = $object->body;
-			$from     = $object->email_from;
+			$email_from     = $object->email_from;
 			$replyto = $object->email_replyto;
 			$errorsto = $object->email_errorsto;
 			// Is the message in html
@@ -305,9 +304,6 @@ if (empty($reshook)) {
 						if (isModEnabled('paypal')) {
 							$onlinepaymentenabled++;
 						}
-						if (isModEnabled('paybox')) {
-							$onlinepaymentenabled++;
-						}
 						if (isModEnabled('stripe')) {
 							$onlinepaymentenabled++;
 						}
@@ -386,7 +382,7 @@ if (empty($reshook)) {
 						// Mail making
 						$trackid = 'emailing-'.$obj->fk_mailing.'-'.$obj->rowid;
 						$upload_dir_tmp = $upload_dir;
-						$mail = new CMailFile($newsubject, $sendto, $from, $newmessage, $arr_file, $arr_mime, $arr_name, '', '', 0, $msgishtml, $errorsto, $arr_css, $trackid, $moreinheader, 'emailing', $replyto, $upload_dir_tmp);
+						$mail = new CMailFile($newsubject, $sendto, $email_from, $newmessage, $arr_file, $arr_mime, $arr_name, '', '', 0, $msgishtml, $errorsto, $arr_css, $trackid, $moreinheader, 'emailing', $replyto, $upload_dir_tmp);
 
 						if ($mail->error) {
 							$res = 0;
@@ -796,6 +792,10 @@ if (isModEnabled('project')) {
 	$formproject = new FormProjets($db);
 }
 
+// Same check as the email templates editor in admin/mails_templates.php so the
+// local media browser is shown consistently in both places.
+$acceptlocallinktomedia = (acceptLocalLinktoMedia() > 0 ? 1 : 0);
+
 $help_url = 'EN:Module_EMailing|FR:Module_Mailing|ES:M&oacute;dulo_Mailing';
 llxHeader(
 	'',
@@ -961,7 +961,7 @@ if ($action == 'create') {	// aaa
 	print '<div style="padding-top: 10px">';
 	// wysiwyg editor
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor('bodyemail', GETPOST('bodyemail', 'restricthtmlallowunvalid'), '', 600, 'dolibarr_mailings', '', true, -1, getDolGlobalInt('FCKEDITOR_ENABLE_MAILING'), 20, '100%');
+	$doleditor = new DolEditor('bodyemail', GETPOST('bodyemail', 'restricthtmlallowunvalid'), '', 600, 'dolibarr_mailings', '', true, $acceptlocallinktomedia, getDolGlobalInt('FCKEDITOR_ENABLE_MAILING'), 20, '100%');
 	$doleditor->Create();
 	print '</div>';
 
@@ -1063,7 +1063,10 @@ if ($action == 'create') {	// aaa
 						$text .= '<br><textarea class="quatrevingtpercent" rows="'.ROWS_2.'" wrap="soft" disabled>php ./scripts/emailings/mailing-send.php '.$object->id.' '.$user->login.'</textarea>';
 					}
 
-					print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('SendMailing'), $text, 'sendallconfirmed', '', '', 1, 380, 660, 0, $langs->trans("Confirm"), $langs->trans("Cancel"));
+					$labelbuttonyes = $langs->transnoentities('Confirm');
+					$labelbuttonno  = $langs->transnoentities('Cancel');
+
+					print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('SendMailing'), $text, 'sendallconfirmed', '', '', 1, 380, 660, 0, $labelbuttonyes, $labelbuttonno);
 				}
 			}
 
@@ -1272,6 +1275,9 @@ if ($action == 'create') {	// aaa
 			if (GETPOST('cancel', 'alpha') || $confirm == 'no' || $action == '' || in_array($action, array('settodraft', 'valid', 'delete', 'sendall', 'clone', 'test', 'editevenunsubscribe'))) {
 				print "\n\n<div class=\"tabsAction\">\n";
 
+				$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action);
+
+
 				if (($object->status == 1) && ($user->hasRight('mailing', 'valider') || $object->user_validation_id == $user->id)) {
 					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=settodraft&token='.newToken().'&id='.$object->id.'">'.$langs->trans("SetToDraft").'</a>';
 				}
@@ -1319,7 +1325,7 @@ if ($action == 'create') {	// aaa
 				}
 
 				if ($user->hasRight('mailing', 'creer')) {
-					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=clone&amp;object=emailing&amp;id='.$object->id.'">'.$langs->trans("ToClone").'</a>';
+					print '<a class="butAction butActionClone" href="'.$_SERVER['PHP_SELF'].'?action=clone&amp;object=emailing&amp;id='.$object->id.'">'.$langs->trans("ToClone").'</a>';
 				}
 
 				if (($object->status == 2 || $object->status == 3) && $user->hasRight('mailing', 'valider')) {
@@ -1436,7 +1442,7 @@ if ($action == 'create') {	// aaa
 				$readonly = 1;
 				// wysiwyg editor
 				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-				$doleditor = new DolEditor('bodyemail', $object->body, '', 600, 'dolibarr_mailings', '', false, -1, getDolGlobalInt('FCKEDITOR_ENABLE_MAILING'), 20, '100%', $readonly);
+				$doleditor = new DolEditor('bodyemail', $object->body, '', 600, 'dolibarr_mailings', '', false, $acceptlocallinktomedia, getDolGlobalInt('FCKEDITOR_ENABLE_MAILING'), 20, '100%', $readonly);
 				$doleditor->Create();
 			} else {
 				print dol_htmlentitiesbr($object->body);
@@ -1722,19 +1728,19 @@ if ($action == 'create') {	// aaa
 						$object->body = '<div style="background-color: #'.$object->bgcolor.'; margin-bottom:-20px; margin-left:-10px; margin-right:-10px; margin-top:-10px; padding: 10px;">'.$object->body.'</div>';
 					}
 				}
-				$doleditor = new DolEditor('bodyemail', $object->body, '', 600, 'dolibarr_mailings', '', true, -1, getDolGlobalInt('FCKEDITOR_ENABLE_MAILING'), 20, '100%');
+				$doleditor = new DolEditor('bodyemail', $object->body, '', 600, 'dolibarr_mailings', '', true, $acceptlocallinktomedia, getDolGlobalInt('FCKEDITOR_ENABLE_MAILING'), 20, '100%');
 				$doleditor->Create();
 			}
 			if ($action == 'edittxt') {
 				// wysiwyg editor
 				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-				$doleditor = new DolEditor('bodyemail', $object->body, '', 600, 'dolibarr_mailings', '', true, -1, 0, 20, '100%');
+				$doleditor = new DolEditor('bodyemail', $object->body, '', 600, 'dolibarr_mailings', '', true, $acceptlocallinktomedia, 0, 20, '100%');
 				$doleditor->Create();
 			}
 			if ($action == 'edithtml') {
 				// HTML source editor
 				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-				$doleditor = new DolEditor('bodyemail', $object->body, '', 600, 'dolibarr_mailings', '', true, -1, 'ace', 20, '100%');
+				$doleditor = new DolEditor('bodyemail', $object->body, '', 600, 'dolibarr_mailings', '', true, $acceptlocallinktomedia, 'ace', 20, '100%');
 				$doleditor->Create(0, '', false, 'HTML Source', 'php');
 			}
 

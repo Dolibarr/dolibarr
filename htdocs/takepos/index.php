@@ -2,7 +2,7 @@
 /* Copyright (C) 2018	Andreu Bisquerra	<jove@bisquerra.com>
  * Copyright (C) 2019	Josep Lluís Amador	<joseplluis@lliuretic.cat>
  * Copyright (C) 2020	Thibault FOUCART	<support@ptibogxiv.net>
- * Copyright (C) 2024-2025	MDW				<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW				<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -76,7 +76,7 @@ if (empty($_SESSION["takeposterminal"])) {
 }
 
 if ($setterminal > 0) {
-	$_SESSION["takeposterminal"] = $setterminal;
+	$_SESSION["takeposterminal"] = (int) $setterminal;
 	dolSetCookie("takeposterminal", (string) $setterminal, -1); // takeposterminal var in a 1 year cookie
 }
 
@@ -499,7 +499,7 @@ function MoreProducts(moreorless) {
 	}
 
 	var nb_cat_shown = $('.div5 div.wrapper2[data-iscat=1]').length;
-	var offset = <?php echo ($MAXPRODUCT - 2); ?> * pageproducts - nb_cat_shown;
+	var offset = <?php echo($MAXPRODUCT - 2); ?> * pageproducts - nb_cat_shown;
 
 	// Get socid
 	let socid = jQuery('#thirdpartyid').val();
@@ -566,7 +566,7 @@ function MoreProducts(moreorless) {
 	ClearSearch(false);
 }
 
-function ClickProduct(position, qty = 1) {
+function ClickProduct(position, qty = 1, qty_std = 0) {
 	console.log("ClickProduct at position"+position);
 	if ($('#invoiceid').val() == "") {
 		invoiceid = $('#invoiceid').val();
@@ -585,24 +585,26 @@ function ClickProduct(position, qty = 1) {
 		if (idproduct == "") {
 			return;
 		}
-		addInvoiceLine = function(qty) {
+
+		addInvoiceLine = function(qty, qty_std_inner = 0) {
 			// Call page invoice.php to generate the section with product lines
-			$("#poslines").load("invoice.php?action=addline&token=<?php echo newToken(); ?>&place="+place+"&idproduct="+idproduct+"&qty="+qty+"&invoiceid="+invoiceid, function() {
+			  $("#poslines").load("invoice.php?action=addline&token=<?php echo newToken(); ?>&place="+place+"&idproduct="+idproduct+"&selectedline="+selectedline+"&qty="+qty+"&invoiceid="+invoiceid+(qty_std_inner ? '&qty_std=1' : ''), function() {
 				idproduct = "";
 				<?php if (getDolGlobalString('TAKEPOS_CUSTOMER_DISPLAY')) {
 					echo "CustomerDisplay();";
 				}?>
 			});
 		};
+
 		// call WeighingScale() if product is a product that need to measure weight
 		<?php if (getDolGlobalString('TAKEPOS_WEIGHING_SCALE')) { ?>
 			if ($('#prodiv'+position).data('unit') == 2) {
 				WeighingScale(addInvoiceLine);
 			} else {
-				addInvoiceLine(qty);
+				addInvoiceLine(qty, qty_std);
 			}
 		<?php } else { ?>
-			addInvoiceLine(qty);
+			addInvoiceLine(qty, qty_std);
 		<?php } ?>
 	}
 
@@ -721,6 +723,16 @@ function New() {
 
 	console.log("New with place = <?php echo $place; ?>, js place="+place+", invoiceid="+invoiceid);
 
+	if (invoiceid == '') {
+		$("#poslines").load("invoice.php?action=delete&token=<?php echo newToken(); ?>&place=" + place, function () {
+			//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
+		});
+
+		ClearSearch(false);
+		$("#idcustomer").val("");
+		return;
+	}
+
 	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=getInvoice&token=<?php echo newToken();?>&id='+invoiceid, function(data) {
 		var r;
 
@@ -741,7 +753,6 @@ function New() {
 		}
 	});
 }
-
 /**
  * Search products
  *
@@ -884,7 +895,7 @@ function Search2(keyCodeForEnter, moreorless) {
 					}
 					else if ('product' == data[0]['object'] && $('#search').val() == data[0]['barcode']) {
 						console.log("There is only 1 answer and we found search on a barcode, so we add the product in basket, qty="+data[0]['qty']);
-						ClickProduct(0, data[0]['qty']);
+						ClickProduct(0, data[0]['qty'], 1);
 					}
 				}
 				if (eventKeyCode == keyCodeForEnter){
@@ -1070,7 +1081,10 @@ function CashReport(rowid)
 	$.colorbox({href:"../compta/cashcontrol/report.php?id="+rowid+"&contextpage=takepos", width:"60%", height:"90%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("CashReport"); ?>"});
 }
 
-// TakePOS Popup
+/*
+ * TakePOS Popup
+ * Open the <div id='ModalID'>in a popup. Example with ModalID='ModalCreditNote'
+ */
 function ModalBox(ModalID)
 {
 	var modal = document.getElementById(ModalID);
@@ -1148,11 +1162,14 @@ $( document ).ready(function() {
 	}
 
 	if (getDolGlobalString('TAKEPOS_CONTROL_CASH_OPENING')) {
+		// Look for any cash control fence created today on this terminal, regardless of its status,
+		// so the auto-open popup only fires on the first cash control of a calendar day. Without this,
+		// refreshing the browser the same day after closing a fence used to immediately re-fire the
+		// popup because the closed fences were filtered out by the status check (#38597).
 		$sql = "SELECT rowid, status FROM ".MAIN_DB_PREFIX."pos_cash_fence WHERE";
 		$sql .= " entity = ".((int) $conf->entity)." AND ";
 		$sql .= " posnumber = ".((int) $_SESSION["takeposterminal"])." AND ";
 		$sql .= " date_creation > '".$db->idate(dol_get_first_hour(dol_now()))."'";
-		$sql .= " AND status = 0 ";
 		$resql = $db->query($sql);
 		if ($resql) {
 			$obj = $db->fetch_object($resql);
@@ -1340,7 +1357,7 @@ if (!getDolGlobalString('TAKEPOS_HIDE_HEAD_BAR')) {
 			$resql = $db->query($sql);
 			if ($resql) {
 				while ($obj = $db->fetch_object($resql)) {
-					print '<button type="button" class="block" onclick="location.href=\'index.php?setcurrency='.$obj->code.'\'">'.$obj->code.'</button>';
+					print '<button type="button" class="block" onclick="location.href=\'index.php?setcurrency='.urlencode($obj->code).'\'">'.$obj->code.'</button>';
 				}
 			}
 			?>
@@ -1349,7 +1366,7 @@ if (!getDolGlobalString('TAKEPOS_HIDE_HEAD_BAR')) {
 </div>
 <?php } ?>
 
-<!-- Modal terminal Credit Note -->
+<!-- Modal popup to create a Credit Note -->
 <div id="ModalCreditNote" class="modal">
 	<div class="modal-content">
 		<div class="modal-header">
@@ -1400,7 +1417,9 @@ if (!getDolGlobalString('TAKEPOS_HIDE_HEAD_BAR')) {
 			<button type="button" class="calcbutton" onclick="Edit(0);">0</button>
 			<button type="button" class="calcbutton" onclick="Edit('.')">.</button>
 			<button type="button" class="calcbutton poscolorblue" onclick="Edit('c')">C</button>
+			<?php if ($user->hasRight('takepos', 'editlines')) { ?>
 			<button type="button" class="calcbutton2 poscolordelete" id="delete" onclick="deleteline()"><span class="fa fa-trash"></span></button>
+			<?php } ?>
 		</div>
 
 <?php
@@ -1595,7 +1614,7 @@ if ($reshook == 0) {  //add buttons
 	}
 } elseif ($reshook == 1) {
 	$r = 0; //replace buttons
-	if (is_array($hookmanager->resArray) ) {
+	if (is_array($hookmanager->resArray)) {
 		foreach ($hookmanager->resArray as $resArray) {
 			foreach ($resArray as $butmenu) {
 				$menus[$r++] = $butmenu;
@@ -1708,14 +1727,14 @@ if ($reshook == 0) {  //add buttons
 
 	while ($count < $MAXPRODUCT) {
 		print '<div class="wrapper2'.(($count >= ($MAXPRODUCT - 2)) ? ' arrow' : '').'" id="prodiv'.$count.'" '; ?>
-													<?php if ($count == ($MAXPRODUCT - 2)) {
-														?> onclick="MoreProducts('less')" <?php
-													}
-													if ($count == ($MAXPRODUCT - 1)) {
-														?> onclick="MoreProducts('more')" <?php
-													} else {
-														echo 'onclick="ClickProduct('.((int) $count).')"';
-													} ?>>
+															<?php if ($count == ($MAXPRODUCT - 2)) {
+																?> onclick="MoreProducts('less')" <?php
+															}
+															if ($count == ($MAXPRODUCT - 1)) {
+																?> onclick="MoreProducts('more')" <?php
+															} else {
+																echo 'onclick="ClickProduct('.((int) $count).')"';
+															} ?>>
 					<?php
 					if ($count == ($MAXPRODUCT - 2)) {
 						//echo '<img class="imgwrapper" src="img/arrow-prev-top.png" height="100%" id="proimg'.$count.'" />';

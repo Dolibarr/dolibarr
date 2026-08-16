@@ -203,6 +203,11 @@ abstract class CommonInvoice extends CommonObject
 	public $situation_cycle_ref;
 
 	/**
+	 * @var int 		Populated by setRetainedWarrantyPaymentTerms()
+	 */
+	public $retained_warranty_fk_cond_reglement;
+
+	/**
 	 * ! Closing after partial payment: CLOSECODE_DISCOUNTVAT, CLOSECODE_BADDEBT, CLOSECODE_BANKCHARGE, CLOSECODE_OTHER
 	 * ! Closing when no payment: CLOSECODE_ABANDONED, CLOSECODE_REPLACED
 	 * @var string Close code
@@ -578,6 +583,37 @@ abstract class CommonInvoice extends CommonObject
 	}
 
 	/**
+	 *  Change the retained warranty payments terms
+	 *
+	 *  @param		int		$id		Id of new payment terms
+	 *  @return		int				>0 if OK, <0 if KO
+	 */
+	public function setRetainedWarrantyPaymentTerms($id)
+	{
+		dol_syslog(get_class($this).'::setRetainedWarrantyPaymentTerms('.$id.')');
+		if ($this->status >= 0 || $this->element == 'societe') {
+			$fieldname = 'retained_warranty_fk_cond_reglement';
+
+			$sql = 'UPDATE '.$this->db->prefix().$this->table_element;
+			$sql .= " SET ".$this->db->sanitize($fieldname)." = ".((int) $id);
+			$sql .= ' WHERE rowid='.((int) $this->id);
+
+			if ($this->db->query($sql)) {
+				$this->retained_warranty_fk_cond_reglement = $id;
+				return 1;
+			} else {
+				dol_syslog(get_class($this).'::setRetainedWarrantyPaymentTerms Error '.$sql.' - '.$this->db->error());
+				$this->error = $this->db->error();
+				return -1;
+			}
+		} else {
+			dol_syslog(get_class($this).'::setRetainedWarrantyPaymentTerms, status of the object is incompatible');
+			$this->error = 'Status of the object is incompatible '.$this->status;
+			return -2;
+		}
+	}
+
+	/**
 	 *  Return list of payments
 	 *
 	 *  @see $error Empty string '' if no error.
@@ -747,9 +783,10 @@ abstract class CommonInvoice extends CommonObject
 				}
 
 				include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
-				if (isALNERunningVersion()) {
-					$this->error = 'Action not allowed on the certified version';
+				if (isALNERunningVersion() && !empty($this->module_source)) {
+					$this->error = 'Action to modify an invoice from an external module like the Point Of Sale is not allowed';
 					return -7;
+					// Note, edit status to draft is also blocked by the trigger of blockedlog module for action BILL_UNVALIDATE that do a test on isEditable().
 				}
 			}
 
@@ -847,7 +884,7 @@ abstract class CommonInvoice extends CommonObject
 
 			include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
 			if (isALNERunningVersion()) {
-				$this->error = 'Action not allowed on the certified version';
+				$this->error = 'Action not allowed on a certified version (or candidate for certification)';
 				return -7;
 			}
 
@@ -920,7 +957,7 @@ abstract class CommonInvoice extends CommonObject
 
 				include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
 				if (isALNERunningVersion()) {
-					$this->error = 'Action not allowed on the certified version';
+					$this->error = 'Action not allowed on the certified version (or candidate for certification)';
 					return -7;
 				}
 			}
@@ -1797,6 +1834,7 @@ abstract class CommonInvoice extends CommonObject
 								dol_syslog("makeStripeSepaRequest Current Saved Stripe environment is ".$savstripearrayofkeysbyenv[$servicestatus]['publishable_key']);
 
 								$foundalternativestripeaccount = '';
+								$stripearrayofkeys = array();
 
 								// Force stripe to another value (by default this value is empty)
 								if (! empty($forcestripe)) {
@@ -2327,13 +2365,13 @@ abstract class CommonInvoice extends CommonObject
 		$complementaryinfo = '';
 		/*
 		 Example: //S1/10/10201409/11/190512/20/1400.000-53/30/106017086/31/180508/32/7.7/40/2:10;0:30
-		 /10/ Numéro de facture – 10201409
-		 /11/ Date de facture – 12.05.2019
-		 /20/ Référence client – 1400.000-53
-		 /30/ Numéro IDE pour la TVA – CHE-106.017.086 TVA
-		 /31/ Date de la prestation pour la comptabilisation de la TVA – 08.05.2018
-		 /32/ Taux de TVA sur le montant total de la facture – 7.7%
-		 /40/ Conditions – 2% d’escompte à 10 jours, paiement net à 30 jours
+		 /10/ Invoice number -- 10201409
+		 /11/ Invoice date -- 12.05.2019
+		 /20/ Customer reference -- 1400.000-53
+		 /30/ VAT IDE number -- CHE-106.017.086 TVA
+		 /31/ Service date for VAT accounting -- 08.05.2018
+		 /32/ VAT rate on total invoice amount -- 7.7%
+		 /40/ Terms -- 2% discount at 10 days, net payment at 30 days
 		 */
 		$datestring = dol_print_date($this->date, '%y%m%d');
 		//$pricewithtaxstring = price($this->total_ttc, 0, $tmplang, 0, -1, 2);
@@ -2354,7 +2392,7 @@ abstract class CommonInvoice extends CommonObject
 		$s .= "SPC\n";
 		$s .= "0200\n";
 		$s .= "1\n";
-		// Info Seller ("Compte / Payable à")
+		// Info Seller ("Account / Payable to")
 		if ($this->fk_account > 0) {
 			// Bank BAN if country is LI or CH.  TODO Add a test to check than IBAN start with CH or LI
 			$bankaccount->fetch($this->fk_account);
@@ -2383,7 +2421,7 @@ abstract class CommonInvoice extends CommonObject
 			$s .= dol_trunc($mysoc->town, 35, 'right', 'UTF-8', 1)."\n";
 			$s .= dol_trunc($mysoc->country_code, 2, 'right', 'UTF-8', 1)."\n";
 		}
-		// Final seller (Ultimate seller) ("Créancier final" = "En faveur de")
+		// Final seller (Ultimate seller) ("Final creditor" = "In favour of")
 		$s .= "\n";
 		$s .= "\n";
 		$s .= "\n";

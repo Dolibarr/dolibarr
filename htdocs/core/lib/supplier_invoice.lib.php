@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2006       Marc Barilley           <marc@ocebo.com>
  * Copyright (C) 2011-2013  Philippe Grand          <philippe.grand@atoo-net.com>
- * Copyright (C) 2022-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2022-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023       Nick Fragoulis
  * Copyright (C) 2024       MDW                     <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026       Alexandre Spangaro      <alexandre@inovea-conseil.com>
@@ -175,9 +175,8 @@ function supplierinvoice_prepare_head(FactureFournisseur $object)
  */
 function supplier_invoice_admin_prepare_head()
 {
-	global $langs, $conf, $user, $db;
+	global $langs, $conf, $user, $extrafields;
 
-	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('facture_fourn');
 	$extrafields->fetch_name_optionals_label('facture_fourn_det');
 	$extrafields->fetch_name_optionals_label('facture_fourn_rec');
@@ -198,7 +197,7 @@ function supplier_invoice_admin_prepare_head()
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'supplierinvoice_admin');
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/supplier_invoice/admin/supplierinvoice_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'facture_fourn'));
 	$head[$h][1] = $langs->trans("ExtraFieldsSupplierInvoices");
 	$nbExtrafields = $extrafields->attributes['facture_fourn']['count'];
 	if ($nbExtrafields > 0) {
@@ -207,7 +206,7 @@ function supplier_invoice_admin_prepare_head()
 	$head[$h][2] = 'supplierinvoice';
 	$h++;
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/supplier_invoice/admin/supplierinvoicedet_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'facture_fourn_det'));
 	$head[$h][1] = $langs->trans("ExtraFieldsSupplierInvoicesLines");
 	$nbExtrafields = $extrafields->attributes['facture_fourn_det']['count'];
 	if ($nbExtrafields > 0) {
@@ -216,7 +215,7 @@ function supplier_invoice_admin_prepare_head()
 	$head[$h][2] = 'supplierinvoicedet';
 	$h++;
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/supplier_invoice/admin/supplierinvoice_rec_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'facture_fourn_rec'));
 	$head[$h][1] = $langs->trans("ExtraFieldsSupplierInvoicesRec");
 	$nbExtrafields = $extrafields->attributes['facture_fourn_rec']['count'];
 	if ($nbExtrafields > 0) {
@@ -225,7 +224,7 @@ function supplier_invoice_admin_prepare_head()
 	$head[$h][2] = 'attributesrec';
 	$h++;
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/supplier_invoice/admin/supplierinvoicedet_rec_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'facture_fourn_det_rec'));
 	$head[$h][1] = $langs->trans("ExtraFieldsSupplierInvoicesLinesRec");
 	$nbExtrafields = $extrafields->attributes['facture_fourn_det_rec']['count'];
 	if ($nbExtrafields > 0) {

@@ -378,6 +378,22 @@ class TraceableDB extends DoliDB
 	}
 
 	/**
+	 * Check if full query tracing is enabled
+	 *
+	 * Full tracing captures backtrace for ALL queries, not just failed ones.
+	 * This is useful for debugging but has performance impact.
+	 *
+	 * @return bool True if full tracing is enabled
+	 */
+	protected function isFullTracingEnabled()
+	{
+		if (isset($_COOKIE['debugbar_full_tracing'])) {
+			return $_COOKIE['debugbar_full_tracing'] === '1';
+		}
+		return false;
+	}
+
+	/**
 	 * End query tracing
 	 *
 	 * @param      string   $sql       query string
@@ -391,13 +407,20 @@ class TraceableDB extends DoliDB
 		$endMemory   = memory_get_usage(true);
 		$memoryDelta = $endMemory - $this->startMemory;
 
+		// Capture backtrace for failed queries, or if full tracing is enabled
+		$backtrace = null;
+		if (!$resql || $this->isFullTracingEnabled()) {
+			$backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+		}
+
 		$this->queries[] = array(
 			'sql'           => $sql,
 			'duration'      => $duration,
 			'memory_usage'  => $memoryDelta,
 			'is_success'    => $resql ? true : false,
 			'error_code'    => $resql ? null : $this->db->lasterrno(),
-			'error_message' => $resql ? null : $this->db->lasterror()
+			'error_message' => $resql ? null : $this->db->lasterror(),
+			'backtrace'     => $backtrace
 		);
 	}
 

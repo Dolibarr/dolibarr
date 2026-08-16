@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2018-2022	OpenDSI					<support@open-dsi.fr>
- * Copyright (C) 2022-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2022-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Alexandre Spangaro		<alexandre@inovea-conseil.com>
  *
@@ -31,9 +31,8 @@
  */
 function assetAdminPrepareHead()
 {
-	global $langs, $conf, $db;
+	global $langs, $conf, $extrafields;
 
-	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('asset');
 	$extrafields->fetch_name_optionals_label('asset_model');
 
@@ -57,7 +56,7 @@ function assetAdminPrepareHead()
 	//); // to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'asset_admin');
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/asset/admin/asset_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'asset'));
 	$head[$h][1] = $langs->trans("ExtraFields");
 	$nbExtrafields = $extrafields->attributes['asset']['count'];
 	if ($nbExtrafields > 0) {
@@ -66,7 +65,7 @@ function assetAdminPrepareHead()
 	$head[$h][2] = 'asset_extrafields';
 	$h++;
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/asset/admin/assetmodel_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'asset_model'));
 	$head[$h][1] = $langs->trans("ExtraFieldsAssetModel");
 	$nbExtrafields = $extrafields->attributes['asset_model']['count'];
 	if ($nbExtrafields > 0) {

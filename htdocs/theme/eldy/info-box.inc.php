@@ -44,9 +44,12 @@ if (isModEnabled("bank") && isModEnabled("prelevement") && isModEnabled("payment
 	min-height: <?php echo $heightbox; ?>px;	/* must be same height than info-box-icon */
 	background: var(--colorbacklineimpair2);
 	width: 100%;
-	box-shadow: 1px 1px 12px rgba(192, 192, 192, 0.2);
+	<?php
+	if (getDolGlobalInt('THEME_DARKMODEENABLED') != 2) { ?>
+	box-shadow: 0 1px 5px rgba(0, 0, 0, 0.15);
+	<?php } ?>
 	border-radius: 5px;
-	border: 1px solid #e9e9e9;
+	/* border: 1px solid #e9e9e9; */
 	/* border: 1px solid var(--colorbacktitle1); */
 	margin-bottom: 15px;
 }
@@ -56,7 +59,7 @@ if (isModEnabled("bank") && isModEnabled("prelevement") && isModEnabled("payment
 	/* background: #fff; */
 }
 .opened-dash-board-wrap .info-box, .opened-dash-board-wrap .info-box .info-box-icon  {
-	border-radius: 0 0 0 15px;
+	border-radius: 5px 5px 5px 15px;
 }
 /*.opened-dash-board-wrap .box-flex-item {
 	border-radius: 10px;
@@ -310,7 +313,7 @@ a.info-box-text-a i.fa.fa-exclamation-triangle, span.badge i.fa.fa-exclamation-t
 	font-size: 0.92em;
 }
 .info-box-desc {
-	font-size: 0.92em;
+	font-size: 0.91em;
 }
 
 /* Force values for small screen 480 */
@@ -405,7 +408,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 }
 
 .nonature-back {
-	background-color: #EEE;
+	 background-color: var(--colorwhitelight);
 }
 .prospect-back {
 	background-color: #a3c0ad !important;

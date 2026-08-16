@@ -2,6 +2,7 @@
 /* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) ---Put here your own copyright and developer email---
  * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +29,7 @@
  *  Terms
  *
  *	DEB = Declaration d'Exchanges de Biens (FR)   =  Declaration of Exchange of Goods (EN)
- *  DES = Déclaration Européenne de Services (FR) =  European Declaration of Services (EN)
+ *  DES = Declaration Europeenne de Services (FR) =  European Declaration of Services (EN)
  *
  *  INTRACOMM: Douanes françaises (FR) = french customs (EN)  -  https://www.douane.gouv.fr/professionnels/commerce-international/import-export
  *
@@ -423,7 +424,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 				}
 				if (empty($reshook)) {
-					$object->formAddObjectLine(1, $mysoc, $soc);
+					$object->formAddObjectLine(1, $mysoc, null);
 				}
 			}
 		}
@@ -473,7 +474,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			// Clone
 			if ($permissiontoadd) {
-				print dolGetButtonAction('', $langs->trans('ToClone'), 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&token='.newToken(), '', $permissiontoadd);
+				print dolGetButtonAction('', $langs->trans('ToClone'), 'clone', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&token='.newToken(), '', $permissiontoadd);
 			}
 
 			/*

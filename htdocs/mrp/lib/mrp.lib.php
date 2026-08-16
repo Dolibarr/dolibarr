@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2019 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -30,9 +30,8 @@
  */
 function mrpAdminPrepareHead()
 {
-	global $langs, $conf, $db;
+	global $langs, $conf, $extrafields;
 
-	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('mrp_mo');
 
 	$langs->load("mrp");
@@ -45,7 +44,7 @@ function mrpAdminPrepareHead()
 	$head[$h][2] = 'settings';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT . '/admin/mrp_extrafields.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'mrp_mo'));
 	$head[$h][1] = $langs->trans("ExtraFields");
 	$nbExtrafields = $extrafields->attributes['mrp_mo']['count'];
 	if ($nbExtrafields > 0) {
@@ -54,7 +53,7 @@ function mrpAdminPrepareHead()
 	$head[$h][2] = 'mrp_extrafields';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT . '/admin/mrp_production_extrafields.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'mrp_production'));
 	$head[$h][1] = $langs->trans("ExtraFieldsLines");
 	$head[$h][2] = 'mrp_production_extrafields';
 	$h++;

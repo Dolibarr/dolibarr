@@ -30,13 +30,6 @@
 
 // Load Dolibarr environment
 require '../../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propalestats.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
-require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formpropal.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -44,6 +37,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propalestats.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formpropal.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
@@ -99,7 +98,8 @@ $formother = new FormOther($db);
 $langs->loadLangs(array('propal', 'other', 'companies'));
 
 $picto = 'propal';
-$title = $langs->trans("ProposalsStatistics");
+$title = $langs->trans('Proposals');
+
 $dir = $conf->propal->dir_temp;
 $cat_type = Categorie::TYPE_CUSTOMER;
 $cat_label = $langs->trans("Category").' '.lcfirst($langs->trans("Customer"));
@@ -114,7 +114,28 @@ if ($mode == 'supplier') {
 
 llxHeader('', $title);
 
-print load_fiche_titre($title, '', $picto);
+$page = 0;
+$param = '';
+$sortfield = '';
+$sortorder = '';
+$massactionbutton = '';
+$num = 0;
+$nbtotalofrecords = $langs->trans("Statistics");
+$limit = 0;
+
+$url = DOL_URL_ROOT.'/comm/propal/card.php?action=create';
+if (!empty($socid)) {
+	$url .= '&socid='.$socid;
+}
+
+$newcardbutton = '';
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/comm/propal/list.php?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', 1, array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', DOL_URL_ROOT.'/comm/propal/list.php?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', 1, array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', DOL_URL_ROOT.'/comm/propal/stats/index.php'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', 2, array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitleSeparator();
+$newcardbutton .= dolGetButtonTitle($langs->trans('NewPropal'), '', 'fa fa-plus-circle', $url, '', $user->hasRight('propal', 'creer'));
+
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 
 dol_mkdir($dir);

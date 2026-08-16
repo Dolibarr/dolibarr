@@ -2,7 +2,7 @@
 /* Copyright (C) 2019	    Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2023	    Benjamin Falière	    <benjamin.faliere@altairis.fr>
  * Copyright (C) 2023	    Charlene Benke		    <charlene@patas-monkey.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -79,7 +79,7 @@ class BOM extends CommonObject
 
 	/**
 	 *  'type' field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter]]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'text:none', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
-	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
+	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'picto' is code of a picto to show before value in forms
 	 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalString("MY_SETUP_PARAM")'
@@ -459,7 +459,7 @@ class BOM extends CommonObject
 		$sql = "SELECT ".$objectline->getFieldList('l');
 		$sql .= " FROM ".$this->db->prefix().$objectline->table_element." as l";
 		$sql .= " LEFT JOIN ".$this->db->prefix()."product as p ON p.rowid = l.fk_product";
-		$sql .= " WHERE l.fk_".$this->db->escape($this->element)." = ".((int) $this->id);
+		$sql .= " WHERE l.fk_".$this->db->sanitize($this->element)." = ".((int) $this->id);
 		$sql .= " AND p.fk_product_type = ". ((int) $typeproduct);
 		if (isset($objectline->fields['position'])) {
 			$sql .= $this->db->order('position', 'ASC');
@@ -983,14 +983,14 @@ class BOM extends CommonObject
 			if (preg_match('/^[\(]?PROV/i', $this->ref)) {
 				// Now we rename also files into index
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'bom/".$this->db->escape($this->newref)."'";
-				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'bom/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'bom/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++;
 					$this->error = $this->db->lasterror();
 				}
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'bom/".$this->db->escape($this->newref)."'";
-				$sql .= " WHERE filepath = 'bom/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$sql .= " WHERE filepath = 'bom/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++;
@@ -1159,7 +1159,9 @@ class BOM extends CommonObject
 			$label = implode($this->getTooltipContentArray($params));
 		}
 
-		$url = DOL_URL_ROOT.'/bom/bom_card.php?id='.$this->id;
+		$baseurl = DOL_URL_ROOT.'/bom/bom_card.php';
+
+		$query = ['id' => $this->id];
 
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
@@ -1168,9 +1170,10 @@ class BOM extends CommonObject
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
-				$url .= '&save_lastsearch_values=1';
+				$query = array_merge($query, ['save_lastsearch_values' => 1]);
 			}
 		}
+		$url = dolBuildUrl($baseurl, $query);
 
 		$linkclose = '';
 		if (empty($notooltip)) {
@@ -1558,7 +1561,7 @@ class BOM extends CommonObject
 	/**
 	 * Get/add Net needs Tree by product or bom
 	 *
-	 * @param array<int,array{product:array,bom:BOM,parentid:int,qty:float,level:int,position:int,fk_unit:?int}> 	$TNetNeeds 	Array of ChildBom and infos linked to
+	 * @param array<int,array{product:array<int,array{fk_unit:int,qty:float,level:int,position:int}>,bom:BOM,parentid:int,qty:float,level:int,position:int,fk_unit:?int}> 	$TNetNeeds 	Array of ChildBom and infos linked to
 	 * @param float			$qty       qty needed (used as a factor to produce 1 unit)
 	 * @param int<0,1000>  	$level     level of recursivity
 	 * @return void

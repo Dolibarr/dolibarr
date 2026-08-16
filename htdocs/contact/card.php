@@ -8,7 +8,7 @@
  * Copyright (C) 2013-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2014		Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
- * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2019		Josep Lluís Amador			<joseplluis@lliuretic.cat>
  * Copyright (C) 2020-2026	Open-Dsi					<support@open-dsi.fr>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
@@ -36,6 +36,15 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/contact.lib.php';
@@ -44,20 +53,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Societe $mysoc
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'users', 'other', 'commercial'));
@@ -75,7 +74,6 @@ $socid = GETPOSTINT('socid');
 
 // Initialize a technical object
 $object = new Contact($db);
-$extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -1364,9 +1362,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<table class="border tableforfield" width="100%">';
 
 		// Civility
-		print '<tr><td class="titlefield">'.$langs->trans("UserTitle").'</td><td>';
-		print $object->getCivilityLabel();
-		print '</td></tr>';
+		if (getDolGlobalString('MAIN_USE_TITLE_FOR_CONTACT')) {
+			print '<tr><td class="titlefield">'.$langs->trans("UserTitle").'</td><td>';
+			print $object->getCivilityLabel();
+			print '</td></tr>';
+		}
 
 		// Job / position
 		print '<tr><td>'.$langs->trans("PostOrFunction").'</td><td>'.$object->poste.'</td></tr>';
@@ -1375,7 +1375,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		if (isModEnabled('mailing')) {
 			$langs->load("mails");
 			print '<tr><td>'.$langs->trans("NbOfEMailingsSend").'</td>';
-			print '<td><a href="'.DOL_URL_ROOT.'/comm/mailing/list.php?filteremail='.urlencode($object->email).'">'.$object->getNbOfEMailings().'</a></td></tr>';
+			print '<td><a class="badge badge-info" href="'.DOL_URL_ROOT.'/comm/mailing/list.php?filteremail='.urlencode($object->email).'">'.$object->getNbOfEMailings().'</a></td></tr>';
 		}
 
 		// Unsubscribe opt-out
@@ -1407,7 +1407,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		}
 
 		print '<tr><td>'.$langs->trans("ContactVisibility").'</td><td>';
-		print $object->LibPubPriv($object->priv);
+		print $object->LibPubPriv($object->priv, 1);
 		print '</td></tr>';
 
 		print '</table>';

@@ -184,7 +184,7 @@ if ($action == 'search') {
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'product as p';
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON p.rowid = cp.fk_product';
 	if (getDolGlobalInt('MAIN_MULTILANGS')) {
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_lang as pl ON pl.fk_product = p.rowid AND lang='".($current_lang)."'";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_lang as pl ON pl.fk_product = p.rowid AND lang='".$db->escape($current_lang)."'";
 	}
 	$sql .= ' WHERE p.entity IN ('.getEntity('product').')';
 
@@ -253,7 +253,7 @@ if ($id > 0 || !empty($ref)) {
 
 		dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref', '');
 
-		if ($object->type != Product::TYPE_SERVICE || getDolGlobalString('STOCK_SUPPORTS_SERVICES') || !getDolGlobalString('PRODUIT_MULTIPRICES')) {
+		if ($object->type != Product::TYPE_SERVICE || getDolGlobalString('STOCK_SUPPORTS_SERVICES') || (!getDolGlobalString('PRODUIT_MULTIPRICES') && !getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES'))) {
 			print '<div class="fichecenter">';
 			print '<div class="fichehalfleft">';
 			print '<div class="underbanner clearboth"></div>';
@@ -308,7 +308,7 @@ if ($id > 0 || !empty($ref)) {
 				}
 			}
 
-			if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
+			if (!getDolGlobalString('PRODUIT_MULTIPRICES') && !getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 				// Price
 				print '<tr><td class="titlefield">'.$langs->trans("SellingPrice").'</td><td>';
 				if ($object->price_base_type == 'TTC') {

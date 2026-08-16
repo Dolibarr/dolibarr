@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017		Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2018-2025	Alexandre Spangaro		<alexandre@inovea-conseil.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -34,6 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
@@ -54,7 +55,6 @@ $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 
 // Initialize a technical objects
 $object = new Asset($db);
-$extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->asset->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('assetcard', 'globalcard')); // Note that conf->hooks_modules contains array
 
@@ -134,7 +134,7 @@ if (empty($reshook)) {
 	// Action dispose object
 	if ($action == 'confirm_disposal' && $confirm == 'yes' && $permissiontoadd) {
 		$object->disposal_date = dol_mktime(0, 0, 0, GETPOSTINT('disposal_datemonth'), GETPOSTINT('disposal_dateday'), GETPOSTINT('disposal_dateyear'), 'gmt'); // for date without hour, we use gmt
-		$object->disposal_amount_ht = GETPOSTINT('disposal_amount');
+		$object->disposal_amount_ht = GETPOSTFLOAT('disposal_amount');
 		$object->fk_disposal_type = GETPOSTINT('fk_disposal_type');
 		$disposal_invoice_id = GETPOSTINT('disposal_invoice_id');
 		$object->disposal_depreciated = ((GETPOST('disposal_depreciated') == '1' || GETPOST('disposal_depreciated') == 'on') ? 1 : 0);
@@ -301,7 +301,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$langs->load('bills');
 
 		$disposal_date = dol_mktime(0, 0, 0, GETPOSTINT('disposal_datemonth'), GETPOSTINT('disposal_dateday'), GETPOSTINT('disposal_dateyear'), 'gmt'); // for date without hour, we use gmt
-		$disposal_amount = GETPOSTINT('disposal_amount');
+		$disposal_amount = GETPOSTFLOAT('disposal_amount');
 		$fk_disposal_type = GETPOSTINT('fk_disposal_type');
 		$disposal_invoice_id = GETPOSTINT('disposal_invoice_id');
 		$disposal_depreciated = GETPOSTISSET('disposal_depreciated') ? GETPOST('disposal_depreciated') : 1;
@@ -438,7 +438,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			}
 
 			// Clone
-			//print dolGetButtonAction($langs->trans('ToClone'), '', 'default', $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=clone&token=' . newToken(), '', false && $permissiontoadd);
+			//print dolGetButtonAction($langs->trans('ToClone'), '', 'clone', $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=clone&token=' . newToken(), '', false && $permissiontoadd);
 
 			// Delete (need delete permission, or if draft, just need create/modify permission)
 			print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=delete&token=' . newToken(), '', $permissiontodelete || ($object->status == $object::STATUS_DRAFT && $permissiontoadd));

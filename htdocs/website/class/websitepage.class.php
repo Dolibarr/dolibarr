@@ -189,7 +189,7 @@ class WebsitePage extends CommonObject
 
 	/**
 	 *  'type' if the field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
-	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
+	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalString("MY_SETUP_PARAM")'
 	 *  'position' is the sort order of field.
@@ -279,13 +279,28 @@ class WebsitePage extends CommonObject
 		// Remove spaces and be sure we have main language only
 		$this->lang = preg_replace('/[_-].*$/', '', trim($this->lang)); // en_US or en-US -> en
 
+		// Check there is no PHP into HTML header
+		$dataposted = trim($this->htmlheader);		// Must accept tags like '<script>' and '<link>'
+		$dataposted = preg_replace(array('/<html>\n*/ims', '/<\/html>\n*/ims'), array('', ''), $dataposted);
+		$dataposted = str_replace('<?=', '<?php', $dataposted);
+
 		// Test if page contains dynamic PHP content
 		if (!$user->hasRight('website', 'writephp')) {
 			// Check there is no PHP content into the imported file (must be only HTML + JS)
 			$phpcontent = dolKeepOnlyPhpCode($this->content);
 
 			if ($phpcontent) {
-				$this->error = 'Error: you try to create a page with PHP content without having permissions for that.';
+				$this->error = 'Error: you try to create a page with PHP content in HTML body without having permissions for that.';
+				$this->errors[] = $this->error;
+				return -1;
+			}
+
+			// Check there is no PHP content into the imported file (must be only HTML + JS)
+			// Note: This one may be uselss because this->htmlheader should be retrieved now using GETPOST(..., 'restricthtmlallowlinkscript') so without PHP content. We keep it in case of.
+			$phpcontent = dolKeepOnlyPhpCode($this->htmlheader);
+
+			if ($phpcontent) {
+				$this->error = 'Error: you try to create a page with PHP content in HTML header without having permissions for that.';
 				$this->errors[] = $this->error;
 				return -1;
 			}
@@ -492,11 +507,11 @@ class WebsitePage extends CommonObject
 							}
 							$listoflang[] = "'".$this->db->escape(substr(str_replace("'", '', $tmpvalue), 0, 2))."'";
 						}
-						$stringtouse = $this->db->sanitize($key)." IN (".$this->db->sanitize(implode(',', $listoflang), 1).")";
+						$sql_extrawhere = $this->db->sanitize($key)." IN (".$this->db->sanitize(implode(',', $listoflang), 1).")";
 						if ($foundnull) {
-							$stringtouse = "(".$stringtouse." OR ".$this->db->sanitize($key)." IS NULL)";
+							$sql_extrawhere = "(".$sql_extrawhere." OR ".$this->db->sanitize($key)." IS NULL)";
 						}
-						$sqlwhere[] = $stringtouse;
+						$sqlwhere[] = $sql_extrawhere;
 					} else {
 						$sqlwhere[] = $this->db->sanitize($key)." LIKE '%".$this->db->escape($value)."%'";
 					}
@@ -504,9 +519,9 @@ class WebsitePage extends CommonObject
 			}
 			if (count($sqlwhere) > 0) {
 				if (!empty($websiteid)) {
-					$sql .= " AND (".implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
+					$sql .= " AND (".implode(' '.$this->db->sanitize($filtermode).' ', $sqlwhere).')';
 				} else {
-					$sql .= " WHERE ".implode(' '.$this->db->escape($filtermode).' ', $sqlwhere);
+					$sql .= " WHERE ".implode(' '.$this->db->sanitize($filtermode).' ', $sqlwhere);
 				}
 			}
 
@@ -613,11 +628,11 @@ class WebsitePage extends CommonObject
 							}
 							$listoflang[] = "'".$this->db->escape(substr(str_replace("'", '', $tmpvalue), 0, 2))."'";
 						}
-						$stringtouse = $this->db->sanitize($key)." IN (".$this->db->sanitize(implode(',', $listoflang), 1).")";
+						$sql_extrawhere = $this->db->sanitize($key)." IN (".$this->db->sanitize(implode(',', $listoflang), 1).")";
 						if ($foundnull) {
-							$stringtouse = "(".$stringtouse." OR ".$this->db->sanitize($key)." IS NULL)";
+							$sql_extrawhere = "(".$sql_extrawhere." OR ".$this->db->sanitize($key)." IS NULL)";
 						}
-						$sqlwhere[] = $stringtouse;
+						$sqlwhere[] = $sql_extrawhere;
 					} else {
 						$sqlwhere[] = $this->db->sanitize($key)." LIKE '%".$this->db->escape($value)."%'";
 					}
@@ -625,9 +640,9 @@ class WebsitePage extends CommonObject
 			}
 			if (count($sqlwhere) > 0) {
 				if (!empty($websiteid)) {
-					$sql .= " AND (".implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
+					$sql .= " AND (".implode(' '.$this->db->sanitize($filtermode).' ', $sqlwhere).')';
 				} else {
-					$sql .= " WHERE ".implode(' '.$this->db->escape($filtermode).' ', $sqlwhere);
+					$sql .= " WHERE ".implode(' '.$this->db->sanitize($filtermode).' ', $sqlwhere);
 				}
 			}
 

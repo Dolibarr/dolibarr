@@ -28,11 +28,11 @@ require '../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
  */
-
 require_once DOL_DOCUMENT_ROOT.'/webhook/class/triggerhistory.class.php';
 require_once DOL_DOCUMENT_ROOT.'/webhook/lib/webhook_triggerhistory.lib.php';
 
@@ -49,7 +49,6 @@ $backtopage = GETPOST('backtopage', 'alpha');
 
 // Initialize a technical objects
 $object = new TriggerHistory($db);
-$extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->webhook->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array($object->element.'note', 'globalcard')); // Note that conf->hooks_modules contains array
 // Fetch optionals attributes and labels
@@ -115,7 +114,11 @@ if ($id > 0 || !empty($ref)) {
 
 	// Object card
 	// ------------------------------------------------------------
-	$linkback = '<a href="'.dol_buildpath('/webhook/triggerhistory_list.php', 1).'?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
+	$query = ['restore_lastsearch_values' => 1];
+	if (!empty($socid) && $socid > 0) {
+		$query += ['socid' => $socid];
+	}
+	$linkback = '<a href="'.dolBuildUrl('/webhook/triggerhistory_list.php', $query).'">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref = '<div class="refidno">';
 	/*

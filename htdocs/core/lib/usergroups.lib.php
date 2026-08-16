@@ -4,7 +4,7 @@
  * Copyright (C) 2015	    Alexandre Spangaro	    <aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2021-2023  Anthony Berton          <anthony.berton@bb2a.fr>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -294,9 +294,8 @@ function group_prepare_head($object)
  */
 function user_admin_prepare_head()
 {
-	global $langs, $conf, $user, $db;
+	global $langs, $conf, $user, $extrafields;
 
-	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('user');
 	$extrafields->fetch_name_optionals_label('usergroup');
 
@@ -314,7 +313,7 @@ function user_admin_prepare_head()
 	$head[$h][2] = 'usergroupcard';
 	$h++;
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/user/admin/user_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'user'));
 	$head[$h][1] = $langs->trans("ExtraFields")." (".$langs->trans("Users").")";
 	$nbExtrafields = $extrafields->attributes['user']['count'];
 	if ($nbExtrafields > 0) {
@@ -323,7 +322,7 @@ function user_admin_prepare_head()
 	$head[$h][2] = 'attributes';
 	$h++;
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/user/admin/group_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'usergroup'));
 	$head[$h][1] = $langs->trans("ExtraFields")." (".$langs->trans("Groups").")";
 	$nbExtrafields = $extrafields->attributes['usergroup']['count'];
 	if ($nbExtrafields > 0) {
@@ -626,6 +625,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 				6 => array('label' => $langs->transnoentitiesnoconv("CornerRadius").' 6'),
 				8 => array('label' => $langs->transnoentitiesnoconv("CornerRadius").' 8'),
 				10 => array('label' => $langs->transnoentitiesnoconv("CornerRadius").' 10'),
+				12 => array('label' => $langs->transnoentitiesnoconv("CornerRadius").' 12'),
 				20 => array('label' => $langs->transnoentitiesnoconv("CornerRadius").' 20'),
 			);
 

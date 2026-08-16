@@ -22,6 +22,7 @@
  * Copyright (C) 2022       Vincent de Grandpré     <vincent@de-grandpre.quebec>
  * Copyright (C) 2024-2026	MDW                     <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		William Mead			<william@m34d.com>
+ * Copyright (C) 2026		Jose MARTINEZ			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -119,6 +120,7 @@ $type = (GETPOSTISSET('type') ? GETPOSTINT('type') : Product::TYPE_PRODUCT);
 $action = (GETPOST('action', 'alpha') ? GETPOST('action', 'alpha') : 'view');
 $cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
+$dol_openinpopup = GETPOST('dol_openinpopup', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $socid = GETPOSTINT('socid');
 $duration_value = GETPOST('duration_value') === '' ? null : GETPOSTINT('duration_value');	// duration value can be an empty string
@@ -157,6 +159,7 @@ if ($result > 0) {
 
 $object = new Product($db);
 $object->type = $type; // so test later to fill $usercancxxx is correct
+$refLabelKey = ($type == Product::TYPE_SERVICE ? 'ServiceRef' : 'ProductRef');
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -531,7 +534,7 @@ if (empty($reshook)) {
 		}
 		if (empty($ref)) {
 			if (!getDolGlobalString('PRODUCT_GENERATE_REF_AFTER_FORM')) {
-				setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('ProductRef')), null, 'errors');
+				setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities($refLabelKey)), null, 'errors');
 				$action = "create";
 				$error++;
 			}
@@ -755,6 +758,13 @@ if (empty($reshook)) {
 						$backtopage .= '&productid='.$object->id; // Old method
 					}
 
+					if (!empty($dol_openinpopup)) {
+						// Created from a popup dialog: reload the parent page instead (backtopage, with the new id substituted, can autoselect the product)
+						print '<script nonce="'.getNonce().'">';
+						print "window.parent.location.href = '".dol_escape_js($backtopage)."';";
+						print '</script>';
+						exit;
+					}
 					header("Location: ".$backtopage);
 					exit;
 				} else {
@@ -1481,6 +1491,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print '<input type="hidden" name="barcode_auto" value="1">';
 		}
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+		print '<input type="hidden" name="dol_openinpopup" value="'.dol_escape_htmltag($dol_openinpopup).'">';
 
 		if ($type == 1) {
 			$picto = 'service';
@@ -1516,7 +1527,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					/** @var ModeleProductCode $modCodeProduct */
 					$tmpcode = $modCodeProduct->getNextValue($object, $type);
 				}
-				print '<td class="titlefieldcreate fieldrequired">'.$langs->trans("ProductRef").'</td><td><input id="ref" name="ref" class="maxwidth200" maxlength="128" value="'.dol_escape_htmltag(GETPOSTISSET('ref') ? GETPOST('ref', 'alphanohtml') : $tmpcode).'">';
+				print '<td class="titlefieldcreate fieldrequired">'.$langs->trans($refLabelKey).'</td><td><input id="ref" name="ref" class="maxwidth200" maxlength="128" value="'.dol_escape_htmltag(GETPOSTISSET('ref') ? GETPOST('ref', 'alphanohtml') : $tmpcode).'">';
 				if ($refalreadyexists) {
 					print $langs->trans("RefAlreadyExists");
 				}
@@ -2018,7 +2029,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 		print dol_get_fiche_end();
 
-		print $form->buttonsSaveCancel("Create");
+		print $form->buttonsSaveCancel("Create", "Cancel", array(), false, '', $dol_openinpopup);
 
 		print '</form>';
 	} elseif ($object->id > 0) {
@@ -3174,7 +3185,7 @@ if ($action != 'create' && $action != 'edit') {
 					$cloneProductUrl = '';
 					$cloneButtonId = 'action-clone';
 				}
-				print dolGetButtonAction($langs->trans('ToClone'), '', 'default', $cloneProductUrl, $cloneButtonId, $usercancreate);
+				print dolGetButtonAction($langs->trans('ToClone'), '', 'clone', $cloneProductUrl, $cloneButtonId, $usercancreate);
 			}
 		}
 		$object_is_used = $object->isObjectUsed($object->id);
@@ -3192,7 +3203,7 @@ if ($action != 'create' && $action != 'edit') {
 				print dolGetButtonAction($langs->trans("ProductIsUsed"), $langs->trans('Delete'), 'delete', '#', '', false);
 			}
 			if (getDolGlobalInt('MAIN_FEATURES_LEVEL') > 1) {
-				print '<a class="butActionDelete" href="card.php?action=merge&id='.$object->id.'" title="'.dol_escape_htmltag($langs->trans("MergeProducts")).'">'.$langs->trans('Merge').'</a>'."\n";
+				print '<a class="butActionDelete" href="card.php?action=merge&id='.$object->id.'&token='.newToken().'" title="'.dol_escape_htmltag($langs->trans("MergeProducts")).'">'.$langs->trans('Merge').'</a>'."\n";
 			}
 		} else {
 			print dolGetButtonAction($langs->trans("NotEnoughPermissions"), $langs->trans('Delete'), 'delete', '#', '', false);

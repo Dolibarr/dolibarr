@@ -2,9 +2,9 @@
 /* Copyright (C) 2007-2016	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2011		Dimitri Mouillard			<dmouillard@teclib.com>
  * Copyright (C) 2020		Tobias Sekan				<tobias.sekan@startmail.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +30,15 @@
 // Load Dolibarr environment
 require '../main.inc.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Security check (access forbidden for external user too)
 if (!$user->hasRight('holiday', 'define_holiday') || $user->socid > 0) {
 	accessforbidden();
@@ -39,14 +48,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array('users', 'other', 'holiday'));
@@ -92,7 +93,7 @@ if (!$sortorder) {
 
 // Initialize a technical objects
 $object = new Holiday($db);
-$extrafields = new ExtraFields($db);
+
 //$diroutputmassaction = $conf->mymodule->dir_output . '/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('leavemovementlist')); // Note that conf->hooks_modules contains array
 
@@ -198,11 +199,11 @@ $sqlwhere = '';
 
 if (!empty($search_year) && $search_year > 0) {
 	if (!empty($search_month) && $search_month > 0) {
-		$from_date  = dol_get_first_day($search_year, $search_month, 1);
-		$to_date    = dol_get_last_day($search_year, $search_month, 1);
+		$from_date = dol_get_first_day($search_year, $search_month, 1);
+		$to_date = dol_get_last_day($search_year, $search_month, 1);
 	} else {
-		$from_date  = dol_get_first_day($search_year, 1, 1);
-		$to_date    = dol_get_last_day($search_year, 12, 1);
+		$from_date = dol_get_first_day($search_year, 1, 1);
+		$to_date = dol_get_last_day($search_year, 12, 1);
 	}
 
 	$sqlwhere .= "AND date_action BETWEEN '".$db->idate($from_date)."' AND '".$db->idate($to_date)."'";
@@ -259,7 +260,7 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.((int) $limit);
 }
 if (!empty($search_id)) {
-	$param .= '&search_status='.urlencode($search_status);
+	$param .= '&search_id='.urlencode($search_id);
 }
 if (!empty($search_month) && $search_month > 0) {
 	$param .= '&search_month='.urlencode((string) ($search_month));

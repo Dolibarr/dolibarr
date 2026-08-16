@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -77,7 +77,7 @@ abstract class CommonClassTest extends TestCase
 	 *
 	 * @var integer
 	 */
-	public $nbLinesToShow = 100;
+	public $nbLinesToShow = 50;
 
 	/**
 	 * Log file from which to extract lines in case of failing test
@@ -141,6 +141,7 @@ abstract class CommonClassTest extends TestCase
 	 */
 	protected function onNotSuccessfulTest(Throwable $t): void
 	{
+		global $db;
 
 		// Get the lines that were added since the start of the test
 
@@ -208,7 +209,7 @@ abstract class CommonClassTest extends TestCase
 
 		if ($nbLinesToShow) {
 			print "\n";
-			print "########## We try to output the last ".$nbLinesToShow." lines of the log file ".basename($this->logfile)." (that has ".$totalLines." lines)".PHP_EOL;
+			print "########## We output the last ".$nbLinesToShow." lines of the file ".basename($this->logfile)." for the failed test ".$failedTestMethod." (file has ".$totalLines." lines) ".PHP_EOL;
 			$newLines = count($last_lines);
 			if ($newLines > 0) {
 				// Show partial log file contents when requested.
@@ -224,6 +225,7 @@ abstract class CommonClassTest extends TestCase
 		print "##[endgroup]".PHP_EOL;
 
 		// Print last line of file /var/log/apache2/travis_error_log (Unix only)
+		/* File travis_error_log seems not found on travis
 		if (strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN') {
 			$logFile = '/var/log/apache2/travis_error_log';
 
@@ -236,9 +238,23 @@ abstract class CommonClassTest extends TestCase
 					echo $line . "\n";
 				}
 			} else {
-				echo "Error: File $logFile does not exist or is not readable.\n";
+				echo "File $logFile does not exist or is not readable.\n";
 			}
 		}
+		*/
+
+		// Try to output DB info
+		print "\n";
+		print "########## We try to output some DB info".PHP_EOL;
+		$resql = $db->query("SHOW ENGINE INNODB STATUS");
+		if ($resql) {
+			$obj = $db->fetch_object($resql);
+			print $obj->Status.PHP_EOL;
+		} else {
+			print $db->lasterror().PHP_EOL;
+		}
+
+		print PHP_EOL;
 
 		/** @phpstan-ignore method.notFound */
 		parent::onNotSuccessfulTest($t);
@@ -428,7 +444,7 @@ abstract class CommonClassTest extends TestCase
 		'dav' => 'Dav',
 		'debugbar' => 'DebugBar',
 		'shipping' => 'Expedition',
-		'deplacement' => 'Deplacement',					// TODO Remove module
+		'deplacement' => null,
 		"documentgeneration" => 'DocumentGeneration',  // TODO: fill in proper name
 		'don' => 'Don',
 		'dynamicprices' => 'DynamicPrices',
@@ -474,7 +490,6 @@ abstract class CommonClassTest extends TestCase
 		'opensurvey' => 'OpenSurvey',
 		'order' => 'Commande',
 		'partnership' => 'Partnership',
-		'paybox' => 'Paybox',
 		'paymentbybanktransfer' => 'PaymentByBankTransfer',
 		'paypal' => 'Paypal',
 		'paypalplus' => null,
@@ -615,5 +630,27 @@ abstract class CommonClassTest extends TestCase
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * PHPUnit compatibility helper for assertMatchesRegularExpression
+	 *
+	 * assertMatchesRegularExpression was introduced in PHPUnit 8.0.
+	 * This method provides backward compatibility with PHPUnit 7.x which only has assertRegExp.
+	 *
+	 * @param string $pattern Regular expression pattern
+	 * @param string $string  String to match against
+	 * @param string $message Optional message
+	 * @return void
+	 */
+	public static function assertMatchesRegularExpression(string $pattern, string $string, string $message = ''): void
+	{
+		if (method_exists('PHPUnit\Framework\Assert', 'assertMatchesRegularExpression')) {
+			// PHPUnit 8.0+: call parent's method
+			PHPUnit\Framework\Assert::assertMatchesRegularExpression($pattern, $string, $message);
+		} else {
+			// PHPUnit 7.x and earlier: use assertRegExp
+			PHPUnit\Framework\Assert::assertRegExp($pattern, $string, $message);
+		}
 	}
 }

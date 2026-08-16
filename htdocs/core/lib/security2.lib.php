@@ -2,7 +2,7 @@
 /* Copyright (C) 2008-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2008-2017  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -481,6 +481,7 @@ function getRandomPassword($generic = false, $replaceambiguouschars = null, $len
 	global $db, $conf, $langs, $user;
 
 	$generated_password = '';
+
 	if ($generic) {
 		$lowercase = "qwertyuiopasdfghjklzxcvbnm";
 		$uppercase = "ASDFGHJKLZXCVBNMQWERTYUIOP";
@@ -505,8 +506,6 @@ function getRandomPassword($generic = false, $replaceambiguouschars = null, $len
 				$tmp = random_int(0, $max);
 				$randomCode .= $numbers[$tmp];
 			}
-
-			$generated_password = str_shuffle($randomCode);
 		} else {
 			// Old platform, non cryptographic random
 			$max = strlen($lowercase) - 1;
@@ -524,21 +523,35 @@ function getRandomPassword($generic = false, $replaceambiguouschars = null, $len
 				$tmp = mt_rand(0, $max);
 				$randomCode .= $numbers[$tmp];
 			}
-
-			$generated_password = str_shuffle($randomCode);
 		}
+
+		// Use the Fisher-Yate to shake (this replace str_shuffle)
+		$passwordArray = str_split($randomCode);
+		for ($i = count($passwordArray) - 1; $i > 0; $i--) {
+			$j = random_int(0, $i);
+			$tmp = $passwordArray[$i];
+			$passwordArray[$i] = $passwordArray[$j];
+			$passwordArray[$j] = $tmp;
+		}
+		$generated_password = implode('', $passwordArray);
 	} elseif (getDolGlobalString('USER_PASSWORD_GENERATED')) {
-		$nomclass = "modGeneratePass".ucfirst($conf->global->USER_PASSWORD_GENERATED);
-		$nomfichier = $nomclass.".class.php";
-		//print DOL_DOCUMENT_ROOT."/core/modules/security/generate/".$nomclass;
-		require_once DOL_DOCUMENT_ROOT."/core/modules/security/generate/".$nomfichier;
-		$genhandler = new $nomclass($db, $conf, $langs, $user);
-		'@phan-var-force ModeleGenPassword $genhandler';
-		$generated_password = $genhandler->getNewGeneratedPassword();
-		unset($genhandler);
+		require_once DOL_DOCUMENT_ROOT."/core/modules/security/generate/modules_genpassword.php";
+		$genhandler = ModeleGenPassword::loadAndInstantiate(getDolGlobalString('USER_PASSWORD_GENERATED'), $db, $conf, $langs, $user);
+		if (!$genhandler) {
+			// Configured generator class could not be resolved (e.g. the module that provided it
+			// was disabled/removed after being selected) — fall back to the always-available
+			// 'standard' generator rather than silently generating and persisting an empty password.
+			dol_syslog("getRandomPassword: generator class for USER_PASSWORD_GENERATED='".getDolGlobalString('USER_PASSWORD_GENERATED')."' not found, falling back to standard", LOG_WARNING);
+			$genhandler = ModeleGenPassword::loadAndInstantiate('standard', $db, $conf, $langs, $user);
+		}
+		if ($genhandler) {
+			'@phan-var-force ModeleGenPassword $genhandler';
+			$generated_password = $genhandler->getNewGeneratedPassword();
+			unset($genhandler);
+		}
 	}
 
-	// Do we have to discard some alphabetic characters ?
+	// Do we have to discard some alphabetic characters ? (usually $replaceambiguouschars is empty)
 	if (is_array($replaceambiguouschars) && count($replaceambiguouschars) > 0) {
 		$numbers = "ABCDEF";
 		$max = strlen($numbers) - 1;

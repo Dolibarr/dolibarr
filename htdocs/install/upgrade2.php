@@ -81,6 +81,7 @@ require_once $dolibarr_main_document_root.'/core/class/menubase.class.php';
 require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
 require_once $dolibarr_main_document_root.'/core/lib/files.lib.php';
 require_once $dolibarr_main_document_root.'/user/class/user.class.php';
+require_once $dolibarr_main_document_root.'/blockedlog/lib/blockedlog.lib.php';
 
 global $langs;
 
@@ -145,6 +146,8 @@ if ((!$versionfrom || preg_match('/version/', $versionfrom)) && (!$versionto || 
 
 pHeader('', 'step5', GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'upgrade', 'versionfrom='.$versionfrom.'&versionto='.$versionto, '', 'main-inside main-inside-borderbottom');
 
+
+$db = null;
 
 if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ09'))) {
 	print '<h3><img class="valignmiddle inline-block paddingright" src="../public/theme/common/database.svg" width="20" alt="Database"> ';
@@ -679,6 +682,8 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 				dol_syslog("Run migrate_... versionto is between ".json_encode($afterversionarray)." and ".json_encode($beforeversionarray));
 
 				migrate_rename_directories($db, $langs, $conf, '/banque', '/bank');
+
+				migrate_blockedlog_add_end_file();
 			}
 		}
 
@@ -715,7 +720,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 				'MAIN_MODULE_RESOURCE' => 'noboxes',
 				'MAIN_MODULE_SALARIES' => 'newboxdefonly',
 				'MAIN_MODULE_SERVICE' => 'newboxdefonly',
-				'MAIN_MODULE_SYSLOG' => 'newboxdefonly',
+				//'MAIN_MODULE_SYSLOG' => 'newboxdefonly',		This enabled the module syslog, but we don't want to do that.
 				'MAIN_MODULE_SOCIETE' => 'newboxdefonly',
 				'MAIN_MODULE_STRIPE' => 'menuonly',
 				'MAIN_MODULE_TICKET' => 'newboxdefonly',
@@ -726,6 +731,14 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			);
 
 			$result = migrate_reload_modules($db, $langs, $conf, $listofmodule);
+			if ($result < 0) {
+				$error++;
+			}
+
+			// Grant the supplier prices permissions added in 23.0 to users/groups that already have
+			// the matching product/service rights (ids resolved by name from the rights_def reloaded
+			// just above), so nobody loses access to supplier prices on upgrade. Idempotent.
+			$result = migrate_supplier_prices_permissions($db, $langs, $conf);
 			if ($result < 0) {
 				$error++;
 			}
@@ -906,7 +919,7 @@ dolibarr_install_syslog("Exit ".$ret);
 dolibarr_install_syslog("--- upgrade2: end");
 pFooter($error ? 2 : 0, $setuplang);
 
-if ($db->connected) {
+if ($db !== null && $db->connected) {
 	$db->close();
 }
 
@@ -1358,7 +1371,7 @@ function migrate_links_transfert($db, $langs, $conf)
 				$sql .= "fk_bank, url_id, url, label, type";
 				$sql .= ")";
 				$sql .= " VALUES (";
-				$sql .= $obj->barowid.",".$obj->bbrowid.", '/compta/bank/line.php?rowid=', '(banktransfert)', 'banktransfert'";
+				$sql .= ((int) $obj->barowid).",".((int) $obj->bbrowid).", '/compta/bank/line.php?rowid=', '(banktransfert)', 'banktransfert'";
 				$sql .= ")";
 
 				//print $sql.'<br>';
@@ -1649,9 +1662,9 @@ function migrate_paiementfourn_facturefourn($db, $langs, $conf)
 						print '<td>'.$select_obj->rowid.'</td><td>'.$select_obj->fk_facture_fourn.'</td><td>'.$select_obj->amount.'</td>';
 
 						$insert_sql = 'INSERT INTO '.MAIN_DB_PREFIX.'paiementfourn_facturefourn SET ';
-						$insert_sql .= ' fk_paiementfourn = \''.$select_obj->rowid.'\',';
-						$insert_sql .= ' fk_facturefourn  = \''.$select_obj->fk_facture_fourn.'\',';
-						$insert_sql .= ' amount           = \''.$select_obj->amount.'\'';
+						$insert_sql .= ' fk_paiementfourn = \''.((int) $select_obj->rowid).'\',';
+						$insert_sql .= ' fk_facturefourn  = \''.((int) $select_obj->fk_facture_fourn).'\',';
+						$insert_sql .= ' amount           = \''.((float) $select_obj->amount).'\'';
 						$insert_resql = $db->query($insert_sql);
 
 						if ($insert_resql) {
@@ -2833,9 +2846,9 @@ function migrate_project_user_resp($db, $langs, $conf)
 					$sql2 .= ") VALUES (";
 					$sql2 .= "'".$db->idate(dol_now())."'";
 					$sql2 .= ", '4'";
-					$sql2 .= ", ".$obj->rowid;
+					$sql2 .= ", ".((int) $obj->rowid);
 					$sql2 .= ", '160'";
-					$sql2 .= ", ".$obj->fk_user_resp;
+					$sql2 .= ", ".((int) $obj->fk_user_resp);
 					$sql2 .= ")";
 
 					if ($obj->fk_user_resp > 0) {
@@ -2912,9 +2925,9 @@ function migrate_project_task_actors($db, $langs, $conf)
 					$sql2 .= ") VALUES (";
 					$sql2 .= "'".$db->idate(dol_now())."'";
 					$sql2 .= ", '4'";
-					$sql2 .= ", ".$obj->fk_project_task;
+					$sql2 .= ", ".((int) $obj->fk_project_task);
 					$sql2 .= ", '180'";
-					$sql2 .= ", ".$obj->fk_user;
+					$sql2 .= ", ".((int) $obj->fk_user);
 					$sql2 .= ")";
 
 					$resql2 = $db->query($sql2);
@@ -3264,9 +3277,9 @@ function migrate_shipping_delivery($db, $langs, $conf)
 					$sqlInsert .= ", fk_target";
 					$sqlInsert .= ", targettype";
 					$sqlInsert .= ") VALUES (";
-					$sqlInsert .= $obj->fk_expedition;
+					$sqlInsert .= ((int) $obj->fk_expedition);
 					$sqlInsert .= ", 'shipping'";
-					$sqlInsert .= ", ".$obj->rowid;
+					$sqlInsert .= ", ".((int) $obj->rowid);
 					$sqlInsert .= ", 'delivery'";
 					$sqlInsert .= ")";
 
@@ -3885,7 +3898,7 @@ function migrate_reset_blocked_log($db, $langs, $conf)
 							}
 						}
 					} else {
-						print ' - '.$langs->trans('AlreadyInV7').'<br>';
+						print ' - '.$langs->trans('AlreadyDone').'<br>';
 					}
 				} else {
 					dol_print_error($db);
@@ -3948,7 +3961,7 @@ function migrate_remise_entity($db, $langs, $conf)
 				$obj = $db->fetch_object($resql);
 
 				$sqlUpdate = "UPDATE ".MAIN_DB_PREFIX."societe_remise SET";
-				$sqlUpdate .= " entity = ".$obj->entity;
+				$sqlUpdate .= " entity = ".((int) $obj->entity);
 				$sqlUpdate .= " WHERE rowid = ".((int) $obj->rowid);
 
 				$result = $db->query($sqlUpdate);
@@ -4067,6 +4080,115 @@ function migrate_remise_except_entity($db, $langs, $conf)
 
 
 	print '</td></tr>';
+}
+
+/**
+ * Grant the "supplier prices" advanced permissions introduced in 23.0 (product/service
+ * read_supplier_prices and product write_supplier_prices) to the users and groups that already
+ * hold the matching product/service "read"/"create" rights.
+ *
+ * Before 23.0, access to supplier (purchase) prices followed the general product/service read and
+ * create rights. In "Advanced permissions" mode these are now gated by dedicated permissions that
+ * are not granted by default, so without this migration every user/group silently loses access to
+ * supplier prices on upgrade. Permission ids are resolved by name from llx_rights_def (populated by
+ * the module reload done just before this call) to avoid hardcoded permission ids. Idempotent.
+ *
+ * @param	DoliDB		$db		Database handler
+ * @param	Translate	$langs	Object langs
+ * @param	Conf		$conf	Object conf
+ * @return	int					Return integer <0 if KO, >=0 if OK
+ */
+function migrate_supplier_prices_permissions($db, $langs, $conf)
+{
+	dolibarr_install_syslog("upgrade2::migrate_supplier_prices_permissions");
+
+	// Grant each target permission to holders of any of its source permissions.
+	// Format: array('to' => array(module, perms, subperms), 'from' => array(array(module, perms, subperms), ...))
+	$rules = array(
+		array('to' => array('produit', 'product_advance', 'read_supplier_prices'), 'from' => array(array('produit', 'lire', ''), array('produit', 'creer', ''))),
+		array('to' => array('produit', 'product_advance', 'write_supplier_prices'), 'from' => array(array('produit', 'creer', ''))),
+		array('to' => array('service', 'service_advance', 'read_supplier_prices'), 'from' => array(array('service', 'lire', ''))),
+	);
+
+	$error = 0;
+	$db->begin();
+
+	foreach ($rules as $rule) {
+		// Resolve the target permission id by name (skip if the module/permission is not present)
+		$targetid = migrate_get_rights_def_id($db, $rule['to'][0], $rule['to'][1], $rule['to'][2]);
+		if ($targetid <= 0) {
+			continue;
+		}
+
+		// Resolve the source permission ids by name
+		$sourceids = array();
+		foreach ($rule['from'] as $from) {
+			$id = migrate_get_rights_def_id($db, $from[0], $from[1], $from[2]);
+			if ($id > 0) {
+				$sourceids[] = $id;
+			}
+		}
+		if (empty($sourceids)) {
+			continue;
+		}
+		$sourcelist = implode(',', $sourceids);
+
+		// Grant to groups that hold a source permission but not yet the target
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."usergroup_rights (entity, fk_usergroup, fk_id)";
+		$sql .= " SELECT DISTINCT gr.entity, gr.fk_usergroup, ".((int) $targetid);
+		$sql .= " FROM ".MAIN_DB_PREFIX."usergroup_rights as gr";
+		$sql .= " WHERE gr.fk_id IN (".$db->sanitize($sourcelist).")";
+		$sql .= " AND NOT EXISTS (SELECT 1 FROM ".MAIN_DB_PREFIX."usergroup_rights as ex WHERE ex.fk_usergroup = gr.fk_usergroup AND ex.entity = gr.entity AND ex.fk_id = ".((int) $targetid).")";
+		if (!$db->query($sql)) {
+			$error++;
+			break;
+		}
+
+		// Grant to users that hold a source permission but not yet the target
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."user_rights (entity, fk_user, fk_id)";
+		$sql .= " SELECT DISTINCT ur.entity, ur.fk_user, ".((int) $targetid);
+		$sql .= " FROM ".MAIN_DB_PREFIX."user_rights as ur";
+		$sql .= " WHERE ur.fk_id IN (".$db->sanitize($sourcelist).")";
+		$sql .= " AND NOT EXISTS (SELECT 1 FROM ".MAIN_DB_PREFIX."user_rights as ex WHERE ex.fk_user = ur.fk_user AND ex.entity = ur.entity AND ex.fk_id = ".((int) $targetid).")";
+		if (!$db->query($sql)) {
+			$error++;
+			break;
+		}
+	}
+
+	if ($error) {
+		$db->rollback();
+		return -1;
+	}
+	$db->commit();
+	return 0;
+}
+
+/**
+ * Return the permission id (llx_rights_def.id) matching a module/perms/subperms triplet, or 0 if none.
+ *
+ * @param	DoliDB	$db			Database handler
+ * @param	string	$module		Module (rights_def.module)
+ * @param	string	$perms		First level permission (rights_def.perms)
+ * @param	string	$subperms	Second level permission (rights_def.subperms), '' for none
+ * @return	int					Permission id, or 0 if not found
+ */
+function migrate_get_rights_def_id($db, $module, $perms, $subperms)
+{
+	$sql = "SELECT id FROM ".MAIN_DB_PREFIX."rights_def";
+	$sql .= " WHERE module = '".$db->escape($module)."'";
+	$sql .= " AND perms = '".$db->escape($perms)."'";
+	if ($subperms === '') {
+		$sql .= " AND (subperms IS NULL OR subperms = '')";
+	} else {
+		$sql .= " AND subperms = '".$db->escape($subperms)."'";
+	}
+	$resql = $db->query($sql);
+	if (!$resql) {
+		return 0;
+	}
+	$obj = $db->fetch_object($resql);
+	return $obj ? (int) $obj->id : 0;
 }
 
 /**
@@ -4245,13 +4367,15 @@ function migrate_delete_old_files($db, $langs, $conf)
 		'/core/menus/barre_top/default.php',
 		'/core/modules/modComptabiliteExpert.class.php',
 		'/core/modules/modCommercial.class.php',
+		'/core/modules/modPaybox.class.php',
 		'/core/modules/modProduit.class.php',
 		'/core/modules/modSkype.class.php',
-		'/core/modules/modactivite.class.php',		// A file from external module that should not be here
+		'/core/modules/modactivite.class.php',		// A file from an external module that should not be here
 		'/core/triggers/interface_modWebcalendar_Webcalsynchro.class.php',
 		'/core/triggers/interface_modCommande_Ecotax.class.php',
 		'/core/triggers/interface_modCommande_fraisport.class.php',
 		'/core/triggers/interface_modPropale_PropalWorkflow.class.php',
+		'/core/triggers/interface_50_modBlockedlog_ActionsBlockedLog.class.php', // now has position 99
 		'/core/triggers/interface_99_modWebhook_WebhookTriggers.class.php',
 		'/core/triggers/interface_99_modZapier_ZapierTriggers.class.php',
 		'/core/menus/smartphone/iphone.lib.php',
@@ -4421,7 +4545,6 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 		'MAIN_MODULE_HOLIDAY' => array('class' => 'modHoliday', 'remove' => 1),
 		'MAIN_MODULE_KNOWLEDGEMANAGEMENT' => array('class' => 'modKnowledgeManagement', 'remove' => 1),
 		'MAIN_MODULE_LOAN' => array('class' => 'modLoan', 'remove' => 1),
-		'MAIN_MODULE_PAYBOX' => array('class' => 'modPaybox', 'remove' => 1),
 		'MAIN_MODULE_PROPAL' => array('class' => 'modPropale'),
 		'MAIN_MODULE_SUPPLIERPROPOSAL' => array('class' => 'modSupplierProposal', 'remove' => 1),
 		'MAIN_MODULE_OPENSURVEY' => array('class' => 'modOpenSurvey', 'remove' => 1),
@@ -5626,7 +5749,9 @@ function migrate_apiresttokens()
 
 
 /**
- * Add the HMAC key for blockedlog v2
+ * Add the HMAC key for blockedlog v2+
+ * Note that this is used on old version only. It stores the HMAC with old method but it will be automatically converted in new storing
+ * method once on version of blockedlog 3.0.0
  *
  * @return  int		Return -1 if KO, 1 if OK
  */
@@ -5646,9 +5771,11 @@ function migrate_blockedlog_add_hmac_key()
 	$hmac_encoded_secret_key = getDolGlobalString('BLOCKEDLOG_HMAC_KEY');
 	if (empty($hmac_encoded_secret_key)) {
 		// Add key
-		$hmac_secret_key = 'BLOCKEDLOGHMAC'.getRandomPassword(true);		// This is using random_int for 32 chars
+		$randomsecret = bin2hex(random_bytes(32)); 	// 64 char hex - 256 bits
 
-		$result = dolibarr_set_const($db, 'BLOCKEDLOG_HMAC_KEY', $hmac_secret_key, 'chaine', 0, 'The secret key for HMAC used for blockedlog record', 0);	// Will encrypt the value using dolCrypt and store it.
+		$hmac_secret_key = 'BLOCKEDLOGHMAC'.$randomsecret;		// Example: 'BLOCKEDLOGHMACY3Ewx37RXbSd8gL9JV8p7Wqw7qvq2K2A'
+
+		$result = dolibarr_set_const($db, 'BLOCKEDLOG_HMAC_KEY', $hmac_secret_key, 'chaine', 0, 'The secret key for HMAC used for blockedlog record', $conf->entity);	// Will encrypt the value using dolCrypt and store it.
 
 		if ($result < 0) {
 			dol_print_error($db);

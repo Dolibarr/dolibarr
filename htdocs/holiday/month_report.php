@@ -4,7 +4,7 @@
  * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2020		Tobias Sekan				<tobias.sekan@startmail.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -241,7 +241,7 @@ print load_fiche_titre($langs->trans('MenuReportMonth'), '', 'title_hrm');
 print '<div class="tabBar">';
 print $formother->select_month($search_month, 'search_month', 0, 1, 'minwidth75 maxwidth150imp valignmiddle', true);
 print $formother->selectyear($search_year, 'search_year', 0, 10, 5, 0, 0, '', 'valignmiddle width75', true);
-print '<input type="submit" class="button small" value="'.dol_escape_htmltag($langs->trans("Search")).'" />';
+print '<input type="submit" class="button smallpaddingimp" value="'.dolPrintHTMLForAttribute($langs->trans("Search")).'" />';
 print '</div>';
 print '<br>';
 
@@ -272,9 +272,9 @@ if (!empty($arrayfields['cp.ref']['checked'])) {
 }
 
 // Filter: Type
+$arraytypeleaves = array();
 if (!empty($arrayfields['cp.fk_type']['checked'])) {
 	$typeleaves = $holidaystatic->getTypes(1, -1);
-	$arraytypeleaves = array();
 	foreach ($typeleaves as $key => $val) {
 		$labeltoshow = ($langs->trans($val['code']) != $val['code'] ? $langs->trans($val['code']) : $val['label']);
 		$arraytypeleaves[$val['rowid']] = $labeltoshow;
@@ -458,7 +458,7 @@ if ($num == 0) {
 		}
 
 		if (!empty($arrayfields['used_days']['checked'])) {
-			print '<td class="right">'.num_open_day($date_start, $date_end, 0, 1, $obj->halfday, $tmpuser->country_id).'</td>';
+			print '<td class="right">'.num_open_day($date_start, $date_end, 0, 1, $obj->halfday, $tmpuser->country_id, $obj->fk_user).'</td>';
 		}
 
 		if (!empty($arrayfields['date_start_month']['checked'])) {
@@ -474,7 +474,7 @@ if ($num == 0) {
 		}
 
 		if (!empty($arrayfields['used_days_month']['checked'])) {
-			print '<td class="right">'.num_open_day($date_start_inmonth, $date_end_inmonth, 0, 1, $halfdayinmonth, $tmpuser->country_id).'</td>';
+			print '<td class="right">'.num_open_day($date_start_inmonth, $date_end_inmonth, 0, 1, $halfdayinmonth, $tmpuser->country_id, $obj->fk_user).'</td>';
 		}
 		if (!empty($arrayfields['cp.description']['checked'])) {
 			print '<td class="maxwidth300 small">';

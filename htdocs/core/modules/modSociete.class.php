@@ -6,7 +6,7 @@
  * Copyright (C) 2005-2013  Regis Houssin               <regis.houssin@inodbox.com>
  * Copyright (C) 2012-2014  Juanjo Menent               <jmenent@2byte.es>
  * Copyright (C) 2022       Ferran Marcet               <fmarcet@2byte.es>
- * Copyright (C) 2024-2025  MDW                         <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW                         <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2026       Alexandre Spangaro          <alexandre@inovea-conseil.com>
  *
@@ -402,7 +402,7 @@ class modSociete extends DolibarrModules
 			's.code_compta' => "Text", 's.code_compta_fournisseur' => "Text",
 			's.client' => "Numeric", 's.fournisseur' => "Numeric",
 			's.address' => "Text", 's.zip' => "Text", 's.town' => "Text", 's.phone' => "Text", 's.email' => "Text",
-			't.code' => "List:c_stcomm:libelle:code",
+			't.code' => "List:c_typent:libelle:code",
 			'c.entity' => 'List:entity:label:rowid',
 			's.entity' => 'List:entity:label:rowid',
 		);
@@ -618,7 +618,7 @@ class modSociete extends DolibarrModules
 			}
 		}
 		// Add extra fields
-		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type <> 'separate' AND elementtype = 'societe' AND entity IN (0, ".$conf->entity.")";
+		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type <> 'separate' AND elementtype = 'societe' AND entity IN (0, ".((int) $conf->entity).")";
 		$resql = $this->db->query($sql);
 		if ($resql) {    // This can fail when class is used on old database (during migration for example)
 			while ($obj = $this->db->fetch_object($resql)) {
@@ -859,7 +859,7 @@ class modSociete extends DolibarrModules
 			}
 		}
 		// Add extra fields
-		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type <> 'separate' AND elementtype = 'socpeople' AND entity IN (0, ".$conf->entity.")";
+		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type <> 'separate' AND elementtype = 'socpeople' AND entity IN (0, ".((int) $conf->entity).")";
 		$resql = $this->db->query($sql);
 		if ($resql) {    // This can fail when class is used on an old database (during a migration for example)
 			while ($obj = $this->db->fetch_object($resql)) {

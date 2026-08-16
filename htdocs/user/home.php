@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2024	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2019		Nicolas ZABOURI			<info@inovea-conseil.com>
  * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'userhome'; // To manage different context of search
 
 if (!$user->hasRight('user', 'user', 'lire') && !$user->admin) {
-	// Redirection vers la page de l'utilisateur
+	// Redirect to the user's own page
 	header("Location: card.php?id=".$user->id);
 	exit;
 }
@@ -82,7 +83,7 @@ if (GETPOST('addbox')) {
 	}
 }
 
-$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
+$max = getDolUserInt('MAIN_SIZE_SHORTLIST_LIMIT', getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5));
 
 
 /*
@@ -246,7 +247,7 @@ if ($permissiontoreadgroup) {
 	if (isModEnabled('multicompany') && $conf->entity == 1 && (getDolGlobalInt('MULTICOMPANY_TRANSVERSE_MODE') || ($user->admin && !$user->entity))) {
 		$sql .= " WHERE g.entity IS NOT NULL";
 	} else {
-		$sql .= " WHERE g.entity IN (0, ".$conf->entity.")";
+		$sql .= " WHERE g.entity IN (0, ".((int) $conf->entity).")";
 	}
 	$sql .= $db->order("g.datec", "DESC");
 	$sql .= $db->plimit($max);

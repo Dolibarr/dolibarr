@@ -58,12 +58,12 @@ class FormCompany extends Form
 
 		$sql = "SELECT id, code, libelle as label";
 		$sql .= " FROM " . $this->db->prefix() . "c_typent";
-		$sql .= " WHERE active = 1 AND (fk_country IS NULL OR fk_country = " . (empty($mysoc->country_id) ? '0' : $mysoc->country_id) . ")";
+		$sql .= " WHERE active = 1 AND (fk_country IS NULL OR fk_country = " . (empty($mysoc->country_id) ? '0' : ((int) $mysoc->country_id)) . ")";
 
 		$errormsg = '';
 		$filter = forgeSQLFromUniversalSearchCriteria($filter, $errormsg, 0);
 		if ($filter) {
-			$sqlwhere = $filter;
+			$sqlwhere = $filter;  // @phan-suppress-current-line SqlInjection
 			$sql .= " " . $sqlwhere;
 		}
 
@@ -119,7 +119,7 @@ class FormCompany extends Form
 		$errormsg = '';
 		$filter = forgeSQLFromUniversalSearchCriteria($filter, $errormsg, 0);
 		if ($filter) {
-			$sqlwhere = $filter;
+			$sqlwhere = $filter;  // @phan-suppress-current-line SqlInjection
 			$sql .= " " . $sqlwhere;
 		}
 
@@ -153,11 +153,11 @@ class FormCompany extends Form
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Affiche formulaire de selection des modes de reglement
+	 *  Displays form for selecting settlement methods
 	 *
 	 *  @param	string	$page        	Page
 	 *  @param  int		$selected    	Id or code preselected
-	 *  @param  string	$htmlname   	Nom du formulaire select
+	 *  @param  string	$htmlname   	Name of the select form
 	 *	@param	int		$empty			Add empty value in list
 	 *	@return	void
 	 */
@@ -414,10 +414,10 @@ class FormCompany extends Form
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *   Provides the dropdown of the active regions including the actif country.
+	 *   Provides the dropdown of the active regions including the active country.
 	 *   The key of the list is the code (there may be more than one entry for a
 	 *   code but in that case the fields country and language are different).
-	 *   un code donnee mais dans ce cas, le champ pays et lang differe).
+	 *   a given code but in this case, the country and language field differs).
 	 *   This way the links with the regions are made independent of its name.
 	 *
 	 *   @param		string		$selected		Preselected value
@@ -581,7 +581,7 @@ class FormCompany extends Form
 		$errormsg = '';
 		$filter = forgeSQLFromUniversalSearchCriteria($filter, $errormsg, 0);
 		if ($filter) {
-			$sqlwhere = $filter;
+			$sqlwhere = $filter;  // @phan-suppress-current-line SqlInjection
 			$sql .= " " . $sqlwhere;
 		}
 
@@ -980,35 +980,30 @@ class FormCompany extends Form
 		$formlength = 0;
 		if (!getDolGlobalString('MAIN_DISABLEPROFIDRULES')) {
 			if ($country_code == 'FR') {
-				if (isset($idprof)) {
-					if ($idprof == 1) {
-						$formlength = 9;
-					} elseif ($idprof == 2) {
-						$formlength = 14;
-					} elseif ($idprof == 3) {
-						$formlength = 5; // 4 digits and 1 letter since january
-					} elseif ($idprof == 4) {
-						$formlength = 32; // No maximum as we need to include a town name in this id
-					}
+				if ($idprof == 1) {
+					$formlength = 9;
+				} elseif ($idprof == 2) {
+					$formlength = 14;
+				} elseif ($idprof == 3) {
+					$formlength = 5; // 4 digits and 1 letter since january
+				} elseif ($idprof == 4) {
+					$formlength = 32; // No maximum as we need to include a town name in this id
 				}
 			} elseif ($country_code == 'ES') {
 				if ($idprof == 1) {
 					$formlength = 9; //CIF/NIF/NIE 9 digits
-				}
-				if ($idprof == 2) {
+				} elseif ($idprof == 2) {
 					$formlength = 12; //NASS 12 digits without /
-				}
-				if ($idprof == 3) {
+				} elseif ($idprof == 3) {
 					$formlength = 5; //CNAE 5 digits
-				}
-				if ($idprof == 4) {
+				} elseif ($idprof == 4) {
 					$formlength = 32; //depend of college
 				}
 			}
 		}
 
 		$selected = $preselected;
-		if (!$selected && isset($idprof)) {
+		if (!$selected) {
 			if ($idprof == 1 && !empty($this->idprof1)) {
 				$selected = $this->idprof1;
 			} elseif ($idprof == 2 && !empty($this->idprof2)) {
@@ -1191,7 +1186,7 @@ class FormCompany extends Form
 	 *  @param	Contact|Client|null	$prospectstatic Prospect object
 	 *  @param  int					$statusprospect	status of prospect
 	 *  @param  int					$idprospect     id of prospect
-	 *  @param  'html'|'js'			$mode      		select if we want activate de html part or js
+	 *  @param  'html'|'js'			$mode      		select whether to activate the HTML part or JS
 	 *  @return	void
 	 */
 	public function selectProspectStatus($htmlname, $prospectstatic, $statusprospect, $idprospect, $mode = "html")

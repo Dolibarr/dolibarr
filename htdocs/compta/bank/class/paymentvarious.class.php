@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2017-2021  Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2017-2021  Alexandre Spangaro          <alexandre@inovea-conseil.com>
+ * Copyright (C) 2018-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  MDW                         <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026       Solution Libre SAS          <contact@solution-libre.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -173,7 +174,7 @@ class PaymentVarious extends CommonObject
 
 	/**
 	 *  'type' if the field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
-	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
+	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalString("MY_SETUP_PARAM")'
 	 *  'position' is the sort order of field.
@@ -260,7 +261,7 @@ class PaymentVarious extends CommonObject
 		$sql .= " accountancy_code='".$this->db->escape($this->accountancy_code)."',";
 		$sql .= " subledger_account='".$this->db->escape($this->subledger_account)."',";
 		$sql .= " fk_projet='".$this->db->escape((string) $this->fk_project)."',";
-		$sql .= " fk_bank=".($this->fk_bank > 0 ? $this->fk_bank : "null").",";
+		$sql .= " fk_bank=".($this->fk_bank > 0 ? ((int) $this->fk_bank) : "null").",";
 		$sql .= " fk_user_author=".(int) $this->fk_user_author.",";
 		$sql .= " fk_user_modif=".(int) $this->fk_user_modif;
 		$sql .= " WHERE rowid=".((int) $this->id);
@@ -272,7 +273,13 @@ class PaymentVarious extends CommonObject
 			return -1;
 		}
 
-		if (!$notrigger) {
+		// Actions on extra fields
+		$result = $this->insertExtraFields();
+		if ($result < 0) {
+			$error++;
+		}
+
+		if (!$error && !$notrigger) {
 			// Call trigger
 			$result = $this->call_trigger('PAYMENT_VARIOUS_MODIFY', $user);
 			if ($result < 0) {
@@ -354,6 +361,10 @@ class PaymentVarious extends CommonObject
 				$this->rappro               = $obj->rappro;
 				$this->bank_num_releve      = $obj->bank_num_releve;
 			}
+
+			// Fetch extrafields
+			$this->fetch_optionals();
+
 			$this->db->free($resql);
 
 			return 1;
@@ -533,6 +544,12 @@ class PaymentVarious extends CommonObject
 			$this->ref = (string) $this->id;
 
 			if ($this->id > 0) {
+				// Insert extrafields
+				$result = $this->insertExtraFields();
+				if ($result < 0) {
+					$error++;
+				}
+
 				if (isModEnabled("bank") && !empty($this->amount)) {
 					// Insert into llx_bank
 					require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';

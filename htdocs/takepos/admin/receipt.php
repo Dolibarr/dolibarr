@@ -94,7 +94,7 @@ $form = new Form($db);
 
 llxHeader('', $langs->trans("CashDeskSetup"), '', '', 0, 0, '', '', '', 'mod-takepos page-admin_receipt');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/system/database.php?restore_lastsearch_values=1">'.img_picto($langs->trans("GoBack"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("GoBack").'</span></a>';
+$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 
 print load_fiche_titre($langs->trans("CashDeskSetup").' (TakePOS)', $linkback, 'title_setup');
 
@@ -128,7 +128,7 @@ if (isALNERunningVersion()) {
 print "</td></tr>\n";
 
 if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "browser" || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {
-	$substitutionarray = pdf_getSubstitutionArray($langs, array('ticket', 'member', 'candidate'), null, 2, array('mycompany', 'company', 'user', 'object', 'system'));
+	$substitutionarray = pdf_getSubstitutionArray($langs, array('ticket', 'member', 'candidate', 'shipping'), null, 2, array('mycompany', 'company', 'user', 'object', 'system'));
 	$substitutionarray['__(AnyTranslationKey)__'] = $langs->trans("Translation");
 
 	$htmltext = '<i class="small">'.$langs->trans("AvailableVariables").':<br>';
@@ -175,7 +175,7 @@ if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "browser" || getDolGlobalStrin
 	print "</td></tr>\n";
 
 	// Print payment method
-	// When LNE is own, we show an information to the user to help himunderstand that the feature is forced.
+	// When LNE is own, we show an information to the user to help him understand that the feature is forced.
 	print '<tr class="oddeven"><td>';
 	print $langs->trans('PrintPaymentMethodOnReceipts');
 	print '<td colspan="2">';
@@ -220,24 +220,27 @@ if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector" && filter_v
 }
 
 // Print without details
-print '<tr class="oddeven"><td>';
-print $langs->trans('PrintWithoutDetailsButton');
-print '<td colspan="2">';
-if (isALNERunningVersion()) {
-	// Always forced to true
-	$conf->global->TAKEPOS_PRINT_WITHOUT_DETAILS = 1;
-	print img_picto($langs->trans("Disabled"), 'switch_off', 'class="opacitymedium valignmiddle"');
-	print ' <span class="opacitymedium valignmiddle">'.$form->textwithpicto($langs->trans("NotAvailable"), $langs->trans("NotAvailableForCountryWhenModuleIsOn", $mysoc->country_code, $langs->transnoentitiesnoconv('Module3200Name'))).'</span>';
-} else {
-	print ajax_constantonoff('TAKEPOS_PRINT_WITHOUT_DETAILS', array(), $conf->entity, 0, 0, 1, 0, 0, 0, '', '', 'inline-block', 0, '');
-}
-print "</td></tr>\n";
-if (getDolGlobalString('TAKEPOS_PRINT_WITHOUT_DETAILS')) {
+if (getDolGlobalString('TAKEPOS_ENABLE_PRINT_WITHOUT_DETAILS')) {	// Note that even if option is set manually, if version is certified, option will be disabled later and above all in the page that generate the documents/receipts.
 	print '<tr class="oddeven"><td>';
-	print $langs->trans('PrintWithoutDetailsLabelDefault');
+	print $langs->trans('PrintWithoutDetailsButton');
 	print '<td colspan="2">';
-	print '<input type="text" name="TAKEPOS_PRINT_WITHOUT_DETAILS_LABEL_DEFAULT" value="' . getDolGlobalString('TAKEPOS_PRINT_WITHOUT_DETAILS_LABEL_DEFAULT') . '" />';
+	if (isALNERunningVersion()) {
+		// Always forced to true
+		$conf->global->TAKEPOS_PRINT_WITHOUT_DETAILS = 1;
+		print img_picto($langs->trans("Disabled"), 'switch_off', 'class="opacitymedium valignmiddle"');
+		print ' <span class="opacitymedium valignmiddle">'.$form->textwithpicto($langs->trans("NotAvailable"), $langs->trans("NotAvailableForCountryWhenModuleIsOn", $mysoc->country_code, $langs->transnoentitiesnoconv('Module3200Name'))).'</span>';
+	} else {
+		print ajax_constantonoff('TAKEPOS_PRINT_WITHOUT_DETAILS', array(), $conf->entity, 0, 0, 1, 0, 0, 0, '', '', 'inline-block', 0, '');
+	}
 	print "</td></tr>\n";
+
+	if (getDolGlobalString('TAKEPOS_PRINT_WITHOUT_DETAILS')) {
+		print '<tr class="oddeven"><td>';
+		print $langs->trans('PrintWithoutDetailsLabelDefault');
+		print '<td colspan="2">';
+		print '<input type="text" name="TAKEPOS_PRINT_WITHOUT_DETAILS_LABEL_DEFAULT" value="' . getDolGlobalString('TAKEPOS_PRINT_WITHOUT_DETAILS_LABEL_DEFAULT') . '" />';
+		print "</td></tr>\n";
+	}
 }
 
 // Gift receipt

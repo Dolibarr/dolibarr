@@ -5,6 +5,7 @@
  * Copyright (C) 2010		Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015 Claudio Aschieri				<c.aschieri@19.coop>
  * Copyright (C) 2024		MDW								<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -118,10 +119,9 @@ function reception_prepare_head(Reception $object)
  */
 function reception_admin_prepare_head()
 {
-	global $langs, $conf, $user, $db;
+	global $langs, $conf, $user, $extrafields;
 	$langs->load("receptions");
 
-	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('reception');
 	$extrafields->fetch_name_optionals_label('receptiondet_batch');
 
@@ -136,7 +136,7 @@ function reception_admin_prepare_head()
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'reception_admin');
 
 	if (getDolGlobalString('MAIN_SUBMODULE_RECEPTION')) {
-		$head[$h][0] = DOL_URL_ROOT.'/admin/reception_extrafields.php';
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'reception'));
 		$head[$h][1] = $langs->trans("ExtraFields");
 		$nbExtrafields = $extrafields->attributes['reception']['count'];
 		if ($nbExtrafields > 0) {
@@ -147,7 +147,7 @@ function reception_admin_prepare_head()
 	}
 
 	if (getDolGlobalString('MAIN_SUBMODULE_RECEPTION')) {
-		$head[$h][0] = DOL_URL_ROOT.'/admin/receptiondet_batch_extrafields.php';
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'receptiondet_batch'));
 		$head[$h][1] = $langs->trans("ExtraFieldsLines");
 		$nbExtrafields = $extrafields->attributes['receptiondet_batch']['count'];
 		if ($nbExtrafields > 0) {
