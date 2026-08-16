@@ -311,7 +311,7 @@ function rebuild_merge_pdf_usage()
 	print "\n";
 	print "To regenerate existing PDF before merge, use regenerate=templatename\n";
 	print "To regenerate existing PDF with no merge (regenerate only), use regeneratenomerge=templatename\n";
-	print "To merge by reusing existing PDF (generation only for non already existing PDF), use regenerate=0 or nothing\n";
+	print "To merge by reusing existing PDF (generation only for non already existing PDF), use regenerate=no or nothing\n";
 	print "\n";
 	print "To generate documents in a given language, use lang=xx_XX\n";
 	print "To set prefix of generated file name, use prefix=myfileprefix\n";
