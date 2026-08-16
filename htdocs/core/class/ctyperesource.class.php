@@ -4,7 +4,7 @@
  * Copyright (C) 2016       Florian Henry       <florian.henry@atm-consulting.fr>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -93,7 +93,7 @@ class Ctyperesource extends CommonDict
 		$sql .= ') VALUES (';
 		$sql .= ' '.(!isset($this->code) ? 'NULL' : "'".$this->db->escape($this->code)."'").',';
 		$sql .= ' '.(!isset($this->label) ? 'NULL' : "'".$this->db->escape($this->label)."'").',';
-		$sql .= ' '.(!isset($this->active) ? 'NULL' : $this->active);
+		$sql .= ' '.(!isset($this->active) ? 'NULL' : ((int) $this->active));
 		$sql .= ')';
 
 		$this->db->begin();
@@ -226,7 +226,7 @@ class Ctyperesource extends CommonDict
 				}
 			}
 			if (count($sqlwhere) > 0) {
-				$sql .= " AND ".implode(' '.$this->db->escape($filtermode).' ', $sqlwhere);
+				$sql .= " AND ".implode(' '.$this->db->sanitize($filtermode).' ', $sqlwhere);
 			}
 
 			$filter = '';
@@ -304,7 +304,7 @@ class Ctyperesource extends CommonDict
 		$sql = 'UPDATE '.$this->db->prefix().$this->table_element.' SET';
 		$sql .= ' code = '.(isset($this->code) ? "'".$this->db->escape($this->code)."'" : "null").',';
 		$sql .= ' label = '.(isset($this->label) ? "'".$this->db->escape($this->label)."'" : "null").',';
-		$sql .= ' active = '.(isset($this->active) ? $this->active : "null");
+		$sql .= ' active = '.(isset($this->active) ? ((int) $this->active) : "null");
 		$sql .= ' WHERE rowid='.((int) $this->id);
 
 		$this->db->begin();

@@ -95,7 +95,7 @@ if (!isset($section)) {
 // Confirm remove file (for non javascript users)
 if (($action == 'delete' || $action == 'file_manager_delete') && empty($conf->use_javascript_ajax)) {
 	// TODO Add website, pageid, filemanager if defined
-	print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.$section.'&urlfile='.urlencode(GETPOST("urlfile")), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', '', 1);
+	print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.urlencode($section).'&urlfile='.urlencode(GETPOST("urlfile")), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', '', 1);
 }
 
 // Start container of all panels
@@ -120,7 +120,7 @@ if ($permtoadd) {
 	print '</a>';
 }
 if ($module == 'ecm') {
-	$tmpurl = ((!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_ECM_DISABLE_JS')) ? '#' : ($_SERVER["PHP_SELF"].'?action=refreshmanual'.($module ? '&module='.$module : '').($section ? '&section='.$section : '')));
+	$tmpurl = ((!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_ECM_DISABLE_JS')) ? '#' : ($_SERVER["PHP_SELF"].'?action=refreshmanual'.($module ? '&module='.$module : '').($section ? '&section='.urlencode($section) : '')));
 	print '<a id="arefreshbutton" href="'.$tmpurl.'" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans('ReSyncListOfDir')).'">';
 	print img_picto('', 'refresh', 'id="refreshbutton"', 0, 0, 0, '', 'size15x marginrightonly');
 	print '</a>';
@@ -222,7 +222,7 @@ print '</div>';
 
 // Ask confirmation of deletion of directory
 if ($action == 'delete_section') {
-	print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.$section, $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection', $ecmdir->label), 'confirm_deletesection', '', '', 1);
+	print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.urlencode($section), $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection', $ecmdir->label), 'confirm_deletesection', '', '', 1);
 }
 // End confirm
 

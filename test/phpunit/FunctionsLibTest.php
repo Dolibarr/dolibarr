@@ -3,7 +3,7 @@
  * Copyright (C) 2015	   	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2023 		Alexandre Janniaux   	<alexandre.janniaux@gmail.com>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -271,6 +271,21 @@ class FunctionsLibTest extends CommonClassTest
 		$sql = forgeSQLFromUniversalSearchCriteria($filter);
 		$this->assertEquals(" AND ((t.fk_soc IN ('1','2=b')))", $sql);
 
+		// Test use of forbiddenstring
+		$errorstr = '';
+		$filter = "(t.fk_soc:IN:'1','2=b')";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter, $errorstr, 0, 0, 0, array('aaa'));
+		$this->assertEquals(" AND ((t.fk_soc IN ('1','2=b')))", $sql);
+
+		$filter = "(t.api_key:IN:'1','2=b')";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter, $errorstr, 0, 0, 0, array('aaa'));
+		$this->assertEquals(" AND (1=1)", $sql);
+
+		$filter = "(t.fk_soc:IN:'1','2=b')";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter, $errorstr, 0, 0, 0, array('fk_soc'));
+		$this->assertEquals(" AND (1=1)", $sql);
+
+
 		global $dolibarr_allow_unsecured_select_in_extrafields_filter;
 
 		// If $dolibarr_allow_unsecured_select_in_extrafields_filter is set
@@ -414,7 +429,9 @@ class FunctionsLibTest extends CommonClassTest
 		print __METHOD__." ".$input." result=".$result."\n";
 		$this->assertEquals(0, $result);
 
-		$input = "usace.army.mil";
+		// Note: intentionally not a .mil domain (some CI network environments filter/block .mil DNS
+		// resolution intermittently, which made this assertion flaky without any actual code issue).
+		$input = "microsoft.com";
 		$result = isValidMXRecord($input);
 		print __METHOD__." ".$input." result=".$result."\n";
 		$this->assertEquals(1, $result);
@@ -1287,6 +1304,23 @@ class FunctionsLibTest extends CommonClassTest
 		$object->country_code = 'CA';
 		$phone = dol_print_phone('1234567890', $object->country_code, 0, 0, 0, ' ');
 		$this->assertEquals('<span class="paddingright">(123) 456-7890</span>', $phone, 'Phone for CA 1');
+
+		// Every digit must appear exactly once, in order, whatever the country format
+		$object->country_code = 'JO';
+		$phone = dol_print_phone('+96212345678', $object->country_code, 0, 0, 0, ' ');
+		$this->assertEquals('<span class="paddingright">+962 1 234 56 78</span>', $phone, 'Phone for JO 1');
+
+		$object->country_code = 'PE';
+		$phone = dol_print_phone('987654321', $object->country_code, 0, 0, 0, ' ');
+		$this->assertEquals('<span class="paddingright">987 654 321</span>', $phone, 'Phone for PE 1');
+
+		$object->country_code = 'PE';
+		$phone = dol_print_phone('+5111234567', $object->country_code, 0, 0, 0, ' ');
+		$this->assertEquals('<span class="paddingright">+511 123 4567</span>', $phone, 'Phone for PE 2');
+
+		$object->country_code = 'PE';
+		$phone = dol_print_phone('+51987654321', $object->country_code, 0, 0, 0, ' ');
+		$this->assertEquals('<span class="paddingright">+51 987 654 321</span>', $phone, 'Phone for PE 3');
 	}
 
 
@@ -1498,6 +1532,84 @@ class FunctionsLibTest extends CommonClassTest
 		print __METHOD__." rule=RULE 5 ECOMMERCE_200238EC FR-US\n";
 		$vat = get_default_tva($companyfr, $companyus, 0);
 		$this->assertEquals(0, $vat, 'RULE 5 ECOMMERCE_200238EC');
+	}
+
+	/**
+	 * testGetDefaultTvaForBuyerState
+	 *
+	 * Covers VATRULE 2: when the buyer department (state/province) has a VAT rule in the
+	 * dictionary, it becomes the default VAT rate. Also checks that only active rates of the
+	 * current entity are considered (an inactive rate must never be selected).
+	 *
+	 * @return	void
+	 */
+	public function testGetDefaultTvaForBuyerState()
+	{
+		global $conf,$user,$langs,$db;
+		$this->savconf = $conf;
+		$this->savuser = $user;
+		$this->savlangs = $langs;
+		$this->savdb = $db;
+
+		// Make sure the ecommerce directive left on by a previous test does not interfere with VATRULE 2
+		unset($conf->global->SERVICE_ARE_ECOMMERCE_200238EC);
+
+		// Seller subject to VAT in France
+		$companyfr = new Societe($db);
+		$companyfr->country_code = 'FR';
+		$companyfr->tva_assuj = 1;
+		$companyfr->tva_intra = 'FR9999';
+
+		// Find an existing department (state/province) to attach a VAT rule to, and the France country id
+		$stateid = 0;
+		$sql = "SELECT rowid FROM ".$db->prefix()."c_departements WHERE code_departement = '75'";
+		$resql = $db->query($sql);
+		if ($resql && $db->num_rows($resql)) {
+			$objdep = $db->fetch_object($resql);
+			$stateid = (int) $objdep->rowid;
+		}
+		if (empty($stateid)) {
+			$this->markTestSkipped('No department found in c_departements to run the VATRULE 2 test.');
+			return;
+		}
+
+		$frpaysid = 0;
+		$sql = "SELECT rowid FROM ".$db->prefix()."c_country WHERE code = 'FR'";
+		$resql = $db->query($sql);
+		if ($resql && $db->num_rows($resql)) {
+			$objpays = $db->fetch_object($resql);
+			$frpaysid = (int) $objpays->rowid;
+		}
+
+		// Insert two temporary VAT rules attached to that department:
+		//  - an ACTIVE one at 12 that must be selected
+		//  - an INACTIVE one at 25 (higher, so it would win the taux DESC sort) that must be ignored
+		$db->query("DELETE FROM ".$db->prefix()."c_tva WHERE code IN ('TESTVATACT', 'TESTVATINACT')");
+		$db->query("INSERT INTO ".$db->prefix()."c_tva (entity, fk_pays, fk_department_buyer, code, type_vat, taux, use_default, recuperableonly, active) VALUES (1, ".$frpaysid.", ".$stateid.", 'TESTVATACT', 0, 12, 0, 0, 1)");
+		$db->query("INSERT INTO ".$db->prefix()."c_tva (entity, fk_pays, fk_department_buyer, code, type_vat, taux, use_default, recuperableonly, active) VALUES (1, ".$frpaysid.", ".$stateid.", 'TESTVATINACT', 0, 25, 0, 0, 0)");
+
+		// Buyer located in that department
+		$buyer = new Societe($db);
+		$buyer->country_code = 'FR';
+		$buyer->tva_assuj = 1;
+		$buyer->state_id = $stateid;
+
+		// Case 1: an active department rate exists -> VATRULE 2 returns it, ignoring the inactive (higher) one
+		$vatactive = get_default_tva($companyfr, $buyer, 0);
+
+		// Case 2: no active department rate remains -> VATRULE 2 must not fire on the inactive rows
+		$db->query("UPDATE ".$db->prefix()."c_tva SET active = 0 WHERE code = 'TESTVATACT'");
+		$vatinactive = get_default_tva($companyfr, $buyer, 0);
+
+		// Cleanup fixtures before asserting so a failed assertion never leaves test data behind
+		$db->query("DELETE FROM ".$db->prefix()."c_tva WHERE code IN ('TESTVATACT', 'TESTVATINACT')");
+
+		// The active department rate is selected...
+		$this->assertStringContainsString('TESTVATACT', $vatactive, 'VATRULE 2 must select the active department VAT rate');
+		// ...and the inactive one is never selected (this is the fix)
+		$this->assertStringNotContainsString('TESTVATINACT', $vatactive, 'An inactive department VAT rate must not be selected by VATRULE 2');
+		// When no active department rate remains, VATRULE 2 does not select the (now inactive) rate either
+		$this->assertStringNotContainsString('TESTVATACT', $vatinactive, 'An inactive department VAT rate must not be selected by VATRULE 2');
 	}
 
 	/**
@@ -2133,5 +2245,79 @@ class FunctionsLibTest extends CommonClassTest
 		$s = '/aaa/bbb -a -b';
 		$result = dol_sanitizePathName($s, '_', 0, 1);
 		$this->assertEquals('/aaa/bbb -a -b', $result);
+	}
+
+	/**
+	 * testPrice
+	 *
+	 * @return void
+	 */
+	public function testPrice()
+	{
+		global $conf;
+
+		// English formatting: SeparatorDecimal=. and SeparatorThousand=,
+		$langsus = new Translate('', $conf);
+		$langsus->setDefaultLang('en_US');
+		$langsus->load('main');
+
+		// Default rounding is min(MAIN_MAX_DECIMALS_UNIT, MAIN_MAX_DECIMALS_TOT) = min(5, 2) = 2 (checked in setUpBeforeClass)
+		$this->assertEquals('1,000.00', price(1000, 0, $langsus));
+		$this->assertEquals('0.00', price(0, 0, $langsus));
+		$this->assertEquals('-1,000.00', price(-1000, 0, $langsus));
+		$this->assertEquals('1,234.50', price(1234.5, 0, $langsus));
+		// More decimals than the default rounding are kept, to not lose information
+		$this->assertEquals('1,234.567', price(1234.567, 0, $langsus));
+
+		// French formatting: SeparatorDecimal=, and SeparatorThousand=Space
+		$langsfr = new Translate('', $conf);
+		$langsfr->setDefaultLang('fr_FR');
+		$langsfr->load('main');
+
+		$this->assertEquals('1 234,50', price(1234.5, 0, $langsfr));
+
+		// HTML mode replaces spaces with &nbsp;
+		$this->assertEquals('1&nbsp;234,50', price(1234.5, 1, $langsfr));
+
+		// International separators when $outlangs = 'none'
+		$this->assertEquals('1234.50', price(1234.5, 0, 'none'));
+
+		// forcerounding forces the exact number of decimals shown (0 forces rounding to unit)
+		$this->assertEquals('1,235', price(1234.5, 0, $langsus, 1, -1, 0));
+		// 'MU' forces MAIN_MAX_DECIMALS_UNIT (5, checked in setUpBeforeClass)
+		$this->assertEquals('1,234.56789', price(1234.56789, 0, $langsus, 1, -1, 'MU'));
+
+		// Currency symbol placement: USD is shown before the amount, EUR after
+		$this->assertEquals('$1,000.00', price(1000, 0, $langsus, 1, -1, -1, 'USD'));
+		$this->assertEquals('1,000.00 €', price(1000, 0, $langsus, 1, -1, -1, 'EUR'));
+	}
+
+	/**
+	 * testDolPrintDate
+	 *
+	 * @return void
+	 */
+	public function testDolPrintDate()
+	{
+		// Timestamp for 2020-07-01 00:00:01 UTC (same value already used and verified in testDolGetDate)
+		$timestamp = 1593561601;
+
+		$this->assertEquals('', dol_print_date('', 'standard', true), 'Empty input must return empty string');
+		$this->assertEquals('1970-01-01 00:00:00', dol_print_date(0, 'standard', true), 'Timestamp 0 is a valid date (1970-01-01)');
+
+		// Format shortcuts that are not language-sensitive
+		$this->assertEquals('2020-07-01', dol_print_date($timestamp, 'dayrfc', true));
+		$this->assertEquals('2020-07-01 00:00:01', dol_print_date($timestamp, 'standard', true));
+		$this->assertEquals('2020-07-01T00:00:01Z', dol_print_date($timestamp, 'dayhourrfc', true));
+		$this->assertEquals('20200701000001', dol_print_date($timestamp, 'dayhourlog', true));
+
+		// A literal (non-shortcut) strftime-style format string
+		$this->assertEquals('01/07/2020 00:00', dol_print_date($timestamp, '%d/%m/%Y %H:%M', true));
+
+		// tzoutput=false uses the PHP server timezone instead of GMT: forced to UTC here so both must match
+		$savtz = date_default_timezone_get();
+		date_default_timezone_set('UTC');
+		$this->assertEquals('2020-07-01 00:00:01', dol_print_date($timestamp, 'standard', false));
+		date_default_timezone_set($savtz);
 	}
 }

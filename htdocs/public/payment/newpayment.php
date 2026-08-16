@@ -810,11 +810,33 @@ if ($action == 'charge' && isModEnabled('stripe')) {	// Test on permission not r
 			$action = '';
 		}
 
-		if ($paymentintent->status != 'succeeded') {
+		// Security: a succeeded PaymentIntent must not be reusable to record a payment on more than one Dolibarr object.
+		// Without this check, a PaymentIntent id obtained for one invoice/order/... could be resubmitted here with a
+		// different fulltag/ref to fraudulently record (and validate) a payment on a different object that was never
+		// really paid for, since Dolibarr never re-checks that a "succeeded" PaymentIntent is bound to a specific target.
+		$paymentintentalreadyused = 0;
+		if (!$error && is_object($paymentintent) && $paymentintent->status == 'succeeded') {
+			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."paiement";
+			$sql .= " WHERE ext_payment_id = '".$db->escape($paymentintent_id)."'";
+			$sql .= " OR ext_payment_id LIKE '".$db->escape($paymentintent_id).":%'";
+			$resql = $db->query($sql);
+			if ($resql) {
+				if ($db->num_rows($resql) > 0) {
+					$paymentintentalreadyused = 1;
+				}
+				$db->free($resql);
+			}
+		}
+
+		if ($paymentintent->status != 'succeeded' || $paymentintentalreadyused) {
 			$error++;
-			$errormessage = "StatusOfRetrievedIntent is not succeeded: ".$paymentintent->status;
+			if ($paymentintentalreadyused) {
+				$errormessage = "PaymentIntent ".$paymentintent_id." was already used to record a payment, it cannot be reused for another object";
+			} else {
+				$errormessage = "StatusOfRetrievedIntent is not succeeded: ".$paymentintent->status;
+			}
 			dol_syslog($errormessage, LOG_WARNING, 0, '_payment');
-			setEventMessages($paymentintent->status, null, 'errors');
+			setEventMessages($errormessage, null, 'errors');
 			$action = '';
 
 			$randomseckey = getRandomPassword(true, null, 20);		// TODO Generate a key including fulltag to avoid forging URL.

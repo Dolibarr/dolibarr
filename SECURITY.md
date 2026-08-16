@@ -5,7 +5,7 @@ This file contains some policies about the security reports on Dolibarr ERP CRM 
 
 ## Supported Versions for security reports
 
-Security report are valid only on any current stable version for the last 5 major versions (see https://dolibarr.org web site to get current stable version) or on development version (branch "develop" on https://github.com/Dolibarr/dolibarr).
+Security report are valid only on any current stable version for the last 2 major stable versions (see https://dolibarr.org web site to get current stable version) or on development version (branch "develop" on https://github.com/Dolibarr/dolibarr), and ONLY if the vulnerability is also confirmed into the "develop" branch (meaning the vulnerability was already reported).
 
 
 ## Reporting a Vulnerability

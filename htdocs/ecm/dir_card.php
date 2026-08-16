@@ -463,11 +463,11 @@ if ($action != 'edit' && $action != 'delete' && $action != 'deletefile') {
 	print '<div class="tabsAction">';
 
 	if ($permissiontoadd) {
-		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&token='.newToken().'&module='.$module.'&section='.$section.'">'.$langs->trans('Edit').'</a>';
+		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&token='.newToken().'&module='.urlencode($module).'&section='.urlencode($section).'">'.$langs->trans('Edit').'</a>';
 	}
 
 	if ($permissiontoadd) {
-		print '<a class="butAction" href="'.DOL_URL_ROOT.'/ecm/dir_add_card.php?action=create&token='.newToken().'&module='.$module.'&catParent='.$section.'">'.$langs->trans('ECMAddSection').'</a>';
+		print '<a class="butAction" href="'.DOL_URL_ROOT.'/ecm/dir_add_card.php?action=create&token='.newToken().'&module='.urlencode($module).'&catParent='.urlencode($section).'">'.$langs->trans('ECMAddSection').'</a>';
 	} else {
 		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('ECMAddSection').'</a>';
 	}
@@ -509,7 +509,7 @@ if ($user->hasRight('ecm', 'upload')) {
 
 // List of document
 if ($user->hasRight('ecm', 'read')) {
-	$param = '&amp;section=' . $section;
+	$param = '&section=' . urlencode($section);
 	$formfile->list_of_documents($filearray, '', 'ecm', $param, 1, $relativepath, $user->hasRight("ecm", "upload"));
 }
 */

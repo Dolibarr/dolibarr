@@ -824,6 +824,7 @@ if (empty($reshook)) {
 		setEventMessages($object->error, $object->errors, 'errors');
 	} elseif ($action == 'deleteline' && !empty($line_id) && $permissiontoadd) {
 		// delete a line
+		$error = 0;
 		$object->fetch($id);
 		$lines = $object->lines;
 		$line = new ExpeditionLigne($db);
@@ -832,7 +833,9 @@ if (empty($reshook)) {
 		$num_prod = count($lines);
 		for ($i = 0; $i < $num_prod; $i++) {
 			if ($lines[$i]->id == $line_id) {
-				if (count($lines[$i]->details_entrepot) > 1) {
+				// A standalone shipment (SHIPMENT_STANDALONE) loads its lines with fetch_lines_free(),
+				// which does not set details_entrepot, so count() must not be called on it blindly.
+				if (is_array($lines[$i]->details_entrepot) && count($lines[$i]->details_entrepot) > 1) {
 					// delete multi warehouse lines
 					foreach ($lines[$i]->details_entrepot as $details_entrepot) {
 						$line->id = $details_entrepot->line_id;
@@ -3729,7 +3732,7 @@ if ($action == 'create' && $usercancreate) {
 					}
 					print '</td>';
 					// Display lines extrafields
-					if (!empty($rowExtrafieldsStart)) {
+					if (isset($rowExtrafieldsStart, $rowExtrafieldsView, $rowEnd)) {  // @phan-suppress-current-line PhanPluginUndeclaredVariableIsset
 						print $rowExtrafieldsStart;
 						print $rowExtrafieldsView;
 						print $rowEnd;

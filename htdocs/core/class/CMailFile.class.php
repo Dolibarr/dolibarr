@@ -6,7 +6,7 @@
  * Copyright (C) 2003       Jean-Louis Bergamo          <jlb@j1b.org>
  * Copyright (C) 2004-2015  Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin               <regis.houssin@inodbox.com>
- * Copyright (C) 2019-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2019-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025       Joachim Kueter              <git-jk@bloxera.com>
  *
@@ -1435,6 +1435,7 @@ class CMailFile
 
 				// send mail
 				$failedRecipients = array();
+				$result = false;
 				try {
 					$result = $this->mailer->send($this->message, $failedRecipients);
 				} catch (Exception $e) {

@@ -22,7 +22,9 @@
  * Copyright (C) 2025		Alexandre Janniaux	<alexandre.janniaux@gmail.com>
  * Copyright (C) 2025		Vincent Maury		<vmaury@timgroup.fr>
  * Copyright (C) 2026		Pierre Ardoin		<developpeur@lesmetiersdubatiment.fr>
-*
+ * Copyright (C) 2026		Anthony Berton		<anthony.berton@bb2a.fr>
+
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -173,6 +175,7 @@ abstract class CommonObject
 	 * noteditable?: int<0, 1>,
 	 * alwayseditable?: int<0, 1>|string,
 	 * default?: string|int,
+	 * description?: string,
 	 * index?: int<0, 1>,
 	 * foreignkey?: string,
 	 * searchall?: int<0, 1>,
@@ -233,6 +236,7 @@ abstract class CommonObject
 	 * 'comment' is not used. You can store here any text of your choice. It is not used by application.
 	 * 'validate' is 1 if you need to validate the field with $this->validateField(). Need MAIN_ACTIVATE_VALIDATION_RESULT.
 	 * 'copytoclipboard' is 1 or 2 to allow to add a picto to copy value into clipboard (1=picto after label, 2=picto after value)
+	 * 'description' is a description of the field that must be set to help the MCP server.
 	 *
 	 * Note: To have value dynamic, you can set value to 0 in definition and edit the value on the fly into the constructor.
 	 */
@@ -366,6 +370,12 @@ abstract class CommonObject
 	 * @see fetch_product()
 	 */
 	public $product;
+
+	/**
+	 * @var ?Entrepot 	A related warehouse object
+	 * @see fetch_warehouse()
+	 */
+	public $warehouse;
 
 	/**
 	 * @var string 		The type of originating object. Combined with `$origin_type`, it allows to reload `$origin_object`
@@ -1343,8 +1353,10 @@ abstract class CommonObject
 			return -2;
 		}
 
+		// socid is checked: @phan-suppress-next-line PhanUndeclaredProperty
 		if ($this->restrictiononfksoc && property_exists($this, 'socid') && !empty($this->socid) && $user->id > 0 && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql_allowed_contacts = 'SELECT COUNT(*) as cnt FROM '.$this->db->prefix().'societe_commerciaux as sc';
+			// socid is checked: @phan-suppress-next-line PhanUndeclaredProperty
 			$sql_allowed_contacts .= ' WHERE sc.fk_soc = '.(int) $this->socid;
 			$sql_allowed_contacts .= ' AND sc.fk_user = '.(int) $user->id;
 
@@ -2196,6 +2208,41 @@ abstract class CommonObject
 		return $result;
 	}
 
+	/**
+	 *	Load the warehouse of object, from id $this->warehouse_id or $this->fk_warehouse, into this->warehouse
+	 *
+	 *	@param		int<0,1>	$force_warehouse_id	Force warehouse id
+	 *	@return		int<-1,1>						Return integer <0 if KO, >0 if OK
+	 */
+	public function fetchWarehouse($force_warehouse_id = 0)
+	{
+		// testing through empty: @phan-suppress-next-line PhanUndeclaredProperty
+		if (empty($this->warehouse_id) && empty($this->fk_warehouse) && empty($force_warehouse_id)) {
+			return 0;
+		}
+
+		include_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
+
+		// testing through isset: @phan-suppress-next-line PhanUndeclaredProperty
+		$idtofetch = isset($this->warehouse_id) ? $this->warehouse_id : (isset($this->fk_warehouse) ? $this->fk_warehouse : 0);
+		if (!empty($force_warehouse_id)) {
+			$idtofetch = $force_warehouse_id;
+		}
+
+		if ($idtofetch) {
+			$warehouse = new Entrepot($this->db);
+			$result = $warehouse->fetch($idtofetch);
+			if ($result < 0) {
+				$this->errors = array_merge($this->errors, $warehouse->errors);
+			}
+			$this->warehouse = $warehouse;
+
+			return $result;
+		} else {
+			return -1;
+		}
+	}
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Load the user with id $userid into this->user
@@ -2555,6 +2602,7 @@ abstract class CommonObject
 		if ($fieldid == 'rowid') {
 			$sql .= " WHERE te.".$this->db->sanitize($fieldid)." < ".((int) $this->id);
 		} elseif ($fieldid == 'label') {
+			// Suppose caller is not in error @phan-suppress-next-line PhanUndeclaredProperty
 			$sql .= " WHERE te.".$this->db->sanitize($fieldid)." < '".$this->db->escape((string) $this->label)."'";
 		} else {	// Should be 'ref' or any other string field
 			$sql .= " WHERE te.".$this->db->sanitize($fieldid)." < '".$this->db->escape((string) $this->ref)."'"; // ->ref must always be defined (set to id if field does not exists)
@@ -2636,6 +2684,7 @@ abstract class CommonObject
 		if ($fieldid == 'rowid') {
 			$sql .= " WHERE te.".$this->db->sanitize($fieldid)." > ".((int) $this->id);
 		} elseif ($fieldid == 'label') {
+			// Suppose caller is not in error @phan-suppress-next-line PhanUndeclaredProperty
 			$sql .= " WHERE te.".$this->db->sanitize($fieldid)." > '".$this->db->escape((string) $this->label)."'";
 		} else {	// Should be 'ref' or any other string field
 			$sql .= " WHERE te.".$this->db->sanitize($fieldid)." > '".$this->db->escape((string) $this->ref)."'"; // ->ref must always be defined (set to id if field does not exists)
@@ -3067,8 +3116,8 @@ abstract class CommonObject
 									$line->fk_unit,
 									$line->multicurrency_subprice,
 									0,
-									$line->date_start,
-									$line->date_end,
+									$line->date_start,  // Ignore real issue with FactureLigneRec @phan-suppress-current-line PhanUndeclaredProperty
+									$line->date_end,  // Ignore real issue with FactureLigneRec @phan-suppress-current-line PhanUndeclaredProperty
 									$line->fk_fournprice,
 									$line->pa_ht,
 									$line->fk_parent_line
@@ -5666,6 +5715,7 @@ abstract class CommonObject
 				$product_static->fetch($line->fk_product);
 
 				$product_static->ref = (string) $line->ref; //can change ref in hook
+				// label is checked with empty @phan-suppress-next-line PhanUndeclaredProperty
 				$product_static->label = !empty($line->label) ? $line->label : ""; //can change label in hook
 
 				$text = $product_static->getNomUrl(1);
@@ -5699,6 +5749,7 @@ abstract class CommonObject
 					$label = $line->product_label;
 				}
 
+				// label is checked with empty @phan-suppress-next-line PhanUndeclaredProperty
 				$text .= ' - '.(!empty($line->label) ? $line->label : $label);
 				$description .= (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE') ? '' : (!empty($line->description) ? dol_htmlentitiesbr($line->description) : '')); // Description is what to show on popup. We shown nothing if already into desc.
 			}
@@ -5708,6 +5759,7 @@ abstract class CommonObject
 				// So we calculate an estimated value just to show something on screen.
 				// Not: the unit price is always for 100% of line, it is not a prorata of situation invoice (when total is)
 				if ($line->remise_percent != 100) {
+					// Suppose situation_percent is defined @phan-suppress-next-line PhanUndeclaredProperty
 					$line->subprice_ttc = (float) price2num($line->total_ttc * ($line->situation_percent ? 100 / $line->situation_percent : 1) / $line->qty / (1 - $line->remise_percent / 100), 'MU');
 				} else {
 					// Other method is less accurate
@@ -5721,7 +5773,8 @@ abstract class CommonObject
 			// Note: This is deprecated. If you need to overwrite the tpl file, use instead the hook printObjectLine and printObjectSubLine.
 
 			$qty_shipped = 0;
-			if (isset($this->expeditions[$line->id])) {
+			if (isset($this->expeditions[$line->id])) { // @phan-suppress-current-line PhanUndeclaredProperty
+				// Suppose existence of expeditions is tested @phan-suppress-next-line PhanUndeclaredProperty
 				$qty_shipped = $this->expeditions[$line->id];
 			}
 			$disableedit = ($qty_shipped > 0) && ($qty_shipped >= $line->qty);
@@ -5750,6 +5803,7 @@ abstract class CommonObject
 
 		// Line in update mode
 		if ($this->status == 0 && $action == 'editline' && $selected == $line->id) {
+			// label is tested @phan-suppress-next-line PhanUndeclaredProperty
 			$label = (!empty($line->label) ? $line->label : (($line->fk_product > 0) ? $line->product_label : ''));
 
 			$line->subprice_ttc = (float) price2num($line->subprice * (1 + ($line->tva_tx / 100)), 'MU');
@@ -5885,7 +5939,9 @@ abstract class CommonObject
 		if (((int) $line->info_bits & 2) == 2) {  // TODO Not sure this is used for source object
 			$discount = new DiscountAbsolute($this->db);
 			if (property_exists($this, 'socid')) {
+				// Tested if socid exists @phan-suppress-next-line PhanUndeclaredProperty
 				$discount->fk_soc = $this->socid;
+				// Tested if socid exists @phan-suppress-next-line PhanUndeclaredProperty
 				$discount->socid = $this->socid;
 			}
 			$this->tpl['label'] .= $discount->getNomUrl(0, 'discount');
@@ -5900,6 +5956,7 @@ abstract class CommonObject
 			}
 
 			$this->tpl['label'] .= $productstatic->getNomUrl(1);
+			// Existence of $line->label is tested @phan-suppress-next-line PhanUndeclaredProperty
 			$this->tpl['label'] .= ' - '.(!empty($line->label) ? $line->label : $line->product_label);
 			// Dates
 			if ($line->product_type == 1 && ($date_start || $date_end)) {
@@ -5910,6 +5967,7 @@ abstract class CommonObject
 			if (!empty($line->desc)) {
 				$this->tpl['label'] .= $line->desc;
 			} else {
+				// Supposes existence of $line->label @phan-suppress-next-line PhanUndeclaredProperty
 				$this->tpl['label'] .= ($line->label ? '&nbsp;'.$line->label : '');
 			}
 
@@ -6151,6 +6209,11 @@ abstract class CommonObject
 		if (!empty($tmp[1])) {
 			$modele = $tmp[0];
 			$srctemplatepath = $tmp[1];
+
+			if (!preg_match('/^'.preg_quote(DOL_DATA_ROOT, '/').'\/(ecm|doctemplates)/', $srctemplatepath)) {
+				$this->error = 'BadDirForTemplateFile';
+				return -1;
+			}
 		}
 
 		// Search template files
@@ -9629,7 +9692,7 @@ abstract class CommonObject
 						// TODO: We should not have this hidden field, and action='update' should be done only if field was POSTED by form.
 						$ef_name = 'options_' . $key;
 						$ef_value = $this->array_options[$ef_name] ?? '';
-						$out .= '<input type="hidden" name="' . $ef_name . '" id="' . $ef_name . '" value="' . dol_htmlentities($ef_value) . '" />' . "\n";	 // If trouble to preserve content, we can try dol_htmlentities() instead, but real solution is to remove completely the hidden field (see previous TODO).
+						$out .= '<input type="hidden" name="' . $ef_name . '" id="' . $ef_name . '" value="' . dolPrintHTMLForAttribute($ef_value) . '" />' . "\n";	 // If trouble to preserve content, we can try dol_htmlentities() instead, but real solution is to remove completely the hidden field (see previous TODO).
 						continue; // <> -1 and <> 1 and <> 3 = not visible on forms, only on list and <> 4 = not visible at the creation
 					} elseif ($mode == 'view' && empty($visibility)) {
 						continue;
@@ -9999,7 +10062,7 @@ abstract class CommonObject
 			return $user->hasRight($module, $element);
 		}
 
-		return $user->rights->$element;
+		return isset($user->rights->$element) ? $user->rights->$element : null;
 	}
 
 	/**
@@ -10629,10 +10692,11 @@ abstract class CommonObject
 	/**
 	 * Function to return the array of data key-value from the ->fields and all the ->properties of an object.
 	 *
-	 * Note: $this->${field} are set by the page that make the createCommon() or the updateCommon().
-	 * $this->${field} should be a clean and string value (so date are formatted for SQL insert).
+	 * Note:
+	 * - $this->${field} are set by the page that makes the createCommon() or the updateCommon().
+	 * - $this->${field} should be a clean and string value (so date are formatted for SQL insert).
 	 *
-	 * @return array<string,null|int|float|string>	Array with all values of each property to update
+	 * @return array<string,null|int|float|string>	Array with all values of each property to update - caller is responsible for escaping
 	 */
 	protected function setSaveQuery()
 	{
@@ -10682,7 +10746,7 @@ abstract class CommonObject
 			} else {
 				// Note: If $this->{$field} is not defined, it means there is a bug into definition of ->fields or a missing declaration of property
 				// We should keep the warning generated by this because it is a bug somewhere else in code, not here.
-				$queryarray[$field] = $this->{$field};
+				$queryarray[$field] = $this->{$field};  // @phan-suppress-current-line SqlInjection
 			}
 
 			if (array_key_exists('type', $info) && $info['type'] == 'timestamp' && empty($queryarray[$field])) {
