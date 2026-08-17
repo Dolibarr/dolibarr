@@ -989,7 +989,7 @@ if (empty($reshook)) {
 
 		if (!$error) {
 			// Actions on extra fields
-			$result = $object->updateExtraField($attribute_name, 'INTERVENTION_MODIFY');
+			$result = $object->updateExtraField($attribute_name, 'FICHINTER_MODIFY');
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
 				$error++;

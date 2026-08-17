@@ -3024,6 +3024,9 @@ if (empty($reshook)) {
 					unset($_POST['date_endyear']);
 					unset($_POST['situations']);
 					unset($_POST['progress']);
+
+					header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$id);
+					exit();
 				} else {
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
