@@ -184,6 +184,13 @@ class PropaleLigne extends CommonObjectLine
 	public $special_code;
 
 	/**
+	 * Whether the line is an option (1) or a normal line (0). Option lines keep a real quantity
+	 * but are excluded from the document totals and displayed as "Option" on PDF. Proposals only.
+	 * @var int
+	 */
+	public $is_option = 0;
+
+	/**
 	 * Some other info:
 	 * Bit 0: 	0 si TVA normal - 1 if TVA NPR
 	 * Bit 1:	0 if normal line - 1 if line with fixed discount
@@ -367,6 +374,17 @@ class PropaleLigne extends CommonObjectLine
 	}
 
 	/**
+	 *	Return whether the line must be treated as an option.
+	 *	Phase N: is_option is the source of truth, legacy special_code=3 is tolerated for backward compatibility.
+	 *
+	 *	@return	bool	True if the line is an option
+	 */
+	public function isOptionLine()
+	{
+		return !empty($this->is_option) || (int) $this->special_code === 3;
+	}
+
+	/**
 	 *	Retrieve the propal line object
 	 *
 	 *	@param	int		$rowid		Propal line id
@@ -376,7 +394,7 @@ class PropaleLigne extends CommonObjectLine
 	{
 		$sql = 'SELECT pd.rowid, pd.fk_propal, pd.fk_parent_line, pd.fk_product, pd.label as custom_label, pd.description, pd.price, pd.qty, pd.vat_src_code, pd.tva_tx,';
 		$sql .= ' pd.remise, pd.remise_percent, pd.fk_remise_except, pd.subprice, pd.subprice_ttc,';
-		$sql .= ' pd.info_bits, pd.total_ht, pd.total_tva, pd.total_ttc, pd.fk_product_fournisseur_price as fk_fournprice, pd.buy_price_ht as pa_ht, pd.special_code, pd.rang,';
+		$sql .= ' pd.info_bits, pd.total_ht, pd.total_tva, pd.total_ttc, pd.fk_product_fournisseur_price as fk_fournprice, pd.buy_price_ht as pa_ht, pd.special_code, pd.is_option, pd.rang,';
 		$sql .= ' pd.fk_unit,';
 		$sql .= ' pd.localtax1_tx, pd.localtax2_tx, pd.total_localtax1, pd.total_localtax2,';
 		$sql .= ' pd.fk_multicurrency, pd.multicurrency_code, pd.multicurrency_subprice, pd.multicurrency_total_ht, pd.multicurrency_total_tva, pd.multicurrency_total_ttc,';
@@ -425,6 +443,7 @@ class PropaleLigne extends CommonObjectLine
 				$this->marque_tx		= $marginInfos[2];
 
 				$this->special_code		= $objp->special_code;
+				$this->is_option		= (int) $objp->is_option;
 				$this->product_type		= $objp->product_type;
 				$this->rang = $objp->rang;
 
@@ -567,7 +586,7 @@ class PropaleLigne extends CommonObjectLine
 		$sql .= ' fk_remise_except, qty, vat_src_code, tva_tx, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type,';
 		$sql .= ' subprice, subprice_ttc, remise_percent, ';
 		$sql .= ' info_bits, ';
-		$sql .= ' total_ht, total_tva, total_localtax1, total_localtax2, total_ttc, fk_product_fournisseur_price, buy_price_ht, special_code, rang,';
+		$sql .= ' total_ht, total_tva, total_localtax1, total_localtax2, total_ttc, fk_product_fournisseur_price, buy_price_ht, special_code, is_option, rang,';
 		$sql .= ' fk_unit,';
 		$sql .= ' date_start, date_end';
 		$sql .= ', fk_multicurrency, multicurrency_code, multicurrency_subprice, multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc)';
@@ -597,6 +616,7 @@ class PropaleLigne extends CommonObjectLine
 		$sql .= " ".(!empty($this->fk_fournprice) ? "'".$this->db->escape((string) $this->fk_fournprice)."'" : "null").",";
 		$sql .= " ".(isset($this->pa_ht) ? "'".price2num($this->pa_ht)."'" : "null").",";
 		$sql .= ' '.((int) $this->special_code).',';
+		$sql .= ' '.(empty($this->is_option) ? 0 : 1).',';
 		$sql .= ' '.((int) $this->rang).',';
 		$sql .= ' '.(empty($this->fk_unit) ? 'NULL' : ((int) $this->fk_unit)).',';
 		$sql .= " ".(!empty($this->date_start) ? "'".$this->db->idate($this->date_start)."'" : "null").',';
@@ -806,6 +826,7 @@ class PropaleLigne extends CommonObjectLine
 		$sql .= ", fk_product_fournisseur_price=".(!empty($this->fk_fournprice) ? "'".$this->db->escape((string) $this->fk_fournprice)."'" : "null");
 		$sql .= ", buy_price_ht=".price2num($this->pa_ht);
 		$sql .= ", special_code=".((int) $this->special_code);
+		$sql .= ", is_option=".(empty($this->is_option) ? 0 : 1);
 		$sql .= ", fk_parent_line=".($this->fk_parent_line > 0 ? (int) $this->fk_parent_line : "null");
 		if (!empty($this->rang)) {
 			$sql .= ", rang=".((int) $this->rang);

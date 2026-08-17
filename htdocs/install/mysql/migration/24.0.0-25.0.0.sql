@@ -78,4 +78,10 @@ UPDATE llx_commande_fournisseurdet SET subprice_ttc = 0 WHERE subprice_ttc <> 0 
 UPDATE llx_facture_fourn_det SET pu_ttc = 0 WHERE pu_ttc <> 0 AND EXISTS (SELECT c.rowid FROM llx_const as c WHERE c.name = 'MAIN_VERSION_LAST_UPGRADE' AND c.value < '25.0.0');
 UPDATE llx_supplier_proposaldet SET subprice_ttc = 0 WHERE subprice_ttc <> 0 AND EXISTS (SELECT c.rowid FROM llx_const as c WHERE c.name = 'MAIN_VERSION_LAST_UPGRADE' AND c.value < '25.0.0');
 
+-- Add is_option flag on proposal lines (option lines kept with a real quantity but excluded from document totals)
+ALTER TABLE llx_propaldet ADD COLUMN is_option integer NOT NULL DEFAULT 0 AFTER special_code;
+-- Backfill: migrate legacy option lines (special_code=3) to the new flag, then neutralize the legacy code on migrated lines only
+UPDATE llx_propaldet SET is_option = 1 WHERE special_code = 3;
+UPDATE llx_propaldet SET special_code = 0 WHERE special_code = 3 AND is_option = 1;
+
 -- end of migration

@@ -717,7 +717,8 @@ if (empty($reshook)) {
 								// Preserve the TTC entry mode of the source line: a line entered including tax must
 								// stay in TTC so its total is computed from the typed value, without rounding drift.
 								$line_price_base_type = $lines[$i]->getPriceBaseType();
-								$result = $object->addline($desc, $lines[$i]->subprice, $lines[$i]->qty, $tva_tx, $lines[$i]->localtax1_tx, $lines[$i]->localtax2_tx, $lines[$i]->fk_product, $lines[$i]->remise_percent, $line_price_base_type, (float) $lines[$i]->subprice_ttc, $lines[$i]->info_bits, $product_type, $lines[$i]->rang, $lines[$i]->special_code, $fk_parent_line, $lines[$i]->fk_fournprice, $lines[$i]->pa_ht, $label, $date_start, $date_end, $array_options, $lines[$i]->fk_unit);
+								$lineisoption = (property_exists($lines[$i], 'is_option') && !empty($lines[$i]->is_option)) ? 1 : 0;
+								$result = $object->addline($desc, $lines[$i]->subprice, $lines[$i]->qty, $tva_tx, $lines[$i]->localtax1_tx, $lines[$i]->localtax2_tx, $lines[$i]->fk_product, $lines[$i]->remise_percent, $line_price_base_type, (float) $lines[$i]->subprice_ttc, $lines[$i]->info_bits, $product_type, $lines[$i]->rang, $lines[$i]->special_code, $fk_parent_line, $lines[$i]->fk_fournprice, $lines[$i]->pa_ht, $label, $date_start, $date_end, $array_options, $lines[$i]->fk_unit, '', 0, 0, 0, 0, $lineisoption);
 
 								if ($result > 0) {
 									$lineid = $result;
@@ -994,8 +995,10 @@ if (empty($reshook)) {
 					$fk_prev_id = '';
 					$fk_unit = $originLine->fk_unit;
 					$pu_ht_devise = $originLine->multicurrency_subprice;
+					// Preserve the option flag only when the origin line carries it (proposal source)
+					$is_option = (property_exists($originLine, 'is_option') && !empty($originLine->is_option)) ? 1 : 0;
 
-					$res = $object->addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $remise_percent, $price_base_type, $pu_ttc, $info_bits, $type, $rang, $special_code, $fk_parent_line, $fk_fournprice, $pa_ht, $label, $date_start, $date_end, $array_options, $fk_unit, $origin, $origin_id, $pu_ht_devise, $fk_remise_except);
+					$res = $object->addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $remise_percent, $price_base_type, $pu_ttc, $info_bits, $type, $rang, $special_code, $fk_parent_line, $fk_fournprice, $pa_ht, $label, $date_start, $date_end, $array_options, $fk_unit, $origin, $origin_id, $pu_ht_devise, $fk_remise_except, 0, $is_option);
 
 					if ($res > 0) {
 						$importCount++;
@@ -1077,7 +1080,7 @@ if (empty($reshook)) {
 				// Preserve the original entry mode of the line so the total is not drifted by rounding.
 				$line_price_base_type = $line->getPriceBaseType();
 				$line_pu = ($line_price_base_type === 'TTC') ? (float) $line->subprice_ttc : (float) $line->subprice;
-				$result = $object->updateline($line->id, $line_pu, $line->qty, $line->remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, $line->desc, $line_price_base_type, $line->info_bits, $line->special_code, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->product_type, $alldate_start, $alldate_end, $line->array_options, $line->fk_unit, $line->multicurrency_subprice);
+				$result = $object->updateline($line->id, $line_pu, $line->qty, $line->remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, $line->desc, $line_price_base_type, $line->info_bits, $line->special_code, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->product_type, $alldate_start, $alldate_end, $line->array_options, $line->fk_unit, $line->multicurrency_subprice, 0, 0, $line->is_option);
 				$object->lines[$key] = $object->line;
 			}
 		}
@@ -1094,7 +1097,7 @@ if (empty($reshook)) {
 			// Preserve the original entry mode of the line so the total is not drifted by rounding.
 			$line_price_base_type = $line->getPriceBaseType();
 			$line_pu = ($line_price_base_type === 'TTC') ? (float) $line->subprice_ttc : (float) $line->subprice;
-			$result = $object->updateline($line->id, $line_pu, $line->qty, $line->remise_percent, $vat_rate, $localtax1_rate, $localtax2_rate, $line->desc, $line_price_base_type, $line->info_bits, $line->special_code, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->product_type, $line->date_start, $line->date_end, $line->array_options, $line->fk_unit, $line->multicurrency_subprice);
+			$result = $object->updateline($line->id, $line_pu, $line->qty, $line->remise_percent, $vat_rate, $localtax1_rate, $localtax2_rate, $line->desc, $line_price_base_type, $line->info_bits, $line->special_code, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->product_type, $line->date_start, $line->date_end, $line->array_options, $line->fk_unit, $line->multicurrency_subprice, 0, 0, $line->is_option);
 			$object->lines[$key] = $object->line;
 		}
 	} elseif ($action == 'addline' && GETPOST('submitforalllines', 'alpha') && GETPOST('remiseforalllines', 'alpha') !== '' && $usercancreate) {
@@ -1112,7 +1115,7 @@ if (empty($reshook)) {
 			// Preserve the original entry mode of the line so the total is not drifted by rounding.
 			$line_price_base_type = $line->getPriceBaseType();
 			$line_pu = ($line_price_base_type === 'TTC') ? (float) $line->subprice_ttc : (float) $line->subprice;
-			$result = $object->updateline($line->id, $line_pu, $line->qty, (float) $remise_percent, $tvatx, $line->localtax1_tx, $line->localtax2_tx, $line->desc, $line_price_base_type, $line->info_bits, $line->special_code, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->product_type, $line->date_start, $line->date_end, $line->array_options, $line->fk_unit, $line->multicurrency_subprice);
+			$result = $object->updateline($line->id, $line_pu, $line->qty, (float) $remise_percent, $tvatx, $line->localtax1_tx, $line->localtax2_tx, $line->desc, $line_price_base_type, $line->info_bits, $line->special_code, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->product_type, $line->date_start, $line->date_end, $line->array_options, $line->fk_unit, $line->multicurrency_subprice, 0, 0, $line->is_option);
 			$object->lines[$key] = $object->line;
 		}
 	} elseif ($action == 'addline' && GETPOST('submitforallmargins', 'alpha') && GETPOST('marginforalllines', 'alpha') !== '' && $usercancreate) {
@@ -1137,7 +1140,7 @@ if (empty($reshook)) {
 				$multicurrency_subprice = 0;
 			}
 			// Update DB
-			$result = $object->updateline($line->id, (float) $subprice, $line->qty, $line->remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, $line->desc, 'HT', $line->info_bits, $line->special_code, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->product_type, $line->date_start, $line->date_end, $line->array_options, $line->fk_unit, $multicurrency_subprice);
+			$result = $object->updateline($line->id, (float) $subprice, $line->qty, $line->remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, $line->desc, 'HT', $line->info_bits, $line->special_code, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->product_type, $line->date_start, $line->date_end, $line->array_options, $line->fk_unit, $multicurrency_subprice, 0, 0, $line->is_option);
 			$object->lines[$key] = $object->line;
 			// Update $object with new margin info
 			// $line->price = $subprice;
@@ -1298,6 +1301,9 @@ if (empty($reshook)) {
 		if (empty($remise_percent)) {
 			$remise_percent = 0;
 		}
+
+		// Option flag (line kept with a real quantity but excluded from document totals)
+		$is_option = GETPOSTINT('is_option') ? 1 : 0;
 
 		// Extrafields
 		$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
@@ -1721,7 +1727,7 @@ if (empty($reshook)) {
 
 			if (!$error) {
 				// Insert line
-				$result = $object->addline($desc, $pu_ht, (float) $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $price_base_type, $pu_ttc, $info_bits, $type, min($rank, count($object->lines) + 1), 0, GETPOSTINT('fk_parent_line'), (int) $fournprice, $buyingprice, $label, $date_start, $date_end, $array_options, $fk_unit, '', 0, (float) $pu_ht_devise);
+				$result = $object->addline($desc, $pu_ht, (float) $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $price_base_type, $pu_ttc, $info_bits, $type, min($rank, count($object->lines) + 1), 0, GETPOSTINT('fk_parent_line'), (int) $fournprice, $buyingprice, $label, $date_start, $date_end, $array_options, $fk_unit, '', 0, (float) $pu_ht_devise, 0, 0, $is_option);
 
 				if ($result > 0) {
 					$db->commit();
@@ -1828,7 +1834,7 @@ if (empty($reshook)) {
 				// Manage $line->subprice and $line->multicurrency_subprice
 				$multicurrency_subprice = (float) $line->subprice * $line->multicurrency_subprice / $subprice_multicurrency;
 				// Update DB
-				$result = $object->updateline($line->id, $line->subprice, $line->qty, $line->remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, $line->desc, 'HT', $line->info_bits, $line->special_code, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->product_type, $line->date_start, $line->date_end, $line->array_options, $line->fk_unit, $multicurrency_subprice);
+				$result = $object->updateline($line->id, $line->subprice, $line->qty, $line->remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, $line->desc, 'HT', $line->info_bits, $line->special_code, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->product_type, $line->date_start, $line->date_end, $line->array_options, $line->fk_unit, $multicurrency_subprice, 0, 0, $line->is_option);
 				// Update $object with new margin info
 				if ($result > 0) {
 					if (is_numeric($margin_rate) && empty($mark_rate)) {
@@ -2007,10 +2013,16 @@ if (empty($reshook)) {
 			}
 		}
 
-		// Define special_code for special lines
+		// Define special_code for special lines (technical codes only: 1=transport, 2=ecotax, moduleid=...)
 		$special_code = GETPOSTINT('special_code');
-		if (!GETPOST('qty')) {
-			$special_code = 3;
+
+		// Option flag is now explicit (replaces the legacy qty=0 => special_code=3 heuristic)
+		$is_option = GETPOSTINT('is_option') ? 1 : 0;
+		// Backward compatibility: a legacy POST still using special_code=3 is mapped to the new flag
+		if (!GETPOSTISSET('is_option') && $special_code == 3) {
+			$is_option = 1;
+			$special_code = 0;
+			dol_syslog("Deprecated: special_code=3 used to flag a proposal line as option. Use is_option instead. Removal planned in a future version.", LOG_WARNING);
 		}
 
 		// The form JS clears the other field when the user edits one of them: only the modified field is filled.
@@ -2095,7 +2107,7 @@ if (empty($reshook)) {
 
 			$qty = price2num(GETPOST('qty', 'alpha'), 'MS');
 
-			$result = $object->updateline(GETPOSTINT('lineid'), (float) $pu, (float) $qty, (float) $remise_percent, $vat_rate, $localtax1_rate, $localtax2_rate, $description, $price_base_type, $info_bits, $special_code, GETPOSTINT('fk_parent_line'), 0, (int) $fournprice, $buyingprice, $label, $type, $date_start, $date_end, $array_options, GETPOSTINT("units"), (float) $pu_ht_devise);
+			$result = $object->updateline(GETPOSTINT('lineid'), (float) $pu, (float) $qty, (float) $remise_percent, $vat_rate, $localtax1_rate, $localtax2_rate, $description, $price_base_type, $info_bits, $special_code, GETPOSTINT('fk_parent_line'), 0, (int) $fournprice, $buyingprice, $label, $type, $date_start, $date_end, $array_options, GETPOSTINT("units"), (float) $pu_ht_devise, 0, 0, $is_option);
 
 			if ($result >= 0) {
 				$db->commit();
@@ -3498,6 +3510,44 @@ if ($action == 'create') {
 			print '<td class="nowrap amountcard right">' . price($object->multicurrency_total_ttc, 0, $langs, 1, -1, -1, $object->multicurrency_code) . '</td>';
 		}
 		print '</tr>';
+
+		// Totals including option lines: option lines are excluded from the amounts above, so we show a
+		// reconciling "including options" total to avoid the line totals looking inconsistent with the base total.
+		$optionTotalHt = 0;
+		$optionTotalTtc = 0;
+		$optionMcTotalHt = 0;
+		$optionMcTotalTtc = 0;
+		$hasOptionLine = false;
+		if (is_array($object->lines)) {
+			foreach ($object->lines as $optline) {
+				if (!empty($optline->is_option) || (int) $optline->special_code === 3) {
+					$hasOptionLine = true;
+					$optionTotalHt += (float) $optline->total_ht;
+					$optionTotalTtc += (float) $optline->total_ttc;
+					$optionMcTotalHt += (float) $optline->multicurrency_total_ht;
+					$optionMcTotalTtc += (float) $optline->multicurrency_total_ttc;
+				}
+			}
+		}
+		if ($hasOptionLine) {
+			$usemcurrency = (isModEnabled("multicurrency") && $object->multicurrency_code && $object->multicurrency_code != $conf->currency);
+
+			print '<tr>';
+			print '<td>' . $form->textwithpicto($langs->trans('TotalHTIncludingOptions'), $langs->trans('TotalIncludingOptionsHelp')) . '</td>';
+			print '<td class="nowrap amountcard right">' . price((float) $object->total_ht + $optionTotalHt, 0, $langs, 1, -1, -1, $conf->currency) . '</td>';
+			if ($usemcurrency) {
+				print '<td class="nowrap amountcard right">' . price((float) $object->multicurrency_total_ht + $optionMcTotalHt, 0, $langs, 1, -1, -1, $object->multicurrency_code) . '</td>';
+			}
+			print '</tr>';
+
+			print '<tr>';
+			print '<td>' . $langs->trans('TotalTTCIncludingOptions') . '</td>';
+			print '<td class="nowrap amountcard right"><b>' . price((float) $object->total_ttc + $optionTotalTtc, 0, $langs, 1, -1, -1, $conf->currency) . '</b></td>';
+			if ($usemcurrency) {
+				print '<td class="nowrap amountcard right"><b>' . price((float) $object->multicurrency_total_ttc + $optionMcTotalTtc, 0, $langs, 1, -1, -1, $object->multicurrency_code) . '</b></td>';
+			}
+			print '</tr>';
+		}
 
 		print '</table>';
 

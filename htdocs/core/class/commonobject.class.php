@@ -4158,6 +4158,9 @@ abstract class CommonObject
 		if ($this->table_element_line == 'facturedet') {
 			$sql .= ', situation_percent';
 		}
+		if ($this->table_element_line == 'propaldet') {
+			$sql .= ', is_option, special_code';	// Option lines (is_option=1 or legacy special_code=3) are excluded from the document totals (proposals only)
+		}
 		$sql .= ', multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc';
 		$sql .= " FROM ".$this->db->prefix().$this->db->sanitize($this->table_element_line);
 		$sql .= " WHERE ".$this->db->sanitize($this->fk_element)." = ".((int) $this->id);
@@ -4194,6 +4197,11 @@ abstract class CommonObject
 			$i = 0;
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
+
+				// Proposal option lines keep a real quantity but must be excluded from the document totals.
+				// is_option is the source of truth; legacy special_code=3 is tolerated so totals stay consistent
+				// with what the line view and PDF render as "Option". The per-line rounding fix below still runs.
+				$lineisoption = ($this->table_element_line == 'propaldet' && (!empty($obj->is_option) || (int) $obj->special_code === 3));
 
 				// Note: There is no check on detail line and no check on total, if $forcedroundingmode = '0'
 				$parameters = array('fk_element' => $obj->rowid);
@@ -4253,6 +4261,12 @@ abstract class CommonObject
 							}
 						}
 					}
+				}
+
+				if ($lineisoption) {
+					// Option line: excluded from the document totals (and from the per-VAT aggregates used for rounding adjustment).
+					$i++;
+					continue;
 				}
 
 				$this->total_ht        += $obj->total_ht; // The field visible at end of line detail
@@ -5930,6 +5944,9 @@ abstract class CommonObject
 
 		// Set thevalue into ->tpl[] array.
 		$this->tpl['id'] = $line->id;
+
+		// Option lines (proposals) must be unchecked by default when creating a target object from the origin
+		$this->tpl['is_option'] = (!empty($line->is_option) ? 1 : 0);
 
 		$this->tpl['label'] = '';
 		if (!empty($line->fk_parent_line)) {
