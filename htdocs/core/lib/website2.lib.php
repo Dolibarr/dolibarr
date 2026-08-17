@@ -1094,12 +1094,11 @@ function checkPHPCode(&$phpfullcodestringold, &$phpfullcodestring)
 		}*/
 		foreach ($forbiddenphpfunctions as $forbiddenphpfunction) {	// Check "function" whatever is "function(" or "function'(" or "function (" or "function"
 			$reg = array();
-			if (preg_match('/\b'.$forbiddenphpfunction.'(=|\b)/ims', $phpfullcodestring, $reg)) {
-				var_dump($reg[1]);
-				if ($reg[1] != '=') {	// So we may accept string ...&file=... even if 'file' is in forbiddenphpfunction.
+			if (preg_match('/\b'.$forbiddenphpfunction.'(=| class=|\b)/ims', $phpfullcodestring, $reg)) {
+				if ($reg[1] != '=' && $reg[1] != ' class=') {	// So we may accept string ...&file=... even if 'file' is in forbiddenphpfunction. And we accept content with '<dl class=...'
 					$error++;
-					setEventMessages($langs->trans("bDynamicPHPCodeContainsAForbiddenInstruction", $forbiddenphpfunction).' ['.$phpfullcodestring.']', null, 'errors');
-					//setEventMessages($langs->trans("bDynamicPHPCodeContainsAForbiddenInstruction", $forbiddenphpfunction), null, 'errors');
+					//setEventMessages($langs->trans("DynamicPHPCodeContainsAForbiddenInstruction", $forbiddenphpfunction)." :<br>\n".$phpfullcodestring, null, 'errors');
+					setEventMessages($langs->trans("DynamicPHPCodeContainsAForbiddenInstruction", $forbiddenphpfunction), null, 'errors');
 					break;
 				}
 			}
@@ -1108,7 +1107,7 @@ function checkPHPCode(&$phpfullcodestringold, &$phpfullcodestring)
 		foreach ($forbiddenphpmethods as $forbiddenphpmethod) {
 			if (preg_match('/->'.$forbiddenphpmethod.'/ims', $phpfullcodestring)) {
 				$error++;
-				setEventMessages($langs->trans("cDynamicPHPCodeContainsAForbiddenInstruction", $forbiddenphpmethod), null, 'errors');
+				setEventMessages($langs->trans("DynamicPHPCodeContainsAForbiddenInstruction", $forbiddenphpmethod), null, 'errors');
 				break;
 			}
 		}
