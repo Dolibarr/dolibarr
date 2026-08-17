@@ -146,6 +146,10 @@ function init(){
 			}
 			inital_table = $("#<?php echo $tagidfortablednd; ?> .drag").map((_, el) => $(el)[0]).get();
 
+			if (typeof subtotalRefreshRows === 'function') {
+				subtotalRefreshRows();	// The drag and drop may have shown lines of a collapsed block, so we apply the collapsed blocks again
+			}
+
 			var reloadpage = "<?php echo $forcereloadpage; ?>";
 			console.log("tableDND onDrop");
 			console.log(decodeURI($("#<?php echo $tagidfortablednd; ?>").tableDnDSerialize()));
