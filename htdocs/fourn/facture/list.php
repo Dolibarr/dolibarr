@@ -241,6 +241,7 @@ $arrayfields = array(
 	'f.note_public' => array('label' => 'NotePublic', 'checked' => '0', 'position' => 520, 'enabled' => (getDolGlobalInt('MAIN_LIST_HIDE_PUBLIC_NOTES') ? '0' : '1')),
 	'f.note_private' => array('label' => 'NotePrivate', 'checked' => '0', 'position' => 521, 'enabled' => (getDolGlobalInt('MAIN_LIST_HIDE_PRIVATE_NOTES') ? '0' : '1')),
 	'f.fk_statut' => array('label' => "Status", 'checked' => '1', 'position' => 1000),
+	'categorie' => array('label' => "Categories", 'checked' => '1', 'position' => 1000),
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
@@ -1516,6 +1517,11 @@ if (!empty($arrayfields['f.fk_statut']['checked'])) {
 	print $form->multiselectarray('search_status', $liststatus, (is_array($search_status) ? $search_status : array()), 0, 0, 'center search_status width125 onrightofpage', 1, 0);
 	print '</td>';
 }
+// Category
+if (!empty($arrayfields['categorie']['checked'])) {
+	print '<td class="liste_titre center parentonrightofpage">';
+	print '</td>';
+}
 // Action column
 if (!$conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center maxwidthsearch actioncolumn">';
@@ -1705,6 +1711,11 @@ if (!empty($arrayfields['f.note_private']['checked'])) {
 }
 if (!empty($arrayfields['f.fk_statut']['checked'])) {
 	print_liste_field_titre($arrayfields['f.fk_statut']['label'], $_SERVER["PHP_SELF"], "fk_statut,paye,type", "", $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
+}
+// Category
+if (!empty($arrayfields['categorie']['checked'])) {
+	print_liste_field_titre($arrayfields['categorie']['label'], $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 // Action column
@@ -2292,7 +2303,15 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
-
+		// Category
+		if (!empty($arrayfields['categorie']['checked'])) {
+			print '<td class="nowrap center">';
+			print $form->showCategories($object->id, Categorie::TYPE_SUPPLIER_INVOICE, 1);
+			print "</td>";
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
 		// Action column
 		if (!$conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';

@@ -322,6 +322,7 @@ $arrayfields = array(
 	'f.import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => '1', 'visible' => -2, 'position' => 990),
 	'f.dispute_status' => array('label' => "DisputeStatus", 'checked' => '-1', 'position' => 999),
 	'f.fk_statut' => array('label' => "Status", 'checked' => '1', 'position' => 1000),
+	'categorie' => array('label' => "Categories", 'checked' => '1', 'position' => 1000),
 );
 
 if (getDolGlobalString("INVOICE_USE_SITUATION") && getDolGlobalString('INVOICE_USE_RETAINED_WARRANTY')) {
@@ -1995,6 +1996,11 @@ if (!empty($arrayfields['f.fk_statut']['checked'])) {
 	print $form->multiselectarray('search_status', $liststatus, $search_status, 0, 0, 'minwidth125', 1, 0);
 	print '</td>';
 }
+// Category
+if (!empty($arrayfields['categorie']['checked'])) {
+	print '<td class="liste_titre center parentonrightofpage">';
+	print '</td>';
+}
 // Action column
 if (!$conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center maxwidthsearch actioncolumn">';
@@ -2242,6 +2248,12 @@ if (!empty($arrayfields['f.dispute_status']['checked'])) {
 // Status
 if (!empty($arrayfields['f.fk_statut']['checked'])) {
 	print_liste_field_titre($arrayfields['f.fk_statut']['label'], $_SERVER["PHP_SELF"], "f.fk_statut,f.paye,f.type", "", $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
+}
+// Category
+//! cambiar url para que ordene por categoria.
+if (!empty($arrayfields['categorie']['checked'])) {
+	print_liste_field_titre($langs->trans($arrayfields['categorie']['label']), "", "", $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 // Action column
@@ -3133,7 +3145,15 @@ if ($num > 0) {
 					$totalarray['nbfield']++;
 				}
 			}
-
+			// Category
+			if (!empty($arrayfields['categorie']['checked'])) {
+				print '<td class="nowrap center">';
+				print $form->showCategories($object->id, Categorie::TYPE_INVOICE, 1);
+				print "</td>";
+				if (!$i) {
+					$totalarray['nbfield']++;
+				}
+			}
 			// Action column (Show the massaction button only when this page is not opened from the Extended POS)
 
 			if (!$conf->main_checkbox_left_column) {
