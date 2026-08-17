@@ -33,7 +33,6 @@ PreviousYearOfInvoice=Année précédente de la date de facturation
 NextYearOfInvoice=Année suivante de la date de facturation
 DateNextInvoiceBeforeGen=Date de la prochaine génération (avant génération)
 DateNextInvoiceAfterGen=Date de la prochaine facture (après génération)
-DateSent=Date d'envoi
 GraphInBarsAreLimitedToNMeasures=Les graphiques sont limités à %s mesures en mode 'Bars'. Le mode "Lignes" a été automatiquement sélectionné à la place.
 OnlyOneFieldForXAxisIsPossible=1 seul champ est actuellement possible en tant qu'axe X. Seul le premier champ sélectionné a été choisi.
 AtLeastOneMeasureIsRequired=Au moins 1 champ de mesure est requis
