@@ -937,7 +937,8 @@ class Facture extends CommonInvoice
 							$newinvoiceline->fk_unit,
 							$newinvoiceline->multicurrency_subprice,
 							$newinvoiceline->ref_ext,
-							1
+							1,
+							$newinvoiceline->multicurrency_subprice_source
 						);
 
 						if ($result < 0) {
@@ -1023,7 +1024,8 @@ class Facture extends CommonInvoice
 							$line->fk_unit,
 							$line->multicurrency_subprice,
 							$line->ref_ext,
-							1
+							1,
+							$line->multicurrency_subprice_source
 						);
 						if ($result < 0) {
 							$this->error = $this->db->lasterror();
@@ -1122,7 +1124,8 @@ class Facture extends CommonInvoice
 						$_facrec->lines[$i]->fk_unit,
 						$_facrec->lines[$i]->multicurrency_subprice,
 						$_facrec->lines[$i]->ref_ext,
-						1
+						1,
+						$_facrec->lines[$i]->multicurrency_subprice_source
 					);
 
 					foreach ($this->lines as $line) {
@@ -1497,6 +1500,9 @@ class Facture extends CommonInvoice
 			$line->fk_multicurrency = $src_line->fk_multicurrency;
 			$line->multicurrency_code = $src_line->multicurrency_code;
 			$line->multicurrency_subprice = $src_line->multicurrency_subprice;
+			// Carry the fixed-per-currency freeze flag so a later invoice rate change does not silently
+			// recompute a price that was frozen on the source order (issue #32379)
+			$line->multicurrency_subprice_source = $src_line->multicurrency_subprice_source;
 			$line->multicurrency_total_ht = $src_line->multicurrency_total_ht;
 			$line->multicurrency_total_tva = $src_line->multicurrency_total_tva;
 			$line->multicurrency_total_ttc = $src_line->multicurrency_total_ttc;
@@ -2544,7 +2550,7 @@ class Facture extends CommonInvoice
 		$sql .= ' l.date_start as date_start, l.date_end as date_end,';
 		$sql .= ' l.info_bits, l.total_ht, l.total_tva, l.total_localtax1, l.total_localtax2, l.total_ttc, l.fk_code_ventilation, l.fk_product_fournisseur_price as fk_fournprice, l.buy_price_ht as pa_ht,';
 		$sql .= ' l.fk_unit, l.extraparams,';
-		$sql .= ' l.fk_multicurrency, l.multicurrency_code, l.multicurrency_subprice, l.multicurrency_total_ht, l.multicurrency_total_tva, l.multicurrency_total_ttc,';
+		$sql .= ' l.fk_multicurrency, l.multicurrency_code, l.multicurrency_subprice, l.multicurrency_subprice_source, l.multicurrency_total_ht, l.multicurrency_total_tva, l.multicurrency_total_ttc,';
 		$sql .= ' p.ref as product_ref, p.fk_product_type as fk_product_type, p.label as product_label, p.description as product_desc, p.barcode as product_barcode';
 
 		if ($doFetchInOneSqlRequest && $extraFieldsCheck) {
@@ -2648,6 +2654,7 @@ class Facture extends CommonInvoice
 				$line->fk_multicurrency = $objp->fk_multicurrency;
 				$line->multicurrency_code = $objp->multicurrency_code;
 				$line->multicurrency_subprice 	= $objp->multicurrency_subprice;
+				$line->multicurrency_subprice_source = $objp->multicurrency_subprice_source;
 				$line->multicurrency_total_ht 	= $objp->multicurrency_total_ht;
 				$line->multicurrency_total_tva 	= $objp->multicurrency_total_tva;
 				$line->multicurrency_total_ttc 	= $objp->multicurrency_total_ttc;
@@ -4217,6 +4224,7 @@ class Facture extends CommonInvoice
 	 *  @param	float			$pu_ht_devise				Unit price in foreign currency
 	 *  @param	string			$ref_ext		    		External reference of the line
 	 *  @param	int				$noupdateafterinsertline	No update after insert of line
+	 *  @param	int				$multicurrency_subprice_source	Source of the currency unit price (1 = fixed per-currency product price, 0 = computed from the exchange rate)
 	 *  @return	int             							Return integer <0 if KO, Id of line if OK
 	 */
 	public function addline(
@@ -4250,7 +4258,8 @@ class Facture extends CommonInvoice
 		$fk_unit = null,
 		$pu_ht_devise = 0,
 		$ref_ext = '',
-		$noupdateafterinsertline = 0
+		$noupdateafterinsertline = 0,
+		$multicurrency_subprice_source = 0
 	) {
 		// Deprecation warning
 		if ($label) {
@@ -4498,6 +4507,7 @@ class Facture extends CommonInvoice
 			$this->line->fk_multicurrency = $this->fk_multicurrency;
 			$this->line->multicurrency_code = $this->multicurrency_code;
 			$this->line->multicurrency_subprice	= ($apply_abs_price_on_credit_note ? -abs((float) $pu_ht_devise) : (float) $pu_ht_devise); // For credit note, unit price always negative, always positive otherwise
+			$this->line->multicurrency_subprice_source = ($multicurrency_subprice_source === null ? null : (int) $multicurrency_subprice_source);
 
 			$this->line->multicurrency_total_ht = (($apply_abs_price_on_credit_note || $qty < 0) ? -abs((float) $multicurrency_total_ht) : (float) $multicurrency_total_ht); // For credit note and if qty is negative, total is negative
 			$this->line->multicurrency_total_tva = (($apply_abs_price_on_credit_note || $qty < 0) ? -abs((float) $multicurrency_total_tva) : (float) $multicurrency_total_tva); // For credit note and if qty is negative, total is negative
@@ -4587,9 +4597,10 @@ class Facture extends CommonInvoice
 	 * 	@param	int<0,1>		$notrigger			disable line update trigger
 	 *  @param	string			$ref_ext		    External reference of the line
 	 *  @param	integer			$rang		    	rank of line
+	 *  @param	int				$multicurrency_subprice_source	Source of the currency unit price (1 = fixed per-currency product price, 0 = computed from the exchange rate)
 	 *  @return	int									Return integer < 0 if KO, > 0 if OK
 	 */
-	public function updateline($rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $price_base_type = 'HT', $info_bits = 0, $type = self::TYPE_STANDARD, $fk_parent_line = 0, $skip_update_total = 0, $fk_fournprice = null, $pa_ht = 0, $label = '', $special_code = 0, $array_options = array(), $situation_percent = 100, $fk_unit = null, $pu_ht_devise = 0, $notrigger = 0, $ref_ext = '', $rang = 0)
+	public function updateline($rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $price_base_type = 'HT', $info_bits = 0, $type = self::TYPE_STANDARD, $fk_parent_line = 0, $skip_update_total = 0, $fk_fournprice = null, $pa_ht = 0, $label = '', $special_code = 0, $array_options = array(), $situation_percent = 100, $fk_unit = null, $pu_ht_devise = 0, $notrigger = 0, $ref_ext = '', $rang = 0, $multicurrency_subprice_source = null)
 	{
 		global $user;
 
@@ -4820,6 +4831,7 @@ class Facture extends CommonInvoice
 
 			// Multicurrency
 			$this->line->multicurrency_subprice		= ($apply_abs_price_on_credit_note ? -abs((float) $pu_ht_devise) : (float) $pu_ht_devise); // For credit note, unit price always negative, always positive otherwise
+			$this->line->multicurrency_subprice_source = ($multicurrency_subprice_source === null ? null : (int) $multicurrency_subprice_source);
 			$this->line->multicurrency_total_ht 	= (($apply_abs_price_on_credit_note || $qty < 0) ? -abs((float) $multicurrency_total_ht) : (float) $multicurrency_total_ht); // For credit note and if qty is negative, total is negative
 			$this->line->multicurrency_total_tva 	= (($apply_abs_price_on_credit_note || $qty < 0) ? -abs((float) $multicurrency_total_tva) : (float) $multicurrency_total_tva);
 			$this->line->multicurrency_total_ttc 	= (($apply_abs_price_on_credit_note || $qty < 0) ? -abs((float) $multicurrency_total_ttc) : (float) $multicurrency_total_ttc);

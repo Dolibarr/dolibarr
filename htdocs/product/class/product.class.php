@@ -203,6 +203,11 @@ class Product extends CommonObject
 	 */
 	public $price_label;
 
+	/**
+	 * @var array<int,array<string,array{price:float,price_ttc:float,price_base_type:string,multicurrency_tx:float}>>	Fixed sell prices per [price level][currency code] (issue #32379)
+	 */
+	public $multicurrency_prices = array();
+
 	//! Arrays for multiprices
 	/**
 	 * @var array<int,float>
@@ -2638,6 +2643,70 @@ class Product extends CommonObject
 		return array('pu_ht' => $pu_ht, 'pu_ttc' => $pu_ttc, 'price_min' => $price_min, 'price_min_ttc' => $price_min_ttc, 'price_base_type' => $price_base_type, 'tva_tx' => $tva_tx, 'tva_npr' => $tva_npr);
 	}
 
+	/**
+	 *	Return the fixed sell price defined for a given currency and price level, if any.
+	 *
+	 *	Used on sale documents in a foreign currency: when a fixed per-currency price exists it
+	 *	takes precedence over the company-currency catalog price and over the exchange-rate
+	 *	derivation. Returns an empty array when no fixed price is defined (caller then falls back
+	 *	to the exchange-rate computation).
+	 *
+	 *	@param	string	$currency_code	Currency code of the document (e.g. 'USD')
+	 *	@param	int		$price_level	Price level (>=1)
+	 *	@param	int		$socid			Third party id: when >0 a per-customer currency price takes precedence over the catalog one
+	 *	@return	array{price:float,price_ttc:float,price_base_type:string,multicurrency_tx:float}|array{}	Fixed price or empty array
+	 */
+	public function getSellPriceInCurrency(string $currency_code, int $price_level = 1, int $socid = 0): array
+	{
+		if (empty($currency_code)) {
+			return array();
+		}
+		$level = $price_level > 0 ? $price_level : 1;
+
+		// A per-customer fixed currency price (fk_soc = socid) takes precedence over the catalog one (fk_soc = 0).
+		// It is resolved on demand because Product::fetch() only preloads catalog prices.
+		if ($socid > 0) {
+			require_once DOL_DOCUMENT_ROOT.'/product/class/productpricecurrency.class.php';
+			$ppc = new ProductPriceCurrency($this->db);
+			$levels = ($level != 1) ? array($level, 1) : array(1);
+			foreach ($levels as $trylevel) {
+				if ($ppc->fetchByKey($this->id, $trylevel, $currency_code, $socid) > 0) {
+					return array(
+						'price' => $ppc->price,
+						'price_ttc' => $ppc->price_ttc,
+						'price_base_type' => $ppc->price_base_type,
+						'multicurrency_tx' => $ppc->multicurrency_tx,
+					);
+				}
+			}
+		}
+
+		// Catalog price (preloaded by fetch()). Fall back to level 1 when the requested level has none.
+		// Each level slice is read into a local first so the empty() offset test does not run on the
+		// typed property directly (it would otherwise widen its declared shape to a nullable one).
+		$catalog = array();
+		$levelPrices = $this->multicurrency_prices[$level] ?? array();
+		if (!empty($levelPrices[$currency_code])) {
+			$catalog = $levelPrices[$currency_code];
+		} elseif ($level != 1) {
+			$defaultPrices = $this->multicurrency_prices[1] ?? array();
+			if (!empty($defaultPrices[$currency_code])) {
+				$catalog = $defaultPrices[$currency_code];
+			}
+		}
+		if (!empty($catalog)) {
+			// Rebuild a strictly-typed array so the declared return shape is honoured.
+			return array(
+				'price' => (float) $catalog['price'],
+				'price_ttc' => (float) $catalog['price_ttc'],
+				'price_base_type' => (string) $catalog['price_base_type'],
+				'multicurrency_tx' => (float) $catalog['multicurrency_tx'],
+			);
+		}
+
+		return array();
+	}
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Read price used by a provider.
@@ -3465,6 +3534,13 @@ class Product extends CommonObject
 							}
 						}
 					}
+				}
+
+				// Load fixed sell prices per currency (issue #32379)
+				if (isModEnabled('multicurrency') && empty($ignore_price_load)) {
+					require_once DOL_DOCUMENT_ROOT.'/product/class/productpricecurrency.class.php';
+					$productpricecurrency = new ProductPriceCurrency($this->db);
+					$this->multicurrency_prices = $productpricecurrency->fetchAllForProduct($this->id);
 				}
 
 				if (isModEnabled('dynamicprices') && !empty($this->fk_price_expression) && empty($ignore_expression)) {
@@ -7262,15 +7338,45 @@ class Product extends CommonObject
 		$sql = " DELETE FROM ".$dbs->prefix()."product_customer_price";
 		$sql .= " WHERE fk_soc = ".(int) $origin_id;
 		$sql .= " AND fk_product IN (SELECT fk_product FROM (SELECT fk_product FROM ".$dbs->prefix()."product_customer_price WHERE fk_soc = ".(int) $dest_id.") AS tmp)";
-		//$sql .= ' AND EXISTS (SELECT 1 FROM '.$dbs->prefix().'product_customer_price p_new WHERE p_new.fk_product = p_old.fk_product AND p_new.fk_soc = '.(int) $dest_id.')';
 
 		if (!$dbs->query($sql)) {
 			return false;
 		}
 
+		// product_price_currency has a unique key (fk_product, fk_soc, price_level, multicurrency_code, entity).
+		// Drop origin rows that would collide with an existing dest row once fk_soc is remapped, otherwise the
+		// generic fk_soc UPDATE below fails with a duplicate-key error and the whole merge is rolled back. (issue #32379)
+		// Resolve the rowids first, then delete them in a plain statement: a multi-table/self-referencing DELETE
+		// is not portable (MySQL error 1093, and the PostgreSQL SQL converter does not translate it).
+		$idstodelete = array();
+		$sqlfind = "SELECT ppc.rowid FROM ".$dbs->prefix()."product_price_currency as ppc";
+		$sqlfind .= " INNER JOIN ".$dbs->prefix()."product_price_currency as keep ON";
+		$sqlfind .= " keep.fk_product = ppc.fk_product AND keep.price_level = ppc.price_level";
+		$sqlfind .= " AND keep.multicurrency_code = ppc.multicurrency_code AND keep.entity = ppc.entity";
+		$sqlfind .= " AND keep.fk_soc = ".((int) $dest_id);
+		$sqlfind .= " WHERE ppc.fk_soc = ".((int) $origin_id);
+		$resqlfind = $dbs->query($sqlfind);
+		if (!$resqlfind) {
+			return false;
+		}
+		while ($objfind = $dbs->fetch_object($resqlfind)) {
+			$idstodelete[] = (int) $objfind->rowid;
+		}
+		$dbs->free($resqlfind);
+
+		if (!empty($idstodelete)) {
+			$sanitizedids = $dbs->sanitize(implode(',', $idstodelete));
+			$sqldedup = "DELETE FROM ".$dbs->prefix()."product_price_currency";
+			$sqldedup .= " WHERE rowid IN (".$sanitizedids.")";
+			if (!$dbs->query($sqldedup)) {
+				return false;
+			}
+		}
+
 		$tables = array(
 			'product_customer_price',
-			'product_customer_price_log'
+			'product_customer_price_log',
+			'product_price_currency'	// Per-customer fixed sell prices per currency (issue #32379)
 		);
 
 		return CommonObject::commonReplaceThirdparty($dbs, $origin_id, $dest_id, $tables);

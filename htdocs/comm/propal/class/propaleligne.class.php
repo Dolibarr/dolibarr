@@ -133,7 +133,7 @@ class PropaleLigne extends CommonObjectLine
 	public $subprice;
 
 	/**
-	 * Unit price including tax — set when the line was entered with price_base_type='TTC', 0 otherwise.
+	 * Unit price including tax - set when the line was entered with price_base_type='TTC', 0 otherwise.
 	 * Used to preserve the original entry mode on no-op edits (avoids rounding drift).
 	 * @var float
 	 */
@@ -337,6 +337,11 @@ class PropaleLigne extends CommonObjectLine
 	public $multicurrency_subprice;
 
 	/**
+	 * @var int 1 if the multicurrency unit price comes from a fixed per-currency product price (issue #32379)
+	 */
+	public $multicurrency_subprice_source = 0;
+
+	/**
 	 * @var float Multicurrency total without tax
 	 */
 	public $multicurrency_total_ht;
@@ -379,7 +384,7 @@ class PropaleLigne extends CommonObjectLine
 		$sql .= ' pd.info_bits, pd.total_ht, pd.total_tva, pd.total_ttc, pd.fk_product_fournisseur_price as fk_fournprice, pd.buy_price_ht as pa_ht, pd.special_code, pd.rang,';
 		$sql .= ' pd.fk_unit,';
 		$sql .= ' pd.localtax1_tx, pd.localtax2_tx, pd.total_localtax1, pd.total_localtax2,';
-		$sql .= ' pd.fk_multicurrency, pd.multicurrency_code, pd.multicurrency_subprice, pd.multicurrency_total_ht, pd.multicurrency_total_tva, pd.multicurrency_total_ttc,';
+		$sql .= ' pd.fk_multicurrency, pd.multicurrency_code, pd.multicurrency_subprice, pd.multicurrency_subprice_source, pd.multicurrency_total_ht, pd.multicurrency_total_tva, pd.multicurrency_total_ttc,';
 		$sql .= ' p.ref as product_ref, p.label as product_label, p.description as product_desc,p.barcode as product_barcode,';
 		$sql .= ' p.weight, p.weight_units, p.volume, p.volume_units,';
 		$sql .= ' p.customcode, p.fk_country as country_id, c.code as country_code,';
@@ -455,6 +460,7 @@ class PropaleLigne extends CommonObjectLine
 				$this->fk_multicurrency = $objp->fk_multicurrency;
 				$this->multicurrency_code = $objp->multicurrency_code;
 				$this->multicurrency_subprice 	= $objp->multicurrency_subprice;
+				$this->multicurrency_subprice_source = $objp->multicurrency_subprice_source;
 				$this->multicurrency_total_ht 	= $objp->multicurrency_total_ht;
 				$this->multicurrency_total_tva 	= $objp->multicurrency_total_tva;
 				$this->multicurrency_total_ttc 	= $objp->multicurrency_total_ttc;
@@ -535,6 +541,9 @@ class PropaleLigne extends CommonObjectLine
 		if (empty($this->multicurrency_subprice)) {
 			$this->multicurrency_subprice = 0;
 		}
+		if (empty($this->multicurrency_subprice_source)) {
+			$this->multicurrency_subprice_source = 0;
+		}
 		if (empty($this->multicurrency_total_ht)) {
 			$this->multicurrency_total_ht = 0;
 		}
@@ -570,7 +579,7 @@ class PropaleLigne extends CommonObjectLine
 		$sql .= ' total_ht, total_tva, total_localtax1, total_localtax2, total_ttc, fk_product_fournisseur_price, buy_price_ht, special_code, rang,';
 		$sql .= ' fk_unit,';
 		$sql .= ' date_start, date_end';
-		$sql .= ', fk_multicurrency, multicurrency_code, multicurrency_subprice, multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc)';
+		$sql .= ', fk_multicurrency, multicurrency_code, multicurrency_subprice, multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc, multicurrency_subprice_source)';
 		$sql .= " VALUES (".((int) $this->fk_propal).",";
 		$sql .= " ".($this->fk_parent_line > 0 ? "'".$this->db->escape((string) $this->fk_parent_line)."'" : "null").",";
 		$sql .= " ".(!empty($this->label) ? "'".$this->db->escape($this->label)."'" : "null").",";
@@ -607,6 +616,7 @@ class PropaleLigne extends CommonObjectLine
 		$sql .= ", ".price2num($this->multicurrency_total_ht, 'CT');
 		$sql .= ", ".price2num($this->multicurrency_total_tva, 'CT');
 		$sql .= ", ".price2num($this->multicurrency_total_ttc, 'CT');
+		$sql .= ", ".((int) $this->multicurrency_subprice_source);
 		$sql .= ')';
 
 		dol_syslog(get_class($this).'::insert', LOG_DEBUG);
@@ -816,6 +826,10 @@ class PropaleLigne extends CommonObjectLine
 
 		// Multicurrency
 		$sql .= ", multicurrency_subprice=".price2num($this->multicurrency_subprice);
+		// A null flag means "leave the stored value untouched", so a plain line update never clears the freeze flag (issue #32379)
+		if ($this->multicurrency_subprice_source !== null) {
+			$sql .= ", multicurrency_subprice_source=".((int) $this->multicurrency_subprice_source);
+		}
 		$sql .= ", multicurrency_total_ht=".price2num($this->multicurrency_total_ht);
 		$sql .= ", multicurrency_total_tva=".price2num($this->multicurrency_total_tva);
 		$sql .= ", multicurrency_total_ttc=".price2num($this->multicurrency_total_ttc);

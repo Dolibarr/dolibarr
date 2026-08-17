@@ -248,6 +248,18 @@ if ($action == 'fetch' && !empty($id)) {
 			$outdefault_vat_code = $object->default_vat_code;
 		}
 
+		// Fixed sell price per currency, used to prefill the currency unit price field (issue #32379)
+		$outmulticurrency_price_ht = '';
+		$outmulticurrency_price_ttc = '';
+		$multicurrency_code = GETPOST('multicurrency_code', 'alpha');
+		if (isModEnabled('multicurrency') && !empty($multicurrency_code)) {
+			$mccurrencyprice = $object->getSellPriceInCurrency($multicurrency_code, ((isset($price_level) && $price_level >= 1) ? (int) $price_level : 1), $socid);
+			if (!empty($mccurrencyprice)) {
+				$outmulticurrency_price_ht = price($mccurrencyprice['price']);
+				$outmulticurrency_price_ttc = price($mccurrencyprice['price_ttc']);
+			}
+		}
+
 		// VAT to use and default VAT for product are set to same value by default
 		$product_outtva_tx_formated =  $outtva_tx_formated;
 		$product_outtva_tx =  $outtva_tx;
@@ -291,6 +303,9 @@ if ($action == 'fetch' && !empty($id)) {
 			'tva_tx_formated' => $outtva_tx_formated,
 			'tva_tx' => $outtva_tx,
 			'default_vat_code' => $outdefault_vat_code,
+
+			'multicurrency_price_ht' => $outmulticurrency_price_ht,
+			'multicurrency_price_ttc' => $outmulticurrency_price_ttc,
 
 			'qty' => $outqty,
 			'discount' => $outdiscount,

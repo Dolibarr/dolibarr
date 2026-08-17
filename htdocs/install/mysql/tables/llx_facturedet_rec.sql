@@ -69,5 +69,6 @@ create table llx_facturedet_rec
   multicurrency_total_ht    double(24,8) DEFAULT 0,
   multicurrency_total_tva   double(24,8) DEFAULT 0,
   multicurrency_total_ttc   double(24,8) DEFAULT 0,
+  multicurrency_subprice_source	tinyint NOT NULL DEFAULT 0,		-- 1 = currency unit price comes from a fixed per-currency product price
   extraparams				varchar(255)			-- to stock other parameters in json format
 )ENGINE=innodb;

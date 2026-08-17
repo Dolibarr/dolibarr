@@ -182,6 +182,11 @@ class FactureLigne extends CommonInvoiceLine
 	public $packaging;
 
 	/**
+	 * @var int 1 if the multicurrency unit price comes from a fixed per-currency product price (issue #32379)
+	 */
+	public $multicurrency_subprice_source = 0;
+
+	/**
 	 *      Constructor
 	 *
 	 *      @param     DoliDB	$db      handler d'acces base de donnee
@@ -232,6 +237,7 @@ class FactureLigne extends CommonInvoiceLine
 		$sql .= ' fd.fk_unit, fd.fk_user_author, fd.fk_user_modif,';
 		$sql .= ' fd.situation_percent, fd.fk_prev_id, fd.extraparams,';
 		$sql .= ' fd.multicurrency_subprice,';
+		$sql .= ' fd.multicurrency_subprice_source,';
 		$sql .= ' fd.multicurrency_total_ht,';
 		$sql .= ' fd.multicurrency_total_tva,';
 		$sql .= ' fd.multicurrency_total_ttc,';
@@ -327,6 +333,7 @@ class FactureLigne extends CommonInvoiceLine
 			$this->extraparams = !empty($objp->extraparams) ? (array) json_decode($objp->extraparams, true) : array();
 
 			$this->multicurrency_subprice = $objp->multicurrency_subprice;
+			$this->multicurrency_subprice_source = $objp->multicurrency_subprice_source;
 			$this->multicurrency_total_ht = $objp->multicurrency_total_ht;
 			$this->multicurrency_total_tva = $objp->multicurrency_total_tva;
 			$this->multicurrency_total_ttc = $objp->multicurrency_total_ttc;
@@ -457,6 +464,9 @@ class FactureLigne extends CommonInvoiceLine
 		if (empty($this->multicurrency_subprice)) {
 			$this->multicurrency_subprice = 0;
 		}
+		if (empty($this->multicurrency_subprice_source)) {
+			$this->multicurrency_subprice_source = 0;
+		}
 		if (empty($this->multicurrency_total_ht)) {
 			$this->multicurrency_total_ht = 0;
 		}
@@ -504,7 +514,7 @@ class FactureLigne extends CommonInvoiceLine
 		$sql .= ' info_bits, total_ht, total_tva, total_ttc, total_localtax1, total_localtax2,';
 		$sql .= ' situation_percent, fk_prev_id,';
 		$sql .= ' fk_unit, fk_user_author, fk_user_modif,';
-		$sql .= ' fk_multicurrency, multicurrency_code, multicurrency_subprice, multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc,';
+		$sql .= ' fk_multicurrency, multicurrency_code, multicurrency_subprice, multicurrency_subprice_source, multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc,';
 		$sql .= ' batch, fk_warehouse';
 		$sql .= ')';
 		$sql .= " VALUES (".((int) $this->fk_facture).",";
@@ -546,6 +556,7 @@ class FactureLigne extends CommonInvoiceLine
 		$sql .= ", ".(int) $this->fk_multicurrency;
 		$sql .= ", '".$this->db->escape($this->multicurrency_code)."'";
 		$sql .= ", ".price2num($this->multicurrency_subprice);
+		$sql .= ", ".((int) $this->multicurrency_subprice_source);
 		$sql .= ", ".price2num($this->multicurrency_total_ht);
 		$sql .= ", ".price2num($this->multicurrency_total_tva);
 		$sql .= ", ".price2num($this->multicurrency_total_ttc);
@@ -699,6 +710,9 @@ class FactureLigne extends CommonInvoiceLine
 		if (empty($this->multicurrency_subprice)) {
 			$this->multicurrency_subprice = 0;
 		}
+		// Do NOT normalize multicurrency_subprice_source here: a null value must reach the SQL build untouched
+		// so a plain line update leaves the stored freeze flag in place (issue #32379). The (int) cast below
+		// handles any non-null empty value, and insert() resets it separately.
 		if (empty($this->multicurrency_total_ht)) {
 			$this->multicurrency_total_ht = 0;
 		}
@@ -771,6 +785,10 @@ class FactureLigne extends CommonInvoiceLine
 
 		// Multicurrency
 		$sql .= ", multicurrency_subprice=".price2num($this->multicurrency_subprice);
+		// A null flag means "leave the stored value untouched", so a plain line update never clears the freeze flag (issue #32379)
+		if ($this->multicurrency_subprice_source !== null) {
+			$sql .= ", multicurrency_subprice_source=".((int) $this->multicurrency_subprice_source);
+		}
 		$sql .= ", multicurrency_total_ht=".price2num($this->multicurrency_total_ht);
 		$sql .= ", multicurrency_total_tva=".price2num($this->multicurrency_total_tva);
 		$sql .= ", multicurrency_total_ttc=".price2num($this->multicurrency_total_ttc);

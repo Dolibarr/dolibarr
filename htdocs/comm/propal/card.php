@@ -995,7 +995,7 @@ if (empty($reshook)) {
 					$fk_unit = $originLine->fk_unit;
 					$pu_ht_devise = $originLine->multicurrency_subprice;
 
-					$res = $object->addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $remise_percent, $price_base_type, $pu_ttc, $info_bits, $type, $rang, $special_code, $fk_parent_line, $fk_fournprice, $pa_ht, $label, $date_start, $date_end, $array_options, $fk_unit, $origin, $origin_id, $pu_ht_devise, $fk_remise_except);
+					$res = $object->addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $remise_percent, $price_base_type, $pu_ttc, $info_bits, $type, $rang, $special_code, $fk_parent_line, $fk_fournprice, $pa_ht, $label, $date_start, $date_end, $array_options, $fk_unit, $origin, $origin_id, $pu_ht_devise, $fk_remise_except, 0, $originLine->multicurrency_subprice_source);
 
 					if ($res > 0) {
 						$importCount++;
@@ -1357,6 +1357,7 @@ if (empty($reshook)) {
 			$price_min = 0;
 			$price_min_ttc = 0;
 			$tva_npr = 0;
+			$line_multicurrency_subprice_source = 0;
 			$price_base_type = (GETPOST('price_base_type', 'alpha') ? GETPOST('price_base_type', 'alpha') : 'HT');
 
 			$db->begin();
@@ -1527,6 +1528,29 @@ if (empty($reshook)) {
 							}
 							// Note: the remise_percent or price by qty is used to set data on form, so we will use value from POST.
 							break;
+						}
+					}
+				}
+
+				// Foreign-currency document: use the product fixed per-currency price if any (issue #32379).
+				// Freeze the line when no currency price was submitted (apply the fixed price) AND when the submitted
+				// price equals the product fixed price - the product picker prefills the field, so a kept prefilled
+				// value must still be marked sourced, otherwise the freeze never triggers through the normal UI flow.
+				if (isModEnabled('multicurrency') && !empty($object->multicurrency_code) && $object->multicurrency_code != $conf->currency) {
+					$pricelevel = (!empty($object->thirdparty->price_level) ? $object->thirdparty->price_level : 1);
+					$mccurrencyprice = $prod->getSellPriceInCurrency($object->multicurrency_code, $pricelevel, $object->thirdparty->id);
+					if (!empty($mccurrencyprice)) {
+						// Always consume the fixed currency price as HT (stored 'price' is the HT equivalent), so a
+						// TTC-based product price flows through the HT line path and the document total is not
+						// under-valued by 1/(1+VAT) (issue #32379)
+						$nocurrencytyped = ((string) $price_ht_devise === '' && (string) $price_ttc_devise === '');
+						$equalsfixedht = ((string) $price_ttc_devise === '' && (string) $price_ht_devise !== ''
+							&& abs((float) price2num($price_ht_devise, 'CU') - (float) price2num($mccurrencyprice['price'], 'CU')) < 0.00001);
+						if ($nocurrencytyped) {
+							$price_ht_devise = $mccurrencyprice['price'];
+							$line_multicurrency_subprice_source = 1;
+						} elseif ($equalsfixedht) {
+							$line_multicurrency_subprice_source = 1;
 						}
 					}
 				}
@@ -1721,7 +1745,7 @@ if (empty($reshook)) {
 
 			if (!$error) {
 				// Insert line
-				$result = $object->addline($desc, $pu_ht, (float) $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $price_base_type, $pu_ttc, $info_bits, $type, min($rank, count($object->lines) + 1), 0, GETPOSTINT('fk_parent_line'), (int) $fournprice, $buyingprice, $label, $date_start, $date_end, $array_options, $fk_unit, '', 0, (float) $pu_ht_devise);
+				$result = $object->addline($desc, $pu_ht, (float) $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $price_base_type, $pu_ttc, $info_bits, $type, min($rank, count($object->lines) + 1), 0, GETPOSTINT('fk_parent_line'), (int) $fournprice, $buyingprice, $label, $date_start, $date_end, $array_options, $fk_unit, '', 0, (float) $pu_ht_devise, 0, 0, $line_multicurrency_subprice_source);
 
 				if ($result > 0) {
 					$db->commit();

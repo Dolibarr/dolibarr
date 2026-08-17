@@ -2133,9 +2133,10 @@ if (empty($reshook)) {
 											$lines[$i]->situation_percent ?? 100,
 											$lines[$i]->fk_prev_id ?? 0,
 											$lines[$i]->fk_unit,
-											0,
+											(!empty($lines[$i]->multicurrency_subprice_source) ? $lines[$i]->multicurrency_subprice : 0),
 											'',
-											0
+											0,
+											$lines[$i]->multicurrency_subprice_source
 										);
 
 										if ($result > 0) {
@@ -2566,6 +2567,8 @@ if (empty($reshook)) {
 		$price_min = '';
 		$price_min_ttc = '';
 
+		$line_multicurrency_subprice_source = 0;
+
 		if (GETPOST('price_ht') !== '') {
 			$price_ht = price2num(GETPOST('price_ht'), 'MU', 2);
 		}
@@ -2720,6 +2723,29 @@ if (empty($reshook)) {
 				//$tva_npr = $datapriceofproduct['tva_npr'];
 				$tmpvat = (float) price2num(preg_replace('/\s*\(.*\)/', '', $tva_tx));
 				$tmpprodvat = price2num(preg_replace('/\s*\(.*\)/', '', (string) $prod->tva_tx));
+
+				// Foreign-currency document: use the product fixed per-currency price if any (issue #32379).
+				// Freeze the line when no currency price was submitted (apply the fixed price) AND when the submitted
+				// price equals the product fixed price - the product picker prefills the field, so a kept prefilled
+				// value must still be marked sourced, otherwise the freeze never triggers through the normal UI flow.
+				if (isModEnabled('multicurrency') && !empty($object->multicurrency_code) && $object->multicurrency_code != $conf->currency) {
+					$pricelevel = (!empty($object->thirdparty->price_level) ? $object->thirdparty->price_level : 1);
+					$mccurrencyprice = $prod->getSellPriceInCurrency($object->multicurrency_code, $pricelevel, $object->thirdparty->id);
+					if (!empty($mccurrencyprice)) {
+						// Always consume the fixed currency price as HT (stored 'price' is the HT equivalent), so a
+						// TTC-based product price flows through the HT line path and the document total is not
+						// under-valued by 1/(1+VAT) (issue #32379)
+						$nocurrencytyped = ((string) $price_ht_devise === '' && (string) $price_ttc_devise === '');
+						$equalsfixedht = ((string) $price_ttc_devise === '' && (string) $price_ht_devise !== ''
+							&& abs((float) price2num($price_ht_devise, 'CU') - (float) price2num($mccurrencyprice['price'], 'CU')) < 0.00001);
+						if ($nocurrencytyped) {
+							$price_ht_devise = $mccurrencyprice['price'];
+							$line_multicurrency_subprice_source = 1;
+						} elseif ($equalsfixedht) {
+							$line_multicurrency_subprice_source = 1;
+						}
+					}
+				}
 
 				// Set unit price to use.
 				// Force price_base_type to match what the user actually entered, so the total is computed
@@ -2930,7 +2956,7 @@ if (empty($reshook)) {
 				// Insert line
 				$situation_percent = (GETPOSTISSET('progress') ? GETPOSTINT('progress') : 100);
 
-				$result = $object->addline($desc, $pu_ht, (float) $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $date_start, $date_end, 0, $info_bits, 0, $price_base_type, $pu_ttc, $type, min($rank, count($object->lines) + 1), $special_code, '', 0, GETPOSTINT('fk_parent_line'), (int) $fournprice, $buyingprice, $label, $array_options, $situation_percent, 0, $fk_unit, (float) $pu_ht_devise);
+				$result = $object->addline($desc, $pu_ht, (float) $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $date_start, $date_end, 0, $info_bits, 0, $price_base_type, $pu_ttc, $type, min($rank, count($object->lines) + 1), $special_code, '', 0, GETPOSTINT('fk_parent_line'), (int) $fournprice, $buyingprice, $label, $array_options, $situation_percent, 0, $fk_unit, (float) $pu_ht_devise, '', 0, $line_multicurrency_subprice_source);
 
 				if ($result > 0) {
 					$ret = $object->fetch($id); // Reload to get new records
@@ -3654,7 +3680,7 @@ if (empty($reshook)) {
 					$fk_unit = $originLine->fk_unit;
 					$pu_ht_devise = $originLine->multicurrency_subprice;
 
-					$res = $object->addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $remise_percent, $date_start, $date_end, $fk_code_ventilation, $info_bits, $fk_remise_except, $price_base_type, $pu_ttc, $type, $rang, $special_code, $origin, $origin_id, $fk_parent_line, $fk_fournprice, $pa_ht, $label, $array_options, $situation_percent, $fk_prev_id, $fk_unit, $pu_ht_devise);
+					$res = $object->addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $remise_percent, $date_start, $date_end, $fk_code_ventilation, $info_bits, $fk_remise_except, $price_base_type, $pu_ttc, $type, $rang, $special_code, $origin, $origin_id, $fk_parent_line, $fk_fournprice, $pa_ht, $label, $array_options, $situation_percent, $fk_prev_id, $fk_unit, $pu_ht_devise, '', 0, $originLine->multicurrency_subprice_source);
 
 					if ($res > 0) {
 						$importCount++;

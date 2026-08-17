@@ -118,6 +118,7 @@ class Societe extends CommonObject
 		'product_fournisseur_price',
 		'product_customer_price_log',
 		'product_customer_price',
+		'product_price_currency',
 		'@Contact:/contact/class/contact.class.php:fk_soc',
 		'adherent',
 		'societe_account',
