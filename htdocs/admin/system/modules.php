@@ -406,7 +406,7 @@ foreach ($moduleList as $module) {
 			if (getDolGlobalString('MAIN_SHOW_PERMISSION')) {
 				if (empty($langs->tab_translate[$translationKey])) {
 					$tooltip = 'Missing translation (key '.$translationKey.' not found in admin.lang)';
-					$idperms .= ' <img src="../../theme/eldy/img/warning.png" alt="Warning" title="'.$tooltip.'">';
+					$idperms .= ' <img src="../../theme/common/img/warning.png" alt="Warning" title="'.$tooltip.'">';
 				}
 			}
 		}
