@@ -2106,7 +2106,7 @@ if ($dirins && $action == 'addproperty' && empty($cancel) && !empty($module) && 
 
 			// Server-side validation of the ON DELETE policy (must not rely on the UI only).
 			$ondeletenorm = preg_replace('/[^A-Z]/', '', strtoupper((string) $addfieldentry['ondelete']));
-			if (!empty($ondeletenorm) && !in_array($ondeletenorm, array('RESTRICT', 'SETNULL', 'CASCADE', 'NOACTION'), true)) {
+			if (!empty($ondeletenorm) && !in_array($ondeletenorm, array('RESTRICT', 'SETNULL', 'NOACTION'), true)) {
 				$error++;
 				setEventMessages($langs->trans("ErrorOnDeleteInvalidPolicy"), null, 'errors');
 			}
@@ -5037,7 +5037,7 @@ if ($module == 'initmodule') {
 										print '<input type="number" step="1" min="0" max="1" class="center width50" name="propunique" value="'.dol_escape_htmltag($propunique).'">';
 										print '</td>';
 										print '<td>';
-										print $form->selectarray('propondelete', array('' => '', 'RESTRICT' => 'RESTRICT', 'CASCADE' => 'CASCADE', 'SETNULL' => 'SET NULL', 'NOACTION' => 'NO ACTION'), $propondelete, 0, 0, 0, '', 0, 0, 0, '', 'maxwidth100');
+										print $form->selectarray('propondelete', array('' => '', 'RESTRICT' => 'RESTRICT', 'SETNULL' => 'SET NULL', 'NOACTION' => 'NO ACTION'), $propondelete, 0, 0, 0, '', 0, 0, 0, '', 'maxwidth100');
 										print '</td>';
 										print '<td>';
 										print '<input class="right width50" name="propposition" value="'.dol_escape_htmltag($propposition).'">';

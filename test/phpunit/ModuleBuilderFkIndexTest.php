@@ -79,7 +79,7 @@ class ModuleBuilderFkIndexTest extends CommonClassTest
 
 		$addfieldentry = array(
 			'name' => 'fktestlink', 'label' => 'TestLink', 'type' => 'integer',
-			'foreignkey' => 'societe.rowid', 'unique' => 1, 'ondelete' => 'CASCADE',
+			'foreignkey' => 'societe.rowid', 'unique' => 1, 'ondelete' => 'SETNULL',
 			'notnull' => 0, 'position' => 200, 'enabled' => 1, 'visible' => 1
 		);
 
@@ -91,14 +91,14 @@ class ModuleBuilderFkIndexTest extends CommonClassTest
 		$this->assertStringContainsString('"foreignkey" => "societe.rowid"', $class, 'foreignkey must be kept as a string, not corrupted to 0');
 		$this->assertStringNotContainsString('"foreignkey" => "0"', $class, 'foreignkey must not be serialized as 0');
 		$this->assertStringContainsString('"unique" => "1"', $class, 'unique attribute must be serialized');
-		$this->assertStringContainsString('"ondelete" => "CASCADE"', $class, 'ondelete attribute must be serialized');
+		$this->assertStringContainsString('"ondelete" => "SETNULL"', $class, 'ondelete attribute must be serialized');
 
 		$res = rebuildObjectSql($base, $module, $objectname, '0', $base, $object, 'external');
 		$this->assertGreaterThan(0, $res, 'rebuildObjectSql must succeed');
 
 		$keysql = file_get_contents($base.'/sql/llx_'.$module.'_'.strtolower($objectname).'.key.sql');
 		$this->assertStringContainsString('ADD UNIQUE INDEX uk_'.$module.'_'.strtolower($objectname).'_fktestlink', $keysql, 'A UNIQUE index must be generated for a unique field');
-		$this->assertStringContainsString('FOREIGN KEY (fktestlink) REFERENCES llx_societe(rowid) ON DELETE CASCADE', $keysql, 'The FK must be generated with its ON DELETE policy');
+		$this->assertStringContainsString('FOREIGN KEY (fktestlink) REFERENCES llx_societe(rowid) ON DELETE SET NULL', $keysql, 'The FK must be generated with its ON DELETE policy');
 
 		dol_delete_dir_recursive($base);
 	}
@@ -114,10 +114,10 @@ class ModuleBuilderFkIndexTest extends CommonClassTest
 		$normalize = static function (string $v): string {
 			return preg_replace('/[^A-Z]/', '', strtoupper($v));
 		};
-		$allowed = array('RESTRICT', 'SETNULL', 'CASCADE', 'NOACTION');
+		$allowed = array('RESTRICT', 'SETNULL', 'NOACTION');
 
 		$this->assertSame('SETNULL', $normalize('SET NULL'), 'SET NULL must normalize to SETNULL');
-		$this->assertSame('CASCADE', $normalize('cascade'), 'lowercase cascade must normalize');
+		$this->assertFalse(in_array($normalize('cascade'), $allowed, true), 'CASCADE is forbidden by Dolibarr rules and must be rejected');
 		$this->assertTrue(in_array($normalize('SET NULL'), $allowed, true), 'SET NULL must be accepted');
 		$this->assertFalse(in_array($normalize('DROP TABLE'), $allowed, true), 'An unknown policy must be rejected');
 	}
@@ -150,7 +150,7 @@ class ModuleBuilderFkIndexTest extends CommonClassTest
 		$object->fields = array(
 			'rowid' => array('type' => 'integer', 'label' => 'id'),
 			'entity' => array('type' => 'integer', 'label' => 'e'),
-			'fkcascade' => array('type' => 'integer', 'label' => 'C', 'foreignkey' => 'societe.rowid', 'ondelete' => 'CASCADE'),
+			'fkcascade' => array('type' => 'integer', 'label' => 'C', 'foreignkey' => 'societe.rowid', 'ondelete' => 'CASCADE'),	// forbidden, must emit no clause
 			'fksetnull' => array('type' => 'integer', 'label' => 'N', 'foreignkey' => 'societe.rowid', 'ondelete' => 'SETNULL', 'notnull' => 0),
 			'fknoaction' => array('type' => 'integer', 'label' => 'NA', 'foreignkey' => 'societe.rowid', 'ondelete' => 'NOACTION'),
 			'fkrestrict' => array('type' => 'integer', 'label' => 'R', 'foreignkey' => 'societe.rowid', 'ondelete' => 'RESTRICT'),
@@ -165,7 +165,7 @@ class ModuleBuilderFkIndexTest extends CommonClassTest
 		$this->assertGreaterThan(0, $res, 'rebuildObjectSql must succeed');
 		$key = file_get_contents($base.'/sql/llx_'.$module.'_myobject.key.sql');
 
-		$this->assertStringContainsString('fkcascade) REFERENCES llx_societe(rowid) ON DELETE CASCADE;', $key, 'CASCADE policy');
+		$this->assertStringContainsString('fkcascade) REFERENCES llx_societe(rowid);', $key, 'CASCADE is forbidden and must emit no clause');
 		$this->assertStringContainsString('fksetnull) REFERENCES llx_societe(rowid) ON DELETE SET NULL;', $key, 'SET NULL policy on nullable field');
 		$this->assertStringContainsString('fknoaction) REFERENCES llx_societe(rowid) ON DELETE NO ACTION;', $key, 'NO ACTION policy');
 		$this->assertStringContainsString('fkrestrict) REFERENCES llx_societe(rowid);', $key, 'RESTRICT emits no clause');

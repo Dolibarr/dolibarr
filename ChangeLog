@@ -8,6 +8,7 @@ English Dolibarr ChangeLog
 
 For users:
 ----------
+NEW: Unify all per-object extrafields admin pages into a single secured page (htdocs/admin/extrafields.php), replacing ~79 near-identical wrapper pages with one whitelist-controlled controller
 NEW: Experimental module "Quick memo" to put post-it on any screens (#37422)
 NEW: Thirdparty bank account asks for bank country, state, currency and status (#38031)
 NEW: New Stock transfer module stabilization and full functional coverage (#37557)
@@ -177,8 +178,6 @@ For developers:
 NEW: Use another hash algorithm v2 based on sha256/hmac for immutable logs (#37725)
 NEW: Replace MyObject MyModule occurrences (#38370)
 NEW: ModuleBuilder - Allow selecting which optional tabs (contact, note, document, agenda) are generated for an object (#38570)
-NEW: ModuleBuilder - Per-field UNIQUE index and foreign key ON DELETE policy options, foreign key auto-derivation from link-type fields, default foreign keys on fk_soc/fk_project, and fix foreignkey corruption on class rebuild (#32460)
-FIX: ModuleBuilder - Generated list page derives the email trackid from the object name instead of the leftover 'xxxx' placeholder (#32460)
 NEW: add hooks in reception card (#37214)
 NEW: add new hook in BonPrelevement::EnregDestinataireSEPA() function (#37419)
 NEW: Add hook selectForFormsListUrl in Form::selectForForms (#37447)

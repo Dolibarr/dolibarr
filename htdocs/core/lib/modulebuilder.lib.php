@@ -489,7 +489,8 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 					if ($ondeletenorm === 'SETNULL' && !empty($val['notnull']) && $val['notnull'] > 0) {
 						$ondeletenorm = '';
 					}
-					$ondeletemap = array('SETNULL' => 'SET NULL', 'CASCADE' => 'CASCADE', 'NOACTION' => 'NO ACTION');
+					// CASCADE is not offered: Dolibarr forbids it, the core schema holds no ON DELETE CASCADE.
+					$ondeletemap = array('SETNULL' => 'SET NULL', 'NOACTION' => 'NO ACTION');
 					if (isset($ondeletemap[$ondeletenorm])) {
 						$texttoinsert .= " ON DELETE ".$ondeletemap[$ondeletenorm];
 					}
