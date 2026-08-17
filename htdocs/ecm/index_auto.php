@@ -2,7 +2,7 @@
 /* Copyright (C) 2008-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2008-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2016      Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2024-2025 Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2026 MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025      Joachim Kueter       <git-jk@bloxera.com>
  *
@@ -428,7 +428,7 @@ print dol_get_fiche_head($head, 'index_auto', '', -1, '');
 
 // Confirm remove file (for non javascript users)
 if ($action == 'deletefile' && empty($conf->use_javascript_ajax)) {
-	print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.urlencode((string) $section).'&urlfile='.urlencode(GETPOST("urlfile")), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', '', 1);
+	print $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], array('section' => $section, 'urlfile' => GETPOST("urlfile"))), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', '', 1);
 }
 
 // Start container of all panels
@@ -442,7 +442,18 @@ if ($action == 'deletefile' && empty($conf->use_javascript_ajax)) {
 print '<div class="inline-block toolbarbutton centpercent">';
 
 // Toolbar
-$url = ((!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_ECM_DISABLE_JS')) ? '#' : ($_SERVER["PHP_SELF"].'?action=refreshmanual'.($module ? '&module='.urlencode($module) : '').($section ? '&section='.urlencode((string) $section) : '')));
+if (!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_ECM_DISABLE_JS')) {
+	$url = '#';
+} else {
+	$paramsrefresh = array('action' => 'refreshmanual');
+	if ($module) {
+		$paramsrefresh['module'] = $module;
+	}
+	if ($section) {
+		$paramsrefresh['section'] = $section;
+	}
+	$url = dolBuildUrl($_SERVER["PHP_SELF"], $paramsrefresh);
+}
 print '<a href="'.$url.'" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans('Refresh')).'">';
 print img_picto('', 'refresh', 'id="refreshbutton"', 0, 0, 0, '', 'size15x marginrightonly');
 print '</a>';
@@ -459,7 +470,7 @@ print '</div>';
 
 // Generate form to confirm the deletion of a category line
 if ($action == 'delete_section') {
-	print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.urlencode((string) $section), $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection', $ecmdir->label), 'confirm_deletesection', '', '', 1);
+	print $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], array('section' => $section)), $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection', $ecmdir->label), 'confirm_deletesection', '', '', 1);
 }
 // End confirm
 
@@ -506,7 +517,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i', $act
 			}
 
 			print '<li class="directory collapsed">';
-			print '<a class="fmdirlia jqft ecmjqft" href="'.$_SERVER["PHP_SELF"].'?module='.urlencode($val['module']).'">';
+			print '<a class="fmdirlia jqft ecmjqft" href="'.dolBuildUrl($_SERVER["PHP_SELF"], array('module' => $val['module'])).'">';
 			print dolPrintLabel($val['label']);
 			print '</a>';
 

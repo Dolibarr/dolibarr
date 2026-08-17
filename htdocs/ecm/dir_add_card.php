@@ -292,7 +292,7 @@ if (empty($action) || $action == 'delete_section') {
 
 	// Generate form to confirm deletion of a category line
 	if ($action == 'delete_section') {
-		print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.urlencode($section), $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection', $ecmdir->label), 'confirm_deletesection');
+		print $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], array('section' => $section)), $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection', $ecmdir->label), 'confirm_deletesection');
 	}
 
 
@@ -300,7 +300,7 @@ if (empty($action) || $action == 'delete_section') {
 	print '<div class="tabsAction">';
 
 	// Delete
-	print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER["PHP_SELF"].'?section='.urlencode($section).'&action=delete_section&token='.newToken(), '', $user->hasRight('ecm', 'setup'));
+	print dolGetButtonAction($langs->trans('Delete'), '', 'delete', dolBuildUrl($_SERVER["PHP_SELF"], array('section' => $section, 'action' => 'delete_section'), true), '', $user->hasRight('ecm', 'setup'));
 
 	print '</div>';
 }
