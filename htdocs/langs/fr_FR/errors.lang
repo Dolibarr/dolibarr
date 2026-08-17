@@ -214,7 +214,6 @@ ErrorFieldMustBeANumeric=Le champ <b>%s</b> doit être un numérique
 ErrorMandatoryParametersNotProvided=Paramètre(s) obligatoire(s) non fournis
 ErrorOppStatusRequiredIfUsage=Vous définissez que vous souhaitez utiliser ce projet pour suivre une opportunité, vous devez donc également renseigner le Statut initial de l'opportunité.
 ErrorOppStatusRequiredIfAmount=Vous avez fixé un montant estimé pour cette opportunité. Aussi, vous devez également entrer son statut
-ErrorCloseRequiresWonLost=Une opportunité doit être marquée Gagnée ou Perdue avant d'être clôturée.
 ErrorFailedToLoadModuleDescriptorForXXX=Échec de changement de la classe descripteur du module %s
 ErrorBadDefinitionOfMenuArrayInModuleDescriptor=Mauvaise définition du tableau Menu dans le descripteur de module (mauvaise valeur pour la clé fk_menu)
 ErrorSavingChanges=Une erreur est survenue lors de la sauvegarde des modifications
@@ -389,6 +388,7 @@ ErrorModuleBuilderFailedToInit=Échec de l'initialisation de l'objet avec le nou
 ErrorThirdPartyNotFound=Erreur : Tiers introuvable
 ErrorDynamicPHPContentNotAllowed=Erreur : %s=1, le contenu PHP dynamique n'est donc autorisé que si les fonctions PHP RCE (exec, shell_exec, ...) sont toutes désactivées.
 ErrorTooManyLinksIntoHTMLString=Le contenu HTML contient trop de liens ou d'images. Réduisez leur nombre ou augmentez la valeur de MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT.
+ErrorDeletingAClosedCashControlIsNotPossible=La suppression d'une clôture de caisse est impossible.
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Votre paramètre PHP upload_max_filesize (%s) est supérieur au paramètre PHP post_max_size (%s). Ceci n'est pas une configuration cohérente.
