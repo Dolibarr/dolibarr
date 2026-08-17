@@ -48,6 +48,7 @@ ConferenceOrBoothTab = Mkutano Au Kibanda
 AmountPaid = Kiasi kilicholipwa
 DateOfRegistration = Tarehe ya usajili
 ConferenceOrBoothAttendee = Mhudhuriaji wa Mkutano au Kibanda
+ConferenceOrBoothAttendeesShort = Conf. or Booth Attendees
 ApplicantOrVisitor=Mwombaji au mgeni
 Speaker=Spika
 # Template Mail
@@ -81,8 +82,8 @@ ListOfAttendeesOfEvent=List of attendees of event projects
 ListOfConfOrBoothOfEvent=List of conferences or booths of event projects
 DownloadICSLink=Download ICS file
 EVENTORGANIZATION_SECUREKEY=Mbegu ili kupata ufunguo wa ukurasa wa usajili wa umma ili kupendekeza mkutano
-SERVICE_BOOTH_LOCATION=Huduma inayotumika kwa safu mlalo ya ankara kuhusu eneo la kibanda
-SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION=Huduma inayotumika kwa safu mlalo ya ankara kuhusu usajili wa mhudhuriaji kwa tukio
+SERVICE_BOOTH_LOCATION=Service to use on the invoice line for the sale of a booth.
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION=Service to use on the invoice line for the participation fees.
 NbVotes=Idadi ya kura
 # Status
 EvntOrgDraft = Rasimu
@@ -122,7 +123,7 @@ NewSubscription=Usajili
 OrganizationEventConfRequestWasReceived=Pendekezo lako la mkutano limepokelewa
 OrganizationEventBoothRequestWasReceived=Ombi lako la kibanda limepokelewa
 OrganizationEventPaymentOfBoothWasReceived=Malipo yako ya kibanda chako yamerekodiwa
-OrganizationEventPaymentOfRegistrationWasReceived=Malipo yako ya usajili wa tukio yako yamerekodiwa
+OrganizationEventPaymentOfRegistrationWasReceived=Your payment for your registration to the event has been recorded
 OrganizationEventBulkMailToAttendees=Huu ni ukumbusho kuhusu ushiriki wako katika tukio kama mhudhuriaji
 OrganizationEventBulkMailToSpeakers=Hiki ni kikumbusho cha ushiriki wako katika tukio kama mzungumzaji
 OrganizationEventLinkToThirdParty=Unganisha kwa wahusika wengine (mteja, mtoa huduma au mshirika)

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2007-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -272,7 +272,7 @@ class CUnits extends CommonDict
 				}
 			}
 			if (count($sqlwhere) > 0) {
-				$sql .= ' AND ('.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
+				$sql .= ' AND ('.implode(' '.$this->db->sanitize($filtermode).' ', $sqlwhere).')';
 			}
 
 			$filter = '';
@@ -372,7 +372,7 @@ class CUnits extends CommonDict
 		$sql .= " short_label=".(isset($this->short_label) ? "'".$this->db->escape($this->short_label)."'" : "null").",";
 		$sql .= " unit_type=".(isset($this->unit_type) ? "'".$this->db->escape($this->unit_type)."'" : "null").",";
 		$sql .= " scale=".(isset($this->scale) ? "'".$this->db->escape((string) $this->scale)."'" : "null").",";
-		$sql .= " active=".(isset($this->active) ? $this->active : "null");
+		$sql .= " active=".(isset($this->active) ? ((int) $this->active) : "null");
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
@@ -464,13 +464,13 @@ class CUnits extends CommonDict
 		$value = (float) price2num($value);
 		$fk_unit = intval($fk_unit);
 
-		// Calcul en unité de base
+		// Calculate in base unit
 		$scaleUnitPow = $this->scaleOfUnitPow($fk_unit);
 
 		// convert to standard unit
 		$value *= $scaleUnitPow;
 		if ($fk_new_unit != 0) {
-			// Calcul en unité de base
+			// Calculate in base unit
 			$scaleUnitPow = $this->scaleOfUnitPow($fk_new_unit);
 			if (!empty($scaleUnitPow)) {
 				// convert to new unit

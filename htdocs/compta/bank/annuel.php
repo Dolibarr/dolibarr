@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2013-2023  Charlene BENKE          <charlene@patas-monkey.com>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -288,7 +288,7 @@ if ($result < 0) {
 	$error++;
 	setEventMessages($langs->trans("ErrorFailedToCreateDir"), null, 'errors');
 } else {
-	// Calcul de $min et $max
+	// Calculate $min and $max
 	$sql = "SELECT MIN(b.datev) as min, MAX(b.datev) as max";
 	$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
 	$sql .= ", ".MAIN_DB_PREFIX."bank_account as ba";
@@ -311,7 +311,7 @@ if ($result < 0) {
 	}
 
 	// CRED PART
-	// Chargement du tableau des années
+	// Load the year array
 	$tblyear = array();
 	'@phan-var-force array<array<string,int|float>> $tblyear';
 	$tblyear[0] = array();
@@ -325,8 +325,8 @@ if ($result < 0) {
 		$sql .= ", ".MAIN_DB_PREFIX."bank_account as ba";
 		$sql .= " WHERE b.fk_account = ba.rowid";
 		$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
-		$sql .= " AND b.datev >= '".($year - $annee)."-01-01 00:00:00'";
-		$sql .= " AND b.datev <= '".($year - $annee)."-12-31 23:59:59'";
+		$sql .= " AND b.datev >= '".((int) ($year - $annee))."-01-01 00:00:00'";
+		$sql .= " AND b.datev <= '".((int) ($year - $annee))."-12-31 23:59:59'";
 		$sql .= " AND b.amount > 0";
 		if ($id && GETPOST("option") != 'all') {
 			$sql .= " AND b.fk_account IN (".$db->sanitize($id).")";
@@ -347,7 +347,7 @@ if ($result < 0) {
 			dol_print_error($db);
 		}
 	}
-	// Chargement de labels et data_xxx pour tableau 4 Movements
+	// Load labels and data_xxx for the 4 Movements chart
 	$labels = array();
 	$data_year_0 = array();
 	$data_year_1 = array();
@@ -396,7 +396,7 @@ if ($result < 0) {
 	unset($tblyear[2]);
 
 	// DEDBT PART
-	// Chargement du tableau des années
+	// Load the year array
 	$tblyear[0] = array();
 	$tblyear[1] = array();
 	$tblyear[2] = array();
@@ -408,8 +408,8 @@ if ($result < 0) {
 		$sql .= ", ".MAIN_DB_PREFIX."bank_account as ba";
 		$sql .= " WHERE b.fk_account = ba.rowid";
 		$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
-		$sql .= " AND b.datev >= '".($year - $annee)."-01-01 00:00:00'";
-		$sql .= " AND b.datev <= '".($year - $annee)."-12-31 23:59:59'";
+		$sql .= " AND b.datev >= '".((int) ($year - $annee))."-01-01 00:00:00'";
+		$sql .= " AND b.datev <= '".((int) ($year - $annee))."-12-31 23:59:59'";
 		$sql .= " AND b.amount < 0";
 		if ($id && GETPOST("option") != 'all') {
 			$sql .= " AND b.fk_account IN (".$db->sanitize($id).")";
@@ -431,7 +431,7 @@ if ($result < 0) {
 		}
 	}
 
-	// Chargement de labels et data_xxx pour tableau 4 Movements
+	// Load labels and data_xxx for the 4 Movements chart
 	$labels = array();
 	$data_year_0 = array();
 	$data_year_1 = array();

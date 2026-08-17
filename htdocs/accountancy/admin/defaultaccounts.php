@@ -180,6 +180,12 @@ if ($action == 'update') {
 		$error++;
 	}
 
+	$constname = 'ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT_FOR_VAT';
+	$constvalue = GETPOSTINT($constname);
+	if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
+		$error++;
+	}
+
 	$constname = 'ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT';
 	$constvalue = GETPOSTINT($constname);
 	if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
@@ -339,6 +345,18 @@ print '</td>';
 // Value
 print '<td class="right">'; // Do not force class=right, or it align also the content of the select box
 print $formaccounting->select_account(getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT'), 'ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT', 1, [], 1, 1, 'minwidth100 maxwidth300 maxwidthonsmartphone', 'accounts');
+print '</td>';
+print '</tr>';
+
+// customer deposit account for VAT
+print '<tr class="oddeven value">';
+// Param
+print '<td>';
+print img_picto('', 'bill', 'class="pictofixedwidth"') . $langs->trans('ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT_FOR_VAT');
+print '</td>';
+// Value
+print '<td class="right">'; // Do not force class=right, or it align also the content of the select box
+print $formaccounting->select_account(getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT_FOR_VAT'), 'ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT_FOR_VAT', 1, [], 1, 1, 'minwidth100 maxwidth300 maxwidthonsmartphone', 'accounts');
 print '</td>';
 print '</tr>';
 

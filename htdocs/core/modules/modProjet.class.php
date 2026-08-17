@@ -314,7 +314,7 @@ class modProjet extends DolibarrModules
 		$this->import_fields_array[$r] = array('t.ref' => 'ProjectRef*', 't.title' => 'Label*', 't.description' => "Description", 't.fk_soc' => 'ThirdPartyName', 't.public' => "Public", 't.fk_statut' => "Status");
 		$this->import_fields_array[$r] = array_merge($this->import_fields_array[$r], array('t.fk_opp_status' => "OpportunityStatus", 't.opp_percent' => "OpportunityProbability", 't.opp_amount' => "OpportunityAmount", 't.note_public' => "NotePublic", 't.note_private' => "NotePrivate", 't.budget_amount' => "Budget", 't.dateo' => "DateStart", 't.datee' => "DateEnd", 't.usage_opportunity' => "UsageOpportunity", 't.usage_task' => 'UsageTasks', 't.usage_bill_time' => 'UsageBillTimeShort'));
 		// Add extra fields
-		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type <> 'separate' AND elementtype = 'projet' AND entity IN (0,".$conf->entity.")";
+		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type <> 'separate' AND elementtype = 'projet' AND entity IN (0,".((int) $conf->entity).")";
 		$resql = $this->db->query($sql);
 		if ($resql) {    // This can fail when class is used on old database (during migration for example)
 			while ($obj = $this->db->fetch_object($resql)) {
@@ -360,7 +360,7 @@ class modProjet extends DolibarrModules
 			$this->import_tables_array[$r] = array('t' => MAIN_DB_PREFIX.'projet_task', 'extra' => MAIN_DB_PREFIX.'projet_task_extrafields'); // List of tables to insert into (insert done in same order)
 			$this->import_fields_array[$r] = array('t.fk_projet' => 'ProjectRef*', 't.ref' => 'RefTask*', 't.label' => 'LabelTask*', 't.dateo' => "DateStart", 't.datee' => "DateEnd", 't.planned_workload' => "PlannedWorkload", 't.progress' => "Progress", 't.note_private' => "NotePrivate", 't.note_public' => "NotePublic", 't.datec' => "DateCreation");
 			// Add extra fields
-			$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type <> 'separate' AND elementtype = 'projet_task' AND entity IN (0,".$conf->entity.")";
+			$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type <> 'separate' AND elementtype = 'projet_task' AND entity IN (0,".((int) $conf->entity).")";
 			$resql = $this->db->query($sql);
 			if ($resql) {    // This can fail when class is used on old database (during migration for example)
 				while ($obj = $this->db->fetch_object($resql)) {

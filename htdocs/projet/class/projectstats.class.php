@@ -82,7 +82,7 @@ class ProjectStats extends Stats
 
 		$this->from = MAIN_DB_PREFIX.$this->project->table_element;
 		$this->field = 'opp_amount';
-		$this->where = " entity = ".$conf->entity;
+		$this->where = " entity = ".((int) $conf->entity);
 		if ($this->socid > 0) {
 			$this->where .= " AND fk_soc = ".((int) $this->socid);
 		}

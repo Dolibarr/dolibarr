@@ -97,6 +97,8 @@ $search_ref          = GETPOST('search_ref', 'alphanohtml');
 $search_day_create   = GETPOST('search_day_create', 'int');
 $search_month_create = GETPOST('search_month_create', 'int');
 $search_year_create  = GETPOST('search_year_create', 'int');
+$search_month_update = GETPOST('search_month_update', 'int');
+$search_year_update  = GETPOST('search_year_update', 'int');
 $search_day_start    = GETPOST('search_day_start', 'int');
 $search_month_start  = GETPOST('search_month_start', 'int');
 $search_year_start   = GETPOST('search_year_start', 'int');
@@ -207,6 +209,8 @@ if (empty($reshook)) {
 		$search_ref = "";
 		$search_month_create = "";
 		$search_year_create = "";
+		$search_month_update = "";
+		$search_year_update = "";
 		$search_month_start = "";
 		$search_year_start = "";
 		$search_month_end = "";
@@ -265,7 +269,7 @@ if ($id > 0) {
 	$search_employee = $user_id;
 }
 
-// Récupération des congés payés de l'utilisateur ou de tous les users de sa hierarchy
+// Retrieve paid leave for the current user or for all users in their hierarchy
 // Load array $object->holiday
 
 $sql = "SELECT";
@@ -328,7 +332,7 @@ if (isset($extrafields->attributes[$object->table_element]['label']) && is_array
 }
 $sql .= ", ".MAIN_DB_PREFIX."user as uu, ".MAIN_DB_PREFIX."user as ua";
 $sql .= " WHERE cp.entity IN (".getEntity('holiday').")";
-$sql .= " AND cp.fk_user = uu.rowid AND cp.fk_validator = ua.rowid "; // Hack pour la recherche sur le tableau
+$sql .= " AND cp.fk_user = uu.rowid AND cp.fk_validator = ua.rowid "; // Hack needed for search on the list
 // Search all
 if (!empty($search_all)) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
@@ -343,6 +347,8 @@ $sql .= dolSqlDateFilter("cp.date_debut", $search_day_start, $search_month_start
 $sql .= dolSqlDateFilter("cp.date_fin", $search_day_end, $search_month_end, $search_year_end);
 // Create date
 $sql .= dolSqlDateFilter("cp.date_create", $search_day_create, $search_month_create, $search_year_create);
+// Update date
+$sql .= dolSqlDateFilter("cp.tms", 0, $search_month_update, $search_year_update);
 // Employee
 if (!empty($search_employee) && $search_employee != -1) {
 	$sql .= " AND cp.fk_user = '".$db->escape($search_employee)."'\n";
@@ -436,6 +442,12 @@ if ($search_month_create) {
 }
 if ($search_year_create) {
 	$param .= '&search_year_create='.urlencode($search_year_create);
+}
+if ($search_month_update) {
+	$param .= '&search_month_update='.urlencode($search_month_update);
+}
+if ($search_year_update) {
+	$param .= '&search_year_update='.urlencode($search_year_update);
 }
 if ($search_day_start) {
 	$param .= '&search_day_start='.urlencode($search_day_start);

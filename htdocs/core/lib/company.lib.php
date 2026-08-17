@@ -654,7 +654,7 @@ function societe_admin_prepare_head()
 	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'company_admin');
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/societe/admin/societe_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'societe'));
 	$head[$h][1] = $langs->trans("ExtraFieldsThirdParties");
 	$nbExtrafields = $extrafields->attributes['societe']['count'];
 	if ($nbExtrafields > 0) {
@@ -663,7 +663,7 @@ function societe_admin_prepare_head()
 	$head[$h][2] = 'attributes';
 	$h++;
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/societe/admin/contact_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'socpeople'));
 	$head[$h][1] = $langs->trans("ExtraFieldsContacts");
 	$nbExtrafields = $extrafields->attributes['socpeople']['count'];
 	if ($nbExtrafields > 0) {
@@ -2187,7 +2187,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 				&& $filterobj->table_element && $filterobj->element
 			) {
 				// Generic case (if there is a $filterobj and a field rowid and (ref or label) exists.
-				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = '" . $db->escape($filterobj->element) . ($module ? "@" . $module : "") . "'";
+				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = '" . $db->escape($filterobj->element. ($module ? "@" . $module : "")) . "'";
 				if ($filterobj->id) {
 					$sql .= " AND a.fk_element = " . ((int) $filterobj->id);
 				}
@@ -2279,7 +2279,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 		$limit = $MAXWITHOUTPAGINATION;
 
 		// Complete request and execute it with limit
-		$sql .= $db->order($sortfield_new, $sortorder);
+		$sql .= $db->order($sortfield_new, $sortorder);  // @phan-suppress-current-line SqlInjection
 		if ($limit) {	// @phpstan-ignore-line
 			$sql .= $db->plimit($limit + 1, $offset);
 		}

@@ -755,12 +755,12 @@ if (isModEnabled('socialnetworks')) {
 		if ($value['active'] && strlen($search_[$key])) {
 			$searchkeyinjsonformat = preg_replace('/"$/', '', preg_replace('/^"/', '', json_encode($search_[$key])));
 			if (in_array($db->type, array('mysql', 'mysqli'))) {
-				$sql .= " AND p.socialnetworks REGEXP '\"".$db->escape($db->escapeforlike($key))."\":\"[^\"]*".$db->escape($db->escapeforlike($searchkeyinjsonformat))."'";
+				$sql .= " AND p.socialnetworks REGEXP '".$db->escape("\"".$db->escapeforlike($key)."\":\"[^\"]*".$db->escapeforlike($searchkeyinjsonformat))."'";
 			} elseif ($db->type == 'pgsql') {
-				$sql .= " AND p.socialnetworks ~ '\"".$db->escape($db->escapeforlike($key))."\":\"[^\"]*".$db->escape($db->escapeforlike($searchkeyinjsonformat))."'";
+				$sql .= " AND p.socialnetworks ~ '".$db->escape("\"".$db->escapeforlike($key)."\":\"[^\"]*".$db->escapeforlike($searchkeyinjsonformat))."'";
 			} else {
-				// Works with all database but not reliable because search only for social network code starting with earched value
-				$sql .= " AND p.socialnetworks LIKE '%\"".$db->escape($db->escapeforlike($key))."\":\"".$db->escape($db->escapeforlike($searchkeyinjsonformat))."%'";
+				// Works with all database but not reliable because search only for social network code starting with searched value
+				$sql .= " AND p.socialnetworks LIKE '".$db->escape("%\"".$db->escapeforlike($key."\":\"".$searchkeyinjsonformat)."%")."'";
 			}
 		}
 	}
@@ -1800,11 +1800,12 @@ while ($i < $imaxinloop) {
 
 		// EMail
 		if (!empty($arrayfields['p.email']['checked'])) {
-			print '<td class="nowraponall tdoverflowmax200" title="'.dolPrintHTML($obj->email).'">';
+			print '<td class="nowraponall tdoverflowmax200" title="'.dolPrintHTMLForAttribute($obj->email).'">';
 			if ($contextpage == 'poslist') {
 				print $obj->email;
 			} else {
-				print dol_print_email($obj->email, $obj->rowid, $obj->socid, 1, 18, 0, 1);
+				$showinvalidemail = getDolGlobalInt('MAIN_SHOW_INVALID_EMAIL_IN_LIST', 1); // in list, we check only syntax of emails
+				print dol_print_email($obj->email, $obj->rowid, $obj->socid, 1, 18, $showinvalidemail, 1);
 			}
 			print '</td>';
 			if (!$i) {
@@ -1876,7 +1877,9 @@ while ($i < $imaxinloop) {
 
 		// Private/Public
 		if (!empty($arrayfields['p.priv']['checked'])) {
-			print '<td class="center">'.$contactstatic->LibPubPriv($obj->priv).'</td>';
+			print '<td class="center">';
+			print $contactstatic->LibPubPriv($obj->priv, 2);
+			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

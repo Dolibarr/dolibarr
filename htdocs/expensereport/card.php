@@ -1270,9 +1270,9 @@ if (empty($reshook)) {
 				unset($vatrate);
 				unset($comments);
 				unset($fk_c_type_fees);
-				unset($fk_project);
+				$fk_project = 0;
 
-				unset($date);
+				$date = false;
 			} else {
 				$error++;
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -2698,7 +2698,7 @@ if ($action == 'create') {
 				print '</td>';
 
 				print '</tr>';
-			} // Fin si c'est payé/validé
+			} // End if paid/validated
 
 			print '</table>';
 			print '</div>';
@@ -2739,7 +2739,7 @@ if ($action == 'create') {
                     path += "&vatrate="+tva;
                     path += "&qty="+qty;
 
-                    if (type_fee == 4) { // frais_kilométriques
+                    if (type_fee == 4) { // mileage expenses
                         if (tax_cat == "" || parseInt(tax_cat) <= 0){
                             return ;
                         }
@@ -2820,9 +2820,9 @@ if ($action != 'create' && $action != 'edit' && $action != 'editline') {
 	}
 
 	/* If status is "Draft"
-	 *	ET user à droit "creer/supprimer"
-	 *	ET fk_user_author == user courant
-	 * 	Afficher : "Enregistrer" / "Modifier" / "Supprimer"
+	 *	AND user has "create/delete" right
+	 *	AND fk_user_author == current user
+	 * 	Show: "Save" / "Modify" / "Delete"
 	 */
 	if ($user->hasRight('expensereport', 'creer') && $object->status == ExpenseReport::STATUS_DRAFT) {
 		if (in_array($object->fk_user_author, $childids) || $user->hasRight('expensereport', 'writeall_advance')) {
@@ -2836,10 +2836,10 @@ if ($action != 'create' && $action != 'edit' && $action != 'editline') {
 		}
 	}
 
-	/* If status if "Refused"
-	 *	ET user à droit "creer/supprimer"
-	 *	ET fk_user_author == user courant
-	 * 	Afficher : "Enregistrer" / "Modifier" / "Supprimer"
+	/* If status is "Refused"
+	 *	AND user has "create/delete" right
+	 *	AND fk_user_author == current user
+	 * 	Show: "Save" / "Modify" / "Delete"
 	 */
 	if ($user->hasRight('expensereport', 'creer') && $object->status == ExpenseReport::STATUS_REFUSED) {
 		if ($user->id == $object->fk_user_author || $user->id == $object->fk_user_valid) {
@@ -2857,10 +2857,10 @@ if ($action != 'create' && $action != 'edit' && $action != 'editline') {
 		}
 	}
 
-	/* Si l'état est "En attente d'approbation"
-	 *	ET user à droit de "approve"
-	 *	ET fk_user_validator == user courant
-	 *	Afficher : "Valider" / "Refuser" / "Supprimer"
+	/* If status is "Pending approval"
+	 *	AND user has "approve" right
+	 *	AND fk_user_validator == current user
+	 *	Show: "Validate" / "Refuse" / "Delete"
 	 */
 	if ($object->status == ExpenseReport::STATUS_VALIDATED) {
 		if (in_array($object->fk_user_author, $childids)) {

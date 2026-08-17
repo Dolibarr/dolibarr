@@ -216,6 +216,9 @@ $othermessage = '';
 $tmpprojtime = array();
 $nbAttendees = 0;
 
+$extrafields->fetch_name_optionals_label($object->table_element);
+$object->fetch_optionals();
+
 $permissiontoadd = $user->hasRight('projet', 'creer');
 $permissiontodelete = $user->hasRight('projet', 'supprimer');
 $permissiondellink = $user->hasRight('projet', 'creer');	// Used by the include of actions_dellink.inc.php
@@ -838,6 +841,17 @@ if ($action == "addelement") {
 	}
 } elseif ($action == "unlink") {
 	$tablename = GETPOST("tablename", "aZ09");
+	$referentTables = array_values(array_map(
+	/**
+	 * @param array{table: string} $definition
+	 * @return string
+	 */
+	function ($definition) {
+		return $definition['table'];
+	}, $listofreferent));
+	if (!in_array($tablename, $referentTables)) {
+		accessforbidden('', 0, 0);
+	}
 	$projectField = GETPOSTISSET('projectfield') ? GETPOST('projectfield', 'aZ09') : 'fk_projet';
 	$elementselectid = GETPOSTINT("elementselect");
 
@@ -1396,6 +1410,13 @@ foreach ($listofreferent as $key => $value) {
 			print '</td>';
 		}
 
+		// Additional columns from hooks
+		$parameters = array('key' => $key, 'value' => $value, 'tablename' => $tablename);
+		$reshook = $hookmanager->executeHooks('printOverviewDetailTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		if ($reshook < 0) {
+			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+		}
+		print $hookmanager->resPrint;
 
 		// Amount HT
 		//if (empty($value['disableamount']) && ! in_array($tablename, array('projet_task'))) print '<td class="right" width="120">'.$langs->trans("AmountHT").'</td>';
@@ -1737,6 +1758,13 @@ foreach ($listofreferent as $key => $value) {
 					print '</td>';
 				}
 
+				// Additional columns from hooks
+				$parameters = array('key' => $key, 'value' => $value, 'tablename' => $tablename, 'element' => $element, 'i' => $i, 'qualifiedfortotal' => $qualifiedfortotal);
+				$reshook = $hookmanager->executeHooks('printOverviewDetailValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+				if ($reshook < 0) {
+					setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+				}
+				print $hookmanager->resPrint;
 
 				// Amount without tax
 				$warning = '';
@@ -1963,6 +1991,13 @@ foreach ($listofreferent as $key => $value) {
 				if ($tablename == 'fichinter') {
 					print '<td class="left">'.convertSecondToTime($total_duration, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY).'</td>';
 				}
+				// Additional total columns from hooks
+				$parameters = array('key' => $key, 'value' => $value, 'tablename' => $tablename, 'nbelement' => $i);
+				$reshook = $hookmanager->executeHooks('printOverviewDetailTotal', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+				if ($reshook < 0) {
+					setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+				}
+				print $hookmanager->resPrint;
 				print '<td class="right">';
 				if (empty($value['disableamount'])) {
 					if ($key == 'loan') {

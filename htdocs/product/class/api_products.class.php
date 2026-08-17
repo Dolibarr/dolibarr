@@ -2,7 +2,7 @@
 /* Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2019		Cedric Ancelin			<icedo.anc@gmail.com>
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		William Mead			<william@m34d.com>
  * Copyright (C) 2025		Charlene Benke			<charlene@patas-monkey.com>
  *
@@ -63,7 +63,7 @@ class Products extends DolibarrApi
 	 */
 	public function __construct()
 	{
-		global $db, $conf;
+		global $db;
 
 		$this->db = $db;
 		$this->product = new Product($this->db);
@@ -91,7 +91,7 @@ class Products extends DolibarrApi
 	 */
 	public function get($id, $includestockdata = 0, $includesubproducts = false, $includeparentid = false, $includetrans = false)
 	{
-		if ($id < 1 ) {
+		if ($id < 1) {
 			throw new RestException(400, 'No Product with id<1 can exist');
 		}
 		return $this->_fetch($id, '', '', '', $includestockdata, $includesubproducts, $includeparentid, false, $includetrans);
@@ -399,7 +399,7 @@ class Products extends DolibarrApi
 	 */
 	public function put($id, $request_data = null)
 	{
-		if ($id < 1 ) {
+		if ($id < 1) {
 			throw new RestException(400, 'No Product with id<1 can exist');
 		}
 
@@ -570,7 +570,7 @@ class Products extends DolibarrApi
 	 */
 	public function delete($id)
 	{
-		if ($id < 1 ) {
+		if ($id < 1) {
 			throw new RestException(400, 'No Product with id<1 can exist');
 		}
 		if (!DolibarrApiAccess::$user->hasRight('produit', 'supprimer')) {
@@ -2260,7 +2260,7 @@ class Products extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
 		}
 
-		// Récupérer les contacts externes et internes
+		// Retrieve external and internal contacts
 		$contacts = $this->product->liste_contact(-1, 'external', 0, $type);
 		$socpeoples = $this->product->liste_contact(-1, 'internal', 0, $type);
 
