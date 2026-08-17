@@ -259,6 +259,10 @@ class modMultiCurrency extends DolibarrModules
 	{
 		$sql = array();
 
+		// Tables suffixed with '-multicurrency' are skipped by the installer and by the other modules,
+		// so they are created here only, that is when this module is enabled.
+		$this->_load_tables('/install/mysql/', 'multicurrency');
+
 		$res = $this->_init($sql, $options);
 
 		if ($res) {
