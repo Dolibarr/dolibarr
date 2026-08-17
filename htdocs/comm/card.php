@@ -1591,7 +1591,7 @@ if ($object->id > 0) {
 		$sql .= ', f.total_tva';
 		$sql .= ', f.total_ttc';
 		$sql .= ', f.entity';
-		$sql .= ', f.datef as df, f.date_lim_reglement as dl, f.datec as dc, f.paye as paye, f.fk_statut as status';
+		$sql .= ', f.datef as df, f.date_lim_reglement as dl, f.datec as dc, f.paye as paye, f.fk_statut as status, f.dispute_status';
 		$sql .= ', s.nom, s.rowid as socid';
 		$sql .= ', SUM(pf.amount) as am';
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
@@ -1641,6 +1641,7 @@ if ($object->id > 0) {
 				$facturestatic->total_ttc = $objp->total_ttc;
 				$facturestatic->statut = $objp->status;	// deprecated
 				$facturestatic->status = $objp->status;
+				$facturestatic->dispute_status = $objp->dispute_status;
 				$facturestatic->paye = $objp->paye;
 
 				$facturestatic->alreadypaid = $objp->am;
@@ -1714,7 +1715,7 @@ if ($object->id > 0) {
 					print '</td>';
 				}
 
-				print '<td class="nowrap right" style="min-width: 60px">'.($facturestatic->LibStatut($objp->paye, $objp->status, 5, $objp->am)).'</td>';
+				print '<td class="nowrap right" style="min-width: 60px">'.$facturestatic->getLibStatut(5, $objp->am).'</td>';
 				print "</tr>\n";
 				$i++;
 			}
