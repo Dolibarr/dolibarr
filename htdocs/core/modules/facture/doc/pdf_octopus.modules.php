@@ -822,6 +822,13 @@ class pdf_octopus extends ModelePDFFactures
 				// triggered the page break is written on top of the column headers.
 				$linetop_newpage = $this->tab_top_newpage + $this->tabTitleHeight;
 
+				// When TCPDF breaks a page by itself, it restarts the text of the line at the top margin,
+				// without the top padding it applies to the cell of a line printed by the code below. So the
+				// padding is added to the top margin, otherwise the first line of the page would be printed
+				// against the bottom border of the column headers instead of keeping the same gap as the
+				// first line of the first page of lines.
+				$topmargin_newpage = $linetop_newpage + (isset($this->cols['desc']['content']['padding'][0]) ? $this->cols['desc']['content']['padding'][0] : 0);
+
 				// Loop on each lines
 				$pageposbeforeprintlines = $pdf->getPage();
 				$pagenb = $pageposbeforeprintlines;
@@ -831,16 +838,6 @@ class pdf_octopus extends ModelePDFFactures
 				$pdf_sub_options = array();
 				$pdf_sub_options['titleshowuponpdf'] = 1;
 				$pdf_sub_options['titleshowtotalexludingvatonpdf'] = 1;
-
-				// The external module "subtotal" (htdocs/custom/subtotal) uses its own special code and
-				// blanks the standard columns through its hooks (pdf_getlineqty, pdf_getlineprogress, ...),
-				// but it knows nothing about the BTP situation columns added below. Its title, subtotal and
-				// free text lines carry no amount either, so they must be detected here too.
-				$usecustomsubtotal = isModEnabled('subtotal');
-				if ($usecustomsubtotal) {
-					dol_include_once('/subtotal/class/subtotal.class.php');
-					$usecustomsubtotal = class_exists('TSubtotal');
-				}
 
 				for ($i = 0; $i < $nblines; $i++) {
 					$linePosition = $i + 1;
@@ -852,9 +849,11 @@ class pdf_octopus extends ModelePDFFactures
 					$sub_options = $object->lines[$i]->extraparams["subtotal"] ?? array();
 					$issubtotalline = ($object->lines[$i]->special_code == SUBTOTALS_SPECIAL_CODE);
 
-					// Title, subtotal or free text line of either subtotals module: such a line carries no
-					// amount, all the amount columns must stay empty for it.
-					$isnoamountline = $issubtotalline || ($usecustomsubtotal && TSubtotal::isModSubtotalLine($object->lines[$i]));
+					// A title, a subtotal or a free text line is stored with the product type 9 and carries no
+					// amount. The standard columns of such a line are emptied by the module that owns it,
+					// through the pdf_getlinexxx hooks called below, but the situation columns added by this
+					// model are unknown to it, so the line must also be detected here to leave them empty.
+					$isnoamountline = ($object->lines[$i]->product_type == 9);
 
 					if ($issubtotalline) {
 						$level = $object->lines[$i]->qty;
@@ -892,7 +891,7 @@ class pdf_octopus extends ModelePDFFactures
 						$imglinesize = pdf_getSizeForImage($realpatharray[$i]);
 					}
 
-					$pdf->setTopMargin($linetop_newpage);
+					$pdf->setTopMargin($topmargin_newpage);
 					$pdf->setPageOrientation('', true, $this->heightforfooter + $this->heightforfreetext + $this->heightforinfotot); // The only function to edit the bottom margin of current page to set it.
 					$pageposbefore = $pdf->getPage();
 
@@ -1000,17 +999,18 @@ class pdf_octopus extends ModelePDFFactures
 
 					// Title and subtotal lines of the subtotals module carry no amount, they must leave
 					// the amount columns empty. Only a subtotal line gets amounts back, with the total
-					// of its group of lines.
+					// of its group of lines. The lines of any other module are emptied by the module
+					// itself, through the hooks executed by the pdf_getlinexxx() functions.
 
 					// VAT Rate
-					if ($this->getColumnStatus('vat') && !$isnoamountline) {
+					if ($this->getColumnStatus('vat') && !$issubtotalline) {
 						$vat_rate = pdf_getlinevatrate($object, $i, $outputlangs, $hidedetails);
 						$this->printStdColumnContent($pdf, $posy, 'vat', $vat_rate);
 						$nexY = max($pdf->GetY(), $nexY);
 					}
 
 					// Unit price before discount
-					if ($this->getColumnStatus('subprice') && !$isnoamountline && isset($pdf_sub_options['titleshowuponpdf'])) {
+					if ($this->getColumnStatus('subprice') && !$issubtotalline && isset($pdf_sub_options['titleshowuponpdf'])) {
 						$up_excl_tax = pdf_getlineupexcltax($object, $i, $outputlangs, $hidedetails);
 						$this->printStdColumnContent($pdf, $posy, 'subprice', $up_excl_tax);
 						$nexY = max($pdf->GetY(), $nexY);
@@ -1018,28 +1018,28 @@ class pdf_octopus extends ModelePDFFactures
 
 					// Quantity
 					// Enough for 6 chars
-					if ($this->getColumnStatus('qty') && !$isnoamountline) {
+					if ($this->getColumnStatus('qty') && !$issubtotalline) {
 						$qty = pdf_getlineqty($object, $i, $outputlangs, $hidedetails);
 						$this->printStdColumnContent($pdf, $posy, 'qty', $qty);
 						$nexY = max($pdf->GetY(), $nexY);
 					}
 
 					// Situation progress
-					if ($this->getColumnStatus('progress') && !$isnoamountline) {
+					if ($this->getColumnStatus('progress') && !$issubtotalline) {
 						$progress = pdf_getlineprogress($object, $i, $outputlangs, $hidedetails);
 						$this->printStdColumnContent($pdf, $posy, 'progress', $progress);
 						$nexY = max($pdf->GetY(), $nexY);
 					}
 
 					// Unit
-					if ($this->getColumnStatus('unit') && !$isnoamountline) {
+					if ($this->getColumnStatus('unit') && !$issubtotalline) {
 						$unit = pdf_getlineunit($object, $i, $outputlangs, $hidedetails);
 						$this->printStdColumnContent($pdf, $posy, 'unit', $unit);
 						$nexY = max($pdf->GetY(), $nexY);
 					}
 
 					// Discount on line
-					if ($this->getColumnStatus('discount') && $object->lines[$i]->remise_percent && !$isnoamountline) {
+					if ($this->getColumnStatus('discount') && $object->lines[$i]->remise_percent && !$issubtotalline) {
 						$remise_percent = pdf_getlineremisepercent($object, $i, $outputlangs, $hidedetails);
 						$this->printStdColumnContent($pdf, $posy, 'discount', $remise_percent);
 						$nexY = max($pdf->GetY(), $nexY);
@@ -1053,7 +1053,7 @@ class pdf_octopus extends ModelePDFFactures
 
 					// Total excl tax line (HT)
 					if ($this->getColumnStatus('totalexcltax')) {
-						if (!$isnoamountline && isset($pdf_sub_options['titleshowtotalexludingvatonpdf'])) {
+						if (!$issubtotalline && isset($pdf_sub_options['titleshowtotalexludingvatonpdf'])) {
 							$total_excl_tax = pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails);
 							$this->printStdColumnContent($pdf, $posy, 'totalexcltax', $total_excl_tax);
 							$nexY = max($pdf->GetY(), $nexY);
