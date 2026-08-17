@@ -175,6 +175,7 @@ abstract class CommonObject
 	 * noteditable?: int<0, 1>,
 	 * alwayseditable?: int<0, 1>|string,
 	 * default?: string|int,
+	 * description?: string,
 	 * index?: int<0, 1>,
 	 * foreignkey?: string,
 	 * searchall?: int<0, 1>,
@@ -235,6 +236,7 @@ abstract class CommonObject
 	 * 'comment' is not used. You can store here any text of your choice. It is not used by application.
 	 * 'validate' is 1 if you need to validate the field with $this->validateField(). Need MAIN_ACTIVATE_VALIDATION_RESULT.
 	 * 'copytoclipboard' is 1 or 2 to allow to add a picto to copy value into clipboard (1=picto after label, 2=picto after value)
+	 * 'description' is a description of the field that must be set to help the MCP server.
 	 *
 	 * Note: To have value dynamic, you can set value to 0 in definition and edit the value on the fly into the constructor.
 	 */
@@ -1351,8 +1353,10 @@ abstract class CommonObject
 			return -2;
 		}
 
+		// socid is checked: @phan-suppress-next-line PhanUndeclaredProperty
 		if ($this->restrictiononfksoc && property_exists($this, 'socid') && !empty($this->socid) && $user->id > 0 && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql_allowed_contacts = 'SELECT COUNT(*) as cnt FROM '.$this->db->prefix().'societe_commerciaux as sc';
+			// socid is checked: @phan-suppress-next-line PhanUndeclaredProperty
 			$sql_allowed_contacts .= ' WHERE sc.fk_soc = '.(int) $this->socid;
 			$sql_allowed_contacts .= ' AND sc.fk_user = '.(int) $user->id;
 
@@ -2212,12 +2216,14 @@ abstract class CommonObject
 	 */
 	public function fetchWarehouse($force_warehouse_id = 0)
 	{
+		// testing through empty: @phan-suppress-next-line PhanUndeclaredProperty
 		if (empty($this->warehouse_id) && empty($this->fk_warehouse) && empty($force_warehouse_id)) {
 			return 0;
 		}
 
 		include_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 
+		// testing through isset: @phan-suppress-next-line PhanUndeclaredProperty
 		$idtofetch = isset($this->warehouse_id) ? $this->warehouse_id : (isset($this->fk_warehouse) ? $this->fk_warehouse : 0);
 		if (!empty($force_warehouse_id)) {
 			$idtofetch = $force_warehouse_id;
@@ -2596,6 +2602,7 @@ abstract class CommonObject
 		if ($fieldid == 'rowid') {
 			$sql .= " WHERE te.".$this->db->sanitize($fieldid)." < ".((int) $this->id);
 		} elseif ($fieldid == 'label') {
+			// Suppose caller is not in error @phan-suppress-next-line PhanUndeclaredProperty
 			$sql .= " WHERE te.".$this->db->sanitize($fieldid)." < '".$this->db->escape((string) $this->label)."'";
 		} else {	// Should be 'ref' or any other string field
 			$sql .= " WHERE te.".$this->db->sanitize($fieldid)." < '".$this->db->escape((string) $this->ref)."'"; // ->ref must always be defined (set to id if field does not exists)
@@ -2677,6 +2684,7 @@ abstract class CommonObject
 		if ($fieldid == 'rowid') {
 			$sql .= " WHERE te.".$this->db->sanitize($fieldid)." > ".((int) $this->id);
 		} elseif ($fieldid == 'label') {
+			// Suppose caller is not in error @phan-suppress-next-line PhanUndeclaredProperty
 			$sql .= " WHERE te.".$this->db->sanitize($fieldid)." > '".$this->db->escape((string) $this->label)."'";
 		} else {	// Should be 'ref' or any other string field
 			$sql .= " WHERE te.".$this->db->sanitize($fieldid)." > '".$this->db->escape((string) $this->ref)."'"; // ->ref must always be defined (set to id if field does not exists)
@@ -3108,8 +3116,8 @@ abstract class CommonObject
 									$line->fk_unit,
 									$line->multicurrency_subprice,
 									0,
-									$line->date_start,
-									$line->date_end,
+									$line->date_start,  // Ignore real issue with FactureLigneRec @phan-suppress-current-line PhanUndeclaredProperty
+									$line->date_end,  // Ignore real issue with FactureLigneRec @phan-suppress-current-line PhanUndeclaredProperty
 									$line->fk_fournprice,
 									$line->pa_ht,
 									$line->fk_parent_line
@@ -5721,6 +5729,7 @@ abstract class CommonObject
 				$product_static->fetch($line->fk_product);
 
 				$product_static->ref = (string) $line->ref; //can change ref in hook
+				// label is checked with empty @phan-suppress-next-line PhanUndeclaredProperty
 				$product_static->label = !empty($line->label) ? $line->label : ""; //can change label in hook
 
 				$text = $product_static->getNomUrl(1);
@@ -5754,6 +5763,7 @@ abstract class CommonObject
 					$label = $line->product_label;
 				}
 
+				// label is checked with empty @phan-suppress-next-line PhanUndeclaredProperty
 				$text .= ' - '.(!empty($line->label) ? $line->label : $label);
 				$description .= (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE') ? '' : (!empty($line->description) ? dol_htmlentitiesbr($line->description) : '')); // Description is what to show on popup. We shown nothing if already into desc.
 			}
@@ -5763,6 +5773,7 @@ abstract class CommonObject
 				// So we calculate an estimated value just to show something on screen.
 				// Not: the unit price is always for 100% of line, it is not a prorata of situation invoice (when total is)
 				if ($line->remise_percent != 100) {
+					// Suppose situation_percent is defined @phan-suppress-next-line PhanUndeclaredProperty
 					$line->subprice_ttc = (float) price2num($line->total_ttc * ($line->situation_percent ? 100 / $line->situation_percent : 1) / $line->qty / (1 - $line->remise_percent / 100), 'MU');
 				} else {
 					// Other method is less accurate
@@ -5776,7 +5787,8 @@ abstract class CommonObject
 			// Note: This is deprecated. If you need to overwrite the tpl file, use instead the hook printObjectLine and printObjectSubLine.
 
 			$qty_shipped = 0;
-			if (isset($this->expeditions[$line->id])) {
+			if (isset($this->expeditions[$line->id])) { // @phan-suppress-current-line PhanUndeclaredProperty
+				// Suppose existence of expeditions is tested @phan-suppress-next-line PhanUndeclaredProperty
 				$qty_shipped = $this->expeditions[$line->id];
 			}
 			$disableedit = ($qty_shipped > 0) && ($qty_shipped >= $line->qty);
@@ -5805,6 +5817,7 @@ abstract class CommonObject
 
 		// Line in update mode
 		if ($this->status == 0 && $action == 'editline' && $selected == $line->id) {
+			// label is tested @phan-suppress-next-line PhanUndeclaredProperty
 			$label = (!empty($line->label) ? $line->label : (($line->fk_product > 0) ? $line->product_label : ''));
 
 			$line->subprice_ttc = (float) price2num($line->subprice * (1 + ($line->tva_tx / 100)), 'MU');
@@ -5943,7 +5956,9 @@ abstract class CommonObject
 		if (((int) $line->info_bits & 2) == 2) {  // TODO Not sure this is used for source object
 			$discount = new DiscountAbsolute($this->db);
 			if (property_exists($this, 'socid')) {
+				// Tested if socid exists @phan-suppress-next-line PhanUndeclaredProperty
 				$discount->fk_soc = $this->socid;
+				// Tested if socid exists @phan-suppress-next-line PhanUndeclaredProperty
 				$discount->socid = $this->socid;
 			}
 			$this->tpl['label'] .= $discount->getNomUrl(0, 'discount');
@@ -5958,6 +5973,7 @@ abstract class CommonObject
 			}
 
 			$this->tpl['label'] .= $productstatic->getNomUrl(1);
+			// Existence of $line->label is tested @phan-suppress-next-line PhanUndeclaredProperty
 			$this->tpl['label'] .= ' - '.(!empty($line->label) ? $line->label : $line->product_label);
 			// Dates
 			if ($line->product_type == 1 && ($date_start || $date_end)) {
@@ -5968,6 +5984,7 @@ abstract class CommonObject
 			if (!empty($line->desc)) {
 				$this->tpl['label'] .= $line->desc;
 			} else {
+				// Supposes existence of $line->label @phan-suppress-next-line PhanUndeclaredProperty
 				$this->tpl['label'] .= ($line->label ? '&nbsp;'.$line->label : '');
 			}
 
@@ -6209,6 +6226,11 @@ abstract class CommonObject
 		if (!empty($tmp[1])) {
 			$modele = $tmp[0];
 			$srctemplatepath = $tmp[1];
+
+			if (!preg_match('/^'.preg_quote(DOL_DATA_ROOT, '/').'\/(ecm|doctemplates)/', $srctemplatepath)) {
+				$this->error = 'BadDirForTemplateFile';
+				return -1;
+			}
 		}
 
 		// Search template files

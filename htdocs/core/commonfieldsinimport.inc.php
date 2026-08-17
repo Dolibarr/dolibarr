@@ -1,12 +1,13 @@
 <?php
 /* Copyright (C) 2026		MDW	<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  */
 '@phan-var-force DolibarrModules $this';
 /** @var DolibarrModules $this */
 
-if (empty($keyforclass) || empty($keyforclassfile) || empty($keyforelement)) {
+if (empty($keyforclass) || empty($keyforclassfile) || empty($keyforelement) || empty($r)) {
 	//print $keyforclass.' - '.$keyforclassfile.' - '.$keyforelement;
-	dol_print_error(null, 'include of file commonfieldsinimport.inc.php was done but var $keyforclass or $keyforclassfile or $keyforelement was not set');
+	dol_print_error(null, 'include of file commonfieldsinimport.inc.php was done but var $keyforclass or $keyforclassfile or $keyforelement or $r was not set');
 	exit;
 }
 if (empty($keyforalias)) {
