@@ -229,7 +229,7 @@ FeatureAvailableOnlyOnStable=Feature only available on official stable versions
 BoxesDesc=Widgets are components showing some information that you can add to personalize some pages. You can choose between showing the widget or not by selecting target page and clicking 'Activate', or by clicking the trashcan to disable it.
 OnlyActiveElementsAreShown=Only elements from <a href="%s">enabled modules</a> are shown.
 ModulesDesc=The modules/applications determine which features are available in the software. Some modules require permissions to be granted to users after activating the module. Click the on/off button <span class="small valignmiddle">%s</span> of each module to enable or disable a module/application.
-ModulesDesc2=Click the wheel button <span class="small valignmiddle">%s</span> to configure the module/application.
+ModulesDesc2=Click the wheel button <span class="small valignmiddle">%s</span> if you wish to fine-tune the module's configuration.
 ModulesMarketPlaceDesc=You can find more modules to download on external websites on the Internet...
 ModulesDeployDesc=If permissions on your file system allow it, you can use this tool to deploy an external module. The module will then be visible on the tab <strong>%s</strong>.
 ModulesMarketPlaces=Find external app/modules
@@ -422,7 +422,7 @@ ExamplesWithCurrentSetup=Examples with current configuration
 ListOfDirectories=List of OpenDocument templates directories
 ListOfDirectoriesForModelGenODT=List of directories containing templates files with OpenDocument format.<br><br>Put here full path of directories.<br>Add a carriage return between eah directory.<br>To add a directory of the GED module, add here <b>DOL_DATA_ROOT/ecm/yourdirectoryname</b>.<br><br>Files in those directories must end with <b>.odt</b> or <b>.ods</b>.
 NumberOfModelFilesFound=Number of ODT/ODS template files found
-ExampleOfDirectoriesForModelGen=Examples of syntax:<br>c:\\myapp\\mydocumentdir\\mysubdir<br>/home/myapp/mydocumentdir/mysubdir<br>DOL_DATA_ROOT/ecm/ecmdir
+ExampleOfDirectoriesForModelGen=Examples of syntax:<br>DOL_DATA_ROOT/doctemplates/mysubdir<br>DOL_DATA_ROOT/ecm/ecmdir
 FollowingSubstitutionKeysCanBeUsed=<br>To know how to create your odt document templates, before storing them in those directories, read wiki documentation:
 FullListOnOnlineDocumentation=https://wiki.dolibarr.org/index.php/Create_an_ODT_document_template
 FirstnameNamePosition=Position of Name/Lastname
