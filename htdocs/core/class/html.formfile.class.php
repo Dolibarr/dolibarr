@@ -69,6 +69,206 @@ class FormFile
 	}
 
 	/**
+	 * Return a detached form used to post selected documents to document.php.
+	 *
+	 * @param	string	$formid		HTML form id
+	 * @param	string	$modulepart	Module part
+	 * @param	int		$entity		Entity id
+	 * @return	string
+	 */
+	private function getDocumentDownloadSelectionFormHtml($formid, $modulepart, $entity)
+	{
+		// Keep the batch-download form detached: document lists may already be rendered inside rename or generation forms.
+		return implode('', array(
+			'<form id="',
+			dol_escape_htmltag($formid),
+			'" class="hidden" action="',
+			DOL_URL_ROOT,
+			'/document.php" method="POST">',
+			'<input type="hidden" name="token" value="',
+			newToken(),
+			'">',
+			'<input type="hidden" name="action" value="downloadselected">',
+			'<input type="hidden" name="modulepart" value="',
+			dol_escape_htmltag($modulepart),
+			'">',
+			'<input type="hidden" name="entity" value="',
+			(int) $entity,
+			'">',
+			'</form>',
+		));
+	}
+
+	/**
+	 * Return the title button used to download selected documents as a ZIP file.
+	 *
+	 * @param	string	$formid		HTML form id
+	 * @return	string
+	 */
+	private function getDocumentDownloadSelectionButtonHtml($formid)
+	{
+		global $langs;
+
+		$title = $langs->trans('DownloadSelectedDocumentsZip');
+
+		// The button starts disabled visually and is enabled by JavaScript as soon as at least one file is selected.
+		return dolGetButtonTitle(
+			$title,
+			'',
+			'fa fa-download',
+			'javascript:void(0);',
+			'',
+			1,
+			array(
+				'morecss' => 'document-download-selected-button refused',
+				'attr' => array(
+					'data-download-form' => $formid,
+					'data-title-base' => $title,
+					'aria-disabled' => 'true',
+					'aria-label' => $title,
+				),
+			)
+		);
+	}
+
+	/**
+	 * Return a checkbox used to select one document for batch download.
+	 *
+	 * @param	string	$formid		HTML form id
+	 * @param	string	$modulepart	Module part
+	 * @param	string	$filepath	Relative file path
+	 * @param	int		$entity		Entity id
+	 * @param	string	$htmlid		HTML checkbox id
+	 * @return	string
+	 */
+	private function getDocumentDownloadSelectionCheckboxHtml($formid, $modulepart, $filepath, $entity, $htmlid)
+	{
+		global $langs;
+
+		$payload = base64_encode((string) json_encode(array(
+			'modulepart' => (string) $modulepart,
+			'file' => (string) $filepath,
+			'entity' => (int) $entity,
+		)));
+		$title = $langs->trans('SelectDocumentForDownload');
+
+		// The encoded payload is only a compact client-side carrier; document.php revalidates access before reading the file.
+		return '<input type="checkbox" class="documentdownloadselect" form="'.dol_escape_htmltag($formid).'" name="selecteddocuments[]" value="'.dol_escape_htmltag($payload).'" id="'.dol_escape_htmltag($htmlid).'" title="'.dol_escape_htmltag($title).'" aria-label="'.dol_escape_htmltag($title).'">';
+	}
+
+	/**
+	 * Return the select-all checkbox for a document list.
+	 *
+	 * @param	string	$formid		HTML form id
+	 * @param	string	$htmlid		HTML checkbox id
+	 * @return	string
+	 */
+	private function getDocumentDownloadSelectionAllCheckboxHtml($formid, $htmlid)
+	{
+		global $langs;
+
+		$title = $langs->trans('SelectAllDocumentsForDownload');
+
+		// This checkbox is a UI control only. It has no name so it is never submitted as a document selection.
+		return '<input type="checkbox" class="documentdownloadselectall" data-download-form="'.dol_escape_htmltag($formid).'" id="'.dol_escape_htmltag($htmlid).'" title="'.dol_escape_htmltag($title).'" aria-label="'.dol_escape_htmltag($title).'">';
+	}
+
+	/**
+	 * Return URL to force a document download as an HTTP attachment.
+	 *
+	 * @param	string	$modulepart	Module part
+	 * @param	string	$filepath	Relative file path
+	 * @param	int		$entity		Entity id
+	 * @return	string
+	 */
+	private function getDocumentForceDownloadUrl($modulepart, $filepath, $entity)
+	{
+		// Keep the existing preview link untouched and provide a separate explicit attachment download URL.
+		return DOL_URL_ROOT.'/document.php?modulepart='.urlencode($modulepart).'&entity='.((int) $entity).'&file='.urlencode($filepath).'&attachment=1&forcedownload=1';
+	}
+
+	/**
+	 * Return the JavaScript used to manage document batch selection.
+	 *
+	 * @return	string
+	 */
+	private function getDocumentDownloadSelectionScript()
+	{
+		static $scriptalreadyprinted = false;
+
+		if ($scriptalreadyprinted) {
+			return '';
+		}
+		$scriptalreadyprinted = true;
+
+		return '<script nonce="'.getNonce().'">
+		jQuery(function() {
+			// Each document block owns a distinct detached form, so selection state must be scoped by form id.
+			function updateDocumentDownloadSelection(formId) {
+				var $items = jQuery(".documentdownloadselect").filter(function() {
+					return jQuery(this).attr("form") === formId;
+				});
+				var $checked = $items.filter(":checked");
+				var count = $checked.length;
+				var $button = jQuery(".document-download-selected-button").filter(function() {
+					return jQuery(this).attr("data-download-form") === formId;
+				});
+				var disabled = count === 0;
+				var title = $button.attr("data-title-base") || $button.attr("title") || "";
+
+				$button.toggleClass("refused", disabled);
+				$button.attr("aria-disabled", disabled ? "true" : "false");
+				if (title) {
+					$button.attr("title", count > 0 ? title + " (" + count + ")" : title);
+					$button.attr("aria-label", count > 0 ? title + " (" + count + ")" : title);
+				}
+
+				var $selectAll = jQuery(".documentdownloadselectall").filter(function() {
+					return jQuery(this).attr("data-download-form") === formId;
+				});
+				if ($selectAll.length) {
+					$selectAll.prop("checked", $items.length > 0 && count === $items.length);
+					$selectAll.prop("indeterminate", count > 0 && count < $items.length);
+				}
+			}
+
+			// Update the ZIP action when an individual file checkbox changes.
+			jQuery(document).on("change", ".documentdownloadselect", function() {
+				updateDocumentDownloadSelection(jQuery(this).attr("form"));
+			});
+
+			// Select-all checkboxes only toggle files that belong to the same detached form.
+			jQuery(document).on("change", ".documentdownloadselectall", function() {
+				var formId = jQuery(this).attr("data-download-form");
+				jQuery(".documentdownloadselect").filter(function() {
+					return jQuery(this).attr("form") === formId;
+				}).prop("checked", jQuery(this).is(":checked"));
+				updateDocumentDownloadSelection(formId);
+			});
+
+			// Submit through the real form so Dolibarr receives the CSRF token and selected file payloads normally.
+			jQuery(document).on("click", ".document-download-selected-button", function(e) {
+				e.preventDefault();
+				var formId = jQuery(this).attr("data-download-form");
+				if (jQuery(this).attr("aria-disabled") === "true") {
+					return false;
+				}
+				var form = document.getElementById(formId);
+				if (form) {
+					form.submit();
+				}
+				return false;
+			});
+
+			// Initialize every rendered block, including pages with several document zones.
+			jQuery(".documentdownloadselectall").each(function() {
+				updateDocumentDownloadSelection(jQuery(this).attr("data-download-form"));
+			});
+		});
+		</script>';
+	}
+
+	/**
 	 * Show an image with feature to edit it
 	 *
 	 * @param	string	$htmlname				HTML name
@@ -565,8 +765,16 @@ class FormFile
 			$submodulepart = $tmp[1];
 		}
 
-		$addcolumforpicto = ($delallowed || $printer || $morepicto);
-		$colspan = (4 + ($addcolumforpicto ? 1 : 0));
+		static $documentdownloadselectioncounter = 0;
+		$documentdownloadselectioncounter++;
+		$downloadselectionformid = 'documentdownloadselectionform'.$documentdownloadselectioncounter;
+		$downloadselectionentity = (is_object($object) && !empty($object->entity)) ? (int) $object->entity : (int) $conf->entity;
+		// A page may render several document blocks; unique form ids keep checkbox submissions isolated per block.
+		$out .= $this->getDocumentDownloadSelectionFormHtml($downloadselectionformid, $modulepart, $downloadselectionentity);
+
+		// The forced-download icon makes the action column always available, even when delete/print actions are hidden.
+		$addcolumforpicto = 1;
+		$colspan = 6;
 		$colspanmore = 0;
 
 		// Show table
@@ -815,17 +1023,18 @@ class FormFile
 			$out .= '<input type="hidden" name="token" value="'.newToken().'">';
 
 			if ($titletoshow) {
-				$out .= load_fiche_titre($titletoshow, '', '');
+				$out .= load_fiche_titre($titletoshow, $this->getDocumentDownloadSelectionButtonHtml($downloadselectionformid), '');
 			}
 			$out .= '<div class="div-table-responsive-no-min">';
 			$out .= '<table class="liste formdoc noborder centpercent">';
 
 			$out .= '<tr class="liste_titre">';
-			$addcolumforpicto = ($delallowed || $printer || $morepicto);
-			$colspan = (4 + ($addcolumforpicto ? 1 : 0));
+			$addcolumforpicto = 1;
+			$colspan = 6;
 			$colspanmore = 0;
 
-			$out .= '<th colspan="'.$colspan.'" class="formdoc liste_titre maxwidthonsmartphone center">';
+			$out .= '<th class="center width25">'.$this->getDocumentDownloadSelectionAllCheckboxHtml($downloadselectionformid, $downloadselectionformid.'_all').'</th>';
+			$out .= '<th colspan="'.($colspan - 1).'" class="formdoc liste_titre maxwidthonsmartphone center">';
 
 			// Model
 			if (!empty($modellist)) {
@@ -919,9 +1128,15 @@ class FormFile
 			if ((!empty($file_list) || !empty($link_list) || preg_match('/^massfilesarea/', $modulepart))
 				&& !$headershown) {
 				$headershown = 1;
-				$out .= '<div class="titre paddingbottom">'.$titletoshow.'</div>'."\n";
+				$out .= load_fiche_titre($titletoshow, $this->getDocumentDownloadSelectionButtonHtml($downloadselectionformid), '');
 				$out .= '<div class="div-table-responsive-no-min">';
 				$out .= '<table class="noborder centpercent" id="'.$modulepart.'_table">'."\n";
+				if (!$genallowed) {
+					$out .= '<tr class="liste_titre">';
+					$out .= '<th class="center width25">'.$this->getDocumentDownloadSelectionAllCheckboxHtml($downloadselectionformid, $downloadselectionformid.'_all').'</th>';
+					$out .= '<th colspan="'.($colspan - 1).'" class="left">'.$langs->trans("Documents2").'</th>';
+					$out .= '</tr>'."\n";
+				}
 			}
 
 			// Loop on each file found
@@ -973,6 +1188,7 @@ class FormFile
 					}
 
 					$tmpout = '<tr class="oddeven'.((!$genallowed && $i == 1) ? ' trfirstline' : '').'">';
+					$tmpout .= '<td class="center width25">'.$this->getDocumentDownloadSelectionCheckboxHtml($downloadselectionformid, $modulepart, $relativepath, $downloadselectionentity, $downloadselectionformid.'_file_'.$i).'</td>';
 
 					$documenturl = getDolGlobalString('DOL_URL_ROOT_DOCUMENT_PHP', DOL_URL_ROOT.'/document.php'); // DOL_URL_ROOT_DOCUMENT_PHP can be used to set another wrapper
 
@@ -1051,32 +1267,30 @@ class FormFile
 					}
 					$tmpout .= '</td>';
 
-					// Show picto delete, print...
-					if ($delallowed || $printer || $morepicto) {
-						$tmpout .= '<td class="right nowraponall">';
-						if ($delallowed) {
-							$tmpurlsource = preg_replace('/#[a-zA-Z0-9_]*$/', '', $urlsource);
-							$tmpout .= '<a class="maginleftonly marginrightonly reposition" href="'.$tmpurlsource.((strpos($tmpurlsource, '?') === false) ? '?' : '&').'action='.urlencode($removeaction).'&token='.newToken().'&file='.urlencode($relativepath);
-							$tmpout .= ($param ? '&'.$param : '');
-							//$out.= '&modulepart='.$modulepart; // TODO obsolete ?
-							//$out.= '&urlsource='.urlencode($urlsource); // TODO obsolete ?
-							$tmpout .= '">'.img_picto($langs->trans("Delete"), 'delete').'</a>';
-						}
-						if ($printer) {
-							$tmpout .= '<a class="maginleftonly marginleftonly reposition" href="'.$urlsource.(strpos($urlsource, '?') ? '&' : '?').'action=print_file&token='.newToken().'&printer='.urlencode($modulepart).'&file='.urlencode($relativepath);
-							$tmpout .= ($param ? '&'.$param : '');
-							$tmpout .= '">'.img_picto($langs->trans("PrintFile", $relativepath), 'printer').'</a>';
-						}
-						if ($morepicto) {
-							$morepicto = preg_replace('/__FILENAMEURLENCODED__/', urlencode($relativepath), $morepicto);
-							$tmpout .= $morepicto;
-						}
-						$tmpout .= '</td>';
+					// Show picto download, delete, print...
+					$tmpout .= '<td class="right nowraponall">';
+					// This icon is independent from the preview link and always asks document.php for an attachment response.
+					$tmpout .= '<a class="reposition documentforcedownloadlink marginrightonly" href="'.$this->getDocumentForceDownloadUrl($modulepart, $relativepath, $downloadselectionentity).'" title="'.dol_escape_htmltag($langs->trans("ForceDownloadDocument")).'" aria-label="'.dol_escape_htmltag($langs->trans("ForceDownloadDocument")).'">'.img_picto($langs->trans("ForceDownloadDocument"), 'download', 'class="paddingrightonly"').'</a>';
+					if ($delallowed) {
+						$tmpurlsource = preg_replace('/#[a-zA-Z0-9_]*$/', '', $urlsource);
+						$tmpout .= '<a class="maginleftonly marginrightonly reposition" href="'.$tmpurlsource.((strpos($tmpurlsource, '?') === false) ? '?' : '&').'action='.urlencode($removeaction).'&token='.newToken().'&file='.urlencode($relativepath);
+						$tmpout .= ($param ? '&'.$param : '');
+						//$out.= '&modulepart='.$modulepart; // TODO obsolete ?
+						//$out.= '&urlsource='.urlencode($urlsource); // TODO obsolete ?
+						$tmpout .= '">'.img_picto($langs->trans("Delete"), 'delete').'</a>';
 					}
+					if ($printer) {
+						$tmpout .= '<a class="maginleftonly marginleftonly reposition" href="'.$urlsource.(strpos($urlsource, '?') ? '&' : '?').'action=print_file&token='.newToken().'&printer='.urlencode($modulepart).'&file='.urlencode($relativepath);
+						$tmpout .= ($param ? '&'.$param : '');
+						$tmpout .= '">'.img_picto($langs->trans("PrintFile", $relativepath), 'printer').'</a>';
+					}
+					if ($morepicto) {
+						$morepicto = preg_replace('/__FILENAMEURLENCODED__/', urlencode($relativepath), $morepicto);
+						$tmpout .= $morepicto;
+					}
+					$tmpout .= '</td>';
 
 					if (is_object($hookmanager)) {
-						$addcolumforpicto = ($delallowed || $printer || $morepicto);
-						$colspan = (4 + ($addcolumforpicto ? 1 : 0));
 						$colspanmore = 0;
 						$parameters = array('tmpout' => &$tmpout, 'colspan' => ($colspan + $colspanmore), 'socid' => (isset($GLOBALS['socid']) ? $GLOBALS['socid'] : ''), 'id' => (isset($GLOBALS['id']) ? $GLOBALS['id'] : ''), 'modulepart' => $modulepart, 'relativepath' => $relativepath);
 						$res = $hookmanager->executeHooks('formBuilddocLineOptions', $parameters, $file);
@@ -1101,6 +1315,8 @@ class FormFile
 
 				foreach ($link_list as $file) {
 					$out .= '<tr class="oddeven">';
+					// External links are displayed with the same table shape but are not valid inputs for the ZIP archive.
+					$out .= '<td class="center width25"></td>';
 					$out .= '<td colspan="'.$colspan.'" class="maxwidhtonsmartphone">';
 					$out .= '<a data-ajax="false" href="'.$file->url.'" target="_blank" rel="noopener noreferrer">';
 					$out .= $file->label;
@@ -1111,16 +1327,14 @@ class FormFile
 					$out .= '</td>';
 					// for share link of files
 					$out .= '<td></td>';
-					if ($delallowed || $printer || $morepicto) {
-						$out .= '<td></td>';
-					}
+					$out .= '<td></td>';
 					$out .= '</tr>'."\n";
 				}
 				$this->numoffiles++;
 			}
 
 			if (count($file_list) == 0 && count($link_list) == 0 && $headershown) {
-				$out .= '<tr><td colspan="'.(3 + ($addcolumforpicto ? 1 : 0)).'"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>'."\n";
+				$out .= '<tr><td colspan="'.(6 + $colspanmore).'"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>'."\n";
 			}
 		}
 
@@ -1135,6 +1349,7 @@ class FormFile
 			}
 		}
 		$out .= '<!-- End show_document -->'."\n";
+		$out .= $this->getDocumentDownloadSelectionScript();
 
 		$out .= '<script>
 		jQuery(document).ready(function() {
@@ -1403,6 +1618,12 @@ class FormFile
 				$url = $_SERVER["PHP_SELF"];
 			}
 
+			static $documentdownloadselectioncounter = 0;
+			$documentdownloadselectioncounter++;
+			$downloadselectionformid = 'documentdownloadselectionformlist'.$documentdownloadselectioncounter;
+			$downloadselectionentity = (is_object($object) && !empty($object->entity)) ? (int) $object->entity : (int) $conf->entity;
+			// The batch-download form must stay outside the rename form while file checkboxes still target it with the HTML form attribute.
+			print $this->getDocumentDownloadSelectionFormHtml($downloadselectionformid, $modulepart, $downloadselectionentity);
 
 			// Show title of list of existing files
 			$morehtmlright = '';
@@ -1410,6 +1631,7 @@ class FormFile
 				$tmpurlforbutton = 'javascript:console.log("open add file form"); if (jQuery(".divattachnewfile").is(":hidden")) { jQuery(".divattachnewfile").removeClass("hidden"); jQuery(".divattachnewfile input[type=\'file\']").first().click(); } else { jQuery(".divattachnewfile").addClass("hidden"); } void(0);';
 				$morehtmlright .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', $tmpurlforbutton, '', $permtoeditline);
 			}
+			$morehtmlright .= $this->getDocumentDownloadSelectionButtonHtml($downloadselectionformid);
 
 			if ((empty($useinecm) || $useinecm == 3 || $useinecm == 6) && $title != 'none') {
 				print load_fiche_titre($title ? $title : $langs->trans("AttachedFiles"), $morehtmlright, 'file-upload', 0, '', 'table-list-of-attached-files');
@@ -1434,6 +1656,7 @@ class FormFile
 
 			if (!empty($addfilterfields)) {
 				print '<tr class="liste_titre nodrag nodrop">';
+				print '<td></td>';
 				print '<td><input type="search_doc_ref" value="'.dol_escape_htmltag(GETPOST('search_doc_ref', 'alpha')).'"></td>';
 				print '<td></td>';
 				print '<td></td>';
@@ -1460,6 +1683,7 @@ class FormFile
 			}
 
 			print '<tr class="liste_titre nodrag nodrop">';
+			print '<th class="center width25">'.$this->getDocumentDownloadSelectionAllCheckboxHtml($downloadselectionformid, $downloadselectionformid.'_all').'</th>';
 			// Name
 			print_liste_field_titre('Documents2', $url, "name", "", $param, '', $sortfield, $sortorder, 'left ');
 			// Size
@@ -1535,6 +1759,7 @@ class FormFile
 					print '<!-- In database: position='.(array_key_exists('position', $filearray[$key]) ? $filearray[$key]['position'] : 0).' -->'."\n";
 					print '<tr class="oddeven" id="row-'.((array_key_exists('rowid', $filearray[$key]) && $filearray[$key]['rowid'] > 0) ? $filearray[$key]['rowid'] : 'AFTER'.$lastrowid.'POS'.($i + 1)).'">';
 
+					print '<td class="center width25">'.$this->getDocumentDownloadSelectionCheckboxHtml($downloadselectionformid, $modulepart, $filepath, (is_object($object) && !empty($object->entity)) ? (int) $object->entity : (int) $conf->entity, $downloadselectionformid.'_file_'.$i).'</td>';
 
 					// File name
 					print '<td class="minwidth200imp tdoverflowmax500" title="'.dolPrintHTMLForAttribute($file['name']).'">';
@@ -1752,6 +1977,8 @@ class FormFile
 								print '<a class="editfielda reposition editfilelink paddingright marginleftonly" href="'.(($useinecm == 1 || $useinecm == 5) ? '#' : ($url.'?action=editfile&urlfile='.urlencode($filepath).$paramsectiondir.$param)).'" rel="'.$filepath.'">'.img_edit('default', 0, 'class="paddingrightonly"').'</a>';
 							}
 						}
+						// This icon is independent from the preview link and always asks document.php for an attachment response.
+						print '<a class="reposition documentforcedownloadlink paddingright marginleftonly" href="'.$this->getDocumentForceDownloadUrl($modulepart, $filepath, (is_object($object) && !empty($object->entity)) ? (int) $object->entity : (int) $conf->entity).'" title="'.dol_escape_htmltag($langs->trans("ForceDownloadDocument")).'" aria-label="'.dol_escape_htmltag($langs->trans("ForceDownloadDocument")).'">'.img_picto($langs->trans("ForceDownloadDocument"), 'download', 'class="paddingrightonly"').'</a>';
 						// Output link to delete file
 						if ($permonobject) {
 							$useajax = 1;
@@ -1800,7 +2027,7 @@ class FormFile
 				}
 			}
 			if ($nboffiles == 0) {
-				$colspan = '6';
+				$colspan = '7';
 				if (!empty($moreoptions['buttons'])) {
 					$colspan++;
 				}
@@ -1830,6 +2057,7 @@ class FormFile
 			}
 
 			print ajax_autoselect('downloadlink');
+			print $this->getDocumentDownloadSelectionScript();
 
 			if (GETPOST('action', 'aZ09') == 'editfile' && $permtoeditline) {
 				print '</form>';
