@@ -1186,9 +1186,10 @@ class ExtraFields
 	 * @param  int|CommonObject     $object       			Current object or object ID. Preferably, pass the object itself.
 	 * @param  string        		$extrafieldsobjectkey	The key to use to store retrieved data (commonly $object->table_element)
 	 * @param  int	         		$mode                  	1=Used for search filters
+	 * @param  int	         		$filteronparentvalue	1=Filter the values of a dependent list on the value currently saved for its parent list. Used when the field is edited alone (the parent list is not on the form, so the javascript that filters the list can't work).
 	 * @return string
 	 */
-	public function showInputField($key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '', $object = 0, $extrafieldsobjectkey = '', $mode = 0)
+	public function showInputField($key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '', $object = 0, $extrafieldsobjectkey = '', $mode = 0, $filteronparentvalue = 0)
 	{
 		global $conf, $langs, $form, $hookmanager;
 
@@ -1470,6 +1471,19 @@ class ExtraFields
 					$parent = '';
 					if (!empty($valarray[1])) {
 						$parent = $valarray[1];
+					}
+					// When the field is edited alone (not into the whole form), the parent list is not on the page, so the
+					// javascript that filters a dependent list can't do its job. In this case, we filter the values here, on
+					// the value currently saved for the parent list. Note that the selected value is always kept, whatever the
+					// parent value is, so editing the field does not silently clear it.
+					if ($filteronparentvalue && !empty($parent) && (string) $value != (string) $key2) {
+						$tmpparent = explode(':', $parent, 2);
+						if (!empty($tmpparent[1]) && is_object($object)) {
+							$parentvalue = isset($object->array_options['options_'.$tmpparent[0]]) ? $object->array_options['options_'.$tmpparent[0]] : '';
+							if ((string) $parentvalue !== '' && (string) $parentvalue !== (string) $tmpparent[1]) {
+								continue;
+							}
+						}
 					}
 					$out .= '<option value="'.$key2.'"';
 					$out .= (((string) $value == (string) $key2) ? ' selected' : '');
