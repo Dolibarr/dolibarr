@@ -32,6 +32,12 @@ if (!empty($line->origin_line_id)) {
 $langs->load('subtotals');
 
 $line_color = $object->getSubtotalColors((int) $line->qty);
+
+// Style of the text of the line, and style of the pictos of the line, which use a softer color than
+// the text when the color is not configured and has to be guessed from the background
+$line_text_style = ' style="color: ' . $object->getSubtotalCssTextColor((int) $line->qty) . '"';
+$line_picto_style = 'style="color: ' . $object->getSubtotalCssTextColor((int) $line->qty, '#666') . '"';
+
 $colspan = 7;
 
 if (isModEnabled('productbatch')) {
@@ -48,7 +54,7 @@ if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) {
 }
 
 if ($line->qty > 0) { ?>
-	<td class="linecollabel" colspan="<?php echo $colspan ?>" <?php echo !colorIsLight($line_color) ? ' style="color: white"' : ' style="color: black"' ?>><?php echo str_repeat('&nbsp;', (int) ($line->qty - 1) * 8); ?>
+	<td class="linecollabel" colspan="<?php echo $colspan ?>" <?php echo $line_text_style ?>><?php echo str_repeat('&nbsp;', (int) ($line->qty - 1) * 8); ?>
 		<?php
 		echo $desc;
 		if (array_key_exists('titleshowuponpdf', $line_options)) {
@@ -63,7 +69,7 @@ if ($line->qty > 0) { ?>
 		?>
 	</td>
 <?php } elseif ($line->qty < 0) { ?>
-<td class="linecollabel nowrap right" <?php echo !colorIsLight($line_color) ? ' style="color: white"' : ' style="color: black"' ?> colspan="<?php echo $colspan ?>">
+<td class="linecollabel nowrap right" <?php echo $line_text_style ?> colspan="<?php echo $colspan ?>">
 	<?php
 	echo $desc;
 	if (array_key_exists('subtotalshowtotalexludingvatonpdf', $line_options)) {
@@ -81,11 +87,7 @@ if (isset($buttons) && $buttons) {
 		echo '&type=title';
 	}
 	echo '">';
-	if (!colorIsLight($line_color)) {
-		echo img_delete('default', 'class="pictodelete" style="color: white"');
-	} else {
-		echo img_delete('default', 'class="pictodelete" style="color: #666"');
-	}
+	echo img_delete('default', 'class="pictodelete" ' . $line_picto_style);
 	echo '</a> </td>';
 }
 
