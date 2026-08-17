@@ -720,14 +720,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$MAXEVENT = 10;
 
 		$morehtmlcenter = '<div class="nowraponall">';
-		$morehtmlcenter .= dolGetButtonTitle($langs->trans('FullConversation'), '', 'fa fa-comments imgforviewmode', DOL_URL_ROOT.'/societe/messaging.php?socid='.$object->id);
-		$morehtmlcenter .= dolGetButtonTitle($langs->trans('FullList'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/societe/agenda.php?socid='.$object->id);
+		$morehtmlcenter .= dolGetButtonTitle($langs->trans('ShowAsConversation'), '', 'fa fa-comments imgforviewmode', DOL_URL_ROOT.'/eventorganization/conferenceorboothattendee_am_combi.php?combi=messaging&attendeeid='.$object->id);
+		$morehtmlcenter .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/eventorganization/conferenceorboothattendee_am_combi.php?combi=agenda&attendeeid='.$object->id);
 		$morehtmlcenter .= '</div>';
 
 		// List of actions on element
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 		$formactions = new FormActions($db);
-		$somethingshown = $formactions->showactions($object, 'conferenceorboothattendee', 0, 1, '', $MAXEVENT, '', $morehtmlcenter); // Show all action for attendee
+		$somethingshown = $formactions->showactions($object, $object->element.'@'.$object->module, 0, 1, '', $MAXEVENT, '', $morehtmlcenter); // Show all action for attendee
 
 		print '</div></div>';
 	}

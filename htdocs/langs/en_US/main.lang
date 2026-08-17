@@ -753,6 +753,7 @@ NoMobilePhone=No mobile phone
 Owner=Owner
 FollowingConstantsWillBeSubstituted=The following constants will be replaced with the corresponding value.
 Refresh=Refresh
+BackToCard=Back to card
 BackToList=Back to list
 BackToTree=Back to tree
 GoBack=Go back
