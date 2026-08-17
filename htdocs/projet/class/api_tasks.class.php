@@ -658,7 +658,7 @@ class Tasks extends DolibarrApi
 	 * @since	5.0.0	Initial implementation
 	 *
 	 * @param   int         	$id                 Task ID
-	 * @param   datetime|string	$date               Date (YYYY-MM-DD HH:MI:SS in GMT)
+	 * @param   datetime    	$date               Date (YYYY-MM-DD HH:MI:SS in GMT)
 	 * @phan-param string $date
 	 * @param   int         	$duration           Duration in seconds (3600 = 1h)
 	 * @param   int         	$product_id         The product id that is used, default is null
