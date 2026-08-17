@@ -10,7 +10,9 @@ SubTotalModuleDesc=Subtotal and title lines for certain documents
 #
 SubtotalSetup=Subtotals module setup
 MaxSubtotalLevel=Maximum level
-SubtotalLineBackColor=Level %s lines background color
+SubtotalBackColor=Background color
+SubtotalTextColor=Text color
+SubtotalFootColorScreenOnly=Applied on the screen only. On the PDF, the subtotal line keeps the colors of its title line.
 NotSupportedByAllPDF=Will work with newer PDF but not with old ones %s
 
 #
@@ -26,6 +28,10 @@ ConfirmDeleteSubtotalLine=Are you sure you want to delete this subtotal line?
 DeleteTitleLine=Delete title line
 ConfirmDeleteTitleLine=Are you sure you want to delete this title line?
 DeleteCorrespondingSubtotalLine=Delete the corresponding subtotal line ?
+CollapseBlock=Hide the lines of this block
+ExpandBlock=Show the lines of this block
+DuplicateBlock=Duplicate this block
+ConfirmDuplicateBlock=Are you sure you want to duplicate this block? The description of the title lines of the copy will be changed to stay unique in the document.
 SubtotalLevel=Level %s
 SubtotalLineDesc=Line description
 SubtotalLineLevel=Line level
@@ -47,6 +53,8 @@ STLineUnderCorrespondingTitle=Subtotal line must be under a title of the same le
 STLineUnderTitle=Subtotal line must be under its title
 UnsupportedModuleError=You can't add a subtotals line in unsupported module
 CorrespondingTitleNotFound=The corresponding title was not found
+TitleLineNotFound=The title line of the block was not found
+DuplicateBlockNeedDraft=Only a draft document can have a block duplicated
 
 #
 # PDF
