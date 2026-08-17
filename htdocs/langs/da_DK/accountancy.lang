@@ -202,6 +202,7 @@ DiscountReceived=Modtaget rabat
 DONATION_ACCOUNTINGACCOUNT=Konto (fra kontoplanen), der skal bruges til at registrere donationer (donationsmodul)
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Konto (fra kontoplanen), der skal bruges til at registrere medlemskabsabonnementer (Medlemsmodul - hvis medlemskab registreres uden faktura)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Konto (fra kontoplanen) skal bruges som standardkonto til registrering af kundeindbetaling
+ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT_FOR_VAT=Konto (fra kontoplanen), der skal bruges som standardkonto for moms på kundeindbetalinger, der bruges i bindinger
 UseAuxiliaryAccountOnCustomerDeposit=Gem kundekonto som individuel konto i hovedbog for linjer med forudbetalinger (hvis den er deaktiveret, forbliver individuel konto for forudbetalingslinjer tomme)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Konto (fra kontoplanen), der skal bruges som standardkonto til registrering af leverandørindbetaling
 UseAuxiliaryAccountOnSupplierDeposit=Gem leverandørkonto som individuel konto i hovedbog for linjer med forudbetalinger (hvis den er deaktiveret, vil individuel konto for forudbetalingslinjer forblive tom)

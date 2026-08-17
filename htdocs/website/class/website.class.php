@@ -1320,16 +1320,13 @@ class Website extends CommonObject
 		$arrayreplacement['__LOGO_KEY__'] = $this->db->escape($mysoc->logo);
 
 
-		// Copy containers directory
-		dolCopyDir($conf->website->dir_temp.'/'.$object->ref.'/containers', $conf->website->dir_output.'/'.$object->ref, '0', 1); // Overwrite if exists
-
-		// Make replacement into css and htmlheader file
-		$cssindestdir = $conf->website->dir_output.'/'.$object->ref.'/styles.css.php';
-		$result = dolReplaceInFile($cssindestdir, $arrayreplacement);
+		// Make replacement into css
+		$cssinsrcdir = $conf->website->dir_temp.'/'.$object->ref.'/containers/styles.css.php';
+		$result = dolReplaceInFile($cssinsrcdir, $arrayreplacement);
 
 		// Test if imported CSS page contains dynamic PHP content
 		if (!$user->hasRight('website', 'writephp')) {
-			$newpathofsrcfile = dol_osencode($cssindestdir);
+			$newpathofsrcfile = dol_osencode($cssinsrcdir);
 			$csscontent = file_get_contents($newpathofsrcfile);
 
 			// Check there is no PHP content into the imported file (must be only HTML + JS)
@@ -1342,8 +1339,30 @@ class Website extends CommonObject
 			}
 		}
 
-		$htmldeaderindestdir = $conf->website->dir_output.'/'.$object->ref.'/htmlheader.html';
-		$result = dolReplaceInFile($htmldeaderindestdir, $arrayreplacement);
+
+		// Make replacement in htmlheader.html
+		$htmldeaderinsrcdir = $conf->website->dir_output.'/'.$object->ref.'/containers/htmlheader.html';
+		$result = dolReplaceInFile($htmldeaderinsrcdir, $arrayreplacement);
+
+		// Test if imported html page contains dynamic PHP content
+		if (!$user->hasRight('website', 'writephp')) {
+			$newpathofsrcfile = dol_osencode($htmldeaderinsrcdir);
+			$htmlcontent = file_get_contents($newpathofsrcfile);
+
+			// Check there is no PHP content into the imported file (must be only HTML + JS)
+			$phpcontent = dolKeepOnlyPhpCode($htmlcontent);
+
+			if ($phpcontent) {
+				$this->error = 'Error: you try to import a website with a page with PHP dynamic content in htmlheader.html without having permissions for that.';
+				$this->errors[] = $this->error;
+				return -1;
+			}
+		}
+
+
+		// Copy tmp containers directory
+		dolCopyDir($conf->website->dir_temp.'/'.$object->ref.'/containers', $conf->website->dir_output.'/'.$object->ref, '0', 1); // Overwrite if exists
+
 
 		// Now generate the master.inc.php page
 		$filemaster = $conf->website->dir_output.'/'.$object->ref.'/master.inc.php';
@@ -1352,6 +1371,7 @@ class Website extends CommonObject
 			$this->errors[] = 'Failed to write file '.$filemaster;
 			$error++;
 		}
+
 
 		// Copy dir medias/image/websitekey
 		if (dol_is_dir($conf->website->dir_temp.'/'.$object->ref.'/medias/image/websitekey')) {
