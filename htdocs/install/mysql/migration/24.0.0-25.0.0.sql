@@ -227,32 +227,6 @@ ALTER TABLE llx_user ADD COLUMN state_job_id integer DEFAULT NULL;
 ALTER TABLE llx_bank_account ADD COLUMN sepa_category_purpose varchar(4) DEFAULT 'CORE' AFTER pti_in_ctti;
 ALTER TABLE llx_bank_account ADD COLUMN sepa_local_instrument varchar(4) DEFAULT 'CORE' AFTER sepa_category_purpose;
 
--- Fixed sell prices per currency for a product, independent from the exchange rate (issue #32379).
--- The table must be created here too: the upgrade path runs migrations only, it does not replay the tables/ files.
-create table llx_product_price_currency
-(
-  rowid					integer AUTO_INCREMENT PRIMARY KEY,
-  entity				integer   DEFAULT 1 NOT NULL,
-  tms					timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  fk_product			integer NOT NULL,
-  fk_soc				integer   DEFAULT 0 NOT NULL,
-  price_level			smallint  DEFAULT 1 NOT NULL,
-  fk_multicurrency		integer,
-  multicurrency_code	varchar(3) NOT NULL,
-  multicurrency_tx		double(24,8) DEFAULT 1,
-  price					double(24,8) DEFAULT NULL,
-  price_ttc				double(24,8) DEFAULT NULL,
-  price_base_type		varchar(3) DEFAULT 'HT',
-  date_price			datetime NOT NULL,
-  fk_user_author		integer,
-  import_key			varchar(14)
-)ENGINE=innodb;
-
-ALTER TABLE llx_product_price_currency ADD UNIQUE INDEX uk_product_price_currency (fk_product, fk_soc, price_level, multicurrency_code, entity);
-ALTER TABLE llx_product_price_currency ADD INDEX idx_product_price_currency_fk_product (fk_product);
-ALTER TABLE llx_product_price_currency ADD INDEX idx_product_price_currency_fk_user_author (fk_user_author);
-ALTER TABLE llx_product_price_currency ADD CONSTRAINT fk_product_price_currency_fk_product FOREIGN KEY (fk_product) REFERENCES llx_product (rowid);
-
 -- Flag a document line whose currency unit price comes from a fixed per-currency product price (issue #32379)
 ALTER TABLE llx_propaldet ADD COLUMN multicurrency_subprice_source tinyint NOT NULL DEFAULT 0;
 ALTER TABLE llx_commandedet ADD COLUMN multicurrency_subprice_source tinyint NOT NULL DEFAULT 0;
