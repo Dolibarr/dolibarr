@@ -158,6 +158,10 @@ if (empty($reshook)) {
 	// Create MO with Children
 	if ($action == 'add' && empty($id) && !empty($TBomLineId) && $permissiontoadd) {
 		$noback = 1;
+		// Sub-BOM lines the user checked "Generate Child MO" for must not be flattened into their
+		// raw materials on the parent MO: keep a single consume line anchored on the sub-assembly
+		// product instead, so it can be found below to create the child MO.
+		$object->noFlattenBomLineIds = array_map('intval', $TBomLineId);
 		include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
 
 		$mo_parent = $object;
