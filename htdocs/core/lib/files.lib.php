@@ -2355,6 +2355,97 @@ function dol_remove_file_process($filenb, $donotupdatesession = 0, $donotdeletef
 
 
 /**
+ * Extract text from a DOCX (OpenXML) file.
+ *
+ * @param  string	$filetoprocess	Full path to DOCX file
+ * @param  string	$keywords		Will be filled with extracted keywords/subject when available
+ * @return string					Extracted text (or empty string if not readable)
+ */
+function dolExtractTextFromDocxFile($filetoprocess, &$keywords = '')
+{
+	$keywords = '';
+	$filetoprocess = (string) $filetoprocess;
+
+	if ($filetoprocess === '' || !is_readable($filetoprocess)) {
+		return '';
+	}
+
+	if (!class_exists('ZipArchive')) {
+		dol_syslog("dolExtractTextFromDocxFile: ZipArchive class missing");
+		return '';
+	}
+
+	$filesize = @filesize($filetoprocess);
+	if ($filesize !== false && (int) $filesize > 20000000) { // 20MB safeguard
+		dol_syslog("dolExtractTextFromDocxFile: file is too large");
+		return '';
+	}
+
+	$zip = new ZipArchive();
+	$openRes = $zip->open($filetoprocess);
+	if ($openRes !== true) {
+		dol_syslog("dolExtractTextFromDocxFile: failed to open archive");
+		return '';
+	}
+
+	$xmlCandidates = array('word/document.xml' => 1);
+	for ($i = 0; $i < $zip->numFiles; $i++) {
+		$stat = $zip->statIndex($i);
+		$name = (!empty($stat['name']) ? (string) $stat['name'] : '');
+		if ($name === '') continue;
+		if (preg_match('#^word/(header[0-9]*|footer[0-9]*|footnotes|endnotes|comments)\.xml$#i', $name)) {
+			$xmlCandidates[$name] = 1;
+		}
+	}
+
+	$maxXmlBytes = 6000000; // Keep extraction bounded.
+	$currentXmlBytes = 0;
+	$textParts = array();
+	foreach (array_keys($xmlCandidates) as $xmlName) {
+		$xml = $zip->getFromName($xmlName);
+		if ($xml === false || $xml === '') continue;
+
+		$currentXmlBytes += strlen($xml);
+		if ($currentXmlBytes > $maxXmlBytes) break;
+
+		$xml = str_replace(array('<w:tab/>', '<w:tab />'), "\t", (string) $xml);
+		$xml = str_replace(array('<w:br/>', '<w:br />', '<w:cr/>', '<w:cr />'), "\n", (string) $xml);
+		$xml = str_replace(array('</w:p>', '</w:tr>', '</w:tbl>', '</w:tc>'), "\n", (string) $xml);
+
+		$txt = strip_tags($xml);
+		$txt = html_entity_decode((string) $txt, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+		$txt = str_replace("\r", '', (string) $txt);
+		$txt = preg_replace('/[ \t]+/', ' ', (string) $txt);
+		$txt = preg_replace("/\n{3,}/", "\n\n", (string) $txt);
+		$txt = trim((string) $txt);
+		if ($txt !== '') {
+			$textParts[] = $txt;
+		}
+	}
+
+	$coreXml = $zip->getFromName('docProps/core.xml');
+	$zip->close();
+
+	if ($coreXml !== false && $coreXml !== '') {
+		$matches = array();
+		if (preg_match('/<cp:keywords[^>]*>(.*?)<\/cp:keywords>/si', (string) $coreXml, $matches)) {
+			$keywords = trim((string) html_entity_decode(strip_tags((string) $matches[1]), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+		}
+		if ($keywords === '' && preg_match('/<dc:subject[^>]*>(.*?)<\/dc:subject>/si', (string) $coreXml, $matches)) {
+			$keywords = trim((string) html_entity_decode(strip_tags((string) $matches[1]), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+		}
+	}
+
+	$text = trim(implode("\n\n", $textParts));
+	if (strlen($text) > 4000000) { // 4MB limit for ECM content.
+		$text = substr($text, 0, 4000000);
+	}
+
+	return (string) $text;
+}
+
+
+/**
  *  Add a file into database index.
  *  Called by dol_add_file_process when uploading a file and on other cases.
  *  See also commonGenerateDocument that also add/update database index when a file is generated.
@@ -2452,6 +2543,11 @@ function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uplo
 					$cmd = $result['cmd'];
 				} else {
 					$error++;
+				}
+			} elseif (preg_match('/\.docx$/i', $filename)) {
+				$textforfulltextindex = dolExtractTextFromDocxFile($filetoprocess, $keywords);
+				if ($textforfulltextindex !== '' || $keywords !== '') {
+					$cmd = 'native DOCX parser';
 				}
 			}
 

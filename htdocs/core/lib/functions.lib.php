@@ -13857,10 +13857,13 @@ function getAdvancedPreviewUrl($modulepart, $relativepath, $alldata = 0, $param 
 	}
 
 	$isAllowedForPreview = dolIsAllowedForPreview($relativepath);
+	$isDocxPreviewAsText = (preg_match('/\.docx(\.noexe)?$/i', (string) $relativepath) ? 1 : 0);
+	$previewMime = ($isDocxPreviewAsText ? 'text/plain' : dol_mimetype($relativepath));
+	$previewExtraParam = ($isDocxPreviewAsText ? '&textdocxpreview=1' : '');
 
 	if ($alldata == 1) {
 		if ($isAllowedForPreview) {
-			return array('target' => '_blank', 'css' => 'documentpreview', 'url' => DOL_URL_ROOT . '/document.php?modulepart=' . urlencode($modulepart) . '&attachment=0&file=' . urlencode($relativepath) . ($param ? '&' . $param : ''), 'mime' => dol_mimetype($relativepath));
+			return array('target' => '_blank', 'css' => 'documentpreview', 'url' => DOL_URL_ROOT . '/document.php?modulepart=' . urlencode($modulepart) . '&attachment=0&file=' . urlencode($relativepath) . ($param ? '&' . $param : '') . $previewExtraParam, 'mime' => $previewMime);
 		} else {
 			return array();
 		}
@@ -13868,7 +13871,7 @@ function getAdvancedPreviewUrl($modulepart, $relativepath, $alldata = 0, $param 
 
 	// old behavior, return a string
 	if ($isAllowedForPreview) {
-		$tmpurl = DOL_URL_ROOT . '/document.php?modulepart=' . urlencode($modulepart) . '&attachment=0&file=' . urlencode($relativepath) . ($param ? '&' . $param : '');
+		$tmpurl = DOL_URL_ROOT . '/document.php?modulepart=' . urlencode($modulepart) . '&attachment=0&file=' . urlencode($relativepath) . ($param ? '&' . $param : '') . $previewExtraParam;
 		$title = $langs->transnoentities("Preview");
 		//$title = '%27-alert(document.domain)-%27';							// An example of js injection into a corrupted title string, that should be blocked by the dol_escape_uri().
 		//$tmpurl = 'file='.urlencode("'-alert(document.domain)-'_small.jpg");	// An example of tmpurl that should be blocked by the dol_escape_uri()
@@ -13876,7 +13879,7 @@ function getAdvancedPreviewUrl($modulepart, $relativepath, $alldata = 0, $param 
 		// We need to do a dol_escape_uri() on the full string after the javascript: because such parts are the URI and when we click on such links, a RFC3986 decode is done,
 		// by the browser, converting the %27 (like when having param file=abc%27def), or when having a corrupted title), into a ', BEFORE interpreting the content that can be a js code.
 		// Using the dol_escape_uri guarantee that we encode for URI so decode retrieve original expected value.
-		return 'javascript:' . dol_escape_uri('document_preview(\'' . dol_escape_js($tmpurl) . '\', \'' . dol_escape_js(dol_mimetype($relativepath)) . '\', \'' . dol_escape_js($title) . '\')');
+		return 'javascript:' . dol_escape_uri('document_preview(\'' . dol_escape_js($tmpurl) . '\', \'' . dol_escape_js($previewMime) . '\', \'' . dol_escape_js($title) . '\')');
 	} else {
 		return '';
 	}
@@ -13941,6 +13944,11 @@ function dolIsAllowedForPreview($file)
 	// Check .noexe extension in filename
 	if (preg_match('/\.noexe$/i', $file)) {
 		return 0;
+	}
+
+	// DOCX is previewed as extracted text (via document.php textdocxpreview flow).
+	if (preg_match('/\.docx$/i', $file)) {
+		return 1;
 	}
 
 	// Check mime types

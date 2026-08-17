@@ -368,6 +368,27 @@ if ($reshook < 0) {
 	exit;
 }
 
+// Special preview flow for DOCX files: return extracted plain text for browser preview popup.
+$isDocxTextPreviewRequested = (empty($attachment) && GETPOSTINT('textdocxpreview') && preg_match('/\.docx$/i', (string) $original_file));
+if ($isDocxTextPreviewRequested) {
+	$keywords = '';
+	$textPreview = dolExtractTextFromDocxFile($fullpath_original_file, $keywords);
+	if ($textPreview !== '') {
+		$type = 'text/plain; charset=UTF-8';
+		top_httphead($type);
+		header('Content-Description: File Transfer');
+		header('Content-Disposition: inline; filename="'.preg_replace('/\.docx$/i', '.txt', $filename).'"');
+		header('Cache-Control: Public, must-revalidate');
+		header('Pragma: public');
+		header('Content-Length: '.strlen($textPreview));
+		if (is_object($db)) {
+			$db->close();
+		}
+		print $textPreview;
+		exit;
+	}
+}
+
 // Set this for test
 //$type = 'text/html'; $attachment = -1;
 
