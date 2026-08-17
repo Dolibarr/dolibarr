@@ -439,7 +439,8 @@ function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir, $object = 
 	$filearrayindatabase = dol_dir_list_in_database(rtrim($relativedir, "/\\"), '', null, 'name', SORT_ASC, 0, '', $object);
 
 	global $modulepart;
-	if ($modulepart == 'produit' && getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {
+	// Note: $modulepart is 'product' when set by product/document.php, but 'produit' in some other contexts, so we accept both.
+	if (in_array($modulepart, array('produit', 'product')) && getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {
 		// TODO Remove this when PRODUCT_USE_OLD_PATH_FOR_PHOTO will be removed
 		global $object;
 		if (!empty($object->id)) {
@@ -452,7 +453,8 @@ function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir, $object = 
 			$relativedirold = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $upload_dirold);
 			$relativedirold = ltrim($relativedirold, "/\\");
 
-			$filearrayindatabase = array_merge($filearrayindatabase, dol_dir_list_in_database($relativedirold, '', null, 'name', SORT_ASC));
+			// Note: $object must be provided so the entity filter matches the one used to forge $upload_dirold (multicompany)
+			$filearrayindatabase = array_merge($filearrayindatabase, dol_dir_list_in_database($relativedirold, '', null, 'name', SORT_ASC, 0, '', $object));
 		}
 	} elseif ($modulepart == 'ticket') {
 		foreach ($filearray as $key => $val) {
@@ -3443,7 +3445,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$accessallowed = 1;
 		}
 		$original_file = $conf->societe->multidir_output[$entity].'/contact/'.$original_file;
-		$sqlprotectagainstexternals = "SELECT fk_soc FROM ".MAIN_DB_PREFIX."socpepople WHERE rowid = ".((int) $refname)." AND entity IN (".getEntity('contact').")";
+		$sqlprotectagainstexternals = "SELECT fk_soc FROM ".MAIN_DB_PREFIX."socpeople WHERE rowid = ".((int) $refname)." AND entity IN (".getEntity('contact').")";
 	} elseif (($modulepart == 'facture' || $modulepart == 'invoice') && !empty($conf->invoice->multidir_output[$entity])) {
 		// Wrapping for invoices
 		if ($fuser->hasRight('facture', $lire) || preg_match('/^specimen/i', $original_file)) {
