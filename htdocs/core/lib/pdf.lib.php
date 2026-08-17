@@ -553,27 +553,33 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 
 		if ($mode == 'target' || preg_match('/targetwithdetails/', $mode)) {
 			if ($usecontact && (is_object($targetcontact))) {
+				$addressobject = $targetcontact;
+				$companytouseforaddress = $targetcompany;
+
+				if (method_exists($targetcontact, 'getEffectiveAddressObject')) {
+					if (method_exists($targetcontact, 'mustUseThirdpartyAddress') && $targetcontact->mustUseThirdpartyAddress() && is_object($targetcompany) && (int) $targetcontact->socid > 0 && (int) $targetcontact->socid !== (int) $targetcompany->id) {
+						$targetcontact->fetch_thirdparty();
+						if (!empty($targetcontact->thirdparty) && is_object($targetcontact->thirdparty)) {
+							$companytouseforaddress = $targetcontact->thirdparty;
+						} else {
+							dol_syslog(__FUNCTION__.' thirdparty fallback failed for contact id='.((int) $targetcontact->id).' socid='.((int) $targetcontact->socid), LOG_WARNING);
+						}
+					}
+
+					$addressobject = $targetcontact->getEffectiveAddressObject((is_object($companytouseforaddress) ? $companytouseforaddress : null));
+				}
+
 				$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->convToOutputCharset($targetcontact->getFullName($outputlangs, 1));
 
-				if (!empty($targetcontact->address)) {
-					$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->convToOutputCharset(dol_format_address($targetcontact))."\n";
-				} elseif (is_object($targetcompany)) {
-					$companytouseforaddress = $targetcompany;
-
-					// Contact on a thirdparty that is a different thirdparty than the thirdparty of object
-					if ($targetcontact->socid > 0 && $targetcontact->socid != $targetcompany->id) {
-						$targetcontact->fetch_thirdparty();
-						$companytouseforaddress = $targetcontact->thirdparty;
-					}
-
-					if (is_object($companytouseforaddress)) {
-						$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->convToOutputCharset(dol_format_address($companytouseforaddress))."\n";
-					}
+				if (!empty($addressobject->address) || !empty($addressobject->zip) || !empty($addressobject->town) || !empty($addressobject->state_id) || !empty($addressobject->country_id)) {
+					$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->convToOutputCharset(dol_format_address($addressobject))."\n";
+				} elseif (is_object($companytouseforaddress)) {
+					$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->convToOutputCharset(dol_format_address($companytouseforaddress))."\n";
 				}
 				// Country
-				if (!empty($targetcontact->country_code) && $targetcontact->country_code != $sourcecompany->country_code) {
-					$stringaddress .= (($stringaddress && !getDolGlobalString('MAIN_PDF_REMOVE_BREAK_BEFORE_COUNTRY')) ? "\n" : '').$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$targetcontact->country_code));
-				} elseif (empty($targetcontact->country_code) && !empty($targetcompany->country_code) && ($targetcompany->country_code != $sourcecompany->country_code)) {
+				if (!empty($addressobject->country_code) && $addressobject->country_code != $sourcecompany->country_code) {
+					$stringaddress .= (($stringaddress && !getDolGlobalString('MAIN_PDF_REMOVE_BREAK_BEFORE_COUNTRY')) ? "\n" : '').$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$addressobject->country_code));
+				} elseif (empty($addressobject->country_code) && !empty($targetcompany->country_code) && ($targetcompany->country_code != $sourcecompany->country_code)) {
 					$stringaddress .= (($stringaddress && !getDolGlobalString('MAIN_PDF_REMOVE_BREAK_BEFORE_COUNTRY')) ? "\n" : '').$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$targetcompany->country_code));
 				}
 

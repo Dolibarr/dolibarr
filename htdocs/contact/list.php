@@ -162,7 +162,7 @@ $type = GETPOST("type", 'aZ');
 $view = GETPOST("view", 'alpha');
 
 $userid = GETPOSTINT('userid');
-$begin = GETPOST('begin');
+$begin = GETPOST('begin', 'alpha');
 
 // Load variable for pagination
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
@@ -529,14 +529,15 @@ if ($resql) {
 
 // Build and execute select
 // --------------------------------------------------------------------
-$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias as alias,";
+$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias as alias, s.address as soc_address, s.zip as soc_zip, s.town as soc_town, s.fk_pays as soc_country_id, s.fk_departement as soc_state_id,";
 $sql .= " p.rowid, p.ref_ext, p.lastname as lastname, p.statut, p.firstname, p.address, p.zip, p.town, p.poste, p.email, p.birthday,";
 $sql .= " p.socialnetworks, p.photo,";
-$sql .= " p.phone as phone_pro, p.phone_mobile, p.phone_perso, p.fax, p.fk_pays, p.priv, p.ip, p.datec as date_creation, p.tms as date_modification,";
+$sql .= " p.phone as phone_pro, p.phone_mobile, p.phone_perso, p.fax, p.fk_pays, p.fk_departement, p.use_thirdparty_address, p.priv, p.ip, p.datec as date_creation, p.tms as date_modification,";
 $sql .= " p.import_key, p.fk_stcommcontact as stcomm_id, p.fk_prospectlevel, p.note_public, p.note_private,";
 $sql .= " st.libelle as stcomm, st.picto as stcomm_picto,";
 $sql .= " co.label as country, co.code as country_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
+$sql .= " sco.label as soc_country, sco.code as soc_country_code, sstate.code_departement as soc_state_code, sstate.nom as soc_state_name,";
 $sql .= " region.code_region as region_code, region.nom as region_name";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
@@ -562,7 +563,9 @@ if (isset($extrafields->attributes[$object->table_element]['label']) && is_array
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON co.rowid = p.fk_pays";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = p.fk_soc";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as sco ON sco.rowid = s.fk_pays";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = p.fk_departement)";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as sstate on (sstate.rowid = s.fk_departement)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_regions as region on (region.code_region = state.fk_region)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_stcommcontact as st ON st.id = p.fk_stcommcontact";
 
@@ -1607,9 +1610,13 @@ while ($i < $imaxinloop) {
 	$contactstatic->phone_pro = $obj->phone_pro;
 	$contactstatic->phone_perso = $obj->phone_perso;
 	$contactstatic->phone_mobile = $obj->phone_mobile;
+	$contactstatic->fk_soc = $obj->socid;
+	$contactstatic->socid = $obj->socid;
 	$contactstatic->address = $obj->address;
 	$contactstatic->zip = $obj->zip;
 	$contactstatic->town = $obj->town;
+	$contactstatic->country_id = $obj->fk_pays;
+	$contactstatic->state_id = $obj->fk_departement;
 	$contactstatic->state = $obj->state_name;
 	$contactstatic->region = $obj->region_name;
 	$contactstatic->socialnetworks = $arraysocialnetworks;
@@ -1619,6 +1626,7 @@ while ($i < $imaxinloop) {
 	$contactstatic->import_key = $obj->import_key;
 	$contactstatic->photo = $obj->photo;
 	$contactstatic->fk_prospectlevel = $obj->fk_prospectlevel;
+	$contactstatic->use_thirdparty_address = isset($obj->use_thirdparty_address) && !is_null($obj->use_thirdparty_address) ? (int) $obj->use_thirdparty_address : null;
 
 	$object = $contactstatic;
 
@@ -1643,6 +1651,22 @@ while ($i < $imaxinloop) {
 			print '</td></tr>';
 		}
 	} else {
+		$thirdpartyaddressobject = null;
+		if ($obj->socid > 0) {
+			$thirdpartyaddressobject = new Societe($db);
+			$thirdpartyaddressobject->id = (int) $obj->socid;
+			$thirdpartyaddressobject->address = $obj->soc_address;
+			$thirdpartyaddressobject->zip = $obj->soc_zip;
+			$thirdpartyaddressobject->town = $obj->soc_town;
+			$thirdpartyaddressobject->state_id = (int) $obj->soc_state_id;
+			$thirdpartyaddressobject->state = $obj->soc_state_name;
+			$thirdpartyaddressobject->state_code = $obj->soc_state_code;
+			$thirdpartyaddressobject->country_id = (int) $obj->soc_country_id;
+			$thirdpartyaddressobject->country = $obj->soc_country;
+			$thirdpartyaddressobject->country_code = $obj->soc_country_code;
+		}
+		$effectiveaddressfields = $contactstatic->getEffectiveAddressFields($thirdpartyaddressobject);
+
 		// Show here line of result
 		print '<tr data-rowid="'.$object->id.'" class="oddeven row-with-select"';
 		if ($contextpage == 'poslist') {
@@ -1720,7 +1744,7 @@ while ($i < $imaxinloop) {
 
 		// Address
 		if (!empty($arrayfields['p.address']['checked'])) {
-			print '<td>'.dolPrintHTML($obj->address).'</td>';
+			print '<td>'.dolPrintHTML($effectiveaddressfields['address']).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1728,7 +1752,7 @@ while ($i < $imaxinloop) {
 
 		// Zip
 		if (!empty($arrayfields['p.zip']['checked'])) {
-			print '<td>'.dolPrintHTML($obj->zip).'</td>';
+			print '<td>'.dolPrintHTML($effectiveaddressfields['zip']).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1736,14 +1760,14 @@ while ($i < $imaxinloop) {
 
 		// Town
 		if (!empty($arrayfields['p.town']['checked'])) {
-			print '<td class="tdoverflowmax100" title="'.dolPrintHTMLForAttribute($obj->town).'">'.dolPrintHTML($obj->town).'</td>';
+			print '<td class="tdoverflowmax100" title="'.dolPrintHTMLForAttribute($effectiveaddressfields['town']).'">'.dolPrintHTML($effectiveaddressfields['town']).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 		// State
 		if (!empty($arrayfields['state.nom']['checked'])) {
-			print "<td>".dolPrintHTML($obj->state_name)."</td>\n";
+			print "<td>".dolPrintHTML($effectiveaddressfields['state'])."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1758,8 +1782,7 @@ while ($i < $imaxinloop) {
 		// Country
 		if (!empty($arrayfields['country.code_iso']['checked'])) {
 			print '<td class="center">';
-			$tmparray = getCountry($obj->fk_pays, 'all');
-			print dolPrintHTML($tmparray['label']);
+			print dolPrintHTML($effectiveaddressfields['country']);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

@@ -367,7 +367,7 @@ class modSociete extends DolibarrModules
 		$this->export_permission[$r] = array(array("societe", "contact", "export"));
 		$this->export_fields_array[$r] = array(
 			'c.rowid' => "IdContact", 'c.civility' => "CivilityCode", 'c.lastname' => 'Lastname', 'c.firstname' => 'Firstname', 'c.poste' => 'PostOrFunction',
-			'c.datec' => "DateCreation", 'c.tms' => "DateLastModification", 'c.priv' => "ContactPrivate", 'c.address' => "Address", 'c.zip' => "Zip", 'c.town' => "Town",
+			'c.datec' => "DateCreation", 'c.tms' => "DateLastModification", 'c.priv' => "ContactPrivate", 'c.use_thirdparty_address' => "UseThirdpartyAddress", 'c.address' => "Address", 'c.zip' => "Zip", 'c.town' => "Town",
 			'd.nom' => 'State', 'r.nom' => 'Region', 'co.label' => "Country", 'co.code' => "CountryCode", 'c.phone' => "Phone", 'c.fax' => "Fax", 'c.phone_mobile' => "Mobile", 'c.email' => "EMail",
 			'c.note_private' => 'NotePrivate', 'c.note_public' => "NotePublic",
 			'c.statut' => "Status",
@@ -395,7 +395,7 @@ class modSociete extends DolibarrModules
 		$this->export_examplevalues_array[$r] = array('s.client' => '0 (no customer no prospect)/1 (customer)/2 (prospect)/3 (customer and prospect)', 's.fournisseur' => '0 (not a supplier) or 1 (supplier)');
 		$this->export_TypeFields_array[$r] = array(
 			'c.civility' => "List:c_civility:label:code", 'c.lastname' => 'Text', 'c.firstname' => 'Text', 'c.poste' => 'Text', 'c.datec' => "Date", 'c.priv' => "Boolean",
-			'c.address' => "Text", 'c.zip' => "Text", 'c.town' => "Text", 'd.nom' => 'Text', 'r.nom' => 'Text', 'co.label' => "List:c_country:label:rowid", 'co.code' => "Text", 'c.phone' => "Text",
+			'c.use_thirdparty_address' => "Numeric", 'c.address' => "Text", 'c.zip' => "Text", 'c.town' => "Text", 'd.nom' => 'Text', 'r.nom' => 'Text', 'co.label' => "List:c_country:label:rowid", 'co.code' => "Text", 'c.phone' => "Text",
 			'c.fax' => "Text", 'c.email' => "Text",
 			'c.statut' => "Status",
 			's.rowid' => "Numeric", 's.nom' => "Text", 's.status' => "Status", 's.code_client' => "Text", 's.code_fournisseur' => "Text",
@@ -828,6 +828,7 @@ class modSociete extends DolibarrModules
 			's.rowid' => 'Id',
 			's.datec' => "DateCreation",
 			's.fk_soc' => 'ThirdPartyName',
+			's.use_thirdparty_address' => 'UseThirdpartyAddress',
 			's.civility' => 'UserTitle',
 			's.lastname' => "Lastname*",
 			's.firstname' => "Firstname",
@@ -905,6 +906,7 @@ class modSociete extends DolibarrModules
 			's.rowid' => '1',
 			's.datec' => 'formatted as '.dol_print_date(dol_now(), '%Y-%m-%d'),
 			's.fk_soc' => 'Third Party name eg. TPBigCompany',
+			's.use_thirdparty_address' => '0 or 1',
 			's.civility' => 'Title of civility eg: MR...matches field "code" in table "'.MAIN_DB_PREFIX.'c_civility"',
 			's.lastname' => "lastname or label",
 			's.firstname' => 'John',

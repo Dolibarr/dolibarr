@@ -2014,6 +2014,7 @@ class User extends CommonObject
 		global $user;
 
 		$error = 0;
+		$effectiveaddressobject = $contact->getEffectiveAddressObject();
 
 		// Define parameters
 		$this->admin = 0;
@@ -2026,12 +2027,12 @@ class User extends CommonObject
 		$this->office_phone = $contact->phone_pro;
 		$this->office_fax = $contact->fax;
 		$this->user_mobile = $contact->phone_mobile;
-		$this->address = $contact->address;
-		$this->zip = $contact->zip;
-		$this->town = $contact->town;
+		$this->address = (string) $effectiveaddressobject->address;
+		$this->zip = (string) $effectiveaddressobject->zip;
+		$this->town = (string) $effectiveaddressobject->town;
 		$this->setUpperOrLowerCase();
-		$this->state_id = $contact->state_id;
-		$this->country_id = $contact->country_id;
+		$this->state_id = (int) $effectiveaddressobject->state_id;
+		$this->country_id = (int) $effectiveaddressobject->country_id;
 		$this->employee = 0;
 
 		if (empty($login)) {

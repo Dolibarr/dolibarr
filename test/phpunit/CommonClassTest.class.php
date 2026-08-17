@@ -59,8 +59,12 @@ use PHPUnit\Framework\TestCase;
  * @phan-file-suppress PhanUndeclaredClass
  * @phan-file-suppress PhanUndeclaredExtendedClass
  * @phan-file-suppress PhanUndeclaredMethod
+ * @phan-file-suppress PhanParamSignatureRealMismatchParamTypeInternal
+ * @phan-file-suppress PhanAccessSignatureMismatchInternal
+ * @phan-file-suppress PhanParamSignatureMismatchInternal
+ * @phan-file-suppress PhanTypeMismatchArgumentInternal
  */
-/** @phpstan-ignore class.notFound */
+/** @phpstan-ignore-next-line */
 abstract class CommonClassTest extends TestCase
 {
 	/** @var \Conf */
@@ -103,6 +107,7 @@ abstract class CommonClassTest extends TestCase
 	 */
 	public function __construct($name = null, array $data = array(), $dataName = '')
 	{
+		/** @phpstan-ignore-next-line */
 		parent::__construct($name, $data, $dataName);
 
 		//$this->sharedFixture
@@ -136,10 +141,10 @@ abstract class CommonClassTest extends TestCase
 	/**
 	 *	This method is called when a test fails
 	 *
-	 *  @param	Throwable	$t		Throwable object
+	 *  @param	\Throwable	$t		Throwable object
 	 *  @return void
 	 */
-	protected function onNotSuccessfulTest(Throwable $t): void
+	public function onNotSuccessfulTest($t): void // @phpstan-ignore missingType.parameter
 	{
 		global $db;
 
@@ -163,6 +168,7 @@ abstract class CommonClassTest extends TestCase
 		$nbLinesToShow = $this->nbLinesToShow;
 		// @phan-suppress-next-line PhanUndeclaredClass
 		/** @phpstan-ignore comparison.alwaysFalse */
+		/** @phpstan-ignore-next-line */
 		if (get_class($t) === 'PHPUnit\Framework\Error\Notice') {
 			$nbLinesToShow = 3;
 		}
@@ -257,6 +263,7 @@ abstract class CommonClassTest extends TestCase
 		print PHP_EOL;
 
 		/** @phpstan-ignore method.notFound */
+		/** @phpstan-ignore-next-line */
 		parent::onNotSuccessfulTest($t);
 	}
 

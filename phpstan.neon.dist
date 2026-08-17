@@ -15,6 +15,10 @@ parameters:
 	level: 10
 	fileExtensions:
 		- php
+	stubFiles:
+		- dev/tools/phpstan/stubs/phpunit.stub.php
+	scanFiles:
+		- dev/tools/phpstan/stubs/phpunit.stub.php
 	paths:
 		- htdocs
 		- scripts

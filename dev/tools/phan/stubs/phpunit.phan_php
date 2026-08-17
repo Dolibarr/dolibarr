@@ -7,20 +7,36 @@ class TestCase {
 	{
 	}
 
-	/*
-    public function assertTrue($condition, string $message = ''): void {}
-    public function assertFalse($condition, string $message = ''): void {}
-    public function assertEquals($expected, $actual, string $message = ''): void {}
-    public function assertSame($expected, $actual, string $message = ''): void {}
-    public function assertNotNull($actual, string $message = ''): void {}
-    public function assertNull($actual, string $message = ''): void {}
-    public function assertCount(int $expectedCount, $haystack, string $message = ''): void {}
-    public function assertEmpty($actual, string $message = ''): void {}
-    public function assertNotEmpty($actual, string $message = ''): void {}
-    public function fail(string $message = ''): void {}
-	*/
+	public static function assertTrue(bool $condition, string $message = ''): void {}
+	public static function assertFalse(bool $condition, string $message = ''): void {}
+	public static function assertEquals($expected, $actual, string $message = ''): void {}
+	public static function assertSame($expected, $actual, string $message = ''): void {}
+	public static function assertNotNull($actual, string $message = ''): void {}
+	public static function assertNull($actual, string $message = ''): void {}
+	public static function assertInstanceOf(string $expected, $actual, string $message = ''): void {}
+	public static function assertCount(int $expectedCount, $haystack, string $message = ''): void {}
+	public static function assertEmpty($actual, string $message = ''): void {}
+	public static function assertNotEmpty($actual, string $message = ''): void {}
+	public function expectException(string $exception): void {}
+	public static function assertFileNotExists(string $filename, string $message = ''): void {}
+	public static function assertFileDoesNotExist(string $filename, string $message = ''): void {}
+	public static function assertStringContainsString(string $needle, string $haystack, string $message = ''): void {}
+	public static function assertStringNotContainsString(string $needle, string $haystack, string $message = ''): void {}
+	public static function assertNotSame($expected, $actual, string $message = ''): void {}
+	public static function assertGreaterThan($expected, $actual, string $message = ''): void {}
+	public static function fail(string $message = ''): void {}
 
-	public function	onNotSuccessfulTest(\PHPUnit\Framework\Throwable $t): void
+	public function	onNotSuccessfulTest(\Throwable $t): void
+	{
+	}
+}
+
+class TestSuite {
+	public function __construct($name = '')
+	{
+	}
+
+	public function addTestSuite($testSuite): void
 	{
 	}
 }

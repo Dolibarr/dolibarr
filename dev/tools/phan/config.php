@@ -222,6 +222,19 @@ $deprecatedModuleNameRegex = '/^(?!(?:'.implode('|', array_keys($DEPRECATED_MODU
 
 $extraFieldTypeRegex = '/^(?:'.implode('|', array_keys($EXTRAFIELDS_TYPE2LABEL)).')$/';
 
+$phanProjectStubFiles = [
+	PHAN_DIR . '/stubs/GeoIP2.php',
+	PHAN_DIR . '/stubs/geoip_inc.php',
+	PHAN_DIR . '/stubs/module_numberwords.php',
+	PHAN_DIR . '/stubs/multicompany.php',
+	PHAN_DIR . '/stubs/nusoap.php',
+	PHAN_DIR . '/stubs/ovhsms.php',
+	PHAN_DIR . '/stubs/phpunit.phan_php',
+	PHAN_DIR . '/stubs/restler.php',
+	PHAN_DIR . '/stubs/stripe.php',
+	PHAN_DIR . '/stubs/swiss-qr-bill.php',
+];
+
 /**
  * This configuration will be read and overlaid on top of the
  * default configuration. Command line arguments will be applied
@@ -231,7 +244,8 @@ return [
 	//	'processes' => 6,
 	'backward_compatibility_checks' => false,
 	'simplify_ast' => true,
-	'analyzed_file_extensions' => ['php','inc'],
+	'analyzed_file_extensions' => ['php','inc','phan_php'],
+	'file_list' => $phanProjectStubFiles,
 	/*'included_extension_subset' => [
 		'curl',
 		'dom',
@@ -345,7 +359,6 @@ return [
 	'directory_list' => [
 		'htdocs',
 		'scripts',
-		PHAN_DIR . '/stubs',
 	],
 
 	// A directory list that defines files that will be excluded
@@ -381,6 +394,7 @@ return [
 		// Included as stub (did not seem properly analyzed by phan without it)
 		.'|htdocs/includes/stripe/.*'  // @phpstan-ignore-line
 		.'|htdocs/conf/conf.php'  // @phpstan-ignore-line
+		.'|dev/tools/phpstan/stubs/.*'  // @phpstan-ignore-line
 		// .'|htdocs/[^h].*/.*'  // For testing @phpstan-ignore-line
 		.')@',  // @phpstan-ignore-line
 
@@ -547,7 +561,6 @@ return [
 		'pdo_mysql'  => PHAN_DIR . '/stubs/pdo_mysql.phan_php',
 		'pdo_pgsql'  => PHAN_DIR . '/stubs/pdo_pgsql.phan_php',
 		'pdo_sqlite'  => PHAN_DIR . '/stubs/pdo_sqlite.phan_php',
-		'phpunit'  => PHAN_DIR . '/stubs/phpunit.phan_php',
 		'pgsql'  => PHAN_DIR . '/stubs/pgsql.phan_php',
 		'session'  => PHAN_DIR . '/stubs/session.phan_php',
 		'simplexml'  => PHAN_DIR . '/stubs/SimpleXML.phan_php',

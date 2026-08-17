@@ -36,6 +36,7 @@
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonsocialnetworks.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonpeople.class.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
 
 /**
@@ -45,6 +46,9 @@ class Contact extends CommonObject
 {
 	use CommonSocialNetworks;
 	use CommonPeople;
+
+	public const USE_THIRDPARTY_ADDRESS_NO = 0;
+	public const USE_THIRDPARTY_ADDRESS_YES = 1;
 
 	/**
 	 * @var string		Prefix to check for any trigger code of any business class to prevent bad value for trigger code.
@@ -110,6 +114,7 @@ class Contact extends CommonObject
 		'fk_departement' => array('type' => 'integer', 'label' => 'Fk departement', 'enabled' => 1, 'visible' => 3, 'position' => 70),
 		'fk_pays' => array('type' => 'integer', 'label' => 'Fk pays', 'enabled' => 1, 'visible' => 3, 'position' => 75),
 		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php', 'label' => 'ThirdParty', 'enabled' => 1, 'visible' => 1, 'position' => 77, 'searchall' => 1),
+		'use_thirdparty_address' => array('type' => 'smallint', 'label' => 'ContactAddress_UseThirdpartyAddress', 'enabled' => 1, 'visible' => 0, 'position' => 78),
 		'birthday' => array('type' => 'date', 'label' => 'Birthday', 'enabled' => 1, 'visible' => -1, 'position' => 80),
 		'phone' => array('type' => 'varchar(30)', 'label' => 'Phone', 'enabled' => 1, 'visible' => 1, 'position' => 90, 'searchall' => 1),
 		'phone_perso' => array('type' => 'varchar(30)', 'label' => 'PhonePerso', 'enabled' => 1, 'visible' => -1, 'position' => 95, 'searchall' => 1),
@@ -218,6 +223,11 @@ class Contact extends CommonObject
 	 * @var int
 	 */
 	public $fk_soc;		// both socid and fk_soc are used
+
+	/**
+	 * @var int|null 1 to use thirdparty address, 0 to use contact address, null for legacy fallback
+	 */
+	public $use_thirdparty_address = null;
 
 	/**
 	 * @var string Thirdparty name
@@ -375,6 +385,16 @@ class Contact extends CommonObject
 	 */
 	public $stcomm_picto;
 
+	/**
+	 * @var CommonObject|null Cached effective address object for current lifecycle
+	 */
+	protected $cached_effective_address_object;
+
+	/**
+	 * @var string Cache key matching the current effective address object
+	 */
+	protected $cached_effective_address_cache_key = '';
+
 
 	/**
 	 *	Constructor
@@ -503,13 +523,22 @@ class Contact extends CommonObject
 		if (empty($this->socid)) {
 			$this->socid = 0;
 		}
+		if (!isset($this->use_thirdparty_address)) {
+			if ($this->socid > 0) {
+				// Preserve backward compatibility: legacy callers may link a thirdparty
+				// and still expect explicit contact postal fields to remain authoritative.
+				$this->use_thirdparty_address = (int) $this->getLegacyResolvedUseThirdpartyAddressValue();
+			} else {
+				$this->use_thirdparty_address = self::USE_THIRDPARTY_ADDRESS_NO;
+			}
+		}
 		if (empty($this->priv)) {
 			$this->priv = 0;
 		}
-		if (!empty($this->statut) && empty($this->status)) {
+		if (isset($this->statut) && !empty($this->statut) && empty($this->status)) {
 			$this->status = 1;
 		}
-		if (empty($this->status)) {
+		if (!isset($this->status) || empty($this->status)) {
 			$this->status = 0; // This is to convert '' into '0' to avoid bad sql request
 			$this->statut = 0; // This is to convert '' into '0' to avoid bad sql request
 		}
@@ -520,6 +549,7 @@ class Contact extends CommonObject
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."socpeople (";
 		$sql .= " datec";
 		$sql .= ", fk_soc";
+		$sql .= ", use_thirdparty_address";
 		$sql .= ", name_alias";
 		$sql .= ", lastname";
 		$sql .= ", firstname";
@@ -539,6 +569,7 @@ class Contact extends CommonObject
 		} else {
 			$sql .= "null,";
 		}
+		$sql .= " ".($this->use_thirdparty_address === null ? "null" : (string) ((int) $this->use_thirdparty_address)).",";
 		$sql .= "'".$this->db->escape($this->name_alias)."',";
 		$sql .= "'".$this->db->escape($this->lastname)."',";
 		$sql .= "'".$this->db->escape($this->firstname)."',";
@@ -637,17 +668,23 @@ class Contact extends CommonObject
 		$this->zip = (empty($this->zip) ? '' : trim($this->zip));
 		$this->town = (empty($this->town) ? '' : trim($this->town));
 		$this->country_id = (empty($this->country_id) || $this->country_id < 0) ? 0 : $this->country_id;
-		if (!empty($this->statut) && empty($this->status)) {
+		if (isset($this->statut) && !empty($this->statut) && empty($this->status)) {
 			$this->status = 1;
 		}
-		if (empty($this->status)) {
+		if (!isset($this->status) || empty($this->status)) {
 			$this->status = 0;
 			$this->statut = 0;
 		}
 		if (empty($this->civility_code) && !is_numeric($this->civility_id)) {
 			$this->civility_code = $this->civility_id; // For backward compatibility
 		}
+		if ($this->socid <= 0) {
+			$this->use_thirdparty_address = self::USE_THIRDPARTY_ADDRESS_NO;
+		} elseif (!isset($this->use_thirdparty_address)) {
+			$this->use_thirdparty_address = (int) $this->getLegacyResolvedUseThirdpartyAddressValue();
+		}
 		$this->setUpperOrLowerCase();
+		$this->resetEffectiveAddressCache();
 
 		$this->db->begin();
 
@@ -664,6 +701,7 @@ class Contact extends CommonObject
 		$sql .= ", address='".$this->db->escape((string) $this->address)."'";
 		$sql .= ", zip='".$this->db->escape($this->zip)."'";
 		$sql .= ", town='".$this->db->escape($this->town)."'";
+		$sql .= ", use_thirdparty_address=".($this->use_thirdparty_address === null ? "NULL" : (string) ((int) $this->use_thirdparty_address));
 		$sql .= ", ref_ext = ".(!empty($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "NULL");
 		$sql .= ", fk_pays=".($this->country_id > 0 ? ((int) $this->country_id) : 'NULL');
 		$sql .= ", fk_departement=".($this->state_id > 0 ? ((int) $this->state_id) : 'NULL');
@@ -714,6 +752,7 @@ class Contact extends CommonObject
 
 			if (!$error && $this->user_id > 0) {
 				// If contact is linked to a user
+				$effectiveaddressfields = $this->getEffectiveAddressFields();
 				$tmpobj = new User($this->db);
 				$tmpobj->fetch($this->user_id);
 				$usermustbemodified = 0;
@@ -725,24 +764,24 @@ class Contact extends CommonObject
 					$tmpobj->office_fax = $this->fax;
 					$usermustbemodified++;
 				}
-				if ($tmpobj->address != $this->address) {
-					$tmpobj->address = $this->address;
+				if ($tmpobj->address != $effectiveaddressfields['address']) {
+					$tmpobj->address = $effectiveaddressfields['address'];
 					$usermustbemodified++;
 				}
-				if ($tmpobj->town != $this->town) {
-					$tmpobj->town = $this->town;
+				if ($tmpobj->town != $effectiveaddressfields['town']) {
+					$tmpobj->town = $effectiveaddressfields['town'];
 					$usermustbemodified++;
 				}
-				if ($tmpobj->zip != $this->zip) {
-					$tmpobj->zip = $this->zip;
+				if ($tmpobj->zip != $effectiveaddressfields['zip']) {
+					$tmpobj->zip = $effectiveaddressfields['zip'];
 					$usermustbemodified++;
 				}
-				if ($tmpobj->zip != $this->zip) {
-					$tmpobj->state_id = $this->state_id;
+				if ((int) $tmpobj->state_id != $effectiveaddressfields['state_id']) {
+					$tmpobj->state_id = $effectiveaddressfields['state_id'];
 					$usermustbemodified++;
 				}
-				if ($tmpobj->country_id != $this->country_id) {
-					$tmpobj->country_id = $this->country_id;
+				if ((int) $tmpobj->country_id != $effectiveaddressfields['country_id']) {
+					$tmpobj->country_id = $effectiveaddressfields['country_id'];
 					$usermustbemodified++;
 				}
 				if ($tmpobj->email != $this->email) {
@@ -786,6 +825,174 @@ class Contact extends CommonObject
 	}
 
 
+	/**
+	 * Return true when effective postal address must come from linked thirdparty.
+	 *
+	 * @return bool
+	 */
+	public function mustUseThirdpartyAddress(): bool
+	{
+		if ((int) $this->socid <= 0) {
+			return false;
+		}
+
+		if ($this->use_thirdparty_address === self::USE_THIRDPARTY_ADDRESS_YES) {
+			return true;
+		}
+
+		if ($this->use_thirdparty_address === self::USE_THIRDPARTY_ADDRESS_NO) {
+			return false;
+		}
+
+		return $this->hasEmptyOwnAddressFields();
+	}
+
+	/**
+	 * Return the address resolution mode for debug and trace purposes.
+	 *
+	 * @return string
+	 */
+	public function getAddressResolutionMode(): string
+	{
+		if ((int) $this->socid <= 0) {
+			return 'explicit_contact';
+		}
+
+		if ($this->use_thirdparty_address === self::USE_THIRDPARTY_ADDRESS_YES) {
+			return 'explicit_thirdparty';
+		}
+
+		if ($this->use_thirdparty_address === self::USE_THIRDPARTY_ADDRESS_NO) {
+			return 'explicit_contact';
+		}
+
+		if ($this->hasEmptyOwnAddressFields()) {
+			return 'legacy_empty';
+		}
+
+		return 'legacy_filled';
+	}
+
+	/**
+	 * Return the object to use as effective postal address source.
+	 *
+	 * @param   Societe|null $thirdparty Preloaded thirdparty when already available
+	 * @return  CommonObject
+	 */
+	public function getEffectiveAddressObject(?Societe $thirdparty = null): CommonObject
+	{
+		$cachekey = $this->buildEffectiveAddressCacheKey($thirdparty);
+		if ($this->cached_effective_address_object instanceof CommonObject && $this->cached_effective_address_cache_key === $cachekey) {
+			return $this->cached_effective_address_object;
+		}
+
+		if (!$this->mustUseThirdpartyAddress()) {
+			$this->cached_effective_address_object = $this;
+			$this->cached_effective_address_cache_key = $cachekey;
+			return $this->cached_effective_address_object;
+		}
+
+		if ($thirdparty instanceof Societe && (int) $thirdparty->id > 0 && (int) $thirdparty->id === (int) $this->socid) {
+			$this->cached_effective_address_object = $thirdparty;
+			$this->cached_effective_address_cache_key = $cachekey;
+			return $this->cached_effective_address_object;
+		}
+
+		$thirdpartytoload = new Societe($this->db);
+		$result = $thirdpartytoload->fetch((int) $this->socid);
+		if ($result > 0) {
+			$this->cached_effective_address_object = $thirdpartytoload;
+			$this->cached_effective_address_cache_key = $cachekey;
+			return $this->cached_effective_address_object;
+		}
+
+		dol_syslog(
+			__METHOD__.' fallback to contact address because thirdparty fetch failed for contact id='
+			.((int) $this->id).' socid='.((int) $this->socid).' mode='.$this->getAddressResolutionMode()
+			.' error='.$thirdpartytoload->error,
+			LOG_WARNING
+		);
+
+		$this->cached_effective_address_object = $this;
+		$this->cached_effective_address_cache_key = $cachekey;
+		return $this->cached_effective_address_object;
+	}
+
+	/**
+	 * Return normalized scalar fields for the effective postal address source.
+	 *
+	 * @param   Societe|null $thirdparty Preloaded thirdparty when already available
+	 * @return  array{address:string,zip:string,town:string,state_id:int,state_code:string,state:string,country_id:int,country_code:string,country:string}
+	 */
+	public function getEffectiveAddressFields(?Societe $thirdparty = null): array
+	{
+		$effectiveaddressobject = $this->getEffectiveAddressObject($thirdparty);
+
+		return array(
+			'address' => $this->getCommonObjectStringProperty($effectiveaddressobject, 'address'),
+			'zip' => $this->getCommonObjectStringProperty($effectiveaddressobject, 'zip'),
+			'town' => $this->getCommonObjectStringProperty($effectiveaddressobject, 'town'),
+			'state_id' => $this->getCommonObjectIntProperty($effectiveaddressobject, 'state_id'),
+			'state_code' => $this->getCommonObjectStringProperty($effectiveaddressobject, 'state_code'),
+			'state' => $this->getCommonObjectStringProperty($effectiveaddressobject, 'state'),
+			'country_id' => $this->getCommonObjectIntProperty($effectiveaddressobject, 'country_id'),
+			'country_code' => $this->getCommonObjectStringProperty($effectiveaddressobject, 'country_code'),
+			'country' => $this->getCommonObjectStringProperty($effectiveaddressobject, 'country'),
+		);
+	}
+
+	/**
+	 * Return the effective full address string.
+	 *
+	 * @param   int<0,1> $withcountry Add country into address string
+	 * @param   string   $sep Separator used between address parts
+	 * @param   int<0,1> $withregion Add state/region into address string
+	 * @param   string   $extralangcode Extra language code for translated fields
+	 * @return  string
+	 */
+	public function getFullAddress($withcountry = 0, $sep = "\n", $withregion = 0, $extralangcode = '')
+	{
+		$effectiveaddressobject = $this->getEffectiveAddressObject();
+		if ($effectiveaddressobject === $this) {
+			return parent::getFullAddress($withcountry, $sep, $withregion, $extralangcode);
+		}
+
+		return $effectiveaddressobject->getFullAddress($withcountry, $sep, $withregion, $extralangcode);
+	}
+
+	/**
+	 * Read a string property from a common object with a stable fallback for static analysis.
+	 *
+	 * @param   CommonObject $object Source object
+	 * @param   string       $property Property name
+	 * @return  string
+	 */
+	private function getCommonObjectStringProperty(CommonObject $object, string $property): string
+	{
+		if (!property_exists($object, $property) || !isset($object->{$property})) {
+			return '';
+		}
+
+		return (string) $object->{$property};
+	}
+
+	/**
+	 * Read an integer property from a common object with a stable fallback for static analysis.
+	 *
+	 * @param   CommonObject $object Source object
+	 * @param   string       $property Property name
+	 * @return  int
+	 */
+	private function getCommonObjectIntProperty(CommonObject $object, string $property): int
+	{
+		if (!property_exists($object, $property) || !isset($object->{$property})) {
+			return 0;
+		}
+
+		return (int) $object->{$property};
+	}
+
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
@@ -826,6 +1033,7 @@ class Contact extends CommonObject
 		global $conf, $langs;
 
 		$info = array();
+		$effectiveaddressobject = $this->getEffectiveAddressObject();
 
 		// Object classes
 		$info["objectclass"] = explode(',', getDolGlobalString('LDAP_CONTACT_OBJECT_CLASS'));
@@ -861,17 +1069,18 @@ class Contact extends CommonObject
 				$info["businessCategory"] = "Suppliers";
 			}
 		}
-		if ($this->address && getDolGlobalString('LDAP_CONTACT_FIELD_ADDRESS')) {
-			$info[getDolGlobalString('LDAP_CONTACT_FIELD_ADDRESS')] = $this->address;
+		$effectiveaddressfields = $this->getEffectiveAddressFields();
+		if (!empty($effectiveaddressfields['address']) && getDolGlobalString('LDAP_CONTACT_FIELD_ADDRESS')) {
+			$info[getDolGlobalString('LDAP_CONTACT_FIELD_ADDRESS')] = $effectiveaddressfields['address'];
 		}
-		if ($this->zip && getDolGlobalString('LDAP_CONTACT_FIELD_ZIP')) {
-			$info[getDolGlobalString('LDAP_CONTACT_FIELD_ZIP')] = $this->zip;
+		if (!empty($effectiveaddressfields['zip']) && getDolGlobalString('LDAP_CONTACT_FIELD_ZIP')) {
+			$info[getDolGlobalString('LDAP_CONTACT_FIELD_ZIP')] = $effectiveaddressfields['zip'];
 		}
-		if ($this->town && getDolGlobalString('LDAP_CONTACT_FIELD_TOWN')) {
-			$info[getDolGlobalString('LDAP_CONTACT_FIELD_TOWN')] = $this->town;
+		if (!empty($effectiveaddressfields['town']) && getDolGlobalString('LDAP_CONTACT_FIELD_TOWN')) {
+			$info[getDolGlobalString('LDAP_CONTACT_FIELD_TOWN')] = $effectiveaddressfields['town'];
 		}
-		if ($this->country_code && getDolGlobalString('LDAP_CONTACT_FIELD_COUNTRY')) {
-			$info[getDolGlobalString('LDAP_CONTACT_FIELD_COUNTRY')] = $this->country_code;
+		if (!empty($effectiveaddressfields['country_code']) && getDolGlobalString('LDAP_CONTACT_FIELD_COUNTRY')) {
+			$info[getDolGlobalString('LDAP_CONTACT_FIELD_COUNTRY')] = $effectiveaddressfields['country_code'];
 		}
 		if ($this->phone_pro && getDolGlobalString('LDAP_CONTACT_FIELD_PHONE')) {
 			$info[getDolGlobalString('LDAP_CONTACT_FIELD_PHONE')] = $this->phone_pro;
@@ -1026,7 +1235,7 @@ class Contact extends CommonObject
 		$langs->loadLangs(array("dict", "companies"));
 
 		$sql = "SELECT c.rowid, c.entity, c.fk_soc, c.ref_ext, c.civility as civility_code, c.name_alias, c.lastname, c.firstname,";
-		$sql .= " c.address, c.statut as status, c.zip, c.town,";
+		$sql .= " c.address, c.statut as status, c.zip, c.town, c.use_thirdparty_address,";
 		$sql .= " c.fk_pays as country_id,";
 		$sql .= " c.fk_departement as state_id,";
 		$sql .= " c.birthday,";
@@ -1073,6 +1282,7 @@ class Contact extends CommonObject
 				return 2;
 			} elseif ($num) {   // $num = 1
 				$obj = $this->db->fetch_object($resql);
+				$this->db->free($resql);
 
 				$this->id = $obj->rowid;
 				$this->entity = $obj->entity;
@@ -1088,6 +1298,7 @@ class Contact extends CommonObject
 				$this->address		= $obj->address;
 				$this->zip			= $obj->zip;
 				$this->town			= $obj->town;
+				$this->use_thirdparty_address = isset($obj->use_thirdparty_address) && !is_null($obj->use_thirdparty_address) ? (int) $obj->use_thirdparty_address : null;
 
 				$this->date_creation = $this->db->jdate($obj->date_creation);
 				$this->date_modification = $this->db->jdate($obj->date_modification);
@@ -1138,6 +1349,7 @@ class Contact extends CommonObject
 				$this->canvas		= $obj->canvas;
 
 				$this->import_key = $obj->import_key;
+				$this->resetEffectiveAddressCache();
 
 				// Define gender according to civility
 				$this->setGenderFromCivility();
@@ -1496,6 +1708,8 @@ class Contact extends CommonObject
 		if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 			return ['optimize' => $langs->trans("ShowContact")];
 		}
+		$effectiveaddressfields = $this->getEffectiveAddressFields();
+
 		if (!empty($this->photo) && class_exists('Form')) {
 			$photo = '<div class="photointooltip floatright">';
 			$photo .= Form::showphoto('contact', $this, 0, 40, 0, 'photoref', 'mini', 0); // Important, we must force height so image will have height tags and if image is inside a tooltip, the tooltip manager can calculate height and position correctly the tooltip.
@@ -1522,7 +1736,7 @@ class Contact extends CommonObject
 			$phonelist[] = dol_print_phone($this->phone_perso, $country_code, $this->id, 0, '', '&nbsp;', 'phone');
 		}
 		$datas['phonelist'] = '<br><b>'.$langs->trans("Phone").':</b> '.implode('&nbsp;', $phonelist);
-		$datas['address'] = '<br><b>'.$langs->trans("Address").':</b> '.dol_format_address($this, 1, ' ', $langs);
+		$datas['address'] = '<br><b>'.$langs->trans("Address").':</b> '.dol_escape_htmltag(dol_format_address((object) $effectiveaddressfields, 1, ' ', $langs), 0, 1);
 
 		return $datas;
 	}
@@ -1748,6 +1962,7 @@ class Contact extends CommonObject
 			if ($obj) {
 				$socid = $obj->rowid;
 			}
+			$this->db->free($resql);
 		}
 
 		// Initialise parameters
@@ -1777,6 +1992,7 @@ class Contact extends CommonObject
 		$this->note_private = 'This is a comment (private)';
 
 		$this->socid = $socid;
+		$this->use_thirdparty_address = self::USE_THIRDPARTY_ADDRESS_NO;
 		$this->status = 1;
 
 		return 1;
@@ -1795,7 +2011,7 @@ class Contact extends CommonObject
 		$error = 0;
 
 		// Check parameters
-		if (!empty($this->statut) && empty($this->status)) {
+		if (isset($this->statut) && !empty($this->statut) && empty($this->status)) {
 			$this->status = 1;
 		}
 		if ($this->status == $status) {
@@ -1865,6 +2081,67 @@ class Contact extends CommonObject
 		);
 
 		return CommonObject::commonReplaceThirdparty($dbs, $origin_id, $dest_id, $tables);
+	}
+
+	/**
+	 * Reset cached effective address object.
+	 *
+	 * @return void
+	 */
+	protected function resetEffectiveAddressCache(): void
+	{
+		$this->cached_effective_address_object = null;
+		$this->cached_effective_address_cache_key = '';
+	}
+
+	/**
+	 * Build a cache key for the current effective address inputs.
+	 *
+	 * The same Contact instance is often reused and manually rehydrated in lists.
+	 * The cache must therefore follow the current object state, not only the object identity.
+	 *
+	 * @param   Societe|null $thirdparty Preloaded thirdparty when already available
+	 * @return  string
+	 */
+	protected function buildEffectiveAddressCacheKey(?Societe $thirdparty = null): string
+	{
+		$keyparts = array(
+			(string) ((int) $this->id),
+			(string) ((int) $this->socid),
+			(string) (($thirdparty instanceof Societe && (int) $thirdparty->id > 0) ? (int) $thirdparty->id : (int) $this->socid),
+			($this->use_thirdparty_address === null ? 'null' : (string) ((int) $this->use_thirdparty_address)),
+			(string) $this->address,
+			(string) $this->zip,
+			(string) $this->town,
+			(string) ((int) $this->state_id),
+			(string) ((int) $this->country_id),
+		);
+
+		return sha1(implode("\0", $keyparts));
+	}
+
+	/**
+	 * Return true when all contact postal fields are empty.
+	 *
+	 * @return bool
+	 */
+	protected function hasEmptyOwnAddressFields(): bool
+	{
+		return dol_strlen(trim((string) $this->address)) === 0
+			&& dol_strlen(trim((string) $this->zip)) === 0
+			&& dol_strlen(trim((string) $this->town)) === 0
+			&& empty($this->state_id)
+			&& empty($this->country_id);
+	}
+
+	/**
+	 * Resolve the explicit persisted value to write for a legacy record.
+	 *
+	 * @return int
+	 */
+	protected function getLegacyResolvedUseThirdpartyAddressValue(): int
+	{
+		return $this->hasEmptyOwnAddressFields() ? self::USE_THIRDPARTY_ADDRESS_YES : self::USE_THIRDPARTY_ADDRESS_NO;
 	}
 
 	/**

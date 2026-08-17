@@ -360,6 +360,10 @@ class Contacts extends DolibarrApi
 				$this->contact->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
+			if ($field == 'use_thirdparty_address') {
+				$this->contact->use_thirdparty_address = $this->validateUseThirdpartyAddressValue($value);
+				continue;
+			}
 			if ($field == 'array_options' && is_array($value)) {
 				$this->contact->fetch_optionals();	// To force the load of the extrafields definition by fetch_name_optionals_label()
 
@@ -382,6 +386,7 @@ class Contacts extends DolibarrApi
 
 			$this->contact->$field = $this->_checkValForAPI($field, $value, $this->contact);
 		}
+		$this->assertUseThirdpartyAddressIsConsistent($this->contact);
 		if ($this->contact->create(DolibarrApiAccess::$user) < 0) {
 			throw new RestException(500, "Error creating contact", array_merge(array($this->contact->error), $this->contact->errors));
 		}
@@ -430,6 +435,10 @@ class Contacts extends DolibarrApi
 				$this->contact->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
+			if ($field == 'use_thirdparty_address') {
+				$this->contact->use_thirdparty_address = $this->validateUseThirdpartyAddressValue($value);
+				continue;
+			}
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
 					$this->contact->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->contact);
@@ -450,6 +459,7 @@ class Contacts extends DolibarrApi
 
 			$this->contact->$field = $this->_checkValForAPI($field, $value, $this->contact);
 		}
+		$this->assertUseThirdpartyAddressIsConsistent($this->contact);
 
 		if (isModEnabled('mailing') && !empty($this->contact->email) && isset($this->contact->no_email)) {
 			$this->contact->setNoEmail($this->contact->no_email);
@@ -720,5 +730,51 @@ class Contacts extends DolibarrApi
 		}
 
 		return $contact;
+	}
+
+	/**
+	 * Validate use_thirdparty_address payload value.
+	 *
+	 * @param   mixed $value Raw API value
+	 * @return  int|null
+	 * @throws  RestException
+	 */
+	private function validateUseThirdpartyAddressValue($value): ?int
+	{
+		if ($value === null || $value === '') {
+			return null;
+		}
+
+		if ($value === 0 || $value === '0') {
+			return Contact::USE_THIRDPARTY_ADDRESS_NO;
+		}
+
+		if ($value === 1 || $value === '1') {
+			return Contact::USE_THIRDPARTY_ADDRESS_YES;
+		}
+
+		global $langs;
+
+		$langs->load('companies');
+
+		throw new RestException(400, $langs->trans('ContactAddress_ApiInvalidUseThirdpartyAddressValue'));
+	}
+
+	/**
+	 * Validate consistency between linked thirdparty and address mode.
+	 *
+	 * @param   Contact $contact Contact to validate
+	 * @return  void
+	 * @throws  RestException
+	 */
+	private function assertUseThirdpartyAddressIsConsistent(Contact $contact): void
+	{
+		if ((int) $contact->socid <= 0 && (int) $contact->use_thirdparty_address === Contact::USE_THIRDPARTY_ADDRESS_YES) {
+			global $langs;
+
+			$langs->load('companies');
+
+			throw new RestException(400, $langs->trans('ContactAddress_ApiUseThirdpartyAddressRequiresThirdparty'));
+		}
 	}
 }
