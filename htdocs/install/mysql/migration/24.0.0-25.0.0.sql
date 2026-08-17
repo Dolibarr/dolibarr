@@ -78,4 +78,10 @@ UPDATE llx_commande_fournisseurdet SET subprice_ttc = 0 WHERE subprice_ttc <> 0 
 UPDATE llx_facture_fourn_det SET pu_ttc = 0 WHERE pu_ttc <> 0 AND EXISTS (SELECT c.rowid FROM llx_const as c WHERE c.name = 'MAIN_VERSION_LAST_UPGRADE' AND c.value < '25.0.0');
 UPDATE llx_supplier_proposaldet SET subprice_ttc = 0 WHERE subprice_ttc <> 0 AND EXISTS (SELECT c.rowid FROM llx_const as c WHERE c.name = 'MAIN_VERSION_LAST_UPGRADE' AND c.value < '25.0.0');
 
+-- Flag a document line whose currency unit price comes from a fixed per-currency product price (issue #32379)
+ALTER TABLE llx_propaldet ADD COLUMN multicurrency_subprice_source tinyint NOT NULL DEFAULT 0;
+ALTER TABLE llx_commandedet ADD COLUMN multicurrency_subprice_source tinyint NOT NULL DEFAULT 0;
+ALTER TABLE llx_facturedet ADD COLUMN multicurrency_subprice_source tinyint NOT NULL DEFAULT 0;
+ALTER TABLE llx_facturedet_rec ADD COLUMN multicurrency_subprice_source tinyint NOT NULL DEFAULT 0;
+
 -- end of migration
