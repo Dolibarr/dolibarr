@@ -3,7 +3,7 @@
  * Copyright (C) 2015	   	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2023 		Alexandre Janniaux   	<alexandre.janniaux@gmail.com>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -429,7 +429,9 @@ class FunctionsLibTest extends CommonClassTest
 		print __METHOD__." ".$input." result=".$result."\n";
 		$this->assertEquals(0, $result);
 
-		$input = "usace.army.mil";
+		// Note: intentionally not a .mil domain (some CI network environments filter/block .mil DNS
+		// resolution intermittently, which made this assertion flaky without any actual code issue).
+		$input = "microsoft.com";
 		$result = isValidMXRecord($input);
 		print __METHOD__." ".$input." result=".$result."\n";
 		$this->assertEquals(1, $result);
@@ -1302,6 +1304,23 @@ class FunctionsLibTest extends CommonClassTest
 		$object->country_code = 'CA';
 		$phone = dol_print_phone('1234567890', $object->country_code, 0, 0, 0, ' ');
 		$this->assertEquals('<span class="paddingright">(123) 456-7890</span>', $phone, 'Phone for CA 1');
+
+		// Every digit must appear exactly once, in order, whatever the country format
+		$object->country_code = 'JO';
+		$phone = dol_print_phone('+96212345678', $object->country_code, 0, 0, 0, ' ');
+		$this->assertEquals('<span class="paddingright">+962 1 234 56 78</span>', $phone, 'Phone for JO 1');
+
+		$object->country_code = 'PE';
+		$phone = dol_print_phone('987654321', $object->country_code, 0, 0, 0, ' ');
+		$this->assertEquals('<span class="paddingright">987 654 321</span>', $phone, 'Phone for PE 1');
+
+		$object->country_code = 'PE';
+		$phone = dol_print_phone('+5111234567', $object->country_code, 0, 0, 0, ' ');
+		$this->assertEquals('<span class="paddingright">+511 123 4567</span>', $phone, 'Phone for PE 2');
+
+		$object->country_code = 'PE';
+		$phone = dol_print_phone('+51987654321', $object->country_code, 0, 0, 0, ' ');
+		$this->assertEquals('<span class="paddingright">+51 987 654 321</span>', $phone, 'Phone for PE 3');
 	}
 
 
@@ -2226,5 +2245,168 @@ class FunctionsLibTest extends CommonClassTest
 		$s = '/aaa/bbb -a -b';
 		$result = dol_sanitizePathName($s, '_', 0, 1);
 		$this->assertEquals('/aaa/bbb -a -b', $result);
+	}
+
+	/**
+	 * testPrice
+	 *
+	 * @return void
+	 */
+	public function testPrice()
+	{
+		global $conf;
+
+		// English formatting: SeparatorDecimal=. and SeparatorThousand=,
+		$langsus = new Translate('', $conf);
+		$langsus->setDefaultLang('en_US');
+		$langsus->load('main');
+
+		// Default rounding is min(MAIN_MAX_DECIMALS_UNIT, MAIN_MAX_DECIMALS_TOT) = min(5, 2) = 2 (checked in setUpBeforeClass)
+		$this->assertEquals('1,000.00', price(1000, 0, $langsus));
+		$this->assertEquals('0.00', price(0, 0, $langsus));
+		$this->assertEquals('-1,000.00', price(-1000, 0, $langsus));
+		$this->assertEquals('1,234.50', price(1234.5, 0, $langsus));
+		// More decimals than the default rounding are kept, to not lose information
+		$this->assertEquals('1,234.567', price(1234.567, 0, $langsus));
+
+		// French formatting: SeparatorDecimal=, and SeparatorThousand=Space
+		$langsfr = new Translate('', $conf);
+		$langsfr->setDefaultLang('fr_FR');
+		$langsfr->load('main');
+
+		$this->assertEquals('1 234,50', price(1234.5, 0, $langsfr));
+
+		// HTML mode replaces spaces with &nbsp;
+		$this->assertEquals('1&nbsp;234,50', price(1234.5, 1, $langsfr));
+
+		// International separators when $outlangs = 'none'
+		$this->assertEquals('1234.50', price(1234.5, 0, 'none'));
+
+		// forcerounding forces the exact number of decimals shown (0 forces rounding to unit)
+		$this->assertEquals('1,235', price(1234.5, 0, $langsus, 1, -1, 0));
+		// 'MU' forces MAIN_MAX_DECIMALS_UNIT (5, checked in setUpBeforeClass)
+		$this->assertEquals('1,234.56789', price(1234.56789, 0, $langsus, 1, -1, 'MU'));
+
+		// Currency symbol placement: USD is shown before the amount, EUR after
+		$this->assertEquals('$1,000.00', price(1000, 0, $langsus, 1, -1, -1, 'USD'));
+		$this->assertEquals('1,000.00 €', price(1000, 0, $langsus, 1, -1, -1, 'EUR'));
+	}
+
+	/**
+	 * testDolPrintDate
+	 *
+	 * @return void
+	 */
+	public function testDolPrintDate()
+	{
+		// Timestamp for 2020-07-01 00:00:01 UTC (same value already used and verified in testDolGetDate)
+		$timestamp = 1593561601;
+
+		$this->assertEquals('', dol_print_date('', 'standard', true), 'Empty input must return empty string');
+		$this->assertEquals('1970-01-01 00:00:00', dol_print_date(0, 'standard', true), 'Timestamp 0 is a valid date (1970-01-01)');
+
+		// Format shortcuts that are not language-sensitive
+		$this->assertEquals('2020-07-01', dol_print_date($timestamp, 'dayrfc', true));
+		$this->assertEquals('2020-07-01 00:00:01', dol_print_date($timestamp, 'standard', true));
+		$this->assertEquals('2020-07-01T00:00:01Z', dol_print_date($timestamp, 'dayhourrfc', true));
+		$this->assertEquals('20200701000001', dol_print_date($timestamp, 'dayhourlog', true));
+
+		// A literal (non-shortcut) strftime-style format string
+		$this->assertEquals('01/07/2020 00:00', dol_print_date($timestamp, '%d/%m/%Y %H:%M', true));
+
+		// tzoutput=false uses the PHP server timezone instead of GMT: forced to UTC here so both must match
+		$savtz = date_default_timezone_get();
+		date_default_timezone_set('UTC');
+		$this->assertEquals('2020-07-01 00:00:01', dol_print_date($timestamp, 'standard', false));
+		date_default_timezone_set($savtz);
+	}
+
+	/**
+	 * testGetElementProperties
+	 *
+	 * @return void
+	 */
+	public function testGetElementProperties()
+	{
+		// Generic path: no '@'/'_' parsing, no special case branch, so classfile/classname are completed
+		// from subelement (classfile=strtolower(subelement), classname=ucfirst(subelement))
+		$properties = getElementProperties('project');
+		$this->assertEquals('project', $properties['element']);
+		$this->assertEquals('projet', $properties['module']);
+		$this->assertEquals('project', $properties['subelement']);
+		$this->assertEquals('projet', $properties['table_element']);
+		$this->assertEquals('projet/class', $properties['classpath']);
+		$this->assertEquals('project', $properties['classfile']);
+		$this->assertEquals('Project', $properties['classname']);
+
+		// 'myobject@mymodule' syntax to ask a resource from an external module: note that table_element
+		// keeps the full original string (it is never cleaned of the '@mymodule' part)
+		$properties = getElementProperties('myobject@mymodule');
+		$this->assertEquals('myobject', $properties['element']);
+		$this->assertEquals('mymodule', $properties['module']);
+		$this->assertEquals('myobject', $properties['subelement']);
+		$this->assertEquals('myobject@mymodule', $properties['table_element']);
+		$this->assertEquals('mymodule/class', $properties['classpath']);
+		$this->assertEquals('myobject', $properties['classfile']);
+		$this->assertEquals('Myobject', $properties['classname']);
+
+		// 'myobject_mysubobject' syntax: element/module resolved from the string, but the specific
+		// 'project_task' case branch then overrides module (projet, not project) and table_element
+		$properties = getElementProperties('project_task');
+		$this->assertEquals('project', $properties['element']);
+		$this->assertEquals('projet', $properties['module']);
+		$this->assertEquals('task', $properties['subelement']);
+		$this->assertEquals('projet_task', $properties['table_element']);
+		$this->assertEquals('projet/class', $properties['classpath']);
+		$this->assertEquals('task', $properties['classfile']);
+		$this->assertEquals('Task', $properties['classname']);
+
+		// Generic '...det' fallback (no dedicated case branch for this fictional module): module and
+		// subelement are stripped of the 'det' suffix, but element is not, and classname keeps the raw
+		// (non-capitalized) result of the suffix replacement since it is not empty afterwards
+		$properties = getElementProperties('myobjectdet');
+		$this->assertEquals('myobjectdet', $properties['element']);
+		$this->assertEquals('myobject', $properties['module']);
+		$this->assertEquals('myobject', $properties['subelement']);
+		$this->assertEquals('myobjectdet', $properties['table_element']);
+		$this->assertEquals('myobject/class', $properties['classpath']);
+		$this->assertEquals('myobject', $properties['classfile']);
+		$this->assertEquals('myobjectLine', $properties['classname']);
+
+		// 'contratdet': the generic '...det' fallback runs first (module=contrat is in the list of
+		// modules using "Ligne" instead of "Line", so classname=contratLigne), then the dedicated
+		// 'contratdet' case branch only adds parent_element on top, it does not touch classname/classfile
+		$properties = getElementProperties('contratdet');
+		$this->assertEquals('contrat', $properties['module']);
+		$this->assertEquals('contrat', $properties['subelement']);
+		$this->assertEquals('contratdet', $properties['table_element']);
+		$this->assertEquals('contrat', $properties['parent_element']);
+		$this->assertEquals('contrat/class', $properties['classpath']);
+		$this->assertEquals('contrat', $properties['classfile']);
+		$this->assertEquals('contratLigne', $properties['classname']);
+
+		// 'facturedet': same generic fallback runs first, but this time the dedicated 'facturedet' case
+		// branch overrides classpath (fuller 'compta/facture/class' path) and classname (capitalized
+		// 'FactureLigne' instead of the generic fallback's lowercase 'factureLigne')
+		$properties = getElementProperties('facturedet');
+		$this->assertEquals('facture', $properties['module']);
+		$this->assertEquals('facturedet', $properties['table_element']);
+		$this->assertEquals('facture', $properties['parent_element']);
+		$this->assertEquals('compta/facture/class', $properties['classpath']);
+		$this->assertEquals('facture', $properties['classfile']);
+		$this->assertEquals('FactureLigne', $properties['classname']);
+		// facture is a core module, always configured with an output directory
+		$this->assertNotEmpty($properties['dir_output']);
+
+		// 'action'/'actioncomm' special case: note how table_element is corrected to 'actioncomm' even
+		// though the input 'action' is kept as-is in element, and subelement is capitalized 'Actioncomm'
+		$properties = getElementProperties('action');
+		$this->assertEquals('action', $properties['element']);
+		$this->assertEquals('agenda', $properties['module']);
+		$this->assertEquals('Actioncomm', $properties['subelement']);
+		$this->assertEquals('actioncomm', $properties['table_element']);
+		$this->assertEquals('comm/action/class', $properties['classpath']);
+		$this->assertEquals('actioncomm', $properties['classfile']);
+		$this->assertEquals('Actioncomm', $properties['classname']);
 	}
 }
