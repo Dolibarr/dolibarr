@@ -181,7 +181,7 @@ function societe_prepare_head(Societe $object, $subtabs = '')
 			$sql .= " FROM " . $db->prefix() . "projet as n";
 			$sql .= " WHERE n.fk_soc = " . ((int) $object->id);
 			$sql .= " AND n.entity IN (" . getEntity('project') . ")";
-			$sql .= $projectviewfilter;
+			$sql .= $projectviewfilter;  // @phan-suppress-current-line SqlInjection  (built by Project::getViewFilterSQL(), alias whitelisted and ids cast to int)
 			$resql = $db->query($sql);
 			if ($resql) {
 				$obj = $db->fetch_object($resql);

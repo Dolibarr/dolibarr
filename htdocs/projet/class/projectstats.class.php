@@ -252,7 +252,7 @@ class ProjectStats extends Stats
 
 		// Restrict to one side of the opportunity/project partition (issue #23821)
 		if ($this->mode == 'lead' || $this->mode == 'project') {
-			$sqlwhere[] = Project::getViewFilterSQL($this->mode, 't');
+			$sqlwhere[] = Project::getViewFilterSQL($this->mode, 't');  // @phan-suppress-current-line SqlInjection  (alias whitelisted and ids cast to int)
 		}
 
 		if (!$user->hasRight('projet', 'all', 'lire')) {

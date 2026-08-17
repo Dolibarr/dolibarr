@@ -2399,7 +2399,7 @@ class Project extends CommonObject
 		}));
 
 		// Values are already cast to int above, so the joined list is safe to inline.
-		$sanitizedids = implode(',', $wonlost);
+		$sanitizedids = implode(',', $wonlost);  // @phan-suppress-current-line SqlInjection  (every element is cast to int and filtered above)
 		// Fallback to a constant-false predicate when the dictionary has neither WON nor LOST,
 		// so the partition stays exhaustive and never produces invalid SQL.
 		$inclause = empty($wonlost) ? '0' : ($alias.'.fk_opp_status IN ('.$sanitizedids.')');
