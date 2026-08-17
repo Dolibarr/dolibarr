@@ -1258,10 +1258,11 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 		$numFinal = $ref;
 	} elseif ($mode == 'next') {
 		//Begin Customisation: Accellier Ltd: If Increment in SN is required more than 1
-		if (empty(getDolGlobalString('SN_ADVANCED_INCREMENT'))) {
+		$snAdvancedIncrement = getDolGlobalString('SN_ADVANCED_INCREMENT');
+		if (empty($snAdvancedIncrement)) {
 			$counter++;
 		} else {
-			$counter += (int) getDolGlobalString('SN_ADVANCED_INCREMENT');
+			$counter += (int) $snAdvancedIncrement;
 		}
 		//End Customisation
 		$maskrefclient_counter = 0;
