@@ -9,6 +9,8 @@
  * Copyright (C) 2021       Noé Cendrier			<noe.cendrier@altairis.fr>
  * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Charlene Benke			<charlene@patas-monkey.com>
+
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -97,10 +99,12 @@ if (GETPOSTISSET('catid')) {
 $search_warehouse_categ = GETPOSTINT('search_warehouse_categ');
 
 // Fetch optionals attributes and labels
-$extrafields->fetch_name_optionals_label($object->table_element);
+$extrafieldsobjectkey = "product_lot";
+
+$extrafields->fetch_name_optionals_label($extrafieldsobjectkey);
 //$extrafields->fetch_name_optionals_label($object->table_element_line);
 
-$search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
+$search_array_options = $extrafields->getOptionalsFromPost($extrafieldsobjectkey, '', 'search_');
 
 // Default sort order (if not yet defined by previous GETPOST)
 if (!$sortfield) {
@@ -154,6 +158,8 @@ $arrayfields = array(
 	array('type' => 'int', 'label' => 'StatusSell', 'checked' => 1, 'enabled' => 1, 'position' => 1),
 	array('type' => 'int', 'label' => 'StatusBuy', 'checked' => 1, 'enabled' => 1, 'position' => 1),
 );
+// Extra fields
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 //$arrayfields['anotherfield'] = array('type'=>'integer', 'label'=>'AnotherField', 'checked'=>1, 'enabled'=>1, 'position'=>90, 'csslist'=>'right');
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -256,7 +262,14 @@ $sql .= ' ps.fk_entrepot, ps.reel,';
 $sql .= ' e.ref as warehouse_ref, e.lieu as warehouse_lieu, e.fk_parent as warehouse_parent,';
 $sql .= ' pb.batch, pb.eatby as oldeatby, pb.sellby as oldsellby,';
 $sql .= ' pl.rowid as lotid, pl.eatby, pl.sellby,';
-$sql .= ' SUM(pb.qty) as stock_physique, COUNT(pb.rowid) as nbinbatchtable';
+// Add fields from extrafields
+if (!empty($extrafields->attributes[$extrafieldsobjectkey]['label'])) {
+	foreach ($extrafields->attributes[$extrafieldsobjectkey]['label'] as $key => $val) {
+		$sql .= ($extrafields->attributes[$extrafieldsobjectkey]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
+	}
+}
+
+$sql .= ', SUM(pb.qty) as stock_physique, COUNT(pb.rowid) as nbinbatchtable';
 // Add fields from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object); // Note that $action and $object may have been modified by hook
@@ -266,6 +279,8 @@ $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_stock as ps on p.rowid = ps.fk_pro
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'entrepot as e on ps.fk_entrepot = e.rowid'; // Link on unique key
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_batch as pb on pb.fk_product_stock = ps.rowid'; // Detail for each lot on each warehouse
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_lot as pl on pl.fk_product = p.rowid AND pl.batch = pb.batch'; // Link on unique key
+$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_lot_extrafields as ef on pl.rowid = ef.fk_object';
+
 // Add table from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
@@ -386,6 +401,12 @@ $sql .= " ps.fk_entrepot, ps.reel,";
 $sql .= " e.ref, e.lieu, e.fk_parent,";
 $sql .= " pb.batch, pb.eatby, pb.sellby,";
 $sql .= " pl.rowid, pl.eatby, pl.sellby";
+if (!empty($extrafields->attributes[$extrafieldsobjectkey]['label'])) {
+	foreach ($extrafields->attributes[$extrafieldsobjectkey]['label'] as $key => $val) {
+		$sql .= ($extrafields->attributes[$extrafieldsobjectkey]['type'][$key] != 'separate' ? ", ef.".$key : '');
+	}
+}
+
 // Add GROUP BY from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListGroupBy', $parameters, $object); // Note that $action and $object may have been modified by hook
@@ -536,6 +557,9 @@ if (!empty($search_warehouse_categ) && $search_warehouse_categ != '-1') {
 if ($search_stock_physique) {
 	$param .= '&search_stock_physique=' . urlencode($search_stock_physique);
 }
+// Add $param from extra fields
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
+
 /*if ($eatby)		$param.="&eatby=".$eatby;
 if ($sellby)	$param.="&sellby=".$sellby;*/
 
@@ -642,6 +666,11 @@ if (!getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
 	print '</div>';
 	print '</td>';
 }
+if (getDolGlobalString('PRODUCT_LOT_SHOW_EXTRAFIELDS')) {
+	// Extra fields
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
+}
+
 // Physical stock
 print '<td class="liste_titre right">';
 print '<input class="flat" type="text" size="5" name="search_stock_physique" value="'.dol_escape_htmltag($search_stock_physique).'">';
@@ -684,6 +713,10 @@ if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
 }
 if (!getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
 	print_liste_field_titre("EatByDate", $_SERVER["PHP_SELF"], "pl.eatby", '', $param, "", $sortfield, $sortorder, 'center ');
+}
+if (getDolGlobalString('PRODUCT_LOT_SHOW_EXTRAFIELDS')) {
+	// Extra fields
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 }
 print_liste_field_titre("PhysicalStock", $_SERVER["PHP_SELF"], "stock_physique", '', $param, "", $sortfield, $sortorder, 'right ');
 // TODO Add info of running suppliers/customers orders
@@ -830,6 +863,12 @@ while ($i < $imaxinloop) {
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
+	}
+
+	if (getDolGlobalString('PRODUCT_LOT_SHOW_EXTRAFIELDS')) {
+		// Extra fields
+		$obj = $objp; // trick for not change more thing
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 	}
 
 	print '<td class="right">';
