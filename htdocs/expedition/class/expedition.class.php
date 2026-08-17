@@ -3075,13 +3075,14 @@ class Expedition extends CommonObject
 
 		// Loop on each product line to add a stock movement
 		$sql = "SELECT";
-		$sql .= " ed.rowid as edid, ed.fk_product, ed.qty, ed.fk_entrepot";
-		$sql .= ", cd.rowid as cdid";
-		$sql .= ", cd.subprice";
+		$sql .= " ed.rowid as edid, COALESCE(cd.fk_product, pd.fk_product, ed.fk_product) as fk_product, ed.qty, ed.fk_entrepot";
+		$sql .= ", COALESCE(cd.rowid, pd.rowid, 0) as src_line_id";
+		$sql .= ", COALESCE(cd.subprice, pd.subprice, 0) as subprice";
 		$sql .= ", edb.rowid as edbrowid, edb.eatby, edb.sellby, edb.batch, edb.qty as edbqty, edb.fk_origin_stock";
 		$sql .= ", e.ref";
 		$sql .= " FROM " . $this->db->prefix() . "expeditiondet as ed";
-		$sql .= " LEFT JOIN " . $this->db->prefix() . "commandedet as cd ON cd.rowid = ed.fk_elementdet";
+		$sql .= " LEFT JOIN " . $this->db->prefix() . "commandedet as cd ON cd.rowid = ed.fk_elementdet AND ed.element_type IN ('commande', 'order')";
+		$sql .= " LEFT JOIN " . $this->db->prefix() . "propaldet as pd ON pd.rowid = ed.fk_elementdet AND ed.element_type = 'propal'";
 		$sql .= " LEFT JOIN " . $this->db->prefix() . "expeditiondet_batch as edb on edb.fk_expeditiondet = ed.rowid";
 		$sql .= " INNER JOIN " . $this->db->prefix() . "expedition as e ON ed.fk_expedition = e.rowid";
 		$sql .= " WHERE ed.fk_expedition = " . ((int) $this->id);
@@ -3105,7 +3106,7 @@ class Expedition extends CommonObject
 
 				$mouvS = new MouvementStock($this->db);
 				$mouvS->origin = &$this;
-				$mouvS->setOrigin($this->element, $this->id, $obj->cdid, $obj->edid);
+				$mouvS->setOrigin($this->element, $this->id, $obj->src_line_id, $obj->edid);
 
 				if (empty($obj->edbrowid)) {
 					// line without batch detail
@@ -3239,16 +3240,15 @@ class Expedition extends CommonObject
 
 				$langs->load("agenda");
 
-				// Loop on each product line to add a stock movement
-				// TODO possibilite d'expedier a partir d'une propale ou autre origine
-				$sql = "SELECT cd.fk_product, cd.subprice,";
+				// Loop on each product line to revert stock movement
+				$sql = "SELECT COALESCE(cd.fk_product, pd.fk_product, ed.fk_product) as fk_product, COALESCE(cd.subprice, pd.subprice, 0) as subprice,";
 				$sql .= " ed.rowid, ed.qty, ed.fk_entrepot,";
 				$sql .= " edb.rowid as edbrowid, edb.eatby, edb.sellby, edb.batch, edb.qty as edbqty, edb.fk_origin_stock";
-				$sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd,";
-				$sql .= " ".MAIN_DB_PREFIX."expeditiondet as ed";
+				$sql .= " FROM ".MAIN_DB_PREFIX."expeditiondet as ed";
+				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."commandedet as cd ON cd.rowid = ed.fk_elementdet AND ed.element_type IN ('commande', 'order')";
+				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."propaldet as pd ON pd.rowid = ed.fk_elementdet AND ed.element_type = 'propal'";
 				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."expeditiondet_batch as edb on edb.fk_expeditiondet = ed.rowid";
 				$sql .= " WHERE ed.fk_expedition = ".((int) $this->id);
-				$sql .= " AND cd.rowid = ed.fk_elementdet";
 
 				dol_syslog(get_class($this)."::valid select details", LOG_DEBUG);
 				$resql = $this->db->query($sql);
