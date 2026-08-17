@@ -59,6 +59,7 @@ if (!isModEnabled('bookcal')) {
  * @var Conf $conf
  * @var DoliDB $db
  * @var Translate $langs
+ * @var User $user
  *
  * @var string $dolibarr_main_url_root
  */

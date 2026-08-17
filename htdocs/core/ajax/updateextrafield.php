@@ -95,10 +95,26 @@ if ($object->id > 0 && $field && isset($value)) {
 	// Fetch optionals attributes and labels
 	$extrafields->fetch_name_optionals_label($object->table_element);
 
-	// TODO Test specific permission of extrafield $field for object $object. It is stored into
-	// $extrafields->attributes[$object->table_element]['label']['perms'][$key]
+	// Test specific permission of extrafield $field for object $object. It is stored into $extrafields->attributes[$object->table_element]['label']['perms'][$key]
+	if (empty($field)
+	 || empty($extrafields->attributes[$object->table_element]['label'][$field])
+	 || !dol_eval((string) $extrafields->attributes[$object->table_element]['enabled'][$field])) {
+		http_response_code(403);
+		accessforbidden('Can\'t edit the invalid or disabled extrafield '.$field);
+	}
+
+	$fieldPermsExpr = $extrafields->attributes[$object->table_element]['perms'][$field] ?? '';
+
+	if (!empty($fieldPermsExpr)) {
+		$allowed = (int) dol_eval((string) $fieldPermsExpr);
+		if (empty($allowed)) {
+			http_response_code(403);
+			accessforbidden('The extrafield '.$field.' has dedicated permission and you are not allowed to edit it.');
+		}
+	}
 
 	$object->array_options['options_'.$field] = $value;
+
 	if ($object instanceof Societe) {
 		$result = $object->update($object->id, $user);
 	} else {
