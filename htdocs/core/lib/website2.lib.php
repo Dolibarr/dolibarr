@@ -1093,17 +1093,22 @@ function checkPHPCode(&$phpfullcodestringold, &$phpfullcodestring)
 			}
 		}*/
 		foreach ($forbiddenphpfunctions as $forbiddenphpfunction) {	// Check "function" whatever is "function(" or "function'(" or "function (" or "function"
-			if (preg_match('/\b'.$forbiddenphpfunction.'\b/ims', $phpfullcodestring)) {
-				$error++;
-				setEventMessages($langs->trans("DynamicPHPCodeContainsAForbiddenInstruction", $forbiddenphpfunction), null, 'errors');
-				break;
+			$reg = array();
+			if (preg_match('/\b'.$forbiddenphpfunction.'(=|\b)/ims', $phpfullcodestring, $reg)) {
+				var_dump($reg[1]);
+				if ($reg[1] != '=') {	// So we may accept string ...&file=... even if 'file' is in forbiddenphpfunction.
+					$error++;
+					setEventMessages($langs->trans("bDynamicPHPCodeContainsAForbiddenInstruction", $forbiddenphpfunction).' ['.$phpfullcodestring.']', null, 'errors');
+					//setEventMessages($langs->trans("bDynamicPHPCodeContainsAForbiddenInstruction", $forbiddenphpfunction), null, 'errors');
+					break;
+				}
 			}
 		}
 
 		foreach ($forbiddenphpmethods as $forbiddenphpmethod) {
 			if (preg_match('/->'.$forbiddenphpmethod.'/ims', $phpfullcodestring)) {
 				$error++;
-				setEventMessages($langs->trans("DynamicPHPCodeContainsAForbiddenInstruction", $forbiddenphpmethod), null, 'errors');
+				setEventMessages($langs->trans("cDynamicPHPCodeContainsAForbiddenInstruction", $forbiddenphpmethod), null, 'errors');
 				break;
 			}
 		}
