@@ -78,4 +78,8 @@ UPDATE llx_commande_fournisseurdet SET subprice_ttc = 0 WHERE subprice_ttc <> 0 
 UPDATE llx_facture_fourn_det SET pu_ttc = 0 WHERE pu_ttc <> 0 AND EXISTS (SELECT c.rowid FROM llx_const as c WHERE c.name = 'MAIN_VERSION_LAST_UPGRADE' AND c.value < '25.0.0');
 UPDATE llx_supplier_proposaldet SET subprice_ttc = 0 WHERE subprice_ttc <> 0 AND EXISTS (SELECT c.rowid FROM llx_const as c WHERE c.name = 'MAIN_VERSION_LAST_UPGRADE' AND c.value < '25.0.0');
 
+-- Track how many times a proposal or an order was sent by email, like llx_facture already does
+ALTER TABLE llx_propal ADD COLUMN email_sent_counter integer DEFAULT 0;
+ALTER TABLE llx_commande ADD COLUMN email_sent_counter integer DEFAULT 0;
+
 -- end of migration

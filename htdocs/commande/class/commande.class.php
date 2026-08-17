@@ -289,6 +289,11 @@ class Commande extends CommonOrder
 	/**
 	 * @var array<int,float>	Array with lines of all shipments (qty)
 	 */
+	/**
+	 * @var int			counter used to track how many times the document was sent by email
+	 */
+	public $email_sent_counter = 0;
+
 	public $expeditions;
 
 	/**
@@ -2025,6 +2030,7 @@ class Commande extends CommonOrder
 		$sql .= ', c.fk_warehouse';
 		$sql .= ', c.fk_projet as fk_project, c.source, c.facture as billed';
 		$sql .= ', c.note_private, c.note_public, c.ref_client, c.ref_ext, c.model_pdf, c.last_main_doc, c.fk_delivery_address, c.extraparams';
+		$sql .= ', c.email_sent_counter';
 		$sql .= ', c.fk_incoterms, c.location_incoterms';
 		$sql .= ", c.fk_multicurrency, c.multicurrency_code, c.multicurrency_tx, c.multicurrency_total_ht, c.multicurrency_total_tva, c.multicurrency_total_ttc";
 		$sql .= ", c.module_source, c.pos_source";
@@ -2095,6 +2101,7 @@ class Commande extends CommonOrder
 				$this->note_private = $obj->note_private;
 				$this->note_public = $obj->note_public;
 				$this->model_pdf = $obj->model_pdf;
+				$this->email_sent_counter = (int) $obj->email_sent_counter;
 				$this->last_main_doc = $obj->last_main_doc;
 				$this->mode_reglement_id	= $obj->fk_mode_reglement;
 				$this->mode_reglement_code	= $obj->mode_reglement_code;
