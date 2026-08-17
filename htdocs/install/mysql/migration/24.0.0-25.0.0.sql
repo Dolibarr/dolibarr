@@ -149,6 +149,10 @@ ALTER TABLE llx_contrat ADD COLUMN fk_contract_type tinyint DEFAULT 0 AFTER ref_
 ALTER TABLE llx_user ADD COLUMN country_job_id integer DEFAULT NULL;
 ALTER TABLE llx_user ADD COLUMN state_job_id integer DEFAULT NULL;
 
+-- Track how many times a proposal or an order was sent by email, like llx_facture already does
+ALTER TABLE llx_propal ADD COLUMN email_sent_counter integer DEFAULT 0;
+ALTER TABLE llx_commande ADD COLUMN email_sent_counter integer DEFAULT 0;
+
 -- end of migration - nothing after this line
 
 -- Variants: allow standard import/export of variants (attributes, values, combinations,
