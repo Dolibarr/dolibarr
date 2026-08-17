@@ -167,11 +167,12 @@ $show_shippable_command = GETPOST('show_shippable_command', 'aZ09');
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new Commande($db);
+$objectline = new OrderLine($db);
 $hookmanager->initHooks(array('orderlistdetail'));
 
 // fetch optionals attributes and labels
-$extrafields->fetch_name_optionals_label($object->table_element);
-$search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
+$extrafields->fetch_name_optionals_label($objectline->table_element);
+$search_array_options = $extrafields->getOptionalsFromPost($objectline->table_element, '', 'search_');
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
@@ -239,8 +240,10 @@ $arrayfields = array(
 );
 
 // Extra fields
+$extrafieldsobject = $object;
+$object = $objectline;
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
-
+$object = $extrafieldsobject;
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
@@ -404,9 +407,9 @@ $sqlSelect .= ' c.fk_input_reason, c.import_key,';
 $sqlSelect .= ' cdet.rowid, cdet.description, cdet.qty, cdet.product_type, cdet.fk_product, cdet.total_ht, cdet.total_tva, cdet.total_ttc,';
 $sqlSelect .= ' pr.rowid as product_rowid, pr.ref as product_ref, pr.label as product_label, pr.barcode as product_barcode, pr.tobatch as product_batch, pr.tosell as product_status, pr.tobuy as product_status_buy';
 // Add fields from extrafields
-if (!empty($extrafields->attributes[$object->table_element]['label'])) {
-	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sqlSelect .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
+if (!empty($extrafields->attributes[$objectline->table_element]['label'])) {
+	foreach ($extrafields->attributes[$objectline->table_element]['label'] as $key => $val) {
+		$sqlSelect .= ($extrafields->attributes[$objectline->table_element]['type'][$key] != 'separate' ? ", ef2.".$key." as options_".$key : '');
 	}
 }
 
@@ -423,8 +426,9 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = 
 $sql .= ', '.MAIN_DB_PREFIX.'commandedet as cdet';
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'commande as c ON cdet.fk_commande = c.rowid';
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as pr ON pr.rowid = cdet.fk_product';
-if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
+if (!empty($extrafields->attributes[$objectline->table_element]['label']) && is_array($extrafields->attributes[$objectline->table_element]['label']) && count($extrafields->attributes[$objectline->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."commande_extrafields as ef on (c.rowid = ef.fk_object)";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."commandedet_extrafields as ef2 on (cdet.rowid = ef2.fk_object)";
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = c.fk_projet";
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON c.fk_user_author = u.rowid';
