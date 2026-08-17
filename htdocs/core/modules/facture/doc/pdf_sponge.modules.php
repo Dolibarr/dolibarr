@@ -1811,6 +1811,7 @@ class pdf_sponge extends ModelePDFFactures
 		}
 
 		$i = 1;
+		$fac = null;
 		if (!empty($TPreviousIncoice)) {
 			$pdf->setY($tab2_top);
 			$posy = $pdf->GetY();
