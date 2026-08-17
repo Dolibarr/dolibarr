@@ -102,10 +102,27 @@ foreach ($modules as $const => $desc) {
 	}
 }
 
+// Background and text colors of the header (title line) and of the footer (subtotal line) of a block,
+// for each level. A color not defined yet is shown with the color really used at the moment, so that
+// saving the page without touching a picker changes nothing.
 $colors = array();
 
-for ($i = 0; $i < $max_depth; $i++) {
-	$colors['SUBTOTAL_BACK_COLOR_LEVEL_' . ($i + 1)] = array('level' => $i + 1, 'color' => getDolGlobalString('SUBTOTAL_BACK_COLOR_LEVEL_' . ($i + 1), $default));
+for ($i = 1; $i <= $max_depth; $i++) {
+	$head_color = getDolGlobalString('SUBTOTAL_BACK_COLOR_LEVEL_' . $i, $default);
+	$foot_color = getDolGlobalString('SUBTOTAL_FOOT_COLOR_LEVEL_' . $i);
+	$foot_color = (empty($foot_color) ? $head_color : $foot_color);	// The footer uses the header color when not defined
+	$head_text_color = getDolGlobalString('SUBTOTAL_TEXT_COLOR_LEVEL_' . $i);
+	$foot_text_color = getDolGlobalString('SUBTOTAL_FOOT_TEXT_COLOR_LEVEL_' . $i);
+	if (empty($foot_text_color)) {
+		$foot_text_color = $head_text_color;
+	}
+	$colors[$i] = array(
+		'SUBTOTAL_BACK_COLOR_LEVEL_' . $i => $head_color,
+		// When no text color is set, the module computes one from the background color
+		'SUBTOTAL_TEXT_COLOR_LEVEL_' . $i => (empty($head_text_color) ? (colorIsLight($head_color) == 1 ? '000000' : 'ffffff') : $head_text_color),
+		'SUBTOTAL_FOOT_COLOR_LEVEL_' . $i => $foot_color,
+		'SUBTOTAL_FOOT_TEXT_COLOR_LEVEL_' . $i => (empty($foot_text_color) ? (colorIsLight($foot_color) == 1 ? '000000' : 'ffffff') : $foot_text_color),
+	);
 }
 
 /*
@@ -129,10 +146,12 @@ if (preg_match('/^SUBTOTAL_.*$/', $action)) {
 }
 
 if ($action == 'update_colors') {
-	foreach ($colors as $const => $color) {
-		$color_to_update = GETPOST($const, 'aZ09');
-		if ($color_to_update != $color['color']) {
-			dolibarr_set_const($db, $const, $color_to_update, 'chaine', 0, '', $conf->entity);
+	foreach ($colors as $level_colors) {
+		foreach ($level_colors as $const => $color) {
+			$color_to_update = GETPOST($const, 'aZ09');
+			if ($color_to_update != $color) {
+				dolibarr_set_const($db, $const, $color_to_update, 'chaine', 0, '', $conf->entity);
+			}
 		}
 	}
 
@@ -220,18 +239,26 @@ if (empty($conf->use_javascript_ajax)) {
 
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<td>' . $langs->trans("Other") . '</td>';
-	print '<td></td>';
+	print '<td rowspan="2">' . $langs->trans("Other") . '</td>';
+	print '<td class="center" colspan="2">' . $langs->trans("Title") . '</td>';
+	print '<td class="center" colspan="2">' . $langs->trans("Subtotal") . '</td>';
+	print "</tr>\n";
+	print '<tr class="liste_titre">';
+	print '<td class="center">' . $langs->trans("SubtotalBackColor") . '</td>';
+	print '<td class="center">' . $langs->trans("SubtotalTextColor") . '</td>';
+	print '<td class="center">' . $form->textwithpicto($langs->trans("SubtotalBackColor"), $langs->trans("SubtotalFootColorScreenOnly")) . '</td>';
+	print '<td class="center">' . $form->textwithpicto($langs->trans("SubtotalTextColor"), $langs->trans("SubtotalFootColorScreenOnly")) . '</td>';
 	print "</tr>\n";
 
-	foreach ($colors as $key => $value) {
+	foreach ($colors as $level => $level_colors) {
 		print '<tr class="oddeven">';
-		print '<td>' . $langs->trans("SubtotalLineBackColor", $value['level']) . '</td>';
-		print '<td class="center width250">';
-		print $formother->selectColor(colorArrayToHex(colorStringToArray($value['color'], array()), $default), $key, '', 1, array(), '', '', $default) . ' ';
-		print ' &nbsp; <span class="nowraponall opacitymedium">' . $langs->trans("Default") . '</span>: <strong>' . $default . '</strong>';
-		print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes") . ', ' . $langs->trans("PressF5AfterChangingThis"));
-		print '</td>';
+		print '<td>' . $langs->trans("SubtotalLevel", $level) . '</td>';
+		foreach ($level_colors as $key => $color) {
+			print '<td class="center width150">';
+			print $formother->selectColor(colorArrayToHex(colorStringToArray($color, array()), $default), $key, '', 1, array(), '', '', $default);
+			print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes") . ', ' . $langs->trans("PressF5AfterChangingThis"));
+			print '</td>';
+		}
 		print '</tr>';
 	}
 
