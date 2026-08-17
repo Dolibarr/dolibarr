@@ -8868,7 +8868,7 @@ function yn($yesno, $format = 1, $color = 0)
  *         or:  $conf->module->dir_output.'/'.get_exdir(0, 0, 0, 0, $object, '')
  *
  *  Example of output with new usage:       $object is invoice -> 'INYYMM-ABCD'
- *  Example of output with old usage:       '015' with level 3->"0/1/5/", '015' with level 1->"5/", 'ABC-1' with level 3 ->"0/0/1/"
+ *  Example of output with old usage:       '015' with level 3->"5/1/0/", '015' with level 1->"5/", 'ABC-1' with level 3 ->"1/0/0/"
  *
  *	@param	string|int		$num            Id of object (deprecated, $object->id will be used in future)
  *	@param  int				$level		    Level of subdirs to return (1, 2 or 3 levels). (deprecated, global setup will be used in future)
