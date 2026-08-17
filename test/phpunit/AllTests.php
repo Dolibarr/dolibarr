@@ -157,6 +157,8 @@ class AllTests
 
 		require_once dirname(__FILE__).'/NumberingModulesTest.php';
 		$suite->addTestSuite('NumberingModulesTest');
+		require_once dirname(__FILE__).'/CronjobTest.php';
+		$suite->addTestSuite('CronjobTest');
 		require_once dirname(__FILE__).'/PgsqlTest.php';
 		$suite->addTestSuite('PgsqlTest');
 		require_once dirname(__FILE__).'/PdfDocTest.php';
@@ -257,6 +259,8 @@ class AllTests
 
 		require_once dirname(__FILE__).'/ChargeSocialesTest.php';
 		$suite->addTestSuite('ChargeSocialesTest');
+		require_once dirname(__FILE__).'/PaymentVATTest.php';
+		$suite->addTestSuite('PaymentVATTest');
 		require_once dirname(__FILE__).'/HolidayTest.php';
 		$suite->addTestSuite('HolidayTest');
 		require_once dirname(__FILE__).'/ExpenseReportTest.php';
