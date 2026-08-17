@@ -55,6 +55,11 @@ $line_options = $line->extraparams["subtotal"] ?? array();
 
 $line_color = $this->getSubtotalColors($line->qty);
 
+// Style of the text of the line, and style of the pictos of the line, which use a softer color than
+// the text when the color is not configured and has to be guessed from the background
+$line_text_style = ' style="color: ' . $this->getSubtotalCssTextColor($line->qty) . '"';
+$line_picto_style = 'style="color: ' . $this->getSubtotalCssTextColor($line->qty, '#666') . '"';
+
 echo '<tr data-level="' . $line->qty . '" data-desc="' . $line->desc . '" data-rang="' . $line->rang . '" id="row-' . $line->id . '" class="drag drop" style="background:#' . $line_color . '">';
 
 // Showing line number if conf is enabled
@@ -63,8 +68,14 @@ if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) {
 }
 
 if ($line->qty > 0) { ?>
-	<td class="linecollabel" <?php echo !colorIsLight($line_color) ? ' style="color: white"' : ' style="color: black"' ?>><?php echo str_repeat('&nbsp;', (int) ($line->qty - 1) * 8); ?>
+	<td class="linecollabel" <?php echo $line_text_style ?>><?php echo str_repeat('&nbsp;', (int) ($line->qty - 1) * 8); ?>
 		<?php
+		// Button to collapse/expand the lines of the block (state is managed in javascript, see subtotal_collapse.tpl.php)
+		if (!empty($conf->use_javascript_ajax)) {
+			echo '<span class="cursorpointer subtotalcollapse marginrightonly">';
+			echo img_picto($langs->trans("CollapseBlock"), 'chevron-down', '', 0, 0, 0, '', 'subtotalcollapsepicto');
+			echo '</span>';
+		}
 		echo $line->desc;
 		if (array_key_exists('titleshowuponpdf', $line_options)) {
 			echo '&nbsp;' . img_picto($langs->trans("ShowUPOnPDF"), 'invoicing');
@@ -74,6 +85,12 @@ if ($line->qty > 0) { ?>
 		}
 		if (array_key_exists('titleforcepagebreak', $line_options)) {
 			echo '&nbsp;' . img_picto($langs->trans("ForcePageBreak"), 'file');
+		}
+		// Button to duplicate the block (the title line, the lines it contains and the subtotal line)
+		if ($this->status == 0 && in_array($object->element, array('propal', 'commande', 'facture', 'facturerec'))) {
+			echo '&nbsp;<a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?id=' . $this->id . '&action=ask_duplicate_subtotalblock&token=' . newToken() . '&lineid=' . $line->id . '">';
+			echo img_picto($langs->trans("DuplicateBlock"), 'clone');
+			echo '</a>';
 		}
 		// Handling td for ref supplier
 		if (in_array($object->element, ['supplier_proposal'])) {
@@ -93,11 +110,7 @@ if ($line->qty > 0) { ?>
 				print '</div>';
 			} else {
 				print '<a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&mode=vatforblocklines&lineid=' . $line->id . '">';
-				if (!colorIsLight($line_color)) {
-					echo img_edit($langs->trans("ApplyVATForBlock"), 0, 'style="color: white"');
-				} else {
-					echo img_edit($langs->trans("ApplyVATForBlock"), 0, 'style="color: #666"');
-				}
+				echo img_edit($langs->trans("ApplyVATForBlock"), 0, $line_picto_style);
 				echo '</a>';
 			}
 		}
@@ -129,22 +142,14 @@ if ($line->qty > 0) { ?>
 			if (GETPOST('mode', 'aZ09') == 'discountforblocklines' && GETPOSTINT('lineid') == $line->id) {
 				print '<div class="inline-block nowraponall">';
 				print '<input type="text" class="flat right width40" name="discountforblocklines" id="discountforblocklines" value="0"><span class="hideonsmartphone"';
-				if (!colorIsLight($line_color)) {
-					print 'style="color: white"';
-				} else {
-					print 'style="color: black"';
-				}
+				print $line_text_style;
 				print '>%</span>';
 				print '<input type="hidden" name="lineid" value="' . $line->id . '">';
 				print '<input class="inline-block button smallpaddingimp" type="submit" name="updatealldiscountlinesblock" value="' . $langs->trans("Update") . '">';
 				print '</div>';
 			} else {
 				print '<a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&mode=discountforblocklines&lineid=' . $line->id . '">';
-				if (!colorIsLight($line_color)) {
-					echo img_edit($langs->trans("ApplyDiscountForBlock"), 0, 'style="color: white"');
-				} else {
-					echo img_edit($langs->trans("ApplyDiscountForBlock"), 0, 'style="color: #666"');
-				}
+				echo img_edit($langs->trans("ApplyDiscountForBlock"), 0, $line_picto_style);
 				echo '</a>';
 			}
 		}
@@ -221,7 +226,7 @@ if ($line->qty > 0) { ?>
 		$colspan += 1;
 	}
 	?>
-	<td class="linecollabel nowrap right" <?php echo !colorIsLight($line_color) ? ' style="color: white"' : ' style="color: black"' ?> colspan="<?php echo $colspan + 2 ?>">
+	<td class="linecollabel nowrap right" <?php echo $line_text_style ?> colspan="<?php echo $colspan + 2 ?>">
 		<?php
 		echo $line->desc;
 		if (array_key_exists('subtotalshowtotalexludingvatonpdf', $line_options)) {
@@ -230,7 +235,7 @@ if ($line->qty > 0) { ?>
 		echo ' :';
 		?>
 	</td>
-	<td class="linecolamount nowrap right" <?php echo !colorIsLight($line_color) ? ' style="color: white"' : ' style="color: black"' ?>>
+	<td class="linecolamount nowrap right" <?php echo $line_text_style ?>>
 		<?php
 		echo $this->getSubtotalLineAmount($line);
 		?>
@@ -238,7 +243,7 @@ if ($line->qty > 0) { ?>
 	<?php
 	if (isModEnabled('multicurrency') && $object->multicurrency_code != $conf->currency) {
 		echo '<td class="linecolamount nowrap right"';
-		echo !colorIsLight($line_color) ? ' style="color: white"' : ' style="color: black"';
+		echo $line_text_style;
 		echo '>';
 		echo $this->getSubtotalLineMulticurrencyAmount($line);
 		echo '</td>';
@@ -250,11 +255,7 @@ if ($this->status == 0) {
 	// Edit picto
 	echo '<td class="linecoledit center">';
 	echo '<a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?id=' . $this->id . '&action=editline&token=' . newToken() . '&lineid=' . $line->id . '">';
-	if (!colorIsLight($line_color)) {
-		echo img_edit('default', 0, 'style="color: white"');
-	} else {
-		echo img_edit('default', 0, 'style="color: #666"');
-	}
+	echo img_edit('default', 0, $line_picto_style);
 	echo '</a> </td>';
 
 	// Delete picto
@@ -264,11 +265,7 @@ if ($this->status == 0) {
 		echo '&type=title';
 	}
 	echo '">';
-	if (!colorIsLight($line_color)) {
-		echo img_delete('default', 'class="pictodelete" style="color: white"');
-	} else {
-		echo img_delete('default', 'class="pictodelete" style="color: #666"');
-	}
+	echo img_delete('default', 'class="pictodelete" ' . $line_picto_style);
 	echo '</a> </td>';
 
 	// Move up-down picto
