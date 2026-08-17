@@ -3,6 +3,7 @@
  * Copyright (C) 2011-2012  Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026       Lionel Vessiller        <lvessiller@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -156,6 +157,8 @@ class AllTests
 
 		require_once dirname(__FILE__).'/NumberingModulesTest.php';
 		$suite->addTestSuite('NumberingModulesTest');
+		require_once dirname(__FILE__).'/CronjobTest.php';
+		$suite->addTestSuite('CronjobTest');
 		require_once dirname(__FILE__).'/PgsqlTest.php';
 		$suite->addTestSuite('PgsqlTest');
 		require_once dirname(__FILE__).'/PdfDocTest.php';
@@ -171,6 +174,9 @@ class AllTests
 
 		require_once dirname(__FILE__).'/CommonObjectTest.php';
 		$suite->addTestSuite('CommonObjectTest');
+
+		require_once dirname(__FILE__).'/ExtraFieldsTest.php';
+		$suite->addTestSuite('ExtraFieldsTest');
 
 		require_once dirname(__FILE__).'/ActionCommTest.php';
 		$suite->addTestSuite('ActionCommTest');
@@ -190,11 +196,24 @@ class AllTests
 
 		require_once dirname(__FILE__).'/PricesTest.php';
 		$suite->addTestSuite('PricesTest');
+
 		require_once dirname(__FILE__).'/DiscountTest.php';
 		$suite->addTestSuite('DiscountTest');
 
+		require_once dirname(__FILE__).'/MultiCurrencyTest.php';
+		$suite->addTestSuite('MultiCurrencyTest');
+
 		require_once dirname(__FILE__).'/BOMTest.php';
 		$suite->addTestSuite('BOMTest');
+
+		require_once dirname(__FILE__).'/DolresourceTest.php';
+		$suite->addTestSuite('DolresourceTest');
+
+		require_once dirname(__FILE__).'/WorkstationTest.php';
+		$suite->addTestSuite('WorkstationTest');
+
+		require_once dirname(__FILE__).'/OpensurveysondageTest.php';
+		$suite->addTestSuite('OpensurveysondageTest');
 
 		require_once dirname(__FILE__).'/ContratTest.php';
 		$suite->addTestSuite('ContratTest');
@@ -224,6 +243,8 @@ class AllTests
 		$suite->addTestSuite('FactureRecTest');
 		require_once dirname(__FILE__).'/FactureTestRounding.php';
 		$suite->addTestSuite('FactureTestRounding');
+		require_once dirname(__FILE__).'/TtcRoundingTest.php';
+		$suite->addTestSuite('TtcRoundingTest');
 		require_once dirname(__FILE__).'/PaiementTest.php';
 		$suite->addTestSuite('PaiementTest');
 		require_once dirname(__FILE__).'/FactureFournisseurTest.php';
@@ -238,6 +259,8 @@ class AllTests
 
 		require_once dirname(__FILE__).'/ChargeSocialesTest.php';
 		$suite->addTestSuite('ChargeSocialesTest');
+		require_once dirname(__FILE__).'/PaymentVATTest.php';
+		$suite->addTestSuite('PaymentVATTest');
 		require_once dirname(__FILE__).'/HolidayTest.php';
 		$suite->addTestSuite('HolidayTest');
 		require_once dirname(__FILE__).'/ExpenseReportTest.php';
@@ -257,6 +280,8 @@ class AllTests
 
 		require_once dirname(__FILE__).'/ProjectTest.php';
 		$suite->addTestSuite('ProjectTest');
+		require_once dirname(__FILE__).'/CommentTest.php';
+		$suite->addTestSuite('CommentTest');
 
 		require_once dirname(__FILE__).'/KnowledgeRecordTest.php';
 		$suite->addTestSuite('KnowledgeRecordTest');

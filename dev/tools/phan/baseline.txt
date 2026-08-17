@@ -9,14 +9,12 @@
  */
 return [
     // # Issue statistics:
-    // PhanUndeclaredProperty : 340+ occurrences
+    // PhanUndeclaredProperty : 330+ occurrences
     // PhanTypeMismatchArgument : 25+ occurrences
     // PhanUndeclaredGlobalVariable : 20+ occurrences
     // PhanTypeMismatchProperty : 15+ occurrences
     // PhanTypeInvalidDimOffset : 10+ occurrences
     // PhanTypeMismatchDimFetch : 10+ occurrences
-    // SqlInjection : 7 occurrences
-    // SqlInjectionUnquotedEscape : 6 occurrences
     // PhanTypeArraySuspiciousNull : 5 occurrences
     // PhanUndeclaredMethod : 5 occurrences
     // PhanTypeExpectedObjectPropAccess : 4 occurrences
@@ -30,7 +28,6 @@ return [
 
     // Currently, file_suppressions and directory_suppressions are the only supported suppressions
     'file_suppressions' => [
-        'htdocs/blockedlog/admin/filecheck_diff.php' => ['SqlInjection'],
         'htdocs/comm/action/index.php' => ['PhanTypeMismatchProperty'],
         'htdocs/comm/action/pertype.php' => ['PhanTypeExpectedObjectPropAccess'],
         'htdocs/comm/action/peruser.php' => ['PhanTypeMismatchArgument'],
@@ -49,7 +46,6 @@ return [
         'htdocs/compta/sociales/card.php' => ['PhanUndeclaredProperty'],
         'htdocs/compta/tva/class/paymentvat.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/compta/tva/clients.php' => ['PhanTypeArraySuspiciousNull', 'PhanTypeInvalidDimOffset'],
-        'htdocs/contact/list.php' => ['SqlInjectionUnquotedEscape'],
         'htdocs/core/actions_addupdatedelete.inc.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/actions_massactions.inc.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/actions_sendmails.inc.php' => ['PhanUndeclaredProperty'],
@@ -57,7 +53,6 @@ return [
         'htdocs/core/class/CMailFile.class.php' => ['PhanTypeMismatchArgument'],
         'htdocs/core/class/canvas.class.php' => ['PhanUndeclaredMethod'],
         'htdocs/core/class/cgenericdic.class.php' => ['PhanUndeclaredProperty'],
-        'htdocs/core/class/commonobject.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/class/commonpeople.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/class/conf.class.php' => ['PhanTypeMismatchProperty'],
         'htdocs/core/class/ctyperesource.class.php' => ['PhanUndeclaredProperty'],
@@ -86,7 +81,6 @@ return [
         'htdocs/core/modules/facture/doc/pdf_octopus.modules.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable', 'PhanUndeclaredProperty'],
         'htdocs/core/modules/holiday/mod_holiday_immaculate.php' => ['PhanTypeMismatchArgument'],
         'htdocs/core/modules/hrm/mod_evaluation_advanced.php' => ['PhanUndeclaredProperty'],
-        'htdocs/core/modules/import/modules_import.class.php' => ['SqlInjection'],
         'htdocs/core/modules/member/modules_cards.php' => ['PhanTypeMismatchArgument'],
         'htdocs/core/modules/mrp/doc/pdf_vinci.modules.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/modules/mrp/mod_mo_advanced.php' => ['PhanUndeclaredProperty'],
@@ -146,7 +140,7 @@ return [
         'htdocs/partnership/partnership_card.php' => ['PhanUndeclaredGlobalVariable'],
         'htdocs/partnership/partnership_list.php' => ['PhanUndeclaredProperty'],
         'htdocs/product/class/api_products.class.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchReturn', 'PhanUndeclaredProperty'],
-        'htdocs/product/class/html.formproduct.class.php' => ['PhanUndeclaredProperty', 'SqlInjection'],
+        'htdocs/product/class/html.formproduct.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/product/class/productfournisseurprice.class.php' => ['PhanUndeclaredMethod', 'PhanUndeclaredProperty'],
         'htdocs/product/inventory/class/inventory.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/product/price.php' => ['PhanUndeclaredProperty'],
@@ -205,7 +199,6 @@ return [
         'htdocs/variants/tpl/productattributevalueline_view.tpl.php' => ['PhanUndeclaredProperty'],
         'htdocs/webhook/class/target.class.php' => ['PhanUndeclaredMethod'],
         'htdocs/webhook/target_card.php' => ['PhanUndeclaredGlobalVariable'],
-        'htdocs/webportal/class/html.formwebportal.class.php' => ['SqlInjection'],
         'htdocs/webservices/server_project.php' => ['PhanUndeclaredProperty'],
     ],
     // 'directory_suppressions' => ['src/directory_name' => ['PhanIssueName1', 'PhanIssueName2']] can be manually added if needed.

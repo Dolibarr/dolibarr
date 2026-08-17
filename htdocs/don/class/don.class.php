@@ -6,7 +6,7 @@
  * Copyright (C) 2015-2017 Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2016      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2019      Thibault FOUCART     <support@ptibogxiv.net>
- * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2019-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2021       Maxime DEMAREST         <maxime@indelog.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -835,24 +835,48 @@ class Don extends CommonObject
 	/**
 	 *    Set donation to status cancelled
 	 *
-	 *    @param	int		$id   	    id of donation
-	 *    @return   int     			Return integer <0 if KO, >0 if OK
+	 *    @param	int		$id   	    	id of donation
+	 *    @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
+	 *    @return   int     				Return integer <0 if KO, >0 if OK
 	 */
-	public function set_cancel($id)
+	public function set_cancel($id, $notrigger = 0)
 	{
 		// phpcs:enable
+		global $user;
+
+		$error = 0;
+
+		$this->db->begin();
+
 		$sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = -1 WHERE rowid = ".((int) $id);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			if ($this->db->affected_rows($resql)) {
 				$this->status = -1;
-				return 1;
+
+				if (!$notrigger) {
+					// Call trigger
+					$result = $this->call_trigger('DON_CANCEL', $user);
+					if ($result < 0) {
+						$error++;
+					}
+					// End call triggers
+				}
 			} else {
+				$this->db->commit();
 				return 0;
 			}
 		} else {
-			dol_print_error($this->db);
+			$this->error = $this->db->error();
+			$error++;
+		}
+
+		if (!$error) {
+			$this->db->commit();
+			return 1;
+		} else {
+			$this->db->rollback();
 			return -1;
 		}
 	}

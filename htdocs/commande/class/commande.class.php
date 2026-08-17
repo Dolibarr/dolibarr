@@ -16,6 +16,7 @@
  * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
  * Copyright (C) 2026		Vincent de Grandpré		<vincent@de-grandpre.quebec>
+ * Copyright (C) 2026		Lionel Vessiller		<lvessiller@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -159,8 +160,7 @@ class Commande extends CommonOrder
 	public $cond_reglement_doc;
 
 	/**
-	 * @var float 	Deposit percent for payment terms.
-	 *				Populated by $CommonObject->setPaymentTerms().
+	 * @var string|float 	Deposit percent for payment terms. Populated by $CommonObject->setPaymentTerms().
 	 * @see setPaymentTerms()
 	 */
 	public $deposit_percent;
@@ -1058,7 +1058,7 @@ class Commande extends CommonOrder
 		$sql .= ", ".($this->ref_client ? "'".$this->db->escape($this->ref_client)."'" : "null");
 		$sql .= ", '".$this->db->escape($this->model_pdf)."'";
 		$sql .= ", ".($this->cond_reglement_id > 0 ? ((int) $this->cond_reglement_id) : "null");
-		$sql .= ", ".(!empty($this->deposit_percent) ? "'".$this->db->escape((string) $this->deposit_percent)."'" : "null");
+		$sql .= ", ".(!empty($this->deposit_percent) ? "'".$this->db->escape($this->deposit_percent)."'" : "null");
 		$sql .= ", ".($this->mode_reglement_id > 0 ? ((int) $this->mode_reglement_id) : "null");
 		$sql .= ", ".($this->fk_account > 0 ? ((int) $this->fk_account) : 'NULL');
 		$sql .= ", ".($this->availability_id > 0 ? ((int) $this->availability_id) : "null");
@@ -1128,9 +1128,11 @@ class Commande extends CommonOrder
 						$line->ref_ext = '';
 					}
 
+					// Preserve the original entry mode of the line so the total is computed from the typed value (no rounding drift).
+					$line_price_base_type = $line->getPriceBaseType();
 					$result = $this->addline(
 						$line->desc,
-						$line->subprice,
+						(float) $line->subprice,
 						$line->qty,
 						$vatrate,
 						$line->localtax1_tx,
@@ -1139,8 +1141,8 @@ class Commande extends CommonOrder
 						$line->remise_percent,
 						$line->info_bits,
 						$line->fk_remise_except,
-						'HT',
-						0,
+						$line_price_base_type,
+						(float) $line->subprice_ttc,
 						$line->date_start,
 						$line->date_end,
 						$line->product_type,
@@ -1316,7 +1318,7 @@ class Commande extends CommonOrder
 			if ($objsoc->fetch($socid) > 0) {
 				$this->socid = $objsoc->id;
 				$this->cond_reglement_id	= (!empty($objsoc->cond_reglement_id) ? $objsoc->cond_reglement_id : 0);
-				$this->deposit_percent		= (!empty($objsoc->deposit_percent) ? $objsoc->deposit_percent : 0);
+				$this->deposit_percent		= (!empty($objsoc->deposit_percent) ? $objsoc->deposit_percent : '0');
 				$this->mode_reglement_id	= (!empty($objsoc->mode_reglement_id) ? $objsoc->mode_reglement_id : 0);
 				$this->fk_project = 0;
 				$this->fk_delivery_address = 0;
@@ -1426,6 +1428,7 @@ class Commande extends CommonOrder
 			$line->desc              = $object->lines[$i]->desc;
 			$line->price             = $object->lines[$i]->price;
 			$line->subprice          = $object->lines[$i]->subprice;
+			$line->subprice_ttc      = $object->lines[$i]->subprice_ttc;	// Preserve the TTC entry mode so create() keeps the typed value (no rounding drift).
 			$line->vat_src_code      = $object->lines[$i]->vat_src_code;
 			$line->tva_tx            = $object->lines[$i]->tva_tx;
 			$line->localtax1_tx      = $object->lines[$i]->localtax1_tx;
@@ -1810,6 +1813,8 @@ class Commande extends CommonOrder
 			$this->line->fk_remise_except = $fk_remise_except;
 			$this->line->remise_percent = $remise_percent;
 			$this->line->subprice = (float) $pu_ht;
+			// Persist the original entry mode of the line so updateline() can preserve it later.
+			$this->line->subprice_ttc = ($price_base_type === 'TTC') ? (float) $pu_ttc : 0;
 			$this->line->rang = $ranktouse;
 			$this->line->info_bits = $info_bits;
 			$this->line->total_ht = (float) $total_ht;
@@ -3363,6 +3368,8 @@ class Commande extends CommonOrder
 			$this->line->localtax2_type = empty($localtaxes_type[2]) ? '' : $localtaxes_type[2];
 			$this->line->remise_percent = $remise_percent;
 			$this->line->subprice       = (float) $pu_ht;
+			// Persist the original entry mode of the line so a no-op edit can preserve it later.
+			$this->line->subprice_ttc   = ($price_base_type === 'TTC') ? (float) $pu_ttc : 0;
 			$this->line->info_bits      = $info_bits;
 			$this->line->special_code   = $special_code;
 			$this->line->total_ht       = (float) $total_ht;
@@ -3465,6 +3472,7 @@ class Commande extends CommonOrder
 		$sql .= " fk_soc=".(isset($this->socid) ? ((int) $this->socid) : "null").",";
 		$sql .= " date_commande=".(strval($this->date_commande) != '' ? "'".$this->db->idate($this->date_commande)."'" : 'null').",";
 		$sql .= " date_valid=".(strval($this->date_validation) != '' ? "'".$this->db->idate($this->date_validation)."'" : 'null').",";
+
 		$sql .= " total_tva=".(isset($this->total_tva) ? ((float) $this->total_tva) : "null").",";
 		$sql .= " localtax1=".(isset($this->total_localtax1) ? ((float) $this->total_localtax1) : "null").",";
 		$sql .= " localtax2=".(isset($this->total_localtax2) ? ((float) $this->total_localtax2) : "null").",";
@@ -3475,7 +3483,7 @@ class Commande extends CommonOrder
 		$sql .= " fk_user_valid=".((isset($this->user_validation_id) && $this->user_validation_id > 0) ? ((int) $this->user_validation_id) : "null").",";
 		$sql .= " fk_projet=".(isset($this->fk_project) ? ((int) $this->fk_project) : "null").",";
 		$sql .= " fk_cond_reglement=".(isset($this->cond_reglement_id) ? ((int) $this->cond_reglement_id) : "null").",";
-		$sql .= " deposit_percent=".(!empty($this->deposit_percent) ? ((float) $this->deposit_percent) : "null").",";
+		$sql .= " deposit_percent=".(!empty($this->deposit_percent) ? "'".$this->db->escape((string) $this->deposit_percent)."'" : "null").",";
 		$sql .= " fk_mode_reglement=".(isset($this->mode_reglement_id) ? ((int) $this->mode_reglement_id) : "null").",";
 		$sql .= " date_livraison=".(strval($this->delivery_date) != '' ? "'".$this->db->idate($this->delivery_date)."'" : 'null').",";
 		$sql .= " fk_shipping_method=".(isset($this->shipping_method_id) ? ((int) $this->shipping_method_id) : "null").",";
