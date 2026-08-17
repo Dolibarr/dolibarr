@@ -2029,6 +2029,9 @@ if (empty($reshook)) {
 			unset($_POST['date_endday']);
 			unset($_POST['date_endmonth']);
 			unset($_POST['date_endyear']);
+
+			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
+			exit();
 		} else {
 			$db->rollback();
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -4415,7 +4418,7 @@ if ($action == 'create') {
 						print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=paid&token='.newToken().'">'.$langs->trans('ClassifyPaidPartially').'</a>';
 					} else {
 						if (!getDolGlobalString('INVOICE_CAN_NEVER_BE_CANCELED')) {
-							print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=canceled">'.$langs->trans('ClassifyCanceled').'</a>';
+							print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=canceled&token='.newToken().'">'.$langs->trans('ClassifyCanceled').'</a>';
 						}
 					}
 				}
