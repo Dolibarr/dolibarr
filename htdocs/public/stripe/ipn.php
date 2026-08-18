@@ -692,7 +692,7 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 			if (getDolGlobalString('STRIPE_IPN_SEND_EMAIL_ON_DIRECT_DEBIT_CONFIRMATION')) {
 				$db->begin();
 
-				// If option to send email after confirmation of direct debit is on, we send the email (template must exists
+				// If option to send email after confirmation of direct debit is on, we send the email (template must exists)
 				$labeltouse = getDolGlobalString('STRIPE_IPN_SEND_EMAIL_ON_DIRECT_DEBIT_CONFIRMATION');
 				// Example: $labeltouse = 'InvoicePaymentSuccess'
 
