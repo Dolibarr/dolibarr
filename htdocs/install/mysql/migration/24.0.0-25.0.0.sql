@@ -78,4 +78,31 @@ UPDATE llx_commande_fournisseurdet SET subprice_ttc = 0 WHERE subprice_ttc <> 0 
 UPDATE llx_facture_fourn_det SET pu_ttc = 0 WHERE pu_ttc <> 0 AND EXISTS (SELECT c.rowid FROM llx_const as c WHERE c.name = 'MAIN_VERSION_LAST_UPGRADE' AND c.value < '25.0.0');
 UPDATE llx_supplier_proposaldet SET subprice_ttc = 0 WHERE subprice_ttc <> 0 AND EXISTS (SELECT c.rowid FROM llx_const as c WHERE c.name = 'MAIN_VERSION_LAST_UPGRADE' AND c.value < '25.0.0');
 
+
+-- Change mainmenu for ticket and knowledge management modules to support
+UPDATE llx_menu SET mainmenu = 'support' WHERE mainmenu = 'ticket';
+UPDATE llx_menu SET fk_mainmenu = 'support' WHERE fk_mainmenu = 'ticket';
+
+-- Mouve intervention module to support mainmenu
+UPDATE llx_menu SET menu_handler = 'all' WHERE mainmenu = 'intervention';
+UPDATE llx_menu SET mainmenu = 'support' WHERE mainmenu = 'intervention';
+UPDATE llx_menu SET fk_leftmenu = 'intervention' WHERE leftmenu = 'ficheinter';
+UPDATE llx_menu SET fk_menu = '-1' WHERE leftmenu = 'intervention';
+UPDATE llx_menu SET fk_mainmenu = 'support' WHERE leftmenu = 'intervention';
+
+-- Delete mainmenu en leftmenu in url menu entries
+UPDATE llx_menu SET url = '/fichinter/index.php' WHERE titre = 'Interventions' and module = 'intervention';
+UPDATE llx_menu SET url = '/fichinter/card.php?action=create' WHERE titre = 'NewIntervention' and module = 'intervention';
+UPDATE llx_menu SET url = '/fichinter/list.php' WHERE titre = 'List' and module = 'intervention';
+UPDATE llx_menu SET url = '/fichinter/stats/index.php' WHERE titre = 'Statistics' and module = 'intervention';
+
+UPDATE llx_menu SET position = '101' WHERE titre = 'Interventions' and module = 'intervention';
+UPDATE llx_menu SET position = '102' WHERE titre = 'NewIntervention' and module = 'intervention';
+UPDATE llx_menu SET position = '111' WHERE titre = 'List' and module = 'intervention';
+UPDATE llx_menu SET position = '120' WHERE titre = 'Statistics' and module = 'intervention';
+
+UPDATE llx_menu SET module = 'intervention' WHERE module = 'fichinter';
+
+UPDATE llx_menu SET prefix = '<span class="fas fa-ambulance infobox-contrat paddingright pictofixedwidth em092" style=""></span>' WHERE titre = 'Interventions' and module = 'intervention';
+
 -- end of migration
