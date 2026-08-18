@@ -104,8 +104,11 @@ if ($element == 'fichinter') {
 if ($element == 'product' || $element == 'service') {	// When RESOURCE_ON_PRODUCTS or RESOURCE_ON_SERVICES is set
 	$tmpobject = new Product($db);
 	$tmpobject->fetch($element_id);
-	$fieldtype = $tmpobject->type;
-	$result = restrictedArea($user, 'produit|service', $element_id, 'product&product', '', '', (string) $fieldtype);
+	if ($tmpobject->type == Product::TYPE_PRODUCT) {
+		$result = restrictedArea($user, 'produit', $element_id, 'product&product');
+	} else {
+		$result = restrictedArea($user, 'service', $element_id, 'product&product');
+	}
 }
 
 // TODO
