@@ -64,6 +64,7 @@ $max_users				= GETPOSTINT('max_users');
 $url					= GETPOST('url', 'alpha');
 $confirm				= GETPOST('confirm', 'aZ09');
 $fk_code_type_resource	= GETPOST('fk_code_type_resource', 'aZ09');
+$status					= GETPOSTISSET('status') ? GETPOSTINT('status') : Dolresource::STATUS_FREE;
 
 // Protection if external user
 if ($user->socid > 0) {
@@ -114,10 +115,15 @@ if (empty($reshook)) {
 		if (!$cancel) {
 			$error = '';
 
+			if (!in_array($status, array(Dolresource::STATUS_FREE, Dolresource::STATUS_OUT_OF_SERVICE), true)) {
+				setEventMessages($langs->trans('ErrorBadValueForParameter', 'status'), null, 'errors');
+				$action = 'create';
+				$error++;
+			}
 			if (empty($ref)) {
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Ref")), null, 'errors');
 				$action = 'create';
-			} else {
+			} elseif (!$error) {
 				$object->ref                    = $ref;
 				$object->address				= $address;
 				$object->zip					= $zip;
@@ -130,6 +136,7 @@ if (empty($reshook)) {
 				$object->max_users				= $max_users;
 				$object->url					= $url;
 				$object->fk_code_type_resource	= $fk_code_type_resource;
+				$object->status					= $status;
 
 				// Fill array 'array_options' with data from add form
 				$ret = $extrafields->setOptionalsFromPost(null, $object);
@@ -158,6 +165,10 @@ if (empty($reshook)) {
 	if ($action == 'update' && !$cancel && $permissiontoadd) {
 		$error = 0;
 
+		if (!array_key_exists($status, Dolresource::getStatusArray())) {
+			setEventMessages($langs->trans('ErrorBadValueForParameter', 'status'), null, 'errors');
+			$error++;
+		}
 		if (empty($ref)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Ref")), null, 'errors');
 			$error++;
@@ -180,6 +191,12 @@ if (empty($reshook)) {
 				$object->max_users				= $max_users;
 				$object->url					= $url;
 				$object->fk_code_type_resource  = $fk_code_type_resource;
+				if ($status === Dolresource::STATUS_UNKNOWN && !$object->hasStatusProvider()) {
+					setEventMessages($langs->trans('ResourceStatusProviderRequired'), null, 'errors');
+					$error++;
+				} else {
+					$object->status = $status;
+				}
 
 				// Fill array 'array_options' with data from add form
 				$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
@@ -187,7 +204,7 @@ if (empty($reshook)) {
 					$error++;
 				}
 
-				$result = $object->update($user);
+				$result = !$error ? $object->update($user) : -1;
 				if ($result > 0) {
 					if ($oldref != $ref) {
 						// We renamed the ref so we must change the directory too
@@ -287,6 +304,14 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 		print '<tr><td>'.$langs->trans("ResourceType").'</td>';
 		print '<td>';
 		$formresource->select_types_resource($object->fk_code_type_resource, 'fk_code_type_resource', '', 2, 0, 0, 0, 1, 'minwidth200');
+		print '</td></tr>';
+
+		$statusOptions = Dolresource::getStatusArray();
+		if ($action == 'create') {
+			unset($statusOptions[Dolresource::STATUS_UNKNOWN]);
+		}
+		print '<tr><td>'.$langs->trans('Status').'</td><td>';
+		print $form->selectarray('status', $statusOptions, GETPOSTISSET('status') ? $status : $object->status, 0, 0, 0, '', 0, 0, 0, '', 'minwidth200');
 		print '</td></tr>';
 
 		// Description
@@ -418,6 +443,11 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 		print '<td>';
 		print $object->type_label;
 		print '</td>';
+		print '</tr>';
+
+		print '<tr>';
+		print '<td>'.$langs->trans('Status').'</td>';
+		print '<td>'.$object->getLibStatut(4).'</td>';
 		print '</tr>';
 
 		// Description

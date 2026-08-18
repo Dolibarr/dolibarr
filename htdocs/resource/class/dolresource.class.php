@@ -35,6 +35,15 @@ class Dolresource extends CommonObject
 {
 	use CommonPeople;
 
+	/** @var int Status is provided by a person in charge. */
+	public const STATUS_UNKNOWN = 0;
+
+	/** @var int Resource is manually available. */
+	public const STATUS_FREE = 1;
+
+	/** @var int Resource cannot be allocated. */
+	public const STATUS_OUT_OF_SERVICE = 2;
+
 	/**
 	 * @var string ID to identify managed object
 	 */
@@ -140,7 +149,7 @@ class Dolresource extends CommonObject
 	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
-		$this->status = 0;
+		$this->status = self::STATUS_FREE;
 
 		$this->cache_code_type_resource = array();
 	}
@@ -198,7 +207,8 @@ class Dolresource extends CommonObject
 		$sql .= "url,";
 		$sql .= "fk_code_type_resource,";
 		$sql .= "note_public,";
-		$sql .= "note_private, ";
+		$sql .= "note_private,";
+		$sql .= "fk_statut, ";
 		$sql .= "datec, ";
 		$sql .= "fk_user_author ";
 		$sql .= ") VALUES (";
@@ -206,6 +216,7 @@ class Dolresource extends CommonObject
 		foreach ($new_resource_values as $value) {
 			$sql .= " " . (!empty($value) ? "'" . $this->db->escape($value) . "'" : 'NULL') . ",";
 		}
+		$sql .= " ".((int) $this->status).",";
 		$sql .= " '" . $this->db->idate($this->date_creation) . "',";
 		$sql .= " " . (!empty($user->id) ? ((int) $user->id) : "null");
 		$sql .= ")";
@@ -280,6 +291,7 @@ class Dolresource extends CommonObject
 		$sql .= " t.max_users,";
 		$sql .= " t.url,";
 		$sql .= " t.fk_code_type_resource,";
+		$sql .= " t.fk_statut,";
 		$sql .= " t.note_public,";
 		$sql .= " t.note_private,";
 		$sql .= " t.tms as date_modification,";
@@ -313,6 +325,7 @@ class Dolresource extends CommonObject
 				$this->max_users = $obj->max_users;
 				$this->url = $obj->url;
 				$this->fk_code_type_resource = $obj->fk_code_type_resource;
+				$this->status = (int) $obj->fk_statut;
 				$this->note_public = $obj->note_public;
 				$this->note_private = $obj->note_private;
 				$this->date_creation     = $this->db->jdate($obj->date_creation);
@@ -407,6 +420,7 @@ class Dolresource extends CommonObject
 		$sql .= " max_users=".(isset($this->max_users) ? (int) $this->max_users : "null").",";
 		$sql .= " url=".(isset($this->url) ? "'".$this->db->escape($this->url)."'" : "null").",";
 		$sql .= " fk_code_type_resource=".(isset($this->fk_code_type_resource) ? "'".$this->db->escape($this->fk_code_type_resource)."'" : "null").",";
+		$sql .= " fk_statut=".((int) $this->status).",";
 		$sql .= " note_public=".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
 		$sql .= " note_private=".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
 		$sql .= " tms=" . ("'" . $this->db->idate($this->date_modification) . "',");
@@ -1022,7 +1036,55 @@ class Dolresource extends CommonObject
 	 */
 	public static function getLibStatusLabel(int $status, int $mode = 0)
 	{
-		return '';
+		global $langs;
+		$langs->load('resource');
+		$labels = self::getStatusArray();
+		$label = $labels[$status] ?? $labels[self::STATUS_UNKNOWN];
+		$statusType = 'status1';
+		if ($status === self::STATUS_FREE) {
+			$statusType = 'status4';
+		} elseif ($status === self::STATUS_OUT_OF_SERVICE) {
+			$statusType = 'status8';
+		}
+		return dolGetStatus($label, $label, '', $statusType, $mode);
+	}
+
+	/**
+	 * Return manual resource statuses. Busy is calculated for a time range.
+	 *
+	 * @return array<int,string>
+	 */
+	public static function getStatusArray()
+	{
+		global $langs;
+		$langs->load('resource');
+
+		return array(
+			self::STATUS_UNKNOWN => $langs->trans('ResourceStatusUnknown'),
+			self::STATUS_FREE => $langs->trans('ResourceStatusFree'),
+			self::STATUS_OUT_OF_SERVICE => $langs->trans('ResourceStatusOutOfService'),
+		);
+	}
+
+	/**
+	 * Check whether an internal user or external contact is in charge of status.
+	 *
+	 * @return bool
+	 */
+	public function hasStatusProvider()
+	{
+		$sql = 'SELECT COUNT(ec.rowid) as nb';
+		$sql .= ' FROM '.$this->db->prefix().'element_contact ec';
+		$sql .= ' INNER JOIN '.$this->db->prefix().'c_type_contact tc ON tc.rowid = ec.fk_c_type_contact';
+		$sql .= ' WHERE ec.element_id = '.((int) $this->id);
+		$sql .= " AND tc.element = 'dolresource'";
+		$sql .= " AND tc.code IN ('USERINCHARGE', 'THIRDINCHARGE')";
+		$resql = $this->db->query($sql);
+		if ($resql && ($obj = $this->db->fetch_object($resql))) {
+			return ((int) $obj->nb) > 0;
+		}
+
+		return false;
 	}
 
 	/**

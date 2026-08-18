@@ -93,6 +93,7 @@ class DolresourceTest extends CommonClassTest
 		$localobject->phone = '0102030405';
 		$localobject->email = 'phpunit@example.com';
 		$localobject->max_users = 3;
+		$localobject->status = Dolresource::STATUS_FREE;
 		$localobject->note_public = 'Public note';
 		$localobject->note_private = 'Private note';
 		$result = $localobject->create($user);
@@ -130,6 +131,7 @@ class DolresourceTest extends CommonClassTest
 		$this->assertSame('0102030405', $localobject->phone);
 		$this->assertSame('phpunit@example.com', $localobject->email);
 		$this->assertEquals(3, $localobject->max_users);
+		$this->assertSame(Dolresource::STATUS_FREE, $localobject->status);
 		$this->assertSame('Public note', $localobject->note_public);
 		$this->assertSame('Private note', $localobject->note_private);
 
@@ -157,6 +159,7 @@ class DolresourceTest extends CommonClassTest
 		$localobject->phone = '0605040302';
 		$localobject->note_public = 'New note public after update';
 		$localobject->note_private = 'New note private after update';
+		$localobject->status = Dolresource::STATUS_OUT_OF_SERVICE;
 		$result = $localobject->update($user);
 
 		$this->assertGreaterThan(0, $result, $localobject->errorsToString());
@@ -167,6 +170,13 @@ class DolresourceTest extends CommonClassTest
 		$this->assertSame('0605040302', $localobject->phone);
 		$this->assertSame('New note public after update', $localobject->note_public);
 		$this->assertSame('New note private after update', $localobject->note_private);
+		$this->assertSame(Dolresource::STATUS_OUT_OF_SERVICE, $localobject->status);
+		$this->assertFalse($localobject->hasStatusProvider());
+		$this->assertGreaterThan(0, $localobject->add_contact($user->id, 'USERINCHARGE', 'internal'));
+		$this->assertTrue($localobject->hasStatusProvider());
+		$this->assertArrayHasKey(Dolresource::STATUS_UNKNOWN, Dolresource::getStatusArray());
+		$this->assertArrayHasKey(Dolresource::STATUS_FREE, Dolresource::getStatusArray());
+		$this->assertArrayHasKey(Dolresource::STATUS_OUT_OF_SERVICE, Dolresource::getStatusArray());
 
 		return $localobject;
 	}

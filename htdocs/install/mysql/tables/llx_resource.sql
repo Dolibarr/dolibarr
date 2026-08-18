@@ -37,7 +37,7 @@ CREATE TABLE llx_resource
   fk_user_author        integer DEFAULT NULL,
   fk_user_modif         integer DEFAULT NULL,
   fk_user_valid         integer DEFAULT NULL,
-  fk_statut             smallint NOT NULL DEFAULT '0',
+  fk_statut             smallint NOT NULL DEFAULT '1',
   note_public     		  text,
   note_private    		  text,
   import_key			varchar(14),
