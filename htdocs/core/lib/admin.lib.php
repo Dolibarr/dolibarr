@@ -246,12 +246,7 @@ function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler
 			// Add line buf to buffer if not a comment
 			if ($nocommentremoval || !preg_match('/^\s*--/', $buf)) {
 				if (empty($nocommentremoval)) {
-					// remove comment on lines that does not start with --, before adding it to the buffer
-					// The (?=\s|$) requires the -- to be followed by whitespace or end of line to be treated as a real SQL comment
-					// (matching MySQL's own comment syntax), so it no longer falsely strips ordinary content containing "-->"
-					// (e.g. an HTML comment closer inside imported website page content, such as "<!-- Some text -->"),
-					// which was truncating lines and corrupting statement parsing.
-					$buf = preg_replace('/([,;ERLT0\)])\s+--(?=\s|$).*$/i', '\1', $buf);
+					$buf = preg_replace('/([,;ERLT0\)])\s+--(\s|$).*$/i', '\1', $buf);
 				}
 				if ($buffer) {
 					$buffer .= ' ';
