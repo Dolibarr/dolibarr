@@ -2093,22 +2093,7 @@ class pdf_octopus extends ModelePDFFactures
 
 				if (!getDolGlobalInt('PDF_INVOICE_SHOW_VAT_ANALYSIS')) {
 					// VAT
-					$tvas = array();
-					$nblines = count($object->lines);
-					for ($i = 0; $i < $nblines; $i++) {
-						$tvaligne = $object->lines[$i]->total_tva;
-						$vatrate = (string) $object->lines[$i]->tva_tx;
-
-						if (($object->lines[$i]->info_bits & 0x01) == 0x01) {
-							$vatrate .= '*';
-						}
-						if (! isset($tvas[$vatrate])) {
-							$tvas[$vatrate] = 0;
-						}
-						$tvas[$vatrate] += $tvaligne;
-					}
-
-					foreach ($tvas as $tvakey => $tvaval) {
+					foreach ($this->tva_array as $tvakey => $tvaval) {
 						if ($tvakey != 0 || getDolGlobalString('INVOICE_SHOW_ALSO_VAT_LINE_IF_ZERO')) {
 							$this->atleastoneratenotnull++;
 
