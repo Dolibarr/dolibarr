@@ -242,7 +242,8 @@ function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler
 			// Add line buf to buffer if not a comment
 			if ($nocommentremoval || !preg_match('/^\s*--/', $buf)) {
 				if (empty($nocommentremoval)) {
-					$buf = preg_replace('/([,;ERLT05\)])\s+--.*$/i', '\1', $buf); //remove comment on lines that does not start with --, before adding it to the buffer
+					$buf = preg_replace('/([,;ERLT05\)])\s+--\s.*$/i', '\1', $buf); // remove comment on lines that does not start with --, like "... -- a comment"
+					$buf = preg_replace('/([,;ERLT05\)])\s+--$/i', '\1', $buf); // remove comment on lines that does not start with --, like "... --"
 				}
 				if ($buffer) {
 					$buffer .= ' ';

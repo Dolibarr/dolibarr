@@ -340,6 +340,7 @@ class DolibarrApiAccess implements iAuthenticate
 		}
 
 		$userClass::setCacheIdentifier(static::$role);
+
 		Resources::$accessControlFunction = 'DolibarrApiAccess::verifyAccess';
 		$requirefortest = static::$requires;
 		if (!is_array($requirefortest)) {
@@ -359,7 +360,7 @@ class DolibarrApiAccess implements iAuthenticate
 	}
 
 	/**
-	 * Verify access
+	 * Check that the role of user is among a the given list defined into static::$requires
 	 *
 	 * @param   array{class:array{DolibarrApiAccess:array{properties:array{requires?:bool}}}} $m Properties of method
 	 *

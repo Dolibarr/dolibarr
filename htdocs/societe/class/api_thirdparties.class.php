@@ -1990,6 +1990,11 @@ class Thirdparties extends DolibarrApi
 		if ($this->company->fetch($id) <= 0) {
 			throw new RestException(404, 'Error creating Company Bank account, Company doesn\'t exists');
 		}
+
+		if (!DolibarrApi::_checkAccessToResource('societe', $id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		$account = new CompanyBankAccount($this->db);
 
 		$account->socid = $id;
@@ -2047,6 +2052,11 @@ class Thirdparties extends DolibarrApi
 		if ($this->company->fetch($id) <= 0) {
 			throw new RestException(404, 'Error creating Company Bank account, Company doesn\'t exists');
 		}
+
+		if (!DolibarrApi::_checkAccessToResource('societe', $id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		$account = new CompanyBankAccount($this->db);
 
 		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
@@ -2099,6 +2109,10 @@ class Thirdparties extends DolibarrApi
 	{
 		if (!DolibarrApiAccess::$user->hasRight('societe', 'creer')) {
 			throw new RestException(403);
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('societe', $id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$account = new CompanyBankAccount($this->db);
