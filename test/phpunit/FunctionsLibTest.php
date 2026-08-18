@@ -2322,6 +2322,102 @@ class FunctionsLibTest extends CommonClassTest
 	}
 
 	/**
+	 * testDolPrintSize
+	 *
+	 * @return void
+	 */
+	public function testDolPrintSize()
+	{
+		global $conf, $langs;
+
+		$oldlangs = $langs;
+		$newlangs = new Translate('', $conf);
+		$newlangs->setDefaultLang('en_US');
+		$newlangs->load('main');
+		$langs = $newlangs;
+
+		// Below the 10240 threshold, size is always kept in bytes regardless of $shortvalue
+		$this->assertEquals('500 Bytes', dol_print_size(500));
+		$this->assertEquals('500 Bytes', dol_print_size(500, 1));
+
+		// Above the threshold, $shortvalue=1 converts to Kilobytes (rounded)
+		$this->assertEquals('20 Kilobytes', dol_print_size(20000, 1));
+		$this->assertEquals('20 Kb', dol_print_size(20000, 1, 1), '$shortunit=1 uses the short unit label');
+
+		// $shortvalue=0 (default) never converts, even for a large size
+		$this->assertEquals('20000 Bytes', dol_print_size(20000, 0));
+		$this->assertEquals('20000 b.', dol_print_size(20000, 0, 1));
+
+		$langs = $oldlangs;
+	}
+
+	/**
+	 * testDolGetFirstLastname
+	 *
+	 * @return void
+	 */
+	public function testDolGetFirstLastname()
+	{
+		$this->assertEquals('John Smith', dolGetFirstLastname('John', 'Smith', 1), 'nameorder=1: firstname then lastname');
+		$this->assertEquals('Smith John', dolGetFirstLastname('John', 'Smith', 0), 'nameorder=0: lastname then firstname');
+		$this->assertEquals('John', dolGetFirstLastname('John', 'Smith', 2), 'nameorder=2: firstname only');
+		$this->assertEquals('Smith', dolGetFirstLastname('', 'Smith', 3), 'nameorder=3: firstname if defined else lastname (here empty firstname)');
+		$this->assertEquals('John', dolGetFirstLastname('John', '', 3), 'nameorder=3: firstname if defined');
+		$this->assertEquals('Smith', dolGetFirstLastname('John', 'Smith', 4), 'nameorder=4: lastname only');
+		$this->assertEquals('John', dolGetFirstLastname('John', '', 5), 'nameorder=5: lastname if defined else firstname (here empty lastname)');
+		$this->assertEquals('Smith', dolGetFirstLastname('', 'Smith', 5), 'nameorder=5: lastname if defined');
+		// nameorder=-1 (auto) falls back to MAIN_FIRSTNAME_NAME_POSITION, default is firstname+lastname
+		$this->assertEquals('John Smith', dolGetFirstLastname('John', 'Smith', -1));
+	}
+
+	/**
+	 * testJsonOrUnserialize
+	 *
+	 * @return void
+	 */
+	public function testJsonOrUnserialize()
+	{
+		// Valid JSON is decoded as-is (object and array forms)
+		$this->assertEquals(array('a' => 1, 'b' => 'x'), jsonOrUnserialize('{"a":1,"b":"x"}'));
+		$this->assertEquals(array(1, 2, 3), jsonOrUnserialize('[1,2,3]'));
+
+		// A legacy PHP-serialized string (not valid JSON) falls back to unserialize()
+		$this->assertEquals(array('a' => 1), jsonOrUnserialize('a:1:{s:1:"a";i:1;}'));
+
+		// A string that is neither valid JSON nor a valid serialized value returns false
+		$this->assertFalse(@jsonOrUnserialize('not valid at all'));
+	}
+
+	/**
+	 * testPictoFromLangcode
+	 *
+	 * @return void
+	 */
+	public function testPictoFromLangcode()
+	{
+		$this->assertEquals('', picto_from_langcode(''));
+		$this->assertEquals('<span class="fa fa-language"></span>', picto_from_langcode('auto'));
+
+		// 'fr_CA' is one of the special-cased codes using a specific flag (Martinique)
+		$this->assertEquals('<span class="flag-sprite mq" title="fr_CA"></span>', picto_from_langcode('fr_CA'));
+
+		// Generic 'xx_YY' code: flag is derived from the country part (YY)
+		$this->assertEquals('<span class="flag-sprite us" title="en_US"></span>', picto_from_langcode('en_US'));
+
+		// A bare 2-letter country code (no underscore) is used as-is
+		$this->assertEquals('<span class="flag-sprite fr" title="FR"></span>', picto_from_langcode('FR'));
+
+		// $notitlealt=1 removes the title attribute
+		$this->assertEquals('<span class="flag-sprite us"></span>', picto_from_langcode('en_US', '', 1));
+
+		// A 'class="..."' in $moreatt is merged into the span's own class instead of being added as a separate attribute
+		$this->assertEquals('<span class="flag-sprite us saturatemedium" title="en_US"></span>', picto_from_langcode('en_US', 'class="saturatemedium"'));
+
+		// Any other attribute in $moreatt is kept as a separate attribute
+		$this->assertEquals('<span class="flag-sprite us" style="float: right" title="en_US"></span>', picto_from_langcode('en_US', 'style="float: right"'));
+	}
+
+	/**
 	 * testGetElementProperties
 	 *
 	 * @return void
