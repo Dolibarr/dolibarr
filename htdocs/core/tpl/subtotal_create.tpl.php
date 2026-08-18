@@ -27,13 +27,14 @@
  * @var Translate $langs
  * @var User $user
  *
- * @var array<int,string> $depth_array
- * @var array<string,string> $titles
+ * @var ?array<int,string> $depth_array
+ * @var ?array<string,string> $titles
  * @var string $type
  */
 
 '
-@phan-var-force Propal|Commande|Facture|FactureRec|Expedition|SupplierProposal|CommandeFournisseur|FactureFournisseur $this
+@phan-var-force CommonObject $this
+@phan-var-force Propal|Commande|Facture|FactureRec|Expedition|SupplierProposal|CommandeFournisseur|FactureFournisseur $object
 @phan-var-force ?array<int,string> $depth_array
 @phan-var-force ?array<string,string> $titles
 @phan-var-force string $type
