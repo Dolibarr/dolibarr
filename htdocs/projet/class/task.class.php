@@ -1635,7 +1635,9 @@ class Task extends CommonObjectLine
 		if (isset($this->timespent_note)) {
 			$this->timespent_note = trim($this->timespent_note);
 		}
-		if (empty($this->timespent_datehour) || ($this->timespent_date != $this->timespent_datehour)) {
+		if (empty($this->timespent_datehour)) {
+			// Only fall back to the day-level date when no accurate start time was provided.
+			// Copying it unconditionally when the two differ would discard the hour set by the caller (#39276).
 			$this->timespent_datehour = $this->timespent_date;
 		}
 
@@ -2089,7 +2091,9 @@ class Task extends CommonObjectLine
 		}
 
 		// Clean parameters
-		if (empty($this->timespent_datehour) || ($this->timespent_date != $this->timespent_datehour)) {
+		if (empty($this->timespent_datehour)) {
+			// Only fall back to the day-level date when no accurate start time was provided.
+			// Copying it unconditionally when the two differ would discard the hour set by the caller (#39276).
 			$this->timespent_datehour = $this->timespent_date;
 		}
 		if (isset($this->timespent_note)) {
