@@ -47,39 +47,6 @@ $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 class MoTest extends CommonClassTest
 {
 	/**
-	 * setUpBeforeClass
-	 *
-	 * @return void
-	 */
-	public static function setUpBeforeClass(): void
-	{
-		global $db, $conf;
-
-		if (!isModEnabled('mrp')) {
-			// activateModule() below transitively instantiates modProduct (modMrp depends on modBom, which
-			// depends on modProduct), whose constructor queries the DB via Societe::useNPR() - make sure
-			// $db/$mysoc/$user are not stale before that (see CommonClassTest::ensureDbIsConnected() for why
-			// this is needed).
-			self::ensureDbIsConnected();
-
-			// Activating a module re-runs its SQL install scripts (CREATE/ALTER TABLE), which causes an
-			// implicit commit in MySQL/InnoDB: this activation is real and is NOT undone by the
-			// rollback in tearDownAfterClass, exactly like an admin enabling it from Setup > Modules
-			// would be (see also FactureTest::setUpBeforeClass(), which similarly disables the
-			// blockedlog module for real, outside of any transaction). Do this before starting the
-			// test transaction below, so the transaction-open counter stays consistent.
-			require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-			$result = activateModule('modMrp');
-			self::assertEmpty($result['errors'], 'Failed to activate module mrp: '.implode(', ', $result['errors']));
-			$conf->setValues($db);
-		}
-
-		self::assertTrue(isModEnabled('mrp'), 'module mrp must be enabled');
-
-		parent::setUpBeforeClass();
-	}
-
-	/**
 	 * testMoCreate
 	 *
 	 * Mo::create() needs a real product (fk_product): a random real catalog product cannot be used
