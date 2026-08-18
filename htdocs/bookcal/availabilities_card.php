@@ -3,6 +3,7 @@
  * Copyright (C) 2022 		Alice Adminson 			<aadminson@example.com>
  * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Daniel Bauer			<d.bauer@elaax.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -353,7 +354,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$morehtmlref .= '</div>';
 
 
-	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'label', $morehtmlref);
 
 
 	print '<div class="fichecenter">';

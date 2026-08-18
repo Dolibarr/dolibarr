@@ -2,6 +2,7 @@
 /* Copyright (C) 2017       Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2022       Alice Adminson              <aadminson@example.com>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2026		Daniel Bauer				<d.bauer@elaax.net>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -967,6 +968,11 @@ class Availabilities extends CommonObject
 		}
 
 		$modelpath = "core/modules/bookcal/doc/";
+		if (!is_dir(DOL_DOCUMENT_ROOT.'/'.$modelpath)) {
+			$this->error = '';
+			$this->errors = array();
+			return 0;
+		}
 
 		if (!empty($modele)) {
 			$result = $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);

@@ -4,6 +4,7 @@
  * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2023		anthony Berton			<anthony.berton@bb2a.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Daniel Bauer			<d.bauer@elaax.net>
  * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -48,6 +49,8 @@ require_once DOL_DOCUMENT_ROOT.'/bookcal/class/calendar.class.php';
 require_once DOL_DOCUMENT_ROOT.'/bookcal/class/availabilities.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/public.lib.php';
 
 // Security check
@@ -155,6 +158,92 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
 	print '<div class="divmainbodylarge">';
 }
 
+/**
+ * Send the customer an acknowledgement after a public booking request.
+ *
+ * @param	Contact		$contact		Booked contact
+ * @param	ActionComm	$actioncomm		Created booking event
+ * @return	int							1 if mail was sent, 0 if skipped, -1 on error
+ */
+function bookcalSendBookingAcknowledgement($contact, $actioncomm)
+{
+	global $db, $langs, $mysoc, $user;
+
+	if (empty($contact->email)) {
+		return 0;
+	}
+
+	$from = getDolGlobalString('BOOKCAL_MAIL_FROM');
+	if (empty($from)) {
+		$from = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
+	}
+	if (empty($from)) {
+		$from = getDolGlobalString('MAIN_INFO_SOCIETE_MAIL');
+	}
+	if (empty($from) && is_object($mysoc) && !empty($mysoc->email)) {
+		$from = $mysoc->email;
+	}
+	if (empty($from)) {
+		dol_syslog('BookCal booking acknowledgement skipped: no sender email configured', LOG_WARNING);
+		return 0;
+	}
+
+	$companyname = getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
+	if (empty($companyname) && is_object($mysoc) && !empty($mysoc->name)) {
+		$companyname = $mysoc->name;
+	}
+
+	$bookingdate = dol_print_date($actioncomm->datep, 'dayhourtext');
+	$fullname = trim($contact->getFullName($langs));
+	if (empty($fullname)) {
+		$fullname = trim($contact->firstname.' '.$contact->lastname);
+	}
+
+	$subject = 'Booking request received - __MAIN_INFO_SOCIETE_NOM__';
+	$msg = '<p>Hallo __BOOKCAL_CONTACT_FULLNAME__,</p>';
+	$msg .= '<p>thank you for your booking. We received your request for __BOOKCAL_BOOKING_DATE__.</p>';
+	$msg .= '<p>We will confirm the appointment as soon as possible or contact you with an alternative suggestion.</p>';
+	$msg .= '<p>Mit freundlichen Gruessen<br>__MAIN_INFO_SOCIETE_NOM__</p>';
+
+	$formmail = new FormMail($db);
+	$template = $formmail->getEMailTemplate($db, 'bookcal_send', $user, $langs, -2, 1, 'BookCalBookingAcknowledgement');
+	if (is_object($template)) {
+		$subject = $template->topic;
+		$msg = $template->content;
+		if (!empty($template->email_from)) {
+			$from = $template->email_from;
+		}
+	}
+
+	$substitutionarray = getCommonSubstitutionArray($langs, 0, null, $actioncomm);
+	complete_substitutions_array($substitutionarray, $langs, $actioncomm);
+	$substitutionarray['__BOOKCAL_CONTACT_FULLNAME__'] = $fullname;
+	$substitutionarray['__BOOKCAL_CONTACT_EMAIL__'] = $contact->email;
+	$substitutionarray['__BOOKCAL_BOOKING_DATE__'] = $bookingdate;
+	$substitutionarray['__BOOKCAL_BOOKING_REF__'] = $actioncomm->ref;
+	if (!empty($companyname)) {
+		$substitutionarray['__BOOKCAL_COMPANY_NAME__'] = $companyname;
+	}
+
+	$subject = make_substitutions($subject, $substitutionarray, $langs);
+	$msg = make_substitutions($msg, $substitutionarray, $langs);
+	$from = make_substitutions($from, $substitutionarray, $langs);
+
+	try {
+		$mail = new CMailFile($subject, $contact->email, $from, $msg, array(), array(), array(), '', '', 0, 1, '', '', 'bookcal_'.$actioncomm->id, '', 'bookcal');
+		$result = $mail->sendfile();
+		if (!$result) {
+			dol_syslog('BookCal booking acknowledgement mail failed: '.$mail->error, LOG_WARNING);
+			return -1;
+		}
+	} catch (Throwable $e) {
+		dol_syslog('BookCal booking acknowledgement mail failed: '.$e->getMessage(), LOG_WARNING);
+		return -1;
+	}
+
+	return 1;
+}
+
 
 /*
  * Actions
@@ -170,6 +259,10 @@ if ($action == 'add') {	// Test on permission not required here (anonymous actio
 
 	if (!is_object($user)) {
 		$user = new User($db);
+	}
+
+	if (!checkToken()) {
+		accessforbidden();
 	}
 
 	$db->begin();
@@ -226,7 +319,36 @@ if ($action == 'add') {	// Test on permission not required here (anonymous actio
 
 	if (!$error) {
 		$dateend = dol_time_plus_duree(GETPOSTINT("datetimebooking"), GETPOSTINT("durationbooking"), 'i');
+		if (GETPOSTINT("datetimebooking") <= 0 || GETPOSTINT("durationbooking") <= 0 || $dateend <= GETPOSTINT("datetimebooking")) {
+			$error++;
+			$errmsg .= $langs->trans("BookcalErrorBadSlot")."<br>\n";
+		}
+	}
 
+	if (!$error) {
+		$sql = "SELECT a.id";
+		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
+		$sql .= " WHERE a.fk_bookcal_calendar = ".((int) $id);
+		$sql .= " AND a.code = 'AC_RDV'";
+		$sql .= " AND a.status = 0";
+		$sql .= " AND a.datep < '".$db->idate($dateend)."'";
+		$sql .= " AND a.datep2 > '".$db->idate(GETPOSTINT("datetimebooking"))."'";
+		$sql .= " LIMIT 1";
+		$sql .= " FOR UPDATE";
+		$resql = $db->query($sql);
+		if ($resql) {
+			if ($db->num_rows($resql) > 0) {
+				$error++;
+				$errmsg .= $langs->trans("BookcalErrorAlreadyBooked")."<br>\n";
+			}
+			$db->free($resql);
+		} else {
+			$error++;
+			$errmsg .= $db->lasterror();
+		}
+	}
+
+	if (!$error) {
 		$actioncomm->label = $langs->trans("BookcalBookingTitle");
 		$actioncomm->type = 'AC_RDV';
 		$actioncomm->type_id = 5;
@@ -260,7 +382,10 @@ if ($action == 'add') {	// Test on permission not required here (anonymous actio
 
 	if (!$error) {
 		$db->commit();
-		$action = 'afteradd';
+		bookcalSendBookingAcknowledgement($contact, $actioncomm);
+		$redirecturl = DOL_URL_ROOT.'/public/bookcal/index.php?id='.(int) $id.'&action=afteradd&bookingdate='.GETPOSTINT("datetimebooking");
+		header("Location: ".$redirecturl, true, 303);
+		exit;
 	} else {
 		$db->rollback();
 		$action = 'create';
@@ -307,7 +432,8 @@ if ($action == 'afteradd') {
 	print '<h2>';
 	print $langs->trans("BookingSuccessfullyBooked");
 	print '</h2>';
-	print $langs->trans("BookingReservationHourAfter", dol_print_date(GETPOSTINT("datetimebooking"), "dayhourtext"));
+	$bookingdate = GETPOSTINT("bookingdate") ? GETPOSTINT("bookingdate") : GETPOSTINT("datetimebooking");
+	print $langs->trans("BookingReservationHourAfter", dol_print_date($bookingdate, "dayhourtext"));
 } else {
 	$param = '';
 
@@ -349,8 +475,8 @@ if ($action == 'afteradd') {
 			$datetimebooking = dol_time_plus_duree($datetimechosen, intval($timestartarray[0]), "h");
 			$datetimebooking = dol_time_plus_duree($datetimebooking, intval($timestartarray[1]), "i");
 		}
-		print '<span>'.img_picto("", "calendar")." ".dol_print_date($datetimebooking, 'dayhourtext').'</span>';
-		print '<div class="center"><a href="'.$_SERVER["PHP_SELF"].'?id=1&year=2024&month=2" class="small">('.$langs->trans("SelectANewDate").')</a></div>';
+			print '<span>'.img_picto("", "calendar")." ".dol_print_date($datetimebooking, 'dayhourtext').'</span>';
+			print '<div class="center"><a href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&year='.$year.'&month='.$month.'" class="small">('.$langs->trans("SelectANewDate").')</a></div>';
 		print '</td>';
 
 		print '<td>';
@@ -418,12 +544,22 @@ if ($action == 'afteradd') {
 			setEventMessages($availability->error, $availability->errors, 'errors');
 		} else {
 			foreach ($arrayofavailabilities as $key => $value) {
-				$startarray = dol_getdate((int) $value->start);
-				$endarray = dol_getdate((int) $value->end);
-				for ($i = $startarray['mday']; $i <= $endarray['mday']; $i++) {
-					if ($todayarray['mon'] >= $startarray['mon'] && $todayarray['mon'] <= $endarray['mon']) {
-						$arrayofavailabledays[dol_mktime(0, 0, 0, $todayarray['mon'], $i, $todayarray['year'])] = dol_mktime(0, 0, 0, $todayarray['mon'], $i, $todayarray['year']);
-					}
+				$starttime = is_numeric($value->start) ? (int) $value->start : $db->jdate($value->start);
+				$endtime = is_numeric($value->end) ? (int) $value->end : $db->jdate($value->end);
+				$monthstart = dol_mktime(0, 0, 0, $month, 1, $year);
+				$monthend = dol_mktime(0, 0, 0, $month, $max_day_in_month, $year);
+
+				if (empty($starttime) || empty($endtime) || $endtime < $monthstart || $starttime > $monthend) {
+					continue;
+				}
+
+				$firstdayarray = dol_getdate(max($starttime, $monthstart));
+				$lastdayarray = dol_getdate(min($endtime, $monthend));
+
+				for ($daytime = dol_mktime(0, 0, 0, $firstdayarray['mon'], $firstdayarray['mday'], $firstdayarray['year']);
+					$daytime <= dol_mktime(0, 0, 0, $lastdayarray['mon'], $lastdayarray['mday'], $lastdayarray['year']);
+					$daytime = dol_time_plus_duree($daytime, 1, 'd')) {
+					$arrayofavailabledays[$daytime] = $daytime;
 				}
 			}
 		}

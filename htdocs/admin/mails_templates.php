@@ -15,6 +15,7 @@
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Vincent Maury			<vmaury@timgroup.fr>
  * Copyright (C) 2025		Jon Bendtsen			<jon.bendtsen.github@jonb.dk>
+ * Copyright (C) 2026		Daniel Bauer			<d.bauer@elaax.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -254,6 +255,9 @@ if (isModEnabled("societe") && $user->hasRight('societe', 'contact', 'lire')) {
 }
 if (isModEnabled('project')) {
 	$elementList['project'] = img_picto('', 'project', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToProject'));
+}
+if (isModEnabled('bookcal')) {
+	$elementList['bookcal_send'] = img_picto('', 'calendar', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('BookingCalendar'));
 }
 if (isModEnabled("propal") && $user->hasRight('propal', 'lire')) {
 	$elementList['propal_send'] = img_picto('', 'propal', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendProposal'));
