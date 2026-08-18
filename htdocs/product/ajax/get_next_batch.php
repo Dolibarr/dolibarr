@@ -38,7 +38,7 @@ require '../../main.inc.php';
  * @var User        $user
  */
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-header('Content-Type: application/json');
+top_httphead('application/json');
 $fk_product = GETPOSTINT('fk_product');
 $qty        = max(1, GETPOSTINT('qty'));
 // Lot/serial values already displayed in the form that have not been submitted yet.
