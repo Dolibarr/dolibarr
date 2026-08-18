@@ -202,6 +202,7 @@ DiscountReceived=Discount received
 DONATION_ACCOUNTINGACCOUNT=Tili (tilikaaviosta), jota käytetään lahjoitusten rekisteröintiin (lahjoitusmoduuli)
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Tili (tilikartalta), jota käytetään jäsenmaksujen rekisteröintiin (Jäsenyysmoduuli - jos jäsenyys kirjataan ilman laskua)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Tili (tilikartasta), jota käytetään oletus-tilinä asiakkaan talletuksen rekisteröintiin
+ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT_FOR_VAT=Account (from the Chart Of Account) to be used as the default account for VAT on customer deposit used in bindings
 UseAuxiliaryAccountOnCustomerDeposit=Tallenna asiakastili henkilökohtaisena tilinä tytäryhtiön kirjanpitoon käsirahariveille (jos se on poistettu käytöstä, henkilötili osamaksu-riville jää tyhjiksi)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default account to register supplier deposit
 UseAuxiliaryAccountOnSupplierDeposit=Tallenna toimittaja-tili henkilökohtaisena tilinä tytäryhtiön kirjanpitoon käsirahariveille (jos se on poistettu käytöstä, osamaksu-rivien henkilökohtainen tili jää tyhjiksi )
