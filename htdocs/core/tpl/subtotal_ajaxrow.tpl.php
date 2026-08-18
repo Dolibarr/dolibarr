@@ -47,6 +47,7 @@ if (empty($object) || !is_object($object)) {
 	exit;
 }
 '
+@phan-var-force CommonObject $object
 @phan-var-force ?string $fk_element
 @phan-var-force ?Task[] $tasksarray
 ';
