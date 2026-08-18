@@ -801,6 +801,7 @@ trait CommonSubtotal
 	 *
 	 * @phan-suppress PhanUndeclaredMethod
 	 * @phan-suppress PhanUndeclaredProperty
+	 * @phan-suppress PhanPluginUnknownObjectMethodCall
 	 */
 	public function duplicateSubtotalBlock($langs, $lineid, $user = null)
 	{
