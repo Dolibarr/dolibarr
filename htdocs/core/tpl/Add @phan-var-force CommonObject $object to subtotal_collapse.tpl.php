@@ -35,6 +35,9 @@ if (empty($object) || !is_object($object)) {
 	print "Error, template page ".basename(__FILE__)." can't be called with no object defined.";
 	exit;
 }
+'
+@phan-var-force CommonObject $object
+';
 
 $tagidfortablednd = (empty($tagidfortablednd) ? 'tablelines' : $tagidfortablednd);
 $langs->load("subtotals");
