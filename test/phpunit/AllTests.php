@@ -261,6 +261,10 @@ class AllTests
 
 		require_once dirname(__FILE__).'/ChargeSocialesTest.php';
 		$suite->addTestSuite('ChargeSocialesTest');
+		require_once dirname(__FILE__).'/DonTest.php';
+		$suite->addTestSuite('DonTest');
+		require_once dirname(__FILE__).'/PaymentDonationTest.php';
+		$suite->addTestSuite('PaymentDonationTest');
 		require_once dirname(__FILE__).'/PaymentVATTest.php';
 		$suite->addTestSuite('PaymentVATTest');
 		require_once dirname(__FILE__).'/HolidayTest.php';
