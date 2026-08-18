@@ -267,6 +267,10 @@ class AllTests
 		$suite->addTestSuite('ExpenseReportTest');
 		require_once dirname(__FILE__).'/LoanTest.php';
 		$suite->addTestSuite('LoanTest');
+		require_once dirname(__FILE__).'/LoanScheduleTest.php';
+		$suite->addTestSuite('LoanScheduleTest');
+		require_once dirname(__FILE__).'/PaymentLoanTest.php';
+		$suite->addTestSuite('PaymentLoanTest');
 
 		require_once dirname(__FILE__).'/EntrepotTest.php';
 		$suite->addTestSuite('EntrepotTest');
