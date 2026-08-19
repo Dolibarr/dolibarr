@@ -383,6 +383,56 @@ abstract class CommonClassTest extends TestCase
 	}
 
 	/**
+	 * Assert that the sum of the persisted line totals matches the object header totals.
+	 * Catches bugs where update_price() forgets a line, or a total is not recalculated after a line change.
+	 *
+	 * @param CommonObject $localobject Object with a ->lines array of line objects having total_ht/total_tva/total_ttc
+	 * @param string       $message     Extra message to show on failure
+	 * @return void
+	 */
+	protected function assertLineTotalsMatchHeader($localobject, $message = '')
+	{
+		$sumht = 0.0;
+		$sumtva = 0.0;
+		$sumttc = 0.0;
+		foreach ($localobject->lines as $line) {
+			$sumht += (float) $line->total_ht;
+			$sumtva += (float) $line->total_tva;
+			$sumttc += (float) $line->total_ttc;
+		}
+
+		$this->assertEqualsWithDelta($sumht, (float) $localobject->total_ht, 0.01, 'total_ht does not match sum of lines. '.$message);
+		$this->assertEqualsWithDelta($sumtva, (float) $localobject->total_tva, 0.01, 'total_tva does not match sum of lines. '.$message);
+		$this->assertEqualsWithDelta($sumttc, (float) $localobject->total_ttc, 0.01, 'total_ttc does not match sum of lines. '.$message);
+	}
+
+	/**
+	 * Compare $localobject against a freshly built specimen of the same class (with the same mutation applied)
+	 * to detect fields unexpectedly changed by a lifecycle action such as update() or valid().
+	 *
+	 * @param object   $localobject         Object to check, already gone through create()/update()/valid()...
+	 * @param callable $mutate              Callback(object $specimen): void applying the same mutation that was applied to $localobject
+	 * @param array<int|string> $fieldstoignorearray Fields to ignore in the comparison (passed to objCompare)
+	 * @param array<mixed> $specimenparam   Param array passed to initAsSpecimen()
+	 * @return void
+	 */
+	protected function assertMatchesFreshSpecimen($localobject, callable $mutate, array $fieldstoignorearray, array $specimenparam = array())
+	{
+		global $db;
+
+		$class = get_class($localobject);
+		$newlocalobject = new $class($db);
+		$newlocalobject->initAsSpecimen($specimenparam);
+		$mutate($newlocalobject);
+
+		$clonedobject = clone $localobject;
+		unset($clonedobject->array_options);
+
+		$arraywithdiff = $this->objCompare($clonedobject, $newlocalobject, true, $fieldstoignorearray);
+		$this->assertEquals(array(), $arraywithdiff, 'Found differences '.var_export($arraywithdiff, true));
+	}
+
+	/**
 	 * Map deprecated module names to new module names
 	 */
 	const DEPRECATED_MODULE_MAPPING = array(
