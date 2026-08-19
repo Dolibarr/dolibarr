@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2017       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2020-2026	BERTON Anthony 			<anthony.berton@bb2a.fr>
  * Copyright (C) ---Replace with your own copyright and developer email---
  * Copyright (C) 2026		Jose MARTINEZ			<jose.martinez@pichinov.com>
  *
@@ -101,6 +102,7 @@ $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : getDolDefaultContextPage(__FILE__); // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
+$mode = GETPOST('mode', 'alpha');
 
 if (GETPOSTISARRAY('actioncode')) {
 	$actioncode = GETPOST('actioncode', 'array:alpha', 3);
@@ -211,6 +213,7 @@ $form = new Form($db);
 if ($object->id > 0) {
 	$title = $langs->trans("MyObject")." - ".$langs->trans('Agenda');
 	//$title = $object->ref." - ".$langs->trans("Agenda");
+	if (getDolGlobalInt('MAIN_HTML_TITLE') && getDolGlobalString('MAIN_APPLICATION_TITLE')) $title = getDolGlobalString('MAIN_APPLICATION_TITLE') . " - " . $title;
 	$help_url = 'EN:Module_Agenda_En|DE:Modul_Terminplanung';
 
 	llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-mymodule page-card_agenda');
@@ -302,12 +305,20 @@ if ($object->id > 0) {
 	}
 
 	$morehtmlright = '';
-
-	//$messagingUrl = DOL_URL_ROOT.'/societe/messaging.php?socid='.$object->id;
-	//$morehtmlright .= dolGetButtonTitle($langs->trans('ShowAsConversation'), '', 'fa fa-comments imgforviewmode', $messagingUrl, '', 1);
-	//$messagingUrl = DOL_URL_ROOT.'/societe/agenda.php?socid='.$object->id;
-	//$morehtmlright .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-bars imgforviewmode', $messagingUrl, '', 2);
-
+	if (version_compare(DOL_VERSION, '22.0.0', '>=')) {
+		$messagingUrl = dol_buildpath("/mymodule/myobject_agenda.php", 1).'?id='.$object->id;
+		if ($mode != 'messaging') {
+			$messagingUrl .= '&mode=messaging';
+			$valbtnmessaging = 2;
+			$valbtnlist = 1;
+		} else {
+			$messagingUrl .= '&mode=list';
+			$valbtnmessaging = 1;
+			$valbtnlist = 2;
+		}
+		$morehtmlright .= dolGetButtonTitle($langs->trans('ShowAsConversation'), '', 'fa fa-comments imgforviewmode', $messagingUrl, '', $valbtnmessaging);
+		$morehtmlright .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-bars imgforviewmode', $messagingUrl, '', $valbtnlist);
+	}
 	if (isModEnabled('agenda')) {
 		if ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create')) {
 			$morehtmlright .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out);
@@ -381,8 +392,13 @@ if ($object->id > 0) {
 		$filters['search_complete'] = $search_complete;		// Can be 'na', '0', '100', '50'
 		$filters['search_filtert'] = $search_filtert;
 
-		// TODO Replace this with the same code than into list.php
-		show_actions_done($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder, !empty($object->module) ? $object->module : '');
+
+		// TODO Replace this with same code than into list.php
+		if ($mode == 'messaging') {
+			show_actions_messaging($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder, property_exists($object, 'module') ? $object->module : '');
+		} else {
+			show_actions_done($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder, !empty($object->module) ? $object->module : '');
+		}
 	}
 }
 
