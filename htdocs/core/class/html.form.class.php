@@ -1975,7 +1975,7 @@ class Form
 			$options_only = 0;
 			$limitto = '';
 
-			$out .= $this->selectcontacts($socid, $selected, $htmlname, $showempty, $exclude, $limitto, $showfunction, $morecss, $options_only, $showsoc, $forcecombo, $events, $moreparam, $htmlid, $multiple, $disableifempty);
+			$out .= $this->selectcontacts($socid, $selected, $htmlname, $showempty, $exclude, $limitto, $showfunction, $morecss, $options_only, $showsoc, $forcecombo, $events, $moreparam, $htmlid, $multiple, $disableifempty, $filter);
 		}
 
 		$conf->global->CONTACT_USE_SEARCH_TO_SELECT = $sav;
@@ -2767,7 +2767,7 @@ class Form
 		if (getDolGlobalString('USER_HIDE_INACTIVE_IN_COMBOBOX') || $notdisabled) {
 			$sql .= " AND (u.statut <> 0";
 			if (!empty($selected)) {
-				$sql .= " OR rowid IN (".$this->db->sanitize(implode(',', $selected)).")";	// We must always keep the selected users to avoid to loose it/them when updating
+				$sql .= " OR u.rowid IN (".$this->db->sanitize(implode(',', $selected)).")";	// We must always keep the selected users to avoid to loose it/them when updating
 			}
 			$sql .= ")";
 		}
@@ -9940,12 +9940,17 @@ class Form
 				}
 			}
 
-			// If user is external user, we must also make a test on llx_societe_commerciaux
+			// If user is external user, we must also make a test on thirdparty
 			if (!empty($user->socid)) {
 				if ($objecttmp->element == 'societe') {
 					$sql .= " AND t.rowid = " . ((int) $user->socid);
 				} elseif (!empty($objecttmp->fields['fk_soc']) || !empty($objecttmp->fields['t.fk_soc']) || property_exists($objecttmp, 'fk_soc') || property_exists($objecttmp, 'socid')) {
 					$sql .= " AND t.fk_soc = " . ((int) $user->socid);
+				} elseif (!empty($objecttmp->parent_element)) {
+					$tmpparent = fetchObjectByElement(0, $objecttmp->parent_element, '', 1);
+					if (is_object($tmpparent) && (!empty($tmpparent->fields['fk_soc']) || !empty($tmpparent->fields['t.fk_soc']) || property_exists($tmpparent, 'fk_soc') || property_exists($tmpparent, 'socid'))) {
+						$sql .= " AND o.fk_soc = " . ((int) $user->socid);
+					}
 				}
 			}
 

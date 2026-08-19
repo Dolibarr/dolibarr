@@ -19,7 +19,7 @@
  * Copyright (C) 2023		Nick Fragoulis
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025	Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2025		Lenin Rivas					<lenin.rivas777@gmail.com>
+ * Copyright (C) 2025-2026	Lenin Rivas					<lenin.rivas777@gmail.com>
  * Copyright (C) 2026		Vincent de Grandpré			<vincent@de-grandpre.quebec>
  * Copyright (C) 2026		Joachim Küter				<git-jk@bloxera.com>
  * Copyright (C) 2026		Lionel Vessiller			<lvessiller@open-dsi.fr>
@@ -1582,7 +1582,9 @@ if (empty($reshook)) {
 							$tva_tx = 0;
 						}
 
-						$object->addline($langs->trans('invoiceAvoirLineWithPaymentRestAmount'), 0, 1, $tva_tx, 0, 0, 0, 0, '', '', 0, 0, 0, 'TTC', $remain_to_pay);
+						// Pass the amount already signed: addline() forces -abs() on credit notes with the default setup, so this
+						// changes nothing there, but it keeps the line negative when that forcing is relaxed (see addline()).
+						$object->addline($langs->trans('invoiceAvoirLineWithPaymentRestAmount'), 0, 1, $tva_tx, 0, 0, 0, 0, '', '', 0, 0, 0, 'TTC', -$remain_to_pay);
 					}
 				}
 
@@ -2986,6 +2988,9 @@ if (empty($reshook)) {
 					unset($_POST['date_endyear']);
 					unset($_POST['situations']);
 					unset($_POST['progress']);
+
+					header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$id);
+					exit();
 				} else {
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
@@ -4407,6 +4412,7 @@ if ($action == 'create') {
 						$newinvoice_static->type = $valarray ['type'];
 						$newinvoice_static->paye = $valarray ['paye'];
 						$newinvoice_static->paid = $valarray ['paye'];
+						$newinvoice_static->multicurrency_code = (string) $valarray['multicurrency_code'];
 
 						$optionsav .= '<option value="'.$key.'"';
 						if ($key == GETPOST('fac_avoir')) {
@@ -4415,6 +4421,9 @@ if ($action == 'create') {
 							// pre-filled extra fields with selected credit note
 							$newinvoice_static->fetch_optionals($key);
 							$object->array_options = $newinvoice_static->array_options;
+
+							// Currency is the same of origin (credit note)
+							$currency_code = $newinvoice_static->multicurrency_code;
 						}
 						$optionsav .= '>';
 						$optionsav .= $newinvoice_static->ref;
@@ -6928,7 +6937,7 @@ if ($action == 'create') {
 						if ($objectidnext) {
 							print '<span class="butActionRefused classfortooltip" title="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('ClassifyCanceled').'</span>';
 						} else {
-							print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'&action=canceled">'.$langs->trans('ClassifyCanceled').'</a>';
+							print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'&action=canceled&token='.newToken().'">'.$langs->trans('ClassifyCanceled').'</a>';
 						}
 					}
 				}

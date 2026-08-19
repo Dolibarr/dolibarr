@@ -156,6 +156,10 @@ if (empty($reshook)) {
 	// Create MO with Children
 	if ($action == 'add' && empty($id) && !empty($TBomLineId) && $permissiontoadd) {
 		$noback = 1;
+		// Sub-BOM lines the user checked "Generate Child MO" for must not be flattened into their
+		// raw materials on the parent MO: keep a single consume line anchored on the sub-assembly
+		// product instead, so it can be found below to create the child MO.
+		$object->noFlattenBomLineIds = array_map('intval', $TBomLineId);
 		include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
 
 		$mo_parent = $object;
@@ -172,7 +176,8 @@ if (empty($reshook)) {
 			// The lookup must be scoped to the parent MO and use an exact match on origin_id/origin_type,
 			// otherwise the default 'origin_id LIKE %..%' filter can return an unrelated line (or none),
 			// which would let the child MO be created from the leftover parent POST data (duplicate MO).
-			$TMoLines = $moline->fetchAll('DESC', 'rowid', 1, 0, array('fk_mo' => $mo_parent->id, 'origin_id' => (int) $id_bom_line, 'origin_type' => 'bomline'));
+			$filter = '(fk_mo:=:'.((int) $mo_parent->id).') AND (origin_id:=:'.((int) $id_bom_line).") AND (origin_type:=:'bomline')";
+			$TMoLines = $moline->fetchAll('DESC', 'rowid', 1, 0, $filter);
 
 			if (empty($TMoLines)) {
 				continue;
@@ -579,7 +584,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	$head = moPrepareHead($object);
 
-	print dol_get_fiche_head($head, 'card', $langs->trans("ManufacturingOrder"), -1, $object->picto);
+	print dol_get_fiche_head($head, 'card', $langs->trans("ManufacturingOrder"), -1, $object->picto, 0, '', '', 0, '', 1);
 
 	$formconfirm = '';
 

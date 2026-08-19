@@ -155,9 +155,6 @@ ErrNoZipEngine=Žiadny nástroj na zips/rozbalenie súboru %s v tomto PHP
 ErrorFileMustBeADolibarrPackage=Súborov %s musí byť zips Dolibarr balíček
 ErrorModuleFileRequired=Musíte vybrať súbor balíka modulov Dolibarr
 ErrorFailToDownloadModuleFromSource=Failed to download the module from the source. Please check your internet connection or the source URL and try again.
-extModuleConfirmInstallTitle = Confirm module installation
-extModuleConfirmInstallText  = You are about to install the following module:<br><br><b>Name:</b> %s<br><b>Version:</b> %s<br><b>Reference:</b> %s<br><b>Last update:</b> %s<br><br>This action is not reversible, Do you confirm the installation of this module?
-install=Install
 ErrorPhpCurlNotInstalled=PHP CURL nie je nainštalovaný, je to nevyhnutné hovoriť s Paypal
 ErrorFailedToAddToMailmanList=Nepodarilo sa pridať záznam do %s %s poštár zoznamu alebo SPIP základne
 ErrorFailedToRemoveToMailmanList=Nepodarilo sa odstrániť záznam %s %s na zoznam poštár alebo SPIP základne
@@ -443,6 +440,7 @@ WarningModuleAffiliatedToAReportedCompany=Warning, this module has been reported
 WarningModuleAffiliatedToAPiratPlatform=Buďte opatrní pri získavaní modulu (plateného alebo bezplatného) z podozrivej neoficiálnej platformy, ako je %s
 WarningDNSServerNotAvailable=Warning, DNS server not available
 WarningSecureKeyNotSet=The value fo the securekey must not be empty
+WarningFullPathWasNotFoundSoWeUseAnAlternativeValue=Note: Full path was not found so we used the alternative value <b>%s</b>
 
 SwissQrOnlyVIR = Faktúru SwissQR je možné pridať iba na faktúry nastavené na úhradu prevodom.
 SwissQrCreditorAddressInvalid = Adresa veriteľa je neplatná (je nastavené PSČ a mesto? (%s)

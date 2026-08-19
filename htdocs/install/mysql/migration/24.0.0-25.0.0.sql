@@ -79,4 +79,9 @@ ALTER TABLE llx_c_action_trigger ADD COLUMN enabled varchar(255);
 UPDATE llx_facture_fourn_det SET pu_ttc = 0 WHERE pu_ttc <> 0 AND NOT EXISTS (SELECT rowid FROM llx_const WHERE __DECRYPT('name')__ = 'MAIN_SUPPLIER_TTC_ENTRY_MODE_RESET_DONE');
 INSERT INTO llx_const (name, entity, value, type, visible, note) SELECT DISTINCT __ENCRYPT('MAIN_SUPPLIER_TTC_ENTRY_MODE_RESET_DONE')__, 0, __ENCRYPT('1')__, 'chaine', 0, 'Supplier invoice pu_ttc reset done once (fix #37658)' FROM llx_const WHERE NOT EXISTS (SELECT rowid FROM llx_const WHERE __DECRYPT('name')__ = 'MAIN_SUPPLIER_TTC_ENTRY_MODE_RESET_DONE');
 
+-- Explicit contact address mode flag. NULL keeps the legacy resolution for existing records,
+-- so an existing alternative contact address stays independent from its thirdparty address.
+-- VMYSQL4.1 ALTER TABLE llx_socpeople ADD COLUMN use_thirdparty_address smallint DEFAULT NULL AFTER fk_soc;
+-- VPGSQL8.2 ALTER TABLE llx_socpeople ADD COLUMN use_thirdparty_address smallint DEFAULT NULL;
+
 -- end of migration

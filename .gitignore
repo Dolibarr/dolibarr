@@ -101,3 +101,6 @@ docs/superpowers/
 
 # Claude Code
 .claude
+
+# Agent-managed git worktrees
+.worktrees/
