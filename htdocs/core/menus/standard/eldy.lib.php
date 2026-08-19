@@ -508,7 +508,10 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 			$url = $shorturl = $tmp[0];
 			$param = (isset($tmp[1]) ? $tmp[1] : '');
 
-			if ((!preg_match('/mainmenu/i', $param)) || !preg_match('/leftmenu/i', $param)) {
+			if ((!preg_match('/mainmenu/i', $param)) && (!preg_match('/leftmenu/i', $param))) {
+				// Only complete when neither mainmenu nor leftmenu is already in the url, like print_left_eldy_menu()
+				// does. With the previous OR, a link that already carried only mainmenu got it duplicated, and a link
+				// that already carried only leftmenu got an empty leftmenu appended that overrode the real value (#39584).
 				// @phan-suppress-next-line PhanTypeSuspiciousStringExpression
 				$param .= ($param ? '&' : '').'mainmenu='.$newTabMenu[$i]['mainmenu'].'&leftmenu=';
 			}
