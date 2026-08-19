@@ -68,15 +68,13 @@ ALTER TABLE llx_element_element ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTA
 
 ALTER TABLE llx_c_action_trigger ADD COLUMN enabled varchar(255);
 
--- Fix #37658 - subprice_ttc (pu_ttc for supplier invoices) now flags a line entered including tax (0 when
--- entered excluding tax). Supplier lines used to store it unconditionally (even for lines entered excluding
--- tax), so reset it on existing supplier lines to avoid them being wrongly treated as entered including tax
--- on clone/edit/bulk actions. A line can be re-entered including tax to set the value again.
--- Guarded on the upgrade source version (MAIN_VERSION_LAST_UPGRADE is still the source version at this point,
--- updated only at the end of step5) so re-running the migration on a 25.x base does NOT wipe values set since.
-UPDATE llx_commande_fournisseurdet SET subprice_ttc = 0 WHERE subprice_ttc <> 0 AND EXISTS (SELECT c.rowid FROM llx_const as c WHERE c.name = 'MAIN_VERSION_LAST_UPGRADE' AND c.value < '25.0.0');
-UPDATE llx_facture_fourn_det SET pu_ttc = 0 WHERE pu_ttc <> 0 AND EXISTS (SELECT c.rowid FROM llx_const as c WHERE c.name = 'MAIN_VERSION_LAST_UPGRADE' AND c.value < '25.0.0');
-UPDATE llx_supplier_proposaldet SET subprice_ttc = 0 WHERE subprice_ttc <> 0 AND EXISTS (SELECT c.rowid FROM llx_const as c WHERE c.name = 'MAIN_VERSION_LAST_UPGRADE' AND c.value < '25.0.0');
+-- Fix #37658 - pu_ttc for supplier invoices now flags a line entered including tax (0 when entered excluding
+-- tax). Before this change it was stored unconditionally (pu_ttc = total_ttc / qty), so reset it on existing
+-- lines to keep them behaving as excluding tax; it is set again when a line is re-entered including tax.
+-- Guarded on MAIN_VERSION_LAST_UPGRADE < major 25 (integer compare, not lexicographic; __DECRYPT handles the
+-- encrypted-const case).
+-- VMYSQL4.3 UPDATE llx_facture_fourn_det SET pu_ttc = 0 WHERE pu_ttc <> 0 AND EXISTS (SELECT rowid FROM llx_const WHERE __DECRYPT('name')__ = 'MAIN_VERSION_LAST_UPGRADE' AND CAST(SUBSTRING_INDEX(__DECRYPT('value')__, '.', 1) AS UNSIGNED) < 25);
+-- VPGSQL8.2 UPDATE llx_facture_fourn_det SET pu_ttc = 0 WHERE pu_ttc <> 0 AND EXISTS (SELECT rowid FROM llx_const WHERE __DECRYPT('name')__ = 'MAIN_VERSION_LAST_UPGRADE' AND CAST(split_part(__DECRYPT('value')__, '.', 1) AS INTEGER) < 25);
 
 -- Explicit contact address mode flag. NULL keeps the legacy resolution for existing records,
 -- so an existing alternative contact address stays independent from its thirdparty address.
