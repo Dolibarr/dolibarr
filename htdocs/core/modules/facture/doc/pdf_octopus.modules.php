@@ -3639,6 +3639,9 @@ class pdf_octopus extends ModelePDFFactures
 			if (empty($line)) {
 				continue;
 			}
+			/** @var FactureLigne $line */
+			'@phan-var-force FactureLigne $line';
+			
 			if ($line->special_code == SUBTOTALS_SPECIAL_CODE) {
 				if ($line->qty > 0 && $line->qty <= $level) {
 					break;	// Title line that opened the group: we stop here
