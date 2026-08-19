@@ -1053,17 +1053,17 @@ class FormFile
 
 					// Show picto delete, print...
 					if ($delallowed || $printer || $morepicto) {
-						$$tmpout .= '<td class="right nowraponall">';
+						$tmpout .= '<td class="right nowraponall">';
 						if ($delallowed) {
 							$tmpurlsource = preg_replace('/#[a-zA-Z0-9_]*$/', '', $urlsource);
-							$tmpout .= '<a class="reposition" href="'.$tmpurlsource.((strpos($tmpurlsource, '?') === false) ? '?' : '&').'action='.urlencode($removeaction).'&token='.newToken().'&file='.urlencode($relativepath);
+							$tmpout .= '<a class="maginleftonly marginrightonly reposition" href="'.$tmpurlsource.((strpos($tmpurlsource, '?') === false) ? '?' : '&').'action='.urlencode($removeaction).'&token='.newToken().'&file='.urlencode($relativepath);
 							$tmpout .= ($param ? '&'.$param : '');
 							//$out.= '&modulepart='.$modulepart; // TODO obsolete ?
 							//$out.= '&urlsource='.urlencode($urlsource); // TODO obsolete ?
 							$tmpout .= '">'.img_picto($langs->trans("Delete"), 'delete').'</a>';
 						}
 						if ($printer) {
-							$tmpout .= '<a class="marginleftonly reposition" href="'.$urlsource.(strpos($urlsource, '?') ? '&' : '?').'action=print_file&token='.newToken().'&printer='.urlencode($modulepart).'&file='.urlencode($relativepath);
+							$tmpout .= '<a class="maginleftonly marginleftonly reposition" href="'.$urlsource.(strpos($urlsource, '?') ? '&' : '?').'action=print_file&token='.newToken().'&printer='.urlencode($modulepart).'&file='.urlencode($relativepath);
 							$tmpout .= ($param ? '&'.$param : '');
 							$tmpout .= '">'.img_picto($langs->trans("PrintFile", $relativepath), 'printer').'</a>';
 						}
@@ -1125,7 +1125,7 @@ class FormFile
 		}
 
 		if ($headershown) {
-			// Affiche pied du tableau
+			// end of table
 			$out .= "</table>\n";
 			$out .= "</div>\n";
 			if ($genallowed) {
@@ -1407,7 +1407,7 @@ class FormFile
 			// Show title of list of existing files
 			$morehtmlright = '';
 			if (!empty($moreoptions['showhideaddbutton']) && $conf->use_javascript_ajax) {
-				$tmpurlforbutton = 'javascript:console.log("open add file form");jQuery(".divattachnewfile").removeClass("hidden").toggle(); if (!jQuery(".divattachnewfile").is(":hidden")) { jQuery(".divattachnewfile input[type=\'file\']").first().click();} void(0);';	// scope file picker click to the just-shown form to avoid triggering native file dialog twice when other input[type=file] exist on the page; removeClass keeps the toggle effective when a theme stylesheet ships a `.hidden { display: none !important }` rule (see #34780, #36782)
+				$tmpurlforbutton = 'javascript:console.log("open add file form"); if (jQuery(".divattachnewfile").is(":hidden")) { jQuery(".divattachnewfile").removeClass("hidden"); jQuery(".divattachnewfile input[type=\'file\']").first().click(); } else { jQuery(".divattachnewfile").addClass("hidden"); } void(0);';
 				$morehtmlright .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', $tmpurlforbutton, '', $permtoeditline);
 			}
 
@@ -2221,7 +2221,7 @@ class FormFile
 				//if ($forcedownload) print '&attachment=1';
 				//print '&file='.urlencode($relativefile).'">';
 				//print img_view().'</a> &nbsp; ';
-				//if ($permissiontodelete) print '<a href="'.$url.'?id='.$object->id.'&section='.$_REQUEST["section"].'&action=delete&token='.newToken().'&urlfile='.urlencode($file['name']).'">'.img_delete().'</a>';
+				//if ($permissiontodelete) print '<a href="'.$url.'?id='.$object->id.'&section='.urlencode(GETPOST("section")).'&action=delete&token='.newToken().'&urlfile='.urlencode($file['name']).'">'.img_delete().'</a>';
 				//else print '&nbsp;';
 				print "</td>";
 
@@ -2286,7 +2286,7 @@ class FormFile
 
 		$morehtmlright = '';
 		if (!empty($moreoptions['showhideaddbutton']) && $conf->use_javascript_ajax) {
-			$morehtmlright .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', 'javascript:console.log("open addlink form"); jQuery(".divlinkfile").toggle(); void(0);', '', $permissiontoedit);
+			$morehtmlright .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', 'javascript:console.log("open addlink form"); if (jQuery(".divlinkfile").is(":hidden")) { jQuery(".divlinkfile").removeClass("hidden"); } else { jQuery(".divlinkfile").addClass("hidden"); } void(0);', '', $permissiontoedit);
 		}
 
 		// Show list of associated links

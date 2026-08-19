@@ -3,7 +3,7 @@
  * Copyright (C) 2015	   	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2023 		Alexandre Janniaux   	<alexandre.janniaux@gmail.com>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +33,8 @@ global $conf,$user,$langs,$db,$mysoc;
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/date.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/product/class/product.class.php';
+require_once dirname(__FILE__).'/../../htdocs/societe/class/societe.class.php';
+require_once dirname(__FILE__).'/../../htdocs/contact/class/contact.class.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (! defined('NOREQUIREUSER')) {
@@ -108,6 +110,212 @@ class FunctionsLibTest extends CommonClassTest
 		print __METHOD__."\n";
 	}
 
+
+	/**
+	 * testGetExdirForObject
+	 *
+	 * get_exdir() with $level = 0 and $withoutslash = 1 is the reference implementation used to forge the
+	 * directory where the documents of an object are stored. FileUpload (the drag and drop of a file on a
+	 * card) relies on it to store the file into the directory read by the "Attached files" tab.
+	 *
+	 * @return void
+	 */
+	public function testGetExdirForObject()
+	{
+		global $conf, $db;
+
+		// PRODUCT_USE_OLD_PATH_FOR_PHOTO makes get_exdir() answer a two level path built on the id for a
+		// product, instead of the ref. The assertions below are on the default path, so the option is forced
+		// off here: it is a global, another test of the suite may have left it on, and the whole suite runs in
+		// a single process. The option gets its own coverage at the end of this test.
+		$savoldpath = getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO');
+		$conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO = 0;
+
+		// The ref is used when it is defined
+		$object = new Product($db);
+		$object->id = 42;
+		$object->ref = 'MYREF';
+		$this->assertSame('MYREF', get_exdir(0, 0, 0, 1, $object, 'product'), 'The ref must be used when it is defined');
+
+		// The trailing slash is added when $withoutslash is 0. FileUpload appends its own '/' to the
+		// result, so it must call get_exdir() with $withoutslash = 1 to avoid a double slash in the path.
+		$this->assertSame('MYREF/', get_exdir(0, 0, 0, 0, $object, 'product'), 'A trailing slash is expected when $withoutslash is 0');
+
+		// The modulepart is deduced from the object when it is not given
+		$this->assertSame('MYREF', get_exdir(0, 0, 0, 1, $object), 'The modulepart must be deduced from the object');
+
+		// The ref is a user input: it must never introduce a directory traversal nor a sub directory
+		$object->ref = '../../etc';
+		$this->assertStringNotContainsString('..', get_exdir(0, 0, 0, 1, $object, 'product'), 'A ref must never allow a directory traversal');
+		$object->ref = 'A/B';
+		$this->assertStringNotContainsString('/', get_exdir(0, 0, 0, 1, $object, 'product'), 'A ref must never introduce a sub directory');
+
+		// The id is used as a fallback when the ref is empty
+		$object->ref = '';
+		$this->assertSame('42', get_exdir(0, 0, 0, 1, $object, 'product'), 'The id must be used when the ref is empty');
+		$object->ref = null;
+		$this->assertSame('42', get_exdir(0, 0, 0, 1, $object, 'product'), 'The id must be used when the ref is null');
+		$object->ref = '0';
+		$this->assertSame('42', get_exdir(0, 0, 0, 1, $object, 'product'), 'A ref "0" is empty for php, so the id is used');
+
+		// An object with neither a ref nor an id falls back on the directory '0', shared by every unsaved
+		// object. A caller must never forge a path from an object it did not load.
+		$empty = new Product($db);
+		$empty->id = 0;
+		$empty->ref = '';
+		$this->assertSame('0', get_exdir(0, 0, 0, 1, $empty, 'product'), 'An object with no id and no ref falls back on the directory "0"');
+
+		// The id is always used for a thirdparty, because its ref is a company name, so it is not unique
+		$thirdparty = new Societe($db);
+		$thirdparty->id = 7;
+		$thirdparty->ref = 'My company';
+		$this->assertSame('7', get_exdir(0, 0, 0, 1, $thirdparty, 'societe'), 'The id must be used for a thirdparty');
+		$this->assertSame('7', get_exdir(0, 0, 0, 1, $thirdparty, 'thirdparty'), 'The id must be used for a thirdparty');
+
+		// The rule is on the class, not only on the modulepart: a contact belongs to the module 'societe'
+		// but it is not a Societe, so it keeps its ref
+		$contact = new Contact($db);
+		$contact->id = 8;
+		$contact->ref = 'DOE';
+		$this->assertSame('DOE', get_exdir(0, 0, 0, 1, $contact, 'contact'), 'A contact is not a thirdparty, its ref is used');
+
+		// A module storing its documents on several levels returns the level directories only, not the object
+		$object->ref = 'MYREF';
+		$this->assertSame('2/4', get_exdir(0, 0, 0, 1, $object, 'invoice_supplier'), 'Two levels of directories are expected');
+		$this->assertSame('2/4', get_exdir(0, 0, 0, 1, $object, 'supplier_invoice'), 'The two aliases must answer the same directory');
+		$this->assertSame('2/4/', get_exdir(0, 0, 0, 0, $object, 'invoice_supplier'), 'A trailing slash is expected when $withoutslash is 0');
+
+		// The levels are built from the id, not from the ref
+		$object->id = 1234;
+		$this->assertSame('4/3', get_exdir(0, 0, 0, 1, $object, 'invoice_supplier'), 'The levels must be built from the id');
+
+		// With PRODUCT_USE_OLD_PATH_FOR_PHOTO a product joins the modules storing on two levels, so its
+		// directory is built on the id and the ref is ignored. This is the path the "Attached files" tab of a
+		// product reads on such an instance, so FileUpload must forge the same one.
+		$conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO = 1;
+		$object->id = 42;
+		$object->ref = 'MYREF';
+		$this->assertSame('2/4', get_exdir(0, 0, 0, 1, $object, 'product'), 'With the old path option a product uses two levels built on its id');
+
+		$conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO = $savoldpath;
+	}
+
+	/**
+	 * testGetElementPropertiesDirOutput
+	 *
+	 * The 'dir_output' returned for an element must be the directory read by the "Attached files" tab of
+	 * this element, otherwise a file uploaded by drag and drop is stored but never shown to the user.
+	 *
+	 * @return void
+	 */
+	public function testGetElementPropertiesDirOutput()
+	{
+		global $conf, $db;
+
+		// A contact is stored into a sub directory of the thirdparty module, see contact/document.php.
+		// The exact value is asserted and not only the suffix: an assertion on the suffix alone would also
+		// pass on the value '/contact' returned when the module is disabled, which is the bug guarded here.
+		if (!isModEnabled('societe')) {
+			$this->markTestSkipped('The module societe must be enabled to check the directory of a contact');
+		}
+		$prop = getElementProperties('contact');
+		$this->assertSame('societe', $prop['module']);
+		$this->assertSame($conf->societe->multidir_output[$conf->entity].'/contact', $prop['dir_output'], 'A contact is stored into a /contact sub directory');
+		$this->assertSame($conf->societe->multidir_temp[$conf->entity].'/contact', $prop['dir_temp'], 'The sub directory applies to the temporary directory too');
+
+		// The elements added or fixed here must answer the class that is really able to load them, and the
+		// table restrictedArea() builds its sql on.
+		$expected = array(
+			// element => array(module, classname, classpath, classfile, table_element)
+			'payment' => array('facture', 'Paiement', 'compta/paiement/class', 'paiement', 'paiement'),
+			'payment_supplier' => array('fournisseur', 'PaiementFourn', 'fourn/class', 'paiementfourn', 'paiementfourn'),
+			'payment_various' => array('bank', 'PaymentVarious', 'compta/bank/class', 'paymentvarious', 'payment_various'),
+			'stocktransfer' => array('stocktransfer', 'StockTransfer', 'product/stock/stocktransfer/class', 'stocktransfer', 'stocktransfer_stocktransfer'),
+			'job' => array('hrm', 'Job', 'hrm/class', 'job', 'hrm_job'),
+			'position' => array('hrm', 'Position', 'hrm/class', 'position', 'hrm_job_user'),
+			'skill' => array('hrm', 'Skill', 'hrm/class', 'skill', 'hrm_skill'),
+			'evaluation' => array('hrm', 'Evaluation', 'hrm/class', 'evaluation', 'hrm_evaluation'),
+		);
+		foreach ($expected as $element => $values) {
+			$prop = getElementProperties($element);
+
+			$this->assertSame($element, $prop['element'], 'The element '.$element.' must not be truncated by the myobject_mysubobject rule');
+			$this->assertSame($values[0], $prop['module'], 'Wrong module for the element '.$element);
+			$this->assertSame($values[1], $prop['classname'], 'Wrong classname for the element '.$element);
+			$this->assertSame($values[2], $prop['classpath'], 'Wrong classpath for the element '.$element);
+			$this->assertSame($values[3], $prop['classfile'], 'Wrong classfile for the element '.$element);
+			$this->assertSame($values[4], $prop['table_element'], 'Wrong table for the element '.$element);
+
+			// The class must really exist, otherwise fetchObjectByElement() ends on a fatal error
+			$file = DOL_DOCUMENT_ROOT.'/'.$prop['classpath'].'/'.$prop['classfile'].'.class.php';
+			$this->assertFileExists($file, 'The class file of the element '.$element.' does not exist');
+			require_once $file;
+			$this->assertTrue(class_exists($prop['classname']), 'The class '.$prop['classname'].' of the element '.$element.' does not exist');
+
+			// And the table must exist too, restrictedArea() builds its sql on it.
+			// The table of an optional module is only created when the module is enabled, so the check is
+			// skipped otherwise: the mapping asserted above does not depend on the module being enabled.
+			if (isModEnabled($values[0])) {
+				$sql = "SELECT COUNT(*) as nb FROM ".$db->prefix().$db->escape($values[4]);
+				$resql = $db->query($sql);
+				$this->assertNotFalse($resql, 'The table '.$values[4].' of the element '.$element.' is not readable');
+				if ($resql) {
+					$db->free($resql);
+				}
+			}
+		}
+
+		// The elements of the hrm module are all stored into a sub directory named after the element
+		if (isModEnabled('hrm')) {
+			foreach (array('job', 'position', 'skill', 'evaluation') as $element) {
+				$prop = getElementProperties($element);
+				$this->assertSame($conf->hrm->dir_output.'/'.$element, $prop['dir_output'], 'The element '.$element.' is stored into a /'.$element.' sub directory');
+				$this->assertSame($conf->hrm->dir_temp.'/'.$element, $prop['dir_temp'], 'The sub directory applies to the temporary directory of '.$element.' too');
+			}
+		}
+
+		// The sub directory must not be appended when the module is disabled, otherwise we would return a
+		// path at the root of the file system (for example '/contact') instead of an empty string. This is
+		// only observable with the module really off, so it is simulated here.
+		$elements = array('contact' => 'societe', 'job' => 'hrm', 'position' => 'hrm', 'skill' => 'hrm',
+			'evaluation' => 'hrm', 'conferenceorbooth' => 'eventorganization');
+		foreach ($elements as $element => $module) {
+			$savconfmodule = isset($conf->$module) ? $conf->$module : null;
+			$savmodules = $conf->modules;
+
+			unset($conf->$module);
+			unset($conf->modules[$module]);
+
+			try {
+				$prop = getElementProperties($element);
+				$this->assertSame('', $prop['dir_output'], 'The dir_output of the element '.$element.' must be empty when the module '.$module.' is disabled, not the sub directory alone');
+				$this->assertSame('', $prop['dir_temp'], 'The dir_temp of the element '.$element.' must be empty when the module '.$module.' is disabled');
+			} finally {
+				if ($savconfmodule !== null) {
+					$conf->$module = $savconfmodule;
+				}
+				$conf->modules = $savmodules;
+			}
+		}
+
+		// So the directory of an element is either empty, or a directory of the data directory of Dolibarr,
+		// and never the sentinel string returned by getMultidirOutput() when it fails.
+		$allelements = array('contact', 'job', 'position', 'skill', 'evaluation', 'conferenceorbooth',
+			'partnership', 'stocktransfer', 'payment', 'payment_supplier', 'payment_various', 'product',
+			'societe', 'action', 'expedition', 'reception', 'don', 'expensereport', 'holiday', 'mo',
+			'productlot', 'resource', 'workstation', 'knowledgerecord', 'asset', 'salary', 'chargesociales');
+		foreach ($allelements as $element) {
+			$prop = getElementProperties($element);
+			foreach (array('dir_output', 'dir_temp') as $key) {
+				$dir = (string) $prop[$key];
+				$this->assertStringNotContainsString('error-diroutput-not-defined-for-this-object', $dir, 'The '.$key.' of the element '.$element.' must never be the sentinel of getMultidirOutput');
+				$this->assertTrue(
+					$dir === '' || strpos($dir, DOL_DATA_ROOT) === 0,
+					'The '.$key.' of the element '.$element.' must be empty or inside DOL_DATA_ROOT, got "'.$dir.'"'
+				);
+			}
+		}
+	}
 
 	/**
 	 * testDolCheckFilters
@@ -271,6 +479,21 @@ class FunctionsLibTest extends CommonClassTest
 		$sql = forgeSQLFromUniversalSearchCriteria($filter);
 		$this->assertEquals(" AND ((t.fk_soc IN ('1','2=b')))", $sql);
 
+		// Test use of forbiddenstring
+		$errorstr = '';
+		$filter = "(t.fk_soc:IN:'1','2=b')";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter, $errorstr, 0, 0, 0, array('aaa'));
+		$this->assertEquals(" AND ((t.fk_soc IN ('1','2=b')))", $sql);
+
+		$filter = "(t.api_key:IN:'1','2=b')";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter, $errorstr, 0, 0, 0, array('aaa'));
+		$this->assertEquals(" AND (1=1)", $sql);
+
+		$filter = "(t.fk_soc:IN:'1','2=b')";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter, $errorstr, 0, 0, 0, array('fk_soc'));
+		$this->assertEquals(" AND (1=1)", $sql);
+
+
 		global $dolibarr_allow_unsecured_select_in_extrafields_filter;
 
 		// If $dolibarr_allow_unsecured_select_in_extrafields_filter is set
@@ -414,7 +637,9 @@ class FunctionsLibTest extends CommonClassTest
 		print __METHOD__." ".$input." result=".$result."\n";
 		$this->assertEquals(0, $result);
 
-		$input = "usace.army.mil";
+		// Note: intentionally not a .mil domain (some CI network environments filter/block .mil DNS
+		// resolution intermittently, which made this assertion flaky without any actual code issue).
+		$input = "microsoft.com";
 		$result = isValidMXRecord($input);
 		print __METHOD__." ".$input." result=".$result."\n";
 		$this->assertEquals(1, $result);
@@ -1287,6 +1512,23 @@ class FunctionsLibTest extends CommonClassTest
 		$object->country_code = 'CA';
 		$phone = dol_print_phone('1234567890', $object->country_code, 0, 0, 0, ' ');
 		$this->assertEquals('<span class="paddingright">(123) 456-7890</span>', $phone, 'Phone for CA 1');
+
+		// Every digit must appear exactly once, in order, whatever the country format
+		$object->country_code = 'JO';
+		$phone = dol_print_phone('+96212345678', $object->country_code, 0, 0, 0, ' ');
+		$this->assertEquals('<span class="paddingright">+962 1 234 56 78</span>', $phone, 'Phone for JO 1');
+
+		$object->country_code = 'PE';
+		$phone = dol_print_phone('987654321', $object->country_code, 0, 0, 0, ' ');
+		$this->assertEquals('<span class="paddingright">987 654 321</span>', $phone, 'Phone for PE 1');
+
+		$object->country_code = 'PE';
+		$phone = dol_print_phone('+5111234567', $object->country_code, 0, 0, 0, ' ');
+		$this->assertEquals('<span class="paddingright">+511 123 4567</span>', $phone, 'Phone for PE 2');
+
+		$object->country_code = 'PE';
+		$phone = dol_print_phone('+51987654321', $object->country_code, 0, 0, 0, ' ');
+		$this->assertEquals('<span class="paddingright">+51 987 654 321</span>', $phone, 'Phone for PE 3');
 	}
 
 
@@ -1370,6 +1612,21 @@ class FunctionsLibTest extends CommonClassTest
 			$this->assertFalse(verifCond($cond));
 		}
 	}
+
+	/**
+	 * testVerifCondOnMethods
+	 *
+	 * @return	void
+	 */
+	public function testVerifCondOnMethods()
+	{
+		$a = verifCond('$user->hasRight("facture", "read")');
+		$this->assertTrue($a);
+
+		$a = verifCond('$user->hasMethodKo("facture", "read")');
+		$this->assertFalse($a);
+	}
+
 
 	/**
 	 * testGetDefaultTva
@@ -1483,6 +1740,84 @@ class FunctionsLibTest extends CommonClassTest
 		print __METHOD__." rule=RULE 5 ECOMMERCE_200238EC FR-US\n";
 		$vat = get_default_tva($companyfr, $companyus, 0);
 		$this->assertEquals(0, $vat, 'RULE 5 ECOMMERCE_200238EC');
+	}
+
+	/**
+	 * testGetDefaultTvaForBuyerState
+	 *
+	 * Covers VATRULE 2: when the buyer department (state/province) has a VAT rule in the
+	 * dictionary, it becomes the default VAT rate. Also checks that only active rates of the
+	 * current entity are considered (an inactive rate must never be selected).
+	 *
+	 * @return	void
+	 */
+	public function testGetDefaultTvaForBuyerState()
+	{
+		global $conf,$user,$langs,$db;
+		$this->savconf = $conf;
+		$this->savuser = $user;
+		$this->savlangs = $langs;
+		$this->savdb = $db;
+
+		// Make sure the ecommerce directive left on by a previous test does not interfere with VATRULE 2
+		unset($conf->global->SERVICE_ARE_ECOMMERCE_200238EC);
+
+		// Seller subject to VAT in France
+		$companyfr = new Societe($db);
+		$companyfr->country_code = 'FR';
+		$companyfr->tva_assuj = 1;
+		$companyfr->tva_intra = 'FR9999';
+
+		// Find an existing department (state/province) to attach a VAT rule to, and the France country id
+		$stateid = 0;
+		$sql = "SELECT rowid FROM ".$db->prefix()."c_departements WHERE code_departement = '75'";
+		$resql = $db->query($sql);
+		if ($resql && $db->num_rows($resql)) {
+			$objdep = $db->fetch_object($resql);
+			$stateid = (int) $objdep->rowid;
+		}
+		if (empty($stateid)) {
+			$this->markTestSkipped('No department found in c_departements to run the VATRULE 2 test.');
+			return;
+		}
+
+		$frpaysid = 0;
+		$sql = "SELECT rowid FROM ".$db->prefix()."c_country WHERE code = 'FR'";
+		$resql = $db->query($sql);
+		if ($resql && $db->num_rows($resql)) {
+			$objpays = $db->fetch_object($resql);
+			$frpaysid = (int) $objpays->rowid;
+		}
+
+		// Insert two temporary VAT rules attached to that department:
+		//  - an ACTIVE one at 12 that must be selected
+		//  - an INACTIVE one at 25 (higher, so it would win the taux DESC sort) that must be ignored
+		$db->query("DELETE FROM ".$db->prefix()."c_tva WHERE code IN ('TESTVATACT', 'TESTVATINACT')");
+		$db->query("INSERT INTO ".$db->prefix()."c_tva (entity, fk_pays, fk_department_buyer, code, type_vat, taux, use_default, recuperableonly, active) VALUES (1, ".$frpaysid.", ".$stateid.", 'TESTVATACT', 0, 12, 0, 0, 1)");
+		$db->query("INSERT INTO ".$db->prefix()."c_tva (entity, fk_pays, fk_department_buyer, code, type_vat, taux, use_default, recuperableonly, active) VALUES (1, ".$frpaysid.", ".$stateid.", 'TESTVATINACT', 0, 25, 0, 0, 0)");
+
+		// Buyer located in that department
+		$buyer = new Societe($db);
+		$buyer->country_code = 'FR';
+		$buyer->tva_assuj = 1;
+		$buyer->state_id = $stateid;
+
+		// Case 1: an active department rate exists -> VATRULE 2 returns it, ignoring the inactive (higher) one
+		$vatactive = get_default_tva($companyfr, $buyer, 0);
+
+		// Case 2: no active department rate remains -> VATRULE 2 must not fire on the inactive rows
+		$db->query("UPDATE ".$db->prefix()."c_tva SET active = 0 WHERE code = 'TESTVATACT'");
+		$vatinactive = get_default_tva($companyfr, $buyer, 0);
+
+		// Cleanup fixtures before asserting so a failed assertion never leaves test data behind
+		$db->query("DELETE FROM ".$db->prefix()."c_tva WHERE code IN ('TESTVATACT', 'TESTVATINACT')");
+
+		// The active department rate is selected...
+		$this->assertStringContainsString('TESTVATACT', $vatactive, 'VATRULE 2 must select the active department VAT rate');
+		// ...and the inactive one is never selected (this is the fix)
+		$this->assertStringNotContainsString('TESTVATINACT', $vatactive, 'An inactive department VAT rate must not be selected by VATRULE 2');
+		// When no active department rate remains, VATRULE 2 does not select the (now inactive) rate either
+		$this->assertStringNotContainsString('TESTVATACT', $vatinactive, 'An inactive department VAT rate must not be selected by VATRULE 2');
 	}
 
 	/**
@@ -2118,5 +2453,264 @@ class FunctionsLibTest extends CommonClassTest
 		$s = '/aaa/bbb -a -b';
 		$result = dol_sanitizePathName($s, '_', 0, 1);
 		$this->assertEquals('/aaa/bbb -a -b', $result);
+	}
+
+	/**
+	 * testPrice
+	 *
+	 * @return void
+	 */
+	public function testPrice()
+	{
+		global $conf;
+
+		// English formatting: SeparatorDecimal=. and SeparatorThousand=,
+		$langsus = new Translate('', $conf);
+		$langsus->setDefaultLang('en_US');
+		$langsus->load('main');
+
+		// Default rounding is min(MAIN_MAX_DECIMALS_UNIT, MAIN_MAX_DECIMALS_TOT) = min(5, 2) = 2 (checked in setUpBeforeClass)
+		$this->assertEquals('1,000.00', price(1000, 0, $langsus));
+		$this->assertEquals('0.00', price(0, 0, $langsus));
+		$this->assertEquals('-1,000.00', price(-1000, 0, $langsus));
+		$this->assertEquals('1,234.50', price(1234.5, 0, $langsus));
+		// More decimals than the default rounding are kept, to not lose information
+		$this->assertEquals('1,234.567', price(1234.567, 0, $langsus));
+
+		// French formatting: SeparatorDecimal=, and SeparatorThousand=Space
+		$langsfr = new Translate('', $conf);
+		$langsfr->setDefaultLang('fr_FR');
+		$langsfr->load('main');
+
+		$this->assertEquals('1 234,50', price(1234.5, 0, $langsfr));
+
+		// HTML mode replaces spaces with &nbsp;
+		$this->assertEquals('1&nbsp;234,50', price(1234.5, 1, $langsfr));
+
+		// International separators when $outlangs = 'none'
+		$this->assertEquals('1234.50', price(1234.5, 0, 'none'));
+
+		// forcerounding forces the exact number of decimals shown (0 forces rounding to unit)
+		$this->assertEquals('1,235', price(1234.5, 0, $langsus, 1, -1, 0));
+		// 'MU' forces MAIN_MAX_DECIMALS_UNIT (5, checked in setUpBeforeClass)
+		$this->assertEquals('1,234.56789', price(1234.56789, 0, $langsus, 1, -1, 'MU'));
+
+		// Currency symbol placement: USD is shown before the amount, EUR after
+		$this->assertEquals('$1,000.00', price(1000, 0, $langsus, 1, -1, -1, 'USD'));
+		$this->assertEquals('1,000.00 €', price(1000, 0, $langsus, 1, -1, -1, 'EUR'));
+	}
+
+	/**
+	 * testDolPrintDate
+	 *
+	 * @return void
+	 */
+	public function testDolPrintDate()
+	{
+		// Timestamp for 2020-07-01 00:00:01 UTC (same value already used and verified in testDolGetDate)
+		$timestamp = 1593561601;
+
+		$this->assertEquals('', dol_print_date('', 'standard', true), 'Empty input must return empty string');
+		$this->assertEquals('1970-01-01 00:00:00', dol_print_date(0, 'standard', true), 'Timestamp 0 is a valid date (1970-01-01)');
+
+		// Format shortcuts that are not language-sensitive
+		$this->assertEquals('2020-07-01', dol_print_date($timestamp, 'dayrfc', true));
+		$this->assertEquals('2020-07-01 00:00:01', dol_print_date($timestamp, 'standard', true));
+		$this->assertEquals('2020-07-01T00:00:01Z', dol_print_date($timestamp, 'dayhourrfc', true));
+		$this->assertEquals('20200701000001', dol_print_date($timestamp, 'dayhourlog', true));
+
+		// A literal (non-shortcut) strftime-style format string
+		$this->assertEquals('01/07/2020 00:00', dol_print_date($timestamp, '%d/%m/%Y %H:%M', true));
+
+		// tzoutput=false uses the PHP server timezone instead of GMT: forced to UTC here so both must match
+		$savtz = date_default_timezone_get();
+		date_default_timezone_set('UTC');
+		$this->assertEquals('2020-07-01 00:00:01', dol_print_date($timestamp, 'standard', false));
+		date_default_timezone_set($savtz);
+	}
+
+	/**
+	 * testDolPrintSize
+	 *
+	 * @return void
+	 */
+	public function testDolPrintSize()
+	{
+		global $conf, $langs;
+
+		$oldlangs = $langs;
+		$newlangs = new Translate('', $conf);
+		$newlangs->setDefaultLang('en_US');
+		$newlangs->load('main');
+		$langs = $newlangs;
+
+		// Below the 10240 threshold, size is always kept in bytes regardless of $shortvalue
+		$this->assertEquals('500 Bytes', dol_print_size(500));
+		$this->assertEquals('500 Bytes', dol_print_size(500, 1));
+
+		// Above the threshold, $shortvalue=1 converts to Kilobytes (rounded)
+		$this->assertEquals('20 Kilobytes', dol_print_size(20000, 1));
+		$this->assertEquals('20 Kb', dol_print_size(20000, 1, 1), '$shortunit=1 uses the short unit label');
+
+		// $shortvalue=0 (default) never converts, even for a large size
+		$this->assertEquals('20000 Bytes', dol_print_size(20000, 0));
+		$this->assertEquals('20000 b.', dol_print_size(20000, 0, 1));
+
+		$langs = $oldlangs;
+	}
+
+	/**
+	 * testDolGetFirstLastname
+	 *
+	 * @return void
+	 */
+	public function testDolGetFirstLastname()
+	{
+		$this->assertEquals('John Smith', dolGetFirstLastname('John', 'Smith', 1), 'nameorder=1: firstname then lastname');
+		$this->assertEquals('Smith John', dolGetFirstLastname('John', 'Smith', 0), 'nameorder=0: lastname then firstname');
+		$this->assertEquals('John', dolGetFirstLastname('John', 'Smith', 2), 'nameorder=2: firstname only');
+		$this->assertEquals('Smith', dolGetFirstLastname('', 'Smith', 3), 'nameorder=3: firstname if defined else lastname (here empty firstname)');
+		$this->assertEquals('John', dolGetFirstLastname('John', '', 3), 'nameorder=3: firstname if defined');
+		$this->assertEquals('Smith', dolGetFirstLastname('John', 'Smith', 4), 'nameorder=4: lastname only');
+		$this->assertEquals('John', dolGetFirstLastname('John', '', 5), 'nameorder=5: lastname if defined else firstname (here empty lastname)');
+		$this->assertEquals('Smith', dolGetFirstLastname('', 'Smith', 5), 'nameorder=5: lastname if defined');
+		// nameorder=-1 (auto) falls back to MAIN_FIRSTNAME_NAME_POSITION, default is firstname+lastname
+		$this->assertEquals('John Smith', dolGetFirstLastname('John', 'Smith', -1));
+	}
+
+	/**
+	 * testJsonOrUnserialize
+	 *
+	 * @return void
+	 */
+	public function testJsonOrUnserialize()
+	{
+		// Valid JSON is decoded as-is (object and array forms)
+		$this->assertEquals(array('a' => 1, 'b' => 'x'), jsonOrUnserialize('{"a":1,"b":"x"}'));
+		$this->assertEquals(array(1, 2, 3), jsonOrUnserialize('[1,2,3]'));
+
+		// A legacy PHP-serialized string (not valid JSON) falls back to unserialize()
+		$this->assertEquals(array('a' => 1), jsonOrUnserialize('a:1:{s:1:"a";i:1;}'));
+
+		// A string that is neither valid JSON nor a valid serialized value returns false
+		$this->assertFalse(@jsonOrUnserialize('not valid at all'));
+	}
+
+	/**
+	 * testPictoFromLangcode
+	 *
+	 * @return void
+	 */
+	public function testPictoFromLangcode()
+	{
+		$this->assertEquals('', picto_from_langcode(''));
+		$this->assertEquals('<span class="fa fa-language"></span>', picto_from_langcode('auto'));
+
+		// 'fr_CA' is one of the special-cased codes using a specific flag (Martinique)
+		$this->assertEquals('<span class="flag-sprite mq" title="fr_CA"></span>', picto_from_langcode('fr_CA'));
+
+		// Generic 'xx_YY' code: flag is derived from the country part (YY)
+		$this->assertEquals('<span class="flag-sprite us" title="en_US"></span>', picto_from_langcode('en_US'));
+
+		// A bare 2-letter country code (no underscore) is used as-is
+		$this->assertEquals('<span class="flag-sprite fr" title="FR"></span>', picto_from_langcode('FR'));
+
+		// $notitlealt=1 removes the title attribute
+		$this->assertEquals('<span class="flag-sprite us"></span>', picto_from_langcode('en_US', '', 1));
+
+		// A 'class="..."' in $moreatt is merged into the span's own class instead of being added as a separate attribute
+		$this->assertEquals('<span class="flag-sprite us saturatemedium" title="en_US"></span>', picto_from_langcode('en_US', 'class="saturatemedium"'));
+
+		// Any other attribute in $moreatt is kept as a separate attribute
+		$this->assertEquals('<span class="flag-sprite us" style="float: right" title="en_US"></span>', picto_from_langcode('en_US', 'style="float: right"'));
+	}
+
+	/**
+	 * testGetElementProperties
+	 *
+	 * @return void
+	 */
+	public function testGetElementProperties()
+	{
+		// Generic path: no '@'/'_' parsing, no special case branch, so classfile/classname are completed
+		// from subelement (classfile=strtolower(subelement), classname=ucfirst(subelement))
+		$properties = getElementProperties('project');
+		$this->assertEquals('project', $properties['element']);
+		$this->assertEquals('projet', $properties['module']);
+		$this->assertEquals('project', $properties['subelement']);
+		$this->assertEquals('projet', $properties['table_element']);
+		$this->assertEquals('projet/class', $properties['classpath']);
+		$this->assertEquals('project', $properties['classfile']);
+		$this->assertEquals('Project', $properties['classname']);
+
+		// 'myobject@mymodule' syntax to ask a resource from an external module: note that table_element
+		// keeps the full original string (it is never cleaned of the '@mymodule' part)
+		$properties = getElementProperties('myobject@mymodule');
+		$this->assertEquals('myobject', $properties['element']);
+		$this->assertEquals('mymodule', $properties['module']);
+		$this->assertEquals('myobject', $properties['subelement']);
+		$this->assertEquals('myobject@mymodule', $properties['table_element']);
+		$this->assertEquals('mymodule/class', $properties['classpath']);
+		$this->assertEquals('myobject', $properties['classfile']);
+		$this->assertEquals('Myobject', $properties['classname']);
+
+		// 'myobject_mysubobject' syntax: element/module resolved from the string, but the specific
+		// 'project_task' case branch then overrides module (projet, not project) and table_element
+		$properties = getElementProperties('project_task');
+		$this->assertEquals('project', $properties['element']);
+		$this->assertEquals('projet', $properties['module']);
+		$this->assertEquals('task', $properties['subelement']);
+		$this->assertEquals('projet_task', $properties['table_element']);
+		$this->assertEquals('projet/class', $properties['classpath']);
+		$this->assertEquals('task', $properties['classfile']);
+		$this->assertEquals('Task', $properties['classname']);
+
+		// Generic '...det' fallback (no dedicated case branch for this fictional module): module and
+		// subelement are stripped of the 'det' suffix, but element is not, and classname keeps the raw
+		// (non-capitalized) result of the suffix replacement since it is not empty afterwards
+		$properties = getElementProperties('myobjectdet');
+		$this->assertEquals('myobjectdet', $properties['element']);
+		$this->assertEquals('myobject', $properties['module']);
+		$this->assertEquals('myobject', $properties['subelement']);
+		$this->assertEquals('myobjectdet', $properties['table_element']);
+		$this->assertEquals('myobject/class', $properties['classpath']);
+		$this->assertEquals('myobject', $properties['classfile']);
+		$this->assertEquals('myobjectLine', $properties['classname']);
+
+		// 'contratdet': the generic '...det' fallback runs first (module=contrat is in the list of
+		// modules using "Ligne" instead of "Line", so classname=contratLigne), then the dedicated
+		// 'contratdet' case branch only adds parent_element on top, it does not touch classname/classfile
+		$properties = getElementProperties('contratdet');
+		$this->assertEquals('contrat', $properties['module']);
+		$this->assertEquals('contrat', $properties['subelement']);
+		$this->assertEquals('contratdet', $properties['table_element']);
+		$this->assertEquals('contrat', $properties['parent_element']);
+		$this->assertEquals('contrat/class', $properties['classpath']);
+		$this->assertEquals('contrat', $properties['classfile']);
+		$this->assertEquals('contratLigne', $properties['classname']);
+
+		// 'facturedet': same generic fallback runs first, but this time the dedicated 'facturedet' case
+		// branch overrides classpath (fuller 'compta/facture/class' path) and classname (capitalized
+		// 'FactureLigne' instead of the generic fallback's lowercase 'factureLigne')
+		$properties = getElementProperties('facturedet');
+		$this->assertEquals('facture', $properties['module']);
+		$this->assertEquals('facturedet', $properties['table_element']);
+		$this->assertEquals('facture', $properties['parent_element']);
+		$this->assertEquals('compta/facture/class', $properties['classpath']);
+		$this->assertEquals('facture', $properties['classfile']);
+		$this->assertEquals('FactureLigne', $properties['classname']);
+		// facture is a core module, always configured with an output directory
+		$this->assertNotEmpty($properties['dir_output']);
+
+		// 'action'/'actioncomm' special case: note how table_element is corrected to 'actioncomm' even
+		// though the input 'action' is kept as-is in element, and subelement is capitalized 'Actioncomm'
+		$properties = getElementProperties('action');
+		$this->assertEquals('action', $properties['element']);
+		$this->assertEquals('agenda', $properties['module']);
+		$this->assertEquals('Actioncomm', $properties['subelement']);
+		$this->assertEquals('actioncomm', $properties['table_element']);
+		$this->assertEquals('comm/action/class', $properties['classpath']);
+		$this->assertEquals('actioncomm', $properties['classfile']);
+		$this->assertEquals('Actioncomm', $properties['classname']);
 	}
 }

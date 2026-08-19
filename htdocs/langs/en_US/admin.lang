@@ -27,6 +27,12 @@ FilesMissing=Missing files
 FilesUpdated=Updated files
 FilesModified=Modified files
 FilesAdded=Added files
+ShowDiffWithOriginal=Show changes compared to the original file
+DiffNotAvailableForBinaryFiles=Comparison is not available for binary files
+CouldNotFetchOriginalFile=Could not retrieve the original file
+OriginalFileChecksumMismatch=Warning: the retrieved original file does not match the expected checksum, the comparison below may not be reliable
+NoDifferenceFound=No difference found
+Loading=Loading
 FileCheckDolibarr=Files integrity
 AvailableOnlyOnPackagedVersions=Local integrity file is only available for packaged installations. Use the remote signature if unavailable.
 XmlNotFound=Application XML integrity file not found
@@ -223,7 +229,7 @@ FeatureAvailableOnlyOnStable=Feature only available on official stable versions
 BoxesDesc=Widgets are components showing some information that you can add to personalize some pages. You can choose between showing the widget or not by selecting target page and clicking 'Activate', or by clicking the trashcan to disable it.
 OnlyActiveElementsAreShown=Only elements from <a href="%s">enabled modules</a> are shown.
 ModulesDesc=The modules/applications determine which features are available in the software. Some modules require permissions to be granted to users after activating the module. Click the on/off button <span class="small valignmiddle">%s</span> of each module to enable or disable a module/application.
-ModulesDesc2=Click the wheel button <span class="small valignmiddle">%s</span> to configure the module/application.
+ModulesDesc2=Click the wheel button <span class="small valignmiddle">%s</span> if you wish to fine-tune the module's configuration.
 ModulesMarketPlaceDesc=You can find more modules to download on external websites on the Internet...
 ModulesDeployDesc=If permissions on your file system allow it, you can use this tool to deploy an external module. The module will then be visible on the tab <strong>%s</strong>.
 ModulesMarketPlaces=Find external app/modules
@@ -318,6 +324,8 @@ MAIN_DISABLE_ALL_MAILS=Disable all email sending (for test purposes or demos)
 MAIN_MAIL_FORCE_SENDTO=Send all emails to (instead of real recipients, for test purposes)
 MAIN_MAIL_ENABLED_USER_DEST_SELECT=Suggest emails of employees (if defined) into the list of predefined recipient when writing a new email
 MAIN_MAIL_NO_WITH_TO_SELECTED=Disable the selection of a default recipient when writing an email, even if there is only 1 possible choice
+MAIN_MAIL_DEFAULT_SIGNATURE_FOR_ALL_USERS=Signature for all employee user
+MAIN_MAIL_DEFAULT_SIGNATURE_FOR_ALL_USERS_Help=User signatures will be replaced by this one. Leave the field empty to keep the user signatures.
 MAIN_MAIL_SENDMODE=Sending method
 MAIN_MAIL_SMTPS_ID=SMTP username or ID (if sending server requires an authentication)
 MAIN_MAIL_SMTPS_PW=SMTP password or token (if sending server requires an authentication)
@@ -414,7 +422,7 @@ ExamplesWithCurrentSetup=Examples with current configuration
 ListOfDirectories=List of OpenDocument templates directories
 ListOfDirectoriesForModelGenODT=List of directories containing templates files with OpenDocument format.<br><br>Put here full path of directories.<br>Add a carriage return between eah directory.<br>To add a directory of the GED module, add here <b>DOL_DATA_ROOT/ecm/yourdirectoryname</b>.<br><br>Files in those directories must end with <b>.odt</b> or <b>.ods</b>.
 NumberOfModelFilesFound=Number of ODT/ODS template files found
-ExampleOfDirectoriesForModelGen=Examples of syntax:<br>c:\\myapp\\mydocumentdir\\mysubdir<br>/home/myapp/mydocumentdir/mysubdir<br>DOL_DATA_ROOT/ecm/ecmdir
+ExampleOfDirectoriesForModelGen=Examples of syntax:<br>DOL_DATA_ROOT/doctemplates/mysubdir<br>DOL_DATA_ROOT/ecm/ecmdir
 FollowingSubstitutionKeysCanBeUsed=<br>To know how to create your odt document templates, before storing them in those directories, read wiki documentation:
 FullListOnOnlineDocumentation=https://wiki.dolibarr.org/index.php/Create_an_ODT_document_template
 FirstnameNamePosition=Position of Name/Lastname
@@ -2912,3 +2920,6 @@ NoMcpToolsDiscovered=No MCP tools discovered. Please ensure the AI module is cor
 ViewOnly=View only
 ToolActionType=Action Type
 InitEndFlagFile=Init the .end file to protect end of the blockedlog chain
+extModuleConfirmInstallTitle = Confirm module installation
+extModuleConfirmInstallText=You are about to install the following module:<br><br>%s<br><br><b>Version:</b> %s<br><b>Reference:</b> %s<br><b>Last update:</b> %s<br>
+Install=Install

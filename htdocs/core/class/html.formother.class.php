@@ -551,7 +551,7 @@ class FormOther
 
 		//Add hook to filter on user (for example on usergroup define in custom modules)
 		if (!empty($reshook)) {
-			$sql_usr .= $hookmanager->resArray[0];
+			$sql_usr .= $hookmanager->resArray[0];  // Trust the hook: @phan-suppress-current-line SqlInjection
 		}
 
 		// Add existing sales representatives of thirdparty of external user
@@ -574,7 +574,7 @@ class FormOther
 
 			//Add hook to filter on user (for example on usergroup define in custom modules)
 			if (!empty($reshook)) {
-				$sql_usr .= $hookmanager->resArray[1];
+				$sql_usr .= $hookmanager->resArray[1];  // Trust the hook: @phan-suppress-current-line SqlInjection
 			}
 		}
 

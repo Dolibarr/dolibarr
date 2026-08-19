@@ -12,7 +12,7 @@
  * Copyright (C) 2015-2024  Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Vincent Maury			<vmaury@timgroup.fr>
  * Copyright (C) 2025		Jon Bendtsen			<jon.bendtsen.github@jonb.dk>
  *
@@ -576,7 +576,7 @@ if (empty($reshook)) {
 					$i++;
 				}
 
-				$sql .= " WHERE ".$db->escape($rowidcol)." = ".((int) $rowid);
+				$sql .= " WHERE ".$db->sanitize($rowidcol)." = ".((int) $rowid);
 				if (!$user->admin) {	// A non admin user can only edit its own template
 					$sql .= " AND fk_user  = ".((int) $user->id);
 				}
@@ -776,6 +776,9 @@ if ($sortorder) {
 if ($sortfield) {
 	$paramwithsearch .= '&sortfield='.urlencode($sortfield);
 }
+if ($limit) {
+	$paramwithsearch .= '&limit='.((int) $limit);
+}
 if (GETPOST('from', 'alpha')) {
 	$paramwithsearch .= '&from='.urlencode(GETPOST('from', 'alpha'));
 }
@@ -813,7 +816,6 @@ if ($action != 'create') {
 if (!empty($user->admin) && (empty($_SESSION['leftmenu']) || $_SESSION['leftmenu'] != 'email_templates')) {
 	print load_fiche_titre($title, '', $titlepicto);
 } else {
-	//print load_fiche_titre($title, $newcardbutton, $titlepicto);
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'tools', 0, $newcardbutton, '', $limit, 'limit', 0, 1);
 }
 
@@ -1173,11 +1175,11 @@ foreach ($fieldlist as $field => $value) {
 		if ($sortfieldtouse == 'type_template') {
 			$sortfieldtouse .= ',lang,position,label';
 		}
-		print getTitleFieldOfList($valuetoshow, 0, $_SERVER["PHP_SELF"], $sortfieldtouse, ($page ? 'page='.$page.'&' : ''), $param, '', $sortfield, $sortorder, $css.' ');
+		print getTitleFieldOfList($valuetoshow, 0, $_SERVER["PHP_SELF"], $sortfieldtouse, ($page ? 'page='.$page.'&' : ''), $paramwithsearch, '', $sortfield, $sortorder, $css.' ');
 	}
 }
 
-print getTitleFieldOfList($langs->trans("Status"), 0, $_SERVER["PHP_SELF"], "active", ($page ? 'page='.$page.'&' : ''), $param, '', $sortfield, $sortorder, 'center ');
+print getTitleFieldOfList($langs->trans("Status"), 0, $_SERVER["PHP_SELF"], "active", ($page ? 'page='.$page.'&' : ''), $paramwithsearch, '', $sortfield, $sortorder, 'center ');
 // Action column
 if (!$conf->main_checkbox_left_column) {
 	print getTitleFieldOfList('');

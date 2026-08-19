@@ -137,9 +137,11 @@ if ($id > 0) {
 	print '<table class="border centpercent tableforfield">';
 
 	// Civility
-	print '<tr><td class="'.$cssclass.'">'.$langs->trans("UserTitle").'</td><td>';
-	print $object->getCivilityLabel();
-	print '</td></tr>';
+	if (getDolGlobalString('MAIN_USE_TITLE_FOR_CONTACT')) {
+		print '<tr><td class="'.$cssclass.'">'.$langs->trans("UserTitle").'</td><td>';
+		print $object->getCivilityLabel();
+		print '</td></tr>';
+	}
 
 	print "</table>";
 

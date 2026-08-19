@@ -95,3 +95,12 @@ phpstan_custom.neon
 
 # Mistral Vibe
 .vibe
+
+# Agent workflow artifacts (specs/plans), not product documentation
+docs/superpowers/
+
+# Claude Code
+.claude
+
+# Agent-managed git worktrees
+.worktrees/

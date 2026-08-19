@@ -12,7 +12,7 @@
  * Copyright (C) 2019       Nicolas ZABOURI             <info@inovea-conseil.com>
  * Copyright (C) 2020       Open-Dsi                    <support@open-dsi.fr>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,6 +51,31 @@ class Contact extends CommonObject
 	 * @see CommonTrigger::call_trigger()
 	 */
 	public $TRIGGER_PREFIX = 'CONTACT';
+
+	/**
+	 * @var string[] Properties copied from the merged contact when they are empty on the target one.
+	 *               Only properties actually loaded by fetch() can be listed here: url, no_email,
+	 *               fk_parent, ip and the geo columns are not, and no_email is deprecated in favour
+	 *               of the llx_mailing_unsubscribe table. photo is excluded on purpose: the file is
+	 *               moved once the transaction is committed and may be renamed on a name collision.
+	 */
+	public const MERGE_FIELDS_FILL_IF_EMPTY = array(
+		'civility_code', 'lastname', 'firstname', 'name_alias', 'address', 'zip', 'town',
+		'state_id', 'country_id', 'poste', 'phone_pro', 'phone_perso', 'phone_mobile', 'fax',
+		'email', 'socialnetworks', 'birthday', 'default_lang', 'ref_ext',
+		'fk_prospectlevel', 'stcomm_id', 'socid'
+	);
+
+	/**
+	 * @var string[] Properties concatenated when merging two contacts.
+	 */
+	public const MERGE_FIELDS_CONCAT = array('note_public', 'note_private');
+
+	/**
+	 * @var int Maximum depth walked when looking for the ancestors of a contact, to avoid an
+	 *          infinite loop should the parent hierarchy already contain a cycle.
+	 */
+	public const MERGE_MAX_PARENT_DEPTH = 100;
 
 	/**
 	 * @var string ID to identify managed object
@@ -665,8 +690,8 @@ class Contact extends CommonObject
 		$sql .= ", zip='".$this->db->escape($this->zip)."'";
 		$sql .= ", town='".$this->db->escape($this->town)."'";
 		$sql .= ", ref_ext = ".(!empty($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "NULL");
-		$sql .= ", fk_pays=".($this->country_id > 0 ? $this->country_id : 'NULL');
-		$sql .= ", fk_departement=".($this->state_id > 0 ? $this->state_id : 'NULL');
+		$sql .= ", fk_pays=".($this->country_id > 0 ? ((int) $this->country_id) : 'NULL');
+		$sql .= ", fk_departement=".($this->state_id > 0 ? ((int) $this->state_id) : 'NULL');
 		$sql .= ", poste='".$this->db->escape($this->poste)."'";
 		$sql .= ", fax='".$this->db->escape($this->fax)."'";
 		$sql .= ", email='".$this->db->escape($this->email)."'";
@@ -681,7 +706,7 @@ class Contact extends CommonObject
 		$sql .= ", priv = ".((int) $this->priv);
 		$sql .= ", fk_prospectlevel = '".$this->db->escape($this->fk_prospectlevel)."'";
 		if (isset($this->stcomm_id)) {
-			$sql .= ", fk_stcommcontact = ".($this->stcomm_id > 0 || $this->stcomm_id == -1 ? $this->stcomm_id : "0");
+			$sql .= ", fk_stcommcontact = ".($this->stcomm_id > 0 || $this->stcomm_id == -1 ? ((int) $this->stcomm_id) : "0");
 		}
 		$sql .= ", statut = ".((int) $this->status);
 		$sql .= ", fk_user_modif=".($user->id > 0 ? "'".$this->db->escape((string) $user->id)."'" : "NULL");
@@ -1868,6 +1893,668 @@ class Contact extends CommonObject
 	}
 
 	/**
+	 * Function used to replace a contact id with another one when merging two contacts.
+	 * Every table having a unique index on the contact id is deduplicated before its update, so the
+	 * update cannot violate it.
+	 * llx_categorie_contact is not handled here (done by setCategories) and llx_socpeople_extrafields
+	 * is not either (values are merged into the target contact before its update).
+	 *
+	 * @param  DoliDB	$dbs		Database handler
+	 * @param  int		$origin_id	Old contact id (the contact to delete)
+	 * @param  int		$dest_id	New contact id (the contact that will receive elements of the other)
+	 * @return bool					True if success, False if error
+	 */
+	public static function replaceContact(DoliDB $dbs, $origin_id, $dest_id)
+	{
+		// llx_societe_contacts: UNIQUE(entity, fk_soc, fk_c_type_contact, fk_socpeople).
+		// Delete the roles the target contact already has, then move the remaining ones.
+		$sql = 'DELETE FROM '.$dbs->prefix().'societe_contacts WHERE rowid IN (';
+		$sql .= ' SELECT x.rowid FROM (';
+		$sql .= '  SELECT origin.rowid FROM '.$dbs->prefix().'societe_contacts as origin';
+		$sql .= '  INNER JOIN '.$dbs->prefix().'societe_contacts as dest ON dest.entity = origin.entity';
+		$sql .= '   AND dest.fk_soc = origin.fk_soc AND dest.fk_c_type_contact = origin.fk_c_type_contact';
+		$sql .= '  WHERE origin.fk_socpeople = '.((int) $origin_id).' AND dest.fk_socpeople = '.((int) $dest_id);
+		$sql .= ' ) as x)';
+		if (!$dbs->query($sql)) {
+			return false;
+		}
+
+		if (!CommonObject::commonReplaceContact($dbs, $origin_id, $dest_id, array('societe_contacts'))) {
+			return false;
+		}
+
+		// llx_element_contact.fk_socpeople points to llx_socpeople only when c_type_contact.source is
+		// 'external'. It points to llx_user when source is 'internal', so both queries below MUST filter
+		// on it, otherwise internal (user) assignments would be moved to the merged contact.
+
+
+		// llx_element_contact: UNIQUE(element_id, fk_c_type_contact, fk_socpeople)
+		$sql = 'DELETE FROM '.$dbs->prefix().'element_contact WHERE rowid IN (';
+		$sql .= ' SELECT x.rowid FROM (';
+		$sql .= '  SELECT origin.rowid FROM '.$dbs->prefix().'element_contact as origin';
+		$sql .= '  INNER JOIN '.$dbs->prefix().'element_contact as dest ON dest.element_id = origin.element_id';
+		$sql .= '   AND dest.fk_c_type_contact = origin.fk_c_type_contact';
+		$sql .= '  WHERE origin.fk_socpeople = '.((int) $origin_id).' AND dest.fk_socpeople = '.((int) $dest_id);
+		$sql .= "   AND origin.fk_c_type_contact IN (SELECT rowid FROM ".$dbs->prefix()."c_type_contact WHERE source = 'external')";
+		$sql .= ' ) as x)';
+		if (!$dbs->query($sql)) {
+			return false;
+		}
+
+		$sql = 'UPDATE '.$dbs->prefix().'element_contact SET fk_socpeople = '.((int) $dest_id);
+		$sql .= ' WHERE fk_socpeople = '.((int) $origin_id);
+		$sql .= " AND fk_c_type_contact IN (SELECT rowid FROM ".$dbs->prefix()."c_type_contact WHERE source = 'external')";
+		if (!$dbs->query($sql)) {
+			return false;
+		}
+
+		// References to a contact stored as a (type, id) couple. All the names below are literals, so
+		// they are safe to concatenate. 'unique' lists the other columns of the unique index of the
+		// table, if any, so the rows the target contact already has can be dropped before the update.
+		$polymorphic = array(
+			array('table' => 'object_lang', 'id' => 'fk_object', 'type' => 'type_object',
+				'values' => array('contact', 'socpeople'), 'unique' => array('property', 'lang')),
+			array('table' => 'links', 'id' => 'objectid', 'type' => 'objecttype',
+				'values' => array('contact'), 'unique' => array('label')),
+			array('table' => 'element_element', 'id' => 'fk_source', 'type' => 'sourcetype',
+				'values' => array('contact'), 'unique' => array('fk_target', 'targettype')),
+			array('table' => 'element_element', 'id' => 'fk_target', 'type' => 'targettype',
+				'values' => array('contact'), 'unique' => array('fk_source', 'sourcetype')),
+			// An event can be linked to a contact as its related object
+			array('table' => 'actioncomm', 'id' => 'fk_element', 'type' => 'elementtype',
+				'values' => array('contact'), 'unique' => array()),
+			// dol_move() updates the path of the indexed files but never their source object, so the
+			// index rows have to be moved here or they would point to the deleted contact. The unique
+			// index of the table is on (filepath, filename, entity), which is left untouched.
+			array('table' => 'ecm_files', 'id' => 'src_object_id', 'type' => 'src_object_type',
+				'values' => array('contact', 'socpeople'), 'unique' => array()),
+			array('table' => 'quickmemo_memo', 'id' => 'fk_element', 'type' => 'element_type',
+				'values' => array('contact'), 'unique' => array()),
+			array('table' => 'comment', 'id' => 'fk_element', 'type' => 'element_type',
+				'values' => array('contact'), 'unique' => array()),
+		);
+
+		foreach ($polymorphic as $ref) {
+			// Some of these tables are provided by modules that may not be installed
+			$sanitizedtable = $dbs->sanitize($ref['table']);
+			$sanitizedidcol = $dbs->sanitize($ref['id']);
+			$sanitizedtypecol = $dbs->sanitize($ref['type']);
+			if (!$dbs->DDLListTables((string) $dbs->database_name, $dbs->prefix().$sanitizedtable)) {
+				continue;
+			}
+			// Each value is escaped on its own: sanitize() removes the quotes inside the string it is
+			// given, so sanitizing an already assembled list would collapse it into a single value
+			$quotedvalues = array();
+			foreach ($ref['values'] as $refvalue) {
+				$quotedvalues[] = "'".$dbs->escape($refvalue)."'";
+			}
+			$sanitizedvalues = implode(', ', $quotedvalues);  // @phan-suppress-current-line SqlInjection
+			$sanitizedtypefilter = $sanitizedtypecol." IN (".$sanitizedvalues.")";
+
+			if (!empty($ref['unique'])) {
+				$sql = "DELETE FROM ".$dbs->prefix().$sanitizedtable." WHERE rowid IN (";
+				$sql .= " SELECT x.rowid FROM (";
+				$sql .= "  SELECT origin.rowid FROM ".$dbs->prefix().$sanitizedtable." as origin";
+				$sql .= "  INNER JOIN ".$dbs->prefix().$sanitizedtable." as dest";
+				$sql .= "   ON dest.".$sanitizedtypecol." = origin.".$sanitizedtypecol;
+				foreach ($ref['unique'] as $uniquecol) {
+					$sanitizeduniquecol = $dbs->sanitize($uniquecol);
+					$sql .= " AND dest.".$sanitizeduniquecol." = origin.".$sanitizeduniquecol;
+				}
+				$sql .= "  WHERE origin.".$sanitizedidcol." = ".((int) $origin_id);
+				$sql .= "   AND dest.".$sanitizedidcol." = ".((int) $dest_id);
+				$sql .= "   AND origin.".$sanitizedtypefilter;
+				$sql .= " ) as x)";
+				if (!$dbs->query($sql)) {
+					return false;
+				}
+			}
+
+			$sql = "UPDATE ".$dbs->prefix().$sanitizedtable." SET ".$sanitizedidcol." = ".((int) $dest_id);
+			$sql .= " WHERE ".$sanitizedtypefilter;
+			$sql .= " AND ".$sanitizedidcol." = ".((int) $origin_id);
+			if (!$dbs->query($sql)) {
+				return false;
+			}
+		}
+
+		// A link between the two contacts became a link of the target contact to itself, which the
+		// linked objects box would then display. There is no unique index violation, so nothing failed.
+		$sql = "DELETE FROM ".$dbs->prefix()."element_element WHERE fk_source = fk_target";
+		$sql .= " AND sourcetype = targettype AND fk_source = ".((int) $dest_id);
+		$sql .= " AND sourcetype = 'contact'";
+		if (!$dbs->query($sql)) {
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * Merge a contact with the current one, deleting the given contact $contact_origin_id.
+	 * All satellite data of the merged contact are moved to the current contact.
+	 * Access guards are implemented here and not into the calling page, and cover the two contacts, so
+	 * the REST API, the scheduled jobs and the external modules also benefit from them.
+	 * Must not be called inside an already open transaction: DoliDB::rollback() only decrements the
+	 * nesting counter, so the caller would commit a partially merged contact.
+	 *
+	 * @param	int		$contact_origin_id	Contact to merge the data from (will be deleted)
+	 * @return	int							Return integer -1 if error, >=0 if OK
+	 */
+	public function mergeContact($contact_origin_id)
+	{
+		global $langs, $hookmanager, $user, $action;
+
+		$error = 0;
+		$langs->loadLangs(array('errors', 'companies'));
+
+		// The target contact must have been loaded: update() would silently update no row and the
+		// satellite data would then be moved to the contact id 0.
+		if (!($this->id > 0) || empty($this->entity)) {
+			$this->error = $langs->trans('ErrorBadParameters');
+			dol_syslog(__METHOD__.' Called on a contact that was not loaded', LOG_ERR);
+			return -1;
+		}
+		if ($contact_origin_id <= 0 || $contact_origin_id == $this->id) {
+			$this->error = $langs->trans('ErrorBadParameters');
+			return -1;
+		}
+		// A merge deletes a contact, so it requires the permission to delete one, whatever the caller
+		if (!$user->hasRight('societe', 'contact', 'creer') || !$user->hasRight('societe', 'contact', 'supprimer')) {
+			$this->error = $langs->trans('ErrorForbidden');
+			return -1;
+		}
+		// An external user never merges anything, as on the third party card
+		if ($user->socid > 0) {
+			$this->error = $langs->trans('ErrorForbidden');
+			return -1;
+		}
+
+		$contact_origin = new Contact($this->db);	// The contact that we will delete
+		$resultfetch = $contact_origin->fetch($contact_origin_id);
+		// fetch() returns the id when found, 2 when several records were found, 0 when not found and -1 on error
+		if ($resultfetch != $contact_origin_id) {
+			$this->error = $langs->trans('ErrorRecordNotFound');
+			dol_syslog(__METHOD__.' Cannot fetch contact id='.$contact_origin_id.', result='.$resultfetch, LOG_ERR);
+			return -1;
+		}
+
+		// Access guards. fetch() by rowid applies neither an entity filter nor a permission filter, so
+		// the two contacts are revalidated here, including the current one: an id coming from a POST is
+		// not to be trusted, and the checks must also protect the callers that are not the contact card.
+		$entities = explode(',', getEntity('contact'));
+		foreach (array($this, $contact_origin) as $tmpcontact) {
+			if (!in_array($tmpcontact->entity, $entities) || $tmpcontact->entity != $this->entity) {
+				$this->error = $langs->trans('ErrorContactsMergeDifferentEntity');
+				return -1;
+			}
+			if (!empty($tmpcontact->priv) && $tmpcontact->user_creation_id != $user->id) {
+				$this->error = $langs->trans('ErrorContactsMergePrivate');
+				return -1;
+			}
+			// A contact without a third party is shared, so the perimeter of the sales representatives
+			// does not apply to it, as in restrictedArea()
+			if ($tmpcontact->socid > 0 && !$user->hasRight('societe', 'client', 'voir')
+				&& !$this->isSalesRepresentativeOf($tmpcontact->socid)) {
+				$this->error = $langs->trans('ErrorForbidden');
+				return -1;
+			}
+		}
+		// Absorbing a shared contact into a private one would hide its data from everybody else,
+		// including the administrators, and the merged contact is deleted so it is not reversible
+		if (!empty($this->priv) && empty($contact_origin->priv)) {
+			$this->error = $langs->trans('ErrorContactsMergeIntoPrivate');
+			return -1;
+		}
+		$originlinked = $this->isLinkedToUser($contact_origin->id);
+		$destlinked = $this->isLinkedToUser($this->id);
+		if ($originlinked < 0 || $destlinked < 0) {
+			// The guard below is a security one, so it must refuse and not let the merge through
+			$this->error = $langs->trans('ErrorContactsMerge');
+			return -1;
+		}
+		// Moving llx_user.fk_socpeople would give the contact of a user account to another contact,
+		// and Contact::update() then propagates the email of that contact to the user, which is a way
+		// to take over the account. Changing the contact of a user requires the permission to do so.
+		if (($originlinked > 0 || $destlinked > 0) && !$user->hasRight('user', 'user', 'creer')) {
+			$this->error = $langs->trans('ErrorContactsMergeLinkedToUser');
+			return -1;
+		}
+		// llx_user.fk_socpeople has a unique key: refuse rather than silently break a user link
+		if ($originlinked > 0 && $destlinked > 0) {
+			$this->error = $langs->trans('ErrorContactsMergeBothLinkedToUser');
+			return -1;
+		}
+
+		dol_syslog(__METHOD__.' merge contact id='.$contact_origin->id.' (will be deleted) into the contact id='.$this->id);
+
+		$this->db->begin();
+
+		// Recopy some data
+		foreach (self::MERGE_FIELDS_FILL_IF_EMPTY as $property) {
+			if (empty($this->$property) && !empty($contact_origin->$property)) {
+				$this->$property = $contact_origin->$property;
+			}
+		}
+
+		// Concat some data, with a dated mention so a targeted erasure stays possible later
+		$mention = '['.$langs->transnoentitiesnoconv('MergedFromContact', dol_print_date(dol_now(), 'day'), (string) $contact_origin->id).']';
+		foreach (self::MERGE_FIELDS_CONCAT as $property) {
+			if (!empty($contact_origin->$property)) {
+				$this->$property = dol_concatdesc($this->$property, $mention."\n".$contact_origin->$property);
+			}
+		}
+
+		// A merge must never make the data of a private contact visible to everybody
+		if (!empty($contact_origin->priv)) {
+			$this->priv = 1;
+		}
+
+		// If alias name is not defined on target contact, we can store in it the old name of the contact
+		if (empty($this->name_alias) && $this->getFullName($langs) != $contact_origin->getFullName($langs)) {
+			$this->name_alias = $contact_origin->getFullName($langs);
+		}
+
+		// Merge extrafields. They are saved by the update() below.
+		if (is_array($contact_origin->array_options)) {
+			foreach ($contact_origin->array_options as $key => $val) {
+				if (empty($this->array_options[$key])) {
+					$this->array_options[$key] = $val;
+				}
+			}
+		}
+
+		// updateRoles(), called by update(), deletes then reinserts every societe_contacts row of the
+		// contact from $this->roles, which would wipe the roles we are about to move. It is a no-op
+		// when roles is not set. Set it to null instead of using unset(): roles is a declared property
+		// and unset() would make any later access emit an "Undefined property" warning.
+		$this->roles = null;
+
+		// Update. The trigger is called once at the end of the merge, hence $notrigger = 1.
+		if ($this->update($this->id, $user, 1) <= 0) {
+			$error++;
+			dol_syslog(__METHOD__.' Failed to update the target contact: '.$this->errorsToString(), LOG_ERR);
+		}
+
+		// Merge categories, before the deletion below: llx_categorie_contact has a foreign key on
+		// llx_socpeople without ON DELETE.
+		if (!$error) {
+			include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+			$static_cat = new Categorie($this->db);
+			$cats_origin = $static_cat->containing($contact_origin->id, 'contact', 'id');
+			$cats_dest = $static_cat->containing($this->id, 'contact', 'id');
+			// containing() returns the int -1 on SQL error. Reading it as an empty list would replace
+			// the categories of the target contact by the ones of the merged contact only.
+			if (!is_array($cats_origin) || !is_array($cats_dest)) {
+				$this->error = $static_cat->error;
+				dol_syslog(__METHOD__.' Cannot read the categories of the contacts: '.$this->error, LOG_ERR);
+				$error++;
+			} else {
+				// array_merge() must be used here: the + operator on arrays is a union on keys, it
+				// would silently drop categories.
+				$cats = array_merge($cats_origin, $cats_dest);
+				if ($this->setCategories(array_values(array_unique($cats))) < 0) {
+					$error++;
+				}
+			}
+		}
+
+		// Children contacts
+		if (!$error) {
+			$error += $this->mergeContactChildren($contact_origin);
+		}
+
+		// Move links
+		if (!$error) {
+			$objects = array(
+				'ActionComm' => '/comm/action/class/actioncomm.class.php',
+				'Contact' => '/contact/class/contact.class.php',
+				'User' => '/user/class/user.class.php',
+			);
+			foreach ($objects as $object_name => $object_file) {
+				require_once DOL_DOCUMENT_ROOT.$object_file;
+
+				if (!$object_name::replaceContact($this->db, $contact_origin->id, $this->id)) {
+					$error++;
+					$this->error = $this->db->lasterror();
+					dol_syslog(__METHOD__.' '.$object_name.'::replaceContact failed: '.$this->error, LOG_ERR);
+					break;
+				}
+			}
+		}
+
+		// Tables of the optional modules
+		if (!$error) {
+			$error += $this->mergeContactOptionalTables($contact_origin);
+		}
+
+		// External modules should update their ones too
+		if (!$error) {
+			$parameters = array('contact_origin' => $contact_origin->id, 'contact_dest' => $this->id);
+			$reshook = $hookmanager->executeHooks('replaceContact', $parameters, $this, $action);
+
+			if ($reshook < 0) {
+				$this->error = $hookmanager->error;
+				$this->errors = $hookmanager->errors;
+				$error++;
+			}
+		}
+
+		if (!$error) {
+			$this->context = array(
+				'merge' => 1,
+				'mergefromid' => $contact_origin->id,
+				'mergefromname' => $contact_origin->getFullName($langs)
+			);
+
+			// Call trigger
+			$result = $this->call_trigger('CONTACT_MODIFY', $user);
+			if ($result < 0) {
+				$error++;
+			}
+			// End call triggers
+		}
+
+		if (!$error) {
+			// We finally remove the old contact
+			if ($contact_origin->delete($user) < 1) {
+				$this->error = $contact_origin->error;
+				$this->errors = $contact_origin->errors;
+				$error++;
+			}
+		}
+
+		if ($error) {
+			$this->error = $langs->trans('ErrorContactsMerge').' '.$this->error;
+			$this->db->rollback();
+			// The object still holds the merged values in memory, reload it so the caller does not
+			// display data that was rolled back
+			$this->fetch($this->id);
+			return -1;
+		}
+
+		$this->db->commit();
+
+		// Files are moved once the transaction is committed: dol_move() is not transactional, and
+		// Contact::delete() does not remove the directory of the contact, so the files are still there.
+		$this->mergeContactFiles($contact_origin->id);
+
+		return 0;
+	}
+
+	/**
+	 * Tell whether a user account is linked to the given contact.
+	 * llx_user.fk_socpeople has a unique key, so a merge cannot move that link when the target
+	 * contact is already linked to another user.
+	 *
+	 * @param	int		$contactid	Id of the contact to check
+	 * @return	int					1 if a user is linked to this contact, 0 if none, -1 on error
+	 */
+	private function isLinkedToUser($contactid)
+	{
+		$sql = "SELECT rowid FROM ".$this->db->prefix()."user WHERE fk_socpeople = ".((int) $contactid);
+
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
+			return -1;
+		}
+		$found = ($this->db->num_rows($resql) > 0 ? 1 : 0);
+		$this->db->free($resql);
+
+		return $found;
+	}
+
+	/**
+	 * Tell whether the current user is a sales representative of the given third party.
+	 * Used to keep a user restricted to his own portfolio from merging a contact he cannot see.
+	 *
+	 * @param	int		$socid	Id of the third party of the contact to merge
+	 * @return	bool			True if allowed
+	 */
+	private function isSalesRepresentativeOf($socid)
+	{
+		global $user;
+
+		if (empty($socid)) {
+			return false;	// A shared contact with no third party is out of any portfolio
+		}
+
+		$sql = "SELECT fk_soc FROM ".$this->db->prefix()."societe_commerciaux";
+		$sql .= " WHERE fk_soc = ".((int) $socid)." AND fk_user = ".((int) $user->id);
+
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
+			return false;
+		}
+		$found = ($this->db->num_rows($resql) > 0);
+		$this->db->free($resql);
+
+		return $found;
+	}
+
+	/**
+	 * Move the children of the merged contact to the target contact.
+	 * llx_socpeople.fk_parent has neither a foreign key nor an index, and it is not written by
+	 * update(), so the hierarchy must be fixed with dedicated queries. Two corruptions have to be
+	 * avoided: a dangling pointer when the target contact is a child of the merged one, and a cycle
+	 * when a child of the merged contact is an ancestor of the target one.
+	 *
+	 * @param	Contact	$contact_origin	Contact being merged into the current one
+	 * @return	int						Number of errors
+	 */
+	private function mergeContactChildren($contact_origin)
+	{
+		$error = 0;
+
+		// fk_parent is not loaded by fetch()
+		$parentofdest = $this->getParentId($this->id);
+
+		// The target contact is a child of the merged one: its parent is about to be deleted
+		if ($parentofdest == $contact_origin->id) {
+			$newparent = $this->getParentId($contact_origin->id);
+			// A dedicated query is used rather than setValueFrom(): the 'int' format of the latter
+			// casts null to 0, while fk_parent is nullable, and its trigger key would fetch the
+			// record again and overwrite the values merged into memory.
+			$sql = 'UPDATE '.$this->db->prefix().'socpeople';
+			$sql .= ' SET fk_parent = '.($newparent > 0 ? ((int) $newparent) : 'NULL');
+			$sql .= ' WHERE rowid = '.((int) $this->id);
+			if (!$this->db->query($sql)) {
+				$this->error = $this->db->lasterror();
+				dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
+				return 1;
+			}
+		}
+
+		// Collect the ancestors of the target contact, they must not become its children
+		$ancestors = array();
+		$currentid = $this->getParentId($this->id);
+		$depth = 0;
+		while ($currentid > 0 && $depth < self::MERGE_MAX_PARENT_DEPTH) {
+			if (in_array($currentid, $ancestors)) {
+				break;	// The hierarchy already contains a cycle, stop walking it
+			}
+			$ancestors[] = (int) $currentid;
+			$currentid = $this->getParentId($currentid);
+			$depth++;
+		}
+
+		$sql = 'UPDATE '.$this->db->prefix().'socpeople SET fk_parent = '.((int) $this->id);
+		$sql .= ' WHERE fk_parent = '.((int) $contact_origin->id);
+		$sql .= ' AND rowid <> '.((int) $this->id);
+		if (!empty($ancestors)) {
+			// $ancestors only contains ids already cast to int
+			$sanitizedancestors = implode(',', $ancestors);  // @phan-suppress-current-line SqlInjection
+			$sql .= " AND rowid NOT IN (".$sanitizedancestors.")";
+		}
+		if (!$this->db->query($sql)) {
+			$this->error = $this->db->lasterror();
+			dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
+			$error++;
+		}
+
+		// The children excluded above, being ancestors of the target contact, still point to the
+		// contact about to be deleted. Detach them rather than leave a dangling parent.
+		if (!$error) {
+			$sql = 'UPDATE '.$this->db->prefix().'socpeople SET fk_parent = NULL';
+			$sql .= ' WHERE fk_parent = '.((int) $contact_origin->id);
+			if (!$this->db->query($sql)) {
+				$this->error = $this->db->lasterror();
+				dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
+				$error++;
+			}
+		}
+
+		return $error;
+	}
+
+	/**
+	 * Return the id of the parent contact of a contact, 0 if none.
+	 * fk_parent is not among the columns loaded by fetch().
+	 *
+	 * @param	int		$contactid	Id of the contact
+	 * @return	int					Id of the parent contact, 0 if none or on error
+	 */
+	private function getParentId($contactid)
+	{
+		$sql = "SELECT fk_parent FROM ".$this->db->prefix()."socpeople WHERE rowid = ".((int) $contactid);
+
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
+			return 0;
+		}
+		$parentid = 0;
+		if ($obj = $this->db->fetch_object($resql)) {
+			$parentid = (empty($obj->fk_parent) ? 0 : (int) $obj->fk_parent);
+		}
+		$this->db->free($resql);
+
+		return $parentid;
+	}
+
+	/**
+	 * Move the data stored by the optional modules and by the notification system.
+	 * These tables are handled here instead of in a replaceContact() of their own class, to keep the
+	 * number of modified files low, the same way Adherent::mergeMembers() does.
+	 *
+	 * @param	Contact	$contact_origin	Contact being merged into the current one
+	 * @return	int						Number of errors
+	 */
+	private function mergeContactOptionalTables($contact_origin)
+	{
+		$error = 0;
+
+		// Notifications. llx_notify_def has no unique key, but a duplicated row means the same
+		// notification sent twice, so it must be deduplicated as well.
+		$sql = 'DELETE FROM '.$this->db->prefix().'notify_def WHERE rowid IN (';
+		$sql .= ' SELECT x.rowid FROM (';
+		$sql .= '  SELECT origin.rowid FROM '.$this->db->prefix().'notify_def as origin';
+		$sql .= '  INNER JOIN '.$this->db->prefix().'notify_def as dest ON dest.fk_action = origin.fk_action';
+		// A row is a duplicate only if the whole definition matches, recipient included: fk_soc,
+		// entity, type, threshold, context, fk_user and email are nullable, hence the NULL safe
+		// comparisons, the MySQL <=> operator not being portable to PostgreSQL.
+		$sql .= '   AND (dest.fk_soc = origin.fk_soc OR (dest.fk_soc IS NULL AND origin.fk_soc IS NULL))';
+		$sql .= '   AND (dest.entity = origin.entity OR (dest.entity IS NULL AND origin.entity IS NULL))';
+		$sql .= '   AND (dest.type = origin.type OR (dest.type IS NULL AND origin.type IS NULL))';
+		$sql .= '   AND (dest.threshold = origin.threshold OR (dest.threshold IS NULL AND origin.threshold IS NULL))';
+		$sql .= '   AND (dest.context = origin.context OR (dest.context IS NULL AND origin.context IS NULL))';
+		$sql .= '   AND (dest.fk_user = origin.fk_user OR (dest.fk_user IS NULL AND origin.fk_user IS NULL))';
+		$sql .= '   AND (dest.email = origin.email OR (dest.email IS NULL AND origin.email IS NULL))';
+		$sql .= '  WHERE origin.fk_contact = '.((int) $contact_origin->id).' AND dest.fk_contact = '.((int) $this->id);
+		$sql .= ' ) as x)';
+		if (!$this->db->query($sql)) {
+			$this->error = $this->db->lasterror();
+			dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
+			return 1;
+		}
+
+		if (!CommonObject::commonReplaceContact($this->db, $contact_origin->id, $this->id, array('notify', 'notify_def'), 'fk_contact')) {
+			dol_syslog(__METHOD__.' Failed to move the notifications: '.$this->db->lasterror(), LOG_ERR);
+			return 1;
+		}
+
+		// Mass emailing targets
+		if ($this->db->DDLListTables((string) $this->db->database_name, $this->db->prefix().'mailing_cibles')) {
+			// No deduplication here: uk_mailing_cibles is (fk_mailing, email), it does not contain
+			// fk_contact, so moving fk_contact cannot violate it, and the rows hold the send history.
+			if (!CommonObject::commonReplaceContact($this->db, $contact_origin->id, $this->id, array('mailing_cibles'), 'fk_contact')) {
+				dol_syslog(__METHOD__.' Failed to move the mass emailing targets: '.$this->db->lasterror(), LOG_ERR);
+				return 1;
+			}
+
+			// The source of a target is also stored as a (source_type, source_id) couple
+			$sql = 'UPDATE '.$this->db->prefix().'mailing_cibles SET source_id = '.((int) $this->id);
+			$sql .= " WHERE source_type = 'contact' AND source_id = ".((int) $contact_origin->id);
+			if (!$this->db->query($sql)) {
+				$this->error = $this->db->lasterror();
+				dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
+				return 1;
+			}
+		}
+
+		return $error;
+	}
+
+	/**
+	 * Move the files of the merged contact into the directory of the target contact.
+	 * Called once the transaction is committed, because dol_move() is not transactional. A failure
+	 * cannot be rolled back, so it is reported to the user instead of being silently logged.
+	 *
+	 * @param	int		$contact_origin_id	Id of the merged contact
+	 * @return	void
+	 */
+	private function mergeContactFiles($contact_origin_id)
+	{
+		global $conf, $langs;
+
+		if (empty($conf->societe->multidir_output[$this->entity])) {
+			return;
+		}
+
+		// files.lib.php is not loaded when the merge is called outside of a web context
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
+		// The id is used and not $this->ref, which is null unless the contact was loaded by fetch()
+		$srcdir = $conf->societe->multidir_output[$this->entity].'/contact/'.((int) $contact_origin_id);
+		$destdir = $conf->societe->multidir_output[$this->entity].'/contact/'.((int) $this->id);
+
+		if (!dol_is_dir($srcdir)) {
+			return;
+		}
+
+		$failed = array();
+		$dirlist = dol_dir_list($srcdir, 'files', 1);
+		foreach ($dirlist as $filetomove) {
+			$destfile = $destdir.'/'.$filetomove['relativename'];
+			// dol_move() is called below with $overwriteifexists = 0, so a file already existing on
+			// the target contact is renamed rather than lost
+			if (dol_is_file($destfile)) {
+				$info = pathinfo($filetomove['relativename']);
+				$suffix = (empty($info['extension']) ? '' : '.'.$info['extension']);
+				$destfile = $destdir.'/'.(empty($info['dirname']) || $info['dirname'] == '.' ? '' : $info['dirname'].'/');
+				$destfile .= $info['filename'].'-'.((int) $contact_origin_id).$suffix;
+			}
+			// dol_move() does not create the target directory, and the target contact usually has
+			// none yet, so it has to be created for every level of the source tree
+			dol_mkdir(dirname($destfile));
+			if (!dol_move($filetomove['fullname'], $destfile, '0', 0, 0, 1)) {
+				$failed[] = $filetomove['relativename'];
+			}
+		}
+
+		if (!empty($failed)) {
+			dol_syslog(__METHOD__.' Failed to move '.count($failed).' file(s) from '.$srcdir, LOG_ERR);
+			// The merge itself is committed, so this is reported as a warning and not as a failure
+			$this->warnings[] = $langs->trans('WarningContactsMergeFilesNotMoved', implode(', ', $failed));
+		}
+	}
+
+	/**
 	 * Fetch roles (default contact of some companies) for the current contact.
 	 * This load the array ->roles.
 	 *
@@ -2009,11 +2696,11 @@ class Contact extends CommonObject
 						$sql .= "fk_soc,";
 						$sql .= "fk_c_type_contact,";
 						$sql .= "fk_socpeople) ";
-						$sql .= " VALUES (".$conf->entity.",";
+						$sql .= " VALUES (".((int) $conf->entity).",";
 						$sql .= "'".$this->db->idate(dol_now())."',";
-						$sql .= $socid.", ";
-						$sql .= $idrole." , ";
-						$sql .= $this->id;
+						$sql .= ((int) $socid).", ";
+						$sql .= ((int) $idrole)." , ";
+						$sql .= ((int) $this->id);
 						$sql .= ")";
 
 						$result = $this->db->query($sql);

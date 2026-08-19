@@ -116,6 +116,7 @@ BoxLastCustomerShipments=Last customer shipments
 BoxTitleLastCustomerShipments=Latest %s modified customer shipments
 BoxTitleLastLeaveRequests=Latest %s modified leave requests
 NoRecordedShipments=No recorded customer shipment
+NoUpcomingEvent=No upcoming events
 BoxCustomersOutstandingBillReached=Customers with outstanding limit reached
 BoxTitleLastFediverseInfos=Last %s posts from %s
 BoxLastFediverseInfos=Latest Fediverse Updates: News and Trends

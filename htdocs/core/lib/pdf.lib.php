@@ -331,6 +331,47 @@ function pdf_getHeightForLogo($logo, $url = false)
 }
 
 /**
+ * Output company logo on top-left of a PDF page header, or the company name as fallback text if no logo is
+ * set, or an error message if the logo file is missing/unreadable. Shared by the page headers of the various
+ * document generators (invoices, orders, proposals, ...).
+ *
+ * @param	TCPDF		$pdf				PDF object
+ * @param	Translate	$outputlangs		Object lang for output
+ * @param	Societe		$emetteur			Emitting company (the PDF generator's $this->emetteur)
+ * @param	string		$logodir			Directory containing the logos subfolder (already resolved by the caller)
+ * @param	float		$posx				X position to place the logo image
+ * @param	float		$posy				Y position to place the logo image
+ * @param	float		$w					Cell width used for the fallback company name / error message text
+ * @param	float		$default_font_size	Default font size (used to size the error message font)
+ * @param	string		$align				Alignment ('L', 'R', or 'J') for the fallback company name text
+ * @return	void
+ */
+function pdf_writeLogoOrCompanyName($pdf, $outputlangs, $emetteur, $logodir, $posx, $posy, $w, $default_font_size, $align)
+{
+	if (!getDolGlobalInt('PDF_DISABLE_MYCOMPANY_LOGO')) {
+		if ($emetteur->logo) {
+			if (!getDolGlobalInt('MAIN_PDF_USE_LARGE_LOGO')) {
+				$logo = $logodir.'/logos/thumbs/'.$emetteur->logo_small;
+			} else {
+				$logo = $logodir.'/logos/'.$emetteur->logo;
+			}
+			if (is_readable($logo)) {
+				$height = pdf_getHeightForLogo($logo);
+				$pdf->Image($logo, $posx, $posy, 0, $height); // width=0 (auto)
+			} else {
+				$pdf->SetTextColor(200, 0, 0);
+				$pdf->SetFont('', 'B', $default_font_size - 2);
+				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("ErrorLogoFileNotFound", $logo), 0, 'L');
+				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("ErrorGoToGlobalSetup"), 0, 'L');
+			}
+		} else {
+			$text = (string) $emetteur->name;
+			$pdf->MultiCell($w, 4, $outputlangs->convToOutputCharset($text), 0, $align);
+		}
+	}
+}
+
+/**
  * Function to try to calculate height of a HTML Content.
  * WARNING: Do not use this function inside a TCPDF transaction.
  *
@@ -566,7 +607,9 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 						$companytouseforaddress = $targetcontact->thirdparty;
 					}
 
-					$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->convToOutputCharset(dol_format_address($companytouseforaddress))."\n";
+					if (is_object($companytouseforaddress)) {
+						$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->convToOutputCharset(dol_format_address($companytouseforaddress))."\n";
+					}
 				}
 				// Country
 				if (!empty($targetcontact->country_code) && $targetcontact->country_code != $sourcecompany->country_code) {
@@ -3228,9 +3271,11 @@ function pdfGetLineTotalDiscountAmount($object, $i, $outputlangs, $hidedetails =
 
 		if (empty($hidedetails) || $hidedetails > 1) {
 			if (empty($multicurrency)) {
-				return (float) price2num($sign * (($object->lines[$i]->subprice * (float) $object->lines[$i]->qty) - $object->lines[$i]->total_ht), 'MT', 1);
+				$diff = (float) price2num($sign * $object->lines[$i]->subprice * (float) $object->lines[$i]->qty, 'MT', 1) - $object->lines[$i]->total_ht;
+				return (float) price2num($diff, 'MT', 1);
 			} else {
-				return (float) price2num($sign * (($object->lines[$i]->multicurrency_subprice * (float) $object->lines[$i]->qty) - $object->lines[$i]->multicurrency_total_ht), 'MT', 1);
+				$diff = (float) price2num($sign * $object->lines[$i]->multicurrency_subprice * (float) $object->lines[$i]->qty, 'MT', 1) - $object->lines[$i]->multicurrency_total_ht;
+				return (float) price2num($diff, 'MT', 1);
 			}
 		}
 	}

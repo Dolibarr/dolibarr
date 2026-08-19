@@ -1170,7 +1170,7 @@ if ($user->hasRight("holiday", "read")) {
 	$sql .= " AND (x.statut = '2' OR x.statut = '3')"; // Show only public leaves (2 = leave wait for approval, 3 = leave approved)
 	if ($mode == 'show_day') {
 		// Request only leaves for the current selected day
-		$sql .= " AND '".$db->escape($year)."-".$db->escape($month)."-".$db->escape($day)."' BETWEEN x.date_debut AND x.date_fin";	// date_debut and date_fin are date without time
+		$sql .= " AND '".$db->escape($year."-".$month."-".$day)."' BETWEEN x.date_debut AND x.date_fin";	// date_debut and date_fin are date without time
 	} elseif ($mode == 'show_week') {
 		// Restrict on current month (we get more, but we will filter later)
 		$sql .= " AND x.date_debut < '".$db->idate(dol_get_last_day($year, $month))."'";
@@ -1210,8 +1210,10 @@ if ($user->hasRight("holiday", "read")) {
 			$event->type = 'holiday';
 			$event->type_picto = 'holiday';
 
-			$event->datep                   = (int) $db->jdate($obj->date_start) + (int) ((empty($obj->halfday) || $obj->halfday == 1 ? 0 : 12) * 60 * 60);
-			$event->datef                   = (int) $db->jdate($obj->date_end) + (int) ((empty($obj->halfday) || $obj->halfday == -1 ? 24 : 12) * 60 * 60 - 1);
+			// date_debut and date_fin are dates without time, so they must be read and rendered in GMT to
+			// stay independent from the server and user timezones (otherwise the calendar day box is shifted).
+			$event->datep                   = (int) $db->jdate($obj->date_start, 'gmt') + (empty($obj->halfday) || $obj->halfday == 1 ? 0 : 12) * 60 * 60;
+			$event->datef                   = (int) $db->jdate($obj->date_end, 'gmt') + (empty($obj->halfday) || $obj->halfday == -1 ? 24 : 12) * 60 * 60 - 1;
 			$event->date_start_in_calendar  = $event->datep;
 			$event->date_end_in_calendar    = $event->datef;
 
@@ -1226,14 +1228,14 @@ if ($user->hasRight("holiday", "read")) {
 			$event->label = $langs->trans("Holiday");
 
 			$daycursor = $event->date_start_in_calendar;
-			$annee = (int) dol_print_date($daycursor, '%Y', 'tzuserrel');
-			$mois = (int) dol_print_date($daycursor, '%m', 'tzuserrel');
-			$jour = (int) dol_print_date($daycursor, '%d', 'tzuserrel');
+			$annee = (int) dol_print_date($daycursor, '%Y', 'gmt');
+			$mois = (int) dol_print_date($daycursor, '%m', 'gmt');
+			$jour = (int) dol_print_date($daycursor, '%d', 'gmt');
 
 			$daycursorend = $event->date_end_in_calendar;
-			$anneeend = (int) dol_print_date($daycursorend, '%Y', 'tzuserrel');
-			$moisend = (int) dol_print_date($daycursorend, '%m', 'tzuserrel');
-			$jourend = (int) dol_print_date($daycursorend, '%d', 'tzuserrel');
+			$anneeend = (int) dol_print_date($daycursorend, '%Y', 'gmt');
+			$moisend = (int) dol_print_date($daycursorend, '%m', 'gmt');
+			$jourend = (int) dol_print_date($daycursorend, '%d', 'gmt');
 
 			// daykey must be date that represent day box in calendar so must be a user time
 			$daykey = dol_mktime(0, 0, 0, $mois, $jour, $annee, 'gmt');
@@ -1826,7 +1828,7 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 	$arraytimestamp = dol_getdate($timestamp);
 
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
-	print_actions_filter($form, $canedit, $status, $year, $month, $day, $check_birthday, '', $filtert, '', $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid);
+	print_actions_filter($form, $canedit, $status, $year, $month, $day, $check_birthday, '', $filtert, '', $pid, $socid, $action, -1, $actioncode, $usergroupids, '', $resourceid);
 	print '</div>';
 
 	print '<div class="div-table-responsive-no-min sectioncalendarbyday maxscreenheightless300">';

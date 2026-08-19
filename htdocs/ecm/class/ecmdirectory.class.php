@@ -599,7 +599,7 @@ class EcmDirectory extends CommonObject
 		$sql = "SELECT fk_parent as id_parent, rowid as id_son";
 		$sql .= " FROM ".MAIN_DB_PREFIX."ecm_directories";
 		$sql .= " WHERE fk_parent != 0";
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " AND entity = ".((int) $conf->entity);
 
 		dol_syslog(get_class($this)."::load_motherof", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -688,7 +688,7 @@ class EcmDirectory extends CommonObject
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."ecm_directories as ca";
 		$sql .= " ON c.rowid = ca.fk_parent";
 		$sql .= " WHERE c.fk_user_c = u.rowid";
-		$sql .= " AND c.entity = ".$conf->entity;
+		$sql .= " AND c.entity = ".((int) $conf->entity);
 		$sql .= " ORDER BY c.label, c.rowid";
 
 		dol_syslog(get_class($this)."::get_full_arbo", LOG_DEBUG);
@@ -796,11 +796,11 @@ class EcmDirectory extends CommonObject
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."ecm_directories SET";
-		$sql .= " cachenbofdoc = '".count($filelist)."'";
+		$sql .= " cachenbofdoc = ".count($filelist);
 		if (empty($all)) {  // By default
 			$sql .= " WHERE rowid = ".((int) $this->id);
 		} else {
-			$sql .= " WHERE entity = ".$conf->entity;
+			$sql .= " WHERE entity = ".((int) $conf->entity);
 		}
 
 		dol_syslog(get_class($this)."::refreshcachenboffile", LOG_DEBUG);

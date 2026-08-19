@@ -6,7 +6,7 @@
  * Copyright (C) 2015	    Marcos García		    <marcosgdf@gmail.com>
  * Copyright (C) 2018	    Nicolas ZABOURI	        <info@inovea-conseil.com>
  * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -651,15 +651,15 @@ class ActionComm extends CommonObject
 		$sql .= "'".$this->db->idate($this->datep)."', ";	// date start event
 		$sql .= (strval($this->datef) != '' ? "'".$this->db->idate($this->datef)."'" : "null").", ";
 		$sql .= ((isset($this->durationp) && $this->durationp >= 0 && $this->durationp != '') ? "'".$this->db->escape((string) $this->durationp)."'" : "null").", "; // deprecated
-		$sql .= (isset($this->type_id) ? $this->type_id : "null").",";
+		$sql .= (isset($this->type_id) ? ((int) $this->type_id) : "null").",";
 		$sql .= ($code ? ("'".$this->db->escape($code)."'") : "null").", ";
 		$sql .= (!empty($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "null").", ";
 		$sql .= ((isset($this->socid) && $this->socid > 0) ? ((int) $this->socid) : "null").", ";
 		$sql .= ((isset($this->fk_project) && $this->fk_project > 0) ? ((int) $this->fk_project) : "null").", ";
 		$sql .= " '".$this->db->escape($this->note_private)."', ";
 		$sql .= ((isset($this->contact_id) && $this->contact_id > 0) ? ((int) $this->contact_id) : "null").", "; // deprecated, use ->socpeopleassigned
-		$sql .= (isset($user->id) && $user->id > 0 ? $user->id : "null").", ";
-		$sql .= ($userownerid > 0 ? $userownerid : "null").", ";
+		$sql .= (isset($user->id) && $user->id > 0 ? ((int) $user->id) : "null").", ";
+		$sql .= ($userownerid > 0 ? ((int) $userownerid) : "null").", ";
 		$sql .= (!empty($this->fk_task) ? ((int) $this->fk_task) : "null").", ";
 		$sql .= "'".$this->db->escape($this->label)."', ";
 		$sql .= "'".$this->db->escape((string) $this->percentage)."', ";
@@ -695,7 +695,7 @@ class ActionComm extends CommonObject
 		if ($resql) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."actioncomm", "id");
 			$this->ref = (string) $this->id;
-			$sql = "UPDATE ".MAIN_DB_PREFIX."actioncomm SET ref='".$this->db->escape($this->ref)."' WHERE id=".$this->id;
+			$sql = "UPDATE ".MAIN_DB_PREFIX."actioncomm SET ref='".$this->db->escape($this->ref)."' WHERE id=".((int) $this->id);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
 				$error++;
@@ -1406,13 +1406,13 @@ class ActionComm extends CommonObject
 	 *  @param		int		$socid			Filter by thirdparty
 	 *  @param		int		$fk_element		Id of element action is linked to
 	 *  @param		string	$elementtype	Type of element action is linked to
-	 *  @param		string	$filter			Other filter
+	 *  @param		string	$sqlfilter		Other filter
 	 *  @param		string	$sortfield		Sort on this field
 	 *  @param		string	$sortorder		ASC or DESC
 	 *  @param		int		$limit			Limit number of answers
 	 *  @return		ActionComm[]|string		Error string if KO, array with actions if OK
 	 */
-	public function getActions($socid = 0, $fk_element = 0, $elementtype = '', $filter = '', $sortfield = 'a.datep', $sortorder = 'DESC', $limit = 0)
+	public function getActions($socid = 0, $fk_element = 0, $elementtype = '', $sqlfilter = '', $sortfield = 'a.datep', $sortorder = 'DESC', $limit = 0)
 	{
 		global $hookmanager;
 
@@ -1461,8 +1461,8 @@ class ActionComm extends CommonObject
 				$sql .= " AND a.fk_element = ".((int) $fk_element)." AND a.elementtype = '".$this->db->escape($elementtype)."'";
 			}
 		}
-		if (!empty($filter)) {
-			$sql .= $filter;
+		if (!empty($sqlfilter)) {
+			$sql .= $sqlfilter;
 		}
 		// Fields where hook
 		$parameters = array('sql' => &$sql, 'socid' => $socid, 'fk_element' => $fk_element, 'elementtype' => $elementtype);
@@ -2642,6 +2642,61 @@ class ActionComm extends CommonObject
 		);
 
 		return CommonObject::commonReplaceThirdparty($dbs, $origin_id, $dest_id, $tables);
+	}
+
+	/**
+	 *  Function used to replace a contact id with another one when merging two contacts.
+	 *  llx_actioncomm_resources with element_type = 'socpeople' is where the contacts assigned to an
+	 *  event are really stored, llx_actioncomm.fk_contact being deprecated but still filled.
+	 *
+	 *  @param	DoliDB	$dbs		Database handler
+	 *  @param	int		$origin_id	Old contact id (the contact to delete)
+	 *  @param	int		$dest_id	New contact id (the contact that will receive elements of the other)
+	 *  @return	bool				True if success, False if error
+	 */
+	public static function replaceContact(DoliDB $dbs, $origin_id, $dest_id)
+	{
+		// llx_actioncomm_resources: UNIQUE(fk_actioncomm, element_type, fk_element)
+		$sql = 'DELETE FROM '.$dbs->prefix().'actioncomm_resources WHERE rowid IN (';
+		$sql .= ' SELECT x.rowid FROM (';
+		$sql .= '  SELECT origin.rowid FROM '.$dbs->prefix().'actioncomm_resources as origin';
+		$sql .= '  INNER JOIN '.$dbs->prefix().'actioncomm_resources as dest';
+		$sql .= '   ON dest.fk_actioncomm = origin.fk_actioncomm AND dest.element_type = origin.element_type';
+		$sql .= "  WHERE origin.element_type = 'socpeople'";
+		$sql .= '   AND origin.fk_element = '.((int) $origin_id).' AND dest.fk_element = '.((int) $dest_id);
+		$sql .= ' ) as x)';
+		if (!$dbs->query($sql)) {
+			return false;
+		}
+
+		$sql = 'UPDATE '.$dbs->prefix().'actioncomm_resources SET fk_element = '.((int) $dest_id);
+		$sql .= " WHERE element_type = 'socpeople' AND fk_element = ".((int) $origin_id);
+		if (!$dbs->query($sql)) {
+			return false;
+		}
+
+		// llx_actioncomm_reminder: UNIQUE(fk_actioncomm, fk_user, fk_soc, fk_contact, typeremind, offsetvalue, offsetunit)
+		$sql = 'DELETE FROM '.$dbs->prefix().'actioncomm_reminder WHERE rowid IN (';
+		$sql .= ' SELECT x.rowid FROM (';
+		$sql .= '  SELECT origin.rowid FROM '.$dbs->prefix().'actioncomm_reminder as origin';
+		$sql .= '  INNER JOIN '.$dbs->prefix().'actioncomm_reminder as dest';
+		$sql .= '   ON dest.fk_actioncomm = origin.fk_actioncomm AND dest.typeremind = origin.typeremind';
+		$sql .= '   AND dest.offsetvalue = origin.offsetvalue AND dest.offsetunit = origin.offsetunit';
+		// fk_user and fk_soc are part of the unique key and are nullable, hence the NULL safe
+		// comparisons: the MySQL <=> operator is not portable to PostgreSQL
+		$sql .= '   AND (dest.fk_user = origin.fk_user OR (dest.fk_user IS NULL AND origin.fk_user IS NULL))';
+		$sql .= '   AND (dest.fk_soc = origin.fk_soc OR (dest.fk_soc IS NULL AND origin.fk_soc IS NULL))';
+		$sql .= '  WHERE origin.fk_contact = '.((int) $origin_id).' AND dest.fk_contact = '.((int) $dest_id);
+		$sql .= ' ) as x)';
+		if (!$dbs->query($sql)) {
+			return false;
+		}
+
+		$tables = array(
+			'actioncomm', 'actioncomm_reminder'
+		);
+
+		return CommonObject::commonReplaceContact($dbs, $origin_id, $dest_id, $tables, 'fk_contact');
 	}
 
 	/**

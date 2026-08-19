@@ -394,6 +394,7 @@ class ExtraFields
 			$result = $this->db->DDLAddField($this->db->prefix().$this->db->sanitize($table), $attrname, $field_desc);
 			if ($result > 0) {
 				if ($unique) {
+					// @phan-suppress-next-line SqlInjection
 					$sql = "ALTER TABLE ".$this->db->prefix().$this->db->sanitize($table)." ADD UNIQUE INDEX uk_".$this->db->sanitize($table)."_".$attrname." (".$attrname.")";
 					$resql = $this->db->query($sql, 1, 'dml');
 				}
@@ -542,7 +543,7 @@ class ExtraFields
 			$sql .= " '".$this->db->escape($type)."',";
 			$sql .= " ".((int) $pos).",";
 			$sql .= " '".$this->db->escape($size)."',";
-			$sql .= " ".((int) ($entity === '' ? $conf->entity : $entity)).",";
+			$sql .= " ".((int) ($entity === '' ? ((int) $conf->entity) : ((int) $entity))).",";
 			$sql .= " '".$this->db->escape($elementtype)."',";
 			$sql .= " ".((int) $unique).",";
 			$sql .= " ".((int) $required).",";
@@ -554,8 +555,8 @@ class ExtraFields
 			$sql .= " '".$this->db->escape((string) $printable)."',";
 			$sql .= " ".($default ? "'".$this->db->escape($default)."'" : "null").",";
 			$sql .= " ".($computed ? "'".$this->db->escape($computed)."'" : "null").",";
-			$sql .= " ".(is_object($user) ? $user->id : 0).",";
-			$sql .= " ".(is_object($user) ? $user->id : 0).",";
+			$sql .= " ".(is_object($user) ? ((int) $user->id) : 0).",";
+			$sql .= " ".(is_object($user) ? ((int) $user->id) : 0).",";
 			$sql .= "'".$this->db->idate(dol_now())."',";
 			$sql .= " ".($enabled ? "'".$this->db->escape($enabled)."'" : "1").",";
 			$sql .= " ".($help ? "'".$this->db->escape($help)."'" : "null").",";
@@ -618,7 +619,7 @@ class ExtraFields
 				$sql .= " FROM ".$this->db->prefix()."extrafields";
 				$sql .= " WHERE elementtype = '".$this->db->escape($elementtype)."'";
 				$sql .= " AND name = '".$this->db->escape($attrname)."'";
-				//$sql.= " AND entity IN (0,".$conf->entity.")";      Do not test on entity here. We want to see if there is still on field remaining in other entities before deleting field in table
+				//$sql.= " AND entity IN (0,".((int) $conf->entity).")";      Do not test on entity here. We want to see if there is still on field remaining in other entities before deleting field in table
 				$resql = $this->db->query($sql);
 				if ($resql) {
 					$obj = $this->db->fetch_object($resql);
@@ -669,7 +670,7 @@ class ExtraFields
 		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/", $attrname)) {
 			$sql = "DELETE FROM ".$this->db->prefix()."extrafields";
 			$sql .= " WHERE name = '".$this->db->escape($attrname)."'";
-			$sql .= " AND entity IN  (0,".$conf->entity.')';
+			$sql .= " AND entity IN  (0,".((int) $conf->entity).')';
 			if (!empty($elementtype)) {
 				$sql .= " AND elementtype = '".$this->db->escape($elementtype)."'";
 			}
@@ -1082,7 +1083,7 @@ class ExtraFields
 		$sql = "SELECT rowid, name, label, type, size, elementtype, fieldunique, fieldrequired, param, pos, alwayseditable, emptyonclone, perms, langs, list, printable, showintooltip, totalizable, fielddefault, fieldcomputed, entity, enabled, help, aiprompt";
 		$sql .= " , css, cssview, csslist, personal_data";
 		$sql .= " FROM ".$this->db->prefix()."extrafields";
-		//$sql.= " WHERE entity IN (0,".$conf->entity.")";    // Filter is done later
+		//$sql.= " WHERE entity IN (0,".((int) $conf->entity).")";    // Filter is done later
 		if ($elementtype && $elementtype != 'all') {
 			$sql .= " WHERE elementtype = '".$this->db->escape($elementtype)."'"; // Filed with object->table_element
 		}
@@ -1185,9 +1186,10 @@ class ExtraFields
 	 * @param  int|CommonObject     $object       			Current object or object ID. Preferably, pass the object itself.
 	 * @param  string        		$extrafieldsobjectkey	The key to use to store retrieved data (commonly $object->table_element)
 	 * @param  int	         		$mode                  	1=Used for search filters
+	 * @param  int	         		$filteronparentvalue	1=Filter the values of a dependent list on the value currently saved for its parent list. Used when the field is edited alone (the parent list is not on the form, so the javascript that filters the list can't work).
 	 * @return string
 	 */
-	public function showInputField($key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '', $object = 0, $extrafieldsobjectkey = '', $mode = 0)
+	public function showInputField($key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '', $object = 0, $extrafieldsobjectkey = '', $mode = 0, $filteronparentvalue = 0)
 	{
 		global $conf, $langs, $form, $hookmanager;
 
@@ -1470,6 +1472,19 @@ class ExtraFields
 					if (!empty($valarray[1])) {
 						$parent = $valarray[1];
 					}
+					// When the field is edited alone (not into the whole form), the parent list is not on the page, so the
+					// javascript that filters a dependent list can't do its job. In this case, we filter the values here, on
+					// the value currently saved for the parent list. Note that the selected value is always kept, whatever the
+					// parent value is, so editing the field does not silently clear it.
+					if ($filteronparentvalue && !empty($parent) && (string) $value != (string) $key2) {
+						$tmpparent = explode(':', $parent, 2);
+						if (!empty($tmpparent[1]) && is_object($object)) {
+							$parentvalue = isset($object->array_options['options_'.$tmpparent[0]]) ? $object->array_options['options_'.$tmpparent[0]] : '';
+							if ((string) $parentvalue !== '' && (string) $parentvalue !== (string) $tmpparent[1]) {
+								continue;
+							}
+						}
+					}
 					$out .= '<option value="'.$key2.'"';
 					$out .= (((string) $value == (string) $key2) ? ' selected' : '');
 					$out .= (!empty($parent) ? ' parent="'.$parent.'"' : '');
@@ -1636,12 +1651,12 @@ class ExtraFields
 							} elseif (substr($_SERVER["PHP_SELF"], -8) == 'list.php') {
 								// In filters of list views, we do not want $ID$ replaced by 0. So we remove the '=' condition.
 								// Do nothing if condition is using 'IN' keyword
-								// Replace 'column = $ID$' by "word"
-								$word = '#\b([a-zA-Z0-9-\.-_]+)\b *= *\$ID\$#';
-								$InfoFieldList[4] = preg_replace($word, '$1', $InfoFieldList[4]);
-								// Replace '$ID$ = column' by "word"
-								$word = '#\$ID\$ *= *\b([a-zA-Z0-9-\.-_]+)\b#';
-								$InfoFieldList[4] = preg_replace($word, '$1', $InfoFieldList[4]);
+								// Replace 'column = $any$' by "1=1"
+								$word = '#([a-zA-Z0-9._-]+):=:\$([A-Za-z0-9_]+)\$#';
+								$InfoFieldList[4] = preg_replace($word, '1:=:1', $InfoFieldList[4]);
+								// Replace '$any$ = column' by "1:=:1"
+								$word = '#\$([A-Za-z0-9_]+)\$:=:([A-Za-z0-9._-]+)#';
+								$InfoFieldList[4] = preg_replace($word, '1:=:1', $InfoFieldList[4]);
 							} else {
 								$InfoFieldList[4] = str_replace('$ID$', '0', $InfoFieldList[4]);
 							}
@@ -2405,7 +2420,7 @@ class ExtraFields
 			} else {
 				$sql .= " WHERE ".$this->db->sanitize($selectkey)." = '".$this->db->escape($value)."'";
 			}
-			//$sql.= ' AND entity = '.$conf->entity;
+			//$sql.= ' AND entity = '.((int) $conf->entity);
 
 			dol_syslog(get_class($this).':showOutputField:$type=sellist', LOG_DEBUG);
 

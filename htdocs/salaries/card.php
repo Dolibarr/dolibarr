@@ -896,7 +896,7 @@ if ($id > 0) {
 	print $formconfirm;
 
 
-	print dol_get_fiche_head($head, 'card', $langs->trans("SalaryPayment"), -1, 'salary', 0, '', '', 0, '', 1);
+	print dol_get_fiche_head($head, 'card', $langs->trans("SalaryPayment"), -1, 'salary', 0, '', '', 0, '', ($action == 'edit' ? 0 : 1));
 
 	$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/salaries/list.php', ['restore_lastsearch_values' => 1]).(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
