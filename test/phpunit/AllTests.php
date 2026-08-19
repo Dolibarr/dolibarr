@@ -1,8 +1,9 @@
 <?php
 /* Copyright (C) 2010-2012  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2011-2012  Regis Houssin       <regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026       Lionel Vessiller        <lvessiller@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -156,17 +157,26 @@ class AllTests
 
 		require_once dirname(__FILE__).'/NumberingModulesTest.php';
 		$suite->addTestSuite('NumberingModulesTest');
+		require_once dirname(__FILE__).'/CronjobTest.php';
+		$suite->addTestSuite('CronjobTest');
 		require_once dirname(__FILE__).'/PgsqlTest.php';
 		$suite->addTestSuite('PgsqlTest');
 		require_once dirname(__FILE__).'/PdfDocTest.php';
 		$suite->addTestSuite('PdfDocTest');
 		require_once dirname(__FILE__).'/BuildDocTest.php';
 		$suite->addTestSuite('BuildDocTest');
+		require_once dirname(__FILE__).'/CDavLibTest.php';
+		$suite->addTestSuite('CDavLibTest');
+		require_once dirname(__FILE__).'/DAVLibTest.php';
+		$suite->addTestSuite('DAVLibTest');
 		require_once dirname(__FILE__).'/CMailFileTest.php';
 		$suite->addTestSuite('CMailFileTest');
 
 		require_once dirname(__FILE__).'/CommonObjectTest.php';
 		$suite->addTestSuite('CommonObjectTest');
+
+		require_once dirname(__FILE__).'/ExtraFieldsTest.php';
+		$suite->addTestSuite('ExtraFieldsTest');
 
 		require_once dirname(__FILE__).'/ActionCommTest.php';
 		$suite->addTestSuite('ActionCommTest');
@@ -186,11 +196,27 @@ class AllTests
 
 		require_once dirname(__FILE__).'/PricesTest.php';
 		$suite->addTestSuite('PricesTest');
+
 		require_once dirname(__FILE__).'/DiscountTest.php';
 		$suite->addTestSuite('DiscountTest');
 
+		require_once dirname(__FILE__).'/MultiCurrencyTest.php';
+		$suite->addTestSuite('MultiCurrencyTest');
+
 		require_once dirname(__FILE__).'/BOMTest.php';
 		$suite->addTestSuite('BOMTest');
+
+		require_once dirname(__FILE__).'/MoTest.php';
+		$suite->addTestSuite('MoTest');
+
+		require_once dirname(__FILE__).'/DolresourceTest.php';
+		$suite->addTestSuite('DolresourceTest');
+
+		require_once dirname(__FILE__).'/WorkstationTest.php';
+		$suite->addTestSuite('WorkstationTest');
+
+		require_once dirname(__FILE__).'/OpensurveysondageTest.php';
+		$suite->addTestSuite('OpensurveysondageTest');
 
 		require_once dirname(__FILE__).'/ContratTest.php';
 		$suite->addTestSuite('ContratTest');
@@ -216,12 +242,18 @@ class AllTests
 		$suite->addTestSuite('CommonInvoiceTest');
 		require_once dirname(__FILE__).'/FactureTest.php';
 		$suite->addTestSuite('FactureTest');
+		require_once dirname(__FILE__).'/PropalCommandeFactureWorkflowTest.php';
+		$suite->addTestSuite('PropalCommandeFactureWorkflowTest');
 		require_once dirname(__FILE__).'/FactureRecTest.php';
 		$suite->addTestSuite('FactureRecTest');
 		require_once dirname(__FILE__).'/FactureTestRounding.php';
 		$suite->addTestSuite('FactureTestRounding');
+		require_once dirname(__FILE__).'/TtcRoundingTest.php';
+		$suite->addTestSuite('TtcRoundingTest');
 		require_once dirname(__FILE__).'/PaiementTest.php';
 		$suite->addTestSuite('PaiementTest');
+		require_once dirname(__FILE__).'/RemiseChequeTest.php';
+		$suite->addTestSuite('RemiseChequeTest');
 		require_once dirname(__FILE__).'/FactureFournisseurTest.php';
 		$suite->addTestSuite('FactureFournisseurTest');
 
@@ -234,12 +266,22 @@ class AllTests
 
 		require_once dirname(__FILE__).'/ChargeSocialesTest.php';
 		$suite->addTestSuite('ChargeSocialesTest');
+		require_once dirname(__FILE__).'/DonTest.php';
+		$suite->addTestSuite('DonTest');
+		require_once dirname(__FILE__).'/PaymentDonationTest.php';
+		$suite->addTestSuite('PaymentDonationTest');
+		require_once dirname(__FILE__).'/PaymentVATTest.php';
+		$suite->addTestSuite('PaymentVATTest');
 		require_once dirname(__FILE__).'/HolidayTest.php';
 		$suite->addTestSuite('HolidayTest');
 		require_once dirname(__FILE__).'/ExpenseReportTest.php';
 		$suite->addTestSuite('ExpenseReportTest');
 		require_once dirname(__FILE__).'/LoanTest.php';
 		$suite->addTestSuite('LoanTest');
+		require_once dirname(__FILE__).'/LoanScheduleTest.php';
+		$suite->addTestSuite('LoanScheduleTest');
+		require_once dirname(__FILE__).'/PaymentLoanTest.php';
+		$suite->addTestSuite('PaymentLoanTest');
 
 		require_once dirname(__FILE__).'/EntrepotTest.php';
 		$suite->addTestSuite('EntrepotTest');
@@ -251,8 +293,13 @@ class AllTests
 		require_once dirname(__FILE__).'/CategorieTest.php';
 		$suite->addTestSuite('CategorieTest');
 
+		require_once dirname(__FILE__).'/LinkTest.php';
+		$suite->addTestSuite('LinkTest');
+
 		require_once dirname(__FILE__).'/ProjectTest.php';
 		$suite->addTestSuite('ProjectTest');
+		require_once dirname(__FILE__).'/CommentTest.php';
+		$suite->addTestSuite('CommentTest');
 
 		require_once dirname(__FILE__).'/KnowledgeRecordTest.php';
 		$suite->addTestSuite('KnowledgeRecordTest');

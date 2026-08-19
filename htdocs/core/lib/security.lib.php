@@ -174,7 +174,7 @@ function dolGetLdapPasswordHash($password, $type = 'md5')
  *  @param  string				$dbt_select     Field rowid name, for select into tableandshare if not "rowid". Not used if objectid is null (optional)
  *  @param	int<0,1>			$isdraft		1=The object with id=$objectid is a draft
  *  @param	int<0,1>			$mode			Mode (0=default, 1=return without dying)
- * 	@return	int									If mode = 0 (default): Always 1, die process if not allowed. If mode = 1: Return 0 if access not allowed.
+ * 	@return	int									If mode = 0 (default): die process if not allowed (else return 1). If mode = 1: Return 0 if access not allowed (else return 1).
  *  @see dol_check_secure_access_document(), checkUserAccessToObject()
  */
 function restrictedArea(User $user, $features, $object = 0, $tableandshare = '', $feature2 = '', $dbt_keyfield = 'fk_soc', $dbt_select = 'rowid', $isdraft = 0, $mode = 0)
@@ -209,54 +209,61 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 		$tableandshare = 'actioncomm&societe';
 		$feature2 = 'myactions|allactions';
 		$dbt_select = 'id';
-	}
-	if ($features == 'bank') {
+	} elseif ($features == 'bank') {
 		$features = 'banque';
-	}
-	if ($features == 'facturerec') {
+	} elseif ($features == 'facturerec') {
 		$features = 'facture';
-	}
-	if ($features == 'supplier_invoicerec') {
+	} elseif ($features == 'supplier_invoicerec') {
 		$features = 'fournisseur';
 		$feature2 = 'facture';
-	}
-	if ($features == 'mo') {
+	} elseif ($features == 'mo') {
 		$features = 'mrp';
-	}
-	if ($features == 'member') {
+	} elseif ($features == 'member') {
 		$features = 'adherent';
-	}
-	if ($features == 'subscription') {
+	} elseif ($features == 'subscription') {
 		$features = 'adherent';
 		$feature2 = 'cotisation';
-	}
-	if ($features == 'website' && is_object($object) && $object->element == 'websitepage') {
+	} elseif ($features == 'website' && is_object($object) && $object->element == 'websitepage') {
 		$parentfortableentity = 'fk_website@website';
-	}
-	if ($features == 'project') {
+	} elseif ($features == 'project') {
 		$features = 'projet';
-	}
-	if ($features == 'product') {
+	} elseif ($features == 'eventorganization' && is_object($object) && $object->element == 'conferenceorbooth') {
+		// The module of an event organization declares no permission of its own, on purpose, so a check on
+		// 'eventorganization' is refused to everyone, an administrator included. Check the parent project
+		// instead, which is what the card of the object does itself.
+		// The card refuses an external user before that check, and fk_project is nullable, so we must refuse
+		// both cases here too: with no parent project there is nothing left to check the access on, and
+		// granting it would be an access with no check at all.
+		if (!empty($user->socid) || empty($object->fk_project)) {
+			if ($mode) {
+				return 0;
+			} else {
+				accessforbidden();
+			}
+		}
+		$features = 'projet';
+		$tableandshare = 'projet&project';
+		$objectid = (int) $object->fk_project;
+		$object = $objectid;
+	} elseif ($features == 'product') {
 		$features = 'produit';
-	}
-	if ($features == 'productbatch') {
+	} elseif ($features == 'productbatch') {
 		$features = 'produit';
-	}
-	if ($features == 'tax') {
+	} elseif ($features == 'tax') {
 		$feature2 = 'charges';
-	}
-	if ($features == 'workstation') {
+	} elseif ($features == 'workstation') {
 		$feature2 = 'workstation';
-	}
-	if ($features == 'fournisseur') {	// When vendor invoice and purchase order are into module 'fournisseur'
-		$features = 'fournisseur';
+	} elseif ($features == 'hrm' && is_object($object) && in_array($object->element, array('job', 'position', 'skill'))) {
+		$feature2 = 'all';	// These 3 objects have no permission of their own, they share the level "all"
+	} elseif ($features == 'stocktransfer' && is_object($object) && $object->element == 'stocktransfer') {
+		$feature2 = 'stocktransfer';	// This module declares no permission at its first level, only this one
+	} elseif ($features == 'fournisseur') {	// When vendor invoice and purchase order are into module 'fournisseur'
 		if (is_object($object) && $object->element == 'invoice_supplier') {
 			$feature2 = 'facture';
 		} elseif (is_object($object) && $object->element == 'order_supplier') {
 			$feature2 = 'commande';
 		}
-	}
-	if ($features == 'payment_sc') {
+	} elseif ($features == 'payment_sc') {
 		$tableandshare = 'paiementcharge';
 		$parentfortableentity = 'fk_charge@chargesociales';
 	}
@@ -798,6 +805,30 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 			$sharedelement = (!empty($params[1]) ? $params[1] : $dbtablename); // We change dbtablename, so we set sharedelement too.
 		}
 
+		// The default rule reads the columns entity and $dbt_keyfield of the table, but some tables own neither of
+		// them. The sql was then built on columns that do not exist, so it always failed and the access was refused
+		// to the users that this rule applies to.
+		// The rule is selected on the table and not on the element of the object, because $object is an id and not
+		// an object for most of the callers, the card of an asset and the card of a workstation included.
+		if (!empty($objectid) && in_array($dbtablename, array('asset', 'paiement', 'paiementfourn', 'workstation_workstation', 'hrm_job', 'hrm_job_user', 'hrm_skill'))) {
+			// None of these objects is linked to a third party, so an external user can own none of them. The
+			// default rule refused him through a link that does not exist, we must refuse him explicitly instead,
+			// otherwise the rules below, which do not look at the third party of the user at all, would grant it.
+			if (!empty($user->socid)) {
+				return false;
+			}
+			if (in_array($dbtablename, array('hrm_job', 'hrm_job_user', 'hrm_skill'))) {
+				// These 3 tables have no entity column either, so no rule that reads the table can be run on them.
+				// The permission is still checked by restrictedArea(), and the $checkhierarchy rule below still runs.
+				// Note that these 3 objects are therefore not partitioned between entities at all, in the database
+				// itself: their cards already answer to a user of another entity, and their lists already show the
+				// records of all of them. This rule does not widen that, it aligns with it.
+				$nocheck[] = $feature;
+			} else {
+				$check[] = $feature;	// Test on the entity only, there is no third party to restrict on
+			}
+		}
+
 		// $objectid was already sanitized at begin of this method (can be an int or a list of int separated by comma).
 		// To avoid an access forbidden with a numeric ref
 		if ($dbt_select != 'rowid' && $dbt_select != 'id') {
@@ -981,7 +1012,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 					$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
 					$sql .= " AND (sc.fk_user = ".((int) $user->id)." OR dbt.".$dbt_keyfield." IS NULL OR dbt.".$dbt_keyfield." = 0)";
 				}
-			} elseif (isModEnabled('multicompany')) {
+			} elseif (isModEnabled('multicompany') && (!empty($object->ismultientitymanaged) || !isset($object->ismultientitymanaged))) {
 				// If multicompany, and user is an internal user with all permissions, check that object is in correct entity
 				$sql = "SELECT COUNT(dbt.".$db->sanitize($dbt_select).") as nb";
 				$sql .= " FROM ".MAIN_DB_PREFIX.$db->sanitize($dbtablename)." as dbt";

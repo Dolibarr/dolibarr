@@ -1186,9 +1186,10 @@ class ExtraFields
 	 * @param  int|CommonObject     $object       			Current object or object ID. Preferably, pass the object itself.
 	 * @param  string        		$extrafieldsobjectkey	The key to use to store retrieved data (commonly $object->table_element)
 	 * @param  int	         		$mode                  	1=Used for search filters
+	 * @param  int	         		$filteronparentvalue	1=Filter the values of a dependent list on the value currently saved for its parent list. Used when the field is edited alone (the parent list is not on the form, so the javascript that filters the list can't work).
 	 * @return string
 	 */
-	public function showInputField($key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '', $object = 0, $extrafieldsobjectkey = '', $mode = 0)
+	public function showInputField($key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '', $object = 0, $extrafieldsobjectkey = '', $mode = 0, $filteronparentvalue = 0)
 	{
 		global $conf, $langs, $form, $hookmanager;
 
@@ -1471,6 +1472,19 @@ class ExtraFields
 					if (!empty($valarray[1])) {
 						$parent = $valarray[1];
 					}
+					// When the field is edited alone (not into the whole form), the parent list is not on the page, so the
+					// javascript that filters a dependent list can't do its job. In this case, we filter the values here, on
+					// the value currently saved for the parent list. Note that the selected value is always kept, whatever the
+					// parent value is, so editing the field does not silently clear it.
+					if ($filteronparentvalue && !empty($parent) && (string) $value != (string) $key2) {
+						$tmpparent = explode(':', $parent, 2);
+						if (!empty($tmpparent[1]) && is_object($object)) {
+							$parentvalue = isset($object->array_options['options_'.$tmpparent[0]]) ? $object->array_options['options_'.$tmpparent[0]] : '';
+							if ((string) $parentvalue !== '' && (string) $parentvalue !== (string) $tmpparent[1]) {
+								continue;
+							}
+						}
+					}
 					$out .= '<option value="'.$key2.'"';
 					$out .= (((string) $value == (string) $key2) ? ' selected' : '');
 					$out .= (!empty($parent) ? ' parent="'.$parent.'"' : '');
@@ -1637,12 +1651,12 @@ class ExtraFields
 							} elseif (substr($_SERVER["PHP_SELF"], -8) == 'list.php') {
 								// In filters of list views, we do not want $ID$ replaced by 0. So we remove the '=' condition.
 								// Do nothing if condition is using 'IN' keyword
-								// Replace 'column = $ID$' by "word"
-								$word = '#\b([a-zA-Z0-9-\.-_]+)\b *= *\$ID\$#';
-								$InfoFieldList[4] = preg_replace($word, '$1', $InfoFieldList[4]);
-								// Replace '$ID$ = column' by "word"
-								$word = '#\$ID\$ *= *\b([a-zA-Z0-9-\.-_]+)\b#';
-								$InfoFieldList[4] = preg_replace($word, '$1', $InfoFieldList[4]);
+								// Replace 'column = $any$' by "1=1"
+								$word = '#([a-zA-Z0-9._-]+):=:\$([A-Za-z0-9_]+)\$#';
+								$InfoFieldList[4] = preg_replace($word, '1:=:1', $InfoFieldList[4]);
+								// Replace '$any$ = column' by "1:=:1"
+								$word = '#\$([A-Za-z0-9_]+)\$:=:([A-Za-z0-9._-]+)#';
+								$InfoFieldList[4] = preg_replace($word, '1:=:1', $InfoFieldList[4]);
 							} else {
 								$InfoFieldList[4] = str_replace('$ID$', '0', $InfoFieldList[4]);
 							}

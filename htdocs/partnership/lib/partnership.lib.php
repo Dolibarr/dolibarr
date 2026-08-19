@@ -45,7 +45,7 @@ function partnershipAdminPrepareHead()
 	$h++;
 
 
-	$head[$h][0] = DOL_URL_ROOT . '/partnership/admin/partnership_extrafields.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'partnership'));
 	$head[$h][1] = $langs->trans("ExtraFields");
 	$nbExtrafields = $extrafields->attributes['partnership']['count'];
 	if ($nbExtrafields > 0) {

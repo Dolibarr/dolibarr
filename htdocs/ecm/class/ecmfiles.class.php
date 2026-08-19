@@ -4,7 +4,7 @@
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018       Francis Appels      <francis.appels@yahoo.com>
- * Copyright (C) 2019-2025  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2019-2026  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -61,6 +61,11 @@ class EcmFiles extends CommonObject
 	 * @var ?string hash for file sharing, empty by default (example: getRandomPassword(true))
 	 */
 	public $share;
+
+	/**
+	 * @var EcmFilesLine[]
+	 */
+	public $lines = array();
 
 	/**
 	 * @var ?string filename, Note: Into ecm database record, the entry never ends with .noexe
@@ -624,7 +629,7 @@ class EcmFiles extends CommonObject
 				}
 			}
 			if (count($sqlwhere) > 0) {
-				$sql .= ' AND '.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere);
+				$sql .= ' AND '.implode(' '.$this->db->sanitize($filtermode).' ', $sqlwhere);
 			}
 
 			$filter = '';
@@ -1050,9 +1055,9 @@ class EcmFiles extends CommonObject
 					$tmppath = preg_replace('/^[^\/]+\//', '', $this->filepath);
 				}
 			}
-			$url = DOL_URL_ROOT.'/document.php?modulepart='.urlencode($option).'&file='.urlencode($tmppath.'/'.$this->filename).'&entity='.((int) $this->entity);
+			$url = dolBuildUrl(DOL_URL_ROOT.'/document.php', array('modulepart' => $option, 'file' => $tmppath.'/'.$this->filename, 'entity' => (int) $this->entity));
 		} else {
-			$url = DOL_URL_ROOT.'/ecm/file_card.php?id='.$this->id;
+			$url = dolBuildUrl(DOL_URL_ROOT.'/ecm/file_card.php', array('id' => $this->id));
 		}
 
 		$linkclose = '';
@@ -1255,4 +1260,12 @@ class EcmFilesLine extends CommonObjectLine
 	 * @var int
 	 */
 	public $src_object_id;
+	/**
+	 * @var int
+	 */
+	public $agenda_id;
+	/**
+	 * @var ?string Hash for file sharing
+	 */
+	public $share;
 }

@@ -25,6 +25,7 @@ ServicesOnPurchaseOnly=Servicios que se adquieren únicamente
 ServicesNotOnSell=Servicios que no se venden ni se adquieren
 ServicesOnSellAndOnBuy=Servicios que se vender y se adquieren
 MenuStocks=Inventarios(Stocks)
+Stocks=Inventarios y ubicaciones (almacenes) de productos
 OnSell=Para vender
 OnBuy=Para comprar
 NotOnSell=No se vende

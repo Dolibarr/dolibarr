@@ -49,7 +49,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("install", "other", "admin"));
+$langs->loadLangs(array("blockedlog", "install", "other", "admin"));
 
 $action = GETPOST('action', 'aZ09');
 
@@ -444,11 +444,13 @@ $configfileparameters = array(
 	'?dolibarr_font_DOL_DEFAULT_TTF_BOLD' => 'dolibarr_font_DOL_DEFAULT_TTF_BOLD',
 	'separator4' => '',
 	'dolibarr_main_restrict_os_commands' => 'Restrict CLI commands for backups',
+	'dolibarr_main_restrict_eval_methods' => 'Restrict php commands for dol_eval',
 	'dolibarr_main_restrict_ip' => 'Restrict access to some IPs only',
+	'?dolibarr_website_allow_custom_php' => 'Allow custom php code in website pages',
 	'?dolibarr_mailing_limit_sendbyweb' => 'Limit nb of email sent by page',
 	'?dolibarr_mailing_limit_sendbycli' => 'Limit nb of email sent by cli',
 	'?dolibarr_mailing_limit_sendbyday' => 'Limit nb of email sent per day',
-	'?dolibarr_strict_mode' => 'Strict mode is on/off',
+	'?dolibarr_strict_mode' => 'Strict mode for php syntax is on/off',
 	'?dolibarr_nocsrfcheck' => 'Disable CSRF security checks'
 );
 

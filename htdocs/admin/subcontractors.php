@@ -148,13 +148,11 @@ $head = company_admin_prepare_head();
 print dol_get_fiche_head($head, 'subcontractors', '', -1, '');
 
 $form = new Form($db);
-$formother = new FormOther($db);
 $formcompany = new FormCompany($db);
 
-$countrynotdefined = '<span class="error">'.$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')</span>';
 
-print '<span class="opacitymedium">'.$langs->trans("SubcontractorsDesc")."</span><br>\n";
-print "<br><br>\n";
+print '<div class="info">'.$langs->trans("SubcontractorsDesc")."</div>\n";
+print "<br>\n";
 
 /**
  * Edit parameters

@@ -2,6 +2,7 @@
 /*
  * Copyright (C) 2024 Anthony Damhet <a.damhet@progiseize.fr>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,9 +76,7 @@ $documentation->showSidebar(); ?>
 <div class="doc-wrapper">
 
 	<?php $documentation->showBreadCrumb(); ?>
-
 	<div class="doc-content-wrapper">
-
 		<h1 class="documentation-title"><?php echo $langs->trans('DocSetEventMessageTitle'); ?></h1>
 		<p class="documentation-text"><?php echo $langs->trans('DocSetEventMessageMainDescription'); ?></p>
 
@@ -90,42 +89,43 @@ $documentation->showSidebar(); ?>
 			<p class="documentation-text"><?php echo $langs->trans('DocSetEventMessageDescription'); ?></p>
 			<div class="documentation-example">
 				<?php
-					$label = 'My action label used for accessibility visually for impaired people';
-					$user_right = 1;
+				$label = 'My action label used for accessibility visually for impaired people';
+				$user_right = 1;
 
-					$html = '<span class="fa fa-comment paddingright"></span>'.$langs->trans('DocSetEventMessageDisplayMessage');
-					$action_type = 'displayeventmessage';
-					$url = $_SERVER["PHP_SELF"].'?action=displayeventmessage';
-					print dolGetButtonAction($label, $html, $action_type, $url, '', $user_right);
+				$html = '<span class="fa fa-comment paddingright"></span>'.$langs->trans('DocSetEventMessageDisplayMessage');
+				$action_type = 'displayeventmessage';
+				$url = $_SERVER["PHP_SELF"].'?action=displayeventmessage';
+				print dolGetButtonAction($label, $html, $action_type, $url, '', $user_right);
 
-					$label = 'My action label used for accessibility visually for impaired people';
-					$user_right = 1;
+				$label = 'My action label used for accessibility visually for impaired people';
+				$user_right = 1;
 
-					$html = '<span class="fa fa-comments paddingright"></span>'.$langs->trans('DocSetEventMessageDisplayMessages');
-					$action_type = 'displayeventmessages';
-					$url = $_SERVER["PHP_SELF"].'?action=displayeventmessages';
-					print dolGetButtonAction($label, $html, $action_type, $url, '', $user_right); ?>
+				$html = '<span class="fa fa-comments paddingright"></span>'.$langs->trans('DocSetEventMessageDisplayMessages');
+				$action_type = 'displayeventmessages';
+				$url = $_SERVER["PHP_SELF"].'?action=displayeventmessages';
+				print dolGetButtonAction($label, $html, $action_type, $url, '', $user_right);
+				?>
 			</div>
 			<?php
 			$lines = array(
-					'<?php',
-					'/**',
-					'* Function setEventMessages',
-					'*',
-					'*  Set event messages in dol_events session object. Will be output by calling dol_htmloutput_events',
-					'*  Note: Calling dol_htmloutput_events is done into pages by standard llxFooter() function',
-					'*',
-					'*  @param  string|null     $mesg       Message string',
-					'*  @param  string[]|null   $mesgs      Message array',
-					'*  @param  string  $style              Which style to use ("mesgs" by default, "warnings", "errors")',
-					'*  @param  string  $messagekey         A key to be used to allow the feature "Never show this message during this session again"',
-					'*  @param  int     $noduplicate        1 means we do not add the message if already present in session stack',
-					'*  @return void',
-					'*  @see	dol_htmloutput_events()',
-					'*/',
-					'',
-					'setEventMessages("message", null);',
-					'setEventMessages(null, messages[]);',
+				'<?php',
+				'/**',
+				' * Function setEventMessages',
+				' *',
+				' *  Set event messages in dol_events session object. Will be output by calling dol_htmloutput_events',
+				' *  Note: Calling dol_htmloutput_events is done into pages by standard llxFooter() function',
+				' *',
+				' *  @param  string|null     $mesg       Message string',
+				' *  @param  string[]|null   $mesgs      Message array',
+				' *  @param  \'\'|\'mesgs\'|\'warnings\'|\'errors\' $style  Which style to use (\'mesgs\' by default, \'warnings\', \'errors\')',
+				' *  @param  string  $messagekey         A key to be used to allow the feature "Never show this message during this session again"',
+				' *  @param  int     $noduplicate        1 means we do not add the message if already present in session stack',
+				' *  @return void',
+				' *  @see   dol_htmloutput_events()',
+				' */',
+				'',
+				'setEventMessages("message", null);',
+				'setEventMessages(null, messages[]);',
 			);
 			$documentation->showCode($lines, 'php'); ?>
 		</div>
@@ -190,5 +190,3 @@ $documentation->showSidebar(); ?>
 <?php
 // Output close body + html
 $documentation->docFooter();
-
-?>
