@@ -11606,7 +11606,6 @@ function dol_htmloutput_errors($mesgstring = '', $mesgarray = array(), $keepembe
 	dol_htmloutput_mesg($mesgstring, $mesgarray, 'error', $keepembedded);
 }
 
-
 /**
  *  Sort an array using a user defined function. This function is a wrapper to usort without the callable parameter so we can use it into dol_eval().
  *  This function is not used in Dolibarr code.
@@ -11616,7 +11615,8 @@ function dol_htmloutput_errors($mesgstring = '', $mesgarray = array(), $keepembe
  */
 function dolSort($arraytosort)
 {
-	return usort($arraytosort);
+	sort($arraytosort);
+	return $arraytosort;
 }
 
 /**
