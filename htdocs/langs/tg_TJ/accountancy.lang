@@ -202,6 +202,7 @@ DiscountReceived=Discount received
 DONATION_ACCOUNTINGACCOUNT=Ҳисоб (аз Нақшаи ҳисоб), ки барои бақайдгирии хайрияҳо истифода мешавад (модули хайрия)
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Ҳисоб (аз Нақшаи Ҳисоб), ки барои бақайдгирии обунаҳои аъзогӣ истифода мешавад (Модули аъзогӣ - агар узвият бидуни ҳисобнома сабт шуда бошад)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Ҳисоб (аз Нақшаи ҳисоб) ҳамчун ҳисоби пешфарз барои бақайдгирии пасандози муштарӣ истифода мешавад
+ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT_FOR_VAT=Account (from the Chart Of Account) to be used as the default account for VAT on customer deposit used in bindings
 UseAuxiliaryAccountOnCustomerDeposit=Ҳисоби муштариро ҳамчун ҳисоби инфиродӣ дар китоби фаръӣ барои хатҳои пардохтҳои пешакӣ нигоҳ доред (агар ғайрифаъол карда шавад, ҳисоби инфиродӣ барои хатҳои пешпардохт холӣ мемонад)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default account to register supplier deposit
 UseAuxiliaryAccountOnSupplierDeposit=Ҳисоби молрасонро ҳамчун ҳисоби инфиродӣ дар китоби фаръӣ барои хатҳои пардохтҳои пешакӣ нигоҳ доред (агар ғайрифаъол карда шавад, ҳисоби инфиродӣ барои хатҳои пешпардохт холӣ мемонад)

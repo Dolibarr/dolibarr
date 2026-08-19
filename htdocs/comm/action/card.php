@@ -2659,7 +2659,7 @@ if ($id > 0 && $action != 'create') {
 
 		print '</form>';
 	} else {
-		print dol_get_fiche_head($head, 'card', $langs->trans("Action"), -1, 'action');
+		print dol_get_fiche_head($head, 'card', $langs->trans("Action"), -1, 'action', 0, '', '', 0, '', 1);
 
 		$formconfirm = '';
 

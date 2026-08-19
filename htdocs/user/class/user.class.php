@@ -4196,6 +4196,25 @@ class User extends CommonObject
 		return CommonObject::commonReplaceThirdparty($dbs, $origin_id, $dest_id, $tables);
 	}
 
+	/**
+	 *  Function used to replace a contact id with another one when merging two contacts.
+	 *  llx_user.fk_socpeople has a unique key, so the case where both contacts are linked to a user
+	 *  is refused by Contact::mergeContact() before this method is called.
+	 *
+	 *  @param	DoliDB	$dbs		Database handler
+	 *  @param	int		$origin_id	Old contact id (the contact to delete)
+	 *  @param	int		$dest_id	New contact id (the contact that will receive elements of the other)
+	 *  @return	bool				True if success, False if error
+	 */
+	public static function replaceContact(DoliDB $dbs, $origin_id, $dest_id)
+	{
+		if (!CommonObject::commonReplaceContact($dbs, $origin_id, $dest_id, array('user'))) {
+			return false;
+		}
+
+		return CommonObject::commonReplaceContact($dbs, $origin_id, $dest_id, array('user_alert'), 'fk_contact');
+	}
+
 
 	/**
 	 *      Load metrics this->nb for dashboard

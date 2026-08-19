@@ -2011,7 +2011,7 @@ if ($action == 'create' && $permissiontoadd) {
 	$res = $object->fetch_optionals();
 
 	$head = reception_prepare_head($object);
-	print dol_get_fiche_head($head, 'reception', $langs->trans("Reception"), -1, 'dollyrevert');
+	print dol_get_fiche_head($head, 'reception', $langs->trans("Reception"), -1, 'dollyrevert', 0, '', '', 0, '', 1);
 
 	$formconfirm = '';
 

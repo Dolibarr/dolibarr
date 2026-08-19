@@ -191,6 +191,7 @@ CustomerBillsUnpaid=Faturas de clientes não pagos
 SetConditions=Definir condições de pagamento
 SetMode=Definir tipo de pagamento
 SetRevenuStamp=Definir o selo da receita
+RecurringInvoiceSource=Source recurring invoice
 RepeatableInvoice=Fatura pré-definida
 RepeatableInvoices=Faturas pré-definidas
 Repeatable=Pré-definida
