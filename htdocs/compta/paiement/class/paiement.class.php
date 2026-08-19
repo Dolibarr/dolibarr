@@ -14,6 +14,7 @@
  * Copyright (C) 2023       Joachim Kueter			<git-jk@bloxera.com>
  * Copyright (C) 2023       Sylvain Legrand			<technique@infras.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026       Lenin Rivas      	    <lenin.rivas777@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -343,11 +344,7 @@ class Paiement extends CommonObject
 
 			// $key is id of invoice, $value is amount, $way is 'dolibarr' if amount is in main currency, 'customer' if in foreign currency
 			if ($invoice_multicurrency_tx) {
-				if ($way == 'dolibarr') {
-					$value_converted = (float) price2num($value * $invoice_multicurrency_tx, 'MU');
-				} else {
-					$value_converted = (float) price2num($value / $invoice_multicurrency_tx, 'MU');
-				}
+				$value_converted = MultiCurrency::getAmountConversionFromInvoiceRate($key, $value ? $value : 0, $way, 'facture', $invoice_multicurrency_tx);
 			} else {
 				$invoice_multicurrency_tx = false;
 			}
