@@ -1782,6 +1782,14 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on 
 		}
 	}
 
+	// Status management: if unchecked at creation, prune all status-anchored regions (class + card).
+	// Must run BEFORE rebuildObjectClass so the pruned $fields['status'] entry is not regenerated.
+	if (!$error && !GETPOST('statusmanaged', 'aZ09')) {
+		if (pruneModuleBuilderStatusRegions($destdir, $objectname) > 0) {
+			$error++;
+		}
+	}
+
 	if (!$error) {
 		// Edit PHP files to make replacement
 		foreach ($filetogenerate as $destfile) {
@@ -2163,6 +2171,52 @@ if ($dirins && $action == 'confirm_deleteproperty' && $propertykey /* && $user->
 
 		// Make a redirect to reload all data
 		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=objects&module='.$module.($forceddirread ? '@'.$dirread : '').'&tabobj='.$objectname);
+		exit;
+	}
+}
+
+if ($dirins && $action == 'confirm_disablestatus' && $module && $tabobj && GETPOST('confirm', 'aZ09') == 'yes' /* && $user->hasRight("modulebuilder", "run") // already checked */) {
+	$objectname = $tabobj;
+
+	$dirins = $dirread = $listofmodules[strtolower($module)]['moduledescriptorrootpath'];
+	$moduletype = $listofmodules[strtolower($module)]['moduletype'];
+
+	$srcdir = $dirread.'/'.strtolower($module);
+	$destdir = $dirins.'/'.strtolower($module);
+
+	// 1) Prune every status-anchored region in the already-generated class and card files.
+	if (pruneModuleBuilderStatusRegions($destdir, $objectname) > 0) {
+		$error++;
+	}
+
+	// 2) Drop the status field from the class properties and regenerate class + SQL.
+	$object = null;
+	if (!$error) {
+		$object = rebuildObjectClass($destdir, $module, $objectname, $newmask, $srcdir, array(), 'status');
+
+		if (is_numeric($object) && $object <= 0) {
+			$pathoffiletoeditsrc = $destdir.'/class/'.strtolower($objectname).'.class.php';
+			setEventMessages($langs->trans('ErrorFailToCreateFile', $pathoffiletoeditsrc), null, 'errors');
+			$error++;
+		}
+	}
+
+	if (!$error && $object !== null) {
+		$result = rebuildObjectSql($destdir, $module, $objectname, $newmask, $srcdir, $object);
+
+		if ($result <= 0) {
+			setEventMessages($langs->trans('ErrorFailToCreateFile', '.sql'), null, 'errors');
+			$error++;
+		}
+	}
+
+	if (!$error) {
+		setEventMessages($langs->trans('StatusManagementDisabled'), null);
+
+		clearstatcache(true);
+
+		// Make a redirect to reload all data
+		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=objects&module='.urlencode($module.($forceddirread ? '@'.$dirread : '')).'&tabobj='.urlencode($objectname));
 		exit;
 	}
 }
@@ -4344,6 +4398,8 @@ if ($module == 'initmodule') {
 				print '<input type="checkbox" name="includedocgeneration" id="includedocgeneration" value="includedocgeneration"> <label for="includedocgeneration">'.$form->textwithpicto($langs->trans("IncludeDocGeneration"), $langs->trans("IncludeDocGenerationHelp")).'</label><br>';
 				print '<input type="checkbox" name="generatepermissions" id="generatepermissions" value="generatepermissions"> <label for="generatepermissions">'.$form->textwithpicto($langs->trans("GeneratePermissions"), $langs->trans("GeneratePermissionsHelp")).'</label><br>';
 				print '<input type="checkbox" name="nogeneratelines" id="nogeneratelines" value="nogeneratelines"> <label for="nogeneratelines">'.$form->textwithpicto($langs->trans("NoGenerateLines"), $langs->trans("NoGenerateLinesHelp")).'</label><br>';
+				$checkedstatus = GETPOSTISSET('statusmanaged') ? (GETPOST('statusmanaged', 'aZ09') ? ' checked' : '') : ' checked';
+				print '<input type="checkbox" name="statusmanaged" id="statusmanaged" value="statusmanaged"'.$checkedstatus.'> <label for="statusmanaged">'.$form->textwithpicto($langs->trans("ManageStatuses"), $langs->trans("ManageStatusesHelp")).'</label><br>';
 				print '<br><span class="opacitymedium">'.$form->textwithpicto($langs->trans("EnabledTabsForObject"), $langs->trans("EnabledTabsForObjectHelp")).'</span><br>';
 				foreach (getModuleBuilderObjectTabs() as $tabkey => $tabinfo) {
 					$checked = in_array($tabkey, $enabledtabsdefault, true) ? ' checked' : '';
@@ -4813,6 +4869,26 @@ if ($module == 'initmodule') {
 							print '<input type="hidden" name="tabobj" value="'.dol_escape_htmltag($tabobj).'">';
 
 							print '<input class="button smallpaddingimp" type="submit" name="regenerateclasssql" value="'.$langs->trans("RegenerateClassAndSql").'">';
+
+							// Status management is inferred from the presence of the 'status' field in the generated class.
+							$statusmanaged = isset($reflectorpropdefault['fields']['status']);
+							if ($statusmanaged) {
+								print ' &nbsp; <a class="button smallpaddingimp" href="'.$_SERVER['PHP_SELF'].'?action=disablestatus&token='.newToken().'&tab=objects&module='.urlencode($module.($forceddirread ? '@'.$dirread : '')).'&tabobj='.urlencode($tabobj).'">'.dol_escape_htmltag($langs->trans('DisableStatusManagement')).'</a>';
+							} else {
+								print ' &nbsp; <span class="opacitymedium">'.dol_escape_htmltag($langs->trans('StatusManagementDisabled')).'</span>';
+							}
+							if ($statusmanaged && $action == 'disablestatus') {
+								print $form->formconfirm(
+									$_SERVER['PHP_SELF'].'?module='.urlencode($module.($forceddirread ? '@'.$dirread : '')).'&tabobj='.urlencode($tabobj).'&tab=objects',
+									$langs->trans('DisableStatusManagement'),
+									$langs->trans('ConfirmDisableStatusManagement'),
+									'confirm_disablestatus',
+									'',
+									0,
+									1
+								);
+							}
+
 							print '<br><br class="clearboth">';
 							print '<br class="clearboth">';
 

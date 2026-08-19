@@ -445,6 +445,38 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 }
 
 /**
+ * Prune every BEGIN/END MODULEBUILDER STATUS region from a generated object's class and card files.
+ *
+ * Used to honor the "manage statuses" option: when an object does not manage statuses, all the
+ * status-related code (constants, validate/setDraft/cancel/reopen, LibStatut, status buttons, etc.)
+ * is removed from the generated files instead of being only hidden.
+ *
+ * @param	string	$destdir		Module root directory (absolute path)
+ * @param	string	$objectname		Object name (class file is <lower>.class.php, card is <lower>_card.php)
+ * @return	int						0 if OK, >0 = number of files that could not be pruned
+ */
+function pruneModuleBuilderStatusRegions($destdir, $objectname)
+{
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
+	$pattern = '/\h*\/\*\s*BEGIN MODULEBUILDER STATUS\s*\*\/.*?\/\*\s*END MODULEBUILDER STATUS\s*\*\/\s*/s';
+	$files = array(
+		$destdir.'/class/'.strtolower($objectname).'.class.php',
+		$destdir.'/'.strtolower($objectname).'_card.php',
+	);
+
+	$nberror = 0;
+	foreach ($files as $file) {
+		if (file_exists($file) && !removePatternFromFile($file, $pattern)) {
+			$nberror++;
+			dol_syslog("modulebuilder: failed to purge STATUS sections in ".$file, LOG_ERR);
+		}
+	}
+
+	return $nberror;
+}
+
+/**
  * Get list of existing objects from a directory
  *
  * @param	string	$destdir		Directory
