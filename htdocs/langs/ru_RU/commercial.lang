@@ -90,6 +90,7 @@ ThisIsInformationOnDocumentToSignFichinter=Это информация об ак
 ThisIsInformationOnDocumentToSignSociete_rib=Это информация о мандате SEPA на подписание.
 ThisIsInformationOnDocumentToSignExpedition= Это информация о доставке для подписи
 SignatureProposalRef=Подпись расценки / коммерческого предложения %s
+SignatureOrderRef=Signature of sale order %s
 SignatureContractRef=Подписание контракта %s
 SignatureFichinterRef=Подпись акта о вмешательстве %s
 SignatureSociete_ribRef=Подписание мандата SEPA %s

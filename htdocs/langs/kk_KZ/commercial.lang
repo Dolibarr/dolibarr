@@ -90,6 +90,7 @@ ThisIsInformationOnDocumentToSignFichinter=Бұл қол қою үшін ара�
 ThisIsInformationOnDocumentToSignSociete_rib=Бұл қол қою үшін SEPA мандаты туралы ақпарат
 ThisIsInformationOnDocumentToSignExpedition= Бұл қол қою үшін жөнелту туралы ақпарат
 SignatureProposalRef=%s баға белгілеу/коммерциялық ұсыныстың қолы
+SignatureOrderRef=Signature of sale order %s
 SignatureContractRef=Келісімшартқа қол қою %s
 SignatureFichinterRef=Интервенцияның қолтаңбасы %s
 SignatureSociete_ribRef=SEPA мандатының қолы %s

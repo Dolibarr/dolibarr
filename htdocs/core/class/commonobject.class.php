@@ -10138,6 +10138,68 @@ abstract class CommonObject
 	}
 
 	/**
+	 * Function used to replace a contact id with another one.
+	 * This function is meant to be called from replaceContact with the appropriate tables.
+	 * The column storing the contact id is 'fk_socpeople' on some tables and 'fk_contact' on others,
+	 * hence the $fieldname parameter.
+	 *
+	 * @param  DoliDB	$dbs			Database handler
+	 * @param  int		$origin_id		Old contact id (the contact to delete)
+	 * @param  int		$dest_id		New contact id (the contact that will receive elements of the other)
+	 * @param  string[]	$tables			Tables that need to be changed
+	 * @param  string	$fieldname		Name of the column storing the contact id ('fk_socpeople' or 'fk_contact')
+	 * @param  int<0,1>	$ignoreerrors	Ignore errors. Return true even if errors.
+	 * @return bool						True if success, False if error
+	 */
+	public static function commonReplaceContact(DoliDB $dbs, $origin_id, $dest_id, array $tables, $fieldname = 'fk_socpeople', $ignoreerrors = 0)
+	{
+		global $hookmanager;
+
+		// Table and column names are concatenated into the SQL, so they are validated as a defence in
+		// depth: this method is public and static, hence callable from any module.
+		if (!preg_match('/^[a-z0-9_]+$/', $fieldname)) {
+			dol_syslog(__METHOD__.' Refused an invalid column name: '.$fieldname, LOG_ERR);
+			return false;
+		}
+
+		$parameters = array(
+			'origin_id' => $origin_id,
+			'dest_id' => $dest_id,
+			'tables' => $tables,
+			'fieldname' => $fieldname,
+		);
+		$reshook = $hookmanager->executeHooks('commonReplaceContact', $parameters);
+		if ($reshook > 0) {
+			return true; // replacement code
+		} elseif ($reshook < 0) {
+			return $ignoreerrors === 1; // failure
+		} // reshook = 0 => execute normal code
+
+		foreach ($tables as $table) {
+			if (!preg_match('/^[a-z0-9_]+$/', $table)) {
+				dol_syslog(__METHOD__.' Refused an invalid table name: '.$table, LOG_ERR);
+				return false;
+			}
+
+			$sanitizedtable = $dbs->sanitize($table);
+			$sanitizedfieldname = $dbs->sanitize($fieldname);
+
+			$sql = "UPDATE ".$dbs->prefix().$sanitizedtable;
+			$sql .= " SET ".$sanitizedfieldname." = ".((int) $dest_id);
+			$sql .= " WHERE ".$sanitizedfieldname." = ".((int) $origin_id);
+
+			if (!$dbs->query($sql)) {
+				if ($ignoreerrors) {
+					return true;
+				}
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	/**
 	 * Get buy price to use for margin calculation. This function is called when buy price is unknown.
 	 *	 Set buy price = sell price if ForceBuyingPriceIfNull configured,
 	 *   elseif calculation MARGIN_TYPE = 'costprice' and costprice is defined, use costprice as buyprice
