@@ -559,16 +559,24 @@ class MultiCurrency extends CommonObject
 		$resql = $dbs->query($sql1.$sql2.$sql3);
 
 		if ($resql && $obj = $dbs->fetch_object($resql)) {
-			return array($obj->rowid, $obj->rate);
+			$rate = $obj->rate;
+			if (getDolGlobalString('MULTICURRENCY_USE_RATE_DIRECT') && !empty($obj->rate_direct)) {
+				$rate = $obj->rate_direct;
+			}
+			return array($obj->rowid, $rate, $obj->rate_direct);
 		} else {
 			if (getDolGlobalString('MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE')) {
 				$resql = $dbs->query($sql1.$sql3);
 				if ($resql && $obj = $dbs->fetch_object($resql)) {
-					return array($obj->rowid, $obj->rate, $obj->rate_direct);
+					$rate = $obj->rate;
+					if (getDolGlobalString('MULTICURRENCY_USE_RATE_DIRECT') && !empty($obj->rate_direct)) {
+						$rate = $obj->rate_direct;
+					}
+					return array($obj->rowid, $rate, $obj->rate_direct);
 				}
 			}
 
-			return array(0, 1);
+			return array(0, 1, 1);
 		}
 	}
 
@@ -592,10 +600,18 @@ class MultiCurrency extends CommonObject
 		}
 
 		if ($multicurrency_tx) {
-			if ($way == 'dolibarr') {
-				return (float) price2num($amount * $multicurrency_tx, 'MU');
+			if (getDolGlobalString('MULTICURRENCY_USE_RATE_DIRECT')) {
+				if ($way == 'dolibarr') {
+					return (float) price2num($amount / $multicurrency_tx, 'MU');
+				} else {
+					return (float) price2num($amount * $multicurrency_tx, 'MU');
+				}
 			} else {
-				return (float) price2num($amount / $multicurrency_tx, 'MU');
+				if ($way == 'dolibarr') {
+					return (float) price2num($amount * $multicurrency_tx, 'MU');
+				} else {
+					return (float) price2num($amount / $multicurrency_tx, 'MU');
+				}
 			}
 		} else {
 			return false;
