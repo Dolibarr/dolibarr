@@ -288,6 +288,9 @@ class AllTests
 		require_once dirname(__FILE__).'/CategorieTest.php';
 		$suite->addTestSuite('CategorieTest');
 
+		require_once dirname(__FILE__).'/LinkTest.php';
+		$suite->addTestSuite('LinkTest');
+
 		require_once dirname(__FILE__).'/ProjectTest.php';
 		$suite->addTestSuite('ProjectTest');
 		require_once dirname(__FILE__).'/CommentTest.php';
