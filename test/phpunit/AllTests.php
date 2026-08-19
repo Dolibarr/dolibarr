@@ -206,6 +206,9 @@ class AllTests
 		require_once dirname(__FILE__).'/BOMTest.php';
 		$suite->addTestSuite('BOMTest');
 
+		require_once dirname(__FILE__).'/MoTest.php';
+		$suite->addTestSuite('MoTest');
+
 		require_once dirname(__FILE__).'/DolresourceTest.php';
 		$suite->addTestSuite('DolresourceTest');
 
@@ -239,6 +242,8 @@ class AllTests
 		$suite->addTestSuite('CommonInvoiceTest');
 		require_once dirname(__FILE__).'/FactureTest.php';
 		$suite->addTestSuite('FactureTest');
+		require_once dirname(__FILE__).'/PropalCommandeFactureWorkflowTest.php';
+		$suite->addTestSuite('PropalCommandeFactureWorkflowTest');
 		require_once dirname(__FILE__).'/FactureRecTest.php';
 		$suite->addTestSuite('FactureRecTest');
 		require_once dirname(__FILE__).'/FactureTestRounding.php';
@@ -287,6 +292,9 @@ class AllTests
 
 		require_once dirname(__FILE__).'/CategorieTest.php';
 		$suite->addTestSuite('CategorieTest');
+
+		require_once dirname(__FILE__).'/LinkTest.php';
+		$suite->addTestSuite('LinkTest');
 
 		require_once dirname(__FILE__).'/ProjectTest.php';
 		$suite->addTestSuite('ProjectTest');
