@@ -16,7 +16,7 @@
  * Copyright (C) 2018       Josep Lluís Amador  <joseplluis@lliuretic.cat>
  * Copyright (C) 2023       Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2021       Grégory Blémand     <gregory.blemand@atm-consulting.fr>
- * Copyright (C) 2023       Lenin Rivas      	<lenin.rivas777@gmail.com>
+ * Copyright (C) 2023-2026  Lenin Rivas      	<lenin.rivas777@gmail.com>
  * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
  * Copyright (C) 2025		Alexandre Janniaux	<alexandre.janniaux@gmail.com>
@@ -2951,7 +2951,22 @@ abstract class CommonObject
 
 				list($fk_multicurrency, $rate) = MultiCurrency::getIdAndTxFromCode($this->db, $code);
 				if ($rate) {
-					$this->setMulticurrencyRate($rate, 2);
+					$mode = 2;
+					if (getDolGlobalString('MULTICURRENCY_USE_RATE_DIRECT')) {
+						$hasForeignPrices = false;
+						if (!empty($this->lines)) {
+							foreach ($this->lines as $tmpline) {
+								if (!empty($tmpline->multicurrency_subprice)) {
+									$hasForeignPrices = true;
+									break;
+								}
+							}
+						}
+						if ($hasForeignPrices) {
+							$mode = 1;
+						}
+					}
+					$this->setMulticurrencyRate($rate, $mode);
 				}
 
 				return 1;
