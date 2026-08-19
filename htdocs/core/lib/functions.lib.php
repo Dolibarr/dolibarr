@@ -187,6 +187,12 @@ function getMultidirOutput($object, $module = '', $forobject = 0, $mode = 'outpu
 			$module = 'knowledgemanagement';
 			$subdirectory = '/knowledgerecord';
 			break;
+		case 'partnership':
+			$subdirectory = '/partnership';
+			break;
+		case 'stocktransfer':
+			$subdirectory = '/stocktransfer';
+			break;
 		case 'commande_fournisseur':
 			$module = 'fournisseur';
 			$subdirectory = '/commande';
@@ -207,10 +213,20 @@ function getMultidirOutput($object, $module = '', $forobject = 0, $mode = 'outpu
 		case 'project_task':
 			$module = 'projet';
 
-			// Fetch the project to build the correct path
-			$object->fetchProject();
+			// Fetch the project to build the correct path. The signature of this function accepts an object
+			// that is not a CommonObject, and even a null when a module is given, so we must not call a method
+			// that only a CommonObject owns without testing it exists.
+			if (is_object($object) && method_exists($object, 'fetchProject')) {
+				$object->fetchProject();
+			}
 
-			$subdirectory = '/'.$object->project->ref;
+			// The ref must be sanitized with dol_sanitizeFileName() and not only with dol_sanitizePathName()
+			// done at the end of this function, because a project ref is a user input that may contain a '/',
+			// a ':' or an accented char. dol_sanitizePathName() keeps them, so we would not return the
+			// directory used by projet/tasks/document.php, that sanitizes the ref with dol_sanitizeFileName().
+			if (!empty($object->project->ref)) {
+				$subdirectory = '/'.dol_sanitizeFileName($object->project->ref);
+			}
 			break;
 		case 'action':
 		case 'actioncomm':
@@ -226,7 +242,13 @@ function getMultidirOutput($object, $module = '', $forobject = 0, $mode = 'outpu
 		if (isset($conf->$module) && property_exists($conf->$module, 'multidir_output')) {
 			$s = '';
 			if ($mode != 'outputrel') {
-				$s = $conf->$module->multidir_output[(empty($object->entity) ? $conf->entity : $object->entity)] . $subdirectory;
+				// An entity with no directory declared used to return an undefined index, so a relative path
+				// that made the caller read or write under the web root. Answer the error instead.
+				$entity = (int) (empty($object->entity) ? $conf->entity : $object->entity);
+				if (!isset($conf->$module->multidir_output[$entity])) {
+					return 'error-diroutput-not-defined-for-this-object='.$module;
+				}
+				$s = $conf->$module->multidir_output[$entity].$subdirectory;
 			}
 			if ($forobject && $object->id > 0) {
 				$s .= ($mode != 'outputrel' ? '/' : '') . get_exdir(0, 0, 0, 0, $object);
@@ -246,7 +268,12 @@ function getMultidirOutput($object, $module = '', $forobject = 0, $mode = 'outpu
 		}
 	} elseif ($mode == 'temp') {
 		if (isset($conf->$module) && property_exists($conf->$module, 'multidir_temp')) {
-			return dol_sanitizePathName($conf->$module->multidir_temp[(empty($object->entity) ? $conf->entity : $object->entity)]);
+			// Same guard as the 'output' mode above, see the comment there
+			$entity = (int) (empty($object->entity) ? $conf->entity : $object->entity);
+			if (!isset($conf->$module->multidir_temp[$entity])) {
+				return 'error-dirtemp-not-defined-for-this-object='.$module;
+			}
+			return dol_sanitizePathName($conf->$module->multidir_temp[$entity]);
 		} elseif (isset($conf->$module) && property_exists($conf->$module, 'dir_temp')) {
 			return dol_sanitizePathName($conf->$module->dir_temp);
 		} else {
@@ -11620,7 +11647,6 @@ function dol_htmloutput_errors($mesgstring = '', $mesgarray = array(), $keepembe
 	dol_htmloutput_mesg($mesgstring, $mesgarray, 'error', $keepembedded);
 }
 
-
 /**
  *  Sort an array using a user defined function. This function is a wrapper to usort without the callable parameter so we can use it into dol_eval().
  *  This function is not used in Dolibarr code.
@@ -11630,7 +11656,8 @@ function dol_htmloutput_errors($mesgstring = '', $mesgarray = array(), $keepembe
  */
 function dolSort($arraytosort)
 {
-	return usort($arraytosort);
+	sort($arraytosort);
+	return $arraytosort;
 }
 
 /**
@@ -15243,6 +15270,7 @@ function getElementProperties($elementType)
 		$module = 'societe';
 		$subelement = 'contact';
 		$table_element = 'socpeople';
+		$subdir = '/contact';
 	} elseif ($elementType == 'inventory') {
 		$module = 'product';
 		$classpath = 'product/inventory/class';
@@ -15458,6 +15486,45 @@ function getElementProperties($elementType)
 		$classfile = 'paymentsalary';
 		$classname = 'PaymentSalary';
 		$module = 'salaries';
+	} elseif ($elementType == 'payment') {
+		$classpath = 'compta/paiement/class';
+		$classfile = 'paiement';
+		$classname = 'Paiement';
+		$module = 'facture';	// A customer payment belongs to the invoice module, there is no 'compta' module
+		$element = 'payment';
+		$subelement = 'payment';
+		$table_element = 'paiement';
+	} elseif ($elementType == 'payment_supplier') {
+		$classpath = 'fourn/class';
+		$classfile = 'paiementfourn';
+		$classname = 'PaiementFourn';
+		$module = 'fournisseur';
+		$element = 'payment_supplier';
+		$subelement = 'payment_supplier';
+		$table_element = 'paiementfourn';
+	} elseif ($elementType == 'payment_various') {
+		$classpath = 'compta/bank/class';
+		$classfile = 'paymentvarious';
+		$classname = 'PaymentVarious';
+		$module = 'bank';	// We need $conf->bank->dir_output and not $conf->banque->dir_output
+		$element = 'payment_various';
+		$subelement = 'payment_various';
+		$table_element = 'payment_various';
+	} elseif ($elementType == 'stocktransfer') {
+		$classpath = 'product/stock/stocktransfer/class';
+		$classfile = 'stocktransfer';
+		$classname = 'StockTransfer';	// Not the ucfirst() of the element, so it must be set explicitly
+		$module = 'stocktransfer';
+		$subelement = 'stocktransfer';
+		$table_element = 'stocktransfer_stocktransfer';
+	} elseif ($elementType == 'job' || $elementType == 'position' || $elementType == 'skill' || $elementType == 'evaluation') {
+		$classpath = 'hrm/class';
+		$classfile = $elementType;
+		$classname = ucfirst($elementType);
+		$module = 'hrm';
+		$subelement = $elementType;
+		$table_element = ($elementType == 'position' ? 'hrm_job_user' : 'hrm_'.$elementType);
+		$subdir = '/'.$elementType;
 	} elseif ($elementType == 'productlot') {
 		$module = 'productbatch';
 		$classpath = 'product/stock/class';
@@ -15508,6 +15575,7 @@ function getElementProperties($elementType)
 		$classfile = 'conferenceorbooth';
 		$classname = 'ConferenceOrBooth';
 		$module = 'eventorganization';
+		$subdir = '/conferenceorbooth';
 	} elseif ($elementType == 'ccountry') {
 		$module = '';
 		$classpath = 'core/class';
@@ -15597,9 +15665,24 @@ function getElementProperties($elementType)
 	} elseif ($element == 'invoice_supplier' && isModEnabled('fournisseur')) {
 		$dir_output = $conf->fournisseur->facture->dir_output;
 		$dir_temp = $conf->fournisseur->facture->dir_temp;
+	} elseif ($elementType == 'payment' && isModEnabled('invoice') && isset($conf->compta->payment)) {
+		// A customer payment is stored into a sub object of $conf, not handled by the generic case.
+		// Note: we must test $elementType and not $element, because the 'myobject_mysubobject' rule above
+		// rewrites $element to 'payment' for the element 'payment_salary' too, which is stored elsewhere.
+		$dir_output = $conf->compta->payment->dir_output;
+		$dir_temp = $conf->compta->payment->dir_temp;
+	} elseif ($elementType == 'payment_supplier' && isModEnabled('fournisseur') && isset($conf->fournisseur->payment)) {
+		$dir_output = $conf->fournisseur->payment->dir_output;
+		$dir_temp = $conf->fournisseur->payment->dir_temp;
 	}
-	$dir_output .= $subdir;
-	$dir_temp .= $subdir;
+	// The sub directory must not be appended when the module is disabled, because $dir_output is then empty
+	// and we would return a path at the root of the file system instead of an empty string.
+	if (!empty($dir_output)) {
+		$dir_output .= $subdir;
+	}
+	if (!empty($dir_temp)) {
+		$dir_temp .= $subdir;
+	}
 
 	$elementProperties = array(
 		'module' => $module,
