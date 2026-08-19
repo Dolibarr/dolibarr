@@ -134,42 +134,6 @@ abstract class CommonClassTest extends TestCase
 	}
 
 	/**
-	 * Defensive: in the full test suite (all classes run in one continuous process, processIsolation=false),
-	 * the global $db, $mysoc and $user can end up with a stale/closed underlying DB connection by the time a
-	 * given test class's setUpBeforeClass() runs, for reasons outside that test's control (see
-	 * https://github.com/Dolibarr/dolibarr/issues/38068 and https://github.com/Dolibarr/dolibarr/pull/39010
-	 * for related "mysqli object is already closed" reports elsewhere in this codebase, on stricter PHP
-	 * versions). Call this before doing anything that needs a working DB connection outside of the test
-	 * transaction itself - typically before activateModule() for a module whose dependency chain reaches
-	 * modProduct, whose constructor queries the DB via Societe::useNPR().
-	 *
-	 * @return void
-	 */
-	protected static function ensureDbIsConnected(): void
-	{
-		global $db, $conf, $dolibarr_main_db_pass, $mysoc, $user;
-
-		$stillconnected = false;
-		try {
-			$stillconnected = (bool) $db->query('SELECT 1');
-		} catch (Throwable $e) {
-			$stillconnected = false;
-		}
-		if (!$stillconnected) {
-			// $conf->db->pass is deliberately unset by master.inc.php right after the initial connection (to
-			// avoid the password lingering in memory) - $dolibarr_main_db_pass is the one global left
-			// available for this exact kind of reconnect.
-			$db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $dolibarr_main_db_pass, $conf->db->name, (int) $conf->db->port);
-		}
-		// Always resync, even if $db itself did not need reconnecting above: $mysoc and $user were built once
-		// at bootstrap (master.inc.php) and each stashed their own reference to $db in their ->db property,
-		// which can go stale independently of the global $db variable (for example if an earlier test class
-		// in the same continuous run already reconnected $db without going through this same code).
-		$mysoc->db = $db;
-		$user->db = $db;
-	}
-
-	/**
 	 *	This method is called when a test fails
 	 *
 	 *  @param	Throwable	$t		Throwable object
