@@ -1355,7 +1355,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		// Show errors
 		dol_htmloutput_errors(is_numeric($error) ? '' : $error, $errors);
 
-		print dol_get_fiche_head($head, 'card', $title, -1, 'contact');
+		print dol_get_fiche_head($head, 'card', $title, -1, 'contact', 0, '', '', 0, '', 1);
 
 		if ($action == 'create_user') {
 			// Full firstname and lastname separated with a dot : firstname.lastname
