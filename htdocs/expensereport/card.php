@@ -1621,7 +1621,7 @@ if ($action == 'create') {
 			print '<input type="hidden" name="id" value="'.$id.'">';
 			print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
-			print dol_get_fiche_head($head, 'card', $langs->trans("ExpenseReport"), 0, 'trip', 0, '', '', 0, '', 1);
+			print dol_get_fiche_head($head, 'card', $langs->trans("ExpenseReport"), 0, 'trip', 0, '', '', 0, '', 0);	// No drag and drop on the edit form, dropping a file reloads the page and discards it
 
 			if ($object->status == ExpenseReport::STATUS_REFUSED) {
 				print '<input type="hidden" name="action" value="updateFromRefuse">';

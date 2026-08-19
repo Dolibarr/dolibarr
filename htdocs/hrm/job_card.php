@@ -314,7 +314,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	$head = jobPrepareHead($object);
 	$picto = 'company.png';
-	print dol_get_fiche_head($head, 'job_card', $langs->trans("Workstation"), -1, $object->picto);
+	print dol_get_fiche_head($head, 'job_card', $langs->trans("Workstation"), -1, $object->picto, 0, '', '', 0, '', 1);
 
 	$formconfirm = '';
 

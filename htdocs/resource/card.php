@@ -250,7 +250,7 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 		print dol_get_fiche_head();
 	} else {
 		$head = resource_prepare_head($object);
-		print dol_get_fiche_head($head, 'resource', $title, -1, 'resource');
+		print dol_get_fiche_head($head, 'resource', $title, -1, 'resource', 0, '', '', 0, '', ($action == 'edit' ? 0 : 1));
 	}
 
 	if ($action == 'create' || $action == 'edit') {
