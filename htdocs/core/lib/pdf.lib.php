@@ -2995,7 +2995,7 @@ function pdf_render_subtotals(
 
 	if ($isSubtotal && $applySubtotalLogic && $object->lines[$i]->qty < 0) {
 		$outputlangs->load("subtotals");
-		$object->lines[$i]->desc = getDolGlobalString("SUBTOTAL_LINE_TEXT_DOES_NOT_INCLUDE_TITLE_TEXT") ? $outputlangs->trans("Subtotal") : $outputlangs->trans("SubtotalOf", $object->lines[$i]->desc);
+		$object->lines[$i]->desc = getDolGlobalString("SUBTOTAL_LINE_TEXT_DOES_NOT_INCLUDE_TITLE_TEXT") ? $outputlangs->trans("SubTotal") : $outputlangs->trans("SubtotalOf", $object->lines[$i]->desc);
 		$generator->cols['desc']['content']['align'] = ($prevAlign === 'L') ? 'R' : 'L';
 	}
 

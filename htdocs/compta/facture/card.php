@@ -6680,7 +6680,7 @@ if ($action == 'create') {
 					'label' => $langs->trans('AddSubtotalLine'),
 					'url' => '/compta/facture/card.php?facid='.$object->id.'&action=add_subtotal_line&token='.newToken()
 				);
-				print dolGetButtonAction('', $langs->trans('Subtotal'), 'default', $url_button, '', true);
+				print dolGetButtonAction('', $langs->trans('SubTotal'), 'default', $url_button, '', true);
 			}
 
 			// Validate
