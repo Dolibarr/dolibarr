@@ -422,7 +422,7 @@ class Website extends CommonObject
 				}
 			}
 			if (count($sqlwhere) > 0) {
-				$sql .= ' AND '.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere);
+				$sql .= ' AND '.implode(' '.$this->db->sanitize($filtermode).' ', $sqlwhere);
 			}
 
 			$filter = '';
@@ -1005,6 +1005,7 @@ class Website extends CommonObject
 	 * Generate a zip with all data of web site.
 	 *
 	 * @return  string						Path to file with zip or '' if error
+	 * @see importWebSite()
 	 */
 	public function exportWebSite()
 	{
@@ -1272,10 +1273,11 @@ class Website extends CommonObject
 	 *
 	 * @param 	string		$pathtofile		Full path of zip file
 	 * @return  int							Return integer <0 if KO, Id of new website if OK
+	 * @see exportWebSite()
 	 */
 	public function importWebSite($pathtofile)
 	{
-		global $conf, $mysoc;
+		global $conf, $mysoc, $user;
 
 		$error = 0;
 
@@ -1318,15 +1320,49 @@ class Website extends CommonObject
 		$arrayreplacement['__LOGO_KEY__'] = $this->db->escape($mysoc->logo);
 
 
-		// Copy containers directory
+		// Make replacement into css
+		$cssinsrcdir = $conf->website->dir_temp.'/'.$object->ref.'/containers/styles.css.php';
+		$result = dolReplaceInFile($cssinsrcdir, $arrayreplacement);
+
+		// Test if imported CSS page contains dynamic PHP content
+		if (!$user->hasRight('website', 'writephp')) {
+			$newpathofsrcfile = dol_osencode($cssinsrcdir);
+			$csscontent = file_get_contents($newpathofsrcfile);
+
+			// Check there is no PHP content into the imported file (must be only HTML + JS)
+			$phpcontent = dolKeepOnlyPhpCode($csscontent);
+
+			if ($phpcontent) {
+				$this->error = 'Error: you try to import a website with a page with PHP dynamic content in style sheet without having permissions for that.';
+				$this->errors[] = $this->error;
+				return -1;
+			}
+		}
+
+
+		// Make replacement in htmlheader.html
+		$htmldeaderinsrcdir = $conf->website->dir_output.'/'.$object->ref.'/containers/htmlheader.html';
+		$result = dolReplaceInFile($htmldeaderinsrcdir, $arrayreplacement);
+
+		// Test if imported html page contains dynamic PHP content
+		if (!$user->hasRight('website', 'writephp')) {
+			$newpathofsrcfile = dol_osencode($htmldeaderinsrcdir);
+			$htmlcontent = file_get_contents($newpathofsrcfile);
+
+			// Check there is no PHP content into the imported file (must be only HTML + JS)
+			$phpcontent = dolKeepOnlyPhpCode($htmlcontent);
+
+			if ($phpcontent) {
+				$this->error = 'Error: you try to import a website with a page with PHP dynamic content in htmlheader.html without having permissions for that.';
+				$this->errors[] = $this->error;
+				return -1;
+			}
+		}
+
+
+		// Copy tmp containers directory
 		dolCopyDir($conf->website->dir_temp.'/'.$object->ref.'/containers', $conf->website->dir_output.'/'.$object->ref, '0', 1); // Overwrite if exists
 
-		// Make replacement into css and htmlheader file
-		$cssindestdir = $conf->website->dir_output.'/'.$object->ref.'/styles.css.php';
-		$result = dolReplaceInFile($cssindestdir, $arrayreplacement);
-
-		$htmldeaderindestdir = $conf->website->dir_output.'/'.$object->ref.'/htmlheader.html';
-		$result = dolReplaceInFile($htmldeaderindestdir, $arrayreplacement);
 
 		// Now generate the master.inc.php page
 		$filemaster = $conf->website->dir_output.'/'.$object->ref.'/master.inc.php';
@@ -1335,6 +1371,7 @@ class Website extends CommonObject
 			$this->errors[] = 'Failed to write file '.$filemaster;
 			$error++;
 		}
+
 
 		// Copy dir medias/image/websitekey
 		if (dol_is_dir($conf->website->dir_temp.'/'.$object->ref.'/medias/image/websitekey')) {
@@ -1390,7 +1427,7 @@ class Website extends CommonObject
 				$reg = array();
 
 				// Warning fgets with second parameter that is null or 0 hang.
-				$buf = fgets($fp, 65000);	// No needto have a high value here for second parameter. We will process only short lines starting with '-- Page ID ...'
+				$buf = fgets($fp, 65000);	// No need to have a high value here for second parameter. We will process only short lines starting with '-- Page ID ...'
 				$newid = 0;
 
 				// Scan the line
@@ -1414,12 +1451,27 @@ class Website extends CommonObject
 				if ($newid) {
 					$objectpagestatic->fetch($newid);
 
-					// We regenerate the pageX.tpl.php
+					// We write the pageX.tpl.php
 					$filetpl = $conf->website->dir_output.'/'.$object->ref.'/page'.$newid.'.tpl.php';
 					$result = dolSavePageContent($filetpl, $object, $objectpagestatic);
 					if (!$result) {
 						$this->errors[] = 'Failed to write file '.basename($filetpl);
 						$error++;
+					}
+
+					// Test if imported page contains dynamic PHP content
+					if (!$user->hasRight('website', 'writephp')) {
+						$newpathofsrcfile = dol_osencode($filetpl);
+						$tplcontent = file_get_contents($newpathofsrcfile);
+
+						// Check there is no PHP content into the imported file (must be only HTML + JS)
+						$phpcontent = dolKeepOnlyPhpCode($tplcontent);
+
+						if ($phpcontent) {
+							$this->error = 'Error: you try to import a website with a page with PHP dynamic content without having permissions for that.';
+							$this->errors[] = $this->error;
+							$error++;
+						}
 					}
 
 					// Regenerate also the main alias + alternative aliases pages

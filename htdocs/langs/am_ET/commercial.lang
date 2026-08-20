@@ -90,6 +90,7 @@ ThisIsInformationOnDocumentToSignFichinter=ይህ ለመፈረም ጣልቃ ገ�
 ThisIsInformationOnDocumentToSignSociete_rib=ይህ በ SEPA የመፈረም ትእዛዝ ላይ ያለ መረጃ ነው።
 ThisIsInformationOnDocumentToSignExpedition= This is information on shipment to sign
 SignatureProposalRef=የጥቅስ/የንግድ ፕሮፖዛል ፊርማ %s
+SignatureOrderRef=Signature of sale order %s
 SignatureContractRef=የኮንትራት ፊርማ %s
 SignatureFichinterRef=የጣልቃ ገብነት ፊርማ %s
 SignatureSociete_ribRef=የ SEPA ትዕዛዝ ፊርማ %s

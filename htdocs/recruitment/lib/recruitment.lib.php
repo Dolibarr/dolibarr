@@ -50,7 +50,7 @@ function recruitmentAdminPrepareHead()
 	$head[$h][2] = 'settings_candidatures';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT . '/recruitment/admin/jobposition_extrafields.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/admin/extrafields.php', array('elementtype' => 'recruitment_recruitmentjobposition'));
 	$head[$h][1] = $langs->trans("ExtrafieldsJobPosition");
 	$nbExtrafields = $extrafields->attributes['recruitment_recruitmentjobposition']['count'];
 	if ($nbExtrafields > 0) {
@@ -59,7 +59,7 @@ function recruitmentAdminPrepareHead()
 	$head[$h][2] = 'jobposition_extrafields';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT . '/recruitment/admin/candidature_extrafields.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/admin/extrafields.php', array('elementtype' => 'recruitment_recruitmentcandidature'));
 	$head[$h][1] = $langs->trans("ExtrafieldsApplication");
 	$nbExtrafields = $extrafields->attributes['recruitment_recruitmentcandidature']['count'];
 	if ($nbExtrafields > 0) {

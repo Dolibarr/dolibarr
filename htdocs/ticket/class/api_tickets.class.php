@@ -2,6 +2,7 @@
 /* Copyright (C) 2016   Jean-François Ferry     <hello@librethic.io>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Jose Martinez				<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -435,7 +436,14 @@ class Tickets extends DolibarrApi
 			$this->ticket->$field = $this->_checkValForAPI($field, $value, $this->ticket);
 		}
 		$ticketMessageText = $this->ticket->message;
-		$result = $this->ticket->fetch(0, '', $this->ticket->track_id);
+		// Allow targeting the ticket by id or ref, not only track_id
+		if (!empty($this->ticket->id)) {
+			$result = $this->ticket->fetch($this->ticket->id);
+		} elseif (!empty($this->ticket->ref)) {
+			$result = $this->ticket->fetch(0, $this->ticket->ref);
+		} else {
+			$result = $this->ticket->fetch(0, '', $this->ticket->track_id);
+		}
 		if (!$result) {
 			throw new RestException(404, 'Ticket not found');
 		}

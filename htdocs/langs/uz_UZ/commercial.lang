@@ -90,6 +90,7 @@ ThisIsInformationOnDocumentToSignFichinter=Bu imzolash uchun aralashuv haqida ma
 ThisIsInformationOnDocumentToSignSociete_rib=Bu imzolash uchun SEPA Mandati haqidagi ma'lumot
 ThisIsInformationOnDocumentToSignExpedition= Bu imzolash uchun jo'natish haqidagi ma'lumot
 SignatureProposalRef=%s taklifi / tijorat taklifining imzosi
+SignatureOrderRef=Signature of sale order %s
 SignatureContractRef=Shartnoma imzosi %s
 SignatureFichinterRef=Aralashuv imzosi %s
 SignatureSociete_ribRef=SEPA mandati imzosi %s

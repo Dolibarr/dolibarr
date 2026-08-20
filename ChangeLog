@@ -8,6 +8,7 @@ English Dolibarr ChangeLog
 
 For users:
 ----------
+NEW: Unify all per-object extrafields admin pages into a single secured page (htdocs/admin/extrafields.php), replacing ~79 near-identical wrapper pages with one whitelist-controlled controller
 NEW: Experimental module "Quick memo" to put post-it on any screens (#37422)
 NEW: Thirdparty bank account asks for bank country, state, currency and status (#38031)
 NEW: New Stock transfer module stabilization and full functional coverage (#37557)
@@ -188,6 +189,7 @@ NEW: API get country: load region and load states now an option (#37715)
 NEW: Add MAIN_FORCE_SYSTEM_MESSAGE Renamed hook "info_admin" into "messageOfTheDay"
 NEW: Category - API - Add type list (#38207)
 NEW: Add method calculateVATNumberFromProperties()
+NEW: Add pdf_writeLogoOrCompanyName() helper in pdf.lib.php to mutualize PDF header logo rendering across document generators
 NEW: Add method dolOutputDates()
 FIX: Security permission on payment instead of create to create payment with API (credit Santosh Kumar Puppala) in commit ad8cd7c0e1800636302517e42fcdcafa393524b3
 
