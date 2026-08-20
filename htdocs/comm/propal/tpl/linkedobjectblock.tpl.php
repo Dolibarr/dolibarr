@@ -81,7 +81,11 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	print '<td class="linkedcol-amount right">';
 	if ($user->hasRight('propal', 'lire')) {
 		$total += $objectlink->total_ht;
-		echo price($objectlink->total_ht);
+		if (isModEnabled('multicurrency') && !empty($objectlink->multicurrency_code) && $objectlink->multicurrency_code != $conf->currency) {
+			echo price($objectlink->multicurrency_total_ht, 0, $langs, 1, -1, -1, $objectlink->multicurrency_code);
+		} else {
+			echo price($objectlink->total_ht);
+		}
 	}
 	print '</td>';
 	print '<td class="linkedcol-statut right">'.$objectlink->getLibStatut(3).'</td>';
