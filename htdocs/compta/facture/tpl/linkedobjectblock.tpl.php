@@ -4,6 +4,7 @@
  * Copyright (C) 2014       Marcos García <marcosgdf@gmail.com>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025       Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2026      Lenin Rivas      	<lenin.rivas777@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -94,9 +95,17 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 		if ($objectlink->status != 3) {
 			// If not abandoned
 			$total += $objectlink->total_ht;
-			echo price($objectlink->total_ht);
+			if (isModEnabled('multicurrency') && !empty($objectlink->multicurrency_code) && $objectlink->multicurrency_code != $conf->currency) {
+				echo price($objectlink->multicurrency_total_ht, 0, $langs, 1, -1, -1, $objectlink->multicurrency_code);
+			} else {
+				echo price($objectlink->total_ht);
+			}
 		} else {
-			echo '<strike>'.price($objectlink->total_ht).'</strike>';
+			if (isModEnabled('multicurrency') && !empty($objectlink->multicurrency_code) && $objectlink->multicurrency_code != $conf->currency) {
+				echo '<strike>'.price($objectlink->multicurrency_total_ht, 0, $langs, 1, -1, -1, $objectlink->multicurrency_code).'</strike>';
+			} else {
+				echo '<strike>'.price($objectlink->total_ht).'</strike>';
+			}
 		}
 	}
 
