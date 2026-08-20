@@ -4312,7 +4312,8 @@ class User extends CommonObject
 		global $dolibarr_main_url_root;
 		global $conf;
 
-		$encodedsecurekey = dol_hash($conf->file->instance_unique_id.'uservirtualcard'.$this->id.'-'.$this->login, 'md5');
+		$instanceuniqueid = empty($conf->file->instance_unique_id) ? '' : $conf->file->instance_unique_id;
+		$encodedsecurekey = dol_hash($instanceuniqueid.'uservirtualcard'.$this->id.'-'.$this->login, 'md5');
 		if (isModEnabled('multicompany')) {
 			$entity_qr = '&entity='.((int) $conf->entity);
 		} else {
