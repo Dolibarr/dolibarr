@@ -216,12 +216,12 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/multicurrency
 %_datadir/dolibarr/htdocs/opensurvey
 %_datadir/dolibarr/htdocs/partnership
-%_datadir/dolibarr/htdocs/paybox
 %_datadir/dolibarr/htdocs/paypal
 %_datadir/dolibarr/htdocs/printing
 %_datadir/dolibarr/htdocs/product
 %_datadir/dolibarr/htdocs/projet
 %_datadir/dolibarr/htdocs/public
+%_datadir/dolibarr/htdocs/quickmemo
 %_datadir/dolibarr/htdocs/recruitment
 %_datadir/dolibarr/htdocs/reception
 %_datadir/dolibarr/htdocs/resource
