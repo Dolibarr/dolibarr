@@ -445,68 +445,43 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 					(getDolGlobalString('WORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED') && ($action == 'SHIPPING_CLOSED'))
 				)
 			) {
-				$qtyshipped = array();
-				$qtyordred = array();
-
 				// The original sale order is id in $object->origin_id
-				// Find all shipments on sale order origin
+				// Compare shipped vs ordered qty by order line id (same approach as Expedition::setClosed)
 
 				if (in_array($object->origin, array('order', 'commande')) && $object->origin_id > 0) {
 					require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+					require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
+					require_once DOL_DOCUMENT_ROOT.'/core/lib/expedition.lib.php';
 					$order = new Commande($this->db);
 					$ret = $order->fetch($object->origin_id);
 					if ($ret < 0) {
 						$this->setErrorsFromObject($order);
 						return $ret;
 					}
-					$ret = $order->fetchObjectLinked($order->id, 'commande', null, 'shipping');
+
+					// Include validated and closed shipments (exclude draft/canceled), keyed by commandedet.rowid
+					$ret = $order->loadExpeditions(Expedition::STATUS_VALIDATED);
 					if ($ret < 0) {
 						$this->setErrorsFromObject($order);
 						return $ret;
 					}
-					//Build array of quantity shipped by product for an order
-					if (is_array($order->linkedObjects) && count($order->linkedObjects) > 0) {
-						foreach ($order->linkedObjects as $type => $shipping_array) {
-							if ($type != 'shipping' || !is_array($shipping_array) || count($shipping_array) == 0) {
-								continue;
-							}
-							/** @var Expedition[] $shipping_array */
-							foreach ($shipping_array as $shipping) {
-								if ($shipping->status <= 0 || !is_array($shipping->lines) || count($shipping->lines) == 0) {
-									continue;
-								}
 
-								foreach ($shipping->lines as $shippingline) {
-									if (isset($qtyshipped[$shippingline->fk_product])) {
-										$qtyshipped[$shippingline->fk_product] += $shippingline->qty;
-									} else {
-										$qtyshipped[$shippingline->fk_product] = $shippingline->qty;
-									}
-								}
-							}
-						}
-					}
-
-					//Build array of quantity ordered to be shipped
+					$shipments_match_order = 1;
 					if (is_array($order->lines) && count($order->lines) > 0) {
 						foreach ($order->lines as $orderline) {
-							// Exclude lines not qualified for shipment, similar code is found into calcAndSetStatusDispatch() for vendors
-							if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES') && $orderline->product_type > 0) {
+							// Exclude lines not qualified for shipment
+							if (!isProductLineShippable($orderline->product_type)) {
 								continue;
 							}
-							if (isset($qtyordred[$orderline->fk_product])) {
-								$qtyordred[$orderline->fk_product] += $orderline->qty;
-							} else {
-								$qtyordred[$orderline->fk_product] = $orderline->qty;
+							$qtyshippedline = isset($order->expeditions[$orderline->id]) ? $order->expeditions[$orderline->id] : 0;
+							if (price2num($qtyshippedline, 'MS') != price2num($orderline->qty, 'MS')) {
+								$shipments_match_order = 0;
+								break;
 							}
 						}
 					}
-					//dol_syslog(var_export($qtyordred,true),LOG_DEBUG);
-					//dol_syslog(var_export($qtyshipped,true),LOG_DEBUG);
-					//Compare array
-					$diff_array = array_diff_assoc($qtyordred, $qtyshipped);
-					if (count($diff_array) == 0) {
-						//No diff => mean everything is shipped
+					if ($shipments_match_order) {
+						// No diff => mean everything is shipped
 						$ret = $order->cloture($user);
 						if ($ret < 0) {
 							$this->setErrorsFromObject($order);

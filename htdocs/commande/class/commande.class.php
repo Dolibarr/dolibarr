@@ -45,6 +45,7 @@ require_once DOL_DOCUMENT_ROOT.'/margin/lib/margins.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/subtotals/class/commonsubtotal.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/expedition.lib.php';
 
 
 /**
@@ -2387,6 +2388,24 @@ class Commande extends CommonOrder
 			}
 		}
 		return $nb;
+	}
+
+	/**
+	 *	Return true if the order has at least one line eligible for shipment.
+	 *	Products are always eligible. Services are eligible when STOCK_SUPPORTS_SERVICES
+	 *	or SHIPMENT_SUPPORTS_SERVICES is enabled.
+	 *
+	 *	@return		bool	True if at least one shippable line exists
+	 *	@see		isProductLineShippable()
+	 */
+	public function hasShippableLines()
+	{
+		foreach ($this->lines as $line) {
+			if (isProductLineShippable($line->product_type)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**

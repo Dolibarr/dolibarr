@@ -49,6 +49,7 @@ if (isModEnabled('order')) {
 require_once DOL_DOCUMENT_ROOT.'/expedition/class/expeditionlinebatch.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonsignedobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/subtotals/class/commonsubtotal.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/expedition.lib.php';
 
 /**
  *	Class to manage shipments
@@ -533,7 +534,7 @@ class Expedition extends CommonObject
 							}
 							continue;
 						}
-						if (empty($this->lines[$i]->product_type) || getDolGlobalString('STOCK_SUPPORTS_SERVICES') || getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES')) {
+						if (isProductLineShippable($this->lines[$i]->product_type)) {
 							// virtual products
 							$line = $this->lines[$i];
 							if ($line->fk_product > 0) {
@@ -574,7 +575,7 @@ class Expedition extends CommonObject
 				$sub_parents_cached = array();
 				for ($i = 0; $i < $num; $i++) {
 					$line = $this->lines[$i];
-					if (empty($line->product_type) || getDolGlobalString('STOCK_SUPPORTS_SERVICES') || getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES')) {
+					if (isProductLineShippable($line->product_type)) {
 						$line_id = 0;
 						if (!isset($kits_id_cached[$line->fk_elementdet])) {
 							if (!isset($line->detail_batch) || (isset($kits_list[$line->fk_elementdet]) && !getDolGlobalInt('PRODUIT_SOUSPRODUITS_ALSO_ENABLE_PARENT_STOCK_MOVE'))) {    // no batch management or is kit
@@ -3005,9 +3006,9 @@ class Expedition extends CommonObject
 				foreach ($order->lines as $line) {
 					$lineid = $line->id;
 					$qty = $line->qty;
-					if (($line->product_type == 0 || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) && $order->expeditions[$lineid] != $qty) {
+					if (isProductLineShippable($line->product_type) && (!isset($order->expeditions[$lineid]) || $order->expeditions[$lineid] != $qty)) {
 						$shipments_match_order = 0;
-						$text = 'Qty for order line id '.$lineid.' is '.$qty.'. However in the shipments with status Expedition::STATUS_CLOSED='.self::STATUS_CLOSED.' we have qty = '.$order->expeditions[$lineid].', so we can t close order';
+						$text = 'Qty for order line id '.$lineid.' is '.$qty.'. However in the shipments with status Expedition::STATUS_CLOSED='.self::STATUS_CLOSED.' we have qty = '.(isset($order->expeditions[$lineid]) ? $order->expeditions[$lineid] : 0).', so we can t close order';
 						dol_syslog($text);
 						break;
 					}
