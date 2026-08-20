@@ -81,4 +81,8 @@ ALTER TABLE llx_c_action_trigger ADD COLUMN enabled varchar(255);
 -- VMYSQL4.1 ALTER TABLE llx_socpeople ADD COLUMN use_thirdparty_address smallint DEFAULT NULL AFTER fk_soc;
 -- VPGSQL8.2 ALTER TABLE llx_socpeople ADD COLUMN use_thirdparty_address smallint DEFAULT NULL;
 
+-- Track how many times a proposal or an order was sent by email, like llx_facture already does
+ALTER TABLE llx_propal ADD COLUMN email_sent_counter integer DEFAULT 0;
+ALTER TABLE llx_commande ADD COLUMN email_sent_counter integer DEFAULT 0;
+
 -- end of migration
