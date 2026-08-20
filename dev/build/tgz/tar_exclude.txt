@@ -7,7 +7,6 @@
 .idea
 .phan
 .settings
-.tx
 .agentsignore
 .buildpath
 .codeclimate.yml

@@ -688,13 +688,13 @@ if ($nboftargetok) {
 		run("rm -f  $BUILDROOT/$PROJECT/htdocs/conf/conf.php.old");
 		run("rm -f  $BUILDROOT/$PROJECT/htdocs/conf/conf.php.pgsql");
 		run("rm -f  $BUILDROOT/$PROJECT/htdocs/conf/conf*sav*");
+		run("rm -fr $BUILDROOT/$PROJECT/dev/build/*/.github");
 
-		run("rm -f  $BUILDROOT/$PROJECT/htdocs/install/mssql/README");
-		run("rm -f  $BUILDROOT/$PROJECT/htdocs/install/mysql/README");
-		run("rm -f  $BUILDROOT/$PROJECT/htdocs/install/pgsql/README");
+		run("rm -fr $BUILDROOT/$PROJECT/htdocs/includes/*/*/.github");
 
 		run("rm -fr $BUILDROOT/$PROJECT/htdocs/install/mssql");
 		run("rm -fr $BUILDROOT/$PROJECT/htdocs/install/sqlite3");
+		run("rm -f  $BUILDROOT/$PROJECT/htdocs/install/*/README");
 
 		run("rm -fr $BUILDROOT/$PROJECT/htdocs/install/install.forced.php");
 
