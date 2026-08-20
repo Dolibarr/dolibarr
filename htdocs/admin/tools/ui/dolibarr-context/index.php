@@ -1,7 +1,7 @@
 <?php
 /*
  * Copyright (C) 2025 Anthony Damhet <a.damhet@progiseize.fr>
- * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -498,7 +498,13 @@ $documentation->showSidebar(); ?>
 						animation: highlightfortest 1s ease-out;
 					}
 				</style>
-				<div id="idfortooltiponclick_doc-event-dialog-test" class="classfortooltiponclicktext" title="The title" style="display: none" >Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce nec elit venenatis, bibendum dui in, tristique dolor. In hac habitasse platea dictumst. Vestibulum consectetur quam non felis fringilla mollis pretium vel nibh. Pellentesque congue risus et laoreet blandit. Aliquam orci ipsum, gravida id leo eget, molestie pulvinar sem. Nulla sed felis et lacus tristique finibus. Cras ornare tincidunt. Aenean hendrerit volutpat efficitur. Integer vestibulum dui eget lectus pulvinar, vel mattis odio facilisis. Etiam convallis scelerisque lobortis. Mauris tristique, quam dignissim sollicitudin sodales, elit ligula venenatis neque, sit amet interdum lacus tellus id tellus. Mauris eu pretium turpis. Proin porta sem eget nisl vulputate vehicula.</div>
+				<div id="idfortooltiponclick_doc-event-dialog-test" class="classfortooltiponclicktext" title="The title" style="display: none" >
+					Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce nec elit venenatis, bibendum dui in, tristique dolor. In hac habitasse platea dictumst.
+					Vestibulum consectetur quam non felis fringilla mollis pretium vel nibh. Pellentesque congue risus et laoreet blandit. Aliquam orci ipsum, gravida id leo eget, molestie pulvinar sem.
+					Nulla sed felis et lacus tristique finibus. Cras ornare tincidunt. Aenean hendrerit volutpat efficitur. Integer vestibulum dui eget lectus pulvinar, vel mattis odio facilisis.
+					Etiam convallis scelerisque lobortis. Mauris tristique, quam dignissim sollicitudin sodales, elit ligula venenatis neque, sit amet interdum lacus tellus id tellus.
+					Mauris eu pretium turpis. Proin porta sem eget nisl vulputate vehicula.
+				</div>
 				<script nonce="<?php print getNonce() ?>">
 					document.addEventListener('Dolibarr:Ready', function(e) {
 						const container = document.getElementById('initNewContent-test-container');
