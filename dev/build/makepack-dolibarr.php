@@ -636,22 +636,26 @@ if ($nboftargetok) {
 		}
 
 		echo "Clean $BUILDROOT\n";
+		run("rm -fr $BUILDROOT/$PROJECT/.agents");
+		run("rm -f  $BUILDROOT/$PROJECT/.agentsignore");
 		run("rm -f  $BUILDROOT/$PROJECT/.buildpath");
 		run("rm -fr $BUILDROOT/$PROJECT/.cache");
-		run("rm -fr $BUILDROOT/$PROJECT/.codeclimate");
+		run("rm -fr $BUILDROOT/$PROJECT/.codeclimate.yml");
+		run("rm -fr $BUILDROOT/$PROJECT/.editorconfig");
 		run("rm -fr $BUILDROOT/$PROJECT/.externalToolBuilders");
 		run("rm -fr $BUILDROOT/$PROJECT/.git*");
+		run("rm -fr $BUILDROOT/$PROJECT/.idea");
 		run("rm -fr $BUILDROOT/$PROJECT/.mailmap");
 		run("rm -fr $BUILDROOT/$PROJECT/.phpunit.result.cache");
 		run("rm -fr $BUILDROOT/$PROJECT/.project");
 		run("rm -fr $BUILDROOT/$PROJECT/.pydevproject");
-		run("rm -fr $BUILDROOT/$PROJECT/.pyproject.toml");
 		run("rm -fr $BUILDROOT/$PROJECT/.settings");
 		run("rm -fr $BUILDROOT/$PROJECT/.scrutinizer.yml");
 		run("rm -fr $BUILDROOT/$PROJECT/.stickler.yml");
 		run("rm -fr $BUILDROOT/$PROJECT/.travis.yml");
 		run("rm -fr $BUILDROOT/$PROJECT/.tx");
 		run("rm -f  $BUILDROOT/$PROJECT/build.xml");
+		run("rm -fr $BUILDROOT/$PROJECT/pyproject.toml");
 
 		run("rm -f  $BUILDROOT/$PROJECT/.pre-commit-config.yaml");
 		run("rm -fr $BUILDROOT/$PROJECT/.phan");
