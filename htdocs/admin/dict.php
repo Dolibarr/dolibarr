@@ -2963,7 +2963,8 @@ function dictFieldList($fieldlist, $obj = null, $tabname = '', $context = '')
 		} elseif ($value == 'type' && $tabname == 'c_paiement') {
 			print '<td>';
 			$select_list = array(0 => $langs->trans('PaymentTypeCustomer'), 1 => $langs->trans('PaymentTypeSupplier'), 2 => $langs->trans('PaymentTypeBoth'));
-			print $form->selectarray($value, $select_list, (!empty($obj->{$value}) ? $obj->{$value} : '2'));
+			// Use isset(), not !empty(), because 0 (Customer) is a valid value that empty() would treat as unset
+			print $form->selectarray($value, $select_list, (isset($obj->{$value}) && $obj->{$value} !== '' ? $obj->{$value} : '2'));
 			print '</td>';
 		} elseif ($value == 'recuperableonly' || $value == 'type_cdr' || $value == 'deductible' || $value == 'category_type') {
 			if ($value == 'type_cdr') {
