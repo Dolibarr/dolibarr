@@ -162,7 +162,7 @@ print '<tr class="liste_titre">';
 print '<td colspan="4">'.$langs->trans("LDAPSynchronizeContacts").'</td>';
 print "</tr>\n";
 
-// DN Pour les contacts
+// DN For the contacts
 print '<!-- LDAP_CONTACT_DN -->';
 print '<tr class="oddeven"><td><span class="fieldrequired">'.$langs->trans("LDAPContactDn").'</span></td><td>';
 print '<input size="48" type="text" name="contactdn" value="' . getDolGlobalString('LDAP_CONTACT_DN').'">';

@@ -98,15 +98,15 @@ $tabsql[1] = "SELECT f.rowid as rowid, f.entity, f.ref, f.description, f.virtual
 $tabsqlsort = array();
 $tabsqlsort[1] = "ref ASC";
 
-// Nom des champs en resultat de select pour affichage du dictionnaire
+// Name of the fields in the result of select to display the dictionary
 $tabfield = array();
 $tabfield[1] = "ref,description,virtualhost,position,date_creation,lastaccess,pageviews_previous_month,pageviews_total";
 
-// Nom des champs d'edition pour modification d'un enregistrement
+// Name of editing fields for record modification
 $tabfieldvalue = array();
 $tabfieldvalue[1] = "ref,description,virtualhost,position,entity";
 
-// Nom des champs dans la table pour insertion d'un enregistrement
+// Name of the fields in the table for inserting a record
 $tabfieldinsert = array();
 $tabfieldinsert[1] = "ref,description,virtualhost,position,entity";
 
