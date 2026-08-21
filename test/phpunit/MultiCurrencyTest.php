@@ -226,7 +226,7 @@ class MultiCurrencyTest extends CommonClassTest
 		$this->assertEqualsWithDelta(50.0, (float) MultiCurrency::getAmountConversionFromInvoiceRate(0, 100, 'dolibarr', 'facture', 2.0), 0.00001, '100 local converted to foreign at direct rate 2 must be 50');
 		$this->assertEqualsWithDelta(200.0, (float) MultiCurrency::getAmountConversionFromInvoiceRate(0, 100, 'fromdolibarr', 'facture', 2.0), 0.00001, '100 foreign converted to local at direct rate 2 must be 200');
 		$conf->global->MULTICURRENCY_USE_RATE_DIRECT = '0';
-		
+
 		return $localobject;
 	}
 
