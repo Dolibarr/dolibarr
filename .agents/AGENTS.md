@@ -15,7 +15,6 @@ Every modification must respect:
 - ❌ Do not break compatibility of PHP functions and methods
 - ❌ Do not introduce external dependencies without validation
 - ❌ Separate page actions in the `/* Actions */` section of the PHP code and the rendering part in the `/* Views */` section
-- ❌ Never commit directly to `develop` or version branch matching regex `^\d+\.\d+$`
 - ❌ Never use PHP native curl functions to call a GET or POST URL, but use instead the Dolibarr function getURLContent()
 - ✅ Use Dolibarr hooks whenever possible
 - ✅ Respect existing naming conventions
@@ -152,14 +151,13 @@ If possible:
 - Branch strategy:
     - One branch per major version (bug fixes only)
     - `develop` branch for both fixes and new features
-- ❌ Never commit directly to `main` or `develop` without a reviewed PR
+- ❌ Never commit directly to `main` or `develop` or any branch name matching regex `^\d+\.\d+$` but use a Pull Request.
 - Commit message format: `TYPE: #issueNumber Short description`
     - Types: `NEW`, `FIX` or `CLOSE`
     - Example: `FIX: #1234 Correct VAT calculation on credit notes`
-- Update the `ChangeLog` file with a summary of significant changes
-- When fixing a bug, apply the patch on the **oldest affected branch first**,
-  then cherry-pick forward to newer branches and `develop`
+- Do not update the `ChangeLog` file (this file will be generated before the release from all commit titles)
 - Do not introduce new syntax or features unavailable in the branch's minimum PHP version
+- When commiting, mention the AI agent name in the commit message (e.g. "Co-authored-by: AI Agent <ai-agent@dolibarr.org>")
 
 ---
 
@@ -176,9 +174,9 @@ If possible:
 
 - Perform massive refactoring without an explicit request
 - Change the global architecture of existing modules
-- Delete code without justification and a comment explaining why
+- Delete dead code
 - Add external dependencies (Composer packages, JS libraries) without prior validation
-- Modify the `ChangeLog` file (this file will be updated by the maintainer during the release process)
+- Modify the `ChangeLog` file (because this file will be updated by the maintainer during the release process)
 
 ---
 
