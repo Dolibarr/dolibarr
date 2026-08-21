@@ -1,5 +1,5 @@
 ---
-name: dolibarr-interactive-test
+name: skill-doli-interactive-test
 description: >
   Create interactive PHP test case scripts for Dolibarr ERP/CRM that allow users to
   setup test data, view results via direct links, and tear down (clean up) the data.

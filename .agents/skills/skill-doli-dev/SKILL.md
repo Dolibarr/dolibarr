@@ -1,5 +1,5 @@
 ---
-name: dolibarr-dev
+name: skill-doli-dev
 description: Use when developing Dolibarr ERP/CRM code, working with database queries, or asking about Dolibarr best practices.
 license: MIT
 user-invocable: true
