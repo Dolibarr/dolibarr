@@ -35,6 +35,7 @@
  * @var int $showImportButton
  * @var Propal[] $linkedObjectBlock
  */
+'@phan-var-force CommonObject $object';
 
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
