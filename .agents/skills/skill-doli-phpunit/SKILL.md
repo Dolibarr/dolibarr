@@ -77,12 +77,13 @@ When generating code:
 - do not rewrite unrelated methods
 - explain briefly what is being tested
 
+
 ## Examples
 
 ### Input: "Add a unit test for the create() method of the Invoice class"
 
 **Action:**
-1. locate or create `test/phpunit/InvoiceTest.php`
+1. locate or create `test/phpunit/MyObjectTest.php`
 2. add test method following Dolibarr conventions
 
 ### Input: "Write tests for the calculateVAT() function in price.lib.php"
@@ -90,6 +91,8 @@ When generating code:
 **Action:**
 1. locate or create appropriate test file in `test/phpunit/`
 2. add test methods for various VAT calculation scenarios
+3. you can test or suggest to test it by running the command: `phpunit test/phpunit/TheTestFile.php`
+
 
 ## Error Handling
 
