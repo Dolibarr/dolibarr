@@ -81,4 +81,8 @@ ALTER TABLE llx_c_action_trigger ADD COLUMN enabled varchar(255);
 -- VMYSQL4.1 ALTER TABLE llx_socpeople ADD COLUMN use_thirdparty_address smallint DEFAULT NULL AFTER fk_soc;
 -- VPGSQL8.2 ALTER TABLE llx_socpeople ADD COLUMN use_thirdparty_address smallint DEFAULT NULL;
 
+-- Add user information to const
+ALTER TABLE llx_const ADD COLUMN fk_user_creat integer;
+ALTER TABLE llx_const ADD COLUMN fk_user_modif integer;
+
 -- end of migration

@@ -1373,6 +1373,9 @@ if (!$error && ($action == 'affecttag' && $confirm == 'yes') && $permissiontoadd
 
 		// For each valid categ type set common categ
 		if (!empty($to_affecttag_type_array)) {
+			// The CommonSocialNetworks trait forces $object to its own type on the global $object for phan, which
+			// makes phan lose the CommonObject methods here (fetch, setCategoriesCommon). Restore the real type.
+			'@phan-var-force CommonObject $object';
 			foreach ($to_affecttag_type_array as $categ_type) {
 				$contcats = GETPOST('contcats_' . $categ_type, 'array');
 				foreach ($toselect as $toselectid) {
