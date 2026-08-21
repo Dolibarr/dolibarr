@@ -1,7 +1,7 @@
 ---
-name: add-unit-test
+name: skill-doli-phpunit
 description: >
-  Creates PHP unit tests for Dolibarr ERP/CRM functions and methods. Use when the user asks to add, write, create, or complete a PHPUnit test for Dolibarr, or mentions testing a specific function, method, or class in the Dolibarr codebase.
+  Creates or modify PHP unit tests for Dolibarr ERP/CRM functions and methods. Use when the user asks to add, write, create, or complete a PHPUnit test for Dolibarr, or mentions testing a specific function, method, or class in the Dolibarr codebase.
 license: MIT
 user-invocable: true
 allowed-tools:
@@ -10,7 +10,7 @@ allowed-tools:
  - grep
 ---
 
-# Skill: Add a Unit Test for Dolibarr
+# Skill: Add or modify a PHP Unit Test for Dolibarr
 
 ## When to Use This Skill
 

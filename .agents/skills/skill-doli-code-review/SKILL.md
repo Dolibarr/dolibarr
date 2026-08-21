@@ -1,5 +1,5 @@
 ---
-name: code-review
+name: skill-doli-code-review
 description: >
   Reviews Dolibarr PHP code for compliance with coding standards and security best practices, and fixes identified issues. Use when the user asks to review, audit, fix, or update code for Dolibarr, or mentions code quality, security vulnerabilities, or PSR-12 compliance.
 license: MIT

@@ -1,5 +1,5 @@
 ---
-name: dolibarr-hurl-test
+name: skill-doli-hurl-test
 description: Create and maintain Hurl tests for Dolibarr ERP/CRM. Use when asked to create, write, or fix hurl tests for Dolibarr, or when working with test/hurl directory. Covers Dolibarr-specific conventions for hurl testing including authentication, test file naming, and test structure.
 ---
 
