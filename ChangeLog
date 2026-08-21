@@ -193,6 +193,7 @@ NEW: Add method calculateVATNumberFromProperties()
 NEW: Add pdf_writeLogoOrCompanyName() helper in pdf.lib.php to mutualize PDF header logo rendering across document generators
 NEW: Add method dolOutputDates()
 FIX: Security permission on payment instead of create to create payment with API (credit Santosh Kumar Puppala) in commit ad8cd7c0e1800636302517e42fcdcafa393524b3
+FIX: A lot of security fixes in API (more control for external users usage)
 
 WARNING:
 --------
