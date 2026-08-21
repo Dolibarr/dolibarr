@@ -654,11 +654,13 @@ class MouvementStock extends CommonObject
 				// having a lot1/qty=X and lot2/qty=-X, so 0 but we must not loose repartition of different lot.
 				$sql = "DELETE FROM ".$this->db->prefix()."product_stock WHERE reel = 0 AND rowid NOT IN (SELECT fk_product_stock FROM ".$this->db->prefix()."product_batch as pb)";
 				$resql = $this->db->query($sql);
-				// We tolerate a failure here when there are child rows in batch details, but a deadlock (1213)
-				// rolls back the whole transaction (including the movement just inserted). If we swallowed it,
-				// _create() would commit an empty transaction and return the movement id as a success, so the
-				// caller (and the REST API) would think the movement was saved while it was lost.
-				if (!$resql && $this->db->lasterrno() == 'DB_ERROR_1213') {
+				// The NOT IN clause already excludes rows still referenced by product_batch (the only child FK on
+				// product_stock), so this DELETE cannot fail on a child constraint. Any failure is therefore a real
+				// error, in particular a deadlock (1213) that rolls back the whole transaction including the movement
+				// just inserted; if we swallowed it, _create() would commit an empty transaction and return the
+				// movement id as a success, so the caller (and the REST API) would think the movement was saved while
+				// it was lost.
+				if (!$resql) {
 					$this->errors[] = $this->db->lasterror();
 					$error++;
 				}
