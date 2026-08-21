@@ -11,6 +11,7 @@
 '
 @phan-var-force CommonObjectLine|CommonOrderLine|ExpeditionLigne $line
 @phan-var-force Commande|Expedition $object
+@phan-var-force int $i
 ';
 
 if (!empty($line->origin_line_id)) {
