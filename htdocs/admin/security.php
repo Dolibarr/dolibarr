@@ -433,7 +433,6 @@ if (!getDolGlobalString('DATABASE_PWD_ENCRYPTED')) {
 } else {
 	print '<td class="center" width="100">';
 	if ($allow_disable_encryption) {
-		//On n'autorise pas l'annulation de l'encryption car les mots de passe ne peuvent pas etre decodes
 		//Do not allow "disable encryption" as passwords cannot be decrypted
 		print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=disable_encrypt&token='.newToken().'">'.$langs->trans("Disable").'</a>';
 	} else {

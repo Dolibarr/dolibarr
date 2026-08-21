@@ -9037,10 +9037,19 @@ div.clipboardCPValue.hidewithsize {
 
 .clipboardCPShowOnHover{
 	cursor: copy;
+	position: relative;
 }
 
 .clipboardCPShowOnHover .clipboardCPButton {
 	display: none;
+}
+
+.clipboardCPShowOnHover .clipboardCPButton,
+.clipboardCPShowOnHover .clipboardCPTick {
+	position: absolute;
+	right: 0;
+	top: 50%;
+	transform: translate(100%, -50%);
 }
 
 /* To make a div popup, we must use a position absolute inside a position relative */

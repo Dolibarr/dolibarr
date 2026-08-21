@@ -41,7 +41,7 @@ The user request should contain, when available:
 When generating code:
 
 - provide only the relevant PHP code
-- preserve the existing file formatting
+- preserve the existing file formatting, never change the copyright or licence header, never remove existing cast 
 - do not rewrite unrelated methods
 - explain briefly what is being fixed
 
@@ -50,7 +50,7 @@ When generating code:
 ### Input: "Review the supplier invoice module for security issues"
 
 **Action:**
-1. scan `htdocs/fournisseur/` directory for common vulnerabilities
+1. scan the current directory for common vulnerabilities
 2. check for unescaped SQL queries
 3. verify all user inputs use `GETPOST()` with type parameters
 4. ensure HTML output is escaped with `dolPrintHTML()` or `dolPrintHTMLForAttribute()`
@@ -76,7 +76,6 @@ When generating code:
 | Mixed line endings | Check with `cat -A` | Normalize to LF |
 
 **Before applying fixes:**
-- back up the original file
 - verify the file is not part of a protected core module
 - run existing tests to establish a baseline
 - apply changes incrementally
@@ -85,8 +84,8 @@ When generating code:
 
 - **Dolibarr conventions override PSR-12**: Tabs must be used for indentation, not spaces, even though PSR-12 recommends spaces
 - **Legacy code**: Some older modules cannot be fully PSR-12 compliant. Prioritize consistency with existing module style
-- **Global variables**: Dolibarr uses globals like `$db`, `$conf`, `$user`. Do not remove these without understanding the architecture
+- **Global variables**: Dolibarr uses globals like `$db`, `$conf`, `$lang`, `$user`. Do not remove these without understanding the architecture
 - **Dolibarr functions**: Prefer built-in Dolibarr functions (e.g., `dol_print_date()`, `getDolGlobalString()`) over native PHP functions
-- **SQL injection**: Dolibarr has its own sanitizing and escaping methods (`$db->escape()`, casting to `(int)`, `$db->sanitize()`). Do not replace with prepared statements. Also take into account that MAIN_DB_PREFIX is a constant.
+- **SQL injection**: Dolibarr has its own sanitizing and escaping methods (`$db->escape()`, casting to `(int)` or `(float)`, `$db->sanitize()`). Do not replace with prepared statements. Also take into account that MAIN_DB_PREFIX is a constant.
 - **XSS protection**: Use `dolPrintHTML()`, `dolPrintHTMLForAttribute()`, or `dol_htmlentities()` for output, not native `htmlentities()`
 - **CSRF tokens**: All POST forms must include `<input type="hidden" name="token" value="'.newToken().'">`
