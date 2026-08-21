@@ -3694,7 +3694,8 @@ if ($action == 'create' && $usercancreate) {
 
 				// Delete order
 				if ($usercandelete) {
-					if ($numshipping == 0) {
+					$stocksent = getDolGlobalString('STOCK_CALCULATE_ON_VALIDATE_ORDER') && $object->status > Commande::STATUS_DRAFT;
+					if ($numshipping == 0 && !$stocksent) {
 						print dolGetButtonAction('', $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"] . '?action=delete&token=' . newToken() . '&id=' . $object->id, '');
 					} else {
 						print dolGetButtonAction($langs->trans('ShippingExist'), $langs->trans('Delete'), 'default', $_SERVER['PHP_SELF'] . '#', '', false);
