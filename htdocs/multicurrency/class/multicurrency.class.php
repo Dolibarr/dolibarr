@@ -4,7 +4,7 @@
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016       Pierre-Henry Favre  <phf@atm-consulting.fr>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -688,7 +688,10 @@ class MultiCurrency extends CommonObject
 		$resget = getURLContent($urlendpoint, 'GET', '', 1, $addheaders);
 
 		// Example of result with https://currencylayer.com/live and https://api.apilayer.com/currency_data/live
-		// 'content' => string '{"success":true,"terms":"https:\/\/currencylayer.com\/terms","privacy":"https:\/\/currencylayer.com\/privacy","timestamp":1742562251,"source":"USD","quotes":{"USDAED":3.67302,"USDAFN":70.6213,"USDALL":91.042287,"USDAMD":390.984233,"USDANG":1.802039,"USDAOA":913.498241,"USDARS":1068.745088,"USDAUD":1.591824,"USDAWG":1.8,"USDAZN":1.699323,"USDBAM":1.80224,"USDBBD":2.018881,"USDBDT":121.488567,"USDBGN":1.802745,"USDBHD":0.376878,"USDBIF":2963.403228,"USDBMD":1,"USDBND":1.333573,"USDBOB":6.909262,"USDBRL":5.721'... (length=3337)
+		// 'content' => string '{"success":true,"terms":"https:\/\/currencylayer.com\/terms","privacy":"https:\/\/currencylayer.com\/privacy","timestamp":1742562
+		// 251,"source":"USD","quotes":{"USDAED":3.67302,"USDAFN":70.6213,"USDALL":91.042287,"USDAMD":390.984233,"USDANG":1.802039,"USDAOA":913.498241,"USDARS":1
+		// 068.745088,"USDAUD":1.591824,"USDAWG":1.8,"USDAZN":1.699323,"USDBAM":1.80224,"USDBBD":2.018881,"USDBDT":121.488567,"USDBGN":1.802745,"USDBHD":0.376878
+		// ,"USDBIF":2963.403228,"USDBMD":1,"USDBND":1.333573,"USDBOB":6.909262,"USDBRL":5.721'... (length=3337)
 		//var_dump($urlendpoint);
 		//var_dump($resget);
 
