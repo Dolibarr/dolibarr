@@ -35,6 +35,7 @@
  * @var int $showImportButton
  * @var CommandeFournisseur[] $linkedObjectBlock
  */
+'@phan-var-force CommonObject $object';
 '@phan-var-force CommandeFournisseur[] $linkedObjectBlock';
 
 // Protection to avoid direct call of template
