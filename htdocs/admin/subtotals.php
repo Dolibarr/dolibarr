@@ -177,7 +177,7 @@ if (empty($conf->use_javascript_ajax)) {
 	print '<tr class="liste_titre">';
 	print '<td width="1100">' . $langs->trans("Settings") . '</td>';
 	print '<td class="center">' . $langs->trans("Title") . '</td>';
-	print '<td class="center">' . $langs->trans("Subtotal") . '</td>';
+	print '<td class="center">' . $langs->trans("SubTotal") . '</td>';
 	print '<td class="center">' . $langs->trans("MaxSubtotalLevel") . '</td>';
 	print "</tr>\n";
 

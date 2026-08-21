@@ -3,7 +3,7 @@
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		Charlene Benke			<charlene@patas-monkey.com>
-
+ * Copyright (C) 2026		Lionel Vessiller		<lvessiller@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -653,10 +653,13 @@ trait CommonSubtotal
 				}
 			} else {
 				if ($current_module == 'facture' && $this instanceof Facture) {
+					// Preserve the original entry mode of the line so the total is not drifted by rounding.
+					$line_price_base_type = $this->lines[$i]->getPriceBaseType();
+					$line_pu = ($line_price_base_type === 'TTC') ? $this->lines[$i]->subprice_ttc : $this->lines[$i]->subprice;
 					$result = $this->updateline(
 						$this->lines[$i]->id,
 						$this->lines[$i]->desc,
-						$this->lines[$i]->subprice,
+						$line_pu,
 						$this->lines[$i]->qty,
 						$mode == 'discount' ? $value : $this->lines[$i]->remise_percent,
 						$this->lines[$i]->date_start,
@@ -664,7 +667,7 @@ trait CommonSubtotal
 						$mode == 'tva' ? $value : $this->lines[$i]->tva_tx,
 						$this->lines[$i]->localtax1_tx,
 						$this->lines[$i]->localtax2_tx,
-						'HT',
+						$line_price_base_type,
 						$this->lines[$i]->info_bits,
 						$this->lines[$i]->product_type,
 						$this->lines[$i]->fk_parent_line,
@@ -679,16 +682,19 @@ trait CommonSubtotal
 						$this->lines[$i]->multicurrency_subprice
 					);
 				} elseif ($current_module == 'commande' && $this instanceof Commande) {
+					// Preserve the original entry mode of the line so the total is not drifted by rounding.
+					$line_price_base_type = $this->lines[$i]->getPriceBaseType();
+					$line_pu = ($line_price_base_type === 'TTC') ? $this->lines[$i]->subprice_ttc : $this->lines[$i]->subprice;
 					$result = $this->updateline(
 						$this->lines[$i]->id,
 						$this->lines[$i]->desc,
-						$this->lines[$i]->subprice,
+						$line_pu,
 						$this->lines[$i]->qty,
 						$mode == 'discount' ? $value : $this->lines[$i]->remise_percent,
 						$mode == 'tva' ? $value : $this->lines[$i]->tva_tx,
 						$this->lines[$i]->localtax1_rate,
 						$this->lines[$i]->localtax2_rate,
-						'HT',
+						$line_price_base_type,
 						$this->lines[$i]->info_bits,
 						$this->lines[$i]->date_start,
 						$this->lines[$i]->date_end,
@@ -705,7 +711,7 @@ trait CommonSubtotal
 					);
 				} elseif ($current_module == 'propal' && $this instanceof Propal) {
 					// Preserve the original entry mode of the line so the total is not drifted by rounding.
-					$line_price_base_type = $this->lines[$i]->wasEnteredIncludingTax() ? 'TTC' : 'HT';
+					$line_price_base_type = $this->lines[$i]->getPriceBaseType();
 					$line_pu = ($line_price_base_type === 'TTC') ? $this->lines[$i]->subprice_ttc : $this->lines[$i]->subprice;
 					$result = $this->updateline(
 						$this->lines[$i]->id,

@@ -1373,6 +1373,9 @@ if (!$error && ($action == 'affecttag' && $confirm == 'yes') && $permissiontoadd
 
 		// For each valid categ type set common categ
 		if (!empty($to_affecttag_type_array)) {
+			// The CommonSocialNetworks trait forces $object to its own type on the global $object for phan, which
+			// makes phan lose the CommonObject methods here (fetch, setCategoriesCommon). Restore the real type.
+			'@phan-var-force CommonObject $object';
 			foreach ($to_affecttag_type_array as $categ_type) {
 				$contcats = GETPOST('contcats_' . $categ_type, 'array');
 				foreach ($toselect as $toselectid) {
@@ -1946,7 +1949,7 @@ if (!$error && ($massaction == 'clonetasks' || ($action == 'clonetasks' && $conf
 	if (empty($newproject->public)) {
 		$tmps = $newproject->getProjectsAuthorizedForUser($user, 0, 1, 0, '(fk_statut:=:1)');	// We check only open project (cloning on closed is not allowed)
 		$tmparray = explode(',', $tmps);
-		if (!in_array($newproject->id, $tmparray)) {
+		if (in_array($newproject->id, $tmparray)) {
 			$iscontactofnewproject = 1;
 		}
 	}

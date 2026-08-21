@@ -126,7 +126,7 @@ llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'mod-bookcal page-list');
 if ($object->id > 0) {
 	$head = calendarPrepareHead($object);
 
-	print dol_get_fiche_head($head, 'booking', $langs->trans("Calendar"), -1, $object->picto, 0, '', '', 0, '', 1);
+	print dol_get_fiche_head($head, 'booking', $langs->trans("Calendar"), -1, $object->picto);
 
 	$formconfirm = '';
 

@@ -653,8 +653,10 @@ class FormWebPortal extends Form
 						//We have to join on extrafield table
 						if (strpos($InfoFieldList[4], 'extra') !== false) {
 							$sql .= " as main, " . $this->db->prefix() . $this->db->sanitize($InfoFieldList[0]) . "_extrafields as extra";
+							// We trust this argument `$InfoFieldList[4]` @phan-suppress-next-line SqlInjection
 							$sqlwhere .= " WHERE extra.fk_object=main." . $this->db->sanitize($InfoFieldList[2]) . " AND " . $InfoFieldList[4];
 						} else {
+							// We trust this argument `$InfoFieldList[4]` @phan-suppress-next-line SqlInjection
 							$sqlwhere .= " WHERE " . $InfoFieldList[4];
 						}
 					} else {

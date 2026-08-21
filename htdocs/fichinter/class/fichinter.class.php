@@ -1202,7 +1202,7 @@ class Fichinter extends CommonObject
 
 			// Remove directory with files
 			$fichinterref = dol_sanitizeFileName($this->ref);
-			if ($conf->ficheinter->dir_output) {
+			if ($conf->ficheinter->dir_output && !empty($fichinterref)) {
 				$dir = $conf->ficheinter->dir_output."/".$fichinterref;
 				$file = $conf->ficheinter->dir_output."/".$fichinterref."/".$fichinterref.".pdf";
 				if (file_exists($file)) {
@@ -1245,6 +1245,8 @@ class Fichinter extends CommonObject
 	{
 		// phpcs:enable
 		if ($user->hasRight('ficheinter', 'creer')) {
+			$this->db->begin();
+
 			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter";
 			$sql .= " SET datei = '".$this->db->idate($delivery_date_receipt)."'";
 			$sql .= " WHERE rowid = ".((int) $this->id);
@@ -1253,10 +1255,19 @@ class Fichinter extends CommonObject
 			if ($this->db->query($sql)) {
 				$this->date_delivery = $delivery_date_receipt;
 				$this->delivery_date_receipt = $delivery_date_receipt;
+
+				$result = $this->call_trigger($this->TRIGGER_PREFIX . '_MODIFY', $user);
+				if ($result < 0) {
+					$this->db->rollback();
+					return -1;
+				}
+
+				$this->db->commit();
 				return 1;
 			} else {
 				$this->error = $this->db->error();
 				dol_syslog("Fichinter::set_date_delivery Erreur SQL");
+				$this->db->rollback();
 				return -1;
 			}
 		}
@@ -1276,6 +1287,8 @@ class Fichinter extends CommonObject
 	{
 		// phpcs:enable
 		if ($user->hasRight('ficheinter', 'creer')) {
+			$this->db->begin();
+
 			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter ";
 			$sql .= " SET description = '".$this->db->escape($description)."',";
 			$sql .= " fk_user_modif = ".((int) $user->id);
@@ -1283,10 +1296,19 @@ class Fichinter extends CommonObject
 
 			if ($this->db->query($sql)) {
 				$this->description = $description;
+
+				$result = $this->call_trigger($this->TRIGGER_PREFIX . '_MODIFY', $user);
+				if ($result < 0) {
+					$this->db->rollback();
+					return -1;
+				}
+
+				$this->db->commit();
 				return 1;
 			} else {
 				$this->error = $this->db->error();
 				dol_syslog("Fichinter::set_description Erreur SQL");
+				$this->db->rollback();
 				return -1;
 			}
 		}
@@ -1307,15 +1329,26 @@ class Fichinter extends CommonObject
 	{
 		// phpcs:enable
 		if ($user->hasRight('ficheinter', 'creer')) {
+			$this->db->begin();
+
 			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter ";
 			$sql .= " SET fk_contrat = ".((int) $contractid);
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			if ($this->db->query($sql)) {
 				$this->fk_contrat = $contractid;
+
+				$result = $this->call_trigger($this->TRIGGER_PREFIX . '_MODIFY', $user);
+				if ($result < 0) {
+					$this->db->rollback();
+					return -1;
+				}
+
+				$this->db->commit();
 				return 1;
 			} else {
 				$this->error = $this->db->error();
+				$this->db->rollback();
 				return -1;
 			}
 		}

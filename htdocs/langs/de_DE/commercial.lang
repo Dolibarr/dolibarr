@@ -90,6 +90,7 @@ ThisIsInformationOnDocumentToSignFichinter=Dies ist eine Information über den z
 ThisIsInformationOnDocumentToSignSociete_rib=Hier finden Sie Informationen zum SEPA-Mandat zur Unterzeichnung
 ThisIsInformationOnDocumentToSignExpedition= Dies sind die zu unterzeichnenden Versandinformationen
 SignatureProposalRef=Unterschrift des Angebotes %s
+SignatureOrderRef=Signatur von Kundenauftrag %s
 SignatureContractRef=Unterschrift zum Vertrag %s
 SignatureFichinterRef=Unterzeichnung des Serviceauftrags %s
 SignatureSociete_ribRef=Unterschrift des SEPA-Mandats %s
