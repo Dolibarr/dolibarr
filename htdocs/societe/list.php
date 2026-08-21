@@ -1956,7 +1956,7 @@ while ($i < $imaxinloop) {
 		$j = 0;
 		print '<tr data-rowid="'.$companystatic->id.'" class="oddeven row-with-select"';
 		if ($contextpage == 'poslist') {
-			print ' onclick="location.href=\'list.php?action=change&contextpage=poslist&idcustomer='.$obj->rowid.'&place='.urlencode($place).'\'"';
+			print ' onclick="location.href=\'list.php?action=change&contextpage=poslist&idcustomer='.$obj->rowid.'&place='.urlencode($place).'&token='.newToken().'\'"';
 		}
 		print '>';
 
