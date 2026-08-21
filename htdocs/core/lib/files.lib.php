@@ -2021,7 +2021,7 @@ function dol_meta_create($object)
 			AMOUNT=\"" . $object->total_ttc."\"\n";
 
 			for ($i = 0; $i < $nblines; $i++) {
-				//Pour les articles
+				//For the items
 				$meta .= "ITEM_".$i."_QUANTITY=\"".$object->lines[$i]->qty."\"
 				ITEM_" . $i."_AMOUNT_WO_TAX=\"".$object->lines[$i]->total_ht."\"
 				ITEM_" . $i."_VAT=\"".$object->lines[$i]->tva_tx."\"
@@ -3331,7 +3331,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		$original_file = $conf->expedition->dir_temp.'/'.$original_file;
 	} elseif ($modulepart == 'tripsexpensesstats' && !empty($conf->deplacement->dir_temp)) {
-		// Wrapping pour les images des stats expeditions
+		// Wrapping for shipment stats images
 		if ($fuser->hasRight('deplacement', $lire)) {
 			$accessallowed = 1;
 		}
@@ -3381,25 +3381,25 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		$original_file = $conf->categorie->multidir_output[$entity].'/'.$original_file;
 	} elseif ($modulepart == 'prelevement' && !empty($conf->prelevement->dir_output)) {
-		// Wrapping pour les prelevements
+		// Wrapping for direct debits
 		if ($fuser->hasRight('prelevement', 'bons', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->prelevement->dir_output.'/'.$original_file;
 	} elseif ($modulepart == 'graph_stock' && !empty($conf->stock->dir_temp)) {
-		// Wrapping pour les graph energie
+		// Wrapping for energy graphs
 		$accessallowed = 1;
 		$original_file = $conf->stock->dir_temp.'/'.$original_file;
 	} elseif ($modulepart == 'graph_fourn' && !empty($conf->fournisseur->dir_temp)) {
-		// Wrapping pour les graph fournisseurs
+		// Wrapping for supplier graphs
 		$accessallowed = 1;
 		$original_file = $conf->fournisseur->dir_temp.'/'.$original_file;
 	} elseif ($modulepart == 'graph_product' && !empty($conf->product->dir_temp)) {
-		// Wrapping pour les graph des produits
+		// Wrapping for product graphs
 		$accessallowed = 1;
 		$original_file = $conf->product->multidir_temp[$entity].'/'.$original_file;
 	} elseif ($modulepart == 'barcode') {
-		// Wrapping pour les code barre
+		// Wrapping for barcodes
 		$accessallowed = 1;
 		// If viewimage is called for barcode, we try to output an image on the fly, with no build of file on disk.
 		//$original_file=$conf->barcode->dir_temp.'/'.$original_file;
@@ -3409,11 +3409,11 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$accessallowed = 1;
 		$original_file = $conf->mailing->dir_temp.'/'.$original_file;
 	} elseif ($modulepart == 'scanner_user_temp' && !empty($conf->scanner->dir_temp)) {
-		// Wrapping pour le scanner
+		// Wrapping for the scanner
 		$accessallowed = 1;
 		$original_file = $conf->scanner->dir_temp.'/'.$fuser->id.'/'.$original_file;
 	} elseif ($modulepart == 'fckeditor' && !empty($conf->fckeditor->dir_output)) {
-		// Wrapping pour les images fckeditor
+		// Wrapping for fckeditor images
 		$accessallowed = 1;
 		$original_file = $conf->fckeditor->dir_output.'/'.$original_file;
 	} elseif ($modulepart == 'user' && !empty($conf->user->dir_output)) {
@@ -3522,28 +3522,28 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$original_file = $conf->ficheinter->multidir_output[$entity].'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='".$db->escape($refname)."' AND entity=".((int) $conf->entity);
 	} elseif ($modulepart == 'deplacement' && !empty($conf->deplacement->dir_output)) {
-		// Wrapping pour les deplacements et notes de frais
+		// Wrapping for travel and expense reports
 		if ($fuser->hasRight('deplacement', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->deplacement->dir_output.'/'.$original_file;
 		//$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='".$db->escape($refname)."' AND entity=".((int) $conf->entity);
 	} elseif (($modulepart == 'propal' || $modulepart == 'propale') && isset($conf->propal->multidir_output[$entity])) {
-		// Wrapping pour les propales
+		// Wrapping for proposals
 		if ($fuser->hasRight('propal', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->propal->multidir_output[$entity].'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."propal WHERE ref='".$db->escape($refname)."' AND entity IN (".getEntity('propal').")";
 	} elseif (($modulepart == 'commande' || $modulepart == 'order') && !empty($conf->order->multidir_output[$entity])) {
-		// Wrapping pour les commandes
+		// Wrapping for orders
 		if ($fuser->hasRight('commande', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->order->multidir_output[$entity].'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."commande WHERE ref='".$db->escape($refname)."' AND entity IN (".getEntity('order').")";
 	} elseif ($modulepart == 'project' && !empty($conf->project->multidir_output[$entity])) {
-		// Wrapping pour les projects
+		// Wrapping for projects
 		if ($fuser->hasRight('projet', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 			// If we known $id of project, call checkUserAccessToObject to check permission on properties and contact of project
@@ -3622,7 +3622,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		$original_file = $conf->accounting->dir_output.'/'.$original_file;
 	} elseif (($modulepart == 'expedition' || $modulepart == 'shipment' || $modulepart == 'shipping') && !empty($conf->expedition->dir_output)) {
-		// Wrapping pour les expedition
+		// Wrapping for shipments
 		if ($fuser->hasRight('expedition', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
@@ -3706,7 +3706,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		$original_file = $conf->resource->dir_output.'/'.$original_file;
 	} elseif (($modulepart == 'remisecheque' || $modulepart == 'chequereceipt') && !empty($conf->bank->dir_output)) {
-		// Wrapping pour les remises de cheques
+		// Wrapping for check deposits
 		if ($fuser->hasRight('banque', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
@@ -3751,7 +3751,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		$original_file = $conf->admin->dir_temp.'/'.$original_file;
 	} elseif ($modulepart == 'bittorrent' && !empty($conf->bittorrent->dir_output)) {
-		// Wrapping pour BitTorrent
+		// Wrapping for BitTorrent
 		$accessallowed = 1;
 		$dir = 'files';
 		if (dol_mimetype($original_file) == 'application/x-bittorrent') {
@@ -3759,7 +3759,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		$original_file = $conf->bittorrent->dir_output.'/'.$dir.'/'.$original_file;
 	} elseif ($modulepart == 'member' && !empty($conf->member->dir_output)) {
-		// Wrapping pour Foundation module
+		// Wrapping for Foundation module
 		if ($fuser->hasRight('adherent', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
