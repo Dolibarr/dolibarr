@@ -2536,7 +2536,7 @@ class Form
 		// phpcs:enable
 		global $langs, $conf;
 
-		// On recherche les remises
+		// Search for the discounts
 		$sql = "SELECT re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc,";
 		$sql .= " re.description, re.fk_facture_source";
 		$sql .= " FROM " . $this->db->prefix() . "societe_remise_except as re";

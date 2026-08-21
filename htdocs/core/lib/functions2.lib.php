@@ -670,7 +670,7 @@ function clean_url($url, $http = 1)
 		//$url = dol_string_nospecial(trim($url));
 		$url = trim($url);
 
-		// Si http: defini on supprime le http (Si https on ne supprime pas)
+		// If http: is defined, remove the http (If https, do not remove)
 		$newproto = $proto;
 		if ($http == 0) {
 			if (preg_match('/^http:[\\/]+/i', $url)) {
@@ -1639,7 +1639,7 @@ function numero_semaine($time)
 
 	// Cas particulier de la semaine 53
 	if ($numeroSemaine == 53) {
-		// Les annees qui commencent un Jeudi et les annees bissextiles commencant un Mercredi en possedent 53
+		// Years starting on a Thursday, and leap years starting on a Wednesday, have 53
 		if (
 			((int) date("w", mktime(12, 0, 0, 1, 1, (int) date("Y", $jeudiSemaine))) == 4)
 			|| (
@@ -3484,7 +3484,7 @@ function analyzeDirContents($dir, $search = array(), &$results = array(), &$coun
 								foreach ($regs[$id] as $i => $string) {
 									if (!empty($pattern['contain']) && is_array($pattern['contain'])) {
 										foreach ($pattern['contain'] as $contain) {
-											// Mode strict true : doit contenir && ne pas contenir
+											// Strict mode true: must contain // Mode strict true : doit contenir && ne pas contenir// Mode strict true : doit contenir && ne pas contenir must not contain
 											if (!empty($pattern['notcontain']) && !empty($pattern['strict']) && is_array($pattern['notcontain'])) {
 												foreach ($pattern['notcontain'] as $notcontain) {
 													if (strstr($string, $contain) && strstr($string, $notcontain)) {
@@ -3509,7 +3509,7 @@ function analyzeDirContents($dir, $search = array(), &$results = array(), &$coun
 											}
 										}
 									}
-									// Ou ne doit pas contenir
+									// Or must not contain
 									if (empty($count) && !empty($pattern['notcontain']) && empty($pattern['strict']) && is_array($pattern['notcontain'])) {
 										foreach ($pattern['notcontain'] as $notcontain) {
 											if (strstr($string, $notcontain)) {
