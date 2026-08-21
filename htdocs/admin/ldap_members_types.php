@@ -134,7 +134,7 @@ print '<tr class="liste_titre">';
 print '<td colspan="4">'.$langs->trans("LDAPSynchronizeMembersTypes").'</td>';
 print "</tr>\n";
 
-// DN pour les types de membres
+// DN for the member types
 print '<!-- LDAP_MEMBER_TYPE_DN -->';
 print '<tr class="oddeven"><td><span class="fieldrequired">'.$langs->trans("LDAPMemberTypeDn").'</span></td><td>';
 print '<input size="48" type="text" name="membertype" value="' . getDolGlobalString('LDAP_MEMBER_TYPE_DN').'">';

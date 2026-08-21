@@ -873,9 +873,9 @@ if ($action == 'edit') {
 		$formmail->withdeliveryreceipt = 1;
 		$formmail->withfckeditor = ($action == 'testhtml' ? 1 : 0);
 		$formmail->ckeditortoolbar = 'dolibarr_mailings';
-		// Tableau des substitutions
+		// Array of substitutions
 		$formmail->substit = $substitutionarrayfortest;
-		// Tableau des parameters complementaires du post
+		// Array of additional post parameters
 		$formmail->param["action"] = "send";
 		$formmail->param["models"] = "body";
 		$formmail->param["mailid"] = 0;
