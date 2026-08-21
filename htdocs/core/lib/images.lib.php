@@ -671,7 +671,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 			$extImg = '.webp';
 			break;
 		case 19:	// 19 TYPEIMAGE_AVIF constant don't exists with php < 8.1
-			$img = imagecreatefromavif($filetoread);
+			$img = imagecreatefromavif($filetoread); // @phan-suppress-current-line PhanParamTooManyInternal -- Phan's internal signature for imagecreatefromavif() is missing its $filename param, see https://github.com/phan/phan/issues/5562
 			$extImg = '.avif';
 			break;
 	}
@@ -850,7 +850,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 			imagewebp($imgThumb, $imgThumbName, $newquality); // @phan-suppress-current-line PhanTypeMismatchArgumentNullableInternal,PhanPossiblyUndeclaredVariable
 			break;
 		case 19:    // 19 TYPEIMAGE_AVIF constant don't exists with php < 8.1
-			imageavif($imgThumb, $imgThumbName, $newquality); // @phan-suppress-current-line PhanTypeMismatchArgumentNullableInternal,PhanPossiblyUndeclaredVariable
+			imageavif($imgThumb, $imgThumbName, $newquality); // @phan-suppress-current-line PhanTypeMismatchArgumentNullableInternal,PhanPossiblyUndeclaredVariable,PhanParamTooManyInternal -- Phan's internal signature for imageavif() is missing its params, see https://github.com/phan/phan/issues/5562
 			break;
 	}
 
