@@ -104,3 +104,5 @@ docs/superpowers/
 
 # Agent-managed git worktrees
 .worktrees/
+/.claudeignore
+/.vibeignore
