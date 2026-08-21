@@ -40,8 +40,10 @@ htdocs/includes/squizlabs/
 htdocs/includes/webmozart/
 htdocs/install/install.forced.php
 htdocs/.well-known/apple-developer-merchantid-domain-association
-/factory/
 /output/
+
+# For module authors
+/factory/
 
 # Node Modules
 dev/build/yarn-error.log
@@ -95,14 +97,14 @@ phpstan_custom.neon
 
 # Mistral Vibe
 .vibe
+/.vibeignore
+
+# Claude Code
+.claude
+/.claudeignore
 
 # Agent workflow artifacts (specs/plans), not product documentation
 docs/superpowers/
 
-# Claude Code
-.claude
-
 # Agent-managed git worktrees
 .worktrees/
-/.claudeignore
-/.vibeignore
