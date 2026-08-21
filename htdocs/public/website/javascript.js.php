@@ -162,8 +162,8 @@ if (!$accessallowed) {
 }
 
 // Security:
-// On interdit les remontees de repertoire ainsi que les pipe dans
-// les noms de fichiers.
+// We forbid directory traversal as well as pipes in
+// file names.
 if (preg_match('/\.\./', $original_file) || preg_match('/[<>|]/', $original_file)) {
 	dol_syslog("Refused to deliver file ".$original_file);
 	$file = basename($original_file); // Do no show plain path of original_file in shown error message
