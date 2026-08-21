@@ -569,7 +569,7 @@ if ($resql) {
 						}
 						// Show value for field
 						if ($showfield) {
-							print '<!-- '.$fieldlist[$field].' --><td class="'.$class.'">'.$valuetoshow.'</td>';
+							print '<!-- '.$fieldlist[$field].' --><td class="'.$class.'">'.dolPrintHTML($valuetoshow).'</td>';
 						}
 					}
 				}

@@ -87,6 +87,6 @@ When generating code:
 - **Legacy code**: Some older modules cannot be fully PSR-12 compliant. Prioritize consistency with existing module style
 - **Global variables**: Dolibarr uses globals like `$db`, `$conf`, `$user`. Do not remove these without understanding the architecture
 - **Dolibarr functions**: Prefer built-in Dolibarr functions (e.g., `dol_print_date()`, `getDolGlobalString()`) over native PHP functions
-- **SQL injection**: Dolibarr has its own sanitizing and escaping methods (`$db->escape()`, casting to `(int)`, `$db->sanitize()`). Do not replace with prepared statements without testing
+- **SQL injection**: Dolibarr has its own sanitizing and escaping methods (`$db->escape()`, casting to `(int)`, `$db->sanitize()`). Do not replace with prepared statements. Also take into account that MAIN_DB_PREFIX is a constant.
 - **XSS protection**: Use `dolPrintHTML()`, `dolPrintHTMLForAttribute()`, or `dol_htmlentities()` for output, not native `htmlentities()`
 - **CSRF tokens**: All POST forms must include `<input type="hidden" name="token" value="'.newToken().'">`
