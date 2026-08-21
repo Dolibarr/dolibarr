@@ -33,6 +33,9 @@ cache:
   apt: true
   directories:
     - ~/.cache
+    # Composer vendor-dir is redirected here (see `install` step below); caching it
+    # avoids re-downloading/re-extracting phpunit, phpcs, parallel-lint, etc. on every build.
+    - htdocs/includes
 
 
 jobs:
