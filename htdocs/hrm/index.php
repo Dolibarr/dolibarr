@@ -90,6 +90,19 @@ if (isModEnabled('holiday') && !empty($setupcompanynotcomplete)) {
 	$result = $holidaystatic->updateBalance();
 }
 
+if (GETPOST('addbox')) {
+	// Add box (when submit is done from a form when ajax disabled)
+	require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
+	$zone = GETPOSTINT('areacode');
+	$userid = GETPOSTINT('userid');
+	$boxorder = GETPOST('boxorder', 'aZ09');
+	$boxorder .= GETPOST('boxcombo', 'aZ09');
+	$result = InfoBox::saveboxorder($db, $zone, $boxorder, $userid);
+	if ($result > 0) {
+		setEventMessages($langs->trans("BoxAdded"), null);
+	}
+}
+
 
 /*
  * View
@@ -102,9 +115,12 @@ $childids[] = $user->id;
 
 $title = $langs->trans('HRMArea');
 
+// Load $resultboxes
+$resultboxes = FormOther::getBoxesArea($user, "10");
+
 llxHeader('', $title, '');
 
-print load_fiche_titre($langs->trans("HRMArea"), '', 'hrm');
+print load_fiche_titre($langs->trans("HRMArea"), $resultboxes['selectboxlist'], 'hrm');
 
 
 if (!empty($setupcompanynotcomplete)) {
@@ -194,6 +210,8 @@ if (isModEnabled('holiday')) {
 	}
 }
 
+
+print $resultboxes['boxlista'];
 
 print '</div><div class="secondcolumn fichehalfright boxhalfright" id="boxhalfright">';
 
@@ -462,6 +480,8 @@ if (isModEnabled('recruitment') && $user->hasRight('recruitment', 'recruitmentjo
 		dol_print_error($db);
 	}
 }
+
+print $resultboxes['boxlistb'];
 
 print '</div></div></div>';
 

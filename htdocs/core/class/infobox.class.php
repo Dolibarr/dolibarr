@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2019		Nicolas ZABOURI			<info@inovea-conseil.com>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,6 +46,9 @@ class InfoBox
 				2 => 'MembersHome',
 				3 => 'ThirdpartiesHome',
 				4 => 'productindex',
+				6 => 'mrpindex',
+				9 => 'invoiceindex',
+				10 => 'hrmindex',
 				11 => 'TicketsHome',
 				20 => 'interventionindex',
 				27 => 'AccountancyHome'
