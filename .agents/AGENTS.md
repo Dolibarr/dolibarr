@@ -151,16 +151,6 @@ If possible:
 - Branch strategy:
     - One branch per major version (bug fixes only)
     - `develop` branch for both fixes and new features
-<<<<<<< HEAD
-- ❌ Never commit directly to `main` or `develop` without a reviewed PR
-- Commit message format: `TYPE: #issueNumber Short description`
-    - Types: `NEW`, `FIX` or `CLOSE`
-    - Example: `FIX: #1234 Correct VAT calculation on credit notes`
-- Update the `ChangeLog` file with a summary of significant changes
-- When fixing a bug, apply the patch on the **oldest affected branch first**,
-  then cherry-pick forward to newer branches and `develop`
-- Do not introduce new syntax or features unavailable in the branch's minimum PHP version
-=======
 - ❌ Never commit directly to `main` or `develop` or any branch name matching regex `^\d+\.\d+$` but use a Pull Request.
 - Commit message format: `TYPE: #issueNumber Short description`
     - Types: `NEW`, `FIX` or `CLOSE`
@@ -168,7 +158,7 @@ If possible:
 - Do not update the `ChangeLog` file (this file will be generated before the release from all commit titles)
 - Do not introduce new syntax or features unavailable in the branch's minimum PHP version
 - When commiting, mention the AI agent name in the commit message (e.g. "Co-authored-by: AI Agent <ai-agent@dolibarr.org>")
->>>>>>> local_prev/23.0
+
 
 ---
 
