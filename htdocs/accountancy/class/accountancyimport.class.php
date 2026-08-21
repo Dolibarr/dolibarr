@@ -109,7 +109,7 @@ class AccountancyImport
 				$amount = (float) price2num($arrayrecord[$credit_index]['val']);
 			}
 
-			return "'" . $this->db->escape((string) abs($amount)) . "'";
+			return "'" . $this->db->escape(abs($amount)) . "'";
 		}
 
 		return "''";

@@ -41,9 +41,10 @@ The user request should contain, when available:
 When generating code:
 
 - provide only the relevant PHP code
-- preserve the existing file formatting, never change the copyright header
+- preserve the existing file formatting, never change the copyright or licence header, never remove existing cast 
 - do not rewrite unrelated methods
 - explain briefly what is being fixed
+- never do or suggest git commit (except in standalone requests)
 
 ## Examples
 
@@ -76,7 +77,6 @@ When generating code:
 | Mixed line endings | Check with `cat -A` | Normalize to LF |
 
 **Before applying fixes:**
-- back up the original file
 - verify the file is not part of a protected core module
 - run existing tests to establish a baseline
 - apply changes incrementally
