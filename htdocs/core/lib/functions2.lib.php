@@ -1578,9 +1578,9 @@ function hexbin($hexa)
 }
 
 /**
- *	Retourne le numero de la semaine par rapport a une date
+ *	Return the week number for a given date
  *
- *	@param	string	$time   	Date au format 'timestamp'
+ *	@param	string	$time   	Date in 'timestamp' format
  *	@return string					Number of week
  */
 function numero_semaine($time)
@@ -1589,7 +1589,7 @@ function numero_semaine($time)
 
 	$reg = array();
 	if (preg_match('/^([0-9]+)\-([0-9]+)\-([0-9]+)\s?([0-9]+)?:?([0-9]+)?/i', $stime, $reg)) {
-		// Date est au format 'YYYY-MM-DD' ou 'YYYY-MM-DD HH:MM:SS'
+		// Date is in 'YYYY-MM-DD' or 'YYYY-MM-DD HH:MM:SS' format
 		$annee = (int) $reg[1];
 		$mois = (int) $reg[2];
 		$jour = (int) $reg[3];
@@ -1600,35 +1600,35 @@ function numero_semaine($time)
 	}
 
 	/*
-	 * Norme ISO-8601:
+	 * ISO-8601 standard:
 	 * - Week 1 of the year contains Jan 4th, or contains the first Thursday of January.
 	 * - Most years have 52 weeks, but 53 weeks for years starting on a Thursday and bisectile years that start on a Wednesday.
 	 * - The first day of a week is Monday
 	 */
 
-	// Definition du Jeudi de la semaine
-	if ((int) date("w", mktime(12, 0, 0, $mois, $jour, $annee)) == 0) { // Dimanche
+	// Definition of the Thursday of the week
+	if ((int) date("w", mktime(12, 0, 0, $mois, $jour, $annee)) == 0) { // Sunday
 		$jeudiSemaine = mktime(12, 0, 0, $mois, $jour, $annee) - 3 * 24 * 60 * 60;
-	} elseif (date("w", mktime(12, 0, 0, $mois, $jour, $annee)) < 4) { // du Lundi au Mercredi
+	} elseif (date("w", mktime(12, 0, 0, $mois, $jour, $annee)) < 4) { // Monday to Wednesday
 		$jeudiSemaine = mktime(12, 0, 0, $mois, $jour, $annee) + (4 - (int) date("w", mktime(12, 0, 0, $mois, $jour, $annee))) * 24 * 60 * 60;
-	} elseif ((int) date("w", mktime(12, 0, 0, $mois, $jour, $annee)) > 4) { // du Vendredi au Samedi
+	} elseif ((int) date("w", mktime(12, 0, 0, $mois, $jour, $annee)) > 4) { // Friday to Saturday
 		$jeudiSemaine = mktime(12, 0, 0, $mois, $jour, $annee) - ((int) date("w", mktime(12, 0, 0, $mois, $jour, $annee)) - 4) * 24 * 60 * 60;
-	} else { // Jeudi
+	} else { // Thursday
 		$jeudiSemaine = mktime(12, 0, 0, $mois, $jour, $annee);
 	}
 
-	// Definition du premier Jeudi de l'annee
-	if ((int) date("w", mktime(12, 0, 0, 1, 1, (int) date("Y", $jeudiSemaine))) == 0) { // Dimanche
+	// Definition of the first Thursday of the year
+	if ((int) date("w", mktime(12, 0, 0, 1, 1, (int) date("Y", $jeudiSemaine))) == 0) { // Sunday
 		$premierJeudiAnnee = mktime(12, 0, 0, 1, 1, (int) date("Y", $jeudiSemaine)) + 4 * 24 * 60 * 60;
-	} elseif ((int) date("w", mktime(12, 0, 0, 1, 1, (int) date("Y", $jeudiSemaine))) < 4) { // du Lundi au Mercredi
+	} elseif ((int) date("w", mktime(12, 0, 0, 1, 1, (int) date("Y", $jeudiSemaine))) < 4) { // Monday to Wednesday
 		$premierJeudiAnnee = mktime(12, 0, 0, 1, 1, (int) date("Y", $jeudiSemaine)) + (4 - (int) date("w", mktime(12, 0, 0, 1, 1, (int) date("Y", $jeudiSemaine)))) * 24 * 60 * 60;
-	} elseif ((int) date("w", mktime(12, 0, 0, 1, 1, (int) date("Y", $jeudiSemaine))) > 4) { // du Vendredi au Samedi
+	} elseif ((int) date("w", mktime(12, 0, 0, 1, 1, (int) date("Y", $jeudiSemaine))) > 4) { // Friday to Saturday
 		$premierJeudiAnnee = mktime(12, 0, 0, 1, 1, (int) date("Y", $jeudiSemaine)) + (7 - ((int) date("w", mktime(12, 0, 0, 1, 1, (int) date("Y", $jeudiSemaine))) - 4)) * 24 * 60 * 60;
-	} else { // Jeudi
+	} else { // Thursday
 		$premierJeudiAnnee = mktime(12, 0, 0, 1, 1, (int) date("Y", $jeudiSemaine));
 	}
 
-	// Definition du numero de semaine: nb de jours entre "premier Jeudi de l'annee" et "Jeudi de la semaine";
+	// Definition of the week number: nb of days between "first Thursday of the year" and "Thursday of the week"
 	$numeroSemaine = (
 		(
 			(int) date("z", mktime(12, 0, 0, (int) date("m", $jeudiSemaine), (int) date("d", $jeudiSemaine), (int) date("Y", $jeudiSemaine)))
@@ -1637,7 +1637,7 @@ function numero_semaine($time)
 		) / 7
 	) + 1;
 
-	// Cas particulier de la semaine 53
+	// Special case of week 53
 	if ($numeroSemaine == 53) {
 		// Years starting on a Thursday, and leap years starting on a Wednesday, have 53
 		if (
