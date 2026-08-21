@@ -1,5 +1,5 @@
 ---
-name: add-unit-test
+name: skill-phpunit
 description: Add a unit test to test functions or methods.
 license: MIT
 user-invocable: true
@@ -8,9 +8,9 @@ allowed-tools:
  - write_file
  - grep
 ---
- 
- 
-# Skill: Add a Unit Test for Dolibarr
+
+
+# Skill: Add or modify a PHP Unit Test for Dolibarr
 
 ## When to use this skill
 

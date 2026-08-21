@@ -1,5 +1,5 @@
 ---
-name: code-review
+name: skill-code-review
 description: Review code and fix bad practices
 license: MIT
 user-invocable: true
@@ -8,8 +8,8 @@ allowed-tools:
  - write_file
  - grep
 ---
- 
- 
+
+
 # Skill: Review code for Dolibarr practices and fix it
 
 ## When to use this skill
