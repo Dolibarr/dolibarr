@@ -49,6 +49,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 '
 @phan-var-force ?string $dolibarr_main_url_root_alt
+@phan-var-force ?string $dolibarr_main_document_root_alt
 @phan-var-force ?string $dolibarr_main_db_prefix
 ';
 
