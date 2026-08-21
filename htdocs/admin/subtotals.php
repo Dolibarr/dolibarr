@@ -241,7 +241,7 @@ if (empty($conf->use_javascript_ajax)) {
 	print '<tr class="liste_titre">';
 	print '<td rowspan="2">' . $langs->trans("Other") . '</td>';
 	print '<td class="center" colspan="2">' . $langs->trans("Title") . '</td>';
-	print '<td class="center" colspan="2">' . $langs->trans("Subtotal") . '</td>';
+	print '<td class="center" colspan="2">' . $langs->trans("SubTotal") . '</td>';
 	print "</tr>\n";
 	print '<tr class="liste_titre">';
 	print '<td class="center">' . $langs->trans("SubtotalBackColor") . '</td>';
