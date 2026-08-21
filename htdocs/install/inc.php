@@ -59,7 +59,7 @@ $conf = new Conf();
 // Force $_REQUEST["logtohtml"]
 $_REQUEST["logtohtml"] = 1;
 
-// Correction PHP_SELF (ex pour apache via caudium) car PHP_SELF doit valoir URL relative
+// Fix PHP_SELF (e.g. for apache via caudium) because PHP_SELF must be a relative URL
 // et non path absolu.
 if (isset($_SERVER["DOCUMENT_URI"]) && $_SERVER["DOCUMENT_URI"]) {
 	$_SERVER["PHP_SELF"] = $_SERVER["DOCUMENT_URI"];

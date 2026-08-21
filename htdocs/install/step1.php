@@ -263,12 +263,12 @@ if (!filter_var($main_url, FILTER_VALIDATE_URL)) {
 	$error++;
 }
 
-// Remove last / into dans main_dir
+// Remove last / into main_dir
 if (substr($main_dir, dol_strlen($main_dir) - 1) == "/") {
 	$main_dir = substr($main_dir, 0, dol_strlen($main_dir) - 1);
 }
 
-// Remove last / into dans main_url
+// Remove last / into main_url
 if (!empty($main_url) && substr($main_url, dol_strlen($main_url) - 1) == "/") {
 	$main_url = substr($main_url, 0, dol_strlen($main_url) - 1);
 }

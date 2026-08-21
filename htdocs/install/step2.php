@@ -51,7 +51,7 @@ $db = null;
 
 
 // This page can be long. We increase the time allowed. / Cette page peut etre longue. On augmente le delai autorise.
-// Only works if you are not in safe_mode. / Ne fonctionne que si on est pas en safe_mode.
+// Only works if you are not in safe_mode.
 
 $err = error_reporting();
 error_reporting(0);      // Disable all errors
