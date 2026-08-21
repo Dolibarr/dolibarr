@@ -15,6 +15,7 @@
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Nick Fragoulis
  * Copyright (C) 2026		Mathieu Moulin			<mathieu@iprospective.fr>
+ * Copyright (C) 2026		Jose Martinez				<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1637,6 +1638,24 @@ class Reception extends CommonObject
 	}
 
 	/**
+	 *  Return the array of data to show into the tooltip
+	 *
+	 *  @param  array<string,mixed>  $params  Params to construct tooltip data
+	 *  @return array<string,string>
+	 */
+	public function getTooltipContentArray($params)
+	{
+		global $langs;
+
+		$datas = array();
+		$datas['picto'] = img_picto('', $this->picto).' <u>'.$langs->trans("Reception").'</u>';
+		$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		$datas['refsupplier'] = '<br><b>'.$langs->trans('RefSupplier').':</b> '.($this->ref_supplier ? $this->ref_supplier : '');
+
+		return $datas;
+	}
+
+	/**
 	 *	Return clickable link of object (with eventually picto)
 	 *
 	 *  @param	int     $withpicto                  Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
@@ -1651,9 +1670,8 @@ class Reception extends CommonObject
 		global $langs, $hookmanager;
 
 		$result = '';
-		$label = img_picto('', $this->picto).' <u>'.$langs->trans("Reception").'</u>';
-		$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
-		$label .= '<br><b>'.$langs->trans('RefSupplier').':</b> '.($this->ref_supplier ? $this->ref_supplier : '');
+		$params = array();
+		$label = $this->getTooltipContent($params);
 
 		$url = DOL_URL_ROOT.'/reception/card.php?id='.$this->id;
 
