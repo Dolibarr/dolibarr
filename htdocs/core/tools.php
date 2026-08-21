@@ -68,6 +68,7 @@ if (GETPOST('addbox')) {
  * View
  */
 
+$form = new Form($db);
 $socstatic = new Societe($db);
 
 // Load $resultboxes
@@ -88,9 +89,6 @@ print '<div class="fichecenter">';
 print '<div class="twocolumns">';
 
 print '<div class="firstcolumn fichehalfleft boxhalfleft" id="boxhalfleft">';
-
-// Show logo
-print '<div class="center"><div class="logo_setup"></div></div>';
 
 print $resultboxes['boxlista'];
 
