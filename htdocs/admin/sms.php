@@ -286,9 +286,9 @@ if ($action == 'edit') {
 		$formsms->withbody = (GETPOSTISSET('message') ? (!GETPOST('message') ? 1 : GETPOST('message')) : $langs->trans("ThisIsATestMessage"));
 		$formsms->withbodyreadonly = 0;
 		$formsms->withcancel = 1;
-		// Tableau des substitutions
+		// Array of substitutions
 		$formsms->substit = $substitutionarrayfortest;
-		// Tableau des parameters complementaires du post
+		// Array of additional post parameters
 		$formsms->param["action"] = "send";
 		$formsms->param["models"] = "body";
 		$formsms->param["smsid"] = 0;

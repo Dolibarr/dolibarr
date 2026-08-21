@@ -136,7 +136,7 @@ if (GETPOST("delete")) {
 	if (GETPOSTINT("norss")) {
 		$db->begin();
 
-		// Supprime boite box_external_rss de definition des boites
+		// Remove box box_external_rss from box definitions
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."boxes_def";
 		$sql .= " WHERE file = 'box_external_rss.php' AND note LIKE '".$db->escape((string) GETPOSTINT("norss"))." %'";
 

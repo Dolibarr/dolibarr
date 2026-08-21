@@ -154,7 +154,7 @@ if ($rowid > 0) {
 $tabname = array();
 $tabname[25] = MAIN_DB_PREFIX."c_email_templates";
 
-// Nom des champs en resultat de select pour affichage du dictionnaire
+// Name of the fields in the result of select to display the dictionary
 // Names of fields in select results for dictionary display (AI translated)
 $tabfield = array();
 $tabfield[25] = "label,lang,type_template,fk_user,position,module,topic,joinfiles,defaultfortype,content";
@@ -162,7 +162,7 @@ if (getDolGlobalString('MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES')) {
 	$tabfield[25] .= ',content_lines';
 }
 
-// Nom des champs d'edition pour modification d'un enregistrement
+// Name of editing fields for record modification
 // Names of edit fields for modifying a record (AI translated)
 $tabfieldvalue = array();
 $tabfieldvalue[25] = "label,lang,type_template,fk_user,private,position,topic,email_from,joinfiles,defaultfortype,content";
@@ -170,7 +170,7 @@ if (getDolGlobalString('MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES')) {
 	$tabfieldvalue[25] .= ',content_lines';
 }
 
-// Nom des champs dans la table pour insertion d'un enregistrement
+// Name of the fields in the table for inserting a record
 // Field names in the table for inserting a record (AI translated)
 $tabfieldinsert = array();
 $tabfieldinsert[25] = "label,lang,type_template,fk_user,private,position,topic,email_from,joinfiles,defaultfortype,content,datec";

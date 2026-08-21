@@ -207,7 +207,7 @@ print '<tr class="liste_titre">';
 print '<td colspan="4">'.$langs->trans("LDAPSynchronizeMembers").'</td>';
 print "</tr>\n";
 
-// DN Pour les adherents
+// DN For the members
 print '<!-- LDAP_MEMBER_DN -->';
 print '<tr class="oddeven"><td><span class="fieldrequired">'.$langs->trans("LDAPMemberDn").'</span></td><td>';
 print '<input size="48" type="text" name="user" value="' . getDolGlobalString('LDAP_MEMBER_DN').'">';
