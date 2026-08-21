@@ -1592,7 +1592,7 @@ class Contrat extends CommonObject
 				}
 			}
 
-			// Insertion dans la base
+			// Insert into database
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."contratdet";
 			$sql .= " (fk_contrat, label, description, fk_product, qty, tva_tx, vat_src_code,";
 			$sql .= " localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, remise_percent, subprice, subprice_ttc,";
