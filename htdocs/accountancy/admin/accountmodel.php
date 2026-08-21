@@ -12,7 +12,7 @@
  * Copyright (C) 2015       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026 MDW <mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -122,15 +122,15 @@ $tabsql[31] = "SELECT s.rowid as rowid, pcg_version, s.label, s.fk_country as co
 $tabsqlsort = array();
 $tabsqlsort[31] = "pcg_version ASC";
 
-// Nom des champs en resultat de select pour affichage du dictionnaire
+// Fields names from select for dictionary display
 $tabfield = array();
 $tabfield[31] = "pcg_version,label,country_id,country";
 
-// Nom des champs d'edition pour modification d'un enregistrement
+// Field names for editing a record
 $tabfieldvalue = array();
 $tabfieldvalue[31] = "pcg_version,label,country";
 
-// Nom des champs dans la table pour insertion d'un enregistrement
+// Field names in the table for record insertion
 $tabfieldinsert = array();
 $tabfieldinsert[31] = "pcg_version,label,fk_country";
 
@@ -382,7 +382,7 @@ foreach ($fieldlist as $field => $value) {
 		if (in_array('region_id', $fieldlist)) {
 			print '<td>&nbsp;</td>';
 			continue;
-		}		// For region page, we do not show the country input
+		} // For region page, we do not show the country input
 		$valuetoshow = $langs->trans("Country");
 	}
 	if ($fieldlist[$field] == 'country_id') {
@@ -569,7 +569,7 @@ if ($resql) {
 						}
 						// Show value for field
 						if ($showfield) {
-							print '<!-- '.$fieldlist[$field].' --><td class="'.$class.'">'.$valuetoshow.'</td>';
+							print '<!-- '.$fieldlist[$field].' --><td class="'.$class.'">'.dolPrintHTML($valuetoshow).'</td>';
 						}
 					}
 				}
@@ -651,7 +651,7 @@ function fieldListAccountModel($fieldlist, $obj = null, $tabname = '', $context 
 				//print join(',',$fieldlist);
 				print '</td>';
 				continue;
-			}	// For state page, we do not show the country input (we link to region, not country)
+			} // For state page, we do not show the country input (we link to region, not country)
 			print '<td>';
 			$fieldname = 'country';
 			print $form->select_country((!empty($obj->country_code) ? $obj->country_code : (!empty($obj->country) ? $obj->country : '')), $fieldname, '', 28, 'maxwidth200 maxwidthonsmartphone');
