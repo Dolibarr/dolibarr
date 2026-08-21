@@ -35,6 +35,7 @@ cache:
     - ~/.cache
     # Composer vendor-dir is redirected here (see `install` step below); caching it
     # avoids re-downloading/re-extracting phpunit, phpcs, parallel-lint, etc. on every build.
+    # Each stage below sets its own CACHE_NAME so they don't share/overwrite one cache slot.
     - htdocs/includes
 
 
@@ -47,6 +48,7 @@ jobs:
       if: type = push and commit_message !~ /latest php/
       php: '7.2'
       env:
+      - CACHE_NAME=php-min
       - DB=postgresql
       - TRAVIS_PHP_VERSION=7.2
       - TRAVIS_TYPE=push
@@ -54,6 +56,7 @@ jobs:
       if: type = push and commit_message !~ /latest php/
       php: '8.4'
       env:
+      - CACHE_NAME=php-max-push
       - DB=mysql
       - TRAVIS_PHP_VERSION=8.4
       - TRAVIS_TYPE=push
@@ -62,6 +65,7 @@ jobs:
       php: 'latest'
       language: php
       env:
+      - CACHE_NAME=php-latest
       - DB=mysql
       - TRAVIS_PHP_VERSION=latest
       - TRAVIS_TYPE=push
@@ -69,6 +73,7 @@ jobs:
       if: type = pull_request
       php: '8.4'
       env:
+      - CACHE_NAME=php-max-pr
       - DB=mysql
       - TRAVIS_PHP_VERSION=8.4
       - TRAVIS_TYPE=pull_request
