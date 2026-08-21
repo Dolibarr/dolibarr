@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -46,23 +47,58 @@ require_once DOL_DOCUMENT_ROOT.'/core/redirect_if_setup_not_complete.inc.php';
 
 
 /*
+ * Actions
+ */
+
+if (GETPOST('addbox')) {
+	// Add box (when submit is done from a form when ajax disabled)
+	require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
+	$zone = GETPOSTINT('areacode');
+	$userid = GETPOSTINT('userid');
+	$boxorder = GETPOST('boxorder', 'aZ09');
+	$boxorder .= GETPOST('boxcombo', 'aZ09');
+	$result = InfoBox::saveboxorder($db, $zone, $boxorder, $userid);
+	if ($result > 0) {
+		setEventMessages($langs->trans("BoxAdded"), null);
+	}
+}
+
+
+/*
  * View
  */
 
 $socstatic = new Societe($db);
 
+// Load $resultboxes
+$resultboxes = FormOther::getBoxesArea($user, "28");
+
 llxHeader("", $langs->trans("Tools"), "");
 
 $text = $langs->trans("Tools");
 
-print load_fiche_titre($text, '', 'wrench');
+print load_fiche_titre($text, $resultboxes['selectboxlist'], 'wrench');
 
 // Show description of content
 print '<div class="justify opacitymedium">'.$langs->trans("ToolsDesc").'</div><br><br>';
 
 
+print '<div class="fichecenter">';
+
+print '<div class="twocolumns">';
+
+print '<div class="firstcolumn fichehalfleft boxhalfleft" id="boxhalfleft">';
+
 // Show logo
 print '<div class="center"><div class="logo_setup"></div></div>';
+
+print $resultboxes['boxlista'];
+
+print '</div><div class="secondcolumn fichehalfright boxhalfright" id="boxhalfright">';
+
+print $resultboxes['boxlistb'];
+
+print '</div></div></div>';
 
 
 llxFooter();

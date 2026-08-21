@@ -47,11 +47,13 @@ class InfoBox
 				3 => 'ThirdpartiesHome',
 				4 => 'productindex',
 				6 => 'mrpindex',
+				8 => 'projectsindex',
 				9 => 'invoiceindex',
 				10 => 'hrmindex',
 				11 => 'TicketsHome',
 				20 => 'interventionindex',
-				27 => 'AccountancyHome'
+				27 => 'AccountancyHome',
+				28 => 'toolsindex'
 			);
 		} else {
 			return array(
@@ -82,7 +84,8 @@ class InfoBox
 				24 => 'expensereportindex',
 				25 => 'mailingindex',
 				26 => 'opensurveyindex',
-				27 => 'AccountancyHome'
+				27 => 'AccountancyHome',
+				28 => 'toolsindex'
 			);
 		}
 	}
