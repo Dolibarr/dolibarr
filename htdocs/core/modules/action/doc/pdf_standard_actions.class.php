@@ -2,8 +2,8 @@
 /* Copyright (C) 2004       Rodolphe Quiedeville   <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012  Laurent Destailleur    <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009  Regis Houssin          <regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW					   <mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France        <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW					   <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France        <frederic.france@free.fr>
  * Copyright (C) 2024	    Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
@@ -52,6 +52,11 @@ class pdf_standard_actions
 	 * @var string[] array of errors messages
 	 */
 	public $errors;
+
+	/**
+	 * @var string[] array of warnings messages
+	 */
+	public $warnings;
 
 	/**
 	 * @var string description
@@ -174,7 +179,7 @@ class pdf_standard_actions
 	 *
 	 * @param  ?CommonObject	$object			Order/...
 	 * @param  Translate		$outputlangs    Lang object for output language
-	 * @return int<0,1>     			    	1=OK, 0=KO
+	 * @return int<-1,1>     			    	1 => OK, <=0 => KO
 	 */
 	public function write_file($object, $outputlangs)
 	{
@@ -193,7 +198,7 @@ class pdf_standard_actions
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "products"));
 
 		$dir = $conf->agenda->dir_temp."/";
-		$file = $dir."actions-".sprintf("%02d", $this->month)."-".sprintf("%04d", $this->year).".pdf";
+		$file = $dir."actions-".sprintf("%04d", $this->year)."-".sprintf("%02d", $this->month).".pdf";
 
 		if (!file_exists($dir)) {
 			if (dol_mkdir($dir) < 0) {
@@ -220,7 +225,7 @@ class pdf_standard_actions
 			$heightforinfotot = 50; // Height reserved to output the info and total part
 			$heightforfreetext = getDolGlobalInt('MAIN_PDF_FREETEXT_HEIGHT', 5); // Height reserved to output the free text on last page
 			$heightforfooter = $this->marge_basse + 8; // Height reserved to output the footer (value include bottom margin)
-			$pdf->SetAutoPageBreak(1, 0);
+			$pdf->setAutoPageBreak(true, 0);
 
 			if (class_exists('TCPDF')) {
 				$pdf->setPrintHeader(false);
@@ -236,7 +241,7 @@ class pdf_standard_actions
 			$pdf->SetTitle($outputlangs->convToOutputCharset($this->title));
 			$pdf->SetSubject($outputlangs->convToOutputCharset($this->subject));
 			$pdf->SetCreator("Dolibarr ".DOL_VERSION);
-			$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
+			$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getAnonymisableFullName($outputlangs)));
 			$pdf->SetKeywords($outputlangs->convToOutputCharset($this->title." ".$this->subject));
 
 			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
@@ -260,9 +265,12 @@ class pdf_standard_actions
 			$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 			global $action;
 			$reshook = $hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+			$this->warnings = $hookmanager->warnings;
 			if ($reshook < 0) {
 				$this->error = $hookmanager->error;
 				$this->errors = $hookmanager->errors;
+				dolChmod($file);
+				return -1;
 			}
 
 			dolChmod($file);
@@ -302,7 +310,7 @@ class pdf_standard_actions
 		$sql .= " WHERE c.id=a.fk_action AND a.fk_user_author = u.rowid";
 		$sql .= " AND a.datep BETWEEN '".$this->db->idate(dol_get_first_day($this->year, $this->month, false))."'";
 		$sql .= " AND '".$this->db->idate(dol_get_last_day($this->year, $this->month, false))."'";
-		$sql .= " AND a.entity = ".$conf->entity;
+		$sql .= " AND a.entity = ".((int) $conf->entity);
 		$sql .= " ORDER BY a.datep DESC";
 
 		$eventstatic = new ActionComm($this->db);
@@ -337,7 +345,7 @@ class pdf_standard_actions
 				if ($obj->fk_project > 0) {
 					$projectstatic->fetch($obj->fk_project);
 					if ($projectstatic->ref) {
-						$text .= ($status ? ' - ' : '').$outputlangs->transnoentitiesnoconv("Project").": ".dol_htmlentitiesbr_decode($projectstatic->ref);
+						$text .= ($status ? ' - ' : '').$outputlangs->transnoentitiesnoconv("Project").": ".dol_htmlentitiesbr_decode((string) $projectstatic->ref);
 					}
 				}
 
@@ -366,12 +374,12 @@ class pdf_standard_actions
 					}
 				}
 				$textdate = $outputlangs->trans("ID").' '.$obj->id.' - '.$textdate;
-				$pdf->MultiCell(45 - $this->marge_gauche, $height, $textdate, 0, 'L', 0);
+				$pdf->MultiCell(45 - $this->marge_gauche, $height, $textdate, 0, 'L', false);
 				$y0 = $pdf->GetY();
 
 				// Third party
 				$pdf->SetXY(45, $y);
-				$pdf->MultiCell(28, $height, dol_trunc($outputlangs->convToOutputCharset($obj->thirdparty), 28), 0, 'L', 0);
+				$pdf->MultiCell(28, $height, dol_trunc($outputlangs->convToOutputCharset($obj->thirdparty), 28), 0, 'L', false);
 				$y1 = $pdf->GetY();
 
 				// Action code
@@ -387,12 +395,12 @@ class pdf_standard_actions
 				$pdf->SetXY(73, $y);
 				$labelactiontype = $outputlangs->transnoentitiesnoconv("Action".$code);
 				$labelactiontypeshort = $outputlangs->transnoentitiesnoconv("Action".$code.'Short');
-				$pdf->MultiCell(32, $height, dol_trunc($outputlangs->convToOutputCharset($labelactiontypeshort == "Action".$code.'Short' ? $labelactiontype : $labelactiontypeshort), 32), 0, 'L', 0);
+				$pdf->MultiCell(32, $height, dol_trunc($outputlangs->convToOutputCharset($labelactiontypeshort == "Action".$code.'Short' ? $labelactiontype : $labelactiontypeshort), 32), 0, 'L', false);
 				$y2 = $pdf->GetY();
 
 				// Description of event
 				$pdf->SetXY(106, $y);
-				$pdf->MultiCell(94, $height, $outputlangs->convToOutputCharset(dol_trunc(dol_string_nohtmltag($text, 0), 250, 'right', 'UTF-8', 0)), 0, 'L', 0);
+				$pdf->MultiCell(94, $height, $outputlangs->convToOutputCharset(dol_trunc(dol_string_nohtmltag($text, 0), 250, 'right', 'UTF-8', 0)), 0, 'L', false);
 				$y3 = $pdf->GetY();
 
 				$i++;
@@ -421,11 +429,11 @@ class pdf_standard_actions
 		// Show title
 		$pdf->SetFont('', 'B', 10);
 		$pdf->SetXY($this->marge_gauche, $this->marge_haute);
-		$pdf->MultiCell(120, 1, $outputlangs->convToOutputCharset($this->title), 0, 'L', 0);
+		$pdf->MultiCell(120, 1, $outputlangs->convToOutputCharset($this->title), 0, 'L', false);
 		// Show page nb only on iso languages (so default Helvetica font)
 		if (pdf_getPDFFont($outputlangs) == 'Helvetica') {
 			$pdf->SetXY($this->page_largeur - $this->marge_droite - 40, $this->marge_haute);
-			$pdf->MultiCell(40, 1, $pagenb.'/'.$pdf->getAliasNbPages(), 0, 'R', 0);
+			$pdf->MultiCell(40, 1, $pagenb.'/'.$pdf->getAliasNbPages(), 0, 'R', false);
 		}
 
 		$y = $pdf->GetY() + 2;

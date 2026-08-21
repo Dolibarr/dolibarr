@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2015-2026  Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ class box_factures_fourn_imp extends ModeleBoxes
 	public $boxcode = "oldestunpaidsupplierbills";
 	public $boximg = "object_bill";
 	public $boxlabel = "BoxOldestUnpaidSupplierBills";
-	public $depends = array("facture", "fournisseur");
+	public $depends = array("invoice", "fournisseur");
 
 	/**
 	 *  Constructor
@@ -42,7 +42,7 @@ class box_factures_fourn_imp extends ModeleBoxes
 	 *  @param  DoliDB  $db         Database handler
 	 *  @param  string  $param      More parameters
 	 */
-	public function __construct($db, $param)
+	public function __construct($db, $param)  // @phpstan-ignore constructor.unusedParameter
 	{
 		global $user;
 
@@ -218,7 +218,7 @@ class box_factures_fourn_imp extends ModeleBoxes
 					$objp = $this->db->fetch_object($result);
 					$totalamount = $objp->total_ht;
 
-					// Add the sum à the bottom of the boxes
+					// Add the sum to the bottom of the boxes
 					$this->info_box_contents[$line][] = array(
 						'tr' => 'class="liste_total_wrap"',
 						'td' => 'class="liste_total"',

@@ -10,7 +10,7 @@
  * Copyright (C) 2024		Benjamin Falière	<benjamin.faliere@altairis.fr>
  * Copyright (C) 2024		Vincent Maury		<vmaury@timgroup.fr>
  * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +34,14 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
@@ -43,16 +51,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
-
 // Load translation files required by the page
-$langs->loadLangs(array("sendings", "deliveries", 'companies', 'bills', 'products', 'orders'));
+$langs->loadLangs(array("sendings", 'companies', 'bills', 'products', 'orders'));
 
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'shipmentlist'; // To manage different context of search
 
@@ -61,7 +61,7 @@ $socid = GETPOSTINT('socid');
 $action     = GETPOST('action', 'alpha');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOSTINT('show_files');
-$toselect   = GETPOST('toselect', 'array');
+$toselect   = GETPOST('toselect', 'array:int');
 $optioncss = GETPOST('optioncss', 'alpha');
 $mode = GETPOST('mode', 'alpha');
 
@@ -116,7 +116,6 @@ $object = new Expedition($db);
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('shipmentlist'));
-$extrafields = new ExtraFields($db);
 
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -135,30 +134,30 @@ if (empty($user->socid)) {
 	$fieldstosearchall["e.note_private"] = "NotePrivate";
 }
 
-$checkedtypetiers = 0;
+$checkedtypetiers = '0';
 $arrayfields = array(
-	'e.ref' => array('label' => $langs->trans("Ref"), 'checked' => 1, 'position' => 1),
-	'e.ref_customer' => array('label' => $langs->trans("RefCustomer"), 'checked' => 1, 'position' => 2),
-	's.nom' => array('label' => $langs->trans("ThirdParty"), 'checked' => 1, 'position' => 3),
-	's.town' => array('label' => $langs->trans("Town"), 'checked' => 1, 'position' => 4),
-	's.zip' => array('label' => $langs->trans("Zip"), 'checked' => -1, 'position' => 5),
-	'state.nom' => array('label' => $langs->trans("StateShort"), 'checked' => 0, 'position' => 6),
-	'country.code_iso' => array('label' => $langs->trans("Country"), 'checked' => 0, 'position' => 7),
+	'e.ref' => array('label' => $langs->trans("Ref"), 'checked' => '1', 'position' => 1),
+	'e.ref_customer' => array('label' => $langs->trans("RefCustomer"), 'checked' => '1', 'position' => 2),
+	's.nom' => array('label' => $langs->trans("ThirdParty"), 'checked' => '1', 'position' => 3),
+	's.town' => array('label' => $langs->trans("Town"), 'checked' => '1', 'position' => 4),
+	's.zip' => array('label' => $langs->trans("Zip"), 'checked' => '-1', 'position' => 5),
+	'state.nom' => array('label' => $langs->trans("StateShort"), 'checked' => '0', 'position' => 6),
+	'country.code_iso' => array('label' => $langs->trans("Country"), 'checked' => '0', 'position' => 7),
 	'typent.code' => array('label' => $langs->trans("ThirdPartyType"), 'checked' => $checkedtypetiers, 'position' => 8),
-	'e.date_delivery' => array('label' => $langs->trans("DateDeliveryPlanned"), 'checked' => 1, 'position' => 9),
-	'e.date_expedition' => array('label' => $langs->trans("DateShipping"), 'checked' => 1, 'position' => 10),
-	'e.fk_shipping_method' => array('label' => $langs->trans('SendingMethod'), 'checked' => 1, 'position' => 11),
-	'e.tracking_number' => array('label' => $langs->trans("TrackingNumber"), 'checked' => 1, 'position' => 12),
-	'e.weight' => array('label' => $langs->trans("Weight"), 'checked' => 0, 'position' => 13),
-	'e.datec' => array('label' => $langs->trans("DateCreation"), 'checked' => 0, 'position' => 500),
-	'e.tms' => array('label' => $langs->trans("DateModificationShort"), 'checked' => 0, 'position' => 500),
-	'e.fk_statut' => array('label' => $langs->trans("Status"), 'checked' => 1, 'position' => 1000),
-	'e.signed_status' => array('label' => 'Signed status', 'checked' => 0, 'position' => 1001),
-	'l.ref' => array('label' => $langs->trans("DeliveryRef"), 'checked' => 1, 'position' => 1010, 'enabled' => (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') ? 1 : 0)),
-	'l.date_delivery' => array('label' => $langs->trans("DateReceived"), 'position' => 1020, 'checked' => 1, 'enabled' => (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') ? 1 : 0)),
-	'e.billed' => array('label' => $langs->trans("Billed"), 'checked' => 1, 'position' => 1100, 'enabled' => 'getDolGlobalString("WORKFLOW_BILL_ON_SHIPMENT") !== "0"'),
-	'e.note_public' => array('label' => 'NotePublic', 'checked' => 0, 'enabled' => (empty($conf->global->MAIN_LIST_ALLOW_PUBLIC_NOTES)), 'position' => 135),
-	'e.note_private' => array('label' => 'NotePrivate', 'checked' => 0, 'enabled' => (empty($conf->global->MAIN_LIST_ALLOW_PRIVATE_NOTES)), 'position' => 140),
+	'e.date_delivery' => array('label' => $langs->trans("DateDeliveryPlanned"), 'checked' => '1', 'position' => 9),
+	'e.date_expedition' => array('label' => $langs->trans("DateShipping"), 'checked' => '1', 'position' => 10),
+	'e.fk_shipping_method' => array('label' => $langs->trans('SendingMethod'), 'checked' => '1', 'position' => 11),
+	'e.tracking_number' => array('label' => $langs->trans("TrackingNumber"), 'checked' => '1', 'position' => 12),
+	'e.weight' => array('label' => $langs->trans("Weight"), 'checked' => '0', 'position' => 13),
+	'e.datec' => array('label' => $langs->trans("DateCreation"), 'checked' => '0', 'position' => 500),
+	'e.tms' => array('label' => $langs->trans("DateModificationShort"), 'checked' => '0', 'position' => 500),
+	'e.fk_statut' => array('label' => $langs->trans("Status"), 'checked' => '1', 'position' => 1000),
+	'e.signed_status' => array('label' => 'Signed status', 'checked' => '0', 'position' => 1001),
+	'l.ref' => array('label' => $langs->trans("DeliveryRef"), 'checked' => '1', 'position' => 1010, 'enabled' => (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') ? '1' : '0')),
+	'l.date_delivery' => array('label' => $langs->trans("DateReceived"), 'position' => 1020, 'checked' => '1', 'enabled' => (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') ? '1' : '0')),
+	'e.billed' => array('label' => $langs->trans("Billed"), 'checked' => '1', 'position' => 1100, 'enabled' => 'getDolGlobalString("WORKFLOW_BILL_ON_SHIPMENT") !== "0"'),
+	'e.note_public' => array('label' => 'NotePublic', 'checked' => '0', 'enabled' => (string) (int) (!getDolGlobalString('MAIN_LIST_HIDE_PUBLIC_NOTES')), 'position' => 135),
+	'e.note_private' => array('label' => 'NotePrivate', 'checked' => '0', 'enabled' => (string) (int) (!getDolGlobalString('MAIN_LIST_HIDE_PRIVATE_NOTES')), 'position' => 140),
 );
 
 // Extra fields
@@ -166,7 +165,6 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
-'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 // Security check
 $expeditionid = GETPOSTINT('id');
@@ -240,7 +238,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
 	if ($massaction == 'confirm_createbills') {   // Create bills from sendings.
-		$sendings = GETPOST('toselect', 'array');
+		$sendings = GETPOST('toselect', 'array:int');
 		$createbills_onebythird = GETPOST('createbills_onebythird', 'int');
 		$validate_invoices = GETPOST('validate_invoices', 'int');
 
@@ -296,7 +294,7 @@ if (empty($reshook)) {
 
 				$objecttmp->date = $datefacture;
 				$objecttmp->origin_type    = 'shipping';
-				$objecttmp->origin_id = $id_sending;
+				$objecttmp->origin_id = (int) $id_sending;
 
 				$objecttmp->array_options = $expd->array_options; // Copy extrafields
 
@@ -365,7 +363,7 @@ if (empty($reshook)) {
 							$desc = dol_concatdesc($desc, $langs->trans("Order").': '.$expdCmdSrc->ref. ' - '. $langs->trans("Shipment").': '.$expd->ref.($expd->date_shipping ? ' - '.dol_print_date($expd->date_shipping, 'day') : ''));
 						}
 
-						if ($lines[$i]->subprice < 0 && empty($conf->global->INVOICE_KEEP_DISCOUNT_LINES_AS_IN_ORIGIN)) {
+						if ($lines[$i]->subprice < 0 && !getDolGlobalString('INVOICE_KEEP_DISCOUNT_LINES_AS_IN_ORIGIN')) {
 							// Negative line, we create a discount line
 							$discount = new DiscountAbsolute($db);
 							$discount->socid = $objecttmp->socid;
@@ -440,7 +438,7 @@ if (empty($reshook)) {
 								$date_start,
 								$date_end,
 								0,
-								$lines[$i]->info_bits,
+								(int) $lines[$i]->info_bits,
 								$lines[$i]->fk_remise_except,
 								'HT',
 								0,
@@ -534,7 +532,7 @@ if (empty($reshook)) {
 				$param .= '&contextpage='.urlencode($contextpage);
 			}
 			if ($limit > 0 && $limit != $conf->liste_limit) {
-				$param .= '&limit='.urlencode(strval($limit));
+				$param .= '&limit='.((int) $limit);
 			}
 			if ($search_all) {
 				$param .= "&search_all=".urlencode($search_all);
@@ -559,7 +557,7 @@ if (empty($reshook)) {
 			}
 			if ($search_shipping_method_ids) {
 				foreach ($search_shipping_method_ids as $value) {
-					$param .= "&amp;search_shipping_method_ids[]=".urlencode($value);
+					$param .= "&search_shipping_method_ids[]=".urlencode($value);
 				}
 			}
 			if ($search_tracking) {
@@ -617,8 +615,8 @@ if (empty($reshook)) {
 			$db->rollback();
 
 			$action = 'create';
-			$_GET["origin"] = $_POST["origin"];
-			$_GET["originid"] = $_POST["originid"];
+			$_GET["origin"] = GETPOST("origin", 'alpha');
+			$_GET["originid"] = GETPOSTINT("originid");
 			if (!empty($errors)) {
 				setEventMessages(null, $errors, 'errors');
 			} else {
@@ -631,7 +629,7 @@ if (empty($reshook)) {
 	// If massaction is close
 	if ($massaction == 'classifyclose') {
 		$error = 0;
-		$selectids = GETPOST('toselect', 'array');
+		$selectids = GETPOST('toselect', 'array:int');
 		foreach ($selectids as $selectid) {
 			//	$object->fetch($selectid);
 			$object->fetch($selectid);
@@ -817,7 +815,7 @@ if ($search_sale && $search_sale != '-1') {
 	}
 }
 // Search for tag/category ($searchCategoryCustomerList is an array of ID)
-$searchCategoryCustomerOperator = -1;
+$searchCategoryCustomerOperator = GETPOSTINT('search_category_customer_operator');
 $searchCategoryCustomerList = array($search_categ_cus);
 if (!empty($searchCategoryCustomerList)) {
 	$searchCategoryCustomerSqlList = array();
@@ -847,7 +845,7 @@ if (!empty($searchCategoryCustomerList)) {
 	}
 }
 // Search for tag/category ($searchCategoryProductList is an array of ID)
-$searchCategoryProductOperator = -1;
+$searchCategoryProductOperator = GETPOSTINT('search_category_product_operator');
 $searchCategoryProductList = array($search_product_category);
 if (!empty($searchCategoryProductList)) {
 	$searchCategoryProductSqlList = array();
@@ -882,12 +880,20 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 // Add where from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-$sql .= $hookmanager->resPrint;
+if (empty($reshook)) {
+	$sql .= $hookmanager->resPrint;
+} else {
+	$sql = $hookmanager->resPrint;
+}
 
 // Add HAVING from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-$sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
+if (empty($reshook)) {
+	$sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
+} else {
+	$sql = $hookmanager->resPrint;
+}
 
 $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
@@ -902,7 +908,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -983,7 +989,7 @@ if ($search_company) {
 }
 if ($search_shipping_method_ids) {
 	foreach ($search_shipping_method_ids as $value) {
-		$param .= "&amp;search_shipping_method_ids[]=".urlencode($value);
+		$param .= "&search_shipping_method_ids[]=".urlencode($value);
 	}
 }
 if ($search_tracking) {
@@ -1060,6 +1066,7 @@ $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 $newcardbutton  = '';
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', DOL_URL_ROOT.'/expedition/stats/index.php?mode=statistics'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', ($mode == 'statistics' ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitleSeparator();
 $newcardbutton .= dolGetButtonTitle($langs->trans('NewSending'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/expedition/card.php?action=create2', '', $user->hasRight('expedition', 'creer'));
 
@@ -1094,7 +1101,7 @@ if ($massaction == 'createbills') {
 	print $langs->trans('DateInvoice');
 	print '</td>';
 	print '<td>';
-	print $form->selectDate('', '', '', '', '', '', 1, 1);
+	print $form->selectDate('', '', 0, 0, 0, '', 1, 1);
 	print '</td>';
 	print '</tr>';
 	print '<tr>';
@@ -1110,14 +1117,14 @@ if ($massaction == 'createbills') {
 	print $langs->trans('ValidateInvoices');
 	print '</td>';
 	print '<td>';
-	if (!empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_BILL)) {
-		print $form->selectyesno('validate_invoices', 0, 1, 1);
+	if (!empty($conf->stock->enabled) && getDolGlobalString('STOCK_CALCULATE_ON_BILL')) {
+		print $form->selectyesno('validate_invoices', 0, 1, true);
 		$langs->load("errors");
 		print ' ('.$langs->trans("WarningAutoValNotPossibleWhenStockIsDecreasedOnInvoiceVal").')';
 	} else {
 		print $form->selectyesno('validate_invoices', 0, 1);
 	}
-	if (!empty($conf->workflow->enabled) && !empty($conf->global->WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER)) {
+	if (!empty($conf->workflow->enabled) && getDolGlobalString('WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER')) {
 		print ' &nbsp; &nbsp; <span class="opacitymedium">'.$langs->trans("IfValidateInvoiceIsNoSendingStayUnbilled").'</span>';
 	} else {
 		print ' &nbsp; &nbsp; <span class="opacitymedium">'.$langs->trans("OptionToSetSendingBilledNotEnabled").'</span>';
@@ -1157,7 +1164,7 @@ if ($user->hasRight('user', 'user', 'lire')) {
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('LinkedToSpecificUsers');
 	$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"');
-	$moreforfilter .= $form->select_dolusers($search_user, 'search_user', $tmptitle, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth200');
+	$moreforfilter .= $form->select_dolusers($search_user, 'search_user', $tmptitle, null, 0, '', '', '0', 0, 0, '', 0, '', 'maxwidth200');
 	$moreforfilter .= '</div>';
 }
 // If the user can view prospects other than his'
@@ -1166,10 +1173,7 @@ if (isModEnabled('category') && $user->hasRight('categorie', 'lire') && ($user->
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('IncludingProductWithTag');
 	$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"');
-	//$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, null, 'parent', null, null, 1);
-	//$moreforfilter .= $form->selectarray('search_product_category', $cate_arbo, $search_product_category, 1, 0, 0, '', 0, 0, 0, 0, 'maxwidth300', 1);
-	$moreforfilter .= $formother->select_categories(Categorie::TYPE_PRODUCT, $search_product_category, 'search_product_category', 1, $tmptitle);
-
+	$moreforfilter .= $formother->select_categories(Categorie::TYPE_PRODUCT, (int) $search_product_category, 'search_product_category', 1, $tmptitle);
 	$moreforfilter .= '</div>';
 }
 if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
@@ -1195,7 +1199,7 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // @phan-suppress-current-line PhanTypeMismatchArgument
 if ($massactionbutton) {
 	$selectedfields .= $form->showCheckAddButtons('checkforselect', 1); // This also change content of $arrayfields
 }
@@ -1207,7 +1211,7 @@ print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" :
 // --------------------------------------------------------------------
 print '<tr class="liste_titre_filter">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
@@ -1228,7 +1232,7 @@ if (!empty($arrayfields['e.ref_customer']['checked'])) {
 // Thirdparty
 if (!empty($arrayfields['s.nom']['checked'])) {
 	print '<td class="liste_titre left">';
-	print '<input class="flat" type="text" size="8" name="search_company" value="'.dol_escape_htmltag($search_company).'">';
+	print '<input class="flat" type="text" size="8" name="search_company" value="'.dol_escape_htmltag((string) $search_company).'">';
 	print '</td>';
 }
 // Town
@@ -1358,11 +1362,11 @@ if (!empty($arrayfields['e.signed_status']['checked'])) {
 // Status billed
 if (!empty($arrayfields['e.billed']['checked'])) {
 	print '<td class="liste_titre maxwidthonsmartphone center">';
-	print $form->selectyesno('search_billed', $search_billed, 1, 0, 1);
+	print $form->selectyesno('search_billed', $search_billed, 1, false, 1);
 	print '</td>';
 }
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
@@ -1377,7 +1381,7 @@ $totalarray['nbfield'] = 0;
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 	$totalarray['nbfield']++;
 }
@@ -1476,7 +1480,7 @@ if (!empty($arrayfields['e.billed']['checked'])) {
 	$totalarray['nbfield']++;
 }
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 	$totalarray['nbfield']++;
 }
@@ -1526,10 +1530,10 @@ while ($i < $imaxinloop) {
 			print '</td></tr>';
 		}
 	} else {
-		print '<tr class="oddeven">';
+		print '<tr class="oddeven row-with-select">';
 
 		// Action column
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;
@@ -1544,7 +1548,7 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['e.ref']['checked'])) {
 			print '<td class="nowraponall">';
 			print $object->getNomUrl(1);
-			$filedir = ($conf->expedition->multidir_output[$object->entity] ? $conf->expedition->multidir_output[$object->entity] : $conf->expedition->dir_output).'/sending/'.get_exdir(0, 0, 0, 1, $object, '');
+			$filedir = ($conf->expedition->multidir_output[$object->entity ?? $conf->entity] ? $conf->expedition->multidir_output[$object->entity ?? $conf->entity] : $conf->expedition->dir_output).'/sending/'.get_exdir(0, 0, 0, 1, $object, '');
 			$filename = dol_sanitizeFileName($object->ref);
 			print $formfile->getDocumentsLink('expedition', $filename, $filedir);
 			print "</td>\n";
@@ -1623,11 +1627,11 @@ while ($i < $imaxinloop) {
 			print '<td class="center">';
 			if (empty($object->trueWeight)) {
 				$tmparray = $object->getTotalWeightVolume();
-				print showDimensionInBestUnit($tmparray['weight'], 0, "weight", $langs, getDolGlobalInt('MAIN_WEIGHT_DEFAULT_ROUND', -1), isset($conf->global->MAIN_WEIGHT_DEFAULT_UNIT) ? $conf->global->MAIN_WEIGHT_DEFAULT_UNIT : 'no');
+				print showDimensionInBestUnit($tmparray['weight'], 0, "weight", $langs, getDolGlobalInt('MAIN_WEIGHT_DEFAULT_ROUND', -1), getDolGlobalString('MAIN_WEIGHT_DEFAULT_UNIT', 'no'));
 				print $form->textwithpicto('', $langs->trans('EstimatedWeight'), 1);
 			} else {
 				print $object->trueWeight;
-				print ($object->trueWeight && $object->weight_units != '') ? ' '.measuringUnitString(0, "weight", (string) $object->weight_units) : '';
+				print ($object->trueWeight && $object->weight_units != '') ? ' '.measuringUnitString(0, "weight", $object->weight_units) : '';
 			}
 			print '</td>';
 			if (!$i) {
@@ -1654,7 +1658,7 @@ while ($i < $imaxinloop) {
 		}
 		if (!empty($arrayfields['e.fk_shipping_method']['checked'])) {
 			// Get code using getLabelFromKey
-			$code = $langs->getLabelFromKey($db, $object->shipping_method_id, 'c_shipment_mode', 'rowid', 'code');
+			$code = $langs->getLabelFromKey($db, (string) $object->shipping_method_id, 'c_shipment_mode', 'rowid', 'code');
 			print '<td class="center tdoverflowmax150" title="'.dol_escape_htmltag($langs->trans("SendingMethod".strtoupper($code))).'">';
 			if ($object->shipping_method_id > 0) {
 				print $langs->trans("SendingMethod".strtoupper($code));
@@ -1697,7 +1701,7 @@ while ($i < $imaxinloop) {
 		// Note public
 		if (!empty($arrayfields['e.note_public']['checked'])) {
 			print '<td class="sensiblehtmlcontent center">';
-			print dolPrintHTML($obj->note_public);
+			print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_public, 5)).'</div>';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1706,7 +1710,7 @@ while ($i < $imaxinloop) {
 		// Note private
 		if (!empty($arrayfields['e.note_private']['checked'])) {
 			print '<td class="sensiblehtmlcontent center">';
-			print dolPrintHTML($obj->note_private);
+			print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_private, 5)).'</div>';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1759,7 +1763,7 @@ while ($i < $imaxinloop) {
 		}
 
 		// Action column
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if (!$conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;

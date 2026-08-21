@@ -4,8 +4,8 @@
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2020 	   Nicolas ZABOURI		<info@inovea-conseil.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,22 +38,22 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 class WebsitePage extends CommonObject
 {
 	/**
-	 * @var string Id to identify managed objects
+	 * @var string 		Id to identify managed objects
 	 */
 	public $element = 'websitepage';
 
 	/**
-	 * @var string Name of table without prefix where object is stored
+	 * @var string 		Name of table without prefix where object is stored
 	 */
 	public $table_element = 'website_page';
 
 	/**
-	 * @var string String with name of icon for websitepage. Must be the part after the 'object_' into object_myobject.png
+	 * @var string 		String with name of icon for websitepage. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'file-code';
 
 	/**
-	 * @var string 	Field with ID of parent key if this field has a parent or for child tables
+	 * @var string 		Field with ID of parent key if this field has a parent or for child tables
 	 */
 	public $fk_element = 'fk_website_page';
 
@@ -63,72 +63,87 @@ class WebsitePage extends CommonObject
 	protected $childtablesoncascade = array('categorie_website_page');
 
 	/**
-	 * @var int Website ID
+	 * @var int 		Website ID
 	 */
 	public $fk_website;
 
 	/**
-	 * @var ?int Page ID
+	 * @var ?int 		Page ID
 	 */
 	public $fk_page;		// If translation of another page
 
 	/**
-	 * @var string Page url
+	 * @var string 		Page url
 	 */
 	public $pageurl;
 
 	/**
-	 * @var string Alias alt
+	 * @var string 		Alias alt
 	 */
 	public $aliasalt;
 
 	/**
-	 * @var string Container type
+	 * @var string 		Container type
 	 */
 	public $type_container;
 
 	/**
-	 * @var string title
+	 * @var string 		Title
 	 */
 	public $title;
 
 	/**
-	 * @var string description
+	 * @var string 		Description
 	 */
 	public $description;
 
 	/**
-	 * @var string image
+	 * @var string 		Image (deprecated)
 	 */
 	public $image;
 
 	/**
-	 * @var string keywords
+	 * @var string 		Keywords
 	 */
 	public $keywords;
 
 	/**
-	 * @var string language code ('en', 'fr', 'en-gb', ..)
+	 * @var string 		Language code ('en', 'fr', 'en-gb', ..)
 	 */
 	public $lang;
 
 	/**
-	 * @var int allowed in frames
+	 * @var int 		Page allowed in frames
 	 */
 	public $allowed_in_frames;
 
 	/**
-	 * @var string html header
+	 * @var int 		Use meta robot tag "index" (else "noindex")
+	 */
+	public $index = 1;
+
+	/**
+	 * @var int 		Use meta robot tag "follow" (else "nofollow")
+	 */
+	public $follow = 1;
+
+	/**
+	 * @var string		Disable WAF ('all', 'NOSCANAUDIOFORINJECTION,NOSCANIFRAMEFORINJECTION,NOSCANOBJECTFORINJECTION')
+	 */
+	public $disable_waf = 'NOSCANAUDIOFORINJECTION,NOSCANIFRAMEFORINJECTION,NOSCANOBJECTFORINJECTION';	// TODO Manage field in page setup
+
+	/**
+	 * @var string 		Page html header
 	 */
 	public $htmlheader;
 
 	/**
-	 * @var string content
+	 * @var string 		Page content
 	 */
 	public $content;
 
 	/**
-	 * @var string grabbed from
+	 * @var string 		Url page was grabbed from
 	 */
 	public $grabbed_from;
 
@@ -138,12 +153,12 @@ class WebsitePage extends CommonObject
 	public $status;
 
 	/**
-	 * @var int ID
+	 * @var int 		ID use of creation
 	 */
 	public $fk_user_creat;
 
 	/**
-	 * @var int ID
+	 * @var int 		ID user of last modification
 	 */
 	public $fk_user_modif;
 
@@ -163,7 +178,7 @@ class WebsitePage extends CommonObject
 	public $fk_object;
 
 	/**
-	 * @var int			Another ID that is the $id but with an offset so that ID of pages of the website start at 1
+	 * @var int			Another ID that is the but with an offset so that ID of pages of the website start at 1
 	 */
 	public $newid;
 
@@ -174,14 +189,14 @@ class WebsitePage extends CommonObject
 
 	/**
 	 *  'type' if the field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
-	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
+	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalString("MY_SETUP_PARAM")'
 	 *  'position' is the sort order of field.
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
 	 *  'noteditable' says if field is not editable (1 or 0)
-	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
+	 *  'default' is a default value for creation (can still be overwritten by the Setup of Default Values if the field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
 	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
@@ -198,7 +213,7 @@ class WebsitePage extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-5,5>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,visible:int<-6,6>|string,langfile?:string,notnull?:int<-1,1>,noteditable?:int<0,1>,alwayseditable?:int<0,1>|string,default?:string|int,index?:int<0,1>,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,helplist?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>|string,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>|string,showonheader?:int<0,1>,searchmulti?:int<0,1>,picto?:string,required?:int<0,1>,placeholder?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid'          => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id'),
@@ -220,9 +235,9 @@ class WebsitePage extends CommonObject
 		'date_creation'  => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 500),
 		'tms'            => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 501),
 		//'date_valid'    =>array('type'=>'datetime',     'label'=>'DateValidation',     'enabled'=>1, 'visible'=>-1, 'position'=>502),
-		'fk_user_creat'  => array('type' => 'integer', 'label' => 'UserAuthor', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 510),
+		'fk_user_creat'  => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 510),
 		'author_alias'   => array('type' => 'varchar(64)', 'label' => 'AuthorAlias', 'enabled' => 1, 'visible' => -1, 'index' => 0, 'position' => 511, 'comment' => 'Author alias'),
-		'fk_user_modif'  => array('type' => 'integer', 'label' => 'UserModif', 'enabled' => 1, 'visible' => -1, 'position' => 512),
+		'fk_user_modif'  => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'visible' => -1, 'position' => 512),
 		//'fk_user_valid' =>array('type'=>'integer',      'label'=>'UserValidation',        'enabled'=>1, 'visible'=>-1, 'position'=>512),
 		'import_key'     => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'visible' => -1, 'index' => 1, 'position' => 1000, 'notnull' => -1),
 		'object_type' => array('type' => 'varchar(255)', 'label' => 'ObjectType', 'enabled' => 1, 'visible' => 0, 'position' => 46, 'searchall' => 0, 'help' => ''),
@@ -264,13 +279,28 @@ class WebsitePage extends CommonObject
 		// Remove spaces and be sure we have main language only
 		$this->lang = preg_replace('/[_-].*$/', '', trim($this->lang)); // en_US or en-US -> en
 
+		// Check there is no PHP into HTML header
+		$dataposted = trim($this->htmlheader);		// Must accept tags like '<script>' and '<link>'
+		$dataposted = preg_replace(array('/<html>\n*/ims', '/<\/html>\n*/ims'), array('', ''), $dataposted);
+		$dataposted = str_replace('<?=', '<?php', $dataposted);
+
+		// Check there is no PHP content into the imported file (must be only HTML + JS)
+		// Note: This one may be useless because this->htmlheader should be retrieved now using GETPOST(..., 'restricthtmlallowlinkscript') so without PHP content. We keep it in case of.
+		$phpcontent = dolKeepOnlyPhpCode($this->htmlheader);
+
+		if ($phpcontent) {
+			$this->error = 'Error: you try to create htmlheader with PHP content inside, this is not allowed.';
+			$this->errors[] = $this->error;
+			return -1;
+		}
+
 		// Test if page contains dynamic PHP content
 		if (!$user->hasRight('website', 'writephp')) {
 			// Check there is no PHP content into the imported file (must be only HTML + JS)
 			$phpcontent = dolKeepOnlyPhpCode($this->content);
 
 			if ($phpcontent) {
-				$this->error = 'Error: you try to create a page with PHP content without having permissions for that.';
+				$this->error = 'Error: you try to create a page with PHP content in HTML body without having permissions for that.';
 				$this->errors[] = $this->error;
 				return -1;
 			}
@@ -282,15 +312,15 @@ class WebsitePage extends CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param 	int       	$id             		Id object.
-	 *                                  			- If this is 0, the value into $page will be used. If not found or $page not defined, the default page of website_id will be used or the first page found if not set.
-	 *                                  			- If value is < 0, we must exclude this ID.
-	 * @param 	?string    	$website_id     		Web site id (page name must also be filled if this parameter is used)
-	 * @param 	?string    	$page           		Page name (website id must also be filled if this parameter is used). Example 'myaliaspage' or 'fr/myaliaspage'
-	 * @param 	?string    	$aliasalt       		Alternative alias to search page (slow)
-	 * @param	int			$translationparentid	Translation parent ID (a main language page ID to get the translated page). Parameter $translationparentlang must also be set.
-	 * @param	string		$translationparentlang	Translation parent Lang (a language lang to search the translation of the main page ID). Parameter $translationparentid must also be set.
-	 * @return 	int<-1,1>							Return integer <0 if KO, 0 if not found, >0 if OK
+	 * @param 	int       		$id             		Id object.
+	 *                          	        			- If this is 0, the value into $page will be used. If not found or $page not defined, the default page of website_id will be used or the first page found if not set.
+	 *                              	    			- If value is < 0, we must exclude this ID.
+	 * @param 	int|string|null $website_id     		Web site id (page name must also be filled if this parameter is used)
+	 * @param 	?string    		$page           		Page name (website id must also be filled if this parameter is used). Example 'myaliaspage' or 'fr/myaliaspage'
+	 * @param 	?string    		$aliasalt       		Alternative alias to search page (slow)
+	 * @param	int				$translationparentid	Translation parent ID (a main language page ID to get the translated page). Parameter $translationparentlang must also be set.
+	 * @param	string			$translationparentlang	Translation parent Lang (a language lang to search the translation of the main page ID). Parameter $translationparentid must also be set.
+	 * @return 	int<-1,1>								Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $website_id = null, $page = null, $aliasalt = null, $translationparentid = 0, $translationparentlang = '')
 	{
@@ -331,7 +361,7 @@ class WebsitePage extends CommonObject
 				$sql .= ' AND t.rowid <> '.((int) abs($id));
 			}
 			if (null !== $website_id) {
-				$sql .= " AND t.fk_website = '".$this->db->escape($website_id)."'";
+				$sql .= " AND t.fk_website = ".((int) $website_id);
 				if ($page) {
 					$pagetouse = $page;
 					$langtouse = '';
@@ -477,11 +507,11 @@ class WebsitePage extends CommonObject
 							}
 							$listoflang[] = "'".$this->db->escape(substr(str_replace("'", '', $tmpvalue), 0, 2))."'";
 						}
-						$stringtouse = $this->db->sanitize($key)." IN (".$this->db->sanitize(implode(',', $listoflang), 1).")";
+						$sql_extrawhere = $this->db->sanitize($key)." IN (".$this->db->sanitize(implode(',', $listoflang), 1).")";
 						if ($foundnull) {
-							$stringtouse = "(".$stringtouse." OR ".$this->db->sanitize($key)." IS NULL)";
+							$sql_extrawhere = "(".$sql_extrawhere." OR ".$this->db->sanitize($key)." IS NULL)";
 						}
-						$sqlwhere[] = $stringtouse;
+						$sqlwhere[] = $sql_extrawhere;
 					} else {
 						$sqlwhere[] = $this->db->sanitize($key)." LIKE '%".$this->db->escape($value)."%'";
 					}
@@ -489,9 +519,9 @@ class WebsitePage extends CommonObject
 			}
 			if (count($sqlwhere) > 0) {
 				if (!empty($websiteid)) {
-					$sql .= " AND (".implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
+					$sql .= " AND (".implode(' '.$this->db->sanitize($filtermode).' ', $sqlwhere).')';
 				} else {
-					$sql .= " WHERE ".implode(' '.$this->db->escape($filtermode).' ', $sqlwhere);
+					$sql .= " WHERE ".implode(' '.$this->db->sanitize($filtermode).' ', $sqlwhere);
 				}
 			}
 
@@ -598,11 +628,11 @@ class WebsitePage extends CommonObject
 							}
 							$listoflang[] = "'".$this->db->escape(substr(str_replace("'", '', $tmpvalue), 0, 2))."'";
 						}
-						$stringtouse = $this->db->sanitize($key)." IN (".$this->db->sanitize(implode(',', $listoflang), 1).")";
+						$sql_extrawhere = $this->db->sanitize($key)." IN (".$this->db->sanitize(implode(',', $listoflang), 1).")";
 						if ($foundnull) {
-							$stringtouse = "(".$stringtouse." OR ".$this->db->sanitize($key)." IS NULL)";
+							$sql_extrawhere = "(".$sql_extrawhere." OR ".$this->db->sanitize($key)." IS NULL)";
 						}
-						$sqlwhere[] = $stringtouse;
+						$sqlwhere[] = $sql_extrawhere;
 					} else {
 						$sqlwhere[] = $this->db->sanitize($key)." LIKE '%".$this->db->escape($value)."%'";
 					}
@@ -610,9 +640,9 @@ class WebsitePage extends CommonObject
 			}
 			if (count($sqlwhere) > 0) {
 				if (!empty($websiteid)) {
-					$sql .= " AND (".implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
+					$sql .= " AND (".implode(' '.$this->db->sanitize($filtermode).' ', $sqlwhere).')';
 				} else {
-					$sql .= " WHERE ".implode(' '.$this->db->escape($filtermode).' ', $sqlwhere);
+					$sql .= " WHERE ".implode(' '.$this->db->sanitize($filtermode).' ', $sqlwhere);
 				}
 			}
 
@@ -674,11 +704,21 @@ class WebsitePage extends CommonObject
 				return -1;
 			}
 			$tmppage = new WebsitePage($this->db);
-			$tmppage->fetch($this->fk_page);
+			$tmppage->fetch((int) $this->fk_page);
 			if ($tmppage->lang == $this->lang) {
 				$this->error = "ErrorLanguageOfTranslatedPageIsSameThanThisPage";
 				return -1;
 			}
+		}
+
+		// Check there is no PHP content into the modifiedhtmlheader (must be only HTML + JS)
+		// Note: This one may be useless because this->htmlheader should be retrieved now using GETPOST(..., 'restricthtmlallowlinkscript') so without PHP content. We keep it in case of.
+		$phpcontent = dolKeepOnlyPhpCode($this->htmlheader);
+
+		if ($phpcontent) {
+			$this->error = 'Error: you try to create htmlheader with PHP content inside, this is not allowed.';
+			$this->errors[] = $this->error;
+			return -1;
 		}
 
 		return $this->updateCommon($user, $notrigger);
@@ -836,8 +876,7 @@ class WebsitePage extends CommonObject
 		$result = $object->create($user);
 		if ($result < 0) {
 			$error++;
-			$this->error = $object->error;
-			$this->errors = $object->errors;
+			$this->setErrorsFromObject($object);
 			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 		}
 

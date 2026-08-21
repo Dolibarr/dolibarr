@@ -20,6 +20,7 @@ ProductLotSetup=Einstellungen Modul Lot / Seriennummer
 ShowCurrentStockOfLot=Zeige aktuellen Lagerbestand von Produkt / Lot Paaren
 ShowLogOfMovementIfLot=Zeige Lagerbewegungen von Produkt / Lot Paaren
 StockDetailPerBatch=Lagerdetails pro Lot
+TooManyQtyForSerialNumber=Sie können nur ein Produkt %s für die Seriennummer %s haben
 ManageLotMask=Benutzerdefiniertes Schema
 CustomMasks=Option, um für jedes Produkt ein anderes Numerierungsschema zu verwenden
 BatchLotNumberingModules=Numerierungsschema für automatische Lot - Nr. Vergabe

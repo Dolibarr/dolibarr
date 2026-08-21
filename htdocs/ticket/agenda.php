@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) - 2013-2016 Jean-François FERRY    <hello@librethic.io>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2013-2016	Jean-François FERRY		<hello@librethic.io>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		Jose MARTINEZ			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -99,6 +100,8 @@ if (!$action) {
 	$action = 'view';
 }
 
+$permissiontoadd = $user->hasRight('ticket', 'write');	// Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles
+$permissiontomanage = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ticket', 'write')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('expedition', 'ticket', 'manage_advance')));	// What is this permission for ?
 
 // Security check
 $id = GETPOSTINT("id");
@@ -112,7 +115,7 @@ if ($user->socid > 0 && ($object->fk_soc != $user->socid)) {
 	accessforbidden();
 }
 // or for unauthorized internals users
-if (!$user->socid && (getDolGlobalString('TICKET_LIMIT_VIEW_ASSIGNED_ONLY') && $object->fk_user_assign != $user->id) && !$user->hasRight('ticket', 'manage')) {
+if (!$user->socid && (getDolGlobalString('TICKET_LIMIT_VIEW_ASSIGNED_ONLY') && $object->fk_user_assign != $user->id) && !$permissiontomanage) {
 	accessforbidden();
 }
 
@@ -191,18 +194,20 @@ $morehtmlref = '<div class="refidno">';
 $morehtmlref .= $object->subject;
 // Author
 if ($object->fk_user_create > 0) {
-	$morehtmlref .= '<br>'.$langs->trans("CreatedBy").' : ';
-
+	$morehtmlref .= '<br>';
+	//$morehtmlref .= '<span class="opacitymedium">'.$langs->trans("CreatedBy").'</span> ';
 	$langs->load("users");
 	$fuser = new User($db);
 	$fuser->fetch($object->fk_user_create);
 	$morehtmlref .= $fuser->getNomUrl(-1);
 } elseif (!empty($object->email_msgid)) {
-	$morehtmlref .= '<br>'.$langs->trans("CreatedBy").' : ';
+	$morehtmlref .= '<br>';
+	//$morehtmlref .= '<span class="opacitymedium">'.$langs->trans("CreatedBy").'</span> ';
 	$morehtmlref .= img_picto('', 'email', 'class="paddingrightonly"');
 	$morehtmlref .= dol_escape_htmltag($object->origin_email).' <small class="hideonsmartphone opacitymedium">('.$form->textwithpicto($langs->trans("CreatedByEmailCollector"), $langs->trans("EmailMsgID").': '.$object->email_msgid).')</small>';
 } elseif (!empty($object->origin_email)) {
-	$morehtmlref .= '<br>'.$langs->trans("CreatedBy").' : ';
+	$morehtmlref .= '<br>';
+	//$morehtmlref .= '<span class="opacitymedium">'.$langs->trans("CreatedBy").'</span> ';
 	$morehtmlref .= img_picto('', 'email', 'class="paddingrightonly"');
 	$morehtmlref .= dol_escape_htmltag($object->origin_email).' <small class="hideonsmartphone opacitymedium">('.$langs->trans("CreatedByPublicPortal").')</small>';
 }
@@ -214,19 +219,19 @@ if (isModEnabled("societe")) {
 	if ($action != 'editcustomer' && $permissiontoadd) {
 		$morehtmlref .= '<a class="editfielda" href="'.$url_page_current.'?action=editcustomer&token='.newToken().'&track_id='.$object->track_id.'">'.img_edit($langs->transnoentitiesnoconv('SetThirdParty'), 0).'</a> ';
 	}
-	$morehtmlref .= $form->form_thirdparty($url_page_current.'?track_id='.$object->track_id, $object->socid, $action == 'editcustomer' ? 'editcustomer' : 'none', '', 1, 0, 0, array(), 1);
+	$morehtmlref .= $form->form_thirdparty($url_page_current.'?track_id='.$object->track_id, (string) $object->socid, $action == 'editcustomer' ? 'editcustomer' : 'none', '', 1, 0, 0, array(), 1);
 }
 
 // Project
 if (isModEnabled('project')) {
 	$langs->load("projects");
-	if (0) {
+	if (0) {	// @phpstan-ignore-line
 		$morehtmlref .= '<br>';
 		$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 		if ($action != 'classify') {
-			$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
+			$morehtmlref .= '<a class="editfielda" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true).'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 		}
-		$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+		$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 	} else {
 		if (!empty($object->fk_project)) {
 			$morehtmlref .= '<br>';
@@ -289,6 +294,15 @@ if (!empty($object->id)) {
 	$titlelist = $langs->trans("ActionsOnTicket").(is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">('.$nbEvent.')</span>' : '');
 	if (!empty($conf->dol_optimize_smallscreen)) {
 		$titlelist = $langs->trans("Actions").(is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">('.$nbEvent.')</span>' : '');
+	}
+
+	// Hook to let external modules add buttons to the object right toolbar. Works on any object page; the hook gets the context (elementtype) so a module can scope itself (e.g. only on event pages).
+	$parameters = array('morehtmlright' => &$morehtmlright, 'elementtype' => $object->element);
+	$reshook = $hookmanager->executeHooks('printObjectRightToolbar', $parameters, $object, $action);
+	if ($reshook < 0) {
+		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+	} else {
+		$morehtmlright .= $hookmanager->resPrint;
 	}
 
 	print_barre_liste($titlelist, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlright, '', 0, 1, 0);

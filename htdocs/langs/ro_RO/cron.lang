@@ -77,6 +77,7 @@ CronType=Tip job
 CronType_method=Metoda de apel a unei clase PHP
 CronType_command=Comandă shell
 CronCannotLoadClass=Nu se poate încărca fișierul de clasă %s (pentru a folosi clasa %s)
+CronModuleNotEnabledInThisEntity=Modulul Cron nu este activat în această entitate (pentru a utiliza metoda %s a obiectului %s)
 CronCannotLoadObject=Fișierul de clasă %s a fost încărcat, dar obiectul %s nu a fost găsit în el
 UseMenuModuleToolsToAddCronJobs=Mergi în meniul "<a href="%s">Acasă - Instrumente administrare - Joburi programate</a>" pentru a vedea şi a edita joburile programate.
 JobDisabled=Job dezactivat

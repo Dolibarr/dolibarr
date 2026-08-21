@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2010-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,15 +38,26 @@
  * @var string $action
  * @var string $elementtype
  * @var string $textobject
+ * @var string[] $type2label
  */
+'@phan-var-force string $attrname';
+'@phan-var-force string $action';
+'@phan-var-force string $elementtype';
+'@phan-var-force string $textobject';
+'@phan-var-force string[] $type2label';
+
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
 	exit(1);
 }
 
+// Prefer $pagekey (the whitelisted request key) for self-referencing links; fall back to
+// $elementtype for older-style callers of this shared template that don't define $pagekey.
+$pagekeyforurl = isset($pagekey) ? $pagekey : $elementtype;
 
 $langs->load("modulebuilder");
+$langs->load("admin");
 
 $listofexamplesforlink = 'Societe:societe/class/societe.class.php<br>Contact:contact/class/contact.class.php<br>Product:product/class/product.class.php<br>Project:projet/class/project.class.php<br>...';
 
@@ -56,7 +68,7 @@ $listofexamplesforlink = 'Societe:societe/class/societe.class.php<br>Contact:con
 	jQuery(document).ready(function() {
 		function init_typeoffields(type)
 		{
-			console.log("select a new type (edit) = "+type);
+			console.log("admin_extrafields_edit select a new type (edit) = "+type);
 			var size = jQuery("#size");
 			var computed_value = jQuery("#computed_value");
 			var langfile = jQuery("#langfile");
@@ -64,6 +76,7 @@ $listofexamplesforlink = 'Societe:societe/class/societe.class.php<br>Contact:con
 			var unique = jQuery("#unique");
 			var required = jQuery("#required");
 			var alwayseditable = jQuery("#alwayseditable");
+			var emptyonclone = jQuery("#emptyonclone");
 			var list = jQuery("#list");
 			var totalizable = jQuery("#totalizable");
 			<?php
@@ -88,14 +101,21 @@ $listofexamplesforlink = 'Societe:societe/class/societe.class.php<br>Contact:con
 				console.log("We enter a computed formula");
 				jQuery("#default_value").val('');
 				/* jQuery("#unique, #required, #alwayseditable, #list").removeAttr('checked'); */
-				jQuery("#default_value, #unique, #required, #alwayseditable, #list").attr('disabled', true);
-				jQuery("tr.extra_default_value, tr.extra_unique, tr.extra_required, tr.extra_alwayseditable, tr.extra_list").hide();
+				jQuery("#default_value, #unique, #required, #alwayseditable, #emptyonclone, #list").attr('disabled', true);
+				jQuery("tr.extra_default_value, tr.extra_unique, tr.extra_required, tr.extra_alwayseditable, tr.extra_emptyonclone, tr.extra_list").hide();
 			}
 			else
 			{
 				console.log("No computed formula");
-				jQuery("#default_value, #unique, #required, #alwayseditable, #list").attr('disabled', false);
-				jQuery("tr.extra_default_value, tr.extra_unique, tr.extra_required, tr.extra_alwayseditable, tr.extra_list").show();
+				jQuery("#default_value, #unique, #required, #alwayseditable, #emptyonclone, #list").attr('disabled', false);
+				jQuery("tr.extra_default_value, tr.extra_unique, tr.extra_required, tr.extra_alwayseditable, tr.extra_emptyonclone, tr.extra_list").show();
+			}
+
+			// Case of ai prompt
+			if (type == 'text' || type == 'varchar' || type == 'int' || type == 'double' || type == 'price' || type == 'html') {
+				jQuery("tr.extra_ai_prompt").show();
+			} else {
+				jQuery(ai_prompt).val(''); jQuery("tr.extra_ai_prompt").hide();
 			}
 
 			if (type == 'date') { size.val('').prop('disabled', true); unique.removeAttr('disabled'); jQuery("#value_choice").hide();jQuery("#helpchkbxlst").hide(); }
@@ -128,14 +148,14 @@ $listofexamplesforlink = 'Societe:societe/class/societe.class.php<br>Contact:con
 
 			if (type == 'separate' || type == 'point' || type == 'linestrg' || type == 'polygon')
 			{
-				required.removeAttr('checked').prop('disabled', true); alwayseditable.removeAttr('checked').prop('disabled', true); list.removeAttr('checked').prop('disabled', true);
+				required.removeAttr('checked').prop('disabled', true); alwayseditable.removeAttr('checked').prop('disabled', true); emptyonclone.removeAttr('checked').prop('disabled', true); list.removeAttr('checked').prop('disabled', true);
 				jQuery('#size, #default_value, #langfile').val('').prop('disabled', true);
 				jQuery('#list').val(3);	// visible on create/update/view form only
 			}
 			else
 			{
 				default_value.removeAttr('disabled');
-				required.removeAttr('disabled'); alwayseditable.removeAttr('disabled'); list.removeAttr('disabled');
+				required.removeAttr('disabled'); alwayseditable.removeAttr('disabled'); emptyonclone.removeAttr('disabled'); list.removeAttr('disabled');
 			}
 		}
 		init_typeoffields(jQuery("#type").val());
@@ -151,10 +171,11 @@ $listofexamplesforlink = 'Societe:societe/class/societe.class.php<br>Contact:con
 </script>
 
 <!-- Form to edit an extra field -->
-<form action="<?php echo $_SERVER["PHP_SELF"]; ?>?attrname=<?php echo $attrname; ?>" id="formeditextrafield" method="post">
+<form action="<?php echo $_SERVER["PHP_SELF"]; ?>?attrname=<?php echo $attrname; ?>&elementtype=<?php echo urlencode($pagekeyforurl); ?>" id="formeditextrafield" method="post">
 <input type="hidden" name="token" value="<?php echo newToken(); ?>">
-<input type="hidden" name="attrname" value="<?php echo $attrname; ?>">
+<input type="hidden" name="attrname" value="<?php echo dol_escape_htmltag($attrname); ?>">
 <input type="hidden" name="action" value="update">
+<input type="hidden" name="elementtype" value="<?php echo dol_escape_htmltag($pagekeyforurl); ?>">
 <input type="hidden" name="rowid" value="<?php echo(empty($rowid) ? '' : $rowid) ?>">
 <input type="hidden" name="enabled" value="<?php echo dol_escape_htmltag((string) $extrafields->attributes[$elementtype]['enabled'][$attrname]); ?>">
 
@@ -167,11 +188,13 @@ $label = $extrafields->attributes[$elementtype]['label'][$attrname];
 $type = $extrafields->attributes[$elementtype]['type'][$attrname];
 $size = $extrafields->attributes[$elementtype]['size'][$attrname];
 $computed = $extrafields->attributes[$elementtype]['computed'][$attrname];
+$aiprompt = $extrafields->attributes[$elementtype]['aiprompt'][$attrname];
 $default = $extrafields->attributes[$elementtype]['default'][$attrname];
 $unique = $extrafields->attributes[$elementtype]['unique'][$attrname];
 $required = $extrafields->attributes[$elementtype]['required'][$attrname];
 $pos = $extrafields->attributes[$elementtype]['pos'][$attrname];
 $alwayseditable = $extrafields->attributes[$elementtype]['alwayseditable'][$attrname];
+$emptyonclone = $extrafields->attributes[$elementtype]['emptyonclone'][$attrname];
 $param = $extrafields->attributes[$elementtype]['param'][$attrname];
 $perms = $extrafields->attributes[$elementtype]['perms'][$attrname];
 $langfile = $extrafields->attributes[$elementtype]['langfile'][$attrname];
@@ -180,10 +203,12 @@ $totalizable = $extrafields->attributes[$elementtype]['totalizable'][$attrname];
 $help = $extrafields->attributes[$elementtype]['help'][$attrname];
 $entitycurrentorall = $extrafields->attributes[$elementtype]['entityid'][$attrname];
 $printable = $extrafields->attributes[$elementtype]['printable'][$attrname];
+$showITooltip = $extrafields->attributes[$elementtype]['showintooltip'][$attrname];
 $enabled = $extrafields->attributes[$elementtype]['enabled'][$attrname];
 $css = $extrafields->attributes[$elementtype]['css'][$attrname];
 $cssview = $extrafields->attributes[$elementtype]['cssview'][$attrname];
 $csslist = $extrafields->attributes[$elementtype]['csslist'][$attrname];
+$personal_data = $extrafields->attributes[$elementtype]['personal_data'][$attrname];
 
 $param_chain = '';
 if (is_array($param)) {
@@ -200,7 +225,7 @@ if (is_array($param)) {
 }
 ?>
 <!-- Label -->
-<tr><td class="titlefieldcreate fieldrequired"><?php echo $langs->trans("LabelOrTranslationKey"); ?></td><td class="valeur"><input type="text" name="label" size="40" value="<?php echo $label; ?>"></td></tr>
+<tr><td class="titlefieldcreate fieldrequired"><?php echo $langs->trans("LabelOrTranslationKey"); ?></td><td class="valeur"><input type="text" name="label" size="40" value="<?php echo dol_escape_htmltag($label); ?>"></td></tr>
 
 <!-- Code -->
 <tr><td class="fieldrequired"><?php echo $form->textwithpicto($langs->trans("AttributeCode"), $langs->trans("AttributeCodeHelp")); ?></td><td class="valeur"><?php echo $attrname; ?></td></tr>
@@ -210,18 +235,18 @@ if (is_array($param)) {
 <?php
 // Define list of possible type transition
 $typewecanchangeinto = array(
-	'varchar'=>array('varchar', 'phone', 'mail', 'url', 'ip', 'select', 'password', 'text', 'html'),
-	'double'=>array('double', 'price'),
-	'price'=>array('double', 'price'),
-	'text'=>array('text', 'html'),
-	'html'=>array('text', 'html'),
-	'password'=>array('password', 'varchar'),
-	'mail'=>array('varchar', 'phone', 'mail', 'url', 'ip', 'select'),
-	'url'=>array('varchar', 'phone', 'mail', 'url', 'ip', 'select'),
-	'phone'=>array('varchar', 'phone', 'mail', 'url', 'ip', 'select'),
-	'ip'=>array('varchar', 'phone', 'mail', 'url', 'ip', 'select'),
-	'select'=>array('varchar', 'phone', 'mail', 'url', 'ip', 'select'),
-	'date'=>array('date', 'datetime')
+	'varchar' => array('varchar', 'phone', 'mail', 'url', 'ip', 'select', 'password', 'text', 'html'),
+	'double' => array('double', 'price'),
+	'price' => array('double', 'price'),
+	'text' => array('text', 'html'),
+	'html' => array('text', 'html'),
+	'password' => array('password', 'varchar'),
+	'mail' => array('varchar', 'phone', 'mail', 'url', 'ip', 'select'),
+	'url' => array('varchar', 'phone', 'mail', 'url', 'ip', 'select'),
+	'phone' => array('varchar', 'phone', 'mail', 'url', 'ip', 'select'),
+	'ip' => array('varchar', 'phone', 'mail', 'url', 'ip', 'select'),
+	'select' => array('varchar', 'phone', 'mail', 'url', 'ip', 'select'),
+	'date' => array('date', 'datetime')
 );
 /* Disabled because text is text on several lines, when varchar is text on 1 line, we should not be able to convert
 if ($size <= 255 && in_array($type, array('text', 'html'))) {
@@ -244,7 +269,7 @@ if (in_array($type, array_keys($typewecanchangeinto))) {
 </td></tr>
 
 <!-- Size -->
-<tr class="extra_size"><td class="fieldrequired"><?php echo $langs->trans("Size"); ?></td><td><input id="size" type="text" name="size" class="width50" value="<?php echo $size; ?>"></td></tr>
+<tr class="extra_size"><td><?php echo $langs->trans("Size"); ?></td><td><input id="size" type="text" name="size" class="width50" value="<?php echo dol_escape_htmltag($size); ?>"></td></tr>
 
 <!--  Value (for some fields like password, select list, radio, ...) -->
 <tr id="value_choice">
@@ -254,14 +279,14 @@ if (in_array($type, array_keys($typewecanchangeinto))) {
 <td>
 	<table class="nobordernopadding">
 	<tr><td>
-		<textarea name="param" id="param" cols="80" rows="<?php echo ROWS_4 ?>"><?php echo dol_htmlcleanlastbr($param_chain); ?></textarea>
+		<textarea name="param" id="param" cols="80" rows="<?php echo ROWS_4 ?>" spellcheck="false"><?php echo dol_htmlcleanlastbr($param_chain); ?></textarea>
 	</td><td>
-	<span id="helpselect" class="spanforparamtooltip"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpselect"), 1, 0, '', 0, 2, 'helpvalue1')?></span>
-	<span id="helpsellist" class="spanforparamtooltip"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpsellist").(getDolGlobalInt('MAIN_FEATURES_LEVEL') > 0 ? '<br>'.$langs->trans("ExtrafieldParamHelpsellist2") : ''), 1, 0, '', 0, 2, 'helpvalue2')?></span>
-	<span id="helpchkbxlst" class="spanforparamtooltip"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpsellist").(getDolGlobalInt('MAIN_FEATURES_LEVEL') > 0 ? '<br>'.$langs->trans("ExtrafieldParamHelpsellist2") : ''), 1, 0, '', 0, 2, 'helpvalue3')?></span>
-	<span id="helplink" class="spanforparamtooltip"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelplink").'<br><br>'.$langs->trans("Examples").':<br>'.$listofexamplesforlink, 1, 0, '', 0, 2, 'helpvalue4')?></span>
-	<span id="helppassword" class="spanforparamtooltip"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpPassword"), 1, 0, '', 0, 2, 'helpvalue5')?></span>
-	<span id="helpseparate" class="spanforparamtooltip"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpSeparator"), 1, 0, '', 0, 2, 'helpvalue6')?></span>
+	<span id="helpselect" class="spanforparamtooltip"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpselect"), 1, 'info', '', 0, 2, 'helpvalue1')?></span>
+	<span id="helpsellist" class="spanforparamtooltip"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpsellist").'<br>'.$langs->trans("ExtrafieldParamHelpsellistb").'<br>'.$langs->trans("ExtrafieldParamHelpsellistc").'<br>'.$langs->trans("ExtrafieldParamHelpsellistd").(getDolGlobalInt('MAIN_FEATUREES_LEVEL') > 0 ? '<br>'.$langs->trans("ExtrafieldParamHelpsellist2") : ''), 1, 'info', '', 0, 2, 'helpvalue2')?></span>
+	<span id="helpchkbxlst" class="spanforparamtooltip"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpsellist").'<br>'.$langs->trans("ExtrafieldParamHelpsellistb").'<br>'.$langs->trans("ExtrafieldParamHelpsellistc").'<br>'.$langs->trans("ExtrafieldParamHelpsellistd").(getDolGlobalInt('MAIN_FEATUREES_LEVEL') > 0 ? '<br>'.$langs->trans("ExtrafieldParamHelpsellist2") : ''), 1, 'info', '', 0, 2, 'helpvalue3')?></span>
+	<span id="helplink" class="spanforparamtooltip"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelplink").'<br><br>'.$langs->trans("Examples").':<br>'.$listofexamplesforlink, 1, 'info', '', 0, 2, 'helpvalue4')?></span>
+	<span id="helppassword" class="spanforparamtooltip"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpPassword"), 1, 'info', '', 0, 2, 'helpvalue5')?></span>
+	<span id="helpseparate" class="spanforparamtooltip"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpSeparator"), 1, 'info', '', 0, 2, 'helpvalue6')?></span>
 	</td></tr>
 	</table>
 </td>
@@ -275,48 +300,101 @@ if (in_array($type, array_keys($typewecanchangeinto))) {
 
 <!-- Computed value -->
 <tr class="extra_computed_value">
-<?php if (!getDolGlobalString('MAIN_STORE_COMPUTED_EXTRAFIELDS')) { ?>
-	<td><?php echo $form->textwithpicto($langs->trans("ComputedFormula"), $langs->trans("ComputedFormulaDesc"), 1, 'help', '', 0, 2, 'tooltipcompute'); ?></td>
-<?php } else { ?>
-	<td><?php echo $form->textwithpicto($langs->trans("ComputedFormula"), $langs->trans("ComputedFormulaDesc")).$form->textwithpicto($langs->trans("Computedpersistent"), $langs->trans("ComputedpersistentDesc"), 1, 'warning'); ?></td>
+<?php
+global $dolibarr_main_restrict_eval_methods;
+if (!isset($dolibarr_main_restrict_eval_methods)) {
+	$showfunctions = 'getDolGlobalString, getDolGlobalInt, getDolCurrency, getDolEntity, getDolDBType, fetchNoCompute, hasRight, isAdmin, isExternalUser, isModEnabled, isStringVarMatching, abs, min, max, round, dol_now, preg_match';
+} else {
+	$showfunctions = $dolibarr_main_restrict_eval_methods ? $dolibarr_main_restrict_eval_methods : $langs->transnoentitiesnoconv("None");
+}
+if (!getDolGlobalString('MAIN_STORE_COMPUTED_EXTRAFIELDS')) {
+	?>
+	<td><?php echo $form->textwithpicto($langs->trans("ComputedFormula"), $langs->trans("ComputedFormulaDesc", '$objectoffield', $showfunctions).'<br>'.$langs->trans("ComputedFormulaDesc2").'<br><br>'.$langs->trans("ComputedFormulaDesc3"), 1, 'help', '', 0, 2, 'tooltipcompute'); ?></td>
+<?php } else {
+	?>
+	<td><?php echo $form->textwithpicto($langs->trans("ComputedFormula"), $langs->trans("ComputedFormulaDesc", '$objectoffield', $showfunctions).'<br>'.$langs->trans("ComputedFormulaDesc2").'<br><br>'.$langs->trans("ComputedFormulaDesc3")).$form->textwithpicto($langs->trans("Computedpersistent"), $langs->trans("ComputedpersistentDesc"), 1, 'warning'); ?></td>
 <?php } ?>
 <td class="valeur"><textarea name="computed_value" id="computed_value" class="quatrevingtpercent" rows="<?php echo ROWS_4 ?>"><?php echo dol_htmlcleanlastbr($computed); ?></textarea></td>
 </tr>
 
+<!-- AI Prompt -->
+<tr class="extra_ai_prompt">
+	<td><?php
+	if ($elementtype == "projet") {
+		$elementtype = "project";
+	}
+	$elementprop = getElementProperties($elementtype);
+	$object = fetchObjectByElement(0, $elementtype);
+	if ($elementprop["module"] == "adherent") {
+		$elementprop["module"] = "member";
+	}
+	if ($elementprop["module"] == "projet") {
+		$elementprop["module"] = "project";
+	}
+	if ($elementprop["module"] == "contrat") {
+		$elementprop["module"] = "contract";
+		$object->element = "contract";
+	}
+	if ($elementprop["module"] == "ficheinter") {
+		$elementprop["module"] = "intervention";
+	}
+	$substitutionarray = getCommonSubstitutionArray($langs, 1, null, $object, array("object", $elementprop["module"]));
+	$texthelp = $langs->trans("AIPromptExtrafieldDesc").'<br><br>';
+	$texthelp .= $langs->trans("FollowingConstantsWillBeSubstituted").'<br><small>';
+	foreach ($substitutionarray as $key => $val) {
+		$texthelp .= $key.' -> '.$val.'<br>';
+	}
+	$texthelp .= '</small>';
+	echo $form->textwithpicto($langs->trans("AIPromptExtrafield"), $texthelp, 1, 'help', 'valignmiddle', 0, 3, 'abc');?></td>
+<td class="valeur"><textarea name="ai_prompt" id="ai_prompt" class="quatrevingtpercent" rows="<?php echo ROWS_4 ?>"><?php echo($aiprompt); ?></textarea></td></tr>
+
 <!-- Default Value (at sql setup level) -->
-<tr class="extra_default_value"><td><?php echo $langs->trans("DefaultValue").' ('.$langs->trans("Database").')'; ?></td><td class="valeur"><input id="default_value" type="text" name="default_value" class="width50" value="<?php echo dol_escape_htmltag($default); ?>"></td></tr>
+<tr class="extra_default_value"><td><?php echo $langs->trans("DefaultValue").' <span class="opacitymedium small">('.$langs->trans("Database").')</span>'; ?></td><td class="valeur"><input id="default_value" type="text" name="default_value" class="minwidth200" value="<?php echo dol_escape_htmltag($default); ?>" spellcheck="false"></td></tr>
 
 <!-- Unique -->
-<tr class="extra_unique"><td><?php echo $langs->trans("Unique"); ?></td><td class="valeur"><input id="unique" type="checkbox" name="unique"<?php echo($unique ? ' checked' : ''); ?>></td></tr>
+<tr class="extra_unique"><td><?php echo $langs->trans("Unique").' <span class="opacitymedium small">('.$langs->trans("Database").')</span>'; ?></td><td class="valeur"><input id="unique" type="checkbox" name="unique"<?php echo($unique ? ' checked' : ''); ?>></td></tr>
 
 <!-- Required -->
-<tr class="extra_required"><td><?php echo $langs->trans("Mandatory"); ?></td><td class="valeur"><input id="required" type="checkbox" name="required"<?php echo($required ? ' checked' : ''); ?>></td></tr>
+<tr class="extra_required"><td><?php echo $langs->trans("Mandatory").' <span class="opacitymedium small">('.$langs->trans("Database").')</span>'; ?></td><td class="valeur"><input id="required" type="checkbox" name="required"<?php echo($required ? ' checked' : ''); ?>></td></tr>
 
 <!-- Always editable -->
 <tr class="extra_alwayseditable"><td><?php echo $form->textwithpicto($langs->trans("AlwaysEditable"), $langs->trans("EditableWhenDraftOnly")); ?></td><td class="valeur"><input id="alwayseditable" type="checkbox" name="alwayseditable"<?php echo($alwayseditable ? ' checked' : ''); ?>></td></tr>
 
+<!-- Personal Data (RGPD/nLPD/LGPD) -->
+<tr class="extra_personal_data"><td><?php echo $form->textwithpicto($langs->trans("IsPersonalData"), $langs->trans("IsPersonalDataDesc")); ?></td><td class="valeur"><input id="personal_data" type="checkbox" name="personal_data" value="1"<?php echo($personal_data ? ' checked' : ''); ?>></td></tr>
+
+<!-- Empty on clone -->
+<tr class="extra_emptyonclone"><td><?php echo $form->textwithpicto($langs->trans("EmptyOnClone"), $langs->trans("EmptyOnCloneDesc")); ?></td><td class="valeur"><input id="emptyonclone" type="checkbox" name="emptyonclone"<?php echo($emptyonclone ? ' checked' : ''); ?>></td></tr>
+
+<!-- Permission to edit -->
+<tr class="extra_perms"><td><?php echo $form->textwithpicto($langs->trans("PermissionOnField"), $langs->trans("PermissionToEditField")); ?></td><td class="valeur"><input id="perms" class="minwidth200" type="text" name="perms" value="<?php echo dol_escape_htmltag($perms); ?>"></td></tr>
+
 <!-- Visibility -->
 <tr><td class="extra_list"><?php echo $form->textwithpicto($langs->trans("Visibility"), $langs->trans("VisibleDesc").'<br><br>'.$langs->trans("ItCanBeAnExpression")); ?>
-</td><td class="valeur"><input id="list" class="minwidth100" type="text" name="list" value="<?php echo($list != '' ? $list : '1'); ?>"></td></tr>
+</td><td class="valeur"><input id="list" class="minwidth200" type="text" name="list" value="<?php echo dol_escape_htmltag($list != '' ? $list : '1'); ?>"></td></tr>
 
 <!-- Visibility for PDF-->
 <tr><td class="extra_pdf"><?php echo $form->textwithpicto($langs->trans("DisplayOnPdf"), $langs->trans("DisplayOnPdfDesc")); ?>
-</td><td class="valeur"><input id="printable" class="minwidth100" type="text" name="printable" value="<?php echo dol_escape_htmltag((string) $printable); ?>"></td></tr>
+</td><td class="valeur"><input id="printable" class="width50" type="text" name="printable" value="<?php echo dol_escape_htmltag((string) $printable); ?>"></td></tr>
+
+<!-- Visibility for getNomUrl -->
+<tr><td class="extra_showintooltip"><?php echo $form->textwithpicto($langs->trans("DisplayExtraOnTooltip"), $langs->trans("DisplayExtraOnTooltipDesc")); ?>
+</td><td class="valeur"><input id="showintooltip" type="checkbox" name="showintooltip" value="1" <?php echo($showITooltip ? ' checked' : ''); ?> ></td></tr>
 
 <!-- Can be summed -->
 <tr class="extra_totalizable"><td><?php echo $form->textwithpicto($langs->trans("Totalizable"), $langs->trans("TotalizableDesc")); ?></td><td class="valeur"><input id="totalizable" type="checkbox" name="totalizable"<?php echo($totalizable ? ' checked' : ''); ?>></td></tr>
 
-<!-- Css edit -->
-<tr class="extra_css"><td><?php echo $form->textwithpicto($langs->trans("CssOnEdit"), $langs->trans("HelpCssOnEditDesc")); ?></td><td class="valeur"><input id="css" type="text" name="css" value="<?php echo $css ?>"></td></tr>
-
-<!-- Css view -->
-<tr class="extra_cssview"><td><?php echo $form->textwithpicto($langs->trans("CssOnView"), $langs->trans("HelpCssOnViewDesc")); ?></td><td class="valeur"><input id="cssview" type="text" name="cssview" value="<?php echo $cssview; ?>"></td></tr>
-
-<!-- Css list -->
-<tr class="extra_csslist"><td><?php echo $form->textwithpicto($langs->trans("CssOnList"), $langs->trans("HelpCssOnListDesc")); ?></td><td class="valeur"><input id="csslist" type="text" name="csslist" value="<?php echo $csslist; ?>"></td></tr>
-
 <!-- Help tooltip -->
 <tr class="help"><td><?php echo $form->textwithpicto($langs->trans("HelpOnTooltip"), $langs->trans("HelpOnTooltipDesc")); ?></td><td class="valeur"><input id="help" class="quatrevingtpercent" type="text" name="help" value="<?php echo dol_escape_htmltag($help); ?>"></td></tr>
+
+<!-- Css edit -->
+<tr class="extra_css"><td><?php echo $form->textwithpicto($langs->trans("CssOnEdit"), $langs->trans("HelpCssOnEditDesc")); ?></td><td class="valeur"><input id="css" type="text" class="minwidth200" name="css" value="<?php echo dol_escape_htmltag($css); ?>"></td></tr>
+
+<!-- Css view -->
+<tr class="extra_cssview"><td><?php echo $form->textwithpicto($langs->trans("CssOnView"), $langs->trans("HelpCssOnViewDesc")); ?></td><td class="valeur"><input id="cssview" class="minwidth200" type="text" name="cssview" value="<?php echo dol_escape_htmltag($cssview); ?>"></td></tr>
+
+<!-- Css list -->
+<tr class="extra_csslist"><td><?php echo $form->textwithpicto($langs->trans("CssOnList"), $langs->trans("HelpCssOnListDesc")); ?></td><td class="valeur"><input id="csslist" class="minwidth200" type="text" name="csslist" value="<?php echo dol_escape_htmltag($csslist); ?>"></td></tr>
 
 <?php if (isModEnabled('multicompany')) { ?>
 	<!-- Multicompany entity -->
@@ -325,7 +403,7 @@ if (in_array($type, array_keys($typewecanchangeinto))) {
 
 <!-- Show Enabled property when value is not a common value -->
 <?php if ($enabled != '1') { ?>
-	<tr class="help"><td><?php echo $langs->trans("EnabledCondition"); ?></td><td class="valeur">
+	<tr class="help"><td><?php echo $form->textwithpicto($langs->trans("EnabledCondition"), $langs->trans("EnabledConditionHelp")); ?></td><td class="valeur">
 	<?php echo dol_escape_htmltag((string) $enabled); ?>
 <?php } ?>
 </td></tr>

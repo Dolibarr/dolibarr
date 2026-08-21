@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+/* Copyright (C) 2006-2008  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2012       Cedric Salvador         <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2024-2026  MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		Lionel Vessiller		<lvessiller@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +24,8 @@
  *  \ingroup    core
  *  \brief      File of the superclass of classes of lines of business objects (invoice, contract, proposal, orders, etc. ...)
  */
+
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 
 
 /**
@@ -191,6 +194,21 @@ abstract class CommonObjectLine extends CommonObject
 	public $product_desc;
 
 	/**
+	 * @var ?string Product custom code
+	 */
+	public $product_custom_code;
+
+	/**
+	 * @var ?string Product custom country code
+	 */
+	public $product_custom_country_code;
+
+	/**
+	 * @var ?int Product custom country id
+	 */
+	public $product_custom_country_id;
+
+	/**
 	 * @var int type in product table
 	 */
 	public $fk_product_type;
@@ -211,8 +229,8 @@ abstract class CommonObjectLine extends CommonObject
 	/**
 	 * List of cumulative options:
 	 * Bit 0:	0 for common VAT - 1 if VAT french NPR
-	 * Bit 1:	0 si ligne normal - 1 si bit discount (link to line into llx_remise_except)
-	 * @var int
+	 * Bit 1:	0 if standard line - 1 if discount (link to line into llx_remise_except)
+	 * @var ?int
 	 */
 	public $info_bits;
 
@@ -226,6 +244,13 @@ abstract class CommonObjectLine extends CommonObject
 	 * @var float
 	 */
 	public $subprice;
+
+	/**
+	 * Unit price including taxes
+	 * @var float
+	 */
+	public $subprice_ttc;
+
 	/**
 	 * @var float|string
 	 */
@@ -242,12 +267,12 @@ abstract class CommonObjectLine extends CommonObject
 	public $multicurrency_code;
 
 	/**
-	 * @var float Multicurrency subprice
+	 * @var float Multicurrency unit price without taxes
 	 */
 	public $multicurrency_subprice;
 
 	/**
-	 * @var float Multicurrency subprice
+	 * @var float Multicurrency unit price including taxes
 	 */
 	public $multicurrency_subprice_ttc;
 
@@ -260,6 +285,16 @@ abstract class CommonObjectLine extends CommonObject
 	 * @var float Multicurrency total vat
 	 */
 	public $multicurrency_total_tva;
+
+	/**
+	 * @var float|string Multicurrency total localtax1
+	 */
+	public $multicurrency_total_localtax1;	// not in database
+
+	/**
+	 * @var float|string Multicurrency total localtax2
+	 */
+	public $multicurrency_total_localtax2;	// not in database
 
 	/**
 	 * @var float Multicurrency total with tax
@@ -353,7 +388,7 @@ abstract class CommonObjectLine extends CommonObject
 	}
 
 	/**
-	 * Return clicable link of object line (with eventually picto)
+	 * Return clickable link of object line (optionally with picto)
 	 * May (should) also return information about the associated "parent" object.
 	 * To overload
 	 *
@@ -382,5 +417,30 @@ abstract class CommonObjectLine extends CommonObject
 		}
 
 		return $parent_element->getNomUrl($withpicto).' - Line #'.$this->id; // @phan-suppress-current-line PhanPluginUnknownObjectMethodCall
+	}
+
+	/**
+	 *	Return true if the unit price was originally entered including tax (TTC mode).
+	 *	Useful to preserve the entry mode on no-op edits and to avoid total drift.
+	 *	Note: cannot use !empty() because MySQL returns doubles as strings like "0.00000000"
+	 *	which empty() treats as non-empty.
+	 *
+	 *	@return	bool
+	 */
+	public function wasEnteredIncludingTax()
+	{
+		return isset($this->subprice_ttc) && (float) $this->subprice_ttc != 0;
+	}
+
+	/**
+	 *	Return the price base type ('TTC' or 'HT') matching how the unit price was entered.
+	 *	Shortcut over wasEnteredIncludingTax() to keep the entry mode when re-adding a line
+	 *	(clone, conversion, bulk action) so the total is recomputed from the typed value.
+	 *
+	 *	@return	string	'TTC' if entered including tax, 'HT' otherwise
+	 */
+	public function getPriceBaseType()
+	{
+		return $this->wasEnteredIncludingTax() ? 'TTC' : 'HT';
 	}
 }

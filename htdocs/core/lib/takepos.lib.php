@@ -63,10 +63,12 @@ function takepos_admin_prepare_head()
 		$h++;
 	}
 
+	/*
 	$head[$h][0] = DOL_URL_ROOT.'/takepos/admin/other.php';
 	$head[$h][1] = $langs->trans("About");
 	$head[$h][2] = 'other';
 	$h++;
+	*/
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'takepos_admin');
 

@@ -1,11 +1,11 @@
 <?php
-/* Copyright (C) 2005      Matthieu Valleton    <mv@seeschloss.org>
- * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2006-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2019-2024  Frédéric France      <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2005       Matthieu Valleton       <mv@seeschloss.org>
+ * Copyright (C) 2005       Eric Seigne             <eric.seigne@ryxeo.com>
+ * Copyright (C) 2006-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2007       Patrick Raguin          <patrick.raguin@gmail.com>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2019-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -107,23 +107,23 @@ if ($contextpage == 'employeelist' && $search_employee == 1) {
 	$title = $langs->trans("Users");
 }
 $arrayofjs = array(
-	'/includes/jquery/plugins/jquerytreeview/jquery.treeview.js',
-	'/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js',
+	'/public/includes/jquery/plugins/jquerytreeview/jquery.treeview.js',
+	'/public/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js',
 );
-$arrayofcss = array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css');
+$arrayofcss = array('/public/includes/jquery/plugins/jquerytreeview/jquery.treeview.css');
 
 llxHeader('', $title, $help_url, '', 0, 0, $arrayofjs, $arrayofcss, '', 'bodyforlist mod-user page-hierarchy');
 
-$filters = [];
+$sql_filters_arr = [];
 if (($search_status != '' && $search_status >= 0)) {
-	$filters[] = "statut = ".((int) $search_status);
+	$sql_filters_arr[] = "(statut:=:".((int) $search_status).")";
 }
-if (($search_employee != '' && $search_employee >= 0)) {
-	$filters[] = "employee = ".((int) $search_employee);
+if ($search_employee == 1) {
+	$sql_filters_arr[] = "(employee:=:1)";
 }
 $sqlfilter = '';
-if (!empty($filters)) {
-	$sqlfilter = implode(' AND ', $filters);
+if (!empty($sql_filters_arr)) {
+	$sqlfilter = implode(' AND ', $sql_filters_arr);
 }
 // Load hierarchy of users
 $user_arbo_all = $userstatic->get_full_tree(0, '');
@@ -165,7 +165,7 @@ if (!is_array($user_arbo) && $user_arbo < 0) {
 		$entitystring = '';
 
 		// TODO Set of entitystring should be done with a hook
-		if (isModEnabled('multicompany') && is_object($mc)) {
+		if (isModEnabled('multicompany') && isset($mc) && is_object($mc)) {
 			if (empty($entity)) {
 				$entitystring = $langs->trans("AllEntities");
 			} else {
@@ -176,9 +176,9 @@ if (!is_array($user_arbo) && $user_arbo < 0) {
 
 		$li = $userstatic->getNomUrl(-1, '', 0, 1);
 		if (isModEnabled('multicompany') && $userstatic->admin && !$userstatic->entity) {
-			$li .= img_picto($langs->trans("SuperAdministratorDesc"), 'redstar', 'class="valignmiddle paddingright paddingleft"');
+			$li .= img_picto($langs->trans("SuperAdministratorDesc"), 'superadmin', 'class="valignmiddle paddingright paddingleft"');
 		} elseif ($userstatic->admin) {
-			$li .= img_picto($langs->trans("AdministratorDesc"), 'star', 'class="valignmiddle paddingright paddingleft"');
+			$li .= img_picto($langs->trans("AdministratorDesc"), 'admin', 'class="valignmiddle paddingright paddingleft"');
 		}
 		$li .= ' <span class="opacitymedium">('.$val['login'].($entitystring ? ' - '.$entitystring : '').')</span>';
 
@@ -221,7 +221,7 @@ if (!is_array($user_arbo) && $user_arbo < 0) {
 					$entitystring = '';
 
 					// TODO Set of entitystring should be done with a hook
-					if (isModEnabled('multicompany') && is_object($mc)) {
+					if (isModEnabled('multicompany') && isset($mc) && is_object($mc)) {
 						if (empty($entity)) {
 							$entitystring = $langs->trans("AllEntities");
 						} else {
@@ -233,9 +233,9 @@ if (!is_array($user_arbo) && $user_arbo < 0) {
 					$li = '<span class="opacitymedium">';
 					$li .= $userstatic->getNomUrl(-1, '', 0, 1);
 					if (isModEnabled('multicompany') && $userstatic->admin && !$userstatic->entity) {
-						$li .= img_picto($langs->trans("SuperAdministrator"), 'redstar');
+						$li .= img_picto($langs->trans("SuperAdministrator"), 'superadmin');
 					} elseif ($userstatic->admin) {
-						$li .= img_picto($langs->trans("Administrator"), 'star');
+						$li .= img_picto($langs->trans("Administrator"), 'admin');
 					}
 					$li .= ' <span class="opacitymedium">('.$val['login'].($entitystring ? ' - '.$entitystring : '').')</span>';
 					$li .= ' - <span class="opacitymedium">'.$langs->trans("ExcludedByFilter").'</span>';
@@ -311,7 +311,7 @@ if (!is_array($user_arbo) && $user_arbo < 0) {
 
 	print '<tr class="liste_titre_filter">';
 	// Action column
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		print '<td class="liste_titre maxwidthsearch">';
 		$searchpicto = $form->showFilterAndCheckAddButtons(0);
 		print $searchpicto;
@@ -324,7 +324,7 @@ if (!is_array($user_arbo) && $user_arbo < 0) {
 	print $form->selectarray('search_status', array('-1' => '', '0' => $langs->trans('Disabled'), '1' => $langs->trans('Enabled')), $search_status, 0, 0, 0, '', 0, 0, 0, '', 'minwidth75imp onrightofpage width100');
 	print '</td>';
 	// Action column
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		print '<td class="liste_titre maxwidthsearch">';
 		$searchpicto = $form->showFilterAndCheckAddButtons(0);
 		print $searchpicto;
@@ -334,14 +334,14 @@ if (!is_array($user_arbo) && $user_arbo < 0) {
 
 	print '<tr class="liste_titre">';
 	// Action column
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', '', '', '', 'maxwidthsearch ');
 	}
 	print_liste_field_titre("HierarchicView");
 	print_liste_field_titre('<div id="iddivjstreecontrol"><a href="#">'.img_picto('', 'folder', 'class="paddingright"').'<span class="hideonsmartphone">'.$langs->trans("UndoExpandAll").'</span></a> | <a href="#">'.img_picto('', 'folder-open', 'class="paddingright"').'<span class="hideonsmartphone">'.$langs->trans("ExpandAll").'</span></a></div>', $_SERVER['PHP_SELF'], "", '', "", 'align="center"');
 	print_liste_field_titre("Status", $_SERVER['PHP_SELF'], "", '', "", '', '', '', 'right onrightofpage');
 	// Action column
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', '', '', '', 'maxwidthsearch ');
 	}
 	print '</tr>';
@@ -352,14 +352,14 @@ if (!is_array($user_arbo) && $user_arbo < 0) {
 	if ($nbofentries > 0) {
 		print '<tr>';
 		// Action column
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($conf->main_checkbox_left_column) {
 			print '<td></td>';
 		}
 		print '<td colspan="3">';
 		tree_recur($data, $data[0], 0);
 		print '</td>';
 		// Action column
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if (!$conf->main_checkbox_left_column) {
 			print '<td></td>';
 		}
 		print '</tr>';

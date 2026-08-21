@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2012 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -223,7 +223,8 @@ if ($id > 0 || $ref) {
 if ($salaryBonPl) {
 	$sql = "SELECT pf.rowid, p.type,";
 	$sql .= " f.rowid as salaryid, f.ref as ref, f.amount,";
-	$sql .= " u.rowid as userid, u.firstname, u.lastname, pl.statut as status, pl.amount as amount_requested";
+	$sql .= " u.rowid as userid, u.firstname, u.lastname,";
+	$sql .= " pl.statut as status, pl.amount as amount_requested";
 	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."prelevement_lignes as pl ON pl.fk_prelevement_bons = p.rowid";
 	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."prelevement as pf ON pf.fk_prelevement_lignes = pl.rowid";
@@ -242,7 +243,8 @@ if ($salaryBonPl) {
 	if ($object->type == 'bank-transfer') {
 		$sql .= " f.ref_supplier,";
 	}
-	$sql .= " s.rowid as socid, s.nom as name, pl.statut as status, pl.amount as amount_requested";
+	$sql .= " s.rowid as socid, s.nom as name,";
+	$sql .= " pl.statut as status, pl.amount as amount_requested";
 	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p,";
 	$sql .= " ".MAIN_DB_PREFIX."prelevement_lignes as pl,";
 	$sql .= " ".MAIN_DB_PREFIX."prelevement as pf";
@@ -278,7 +280,7 @@ $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$resql = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($resql);
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -296,7 +298,7 @@ if ($resql) {
 	}
 
 	// Lines of title fields
-	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" id="searchFormList" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	if ($optioncss != '') {
 		print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	}

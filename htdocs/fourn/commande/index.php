@@ -1,10 +1,10 @@
 <?php
-/* Copyright (C) 2001-2006	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2012		Vinicius Nogueira	<viniciusvgn@gmail.com>
- * Copyright (C) 2019		Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+/* Copyright (C) 2001-2006  Rodolphe Quiedeville        <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2012  Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012  Regis Houssin               <regis.houssin@inodbox.com>
+ * Copyright (C) 2012       Vinicius Nogueira           <viniciusvgn@gmail.com>
+ * Copyright (C) 2019       Nicolas ZABOURI             <info@inovea-conseil.com>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,10 +29,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
-
 
 /**
  * @var Conf $conf
@@ -42,19 +38,23 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
  * @var User $user
  */
 
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+
 // Load translation files required by the page
 $langs->loadLangs(array("suppliers", "orders"));
 
 // Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('orderssuppliersindex'));
 
-$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
+$max = getDolUserInt('MAIN_SIZE_SHORTLIST_LIMIT', getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5));
 
 // Security check
 $orderid = GETPOST('orderid');
 $socid = GETPOSTINT('socid');
-if ($user->socid) {
-	$socid = $user->socid;
+if ($user->isExternalUser()) {
+	$socid = $user->isExternalUser();
 }
 $result = restrictedArea($user, 'fournisseur', $orderid, '', 'commande');
 
@@ -235,14 +235,14 @@ if (isModEnabled("supplier_order")) {
 
 
 /*
- * List of users allowed
+ * List of users allowed to approve
  */
 
 $sql = "SELECT";
 if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
 	$sql .= " DISTINCT";
 }
-$sql .= " u.rowid, u.lastname, u.firstname, u.email, u.statut";
+$sql .= " u.rowid, u.login, u.lastname, u.firstname, u.email, u.photo, u.statut";
 $sql .= " FROM ".MAIN_DB_PREFIX."user as u";
 if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
 	$sql .= ",".MAIN_DB_PREFIX."usergroup_user as ug";
@@ -252,7 +252,7 @@ if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_
 } else {
 	$sql .= " WHERE (u.entity IN (".getEntity('user')."))";
 }
-$sql .= " AND u.fk_soc IS NULL"; // An external user can not approved
+$sql .= " AND u.fk_soc IS NULL"; // An external user can not approve
 
 $resql = $db->query($sql);
 if ($resql) {
@@ -264,6 +264,9 @@ if ($resql) {
 	print '<tr class="liste_titre"><th>'.$langs->trans("UserWithApproveOrderGrant").'</th>';
 	print "</tr>\n";
 
+	print '<tr class="oddeven">';
+	print '<td>';
+
 	while ($i < $num) {
 		$obj = $db->fetch_object($resql);
 
@@ -272,19 +275,29 @@ if ($resql) {
 		$userstatic->loadRights('fournisseur');
 
 		if ($userstatic->hasRight('fournisseur', 'commande', 'approuver')) {
-			print '<tr class="oddeven">';
-			print '<td>';
+			if ($i > 0) {
+				print ', ';
+			}
+
 			$userstatic->lastname = $obj->lastname;
 			$userstatic->firstname = $obj->firstname;
 			$userstatic->email = $obj->email;
+			$userstatic->login = $obj->login;
+			$userstatic->photo = $obj->photo;
 			$userstatic->status = $obj->statut;
-			print $userstatic->getNomUrl(1);
-			print '</td>';
-			print "</tr>\n";
+
+			print $userstatic->getNomUrl(-1);
 		}
 
 		$i++;
 	}
+	if ($i == 0) {
+		print '<span class="opacitymedium">'.$langs->trans("Nobody").'</span>';
+	}
+
+	print '</td>';
+	print "</tr>\n";
+
 	print "</table></div><br>";
 	$db->free($resql);
 } else {
@@ -351,7 +364,7 @@ if ($resql) {
 
 			print '<td width="16" class="right nobordernopadding hideonsmartphone">';
 			$filename = dol_sanitizeFileName($obj->ref);
-			$filedir = $conf->commande->dir_output.'/'.dol_sanitizeFileName($obj->ref);
+			$filedir = getMultidirOutput($commandestatic).'/'.dol_sanitizeFileName($obj->ref);
 			$urlsource = $_SERVER['PHP_SELF'].'?id='.$obj->rowid;
 			print $formfile->getDocumentsLink($commandestatic->element, $filename, $filedir);
 			print '</td></tr></table>';
@@ -420,7 +433,7 @@ print '</td>';
 
 print '<td width="16" class="right nobordernopadding hideonsmartphone">';
 $filename=dol_sanitizeFileName($obj->ref);
-$filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($obj->ref);
+$filedir=getMultidirOutput($commandestatic) . '/' . dol_sanitizeFileName($obj->ref);
 $urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
 print $formfile->getDocumentsLink($commandestatic->element, $filename, $filedir);
 print '</td></tr></table>';

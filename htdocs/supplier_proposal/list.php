@@ -12,9 +12,9 @@
  * Copyright (C) 2016		Ferran Marcet				<fmarcet@2byte.es>
  * Copyright (C) 2018-2023	Charlene Benke				<charlene@patas-monkey.com>
  * Copyright (C) 2021-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Benjamin Falière			<benjamin.faliere@altairis.fr>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,7 +64,7 @@ $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOSTINT('show_files');
 $confirm = GETPOST('confirm', 'alpha');
-$toselect = GETPOST('toselect', 'array');
+$toselect = GETPOST('toselect', 'array:int');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'supplierproposallist';
 $optioncss = GETPOST('optioncss', 'alpha');
 $mode = GETPOST('mode', 'alpha');
@@ -106,7 +106,16 @@ $search_multicurrency_montant_vat = GETPOST('search_multicurrency_montant_vat', 
 $search_multicurrency_montant_ttc = GETPOST('search_multicurrency_montant_ttc', 'alpha');
 $search_project_ref = GETPOST('search_project_ref', 'alpha');
 $search_status = GETPOST('search_status', 'intcomma');
+$search_note_private = GETPOST('search_note_private', 'alpha');
+$search_note_public = GETPOST('search_note_public', 'alpha');
 $search_product_category = GETPOST('search_product_category', 'int');
+$searchCategorySupplierPropalList = GETPOST('search_category_supplier_proposal_list', 'array:int');
+$searchCategorySupplierPropalOperator = 0;
+if (GETPOSTISSET('formfilteraction')) {
+	$searchCategorySupplierPropalOperator = GETPOSTINT('search_category_supplier_proposal_operator');
+} elseif (getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT')) {
+	$searchCategorySupplierPropalOperator = getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT');
+}
 $search_all = trim(GETPOST('search_all', 'alphanohtml'));
 
 $object_statut = GETPOST('supplier_proposal_statut', 'intcomma');
@@ -125,7 +134,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (!$sortfield) {
-	$sortfield = 'sp.date_livraison';
+	$sortfield = 'sp.ref';
 }
 if (!$sortorder) {
 	$sortorder = 'DESC';
@@ -135,7 +144,7 @@ if ($object_statut != '') {
 	$search_status = $object_statut;
 }
 
-// Nombre de ligne pour choix de produit/service predefinis
+// Number of line to choose predefined product/service from
 $NBLINES = 4;
 
 // Security check
@@ -180,38 +189,39 @@ if (empty($user->socid)) {
 	$fieldstosearchall["p.note_private"] = "NotePrivate";
 }
 
-$checkedtypetiers = 0;
+$checkedtypetiers = '0';
 $arrayfields = array(
-	'sp.ref' => array('label' => $langs->trans("Ref"), 'checked' => 1),
-	's.nom' => array('label' => $langs->trans("Supplier"), 'checked' => 1),
-	's.name_alias' => array('label' => "AliasNameShort", 'checked' => 0),
-	's.town' => array('label' => $langs->trans("Town"), 'checked' => 1),
-	's.zip' => array('label' => $langs->trans("Zip"), 'checked' => 1),
-	'state.nom' => array('label' => $langs->trans("StateShort"), 'checked' => 0),
-	'country.code_iso' => array('label' => $langs->trans("Country"), 'checked' => 0),
+	'sp.ref' => array('label' => $langs->trans("Ref"), 'checked' => '1'),
+	's.nom' => array('label' => $langs->trans("Supplier"), 'checked' => '1'),
+	's.name_alias' => array('label' => "AliasNameShort", 'checked' => '0'),
+	's.town' => array('label' => $langs->trans("Town"), 'checked' => '1'),
+	's.zip' => array('label' => $langs->trans("Zip"), 'checked' => '1'),
+	'state.nom' => array('label' => $langs->trans("StateShort"), 'checked' => '0'),
+	'country.code_iso' => array('label' => $langs->trans("Country"), 'checked' => '0'),
 	'typent.code' => array('label' => $langs->trans("ThirdPartyType"), 'checked' => $checkedtypetiers),
-	'sp.date_valid' => array('label' => $langs->trans("DateValidation"), 'checked' => 1),
-	'sp.date_livraison' => array('label' => $langs->trans("DateEnd"), 'checked' => 1),
-	'sp.total_ht' => array('label' => $langs->trans("AmountHT"), 'checked' => 1),
-	'sp.total_tva' => array('label' => $langs->trans("AmountVAT"), 'checked' => 0),
-	'sp.total_ttc' => array('label' => $langs->trans("AmountTTC"), 'checked' => 0),
-	'sp.multicurrency_code' => array('label' => 'Currency', 'checked' => 0, 'enabled' => (!isModEnabled("multicurrency") ? 0 : 1)),
-	'sp.multicurrency_tx' => array('label' => 'CurrencyRate', 'checked' => 0, 'enabled' => (!isModEnabled("multicurrency") ? 0 : 1)),
-	'sp.multicurrency_total_ht' => array('label' => 'MulticurrencyAmountHT', 'checked' => 0, 'enabled' => (!isModEnabled("multicurrency") ? 0 : 1)),
-	'sp.multicurrency_total_vat' => array('label' => 'MulticurrencyAmountVAT', 'checked' => 0, 'enabled' => (!isModEnabled("multicurrency") ? 0 : 1)),
-	'sp.multicurrency_total_ttc' => array('label' => 'MulticurrencyAmountTTC', 'checked' => 0, 'enabled' => (!isModEnabled("multicurrency") ? 0 : 1)),
-	'sp.fk_projet' => array('label' => $langs->trans("RefProject"), 'checked' => 1,'enabled' => (!isModEnabled("project") ? 0 : 1)),
-	'u.login' => array('label' => $langs->trans("Author"), 'checked' => 1, 'position' => 10),
-	'sp.datec' => array('label' => $langs->trans("DateCreation"), 'checked' => 0, 'position' => 500),
-	'sp.tms' => array('label' => $langs->trans("DateModificationShort"), 'checked' => 0, 'position' => 500),
-	'sp.fk_statut' => array('label' => $langs->trans("Status"), 'checked' => 1, 'position' => 1000),
+	'sp.date_valid' => array('label' => $langs->trans("DateValidation"), 'checked' => '1'),
+	'sp.date_livraison' => array('label' => $langs->trans("DateEnd"), 'checked' => '1'),
+	'sp.total_ht' => array('label' => $langs->trans("AmountHT"), 'checked' => '1'),
+	'sp.total_tva' => array('label' => $langs->trans("AmountVAT"), 'checked' => '0'),
+	'sp.total_ttc' => array('label' => $langs->trans("AmountTTC"), 'checked' => '0'),
+	'sp.multicurrency_code' => array('label' => 'Currency', 'checked' => '0', 'enabled' => (!isModEnabled("multicurrency") ? '0' : '1')),
+	'sp.multicurrency_tx' => array('label' => 'CurrencyRate', 'checked' => '0', 'enabled' => (!isModEnabled("multicurrency") ? '0' : '1')),
+	'sp.multicurrency_total_ht' => array('label' => 'MulticurrencyAmountHT', 'checked' => '0', 'enabled' => (!isModEnabled("multicurrency") ? '0' : '1')),
+	'sp.multicurrency_total_vat' => array('label' => 'MulticurrencyAmountVAT', 'checked' => '0', 'enabled' => (!isModEnabled("multicurrency") ? '0' : '1')),
+	'sp.multicurrency_total_ttc' => array('label' => 'MulticurrencyAmountTTC', 'checked' => '0', 'enabled' => (!isModEnabled("multicurrency") ? '0' : '1')),
+	'sp.fk_projet' => array('label' => $langs->trans("RefProject"), 'checked' => '1', 'enabled' => (!isModEnabled("project") ? '0' : '1')),
+	'u.login' => array('label' => $langs->trans("Author"), 'checked' => '1', 'position' => 10),
+	'sp.datec' => array('label' => $langs->trans("DateCreation"), 'checked' => '0', 'position' => 500),
+	'sp.tms' => array('label' => $langs->trans("DateModificationShort"), 'checked' => '0', 'position' => 500),
+	'sp.note_public' => array('label' => 'NotePublic', 'checked' => '0', 'position' => 520, 'enabled' => (getDolGlobalInt('MAIN_LIST_HIDE_PUBLIC_NOTES') ? '0' : '1')),
+	'sp.note_private' => array('label' => 'NotePrivate', 'checked' => '0', 'position' => 521, 'enabled' => (getDolGlobalInt('MAIN_LIST_HIDE_PRIVATE_NOTES') ? '0' : '1')),
+	'sp.fk_statut' => array('label' => $langs->trans("Status"), 'checked' => '1', 'position' => 1000),
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
-'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 // Check only if it's an internal user
 if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
@@ -222,7 +232,7 @@ $result = restrictedArea($user, $module, $objectid, $dbtable);
 
 $permissiontoread = $user->hasRight('supplier_proposal', 'lire');
 $permissiontodelete = $user->hasRight('supplier_proposal', 'supprimer');
-
+$permissiontoadd = $user->hasRight('supplier_proposal', 'creer');
 
 /*
  * Actions
@@ -265,6 +275,7 @@ if (empty($reshook)) {
 		$search_project_ref = '';
 		$search_login = '';
 		$search_product_category = '';
+		$searchCategorySupplierPropalList = array();
 		$search_town = '';
 		$search_zip = "";
 		$search_state = "";
@@ -445,6 +456,12 @@ if ($search_date_end) {
 if ($search_date_valid_start) {
 	$sql .= " AND sp.date_valid >= '".$db->idate($search_date_valid_start)."'";
 }
+if ($search_note_public) {
+	$sql .= " AND p.note_public LIKE '%".$db->escape($db->escapeforlike($search_note_public))."%'";
+}
+if ($search_note_private) {
+	$sql .= " AND p.note_private LIKE '%".$db->escape($db->escapeforlike($search_note_private))."%'";
+}
 if ($search_date_valid_end) {
 	$sql .= " AND sp.date_valid <= '".$db->idate($search_date_valid_end)."'";
 }
@@ -463,8 +480,36 @@ if ($search_sale && $search_sale != '-1') {
 		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = sp.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
 	}
 }
+// Search for tag/category ($searchCategorySupplierInvoiceList is an array of ID)
+if (!empty($searchCategorySupplierPropalList)) {
+	$searchCategorySupplierPropalSqlList = array();
+	$listofcategoryid = '';
+	foreach ($searchCategorySupplierPropalList as $searchCategorySupplierPropal) {
+		if (intval($searchCategorySupplierPropal) == -2) {
+			$searchCategorySupplierPropalSqlList[] = "NOT EXISTS (SELECT ck.fk_supplier_proposal FROM ".MAIN_DB_PREFIX."categorie_supplier_proposal as ck WHERE sp.rowid = ck.fk_supplier_proposal)";
+		} elseif (intval($searchCategorySupplierPropal) > 0) {
+			if ($searchCategorySupplierPropalOperator == 0) {
+				$searchCategorySupplierPropalSqlList[] = " EXISTS (SELECT ck.fk_supplier_proposal FROM ".MAIN_DB_PREFIX."categorie_supplier_proposal as ck WHERE sp.rowid = ck.fk_supplier_proposal AND ck.fk_categorie = ".((int) $searchCategorySupplierPropal).")";
+			} else {
+				$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategorySupplierPropal);
+			}
+		}
+	}
+	if ($listofcategoryid) {
+		$searchCategorySupplierPropalSqlList[] = " EXISTS (SELECT ck.fk_supplier_proposal FROM ".MAIN_DB_PREFIX."categorie_supplier_proposal as ck WHERE sp.rowid = ck.fk_supplier_proposal AND ck.fk_categorie IN (".$db->sanitize($listofcategoryid)."))";
+	}
+	if ($searchCategorySupplierPropalOperator == 1) {
+		if (!empty($searchCategorySupplierPropalSqlList)) {
+			$sql .= " AND (".implode(' OR ', $searchCategorySupplierPropalSqlList).")";
+		}
+	} else {
+		if (!empty($searchCategorySupplierPropalSqlList)) {
+			$sql .= " AND (".implode(' AND ', $searchCategorySupplierPropalSqlList).")";
+		}
+	}
+}
 // Search for tag/category ($searchCategoryProductList is an array of ID)
-$searchCategoryProductOperator = -1;
+$searchCategoryProductOperator = GETPOSTINT('search_category_product_operator');
 $searchCategoryProductList = array($search_product_category);
 if (!empty($searchCategoryProductList)) {
 	$searchCategoryProductSqlList = array();
@@ -508,7 +553,7 @@ $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$resql = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($resql);
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -632,6 +677,12 @@ if ($resql) {
 	if ($search_login) {
 		$param .= '&search_login='.urlencode($search_login);
 	}
+	if ($searchCategorySupplierPropalOperator == 1) {
+		$param .= "&search_category_supplier_propal_operator=".urlencode((string) ($searchCategorySupplierPropalOperator));
+	}
+	foreach ($searchCategorySupplierPropalList as $searchCategorySupplierPropal) {
+		$param .= "&search_category_supplier_invoice_list[]=".urlencode($searchCategorySupplierPropal);
+	}
 	if ($search_town) {
 		$param .= '&search_town='.urlencode($search_town);
 	}
@@ -662,6 +713,9 @@ if ($resql) {
 		'builddoc' => img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 		//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 	);
+	if (isModEnabled('category') && $user->hasRight('supplier_proposal', 'lire')) {
+		$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
+	}
 	if ($user->hasRight('supplier_proposal', 'supprimer')) {
 		$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 	}
@@ -681,7 +735,7 @@ if ($resql) {
 	$newcardbutton .= dolGetButtonTitle($langs->trans('NewAskPrice'), '', 'fa fa-plus-circle', $url, '', $user->hasRight('supplier_proposal', 'creer'));
 
 	// Fields title search
-	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" id="searchFormList" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	if ($optioncss != '') {
 		print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	}
@@ -710,7 +764,11 @@ if ($resql) {
 	$i = 0;
 
 	$moreforfilter = '';
-
+	if (isModEnabled('category') && $user->hasRight('categorie', 'read')) {
+		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
+		$formcategory = new FormCategory($db);
+		$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_SUPPLIER_PROPOSAL, $searchCategorySupplierPropalList, 'minwidth300', $searchCategorySupplierPropalOperator ? $searchCategorySupplierPropalOperator : 0);
+	}
 	// If the user can view prospects other than his'
 	if ($user->hasRight('user', 'user', 'lire')) {
 		$langs->load("commercial");
@@ -723,7 +781,7 @@ if ($resql) {
 	if ($user->hasRight('user', 'user', 'lire')) {
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('LinkedToSpecificUsers');
-		$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$form->select_dolusers($search_user, 'search_user', $tmptitle, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth250 widthcentpercentminusx');
+		$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$form->select_dolusers($search_user, 'search_user', $tmptitle, null, 0, '', '', '0', 0, 0, '', 0, '', 'maxwidth250 widthcentpercentminusx');
 		$moreforfilter .= '</div>';
 	}
 	// If the user can view products
@@ -731,8 +789,8 @@ if ($resql) {
 		include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('IncludingProductWithTag');
-		$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, null, 'parent', null, null, 1);
-		$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$form->selectarray('search_product_category', $cate_arbo, $search_product_category, $tmptitle, 0, 0, '', 0, 0, 0, 0, 'maxwidth300 widthcentpercentminusx', 1);
+		$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', 'parent', 0, 0, 1);
+		$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$form->selectarray('search_product_category', $cate_arbo, $search_product_category, $tmptitle, 0, 0, '', 0, 0, 0, '', 'maxwidth300 widthcentpercentminusx', 1);
 		$moreforfilter .= '</div>';
 	}
 	$parameters = array();
@@ -750,7 +808,7 @@ if ($resql) {
 	}
 
 	$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
+	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column); // This also change content of $arrayfields
 	$selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 	print '<div class="div-table-responsive">';
@@ -760,7 +818,7 @@ if ($resql) {
 	// --------------------------------------------------------------------
 	print '<tr class="liste_titre_filter">';
 	// Action column
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		print '<td class="liste_titre maxwidthsearch">';
 		$searchpicto = $form->showFilterButtons('left');
 		print $searchpicto;
@@ -779,7 +837,7 @@ if ($resql) {
 	}
 	if (!empty($arrayfields['s.nom']['checked'])) {
 		print '<td class="liste_titre left">';
-		print '<input class="flat" type="text" size="12" name="search_company" value="'.dol_escape_htmltag($search_company).'">';
+		print '<input class="flat" type="text" size="12" name="search_company" value="'.dol_escape_htmltag((string) $search_company).'">';
 		print '</td>';
 	}
 	if (!empty($arrayfields['s.name_alias']['checked'])) {
@@ -808,7 +866,7 @@ if ($resql) {
 	// Company type
 	if (!empty($arrayfields['typent.code']['checked'])) {
 		print '<td class="liste_titre maxwidthonsmartphone center">';
-		print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 1, 0, 0, '', 0, 0, 0, (!getDolGlobalString('SOCIETE_SORT_ON_TYPEENT') ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT), '', 1);
+		print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 1, 0, 0, '', 0, 0, 0, getDolGlobalString('SOCIETE_SORT_ON_TYPEENT', 'ASC'), '', 1);
 		print '</td>';
 	}
 	// Date
@@ -904,6 +962,18 @@ if ($resql) {
 		print '<td class="liste_titre">';
 		print '</td>';
 	}
+	if (!empty($arrayfields['sp.note_public']['checked'])) {
+		// Note public
+		print '<td class="liste_titre">';
+		print '<input class="flat maxwidth75" type="text" name="search_note_public" value="'.dol_escape_htmltag($search_note_public).'">';
+		print '</td>';
+	}
+	if (!empty($arrayfields['sp.note_private']['checked'])) {
+		// Note private
+		print '<td class="liste_titre">';
+		print '<input class="flat maxwidth75" type="text" name="search_note_private" value="'.dol_escape_htmltag($search_note_private).'">';
+		print '</td>';
+	}
 	// Status
 	if (!empty($arrayfields['sp.fk_statut']['checked'])) {
 		print '<td class="liste_titre center parentonrightofpage">';
@@ -911,7 +981,7 @@ if ($resql) {
 		print '</td>';
 	}
 	// Action column
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		print '<td class="liste_titre maxwidthsearch">';
 		$searchpicto = $form->showFilterButtons();
 		print $searchpicto;
@@ -925,7 +995,7 @@ if ($resql) {
 
 	// Fields title
 	print '<tr class="liste_titre">';
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 		$totalarray['nbfield']++;
 	}
@@ -1026,12 +1096,20 @@ if ($resql) {
 		print_liste_field_titre($arrayfields['sp.tms']['label'], $_SERVER["PHP_SELF"], "sp.tms", "", $param, '', $sortfield, $sortorder, 'center nowrap');
 		$totalarray['nbfield']++;
 	}
+	if (!empty($arrayfields['sp.note_public']['checked'])) {
+		print_liste_field_titre($arrayfields['sp.note_public']['label'], $_SERVER["PHP_SELF"], "sp.note_public", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+		$totalarray['nbfield']++;
+	}
+	if (!empty($arrayfields['sp.note_private']['checked'])) {
+		print_liste_field_titre($arrayfields['sp.note_private']['label'], $_SERVER["PHP_SELF"], "sp.note_private", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+		$totalarray['nbfield']++;
+	}
 	if (!empty($arrayfields['sp.fk_statut']['checked'])) {
 		print_liste_field_titre($arrayfields['sp.fk_statut']['label'], $_SERVER["PHP_SELF"], "sp.fk_statut", "", $param, '', $sortfield, $sortorder, 'center ');
 		$totalarray['nbfield']++;
 	}
 	// Action
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 		$totalarray['nbfield']++;
 	}
@@ -1084,9 +1162,9 @@ if ($resql) {
 				print '</td></tr>';
 			}
 		} else {
-			print '<tr class="oddeven '.((getDolGlobalInt('MAIN_FINISHED_LINES_OPACITY') == 1 && $obj->status > 1) ? 'opacitymedium' : '').'">';
+			print '<tr class="oddeven row-with-select '.((getDolGlobalInt('MAIN_FINISHED_LINES_OPACITY') == 1 && $obj->status > 1) ? 'opacitymedium' : '').'">';
 			// Action column
-			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			if ($conf->main_checkbox_left_column) {
 				print '<td class="nowrap center">';
 				if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 					$selected = 0;
@@ -1350,6 +1428,24 @@ if ($resql) {
 					$totalarray['nbfield']++;
 				}
 			}
+			// Note public
+			if (!empty($arrayfields['f.note_public']['checked'])) {
+				print '<td class="sensiblehtmlcontent center">';
+				print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_public, 5)).'</div>';
+				print '</td>';
+				if (!$i) {
+					$totalarray['nbfield']++;
+				}
+			}
+			// Note private
+			if (!empty($arrayfields['f.note_private']['checked'])) {
+				print '<td class="sensiblehtmlcontent center">';
+				print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_private, 5)).'</div>';
+				print '</td>';
+				if (!$i) {
+					$totalarray['nbfield']++;
+				}
+			}
 			// Status
 			if (!empty($arrayfields['sp.fk_statut']['checked'])) {
 				print '<td class="center">'.$objectstatic->getLibStatut(5)."</td>\n";
@@ -1359,7 +1455,7 @@ if ($resql) {
 			}
 
 			// Action column
-			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			if (!$conf->main_checkbox_left_column) {
 				print '<td class="nowrap center">';
 				if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 					$selected = 0;

@@ -4,7 +4,7 @@
  * Copyright (C) 2014		Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2016		Charlie Benke		<charlie@patas-monkey.com>
  * Copyright (C) 2018-2021  Philippe Grand      <philippe.grand@atoo-net.com>
- * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -155,18 +155,10 @@ class doc_generic_recruitmentjobposition_odt extends ModelePDFRecruitmentJobPosi
 			}
 		}
 		$texthelp = $langs->trans("ListOfDirectoriesForModelGenODT");
+		$texthelp .= '<br><br><span class="opacitymedium">'.$langs->trans("ExampleOfDirectoriesForModelGen").'</span>';
 		// Add list of substitution keys
 		$texthelp .= '<br>'.$langs->trans("FollowingSubstitutionKeysCanBeUsed").'<br>';
 		$texthelp .= $langs->transnoentitiesnoconv("FullListOnOnlineDocumentation"); // This contains an url, we don't modify it
-
-		$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1);
-		$texte .= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
-		$texte .= '<textarea class="flat" cols="60" name="value1">';
-		$texte .= getDolGlobalString('RECRUITMENT_RECRUITMENTJOBPOSITION_ADDON_PDF_ODT_PATH');
-		$texte .= '</textarea>';
-		$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
-		$texte .= '<input type="submit" class="button small reposition" name="modify" value="'.$langs->trans("Modify").'">';
-		$texte .= '<br></div></div>';
 
 		// Scan directories
 		$nbofiles = count($listoffiles);
@@ -188,6 +180,17 @@ class doc_generic_recruitmentjobposition_odt extends ModelePDFRecruitmentJobPosi
 			}
 			$texte .= '</div>';
 		}
+
+		$texte .= '<br><br>';
+		$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1);
+		$texte .= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
+		$texte .= '<textarea class="flat textareafordir" spellcheck="false" cols="60" name="value1">';
+		$texte .= getDolGlobalString('RECRUITMENT_RECRUITMENTJOBPOSITION_ADDON_PDF_ODT_PATH');
+		$texte .= '</textarea>';
+		$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
+		$texte .= '<input type="submit" class="button button-edit smallpaddingimp reposition" name="modify" value="'.$langs->trans("Modify").'">';
+		$texte .= '<br></div></div>';
+
 		// Add input to upload a new template file.
 		$texte .= '<div>'.$langs->trans("UploadNewTemplate");
 		$maxfilesizearray = getMaxFileSizeArray();
@@ -201,11 +204,6 @@ class doc_generic_recruitmentjobposition_odt extends ModelePDFRecruitmentJobPosi
 		$texte .= '</div>';
 		$texte .= '</td>';
 
-		$texte .= '<td rowspan="2" class="tdtop hideonsmartphone">';
-		$texte .= '<span class="opacitymedium">';
-		$texte .= $langs->trans("ExampleOfDirectoriesForModelGen");
-		$texte .= '</span>';
-		$texte .= '</td>';
 		$texte .= '</tr>';
 
 		$texte .= '</table>';
@@ -253,7 +251,9 @@ class doc_generic_recruitmentjobposition_odt extends ModelePDFRecruitmentJobPosi
 
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills"));
 
-		if ($conf->recruitment->dir_output) {
+		$dir = getMultidirOutput($object);
+
+		if ($dir) {
 			// If $object is id instead of object
 			if (!is_object($object)) {
 				$id = $object;
@@ -265,8 +265,7 @@ class doc_generic_recruitmentjobposition_odt extends ModelePDFRecruitmentJobPosi
 				}
 			}
 
-			$dir = $conf->recruitment->multidir_output[isset($object->entity) ? $object->entity : 1].'/recruitmentjobposition/';
-			$objectref = dol_sanitizeFileName($object->ref);
+			$objectref = dol_sanitizeFileName((string) $object->ref);
 			if (!preg_match('/specimen/i', $objectref)) {
 				$dir .= "/".$objectref;
 			}
@@ -408,12 +407,19 @@ class doc_generic_recruitmentjobposition_odt extends ModelePDFRecruitmentJobPosi
 				$parameters = array('odfHandler' => &$odfHandler, 'file' => $file, 'object' => $object, 'outputlangs' => $outputlangs, 'substitutionarray' => &$tmparray);
 				$reshook = $hookmanager->executeHooks('ODTSubstitution', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 
+				// retrieve the constant to apply a ratio for image size or set the ratio to 1
+				if (getDolGlobalString('MAIN_DOC_ODT_IMAGE_RATIO')) {
+					$ratio = (float) getDolGlobalString('MAIN_DOC_ODT_IMAGE_RATIO');
+				} else {
+					$ratio = 1;
+				}
+
 				foreach ($tmparray as $key => $value) {
 					try {
 						if (preg_match('/logo$/', $key)) {
 							// Image
 							if (file_exists($value)) {
-								$odfHandler->setImage($key, $value);
+								$odfHandler->setImage($key, $value, $ratio);
 							} else {
 								$odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
 							}
@@ -437,6 +443,7 @@ class doc_generic_recruitmentjobposition_odt extends ModelePDFRecruitmentJobPosi
 				if ($foundtagforlines) {
 					$linenumber = 0;
 					foreach ($object->lines as $line) {
+						/** @var CommonObjectLine $line */
 						$linenumber++;
 						$tmparray = $this->get_substitutionarray_lines($line, $outputlangs, $linenumber);
 						complete_substitutions_array($tmparray, $outputlangs, $object, $line, "completesubstitutionarray_lines");

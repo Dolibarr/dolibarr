@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2020  Lenin Rivas		   <lenin@leninrivas.com>
- * Copyright (C) 2023-2024  Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2023-2026  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -64,7 +64,7 @@ class MoLine extends CommonObjectLine
 	 *  	'date', 'datetime', 'timestamp', 'duration',
 	 *  	'boolean', 'checkbox', 'radio', 'array',
 	 *  	'mail', 'phone', 'url', 'password', 'ip'
-	 *		Note: Filter must be a Dolibarr Universal Filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
+	 *		Note: Filter must be a Dolibarr Universal Filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'alias' the alias used into some old hard coded SQL requests
 	 *  'picto' is code of a picto to show before value in forms
@@ -74,7 +74,7 @@ class MoLine extends CommonObjectLine
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
 	 *  'noteditable' says if field is not editable (1 or 0)
 	 *  'alwayseditable' says if field can be modified also when status is not draft ('1' or '0')
-	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
+	 *  'default' is a default value for creation (can still be overwritten by the Setup of Default Values if the field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
 	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
@@ -109,8 +109,8 @@ class MoLine extends CommonObjectLine
 		'fk_stock_movement' => array('type' => 'integer', 'label' => 'StockMovement', 'enabled' => 1, 'visible' => -1, 'position' => 155),
 		'date_creation' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 160),
 		'tms' => array('type' => 'timestamp', 'label' => 'Tms', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 165),
-		'fk_user_creat' => array('type' => 'integer', 'label' => 'UserCreation', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 170),
-		'fk_user_modif' => array('type' => 'integer', 'label' => 'UserModification', 'enabled' => 1, 'visible' => -1, 'position' => 175),
+		'fk_user_creat' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserCreation', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 170),
+		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModification', 'enabled' => 1, 'visible' => -1, 'position' => 175),
 		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'visible' => -1, 'position' => 180),
 		'fk_default_workstation' => array('type' => 'integer', 'label' => 'DefaultWorkstation', 'enabled' => 1, 'visible' => 1, 'notnull' => 0, 'position' => 185),
 		'fk_unit' => array('type' => 'int', 'label' => 'Unit', 'enabled' => 1, 'visible' => 1, 'notnull' => 0, 'position' => 186)
@@ -141,7 +141,7 @@ class MoLine extends CommonObjectLine
 	 */
 	public $fk_product;
 	/**
-	 * @var int
+	 * @var ?int
 	 */
 	public $fk_warehouse;
 
@@ -151,7 +151,7 @@ class MoLine extends CommonObjectLine
 	public $qty;
 
 	/**
-	 * @var float Quantity frozen
+	 * @var int<0,1> Is quantity frozen
 	 */
 	public $qty_frozen;
 	/**
@@ -196,6 +196,11 @@ class MoLine extends CommonObjectLine
 	 * @var int Service Workstation
 	 */
 	public $fk_default_workstation;
+
+	/**
+	 * @var ?int Id of the child BOM linked to this line (not stored in the line table, set on the fly for display)
+	 */
+	public $fk_bom_child;
 
 	/**
 	 * Constructor
@@ -274,7 +279,7 @@ class MoLine extends CommonObjectLine
 	 * @param  string      	$sortfield    	Sort field
 	 * @param  int         	$limit        	limit
 	 * @param  int         	$offset       	Offset
-	 * @param  string|array<string,string> $filter       	Filter array. Example array('field'=>'valueforlike', 'customurl'=>...)
+	 * @param  string|array<string,string|int> $filter       	Filter array. Example array('field'=>'valueforlike', ...)
 	 * @param  string      	$filtermode   	Filter mode (AND or OR)
 	 * @return MoLine[]|int                 	int <0 if KO, array of pages if OK
 	 */
@@ -299,18 +304,18 @@ class MoLine extends CommonObjectLine
 			if (count($filter) > 0) {
 				foreach ($filter as $key => $value) {
 					if ($key == 't.rowid' || $key == 'fk_mo' || $key == 'origin_id') {
-						$sqlwhere[] = $key." = ".((int) $value);
+						$sqlwhere[] = $this->db->sanitize($key)." = ".((int) $value);
 					} elseif ($key == 'origin_type') {
-						$sqlwhere[] = $key." = '".$this->db->escape($value)."'";
+						$sqlwhere[] = $this->db->sanitize($key)." = '".$this->db->escape($value)."'";
 					} elseif (strpos($key, 'date') !== false) {
-						$sqlwhere[] = $key." = '".$this->db->idate($value)."'";
+						$sqlwhere[] = $this->db->sanitize($key)." = '".$this->db->idate((int) $value)."'";
 					} else {
-						$sqlwhere[] = $key." LIKE '%".$this->db->escape($this->db->escapeforlike($value))."%'";
+						$sqlwhere[] = $this->db->sanitize($key)." LIKE '%".$this->db->escape($this->db->escapeforlike((string) $value))."%'";
 					}
 				}
 			}
 			if (count($sqlwhere) > 0) {
-				$sql .= ' AND ('.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
+				$sql .= ' AND ('.implode(' '.$this->db->sanitize($filtermode).' ', $sqlwhere).')';
 			}
 
 			$filter = '';

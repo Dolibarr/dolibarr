@@ -5,8 +5,8 @@
  * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2025  Alexandre spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2013       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -118,8 +118,7 @@ $period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.
 
 report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink);
 
-$p = explode(":", getDolGlobalString('MAIN_INFO_SOCIETE_COUNTRY'));
-$idpays = $p[0];
+$idpays = $mysoc->country_id;
 
 
 $sql = "SELECT f.rowid, f.ref_supplier, f.type, f.datef, f.libelle as label,";
@@ -149,32 +148,32 @@ if (in_array($db->type, array('mysql', 'mysqli'))) {
 }
 
 $tabfac = array();
+$tabcompany = array();
+$tabht = array();
+$tabtva = array();
+$tabttc = array();
+$tablocaltax1 = array();
+$tablocaltax2 = array();
 
 $result = $db->query($sql);
 if ($result) {
 	$num = $db->num_rows($result);
 	// les variables
-	$cptfour = ((getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER') != "") ? $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER : $langs->trans("CodeNotDef"));
-	$cpttva = (getDolGlobalString('ACCOUNTING_VAT_BUY_ACCOUNT') ? $conf->global->ACCOUNTING_VAT_BUY_ACCOUNT : $langs->trans("CodeNotDef"));
+	$cptfour = getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER', $langs->trans("CodeNotDef"));
+	$cpttva = getDolGlobalString('ACCOUNTING_VAT_BUY_ACCOUNT', $langs->trans("CodeNotDef"));
 
-	$tabht = array();
-	$tabtva = array();
-	$tabttc = array();
-	$tablocaltax1 = array();
-	$tablocaltax2 = array();
-	$tabcompany = array();
 
 	$i = 0;
 	while ($i < $num) {
 		$obj = $db->fetch_object($result);
-		// contrôles
+		// checks
 		$compta_soc = (($obj->code_compta_fournisseur != "") ? $obj->code_compta_fournisseur : $cptfour);
 		$compta_prod = $obj->accountancy_code_buy;
 		if (empty($compta_prod)) {
 			if ($obj->product_type == 0) {
-				$compta_prod = (getDolGlobalString('ACCOUNTING_PRODUCT_BUY_ACCOUNT') ? $conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT : $langs->trans("CodeNotDef"));
+				$compta_prod = getDolGlobalString('ACCOUNTING_PRODUCT_BUY_ACCOUNT', $langs->trans("CodeNotDef"));
 			} else {
-				$compta_prod = (getDolGlobalString('ACCOUNTING_SERVICE_BUY_ACCOUNT') ? $conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT : $langs->trans("CodeNotDef"));
+				$compta_prod = getDolGlobalString('ACCOUNTING_SERVICE_BUY_ACCOUNT', $langs->trans("CodeNotDef"));
 			}
 		}
 		$compta_tva = (!empty($obj->account_tva) ? $obj->account_tva : $cpttva);
@@ -185,6 +184,31 @@ if ($result) {
 		$compta_localtax1 = (!empty($account_localtax1[2]) ? $account_localtax1[2] : $langs->trans("CodeNotDef"));
 		$account_localtax2 = getLocalTaxesFromRate($obj->tva_tx, 2, $mysoc, $obj->thirdparty);
 		$compta_localtax2 = (!empty($account_localtax2[2]) ? $account_localtax2[2] : $langs->trans("CodeNotDef"));
+
+		// Avoid warnings
+		if (!array_key_exists($obj->rowid, $tabfac)) {
+			$tabfac[$obj->rowid] = array();
+			$tabttc[$obj->rowid] = array();
+			$tabht[$obj->rowid] = array();
+			$tabtva[$obj->rowid] = array();
+			$tablocaltax1[$obj->rowid] = array();
+			$tablocaltax2[$obj->rowid] = array();
+		}
+		if (!isset($tabttc[$obj->rowid][$compta_soc])) {
+			$tabttc[$obj->rowid][$compta_soc] = 0;
+		}
+		if (!isset($tabht[$obj->rowid][$compta_prod])) {
+			$tabht[$obj->rowid][$compta_prod] = 0;
+		}
+		if (!isset($tabtva[$obj->rowid][$compta_tva])) {
+			$tabtva[$obj->rowid][$compta_tva] = 0;
+		}
+		if (!isset($tablocaltax1[$obj->rowid][$compta_localtax1])) {
+			$tablocaltax1[$obj->rowid][$compta_localtax1] = 0;
+		}
+		if (!isset($tablocaltax2[$obj->rowid][$compta_localtax2])) {
+			$tablocaltax2[$obj->rowid][$compta_localtax2] = 0;
+		}
 
 		$tabfac[$obj->rowid]["date"] = $obj->datef;
 		$tabfac[$obj->rowid]["ref"] = $obj->ref_supplier;
@@ -223,15 +247,16 @@ print "</tr>\n";
 $invoicestatic = new FactureFournisseur($db);
 $companystatic = new Fournisseur($db);
 
-foreach ($tabfac as $key => $val) {
-	$invoicestatic->id = $key;
-	$invoicestatic->ref = $val["ref"];
-	$invoicestatic->type = $val["type"];
+if (count($tabfac) && count($tabht) && count($tabtva) && count($tablocaltax1) && count($tablocaltax2) && count($tabttc)) {  // Check for static analysis
+	foreach ($tabfac as $key => $val) {
+		$invoicestatic->id = (int) $key;
+		$invoicestatic->ref = (string) $val["ref"];
+		$invoicestatic->type = $val["type"];
 
-	$companystatic->id = $tabcompany[$key]['id'];
-	$companystatic->name = $tabcompany[$key]['name'];
+		$companystatic->id = $tabcompany[$key]['id'];
+		$companystatic->name = $tabcompany[$key]['name'];
 
-	$lines = array(
+		$lines = array(
 		array(
 			'var' => $tabht[$key],
 			'label' => $langs->trans('Products'),
@@ -254,26 +279,27 @@ foreach ($tabfac as $key => $val) {
 			'nomtcheck' => true,
 			'inv' => true
 		)
-	);
+		);
 
-	foreach ($lines as $line) {
-		foreach ($line['var'] as $k => $mt) {
-			if (isset($line['nomtcheck']) || $mt) {
-				print '<tr class="oddeven">';
-				print "<td>".dol_print_date($db->jdate($val["date"]))."</td>";
-				print "<td>".$invoicestatic->getNomUrl(1)."</td>";
-				print "<td>".$k."</td>";
-				print "<td>".$line['label']."</td>";
+		foreach ($lines as $line) {
+			foreach ($line['var'] as $k => $mt) {
+				if (isset($line['nomtcheck']) || $mt) {
+					print '<tr class="oddeven">';
+					print '<td class="nowraponall">'.dol_print_date($db->jdate($val["date"]), 'day')."</td>";
+					print '<td class="tdoverflowmax150">'.$invoicestatic->getNomUrl(1)."</td>";
+					print "<td>".$k."</td>";
+					print "<td>".$line['label']."</td>";
 
-				if (isset($line['inv'])) {
-					print '<td class="right">'.($mt < 0 ? price(-$mt) : '')."</td>";
-					print '<td class="right">'.($mt >= 0 ? price($mt) : '')."</td>";
-				} else {
-					print '<td class="right">'.($mt >= 0 ? price($mt) : '')."</td>";
-					print '<td class="right">'.($mt < 0 ? price(-$mt) : '')."</td>";
+					if (isset($line['inv'])) {
+						print '<td class="right">'.($mt < 0 ? price(-$mt) : '')."</td>";
+						print '<td class="right">'.($mt >= 0 ? price($mt) : '')."</td>";
+					} else {
+						print '<td class="right">'.($mt >= 0 ? price($mt) : '')."</td>";
+						print '<td class="right">'.($mt < 0 ? price(-$mt) : '')."</td>";
+					}
+
+					print "</tr>";
 				}
-
-				print "</tr>";
 			}
 		}
 	}

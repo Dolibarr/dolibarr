@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2018	Andreu Bisquerra	<jove@bisquerra.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW				<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -85,7 +85,7 @@ if ($action == "getTables" && $user->hasRight('takepos', 'run')) {
 		$tmpplace = (int) $row['rowid'];
 
 		$invoice = new Facture($db);
-		$result = $invoice->fetch('', '(PROV-POS'.$_SESSION['takeposterminal'].'-'.$tmpplace.')');
+		$result = $invoice->fetch(0, '(PROV-POS'.$_SESSION['takeposterminal'].'-'.$tmpplace.')');
 		if ($result > 0) {
 			$row['occupied'] = "red";
 		}
@@ -121,7 +121,7 @@ if ($action == "updatename" && $user->hasRight('takepos', 'run')) {
 }
 
 if ($action == "add" && $user->hasRight('takepos', 'run')) {
-	$sql = "INSERT INTO ".MAIN_DB_PREFIX."takepos_floor_tables(entity, label, leftpos, toppos, floor) VALUES (".$conf->entity.", '', '45', '45', ".((int) $floor).")";
+	$sql = "INSERT INTO ".MAIN_DB_PREFIX."takepos_floor_tables(entity, label, leftpos, toppos, floor) VALUES (".((int) $conf->entity).", '', '45', '45', ".((int) $floor).")";
 	$asdf = $db->query($sql);
 	$db->query("UPDATE ".MAIN_DB_PREFIX."takepos_floor_tables SET label = rowid WHERE label = ''"); // No empty table names
 }
@@ -238,13 +238,13 @@ $( document ).ready(function() {
 <div style="position: absolute; left: 25%; bottom: 8%; width:50%; height:3%;">
 	<center>
 	<h1>
-	<?php if ($floor > 1) { ?>
-	<img class="valignmiddle" src="./img/arrow-prev.png" width="5%" onclick="location.href='floors.php?floor=<?php if ($floor > 1) {
+	<?php if ($floor > 0) { ?>
+	<img class="valignmiddle" src="./img/arrow-prev.png" width="5%" onclick="location.href='floors.php?floor=<?php if ($floor > 0) {
 		$floor--;
 		echo $floor;
 		$floor++;
 																											 } else {
-																												 echo "1";
+																												 echo "0";
 																											 } ?>';">
 	<?php } ?>
 	<span class="valignmiddle"><?php echo $langs->trans("Floor")." ".$floor; ?></span>

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2010       Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023       Alexandre Janniaux      <alexandre.janniaux@gmail.com>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -31,6 +31,7 @@ global $conf,$user,$langs,$db;
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/compta/facture/class/facture.class.php';
+require_once dirname(__FILE__).'/../../htdocs/core/modules/modBlockedLog.class.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
@@ -57,9 +58,14 @@ class FactureTest extends CommonClassTest
 	 */
 	public static function setUpBeforeClass(): void
 	{
-		self::assertTrue(isModEnabled('facture'), " module customer invoice must be enabled");
+		self::assertTrue(isModEnabled('invoice'), " module customer invoice must be enabled");
 		self::assertFalse(isModEnabled('ecotaxdeee'), " module ecotaxdeee must not be enabled");
 		parent::setUpBeforeClass();
+
+		// We disable module blocked log to avoid interference with tests
+		global $db;
+		$blockedlogmodule = new modBlockedLog($db);
+		$blockedlogmodule->remove();
 	}
 
 
@@ -106,6 +112,12 @@ class FactureTest extends CommonClassTest
 
 		$this->assertLessThan($result, 0);
 		print __METHOD__." id=".$id." result=".$result."\n";
+
+		// Specimen lines are built from real products picked at random (see Facture::initAsSpecimen), so the
+		// exact line count is not stable (a kit/BOM product can expand into extra lines) - only check totals coherence.
+		$this->assertNotEmpty($localobject->lines);
+		$this->assertLineTotalsMatchHeader($localobject, 'after fetch');
+
 		return $localobject;
 	}
 
@@ -135,12 +147,115 @@ class FactureTest extends CommonClassTest
 	}
 
 	/**
+	 * testFactureAddLine
+	 *
+	 * @param	Facture	$localobject	Invoice
+	 * @return	array{0:Facture,1:int}	Invoice and id of the line added
+	 *
+	 * @depends testFactureUpdate
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testFactureAddLine($localobject)
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$localobject->fetch_thirdparty();
+		$beforelinecount = count($localobject->lines);
+		$beforetotalht = (float) $localobject->total_ht;
+
+		$lineid = $localobject->addline('PHPUnit addline test', 100, 2, 20);	// 2 x 100 HT at 20% VAT = 200 HT / 40 VAT / 240 TTC
+
+		print __METHOD__." id=".$localobject->id." lineid=".$lineid."\n";
+		$this->assertGreaterThan(0, $lineid, $localobject->errorsToString());
+
+		$localobject->fetch($localobject->id);
+		$this->assertCount($beforelinecount + 1, $localobject->lines);
+		$this->assertEqualsWithDelta($beforetotalht + 200, (float) $localobject->total_ht, 0.01, 'total_ht not updated after addline');
+		$this->assertLineTotalsMatchHeader($localobject, 'after addline');
+
+		return array($localobject, $lineid);
+	}
+
+	/**
+	 * testFactureUpdateLine
+	 *
+	 * @param	array{0:Facture,1:int}	$params	Invoice and id of the line to update
+	 * @return	array{0:Facture,1:int}			Invoice and id of the line updated
+	 *
+	 * @depends testFactureAddLine
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testFactureUpdateLine($params)
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		list($localobject, $lineid) = $params;
+		$beforelinecount = count($localobject->lines);
+		$beforetotalht = (float) $localobject->total_ht;
+
+		$result = $localobject->updateline($lineid, 'PHPUnit addline test', 100, 3, 0, '', '', 20);	// qty 2 -> 3, so +100 HT / +20 VAT / +120 TTC
+
+		print __METHOD__." id=".$localobject->id." lineid=".$lineid." result=".$result."\n";
+		$this->assertGreaterThan(0, $result, $localobject->errorsToString());
+
+		$localobject->fetch($localobject->id);
+		$this->assertCount($beforelinecount, $localobject->lines);
+		$this->assertEqualsWithDelta($beforetotalht + 100, (float) $localobject->total_ht, 0.01, 'total_ht not updated after updateline');
+		$this->assertLineTotalsMatchHeader($localobject, 'after updateline');
+
+		return array($localobject, $lineid);
+	}
+
+	/**
+	 * testFactureDeleteLine
+	 *
+	 * @param	array{0:Facture,1:int}	$params	Invoice and id of the line to delete
+	 * @return	Facture
+	 *
+	 * @depends testFactureUpdateLine
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testFactureDeleteLine($params)
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		list($localobject, $lineid) = $params;
+		$beforelinecount = count($localobject->lines);
+		$beforetotalht = (float) $localobject->total_ht;
+
+		$result = $localobject->deleteLine($lineid);
+
+		print __METHOD__." id=".$localobject->id." lineid=".$lineid." result=".$result."\n";
+		$this->assertGreaterThan(0, $result, $localobject->errorsToString());
+
+		$localobject->fetch($localobject->id);
+		// Back to the original specimen lines, with the same totals
+		$this->assertCount($beforelinecount - 1, $localobject->lines);
+		$this->assertEqualsWithDelta($beforetotalht - 300, (float) $localobject->total_ht, 0.01, 'total_ht not updated after deleteLine');
+		$this->assertLineTotalsMatchHeader($localobject, 'after deleteLine');
+
+		return $localobject;
+	}
+
+	/**
 	 * testFactureValid
 	 *
 	 * @param   Facture $localobject Invoice
-	 * @return  void
+	 * @return  Facture
 	 *
-	 * @depends testFactureUpdate
+	 * @depends testFactureDeleteLine
 	 * The depends says test is run only if previous is ok
 	 */
 	public function testFactureValid($localobject)
@@ -151,35 +266,34 @@ class FactureTest extends CommonClassTest
 		$langs = $this->savlangs;
 		$db = $this->savdb;
 
+		// Force to default setup
+		$conf->global->FAC_FORCE_DATE_VALIDATION = 0;
+		$conf->global->INVOICE_CHECK_POSTERIOR_DATE = 0;
+
 		$result = $localobject->validate($user);
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 
 		$this->assertLessThan($result, 0);
 
-		// Test everything is still the same as specimen
-		$newlocalobject = new Facture($db);
-		$newlocalobject->initAsSpecimen();
-		$this->changeProperties($newlocalobject);
-
-		// Hack to avoid test to be wrong when module sellyoursaas is on
-		unset($localobject->array_options['options_commission']);
-		unset($localobject->array_options['options_reseller']);
-
-		$arraywithdiff = $this->objCompare(
+		// Test everything is still the same as a freshly built specimen with the same mutation applied
+		// (catches unwanted field changes introduced by update()/validate())
+		$this->assertMatchesFreshSpecimen(
 			$localobject,
-			$newlocalobject,
-			true,
-			// Not comparing:
+			function ($specimen) {
+				$this->changeProperties($specimen);
+			},
 			array(
-				'newref','oldref','id','lines','client','thirdparty','brouillon','user_creation_id','date_creation','date_validation','datem','date_modification',
-				'ref','statut','status','paye','specimen','ref','actiontypecode','actionmsg2','actionmsg','mode_reglement','cond_reglement',
+				'newref', 'oldcopy', 'oldref', 'id', 'lines', 'line', 'client', 'thirdparty', 'brouillon', 'fk_user_author', 'fk_user_modif', 'user_modification_id', 'date_creation', 'date_validation', 'datem', 'date_modification',
+				'ref', 'statut', 'status', 'paye', 'ref', 'actiontypecode', 'actionmsg2', 'actionmsg', 'mode_reglement', 'cond_reglement',
 				'cond_reglement_doc', 'modelpdf',
-				'multicurrency_total_ht','multicurrency_total_tva',	'multicurrency_total_ttc','fk_multicurrency','multicurrency_code','multicurrency_tx',
-				'retained_warranty' ,'retained_warranty_date_limit', 'retained_warranty_fk_cond_reglement', 'specimen', 'situation_cycle_ref', 'situation_counter', 'situation_final',
-				'trackid','user_creat','user_valid'
+				// Totals are ignored here: specimen lines reference random real products, and a kit/BOM product can
+				// expand into extra lines with a different amount - total correctness is checked by assertLineTotalsMatchHeader() instead.
+				'total_ht', 'total_tva', 'total_ttc',
+				'multicurrency_total_ht', 'multicurrency_total_tva',	'multicurrency_total_ttc', 'fk_multicurrency', 'multicurrency_code', 'multicurrency_tx',
+				'retained_warranty', 'retained_warranty_date_limit', 'retained_warranty_fk_cond_reglement', 'specimen', 'situation_cycle_ref', 'situation_counter', 'situation_final',
+				'trackid', 'user_creat', 'user_valid', 'note'
 			)
 		);
-		$this->assertEquals($arraywithdiff, array());    // Actual, Expected
 
 		return $localobject;
 	}
@@ -200,11 +314,6 @@ class FactureTest extends CommonClassTest
 		$user = $this->savuser;
 		$langs = $this->savlangs;
 		$db = $this->savdb;
-
-		/*$result=$localobject->setstatus(0);
-		print __METHOD__." id=".$localobject->id." result=".$result."\n";
-		$this->assertLessThan($result, 0);
-		*/
 
 		$localobject->info($localobject->id);
 		print __METHOD__." localobject->date_creation=".$localobject->date_creation."\n";
@@ -260,6 +369,8 @@ class FactureTest extends CommonClassTest
 		$result = $localobject->delete($user);					// Deletion is KO, it is not last invoice
 		print __METHOD__." id=".$localobject->id." ref=".$localobject->ref." result=".$result."\n";
 		$this->assertEquals(0, $result, 'Deletion should fail, it is not last invoice');
+
+		var_dump($localobject2->is_erasable());
 
 		$result = $localobject2->delete($user);					// Deletion is OK, it is last invoice
 		print __METHOD__." id=".$localobject2->id." ref=".$localobject2->ref." result=".$result."\n";

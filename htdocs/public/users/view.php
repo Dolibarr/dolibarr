@@ -37,17 +37,17 @@ if (!defined('NOBROWSERNOTIF')) {
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/vcard.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
  * @var HookManager $hookmanager
  * @var Societe $mysoc
  * @var Translate $langs
+ * @var string $dolibarr_main_url_root
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/vcard.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "other", "recruitment"));
@@ -274,6 +274,7 @@ print '<input type="hidden" name="securekey" value="'.$securekey.'">'."\n";
 print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
 print "\n";
 
+
 // Output html code for logo
 print '<div class="backgreypublicpayment">';
 print '<div class="logopublicpayment">';
@@ -292,14 +293,8 @@ if (!getDolUserInt('USER_PUBLIC_HIDE_COMPANY', 0, $object)) {
 	print '</div>';
 }
 
-
-
 print '</div>';
-/*if (empty($conf->global->MAIN_HIDE_POWERED_BY)) {
-	print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img class="poweredbyimg" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
-}*/
 print '</div>';
-
 
 if (getDolGlobalString('USER_IMAGE_PUBLIC_INTERFACE')) {
 	print '<div class="backimagepublicrecruitment">';
@@ -351,7 +346,7 @@ if ($object->email && !getDolUserInt('USER_PUBLIC_HIDE_EMAIL', 0, $object)) {
 if ($object->url && !getDolUserInt('USER_PUBLIC_HIDE_URL', 0, $object)) {
 	$usersection .= '<div class="flexitemsmall">';
 	$usersection .= img_picto('', 'globe', 'class="pictofixedwidth"');
-	$usersection .= dol_print_url($object->url, '_blank', 0, 0, '');
+	$usersection .= dol_print_url($object->url ?? '', '_blank', 0, 0, '');
 	$usersection .= '</div>';
 }
 
@@ -414,7 +409,7 @@ if ($usersection) {
 	// Output payment summary form
 	print '<tr><td class="left">';
 
-	print '<div class="nowidthimp nopaddingtoponsmartphone" id="tablepublicpayment">';
+	print '<div class="nowidthimp" id="tablepublicpayment">';
 
 	print $usersection;
 
@@ -511,20 +506,22 @@ if (!getDolUserInt('USER_PUBLIC_HIDE_COMPANY', 0, $object)) {
 	// Output payment summary form
 	print '<tr><td class="left">';
 
-	print '<div class="nowidthimp nopaddingtoponsmartphone" id="tablepublicpayment">';
+	if ($companysection || $mysoc->name) {
+		print '<div class="nowidthimp" id="tablepublicpayment">';
 
-	// Add company info
-	if ($mysoc->name) {
-		print '<div class="center bold">';
-		print dol_escape_htmltag($mysoc->name);
-		print '</div>';
-		print '<br>';
+		// Add company info
+		if ($mysoc->name) {
+			print '<div class="center bold">';
+			print dol_escape_htmltag($mysoc->name);
+			print '</div>';
+			print '<br>';
+		}
+
+		print $companysection;
+
+		print '</div>'."\n";
+		print "\n";
 	}
-
-	print $companysection;
-
-	print '</div>'."\n";
-	print "\n";
 
 	print '</td></tr>'."\n";
 

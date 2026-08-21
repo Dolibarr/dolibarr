@@ -4,56 +4,42 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see .
 
-#
 # Generic
-#
-
 # Module label 'ModuleKnowledgeManagementName'
-ModuleKnowledgeManagementName = Knowledge Management System
+ModuleKnowledgeManagementName = Teadmushaldussüsteem
 # Module description 'ModuleKnowledgeManagementDesc'
-ModuleKnowledgeManagementDesc=Manage a Knowledge Management (KM) or Help-Desk base
-
-#
+ModuleKnowledgeManagementDesc=Teadmushalduse (KM) või klienditoe baasi haldamine
 # Admin page
-#
-KnowledgeManagementSetup = Knowledge Management System setup
-KnowledgeManagementSetupPage = Knowledge Management System setup page
-
-
-#
+KnowledgeManagementSetup = Teadmushaldussüsteemi seadistamine
+KnowledgeManagementSetupPage = Teadmushaldussüsteemi seadistusleht
 # About page
-#
-KnowledgeManagementAbout = About Knowledge Management
-KnowledgeManagementAboutPage = Knowledge Management about page
-
-KnowledgeManagementArea = Knowledge Management
+KnowledgeManagementAbout = Teadmushalduse kohta
+KnowledgeManagementAboutPage = Teadmushalduse leht
+KnowledgeManagementArea = Teadmushaldus
 MenuKnowledgeRecord = Teadmusbaas
 MenuKnowledgeRecordShort = Teadmusbaas
-ListKnowledgeRecord = List of articles
-NewKnowledgeRecord = New article
-ValidateReply = Validate solution
-KnowledgeRecords = Articles
+ListKnowledgeRecord = Artiklite loend
+NewKnowledgeRecord = Uus artikkel
+ValidateReply = Lahenduse valideerimine
+KnowledgeRecords = Artiklid
 KnowledgeRecord = Artikkel
-KnowledgeRecordExtraFields = Extrafields for Article
-GroupOfTicket=Group of tickets
-YouCanLinkArticleToATicketCategory=You can link the article to a ticket group (so the article will be highlighted on any tickets in this group)
-SuggestedForTicketsInGroup=Suggested on ticket creation
-
-SetObsolete=Set as obsolete
-ConfirmCloseKM=Do you confirm the closing of this article as obsolete ?
-ConfirmReopenKM=Do you want to restore this article to status "Validated" ?
-BoxLastKnowledgerecordDescription=Last %s articles
-BoxLastKnowledgerecord=Last articles
-BoxLastKnowledgerecordContent=Last articles
-BoxLastKnowledgerecordModifiedContent=Last modified articles
-BoxLastModifiedKnowledgerecordDescription=Last %s modified articles
-BoxLastModifiedKnowledgerecord=Last modified articles
+KnowledgeRecordExtraFields = Artikli lisaväljad
+GroupOfTicket=Piletite grupp
+YouCanLinkArticleToATicketCategory=Saate artikli linkida piletigrupiga (nii et artikkel on selle grupi kõigil piletitel esile tõstetud).
+SuggestedForTicketsInGroup=Soovitatud piletite loomisel
+SetObsolete=Määra aegunuks
+ConfirmCloseKM=Kas kinnitate selle artikli sulgemist aegununa?
+ConfirmReopenKM=Kas soovite selle artikli olekuks "Valideeritud" taastada?
+BoxLastKnowledgerecordDescription=Viimased %s artiklid
+BoxLastKnowledgerecord=Viimased artiklid
+BoxLastKnowledgerecordContent=Viimased artiklid
+BoxLastKnowledgerecordModifiedContent=Viimati muudetud artiklid
+BoxLastModifiedKnowledgerecordDescription=Viimati muudetud artiklid %s
+BoxLastModifiedKnowledgerecord=Viimati muudetud artiklid

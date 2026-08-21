@@ -1,5 +1,7 @@
 #!/bin/bash
-# Copyright (C) 2025		MDW	<mdeweerd@users.noreply.github.com>
+# Copyright (C) 2025-2026	MDW	<mdeweerd@users.noreply.github.com>
+
+# shellcheck disable=2129,2128,2034,2016
 
 set -euo pipefail
 
@@ -20,11 +22,11 @@ if [[ -z "${GITHUB_TOKEN:-}" ]]; then
 fi
 if [[ -z "${GITHUB_REPOSITORY:-}" ]]; then
 	echo "GITHUB_REPOSITORY is not set" >&2
-	exit 1
+	exit 2
 fi
 if [[ -z "${GITHUB_EVENT_PATH:-}" ]]; then
 	echo "GITHUB_EVENT_PATH is not set" >&2
-	exit 1
+	exit 3
 fi
 
 # Extract the pull request number from the event payload
@@ -34,7 +36,6 @@ if [[ "$pr_number" == "null" ]]; then
 	exit 0
 fi
 
-# Split repository into owner and repo name
 # Split repository into owner and repo name using Bash parameter expansion
 owner="${GITHUB_REPOSITORY%%/*}"  # Extract text before the first '/'
 repo="${GITHUB_REPOSITORY##*/}"   # Extract text after the last '/'
@@ -42,15 +43,35 @@ repo="${GITHUB_REPOSITORY##*/}"   # Extract text after the last '/'
 page=1
 per_page=100
 changed_php_files=()
+changed_phan_files=()
+changed_lang_files=()
+
+# Get phan path configuration
+phan_directory_list=$(php -r '$config = require("dev/tools/phan/config.php"); echo "^".implode("|",$config["directory_list"]);')
+phan_exclude_directory=$(php -r '$config = require("dev/tools/phan/config.php"); echo "^".implode("|",$config["exclude_analysis_directory_list"]);')
+
+phan_exclude_file_regex=$(php -r '$config = require("dev/tools/phan/config.php"); echo $config["exclude_file_regex"];')
+phan_exclude_file_regex=${phan_exclude_file_regex#@}
+phan_exclude_file_regex=${phan_exclude_file_regex%@}
 
 # Loop through all pages to gather changed files
 while true; do
 	response=$(curl -s -H "Authorization: token ${GITHUB_TOKEN}" \
 		"https://api.github.com/repos/${owner}/${repo}/pulls/${pr_number}/files?per_page=${per_page}&page=${page}")
 
+
+
 	# Filter for files ending with .php and add them to the list
-	mapfile -t files < <(echo "$response" | jq -r '.[] | select(.filename | test("\\.php$")) | .filename')
+	# Deleted files (status "removed") are excluded: they no longer exist on disk, so
+	# passing them to phpstan/phan would just fail trying to analyse a missing path.
+	mapfile -t files < <(echo "$response" | jq -r '.[] | select((.filename | test("\\.php$")) and (.filename | test("^dev/") | not) and (.status != "removed")) | .filename')
 	changed_php_files+=("${files[@]}")
+
+	mapfile -t files < <(echo "$response" | jq -r '.[] | select((.filename | test("\\.php$")) and (.filename | test("'"$phan_directory_list"'")) and (.status != "removed")) | .filename' | grep -vP "$phan_exclude_file_regex")
+	changed_phan_files+=("${files[@]}")
+
+	mapfile -t files < <(echo "$response" | jq -r '.[] | select((.filename | test("\\.lang$")) and (.status != "removed")) | .filename')
+	changed_lang_files+=("${files[@]}")
 
 	# Check if we have reached the last page (less than per_page results)
 	count=$(echo "$response" | jq 'length')
@@ -61,26 +82,51 @@ while true; do
 done
 
 
-# Build a space-separated string of changed PHP files
+# Build a space-separated string of changed PHP and lang files
 # This does not cope with files that have spaces.
+
 # But such files do not exist in the project (at least not for the
 # files we are filtering).
 all_changed_files=$(IFS=" " ; echo "${changed_php_files[*]}")
+all_changed_lang=$(IFS=" " ; echo "${changed_lang_files[*]}")
+phan_changed_files=$(IFS=" " ; echo "${changed_phan_files[*]}")
 
 
-# Determine changed files flag
-if [ -z "$all_changed_files" ]; then
-	any_changed="false"
+forbidden_files=""
+#forbidden_files=$(echo "$all_changed_lang" | grep -E 'htdocs/langs/([^/]+)/.*\.lang$' | grep -v 'htdocs/langs/en_US/')
+#if [ -n "$forbidden_files" ]; then
+#  echo "You tried to modify one or more language files that are not allowed to be modified in Pull requests."
+#  echo "$forbidden_files"
+#  echo "To modify translations that are not the source language (en_US), you must modify them from transifex.com"
+#  exit 10
+#fi
+
+
+# Determine changed files flags
+if [ -z "${all_changed_files}" ]; then
+    any_changed="false"
 else
-	any_changed="true"
+    any_changed="true"
+fi
+
+if [ -z "${phan_changed_files}" ]; then
+    phan_changed="false"
+else
+    phan_changed="true"
 fi
 
 # Set outputs for GitHub Actions if GITHUB_OUTPUT is available
 if [ -n "${GITHUB_OUTPUT:-}" ]; then
 	echo "any_changed=${any_changed}" >> "$GITHUB_OUTPUT"
+	echo "phan_changed=${phan_changed}" >> "$GITHUB_OUTPUT"
 	echo "all_changed_files=${all_changed_files}" >> "$GITHUB_OUTPUT"
+	echo "phan_changed_files=${phan_changed_files[*]}" >> "$GITHUB_OUTPUT"
+	echo "forbidden_files=${forbidden_files}" >> "$GITHUB_OUTPUT"
 else
 	# Otherwise, print the outputs
 	echo "any_changed=${any_changed}"
+	echo "phan_changed=${phan_changed}"
+	echo "phan_changed_files=${phan_changed_files[*]}"
 	echo "all_changed_files=${all_changed_files}"
+	echo "forbidden_files=${forbidden_files}"
 fi

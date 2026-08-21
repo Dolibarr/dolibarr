@@ -29,4 +29,3 @@ ALTER TABLE llx_paiement_facture ADD CONSTRAINT fk_paiement_facture_fk_paiement 
 
 
 ALTER TABLE llx_paiement_facture ADD UNIQUE INDEX uk_paiement_facture(fk_paiement, fk_facture);
-

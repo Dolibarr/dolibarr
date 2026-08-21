@@ -5,8 +5,8 @@
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (c) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2016-2020 	Ferran Marcet       	<fmarcet@2byte.es>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -90,11 +90,6 @@ class ExpenseReportLine extends CommonObjectLine
 	 * @var int ID
 	 */
 	public $fk_c_exp_tax_cat;
-
-	/**
-	 * @var int ID
-	 */
-	public $fk_projet;
 
 	/**
 	 * @var int ID
@@ -203,7 +198,7 @@ class ExpenseReportLine extends CommonObjectLine
 	public $multicurrency_code;
 
 	/**
-	 * @var float
+	 * @var ?float
 	 */
 	public $multicurrency_tx;
 
@@ -226,6 +221,11 @@ class ExpenseReportLine extends CommonObjectLine
 	 * @var int ID into llx_ecm_files table to link line to attached file
 	 */
 	public $fk_ecm_files;
+
+	/**
+	 * @var int 0: not check, 1 :tchecked ok -1 : not good
+	 */
+	public $tcheck_file;
 
 	/**
 	 * @var string
@@ -254,7 +254,7 @@ class ExpenseReportLine extends CommonObjectLine
 		$sql = 'SELECT fde.rowid, fde.fk_expensereport, fde.fk_c_type_fees, fde.fk_c_exp_tax_cat, fde.fk_projet as fk_project, fde.date,';
 		$sql .= ' fde.tva_tx as vatrate, fde.vat_src_code, fde.comments, fde.qty, fde.value_unit, fde.total_ht, fde.total_tva, fde.total_ttc, fde.fk_ecm_files,';
 		$sql .= ' fde.localtax1_tx, fde.localtax2_tx, fde.localtax1_type, fde.localtax2_type, fde.total_localtax1, fde.total_localtax2, fde.rule_warning_message,';
-		$sql .= ' ctf.code as type_fees_code, ctf.label as type_fees_libelle,';
+		$sql .= ' ctf.code as type_fees_code, ctf.label as type_fees_libelle, fde.tcheck_file,';
 		$sql .= ' pjt.rowid as projet_id, pjt.title as projet_title, pjt.ref as projet_ref';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'expensereport_det as fde';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_fees as ctf ON fde.fk_c_type_fees=ctf.id'; // Sometimes type of expense report has been removed, so we use a left join here.
@@ -275,8 +275,8 @@ class ExpenseReportLine extends CommonObjectLine
 			$this->date = $objp->date;
 			$this->dates = $this->db->jdate($objp->date);
 			$this->value_unit = $objp->value_unit;
-			$this->fk_c_type_fees = $objp->fk_c_type_fees;
-			$this->fk_c_exp_tax_cat = $objp->fk_c_exp_tax_cat;
+			$this->fk_c_type_fees = (int) $objp->fk_c_type_fees;
+			$this->fk_c_exp_tax_cat = (int) $objp->fk_c_exp_tax_cat;
 			$this->fk_projet = $objp->fk_project; // deprecated
 			$this->fk_project = $objp->fk_project;
 			$this->type_fees_code = $objp->type_fees_code;
@@ -298,6 +298,7 @@ class ExpenseReportLine extends CommonObjectLine
 			$this->total_localtax2 = $objp->total_localtax2;
 
 			$this->fk_ecm_files = $objp->fk_ecm_files;
+			$this->tcheck_file = $objp->tcheck_file;
 
 			$this->rule_warning_message = $objp->rule_warning_message;
 
@@ -346,9 +347,9 @@ class ExpenseReportLine extends CommonObjectLine
 		$sql .= ' total_ht, total_tva, total_ttc,';
 		$sql .= ' total_localtax1, total_localtax2,';
 		$sql .= ' date, rule_warning_message, fk_c_exp_tax_cat, fk_ecm_files)';
-		$sql .= " VALUES (".$this->db->escape($this->fk_expensereport).",";
+		$sql .= " VALUES (".((int) $this->fk_expensereport).",";
 		$sql .= " ".((int) $this->fk_c_type_fees).",";
-		$sql .= " ".((int) (!empty($this->fk_project) && $this->fk_project > 0) ? $this->fk_project : ((!empty($this->fk_projet) && $this->fk_projet > 0) ? $this->fk_projet : 'null')).",";
+		$sql .= " ".((int) (!empty($this->fk_project) && $this->fk_project > 0) ? ((int) $this->fk_project) : ((!empty($this->fk_projet) && $this->fk_projet > 0) ? ((int) $this->fk_projet) : 'null')).",";
 		$sql .= " ".((float) $this->vatrate).",";
 		$sql .= " '".$this->db->escape(empty($this->vat_src_code) ? '' : $this->vat_src_code)."',";
 		$sql .= " ".((float) price2num($this->localtax1_tx)).",";
@@ -373,7 +374,7 @@ class ExpenseReportLine extends CommonObjectLine
 		if ($resql) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'expensereport_det');
 
-			if (!$error && !$notrigger) {
+			if (!$notrigger) {
 				// Call triggers
 				$result = $this->call_trigger('EXPENSE_REPORT_DET_CREATE', $user);
 				if ($result < 0) {
@@ -460,8 +461,6 @@ class ExpenseReportLine extends CommonObjectLine
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
-		global $langs;
-
 		$error = 0;
 
 		// Clean parameters
@@ -492,8 +491,8 @@ class ExpenseReportLine extends CommonObjectLine
 		$sql .= ", localtax1_type='".$this->db->escape($this->localtax1_type)."'";
 		$sql .= ", localtax2_type='".$this->db->escape($this->localtax2_type)."'";
 		$sql .= ", rule_warning_message='".$this->db->escape($this->rule_warning_message)."'";
-		$sql .= ", fk_c_exp_tax_cat=".$this->db->escape($this->fk_c_exp_tax_cat);
-		$sql .= ", fk_ecm_files=".($this->fk_ecm_files > 0 ? ((int) $this->fk_ecm_files) : 'null');
+		$sql .= ", fk_c_exp_tax_cat = ".((int) $this->fk_c_exp_tax_cat);
+		$sql .= ", fk_ecm_files = ".($this->fk_ecm_files > 0 ? ((int) $this->fk_ecm_files) : 'null');
 		if ($this->fk_c_type_fees) {
 			$sql .= ", fk_c_type_fees = ".((int) $this->fk_c_type_fees);
 		} else {
@@ -504,7 +503,7 @@ class ExpenseReportLine extends CommonObjectLine
 		} else {
 			$sql .= ", fk_projet=null";
 		}
-		$sql .= " WHERE rowid = ".((int) ($this->rowid ? $this->rowid : $this->id));
+		$sql .= " WHERE rowid = ".((int) ($this->rowid ? $this->rowid : ((int) $this->id)));
 
 		dol_syslog("ExpenseReportLine::update");
 

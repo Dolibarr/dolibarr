@@ -36,10 +36,18 @@ ActivateAllOnContract=Activar tots els serveis
 CloseAContract=Tancar un contracte
 ConfirmDeleteAContract=Vols eliminar aquest contracte i tots els seus serveis?
 ConfirmValidateContract=Estàs segur que vols validar aquest contracte sota el nom <b>%s</b>?
+ConfirmSignContract=Esteu segur que voleu establir aquest contracte com a signat?
+ConfirmUnsignContract=Esteu segur que voleu establir aquest contracte com a sense signar?
 ConfirmActivateAllOnContract=Això obrirà tots els serveis (encara no actius). Esteu segur que voleu obrir tots els serveis?
 ConfirmCloseContract=Això tancarà tots els serveis (caducats o no). Confirmes que vols tancar aquest contracte?
 ConfirmCloseService=Vols tancar aquest servei amb data <b>%s</b>?
 ValidateAContract=Validar un contracte
+UnsignContract=Anul·lar la signatura del contracte
+ContractSign=Estableix com a Signat
+ContractUnsign=Estableix com a Sense signar
+ContractSignedInDolibarr=Contracte signat
+ContractSignedOnline=Contracte signat en línia
+ContractUnsignedInDolibarr=Contracte sense signar
 ActivateService=Activar el servei
 ConfirmActivateService=Vols activar aquest servei amb data <b>%s</b>?
 RefContract=Ref. contracte
@@ -95,7 +103,13 @@ ConfirmCloneContract=Esteu segur que voleu clonar el contracte <b> %s </b>?
 LowerDateEndPlannedShort=Baixa data de finalització planificada dels serveis actius
 SendContractRef=Informació del contracte __REF__
 OtherContracts=Altres contractes
-##### Types de contacts #####
+##### Statistics #####
+ContractsStatistics=Estadístiques del contracte
+NbOfContracts=Nombre de contractes
+NumberOfContractsByMonth=Nombre de contractes per mes
+AmountOfServices=Nombre de serveis
+AmountOfServicesByMonthHT=Nombre de serveis (sense impostos) per mes
+##### Types of contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Agent comercial signant del contracte
 TypeContact_contrat_internal_SALESREPFOLL=Agent comercial del seguiment del contracte
 TypeContact_contrat_external_BILLING=Contacte client de facturació

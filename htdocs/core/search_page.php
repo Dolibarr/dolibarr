@@ -1,6 +1,8 @@
 <?php
+
 /* Copyright (C) 2005-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This file is a modified version of datepicker.php from phpBSM to fix some
  * bugs, to add new features and to dramatically increase speed.
@@ -97,7 +99,7 @@ if ($action == 'redirect') {	// Test on permission not required here. Test will 
  */
 
 // Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
-if (empty($dolibarr_nocache) && GETPOSTINT('cache')) {
+if (GETPOSTINT('cache')) {
 	header('Cache-Control: max-age='.GETPOSTINT('cache').', public');
 	// For a .php, we must set an Expires to avoid to have it forced to an expired value by the web server
 	header('Expires: '.gmdate('D, d M Y H:i:s', dol_now('gmt') + GETPOSTINT('cache')).' GMT');
@@ -128,11 +130,11 @@ $hookmanager->initHooks(array('searchform'));
 // Define $searchform
 $searchform = '';
 
-if ($conf->use_javascript_ajax && 1 == 2) {   // select2 is not best with smartphone
+if ($conf->use_javascript_ajax && 1 == 2) {   // select2 is not best with smartphone @phan-suppress-current-line PhanPluginBothLiteralsBinaryOp
 	if (!is_object($form)) {
 		$form = new Form($db);
 	}
-	$selected = -1;
+	$selected = '-1';
 	$searchform .= '<br><br>'.$form->selectArrayAjax('searchselectcombo', DOL_URL_ROOT.'/core/ajax/selectsearchbox.php', $selected, '', '', 0, 1, 'minwidth300', 1, $langs->trans("Search"), 0);
 } else {
 	$usedbyinclude = 1; // Used into next include
@@ -142,7 +144,7 @@ if ($conf->use_javascript_ajax && 1 == 2) {   // select2 is not best with smartp
 
 	$i = 0;
 	$accesskeyalreadyassigned = array();
-	foreach ($arrayresult as $key => $val) {
+	foreach ($arrayresult as $key => $val) {  // @phan-suppress-current-line PhanEmptyForeach
 		$tmp = explode('?', $val['url']);
 		$urlaction = $tmp[0];
 		$keysearch = 'search_all';
@@ -162,7 +164,7 @@ if ($conf->use_javascript_ajax && 1 == 2) {   // select2 is not best with smartp
 
 
 // Execute hook printSearchForm
-$parameters = array('searchform'=>$searchform);
+$parameters = array('searchform' => $searchform);
 $reshook = $hookmanager->executeHooks('printSearchForm', $parameters); // Note that $action and $object may have been modified by some hooks
 if (empty($reshook)) {
 	$searchform .= $hookmanager->resPrint;
@@ -174,7 +176,7 @@ $searchform .= '<br>';
 
 
 // Add search on URL
-if ($conf->dol_use_jmobile) {
+if (!empty($conf->dol_use_jmobile)) {
 	$ret = '';
 	$ret .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" class="searchform nowraponall tagtr">';
 	$ret .= '<input type="hidden" name="token" value="'.newToken().'">';
@@ -186,7 +188,7 @@ if ($conf->dol_use_jmobile) {
 	$ret .= ' style="background-repeat: no-repeat; background-position: 3px;"';
 	$ret .= ' placeholder="'.strip_tags($langs->trans("OrPasteAnURL")).'"';
 	$ret .= ' name="url" id="url" />';
-	$ret .= '<button type="submit" class="button bordertransp" style="padding-top: 4px; padding-bottom: 4px; padding-left: 6px; padding-right: 6px">';
+	$ret .= '<button type="submit" class="button bordertransp nohover" style="padding-top: 4px; padding-bottom: 4px; padding-left: 6px; padding-right: 6px">';
 	$ret .= '<span class="fa fa-search"></span>';
 	$ret .= '</button>';
 	$ret .= '</div>';

@@ -11,6 +11,35 @@ use OAuth\Common\Http\Uri\UriInterface;
 class StreamClient extends AbstractClient
 {
     /**
+     * Extract last HTTP status line and code from $http_response_header.
+     *
+     * @param array $headers
+     * @return array{0:string,1:int} [statusLine, statusCode]
+     */
+    private function getHttpStatusFromResponseHeaders($headers)
+    {
+        $statusLine = '';
+        $statusCode = 0;
+
+        if (!is_array($headers)) {
+            return array($statusLine, $statusCode);
+        }
+
+        // In case of redirects, PHP may include multiple status lines. Keep the last one.
+        foreach ($headers as $h) {
+            if (is_string($h) && strpos($h, 'HTTP/') === 0) {
+                $statusLine = trim($h);
+            }
+        }
+
+        if ($statusLine !== '' && preg_match('/^HTTP\\/\\S+\\s+(\\d{3})\\b/', $statusLine, $m)) {
+            $statusCode = (int) $m[1];
+        }
+
+        return array($statusLine, $statusCode);
+    }
+
+    /**
      * Any implementing HTTP providers should send a request to the provided endpoint with the parameters.
      * They should return, in string form, the response body and throw an exception on error.
      *
@@ -83,6 +112,25 @@ class StreamClient extends AbstractClient
             throw new TokenResponseException($lastError['message']);
         }
 
+        // When ignore_errors is enabled, file_get_contents returns the body even on HTTP 4xx/5xx.
+        // Keep the previous behavior (throw on HTTP errors) but include a short response snippet to help debugging.
+        list($statusLine, $statusCode) = $this->getHttpStatusFromResponseHeaders(isset($http_response_header) ? $http_response_header : null);
+        if ($statusCode >= 400) {
+            $snippet = trim((string) $response);
+            if (strlen($snippet) > 2000) {
+                $snippet = substr($snippet, 0, 2000).'...';
+            }
+
+            $msg = 'Failed to request resource. HTTP Code: '.($statusLine !== '' ? $statusLine : (string) $statusCode);
+
+            $canShowDetails = (!empty($GLOBALS['user']) && is_object($GLOBALS['user']) && !empty($GLOBALS['user']->admin));
+            if ($snippet !== '' && $canShowDetails) {
+                $msg .= ' Response: '.$snippet;
+            }
+
+            throw new TokenResponseException($msg);
+        }
+
         return $response;
     }
 
@@ -97,7 +145,9 @@ class StreamClient extends AbstractClient
                     'protocol_version' => '1.1',
                     'user_agent'       => $this->userAgent,
                     'max_redirects'    => $this->maxRedirects,
-                    'timeout'          => $this->timeout
+                    'timeout'          => $this->timeout,
+                    // Return the response body even on HTTP error status codes so we can include it in exceptions.
+                    'ignore_errors'    => true
                 ),
             )
         );

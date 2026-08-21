@@ -1,6 +1,6 @@
 #!/usr/bin/env php
 <?php
-/* Copyright (C) 2024		MDW				<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2024-2025	MDW				<mdeweerd@users.noreply.github.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -125,9 +125,11 @@ function updateCopyrightNotice($filename, $fileType, $name, $email)
 	$matches = array();
 	if (preg_match($pattern, $lines, $matches)) {
 		$existingYear = $matches['last'];
+		$startYear = null;
 		if (array_key_exists('start', $matches)) {
 			$startYear = $matches['start'];
-		} else {
+		}
+		if (empty($startYear)) {
 			$startYear = $existingYear;
 		}
 
@@ -135,7 +137,6 @@ function updateCopyrightNotice($filename, $fileType, $name, $email)
 		if ($existingYear !== date('Y')) {
 			// Extend the year range to the current year
 			$updatedNotice = preg_replace('/(?:\d{4}-)?\d{4}\s+/', $startYear . '-' . date('Y') . "\t", $matches[0]);
-
 			// Replace the old notice with the updated one in the file
 			file_put_contents($filename, preg_replace($pattern, $updatedNotice, file_get_contents($filename)));
 			return true; // Change detected

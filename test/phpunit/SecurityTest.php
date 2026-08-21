@@ -25,7 +25,7 @@
  *		\remarks	To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf, $user, $langs, $db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 
@@ -56,6 +56,7 @@ if (! defined("NOSESSION")) {
 
 require_once dirname(__FILE__).'/../../htdocs/main.inc.php';	// We force include of main.inc.php instead of master.inc.php even if we are in CLI mode because it contains a lot of security components we want to test.
 require_once dirname(__FILE__).'/../../htdocs/core/lib/security.lib.php';
+require_once dirname(__FILE__).'/../../htdocs/blockedlog/lib/securitycore.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/security2.lib.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
@@ -67,8 +68,14 @@ if (empty($user->id)) {
 $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
 
+print "PHP Version: ".phpversion()."\n";
+print "Memory limit: ". ini_get('memory_limit')."\n";
+
+
 /**
  * Class for PHPUnit tests
+ *
+ * #LNE1-QU2507-0005
  *
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
@@ -92,6 +99,31 @@ class SecurityTest extends CommonClassTest
 		$tmplangs->setDefaultLang('auto');
 		print __METHOD__.' $tmplangs->defaultlang='.$tmplangs->defaultlang."\n";
 		$this->assertEquals($tmplangs->defaultlang, 'malicioustextwithquote_MALICIOUSTEXTWITHQUOTE');
+	}
+
+
+
+	/**
+	 * testDolEncryptDolDecrypt
+	 *
+	 * @return  void
+	 */
+	public function testDolEncryptDolDecrypt()
+	{
+		$s = 'simple string with no special char a..z 1..0';
+		$es = dolEncrypt($s);
+		$news = dolDecrypt($es);
+
+		print __METHOD__.' testDolEncryptDolDecrypt '.$s.' ==> '.$es.' ==> '.$news."\n";
+		$this->assertEquals($news, $s);
+
+
+		$s = 'string with à é ç';
+		$es = dolEncrypt($s);
+		$news = dolDecrypt($es);
+
+		print __METHOD__.' testDolEncryptDolDecrypt '.$s.' ==> '.$es.' ==> '.$news."\n";
+		$this->assertEquals($news, $s);
 	}
 
 
@@ -137,6 +169,10 @@ class SecurityTest extends CommonClassTest
 		$_SERVER["PHP_SELF"] = '/DIR WITH SPACE/htdocs/admin/index.php/<svg>';
 		$result = testSqlAndScriptInject($_SERVER["PHP_SELF"], 2);
 		$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject for PHP_SELF that should detect XSS');
+
+		$_SERVER["PHP_SELF"] = '/dolibarr/htdocs/admin/index.php/aaa%bbb';
+		$result = testSqlAndScriptInject($_SERVER["PHP_SELF"], 2);
+		$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject for PHP_SELF that should detect % inside URL');
 
 		$test = 'select @@version';
 		$result = testSqlAndScriptInject($test, 0);
@@ -296,6 +332,12 @@ class SecurityTest extends CommonClassTest
 		$test = '<img onerror<abc>=alert(document.domain)';
 		$result = testSqlAndScriptInject($test, 0);
 		$this->assertEquals($expectedresult, $result, 'Error on testSqlAndScriptInject with an obfuscated string that bypass the WAF');
+
+		// Can allow the " in GET parameter value
+		define("SECURITY_WAF_ALLOW_QUOTES_IN_GET", 1);
+		$test = 'aa"bb';
+		$result = testSqlAndScriptInject($test, 1);		// Should return 0 = allowed
+		$this->assertEquals(0, $result, 'Error on testSqlAndScriptInject with SECURITY_WAF_ALLOW_QUOTES_IN_GET, should return 0, result='.$result);
 	}
 
 	/**
@@ -435,76 +477,10 @@ class SecurityTest extends CommonClassTest
 		//$dummyuser=new User($db);
 		//$result=restrictedArea($dummyuser,'societe');
 
-		$result = restrictedArea($user, 'societe');
+		$result = restrictedArea($user, 'societe', 0, '', '', 'fk_soc', 'rowid', 0, 1);
 		$this->assertEquals(1, $result);
 	}
 
-
-	/**
-	 * testGetRandomPassword
-	 *
-	 * @return int
-	 */
-	public function testGetURLContent()
-	{
-		global $conf;
-		include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
-
-		$url = 'ftp://mydomain.com';
-		$tmp = getURLContent($url);
-		print __METHOD__." url=".$url."\n";
-
-		$tmpvar = preg_match('/not supported/', $tmp['curl_error_msg']);
-		$this->assertEquals(1, $tmpvar, "Did not find the /not supported/ in getURLContent error message. We should.");
-
-		$url = 'https://www.dolibarr.fr';	// This is a redirect 301 page
-		$tmp = getURLContent($url, 'GET', '', 0);	// We do NOT follow
-		print __METHOD__." url=".$url."\n";
-		$this->assertEquals(301, (empty($tmp['http_code']) ? 0 : $tmp['http_code']), 'Should GET url 301 response');
-
-		$url = 'https://www.dolibarr.fr';	// This is a redirect 301 page
-		$tmp = getURLContent($url);		// We DO follow a page with return 300 so result should be 200
-		print __METHOD__." url=".$url."\n";
-		$this->assertEquals(200, (empty($tmp['http_code']) ? 0 : $tmp['http_code']), 'Should GET url 301 with a follow -> 200 but we get '.(empty($tmp['http_code']) ? 0 : $tmp['http_code']));
-
-		$url = 'http://localhost';
-		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
-		print __METHOD__." url=".$url."\n";
-		$this->assertEquals(400, (empty($tmp['http_code']) ? 0 : $tmp['http_code']), 'Should GET url to '.$url.' that resolves to a local URL');	// Test we receive an error because localtest.me is not an external URL
-
-		$url = 'http://127.0.0.1';
-		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
-		print __METHOD__." url=".$url."\n";
-		$this->assertEquals(400, (empty($tmp['http_code']) ? 0 : $tmp['http_code']), 'Should GET url to '.$url.' that is a local URL');	// Test we receive an error because 127.0.0.1 is not an external URL
-
-		$url = 'http://127.0.2.1';
-		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
-		print __METHOD__." url=".$url."\n";
-		$this->assertEquals(400, (empty($tmp['http_code']) ? 0 : $tmp['http_code']), 'Should GET url to '.$url.' that is a local URL');	// Test we receive an error because 127.0.2.1 is not an external URL
-
-		$url = 'https://169.254.0.1';
-		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
-		print __METHOD__." url=".$url."\n";
-		$this->assertEquals(400, (empty($tmp['http_code']) ? 0 : $tmp['http_code']), 'Should GET url to '.$url.' that is a local URL');	// Test we receive an error because 169.254.0.1 is not an external URL
-
-		$url = 'http://[::1]';
-		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
-		print __METHOD__." url=".$url."\n";
-		$this->assertEquals(400, (empty($tmp['http_code']) ? 0 : $tmp['http_code']), 'Should GET url to '.$url.' that is a local URL');	// Test we receive an error because [::1] is not an external URL
-
-		/*$url = 'localtest.me';
-		 $tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
-		 print __METHOD__." url=".$url."\n";
-		 $this->assertEquals(400, (empty($tmp['http_code']) ? 0 : $tmp['http_code']), 'Should GET url to '.$url.' that resolves to a local URL');	// Test we receive an error because localtest.me is not an external URL
-		 */
-
-		$url = 'http://192.0.0.192';
-		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL but on an IP in blacklist
-		print __METHOD__." url=".$url." tmp['http_code'] = ".(empty($tmp['http_code']) ? 0 : $tmp['http_code'])."\n";
-		$this->assertEquals(400, (empty($tmp['http_code']) ? 0 : $tmp['http_code']), 'Access should be refused and was not');	// Test we receive an error because ip is in blacklist
-
-		return 0;
-	}
 
 	/**
 	 * testDolSanitizeUrl
@@ -602,202 +578,380 @@ class SecurityTest extends CommonClassTest
 		include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 		include_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 
-		$result = dol_eval('1==\x01', 1, 0);	// Check that we can't make dol_eval on string containing \ char.
-		print "result0 = ".$result."\n";
-		$this->assertStringContainsString('Bad string syntax to evaluate', $result);
 
+		global $dolibarr_main_use_dol_eval_new;
+		$dolibarr_main_use_dol_eval_new = 0;
+
+
+		//$conf->global->MAIN_USE_DOL_EVAL_NEW = 1;
+		$conf->global->MAIN_ALLOW_DOUBLE_COLON_IN_DOL_EVAL = 0;
+		$conf->global->MAIN_ALLOW_OBFUSCATION_METHODS_IN_DOL_EVAL = 1;
+
+		// We force $dolibarr_main_restrict_eval_methods to 2 values, so the code will use the old black-list patterns.
+		global $dolibarr_main_restrict_eval_methods;
+
+		foreach (array('', 'getDolGlobalString, getDolGlobalInt, getDolCurrency, getDolEntity, getDolDBType, fetchNoCompute, hasRight, isAdmin, isModEnabled, isStringVarMatching, abs, min, max, round, dol_now, preg_match') as $valparam) {
+			$dolibarr_main_restrict_eval_methods = $valparam;
+			print "\ndolibarr_main_restrict_eval_methods = ".$dolibarr_main_restrict_eval_methods."\n";
+
+			//$dolibarr_main_restrict_eval_methods = array();
+
+
+			//$resulttest = dol_eval('((getDolGlobalString("MAIN_USE_ADVANCED_PERMS") ? $user->hasRight("user","group_advance","read") : $user->hasRight("user","user","lire")) || $user->admin) && !(isModEnabled("multicompany") && $conf->entity > 1 && getDolGlobalString("MULTICOMPANY_TRANSVERSE_MODE"))', 1, 0);
+			//print "resulttest = ".$resulttest."\n";
+			//$this->assertTrue($resulttest);
+
+			$result = dol_eval("('exec') /* */ ('id')");
+			print "result = ".$result."\n";
+			$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'The string was not detected as evil');
+
+			$result = dol_eval("('exec')  ('id')");
+			print "result = ".$result."\n";
+			$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'The string was not detected as evil');
+
+			$result = dol_eval('1==1', 1, 0);
+			print "result1 = ".$result."\n";
+			$this->assertTrue($result);
+
+			$result = dol_eval('1==2', 1, 0);
+			print "result2 = ".$result."\n";
+			$this->assertFalse($result);
+
+			if (empty($dolibarr_main_restrict_eval_methods)) {		// Old mode
+				$s = '(($var1 = ne SyntaxErrorOnNew($db)))';
+				$result3a = dol_eval($s, 1, 1, '2');
+				print "result3a = ".$result3a."\n";
+				$this->assertStringContainsString('Exception during evaluation', $result3a, 'The string was not detected as evil : '.$s);
+
+				$s = '((($var1 = new ClassThatDoesNotExists($db)) && ($var1->fetchNoCompute($objectoffield->fk_product) > 0)) ? \'1\' : \'0\')';
+				$result3c = dol_eval($s, 1, 1, '2');
+				print "result3c = ".$result3c."\n";
+				$this->assertStringContainsString('Exception during evaluation', $result3c, 'The string was not detected as evil : '.$s);
+
+				$s = '((($var1 = new SimpleXMLElement()) ? \'1\' : \'0\')';
+				$result3d= dol_eval($s, 1, 1, '2');
+				print "result3d = ".$result."\n";
+				$this->assertStringContainsString('Exception during evaluation', $result3d, 'The string was not detected as evil : '.$s);
+			} else {												// New mode for v23+
+				$s = '(($var1 = ne SyntaxErrorOnNew($db)))';
+				$result3a = dol_eval($s, 1, 1, '2');
+				print "result3a = ".$result3a."\n";
+				$this->assertStringContainsString('Bad string syntax to evaluate.', $result3a, 'The string was not detected as evil');
+
+				$s = '((($var1 = new ClassThatDoesNotExists($db)) && ($var1->fetchNoCompute($objectoffield->fk_product) > 0)) ? \'1\' : \'0\')';
+				$result3c = dol_eval($s, 1, 1, '2');
+				print "result3c = ".$result3c."\n";
+				$this->assertStringContainsString('Bad string syntax to evaluate', $result3c, 'The string was not detected as evil');
+
+				$s = '((($var1 = new SimpleXMLElement()) ? \'1\' : \'0\')';
+				$result3d= dol_eval($s, 1, 1, '2');
+				print "result3d = ".$result."\n";
+				$this->assertStringContainsString('Bad string syntax to evaluate', $result3d, 'The string was not detected as evil');
+			}
+
+			// This next one are okfor syntax and allowance
+
+			$s = '((($var1 = new Project($db)) && ($var1->fetchNoCompute($objectoffield->fk_product) > 0)) ? \'1\' : \'0\')';
+			$result3b = dol_eval($s, 1, 1, '2');
+			print "result3b = ".$result."\n";
+			$this->assertEquals('0', $result3b);
+
+			$s = '(($var1 = new Task($db)) && ($var1->fetchNoCompute($objectoffield->id) > 0) && ($var2 = new Project($db)) && ($var2->fetchNoCompute($var1->fk_project) > 0)) ? $var2->ref : "Parent project not found"';
+			$result = (string) dol_eval($s, 1, 1, '2');
+			print "result3c = ".$result."\n";
+			$this->assertEquals('Parent project not found', $result);
+
+			$s = '(($var1 = new Task($db)) && ($var1->fetchNoCompute($objectoffield->id) > 0) && ($var2 = new Project($db)) && ($var2->fetchNoCompute($var1->fk_project) > 0)) ? $var2->ref : \'Parent project not found\'';
+			$result = (string) dol_eval($s, 1, 1, '2');
+			print "result4 = ".$result."\n";
+			$this->assertEquals('Parent project not found', $result, 'Test 4');
+
+			$s = '4 < 5';
+			$result = (string) dol_eval($s, 1, 1, '2');
+			print "result6 = ".$result."\n";
+			$this->assertEquals('1', $result, 'Test 5');
+
+			/*
+			$s = 'MyClass::MyMethod()';
+			$result = dol_eval($s, 1, 1, '2');
+			print "result7 = ".$result."\n";
+			$this->assertStringContainsString('Bad string syntax to evaluate (double : char is forbidden without setting MAIN_ALLOW_DOUBLE_COLON_IN_DOL_EVAL)', $result, 'The string was not detected as evil');
+			*/
+
+			/* not allowed. Not a one line eval string
+			$result = (string) dol_eval('if ($a == 1) { }', 1, 1);
+			print "result4b = ".$result."\n";
+			$this->assertEquals('aaa', $result);
+			*/
+
+			// Now string not allowed
+
+			$s = '4 <5';
+			$result = (string) dol_eval($s, 1, 1, '2');		// in mode 2, char < is allowed only if followed by a space
+			print "result = ".$result."\n";
+			$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'Test 4 <5 - The string was not detected as evil');
+
+			$s = '4 < 5';
+			$result = (string) dol_eval($s, 1, 1, '1');		// in mode 1, char < is always forbidden
+			print "result = ".$result."\n";
+			$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'Test 4 < 5 - The string was not detected as evil');
+
+			$s = '1==\x01';
+			$result = dol_eval($s, 1, 1, '1');	// Check that we can't make dol_eval on string containing \ char.
+			print "result5 = ".$result."\n";
+			$this->assertStringContainsString('Bad string syntax to evaluate (found chars that are not chars for a simple one line clean eval string)', $result);
+
+			$s = 'new abc->invoke(\'whoami\')';
+			$result = (string) dol_eval($s, 1, 1, '2');
+			print "result = ".$result."\n";
+			$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'The string was not detected as evil');
+
+			/*          $s = 'new ReflectionFunction(\'abc\')';
+			$result = (string) dol_eval($s, 1, 1, '2');
+			print "result = ".$result."\n";
+			$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'The string was not detected as evil');
+			*/
+			$s = 'new ReflectionFunction(\'abc\')';
+			$result = (string) dol_eval($s, 1, 1, '2');
+			print "result = ".$result."\n";
+			$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'The string was not detected as evil');
+
+			$result = dol_eval('json_encode(array_map(implode("",["ex","ec"]), ["id"]))', 1, 1, '1');		// result of dol_eval may be an object Closure
+			print "result4a = ".json_encode($result)."\n";
+			$this->assertStringContainsString('Bad string syntax to evaluate', json_encode($result), 'The string was not detected as evil, it should due to the [ char and method "2"');
+
+			$result = dol_eval('json_encode(array_map(implode("",["ex","ec"]), ["id"]))', 1, 1, '2');		// result of dol_eval may be an object Closure
+			print "result4b = ".json_encode($result)."\n";
+			$this->assertStringContainsString('Bad string syntax to evaluate', json_encode($result), 'The string was not detected as evil, it should due to the use of array_map');
+
+			$result = dol_eval('json_encode(array_map(implode("",array("ex","ec"), array("id")))', 1, 1, '1');		// result of dol_eval may be an object Closure
+			print "result4c = ".json_encode($result)."\n";
+			$this->assertStringContainsString('Bad string syntax to evaluate', json_encode($result), 'The string was not detected as evil, it should due to the use of array_map');
+
+			$result = dol_eval('$a=function() { }; $a', 1, 1, '0');		// result of dol_eval may be an object Closure
+			print "result5 = ".json_encode($result)."\n";
+			$this->assertStringContainsString('Bad string syntax to evaluate', json_encode($result), 'The string was not detected as evil');
+
+			$result = dol_eval('$a=function() { }; $a();', 1, 1, '1');
+			print "result6 = ".json_encode($result)."\n";
+			$this->assertStringContainsString('Bad string syntax to evaluate', json_encode($result), 'The string was not detected as evil');
+
+			$result = (string) dol_eval('instruction;', 1, 1);	// ; is not allowed.
+			print "result7 = ".$result."\n";
+			$this->assertStringContainsString('Bad string syntax to evaluate (found chars that are not chars for a simple one line clean eval string)', $result, 'The string was not detected as evil');
+
+			$result = (string) dol_eval('$var1=exec("ls")', 1, 1);
+			print "result7 = ".$result."\n";
+			$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'The string was not detected as evil');
+
+			$result = (string) dol_eval('$var1=exec(\'ls\')', 1, 1);
+			print "result7 = ".$result."\n";
+			$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'The string was not detected as evil');
+
+			$result = (string) dol_eval('$var1=exec ("ls")', 1, 1);
+			print "result8 = ".$result."\n";
+			$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'The string was not detected as evil');
+
+			$result = (string) dol_eval("strrev('metsys') ('whoami')", 1, 1);
+			print "result8b = ".$result."\n";
+			$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'The string was not detected as evil');
+
+			$conf->global->MAIN_ALLOW_OBFUSCATION_METHODS_IN_DOL_EVAL = 0;
+
+			$result = (string) dol_eval('$a="test"; $$a;', 1, 0);
+			print "result9 = ".$result."\n";
+			$this->assertStringContainsString('Bad string syntax to evaluate (found chars that are not chars for a simple one line clean eval string)', $result, 'The string was not detected as evil');
+
+			$result = (string) dol_eval('`ls`', 1, 0);
+			print "result10 = ".$result."\n";
+			$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'The string was not detected as evil');
+
+			$result = (string) dol_eval("('ex'.'ec')('ls')", 1, 0);	// This will execute exec of ls
+			print "result11 = ".$result."\n";
+			$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'The string was not detected as evil');
+
+			$result = (string) dol_eval("('ex'.'ec') /* */ (/* */'ls')", 1, 0);	// This will execute exec of ls
+			print "result11 = ".$result."\n";
+			$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'The string was not detected as evil');
+
+			$result = (string) dol_eval("sprintf(\"%s%s\", \"ex\", \"ec\")('echo abc')", 1, 0);
+			print "result12 = ".$result."\n";
+			$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'The string was not detected as evil');
+
+			$result = dol_eval("90402.38+267678+0", 1, 1, 1);
+			print "result13 = ".$result."\n";
+			$this->assertEquals('358080.38', $result, 'The string was not detected as evil');
+
+
+			// Must be allowed
+
+			global $mainmenu,$leftmenu;	// Used into following strings to eval
+
+			$leftmenu = 'AAA';
+			$result = dol_eval('getDolCurrency() && preg_match(\'/^(AAA|BBB)/\',$leftmenu)', 1, 1, '1');
+			print "result = ".$result."\n";
+			$this->assertTrue($result);
+
+			// Same with a value that does not match
+			$leftmenu = 'XXX';
+			$result = dol_eval('getDolCurrency() && preg_match(\'/^(AAA|BBB)/\',$leftmenu)', 1, 1, '1');
+			print "result14 = ".$result."\n";
+			$this->assertFalse($result);
+
+			$leftmenu = 'AAA';
+			$result = dol_eval('getDolCurrency() && isStringVarMatching(\'leftmenu\', \'(AAA|BBB)\')', 1, 1, '1');
+			print "result15 = ".$result."\n";
+			$this->assertTrue($result);
+
+			$leftmenu = 'XXX';
+			$result = dol_eval('getDolCurrency() && isStringVarMatching(\'leftmenu\', \'(AAA|BBB)\')', 1, 1, '1');
+			print "result16 = ".$result."\n";
+			$this->assertFalse($result);
+
+			$leftmenu = 'XXX';
+			$conf->global->MAIN_FEATURES_LEVEL = 1;		// Force for the case option is -1
+			$string = '(isModEnabled("user") || isModEnabled("resource")) && getDolGlobalInt("MAIN_FEATURES_LEVEL") >= 0 && preg_match(\'/^(admintools|all|XXX)/\', $leftmenu)';
+			$result = dol_eval($string, 1, 1, '1');
+			print "result17 = ".$result."\n";
+			$this->assertTrue($result);
+
+			$result = dol_eval('1 && getDolGlobalInt("doesnotexist1") && getDolGlobalInt("MAIN_FEATURES_LEVEL")', 1, 0);	// Should return false and not a 'Bad string syntax to evaluate ...'
+			print "result18 = ".$result."\n";
+			$this->assertFalse($result);
+
+			$mainmenu = 'TTT';
+			$leftmenu = 'LLL';
+			$result = (string) dol_eval('$mainmenu=\'T2\' && ($mainmenu == \'TTT\')', 1, 0);
+			print "result11 = ".$result."\n";
+			$this->assertEquals('1', $result, 'The string was not detected as evil');
+
+
+			// Test option MAIN_ALLOW_OBFUSCATION_METHODS_IN_DOL_EVAL
+
+			$conf->global->MAIN_ALLOW_OBFUSCATION_METHODS_IN_DOL_EVAL = 1;
+
+			$mainmenu = 'ex';
+			$result = (string) dol_eval('$mainmenu.\'ec\'', 1, 0);
+			print "resultconcat1 = ".$result."\n";
+			$this->assertStringContainsString('exec', $result, 'With MAIN_ALLOW_OBFUSCATION_METHODS_IN_DOL_EVAL on. we should accept concat');
+
+			$mainmenu = 'ex';
+			$leftmenu = 'ec';
+			$result = (string) dol_eval("\$mainmenu.\$leftmenu", 1, 0);
+			print "resultconcat2 = ".$result."\n";
+			$this->assertStringContainsString('exec', $result, 'With MAIN_ALLOW_OBFUSCATION_METHODS_IN_DOL_EVAL on. we should accept concat');
+
+			// Test option MAIN_ALLOW_OBFUSCATION_METHODS_IN_DOL_EVAL = 0
+
+			$conf->global->MAIN_ALLOW_OBFUSCATION_METHODS_IN_DOL_EVAL = 0;
+
+			$leftmenu = 'ab';
+			$result = (string) dol_eval("(\$leftmenu.'s')", 1, 0);
+			print "resultconcat3 = ".$result."\n";
+			$this->assertStringContainsString('Bad string syntax to evaluate (dot char is forbidden if not strictly between 2 numbers)', $result, 'Test concat - The string was not reported as a bad syntax when it should');
+
+
+			// Not allowed
+
+			$conf->global->MAIN_ALLOW_OBFUSCATION_METHODS_IN_DOL_EVAL = 1;
+
+			$leftmenu = 'abs';
+			$result = (string) dol_eval('$leftmenu(-5)', 1, 0);
+			print "result20 = ".$result."\n";
+			$this->assertStringContainsString('Bad string syntax to evaluate (mode 1, found a call using "$abc(" or "$abc (" instead of using the direct name of the function)', $result, 'Test 20 - The string was not detected as evil');
+
+			$result = (string) dol_eval('str_replace("z","e","zxzc")("whoami");', 1, 0);
+			print "result21 = ".$result."\n";
+			$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'Test 21 - The string was not detected as evil');
+
+			$result = (string) dol_eval('($a = "ex") && ($b = "ec") && ($cmd = "$a$b") && $cmd ("curl localhost:5555")', 1, 0);
+			print "result22 = ".$result."\n";
+			$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'Test 22 - The string was not detected as evil');
+
+			$result = (string) dol_eval('\'exec\'("aaa")', 1, 0);
+			print "result23 = ".$result."\n";
+			$this->assertStringContainsString('Bad string syntax to evaluate', json_encode($result), 'Test 23 - The string was not detected as evil - Can\'t find the string Bad string syntax when it should');
+
+			$result = (string) dol_eval('1 + 2 <? echo "aaa" ?>', 1, 0, '2');
+			print "result24 = ".$result."\n";
+			$this->assertStringContainsString('Bad string syntax to evaluate (The char ? can be used only with a space before and after)', json_encode($result), 'Test 24 - The string was not detected as evil - Can\'t find the string Bad string syntax when i should');
+
+			$result = (string) dol_eval('$$a', 1, 0);
+			print "result25 = ".$result."\n";
+			$this->assertStringContainsString('Bad string syntax to evaluate', json_encode($result), 'Test 25 - The string was not detected as evil - Can\'t find the string Bad string syntax when i should');
+		}
+	}
+
+	/**
+	 * testDolEvalNew
+	 *
+	 * Check that dol_eval_new() (engine used when MAIN_USE_DOL_EVAL_NEW is set) rejects
+	 * the callable-dispatch bypass reported in GitHub issue #39436: a forbidden function
+	 * name reached indirectly by a PHP callable-dispatch function like array_map/usort/...
+	 * instead of a direct call.
+	 *
+	 * @depends	testDolEval
+	 * @return void
+	 */
+	public function testDolEvalNew()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+
+		global $dolibarr_main_use_dol_eval_new;
+		$dolibarr_main_use_dol_eval_new = 1;
+
+
+		$s = "array_map('sys'.'tem', array('id'))";
+		$result = (string) dol_eval($s, 1, 1, '0');
+		print "resultnew1 = ".$result."\n";
+		$this->assertStringContainsString('is prohibited', $result, 'The string '.$s.' returned '.$result.', so was not detected as evil - array_map bypass');
+
+		$result = (string) dol_eval("usort(\$a, 'system')", 1, 1, '0');
+		print "resultnew2 = ".$result."\n";
+		$this->assertStringContainsString('is prohibited', $result, 'The string was not detected as evil - usort bypass');
+
+		$result = (string) dol_eval("preg_replace_callback('/a/', 'system', 'a')", 1, 1, '0');
+		print "resultnew3 = ".$result."\n";
+		$this->assertStringContainsString('is prohibited', $result, 'The string was not detected as evil - preg_replace_callback bypass');
+
+		// Sanity check: legitimate expressions still evaluate correctly
 		$result = dol_eval('1==1', 1, 0);
-		print "result1 = ".$result."\n";
+		print "resultnew4 = ".json_encode($result)."\n";
 		$this->assertTrue($result);
 
-		$result = dol_eval('1==2', 1, 0);
-		print "result2 = ".$result."\n";
-		$this->assertFalse($result);
-
-		$s = '((($reloadedobj = new ClassThatDoesNotExists($db)) && ($reloadedobj->fetchNoCompute($objectoffield->fk_product) > 0)) ? \'1\' : \'0\')';
-		$result3a = dol_eval($s, 1, 1, '2');
-		print "result3a = ".$result3a."\n";
-		$this->assertEquals('Exception during evaluation: '.$s, $result3a);
-
-		$s = '((($reloadedobj = new Project($db)) && ($reloadedobj->fetchNoCompute($objectoffield->fk_product) > 0)) ? \'1\' : \'0\')';
-		$result3b = dol_eval($s, 1, 1, '2');
-		print "result3b = ".$result."\n";
-		$this->assertEquals('0', $result3b);
-
-		$s = '(($reloadedobj = new Task($db)) && ($reloadedobj->fetchNoCompute($object->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetchNoCompute($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref : "Parent project not found"';
-		$result = (string) dol_eval($s, 1, 1, '2');
-		print "result3 = ".$result."\n";
-		$this->assertEquals('Parent project not found', $result);
-
-		$s = '(($reloadedobj = new Task($db)) && ($reloadedobj->fetchNoCompute($object->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetchNoCompute($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref : \'Parent project not found\'';
-		$result = (string) dol_eval($s, 1, 1, '2');
-		print "result4 = ".$result."\n";
-		$this->assertEquals('Parent project not found', $result, 'Test 4');
-
-		$s = '4 < 5';
-		$result = (string) dol_eval($s, 1, 1, '2');
-		print "result5 = ".$result."\n";
-		$this->assertEquals('1', $result, 'Test 5');
+		$conf->global->MAIN_USE_DOL_EVAL_NEW = 0;
+	}
 
 
-		/* not allowed. Not a one line eval string
-		$result = (string) dol_eval('if ($a == 1) { }', 1, 1);
-		print "result4b = ".$result."\n";
-		$this->assertEquals('aaa', $result);
-		*/
+	/**
+	 * testRealCharforNumericEntities()
+	 *
+	 * @return int
+	 */
+	public function testRealCharforNumericEntities()
+	{
+		global $conf;
 
-		// Now string not allowed
+		// Test that testRealCharforNumericEntities return an ascii char when code is inside Ascii range
+		$arraytmp = array(0 => '&#97;', 1 => '97;');
+		$result = realCharForNumericEntities($arraytmp);
+		$this->assertEquals('a', $result);
 
-		$s = '4 <5';
-		$result = (string) dol_eval($s, 1, 1, '2');		// in mode 2, char < is allowed only if followed by a space
-		print "result = ".$result."\n";
-		$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'Test 4 <5 - The string was not detected as evil');
+		// Test that testRealCharforNumericEntities return an emoji utf8 char when code is inside Emoji range
+		$arraytmp = array(0 => '&#9989;', 1 => '9989;');	// Encoded as decimal
+		$result = realCharForNumericEntities($arraytmp);
+		$this->assertEquals('✅', $result);
 
-		$s = '4 < 5';
-		$result = (string) dol_eval($s, 1, 1, '1');		// in mode 1, char < is always forbidden
-		print "result = ".$result."\n";
-		$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'Test 4 < 5 - The string was not detected as evil');
+		$arraytmp = array(0 => '&#x2705;', 1 => 'x2705;');	// Encoded as hexadecimal
+		$result = realCharForNumericEntities($arraytmp);
+		$this->assertEquals('✅', $result);
 
-		$s = 'new abc->invoke(\'whoami\')';
-		$result = (string) dol_eval($s, 1, 1, '2');
-		print "result = ".$result."\n";
-		$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'The string was not detected as evil');
-
-		$s = 'new ReflectionFunction(\'abc\')';
-		$result = (string) dol_eval($s, 1, 1, '2');
-		print "result = ".$result."\n";
-		$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'The string was not detected as evil');
-
-		$result = dol_eval('json_encode(array_map(implode("",["ex","ec"]), ["id"]))', 1, 1, '1');		// result of dol_eval may be an object Closure
-		print "result4a = ".json_encode($result)."\n";
-		$this->assertStringContainsString('Bad string syntax to evaluate', json_encode($result), 'The string was not detected as evil, it should due to the [ char and method "2"');
-
-		$result = dol_eval('json_encode(array_map(implode("",["ex","ec"]), ["id"]))', 1, 1, '2');		// result of dol_eval may be an object Closure
-		print "result4b = ".json_encode($result)."\n";
-		$this->assertStringContainsString('Bad string syntax to evaluate', json_encode($result), 'The string was not detected as evil, it should due to the use of array_map');
-
-		$result = dol_eval('json_encode(array_map(implode("",array("ex","ec"), array("id")))', 1, 1, '1');		// result of dol_eval may be an object Closure
-		print "result4c = ".json_encode($result)."\n";
-		$this->assertStringContainsString('Bad string syntax to evaluate', json_encode($result), 'The string was not detected as evil, it should due to the use of array_map');
-
-		$result = dol_eval('$a=function() { }; $a', 1, 1, '0');		// result of dol_eval may be an object Closure
-		print "result5 = ".json_encode($result)."\n";
-		$this->assertStringContainsString('Bad string syntax to evaluate', json_encode($result), 'The string was not detected as evil');
-
-		$result = dol_eval('$a=function() { }; $a();', 1, 1, '1');
-		print "result6 = ".json_encode($result)."\n";
-		$this->assertStringContainsString('Bad string syntax to evaluate', json_encode($result), 'The string was not detected as evil');
-
-		$result = dol_eval('json_encode(array_map(implode("",["ex","ec"]), ["id"]))', 1, 1, '1');		// result of dol_eval may be an object Closure
-		print "result4a = ".json_encode($result)."\n";
-		$this->assertStringContainsString('Bad string syntax to evaluate', json_encode($result), 'The string was not detected as evil, it should due to the [ char and method "2"');
-
-		$result = dol_eval('json_encode(array_map(implode("",["ex","ec"]), ["id"]))', 1, 1, '2');		// result of dol_eval may be an object Closure
-		print "result4b = ".json_encode($result)."\n";
-		$this->assertStringContainsString('Bad string syntax to evaluate', json_encode($result), 'The string was not detected as evil, it should due to the use of array_map');
-
-		$result = dol_eval('json_encode(array_map(implode("",array("ex","ec"), array("id")))', 1, 1, '1');		// result of dol_eval may be an object Closure
-		print "result4c = ".json_encode($result)."\n";
-		$this->assertStringContainsString('Bad string syntax to evaluate', json_encode($result), 'The string was not detected as evil, it should due to the use of array_map');
-
-		$result = dol_eval('$a=function() { }; $a', 1, 1, '0');		// result of dol_eval may be an object Closure
-		print "result5 = ".json_encode($result)."\n";
-		$this->assertStringContainsString('Bad string syntax to evaluate', json_encode($result), 'The string was not detected as evil');
-
-		$result = (string) dol_eval('$a=exec("ls");', 1, 1);
-		print "result7 = ".$result."\n";
-		$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'The string was not detected as evil');
-
-		$result = (string) dol_eval('$a=exec ("ls")', 1, 1);
-		print "result8 = ".$result."\n";
-		$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'The string was not detected as evil');
-
-		$result = (string) dol_eval("strrev('metsys') ('whoami')", 1, 1);
-		print "result8b = ".$result."\n";
-		$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'The string was not detected as evil');
-
-		$conf->global->MAIN_DISALLOW_STRING_OBFUSCATION_IN_DOL_EVAL = 1;
-
-		$result = (string) dol_eval('$a="test"; $$a;', 1, 0);
-		print "result9 = ".$result."\n";
-		$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'The string was not detected as evil');
-
-		$result = (string) dol_eval('`ls`', 1, 0);
-		print "result10 = ".$result."\n";
-		$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'The string was not detected as evil');
-
-		$result = (string) dol_eval("('ex'.'ec')('echo abc')", 1, 0);
-		print "result11 = ".$result."\n";
-		$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'The string was not detected as evil');
-
-		$result = (string) dol_eval("sprintf(\"%s%s\", \"ex\", \"ec\")('echo abc')", 1, 0);
-		print "result12 = ".$result."\n";
-		$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'The string was not detected as evil');
-
-		$result = dol_eval("90402.38+267678+0", 1, 1, 1);
-		print "result13 = ".$result."\n";
-		$this->assertEquals('358080.38', $result, 'The string was not detected as evil');
-
-		// Must be allowed
-
-		global $leftmenu;	// Used into strings to eval
-		$conf->global->MAIN_FEATURES_LEVEL = 1;
-
-		$leftmenu = 'AAA';
-		$result = dol_eval('$conf->currency && preg_match(\'/^(AAA|BBB)/\',$leftmenu)', 1, 1, '1');
-		print "result = ".$result."\n";
-		$this->assertTrue($result);
-
-		// Same with a value that does not match
-		$leftmenu = 'XXX';
-		$result = dol_eval('$conf->currency && preg_match(\'/^(AAA|BBB)/\',$leftmenu)', 1, 1, '1');
-		print "result14 = ".$result."\n";
-		$this->assertFalse($result);
-
-		$leftmenu = 'AAA';
-		$result = dol_eval('$conf->currency && isStringVarMatching(\'leftmenu\', \'(AAA|BBB)\')', 1, 1, '1');
-		print "result15 = ".$result."\n";
-		$this->assertTrue($result);
-
-		$leftmenu = 'XXX';
-		$result = dol_eval('$conf->currency && isStringVarMatching(\'leftmenu\', \'(AAA|BBB)\')', 1, 1, '1');
-		print "result16 = ".$result."\n";
-		$this->assertFalse($result);
-
-		$leftmenu = 'XXX';
-		$conf->global->MAIN_FEATURES_LEVEL = 1;		// Force for the case option is -1
-		$string = '(isModEnabled("user") || isModEnabled("resource")) && getDolGlobalInt("MAIN_FEATURES_LEVEL") >= 0 && preg_match(\'/^(admintools|all|XXX)/\', $leftmenu)';
-		$result = dol_eval($string, 1, 1, '1');
-		print "result17 = ".$result."\n";
-		$this->assertTrue($result);
-
-		$result = dol_eval('1 && getDolGlobalInt("doesnotexist1") && $conf->global->MAIN_FEATURES_LEVEL', 1, 0);	// Should return false and not a 'Bad string syntax to evaluate ...'
-		print "result18 = ".$result."\n";
-		$this->assertFalse($result);
-
-		// Not allowed
-
-		$a = 'ab';
-		$result = (string) dol_eval("(\$a.'s')", 1, 0);
-		print "result19 = ".$result."\n";
-		$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'Test 19 - The string was not detected as evil');
-
-		$leftmenu = 'abs';
-		$result = (string) dol_eval('$leftmenu(-5)', 1, 0);
-		print "result20 = ".$result."\n";
-		$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'Test 20 - The string was not detected as evil');
-
-		$result = (string) dol_eval('str_replace("z","e","zxzc")("whoami");', 1, 0);
-		print "result21 = ".$result."\n";
-		$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'Test 21 - The string was not detected as evil');
-
-		$result = (string) dol_eval('($a = "ex") && ($b = "ec") && ($cmd = "$a$b") && $cmd ("curl localhost:5555")', 1, 0);
-		print "result22 = ".$result."\n";
-		$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'Test 22 - The string was not detected as evil');
-
-		$result = (string) dol_eval('\'exec\'("aaa")', 1, 0);
-		print "result23 = ".$result."\n";
-		$this->assertStringContainsString('Bad string syntax to evaluate', json_encode($result), 'Test 23 - The string was not detected as evil - Can\'t find the string Bad string syntax when i should');
+		return 0;
 	}
 
 
@@ -813,9 +967,12 @@ class SecurityTest extends CommonClassTest
 
 		// Set options for cleaning data
 		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 0;	// disabled, does not work on HTML5 and some libxml versions
-		// Enabled option MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY if possible
+		// Enable option MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY if possible
 		if (extension_loaded('tidy') && class_exists("tidy")) {
 			$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 1;
+		} else {
+			$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 0;
+			print "WARNING !!! php-tidy is not available !!!";
 		}
 		$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 0;	// disabled, does not work on HTML5 and some libxml versions
 
@@ -829,6 +986,26 @@ class SecurityTest extends CommonClassTest
 		//$result = dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($stringtotest), 1, 1, 1, 0));
 		//$result = dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($stringtotest), 1, 1, 1, 0, array())), 1, 1, 'common', 0, 1);
 		$result = dolPrintHTML($stringtotest);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($stringfixed, $result, 'Error in dolPrintHTML test 1');    // Expected '' because should failed because login 'auto' does not exists
+
+		$stringtotest = "<b>bold</b> <code>aaa</code>";
+		$stringfixed = "<b>bold</b> aaa";
+		//$result = dol_htmlentitiesbr($stringtotest);
+		//$result = dol_string_onlythesehtmltags(dol_htmlentitiesbr($stringtotest), 1, 1, 1, 0);
+		//$result = dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($stringtotest), 1, 1, 1, 0));
+		//$result = dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($stringtotest), 1, 1, 1, 0, array())), 1, 1, 'common', 0, 1);
+		$result = dolPrintHTML($stringtotest);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($stringfixed, $result, 'Error in dolPrintHTML test 1');    // Expected '' because should failed because login 'auto' does not exists
+
+		$stringtotest = "<b>bold</b> <code>aaa</code>";
+		$stringfixed = "<b>bold</b> aaa";
+		//$result = dol_htmlentitiesbr($stringtotest);
+		//$result = dol_string_onlythesehtmltags(dol_htmlentitiesbr($stringtotest), 1, 1, 1, 0);
+		//$result = dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($stringtotest), 1, 1, 1, 0));
+		//$result = dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($stringtotest), 1, 1, 1, 0, array())), 1, 1, 'common', 0, 1);
+		$result = dolPrintHTML($stringtotest, 0, array('code'));
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($stringfixed, $result, 'Error in dolPrintHTML test 1');    // Expected '' because should failed because login 'auto' does not exists
 
@@ -910,7 +1087,6 @@ class SecurityTest extends CommonClassTest
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($stringfixed, $result, 'Error');
 
-
 		// For a string that is already HTML (contains HTML tags) but badly formatted
 		$stringtotest = "testB\n<h1>hhh</h1>\n<td>td alone</td><h1>iii</h1>";
 		if (getDolGlobalString("MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY")) {
@@ -922,7 +1098,6 @@ class SecurityTest extends CommonClassTest
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($stringfixed, $result, 'Error');
 
-
 		// For a string with no HTML tags
 		$stringtotest = "testwithnewline\nsecond line";
 		$stringfixed = "testwithnewline<br>\nsecond line";
@@ -930,6 +1105,30 @@ class SecurityTest extends CommonClassTest
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($stringfixed, $result, 'Error');
 
+		// For a string with a simple & inside
+		// With no clean option
+		/*
+		$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 1;
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 1;
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 1;
+		$stringtotest = "a & b";
+		$stringfixed = "a &amp; b";
+		$result = dolPrintHTML($stringtotest);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($stringfixed, $result, 'Error');
+
+
+		// For a string with a simple & inside
+		// With all clean option
+		$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 1;
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 1;
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 1;
+		$stringtotest = "a & b";
+		$stringfixed = "a &amp; b";
+		$result = dolPrintHTML($stringtotest);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($stringfixed, $result, 'Error');
+		*/
 
 		// For a string with ' and &#39;
 		// With no clean option
@@ -961,7 +1160,8 @@ class SecurityTest extends CommonClassTest
 		// With cleaning options of HTML TIDY
 		if (extension_loaded('tidy') && class_exists("tidy")) {
 			$stringtotest = "Message<br>with ' and &egrave; and &#39; !";
-			$stringexpected = "Message<br>\nwith ' and &egrave; and ' !";		// The &#39; is modified into ' because html tidy fix it.
+			//$stringexpected = "Message<br>\nwith ' and &egrave; and ' !";		// The &#39; is modified into ' because html tidy fix it.
+			$stringexpected = "Message<br>\nwith ' and &egrave; and &#39; !";
 			/*
 			var_dump($stringtotest);
 			var_dump(dol_htmlentitiesbr($stringtotest));
@@ -979,27 +1179,207 @@ class SecurityTest extends CommonClassTest
 
 
 	/**
-	 * testRealCharforNumericEntities()
+	 * testDolPrintHTML
+	 * This method include calls to dol_htmlwithnojs()
 	 *
 	 * @return int
+	 *
+	 * @depends testDolPrintHTMLAndDolPrintHtmlForAttribute
 	 */
-	public function testRealCharforNumericEntities()
+	public function testDolPrintHTML()
 	{
 		global $conf;
 
-		// Test that testRealCharforNumericEntities return an ascii char when code is inside Ascii range
-		$arraytmp = array(0 => '&#97;', 1 => '97;');
-		$result = realCharForNumericEntities($arraytmp);
-		$this->assertEquals('a', $result);
+		// Set options for cleaning data
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 0;	// disabled, does not work on HTML5 and some libxml versions
+		// Enable option MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY if possible
+		if (extension_loaded('tidy') && class_exists("tidy")) {
+			$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 1;
+		} else {
+			$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 0;
+			print "WARNING !!! php-tidy is not available !!!";
+		}
 
-		// Test that testRealCharforNumericEntities return an emoji utf8 char when code is inside Emoji range
-		$arraytmp = array(0 => '&#9989;', 1 => '9989;');	// Encoded as decimal
-		$result = realCharForNumericEntities($arraytmp);
-		$this->assertEquals('✅', $result);
+		$libXmlIsOkForMAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 0;		// Ok with 2.9.14, not ok on HTML5 and some libxmlversion like the one of travis
 
-		$arraytmp = array(0 => '&#x2705;', 1 => 'x2705;');	// Encoded as hexadecimal
-		$result = realCharForNumericEntities($arraytmp);
-		$this->assertEquals('✅', $result);
+
+		// With no clean option
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 0;
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 0;			//
+		$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 0;	// 1 = Replaces & alone into &amp; and replaces &#39 into '
+
+		// For a string with a simple & inside and already encoded
+		$s = 'List of char+their entities: & &amp; é &eacute; < &lt; " &quot; \' &apos; <a href="aaa?aaa=1&bbb=2&amp;ccc=3">a</a> <zzz>z</zzz>';	// Detected as already HTML
+		$expectedresult = 'List of char+their entities: &amp; &amp; &eacute; &eacute; &lt; &lt; &quot; &quot; \' &#39; <a href="aaa?aaa=1&amp;bbb=2&amp;ccc=3">a</a> z';
+		$result = dolPrintHTML($s);
+		$this->assertEquals($expectedresult, $result, 'Error on test dolPrintHTML');
+
+		// For a string that is not an already HTML content
+		$s = 'List: & é < " \'';															// Detected as non already HTML
+		$expectedresult = 'List: &amp; &eacute; &lt; &quot; \'';
+		$result = dolPrintHTML($s);
+		$this->assertEquals($expectedresult, $result, 'Error on test dolPrintHTML');
+
+
+		if (extension_loaded('tidy') && class_exists("tidy")) {
+			// With clean TIDY only
+			$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 0;
+			$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 1;			//
+			$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 0;	// 1 = Replaces & alone into &amp; and replaces &#39 into '
+
+			// For a string with a simple & inside and already encoded
+			$s = 'List of char+their entities: & &amp; é &eacute; < &lt; " &quot; \' &apos; <a href="aaa?aaa=1&bbb=2&amp;ccc=3">a</a> <zzz>z</zzz>';	// Detected as already HTML
+			$expectedresult = 'List of char+their entities: &amp; &amp; &eacute; &eacute; &lt; &lt; &quot; &quot; \' &#39; <a href="aaa?aaa=1&amp;bbb=2&amp;ccc=3">a</a> z';
+			$result = dolPrintHTML($s);
+			$this->assertEquals($expectedresult, $result, 'Error on test dolPrintHTML');
+
+			// For a string that is not an already HTML content
+			$s = 'List: & é < " \'';															// Detected as non already HTML
+			$expectedresult = 'List: &amp; &eacute; &lt; &quot; \'';
+			$result = dolPrintHTML($s);
+			$this->assertEquals($expectedresult, $result, 'Error on test dolPrintHTML');
+
+			if ($libXmlIsOkForMAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES) {
+				// With clean TIDY and remove Bad attributes option
+				$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 0;
+				$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 1;			//
+				$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 1;	// 1 = Replaces & alone into &amp; and replaces &#39 into '
+
+				// For a string with a simple & inside and already encoded
+				$s = 'List of char+their entities: & &amp; é &eacute; < &lt; " &quot; \' &apos; <a href="aaa?aaa=1&bbb=2&amp;ccc=3">a</a> <zzz>z</zzz>';	// Detected as already HTML
+				$expectedresult = 'List of char+their entities: &amp; &amp; &eacute; &eacute; &lt; &lt; &quot; &quot; \' \' <a href="aaa?aaa=1&amp;bbb=2&amp;ccc=3">a</a> z';
+				$result = dolPrintHTML($s);
+				$this->assertEquals($expectedresult, $result, 'Error on test dolPrintHTML');
+
+				// For a string that is not an already HTML content
+				$s = 'List: & é < " \'';															// Detected as non already HTML
+				$expectedresult = 'List: &amp; &eacute; &lt; &quot; \'';
+				$result = dolPrintHTML($s);
+				$this->assertEquals($expectedresult, $result, 'Error on test dolPrintHTML');
+			}
+		}
+
+		if ($libXmlIsOkForMAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES) {
+			// With remove Bad attributes option only
+			$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 0;
+			$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 0;			//
+			$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 1;	// 1 = Replaces & alone into &amp; and replaces &#39 into '
+
+			// For a string with a simple & inside and already encoded
+			$s = 'List of char+their entities: & &amp; é &eacute; < &lt; " &quot; \' &apos; <a href="aaa?aaa=1&bbb=2&amp;ccc=3">a</a> <zzz>z</zzz>';	// Detected as already HTML
+			$expectedresult = 'List of char+their entities: &amp; &amp; &eacute; &eacute; &lt; &lt; &quot; &quot; \' \' <a href="aaa?aaa=1&amp;bbb=2&amp;ccc=3">a</a> z';
+			$result = dolPrintHTML($s);
+			$this->assertEquals($expectedresult, $result, 'Error on test dolPrintHTML');
+
+			// For a string that is not an already HTML content
+			$s = 'List: & é < " \'';															// Detected as non already HTML
+			$expectedresult = 'List: &amp; &eacute; &lt; &quot; \'';
+			$result = dolPrintHTML($s);
+			$this->assertEquals($expectedresult, $result, 'Error on test dolPrintHTML');
+		}
+
+		return 0;
+	}
+
+	/**
+	 * testDolPrintHTMLForAttribute
+	 * This method include calls to dol_htmlwithnojs()
+	 *
+	 * @return int
+	 * @depends testDolPrintHTML
+	 */
+	public function testDolPrintHTMLForAttribute()
+	{
+		global $conf;
+
+		// Set options for cleaning data
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 0;	// disabled, does not work on HTML5 and some libxml versions
+		// Enable option MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY if possible
+		if (extension_loaded('tidy') && class_exists("tidy")) {
+			$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 1;
+		} else {
+			$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 0;
+			print "WARNING !!! php-tidy is not available !!!";
+		}
+
+		$libXmlIsOkForMAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 0;		// Ok with 2.9.14, not ok on HTML5 and some libxmlversion like the one of travis
+
+
+		// With no clean option
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 0;
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 0;			//
+		$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 0;	// 1 = Replaces & alone into &amp; and replaces &#39 into '
+
+		// For a string with a simple & inside and already encoded
+		$s = 'List of char+their entities: & &amp; é &eacute; < &lt; " &quot; \' &apos; <a href="aaa?aaa=1&bbb=2&amp;ccc=3">a</a> <zzz>z</zzz>';	// Detected as already HTML
+		$expectedresult = 'List of char+their entities: &amp; &amp;amp; &eacute; &eacute; &lt; &amp;lt; &quot; &amp;quot; \' &amp;apos; a z';
+		$result = dolPrintHTMLForAttribute($s);
+		$this->assertEquals($expectedresult, $result, 'Error on test dolPrintHTML');
+
+		// For a string that is not an already HTML content
+		$s = 'List: & é < " \'';															// Detected as non already HTML
+		$expectedresult = 'List: &amp;amp; &eacute; &amp;lt; &amp;quot; \'';
+		$result = dolPrintHTMLForAttribute($s);
+		$this->assertEquals($expectedresult, $result, 'Error on test dolPrintHTML');
+
+
+		if (extension_loaded('tidy') && class_exists("tidy")) {
+			// With clean TIDY only
+			$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 0;
+			$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 1;			//
+			$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 0;	// 1 = Replaces & alone into &amp; and replaces &#39 into '
+
+			// For a string with a simple & inside and already encoded
+			$s = 'List of char+their entities: & &amp; é &eacute; < &lt; " &quot; \' &apos; <a href="aaa?aaa=1&bbb=2&amp;ccc=3">a</a> <zzz>z</zzz>';	// Detected as already HTML
+			$expectedresult = 'List of char+their entities: &amp; &amp;amp; &eacute; &eacute; &lt; &amp;lt; &quot; &amp;quot; \' &amp;apos; a z';
+			$result = dolPrintHTMLForAttribute($s);
+			$this->assertEquals($expectedresult, $result, 'Error on test dolPrintHTML');
+
+			// For a string that is not an already HTML content
+			$s = 'List: & é < " \'';															// Detected as non already HTML
+			$expectedresult = 'List: &amp;amp; &eacute; &amp;lt; &amp;quot; \'';
+			$result = dolPrintHTMLForAttribute($s);
+			$this->assertEquals($expectedresult, $result, 'Error on test dolPrintHTML');
+
+
+			if ($libXmlIsOkForMAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES) {
+				// With clean TIDY and remove Bad attributes option
+				$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 0;
+				$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 1;			//
+				$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 1;	// 1 = Replaces & alone into &amp; and replaces &#39 into '
+
+				// For a string with a simple & inside and already encoded
+				$s = 'List of char+their entities: & &amp; é &eacute; < &lt; " &quot; \' &apos; <a href="aaa?aaa=1&bbb=2&amp;ccc=3">a</a> <zzz>z</zzz>';	// Detected as already HTML
+				$expectedresult = 'List of char+their entities: &amp; &amp;amp; &eacute; &eacute; &lt; &amp;lt; &quot; &amp;quot; \' &amp;apos; a z';
+				$result = dolPrintHTMLForAttribute($s);
+				$this->assertEquals($expectedresult, $result, 'Error on test dolPrintHTML');
+
+				// For a string that is not an already HTML content
+				$s = 'List: & é < " \'';															// Detected as non already HTML
+				$expectedresult = 'List: &amp;amp; &eacute; &amp;lt; &amp;quot; \'';
+				$result = dolPrintHTMLForAttribute($s);
+				$this->assertEquals($expectedresult, $result, 'Error on test dolPrintHTML');
+			}
+		}
+
+		if ($libXmlIsOkForMAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES) {
+			// With remove Bad attributes option only
+			$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 0;
+			$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 0;			//
+			$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 1;	// 1 = Replaces & alone into &amp; and replaces &#39 into '
+
+			// For a string with a simple & inside and already encoded
+			$s = 'List of char+their entities: & &amp; é &eacute; < &lt; " &quot; \' &apos; <a href="aaa?aaa=1&bbb=2&amp;ccc=3">a</a> <zzz>z</zzz>';	// Detected as already HTML
+			$expectedresult = 'List of char+their entities: &amp; &amp;amp; &eacute; &eacute; &lt; &amp;lt; &quot; &amp;quot; \' &amp;apos; a z';
+			$result = dolPrintHTMLForAttribute($s);
+			$this->assertEquals($expectedresult, $result, 'Error on test dolPrintHTML');
+
+			// For a string that is not an already HTML content
+			$s = 'List: & é < " \'';															// Detected as non already HTML
+			$expectedresult = 'List: &amp;amp; &eacute; &amp;lt; &amp;quot; \'';
+			$result = dolPrintHTMLForAttribute($s);
+			$this->assertEquals($expectedresult, $result, 'Error on test dolPrintHTML');
+		}
 
 		return 0;
 	}
@@ -1009,10 +1389,52 @@ class SecurityTest extends CommonClassTest
 	 * testDolHtmlWithNoJs()
 	 *
 	 * @return int
+	 *
+	 * @depends	testDolPrintHTMLAndDolPrintHtmlForAttribute
 	 */
 	public function testDolHtmlWithNoJs()
 	{
 		global $conf;
+
+		$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 1;
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 2;				// 1 = only valid html, 2 = only valid htm and allowed styles
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 1;
+
+
+		// Test on sanitizing styles
+		$result = dol_htmlwithnojs('Text <div style="position: 0">Div content</div><span style="z-index: 123">Text</span> and more', 0, 'restricthtml');
+		print __METHOD__." result=".$result."\n";
+		// Normalize formatting differences between libxml/php versions (spaces and line breaks around tags/style values)
+		$normalizedresult = str_replace(array("\r", "\n", "\t"), ' ', $result);
+		$normalizedresult = preg_replace('/style="\s*([0-9]+)\s*"/', 'style="$1"', $normalizedresult);
+		$normalizedresult = preg_replace('/>\s*</', '><', $normalizedresult);
+		$this->assertEquals('Text <div style="0">Div content</div><span style="123">Text</span> and more', $normalizedresult, 'Test sanitizing style for CSS UI redressing');
+
+
+		// Test on a string in hindi with MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES because
+		// in past this case was losing the UTF8.
+		$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 0;
+
+		$result = dol_htmlwithnojs('String in Hindi लेखाकर्म', 0, 'restricthtml');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('String in Hindi लेखाकर्म', $result, 'Test js sanitizing a Hindi string is ko');
+
+		$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 1;
+
+		$result = dol_htmlwithnojs('String in Hindi लेखाकर्म', 0, 'restricthtml');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('String in Hindi लेखाकर्म', $result, 'Test js sanitizing a Hindi string is ko');
+
+		$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 1;
+
+		$result = dol_htmlwithnojs('String in Hindi लेखाकर्म', 0, 'restricthtml');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('String in Hindi लेखाकर्म', $result, 'Test js sanitizing a Hindi string is ko');
+
+
+		// Test emoticons
+
+		$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 0;	// If we set this to 1, it will also convert emoticon in htmlentities, so tests must be modified.
 
 		$sav1 = getDolGlobalString('MAIN_RESTRICTHTML_ONLY_VALID_HTML');
 		$sav2 = getDolGlobalString('MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY');
@@ -1045,22 +1467,37 @@ class SecurityTest extends CommonClassTest
 		// Without HTML_TIDY
 		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 0;
 		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 0;
+
 		$result = dol_htmlwithnojs('<img onerror=alert(document.domain) src=x>', 1, 'restricthtml');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('<img alert(document.domain) src=x>', $result, 'Test js sanitizing without tidy on');
+
+		$result = dol_htmlwithnojs('<<r>scr<r>ipt<r>>alert("hello")<<r>&#x2f;scr<r>ipt<r>>', 1, 'restricthtml');
+		//$result = dol_string_onlythesehtmltags($aa, 0, 1, 1);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('alert("hello")', $result, 'Test js sanitizing without tidy');
+
 		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = $sav1;
 		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = $sav2;
-		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('<img alert(document.domain) src=x>', $result, 'Test example');
+
 
 		// With HTML TIDY
 		if (extension_loaded('tidy') && class_exists("tidy")) {
 			$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 0;
 			$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 1;
+
 			$result = dol_htmlwithnojs('<img onerror=alert(document.domain) src=x>', 1, 'restricthtml');
-			$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = $sav1;
-			$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = $sav2;
 			//$result = dol_string_onlythesehtmltags($aa, 0, 1, 1);
 			print __METHOD__." result=".$result."\n";
-			$this->assertEquals('<img src="x">', $result, 'Test example');
+			$this->assertEquals('<img src="x">', $result, 'Test js sanitizing with tidy on');
+
+			$result = dol_htmlwithnojs('<<r>scr<r>ipt<r>>alert("hello")<<r>&#x2f;scr<r>ipt<r>>', 1, 'restricthtml');
+			//$result = dol_string_onlythesehtmltags($aa, 0, 1, 1);
+			print __METHOD__." result=".$result."\n";
+			$this->assertEquals('&lt;script&gt;alert("hello")&lt;/script&gt;', $result, 'Test js sanitizing with tidy on');
+
+			$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = $sav1;
+			$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = $sav2;
 		}
 
 

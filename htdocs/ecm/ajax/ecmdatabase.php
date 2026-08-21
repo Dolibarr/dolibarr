@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2012	Regis Houssin	<regis.houssin@inodbox.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2026		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,6 +51,8 @@ $element = GETPOST('element', 'alpha');
 
 $permissiontoread = $user->hasRight('ecm', 'read');
 
+$error = 0;
+
 
 /*
  * Actions
@@ -68,8 +71,6 @@ top_httphead();
 
 // Load original field value
 if (isset($action) && !empty($action)) {
-	$error = 0;
-
 	if ($action == 'build' && !empty($element) && $permissiontoread) {
 		require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 
@@ -82,22 +83,24 @@ if (isset($action) && !empty($action)) {
 		$diroutputslash = str_replace('\\', '/', $conf->$element->dir_output);
 		$diroutputslash .= '/';
 
-		// Scan directory tree on disk
+		// Scan directory tree on disk to get list of all directories
 		$disktree = dol_dir_list($conf->$element->dir_output, 'directories', 1, '', array('^temp$'), '', 0, 0);
+		//dol_syslog("Found ".count($disktree)." directories on disk");
 
 		// Scan directory tree in database
-		$sqltree = $ecmdirstatic->get_full_arbo(0);
+		$treesqldir = $ecmdirstatic->get_full_arbo(0);
+		//dol_syslog("Found ".count($treesqldir)." directories in database");
 
 		$adirwascreated = 0;
 
 		// Now we compare both trees to complete missing trees into database
 		//var_dump($disktree);
-		//var_dump($sqltree);
+		//var_dump($treesqldir);
 		foreach ($disktree as $dirdesc) {    // Loop on tree onto disk
 			set_time_limit(0); // To force restarts the timeout counter from zero
 
 			$dirisindatabase = 0;
-			foreach ($sqltree as $dirsqldesc) {
+			foreach ($treesqldir as $dirsqldesc) {
 				if ($conf->$element->dir_output.'/'.$dirsqldesc['fullrelativename'] == $dirdesc['fullname']) {
 					$dirisindatabase = 1;
 					break;
@@ -120,7 +123,7 @@ if (isset($action) && !empty($action)) {
 					dol_syslog($txt);
 					//print $txt." -> ";
 					$parentdirisindatabase = 0;
-					foreach ($sqltree as $dirsqldesc) {
+					foreach ($treesqldir as $dirsqldesc) {
 						if ($dirsqldesc['fullrelativename'] == $relativepathtosearchparent) {
 							$parentdirisindatabase = $dirsqldesc['id'];
 							break;
@@ -151,13 +154,13 @@ if (isset($action) && !empty($action)) {
 					//print $txt."<br>\n";
 					$id = $ecmdirtmp->create($user);
 					if ($id > 0) {
-						$newdirsql = array('id'=>$id,
-								'id_mere'=>$ecmdirtmp->fk_parent,
-								'label'=>$ecmdirtmp->label,
-								'description'=>$ecmdirtmp->description,
-								'fullrelativename'=>$relativepathmissing);
-						$sqltree[] = $newdirsql; // We complete fulltree for following loops
-						//var_dump($sqltree);
+						$newsqldir = array('id' => $id,
+								'id_mere' => $ecmdirtmp->fk_parent,
+								'label' => $ecmdirtmp->label,
+								'description' => $ecmdirtmp->description,
+								'fullrelativename' => $relativepathmissing);
+						$treesqldir[] = $newsqldir; // We complete fulltree for following loops
+						//var_dump($treesqldir);
 						$adirwascreated = 1;
 					} else {
 						dol_syslog("Failed to create directory ".$ecmdirtmp->label, LOG_ERR);
@@ -171,7 +174,7 @@ if (isset($action) && !empty($action)) {
 		}
 
 		// Loop now on each sql tree to check if dir exists
-		foreach ($sqltree as $dirdesc) {    // Loop on each sqltree to check dir is on disk
+		foreach ($treesqldir as $dirdesc) {    // Loop on each treesqldir to check dir is on disk
 			$dirtotest = $conf->$element->dir_output.'/'.$dirdesc['fullrelativename'];
 			if (!dol_is_dir($dirtotest)) {
 				dol_syslog($dirtotest." not found onto disk. We delete from database dir with id=".$dirdesc['id']);

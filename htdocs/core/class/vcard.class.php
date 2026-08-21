@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2017  Laurent Destailleur  	<eldy@users.sourceforge.org>
  * Copyright (C) 2020		Tobias Sekan			<tobias.sekan@startmail.com>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -506,7 +506,7 @@ class vCard
 		// For user, $object->url is not defined
 		// For contact, $object->url is not defined
 		if (!empty($object->url)) {
-			$this->setURL($object->url, "");
+			$this->setURL($object->url ?? "");
 		}
 
 		if (is_object($company)) {

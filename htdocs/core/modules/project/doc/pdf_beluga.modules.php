@@ -2,8 +2,8 @@
 /* Copyright (C) 2010-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2018  Charlene Benke          <charlie@patas-monkey.com>
  * Copyright (C) 2018       Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024	    Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
@@ -45,7 +45,6 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
@@ -197,9 +196,12 @@ class pdf_beluga extends ModelePDFProjects
 	 *	@param	Project		$object					Object source to build document
 	 *	@param	Translate	$outputlangs			Lang output object
 	 * 	@param	string		$srctemplatepath	    Full path of source filename for generator using a template file
+	 *  @param	int<0,1>	$hidedetails			Do not show line details
+	 *  @param	int<0,1>	$hidedesc				Do not show desc
+	 *  @param	int<0,1>	$hideref				Do not show ref
 	 *	@return	int<-1,1>      						1 if OK, <=0 if KO
 	 */
-	public function write_file($object, $outputlangs, $srctemplatepath = '')
+	public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
 		// phpcs:enable
 		global $conf, $hookmanager, $langs, $user;
@@ -217,11 +219,11 @@ class pdf_beluga extends ModelePDFProjects
 		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "projects"));
 
-		if ($conf->project->multidir_output[$object->entity]) {
+		if ($conf->project->multidir_output[$object->entity ?? $conf->entity]) {
 			//$nblines = count($object->lines);  // This is set later with array of tasks
 
 			$objectref = dol_sanitizeFileName($object->ref);
-			$dir = $conf->project->multidir_output[$object->entity];
+			$dir = $conf->project->multidir_output[$object->entity ?? $conf->entity];
 			if (!preg_match('/specimen/i', $objectref)) {
 				$dir .= "/".$objectref;
 			}
@@ -248,7 +250,7 @@ class pdf_beluga extends ModelePDFProjects
 				// Create pdf instance
 				$pdf = pdf_getInstance($this->format);
 				$default_font_size = pdf_getPDFFontSize($outputlangs); // Must be after pdf_getInstance
-				$pdf->SetAutoPageBreak(1, 0);
+				$pdf->setAutoPageBreak(true, 0);
 
 				$heightforinfotot = 40; // Height reserved to output the info and total part
 				$heightforfreetext = getDolGlobalInt('MAIN_PDF_FREETEXT_HEIGHT', 5); // Height reserved to output the free text on last page
@@ -288,7 +290,7 @@ class pdf_beluga extends ModelePDFProjects
 				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("Project"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
-				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
+				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getAnonymisableFullName($outputlangs)));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("Project"));
 				if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 					$pdf->SetCompression(false);
@@ -411,16 +413,6 @@ class pdf_beluga extends ModelePDFProjects
 						'disableamount' => 1,
 						'test' => isModEnabled('intervention') && $user->hasRight('ficheinter', 'lire'),
 						'lang' => 'interventions'),
-					'trip' => array(
-						'name' => "TripsAndExpenses",
-						'title' => "ListExpenseReportsAssociatedProject",
-						'class' => 'Deplacement',
-						'table' => 'deplacement',
-						'datefieldname' => 'dated',
-						'margin' => 'minus',
-						'disableamount' => 1,
-						'test' => isModEnabled('deplacement') && $user->hasRight('deplacement', 'lire'),
-						'lang' => 'trip'),
 					'expensereport' => array(
 						'name' => "ExpensesReports",
 						'title' => "ListExpenseReportsAssociatedProject",
@@ -467,7 +459,7 @@ class pdf_beluga extends ModelePDFProjects
 					//var_dump("$key, $tablename, $datefieldname, $dates, $datee");
 					$elementarray = $object->get_element_list($key, $tablename, $datefieldname, 0, 0, $projectField);
 
-					$num = count($elementarray);
+					$num = is_array($elementarray) ? count($elementarray) : $elementarray;
 					if ($num >= 0) {
 						$nexY = $pdf->GetY() + 5;
 
@@ -517,11 +509,11 @@ class pdf_beluga extends ModelePDFProjects
 								$pdf->SetTextColor(0, 0, 0);
 
 								$pdf->setTopMargin($tab_top_newpage);
-								$pdf->setPageOrientation($this->orientation, 1, $heightforfooter + $heightforfreetext + $heightforinfotot); // The only function to edit the bottom margin of current page to set it.
+								$pdf->setPageOrientation($this->orientation, true, $heightforfooter + $heightforfreetext + $heightforinfotot); // The only function to edit the bottom margin of current page to set it.
 								$pageposbefore = $pdf->getPage();
 
 								// Description of line
-								$idofelement = $elementarray[$i];
+								$idofelement = (int) $elementarray[$i];
 								if ($classname == 'ExpenseReport') {
 									// We get id of expense report
 									$expensereportline = new ExpenseReportLine($this->db);
@@ -546,17 +538,17 @@ class pdf_beluga extends ModelePDFProjects
 								$pdf->startTransaction();
 								// Label
 								$pdf->SetXY($this->posxref, $curY);
-								$pdf->MultiCell($this->posxdate - $this->posxref, 3, $element->ref, 1, 'L');
+								$pdf->MultiCell($this->posxdate - $this->posxref, 3, (string) $element->ref, 1, 'L');
 								$pageposafter = $pdf->getPage();
 								if ($pageposafter > $pageposbefore) {	// There is a pagebreak
 									$pdf->rollbackTransaction(true);
 									$pageposafter = $pageposbefore;
 									//print $pageposafter.'-'.$pageposbefore;exit;
-									$pdf->setPageOrientation($this->orientation, 1, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
+									$pdf->setPageOrientation($this->orientation, true, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
 									// Label
 									$pdf->SetXY($this->posxref, $curY);
 									$posybefore = $pdf->GetY();
-									$pdf->MultiCell($this->posxdate - $this->posxref, 3, $element->ref, 1, 'L');
+									$pdf->MultiCell($this->posxdate - $this->posxref, 3, (string) $element->ref, 1, 'L');
 									$pageposafter = $pdf->getPage();
 									$posyafter = $pdf->GetY();
 									if ($posyafter > ($this->page_hauteur - ($heightforfooter + $heightforfreetext + $heightforinfotot))) {	// There is no space left for total+free text
@@ -584,7 +576,7 @@ class pdf_beluga extends ModelePDFProjects
 										if ($forcedesconsamepage) {
 											$pdf->rollbackTransaction(true);
 											$pageposafter = $pageposbefore;
-											$pdf->setPageOrientation($this->orientation, 1, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
+											$pdf->setPageOrientation($this->orientation, true, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
 
 											$pdf->AddPage($this->orientation, '', true);
 											if (!empty($tplidx)) {
@@ -598,13 +590,13 @@ class pdf_beluga extends ModelePDFProjects
 											$pdf->MultiCell(0, 3, ''); // Set interline to 3
 											$pdf->SetTextColor(0, 0, 0);
 
-											$pdf->setPageOrientation($this->orientation, 1, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
+											$pdf->setPageOrientation($this->orientation, true, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
 											$curY = $tab_top_newpage + $heightoftitleline + 1;
 
 											// Label
 											$pdf->SetXY($this->posxref, $curY);
 											$posybefore = $pdf->GetY();
-											$pdf->MultiCell($this->posxdate - $this->posxref, 3, $element->ref, 1, 'L');
+											$pdf->MultiCell($this->posxdate - $this->posxref, 3, (string) $element->ref, 1, 'L');
 											$pageposafter = $pdf->getPage();
 											$posyafter = $pdf->GetY();
 										}
@@ -619,7 +611,7 @@ class pdf_beluga extends ModelePDFProjects
 								$pageposafter = $pdf->getPage();
 								$pdf->setPage($pageposbefore);
 								$pdf->setTopMargin($this->marge_haute);
-								$pdf->setPageOrientation($this->orientation, 1, 0); // The only function to edit the bottom margin of current page to set it.
+								$pdf->setPageOrientation($this->orientation, true, 0); // The only function to edit the bottom margin of current page to set it.
 
 								// We suppose that a too long description is moved completely on next page
 								if ($pageposafter > $pageposbefore && empty($showpricebeforepagebreak)) {
@@ -685,7 +677,7 @@ class pdf_beluga extends ModelePDFProjects
 									$outputstatut = $element->getLibStatut(1);
 								}
 								$pdf->SetXY($this->posxstatut, $curY);
-								$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxstatut, 3, $outputstatut, 1, 'R', false, 1, '', '', true, 0, true);
+								$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxstatut, 3, $outputstatut, 1, 'R', false, 1, null, null, true, 0, true);
 
 								if ($qualifiedfortotal) {
 									$total_ht += $element->total_ht;
@@ -719,7 +711,7 @@ class pdf_beluga extends ModelePDFProjects
 						$this->_pagefoot($pdf, $object, $outputlangs, 1);
 						$pagenb++;
 						$pdf->setPage($pagenb);
-						$pdf->setPageOrientation($this->orientation, 1, 0); // The only function to edit the bottom margin of current page to set it.
+						$pdf->setPageOrientation($this->orientation, true, 0); // The only function to edit the bottom margin of current page to set it.
 						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 							$this->_pagehead($pdf, $object, 0, $outputlangs);
 						}
@@ -744,9 +736,12 @@ class pdf_beluga extends ModelePDFProjects
 				$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 				global $action;
 				$reshook = $hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+				$this->warnings = $hookmanager->warnings;
 				if ($reshook < 0) {
 					$this->error = $hookmanager->error;
 					$this->errors = $hookmanager->errors;
+					dolChmod($file);
+					return -1;
 				}
 
 				dolChmod($file);

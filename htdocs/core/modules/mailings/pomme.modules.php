@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2005-2011 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin       <regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ class mailing_pomme extends MailingTargets
 	/**
 	 * @var string This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
 	 */
-	public $desc = 'Dolibarr users with emails'; // Libelle utilise si aucune traduction pour MailingModuleDescXXX ou XXX=name trouvée
+	public $desc = 'Dolibarr users with emails'; // Label used if no translation found for MailingModuleDescXXX or XXX=name
 
 	/**
 	 * @var string[] Module mailing actif si modules require_module actifs
@@ -88,7 +88,7 @@ class mailing_pomme extends MailingTargets
 		$sql .= " count(distinct(u.email)) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
 		$sql .= " WHERE u.email != ''"; // u.email IS NOT NULL est implicit dans ce test
-		$sql .= " AND u.entity IN (0,".$conf->entity.")";
+		$sql .= " AND u.entity IN (0,".((int) $conf->entity).")";
 
 		$statssql[0] = $sql;
 
@@ -111,7 +111,7 @@ class mailing_pomme extends MailingTargets
 		$sql = "SELECT count(distinct(u.email)) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
 		$sql .= " WHERE u.email != ''"; // u.email IS NOT NULL est implicit dans ce test
-		$sql .= " AND u.entity IN (0,".$conf->entity.")";
+		$sql .= " AND u.entity IN (0,".((int) $conf->entity).")";
 		if (empty($this->evenunsubscribe)) {
 			$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = u.email and mu.entity = ".((int) $conf->entity).")";
 		}
@@ -122,9 +122,9 @@ class mailing_pomme extends MailingTargets
 
 
 	/**
-	 *  Affiche formulaire de filtre qui apparait dans page de selection des destinataires de mailings
+	 *  Display filter form shown on the mailing recipient selection page
 	 *
-	 *  @return     string      Retourne zone select
+	 *  @return     string      HTML select zone
 	 */
 	public function formFilter()
 	{
@@ -184,7 +184,7 @@ class mailing_pomme extends MailingTargets
 		$sql .= " u.lastname, u.firstname as firstname, u.civility as civility_id, u.login, u.office_phone";
 		$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
 		$sql .= " WHERE u.email <> ''"; // u.email IS NOT NULL est implicit dans ce test
-		$sql .= " AND u.entity IN (0,".$conf->entity.")";
+		$sql .= " AND u.entity IN (0,".((int) $conf->entity).")";
 		$sql .= " AND u.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".((int) $mailing_id).")";
 		if (GETPOSTISSET("filter") && GETPOST("filter") == '1') {
 			$sql .= " AND u.statut=1";

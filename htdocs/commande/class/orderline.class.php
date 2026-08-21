@@ -11,10 +11,11 @@
  * Copyright (C) 2014-2015 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2018      Nicolas ZABOURI	    <info@inovea-conseil.com>
  * Copyright (C) 2016-2022 Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2021-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2021-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
+ * Copyright (C) 2026		Lionel Vessiller		<lvessiller@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +38,7 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonorder.class.php';		// Because the CommonOrderLine is still in commonorder.class.php file
 require_once DOL_DOCUMENT_ROOT.'/margin/lib/margins.lib.php';
 
 
@@ -106,7 +108,7 @@ class OrderLine extends CommonOrderLine
 
 	/**
 	 * Buy price without taxes
-	 * @var int|float|string
+	 * @var float|int|string	Can be '' when we do not provide any buying price.
 	 */
 	public $pa_ht;
 
@@ -129,13 +131,13 @@ class OrderLine extends CommonOrderLine
 
 	/**
 	 * Start date of line
-	 * @var int|string
+	 * @var int|''
 	 */
 	public $date_start;
 
 	/**
 	 * End date of line
-	 * @var int|string
+	 * @var int|''
 	 */
 	public $date_end;
 
@@ -144,6 +146,64 @@ class OrderLine extends CommonOrderLine
 	 * @var int
 	 */
 	public $skip_update_total;
+
+	/**
+	 * @var float
+	 */
+	public $packaging;
+
+
+	// BEGIN MODULEBUILDER PROPERTIES
+	/**
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,visible:int<-6,6>|string,langfile?:string,notnull?:int<-1,1>,noteditable?:int<0,1>,alwayseditable?:int<0,1>|string,default?:string|int,index?:int<0,1>,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,helplist?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>|string,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>|string,showonheader?:int<0,1>,searchmulti?:int<0,1>,picto?:string,required?:int<0,1>,placeholder?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 */
+	public $fields = array(
+		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
+		'fk_commande' => array('type' => 'integer:Commande:commande/class/commande.class.php', 'label' => 'Order', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 15),
+		'fk_parent_line' => array('type' => 'integer:OrderLine:commande/class/orderline.class.php', 'label' => 'ParentLine', 'enabled' => 1, 'visible' => -1, 'position' => 20),
+		'fk_product' => array('type' => 'integer:Product:product/class/product.class.php:1', 'label' => 'ProductOrService', 'enabled' => "isModEnabled('product') || isModEnabled('service')", 'visible' => -1, 'position' => 25),
+		'label' => array('type' => 'varchar(255)', 'label' => 'Label', 'enabled' => 1, 'visible' => -1, 'position' => 30),
+		'description' => array('type' => 'text', 'label' => 'Description', 'enabled' => 1, 'visible' => -1, 'position' => 35, 'searchall' => 1),
+		'vat_src_code' => array('type' => 'varchar(10)', 'label' => 'VatSrcCode', 'enabled' => 1, 'visible' => -1, 'position' => 40),
+		'tva_tx' => array('type' => 'double(7,4)', 'label' => 'VATRate', 'enabled' => 1, 'visible' => -1, 'position' => 45),
+		'localtax1_tx' => array('type' => 'double(7,4)', 'label' => 'LocalTax1Rate', 'enabled' => 1, 'visible' => -1, 'default' => '0', 'position' => 50),
+		'localtax1_type' => array('type' => 'varchar(10)', 'label' => 'LocalTax1Type', 'enabled' => 1, 'visible' => -1, 'position' => 55),
+		'localtax2_tx' => array('type' => 'double(7,4)', 'label' => 'LocalTax2Rate', 'enabled' => 1, 'visible' => -1, 'default' => '0', 'position' => 60),
+		'localtax2_type' => array('type' => 'varchar(10)', 'label' => 'LocalTax2Type', 'enabled' => 1, 'visible' => -1, 'position' => 65),
+		'qty' => array('type' => 'real', 'label' => 'Qty', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 70),
+		'remise_percent' => array('type' => 'real', 'label' => 'ReductionPercent', 'enabled' => 1, 'visible' => -1, 'default' => '0', 'position' => 75),
+		'remise' => array('type' => 'real', 'label' => 'Remise', 'enabled' => 0, 'visible' => -2, 'default' => '0', 'position' => 80),
+		'fk_remise_except' => array('type' => 'integer:DiscountAbsolute:core/class/discount.class.php', 'label' => 'DiscountAbsolute', 'enabled' => 1, 'visible' => -1, 'position' => 85),
+		'price' => array('type' => 'real', 'label' => 'Price', 'enabled' => 0, 'visible' => -2, 'position' => 90),
+		'subprice' => array('type' => 'double(24,8)', 'label' => 'SubPrice', 'enabled' => 1, 'visible' => -1, 'default' => '0', 'position' => 95),
+		'subprice_ttc' => array('type' => 'double(24,8)', 'label' => 'SubPriceTTC', 'enabled' => 1, 'visible' => -1, 'default' => '0', 'position' => 100),
+		'total_ht' => array('type' => 'double(24,8)', 'label' => 'TotalHT', 'enabled' => 1, 'visible' => -1, 'default' => '0', 'position' => 105, 'isameasure' => 1),
+		'total_tva' => array('type' => 'double(24,8)', 'label' => 'VAT', 'enabled' => 1, 'visible' => -1, 'default' => '0', 'position' => 110, 'isameasure' => 1),
+		'total_localtax1' => array('type' => 'double(24,8)', 'label' => 'LocalTax1', 'enabled' => 1, 'visible' => -1, 'default' => '0', 'position' => 115, 'isameasure' => 1),
+		'total_localtax2' => array('type' => 'double(24,8)', 'label' => 'LocalTax2', 'enabled' => 1, 'visible' => -1, 'default' => '0', 'position' => 120, 'isameasure' => 1),
+		'total_ttc' => array('type' => 'double(24,8)', 'label' => 'TotalTTC', 'enabled' => 1, 'visible' => -1, 'default' => '0', 'position' => 125, 'isameasure' => 1),
+		'product_type' => array('type' => 'integer', 'label' => 'TypeOfLineServiceOrProduct', 'enabled' => 1, 'visible' => -1, 'default' => '0', 'position' => 130),
+		'date_start' => array('type' => 'datetime', 'label' => 'DateStart', 'enabled' => 1, 'visible' => -1, 'position' => 135),
+		'date_end' => array('type' => 'datetime', 'label' => 'DateEnd', 'enabled' => 1, 'visible' => -1, 'position' => 140),
+		'info_bits' => array('type' => 'integer', 'label' => 'InfoBits', 'enabled' => 1, 'visible' => -1, 'default' => '0', 'position' => 145),
+		'buy_price_ht' => array('type' => 'double(24,8)', 'label' => 'BuyingPrice', 'enabled' => 1, 'visible' => -1, 'default' => '0', 'position' => 150),
+		'fk_product_fournisseur_price' => array('type' => 'integer:ProductFournisseur:fourn/class/fournisseur.product.class.php', 'label' => 'SupplierPriceReference', 'enabled' => 1, 'visible' => -1, 'position' => 155),
+		'special_code' => array('type' => 'integer', 'label' => 'SpecialCode', 'enabled' => 1, 'visible' => -1, 'default' => '0', 'position' => 160),
+		'rang' => array('type' => 'integer', 'label' => 'Rank', 'enabled' => 1, 'visible' => -1, 'default' => '0', 'position' => 165),
+		'fk_unit' => array('type' => 'integer:CUnits:core/class/cunits.class.php', 'label' => 'Unit', 'enabled' => 1, 'visible' => -1, 'position' => 170),
+		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'visible' => -2, 'position' => 175),
+		'ref_ext' => array('type' => 'varchar(255)', 'label' => 'RefExt', 'enabled' => 1, 'visible' => 0, 'position' => 180),
+		'fk_commandefourndet' => array('type' => 'integer:CommandeFournisseurLigne:fourn/class/fournisseur.commande.class.php', 'label' => 'SupplierOrderLine', 'enabled' => 1, 'visible' => -1, 'position' => 185),
+		'fk_multicurrency' => array('type' => 'integer:MultiCurrency:multicurrency/class/multicurrency.class.php', 'label' => 'Currency', 'enabled' => 1, 'visible' => -1, 'position' => 190),
+		'multicurrency_code' => array('type' => 'varchar(3)', 'label' => 'CurrencyCode', 'enabled' => 1, 'visible' => -1, 'position' => 195),
+		'multicurrency_subprice' => array('type' => 'double(24,8)', 'label' => 'CurrencyUnitPrice', 'enabled' => 1, 'visible' => -1, 'default' => '0', 'position' => 200),
+		'multicurrency_subprice_ttc' => array('type' => 'double(24,8)', 'label' => 'CurrencyUnitPriceTTC', 'enabled' => 1, 'visible' => -1, 'default' => '0', 'position' => 205),
+		'multicurrency_total_ht' => array('type' => 'double(24,8)', 'label' => 'CurrencyTotalHT', 'enabled' => 1, 'visible' => -1, 'default' => '0', 'position' => 210),
+		'multicurrency_total_tva' => array('type' => 'double(24,8)', 'label' => 'CurrencyTotalVAT', 'enabled' => 1, 'visible' => -1, 'default' => '0', 'position' => 215),
+		'multicurrency_total_ttc' => array('type' => 'double(24,8)', 'label' => 'CurrencyTotalTTC', 'enabled' => 1, 'visible' => -1, 'default' => '0', 'position' => 220),
+		'extraparams' => array('type' => 'varchar(255)', 'label' => 'Extraparams', 'enabled' => 1, 'visible' => -1, 'position' => 225),
+	);
+	// END MODULEBUILDER PROPERTIES
 
 
 	/**
@@ -165,14 +225,17 @@ class OrderLine extends CommonOrderLine
 	public function fetch($rowid)
 	{
 		$sql = 'SELECT cd.rowid, cd.fk_commande, cd.fk_parent_line, cd.fk_product, cd.product_type, cd.label as custom_label, cd.description, cd.price, cd.qty, cd.tva_tx, cd.localtax1_tx, cd.localtax2_tx,';
-		$sql .= ' cd.remise, cd.remise_percent, cd.fk_remise_except, cd.subprice, cd.ref_ext,';
+		$sql .= ' cd.remise, cd.remise_percent, cd.fk_remise_except, cd.subprice, cd.subprice_ttc, cd.ref_ext,';
 		$sql .= ' cd.info_bits, cd.total_ht, cd.total_tva, cd.total_localtax1, cd.total_localtax2, cd.total_ttc, cd.fk_product_fournisseur_price as fk_fournprice, cd.buy_price_ht as pa_ht, cd.rang, cd.special_code,';
 		$sql .= ' cd.fk_unit,';
 		$sql .= ' cd.fk_multicurrency, cd.multicurrency_code, cd.multicurrency_subprice, cd.multicurrency_total_ht, cd.multicurrency_total_tva, cd.multicurrency_total_ttc,';
-		$sql .= ' p.ref as product_ref, p.label as product_label, p.description as product_desc, p.tobatch as product_tobatch,';
-		$sql .= ' cd.date_start, cd.date_end, cd.vat_src_code';
+		$sql .= ' p.ref as product_ref, p.label as product_label, p.description as product_desc, p.tobatch as product_tobatch,p.barcode as product_barcode,';
+		$sql .= ' p.customcode, p.fk_country as country_id, c.code as country_code,';
+		$sql .= ' p.packaging,';
+		$sql .= ' cd.date_start, cd.date_end, cd.vat_src_code, cd.extraparams';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'commandedet as cd';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON cd.fk_product = p.rowid';
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON c.rowid = p.fk_country';
 		$sql .= ' WHERE cd.rowid = '.((int) $rowid);
 		$result = $this->db->query($sql);
 		if ($result) {
@@ -192,6 +255,7 @@ class OrderLine extends CommonOrderLine
 			$this->qty              = $objp->qty;
 			$this->price            = $objp->price;
 			$this->subprice         = $objp->subprice;
+			$this->subprice_ttc     = $objp->subprice_ttc;
 			$this->ref_ext          = $objp->ref_ext;
 			$this->vat_src_code     = $objp->vat_src_code;
 			$this->tva_tx           = $objp->tva_tx;
@@ -223,10 +287,17 @@ class OrderLine extends CommonOrderLine
 			$this->product_label    = $objp->product_label;
 			$this->product_desc     = $objp->product_desc;
 			$this->product_tobatch  = $objp->product_tobatch;
+			$this->product_barcode = $objp->product_barcode;
+			$this->product_custom_code = $objp->customcode;
+			$this->product_custom_country_id = $objp->country_id;
+			$this->product_custom_country_code = $objp->country_code;
 			$this->fk_unit          = $objp->fk_unit;
+			$this->packaging      	= $objp->packaging;
 
 			$this->date_start       = $this->db->jdate($objp->date_start);
 			$this->date_end         = $this->db->jdate($objp->date_end);
+
+			$this->extraparams = !empty($objp->extraparams) ? (array) json_decode($objp->extraparams, true) : array();
 
 			$this->fk_multicurrency = $objp->fk_multicurrency;
 			$this->multicurrency_code = $objp->multicurrency_code;
@@ -408,18 +479,18 @@ class OrderLine extends CommonOrderLine
 
 		$this->db->begin();
 
-		// Insertion dans base de la ligne
+		// Insert line into database
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'commandedet';
 		$sql .= ' (fk_commande, fk_parent_line, label, description, qty, ref_ext,';
 		$sql .= ' vat_src_code, tva_tx, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type,';
-		$sql .= ' fk_product, product_type, remise_percent, subprice, price, fk_remise_except,';
+		$sql .= ' fk_product, product_type, remise_percent, subprice, subprice_ttc, price, fk_remise_except,';
 		$sql .= ' special_code, rang, fk_product_fournisseur_price, buy_price_ht,';
 		$sql .= ' info_bits, total_ht, total_tva, total_localtax1, total_localtax2, total_ttc, date_start, date_end,';
 		$sql .= ' fk_unit,';
 		$sql .= ' fk_multicurrency, multicurrency_code, multicurrency_subprice, multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc';
 		$sql .= ')';
-		$sql .= " VALUES (".$this->fk_commande.",";
-		$sql .= " ".($this->fk_parent_line > 0 ? "'".$this->db->escape($this->fk_parent_line)."'" : "null").",";
+		$sql .= " VALUES (".((int) $this->fk_commande).",";
+		$sql .= " ".($this->fk_parent_line > 0 ? "'".$this->db->escape((string) $this->fk_parent_line)."'" : "null").",";
 		$sql .= " ".(!empty($this->label) ? "'".$this->db->escape($this->label)."'" : "null").",";
 		$sql .= " '".$this->db->escape($this->desc)."',";
 		$sql .= " '".price2num($this->qty)."',";
@@ -430,15 +501,16 @@ class OrderLine extends CommonOrderLine
 		$sql .= " '".price2num($this->localtax2_tx)."',";
 		$sql .= " '".$this->db->escape($this->localtax1_type)."',";
 		$sql .= " '".$this->db->escape($this->localtax2_type)."',";
-		$sql .= ' '.((!empty($this->fk_product) && $this->fk_product > 0) ? $this->fk_product : "null").',';
-		$sql .= " '".$this->db->escape($this->product_type)."',";
+		$sql .= ' '.((!empty($this->fk_product) && $this->fk_product > 0) ? ((int) $this->fk_product) : "null").',';
+		$sql .= " ".((int) $this->product_type).",";
 		$sql .= " '".price2num($this->remise_percent)."',";
 		$sql .= " ".(price2num($this->subprice) !== '' ? price2num($this->subprice) : "null").",";
+		$sql .= " ".price2num($this->subprice_ttc).",";
 		$sql .= " ".($this->price != '' ? "'".price2num($this->price)."'" : "null").",";
-		$sql .= ' '.(!empty($this->fk_remise_except) ? $this->fk_remise_except : "null").',';
+		$sql .= ' '.(!empty($this->fk_remise_except) ? ((int) $this->fk_remise_except) : "null").',';
 		$sql .= ' '.((int) $this->special_code).',';
 		$sql .= ' '.((int) $this->rang).',';
-		$sql .= ' '.(!empty($this->fk_fournprice) ? $this->fk_fournprice : "null").',';
+		$sql .= ' '.(!empty($this->fk_fournprice) ? ((int) $this->fk_fournprice) : "null").',';
 		$sql .= ' '.price2num($this->pa_ht).',';
 		$sql .= " ".((int) $this->info_bits).",";
 		$sql .= " ".price2num($this->total_ht, 'MT').",";
@@ -463,11 +535,9 @@ class OrderLine extends CommonOrderLine
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'commandedet');
 			$this->rowid = $this->id;
 
-			if (!$error) {
-				$result = $this->insertExtraFields();
-				if ($result < 0) {
-					$error++;
-				}
+			$result = $this->insertExtraFields();
+			if ($result < 0) {
+				$error++;
 			}
 
 			if (!$error && !$notrigger) {
@@ -544,6 +614,9 @@ class OrderLine extends CommonOrderLine
 		if (empty($this->remise_percent)) {
 			$this->remise_percent = 0;
 		}
+		if (empty($this->price)) {
+			$this->price = 0;
+		}
 		if (empty($this->remise)) {
 			$this->remise = 0;
 		}
@@ -578,7 +651,7 @@ class OrderLine extends CommonOrderLine
 
 		$this->db->begin();
 
-		// Mise a jour ligne en base
+		// Update line in database
 		$sql = "UPDATE ".MAIN_DB_PREFIX."commandedet SET";
 		$sql .= " description='".$this->db->escape($this->desc)."'";
 		$sql .= " , label=".(!empty($this->label) ? "'".$this->db->escape($this->label)."'" : "null");
@@ -591,6 +664,7 @@ class OrderLine extends CommonOrderLine
 		$sql .= " , qty=".price2num($this->qty);
 		$sql .= " , ref_ext='".$this->db->escape($this->ref_ext)."'";
 		$sql .= " , subprice=".price2num($this->subprice);
+		$sql .= " , subprice_ttc=".price2num($this->subprice_ttc);
 		$sql .= " , remise_percent=".price2num($this->remise_percent);
 		$sql .= " , price=".price2num($this->price); // TODO A virer
 		$sql .= " , remise=".price2num($this->remise); // TODO A virer
@@ -601,18 +675,18 @@ class OrderLine extends CommonOrderLine
 			$sql .= " , total_localtax1=".price2num($this->total_localtax1);
 			$sql .= " , total_localtax2=".price2num($this->total_localtax2);
 		}
-		$sql .= " , fk_product_fournisseur_price=".(!empty($this->fk_fournprice) ? $this->fk_fournprice : "null");
+		$sql .= " , fk_product_fournisseur_price=".(!empty($this->fk_fournprice) ? ((int) $this->fk_fournprice) : "null");
 		$sql .= " , buy_price_ht='".price2num($this->pa_ht)."'";
 		$sql .= " , info_bits=".((int) $this->info_bits);
 		$sql .= " , special_code=".((int) $this->special_code);
 		$sql .= " , date_start=".(!empty($this->date_start) ? "'".$this->db->idate($this->date_start)."'" : "null");
 		$sql .= " , date_end=".(!empty($this->date_end) ? "'".$this->db->idate($this->date_end)."'" : "null");
-		$sql .= " , product_type=".$this->product_type;
-		$sql .= " , fk_parent_line=".(!empty($this->fk_parent_line) ? $this->fk_parent_line : "null");
+		$sql .= " , product_type = ".((int) $this->product_type);
+		$sql .= " , fk_parent_line=".(!empty($this->fk_parent_line) ? ((int) $this->fk_parent_line) : "null");
 		if (!empty($this->rang)) {
 			$sql .= ", rang=".((int) $this->rang);
 		}
-		$sql .= " , fk_unit=".(!$this->fk_unit ? 'NULL' : $this->fk_unit);
+		$sql .= " , fk_unit=".(!$this->fk_unit ? 'NULL' : ((int) $this->fk_unit));
 
 		// Multicurrency
 		$sql .= " , multicurrency_subprice=".price2num($this->multicurrency_subprice);
@@ -625,12 +699,10 @@ class OrderLine extends CommonOrderLine
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			if (!$error) {
-				$this->id = $this->rowid;
-				$result = $this->insertExtraFields();
-				if ($result < 0) {
-					$error++;
-				}
+			$this->id = $this->rowid;
+			$result = $this->insertExtraFields();
+			if ($result < 0) {
+				$error++;
 			}
 
 			if (!$error && !$notrigger) {
@@ -680,7 +752,7 @@ class OrderLine extends CommonOrderLine
 			$this->total_localtax2 = 0;
 		}
 
-		// Mise a jour ligne en base
+		// Update line in database
 		$sql = "UPDATE ".MAIN_DB_PREFIX."commandedet SET";
 		$sql .= " total_ht='".price2num($this->total_ht)."'";
 		$sql .= ",total_tva='".price2num($this->total_tva)."'";

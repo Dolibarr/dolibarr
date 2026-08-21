@@ -2,8 +2,8 @@
 /* Copyright (C) 2016	    Xebax Christy	        <xebax@wanadoo.fr>
  * Copyright (C) 2017	    Regis Houssin	        <regis.houssin@inodbox.com>
  * Copyright (C) 2020	    Thibault FOUCART        <support@ptibogxiv.net>
- * Copyright (C) 2020-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2020-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
+require_once DOL_DOCUMENT_ROOT . '/adherents/class/adherentstats.class.php';
 
 
 /**
@@ -45,12 +46,18 @@ class Members extends DolibarrApi
 	);
 
 	/**
+	 * @var AdherentStats
+	 */
+	public $memberstats;
+
+	/**
 	 * Constructor
 	 */
 	public function __construct()
 	{
 		global $db;
 		$this->db = $db;
+		$this->memberstats = new AdherentStats($this->db, DolibarrApiAccess::$user->socid, DolibarrApiAccess::$user->id);
 	}
 
 	/**
@@ -138,7 +145,7 @@ class Members extends DolibarrApi
 			throw new RestException(403);
 		}
 
-		$sql = "SELECT rowid, fk_soc, key_account, site, date_creation, tms FROM ".MAIN_DB_PREFIX."societe_account";
+		$sql = "SELECT rowid, fk_soc as socid, key_account, site, date_creation, tms FROM ".MAIN_DB_PREFIX."societe_account";
 		$sql .= " WHERE site = '".$this->db->escape($site)."' AND key_account = '".$this->db->escape($key_account)."'";
 		$sql .= " AND entity IN (".getEntity('adherent').")";
 
@@ -147,7 +154,7 @@ class Members extends DolibarrApi
 		if ($result && $this->db->num_rows($result) == 1) {
 			$obj = $this->db->fetch_object($result);
 			$thirdparty = new Societe($this->db);
-			$result = $thirdparty->fetch($obj->fk_soc);
+			$result = $thirdparty->fetch($obj->socid);
 
 			if ($result <= 0) {
 				throw new RestException(404, 'thirdparty not found');
@@ -159,7 +166,7 @@ class Members extends DolibarrApi
 				throw new RestException(404, 'member not found');
 			}
 		} else {
-				throw new RestException(404, 'This account have many thirdparties attached or does not exist.');
+			throw new RestException(404, 'This account have many thirdparties attached or does not exist.');
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('adherent', $member->id)) {
@@ -259,7 +266,7 @@ class Members extends DolibarrApi
 	 * @param string    $typeid     		ID of the type of member
 	 * @param int		$category   		Use this param to filter list by category
 	 * @param string    $sqlfilters 		Other criteria to filter answers separated by a comma.
-	 *                              		Example: "(t.ref:like:'SO-%') and ((t.date_creation:<:'20160101') or (t.nature:is:NULL))"
+	 *                              		Example: "(t.ref:like:'SO-%') and ((t.date_creation:>:'20160101') or (t.nature:is:NULL))"
 	 * @param string	$properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool      $pagination_data    If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @return array    					Array of member objects
@@ -373,6 +380,14 @@ class Members extends DolibarrApi
 
 		$member = new Adherent($this->db);
 		foreach ($request_data as $field => $value) {
+			if (in_array($field, array('pass', 'pass_crypted', 'pass_indatabase', 'pass_indatabase_crypted', 'pass_temp', 'api_key'))) {
+				// This properties can't be set/modified with API
+				throw new RestException(405, 'The property '.$field." can't be set/modified using the APIs");
+			}
+			if (in_array($field, array('user_id')) && !DolibarrApiAccess::$user->hasRight('user', 'user', 'creer')) {
+				// This properties can't be set/modified with API without permission user->user->creer
+				throw new RestException(405, 'The property '.$field." can't be set/modified using the APIs without permission user->user->create");
+			}
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$member->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
@@ -416,7 +431,17 @@ class Members extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
+		$sav_user_id = $member->user_id;
+
 		foreach ($request_data as $field => $value) {
+			if (in_array($field, array('pass', 'pass_crypted', 'pass_indatabase', 'pass_indatabase_crypted', 'pass_temp', 'api_key'))) {
+				// This properties can't be set/modified with API
+				throw new RestException(405, 'The property '.$field." can't be set/modified using the APIs");
+			}
+			if (in_array($field, array('user_id')) && !DolibarrApiAccess::$user->hasRight('user', 'user', 'creer')) {
+				// This properties can't be set/modified with API without permission user->user->creer
+				throw new RestException(405, 'The property '.$field." can't be set/modified using the APIs without the permission user->user->create");
+			}
 			if ($field == 'id') {
 				continue;
 			}
@@ -427,7 +452,7 @@ class Members extends DolibarrApi
 			}
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$member->array_options[$index] = $this->_checkValForAPI($field, $val, $member);
+					$member->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $member);
 				}
 				continue;
 			}
@@ -457,7 +482,9 @@ class Members extends DolibarrApi
 
 		// If there is no error, update() returns the number of affected rows
 		// so if the update is a no op, the return value is zero.
-		if ($member->update(DolibarrApiAccess::$user) >= 0) {
+		$nosyncuser = 0;
+		$nosyncpassword = 1;										// Disable password sync. Management of password must be done using the user API only.
+		if ($member->update(DolibarrApiAccess::$user, 0, $nosyncuser, $nosyncpassword) >= 0) {
 			return $this->get($id);
 		} else {
 			throw new RestException(500, 'Error when updating member: '.$member->error);
@@ -508,7 +535,7 @@ class Members extends DolibarrApi
 	/**
 	 * Validate fields before creating an object
 	 *
-	 * @param array<string,null|int|float|string>	$data   Data to validate
+	 * @param ?array<string,null|int|float|string>	$data   Data to validate
 	 * @return array<string,null|int|float|string>			Return array with validated mandatory fields and their value
 	 * @phan-return array<string,?int|?float|?string>			Return array with validated mandatory fields and their value
 	 *
@@ -516,6 +543,9 @@ class Members extends DolibarrApi
 	 */
 	private function _validate($data)
 	{
+		if ($data === null) {
+			$data = array();
+		}
 		$member = array();
 
 		$mandatoryfields = array(
@@ -534,11 +564,14 @@ class Members extends DolibarrApi
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Clean sensible object datas
+	 * @phpstan-template T
 	 *
 	 * @param   Object  $object    	Object to clean
 	 * @return  Object    			Object with cleaned properties
+	 * @phpstan-param T $object
+	 * @phpstan-return T
 	 */
-	protected function _cleanObjectDatas($object)
+	public function _cleanObjectDatas($object)
 	{
 		// phpcs:enable
 		$object = parent::_cleanObjectDatas($object);
@@ -551,6 +584,9 @@ class Members extends DolibarrApi
 			unset($object->location_incoterms);
 			unset($object->fk_delivery_address);
 			unset($object->shipping_method_id);
+
+			unset($object->pass);
+			unset($object->pass_crypted);
 
 			unset($object->total_ht);
 			unset($object->total_ttc);
@@ -599,6 +635,17 @@ class Members extends DolibarrApi
 			unset($object->total_localtax1);
 			unset($object->total_localtax2);
 			unset($object->total_ttc);
+		}
+
+		// Expose POST-friendly aliases on the Subscription GET response so the
+		// payload returned by GET /members/{id}/subscriptions matches the field
+		// names POST /members/{id}/subscriptions expects (see issue #38279).
+		// $dateh / $datef stay in the response for backward compatibility with
+		// existing consumers; date_start / date_end are the documented names
+		// used by the rest of the codebase (e.g. tasks, expenses, holidays).
+		if ($object instanceof Subscription) {
+			$object->date_start = $object->dateh;
+			$object->date_end = $object->datef;
 		}
 
 		return $object;
@@ -652,11 +699,19 @@ class Members extends DolibarrApi
 	 *
 	 * @throws	RestException	403		Access denied
 	 * @throws	RestException	404		Member not found
+	 * @throws	RestException	422		Malformed data
+	 * @throws	RestException	500		server error
 	 */
 	public function createSubscription($id, $start_date, $end_date, $amount, $label = '')
 	{
 		if (!DolibarrApiAccess::$user->hasRight('adherent', 'cotisation', 'creer')) {
 			throw new RestException(403);
+		}
+		if (!is_numeric($start_date) || !is_numeric($end_date) || !is_numeric($amount)) {
+			throw new RestException(422, 'Malformed data: subscription start or end date, or subscription amount, is not numeric');
+		}
+		if ($start_date > $end_date) {
+			throw new RestException(422, 'Malformed data: subscription start is not larger than end date');
 		}
 
 		$member = new Adherent($this->db);
@@ -665,7 +720,12 @@ class Members extends DolibarrApi
 			throw new RestException(404, 'member not found');
 		}
 
-		return $member->subscription($start_date, $amount, 0, '', $label, '', '', '', $end_date);
+		$result =  $member->subscription((int) $start_date, (float) $amount, 0, '', $label, '', '', '', (int) $end_date);
+		if ($result < 1) {
+			throw new RestException(500, $member->error);
+		} else {
+			return $result;
+		}
 	}
 
 	/**
@@ -973,6 +1033,91 @@ class Members extends DolibarrApi
 				'message' => 'Member type deleted'
 			)
 		);
+	}
+
+	/**
+	 * Return an array with the number of members by month for a given year
+	 *
+	 * @param	int		$year       Year
+	 * @param	int		$format		0=Label of abscissa is a translated text
+	 *                              1=Label of abscissa is month number
+	 *                              2=Label of abscissa is first letter of month
+	 * @return array 			Array of statistics for last modified members
+	 * @phan-return array<int<0,11>,array{0:int<1,12>,1:int}>	Array of nb each month
+	 * @phpstan-return array<int<0,11>,array{0:int<1,12>,1:int}>	Array of nb each month
+	 *
+	 * @url GET stats/nbbymonth
+	 * @throws	RestException	403		Access denied
+	 */
+	public function getNbByMonth($year, $format = 0)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('adherent', 'lire')) {
+			throw new RestException(403);
+		}
+
+		return $this->memberstats->getNbByMonth($year, $format);
+	}
+
+	/**
+	 * Return an array with the number of subscriptions by year
+	 *
+	 * @return array 			Array of statistics for last modified members
+	 * @phan-return array<array{0:int,1:int}>		Array of nb each year
+	 * @phpstan-return array<array{0:int,1:int}>	Array of nb each year
+	 *
+	 * @url GET stats/nbbyyear
+	 * @throws	RestException	403		Access denied
+	 */
+	public function getNbByYear()
+	{
+		if (!DolibarrApiAccess::$user->hasRight('adherent', 'lire')) {
+			throw new RestException(403);
+		}
+
+		return $this->memberstats->getNbByYear();
+	}
+
+	/**
+	 *  Return the number of subscriptions by month for a given year
+	 *
+	 * @param   int		$year       Year
+	 * @param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
+	 * @return array 				Array of statistics for last modified members
+	 * @phan-return array<int<0,11>,array{0:int<1,12>,1:int|float}>		Array of values by month
+	 * @phpstan-return array<int<0,11>,array{0:int<1,12>,1:int|float}>	Array of values by month
+	 *
+	 * @url GET stats/amountbymonth
+	 * @throws	RestException	403		Access denied
+	 */
+	public function getAmountByMonth($year, $format = 0)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('adherent', 'lire')) {
+			throw new RestException(403);
+		}
+
+		return $this->memberstats->getAmountByMonth($year, $format);
+	}
+
+	/**
+	 * Last Modified Members
+	 *
+	 * Get an array of statistics for last modified members
+	 *
+	 * @param int    $max  		Max numbers of members
+	 * @return array 			Array of statistics for last modified members
+	 * @phan-return array<int,array{id:int,ref:string,firstname:string,lastname:string,company:string,fk_soc:?int,datec:int|'',datem:int|'',status:int,date_end_subscription:int|'',photo:null|string,email:string,gender:string,morphy:string,typeid:int,need_subscription:0|1|null,subscription:'0'|'1'|null,label:string}>
+	 * @phpstan-return array<int,array{id:int,ref:string,firstname:string,lastname:string,company:string,fk_soc:?int,datec:int|'',datem:int|'',status:int,date_end_subscription:int|'',photo:null|string,email:string,gender:string,morphy:string,typeid:int,need_subscription:0|1|null,subscription:'0'|'1'|null,label:string}>
+	 *
+	 * @url GET stats/lastmodifiedmembers
+	 * @throws	RestException	403		Access denied
+	 */
+	public function getLastModifiedMembers($max)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('adherent', 'lire')) {
+			throw new RestException(403);
+		}
+
+		return $this->memberstats->getLastModifiedMembers($max);
 	}
 
 	/**

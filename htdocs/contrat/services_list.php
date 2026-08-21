@@ -4,10 +4,10 @@
  * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
  * Copyright (C) 2018		Ferran Marcet				<fmarcet@2byte.es>
- * Copyright (C) 2018-2024  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2019		Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2023-2024	William Mead				<william.mead@manchenumerique.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -31,24 +31,24 @@
  */
 
 require "../main.inc.php";
-require_once DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php";
-require_once DOL_DOCUMENT_ROOT."/product/class/product.class.php";
-require_once DOL_DOCUMENT_ROOT."/societe/class/societe.class.php";
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php";
+require_once DOL_DOCUMENT_ROOT."/product/class/product.class.php";
+require_once DOL_DOCUMENT_ROOT."/societe/class/societe.class.php";
 
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'contracts', 'companies'));
 
 // Get parameters
 $massaction = GETPOST('massaction', 'alpha');
-$toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
+$toselect   = GETPOST('toselect', 'array:int'); // Array of ids of elements selected into a list
 $optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 $mode       = GETPOST('mode', 'aZ'); // The output mode ('list', 'kanban', 'hierarchy', 'calendar', ...)
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : str_replace('_', '', basename(dirname(__FILE__)).basename(__FILE__, '.php')).$mode; // To manage different context of search
@@ -100,28 +100,27 @@ $socid = GETPOSTINT('socid');
 $opouvertureprevuemonth = GETPOST('opouvertureprevuemonth');
 $opouvertureprevueday = GETPOST('opouvertureprevueday');
 $opouvertureprevueyear = GETPOST('opouvertureprevueyear');
-$filter_opouvertureprevue = GETPOST('filter_opouvertureprevue', 'alphawithlgt');
+$sqlfilter_opouvertureprevue = GETPOST('filter_opouvertureprevue', 'alphawithlgt');  // @phan-suppress-current-line SqlInjection
 
 $op1month = GETPOSTINT('op1month');
 $op1day = GETPOSTINT('op1day');
 $op1year = GETPOSTINT('op1year');
-$filter_op1 = GETPOST('filter_op1', 'alphawithlgt');
+$sqlfilter_op1 = GETPOST('filter_op1', 'alphawithlgt');  // @phan-suppress-current-line SqlInjection
 
 $op2month = GETPOSTINT('op2month');
 $op2day = GETPOSTINT('op2day');
 $op2year = GETPOSTINT('op2year');
-$filter_op2 = GETPOST('filter_op2', 'alphawithlgt');
+$sqlfilter_op2 = GETPOST('filter_op2', 'alphawithlgt');  // @phan-suppress-current-line SqlInjection
 
 $opcloturemonth = GETPOSTINT('opcloturemonth');
 $opclotureday = GETPOSTINT('opclotureday');
 $opclotureyear = GETPOSTINT('opclotureyear');
-$filter_opcloture = GETPOST('filter_opcloture', 'alphawithlgt');
+$sqlfilter_opcloture = GETPOST('filter_opcloture', 'alphawithlgt');  // @phan-suppress-current-line SqlInjection
 
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new ContratLigne($db);
 $hookmanager->initHooks(array('contractservicelist'));
-$extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -140,28 +139,27 @@ $staticcontratligne = new ContratLigne($db);
 $companystatic = new Societe($db);
 
 $arrayfields = array(
-	'c.ref' => array('label' => "Contract", 'checked' => 1, 'position' => 80),
-	'p.description' => array('label' => "Service", 'checked' => 1, 'position' => 80),
-	's.nom' => array('label' => "ThirdParty", 'checked' => 1, 'position' => 90),
-	'cd.tva_tx' => array('label' => "VATRate", 'checked' => -1, 'position' => 100),
-	'cd.subprice' => array('label' => "PriceUHT", 'checked' => -1, 'position' => 105),
-	'cd.qty' => array('label' => "Qty", 'checked' => 1, 'position' => 108),
-	'cd.total_ht' => array('label' => "TotalHT", 'checked' => -1, 'position' => 109, 'isameasure' => 1),
-	'cd.total_tva' => array('label' => "TotalVAT", 'checked' => -1, 'position' => 110),
-	'cd.date_ouverture_prevue' => array('label' => "DateStartPlannedShort", 'checked' => 1, 'position' => 150),
-	'cd.date_ouverture' => array('label' => "DateStartRealShort", 'checked' => 1, 'position' => 160),
-	'cd.date_fin_validite' => array('label' => "DateEndPlannedShort", 'checked' => 1, 'position' => 170),
-	'cd.date_cloture' => array('label' => "DateEndRealShort", 'checked' => 1, 'position' => 180),
+	'c.ref' => array('label' => "Contract", 'checked' => '1', 'position' => 80),
+	'p.description' => array('label' => "Service", 'checked' => '1', 'position' => 80),
+	's.nom' => array('label' => "ThirdParty", 'checked' => '1', 'position' => 90),
+	'cd.tva_tx' => array('label' => "VATRate", 'checked' => '-1', 'position' => 100),
+	'cd.subprice' => array('label' => "PriceUHT", 'checked' => '-1', 'position' => 105),
+	'cd.qty' => array('label' => "Qty", 'checked' => '1', 'position' => 108),
+	'cd.total_ht' => array('label' => "TotalHT", 'checked' => '-1', 'position' => 109, 'isameasure' => 1),
+	'cd.total_tva' => array('label' => "TotalVAT", 'checked' => '-1', 'position' => 110),
+	'cd.date_ouverture_prevue' => array('label' => "DateStartPlannedShort", 'checked' => '1', 'position' => 150),
+	'cd.date_ouverture' => array('label' => "DateStartRealShort", 'checked' => '1', 'position' => 160),
+	'cd.date_fin_validite' => array('label' => "DateEndPlannedShort", 'checked' => '1', 'position' => 170),
+	'cd.date_cloture' => array('label' => "DateEndRealShort", 'checked' => '1', 'position' => 180),
 	//'cd.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
-	'cd.tms' => array('label' => "DateModificationShort", 'checked' => 0, 'position' => 500),
-	'status' => array('label' => "Status", 'checked' => 1, 'position' => 1000)
+	'cd.tms' => array('label' => "DateModificationShort", 'checked' => '0', 'position' => 500),
+	'status' => array('label' => "Status", 'checked' => '1', 'position' => 1000)
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
-'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 $permissiontoread = $user->hasRight('contrat', 'lire');
 $permissiontoadd = $user->hasRight('contrat', 'creer');
@@ -207,19 +205,19 @@ if (empty($reshook)) {
 		$opouvertureprevuemonth = "";
 		$opouvertureprevueday = "";
 		$opouvertureprevueyear = "";
-		$filter_opouvertureprevue = "";
+		$sqlfilter_opouvertureprevue = "";
 		$op1month = "";
 		$op1day = "";
 		$op1year = "";
-		$filter_op1 = "";
+		$sqlfilter_op1 = "";
 		$op2month = "";
 		$op2day = "";
 		$op2year = "";
-		$filter_op2 = "";
+		$sqlfilter_op2 = "";
 		$opcloturemonth = "";
 		$opclotureday = "";
 		$opclotureyear = "";
-		$filter_opcloture = "";
+		$sqlfilter_opcloture = "";
 		$filter = '';
 		$toselect = array();
 		$search_array_options = array();
@@ -318,12 +316,12 @@ if ($search_status == "5") {
 	$sql .= " AND cd.statut = 5";
 }
 if ($search_option == 'late' && $search_status != '0') {
-	$warning_date = $db->idate(dol_now() - $conf->contract->services->expires->warning_delay);
-	$sql .= " AND cd.date_fin_validite < '".addslashes($warning_date)."'";
+	$warning_date = $db->idate(dol_now() - (int) $conf->contract->services->expires->warning_delay);
+	$sql .= " AND cd.date_fin_validite < '".$db->escape($warning_date)."'";
 }
 if ($search_option == 'late' && $search_status == '0') {
-	$warning_date = $db->idate(dol_now() - $conf->contract->services->expires->warning_delay);
-	$sql .= " AND (cd.date_ouverture_prevue < '".addslashes($warning_date)."' OR cd.date_fin_validite < '".addslashes($warning_date)."')";
+	$warning_date = $db->idate(dol_now() - (int) $conf->contract->services->expires->warning_delay);
+	$sql .= " AND (cd.date_ouverture_prevue < '".$db->escape($warning_date)."' OR cd.date_fin_validite < '".$db->escape($warning_date)."')";
 }
 if ($search_subprice) {
 	$sql .= natural_search("cd.subprice", $search_subprice, 1);
@@ -356,55 +354,55 @@ if ($socid > 0) {
 $filter_dateouvertureprevue = '';
 $filter_date1 = '';
 $filter_date2 = '';
-$filter_opcloture = '';
+$sqlfilter_opcloture = '';
 
 $filter_dateouvertureprevue_start = dol_mktime(0, 0, 0, (int) $opouvertureprevuemonth, (int) $opouvertureprevueday, (int) $opouvertureprevueyear);
 $filter_dateouvertureprevue_end = dol_mktime(23, 59, 59, (int) $opouvertureprevuemonth, (int) $opouvertureprevueday, (int) $opouvertureprevueyear);
-if ($filter_dateouvertureprevue_start != '' && $filter_opouvertureprevue == -1) {
-	$filter_opouvertureprevue = ' BETWEEN ';
+if ($filter_dateouvertureprevue_start != '' && $sqlfilter_opouvertureprevue == -1) {
+	$sqlfilter_opouvertureprevue = ' BETWEEN ';
 }
 
 $filter_date1_start = dol_mktime(0, 0, 0, (int) $op1month, (int) $op1day, (int) $op1year);
 $filter_date1_end = dol_mktime(23, 59, 59, (int) $op1month, (int) $op1day, (int) $op1year);
-if ($filter_date1_start != '' && $filter_op1 == -1) {
-	$filter_op1 = ' BETWEEN ';
+if ($filter_date1_start != '' && $sqlfilter_op1 == -1) {
+	$sqlfilter_op1 = ' BETWEEN ';
 }
 
 $filter_date2_start = dol_mktime(0, 0, 0, (int) $op2month, (int) $op2day, (int) $op2year);
 $filter_date2_end = dol_mktime(23, 59, 59, (int) $op2month, (int) $op2day, (int) $op2year);
-if ($filter_date2_start != '' && $filter_op2 == -1) {
-	$filter_op2 = ' BETWEEN ';
+if ($filter_date2_start != '' && $sqlfilter_op2 == -1) {
+	$sqlfilter_op2 = ' BETWEEN ';
 }
 
 $filter_datecloture_start = dol_mktime(0, 0, 0, (int) $opcloturemonth, (int) $opclotureday, (int) $opclotureyear);
 $filter_datecloture_end = dol_mktime(23, 59, 59, (int) $opcloturemonth, (int) $opclotureday, (int) $opclotureyear);
-if ($filter_datecloture_start != '' && $filter_opcloture == -1) {
-	$filter_opcloture = ' BETWEEN ';
+if ($filter_datecloture_start != '' && $sqlfilter_opcloture == -1) {
+	$sqlfilter_opcloture = ' BETWEEN ';
 }
 
-if (!empty($filter_opouvertureprevue) && $filter_opouvertureprevue != -1 && $filter_opouvertureprevue != ' BETWEEN ' && $filter_dateouvertureprevue_start != '') {
-	$sql .= " AND cd.date_ouverture_prevue ".preg_replace('/[^<>]/', '', $filter_opouvertureprevue)." '".$db->idate($filter_dateouvertureprevue_start)."'";
+if (!empty($sqlfilter_opouvertureprevue) && $sqlfilter_opouvertureprevue != -1 && $sqlfilter_opouvertureprevue != ' BETWEEN ' && $filter_dateouvertureprevue_start != '') {
+	$sql .= " AND cd.date_ouverture_prevue ".preg_replace('/[^<>]/', '', $sqlfilter_opouvertureprevue)." '".$db->idate($filter_dateouvertureprevue_start)."'";
 }
-if (!empty($filter_opouvertureprevue) && $filter_opouvertureprevue == ' BETWEEN ') {
-	$sql .= " AND cd.date_ouverture_prevue ".$db->sanitize($filter_opouvertureprevue)." '".$db->idate($filter_dateouvertureprevue_start)."' AND '".$db->idate($filter_dateouvertureprevue_end)."'";
+if (!empty($sqlfilter_opouvertureprevue) && $sqlfilter_opouvertureprevue == ' BETWEEN ') {
+	$sql .= " AND cd.date_ouverture_prevue ".$db->sanitize($sqlfilter_opouvertureprevue)." '".$db->idate($filter_dateouvertureprevue_start)."' AND '".$db->idate($filter_dateouvertureprevue_end)."'";
 }
-if (!empty($filter_op1) && $filter_op1 != -1 && $filter_op1 != ' BETWEEN ' && $filter_date1_start != '') {
-	$sql .= " AND cd.date_ouverture ".preg_replace('/[^<>]/', '', $filter_op1)." '".$db->idate($filter_date1_start)."'";
+if (!empty($sqlfilter_op1) && $sqlfilter_op1 != -1 && $sqlfilter_op1 != ' BETWEEN ' && $filter_date1_start != '') {
+	$sql .= " AND cd.date_ouverture ".preg_replace('/[^<>]/', '', $sqlfilter_op1)." '".$db->idate($filter_date1_start)."'";
 }
-if (!empty($filter_op1) && $filter_op1 == ' BETWEEN ') {
-	$sql .= " AND cd.date_ouverture ".$db->sanitize($filter_op1)." '".$db->idate($filter_date1_start)."' AND '".$db->idate($filter_date1_end)."'";
+if (!empty($sqlfilter_op1) && $sqlfilter_op1 == ' BETWEEN ') {
+	$sql .= " AND cd.date_ouverture ".$db->sanitize($sqlfilter_op1)." '".$db->idate($filter_date1_start)."' AND '".$db->idate($filter_date1_end)."'";
 }
-if (!empty($filter_op2) && $filter_op2 != -1 && $filter_op2 != ' BETWEEN ' && $filter_date2_start != '') {
-	$sql .= " AND cd.date_fin_validite ".preg_replace('/[^<>]/', '', $filter_op2)." '".$db->idate($filter_date2_start)."'";
+if (!empty($sqlfilter_op2) && $sqlfilter_op2 != -1 && $sqlfilter_op2 != ' BETWEEN ' && $filter_date2_start != '') {
+	$sql .= " AND cd.date_fin_validite ".preg_replace('/[^<>]/', '', $sqlfilter_op2)." '".$db->idate($filter_date2_start)."'";
 }
-if (!empty($filter_op2) && $filter_op2 == ' BETWEEN ') {
-	$sql .= " AND cd.date_fin_validite ".$db->sanitize($filter_op2)." '".$db->idate($filter_date2_start)."' AND '".$db->idate($filter_date2_end)."'";
+if (!empty($sqlfilter_op2) && $sqlfilter_op2 == ' BETWEEN ') {
+	$sql .= " AND cd.date_fin_validite ".$db->sanitize($sqlfilter_op2)." '".$db->idate($filter_date2_start)."' AND '".$db->idate($filter_date2_end)."'";
 }
-if (!empty($filter_opcloture) && $filter_opcloture != ' BETWEEN ' && $filter_opcloture != -1 && $filter_datecloture_start != '') {
-	$sql .= " AND cd.date_cloture ".preg_replace('/[^<>]/', '', $filter_opcloture)." '".$db->idate($filter_datecloture_start)."'";
+if (!empty($sqlfilter_opcloture) && $sqlfilter_opcloture != ' BETWEEN ' && $sqlfilter_opcloture != -1 && $filter_datecloture_start != '') {
+	$sql .= " AND cd.date_cloture ".preg_replace('/[^<>]/', '', $sqlfilter_opcloture)." '".$db->idate($filter_datecloture_start)."'";
 }
-if (!empty($filter_opcloture) && $filter_opcloture == ' BETWEEN ') {
-	$sql .= " AND cd.date_cloture ".$db->sanitize($filter_opcloture)." '".$db->idate($filter_datecloture_start)."' AND '".$db->idate($filter_datecloture_end)."'";
+if (!empty($sqlfilter_opcloture) && $sqlfilter_opcloture == ' BETWEEN ') {
+	$sql .= " AND cd.date_cloture ".$db->sanitize($sqlfilter_opcloture)." '".$db->idate($filter_datecloture_start)."' AND '".$db->idate($filter_datecloture_end)."'";
 }
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
@@ -419,7 +417,7 @@ $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -495,23 +493,27 @@ if ($search_total_ttc) {
 if ($search_service) {
 	$param .= '&amp;search_service='.urlencode($search_service);
 }
-if ($search_status) {
-	$param .= '&amp;search_status='.urlencode($search_status);
+if ($search_status != '') {
+	if ($filter == 'expired' || $filter == 'notexpired') {
+		$param .= '&amp;search_status='.urlencode($search_status.'&filter='.$filter);
+	} else {
+		$param .= '&amp;search_status='.urlencode($search_status);
+	}
 }
 if ($search_option) {
 	$param .= "&amp;search_option=".urlencode($search_option);
 }
-if (!empty($filter_opouvertureprevue) && $filter_opouvertureprevue != -1) {
-	$param .= '&amp;filter_opouvertureprevue='.urlencode($filter_opouvertureprevue);
+if (!empty($sqlfilter_opouvertureprevue) && $sqlfilter_opouvertureprevue != -1) {
+	$param .= '&amp;filter_opouvertureprevue='.urlencode($sqlfilter_opouvertureprevue);
 }
-if (!empty($filter_op1) && $filter_op1 != -1) {
-	$param .= '&amp;filter_op1='.urlencode($filter_op1);
+if (!empty($sqlfilter_op1) && $sqlfilter_op1 != -1) {
+	$param .= '&amp;filter_op1='.urlencode($sqlfilter_op1);
 }
-if (!empty($filter_op2) && $filter_op2 != -1) {
-	$param .= '&amp;filter_op2='.urlencode($filter_op2);
+if (!empty($sqlfilter_op2) && $sqlfilter_op2 != -1) {
+	$param .= '&amp;filter_op2='.urlencode($sqlfilter_op2);
 }
-if (!empty($filter_opcloture) && $filter_opcloture != -1) {
-	$param .= '&amp;filter_opcloture='.urlencode($filter_opcloture);
+if (!empty($sqlfilter_opcloture) && $sqlfilter_opcloture != -1) {
+	$param .= '&amp;filter_opcloture='.urlencode($sqlfilter_opcloture);
 }
 if ($filter_dateouvertureprevue_start != '') {
 	$param .= '&amp;opouvertureprevueday='.((int) $opouvertureprevueday).'&amp;opouvertureprevuemonth='.((int) $opouvertureprevuemonth).'&amp;opouvertureprevueyear='.((int) $opouvertureprevueyear);
@@ -577,12 +579,12 @@ if (isModEnabled('category') && ($user->hasRight('produit', 'lire') || $user->ha
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('IncludingProductWithTag');
 	$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', 'parent', 0, 0, 1);
-	$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$form->selectarray('search_product_category', $cate_arbo, $search_product_category, $tmptitle, 0, 0, '', 0, 0, 0, 0, 'widthcentpercentminusx maxwidth300', 1);
+	$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$form->selectarray('search_product_category', $cate_arbo, $search_product_category, $tmptitle, 0, 0, '', 0, 0, 0, '', 'widthcentpercentminusx maxwidth300', 1);
 	$moreforfilter .= '</div>';
 }
 // alert on late date
 $moreforfilter .= '<div class="divsearchfield">';
-$moreforfilter .= $langs->trans('Alert').' <input type="checkbox" name="search_option" value="late"'.($search_option == 'late' ? ' checked' : '').'>';
+$moreforfilter .= '<label for="search_option">'.$langs->trans('Alert').'</label> <input type="checkbox" name="search_option" id="search_option" value="late"'.($search_option == 'late' ? ' checked' : '').'>';
 $moreforfilter .= '</div>';
 
 $parameters = array();
@@ -601,7 +603,7 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
 $selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
@@ -613,7 +615,7 @@ print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" :
 // --------------------------------------------------------------------
 print '<tr class="liste_titre_filter">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
@@ -666,7 +668,7 @@ if (!empty($arrayfields['s.nom']['checked'])) {
 if (!empty($arrayfields['cd.date_ouverture_prevue']['checked'])) {
 	print '<td class="liste_titre center">';
 	$arrayofoperators = array('<' => '<', '>' => '>');
-	print $form->selectarray('filter_opouvertureprevue', $arrayofoperators, $filter_opouvertureprevue, 1, 0, 0, '', 0, 0, 0, '', 'width50');
+	print $form->selectarray('filter_opouvertureprevue', $arrayofoperators, $sqlfilter_opouvertureprevue, 1, 0, 0, '', 0, 0, 0, '', 'width50');
 	print ' ';
 	$filter_dateouvertureprevue = dol_mktime(0, 0, 0, (int) $opouvertureprevuemonth, (int) $opouvertureprevueday, (int) $opouvertureprevueyear);
 	print $form->selectDate($filter_dateouvertureprevue, 'opouvertureprevue', 0, 0, 1, '', 1, 0);
@@ -675,7 +677,7 @@ if (!empty($arrayfields['cd.date_ouverture_prevue']['checked'])) {
 if (!empty($arrayfields['cd.date_ouverture']['checked'])) {
 	print '<td class="liste_titre center">';
 	$arrayofoperators = array('<' => '<', '>' => '>');
-	print $form->selectarray('filter_op1', $arrayofoperators, $filter_op1, 1, 0, 0, '', 0, 0, 0, '', 'width50');
+	print $form->selectarray('filter_op1', $arrayofoperators, $sqlfilter_op1, 1, 0, 0, '', 0, 0, 0, '', 'width50');
 	print ' ';
 	$filter_date1 = dol_mktime(0, 0, 0, (int) $op1month, (int) $op1day, (int) $op1year);
 	print $form->selectDate($filter_date1, 'op1', 0, 0, 1, '', 1, 0);
@@ -684,7 +686,7 @@ if (!empty($arrayfields['cd.date_ouverture']['checked'])) {
 if (!empty($arrayfields['cd.date_fin_validite']['checked'])) {
 	print '<td class="liste_titre center">';
 	$arrayofoperators = array('<' => '<', '>' => '>');
-	print $form->selectarray('filter_op2', $arrayofoperators, $filter_op2, 1, 0, 0, '', 0, 0, 0, '', 'width50');
+	print $form->selectarray('filter_op2', $arrayofoperators, $sqlfilter_op2, 1, 0, 0, '', 0, 0, 0, '', 'width50');
 	print ' ';
 	$filter_date2 = dol_mktime(0, 0, 0, (int) $op2month, (int) $op2day, (int) $op2year);
 	print $form->selectDate($filter_date2, 'op2', 0, 0, 1, '', 1, 0);
@@ -693,7 +695,7 @@ if (!empty($arrayfields['cd.date_fin_validite']['checked'])) {
 if (!empty($arrayfields['cd.date_cloture']['checked'])) {
 	print '<td class="liste_titre center">';
 	$arrayofoperators = array('<' => '<', '>' => '>');
-	print $form->selectarray('filter_opcloture', $arrayofoperators, $filter_opcloture, 1, 0, 0, '', 0, 0, 0, '', 'width50');
+	print $form->selectarray('filter_opcloture', $arrayofoperators, $sqlfilter_opcloture, 1, 0, 0, '', 0, 0, 0, '', 'width50');
 	print ' ';
 	$filter_date_cloture = dol_mktime(0, 0, 0, (int) $opcloturemonth, (int) $opclotureday, (int) $opclotureyear);
 	print $form->selectDate($filter_date_cloture, 'opcloture', 0, 0, 1, '', 1, 0);
@@ -734,7 +736,7 @@ if (!empty($arrayfields['status']['checked'])) {
 	print '</td>';
 }
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
@@ -749,7 +751,7 @@ $totalarray['nbfield'] = 0;
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
@@ -806,7 +808,7 @@ if (!empty($arrayfields['status']['checked'])) {
 	print_liste_field_titre($arrayfields['status']['label'], $_SERVER["PHP_SELF"], "cd.statut,c.statut", "", $param, '', $sortfield, $sortorder, 'right ');
 }
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
@@ -853,7 +855,7 @@ while ($i < $imaxinloop) {
 	print '<tr data-rowid="'.$object->id.'" class="oddeven">';
 
 	// Action column
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		print '<td class="nowrap center">';
 		if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 			$selected = 0;
@@ -883,7 +885,7 @@ while ($i < $imaxinloop) {
 			print $productstatic->getNomUrl(1, '', 24);
 			print $obj->label ? ' - '.dol_trunc($obj->label, 16) : '';
 			if (!empty($obj->description) && getDolGlobalString('PRODUCT_DESC_IN_LIST')) {
-				print '<br><span class="small">'.dol_nl2br($obj->description).'</span>';
+				print '<br><div class="small lineheightsmall">'.dol_nl2br($obj->description).'</div>';
 			}
 		} else {
 			if ($obj->type == 0) {
@@ -1045,7 +1047,7 @@ while ($i < $imaxinloop) {
 		}
 	}
 	// Action column
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		print '<td class="nowrap center">';
 		if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 			$selected = 0;

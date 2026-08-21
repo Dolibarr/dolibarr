@@ -34,5 +34,6 @@ ResourceTypeCode=Cod tip resursă
 ImportDataset_resource_1=Resurse
 ErrorResourcesAlreadyInUse=O parte din resurse sunt deja în uz
 ErrorResourceUseInEvent= %sutilizată în %seveniment
-MaxUsers=Număr maxim de utilizatori (locuri, scaune etc.)
+MaxUsers=Număr maxim de utilizatori
+MaxUsersResourceDesc=Dacă resursa poate fi utilizată de mai multe persoane simultan (mașină, cameră, ...), poți introduce aici numărul maxim de utilizatori permiși să utilizeze resursa în același timp (număr de locuri, locuri, ...).
 MaxUsersLabel=Maxim de utilizatori

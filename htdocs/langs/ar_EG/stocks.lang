@@ -1,2 +1,7 @@
 # Dolibarr language file - Source file is en_US - stocks
-inventoryValidate=معتمد
+inventorySetup =إعداد الجرد
+inventoryReadPermission=عرض الجرد
+inventoryEdit=تحرير
+inventoryChangePMPPermission=السماح بتغيير قيمة متوسط السعر المرجح (PMP) لمنتج
+inventoryDeleteLine=حذف السطر
+ListInventory=قائمة

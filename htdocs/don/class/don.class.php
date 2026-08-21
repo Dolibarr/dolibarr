@@ -6,9 +6,9 @@
  * Copyright (C) 2015-2017 Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2016      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2019      Thibault FOUCART     <support@ptibogxiv.net>
- * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2019-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2021       Maxime DEMAREST         <maxime@indelog.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -98,22 +98,22 @@ class Don extends CommonObject
 	public $societe;
 
 	/**
-	 * @var string Address
+	 * @var ?string Address
 	 */
 	public $address;
 
 	/**
-	 * @var string Zipcode
+	 * @var ?string Zipcode
 	 */
 	public $zip;
 
 	/**
-	 * @var string Town
+	 * @var ?string Town
 	 */
 	public $town;
 
 	/**
-	 * @var string Email
+	 * @var ?string Email
 	 */
 	public $email;
 
@@ -167,6 +167,11 @@ class Don extends CommonObject
 	 * @var int<0,1> paid
 	 */
 	public $paid;
+
+	/**
+	 * @var string IP address
+	 */
+	public $ip;
 
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
@@ -253,7 +258,7 @@ class Don extends CommonObject
 		$sql = "SELECT rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe";
 		$sql .= " WHERE client IN (1, 3)";
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " AND entity = ".((int) $conf->entity);
 		$sql .= " LIMIT 10";
 
 		$resql = $this->db->query($sql);
@@ -426,12 +431,13 @@ class Don extends CommonObject
 		$sql .= ", email";
 		$sql .= ", phone";
 		$sql .= ", phone_mobile";
+		$sql .= ", ip";
 		$sql .= ") VALUES (";
 		$sql .= "'".$this->db->idate($this->date ? $this->date : $now)."'";
 		$sql .= ", ".((int) $conf->entity);
 		$sql .= ", ".((float) $this->amount);
-		$sql .= ", ".($this->modepaymentid ? $this->modepaymentid : "null");
-		$sql .= ", ".($this->socid > 0 ? $this->socid : "null");
+		$sql .= ", ".($this->modepaymentid ? ((int) $this->modepaymentid) : "null");
+		$sql .= ", ".($this->socid > 0 ? ((int) $this->socid) : "null");
 		$sql .= ", '".$this->db->escape($this->firstname)."'";
 		$sql .= ", '".$this->db->escape($this->lastname)."'";
 		$sql .= ", '".$this->db->escape($this->societe)."'";
@@ -449,6 +455,7 @@ class Don extends CommonObject
 		$sql .= ", '".(!empty($this->email) ? $this->db->escape(trim($this->email)) : "")."'";
 		$sql .= ", '".(!empty($this->phone) ? $this->db->escape(trim($this->phone)) : "")."'";
 		$sql .= ", '".(!empty($this->phone_mobile) ? $this->db->escape(trim($this->phone_mobile)) : "")."'";
+		$sql .= ", '".(!empty($this->ip) ? $this->db->escape($this->ip) : "null")."'";
 		$sql .= ")";
 
 		$resql = $this->db->query($sql);
@@ -494,7 +501,7 @@ class Don extends CommonObject
 	/**
 	 *  Update a donation record
 	 *
-	 *  @param 		User	$user   Object utilisateur qui met a jour le don
+	 *  @param 		User	$user   Object User which updates the donation
 	 *  @param      int		$notrigger	Disable triggers
 	 *  @return     int      		>0 if OK, <0 if KO
 	 */
@@ -522,7 +529,7 @@ class Don extends CommonObject
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."don SET";
 		$sql .= " amount = ".((float) $this->amount);
-		$sql .= ", fk_payment = ".($this->modepaymentid ? $this->modepaymentid : "null");
+		$sql .= ", fk_payment = ".($this->modepaymentid ? ((int) $this->modepaymentid) : "null");
 		$sql .= ", firstname = '".$this->db->escape($this->firstname)."'";
 		$sql .= ", lastname='".$this->db->escape($this->lastname)."'";
 		$sql .= ", societe='".$this->db->escape($this->societe)."'";
@@ -531,7 +538,7 @@ class Don extends CommonObject
 		$sql .= ", town='".$this->db->escape($this->town)."'";
 		$sql .= ", fk_country = ".($this->country_id > 0 ? ((int) $this->country_id) : '0');
 		$sql .= ", public=".((int) $this->public);
-		$sql .= ", fk_projet=".($this->fk_project > 0 ? $this->fk_project : 'null');
+		$sql .= ", fk_projet=".($this->fk_project > 0 ? ((int) $this->fk_project) : 'null');
 		$sql .= ", note_private=".(!empty($this->note_private) ? ("'".$this->db->escape($this->note_private)."'") : "NULL");
 		$sql .= ", note_public=".(!empty($this->note_public) ? ("'".$this->db->escape($this->note_public)."'") : "NULL");
 		$sql .= ", datedon='".$this->db->idate($this->date)."'";
@@ -632,7 +639,7 @@ class Don extends CommonObject
 				// For remove dir
 				if (dol_is_dir($dir)) {
 					if (!dol_delete_dir_recursive($dir)) {
-						$this->errors[] = $this->error;
+						$this->errors[] = 'ErrorFailToDeleteDir';
 					}
 				}
 			}
@@ -661,7 +668,7 @@ class Don extends CommonObject
 	 */
 	public function fetch($id, $ref = '')
 	{
-		$sql = "SELECT d.rowid, d.datec, d.date_valid, d.tms as datem, d.datedon,";
+		$sql = "SELECT d.rowid, d.entity, d.datec, d.date_valid, d.tms as datem, d.datedon,";
 		$sql .= " d.fk_soc as socid, d.firstname, d.lastname, d.societe, d.amount, d.fk_statut as status, d.address, d.zip, d.town, ";
 		$sql .= " d.fk_country, d.public, d.amount, d.fk_payment, d.paid, d.note_private, d.note_public, d.email, d.phone, ";
 		$sql .= " d.phone_mobile, d.fk_projet as fk_project, d.model_pdf,";
@@ -685,7 +692,8 @@ class Don extends CommonObject
 			if ($this->db->num_rows($resql)) {
 				$obj = $this->db->fetch_object($resql);
 
-				$this->id                 = $obj->rowid;
+				$this->id = $obj->rowid;
+				$this->entity = $obj->entity;
 				$this->ref                = $obj->rowid;
 				$this->date_creation      = $this->db->jdate($obj->datec);
 				$this->datec              = $this->db->jdate($obj->datec);
@@ -827,24 +835,48 @@ class Don extends CommonObject
 	/**
 	 *    Set donation to status cancelled
 	 *
-	 *    @param	int		$id   	    id of donation
-	 *    @return   int     			Return integer <0 if KO, >0 if OK
+	 *    @param	int		$id   	    	id of donation
+	 *    @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
+	 *    @return   int     				Return integer <0 if KO, >0 if OK
 	 */
-	public function set_cancel($id)
+	public function set_cancel($id, $notrigger = 0)
 	{
 		// phpcs:enable
+		global $user;
+
+		$error = 0;
+
+		$this->db->begin();
+
 		$sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = -1 WHERE rowid = ".((int) $id);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			if ($this->db->affected_rows($resql)) {
 				$this->status = -1;
-				return 1;
+
+				if (!$notrigger) {
+					// Call trigger
+					$result = $this->call_trigger('DON_CANCEL', $user);
+					if ($result < 0) {
+						$error++;
+					}
+					// End call triggers
+				}
 			} else {
+				$this->db->commit();
 				return 0;
 			}
 		} else {
-			dol_print_error($this->db);
+			$this->error = $this->db->error();
+			$error++;
+		}
+
+		if (!$error) {
+			$this->db->commit();
+			return 1;
+		} else {
+			$this->db->rollback();
 			return -1;
 		}
 	}
@@ -859,8 +891,21 @@ class Don extends CommonObject
 	public function reopen($user, $notrigger = 0)
 	{
 		// Protection
-		if ($this->status != self::STATUS_CANCELED) {
+		if ($this->status != self::STATUS_CANCELED && $this->status != self::STATUS_PAID) {
 			return 0;
+		}
+		if ($this->statut == self::STATUS_PAID) {
+			$sql = "UPDATE " . MAIN_DB_PREFIX . "don SET paid = 0 WHERE rowid = " . ((int) $this->id);
+
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				if ($this->db->affected_rows($resql)) {
+					$this->paid = 0;
+				} else {
+					dol_print_error($this->db);
+					return -1;
+				}
+			}
 		}
 
 		return $this->setStatusCommon($user, self::STATUS_VALIDATED, $notrigger, 'DON_REOPEN');
@@ -883,7 +928,7 @@ class Don extends CommonObject
 		$sql = "SELECT sum(amount) as total";
 		$sql .= " FROM ".MAIN_DB_PREFIX."don";
 		$sql .= " WHERE fk_statut = ".((int) $param);
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " AND entity = ".((int) $conf->entity);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -929,7 +974,7 @@ class Don extends CommonObject
 	 *	@param	int  	$notooltip					1=Disable tooltip
 	 *	@param	string	$moretitle					Add more text to title tooltip
 	 *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-	 *	@return	string								Chaine avec URL
+	 *	@return	string								String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $notooltip = 0, $moretitle = '', $save_lastsearch_value = -1)
 	{
@@ -1068,10 +1113,7 @@ class Don extends CommonObject
 		$file = '';
 		$classname = '';
 		$filefound = 0;
-		$dirmodels = array('/');
-		if (is_array($conf->modules_parts['models'])) {
-			$dirmodels = array_merge($dirmodels, $conf->modules_parts['models']);
-		}
+		$dirmodels = array_merge(['/'], (array) $conf->modules_parts['models']);
 		foreach ($dirmodels as $reldir) {
 			foreach (array('html', 'doc', 'pdf') as $prefix) {
 				$file = $prefix."_".preg_replace('/^html_/', '', $modele).".modules.php";
@@ -1097,13 +1139,13 @@ class Don extends CommonObject
 
 			$classname = $modele;
 			$obj = new $classname($this->db);
-
+			/** @var ModeleDon $obj */
 			'@phan-var-force ModeleDon $obj';
 
 			// We save charset_output to restore it because write_file can change it if needed for
 			// output format that does not support UTF8.
 			$sav_charset_output = $outputlangs->charset_output;
-			if ($obj->write_file($object, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref) > 0) {
+			if ($obj->write_file($object, $outputlangs /*, $currency */) > 0) {
 				$outputlangs->charset_output = $sav_charset_output;
 
 				// we delete preview files
@@ -1170,7 +1212,7 @@ class Don extends CommonObject
 	 *	Return clickable link of object (with eventually picto)
 	 *
 	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array{string,mixed}		$arraydata				Array of data
+	 *  @param		?array<string,mixed>	$arraydata				Array of data
 	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
@@ -1196,7 +1238,7 @@ class Don extends CommonObject
 			$return .= '<br><span class="opacitymedium">'.$langs->trans("Company").'</span> : <span class="info-box-label">'.$this->societe.'</span>';
 		}
 		if (!empty($this->amount)) {
-			$return .= '<br><span class="info-box-label amount">'.price($this->amount, 1, $langs, 1, -1, -1, $conf->currency).'</span>';
+			$return .= '<br><span class="info-box-label amount">'.price($this->amount, 1, $langs, 1, -1, -1, getDolCurrency()).'</span>';
 		}
 		if (isset($this->status)) {
 			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';

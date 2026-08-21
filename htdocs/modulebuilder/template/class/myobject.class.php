@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2017       Laurent Destailleur      <eldy@users.sourceforge.net>
- * Copyright (C) 2023-2024  Frédéric France          <frederic.france@free.fr>
+ * Copyright (C) 2023-2025  Frédéric France          <frederic.france@free.fr>
  * Copyright (C) ---Replace with your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
@@ -34,29 +34,46 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 class MyObject extends CommonObject
 {
 	/**
-	 * @var string 	ID of module.
+	 * @var string 		ID of module.
 	 */
 	public $module = 'mymodule';
 
 	/**
-	 * @var string 	ID to identify managed object.
+	 * @var string 		ID to identify managed object.
 	 */
 	public $element = 'myobject';
 
 	/**
-	 * @var string 	Name of table without prefix where object is stored. This is also the key used for extrafields management (so extrafields know the link to the parent table).
+	 * @var string		Prefix to check for any trigger code of any business class to prevent bad value for trigger code.
+	 * @see CommonTrigger::call_trigger()
+	 */
+	public $TRIGGER_PREFIX = 'MYMODULE_MYOBJECT';	// Will be used to build trigger keys 'MYMODULE_MYOBJECT_MODIFY', ...
+
+	/**
+	 * @var string 		Name of table without prefix where object is stored. This is also the key used for extrafields management (so extrafields know the link to the parent table).
 	 */
 	public $table_element = 'mymodule_myobject';
 
 	/**
-	 * @var string 	If permission must be checkec with hasRight('mymodule', 'read') and not hasright('mymodyle', 'myobject', 'read'), you can uncomment this line
+	 * @var string 		If permission must be checked with hasRight('mymodule', 'read') and not hasright('mymodule', 'myobject', 'read'), you can uncomment this line
 	 */
 	//public $element_for_permission = 'mymodule';
 
 	/**
-	 * @var string 	String with name of icon for myobject. Must be a 'fa-xxx' fontawesome code (or 'fa-xxx_fa_color_size') or 'myobject@mymodule' if picto is file 'img/object_myobject.png'.
+	 * @var string 		String with name of icon for myobject. Must be a 'fa-xxx' fontawesome code (or 'fa-xxx_fa_color_size') or 'myobject@mymodule' if picto is file 'img/object_myobject.png'.
 	 */
 	public $picto = 'fa-file';
+
+	/**
+	 * @var int<0,1>	Does object support extrafields ? 0=No, 1=Yes
+	 */
+	public $isextrafieldmanaged = 0;
+
+	/**
+	 * @var int<0,1>|string		Does this object support multicompany module ?
+	 * 							0=No test on entity, 1=Test with field entity in local table, 'field@table'=Test entity into the field@table (example 'fk_soc@societe')
+	 */
+	public $ismultientitymanaged = 0;
 
 
 	const STATUS_DRAFT = 0;
@@ -74,8 +91,8 @@ class MyObject extends CommonObject
 	 *   	'double(24,8)', 'real', 'price', 'stock',
 	 *  	'date', 'datetime', 'timestamp', 'duration',
 	 *  	'boolean', 'checkbox', 'radio', 'array',
-	 *  	'mail', 'phone', 'url', 'password', 'ip'
-	 *		Note: Filter must be a Dolibarr Universal Filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
+	 *  	'email', 'phone', 'url', 'password', 'ip'
+	 *		Note: Filter must be a Dolibarr Universal Filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
 	 *  'length' the length of field. Example: 255, '24,8'
 	 *  'label' the translation key.
 	 *  'langfile' the key of the language file for translation.
@@ -87,7 +104,7 @@ class MyObject extends CommonObject
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form (not create). 5=Visible on list and view form (not create/not update). 6=visible on list and update/view form (not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
 	 *  'noteditable' says if field is not editable (1 or 0)
 	 *  'alwayseditable' says if field can be modified also when status is not draft ('1' or '0')
-	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
+	 *  'default' is a default value for creation (can still be overwritten by the Setup of Default Values if the field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
 	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
@@ -102,6 +119,7 @@ class MyObject extends CommonObject
 	 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
 	 *	'validate' is 1 if you need to validate the field with $this->validateField(). Need MAIN_ACTIVATE_VALIDATION_RESULT.
 	 *  'copytoclipboard' is 1 or 2 to allow to add a picto to copy value into clipboard (1=picto after label, 2=picto after value)
+	 *  'description' is a description of the field. Can be used to help the MCP server.
 	 *
 	 *  Note: To have value dynamic, you can set value to 0 in definition and edit the value on the fly into the constructor.
 	 */
@@ -112,24 +130,25 @@ class MyObject extends CommonObject
 	 * Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
-		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'visible' => 0, 'noteditable' => 1, 'index' => 1, 'css' => 'left', 'comment' => 'Id'),
-		'ref' => array('type' => 'varchar(128)', 'label' => 'Ref', 'enabled' => 1, 'position' => 20, 'notnull' => 1, 'visible' => 1, 'index' => 1, 'searchall' => 1, 'showoncombobox' => 1, 'validate' => 1, 'comment' => 'Reference of object'),
-		'label' => array('type' => 'varchar(255)', 'label' => 'Label', 'enabled' => 1, 'position' => 30, 'notnull' => 0, 'visible' => 1, 'alwayseditable' => 1, 'searchall' => 1, 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'help' => 'Help text', 'showoncombobox' => 2, 'validate' => 1,),
-		'amount' => array('type' => 'price', 'label' => 'Amount', 'enabled' => 1, 'position' => 40, 'notnull' => 0, 'visible' => 1, 'default' => 'null', 'isameasure' => 1, 'help' => 'Help text for amount', 'validate' => 1,),
-		'qty' => array('type' => 'real', 'label' => 'Qty', 'enabled' => 1, 'position' => 45, 'notnull' => 0, 'visible' => 1, 'default' => '0', 'isameasure' => 1, 'css' => 'maxwidth75imp', 'help' => 'Help text for quantity', 'validate' => 1,),
-		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))', 'label' => 'ThirdParty', 'picto' => 'company', 'enabled' => 'isModEnabled("societe")', 'position' => 50, 'notnull' => -1, 'visible' => 1, 'index' => 1, 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150', 'help' => 'OrganizationEventLinkToThirdParty', 'validate' => 1,),
-		'fk_project' => array('type' => 'integer:Project:projet/class/project.class.php:1', 'label' => 'Project', 'picto' => 'project', 'enabled' => 'isModEnabled("project")', 'position' => 52, 'notnull' => -1, 'visible' => -1, 'index' => 1, 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150', 'validate' => 1,),
-		'description' => array('type' => 'text', 'label' => 'Description', 'enabled' => 1, 'position' => 60, 'notnull' => 0, 'visible' => 3, 'validate' => 1,),
-		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'position' => 61, 'notnull' => 0, 'visible' => 0, 'cssview' => 'wordbreak', 'validate' => 1,),
-		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'position' => 62, 'notnull' => 0, 'visible' => 0, 'cssview' => 'wordbreak', 'validate' => 1,),
-		'date_creation' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'position' => 500, 'notnull' => 1, 'visible' => -2,),
-		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'position' => 501, 'notnull' => 0, 'visible' => -2,),
-		'fk_user_creat' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'picto' => 'user', 'enabled' => 1, 'position' => 510, 'notnull' => 1, 'visible' => -2, 'foreignkey' => '0', 'csslist' => 'tdoverflowmax150',),
-		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'picto' => 'user', 'enabled' => 1, 'position' => 511, 'notnull' => -1, 'visible' => -2, 'csslist' => 'tdoverflowmax150',),
-		'last_main_doc' => array('type' => 'varchar(255)', 'label' => 'LastMainDoc', 'enabled' => 1, 'position' => 600, 'notnull' => 0, 'visible' => 0,),
-		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'position' => 1000, 'notnull' => -1, 'visible' => -2,),
-		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'Model pdf', 'enabled' => 1, 'position' => 1010, 'notnull' => -1, 'visible' => 0,),
-		'status' => array('type' => 'integer', 'label' => 'Status', 'enabled' => 1, 'position' => 2000, 'notnull' => 1, 'visible' => 1, 'index' => 1, 'arrayofkeyval' => array(0 => 'Draft', '1' => 'Validated', 9 => 'Canceled'), 'validate' => 1,),
+		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'visible' => 0, 'noteditable' => 1, 'index' => 1, 'css' => 'left', 'comment' => 'Id', 'lang' => 'mymodule@mymodule'),
+		'ref' => array('type' => 'varchar(128)', 'label' => 'Ref', 'enabled' => 1, 'position' => 15, 'notnull' => 1, 'visible' => 1, 'index' => 1, 'searchall' => 1, 'showoncombobox' => 1, 'validate' => 1, 'comment' => 'Reference of object', 'lang' => 'mymodule@mymodule'),
+		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => '1', 'enabled' => 1, 'visible' => 0, 'notnull' => 1, 'position' => 20, 'index' => 1),
+		'label' => array('type' => 'varchar(255)', 'label' => 'Label', 'enabled' => 1, 'position' => 30, 'notnull' => 0, 'visible' => 1, 'alwayseditable' => 1, 'searchall' => 1, 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'help' => 'Help text', 'showoncombobox' => 2, 'validate' => 1, 'lang' => 'mymodule@mymodule'),
+		'amount' => array('type' => 'price', 'label' => 'Amount', 'enabled' => 1, 'position' => 40, 'notnull' => 0, 'visible' => 1, 'default' => 'null', 'isameasure' => 1, 'help' => 'Help text for amount', 'validate' => 1, 'lang' => 'mymodule@mymodule'),
+		'qty' => array('type' => 'real', 'label' => 'Qty', 'enabled' => 1, 'position' => 45, 'notnull' => 0, 'visible' => 1, 'default' => '0', 'isameasure' => 1, 'css' => 'maxwidth75imp', 'help' => 'Help text for quantity', 'validate' => 1, 'lang' => 'mymodule@mymodule'),
+		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))', 'label' => 'ThirdParty', 'picto' => 'company', 'enabled' => 'isModEnabled("societe")', 'position' => 50, 'notnull' => -1, 'visible' => 1, 'index' => 1, 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150', 'help' => 'OrganizationEventLinkToThirdParty', 'validate' => 1, 'lang' => 'mymodule@mymodule'),
+		'fk_project' => array('type' => 'integer:Project:projet/class/project.class.php:1', 'label' => 'Project', 'picto' => 'project', 'enabled' => 'isModEnabled("project")', 'position' => 52, 'notnull' => -1, 'visible' => -1, 'index' => 1, 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150', 'validate' => 1, 'lang' => 'mymodule@mymodule'),
+		'description' => array('type' => 'text', 'label' => 'Description', 'enabled' => 1, 'position' => 60, 'notnull' => 0, 'visible' => 3, 'validate' => 1, 'lang' => 'mymodule@mymodule'),
+		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'position' => 61, 'notnull' => 0, 'visible' => 0, 'cssview' => 'wordbreak', 'validate' => 1, 'lang' => 'mymodule@mymodule'),
+		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'position' => 62, 'notnull' => 0, 'visible' => 0, 'cssview' => 'wordbreak', 'validate' => 1, 'lang' => 'mymodule@mymodule'),
+		'date_creation' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'position' => 500, 'notnull' => 1, 'visible' => -2, 'lang' => 'mymodule@mymodule'),
+		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'position' => 501, 'notnull' => 0, 'visible' => -2, 'lang' => 'mymodule@mymodule'),
+		'fk_user_creat' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'picto' => 'user', 'enabled' => 1, 'position' => 510, 'notnull' => 1, 'visible' => -2, 'foreignkey' => '0', 'csslist' => 'tdoverflowmax150', 'lang' => 'mymodule@mymodule'),
+		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'picto' => 'user', 'enabled' => 1, 'position' => 511, 'notnull' => -1, 'visible' => -2, 'csslist' => 'tdoverflowmax150', 'lang' => 'mymodule@mymodule'),
+		'last_main_doc' => array('type' => 'varchar(255)', 'label' => 'LastMainDoc', 'enabled' => 1, 'position' => 600, 'notnull' => 0, 'visible' => 0, 'lang' => 'mymodule@mymodule'),
+		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'position' => 1000, 'notnull' => -1, 'visible' => -2, 'lang' => 'mymodule@mymodule'),
+		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'Model pdf', 'enabled' => 1, 'position' => 1010, 'notnull' => -1, 'visible' => 0, 'lang' => 'mymodule@mymodule'),
+		'status' => array('type' => 'integer', 'label' => 'Status', 'enabled' => 1, 'position' => 2000, 'notnull' => 1, 'visible' => 1, 'index' => 1, 'arrayofkeyval' => array(0 => 'Draft', '1' => 'Validated', 9 => 'Canceled'), 'validate' => 1, 'lang' => 'mymodule@mymodule'),
 	);
 
 	/**
@@ -141,11 +160,6 @@ class MyObject extends CommonObject
 	 * @var string Ref
 	 */
 	public $ref;
-
-	/**
-	 * @var int Entity
-	 */
-	public $entity;
 
 	/**
 	 * @var string label
@@ -167,7 +181,7 @@ class MyObject extends CommonObject
 	public $fk_soc;		// both socid and fk_soc are used
 
 	/**
-	 * @var int Status
+	 * @var ?int Status
 	 */
 	public $status;
 
@@ -177,12 +191,12 @@ class MyObject extends CommonObject
 	public $fk_user_creat;
 
 	/**
-	 * @var int ID
+	 * @var ?int ID
 	 */
 	public $fk_user_modif;
 
 	/**
-	 * @var string public $last_main_doc
+	 * @var string public
 	 */
 	public $last_main_doc;
 
@@ -192,42 +206,42 @@ class MyObject extends CommonObject
 	public $import_key;
 	// END MODULEBUILDER PROPERTIES
 
-
+	//BEGIN MODULEBUILDER LINES
 	// If this object has a subtable with lines
 
-	// /**
-	//  * @var string    Name of subtable line
-	//  */
-	// public $table_element_line = 'mymodule_myobjectline';
+	/**
+	 * @var string    Name of subtable line
+	 */
+	public $table_element_line = 'mymodule_myobjectline';
 
-	// /**
-	//  * @var string    Field with ID of parent key if this object has a parent
-	//  */
-	// public $fk_element = 'fk_myobject';
+	/**
+	 * @var string    Field with ID of parent key if this object has a parent
+	 */
+	public $fk_element = 'fk_myobject';
 
-	// /**
-	//  * @var string    Name of subtable class that manage subtable lines
-	//  */
-	// public $class_element_line = 'MyObjectline';
+	/**
+	 * @var string    Name of subtable class that manage subtable lines
+	 */
+	public $class_element_line = 'MyObjectline';
 
-	// /**
-	//  * @var array	List of child tables. To test if we can delete object.
-	//  */
-	// protected $childtables = array('mychildtable' => array('name'=>'MyObject', 'fk_element'=>'fk_myobject'));
+	/**
+	 * @var array<array<string>|string>		List of child tables. To test if we can delete object.
+	 */
+	protected $childtables = array('mychildtable' => array('name' => 'MyObject', 'fk_element' => 'fk_myobject'));
 
-	// /**
-	//  * @var array    List of child tables. To know object to delete on cascade.
-	//  *               If name matches '@ClassNAme:FilePathClass;ParentFkFieldName' it will
-	//  *               call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object
-	//  */
-	// protected $childtablesoncascade = array('mymodule_myobjectdet');
+	/**
+	 * @var string[]	List of child tables. To know object to delete on cascade.
+	 *               	If name matches '@ClassNAme:FilePathClass;ParentFkFieldName' it will
+	 *               	call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object
+	 */
+	protected $childtablesoncascade = array('mymodule_myobjectdet');
 
-	// /**
-	//  * @var MyObjectLine[]     Array of subtable lines
-	//  */
-	// public $lines = array();
+	/**
+	 * @var MyObjectLine[]     Array of subtable lines
+	 */
+	public $lines = array();
 
-
+	//END MODULEBUILDER LINES
 
 	/**
 	 * Constructor
@@ -239,8 +253,6 @@ class MyObject extends CommonObject
 		global $langs;
 
 		$this->db = $db;
-		$this->ismultientitymanaged = 0;
-		$this->isextrafieldmanaged = 1;
 
 		if (!getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid']) && !empty($this->fields['ref'])) {
 			$this->fields['rowid']['visible'] = 0;
@@ -283,13 +295,16 @@ class MyObject extends CommonObject
 	 */
 	public function create(User $user, $notrigger = 0)
 	{
-		$resultcreate = $this->createCommon($user, $notrigger);
+		$result = $this->createCommon($user, $notrigger);
 
 		// uncomment lines below if you want to validate object after creation
+		// if ($result > 0) {
 		// $this->fetch($this->id); // needed to retrieve some fields (ie date_creation for masked ref)
-		// $resultcreate = $this->validate($user, $notrigger);
+		// $resultupdate = $this->validate($user, $notrigger);
+		// if ($resultupdate < 0) { return $resultupdate; }
+		// }
 
-		return $resultcreate;
+		return $result;
 	}
 
 	/**
@@ -312,14 +327,16 @@ class MyObject extends CommonObject
 
 		// Load source object
 		$result = $object->fetchCommon($fromid);
+		//BEGIN MODULEBUILDER LINES
 		if ($result > 0 && !empty($object->table_element_line)) {
 			$object->fetchLines();
 		}
 
 		// get lines so they will be clone
-		//foreach($this->lines as $line)
-		//	$line->fetch_optionals();
-
+		foreach ($this->lines as $line) {
+			$line->fetch_optionals();
+		}
+		//END MODULEBUILDER LINES
 		// Reset some properties
 		unset($object->id);
 		unset($object->fk_user_creat);
@@ -372,7 +389,7 @@ class MyObject extends CommonObject
 
 		if (!$error) {
 			// copy external contacts if same company
-			if (!empty($object->socid) && property_exists($this, 'fk_soc') && $this->fk_soc == $object->socid) {
+			if (!empty($object->socid) && ((property_exists($this, 'fk_soc') && ($this->fk_soc == $object->socid)) || (property_exists($this, 'socid') && ($this->socid == $object->socid)))) {	// @phpstan-ignore-line
 				if ($this->copy_linked_contact($object, 'external') < 0) {
 					$error++;
 				}
@@ -397,15 +414,17 @@ class MyObject extends CommonObject
 	 * @param	int    		$id   			Id object
 	 * @param	string 		$ref  			Ref
 	 * @param	int<0,1>	$noextrafields	0=Default to load extrafields, 1=No extrafields
-	 * @param	int<0,1>	$nolines		0=Default to load extrafields, 1=No extrafields
+	 * @param	int<0,1>	$nolines		0=Default to load lines, 1=No lines
 	 * @return	int<-1,1>					Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = null, $noextrafields = 0, $nolines = 0)
 	{
 		$result = $this->fetchCommon($id, $ref, '', $noextrafields);
+		//BEGIN MODULEBUILDER LINES
 		if ($result > 0 && !empty($this->table_element_line) && empty($nolines)) {
 			$this->fetchLines($noextrafields);
 		}
+		//END MODULEBUILDER LINES
 		return $result;
 	}
 
@@ -422,8 +441,7 @@ class MyObject extends CommonObject
 		$result = $this->fetchLinesCommon('', $noextrafields);
 		return $result;
 	}
-
-
+	//END MODULEBUILDER LINES
 	/**
 	 * Load list of objects in memory from the database.
 	 * Using a fetchAll() with limit = 0 is a very bad practice. Instead try to forge yourself an optimized SQL request with
@@ -447,11 +465,15 @@ class MyObject extends CommonObject
 		$sql = "SELECT ";
 		$sql .= $this->getFieldList('t');
 		$sql .= " FROM ".$this->db->prefix().$this->table_element." as t";
-		if (isset($this->isextrafieldmanaged) && $this->isextrafieldmanaged == 1) {
+		if (!empty($this->isextrafieldmanaged) && $this->isextrafieldmanaged == 1) {
 			$sql .= " LEFT JOIN ".$this->db->prefix().$this->table_element."_extrafields as te ON te.fk_object = t.rowid";
 		}
-		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) {
+		if (!empty($this->ismultientitymanaged) && (int) $this->ismultientitymanaged == 1) {
 			$sql .= " WHERE t.entity IN (".getEntity($this->element).")";
+		} elseif (preg_match('/^\w+@\w+$/', (string) $this->ismultientitymanaged)) {
+			$tmparray = explode('@', (string) $this->ismultientitymanaged);
+			$sql .= " LEFT JOIN ".$this->db->prefix().$this->db->sanitize($tmparray[1])." as pt ON t.".$this->db->sanitize($tmparray[0])." = pt.rowid";
+			$sql .= " WHERE pt.entity IN (".getEntity($this->element).")";
 		} else {
 			$sql .= " WHERE 1 = 1";
 		}
@@ -526,6 +548,7 @@ class MyObject extends CommonObject
 		//return $this->deleteCommon($user, $notrigger, 1);
 	}
 
+	//BEGIN MODULEBUILDER LINES
 	/**
 	 *  Delete a line of object in database
 	 *
@@ -543,6 +566,7 @@ class MyObject extends CommonObject
 
 		return $this->deleteLineCommon($user, $idline, $notrigger);
 	}
+	//END MODULEBUILDER LINES
 
 
 	/**
@@ -579,16 +603,16 @@ class MyObject extends CommonObject
 		$this->db->begin();
 
 		// Define new ref
-		if (!$error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) { // empty should not happened, but when it occurs, the test save life
+		if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) { // empty should not happened, but when it occurs, the test save life
 			$num = $this->getNextNumRef();
 		} else {
-			$num = $this->ref;
+			$num = (string) $this->ref;
 		}
 		$this->newref = $num;
 
 		if (!empty($num)) {
 			// Validate
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
+			$sql = "UPDATE ".$this->db->prefix().$this->table_element;
 			$sql .= " SET ";
 			if (!empty($this->fields['ref'])) {
 				$sql .= " ref = '".$this->db->escape($num)."',";
@@ -612,7 +636,7 @@ class MyObject extends CommonObject
 
 			if (!$error && !$notrigger) {
 				// Call trigger
-				$result = $this->call_trigger('MYOBJECT_VALIDATE', $user);
+				$result = $this->call_trigger('MYMODULE_MYOBJECT_VALIDATE', $user);
 				if ($result < 0) {
 					$error++;
 				}
@@ -626,15 +650,15 @@ class MyObject extends CommonObject
 			// Rename directory if dir was a temporary ref
 			if (preg_match('/^[\(]?PROV/i', $this->ref)) {
 				// Now we rename also files into index
-				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'myobject/".$this->db->escape($this->newref)."'";
-				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'myobject/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$sql = 'UPDATE '.$this->db->prefix()."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'myobject/".$this->db->escape($this->newref)."'";
+				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'myobject/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++;
 					$this->error = $this->db->lasterror();
 				}
-				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'myobject/".$this->db->escape($this->newref)."'";
-				$sql .= " WHERE filepath = 'myobject/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$sql = 'UPDATE '.$this->db->prefix()."ecm_files set filepath = 'myobject/".$this->db->escape($this->newref)."'";
+				$sql .= " WHERE filepath = 'myobject/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++;
@@ -803,7 +827,7 @@ class MyObject extends CommonObject
 
 		$result = '';
 		$params = [
-			'id' => $this->id,
+			'id' => (string) $this->id,
 			'objecttype' => $this->element.($this->module ? '@'.$this->module : ''),
 			'option' => $option,
 		];
@@ -817,18 +841,19 @@ class MyObject extends CommonObject
 			$label = implode($this->getTooltipContentArray($params));
 		}
 
-		$url = dol_buildpath('/mymodule/myobject_card.php', 1).'?id='.$this->id;
-
+		$baseurl = dol_buildpath('/mymodule/myobject_card.php', 1);
+		$query = ['id' => $this->id];
 		if ($option !== 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
 			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
-			if ($url && $add_save_lastsearch_values) {
-				$url .= '&save_lastsearch_values=1';
+			if ($add_save_lastsearch_values) {
+				$query = array_merge($query, ['save_lastsearch_values' => 1]);
 			}
 		}
+		$url = dolBuildUrl($baseurl, $query);
 
 		$linkclose = '';
 		if (empty($notooltip)) {
@@ -842,13 +867,13 @@ class MyObject extends CommonObject
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 		}
 
-		if ($option == 'nolink' || empty($url)) {
+		if ($option == 'nolink') {
 			$linkstart = '<span';
 		} else {
 			$linkstart = '<a href="'.$url.'"';
 		}
 		$linkstart .= $linkclose.'>';
-		if ($option == 'nolink' || empty($url)) {
+		if ($option == 'nolink') {
 			$linkend = '</span>';
 		} else {
 			$linkend = '</a>';
@@ -909,7 +934,7 @@ class MyObject extends CommonObject
 	 *	Return a thumb for kanban views
 	 *
 	 *	@param	string	    			$option		Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param	?array<string,string>	$arraydata	Array of data
+	 *  @param	?array<string,mixed>	$arraydata	Array of data
 	 *  @return	string								HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
@@ -985,15 +1010,23 @@ class MyObject extends CommonObject
 			return '';
 		}
 
+		$paramsBadge = array('badgeParams' => array('attr' => array(
+			'data-status-element' => $this->element,
+			'data-status' => (int) $status
+		)));
+
+
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("mymodule@mymodule");
-			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
-			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Enabled');
-			$this->labelStatus[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Disabled');
-			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
-			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Enabled');
-			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Disabled');
+			// Build status labels from the 'status' field arrayofkeyval so that the badge (LibStatut),
+			// the list filter and the select all show the same, configurable labels.
+			if (!empty($this->fields['status']['arrayofkeyval']) && is_array($this->fields['status']['arrayofkeyval'])) {
+				foreach ($this->fields['status']['arrayofkeyval'] as $statuskey => $statuslabel) {
+					$this->labelStatus[$statuskey] = $langs->transnoentitiesnoconv($statuslabel);
+					$this->labelStatusShort[$statuskey] = $langs->transnoentitiesnoconv($statuslabel);
+				}
+			}
 		}
 
 		$statusType = 'status'.$status;
@@ -1002,7 +1035,7 @@ class MyObject extends CommonObject
 			$statusType = 'status6';
 		}
 
-		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
+		return dolGetStatus($this->labelStatus[$status] ?? '', $this->labelStatusShort[$status] ?? '', '', $statusType, $mode, '', $paramsBadge);
 	}
 
 	/**
@@ -1013,21 +1046,28 @@ class MyObject extends CommonObject
 	 */
 	public function info($id)
 	{
-		$sql = "SELECT rowid,";
-		$sql .= " date_creation as datec, tms as datem";
+		$sql = "SELECT t.rowid, t.date_creation as datec";
+		if (!empty($this->isextrafieldmanaged) && $this->isextrafieldmanaged == 1) {
+			$sql .= ", GREATEST(t.tms, COALESCE(te.tms, t.tms)) as datem";
+		} else {
+			$sql .= ", t.tms as datem";
+		}
 		if (!empty($this->fields['date_validation'])) {
-			$sql .= ", date_validation as datev";
+			$sql .= ", t.date_validation as datev";
 		}
 		if (!empty($this->fields['fk_user_creat'])) {
-			$sql .= ", fk_user_creat";
+			$sql .= ", t.fk_user_creat";
 		}
 		if (!empty($this->fields['fk_user_modif'])) {
-			$sql .= ", fk_user_modif";
+			$sql .= ", t.fk_user_modif";
 		}
 		if (!empty($this->fields['fk_user_valid'])) {
-			$sql .= ", fk_user_valid";
+			$sql .= ", t.fk_user_valid";
 		}
-		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
+		$sql .= " FROM ".$this->db->prefix().$this->table_element." as t";
+		if (!empty($this->isextrafieldmanaged) && $this->isextrafieldmanaged == 1) {
+			$sql .= " LEFT JOIN ".$this->db->prefix().$this->table_element."_extrafields as te ON te.fk_object = t.rowid";
+		}
 		$sql .= " WHERE t.rowid = ".((int) $id);
 
 		$result = $this->db->query($sql);
@@ -1046,10 +1086,10 @@ class MyObject extends CommonObject
 				if (!empty($this->fields['fk_user_valid'])) {
 					$this->user_validation_id = $obj->fk_user_valid;
 				}
-				$this->date_creation     = $this->db->jdate($obj->datec);
+				$this->date_creation = $this->db->jdate($obj->datec);
 				$this->date_modification = empty($obj->datem) ? '' : $this->db->jdate($obj->datem);
 				if (!empty($obj->datev)) {
-					$this->date_validation   = empty($obj->datev) ? '' : $this->db->jdate($obj->datev);
+					$this->date_validation = empty($obj->datev) ? '' : $this->db->jdate($obj->datev);
 				}
 			}
 
@@ -1074,10 +1114,11 @@ class MyObject extends CommonObject
 		return $this->initAsSpecimenCommon();
 	}
 
+	//BEGIN MODULEBUILDER LINES
 	/**
 	 * 	Create an array of lines
 	 *
-	 * 	@return	CommonObjectLine[]|int		array of lines if OK, <0 if KO
+	 * 	@return	array<CommonObjectLine>|int		array of lines if OK, <0 if KO
 	 */
 	public function getLinesArray()
 	{
@@ -1090,10 +1131,12 @@ class MyObject extends CommonObject
 			$this->setErrorsFromObject($objectline);
 			return $result;
 		} else {
+			/** @phpstan-ignore-next-line */
 			$this->lines = $result;
 			return $this->lines;
 		}
 	}
+	//END MODULEBUILDER LINES
 
 	/**
 	 *  Returns the reference to the following non used object depending on the active numbering module.
@@ -1172,12 +1215,10 @@ class MyObject extends CommonObject
 		$langs->load("mymodule@mymodule");
 
 		if (!dol_strlen($modele)) {
-			$modele = 'standard_myobject';
-
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
-			} elseif (getDolGlobalString('MYOBJECT_ADDON_PDF')) {
-				$modele = getDolGlobalString('MYOBJECT_ADDON_PDF');
+			} else {
+				$modele = getDolGlobalString('MYOBJECT_ADDON_PDF', 'standard_myobject');
 			}
 		}
 
@@ -1226,7 +1267,7 @@ class MyObject extends CommonObject
 
 		dol_syslog(__METHOD__." start", LOG_INFO);
 
-		$now = dol_now();
+		//$now = dol_now();
 
 		$this->db->begin();
 
@@ -1242,7 +1283,7 @@ class MyObject extends CommonObject
 
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
-
+//BEGIN MODULEBUILDER LINES
 /**
  * Class MyObjectLine. You can also remove this and generate a CRUD class for lines objects.
  */
@@ -1264,6 +1305,18 @@ class MyObjectLine extends CommonObjectLine
 	public $fk_parent_attribute = '';	// Example: '' or 'fk_myobject'
 
 	/**
+	 * @var int<0,1>	Does object support extrafields ? 0=No, 1=Yes
+	 */
+	public $isextrafieldmanaged = 0;
+
+	/**
+	 * @var int<0,1>|string|null  	Does this object support multicompany module ?
+	 * 								0=No test on entity, 1=Test with field entity in local table, 'field@table'=Test entity into the field@table (example 'fk_soc@societe')
+	 */
+	public $ismultientitymanaged = 0;
+
+
+	/**
 	 * Constructor
 	 *
 	 * @param	DoliDB $db Database handler
@@ -1271,7 +1324,6 @@ class MyObjectLine extends CommonObjectLine
 	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
-
-		$this->isextrafieldmanaged = 0;
 	}
 }
+//END MODULEBUILDER LINES

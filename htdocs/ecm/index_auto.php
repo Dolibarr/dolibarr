@@ -2,8 +2,8 @@
 /* Copyright (C) 2008-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2008-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2016      Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2024      Frédéric France      <frederic.france@free.fr>
- * Copyright (C) 2024	   MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026 MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025      Joachim Kueter       <git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -28,12 +28,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/ecm.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -41,6 +35,11 @@ require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/ecm.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("ecm", "companies", "other", "users", "orders", "propal", "bills", "contracts"));
@@ -49,7 +48,7 @@ $langs->loadLangs(array("ecm", "companies", "other", "users", "orders", "propal"
 $socid = GETPOSTINT('socid');
 $action = GETPOST('action', 'aZ09');
 $section = GETPOSTINT('section') ? GETPOSTINT('section') : GETPOSTINT('section_id');
-$module = GETPOST('module', 'alpha');
+$module = GETPOST('module', 'aZ09arobase');
 if (!$section) {
 	$section = 0;
 }
@@ -147,7 +146,7 @@ if ($action == 'confirm_deletefile' && $user->hasRight('ecm', 'upload')) {
 		$upload_dir = $conf->ecm->dir_output.($relativepath ? '/'.$relativepath : '');
 		$file = $upload_dir."/".GETPOST('urlfile');
 
-		$ret = dol_delete_file($file);
+		$ret = dol_delete_file($file, 1);
 		if ($ret) {
 			setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
 		} else {
@@ -185,16 +184,16 @@ if ($action == 'refreshmanual' && $user->hasRight('ecm', 'read')) {
 	$disktree = dol_dir_list($conf->ecm->dir_output, 'directories', 1, '', '^temp$', '', 0, 0);
 
 	// Scan directory tree in database
-	$sqltree = $ecmdirstatic->get_full_arbo(0);
+	$treesqldir = $ecmdirstatic->get_full_arbo(0);
 
 	$adirwascreated = 0;
 
 	// Now we compare both trees to complete missing trees into database
 	//var_dump($disktree);
-	//var_dump($sqltree);
+	//var_dump($treesqldir);
 	foreach ($disktree as $dirdesc) {    // Loop on tree onto disk
 		$dirisindatabase = 0;
-		foreach ($sqltree as $dirsqldesc) {
+		foreach ($treesqldir as $dirsqldesc) {
 			if ($conf->ecm->dir_output.'/'.$dirsqldesc['fullrelativename'] == $dirdesc['fullname']) {
 				$dirisindatabase = 1;
 				break;
@@ -218,7 +217,7 @@ if ($action == 'refreshmanual' && $user->hasRight('ecm', 'read')) {
 				dol_syslog($txt);
 				//print $txt." -> ";
 				$parentdirisindatabase = 0;
-				foreach ($sqltree as $dirsqldesc) {
+				foreach ($treesqldir as $dirsqldesc) {
 					if ($dirsqldesc['fullrelativename'] == $relativepathtosearchparent) {
 						$parentdirisindatabase = $dirsqldesc['id'];
 						break;
@@ -249,13 +248,13 @@ if ($action == 'refreshmanual' && $user->hasRight('ecm', 'read')) {
 				//print $ecmdirtmp->cachenbofdoc."<br>\n";exit;
 				$id = $ecmdirtmp->create($user);
 				if ($id > 0) {
-					$newdirsql = array('id' => $id,
+					$newsqldir = array('id' => $id,
 									 'id_mere' => $ecmdirtmp->fk_parent,
 									 'label' => $ecmdirtmp->label,
 									 'description' => $ecmdirtmp->description,
 									 'fullrelativename' => $relativepathmissing);
-					$sqltree[] = $newdirsql; // We complete fulltree for following loops
-					//var_dump($sqltree);
+					$treesqldir[] = $newsqldir; // We complete fulltree for following loops
+					//var_dump($treesqldir);
 					$adirwascreated = 1;
 				} else {
 					dol_syslog("Failed to create directory ".$ecmdirtmp->label, LOG_ERR);
@@ -269,7 +268,7 @@ if ($action == 'refreshmanual' && $user->hasRight('ecm', 'read')) {
 	}
 
 	// Loop now on each sql tree to check if dir exists
-	foreach ($sqltree as $dirdesc) {    // Loop on each sqltree to check dir is on disk
+	foreach ($treesqldir as $dirdesc) {    // Loop on each treesqldir to check dir is on disk
 		$dirtotest = $conf->ecm->dir_output.'/'.$dirdesc['fullrelativename'];
 		if (!dol_is_dir($dirtotest)) {
 			$ecmdirtmp->id = $dirdesc['id'];
@@ -285,7 +284,7 @@ if ($action == 'refreshmanual' && $user->hasRight('ecm', 'read')) {
 	// If a directory was added, the fulltree array is not correctly completed and sorted, so we clean
 	// it to be sure that fulltree array is not used without reloading it.
 	if ($adirwascreated) {
-		$sqltree = null;
+		$treesqldir = null;
 	}
 }
 
@@ -302,15 +301,10 @@ $maxheightwin = (isset($_SESSION["dol_screenheight"]) && $_SESSION["dol_screenhe
 $moreheadcss = '';
 $moreheadjs = '';
 
-//$morejs=array();
-$morejs = array('includes/jquery/plugins/blockUI/jquery.blockUI.js', 'core/js/blockUI.js'); // Used by ecm/tpl/enabledfiletreeajax.tpl.pgp
+$morejs=array();
 if (!getDolGlobalString('MAIN_ECM_DISABLE_JS')) {
-	$morejs[] = "includes/jquery/plugins/jqueryFileTree/jqueryFileTree.js";
+	$morejs[] = "public/includes/jquery/plugins/jqueryFileTree/jqueryFileTree.js";
 }
-
-$moreheadjs .= '<script type="text/javascript">'."\n";
-$moreheadjs .= 'var indicatorBlockUI = \''.DOL_URL_ROOT."/theme/".$conf->theme."/img/working.gif".'\';'."\n";
-$moreheadjs .= '</script>'."\n";
 
 llxHeader($moreheadcss.$moreheadjs, $langs->trans("ECMArea"), '', '', 0, 0, $morejs, '', '', 'mod-ecm page-index_auto');
 
@@ -322,90 +316,93 @@ if (!getDolGlobalString('ECM_AUTO_TREE_HIDEN')) {
 	if (isModEnabled("product") || isModEnabled("service")) {
 		$langs->load("products");
 		$rowspan++;
-		$sectionauto[] = array('position' => 10, 'level' => 1, 'module' => 'product', 'test' => (isModEnabled("product") || isModEnabled("service")), 'label' => $langs->trans("ProductsAndServices"), 'desc' => $langs->trans("ECMDocsByProducts"));
+		$sectionauto[] = array('position' => 10, 'level' => 1, 'module' => 'product', 'test' => $user->hasRight('produit', 'lire'), 'label' => $langs->trans("ProductsAndServices"), 'desc' => $langs->trans("ECMDocsByProducts"));
 	}
 	if (isModEnabled("societe")) {
 		$rowspan++;
-		$sectionauto[] = array('position' => 20, 'level' => 1, 'module' => 'company', 'test' => isModEnabled('societe'), 'label' => $langs->trans("ThirdParties"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("ThirdParties")));
+		$sectionauto[] = array('position' => 20, 'level' => 1, 'module' => 'company', 'test' => $user->hasRight('societe', 'lire'), 'label' => $langs->trans("ThirdParties"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("ThirdParties")));
 	}
 	if (isModEnabled("propal")) {
 		$rowspan++;
-		$sectionauto[] = array('position' => 30, 'level' => 1, 'module' => 'propal', 'test' => isModEnabled('propal'), 'label' => $langs->trans("Proposals"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Proposals")));
+		$sectionauto[] = array('position' => 30, 'level' => 1, 'module' => 'propal', 'test' => $user->hasRight('propale', 'lire'), 'label' => $langs->trans("Proposals"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Proposals")));
 	}
 	if (isModEnabled('contract')) {
 		$rowspan++;
-		$sectionauto[] = array('position' => 40, 'level' => 1, 'module' => 'contract', 'test' => isModEnabled('contract'), 'label' => $langs->trans("Contracts"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Contracts")));
+		$sectionauto[] = array('position' => 40, 'level' => 1, 'module' => 'contract', 'test' => $user->hasRight('contrat', 'lire'), 'label' => $langs->trans("Contracts"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Contracts")));
 	}
 	if (isModEnabled('order')) {
 		$rowspan++;
-		$sectionauto[] = array('position' => 50, 'level' => 1, 'module' => 'order', 'test' => isModEnabled('order'), 'label' => $langs->trans("CustomersOrders"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Orders")));
+		$sectionauto[] = array('position' => 50, 'level' => 1, 'module' => 'order', 'test' => $user->hasRight('commande', 'lire'), 'label' => $langs->trans("CustomersOrders"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Orders")));
 	}
 	if (isModEnabled('invoice')) {
 		$rowspan++;
-		$sectionauto[] = array('position' => 60, 'level' => 1, 'module' => 'invoice', 'test' => isModEnabled('invoice'), 'label' => $langs->trans("CustomersInvoices"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Invoices")));
+		$sectionauto[] = array('position' => 60, 'level' => 1, 'module' => 'invoice', 'test' => $user->hasRight('facture', 'lire'), 'label' => $langs->trans("CustomersInvoices"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Invoices")));
 	}
 	if (isModEnabled('supplier_proposal')) {
 		$langs->load("supplier_proposal");
 		$rowspan++;
-		$sectionauto[] = array('position' => 70, 'level' => 1, 'module' => 'supplier_proposal', 'test' => isModEnabled('supplier_proposal'), 'label' => $langs->trans("SupplierProposals"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("SupplierProposals")));
+		$sectionauto[] = array('position' => 70, 'level' => 1, 'module' => 'supplier_proposal', 'test' => $user->hasRight('supplier_proposal', 'lire'), 'label' => $langs->trans("SupplierProposals"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("SupplierProposals")));
 	}
 	if (isModEnabled("supplier_order")) {
 		$rowspan++;
-		$sectionauto[] = array('position' => 80, 'level' => 1, 'module' => 'order_supplier', 'test' => isModEnabled("supplier_order"), 'label' => $langs->trans("SuppliersOrders"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("PurchaseOrders")));
+		$sectionauto[] = array('position' => 80, 'level' => 1, 'module' => 'order_supplier', 'test' => $user->hasRight('fournisseur', 'commande', 'lire'), 'label' => $langs->trans("SuppliersOrders"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("SuppliersOrders")));
 	}
 	if (isModEnabled("supplier_invoice")) {
 		$rowspan++;
-		$sectionauto[] = array('position' => 90, 'level' => 1, 'module' => 'invoice_supplier', 'test' => isModEnabled("supplier_invoice"), 'label' => $langs->trans("SuppliersInvoices"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("SupplierInvoices")));
+		$sectionauto[] = array('position' => 90, 'level' => 1, 'module' => 'invoice_supplier', 'test' => $user->hasRight('fournisseur', 'facture', 'lire'), 'label' => $langs->trans("SuppliersInvoices"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("SupplierInvoices")));
 	}
 	if (isModEnabled('tax')) {
 		$langs->load("compta");
 		$rowspan++;
-		$sectionauto[] = array('position' => 100, 'level' => 1, 'module' => 'tax', 'test' => isModEnabled('tax'), 'label' => $langs->trans("SocialContributions"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("SocialContributions")));
+		$sectionauto[] = array('position' => 100, 'level' => 1, 'module' => 'tax', 'test' => $user->hasRight('tax', 'charges', 'lire'), 'label' => $langs->trans("SocialContributions"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("SocialContributions")));
 		$rowspan++;
-		$sectionauto[] = array('position' => 110, 'level' => 1, 'module' => 'tax-vat', 'test' => isModEnabled('tax'), 'label' => $langs->trans("VAT"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("VAT")));
+		$sectionauto[] = array('position' => 110, 'level' => 1, 'module' => 'tax-vat', 'test' => $user->hasRight('tax', 'charges', 'lire'), 'label' => $langs->trans("VAT"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("VAT")));
 	}
 	if (isModEnabled('salaries')) {
 		$langs->load("compta");
 		$rowspan++;
-		$sectionauto[] = array('position' => 120, 'level' => 1, 'module' => 'salaries', 'test' => isModEnabled('salaries'), 'label' => $langs->trans("Salaries"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Salaries")));
+		$sectionauto[] = array('position' => 120, 'level' => 1, 'module' => 'salaries', 'test' => $user->hasRight('salaries', 'read'), 'label' => $langs->trans("Salaries"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Salaries")));
 	}
 	if (isModEnabled('project')) {
 		$rowspan++;
-		$sectionauto[] = array('position' => 130, 'level' => 1, 'module' => 'project', 'test' => isModEnabled('project'), 'label' => $langs->trans("Projects"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Projects")));
+		$sectionauto[] = array('position' => 130, 'level' => 1, 'module' => 'project', 'test' => 1, 'label' => $langs->trans("Projects"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Projects")));
 		$rowspan++;
-		$sectionauto[] = array('position' => 140, 'level' => 1, 'module' => 'project_task', 'test' => isModEnabled('project'), 'label' => $langs->trans("Tasks"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Tasks")));
+		$sectionauto[] = array('position' => 140, 'level' => 1, 'module' => 'project_task', 'test' => 1, 'label' => $langs->trans("Tasks"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Tasks")));
 	}
 	if (isModEnabled('intervention')) {
 		$langs->load("interventions");
 		$rowspan++;
-		$sectionauto[] = array('position' => 150, 'level' => 1, 'module' => 'fichinter', 'test' => isModEnabled('intervention'), 'label' => $langs->trans("Interventions"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Interventions")));
+		$sectionauto[] = array('position' => 150, 'level' => 1, 'module' => 'fichinter', 'test' => $user->hasRight('ficheinter', 'lire'), 'label' => $langs->trans("Interventions"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Interventions")));
 	}
 	if (isModEnabled('expensereport')) {
 		$langs->load("trips");
 		$rowspan++;
-		$sectionauto[] = array('position' => 160, 'level' => 1, 'module' => 'expensereport', 'test' => isModEnabled('expensereport'), 'label' => $langs->trans("ExpenseReports"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("ExpenseReports")));
+		$sectionauto[] = array('position' => 160, 'level' => 1, 'module' => 'expensereport', 'test' => $user->hasRight('expensereport', 'lire'), 'label' => $langs->trans("ExpenseReports"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("ExpenseReports")));
 	}
 	if (isModEnabled('holiday')) {
 		$langs->load("holiday");
 		$rowspan++;
-		$sectionauto[] = array('position' => 170, 'level' => 1, 'module' => 'holiday', 'test' => isModEnabled('holiday'), 'label' => $langs->trans("Holidays"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Holidays")));
+		$sectionauto[] = array('position' => 170, 'level' => 1, 'module' => 'holiday', 'test' => $user->hasRight('holiday', 'read'), 'label' => $langs->trans("Holidays"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Holidays")));
 	}
 	if (isModEnabled("bank")) {
 		$langs->load("banks");
 		$rowspan++;
-		$sectionauto[] = array('position' => 180, 'level' => 1, 'module' => 'banque', 'test' => isModEnabled('bank'), 'label' => $langs->trans("BankAccount"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("BankAccount")));
+		$sectionauto[] = array('position' => 180, 'level' => 1, 'module' => 'banque', 'test' => $user->hasRight('banque', 'lire'), 'label' => $langs->trans("BankAccount"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("BankAccount")));
+		// TODO Enable this
+		//$rowspan++;
+		//$sectionauto[] = array('position' => 182, 'level' => 1, 'module' => 'bank-statement', 'test' => $user->hasRight('banque', 'lire'), 'label' => $langs->trans("BankAccount").' - '.$langs->trans("Statement"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("BankAccount").' - '.$langs->transnoentitiesnoconv("Statement")));
 		$rowspan++;
-		$sectionauto[] = array('position' => 190, 'level' => 1, 'module' => 'chequereceipt', 'test' => isModEnabled('bank'), 'label' => $langs->trans("CheckReceipt"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("CheckReceipt")));
+		$sectionauto[] = array('position' => 190, 'level' => 1, 'module' => 'chequereceipt', 'test' => $user->hasRight('banque', 'lire'), 'label' => $langs->trans("CheckReceipt"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("CheckReceipt")));
 	}
 	if (isModEnabled('mrp')) {
 		$langs->load("mrp");
 		$rowspan++;
-		$sectionauto[] = array('position' => 200, 'level' => 1, 'module' => 'mrp-mo', 'test' => isModEnabled('mrp'), 'label' => $langs->trans("MOs"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("ManufacturingOrders")));
+		$sectionauto[] = array('position' => 200, 'level' => 1, 'module' => 'mrp-mo', 'test' => $user->hasRight('mrp', 'read'), 'label' => $langs->trans("MOs"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("ManufacturingOrders")));
 	}
 	if (isModEnabled('recruitment')) {
 		$langs->load("recruitment");
 		$rowspan++;
-		$sectionauto[] = array('position' => 210, 'level' => 1, 'module' => 'recruitment-recruitmentcandidature', 'test' => isModEnabled('recruitment'), 'label' => $langs->trans("Candidatures"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("JobApplications")));
+		$sectionauto[] = array('position' => 210, 'level' => 1, 'module' => 'recruitment-recruitmentcandidature', 'test' => $user->hasRight('recruitment', 'read'), 'label' => $langs->trans("Candidatures"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("JobApplications")));
 	}
 	$rowspan++;
 	$sectionauto[] = array('position' => 220, 'level' => 1, 'module' => 'user', 'test' => 1, 'label' => $langs->trans("Users"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Users")));
@@ -431,7 +428,7 @@ print dol_get_fiche_head($head, 'index_auto', '', -1, '');
 
 // Confirm remove file (for non javascript users)
 if ($action == 'deletefile' && empty($conf->use_javascript_ajax)) {
-	print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.$section.'&urlfile='.urlencode(GETPOST("urlfile")), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', '', 1);
+	print $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], array('section' => $section, 'urlfile' => GETPOST("urlfile"))), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', '', 1);
 }
 
 // Start container of all panels
@@ -445,7 +442,18 @@ if ($action == 'deletefile' && empty($conf->use_javascript_ajax)) {
 print '<div class="inline-block toolbarbutton centpercent">';
 
 // Toolbar
-$url = ((!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_ECM_DISABLE_JS')) ? '#' : ($_SERVER["PHP_SELF"].'?action=refreshmanual'.($module ? '&amp;module='.$module : '').($section ? '&amp;section='.$section : '')));
+if (!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_ECM_DISABLE_JS')) {
+	$url = '#';
+} else {
+	$paramsrefresh = array('action' => 'refreshmanual');
+	if ($module) {
+		$paramsrefresh['module'] = $module;
+	}
+	if ($section) {
+		$paramsrefresh['section'] = $section;
+	}
+	$url = dolBuildUrl($_SERVER["PHP_SELF"], $paramsrefresh);
+}
 print '<a href="'.$url.'" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans('Refresh')).'">';
 print img_picto('', 'refresh', 'id="refreshbutton"', 0, 0, 0, '', 'size15x marginrightonly');
 print '</a>';
@@ -460,9 +468,9 @@ print '</div>';
 // Start left area
 
 
-// Confirmation de la suppression d'une ligne categorie
+// Generate form to confirm the deletion of a category line
 if ($action == 'delete_section') {
-	print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.$section, $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection', $ecmdir->label), 'confirm_deletesection', '', '', 1);
+	print $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], array('section' => $section)), $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection', $ecmdir->label), 'confirm_deletesection', '', '', 1);
 }
 // End confirm
 
@@ -509,7 +517,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i', $act
 			}
 
 			print '<li class="directory collapsed">';
-			print '<a class="fmdirlia jqft ecmjqft" href="'.$_SERVER["PHP_SELF"].'?module='.urlencode($val['module']).'">';
+			print '<a class="fmdirlia jqft ecmjqft" href="'.dolBuildUrl($_SERVER["PHP_SELF"], array('module' => $val['module'])).'">';
 			print dolPrintLabel($val['label']);
 			print '</a>';
 

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,7 +58,7 @@ class PaymentTerm // extends CommonObject
 
 
 	/**
-	 * @var int Entity ID
+	 * @var ?int Entity ID
 	 */
 	public $entity;
 
@@ -164,7 +164,7 @@ class PaymentTerm // extends CommonObject
 		$sql .= "nbjour,";
 		$sql .= "decalage";
 		$sql .= ") VALUES (";
-		$sql .= " ".(!isset($this->entity) ? getEntity('c_payment_term') : "'".$this->db->escape($this->entity)."'").",";
+		$sql .= " ".(!isset($this->entity) ? getEntity('c_payment_term') : "'".$this->db->escape((string) $this->entity)."'").",";
 		$sql .= " ".(!isset($this->code) ? 'NULL' : "'".$this->db->escape($this->code)."'").",";
 		$sql .= " ".(!isset($this->sortorder) ? 'NULL' : "'".$this->db->escape($this->sortorder)."'").",";
 		$sql .= " ".(!isset($this->active) ? 'NULL' : "'".$this->db->escape($this->active)."'").",";
@@ -342,12 +342,12 @@ class PaymentTerm // extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."c_payment_term SET";
 		$sql .= " code=".(isset($this->code) ? "'".$this->db->escape($this->code)."'" : "null").",";
 		$sql .= " sortorder=".(isset($this->sortorder) ? $this->sortorder : "null").",";
-		$sql .= " active=".(isset($this->active) ? $this->active : "null").",";
+		$sql .= " active=".(isset($this->active) ? "'".$this->db->escape($this->active)."'" : "null").",";
 		$sql .= " libelle=".(isset($this->libelle) ? "'".$this->db->escape($this->libelle)."'" : "null").",";
 		$sql .= " libelle_facture=".(isset($this->libelle_facture) ? "'".$this->db->escape($this->libelle_facture)."'" : "null").",";
-		$sql .= " type_cdr=".(isset($this->type_cdr) ? $this->type_cdr : "null").",";
-		$sql .= " nbjour=".(isset($this->nbjour) ? $this->nbjour : "null").",";
-		$sql .= " decalage=".(isset($this->decalage) ? $this->decalage : "null");
+		$sql .= " type_cdr=".(isset($this->type_cdr) ? "'".$this->db->escape($this->type_cdr)."'" : "null").",";
+		$sql .= " nbjour=".(isset($this->nbjour) ? "'".$this->db->escape($this->nbjour)."'" : "null").",";
+		$sql .= " decalage=".(isset($this->decalage) ? "'".$this->db->escape($this->decalage)."'" : "null");
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$this->db->begin();

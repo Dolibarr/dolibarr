@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2010-2022	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+/* Copyright (C) 2010-2022	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2010-2012	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2025		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +26,7 @@
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
 
-
+/** @phan-file-suppress PhanTypeInvalidDimOffset */
 
 /**
  * Core function to output top menu auguria
@@ -33,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
  * @param 	DoliDB		$db			Database handler
  * @param 	string		$atarget	Target (Example: '' or '_top')
  * @param 	int			$type_user	0=Menu for backoffice, 1=Menu for front office
- * @param	array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,level:int,prefix:string}> $tabMenu		If array with menu entries already loaded, we put this array here (in most cases, it's empty)
+ * @param	array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,positionfull:int|string,showtopmenuinframe:int,level:int,prefix:string}> $tabMenu		If array with menu entries already loaded, we put this array here (in most cases, it's empty)
  * @param	Menu		$menu		Object Menu to return back list of menu entries
  * @param	int<0,1>	$noout		1=Disable output (Initialise &$menu only).
  * @param	string		$mode		'top', 'topnb', 'left', 'jmobile'
@@ -53,13 +54,8 @@ function print_auguria_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout
 	// Show personalized menus
 	$menuArbo = new Menubase($db, 'auguria');
 	$newTabMenu = $menuArbo->menuTopCharger('', '', $type_user, 'auguria', $tabMenu);
-	'@phan-var-force array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,prefix:string}> $newTabMenu';
 
-	$substitarray = getCommonSubstitutionArray($langs, 0, null, null);
-
-	if (empty($noout)) {
-		print_start_menu_array_auguria();
-	}
+	$substitarray = getCommonSubstitutionArray($langs, 0, null, null, array('system', 'mycompany', 'date', 'user'));
 
 	global $usemenuhider;
 	$usemenuhider = 1;
@@ -83,6 +79,10 @@ function print_auguria_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout
 		$showmode = dol_auguria_showmenu($type_user, $newTabMenu[$i], $listofmodulesforexternal);
 		if ($showmode == 1) {
 			$newTabMenu[$i]['url'] = make_substitutions($newTabMenu[$i]['url'], $substitarray);
+
+			// Phan issue #4881 requires that we reforce the type
+			'@phan-var-force array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,positionfull:int|string,showtopmenuinframe:int,level?:int,prefix:string}> $newTabMenu';
+
 			// url = url from host, shorturl = relative path into dolibarr sources
 			$url = $shorturl = $newTabMenu[$i]['url'];
 
@@ -109,8 +109,15 @@ function print_auguria_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout
 				}
 			}
 
-			// Phan issue #4881 requires that we reforce the type
-			'@phan-var-force array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,prefix:string}> $newTabMenu';
+			// Modify URL for the case we are using the option showtopmenuinframe
+			'@phan-var-force array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,positionfull:int|string,showtopmenuinframe:int,level?:int,prefix:string}> $newTabMenu';
+			// @phan-suppress-next-line PhanTypeInvalidDimOffset
+			if ($newTabMenu[$i]['showtopmenuinframe']) {
+				if (preg_match("/^(http:\/\/|https:\/\/)/i", $newTabMenu[$i]['url'])) {
+					$url = '/core/frames.php?idmenu='.$newTabMenu[$i]['rowid'];
+					$shorturl = $url;
+				}
+			}
 
 			// TODO Find a generic solution
 			if (preg_match('/search_project_user=__search_project_user__/', $shorturl)) {
@@ -121,9 +128,6 @@ function print_auguria_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout
 					$shorturl = preg_replace('/search_project_user=__search_project_user__/', '', $shorturl);
 				}
 			}
-
-			// Phan issue #4881 requires that we reforce the type
-			'@phan-var-force array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,prefix:string}> $newTabMenu';
 
 			// Define the class (top menu selected or not)
 			if (!empty($_SESSION['idmenu']) && $newTabMenu[$i]['rowid'] == $_SESSION['idmenu']) {
@@ -145,9 +149,17 @@ function print_auguria_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout
 	// Sort on position
 	$menu->liste = dol_sort_array($menu->liste, 'position');
 
+	// If noout is on (for jmobile div menu for example)
+	if ($noout) {
+		return 0;
+	}
+
 	// Output menu entries
+
+	print_start_menu_array_auguria();
+
 	// Show logo company
-	if (!getDolGlobalString('MAIN_MENU_INVERT') && empty($noout) && getDolGlobalString('MAIN_SHOW_LOGO') && !getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
+	if (!getDolGlobalString('MAIN_MENU_INVERT') && getDolGlobalString('MAIN_SHOW_LOGO') && !getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 		//$mysoc->logo_mini=(empty($conf->global->MAIN_INFO_SOCIETE_LOGO_MINI)?'':$conf->global->MAIN_INFO_SOCIETE_LOGO_MINI);
 		$mysoc->logo_squarred_mini = (!getDolGlobalString('MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI') ? '' : $conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI);
 
@@ -177,16 +189,15 @@ function print_auguria_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout
 		print_end_menu_entry_auguria(4);
 	}
 
-	if (empty($noout)) {
-		foreach ($menu->liste as $menuval) {
-			print_start_menu_entry_auguria($menuval['idsel'], $menuval['classname'], $menuval['enabled']);
-			print_text_menu_entry_auguria($menuval['titre'], $menuval['enabled'], ($menuval['url'] != '#' ? DOL_URL_ROOT : '').$menuval['url'], $menuval['id'], $menuval['idsel'], $menuval['classname'], ($menuval['target'] ? $menuval['target'] : $atarget), $menuval);
-			print_end_menu_entry_auguria($menuval['enabled']);
-		}
+	foreach ($menu->liste as $menuval) {
+		print_start_menu_entry_auguria($menuval['idsel'], $menuval['classname'], $menuval['enabled']);
+		// @phpstan-ignore-next-line
+		print_text_menu_entry_auguria($menuval['titre'], $menuval['enabled'], ($menuval['url'] != '#' ? DOL_URL_ROOT : '').$menuval['url'], $menuval['id'], $menuval['idsel'], $menuval['classname'], ($menuval['target'] ? $menuval['target'] : $atarget), $menuval);
+		print_end_menu_entry_auguria($menuval['enabled']);
 	}
 
-	$showmode = 1;
-	if (empty($noout) && !getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
+	if (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
+		$showmode = 1;
 		print_start_menu_entry_auguria('', 'class="tmenuend"', $showmode);
 		print_end_menu_entry_auguria($showmode);
 		print_end_menu_array_auguria();
@@ -234,7 +245,7 @@ function print_start_menu_entry_auguria($idsel, $classname, $showmode)
  * @param	string		$idsel		Id sel
  * @param	string		$classname	Class name
  * @param	string		$atarget	Target
- * @param	array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,level:int,prefix:string}|array{}	$menuval	The full $menuval array
+ * @param	array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,positionfull:int|string,showtopmenuinframe:int,level:int,prefix:string}|array{}	$menuval	The full $menuval array
  * @return	void
  */
 function print_text_menu_entry_auguria($text, $showmode, $url, $id, $idsel, $classname, $atarget, $menuval = array())
@@ -247,10 +258,11 @@ function print_text_menu_entry_auguria($text, $showmode, $url, $id, $idsel, $cla
 	if ($showmode == 1) {
 		print '<a '.$classnameimg.' tabindex="-1" href="'.$url.'"'.($atarget ? ' target="'.$atarget.'"' : '').' title="'.dol_escape_htmltag($text).'">';
 		print '<div class="'.$id.' '.$idsel.' topmenuimage">';
+		$reg = array();
 		if (!empty($menuval['prefix']) && strpos($menuval['prefix'], '<span') === 0) {
 			print $menuval['prefix'];
-		} elseif (!empty($menuval['prefix']) && strpos($menuval['prefix'], 'fa-') === 0) {
-			print '<span class="'.$id.' '.$menuval['prefix'].'" id="mainmenuspan_'.$idsel.'"></span>';
+		} elseif (!empty($menuval['prefix']) && preg_match('/^(fa[rsb]? )?fa-/', $menuval['prefix'], $reg)) {
+			print '<span class="'.$id.' '.(empty($reg[1]) ? 'fa ' : '').$menuval['prefix'].'" id="mainmenuspan_'.$idsel.'"></span>';
 		} else {
 			print '<span class="'.$id.' tmenuimageforpng" id="mainmenuspan_'.$idsel.'"></span>';
 		}
@@ -316,9 +328,9 @@ function print_end_menu_array_auguria()
  * Fill &$menu (example with $forcemainmenu='home' $forceleftmenu='all', return left menu tree of Home)
  *
  * @param	DoliDB		$db                 Database handler
- * @param	array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,level:int,prefix:string}> 	$menu_array_before  Table of menu entries to show before entries of menu handler (menu->liste filled with menu->add)
- * @param	array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,level:int,prefix:string}>		$menu_array_after   Table of menu entries to show after entries of menu handler (menu->liste filled with menu->add)
- * @param	array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,level:int,prefix:string}> 	$tabMenu       		If array with menu entries already loaded, we put this array here (in most cases, it's empty)
+ * @param	array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,positionfull:int|string,showtopmenuinframe:int,level:int,prefix:string}> 	$menu_array_before  Table of menu entries to show before entries of menu handler (menu->liste filled with menu->add)
+ * @param	array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,positionfull:int|string,showtopmenuinframe:int,level:int,prefix:string}>		$menu_array_after   Table of menu entries to show after entries of menu handler (menu->liste filled with menu->add)
+ * @param	array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,positionfull:int|string,showtopmenuinframe:int,level:int,prefix:string}> 	$tabMenu       		If array with menu entries already loaded, we put this array here (in most cases, it's empty)
  * @param	Menu		$menu				Object Menu to return back list of menu entries
  * @param	int<0,1>	$noout				Disable output (Initialise &$menu only).
  * @param	string		$forcemainmenu		'x'=Force mainmenu to mainmenu='x'
@@ -358,7 +370,7 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 		print "<!-- End Bookmarks -->\n";
 	}
 
-	$substitarray = getCommonSubstitutionArray($langs, 0, null, null);
+	$substitarray = getCommonSubstitutionArray($langs, 0, null, null, array('system', 'mycompany', 'date', 'user'));
 
 	// We update newmenu with entries found into database
 	$menuArbo = new Menubase($db, 'auguria');
@@ -370,7 +382,7 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 
 		$sql = "SELECT rowid, label, courant, rappro, courant";
 		$sql .= " FROM ".MAIN_DB_PREFIX."bank_account";
-		$sql .= " WHERE entity = ".$conf->entity;
+		$sql .= " WHERE entity = ".((int) $conf->entity);
 		$sql .= " AND clos = 0";
 		$sql .= " ORDER BY label";
 
@@ -403,9 +415,12 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 		// Multi journal
 		$sql = "SELECT rowid, code, label, nature";
 		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_journal";
-		$sql .= " WHERE entity = ".$conf->entity;
+		$sql .= " WHERE entity = ".((int) $conf->entity);
+		if (getDolGlobalString('ACCOUNTING_MODE') == 'RECETTES-DEPENSES') {
+			$sql .= " AND nature = 4"; // only bank journal when using treasury accounting mode
+		}
 		$sql .= " AND active = 1";
-		$sql .= " ORDER BY label DESC";
+		$sql .= " ORDER BY nature ASC, label DESC";
 
 		$resql = $db->query($sql);
 		if ($resql) {
@@ -433,7 +448,7 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 					if ($objp->nature == 5 && isModEnabled('expensereport') && !getDolGlobalString('ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS')) {
 						$nature = "expensereports";
 					}
-					if ($objp->nature == 1) {
+					if ($objp->nature == 1 && (isModEnabled('asset') || isModEnabled('invoice') || isModEnabled('supplier_invoice'))) {
 						$nature = "various";
 					}
 					if ($objp->nature == 8) {
@@ -453,7 +468,13 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 					if ($nature) {
 						$langs->load('accountancy');
 						$journallabel = $langs->transnoentities($objp->label); // Labels in this table are set by loading llx_accounting_abc.sql. Label can be 'ACCOUNTING_SELL_JOURNAL', 'InventoryJournal', ...
-						$newmenu->add('/accountancy/journal/'.$nature.'journal.php?mainmenu=accountancy&leftmenu=accountancy_journal&id_journal='.$objp->rowid, $journallabel, 2, $user->hasRight('accounting', 'comptarapport', 'lire'));
+
+						if (getDolGlobalString('ACCOUNTING_MODE') == 'RECETTES-DEPENSES') {
+							$journalNaturePrefixUrl = 'treasury';
+						} else {
+							$journalNaturePrefixUrl = $nature;
+						}
+						$newmenu->add('/accountancy/journal/'.$journalNaturePrefixUrl.'journal.php?mainmenu=accountancy&leftmenu=accountancy_journal&id_journal='.$objp->rowid, $journallabel, 2, $user->hasRight('accounting', 'comptarapport', 'lire'));
 					}
 					$i++;
 				}
@@ -523,7 +544,7 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 
 	// Phan has a hard time tracking the type, for instance because it get hookmanager->results
 	// Force the typing at this point to get useful analysis below:
-	'@phan-var-force array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,prefix:string,level:int}> $menu_array';
+	'@phan-var-force array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,showtopmenuinframe:int,prefix:string,level:int}> $menu_array';
 
 	// Show menu
 	$invert = !getDolGlobalString('MAIN_MENU_INVERT') ? "" : "invert";
@@ -600,15 +621,16 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 						print '<span class="vmenu">';
 					}
 					if (!empty($menu_array[$i]['prefix'])) {
-						if (preg_match('/^fa\-[a-zA-Z0-9\-_]+$/', $menu_array[$i]['prefix'])) {
-							print '<span class="fas '.$menu_array[$i]['prefix'].' paddingright pictofixedwidth"></span>';
+						$reg = array();
+						if (preg_match('/^(fa[rsb]? )?fa-/', $menu_array[$i]['prefix'], $reg)) {
+							print '<span class="'.(empty($reg[1]) ? 'fa ' : '').$menu_array[$i]['prefix'].' paddingright pictofixedwidth"></span>';
 						} else {
 							print $menu_array[$i]['prefix'];
 						}
 					}
 
 					// print ($menu_array[$i]['prefix'] ? $menu_array[$i]['prefix'] : '');
-					print $menu_array[$i]['titre'];
+					print ucfirst($menu_array[$i]['titre']);
 					if ($shorturlwithoutparam) {
 						print '</a>';
 					} else {
@@ -622,7 +644,7 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 					if (!empty($menu_array[$i]['prefix'])) {
 						print $menu_array[$i]['prefix'];
 					}
-					print $menu_array[$i]['titre'];
+					print ucfirst($menu_array[$i]['titre']);
 					print '</span>';
 					print '</div>'."\n";
 					$lastlevel0 = 'greyed';
@@ -650,7 +672,7 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 					} else {
 						print '<span class="vsmenu" title="'.dol_escape_htmltag($menu_array[$i]['titre']).'">';
 					}
-					print $menu_array[$i]['titre'];
+					print ucfirst($menu_array[$i]['titre']);
 					if ($shorturlwithoutparam) {
 						print '</a>';
 					} else {
@@ -665,7 +687,7 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 					// Not enabled but visible (so greyed), except if parent was not enabled.
 					print '<div class="menu_contenu'.$cssmenu.'">';
 					print $tabstring;
-					print '<span class="spanlilevel0 vsmenudisabled vsmenudisabledmargin">'.$menu_array[$i]['titre'].'</span><br>';
+					print '<span class="spanlilevel0 vsmenudisabled vsmenudisabledmargin">'.ucfirst($menu_array[$i]['titre']).'</span><br>';
 					print '</div>'."\n";
 				}
 			}
@@ -695,14 +717,12 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
  * Function to test if an entry is enabled or not
  *
  * @param	int		$type_user					0=We need backoffice menu, 1=We need frontoffice menu
- * @param	array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,level:int,prefix:string,module:string}	$menuentry	Array for menu entry
+ * @param	array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,positionfull:int|string,showtopmenuinframe:int,level:int,prefix:string,module:string}	$menuentry	Array for menu entry
  * @param	string[]	$listofmodulesforexternal	Array with list of modules allowed to external users
  * @return	int<0,2>								0=Hide, 1=Show, 2=Show gray
  */
 function dol_auguria_showmenu($type_user, &$menuentry, &$listofmodulesforexternal)
 {
-	global $conf;
-
 	//print 'type_user='.$type_user.' module='.$menuentry['module'].' enabled='.$menuentry['enabled'].' perms='.$menuentry['perms'];
 	//print 'ok='.in_array($menuentry['module'], $listofmodulesforexternal);
 	if (empty($menuentry['enabled'])) {

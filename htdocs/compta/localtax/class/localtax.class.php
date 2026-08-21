@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2011-2014	Juanjo Menent	<jmenent@2byte.es>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -209,7 +209,7 @@ class Localtax extends CommonObject
 		$sql .= " tms='".$this->db->idate($this->tms)."',";
 		$sql .= " datep='".$this->db->idate($this->datep)."',";
 		$sql .= " datev='".$this->db->idate($this->datev)."',";
-		$sql .= " amount=".price2num($this->amount).",";
+		$sql .= " amount='".$this->db->escape($this->amount)."',";
 		$sql .= " label='".$this->db->escape($this->label)."',";
 		$sql .= " note='".$this->db->escape($this->note)."',";
 		$sql .= " fk_bank=".(int) $this->fk_bank.",";
@@ -380,7 +380,7 @@ class Localtax extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Total de la localtax des factures emises par la societe.
+	 *	Total of invoices localtax emitted by the company
 	 *
 	 *	@param	int		$year		Year
 	 *	@return	int					???
@@ -514,7 +514,7 @@ class Localtax extends CommonObject
 		}
 
 		// Insertion dans table des paiement localtax
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."localtax (localtaxtype, datep, datev, amount";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."localtax(localtaxtype, datep, datev, amount";
 		if ($this->note) {
 			$sql .= ", note";
 		}
@@ -523,15 +523,15 @@ class Localtax extends CommonObject
 		}
 		$sql .= ", fk_user_creat, fk_bank";
 		$sql .= ") ";
-		$sql .= " VALUES (".$this->ltt.", '".$this->db->idate($this->datep)."',";
-		$sql .= "'".$this->db->idate($this->datev)."',".$this->amount;
+		$sql .= " VALUES(".((int) $this->ltt).", '".$this->db->idate($this->datep)."', ";
+		$sql .= "'".$this->db->idate($this->datev)."', ".((float) $this->amount);
 		if ($this->note) {
 			$sql .= ", '".$this->db->escape($this->note)."'";
 		}
 		if ($this->label) {
 			$sql .= ", '".$this->db->escape($this->label)."'";
 		}
-		$sql .= ", ".((int) $user->id).", NULL";
+		$sql .= ", ".((int) $user->id).", null";
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::addPayment", LOG_DEBUG);
@@ -614,7 +614,7 @@ class Localtax extends CommonObject
 	 *
 	 *	@param		int		$withpicto		0=Link, 1=Picto into link, 2=Picto
 	 *	@param		string	$option			What the link points to
-	 *	@return		string					Chaine avec URL
+	 *	@return		string					String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $option = '')
 	{
@@ -671,7 +671,7 @@ class Localtax extends CommonObject
 	 *	Return clickable link of object (with eventually picto)
 	 *
 	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array{string,mixed}		$arraydata				Array of data
+	 *  @param		?array<string,mixed>	$arraydata				Array of data
 	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)

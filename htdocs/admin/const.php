@@ -3,7 +3,8 @@
  * Copyright (C) 2004-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2013		Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,9 +28,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -37,6 +35,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 
 // Load translation files required by the page
 $langs->load("admin");
@@ -44,11 +44,14 @@ $langs->load("admin");
 $rowid = GETPOSTINT('rowid');
 $entity = GETPOSTINT('entity');
 $action = GETPOST('action', 'aZ09');
+$massaction = GETPOST('massaction', 'aZ09');
+
 $debug = GETPOSTINT('debug');
 $consts = GETPOST('const', 'array');
 $constname = GETPOST('constname', 'alphanohtml');
 $constvalue = GETPOST('constvalue', 'restricthtml'); // We should be able to send everything here
 $constnote = GETPOST('constnote', 'alpha');
+
 // Load variable for pagination
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -194,9 +197,7 @@ jQuery(document).ready(function() {
 
 print load_fiche_titre($langs->trans("OtherSetup"), '', 'title_setup');
 
-print '<span class="opacitymedium">'.$langs->trans("ConstDesc")."</span><br>\n";
-print "<br>\n";
-print "<br>\n";
+print '<div class="info">'.$langs->trans("ConstDesc")."</div><br>\n";
 
 $param = '';
 
@@ -224,10 +225,10 @@ print "</tr>\n";
 print "\n";
 
 print '<tr class="oddeven nohover"><td>';
-print '<input type="text" class="flat minwidth300" name="constname" value="'.$constname.'">';
+print '<input type="text" class="flat minwidth300" name="constname" value="'.$constname.'" spellcheck="false">';
 print '</td>'."\n";
 print '<td>';
-print '<input type="text" class="flat minwidth100" name="constvalue" value="'.$constvalue.'">';
+print '<input type="text" class="flat minwidth100" name="constvalue" value="'.$constvalue.'" spellcheck="false">';
 print '</td>';
 print '<td>';
 print '<input type="text" class="flat minwidth100" name="constnote" value="'.$constnote.'">';
@@ -259,8 +260,9 @@ $sql .= ", note";
 $sql .= ", tms";
 $sql .= ", entity";
 $sql .= " FROM ".MAIN_DB_PREFIX."const";
-$sql .= " WHERE entity IN (".$db->sanitize($user->entity.",".$conf->entity).")";
-if ((empty($user->entity) || $user->admin) && $debug) {
+$sql .= " WHERE entity IN (".$db->sanitize($user->entity.",".((int) $conf->entity)).")";
+if ((empty($user->entity)/*  || $user->admin */) && $debug) {
+	// empty
 } elseif (!GETPOST('visible') || GETPOST('visible') != 'all') {
 	// to force for superadmin to debug
 	$sql .= " AND visible = 1"; // We must always have this. Otherwise, array is too large and submitting data fails due to apache POST or GET limits

@@ -7,8 +7,8 @@
  * Copyright (C) 2008      Raphael Bertrand (Resultic)  <raphael.bertrand@resultic.fr>
  * Copyright (C) 2011-2013 Juanjo Menent			    <jmenent@2byte.es>
  * Copyright (C) 2011-2022 Philippe Grand			    <philippe.grand@atoo-net.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,11 +32,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/expensereport.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -44,6 +39,10 @@ require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/expensereport.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'errors', 'trips', 'other'));
@@ -132,7 +131,7 @@ if ($action == 'updateMask') {
 } elseif ($action == 'del') {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0) {
-		if ($conf->global->EXPENSEREPORT_ADDON_PDF == "$value") {
+		if (getDolGlobalString('EXPENSEREPORT_ADDON_PDF') == "$value") {
 			dolibarr_del_const($db, 'EXPENSEREPORT_ADDON_PDF', $conf->entity);
 		}
 	}
@@ -201,7 +200,8 @@ llxHeader('', $langs->trans("ExpenseReportsSetup"), '', '', 0, 0, '', '', '', 'm
 
 $form = new Form($db);
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+
 print load_fiche_titre($langs->trans("ExpenseReportsSetup"), $linkback, 'title_setup');
 
 
@@ -215,6 +215,7 @@ print dol_get_fiche_head($head, 'expensereport', $langs->trans("ExpenseReports")
 
 print load_fiche_titre($langs->trans("ExpenseReportNumberingModules"), '', '');
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
@@ -269,7 +270,7 @@ foreach ($dirmodels as $reldir) {
 						print '</td>'."\n";
 
 						print '<td class="center">';
-						if ($conf->global->EXPENSEREPORT_ADDON == $file) {
+						if (getDolGlobalString('EXPENSEREPORT_ADDON') == $file) {
 							print img_picto($langs->trans("Activated"), 'switch_on');
 						} else {
 							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&value='.urlencode($file).'">';
@@ -298,7 +299,7 @@ foreach ($dirmodels as $reldir) {
 						}
 
 						print '<td class="center">';
-						print $form->textwithpicto('', $htmltooltip, 1, 0);
+						print $form->textwithpicto('', $htmltooltip, 1, 'info');
 						print '</td>';
 
 						print "</tr>\n";
@@ -309,7 +310,7 @@ foreach ($dirmodels as $reldir) {
 		}
 	}
 }
-print "</table><br>\n";
+print "</table></div><br>\n";
 
 /*
  *  Documents models for ExpenseReport
@@ -323,7 +324,7 @@ $def = array();
 $sql = "SELECT nom";
 $sql .= " FROM ".MAIN_DB_PREFIX."document_model";
 $sql .= " WHERE type = '".$db->escape($type)."'";
-$sql .= " AND entity = ".$conf->entity;
+$sql .= " AND entity = ".((int) $conf->entity);
 $resql = $db->query($sql);
 if ($resql) {
 	$i = 0;
@@ -339,6 +340,7 @@ if ($resql) {
 	dol_print_error($db);
 }
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
@@ -397,19 +399,19 @@ foreach ($dirmodels as $reldir) {
 							// Active
 							if (in_array($name, $def)) {
 								print '<td class="center">'."\n";
-								print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'">';
+								print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=del&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'">';
 								print img_picto($langs->trans("Enabled"), 'switch_on');
 								print '</a>';
 								print "</td>";
 							} else {
 								print '<td class="center">'."\n";
-								print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+								print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=set&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 								print "</td>";
 							}
 
 							// Default
 							print '<td class="center">';
-							if ($conf->global->EXPENSEREPORT_ADDON_PDF == "$name") {
+							if (getDolGlobalString('EXPENSEREPORT_ADDON_PDF') == "$name") {
 								print img_picto($langs->trans("Default"), 'on');
 							} else {
 								print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.$name.'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
@@ -427,13 +429,13 @@ foreach ($dirmodels as $reldir) {
 							$htmltooltip .= '<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang, 1, 1);
 							$htmltooltip .= '<br>'.$langs->trans("WatermarkOnDraftOrders").': '.yn($module->option_draft_watermark, 1, 1);
 							print '<td class="center">';
-							print $form->textwithpicto('', $htmltooltip, -1, 0);
+							print $form->textwithpicto('', $htmltooltip, -1, 'info');
 							print '</td>';
 
 							// Preview
 							print '<td class="center">';
 							if ($module->type == 'pdf') {
-								print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
+								print '<a href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'specimen', 'module' => $name], true).'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
 							} else {
 								print img_object($langs->transnoentitiesnoconv("PreviewNotAvailable"), 'generic');
 							}
@@ -449,7 +451,7 @@ foreach ($dirmodels as $reldir) {
 }
 
 print '</table>';
-
+print '</div>';
 
 print '<br>';
 
@@ -464,6 +466,8 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="setoptions">';
 
 print load_fiche_titre($langs->trans("OtherOptions"), '', '');
+
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
@@ -524,6 +528,7 @@ print $form->selectyesno('EXPENSEREPORT_BLOCK_LINE_CREATION_IF_NOT_BETWEEN_DATES
 print '</td></tr>';
 
 print '</table>';
+print '</div>';
 
 print $form->buttonsSaveCancel("Save", '');
 

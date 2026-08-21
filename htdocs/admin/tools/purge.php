@@ -28,8 +28,6 @@ if (! defined('CSRFCHECK_WITH_TOKEN')) {
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -39,6 +37,8 @@ include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
  *
  * @var string $dolibarr_main_data_root
  */
+include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
 
 $langs->load("admin");
 

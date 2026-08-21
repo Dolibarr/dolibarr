@@ -16,8 +16,24 @@ class SegmentException extends Exception
  */
 class Segment implements IteratorAggregate, Countable
 {
+	/**
+	 * @var string
+	 */
 	protected $xml;
+
+	/**
+	 * @var string
+	 */
+	protected $savxml;
+
+	/**
+	 * @var string
+	 */
 	protected $xmlParsed = '';
+
+	/**
+	 * @var string
+	 */
 	protected $name;
 	protected $children = array();
 	protected $vars = array();
@@ -30,7 +46,7 @@ class Segment implements IteratorAggregate, Countable
 	 *
 	 * @param string $name  name of the segment to construct
 	 * @param string $xml   XML tree of the segment
-	 * @param string $odf   odf
+	 * @param Odf    $odf   odf
 	 */
 	public function __construct($name, $xml, $odf)
 	{
@@ -64,6 +80,7 @@ class Segment implements IteratorAggregate, Countable
 	 *
 	 * @return int
 	 */
+	#[\ReturnTypeWillChange]
 	public function count()
 	{
 		return count($this->children);
@@ -73,6 +90,7 @@ class Segment implements IteratorAggregate, Countable
 	 *
 	 * @return Iterator
 	 */
+	#[\ReturnTypeWillChange]
 	public function getIterator()
 	{
 		return new RecursiveIteratorIterator(new SegmentIterator($this->children), 1);
@@ -165,7 +183,7 @@ class Segment implements IteratorAggregate, Countable
 	*
 	* Miguel Erill 09/04/2017
 	*
-	* @param	string	$value	String to convert
+	* @param	string	$text	String to convert
 	*/
 	public function macroReplace($text)
 	{
@@ -239,10 +257,11 @@ class Segment implements IteratorAggregate, Countable
 	 *
 	 * @param string $key name of the variable within the template
 	 * @param string $value path to the picture
+	 * @param float $ratio   Ratio for image
 	 * @throws OdfException
 	 * @return Segment
 	 */
-	public function setImage($key, $value)
+	public function setImage($key, $value, float $ratio=1)
 	{
 		$filename = strtok(strrchr($value, '/'), '/.');
 		$file = substr(strrchr($value, '/'), 1);
@@ -252,8 +271,8 @@ class Segment implements IteratorAggregate, Countable
 		}
 		// Set the width and height of the page
 		list ($width, $height) = $size;
-		$width *= Odf::PIXEL_TO_CM;
-		$height *= Odf::PIXEL_TO_CM;
+		$width *= Odf::PIXEL_TO_CM * $ratio;
+		$height *= Odf::PIXEL_TO_CM * $ratio;
 		// Fix local-aware issues (eg: 12,10 -> 12.10)
 		$width = sprintf("%F", $width);
 		$height = sprintf("%F", $height);

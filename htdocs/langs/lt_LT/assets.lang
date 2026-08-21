@@ -1,65 +1,146 @@
-# Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+# Copyright (C) 2018-2022  Alexandre Spangaro   <aspangaro@open-dsi.fr>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-Assets = Assets
-NewAsset = New asset
-AccountancyCodeAsset = Accounting code (asset)
-AccountancyCodeDepreciationAsset = Accounting code (depreciation asset account)
-AccountancyCodeDepreciationExpense = Accounting code (depreciation expense account)
-NewAssetType=New asset type
-AssetsTypeSetup=Asset type setup
-AssetTypeModified=Asset type modified
-AssetType=Asset type
-AssetsLines=Assets
+NewAsset=Naujas turtas
+AccountancyCodeAsset=Apskaitos kodas (turtas)
+AccountancyCodeDepreciationAsset=Apskaitos kodas (nusidėvėjimo turto sąskaita)
+AccountancyCodeDepreciationExpense=Apskaitos kodas (nusidėvėjimo sąnaudų sąskaita)
+AssetsLines=Turtas
+ConfirmValidateAsset=Ar tikrai norite patvirtinti šį išteklių su nuoroda <b>%s</b>?
 DeleteType=Ištrinti
-DeleteAnAssetType=Delete an asset type
-ConfirmDeleteAssetType=Are you sure you want to delete this asset type?
-ShowTypeCard=Rodyti tipą '%s'
-
+DeleteAnAssetType=Ištrinti turto modelį
+ConfirmDeleteAssetType=Ar tikrai norite ištrinti šį turto modelį?
+ShowTypeCard=Rodyti modelį „%s“
 # Module label 'ModuleAssetsName'
-ModuleAssetsName = Assets
+ModuleAssetsName=Turtas
 # Module description 'ModuleAssetsDesc'
-ModuleAssetsDesc = Assets description
-
-#
+ModuleAssetsDesc=Turto aprašymas
 # Admin page
-#
-AssetsSetup = Assets setup
-Settings = Settings
-AssetsSetupPage = Assets setup page
-ExtraFieldsAssetsType = Complementary attributes (Asset type)
-AssetsType=Asset type
-AssetsTypeId=Asset type id
-AssetsTypeLabel=Asset type label
-AssetsTypes=Assets types
-
-#
+AssetSetup=Turto sąranka
+AssetSetupPage=Išteklių sąrankos puslapis
+ExtraFieldsAssetModel=Papildomi atributai (turto modelis)
+AssetsType=Turto modelis
+AssetsTypeId=Turto modelio ID
+AssetsTypeLabel=Turto modelio etiketė
+AssetsTypes=Turto modeliai
+ASSET_ACCOUNTANCY_CATEGORY=Ilgalaikio turto apskaitos grupė
+ASSET_DEPRECIATION_DURATION_PER_YEAR=Proporcingas laikotarpis dienomis amortizacijai per vienerius metus apskaičiuoti
 # Menu
-#
-MenuAssets = Assets
-MenuNewAsset = New asset
-MenuTypeAssets = Type assets
-MenuListAssets = Sąrašas
-MenuNewTypeAssets = Naujas
-MenuListTypeAssets = Sąrašas
-
-#
+MenuAssets=Turtas
+MenuNewAsset=Naujas turtas
+MenuAssetModels=Modelių ištekliai
+MenuListAssets=Sąrašas
+MenuNewAssetModel=Naujo turto modelis
+MenuListAssetModels=Sąrašas
 # Module
-#
-NewAssetType=New asset type
-NewAsset=New asset
+ConfirmDeleteAsset=Ar tikrai norite pašalinti šį išteklių?
+# Tab
+AssetDepreciationOptions=Nusidėvėjimo parinktys
+AssetAccountancyCodes=Apskaitos sąskaitos
+AssetDepreciation=Nusidėvėjimas
+# Asset
+Asset=Turtas
+Assets=Turtas
+AssetReversalAmountHT=Atšaukimo suma (be mokesčių)
+AssetAcquisitionValueHT=Įsigijimo suma (be mokesčių)
+AssetRecoveredVAT=Atgautas PVM
+AssetReversalDate=Grąžinimo data
+AssetDateAcquisition=Įsigijimo data
+AssetDateStart=Pradžios data
+AssetAcquisitionType=Įsigijimo tipas
+AssetAcquisitionTypeNew=Naujas
+AssetAcquisitionTypeOccasion=Naudotas
+AssetType=Turto tipas
+AssetTypeIntangible=Nematerialusis
+AssetTypeTangible=Apčiuopiamas
+AssetTypeInProgress=Vykdoma
+AssetTypeFinancial=Finansinis
+AssetNotDepreciated=Nenuvertėta
+AssetDisposal=Atliekų šalinimas
+AssetConfirmDisposalAsk=Ar tikrai norite atsikratyti šio turto <b> %s</b>?
+AssetConfirmReOpenAsk=Ar tikrai norite iš naujo atidaryti išteklių <b> %s</b>?
+# Asset status
+AssetInDraft=Projektas
+AssetInProgress=Vykdoma
+AssetDisposed=Pašalintas
+AssetRecorded=Apskaityta
+# Asset disposal
+AssetDisposalDate=Šalinimo data
+AssetDisposalAmount=Likvidavimo vertė
+AssetDisposalType=Šalinimo tipas
+AssetDisposalDepreciated=Nuvertėjimas skaičiuojamas pagal perdavimo metus
+AssetDisposalSubjectToVat=Šalinimas apmokestinamas PVM
+# Asset model
+AssetModel=Turto modelis
+AssetModels=Turto modeliai
+# Asset depreciation options
+AssetDepreciationOptionEconomic=Ekonominis nusidėvėjimas
+AssetDepreciationOptionAcceleratedDepreciation=Pagreitintas nusidėvėjimas (mokestis)
+AssetDepreciationOptionDepreciationType=Nusidėvėjimo tipas
+AssetDepreciationOptionDepreciationTypeLinear=Linijinis
+AssetDepreciationOptionDepreciationTypeDegressive=Degresyvus
+AssetDepreciationOptionDepreciationTypeExceptional=Išskirtinis
+AssetDepreciationOptionDegressiveRate=Degresyvus tarifas
+AssetDepreciationOptionDuration=Trukmė
+AssetDepreciationOptionDurationType=Tipo trukmė
+AssetDepreciationOptionDurationTypeAnnual=Metinis
+AssetDepreciationOptionDurationTypeMonthly=Mėnesinis
+AssetDepreciationOptionDurationTypeDaily=Kasdien
+AssetDepreciationOptionRate=Įvertinimas (%%)
+AssetDepreciationOptionAmountBaseDepreciationHT=Nusidėvėjimo bazė (be PVM)
+AssetDepreciationOptionAmountBaseDeductibleHT=Atskaitoma bazė (be PVM)
+AssetDepreciationOptionTotalAmountLastDepreciationHT=Bendra paskutinio nusidėvėjimo suma (be PVM)
+# Asset accountancy codes
+AssetAccountancyCodeDepreciationEconomic=Ekonominis nusidėvėjimas
+AssetAccountancyCodeAsset=Turtas
+AssetAccountancyCodeDepreciationAsset=Nusidėvėjimas
+AssetAccountancyCodeDepreciationExpense=Nusidėvėjimo sąnaudos
+AssetAccountancyCodeValueAssetSold=Parduoto turto vertė
+AssetAccountancyCodeReceivableOnAssignment=Gautina realizavimo metu
+AssetAccountancyCodeProceedsFromSales=Pajamos iš perleidimo
+AssetAccountancyCodeVatCollected=Surinktas PVM
+AssetAccountancyCodeVatDeductible=Atgautas PVM už turtą
+AssetAccountancyCodeDepreciationAcceleratedDepreciation=Pagreitintas nusidėvėjimas (mokestis)
+AssetAccountancyCodeAcceleratedDepreciation=Sąskaita
+AssetAccountancyCodeEndowmentAcceleratedDepreciation=Nusidėvėjimo sąnaudos
+AssetAccountancyCodeProvisionAcceleratedDepreciation=Atgavimas / suteikimas
+# Asset depreciation
+AssetBaseDepreciationHT=Nusidėvėjimo bazė (be PVM)
+AssetDepreciationBeginDate=Nusidėvėjimo pradžia
+AssetDepreciationDuration=Trukmė
+AssetDepreciationRate=Įvertinimas (%%)
+AssetDepreciationDate=Nusidėvėjimo data
+AssetDepreciationHT=Nusidėvėjimas (be PVM)
+AssetCumulativeDepreciationHT=Kaupiamasis nusidėvėjimas (be PVM)
+AssetResidualHT=Likutinė vertė (be PVM)
+AssetDispatchedInBookkeeping=Įrašytas nusidėvėjimas
+AssetFutureDepreciationLine=Būsimas nusidėvėjimas
+AssetDepreciationReversal=Atšaukimas
+# Errors
+AssetErrorAssetOrAssetModelIDNotProvide=Nenurodytas rasto ištekliaus arba modelio ID
+AssetErrorFetchAccountancyCodesForMode=Klaida gaunant apskaitos sąskaitas, skirtas nusidėvėjimo režimui „%s“.
+AssetErrorDeleteAccountancyCodesForMode=Klaida trinant apskaitos sąskaitas iš nusidėvėjimo režimo „%s“
+AssetErrorInsertAccountancyCodesForMode=Klaida įterpiant nusidėvėjimo režimo „%s“ apskaitos sąskaitas
+AssetErrorFetchDepreciationOptionsForMode=Klaida gaunant „%s“ nusidėvėjimo režimo parinktis
+AssetErrorDeleteDepreciationOptionsForMode=Klaida trinant „%s“ nusidėvėjimo režimo parinktis
+AssetErrorInsertDepreciationOptionsForMode=Klaida įterpiant „%s“ nusidėvėjimo režimo parinktis
+AssetErrorFetchDepreciationLines=Klaida gaunant įrašytas nusidėvėjimo eilutes
+AssetErrorClearDepreciationLines=Klaida valant įrašytas nusidėvėjimo eilutes (atstatymas ir būsimos)
+AssetErrorAddDepreciationLine=Klaida pridedant nusidėvėjimo eilutę
+AssetErrorCalculationDepreciationLines=Klaida skaičiuojant nusidėvėjimo eilutes (atgaunamą ir būsimą)
+AssetErrorReversalDateNotProvidedForMode=Nusidėvėjimo metodui „%s“ nenurodyta atšaukimo data.
+AssetErrorReversalDateNotGreaterThanCurrentBeginFiscalDateForMode=Atstatymo data, naudojant nusidėvėjimo metodą „%s“, turi būti vėlesnė arba lygi einamųjų finansinių metų pradžiai.
+AssetErrorReversalAmountNotProvidedForMode=Nusidėvėjimo režimui „%s“ atšaukimo suma nenurodyta.
+AssetErrorFetchCumulativeDepreciation=Klaida gaunant sukauptą nusidėvėjimo sumą iš nusidėvėjimo eilutės
+AssetErrorSetLastCumulativeDepreciation=Klaida įrašant paskutinę sukauptą nusidėvėjimo sumą

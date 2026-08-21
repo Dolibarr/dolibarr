@@ -22,7 +22,7 @@ printSellby=Son satış: %s
 printQty=Miktar: %d
 printPlannedWarehouse=Depo: %s
 AddDispatchBatchLine=Dağıtımda bir Raf Ömrü satırı ekle
-WhenProductBatchModuleOnOptionAreForced=Lot/Seri modülü açıkken, otomatik stok azaltımı '%s' olarak, otomatik artırma modu ise '%s olarak zorlanır. '. Bazı seçenekler mevcut olmayabilir. Diğer seçenekler istediğiniz gibi tanımlanabilir.
+WhenProductBatchModuleOnOptionAreForced=Lot/Seri modülü açık olduğunda otomatik stok azaltma veya artırma modlarından bazıları kullanılamayabilir. Diğer seçeneklerde herhangi bir kısıtlama yoktur.
 ProductDoesNotUseBatchSerial=Bu ürün parti/seri numarası kullanmıyor
 ProductLotSetup=Parti/seri modülü kurulumu
 ShowCurrentStockOfLot=Çift ürün/parti için mevcut stoğu göster
@@ -50,3 +50,6 @@ ToReplace=Yer değiştirmek
 CantMoveNonExistantSerial=Hata. Artık var olmayan bir dizi için kayıt değişikliği talep ediyorsunuz. Aynı seriyi aynı depoda, aynı sevkiyatta birkaç kez almış olabilirsiniz veya başka bir sevkiyatta kullanılmış olabilir. Bu gönderiyi kaldırın ve bir tane daha hazırlayın.
 TableLotIncompleteRunRepairWithParamStandardEqualConfirmed='...repair.php?standard=confirmed' parametresi ile parti tablosu eksik çalıştırma onarımı
 IlligalQtyForSerialNumbers= Benzersiz seri numarası nedeniyle stok düzeltmesi gerekiyor.
+ErrorBatchesNeedStockManagement=Hata. Parti/lot yönetimi olan bir ürünün stokta da yönetilmesi gerekir.
+ForceBatchesNeedStockManagement=Parti/lot yönetimi olan bir ürün stokta yönetilmelidir (stok yönetimi evet'e zorunludur)
+BatchInformationNotfound=Parti bilgisi bulunamadı

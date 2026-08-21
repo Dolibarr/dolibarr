@@ -2,7 +2,7 @@
 /* Copyright (C) 2008-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2008-2017  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -202,24 +202,7 @@ if (!function_exists('dol_loginfunction')) {
 		$sessiontimeout = 'DOLSESSTIMEOUT_'.$prefix;
 
 		if (getDolGlobalString('MAIN_SESSION_TIMEOUT')) {
-			if (session_status() != PHP_SESSION_ACTIVE) {
-				if (PHP_VERSION_ID < 70300) {
-					session_set_cookie_params(0, '/', null, !(empty($dolibarr_main_force_https) && isHTTPS() === false), true); // Add tag secure and httponly on session cookie (same as setting session.cookie_httponly into php.ini). Must be called before the session_start.
-				} else {
-					// Only available for php >= 7.3
-					$sessioncookieparams = array(
-						'lifetime' => 0,
-						'path' => '/',
-						//'domain' => '.mywebsite.com', // the dot at the beginning allows compatibility with subdomains
-						'secure' => !(empty($dolibarr_main_force_https) && isHTTPS() === false),
-						'httponly' => true,
-						'samesite' => 'Lax'	// None || Lax  || Strict
-					);
-					session_set_cookie_params($sessioncookieparams);
-				}
-
-				setcookie($sessiontimeout, getDolGlobalString('MAIN_SESSION_TIMEOUT'), 0, "/", '', !empty($dolibarr_main_force_https), true);
-			}
+			dolSetCookie($sessiontimeout, getDolGlobalString('MAIN_SESSION_TIMEOUT'), 0);
 		}
 
 		if (GETPOST('urlfrom', 'alpha')) {
@@ -424,20 +407,21 @@ function encodedecode_dbpassconf($level = 0)
 					$passwd_crypted = $val;
 					$val = dol_decode($val);
 					$passwd = $val;
-				} elseif (preg_match('/^dolcrypt:([^:]+):(.*)$/i', $buffer, $reg)) {
+				} elseif (preg_match('/^dolcrypt:([^:]+):(.*)$/i', $val, $reg)) {
 					// method dolEncrypt/dolDecrypt
 					$mode = 'dolcrypt:';
-					$val = preg_replace('/crypted:([^:]+):/i', '', $val);
-					$passwd_crypted = $val;
-					$val = dolDecrypt($buffer);
+					//$val = preg_replace('/dolcrypt:/i', '', $val);
+					$passwd_crypted = $reg[1].':'.$reg[2];
+					$val = dolDecrypt($val);
 					$passwd = $val;
 				} else {
 					$passwd = $val;
+					/* old method
 					$mode = 'crypted:';
 					$val = dol_encode($val);
-					$passwd_crypted = $val;
-					// TODO replace with dolEncrypt()
-					// ...
+					*/
+					$mode = 'dolcrypt:';
+					$passwd_crypted = preg_replace('/^dolcrypt:/', '', dolEncrypt($val));
 				}
 				$lineofpass = 1;
 			}
@@ -497,6 +481,7 @@ function getRandomPassword($generic = false, $replaceambiguouschars = null, $len
 	global $db, $conf, $langs, $user;
 
 	$generated_password = '';
+
 	if ($generic) {
 		$lowercase = "qwertyuiopasdfghjklzxcvbnm";
 		$uppercase = "ASDFGHJKLZXCVBNMQWERTYUIOP";
@@ -521,8 +506,6 @@ function getRandomPassword($generic = false, $replaceambiguouschars = null, $len
 				$tmp = random_int(0, $max);
 				$randomCode .= $numbers[$tmp];
 			}
-
-			$generated_password = str_shuffle($randomCode);
 		} else {
 			// Old platform, non cryptographic random
 			$max = strlen($lowercase) - 1;
@@ -540,21 +523,35 @@ function getRandomPassword($generic = false, $replaceambiguouschars = null, $len
 				$tmp = mt_rand(0, $max);
 				$randomCode .= $numbers[$tmp];
 			}
-
-			$generated_password = str_shuffle($randomCode);
 		}
+
+		// Use the Fisher-Yate to shake (this replace str_shuffle)
+		$passwordArray = str_split($randomCode);
+		for ($i = count($passwordArray) - 1; $i > 0; $i--) {
+			$j = random_int(0, $i);
+			$tmp = $passwordArray[$i];
+			$passwordArray[$i] = $passwordArray[$j];
+			$passwordArray[$j] = $tmp;
+		}
+		$generated_password = implode('', $passwordArray);
 	} elseif (getDolGlobalString('USER_PASSWORD_GENERATED')) {
-		$nomclass = "modGeneratePass".ucfirst($conf->global->USER_PASSWORD_GENERATED);
-		$nomfichier = $nomclass.".class.php";
-		//print DOL_DOCUMENT_ROOT."/core/modules/security/generate/".$nomclass;
-		require_once DOL_DOCUMENT_ROOT."/core/modules/security/generate/".$nomfichier;
-		$genhandler = new $nomclass($db, $conf, $langs, $user);
-		'@phan-var-force ModeleGenPassword $genhandler';
-		$generated_password = $genhandler->getNewGeneratedPassword();
-		unset($genhandler);
+		require_once DOL_DOCUMENT_ROOT."/core/modules/security/generate/modules_genpassword.php";
+		$genhandler = ModeleGenPassword::loadAndInstantiate(getDolGlobalString('USER_PASSWORD_GENERATED'), $db, $conf, $langs, $user);
+		if (!$genhandler) {
+			// Configured generator class could not be resolved (e.g. the module that provided it
+			// was disabled/removed after being selected) — fall back to the always-available
+			// 'standard' generator rather than silently generating and persisting an empty password.
+			dol_syslog("getRandomPassword: generator class for USER_PASSWORD_GENERATED='".getDolGlobalString('USER_PASSWORD_GENERATED')."' not found, falling back to standard", LOG_WARNING);
+			$genhandler = ModeleGenPassword::loadAndInstantiate('standard', $db, $conf, $langs, $user);
+		}
+		if ($genhandler) {
+			'@phan-var-force ModeleGenPassword $genhandler';
+			$generated_password = $genhandler->getNewGeneratedPassword();
+			unset($genhandler);
+		}
 	}
 
-	// Do we have to discard some alphabetic characters ?
+	// Do we have to discard some alphabetic characters ? (usually $replaceambiguouschars is empty)
 	if (is_array($replaceambiguouschars) && count($replaceambiguouschars) > 0) {
 		$numbers = "ABCDEF";
 		$max = strlen($numbers) - 1;
@@ -591,7 +588,7 @@ function dolJSToSetRandomPassword($htmlname, $htmlnameofbutton = 'generate_token
 		$out .= 'jQuery(document).ready(function () {
             jQuery("#'.dol_escape_js($htmlnameofbutton).'").click(function() {
 				var currenttoken = jQuery("meta[name=anti-csrf-currenttoken]").attr("content");
-				console.log("We click on the button '.dol_escape_js($htmlnameofbutton).' to suggest a key. anti-csrf-currenttoken is "+currenttoken+". We will fill '.dol_escape_js($htmlname).'");
+				console.log("dolJSToSetRandomPassword: We click on the button '.dol_escape_js($htmlnameofbutton).' to suggest a key. anti-csrf-currenttoken is "+currenttoken+". We will fill '.dol_escape_js($htmlname).'");
 				jQuery.get( "'.DOL_URL_ROOT.'/core/ajax/security.php", {
             		action: \'getrandompassword\',
             		generic: '.($generic ? '1' : '0').',
@@ -609,4 +606,37 @@ function dolJSToSetRandomPassword($htmlname, $htmlnameofbutton = 'generate_token
 	}
 
 	return $out;
+}
+
+/**
+ * Output the eye picto to show/hide a password HTML field.
+ *
+ * @param		string 		$htmlname			HTML name of element to insert key into
+ * @param		string		$htmlnameofinput	HTML id of input field
+ * @return		string		    				HTML javascript code to set a password
+ */
+function showEyeForField($htmlname, $htmlnameofinput)
+{
+	return '<!-- code to manage the eye hide/show -->
+<span id="'.$htmlname.'" tabindex="-1"><span class="fa fa-eye"></span></span>
+<script nonce="'.getNonce().'">
+	$(document).ready(function () {
+		$(\'#'.$htmlname.'\').on(\'click\', function (e) {
+			e.preventDefault();
+			if (event.detail === 0) return false; // Ignore keyboard "clicks"
+			console.log("We click on '.$htmlname.'");
+			const $passwordInput = $(\'#'.$htmlnameofinput.'\');
+
+			if ($passwordInput.is(\'[type=password]\')) {
+				$passwordInput.attr(\'type\', \'text\');
+				jQuery(\'#'.$htmlname.' .fa-eye\').attr(\'class\', \'fa fa-eye-slash\');
+			} else {
+				$passwordInput.attr(\'type\', \'password\');
+				jQuery(\'#'.$htmlname.' .fa-eye-slash\').attr(\'class\', \'fa fa-eye\');
+			}
+
+			return false; // This prevents the click from reloading the page
+		});
+	});
+</script>';
 }

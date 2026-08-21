@@ -2,8 +2,9 @@
 /* Copyright (C) 2007-2018	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2018		All-3kcis				<contact@all-3kcis.fr>
  * Copyright (C) 2021		Noé Cendrier			<noe.cendrier@altairis.fr>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2025		Alexandre Spangaro		<alexandre@inovea-conseil.com>
+ * Copyright (C) 2025-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,21 +28,20 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array('stocks', 'other', 'productbatch'));
@@ -49,8 +49,8 @@ $langs->loadLangs(array('stocks', 'other', 'productbatch'));
 // Get parameters
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
-$cancel = GETPOST('cancel', 'aZ09');
-$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'myobjectcard'; // To manage different context of search
+$cancel = GETPOST('cancel');
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'productlotcard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 
@@ -67,7 +67,6 @@ $modulepart = 'product_batch';
 // Initialize a technical objects
 
 $object = new Productlot($db);
-$extrafields = new ExtraFields($db);
 $hookmanager->initHooks(array('productlotcard', 'globalcard')); // Note that conf->hooks_modules contains array
 
 // Fetch optionals attributes and labels
@@ -108,7 +107,7 @@ if ($id || $ref) {
 		$batch = $tmp[1];
 	}
 	$object->fetch($id, $productid, $batch);
-	$upload_dir = $conf->productbatch->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 1, $object, $modulepart);
+	$upload_dir = $conf->productbatch->multidir_output[$object->entity ?? $conf->entity].'/'.get_exdir(0, 0, 0, 1, $object, $modulepart);
 	$filearray = dol_dir_list($upload_dir, "files");
 }
 
@@ -136,7 +135,7 @@ if ($user->socid > 0) { // Protection if external user
 	//$socid = $user->socid;
 	accessforbidden();
 }
-//$result = restrictedArea($user, 'productbatch');
+//restrictedArea($user, 'productbatch');
 if (!$permissiontoread) {
 	accessforbidden();
 }
@@ -241,7 +240,7 @@ if (empty($reshook)) {
 	}
 
 	/* if ($action == 'setcommissionning_date' && $permissiontoadd && ! GETPOST('cancel', 'alpha')) {
-		$newvalue = dol_mktime(12, 0, 0, GETPOST('commissionning_datemonth', 'int'), GETPOST('commissionning_dateday', 'int'), GETPOST('commissionning_dateyear', 'int'));
+		$newvalue = dol_mktime(12, 0, 0, GETPOSTINT('commissionning_datemonth', 'int'), GETPOSTINT('commissionning_dateday', 'int'), GETPOSTINT('commissionning_dateyear', 'int'));
 		$result = $object->setValueFrom('commissionning_date', $newvalue, '', null, 'date', '', $user, 'PRODUCTLOT_MODIFY');
 		if ($result < 0) {
 			setEventMessages($object->error, null, 'errors');
@@ -253,7 +252,7 @@ if (empty($reshook)) {
 
 	if ($action == 'setqc_frequency' && $permissiontoadd && ! GETPOST('cancel', 'alpha')) {
 		$result = $object->setValueFrom('qc_frequency', GETPOST('qc_frequency'), '', null, 'int', '', $user, 'PRODUCT_MODIFY');
-		if ($result < 0) { // Prévoir un test de format de durée
+		if ($result < 0) { // To provide a duration format test
 			setEventMessages($object->error, null, 'errors');
 			$action = 'editqc_frequency';
 		} else {
@@ -265,119 +264,7 @@ if (empty($reshook)) {
 
 	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
-	/*
-	if ($action == 'update_extras' && $permissiontoadd) {
-		$object->oldcopy = dol_clone($object, 2);
 
-		// Fill array 'array_options' with data from update form
-		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
-		if ($ret < 0) $error++;
-
-		if (!$error) {
-			// Actions on extra fields
-			$result = $object->insertExtraFields('PRODUCT_LOT_MODIFY');
-			if ($result < 0) {
-				setEventMessages($object->error, $object->errors, 'errors');
-				$error++;
-			}
-		}
-
-		if ($error) {
-			$action = 'edit_extras';
-		}
-	}
-
-	// Action to add record
-	if ($action == 'add' && $permissiontoadd) {
-		if (GETPOST('cancel', 'alpha')) {
-			$urltogo = $backtopage ? $backtopage : dol_buildpath('/stock/list.php', 1);
-			header("Location: ".$urltogo);
-			exit;
-		}
-
-		$error = 0;
-
-		$object->entity = GETPOST('entity', 'int');
-		$object->fk_product = GETPOST('fk_product', 'int');
-		$object->batch = GETPOST('batch', 'alpha');
-		$object->fk_user_creat = GETPOST('fk_user_creat', 'int');
-		$object->fk_user_modif = GETPOST('fk_user_modif', 'int');
-		$object->import_key = GETPOST('import_key', 'int');
-
-		if (empty($object->ref)) {
-			$error++;
-			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Ref")), null, 'errors');
-		}
-
-		if (!$error) {
-			$result = $object->create($user);
-			if ($result > 0) {
-				// Creation OK
-				$urltogo = $backtopage ? $backtopage : dol_buildpath('/stock/list.php', 1);
-				header("Location: ".$urltogo);
-				exit;
-			}
-			{
-				// Creation KO
-				if (!empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
-			else setEventMessages($object->error, null, 'errors');
-				$action = 'create';
-			}
-		} else {
-			$action = 'create';
-		}
-	}
-
-	// Cancel
-	if ($action == 'update' && GETPOST('cancel', 'alpha') && $permissiontoadd) {
-		$action = 'view';
-	}
-
-	// Action to update record
-	if ($action == 'update' && !GETPOST('cancel', 'alpha') && $permissiontoadd) {
-		$error = 0;
-
-		$object->entity = GETPOST('entity', 'int');
-		$object->fk_product = GETPOST('fk_product', 'int');
-		$object->batch = GETPOST('batch', 'alpha');
-		$object->fk_user_creat = GETPOST('fk_user_creat', 'int');
-		$object->fk_user_modif = GETPOST('fk_user_modif', 'int');
-		$object->import_key = GETPOST('import_key', 'int');
-
-		if (empty($object->ref)) {
-			$error++;
-			setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired", $langs->transnoentitiesnoconv("Ref")), null, 'errors');
-		}
-
-		if (!$error) {
-			$result = $object->update($user);
-			if ($result > 0) {
-				$action = 'view';
-			} else {
-				// Creation KO
-				if (!empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
-				else setEventMessages($object->error, null, 'errors');
-				$action = 'edit';
-			}
-		} else {
-			$action = 'edit';
-		}
-	}
-
-	// Action to delete
-	if ($action == 'confirm_delete' && $permissiontodelete) {
-		$result = $object->delete($user);
-		if ($result > 0) {
-			// Delete OK
-			setEventMessages("RecordDeleted", null, 'mesgs');
-			header("Location: ".dol_buildpath('/stock/list.php', 1));
-			exit;
-		} else {
-			if (!empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
-			else setEventMessages($object->error, null, 'errors');
-		}
-	}
-	*/
 	// Action to build doc
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
@@ -420,7 +307,7 @@ if ($res > 0 && $object->product) {
 if ($action == 'create') {
 	print load_fiche_titre($langs->trans("Batch"), '', 'object_'.$object->picto);
 
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 	if ($backtopage) {
@@ -457,7 +344,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$res = $object->fetch_optionals();
 
 	$head = productlot_prepare_head($object);
-	print dol_get_fiche_head($head, 'card', $langs->trans("Batch"), -1, $object->picto);
+	print dol_get_fiche_head($head, 'card', $langs->trans("Batch"), -1, $object->picto, 0, '', '', 0, '', 1);
 
 	$formconfirm = '';
 
@@ -605,11 +492,11 @@ if ($action != 'presend') {
 	if ($includedocgeneration) {
 		$objref = dol_sanitizeFileName($object->ref);
 		$relativepath = $object->id.'/'.$objref.'.pdf';
-		$filedir = $conf->productbatch->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 1, $object, 'product_batch');
+		$filedir = $conf->productbatch->multidir_output[$object->entity ?? $conf->entity].'/'.get_exdir(0, 0, 0, 1, $object, 'product_batch');
 		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 		$genallowed = $usercanread; // If you can read, you can build the PDF to read content
 		$delallowed = $usercancreate; // If you can create/edit, you can remove a file on card
-		print $formfile->showdocuments('product_batch', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 0, 0, 0, 28, 0, '', 0, '', (empty($object->default_lang) ? '' : $object->default_lang), '', $object);
+		print $formfile->showdocuments('product_batch', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 0, 0, 0, 28, 0, '', '', '', (empty($object->default_lang) ? '' : $object->default_lang), '', $object);
 	}
 
 	print '</div><div class="fichehalfright">';

@@ -2,8 +2,8 @@
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2016 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2024      Frédéric France      <frederic.france@free.fr>
- * Copyright (C) 2024      MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@
  *					DOL_URL_ROOT.'/viewimage.php?hashp=sharekey
  */
 
-define('MAIN_SECURITY_FORCECSP', "default-src: 'none'");
+define('MAIN_SECURITY_FORCECSP', "default-src 'none'; form-action 'none'; frame-ancestors 'self'");
 
 //if (! defined('NOREQUIREUSER'))	define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
 //if (! defined('NOREQUIREDB'))		define('NOREQUIREDB','1');		// Not disabled cause need to load personalized language
@@ -61,32 +61,33 @@ $needlogin = 1;
 if (isset($_GET["modulepart"])) {
 	// Some value of modulepart can be used to get resources that are public so no login are required.
 
-	// For logo of company
-	if ($_GET["modulepart"] == 'mycompany' && preg_match('/^\/?logos\//', $_GET['file'])) {
+	// For logo of company (by definition, the company logo is public)
+	if ($_GET["modulepart"] == 'mycompany' && isset($_GET['file']) && preg_match('/^\/?logos\//', $_GET['file'])) {
 		$needlogin = 0;
 	}
-	// For barcode live generation
+	// For barcode live generation (barcode are just a graph of a value, so can be public)
 	if ($_GET["modulepart"] == 'barcode') {
 		$needlogin = 0;
 	}
-	// Medias files
+	// Medias files (by definition medias files are for website so are public)
 	if ($_GET["modulepart"] == 'medias') {
 		$needlogin = 0;
 	}
-	// Common files (files into /public/theme/common)
+	// Common files (public files embedded into /public/theme/common)
 	if ($_GET["modulepart"] == 'common') {
 		$needlogin = 0;
 	}
-	// User photo when user has made its profile public (for virtual credi card)
+	// User photo when user has made its profile public (for virtual credit card)
 	if ($_GET["modulepart"] == 'userphotopublic') {
 		$needlogin = 0;
 	}
-	// Used by TakePOS Auto Order
-	if ($_GET["modulepart"] == 'product' && isset($_GET["publictakepos"])) {
+	// Used by TakePOS Auto Order. TODO Image product may became public in this case. A security check to check that product is in takepos tree must be done later.
+	// isModEnabled is not defined, DOL_DOCUMENT_ROOT is not defined
+	if ($_GET["modulepart"] == 'product' /* && isModEnabled('takepos') */ && isset($_GET["publictakepos"])) {
 		$needlogin = 0;
 	}
 }
-// For direct external download link, we don't need to load/check we are into a login session
+// For direct external download link (when files was shared for download using a hash link), we don't need to load/check we are into a login session
 if (isset($_GET["hashp"])) {
 	$needlogin = 0;
 }
@@ -103,16 +104,21 @@ if (!$needlogin) {
 	}
 }
 
-// For MultiCompany module.
+// For MultiCompany modules, if an entity is set in query parameters (required to point an object because a ref can exists
+// in 2 entities), then if user is not already into a session, the user must be loaded on this entity, so permission will
+// be the one of this entity.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
-// Because 2 entities can have the same ref.
-$entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
-if (is_numeric($entity)) {
+$entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 0));
+if (is_numeric($entity) && $entity > 0) {
+	// An entity was forced on param, so we force the constant to allow master.inc.php to use this entity if not already logged.
+	// It has no effect if already logged.
 	define("DOLENTITY", $entity);
 }
 
 /**
  * Header empty
+ *
+ * Note: also called by functions.lib:recordNotFound
  *
  * @param 	string 			$head				Optional head lines
  * @param 	string 			$title				HTML title
@@ -131,24 +137,24 @@ if (is_numeric($entity)) {
  * @param	int				$disablenoindex		Disable the "noindex" on meta robot header
  * @return	void
  */
-function llxHeader($head = '', $title = '', $help_url = '', $target = '', $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '', $morequerystring = '', $morecssonbody = '', $replacemainareaby = '', $disablenofollow = 0, $disablenoindex = 0)
+function llxHeader($head = '', $title = '', $help_url = '', $target = '', $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '', $morequerystring = '', $morecssonbody = '', $replacemainareaby = '', $disablenofollow = 0, $disablenoindex = 0)  // @phan-suppress-current-line PhanRedefineFunction
 {
 }
 /**
  * Footer empty
+ *
+ * Note: also called by functions.lib:recordNotFound
  *
  * @param	string	$comment    				A text to add as HTML comment into HTML generated page
  * @param	string	$zone						'private' (for private pages) or 'public' (for public pages)
  * @param	int		$disabledoutputofmessages	Clear all messages stored into session without displaying them
  * @return	void
  */
-function llxFooter($comment = '', $zone = 'private', $disabledoutputofmessages = 0)
+function llxFooter($comment = '', $zone = 'private', $disabledoutputofmessages = 0)  // @phan-suppress-current-line PhanRedefineFunction
 {
 }
 
 require 'main.inc.php'; // Load $user and permissions
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -156,6 +162,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 $action = GETPOST('action', 'aZ09');
 $original_file = GETPOST('file', 'alphanohtml');
@@ -163,7 +170,7 @@ $hashp = GETPOST('hashp', 'aZ09', 1);
 $extname = GETPOST('extname', 'alpha', 1);
 $modulepart = GETPOST('modulepart', 'alpha', 1);
 $urlsource = GETPOST('urlsource', 'alpha');
-$entity = (GETPOSTINT('entity') ? GETPOSTINT('entity') : $conf->entity);
+$entity = ($entity > 0 ? $entity : $conf->entity);
 
 // Security check
 if (empty($modulepart) && empty($hashp)) {
@@ -195,20 +202,14 @@ if ($cachestring) {
 	// We are here when param cache=xxx to force a cache policy:
 	//  xxx=1 means cache of 3600s
 	//  xxx=abcdef or 123456789 means a cache of 1 week (the key will be modified to get break cache use)
-	if (empty($dolibarr_nocache)) {
-		$delaycache = ((is_numeric($cachestring) && (int) $cachestring > 1 && (int) $cachestring < 999999) ? $cachestring : '3600');
-		header('Cache-Control: max-age='.$delaycache.', public, must-revalidate');
-		header('Pragma: cache'); // This is to avoid to have Pragma: no-cache set by proxy or web server
-		header('Expires: '.gmdate('D, d M Y H:i:s', time() + (int) $delaycache).' GMT');	// This is to avoid to have Expires set by proxy or web server
-	} else {
-		// If any cache on files were disable by config file (for test purpose)
-		header('Cache-Control: no-cache');
-	}
-	//print $dolibarr_nocache; exit;
+	$delaycache = ((is_numeric($cachestring) && (int) $cachestring > 1 && (int) $cachestring < 999999) ? $cachestring : '3600');
+	header('Cache-Control: max-age='.$delaycache.', public, must-revalidate');
+	header('Pragma: cache'); // This is to avoid to have Pragma: no-cache set by proxy or web server
+	header('Expires: '.gmdate('D, d M Y H:i:s', time() + (int) $delaycache).' GMT');	// This is to avoid to have Expires set by proxy or web server
 }
 
 // If we have a hash public (hashp), we guess the original_file.
-if (!empty($hashp)) {
+if (!empty($hashp) && $hashp != 'shared') {
 	include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 	$ecmfile = new EcmFiles($db);
@@ -299,7 +300,7 @@ if (!empty($hashp)) {
 } elseif (GETPOSTINT("publictakepos")) {
 	if (getDolGlobalString('TAKEPOS_AUTO_ORDER') && in_array($modulepart, array('product', 'category'))) {
 		$accessallowed = 1; // When TakePOS Public Auto Order is enabled, we accept to see all images of product and categories with no login
-		// TODO Replace this with a call of getPublicImageOfObject like used by website so
+		// TODO Replace the use of link to viewimage with a call to get link by getPublicImageOfObject, like done by website templates so
 		// only shared images are visible
 	}
 } else {
@@ -336,7 +337,6 @@ if (preg_match('/\.\./', $fullpath_original_file) || preg_match('/[<>|]/', $full
 	print "ErrorFileNameInvalid: ".dol_escape_htmltag($original_file);
 	exit;
 }
-
 
 
 if ($modulepart == 'barcode') {
@@ -414,6 +414,9 @@ if ($modulepart == 'barcode') {
 	'@phan-var-force ModeleBarCode $module';
 	/** @var ModeleBarCode $module */
 	if ($module->encodingIsSupported($encoding)) {
+		top_httphead('none');	// This add header like the Content-Security-Policy. We set content-type to 'none' so the content-type will be added by the $module->buildBarCode.
+		// Note that link to image can be shown as a direct link due to the MAIN_SECURITY_FORCECSP directive. Link must be into an img of a page in same domain.
+
 		$result = $module->buildBarCode($code, $encoding, $readable);
 	}
 } else {

@@ -6,6 +6,7 @@
  * Copyright (C) 2014-2020  Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2015  		Benoit Bruchard			<benoitb21@gmail.com>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +45,7 @@ class html_cerfafr extends ModeleDon
 	 */
 	public function __construct($db)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$this->db = $db;
 		$this->name = "cerfafr";
@@ -105,7 +106,7 @@ class html_cerfafr extends ModeleDon
 				$dir = $conf->don->dir_output;
 				$file = $dir."/SPECIMEN.html";
 			} else {
-				$donref = dol_sanitizeFileName($don->ref);
+				$donref = dol_sanitizeFileName((string) $don->ref);
 				$dir = $conf->don->dir_output."/".$donref;
 				$file = $dir."/".$donref.".html";
 			}
@@ -128,7 +129,7 @@ class html_cerfafr extends ModeleDon
 				// donation and no payment mode checkbox was ever ticked on the receipt.
 				$modepaymentid = !empty($don->mode_reglement_id) ? $don->mode_reglement_id : $don->modepaymentid;
 				if ($modepaymentid) {
-					$paymentmode = !empty($formclass->cache_types_paiements[$modepaymentid]['label']) ? $formclass->cache_types_paiements[$modepaymentid]['label'] : '';
+					$paymentmode = !empty($formclass->cache_types_paiements[(int) $modepaymentid]['label']) ? $formclass->cache_types_paiements[$modepaymentid]['label'] : '';
 				} else {
 					$paymentmode = '';
 				}
@@ -170,7 +171,7 @@ class html_cerfafr extends ModeleDon
 					if ($donatorthirdparty->fetch($don->socid) > 0) {
 						if (dol_strlen(trim($donatorsociete.$donatorlastname.$donatorfirstname)) == 0) {
 							// A third party holds a single name field, even for a private individual, so it goes
-							// to the "Nom" cell of the form and the "Prénoms" cell is left empty.
+							// to the "Name" cell of the form and the "Firstname" cell is left empty.
 							$donatorsociete = (string) $donatorthirdparty->name;
 						}
 						if (dol_strlen(trim($donatoraddress)) == 0) {
@@ -193,7 +194,9 @@ class html_cerfafr extends ModeleDon
 
 				// Define contents
 				$donmodel = DOL_DOCUMENT_ROOT."/core/modules/dons/html_cerfafr.html";
-				$form = implode('', file($donmodel));
+
+				$form = file_get_contents($donmodel);
+
 				$form = str_replace('__REF__', (string) $don->id, $form);
 				$form = str_replace('__DATE__', dol_print_date($don->date, 'day', false, $outputlangs), $form);
 				//$form = str_replace('__IP__',$user->ip,$form); // TODO $user->ip not exist
@@ -201,11 +204,12 @@ class html_cerfafr extends ModeleDon
 				$form = str_replace('__AMOUNTLETTERS__', $this->amountToLetters($don->amount), $form);
 				$form = str_replace('__CURRENCY__', $outputlangs->transnoentitiesnoconv("Currency".$currency), $form);
 				$form = str_replace('__CURRENCYCODE__', $conf->currency, $form);
-				$form = str_replace('__MAIN_INFO_SOCIETE_NOM__', $mysoc->name, $form);
-				$form = str_replace('__MAIN_INFO_SOCIETE_ADDRESS__', $mysoc->address, $form);
-				$form = str_replace('__MAIN_INFO_SOCIETE_ZIP__', $mysoc->zip, $form);
-				$form = str_replace('__MAIN_INFO_SOCIETE_TOWN__', $mysoc->town, $form);
-				$form = str_replace('__MAIN_INFO_SOCIETE_OBJECT__', $mysoc->socialobject, $form);
+				$form = str_replace('__MAIN_INFO_SOCIETE_NOM__', (string) $mysoc->name, $form);
+				$form = str_replace('__MAIN_INFO_SOCIETE_ADDRESS__', (string) $mysoc->address, $form);
+				$form = str_replace('__MAIN_INFO_SOCIETE_ZIP__', (string) $mysoc->zip, $form);
+				$form = str_replace('__MAIN_INFO_SOCIETE_TOWN__', (string) $mysoc->town, $form);
+
+				$form = str_replace('__MAIN_INFO_SOCIETE_OBJECT__', (string) $mysoc->socialobject, $form);
 
 				$form = str_replace('__DONATOR_FIRSTNAME__', dol_escape_htmltag($donatorfirstname), $form);
 				// The template concatenates __DONATOR_SOCIETE__ and __DONATOR_LASTNAME__ with no separator,
@@ -213,33 +217,19 @@ class html_cerfafr extends ModeleDon
 				$donatorlastnameprefix = (dol_strlen(trim($donatorsociete)) > 0 && dol_strlen(trim($donatorlastname)) > 0) ? '<br>' : '';
 				$form = str_replace('__DONATOR_LASTNAME__', $donatorlastnameprefix.dol_escape_htmltag($donatorlastname), $form);
 				$form = str_replace('__DONATOR_SOCIETE__', dol_escape_htmltag($donatorsociete), $form);
-				$form = str_replace('__DONATOR_STATUT__', $don->statut, $form);
+
+				$form = str_replace('__DONATOR_STATUT__', (string) $don->statut, $form);
 				$form = str_replace('__DONATOR_ADDRESS__', dol_nl2br(dol_escape_htmltag($donatoraddress, 0, 1)), $form);
 				$form = str_replace('__DONATOR_ZIP__', dol_escape_htmltag($donatorzip), $form);
 				$form = str_replace('__DONATOR_TOWN__', dol_escape_htmltag($donatortown), $form);
 
-				$form = str_replace('__PAYMENTMODE_LIB__ ', $paymentmode, $form);
+				$form = str_replace('__PAYMENTMODE_LIB__ ', (string) $paymentmode, $form);
 				$form = str_replace('__NOW__', dol_print_date($now, 'day', false, $outputlangs), $form);
-				$form = str_replace('__DonationRef__', $outputlangs->trans("DonationRef"), $form);
-				$form = str_replace('__DonationTitle__', $outputlangs->trans("DonationTitle"), $form);
-				$form = str_replace('__DonationReceipt__', $outputlangs->trans("DonationReceipt"), $form);
-				$form = str_replace('__DonationRecipient__', $outputlangs->trans("DonationRecipient"), $form);
-				$form = str_replace('__DonationDatePayment__', $outputlangs->trans("DonationDatePayment"), $form);
-				$form = str_replace('__PaymentMode__', $outputlangs->trans("PaymentMode"), $form);
-				// $form = str_replace('__CodeDon__',$CodeDon,$form);
-				$form = str_replace('__Name__', $outputlangs->trans("Name"), $form);
-				$form = str_replace('__Address__', $outputlangs->trans("Address"), $form);
-				$form = str_replace('__Zip__', $outputlangs->trans("Zip"), $form);
-				$form = str_replace('__Town__', $outputlangs->trans("Town"), $form);
-				$form = str_replace('__Object__', $outputlangs->trans("Object"), $form);
-				$form = str_replace('__Donor__', $outputlangs->trans("Donor"), $form);
-				$form = str_replace('__Date__', $outputlangs->trans("Date"), $form);
-				$form = str_replace('__Signature__', $outputlangs->trans("Signature"), $form);
-				$form = str_replace('__Message__', $outputlangs->trans("Message"), $form);
-				$form = str_replace('__IConfirmDonationReception__', $outputlangs->trans("IConfirmDonationReception"), $form);
-				$form = str_replace('__DonationMessage__', $conf->global->DONATION_MESSAGE, $form);
+				$form = str_replace('__DONATION_PAYMENT_MODE__', $ModePaiement, $form);
+				$form = str_replace('__DONATION_MESSAGE__', getDolGlobalString('DONATION_MESSAGE'), $form);
 
-				$form = str_replace('__ModePaiement__', $ModePaiement, $form);
+				// Replace with a generic replacement feature '__(XXX)__' must become $outputlangs->trans('XXX')
+				$form = make_substitutions($form, array(), $outputlangs);
 
 				$frencharticle = '';
 				if (preg_match('/fr/i', $outputlangs->defaultlang)) {
@@ -306,12 +296,12 @@ class html_cerfafr extends ModeleDon
 	/**
 	 * numbers to letters
 	 *
-	 * @param   mixed   $montant    amount
-	 * @param   mixed   $devise1    devise 1 ex: euro
-	 * @param   mixed   $devise2    devise 2 ex: centimes
+	 * @param   mixed   $amount    amount
+	 * @param   string  $devise1    devise 1 ex: euro
+	 * @param   string  $devise2    devise 2 ex: centimes
 	 * @return string               amount in letters
 	 */
-	private function amountToLetters($montant, $devise1 = '', $devise2 = '')
+	private function amountToLetters($amount, $devise1 = '', $devise2 = '')
 	{
 		$unite = array();
 		$dix = array();
@@ -326,19 +316,19 @@ class html_cerfafr extends ModeleDon
 		} else {
 			$dev2 = $devise2;
 		}
-		$valeur_entiere = intval($montant);
-		$valeur_decimal = intval(round($montant - intval($montant), 2) * 100);
-		$dix_c = intval($valeur_decimal % 100 / 10);
-		$cent_c = intval($valeur_decimal % 1000 / 100);
-		$unite[1] = $valeur_entiere % 10;
-		$dix[1] = intval($valeur_entiere % 100 / 10);
-		$cent[1] = intval($valeur_entiere % 1000 / 100);
-		$unite[2] = intval($valeur_entiere % 10000 / 1000);
-		$dix[2] = intval($valeur_entiere % 100000 / 10000);
-		$cent[2] = intval($valeur_entiere % 1000000 / 100000);
-		$unite[3] = intval($valeur_entiere % 10000000 / 1000000);
-		$dix[3] = intval($valeur_entiere % 100000000 / 10000000);
-		$cent[3] = intval($valeur_entiere % 1000000000 / 100000000);
+		$integerAmount = intval($amount);
+		$fractionalAmount = intval(round($amount - intval($amount), 2) * 100);
+		$dix_c = intval($fractionalAmount % 100 / 10);
+		$cent_c = intval($fractionalAmount % 1000 / 100);
+		$unite[1] = $integerAmount % 10;
+		$dix[1] = intval($integerAmount % 100 / 10);
+		$cent[1] = intval($integerAmount % 1000 / 100);
+		$unite[2] = intval($integerAmount % 10000 / 1000);
+		$dix[2] = intval($integerAmount % 100000 / 10000);
+		$cent[2] = intval($integerAmount % 1000000 / 100000);
+		$unite[3] = intval($integerAmount % 10000000 / 1000000);
+		$dix[3] = intval($integerAmount % 100000000 / 10000000);
+		$cent[3] = intval($integerAmount % 1000000000 / 100000000);
 		$chif = array('', 'un', 'deux', 'trois', 'quatre', 'cinq', 'six', 'sept', 'huit', 'neuf', 'dix', 'onze', 'douze', 'treize', 'quatorze', 'quinze', 'seize', 'dix sept', 'dix huit', 'dix neuf');
 		$secon_c = '';
 		$trio_c = '';
