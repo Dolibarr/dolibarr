@@ -33,6 +33,7 @@ global $noMoreLinkedObjectBlockAfter;
 
 $langs = $GLOBALS['langs'];
 '@phan-var-force Translate $langs';
+'@phan-var-force CommonObject $object';
 /**
  * @var CommonObject $object
  */
