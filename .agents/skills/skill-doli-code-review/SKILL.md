@@ -44,7 +44,6 @@ When generating code:
 - preserve the existing file formatting, never change the copyright or licence header, never remove existing cast 
 - do not rewrite unrelated methods
 - explain briefly what is being fixed
-- never do or suggest git commit (except in standalone requests)
 
 ## Examples
 
