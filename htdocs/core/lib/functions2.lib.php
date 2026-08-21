@@ -3484,7 +3484,7 @@ function analyzeDirContents($dir, $search = array(), &$results = array(), &$coun
 								foreach ($regs[$id] as $i => $string) {
 									if (!empty($pattern['contain']) && is_array($pattern['contain'])) {
 										foreach ($pattern['contain'] as $contain) {
-											// Strict mode true: must contain // Mode strict true : doit contenir && ne pas contenir// Mode strict true : doit contenir && ne pas contenir must not contain
+											// Strict mode true: must contain && must not contain
 											if (!empty($pattern['notcontain']) && !empty($pattern['strict']) && is_array($pattern['notcontain'])) {
 												foreach ($pattern['notcontain'] as $notcontain) {
 													if (strstr($string, $contain) && strstr($string, $notcontain)) {
