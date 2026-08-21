@@ -344,7 +344,7 @@ class Paiement extends CommonObject
 
 			// $key is id of invoice, $value is amount, $way is 'dolibarr' if amount is in main currency, 'customer' if in foreign currency
 			if ($invoice_multicurrency_tx) {
-				$value_converted = MultiCurrency::getAmountConversionFromInvoiceRate($key, $value ? $value : 0, $way, 'facture', $invoice_multicurrency_tx);
+				$value_converted = MultiCurrency::getAmountConversionFromInvoiceRate($key, $value, $way, 'facture', $invoice_multicurrency_tx);
 			} else {
 				$invoice_multicurrency_tx = false;
 			}
