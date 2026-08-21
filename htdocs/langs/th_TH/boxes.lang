@@ -116,6 +116,7 @@ BoxLastCustomerShipments=จัดส่งลูกค้ารอบสุด�
 BoxTitleLastCustomerShipments=การจัดส่งลูกค้าที่แก้ไข %s ล่าสุด
 BoxTitleLastLeaveRequests=คำขอลาที่แก้ไข %s ล่าสุด
 NoRecordedShipments=ไม่มีการบันทึกการจัดส่งของลูกค้า
+NoUpcomingEvent=No upcoming events
 BoxCustomersOutstandingBillReached=ลูกค้าที่มีวงเงินคงค้างถึงแล้ว
 BoxTitleLastFediverseInfos=โพสต์ล่าสุด %s จาก %s
 BoxLastFediverseInfos=ข่าวสารและแนวโน้มล่าสุดจาก Fediverse

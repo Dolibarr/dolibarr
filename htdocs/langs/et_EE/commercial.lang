@@ -90,6 +90,7 @@ ThisIsInformationOnDocumentToSignFichinter=See on allkirjastatava sekkumise info
 ThisIsInformationOnDocumentToSignSociete_rib=See on teave SEPA allkirjastamisvolituse kohta
 ThisIsInformationOnDocumentToSignExpedition= See on saadetise kohta käiv teave, mis tuleb allkirjastada.
 SignatureProposalRef=Hinnapakkumise/äripakkumise %s allikiri
+SignatureOrderRef=Signature of sale order %s
 SignatureContractRef=Lepingu %s allkiri
 SignatureFichinterRef=Sekkumise %s allkiri
 SignatureSociete_ribRef=SEPA volituse allkiri %s

@@ -155,9 +155,6 @@ ErrNoZipEngine=Nu există niciun motor pentru a arhiva/dezarhiva fișierul %s î
 ErrorFileMustBeADolibarrPackage=Fșierul %s  trebuie să fie un pachet zip Dolibarr
 ErrorModuleFileRequired=Trebuie să selectați un fișier pachet de modul Dolibarr
 ErrorFailToDownloadModuleFromSource=Failed to download the module from the source. Please check your internet connection or the source URL and try again.
-extModuleConfirmInstallTitle = Confirmare instalare modul
-extModuleConfirmInstallText  = You are about to install the following module:<br><br><b>Name:</b> %s<br><b>Version:</b> %s<br><b>Reference:</b> %s<br><b>Last update:</b> %s<br><br>This action is not reversible, Do you confirm the installation of this module?
-install=Instalare
 ErrorPhpCurlNotInstalled=PHP CURL nu este instalat, acest lucru este esențial pentru comunicarea cu Paypal
 ErrorFailedToAddToMailmanList=Eşec la adăugarea %s la lista de Mailman %s sau la baza SPIP
 ErrorFailedToRemoveToMailmanList=Eşec la înlăturarea %s din lista de Mailman %s sau din baza SPIP
@@ -443,6 +440,7 @@ WarningModuleAffiliatedToAReportedCompany=Warning, this module has been reported
 WarningModuleAffiliatedToAPiratPlatform=Fii atent când obții un modul (plătit sau gratuit) de pe o platformă neoficială suspectă, cum ar fi %s
 WarningDNSServerNotAvailable=Atenție, server-ul DNS nu este disponibil
 WarningSecureKeyNotSet=The value fo the securekey must not be empty
+WarningFullPathWasNotFoundSoWeUseAnAlternativeValue=Note: Full path was not found so we used the alternative value <b>%s</b>
 
 SwissQrOnlyVIR = Factura SwissQR poate fi adăugată numai pe facturile setate să fie plătite cu plăți prin transfer de credit. 
 SwissQrCreditorAddressInvalid = Adresa creditorului este invalidă (este setat codul poștal și județul? (%s)

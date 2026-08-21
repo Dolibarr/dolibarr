@@ -64,7 +64,7 @@ LNECertifiedPOSSystem=Sistema POS certificado por LNE
 LNECandidatePOSSystem=Sistema POS candidato para la certificación LNE
 LNECertifiedVersionFR=La versión %s del módulo Registros Inmutables es una versión certificada. Más información en https://www.dolibarr.org/certifications.php
 LNECandidateVersionForCertificationFR=La versión %s del módulo Registros Inmutables es una versión candidata para convertirse en una versión certificada por LNE. Aún no está certificada.
-NotCertifiedVersionFR=This version %s of the immutable log module is technically ready to be compliant with the french VAT anti-fraud law (check any update of the law of your country). However, if you collect payments from private individuals and you are elligible to VAT, you can't use this software without a compliance statement ("French attestation"). So You MUST ask your reseller, integrator or hosting company to obtain this statement of compliance (Note: A list of companies that provide the statement for their customers may be available on https://partners.dolibarr.org.
+NotCertifiedVersionFR=Esta versión %s del módulo de registro inmutable está técnicamente lista para cumplir con la ley francesa de IVA contra el fraude (verifique cualquier actualización de la ley de su país). Sin embargo, si cobra pagos de particulares y está sujeto al IVA, no puede usar este software sin una declaración de conformidad ("certificación francesa"). Por lo tanto, DEBE solicitar a su revendedor, integrador o empresa de alojamiento que obtenga esta declaración de conformidad (Nota: Puede encontrar una lista de empresas que proporcionan la declaración para sus clientes en https://partners.dolibarr.org.
 InvoiceGeneratedWithLNECertifiedPOSSystem=Factura generada con un sistema TPV certificado por LNE
 InvoiceGeneratedWithLNECandidatePOSSystem=Factura generada con un candidato para el sistema POS certificado por LNE
 TotalTTCIfInvoiceSeeCompleteDataForDetail=Importe del evento. Total con impuestos incluidos si se factura. Consulte la columna "Datos completos" para obtener más información.
@@ -137,7 +137,7 @@ NeedAThirdPartyStatement=Necesitas una declaración de terceros para cumplir con
 ForPeriodAndFilters=Para el período y los filtros
 AddtionalInformation=Información técnica adicional
 StatusValid=Validar
-NotCertified=Need a compliance statement (see note below)
+NotCertified=Se requiere una declaración de cumplimiento (ver nota a continuación).
 ## logTypes
 logBILL_DELETE=Factura del cliente borrada lógicamente
 logBILL_PAYED=Factura del cliente pagada
