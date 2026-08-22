@@ -7576,6 +7576,14 @@ function dol_htmlentitiesbr($stringtoencode, $nl2brmode = 0, $pagecodefrom = 'UT
 		if ($removelasteolbr) {
 			$newstring = preg_replace('/<br>$/i', '', $newstring); // Remove last <br> (remove only last one)
 		}
+		// If the text is seen as HTML only because it contains entities (like &gt; or &amp;) but has no real tag,
+		// its newlines would otherwise be kept as-is and lost on render, so convert them to <br> (#38919).
+		if (!preg_match('/<\/?[a-zA-Z][a-zA-Z0-9]*(\s[^>]*)?>/', $newstring) && preg_match('/(\r\n|\r|\n)/', $newstring)) {
+			if ($removelasteolbr) {
+				$newstring = preg_replace('/(\r\n|\r|\n)$/', '', $newstring);
+			}
+			$newstring = dol_nl2br($newstring, $nl2brmode);
+		}
 		$newstring = strtr($newstring, array('&'=>'__and__', '<'=>'__lt__', '>'=>'__gt__', '"'=>'__dquot__'));
 		$newstring = dol_htmlentities($newstring, ENT_COMPAT, $pagecodefrom); // Make entity encoding
 		$newstring = strtr($newstring, array('__and__'=>'&', '__lt__'=>'<', '__gt__'=>'>', '__dquot__'=>'"'));
