@@ -1,6 +1,6 @@
 ---
-name: skill-doli-dev
-description: Use when developing Dolibarr ERP/CRM code, working with database queries, or asking about Dolibarr best practices.
+name: skill-doli-devmodule
+description: Use when developing a Dolibarr ERP/CRM external module, working with database queries, or asking about Dolibarr best practices.
 license: MIT
 user-invocable: true
 allowed-tools:
@@ -32,7 +32,8 @@ These principles must be followed even before reviewing specific task details. V
     Do not apply rules 1-3 to existing code in backports (i.e., non-functional changes not applied to a (fork of) the develop branch.
 
 ### ⚙️ Workflow & Architecture
-1.  **Action/View Separation:** Always clearly separate page action logic (executed on POST) from pure rendering (the HTML view).
+1.  **Hooks First:** Before implementing any logic that runs on a core lifecycle event (e.g., form save, object update), check if an existing Dolibarr hook can be used. Use the standard calling pattern: `$hookmanager->executeHooks('actionName', $parameters, $object, $action);`.
+2.  **Action/View Separation:** Always clearly separate page action logic (executed on POST) from pure rendering (the HTML view).
 
 ---
 
@@ -64,7 +65,8 @@ This section guides the agent through common development tasks.
 
 
 ### Module Development
-*   **Module Template:** Use the structure found at `htdocs/modulebuilder/template/` as a definitive guide when initiating a new module or new pages.
+*   **Module Template:** Use the structure found at `htdocs/modulebuilder/template/` as a definitive guide when initiating a new module.
+*   **Hook Priority:** When adding functionality that interacts with core Dolibarr processes, check for existing hooks first to minimize architectural impact and maintain compatibility.
 
 ### Database Interaction Detail (Refined)
 This details the preferred mechanical steps:
