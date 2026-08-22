@@ -98,6 +98,7 @@ $action    =  GETPOST('action', 'aZ09');
 $cancel    =  GETPOST('cancel', 'alpha');
 $confirm   =  GETPOST('confirm', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
+$backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 
 $lineid    =  GETPOSTINT('lineid');
 $contactid =  GETPOSTINT('contactid');
