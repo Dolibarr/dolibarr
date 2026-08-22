@@ -32,7 +32,8 @@ These principles must be followed even before reviewing specific task details. V
     Do not apply rules 1-3 to existing code in backports (i.e., non-functional changes not applied to a (fork of) the develop branch.
 
 ### Workflow & Architecture
-1.  **Action/View Separation:** Always clearly separate page action logic (executed on POST) from pure rendering (the HTML view).
+1.  **PHP version:** 7.2+
+2.  **Action/View Separation:** Always clearly separate page action logic (executed on POST) from pure rendering (the HTML view).
 
 ---
 

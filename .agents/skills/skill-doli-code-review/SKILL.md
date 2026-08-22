@@ -40,7 +40,7 @@ The user request should contain, when available:
 
 When generating code:
 
-- provide only the relevant PHP code
+- provide only the relevant PHP code 7.2+
 - preserve the existing file formatting, never change the copyright or licence header, never remove existing cast 
 - do not rewrite unrelated methods
 - explain briefly what is being fixed
