@@ -838,7 +838,7 @@ if (!$resql) {
 $num = $db->num_rows($resql);
 
 if ($action != 'create') {
-	print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST" id="list_of_c_email_templates">';
+	print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST" id="list_of_c_email_templates" spellcheck="false">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="from" value="'.dol_escape_htmltag(GETPOST('from', 'alpha')).'">';
 }
@@ -883,7 +883,7 @@ if ($action == 'create') {
 	$obj->content = GETPOST('content', 'restricthtml');
 
 	// Form to add a new line
-	print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST" id="create_c_email_template">';
+	print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST" id="create_c_email_template" spellcheck="false">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="from" value="'.dol_escape_htmltag(GETPOST('from', 'alpha')).'">';

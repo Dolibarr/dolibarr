@@ -198,7 +198,7 @@ print dol_get_fiche_head($head, 'passwords', '', -1);
 print '<br>';
 
 // Select manager to generate passwords
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 print '<input type="hidden" name="constname" value="USER_PASSWORD_GENERATED">';
@@ -407,7 +407,7 @@ if (getDolGlobalString('USER_PASSWORD_GENERATED') == "Perso") {
 // Crypt passwords in database
 
 print '<br>';
-print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
+print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="encrypt">';
 
