@@ -91,7 +91,7 @@ UPDATE llx_const SET value = 'cyan' WHERE value = 'azur' AND name ='PROPALE_ADDO
 UPDATE llx_document_model SET nom = 'cyan' WHERE nom = 'azur' AND type = 'propal' AND NOT EXISTS (SELECT subquery.nom FROM (SELECT nom, entity FROM llx_document_model WHERE nom = 'cyan' AND type = 'propal') as subquery WHERE subquery.entity = entity);
 DELETE FROM llx_document_model WHERE nom = 'azur' AND type = 'propal';
 
--- Switch all eintein templates into eratosthene
+-- Switch all einstein templates into eratosthene
 UPDATE llx_commande SET model_pdf = 'eratosthene' WHERE model_pdf = 'einstein';
 UPDATE llx_const SET value = 'eratosthene' WHERE value = 'einstein' AND name ='COMMANDE_ADDON_PDF';
 UPDATE llx_document_model SET nom = 'eratosthene' WHERE nom = 'einstein' AND type = 'order' AND NOT EXISTS (SELECT subquery.nom FROM (SELECT nom, entity FROM llx_document_model WHERE nom = 'eratosthene' AND type = 'order') as subquery WHERE subquery.entity = entity);
