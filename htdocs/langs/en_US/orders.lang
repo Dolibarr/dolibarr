@@ -215,3 +215,5 @@ ConfirmDeleteDispatchedLines = Revert also all stock movements already done ?
 SupplierOrderDeletion = Supplier order %s Deletion
 OrderStatusMakeOperationForbidden = Order status forbidden for this operation.
 CreateRemoteOrder=Create remote order
+SetWarehouse=Set warehouse
+SupplierOrderDefaultWarehouseHelp=Warehouse the goods are expected to be received into. It is only a default: the actual warehouse is chosen line by line when receiving.

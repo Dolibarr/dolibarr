@@ -102,4 +102,6 @@ DELETE FROM llx_document_model WHERE nom = 'einstein' AND type = 'order';
 
 
 
+ALTER TABLE llx_commande_fournisseur ADD COLUMN fk_warehouse integer DEFAULT NULL;
+
 -- end of migration

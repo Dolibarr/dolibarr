@@ -61,6 +61,7 @@ create table llx_commande_fournisseur
 
   date_livraison			datetime default NULL,			-- date planned of delivery (expected shipment date)
   date_reception        	datetime default NULL,			-- date of real final reception (when everything is received)
+  fk_warehouse				integer DEFAULT NULL,			-- default destination warehouse for the goods to receive
   fk_account				integer,                        -- bank account
   fk_cond_reglement			integer,                        -- condition de reglement
   deposit_percent			varchar(63) DEFAULT NULL,		-- default deposit % if payment term needs it

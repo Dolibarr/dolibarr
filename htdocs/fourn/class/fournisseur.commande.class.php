@@ -191,6 +191,11 @@ class CommandeFournisseur extends CommonOrder
 	public $delivery_date;
 
 	/**
+	 * @var int|null Default destination warehouse for the goods to receive
+	 */
+	public $fk_warehouse;
+
+	/**
 	 *  @var float Total value, excluding taxes (HT = "Hors Taxe" in French)
 	 */
 	public $total_ht;
@@ -396,6 +401,7 @@ class CommandeFournisseur extends CommonOrder
 		'date_approve2' => array('type' => 'datetime', 'label' => 'DateApprove2', 'enabled' => 1, 'visible' => 3, 'position' => 725),
 		'date_commande' => array('type' => 'date', 'label' => 'OrderDateShort', 'enabled' => 1, 'visible' => 1, 'position' => 70),
 		'date_livraison' => array('type' => 'datetime', 'label' => 'DeliveryDate', 'enabled' => 'getDolGlobalInt("ORDER_DISABLE_DELIVERY_DATE") ? 0 : 1', 'visible' => 1, 'position' => 74),
+		'fk_warehouse' => array('type' => 'integer:Entrepot:product/stock/class/entrepot.class.php', 'label' => 'DefaultWarehouse', 'enabled' => 'isModEnabled("stock")', 'visible' => -1, 'position' => 75, 'nodepth' => 1),
 		'fk_user_author' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'visible' => 3, 'position' => 41),
 		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'visible' => 3, 'notnull' => -1, 'position' => 80),
 		'fk_user_valid' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserValidation', 'enabled' => 1, 'visible' => 3, 'position' => 711),
@@ -517,7 +523,7 @@ class CommandeFournisseur extends CommonOrder
 		$sql .= " c.localtax1, c.localtax2, ";
 		$sql .= " c.date_creation, c.date_valid, c.date_approve, c.date_approve2,";
 		$sql .= " c.fk_user_author as user_author_id, c.fk_user_valid as user_validation_id, c.fk_user_approve as user_approve_id, c.fk_user_approve2 as user_approve_id2,";
-		$sql .= " c.date_commande as date_commande, c.date_livraison as delivery_date, c.fk_cond_reglement, c.fk_mode_reglement, c.fk_projet as fk_project, c.remise_percent, c.source, c.fk_input_method,";
+		$sql .= " c.date_commande as date_commande, c.date_livraison as delivery_date, c.fk_warehouse, c.fk_cond_reglement, c.fk_mode_reglement, c.fk_projet as fk_project, c.remise_percent, c.source, c.fk_input_method,";
 		$sql .= " c.fk_account,";
 		$sql .= " c.note_private, c.note_public, c.model_pdf, c.last_main_doc, c.extraparams, c.billed,";
 		$sql .= " c.fk_multicurrency, c.multicurrency_code, c.multicurrency_tx, c.multicurrency_total_ht, c.multicurrency_total_tva, c.multicurrency_total_ttc,";
@@ -587,6 +593,7 @@ class CommandeFournisseur extends CommonOrder
 				$this->date = $this->date_creation;
 			}
 			$this->delivery_date = $this->db->jdate($obj->delivery_date);
+			$this->fk_warehouse = $obj->fk_warehouse;
 			$this->remise_percent = $obj->remise_percent;
 			$this->methode_commande_id = $obj->fk_input_method;
 			$this->methode_commande = $obj->methode_commande;
@@ -1646,6 +1653,7 @@ class CommandeFournisseur extends CommonOrder
 		$sql .= ", fk_projet";
 		$sql .= ", date_creation";
 		$sql .= ", date_livraison";
+		$sql .= ", fk_warehouse";
 		$sql .= ", fk_user_author";
 		$sql .= ", fk_statut";
 		$sql .= ", source";
@@ -1669,6 +1677,7 @@ class CommandeFournisseur extends CommonOrder
 		$sql .= ", ".($this->fk_project > 0 ? ((int) $this->fk_project) : "null");
 		$sql .= ", '".$this->db->idate($date)."'";
 		$sql .= ", ".($delivery_date ? "'".$this->db->idate($delivery_date)."'" : "null");
+		$sql .= ", ".($this->fk_warehouse > 0 ? ((int) $this->fk_warehouse) : "null");
 		$sql .= ", ".((int) $user->id);
 		$sql .= ", ".self::STATUS_DRAFT;
 		$sql .= ", ".((int) $this->source);
@@ -1857,6 +1866,7 @@ class CommandeFournisseur extends CommonOrder
 		$sql .= " fk_soc=".(isset($this->socid) ? ((int) $this->socid) : "null").",";
 		$sql .= " date_commande=".(strval($this->date_commande) != '' ? "'".$this->db->idate($this->date_commande)."'" : 'null').",";
 		$sql .= " date_valid=".(strval($this->date_validation) != '' ? "'".$this->db->idate($this->date_validation)."'" : 'null').",";
+		$sql .= " fk_warehouse=".($this->fk_warehouse > 0 ? ((int) $this->fk_warehouse) : "null").",";
 		$sql .= " total_tva=".(isset($this->total_tva) ? ((float) $this->total_tva) : "null").",";
 		$sql .= " localtax1=".(isset($this->total_localtax1) ? ((float) $this->total_localtax1) : "null").",";
 		$sql .= " localtax2=".(isset($this->total_localtax2) ? ((float) $this->total_localtax2) : "null").",";
