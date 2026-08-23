@@ -4069,9 +4069,10 @@ class Product extends CommonObject
 	 * @param	string 	$filtrestatut    	Id status to filter on a status
 	 * @param	int    	$forVirtualStock 	Ignore rights filter for virtual stock calculation.
 	 * @param	int		$dateofvirtualstock	Date of virtual stock
+	 * @param	int		$dateofvirtualstockmin	Lower bound of the virtual stock window: ignore orders planned before this date
 	 * @return	int                   		Array of stats in $this->stats_reception, <0 if ko or >0 if ok
 	 */
-	public function load_stats_reception($socid = 0, $filtrestatut = '', $forVirtualStock = 0, $dateofvirtualstock = null)
+	public function load_stats_reception($socid = 0, $filtrestatut = '', $forVirtualStock = 0, $dateofvirtualstock = null, $dateofvirtualstockmin = null)
 	{
 		// phpcs:enable
 		global $user, $hookmanager, $action;
@@ -4093,6 +4094,10 @@ class Product extends CommonObject
 		}
 		if ($filtrestatut != '') {
 			$sql .= " AND cf.fk_statut IN (".$this->db->sanitize($filtrestatut).")";
+		}
+		if (!empty($dateofvirtualstockmin)) {
+			// Same lower bound as the supplier order side: both halves of the subtraction must run on the same population of orders
+			$sql .= " AND cf.date_livraison >= '".$this->db->idate($dateofvirtualstockmin)."'";
 		}
 		if (!empty($dateofvirtualstock)) {
 			$sql .= " AND fd.datec <= '".$this->db->idate($dateofvirtualstock)."'";
@@ -6596,7 +6601,7 @@ class Product extends CommonObject
 			if (isset($includedraftpoforvirtual)) {
 				$filterStatus = '0,'.$filterStatus;
 			}
-			$result = $this->load_stats_reception(0, $filterStatus, 1, $dateofvirtualstock);
+			$result = $this->load_stats_reception(0, $filterStatus, 1, $dateofvirtualstock, $dateofvirtualstockmin);
 			if ($result < 0) {
 				dol_print_error($this->db, $this->error);
 			}
