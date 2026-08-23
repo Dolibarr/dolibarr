@@ -355,6 +355,6 @@ QtyRegulated=Quantity on stock correction
 InventoryEntrepot=Warehouse identity
 SelectedWarehouse=Select a warehouse
 VirtualStockHorizon=Horizon for incoming supply
-VirtualStockHorizonHelp=Number of days ahead used to include incoming supply into the virtual stock. Supplier orders expected after this horizon are not counted, so the virtual stock does not promise goods that are still far away. Leave empty to disable the horizon and count all incoming supply, whatever its expected date (default). A value of 0 is a valid horizon: only supply that is already due is counted.
+VirtualStockHorizonHelp=Number of days ahead used to include incoming supply into the virtual stock. The horizon is a window: only supplier orders planned to arrive between today and today + N days are counted. Orders planned further away are not counted yet, and orders whose planned delivery date has passed without arriving are no longer counted either, since that plan proved wrong. Leave empty to disable the horizon and count all incoming supply, whatever its expected date (default). A value of 0 is a valid horizon: only supply planned for today is counted.
 VirtualStockHorizonKeepUndatedOrders=Count supplier orders with no planned delivery date
 VirtualStockHorizonKeepUndatedOrdersHelp=When a horizon is set, supplier orders with no planned delivery date are not counted, because their arrival is unknown. Enable this to count them anyway.

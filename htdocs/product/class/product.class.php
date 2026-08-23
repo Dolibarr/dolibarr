@@ -3915,9 +3915,10 @@ class Product extends CommonObject
 	 * @param	string	$filtrestatut		Id of status to filter on status
 	 * @param	int		$forVirtualStock	Ignore rights filter for virtual stock calculation.
 	 * @param	int		$dateofvirtualstock	Date of virtual stock
+	 * @param	int		$dateofvirtualstockmin	Lower bound of the virtual stock window: ignore orders planned before this date
 	 * @return	int							Array of stats in $this->stats_commande_fournisseur, <0 if ko or >0 if ok
 	 */
-	public function load_stats_commande_fournisseur($socid = 0, $filtrestatut = '', $forVirtualStock = 0, $dateofvirtualstock = null)
+	public function load_stats_commande_fournisseur($socid = 0, $filtrestatut = '', $forVirtualStock = 0, $dateofvirtualstock = null, $dateofvirtualstockmin = null)
 	{
 		// phpcs:enable
 		global $user, $hookmanager, $action;
@@ -3939,6 +3940,11 @@ class Product extends CommonObject
 		}
 		if ($filtrestatut != '') {
 			$sql .= " AND c.fk_statut in (".$this->db->sanitize($filtrestatut).")"; // Peut valoir 0
+		}
+		if (!empty($dateofvirtualstockmin)) {
+			// Lower bound of the horizon: an order whose planned delivery date is already in the past did not arrive as planned,
+			// so it is no longer a credible supply and must not inflate the theoretical stock.
+			$sql .= " AND c.date_livraison >= '".$this->db->idate($dateofvirtualstockmin)."'";
 		}
 		if (!empty($dateofvirtualstock)) {
 			// Orders with no planned delivery date are left out by this filter, unless the option says to keep them
@@ -6545,8 +6551,10 @@ class Product extends CommonObject
 		// incoming supply expected after this horizon is ignored, so the theoretical stock does not promise goods that are still far away.
 		// An empty option means no horizon at all (default). A value of 0 is a valid horizon: only supply already due is counted.
 		$horizoninDays = getDolGlobalString('STOCK_VIRTUAL_HORIZON_IN_DAYS');
+		$dateofvirtualstockmin = null;
 		if (empty($dateofvirtualstock) && $horizoninDays !== '') {
 			$dateofvirtualstock = dol_time_plus_duree(dol_now(), max(0, (int) $horizoninDays), 'd');
+			$dateofvirtualstockmin = dol_get_first_hour(dol_now());	// The horizon is a window: supply expected before today did not arrive as planned
 		}
 
 		if (isModEnabled('order')) {
@@ -6576,7 +6584,7 @@ class Product extends CommonObject
 			if (isset($includedraftpoforvirtual)) {
 				$filterStatus = '0,1,2,'.$filterStatus;	// 1,2 may have already been inside $filterStatus but it is better to have twice than missing $filterStatus does not include them
 			}
-			$result = $this->load_stats_commande_fournisseur(0, $filterStatus, 1, $dateofvirtualstock);
+			$result = $this->load_stats_commande_fournisseur(0, $filterStatus, 1, $dateofvirtualstock, $dateofvirtualstockmin);
 			if ($result < 0) {
 				dol_print_error($this->db, $this->error);
 			}
