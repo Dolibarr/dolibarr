@@ -145,11 +145,13 @@ if ($action == 'warehouse') {
 		$error++;
 	}
 
-	$value = GETPOSTINT('STOCK_VIRTUAL_HORIZON_IN_DAYS');
-	if ($value > 0) {
-		$res = dolibarr_set_const($db, "STOCK_VIRTUAL_HORIZON_IN_DAYS", $value, 'chaine', 0, '', $conf->entity);
-	} else {
-		$res = dolibarr_del_const($db, "STOCK_VIRTUAL_HORIZON_IN_DAYS", $conf->entity);
+	if (GETPOSTISSET('STOCK_VIRTUAL_HORIZON_IN_DAYS')) {
+		$value = GETPOST('STOCK_VIRTUAL_HORIZON_IN_DAYS', 'alphanohtml');
+		if ($value === '') {	// An empty field disables the horizon. A 0 is a valid value, so it must be kept.
+			$res = dolibarr_del_const($db, "STOCK_VIRTUAL_HORIZON_IN_DAYS", $conf->entity);
+		} else {
+			$res = dolibarr_set_const($db, "STOCK_VIRTUAL_HORIZON_IN_DAYS", max(0, (int) $value), 'chaine', 0, '', $conf->entity);
+		}
 	}
 	if (!($res > 0)) {
 		$error++;
@@ -800,12 +802,12 @@ print "</tr>\n";
 print '<tr class="oddeven">';
 print '<td>'.$form->textwithpicto($langs->trans("VirtualStockHorizon"), $langs->trans("VirtualStockHorizonHelp")).'</td>';
 print '<td class="right">';
-print '<input type="number" min="0" step="1" class="width50 right" name="STOCK_VIRTUAL_HORIZON_IN_DAYS" value="'.getDolGlobalInt('STOCK_VIRTUAL_HORIZON_IN_DAYS').'"> '.$langs->trans("days").' ';
+print '<input type="number" min="0" step="1" class="width50 right" name="STOCK_VIRTUAL_HORIZON_IN_DAYS" value="'.dol_escape_htmltag(getDolGlobalString('STOCK_VIRTUAL_HORIZON_IN_DAYS')).'"> '.$langs->trans("days").' ';
 print '<input type="submit" class="button button-edit smallpaddingimp" value="'.$langs->trans("Modify").'">';
 print "</td>";
 print "</tr>\n";
 
-if (getDolGlobalInt('STOCK_VIRTUAL_HORIZON_IN_DAYS') > 0) {
+if (getDolGlobalString('STOCK_VIRTUAL_HORIZON_IN_DAYS') !== '') {
 	print '<tr class="oddeven">';
 	print '<td>'.$form->textwithpicto($langs->trans("VirtualStockHorizonKeepUndatedOrders"), $langs->trans("VirtualStockHorizonKeepUndatedOrdersHelp")).'</td>';
 	print '<td class="right">';

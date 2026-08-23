@@ -6543,8 +6543,10 @@ class Product extends CommonObject
 
 		// If the caller did not provide a date, apply the virtual stock horizon (option STOCK_VIRTUAL_HORIZON_IN_DAYS):
 		// incoming supply expected after this horizon is ignored, so the theoretical stock does not promise goods that are still far away.
-		if (empty($dateofvirtualstock) && getDolGlobalInt('STOCK_VIRTUAL_HORIZON_IN_DAYS') > 0) {
-			$dateofvirtualstock = dol_time_plus_duree(dol_now(), getDolGlobalInt('STOCK_VIRTUAL_HORIZON_IN_DAYS'), 'd');
+		// An empty option means no horizon at all (default). A value of 0 is a valid horizon: only supply already due is counted.
+		$horizoninDays = getDolGlobalString('STOCK_VIRTUAL_HORIZON_IN_DAYS');
+		if (empty($dateofvirtualstock) && $horizoninDays !== '') {
+			$dateofvirtualstock = dol_time_plus_duree(dol_now(), max(0, (int) $horizoninDays), 'd');
 		}
 
 		if (isModEnabled('order')) {
