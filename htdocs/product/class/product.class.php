@@ -3941,18 +3941,18 @@ class Product extends CommonObject
 		if ($filtrestatut != '') {
 			$sql .= " AND c.fk_statut in (".$this->db->sanitize($filtrestatut).")"; // Peut valoir 0
 		}
-		if (!empty($dateofvirtualstockmin)) {
-			// Lower bound of the horizon: an order whose planned delivery date is already in the past did not arrive as planned,
-			// so it is no longer a credible supply and must not inflate the theoretical stock.
-			$sql .= " AND c.date_livraison >= '".$this->db->idate($dateofvirtualstockmin)."'";
-		}
 		if (!empty($dateofvirtualstock)) {
-			// Orders with no planned delivery date are left out by this filter, unless the option says to keep them
-			if (getDolGlobalInt('STOCK_VIRTUAL_HORIZON_INCLUDE_UNDATED_ORDERS')) {
-				$sql .= " AND (c.date_livraison <= '".$this->db->idate($dateofvirtualstock)."' OR c.date_livraison IS NULL)";
-			} else {
-				$sql .= " AND c.date_livraison <= '".$this->db->idate($dateofvirtualstock)."'";
+			// Window of the horizon. The lower bound, when set, drops the orders that did not arrive as planned: their date has
+			// passed, so they are no longer a credible supply. Orders with no planned delivery date fall outside the window as
+			// well, since their arrival is unknown, unless the option says to keep them.
+			$sqlwindow = "c.date_livraison <= '".$this->db->idate($dateofvirtualstock)."'";
+			if (!empty($dateofvirtualstockmin)) {
+				$sqlwindow = "c.date_livraison >= '".$this->db->idate($dateofvirtualstockmin)."' AND ".$sqlwindow;
 			}
+			if (getDolGlobalInt('STOCK_VIRTUAL_HORIZON_INCLUDE_UNDATED_ORDERS')) {
+				$sqlwindow .= " OR c.date_livraison IS NULL";
+			}
+			$sql .= " AND (".$sqlwindow.")";
 		}
 
 		$result = $this->db->query($sql);
@@ -4095,12 +4095,18 @@ class Product extends CommonObject
 		if ($filtrestatut != '') {
 			$sql .= " AND cf.fk_statut IN (".$this->db->sanitize($filtrestatut).")";
 		}
-		if (!empty($dateofvirtualstockmin)) {
-			// Same lower bound as the supplier order side: both halves of the subtraction must run on the same population of orders
-			$sql .= " AND cf.date_livraison >= '".$this->db->idate($dateofvirtualstockmin)."'";
-		}
 		if (!empty($dateofvirtualstock)) {
 			$sql .= " AND fd.datec <= '".$this->db->idate($dateofvirtualstock)."'";
+		}
+		if (!empty($dateofvirtualstockmin)) {
+			// Same window as the supplier order side: both halves of the subtraction must always run on the same population of
+			// orders, otherwise an order dropped from one half while its receptions are still subtracted in the other one would
+			// push the theoretical stock below the real stock.
+			$sqlwindow = "cf.date_livraison >= '".$this->db->idate($dateofvirtualstockmin)."' AND cf.date_livraison <= '".$this->db->idate($dateofvirtualstock)."'";
+			if (getDolGlobalInt('STOCK_VIRTUAL_HORIZON_INCLUDE_UNDATED_ORDERS')) {
+				$sqlwindow .= " OR cf.date_livraison IS NULL";
+			}
+			$sql .= " AND (".$sqlwindow.")";
 		}
 
 		$result = $this->db->query($sql);
