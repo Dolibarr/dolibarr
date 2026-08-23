@@ -4139,9 +4139,10 @@ class Product extends CommonObject
 	 * @param	int    	$forVirtualStock 	Ignore rights filter for virtual stock calculation.
 	 * @param	int		$dateofvirtualstock	Date of virtual stock
 	 * @param   int 	$warehouseid 		Filter by a warehouse. Warning: When a filter on a warehouse is set, it is not possible to calculate an accurate virtual stock because we can't know in which warehouse will be done virtual stock changes.
+	 * @param	int		$dateofvirtualstockmin	Lower bound of the virtual stock window: ignore manufacturing orders planned to end before this date
 	 * @return 	integer                 	Array of stats in $this->stats_mrptoproduce (nb=nb of order, qty=qty ordered), <0 if ko or >0 if ok
 	 */
-	public function load_stats_inproduction($socid = 0, $filtrestatut = '', $forVirtualStock = 0, $dateofvirtualstock = null, $warehouseid = 0)
+	public function load_stats_inproduction($socid = 0, $filtrestatut = '', $forVirtualStock = 0, $dateofvirtualstock = null, $warehouseid = 0, $dateofvirtualstockmin = null)
 	{
 		// phpcs:enable
 		global $user, $hookmanager, $action;
@@ -4166,7 +4167,15 @@ class Product extends CommonObject
 		if ($filtrestatut != '') {
 			$sql .= " AND m.status IN (".$this->db->sanitize($filtrestatut).")";
 		}
-		if (!empty($dateofvirtualstock)) {
+		if (!empty($dateofvirtualstockmin)) {
+			// Window of the horizon. Here the relevant date is the planned end of production, not the validation date: a
+			// manufacturing order validated months ago but never completed is no longer a credible source of goods, and its
+			// components are no longer a credible consumption either. The validation date is kept as a fallback for the
+			// orders that carry no planned end date.
+			$datetouse = "COALESCE(m.date_end_planned, m.date_valid)";
+			$sql .= " AND ".$datetouse." >= '".$this->db->idate($dateofvirtualstockmin)."'";
+			$sql .= " AND ".$datetouse." <= '".$this->db->idate($dateofvirtualstock)."'";
+		} elseif (!empty($dateofvirtualstock)) {
 			$sql .= " AND m.date_valid <= '".$this->db->idate($dateofvirtualstock)."'"; // better date to code ? end of production ?
 		}
 		if (!$serviceStockIsEnabled) {
@@ -6615,7 +6624,7 @@ class Product extends CommonObject
 		}
 		// Include manufacturing
 		if (isModEnabled('mrp')) {
-			$result = $this->load_stats_inproduction(0, '1,2', 1, $dateofvirtualstock);
+			$result = $this->load_stats_inproduction(0, '1,2', 1, $dateofvirtualstock, 0, $dateofvirtualstockmin);
 			if ($result < 0) {
 				dol_print_error($this->db, $this->error);
 			}
@@ -6674,7 +6683,7 @@ class Product extends CommonObject
 		if (!empty($this->stock_warehouse) && getDolGlobalString('STOCK_ALLOW_VIRTUAL_STOCK_PER_WAREHOUSE')) {
 			foreach ($this->stock_warehouse as $warehouseid => $stockwarehouse) {
 				if (isModEnabled('mrp')) {
-					$result = $this->load_stats_inproduction(0, '1,2', 1, $dateofvirtualstock, $warehouseid);
+					$result = $this->load_stats_inproduction(0, '1,2', 1, $dateofvirtualstock, $warehouseid, $dateofvirtualstockmin);
 					if ($result < 0) {
 						dol_print_error($this->db, $this->error);
 					}
