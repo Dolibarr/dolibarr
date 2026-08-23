@@ -101,6 +101,10 @@ if (empty($reshook)) {
 			}
 			$key = $mode_key . '_' . $field_key;
 			$value = $assetdepreciationoptions->deprecation_options[$mode_key][$field_key] ?? null;
+			if (!empty($field_info['computedfromcore'])) {
+				// Value provided by the core, not by a dol_eval() of a user expression
+				$value = $assetdepreciationoptions->getRate($field_info['computedfromcore']);
+			}
 
 			print '<tr class="field_' . $key . '" id="block_' . $mode_key . '"><td';
 			print ' class="' . (empty($field_info['tdcss']) ? 'titlefieldmiddle' : $field_info['tdcss']) . ' fieldname_' . $key;
