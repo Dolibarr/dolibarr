@@ -4172,9 +4172,8 @@ class Product extends CommonObject
 			// manufacturing order validated months ago but never completed is no longer a credible source of goods, and its
 			// components are no longer a credible consumption either. The validation date is kept as a fallback for the
 			// orders that carry no planned end date.
-			$datetouse = "COALESCE(m.date_end_planned, m.date_valid)";
-			$sql .= " AND ".$datetouse." >= '".$this->db->idate($dateofvirtualstockmin)."'";
-			$sql .= " AND ".$datetouse." <= '".$this->db->idate($dateofvirtualstock)."'";
+			$sql .= " AND COALESCE(m.date_end_planned, m.date_valid) >= '".$this->db->idate($dateofvirtualstockmin)."'";
+			$sql .= " AND COALESCE(m.date_end_planned, m.date_valid) <= '".$this->db->idate($dateofvirtualstock)."'";
 		} elseif (!empty($dateofvirtualstock)) {
 			$sql .= " AND m.date_valid <= '".$this->db->idate($dateofvirtualstock)."'"; // better date to code ? end of production ?
 		}
@@ -6571,7 +6570,7 @@ class Product extends CommonObject
 		// incoming supply expected after this horizon is ignored, so the theoretical stock does not promise goods that are still far away.
 		// An empty option means no horizon at all (default). A value of 0 is a valid horizon: only supply already due is counted.
 		$horizoninDays = getDolGlobalString('STOCK_VIRTUAL_HORIZON_IN_DAYS');
-		$dateofvirtualstockmin = null;
+		$dateofvirtualstockmin = 0;
 		if (empty($dateofvirtualstock) && $horizoninDays !== '') {
 			$dateofvirtualstock = dol_time_plus_duree(dol_now(), max(0, (int) $horizoninDays), 'd');
 			$dateofvirtualstockmin = dol_get_first_hour(dol_now());	// The horizon is a window: supply expected before today did not arrive as planned
