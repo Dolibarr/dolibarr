@@ -3941,7 +3941,12 @@ class Product extends CommonObject
 			$sql .= " AND c.fk_statut in (".$this->db->sanitize($filtrestatut).")"; // Peut valoir 0
 		}
 		if (!empty($dateofvirtualstock)) {
-			$sql .= " AND c.date_livraison <= '".$this->db->idate($dateofvirtualstock)."'";
+			// Orders with no planned delivery date are left out by this filter, unless the option says to keep them
+			if (getDolGlobalInt('STOCK_VIRTUAL_HORIZON_INCLUDE_UNDATED_ORDERS')) {
+				$sql .= " AND (c.date_livraison <= '".$this->db->idate($dateofvirtualstock)."' OR c.date_livraison IS NULL)";
+			} else {
+				$sql .= " AND c.date_livraison <= '".$this->db->idate($dateofvirtualstock)."'";
+			}
 		}
 
 		$result = $this->db->query($sql);
@@ -6535,6 +6540,12 @@ class Product extends CommonObject
 		$stock_inproduction = 0;
 
 		//dol_syslog("load_virtual_stock");
+
+		// If the caller did not provide a date, apply the virtual stock horizon (option STOCK_VIRTUAL_HORIZON_IN_DAYS):
+		// incoming supply expected after this horizon is ignored, so the theoretical stock does not promise goods that are still far away.
+		if (empty($dateofvirtualstock) && getDolGlobalInt('STOCK_VIRTUAL_HORIZON_IN_DAYS') > 0) {
+			$dateofvirtualstock = dol_time_plus_duree(dol_now(), getDolGlobalInt('STOCK_VIRTUAL_HORIZON_IN_DAYS'), 'd');
+		}
 
 		if (isModEnabled('order')) {
 			$result = $this->load_stats_commande(0, '1,2', 1);

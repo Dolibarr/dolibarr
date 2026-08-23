@@ -144,6 +144,16 @@ if ($action == 'warehouse') {
 	if (!($res > 0)) {
 		$error++;
 	}
+
+	$value = GETPOSTINT('STOCK_VIRTUAL_HORIZON_IN_DAYS');
+	if ($value > 0) {
+		$res = dolibarr_set_const($db, "STOCK_VIRTUAL_HORIZON_IN_DAYS", $value, 'chaine', 0, '', $conf->entity);
+	} else {
+		$res = dolibarr_del_const($db, "STOCK_VIRTUAL_HORIZON_IN_DAYS", $conf->entity);
+	}
+	if (!($res > 0)) {
+		$error++;
+	}
 }
 
 if ($action == 'specimen') {
@@ -786,6 +796,28 @@ print $formproduct->selectWarehouses(getDolGlobalInt('MAIN_DEFAULT_WAREHOUSE', -
 print '<input type="submit" class="button button-edit smallpaddingimp" value="'.$langs->trans("Modify").'">';
 print "</td>";
 print "</tr>\n";
+
+print '<tr class="oddeven">';
+print '<td>'.$form->textwithpicto($langs->trans("VirtualStockHorizon"), $langs->trans("VirtualStockHorizonHelp")).'</td>';
+print '<td class="right">';
+print '<input type="number" min="0" step="1" class="width50 right" name="STOCK_VIRTUAL_HORIZON_IN_DAYS" value="'.getDolGlobalInt('STOCK_VIRTUAL_HORIZON_IN_DAYS').'"> '.$langs->trans("days").' ';
+print '<input type="submit" class="button button-edit smallpaddingimp" value="'.$langs->trans("Modify").'">';
+print "</td>";
+print "</tr>\n";
+
+if (getDolGlobalInt('STOCK_VIRTUAL_HORIZON_IN_DAYS') > 0) {
+	print '<tr class="oddeven">';
+	print '<td>'.$form->textwithpicto($langs->trans("VirtualStockHorizonKeepUndatedOrders"), $langs->trans("VirtualStockHorizonKeepUndatedOrdersHelp")).'</td>';
+	print '<td class="right">';
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('STOCK_VIRTUAL_HORIZON_INCLUDE_UNDATED_ORDERS');
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("STOCK_VIRTUAL_HORIZON_INCLUDE_UNDATED_ORDERS", $arrval, getDolGlobalString('STOCK_VIRTUAL_HORIZON_INCLUDE_UNDATED_ORDERS'));
+	}
+	print "</td>\n";
+	print "</tr>\n";
+}
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("UserDefaultWarehouse").'</td>';
