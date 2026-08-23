@@ -752,3 +752,5 @@ CreditNoteNotCreatedErrorOnDiscount=Credit note for <b>%s</b> not created: error
 CreditNoteNotCreatedAlreadyConverted=Credit note for <b>%s</b> not created: invoice already converted
 CreditNotesCreated=%s credit note(s) created
 ThisMassActionIsOnlyForInvoices=This mass action is only available for invoices
+# Deposit/credit split in the invoice currency (option MULTICURRENCY_PAYMENT_USE_REAL_AMOUNTS)
+DepositSplitAutomaticallyApplied=The available credit was larger than the remaining amount to pay and was split automatically: %s applied to this invoice, %s kept as an available credit for later use.
