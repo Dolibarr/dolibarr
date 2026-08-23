@@ -16,6 +16,7 @@ ExportMethod=Exportmethode
 ImportMethod=Importmethode
 FileNameToGenerate=Dateiname für die Sicherung:
 AutoDetectLang=automatische Erkennung (Browsersprache)
+ExampleOfDirectoriesForModelGen=Examples of syntax:<br>c:\\myapp\\mydocumentdir\\mysubdir<br>/home/myapp/mydocumentdir/mysubdir<br>DOL_DATA_ROOT/ecm/ecmdir
 Permission202=ADSL-Anschlüsse anlegen
 Permission203=Anschlussbestellungen übermitteln
 Permission204=Anschlussbestellungen

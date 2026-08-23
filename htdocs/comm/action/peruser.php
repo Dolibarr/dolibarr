@@ -752,6 +752,11 @@ if (($filtert != '-1' && $filtert != '-2') || $usergroup > 0) {
 	}
 }
 
+// Add table from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
+
 $sql .= " WHERE a.fk_action = ca.id";
 $sql .= " AND a.entity IN (".getEntity('agenda').")";	// bookcal is a "virtual view" of agenda
 

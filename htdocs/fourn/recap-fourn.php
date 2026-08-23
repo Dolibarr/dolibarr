@@ -129,7 +129,7 @@ if ($socid > 0) {
 		if ($resql) {
 			$num = $db->num_rows($resql);
 
-			// Boucle sur chaque facture
+			// Loop over each invoice
 			for ($i = 0; $i < $num; $i++) {
 				$objf = $db->fetch_object($resql);
 
