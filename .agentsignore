@@ -8,6 +8,9 @@
 .settings
 .txs
 .vscode
+*.lock
+*.map
+*.min.js
 vendor
 documents
 node_modules
