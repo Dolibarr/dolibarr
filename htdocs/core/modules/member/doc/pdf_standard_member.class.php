@@ -254,7 +254,7 @@ class pdf_standard_member extends CommonStickerGenerator
 		}
 
 		if ($this->_COUNTX == $this->_X_Number) {
-			// Si on est en bout de page, alors on repart sur une nouvelle page
+			// If we are at the end of the page, then start a new page
 			$this->_COUNTX = 0;
 			$this->_COUNTY = 0;
 		}
@@ -513,7 +513,7 @@ class pdf_standard_member extends CommonStickerGenerator
 				header('Content-Disposition: inline; filename="'.$filename.'"');
 			}
 
-			// Ajout directives pour resoudre bug IE
+			// Add directives to fix IE bug
 			header('Cache-Control: Public, must-revalidate');
 			header('Pragma: public');
 

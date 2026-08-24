@@ -177,7 +177,7 @@ $head = group_prepare_head($object);
 $title = $langs->trans("Group");
 print dol_get_fiche_head($head, 'rights', $title, -1, 'group');
 
-// Charge les modules soumis a permissions
+// Load modules subject to permissions
 $modules = array();
 $modulesdir = dolGetModulesDirs();
 

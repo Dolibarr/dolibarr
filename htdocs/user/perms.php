@@ -534,7 +534,7 @@ if ($result) {
 			$obj->family = 'external';
 		}
 
-		// Si la famille n'existe pas dans $familyinfo, on utilise 'other'
+		// If the family does not exist in $familyinfo, use 'other'
 		if (!empty($obj->family) && !isset($familyinfo[$obj->family])) {
 			$obj->family = 'other';
 		}
