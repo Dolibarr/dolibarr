@@ -460,22 +460,24 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++) {
 			//var_dump($annee.' '.$year_end.' '.$mois.' '.$month_end);
 			if ($annee < $year_end || ($annee == $year_end && $mois <= $month_end)) {
 				if ($annee_decalage > $minyear && $case <= $casenow) {
-					if (!empty($cum[$caseprev]) && !empty($cum[$case])) {
+					// Compare as float: the amounts come from a SQL SUM() and reach us as strings like "0.00",
+					// for which empty() is false, so a plain !empty() guard let a division by zero through.
+					if ((float) $cum[$caseprev] != 0 && (float) $cum[$case] != 0) {
 						$percent = (round(($cum[$case] - $cum[$caseprev]) / $cum[$caseprev], 4) * 100);
 						//print "X $cum[$case] - $cum[$caseprev] - $cum[$caseprev] - $percent X";
 						print ($percent >= 0 ? "+$percent" : "$percent").'%';
 					}
-					if (!empty($cum[$caseprev]) && empty($cum[$case])) {
+					if ((float) $cum[$caseprev] != 0 && (float) $cum[$case] == 0) {
 						print '-100%';
 					}
-					if (empty($cum[$caseprev]) && !empty($cum[$case])) {
+					if ((float) $cum[$caseprev] == 0 && (float) $cum[$case] != 0) {
 						//print '<td class="right">+Inf%</td>';
 						print '-';
 					}
-					if (isset($cum[$caseprev]) && empty($cum[$caseprev]) && empty($cum[$case])) {
+					if (isset($cum[$caseprev]) && (float) $cum[$caseprev] == 0 && (float) $cum[$case] == 0) {
 						print '+0%';
 					}
-					if (!isset($cum[$caseprev]) && empty($cum[$case])) {
+					if (!isset($cum[$caseprev]) && (float) $cum[$case] == 0) {
 						print '-';
 					}
 				} else {
@@ -600,19 +602,20 @@ for ($annee = $year_start; $annee <= $year_end; $annee++) {
 
 	// Pourcentage total
 	if ($annee > $minyear && $annee <= max($nowyear, $maxyear)) {
-		if (!empty($total[$annee - 1]) && !empty($total[$annee])) {
+		// Same as above: a SUM() returned as "0.00" is not empty(), so compare as float.
+		if ((float) $total[$annee - 1] != 0 && (float) $total[$annee] != 0) {
 			$percent = (round(($total[$annee] - $total[$annee - 1]) / $total[$annee - 1], 4) * 100);
 			print '<td class="nowrap borderrightlight right">';
 			print ($percent >= 0 ? "+$percent" : "$percent").'%';
 			print '</td>';
 		}
-		if (!empty($total[$annee - 1]) && empty($total[$annee])) {
+		if ((float) $total[$annee - 1] != 0 && (float) $total[$annee] == 0) {
 			print '<td class="borderrightlight right">-100%</td>';
 		}
-		if (empty($total[$annee - 1]) && !empty($total[$annee])) {
+		if ((float) $total[$annee - 1] == 0 && (float) $total[$annee] != 0) {
 			print '<td class="borderrightlight right">+'.$langs->trans('Inf').'%</td>';
 		}
-		if (empty($total[$annee - 1]) && empty($total[$annee])) {
+		if ((float) $total[$annee - 1] == 0 && (float) $total[$annee] == 0) {
 			print '<td class="borderrightlight right">+0%</td>';
 		}
 	} else {
