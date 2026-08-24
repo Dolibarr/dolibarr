@@ -117,15 +117,15 @@ $tabsql[35] = "SELECT a.rowid as rowid, a.code as code, a.label, a.nature, a.act
 $tabsqlsort = array();
 $tabsqlsort[35] = "code ASC";
 
-// Nom des champs en resultat de select pour affichage du dictionnaire
+// Name of the fields in the result of select to display the dictionary
 $tabfield = array();
 $tabfield[35] = "code,label,nature";
 
-// Nom des champs d'edition pour modification d'un enregistrement
+// Name of editing fields for record modification
 $tabfieldvalue = array();
 $tabfieldvalue[35] = "code,label,nature";
 
-// Nom des champs dans la table pour insertion d'un enregistrement
+// Name of the fields in the table for inserting a record
 $tabfieldinsert = array();
 $tabfieldinsert[35] = "code,label,nature";
 

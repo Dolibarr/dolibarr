@@ -272,6 +272,8 @@ class AllTests
 		$suite->addTestSuite('PaymentDonationTest');
 		require_once dirname(__FILE__).'/PaymentVATTest.php';
 		$suite->addTestSuite('PaymentVATTest');
+		require_once dirname(__FILE__).'/LocaltaxTest.php';
+		$suite->addTestSuite('LocaltaxTest');
 		require_once dirname(__FILE__).'/HolidayTest.php';
 		$suite->addTestSuite('HolidayTest');
 		require_once dirname(__FILE__).'/ExpenseReportTest.php';
@@ -303,6 +305,9 @@ class AllTests
 
 		require_once dirname(__FILE__).'/KnowledgeRecordTest.php';
 		$suite->addTestSuite('KnowledgeRecordTest');
+
+		require_once dirname(__FILE__).'/MemoTest.php';
+		$suite->addTestSuite('MemoTest');
 
 		require_once dirname(__FILE__).'/AccountancySystemTest.php';
 		$suite->addTestSuite('AccountancySystemTest');

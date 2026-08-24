@@ -8043,7 +8043,12 @@ function get_localtax($vatrate, $local, $thirdparty_buyer = null, $thirdparty_se
 		$thirdparty_seller = $mysoc;
 	}
 
-	dol_syslog("get_localtax tva=" . $vatrate . " local=" . $local . " thirdparty_buyer id=" . (is_object($thirdparty_buyer) ? $thirdparty_buyer->id : '') . "/country_code=" . (is_object($thirdparty_buyer) ? $thirdparty_buyer->country_code : '') . " thirdparty_seller id=" . $thirdparty_seller->id . "/country_code=" . $thirdparty_seller->country_code . " thirdparty_seller localtax1_assuj=" . $thirdparty_seller->localtax1_assuj . "  thirdparty_seller localtax2_assuj=" . $thirdparty_seller->localtax2_assuj);
+	dol_syslog(
+		"get_localtax tva=" . $vatrate . " local=" . $local
+		." thirdparty_buyer id=" . (is_object($thirdparty_buyer) ? $thirdparty_buyer->id : '') . "/country_code=" . (is_object($thirdparty_buyer) ? $thirdparty_buyer->country_code : '')
+		." thirdparty_seller id=" . $thirdparty_seller->id . "/country_code=" . $thirdparty_seller->country_code
+		." thirdparty_seller localtax1_assuj=" . $thirdparty_seller->localtax1_assuj . "  thirdparty_seller localtax2_assuj=" . $thirdparty_seller->localtax2_assuj
+	);
 
 	$vatratecleaned = $vatrate;
 	$reg = array();
@@ -8559,7 +8564,11 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 	$buyer_country_code = $thirdparty_buyer->country_code;
 	$buyer_in_cee = isInEEC($thirdparty_buyer);
 
-	dol_syslog("get_default_tva: seller use vat=" . $seller_use_vat . ", seller country=" . $seller_country_code . ", seller in cee=" . ((string) (int) $seller_in_cee) . ", buyer vat number=" . $thirdparty_buyer->tva_intra . " buyer country=" . $buyer_country_code . ", buyer state=" . $thirdparty_buyer->state_id . " buyer in cee=" . ((string) (int) $buyer_in_cee) . ", idprod=" . $idprod . ", idprodfournprice=" . $idprodfournprice . ", SERVICE_ARE_ECOMMERCE_200238EC=" . getDolGlobalString('SERVICE_ARE_ECOMMERCE_200238EC'));
+	dol_syslog(
+		"get_default_tva: seller use vat=" . $seller_use_vat . ", seller country=" . $seller_country_code . ", seller in cee=" . ((string) (int) $seller_in_cee)
+		.", buyer vat number=" . $thirdparty_buyer->tva_intra . " buyer country=" . $buyer_country_code . ", buyer state=" . $thirdparty_buyer->state_id . " buyer in cee=" . ((string) (int) $buyer_in_cee)
+		.", idprod=" . $idprod . ", idprodfournprice=" . $idprodfournprice . ", SERVICE_ARE_ECOMMERCE_200238EC=" . getDolGlobalString('SERVICE_ARE_ECOMMERCE_200238EC')
+	);
 
 	$vatvalue = 0;
 	$vatrule = '';
@@ -11647,7 +11656,6 @@ function dol_htmloutput_errors($mesgstring = '', $mesgarray = array(), $keepembe
 	dol_htmloutput_mesg($mesgstring, $mesgarray, 'error', $keepembedded);
 }
 
-
 /**
  *  Sort an array using a user defined function. This function is a wrapper to usort without the callable parameter so we can use it into dol_eval().
  *  This function is not used in Dolibarr code.
@@ -11657,7 +11665,8 @@ function dol_htmloutput_errors($mesgstring = '', $mesgarray = array(), $keepembe
  */
 function dolSort($arraytosort)
 {
-	return usort($arraytosort);
+	sort($arraytosort);
+	return $arraytosort;
 }
 
 /**

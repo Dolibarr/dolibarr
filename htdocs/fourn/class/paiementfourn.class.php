@@ -59,7 +59,7 @@ class PaiementFourn extends Paiement
 	 * @var int	Status of payment. 0 = unvalidated; 1 = validated
 	 */
 	public $statut;
-	// fk_paiement dans llx_paiement est l'id du type de paiement (7 pour CHQ, ...)
+	// fk_paiement in llx_paiement is the id of the payment type (7 for CHQ, ...)
 	// fk_paiement dans llx_paiement_facture is rowid of payment
 
 	/**
@@ -285,7 +285,7 @@ class PaiementFourn extends Paiement
 			if ($resql) {
 				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'paiementfourn');
 
-				// Insere tableau des montants / factures
+				// Insert array of amounts / invoices
 				foreach ($this->amounts as $key => $amount) {
 					$facid = $key;
 					if (is_numeric($amount) && $amount != 0) {
@@ -549,7 +549,7 @@ class PaiementFourn extends Paiement
 			}
 
 			if (!$notrigger) {
-				// Appel des triggers
+				// Call triggers
 				$result = $this->call_trigger('PAYMENT_SUPPLIER_DELETE', $user);
 				if ($result < 0) {
 					$this->db->rollback();
@@ -719,7 +719,7 @@ class PaiementFourn extends Paiement
 		$text = $this->ref; // Sometimes ref contains label
 		$reg = array();
 		if (preg_match('/^\((.*)\)$/i', $text, $reg)) {
-			// Label generique car entre parentheses. On l'affiche en le traduisant
+			// Generic label because it is in parentheses. We display it translated.
 			if ($reg[1] == 'paiement') {
 				$reg[1] = 'Payment';
 			}
