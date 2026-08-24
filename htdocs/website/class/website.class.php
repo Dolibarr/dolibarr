@@ -1409,7 +1409,7 @@ class Website extends CommonObject
 			$this->errors[] = $this->error;
 			return -1;
 		}
-		dolSaveManifestJson($conf->website->dir_output.'/'.$object->ref.'/manifes.json.php', $manifestjsoncontent);
+		dolSaveManifestJson($conf->website->dir_output.'/'.$object->ref.'/manifest.json.php', $manifestjsoncontent);
 
 
 		// Now generate the master.inc.php page
