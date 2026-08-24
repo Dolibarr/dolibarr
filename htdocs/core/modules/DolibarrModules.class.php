@@ -2063,51 +2063,49 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 					}
 
 					if (!$rightalreadyexists) {
-						{
-							$sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def (";
-							$sql .= "id";
-							$sql .= ", entity";
-							$sql .= ", libelle";
-							$sql .= ", module";
-							$sql .= ", module_origin";
-							$sql .= ", module_position";		// Not that module_position can be fixed eynamically when accessing page user/perms.php
-							$sql .= ", family";
-							$sql .= ", family_position";
-							$sql .= ", type";	// Not used yet
-							$sql .= ", bydefault";
-							$sql .= ", perms";
-							$sql .= ", subperms";
-							$sql .= ", enabled";
-							$sql .= ") VALUES (";
-							$sql .= ((int) $r_id);
-							$sql .= ", ".((int) $entity);
-							$sql .= ", '".$this->db->escape($r_label)."'";
-							$sql .= ", '".$this->db->escape($r_module)."'";
-							$sql .= ", '".$this->db->escape($r_module_origin)."'";
-							$sql .= ", '".$this->db->escape((string) $r_module_position)."'";
-							$sql .= ", '".$this->db->escape($r_family)."'";
-							$sql .= ", '".$this->db->escape((string) $r_family_position)."'";
-							$sql .= ", '".$this->db->escape($r_type)."'";	// Not used yet
-							$sql .= ", ".((int) $r_default);
-							$sql .= ", '".$this->db->escape($r_perms)."'";
-							$sql .= ", '".$this->db->escape($r_subperms)."'";
-							$sql .= ", '".$this->db->escape($r_enabled)."'";
-							$sql .= ")";
+						$sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def (";
+						$sql .= "id";
+						$sql .= ", entity";
+						$sql .= ", libelle";
+						$sql .= ", module";
+						$sql .= ", module_origin";
+						$sql .= ", module_position";		// Not that module_position can be fixed eynamically when accessing page user/perms.php
+						$sql .= ", family";
+						$sql .= ", family_position";
+						$sql .= ", type";	// Not used yet
+						$sql .= ", bydefault";
+						$sql .= ", perms";
+						$sql .= ", subperms";
+						$sql .= ", enabled";
+						$sql .= ") VALUES (";
+						$sql .= ((int) $r_id);
+						$sql .= ", ".((int) $entity);
+						$sql .= ", '".$this->db->escape($r_label)."'";
+						$sql .= ", '".$this->db->escape($r_module)."'";
+						$sql .= ", '".$this->db->escape($r_module_origin)."'";
+						$sql .= ", '".$this->db->escape((string) $r_module_position)."'";
+						$sql .= ", '".$this->db->escape($r_family)."'";
+						$sql .= ", '".$this->db->escape((string) $r_family_position)."'";
+						$sql .= ", '".$this->db->escape($r_type)."'";	// Not used yet
+						$sql .= ", ".((int) $r_default);
+						$sql .= ", '".$this->db->escape($r_perms)."'";
+						$sql .= ", '".$this->db->escape($r_subperms)."'";
+						$sql .= ", '".$this->db->escape($r_enabled)."'";
+						$sql .= ")";
 
-							$resqlinsert = $this->db->query($sql, 1);
+						$resqlinsert = $this->db->query($sql, 1);
 
-							if (!$resqlinsert) {
-								if ($this->db->errno() != "DB_ERROR_RECORD_ALREADY_EXISTS") {
-									$this->error = $this->db->lasterror();
-									$err++;
-									break;
-								} else {
-									dol_syslog(get_class($this)."::insert_permissions record already exists", LOG_INFO);
-								}
+						if (!$resqlinsert) {
+							if ($this->db->errno() != "DB_ERROR_RECORD_ALREADY_EXISTS") {
+								$this->error = $this->db->lasterror();
+								$err++;
+								break;
+							} else {
+								dol_syslog(get_class($this)."::insert_permissions record already exists", LOG_INFO);
 							}
-
-							$this->db->free($resqlinsert);
 						}
+
+						$this->db->free($resqlinsert);
 					}
 
 					// If we want to init permissions on admin users
