@@ -97,6 +97,8 @@ UPDATE llx_const SET value = 'eratosthene' WHERE value = 'einstein' AND name ='C
 UPDATE llx_document_model SET nom = 'eratosthene' WHERE nom = 'einstein' AND type = 'order' AND NOT EXISTS (SELECT subquery.nom FROM (SELECT nom, entity FROM llx_document_model WHERE nom = 'eratosthene' AND type = 'order') as subquery WHERE subquery.entity = entity);
 DELETE FROM llx_document_model WHERE nom = 'einstein' AND type = 'order';
 
+-- Index fk_statut on llx_commande for order status filtering (llx_facture already has idx_facture_fk_statut)
+ALTER TABLE llx_commande ADD INDEX idx_commande_fk_statut (fk_statut);
 
 
 
