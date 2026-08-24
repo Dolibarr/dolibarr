@@ -2441,6 +2441,11 @@ if ($action != 'dopayment') {
 			print '<br><br><div class="amountpaymentcomplete size12x wrapimp">'.$langs->trans("OrderBilled").'</div>';
 		} elseif ($source == 'invoice' && $object->paye) {
 			print '<br><br><div class="amountpaymentcomplete size12x wrapimp">'.$langs->trans("InvoicePaid").'</div>';
+		} elseif ($source == 'invoice' && $object->status == Facture::STATUS_ABANDONED && !getDolGlobalString('ONLINE_PAYMENT_ACCEPT_ABANDONED_INVOICE')) {
+			// An abandoned invoice is closed with no payment expected, for instance when it has been replaced,
+			// so the link must not keep accepting a payment. ONLINE_PAYMENT_ACCEPT_ABANDONED_INVOICE restores
+			// the previous behaviour for setups that still collect on such invoices.
+			print '<br><br><div class="amountpaymentcomplete size12x wrapimp">'.$langs->trans("Abandoned").'</div>';
 		} elseif ($source == 'donation' && $object->paid) {
 			print '<br><br><div class="amountpaymentcomplete size12x wrapimp">'.$langs->trans("DonationPaid").'</div>';
 		} else {
