@@ -90,6 +90,7 @@ ThisIsInformationOnDocumentToSignFichinter=Acestea sunt informații despre inter
 ThisIsInformationOnDocumentToSignSociete_rib=Acestea sunt informațiile depre mandatul SEPA care trebuie semnat
 ThisIsInformationOnDocumentToSignExpedition= Acestea sunt informațiile despre expedierea/livrarea de semnat
 SignatureProposalRef=Semnarea ofertei/propunerii comerciale %s
+SignatureOrderRef=Signature of sale order %s
 SignatureContractRef=Semnarea contractului %s
 SignatureFichinterRef=Semnarea intervenției %s
 SignatureSociete_ribRef=Semnătură mandat SEPA %s

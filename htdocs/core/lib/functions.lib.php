@@ -17,7 +17,7 @@
  * Copyright (C) 2019-2023  Thibault Foucart            <support@ptibogxiv.net>
  * Copyright (C) 2020       Open-Dsi         			<support@open-dsi.fr>
  * Copyright (C) 2021       Gauthier VERDOL         	<gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2022       Anthony Berton	         	<anthony.berton@bb2a.fr>
+ * Copyright (C) 2022-2026  Anthony Berton	         	<anthony.berton@bb2a.fr>
  * Copyright (C) 2022       Ferran Marcet           	<fmarcet@2byte.es>
  * Copyright (C) 2022-2026  Charlene Benke           	<charlene@patas-monkey.com>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
@@ -187,6 +187,12 @@ function getMultidirOutput($object, $module = '', $forobject = 0, $mode = 'outpu
 			$module = 'knowledgemanagement';
 			$subdirectory = '/knowledgerecord';
 			break;
+		case 'partnership':
+			$subdirectory = '/partnership';
+			break;
+		case 'stocktransfer':
+			$subdirectory = '/stocktransfer';
+			break;
 		case 'commande_fournisseur':
 			$module = 'fournisseur';
 			$subdirectory = '/commande';
@@ -207,10 +213,20 @@ function getMultidirOutput($object, $module = '', $forobject = 0, $mode = 'outpu
 		case 'project_task':
 			$module = 'projet';
 
-			// Fetch the project to build the correct path
-			$object->fetchProject();
+			// Fetch the project to build the correct path. The signature of this function accepts an object
+			// that is not a CommonObject, and even a null when a module is given, so we must not call a method
+			// that only a CommonObject owns without testing it exists.
+			if (is_object($object) && method_exists($object, 'fetchProject')) {
+				$object->fetchProject();
+			}
 
-			$subdirectory = '/'.$object->project->ref;
+			// The ref must be sanitized with dol_sanitizeFileName() and not only with dol_sanitizePathName()
+			// done at the end of this function, because a project ref is a user input that may contain a '/',
+			// a ':' or an accented char. dol_sanitizePathName() keeps them, so we would not return the
+			// directory used by projet/tasks/document.php, that sanitizes the ref with dol_sanitizeFileName().
+			if (!empty($object->project->ref)) {
+				$subdirectory = '/'.dol_sanitizeFileName($object->project->ref);
+			}
 			break;
 		case 'action':
 		case 'actioncomm':
@@ -226,7 +242,13 @@ function getMultidirOutput($object, $module = '', $forobject = 0, $mode = 'outpu
 		if (isset($conf->$module) && property_exists($conf->$module, 'multidir_output')) {
 			$s = '';
 			if ($mode != 'outputrel') {
-				$s = $conf->$module->multidir_output[(empty($object->entity) ? $conf->entity : $object->entity)] . $subdirectory;
+				// An entity with no directory declared used to return an undefined index, so a relative path
+				// that made the caller read or write under the web root. Answer the error instead.
+				$entity = (int) (empty($object->entity) ? $conf->entity : $object->entity);
+				if (!isset($conf->$module->multidir_output[$entity])) {
+					return 'error-diroutput-not-defined-for-this-object='.$module;
+				}
+				$s = $conf->$module->multidir_output[$entity].$subdirectory;
 			}
 			if ($forobject && $object->id > 0) {
 				$s .= ($mode != 'outputrel' ? '/' : '') . get_exdir(0, 0, 0, 0, $object);
@@ -246,7 +268,12 @@ function getMultidirOutput($object, $module = '', $forobject = 0, $mode = 'outpu
 		}
 	} elseif ($mode == 'temp') {
 		if (isset($conf->$module) && property_exists($conf->$module, 'multidir_temp')) {
-			return dol_sanitizePathName($conf->$module->multidir_temp[(empty($object->entity) ? $conf->entity : $object->entity)]);
+			// Same guard as the 'output' mode above, see the comment there
+			$entity = (int) (empty($object->entity) ? $conf->entity : $object->entity);
+			if (!isset($conf->$module->multidir_temp[$entity])) {
+				return 'error-dirtemp-not-defined-for-this-object='.$module;
+			}
+			return dol_sanitizePathName($conf->$module->multidir_temp[$entity]);
 		} elseif (isset($conf->$module) && property_exists($conf->$module, 'dir_temp')) {
 			return dol_sanitizePathName($conf->$module->dir_temp);
 		} else {
@@ -2092,62 +2119,24 @@ function dol_string_unaccent($str)
 		// See http://www.utf8-chartable.de/
 		$string = rawurlencode($str);
 		$replacements = array(
-			'%C3%80' => 'A',
-			'%C3%81' => 'A',
-			'%C3%82' => 'A',
-			'%C3%83' => 'A',
-			'%C3%84' => 'A',
-			'%C3%85' => 'A',
+			'%C3%80' => 'A', '%C3%81' => 'A', '%C3%82' => 'A', '%C3%83' => 'A', '%C3%84' => 'A', '%C3%85' => 'A',
 			'%C3%87' => 'C',
-			'%C3%88' => 'E',
-			'%C3%89' => 'E',
-			'%C3%8A' => 'E',
-			'%C3%8B' => 'E',
-			'%C3%8C' => 'I',
-			'%C3%8D' => 'I',
-			'%C3%8E' => 'I',
-			'%C3%8F' => 'I',
+			'%C3%88' => 'E', '%C3%89' => 'E', '%C3%8A' => 'E', '%C3%8B' => 'E',
+			'%C3%8C' => 'I', '%C3%8D' => 'I', '%C3%8E' => 'I', '%C3%8F' => 'I',
 			'%C3%91' => 'N',
-			'%C3%92' => 'O',
-			'%C3%93' => 'O',
-			'%C3%94' => 'O',
-			'%C3%95' => 'O',
-			'%C3%96' => 'O',
+			'%C3%92' => 'O', '%C3%93' => 'O', '%C3%94' => 'O', '%C3%95' => 'O', '%C3%96' => 'O', '%C5%90' => 'O',
 			'%C5%A0' => 'S',
-			'%C3%99' => 'U',
-			'%C3%9A' => 'U',
-			'%C3%9B' => 'U',
-			'%C3%9C' => 'U',
-			'%C3%9D' => 'Y',
-			'%C5%B8' => 'y',
-			'%C3%A0' => 'a',
-			'%C3%A1' => 'a',
-			'%C3%A2' => 'a',
-			'%C3%A3' => 'a',
-			'%C3%A4' => 'a',
-			'%C3%A5' => 'a',
+			'%C3%99' => 'U', '%C3%9A' => 'U', '%C3%9B' => 'U', '%C3%9C' => 'U', '%C5%B0' => 'U',
+			'%C3%9D' => 'Y', '%C5%B8' => 'y',
+			'%C3%A0' => 'a', '%C3%A1' => 'a', '%C3%A2' => 'a', '%C3%A3' => 'a', '%C3%A4' => 'a', '%C3%A5' => 'a',
 			'%C3%A7' => 'c',
-			'%C3%A8' => 'e',
-			'%C3%A9' => 'e',
-			'%C3%AA' => 'e',
-			'%C3%AB' => 'e',
-			'%C3%AC' => 'i',
-			'%C3%AD' => 'i',
-			'%C3%AE' => 'i',
-			'%C3%AF' => 'i',
+			'%C3%A8' => 'e', '%C3%A9' => 'e', '%C3%AA' => 'e', '%C3%AB' => 'e',
+			'%C3%AC' => 'i', '%C3%AD' => 'i', '%C3%AE' => 'i', '%C3%AF' => 'i',
 			'%C3%B1' => 'n',
-			'%C3%B2' => 'o',
-			'%C3%B3' => 'o',
-			'%C3%B4' => 'o',
-			'%C3%B5' => 'o',
-			'%C3%B6' => 'o',
+			'%C3%B2' => 'o', '%C3%B3' => 'o', '%C3%B4' => 'o', '%C3%B5' => 'o', '%C3%B6' => 'o', '%C5%91' => 'o',
 			'%C5%A1' => 's',
-			'%C3%B9' => 'u',
-			'%C3%BA' => 'u',
-			'%C3%BB' => 'u',
-			'%C3%BC' => 'u',
-			'%C3%BD' => 'y',
-			'%C3%BF' => 'y',
+			'%C3%B9' => 'u', '%C3%BA' => 'u', '%C3%BB' => 'u', '%C3%BC' => 'u', '%C5%B1' => 'u',
+			'%C3%BD' => 'y', '%C3%BF' => 'y',
 			'%CC%80' => '',
 			'%CC%81' => '',
 			'%CC%82' => '',
@@ -2166,7 +2155,7 @@ function dol_string_unaccent($str)
 			'%CC%8F' => '',
 			'%CC%90' => '',
 			'%CC%91' => '',
-			'%CC%A7' => '',
+			'%CC%A7' => ''
 		);
 		$string = strtr($string, $replacements);
 		return rawurldecode($string);
@@ -4967,7 +4956,7 @@ function dol_print_phone($phone, $countrycode = '', $contactid = 0, $socid = 0, 
 		}
 	} elseif (strtoupper($countrycode) == "JO") { //Jordanie
 		if (dol_strlen($phone) == 12) { //ex: +962_A_BCD_EF_GH
-			$newphone = substr($newphone, 0, 4) . $separ . substr($newphone, 4, 1) . $separ . substr($newphone, 5, 3) . $separ . substr($newphone, 7, 2) . $separ . substr($newphone, 9, 2);
+			$newphone = substr($newphone, 0, 4) . $separ . substr($newphone, 4, 1) . $separ . substr($newphone, 5, 3) . $separ . substr($newphone, 8, 2) . $separ . substr($newphone, 10, 2);
 		}
 	} elseif (strtoupper($countrycode) == "JM") { //Jamaica
 		if (dol_strlen($newphone) == 12) { //ex: +1867_ABC_DEFG
@@ -5032,12 +5021,12 @@ function dol_print_phone($phone, $countrycode = '', $contactid = 0, $socid = 0, 
 			$newphone = substr($newphone, 0, 3) . $separ . substr($newphone, 3, 4);
 		} elseif (dol_strlen($phone) == 9) { // mobile add code and fix 9 numbers +51_AAA_BBB_CCC
 			$newphonewa = '+51' . $newphone;
-			$newphone = substr($newphone, 0, 3) . $separ . substr($newphone, 3, 3) . $separ . substr($newphone, 6, 3) . $separ . substr($newphone, 10, 3);
+			$newphone = substr($newphone, 0, 3) . $separ . substr($newphone, 3, 3) . $separ . substr($newphone, 6, 3);
 		} elseif (dol_strlen($phone) == 11) { // fix 11 numbers +511_AAA_BBBB
-			$newphone = substr($newphone, 0, 4) . $separ . substr($newphone, 4, 3) . $separ . substr($newphone, 8, 4);
+			$newphone = substr($newphone, 0, 4) . $separ . substr($newphone, 4, 3) . $separ . substr($newphone, 7, 4);
 		} elseif (dol_strlen($phone) == 12) { // mobile +51_AAA_BBB_CCC
 			$newphonewa = $newphone;
-			$newphone = substr($newphone, 0, 3) . $separ . substr($newphone, 3, 3) . $separ . substr($newphone, 6, 3) . $separ . substr($newphone, 10, 3) . $separ . substr($newphone, 14, 3);
+			$newphone = substr($newphone, 0, 3) . $separ . substr($newphone, 3, 3) . $separ . substr($newphone, 6, 3) . $separ . substr($newphone, 9, 3);
 		}
 	} elseif (strtoupper($countrycode) == "IN") { //India
 		if (dol_strlen($phone) == 13) {
@@ -5092,7 +5081,6 @@ function dol_print_phone($phone, $countrycode = '', $contactid = 0, $socid = 0, 
 				$newphoneaend .= '</a>';
 			}
 		}
-
 		//if (($contactid || $socid) && isModEnabled('agenda') && $user->hasRight('agenda', 'myactions', 'create'))
 		if (isModEnabled('agenda') && $user->hasRight("agenda", "myactions", "create")) {
 			$type = 'AC_TEL';
@@ -8055,7 +8043,12 @@ function get_localtax($vatrate, $local, $thirdparty_buyer = null, $thirdparty_se
 		$thirdparty_seller = $mysoc;
 	}
 
-	dol_syslog("get_localtax tva=" . $vatrate . " local=" . $local . " thirdparty_buyer id=" . (is_object($thirdparty_buyer) ? $thirdparty_buyer->id : '') . "/country_code=" . (is_object($thirdparty_buyer) ? $thirdparty_buyer->country_code : '') . " thirdparty_seller id=" . $thirdparty_seller->id . "/country_code=" . $thirdparty_seller->country_code . " thirdparty_seller localtax1_assuj=" . $thirdparty_seller->localtax1_assuj . "  thirdparty_seller localtax2_assuj=" . $thirdparty_seller->localtax2_assuj);
+	dol_syslog(
+		"get_localtax tva=" . $vatrate . " local=" . $local
+		." thirdparty_buyer id=" . (is_object($thirdparty_buyer) ? $thirdparty_buyer->id : '') . "/country_code=" . (is_object($thirdparty_buyer) ? $thirdparty_buyer->country_code : '')
+		." thirdparty_seller id=" . $thirdparty_seller->id . "/country_code=" . $thirdparty_seller->country_code
+		." thirdparty_seller localtax1_assuj=" . $thirdparty_seller->localtax1_assuj . "  thirdparty_seller localtax2_assuj=" . $thirdparty_seller->localtax2_assuj
+	);
 
 	$vatratecleaned = $vatrate;
 	$reg = array();
@@ -8571,7 +8564,11 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 	$buyer_country_code = $thirdparty_buyer->country_code;
 	$buyer_in_cee = isInEEC($thirdparty_buyer);
 
-	dol_syslog("get_default_tva: seller use vat=" . $seller_use_vat . ", seller country=" . $seller_country_code . ", seller in cee=" . ((string) (int) $seller_in_cee) . ", buyer vat number=" . $thirdparty_buyer->tva_intra . " buyer country=" . $buyer_country_code . ", buyer state=" . $thirdparty_buyer->state_id . " buyer in cee=" . ((string) (int) $buyer_in_cee) . ", idprod=" . $idprod . ", idprodfournprice=" . $idprodfournprice . ", SERVICE_ARE_ECOMMERCE_200238EC=" . getDolGlobalString('SERVICE_ARE_ECOMMERCE_200238EC'));
+	dol_syslog(
+		"get_default_tva: seller use vat=" . $seller_use_vat . ", seller country=" . $seller_country_code . ", seller in cee=" . ((string) (int) $seller_in_cee)
+		.", buyer vat number=" . $thirdparty_buyer->tva_intra . " buyer country=" . $buyer_country_code . ", buyer state=" . $thirdparty_buyer->state_id . " buyer in cee=" . ((string) (int) $buyer_in_cee)
+		.", idprod=" . $idprod . ", idprodfournprice=" . $idprodfournprice . ", SERVICE_ARE_ECOMMERCE_200238EC=" . getDolGlobalString('SERVICE_ARE_ECOMMERCE_200238EC')
+	);
 
 	$vatvalue = 0;
 	$vatrule = '';
@@ -8880,7 +8877,7 @@ function yn($yesno, $format = 1, $color = 0)
  *         or:  $conf->module->dir_output.'/'.get_exdir(0, 0, 0, 0, $object, '')
  *
  *  Example of output with new usage:       $object is invoice -> 'INYYMM-ABCD'
- *  Example of output with old usage:       '015' with level 3->"0/1/5/", '015' with level 1->"5/", 'ABC-1' with level 3 ->"0/0/1/"
+ *  Example of output with old usage:       '015' with level 3->"5/1/0/", '015' with level 1->"5/", 'ABC-1' with level 3 ->"1/0/0/"
  *
  *	@param	string|int		$num            Id of object (deprecated, $object->id will be used in future)
  *	@param  int				$level		    Level of subdirs to return (1, 2 or 3 levels). (deprecated, global setup will be used in future)
@@ -10228,6 +10225,10 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		//var_dump($onlykey);
 		$emailsendersignature = $user->signature; //  By default, we use the signature of current user. We must complete substitution with signature in c_email_senderprofile of array after calling getCommonSubstitutionArray()
 		$usersignature = $user->signature;
+		if (getDolGlobalString('MAIN_MAIL_DEFAULT_SIGNATURE_FOR_ALL_USERS') && !empty($user->employee)) {
+			$emailsendersignature = getDolGlobalString('MAIN_MAIL_DEFAULT_SIGNATURE_FOR_ALL_USERS');
+			$usersignature = getDolGlobalString('MAIN_MAIL_DEFAULT_SIGNATURE_FOR_ALL_USERS');
+		}
 		$substitutionarray = array_merge($substitutionarray, array(
 			'__SENDEREMAIL_SIGNATURE__' => (string) ((!getDolGlobalString('MAIN_MAIL_DO_NOT_USE_SIGN')) ? ($onlykey == 2 ? dol_trunc('SignatureFromTheSelectedSenderProfile', 30) : $emailsendersignature) : ''),
 			'__USER_SIGNATURE__' => (string) (($usersignature && !getDolGlobalString('MAIN_MAIL_DO_NOT_USE_SIGN')) ? ($onlykey == 2 ? dol_trunc(dol_string_nohtmltag($usersignature), 30) : $usersignature) : '')
@@ -10250,6 +10251,18 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				'__USER_REMOTE_IP__' => (string) getUserRemoteIP(),
 				'__USER_VCARD_URL__' => (string) $user->getOnlineVirtualCardUrl('', 'external')
 			));
+			if (isModEnabled('stock') && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE_USER') && is_object($user->warehouse)) {
+				$substitutionarray = array_merge($substitutionarray, array(
+					'__USER_WAREHOUSE_ID__' => isset($user->warehouse->id) ? $user->warehouse->id : '',
+					'__USER_WAREHOUSE_REF__' => isset($user->warehouse->ref) ? $user->warehouse->ref : '',
+					'__USER_WAREHOUSE_DESCRIPTION__' => isset($user->warehouse->description) ? $user->warehouse->description : '',
+					'__USER_WAREHOUSE_ADDRESS__' => isset($user->warehouse->address) ? $user->warehouse->address : '',
+					'__USER_WAREHOUSE_ZIP__' => isset($user->warehouse->zip) ? $user->warehouse->zip : '',
+					'__USER_WAREHOUSE_TOWN__' => isset($user->warehouse->town) ? $user->warehouse->town : '',
+					'__USER_WAREHOUSE_PHONE__' => isset($user->warehouse->phone) ? (string) dol_print_phone($user->warehouse->phone, '', 0, 0, '', " ", '', '', -1) : '',
+					'__USER_WAREHOUSE_FAX__' => isset($user->warehouse->fax) ? (string) dol_print_phone($user->warehouse->fax, '', 0, 0, '', " ", '', '', -1) : ''
+				));
+			}
 		}
 	}
 	if ((empty($exclude) || !in_array('mycompany', $exclude)) && is_object($mysoc) && (empty($include) || in_array('mycompany', $include))) {
@@ -10952,7 +10965,6 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		}
 	}
 
-
 	if ((empty($exclude) || !in_array('date', $exclude)) && (empty($include) || in_array('date', $include))) {
 		include_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 
@@ -11363,8 +11375,8 @@ function dolGetFirstLastname($firstname, $lastname, $nameorder = -1)
  *  Note: Calling dol_htmloutput_events is done into pages by standard llxFooter() function.
  *  Note: Prefer to use setEventMessages instead.
  *
- *	@param	string|string[] $mesgs			Message string or array
- *  @param  string          $style      	Which style to use ('mesgs' by default, 'warnings', 'errors')
+ *	@param	string|string[]	$mesgs			Message string or array
+ *  @param  ''|'mesgs'|'warnings'|'errors'   $style		Which style to use ('mesgs' by default, 'warnings', 'errors')
  *  @param	int				$noduplicate	1 means we do not add the message if already present in session stack
  *  @param	int				$attop			Add the message in the top of the stack (at bottom by default)
  *  @return	void
@@ -11410,7 +11422,7 @@ function setEventMessage($mesgs, $style = 'mesgs', $noduplicate = 0, $attop = 0)
  *
  *	@param	string|null		$mesg			Message string
  *	@param	string[]|null	$mesgs			Message array
- *  @param  string			$style     		Which style to use ('mesgs' by default, 'warnings', 'errors')
+ *  @param  ''|'mesgs'|'warnings'|'errors'   $style		Which style to use ('mesgs' by default, 'warnings', 'errors')',
  *  @param	string			$messagekey		A key to be used to allow the feature "Never show this message during this session again"
  *  @param	int				$noduplicate	1 means we do not add the message if already present in session stack
  *  @param	int				$attop			Add the message in the top of the stack (at bottom by default)
@@ -11642,6 +11654,19 @@ function dol_htmloutput_mesg($mesgstring = '', $mesgarray = array(), $style = 'o
 function dol_htmloutput_errors($mesgstring = '', $mesgarray = array(), $keepembedded = 0)
 {
 	dol_htmloutput_mesg($mesgstring, $mesgarray, 'error', $keepembedded);
+}
+
+/**
+ *  Sort an array using a user defined function. This function is a wrapper to usort without the callable parameter so we can use it into dol_eval().
+ *  This function is not used in Dolibarr code.
+ *
+ *  @param	array<string|int,mixed>	$arraytosort	Array to sort
+ *  @return	array<string|int,mixed>					Return the sorted array (the source array is not modified)
+ */
+function dolSort($arraytosort)
+{
+	sort($arraytosort);
+	return $arraytosort;
 }
 
 /**
@@ -11959,6 +11984,7 @@ function verifCond($strToEvaluate, $onlysimplestring = '1')
 /**
  * Replace eval function to add more security.
  * This function is called by verifCond() for example.
+ * To test non-regression on this, run "phpunit test/phpunit/SecurityTest.php"
  *
  * @param 	string		$s					String to evaluate
  * @param	int<0,1>	$returnvalue		0=No return (deprecated, used to execute eval($a=something)). 1=Value of eval is returned (used to eval($something)).
@@ -11976,7 +12002,8 @@ function dol_eval($s, $returnvalue = 1, $hideerrors = 1, $onlysimplestring = '1'
 		dol_syslog("Use of dol_eval with parameter returnvalue = 0 is now forbidden. Please fix this", LOG_ERR);
 	}
 
-	if (getDolGlobalString("MAIN_USE_DOL_EVAL_NEW")) {
+	global $dolibarr_main_use_dol_eval_new;			// experimental option, not yet ready
+	if (!empty($dolibarr_main_use_dol_eval_new)) {
 		return dol_eval_new($s);
 	} else {
 		return dol_eval_standard($s, $hideerrors, $onlysimplestring);
@@ -12135,57 +12162,51 @@ function dol_eval_new($s)
 		'$_SESSION',
 	];
 
-	$prohibited_functions = [
-		// 'base64_decode', 'rawurldecode', 'urldecode', 'str_rot13', 'hex2bin', // I haven't managed to inject anything with these functions yet, can someone confirm?
-		// 'get_defined_functions', 'get_defined_vars', 'get_defined_constants', 'get_declared_classes', // Should we really block the admin from viewing these lists?
-		'override_function',
-		'session_id',
-		'session_create_id',
-		'session_regenerate_id',
-		'call_user_func',
-		'call_user_func_array',  // PREVENT calling forbidden functions
-		'exec',
-		'passthru',
-		'shell_exec',
-		'system',
-		'proc_open',
-		'popen',
-		'dol_eval',
-		'dol_eval_new',
-		'dol_eval_standard',
-		'dol_contctdesc',
-		'executeCLI',
-		'verifCond',
-		'GETPOST', // Native Dolibarr functions
-		'create_function',
-		'assert',
-		'mb_ereg_replace',
-		'mb_eregi_replace', // function with eval capabilities
-		'dol_compress_dir',
-		'dol_decode',
-		'dol_delete_file',
-		'dol_delete_dir',
-		'dol_delete_dir_recursive',
-		'dol_copy',
-		'archiveOrBackupFile', // more dolibarr functions
-		'fopen',
-		'file_put_contents',
-		'fputs',
-		'fputscsv',
-		'fwrite',
-		'fpassthru',
-		'mkdir',
-		'rmdir',
-		'symlink',
-		'touch',
-		'unlink',
-		'umask', // PHP functions related to file operations
-		'invoke',
-		'invokeArgs', // Method of ReflectionFunction to execute a function
-		'filter_input',
-		'filter_input_array',
-		'GETPOST', // PREVENT CODE INJECTION
-	];
+	$forbiddenphpfunctions = array();
+	$forbiddenphpmethods = array();
+
+	// Same list than in dol_eval
+	$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("override_function", "session_id", "session_create_id", "session_regenerate_id"));
+	$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("get_defined_functions", "get_defined_vars", "get_defined_constants", "get_declared_classes"));
+	$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("function"));
+
+	$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("GETPOST"));	// native dolibarr functions
+
+	$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("ob_start"));
+
+	// Functions with callable parameters
+	$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("call_user_func", "call_user_func_array"));
+	$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("array_all", "array_any", "array_diff_ukey", "array_filter", "array_find", "array_find_key", "array_map", "array_reduce", "array_intersect_uassoc", "array_intersect_ukey", "array_walk", "array_walk_recursive"));
+	$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("usort", "uasort", "uksort"));
+	$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("preg_replace_callback", "preg_replace_callback_array", "header_register_callback"));
+	$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("error_log", "set_error_handler", "set_exception_handler", "libxml_set_external_entity_loader", "register_shutdown_function", "register_tick_function", "unregister_tick_function"));
+	$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("spl_autoload_register", "spl_autoload_unregister", "iterator_apply", "session_set_save_handler"));
+	$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("forward_static_call", "forward_static_call_array", "register_postsend_function"));
+	$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("readline_completion_function", "readline_callback_handler_install"));
+
+	// Exec functions
+	$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("exec", "passthru", "shell_exec", "system", "proc_open", "popen"));
+	$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("pcntl_alarm", "pcntl_exec", "pcntl_fork", "pcntl_waitpid", "pcntl_wait", "pcntl_wifexited", "pcntl_wifstopped", "pcntl_wifsignaled", "pcntl_wifcontinued", "pcntl_wexitstatus", "pcntl_wtermsig", "pcntl_wstopsig", "pcntl_signal"));
+	$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("pcntl_signal_get_handler", "pcntl_signal_dispatch", "pcntl_get_last_error", "pcntl_strerror", "pcntl_sigprocmask", "pcntl_sigwaitinfo", "pcntl_sigtimedwait", "pcntl_getpriority", "pcntl_async_signals", "pcntl_unshare", ));
+	$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("putenv", "dl", "apache_child_terminate", "apache_setenv"));
+	$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("dol_eval", "dol_eval_new", "dol_eval_standard", "executeCLI", "verifCond", "dolEncrypt", "dolDecrypt"));	// native dolibarr functions
+	$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("eval", "create_function", "assert", "mb_ereg_replace")); // function with eval capabilities
+
+	// Include functions
+	$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("require", "include", "require_once", "include_once"));
+
+	$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("dol_compress_dir", "dol_decode", "dol_dir_list", "dol_dir_list_in_database", "dol_delete_file", "dol_delete_dir", "dol_delete_dir_recursive", "dol_copy", "archiveOrBackupFile")); // more dolibarr functions
+	$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("chdir", "dir", "fopen", "file", "file_exists", "file_get_contents", "file_put_contents", "fget", "fgetc", "fgetcsv", "flock", "fputs", "fputscsv", "fpassthru", "fscanf", "fseek", "fwrite", "is_file", "is_dir", "is_link", "mkdir", "opendir", "rmdir", "scandir", "symlink", "touch", "unlink", "umask"));
+
+	if (!getDolGlobalString('MAIN_ALLOW_OBFUSCATION_METHODS_IN_DOL_EVAL')) {	// We disallow all function that allow to obfuscate the real name of a function
+		// @phpcs:ignore
+		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("base64" . "_" . "decode", "rawurl" . "decode", "url" . "decode", "str" . "_rot13", "hex" . "2bin", "printf", "sprintf")); // name of forbidden functions are split to avoid false positive
+		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("dol_concat", "dol_concatdesc"));		// native dolibarr functions
+	}
+
+	$forbiddenphpmethods = array_merge($forbiddenphpmethods, array('invoke', 'invokeArgs'));	// Methods of ReflectionFunction to execute a function
+
+	$prohibited_functions = array_merge($forbiddenphpfunctions, $forbiddenphpmethods);
 
 	$prohibited_token_arrangements = [
 		// Variable functions "$a(", '"$a"(', "'FN_NAME'(", ('FN_NAME')()
@@ -12224,7 +12245,7 @@ function dol_eval_new($s)
 			T_VARIABLE === $token_id
 			&& in_array($token_value, $prohibited_variables, true)
 		) {
-			return "« {$token_value} » is prohibited in « {$s} »";
+			return "Bad string syntax to evaluate. « {$token_value} » is prohibited in « {$s} »";
 		}
 
 		// Prohibited Functions
@@ -12232,7 +12253,7 @@ function dol_eval_new($s)
 			T_STRING === $token_id
 			&& in_array($token_value, $prohibited_functions, true)
 		) {
-			return "« {$token_value} » is prohibited in « {$s} »";
+			return "Bad string syntax to evaluate. « {$token_value} » is prohibited in « {$s} »";
 		}
 	}
 
@@ -12240,7 +12261,7 @@ function dol_eval_new($s)
 	$maxi = count($prohibited_token_ids);
 	for ($i = 0; $i < $maxi; ++$i) {
 		if (false !== strpos($tokens_arrangement, " {$prohibited_token_ids[$i]} ")) {
-			return "« {$prohibited_token_ids[$i]} » is prohibited in « {$s} »";
+			return "Bad string syntax to evaluate. « {$prohibited_token_ids[$i]} » is prohibited in « {$s} »";
 		}
 	}
 
@@ -12248,7 +12269,7 @@ function dol_eval_new($s)
 	$maxi = count($prohibited_token_arrangements);
 	for ($i = 0; $i < $maxi; ++$i) {
 		if (false !== strpos($tokens_arrangement, $prohibited_token_arrangements[$i])) {
-			return "« {$prohibited_token_arrangements[$i]} » is prohibited in « {$s} »";
+			return "Bad string syntax to evaluate. « {$prohibited_token_arrangements[$i]} » is prohibited in « {$s} »";
 		}
 	}
 
@@ -12256,7 +12277,7 @@ function dol_eval_new($s)
 	try {
 		return @eval("return {$s};") ?? '';
 	} catch (Throwable $ex) {
-		return "Exception during evaluation: " . $s . " - " . $ex->getMessage();
+		return "Bad string syntax to evaluate. Exception during evaluation: " . $s . " - " . $ex->getMessage();
 	}
 }
 
@@ -12451,28 +12472,36 @@ function dol_eval_standard($s, $hideerrors = 1, $onlysimplestring = '1')
 
 			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("override_function", "session_id", "session_create_id", "session_regenerate_id"));
 			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("get_defined_functions", "get_defined_vars", "get_defined_constants", "get_declared_classes"));
-			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("function", "call_user_func", "call_user_func_array"));
+			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("function"));
 
-			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("array_all", "array_any", "array_diff_ukey", "array_filter", "array_find", "array_find_key", "array_map", "array_reduce", "array_intersect_uassoc", "array_intersect_ukey", "array_walk", "array_walk_recursive"));
-			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("usort", "uasort", "uksort", "preg_replace_callback", "preg_replace_callback_array", "header_register_callback"));
-			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("error_log", "set_error_handler", "set_exception_handler", "libxml_set_external_entity_loader", "register_shutdown_function", "register_tick_function", "unregister_tick_function"));
-			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("spl_autoload_register", "spl_autoload_unregister", "iterator_apply", "session_set_save_handler"));
-			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("forward_static_call", "forward_static_call_array", "register_postsend_function"));
+			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("GETPOST"));	// native dolibarr functions
 
 			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("ob_start"));
 
-			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("require", "include", "require_once", "include_once"));
+			// Functions with callable parameters
+			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("call_user_func", "call_user_func_array"));
+			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("array_all", "array_any", "array_diff_ukey", "array_filter", "array_find", "array_find_key", "array_map", "array_reduce", "array_intersect_uassoc", "array_intersect_ukey", "array_walk", "array_walk_recursive"));
+			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("usort", "uasort", "uksort"));
+			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("preg_replace_callback", "preg_replace_callback_array", "header_register_callback"));
+			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("error_log", "set_error_handler", "set_exception_handler", "libxml_set_external_entity_loader", "register_shutdown_function", "register_tick_function", "unregister_tick_function"));
+			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("spl_autoload_register", "spl_autoload_unregister", "iterator_apply", "session_set_save_handler"));
+			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("forward_static_call", "forward_static_call_array", "register_postsend_function"));
+			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("readline_completion_function", "readline_callback_handler_install"));
+
+			// Exec functions
 			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("exec", "passthru", "shell_exec", "system", "proc_open", "popen"));
 			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("pcntl_alarm", "pcntl_exec", "pcntl_fork", "pcntl_waitpid", "pcntl_wait", "pcntl_wifexited", "pcntl_wifstopped", "pcntl_wifsignaled", "pcntl_wifcontinued", "pcntl_wexitstatus", "pcntl_wtermsig", "pcntl_wstopsig", "pcntl_signal"));
 			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("pcntl_signal_get_handler", "pcntl_signal_dispatch", "pcntl_get_last_error", "pcntl_strerror", "pcntl_sigprocmask", "pcntl_sigwaitinfo", "pcntl_sigtimedwait", "pcntl_getpriority", "pcntl_async_signals", "pcntl_unshare", ));
 			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("putenv", "dl", "apache_child_terminate", "apache_setenv"));
-			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("posix_kill", "posix_setuid", "posix_setgid"));
-			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("dol_eval", "dol_eval_new", "dol_eval_standard", "executeCLI", "verifCond", "GETPOST", "dolEncrypt", "dolDecrypt"));	// native dolibarr functions
+			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("dol_eval", "dol_eval_new", "dol_eval_standard", "executeCLI", "verifCond", "dolEncrypt", "dolDecrypt"));	// native dolibarr functions
 			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("eval", "create_function", "assert", "mb_ereg_replace")); // function with eval capabilities
-			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("readline_completion_function", "readline_callback_handler_install"));
+
+			// Include functions
+			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("require", "include", "require_once", "include_once"));
+
 			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("dol_compress_dir", "dol_decode", "dol_dir_list", "dol_dir_list_in_database", "dol_delete_file", "dol_delete_dir", "dol_delete_dir_recursive", "dol_copy", "archiveOrBackupFile")); // more dolibarr functions
-			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("chdir", "dir", "fopen", "file", "file_exists", "file_get_contents", "file_put_contents", "fget", "fgetc", "fgetcsv", "fputs", "fputscsv", "fpassthru", "fscanf", "fseek", "fwrite", "is_file", "is_dir", "is_link", "mkdir", "opendir", "rmdir", "scandir", "symlink", "touch", "unlink", "umask"));
-			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("require", "include"));
+			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("chdir", "dir", "fopen", "file", "file_exists", "file_get_contents", "file_put_contents", "fget", "fgetc", "fgetcsv", "flock", "fputs", "fputscsv", "fpassthru", "fscanf", "fseek", "fwrite", "is_file", "is_dir", "is_link", "mkdir", "opendir", "rmdir", "scandir", "symlink", "touch", "unlink", "umask"));
+
 			if (!getDolGlobalString('MAIN_ALLOW_OBFUSCATION_METHODS_IN_DOL_EVAL')) {	// We disallow all function that allow to obfuscate the real name of a function
 				// @phpcs:ignore
 				$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("base64" . "_" . "decode", "rawurl" . "decode", "url" . "decode", "str" . "_rot13", "hex" . "2bin", "printf", "sprintf")); // name of forbidden functions are split to avoid false positive
@@ -12494,7 +12523,7 @@ function dol_eval_standard($s, $hideerrors = 1, $onlysimplestring = '1')
 			}*/
 
 			$forbiddenphpregex = 'global\s*\$';
-			$forbiddenphpregex .= '|';
+			$forbiddenphpregex .= '|posix_[a-zA-Z0-9_]*|';		// All posix functions
 			$forbiddenphpregex .= '\b(' . implode('|', $forbiddenphpfunctions) . ')\b';
 
 			$forbiddenphpmethodsregex = '->(' . implode('|', $forbiddenphpmethods) . ')';
@@ -12516,7 +12545,7 @@ function dol_eval_standard($s, $hideerrors = 1, $onlysimplestring = '1')
 
 		if (!empty($dolibarr_main_restrict_eval_methods)) {
 			// Accept only white-listed allowed function and classes
-			// TODO Get all pattern '/([\s\w]+)\(/', then check that $reg[1] is a defined class or a function into a given list
+			// TODO Get all pattern '/([\s\w]+)\(/', then check that $matches[1] is a defined class or a function into a given list
 			$pattern = '/([\s\w\'\]\"]+)\(/';
 
 			$matches = array();
@@ -13198,7 +13227,7 @@ function printCommonFooter($zone = 'private')
 
 										if (tmptypefield == 'textarea') {
 											// We must instead check the content of ckeditor
-											var tmpeditor = CKEDITOR.instances['" . dol_escape_js($paramkey) . "'];
+											var tmpeditor = (typeof CKEDITOR !== 'undefined') ? CKEDITOR.instances['".dol_escape_js($paramkey)."'] : null;
 											if (tmpeditor) {
 												tmpvalue = tmpeditor.getData();
 												console.log('For textarea tmpvalue is '+tmpvalue);
@@ -13206,7 +13235,7 @@ function printCommonFooter($zone = 'private')
 										}
 
 										let tmpvalueisempty = false;
-										if (tmpvalue === null || tmpvalue === undefined || tmpvalue === '' || tmpvalue === -1) {
+										if (tmpvalue === null || tmpvalue === undefined || tmpvalue === '' || tmpvalue === -1 || tmpvalue === '-1') {
 											tmpvalueisempty = true;
 										}
 										if (tmpvalue === '0' && (tmptypefield == 'select' || tmptypefield == 'input')) {
@@ -15250,6 +15279,7 @@ function getElementProperties($elementType)
 		$module = 'societe';
 		$subelement = 'contact';
 		$table_element = 'socpeople';
+		$subdir = '/contact';
 	} elseif ($elementType == 'inventory') {
 		$module = 'product';
 		$classpath = 'product/inventory/class';
@@ -15465,6 +15495,45 @@ function getElementProperties($elementType)
 		$classfile = 'paymentsalary';
 		$classname = 'PaymentSalary';
 		$module = 'salaries';
+	} elseif ($elementType == 'payment') {
+		$classpath = 'compta/paiement/class';
+		$classfile = 'paiement';
+		$classname = 'Paiement';
+		$module = 'facture';	// A customer payment belongs to the invoice module, there is no 'compta' module
+		$element = 'payment';
+		$subelement = 'payment';
+		$table_element = 'paiement';
+	} elseif ($elementType == 'payment_supplier') {
+		$classpath = 'fourn/class';
+		$classfile = 'paiementfourn';
+		$classname = 'PaiementFourn';
+		$module = 'fournisseur';
+		$element = 'payment_supplier';
+		$subelement = 'payment_supplier';
+		$table_element = 'paiementfourn';
+	} elseif ($elementType == 'payment_various') {
+		$classpath = 'compta/bank/class';
+		$classfile = 'paymentvarious';
+		$classname = 'PaymentVarious';
+		$module = 'bank';	// We need $conf->bank->dir_output and not $conf->banque->dir_output
+		$element = 'payment_various';
+		$subelement = 'payment_various';
+		$table_element = 'payment_various';
+	} elseif ($elementType == 'stocktransfer') {
+		$classpath = 'product/stock/stocktransfer/class';
+		$classfile = 'stocktransfer';
+		$classname = 'StockTransfer';	// Not the ucfirst() of the element, so it must be set explicitly
+		$module = 'stocktransfer';
+		$subelement = 'stocktransfer';
+		$table_element = 'stocktransfer_stocktransfer';
+	} elseif ($elementType == 'job' || $elementType == 'position' || $elementType == 'skill' || $elementType == 'evaluation') {
+		$classpath = 'hrm/class';
+		$classfile = $elementType;
+		$classname = ucfirst($elementType);
+		$module = 'hrm';
+		$subelement = $elementType;
+		$table_element = ($elementType == 'position' ? 'hrm_job_user' : 'hrm_'.$elementType);
+		$subdir = '/'.$elementType;
 	} elseif ($elementType == 'productlot') {
 		$module = 'productbatch';
 		$classpath = 'product/stock/class';
@@ -15515,6 +15584,7 @@ function getElementProperties($elementType)
 		$classfile = 'conferenceorbooth';
 		$classname = 'ConferenceOrBooth';
 		$module = 'eventorganization';
+		$subdir = '/conferenceorbooth';
 	} elseif ($elementType == 'ccountry') {
 		$module = '';
 		$classpath = 'core/class';
@@ -15604,9 +15674,24 @@ function getElementProperties($elementType)
 	} elseif ($element == 'invoice_supplier' && isModEnabled('fournisseur')) {
 		$dir_output = $conf->fournisseur->facture->dir_output;
 		$dir_temp = $conf->fournisseur->facture->dir_temp;
+	} elseif ($elementType == 'payment' && isModEnabled('invoice') && isset($conf->compta->payment)) {
+		// A customer payment is stored into a sub object of $conf, not handled by the generic case.
+		// Note: we must test $elementType and not $element, because the 'myobject_mysubobject' rule above
+		// rewrites $element to 'payment' for the element 'payment_salary' too, which is stored elsewhere.
+		$dir_output = $conf->compta->payment->dir_output;
+		$dir_temp = $conf->compta->payment->dir_temp;
+	} elseif ($elementType == 'payment_supplier' && isModEnabled('fournisseur') && isset($conf->fournisseur->payment)) {
+		$dir_output = $conf->fournisseur->payment->dir_output;
+		$dir_temp = $conf->fournisseur->payment->dir_temp;
 	}
-	$dir_output .= $subdir;
-	$dir_temp .= $subdir;
+	// The sub directory must not be appended when the module is disabled, because $dir_output is then empty
+	// and we would return a path at the root of the file system instead of an empty string.
+	if (!empty($dir_output)) {
+		$dir_output .= $subdir;
+	}
+	if (!empty($dir_temp)) {
+		$dir_temp .= $subdir;
+	}
 
 	$elementProperties = array(
 		'module' => $module,

@@ -202,6 +202,7 @@ DiscountReceived=Discount received
 DONATION_ACCOUNTINGACCOUNT=Účet (z účtového rozvrhu), který se má použít k evidenci darů (modul Darování)
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Účet (z účtového rozvrhu), který se má použít k registraci členských příspěvků (modul Členství – pokud je členství zaznamenáno bez faktury)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Účet (z účtového rozvrhu), který se má použít jako výchozí účet pro registraci vkladu zákazníka
+ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT_FOR_VAT=Account (from the Chart Of Account) to be used as the default account for VAT on customer deposit used in bindings
 UseAuxiliaryAccountOnCustomerDeposit=Uložit zákaznický účet jako individuální účet v pomocné knize pro řádky záloh (pokud je tato možnost zakázána, individuální účet pro řádky záloh zůstane prázdný)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Účet (z účtového rozvrhu), který se má použít jako výchozí účet pro registraci zálohy dodavatele
 UseAuxiliaryAccountOnSupplierDeposit=Uložit účet dodavatele jako individuální účet v pomocné knize pro řádky záloh (pokud je tato možnost zakázána, individuální účet pro řádky záloh zůstane prázdný)
