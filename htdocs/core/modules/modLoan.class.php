@@ -143,7 +143,40 @@ class modLoan extends DolibarrModules
 
 		// Menus
 		//-------
-		$this->menu = 1; // This module add menu entries. They are coded into menu manager.
+		$this->menu = array();
+		$r = 0;
+
+		$this->menu[$r] = array(
+			'fk_menu' => 'fk_mainmenu=billing',
+			'type' => 'left',
+			'titre' => 'Loans',
+			'prefix' => img_picto('', 'loan', 'class="paddingright pictofixedwidth"'),
+			'mainmenu' => 'billing',
+			'leftmenu' => 'tax_loan',
+			'url' => '/loan/list.php?leftmenu=tax_loan&amp;mainmenu=billing',
+			'langs' => 'loan',
+			'position' => 250,
+			'enabled' => 'isModEnabled("loan")',
+			'perms' => '$user->hasRight("loan", "read")',
+			'target' => '',
+			'user' => 0,
+		);
+
+		$r++;
+		$this->menu[$r] = array(
+			'fk_menu' => 'fk_mainmenu=billing,fk_leftmenu=tax_loan',
+			'type' => 'left',
+			'titre' => 'NewLoan',
+			'mainmenu' => 'billing',
+			'leftmenu' => 'tax_loan_new',
+			'url' => '/loan/card.php?leftmenu=tax_loan&action=create',
+			'langs' => 'loan',
+			'position' => 251,
+			'enabled' => 'isModEnabled("loan")',
+			'perms' => '$user->hasRight("loan", "write")',
+			'target' => '',
+			'user' => 0,
+		);
 
 
 		// Exports

@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2010	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2015		Alexandre Spangaro		<aspangaro@open-dsi.fr>
- * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -140,7 +140,88 @@ class modDon extends DolibarrModules
 
 		// Menus
 		//-------
-		$this->menu = 1; // This module add menu entries. They are coded into menu manager.
+		$this->menu = array();
+		$r = 0;
+
+		$this->menu[$r] = array(
+			'fk_menu' => 'fk_mainmenu=billing',
+			'type' => 'left',
+			'titre' => 'Donations',
+			'prefix' => img_picto('', 'donation', 'class="paddingright pictofixedwidth"'),
+			'mainmenu' => 'billing',
+			'leftmenu' => 'donations',
+			'url' => '/don/index.php?leftmenu=donations&amp;mainmenu=billing',
+			'langs' => 'donations',
+			'position' => 200,
+			'enabled' => 'isModEnabled("don")',
+			'perms' => '$user->hasRight("don", "lire")',
+			'target' => '',
+			'user' => 0,
+		);
+
+		$r++;
+		$this->menu[$r] = array(
+			'fk_menu' => 'fk_mainmenu=billing,fk_leftmenu=donations',
+			'type' => 'left',
+			'titre' => 'NewDonation',
+			'mainmenu' => 'billing',
+			'leftmenu' => 'donations_new',
+			'url' => '/don/card.php?leftmenu=donations&action=create',
+			'langs' => 'donations',
+			'position' => 201,
+			'enabled' => 'isModEnabled("don")',
+			'perms' => '$user->hasRight("don", "creer")',
+			'target' => '',
+			'user' => 0,
+		);
+
+		$r++;
+		$this->menu[$r] = array(
+			'fk_menu' => 'fk_mainmenu=billing,fk_leftmenu=donations',
+			'type' => 'left',
+			'titre' => 'List',
+			'mainmenu' => 'billing',
+			'leftmenu' => 'donations_list',
+			'url' => '/don/list.php?leftmenu=donations',
+			'langs' => 'donations',
+			'position' => 202,
+			'enabled' => 'isModEnabled("don")',
+			'perms' => '$user->hasRight("don", "lire")',
+			'target' => '',
+			'user' => 0,
+		);
+
+		$r++;
+		$this->menu[$r] = array(
+			'fk_menu' => 'fk_mainmenu=billing,fk_leftmenu=donations',
+			'type' => 'left',
+			'titre' => 'Payments',
+			'mainmenu' => 'billing',
+			'leftmenu' => 'donations_payment',
+			'url' => '/don/paiement/list.php?leftmenu=donations',
+			'langs' => 'donations',
+			'position' => 203,
+			'enabled' => 'isModEnabled("don")',
+			'perms' => '$user->hasRight("don", "lire")',
+			'target' => '',
+			'user' => 0,
+		);
+
+		$r++;
+		$this->menu[$r] = array(
+			'fk_menu' => 'fk_mainmenu=billing,fk_leftmenu=donations',
+			'type' => 'left',
+			'titre' => 'Statistics',
+			'mainmenu' => 'billing',
+			'leftmenu' => 'donations_stats',
+			'url' => '/don/stats/index.php',
+			'langs' => 'donations',
+			'position' => 204,
+			'enabled' => 'isModEnabled("don") && getDolGlobalString("MAIN_STATISTICS_IN_MENU")',
+			'perms' => '$user->hasRight("don", "lire")',
+			'target' => '',
+			'user' => 0,
+		);
 	}
 
 

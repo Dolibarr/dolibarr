@@ -5,7 +5,7 @@
  * Copyright (C) 2013		Cédric Salvador				<csalvador@gpcsolutions.fr>
  * Copyright (C) 2015		Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2018		Ferran Marcet				<fmarcet@2byte.es>
- * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2021		Gauthier VERDOL				<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2022-2023	Solution Libre SAS			<contact@solution-libre.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
@@ -521,7 +521,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 			$url = dol_buildpath($url, 1).($param ? '?'.$param : '');
 			//$shorturl = $shorturl.($param?'?'.$param:'');
 			$shorturl = $url;
-			if (DOL_URL_ROOT) {
+			if (defined('DOL_URL_ROOT')) {
 				$shorturl = preg_replace('/^'.preg_quote(DOL_URL_ROOT, '/').'/', '', $shorturl);
 			}
 		}
@@ -1648,19 +1648,7 @@ function get_left_menu_billing($mainmenu, &$newmenu, $usemenuhider = 1, $leftmen
 		}
 
 
-		// Donations
-		if (isModEnabled('don')) {
-			$langs->load("donations");
-			$newmenu->add("/don/index.php?leftmenu=donations&amp;mainmenu=billing", $langs->trans("Donations"), 0, $user->hasRight('don', 'lire'), '', $mainmenu, 'donations', 0, '', '', '', img_picto('', 'donation', 'class="paddingright pictofixedwidth"'));
-			if ($usemenuhider || empty($leftmenu) || $leftmenu == "donations") {
-				$newmenu->add("/don/card.php?leftmenu=donations&action=create", $langs->trans("NewDonation"), 1, $user->hasRight('don', 'creer'));
-				$newmenu->add("/don/list.php?leftmenu=donations", $langs->trans("List"), 1, $user->hasRight('don', 'lire'));
-				$newmenu->add("/don/paiement/list.php?leftmenu=donations", $langs->trans("Payments"), 1, $user->hasRight('don', 'lire'));
-				if (getDolGlobalString('MAIN_STATISTICS_IN_MENU')) {
-					$newmenu->add("/don/stats/index.php", $langs->trans("Statistics"), 1, $user->hasRight('don', 'lire'));
-				}
-			}
-		}
+		// Donations menu entries are declared by the module itself (see modDon::menu) and merged in below by menuLeftCharger()
 
 		// Taxes and social contributions
 		if (isModEnabled('tax')) {
@@ -1725,15 +1713,7 @@ function get_left_menu_billing($mainmenu, &$newmenu, $usemenuhider = 1, $leftmen
 			}
 		}
 
-		// Loan
-		if (isModEnabled('loan')) {
-			$langs->load("loan");
-			$newmenu->add("/loan/list.php?leftmenu=tax_loan&amp;mainmenu=billing", $langs->trans("Loans"), 0, $user->hasRight('loan', 'read'), '', $mainmenu, 'tax_loan', 0, '', '', '', img_picto('', 'loan', 'class="paddingright pictofixedwidth"'));
-			if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_loan/i', $leftmenu)) {
-				$newmenu->add("/loan/card.php?leftmenu=tax_loan&action=create", $langs->trans("NewLoan"), 1, $user->hasRight('loan', 'write'));
-				//$newmenu->add("/loan/payment/list.php?leftmenu=tax_loan",$langs->trans("Payments"),2,$user->hasRight('loan',  'read'));
-			}
-		}
+		// Loan menu entries are declared by the module itself (see modLoan::menu) and merged in below by menuLeftCharger()
 
 		// Various payment
 		if (isModEnabled('bank') && !getDolGlobalString('BANK_USE_OLD_VARIOUS_PAYMENT')) {
@@ -2120,15 +2100,7 @@ function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $lef
 			//if ($leftmenu=="ca") $newmenu->add("/compta/journaux/index.php?leftmenu=ca",$langs->trans("Journals"),1,$user->hasRight('compta',  'resultat', 'lire')||$user->hasRight('accounting',  'comptarapport', 'lire'));
 		}
 
-		// Intracomm report
-		if (isModEnabled('intracommreport')) {
-			$newmenu->add("/intracommreport/list.php?leftmenu=intracommreport", $langs->trans("MenuIntracommReport"), 0, $user->hasRight('intracommreport', 'read'), '', $mainmenu, 'intracommreport', 60, '', '', '', img_picto('', 'intracommreport', 'class="paddingright pictofixedwidth"'));
-			if ($usemenuhider || empty($leftmenu) || preg_match('/intracommreport/', $leftmenu)) {
-				// DEB / DES
-				$newmenu->add("/intracommreport/card.php?action=create&leftmenu=intracommreport", $langs->trans("MenuIntracommReportNew"), 1, $user->hasRight('intracommreport', 'write'), '', $mainmenu, 'intracommreport', 1);
-				$newmenu->add("/intracommreport/list.php?leftmenu=intracommreport", $langs->trans("MenuIntracommReportList"), 1, $user->hasRight('intracommreport', 'read'), '', $mainmenu, 'intracommreport', 1);
-			}
-		}
+		// Intracomm report menu entries are declared by the module itself (see modIntracommreport::menu) and merged in below by menuLeftCharger()
 
 		// Assets
 		if (isModEnabled('asset')) {

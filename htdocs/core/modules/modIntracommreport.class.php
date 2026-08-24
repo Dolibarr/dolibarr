@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
  * Copyright (C) 2019       Open-DSI                <support@open-dsi.fr>
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -121,6 +122,54 @@ class modIntracommreport extends DolibarrModules
 		// Main menu entries
 		$this->menu = array(); // List of menus to add
 		$r = 0;
+
+		$this->menu[$r] = array(
+			'fk_menu' => 'fk_mainmenu=accountancy',
+			'type' => 'left',
+			'titre' => 'MenuIntracommReport',
+			'prefix' => img_picto('', 'intracommreport', 'class="paddingright pictofixedwidth"'),
+			'mainmenu' => 'accountancy',
+			'leftmenu' => 'intracommreport',
+			'url' => '/intracommreport/list.php?leftmenu=intracommreport',
+			'langs' => 'intracommreport',
+			'position' => 260,
+			'enabled' => 'isModEnabled("intracommreport")',
+			'perms' => '$user->hasRight("intracommreport", "read")',
+			'target' => '',
+			'user' => 0,
+		);
+
+		$r++;
+		$this->menu[$r] = array(
+			'fk_menu' => 'fk_mainmenu=accountancy,fk_leftmenu=intracommreport',
+			'type' => 'left',
+			'titre' => 'MenuIntracommReportNew',
+			'mainmenu' => 'accountancy',
+			'leftmenu' => 'intracommreport_new',
+			'url' => '/intracommreport/card.php?action=create&leftmenu=intracommreport',
+			'langs' => 'intracommreport',
+			'position' => 261,
+			'enabled' => 'isModEnabled("intracommreport")',
+			'perms' => '$user->hasRight("intracommreport", "write")',
+			'target' => '',
+			'user' => 0,
+		);
+
+		$r++;
+		$this->menu[$r] = array(
+			'fk_menu' => 'fk_mainmenu=accountancy,fk_leftmenu=intracommreport',
+			'type' => 'left',
+			'titre' => 'MenuIntracommReportList',
+			'mainmenu' => 'accountancy',
+			'leftmenu' => 'intracommreport_list',
+			'url' => '/intracommreport/list.php?leftmenu=intracommreport',
+			'langs' => 'intracommreport',
+			'position' => 262,
+			'enabled' => 'isModEnabled("intracommreport")',
+			'perms' => '$user->hasRight("intracommreport", "read")',
+			'target' => '',
+			'user' => 0,
+		);
 
 		// Exports
 		$r = 1;
