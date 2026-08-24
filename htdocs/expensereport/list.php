@@ -172,6 +172,7 @@ if (empty($user->socid)) {
 
 $arrayfields = array(
 	'd.ref' => array('label' => $langs->trans("Ref"), 'checked' => '1'),
+	'summary' => array('label' => $langs->trans("Summary"), 'checked' => '1'),
 	'user' => array('label' => $langs->trans("User"), 'checked' => '1'),
 	'd.date_debut' => array('label' => $langs->trans("DateStart"), 'checked' => '1'),
 	'd.date_fin' => array('label' => $langs->trans("DateEnd"), 'checked' => '1'),
@@ -623,6 +624,9 @@ if (!empty($arrayfields['d.ref']['checked'])) {
 	print '<input class="flat width100" type="text" name="search_ref" value="'.dolPrintHTMLForAttribute($search_ref).'">';
 	print '</td>';
 }
+if (!empty($arrayfields['summary']['checked'])) {
+	print '<td class="liste_titre">&nbsp;</td>';
+}
 // User
 if (!empty($arrayfields['user']['checked'])) {
 	if ($user->hasRight('expensereport', 'readall') || $user->hasRight('expensereport', 'lire_tous')) {
@@ -725,6 +729,10 @@ if ($conf->main_checkbox_left_column) {
 }
 if (!empty($arrayfields['d.ref']['checked'])) {
 	print_liste_field_titre($arrayfields['d.ref']['label'], $_SERVER["PHP_SELF"], "d.ref", "", $param, '', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['summary']['checked'])) {
+	print_liste_field_titre($arrayfields['summary']['label'], $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['user']['checked'])) {
@@ -893,6 +901,13 @@ if ($num > 0) {
 				$urlsource = $_SERVER['PHP_SELF'].'?id='.$obj->rowid;
 				print $formfile->getDocumentsLink($expensereportstatic->element, $filename, $filedir);
 				print '</td>';
+				if (!$i) {
+					$totalarray['nbfield']++;
+				}
+			}
+			// Summary
+			if (!empty($arrayfields['summary']['checked'])) {
+				print '<td class="tdoverflowmax300">'.dol_escape_htmltag($expensereportstatic->getSummary()).'</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}

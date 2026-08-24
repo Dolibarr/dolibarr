@@ -875,6 +875,35 @@ class ExpenseReport extends CommonObject
 		return $this->LibStatut($this->status, $mode);
 	}
 
+	/**
+	 * Return a short summary of the public note.
+	 *
+	 * @return string Summary
+	 */
+	public function getSummary()
+	{
+		$note = preg_replace('/(?:<br\s*\/?>|<\/(?:p|div|li)>)/i', "\n", (string) $this->note_public);
+		$lines = preg_split('/\r\n|\r|\n/', (string) $note);
+
+		foreach ($lines as $line) {
+			$summary = trim(dol_string_nohtmltag($line));
+			if ($summary !== '') {
+				if (dol_strlen($summary) > 80) {
+					$summary = dol_substr($summary, 0, 77);
+					$lastSpace = strrpos($summary, ' ');
+					if ($lastSpace !== false) {
+						$summary = dol_substr($summary, 0, dol_strlen(substr($summary, 0, $lastSpace)));
+					}
+					$summary = rtrim($summary).'...';
+				}
+
+				return $summary;
+			}
+		}
+
+		return '';
+	}
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Returns the label of a status
