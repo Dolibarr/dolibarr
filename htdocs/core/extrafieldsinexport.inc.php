@@ -39,12 +39,25 @@ if (empty($keyforselect) || empty($keyforelement) || empty($keyforaliasextra)) {
 }
 
 // Add extra fields
-$sql = "SELECT name, label, type, param, fieldcomputed, fielddefault FROM ".MAIN_DB_PREFIX."extrafields";
-$sql .= " WHERE elementtype = '".$this->db->escape($keyforselect)."' AND type <> 'separate' AND entity IN (0, ".((int) $conf->entity).') ORDER BY pos ASC';
-//print $sql;
-$resql = $this->db->query($sql);
-if ($resql) {    // This can fail when class is used on old database (during migration for example)
-	while ($obj = $this->db->fetch_object($resql)) {
+// The list of extrafields for a given elementtype/entity is identical for every module that exports it,
+// so it is cached for the duration of the request instead of being re-queried on each inclusion of this file
+// (a page like user/perms.php that instantiates every module can otherwise trigger the same query dozens of times).
+$cachekey = $keyforselect.'_'.$conf->entity;
+if (!isset($conf->cache['extrafieldsinexport'][$cachekey])) {
+	$sql = "SELECT name, label, type, param, fieldcomputed, fielddefault FROM ".MAIN_DB_PREFIX."extrafields";
+	$sql .= " WHERE elementtype = '".$this->db->escape($keyforselect)."' AND type <> 'separate' AND entity IN (0, ".((int) $conf->entity).') ORDER BY pos ASC';
+	//print $sql;
+	$tmparrayextrafieldsinexport = array();
+	$resql = $this->db->query($sql);
+	if ($resql) {    // This can fail when class is used on old database (during migration for example)
+		while ($obj = $this->db->fetch_object($resql)) {
+			$tmparrayextrafieldsinexport[] = $obj;
+		}
+	}
+	$conf->cache['extrafieldsinexport'][$cachekey] = $tmparrayextrafieldsinexport;
+}
+if (!empty($conf->cache['extrafieldsinexport'][$cachekey])) {
+	foreach ($conf->cache['extrafieldsinexport'][$cachekey] as $obj) {
 		$fieldname = $keyforaliasextra.'.'.$obj->name;
 		$fieldlabel = ucfirst($obj->label);
 		$typeFilter = "Text";

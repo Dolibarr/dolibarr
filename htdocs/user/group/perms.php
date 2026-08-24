@@ -184,6 +184,39 @@ $modulesdir = dolGetModulesDirs();
 // Modules to ignore depending on supplier module mode
 $excludedModules = getDolGlobalInt('MAIN_USE_NEW_SUPPLIERMOD') ? array('modFournisseur') : array('modSupplierOrder', 'modSupplierInvoice');
 
+// Preload MAIN_MODULE_* enablement for the target entity in one query, so we can skip calling
+// insert_permissions() (which starts by re-checking this same enablement with its own query) on
+// every disabled module found on disk. If we are looking at our own entity, $conf->global already
+// has this cached from bootstrap and no query is needed at all.
+if ($entity == $conf->entity) {
+	$enabledmoduleconst = (array) $conf->global;
+} else {
+	$enabledmoduleconst = array();
+	$sql = "SELECT ".$db->decrypt('name')." as name, ".$db->decrypt('value')." as value";
+	$sql .= " FROM ".MAIN_DB_PREFIX."const";
+	$sql .= " WHERE entity IN (0, ".((int) $entity).")";
+	$sql .= " ORDER BY entity"; // entity 0 first, then entity-specific overrides it
+	$resql = $db->query($sql);
+	if ($resql) {
+		while ($obj = $db->fetch_object($resql)) {
+			$enabledmoduleconst[$obj->name] = $obj->value;
+		}
+		$db->free($resql);
+	}
+}
+
+// Preload the ids of rights already present in llx_rights_def for this entity in one query, so insert_permissions()
+// below can check existence in-memory instead of issuing one "SELECT count(*)" query per permission of every module.
+$existingrightsdefids = array();
+$sql = "SELECT id FROM ".MAIN_DB_PREFIX."rights_def WHERE entity = ".((int) $entity);
+$resql = $db->query($sql);
+if ($resql) {
+	while ($obj = $db->fetch_object($resql)) {
+		$existingrightsdefids[$obj->id] = 1;
+	}
+	$db->free($resql);
+}
+
 $db->begin();
 
 foreach ($modulesdir as $dir) {
@@ -212,7 +245,11 @@ foreach ($modulesdir as $dir) {
 					}
 					// Load all permissions
 					if ($objMod->rights_class) {
-						$objMod->insert_permissions(0, $entity);
+						// Skip the DB round trip insert_permissions() would do just to find out the
+						// module is disabled for this entity - we already know from the preload above.
+						if (empty($objMod->const_name) || !empty($enabledmoduleconst[$objMod->const_name])) {
+							$objMod->insert_permissions(0, $entity, 0, $existingrightsdefids);
+						}
 						$modules[$objMod->rights_class] = $objMod;
 					}
 				}
@@ -231,6 +268,7 @@ $sql .= " FROM ".MAIN_DB_PREFIX."rights_def as r,";
 $sql .= " ".MAIN_DB_PREFIX."usergroup_rights as gr";
 $sql .= " WHERE gr.fk_id = r.id";
 $sql .= " AND gr.entity = ".((int) $entity);
+$sql .= " AND r.entity = ".((int) $entity);
 $sql .= " AND gr.fk_usergroup = ".((int) $object->id);
 
 dol_syslog("get user perms", LOG_DEBUG);
