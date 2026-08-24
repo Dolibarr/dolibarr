@@ -76,7 +76,7 @@ if (empty($_SESSION["takeposterminal"])) {
 }
 
 if ($setterminal > 0) {
-	$_SESSION["takeposterminal"] = $setterminal;
+	$_SESSION["takeposterminal"] = (int) $setterminal;
 	dolSetCookie("takeposterminal", (string) $setterminal, -1); // takeposterminal var in a 1 year cookie
 }
 
@@ -1131,7 +1131,7 @@ function WeighingScale(callback) {
 				}
 			});
 		<?php } else { ?>
-			// Protocole par défaut de takeposconnector: réception continue du poids/stabilité
+			// Default takeposconnector protocol: continuous reception of weight/stability
 			editnumber = globalWeight;
 			$("#poslines").load("invoice.php?token=<?php echo newToken(); ?>&action=updateqty&place="+place+"&idline="+selectedline+"&number="+editnumber, function() {
 				editnumber="";
@@ -1727,14 +1727,14 @@ if ($reshook == 0) {  //add buttons
 
 	while ($count < $MAXPRODUCT) {
 		print '<div class="wrapper2'.(($count >= ($MAXPRODUCT - 2)) ? ' arrow' : '').'" id="prodiv'.$count.'" '; ?>
-														<?php if ($count == ($MAXPRODUCT - 2)) {
-															?> onclick="MoreProducts('less')" <?php
-														}
-														if ($count == ($MAXPRODUCT - 1)) {
-															?> onclick="MoreProducts('more')" <?php
-														} else {
-															echo 'onclick="ClickProduct('.((int) $count).')"';
-														} ?>>
+															<?php if ($count == ($MAXPRODUCT - 2)) {
+																?> onclick="MoreProducts('less')" <?php
+															}
+															if ($count == ($MAXPRODUCT - 1)) {
+																?> onclick="MoreProducts('more')" <?php
+															} else {
+																echo 'onclick="ClickProduct('.((int) $count).')"';
+															} ?>>
 					<?php
 					if ($count == ($MAXPRODUCT - 2)) {
 						//echo '<img class="imgwrapper" src="img/arrow-prev-top.png" height="100%" id="proimg'.$count.'" />';

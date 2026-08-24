@@ -49,7 +49,7 @@ $cancel     = GETPOST('cancel');
 $backtopage = GETPOST('backtopage', 'alpha');
 $confirm    = GETPOST('confirm', 'alpha');
 
-$module = GETPOST('module', 'alpha');
+$module = GETPOST('module', 'aZ09arobase');
 $website = GETPOST('website', 'alpha');
 $pageid = GETPOSTINT('pageid');
 if (empty($module)) {
@@ -150,7 +150,7 @@ if (GETPOST("sendit") && getDolGlobalString('MAIN_UPLOAD_DOC') && $permissiontou
 if ($action == 'confirm_deletefile' && $confirm == 'yes' && $permissiontoupload) {
 	$langs->load("other");
 	$file = $upload_dir."/".GETPOST('urlfile'); // Do not use urldecode here
-	$ret = dol_delete_file($file);
+	$ret = dol_delete_file($file, 1);
 	if ($ret) {
 		setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
 	} else {
@@ -463,16 +463,25 @@ if ($action != 'edit' && $action != 'delete' && $action != 'deletefile') {
 	print '<div class="tabsAction">';
 
 	if ($permissiontoadd) {
-		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&token='.newToken().'&module='.$module.'&section='.$section.'">'.$langs->trans('Edit').'</a>';
+		print '<a class="butAction" href="'.dolBuildUrl($_SERVER['PHP_SELF'], array('action' => 'edit', 'module' => $module, 'section' => $section), true).'">'.$langs->trans('Edit').'</a>';
 	}
 
 	if ($permissiontoadd) {
-		print '<a class="butAction" href="'.DOL_URL_ROOT.'/ecm/dir_add_card.php?action=create&token='.newToken().'&module='.$module.'&catParent='.$section.'">'.$langs->trans('ECMAddSection').'</a>';
+		print '<a class="butAction" href="'.dolBuildUrl(DOL_URL_ROOT.'/ecm/dir_add_card.php', array('action' => 'create', 'module' => $module, 'catParent' => $section), true).'">'.$langs->trans('ECMAddSection').'</a>';
 	} else {
 		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('ECMAddSection').'</a>';
 	}
 
-	print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'&module='.urlencode($module).'&section='.urlencode($section).($backtopage ? '&backtopage='.urlencode($backtopage) : ''), '', $permissiontoadd);
+	$paramsdelete = array(
+		'id' => $object->id,
+		'action' => 'delete',
+		'module' => $module,
+		'section' => $section,
+	);
+	if ($backtopage) {
+		$paramsdelete['backtopage'] = $backtopage;
+	}
+	print dolGetButtonAction($langs->trans('Delete'), '', 'delete', dolBuildUrl($_SERVER["PHP_SELF"], $paramsdelete, true), '', $permissiontoadd);
 
 	print '</div>';
 }
@@ -480,7 +489,14 @@ if ($action != 'edit' && $action != 'delete' && $action != 'deletefile') {
 
 // Confirm remove file
 if ($action == 'deletefile') {
-	print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.urlencode(GETPOST("section", 'alpha')).'&urlfile='.urlencode(GETPOST("urlfile")).($backtopage ? '&backtopage='.urlencode($backtopage) : ''), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile');
+	$paramsdeletefile = array(
+		'section' => GETPOST("section", 'alpha'),
+		'urlfile' => GETPOST("urlfile"),
+	);
+	if ($backtopage) {
+		$paramsdeletefile['backtopage'] = $backtopage;
+	}
+	print $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], $paramsdeletefile), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile');
 }
 
 // Confirm remove dir
@@ -495,7 +511,14 @@ if ($action == 'delete' || $action == 'delete_dir') {
 		);
 	}
 
-	print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.urlencode(GETPOST('section', 'alpha')).'&module='.$module.($backtopage ? '&backtopage='.urlencode($backtopage) : ''), $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection', $relativepathwithoutslash), 'confirm_deletedir', $formquestion, 1, 1);
+	$paramsdeletedir = array(
+		'section' => GETPOST('section', 'alpha'),
+		'module' => $module,
+	);
+	if ($backtopage) {
+		$paramsdeletedir['backtopage'] = $backtopage;
+	}
+	print $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], $paramsdeletedir), $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection', $relativepathwithoutslash), 'confirm_deletedir', $formquestion, 1, 1);
 }
 
 
@@ -509,7 +532,7 @@ if ($user->hasRight('ecm', 'upload')) {
 
 // List of document
 if ($user->hasRight('ecm', 'read')) {
-	$param = '&amp;section=' . $section;
+	$param = '&section=' . urlencode($section);
 	$formfile->list_of_documents($filearray, '', 'ecm', $param, 1, $relativepath, $user->hasRight("ecm", "upload"));
 }
 */

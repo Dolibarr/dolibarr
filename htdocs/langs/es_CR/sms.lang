@@ -1,2 +1,23 @@
 # Dolibarr language file - Source file is en_US - sms
+SmsSetup=Configuración de SMS
+SmsDesc=Esta página te permite definir opciones globales en funcionalidades de SMS
+SmsCard=Tarjeta SMS
+SmsTargets=Destinos
+SmsRecipients=Destinos
+SmsRecipient=Destino
+SmsTo=Destino
+ListOfSms=Listar campañas SMS
+DeleteASms=Remover una campaña SMS
+SmsResult=Resultado de envío de SMS
 SmsStatusValidated=Validada
+SmsSuccessfulySent=SMS correctamente enviado (de %s a %s)
+ErrorSmsRecipientIsEmpty=La cantidad de destinos está vacía
+WarningNoSmsAdded=No hay nuevos teléfonos añadidos a la lista de destinos
+NbOfUniqueSms=Cantidad de teléfonos únicos
+NbOfSms=No. de numeros telefonicos
+SmsInfoCharRemain=Número de caracteres restantes
+SmsInfoNumero=(formato internacional, es decir: +33899701761)
+DelayBeforeSending=Demora en el envío (minutos)
+SmsNoPossibleSenderFound=No hay remitente disponible. Compruebe la configuración de su proveedor de SMS.
+SmsNoPossibleRecipientFound=No hay destino disponible. Revise la configuración de su proveedor de SMS.
+DisableStopIfSupported=Deshabilitar mensaje de STOP (si está soportado)

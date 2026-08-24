@@ -230,6 +230,8 @@ if (preg_match("/define\('DOL_VERSION',\s*'([\d\.a-z\-]+)'\)/i", $filefuncConten
 	$PROJVERSION = $matches[1];
 }
 if (empty($PROJVERSION)) {
+	$DOL_MAJOR_VERSION = 'notfound';
+	$DOL_MINOR_VERSION = 'notfound';
 	if (preg_match("/define\('DOL_MAJOR_VERSION',\s*'([\d\.a-z\-]+)'\)/i", $filefuncContent, $matches)) {
 		$DOL_MAJOR_VERSION = $matches[1];
 	}
@@ -269,7 +271,7 @@ if (strpos($newbuild, '-') === false) {
 	$newbuild .= '-0.4';  // finale (fedora)
 }
 $REL1 = preg_replace('/-.*$/', '', $newbuild);
-if ($RPMSUBVERSION === 'auto') {
+if ($RPMSUBVERSION === 'auto') {	// @phpstan-ignore-line
 	$RPMSUBVERSION = preg_replace('/^.*-/', '', $newbuild);
 }
 $FILENAMETGZ2    = "$PROJECT-$MAJOR.$MINOR.$REL1";
@@ -314,10 +316,10 @@ for ($i = 1; $i < $argc; $i++) {
 }
 
 // Force output dir if env vars are defined
-if ($ENVDESTIBETARC && preg_match('/[a-z]/i', $BUILD)) {
+if ($ENVDESTIBETARC && preg_match('/[a-z]/i', $BUILD)) {	// @phpstan-ignore-line
 	$DESTI = $ENVDESTIBETARC;
 }
-if ($ENVDESTISTABLE && preg_match('/^[0-9]+$/', $BUILD)) {
+if ($ENVDESTISTABLE && preg_match('/^[0-9]+$/', $BUILD)) {	// @phpstan-ignore-line
 	$DESTI = $ENVDESTISTABLE;
 }
 
@@ -349,12 +351,12 @@ if ($target) {
 	$targetUpper = strtoupper($target);
 	if ($targetUpper === 'ALL') {
 		foreach ($LISTETARGET as $key) {
-			if ($key !== 'SNAPSHOT' && $key !== 'SF' && $key !== 'ASSO') {
+			if ($key !== 'SNAPSHOT' && $key !== 'SF' && $key !== 'ASSO') {				// @phpstan-ignore-line
 				$CHOOSEDTARGET[$key] = 1;
 			}
 		}
 	}
-	if ($targetUpper !== 'ALL' && $targetUpper !== 'SF' && $targetUpper !== 'ASSO') {
+	if ($targetUpper !== 'ALL' && $targetUpper !== 'SF' && $targetUpper !== 'ASSO') {	// @phpstan-ignore-line
 		$CHOOSEDTARGET[$targetUpper] = 1;
 	}
 	if ($targetUpper === 'SF') {
@@ -399,7 +401,7 @@ if ($target) {
 	} elseif ($NUM_SCRIPT === '0') {
 		$CHOOSEDTARGET['-CHKSUM'] = 1;
 		foreach ($LISTETARGET as $key) {
-			if ($key !== 'SNAPSHOT' && $key !== 'ASSO' && $key !== 'SF') {
+			if ($key !== 'SNAPSHOT' && $key !== 'ASSO' && $key !== 'SF') {				// @phpstan-ignore-line
 				$CHOOSEDTARGET[$key] = 1;
 			}
 		}
@@ -495,7 +497,7 @@ foreach ($CHOOSEDTARGET as $tgt => $val) {
 
 ksort($CHOOSEDPUBLISH);
 foreach ($CHOOSEDPUBLISH as $tgt => $val) {
-	if ($val < 0) { continue; }
+	if ($val < 0) { continue; }					// @phpstan-ignore-line
 	if ($tgt === 'ASSO') { $nbofpublishneedchangelog++; }
 	if ($tgt === 'SF') { $nbofpublishneedchangelog++; $nbofpublishneedtag++; }
 	$nboftargetok++;
@@ -621,7 +623,7 @@ if ($nboftargetok) {
 	// ========================================================================
 
 	if ($nboftargetneedbuildroot) {
-		if (!$copyalreadydone) {
+		if (!$copyalreadydone) {	// @phpstan-ignore-line
 			echo "Creation of a buildroot used for all packages\n";
 
 			echo "Delete directory $BUILDROOT\n";
@@ -634,22 +636,26 @@ if ($nboftargetok) {
 		}
 
 		echo "Clean $BUILDROOT\n";
+		run("rm -fr $BUILDROOT/$PROJECT/.agents");
+		run("rm -f  $BUILDROOT/$PROJECT/.agentsignore");
 		run("rm -f  $BUILDROOT/$PROJECT/.buildpath");
 		run("rm -fr $BUILDROOT/$PROJECT/.cache");
-		run("rm -fr $BUILDROOT/$PROJECT/.codeclimate");
+		run("rm -fr $BUILDROOT/$PROJECT/.codeclimate.yml");
+		run("rm -fr $BUILDROOT/$PROJECT/.editorconfig");
 		run("rm -fr $BUILDROOT/$PROJECT/.externalToolBuilders");
 		run("rm -fr $BUILDROOT/$PROJECT/.git*");
+		run("rm -fr $BUILDROOT/$PROJECT/.idea");
 		run("rm -fr $BUILDROOT/$PROJECT/.mailmap");
 		run("rm -fr $BUILDROOT/$PROJECT/.phpunit.result.cache");
 		run("rm -fr $BUILDROOT/$PROJECT/.project");
 		run("rm -fr $BUILDROOT/$PROJECT/.pydevproject");
-		run("rm -fr $BUILDROOT/$PROJECT/.pyproject.toml");
 		run("rm -fr $BUILDROOT/$PROJECT/.settings");
 		run("rm -fr $BUILDROOT/$PROJECT/.scrutinizer.yml");
 		run("rm -fr $BUILDROOT/$PROJECT/.stickler.yml");
 		run("rm -fr $BUILDROOT/$PROJECT/.travis.yml");
 		run("rm -fr $BUILDROOT/$PROJECT/.tx");
 		run("rm -f  $BUILDROOT/$PROJECT/build.xml");
+		run("rm -fr $BUILDROOT/$PROJECT/pyproject.toml");
 
 		run("rm -f  $BUILDROOT/$PROJECT/.pre-commit-config.yaml");
 		run("rm -fr $BUILDROOT/$PROJECT/.phan");
@@ -682,13 +688,13 @@ if ($nboftargetok) {
 		run("rm -f  $BUILDROOT/$PROJECT/htdocs/conf/conf.php.old");
 		run("rm -f  $BUILDROOT/$PROJECT/htdocs/conf/conf.php.pgsql");
 		run("rm -f  $BUILDROOT/$PROJECT/htdocs/conf/conf*sav*");
+		run("rm -fr $BUILDROOT/$PROJECT/dev/build/*/.github");
 
-		run("rm -f  $BUILDROOT/$PROJECT/htdocs/install/mssql/README");
-		run("rm -f  $BUILDROOT/$PROJECT/htdocs/install/mysql/README");
-		run("rm -f  $BUILDROOT/$PROJECT/htdocs/install/pgsql/README");
+		run("rm -fr $BUILDROOT/$PROJECT/htdocs/includes/*/*/.github");
 
 		run("rm -fr $BUILDROOT/$PROJECT/htdocs/install/mssql");
 		run("rm -fr $BUILDROOT/$PROJECT/htdocs/install/sqlite3");
+		run("rm -f  $BUILDROOT/$PROJECT/htdocs/install/*/README");
 
 		run("rm -fr $BUILDROOT/$PROJECT/htdocs/install/install.forced.php");
 
@@ -1297,7 +1303,7 @@ if ($nboftargetok) {
 
 	ksort($CHOOSEDPUBLISH);
 	foreach ($CHOOSEDPUBLISH as $tgt => $val) {
-		if ($val < 0) { continue; }
+		if ($val < 0) { continue; }								// @phpstan-ignore-line
 
 		echo "\nList of files to publish (BUILD=$BUILD)\n";
 

@@ -359,7 +359,10 @@ class Ldap
 						dol_syslog(get_class($this)."::connectBind serverPing true, we try ldap_connect to ".$host, LOG_DEBUG);
 					}
 					if (version_compare(PHP_VERSION, '8.3.0', '>=')) {
-						$uri = $host.':'.$this->serverPort;
+						// Since PHP 8.3, ldap_connect() expects a single URI argument. A scheme-less
+						// host (ex: localhost, 192.168.0.2) must be turned into a valid ldap:// URI,
+						// otherwise the host is parsed as the URI scheme and the later bind fails.
+						$uri = preg_match('/^ldaps?:\/\//i', $host) ? $host : 'ldap://'.$host.':'.$this->serverPort;
 						$this->connection = ldap_connect($uri);
 					} else {
 						$this->connection = ldap_connect($host, $this->serverPort);
@@ -372,7 +375,7 @@ class Ldap
 							dol_syslog(get_class($this)."::connectBind serverPing false, we try ldap_connect to ".$host, LOG_DEBUG);
 						}
 						if (version_compare(PHP_VERSION, '8.3.0', '>=')) {
-							$uri = $host.':'.$this->serverPort;
+							$uri = preg_match('/^ldaps?:\/\//i', $host) ? $host : 'ldap://'.$host.':'.$this->serverPort;
 							$this->connection = ldap_connect($uri);
 						} else {
 							$this->connection = ldap_connect($host, $this->serverPort);
@@ -1230,7 +1233,7 @@ class Ldap
 
 		$info = @ldap_get_entries($this->connection, $this->result);
 
-		// Warning: Dans info, les noms d'attributs sont en minuscule meme si passe
+		// Warning: In info, attribute names are lowercase even if passed
 		// a ldap_search en majuscule !!!
 		//print_r($info);
 
@@ -1318,7 +1321,7 @@ class Ldap
 			$entry = ldap_first_entry($this->connection, $ldapSearchResult);
 
 			if (!$entry) {
-				// Si pas de resultat on cherche dans le domaine
+				// If no result, search in the domain
 				$searchDN = $this->domain;
 				$i++;
 			} else {
@@ -1435,7 +1438,7 @@ class Ldap
 			}
 
 			if (!$result) {
-				// Si pas de resultat on cherche dans le domaine
+				// If no result, search in the domain
 				$searchDN = $this->domain;
 				$i++;
 			} else {

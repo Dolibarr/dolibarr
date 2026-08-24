@@ -3,7 +3,7 @@
  * Copyright (C) 2015-2026	Alexandre Spangaro		<alexandre@inovea-conseil.com>
  * Copyright (C) 2015-2020	Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2018-2025	Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW				<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Jose MARTINEZ			<jose.martinez@pichinov.com>
  * Copyright (C) 2025		Nicolas Barrouillet		<nicolas@pragma-tech.fr>
  *
@@ -350,7 +350,7 @@ class BookKeeping extends CommonObject
 		if (!empty($this->subledger_account)) {
 			$sql .= " AND subledger_account = '".$this->db->escape($this->subledger_account)."'";
 		}
-		$sql .= " AND entity = ".$conf->entity; // Do not use getEntity for accounting features
+		$sql .= " AND entity = ".((int) $conf->entity); // Do not use getEntity for accounting features
 
 		// Allow duplicates in incomes or loss statements
 		$accountProfit = getDolGlobalString('ACCOUNTING_RESULT_PROFIT');
@@ -377,7 +377,7 @@ class BookKeeping extends CommonObject
 					$sqlnum .= " AND fk_docdet = ".((int) $this->fk_docdet);
 				}
 				$sqlnum .= " AND doc_ref = '".$this->db->escape($this->doc_ref)."'"; // ref of source object
-				$sqlnum .= " AND entity = ".$conf->entity; // Do not use getEntity for accounting features
+				$sqlnum .= " AND entity = ".((int) $conf->entity); // Do not use getEntity for accounting features
 
 				dol_syslog(get_class($this).":: create sqlnum=".$sqlnum, LOG_DEBUG);
 				$resqlnum = $this->db->query($sqlnum);
@@ -455,13 +455,13 @@ class BookKeeping extends CommonObject
 				$sql .= ", ".((float) $this->credit);
 				$sql .= ", ".((float) $this->montant);
 				$sql .= ", ".(!empty($this->sens) ? ("'".$this->db->escape($this->sens)."'") : "NULL");
-				$sql .= ", '".$this->db->escape((string) $this->fk_user_author)."'";
+				$sql .= ", ".((int) $this->fk_user_author).",";
 				$sql .= ", '".$this->db->idate($now)."'";
 				$sql .= ", '".$this->db->escape($this->code_journal)."'";
 				$sql .= ", ".(!empty($this->journal_label) ? ("'".$this->db->escape($this->journal_label)."'") : "NULL");
 				$sql .= ", ".((int) $this->piece_num);
 				$sql .= ", '".$this->db->escape($this->ref)."'";
-				$sql .= ", ".(!isset($this->entity) ? $conf->entity : $this->entity);
+				$sql .= ", ".(!isset($this->entity) ? ((int) $conf->entity) : ((int) $this->entity));
 				$sql .= ")";
 
 				$resql = $this->db->query($sql);
@@ -793,17 +793,17 @@ class BookKeeping extends CommonObject
 		$sql .= ' '.(!isset($this->numero_compte) ? 'NULL' : "'".$this->db->escape($this->numero_compte)."'").',';
 		$sql .= ' '.(!isset($this->label_compte) ? 'NULL' : "'".$this->db->escape($this->label_compte)."'").',';
 		$sql .= ' '.(!isset($this->label_operation) ? 'NULL' : "'".$this->db->escape($this->label_operation)."'").',';
-		$sql .= ' '.(!isset($this->debit) ? 'NULL' : $this->debit).',';
-		$sql .= ' '.(!isset($this->credit) ? 'NULL' : $this->credit).',';
-		$sql .= ' '.(!isset($this->montant) ? 'NULL' : $this->montant).',';
+		$sql .= ' '.(!isset($this->debit) ? 'NULL' : ((float) $this->debit)).',';
+		$sql .= ' '.(!isset($this->credit) ? 'NULL' : ((float) $this->credit)).',';
+		$sql .= ' '.(!isset($this->montant) ? 'NULL' : ((float) $this->montant)).',';
 		$sql .= ' '.(!isset($this->sens) ? 'NULL' : "'".$this->db->escape($this->sens)."'").',';
 		$sql .= ' '.((int) $user->id).',';
 		$sql .= ' '."'".$this->db->idate($now)."',";
 		$sql .= ' '.(empty($this->code_journal) ? 'NULL' : "'".$this->db->escape($this->code_journal)."'").',';
 		$sql .= ' '.(empty($this->journal_label) ? 'NULL' : "'".$this->db->escape($this->journal_label)."'").',';
-		$sql .= ' '.(empty($this->piece_num) ? 'NULL' : $this->db->escape((string) $this->piece_num)).',';
+		$sql .= ' '.(empty($this->piece_num) ? 'NULL' : ((int) $this->piece_num)).',';
 		$sql .= ' '.(empty($this->ref) ? "''" : "'".$this->db->escape($this->ref)."'").',';
-		$sql .= ' '.(!isset($this->entity) ? $conf->entity : $this->entity);
+		$sql .= ' '.(!isset($this->entity) ? ((int) $conf->entity) : ((int) $this->entity));
 		$sql .= ')';
 
 		$this->db->begin();
@@ -1565,23 +1565,23 @@ class BookKeeping extends CommonObject
 		$sql .= ' doc_date = '.(isDolTms($this->doc_date) ? "'".$this->db->idate($this->doc_date)."'" : 'null').',';
 		$sql .= ' doc_type = '.(isset($this->doc_type) ? "'".$this->db->escape($this->doc_type)."'" : "null").',';
 		$sql .= ' doc_ref = '.(isset($this->doc_ref) ? "'".$this->db->escape($this->doc_ref)."'" : "null").',';
-		$sql .= ' fk_doc = '.(isset($this->fk_doc) ? $this->fk_doc : "null").',';
-		$sql .= ' fk_docdet = '.(isset($this->fk_docdet) ? $this->fk_docdet : "null").',';
+		$sql .= ' fk_doc = '.(isset($this->fk_doc) ? ((int) $this->fk_doc) : "null").',';
+		$sql .= ' fk_docdet = '.(isset($this->fk_docdet) ? ((int) $this->fk_docdet) : "null").',';
 		$sql .= ' thirdparty_code = '.(isset($this->thirdparty_code) ? "'".$this->db->escape($this->thirdparty_code)."'" : "null").',';
 		$sql .= ' subledger_account = '.(isset($this->subledger_account) ? "'".$this->db->escape($this->subledger_account)."'" : "null").',';
 		$sql .= ' subledger_label = '.(isset($this->subledger_label) ? "'".$this->db->escape($this->subledger_label)."'" : "null").',';
 		$sql .= ' numero_compte = '.(isset($this->numero_compte) ? "'".$this->db->escape($this->numero_compte)."'" : "null").',';
 		$sql .= ' label_compte = '.(isset($this->label_compte) ? "'".$this->db->escape($this->label_compte)."'" : "null").',';
 		$sql .= ' label_operation = '.(isset($this->label_operation) ? "'".$this->db->escape($this->label_operation)."'" : "null").',';
-		$sql .= ' debit = '.(isset($this->debit) ? $this->debit : "null").',';
-		$sql .= ' credit = '.(isset($this->credit) ? $this->credit : "null").',';
-		$sql .= ' montant = '.(isset($this->montant) ? $this->montant : "null").',';
+		$sql .= ' debit = '.(isset($this->debit) ? ((float) $this->debit) : "null").',';
+		$sql .= ' credit = '.(isset($this->credit) ? ((float) $this->credit) : "null").',';
+		$sql .= ' montant = '.(isset($this->montant) ? ((float) $this->montant) : "null").',';
 		$sql .= ' sens = '.(isset($this->sens) ? "'".$this->db->escape($this->sens)."'" : "null").',';
-		$sql .= ' fk_user_author = '.(isset($this->fk_user_author) ? $this->fk_user_author : "null").',';
+		$sql .= ' fk_user_author = '.(isset($this->fk_user_author) ? ((int) $this->fk_user_author) : "null").',';
 		$sql .= ' import_key = '.(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null").',';
 		$sql .= ' code_journal = '.(isset($this->code_journal) ? "'".$this->db->escape($this->code_journal)."'" : "null").',';
 		$sql .= ' journal_label = '.(isset($this->journal_label) ? "'".$this->db->escape($this->journal_label)."'" : "null").',';
-		$sql .= ' piece_num = '.(isset($this->piece_num) ? $this->piece_num : "null");
+		$sql .= ' piece_num = '.(isset($this->piece_num) ? ((int) $this->piece_num) : "null");
 		$sql .= ' WHERE rowid='.((int) $this->id);
 
 		$this->db->begin();
@@ -2291,7 +2291,7 @@ class BookKeeping extends CommonObject
 				$sql .= ' doc_ref, fk_doc, fk_docdet, entity, thirdparty_code, subledger_account, subledger_label,';
 				$sql .= ' numero_compte, label_compte, label_operation, debit, credit,';
 				$sql .= ' montant, sens, fk_user_author, import_key, code_journal, journal_label, piece_num, date_creation)';
-				$sql .= ' SELECT doc_date, doc_type,' . "'{$ref}',";
+				$sql .= ' SELECT doc_date, doc_type,' . "'".$this->db->escape($ref)."',";
 				$sql .= ' doc_ref, fk_doc, fk_docdet, entity, thirdparty_code, subledger_account, subledger_label,';
 				$sql .= ' numero_compte, label_compte, label_operation, debit, credit,';
 				$sql .= ' montant, sens, fk_user_author, import_key, code_journal, journal_label, '.((int) $next_piecenum).", '".$this->db->idate($now)."'";
@@ -2328,7 +2328,7 @@ class BookKeeping extends CommonObject
 				$sql .= ' doc_ref, fk_doc, fk_docdet, thirdparty_code, subledger_account, subledger_label,';
 				$sql .= ' numero_compte, label_compte, label_operation, debit, credit,';
 				$sql .= ' montant, sens, fk_user_author, import_key, code_journal, journal_label, piece_num)';
-				$sql .= ' SELECT doc_date, doc_type,' . "'{$ref}',";
+				$sql .= ' SELECT doc_date, doc_type,' . "'".$this->db->escape($ref)."',";
 				$sql .= ' doc_ref, fk_doc, fk_docdet, thirdparty_code, subledger_account, subledger_label,';
 				$sql .= ' numero_compte, label_compte, label_operation, debit, credit,';
 				$sql .= ' montant, sens, fk_user_author, import_key, code_journal, journal_label, piece_num';
@@ -3651,7 +3651,7 @@ class BookKeeping extends CommonObject
 				$bookKeepingInstance = new BookKeeping($this->db);
 				$pieceNumNext = $bookKeepingInstance->getNextNumMvt();
 				$cloneId = [];
-				$sqlRowidClone = "SELECT rowid FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping WHERE piece_num = $pieceNum";
+				$sqlRowidClone = "SELECT rowid FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping WHERE piece_num = ".((int) $pieceNum);
 				$resqlRowidClone = $this->db->query($sqlRowidClone);
 
 				if ($resqlRowidClone) {
@@ -3699,7 +3699,7 @@ class BookKeeping extends CommonObject
 									$sql_insert .= ", montant";
 									$sql_insert .= ")";
 									$sql_insert .= " VALUES (";
-									$sql_insert .=  $pieceNumNext;
+									$sql_insert .= ((int) $pieceNumNext);
 									$sql_insert .= ", '" . $this->db->escape($obj->label_operation) . "'";
 									$sql_insert .= ", '" . $this->db->escape($obj->numero_compte) . "'";
 									$sql_insert .= ", '" . $this->db->escape($obj->label_compte) . "'";

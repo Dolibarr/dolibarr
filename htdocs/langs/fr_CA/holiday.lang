@@ -124,3 +124,4 @@ PleaseDefineSomeTypeOfHolidayFirst=Veuillez d'abord définir quelques types de v
 LeaveBalance=Solde de la réserve
 ListeLB=Liste des soldes de congés
 LeaveType =Type de solde de congés
+HolidayHrInformationsPreviousMonthContent=Veuillez trouver ci-joint le récapitulatif des congés du mois de __PREVIOUS_MONTH_TEXT__ pour la société __MYCOMPANY_NAME__

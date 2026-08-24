@@ -561,7 +561,7 @@ class ProductFournisseur extends Product
 			$sql .= " barcode = ".(empty($barcode) ? 'NULL' : "'".$this->db->escape($barcode)."'").",";
 			$sql .= " fk_barcode_type = ".(empty($fk_barcode_type) ? 'NULL' : "'".$this->db->escape((string) $fk_barcode_type)."'");
 			if (getDolGlobalString('PRODUCT_USE_SUPPLIER_PACKAGING')) {
-				$sql .= ", packaging = ".(empty($packaging) ? 1 : $packaging);
+				$sql .= ", packaging = ".(empty($packaging) ? 1 : ((float) $packaging));
 			}
 			$sql .= " WHERE rowid = ".((int) $this->product_fourn_price_id);
 
@@ -648,7 +648,7 @@ class ProductFournisseur extends Product
 				$sql .= " ".((int) $availability).",";
 				$sql .= " ".($newdefaultvatcode ? "'".$this->db->escape($newdefaultvatcode)."'" : "null").",";
 				$sql .= " ".((int) $newnpr).",";
-				$sql .= $conf->entity.",";
+				$sql .= ((int) $conf->entity).",";
 				$sql .= ($delivery_time_days != '' ? ((int) $delivery_time_days) : 'null').",";
 				$sql .= (empty($supplier_reputation) ? 'NULL' : "'".$this->db->escape($supplier_reputation)."'").",";
 				$sql .= (empty($barcode) ? 'NULL' : "'".$this->db->escape($barcode)."'").",";

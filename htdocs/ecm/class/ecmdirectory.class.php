@@ -599,7 +599,7 @@ class EcmDirectory extends CommonObject
 		$sql = "SELECT fk_parent as id_parent, rowid as id_son";
 		$sql .= " FROM ".MAIN_DB_PREFIX."ecm_directories";
 		$sql .= " WHERE fk_parent != 0";
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " AND entity = ".((int) $conf->entity);
 
 		dol_syslog(get_class($this)."::load_motherof", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -647,9 +647,9 @@ class EcmDirectory extends CommonObject
 	/**
 	 * 	Rebuild the tree into an array from the database table llx_ecm_directories
 	 *	Retruen an array('id','id_mere',...) sorted according to tree and with:
-	 *				id                  Id de la categorie
-	 *				id_mere             Id de la categorie mere
-	 *				id_children         Tableau des id enfant
+	 *				id                  Id of the category
+	 *				id_mere             Id of the parent category
+	 *				id_children         Array of children ids
 	 *				label               Name of directory
 	 *				cachenbofdoc        Nb of documents
 	 *				date_c              Date creation
@@ -676,7 +676,7 @@ class EcmDirectory extends CommonObject
 		// Init this->motherof that is array(id_son=>id_parent, ...)
 		$this->load_motherof();
 
-		// Charge tableau des categories
+		// Load categories array
 		$sql = "SELECT c.rowid as rowid, c.label as label,";
 		$sql .= " c.description as description, c.cachenbofdoc,";
 		$sql .= " c.fk_user_c,";
@@ -688,7 +688,7 @@ class EcmDirectory extends CommonObject
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."ecm_directories as ca";
 		$sql .= " ON c.rowid = ca.fk_parent";
 		$sql .= " WHERE c.fk_user_c = u.rowid";
-		$sql .= " AND c.entity = ".$conf->entity;
+		$sql .= " AND c.entity = ".((int) $conf->entity);
 		$sql .= " ORDER BY c.label, c.rowid";
 
 		dol_syslog(get_class($this)."::get_full_arbo", LOG_DEBUG);
@@ -711,10 +711,10 @@ class EcmDirectory extends CommonObject
 				if (!empty($obj->rowid_fille)) {
 					if (isset($this->cats[$obj->rowid]['id_children']) && is_array($this->cats[$obj->rowid]['id_children'])) {
 						$newelempos = count($this->cats[$obj->rowid]['id_children']);
-						//print "this->cats[$i]['id_children'] est deja un tableau de $newelem elements<br>";
+						//print "this->cats[$i]['id_children'] is already an array of $newelem elements<br>";
 						$this->cats[$obj->rowid]['id_children'][$newelempos] = $obj->rowid_fille;
 					} else {
-						//print "this->cats[".$obj->rowid."]['id_children'] n'est pas encore un tableau<br>";
+						//print "this->cats[".$obj->rowid."]['id_children'] is not yet an array<br>";
 						$this->cats[$obj->rowid]['id_children'] = array($obj->rowid_fille);
 					}
 				}
@@ -796,11 +796,11 @@ class EcmDirectory extends CommonObject
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."ecm_directories SET";
-		$sql .= " cachenbofdoc = '".count($filelist)."'";
+		$sql .= " cachenbofdoc = ".count($filelist);
 		if (empty($all)) {  // By default
 			$sql .= " WHERE rowid = ".((int) $this->id);
 		} else {
-			$sql .= " WHERE entity = ".$conf->entity;
+			$sql .= " WHERE entity = ".((int) $conf->entity);
 		}
 
 		dol_syslog(get_class($this)."::refreshcachenboffile", LOG_DEBUG);

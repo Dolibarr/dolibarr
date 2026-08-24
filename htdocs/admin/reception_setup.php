@@ -157,8 +157,8 @@ if ($action == 'updateMask') {
 } elseif ($action == 'setdoc') {
 	// Set default model
 	if (dolibarr_set_const($db, "RECEPTION_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity)) {
-		// La constante qui a ete lue en avant du nouveau set
-		// on passe donc par une variable pour avoir un affichage coherent
+		// The constant that was read before the new set
+		// so we go through a variable to get a consistent display
 		$conf->global->RECEPTION_ADDON_PDF = $value;
 	}
 
@@ -303,7 +303,7 @@ print '<br>';
  */
 print load_fiche_titre($langs->trans("ReceptionsReceiptModel"), '', '');
 
-// Defini tableau def de modele invoice
+// Define array def of model invoice
 $type = "reception";
 $def = array();
 

@@ -461,7 +461,7 @@ class BonPrelevement extends CommonObject
 			$sql .= ", fk_prelevement_demande";
 			$sql .= ($sourcetype == 'salary' ? ", fk_user" : "");
 			$sql .= ") VALUES (";
-			$sql .= $this->id;
+			$sql .= ((int) $this->id);
 			$sql .= ", " . (($sourcetype != 'salary') ? ((int) $client_id) : "0");	// fk_soc can't be null
 			$sql .= ", '" . $this->db->escape($client_nom) . "'";
 			$sql .= ", " . ((float) price2num($amount));
@@ -1128,12 +1128,12 @@ class BonPrelevement extends CommonObject
 		$error = 0;
 		// Pre-store some values into variables to simplify following sql requests
 		if ($sourcetype != 'salary') {
-			$entities = $type != 'bank-transfer' ? getEntity('invoice', 1) : getEntity('supplier_invoice', 1);	// Return a list of entities
+			$entity = $type != 'bank-transfer' ? getEntity('invoice', 1) : getEntity('supplier_invoice', 1);	// Return entity
 			$sqlTable = $type != 'bank-transfer' ? "facture" : "facture_fourn";
 			$socOrUser = 'fk_soc';
 			$societeOrUser = 'societe';
 		} else {
-			$entities = getEntity('salary', 1);		// Return a list of entities
+			$entity = getEntity('salary', 1);		// Return entity
 			$sqlTable = 'salary';
 			$socOrUser = 'fk_user';
 			$societeOrUser = 'user';
@@ -1214,7 +1214,7 @@ class BonPrelevement extends CommonObject
 			// If we add a test on sr.default_rib = 1, we must also check we have a correct error management to stop if no default BAN is found.
 			// Also it may be found for on thirdparty and not for the other.
 		}
-		$sql .= " WHERE f.entity IN (".$this->db->escape($entities).')';
+		$sql .= " WHERE f.entity IN (".((int) $entity).')';
 		if ($sourcetype != 'salary') {
 			$sql .= " AND f.fk_statut = ".Facture::STATUS_VALIDATED; // Invoice validated
 			$sql .= " AND f.paye = 0";

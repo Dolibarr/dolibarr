@@ -242,7 +242,8 @@ function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler
 			// Add line buf to buffer if not a comment
 			if ($nocommentremoval || !preg_match('/^\s*--/', $buf)) {
 				if (empty($nocommentremoval)) {
-					$buf = preg_replace('/([,;ERLT0\)])\s+--.*$/i', '\1', $buf); //remove comment on lines that does not start with --, before adding it to the buffer
+					$buf = preg_replace('/([,;ERLT05\)])\s+--\s.*$/i', '\1', $buf); // remove comment on lines that does not start with --, like "... -- a comment"
+					$buf = preg_replace('/([,;ERLT05\)])\s+--$/i', '\1', $buf); // remove comment on lines that does not start with --, like "... --"
 				}
 				if ($buffer) {
 					$buffer .= ' ';
@@ -256,7 +257,7 @@ function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler
 				// If string contains the end of request string (';'), we save it into $arraysql.
 				// Found new request
 				if ($buffer) {
-					$arraysql[$i] = $buffer;
+					$arraysql[$i] = $buffer;  // @phan-suppress-current-line SqlInjection
 				}
 				$i++;
 				$buffer = '';
@@ -264,7 +265,7 @@ function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler
 		}
 
 		if ($buffer) {
-			$arraysql[$i] = $buffer;
+			$arraysql[$i] = $buffer;  // @phan-suppress-current-line SqlInjection
 		}
 		fclose($fp);
 	} else {
@@ -302,7 +303,7 @@ function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler
 			// Replace __+MAX_llx_table__ with +999
 			$from = '__+MAX_'.$table.'__';
 			$to = '+'.$listofmaxrowid[$table];
-			$newsql = str_replace($from, $to, $newsql);
+			$newsql = str_replace($from, $to, $newsql);  // @phan-suppress-current-line SqlInjection
 			dol_syslog('Admin.lib::run_sql New Request '.($i + 1).' (replacing '.$from.' to '.$to.')', LOG_DEBUG);
 
 			$arraysql[$i] = $newsql;
@@ -327,7 +328,7 @@ function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler
 	// Loop on each request to execute request
 	$cursorinsert = 0;
 	$listofinsertedrowid = array();
-	$keyforsql = md5($sqlfile);
+	$keyforsqlfile = md5($sqlfile);
 	foreach ($arraysql as $i => $sql) {
 		if ($sql) {
 			// Test if the SQL is allowed SQL
@@ -414,11 +415,11 @@ function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler
 				$sql = preg_replace('/__DATABASE__/i', $db->escape($database), $sql);
 			}
 
-			$newsql = preg_replace('/__ENTITY__/i', (!empty($entity) ? $entity : (string) $conf->entity), $sql);
+			$newsql = preg_replace('/__ENTITY__/i', (!empty($entity) ? ((int) $entity) : (string) ((int) $conf->entity)), $sql);
 
 			// Add log of request
 			if (!$silent) {
-				print '<tr class="trforrunsql'.$keyforsql.'"><td class="tdtop opacitymedium"'.($colspan ? ' colspan="'.$colspan.'"' : '').'>'.$langs->trans("Request").' '.($i + 1)." sql='".dol_htmlentities($newsql, ENT_NOQUOTES)."'</td></tr>\n";
+				print '<tr class="trforrunsql'.$keyforsqlfile.'"><td class="tdtop opacitymedium"'.($colspan ? ' colspan="'.$colspan.'"' : '').'>'.$langs->trans("Request").' '.($i + 1)." sql='".dol_htmlentities($newsql, ENT_NOQUOTES)."'</td></tr>\n";
 			}
 			dol_syslog('Admin.lib::run_sql Request '.($i + 1), LOG_DEBUG);
 			$sqlmodified = 0;
@@ -428,9 +429,9 @@ function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler
 				$num = count($reg[0]);
 
 				for ($j = 0; $j < $num; $j++) {
-					$from = $reg[0][$j];
+					$from = $reg[0][$j];  // @phan-suppress-current-line SqlInjection
 					$to = $db->encrypt($reg[1][$j]);
-					$newsql = str_replace($from, $to, $newsql);
+					$newsql = str_replace($from, $to, $newsql);  // @phan-suppress-current-line SqlInjection
 				}
 				$sqlmodified++;
 			}
@@ -440,9 +441,9 @@ function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler
 				$num = count($reg[0]);
 
 				for ($j = 0; $j < $num; $j++) {
-					$from = $reg[0][$j];
+					$from = $reg[0][$j];  // @phan-suppress-current-line SqlInjection
 					$to = $db->decrypt($reg[1][$j]);
-					$newsql = str_replace($from, $to, $newsql);
+					$newsql = str_replace($from, $to, $newsql);  // @phan-suppress-current-line SqlInjection
 				}
 				$sqlmodified++;
 			}
@@ -460,9 +461,9 @@ function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler
 					break;
 				}
 
-				$from = '__'.$cursor.'__';
+				$from = '__'.$cursor.'__';  // @phan-suppress-current-line SqlInjection
 				$to = $listofinsertedrowid[$cursor];
-				$newsql = str_replace($from, $to, $newsql);
+				$newsql = str_replace($from, $to, $newsql);  // @phan-suppress-current-line SqlInjection
 				$sqlmodified++;
 			}
 
@@ -537,19 +538,19 @@ function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler
 		//if (!empty($conf->use_javascript_ajax)) {		// use_javascript_ajax is not defined
 		print '<script type="text/javascript">
 		jQuery(document).ready(function() {
-			function init_trrunsql'.$keyforsql.'()
+			function init_trrunsql'.$keyforsqlfile.'()
 			{
-				console.log("toggle .trforrunsql'.$keyforsql.'");
-				jQuery(".trforrunsql'.$keyforsql.'").toggle();
+				console.log("toggle .trforrunsql'.$keyforsqlfile.'");
+				jQuery(".trforrunsql'.$keyforsqlfile.'").toggle();
 			}
-			init_trrunsql'.$keyforsql.'();
-			jQuery(".trforrunsqlshowhide'.$keyforsql.'").click(function() {
-				init_trrunsql'.$keyforsql.'();
+			init_trrunsql'.$keyforsqlfile.'();
+			jQuery(".trforrunsqlshowhide'.$keyforsqlfile.'").click(function() {
+				init_trrunsql'.$keyforsqlfile.'();
 			});
 		});
 		</script>';
 		if (count($arraysql)) {
-			print ' - <a class="reposition trforrunsqlshowhide'.$keyforsql.' reposition" href="#" title="'.($langs->trans("ShowHideTheNRequests", count($arraysql))).'">'.$langs->trans("ShowHideDetails").'</a>';
+			print ' - <a class="reposition trforrunsqlshowhide'.$keyforsqlfile.' reposition" href="#" title="'.($langs->trans("ShowHideTheNRequests", count($arraysql))).'">'.$langs->trans("ShowHideDetails").'</a>';
 		} else {
 			print ' - <span class="opacitymedium">'.$langs->trans("ScriptIsEmpty").'</span>';
 		}
@@ -717,11 +718,11 @@ function dolibarr_set_const($db, $name, $value, $type = 'chaine', $visible = 0, 
 	$resql = $db->query($sql);
 
 	if (strcmp($value, '')) {	// true if different. Must work for $value='0' or $value=0
-		if (!preg_match('/^(MAIN_LOGEVENTS|MAIN_AGENDA_ACTIONAUTO)/', $name) && (preg_match('/(_KEY|_EXPORTKEY|_SECUREKEY|_SERVERKEY|_PASS|_PASSWORD|_PW|_PW_TICKET|_PW_EMAILING|_SECRET|_SECURITY_TOKEN|_WEB_TOKEN)$/', $name))) {
+		$tmpname = preg_replace('/(_TEST|_PROD)$/', '', $name);
+		if (!preg_match('/^(MAIN_LOGEVENTS|MAIN_AGENDA_ACTIONAUTO)/', $name) && (preg_match('/(_KEY|_EXPORTKEY|_SECUREKEY|_SERVERKEY|_PASS|_PASSWORD|_PW|_PW_TICKET|_PW_EMAILING|_SECRET|_SECURITY_TOKEN|_WEB_TOKEN)$/', $tmpname))) {
 			// This seems a sensitive constant, we encrypt its value
 			// To list all sensitive constant, you can make a
-			// WHERE name like '%\_KEY' or name like '%\_EXPORTKEY' or name like '%\_SECUREKEY' or name like '%\_SERVERKEY' or name like '%\_PASS' or name like '%\_PASSWORD' or name like '%\_SECRET'
-			// or name like '%\_SECURITY_TOKEN' or name like '%\WEB_TOKEN'
+			// SELECT * from llx_const WHERE name like '%\_KEY' or name like '%\_EXPORTKEY' or name like '%\_SECUREKEY' ...
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 			$newvalue = dolEncrypt($value);
 		} else {
@@ -1306,7 +1307,7 @@ function activateModule($value, $withdeps = 1, $noconfverification = 0, $options
 			}
 
 			if (isset($objMod->conflictwith) && is_array($objMod->conflictwith) && !empty($objMod->conflictwith)) {
-				// Deactivation des modules qui entrent en conflict
+				// Deactivation of modules that are in conflict
 				$num = count($objMod->conflictwith);
 				for ($i = 0; $i < $num; $i++) {
 					foreach ($modulesdir as $dir) {
@@ -1494,7 +1495,7 @@ function complete_dictionary_with_modules(&$taborder, &$tabname, &$tablib, &$tab
 
 							if (!empty($objMod->dictionaries)) {
 								//var_dump($objMod->dictionaries['tabname']);
-								$nbtabname = $nbtablib = $nbtabsql = $nbtabsqlsort = $nbtabfield = $nbtabfieldvalue = $nbtabfieldinsert = $nbtabrowid = $nbtabcond = $nbtabfieldcheck = $nbtabhelp = 0;
+								$nbtabname = $nbtablib = $nbtabsqlsort = $nbtabfield = $nbtabfieldvalue = $nbtabfieldinsert = $nbtabrowid = $nbtabcond = $nbtabfieldcheck = $nbtabhelp = $nbtabsql = 0;
 								$tabnamerelwithkey = array();
 								foreach ($objMod->dictionaries['tabname'] as $key => $val) {
 									$tmptablename = preg_replace('/'.MAIN_DB_PREFIX.'/', '', $val);
@@ -1513,14 +1514,14 @@ function complete_dictionary_with_modules(&$taborder, &$tabname, &$tablib, &$tab
 								foreach ($objMod->dictionaries['tabsql'] as $key => $val) {
 									$tmptablename = preg_replace('/'.MAIN_DB_PREFIX.'/', '', $tabnamerelwithkey[$key]);
 									$nbtabsql++;
-									$tabsql[] = $val;
-									$tabcomplete[$tmptablename]['sql'] = $val;
+									$tabsql[] = $val;  // @phan-suppress-current-line SqlInjection
+									$tabcomplete[$tmptablename]['sql'] = $val;  // @phan-suppress-current-line SqlInjection
 								}
 								foreach ($objMod->dictionaries['tabsqlsort'] as $key => $val) {
 									$tmptablename = preg_replace('/'.MAIN_DB_PREFIX.'/', '', $tabnamerelwithkey[$key]);
 									$nbtabsqlsort++;
-									$tabsqlsort[] = $val;
-									$tabcomplete[$tmptablename]['sqlsort'] = $val;
+									$tabsqlsort[] = $val;  // @phan-suppress-current-line SqlInjection
+									$tabcomplete[$tmptablename]['sqlsort'] = $val;  // @phan-suppress-current-line SqlInjection
 								}
 								foreach ($objMod->dictionaries['tabfield'] as $key => $val) {
 									$tmptablename = preg_replace('/'.MAIN_DB_PREFIX.'/', '', $tabnamerelwithkey[$key]);
@@ -1537,14 +1538,14 @@ function complete_dictionary_with_modules(&$taborder, &$tabname, &$tablib, &$tab
 								foreach ($objMod->dictionaries['tabfieldinsert'] as $key => $val) {
 									$tmptablename = preg_replace('/'.MAIN_DB_PREFIX.'/', '', $tabnamerelwithkey[$key]);
 									$nbtabfieldinsert++;
-									$tabfieldinsert[] = $val;
-									$tabcomplete[$tmptablename]['fieldinsert'] = $val;
+									$tabfieldinsert[] = $val;  // @phan-suppress-current-line SqlInjection
+									$tabcomplete[$tmptablename]['fieldinsert'] = $val;  // @phan-suppress-current-line SqlInjection
 								}
 								foreach ($objMod->dictionaries['tabrowid'] as $key => $val) {
 									$tmptablename = preg_replace('/'.MAIN_DB_PREFIX.'/', '', $tabnamerelwithkey[$key]);
 									$nbtabrowid++;
-									$tabrowid[] = $val;
-									$tabcomplete[$tmptablename]['rowid'] = $val;
+									$tabrowid[] = (int) $val;
+									$tabcomplete[$tmptablename]['rowid'] = (int) $val;
 								}
 								foreach ($objMod->dictionaries['tabcond'] as $key => $val) {
 									$tmptablename = preg_replace('/'.MAIN_DB_PREFIX.'/', '', $tabnamerelwithkey[$key]);
@@ -1821,7 +1822,7 @@ function form_constantes($tableau, $strictw3c = 2, $helptext = '', $text = '')
 		$sql .= ", note";
 		$sql .= " FROM ".MAIN_DB_PREFIX."const";
 		$sql .= " WHERE ".$db->decrypt('name')." = '".$db->escape($const)."'";
-		$sql .= " AND entity IN (0, ".$conf->entity.")";
+		$sql .= " AND entity IN (0, ".((int) $conf->entity).")";
 		$sql .= " ORDER BY name ASC, entity DESC";
 		$result = $db->query($sql);
 

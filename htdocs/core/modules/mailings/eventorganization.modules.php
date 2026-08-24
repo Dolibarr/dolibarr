@@ -184,7 +184,7 @@ class mailing_eventorganization extends MailingTargets
 
 		//print $sql;
 
-		// La requete doit retourner un champ "nb" pour etre comprise par parent::getNbOfRecipients
+		// The query must return a field "nb" to be understood by parent::getNbOfRecipients
 		return parent::getNbOfRecipients($sql);
 	}
 
