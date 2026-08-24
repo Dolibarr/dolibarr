@@ -165,7 +165,8 @@ if ($modulepart == 'invoice_supplier') {
 	 "document_info": {
 	  "document_ref": "<document ref or number>",
 	  "date": "<date>",
-	  "title": "<title>"
+	  "title": "<title>",
+	  "currency_code": "<currency_code>"
 	 },
 	 "vendor": {
 	  "name": "<name>",
