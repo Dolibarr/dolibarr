@@ -248,7 +248,7 @@ if ($object->id) {
 					$filename = $obj['photo'];
 				}
 
-				// Nom affiche
+				// Displayed name
 				$viewfilename = $obj['photo'];
 
 				// Taille de l'image
@@ -278,7 +278,7 @@ if ($object->id) {
 				}
 			}
 
-			// Ferme tableau
+			// Close array
 			while ($nbphoto % $nbbyrow) {
 				print '<td width="'.ceil(100 / $nbbyrow).'%">&nbsp;</td>';
 				$nbphoto++;

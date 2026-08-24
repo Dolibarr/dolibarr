@@ -1307,7 +1307,7 @@ function activateModule($value, $withdeps = 1, $noconfverification = 0, $options
 			}
 
 			if (isset($objMod->conflictwith) && is_array($objMod->conflictwith) && !empty($objMod->conflictwith)) {
-				// Deactivation des modules qui entrent en conflict
+				// Deactivation of modules that are in conflict
 				$num = count($objMod->conflictwith);
 				for ($i = 0; $i < $num; $i++) {
 					foreach ($modulesdir as $dir) {
