@@ -1387,16 +1387,6 @@ class Paiement extends CommonObject
 
 
 	/**
-	 *  Return clickable name (with picto eventually)
-	 *
-	 *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
-	 *	@param	string	$option			What the link points to
-	 *  @param  string  $mode           'withlistofinvoices'=Include list of invoices into tooltip
-	 *  @param	int  	$notooltip		1=Disable tooltip
-	 *  @param	string	$morecss		Add more CSS
-	 *	@return	string					String with URL
-	 */
-	/**
 	 * Return array with content of the tooltip, so the getNomUrl() tooltip becomes hookable
 	 * (a module can toggle, reorder or add entries through the getTooltipContent hook).
 	 *
@@ -1426,6 +1416,16 @@ class Paiement extends CommonObject
 		return $datas;
 	}
 
+	/**
+	 *  Return clickable name (with picto eventually)
+	 *
+	 *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
+	 *	@param	string	$option			What the link points to
+	 *  @param  string  $mode           'withlistofinvoices'=Include list of invoices into tooltip
+	 *  @param	int  	$notooltip		1=Disable tooltip
+	 *  @param	string	$morecss		Add more CSS
+	 *	@return	string					String with URL
+	 */
 	public function getNomUrl($withpicto = 0, $option = '', $mode = 'withlistofinvoices', $notooltip = 0, $morecss = '')
 	{
 		global $conf, $langs, $hookmanager;

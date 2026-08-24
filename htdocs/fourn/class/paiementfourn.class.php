@@ -733,6 +733,16 @@ class PaiementFourn extends Paiement
 		return $datas;
 	}
 
+	/**
+	 *	Return clickable name (with picto eventually)
+	 *
+	 *	@param		int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
+	 *	@param		string	$option			What is the link pointing to
+	 *  @param		string  $mode           'withlistofinvoices'=Include list of invoices into tooltip
+	 *  @param		int  	$notooltip		1=Disable tooltip
+	 *  @param		string	$morecss		Add more CSS
+	 *	@return		string					String with URL
+	 */
 	public function getNomUrl($withpicto = 0, $option = '', $mode = 'withlistofinvoices', $notooltip = 0, $morecss = '')
 	{
 		global $langs, $conf, $hookmanager;
