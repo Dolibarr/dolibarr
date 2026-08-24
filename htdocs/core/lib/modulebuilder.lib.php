@@ -648,7 +648,7 @@ function reWriteAllPermissions($file, $permissions, $key, $right, $objectname, $
 		$permissions = $perms_grouped;
 
 
-		// parcourir les objects
+		// iterate over the objects
 		$o = 0;
 		foreach ($permissions as &$object) {
 			// get the object permission
