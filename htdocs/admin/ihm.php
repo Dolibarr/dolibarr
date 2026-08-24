@@ -387,7 +387,7 @@ print load_fiche_titre($form->textwithpicto($langs->trans("GUISetup"), $langs->t
 // WYSIWYG Editor
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
-print '<form enctype="multipart/form-data" method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
+print '<form enctype="multipart/form-data" method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 print '<input type="hidden" name="page_y" value="">';

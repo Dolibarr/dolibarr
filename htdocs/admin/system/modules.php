@@ -222,7 +222,7 @@ foreach ($modules as $key => $module) {
 
 llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-system_modules');
 print $info_admin;
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formulaire">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formulaire" spellcheck="false">';
 if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 }

@@ -556,7 +556,7 @@ print '</table>';
 print '</div><br>';
 
 
-print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" enctype="multipart/form-data" >';
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" enctype="multipart/form-data"  spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="setvarworkflow">';
 print '<input type="hidden" name="page_y" value="">';
@@ -666,7 +666,7 @@ print load_fiche_titre($langs->trans("Notifications"), '', '');
 
 print '<table class="noborder centpercent">';
 
-print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" enctype="multipart/form-data" >';
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" enctype="multipart/form-data"  spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="setvar">';
 print '<input type="hidden" name="page_y" value="">';

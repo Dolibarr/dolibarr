@@ -545,7 +545,7 @@ foreach ($substitutionarray as $key => $val) {
 }
 $htmltext .= '</i>';
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set_FICHINTER_FREE_TEXT">';
 print '<tr class="oddeven"><td colspan="2">';
@@ -564,7 +564,7 @@ print "</td></tr>\n";
 print '</form>';
 
 //Use draft Watermark
-print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
+print '<form method="post" action="'.$_SERVER["PHP_SELF"].'" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print "<input type=\"hidden\" name=\"action\" value=\"set_FICHINTER_DRAFT_WATERMARK\">";
 print '<tr class="oddeven"><td>';

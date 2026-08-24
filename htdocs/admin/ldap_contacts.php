@@ -153,7 +153,7 @@ print dol_get_fiche_head($head, 'contacts', '', -1);
 print '<span class="opacitymedium">'.$langs->trans("LDAPDescContact").'</span><br>';
 print '<br>';
 
-print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=setvalue&token='.newToken().'">';
+print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=setvalue&token='.newToken().'" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
 print '<table class="noborder centpercent">';

@@ -201,7 +201,7 @@ print '<div class="info">'.$langs->trans("ConstDesc")."</div><br>\n";
 
 $param = '';
 
-print '<form action="'.$_SERVER["PHP_SELF"].((empty($user->entity) && $debug) ? '?debug=1' : '').'" method="POST">';
+print '<form action="'.$_SERVER["PHP_SELF"].((empty($user->entity) && $debug) ? '?debug=1' : '').'" method="POST" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" id="action" name="action" value="add">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';

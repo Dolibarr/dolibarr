@@ -460,7 +460,7 @@ if ($id) {
 
 	$fieldlist = explode(',', $tabfield[$id]);
 
-	print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
+	print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST" spellcheck="false">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 
 	print '<div class="div-table-responsive-no-min">';
@@ -543,7 +543,7 @@ if ($id) {
 		if ($num) {
 			print '<br>';
 
-			print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
+			print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST" spellcheck="false">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="page" value="'.$page.'">';
 			print '<input type="hidden" name="rowid" value="'.$rowid.'">';
