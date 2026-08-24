@@ -328,7 +328,12 @@ if ($disablenofollow) {
 <?php
 if (!empty($captcha)) {
 	// Add a variable param to force not using cache (jmobile)
-	$php_self = preg_replace('/[&\?]time=(\d+)/', '', $php_self); // Remove param time
+	// Remove all previous 'time' params first. $php_self is escaped with dol_escape_htmltag(), so separators
+	// may be '&amp;': without this, one more 'time' param is added on each load (endless URL, crawler trap).
+	$php_self = preg_replace('/(\?|&amp;|&)time=\d+/', '$1', $php_self);
+	$php_self = preg_replace('/(&amp;|&)+/', '&amp;', $php_self);
+	$php_self = preg_replace('/(\?|&amp;|&)+$/', '', $php_self);
+	$php_self = preg_replace('/\?(&amp;|&)/', '?', $php_self);
 	if (preg_match('/\?/', $php_self)) {
 		$php_self .= '&time='.dol_print_date(dol_now(), 'dayhourlog');
 	} else {
