@@ -92,7 +92,7 @@ print "</table></div></form><br>\n";
 
 
 
-// Affiche stats de tous les modules de destinataires mailings
+// Display stats of all recipient mailing modules
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("TargetsStatistics").'</td></tr>';
 

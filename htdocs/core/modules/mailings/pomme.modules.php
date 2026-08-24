@@ -116,7 +116,7 @@ class mailing_pomme extends MailingTargets
 			$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = u.email and mu.entity = ".((int) $conf->entity).")";
 		}
 
-		// La requete doit retourner un champ "nb" pour etre comprise par parent::getNbOfRecipients
+		// The query must return a field "nb" to be understood by parent::getNbOfRecipients
 		return parent::getNbOfRecipients($sql);
 	}
 
@@ -179,7 +179,7 @@ class mailing_pomme extends MailingTargets
 
 		$cibles = array();
 
-		// La requete doit retourner: id, email, fk_contact, lastname, firstname
+		// The query must return: id, email, fk_contact, lastname, firstname
 		$sql = "SELECT u.rowid as id, u.email as email, null as fk_contact,";
 		$sql .= " u.lastname, u.firstname as firstname, u.civility as civility_id, u.login, u.office_phone";
 		$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
@@ -203,7 +203,7 @@ class mailing_pomme extends MailingTargets
 		}
 		$sql .= " ORDER BY u.email";
 
-		// Stocke destinataires dans cibles
+		// Store recipients into targets
 		$result = $this->db->query($sql);
 		if ($result) {
 			$num = $this->db->num_rows($result);
