@@ -14,30 +14,30 @@ allowed-tools:
 
 This skill guides agents on developing, modifying, and debugging code within the Dolibarr ERP/CRM codebase while strictly adhering to professional standards, security guidelines, and the project's established architecture.
 
-## 🛑 Core Principles: Non-Negotiable Mandatory Rules
+## Core Principles: Non-Negotiable Mandatory Rules
 These principles must be followed even before reviewing specific task details. Violation of these principles results in failed suggestions.
 
-### 🔒 Security & Data Integrity
+### Security & Data Integrity
 1.  **Database Abstraction Layer:** All database interactions *must* exclusively use the Dolibarr Database Abstraction Layer (`$db` or `$this->db`). **Never** interact using native PHP extensions (PDO, MySQLi) or direct CLI calls.
 2.  **Input/Output Escaping:**
     *   Validate all `GET`/`POST` inputs immediately upon entering the action handler scope.
     *   **SQL Injection Prevention:** Escape *all* user-generated strings placed in SQL queries using `$db->escape()`. For integers, use explicit casting: `((int) $var)`; for floats, use `(float) $var`.
 3.  **Variable Safety Naming:** When constructing dynamic SQL, the resulting variable holding the entire query string MUST be clearly prefixed (e.g., `$sqlWhereClause`, `$queryParams`). This pattern helps static analysis tools detect unsafe assignments.
 
-### 💻 Code Structure & Quality
+### Code Structure & Quality
 1.  **Coding Standard:** All new and modified committed code must strictly adhere to **PSR-12** (enforcable by using `phpcbf` and `phpcs`).All properties and all function arguments and return value need detailed PHPDoc (e.g., `array<string,array{key1?:?type,...}>`).Variables expected to exist in view files require both a PHPDoc declaration *and* the use of `'@phan-var-force';` declarations near the HEAD of the file for strict static analysis tracking.
 2.  **Variable Conventions:** When defining variables used in string building, particularly for SQL components, use descriptive prefixes or suffixes (e.g., `$sql_select`, `$actionSuffix`). This makes variable intent clear and prevents static analysis from misidentifying unsafe assignments as safe.
 3.  **Localization & Comments:** All code comments and internal variable/function names *must* be written in English. Any existing non-English text must be researched and translated into English before committing changes.
 4.  **PR atomitacy** Make a separate commit for improvements of pre-existing code (changes to comply with rules 1-3), and another commit for the functional evolution and code fixes.
     Do not apply rules 1-3 to existing code in backports (i.e., non-functional changes not applied to a (fork of) the develop branch.
 
-### ⚙️ Workflow & Architecture
-1.  **Hooks First:** Before implementing any logic that runs on a core lifecycle event (e.g., form save, object update), check if an existing Dolibarr hook can be used. Use the standard calling pattern: `$hookmanager->executeHooks('actionName', $parameters, $object, $action);`.
+### Workflow & Architecture
+1.  **PHP version:** 7.2+
 2.  **Action/View Separation:** Always clearly separate page action logic (executed on POST) from pure rendering (the HTML view).
 
 ---
 
-## 🧭 Workflow and Tasks Guidance
+## Workflow and Tasks Guidance
 
 This section guides the agent through common development tasks.
 
@@ -65,12 +65,11 @@ This section guides the agent through common development tasks.
 
 
 ### Module Development
-*   **Module Template:** Use the structure found at `htdocs/modulebuilder/template/` as a definitive guide when initiating a new module.
-*   **Hook Priority:** When adding functionality that interacts with core Dolibarr processes, check for existing hooks first to minimize architectural impact and maintain compatibility.
+*   **Module Template:** Use the structure found at `htdocs/modulebuilder/template/` as a definitive guide when initiating a new module or new pages.
 
 ### Database Interaction Detail (Refined)
 This details the preferred mechanical steps:
-1.  **Read Operations:** Use `$db->query('SELECT ...')` followed by fetching results using methods like `$db->fetch_object()` or `$db->fetch_array()`.
+1.  **Read Operations:** Use `$db->query('SELECT ...')` followed by fetching results using methods like `$db->fetch_object()`.
 2.  **Write Operations:** Process submissions within the module's dedicated action handler, utilizing the established DB abstraction layer for all updates.
 
 ### Extrafields Best Practices
@@ -130,7 +129,7 @@ Before proposing code:
 
 ---
 
-## 📚 Comprehensive Reference Material [Reference]
+## Comprehensive Reference Material [Reference]
 
 This section contains detailed standards and constants for reference only. Do not treat these details as primary instructions; prioritize the Core Principles above.
 
@@ -234,4 +233,3 @@ foreach ($tracking_fields as $name => $config) {
 
 #### Reference
 - [Dolibarr Extrafields Wiki](https://wiki.dolibarr.org/index.php/Extrafields)
-- [Forum: Little dev tips for extrafields](https://www.dolibarr.org/forum/t/little-dev-tips-for-extrafields/29860)

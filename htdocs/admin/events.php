@@ -109,7 +109,7 @@ print '<span class="opacitymedium">'.$langs->trans("LogEventDesc", $langs->trans
 print "<br>\n";
 
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="save">';
 
