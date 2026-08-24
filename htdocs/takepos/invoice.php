@@ -503,7 +503,12 @@ if (empty($reshook)) {
 						$mouvP = new MouvementStock($db);
 						$mouvP->setOrigin($invoice->element, $invoice->id);
 
-						$res = $mouvP->livraison($user, $line->fk_product, $warehouseid, $line->qty, $line->price, $labeltakeposmovement, '', '', '', $prod_batch->batch, $prod_batch->id, $inventorycode);
+						if ($invoice->type == Facture::TYPE_CREDIT_NOTE) {
+							$res = $mouvP->reception($user, $line->fk_product, $warehouseid, $line->qty, $line->price, $labeltakeposmovement, '', '', $line->batch, '', 0, $inventorycode);
+						} else {
+							$res = $mouvP->livraison($user, $line->fk_product, $warehouseid, $line->qty, $line->price, $labeltakeposmovement, '', '', '', $prod_batch->batch, $prod_batch->id, $inventorycode);
+						}
+
 						if ($res < 0) {
 							dol_htmloutput_errors($mouvP->error, $mouvP->errors, 1);
 							$error++;
@@ -512,7 +517,12 @@ if (empty($reshook)) {
 						$mouvP = new MouvementStock($db);
 						$mouvP->setOrigin($invoice->element, $invoice->id);
 
-						$res = $mouvP->livraison($user, $line->fk_product, $warehouseid, $line->qty, $line->price, $labeltakeposmovement, '', '', '', '', 0, $inventorycode);
+						if ($invoice->type == Facture::TYPE_CREDIT_NOTE) {
+							$res = $mouvP->reception($user, $line->fk_product, $warehouseid, $line->qty, $line->price, $labeltakeposmovement, '', '', '', '', 0, $inventorycode);
+						} else {
+							$res = $mouvP->livraison($user, $line->fk_product, $warehouseid, $line->qty, $line->price, $labeltakeposmovement, '', '', '', '', 0, $inventorycode);
+						}
+
 						if ($res < 0) {
 							dol_htmloutput_errors($mouvP->error, $mouvP->errors, 1);
 							$error++;
@@ -659,82 +669,12 @@ if (empty($reshook)) {
 		}
 		$creditnote->update_price(1);
 
-		// The credit note is create here. We must now validate it.
+		// The credit note is created here.
+		// We DO NOT validate it automatically so that it can be edited from TakePOS (e.g. to modify quantities or batches).
+		// Stock movements will be done when the credit note is validated later (via Payment / Valid action).
+		$res = 1;
 
-		$constantforkey = 'CASHDESK_NO_DECREASE_STOCK'.(isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '');
-		$allowstockchange = getDolGlobalString($constantforkey) != "1";
-
-		if (isModEnabled('stock') && !isModEnabled('productbatch') && $allowstockchange) {
-			// If module stock is enabled and we do not setup takepo to disable stock decrease
-			// The case for isModEnabled('productbatch') is processed few lines later.
-			$savconst = getDolGlobalString('STOCK_CALCULATE_ON_BILL');
-			$conf->global->STOCK_CALCULATE_ON_BILL = 1;	// We force setup to have update of stock on invoice validation/unvalidation
-
-			$constantforkey = 'CASHDESK_ID_WAREHOUSE'.(isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '');
-			$warehouseid = getDolGlobalInt($constantforkey);
-
-			dol_syslog("Validate invoice with stock change into warehouse defined into constant ".$constantforkey." = ".getDolGlobalString($constantforkey)." or warehouseid= ".$warehouseid." if defined.");
-
-			// Validate invoice with stock change into warehouse getDolGlobalInt($constantforkey)
-			// Label of stock movement will be the same as when we validate invoice "Invoice XXXX validated"
-			$batch_rule = 0;	// Module productbatch is disabled here, so no need for a batch_rule.
-			$res = $creditnote->validate($user, '', $warehouseid, 0, $batch_rule);
-			if ($res < 0) {
-				$error++;
-				dol_htmloutput_errors($creditnote->error, $creditnote->errors, 1);
-			}
-
-			// Restore setup
-			$conf->global->STOCK_CALCULATE_ON_BILL = $savconst;
-		} else {
-			$res = $creditnote->validate($user);
-		}
-
-		// Update stock for batch products
-		if (!$error && $res >= 0) {
-			if (isModEnabled('stock') && isModEnabled('productbatch') && $allowstockchange) {
-				// Update stocks
-				dol_syslog("Now we record the stock movement for each qualified line");
-
-				// The case !isModEnabled('productbatch') was processed few lines before.
-				require_once DOL_DOCUMENT_ROOT . "/product/stock/class/mouvementstock.class.php";
-				$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];
-				$inventorycode = dol_print_date(dol_now(), 'dayhourlog');
-				// Label of stock movement will be "TakePOS - Invoice XXXX"
-				$labeltakeposmovement = 'TakePOS - '.$langs->trans("CreditNote").' '.$creditnote->ref;
-
-				foreach ($creditnote->lines as $line) {
-					// Use the warehouse id defined on invoice line else in the setup
-					$warehouseid = ($line->fk_warehouse ? $line->fk_warehouse : getDolGlobalInt($constantforkey));
-					//var_dump('fk_product='.$line->fk_product.' batch='.$line->batch.' warehouse='.$line->fk_warehouse.' qty='.$line->qty);exit;
-
-					if ($line->batch != '' && $warehouseid > 0) {
-						//$prod_batch = new Productbatch($db);
-						//$prod_batch->find(0, '', '', $line->batch, $warehouseid);
-
-						$mouvP = new MouvementStock($db);
-						$mouvP->setOrigin($creditnote->element, $creditnote->id);
-
-						$res = $mouvP->reception($user, $line->fk_product, $warehouseid, $line->qty, $line->price, $labeltakeposmovement, '', '', $line->batch, '', 0, $inventorycode);
-						if ($res < 0) {
-							dol_htmloutput_errors($mouvP->error, $mouvP->errors, 1);
-							$error++;
-						}
-					} else {
-						$mouvP = new MouvementStock($db);
-						$mouvP->setOrigin($creditnote->element, $creditnote->id);
-
-						$res = $mouvP->reception($user, $line->fk_product, $warehouseid, $line->qty, $line->price, $labeltakeposmovement, '', '', '', '', 0, $inventorycode);
-						if ($res < 0) {
-							dol_htmloutput_errors($mouvP->error, $mouvP->errors, 1);
-							$error++;
-						}
-					}
-				}
-			}
-		}
-
-		if (!$error && $res >= 0) {
+		if (!$error) {
 			$db->commit();
 		} else {
 			$creditnote->id = $placeid;	// Creation has failed, we reset to ID of source invoice so we go back to this one in action=history
@@ -1173,12 +1113,19 @@ if (empty($reshook)) {
 				if (!$permissiontoupdateline) {
 					dol_htmloutput_errors($langs->trans("NotEnoughPermissions", "TakePos").' - No permission to updateqty', [], 1);
 				} else {
-					$vatratecode = $line->tva_tx;
-					if ($line->vat_src_code) {
-						$vatratecode .= ' ('.$line->vat_src_code.')';
-					}
+					if ($number <= 0) {
+						$result = takeposDeleteLineWithChildren($invoice, $line->id);
+						if ($result < 0) {
+							dol_htmloutput_errors($invoice->error, $invoice->errors, 1);
+						}
+					} else {
+						$vatratecode = $line->tva_tx;
+						if ($line->vat_src_code) {
+							$vatratecode .= ' ('.$line->vat_src_code.')';
+						}
 
-					$result = $invoice->updateline($line->id, $line->desc, $line->subprice, $number, $line->remise_percent, $line->date_start, $line->date_end, $vatratecode, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit);
+						$result = $invoice->updateline($line->id, $line->desc, $line->subprice, $number, $line->remise_percent, $line->date_start, $line->date_end, $vatratecode, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit);
+					}
 				}
 			}
 		}
