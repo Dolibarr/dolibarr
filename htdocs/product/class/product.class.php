@@ -6165,7 +6165,7 @@ class Product extends CommonObject
 		$langs->load("products");
 		$outputlangs->load("products");
 
-		// Positionne le modele sur le nom du modele a utiliser
+		// Set the model to the name of the model to use
 		if (!dol_strlen($modele)) {
 			$modele = getDolGlobalString('PRODUCT_ADDON_PDF', 'strato');
 		}
