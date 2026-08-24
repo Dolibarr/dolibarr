@@ -5897,6 +5897,7 @@ class Form
 			}
 
 			$postconfirmas = 'GET';
+			$maxurllengthforget = getDolGlobalInt('MAIN_MAX_URL_LENGTH_FOR_GET', 2000);
 
 			$formconfirm .= '
                     resizable: false,
@@ -5929,7 +5930,7 @@ class Form
                          	var urljump = pageyes + (pageyes.indexOf("?") < 0 ? "?" : "&") + options;
             				if (pageyes.length > 0) {';
 			if ($postconfirmas == 'GET') {
-				$formconfirm .= 'location.href = urljump;';
+				$formconfirm .= 'dolSubmitConfirmForm(urljump, pageyes, options, ' . $maxurllengthforget . ');';
 			} else {
 				$formconfirm .= $jsforcursor;
 				$formconfirm .= 'var post = $.post(
@@ -5961,7 +5962,7 @@ class Form
                          	//alert(urljump);
             				if (pageno.length > 0) {';
 			if ($postconfirmas == 'GET') {
-				$formconfirm .= 'location.href = urljump;';
+				$formconfirm .= 'dolSubmitConfirmForm(urljump, pageno, options, ' . $maxurllengthforget . ');';
 			} else {
 				$formconfirm .= $jsforcursor;
 				$formconfirm .= 'var post = $.post(
