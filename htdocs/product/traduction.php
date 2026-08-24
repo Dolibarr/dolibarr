@@ -91,7 +91,7 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 if (empty($reshook)) {
-	// retour a l'affichage des traduction si annulation
+	// return to translation display if cancelled
 	if ($cancel == $langs->trans("Cancel")) {
 		$action = '';
 	}

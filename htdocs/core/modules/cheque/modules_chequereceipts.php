@@ -146,7 +146,7 @@ function chequereceipt_pdf_create($db, $id, $message, $modele, $outputlangs)
 
 	$dir = DOL_DOCUMENT_ROOT."/core/modules/cheque/doc/";
 
-	// Positionne modele sur le nom du modele a utiliser
+	// Set model to the name of the model to use
 	if (!dol_strlen($modele)) {
 		if (getDolGlobalString('CHEQUERECEIPT_ADDON_PDF')) {
 			$modele = getDolGlobalString('CHEQUERECEIPT_ADDON_PDF');

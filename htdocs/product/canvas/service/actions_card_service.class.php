@@ -274,7 +274,7 @@ class ActionsCardService
 			$this->tpl['note'] = $this->note;
 
 			// Duration unit
-			// TODO creer fonction
+			// TODO create function
 			$duration_unit = '<input name="duration_unit" type="radio" value="h"'.($this->object->duration_unit == 'h' ? ' checked' : '').'>'.$langs->trans("Hour");
 			$duration_unit .= '&nbsp; ';
 			$duration_unit .= '<input name="duration_unit" type="radio" value="d"'.($this->object->duration_unit == 'd' ? ' checked' : '').'>'.$langs->trans("Day");
