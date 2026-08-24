@@ -15221,11 +15221,9 @@ function getElementProperties($elementType)
 	if (preg_match('/^([^@]+)@([^@]+)$/i', $elementType, $regs)) {	// 'myobject@mymodule'
 		$element = $subelement = $regs[1];
 		$module = $regs[2];
-	}
-
-	// If we ask a resource for a string with an element and a subelement
-	// Example 'project_task'
-	if (preg_match('/^([^_]+)_([^_]+)/i', $element, $regs)) {	// 'myobject_mysubobject' with myobject=mymodule
+	} elseif (preg_match('/^([^_]+)_([^_]+)/i', $element, $regs)) {	// 'myobject_mysubobject' with myobject=mymodule, example 'project_task'
+		// This is an alternative syntax to 'myobject@mymodule', so it must not be applied when the previous case already matched,
+		// otherwise the module resolved from the '@' syntax would be overwritten by a wrong guess when $element contains a '_'.
 		$module = $element = $regs[1];
 		$subelement = $regs[2];
 	}
@@ -15415,7 +15413,7 @@ function getElementProperties($elementType)
 	} elseif ($elementType == 'usergroup') {
 		$classpath = 'user/class';
 		$module = 'user';
-	} elseif ($elementType == 'mo' || $elementType == 'mrp') {
+	} elseif ($elementType == 'mrp') {
 		$classpath = 'mrp/class';
 		$classfile = 'mo';
 		$classname = 'Mo';
@@ -15485,6 +15483,7 @@ function getElementProperties($elementType)
 		$parent_element = 'invoice_supplier';
 	} elseif ($elementType == "service") {
 		$classpath = 'product/class';
+		$module = 'product';
 		$subelement = 'product';
 		$table_element = 'product';
 	} elseif ($elementType == 'salary') {
