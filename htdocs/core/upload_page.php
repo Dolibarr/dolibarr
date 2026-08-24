@@ -37,12 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/ai/class/ai.class.php';
 
-
-if (GETPOST('lang', 'aZ09')) {
-	$langs->setDefaultLang(GETPOST('lang', 'aZ09')); // If language was forced on URL by the main.inc.php
-}
-
-$langs->loadLangs(array("main", "other"));
+$langs->loadLangs(array("main", "export", "other"));
 
 $action = GETPOST('action', 'aZ09');
 $modulepart = GETPOST('modulepart', 'aZ09');
@@ -81,6 +76,7 @@ $originalfilename = preg_replace('/^upload_page-[a-z_]+-/', '', $originalfilenam
 $error = 0;
 
 $ai = new Ai($db);
+$ajaxFileUrl = '';
 
 
 /*
@@ -136,13 +132,14 @@ if ($action == 'uploadfile') {	// Test on permission not required here. Done lat
 		// $dir_output = output dir of object
 		// $dir_temp = temp dir of object
 		// $upload_dir is "users/temp/import"
-		include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
+		include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';		// Save uploaded file into $upload_dir (with overwrite if file already exists)
 
-		// TODO Add a js call of ajax service and show instead a message
+		// Call AI to decrypt the file
+		// Use AJAX call instead of redirect
 		// @phpstan-ignore-next-line $error may have been modified by actions_linkedfiles.inc.php
 		if (!$error) {
-			header("Location: ".DOL_URL_ROOT.'/core/ajax/ajaxuploadpage.php?file='.urlencode($fullnewname));
-			exit;
+			// We will make the AJAX call from the bottom of the page
+			$ajaxFileUrl = DOL_URL_ROOT.'/core/ajax/ajaxuploadpage.php?file='.urlencode($fullnewname);
 		}
 	}
 } else {
@@ -197,6 +194,10 @@ if (isModEnabled('supplier_invoice')) {
 	$uploadform .= '
 	<div id="supplierinvoice" class="flex-item flex-item-uploadfile">'.img_picto('', 'bill', 'class="fa-2x"').'<br>
 	<div>'.$langs->trans("SupplierInvoice").'<br><br>';
+
+	//$uploadform .= '<div class="disableautoopen paddingbottom">';
+	//$uploadform .= '<input type="checkbox" name="newsupplierinvoice" id="newsupplierinvoice" value="1" checked="checked" class="disableautoopen"><label for="newsupplierinvoice" class="disableautoopen">'.$langs->trans("NewInvoice").'</label><br>';
+	//$uploadform .= '</div>';
 
 	$uploadform .= img_picto('', 'company', 'class="pictofixedwidth"');
 	$uploadform .= $form->select_company(GETPOSTINT('socid'), 'socid', '(statut:=:0)', $langs->transnoentitiesnoconv("Supplier"), 0, 0, array(), 0, 'maxwidth200 disableautoopen');
@@ -278,7 +279,7 @@ $uploadform .= '<br>';
 
 
 if ($action == 'uploadfile') {
-	print $langs->trans("ImportInProcess", $originalfilename).'<br>';
+	print '<b>'.$langs->trans("ImportInProcess", $originalfilename).'</b><br>';
 	print '<br>';
 
 	print $langs->trans("AIProcessingPleaseWait", $ai->getApiService()).'...';
@@ -288,9 +289,122 @@ if ($action == 'uploadfile') {
 	    <div class="progress-bar" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
 	</div>';
 
+	print '<div id="ajax-result"></div>';
 
-	print '</form>';
-	print "\n<!-- End Form -->\n";
+	// Add AJAX call script
+	if (!empty($ajaxFileUrl)) {
+		print '<script>
+		$(document).ready(function() {
+			$.ajax({
+				url: \''.dol_escape_js($ajaxFileUrl).'\',
+				type: "GET",
+				dataType: "json",
+				beforeSend: function() {
+					$(".progress-bar").css("width", "25%");
+				},
+				success: function(data, textStatus, jqXHR) {
+					if (jqXHR.status === 200) {
+						// Display the JSON content
+						$("#ajax-result").html("<pre>" + JSON.stringify(data, null, 2) + "</pre>");
+						$(".progress-bar").css("width", "100%");
+					} else {
+						// Display error if status is not 200
+						$("#ajax-result").html("<div class=\"error\">Error: HTTP status " + jqXHR.status + "</div>");
+					}
+				},
+				error: function(jqXHR, textStatus, errorThrown) {
+					// Display error
+					$("#ajax-result").html("<div class=\"error\">Error: " + (jqXHR.responseText || errorThrown || "Unknown error") + "</div>");
+					$(".progress-bar").css("width", "100%");
+				}
+			});
+		});
+		</script>';
+	}
+
+	// Example of JSON result when importing a supplier PDF invoice
+	/* {
+		  "document_info": {
+			"type": "Facture",
+			"invoice_number": "MSTRL-API-1234-001",
+			"invoice_reference": "Pro - Annual",
+			"issue_date": "2026-08-21",
+			"due_date": "2026-08-21",
+			"payment_terms": {
+			  "days": 0,
+			  "description": "0 jours"
+			},
+			"organization": "MyBigCompany"
+		  },
+		  "vendor": {
+			"name": "Mistral AI SAS",
+			"address": {
+			  "street": "15, rue des Halles",
+			  "postal_code": "75001",
+			  "city": "Paris",
+			  "country": "France"
+			},
+			"vat_number": "FR95952418325",
+			"professional_id": {
+			  "siren": "952 418 325",
+			  "capital": "19,189.04 €",
+			  "rcs": "Paris"
+			},
+			"email": "no-reply@mistral.ai",
+			"contact_url": "https://help.mistral.ai/en"
+		  },
+		  "recipient": {
+			"name": "MyBigCompany",
+			"address": {
+			  "street": "1 rue de la paix",
+			  "postal_code": "75000",
+			  "city": "Paris",
+			  "country": "France"
+			},
+			"vat_number": "FR012345678901",
+			"email": "contact@mybigcompany.com"
+		  },
+		  "items": [
+			{
+			  "description": "Fee for use- August",
+			  "service": "Pro - Annual",
+			  "quantity": 1,
+			  "unit_price": 143.9,
+			  "vat_rate": 20,
+			  "total_excluding_tax": 143.9,
+			  "total_including_tax": 172.68,
+			  "period_start": "2026-08-21",
+			  "period_end": "2027-08-20"
+			}
+		  ],
+		  "summary": {
+			"subtotal_excluding_tax": 143.9,
+			"tax": {
+			  "rate": 20,
+			  "amount": 28.78,
+			  "description": "EU FR Standard (20.0% sur 143,90 €)"
+			},
+			"total_including_tax": 172.68
+		  },
+		  "payment_info": {
+			"due_date": "2026-08-21",
+			"amount_due": 172.68,
+			"currency": "EUR"
+		  },
+		  "other": {
+			"notes": [
+			  {
+				"type": "legal",
+				"content": "Mistral AI - SAS au capital de 19,189.04€ - 952 418 325 R.C.S. Paris"
+			  },
+			  {
+				"type": "contact",
+				"content": "For any inquiry, please refer to https://help.mistral.ai/en"
+			  }
+			]
+		  }
+		}
+	 */
 } else {
 	// Show all forms
 	print "\n";

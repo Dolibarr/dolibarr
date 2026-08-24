@@ -204,7 +204,7 @@ print load_fiche_titre($langs->trans("ExternalRSSSetup"), $linkback, 'title_setu
 print '<br>';
 
 // From to add
-print '<form name="externalrssconfig" action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<form name="externalrssconfig" action="'.$_SERVER["PHP_SELF"].'" method="post" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
 print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
@@ -266,7 +266,7 @@ if ($resql) {
 		$result = $rssparser->parser(getDolGlobalString($keyrssurl), 5, 300, $conf->externalrss->dir_temp);
 
 		print "<br>";
-		print '<form name="externalrssconfig" action="'.$_SERVER["PHP_SELF"].'" method="post">'."\n";
+		print '<form name="externalrssconfig" action="'.$_SERVER["PHP_SELF"].'" method="post" spellcheck="false">'."\n";
 
 		print '<table class="noborder centpercent">'."\n";
 		print '<input type="hidden" name="token" value="'.newToken().'">'."\n";

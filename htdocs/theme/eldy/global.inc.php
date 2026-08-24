@@ -3071,12 +3071,12 @@ a.pictosubstatus:hover {
 }
 .pictofixedwidth {
 	text-align: start;
-	width: 22px;	/* Do not use em unit here */
+	width: 22px;	/* Do not use em unit here, it varies on font size */
 	/* padding-right: 0; */
 }
 img.pictofixedwidth {
-	width: 16px;	/* Do not use em unit here */
-	padding-right: 6px;		/* width of img + padding-right must be equal to width of .pictofixedwidth */
+	width: 16px;	/* Do not use em unit here, it varies on font size */
+	padding-right: 6px;		/* img width + img padding-right must be equal to width of .pictofixedwidth */
 	margin-right: 4px;
 }
 
@@ -8010,11 +8010,11 @@ span#select2-boxbookmark-container {
 }
 span.select2-dropdown--below {
 	margin-top: -1px;
-	min-width: 100px;
+	min-width: 200px;
 }
 span.select2-dropdown--above {
 	margin-bottom: -1px;
-	min-width: 100px;
+	min-width: 200px;
 }
 
 .parentonrightofpage {
@@ -9535,9 +9535,15 @@ table.jPicker {
 
 	.pictofixedwidth {
 		text-align: start;
-		width: 1.5em;
-		/* padding-right: 0; */
+		width: 1.2rem;	/* Do not use em unit here, it varies on font size */
+		padding-right: 0.2rem;
 	}
+	img.pictofixedwidth {
+		width: 1.2rem;	/* Do not use em unit here, it varies on font size */
+		padding-right: 0.2rem;	/* img width + img padding-right must be equal to width + padding-right of .pictofixedwidth */
+		margin-right: 4px;
+	}
+
 	 table.titlemodulehelp tr td img.widthpictotitle {
 		width: 1.5em;
 	}

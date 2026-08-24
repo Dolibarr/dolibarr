@@ -172,3 +172,4 @@ UserDoesNotHaveRightsToChangeHisPassword=This user doesn't have the rights to ch
 NotPossible=Not possible
 NoPasswordGenerationRuleConfigured=The engine or rule to generate password has not been set or is set to empty password in the setup page.
 OnlyAdminUsersCanDeleteAdminUsers=Only admin users can delete admin users
+OnlySuperAdminUsersCanDeleteSuperAdminUsers=Only superadmin users can delete superadmin users
