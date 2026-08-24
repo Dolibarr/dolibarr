@@ -1,6 +1,7 @@
 <?php
 // Copyright (C) 2014 Cedric GROSS		<c.gross@kreiz-it.fr>
 // Copyright (C) 2017 Francis Appels	<francis.appels@z-application.com>
+// Copyright (C) 2026 Lenin Rivas		<lenin.rivas777@gmail.com>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -173,14 +174,18 @@ function addDispatchLine(index, type, mode) {
 		$("#qty_" + (nbrTrs - 1) + "_" + index).data('index', index);
 		// Update dispatched qty when value dispatch qty input field changed
 		//$("#qty_" + (nbrTrs - 1) + "_" + index).change(this.onChangeDispatchLineQty);
-		//set focus on lot of new line (if it exists)
-		$("#lot_number_" + (nbrTrs) + "_" + index).focus();
 		//Clean bad values
 		$("tr[name^='" + type + "_'][name$='_" + index + "']:last").data("remove", "remove");
-		$("#lot_number_" + (nbrTrs) + "_" + index).val("")
-		$("#idline_" + (nbrTrs) + "_" + index).val("-1")
+		$("#lot_number_" + (nbrTrs) + "_" + index).val("");
+		$("#idline_" + (nbrTrs) + "_" + index).val("-1");
 		$("#qty_" + (nbrTrs) + "_" + index).data('expected', "0");
 		$("#lot_number_" + (nbrTrs) + "_" + index).removeAttr("disabled");
+		//set focus on lot of new line (if it exists)
+		if ($("#lot_number_" + (nbrTrs) + "_" + index).length) {
+			$("#lot_number_" + (nbrTrs) + "_" + index).focus().select();
+		} else {
+			$("#qty_" + (nbrTrs) + "_" + index).focus().select();
+		}
 	}
 }
 
@@ -219,3 +224,51 @@ function onChangeDispatchLineQty(element) {
 		$(element).data('expected', $(element).val());
 	}
 }
+
+$(document).ready(function () {
+	$(document).on('keydown', '.inputlotnumber', function (e) {
+		if (e.key === 'Enter' || e.keyCode === 13 || e.which === 13) {
+			e.preventDefault();
+
+			var $input = $(this);
+			var $tr = $input.closest('tr');
+			var trName = $tr.attr('name');
+			if (!trName) {
+				return;
+			}
+
+			var parts = trName.split('_');
+			if (parts.length < 3) {
+				return;
+			}
+
+			var type = parts[0];
+			var rowIdx = parseInt(parts[1], 10);
+			var prodIdx = parseInt(parts[2], 10);
+
+			var $rows = $("tr[name^='" + type + "_'][name$='_" + prodIdx + "']");
+			var nbrTrs = $rows.length;
+
+			// If user is on the last row of this product line
+			if (rowIdx === nbrTrs - 1) {
+				var qty = parseFloat($("#qty_" + rowIdx + "_" + prodIdx).val());
+				if (qty > 1) {
+					addDispatchLine(prodIdx, type);
+				} else {
+					// Last line for this product reached, try focusing next product line if available
+					var nextProdIdx = prodIdx + 1;
+					var $nextLot = $("#lot_number_0_" + nextProdIdx);
+					if ($nextLot.length && !$nextLot.prop('disabled')) {
+						$nextLot.focus().select();
+					}
+				}
+			} else {
+				// Move focus to next row's lot input if it exists
+				var $nextRowLot = $("#lot_number_" + (rowIdx + 1) + "_" + prodIdx);
+				if ($nextRowLot.length) {
+					$nextRowLot.focus().select();
+				}
+			}
+		}
+	});
+});
