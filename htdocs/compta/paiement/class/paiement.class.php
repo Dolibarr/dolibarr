@@ -207,8 +207,8 @@ class Paiement extends CommonObject
 	 */
 	public $bank_line;
 
-	// fk_paiement dans llx_paiement est l'id du type de paiement (7 pour CHQ, ...)
-	// fk_paiement dans llx_paiement_facture est le rowid du paiement
+	// fk_paiement in llx_paiement is the id of the payment type (7 for CHQ, ...)
+	// fk_paiement in llx_paiement_facture is rowid of payment
 	/**
 	 * @var int payment id
 	 */
@@ -659,7 +659,7 @@ class Paiement extends CommonObject
 			dol_syslog(get_class($this).'::create Now we call the triggers if no error (error = '.$error.')', LOG_DEBUG);
 
 			if (!$error) {    // All payments into $this->amounts were recorded without errors
-				// Appel des triggers
+				// Call triggers
 				$result = $this->call_trigger('PAYMENT_CUSTOMER_CREATE', $user);
 				if ($result < 0) {
 					$error++;
@@ -875,8 +875,8 @@ class Paiement extends CommonObject
 				(float) $totalamount_main_currency
 			);
 
-			// Mise a jour fk_bank dans llx_paiement
-			// On connait ainsi le paiement qui a genere l'ecriture bancaire
+			// Update fk_bank in llx_paiement
+			// This way we know the payment that generated the bank entry
 			if ($bank_line_id > 0) {
 				$result = $this->update_fk_bank($bank_line_id);
 				if ($result <= 0) {
@@ -970,7 +970,7 @@ class Paiement extends CommonObject
 				}
 
 				if (!$error && !$notrigger) {
-					// Appel des triggers
+					// Call triggers
 					$result = $this->call_trigger('PAYMENT_ADD_TO_BANK', $user);
 					if ($result < 0) {
 						$error++;

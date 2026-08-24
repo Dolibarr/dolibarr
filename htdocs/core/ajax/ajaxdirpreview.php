@@ -166,7 +166,7 @@ if (empty($modulepart)) {
 if ($user->socid > 0) {
 	$socid = $user->socid;
 }
-// On interdit les remontees de repertoire ainsi que les pipe dans les noms de fichiers.
+// We forbid directory traversal as well as pipes in file names.
 if (preg_match('/\.\./', $upload_dir) || preg_match('/[<>|]/', $upload_dir)) {
 	dol_syslog("Refused to deliver file ".$upload_dir);
 	// Do no show plain path in shown error message
@@ -198,7 +198,7 @@ if ($modulepart == 'ecm') {
  */
 
 if (!isset($mode) || $mode != 'noajax') {
-	// Ajout directives pour resoudre bug IE
+	// Add directives to fix IE bug
 	header('Cache-Control: Public, must-revalidate');
 	header('Pragma: public');
 
