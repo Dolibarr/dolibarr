@@ -774,7 +774,9 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 		require_once DOL_DOCUMENT_ROOT."/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON').'.php';
 		$modTask = new $classnamemodtask();
 		'@phan-var-force ModeleNumRefTask $modTask';
-		$defaultref = $modTask->getNextValue($object->thirdparty, $object);
+		$tasktmp = new Task($db);	// Numbering modules expect a Task object (and use its creation date), not the project
+		$tasktmp->fk_project = $object->id;
+		$defaultref = $modTask->getNextValue($object->thirdparty, $tasktmp);
 	}
 
 	if (is_numeric($defaultref) && $defaultref <= 0) {
