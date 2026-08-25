@@ -658,7 +658,7 @@ class Documents extends DolibarrApi
 
 					// Select only files that match the requested $content_type, if provided
 					$arraycontenttype = explode(",", $content_type);
-					if (!empty($arraycontenttype)) {
+					if (!empty($content_type)) {
 						$filearray = array_filter(
 							$filearray,
 							/**
