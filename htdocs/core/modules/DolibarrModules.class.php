@@ -149,6 +149,12 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	const KEY_SECOND_LEVEL = 5;
 	const KEY_MODULE = 6;
 	const KEY_ENABLED = 7;
+	const KEY_SORT_ORDER = 8;
+
+	/**
+	 * @var array<string,array{family:string,position:int}> Cache of family/position looked up by rights_class, used by getModuleInfoByRightsClass(). Shared across all module instances for the duration of the request.
+	 */
+	protected static $keyModuleInfoCache = array();
 
 	/**
 	 * @var array<array{commentgroup?:string,mainmenu:string,leftmenu:string,langs:string,enabled:int|string,target:string,titre:string,user:int,fk_menu:string,fk_parent:string,url:string,position:int,positionfull:int|string,perms:string,type:string}>|int<1,1> 	Module menu entries (1 means the menu entries are not declared into module descriptor but are hardcoded into menu manager)
@@ -2016,10 +2022,6 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 					$r_perms = $this->rights[$key][self::KEY_FIRST_LEVEL] ?? '';
 					$r_subperms = $this->rights[$key][self::KEY_SECOND_LEVEL] ?? '';
 
-					$r_module_position = $this->getModulePosition();
-					$r_family = $this->family;
-					$r_family_position = 0;
-
 					// KEY_FIRST_LEVEL (perms) must not be empty
 					if (empty($r_perms)) {
 						continue;
@@ -2037,6 +2039,26 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 						// name of the module from which the right comes
 						$r_module_origin = (empty($this->rights_class) ? strtolower($this->name) : $this->rights_class);
 					}
+
+					if (!empty($r_module_origin) && $r_module !== $r_module_origin) {
+						// This right is filed under a different module's section of the permission
+						// grid (KEY_MODULE) than the one declaring it: use that target module's own
+						// family/position so it appears grouped with its native rights instead of
+						// opening a second, misplaced section for the same module.
+						$r_targetmoduleinfo = $this->getModuleInfoByRightsClass($r_module);
+						$r_module_position = $r_targetmoduleinfo['position'];
+						$r_family = $r_targetmoduleinfo['family'];
+					} else {
+						$r_module_position = $this->getModulePosition();
+						$r_family = $this->family;
+					}
+					$r_family_position = 0;
+
+					// optional fine sort key inside the module/family group (default 0 means: fall
+					// back to id, same as before this key existed). A right filed into another
+					// module's section via KEY_MODULE can set this to the id of the native right it
+					// should be sorted right after.
+					$r_sort_order = $this->rights[$key][self::KEY_SORT_ORDER] ?? 0;
 
 					// condition to show or hide a user right (default: 1) (eg isModEnabled('anothermodule') or ($conf->global->MAIN_FEATURES_LEVEL > 0) or etc..)
 					$r_enabled	= $this->rights[$key][self::KEY_ENABLED] ?? '1';
@@ -2059,6 +2081,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 							$sql .= ", module_position";		// Not that module_position can be fixed eynamically when accessing page user/perms.php
 							$sql .= ", family";
 							$sql .= ", family_position";
+							$sql .= ", sort_order";
 							$sql .= ", type";	// Not used yet
 							$sql .= ", bydefault";
 							$sql .= ", perms";
@@ -2073,6 +2096,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 							$sql .= ", '".$this->db->escape((string) $r_module_position)."'";
 							$sql .= ", '".$this->db->escape($r_family)."'";
 							$sql .= ", '".$this->db->escape((string) $r_family_position)."'";
+							$sql .= ", ".((int) $r_sort_order);
 							$sql .= ", '".$this->db->escape($r_type)."'";	// Not used yet
 							$sql .= ", ".((int) $r_default);
 							$sql .= ", '".$this->db->escape($r_perms)."'";
@@ -2140,6 +2164,59 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		}
 
 		return $err;
+	}
+
+	/**
+	 * Look up the family and module_position of another module by its rights_class, so a right
+	 * filed under that module via KEY_MODULE can share its family/position and be grouped with
+	 * that module's native rights instead of opening a second, misplaced section on the same
+	 * permission grid page (see insert_permissions()). Result is cached per rights_class for the
+	 * duration of the request since this scans every module descriptor found on disk. Falls back
+	 * to this module's own family/position if no module with that rights_class is found.
+	 *
+	 * @param  string 						$rightsclass	rights_class of the target module (value used as KEY_MODULE)
+	 * @return array{family:string,position:int}			family and module_position of the target module
+	 */
+	protected function getModuleInfoByRightsClass($rightsclass)
+	{
+		global $db;
+
+		if (isset(self::$keyModuleInfoCache[$rightsclass])) {
+			return self::$keyModuleInfoCache[$rightsclass];
+		}
+
+		// Fallback: if no module with this rights_class is found (typo, or module removed from disk),
+		// still register something under its own family/position rather than leaving it undefined.
+		$result = array('family' => $this->family, 'position' => $this->getModulePosition());
+
+		$modulesdir = dolGetModulesDirs();
+		foreach ($modulesdir as $dir) {
+			$handle = @opendir(dol_osencode($dir));
+			if (is_resource($handle)) {
+				while (($file = readdir($handle)) !== false) {
+					if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod' && substr($file, dol_strlen($file) - 10) == '.class.php') {
+						$modName = substr($file, 0, dol_strlen($file) - 10);
+						if ($modName && $modName != get_class($this)) {
+							include_once $dir.$file;
+							if (class_exists($modName)) {
+								'@phan-var-force class-string<DolibarrModules> $modName';
+								$objMod = new $modName($db);
+								'@phan-var-force DolibarrModules $objMod';
+								if (!empty($objMod->rights_class) && $objMod->rights_class === $rightsclass) {
+									$result = array('family' => $objMod->family, 'position' => $objMod->getModulePosition());
+									break 2;
+								}
+							}
+						}
+					}
+				}
+				closedir($handle);
+			}
+		}
+
+		self::$keyModuleInfoCache[$rightsclass] = $result;
+
+		return $result;
 	}
 
 

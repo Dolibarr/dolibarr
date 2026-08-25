@@ -620,7 +620,7 @@ class UserGroup extends CommonObject
 		}
 
 		// Load permission from group
-		$sql = "SELECT r.module, r.perms, r.subperms ";
+		$sql = "SELECT r.module, r.module_origin, r.perms, r.subperms ";
 		$sql .= " FROM ".$this->db->prefix()."usergroup_rights as u, ".$this->db->prefix()."rights_def as r";
 		$sql .= " WHERE r.id = u.fk_id";
 		$sql .= " AND r.entity = ".((int) $conf->entity);
@@ -640,7 +640,7 @@ class UserGroup extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 
 				if ($obj) {
-					$module = $obj->module;
+					$module = (!empty($obj->module_origin) ? $obj->module_origin : $obj->module);
 					$perms = $obj->perms;
 					$subperms = $obj->subperms;
 

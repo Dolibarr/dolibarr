@@ -27,6 +27,7 @@ create table llx_rights_def
   module_position	integer DEFAULT 0 NOT NULL,
   family            varchar(64) NULL,
   family_position	integer DEFAULT 0 NOT NULL,
+  sort_order		integer DEFAULT 0 NOT NULL,	-- optional fine sort key inside the module/family group; when 0 (default), sorting falls back to id (unchanged behavior). Used by rights filed into another module's section via module_origin to sort next to a given native right (set to that right's id).
   perms				varchar(50),
   subperms			varchar(50),
   type				varchar(1),					-- deprecated
