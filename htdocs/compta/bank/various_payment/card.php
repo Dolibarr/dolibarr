@@ -798,7 +798,7 @@ if ($id) {
 
 	// Clone
 	if ($permissiontoadd) {
-		print '<div class="inline-block divButAction"><a class="butAction butActionClone" href="' . dolBuildUrl(DOL_DOCUMENT_ROOT."/compta/bank/various_payment/card.php", ['id' => $object->id, 'action' => 'clone']).'">'.$langs->trans("ToClone") . "</a></div>";
+		print '<div class="inline-block divButAction"><a class="butAction butActionClone" href="' . dolBuildUrl(DOL_URL_ROOT."/compta/bank/various_payment/card.php", ['id' => $object->id, 'action' => 'clone']).'">'.$langs->trans("ToClone") . "</a></div>";
 	}
 
 	// Delete

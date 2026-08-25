@@ -513,6 +513,11 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 					$createok = 0;
 					$nbko++;
 				}
+			} elseif ($feature == 'payment_supplier') {	// Permission to write on a payment of an invoice is permission to edit an invoice.
+				if (!$user->hasRight('fournisseur', 'facture', 'creer')) {
+					$createok = 0;
+					$nbko++;
+				}
 			} elseif ($feature == 'webhook') {
 				if (empty($user->admin)) {
 					$createok = 0;
