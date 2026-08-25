@@ -12066,7 +12066,7 @@ class Form
 				if ($show_empty && !$multiple) {
 					$textforempty = '&nbsp;';
 					if (!is_numeric($show_empty)) {
-						$textforempty = $show_empty;
+						$textforempty = dol_escape_htmltag($show_empty);
 					}
 					$out .= '<option value="-1"' . (in_array(-1, $selected) ? ' selected' : '') . '>' . $textforempty . '</option>' . "\n";
 				}
