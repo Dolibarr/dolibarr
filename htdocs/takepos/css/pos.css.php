@@ -5,6 +5,7 @@
  * Copyright (C) 2011		Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2012		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2026       Jose Martinez           <jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -460,6 +461,14 @@ div.paymentbordline
 	font-size: 6px;
 	padding-top:10px;
 	padding-bottom:10px;
+}
+
+/* When the categories column is hidden (TAKEPOS_HIDE_CATEGORIES), index.php gives the
+ * products area the centpercent class so it takes the whole row, but the generic
+ * .centpercent rule of the theme loses against .div5 above, which is loaded later:
+ * make the intent explicit. */
+.div5.centpercent {
+	width: 100%;
 }
 
 .div1, .div2, .div3, .div4, .div5 {
