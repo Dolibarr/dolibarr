@@ -7781,7 +7781,8 @@ class Form
 			return '';
 		}
 
-		return ' <span class="opacitymedium">('.implode(', ', $tmparray).')</span>';
+		// On its own line: appended inline it can push the card left column into the right one
+		return '<br><span class="opacitymedium">('.implode(', ', $tmparray).')</span>';
 	}
 
 
