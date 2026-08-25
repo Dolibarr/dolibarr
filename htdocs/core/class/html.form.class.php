@@ -2820,13 +2820,13 @@ class Form
 					if (!is_numeric($show_empty)) {
 						$textforempty = $show_empty;
 					}
-					$out .= '<option class="optiongrey" value="' . ($show_empty < 0 ? $show_empty : -1) . '"' . ((empty($selected) || in_array(-1, $selected)) ? ' selected' : '') . '>' . $textforempty . '</option>' . "\n";
+					$out .= '<option class="optiongrey" value="' . ($show_empty < 0 ? $show_empty : -1) . '"' . ((empty($selected) || in_array(-1, $selected)) ? ' selected' : '') . '>' . dol_escape_htmltag($textforempty) . '</option>' . "\n";
 
 					$outarray[($show_empty < 0 ? $show_empty : -1)] = $textforempty;
 					$outarray2[($show_empty < 0 ? $show_empty : -1)] = array(
 						'id' => ($show_empty < 0 ? $show_empty : -1),
 						'label' => $textforempty,
-						'labelhtml' => $textforempty,
+						'labelhtml' => dol_escape_htmltag($textforempty),
 						'color' => '',
 						'picto' => ''
 					);
