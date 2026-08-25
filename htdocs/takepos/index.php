@@ -621,12 +621,21 @@ function ChangeThirdparty(idcustomer) {
 }
 
 function deleteline() {
+	if (selectedline == 0) return;
 	invoiceid = $("#invoiceid").val();
 	console.log("Delete line invoiceid="+invoiceid);
 	$("#poslines").load("invoice.php?action=deleteline&token=<?php echo newToken(); ?>&place="+place+"&idline="+selectedline+"&invoiceid="+invoiceid, function() {
 		//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
 	});
 	ClearSearch(false);
+}
+
+function editbatch(lineid, idproduct) {
+	$("#poslines").load("invoice.php?action=editbatch_popup&token=<?php echo newToken(); ?>&place="+place+"&idline="+lineid+"&idproduct="+idproduct+"&invoiceid="+invoiceid, function() {});
+}
+
+function updatebatch(batch, warehouseid, lineid) {
+	$("#poslines").load("invoice.php?action=setbatch&token=<?php echo newToken(); ?>&place="+place+"&idline="+lineid+"&batch="+encodeURIComponent(batch)+"&warehouseid="+warehouseid+"&invoiceid="+invoiceid, function() {});
 }
 
 function Customer() {

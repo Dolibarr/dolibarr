@@ -70,7 +70,7 @@ $idproduct = GETPOSTINT('idproduct');
 $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Bar or Restaurant
 $placeid = 0; // $placeid is ID of invoice
 $mobilepage = GETPOST('mobilepage', 'alpha');
-$batch = ''; // Default no batch if missing
+$batch = GETPOST('batch', 'alpha');
 
 // Terminal is stored into $_SESSION["takeposterminal"];
 
@@ -870,7 +870,7 @@ if (empty($reshook)) {
 				echo "<script>\n";
 				echo "function addbatch(batch, warehouseid) {\n";
 				echo "console.log('We add batch '+batch+' from warehouse id '+warehouseid);\n";
-				echo '$("#poslines").load("'.DOL_URL_ROOT.'/takepos/invoice.php?action=addline&batch="+encodeURI(batch)+"&warehouseid="+warehouseid+"&place='.$place.'&idproduct='.$idproduct.'&token='.newToken().'", function() {});'."\n";
+				echo '$("#poslines").load("'.DOL_URL_ROOT.'/takepos/invoice.php?action=addline&batch="+encodeURIComponent(batch)+"&warehouseid="+warehouseid+"&place='.$place.'&idproduct='.$idproduct.'&token='.newToken().'", function() {});'."\n";
 				echo "}\n";
 				echo "</script>\n";
 
@@ -914,6 +914,16 @@ if (empty($reshook)) {
 						}
 					}
 				}
+
+				if ($nbofsuggested == 0) {
+					// Add manual entry for returns or new batches when stock is 0
+					print '<tr><td class="left" style="padding-top: 10px; border-top: 1px solid #ddd; text-align: center;">';
+					print '<span class="opacitymedium">'.$langs->trans("LotSerial").' (Manual) :</span> ';
+					print '<input type="text" id="manual_batch_add" class="flat" size="10"> ';
+					print '<button class="button" onclick="addbatch(document.getElementById(\'manual_batch_add\').value, '.$warehouseid.')">'.$langs->trans("Add").'</button>';
+					print '</td></tr>';
+				}
+
 				print "</table>";
 
 				print '</body></html>';
@@ -940,8 +950,8 @@ if (empty($reshook)) {
 		}
 
 		$err = 0;
-		// Group if enabled. Skip group if line already sent to the printer
-		if (getDolGlobalString('TAKEPOS_GROUP_SAME_PRODUCT')) {
+		// Group if enabled. Skip group if line already sent to the printer, or if product requires a batch/serial number (cannot group different serials)
+		if (getDolGlobalString('TAKEPOS_GROUP_SAME_PRODUCT') && empty($prod->status_batch)) {
 			foreach ($invoice->lines as $line) {
 				if ($line->product_ref == $prod->ref) {
 					if ($line->special_code == 4) {
@@ -1298,12 +1308,66 @@ if (empty($reshook)) {
 		$invoice->fetch($placeid);
 	}
 
+	if ($action == "editbatch_popup" && ($user->hasRight('takepos', 'run') || defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE'))) {
+		$idline = GETPOSTINT('idline');
+		$idproduct = GETPOSTINT('idproduct');
+		$prod = new Product($db);
+		$prod->fetch($idproduct);
+		$prod->load_stock('warehouseopen');
+
+		$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];
+		$warehouseid = getDolGlobalInt($constantforkey);
+
+		print '<html><body>';
+		print '<div class="divscroll">';
+		print '<table class="noborder">';
+
+		$nbofsuggested = 0;
+		if (is_array($prod->stock_warehouse)) {
+			foreach ($prod->stock_warehouse as $tmpwarehouseid => $tmpval) {
+				if (getDolGlobalInt($constantforkey) && $tmpwarehouseid != getDolGlobalInt($constantforkey)) {
+					continue;
+				}
+				if (!empty($prod->stock_warehouse[$tmpwarehouseid]) && is_array($prod->stock_warehouse[$tmpwarehouseid]->detail_batch)) {
+					foreach ($prod->stock_warehouse[$tmpwarehouseid]->detail_batch as $dbatch) {
+						$detail = '';
+						$detail .= '<span class="opacitymedium">'.$langs->trans("LotSerial").':</span> '.$dbatch->batch;
+						$detail .= ' <span class="opacitymedium">'.$langs->trans("Qty").':</span> '.$dbatch->qty;
+						$detail .= ' <button class="marginleftonly" onclick="updatebatch(\''.dol_escape_js($dbatch->batch).'\', '.$tmpwarehouseid.', '.$idline.')">'.$langs->trans("Select")."</button>";
+
+						print '<tr><td class="left">'.$detail;
+						$nbofsuggested++;
+						print '</td></tr>';
+					}
+				}
+			}
+		}
+		if ($nbofsuggested == 0) {
+			print '<tr><td class="left">'.$langs->trans("NoRecordFound").'</td></tr>';
+		}
+
+		// Add manual entry for returns or new batches
+		print '<tr><td class="left" style="padding-top: 10px; border-top: 1px solid #ddd;">';
+		print '<span class="opacitymedium">'.$langs->trans("LotSerial").' (Manual) :</span> ';
+		print '<input type="text" id="manual_batch" class="flat" size="10"> ';
+		print '<button class="button" onclick="updatebatch(document.getElementById(\'manual_batch\').value, '.$warehouseid.', '.$idline.')">'.$langs->trans("Add").'</button>';
+		print '</td></tr>';
+
+		print "</table>";
+		print '</div></body></html>';
+		exit;
+	}
+
 	if ($action == "setbatch" && ($user->hasRight('takepos', 'run') || defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE'))) {
 		$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];
 		$warehouseid = (GETPOSTINT('warehouseid') > 0 ? GETPOSTINT('warehouseid') : getDolGlobalInt($constantforkey));	// Get the warehouse id from GETPOSTINT('warehouseid'), otherwise use default setup.
+		$idline = (empty($idoflineadded) ? GETPOSTINT('idline') : $idoflineadded);
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet SET batch = '".$db->escape($batch)."', fk_warehouse = ".((int) $warehouseid);
-		$sql .= " WHERE rowid = ".((int) $idoflineadded);
+		$sql .= " WHERE rowid = ".((int) $idline)." AND fk_facture = ".((int) $placeid);
 		$db->query($sql);
+
+		// Reload data
+		$invoice->fetch($placeid);
 	}
 
 	if ($action == "order" && $placeid != 0 && ($user->hasRight('takepos', 'run') || defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE'))) {
@@ -1940,7 +2004,7 @@ if (!empty($conf->use_javascript_ajax)) {
 	print '<script src="'.DOL_URL_ROOT.'/core/js/lib_foot.js.php?lang='.$langs->defaultlang.'"></script>'."\n";
 }
 
-$usediv = (GETPOST('format') == 'div');
+$usediv = (GETPOST('format', 'aZ09') == 'div');
 
 print '<!-- invoice.php place='.(int) $place.' invoice='.$invoice->ref.' usediv='.json_encode($usediv).', mobilepage='.(empty($mobilepage) ? '' : $mobilepage).' $_SESSION["basiclayout"]='.(empty($_SESSION["basiclayout"]) ? '' : $_SESSION["basiclayout"]).' conf TAKEPOS_BAR_RESTAURANT='.getDolGlobalString('TAKEPOS_BAR_RESTAURANT').' -->'."\n";
 print '<div class="div-table-responsive-no-min invoice">';
@@ -2271,6 +2335,20 @@ if ($placeid > 0) {
 			}
 			if (!empty($line->array_options['options_order_notes'])) {
 				$htmlforlines .= "<br>(".$line->array_options['options_order_notes'].")";
+			}
+			if (isModEnabled('productbatch') && $line->fk_product > 0) {
+				if (empty($line->product) || !($line->product->id > 0)) {
+					$line->fetch_product();
+				}
+
+				if (!empty($line->product) && $line->product->status_batch > 0) {
+					$batch_display = empty($line->batch) ? $langs->trans("NotDefined") : dol_escape_htmltag($line->batch);
+					$htmlforlines .= '<br><span class="opacitymedium">'.$langs->trans("LotSerial").' : '.$batch_display.'</span>';
+					// Only show edit button if invoice is a Draft (status == 0)
+					if ($invoice->status == Facture::STATUS_DRAFT) {
+						$htmlforlines .= ' <a href="#" onclick="editbatch('.$line->id.', '.$line->fk_product.'); return false;" title="'.dol_escape_htmltag($langs->trans("Modify")).'">'.img_edit().'</a>';
+					}
+				}
 			}
 			if (!empty($_SESSION["basiclayout"]) && $_SESSION["basiclayout"] == 1) {
 				$htmlforlines .= '</td><td class="right phonetable"><button type="button" onclick="SetQty(place, '.$line->rowid.', '.($line->qty - 1).');" class="publicphonebutton2 phonered">-</button>&nbsp;&nbsp;<button type="button" onclick="SetQty(place, '.$line->rowid.', '.($line->qty + 1).');" class="publicphonebutton2 phonegreen">+</button>';
