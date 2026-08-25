@@ -2337,11 +2337,11 @@ if ($placeid > 0) {
 				$htmlforlines .= "<br>(".$line->array_options['options_order_notes'].")";
 			}
 			if (isModEnabled('productbatch') && $line->fk_product > 0) {
-				if (empty($line->product) || !($line->product->id > 0)) {
+				if (!is_object($line->product) || !($line->product->id > 0)) {
 					$line->fetch_product();
 				}
 
-				if (!empty($line->product) && $line->product->status_batch > 0) {
+				if (is_object($line->product) && $line->product->status_batch > 0) {
 					$batch_display = empty($line->batch) ? $langs->trans("NotDefined") : dol_escape_htmltag($line->batch);
 					$htmlforlines .= '<br><span class="opacitymedium">'.$langs->trans("LotSerial").' : '.$batch_display.'</span>';
 					// Only show edit button if invoice is a Draft (status == 0)
@@ -2397,10 +2397,10 @@ if ($placeid > 0) {
 					if (getDolGlobalString($constantforkey) && $line->fk_product > 0 && !getDolGlobalString('TAKEPOS_HIDE_STOCK_ON_LINE')) {
 						$productChildrenNb = 0;
 						if (getDolGlobalInt('PRODUIT_SOUSPRODUITS')) {
-							if (empty($line->product) || !($line->product->id > 0)) {
+							if (!is_object($line->product) || !($line->product->id > 0)) {
 								$line->fetch_product();
 							}
-							if (!empty($line->product)) {
+							if (is_object($line->product)) {
 								$productChildrenNb = $line->product->hasFatherOrChild(1);
 							}
 						}
