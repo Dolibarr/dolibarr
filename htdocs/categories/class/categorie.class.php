@@ -1051,6 +1051,16 @@ class Categorie extends CommonObject
 				$sql .= " AND o.rowid = ".((int) $user->socid);
 			}
 
+			// Add where from hooks (for example to restrict to objects an external module shares
+			// with the current entity by a granularity finer than this category's own)
+			global $hookmanager;
+			if (is_object($hookmanager)) {
+				$hookmanager->initHooks(array('categorygetobjectsincateg'));
+				$parameters = array('type' => $type, 'alias' => 'o');
+				$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $this);
+				$sql .= $hookmanager->resPrint;
+			}
+
 			$errormessage = '';
 			$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
 			if ($errormessage) {
