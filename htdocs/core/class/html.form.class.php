@@ -2571,7 +2571,7 @@ class Form
 		dol_syslog(get_class($this) . "::select_remises", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			print '<select id="select_' . $htmlname . '" class="flat maxwidth200onsmartphone" name="' . $htmlname . '">';
+			print '<select id="select_' . $htmlname . '" class="flat maxwidth300 maxwidth200onsmartphone" name="' . $htmlname . '">';
 			$num = $this->db->num_rows($resql);
 
 			$qualifiedlines = $num;
