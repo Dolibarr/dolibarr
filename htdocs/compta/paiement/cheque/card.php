@@ -437,7 +437,9 @@ if ($action == 'create2') {
 	print '</td></tr>';
 	print '<tr><td>'.$langs->trans("BankAccount").'</td><td>';
 	print img_picto('', 'account', 'class="pictofixedwidth"');
-	$form->select_comptes($filteraccountid, 'accountid', 0, 'courant:<>:2', 1);
+	// Filter must use the Universal Search Filter syntax, select_comptes() runs it through
+	// forgeSQLFromUniversalSearchCriteria(). != is mapped to <>, so cash registers stay excluded.
+	$form->select_comptes($filteraccountid, 'accountid', 0, '(courant:!=:2)', 1);
 	print '</td></tr>';
 	print '</table>';
 
