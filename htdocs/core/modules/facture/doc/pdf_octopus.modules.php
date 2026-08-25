@@ -1069,7 +1069,10 @@ class pdf_octopus extends ModelePDFFactures
 					}
 
 					// Retrieving information from the previous line
-					$TInfosLigneSituationPrecedente = $this->getInfosLineLastSituation($object, $object->lines[$i]);
+					$TInfosLigneSituationPrecedente = null;
+					if ($object->lines[$i] instanceof FactureLigne) {
+						$TInfosLigneSituationPrecedente = $this->getInfosLineLastSituation($object, $object->lines[$i]);
+					}
 					if (!is_array($TInfosLigneSituationPrecedente)) {
 						// No matching line in the previous situation invoice (new line, title line, ...)
 						$TInfosLigneSituationPrecedente = array('progress_prec' => 0, 'total_ht_without_progress' => 0, 'total_ht' => 0);
@@ -3652,10 +3655,12 @@ class pdf_octopus extends ModelePDFFactures
 			$res['total_ht'] += (float) $line->total_ht;
 			$res['multicurrency_total_ht'] += (float) $line->multicurrency_total_ht;
 
-			$infoprev = $this->getInfosLineLastSituation($object, $line);
-			if (is_array($infoprev)) {
-				$res['total_ht_without_progress'] += (float) $infoprev['total_ht_without_progress'];
-				$res['prev_total_ht'] += (float) $infoprev['total_ht'];
+			if ($line instanceof FactureLigne) {
+				$infoprev = $this->getInfosLineLastSituation($object, $line);
+				if (is_array($infoprev)) {
+					$res['total_ht_without_progress'] += (float) $infoprev['total_ht_without_progress'];
+					$res['prev_total_ht'] += (float) $infoprev['total_ht'];
+				}
 			}
 		}
 
