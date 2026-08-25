@@ -1,5 +1,4 @@
 <?php
-use RectorPrefix202310\Illuminate\Contracts\Broadcasting\ShouldBeUnique;
 
 /* Copyright (C) 2024	Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024	Frédéric France         <frederic.france@free.fr>
@@ -501,13 +500,16 @@ class Ai
 	/**
 	 * Decode JSON into array
 	 *
-	 * @param string	$json	Json
+	 * @param array<string,mixed>|null	$json	Decoded json (result of json_decode(..., true)), null when decoding failed
 	 * @param string	$type	Type of document to get ('supplier_invoice', 'thirdparty', ...)
-	 * @return array<string,string|int|float>	Array of values
+	 * @return array<string,mixed>	Array of values
 	 */
 	public function decodeJsonIntoArray($json, $type)
 	{
 		$tmparray = array();
+		if (!is_array($json)) {
+			return $tmparray;
+		}
 
 		//var_dump($json['items']);
 		if ($type == 'supplier_invoice') {
