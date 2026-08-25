@@ -783,7 +783,7 @@ class pdf_beluga extends ModelePDFProjects
 		// Draw rect of all tab (title + lines). Rect takes a length in 3rd parameter
 		$pdf->RoundedRect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $tab_height, $this->corner_radius, '1234', 'D');
 
-		// line prend une position y en 3eme param
+		// line takes a y position as the 3rd param
 		$pdf->line($this->marge_gauche, $tab_top + $heightoftitleline, $this->page_largeur - $this->marge_droite, $tab_top + $heightoftitleline);
 
 		$pdf->SetTextColor(0, 0, 0);

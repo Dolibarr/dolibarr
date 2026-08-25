@@ -6196,7 +6196,7 @@ class Product extends CommonObject
 		$langs->load("products");
 		$outputlangs->load("products");
 
-		// Positionne le modele sur le nom du modele a utiliser
+		// Set the model to the name of the model to use
 		if (!dol_strlen($modele)) {
 			$modele = getDolGlobalString('PRODUCT_ADDON_PDF', 'strato');
 		}
@@ -6624,7 +6624,8 @@ class Product extends CommonObject
 		}
 		// Include manufacturing
 		if (isModEnabled('mrp')) {
-			$result = $this->load_stats_inproduction(0, '1,2', 1, $dateofvirtualstock, 0, $dateofvirtualstockmin);
+			$filterStatus = getDolGlobalString('MO_STATUS_FOR_VIRTUAL_STOCK', '1,2');
+			$result = $this->load_stats_inproduction(0, $filterStatus, 1, $dateofvirtualstock, 0, $dateofvirtualstockmin);
 			if ($result < 0) {
 				dol_print_error($this->db, $this->error);
 			}
@@ -6683,7 +6684,7 @@ class Product extends CommonObject
 		if (!empty($this->stock_warehouse) && getDolGlobalString('STOCK_ALLOW_VIRTUAL_STOCK_PER_WAREHOUSE')) {
 			foreach ($this->stock_warehouse as $warehouseid => $stockwarehouse) {
 				if (isModEnabled('mrp')) {
-					$result = $this->load_stats_inproduction(0, '1,2', 1, $dateofvirtualstock, $warehouseid, $dateofvirtualstockmin);
+					$result = $this->load_stats_inproduction(0, getDolGlobalString('MO_STATUS_FOR_VIRTUAL_STOCK', '1,2'), 1, $dateofvirtualstock, $warehouseid, $dateofvirtualstockmin);
 					if ($result < 0) {
 						dol_print_error($this->db, $this->error);
 					}
