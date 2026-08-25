@@ -325,6 +325,20 @@ class modMyModule extends DolibarrModules
 		$this->rights[$r][4] = 'myobject';
 		$this->rights[$r][5] = 'delete'; // In php code, permission will be checked by test if ($user->hasRight('mymodule', 'myobject', 'delete'))
 		$r++;
+		// Example of a permission filed into another module's section of the permission grid
+		// (KEY_MODULE, index 6) instead of this module's own, so it appears grouped with that
+		// module's native rights. It is still checked with hasRight('mymodule', ...) (module_origin,
+		// filled in automatically, is what hasRight() actually resolves against, not KEY_MODULE).
+		// KEY_SORT_ORDER (index 8) is optional and, when set to the id of a specific native right
+		// of the target module, sorts this permission right after it instead of trailing the whole
+		// section (falls back to sorting by this permission's own id when left unset).
+		$this->rights[$r][0] = $this->numero . sprintf("%02d", ($o * 10) + 4); // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Read objects of MyModule from the third party card'; // Permission label
+		$this->rights[$r][4] = 'myobject';
+		$this->rights[$r][5] = 'readfromthirdparty';
+		$this->rights[$r][6] = 'societe'; // KEY_MODULE: rights_class of the target module (here, thirdparties)
+		$this->rights[$r][8] = 121; // KEY_SORT_ORDER: id of the native thirdparty right to sort after (here, "Read third parties")
+		$r++;
 		*/
 		/* END MODULEBUILDER PERMISSIONS */
 
