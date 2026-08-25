@@ -97,6 +97,11 @@ UPDATE llx_const SET value = 'eratosthene' WHERE value = 'einstein' AND name ='C
 UPDATE llx_document_model SET nom = 'eratosthene' WHERE nom = 'einstein' AND type = 'order' AND NOT EXISTS (SELECT subquery.nom FROM (SELECT nom, entity FROM llx_document_model WHERE nom = 'eratosthene' AND type = 'order') as subquery WHERE subquery.entity = entity);
 DELETE FROM llx_document_model WHERE nom = 'einstein' AND type = 'order';
 
+-- Indexes on llx_product for the most common product/service list filters
+ALTER TABLE llx_product ADD INDEX idx_product_entity_tosell (entity, tosell);
+ALTER TABLE llx_product ADD INDEX idx_product_entity_tobuy (entity, tobuy);
+ALTER TABLE llx_product ADD INDEX idx_product_datec (datec);
+ALTER TABLE llx_product ADD INDEX idx_product_tms (tms);
 
 
 
