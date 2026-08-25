@@ -2187,7 +2187,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 		// Fallback: if no module with this rights_class is found (typo, or module removed from disk),
 		// still register something under its own family/position rather than leaving it undefined.
-		$result = array('family' => $this->family, 'position' => $this->getModulePosition());
+		$result = array('family' => $this->family, 'position' => (int) $this->getModulePosition());
 
 		$modulesdir = dolGetModulesDirs();
 		foreach ($modulesdir as $dir) {
@@ -2203,7 +2203,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 								$objMod = new $modName($db);
 								'@phan-var-force DolibarrModules $objMod';
 								if (!empty($objMod->rights_class) && $objMod->rights_class === $rightsclass) {
-									$result = array('family' => $objMod->family, 'position' => $objMod->getModulePosition());
+									$result = array('family' => $objMod->family, 'position' => (int) $objMod->getModulePosition());
 									break 2;
 								}
 							}
