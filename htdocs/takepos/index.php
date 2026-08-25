@@ -4,6 +4,7 @@
  * Copyright (C) 2020	Thibault FOUCART	<support@ptibogxiv.net>
  * Copyright (C) 2024-2026	MDW				<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026       Jose Martinez           <jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -753,6 +754,27 @@ function New() {
 		}
 	});
 }
+/**
+ * Delete (discard) the current sale, after confirmation.
+ *
+ * return   void
+ */
+function DeleteSale() {
+	if (typeof place === 'undefined') {
+		return;
+	}
+	if (confirm('<?php echo dol_escape_js($langs->transnoentitiesnoconv("ConfirmDeletionOfThisPOSSale")); ?>')) {
+		// Fully remove the draft (its tab disappears), then switch to the main cart.
+		$("#poslines").load("invoice.php?action=discardsale&token=<?php echo newToken(); ?>&place=" + place, function () {
+			place = '0';
+			invoiceid = 0;
+			ClearSearch(false);
+			$("#idcustomer").val("");
+			Refresh();
+		});
+	}
+}
+
 /**
  * Search products
  *
@@ -1601,6 +1623,9 @@ if (getDolGlobalString('TAKEPOS_HIDE_HEAD_BAR')) {
 if (getDolGlobalString('TAKEPOS_WEIGHING_SCALE')) {
 	$menus[$r++] = array('title' => '<span class="fa fa-balance-scale pictofixedwidth"></span><div class="trunc">'.$langs->trans("WeighingScale").'</div>', 'action' => 'WeighingScale();');
 }
+
+// Button to delete (discard) the current sale
+$menus[$r++] = array('title' => '<span class="fa fa-trash-alt paddingrightonly"></span><div class="trunc">'.$langs->trans("DeleteSale").'</div>', 'action' => 'DeleteSale();', 'style' => 'background-color: #d9534f !important; color: #000 !important;');
 
 $parameters = array('menus' => $menus);
 $reshook = $hookmanager->executeHooks('ActionButtons', $parameters);

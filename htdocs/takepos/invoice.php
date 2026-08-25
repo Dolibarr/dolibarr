@@ -4,6 +4,7 @@
  * Copyright (C) 2022-2023	Christophe Battarel		<christophe.battarel@altairis.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2026       Jose Martinez           <jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1155,6 +1156,18 @@ if (empty($reshook)) {
 				}
 
 				$invoice->fetch($placeid);
+			}
+		}
+	}
+
+	// Action to fully remove (discard) the current sale: delete the draft invoice so its tab disappears
+	// (the "delete" action above only empties and resets the cart).
+	if ($action == "discardsale" && ($user->hasRight('takepos', 'run') || defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE'))) {
+		if ($placeid > 0) {
+			$result = $invoice->fetch($placeid);
+			if ($result > 0 && $invoice->status == Facture::STATUS_DRAFT) {
+				$invoice->delete($user);
+				$placeid = 0;
 			}
 		}
 	}
