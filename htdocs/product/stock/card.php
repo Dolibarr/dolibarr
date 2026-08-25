@@ -716,7 +716,10 @@ if ($action == 'create') {
 			$sql .= "p.accountancy_code_buy_export,";
 			$sql .= 'p.barcode,';
 			if ($separatedPMP) {
-				$sql .= " pa.pmp as ppmp,";
+				// COALESCE: a product may have no row yet in llx_product_perentity (rows are created
+				// on the first stock movement), so fall back on the global p.pmp like Product::fetch()
+				// does, instead of showing an empty AWP.
+				$sql .= " COALESCE(pa.pmp, p.pmp) as ppmp,";
 			} else {
 				$sql .= " p.pmp as ppmp,";
 			}
@@ -724,7 +727,13 @@ if ($action == 'create') {
 			if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 				$sql .= ",fk_unit";
 			}
-			$sql .= ", (ps.reel * p.pmp) as svalue";
+			// svalue is the sort key of the "estimated value" column, so it must use the same AWP
+			// as ppmp above (the displayed value is recomputed in PHP from ppmp).
+			if ($separatedPMP) {
+				$sql .= ", (ps.reel * COALESCE(pa.pmp, p.pmp)) as svalue";
+			} else {
+				$sql .= ", (ps.reel * p.pmp) as svalue";
+			}
 			// Add fields from hooks
 			$parameters = array('context' => 'warehousecard');
 			$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
@@ -735,7 +744,9 @@ if ($action == 'create') {
 			$sql .= " FROM ".MAIN_DB_PREFIX."product_stock as ps, ".MAIN_DB_PREFIX."product as p";
 
 			if ($separatedPMP) {
-				$sql .= ", ".MAIN_DB_PREFIX."product_perentity as pa";
+				// LEFT JOIN (not an inner join): a product with no llx_product_perentity row must
+				// still be listed in the warehouse content, falling back on the global p.pmp.
+				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_perentity as pa ON pa.fk_product = p.rowid AND pa.entity = ".((int) $conf->entity);
 			}
 			$parameters = array('context' => 'warehousecard');
 			$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters); // Note that $action and $object may have been modified by hook
@@ -748,9 +759,6 @@ if ($action == 'create') {
 			$sql .= " AND ps.reel <> 0"; // We do not show if stock is 0 (no product in this warehouse)
 			$sql .= " AND ps.fk_entrepot = ".((int) $object->id);
 
-			if ($separatedPMP) {
-				$sql .= " AND pa.fk_product = p.rowid AND pa.entity = ".(int) $conf->entity;
-			}
 			$parameters = array('context' => 'warehousecard');
 			$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
 			if ($reshook > 0) {			//Note that $sql is replaced if reshook > 0
