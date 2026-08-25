@@ -4,6 +4,7 @@
  * Copyright (C) 2020	Thibault FOUCART	<support@ptibogxiv.net>
  * Copyright (C) 2024-2026	MDW				<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026       Jose Martinez           <jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -527,8 +528,10 @@ function MoreProducts(moreorless) {
 				$("#proimg"+ishow).attr("src","genimg/empty.png");
 				$("#prodiv"+ishow).data("rowid","");
 				$("#prodiv"+ishow).attr("data-rowid","");
+				$("#prodiv"+ishow).addClass("divempty");
 			} else {
 				$("#prodivdesc"+ishow).show();
+				$("#prodiv"+ishow).removeClass("divempty");
 				<?php if (getDolGlobalInt('TAKEPOS_SHOW_PRODUCT_REFERENCE') == 1) { ?>
 					$("#prodesc"+ishow).html(data[parseInt(idata)]['ref'].bold() + ' - ' + data[parseInt(idata)]['label']);
 				<?php } elseif (getDolGlobalInt('TAKEPOS_SHOW_PRODUCT_REFERENCE') == 2) { ?>
@@ -793,6 +796,7 @@ function Search2(keyCodeForEnter, moreorless) {
 		$("[id^=proimg]").attr("src", "genimg/empty.png");
 		$("[id^=prodiv]").data("rowid", "");
 		$("[id^=prodiv]").attr("data-rowid", "");
+		$("[id^=prodiv]").addClass("divempty");
 		return;
 	}
 
@@ -847,6 +851,7 @@ function Search2(keyCodeForEnter, moreorless) {
 						$("#prodesc" + i).html(data[i]['label']);
 					<?php } ?>
 					$("#prodivdesc" + i).show();
+					$("#prodiv" + i).removeClass("divempty");
 					$("#probutton" + i).html(data[i]['label']);
 					$("#probutton" + i).show();
 					if (data[i]['price_formated']) {
