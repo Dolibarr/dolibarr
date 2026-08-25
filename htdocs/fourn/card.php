@@ -217,8 +217,21 @@ if ($id > 0 && empty($object->id)) {
 	// Load data of third party
 	$res = $object->fetch($id);
 	if ($object->id <= 0) {
-		dol_print_error($db, $object->error);
-		exit(1);
+		if ($object->error) {
+			dol_print_error($db, $object->error);
+			exit(1);
+		}
+		// Fournisseur::fetch() filters on s.fournisseur > 0, so a third party that exists but is no
+		// longer a vendor returns no row and no database error. Show a readable message with a link to
+		// the generic card instead of the technical error page (#39618).
+		$langs->load("errors");
+		llxHeader('', $langs->trans("ThirdParty").' - '.$langs->trans('Supplier'));
+		print '<div class="warning">'.$langs->trans("ErrorRecordNotFound").' ('.$langs->trans("Supplier").')';
+		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?socid='.((int) $id).'">'.$langs->trans("ThirdParty").'</a>';
+		print '</div>';
+		llxFooter();
+		$db->close();
+		exit(0);
 	}
 }
 
