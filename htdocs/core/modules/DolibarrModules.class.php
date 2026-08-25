@@ -1256,7 +1256,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 						rewinddir($handle);
 
-						// Run update_xxx.sql files
+						// Run update_xxx.sql files (sorted by name)
 						$files = array();
 						while (($file = readdir($handle)) !== false) {
 								   $files[] = $file;
