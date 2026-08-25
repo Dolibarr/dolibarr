@@ -584,6 +584,7 @@ AttachMainDocByDefault=Set this to <b>Yes</b> if you want to attach by default t
 FilesAttachedToEmail=Attach file
 sendEmailsReminder=Send agenda reminder by emails
 SendEmailsReminders=Send agenda reminders by emails
+SendSmsReminders=Send agenda reminders by SMS
 davDescription=Setup a WebDAV server
 DAVSetup=Setup of module DAV
 DAV_ALLOW_PRIVATE_DIR=Enable the generic private directory (WebDAV dedicated directory named "private" - login required)
