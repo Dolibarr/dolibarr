@@ -1033,12 +1033,14 @@ class FormTicket
 				foreach ($conf->cache['category_tickets'] as $id => $arraycategories) {
 					// Exclude some record
 					if ($publicgroups) {
+						// @phan-suppress-next-line PhanTypeMismatchDimAssignment
 						if (empty($arraycategories['public'])) {
 							continue;
 						}
 					}
 
 					// We discard empty line if showempty is on because an empty line has already been output.
+					// @phan-suppress-next-line PhanTypeMismatchDimAssignment
 					if ($empty && empty($arraycategories['code'])) {
 						continue;
 					}
@@ -1390,6 +1392,7 @@ class FormTicket
 				}
 
 				// We discard empty line if showempty is on because an empty line has already been output.
+				// @phan-suppress-next-line PhanTypeMismatchDimAssignment
 				if ($empty && empty($arrayseverities['code'])) {
 					continue;
 				}
