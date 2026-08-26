@@ -241,14 +241,14 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 			// Generic tool for other documents (excluding order and invoice)
 			[
 				"name" => "create_other_document",
-				"description" => "Create documents other than orders and invoices. Use this for: 'proposal', 'supplier_order', 'supplier_invoice', 'supplier_proposal'. DO NOT use for 'order' or 'invoice' - they have dedicated tools.",
+				"description" => "Create documents other than orders and invoices. Use this for: 'proposal', 'supplier_order', 'supplier_invoice', 'supplier_proposal', 'reception', 'shipment'. DO NOT use for 'order' or 'invoice' - they have dedicated tools.",
 				"inputSchema" => [
 					"type" => "object",
 					"properties" => [
 						"object_type" => [
 							"type" => "string",
-							"enum" => ['proposal', 'supplier_order', 'supplier_invoice', 'supplier_proposal'],
-							"description" => "Document type. Cannot be 'order' or 'invoice'."
+							"enum" => ['proposal', 'supplier_order', 'supplier_invoice', 'supplier_proposal', 'reception', 'shipment'],
+							"description" => "Document type. Cannot be 'order' or 'invoice'. 'reception' and 'shipment' create a standalone document (with no source order) and require the RECEPTION_STANDALONE / SHIPMENT_STANDALONE option to be enabled."
 						],
 						"header" => [
 							"type" => "object",
@@ -419,6 +419,15 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 		$permError = $this->checkPermission($type);
 		if ($permError !== null) {
 			return $permError;
+		}
+
+		// Standalone-mode guard: 'reception' and 'shipment' created here have no source order,
+		// so they require the matching standalone option (mirrors the checks in processAddLine()).
+		if ($type === 'reception' && ! getDolGlobalString('RECEPTION_STANDALONE')) {
+			return ["error" => "Reception standalone mode (RECEPTION_STANDALONE) must be enabled to create a reception without a supplier order."];
+		}
+		if ($type === 'shipment' && ! getDolGlobalString('SHIPMENT_STANDALONE')) {
+			return ["error" => "Shipment standalone mode (SHIPMENT_STANDALONE) must be enabled to create a shipment without an order."];
 		}
 
 		/** @var array{class: string, path: string, card: string, date_field: string, soc_field: string} $confMap */
