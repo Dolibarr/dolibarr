@@ -41,6 +41,7 @@ class Ctypent extends CommonDict
 	 * @var string
 	 */
 	public $libelle;
+
 	/**
 	 * @var string
 	 */

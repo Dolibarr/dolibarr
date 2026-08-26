@@ -147,7 +147,7 @@ class CActionComm
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Return list of event types: array(id=>label) or array(code=>label)
+	 *  Return list of event types
 	 *
 	 *  @param  ''|int<0,1>  $active         1 or 0 to filter on event state active or not ('' by default = no filter)
 	 *  @param  'id'|'code'|'all'      $idorcode       'id' or 'code' or 'all'

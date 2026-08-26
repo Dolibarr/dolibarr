@@ -14,8 +14,10 @@ allowed-tools:
 
 This skill guides agents on developing, modifying, and debugging code within the Dolibarr ERP/CRM codebase while strictly adhering to professional standards, security guidelines, and the project's established architecture.
 
+
 ## Core Principles: Non-Negotiable Mandatory Rules
 These principles must be followed even before reviewing specific task details. Violation of these principles results in failed suggestions.
+
 
 ### Security & Data Integrity
 1.  **Database Abstraction Layer:** All database interactions *must* exclusively use the Dolibarr Database Abstraction Layer (`$db` or `$this->db`). **Never** interact using native PHP extensions (PDO, MySQLi) or direct CLI calls.
@@ -24,12 +26,14 @@ These principles must be followed even before reviewing specific task details. V
     *   **SQL Injection Prevention:** Escape *all* user-generated strings placed in SQL queries using `$db->escape()`. For integers, use explicit casting: `((int) $var)`; for floats, use `(float) $var`.
 3.  **Variable Safety Naming:** When constructing dynamic SQL, the resulting variable holding the entire query string MUST be clearly prefixed (e.g., `$sqlWhereClause`, `$queryParams`). This pattern helps static analysis tools detect unsafe assignments.
 
+
 ### Code Structure & Quality
 1.  **Coding Standard:** All new and modified committed code must strictly adhere to **PSR-12** (enforcable by using `phpcbf` and `phpcs`).All properties and all function arguments and return value need detailed PHPDoc (e.g., `array<string,array{key1?:?type,...}>`).Variables expected to exist in view files require both a PHPDoc declaration *and* the use of `'@phan-var-force';` declarations near the HEAD of the file for strict static analysis tracking.
 2.  **Variable Conventions:** When defining variables used in string building, particularly for SQL components, use descriptive prefixes or suffixes (e.g., `$sql_select`, `$actionSuffix`). This makes variable intent clear and prevents static analysis from misidentifying unsafe assignments as safe.
 3.  **Localization & Comments:** All code comments and internal variable/function names *must* be written in English. Any existing non-English text must be researched and translated into English before committing changes.
 4.  **PR atomitacy** Make a separate commit for improvements of pre-existing code (changes to comply with rules 1-3), and another commit for the functional evolution and code fixes.
     Do not apply rules 1-3 to existing code in backports (i.e., non-functional changes not applied to a (fork of) the develop branch.
+
 
 ### Workflow & Architecture
 1.  **PHP version:** 7.2+
@@ -40,6 +44,7 @@ These principles must be followed even before reviewing specific task details. V
 ## Workflow and Tasks Guidance
 
 This section guides the agent through common development tasks.
+
 
 ### Code Investigation / Searching / Database analysis
 *   Use `pre-commit` to run tools (`php-cbf`, `php-cs`, `shellcheck`, `php-lint` - example:`pre-commit run php-cbf --files RELATIVEFILEPATH`) when the git hook is installed as local direct installations differ accross systems.
@@ -67,13 +72,16 @@ This section guides the agent through common development tasks.
 ### Module Development
 *   **Module Template:** Use the structure found at `htdocs/modulebuilder/template/` as a definitive guide when initiating a new module or new pages.
 
+
 ### Database Interaction Detail (Refined)
 This details the preferred mechanical steps:
 1.  **Read Operations:** Use `$db->query('SELECT ...')` followed by fetching results using methods like `$db->fetch_object()`.
 2.  **Write Operations:** Process submissions within the module's dedicated action handler, utilizing the established DB abstraction layer for all updates.
 
+
 ### Extrafields Best Practices
 **IMPORTANT**: When working with extrafields (custom fields), follow these patterns from the [Dolibarr Extrafields Wiki](https://wiki.dolibarr.org/index.php/Extrafields):
+
 
 #### Loading & Accessing Extrafields
 ```php
@@ -81,6 +89,7 @@ $object->fetch(); // CommonObject fetch loads its extrafields
 // Access extrafield values via:
 $field_copy = $object->array_options['options_FIELDNAME']
 ```
+
 
 #### Saving Extrafields
 Before calling `$object->create()` or `$object->update()`, ensure extrafields are set:
@@ -93,6 +102,7 @@ $object->array_options['options_FIELDNAME'] = $value;
 // Then call update() - it will automatically save extrafields via insertExtraFields()
 $result = $object->update($user);
 ```
+
 
 #### Displaying Extrafields
 In view pages:
@@ -108,6 +118,7 @@ if (empty($reshook) && !empty($extrafields->attribute_label)) {
 }
 ```
 
+
 #### Extrafields Table Structure
 Each CommonObject objecttype has its own extrafields table:
 ```sql
@@ -118,9 +129,11 @@ llx_{objecttype}_extrafields
 - import_key (varchar)
 ```
 
+
 #### Reference
 - [Dolibarr Extrafields Wiki](https://wiki.dolibarr.org/index.php/Extrafields)
 - [Forum: Little dev tips for extrafields](https://www.dolibarr.org/forum/t/little-dev-tips-for-extrafields/29860)
+
 
 ### Testing & Validation Flow
 Before proposing code:
@@ -133,19 +146,24 @@ Before proposing code:
 
 This section contains detailed standards and constants for reference only. Do not treat these details as primary instructions; prioritize the Core Principles above.
 
+
 ### Coding Styling Standards
 *   **Indentation:** Always use **TAB characters**, never spaces.
 *   **Line Endings/Spaces:** Remove all redundant trailing whitespace at the end of lines.
 *   **Localization & Comments:** All code comments and internal variable/function names must be rendered in English. Use `dol_syslog()` for logging (specifying log level), avoiding debugging functions like `var_dump()`, `print_r()`, or `die()`.
+
 
 ### Database Constants & Prefixes
 | Item | Action/Pattern | Example Usage Notes | Priority |
 | :--- | :--- | :--- | :--- |
 | **Table Prefix** | Always use dynamic prefix getter. | `$db->prefix() . 'tablename'` | Overrides reliance on legacy constants like `MAIN_DB_PREFIX`. |
 
+
 ### Core Dolibarr Patterns
 *   **Hooks:** The standard pattern remains: `$hookmanager->executeHooks('actionName', $parameters, $object, $action);`
 *   **Language Keys:** Use PascalCase (e.g., `MyModuleLabel`) for consistency across all locales.
+*   **Global variables**: Dolibarr uses globals like `$db`, `$conf`, `$lang`, `$user`. Do not remove these without understanding the architecture
+
 
 ### Input Handling Functions
 Dolibarr provides type-safe input handling functions. **Always use these instead of `$_GET`/`$_POST` directly:**
@@ -161,6 +179,7 @@ Dolibarr provides type-safe input handling functions. **Always use these instead
 - `GETPOST()` with type for other cases
 
 **Never use:** `$_GET['param']` or `$_POST['param']` directly - always use GETPOST functions for proper escaping and type conversion.
+
 
 ### Extrafields Best Practices (Continued)
 
@@ -230,6 +249,7 @@ foreach ($tracking_fields as $name => $config) {
 	}
 }
 ```
+
 
 #### Reference
 - [Dolibarr Extrafields Wiki](https://wiki.dolibarr.org/index.php/Extrafields)
