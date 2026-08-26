@@ -1029,8 +1029,9 @@ class FormTicket
 				print '<option value="">'.((is_numeric($empty) || $empty == 'ifone') ? '&nbsp;' : $empty).'</option>';
 			}
 
-			if (is_array($conf->cache['category_tickets']) && count($conf->cache['category_tickets'])) {
-				foreach ($conf->cache['category_tickets'] as $id => $arraycategories) {
+			$categorytickets = $conf->cache['category_tickets'];
+			if (is_array($categorytickets) && count($categorytickets)) {
+				foreach ($categorytickets as $id => $arraycategories) {
 					// Exclude some record
 					if ($publicgroups) {
 						if (empty($arraycategories['public'])) {
@@ -1073,7 +1074,7 @@ class FormTicket
 						print ' selected="selected"';
 					} elseif ($arraycategories['use_default'] == "1" && empty($selected) && (!$empty || $empty == 'ifone')) {
 						print ' selected="selected"';
-					} elseif (count($conf->cache['category_tickets']) == 1 && (!$empty || $empty == 'ifone')) {	// If only 1 choice, we autoselect it
+					} elseif (count($categorytickets) == 1 && (!$empty || $empty == 'ifone')) {	// If only 1 choice, we autoselect it
 						print ' selected="selected"';
 					}
 
@@ -1382,8 +1383,9 @@ class FormTicket
 			print '<option value="">'.((is_numeric($empty) || $empty == 'ifone') ? '&nbsp;' : $empty).'</option>';
 		}
 
-		if (is_array($conf->cache['severity_tickets']) && count($conf->cache['severity_tickets'])) {
-			foreach ($conf->cache['severity_tickets'] as $id => $arrayseverities) {
+		$severitytickets = $conf->cache['severity_tickets'];
+		if (is_array($severitytickets) && count($severitytickets)) {
+			foreach ($severitytickets as $id => $arrayseverities) {
 				// On passe si on a demande de filtrer sur des modes de paiments particuliers
 				if (count($filterarray) && !in_array($arrayseverities['type'], $filterarray)) {
 					continue;
@@ -1417,7 +1419,7 @@ class FormTicket
 					print ' selected="selected"';
 				} elseif ($arrayseverities['use_default'] == "1" && empty($selected) && (!$empty || $empty == 'ifone')) {
 					print ' selected="selected"';
-				} elseif (count($conf->cache['severity_tickets']) == 1 && (!$empty || $empty == 'ifone')) {	// If only 1 choice, we autoselect it
+				} elseif (count($severitytickets) == 1 && (!$empty || $empty == 'ifone')) {	// If only 1 choice, we autoselect it
 					print ' selected="selected"';
 				}
 
