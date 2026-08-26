@@ -1062,7 +1062,7 @@ class ProductCustomerPrice extends CommonObject
 						// If line do not exits then create it
 						$prodsocpricenew = new ProductCustomerPrice($this->db);
 						$prodsocpricenew->fk_soc = $obj->rowid;
-						$prodsocpricenew->ref_customer = $obj->ref_customer;
+						$prodsocpricenew->ref_customer = $this->ref_customer; // $obj only selects s.rowid (societe), ref_customer belongs to $this (the price line being propagated)
 						$prodsocpricenew->fk_product = $this->fk_product;
 						$prodsocpricenew->price = $this->price;
 						$prodsocpricenew->price_min = $this->price_min;
