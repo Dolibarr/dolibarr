@@ -96,13 +96,13 @@ class modProduct extends DolibarrModules
 				'pricing rule by default',
 				0,
 			],
-			/*[
+			[
 				"PRODUCT_ADDON_PDF",
 				"chaine",
 				"standard",
 				'Default module for document generation',
 				0,
-			],*/
+			],
 		];
 
 		// Boxes

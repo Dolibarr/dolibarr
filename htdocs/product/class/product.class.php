@@ -6165,7 +6165,7 @@ class Product extends CommonObject
 
 		// Positionne le modele sur le nom du modele a utiliser
 		if (!dol_strlen($modele)) {
-			$modele = getDolGlobalString('PRODUCT_ADDON_PDF', 'strato');
+			$modele = getDolGlobalString('PRODUCT_ADDON_PDF', 'standard');
 		}
 
 		$modelpath = "core/modules/product/doc/";
