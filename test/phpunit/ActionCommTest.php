@@ -162,12 +162,12 @@ class ActionCommTest extends CommonClassTest
 
 		$englishlangs = new Translate('', $conf);
 		$englishlangs->setDefaultLang('en_US');
-		$englishlangs->loadLangs(array('agenda', 'companies'));
+		$englishlangs->load('agenda');
 		$englishlabel = $englishlangs->transnoentitiesnoconv('NewCompanyToDolibarr', $thirdpartyname);
 
 		$frenchlangs = new Translate('', $conf);
 		$frenchlangs->setDefaultLang('fr_FR');
-		$frenchlangs->loadLangs(array('agenda', 'companies'));
+		$frenchlangs->load('agenda');
 		$frenchlabel = $frenchlangs->transnoentitiesnoconv('NewCompanyToDolibarr', $thirdpartyname);
 
 		$localobject = new ActionComm($db);
@@ -178,14 +178,17 @@ class ActionCommTest extends CommonClassTest
 		try {
 			$langs = new Translate('', $conf);
 			$langs->setDefaultLang('fr_FR');
+			$langs->load('agenda');
 			$localobject->label = $englishlabel;
 			$this->assertSame($frenchlabel, $localobject->getTranslatedLabel());
 
 			$langs = new Translate('', $conf);
 			$langs->setDefaultLang('en_US');
+			$langs->load('agenda');
 			$localobject->label = $frenchlabel;
 			$this->assertSame($englishlabel, $localobject->getTranslatedLabel());
 
+			$localobject->code = 'AC_OTH_AUTO';
 			$localobject->label = 'Manual agenda label';
 			$this->assertSame('Manual agenda label', $localobject->getTranslatedLabel());
 		} finally {
