@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - products
 ProductRef=Ref. producto
-ServiceRef=Service ref.
+ServiceRef=Referencia de servicio.
 ProductLabel=Etiqueta producto
 ProductLabelTranslated=Traducción etiqueta de producto
 ProductDescription=Descripción del producto

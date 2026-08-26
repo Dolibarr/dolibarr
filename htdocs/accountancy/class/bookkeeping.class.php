@@ -455,7 +455,7 @@ class BookKeeping extends CommonObject
 				$sql .= ", ".((float) $this->credit);
 				$sql .= ", ".((float) $this->montant);
 				$sql .= ", ".(!empty($this->sens) ? ("'".$this->db->escape($this->sens)."'") : "NULL");
-				$sql .= ", '".$this->db->escape((string) $this->fk_user_author)."'";
+				$sql .= ", ".((int) $this->fk_user_author);
 				$sql .= ", '".$this->db->idate($now)."'";
 				$sql .= ", '".$this->db->escape($this->code_journal)."'";
 				$sql .= ", ".(!empty($this->journal_label) ? ("'".$this->db->escape($this->journal_label)."'") : "NULL");
@@ -801,7 +801,7 @@ class BookKeeping extends CommonObject
 		$sql .= ' '."'".$this->db->idate($now)."',";
 		$sql .= ' '.(empty($this->code_journal) ? 'NULL' : "'".$this->db->escape($this->code_journal)."'").',';
 		$sql .= ' '.(empty($this->journal_label) ? 'NULL' : "'".$this->db->escape($this->journal_label)."'").',';
-		$sql .= ' '.(empty($this->piece_num) ? 'NULL' : $this->db->escape((string) $this->piece_num)).',';
+		$sql .= ' '.(empty($this->piece_num) ? 'NULL' : ((int) $this->piece_num)).',';
 		$sql .= ' '.(empty($this->ref) ? "''" : "'".$this->db->escape($this->ref)."'").',';
 		$sql .= ' '.(!isset($this->entity) ? ((int) $conf->entity) : ((int) $this->entity));
 		$sql .= ')';

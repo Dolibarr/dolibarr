@@ -5,7 +5,7 @@ This file contains some policies about the security reports on Dolibarr ERP CRM 
 
 ## Supported Versions for security reports
 
-Security report are valid only on any current stable version for the last 5 major versions (see https://dolibarr.org web site to get current stable version) or on development version (branch "develop" on https://github.com/Dolibarr/dolibarr).
+Security report are valid only on any current stable version for the last 2 major stable versions (see https://dolibarr.org web site to get current stable version) or on development version (branch "develop" on https://github.com/Dolibarr/dolibarr), and ONLY if the vulnerability is also confirmed into the "develop" branch (meaning the vulnerability was already reported).
 
 
 ## Reporting a Vulnerability
@@ -14,8 +14,6 @@ To report a vulnerability, for a private report, you can:
 
 - Send your report as an issue on https://github.com/Dolibarr/dolibarr/issues or, if you have an allowed account, on GitHub Vulnerability Disclosure Program tool (VDP): https://github.com/Dolibarr/dolibarr/security/advisories (recommended). Do 1 report only per vulnerability. Reports combining several vulnerabilities, as well as reports generated using IA will be rejected. 
 
-NOTE: This is a private vulnerability report process: Advisories are sent to users by our internal channel (RSS at https://cti.dolibarr.org/index-security.rss), we do not publish CVE reports.
-
 <!--
 - Send your report on Vulnerability Disclosure Program (VDP) [https://app.yogosha.com/cvd/dolibarr/10VxeNx6Ui3rSEhAgX63US](https://app.yogosha.com/cvd/dolibarr/10VxeNx6Ui3rSEhAgX63US) (recommended for everybody)
 - Or if you have permissions, use GitHub security advisory at [https://github.com/Dolibarr/dolibarr/security/advisories/new](https://github.com/Dolibarr/dolibarr/security/advisories/new)
@@ -23,7 +21,7 @@ NOTE: This is a private vulnerability report process: Advisories are sent to use
 
 - Or send an email to security@dolibarr.org with clear textual description of the report along with steps to reproduce the issue, include attachments such as screenshots or proof of concept code as necessary (in such a case, the issue may be created by the developer that will fix the vulnerability or the Release Manager).
 
-NOTE: This is a private vulnerability report process: Advisories are sent to application end users by our own live channel (RSS at https://cti.dolibarr.org/index-security.rss, you can subscribe to it with any RSS reader). We do not publish CVE reports ourself (we have no CNA number), but you are free to do it yourself.
+NOTE: Both process are private vulnerability report process: Advisories are sent to application end users by our own live channel (RSS at https://cti.dolibarr.org/index-security.rss, you can subscribe to it with any RSS reader). We do not publish CVE reports ourself (we have no CNA number), but you are free to do it yourself.
 
 Also, note that we are a project developed by volunteers and have no found for bounties.
 
@@ -39,9 +37,11 @@ Any type of denial-of-service attack is strictly forbidden, as well as any inter
 
 We recommend to install Dolibarr ERP CRM on your own server (as most Open Source software, download and use is free: [https://www.dolibarr.org/download](https://www.dolibarr.org/download)) to get access on every side of application.
 
+
 ### User Agent
 
-If you try to find bug on Dolibarr, we recommend to append to your user-agent header the following value: '-securitytest-for-dolibarr'.
+If you try to find bug on a dedicated hosted instance of Dolibarr, we recommend to append to your user-agent header the following value: '-securitytest-for-dolibarr'.
+
 
 ### Account access
 

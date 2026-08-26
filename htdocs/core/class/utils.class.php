@@ -591,7 +591,7 @@ class Utils
 					//print "$outputfile -> $outputerror";
 					@dol_delete_file($outputerror, 1, 0, 0, null, false, 0);
 					@dol_move($outputfile, $outputerror, '0', 1, 0, 0);
-					// Si safe_mode on et command hors du parameter exec, on a un fichier out vide donc errormsg vide
+					// If safe_mode is on and command is outside the exec parameter, we get an empty out file so errormsg is empty
 					if (!$errormsg) {
 						$langs->load("errors");
 						$errormsg = $langs->trans("ErrorFailedToRunExternalCommand");

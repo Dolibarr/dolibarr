@@ -90,6 +90,7 @@ ThisIsInformationOnDocumentToSignFichinter=這是需要簽署的介入文件的�
 ThisIsInformationOnDocumentToSignSociete_rib=這是需要簽署的SEPA授權書的信息
 ThisIsInformationOnDocumentToSignExpedition= 這是需要簽署的發貨單的信息
 SignatureProposalRef=簽署 報價 / 交易建議 %s
+SignatureOrderRef=Signature of sale order %s
 SignatureContractRef=簽署合同 %s
 SignatureFichinterRef=簽署介入文件 %s
 SignatureSociete_ribRef=簽署SEPA授權書 %s
