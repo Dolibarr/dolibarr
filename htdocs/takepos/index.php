@@ -4,6 +4,7 @@
  * Copyright (C) 2020	Thibault FOUCART	<support@ptibogxiv.net>
  * Copyright (C) 2024-2026	MDW				<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026       Jose Martinez           <jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -821,7 +822,7 @@ function Search2(keyCodeForEnter, moreorless) {
 			}
 
 			$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=search&token=<?php echo newToken();?>&search_term=' + search_term + '&thirdpartyid=' + socid + '&search_start=' + search_start + '&search_limit=' + search_limit, function (data) {
-				for (i = 0; i < <?php echo $MAXPRODUCT ?>; i++) {
+				for (i = 0; i < <?php echo $MAXPRODUCT - 2; ?>; i++) {	// the last 2 slots are the pager arrows, not product slots
 					if (typeof (data[i]) == "undefined") {
 						$("#prowatermark" + i).html("");
 						$("#prodesc" + i).text("");
