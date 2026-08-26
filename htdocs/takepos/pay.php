@@ -374,7 +374,7 @@ if (!getDolGlobalInt("TAKEPOS_NUMPAD")) {
 			amountpayed = <?php echo (float) $invoice->total_ttc; ?>;
 		}
 		console.log("We click on the payment mode to pay amount = "+amountpayed);
-		parent.$("#poslines").load("invoice.php?place=<?php echo $place; ?>&action=valid&token=<?php echo newToken(); ?>&pay="+payment+"&amount="+amountpayed+"&excess="+excess+"&invoiceid="+invoiceid+"&accountid="+accountid, function() {
+		parent.$("#poslines").load("invoice.php?place=<?php echo $place; ?>&action=valid&token=<?php echo currentToken(); ?>&pay="+payment+"&amount="+amountpayed+"&excess="+excess+"&invoiceid="+invoiceid+"&accountid="+accountid, function() {
 			if (amountpayed > <?php echo (float) $remaintopay; ?> || amountpayed == <?php echo (float) $remaintopay; ?> || amountpayed == 0 ) {
 				console.log("Close popup");
 				parent.$('#invoiceid').val("");
