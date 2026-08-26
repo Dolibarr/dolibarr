@@ -78,12 +78,13 @@ class mailing_eventorganization extends MailingTargets
 	{
 		// phpcs:enable
 		global $conf, $langs;
+		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$cibles = array();
 		$addDescription = '';
 
 		$sql = "SELECT p.ref, p.entity, e.rowid as id, e.fk_project, e.email as email, e.email_company as company_name, e.firstname as firstname, e.lastname as lastname,";
-		$sql .= " 'eventorganizationattendee' as source";
+		$sql .= " 'eventorganizationattendee' as source, e.status as status";
 		$sql .= " FROM ".MAIN_DB_PREFIX."eventorganization_conferenceorboothattendee as e,";
 		$sql .= " ".MAIN_DB_PREFIX."projet as p";
 		$sql .= " WHERE e.email <> ''";
@@ -92,6 +93,11 @@ class mailing_eventorganization extends MailingTargets
 		$sql .= " AND e.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".((int) $mailing_id).")";
 		if (GETPOSTINT('filter_eventorganization') > 0) {
 			$sql .= " AND e.fk_project = ".(GETPOSTINT('filter_eventorganization'));
+		}
+		if (GETPOSTISSET('attendeeStatusList')) {
+			$attendeeStatusList = (GETPOST('attendeeStatusList', 'array'));
+			$attendeeStatusListStr = implode(",", $attendeeStatusList);
+			$sql .= " AND e.status IN (".$this->db->sanitize($attendeeStatusListStr).")";
 		}
 		if (empty($this->evenunsubscribe)) {
 			$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = e.email and mu.entity = ".((int) $conf->entity).")";
@@ -197,14 +203,16 @@ class mailing_eventorganization extends MailingTargets
 	public function formFilter()
 	{
 		global $conf, $langs;
+		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		$langs->load("companies");
+		$langs->load("eventorganization");
 
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 		$formproject = new FormProjets($this->db);
 
 		$s = img_picto($langs->trans("OrganizedEvent"), 'project', 'class="pictofixedwidth"');
 		$s .= $formproject->select_projects(-1, '0', "filter_eventorganization", 0, 0, $langs->trans("OrganizedEvent"), 1, 0, 0, 0, '', 1, 0, '', '', 'usage_organize_event=1');
+		$s .= '<br>'.$formproject->select_attendee_status_list('attendeeStatusList', array(), 0, 0, 'maxwidth500', 0, 390, '', '', '', -1, 1);
 
 		return $s;
 	}
