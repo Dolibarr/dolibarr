@@ -1030,6 +1030,7 @@ class FormTicket
 			}
 
 			$categorytickets = $conf->cache['category_tickets'];
+			'@phan-var-force array<int,array{code:string,label:string,use_default:int,pos:int,public:int,active:int,force_severity:?string,fk_parent:int}> $categorytickets';
 			if (is_array($categorytickets) && count($categorytickets)) {
 				foreach ($categorytickets as $id => $arraycategories) {
 					// Exclude some record
@@ -1384,6 +1385,7 @@ class FormTicket
 		}
 
 		$severitytickets = $conf->cache['severity_tickets'];
+		'@phan-var-force array<int,array{code:string,label:string,use_default:int,pos:int}> $severitytickets';
 		if (is_array($severitytickets) && count($severitytickets)) {
 			foreach ($severitytickets as $id => $arrayseverities) {
 				// On passe si on a demande de filtrer sur des modes de paiments particuliers
