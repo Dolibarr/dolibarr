@@ -222,7 +222,7 @@ foreach ($modules as $key => $module) {
 
 llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-system_modules');
 print $info_admin;
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formulaire">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formulaire" spellcheck="false">';
 if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 }
@@ -406,7 +406,7 @@ foreach ($moduleList as $module) {
 			if (getDolGlobalString('MAIN_SHOW_PERMISSION')) {
 				if (empty($langs->tab_translate[$translationKey])) {
 					$tooltip = 'Missing translation (key '.$translationKey.' not found in admin.lang)';
-					$idperms .= ' <img src="../../theme/eldy/img/warning.png" alt="Warning" title="'.$tooltip.'">';
+					$idperms .= ' <img src="../../theme/common/img/warning.png" alt="Warning" title="'.$tooltip.'">';
 				}
 			}
 		}

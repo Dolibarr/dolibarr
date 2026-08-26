@@ -563,7 +563,7 @@ class DoliDBPgsql extends DoliDB
 		$ret = @pg_query($this->db, $query);
 
 		//print $query;
-		if (!preg_match("/^COMMIT/i", $query) && !preg_match("/^ROLLBACK/i", $query)) { // Si requete utilisateur, on la sauvegarde ainsi que son resultset
+		if (!preg_match("/^COMMIT/i", $query) && !preg_match("/^ROLLBACK/i", $query)) { // If it is a user query, save it along with its resultset
 			if (!$ret) {
 				if ($this->errno() != 'DB_ERROR_25P02') {	// Do not overwrite errors if this is a consecutive error
 					$this->lastqueryerror = $query;
@@ -791,7 +791,7 @@ class DoliDBPgsql extends DoliDB
 	public function errno()
 	{
 		if (!$this->connected) {
-			// Si il y a eu echec de connection, $this->db n'est pas valide.
+			// If the connection failed, $this->db is not valid.
 			return 'DB_ERROR_FAILED_TO_CONNECT';
 		} else {
 			// Constants to convert error code to a generic Dolibarr error code
@@ -965,7 +965,7 @@ class DoliDBPgsql extends DoliDB
 		//print $charset.' '.setlocale(LC_CTYPE,'0'); exit;
 
 		// NOTE: Do not use ' around the database name
-		$sql = "CREATE DATABASE ".$this->escape($database)." OWNER '".$this->escape($owner)."' ENCODING '".$this->escape((string) $charset)."'";
+		$sql = "CREATE DATABASE ".$this->sanitize($database)." OWNER '".$this->escape($owner)."' ENCODING '".$this->escape((string) $charset)."'";
 
 		dol_syslog($sql, LOG_DEBUG);
 		$ret = $this->query($sql);
@@ -1215,7 +1215,7 @@ class DoliDBPgsql extends DoliDB
 	public function DDLAddField($table, $field_name, $field_desc, $field_position = "")
 	{
 		// phpcs:enable
-		// cles recherchees dans le tableau des descriptions (field_desc) : type,value,attribute,null,default,extra
+		// keys looked up in the descriptions array (field_desc): type,value,attribute,null,default,extra
 		// ex. : $field_desc = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
 		$sql = "ALTER TABLE ".$this->sanitize($table)." ADD ".$this->sanitize($field_name)." ";
 
@@ -1287,10 +1287,10 @@ class DoliDBPgsql extends DoliDB
 		if (isset($field_desc['null']) && ($field_desc['null'] == 'not null' || $field_desc['null'] == 'NOT NULL')) {
 			// We will try to change format of column to NOT NULL. To be sure the ALTER works, we try to update fields that are NULL
 			if ($field_desc['type'] == 'varchar' || $field_desc['type'] == 'text') {
-				$sqlbis = "UPDATE ".$this->sanitize($table)." SET ".$this->escape($field_name)." = '".$this->escape(isset($field_desc['default']) ? $field_desc['default'] : '')."' WHERE ".$this->escape($field_name)." IS NULL";
+				$sqlbis = "UPDATE ".$this->sanitize($table)." SET ".$this->sanitize($field_name)." = '".$this->escape(isset($field_desc['default']) ? $field_desc['default'] : '')."' WHERE ".$this->sanitize($field_name)." IS NULL";
 				$this->query($sqlbis);
 			} elseif (in_array($field_desc['type'], array('tinyint', 'smallint', 'int', 'double'))) {
-				$sqlbis = "UPDATE ".$this->sanitize($table)." SET ".$this->escape($field_name)." = ".((float) $this->escape(isset($field_desc['default']) ? $field_desc['default'] : 0))." WHERE ".$this->escape($field_name)." IS NULL";
+				$sqlbis = "UPDATE ".$this->sanitize($table)." SET ".$this->sanitize($field_name)." = ".((float) $this->escape(isset($field_desc['default']) ? $field_desc['default'] : 0))." WHERE ".$this->sanitize($field_name)." IS NULL";
 				$this->query($sqlbis);
 			}
 		}
@@ -1472,7 +1472,7 @@ class DoliDBPgsql extends DoliDB
 		if (file_exists('/usr/bin/'.$tool)) {
 			$fullpathofdump = '/usr/bin/'.$tool;
 		} else {
-			// TODO L'utilisateur de la base doit etre un superadmin pour lancer cette commande
+			// TODO The database user must be a superadmin to run this command
 			$resql = $this->query('SHOW data_directory');
 			if ($resql) {
 				$liste = $this->fetch_array($resql);

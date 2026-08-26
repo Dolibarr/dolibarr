@@ -901,7 +901,7 @@ class AccountancyExport
 	 *
 	 * Information on format: https://docplayer.fr/20769649-Fichier-d-entree-ascii-dans-quadracompta.html
 	 * Help to import in Quadra: https://wiki.dolibarr.org/index.php?title=Module_Comptabilit%C3%A9_en_Partie_Double#Import_vers_CEGID_Quadra
-	 * In QuadraCompta | Use menu : "Outils" > "Suivi des dossiers" > "Import ASCII(Compta)"
+	 * In QuadraCompta | Use menu: "Tools" > "Folder monitoring" > "ASCII Import (Accounting)"
 	 *
 	 * @param 	BookKeepingLine[]	$objectLines 	data
 	 * @param 	?resource			$exportFile		[=null] File resource to export or print if null
@@ -1427,28 +1427,28 @@ class AccountancyExport
 		foreach ($objectLines as $line) {
 			$date_document = dol_print_date($line->doc_date, '%d/%m/%Y');
 
-			/*** preparation du champ label operation pour istea ***/
-			// retrecissement du champs car ISTEA n'affiche pas bcp de caract�re.
+			/*** prepare label operation field for ISTEA ***/
+			// truncate the field because ISTEA does not display many characters.
 			$search = array('Paiement fournisseur ', 'Virement ', 'Paiement ');
 			$replace = array('Paiemt fourn ','Virt ','Paiemt ');
 			$label_operation = str_replace($search, $replace, $line->label_operation);
-			// encadrement par des ' si le champs contient le separateur
+			// frame with quotes if field contains the separator
 			$label_operation = preg_match('/'.$separator.'/', $label_operation) ? "'".$label_operation."'" : $label_operation;
 
 			$tab = array();
 			// export configurable
-			$tab[] = $line->piece_num;	// colonne 1 : numero de piece	ISTEA
-			$tab[] = $date_document;	// colonne 2 : date				ISTEA
-			$tab[] = $line->doc_ref;	// colonne 3 : reference piece 	ISTEA
-			$tab[] = array_key_exists($line->piece_num, $tiers) ? $tiers[$line->piece_num] : '';	// colonne 4 : nom tiers	ISTEA
-			$tab[] = length_accountg(($line->subledger_account && (substr($line->subledger_account, 0, 2) == substr($line->numero_compte, 0, 2))) ? $line->subledger_account : $line->numero_compte);	// colonne 5 : numero de compte	ISTEA
-			$tab[] = length_accountg($line->subledger_account ? $line->subledger_account : $line->numero_compte);	// colonne 6 : numero de compte
-			$tab[] = length_accountg($line->subledger_account ? $line->numero_compte : '');	// G					// colonne 7 : numero de compte principal (divers paiement ou 40100000 ou 41100000)
-			$tab[] = ($line->doc_type == 'bank') ? $label_operation : ($line->subledger_account ? $line->subledger_label : $line->label_compte);	// colonne 8 : label de l'operation		ISTEA
-			$tab[] = $label_operation;	// colonne 9 : label de l'operation (semble non prise en compte par ISTEA)
-			$tab[] = price2num($line->debit);	// colonne 10 : debit		ISTEA
-			$tab[] = price2num($line->credit);	// colonne 11 : credit		ISTEA
-			$tab[] = $line->code_journal;		// colonne 12 : journal		ISTEA
+			$tab[] = $line->piece_num;	// column 1: piece number	ISTEA
+			$tab[] = $date_document;	// column 2: date				ISTEA
+			$tab[] = $line->doc_ref;	// column 3: piece reference 	ISTEA
+			$tab[] = array_key_exists($line->piece_num, $tiers) ? $tiers[$line->piece_num] : '';	// column 4: third party name	ISTEA
+			$tab[] = length_accountg(($line->subledger_account && (substr($line->subledger_account, 0, 2) == substr($line->numero_compte, 0, 2))) ? $line->subledger_account : $line->numero_compte);	// column 5: account number	ISTEA
+			$tab[] = length_accountg($line->subledger_account ? $line->subledger_account : $line->numero_compte);	// column 6: account number
+			$tab[] = length_accountg($line->subledger_account ? $line->numero_compte : '');	// G					// column 7: main account number (various payments or 40100000 or 41100000)
+			$tab[] = ($line->doc_type == 'bank') ? $label_operation : ($line->subledger_account ? $line->subledger_label : $line->label_compte);	// column 8: operation label		ISTEA
+			$tab[] = $label_operation;	// column 9: operation label (seems not taken into account by ISTEA)
+			$tab[] = price2num($line->debit);	// column 10: debit		ISTEA
+			$tab[] = price2num($line->credit);	// column 11: credit		ISTEA
+			$tab[] = $line->code_journal;		// column 12: journal		ISTEA
 
 			$output = mb_convert_encoding('"'.implode('"'.$separator.'"', $tab).'"'.$this->end_line, 'ISO-8859-1');
 			if ($exportFile) {

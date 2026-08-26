@@ -265,6 +265,7 @@ ChequeMaker=Expéditeur du chèque/virement
 PaymentByChequeOrderedTo=Les paiements par chèque (taxes comprises) sont payables à %s, à envoyer à
 PaymentByChequeOrderedToShort=Les paiements par chèque (TTC) sont payables à
 PaymentByTransferOnThisBankAccount=Paiement par virement sur le compte bancaire suivant
+VATIsNotUsedForInvoice=* TVA non applicable art-293B du CGI
 LawApplicationPart3=le vendeur jusqu'au paiement intégral de
 MenuChequeDeposits=Bordereaux de dépôt
 MenuChequesReceipts=Bordereaux de dépôt
