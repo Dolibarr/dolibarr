@@ -204,7 +204,7 @@ if ($action != 'create_updater' && $action != 'edit_updater') {
 		 * Action bar
 		 */
 		print '<div class="tabsAction">';
-		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=create_variable">'.$langs->trans("AddVariable").'</a>';
+		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=create_variable&token='.newToken().'">'.$langs->trans("AddVariable").'</a>';
 		print '</div>';
 		//Separator is only need for updaters table is showed after buttons
 		print '<br><br>';

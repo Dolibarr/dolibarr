@@ -939,7 +939,7 @@ if ($object->fetch($id) >= 0) {
 					}
 					/*if ($obj->status == -1)	// Sent with error
 					 {
-					 print '<a href="'.$_SERVER['PHP_SELF'].'?action=retry&rowid='.$obj->rowid.$param.'">'.$langs->trans("Retry").'</a>';
+					 print '<a href="'.$_SERVER['PHP_SELF'].'?action=retry&token='.newToken().'&rowid='.$obj->rowid.$param.'">'.$langs->trans("Retry").'</a>';
 					 }*/
 					print '</td>';
 				}
@@ -1016,7 +1016,7 @@ if ($object->fetch($id) >= 0) {
 					}
 					/*if ($obj->status == -1)	// Sent with error
 					{
-						print '<a href="'.$_SERVER['PHP_SELF'].'?action=retry&rowid='.$obj->rowid.$param.'">'.$langs->trans("Retry").'</a>';
+						print '<a href="'.$_SERVER['PHP_SELF'].'?action=retry&token='.newToken().'&rowid='.$obj->rowid.$param.'">'.$langs->trans("Retry").'</a>';
 					}*/
 					print '</td>';
 				}

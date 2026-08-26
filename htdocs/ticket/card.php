@@ -1441,7 +1441,7 @@ if ($action == 'create' || $action == 'presend') {
 
 					print '<div class="tagtd center">';
 					if ($object->status >= 0) {
-						echo '<a href="contact.php?track_id='.$object->track_id.'&amp;action=swapstatut&amp;ligne='.$tab_i['rowid'].'">';
+						echo '<a href="contact.php?track_id='.$object->track_id.'&amp;action=swapstatut&amp;token='.newToken().'&amp;ligne='.$tab_i['rowid'].'">';
 					}
 
 					if ($tab_i['source'] == 'internal') {

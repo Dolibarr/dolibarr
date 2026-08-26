@@ -3975,7 +3975,7 @@ if ($action == 'create') {
 						print '</td>';
 						// Delete
 						print '<td class="right">';
-						print '<a href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&action=unlinkdiscount&discountid='.$obj->rowid.'">';
+						print '<a href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&action=unlinkdiscount&token='.newToken().'&discountid='.$obj->rowid.'">';
 						print img_picto($langs->transnoentitiesnoconv("RemoveDiscount"), 'unlink');
 						print '</a>';
 						print '</td>';
