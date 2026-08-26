@@ -1023,7 +1023,7 @@ if (!empty($object->thirdparty)) {
 					// Get the price for the product and display it
 					console.log("Load unit price and set it into #price_ht or #price_ttc for product id="+$(this).val()+" socid=" + jsConf.docObject.socid);
 					$.post(jsConf.url.fetchProductUrl,
-						{ 'id': $(this).val(), 'socid': jsConf.docObject.socid, 'token': jsConf.conf.newtoken, 'addalsovatforthirdpartyid': 1 },
+						{ 'id': $(this).val(), 'socid': jsConf.docObject.socid, 'token': jsConf.conf.token, 'addalsovatforthirdpartyid': 1 },
 						function(data) {
 							console.log("objectline_create.tpl Load unit price ends, we got value ht="+data.price_ht+" ttc="+data.price_ttc+" pricebasetype="+data.pricebasetype);
 
