@@ -647,6 +647,12 @@ if (!defined('NOLOGIN')) {
 		}
 		// TODO Remove use of $_COOKIE['login_dolibarr'] by replacing line with $usertotest = GETPOST("username", "alpha", $allowedmethodtopostusername); ?
 		$usertotest = (!empty($_COOKIE['login_dolibarr']) ? preg_replace('/[^a-zA-Z0-9_@\-\.]/', '', $_COOKIE['login_dolibarr']) : GETPOST("username", "alpha", $allowedmethodtopostusername));
+		if (is_array($usertotest)) {
+			// An array-shaped username (ex: ?username[]=x) is not sanitized by GETPOST('alpha')
+			// (sanitizeVal only processes scalars for this check) and would otherwise flow unchanged into
+			// checkLoginPassEntity() -> User::fetch(), crashing on trim() with a TypeError (see user.class.php).
+			$usertotest = '';
+		}
 		$passwordtotest = GETPOST('password', 'password', $allowedmethodtopostusername);
 		$entitytotest = (GETPOSTINT('entity') ? GETPOSTINT('entity') : (!empty($conf->entity) ? $conf->entity : 1));
 
