@@ -2584,11 +2584,10 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 	public $remise_percent;
 
 	/**
-	 * Fixed discount
-	 * @var float
-	 * @deprecated
+	 * Id of source discount in table llx_societe_remise_except
+	 * @var ?int
 	 */
-	public $remise;
+	public $fk_remise_except;
 
 	/**
 	 * Total amount before taxes
