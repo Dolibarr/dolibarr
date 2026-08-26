@@ -2035,6 +2035,35 @@ class FunctionsLibTest extends CommonClassTest
 
 		$this->assertTrue(is_object($result));
 
+		$hasvariantsmodule = array_key_exists('variants', $conf->modules);
+		$originalvariantsmodule = $hasvariantsmodule ? $conf->modules['variants'] : null;
+
+		try {
+			$conf->modules['variants'] = 1;
+
+			$productattribute = getElementProperties('product_attribute');
+			$this->assertSame('variants', $productattribute['module']);
+			$this->assertSame('variants/class', $productattribute['classpath']);
+			$this->assertSame('ProductAttribute', $productattribute['classfile']);
+			$this->assertSame('ProductAttribute', $productattribute['classname']);
+
+			$productattributevalue = getElementProperties('product_attribute_value');
+			$this->assertSame('variants', $productattributevalue['module']);
+			$this->assertSame('variants/class', $productattributevalue['classpath']);
+			$this->assertSame('ProductAttributeValue', $productattributevalue['classfile']);
+			$this->assertSame('ProductAttributeValue', $productattributevalue['classname']);
+			$this->assertSame('product_attribute', $productattributevalue['parent_element']);
+
+			$this->assertInstanceOf(ProductAttribute::class, fetchObjectByElement(0, 'product_attribute'));
+			$this->assertInstanceOf(ProductAttributeValue::class, fetchObjectByElement(0, 'product_attribute_value'));
+		} finally {
+			if ($hasvariantsmodule) {
+				$conf->modules['variants'] = $originalvariantsmodule;
+			} else {
+				unset($conf->modules['variants']);
+			}
+		}
+
 		return true;
 	}
 
