@@ -26,14 +26,17 @@
  * $preselectedtypeofcontact may be defined or not
  */
 /**
- * @var ?CommonObject $object
- * @var ?CommonObject $objectsrc
  * @var DoliDB $db
  * @var Form $form
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
+ *
+ * @var ?CommonObject $object
+ * @var ?CommonObject $objectsrc
  * @var ?string $permission
+ * @var ?int $withproject
+ * @®ar ?int $userAlreadySelected
  */
 '
 @phan-var-force ?CommonObject $object
@@ -285,11 +288,13 @@ foreach (array('internal', 'external') as $source) {
 		}
 
 		if ($contact['source'] == 'internal') {
-			$entry->status = $contact['statuscontact'];
-			$entry->status_html = $userstatic->LibStatut($contact['statuscontact'], 3);
+			$entry->status = $contact['statuscontact'] ? $contact['status'] : 0;		// statuscontact=status of contact, status=status of link
+			$entry->status_html = $userstatic->LibStatut($entry->status == 4 ? 1 : 0, 3);
+			$entry->status_html = '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.((int) $object->id).'&action=swapstatut&token='.newToken().'&ligne='.((int) $entry->id).($withproject ? '&withproject=1' : '').'">'.$entry->status_html.'</a>';
 		} elseif ($contact['source'] == 'external') {
-			$entry->status = $contact['statuscontact'];
-			$entry->status_html = $contactstatic->LibStatut($contact['statuscontact'], 3);
+			$entry->status = $contact['statuscontact'] ? $contact['status'] : 0;		// statuscontact=status of contact, status=status of link
+			$entry->status_html = $contactstatic->LibStatut($entry->status == 4 ? 1 : 0, 3);
+			$entry->status_html = '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.((int) $object->id).'&action=swapstatut&token='.newToken().'&ligne='.((int) $entry->id).($withproject ? '&withproject=1' : '').'">'.$entry->status_html.'</a>';
 		}
 
 		$list[] = $entry;

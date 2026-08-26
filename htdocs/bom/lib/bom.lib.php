@@ -45,7 +45,7 @@ function bomAdminPrepareHead()
 	$head[$h][2] = 'settings';
 	$h++;
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT."/admin/bom_extrafields.php");
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'bom_bom'));
 	$head[$h][1] = $langs->trans("ExtraFields");
 	$nbExtrafields = (isset($extrafields->attributes['bom_bom']['label']) && is_countable($extrafields->attributes['bom_bom']['label'])) ? count($extrafields->attributes['bom_bom']['label']) : 0;
 	if ($nbExtrafields > 0) {
@@ -54,7 +54,7 @@ function bomAdminPrepareHead()
 	$head[$h][2] = 'bom_extrafields';
 	$h++;
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT."/admin/bomline_extrafields.php");
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'bom_bomline'));
 	$head[$h][1] = $langs->trans("ExtraFieldsLines");
 	$nbExtrafields = (isset($extrafields->attributes['bom_bomline']['label']) && is_countable($extrafields->attributes['bom_bomline']['label'])) ? count($extrafields->attributes['bom_bomline']['label']) : 0;
 	if ($nbExtrafields > 0) {

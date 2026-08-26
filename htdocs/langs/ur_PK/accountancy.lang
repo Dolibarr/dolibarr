@@ -202,6 +202,7 @@ DiscountReceived=Discount received
 DONATION_ACCOUNTINGACCOUNT=اکاؤنٹ (اکاؤنٹ کے چارٹ سے) عطیات کے اندراج کے لیے استعمال کیا جائے گا (عطیہ ماڈیول)
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=اکاؤنٹ (اکاؤنٹ کے چارٹ سے) ممبرشپ سبسکرپشنز کو رجسٹر کرنے کے لیے استعمال کیا جائے گا (ممبرشپ ماڈیول - اگر ممبرشپ بغیر رسید کے ریکارڈ کی گئی ہو)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=اکاؤنٹ (اکاؤنٹ کے چارٹ سے) کسٹمر ڈپازٹ کو رجسٹر کرنے کے لیے ڈیفالٹ اکاؤنٹ کے طور پر استعمال کیا جائے۔
+ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT_FOR_VAT=Account (from the Chart Of Account) to be used as the default account for VAT on customer deposit used in bindings
 UseAuxiliaryAccountOnCustomerDeposit=ڈاون پیمنٹ لائنوں کے لیے سبسڈری لیجر میں کسٹمر اکاؤنٹ کو انفرادی اکاؤنٹ کے طور پر اسٹور کریں (اگر غیر فعال ہو تو، ڈاؤن پیمنٹ لائنوں کے لیے انفرادی اکاؤنٹ خالی رہے گا)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default account to register supplier deposit
 UseAuxiliaryAccountOnSupplierDeposit=ڈاون پیمنٹ لائنز کے لیے سبسڈیری لیجر میں انفرادی اکاؤنٹ کے طور پر سپلائر اکاؤنٹ اسٹور کریں (اگر غیر فعال ہو تو، ڈاؤن پیمنٹ لائنوں کے لیے انفرادی اکاؤنٹ خالی رہے گا)

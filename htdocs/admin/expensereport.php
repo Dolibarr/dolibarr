@@ -32,11 +32,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/expensereport.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -44,6 +39,10 @@ require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/expensereport.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'errors', 'trips', 'other'));
@@ -139,8 +138,8 @@ if ($action == 'updateMask') {
 } elseif ($action == 'setdoc') {
 	// Set default model
 	if (dolibarr_set_const($db, "EXPENSEREPORT_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity)) {
-		// La constante qui a ete lue en avant du nouveau set
-		// on passe donc par une variable pour avoir un affichage coherent
+		// The constant that was read before the new set
+		// so we go through a variable to get a consistent display
 		$conf->global->EXPENSEREPORT_ADDON_PDF = $value;
 	}
 
@@ -216,6 +215,7 @@ print dol_get_fiche_head($head, 'expensereport', $langs->trans("ExpenseReports")
 
 print load_fiche_titre($langs->trans("ExpenseReportNumberingModules"), '', '');
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
@@ -310,7 +310,7 @@ foreach ($dirmodels as $reldir) {
 		}
 	}
 }
-print "</table><br>\n";
+print "</table></div><br>\n";
 
 /*
  *  Documents models for ExpenseReport
@@ -318,7 +318,7 @@ print "</table><br>\n";
 
 print load_fiche_titre($langs->trans("TemplatePDFExpenseReports"), '', '');
 
-// Defini tableau def des modeles
+// Define array def of models
 $type = 'expensereport';
 $def = array();
 $sql = "SELECT nom";
@@ -340,6 +340,7 @@ if ($resql) {
 	dol_print_error($db);
 }
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
@@ -450,7 +451,7 @@ foreach ($dirmodels as $reldir) {
 }
 
 print '</table>';
-
+print '</div>';
 
 print '<br>';
 
@@ -460,11 +461,13 @@ print '<br>';
  * Other options
  */
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="setoptions">';
 
 print load_fiche_titre($langs->trans("OtherOptions"), '', '');
+
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
@@ -525,6 +528,7 @@ print $form->selectyesno('EXPENSEREPORT_BLOCK_LINE_CREATION_IF_NOT_BETWEEN_DATES
 print '</td></tr>';
 
 print '</table>';
+print '</div>';
 
 print $form->buttonsSaveCancel("Save", '');
 

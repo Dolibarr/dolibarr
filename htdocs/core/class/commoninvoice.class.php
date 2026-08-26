@@ -1834,6 +1834,7 @@ abstract class CommonInvoice extends CommonObject
 								dol_syslog("makeStripeSepaRequest Current Saved Stripe environment is ".$savstripearrayofkeysbyenv[$servicestatus]['publishable_key']);
 
 								$foundalternativestripeaccount = '';
+								$stripearrayofkeys = array();
 
 								// Force stripe to another value (by default this value is empty)
 								if (! empty($forcestripe)) {

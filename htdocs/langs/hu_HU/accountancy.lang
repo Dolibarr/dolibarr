@@ -202,6 +202,7 @@ DiscountReceived=Discount received
 DONATION_ACCOUNTINGACCOUNT=Az adományok regisztrálására szolgáló számla (a Számlatáblázatból) (Adományozási modul)
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Számla (a számlatáblázatból), amelyet a tagsági előfizetések regisztrálásához használnak (Tagsági modul – ha a tagságot számla nélkül rögzítették)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Számla (a számlatervből), amelyet alapértelmezett számlaként kell használni a vevő befizetés regisztrálásához
+ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT_FOR_VAT=Account (from the Chart Of Account) to be used as the default account for VAT on customer deposit used in bindings
 UseAuxiliaryAccountOnCustomerDeposit=Tárolja az ügyfél számát egyéni számlaként a alkönyvben az előlegsorokhoz (ha le van tiltva, az előlegsorokhoz tartozó egyéni számla üres marad)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default account to register supplier deposit
 UseAuxiliaryAccountOnSupplierDeposit=Tárolja a szállítói számlát egyéni számlaként a alkönyvben az előlegsorokhoz (letiltás esetén az előlegsorok egyéni számla üresen marad)

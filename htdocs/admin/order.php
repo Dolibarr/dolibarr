@@ -547,7 +547,7 @@ print '</div>';
 print '<br>';
 print load_fiche_titre($langs->trans("SuggestedPaymentModesIfNotDefinedInOrder"), '', '');
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'" />';
 
 print '<div class="div-table-responsive-no-min">';
@@ -666,7 +666,7 @@ foreach ($substitutionarray as $key => $val) {
 }
 $htmltext .= '</i>';
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set_ORDER_FREE_TEXT">';
 print '<tr class="oddeven"><td colspan="2">';
@@ -686,7 +686,7 @@ print '</form>';
 
 //Use draft Watermark
 
-print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
+print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set_COMMANDE_DRAFT_WATERMARK">';
 print '<tr class="oddeven"><td>';

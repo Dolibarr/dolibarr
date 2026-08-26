@@ -274,6 +274,7 @@ return [
 		'conffiletoshowshort' => 'string',
 		'dateSelector' => 'int<0,1>',
 		'db' => '\DoliDB',
+		'dbsession' => '\DoliDB',
 		'disableedit' => 'int<0,1>',
 		'disablemove' => 'int<0,1>',
 		'disableremove' => 'int<0,1>',
@@ -406,9 +407,11 @@ return [
 		'/^GETPOSTFLOAT$/' => [1, '{^(?:|M[UTS]|C[UT]|\d+)$}',"InvalidGetPostFloatRounding"],
 		'/^price2num$/' => [1, '{^(?:|M[UTS]|C[UT]|\d+)$}',"InvalidPrice2NumRounding"],
 	],
+	'SqlInjectionPlugin' => ['debug' => false],
 	'plugins' => [
 		__DIR__.'/plugins/NoVarDumpPlugin.php',
 		__DIR__.'/plugins/ParamMatchRegexPlugin.php',
+		__DIR__.'/plugins/SqlInjectionPlugin.php',
 		// checks if a function, closure or method unconditionally returns.
 		// can also be written as 'vendor/phan/phan/.phan/plugins/AlwaysReturnPlugin.php'
 		'DeprecateAliasPlugin',

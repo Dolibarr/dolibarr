@@ -124,7 +124,7 @@ foreach ($dirModCaptcha as $dirroot) {
 $arrayhandler = dol_sort_array($arrayhandler, 'position');
 
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="updateform">';
 

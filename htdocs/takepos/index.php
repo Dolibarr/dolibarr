@@ -1131,7 +1131,7 @@ function WeighingScale(callback) {
 				}
 			});
 		<?php } else { ?>
-			// Protocole par défaut de takeposconnector: réception continue du poids/stabilité
+			// Default takeposconnector protocol: continuous reception of weight/stability
 			editnumber = globalWeight;
 			$("#poslines").load("invoice.php?token=<?php echo newToken(); ?>&action=updateqty&place="+place+"&idline="+selectedline+"&number="+editnumber, function() {
 				editnumber="";

@@ -1197,6 +1197,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			$object->country = $tmparray['label'];
 		}
 		$object->forme_juridique_code = GETPOSTINT('forme_juridique_code');
+		$object->birth = dol_mktime(0, 0, 0, GETPOSTINT('birthmonth'), GETPOSTINT('birthday'), GETPOSTINT('birthyear'));
 
 		// We set multicurrency_code if enabled
 		if (isModEnabled("multicurrency")) {

@@ -2,7 +2,7 @@
 /* Copyright (c) 2003-2006  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (c) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1285,7 +1285,9 @@ class DolGraph
 		if (isset($this->type[$firstlot])) {
 			$cssfordiv .= ' dolgraphchar' . $this->type[$firstlot];
 		}
-		$this->stringtoshow .= '<div id="placeholder_'.$tag.'" style="min-height: '.$this->height.(strpos((string) $this->height, '%') > 0 ? '' : 'px').'; max-height: '.(strpos((string) $this->height, '%') > 0 ? $this->height : ((int) $this->height + 100) . 'px').'; width:'.$this->width.(strpos((string) $this->width, '%') > 0 ? '' : 'px').';" class="'.$cssfordiv.' dolgraph'.(empty($dolxaxisvertical) ? '' : ' '.$dolxaxisvertical).(empty($this->cssprefix) ? '' : ' dolgraph'.$this->cssprefix).' center">'."\n";
+		$this->stringtoshow .= '<div id="placeholder_'.$tag.'" style="min-height: '.$this->height.(strpos((string) $this->height, '%') > 0 ? '' : 'px').'; max-height: '.(strpos((string) $this->height, '%') > 0 ? $this->height : ((int) $this->height + 100) . 'px').'; width:'
+			.$this->width.(strpos((string) $this->width, '%') > 0 ? '' : 'px').';" class="'
+			.$cssfordiv.' dolgraph'.(empty($dolxaxisvertical) ? '' : ' '.$dolxaxisvertical).(empty($this->cssprefix) ? '' : ' dolgraph'.$this->cssprefix).' center">'."\n";
 		$this->stringtoshow .= '<canvas id="canvas_'.$tag.'"></canvas></div>'."\n";
 
 		$this->stringtoshow .= '<script nonce="'.getNonce().'" id="' . $tag . '">' . "\n";

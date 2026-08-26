@@ -162,9 +162,11 @@ print '<div class="underbanner clearboth"></div>';
 print '<table class="border centpercent tableforfield">';
 
 // Civility
-print '<tr><td class="titlefield">'.$langs->trans("UserTitle").'</td><td>';
-print $object->getCivilityLabel();
-print '</td></tr>';
+if (getDolGlobalString('MAIN_USE_TITLE_FOR_CONTACT')) {
+	print '<tr><td class="titlefield">'.$langs->trans("UserTitle").'</td><td>';
+	print $object->getCivilityLabel();
+	print '</td></tr>';
+}
 
 $thirdTypeArray = array();
 $elementTypeArray = array();

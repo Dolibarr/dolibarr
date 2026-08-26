@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - products
 ProductRef=Réf. produit
-ServiceRef=service réf.
+ServiceRef=Réf. service
 ProductLabel=Libellé produit
 ProductLabelTranslated=Libellé produit traduit
 ProductDescription=Description du produit
@@ -423,7 +423,7 @@ mandatoryperiod=Plage de date obligatoire
 mandatoryPeriodNeedTobeSet=Remarque : La période (date de début et de fin) doit être définie
 mandatoryPeriodNeedTobeSetMsgValidate=Un service requiert une date de début et une date de fin
 mandatoryHelper=Cochez ceci si vous souhaitez envoyer un message à l'utilisateur lors de la création/validation d'une facture, devis, commande sans saisir de date de début et fin sur les lignes avec ce service.
-mandatoryHelper2=Notez que le message est un avertissement et et non une erreur bloquante.
+mandatoryHelper2=Notez que le message est un avertissement et non une erreur bloquante.
 DefaultBOM=Nomenclature par défaut
 DefaultBOMDesc=La nomenclature par défaut qu'il est recommandé d'utiliser pour fabriquer ce produit. Ce champ ne peut être défini que si la nature du produit est '%s'.
 Rank=Classement

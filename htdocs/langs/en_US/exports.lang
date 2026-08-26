@@ -158,6 +158,7 @@ ResultOfSimulationNoError=Result of simulation: No error
 NumberOfLinesLimited=Number of lines limited
 ErrorFileLinesReachEOF=File has %s lines. However we reach the end of file or an empty line at record %s. This may occurs when some records are split onto several lines and not correctly delimited by the "Char delimiter", or if there is line with no data on all fields.
 ImportInProcess=Import of file %s is in process
+ImportingFile=Import of file %s
 ImportTriggerModeLabel=Import mode
 ImportTriggerModeStrictLine=Secured mode (slower) - applies all automatic actions on each imported line
 ImportTriggerModeFastBulk=Fast mode (faster) - does not apply automatic actions on lines

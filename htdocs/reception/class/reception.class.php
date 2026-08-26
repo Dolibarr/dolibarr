@@ -2057,7 +2057,7 @@ class Reception extends CommonObject
 				$langs->load("agenda");
 
 				// Loop on each product line to add a stock movement
-				// TODO possibilite de receptionner a partir d'une propale ou autre origine ?
+				// TODO possibility to receive from a proposal or other origin ?
 				$sql = "SELECT cd.fk_product, cd.subprice,";
 				$sql .= " ed.rowid, ed.qty, ed.fk_entrepot,";
 				$sql .= " ed.eatby, ed.sellby, ed.batch,";
@@ -2218,7 +2218,7 @@ class Reception extends CommonObject
 				$langs->load("agenda");
 
 				// Loop on each product line to add a stock movement
-				// TODO possibilite de receptionner a partir d'une propale ou autre origine
+				// TODO possibility to receive from a proposal or other origin
 				$sql = "SELECT ed.fk_product, cd.subprice,";
 				$sql .= " ed.rowid, ed.qty, ed.fk_entrepot,";
 				$sql .= " ed.eatby, ed.sellby, ed.batch,";
@@ -2355,7 +2355,7 @@ class Reception extends CommonObject
 				$langs->load("agenda");
 
 				// Loop on each product line to add a stock movement
-				// TODO possibilite de receptionner a partir d'une propale ou autre origine
+				// TODO possibility to receive from a proposal or other origin
 				$sql = "SELECT cd.fk_product, cd.subprice,";
 				$sql .= " ed.rowid, ed.qty, ed.fk_entrepot,";
 				$sql .= " ed.eatby, ed.sellby, ed.batch,";

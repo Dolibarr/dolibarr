@@ -241,8 +241,7 @@ class CommandeFournisseur extends CommonOrder
 	public $cond_reglement_doc;
 
 	/**
-	 * @var float|string	Deposit percent for payment terms.
-	 *						Populated by $CommonObject->setPaymentTerms().
+	 * @var float|string	Deposit percent for payment terms. Populated by $CommonObject->setPaymentTerms().
 	 * @see setPaymentTerms()
 	 */
 	public $deposit_percent;
@@ -1702,6 +1701,12 @@ class CommandeFournisseur extends CommonOrder
 					//$this->special_code = $line->special_code; // TODO : remove this in 9.0 and add special_code param to addline()
 
 					// This include test on qty if option SUPPLIER_ORDER_WITH_NOPRICEDEFINED is not set
+					// Preserve the original entry mode of the line so the total is computed from the typed value (no rounding drift).
+					// In TTC mode, do not forward the HT currency price as pu_ht_devise: under multicurrency it would
+					// reset the local price and recompute from the HT currency amount (read as TTC) -> 0.01 drift.
+					// Like SupplierProposal (which does not pass it), the currency price is re-derived from the local price.
+					$line_price_base_type = $line->getPriceBaseType();
+					$line_pu_devise = ($line_price_base_type === 'TTC') ? 0 : (float) $line->multicurrency_subprice;
 					$result = $this->addline(
 						(string) $line->desc,
 						(float) $line->subprice,
@@ -1713,7 +1718,7 @@ class CommandeFournisseur extends CommonOrder
 						0,
 						(string) ($line->ref_supplier ? $line->ref_supplier : $line->ref_fourn), 			// $line->ref_fourn comes from field ref into table of lines. Value may be a ref that does not exists anymore, so we first try with value of product
 						(float) $line->remise_percent,
-						'HT',
+						$line_price_base_type,
 						(float) $line->subprice_ttc,
 						(int) $line->product_type,
 						(int) $line->info_bits,
@@ -1722,7 +1727,7 @@ class CommandeFournisseur extends CommonOrder
 						$line->date_end ?? null,
 						$line->array_options ?? [],
 						$line->fk_unit ?? null,
-						(float) $line->multicurrency_subprice,  // pu_ht_devise
+						$line_pu_devise,  // pu_ht_devise
 						(string) $line->origin,  // origin
 						(int) $line->origin_id,  // origin_id
 						(int) ($line->rang ?? -1),       // rang
@@ -1862,7 +1867,7 @@ class CommandeFournisseur extends CommonOrder
 		$sql .= " fk_user_valid=".(isset($this->user_validation_id) && $this->user_validation_id > 0 ? ((int) $this->user_validation_id) : "null").",";
 		$sql .= " fk_projet=".((!empty($this->fk_project) && $this->fk_project > 0) ? ((int) $this->fk_project) : "null").",";
 		$sql .= " fk_cond_reglement=".(isset($this->cond_reglement_id) ? ((int) $this->cond_reglement_id) : "null").",";
-		$sql .= " deposit_percent=".(!empty($this->deposit_percent) ? ((float) $this->deposit_percent) : "null").",";
+		$sql .= " deposit_percent=".(!empty($this->deposit_percent) ? "'".$this->db->escape($this->deposit_percent)."'" : "null").",";
 		$sql .= " fk_mode_reglement=".(isset($this->mode_reglement_id) ? ((int) $this->mode_reglement_id) : "null").",";
 		$sql .= " date_livraison=".(strval($this->delivery_date) != '' ? "'".$this->db->idate($this->delivery_date)."'" : 'null').",";
 		//$sql .= " fk_shipping_method=".(isset($this->shipping_method_id) ? $this->shipping_method_id : "null").",";
@@ -1945,7 +1950,7 @@ class CommandeFournisseur extends CommonOrder
 			if ($objsoc->fetch($socid) > 0) {
 				$this->socid = $objsoc->id;
 				$this->cond_reglement_id	= (!empty($objsoc->cond_reglement_id) ? $objsoc->cond_reglement_id : 0);
-				$this->deposit_percent		= (!empty($objsoc->deposit_percent) ? $objsoc->deposit_percent : 0);
+				$this->deposit_percent		= (!empty($objsoc->deposit_percent) ? $objsoc->deposit_percent : '0');
 				$this->mode_reglement_id	= (!empty($objsoc->mode_reglement_id) ? $objsoc->mode_reglement_id : 0);
 				$this->fk_project = 0;
 				$this->fk_delivery_address = 0;
@@ -2259,7 +2264,7 @@ class CommandeFournisseur extends CommonOrder
 			$this->line->product_type = $product_type;
 			$this->line->remise_percent = $remise_percent;
 			$this->line->subprice = (float) $pu_ht;
-			$this->line->subprice_ttc = (float) $pu_ttc;
+			$this->line->subprice_ttc = ($price_base_type === 'TTC') ? (float) $pu_ttc : 0;
 
 			$this->line->rang = $rang;
 			$this->line->info_bits = $info_bits;
@@ -2616,7 +2621,7 @@ class CommandeFournisseur extends CommonOrder
 
 			// We remove directory
 			$ref = dol_sanitizeFileName($this->ref);
-			if ($conf->fournisseur->commande->dir_output) {
+			if ($conf->fournisseur->commande->dir_output && !empty($ref)) {
 				$dir = $conf->fournisseur->commande->dir_output."/".$ref;
 				$file = $dir."/".$ref.".pdf";
 				if (file_exists($file)) {
@@ -3296,7 +3301,7 @@ class CommandeFournisseur extends CommonOrder
 			$this->line->multicurrency_total_ttc 	= (float) $multicurrency_total_ttc;
 
 			$this->line->subprice = (float) $pu_ht;
-			$this->line->subprice_ttc = (float) $pu_ttc;
+			$this->line->subprice_ttc = ($price_base_type === 'TTC') ? (float) $pu_ttc : 0;
 			$this->line->price = $this->line->subprice;
 
 			$this->line->remise_percent = $remise_percent;

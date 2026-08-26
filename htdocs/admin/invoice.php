@@ -152,8 +152,8 @@ if ($action == 'updateMask') {
 } elseif ($action == 'setdoc') {
 	// Set default model
 	if (dolibarr_set_const($db, "FACTURE_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity)) {
-		// La constante qui a ete lue en avant du nouveau set
-		// on passe donc par une variable pour avoir un affichage coherent
+		// The constant that was read before the new set
+		// so we go through a variable to get a consistent display
 		$conf->global->FACTURE_ADDON_PDF = $value;
 	}
 
@@ -658,7 +658,7 @@ if (getDolGlobalString('INVOICE_USE_DEFAULT_DOCUMENT')) { // Hidden conf
 	print '<br>';
 	print load_fiche_titre($langs->trans("BillsPDFModulesAccordindToInvoiceType"), '', '');
 
-	print '<form action="'.$_SERVER["PHP_SELF"].'#default-pdf-modules-by-type-table" method="POST">';
+	print '<form action="'.$_SERVER["PHP_SELF"].'#default-pdf-modules-by-type-table" method="POST" spellcheck="false">';
 	print '<input type="hidden" name="token" value="'.newToken().'" />';
 	print '<input type="hidden" name="action" value="setDefaultPDFModulesByType" >';
 	print '<input type="hidden" name="page_y" value="" />';
@@ -702,7 +702,7 @@ if (getDolGlobalString('INVOICE_USE_DEFAULT_DOCUMENT')) { // Hidden conf
 print '<br>';
 print load_fiche_titre($langs->trans("SuggestedPaymentModesIfNotDefinedInInvoice"), '', '');
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'" />';
 print '<input type="hidden" name="page_y" value="" />';
 
@@ -827,7 +827,7 @@ foreach ($substitutionarray as $key => $val) {
 }
 $htmltext .= '</i>';
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'" />';
 print '<input type="hidden" name="action" value="set_INVOICE_FREE_TEXT" />';
 print '<input type="hidden" name="page_y" value="" />';
@@ -847,7 +847,7 @@ print "</td></tr>\n";
 print '</form>';
 
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'" />';
 print '<input type="hidden" name="action" value="set_FACTURE_DRAFT_WATERMARK" />';
 print '<input type="hidden" name="page_y" value="" />';
@@ -862,7 +862,7 @@ print '</form>';
 
 
 // Force date validation
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'" />';
 print '<input type="hidden" name="action" value="setforcedate" />';
 print '<input type="hidden" name="page_y" value="" />';

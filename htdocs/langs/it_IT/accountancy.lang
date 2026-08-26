@@ -202,6 +202,7 @@ DiscountReceived=Discount received
 DONATION_ACCOUNTINGACCOUNT=Account (from the Chart Of Account) to be used to register donations (Donation module)
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=conto (dalla Carta Dei conto) da utilizzare per registrare gli abbonamenti abbonamenti (iscrizione modulo - if iscrizione registrato senza fattura)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=conto (dalla tabella di conto) da utilizzare come default conto per registrare cliente deposito
+ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT_FOR_VAT=Account (from the Chart Of Account) to be used as the default account for VAT on customer deposit used in bindings
 UseAuxiliaryAccountOnCustomerDeposit=Memorizzare il conto cliente come conto individuale nel libro mastro sussidiario per le righe di acconto (se disabilitato, il conto individuale per le righe di acconto rimarrà vuoto)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default account to register supplier deposit
 UseAuxiliaryAccountOnSupplierDeposit=Memorizzare il conto fornitore come conto individuale nel libro mastro sussidiario per le righe di acconto (se disabilitato, il conto individuale per le righe di acconto rimarrà vuoto)

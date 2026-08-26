@@ -170,6 +170,7 @@ AddCRIfTooLong=Es gibt keine automatische Textformatierung, zu langer Text wird 
 ConfirmPurge=Möchtest du diese Aktion wirklich durchführen?\nDabei gehen alle Datein (im ECM, Attachments etc) unwiederbringlich verloren.
 ExamplesWithCurrentSetup=Beispiele mit der derzeitigen Systemkonfiguration
 ListOfDirectoriesForModelGenODT=Liste der Verzeichnisse mit Vorlagendateien mit OpenDocument-Format.<br><br>Fügen Sie hier den vollständigen Pfad der Verzeichnisse ein.<br>Trennen Sie jedes Verzeichnis mit einer Zeilenschaltung<br>Verzeichnisse des ECM-Moduls fügen Sie z.B. so ein <b>DOL_DATA_ROOT/ecm/yourdirectoryname</b>.<br><br> Dateien in diesen Verzeichnissen müssen mit <b>.odt</b>  oder <b>.ods</b> enden.
+ExampleOfDirectoriesForModelGen=Examples of syntax:<br>c:\\myapp\\mydocumentdir\\mysubdir<br>/home/myapp/mydocumentdir/mysubdir<br>DOL_DATA_ROOT/ecm/ecmdir
 DescWeather=Diese Piktogramme werden bei verspäteten Tasks gemäss folgenden Werten angezeigt.
 KeyForWebServicesAccess=Schlüssel um Web Services (Parameter "dolibarrkey" in webservices) zu benützen
 ThisForceAlsoTheme=Dieser Menu Manager übersteuert die Benutzereinstellung. Er funktioniert nicht auf allen Smartphones. Wähle einen anderen, falls Probleme auftauchen.

@@ -47,7 +47,7 @@ class MyObject extends CommonObject
 	 * @var string		Prefix to check for any trigger code of any business class to prevent bad value for trigger code.
 	 * @see CommonTrigger::call_trigger()
 	 */
-	public $TRIGGER_PREFIX = 'MYMODULE_MYOBJECT';	// Will be used to build trgiger keys 'MYMODULE_MYOBJECT_MODIFY', ...
+	public $TRIGGER_PREFIX = 'MYMODULE_MYOBJECT';	// Will be used to build trigger keys 'MYMODULE_MYOBJECT_MODIFY', ...
 
 	/**
 	 * @var string 		Name of table without prefix where object is stored. This is also the key used for extrafields management (so extrafields know the link to the parent table).
@@ -119,6 +119,7 @@ class MyObject extends CommonObject
 	 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
 	 *	'validate' is 1 if you need to validate the field with $this->validateField(). Need MAIN_ACTIVATE_VALIDATION_RESULT.
 	 *  'copytoclipboard' is 1 or 2 to allow to add a picto to copy value into clipboard (1=picto after label, 2=picto after value)
+	 *  'description' is a description of the field. Can be used to help the MCP server.
 	 *
 	 *  Note: To have value dynamic, you can set value to 0 in definition and edit the value on the fly into the constructor.
 	 */
@@ -635,7 +636,7 @@ class MyObject extends CommonObject
 
 			if (!$error && !$notrigger) {
 				// Call trigger
-				$result = $this->call_trigger('MYOBJECT_VALIDATE', $user);
+				$result = $this->call_trigger('MYMODULE_MYOBJECT_VALIDATE', $user);
 				if ($result < 0) {
 					$error++;
 				}
@@ -1018,12 +1019,14 @@ class MyObject extends CommonObject
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("mymodule@mymodule");
-			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
-			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Enabled');
-			$this->labelStatus[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Disabled');
-			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
-			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Enabled');
-			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Disabled');
+			// Build status labels from the 'status' field arrayofkeyval so that the badge (LibStatut),
+			// the list filter and the select all show the same, configurable labels.
+			if (!empty($this->fields['status']['arrayofkeyval']) && is_array($this->fields['status']['arrayofkeyval'])) {
+				foreach ($this->fields['status']['arrayofkeyval'] as $statuskey => $statuslabel) {
+					$this->labelStatus[$statuskey] = $langs->transnoentitiesnoconv($statuslabel);
+					$this->labelStatusShort[$statuskey] = $langs->transnoentitiesnoconv($statuslabel);
+				}
+			}
 		}
 
 		$statusType = 'status'.$status;
@@ -1032,7 +1035,7 @@ class MyObject extends CommonObject
 			$statusType = 'status6';
 		}
 
-		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode, '', $paramsBadge);
+		return dolGetStatus($this->labelStatus[$status] ?? '', $this->labelStatusShort[$status] ?? '', '', $statusType, $mode, '', $paramsBadge);
 	}
 
 	/**

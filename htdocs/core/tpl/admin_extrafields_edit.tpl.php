@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2010-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -52,6 +52,9 @@ if (empty($conf) || !is_object($conf)) {
 	exit(1);
 }
 
+// Prefer $pagekey (the whitelisted request key) for self-referencing links; fall back to
+// $elementtype for older-style callers of this shared template that don't define $pagekey.
+$pagekeyforurl = isset($pagekey) ? $pagekey : $elementtype;
 
 $langs->load("modulebuilder");
 $langs->load("admin");
@@ -168,10 +171,11 @@ $listofexamplesforlink = 'Societe:societe/class/societe.class.php<br>Contact:con
 </script>
 
 <!-- Form to edit an extra field -->
-<form action="<?php echo $_SERVER["PHP_SELF"]; ?>?attrname=<?php echo $attrname; ?>" id="formeditextrafield" method="post">
+<form action="<?php echo $_SERVER["PHP_SELF"]; ?>?attrname=<?php echo $attrname; ?>&elementtype=<?php echo urlencode($pagekeyforurl); ?>" id="formeditextrafield" method="post">
 <input type="hidden" name="token" value="<?php echo newToken(); ?>">
-<input type="hidden" name="attrname" value="<?php echo $attrname; ?>">
+<input type="hidden" name="attrname" value="<?php echo dol_escape_htmltag($attrname); ?>">
 <input type="hidden" name="action" value="update">
+<input type="hidden" name="elementtype" value="<?php echo dol_escape_htmltag($pagekeyforurl); ?>">
 <input type="hidden" name="rowid" value="<?php echo(empty($rowid) ? '' : $rowid) ?>">
 <input type="hidden" name="enabled" value="<?php echo dol_escape_htmltag((string) $extrafields->attributes[$elementtype]['enabled'][$attrname]); ?>">
 
@@ -221,7 +225,7 @@ if (is_array($param)) {
 }
 ?>
 <!-- Label -->
-<tr><td class="titlefieldcreate fieldrequired"><?php echo $langs->trans("LabelOrTranslationKey"); ?></td><td class="valeur"><input type="text" name="label" size="40" value="<?php echo $label; ?>"></td></tr>
+<tr><td class="titlefieldcreate fieldrequired"><?php echo $langs->trans("LabelOrTranslationKey"); ?></td><td class="valeur"><input type="text" name="label" size="40" value="<?php echo dol_escape_htmltag($label); ?>"></td></tr>
 
 <!-- Code -->
 <tr><td class="fieldrequired"><?php echo $form->textwithpicto($langs->trans("AttributeCode"), $langs->trans("AttributeCodeHelp")); ?></td><td class="valeur"><?php echo $attrname; ?></td></tr>
@@ -265,7 +269,7 @@ if (in_array($type, array_keys($typewecanchangeinto))) {
 </td></tr>
 
 <!-- Size -->
-<tr class="extra_size"><td><?php echo $langs->trans("Size"); ?></td><td><input id="size" type="text" name="size" class="width50" value="<?php echo $size; ?>"></td></tr>
+<tr class="extra_size"><td><?php echo $langs->trans("Size"); ?></td><td><input id="size" type="text" name="size" class="width50" value="<?php echo dol_escape_htmltag($size); ?>"></td></tr>
 
 <!--  Value (for some fields like password, select list, radio, ...) -->
 <tr id="value_choice">
@@ -363,11 +367,11 @@ if (!getDolGlobalString('MAIN_STORE_COMPUTED_EXTRAFIELDS')) {
 <tr class="extra_emptyonclone"><td><?php echo $form->textwithpicto($langs->trans("EmptyOnClone"), $langs->trans("EmptyOnCloneDesc")); ?></td><td class="valeur"><input id="emptyonclone" type="checkbox" name="emptyonclone"<?php echo($emptyonclone ? ' checked' : ''); ?>></td></tr>
 
 <!-- Permission to edit -->
-<tr class="extra_perms"><td><?php echo $form->textwithpicto($langs->trans("PermissionOnField"), $langs->trans("PermissionToEditField")); ?></td><td class="valeur"><input id="perms" class="minwidth200" type="text" name="perms" value="<?php echo $perms; ?>"></td></tr>
+<tr class="extra_perms"><td><?php echo $form->textwithpicto($langs->trans("PermissionOnField"), $langs->trans("PermissionToEditField")); ?></td><td class="valeur"><input id="perms" class="minwidth200" type="text" name="perms" value="<?php echo dol_escape_htmltag($perms); ?>"></td></tr>
 
 <!-- Visibility -->
 <tr><td class="extra_list"><?php echo $form->textwithpicto($langs->trans("Visibility"), $langs->trans("VisibleDesc").'<br><br>'.$langs->trans("ItCanBeAnExpression")); ?>
-</td><td class="valeur"><input id="list" class="minwidth200" type="text" name="list" value="<?php echo($list != '' ? $list : '1'); ?>"></td></tr>
+</td><td class="valeur"><input id="list" class="minwidth200" type="text" name="list" value="<?php echo dol_escape_htmltag($list != '' ? $list : '1'); ?>"></td></tr>
 
 <!-- Visibility for PDF-->
 <tr><td class="extra_pdf"><?php echo $form->textwithpicto($langs->trans("DisplayOnPdf"), $langs->trans("DisplayOnPdfDesc")); ?>
@@ -384,13 +388,13 @@ if (!getDolGlobalString('MAIN_STORE_COMPUTED_EXTRAFIELDS')) {
 <tr class="help"><td><?php echo $form->textwithpicto($langs->trans("HelpOnTooltip"), $langs->trans("HelpOnTooltipDesc")); ?></td><td class="valeur"><input id="help" class="quatrevingtpercent" type="text" name="help" value="<?php echo dol_escape_htmltag($help); ?>"></td></tr>
 
 <!-- Css edit -->
-<tr class="extra_css"><td><?php echo $form->textwithpicto($langs->trans("CssOnEdit"), $langs->trans("HelpCssOnEditDesc")); ?></td><td class="valeur"><input id="css" type="text" class="minwidth200" name="css" value="<?php echo $css ?>"></td></tr>
+<tr class="extra_css"><td><?php echo $form->textwithpicto($langs->trans("CssOnEdit"), $langs->trans("HelpCssOnEditDesc")); ?></td><td class="valeur"><input id="css" type="text" class="minwidth200" name="css" value="<?php echo dol_escape_htmltag($css); ?>"></td></tr>
 
 <!-- Css view -->
-<tr class="extra_cssview"><td><?php echo $form->textwithpicto($langs->trans("CssOnView"), $langs->trans("HelpCssOnViewDesc")); ?></td><td class="valeur"><input id="cssview" class="minwidth200" type="text" name="cssview" value="<?php echo $cssview; ?>"></td></tr>
+<tr class="extra_cssview"><td><?php echo $form->textwithpicto($langs->trans("CssOnView"), $langs->trans("HelpCssOnViewDesc")); ?></td><td class="valeur"><input id="cssview" class="minwidth200" type="text" name="cssview" value="<?php echo dol_escape_htmltag($cssview); ?>"></td></tr>
 
 <!-- Css list -->
-<tr class="extra_csslist"><td><?php echo $form->textwithpicto($langs->trans("CssOnList"), $langs->trans("HelpCssOnListDesc")); ?></td><td class="valeur"><input id="csslist" class="minwidth200" type="text" name="csslist" value="<?php echo $csslist; ?>"></td></tr>
+<tr class="extra_csslist"><td><?php echo $form->textwithpicto($langs->trans("CssOnList"), $langs->trans("HelpCssOnListDesc")); ?></td><td class="valeur"><input id="csslist" class="minwidth200" type="text" name="csslist" value="<?php echo dol_escape_htmltag($csslist); ?>"></td></tr>
 
 <?php if (isModEnabled('multicompany')) { ?>
 	<!-- Multicompany entity -->

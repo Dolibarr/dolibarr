@@ -48,7 +48,7 @@ require_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
 require_once DOL_DOCUMENT_ROOT.'/mrp/lib/mrp_mo.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("mrp", "stocks", "other"));
+$langs->loadLangs(array("mrp", "stocks", "other", "productbatch"));
 
 // Get parameters
 $id          = GETPOSTINT('id');

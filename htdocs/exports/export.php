@@ -942,7 +942,7 @@ if ($step == 3 && $datatoexport) {
 	 * Action bar
 	 */
 	print '<div class="tabsAction tabsActionNoBottom">';
-	// il n'est pas obligatoire de filtrer les champs
+	// it is not mandatory to filter the fields
 	print '<a class="butAction" href="javascript:FilterField.submit();">'.$langs->trans("NextStep").'</a>';
 	print '</div>';
 }

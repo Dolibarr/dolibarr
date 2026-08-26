@@ -436,6 +436,7 @@ AmountOrPercent=Amount or percent
 Percentage=Percentage
 Total=Total
 SubTotal=Subtotal
+SubTotals=Subtotals
 TotalHTShort=Total (excl.)
 TotalHT100Short=Total 100%% (excl.)
 TotalHTShortCurrency=Total (excl., in currency)

@@ -798,7 +798,7 @@ if ($action != 'createsubscription' && $action != 'create_thirdparty') {
 			}
 
 			print '<tr class="oddeven">';
-			print '<td>'.$subscriptionstatic->getNomUrl(1).'</td>';
+			print '<td class="tdoverflowmax150">'.$subscriptionstatic->getNomUrl(1).'</td>';
 			print '<td class="center nowraponall">'.dol_print_date($db->jdate($objp->datec), 'dayhour')."</td>\n";
 			print '<td class="center tdoverflowmax125">';
 			if ($typeid > 0) {

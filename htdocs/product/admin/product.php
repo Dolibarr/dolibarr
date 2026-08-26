@@ -237,8 +237,8 @@ if ($action == 'del') {
 // Set default model
 if ($action == 'setdoc') {
 	if (dolibarr_set_const($db, "PRODUCT_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity)) {
-		// La constante qui a ete lue en avant du nouveau set
-		// on passe donc par une variable pour avoir un affichage coherent
+		// The constant that was read before the new set
+		// so we go through a variable to get a consistent display
 		$conf->global->PRODUCT_ADDON_PDF = $value;
 	}
 

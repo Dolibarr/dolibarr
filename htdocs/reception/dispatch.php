@@ -76,7 +76,7 @@ if ($user->socid) {
 
 $hookmanager->initHooks(array('ordersupplierdispatch'));
 
-// Recuperation de l'id de projet
+// Retrieve the project id
 $projectid = 0;
 if (GETPOSTISSET("projectid")) {
 	$projectid = GETPOSTINT("projectid");

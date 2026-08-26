@@ -186,7 +186,7 @@ if (in_array($modulepart, array('facture_paiement', 'unpaid'))) {
 
 // If we have a hash public (hashp), we guess the original_file.
 $ecmfile = '';
-if (!empty($hashp)) {
+if (!empty($hashp) && $hashp != 'shared') {
 	if (GETPOST('type', 'alpha') == 'link') {
 		require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 		$link = new Link($db);
@@ -454,7 +454,7 @@ if ($attachment > 0) {
 } elseif (empty($attachment)) {
 	header('Content-Disposition: inline; filename="'.$filename.'"');
 }
-// Ajout directives pour resoudre bug IE
+// Add directives to fix IE bug
 header('Cache-Control: Public, must-revalidate');
 header('Pragma: public');
 $readfile = true;

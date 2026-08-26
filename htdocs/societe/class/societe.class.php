@@ -2420,9 +2420,10 @@ class Societe extends CommonObject
 	 *    @param    string	$ref_alias 		Name_alias of third party (Warning, this can return several records)
 	 * 	  @param	int		$is_client		Only client third party
 	 *    @param	int		$is_supplier	Only supplier third party
+	 *    @param	string	$vatnumber		VAT number
 	 *    @return   int						ID of thirdparty found if OK, <0 if KO (-2 if two records found or other negative if error), 0 if not found.
 	 */
-	public function findNearest($rowid = 0, $ref = '', $ref_ext = '', $barcode = '', $idprof1 = '', $idprof2 = '', $idprof3 = '', $idprof4 = '', $idprof5 = '', $idprof6 = '', $email = '', $ref_alias = '', $is_client = 0, $is_supplier = 0)
+	public function findNearest($rowid = 0, $ref = '', $ref_ext = '', $barcode = '', $idprof1 = '', $idprof2 = '', $idprof3 = '', $idprof4 = '', $idprof5 = '', $idprof6 = '', $email = '', $ref_alias = '', $is_client = 0, $is_supplier = 0, $vatnumber = '')
 	{
 		// A rowid is known, it is a unique key so we found it
 		if ($rowid) {
@@ -2491,6 +2492,12 @@ class Societe extends CommonObject
 				$sqlprof .= " OR";
 			}
 			$sqlprof .= " s.idprof6 = '".$this->db->escape($idprof6)."'";
+		}
+		if ($vatnumber) {
+			if ($sqlprof) {
+				$sqlprof .= " OR";
+			}
+			$sqlprof .= " s.tva_intra = '".$this->db->escape($vatnumber)."'";
 		}
 
 		if ($sqlprof) {
@@ -2743,6 +2750,8 @@ class Societe extends CommonObject
 	 */
 	public function setAsCustomer()
 	{
+		global $user;
+
 		if ($this->id) {
 			$newclient = 1;
 			if (($this->client == 2 || $this->client == 3) && !getDolGlobalInt('SOCIETE_DISABLE_PROSPECTSCUSTOMERS')) {
@@ -2752,11 +2761,24 @@ class Societe extends CommonObject
 			$sql .= " SET client = ".((int) $newclient);
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
+			$this->db->begin();
+
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$this->client = $newclient;
+
+				// Call trigger
+				$result = $this->call_trigger('COMPANY_MODIFY', $user);
+				if ($result < 0) {
+					$this->db->rollback();
+					return -1;
+				}
+				// End call triggers
+
+				$this->db->commit();
 				return 1;
 			} else {
+				$this->db->rollback();
 				return -1;
 			}
 		}

@@ -212,7 +212,7 @@ echo '<span class="opacitymedium">'.$langs->trans("KnowledgeManagementSetupPage"
 
 
 if ($action == 'edit') {
-	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
+	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'" spellcheck="false">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 

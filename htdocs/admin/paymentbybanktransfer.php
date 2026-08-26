@@ -159,7 +159,7 @@ $linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore
 print load_fiche_titre($langs->trans("CreditTransferSetup"), $linkback, 'title_setup');
 print '<br>';
 
-print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=set&token='.newToken().'">';
+print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=set&token='.newToken().'" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
 print '<table class="noborder centpercent">';
@@ -443,7 +443,7 @@ if (isModEnabled('notification'))
 	}
 
 
-	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=addnotif&token='.newToken().'">';
+	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=addnotif&token='.newToken().'" spellcheck="false">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';

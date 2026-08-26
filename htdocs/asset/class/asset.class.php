@@ -201,7 +201,7 @@ class Asset extends CommonObject
 	 */
 	public $disposal_date;
 	/**
-	 * @var null|string|int  Is string, but asset/Card.php assigns int.
+	 * @var null|string|float
 	 */
 	public $disposal_amount_ht;
 	/**

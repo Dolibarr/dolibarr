@@ -155,9 +155,6 @@ ErrNoZipEngine=ไม่มีกลไกในการ zip/unzip ไฟล์
 ErrorFileMustBeADolibarrPackage=ไฟล์ %s จะต้องเป็นแพคเกจซิป Dolibarr
 ErrorModuleFileRequired=คุณต้องเลือกไฟล์แพ็กเกจโมดูล Dolibarr
 ErrorFailToDownloadModuleFromSource=Failed to download the module from the source. Please check your internet connection or the source URL and try again.
-extModuleConfirmInstallTitle = Confirm module installation
-extModuleConfirmInstallText  = You are about to install the following module:<br><br><b>Name:</b> %s<br><b>Version:</b> %s<br><b>Reference:</b> %s<br><b>Last update:</b> %s<br><br>This action is not reversible, Do you confirm the installation of this module?
-install=Install
 ErrorPhpCurlNotInstalled=PHP CURL ไม่ได้ติดตั้งนี้เป็นสิ่งสำคัญที่จะพูดคุยกับ Paypal
 ErrorFailedToAddToMailmanList=ไม่สามารถเพิ่มบันทึก %s ไปยังรายการ Mailman %s หรือฐาน SPIP ได้
 ErrorFailedToRemoveToMailmanList=ไม่สามารถลบระเบียน %s ไปยังรายการ Mailman %s หรือฐาน SPIP ได้
@@ -443,6 +440,7 @@ WarningModuleAffiliatedToAReportedCompany=Warning, this module has been reported
 WarningModuleAffiliatedToAPiratPlatform=ควรใช้ความระมัดระวังเมื่อรับโมดูล (แบบชำระเงินหรือฟรี) จากแพลตฟอร์มที่ไม่เป็นทางการที่น่าสงสัย เช่น %s
 WarningDNSServerNotAvailable=Warning, DNS server not available
 WarningSecureKeyNotSet=The value fo the securekey must not be empty
+WarningFullPathWasNotFoundSoWeUseAnAlternativeValue=Note: Full path was not found so we used the alternative value <b>%s</b>
 
 SwissQrOnlyVIR = สามารถเพิ่มใบแจ้งหนี้ SwissQR ได้เฉพาะกับใบแจ้งหนี้ที่ตั้งค่าให้ชำระด้วยการโอนเครดิตเท่านั้น
 SwissQrCreditorAddressInvalid = ที่อยู่เจ้าหนี้ไม่ถูกต้อง (ตั้งค่า ZIP และเมืองไว้แล้วหรือไม่ (%s)

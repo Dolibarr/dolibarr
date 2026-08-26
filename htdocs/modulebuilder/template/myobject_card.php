@@ -375,7 +375,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// 		require_once DOL_DOCUMENT_ROOT . '/core/class/notify.class.php';
 	// 		$notify = new Notify($db);
 	// 		$text .= '<br>';
-	// 		$text .= $notify->confirmMessage('MYOBJECT_CLOSE', $object->socid, $object);
+	// 		$text .= $notify->confirmMessage('MYMODULE_MYOBJECT_CLOSE', $object->socid, $object);
 	// 	}
 
 	// 	$formquestion = array();

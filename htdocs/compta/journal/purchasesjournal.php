@@ -158,7 +158,7 @@ $tablocaltax2 = array();
 $result = $db->query($sql);
 if ($result) {
 	$num = $db->num_rows($result);
-	// les variables
+	// the variables
 	$cptfour = getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER', $langs->trans("CodeNotDef"));
 	$cpttva = getDolGlobalString('ACCOUNTING_VAT_BUY_ACCOUNT', $langs->trans("CodeNotDef"));
 

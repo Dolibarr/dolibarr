@@ -100,7 +100,7 @@ You can add it to your git configuration using:
 git config --local commit.template .gitmessage
 ```
 
-where
+with
 
 #### Keyword
 In uppercase if you want to have the log comment appears into the generated ChangeLog file.

@@ -94,8 +94,8 @@ $title = $object->ref.' - '.$langs->trans("IOMonthlyReporting");
 $helpurl = "";
 llxHeader('', $title, $helpurl);
 
-// Ce rapport de tresorerie est base sur llx_bank (car doit inclure les transactions sans facture)
-// plutot que sur llx_paiement + llx_paiementfourn
+// This treasury report is based on llx_bank (because it must include transactions without invoice)
+// rather than on llx_paiement + llx_paiementfourn
 
 $sql = "SELECT SUM(b.amount)";
 $sql .= ", date_format(b.dateo,'%Y-%m') as dm";
@@ -185,7 +185,7 @@ print dol_get_fiche_end();
 $head = bank_report_prepare_head($object);
 print dol_get_fiche_head($head, 'annual', $langs->trans("FinancialAccount"), -1);
 
-// Affiche tableau
+// Display array
 print load_fiche_titre('', $link, '');
 
 print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
@@ -362,7 +362,7 @@ if ($result < 0) {
 		$datamin[$i] = 0;
 	}
 
-	// Fabrication tableau 4b
+	// Build array 4b
 	$file = $conf->bank->dir_temp."/credmovement".$id."-".$year.".png";
 	$fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=banque_temp&file='."/credmovement".$id."-".$year.".png";
 	$title = $langs->transnoentities("Credit").' - '.$langs->transnoentities("Year").': '.($year - 2).' - '.($year - 1)." - ".$year;

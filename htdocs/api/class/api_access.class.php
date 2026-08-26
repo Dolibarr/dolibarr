@@ -136,7 +136,7 @@ class DolibarrApiAccess implements iAuthenticate
 
 			if (!getDolGlobalString('API_IN_TOKEN_TABLE')) {
 				if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && defined("DOLENTITY")) {
-					$sql = "SELECT u.login, u.datec, u.api_key as use_api, u.api_key as api_key, 0 as token_rowid,";
+					$sql = "SELECT DISTINCT u.login, u.datec, u.api_key as use_api, u.api_key as api_key, 0 as token_rowid,";
 					$sql .= " u.tms as date_modification,";
 					$sql .= " gu.entity, gu.entity as token_entity";
 					$sql .= " FROM ".$this->db->prefix()."user as u";
@@ -150,7 +150,7 @@ class DolibarrApiAccess implements iAuthenticate
 				}
 			} else {
 				if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && defined("DOLENTITY")) {
-					$sql = "SELECT u.login, u.datec, u.api_key as use_api, oat.tokenstring as api_key, oat.entity as token_entity, oat.rowid as token_rowid,";
+					$sql = "SELECT DISTINCT u.login, u.datec, u.api_key as use_api, oat.tokenstring as api_key, oat.entity as token_entity, rowid as token_rowid,";
 					$sql .= " oat.tms as date_modification,";
 					$sql .= " gu.entity";
 					$sql .= " FROM ".$this->db->prefix()."oauth_token AS oat";
@@ -340,6 +340,7 @@ class DolibarrApiAccess implements iAuthenticate
 		}
 
 		$userClass::setCacheIdentifier(static::$role);
+
 		Resources::$accessControlFunction = 'DolibarrApiAccess::verifyAccess';
 		$requirefortest = static::$requires;
 		if (!is_array($requirefortest)) {
@@ -359,7 +360,7 @@ class DolibarrApiAccess implements iAuthenticate
 	}
 
 	/**
-	 * Verify access
+	 * Check that the role of user is among a the given list defined into static::$requires
 	 *
 	 * @param   array{class:array{DolibarrApiAccess:array{properties:array{requires?:bool}}}} $m Properties of method
 	 *

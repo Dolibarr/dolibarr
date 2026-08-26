@@ -228,7 +228,7 @@ $linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore
 
 print load_fiche_titre($langs->trans("BankSetupModule"), $linkback, 'title_setup');
 
-print '<form name="bankmovementcolorconfig" action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<form name="bankmovementcolorconfig" action="'.$_SERVER["PHP_SELF"].'" method="post" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="save">';
 

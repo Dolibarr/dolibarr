@@ -1334,7 +1334,9 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 			if ($canread) {
 				$head = holiday_prepare_head($object);
 
-				if (($action == 'edit' && $object->status == Holiday::STATUS_DRAFT) || ($action == 'editvalidator')) {
+				$editmode = (($action == 'edit' && $object->status == Holiday::STATUS_DRAFT) || ($action == 'editvalidator'));
+
+				if ($editmode) {
 					if ($action == 'edit' && $object->status == Holiday::STATUS_DRAFT) {
 						$edit = true;
 					}
@@ -1345,7 +1347,9 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 					print '<input type="hidden" name="id" value="'.$object->id.'" />'."\n";
 				}
 
-				print dol_get_fiche_head($head, 'card', $langs->trans("CPTitreMenu"), -1, 'holiday');
+				// No drop area in edit mode: these tabs are printed inside the edit form, and dropping a file
+				// reloads the page, which would discard what the user is typing.
+				print dol_get_fiche_head($head, 'card', $langs->trans("CPTitreMenu"), -1, 'holiday', 0, '', '', 0, '', ($editmode ? 0 : 1));
 
 				$linkback = '<a href="'.DOL_URL_ROOT.'/holiday/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 

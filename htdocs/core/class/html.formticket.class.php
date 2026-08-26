@@ -1383,7 +1383,7 @@ class FormTicket
 
 		if (is_array($conf->cache['severity_tickets']) && count($conf->cache['severity_tickets'])) {
 			foreach ($conf->cache['severity_tickets'] as $id => $arrayseverities) {
-				// On passe si on a demande de filtrer sur des modes de paiments particuliers
+				// Skip if filtering on specific payment modes was requested
 				if (count($filterarray) && !in_array($arrayseverities['type'], $filterarray)) {
 					continue;
 				}

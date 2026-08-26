@@ -557,7 +557,6 @@ class ExternalModules
 							$urldownload = 'https://www.dolistore.com/_service_download.php?t=free&p='.$reg[1];
 							$download_link .= '<a class="paddingleft paddingright valignmiddle" target="_blank" title="'.$langs->trans("Download").'" href="'.$urldownload.'" rel="noopener noreferrer">';
 							$download_link .= img_picto('', 'download', 'class="size2x paddingright"');
-							//$download_link .= '<img width="32" src="'.DOL_URL_ROOT.'/admin/remotestore/img/download.png" />';
 							$download_link .= '</a>';
 						}
 					}
@@ -569,12 +568,11 @@ class ExternalModules
 					$download_link .= '</a>';
 					$download_link .= '<a class="paddingleft paddingright" target="_blank" title="'.$langs->trans("Download").'" href="'.$urldownload.'" rel="noopener noreferrer">';
 					$download_link .= img_picto('', 'download', 'class="size2x paddingright"');
-					//$download_link .= '<img width="32" src="'.DOL_URL_ROOT.'/admin/remotestore/img/download.png" />';
 					$download_link .= '</a>';
 				}
 
 				// Direct install
-				if (($product['direct-download'] && $product['direct-download'] == 'yes') || $product['source'] === 'dolistore') {
+				if (($product['direct-download'] && in_array($product['direct-download'], array('yes', 'dolistore'))) || $product['source'] === 'dolistore') {
 					$urldownload = '';
 
 					if ($product['source'] === 'githubcommunity') {
@@ -588,8 +586,13 @@ class ExternalModules
 
 						$reg = array();
 						$urlview = $product["dolistore-download"];		// View on Dolistore
-						if (preg_match('/https:.*\?id=(\d+)$/', $urlview, $reg)) {
-							$urldownload = 'https://www.dolistore.com/_service_download.php?t=free&p='.$reg[1];
+
+						// For community modules, we download from community repo.
+						// But we can force to download from dolistore if MAIN_DOWNLOAD_FROM_DOLISTORE_IN_PRIORITY is set (less reliable, less up to date)
+						if ($product["direct-download"] == 'dolistore' || getDolGlobalString("MAIN_DOWNLOAD_FROM_DOLISTORE_IN_PRIORITY")) {
+							if (preg_match('/https:.*\?id=(\d+)$/', $urlview, $reg)) {
+								$urldownload = 'https://www.dolistore.com/_service_download.php?t=free&p='.$reg[1];
+							}
 						}
 					}
 					if ($product['source'] === 'dolistore') {
@@ -693,8 +696,7 @@ class ExternalModules
 			// Price - do not load if display none
 			$html .= '<td class="margeCote center amount'.(getDolOptimizeSmallScreen() ? ' left" colspan="2"' : '"').'>';
 			$html .= $price;
-			if (($product['direct-download'] && $product['direct-download'] == 'yes')
-				|| ($product['source'] === 'dolistore' && empty((float) $product['price_ht']))) {
+			if (($product['direct-download'] && in_array($product['direct-download'], array('yes', 'dolistore'))) || ($product['source'] === 'dolistore' && empty((float) $product['price_ht']))) {
 				if ($install_link) {
 					$html .= $install_link;
 				}
@@ -1400,7 +1402,7 @@ class ExternalModules
 				}
 				break;
 			case 'githubcommunity':
-				if ($producttoinstall['direct-download'] && $producttoinstall['direct-download'] == 'yes') {
+				if ($producttoinstall['direct-download'] && in_array($producttoinstall['direct-download'], array('yes', 'dolistore'))) {
 					$source_url = 'https://github.com/Dolibarr/dolibarr-community-modules/raw/refs/heads/main/dev/build/bin/module_' . $module_name . '-' . $current_version . '.zip';
 					$downloaded = $this->_downloadFile($source_url, $tmpdir);
 					if (!$downloaded) {

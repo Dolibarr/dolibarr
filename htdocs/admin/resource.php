@@ -81,7 +81,7 @@ $head = resource_admin_prepare_head();
 
 print dol_get_fiche_head($head, 'general', $langs->trans("ResourceSingular"), -1, 'action');
 
-print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="updateoptions">';
 

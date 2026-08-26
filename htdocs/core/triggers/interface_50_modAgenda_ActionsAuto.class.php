@@ -186,18 +186,24 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			$object->sendtoid = array($object->id => $object->id);
 			// $object->socid = $object->socid;
 		} elseif ($action == 'CONTACT_MODIFY' && $object instanceof Contact) {
+			'@phan-var-force Contact $object';
 			// Load translation files required by the page
 			$langs->loadLangs(array("agenda", "other", "companies"));
 
 			if (empty($object->actionmsg2)) {
 				if (empty($object->context['actionmsg2'])) {
-					$object->actionmsg2 = $langs->transnoentities("CONTACT_MODIFYInDolibarr", (string) $object->name);
+					$object->actionmsg2 = $langs->transnoentities("CONTACT_MODIFYInDolibarr", $object->getFullName($langs));
 				} else {
 					$object->actionmsg2 = $object->context['actionmsg2'];
 				}
 			}
 			if (empty($object->actionmsg)) {
-				$object->actionmsg = $langs->transnoentities("CONTACT_MODIFYInDolibarr", (string) $object->name);
+				$object->actionmsg = $langs->transnoentities("CONTACT_MODIFYInDolibarr", $object->getFullName($langs));
+			}
+
+			// For merge event, we add a mention
+			if (!empty($object->context['mergefromname'])) {
+				$object->actionmsg = dol_concatdesc($object->actionmsg, $langs->transnoentities("DataFromWasMerged", $object->context['mergefromname'].' (id='.$object->context['mergefromid'].')'));
 			}
 
 			$object->sendtoid = array($object->id => $object->id);

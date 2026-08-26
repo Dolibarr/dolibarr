@@ -197,7 +197,7 @@ function invoice_admin_prepare_head()
 	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__'); to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'invoice_admin');
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/compta/facture/admin/invoice_cust_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'facture'));
 	$head[$h][1] = $langs->trans("ExtraFieldsCustomerInvoices");
 	$nbExtrafields = $extrafields->attributes['facture']['count'];
 	if ($nbExtrafields > 0) {
@@ -206,7 +206,7 @@ function invoice_admin_prepare_head()
 	$head[$h][2] = 'attributes';
 	$h++;
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/compta/facture/admin/invoicedet_cust_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'facturedet'));
 	$head[$h][1] = $langs->trans("ExtraFieldsLines");
 	$nbExtrafields = $extrafields->attributes['facturedet']['count'];
 	if ($nbExtrafields > 0) {
@@ -215,7 +215,7 @@ function invoice_admin_prepare_head()
 	$head[$h][2] = 'attributeslines';
 	$h++;
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/compta/facture/admin/invoice_rec_cust_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'facture_rec'));
 	$head[$h][1] = $langs->trans("ExtraFieldsCustomerInvoicesRec");
 	$nbExtrafields = $extrafields->attributes['facture_rec']['count'];
 	if ($nbExtrafields > 0) {
@@ -224,7 +224,7 @@ function invoice_admin_prepare_head()
 	$head[$h][2] = 'attributesrec';
 	$h++;
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/compta/facture/admin/invoicedet_rec_cust_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'facturedet_rec'));
 	$head[$h][1] = $langs->trans("ExtraFieldsLinesRec");
 	$nbExtrafields = $extrafields->attributes['facturedet_rec']['count'];
 	if ($nbExtrafields > 0) {

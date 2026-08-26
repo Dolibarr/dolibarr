@@ -125,14 +125,25 @@ if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 
 
 	if (!$situationinvoicelinewithparent) {
-		print '<input type="text" name="line_desc" class="marginrightonly" id="line_desc" value="';
-		print GETPOSTISSET('product_desc') ? GETPOST('product_desc', 'restricthtml') : $line->description . '"';
 		$disabled = 0;
-		if ($line_type == 'subtotal') {
-			print ' readonly="readonly"';
-			$disabled = 1;
+		if (getDolGlobalString("SUBTOTAL_CAN_USE_LONG_TITLE")) {
+			print '<textarea name="line_desc" class="marginrightonly minwidth300 valignmiddle" id="line_desc"';
+			if ($line_type == 'subtotal') {
+				print ' readonly="readonly"';
+				$disabled = 1;
+			}
+			print '>';
+			print GETPOSTISSET('product_desc') ? GETPOST('product_desc', 'restricthtml') : $line->description;
+			print '</textarea>';
+		} else {
+			print '<input type="text" name="line_desc" class="marginrightonly minwidth300 valignmiddle" id="line_desc" value="';
+			print GETPOSTISSET('product_desc') ? GETPOST('product_desc', 'restricthtml') : $line->description . '"';
+			if ($line_type == 'subtotal') {
+				print ' readonly="readonly"';
+				$disabled = 1;
+			}
+			print '>';
 		}
-		print '>';
 		$depth_array = $this->getPossibleLevels($langs);  // Suppose CommonSubtotal trait @phan-suppress-current-line PhanUndeclaredMethod
 		print $form->selectarray('line_depth', $depth_array, abs($line->qty), 0, 0, 0, '', 0, 0, $disabled);
 		if ($disabled) {
@@ -141,10 +152,15 @@ if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 		print '<div><ul class="ecmjqft">';
 		foreach ($line_options as $key => $value) {
 			if (in_array($line_type, $value['type'])) {
-				print '<li><label for="' . $key . '">' . $langs->trans($value['trans_key']) . '</label>';
-				print '<input style="float: left;margin-top: 9px;" id="' . $key . '" type="checkbox" name="' . $key . '" value="' . $value['value'] . '" ';
-				print $value['checked'] ? 'checked' : '';
-				print '></li>';
+				if ($line_type == 'title') {
+					print '<li><label for="' . $key . '">' . $langs->trans($value['trans_key']) . '</label>';
+					print '<input style="float: left;margin-top: 9px;" id="' . $key . '" type="checkbox" name="' . $key . '" value="' . $value['value'] . '" ';
+					print $value['checked'] ? 'checked' : '';
+					print '></li>';
+				}
+				if ($line_type == 'subtotal') {
+					print '<input style="float: left;margin-top: 9px;" id="' . $key . '" type="hidden" name="' . $key . '" value="' . $value['value'] . '">';
+				}
 			}
 		}
 		print '</ul></div></td>';

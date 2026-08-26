@@ -338,7 +338,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 }
 
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" name="agenda">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" name="agenda" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set">';
 

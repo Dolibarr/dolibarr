@@ -99,6 +99,14 @@ if (!$bankid) {
 	$account->fetch(0, '', $id);
 } else {
 	$account->fetch($bankid);
+	if ($account->id > 0) {
+		if ((int) $account->userid !== (int) $object->id) {
+			accessforbidden();
+		}
+		if ((int) $account->entity !== (int) $conf->entity) {
+			accessforbidden();
+		}
+	}
 }
 if (empty($account->userid)) {
 	$account->userid = $object->id;

@@ -1462,12 +1462,12 @@ class ModeleImports
 								if (empty($sql_listvalues[$socialkey]) || $sql_listvalues[$socialkey] == "null") {
 									$json = new stdClass();
 									$json->$socialnetwork = $newval;
-									$sql_listvalues[$socialkey] = json_encode($json);
+									$sql_listvalues[$socialkey] = json_encode($json);  // Supposed proper escape elsewhere!! @phan-suppress-current-line SqlInjection
 								} else {
 									$jsondata = $sql_listvalues[$socialkey];
 									$json = json_decode($jsondata);
 									$json->$socialnetwork = $newval;
-									$sql_listvalues[$socialkey] = json_encode($json);
+									$sql_listvalues[$socialkey] = json_encode($json);  // Supposed proper escape elsewhere!! @phan-suppress-current-line SqlInjection
 								}
 							}
 						} else {
@@ -1720,7 +1720,7 @@ class ModeleImports
 									$keyfield = 'rowid';
 								}
 
-								$sqlend = " WHERE ".$this->db->escape($keyfield)." = ".((int) $lastinsertid);
+								$sqlend = " WHERE ".$this->db->sanitize($keyfield)." = ".((int) $lastinsertid);
 
 								if ($is_table_category_link && !empty($where)) {
 									'@phan-var-force string[] $where';

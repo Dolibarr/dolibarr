@@ -284,6 +284,16 @@ class WebsitePage extends CommonObject
 		$dataposted = preg_replace(array('/<html>\n*/ims', '/<\/html>\n*/ims'), array('', ''), $dataposted);
 		$dataposted = str_replace('<?=', '<?php', $dataposted);
 
+		// Check there is no PHP content into the imported file (must be only HTML + JS)
+		// Note: This one may be useless because this->htmlheader should be retrieved now using GETPOST(..., 'restricthtmlallowlinkscript') so without PHP content. We keep it in case of.
+		$phpcontent = dolKeepOnlyPhpCode($this->htmlheader);
+
+		if ($phpcontent) {
+			$this->error = 'Error: you try to create htmlheader with PHP content inside, this is not allowed.';
+			$this->errors[] = $this->error;
+			return -1;
+		}
+
 		// Test if page contains dynamic PHP content
 		if (!$user->hasRight('website', 'writephp')) {
 			// Check there is no PHP content into the imported file (must be only HTML + JS)
@@ -291,16 +301,6 @@ class WebsitePage extends CommonObject
 
 			if ($phpcontent) {
 				$this->error = 'Error: you try to create a page with PHP content in HTML body without having permissions for that.';
-				$this->errors[] = $this->error;
-				return -1;
-			}
-
-			// Check there is no PHP content into the imported file (must be only HTML + JS)
-			// Note: This one may be uselss because this->htmlheader should be retrieved now using GETPOST(..., 'restricthtmlallowlinkscript') so without PHP content. We keep it in case of.
-			$phpcontent = dolKeepOnlyPhpCode($this->htmlheader);
-
-			if ($phpcontent) {
-				$this->error = 'Error: you try to create a page with PHP content in HTML header without having permissions for that.';
 				$this->errors[] = $this->error;
 				return -1;
 			}
@@ -709,6 +709,16 @@ class WebsitePage extends CommonObject
 				$this->error = "ErrorLanguageOfTranslatedPageIsSameThanThisPage";
 				return -1;
 			}
+		}
+
+		// Check there is no PHP content into the modifiedhtmlheader (must be only HTML + JS)
+		// Note: This one may be useless because this->htmlheader should be retrieved now using GETPOST(..., 'restricthtmlallowlinkscript') so without PHP content. We keep it in case of.
+		$phpcontent = dolKeepOnlyPhpCode($this->htmlheader);
+
+		if ($phpcontent) {
+			$this->error = 'Error: you try to create htmlheader with PHP content inside, this is not allowed.';
+			$this->errors[] = $this->error;
+			return -1;
 		}
 
 		return $this->updateCommon($user, $notrigger);

@@ -100,6 +100,7 @@ class modSupplierProposal extends DolibarrModules
 				0,
 			],
 		];
+
 		// Boxes
 		$this->boxes = [];
 

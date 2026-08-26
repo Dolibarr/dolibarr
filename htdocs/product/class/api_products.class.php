@@ -63,7 +63,7 @@ class Products extends DolibarrApi
 	 */
 	public function __construct()
 	{
-		global $db, $conf;
+		global $db;
 
 		$this->db = $db;
 		$this->product = new Product($this->db);

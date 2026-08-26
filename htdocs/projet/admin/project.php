@@ -210,8 +210,8 @@ if ($action == 'updateMaskTask') {
 	dolibarr_del_const($db, "PROJECT_ADDON_PDF", $conf->entity);
 } elseif ($action == 'setdoctask') {
 	if (dolibarr_set_const($db, "PROJECT_TASK_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity)) {
-		// La constante qui a ete lue en avant du nouveau set
-		// on passe donc par une variable pour avoir un affichage coherent
+		// The constant that was read before the new set
+		// so we go through a variable to get a consistent display
 		$conf->global->PROJECT_TASK_ADDON_PDF = $value;
 	}
 
@@ -520,7 +520,7 @@ if (!getDolGlobalString('PROJECT_HIDE_TASKS')) {
 
 print load_fiche_titre($langs->trans("ProjectsModelModule"), '', '');
 
-// Defini tableau def de modele
+// Define array def of model
 $type = 'project';
 $def = array();
 // TODO Replace with $def = getListOfModels($db, $type);
@@ -670,7 +670,7 @@ if (!getDolGlobalString('PROJECT_HIDE_TASKS')) {
 
 	print load_fiche_titre($langs->trans("TaskModelModule"), '', '');
 
-	// Defini tableau def de modele
+	// Define array def of model
 	$type = 'project_task';
 	$def = array();
 

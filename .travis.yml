@@ -546,6 +546,9 @@ script:
     php upgrade.php 23.0.0 24.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade23002400.log || cat $TRAVIS_BUILD_DIR/upgrade23002400.log
     php upgrade2.php 23.0.0 24.0.0 > $TRAVIS_BUILD_DIR/upgrade23002400-2.log || cat $TRAVIS_BUILD_DIR/upgrade23002400-2.log
     php step5.php 23.0.0 24.0.0 > $TRAVIS_BUILD_DIR/upgrade23002400-3.log || cat $TRAVIS_BUILD_DIR/upgrade23002400-3.log
+    php upgrade.php 24.0.0 25.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade24002500.log || cat $TRAVIS_BUILD_DIR/upgrade24002500.log
+    php upgrade2.php 24.0.0 25.0.0 > $TRAVIS_BUILD_DIR/upgrade24002500-2.log || cat $TRAVIS_BUILD_DIR/upgrade24002500-2.log
+    php step5.php 24.0.0 25.0.0 > $TRAVIS_BUILD_DIR/upgrade24002500-3.log || cat $TRAVIS_BUILD_DIR/upgrade24002500-3.log
     set +e
     echo
 

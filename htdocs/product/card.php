@@ -2075,7 +2075,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			$head = product_prepare_head($object);
 			$titre = $langs->trans("CardProduct".$object->type);
 			$picto = ($object->type == Product::TYPE_SERVICE ? 'service' : 'product');
-			print dol_get_fiche_head($head, 'card', $titre, 0, $picto, 0, '', '', 0, '', 1);
+			print dol_get_fiche_head($head, 'card', $titre, 0, $picto, 0, '', '', 0, '', 0);	// No drag and drop on the edit form, dropping a file reloads the page and discards it
 
 			// Call Hook tabContentEditProduct
 			$parameters = array();

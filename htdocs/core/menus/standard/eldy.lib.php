@@ -2218,7 +2218,7 @@ function get_left_menu_bank($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu =
 		if (!getDolGlobalString('BANK_DISABLE_CHECK_DEPOSIT') && isModEnabled('bank') && (isModEnabled('invoice') || getDolGlobalString('MAIN_MENU_CHEQUE_DEPOSIT_ON'))) {
 			$newmenu->add("/compta/paiement/cheque/index.php?leftmenu=checks&mainmenu=bank", $langs->trans("MenuChequeDeposits"), 0, $user->hasRight('banque', 'cheque'), '', $mainmenu, 'checks', 0, '', '', '', img_picto('', 'payment', 'class="paddingright pictofixedwidth"'));
 			if (preg_match('/checks/', $leftmenu)) {
-				$newmenu->add("/compta/paiement/cheque/card.php?leftmenu=checks_bis&action=new&mainmenu=bank", $langs->trans("NewChequeDeposit"), 1, $user->hasRight('banque', 'cheque'));
+				$newmenu->add("/compta/paiement/cheque/card.php?leftmenu=checks_bis&action=create2&mainmenu=bank", $langs->trans("NewChequeDeposit"), 1, $user->hasRight('banque', 'cheque'));
 				$newmenu->add("/compta/paiement/cheque/list.php?leftmenu=checks_bis&mainmenu=bank", $langs->trans("List"), 1, $user->hasRight('banque', 'cheque'));
 			}
 		}

@@ -26,9 +26,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -36,6 +33,8 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'members', 'errors', 'other'));
