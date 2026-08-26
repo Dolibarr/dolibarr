@@ -1389,7 +1389,7 @@ class FormTicket
 		if (is_array($severitytickets) && count($severitytickets)) {
 			foreach ($severitytickets as $id => $arrayseverities) {
 				// On passe si on a demande de filtrer sur des modes de paiments particuliers
-				if (count($filterarray) && !in_array($arrayseverities['type'], $filterarray)) {
+				if (count($filterarray) && !in_array($arrayseverities['code'], $filterarray)) {
 					continue;
 				}
 
