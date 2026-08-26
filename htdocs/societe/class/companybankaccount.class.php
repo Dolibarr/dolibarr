@@ -476,9 +476,9 @@ class CompanyBankAccount extends Account
 		$sql .= ",bic='".$this->db->escape($this->bic)."'";
 		$sql .= ",iban_prefix = '".$this->db->escape(dolEncrypt($this->iban))."'";
 		$sql .= ",currency_code = '".$this->db->escape($this->currency_code)."'";
-		$sql .= ",fk_country = '".((int) $this->fk_country)."'";
-		$sql .= ",state_id = '".((int) $this->state_id)."'";
-		$sql .= ",status = '".((int) $this->status)."'";
+		$sql .= ",fk_country = ".((int) $this->fk_country);
+		$sql .= ",state_id = ".((int) $this->state_id);
+		$sql .= ",status = ".((int) $this->status);
 		$sql .= ",domiciliation = '".$this->db->escape($this->address)."'";
 		$sql .= ",proprio = '".$this->db->escape($this->owner_name)."'";
 		$sql .= ",owner_address = '".$this->db->escape($this->owner_address)."'";

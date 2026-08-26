@@ -268,7 +268,7 @@ if ($step == 2 && $datatoimport) {
 		}
 
 		$file = $conf->import->dir_temp.'/'.GETPOST('urlfile');
-		$ret = dol_delete_file($file);
+		$ret = dol_delete_file($file, 1);
 		if ($ret) {
 			setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
 		} else {
@@ -304,7 +304,7 @@ if ($step == 4 && $action == 'select_model' && $user->hasRight('import', 'run'))
 	}
 }
 if ($action == 'saveselectorder' && $user->hasRight('import', 'run')) {
-	// Enregistrement de la position des champs
+	// Save the position of the fields
 	$serialized_array_match_file_to_database = '';
 	dol_syslog("selectorder=".GETPOST('selectorder'), LOG_DEBUG);
 	$selectorder = explode(",", GETPOST('selectorder'));

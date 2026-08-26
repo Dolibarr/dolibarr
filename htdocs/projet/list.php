@@ -2222,11 +2222,12 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['commercial']['checked'])) {
 			print '<td class="tdoverflowmax150">';
 			if ($obj->socid) {
+				$PROJECT_MAX_SALES_TO_SHOW_IN_LIST = getDolGlobalInt('PROJECT_MAX_SALES_TO_SHOW_IN_LIST', 5);
 				$companystatic->id = $obj->socid;
 				$companystatic->name = $obj->name;
 				$listsalesrepresentatives = $companystatic->getSalesRepresentatives($user);
 				$nbofsalesrepresentative = count($listsalesrepresentatives);
-				if ($nbofsalesrepresentative > 6) {
+				if ($nbofsalesrepresentative > $PROJECT_MAX_SALES_TO_SHOW_IN_LIST) {
 					// We print only number
 					print $nbofsalesrepresentative;
 				} elseif ($nbofsalesrepresentative > 0) {
@@ -2299,7 +2300,7 @@ while ($i < $imaxinloop) {
 		}
 		// Assigned contacts of project
 		if (!empty($arrayfields['c.assigned']['checked'])) {
-			print '<td class="center nowraponall tdoverflowmax200">';
+			print '<td class="center nowraponall tdoverflowmax150">';
 			print $stringassignedusers;
 			print '</td>';
 			if (!$i) {

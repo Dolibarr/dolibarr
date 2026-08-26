@@ -34,5 +34,6 @@ ResourceTypeCode=রিসোর্স টাইপ কোড
 ImportDataset_resource_1=সম্পদ
 ErrorResourcesAlreadyInUse=কিছু সম্পদ ব্যবহার করা হয়
 ErrorResourceUseInEvent=%s %s ইভেন্টে ব্যবহৃত
-MaxUsers=সর্বাধিক ব্যবহারকারী (জায়গা, আসন, ইত্যাদি)
+MaxUsers=Maximum number of users
+MaxUsersResourceDesc=If the resource can be used by several people at once (car, room, ...), you can enter here the maximum number of users allowed to use the resource at the same time (number of seats, places, ...).
 MaxUsersLabel=সর্বাধিক ব্যবহারকারী

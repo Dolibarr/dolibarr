@@ -251,7 +251,7 @@ if (empty($reshook)) {
 
 		$upload_dir = $conf->hrm->dir_output;
 		$file = $upload_dir.'/'.GETPOST('file');
-		$ret = dol_delete_file($file, 0, 0, 0, $object);
+		$ret = dol_delete_file($file, 1, 0, 0, $object);
 		if ($ret) {
 			setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
 		} else {
@@ -358,7 +358,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$res = $object->fetch_optionals();
 
 	$head = evaluationPrepareHead($object);
-	print dol_get_fiche_head($head, 'card', $langs->trans("Workstation"), -1, $object->picto);
+	print dol_get_fiche_head($head, 'card', $langs->trans("Workstation"), -1, $object->picto, 0, '', '', 0, '', 1);
 
 	$formconfirm = '';
 

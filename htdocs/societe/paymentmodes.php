@@ -1720,7 +1720,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 
 			$out = '';
 			if (is_array($modellist) && count($modellist)) {
-				$out .= '<form action="'.$_SERVER["PHP_SELF"].(!getDolGlobalString('MAIN_JUMP_TAG') ? '' : '#builddoc').'" name="'.$forname.'" id="'.$forname.'_form" method="post" spellcheck="false">';
+				$out .= '<form action="'.$_SERVER["PHP_SELF"].(!getDolGlobalString('MAIN_JUMP_TAG') ? '' : '#builddoc').'" name="'.$forname.'" id="'.$forname.'_form" method="post" autocomplete="off" spellcheck="false">';
 				$out .= '<input type="hidden" name="action" value="builddocrib">';
 				$out .= '<input type="hidden" name="token" value="'.newToken().'">';
 				$out .= '<input type="hidden" name="socid" value="'.$object->id.'">';

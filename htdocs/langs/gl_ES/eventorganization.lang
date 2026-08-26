@@ -48,6 +48,7 @@ ConferenceOrBoothTab = Conferencia ou Stand
 AmountPaid = Cantidade xa paga
 DateOfRegistration = Data de rexistro
 ConferenceOrBoothAttendee = Asistente á conferencia ou stand
+ConferenceOrBoothAttendeesShort = Asistentes a conferencias ou stands
 ApplicantOrVisitor=Solicitante ou visitante
 Speaker=Ponente
 # Template Mail
@@ -81,8 +82,8 @@ ListOfAttendeesOfEvent=Listaxe de asistentes a proxectos do evento
 ListOfConfOrBoothOfEvent=Listaxe de conferencias ou stands de proxectos de eventos
 DownloadICSLink=Descargar ficheiro ICS
 EVENTORGANIZATION_SECUREKEY=Semente para asegurar a chave da páxina pública de rexistro para suxerir unha conferencia
-SERVICE_BOOTH_LOCATION=Servizo empregado para a fila de facturas sobre a situación do stand
-SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION=Servizo utilizado para a fila da factura sobre a subscrición dun asistente a un evento
+SERVICE_BOOTH_LOCATION=Servizo para usar na liña de factura para a venda dun stand.
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION=Servizo a usar na liña de factura para as taxas de participación.
 NbVotes=Número de votos
 # Status
 EvntOrgDraft = Non validada

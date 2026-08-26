@@ -1912,7 +1912,7 @@ class EmailCollector extends CommonObject
 				$headers = array_combine($matches[1], $matches[2]);
 
 
-				$richarrayofemail[] = array('imapemail' => $imapemail, 'header' => $header, 'headers' => $headers, 'overview' => $overview, 'date' => strtotime($headers['Date']));
+				$richarrayofemail[] = array('imapemail' => $imapemail, 'header' => $header, 'headers' => $headers, 'overview' => $overview, 'date' => empty($headers['Date']) ? false : strtotime($headers['Date']));
 			}
 
 

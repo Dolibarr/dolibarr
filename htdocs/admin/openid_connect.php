@@ -234,7 +234,7 @@ if (getDolGlobalString('MAIN_AUTHENTICATION_OIDC_ON')) {
 
 	print '<br>';
 
-	print '<form method="post" action="' . dolBuildUrl($_SERVER["PHP_SELF"]) . '">';
+	print '<form method="post" action="' . dolBuildUrl($_SERVER["PHP_SELF"]) . '" spellcheck="false">';
 	print '<input type="hidden" name="token" value="' . newToken() . '">';
 	print '<input type="hidden" name="action" value="set">';
 

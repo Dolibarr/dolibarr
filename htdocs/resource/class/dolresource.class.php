@@ -2,7 +2,7 @@
 /* Copyright (C) 2013-2015		Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2023-2024		William Mead		<william.mead@manchenumerique.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -381,6 +381,12 @@ class Dolresource extends CommonObject
 		if (isset($this->fk_code_type_resource)) {
 			$this->fk_code_type_resource = trim($this->fk_code_type_resource);
 		}
+		if (isset($this->note_public)) {
+			$this->note_public = trim($this->note_public);
+		}
+		if (isset($this->note_private)) {
+			$this->note_private = trim($this->note_private);
+		}
 
 		// $this->oldcopy should have been set by the caller of update (here properties were already modified)
 		if (is_null($this->oldcopy) || (is_object($this->oldcopy) && $this->oldcopy->isEmpty())) {
@@ -401,6 +407,8 @@ class Dolresource extends CommonObject
 		$sql .= " max_users=".(isset($this->max_users) ? (int) $this->max_users : "null").",";
 		$sql .= " url=".(isset($this->url) ? "'".$this->db->escape($this->url)."'" : "null").",";
 		$sql .= " fk_code_type_resource=".(isset($this->fk_code_type_resource) ? "'".$this->db->escape($this->fk_code_type_resource)."'" : "null").",";
+		$sql .= " note_public=".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
+		$sql .= " note_private=".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
 		$sql .= " tms=" . ("'" . $this->db->idate($this->date_modification) . "',");
 		$sql .= " fk_user_modif=" . (!empty($user->id) ? ((int) $user->id) : "null");
 		$sql .= " WHERE rowid=".((int) $this->id);

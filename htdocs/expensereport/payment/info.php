@@ -84,7 +84,7 @@ $head = payment_expensereport_prepare_head($object);
 print dol_get_fiche_head($head, 'info', $langs->trans("ExpenseReportPayment"), -1, 'payment');
 
 
-//$linkback = '<a href="' . DOL_URL_ROOT . '/expensereport/payment/list.php">' . $langs->trans("BackToList") . '</a>';
+$linkback = '<a href="' . DOL_URL_ROOT . '/expensereport/payment/list.php">' . $langs->trans("BackToList") . '</a>';
 
 dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', '');
 
