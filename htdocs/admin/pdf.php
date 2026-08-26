@@ -187,6 +187,10 @@ if ($action == 'update') {
 		dolibarr_set_const($db, "PDF_SHOW_LINK_TO_ONLINE_PAYMENT", GETPOST('PDF_SHOW_LINK_TO_ONLINE_PAYMENT', 'alpha'), 'chaine', 0, '', $conf->entity);
 	}
 
+	if (GETPOSTISSET('MAIN_DISABLE_PDF_AUTOUPDATE')) {
+		dolibarr_set_const($db, "MAIN_DISABLE_PDF_AUTOUPDATE", GETPOSTINT('MAIN_DISABLE_PDF_AUTOUPDATE'), 'chaine', 0, '', $conf->entity);
+	}
+
 	if (GETPOSTISSET('DOC_SHOW_FIRST_SALES_REP')) {
 		dolibarr_set_const($db, "DOC_SHOW_FIRST_SALES_REP", GETPOST('DOC_SHOW_FIRST_SALES_REP', 'alpha'), 'chaine', 0, '', $conf->entity);
 	}
@@ -671,6 +675,17 @@ if ($conf->use_javascript_ajax) {
 	print $form->selectyesno('PDF_SHOW_LINK_TO_ONLINE_PAYMENT', getDolGlobalInt('PDF_SHOW_LINK_TO_ONLINE_PAYMENT'), 1);
 }
 print '</td></tr>';
+
+// Pdf document auto-generation
+
+print '<tr class="oddeven"><td>'.$form->textwithpicto($langs->trans("MAIN_DISABLE_PDF_AUTOUPDATE"), $langs->trans("MAIN_DISABLE_PDF_AUTOUPDATE_tooltip")).'</td><td>';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('MAIN_DISABLE_PDF_AUTOUPDATE');
+} else {
+	print $form->selectyesno('MAIN_DISABLE_PDF_AUTOUPDATE', getDolGlobalInt('MAIN_DISABLE_PDF_AUTOUPDATE'), 1);
+}
+print '</td></tr>';
+
 
 print '<tr class="oddeven"><td>'.$langs->trans("PDF_USE_A").'</td><td>';
 
