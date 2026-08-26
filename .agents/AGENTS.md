@@ -125,7 +125,9 @@ If possible:
 - Always validate user inputs (`GET`, `POST`) via `GETPOST()` with a type parameter
 - Prevent SQL injection (use `db->escape()` or cast into `(int)` or `(float)`)
 - Prevent XSS injection by escaping HTML output (use `dolPrintHTML()`, `dolPrintHTMLForAttribute()`)
-- Always include Dolibarr CSRF tokens in POST forms: `<input type="hidden" name="token" value="'.newToken().'">`
+- Always include Dolibarr CSRF tokens in POST forms and GET links with a modifying `action`: `token='.newToken().'`
+- For ajax calls, use `currentToken()` instead of `newToken()`, and set `NOTOKENRENEWAL` on the called ajax endpoint
+- Public endpoints called without a session (e.g. webhooks) are exempt via `NOCSRFCHECK` (page-level constant) or, exceptionally, `$dolibarr_nocsrfcheck` (global conf.php override)
 
 ---
 
