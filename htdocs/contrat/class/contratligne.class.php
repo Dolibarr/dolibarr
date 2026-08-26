@@ -827,7 +827,7 @@ class ContratLigne extends CommonObjectLine
 
 		$error = 0;
 
-		// Insertion dans la base
+		// Insert into database
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."contratdet";
 		$sql .= " (fk_contrat, label, description, fk_product, qty, vat_src_code, tva_tx,";
 		$sql .= " localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, remise_percent, subprice, subprice_ttc,";

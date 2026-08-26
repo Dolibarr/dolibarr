@@ -158,7 +158,7 @@ if (empty($reshook)) {
 
 	// Create user from contact
 	if ($action == 'confirm_create_user' && $confirm == 'yes' && $user->hasRight('user', 'user', 'creer')) {
-		// Recuperation contact actuel
+		// Retrieve current contact
 		$result = $object->fetch($id);
 
 		if ($result > 0) {

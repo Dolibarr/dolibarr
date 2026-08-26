@@ -781,7 +781,7 @@ $head = modules_prepare_head($nbofactivatedmodules, count($modules), $nbmodulesn
 if ($mode == 'common' || $mode == 'commonkanban') {
 	dol_set_focus('#search_keyword');
 
-	print '<form method="POST" id="searchFormList" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
+	print '<form method="POST" id="searchFormList" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'" spellcheck="false">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	if (isset($optioncss) && $optioncss != '') {
 		print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -804,7 +804,15 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 	$moreforfilter = '<div class="valignmiddle">';
 
 	$moreforfilter .= '<div class="floatright right pagination paddingtop --module-list"><ul><li>';
-	$moreforfilter .= dolGetButtonTitle($langs->trans('CheckForModuleUpdate'), $langs->trans('CheckForModuleUpdate').'<br><br>'.img_warning('', '', 'paddingright').$langs->trans('CheckForModuleUpdateHelp').' '.$langs->trans('CheckForModuleUpdateHelp2', DolibarrModules::URL_FOR_BLACKLISTED_MODULES).'<br>'.$langs->trans("YourIPWillBeRevealedToThisExternalProviders"), 'fa fa-sync', $_SERVER["PHP_SELF"].'?action=checklastversion&token='.newToken().'&mode='.$mode.$param, '', 1, array('morecss' => 'reposition'));
+	$moreforfilter .= dolGetButtonTitle(
+		$langs->trans('CheckForModuleUpdate'),
+		$langs->trans('CheckForModuleUpdate').'<br><br>'.img_warning('', '', 'paddingright').$langs->trans('CheckForModuleUpdateHelp').' '.$langs->trans('CheckForModuleUpdateHelp2', DolibarrModules::URL_FOR_BLACKLISTED_MODULES).'<br>'.$langs->trans("YourIPWillBeRevealedToThisExternalProviders"),
+		'fa fa-sync',
+		$_SERVER["PHP_SELF"].'?action=checklastversion&token='.newToken().'&mode='.$mode.$param,
+		'',
+		1,
+		array('morecss' => 'reposition')
+	);
 	$moreforfilter .= dolGetButtonTitleSeparator();
 	$moreforfilter .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.$param, '', ($mode == 'common' ? 2 : 1), array('morecss' => 'reposition'));
 	$moreforfilter .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=commonkanban'.$param, '', ($mode == 'commonkanban' ? 2 : 1), array('morecss' => 'reposition'));
@@ -1471,7 +1479,7 @@ if ($mode == 'marketplace') {
 
 		print '<div class="liste_titre liste_titre_bydiv centpercent"><div class="">';
 
-		print '<form method="POST" class="centpercent" id="searchFormList" action="'.$remotestore->url.'">'; ?>
+		print '<form method="POST" class="centpercent" id="searchFormList" action="'.$remotestore->url.'" spellcheck="false">'; ?>
 					<input type="hidden" name="token" value="<?php echo newToken(); ?>">
 					<input type="hidden" name="mode" value="marketplace">
 					<input type="hidden" name="page_y" value="">
@@ -1589,7 +1597,7 @@ if ($mode == 'deploy') {
 		}
 
 		if ($allowfromweb == 1) {
-			print '<form enctype="multipart/form-data" method="POST" class="noborder" action="'.$_SERVER["PHP_SELF"].'" name="forminstall">';
+			print '<form enctype="multipart/form-data" method="POST" class="noborder" action="'.$_SERVER["PHP_SELF"].'" name="forminstall" spellcheck="false">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="install">';
 			print '<input type="hidden" name="mode" value="deploy">';

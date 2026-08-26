@@ -105,6 +105,11 @@ class Localtax extends CommonObject
 	public $fk_user_modif;
 
 	/**
+	 * @var int<0,1>|string		0=No test on entity, 1=Test with field entity in local table
+	 */
+	public $ismultientitymanaged = 1;
+
+	/**
 	 *	Constructor
 	 *
 	 *  @param		DoliDB		$db      Database handler
@@ -132,6 +137,11 @@ class Localtax extends CommonObject
 		$this->label = trim($this->label);
 		$this->note = trim($this->note);
 
+		// Set entity if not already set
+		if (empty($this->entity)) {
+			$this->entity = $conf->entity;
+		}
+
 		// Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."localtax(";
 		$sql .= "localtaxtype,";
@@ -141,6 +151,7 @@ class Localtax extends CommonObject
 		$sql .= "amount,";
 		$sql .= "label,";
 		$sql .= "note,";
+		$sql .= "entity,";
 		$sql .= "fk_bank,";
 		$sql .= "fk_user_creat,";
 		$sql .= "fk_user_modif";
@@ -152,6 +163,7 @@ class Localtax extends CommonObject
 		$sql .= " '".$this->db->escape($this->amount)."',";
 		$sql .= " '".$this->db->escape($this->label)."',";
 		$sql .= " '".$this->db->escape($this->note)."',";
+		$sql .= " ".((int) $this->entity).",";
 		$sql .= " ".($this->fk_bank <= 0 ? "NULL" : (int) $this->fk_bank).",";
 		$sql .= " ".((int) $this->fk_user_creat).",";
 		$sql .= " ".((int) $this->fk_user_modif);
@@ -212,6 +224,7 @@ class Localtax extends CommonObject
 		$sql .= " amount='".$this->db->escape($this->amount)."',";
 		$sql .= " label='".$this->db->escape($this->label)."',";
 		$sql .= " note='".$this->db->escape($this->note)."',";
+		$sql .= " entity=".((int) $this->entity).",";
 		$sql .= " fk_bank=".(int) $this->fk_bank.",";
 		$sql .= " fk_user_creat=".(int) $this->fk_user_creat.",";
 		$sql .= " fk_user_modif=".(int) $this->fk_user_modif;
@@ -260,6 +273,7 @@ class Localtax extends CommonObject
 		$sql .= " t.amount,";
 		$sql .= " t.label,";
 		$sql .= " t.note as note_private,";
+		$sql .= " t.entity,";
 		$sql .= " t.fk_bank,";
 		$sql .= " t.fk_user_creat,";
 		$sql .= " t.fk_user_modif,";
@@ -286,6 +300,7 @@ class Localtax extends CommonObject
 				$this->label = $obj->label;
 				$this->note  = $obj->note_private;
 				$this->note_private  = $obj->note_private;
+				$this->entity = $obj->entity;
 				$this->fk_bank = $obj->fk_bank;
 				$this->fk_user_creat = $obj->fk_user_creat;
 				$this->fk_user_modif = $obj->fk_user_modif;
@@ -341,7 +356,7 @@ class Localtax extends CommonObject
 	 */
 	public function initAsSpecimen()
 	{
-		global $user;
+		global $user, $conf;
 
 		$this->id = 0;
 
@@ -352,6 +367,7 @@ class Localtax extends CommonObject
 		$this->amount = '';
 		$this->label = '';
 		$this->note = '';
+		$this->entity = $conf->entity;
 		$this->fk_bank = 0;
 		$this->fk_user_creat = $user->id;
 		$this->fk_user_modif = $user->id;
@@ -513,7 +529,12 @@ class Localtax extends CommonObject
 			return -5;
 		}
 
-		// Insertion dans table des paiement localtax
+		// Set entity if not already set
+		if (empty($this->entity)) {
+			$this->entity = $conf->entity;
+		}
+
+		// Insert into localtax payment table
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."localtax(localtaxtype, datep, datev, amount";
 		if ($this->note) {
 			$sql .= ", note";
@@ -521,7 +542,7 @@ class Localtax extends CommonObject
 		if ($this->label) {
 			$sql .= ", label";
 		}
-		$sql .= ", fk_user_creat, fk_bank";
+		$sql .= ", entity, fk_user_creat, fk_bank";
 		$sql .= ") ";
 		$sql .= " VALUES(".((int) $this->ltt).", '".$this->db->idate($this->datep)."', ";
 		$sql .= "'".$this->db->idate($this->datev)."', ".((float) $this->amount);
@@ -531,7 +552,7 @@ class Localtax extends CommonObject
 		if ($this->label) {
 			$sql .= ", '".$this->db->escape($this->label)."'";
 		}
-		$sql .= ", ".((int) $user->id).", null";
+		$sql .= ", ".((int) $this->entity).", ".((int) $user->id).", NULL";
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::addPayment", LOG_DEBUG);
@@ -541,7 +562,7 @@ class Localtax extends CommonObject
 			if ($this->id > 0) {
 				$ok = 1;
 				if (isModEnabled("bank")) {
-					// Insertion dans llx_bank
+					// Insert into llx_bank
 					require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 					$acc = new Account($this->db);

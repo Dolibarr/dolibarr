@@ -2021,7 +2021,7 @@ function dol_meta_create($object)
 			AMOUNT=\"" . $object->total_ttc."\"\n";
 
 			for ($i = 0; $i < $nblines; $i++) {
-				//Pour les articles
+				//For the items
 				$meta .= "ITEM_".$i."_QUANTITY=\"".$object->lines[$i]->qty."\"
 				ITEM_" . $i."_AMOUNT_WO_TAX=\"".$object->lines[$i]->total_ht."\"
 				ITEM_" . $i."_VAT=\"".$object->lines[$i]->tva_tx."\"
@@ -3331,7 +3331,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		$original_file = $conf->expedition->dir_temp.'/'.$original_file;
 	} elseif ($modulepart == 'tripsexpensesstats' && !empty($conf->deplacement->dir_temp)) {
-		// Wrapping pour les images des stats expeditions
+		// Wrapping for shipment stats images
 		if ($fuser->hasRight('deplacement', $lire)) {
 			$accessallowed = 1;
 		}
@@ -3381,25 +3381,25 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		$original_file = $conf->categorie->multidir_output[$entity].'/'.$original_file;
 	} elseif ($modulepart == 'prelevement' && !empty($conf->prelevement->dir_output)) {
-		// Wrapping pour les prelevements
+		// Wrapping for direct debits
 		if ($fuser->hasRight('prelevement', 'bons', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->prelevement->dir_output.'/'.$original_file;
 	} elseif ($modulepart == 'graph_stock' && !empty($conf->stock->dir_temp)) {
-		// Wrapping pour les graph energie
+		// Wrapping for energy graphs
 		$accessallowed = 1;
 		$original_file = $conf->stock->dir_temp.'/'.$original_file;
 	} elseif ($modulepart == 'graph_fourn' && !empty($conf->fournisseur->dir_temp)) {
-		// Wrapping pour les graph fournisseurs
+		// Wrapping for supplier graphs
 		$accessallowed = 1;
 		$original_file = $conf->fournisseur->dir_temp.'/'.$original_file;
 	} elseif ($modulepart == 'graph_product' && !empty($conf->product->dir_temp)) {
-		// Wrapping pour les graph des produits
+		// Wrapping for product graphs
 		$accessallowed = 1;
 		$original_file = $conf->product->multidir_temp[$entity].'/'.$original_file;
 	} elseif ($modulepart == 'barcode') {
-		// Wrapping pour les code barre
+		// Wrapping for barcodes
 		$accessallowed = 1;
 		// If viewimage is called for barcode, we try to output an image on the fly, with no build of file on disk.
 		//$original_file=$conf->barcode->dir_temp.'/'.$original_file;
@@ -3409,11 +3409,11 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$accessallowed = 1;
 		$original_file = $conf->mailing->dir_temp.'/'.$original_file;
 	} elseif ($modulepart == 'scanner_user_temp' && !empty($conf->scanner->dir_temp)) {
-		// Wrapping pour le scanner
+		// Wrapping for the scanner
 		$accessallowed = 1;
 		$original_file = $conf->scanner->dir_temp.'/'.$fuser->id.'/'.$original_file;
 	} elseif ($modulepart == 'fckeditor' && !empty($conf->fckeditor->dir_output)) {
-		// Wrapping pour les images fckeditor
+		// Wrapping for fckeditor images
 		$accessallowed = 1;
 		$original_file = $conf->fckeditor->dir_output.'/'.$original_file;
 	} elseif ($modulepart == 'user' && !empty($conf->user->dir_output)) {
@@ -3522,28 +3522,28 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$original_file = $conf->ficheinter->multidir_output[$entity].'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='".$db->escape($refname)."' AND entity=".((int) $conf->entity);
 	} elseif ($modulepart == 'deplacement' && !empty($conf->deplacement->dir_output)) {
-		// Wrapping pour les deplacements et notes de frais
+		// Wrapping for travel and expense reports
 		if ($fuser->hasRight('deplacement', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->deplacement->dir_output.'/'.$original_file;
 		//$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='".$db->escape($refname)."' AND entity=".((int) $conf->entity);
 	} elseif (($modulepart == 'propal' || $modulepart == 'propale') && isset($conf->propal->multidir_output[$entity])) {
-		// Wrapping pour les propales
+		// Wrapping for proposals
 		if ($fuser->hasRight('propal', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->propal->multidir_output[$entity].'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."propal WHERE ref='".$db->escape($refname)."' AND entity IN (".getEntity('propal').")";
 	} elseif (($modulepart == 'commande' || $modulepart == 'order') && !empty($conf->order->multidir_output[$entity])) {
-		// Wrapping pour les commandes
+		// Wrapping for orders
 		if ($fuser->hasRight('commande', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->order->multidir_output[$entity].'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."commande WHERE ref='".$db->escape($refname)."' AND entity IN (".getEntity('order').")";
 	} elseif ($modulepart == 'project' && !empty($conf->project->multidir_output[$entity])) {
-		// Wrapping pour les projects
+		// Wrapping for projects
 		if ($fuser->hasRight('projet', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 			// If we known $id of project, call checkUserAccessToObject to check permission on properties and contact of project
@@ -3622,7 +3622,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		$original_file = $conf->accounting->dir_output.'/'.$original_file;
 	} elseif (($modulepart == 'expedition' || $modulepart == 'shipment' || $modulepart == 'shipping') && !empty($conf->expedition->dir_output)) {
-		// Wrapping pour les expedition
+		// Wrapping for shipments
 		if ($fuser->hasRight('expedition', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
@@ -3706,7 +3706,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		$original_file = $conf->resource->dir_output.'/'.$original_file;
 	} elseif (($modulepart == 'remisecheque' || $modulepart == 'chequereceipt') && !empty($conf->bank->dir_output)) {
-		// Wrapping pour les remises de cheques
+		// Wrapping for check deposits
 		if ($fuser->hasRight('banque', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
@@ -3751,7 +3751,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		$original_file = $conf->admin->dir_temp.'/'.$original_file;
 	} elseif ($modulepart == 'bittorrent' && !empty($conf->bittorrent->dir_output)) {
-		// Wrapping pour BitTorrent
+		// Wrapping for BitTorrent
 		$accessallowed = 1;
 		$dir = 'files';
 		if (dol_mimetype($original_file) == 'application/x-bittorrent') {
@@ -3759,7 +3759,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		$original_file = $conf->bittorrent->dir_output.'/'.$dir.'/'.$original_file;
 	} elseif ($modulepart == 'member' && !empty($conf->member->dir_output)) {
-		// Wrapping pour Foundation module
+		// Wrapping for Foundation module
 		if ($fuser->hasRight('adherent', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
@@ -4056,121 +4056,130 @@ function dragAndDropFileUpload($htmlname)
 	// server that accepts it, so a request could close the script tag below and open one of its own.
 	$pageurl = str_replace('</', '<\\/', dol_escape_js($_SERVER["PHP_SELF"], 1));
 
+	// Values interpolated into the heredoc below via {$...}: dol_escape_js() is still called with
+	// mode 1 on each of them for the same reason as $pageurl above (they are embedded into JS '...' strings).
+	$nonce = getNonce();
+	$fkElement = dol_escape_js((string) $object->id, 1);
+	$elementType = dol_escape_js($object->element, 1);
+	$token = currentToken();
+	$ajaxUrl = DOL_URL_ROOT.'/core/ajax/fileupload.php';
+
 	$out = "";
 	$out .= '<div id="'.$htmlname.'Message" class="dragDropAreaMessage hidden"><span>'.img_picto("", 'download').'<br>'.$langs->trans("DropFileToAddItToObject").'</span></div>';
 	$out .= "\n<!-- JS CODE TO ENABLE DRAG AND DROP OF FILE -->\n";
-	$out .= '<script nonce="'.getNonce().'">';
-	$out .= '
-		jQuery(document).ready(function() {
-			var enterTargetDragDrop = null;
+	$out .= <<<JS
+<script nonce="{$nonce}">
+	jQuery(document).ready(function() {
+		var enterTargetDragDrop = null;
 
-			$(\'#'.$htmlname.'\').addClass(\'cssDragDropArea\');
+		$('#{$htmlname}').addClass('cssDragDropArea');
 
-			$(".cssDragDropArea").on("dragenter", function(ev, ui) {
-				var dataTransfer = ev.originalEvent.dataTransfer;
-				var dataTypes = dataTransfer.types;
-				//console.log(dataTransfer);
-				//console.log(dataTypes);
+		$(".cssDragDropArea").on("dragenter", function(ev, ui) {
+			var dataTransfer = ev.originalEvent.dataTransfer;
+			var dataTypes = dataTransfer.types;
+			// console.log(dataTransfer);
+			// console.log(dataTypes);
 
-				if (!dataTypes || ($.inArray(\'Files\', dataTypes) === -1)) {
-				    // The element dragged is not a file, so we avoid the "dragenter"
-				    ev.preventDefault();
-    				return false;
-  				}
-
-				// Entering drop area. Highlight area
-				console.log("dragAndDropFileUpload: We add class highlightDragDropArea")
-				enterTargetDragDrop = ev.target;
-				$(this).addClass("highlightDragDropArea");
-				$(\'#'.$htmlname.'Message\').removeClass(\'hidden\');
-				ev.preventDefault();
-			});
-
-			$(".cssDragDropArea").on("dragleave", function(ev) {
-				// Going out of drop area. Remove Highlight
-				if (enterTargetDragDrop == ev.target){
-					console.log("dragAndDropFileUpload: We remove class highlightDragDropArea")
-					$(\'#'.$htmlname.'Message\').addClass(\'hidden\');
-					$(this).removeClass("highlightDragDropArea");
-				}
-			});
-
-			$(".cssDragDropArea").on("dragover", function(ev) {
+			if (!dataTypes || ($.inArray('Files', dataTypes) === -1)) {
+				// The element dragged is not a file, so we avoid the "dragenter"
 				ev.preventDefault();
 				return false;
-			});
+			}
 
-			$(".cssDragDropArea").on("drop", function(e) {
-				console.log(\'Trigger event file dropped. fk_element='.dol_escape_js((string) $object->id, 1).' element='.dol_escape_js($object->element, 1).'\');
-				e.preventDefault();
-				fd = new FormData();
-				fd.append(\'fk_element\', \''.dol_escape_js((string) $object->id, 1).'\');
-				fd.append(\'element\', \''.dol_escape_js($object->element, 1).'\');
-				fd.append(\'token\', \''.currentToken().'\');
-				fd.append("action", "linkit");
-
-				var dataTransfer = e.originalEvent.dataTransfer;
-
-				if (dataTransfer.files && dataTransfer.files.length){
-					var droppedFiles = e.originalEvent.dataTransfer.files;
-					$.each(droppedFiles, function(index,file){
-						fd.append("files[]", file,file.name)
-					});
-				}
-				$(".cssDragDropArea").removeClass("highlightDragDropArea");
-				counterdragdrop = 0;
-				$.ajax({
-					url: \''.DOL_URL_ROOT.'/core/ajax/fileupload.php\',
-					type: "POST",
-					processData: false,
-					contentType: false,
-					data: fd,
-					success:function() {
-						console.log("Uploaded.", arguments);
-						/* arguments[0] is the json string of files */
-						/* arguments[1] is the value for variable "success", can be 0 or 1 */
-						let listoffiles = [];
-						/* The answer is not the expected json when php stopped before answering, for example when
-						   post_max_size was reached. Without this, the exception of JSON.parse() would leave the
-						   user on a page with no message at all, thinking the file was added. */
-						try {
-							listoffiles = JSON.parse(arguments[0]);
-						} catch (e) {
-							window.location.href = \''.$pageurl.'?id='.dol_escape_js((string) $object->id, 1).'&seteventmessages=ErrorUploadFileDragDrop:errors\';
-							return;
-						}
-						console.log(listoffiles);
-						let nboferror = 0;
-						for (let i = 0; i < listoffiles.length; i++) {
-							console.log(listoffiles[i].error);
-							if (listoffiles[i].error) {
-								nboferror++;
-							}
-						}
-						console.log(nboferror);
-						/* An empty list means no file was stored at all, so it is an error and not a success:
-						   php empties $_FILES when post_max_size is reached. */
-						if (listoffiles.length == 0) {
-							window.location.href = \''.$pageurl.'?id='.dol_escape_js((string) $object->id, 1).'&seteventmessages=ErrorUploadFileDragDrop:errors\';
-						} else if (nboferror > 0) {
-							window.location.href = \''.$pageurl.'?id='.dol_escape_js((string) $object->id, 1).'&seteventmessages=ErrorOnAtLeastOneFileUpload:warnings\';
-						} else {
-							window.location.href = \''.$pageurl.'?id='.dol_escape_js((string) $object->id, 1).'&seteventmessages=UploadFileDragDropSuccess:mesgs\';
-						}
-					},
-					error:function(jqXHR) {
-						console.log("Error Uploading.", arguments)
-						if (jqXHR.status == 403) {
-							window.location.href = \''.$pageurl.'?id='.dol_escape_js((string) $object->id, 1).'&seteventmessages=ErrorUploadFileDragDropPermissionDenied:errors\';
-						} else {
-							window.location.href = \''.$pageurl.'?id='.dol_escape_js((string) $object->id, 1).'&seteventmessages=ErrorUploadFileDragDrop:errors\';
-						}
-					},
-				})
-			});
+			// Entering drop area. Highlight area
+			console.log("dragAndDropFileUpload: We add class highlightDragDropArea")
+			enterTargetDragDrop = ev.target;
+			$(this).addClass("highlightDragDropArea");
+			$('#{$htmlname}Message').removeClass('hidden');
+			ev.preventDefault();
 		});
-	';
-	$out .= "</script>\n";
+
+		$(".cssDragDropArea").on("dragleave", function(ev) {
+			// Going out of drop area. Remove Highlight
+			if (enterTargetDragDrop == ev.target){
+				console.log("dragAndDropFileUpload: We remove class highlightDragDropArea")
+				$('#{$htmlname}Message').addClass('hidden');
+				$(this).removeClass("highlightDragDropArea");
+			}
+		});
+
+		$(".cssDragDropArea").on("dragover", function(ev) {
+			ev.preventDefault();
+			return false;
+		});
+
+		$(".cssDragDropArea").on("drop", function(e) {
+			console.log('Trigger event file dropped. fk_element={$fkElement} element={$elementType}');
+			e.preventDefault();
+			fd = new FormData();
+			fd.append('fk_element', '{$fkElement}');
+			fd.append('element', '{$elementType}');
+			fd.append('token', '{$token}');
+			fd.append("action", "linkit");
+
+			var dataTransfer = e.originalEvent.dataTransfer;
+
+			if (dataTransfer.files && dataTransfer.files.length){
+				var droppedFiles = e.originalEvent.dataTransfer.files;
+				$.each(droppedFiles, function(index,file){
+					fd.append("files[]", file,file.name)
+				});
+			}
+			$(".cssDragDropArea").removeClass("highlightDragDropArea");
+			counterdragdrop = 0;
+			$.ajax({
+				url: '{$ajaxUrl}',
+				type: "POST",
+				processData: false,
+				contentType: false,
+				data: fd,
+				success:function() {
+					console.log("Uploaded.", arguments);
+					/* arguments[0] is the json string of files */
+					/* arguments[1] is the value for variable "success", can be 0 or 1 */
+					let listoffiles = [];
+					/* The answer is not the expected json when php stopped before answering, for example when
+					   post_max_size was reached. Without this, the exception of JSON.parse() would leave the
+					   user on a page with no message at all, thinking the file was added. */
+					try {
+						listoffiles = JSON.parse(arguments[0]);
+					} catch (e) {
+						window.location.href = '{$pageurl}?id={$fkElement}&seteventmessages=ErrorUploadFileDragDrop:errors';
+						return;
+					}
+					console.log(listoffiles);
+					let nboferror = 0;
+					for (let i = 0; i < listoffiles.length; i++) {
+						console.log(listoffiles[i].error);
+						if (listoffiles[i].error) {
+							nboferror++;
+						}
+					}
+					console.log(nboferror);
+					/* An empty list means no file was stored at all, so it is an error and not a success:
+					   php empties \$_FILES when post_max_size is reached. */
+					if (listoffiles.length == 0) {
+						window.location.href = '{$pageurl}?id={$fkElement}&seteventmessages=ErrorUploadFileDragDrop:errors';
+					} else if (nboferror > 0) {
+						window.location.href = '{$pageurl}?id={$fkElement}&seteventmessages=ErrorOnAtLeastOneFileUpload:warnings';
+					} else {
+						window.location.href = '{$pageurl}?id={$fkElement}&seteventmessages=UploadFileDragDropSuccess:mesgs';
+					}
+				},
+				error:function(jqXHR) {
+					console.log("Error Uploading.", arguments)
+					if (jqXHR.status == 403) {
+						window.location.href = '{$pageurl}?id={$fkElement}&seteventmessages=ErrorUploadFileDragDropPermissionDenied:errors';
+					} else {
+						window.location.href = '{$pageurl}?id={$fkElement}&seteventmessages=ErrorUploadFileDragDrop:errors';
+					}
+				},
+			})
+		});
+	});
+</script>
+
+JS;
 	return $out;
 }
 

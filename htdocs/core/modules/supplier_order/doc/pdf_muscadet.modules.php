@@ -318,7 +318,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 				// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite); // Left, Top, Right
 
-				// Positionne $this->atleastonediscount si on a au moins une remise
+				// Set $this->atleastonediscount if there is at least one discount
 				for ($i = 0; $i < $nblines; $i++) {
 					if ($object->lines[$i]->remise_percent) {
 						$this->atleastonediscount++;
@@ -1115,7 +1115,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		// Do not add the BACKGROUND as this is for suppliers
 		//pdf_pagehead($pdf,$outputlangs,$this->page_hauteur);
 
-		//Affiche le filigrane brouillon - Print Draft Watermark
+		// Print Draft Watermark
 		/*if($object->statut==0 && getDolGlobalString('COMMANDE_DRAFT_WATERMARK'))
 		{
 			pdf_watermark($pdf,$outputlangs,$this->page_hauteur,$this->page_largeur,'mm',getDolGlobalString('COMMANDE_DRAFT_WATERMARK'));

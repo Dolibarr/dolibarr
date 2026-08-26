@@ -81,4 +81,33 @@ ALTER TABLE llx_c_action_trigger ADD COLUMN enabled varchar(255);
 -- VMYSQL4.1 ALTER TABLE llx_socpeople ADD COLUMN use_thirdparty_address smallint DEFAULT NULL AFTER fk_soc;
 -- VPGSQL8.2 ALTER TABLE llx_socpeople ADD COLUMN use_thirdparty_address smallint DEFAULT NULL;
 
+-- Add user information to const
+ALTER TABLE llx_const ADD COLUMN fk_user_creat integer;
+ALTER TABLE llx_const ADD COLUMN fk_user_modif integer;
+
+-- Switch all azur templates into cyan
+UPDATE llx_propal SET model_pdf = 'cyan' WHERE model_pdf = 'azur';
+UPDATE llx_const SET value = 'cyan' WHERE value = 'azur' AND name ='PROPALE_ADDON_PDF';
+UPDATE llx_document_model SET nom = 'cyan' WHERE nom = 'azur' AND type = 'propal' AND NOT EXISTS (SELECT subquery.nom FROM (SELECT nom, entity FROM llx_document_model WHERE nom = 'cyan' AND type = 'propal') as subquery WHERE subquery.entity = entity);
+DELETE FROM llx_document_model WHERE nom = 'azur' AND type = 'propal';
+
+-- Switch all einstein templates into eratosthene
+UPDATE llx_commande SET model_pdf = 'eratosthene' WHERE model_pdf = 'einstein';
+UPDATE llx_const SET value = 'eratosthene' WHERE value = 'einstein' AND name ='COMMANDE_ADDON_PDF';
+UPDATE llx_document_model SET nom = 'eratosthene' WHERE nom = 'einstein' AND type = 'order' AND NOT EXISTS (SELECT subquery.nom FROM (SELECT nom, entity FROM llx_document_model WHERE nom = 'eratosthene' AND type = 'order') as subquery WHERE subquery.entity = entity);
+DELETE FROM llx_document_model WHERE nom = 'einstein' AND type = 'order';
+
+-- Index fk_statut on llx_commande for order status filtering (llx_facture already has idx_facture_fk_statut)
+ALTER TABLE llx_commande ADD INDEX idx_commande_fk_statut (fk_statut);
+
+-- Indexes on llx_product for the most common product/service list filters
+ALTER TABLE llx_product ADD INDEX idx_product_entity_tosell (entity, tosell);
+ALTER TABLE llx_product ADD INDEX idx_product_entity_tobuy (entity, tobuy);
+ALTER TABLE llx_product ADD INDEX idx_product_datec (datec);
+ALTER TABLE llx_product ADD INDEX idx_product_tms (tms);
+
+
+
+
+
 -- end of migration

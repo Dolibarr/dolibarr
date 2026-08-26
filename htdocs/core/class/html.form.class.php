@@ -2536,7 +2536,7 @@ class Form
 		// phpcs:enable
 		global $langs, $conf;
 
-		// On recherche les remises
+		// Search for the discounts
 		$sql = "SELECT re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc,";
 		$sql .= " re.description, re.fk_facture_source";
 		$sql .= " FROM " . $this->db->prefix() . "societe_remise_except as re";
@@ -4420,6 +4420,7 @@ class Form
 
 		$selected_input_value = '';
 		if (!empty($conf->use_javascript_ajax) && getDolGlobalString('PRODUIT_USE_SEARCH_TO_SELECT')) {
+			$regtmpsel = array();
 			if ((int) $selected > 0) {
 				require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 				$producttmpselect = new Product($this->db);
@@ -4438,7 +4439,7 @@ class Form
 			// mode=2 means suppliers products
 			$urloption = ($socid > 0 ? 'socid=' . $socid . '&' : '') . 'htmlname=' . $htmlname . '&outjson=1&price_level=' . $price_level . '&type=' . $filtertype . '&mode=2&status=' . $status . '&finished=' . $finished . '&alsoproductwithnosupplierprice=' . $alsoproductwithnosupplierprice;
 
-			$s = ($hidelabel ? '' : $langs->trans("RefOrLabel") . ' : ') . '<input type="text" class="'.$morecss.'" name="search_' . $htmlname . '" id="search_' . $htmlname . '" value="' . $selected_input_value . '"' . ($placeholder ? ' placeholder="' . $placeholder . '"' : '') . '>';
+			$s = ($hidelabel ? '' : $langs->trans("RefOrLabel") . ' : ') . '<input type="text" class="'.$morecss.'" name="search_' . $htmlname . '" id="search_' . $htmlname . '" value="' . $selected_input_value . '"' . ($placeholder ? ' placeholder="' . $placeholder . '"' : '') . ' spellcheck="false">';
 
 			$s .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT . '/product/ajax/products.php', $urloption, getDolGlobalInt('PRODUIT_USE_SEARCH_TO_SELECT'), 0, $ajaxoptions);
 		} else {
@@ -11179,7 +11180,11 @@ class Form
 					'enabled' => isModEnabled('eventorganization'),
 					'perms' => 1,
 					'label' => 'LinkToConferenceOrBoothAttendee',
-					'sql' => "SELECT s.rowid as socid, CONCAT(a.firstname, ' ', a.lastname) as name, a.rowid as rowid, a.fk_project as fk_project, a.ref as ref, a.email as email, a.date_subscription as date_subscription FROM " . $this->db->prefix() . "societe as s, " . $this->db->prefix() . "eventorganization_conferenceorboothattendee as a WHERE a.fk_soc = s.rowid AND a.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND s.entity IN (' . getEntity('conferenceorboothattendee') . ')' . (empty($object->fk_project) ? '' : ' AND a.fk_project = ' . (int) $object->fk_project),
+					'sql' => "SELECT s.rowid as socid, CONCAT(a.firstname, ' ', a.lastname) as name, a.rowid as rowid, a.fk_project as fk_project, a.ref as ref, a.email as email, a.date_subscription as date_subscription FROM "
+						.$this->db->prefix()."societe as s, "
+						.$this->db->prefix()."eventorganization_conferenceorboothattendee as a WHERE a.fk_soc = s.rowid AND a.fk_soc IN ("
+						.$this->db->sanitize($listofidcompanytoscan) . ') AND s.entity IN (' . getEntity('conferenceorboothattendee') . ')'
+						. (empty($object->fk_project) ? '' : ' AND a.fk_project = ' . (int) $object->fk_project),
 					'linkname' => 'attendee'
 				),
 				'invoice' => array(
