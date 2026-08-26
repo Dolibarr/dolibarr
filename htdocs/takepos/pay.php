@@ -138,7 +138,7 @@ function unexpectedDisconnect() {
 
 function fetchConnectionToken() {
 		<?php
-		$urlconnexiontoken = DOL_URL_ROOT.'/stripe/ajax/ajax.php?action=getConnexionToken&token='.newToken().'&servicestatus='.urlencode((string) ($servicestatus));
+		$urlconnexiontoken = DOL_URL_ROOT.'/stripe/ajax/ajax.php?action=getConnexionToken&token='.currentToken().'&servicestatus='.urlencode((string) ($servicestatus));
 		if (getDolGlobalString('STRIPE_LOCATION')) {
 			$urlconnexiontoken .= '&location='.urlencode(getDolGlobalString('STRIPE_LOCATION'));
 		}
@@ -391,7 +391,7 @@ if (!getDolGlobalInt("TAKEPOS_NUMPAD")) {
 	function fetchPaymentIntentClientSecret(amount, invoiceid) {
 	  const bodyContent = JSON.stringify({ amount : amount, invoiceid : invoiceid });
   <?php
-	$urlpaymentintent = DOL_URL_ROOT.'/stripe/ajax/ajax.php?action=createPaymentIntent&token='.newToken().'&servicestatus='.urlencode((string) $servicestatus);
+	$urlpaymentintent = DOL_URL_ROOT.'/stripe/ajax/ajax.php?action=createPaymentIntent&token='.currentToken().'&servicestatus='.urlencode((string) $servicestatus);
 	if (!empty($stripeacc)) {
 		$urlpaymentintent .= '&stripeacc='.$stripeacc;
 	}
@@ -415,7 +415,7 @@ if (!getDolGlobalInt("TAKEPOS_NUMPAD")) {
 	function capturePaymentIntent(paymentIntentId) {
 	const bodyContent = JSON.stringify({"id": paymentIntentId})
   <?php
-	$urlpaymentintent = DOL_URL_ROOT.'/stripe/ajax/ajax.php?action=capturePaymentIntent&token='.newToken().'&servicestatus='.urlencode((string) ($servicestatus));
+	$urlpaymentintent = DOL_URL_ROOT.'/stripe/ajax/ajax.php?action=capturePaymentIntent&token='.currentToken().'&servicestatus='.urlencode((string) ($servicestatus));
 	if (!empty($stripeacc)) {
 		$urlpaymentintent .= '&stripeacc='.urlencode($stripeacc);
 	}
