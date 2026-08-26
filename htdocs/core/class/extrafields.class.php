@@ -2722,7 +2722,7 @@ class ExtraFields
 									objectId: '.((int) $objectid).',
 									field: \''.dol_escape_js($key).'\',
 									value: selectedStars,
-									token: \''.newToken().'\'
+									token: \''.currentToken().'\'
 								},
 								success: function(response) {
 									var res = JSON.parse(response);
