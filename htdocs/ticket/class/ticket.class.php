@@ -1435,26 +1435,23 @@ class Ticket extends CommonObject
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 			$i = 0;
-			$categorytickets = array();
-			'@phan-var-force array<int,array{code:string,label:string,use_default:int,pos:int,public:int,active:int,force_severity:?string,fk_parent:int}> $categorytickets';
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
-				$categorytickets[$obj->rowid]['code'] = $obj->code;
-				$categorytickets[$obj->rowid]['use_default'] = $obj->use_default;
-				$categorytickets[$obj->rowid]['pos'] = $obj->pos;
-				$categorytickets[$obj->rowid]['public'] = $obj->public;
-				$categorytickets[$obj->rowid]['active'] = $obj->active;
-				$categorytickets[$obj->rowid]['force_severity'] = $obj->force_severity;
-				$categorytickets[$obj->rowid]['fk_parent'] = $obj->fk_parent;
+				$conf->cache['category_tickets'][$obj->rowid]['code'] = $obj->code;
+				$conf->cache['category_tickets'][$obj->rowid]['use_default'] = $obj->use_default;
+				$conf->cache['category_tickets'][$obj->rowid]['pos'] = $obj->pos;
+				$conf->cache['category_tickets'][$obj->rowid]['public'] = $obj->public;
+				$conf->cache['category_tickets'][$obj->rowid]['active'] = $obj->active;
+				$conf->cache['category_tickets'][$obj->rowid]['force_severity'] = $obj->force_severity;
+				$conf->cache['category_tickets'][$obj->rowid]['fk_parent'] = $obj->fk_parent;
 
 				// If  translation exists, we use it to store already translated string.
 				// Warning: You should not use this and recompute the translated string into caller code to get the value into expected language
 				$label = ($langs->trans("TicketCategoryShort".$obj->code) != "TicketCategoryShort".$obj->code ? $langs->trans("TicketCategoryShort".$obj->code) : ($obj->label != '-' ? $obj->label : ''));
-				$categorytickets[$obj->rowid]['label'] = $label;
+				$conf->cache['category_tickets'][$obj->rowid]['label'] = $label;
 
 				$i++;
 			}
-			$conf->cache['category_tickets'] = $categorytickets;
 			return $num;
 		} else {
 			dol_print_error($this->db);
@@ -1486,19 +1483,16 @@ class Ticket extends CommonObject
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 			$i = 0;
-			$severitytickets = array();
-			'@phan-var-force array<int,array{code:string,label:string,use_default:int,pos:int}> $severitytickets';
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
 
-				$severitytickets[$obj->rowid]['code'] = $obj->code;
+				$conf->cache['severity_tickets'][$obj->rowid]['code'] = $obj->code;
 				$label = ($langs->trans("TicketSeverityShort".$obj->code) != "TicketSeverityShort".$obj->code ? $langs->trans("TicketSeverityShort".$obj->code) : ($obj->label != '-' ? $obj->label : ''));
-				$severitytickets[$obj->rowid]['label'] = $label;
-				$severitytickets[$obj->rowid]['use_default'] = $obj->use_default;
-				$severitytickets[$obj->rowid]['pos'] = $obj->pos;
+				$conf->cache['severity_tickets'][$obj->rowid]['label'] = $label;
+				$conf->cache['severity_tickets'][$obj->rowid]['use_default'] = $obj->use_default;
+				$conf->cache['severity_tickets'][$obj->rowid]['pos'] = $obj->pos;
 				$i++;
 			}
-			$conf->cache['severity_tickets'] = $severitytickets;
 			return $num;
 		} else {
 			dol_print_error($this->db);
