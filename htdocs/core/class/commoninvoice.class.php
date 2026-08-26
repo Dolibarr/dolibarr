@@ -2698,6 +2698,7 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 	 */
 	public $situation_percent = 100;
 
+
 	/**
 	 * Check if a line is a deposit line
 	 *

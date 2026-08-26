@@ -5937,7 +5937,7 @@ class Societe extends CommonObject
 	 *    @param    string      $code       Filter on this code of contact type ('SHIPPING', 'BILLING', ...)
 	 *	  @param    string      $element    Filter on this element of default contact type ('facture', 'propal', 'commande' ...)
 	 *    @param    int         $status     Filter by contact status: 1=Active only, 0=Inactive only, -1=All (default)
-	 *    @return int[]|array<array{source:string,socid:int,id:int,nom:string,civility:string,lastname:string,firstname:string,email:string,login:string,photo:string,statuscontact:string,rowid:int,code:string,element:string,libelle:string,status:string,fk_c_type_contact:int}>|-1		Array of contacts, -1 if error
+	 *    @return 	int[]|array<array{source:string,socid:int,id:int,nom:string,civility:string,lastname:string,firstname:string,email:string,login:string,photo:string,statuscontact:string,rowid:int,code:string,element:string,libelle:string,status:string,fk_c_type_contact:int}>|-1		Array of contacts, -1 if error
 	 */
 	public function getContacts($list = 0, $code = '', $element = '', $status = -1)
 	{
@@ -5982,7 +5982,7 @@ class Societe extends CommonObject
 
 				if (!$list) {
 					$transkey = "TypeContact_".$obj->element."_".$obj->source."_".$obj->code;
-					$libelle_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->type_label);
+					$label_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->type_label);
 					$tab[$obj->id] = array(
 						'source' => $obj->source,
 						'socid' => (int) $obj->socid,
@@ -5998,7 +5998,7 @@ class Societe extends CommonObject
 						'rowid' => (int) $obj->rowid,
 						'code' => $obj->code,
 						'element' => $obj->element,
-						'libelle' => $libelle_type,
+						'libelle' => $label_type,
 						'status' => $obj->statuslink,
 						'fk_c_type_contact' => (int) $obj->fk_c_type_contact
 					);

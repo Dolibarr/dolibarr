@@ -307,7 +307,7 @@ class pdf_baleine extends ModelePDFProjects
 
 					// Description of line
 					$ref = $object->lines[$i]->ref;
-					$libelleline = $object->lines[$i]->label;
+					$labelline = $object->lines[$i]->label;
 					$progress = ($object->lines[$i]->progress ? $object->lines[$i]->progress.'%' : '');
 					$datestart = dol_print_date($object->lines[$i]->date_start, 'day');
 					$dateend = dol_print_date($object->lines[$i]->date_end, 'day');
@@ -318,7 +318,7 @@ class pdf_baleine extends ModelePDFProjects
 					$pdf->startTransaction();
 					// Label
 					$pdf->SetXY($this->posxlabel, $curY);
-					$pdf->MultiCell($this->posxworkload - $this->posxlabel, 3, $outputlangs->convToOutputCharset($libelleline), 0, 'L');
+					$pdf->MultiCell($this->posxworkload - $this->posxlabel, 3, $outputlangs->convToOutputCharset($labelline), 0, 'L');
 					$pageposafter = $pdf->getPage();
 					if ($pageposafter > $pageposbefore) {	// There is a pagebreak
 						$pdf->rollbackTransaction(true);
@@ -376,7 +376,7 @@ class pdf_baleine extends ModelePDFProjects
 								// Label
 								$pdf->SetXY($this->posxlabel, $curY);
 								$posybefore = $pdf->GetY();
-								$pdf->MultiCell($this->posxworkload - $this->posxlabel, 3, $outputlangs->convToOutputCharset($libelleline), 0, 'L');
+								$pdf->MultiCell($this->posxworkload - $this->posxlabel, 3, $outputlangs->convToOutputCharset($labelline), 0, 'L');
 								$pageposafter = $pdf->getPage();
 								$posyafter = $pdf->GetY();
 							}

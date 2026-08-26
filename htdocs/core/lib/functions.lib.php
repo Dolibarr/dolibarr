@@ -17220,7 +17220,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 				$out .= $labeltype . ' - ';
 			}
 
-			$libelle = '';
+			$tmplabel = '';
 
 			if (!empty($actionstatic->code) && preg_match('/^TICKET_MSG_PRIVATE/', $actionstatic->code)) {
 				$out .= $langs->trans('TicketNewMessage').' - <em>'.img_picto($langs->trans('Private'), 'lock', 'class="valignmiddle"').' '.$langs->trans('Private').'</em>';
@@ -17233,20 +17233,20 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 			} elseif (isset($histo[$key]['type'])) {
 				if ($histo[$key]['type'] == 'action') {
 					$transcode = $langs->transnoentitiesnoconv("Action" . $histo[$key]['acode']);
-					$libelle = ($transcode != "Action" . $histo[$key]['acode'] ? $transcode : $histo[$key]['alabel']);
-					$libelle = $histo[$key]['note'];
+					//$tmplabel = ($transcode != "Action" . $histo[$key]['acode'] ? $transcode : $histo[$key]['alabel']);
+					$tmplabel = $histo[$key]['note'];
 					$actionstatic->id = $histo[$key]['id'];
-					if ($libelle != $labeltype) {
-						$out .= dol_escape_htmltag(dol_trunc($libelle, 120));
+					if ($tmplabel != $labeltype) {
+						$out .= dol_escape_htmltag(dol_trunc($tmplabel, 120));
 					}
 				} elseif ($histo[$key]['type'] == 'mailing') {
 					$out .= '<a href="' . DOL_URL_ROOT . '/comm/mailing/card.php?id=' . $histo[$key]['id'] . '">' . img_object($langs->trans("ShowEMailing"), "email") . ' ';
 					$transcode = $langs->transnoentitiesnoconv("Action" . $histo[$key]['acode']);
-					$libelle = ($transcode != "Action" . $histo[$key]['acode'] ? $transcode : 'Send mass mailing');
-					$out .= dol_escape_htmltag(dol_trunc($libelle, 120));
+					$tmplabel = ($transcode != "Action" . $histo[$key]['acode'] ? $transcode : 'Send mass mailing');
+					$out .= dol_escape_htmltag(dol_trunc($tmplabel, 120));
 				} else {
-					$libelle .= $histo[$key]['note'];
-					$out .= dol_escape_htmltag(dol_trunc($libelle, 120));
+					$tmplabel .= $histo[$key]['note'];
+					$out .= dol_escape_htmltag(dol_trunc($tmplabel, 120));
 				}
 			}
 			$out = preg_replace('/ - $/', '', $out);	// Remove ending ' - '
@@ -17286,7 +17286,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 				$newmess = $histo[$key]['message'];
 			}
 			if (
-				!empty($newmess && $newmess != $libelle)
+				!empty($newmess && $newmess != $tmplabel)
 				&& $actionstatic->code != 'AC_TICKET_MODIFY'
 			) {
 				$out .= '<div class="timeline-body wordbreak small">';
