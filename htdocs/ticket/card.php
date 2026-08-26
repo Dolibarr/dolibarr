@@ -1320,7 +1320,7 @@ if ($action == 'create' || $action == 'presend') {
 			print '<table class="nobordernopadding centpercent"><tr><td class="none">';
 			print $langs->trans("Categories");
 			if ($permissiontoadd && !in_array($object->status, [Ticket::STATUS_CLOSED, Ticket::STATUS_CANCELED]) && $action != 'categories' && !$user->socid) {
-				print '</td><td class="right"><a class="editfielda" href="'.$url_page_current.'?action=categories&track_id='.urlencode($object->track_id).'">'.img_edit($langs->trans('Modify')).'</a>';
+				print '</td><td class="right"><a class="editfielda" href="'.$url_page_current.'?action=categories&token='.newToken().'&track_id='.urlencode($object->track_id).'">'.img_edit($langs->trans('Modify')).'</a>';
 			}
 			print '</td>';
 			print '</table>';

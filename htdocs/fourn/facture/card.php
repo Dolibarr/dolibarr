@@ -3610,7 +3610,7 @@ if ($action == 'create') {
 				print $langs->trans('VATReverseCharge');
 				print '<td>';
 				if ($action != 'editvatreversecharge' && $usercancreate) {
-					print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editvatreversecharge&amp;id='.$object->id.'">'.img_edit($langs->trans('SetVATReverseCharge'), 1).'</a></td>';
+					print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editvatreversecharge&amp;token='.newToken().'&amp;id='.$object->id.'">'.img_edit($langs->trans('SetVATReverseCharge'), 1).'</a></td>';
 				}
 				print '</tr></table>';
 				print '</td><td>';

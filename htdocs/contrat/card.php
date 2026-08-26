@@ -2466,9 +2466,9 @@ if ($action == 'create') {
 
 				if (getDolGlobalString('CONTRACT_HIDE_CLOSED_SERVICES_BY_DEFAULT') && $object->nbofservicesclosed > 0) {
 					if ($action == 'showclosedlines') {
-						print '<div class="inline-block divButAction"><a class="butAction" id="btnhideclosedlines" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=hideclosedlines">'.$langs->trans("HideClosedServices").'</a></div>';
+						print '<div class="inline-block divButAction"><a class="butAction" id="btnhideclosedlines" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=hideclosedlines&amp;token='.newToken().'">'.$langs->trans("HideClosedServices").'</a></div>';
 					} else {
-						print '<div class="inline-block divButAction"><a class="butAction" id="btnshowclosedlines" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=showclosedlines">'.$langs->trans("ShowClosedServices").'</a></div>';
+						print '<div class="inline-block divButAction"><a class="butAction" id="btnshowclosedlines" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=showclosedlines&amp;token='.newToken().'">'.$langs->trans("ShowClosedServices").'</a></div>';
 					}
 				}
 

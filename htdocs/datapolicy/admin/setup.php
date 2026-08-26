@@ -255,7 +255,7 @@ foreach ($arrayofparameters as $title => $tab) {
 			} elseif ($selectedvalue) {
 				print '<span class="opacitymedium valignmiddle">'.$langs->trans("QualifiedNumber").' : </span>';
 
-				print '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?action=count&group='.urlencode($logicalKey).'">';
+				print '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?action=count&token='.newToken().'&group='.urlencode($logicalKey).'">';
 				print $langs->trans("Calculate");
 				print '</a>';
 			}
