@@ -743,7 +743,7 @@ class Facture extends CommonInvoice
 		$sql .= "'(PROV)'";
 		$sql .= ", ".(int) $this->entity;
 		$sql .= ", ".($this->ref_ext ? "'".$this->db->escape($this->ref_ext)."'" : "null");
-		$sql .= ", '".$this->db->escape((string) $this->type)."'";
+		$sql .= ", ".((int) $this->type);
 		$sql .= ", ".(isset($this->subtype) ? (int) $this->subtype : "null");
 		$sql .= ", ".((int) $socid);
 		$sql .= ", '".$this->db->idate($this->date_creation)."'";
@@ -2814,11 +2814,11 @@ class Facture extends CommonInvoice
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facture SET";
 		$sql .= " ref=".(isset($this->ref) ? "'".$this->db->escape($this->ref)."'" : "null").",";
 		$sql .= " ref_ext=".(isset($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "null").",";
-		$sql .= " type=".(isset($this->type) ? $this->db->escape((string) $this->type) : "null").",";
+		$sql .= " type=".(isset($this->type) ? ((int) $this->type) : "null").",";
 		$sql .= " subtype=".(isset($this->subtype) ? (int) $this->subtype : "null").",";
 		$sql .= " ref_client=".(!empty($this->ref_customer) ? "'".$this->db->escape($this->ref_customer)."'" : (isset($this->ref_client) ? "'".$this->db->escape($this->ref_client)."'" : "null")).",";
 		$sql .= " increment=".(isset($this->increment) ? "'".$this->db->escape($this->increment)."'" : "null").",";
-		$sql .= " fk_soc=".(isset($this->socid) ? $this->db->escape((string) $this->socid) : "null").",";
+		$sql .= " fk_soc=".(isset($this->socid) ? ((int) $this->socid) : "null").",";
 		$sql .= " datec=".(strval($this->date_creation) != '' ? "'".$this->db->idate($this->date_creation)."'" : 'null').",";
 		$sql .= " datef=".(strval($this->date) != '' ? "'".$this->db->idate($this->date)."'" : 'null').",";
 		$sql .= " date_pointoftax=".(strval($this->date_pointoftax) != '' ? "'".$this->db->idate($this->date_pointoftax)."'" : 'null').",";
@@ -2931,8 +2931,8 @@ class Facture extends CommonInvoice
 			$facligne->tva_tx = $remise->tva_tx;
 			$facligne->localtax1_tx = $remise->localtax1_tx;
 			$facligne->localtax1_type = (int) $remise->localtax1_type;
-			$facligne->localtax2_tx = $remise->localtax1_tx;
-			$facligne->localtax2_type = (int) $remise->localtax1_type;
+			$facligne->localtax2_tx = $remise->localtax2_tx;
+			$facligne->localtax2_type = (int) $remise->localtax2_type;
 			$facligne->subprice = -(float) $remise->total_ht;
 			$facligne->fk_product = 0; // Predefined Product ID
 			$facligne->qty = 1;

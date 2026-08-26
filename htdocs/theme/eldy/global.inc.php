@@ -519,7 +519,7 @@ section.setupsection {
 	padding: 20px !important;
 	background-color: var(--colorbackgrey);
 	border-radius: 5px;
-	box-shadow: 0 0 4px rgb(0, 0, 0, 0.15);
+	box-shadow: 0 0 4px rgb(0, 0, 0, 0.18);
 }
 section.setupsection:hover {
 	box-shadow: 0 0 5px #aaa;
@@ -916,7 +916,7 @@ input#onlinepaymenturl, input#directdownloadlink {
 	/* background: #f3f3f3; */
 
 	padding: 20px 20px 20px 20px;
-	border-radius: 8px;
+	border-radius: 5px;
 }
 .formborder {
 	border: solid 2px #444;
