@@ -22,7 +22,7 @@
 
 /**
  *       \file       htdocs/core/ajax/ajaxuploadpage.php
- *       \brief      Page to show a generic upload file feature
+ *       \brief      Page that decrypt a file saved into a temporary directory
  */
 
 if (!defined('NOTOKENRENEWAL')) {
@@ -165,7 +165,8 @@ if ($modulepart == 'invoice_supplier') {
 	 "document_info": {
 	  "document_ref": "<document ref or number>",
 	  "date": "<date>",
-	  "title": "<title>"
+	  "title": "<title>",
+	  "currency_code": "<currency_code>"
 	 },
 	 "vendor": {
 	  "name": "<name>",
@@ -219,7 +220,7 @@ if ($modulepart == 'invoice_supplier') {
 }
 
 
-// TODO Move this into an AJAX service and just output the JS code to call the aajax to start
+// TODO Move this into an AJAX service and just output the JS code to call the ajax to start
 
 if ($METHOD == 'converttotext') { // @phpstan-ignore-line
 	$result = dolDocToText($fullpathoffile, '', 'fulltext');
@@ -232,7 +233,6 @@ if ($METHOD == 'converttotext') { // @phpstan-ignore-line
 
 		$result = $ai->generateContent($prompt, 'auto', 'docparsing', '');
 		// $result is an array of error messages or a string with answer
-
 		if (is_array($result)) {	// If array, there is an error
 			if ($result['error']) {
 				$error++;
@@ -243,7 +243,10 @@ if ($METHOD == 'converttotext') { // @phpstan-ignore-line
 				$errors[] = $result['curl_error_no'];
 			}
 		} else {
-			$answer = $result;
+			$answer = (string) $result;
+
+			$answer = preg_replace('/^```json/', '', $answer);
+			$answer = preg_replace('/```$/', '', $answer);
 		}
 	} else {
 		$errors[] = 'Failed to convert document into TXT';
@@ -452,6 +455,8 @@ if (!empty($errors)) {
 	$data = json_decode((string) $answer, true);
 
 	if ($data == null) {
+		http_response_code(500);
+
 		$error++;
 		$errors[] = 'Failed to decode answer';
 		print 'Failed to decode answer';

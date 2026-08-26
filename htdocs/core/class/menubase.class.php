@@ -777,7 +777,7 @@ class Menubase
 		// Loop on tab array
 		$num = count($tab);
 		for ($x = 0; $x < $num; $x++) {
-			//si un element a pour pere : $pere
+			// if an element has a parent: $pere
 			if ((($tab[$x]['fk_menu'] >= 0 && $tab[$x]['fk_menu'] == $pere)) && $tab[$x]['enabled']) {
 				$this->newmenu->add($tab[$x]['url'], $tab[$x]['titre'], ($level - 1), (int) $tab[$x]['perms'], $tab[$x]['target'], $tab[$x]['mainmenu'], $tab[$x]['leftmenu'], 0, '', '', '', $tab[$x]['prefix']);
 				$this->recur($tab, (int) $tab[$x]['rowid'], ($level + 1));

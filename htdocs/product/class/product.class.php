@@ -19,6 +19,7 @@
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Lenin Rivas				<lenin.rivas777@gmail.com>
  * Copyright (C) 2026		Anthony Berton			<anthony.berton@bb2a.fr>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2360,7 +2361,9 @@ class Product extends CommonObject
 		// Add new price
 		$sql = "INSERT INTO ".$this->db->prefix()."product_price(price_level,date_price, fk_product, fk_user_author, price_label, price, price_ttc, price_base_type,tosell, tva_tx, default_vat_code, recuperableonly,";
 		$sql .= " localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, price_min,price_min_ttc,price_by_qty,entity,fk_price_expression) ";
-		$sql .= " VALUES(".($level ? ((int) $level) : 1).", '".$this->db->idate($now)."', ".((int) $this->id).", ".((int) $user->id).", ".(empty($this->price_label) ? "null" : "'".$this->db->escape($this->price_label)."'").", ".((float) price2num($this->price)).", ".((float) price2num($this->price_ttc)).",'".$this->db->escape($this->price_base_type)."',".((int) $this->status).", ".((float) price2num($this->tva_tx)).", ".($this->default_vat_code ? ("'".$this->db->escape($this->default_vat_code)."'") : "null").", ".((int) $this->tva_npr).",";
+		$sql .= " VALUES(".($level ? ((int) $level) : 1).", '".$this->db->idate($now)."', ".((int) $this->id).", ".((int) $user->id).", ".(empty($this->price_label) ? "null" : "'".$this->db->escape($this->price_label)."'").",";
+		$sql .= " ".((float) price2num($this->price)).", ".((float) price2num($this->price_ttc)).",'".$this->db->escape($this->price_base_type)."',".((int) $this->status).", ".((float) price2num($this->tva_tx)).",";
+		$sql .= " ".($this->default_vat_code ? ("'".$this->db->escape($this->default_vat_code)."'") : "null").", ".((int) $this->tva_npr).",";
 		$sql .= " ".price2num($this->localtax1_tx).", ".price2num($this->localtax2_tx).", '".$this->db->escape($this->localtax1_type)."', '".$this->db->escape($this->localtax2_type)."', ".price2num($this->price_min).", ".price2num($this->price_min_ttc).", ".price2num($this->price_by_qty).", ".((int) $conf->entity).",".($this->fk_price_expression > 0 ? ((int) $this->fk_price_expression) : 'null');
 		$sql .= ")";
 
@@ -2945,20 +2948,27 @@ class Product extends CommonObject
 
 			$this->db->begin();
 
+			// The price columns of the table product hold the default price of the product, that is the price of the level 1
+			// when multiprices are enabled (level is 0 when they are not). So they must not be overwritten by another level.
+			// The vat columns are however shared by all levels, so they are always updated.
+			$updatedefaultprice = (empty($level) || $level == 1);
+
 			// Don't put quotes here on decimal numbers.
 			// This causes storage with base rounding instead of exact values.
 			$sql = "UPDATE ".$this->db->prefix()."product SET";
-			$sql .= " price_base_type = '".$this->db->escape($newpricebase)."',";
-			$sql .= " price = ".(float) $price.",";
-			$sql .= " price_ttc = ".(float) $price_ttc.",";
-			$sql .= " price_min = ".(float) $price_min.",";
-			$sql .= " price_min_ttc = ".(float) $price_min_ttc.",";
+			if ($updatedefaultprice) {
+				$sql .= " price_base_type = '".$this->db->escape($newpricebase)."',";
+				$sql .= " price = ".(float) $price.",";
+				$sql .= " price_ttc = ".(float) $price_ttc.",";
+				$sql .= " price_min = ".(float) $price_min.",";
+				$sql .= " price_min_ttc = ".(float) $price_min_ttc.",";
+				$sql .= " price_label = ".(!empty($price_label) ? "'".$this->db->escape($price_label)."'" : "null").",";
+			}
 			$sql .= " localtax1_tx = ".($localtax1 >= 0 ? (float) $localtax1 : 'NULL').",";
 			$sql .= " localtax2_tx = ".($localtax2 >= 0 ? (float) $localtax2 : 'NULL').",";
 			$sql .= " localtax1_type = ".($localtaxtype1 != '' ? "'".$this->db->escape($localtaxtype1)."'" : "'0'").",";
 			$sql .= " localtax2_type = ".($localtaxtype2 != '' ? "'".$this->db->escape($localtaxtype2)."'" : "'0'").",";
 			$sql .= " default_vat_code = ".($newdefaultvatcode ? "'".$this->db->escape($newdefaultvatcode)."'" : "null").",";
-			$sql .= " price_label = ".(!empty($price_label) ? "'".$this->db->escape($price_label)."'" : "null").",";
 			$sql .= " tva_tx = ".(float) price2num($newvat).",";
 			$sql .= " recuperableonly = '".$this->db->escape((string) $newnpr)."'";
 			$sql .= " WHERE rowid = ".((int) $id);
@@ -2974,6 +2984,10 @@ class Product extends CommonObject
 				$this->multiprices_default_vat_code[$level] = $newdefaultvatcode;
 				$this->multiprices_tva_tx[$level] = $newvat;
 				$this->multiprices_recuperableonly[$level] = $newnpr;
+
+				// Save the default price of the product to restore it after the log if we are updating another level
+				// (_log_price() reads the price into the properties of the object to save the price of the level).
+				$savdefaultprice = array($this->price, $this->price_label, $this->price_ttc, $this->price_min, $this->price_min_ttc, $this->price_base_type);
 
 				$this->price = $price;
 				$this->price_label = $price_label;
@@ -2998,6 +3012,11 @@ class Product extends CommonObject
 				$newPriceData = $this->getArrayForPriceCompare($level);
 				if (!empty(array_diff_assoc($newPriceData, $lastPriceData)) || (!getDolGlobalString('PRODUIT_MULTIPRICES') && !getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES'))) {
 					$this->_log_price($user, $level); // Save price for level into table product_price
+				}
+
+				if (!$updatedefaultprice) {
+					// The price of the level is now saved, so we can restore the default price of the product
+					list($this->price, $this->price_label, $this->price_ttc, $this->price_min, $this->price_min_ttc, $this->price_base_type) = $savdefaultprice;
 				}
 
 				$this->level = $level; // Store level of price edited for trigger
@@ -6147,7 +6166,7 @@ class Product extends CommonObject
 		$langs->load("products");
 		$outputlangs->load("products");
 
-		// Positionne le modele sur le nom du modele a utiliser
+		// Set the model to the name of the model to use
 		if (!dol_strlen($modele)) {
 			$modele = getDolGlobalString('PRODUCT_ADDON_PDF', 'strato');
 		}
@@ -6565,7 +6584,8 @@ class Product extends CommonObject
 		}
 		// Include manufacturing
 		if (isModEnabled('mrp')) {
-			$result = $this->load_stats_inproduction(0, '1,2', 1, $dateofvirtualstock);
+			$filterStatus = getDolGlobalString('MO_STATUS_FOR_VIRTUAL_STOCK', '1,2');
+			$result = $this->load_stats_inproduction(0, $filterStatus, 1, $dateofvirtualstock);
 			if ($result < 0) {
 				dol_print_error($this->db, $this->error);
 			}
@@ -6624,7 +6644,7 @@ class Product extends CommonObject
 		if (!empty($this->stock_warehouse) && getDolGlobalString('STOCK_ALLOW_VIRTUAL_STOCK_PER_WAREHOUSE')) {
 			foreach ($this->stock_warehouse as $warehouseid => $stockwarehouse) {
 				if (isModEnabled('mrp')) {
-					$result = $this->load_stats_inproduction(0, '1,2', 1, $dateofvirtualstock, $warehouseid);
+					$result = $this->load_stats_inproduction(0, getDolGlobalString('MO_STATUS_FOR_VIRTUAL_STOCK', '1,2'), 1, $dateofvirtualstock, $warehouseid);
 					if ($result < 0) {
 						dol_print_error($this->db, $this->error);
 					}
@@ -7242,6 +7262,16 @@ class Product extends CommonObject
 	 */
 	public static function replaceThirdparty(DoliDB $dbs, $origin_id, $dest_id)
 	{
+		/* we firstly delete origin product prices existing in destination before update */
+		$sql = " DELETE FROM ".$dbs->prefix()."product_customer_price";
+		$sql .= " WHERE fk_soc = ".(int) $origin_id;
+		$sql .= " AND fk_product IN (SELECT fk_product FROM (SELECT fk_product FROM ".$dbs->prefix()."product_customer_price WHERE fk_soc = ".(int) $dest_id.") AS tmp)";
+		//$sql .= ' AND EXISTS (SELECT 1 FROM '.$dbs->prefix().'product_customer_price p_new WHERE p_new.fk_product = p_old.fk_product AND p_new.fk_soc = '.(int) $dest_id.')';
+
+		if (!$dbs->query($sql)) {
+			return false;
+		}
+
 		$tables = array(
 			'product_customer_price',
 			'product_customer_price_log'

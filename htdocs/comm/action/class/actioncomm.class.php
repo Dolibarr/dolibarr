@@ -2645,6 +2645,61 @@ class ActionComm extends CommonObject
 	}
 
 	/**
+	 *  Function used to replace a contact id with another one when merging two contacts.
+	 *  llx_actioncomm_resources with element_type = 'socpeople' is where the contacts assigned to an
+	 *  event are really stored, llx_actioncomm.fk_contact being deprecated but still filled.
+	 *
+	 *  @param	DoliDB	$dbs		Database handler
+	 *  @param	int		$origin_id	Old contact id (the contact to delete)
+	 *  @param	int		$dest_id	New contact id (the contact that will receive elements of the other)
+	 *  @return	bool				True if success, False if error
+	 */
+	public static function replaceContact(DoliDB $dbs, $origin_id, $dest_id)
+	{
+		// llx_actioncomm_resources: UNIQUE(fk_actioncomm, element_type, fk_element)
+		$sql = 'DELETE FROM '.$dbs->prefix().'actioncomm_resources WHERE rowid IN (';
+		$sql .= ' SELECT x.rowid FROM (';
+		$sql .= '  SELECT origin.rowid FROM '.$dbs->prefix().'actioncomm_resources as origin';
+		$sql .= '  INNER JOIN '.$dbs->prefix().'actioncomm_resources as dest';
+		$sql .= '   ON dest.fk_actioncomm = origin.fk_actioncomm AND dest.element_type = origin.element_type';
+		$sql .= "  WHERE origin.element_type = 'socpeople'";
+		$sql .= '   AND origin.fk_element = '.((int) $origin_id).' AND dest.fk_element = '.((int) $dest_id);
+		$sql .= ' ) as x)';
+		if (!$dbs->query($sql)) {
+			return false;
+		}
+
+		$sql = 'UPDATE '.$dbs->prefix().'actioncomm_resources SET fk_element = '.((int) $dest_id);
+		$sql .= " WHERE element_type = 'socpeople' AND fk_element = ".((int) $origin_id);
+		if (!$dbs->query($sql)) {
+			return false;
+		}
+
+		// llx_actioncomm_reminder: UNIQUE(fk_actioncomm, fk_user, fk_soc, fk_contact, typeremind, offsetvalue, offsetunit)
+		$sql = 'DELETE FROM '.$dbs->prefix().'actioncomm_reminder WHERE rowid IN (';
+		$sql .= ' SELECT x.rowid FROM (';
+		$sql .= '  SELECT origin.rowid FROM '.$dbs->prefix().'actioncomm_reminder as origin';
+		$sql .= '  INNER JOIN '.$dbs->prefix().'actioncomm_reminder as dest';
+		$sql .= '   ON dest.fk_actioncomm = origin.fk_actioncomm AND dest.typeremind = origin.typeremind';
+		$sql .= '   AND dest.offsetvalue = origin.offsetvalue AND dest.offsetunit = origin.offsetunit';
+		// fk_user and fk_soc are part of the unique key and are nullable, hence the NULL safe
+		// comparisons: the MySQL <=> operator is not portable to PostgreSQL
+		$sql .= '   AND (dest.fk_user = origin.fk_user OR (dest.fk_user IS NULL AND origin.fk_user IS NULL))';
+		$sql .= '   AND (dest.fk_soc = origin.fk_soc OR (dest.fk_soc IS NULL AND origin.fk_soc IS NULL))';
+		$sql .= '  WHERE origin.fk_contact = '.((int) $origin_id).' AND dest.fk_contact = '.((int) $dest_id);
+		$sql .= ' ) as x)';
+		if (!$dbs->query($sql)) {
+			return false;
+		}
+
+		$tables = array(
+			'actioncomm', 'actioncomm_reminder'
+		);
+
+		return CommonObject::commonReplaceContact($dbs, $origin_id, $dest_id, $tables, 'fk_contact');
+	}
+
+	/**
 	 *  Function used to replace a product id with another one.
 	 *
 	 *  @param DoliDB $dbs Database handler

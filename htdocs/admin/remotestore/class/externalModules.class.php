@@ -557,7 +557,6 @@ class ExternalModules
 							$urldownload = 'https://www.dolistore.com/_service_download.php?t=free&p='.$reg[1];
 							$download_link .= '<a class="paddingleft paddingright valignmiddle" target="_blank" title="'.$langs->trans("Download").'" href="'.$urldownload.'" rel="noopener noreferrer">';
 							$download_link .= img_picto('', 'download', 'class="size2x paddingright"');
-							//$download_link .= '<img width="32" src="'.DOL_URL_ROOT.'/admin/remotestore/img/download.png" />';
 							$download_link .= '</a>';
 						}
 					}
@@ -569,13 +568,39 @@ class ExternalModules
 					$download_link .= '</a>';
 					$download_link .= '<a class="paddingleft paddingright" target="_blank" title="'.$langs->trans("Download").'" href="'.$urldownload.'" rel="noopener noreferrer">';
 					$download_link .= img_picto('', 'download', 'class="size2x paddingright"');
-					//$download_link .= '<img width="32" src="'.DOL_URL_ROOT.'/admin/remotestore/img/download.png" />';
 					$download_link .= '</a>';
 				}
 
 				// Direct install
-				if (($product['direct-download'] && $product['direct-download'] == 'yes') || $product['source'] === 'dolistore') {
-					$disableInstall = ($compatible === 'NotCompatible');
+				if (($product['direct-download'] && in_array($product['direct-download'], array('yes', 'dolistore'))) || $product['source'] === 'dolistore') {
+					$urldownload = '';
+
+					if ($product['source'] === 'githubcommunity') {
+						$current_version = $product['module_version'] ?? '';
+						$module_name = strtolower(preg_replace('/@.*$/', '', $product['ref'] ?? ''));
+
+						// Remove "-" followed by current version at the end of the string if it exists
+						$module_name = preg_replace('/-' . preg_quote($current_version, '/') . '$/', '', $module_name);
+
+						$urldownload = 'https://github.com/Dolibarr/dolibarr-community-modules/raw/refs/heads/main/dev/build/bin/module_' . $module_name . '-' . $current_version . '.zip';
+
+						$reg = array();
+						$urlview = $product["dolistore-download"];		// View on Dolistore
+
+						// For community modules, we download from community repo.
+						// But we can force to download from dolistore if MAIN_DOWNLOAD_FROM_DOLISTORE_IN_PRIORITY is set (less reliable, less up to date)
+						if ($product["direct-download"] == 'dolistore' || getDolGlobalString("MAIN_DOWNLOAD_FROM_DOLISTORE_IN_PRIORITY")) {
+							if (preg_match('/https:.*\?id=(\d+)$/', $urlview, $reg)) {
+								$urldownload = 'https://www.dolistore.com/_service_download.php?t=free&p='.$reg[1];
+							}
+						}
+					}
+					if ($product['source'] === 'dolistore') {
+						$urldownload = 'https://www.dolistore.com/_service_download.php?t=free&p=' . $product['id'];
+					}
+
+
+					$disableInstall = ($compatible === 'NotCompatible') && !getDolGlobalInt('MAIN_FEATURES_LEVEL');
 					// $disableInstall = false; // TODO: remove this.
 					$disableInfo = $disableInstall ? dol_string_nohtmltag($version) : '';
 					$fields = ['action' => 'install', 'token' => newToken()];
@@ -583,20 +608,23 @@ class ExternalModules
 						$fields['producttoinstall['.$key.']'] = $value;
 					}
 
+					$installConfirmMessage = $langs->transnoentities(
+							"extModuleConfirmInstallText",
+							$product['label'] ?? '',
+							$product['module_version'] ?? '',
+							$product['ref'] ?? '',
+							!empty($product['tms']) ? dol_print_date($product['tms'], '%d/%m/%Y') : ''
+						);
+					$installConfirmMessage .= $langs->trans("Path").' : '.$urldownload;
+
 					$install_link = '<button class="valignmiddle ' . ($disableInstall ? 'butActionRefused' : 'butAction') . ' paddingleft paddingright"'
 						. ($disableInfo     ? ' title="' . dol_escape_htmltag($disableInfo) . '"' : '')
 						. (!$disableInstall ? ' data-confirm' : '')
 						. (!$disableInstall ? ' data-fields="' . dol_escape_htmltag(json_encode($fields)) . '"' : '')
 						. (!$disableInstall ? ' data-url="' . dol_escape_htmltag($this->url) . '"' : '')
 						. (!$disableInstall ? ' data-confirm-title="' . dol_escape_htmltag($langs->trans("extModuleConfirmInstallTitle")) . '"' : '')
-						. (!$disableInstall ? ' data-confirm-text="' . dol_escape_htmltag($langs->transnoentities(
-							"extModuleConfirmInstallText",
-							$product['label'] ?? '',
-							$product['module_version'] ?? '',
-							$product['ref'] ?? '',
-							!empty($product['tms']) ? dol_print_date($product['tms'], '%d/%m/%Y') : ''
-						)) . '"' : '')
-						. '>' . $langs->trans("install") . '</button>';
+						. (!$disableInstall ? ' data-confirm-text="' . dol_escape_htmltag($installConfirmMessage) . '"' : '')
+						. '>' . $langs->trans("Install") . '</button>';
 				}
 			}
 
@@ -668,8 +696,7 @@ class ExternalModules
 			// Price - do not load if display none
 			$html .= '<td class="margeCote center amount'.(getDolOptimizeSmallScreen() ? ' left" colspan="2"' : '"').'>';
 			$html .= $price;
-			if (($product['direct-download'] && $product['direct-download'] == 'yes')
-				|| ($product['source'] === 'dolistore' && empty((float) $product['price_ht']))) {
+			if (($product['direct-download'] && in_array($product['direct-download'], array('yes', 'dolistore'))) || ($product['source'] === 'dolistore' && empty((float) $product['price_ht']))) {
 				if ($install_link) {
 					$html .= $install_link;
 				}
@@ -699,7 +726,7 @@ class ExternalModules
 		}
 
 		// JS for confirm install
-		$confirmLabel = dol_escape_js($langs->trans("install"));
+		$confirmLabel = dol_escape_js($langs->trans("Install"));
 		$cancelLabel = dol_escape_js($langs->trans("Cancel"));
 		$html .= '<script>
 		$(document).on("click","[data-confirm]",function(){
@@ -1375,8 +1402,8 @@ class ExternalModules
 				}
 				break;
 			case 'githubcommunity':
-				if ($producttoinstall['direct-download'] && $producttoinstall['direct-download'] == 'yes') {
-					$source_url = 'https://github.com/Dolibarr/dolibarr-community-modules/raw/refs/heads/main/' . $module_name . '/module_' . $module_name . '-' . $current_version . '.zip';
+				if ($producttoinstall['direct-download'] && in_array($producttoinstall['direct-download'], array('yes', 'dolistore'))) {
+					$source_url = 'https://github.com/Dolibarr/dolibarr-community-modules/raw/refs/heads/main/dev/build/bin/module_' . $module_name . '-' . $current_version . '.zip';
 					$downloaded = $this->_downloadFile($source_url, $tmpdir);
 					if (!$downloaded) {
 						dol_syslog(__METHOD__ . ': GitHub community module download failed: ' . $source_url . ', Try to find a Dolistore link', LOG_WARNING);

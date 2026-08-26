@@ -325,7 +325,7 @@ if ($step == 5 && $action == 'confirm_deletefile' && $confirm == 'yes' && $user-
 
 	$file = $upload_dir."/".GETPOST('file');
 
-	$ret = dol_delete_file($file);
+	$ret = dol_delete_file($file, 1);
 	if ($ret) {
 		setEventMessages($langs->trans("FileWasRemoved", GETPOST('file')), null, 'mesgs');
 	} else {
@@ -942,7 +942,7 @@ if ($step == 3 && $datatoexport) {
 	 * Action bar
 	 */
 	print '<div class="tabsAction tabsActionNoBottom">';
-	// il n'est pas obligatoire de filtrer les champs
+	// it is not mandatory to filter the fields
 	print '<a class="butAction" href="javascript:FilterField.submit();">'.$langs->trans("NextStep").'</a>';
 	print '</div>';
 }

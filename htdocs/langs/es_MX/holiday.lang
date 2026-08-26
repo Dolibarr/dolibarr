@@ -12,3 +12,4 @@ DelayToRequestCP=Las solicitudes de permiso deben ser hechas al menos <b> %s dí
 EditCP=Editar
 ActionCancelCP=Cancelar
 MotifCP=Razón
+NoticePeriod=Periodo de notificación

@@ -128,6 +128,7 @@ ShipmentDistribution=Lieferung für den Versand
 ErrorTooManyCombinationBatchcode=Kein Versand für Position %s, da zu viele Kombinationen aus Lager, Produkt und Chargencode gefunden wurden (%s).
 ErrorNoCombinationBatchcode=Konnte die Zeile %s nicht speichern, da keine Kombination aus Lager, Produkt und Chargencode (%s, %s, %s) gefunden wurde.
 ErrorTooMuchShipped=Die versendete Menge sollte nicht größer sein als die bestellte Menge für Zeile %s
+NoShipmentLineChangeDetected=Es wurde keine Änderung einer Lieferposition festgestellt.
 ##### Types of contacts #####
 TypeContact_shipping_internal_SALESREPFOLL=Mitarbeiter für die Nachbetreuung des Versands
 TypeContact_shipping_external_BILLING=Kontakt für Kundenrechnungen

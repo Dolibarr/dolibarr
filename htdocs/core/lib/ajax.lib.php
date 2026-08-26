@@ -503,13 +503,16 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
 	$moreselect2theme = preg_replace('/widthcentpercentminus[^\s]*/', '', $moreselect2theme);
 
 	$tmpplugin = 'select2';
+	$componentname = (preg_match('/^\./', $htmlname) ? $htmlname : '#'.$htmlname);	// To support when htmlname is not an ID but a class
 	$msg = "\n";
 	$msg .= '<!-- JS CODE TO ENABLE '.$tmpplugin.' for id = '.$htmlname.' -->'."\n";
 	$msg .= "<script>\n";
 	$msg .= '$(document).ready(function () {
-		$(\''.(dol_escape_js(preg_match('/^\./', $htmlname) ? $htmlname : '#'.$htmlname)).'\').'.$tmpplugin.'({';
-	if (preg_match('/onrightofpage/', $morecss)) {	// when $morecss contains 'onrightofpage', the select2 component must also be inside a parent with class="parentonrightofpage"
-		$msg .= ' dropdownAutoWidth: true, dropdownParent: $(\'#'.$htmlname.'\').parent(), '."\n";
+		$(\''.dol_escape_js($componentname).'\').'.$tmpplugin.'({';
+	// when $morecss contains 'onrightofpage', the select2 component must also be inside a parent with class="parentonrightofpage"
+	if (preg_match('/onrightofpage/', $morecss)) {	// In this cas, htmlname must be an ID not a class.
+		$msg .= ' dropdownAutoWidth: true, ';
+		$msg .= ' dropdownParent: $(\'#'.$htmlname.'\').parent(), ';
 	}
 	$msg .= '
 			dir: \'ltr\',

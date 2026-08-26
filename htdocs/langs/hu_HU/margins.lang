@@ -30,10 +30,10 @@ UseDiscountAsService=Szolgáltatásként
 UseDiscountOnTotal=Részösszegben
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Meghatározza, hogy a globális engedményt termékként, szolgáltatásként vagy csak részösszegként kell-e kezelni az árrés kiszámításához.
 MARGIN_TYPE=A fedezeti számításhoz alapértelmezés szerint javasolt vételi/költségi ár
-MargeType1=Árrés a legjobb eladói áron
-MargeType2=Rész a súlyozott átlagáron (WAP)
+MargeType1=Árrés a legjobb szállítói áron
+MargeType2=Margin on Weighted Average Cost (WAC)
 MargeType3=Önköltségi árrés
-MarginTypeDesc=* Árrés a legjobb vételi áron = eladási ár - a termékkártyán meghatározott legjobb eladói ár<br>* súlyozott átlagár (WAP) árrés = eladási ár - termék súlyozott átlagára (WAP) vagy a legjobb eladói ár, ha még nem WAP meghatározott<br>* Önköltségi árrés = Eladási ár - A termékkártyán vagy a WAP-on meghatározott önköltségi ár, ha az önköltségi ár nincs megadva, vagy a legjobb szállítói ár, ha a WAP még nincs meghatározva
+MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Cost (WAC) = Selling price - Product Weighted Average Price (WAP) or best vendor price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAC if cost price not defined, or best vendor price if WAC not yet defined
 CostPrice=Önköltségi ár
 UnitCharges=Egységdíjak
 Charges=Díjak

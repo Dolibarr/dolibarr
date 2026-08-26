@@ -36,10 +36,18 @@ ActivateAllOnContract=Activați toate serviciile
 CloseAContract=Închide contract
 ConfirmDeleteAContract=Sigur doriți să ștergeți acest contract și toate serviciile acestuia?
 ConfirmValidateContract=Sigur doriți să validați acest contract sub numele <b>%s </b>?
+ConfirmSignContract=Sigur vrei să setezi acest contract ca fiind semnat?
+ConfirmUnsignContract=Sigur vrei să setezi acest contract ca fiind nesemnat?
 ConfirmActivateAllOnContract=Aceasta va deschide toate serviciile (care nu sunt încă active). Sigur doriți să deschideți toate serviciile?
 ConfirmCloseContract=Aceasta va închide toate serviciile (expirate sau nu). Sigur vrei să închizi acest contract?
 ConfirmCloseService=Sigur doriți să închideți acest serviciu cu data <b>%s</b>?
 ValidateAContract=Validare contract
+UnsignContract=Nesemnare contract
+ContractSign=Setare ca semnată
+ContractUnsign=Setare ca nesemnată
+ContractSignedInDolibarr=Contract semnat
+ContractSignedOnline=Contract semnat online
+ContractUnsignedInDolibarr=Contract nesemnat
 ActivateService=Activare serviciu
 ConfirmActivateService=Sigur doriți să activați acest serviciu cu data de <b>%s</b>?
 RefContract=Referinţă contract
@@ -95,7 +103,13 @@ ConfirmCloneContract=Sunteți sigur că doriți să clonați contractul <b>%s</b
 LowerDateEndPlannedShort=Scăderea planificată a serviciilor active
 SendContractRef=Informații privind contractul __REF__
 OtherContracts=Alte contracte
-##### Types de contacts #####
+##### Statistics #####
+ContractsStatistics=Contract's statistics
+NbOfContracts=Nr. de contracte
+NumberOfContractsByMonth=Nr. de contracte pe lună
+AmountOfServices=Nr. de servicii
+AmountOfServicesByMonthHT=Nr. de servicii (fără TVA) pe lună
+##### Types of contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Reprezentant vânzări semnare contract
 TypeContact_contrat_internal_SALESREPFOLL=Reprezentant vânzări urmărire contract
 TypeContact_contrat_external_BILLING=Contact client pentru facturare contract
