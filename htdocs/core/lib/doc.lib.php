@@ -72,7 +72,7 @@ function doc_getlinedesc($line, $outputlangs, $hideref = 0, $hidedesc = 0, $issu
 	}
 
 	// Description short of product line
-	$libelleproduitservice = $label;
+	$labelproductservice = $label;
 
 	// Description long of product line
 	if ($desc && ($desc != $label)) {
@@ -80,31 +80,31 @@ function doc_getlinedesc($line, $outputlangs, $hideref = 0, $hidedesc = 0, $issu
 			$discount = new DiscountAbsolute($db);
 			$discount->fetch($line->fk_remise_except);
 			$sourceref = !empty($discount->discount_type) ? $discount->ref_invoice_supplier_source : $discount->ref_facture_source;
-			$libelleproduitservice = $outputlangs->transnoentitiesnoconv("DiscountFromCreditNote", $sourceref);
+			$labelproductservice = $outputlangs->transnoentitiesnoconv("DiscountFromCreditNote", $sourceref);
 		} elseif ($desc == '(DEPOSIT)' && $line->fk_remise_except) {
 			$discount = new DiscountAbsolute($db);
 			$discount->fetch($line->fk_remise_except);
 			$sourceref = !empty($discount->discount_type) ? $discount->ref_invoice_supplier_source : $discount->ref_facture_source;
-			$libelleproduitservice = $outputlangs->transnoentitiesnoconv("DiscountFromDeposit", $sourceref);
+			$labelproductservice = $outputlangs->transnoentitiesnoconv("DiscountFromDeposit", $sourceref);
 			// Add date of deposit
 			if (getDolGlobalString('INVOICE_ADD_DEPOSIT_DATE')) {
-				$libelleproduitservice .= ' ('.dol_print_date($discount->datec, 'day', '', $outputlangs).')';
+				$labelproductservice .= ' ('.dol_print_date($discount->datec, 'day', '', $outputlangs).')';
 			}
 		} elseif ($desc == '(EXCESS RECEIVED)' && $line->fk_remise_except) {
 			$discount = new DiscountAbsolute($db);
 			$discount->fetch($line->fk_remise_except);
-			$libelleproduitservice = $outputlangs->transnoentitiesnoconv("DiscountFromExcessReceived", $discount->ref_facture_source);
+			$labelproductservice = $outputlangs->transnoentitiesnoconv("DiscountFromExcessReceived", $discount->ref_facture_source);
 		} elseif ($desc == '(EXCESS PAID)' && $line->fk_remise_except) {
 			$discount = new DiscountAbsolute($db);
 			$discount->fetch($line->fk_remise_except);
-			$libelleproduitservice = $outputlangs->transnoentitiesnoconv("DiscountFromExcessPaid", $discount->ref_invoice_supplier_source);
+			$labelproductservice = $outputlangs->transnoentitiesnoconv("DiscountFromExcessPaid", $discount->ref_invoice_supplier_source);
 		} else {
 			if ($idprod) {
 				if (empty($hidedesc)) {
-					$libelleproduitservice = dol_concatdesc($libelleproduitservice, $desc);
+					$labelproductservice = dol_concatdesc($labelproductservice, $desc);
 				}
 			} else {
-				$libelleproduitservice = dol_concatdesc($libelleproduitservice, $desc);
+				$labelproductservice = dol_concatdesc($labelproductservice, $desc);
 			}
 		}
 	}
@@ -131,7 +131,7 @@ function doc_getlinedesc($line, $outputlangs, $hideref = 0, $hidedesc = 0, $issu
 				}
 			}
 
-			$libelleproduitservice = $prefix_prodserv.$ref_prodserv.($libelleproduitservice ? " - " : "").$libelleproduitservice;
+			$labelproductservice = $prefix_prodserv.$ref_prodserv.($labelproductservice ? " - " : "").$labelproductservice;
 		}
 	}
 
@@ -149,9 +149,9 @@ function doc_getlinedesc($line, $outputlangs, $hideref = 0, $hidedesc = 0, $issu
 			$period = '('.$outputlangs->transnoentitiesnoconv('DateUntil', dol_print_date($line->date_end, $format, false, $outputlangs)).')';
 		}
 		//print '>'.$outputlangs->charset_output.','.$period;
-		$libelleproduitservice = dol_concatdesc($libelleproduitservice, $period);
-		//print $libelleproduitservice;
+		$labelproductservice = dol_concatdesc($labelproductservice, $period);
+		//print $labelproductservice;
 	}
 
-	return $libelleproduitservice;
+	return $labelproductservice;
 }

@@ -260,6 +260,10 @@ if (empty($reshook)) {
 				// If user to delete is an admin user and if logged user is not admin, we deny the operation.
 				$error++;
 				setEventMessages($langs->trans("OnlyAdminUsersCanDeleteAdminUsers"), null, 'errors');
+			} elseif ($object->admin && empty($object->entity) && !empty($user->entity)) {
+				// If user to delete is a superadmin user (admin + entity = 0) and logged user is not a superadmin, we deny the operation.
+				$error++;
+				setEventMessages($langs->trans("OnlySuperAdminUsersCanDeleteSuperAdminUsers"), null, 'errors');
 			} else {
 				$object->oldcopy = clone $object; // @phan-suppress-current-line PhanTypeMismatchProperty
 

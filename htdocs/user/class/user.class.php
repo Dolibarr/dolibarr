@@ -614,7 +614,7 @@ class User extends CommonObject
 		}
 
 		if ($sid) {
-			// permet une recherche du user par son SID ActiveDirectory ou Samba
+			// allows searching for the user by their ActiveDirectory or Samba SID
 			$sql .= " AND (u.ldap_sid = '".$this->db->escape($sid)."' OR u.login = '".$this->db->escape($login)."')";
 		} elseif ($login) {
 			$sql .= " AND u.login = '".$this->db->escape($login)."'";
@@ -631,7 +631,7 @@ class User extends CommonObject
 		$sql .= " ORDER BY u.entity ASC"; // Avoid random result when there is 2 login in 2 different entities
 
 		if ($sid) {
-			// permet une recherche du user par son SID ActiveDirectory ou Samba
+			// allows searching for the user by their ActiveDirectory or Samba SID
 			$sql .= ' '.$this->db->plimit(1);
 		}
 
@@ -1267,7 +1267,7 @@ class User extends CommonObject
 			$module = $perms = $subperms = '';
 
 			// When the request is to delete a specific permissions, this gets the
-			// les charactis for the module, permissions and sub-permission of this permission.
+			// characteristics for the module, permissions and sub-permission of this permission.
 			$sql = "SELECT module, perms, subperms";
 			$sql .= " FROM ".$this->db->prefix()."rights_def";
 			$sql .= " WHERE id = ".((int) $rid);
