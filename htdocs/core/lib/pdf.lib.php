@@ -2056,17 +2056,17 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 		$desc = str_replace('(DEPOSIT)', $outputlangs->trans('Deposit'), $desc);
 	}
 
-	$libelleproduitservice = '';  // Default value
+	$labelproductservice = '';  // Default value
 	if (!getDolGlobalString('PDF_HIDE_PRODUCT_LABEL_IN_SUPPLIER_LINES')) {
 		// Description short of product line
-		$libelleproduitservice = $label;
-		if (!empty($libelleproduitservice) && getDolGlobalString('PDF_BOLD_PRODUCT_LABEL')) {
+		$labelproductservice = $label;
+		if (!empty($labelproductservice) && getDolGlobalString('PDF_BOLD_PRODUCT_LABEL')) {
 			// Adding <b> may convert the original string into a HTML string. So we have to first
 			// convert \n into <br> we text is not already HTML.
-			if (!dol_textishtml($libelleproduitservice)) {
-				$libelleproduitservice = str_replace("\n", '<br>', $libelleproduitservice);
+			if (!dol_textishtml($labelproductservice)) {
+				$labelproductservice = str_replace("\n", '<br>', $labelproductservice);
 			}
-			$libelleproduitservice = '<b>'.$libelleproduitservice.'</b>';
+			$labelproductservice = '<b>'.$labelproductservice.'</b>';
 		}
 	}
 
@@ -2087,8 +2087,8 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 
 			if (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_REF')) {
 				foreach ($tmparrayofsubproducts as $subprodval) {
-					$libelleproduitservice = dol_concatdesc(
-						dol_concatdesc($libelleproduitservice, " * ".$subprodval[3]),
+					$labelproductservice = dol_concatdesc(
+						dol_concatdesc($labelproductservice, " * ".$subprodval[3]),
 						(!empty($qtyText) ?
 							$outputlangs->trans('Qty').':'.$qtyText.' x '.$outputlangs->trans('AssociatedProducts').':'.$subprodval[1].'= '.$outputlangs->trans('QtyTot').':'.$subprodval[1] * $qtyText :
 							$outputlangs->trans('Qty').' '.$outputlangs->trans('AssociatedProducts').':'.$subprodval[1])
@@ -2096,8 +2096,8 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 				}
 			} else {
 				foreach ($tmparrayofsubproducts as $subprodval) {
-					$libelleproduitservice = dol_concatdesc(
-						dol_concatdesc($libelleproduitservice, " * ".$subprodval[5].(($subprodval[5] && $subprodval[3]) ? ' - ' : '').$subprodval[3]),
+					$labelproductservice = dol_concatdesc(
+						dol_concatdesc($labelproductservice, " * ".$subprodval[5].(($subprodval[5] && $subprodval[3]) ? ' - ' : '').$subprodval[3]),
 						(!empty($qtyText) ?
 							$outputlangs->trans('Qty').':'.$qtyText.' x '.$outputlangs->trans('AssociatedProducts').':'.$subprodval[1].'= '.$outputlangs->trans('QtyTot').':'.$subprodval[1] * $qtyText :
 							$outputlangs->trans('Qty').' '.$outputlangs->trans('AssociatedProducts').':'.$subprodval[1])
@@ -2108,7 +2108,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 	}
 
 	if (isModEnabled('barcode') && getDolGlobalString('MAIN_GENERATE_DOCUMENTS_SHOW_PRODUCT_BARCODE') && !empty($product_barcode)) {
-		$libelleproduitservice = dol_concatdesc($libelleproduitservice, $outputlangs->trans("BarCode")." ".$product_barcode);
+		$labelproductservice = dol_concatdesc($labelproductservice, $outputlangs->trans("BarCode")." ".$product_barcode);
 	}
 
 	// Description long of product line
@@ -2117,24 +2117,24 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 			$discount = new DiscountAbsolute($db);
 			$discount->fetch($object->lines[$i]->fk_remise_except);
 			$sourceref = !empty($discount->discount_type) ? $discount->ref_invoice_supplier_source : $discount->ref_facture_source;
-			$libelleproduitservice = $outputlangs->transnoentitiesnoconv("DiscountFromCreditNote", $sourceref);
+			$labelproductservice = $outputlangs->transnoentitiesnoconv("DiscountFromCreditNote", $sourceref);
 		} elseif ($desc == '(DEPOSIT)' && $object->lines[$i]->fk_remise_except) {
 			$discount = new DiscountAbsolute($db);
 			$discount->fetch($object->lines[$i]->fk_remise_except);
 			$sourceref = !empty($discount->discount_type) ? $discount->ref_invoice_supplier_source : $discount->ref_facture_source;
-			$libelleproduitservice = $outputlangs->transnoentitiesnoconv("DiscountFromDeposit", $sourceref);
+			$labelproductservice = $outputlangs->transnoentitiesnoconv("DiscountFromDeposit", $sourceref);
 			// Add date of deposit
 			if (getDolGlobalString('INVOICE_ADD_DEPOSIT_DATE')) {
-				$libelleproduitservice .= ' ('.dol_print_date($discount->datec, 'day', '', $outputlangs).')';
+				$labelproductservice .= ' ('.dol_print_date($discount->datec, 'day', '', $outputlangs).')';
 			}
 		} elseif ($desc == '(EXCESS RECEIVED)' && $object->lines[$i]->fk_remise_except) {
 			$discount = new DiscountAbsolute($db);
 			$discount->fetch($object->lines[$i]->fk_remise_except);
-			$libelleproduitservice = $outputlangs->transnoentitiesnoconv("DiscountFromExcessReceived", $discount->ref_facture_source);
+			$labelproductservice = $outputlangs->transnoentitiesnoconv("DiscountFromExcessReceived", $discount->ref_facture_source);
 		} elseif ($desc == '(EXCESS PAID)' && $object->lines[$i]->fk_remise_except) {
 			$discount = new DiscountAbsolute($db);
 			$discount->fetch($object->lines[$i]->fk_remise_except);
-			$libelleproduitservice = $outputlangs->transnoentitiesnoconv("DiscountFromExcessPaid", $discount->ref_invoice_supplier_source);
+			$labelproductservice = $outputlangs->transnoentitiesnoconv("DiscountFromExcessPaid", $discount->ref_invoice_supplier_source);
 		} else {
 			if ($idprod) {
 				// Check if description must be output
@@ -2146,17 +2146,17 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 				}
 				if (empty($hidedesc)) {
 					if (getDolGlobalString('MAIN_DOCUMENTS_DESCRIPTION_FIRST')) {
-						$libelleproduitservice = dol_concatdesc($desc, $libelleproduitservice);
+						$labelproductservice = dol_concatdesc($desc, $labelproductservice);
 					} else {
 						if (getDolGlobalString('HIDE_LABEL_VARIANT_PDF') && $prodser->isVariant()) {
-							$libelleproduitservice = $desc;
+							$labelproductservice = $desc;
 						} else {
-							$libelleproduitservice = dol_concatdesc($libelleproduitservice, $desc);
+							$labelproductservice = dol_concatdesc($labelproductservice, $desc);
 						}
 					}
 				}
 			} else {
-				$libelleproduitservice = dol_concatdesc($libelleproduitservice, $desc);
+				$labelproductservice = dol_concatdesc($labelproductservice, $desc);
 			}
 		}
 	}
@@ -2224,19 +2224,19 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 			}
 		}
 
-		if (!empty($libelleproduitservice) && !empty($ref_prodserv)) {
+		if (!empty($labelproductservice) && !empty($ref_prodserv)) {
 			$ref_prodserv .= " - ";
 		}
 	}
 
 	if (!empty($ref_prodserv) && getDolGlobalString('PDF_BOLD_PRODUCT_REF_AND_PERIOD')) {
-		if (!dol_textishtml($libelleproduitservice)) {
-			$libelleproduitservice = str_replace("\n", '<br>', $libelleproduitservice);
+		if (!dol_textishtml($labelproductservice)) {
+			$labelproductservice = str_replace("\n", '<br>', $labelproductservice);
 		}
 		$ref_prodserv = '<b>'.$ref_prodserv.'</b>';
 		// $prefix_prodserv and $ref_prodser are not HTML var
 	}
-	$libelleproduitservice = $prefix_prodserv.$ref_prodserv.$libelleproduitservice;
+	$labelproductservice = $prefix_prodserv.$ref_prodserv.$labelproductservice;
 
 	// Add an additional description for the category products
 	if (getDolGlobalString('CATEGORY_ADD_DESC_INTO_DOC') && $idprod && isModEnabled('category')) {
@@ -2248,7 +2248,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 			// Adding the descriptions if they are filled
 			$desccateg = $cate->description;
 			if ($desccateg) {
-				$libelleproduitservice = dol_concatdesc($libelleproduitservice, $desccateg);
+				$labelproductservice = dol_concatdesc($labelproductservice, $desccateg);
 			}
 		}
 	}
@@ -2268,14 +2268,14 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 		}
 		//print '>'.$outputlangs->charset_output.','.$period;
 		if (getDolGlobalString('PDF_BOLD_PRODUCT_REF_AND_PERIOD')) {
-			if (!dol_textishtml($libelleproduitservice)) {
-				$libelleproduitservice = str_replace("\n", '<br>', $libelleproduitservice);
+			if (!dol_textishtml($labelproductservice)) {
+				$labelproductservice = str_replace("\n", '<br>', $labelproductservice);
 			}
-			$libelleproduitservice .= '<br><b style="color:#333666;" ><em>'.$period.'</em></b>';
+			$labelproductservice .= '<br><b style="color:#333666;" ><em>'.$period.'</em></b>';
 		} else {
-			$libelleproduitservice = dol_concatdesc($libelleproduitservice, $period);
+			$labelproductservice = dol_concatdesc($labelproductservice, $period);
 		}
-		//print $libelleproduitservice;
+		//print $labelproductservice;
 	}
 
 	// Show information for lot
@@ -2316,7 +2316,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 				}
 			}
 
-			$libelleproduitservice .= "__N__  ".implode(" - ", $dte);
+			$labelproductservice .= "__N__  ".implode(" - ", $dte);
 		}
 	} else {
 		if (getDolGlobalInt('PRODUCTBATCH_SHOW_WAREHOUSE_ON_SHIPMENT')) {
@@ -2325,14 +2325,14 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 	}
 
 	// Now we convert \n into br
-	if (dol_textishtml($libelleproduitservice)) {
-		$libelleproduitservice = preg_replace('/__N__/', '<br>', $libelleproduitservice);
+	if (dol_textishtml($labelproductservice)) {
+		$labelproductservice = preg_replace('/__N__/', '<br>', $labelproductservice);
 	} else {
-		$libelleproduitservice = preg_replace('/__N__/', "\n", $libelleproduitservice);
+		$labelproductservice = preg_replace('/__N__/', "\n", $labelproductservice);
 	}
-	$libelleproduitservice = dol_htmlentitiesbr($libelleproduitservice, 1);
+	$labelproductservice = dol_htmlentitiesbr($labelproductservice, 1);
 
-	return $libelleproduitservice;
+	return $labelproductservice;
 }
 
 /**

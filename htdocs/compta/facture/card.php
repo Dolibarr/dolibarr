@@ -2296,7 +2296,7 @@ if (empty($reshook)) {
 						// If fk_remise_except defined we check if the reduction has already been applied
 						if ($line->fk_remise_except) {
 							$discount = new DiscountAbsolute($line->db);
-							$result = $discount->fetch($line->fk_remise_except);
+							$result = $discount->fetch((int) $line->fk_remise_except);
 							if ($result > 0) {
 								// Check if discount not already affected to another invoice
 								if ($discount->fk_facture_line > 0) {
