@@ -394,7 +394,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 					$handlemodule = @opendir($dirroot); // $dirroot may be '..'
 					if (is_resource($handlemodule)) {
 						while (($filemodule = readdir($handlemodule)) !== false) {
-							if (!preg_match('/\./', $filemodule) && is_dir($dirroot.'/'.$filemodule.'/sql')) {	// We exclude filemodule that contains . (are not directories) and are not directories.
+							if (!preg_match('/\./', $filemodule) && @is_dir($dirroot.'/'.$filemodule.'/sql')) {	// We exclude filemodule that contains . (are not directories) and are not directories. $dirroot may be '..' (see opendir() above), same open_basedir edge case, silence it here too
 								//print "Scan for ".$dirroot . '/' . $filemodule . '/sql/'.$file;
 								if (is_file($dirroot.'/'.$filemodule.'/sql/dolibarr_'.$file)) {
 									$modulesfile[$dirroot.'/'.$filemodule.'/sql/dolibarr_'.$file] = '/'.$filemodule.'/sql/dolibarr_'.$file;

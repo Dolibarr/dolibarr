@@ -2938,7 +2938,7 @@ class Ticket extends CommonObject
 									$array_external = array(array('id' => -1, 'firstname' => '', 'lastname' => $object->origin_replyto, 'email' => $object->origin_replyto, 'libelle' => $langs->transnoentities('Customer'), 'socid' => 0));
 									$external_contacts = array_merge($external_contacts, $array_external);
 								} elseif (empty($object->fk_soc) && !empty($object->origin_email)) {
-									$array_external = array(array('id' => -1, 'firstname' => '', 'lastname' => $object->origin_email, 'email' => $object->thirdparty->email, 'libelle' => $langs->transnoentities('Customer'), 'socid' => $object->thirdparty->id));
+									$array_external = array(array('id' => -1, 'firstname' => '', 'lastname' => $object->origin_email, 'email' => $object->origin_email, 'libelle' => $langs->transnoentities('Customer'), 'socid' => 0)); // no fk_soc here, so $object->thirdparty was never fetched (mirrors the origin_replyto branch above)
 									$external_contacts = array_merge($external_contacts, $array_external);
 								}
 							}
