@@ -24,8 +24,10 @@
 
 global $conf,$user,$langs,$db;
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+require_once dirname(__FILE__).'/../../htdocs/core/lib/files.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/modulebuilder/class/SyncReport.class.php';
 require_once dirname(__FILE__).'/../../htdocs/modulebuilder/class/RightsSyncCommand.class.php';
+require_once dirname(__FILE__).'/../../htdocs/modulebuilder/class/PermissionsBlock.class.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 /**
@@ -40,6 +42,45 @@ require_once dirname(__FILE__).'/CommonClassTest.class.php';
  */
 class ModuleBuilderRightsSyncTest extends CommonClassTest
 {
+	/** @var string[] Fixture files to remove on tearDown */
+	private $fixtures = array();
+
+	/**
+	 * Build a throwaway descriptor whose permissions block holds $inner.
+	 *
+	 * @param string $inner Raw content to put between the BEGIN and END markers
+	 * @return string Path to the fixture file
+	 */
+	private function makeDescriptorFixture(string $inner): string
+	{
+		$dir = sys_get_temp_dir().'/mbrightssync'.getmypid();
+		if (!is_dir($dir)) {
+			dol_mkdir($dir);
+		}
+		$path = $dir.'/modFixture'.uniqid().'.php';
+		$content = "<?php\nclass modFixture\n{\n\tpublic \$rights = array();\n\tpublic \$numero = 500000;\n\n\tpublic function initRights()\n\t{\n\t\t\$r = 0;\n\t\t"
+			.PermissionsBlock::BEGIN_MARKER."\n".$inner."\t\t".PermissionsBlock::END_MARKER."\n\t}\n}\n";
+		file_put_contents($path, $content);
+		$this->fixtures[] = $path;
+		return $path;
+	}
+
+	/**
+	 * Remove fixture files created by makeDescriptorFixture().
+	 *
+	 * @return void
+	 */
+	protected function tearDown(): void
+	{
+		foreach ($this->fixtures as $path) {
+			if (file_exists($path)) {
+				unlink($path);
+			}
+		}
+		$this->fixtures = array();
+		parent::tearDown();
+	}
+
 	/**
 	 * A report with conflicts reports no write and maps to the legacy -1 return code.
 	 *
@@ -104,5 +145,86 @@ class ModuleBuilderRightsSyncTest extends CommonClassTest
 		// An empty module name is never a valid target
 		$this->expectException(\InvalidArgumentException::class);
 		RightsSyncCommand::forRightDeletion('', '/tmp/modMyModule.class.php', $perms, 0);
+	}
+
+	/**
+	 * A descriptor with no permissions markers is never rewritten.
+	 *
+	 * @return void
+	 */
+	public function testPermissionsBlockRefusesFileWithoutMarkers()
+	{
+		$dir = sys_get_temp_dir().'/mbrightssync'.getmypid();
+		if (!is_dir($dir)) {
+			dol_mkdir($dir);
+		}
+		$path = $dir.'/modNoMarkers'.uniqid().'.php';
+		$this->fixtures[] = $path;
+		file_put_contents($path, "<?php\nclass modNoMarkers {}\n");
+
+		$this->expectException(\RuntimeException::class);
+		PermissionsBlock::fromFile($path);
+	}
+
+	/**
+	 * The commented-out template block of a brand new module is not a conflict.
+	 *
+	 * @return void
+	 */
+	public function testPermissionsBlockAcceptsCommentedTemplate()
+	{
+		$inner = "\t\t/*\n\t\t\$o = 1;\n\t\t\$this->rights[\$r][0] = \$this->numero . sprintf(\"%02d\", (\$o * 10) + 1);\n"
+			."\t\t\$this->rights[\$r][1] = 'Read objects of MyModule';\n\t\t\$r++;\n\t\t*/\n";
+		$block = PermissionsBlock::fromFile($this->makeDescriptorFixture($inner));
+
+		$this->assertSame(array(), $block->detectTextConflicts());
+	}
+
+	/**
+	 * A generated block made only of rights assignments is rewritable.
+	 *
+	 * @return void
+	 */
+	public function testPermissionsBlockAcceptsGeneratedBlock()
+	{
+		$inner = "\t\t\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', (0 * 10) + 0 + 1);\n"
+			."\t\t\$this->rights[\$r][1] = 'Read myobject object of Mymodule';\n"
+			."\t\t\$this->rights[\$r][4] = 'myobject';\n"
+			."\t\t\$this->rights[\$r][5] = 'read'; // trailing comment is fine\n"
+			."\t\t\$r++;\n";
+		$block = PermissionsBlock::fromFile($this->makeDescriptorFixture($inner));
+
+		$this->assertSame(array(), $block->detectTextConflicts());
+	}
+
+	/**
+	 * Dynamically built rights would be flattened into static lines, so the block is refused.
+	 *
+	 * @return void
+	 */
+	public function testPermissionsBlockRefusesDynamicRights()
+	{
+		$inner = "\t\tforeach (array('read', 'write') as \$crud) {\n"
+			."\t\t\t\$this->rights[\$r][5] = \$crud;\n\t\t\t\$r++;\n\t\t}\n";
+		$block = PermissionsBlock::fromFile($this->makeDescriptorFixture($inner));
+
+		$conflicts = $block->detectTextConflicts();
+		$this->assertNotEmpty($conflicts);
+		$this->assertStringContainsString('foreach', $conflicts[0]);
+	}
+
+	/**
+	 * A translated label cannot be reproduced by the renderer, so the block is refused.
+	 *
+	 * @return void
+	 */
+	public function testPermissionsBlockRefusesTranslatedLabel()
+	{
+		$inner = "\t\t\$this->rights[\$r][1] = \$langs->trans('ReadMyObject');\n\t\t\$r++;\n";
+		$block = PermissionsBlock::fromFile($this->makeDescriptorFixture($inner));
+
+		$conflicts = $block->detectTextConflicts();
+		$this->assertNotEmpty($conflicts);
+		$this->assertStringContainsString('$langs', $conflicts[0]);
 	}
 }
