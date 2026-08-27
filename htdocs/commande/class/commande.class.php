@@ -1995,7 +1995,7 @@ class Commande extends CommonOrder
 			 * }
 			 * }
 			 * }
-			 **/
+			 */
 		}
 	}
 
