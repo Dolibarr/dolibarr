@@ -4,56 +4,42 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see .
 
-#
 # Generic
-#
-
 # Module label 'ModuleKnowledgeManagementName'
-ModuleKnowledgeManagementName = Knowledge Management System
+ModuleKnowledgeManagementName = Žinių valdymo sistema
 # Module description 'ModuleKnowledgeManagementDesc'
-ModuleKnowledgeManagementDesc=Manage a Knowledge Management (KM) or Help-Desk base
-
-#
+ModuleKnowledgeManagementDesc=Žinių valdymo (ŽV) arba pagalbos tarnybos bazės valdymas
 # Admin page
-#
-KnowledgeManagementSetup = Knowledge Management System setup
-KnowledgeManagementSetupPage = Knowledge Management System setup page
-
-
-#
+KnowledgeManagementSetup = Žinių valdymo sistemos sąranka
+KnowledgeManagementSetupPage = Žinių valdymo sistemos sąrankos puslapis
 # About page
-#
-KnowledgeManagementAbout = About Knowledge Management
-KnowledgeManagementAboutPage = Knowledge Management about page
-
-KnowledgeManagementArea = Knowledge Management
-MenuKnowledgeRecord = Knowledge base
-MenuKnowledgeRecordShort = Knowledge base
-ListKnowledgeRecord = List of articles
-NewKnowledgeRecord = New article
-ValidateReply = Validate solution
-KnowledgeRecords = Articles
+KnowledgeManagementAbout = Apie žinių valdymą
+KnowledgeManagementAboutPage = Žinių valdymo puslapis apie
+KnowledgeManagementArea = Žinių valdymas
+MenuKnowledgeRecord = Žinių bazė
+MenuKnowledgeRecordShort = Žinių bazė
+ListKnowledgeRecord = Straipsnių sąrašas
+NewKnowledgeRecord = Naujas straipsnis
+ValidateReply = Patvirtinti sprendimą
+KnowledgeRecords = Straipsniai
 KnowledgeRecord = Prekė
-KnowledgeRecordExtraFields = Extrafields for Article
-GroupOfTicket=Group of tickets
-YouCanLinkArticleToATicketCategory=You can link the article to a ticket group (so the article will be highlighted on any tickets in this group)
-SuggestedForTicketsInGroup=Suggested on ticket creation
-
-SetObsolete=Set as obsolete
-ConfirmCloseKM=Do you confirm the closing of this article as obsolete ?
-ConfirmReopenKM=Do you want to restore this article to status "Validated" ?
-BoxLastKnowledgerecordDescription=Last %s articles
-BoxLastKnowledgerecord=Last articles
-BoxLastKnowledgerecordContent=Last articles
-BoxLastKnowledgerecordModifiedContent=Last modified articles
-BoxLastModifiedKnowledgerecordDescription=Last %s modified articles
-BoxLastModifiedKnowledgerecord=Last modified articles
+KnowledgeRecordExtraFields = Papildomi straipsnio laukai
+GroupOfTicket=Bilietų grupė
+YouCanLinkArticleToATicketCategory=Galite susieti straipsnį su bilietų grupe (taigi straipsnis bus paryškintas visuose šios grupės bilietuose)
+SuggestedForTicketsInGroup=Siūloma kuriant bilietus
+SetObsolete=Nustatyti kaip nebenaudojamą
+ConfirmCloseKM=Ar patvirtinate šio straipsnio uždarymą kaip pasenusio?
+ConfirmReopenKM=Ar norite atkurti šio straipsnio būseną „Patvirtinta“?
+BoxLastKnowledgerecordDescription=Paskutiniai straipsniai apie %s
+BoxLastKnowledgerecord=Naujausi straipsniai
+BoxLastKnowledgerecordContent=Naujausi straipsniai
+BoxLastKnowledgerecordModifiedContent=Paskutiniai modifikuoti straipsniai
+BoxLastModifiedKnowledgerecordDescription=Paskutiniai modifikuoti straipsniai %s
+BoxLastModifiedKnowledgerecord=Paskutiniai modifikuoti straipsniai

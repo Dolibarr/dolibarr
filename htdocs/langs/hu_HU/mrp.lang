@@ -173,3 +173,5 @@ ErrorObjectMustNotBeFinishedToModifyDateEnd = Object %s must not be finished to 
 ErrorObjectMustNotBeFinishedToModifyDateStart = Object %s must not be finished to modify the start date.
 BOM_SUB_BOM=Use sub-boms
 UseSearchToSelectBom=Wait until a key is pressed before loading content of Boms combo list.<br>This may improve performance if you have a large number of projects, but it is less convenient.
+ReInitialize=Reinitialize
+ReInitializeHelp=Reinitialize the lines to consume and to produce (if the BOM has changed and the production has not started)

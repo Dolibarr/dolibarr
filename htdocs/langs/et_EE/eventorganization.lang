@@ -48,6 +48,7 @@ ConferenceOrBoothTab = Konverents või boks
 AmountPaid = Makstud summa
 DateOfRegistration = Registreerimise kuupäev
 ConferenceOrBoothAttendee = Konverentsi või boksi osaleja
+ConferenceOrBoothAttendeesShort = Conf. or Booth Attendees
 ApplicantOrVisitor=Taotleja või külastaja
 Speaker=Kõlar
 # Template Mail
@@ -81,8 +82,8 @@ ListOfAttendeesOfEvent=Ürituse projektides osalejate nimekiri
 ListOfConfOrBoothOfEvent=Konverentside või ürituste projektide kabiinide loend
 DownloadICSLink=Laadige alla ICS-fail
 EVENTORGANIZATION_SECUREKEY=Seem, et kindlustada avaliku registreerimislehe võti konverentsi soovitamiseks
-SERVICE_BOOTH_LOCATION=Teenus, mida kasutatakse boksi asukoha arve rea jaoks
-SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION=Ürituse osaleja tellimuse arve rea jaoks kasutatav teenus
+SERVICE_BOOTH_LOCATION=Service to use on the invoice line for the sale of a booth.
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION=Service to use on the invoice line for the participation fees.
 NbVotes=Häälte arv
 # Status
 EvntOrgDraft = Mustand
@@ -122,7 +123,7 @@ NewSubscription=Registreerimine
 OrganizationEventConfRequestWasReceived=Teie ettepanek konverentsi korraldamiseks on laekunud.
 OrganizationEventBoothRequestWasReceived=Teie boksi taotlus on kätte saadud
 OrganizationEventPaymentOfBoothWasReceived=Teie makse boksi eest on registreeritud
-OrganizationEventPaymentOfRegistrationWasReceived=Teie ürituse registreerimise eest tasumine on registreeritud
+OrganizationEventPaymentOfRegistrationWasReceived=Your payment for your registration to the event has been recorded
 OrganizationEventBulkMailToAttendees=See on meeldetuletus teie osalemise kohta üritusel osalejana
 OrganizationEventBulkMailToSpeakers=See on meeldetuletus teie osalemisest üritusel esinejana.
 OrganizationEventLinkToThirdParty=Link kolmandale osapoolele (klient, tarnija või partner)

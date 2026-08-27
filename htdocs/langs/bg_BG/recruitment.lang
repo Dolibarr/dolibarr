@@ -68,3 +68,4 @@ ApplyJobCandidature=Кандидатствайте за тази работа
 ErrorRecruitmmentCandidatureAlreadyExists= Вече съществува кандидатура за набиране на персонал с имейл %s
 RecruitmentCandidatureSaved=Кандидатурата за набиране на персонал е успешно запазена
 NoOpenJobOffer=В момента няма отворени предложения за работа
+ShowPositionToBeFilled=Show Position to be filled

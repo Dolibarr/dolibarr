@@ -42,7 +42,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 // Load translation files required by page
 $langs->loadLangs(array('companies', 'products', 'admin', 'users', 'languages', 'projects', 'members'));
 
-// Defini si peux lire/modifier permissions
+// Define if can read/modify permissions
 $canreaduser = ($user->admin || $user->hasRight("user", "user", "read"));
 $caneditfield = false;
 
@@ -83,7 +83,7 @@ $object = new User($db);
 $object->fetch($id, '', '', 1);
 $object->loadRights();
 
-// Liste des zone de recherche permanentes supportees
+// List of supported permanent search zones
 /* deprecated
 $searchform=array("main_searchform_societe","main_searchform_contact","main_searchform_produitservice");
 $searchformconst=array($conf->global->MAIN_SEARCHFORM_SOCIETE,$conf->global->MAIN_SEARCHFORM_CONTACT,$conf->global->MAIN_SEARCHFORM_PRODUITSERVICE);

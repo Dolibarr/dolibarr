@@ -718,7 +718,7 @@ if ($object->fetch($id) >= 0) {
 		// Code Client
 		print '<tr><td>'.$langs->trans('CustomerCode');
 		if (!empty($array_query['cust_code'])) {
-			print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
+			print img_picto($langs->trans('AdvTgtUse'), 'tick');
 			$cust_code_str = (string) $array_query['cust_code'];
 		} else {
 			$cust_code_str = null;
@@ -730,7 +730,7 @@ if ($object->fetch($id) >= 0) {
 		// Address Client
 		print '<tr><td>'.$langs->trans('Address');
 		if (!empty($array_query['cust_adress'])) {
-			print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
+			print img_picto($langs->trans('AdvTgtUse'), 'tick');
 		}
 		print '</td><td><input type="text" name="cust_adress" value="'.$array_query['cust_adress'].'"/></td><td>'."\n";
 		print $form->textwithpicto('', $langs->trans("AdvTgtSearchTextHelp"), 1, 'help');
@@ -739,7 +739,7 @@ if ($object->fetch($id) >= 0) {
 		// Zip Client
 		print '<tr><td>'.$langs->trans('Zip');
 		if (!empty($array_query['cust_zip'])) {
-			print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
+			print img_picto($langs->trans('AdvTgtUse'), 'tick');
 		}
 		print '</td><td><input type="text" name="cust_zip" value="'.$array_query['cust_zip'].'"/></td><td>'."\n";
 		print $form->textwithpicto('', $langs->trans("AdvTgtSearchTextHelp"), 1, 'help');
@@ -748,7 +748,7 @@ if ($object->fetch($id) >= 0) {
 		// City Client
 		print '<tr><td>'.$langs->trans('Town');
 		if (!empty($array_query['cust_city'])) {
-			print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
+			print img_picto($langs->trans('AdvTgtUse'), 'tick');
 		}
 		print '</td><td><input type="text" name="cust_city" value="'.$array_query['cust_city'].'"/></td><td>'."\n";
 		print $form->textwithpicto('', $langs->trans("AdvTgtSearchTextHelp"), 1, 'help');
@@ -757,7 +757,7 @@ if ($object->fetch($id) >= 0) {
 		// State Client
 		print '<tr><td>'.$langs->trans('State');
 		if (!empty($array_query['cust_state'])) {
-			print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
+			print img_picto($langs->trans('AdvTgtUse'), 'tick');
 		}
 		print '</td><td>'."\n";
 		print $formadvtargetemaling->multiselectState('cust_state', $array_query['cust_state']);
@@ -767,7 +767,7 @@ if ($object->fetch($id) >= 0) {
 		// Customer Country
 		print '<tr><td>'.$langs->trans("Country");
 		if (!empty($array_query['cust_country'])) {
-			print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
+			print img_picto($langs->trans('AdvTgtUse'), 'tick');
 		}
 		print '</td><td>'."\n";
 		print $formadvtargetemaling->multiselectCountry('cust_country', $array_query['cust_country']);
@@ -777,7 +777,7 @@ if ($object->fetch($id) >= 0) {
 		// State Customer
 		print '<tr><td>'.$langs->trans('Status').' '.$langs->trans('ThirdParty');
 		if (!empty($array_query['cust_status'])) {
-			print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
+			print img_picto($langs->trans('AdvTgtUse'), 'tick');
 		}
 		print '</td><td>';
 		print $formadvtargetemaling->advMultiselectarray(
@@ -794,7 +794,7 @@ if ($object->fetch($id) >= 0) {
 		// Mother Company
 		print '<tr><td>'.$langs->trans("ParentCompany");
 		if (!empty($array_query['cust_mothercompany'])) {
-			print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
+			print img_picto($langs->trans('AdvTgtUse'), 'tick');
 		}
 		print '</td><td>'."\n";
 		print '<input type="text" name="cust_mothercompany" value="'.$array_query['cust_mothercompany'].'"/>';
@@ -806,7 +806,7 @@ if ($object->fetch($id) >= 0) {
 		$selected = $array_query['cust_typecust'];
 		print '<tr><td>'.$langs->trans('ProspectCustomer').' '.$langs->trans('ThirdParty');
 		if (!empty($array_query['cust_typecust'])) {
-			print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
+			print img_picto($langs->trans('AdvTgtUse'), 'tick');
 		}
 		print '</td><td>';
 		$options_array = array(
@@ -822,7 +822,7 @@ if ($object->fetch($id) >= 0) {
 		// Prospection status
 		print '<tr><td>'.$langs->trans('ProspectLevel');
 		if (!empty($array_query['cust_prospect_status'])) {
-			print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
+			print img_picto($langs->trans('AdvTgtUse'), 'tick');
 		}
 		print '</td><td>';
 		print $formadvtargetemaling->multiselectProspectionStatus($array_query['cust_prospect_status'], 'cust_prospect_status');
@@ -832,7 +832,7 @@ if ($object->fetch($id) >= 0) {
 		// Prospection comm status
 		print '<tr><td>'.$langs->trans('StatusProsp');
 		if (!empty($array_query['cust_comm_status'])) {
-			print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
+			print img_picto($langs->trans('AdvTgtUse'), 'tick');
 		}
 		print '</td><td>';
 		print $formadvtargetemaling->advMultiselectarray('cust_comm_status', $advTarget->type_statuscommprospect, $array_query['cust_comm_status']);
@@ -842,7 +842,7 @@ if ($object->fetch($id) >= 0) {
 		// Customer Type
 		print '<tr><td>'.$langs->trans("ThirdPartyType");
 		if (!empty($array_query['cust_typeent'])) {
-			print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
+			print img_picto($langs->trans('AdvTgtUse'), 'tick');
 		}
 		print '</td><td>'."\n";
 		print $formadvtargetemaling->advMultiselectarray('cust_typeent', $formcompany->typent_array(0, "(id:<>:0)"), $array_query['cust_typeent']);
@@ -852,7 +852,7 @@ if ($object->fetch($id) >= 0) {
 		// Staff number
 		print '<td>'.$langs->trans("Staff");
 		if (!empty($array_query['cust_effectif_id'])) {
-			print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
+			print img_picto($langs->trans('AdvTgtUse'), 'tick');
 		}
 		print '</td><td>';
 		print $formadvtargetemaling->advMultiselectarray("cust_effectif_id", $formcompany->effectif_array(0, "(id:<>:0)"), $array_query['cust_effectif_id']);
@@ -862,7 +862,7 @@ if ($object->fetch($id) >= 0) {
 		// Sales manager
 		print '<tr><td>'.$langs->trans("SalesRepresentatives");
 		if (!empty($array_query['cust_saleman'])) {
-			print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
+			print img_picto($langs->trans('AdvTgtUse'), 'tick');
 		}
 		print '</td><td>'."\n";
 		print $formadvtargetemaling->multiselectselectSalesRepresentatives('cust_saleman', $array_query['cust_saleman'], $user);
@@ -873,7 +873,7 @@ if ($object->fetch($id) >= 0) {
 		if (getDolGlobalInt('MAIN_MULTILANGS')) {
 			print '<tr><td>'.$langs->trans("DefaultLang");
 			if (!empty($array_query['cust_language'])) {
-				print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
+				print img_picto($langs->trans('AdvTgtUse'), 'tick');
 			}
 			print '</td><td>'."\n";
 			print $formadvtargetemaling->multiselectselectLanguage('cust_language', $array_query['cust_language']);
@@ -904,7 +904,7 @@ if ($object->fetch($id) >= 0) {
 					}
 					print '<tr><td>'.$langs->trans($extrafieldinfo['label'][$key]);
 					if (!empty($array_query['options_'.$key]) || (is_array($array_query['options_'.$key]) && count($array_query['options_'.$key]) > 0)) {
-						print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
+						print img_picto($langs->trans('AdvTgtUse'), 'tick');
 					}
 					print '</td><td>';
 					if (($extrafieldinfo['type'][$key] == 'varchar') || ($extrafieldinfo['type'][$key] == 'text')) {
@@ -973,7 +973,7 @@ if ($object->fetch($id) >= 0) {
 		// State Contact
 		print '<tr><td>'.$langs->trans('Status').' '.$langs->trans('Contact');
 		if (!empty($array_query['contact_status'])) {
-			print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
+			print img_picto($langs->trans('AdvTgtUse'), 'tick');
 		}
 		print '</td><td>';
 		print $formadvtargetemaling->advMultiselectarray(
@@ -991,7 +991,7 @@ if ($object->fetch($id) >= 0) {
 		// Civility
 		print '<tr><td>'.$langs->trans("UserTitle");
 		if (!empty($array_query['contact_civility'])) {
-			print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
+			print img_picto($langs->trans('AdvTgtUse'), 'tick');
 		}
 		print '</td><td>';
 		print $formadvtargetemaling->multiselectCivility('contact_civility', $array_query['contact_civility']);
@@ -1000,14 +1000,14 @@ if ($object->fetch($id) >= 0) {
 		// contact name
 		print '<tr><td>'.$langs->trans('Contact').' '.$langs->trans('Lastname');
 		if (!empty($array_query['contact_lastname'])) {
-			print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
+			print img_picto($langs->trans('AdvTgtUse'), 'tick');
 		}
 		print '</td><td><input type="text" name="contact_lastname" value="'.$array_query['contact_lastname'].'"/></td><td>'."\n";
 		print $form->textwithpicto('', $langs->trans("AdvTgtSearchTextHelp"), 1, 'help');
 		print '</td></tr>'."\n";
 		print '<tr><td>'.$langs->trans('Contact').' '.$langs->trans('Firstname');
 		if (!empty($array_query['contact_firstname'])) {
-			print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
+			print img_picto($langs->trans('AdvTgtUse'), 'tick');
 		}
 		print '</td><td><input type="text" name="contact_firstname" value="'.$array_query['contact_firstname'].'"/></td><td>'."\n";
 		print $form->textwithpicto('', $langs->trans("AdvTgtSearchTextHelp"), 1, 'help');
@@ -1016,7 +1016,7 @@ if ($object->fetch($id) >= 0) {
 		// Contact Country
 		print '<tr><td>'.$langs->trans('Contact').' '.$langs->trans("Country");
 		if (!empty($array_query['contact_country'])) {
-			print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
+			print img_picto($langs->trans('AdvTgtUse'), 'tick');
 		}
 		print '</td><td>'."\n";
 		print $formadvtargetemaling->multiselectCountry('contact_country', $array_query['contact_country']);
@@ -1026,7 +1026,7 @@ if ($object->fetch($id) >= 0) {
 		// Never send mass mailing
 		print '<tr><td>'.$langs->trans('Contact').' '.$langs->trans("No_Email");
 		if (!empty($array_query['contact_no_email'])) {
-			print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
+			print img_picto($langs->trans('AdvTgtUse'), 'tick');
 		}
 		print '</td><td>'."\n";
 		print $form->selectarray(
@@ -1044,7 +1044,7 @@ if ($object->fetch($id) >= 0) {
 		// Contact Date Create
 		print '<tr><td>'.$langs->trans('Contact').' '.$langs->trans("DateCreation");
 		if (!empty($array_query['contact_create_st_dt'])) {
-			print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
+			print img_picto($langs->trans('AdvTgtUse'), 'tick');
 		}
 		print '</td><td>'."\n";
 		print '<table class="nobordernopadding"><tr>';
@@ -1059,7 +1059,7 @@ if ($object->fetch($id) >= 0) {
 		// Contact update Create
 		print '<tr><td>'.$langs->trans('Contact').' '.$langs->trans("DateLastModification");
 		if (!empty($array_query['contact_update_st_dt'])) {
-			print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
+			print img_picto($langs->trans('AdvTgtUse'), 'tick');
 		}
 		print '</td><td>'."\n";
 		print '<table class="nobordernopadding"><tr>';
@@ -1099,7 +1099,7 @@ if ($object->fetch($id) >= 0) {
 				foreach ($extrafieldinfo['label'] as $key => $val) {
 					print '<tr><td>'.$extrafieldinfo['label'][$key];
 					if ($array_query['options_'.$key.'_cnct'] != '' || (is_array($array_query['options_'.$key.'_cnct']) && count($array_query['options_'.$key.'_cnct']) > 0)) {
-						print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
+						print img_picto($langs->trans('AdvTgtUse'), 'tick');
 					}
 					print '</td><td>';
 					if (($extrafieldinfo['type'][$key] == 'varchar') || ($extrafieldinfo['type'][$key] == 'text')) {
