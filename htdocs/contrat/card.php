@@ -2119,7 +2119,7 @@ if ($action == 'create') {
 						$arraycontractid[$contractcursor->id] = $contractcursor->ref;
 					}
 					//var_dump($arraycontractid);
-					// Cree un tableau formulaire
+					// Create a form array
 					$formquestion = array(
 						'text' => $langs->trans("ConfirmMoveToAnotherContractQuestion"),
 						0 => array('type' => 'select', 'name' => 'newcid', 'values' => $arraycontractid));

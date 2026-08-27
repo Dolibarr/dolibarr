@@ -2172,7 +2172,7 @@ class CMailFile
 					if (!in_array($fullpath, $inline)) {
 						// Read image file
 						if ($image = file_get_contents($fullpath)) {
-							// On garde que le nom de l'image
+							// Keep only the image name
 							$regs = array();
 							preg_match('/([A-Za-z0-9_-]+[\.]?[A-Za-z0-9]+)?$/i', $img["name"], $regs);
 							$imgName = $regs[1];

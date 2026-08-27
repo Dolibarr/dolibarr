@@ -99,6 +99,7 @@ $action    =  GETPOST('action', 'aZ09');
 $cancel    =  GETPOST('cancel', 'alpha');
 $confirm   =  GETPOST('confirm', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
+$backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 
 $lineid    =  GETPOSTINT('lineid');
 $contactid =  GETPOSTINT('contactid');
@@ -3545,7 +3546,7 @@ if ($action == 'create' && $usercancreate) {
 						'label' => $langs->trans('AddSubtotalLine'),
 						'url' => '/commande/card.php?id=' . $object->id . '&action=add_subtotal_line&token=' . newToken()
 					);
-					print dolGetButtonAction('', $langs->trans('Subtotal'), 'default', $url_button, '', true);
+					print dolGetButtonAction('', $langs->trans('SubTotal'), 'default', $url_button, '', true);
 				}
 
 				// Valid
@@ -3694,7 +3695,8 @@ if ($action == 'create' && $usercancreate) {
 
 				// Delete order
 				if ($usercandelete) {
-					if ($numshipping == 0) {
+					$stocksent = getDolGlobalString('STOCK_CALCULATE_ON_VALIDATE_ORDER') && $object->status > Commande::STATUS_DRAFT;
+					if ($numshipping == 0 && !$stocksent) {
 						print dolGetButtonAction('', $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"] . '?action=delete&token=' . newToken() . '&id=' . $object->id, '');
 					} else {
 						print dolGetButtonAction($langs->trans('ShippingExist'), $langs->trans('Delete'), 'default', $_SERVER['PHP_SELF'] . '#', '', false);

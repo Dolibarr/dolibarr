@@ -1266,7 +1266,7 @@ if ($action == 'addcontainer' && $usercanedit) {
 
 	$pageid = 0;
 	if (!$error) {
-		// Create page. This also check there is no PHP content if user has no pemrissions for that.
+		// Create page. This also check there is no PHP content if user has no permissions for that.
 		$pageid = $objectpage->create($user);
 		if ($pageid <= 0) {
 			$error++;
@@ -3138,6 +3138,7 @@ if ($action != 'preview' && $action != 'editcontent' && $action != 'editsource' 
 }
 
 
+$websitepage = null;
 $disabled = '';
 if (!GETPOST('hide_websitemenu')) {
 	if (!$user->hasRight('website', 'write')) {
@@ -4816,7 +4817,7 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 		$pageallowedinframes = 1;
 	}
 	if (GETPOST('htmlheader', 'restricthtmlallowlinkscript')) {		// Must accept tags like '<script>' and '<link>'
-		$pagehtmlheader = GETPOST('htmlheader', 'none');
+		$pagehtmlheader = GETPOST('htmlheader', 'restricthtmlallowlinkscript');
 	}
 
 	if ($action != 'createcontainer') {
@@ -5378,6 +5379,7 @@ if ($action == 'editcontent') {
 
 print "</div>\n";
 print "</form>\n";
+print '<!-- Now, output content of page ID='.($websitepage->id??'NULL').', mode= '.$mode.' WEBSITE_SUBCONTAINERSINLINE='.getDolGlobalString('WEBSITE_SUBCONTAINERSINLINE').'  WEBSITE_EDITINLINE='.getDolGlobalString('WEBSITE_EDITINLINE').' -->'."\n";
 
 
 if ($mode == 'replacesite' || $massaction == 'replace') {
@@ -5979,7 +5981,7 @@ if ((empty($action) || $action == 'preview' || $action == 'createfromclone' || $
 
 			ob_start();
 			try {
-				$res = include $filephp;
+				$res = include $filephp;	// Note that if file contains a fatal error (Example: declaration of a function that already exists), this may break code here
 				if (empty($res)) {
 					print "ERROR: Failed to include file '".$filephp."'. Try to edit and re-save page with this ID.";
 				}
@@ -5988,6 +5990,7 @@ if ((empty($action) || $action == 'preview' || $action == 'createfromclone' || $
 			}
 			$newcontent = ob_get_contents();
 			ob_end_clean();
+
 
 			// Restore data
 			$_COOKIE[$savsessionname] = $savsessionid;
