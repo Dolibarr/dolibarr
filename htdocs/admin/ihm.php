@@ -311,7 +311,7 @@ if ($action == 'update') {
 						dol_mkdir($dirforimage);
 					}
 					// @phan-suppress-next-line PhanTypeInvalidDimOffset
-					$result = dol_move_uploaded_file($_FILES[$varforimage]["tmp_name"], $dirforimage . $original_file, 1, 0, $_FILES[$varforimage]['error']);
+					$result = dol_move_uploaded_file($_FILES[$varforimage]["tmp_name"], $dirforimage . $original_file, 1, 0, (int) $_FILES[$varforimage]['error']);
 					if ($result > 0) {
 						dolibarr_set_const($db, "MAIN_LOGIN_BACKGROUND", $original_file, 'chaine', 0, '', $conf->entity);
 					} elseif (preg_match('/^ErrorFileIsInfectedWithAVirus/', $result)) {
