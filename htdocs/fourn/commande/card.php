@@ -2043,8 +2043,9 @@ if ($action == 'create') {
 
 		// Ref purchase order on vendor side
 		if (getDolGlobalString('MAIN_ASK_SUPPLIER_REF_OF_PURCHASE_ORDER_AT_CREATION')) {
+			$refsupplier = GETPOSTISSET('refsupplier') ? GETPOST('refsupplier', 'alphanohtml') : (!empty($objectsrc->ref_supplier) ? $objectsrc->ref_supplier : '');
 			print '<tr><td>'.$form->textwithpicto($langs->trans('RefSupplier'), $langs->trans('RefOfOnVendorSide', $langs->transnoentitiesnoconv("SupplierOrder")));
-			print '</td><td><input name="refsupplier" type="text"></td>';
+			print '</td><td><input name="refsupplier" type="text" value="'.dol_escape_htmltag($refsupplier).'"></td>';
 			print '</tr>';
 		}
 
@@ -2061,11 +2062,6 @@ if ($action == 'create') {
 
 			print '</td></tr>';
 		}
-
-		// Ref supplier
-		$refsupplier = GETPOSTISSET('refsupplier') ? GETPOST('refsupplier', 'alphanohtml') : (!empty($objectsrc->ref_supplier) ? $objectsrc->ref_supplier : '');
-		print '<tr><td>'.$langs->trans('RefSupplier').'</td><td><input name="refsupplier" type="text" value="'.dol_escape_htmltag($refsupplier).'"></td>';
-		print '</tr>';
 
 		// Payment term
 		print '<tr><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td>';
