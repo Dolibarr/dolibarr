@@ -519,7 +519,7 @@ section.setupsection {
 	padding: 20px !important;
 	background-color: var(--colorbackgrey);
 	border-radius: 5px;
-	box-shadow: 0 0 4px rgb(0, 0, 0, 0.15);
+	box-shadow: 0 0 4px rgb(0, 0, 0, 0.18);
 }
 section.setupsection:hover {
 	box-shadow: 0 0 5px #aaa;

@@ -1057,7 +1057,7 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['p.statut']['checked'])) {
 			print '<td class="right">';
 			if ($obj->statut == 0) {
-				print '<a href="card.php?id='.$obj->rowid.'&amp;action=valide">';
+				print '<a href="card.php?id='.$obj->rowid.'&amp;action=valide&amp;token='.newToken().'">';
 			}
 			print $object->LibStatut($obj->statut, 5);
 			if ($obj->statut == 0) {
