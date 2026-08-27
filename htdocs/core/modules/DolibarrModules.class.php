@@ -1403,7 +1403,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 						rewinddir($handle);
 
-						// Run update_xxx.sql files
+						// Run update_xxx.sql files (sorted by name)
 						$files = array();
 						while (($file = readdir($handle)) !== false) {
 							$files[] = $file;
@@ -1418,6 +1418,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 									//print 'File '.$file.' match suffix '.$onlywithsuffix.' so we keep it<br>'."\n";
 								}
 							}
+
 							if (preg_match('/\.sql$/i', $file) && !preg_match('/\.key\.sql$/i', $file) && substr($file, 0, 6) == 'update') {
 								$result = run_sql($dir.$file, !getDolGlobalString('MAIN_DISPLAY_SQL_INSTALL_LOG') ? 1 : 0, 0, 1);
 								if ($result <= 0) {

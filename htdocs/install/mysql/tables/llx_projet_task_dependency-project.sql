@@ -1,6 +1,5 @@
 -- ============================================================================
--- Copyright (C) 2024		AWeerWolf
--- Copyright (C) 2026		Alexandre Spangaro	 <alexandre@inovea-conseil.com>
+-- Copyright (C) 2026 Dolibarr contributors
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -15,8 +14,14 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
--- Table of line of transaction template for accounting
 -- ============================================================================
 
-ALTER TABLE llx_accounting_transaction_template_det ADD INDEX idx_accounting_transaction_template_det_rowid (rowid);
-ALTER TABLE llx_accounting_transaction_template_det ADD CONSTRAINT fk_accounting_transaction_template_det_template FOREIGN KEY (fk_transaction_template) REFERENCES llx_accounting_transaction_template(rowid);
+create table llx_projet_task_dependency
+(
+  rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  fk_task         integer NOT NULL,          -- the task that has a predecessor
+  fk_task_depend  integer NOT NULL,          -- the predecessor task (must be finished/started first)
+  type            varchar(2) DEFAULT 'FS' NOT NULL,  -- dependency type: FS, SS, FF, SF
+  entity          integer DEFAULT 1 NOT NULL,
+  datec           datetime
+)ENGINE=innodb;

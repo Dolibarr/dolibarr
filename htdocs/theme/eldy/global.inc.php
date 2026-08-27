@@ -916,7 +916,7 @@ input#onlinepaymenturl, input#directdownloadlink {
 	/* background: #f3f3f3; */
 
 	padding: 20px 20px 20px 20px;
-	border-radius: 8px;
+	border-radius: 5px;
 }
 .formborder {
 	border: solid 2px #444;
