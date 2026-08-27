@@ -678,7 +678,7 @@ print '</td></tr>';
 
 // Pdf document auto-generation
 
-print '<tr class="oddeven"><td>'.$form->textwithpicto($langs->trans("MAIN_DISABLE_PDF_AUTOUPDATE"), $langs->trans("MAIN_DISABLE_PDF_AUTOUPDATE_tooltip")).'</td><td>';
+print '<tr class="oddeven"><td>'.$form->textwithpicto($langs->trans("MAIN_DISABLE_PDF_AUTOUPDATE"), $langs->trans("MAIN_DISABLE_PDF_AUTOUPDATE_HELP")).'</td><td>';
 if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('MAIN_DISABLE_PDF_AUTOUPDATE');
 } else {
