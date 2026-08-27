@@ -7494,7 +7494,7 @@ class Product extends CommonObject
 
 		if (count($filearray)) {
 			if ($sortfield && $sortorder) {
-				if (getDolGlobalInt('OrderPhotoByPosition')) {
+				if (getDolGlobalInt('MAIN_SORT_PHOTO_BY_POSITION')) {
 					$filearray = dol_sort_array($filearray, 'position', $sortorder);
 				} else {
 					$filearray = dol_sort_array($filearray, $sortfield, $sortorder);
