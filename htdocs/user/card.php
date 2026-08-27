@@ -2311,7 +2311,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 					} elseif (($user->id != $id && $permissiontoeditpasswordandsee) && $object->login && !$object->ldap_sid &&
 					((!isModEnabled('multicompany') && $object->entity == $user->entity) || !$user->entity || ($object->entity == $conf->entity) || (getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && $object->entity == 1))) {
 						unset($params['attr']['title']);
-						print dolGetButtonAction($langs->trans('ReinitPassword'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=password&token='.newToken(), '', true, $params);
+						print dolGetButtonAction($langs->trans('ReinitPassword'), '', 'default', dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id, 'action' => 'password'], true), '', true, $params);
 					}
 
 					if ($object->status == $object::STATUS_DISABLED) {
@@ -2321,7 +2321,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 					((!isModEnabled('multicompany') && $object->entity == $user->entity) || !$user->entity || ($object->entity == $conf->entity) || (getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && $object->entity == 1))) {
 						if ($object->email) {
 							unset($params['attr']['title']);
-							print dolGetButtonAction($langs->trans('SendNewPassword'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=passwordsend&token='.newToken(), '', true, $params);
+							print dolGetButtonAction($langs->trans('SendNewPassword'), '', 'default', dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id, 'action' => 'passwordsend'], true), '', true, $params);
 						} else {
 							$params['attr']['title'] = $langs->trans('NoEMail');
 							print dolGetButtonAction($langs->trans('SendNewPassword'), '', 'default', $_SERVER['PHP_SELF'].'#', '', false, $params);
@@ -2332,13 +2332,13 @@ if ($action == 'create' || $action == 'adduserldap') {
 				if ($user->id != $id && $permissiontodisable && $object->status == User::STATUS_DISABLED &&
 				((!isModEnabled('multicompany') && $object->entity == $user->entity) || !$user->entity || ($object->entity == $conf->entity) || (getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && $object->entity == 1))) {
 					unset($params['attr']['title']);
-					print dolGetButtonAction($langs->trans('Reactivate'), '', 'default', $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=enable&token='.newToken(), '', true, $params);
+					print dolGetButtonAction($langs->trans('Reactivate'), '', 'default', dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id, 'action' => 'enable'], true), '', true, $params);
 				}
 				// Disable user
 				if ($user->id != $id && $permissiontodisable && $object->status == User::STATUS_ENABLED &&
 				((!isModEnabled('multicompany') && $object->entity == $user->entity) || !$user->entity || ($object->entity == $conf->entity) || (getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && $object->entity == 1))) {
 					unset($params['attr']['title']);
-					print dolGetButtonAction($langs->trans('DisableUser'), '', 'default', $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=disable&token='.newToken(), '', true, $params);
+					print dolGetButtonAction($langs->trans('DisableUser'), '', 'default', dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id, 'action' => 'disable'], true), '', true, $params);
 				} else {
 					if ($user->id == $id) {
 						$params['attr']['title'] = $langs->trans('CantDisableYourself');
@@ -2350,10 +2350,10 @@ if ($action == 'create' || $action == 'adduserldap') {
 				((!isModEnabled('multicompany') && $object->entity == $user->entity) || !$user->entity || ($object->entity == $conf->entity) || (getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && $object->entity == 1))) {
 					if ($user->admin || !$object->admin) { // If user edited is admin, delete is possible on for an admin
 						unset($params['attr']['title']);
-						print dolGetButtonAction($langs->trans('DeleteUser'), '', 'default', $_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&id='.$object->id, '', true, $params);
+						print dolGetButtonAction($langs->trans('DeleteUser'), '', 'default', dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'delete', 'id' => $object->id], true), '', true, $params);
 					} else {
 						$params['attr']['title'] = $langs->trans('MustBeAdminToDeleteOtherAdmin');
-						print dolGetButtonAction($langs->trans('DeleteUser'), '', 'default', $_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&id='.$object->id, '', false, $params);
+						print dolGetButtonAction($langs->trans('DeleteUser'), '', 'default', dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'delete', 'id' => $object->id], true), '', false, $params);
 					}
 				}
 			}
