@@ -1425,9 +1425,6 @@ if (empty($reshook)) {
 			}
 			*/
 
-			//var_dump(price2num($price_min)); var_dump(price2num($pu_ht)); var_dump($remise_percent);
-			//var_dump(price2num($price_min_ttc)); var_dump(price2num($pu_ttc)); var_dump($remise_percent);exit;
-
 			$desc = dol_htmlcleanlastbr($desc);
 
 			// Check price is not lower than minimum
