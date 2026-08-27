@@ -557,6 +557,7 @@ $timestoinit = [];
 
 $i = 0; // is a sequencer of modules found
 $j = 0; // j is module number. Automatically affected if module number not defined.
+/** @var array<string,string> $modNameLoaded */
 $modNameLoaded = array();
 
 // Load $modules (required for the badge count)

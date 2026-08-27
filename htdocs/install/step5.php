@@ -385,6 +385,7 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 					$tmparray = explode(',', $force_install_module);
 				}
 
+				/** @var array<string,string> $modNameLoaded */
 				$modNameLoaded = array();
 
 				// Search modules dirs
