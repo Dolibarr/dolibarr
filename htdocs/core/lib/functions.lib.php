@@ -11496,7 +11496,7 @@ function dol_htmloutput_events($disabledoutputofmessages = 0)
  *
  *	@param	string		$mesgstring		Message string or message key
  *	@param	string[]	$mesgarray      Array of message strings or message keys
- *  @param  string		$style          Style of message output ('ok' or 'error')
+ *  @param  string		$style          Style of message output ('ok', 'warning' or 'error')
  *  @param  int			$keepembedded   Set to 1 in error message must be kept embedded into its html place (this disable jnotify)
  *	@return	string						Return html output
  *
@@ -11540,12 +11540,42 @@ function get_htmloutput_mesg($mesgstring = '', $mesgarray = [], $style = 'ok', $
 
 	if ($out) {
 		if (!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_DISABLE_JQUERY_JNOTIFY') && empty($keepembedded)) {
-			$return = '<script nonce="' . getNonce() . '">
-				$(document).ready(function() {
-					/* jnotify(message, preset of message type, keepmessage) */
-					$.jnotify("' . dol_escape_js($out) . '", "' . ($style == "ok" ? 3000 : $style) . '", ' . ($style == "ok" ? "false" : "true") . ',{ remove: function (){} } );
-				});
-			</script>';
+			if ($style == "ok") {
+				// For success messages (green), allow manual click to close immediately without fade
+				$return = '<script nonce="' . getNonce() . '">
+					/* jnotify(message, params) */
+					$(document).ready(function() {
+						$.jnotify(\'' . dol_escape_js($out) . '\', {
+							delay: 3000,
+							type: \'' . dol_escape_js($style) . '\',
+							sticky: false,
+							create: function($note) {
+								$note.css("cursor", "pointer").click(function(e) {
+									e.stopPropagation();
+									$note.remove();
+								});
+							}
+						});
+					});
+				</script>';
+			} else {
+				// For error and warning messages, close immediately on click without fade
+				$return = '<script nonce="' . getNonce() . '">
+					$(document).ready(function() {
+						$.jnotify(\'' . dol_escape_js($out) . '\', {
+							delay: 3000,
+							type: \'' . dol_escape_js($style) . '\',
+							sticky: true,
+							create: function($note) {
+								$note.find("a.jnotify-close").click(function(e) {
+									e.stopPropagation();
+									$note.remove();
+								});
+							}
+						});
+					});
+				</script>';
+			}
 		} else {
 			$return = $out;
 		}
