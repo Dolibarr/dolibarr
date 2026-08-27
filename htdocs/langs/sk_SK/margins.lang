@@ -31,9 +31,9 @@ UseDiscountOnTotal=Na medzisúčet
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Definuje, či globálna zľava je považovaný za výrobok, služba, alebo iba na medzisúčet pre výpočet marže.
 MARGIN_TYPE=Nákupná/nákladová cena navrhnutá predvolene pre výpočet marže
 MargeType1=Marža za najlepšiu cenu predajcu
-MargeType2=Marža na váženej priemernej cene (WAP)
+MargeType2=Margin on Weighted Average Cost (WAC)
 MargeType3=Marža z ceny
-MarginTypeDesc=* Marža z najlepšej nákupnej ceny = Predajná cena – Najlepšia cena dodávateľa definovaná na karte produktu<br>* Marža z váženej priemernej ceny (WAP) = Predajná cena – vážená priemerná cena produktu (WAP) alebo najlepšia cena dodávateľa, ak ešte nie je definovaná WAP<br>* Marža na nákladovej cene = Predajná cena – Nákladová cena definovaná na karte produktu alebo WAP, ak nie je definovaná, alebo najlepšia cena dodávateľa, ak WAP ešte nie je definovaný
+MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Cost (WAC) = Selling price - Product Weighted Average Price (WAP) or best vendor price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAC if cost price not defined, or best vendor price if WAC not yet defined
 CostPrice=Veľkoobchodná cena
 UnitCharges=Jednotkové náklady
 Charges=Poplatky

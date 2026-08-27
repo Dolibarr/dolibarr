@@ -175,7 +175,7 @@ $head = agenda_prepare_head();
 
 print dol_get_fiche_head($head, 'reminders', $langs->trans("Agenda"), -1, 'action');
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" name="agenda">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" name="agenda" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set">';
 

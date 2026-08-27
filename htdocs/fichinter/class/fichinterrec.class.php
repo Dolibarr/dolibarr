@@ -46,6 +46,12 @@ class FichinterRec extends Fichinter
 	public $table_element_line = 'fichinterdet_rec';
 
 	/**
+	 * @var string Prefix of trigger name (distinct from the parent Fichinter's 'FICHINTER' prefix since
+	 *             this class manages recurring intervention templates, not actual interventions)
+	 */
+	public $TRIGGER_PREFIX = 'FICHINTERREC';
+
+	/**
 	 * {@inheritdoc}
 	 */
 	protected $table_ref_field = 'title';
@@ -263,6 +269,15 @@ class FichinterRec extends Fichinter
 					}
 				}
 
+				if (!$error && !$notrigger) {
+					// Call trigger
+					$result = $this->call_trigger($this->TRIGGER_PREFIX.'_CREATE', $user);
+					if ($result < 0) {
+						$error++;
+					}
+					// End call triggers
+				}
+
 				if ($error) {
 					$this->db->rollback();
 					return -1;
@@ -459,6 +474,15 @@ class FichinterRec extends Fichinter
 			$error = -2;
 		}
 
+		if (!$error && !$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger($this->TRIGGER_PREFIX.'_DELETE', $user);
+			if ($result < 0) {
+				$error = -3;
+			}
+			// End call triggers
+		}
+
 		if (!$error) {
 			$this->db->commit();
 			return 1;
@@ -600,12 +624,13 @@ class FichinterRec extends Fichinter
 	/**
 	 *	Rend la fichinter automatique
 	 *
-	 *	@param		User	$user		User object
-	 *	@param		int		$freq		Freq
-	 *	@param		string	$courant	Courant
-	 *	@return		int					0 if OK, <0 if KO
+	 *	@param		User		$user		User object
+	 *	@param		int			$freq		Freq
+	 *	@param		string		$courant	Courant
+	 *	@param		int<0,1>	$notrigger	Disable the trigger
+	 *	@return		int						0 if OK, <0 if KO
 	 */
-	public function set_auto($user, $freq, $courant)
+	public function set_auto($user, $freq, $courant, $notrigger = 0)
 	{
 		// phpcs:enable
 		if ($user->hasRight('fichinter', 'creer')) {
@@ -619,6 +644,16 @@ class FichinterRec extends Fichinter
 			if ($resql) {
 				$this->frequency = $freq;
 				$this->date_last_gen = $courant;
+
+				if (!$notrigger) {
+					// Call trigger
+					$result = $this->call_trigger($this->TRIGGER_PREFIX.'_MODIFY', $user);
+					if ($result < 0) {
+						return -1;
+					}
+					// End call triggers
+				}
+
 				return 0;
 			} else {
 				dol_print_error($this->db);
@@ -733,12 +768,15 @@ class FichinterRec extends Fichinter
 	/**
 	 *	Update frequency and unit
 	 *
-	 *	@param	 	?int	$frequency		value of frequency
-	 *	@param	 	string	$unit 			unit of frequency  (d, m, y)
-	 *	@return		int						Return integer <0 if KO, >0 if OK
+	 *	@param	 	?int		$frequency		value of frequency
+	 *	@param	 	string		$unit 			unit of frequency  (d, m, y)
+	 *	@param	 	int<0,1>	$notrigger		Disable the trigger
+	 *	@return		int							Return integer <0 if KO, >0 if OK
 	 */
-	public function setFrequencyAndUnit($frequency, $unit)
+	public function setFrequencyAndUnit($frequency, $unit, $notrigger = 0)
 	{
+		global $user;
+
 		if (!$this->table_element) {
 			dol_syslog(get_class($this)."::setFrequencyAndUnit called with table_element not defined", LOG_ERR);
 			return -1;
@@ -762,6 +800,16 @@ class FichinterRec extends Fichinter
 			if (!empty($unit)) {
 				$this->unit_frequency = $unit;
 			}
+
+			if (!$notrigger) {
+				// Call trigger
+				$result = $this->call_trigger($this->TRIGGER_PREFIX.'_MODIFY', $user);
+				if ($result < 0) {
+					return -1;
+				}
+				// End call triggers
+			}
+
 			return 1;
 		} else {
 			dol_print_error($this->db);
@@ -774,10 +822,13 @@ class FichinterRec extends Fichinter
 	 *
 	 *	@param	 	int			$date					date of execution
 	 *	@param	 	int<0,max>	$increment_nb_gen_done	0 do nothing more, >0 increment nb_gen_done
+	 *	@param	 	int<0,1>	$notrigger				Disable the trigger
 	 *	@return		int									Return integer <0 if KO, >0 if OK
 	 */
-	public function setNextDate($date, $increment_nb_gen_done = 0)
+	public function setNextDate($date, $increment_nb_gen_done = 0, $notrigger = 0)
 	{
+		global $user;
+
 		if (!$this->table_element) {
 			dol_syslog(get_class($this)."::setNextDate was called on object with property table_element not defined", LOG_ERR);
 			return -1;
@@ -795,6 +846,16 @@ class FichinterRec extends Fichinter
 			if ($increment_nb_gen_done > 0) {
 				$this->nb_gen_done++;
 			}
+
+			if (!$notrigger) {
+				// Call trigger
+				$result = $this->call_trigger($this->TRIGGER_PREFIX.'_MODIFY', $user);
+				if ($result < 0) {
+					return -1;
+				}
+				// End call triggers
+			}
+
 			return 1;
 		} else {
 			dol_print_error($this->db);
@@ -805,11 +866,14 @@ class FichinterRec extends Fichinter
 	/**
 	 *	Update the maximum period
 	 *
-	 *	@param	 	int		$nb		number of maximum period
-	 *	@return		int				Return integer <0 if KO, >0 if OK
+	 *	@param	 	int			$nb			number of maximum period
+	 *	@param	 	int<0,1>	$notrigger	Disable the trigger
+	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
-	public function setMaxPeriod($nb)
+	public function setMaxPeriod($nb, $notrigger = 0)
 	{
+		global $user;
+
 		if (!$this->table_element) {
 			dol_syslog(get_class($this)."::setMaxPeriod was called on object with property table_element not defined", LOG_ERR);
 			return -1;
@@ -826,6 +890,16 @@ class FichinterRec extends Fichinter
 		dol_syslog(get_class($this)."::setMaxPeriod", LOG_DEBUG);
 		if ($this->db->query($sql)) {
 			$this->nb_gen_max = $nb;
+
+			if (!$notrigger) {
+				// Call trigger
+				$result = $this->call_trigger($this->TRIGGER_PREFIX.'_MODIFY', $user);
+				if ($result < 0) {
+					return -1;
+				}
+				// End call triggers
+			}
+
 			return 1;
 		} else {
 			dol_print_error($this->db);
@@ -836,11 +910,14 @@ class FichinterRec extends Fichinter
 	/**
 	 *	Update the auto validate fichinter
 	 *
-	 *	@param	 	int		$validate		0 to create in draft, 1 to create and validate fichinter
+	 *	@param	 	int			$validate	0 to create in draft, 1 to create and validate fichinter
+	 *	@param	 	int<0,1>	$notrigger	Disable the trigger
 	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
-	public function setAutoValidate($validate)
+	public function setAutoValidate($validate, $notrigger = 0)
 	{
+		global $user;
+
 		if (!$this->table_element) {
 			dol_syslog(get_class($this)."::setAutoValidate called with property table_element not defined", LOG_ERR);
 			return -1;
@@ -853,6 +930,16 @@ class FichinterRec extends Fichinter
 		dol_syslog(get_class($this)."::setAutoValidate", LOG_DEBUG);
 		if ($this->db->query($sql)) {
 			$this->auto_validate = $validate;
+
+			if (!$notrigger) {
+				// Call trigger
+				$result = $this->call_trigger($this->TRIGGER_PREFIX.'_MODIFY', $user);
+				if ($result < 0) {
+					return -1;
+				}
+				// End call triggers
+			}
+
 			return 1;
 		} else {
 			dol_print_error($this->db);
@@ -863,10 +950,13 @@ class FichinterRec extends Fichinter
 	/**
 	 *	Update the Number of Generation Done
 	 *
+	 *	@param	 	int<0,1>	$notrigger	Disable the trigger
 	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
-	public function updateNbGenDone()
+	public function updateNbGenDone($notrigger = 0)
 	{
+		global $user;
+
 		if (!$this->table_element) {
 			dol_syslog(get_class($this)."::updateNbGenDone called with property table_element not defined", LOG_ERR);
 			return -1;
@@ -882,11 +972,21 @@ class FichinterRec extends Fichinter
 
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
-		dol_syslog(get_class($this)."::setAutoValidate", LOG_DEBUG);
+		dol_syslog(get_class($this)."::updateNbGenDone", LOG_DEBUG);
 		if ($this->db->query($sql)) {
 			$this->nb_gen_done++;
 			$this->date_last_gen = dol_now();
 			//$this->date_when = ...
+
+			if (!$notrigger) {
+				// Call trigger
+				$result = $this->call_trigger($this->TRIGGER_PREFIX.'_MODIFY', $user);
+				if ($result < 0) {
+					return -1;
+				}
+				// End call triggers
+			}
+
 			return 1;
 		} else {
 			dol_print_error($this->db);

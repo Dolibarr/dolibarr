@@ -211,7 +211,7 @@ class Paiements extends DolibarrApi
 	}
 
 	/**
-	 * Delete paiement
+	 * Delete payment
 	 *
 	 * @param   int     $id   Paiement ID
 	 * @return  array
@@ -226,7 +226,7 @@ class Paiements extends DolibarrApi
 	 */
 	public function delete($id)
 	{
-		if (!DolibarrApiAccess::$user->hasRight('facture', 'supprimer')) {
+		if (!DolibarrApiAccess::$user->hasRight('facture', 'paiement')) {
 			throw new RestException(403);
 		}
 

@@ -126,7 +126,7 @@ class DolibarrApi
 
 			// Sanitize the value using its type declared into ->fields of $object
 			if (!empty($object->fields) && !empty($object->fields[$field]) && !empty($object->fields[$field]['type'])) {
-				if (strpos($object->fields[$field]['type'], 'int') || strpos($object->fields[$field]['type'], 'double') || in_array($object->fields[$field]['type'], array('real', 'price', 'stock'))) {
+				if (strpos($object->fields[$field]['type'], 'int') === 0 || strpos($object->fields[$field]['type'], 'double') === 0 || in_array($object->fields[$field]['type'], array('real', 'price', 'stock'))) {
 					return sanitizeVal($value, 'int');
 				}
 				if ($object->fields[$field]['type'] == 'html') {
@@ -197,7 +197,7 @@ class DolibarrApi
 			}
 
 			if ($typeOfExtraField) {
-				if (strpos($typeOfExtraField, 'int') || strpos($typeOfExtraField, 'double') || in_array($typeOfExtraField, array('real', 'price', 'stock'))) {
+				if (strpos($typeOfExtraField, 'int') === 0 || strpos($typeOfExtraField, 'double') === 0 || in_array($typeOfExtraField, array('real', 'price', 'stock'))) {
 					return sanitizeVal($value, 'int');
 				}
 				if ($typeOfExtraField == 'html') {
@@ -307,6 +307,7 @@ class DolibarrApi
 		unset($object->table_rowid);
 		unset($object->pass);
 		unset($object->pass_indatabase);
+		unset($object->pass_indatabase_crypted);
 
 		// Remove linkedObjects. We should already have and keep only linkedObjectsIds that avoid huge responses
 		unset($object->linkedObjects);

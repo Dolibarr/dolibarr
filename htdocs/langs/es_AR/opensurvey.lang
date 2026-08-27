@@ -4,7 +4,6 @@ OpenSurveyArea=Área de encuestas
 AddACommentForPoll=Puedes agregar un comentario en la encuesta...
 AddComment=Agregar comentario
 ToReceiveEMailForEachVote=Recibir un correo por cada voto
-OpenSurveyStep2=Selecciona tus fechas entre los días que ves libres (en gris). Los seleccionados se marcarán en verdes. Puedes anular la selección de un día seleccionado haciendo clic nuevamente en él
 RemoveAllDays=Quitar todos los días
 CopyHoursOfFirstDay=Copia horas del primer día
 RemoveAllHours=Quitar todas las horas

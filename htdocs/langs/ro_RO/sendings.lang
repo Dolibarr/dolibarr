@@ -128,6 +128,7 @@ ShipmentDistribution=Expediere distribuție
 ErrorTooManyCombinationBatchcode=Nicio expediere pentru linia %s, deoarece au fost găsite prea multe combinații de cod de depozit, produs, lot (%s).
 ErrorNoCombinationBatchcode=Nu s-a putut salva linia %s deoarece combinația depozit-produs-lot/serial (%s, %s, %s) nu a fost găsită în stoc.
 ErrorTooMuchShipped=Cantitatea livrată nu ar trebui să fie mai mare decât cea comandată pentru linia/articolul %s
+NoShipmentLineChangeDetected=No shipment line change was detected.
 ##### Types of contacts #####
 TypeContact_shipping_internal_SALESREPFOLL=Responsabil recepţie comandă furnizor
 TypeContact_shipping_external_BILLING=Contact client facturare comandă

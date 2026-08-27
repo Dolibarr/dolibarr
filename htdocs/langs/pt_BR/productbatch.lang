@@ -15,7 +15,6 @@ printSellby=Venda-por: %s
 printQty=Qtde: %d
 printPlannedWarehouse=Armazém: %s
 AddDispatchBatchLine=Adicione uma linha para Shelf Life expedição
-WhenProductBatchModuleOnOptionAreForced=Quando o módulo Lote/Serial está ativado, a redução automática de estoque é forçada para '%s' e o modo de aumento automático é forçado para '%s'. Algumas opções podem não estar disponíveis. Outras opções podem ser definidas como desejar.
 ProductDoesNotUseBatchSerial=Este produto não utiliza Lote / número de série
 ProductLotSetup=Configuração do módulo lote/nº de série
 ShowCurrentStockOfLot=Exibir o estoque atual para o produto/lote

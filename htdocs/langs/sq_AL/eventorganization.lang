@@ -48,6 +48,7 @@ ConferenceOrBoothTab = Konferencë Ose Kabinë
 AmountPaid = Shuma e paguar
 DateOfRegistration = Data e regjistrimit
 ConferenceOrBoothAttendee = Pjesëmarrës në Konferencë ose Booth
+ConferenceOrBoothAttendeesShort = Conf. or Booth Attendees
 ApplicantOrVisitor=Aplikanti ose vizitori
 Speaker=Folësi
 # Template Mail
@@ -81,8 +82,8 @@ ListOfAttendeesOfEvent=Lista e pjesëmarrësve në projektet e eventit
 ListOfConfOrBoothOfEvent=Lista e konferencave ose stendave të projekteve të eventeve
 DownloadICSLink=Shkarko skedarin ICS
 EVENTORGANIZATION_SECUREKEY=Seed për të siguruar çelësin për faqen e regjistrimit publik për të sugjeruar një konferencë
-SERVICE_BOOTH_LOCATION=Shërbimi i përdorur për rreshtin e faturës për vendndodhjen e kabinës
-SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION=Shërbimi i përdorur për rreshtin e faturës në lidhje me një abonim pjesëmarrës në një ngjarje
+SERVICE_BOOTH_LOCATION=Service to use on the invoice line for the sale of a booth.
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION=Service to use on the invoice line for the participation fees.
 NbVotes=Numri i votave
 # Status
 EvntOrgDraft = Draft
@@ -122,7 +123,7 @@ NewSubscription=Regjistrimi
 OrganizationEventConfRequestWasReceived=Sugjerimi juaj për një konferencë është marrë
 OrganizationEventBoothRequestWasReceived=Kërkesa juaj për një kabinë është marrë
 OrganizationEventPaymentOfBoothWasReceived=Pagesa juaj për kabinën tuaj është regjistruar
-OrganizationEventPaymentOfRegistrationWasReceived=Pagesa juaj për regjistrimin e ngjarjes tuaj është regjistruar
+OrganizationEventPaymentOfRegistrationWasReceived=Your payment for your registration to the event has been recorded
 OrganizationEventBulkMailToAttendees=Ky është një kujtim për pjesëmarrjen tuaj në ngjarje si pjesëmarrës
 OrganizationEventBulkMailToSpeakers=Ky është një kujtesë për pjesëmarrjen tuaj në këtë ngjarje si folës
 OrganizationEventLinkToThirdParty=Lidhja me palën e tretë (klient, furnizues ose partner)

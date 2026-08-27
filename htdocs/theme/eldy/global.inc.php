@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2024	Laurent Destailleur			<eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Marc de Lima Lucio			<marc-dll@user.noreply.github.com>
  *
@@ -916,7 +916,7 @@ input#onlinepaymenturl, input#directdownloadlink {
 	/* background: #f3f3f3; */
 
 	padding: 20px 20px 20px 20px;
-	border-radius: 8px;
+	border-radius: 5px;
 }
 .formborder {
 	border: solid 2px #444;
@@ -3071,12 +3071,12 @@ a.pictosubstatus:hover {
 }
 .pictofixedwidth {
 	text-align: start;
-	width: 22px;	/* Do not use em unit here */
+	width: 22px;	/* Do not use em unit here, it varies on font size */
 	/* padding-right: 0; */
 }
 img.pictofixedwidth {
-	width: 16px;	/* Do not use em unit here */
-	padding-right: 6px;		/* width of img + padding-right must be equal to width of .pictofixedwidth */
+	width: 16px;	/* Do not use em unit here, it varies on font size */
+	padding-right: 6px;		/* img width + img padding-right must be equal to width of .pictofixedwidth */
 	margin-right: 4px;
 }
 
@@ -4670,6 +4670,7 @@ table.nointerlines tr:not(:last-child) td {
 /* Management of border radius */
 table.noborder:not(.cal_month, .paymenttable) {
 	border-radius: <?php echo $borderradius; ?>px;
+	overflow: hidden; /* Firefox does not clip cell backgrounds to the table border-radius without this */
 }
 table.noborder.cal_month {
 	border-bottom-left-radius: <?php echo $borderradius; ?>px;
@@ -4711,6 +4712,7 @@ table.liste:not(.listwithfilterbefore) {
 table.liste {
 	border-bottom-left-radius: <?php echo $borderradius; ?>px;
 	border-bottom-right-radius: <?php echo $borderradius; ?>px;
+	overflow: hidden; /* Firefox does not clip cell backgrounds to the table border-radius without this */
 }
 table.liste:not(.listwithfilterbefore) tr.liste_titre_filter:first-child td:first-child,
 table.liste:not(.listwithfilterbefore) tr.liste_titre_filter:first-child th:first-child {
@@ -8010,11 +8012,11 @@ span#select2-boxbookmark-container {
 }
 span.select2-dropdown--below {
 	margin-top: -1px;
-	min-width: 100px;
+	min-width: 200px;
 }
 span.select2-dropdown--above {
 	margin-bottom: -1px;
-	min-width: 100px;
+	min-width: 200px;
 }
 
 .parentonrightofpage {
@@ -9037,10 +9039,19 @@ div.clipboardCPValue.hidewithsize {
 
 .clipboardCPShowOnHover{
 	cursor: copy;
+	position: relative;
 }
 
 .clipboardCPShowOnHover .clipboardCPButton {
 	display: none;
+}
+
+.clipboardCPShowOnHover .clipboardCPButton,
+.clipboardCPShowOnHover .clipboardCPTick {
+	position: absolute;
+	right: 0;
+	top: 50%;
+	transform: translate(100%, -50%);
 }
 
 /* To make a div popup, we must use a position absolute inside a position relative */
@@ -9526,9 +9537,15 @@ table.jPicker {
 
 	.pictofixedwidth {
 		text-align: start;
-		width: 1.5em;
-		/* padding-right: 0; */
+		width: 1.2rem;	/* Do not use em unit here, it varies on font size */
+		padding-right: 0.2rem;
 	}
+	img.pictofixedwidth {
+		width: 1.2rem;	/* Do not use em unit here, it varies on font size */
+		padding-right: 0.2rem;	/* img width + img padding-right must be equal to width + padding-right of .pictofixedwidth */
+		margin-right: 4px;
+	}
+
 	 table.titlemodulehelp tr td img.widthpictotitle {
 		width: 1.5em;
 	}

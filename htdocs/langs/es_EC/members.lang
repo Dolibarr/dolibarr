@@ -82,7 +82,6 @@ MembersStatisticsDesc=Elija las estadísticas que desea leer ...
 MenuMembersStats=Estadística
 NewMemberbyWeb=Nuevo miembro añadido. Esperando aprobacion
 NewMemberForm=Formulario para nuevos miembros
-TurnoverOrBudget=Facturación (para una empresa) o Presupuesto (para una fundación)
 NoEmailSentToMember=No se envió ningún correo electrónico al miembro
 EmailSentToMember=Correo electrónico enviado a un miembro en %s
 YouMayFindYourInvoiceInThisEmail=Puede encontrar su factura adjunta a este correo electrónico

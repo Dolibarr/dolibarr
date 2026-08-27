@@ -128,6 +128,7 @@ ShipmentDistribution=Διανομή αποστολής
 ErrorTooManyCombinationBatchcode=Δεν έγινε αποστολή της γραμμής %s καθώς βρέθηκαν πάρα πολλοί συνδυασμοί αποθήκης, προϊόντος, κωδικών παρτίδας (%s).
 ErrorNoCombinationBatchcode=Δεν έγινε αποθήκευση της γραμμής %s καθώς δεν βρέθηκε συνδυασμός αποθήκης, προϊόντος, κωδικού παρτίδας(%s,%s,%s).
 ErrorTooMuchShipped=Η ποσότητα προς αποστολή δεν πρέπει να είναι μεγαλύτερη από την ποσότητα που παραγγέλθηκε για τη γραμμή %s
+NoShipmentLineChangeDetected=Δεν εντοπίστηκε καμία αλλαγή σε γραμμή αποστολής.
 ##### Types of contacts #####
 TypeContact_shipping_internal_SALESREPFOLL=Εκπρόσωπος εξέλιξης αποστολής
 TypeContact_shipping_external_BILLING=Επαφή τιμολογίου πελάτη

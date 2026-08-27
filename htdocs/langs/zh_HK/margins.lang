@@ -31,9 +31,9 @@ UseDiscountOnTotal=關於小計
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=定義全局折扣是否被視為產品、服務或僅作為利潤計算的小計。
 MARGIN_TYPE=利潤計算默認建議的買入/成本價
 MargeType1=最佳供應商價格的利潤
-MargeType2=加權平均價格（WAP）的利潤
+MargeType2=Margin on Weighted Average Cost (WAC)
 MargeType3=成本價格的利潤
-MarginTypeDesc=* 最佳購買價格利潤 = 銷售價格 - 產品卡上定義的最佳供應商價格<br>* 加權平均價格 (WAP) 利潤 = 銷售價格 - 產品加權平均價格 (WAP) 或最佳供應商價格, 如果 WAP 尚未定義<br>* 成本價利潤 = 銷售價格 - 產品卡或 WAP 上定義的成本價 , 如果未定義成本價 或最佳供應商價格 ,如果尚未定義 WAP '
+MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Cost (WAC) = Selling price - Product Weighted Average Price (WAP) or best vendor price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAC if cost price not defined, or best vendor price if WAC not yet defined
 CostPrice=成本價
 UnitCharges=單位收費
 Charges=收費
