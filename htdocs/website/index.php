@@ -3814,7 +3814,7 @@ if (!GETPOST('hide_websitemenu')) {
 															element_id: elementId,
 															element_type: elementType,
 															action: \'updatedElementContent\',
-															token: \'' . newToken() . '\'
+															token: \'' . currentToken() . '\'
 														},
 														success: function(response) {
 															console.log(response);
@@ -4029,6 +4029,7 @@ if (!GETPOST('hide_websitemenu')) {
                                 method: "POST",
                                 url: "'.DOL_URL_ROOT.'/core/ajax/saveinplace.php",
                                 data: {
+                                    token: \''.currentToken().'\',
                                     field: \'editval_virtualhost\',
                                     element: \'website\',
                                     table_element: \'website\',

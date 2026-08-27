@@ -1521,7 +1521,7 @@ foreach ($listofreferent as $key => $value) {
 				print '<td style="width: 24px">';
 				if ($tablename != 'projet_task' && $tablename != 'stock_mouvement') {
 					if (!getDolGlobalString('PROJECT_DISABLE_UNLINK_FROM_OVERVIEW') || $user->admin) {		// PROJECT_DISABLE_UNLINK_FROM_OVERVIEW is empty by default, so this test true
-						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=unlink&tablename='.$tablename.'&elementselect='.$element->id.($project_field ? '&projectfield='.$project_field : '').'" class="reposition">';
+						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=unlink&token='.newToken().'&tablename='.$tablename.'&elementselect='.$element->id.($project_field ? '&projectfield='.$project_field : '').'" class="reposition">';
 						print img_picto($langs->trans('Unlink'), 'unlink');
 						print '</a>';
 					}

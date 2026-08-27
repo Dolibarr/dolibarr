@@ -373,7 +373,7 @@ function LoadProducts(position, issubcat) {
 	}
 
 	// Only show products for sale (tosell=1)
-	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=getProducts&token=<?php echo newToken();?>&thirdpartyid=' + socid + '&category='+currentcat+'&tosell=1&limit='+limit+'&offset=0', function(data) {
+	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=getProducts&token=<?php echo currentToken();?>&thirdpartyid=' + socid + '&category='+currentcat+'&tosell=1&limit='+limit+'&offset=0', function(data) {
 		/* Fill thumbs from ishow to end max of products with products loaded into data array */
 		console.log("Call ajax.php (in LoadProducts) to get Products of category "+currentcat+" then loop on result to fill image thumbs");
 		console.log("Found "+data.length+" record");
@@ -508,7 +508,7 @@ function MoreProducts(moreorless) {
 	}
 
 	// Only show products for sale (tosell=1)
-	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=getProducts&token=<?php echo newToken();?>&thirdpartyid=' + socid + '&category='+currentcat+'&tosell=1&limit='+limit+'&offset='+offset, function(data) {
+	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=getProducts&token=<?php echo currentToken();?>&thirdpartyid=' + socid + '&category='+currentcat+'&tosell=1&limit='+limit+'&offset='+offset, function(data) {
 		console.log("Call ajax.php (in MoreProducts) to get Products of category "+currentcat);
 
 		if (typeof (data[0]) == "undefined" && moreorless=="more"){ // Return if no more pages
@@ -588,7 +588,7 @@ function ClickProduct(position, qty = 1, qty_std = 0) {
 
 		addInvoiceLine = function(qty, qty_std_inner = 0) {
 			// Call page invoice.php to generate the section with product lines
-			  $("#poslines").load("invoice.php?action=addline&token=<?php echo newToken(); ?>&place="+place+"&idproduct="+idproduct+"&selectedline="+selectedline+"&qty="+qty+"&invoiceid="+invoiceid+(qty_std_inner ? '&qty_std=1' : ''), function() {
+			  $("#poslines").load("invoice.php?action=addline&token=<?php echo currentToken(); ?>&place="+place+"&idproduct="+idproduct+"&selectedline="+selectedline+"&qty="+qty+"&invoiceid="+invoiceid+(qty_std_inner ? '&qty_std=1' : ''), function() {
 				idproduct = "";
 				<?php if (getDolGlobalString('TAKEPOS_CUSTOMER_DISPLAY')) {
 					echo "CustomerDisplay();";
@@ -614,7 +614,7 @@ function ClickProduct(position, qty = 1, qty_std = 0) {
 function ChangeThirdparty(idcustomer) {
 	 console.log("ChangeThirdparty");
 		// Call page list.php to change customer
-		$("#poslines").load("<?php echo DOL_URL_ROOT ?>/societe/list.php?action=change&token=<?php echo newToken();?>&type=t&contextpage=poslist&idcustomer="+idcustomer+"&place="+place+"", function() {
+		$("#poslines").load("<?php echo DOL_URL_ROOT ?>/societe/list.php?action=change&token=<?php echo currentToken();?>&type=t&contextpage=poslist&idcustomer="+idcustomer+"&place="+place+"", function() {
 		});
 
 	ClearSearch(false);
@@ -623,7 +623,7 @@ function ChangeThirdparty(idcustomer) {
 function deleteline() {
 	invoiceid = $("#invoiceid").val();
 	console.log("Delete line invoiceid="+invoiceid);
-	$("#poslines").load("invoice.php?action=deleteline&token=<?php echo newToken(); ?>&place="+place+"&idline="+selectedline+"&invoiceid="+invoiceid, function() {
+	$("#poslines").load("invoice.php?action=deleteline&token=<?php echo currentToken(); ?>&place="+place+"&idline="+selectedline+"&invoiceid="+invoiceid, function() {
 		//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
 	});
 	ClearSearch(false);
@@ -724,7 +724,7 @@ function New() {
 	console.log("New with place = <?php echo $place; ?>, js place="+place+", invoiceid="+invoiceid);
 
 	if (invoiceid == '') {
-		$("#poslines").load("invoice.php?action=delete&token=<?php echo newToken(); ?>&place=" + place, function () {
+		$("#poslines").load("invoice.php?action=delete&token=<?php echo currentToken(); ?>&place=" + place, function () {
 			//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
 		});
 
@@ -733,7 +733,7 @@ function New() {
 		return;
 	}
 
-	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=getInvoice&token=<?php echo newToken();?>&id='+invoiceid, function(data) {
+	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=getInvoice&token=<?php echo currentToken();?>&id='+invoiceid, function(data) {
 		var r;
 
 		if (parseInt(data['paye']) === 1) {
@@ -744,7 +744,7 @@ function New() {
 
 		if (r == true) {
 			// Reload section with invoice lines
-			$("#poslines").load("invoice.php?action=delete&token=<?php echo newToken(); ?>&place=" + place, function () {
+			$("#poslines").load("invoice.php?action=delete&token=<?php echo currentToken(); ?>&place=" + place, function () {
 				//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
 			});
 
@@ -820,7 +820,7 @@ function Search2(keyCodeForEnter, moreorless) {
 				socid = parseInt("<?php echo dol_escape_js($socid); ?>");
 			}
 
-			$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=search&token=<?php echo newToken();?>&search_term=' + search_term + '&thirdpartyid=' + socid + '&search_start=' + search_start + '&search_limit=' + search_limit, function (data) {
+			$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=search&token=<?php echo currentToken();?>&search_term=' + search_term + '&thirdpartyid=' + socid + '&search_start=' + search_start + '&search_limit=' + search_limit, function (data) {
 				for (i = 0; i < <?php echo $MAXPRODUCT ?>; i++) {
 					if (typeof (data[i]) == "undefined") {
 						$("#prowatermark" + i).html("");
@@ -952,7 +952,7 @@ function Edit(number) {
 		return;
 	} else if (number=='qty') {
 		if (editaction=='qty' && editnumber != '') {
-			$("#poslines").load("invoice.php?action=updateqty&token=<?php echo newToken(); ?>&place="+place+"&idline="+selectedline+"&number="+editnumber, function() {
+			$("#poslines").load("invoice.php?action=updateqty&token=<?php echo currentToken(); ?>&place="+place+"&idline="+selectedline+"&number="+editnumber, function() {
 				editnumber="";
 				//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
 				$("#qty").html("<?php echo $langs->trans("Qty"); ?>").removeClass('clicked');
@@ -966,7 +966,7 @@ function Edit(number) {
 		}
 	} else if (number=='p') {
 		if (editaction=='p' && editnumber!="") {
-			$("#poslines").load("invoice.php?action=updateprice&token=<?php echo newToken(); ?>&place="+place+"&idline="+selectedline+"&number="+editnumber, function() {
+			$("#poslines").load("invoice.php?action=updateprice&token=<?php echo currentToken(); ?>&place="+place+"&idline="+selectedline+"&number="+editnumber, function() {
 				editnumber="";
 				//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
 				$("#price").html("<?php echo $langs->trans("Price"); ?>").removeClass('clicked');
@@ -980,7 +980,7 @@ function Edit(number) {
 		}
 	} else if (number=='r') {
 		if (editaction=='r' && editnumber!="") {
-			$("#poslines").load("invoice.php?action=updatereduction&token=<?php echo newToken(); ?>&place="+place+"&idline="+selectedline+"&number="+editnumber, function() {
+			$("#poslines").load("invoice.php?action=updatereduction&token=<?php echo currentToken(); ?>&place="+place+"&idline="+selectedline+"&number="+editnumber, function() {
 				editnumber="";
 				//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
 				$("#reduction").html("<?php echo $langs->trans("LineDiscountShort"); ?>").removeClass('clicked');
@@ -1020,14 +1020,14 @@ function Edit(number) {
 
 function TakeposPrintingOrder(){
 	console.log("TakeposPrintingOrder output invoice to print order");
-	$("#poslines").load("invoice.php?action=order&token=<?php echo newToken();?>&place="+place, function() {
+	$("#poslines").load("invoice.php?action=order&token=<?php echo currentToken();?>&place="+place, function() {
 		//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
 	});
 }
 
 function TakeposPrintingTemp(){
 	console.log("TakeposPrintingTemp");
-	$("#poslines").load("invoice.php?action=temp&token=<?php echo newToken();?>&place="+place, function() {
+	$("#poslines").load("invoice.php?action=temp&token=<?php echo currentToken();?>&place="+place, function() {
 		//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
 	});
 }
@@ -1050,11 +1050,11 @@ function OpenDrawer(){
 
 /* Click on button to open drawer */
 function DolibarrOpenDrawer() {
-	console.log("DolibarrOpenDrawer call ajax url /takepos/ajax/ajax.php?action=opendrawer&token=<?php echo newToken();?>&term=<?php print urlencode(empty($_SESSION["takeposterminal"]) ? '' : $_SESSION["takeposterminal"]); ?>");
+	console.log("DolibarrOpenDrawer call ajax url /takepos/ajax/ajax.php?action=opendrawer&token=<?php echo currentToken();?>&term=<?php print urlencode(empty($_SESSION["takeposterminal"]) ? '' : $_SESSION["takeposterminal"]); ?>");
 	$.ajax({
 		type: "GET",
 		data: { token: '<?php echo currentToken(); ?>' },
-		url: "<?php print DOL_URL_ROOT.'/takepos/ajax/ajax.php?action=opendrawer&token='.newToken().'&term='.urlencode(empty($_SESSION["takeposterminal"]) ? '' : $_SESSION["takeposterminal"]); ?>",
+		url: "<?php print DOL_URL_ROOT.'/takepos/ajax/ajax.php?action=opendrawer&token='.currentToken().'&term='.urlencode(empty($_SESSION["takeposterminal"]) ? '' : $_SESSION["takeposterminal"]); ?>",
 	});
 }
 
@@ -1093,7 +1093,7 @@ function ModalBox(ModalID)
 
 function DirectPayment(){
 	console.log("DirectPayment");
-	$("#poslines").load("invoice.php?place="+place+"&action=valid&token=<?php echo newToken(); ?>&pay=LIQ", function() {
+	$("#poslines").load("invoice.php?place="+place+"&action=valid&token=<?php echo currentToken(); ?>&pay=LIQ", function() {
 		$('#invoiceid').val("");
 	});
 }
@@ -1121,7 +1121,7 @@ function WeighingScale(callback) {
 			.done(function(product) {
 				if (callback === undefined) {
 					callback = function(qty) {
-						$("#poslines").load("invoice.php?token=<?php echo newToken(); ?>&action=updateqty&place="+place+"&idline="+selectedline+"&number="+qty);
+						$("#poslines").load("invoice.php?token=<?php echo currentToken(); ?>&action=updateqty&place="+place+"&idline="+selectedline+"&number="+qty);
 					};
 				}
 				if (product.fk_unit == "2") {
@@ -1133,7 +1133,7 @@ function WeighingScale(callback) {
 		<?php } else { ?>
 			// Protocole par défaut de takeposconnector: réception continue du poids/stabilité
 			editnumber = globalWeight;
-			$("#poslines").load("invoice.php?token=<?php echo newToken(); ?>&action=updateqty&place="+place+"&idline="+selectedline+"&number="+editnumber, function() {
+			$("#poslines").load("invoice.php?token=<?php echo currentToken(); ?>&action=updateqty&place="+place+"&idline="+selectedline+"&number="+editnumber, function() {
 				editnumber="";
 			});
 		<?php } ?>
@@ -1144,7 +1144,7 @@ function WeighingScale(callback) {
 		url: '<?php print getDolGlobalString('TAKEPOS_PRINT_SERVER'); ?>/scale/index.php',
 	})
 	.done(function( editnumber ) {
-		$("#poslines").load("invoice.php?token=<?php echo newToken(); ?>&action=updateqty&place="+place+"&idline="+selectedline+"&number="+editnumber, function() {
+		$("#poslines").load("invoice.php?token=<?php echo currentToken(); ?>&action=updateqty&place="+place+"&idline="+selectedline+"&number="+editnumber, function() {
 				editnumber="";
 			});
 	});
