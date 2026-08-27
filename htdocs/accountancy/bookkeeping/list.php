@@ -210,6 +210,9 @@ $arrayfields = array(
 	't.date_lim_reglement' => array('label' => $langs->trans("DateDue"), 'checked' => '0'),
 	't.import_key' => array('label' => $langs->trans("ImportId"), 'checked' => '0', 'position' => 1100),
 );
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 if (!getDolGlobalString('ACCOUNTING_ENABLE_LETTERING')) {
 	unset($arrayfields['t.lettering_code']);
