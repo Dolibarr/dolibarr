@@ -2589,8 +2589,6 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print '<td>';
 				$nbAdmin = $user->getNbOfUsers('active', '', 1);
 				$nbSuperAdmin = $user->getNbOfUsers('active', 'superadmin', 1);
-				//var_dump($nbAdmin);
-				//var_dump($nbSuperAdmin);
 				if ($user->admin								// Need to be admin to allow downgrade of an admin
 				&& ($user->id != $object->id)                   // Don't downgrade ourself
 				&& (
