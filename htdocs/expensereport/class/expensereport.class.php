@@ -921,7 +921,7 @@ class ExpenseReport extends CommonObject
 		$sql .= " f.fk_user_approve";
 		$sql .= " FROM ".MAIN_DB_PREFIX."expensereport as f";
 		$sql .= " WHERE f.rowid = ".((int) $id);
-		$sql .= " AND f.entity = ".$conf->entity;
+		$sql .= " AND f.entity = ".((int) $conf->entity);
 
 
 
@@ -1373,7 +1373,7 @@ class ExpenseReport extends CommonObject
 		// Validate
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
 		$sql .= " SET ref = '".$this->db->escape($num)."',";
-		$sql .= " fk_statut = ".self::STATUS_VALIDATED.",";
+		$sql .= " fk_statut = ".((int) self::STATUS_VALIDATED).",";
 		$sql .= " date_valid = '".$this->db->idate($this->date_valid)."',";
 		$sql .= " fk_user_valid = ".((int) $user->id);
 		$sql .= " WHERE rowid = ".((int) $this->id);
@@ -1405,7 +1405,7 @@ class ExpenseReport extends CommonObject
 						$this->error = $this->db->lasterror();
 					}
 					$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'expensereport/".$this->db->escape($this->newref)."'";
-					$sql .= " WHERE filepath = 'expensereport/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+					$sql .= " WHERE filepath = 'expensereport/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 					$resql = $this->db->query($sql);
 					if (!$resql) {
 						$error++;
@@ -1480,7 +1480,7 @@ class ExpenseReport extends CommonObject
 
 		if ($this->status != self::STATUS_VALIDATED) {
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-			$sql .= " SET fk_statut = ".self::STATUS_VALIDATED;
+			$sql .= " SET fk_statut = ".((int) self::STATUS_VALIDATED);
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::set_save_from_refuse", LOG_DEBUG);
@@ -1513,7 +1513,7 @@ class ExpenseReport extends CommonObject
 		if ($this->status != self::STATUS_APPROVED) {
 			$this->db->begin();
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-			$sql .= " SET ref = '".$this->db->escape($this->ref)."', fk_statut = ".self::STATUS_APPROVED.", fk_user_approve = ".((int) $fuser->id).",";
+			$sql .= " SET ref = '".$this->db->escape($this->ref)."', fk_statut = ".((int) self::STATUS_APPROVED).", fk_user_approve = ".((int) $fuser->id).",";
 			$sql .= " date_approve='".$this->db->idate($now)."'";
 			$sql .= " WHERE rowid = ".((int) $this->id);
 			if ($this->db->query($sql)) {
@@ -1959,7 +1959,7 @@ class ExpenseReport extends CommonObject
 	 */
 	public function addline($qty = 0, $up = 0, $fk_c_type_fees = 0, $vatrate = 0, $date = '', $comments = '', $fk_project = 0, $fk_c_exp_tax_cat = 0, $type = 0, $fk_ecm_files = 0)
 	{
-		global $langs, $mysoc;
+		global $mysoc;
 
 		dol_syslog(get_class($this)."::addline qty=$qty, up=$up, fk_c_type_fees=$fk_c_type_fees, vatrate=$vatrate, date=$date, fk_project=$fk_project, type=$type, comments=$comments", LOG_DEBUG);
 
@@ -2309,7 +2309,7 @@ class ExpenseReport extends CommonObject
 
 			$this->line->id = ((int) $rowid);
 
-			// Select des infos sur le type fees
+			// Select info about the fee type
 			$sql = "SELECT c.code as code_type_fees, c.label as label_type_fees";
 			$sql .= " FROM ".MAIN_DB_PREFIX."c_type_fees as c";
 			$sql .= " WHERE c.id = ".((int) $type_fees_id);
@@ -2322,7 +2322,7 @@ class ExpenseReport extends CommonObject
 			}
 
 			if ($projet_id > 0) {
-				// Select des information du projet
+				// Select information about the project
 				$sql = "SELECT p.ref as ref_projet, p.title as title_projet";
 				$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 				$sql .= " WHERE p.rowid = ".((int) $projet_id);

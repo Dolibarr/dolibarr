@@ -545,11 +545,11 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 					}
 
 					$to = $adh->makeSubstitution(getDolGlobalString('MAIN_INFO_SOCIETE_MAIL'));
-					$from = getDolGlobalString('ADHERENT_MAIL_FROM', $conf->email_from);
+					$email_from = getDolGlobalString('ADHERENT_MAIL_FROM', $conf->email_from);
 					$mailfile = new CMailFile(
 						'['.$appli.'] ' . getDolGlobalString('ADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT'),
 						$to,
-						$from,
+						$email_from,
 						$adh->makeSubstitution(getDolGlobalString('ADHERENT_AUTOREGISTER_NOTIF_MAIL')),
 						array(),
 						array(),
@@ -561,7 +561,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 					);
 
 					if (!$mailfile->sendfile()) {
-						dol_syslog($langs->trans("ErrorFailedToSendMail", $from, $to), LOG_ERR);
+						dol_syslog($langs->trans("ErrorFailedToSendMail", $email_from, $to), LOG_ERR);
 					}
 				}
 

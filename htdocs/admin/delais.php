@@ -236,7 +236,7 @@ print "<br>\n";
 print "<br>\n";
 
 if ($action == 'edit') {
-	print '<form method="post" action="'.$_SERVER['PHP_SELF'].'" name="form_index">';
+	print '<form method="post" action="'.$_SERVER['PHP_SELF'].'" name="form_index" spellcheck="false">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 

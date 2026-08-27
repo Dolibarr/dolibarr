@@ -193,9 +193,10 @@ function dolDecrypt($chain, $key = '', $patterntotest = '')
 			}
 
 			// Test validity of decryption
-			if (!ascii_check($newchain)) {
+			//if (!ascii_check($newchain)) {
+			if (!ascii_check($newchain) && !utf8_check($newchain)) {
 				if (empty($savkey)) {
-					dol_syslog("Error dolDecrypt failed: The key dolibarr_main_dolcrypt or dolibarr_main_instance_unique_id, found in conf.php file, is the the one used to encrypt this encrypted string", LOG_ERR);
+					dol_syslog("Error dolDecrypt failed: The key dolibarr_main_dolcrypt or dolibarr_main_instance_unique_id, found in conf.php file, seems the one used to encrypt the encrypted string", LOG_ERR);
 				} else {
 					dol_syslog("Error dolDecrypt failed: The string decoded with the key return a non valid value (not ascii)", LOG_ERR);
 				}

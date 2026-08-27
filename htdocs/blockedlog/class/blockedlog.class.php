@@ -1410,7 +1410,7 @@ class BlockedLog
 		$sql .= "0,";
 		$sql .= ((int) $this->fk_user).",";
 		$sql .= "'".$this->db->escape($this->user_fullname)."',";
-		$sql .= ((int) ($this->entity ? $this->entity : $conf->entity)).",";
+		$sql .= ((int) ($this->entity ? ((int) $this->entity) : ((int) $conf->entity))).",";
 		$sql .= "'".$this->db->escape($this->debuginfo)."'";
 		$sql .= ")";
 
@@ -2228,16 +2228,16 @@ class BlockedLog
 
 		if ($element == 'all') {
 			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."blockedlog
-			 WHERE entity = ".$conf->entity;
+			 WHERE entity = ".((int) $conf->entity);
 		} elseif ($element == 'not_certified') {
 			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."blockedlog
-			 WHERE entity = ".$conf->entity." AND certified = 0";
+			 WHERE entity = ".((int) $conf->entity)." AND certified = 0";
 		} elseif ($element == 'just_certified') {
 			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."blockedlog
-			 WHERE entity = ".$conf->entity." AND certified = 1";
+			 WHERE entity = ".((int) $conf->entity)." AND certified = 1";
 		} else {
 			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."blockedlog
-			 WHERE entity = ".$conf->entity." AND element = '".$this->db->escape($element)."'";
+			 WHERE entity = ".((int) $conf->entity)." AND element = '".$this->db->escape($element)."'";
 		}
 
 		if ($fk_object) {
@@ -2290,9 +2290,9 @@ class BlockedLog
 					}
 				}
 				if (!empty($search_module_source)) {
-					$tmp = natural_search("module_source", implode(',', $search_module_source), 0, 1);
-					$tmp = str_replace('%backoffice%', '', $tmp);
-					$sql .= $tmp;
+					$sqlTmp = natural_search("module_source", implode(',', $search_module_source), 0, 1);
+					$sqlTmp = str_replace('%backoffice%', '', $sqlTmp);
+					$sql .= $sqlTmp;
 				}
 				$sql .= " OR module_source = 'mix'";	// When a payment was recorded and payment was on an invoice with different origins (pos and not pos)
 				$sql .= ")";

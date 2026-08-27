@@ -76,8 +76,10 @@ if (!empty($extrafieldsobjectkey) && !empty($extrafields->attributes[$extrafield
 					$value = (isset($obj->$tmpkey) ? $obj->$tmpkey :
 						(isset($obj->array_options[$tmpkey]) ? $obj->array_options[$tmpkey] : ''));
 				}
-				// If field is a computed field, we make computation to get value
-				if ($extrafields->attributes[$extrafieldsobjectkey]['computed'][$key]) {
+				// If field is a computed field, we make computation to get value.
+				// But when MAIN_STORE_COMPUTED_EXTRAFIELDS is enabled, the value stored in database is used instead,
+				// because the raw row available in a list has no object context (like $objectoffield->array_options) that the formula may rely on.
+				if ($extrafields->attributes[$extrafieldsobjectkey]['computed'][$key] && !getDolGlobalString('MAIN_STORE_COMPUTED_EXTRAFIELDS')) {
 					$objectoffield = $object; // For compatibility with the computed formula. $objectoffield is exported by dol_eval().
 					$value = dol_eval((string) $extrafields->attributes[$extrafieldsobjectkey]['computed'][$key], 1, 1, '2');
 					if (is_numeric(price2num($value)) && $extrafields->attributes[$extrafieldsobjectkey]['totalizable'][$key]) {

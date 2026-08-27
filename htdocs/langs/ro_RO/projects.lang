@@ -106,7 +106,7 @@ ListShippingAssociatedProject=Lista livrărilor aferente proiectului
 ListFichinterAssociatedProject=Lista intervențiilor aferente proiectului
 ListExpenseReportsAssociatedProject=Lista rapoartelor de cheltuieli aferente proiectului
 ListDonationsAssociatedProject=Lista donațiilor aferente proiectului
-ListVariousPaymentsAssociatedProject=List of manual journal entries related to the project
+ListVariousPaymentsAssociatedProject=Lista intrărilor manuale în jurnal aferente proiectului
 ListSalariesAssociatedProject=Lista plăților salariale aferente proiectului
 ListActionsAssociatedProject=Lista evenimentelor aferente proiectului
 ListMOAssociatedProject=Lista comenzilor de producţie aferente proiectului
@@ -258,7 +258,7 @@ OtherFilteredTasks=Alte task-uri filtrate
 NoAssignedTasks=Nu au fost găsite task-uri atribuite (atribuiți proiectul/task-urile utilizatorului curent din caseta de selectare superioară pentru a introduce timp pe acesta)
 ThirdPartyRequiredToGenerateIntervention=Un terț trebuie să fie definit pe proiect pentru a putea crea o intervenție.
 ThirdPartyRequiredToGenerateInvoice=Un terț trebuie definit pe proiect pentru a putea să fie facturat.
-ChooseANotYetAssignedTask=Alege un task care nu îţi este atribuit
+ChooseANotYetAssignedTask=Tasks not yet assigned to you
 # Comments trans
 AllowCommentOnTask=Permiteți comentarii de la utilizatori pe task-uri
 AllowCommentOnProject=Permiteți comentarii de la utilizatori pe proiecte

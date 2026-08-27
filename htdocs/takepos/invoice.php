@@ -2149,6 +2149,9 @@ if ($placeid > 0) {
 		$htmlsupplements = array();
 		foreach ($tmplines as $line) {
 			if ($line->fk_parent_line != false) {
+				if (!isset($htmlsupplements[$line->fk_parent_line])) {
+					$htmlsupplements[$line->fk_parent_line] = '';
+				}
 				$htmlsupplements[$line->fk_parent_line] .= '<tr class="drag drop oddeven posinvoiceline';
 				if ($line->special_code == "4") {
 					$htmlsupplements[$line->fk_parent_line] .= ' order';

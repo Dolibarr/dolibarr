@@ -179,7 +179,7 @@ if ($result) {
 	$resligne = array();
 	while ($i < $num) {
 		$obj = $db->fetch_object($result);
-		// les variables
+		// the variables
 		$cptcli = getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER', $langs->trans("CodeNotDef"));
 		$compta_soc = (!empty($obj->code_compta_client) ? $obj->code_compta_client : $cptcli);
 		$compta_prod = $obj->accountancy_code_sell;

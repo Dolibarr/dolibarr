@@ -97,14 +97,14 @@ class mod_myobject_standard extends ModeleNumRefMyObject
 		$max = '';
 
 		$posindice = strlen($this->prefix) + 6;
-		$sql = "SELECT MAX(CAST(SUBSTRING(t.ref FROM ".$posindice.") AS SIGNED)) as max";
+		$sql = "SELECT MAX(CAST(SUBSTRING(t.ref FROM ".((int) $posindice).") AS SIGNED)) as max";
 		$sql .= " FROM ".$db->prefix()."mymodule_myobject as t";
 		$sql .= " WHERE t.ref LIKE '".$db->escape($this->prefix)."____-%'";
 		if ($object->ismultientitymanaged == 1) {
 			$sql .= " AND t.entity = ".((int) $conf->entity);
 		} elseif (preg_match('/^\w+@\w+$/', (string) $object->ismultientitymanaged)) {
 			$tmparray = explode('@', (string) $object->ismultientitymanaged);
-			$sql .= " LEFT JOIN ".$db->prefix().$tmparray[1]." as pt ON t.".$db->sanitize($tmparray[0])." = pt.rowid";
+			$sql .= " LEFT JOIN ".$db->prefix().$db->sanitize($tmparray[1])." as pt ON t.".$db->sanitize($tmparray[0])." = pt.rowid";
 			$sql .= " WHERE pt.entity IN (".getEntity($object->element).")";
 		}
 
@@ -137,14 +137,14 @@ class mod_myobject_standard extends ModeleNumRefMyObject
 
 		// first we get the max value
 		$posindice = strlen($this->prefix) + 6;
-		$sql = "SELECT MAX(CAST(SUBSTRING(t.ref FROM ".$posindice.") AS SIGNED)) as max";
+		$sql = "SELECT MAX(CAST(SUBSTRING(t.ref FROM ".((int) $posindice).") AS SIGNED)) as max";
 		$sql .= " FROM ".$db->prefix()."mymodule_myobject as t";
 		$sql .= " WHERE t.ref LIKE '".$db->escape($this->prefix)."____-%'";
 		if ($object->ismultientitymanaged == 1) {
 			$sql .= " AND t.entity = ".((int) $conf->entity);
 		} elseif (preg_match('/^\w+@\w+$/', (string) $object->ismultientitymanaged)) {
 			$tmparray = explode('@', (string) $object->ismultientitymanaged);
-			$sql .= " LEFT JOIN ".$db->prefix().$tmparray[1]." as pt ON t.".$db->sanitize($tmparray[0])." = pt.rowid";
+			$sql .= " LEFT JOIN ".$db->prefix().$db->sanitize($tmparray[1])." as pt ON t.".$db->sanitize($tmparray[0])." = pt.rowid";
 			$sql .= " WHERE pt.entity IN (".getEntity($object->element).")";
 		}
 

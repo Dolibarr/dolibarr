@@ -1834,6 +1834,7 @@ abstract class CommonInvoice extends CommonObject
 								dol_syslog("makeStripeSepaRequest Current Saved Stripe environment is ".$savstripearrayofkeysbyenv[$servicestatus]['publishable_key']);
 
 								$foundalternativestripeaccount = '';
+								$stripearrayofkeys = array();
 
 								// Force stripe to another value (by default this value is empty)
 								if (! empty($forcestripe)) {
@@ -2583,11 +2584,10 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 	public $remise_percent;
 
 	/**
-	 * Fixed discount
-	 * @var float
-	 * @deprecated
+	 * Id of source discount in table llx_societe_remise_except
+	 * @var ?int
 	 */
-	public $remise;
+	public $fk_remise_except;
 
 	/**
 	 * Total amount before taxes
@@ -2697,6 +2697,7 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 	 * @var float 		Situation advance percentage (default 100 for standard invoices)
 	 */
 	public $situation_percent = 100;
+
 
 	/**
 	 * Check if a line is a deposit line

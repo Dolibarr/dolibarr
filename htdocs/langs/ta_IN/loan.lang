@@ -23,7 +23,7 @@ AddLoan=கடனை உருவாக்கவும்
 FinancialCommitment=நிதி அர்ப்பணிப்பு
 InterestAmount=ஆர்வம்
 CapitalRemain=மூலதனம் உள்ளது
-TermPaidAllreadyPaid = இந்த காலம் ஏற்கனவே செலுத்தப்பட்டது
+TermPaidAllreadyPaid = This term is already paid
 CantUseScheduleWithLoanStartedToPaid = Can't generate a timeline for a loan with a payment started
 CantModifyInterestIfScheduleIsUsed = நீங்கள் அட்டவணையைப் பயன்படுத்தினால் ஆர்வத்தை மாற்ற முடியாது
 # Admin

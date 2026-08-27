@@ -1,7 +1,7 @@
 <?php
 /*
  * Copyright (C) 2023 Marc Chenebaux <marc.chenebaux@maj44.com>
- * Copyright (C) 2025		MDW			<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026	MDW			<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -68,13 +68,14 @@ class Salaries extends DolibarrApi
 	 * @param string    $sortorder  Sort order
 	 * @param int       $limit      Limit for list
 	 * @param int       $page       Page number
+	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.fk_user:=:6) and (t.datep:>:'20250101')"
 	 * @return array                List of salary objects
 	 * @phan-return Salary[]
 	 * @phpstan-return Salary[]
 	 *
 	 * @throws RestException
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0)
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '')
 	{
 		$list = array();
 
@@ -88,10 +89,19 @@ class Salaries extends DolibarrApi
 		$sql .= ' WHERE t.entity IN ('.getEntity('user').')';
 		if (!DolibarrApiAccess::$user->hasRight('salaries', 'readall')) {
 			if (!DolibarrApiAccess::$user->hasRight('salaries', 'readchild')) {
-				$sql .= ' AND t.fk_user = '.((int) DolibarrApiAccess::$user->id).')';
+				$sql .= ' AND t.fk_user = '.((int) DolibarrApiAccess::$user->id);
 			} else {
 				$childids = DolibarrApiAccess::$user->getAllChildIds(1);
 				$sql .= ' AND t.fk_user IN ('.$this->db->sanitize(implode(',', $childids)).')';
+			}
+		}
+
+		// Add sql filters
+		if ($sqlfilters) {
+			$errormessage = '';
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			if ($errormessage) {
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
 		}
 
@@ -141,23 +151,23 @@ class Salaries extends DolibarrApi
 			throw new RestException(403);
 		}
 
-		if (!DolibarrApiAccess::$user->hasRight('salaries', 'readall')) {
-			if (!DolibarrApiAccess::$user->hasRight('salaries', 'readchild')) {
-				if ($id != DolibarrApiAccess::$user->id) {
-					throw new RestException(404, 'salary not found');
-				}
-			} else {
-				$childids = DolibarrApiAccess::$user->getAllChildIds(1);
-				if (!in_array($id, $childids)) {
-					throw new RestException(404, 'salary not found');
-				}
-			}
-		}
-
 		$salary = new Salary($this->db);
 		$result = $salary->fetch($id);
 		if (!$result) {
 			throw new RestException(404, 'salary not found');
+		}
+
+		if (!DolibarrApiAccess::$user->hasRight('salaries', 'readall')) {
+			if (!DolibarrApiAccess::$user->hasRight('salaries', 'readchild')) {
+				if ($salary->fk_user != DolibarrApiAccess::$user->id) {
+					throw new RestException(404, 'salary not found');
+				}
+			} else {
+				$childids = DolibarrApiAccess::$user->getAllChildIds(1);
+				if (!in_array($salary->fk_user, $childids)) {
+					throw new RestException(404, 'salary not found');
+				}
+			}
 		}
 
 		return $this->_cleanObjectDatas($salary);

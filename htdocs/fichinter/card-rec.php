@@ -748,7 +748,7 @@ if ($action == 'create') {
 			$num = count($object->lines);
 			$i = 0;
 			while ($i < $num) {
-				$type =0;
+				$type = 0;
 				// Show product and description
 				if (isset($object->lines[$i]->product_type)) {
 					$type = $object->lines[$i]->product_type;
@@ -808,7 +808,7 @@ if ($action == 'create') {
 			$sql .= " , ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 		$sql .= " WHERE f.fk_soc = s.rowid";
-		$sql .= " AND f.entity = ".$conf->entity;
+		$sql .= " AND f.entity = ".((int) $conf->entity);
 		if (!empty($socid)) {
 			$sql .= " AND s.rowid = ".((int) $socid);
 		}

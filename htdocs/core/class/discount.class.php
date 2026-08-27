@@ -384,10 +384,10 @@ class DiscountAbsolute extends CommonObject
 		$sql .= " multicurrency_amount_ht, multicurrency_amount_tva, multicurrency_amount_ttc,";
 		$sql .= " fk_facture_source, fk_invoice_supplier_source, multicurrency_code, multicurrency_tx";
 		$sql .= ")";
-		$sql .= " VALUES (".$conf->entity.", '".$this->db->idate($this->datec != '' ? $this->datec : dol_now())."', ".((int) $this->socid).", ".(empty($this->discount_type) ? 0 : intval($this->discount_type)).", ".((int) $userid).", '".$this->db->escape($this->description)."',";
+		$sql .= " VALUES (".((int) $conf->entity).", '".$this->db->idate($this->datec != '' ? $this->datec : dol_now())."', ".((int) $this->socid).", ".(empty($this->discount_type) ? 0 : intval($this->discount_type)).", ".((int) $userid).", '".$this->db->escape($this->description)."',";
 		$sql .= " ".price2num($this->amount_ht).", ".price2num($this->amount_tva).", ";
 		$sql .= " ".($this->total_localtax1 ? price2num($this->total_localtax1) : 0).", ".($this->total_localtax2 ? price2num($this->total_localtax2) : 0).", ".price2num($this->amount_ttc).", ".price2num($this->tva_tx).",";
-		$sql .= " ".price2num($this->localtax1_tx).", ".price2num($this->localtax1_type).", ";
+		$sql .= " ".($this->localtax1_tx ? price2num($this->localtax1_tx) : 0).", ".($this->localtax1_type ? price2num($this->localtax1_type) : 0).", ";
 		$sql .= " ".($this->localtax2_tx ? price2num($this->localtax2_tx) : 0).", ".($this->localtax2_type ? price2num($this->localtax2_type) : 0).", '".$this->db->escape($this->vat_src_code)."',";
 		$sql .= " ".price2num($this->multicurrency_amount_ht).", ".price2num($this->multicurrency_amount_tva).", ";
 		$sql .= " ".price2num($this->multicurrency_amount_ttc).", ";
@@ -424,7 +424,7 @@ class DiscountAbsolute extends CommonObject
 			$sql .= " WHERE (fk_facture_line IS NOT NULL"; // Not used as absolute simple discount
 			$sql .= " OR fk_facture IS NOT NULL)"; // Not used as credit note and not used as deposit
 			$sql .= " AND fk_facture_source = ".((int) $this->fk_facture_source);
-			//$sql.=" AND rowid != ".$this->id;
+			//$sql.=" AND rowid != ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::delete Check if we can remove discount", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -447,7 +447,7 @@ class DiscountAbsolute extends CommonObject
 			$sql .= " WHERE (fk_invoice_supplier_line IS NOT NULL"; // Not used as absolute simple discount
 			$sql .= " OR fk_invoice_supplier IS NOT NULL)"; // Not used as credit note and not used as deposit
 			$sql .= " AND fk_invoice_supplier_source = ".((int) $this->fk_invoice_supplier_source);
-			//$sql.=" AND rowid != ".$this->id;
+			//$sql.=" AND rowid != ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::delete Check if we can remove discount", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -704,7 +704,7 @@ class DiscountAbsolute extends CommonObject
 		if (empty($reshook)) {
 			$sql = "SELECT SUM(rc.amount_ttc) as amount, SUM(rc.multicurrency_amount_ttc) as multicurrency_amount";
 			$sql .= " FROM ".$this->db->prefix()."societe_remise_except as rc";
-			$sql .= " WHERE rc.entity = ".$conf->entity;
+			$sql .= " WHERE rc.entity = ".((int) $conf->entity);
 			$sql .= " AND rc.discount_type=".((int) $discount_type);
 			if (!empty($discount_type)) {
 				$sql .= " AND (rc.fk_invoice_supplier IS NULL AND rc.fk_invoice_supplier_line IS NULL)"; // Available from supplier
@@ -718,7 +718,7 @@ class DiscountAbsolute extends CommonObject
 				$sql .= " AND rc.fk_user = ".((int) $user->id);
 			}
 			if ($filter) {
-				$sql .= " AND (".$filter.")";
+				$sql .= " AND (".$filter.")";  // @phan-suppress-current-line SqlInjection
 			}
 			if ($maxvalue) {
 				$sql .= ' AND rc.amount_ttc <= '.((float) price2num($maxvalue));
@@ -965,9 +965,14 @@ class DiscountAbsolute extends CommonObject
 			$ttc = (float) $this->total_ttc;
 
 			// Calculate lt1 and/or lt2 = taxes added after VAT
-			$lt1 = 0; $lt2 = 0;
-			$tx_before_vat = 0; $tx_before_vat_without1 = 0; $tx_before_vat_without2 = 0;
-			$tx_after_vat = 0; $tx_after_vat_without1 = 0; $tx_after_vat_without2 = 0;
+			$lt1 = 0;
+			$lt2 = 0;
+			$tx_before_vat = 0;
+			$tx_before_vat_without1 = 0;
+			$tx_before_vat_without2 = 0;
+			$tx_after_vat = 0;
+			$tx_after_vat_without1 = 0;
+			$tx_after_vat_without2 = 0;
 			if ($localtax1_type2 && $localtax1_tx_pct > 0) {
 				$tx_after_vat += $localtax1_tx_pct;
 				$tx_after_vat_without2 += $localtax1_tx_pct;
@@ -1005,9 +1010,9 @@ class DiscountAbsolute extends CommonObject
 			}
 
 			// lt1 and lt2 are now local taxes (whatever they are calculated before of after vat)
-			//var_dump("lt1 or lt2 wheteer is calculation mode: lt1=$lt1 lt2=$lt2");
+			//var_dump("lt1 or lt2 whatever is calculation mode: lt1=$lt1 lt2=$lt2");
 
-			$tva = ($ttc - $lt2 - $lt1) - ($ttc - $lt2 - $lt1) / ( 1 + $tva_tx_pct);
+			$tva = ($ttc - $lt2 - $lt1) - ($ttc - $lt2 - $lt1) / (1 + $tva_tx_pct);
 			$this->total_tva = (float) price2num($tva, 'MT');
 			$this->total_localtax1 = $lt1;
 			$this->total_localtax2 = $lt2;

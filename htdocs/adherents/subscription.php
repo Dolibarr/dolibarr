@@ -798,7 +798,7 @@ if ($action != 'createsubscription' && $action != 'create_thirdparty') {
 			}
 
 			print '<tr class="oddeven">';
-			print '<td>'.$subscriptionstatic->getNomUrl(1).'</td>';
+			print '<td class="tdoverflowmax150">'.$subscriptionstatic->getNomUrl(1).'</td>';
 			print '<td class="center nowraponall">'.dol_print_date($db->jdate($objp->datec), 'dayhour')."</td>\n";
 			print '<td class="center tdoverflowmax125">';
 			if ($typeid > 0) {
@@ -1094,7 +1094,7 @@ if (($action == 'createsubscription' || $action == 'create_thirdparty') && $user
 						print img_warning($langs->trans("NoThirdPartyAssociatedToMember"));
 					}
 					print $langs->trans("NoThirdPartyAssociatedToMember");
-					print ' - <a href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&action=create_thirdparty">';
+					print ' - <a href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&action=create_thirdparty&token='.newToken().'">';
 					print $langs->trans("CreateDolibarrThirdParty");
 					print '</a>)';
 				}
@@ -1124,7 +1124,7 @@ if (($action == 'createsubscription' || $action == 'create_thirdparty') && $user
 						print img_warning($langs->trans("NoThirdPartyAssociatedToMember"));
 					}
 					print $langs->trans("NoThirdPartyAssociatedToMember");
-					print ' - <a href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&action=create_thirdparty">';
+					print ' - <a href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&action=create_thirdparty&token='.newToken().'">';
 					print $langs->trans("CreateDolibarrThirdParty");
 					print '</a>)';
 				}

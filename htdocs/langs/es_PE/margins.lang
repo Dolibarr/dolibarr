@@ -1,5 +1,6 @@
 # Dolibarr language file - Source file is en_US - margins
 MarginRate=Ratio de margen
+ModifyMarginRates=Modificar ratios de margen
 DisplayMarginRates=Mostrar ratios de margen
 InputPrice=Precio de entrada
 UserMargins=Margenes de usuario

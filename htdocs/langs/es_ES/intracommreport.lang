@@ -1,5 +1,5 @@
 IntraCommReport=Informe intracomunitario
-IntraCommReports=Intracomm reports
+IntraCommReports=Informes intracomunitarios
 
 Module68000Name = Informe intracomunitario
 Module68000Desc = Gestión de informe intracomunitario (soporte para formato francés DEB / DES)
@@ -35,4 +35,4 @@ IntracommReportTypeDeclaration=Tipo de declaración
 IntracommReportDownload=descargar archivo XML
 # Invoice
 IntracommReportTransportMode=Modo de transporte
-DeleteIntraCommReport=Delete IntraComm report
+DeleteIntraCommReport=Eliminar informe de IntraComm

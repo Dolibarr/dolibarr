@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2011  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -91,7 +91,7 @@ print_barre_liste($title, 0, $_SERVER["PHP_SELF"], $param, '', '', $massactionbu
 $sql = "SELECT sum(pb.amount) as amount, count(pb.amount) as nb";
 //$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
 $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as pb";
-$sql .= " WHERE pb.entity = ".$conf->entity;
+$sql .= " WHERE pb.entity = ".((int) $conf->entity);
 if ($type == 'bank-transfer') {
 	$sql .= " AND pb.type = 'bank-transfer'";
 } else {
@@ -127,7 +127,7 @@ $sql = "SELECT COUNT(pb.rowid) as nb, SUM(pb.amount) as amount, pb.statut as sta
 //$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
 $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as pb";
 //$sql .= " WHERE pl.fk_prelevement_bons = pb.rowid";
-$sql .= " WHERE pb.entity = ".$conf->entity;
+$sql .= " WHERE pb.entity = ".((int) $conf->entity);
 if ($type == 'bank-transfer') {
 	$sql .= " AND pb.type = 'bank-transfer'";
 } else {
@@ -211,7 +211,7 @@ $sql = "SELECT sum(pl.amount), count(pl.amount)";
 $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
 $sql .= ", ".MAIN_DB_PREFIX."prelevement_bons as pb";
 $sql .= " WHERE pl.fk_prelevement_bons = pb.rowid";
-$sql .= " AND pb.entity = ".$conf->entity;
+$sql .= " AND pb.entity = ".((int) $conf->entity);
 $sql .= " AND pl.statut = 3";
 if ($type == 'bank-transfer') {
 	$sql .= " AND pb.type = 'bank-transfer'";
@@ -235,7 +235,7 @@ $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
 $sql .= ", ".MAIN_DB_PREFIX."prelevement_bons as pb";
 $sql .= ", ".MAIN_DB_PREFIX."prelevement_rejet as pr";
 $sql .= " WHERE pl.fk_prelevement_bons = pb.rowid";
-$sql .= " AND pb.entity = ".$conf->entity;
+$sql .= " AND pb.entity = ".((int) $conf->entity);
 $sql .= " AND pl.statut = 3";
 $sql .= " AND pr.fk_prelevement_lignes = pl.rowid";
 if ($type == 'bank-transfer') {

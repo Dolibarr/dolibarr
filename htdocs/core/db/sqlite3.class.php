@@ -62,7 +62,7 @@ class DoliDBSqlite3 extends DoliDB
 	 *
 	 *  @param      string	$type		Type of database (mysql, pgsql...). Not used.
 	 *  @param	    string	$host		Address of database server
-	 *  @param	    string	$user		Nom de l'utilisateur autorise
+	 *  @param	    string	$user		Name of the authorized user
 	 *  @param	    string	$pass		Password
 	 *  @param	    string	$name		Nom de la database
 	 *  @param	    int		$port		Port of database server
@@ -474,7 +474,7 @@ class DoliDBSqlite3 extends DoliDB
 			}
 		}
 
-		// Ordre SQL ne necessitant pas de connection a une base (example: CREATE DATABASE)
+		// SQL statement that does not require a connection to a database (example: CREATE DATABASE)
 		try {
 			//$ret = $this->db->exec($query);
 			$ret = $this->db->query($query); // $ret is a Sqlite3Result
@@ -486,7 +486,7 @@ class DoliDBSqlite3 extends DoliDB
 		}
 
 		if (!preg_match("/^COMMIT/i", $query) && !preg_match("/^ROLLBACK/i", $query)) {
-			// Si requete utilisateur, on la sauvegarde ainsi que son resultset
+			// If it is a user query, save it along with its resultset
 			if (!is_object($ret) || $this->error) {
 				$this->lastqueryerror = $query;
 				$this->lasterror = $this->error();
@@ -516,13 +516,13 @@ class DoliDBSqlite3 extends DoliDB
 	/**
 	 * 	Returns the current line (as an object) for the resultset cursor
 	 *
-	 *	@param	SQLite3Result	$resultset  Curseur de la requete voulue
+	 *	@param	SQLite3Result	$resultset  Cursor of the desired query
 	 *	@return	false|object				Object result line or false if KO or end of cursor
 	 */
 	public function fetch_object($resultset)
 	{
 		// phpcs:enable
-		// Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connection
+		// If the resultset is not provided, use the last one used on this connection
 		if (!is_object($resultset)) {
 			$resultset = $this->_results;
 		}
@@ -636,7 +636,7 @@ class DoliDBSqlite3 extends DoliDB
 		if (!is_object($resultset)) {
 			$resultset = $this->_results;
 		}
-		// Si resultset en est un, on libere la memoire
+		// If resultset is one, free the memory
 		if ($resultset && is_object($resultset)) {
 			$resultset->finalize();
 		}
@@ -672,7 +672,7 @@ class DoliDBSqlite3 extends DoliDB
 	public function errno()
 	{
 		if (!$this->connected) {
-			// Si il y a eu echec de connection, $this->db n'est pas valide.
+			// If the connection failed, $this->db is not valid.
 			return 'DB_ERROR_FAILED_TO_CONNECT';
 		} else {
 			// Constants to convert error code to a generic Dolibarr error code
@@ -726,7 +726,7 @@ class DoliDBSqlite3 extends DoliDB
 				}
 			}
 			if ($errno > 1) {
-				// TODO Voir la liste des messages d'erreur
+				// TODO See the list of error messages
 			}
 
 			return ($errno ? 'DB_ERROR_'.$errno : '0');
@@ -741,7 +741,7 @@ class DoliDBSqlite3 extends DoliDB
 	public function error()
 	{
 		if (!$this->connected) {
-			// Si il y a eu echec de connection, $this->db n'est pas valide pour sqlite_error.
+			// If the connection failed, $this->db is not valid for sqlite_error.
 			return 'Not connected. Check setup parameters in conf/conf.php file and your sqlite version';
 		} else {
 			return $this->error;
@@ -766,9 +766,9 @@ class DoliDBSqlite3 extends DoliDB
 	 * Encrypt sensitive data in database
 	 * Warning: This function includes the escape and add the SQL simple quotes on strings.
 	 *
-	 * @param	string	$fieldorvalue	Field name or value to encrypt
-	 * @param	int		$withQuotes		Return string including the SQL simple quotes. This param must always be 1 (Value 0 is bugged and deprecated).
-	 * @return	string					XXX(field) or XXX('value') or field or 'value'
+	 * @param	string		$fieldorvalue	Field name or value to encrypt
+	 * @param	int<1,1>	$withQuotes		Return string including the SQL simple quotes. This param must always be 1 (Value 0 is bugged and deprecated).
+	 * @return	string						XXX(field) or XXX('value') or field or 'value'
 	 */
 	public function encrypt($fieldorvalue, $withQuotes = 1)
 	{
@@ -859,8 +859,8 @@ class DoliDBSqlite3 extends DoliDB
 		}
 
 		// ALTER DATABASE dolibarr_db DEFAULT CHARACTER SET latin DEFAULT COLLATE latin1_swedish_ci
-		$sql = "CREATE DATABASE ".$this->escape($database);
-		$sql .= " DEFAULT CHARACTER SET ".$this->escape($charset)." DEFAULT COLLATE ".$this->escape($collation);
+		$sql = "CREATE DATABASE ".$this->sanitize($database);
+		$sql .= " DEFAULT CHARACTER SET ".$this->sanitize($charset)." DEFAULT COLLATE ".$this->sanitize($collation);
 
 		dol_syslog($sql, LOG_DEBUG);
 		$ret = $this->query($sql);
@@ -887,7 +887,7 @@ class DoliDBSqlite3 extends DoliDB
 
 			$sanitizedlike = "LIKE '".$this->escape($tmptable)."'";
 		}
-		$sanitizedtmpdatabase = preg_replace('/[^a-z0-9\.\-\_]/i', '', $database);
+		$sanitizedtmpdatabase = preg_replace('/[^a-z0-9\.\-\_]/i', '', $database);  // @phan-suppress-current-line SqlInjection
 
 		$sql = "SHOW TABLES FROM ".$sanitizedtmpdatabase." ".$sanitizedlike.";";
 		//print $sql;
@@ -919,7 +919,7 @@ class DoliDBSqlite3 extends DoliDB
 
 			$sanitizedlike = "LIKE '".$this->escape($tmptable)."'";
 		}
-		$sanitizedtmpdatabase = preg_replace('/[^a-z0-9\.\-\_]/i', '', $database);
+		$sanitizedtmpdatabase = preg_replace('/[^a-z0-9\.\-\_]/i', '', $database);  // @phan-suppress-current-line SqlInjection
 
 		$sql = "SHOW FULL TABLES FROM ".$sanitizedtmpdatabase." ".$sanitizedlike.";";
 		//print $sql;
@@ -1110,7 +1110,7 @@ class DoliDBSqlite3 extends DoliDB
 	public function DDLAddField($table, $field_name, $field_desc, $field_position = "")
 	{
 		// phpcs:enable
-		// cles recherchees dans le tableau des descriptions (field_desc) : type,value,attribute,null,default,extra
+		// keys looked up in the descriptions array (field_desc): type,value,attribute,null,default,extra
 		// ex. : $field_desc = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
 		$sql = "ALTER TABLE ".$this->sanitize($table)." ADD ".$this->sanitize($field_name)." ";
 
@@ -1223,7 +1223,7 @@ class DoliDBSqlite3 extends DoliDB
 		// phpcs:enable
 		$sql = "INSERT INTO user ";
 		$sql .= "(Host,User,password,Select_priv,Insert_priv,Update_priv,Delete_priv,Create_priv,Drop_priv,Index_Priv,Alter_priv,Lock_tables_priv)";
-		$sql .= " VALUES ('".$this->escape($dolibarr_main_db_host)."','".$this->escape($dolibarr_main_db_user)."',password('".addslashes($dolibarr_main_db_pass)."')";
+		$sql .= " VALUES ('".$this->escape($dolibarr_main_db_host)."','".$this->escape($dolibarr_main_db_user)."',password('".$this->escape($dolibarr_main_db_pass)."')";
 		$sql .= ",'Y','Y','Y','Y','Y','Y','Y','Y','Y')";
 
 		dol_syslog(get_class($this)."::DDLCreateUser", LOG_DEBUG); // No sql to avoid password in log
@@ -1234,7 +1234,7 @@ class DoliDBSqlite3 extends DoliDB
 
 		$sql = "INSERT INTO db ";
 		$sql .= "(Host,Db,User,Select_priv,Insert_priv,Update_priv,Delete_priv,Create_priv,Drop_priv,Index_Priv,Alter_priv,Lock_tables_priv)";
-		$sql .= " VALUES ('".$this->escape($dolibarr_main_db_host)."','".$this->escape($dolibarr_main_db_name)."','".addslashes($dolibarr_main_db_user)."'";
+		$sql .= " VALUES ('".$this->escape($dolibarr_main_db_host)."','".$this->escape($dolibarr_main_db_name)."','".$this->escape($dolibarr_main_db_user)."'";
 		$sql .= ",'Y','Y','Y','Y','Y','Y','Y','Y','Y')";
 
 		dol_syslog(get_class($this)."::DDLCreateUser", LOG_DEBUG);
@@ -1371,7 +1371,7 @@ class DoliDBSqlite3 extends DoliDB
 
 		// TODO prendre en compte le filtre
 		foreach ($pragmas as $var) {
-			$sql = "PRAGMA $var";
+			$sql = "PRAGMA $var";  // @phan-suppress-current-line SqlInjection
 			$resql = $this->query($sql);
 			if ($resql) {
 				$obj = $this->fetch_row($resql);

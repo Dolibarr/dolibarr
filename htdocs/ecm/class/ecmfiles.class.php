@@ -4,7 +4,7 @@
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018       Francis Appels      <francis.appels@yahoo.com>
- * Copyright (C) 2019-2025  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2019-2026  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -61,6 +61,11 @@ class EcmFiles extends CommonObject
 	 * @var ?string hash for file sharing, empty by default (example: getRandomPassword(true))
 	 */
 	public $share;
+
+	/**
+	 * @var EcmFilesLine[]
+	 */
+	public $lines = array();
 
 	/**
 	 * @var ?string filename, Note: Into ecm database record, the entry never ends with .noexe
@@ -464,7 +469,7 @@ class EcmFiles extends CommonObject
 			if (isset($entity)) {
 				$sql .= " AND t.entity = " . (int) $entity;
 			} else {
-				$sql .= " AND t.entity = " . $conf->entity; // unique key include the entity so each company has its own index
+				$sql .= " AND t.entity = " . ((int) $conf->entity); // unique key include the entity so each company has its own index
 			}
 			$filterfound++;
 		}
@@ -473,7 +478,7 @@ class EcmFiles extends CommonObject
 			if (isset($entity)) {
 				$sql .= " AND t.entity = " . (int) $entity;
 			} else {
-				$sql .= " AND t.entity = " . $conf->entity; // unique key include the entity so each company has its own index
+				$sql .= " AND t.entity = " . ((int) $conf->entity); // unique key include the entity so each company has its own index
 			}
 			$filterfound++;
 		}
@@ -482,7 +487,7 @@ class EcmFiles extends CommonObject
 			if (isset($entity)) {
 				$sql .= " AND t.entity = " . (int) $entity;
 			} else {
-				$sql .= " AND t.entity = " . $conf->entity; // unique key include the entity so each company has its own index
+				$sql .= " AND t.entity = " . ((int) $conf->entity); // unique key include the entity so each company has its own index
 			}
 			$filterfound++;
 		}
@@ -492,7 +497,7 @@ class EcmFiles extends CommonObject
 			} else {
 				$sql .= " AND t.share IS NOT NULL AND t.share <> ''";
 			}
-			//$sql .= " AND t.entity = ".$conf->entity;							// hashforshare already unique
+			//$sql .= " AND t.entity = ".((int) $conf->entity);							// hashforshare already unique
 			$filterfound++;
 		}
 		if ($src_object_type && $src_object_id) {
@@ -500,7 +505,7 @@ class EcmFiles extends CommonObject
 			if (isset($entity)) {
 				$sql .= " AND t.entity = " . (int) $entity;
 			} else {
-				$sql .= " AND t.entity = " . $conf->entity; // unique key include the entity so each company has its own index
+				$sql .= " AND t.entity = " . ((int) $conf->entity); // unique key include the entity so each company has its own index
 			}
 			$filterfound++;
 		}
@@ -624,7 +629,7 @@ class EcmFiles extends CommonObject
 				}
 			}
 			if (count($sqlwhere) > 0) {
-				$sql .= ' AND '.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere);
+				$sql .= ' AND '.implode(' '.$this->db->sanitize($filtermode).' ', $sqlwhere);
 			}
 
 			$filter = '';
@@ -684,7 +689,9 @@ class EcmFiles extends CommonObject
 				$line->src_object_type = $obj->src_object_type;
 				$line->src_object_id = $obj->src_object_id;
 				$line->agenda_id = $obj->agenda_id;
+
 				$line->fetch_optionals();
+
 				$this->lines[] = $line;
 			}
 			$this->db->free($resql);
@@ -769,7 +776,7 @@ class EcmFiles extends CommonObject
 		$sql .= " ref = '".$this->db->escape(dol_hash($this->filepath."/".$this->filename, '3'))."',";
 		$sql .= ' label = '.(isset($this->label) ? "'".$this->db->escape($this->label)."'" : "null").',';
 		$sql .= ' share = '.(!empty($this->share) ? "'".$this->db->escape($this->share)."'" : "null").',';
-		$sql .= ' entity = '.(isset($this->entity) ? $this->entity : $conf->entity).',';
+		$sql .= ' entity = '.(isset($this->entity) ? ((int) $this->entity) : ((int) $conf->entity)).',';
 		$sql .= ' filename = '.(isset($this->filename) ? "'".$this->db->escape($this->filename)."'" : "null").',';
 		$sql .= ' filepath = '.(isset($this->filepath) ? "'".$this->db->escape($this->filepath)."'" : "null").',';
 		$sql .= ' fullpath_orig = '.(isset($this->fullpath_orig) ? "'".$this->db->escape($this->fullpath_orig)."'" : "null").',';
@@ -1048,9 +1055,9 @@ class EcmFiles extends CommonObject
 					$tmppath = preg_replace('/^[^\/]+\//', '', $this->filepath);
 				}
 			}
-			$url = DOL_URL_ROOT.'/document.php?modulepart='.urlencode($option).'&file='.urlencode($tmppath.'/'.$this->filename).'&entity='.((int) $this->entity);
+			$url = dolBuildUrl(DOL_URL_ROOT.'/document.php', array('modulepart' => $option, 'file' => $tmppath.'/'.$this->filename, 'entity' => (int) $this->entity));
 		} else {
-			$url = DOL_URL_ROOT.'/ecm/file_card.php?id='.$this->id;
+			$url = dolBuildUrl(DOL_URL_ROOT.'/ecm/file_card.php', array('id' => $this->id));
 		}
 
 		$linkclose = '';
@@ -1253,4 +1260,12 @@ class EcmFilesLine extends CommonObjectLine
 	 * @var int
 	 */
 	public $src_object_id;
+	/**
+	 * @var int
+	 */
+	public $agenda_id;
+	/**
+	 * @var ?string Hash for file sharing
+	 */
+	public $share;
 }
