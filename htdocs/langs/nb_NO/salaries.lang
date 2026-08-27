@@ -1,29 +1,55 @@
-# Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Konto (fra Kontoplanen) brukes som standard for "brukere" på lønn
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Den dedikerte kontoen som er definert på brukerkortet vil kun brukes til underreskontro. Denne vil bli brukt for hovedbok, men også som standardverdi for underreskontro dersom ingen dedikert brukerkonto er definert på brukeren.
-SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Regnskapskonto som standard for lønnsutbetalinger
-CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=La som standard alternativet "Opprett automatisk en total betaling" være tomt når du oppretter lønn
 Salary=Lønn
 Salaries=Lønn
 NewSalary=Ny lønn
 AddSalary=Legg til lønn
 NewSalaryPayment=Nytt lønnskort
 AddSalaryPayment=Legg til lønnsutbetaling
-SalaryID=Lønns-ID
-SalaryAmount=Lønnsbeløp
 SalaryPayment=Lønnsutbetaling
 SalariesPayments=Lønnsutbetalinger
 SalariesPaymentsOf=Lønnsutbetalinger på %s
 ShowSalaryPayment=Vis lønnsutbetaling
-THM=Gjennomsnittlig timepris
-TJM=Gjennomsnittlig dagspris
+SalaryID=Lønns-ID
+SalaryAmount=Lønnsbeløp
+SalaryDate=Salary date
+SalaryPaid=Lønn utbetalt
+SalaryNotPaid=Salary not paid
+
+SalarySlip=Salary slip
+StandardSalaryDocModel=Standard salary slip document
+
+BasicSalary=Basic salary
+Bonus=Bonus
+Allowance=Allowance
+Overtime=Overtime
+Deduction=Deduction
+Deductions=Deductions
+Earnings=Earnings
+TotalEarnings=Total earnings
+TotalDeductions=Total deductions
+NetPaid=Netto betalt
+
+# Accounting
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Konto (fra Kontoplanen) brukes som standard for "brukere" på lønn
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Den dedikerte kontoen som er definert på brukerkortet vil kun brukes til underreskontro. Denne vil bli brukt for hovedbok, men også som standardverdi for underreskontro dersom ingen dedikert brukerkonto er definert på brukeren.
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Regnskapskonto som standard for lønnsutbetalinger
+CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=La som standard alternativet "Opprett automatisk en total betaling" være tomt når du oppretter lønn
+
+# Stats / Info
 CurrentSalary=Nåværende lønn
-THMDescription=Denne verdien kan brukes til å kalkulere tidsforbruket på et prosjekt hvis prosjekt-modulen er i bruk
-TJMDescription=Dene verdien er foreløpig brukt til informasjon, og er ikke brukt i noen kalkulasjoner
 LastSalaries=Siste %s lønninger
 AllSalaries=Alle lønninger
 SalariesStatistics=Lønnsstatistikk
 SalariesAndPayments=Lønn og utbetalinger
+UserPaySlip=Lønnsslipp
+PayPeriod=Pay period
+
+# THM / TJM
+THM=Gjennomsnittlig timepris
+THMDescription=Denne verdien kan brukes til å kalkulere tidsforbruket på et prosjekt hvis prosjekt-modulen er i bruk
+TJM=Gjennomsnittlig dagspris
+TJMDescription=Dene verdien er foreløpig brukt til informasjon, og er ikke brukt i noen kalkulasjoner
+
+# Other actions
 ConfirmDeleteSalaryPayment=Vil du slette denne lønnsutbetalingen?
 FillFieldFirst=Fyll ansatt-feltet først
 UpdateAmountWithLastSalary=Angi beløp for siste lønn
@@ -31,9 +57,11 @@ MakeTransferRequest=Lag overføringsforespørsel
 VirementOrder=Kredittoverføringsforespørsel
 WithdrawalReceipt=Kredittoverføring ordre
 OrderWaiting=Ventende ordre
-FillEndOfMonth=End of month
+FillEndOfMonth=Slutten av måneden
+
+# Shortcuts
 PreviousMonthShort=Forrige måned
 CurrentMonthShort=Denne måneden
-PreviousWeekShort=Previous week
-CurrentWeekShort=Current week
-UserPaySlip=Lønnsslipp
+NextMonthShort=Neste måned
+PreviousWeekShort=Forrige uke
+CurrentWeekShort=Gjeldende uke

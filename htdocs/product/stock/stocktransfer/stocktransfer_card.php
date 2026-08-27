@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2017 		Laurent Destailleur  	<eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025-2026       Pierre Ardoin           <developpeur@lesmetiersdubatiment.fr>
  *
@@ -148,7 +148,7 @@ if (empty($reshook)) {
 	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
 
-	// On remet cette lecture de permission ici car nécessaire d'avoir le nouveau statut de l'objet après toute action exécutée dessus (après incrémentation par example, le bouton supprimer doit disparaître)
+	// We put this permission read here because it is necessary to have the new status of the object after any executed action on it (for example, the delete button must disappear after incrementation)
 	$permissiontodelete = $user->rights->stocktransfer->stocktransfer->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
 
 	// Actions when linking object each other
@@ -313,7 +313,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	// Annulation décrémentation
+	// Cancel Decrementation
 	if ($action == 'confirm_destockcancel' && $confirm == 'yes' && $object->status == $object::STATUS_TRANSFERED && $permissiontoadd) {
 		$lines = $object->getLinesArray();
 		if (!empty($lines)) {
@@ -340,7 +340,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	// Incrémentation
+	// Incrementing
 	if ($action == 'confirm_addstock' && $confirm == 'yes' && $object->status == $object::STATUS_TRANSFERED && $permissiontoadd) {
 		$lines = $object->getLinesArray();
 		if (!empty($lines)) {
@@ -372,7 +372,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	// Annulation incrémentation
+	// Cancel Incrementing
 	if ($action == 'confirm_addstockcancel' && $confirm == 'yes' && $object->status == $object::STATUS_CLOSED && $permissiontoadd) {
 		$lines = $object->getLinesArray();
 		if (!empty($lines)) {
@@ -427,7 +427,7 @@ $help_url = '';
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-product page-stock-stocktransfer_stocktransfer_card');
 
 
-// Example : Adding jquery code
+// Example: Adding jQuery code
 print '<script type="text/javascript" language="javascript">
 jQuery(document).ready(function() {';
 
@@ -548,7 +548,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	$head = stocktransferPrepareHead($object);
 
-	print dol_get_fiche_head($head, 'card', $langs->trans("StockTransfer"), -1, $object->picto);
+	print dol_get_fiche_head($head, 'card', $langs->trans("StockTransfer"), -1, $object->picto, 0, '', '', 0, '', 1);
 
 	$formconfirm = '';
 
@@ -621,7 +621,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Thirdparty
 	$morehtmlref .= empty($object->thirdparty) ? '' : $object->thirdparty->getNomUrl(1, 'customer');
 	if (!getDolGlobalInt('MAIN_DISABLE_OTHER_LINK') && !empty($object->thirdparty) && $object->thirdparty->id > 0) {
-		$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->thirdparty->id.'&search_societe='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherOrders").'</a>)';
+		$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->thirdparty->id.'">'.$langs->trans("OtherOrders").'</a>)';
 	}
 	// Project
 	if (isModEnabled('project')) {
@@ -671,7 +671,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print $langs->trans('IncotermLabel');
 		print '<td><td class="right">';
 		if ($permissiontoadd && $action != 'editincoterm') {
-			print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=editincoterm">'.img_edit().'</a>';
+			print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=editincoterm&token='.newToken().'">'.img_edit().'</a>';
 		} else {
 			print '&nbsp;';
 		}
@@ -884,7 +884,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				print '<input type="submit" class="button buttongen marginbottomonly" id="cancellinebutton" name="cancel" value="'.$langs->trans("Cancel").'"></td>';
 			} else {
 				print '<td class="right">';
-				print '<a class="editfielda reposition" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=editline&amp;lineid=' . $line->id . '#line_' . $line->id . '">';
+				print '<a class="editfielda reposition" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=editline&token='.newToken().'&lineid=' . $line->id . '#line_' . $line->id . '">';
 				print img_edit() . '</a>';
 				print '</td>';
 				print '<td class="right">';
@@ -899,12 +899,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			if ($num > 1 && $conf->browser->layout != 'phone' && empty($disablemove)) {
 				print '<td class="linecolmove tdlineupdown center">';
 				if ($i > 0) { ?>
-					<a class="lineupdown" href="<?php print $_SERVER["PHP_SELF"].'?id='.$id.'&amp;action=up&amp;rowid='.$line->id; ?>">
+					<a class="lineupdown" href="<?php print $_SERVER["PHP_SELF"].'?id='.$id.'&amp;action=up&amp;token='.newToken().'&amp;rowid='.$line->id; ?>">
 						<?php print img_up('default', 0, 'imgupforline'); ?>
 					</a>
 				<?php }
 				if ($i < $num - 1) { ?>
-					<a class="lineupdown" href="<?php print $_SERVER["PHP_SELF"].'?id='.$id.'&amp;action=down&amp;rowid='.$line->id; ?>">
+					<a class="lineupdown" href="<?php print $_SERVER["PHP_SELF"].'?id='.$id.'&amp;action=down&amp;token='.newToken().'&amp;rowid='.$line->id; ?>">
 						<?php print img_down('default', 0, 'imgdownforline'); ?>
 					</a>
 				<?php }
@@ -942,9 +942,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print '</td>';
 		}
 
-		$formproduct->loadWarehouses(); // Pour charger la totalité des entrepôts
+		$formproduct->loadWarehouses(); // To load all warehouses
 
-		// Define a list of warehouse to not show on the list
+		// Define a list of warehouses to exclude from the selection
 		$TExcludedWarehouseSource = array();
 		if (!empty($object->fk_warehouse_source)) {
 			$source_ent = new Entrepot($db);
@@ -956,7 +956,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			}
 		}
 
-		// Define a list of warehouse to not show on the list
+		// Define a list of warehouses to exclude from the selection
 		$TExcludedWarehouseDestination = array();
 		if (!empty($object->fk_warehouse_destination)) {
 			$dest_ent = new Entrepot($db);
@@ -988,7 +988,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		// PMP
 		print '<td></td>';
 		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
-			// Unité
+			// Unit
 			print '<td></td>';
 		}
 

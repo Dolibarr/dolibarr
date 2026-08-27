@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2019 Laurent Destailleur          <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -426,7 +426,7 @@ foreach ($dirmodels as $reldir) {
 								// Preview
 								print '<td class="center">';
 								if ($module->type == 'pdf') {
-									print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
+									print '<a href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'specimen', 'module' => $name], true).'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
 								} else {
 									print img_object($langs->transnoentitiesnoconv("PreviewNotAvailable"), 'generic');
 								}
@@ -465,7 +465,7 @@ foreach ($substitutionarray as $key => $val) {
 }
 $htmltext .= '</i>';
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set_MRP_MO_FREE_TEXT">';
 print '<tr class="oddeven"><td colspan="2">';
@@ -485,7 +485,7 @@ print '</form>';
 
 //Use draft Watermark
 
-print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
+print '<form method="post" action="'.$_SERVER["PHP_SELF"].'" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print "<input type=\"hidden\" name=\"action\" value=\"set_MRP_MO_DRAFT_WATERMARK\">";
 print '<tr class="oddeven"><td>';

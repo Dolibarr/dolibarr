@@ -76,7 +76,8 @@ $langs->loadLangs(array("mymodule@mymodule"));
 $action = GETPOST('action', 'aZ09');
 
 $now = dol_now();
-$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
+
+$max = getDolUserInt('MAIN_SIZE_SHORTLIST_LIMIT', getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5));
 
 // Security check - Protection if external user
 $socid = GETPOSTINT('socid');

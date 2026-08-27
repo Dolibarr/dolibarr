@@ -3,7 +3,7 @@
  * Copyright (C) 2013-2014  Cedric GROSS            <c.gross@kreiz-it.fr>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024       Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -130,11 +130,11 @@ class Productbatch extends CommonObject
 		$sql .= "qty,";
 		$sql .= "import_key";
 		$sql .= ") VALUES (";
-		$sql .= " ".(!isset($this->fk_product_stock) ? 'NULL' : $this->fk_product_stock).",";
+		$sql .= " ".(!isset($this->fk_product_stock) ? 'NULL' : ((int) $this->fk_product_stock)).",";
 		$sql .= " ".(!isset($this->sellby) || dol_strlen($this->sellby) == 0 ? 'NULL' : "'".$this->db->idate($this->sellby)."'").",";		// no more used
 		$sql .= " ".(!isset($this->eatby) || dol_strlen($this->eatby) == 0 ? 'NULL' : "'".$this->db->idate($this->eatby)."'").",";			// no more used
 		$sql .= " ".(!isset($this->batch) ? 'NULL' : "'".$this->db->escape($this->batch)."'").",";
-		$sql .= " ".(!isset($this->qty) ? 'NULL' : $this->qty).",";
+		$sql .= " ".(!isset($this->qty) ? 'NULL' : ((float) $this->qty)).",";
 		$sql .= " ".(!isset($this->import_key) ? 'NULL' : "'".$this->db->escape($this->import_key)."'");
 		$sql .= ")";
 
@@ -235,11 +235,11 @@ class Productbatch extends CommonObject
 
 		// Update request
 		$sql = "UPDATE ".$this->db->prefix().self::$_table_element." SET";
-		$sql .= " fk_product_stock=".(isset($this->fk_product_stock) ? $this->fk_product_stock : "null").",";
+		$sql .= " fk_product_stock=".(isset($this->fk_product_stock) ? ((int) $this->fk_product_stock) : "null").",";
 		$sql .= " sellby=".(dol_strlen($this->sellby) != 0 ? "'".$this->db->idate($this->sellby)."'" : 'null').",";
 		$sql .= " eatby=".(dol_strlen($this->eatby) != 0 ? "'".$this->db->idate($this->eatby)."'" : 'null').",";
 		$sql .= " batch=".(isset($this->batch) ? "'".$this->db->escape($this->batch)."'" : "null").",";
-		$sql .= " qty=".(isset($this->qty) ? $this->qty : "null").",";
+		$sql .= " qty=".(isset($this->qty) ? ((float) $this->qty) : "null").",";
 		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
 		$sql .= " WHERE rowid=".((int) $this->id);
 
@@ -429,7 +429,7 @@ class Productbatch extends CommonObject
 			$sql .= ", ".$this->db->prefix()."product_stock as ps";
 			$sql .= " WHERE t.fk_product_stock = ps.rowid AND ps.fk_entrepot = ".((int) $fk_warehouse);
 			if ($fk_product > 0) {
-				 $sql .= " AND ps.fk_product = ".((int) $fk_product);
+				$sql .= " AND ps.fk_product = ".((int) $fk_product);
 			}
 		}
 		if (!empty($eatby)) {

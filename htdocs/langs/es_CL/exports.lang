@@ -89,5 +89,4 @@ ComputedField=Campo computado
 SelectFilterFields=Si quiere filtrar algunos valores, simplemente ingrese los valores aquí.
 FilteredFieldsValues=Valor para el filtro
 FormatControlRule=Regla de control de formato
-KeysToUseForUpdates=Clave (columna) a usar para <b>actualizar</b> los datos existentes
 NbInsert=Número de líneas insertadas: %s

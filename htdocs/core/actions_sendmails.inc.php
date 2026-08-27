@@ -198,7 +198,7 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 	}
 
 	if ($result > 0) {
-		$from = '';
+		$email_from = '';
 		$sendto = '';
 		$sendtocc = '';
 		$sendtobcc = '';
@@ -336,33 +336,33 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 			$fromtype = GETPOST('fromtype', 'alpha');
 			$emailsendersignature = '';
 			if ($fromtype === 'robot') {
-				$from = dol_string_nospecial(getDolGlobalString('MAIN_MAIL_EMAIL_FROM'), ' ', array(",")).' <' . getDolGlobalString('MAIN_MAIL_EMAIL_FROM').'>';
+				$email_from = dol_string_nospecial(getDolGlobalString('MAIN_MAIL_EMAIL_FROM'), ' ', array(",")).' <' . getDolGlobalString('MAIN_MAIL_EMAIL_FROM').'>';
 			} elseif ($fromtype === 'user') {
-				$from = dol_string_nospecial($user->getFullName($langs), ' ', array(",")).' <'.$user->email.'>';
+				$email_from = dol_string_nospecial($user->getFullName($langs), ' ', array(",")).' <'.$user->email.'>';
 			} elseif ($fromtype === 'company') {
-				$from = dol_string_nospecial(getDolGlobalString('MAIN_INFO_SOCIETE_NOM'), ' ', array(",")).' <' . getDolGlobalString('MAIN_INFO_SOCIETE_MAIL').'>';
+				$email_from = dol_string_nospecial(getDolGlobalString('MAIN_INFO_SOCIETE_NOM'), ' ', array(",")).' <' . getDolGlobalString('MAIN_INFO_SOCIETE_MAIL').'>';
 			} elseif (preg_match('/global_aliases_(\d+)/', $fromtype, $reg)) {
 				$tmp = explode(',', getDolGlobalString('MAIN_INFO_SOCIETE_MAIL_ALIASES'));
-				$from = trim($tmp[((int) $reg[1] - 1)]);
+				$email_from = trim($tmp[((int) $reg[1] - 1)]);
 			} elseif (preg_match('/senderprofile_(\d+)_(\d+)/', $fromtype, $reg)) {
-				$sql = 'SELECT rowid, label, email, signature FROM '.MAIN_DB_PREFIX.'c_email_senderprofile';
-				$sql .= ' WHERE rowid = '.(int) $reg[1];
+				$sql = "SELECT rowid, label, email, signature FROM ".MAIN_DB_PREFIX."c_email_senderprofile";
+				$sql .= " WHERE rowid = ".(int) $reg[1];
 				$resql = $db->query($sql);
 				$obj = $db->fetch_object($resql);
 				if ($obj) {
-					$from = dol_string_nospecial($obj->label, ' ', array(",")).' <'.$obj->email.'>';
+					$email_from = dol_string_nospecial($obj->label, ' ', array(",")).' <'.$obj->email.'>';
 					$emailsendersignature = $obj->signature;
 				}
 			} elseif (preg_match('/from_template_(\d+)/', $fromtype, $reg)) {
-				$sql = 'SELECT rowid, email_from FROM '.MAIN_DB_PREFIX.'c_email_templates';
-				$sql .= ' WHERE rowid = '.(int) $reg[1];
+				$sql = "SELECT rowid, ".$db->sanitize($email_from)." FROM ".MAIN_DB_PREFIX."c_email_templates";
+				$sql .= " WHERE rowid = ".(int) $reg[1];
 				$resql = $db->query($sql);
 				$obj = $db->fetch_object($resql);
 				if ($obj) {
-					$from = $obj->email_from;
+					$email_from = $obj->$email_from;
 				}
 			} else {
-				$from = dol_string_nospecial(GETPOST('fromname'), ' ', array(",")).' <'.GETPOST('frommail').'>';
+				$email_from = dol_string_nospecial(GETPOST('fromname'), ' ', array(",")).' <'.GETPOST('frommail').'>';
 			}
 
 			$replyto = '';
@@ -390,9 +390,9 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 			$deliveryreceipt = GETPOSTINT('deliveryreceipt') ? 1 : 0;
 
 			if ($action == 'send' || $action == 'relance') {
-				$actionmsg2 = $langs->transnoentities('MailSentByTo', CMailFile::getValidAddress($from, 4, 0, 1), CMailFile::getValidAddress($sendto, 4, 0, 1));
+				$actionmsg2 = $langs->transnoentities('MailSentByTo', CMailFile::getValidAddress($email_from, 4, 0, 1), CMailFile::getValidAddress($sendto, 4, 0, 1));
 				/*if ($message) {
-					$actionmsg = $langs->transnoentities('MailFrom').': '.dol_escape_htmltag($from);
+					$actionmsg = $langs->transnoentities('MailFrom').': '.dol_escape_htmltag($email_from);
 					$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('MailTo').': '.dol_escape_htmltag($sendto));
 					if ($sendtocc) {
 						$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('Bcc').": ".dol_escape_htmltag($sendtocc));
@@ -435,7 +435,7 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 			if (empty($sendcontext)) {
 				$sendcontext = 'standard';
 			}
-			$mailfile = new CMailFile($subject, $sendto, $from, $message, $filepath, $mimetype, $filename, $sendtocc, $sendtobcc, $deliveryreceipt, -1, '', '', $trackid, '', $sendcontext, $replyto, $upload_dir_tmp);
+			$mailfile = new CMailFile($subject, $sendto, $email_from, $message, $filepath, $mimetype, $filename, $sendtocc, $sendtobcc, $deliveryreceipt, -1, '', '', $trackid, '', $sendcontext, $replyto, $upload_dir_tmp);
 
 			if (!empty($mailfile->error) || !empty($mailfile->errors)) {
 				setEventMessages($mailfile->error, $mailfile->errors, 'errors');
@@ -472,14 +472,14 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 
 						// TODO Fix this: Such properties does not exists on all objects
 						$object->context['email_msgid'] = $mailfile->msgid;
-						$object->context['email_from'] = $from;
+						$object->context['$email_from'] = $email_from;
 						$object->context['email_subject'] = $subject;
 						$object->context['email_to'] = $sendto;
 						$object->context['email_tocc'] = $sendtocc;
 						$object->context['email_tobcc'] = $sendtobcc;
 
 						$object->email_msgid = $mailfile->msgid; // @todo Set msgid into $mailfile after sending
-						$object->email_from = $from;
+						$object->$email_from = $email_from;
 						$object->email_subject = $subject;
 						$object->email_to = $sendto;
 						$object->email_tocc = $sendtocc;
@@ -519,7 +519,7 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 
 					// Redirect here
 					// This avoid sending mail twice if going out and then back to page
-					$mesg = $langs->trans('MailSuccessfulySent', $mailfile->getValidAddress($from, 2), $mailfile->getValidAddress($sendto, 2));
+					$mesg = $langs->trans('MailSuccessfulySent', $mailfile->getValidAddress($email_from, 2), $mailfile->getValidAddress($sendto, 2));
 					setEventMessages($mesg, null, 'mesgs');
 
 					header('Location: '.$_SERVER["PHP_SELF"].'?'.($paramname ?? 'id').'='.(is_object($object) ? $object->id : ''));
@@ -528,7 +528,7 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 					$langs->load("other");
 					$mesg = '<div class="error">';
 					if (!empty($mailfile->error) || !empty($mailfile->errors)) {
-						$mesg .= $langs->transnoentities('ErrorFailedToSendMail', dol_escape_htmltag($from), dol_escape_htmltag($sendto));
+						$mesg .= $langs->transnoentities('ErrorFailedToSendMail', dol_escape_htmltag($email_from), dol_escape_htmltag($sendto));
 						if (!empty($mailfile->error)) {
 							$mesg .= '<br>'.$mailfile->error;
 						}
@@ -536,7 +536,7 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 							$mesg .= '<br>'.implode('<br>', $mailfile->errors);
 						}
 					} else {
-						$mesg .= $langs->transnoentities('ErrorFailedToSendMail', dol_escape_htmltag($from), dol_escape_htmltag($sendto));
+						$mesg .= $langs->transnoentities('ErrorFailedToSendMail', dol_escape_htmltag($email_from), dol_escape_htmltag($sendto));
 						if (getDolGlobalString('MAIN_DISABLE_ALL_MAILS')) {
 							$mesg .= '<br>Feature is disabled by option MAIN_DISABLE_ALL_MAILS';
 						} else {

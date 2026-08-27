@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +26,7 @@ use PHP_CodeSniffer\Files\File;
  */
 class CheckIsModEnabledArgumentSniff implements Sniff
 {
-	// Nom de la fonction cible
+	// Target function name
 	protected $targetFunction = 'ismodenabled';
 
 	protected $deprecatedModulesNames = [
@@ -87,7 +88,7 @@ class CheckIsModEnabledArgumentSniff implements Sniff
 			return;
 		}
 
-		// check value of argument
+		// Check argument value
 		$argContent = str_replace(["'", '"'], '', $tokens[$firstArgTokenPtr]['content']);
 		$argCode = $tokens[$firstArgTokenPtr]['code'];
 

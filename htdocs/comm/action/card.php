@@ -101,7 +101,9 @@ $reg = [];
 if (GETPOST('datep')) {
 	if (GETPOST('datep') == 'now') {
 		$datep = dol_now();
-	} elseif (preg_match('/^([0-9][0-9][0-9][0-9])([0-9][0-9])([0-9][0-9])$/', GETPOST("datep"), $reg)) {		// Try to not use this. Use instead '&datep=now'
+	} elseif (preg_match('/^([0-9]{4})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})$/', GETPOST("datep"), $reg)) {		// YYYYMMDDHHMMSS (dayhourlog) - e.g. from /societe/agenda.php "Add event" button
+		$datep = dol_mktime((int) $reg[4], (int) $reg[5], (int) $reg[6], (int) $reg[2], (int) $reg[3], (int) $reg[1], 'tzuserrel');
+	} elseif (preg_match('/^([0-9][0-9][0-9][0-9])([0-9][0-9])([0-9][0-9])$/', GETPOST("datep"), $reg)) {		// YYYYMMDD - try to not use this. Use instead '&datep=now'
 		$datep = dol_mktime(0, 0, 0, (int) $reg[2], (int) $reg[3], (int) $reg[1], 'tzuserrel');
 	}
 }
@@ -2042,7 +2044,7 @@ if ($action == 'create') {
 							$("#select_offsetunittype_duration").select2("destroy");
 							$("#select_offsetunittype_duration").select2();
 							selectremindertype();
-	            		 });
+	            		 }
 
 						toggle_reminder_part();
 						$("#addreminder").click(toggle_reminder_part);
@@ -2657,7 +2659,7 @@ if ($id > 0 && $action != 'create') {
 
 		print '</form>';
 	} else {
-		print dol_get_fiche_head($head, 'card', $langs->trans("Action"), -1, 'action');
+		print dol_get_fiche_head($head, 'card', $langs->trans("Action"), -1, 'action', 0, '', '', 0, '', 1);
 
 		$formconfirm = '';
 
@@ -3040,7 +3042,7 @@ if ($id > 0 && $action != 'create') {
 
 			if ($user->hasRight('agenda', 'allactions', 'create') ||
 			   (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->hasRight('agenda', 'myactions', 'create'))) {
-				print '<div class="inline-block divButAction"><a class="butAction butActionClone" href="card.php?action=clone&object='.$object->element.'&id='.$object->id.'">'.$langs->trans("ToClone").'</a></div>';
+				print '<div class="inline-block divButAction"><a class="butAction butActionClone" href="card.php?action=clone&token='.newToken().'&object='.$object->element.'&id='.$object->id.'">'.$langs->trans("ToClone").'</a></div>';
 			} else {
 				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("ToClone").'</a></div>';
 			}

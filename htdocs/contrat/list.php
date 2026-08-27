@@ -1197,6 +1197,7 @@ $totalarray['nbfield'] = 0;
 $typenArray = array();
 $cacheCountryIDCode = array();
 $imaxinloop = ($limit ? min($num, $limit) : $num);
+$showinvalidemail = getDolGlobalInt('MAIN_SHOW_INVALID_EMAIL_IN_LIST', 1); // in list, we check only syntax of emails
 while ($i < $imaxinloop) {
 	$obj = $db->fetch_object($resql);
 	if (empty($obj)) {
@@ -1353,8 +1354,9 @@ while ($i < $imaxinloop) {
 		}
 		// Email
 		if (!empty($arrayfields['s.email']['checked'])) {
-			print '<td class="tdoverflowmax200" title="'.dolPrintHTMLForAttribute($obj->email).'">'.dol_print_email($obj->email, 0, $obj->socid, 1, 0, 1, 1).'</td>';
+			print '<td class="tdoverflowmax200" title="'.dolPrintHTMLForAttribute($obj->email).'">'.dol_print_email($obj->email, 0, $obj->socid, 1, 0, $showinvalidemail, 1).'</td>';
 		}
+
 		// Type ent
 		if (!empty($arrayfields['typent.code']['checked'])) {
 			print '<td class="center">';

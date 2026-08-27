@@ -34,5 +34,6 @@ ResourceTypeCode=Ressurskode
 ImportDataset_resource_1=Ressurser
 ErrorResourcesAlreadyInUse=Noen ressurser er i bruk
 ErrorResourceUseInEvent=%s brukt i %s hendelse
-MaxUsers=Maksimalt antall brukere (plasser, seter osv.)
+MaxUsers=Maksimalt antall brukere
+MaxUsersResourceDesc=Hvis ressursen kan brukes av flere personer samtidig (bil, rom, ...), kan du angi maksimalt antall brukere som kan bruke ressursen samtidig (antall seter, plasser, ...).
 MaxUsersLabel=Maksimalt antall brukere

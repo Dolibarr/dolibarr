@@ -28,10 +28,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/ligneprelevement.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -39,6 +35,9 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/ligneprelevement.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'withdrawals', 'companies', 'categories'));
@@ -134,7 +133,7 @@ $sqlfields = $sql; // $sql fields to remove for count total
 
 $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 $sql .= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";
-$sql .= " , ".MAIN_DB_PREFIX."prelevement as pf";
+$sql .= " , ".MAIN_DB_PREFIX."prelevement as pf";					// to know the invoice, we should have one line only in prelevement for each pl.rowid but we may have several lines for one invoice.
 if ($type == 'bank-transfer') {
 	$sql .= " , ".MAIN_DB_PREFIX."facture_fourn as f";
 } else {
@@ -182,7 +181,7 @@ if ($type == 'bank-transfer') {
 
 	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 	$sql .= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";
-	$sql .= " , ".MAIN_DB_PREFIX."prelevement as pf";
+	$sql .= " , ".MAIN_DB_PREFIX."prelevement as pf";				// to know the invoice, we should have one line only in prelevement for each pl.rowid but we may have several lines for one invoice.
 	$sql .= " , ".MAIN_DB_PREFIX."salary as sl";
 	$sql .= " , ".MAIN_DB_PREFIX."user as u";
 

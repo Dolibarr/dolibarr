@@ -109,3 +109,4 @@ PAYBOX_PBX_SITE=Vrednost za PBX SITE
 PAYBOX_PBX_RANG=Vrednost za PBX Rang
 PAYBOX_PBX_IDENTIFIANT=Vrednost za PBX ID
 PAYBOX_HMAC_KEY=Ključ HMAC
+FeatureNotUsedAccordingtoSetup=Feature not used according to your %s setup

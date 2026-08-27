@@ -392,8 +392,8 @@ class pdf_azur extends ModelePDFPropales
 				$pdf->SetTextColor(0, 0, 0);
 
 
-				$tab_top = 90 + $top_shift;
-				$tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? 42 + $top_shift : 10);
+				$tab_top = 80 + $this->marge_haute + $top_shift;
+				$tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? 32 + $this->marge_haute + $top_shift : $this->marge_haute);
 
 				// Incoterm
 				$height_incoterms = 0;
@@ -629,17 +629,6 @@ class pdf_azur extends ModelePDFPropales
 					$localtax2_rate = $object->lines[$i]->localtax2_tx;
 					$localtax1_type = $object->lines[$i]->localtax1_type;
 					$localtax2_type = $object->lines[$i]->localtax2_type;
-
-					// TODO remise_percent is an obsolete field for object parent
-					/*if ($object->remise_percent) {
-						$tvaligne -= ($tvaligne * $object->remise_percent) / 100;
-					}
-					if ($object->remise_percent) {
-						$localtax1ligne -= ($localtax1ligne * $object->remise_percent) / 100;
-					}
-					if ($object->remise_percent) {
-						$localtax2ligne -= ($localtax2ligne * $object->remise_percent) / 100;
-					}*/
 
 					$vatrate = (string) $object->lines[$i]->tva_tx;
 
@@ -1593,31 +1582,11 @@ class pdf_azur extends ModelePDFPropales
 		$pdf->SetXY($this->marge_gauche, $posy);
 
 		// Logo
-		if (!getDolGlobalInt('PDF_DISABLE_MYCOMPANY_LOGO')) {
-			if ($this->emetteur->logo) {
-				$logodir = $conf->mycompany->dir_output;
-				if (!empty($conf->mycompany->multidir_output[$object->entity ?? $conf->entity])) {
-					$logodir = $conf->mycompany->multidir_output[$object->entity ?? $conf->entity];
-				}
-				if (!getDolGlobalInt('MAIN_PDF_USE_LARGE_LOGO')) {
-					$logo = $logodir.'/logos/thumbs/'.$this->emetteur->logo_small;
-				} else {
-					$logo = $logodir.'/logos/'.$this->emetteur->logo;
-				}
-				if (is_readable($logo)) {
-					$height = pdf_getHeightForLogo($logo);
-					$pdf->Image($logo, $this->marge_gauche, $posy, 0, $height); // width=0 (auto)
-				} else {
-					$pdf->SetTextColor(200, 0, 0);
-					$pdf->SetFont('', 'B', $default_font_size - 2);
-					$pdf->MultiCell($w, 3, $outputlangs->transnoentities("ErrorLogoFileNotFound", $logo), 0, 'L');
-					$pdf->MultiCell($w, 3, $outputlangs->transnoentities("ErrorGoToGlobalSetup"), 0, 'L');
-				}
-			} else {
-				$text = $this->emetteur->name;
-				$pdf->MultiCell($w, 4, $outputlangs->convToOutputCharset($text), 0, $ltrdirection);
-			}
+		$logodir = $conf->mycompany->dir_output;
+		if (!empty($conf->mycompany->multidir_output[$object->entity ?? $conf->entity])) {
+			$logodir = $conf->mycompany->multidir_output[$object->entity ?? $conf->entity];
 		}
+		pdf_writeLogoOrCompanyName($pdf, $outputlangs, $this->emetteur, $logodir, $this->marge_gauche, $posy, $w, $default_font_size, $ltrdirection);
 
 		$pdf->SetFont('', 'B', $default_font_size + 3);
 		$pdf->SetXY($posx, $posy);
@@ -1745,7 +1714,7 @@ class pdf_azur extends ModelePDFPropales
 			$carac_emetteur .= pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'source', $object);
 
 			// Show sender
-			$posy = 42 + $top_shift;
+			$posy = 32 + $this->marge_haute + $top_shift;
 			$posx = $this->marge_gauche;
 			if (getDolGlobalString('MAIN_INVERT_SENDER_RECIPIENT')) {
 				$posx = $this->page_largeur - $this->marge_droite - 80;
@@ -1803,7 +1772,7 @@ class pdf_azur extends ModelePDFPropales
 			if ($this->page_largeur < 210) {
 				$widthrecbox = 84; // To work with US executive format
 			}
-			$posy = 42 + $top_shift;
+			$posy = 32 + $this->marge_haute + $top_shift;
 			$posx = $this->page_largeur - $this->marge_droite - $widthrecbox;
 			if (getDolGlobalString('MAIN_INVERT_SENDER_RECIPIENT')) {
 				$posx = $this->marge_gauche;

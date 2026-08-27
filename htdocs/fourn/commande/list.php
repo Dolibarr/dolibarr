@@ -10,7 +10,7 @@
  * Copyright (C) 2018-2022  Charlene Benke              <charlene@patas-monkey.com>
  * Copyright (C) 2019       Nicolas Zabouri             <info@inovea-conseil.com>
  * Copyright (C) 2021-2026  Alexandre Spangaro          <alexandre@inovea-conseil.com>
- * Copyright (C) 2024-2025  MDW                         <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW                         <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       William Mead                <william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -474,7 +474,7 @@ if (empty($reshook)) {
 				$sql .= ", fk_target";
 				$sql .= ", targettype";
 				$sql .= ") VALUES (";
-				$sql .= $id_order;
+				$sql .= ((int) $id_order);
 				$sql .= ", '".$db->escape($objecttmp->origin)."'";
 				$sql .= ", ".((int) $objecttmp->id);
 				$sql .= ", '".$db->escape($objecttmp->element)."'";

@@ -4,8 +4,8 @@
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2019      Markus Welters       <markus@welters.de>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -158,7 +158,7 @@ $linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore
 print load_fiche_titre($langs->trans("WithdrawalsSetup"), $linkback, 'title_setup');
 print '<br>';
 
-print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=set">';
+print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=set" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
 print '<table class="noborder centpercent">';
@@ -374,7 +374,7 @@ foreach ($dirmodels as $reldir)
 								print '<td class="center">';
 								if ($module->type == 'pdf')
 								{
-									print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
+									print '<a href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'specimen', 'module' => $name], true).'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
 								}
 								else
 								{
@@ -456,7 +456,7 @@ if (isModEnabled('notification') )
 	}
 
 
-	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=addnotif&token='.newToken().'">';
+	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=addnotif&token='.newToken().'" spellcheck="false">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
@@ -483,7 +483,7 @@ if (isModEnabled('notification') )
 	$sql.= " ".MAIN_DB_PREFIX."c_action_trigger as ad";
 	$sql.= " WHERE u.rowid = nd.fk_user";
 	$sql.= " AND nd.fk_action = ad.rowid";
-	$sql.= " AND u.entity IN (0,".$conf->entity.")";
+	$sql.= " AND u.entity IN (0,".((int) $conf->entity).")";
 
 	$resql = $db->query($sql);
 	if ($resql)

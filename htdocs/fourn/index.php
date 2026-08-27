@@ -78,7 +78,7 @@ $sql .= " WHERE cf.fk_soc = s.rowid ";
 if (!$user->hasRight("societe", "client", "voir") && !$socid) {
 	$sql .= " AND sc.fk_user = ".((int) $user->id);
 }
-$sql .= " AND cf.entity = ".$conf->entity;
+$sql .= " AND cf.entity = ".((int) $conf->entity);
 $sql .= " GROUP BY cf.fk_statut";
 
 $resql = $db->query($sql);
@@ -124,7 +124,7 @@ if (isModEnabled("supplier_order")) {
 	if (!$user->hasRight("societe", "client", "voir") && !$socid) {
 		$sql .= " AND sc.fk_user = ".((int) $user->id);
 	}
-	$sql .= " AND cf.entity = ".$conf->entity;
+	$sql .= " AND cf.entity = ".((int) $conf->entity);
 	$sql .= " AND cf.fk_statut = 0";
 	if ($socid) {
 		$sql .= " AND cf.fk_soc = ".((int) $socid);
@@ -180,7 +180,7 @@ if (isModEnabled("supplier_invoice") && ($user->hasRight('fournisseur', 'facture
 	if (!$user->hasRight("societe", "client", "voir") && !$socid) {
 		$sql .= " AND sc.fk_user = ".((int) $user->id);
 	}
-	$sql .= " AND ff.entity = ".$conf->entity;
+	$sql .= " AND ff.entity = ".((int) $conf->entity);
 	$sql .= " AND ff.fk_statut = 0";
 	if ($socid) {
 		$sql .= " AND f.fk_soc = ".((int) $socid);

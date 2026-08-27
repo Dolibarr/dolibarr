@@ -30,6 +30,13 @@
 
 // Load Dolibarr environment
 require '../../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
@@ -38,14 +45,6 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facturestats.class.php';
 if (isModEnabled('category')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
@@ -102,12 +101,12 @@ $formother = new FormOther($db);
 
 
 $picto = 'bill';
-$title = $langs->trans("BillsStatistics");
-$dir = $conf->facture->dir_temp;
+$title = $langs->trans("BillsCustomers");
+$dir = $conf->invoice->dir_temp;
 
 if ($mode == 'supplier') {
 	$picto = 'supplier_invoice';
-	$title = $langs->trans("BillsStatisticsSuppliers");
+	$title = $langs->trans("BillsSuppliers");
 	$dir = $conf->fournisseur->facture->dir_temp;
 }
 

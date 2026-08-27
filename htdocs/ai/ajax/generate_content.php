@@ -4,7 +4,7 @@
  * Copyright (C) 2012       J. Fernando Lagrange    <fernando@demo-tic.org>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2023       Eric Seigne      		<eric.seigne@cap-rel.fr>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -118,7 +118,7 @@ if (empty($instructions)) {
 			print dolPrintHTML($generatedContent);	// Note that common HTML tags are NOT escaped (but a sanitization is done)
 		} else {
 			// We must not use dolPrintText because dolPrintText format data including accent in htmlentities for a HTML output. We need a non formatted output.
-			//print dol_string_onlythesehtmltags('"Ça va" est une expression française et ceci une balise <a> html', 1, 1, 1);
+			//print dol_string_onlythesehtmltags('"How are you" is a French expression and this is an HTML <a> tag', 1, 1, 1);
 			print dol_string_onlythesehtmltags($generatedContent, 1, 1, 1);
 			//print dol_string_nohtmltag($generatedContent);
 		}
@@ -134,7 +134,7 @@ if (empty($instructions)) {
 			print dolPrintHTML($generatedContent);
 		} else {
 			// We must not use dolPrintText because dolPrintText format data including accent in htmlentities for a HTML output. We need a non formatted output.
-			//print dol_string_onlythesehtmltags('"Ça va" est une expression française et ceci une balise <a> html', 1, 1, 1);
+			//print dol_string_onlythesehtmltags('"How are you" is a French expression and this is an HTML <a> tag', 1, 1, 1);
 			print dol_string_onlythesehtmltags($generatedContent, 1, 1, 1);
 		}
 	}

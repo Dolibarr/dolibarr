@@ -63,7 +63,7 @@ if ($user->isExternalUser()) {
 // Load $resultboxes
 $resultboxes = FormOther::getBoxesArea($user, "20");
 
-$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
+$max = getDolUserInt('MAIN_SIZE_SHORTLIST_LIMIT', getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5));
 
 
 /*

@@ -77,6 +77,7 @@ CronType=Job type
 CronType_method=Метод на повикување на PHP класа
 CronType_command=Shell command
 CronCannotLoadClass=Не може да се вчита датотеката за класа %s (за да се користи класата %s)
+CronModuleNotEnabledInThisEntity=Cron module not enabled in this entity (to use %s method of %s object)
 CronCannotLoadObject=Датотеката за класа %s беше вчитана, но објектот %s не беше пронајден во неа
 UseMenuModuleToolsToAddCronJobs=Одете во менито „<a href="%s">Дома - Алатки за администратор - Закажани работни места</a>" за да ги видите и уредите закажаните работи.
 JobDisabled=Job disabled

@@ -411,7 +411,7 @@ class Memo extends CommonObject
 			$sql .= " WHERE t.entity IN (".getEntity($this->element).")";
 		} elseif (preg_match('/^\w+@\w+$/', (string) $this->ismultientitymanaged)) {
 			$tmparray = explode('@', (string) $this->ismultientitymanaged);
-			$sql .= " LEFT JOIN ".$this->db->prefix().$tmparray[1]." as pt ON t.".$this->db->sanitize($tmparray[0])." = pt.rowid";
+			$sql .= " LEFT JOIN ".$this->db->prefix().$this->db->sanitize($tmparray[1])." as pt ON t.".$this->db->sanitize($tmparray[0])." = pt.rowid";
 			$sql .= " WHERE pt.entity IN (".getEntity($this->element).")";
 		} else {
 			$sql .= " WHERE 1 = 1";
@@ -684,14 +684,14 @@ class Memo extends CommonObject
 			if (preg_match('/^[\(]?PROV/i', $this->ref)) {
 				// Now we rename also files into index
 				$sql = 'UPDATE '.$this->db->prefix()."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'memo/".$this->db->escape($this->newref)."'";
-				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'memo/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'memo/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++;
 					$this->error = $this->db->lasterror();
 				}
 				$sql = 'UPDATE '.$this->db->prefix()."ecm_files set filepath = 'memo/".$this->db->escape($this->newref)."'";
-				$sql .= " WHERE filepath = 'memo/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$sql .= " WHERE filepath = 'memo/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++;
@@ -1229,7 +1229,7 @@ class Memo extends CommonObject
 	}
 
 	/**
-	 * Vérifie si une couleur est un code hex valide
+	 * Checks if a color is a valid hex code
 	 *
 	 * @param mixed $color the color to check
 	 * @return bool
@@ -1243,7 +1243,7 @@ class Memo extends CommonObject
 		// Remove spaces at the beginning/end
 		$color = trim($color);
 
-		// Vérifie #fff ou #ffffff
+		// Checks for #fff or #ffffff
 		return preg_match('/^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/', $color) === 1;
 	}
 

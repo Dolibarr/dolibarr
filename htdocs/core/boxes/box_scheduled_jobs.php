@@ -79,7 +79,7 @@ class box_scheduled_jobs extends ModeleBoxes
 			$sql .= " t.label, t.status, t.test, t.lastresult, t.processing";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "cronjob as t";
 			$sql .= " WHERE status <> ".$cronstatic::STATUS_DISABLED;
-			$sql .= " AND entity IN (0, ".$conf->entity.")";
+			$sql .= " AND entity IN (0, ".((int) $conf->entity).")";
 			$sql .= $this->db->order("t.datelastrun", "DESC");
 
 			$result = $this->db->query($sql);

@@ -4,7 +4,7 @@
  * Copyright (C) 2018 	    Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2019 	    Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -179,26 +179,26 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 			$reg = array();
 			$fromtype = GETPOST('fromtype');
 			if ($fromtype === 'user') {
-				$from = $user->getFullName($langs) . ' <' . $user->email . '>';
+				$email_from = $user->getFullName($langs) . ' <' . $user->email . '>';
 			} elseif ($fromtype === 'company') {
-				$from = getDolGlobalString('MAIN_INFO_SOCIETE_NOM') . ' <' . getDolGlobalString('MAIN_INFO_SOCIETE_MAIL') . '>';
+				$email_from = getDolGlobalString('MAIN_INFO_SOCIETE_NOM') . ' <' . getDolGlobalString('MAIN_INFO_SOCIETE_MAIL') . '>';
 			} elseif (preg_match('/global_aliases_(\d+)/', $fromtype, $reg)) {
 				$tmp = explode(',', getDolGlobalString('MAIN_INFO_SOCIETE_MAIL_ALIASES'));
-				$from = trim($tmp[((int) $reg[1] - 1)]);
+				$email_from = trim($tmp[((int) $reg[1] - 1)]);
 			} elseif (preg_match('/senderprofile_(\d+)_(\d+)/', $fromtype, $reg)) {
 				$sql = "SELECT rowid, label, email FROM " . MAIN_DB_PREFIX . "c_email_senderprofile WHERE rowid = " . (int) $reg[1];
 				$resql = $db->query($sql);
 				$obj = $db->fetch_object($resql);
 				if ($obj) {
-					$from = dol_string_nospecial($obj->label, ' ', array(",")) . ' <' . $obj->email . '>';
+					$email_from = dol_string_nospecial($obj->label, ' ', array(",")) . ' <' . $obj->email . '>';
 				} else {
-					$from = '';
+					$email_from = '';
 				}
 			} else {
-				$from = dol_string_nospecial(GETPOST('fromname'), ' ', array(",")) . ' <' . GETPOST('frommail') . '>';
+				$email_from = dol_string_nospecial(GETPOST('fromname'), ' ', array(",")) . ' <' . GETPOST('frommail') . '>';
 			}
 
-			$replyto = $from;
+			$replyto = $email_from;
 			$subject = GETPOST('subject', 'restricthtml');
 			$message = GETPOST('message', 'restricthtml');
 
@@ -239,18 +239,18 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 
 			// Send mail (substitutionarray must be done just before this)
 			require_once DOL_DOCUMENT_ROOT . '/core/class/CMailFile.class.php';
-			$mailfile = new CMailFile($subjectreplaced, $sendto, $from, $messagereplaced, array(), array(), array(), $sendtocc, $sendtobcc, 0, -1, '', '', "attendees_".$attendees->id, '', $sendcontext);
+			$mailfile = new CMailFile($subjectreplaced, $sendto, $email_from, $messagereplaced, array(), array(), array(), $sendtocc, $sendtobcc, 0, -1, '', '', "attendees_".$attendees->id, '', $sendcontext);
 			if ($mailfile->error) {
 				$resaction .= '<div class="error">' . $mailfile->error . '</div>';
 			} else {
 				$result = $mailfile->sendfile();
 				if ($result) {
-					$resaction .= $langs->trans('MailSuccessfulySent', $mailfile->getValidAddress($from, 2), $mailfile->getValidAddress($sendto, 2)) . '<br>'; // Must not contain "
+					$resaction .= $langs->trans('MailSuccessfulySent', $mailfile->getValidAddress($email_from, 2), $mailfile->getValidAddress($sendto, 2)) . '<br>'; // Must not contain "
 					$error = 0;
 
 					dol_syslog("Try to insert email event into agenda for objid=" . $attendees->id . " => objectobj=" . get_class($attendees));
 
-					$actionmsg = $langs->transnoentities('MailSentByTo', $from, $sendto);
+					$actionmsg = $langs->transnoentities('MailSentByTo', $email_from, $sendto);
 					if ($message) {
 						if ($sendtocc) {
 							$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('Bcc') . ": " . $sendtocc);
@@ -285,12 +285,12 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 				} else {
 					$langs->load("other");
 					if ($mailfile->error) { // @phpstan-ignore-line
-						$resaction .= $langs->trans('ErrorFailedToSendMail', $from, $sendto);
+						$resaction .= $langs->trans('ErrorFailedToSendMail', $email_from, $sendto);
 						$resaction .= '<br><div class="error">' . $mailfile->error . '</div>';
 					} elseif (getDolGlobalString('MAIN_DISABLE_ALL_MAILS')) {
 						$resaction .= '<div class="warning">No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS</div>';
 					} else {
-						$resaction .= $langs->trans('ErrorFailedToSendMail', $from, $sendto) . '<br><div class="error">(unhandled error)</div>';
+						$resaction .= $langs->trans('ErrorFailedToSendMail', $email_from, $sendto) . '<br><div class="error">(unhandled error)</div>';
 					}
 					$nbignored++;
 				}

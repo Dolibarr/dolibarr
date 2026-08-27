@@ -5,7 +5,7 @@
  * Copyright (C) 2014       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2015       Ari Elbaz (elarifr)     <github@accedinfo.com>
  * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -195,7 +195,7 @@ class AccountingAccount extends CommonObject
 				$sql .= " a.rowid = ".(int) $rowid;
 			} elseif ($account_number) {
 				$sql .= " a.account_number = '".$this->db->escape($account_number)."'";
-				$sql .= " AND a.entity = ".$conf->entity;
+				$sql .= " AND a.entity = ".((int) $conf->entity);
 			}
 			if (!empty($limittocurrentchart)) {
 				$sql .= ' AND a.fk_pcg_version IN (SELECT pcg_version FROM '.$this->db->prefix().'accounting_system WHERE rowid = '.((int) getDolGlobalInt('CHARTOFACCOUNTS')).')';

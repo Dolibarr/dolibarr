@@ -7,7 +7,7 @@
  * Copyright (C) 2014       Cedric Gross            <c.gross@kreiz-it.fr>
  * Copyright (C) 2016       Florian Henry           <florian.henry@atm-consulting.fr>
  * Copyright (C) 2017-2022  Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2019-2020  Christophe Battarel	    <christophe@altairis.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -80,7 +80,7 @@ if ($user->socid) {
 
 $hookmanager->initHooks(array('expeditiondispatch'));
 
-// Recuperation de l'id de projet
+// Retrieve the project id
 $projectid = 0;
 if (GETPOSTISSET("projectid")) {
 	$projectid = GETPOSTINT("projectid");
@@ -1642,7 +1642,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 				result=false;
 				tabproduct.forEach(product => {
 					$.ajax({ url: \''.DOL_URL_ROOT.'/expedition/ajax/searchfrombarcode.php\',
-						data: { "token":"'.newToken().'", "action":"existbarcode","fk_entrepot": warehousetouse, "barcode":element, "mode":mode},
+						data: { "token":"'.currentToken().'", "action":"existbarcode","fk_entrepot": warehousetouse, "barcode":element, "mode":mode},
 						type: \'POST\',
 						async: false,
 						success: function(response) {
@@ -1702,7 +1702,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 		print $formother->getHTMLScannerForm("barcodescannerjs", 'all', 1);
 	}
 
-	// traitement entrepot par défaut
+	// default warehouse handling
 	print '<script type="text/javascript">
 		$(document).ready(function () {
 			$("select[name=fk_default_warehouse]").change(function() {

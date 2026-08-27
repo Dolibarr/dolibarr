@@ -3,7 +3,7 @@
  * Copyright (C) 2016       Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2020       Maxime DEMAREST             <maxime@indelog.fr>
  * Copyright (C) 2024-2025  MDW                         <mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2026       Alexandre Spangaro          <alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -102,8 +102,8 @@ if ($action == 'updateMask') {
 } elseif ($action == 'setdoc') {
 	// Set default model
 	if (dolibarr_set_const($db, "SUPPLIER_PAYMENT_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity)) {
-		// La constante qui a ete lue en avant du nouveau set
-		// on passe donc par une variable pour avoir un affichage coherent
+		// The constant that was read before the new set
+		// so we go through a variable to get a consistent display
 		$conf->global->FACTURE_ADDON_PDF = $value;
 	}
 
@@ -397,7 +397,7 @@ foreach ($dirmodels as $reldir) {
 						//if ($conf->global->SUPPLIER_PAYMENT_ADDON_PDF != "$name")
 						//{
 						// Even if choice is the default value, we allow to disable it: For supplier invoice, we accept to have no doc generation at all
-						print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=SUPPLIER_PAYMENT">';
+						print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;token='.newToken().'&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=SUPPLIER_PAYMENT">';
 						print img_picto($langs->trans("Enabled"), 'switch_on');
 						print '</a>';
 						/*}
@@ -435,7 +435,7 @@ foreach ($dirmodels as $reldir) {
 					print $form->textwithpicto('', $htmltooltip, 1, 'info');
 					print '</td>';
 					print '<td class="center">';
-					print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&amp;module='.$name.'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
+					print '<a href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'specimen', 'module' => $name], true).'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
 					print '</td>';
 
 					print "</tr>\n";

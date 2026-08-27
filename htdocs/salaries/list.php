@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2011-2022  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+/* Copyright (C) 2011-2026  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2015-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
@@ -29,12 +29,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-if (isModEnabled('accounting')) {
-	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
-}
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -42,6 +36,11 @@ if (isModEnabled('accounting')) {
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+if (isModEnabled('accounting')) {
+	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "salaries", "bills", "hrm"));
@@ -561,6 +560,7 @@ if (!empty($socid)) {
 $newcardbutton  = '';
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', DOL_URL_ROOT.'/salaries/stats/index.php?'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', ($mode == 'statistics' ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitleSeparator();
 $newcardbutton .= dolGetButtonTitle($langs->trans('NewSalary'), '', 'fa fa-plus-circle', $url, '', $permissiontoadd);
 

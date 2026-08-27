@@ -262,7 +262,7 @@ if ($type_element == 'fichinter') { 	// Customer : show products from invoices
 	$sql_select .= 'NULL as fk_product, NULL as info_bits, NULL as date_start, NULL as date_end, NULL as prod_qty, NULL as total_ht, ';
 	$tables_from = MAIN_DB_PREFIX."fichinter as f LEFT JOIN ".MAIN_DB_PREFIX."fichinterdet as d ON d.fk_fichinter = f.rowid"; // Must use left join to work also with option that disable usage of lines.
 	$where = " WHERE f.fk_soc = s.rowid AND s.rowid = ".((int) $socid);
-	$where .= " AND f.entity = ".$conf->entity;
+	$where .= " AND f.entity = ".((int) $conf->entity);
 	$dateprint = 'f.datec';
 	$doc_number = 'f.ref';
 }
@@ -312,7 +312,7 @@ if ($type_element == 'shipment') {
 	$where = " WHERE e.fk_soc = s.rowid AND s.rowid = ".((int) $socid);
 	$where .= " AND ed.fk_expedition = e.rowid";
 	$where .= " AND ed.element_type = 'commande' AND ed.fk_elementdet = d.rowid";
-	$where .= " AND e.entity = ".$conf->entity;
+	$where .= " AND e.entity = ".((int) $conf->entity);
 	$dateprint = 'e.date_creation';
 	$doc_number = 'e.ref';
 	$thirdTypeSelect = 'customer';
@@ -324,7 +324,7 @@ if ($type_element == 'supplier_invoice') { 	// Supplier : Show products from inv
 	$tables_from = MAIN_DB_PREFIX."facture_fourn as f,".MAIN_DB_PREFIX."facture_fourn_det as d";
 	$where = " WHERE f.fk_soc = s.rowid AND s.rowid = ".((int) $socid);
 	$where .= " AND d.fk_facture_fourn = f.rowid";
-	$where .= " AND f.entity = ".$conf->entity;
+	$where .= " AND f.entity = ".((int) $conf->entity);
 	$dateprint = 'f.datef';
 	$doc_number = 'f.ref';
 	$thirdTypeSelect = 'supplier';
@@ -336,7 +336,7 @@ if ($type_element == 'supplier_proposal') {
 	$tables_from = MAIN_DB_PREFIX."supplier_proposal as c,".MAIN_DB_PREFIX."supplier_proposaldet as d";
 	$where = " WHERE c.fk_soc = s.rowid AND s.rowid = ".((int) $socid);
 	$where .= " AND d.fk_supplier_proposal = c.rowid";
-	$where .= " AND c.entity = ".$conf->entity;
+	$where .= " AND c.entity = ".((int) $conf->entity);
 	$dateprint = 'c.date_valid';
 	$doc_number = 'c.ref';
 	$thirdTypeSelect = 'supplier';
@@ -349,7 +349,7 @@ if ($type_element == 'supplier_order') { 	// Supplier : Show products from order
 	$tables_from = MAIN_DB_PREFIX."commande_fournisseur as c,".MAIN_DB_PREFIX."commande_fournisseurdet as d";
 	$where = " WHERE c.fk_soc = s.rowid AND s.rowid = ".((int) $socid);
 	$where .= " AND d.fk_commande = c.rowid";
-	$where .= " AND c.entity = ".$conf->entity;
+	$where .= " AND c.entity = ".((int) $conf->entity);
 	$dateprint = 'c.date_valid';
 	$doc_number = 'c.ref';
 	$thirdTypeSelect = 'supplier';
@@ -363,7 +363,7 @@ if ($type_element == 'reception') { 	// Supplier : Show products from orders.
 	$where = " WHERE r.fk_soc = s.rowid AND s.rowid = ".((int) $socid);
 	$where .= " AND rd.fk_reception = r.rowid";
 	$where .= " AND rd.fk_elementdet = d.rowid AND rd.element_type = 'supplier_order'";
-	$where .= " AND r.entity = ".$conf->entity;
+	$where .= " AND r.entity = ".((int) $conf->entity);
 	$dateprint = 'r.date_creation';
 	$doc_number = 'r.ref';
 	$thirdTypeSelect = 'supplier';
@@ -376,7 +376,7 @@ if ($type_element == 'contract') { 	// Order
 	$tables_from = MAIN_DB_PREFIX."contrat as c,".MAIN_DB_PREFIX."contratdet as d";
 	$where = " WHERE c.fk_soc = s.rowid AND s.rowid = ".((int) $socid);
 	$where .= " AND d.fk_contrat = c.rowid";
-	$where .= " AND c.entity = ".$conf->entity;
+	$where .= " AND c.entity = ".((int) $conf->entity);
 	$dateprint = 'c.date_valid';
 	$doc_number = 'c.ref';
 	$thirdTypeSelect = 'customer';

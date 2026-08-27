@@ -30,11 +30,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/triggers/interface_50_modNotification_Notification.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -42,6 +37,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/triggers/interface_50_modNotification_Noti
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/triggers/interface_50_modNotification_Notification.class.php';
 
 // Load translation files required by page
 $langs->loadLangs(array('companies', 'mails', 'admin', 'other', 'errors'));
@@ -53,7 +52,9 @@ if (!isset($id) || empty($id)) {
 	accessforbidden();
 }
 
+$contextpage = GETPOST('contextpage');
 $action = GETPOST('action', 'aZ09');
+
 $actionid = GETPOSTINT('actionid');
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
@@ -82,7 +83,7 @@ if ($id > 0 || !empty($ref)) {
 	$object->loadRights();
 }
 
-$permissiontoadd = (($object->id == $user->id) || ($user->hasRight('user', 'user', 'lire')));
+$permissiontoadd = (($object->id == $user->id) || ($user->hasRight('user', 'user', 'creer')));
 
 // Security check
 if ($user->socid) {
