@@ -66,6 +66,35 @@ class ModuleBuilderRightsSyncTest extends CommonClassTest
 	}
 
 	/**
+	 * Check that a rendered permissions block is valid PHP.
+	 *
+	 * @param string $renderedBlock Block content produced by PermissionsBlock::render()
+	 * @return int 0 when the block parses
+	 */
+	private function lintRenderedBlock(string $renderedBlock): int
+	{
+		if (!function_exists('exec')) {
+			$this->markTestSkipped('exec() is disabled, cannot lint the generated block');
+		}
+		$dir = sys_get_temp_dir().'/mbrightssync'.getmypid();
+		if (!is_dir($dir)) {
+			dol_mkdir($dir);
+		}
+		$tmp = $dir.'/rendered'.uniqid().'.php';
+		$this->fixtures[] = $tmp;
+		file_put_contents($tmp, "<?php\nclass T { public \$rights = array(); public \$numero = 500000; function f() { \$r = 0;\n".$renderedBlock."} }\n");
+
+		$output = array();
+		$code = 0;
+		exec('php -l '.escapeshellarg($tmp).' 2>&1', $output, $code);
+		if ($code !== 0) {
+			$this->fail('Rendered block does not parse: '.implode("\n", $output));
+		}
+
+		return $code;
+	}
+
+	/**
 	 * Remove fixture files created by makeDescriptorFixture().
 	 *
 	 * @return void
@@ -226,5 +255,116 @@ class ModuleBuilderRightsSyncTest extends CommonClassTest
 		$conflicts = $block->detectTextConflicts();
 		$this->assertNotEmpty($conflicts);
 		$this->assertStringContainsString('$langs', $conflicts[0]);
+	}
+
+	/**
+	 * Rendering groups rights per object and numbers them read/write/delete within each group.
+	 *
+	 * @return void
+	 */
+	public function testRenderNumbersRightsPerObject()
+	{
+		$block = PermissionsBlock::fromFile($this->makeDescriptorFixture(''));
+		$rendered = $block->render(array(
+			array(1 => 'Read alpha', 4 => 'alpha', 5 => 'read'),
+			array(1 => 'Delete alpha', 4 => 'alpha', 5 => 'delete'),
+			array(1 => 'Read beta', 4 => 'beta', 5 => 'read'),
+		));
+
+		// First object gets stride 0, second gets stride 1
+		$this->assertStringContainsString("sprintf('%02d', (0 * 10) + 0 + 1)", $rendered);
+		$this->assertStringContainsString("sprintf('%02d', (0 * 10) + 2 + 1)", $rendered);
+		$this->assertStringContainsString("sprintf('%02d', (1 * 10) + 0 + 1)", $rendered);
+		// read comes before delete inside a group
+		$this->assertLessThan(strpos($rendered, 'Delete alpha'), strpos($rendered, 'Read alpha'));
+		$this->assertSame(3, substr_count($rendered, '$r++;'));
+	}
+
+	/**
+	 * A label carrying an apostrophe must not break the generated descriptor.
+	 *
+	 * @return void
+	 */
+	public function testRenderEscapesLabels()
+	{
+		$block = PermissionsBlock::fromFile($this->makeDescriptorFixture(''));
+		$rendered = $block->render(array(
+			array(1 => "Read l'objet", 4 => 'alpha', 5 => 'read'),
+		));
+
+		$this->assertStringContainsString("Read l\\'objet", $rendered);
+		$this->assertSame(0, $this->lintRenderedBlock($rendered));
+	}
+
+	/**
+	 * A label crafted to close the string literal stays inert data.
+	 *
+	 * @return void
+	 */
+	public function testRenderKeepsCraftedLabelInert()
+	{
+		$block = PermissionsBlock::fromFile($this->makeDescriptorFixture(''));
+		$rendered = $block->render(array(
+			array(1 => "x'; echo 'pwned", 4 => 'alpha', 5 => 'read'),
+		));
+
+		$this->assertSame(0, $this->lintRenderedBlock($rendered));
+		$this->assertStringNotContainsString("= 'x'; echo 'pwned';", $rendered);
+	}
+
+	/**
+	 * Legacy indexes 2 and 3 are dropped with a warning instead of corrupting the descriptor.
+	 *
+	 * @return void
+	 */
+	public function testLegacyIndexesAreNormalizedWithAWarning()
+	{
+		$block = PermissionsBlock::fromFile($this->makeDescriptorFixture(''));
+		$permissions = array(
+			array(1 => 'Read alpha', 2 => 'r', 3 => 0, 4 => 'alpha', 5 => 'read'),
+		);
+
+		$warnings = $block->detectRightsShapeWarnings($permissions);
+		$this->assertNotEmpty($warnings);
+		$this->assertStringContainsString('2', $warnings[0]);
+
+		$rendered = $block->render($permissions);
+		$this->assertStringNotContainsString('[2]', $rendered);
+		$this->assertStringNotContainsString('[3]', $rendered);
+		$this->assertSame(1, substr_count($rendered, '$r++;'));
+		$this->assertSame(0, $this->lintRenderedBlock($rendered));
+	}
+
+	/**
+	 * A right missing its object or crud cannot be rendered at all.
+	 *
+	 * @return void
+	 */
+	public function testRightMissingObjectOrCrudIsAConflict()
+	{
+		$block = PermissionsBlock::fromFile($this->makeDescriptorFixture(''));
+
+		$this->assertNotEmpty($block->detectRightsShapeConflicts(array(array(1 => 'Orphan'))));
+		$this->assertSame(array(), $block->detectRightsShapeConflicts(array(array(1 => 'Ok', 4 => 'alpha', 5 => 'read'))));
+	}
+
+	/**
+	 * Two rights of one object never collide on the same permission id.
+	 *
+	 * @return void
+	 */
+	public function testOffsetsStayUniqueWithCustomAndDuplicateCruds()
+	{
+		$block = PermissionsBlock::fromFile($this->makeDescriptorFixture(''));
+		$rendered = $block->render(array(
+			array(1 => 'Read alpha', 4 => 'alpha', 5 => 'read'),
+			array(1 => 'Export alpha', 4 => 'alpha', 5 => 'export'),
+			array(1 => 'Read alpha again', 4 => 'alpha', 5 => 'read'),
+		));
+
+		$matches = array();
+		preg_match_all('/\+ (\d+) \+ 1\)/', $rendered, $matches);
+		$this->assertSame(count($matches[1]), count(array_unique($matches[1])));
+		$this->assertSame(3, substr_count($rendered, '$r++;'));
 	}
 }

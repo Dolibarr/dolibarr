@@ -55,6 +55,27 @@ final class PermissionsBlock
 	 */
 	private const ALLOWED_PUNCTUATION = array('[', ']', '(', ')', '=', ';', ',', '.', '+', '-', '*');
 
+	/** @var array<string,int> Canonical numbering offset of the three standard crud codes */
+	private const CRUD_OFFSETS = array('read' => 0, 'write' => 1, 'delete' => 2);
+
+	/** @var int Numbering stride between two objects */
+	private const OBJECT_ID_STRIDE = 10;
+
+	/** @var int Rights array index holding the permission id */
+	private const INDEX_ID = 0;
+
+	/** @var int Rights array index holding the permission label */
+	private const INDEX_LABEL = 1;
+
+	/** @var int Rights array index holding the object name */
+	private const INDEX_OBJECT = 4;
+
+	/** @var int Rights array index holding the crud code */
+	private const INDEX_CRUD = 5;
+
+	/** @var int[] The only rights array indexes the renderer emits */
+	private const SUPPORTED_INDEXES = array(0, 1, 4, 5);
+
 	/** @var string Path to the descriptor file */
 	private $file;
 
@@ -163,5 +184,145 @@ final class PermissionsBlock
 		}
 
 		return array_values(array_unique($conflicts));
+	}
+
+	/**
+	 * List the rights that cannot be rendered at all.
+	 *
+	 * @param array<int,array<int,string>> $permissions Rights array to inspect
+	 * @return string[] Plain English reasons, empty when every right is renderable
+	 */
+	public function detectRightsShapeConflicts(array $permissions): array
+	{
+		$conflicts = array();
+		foreach ($permissions as $i => $right) {
+			if (!is_array($right)) {
+				$conflicts[] = 'right #'.$i.' is not an array';
+				continue;
+			}
+			if (!isset($right[self::INDEX_OBJECT]) || (string) $right[self::INDEX_OBJECT] === '') {
+				$conflicts[] = 'right #'.$i.' declares no object name at index '.self::INDEX_OBJECT;
+			}
+			if (!isset($right[self::INDEX_CRUD]) || (string) $right[self::INDEX_CRUD] === '') {
+				$conflicts[] = 'right #'.$i.' declares no crud code at index '.self::INDEX_CRUD;
+			}
+		}
+
+		return $conflicts;
+	}
+
+	/**
+	 * List the rights carrying indexes the renderer will drop.
+	 *
+	 * Indexes 2 and 3 are obsolete in modern Dolibarr. Dropping them is the correct migration, so
+	 * this is reported as a warning and does not prevent the write.
+	 *
+	 * @param array<int,array<int,string>> $permissions Rights array to inspect
+	 * @return string[] Plain English warnings, empty when every right has a supported shape
+	 */
+	public function detectRightsShapeWarnings(array $permissions): array
+	{
+		$warnings = array();
+		foreach ($permissions as $i => $right) {
+			if (!is_array($right)) {
+				continue;
+			}
+			$unsupported = array_diff(array_keys($right), self::SUPPORTED_INDEXES);
+			if (!empty($unsupported)) {
+				$warnings[] = 'right #'.$i.' carries unsupported index '.implode(', ', $unsupported).', dropped on rewrite';
+			}
+		}
+
+		return $warnings;
+	}
+
+	/**
+	 * Render a rights array as the new content of the permissions block.
+	 *
+	 * Only indexes 0, 1, 4 and 5 are emitted: the historical code rewrote those four but imploded
+	 * the whole row, so a right carrying the obsolete index 2 or 3 had its raw value written into
+	 * the descriptor, which then no longer parsed.
+	 *
+	 * @param array<int,array<int,string>> $permissions Rights array to render
+	 * @return string Block content, markers excluded, one trailing newline
+	 */
+	public function render(array $permissions): string
+	{
+		$grouped = array();
+		foreach ($permissions as $right) {
+			if (!is_array($right) || !isset($right[self::INDEX_OBJECT], $right[self::INDEX_CRUD])) {
+				continue;
+			}
+			$grouped[(string) $right[self::INDEX_OBJECT]][] = $right;
+		}
+
+		$lines = array();
+		$objectIndex = 0;
+		foreach ($grouped as $group) {
+			foreach ($this->assignOffsets($group) as $entry) {
+				$right = $entry['right'];
+				$id = "\$this->numero . sprintf('%02d', (".$objectIndex." * ".self::OBJECT_ID_STRIDE.") + ".$entry['offset']." + 1)";
+
+				$lines[] = "\t\t\$this->rights[\$r][".self::INDEX_ID."] = ".$id.";";
+				$lines[] = "\t\t\$this->rights[\$r][".self::INDEX_LABEL."] = '".$this->escapeForPhpSingleQuotedString((string) ($right[self::INDEX_LABEL] ?? ''))."';";
+				$lines[] = "\t\t\$this->rights[\$r][".self::INDEX_OBJECT."] = '".$this->escapeForPhpSingleQuotedString((string) $right[self::INDEX_OBJECT])."';";
+				$lines[] = "\t\t\$this->rights[\$r][".self::INDEX_CRUD."] = '".$this->escapeForPhpSingleQuotedString((string) $right[self::INDEX_CRUD])."';";
+				$lines[] = "\t\t\$r++;";
+			}
+			$objectIndex++;
+		}
+
+		return empty($lines) ? '' : implode("\n", $lines)."\n";
+	}
+
+	/**
+	 * Give each right of one object its numbering offset.
+	 *
+	 * The three standard crud codes keep their canonical offset. Any other code — or a duplicate
+	 * standard one — takes the next free offset from 3 upwards, so two rights of the same object
+	 * can never collide on the same permission id.
+	 *
+	 * @param array<int,array<int,string>> $group Rights of a single object
+	 * @return array<int,array{offset:int,right:array<int,string>}> Entries sorted by offset
+	 */
+	private function assignOffsets(array $group): array
+	{
+		$assigned = array();
+		$usedOffsets = array();
+		$next = count(self::CRUD_OFFSETS);
+
+		foreach ($group as $right) {
+			$crud = (string) $right[self::INDEX_CRUD];
+			if (isset(self::CRUD_OFFSETS[$crud]) && !isset($usedOffsets[self::CRUD_OFFSETS[$crud]])) {
+				$offset = self::CRUD_OFFSETS[$crud];
+			} else {
+				while (isset($usedOffsets[$next])) {
+					$next++;
+				}
+				$offset = $next;
+			}
+			$usedOffsets[$offset] = true;
+			$assigned[] = array('offset' => $offset, 'right' => $right);
+		}
+
+		usort($assigned, static function (array $a, array $b): int {
+			return $a['offset'] <=> $b['offset'];
+		});
+
+		return $assigned;
+	}
+
+	/**
+	 * Escape a value for inclusion in a single-quoted PHP string literal.
+	 *
+	 * GETPOST(..., 'alpha') keeps the single quote, the semicolon, the dollar sign and
+	 * parentheses, so a label reaches this class able to close the literal it is written into.
+	 *
+	 * @param string $value Raw value
+	 * @return string Value safe to place between single quotes in generated PHP
+	 */
+	private function escapeForPhpSingleQuotedString(string $value): string
+	{
+		return str_replace(array('\\', "'"), array('\\\\', "\\'"), $value);
 	}
 }
