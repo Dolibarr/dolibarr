@@ -70,7 +70,7 @@ if ($action == 'setproductionmode') {
 			}
 		} else {
 			// Delete the cache file otherwise it does not update
-			$result = dol_delete_file($conf->api->dir_temp.'/routes.php');
+			$result = dol_delete_file($conf->api->dir_temp.'/routes.php', 1);
 			if ($result < 0) {
 				setEventMessages($langs->trans("ErrorFailedToDeleteFile", $conf->api->dir_temp.'/routes.php'), null, 'errors');
 				$error++;

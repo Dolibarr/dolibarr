@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2025 		Open-Dsi         <support@open-dsi.fr>
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -137,11 +138,9 @@ class PasswordField extends CommonField
 			// Todo do we use other method ?
 			if (getDolGlobalString('USER_PASSWORD_GENERATED')) {
 				// Add a check on rules for password syntax using the setup of the password generator
-				$modGeneratePassClass = 'modGeneratePass' . ucfirst(getDolGlobalString('USER_PASSWORD_GENERATED'));
-
-				include_once DOL_DOCUMENT_ROOT . '/core/modules/security/generate/' . $modGeneratePassClass . '.class.php';
-				if (class_exists($modGeneratePassClass)) {
-					$modGeneratePass = new $modGeneratePassClass($this->db, $conf, $langs, $user);
+				require_once DOL_DOCUMENT_ROOT . '/core/modules/security/generate/modules_genpassword.php';
+				$modGeneratePass = ModeleGenPassword::loadAndInstantiate(getDolGlobalString('USER_PASSWORD_GENERATED'), $this->db, $conf, $langs, $user);
+				if ($modGeneratePass) {
 					'@phan-var-force ModeleGenPassword $modGeneratePass';
 
 					// To check an input user password, we disable the cleaning on ambiguous characters (this is used only for auto-generated password)

@@ -1,26 +1,39 @@
 # Dolibarr language file - Source file is en_US - workflow
-WorkflowSetup=راه اندازی ماژول گردش کار
-WorkflowDesc=This module provides some automatic actions. By default, the workflow is open (you can do things in the order you want) but here you can activate some automatic actions.
-ThereIsNoWorkflowToModify=There is no workflow modifications available with the activated modules.
+WorkflowSetup=پیکربندی ماژول جریان کار
+WorkflowDesc=این ماژول تعدادی عملیات خودکار فراهم می‌کند. به‌طور پیش‌فرض، جریان کار باز است (می‌توانید کارها را به هر ترتیبی که بخواهید انجام دهید)، اما در اینجا می‌توانید برخی عملیات خودکار را فعال کنید.
+ThereIsNoWorkflowToModify=امکان تغییر در جریان کار با ماژول‌های فعال فعلی وجود ندارد.
 # Autocreate
-descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Automatically create a sales order after a commercial proposal is signed (the new order will have same amount as the proposal)
-descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Automatically create a customer invoice after a commercial proposal is signed (the new invoice will have same amount as the proposal)
-descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Automatically create a customer invoice after a contract is validated
-descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Automatically create a customer invoice after a sales order is closed (the new invoice will have same amount as the order)
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=ایجاد خودکار سفارش فروش پس از امضای پیشنهاد تجاری (سفارش جدید همان مبلغ پیشنهاد را خواهد داشت).
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=ایجاد خودکار فاکتور مشتری پس از امضای پیشنهاد تجاری (فاکتور جدید همان مبلغ پیشنهاد را خواهد داشت).
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=ایجاد خودکار فاکتور مشتری پس از تایید قرارداد.
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=ایجاد خودکار فاکتور مشتری پس از بسته شدن سفارش فروش (فاکتور جدید همان مبلغ سفارش را خواهد داشت).
+descWORKFLOW_TICKET_CREATE_INTERVENTION=در زمان ایجاد تیکت، یک مداخله به‌صورت خودکار ایجاد می‌شود.
 # Autoclassify customer proposal or order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classify linked source proposal as billed when sales order is set to billed (and if the amount of the order is the same as the total amount of the signed linked proposal)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classify linked source proposal as billed when customer invoice is validated (and if the amount of the invoice is the same as the total amount of the signed linked proposal)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classify linked source sales order as billed when customer invoice is validated (and if the amount of the invoice is the same as the total amount of the linked order)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source sales order as billed when customer invoice is set to paid (and if the amount of the invoice is the same as the total amount of the linked order)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classify linked source sales order as shipped when a shipment is validated (and if the quantity shipped by all shipments is the same as in the order to update)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Classify linked source sales order as shipped when a shipment is closed (and if the quantity shipped by all shipments is the same as in the order to update)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=زمانی که یک سفارش فروش به وضعیت «صورتحساب‌شده» تغییر یابد، پیشنهادهای منبع مرتبط نیز به‌عنوان «صورتحساب‌شده» طبقه‌بندی می‌شوند (در صورتی که مبلغ سفارش با مجموع مبلغ پیشنهادهای امضاشدهٔ مرتبط یکسان باشد).
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=زمانی که یک فاکتور مشتری اعتبارسنجی شود، پیشنهادهای منبع مرتبط نیز به‌عنوان «صورتحساب‌شده» طبقه‌بندی می‌شوند (در صورتی که مبلغ فاکتور با مجموع مبلغ پیشنهادهای امضاشدهٔ مرتبط یکسان باشد).
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=زمانی که یک فاکتور مشتری به وضعیت «پرداخت‌شده» تغییر یابد، سفارش‌های فروش منبع مرتبط نیز به‌عنوان «صورتحساب‌شده» طبقه‌بندی می‌شوند (در صورتی که مبلغ فاکتور با مجموع مبلغ سفارش‌های فروش مرتبط یکسان باشد). اگر 1 فاکتور برای n سفارش ایجاد کنید، ممکن است همهٔ آن سفارش‌ها نیز به وضعیت «صورتحساب‌شده» تغییر یابند.
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=زمانی که یک فاکتور مشتری اعتبارسنجی می‌شود، تمام سفارش‌های فروش منبع مرتبط نیز به‌عنوان صورتحساب‌شده طبقه‌بندی می‌شوند (در صورتی که مبلغ فاکتور با مجموع مبلغ سفارش‌های فروش منبع مرتبط یکسان باشد). اگر 1 فاکتور مشترک برای n سفارش ایجاد کنید، ممکن است همه سفارش‌های منبع نیز به وضعیت صورتحساب‌شده تغییر یابند.
+descWORKFLOW_SUM_INVOICES_AMOUNT_CLASSIFY_BILLED_ORDER=زمانی که یک فاکتور مشتری اعتبارسنجی می‌شود، سفارش فروش مرتبط (در صورتی که فقط یکی باشد) به‌عنوان صورتحساب‌شده طبقه‌بندی می‌شود، اگر مجموع مبلغ سفارش فروش مرتبط برابر با مجموع مبلغ تمام فاکتورهای صادرشده از آن باشد. اگر n فاکتور برای 1 سفارش ایجاد کنید، این امکان وجود دارد که سفارش پس از اعتبارسنجی همه فاکتورها به وضعیت صورتحساب‌شده تغییر یابد.
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=زمانی که یک محموله اعتبارسنجی می‌شود، سفارش‌های فروش منبع مرتبط نیز به‌عنوان ارسال‌شده طبقه‌بندی می‌شوند (در صورتی که مقدار ارسال‌شده توسط تمام محموله‌ها با مقدار موجود در سفارش برای به‌روزرسانی یکسان باشد).
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=زمانی که یک محموله بسته می‌شود، سفارش فروش منبع مرتبط نیز به‌عنوان ارسال‌شده طبقه‌بندی می‌شود (در صورتی که مقدار ارسال‌شده توسط تمام محموله‌ها با مقدار موجود در سفارش برای به‌روزرسانی یکسان باشد).
+# Autoclassify purchase proposal
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=زمانی که یک فاکتور فروشنده اعتبارسنجی می‌شود، پیشنهاد فروشنده منبع مرتبط نیز به‌عنوان صورتحساب‌شده طبقه‌بندی می‌شود (در صورتی که مبلغ فاکتور با مجموع مبلغ پیشنهادهای مرتبط یکسان باشد).
 # Autoclassify purchase order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Classify linked source vendor proposal as billed when vendor invoice is validated (and if the amount of the invoice is the same as the total amount of the linked proposal)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Classify linked source purchase order as billed when vendor invoice is validated (and if the amount of the invoice is the same as the total amount of the linked order)
-descWORKFLOW_BILL_ON_RECEPTION=Classify receptions to "billed" when a linked supplier order is validated
-# Autoclose intervention
-descWORKFLOW_TICKET_CLOSE_INTERVENTION=Close all interventions linked to the ticket when a ticket is closed
-AutomaticCreation=Automatic creation
-AutomaticClassification=Automatic classification
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=زمانی که یک فاکتور فروشنده اعتبارسنجی می‌شود، سفارش خرید منبع مرتبط نیز به‌عنوان صورتحساب‌شده طبقه‌بندی می‌شود (در صورتی که مبلغ فاکتور با مجموع مبلغ سفارش‌های مرتبط یکسان باشد).
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=زمانی که یک رسید اعتبارسنجی می‌شود، سفارش خرید منبع مرتبط نیز به‌عنوان دریافت‌شده طبقه‌بندی می‌شود (در صورتی که مقدار دریافت‌شده توسط همه رسیدها با مقدار موجود در سفارش خرید برای به‌روزرسانی یکسان باشد).
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=زمانی که یک رسید بسته می‌شود، سفارش‌های خرید منبع مرتبط نیز به‌عنوان دریافت‌شده طبقه‌بندی می‌شوند (در صورتی که مقدار دریافت‌شده توسط همه رسیدهای صادرشده از سفارش خرید با مقدار موجود در سفارش خرید برای به‌روزرسانی یکسان باشد).
 # Autoclassify shipment
-descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Classify linked source shipment as closed when customer invoice is validated
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=زمانی که یک فاکتور مشتری اعتبارسنجی می‌شود، محموله منبع مرتبط نیز به‌عنوان بسته‌شده طبقه‌بندی می‌شود (در صورتی که مبلغ فاکتور با مجموع مبلغ محموله‌های مرتبط یکسان باشد).
+descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=زمانی که یک فاکتور مشتری اعتبارسنجی می‌شود، محموله منبع مرتبط نیز به‌عنوان صورتحساب‌شده طبقه‌بندی می‌شود (در صورتی که مبلغ فاکتور با مجموع مبلغ محموله‌های مرتبط یکسان باشد).
+# Autoclassify receptions
+descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=زمانی که یک فاکتور خرید اعتبارسنجی می‌شود، رسیدهای منبع مرتبط نیز به‌عنوان بسته‌شده طبقه‌بندی می‌شوند (در صورتی که مبلغ فاکتور با مجموع مبلغ رسیدهای مرتبط یکسان باشد).
+descWORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE=زمانی که یک فاکتور خرید اعتبارسنجی می‌شود، رسیدهای منبع مرتبط نیز به‌عنوان صورتحساب‌شده طبقه‌بندی می‌شوند (در صورتی که مبلغ فاکتور با مجموع مبلغ رسیدهای مرتبط یکسان باشد).
+# Automatically link ticket to contract
+descWORKFLOW_TICKET_LINK_CONTRACT=زمانی که یک تیکت ایجاد می‌شود، آن را با قراردادهای موجودی پیوند بده که با همان طرف تجاری تیکت مطابقت دارند.
+descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=هنگام پیونددهی خودکار یک تیکت با قراردادها، قراردادها را در میان قراردادهای شرکت‌های والد جستجو کن.
+# Autoclose intervention
+descWORKFLOW_TICKET_CLOSE_INTERVENTION=تمام مداخلات مرتبط با تیکت را هنگام بسته‌شدن تیکت ببند
+AutomaticCreation=ایجاد خودکار
+AutomaticClassification=طبقه‌بندی خودکار
+AutomaticClosing=بستن خودکار
+AutomaticLinking=ارتباط‌دهی خودکار

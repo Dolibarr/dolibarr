@@ -10,7 +10,6 @@ ActionsOnFicheInter=Événements sur l'intervention
 LastInterventions=Les %s dernières interventions
 AllInterventions=Toutes les interventions
 CreateDraftIntervention=Créer brouillon
-InterventionContact=Contact intervention
 DeleteIntervention=Supprimer intervention
 ValidateIntervention=Valider intervention
 SignIntervention=Signer l'intervention

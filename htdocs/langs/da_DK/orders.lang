@@ -166,6 +166,7 @@ PDFEdisonDescription=En simpel orden model
 PDFProformaDescription=En komplet Proforma-fakturaskabelon
 CreateInvoiceForThisCustomer=Bill ordrer
 CreateInvoiceForThisSupplier=Fakturer ordrer
+WarningOrderNotEligibleForInvoicing=Ordren %s er blevet sprunget over: dens status tillader ikke oprettelse af en faktura
 CreateInvoiceForThisReceptions=Regningsreceptioner
 NoOrdersToInvoice=Ingen ordrer faktureres
 CloseProcessedOrdersAutomatically=Klassificer "Behandlet" alle valgte ordrer.

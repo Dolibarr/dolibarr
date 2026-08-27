@@ -51,9 +51,12 @@ DateReceived=Jasotako entrega data
 ClassifyReception=Jasotakoa sailkatu
 SendShippingByEMail=Bidali bidalketa posta elektronikoz
 SendShippingRef=%s bidalketaren aurkezpena
+SendDeliveryRef=Submission of delivery %s
 ActionsOnShipping=Bidalketari buruzko gertaerak
 LinkToTrackYourPackage=Zure paketea jarraitzeko esteka
-ShipmentCreationIsDoneFromOrder=Momentuz, bidalketa berri bat sortzea Salmenta Eskaeraren erregistrotik egiten da.
+ShipmentCreationIsDoneFromOrder=For the moment, creation of a new Shipment fully interconnected with other modules is done through the Sales Order module.
+CreateSimpleShipment=However, your Dolibarr administrator can enable the creation of a simple Shipment from Shipments module setup page.
+SHIPMENT_STANDALONE=For the moment, allow the creation of a simple Shipment not yet interconnected with other modules.
 ShipmentLine=Bidalketa-lerroa
 ProductQtyInCustomersOrdersRunning=Salmenta-eskaera irekietatik eratorritako produktuen kantitatea
 ProductQtyInSuppliersOrdersRunning=Erosketa-eskaera irekietatik eratorritako produktuen kantitatea
@@ -69,6 +72,44 @@ OptionToSetSendingBilledNotEnabled=Lan-fluxu moduluko aukera, faktura balioztatu
 NoWarehouseInBase=Ez dago biltegirik oinarrian
 ShipmentUpdated=Bidalketa behar bezala eguneratu da
 ShipmentIncrementStockOnDelete = Ezabatzean stocka handitu
+ConfirmSignShipping=Confirm Sign Shipping
+ConfirmUnsignShipping=Confirm Unsign Shipping
+SignShipping=Sign Shipping
+UnsignShipping=Unsign Shipping
+
+# Deliveries
+Delivery=Delivery
+DeliveryRef=Ref Delivery
+DeliveryCard=Delivery receipt
+DeliveryOrder=Delivery receipt
+DeliveryDate=Delivery date
+CreateDeliveryOrder=Generate delivery receipt
+DeliveryStateSaved=Delivery state saved
+SetDeliveryDate=Set estimated delivery date
+SetShippingDate=Set shipping date
+ValidateDeliveryReceipt=Validate delivery receipt
+ValidateDeliveryReceiptConfirm=Are you sure you want to validate this delivery receipt?
+DeleteDeliveryReceipt=Delete delivery receipt
+DeleteDeliveryReceiptConfirm=Are you sure you want to delete delivery receipt <b>%s</b>?
+DeliveryMethod=Delivery method
+TrackingNumber=Tracking number
+DeliveryNotValidated=Delivery not validated
+StatusDeliveryCanceled=Canceled
+StatusDeliveryDraft=Draft
+StatusDeliveryValidated=Received
+NameAndSignature=Name and Signature:
+ToAndDate=To___________________________________ on ____/_____/__________
+GoodStatusDeclaration=Have received the goods above in good condition,
+Deliverer=Deliverer:
+Sender=Sender
+Recipient=Delivery recipient
+ErrorStockIsNotEnough=There's not enough stock
+Shippable=Shippable
+NonShippable=Not Shippable
+ShowShippableStatus=Show shippable status
+ShowReceiving=Show delivery receipt
+NonExistentOrder=Nonexistent order
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Stock quantities already allocated on previous lines
 
 # Sending methods
 # ModelDocument
@@ -87,6 +128,7 @@ ShipmentDistribution=Bidalketa banaketa
 ErrorTooManyCombinationBatchcode=Ez da bidali %s lerrorako, biltegi, produktu eta lote kodeen konbinazio gehiegi aurkitu direlako (%s).
 ErrorNoCombinationBatchcode=Ezin izan da %s lerroa gorde, biltegi-produktu-lote/serieko konbinazioa (%s, %s, %s) ez baita stockean aurkitu.
 ErrorTooMuchShipped=Bidalitako kantitatea ezin da %s lerrorako eskatutako kantitatea baino handiagoa izan.
+NoShipmentLineChangeDetected=No shipment line change was detected.
 ##### Types of contacts #####
 TypeContact_shipping_internal_SALESREPFOLL=Ordezkariaren bidalketaren jarraipena
 TypeContact_shipping_external_BILLING=Bezeroaren fakturazio-harremanetarako

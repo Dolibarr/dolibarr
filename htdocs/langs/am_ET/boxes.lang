@@ -116,6 +116,7 @@ BoxLastCustomerShipments=የመጨረሻ የደንበኛ መላኪያዎች
 BoxTitleLastCustomerShipments=Latest %s modified customer shipments
 BoxTitleLastLeaveRequests=የቅርብ ጊዜ %s የተሻሻሉ የእረፍት ጥያቄዎች
 NoRecordedShipments=የተመዘገበ የደንበኛ ጭነት የለም።
+NoUpcomingEvent=No upcoming events
 BoxCustomersOutstandingBillReached=ከፍተኛ ገደብ ያላቸው ደንበኞች ደርሰዋል
 BoxTitleLastFediverseInfos=Last %s posts from %s
 BoxLastFediverseInfos=Latest Fediverse Updates: News and Trends

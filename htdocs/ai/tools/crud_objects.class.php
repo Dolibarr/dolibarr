@@ -960,7 +960,7 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 
 		$table = $tableMap[$type];
 
-		$sql = "UPDATE " . MAIN_DB_PREFIX . $this->db->escape($table);
+		$sql = "UPDATE " . MAIN_DB_PREFIX . $this->db->sanitize($table);
 		$sql .= " SET fk_unit = " . (int) $unitId;
 		$sql .= " WHERE rowid = " . (int) $lineId;
 

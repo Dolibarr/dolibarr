@@ -1,29 +1,55 @@
-# Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Račun (iz kontnog plana) koji se koristi po zadanim postavkama za "korisnike" na platama
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Namjenski račun definiran na korisničkoj kartici koristit će se samo za pomoćno računovodstvo. Ovaj račun će se koristiti za glavnu knjigu, ali i kao zadana vrijednost pomoćnog računovodstva ako za korisnika nije definiran namjenski korisnički računovodstveni račun.
-SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Računovodstveni račun po defaultu za isplate plata
-CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=Podrazumevano, ostavite praznu opciju "Automatski kreiraj ukupnu uplatu" kada kreirate Platu
 Salary=Plata
 Salaries=Plate
 NewSalary=Nova plata
 AddSalary=Dodajte platu
 NewSalaryPayment=Nova platna kartica
 AddSalaryPayment=Dodajte isplatu plate
-SalaryID=ID plate
-SalaryAmount=Iznos plate
 SalaryPayment=Isplata plate
 SalariesPayments=Isplate plata
 SalariesPaymentsOf=Isplate plata od %s
 ShowSalaryPayment=Prikaži isplatu plate
-THM=Prosječna satnica
-TJM=Prosječna dnevna stopa
+SalaryID=ID plate
+SalaryAmount=Iznos plate
+SalaryDate=Salary date
+SalaryPaid=Salary paid
+SalaryNotPaid=Salary not paid
+
+SalarySlip=Salary slip
+StandardSalaryDocModel=Standard salary slip document
+
+BasicSalary=Basic salary
+Bonus=Bonus
+Allowance=Allowance
+Overtime=Overtime
+Deduction=Deduction
+Deductions=Deductions
+Earnings=Earnings
+TotalEarnings=Total earnings
+TotalDeductions=Total deductions
+NetPaid=Neto plaćeno
+
+# Accounting
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Račun (iz kontnog plana) koji se koristi po zadanim postavkama za "korisnike" na platama
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Namjenski račun definiran na korisničkoj kartici koristit će se samo za pomoćno računovodstvo. Ovaj račun će se koristiti za glavnu knjigu, ali i kao zadana vrijednost pomoćnog računovodstva ako za korisnika nije definiran namjenski korisnički računovodstveni račun.
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Računovodstveni račun po defaultu za isplate plata
+CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=Podrazumevano, ostavite praznu opciju "Automatski kreiraj ukupnu uplatu" kada kreirate Platu
+
+# Stats / Info
 CurrentSalary=Trenutna plata
-THMDescription=Ova vrijednost se može koristiti za izračunavanje troškova vremena utrošenog na projekat koji su unijeli korisnici ako se koristi projekt modula
-TJMDescription=Ova vrijednost je trenutno samo za informaciju i se ne koristi ni za kakav proračun
 LastSalaries=Najnovije %s plate
 AllSalaries=Sve plate
 SalariesStatistics=Statistika plata
 SalariesAndPayments=Plate i isplate
+UserPaySlip=Platna lista
+PayPeriod=Pay period
+
+# THM / TJM
+THM=Prosječna satnica
+THMDescription=Ova vrijednost se može koristiti za izračunavanje troškova vremena utrošenog na projekat koji su unijeli korisnici ako se koristi projekt modula
+TJM=Prosječna dnevna stopa
+TJMDescription=Ova vrijednost je trenutno samo za informaciju i se ne koristi ni za kakav proračun
+
+# Other actions
 ConfirmDeleteSalaryPayment=Želite li izbrisati ovu isplatu plate?
 FillFieldFirst=Prvo popunite polje za zaposlene
 UpdateAmountWithLastSalary=Odredite iznos zadnje plate
@@ -32,8 +58,10 @@ VirementOrder=Zahtjev za prijenos kredita
 WithdrawalReceipt=Nalog za prijenos kredita
 OrderWaiting=Narudžba na čekanju
 FillEndOfMonth=Kraj mjeseca
+
+# Shortcuts
 PreviousMonthShort=Prethodni mjesec
 CurrentMonthShort=Tekući mjesec
+NextMonthShort=Next month
 PreviousWeekShort=Prethodna sedmica
 CurrentWeekShort=Trenutna sedmica
-UserPaySlip=Platna lista

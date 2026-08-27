@@ -160,7 +160,7 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 					$texttoinsert .= ' "index" => "'.(int) $val['index'].'",';
 				}
 				if (!empty($val['foreignkey'])) {
-					$texttoinsert .= ' "foreignkey" => "'.(int) $val['foreignkey'].'",';
+					$texttoinsert .= ' "foreignkey" => "'.dol_escape_php($val['foreignkey']).'",';
 				}
 				if (!empty($val['searchall'])) {
 					$texttoinsert .= ' "searchall" => "'.(int) $val['searchall'].'",';
@@ -651,7 +651,7 @@ function reWriteAllPermissions($file, $permissions, $key, $right, $objectname, $
 		$permissions = $perms_grouped;
 
 
-		// parcourir les objects
+		// iterate over the objects
 		$o = 0;
 		foreach ($permissions as &$object) {
 			// get the object permission

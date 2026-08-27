@@ -258,7 +258,7 @@ OtherFilteredTasks=Muut suodatetut tehtävät
 NoAssignedTasks=Määritettyjä tehtäviä ei löytynyt (määritä projekti/tehtävät nykyiselle käyttäjälle ylhäältä valintaruudusta syöttääksesi aika)
 ThirdPartyRequiredToGenerateIntervention=Kolmas osapuoli on määriteltävä projektissa, jotta luo voi puuttua asiaan.
 ThirdPartyRequiredToGenerateInvoice=Kolmas osapuoli on määriteltävä projektiin, jotta se voi laskuttaa sen.
-ChooseANotYetAssignedTask=Valitse tehtävä, jota ei ole vielä määritetty sinulle
+ChooseANotYetAssignedTask=Tasks not yet assigned to you
 # Comments trans
 AllowCommentOnTask=Salli käyttäjien kommentit tehtäviin
 AllowCommentOnProject=Salli käyttäjien kommentit aiheeseen Projektit

@@ -319,7 +319,7 @@ $line = -1;
 
 // mode = config
 if ($mode == 'config') {
-	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?mode=config" autocomplete="off">';
+	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?mode=config" autocomplete="off" spellcheck="false">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	if ($action != 'editprinter') {
 		print '<input type="hidden" name="action" value="addprinter">';
@@ -457,7 +457,7 @@ if ($mode == 'template') {
 
 	print '<br>';
 
-	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?mode=template" autocomplete="off">';
+	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?mode=template" autocomplete="off" spellcheck="false">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	if ($action != 'edittemplate') {
 		print '<input type="hidden" name="action" value="addtemplate">';

@@ -31,8 +31,8 @@ OAUTH_URL_FOR_CREDENTIAL=Ga naar <a class="notasortlink" href="%s" target="_blan
 OAUTH_STRIPE_TEST_NAME=Stripe Test
 OAUTH_STRIPE_LIVE_NAME=Stripe Live
 OAUTH_ID=OAuth-client-ID
-OAUTH_SECRET=OAuth Secret
-OAUTH_TENANT=OAuth Tenant
+OAUTH_SECRET=OAuth-geheim
+OAUTH_TENANT=OAuth-tenant
 OAuthProviderAdded=OAuth-provider toegevoegd
 AOAuthEntryForThisProviderAndLabelAlreadyHasAKey=Er bestaat al een OAuth-vermelding voor deze provider en dit label
 URLOfOAuthServiceEndpoints=Basis-URL voor OAuth-service-eindpunten
@@ -40,7 +40,7 @@ URLOfOAuthServiceEndpointsExample=https://mastodon.voorbeeld.com
 URLOfServiceForAuthorization=URL verstrekt door OAuth-service voor authenticatie
 Scopes=Machtigingen (bereiken)
 ScopeUndefined=Machtigingen (bereiken) undefined (zie vorig tabblad)
-ScopesDesc=Example: "read", "write" with Mastodon or "none"
+ScopesDesc=Voorbeeld: "lezen", "schrijven" met Mastodon of "geen"
 TokenRawValue=Volledig token (object)
 AccessToken=Toegangstoken
 TokenExpired=Verlopen
@@ -50,4 +50,4 @@ RefreshToken=Token vernieuwen
 RefreshTokenHelp=Gebruik de Refresh Token om een nieuwe Access Token te krijgen
 OldTokenWasExpiredItHasBeenRefresh=Oude token was verlopen, deze is vernieuwd
 OldTokenWasNotExpiredButItHasBeenRefresh=Het oude token was niet verlopen, maar is vernieuwd
-OAuthErrorStateDiffers=Value for state=%s differs from value in session. Code is refused.
+OAuthErrorStateDiffers=De waarde voor state=%s verschilt van de waarde in de sessie. De code wordt geweigerd.

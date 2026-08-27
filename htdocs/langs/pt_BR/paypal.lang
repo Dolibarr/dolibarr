@@ -8,7 +8,6 @@ PAYPAL_SSLVERSION=Versão do SSL do cURL
 PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Oferta de pagamento "integral" (cartão de crédito + PayPal) ou apenas "PayPal"
 PaypalModeIntegral=Integralmente
 PaypalModeOnlyPaypal=PayPal apenas
-ThisIsTransactionId=Eis o id da transação: <b>%s</b>
 PAYPAL_ADD_PAYMENT_URL=Inclua o URL de pagamento do PayPal quando enviar um documento por e-mail
 NewOnlinePaymentFailed=Foi tentado novo pagamento online, mas sem hêxito
 ONLINE_PAYMENT_SENDEMAIL=Endereço de e-mail para notificações após cada tentativa de pagamento (para sucesso e falha)

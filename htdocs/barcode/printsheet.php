@@ -35,11 +35,6 @@ if (!empty($_POST['mode']) && $_POST['mode'] === 'label') {	// Page is called to
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/format_cards.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/modules/printsheet/modules_labels.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -47,9 +42,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
  * @var Societe $mysoc
  * @var Translate $langs
  * @var User $user
- *
+ */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/format_cards.lib.php';
+/**
  * @var array<string,array{name:string,paper-size:string|array{0:float,1:float},orientation:string,metric:string,marginLeft:float,marginTop:float,NX:int,NY:int,SpaceX:float,SpaceY:float,width:float,height:float,font-size:int,custom_x:float,custom_y:float}> $_Avery_Labels
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/printsheet/modules_labels.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
+
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'members', 'errors'));

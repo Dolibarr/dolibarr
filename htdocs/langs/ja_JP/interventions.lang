@@ -10,7 +10,6 @@ ActionsOnFicheInter=出張のアクション
 LastInterventions=最新の%s出張
 AllInterventions=全出張
 CreateDraftIntervention=下書きを作成
-InterventionContact=出張の接点
 DeleteIntervention=出張を削除
 ValidateIntervention=出張を検証
 SignIntervention=出張に署名
