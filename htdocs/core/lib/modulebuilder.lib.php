@@ -1603,9 +1603,9 @@ function rewriteIncludeStatements($content, $file, $moduleName, IncludeRewritePo
 		}
 		$moduleRelative = implode('/', $segments);
 		$rel = $resolver->resolveFromFileDir($file, $moduleRelative);
-		$from = trim($m[0]);
-		$to = "include_once __DIR__.'/".$rel."';";
-		$report->addReplacement($lineNumber, $from, $to);
+		$oldStatement = trim($m[0]);
+		$newStatement = "include_once __DIR__.'/".$rel."';";
+		$report->addReplacement($lineNumber, $oldStatement, $newStatement);
 	}
 
 	return $report;
