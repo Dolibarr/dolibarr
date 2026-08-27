@@ -8,7 +8,7 @@
  * Copyright (C) 2021-2023	Anthony Berton				<anthony.berton@bb2a.fr>
  * Copyright (C) 2023		Eric Seigne					<eric.seigne@cap-rel.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France				<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -300,7 +300,7 @@ if ($action == 'update') {
 		$dirforimage = $conf->mycompany->dir_output . '/logos/';
 		if ($_FILES[$varforimage]["tmp_name"]) {
 			$reg = array();
-			if (preg_match('/([^\\/:]+)$/i', (string) $_FILES[$varforimage]["name"], $reg)) {
+			if (isset($_FILES[$varforimage]["name"]) && preg_match('/([^\\/:]+)$/i', (string) $_FILES[$varforimage]["name"], $reg)) {
 				$original_file = $reg[1];
 
 				$isimage = image_format_supported($original_file);
