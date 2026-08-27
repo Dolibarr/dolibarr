@@ -31,8 +31,8 @@ OAUTH_URL_FOR_CREDENTIAL=Gå til <a class="notasortlink" href="%s" target="_blan
 OAUTH_STRIPE_TEST_NAME=Stripe test
 OAUTH_STRIPE_LIVE_NAME=Stripe Live
 OAUTH_ID=OAuth-klient-id
-OAUTH_SECRET=OAuth Secret
-OAUTH_TENANT=OAuth Tenant
+OAUTH_SECRET=OAuth-hemmelighed
+OAUTH_TENANT=OAuth-lejer
 OAuthProviderAdded=OAuth-udbyder tilføjet
 AOAuthEntryForThisProviderAndLabelAlreadyHasAKey=Der findes allerede en OAuth-post for denne udbyder og etiket
 URLOfOAuthServiceEndpoints=Basis-URL for OAuth-tjenesteslutpunkter

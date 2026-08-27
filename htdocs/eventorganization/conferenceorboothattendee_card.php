@@ -66,7 +66,7 @@ $lineid   = GETPOSTINT('lineid');
 
 $conf_or_booth_id = GETPOSTINT('conforboothid');
 $fk_project = GETPOSTINT('fk_project');
-$withproject = 1;
+$withproject = GETPOSTISSET('withproject') ? GETPOSTINT('withproject'): 1;
 
 // Initialize a technical objects
 $object = new ConferenceOrBoothAttendee($db);
@@ -501,6 +501,7 @@ if ($action == 'create' && $confOrBooth === null) {
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].(empty($withproject) ? '' : '?withproject=1').'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
+	print '<input type="hidden" name="withproject" value="'.$withproject.'">';
 
 	if ($projectstatic->id > 0) {
 		print '<input type="hidden" name="fk_project" value="'.$projectstatic->id.'">';
@@ -715,6 +716,18 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 
 		print '</div><div class="fichehalfright">';
+
+		$MAXEVENT = 10;
+
+		$morehtmlcenter = '<div class="nowraponall">';
+		$morehtmlcenter .= dolGetButtonTitle($langs->trans('FullConversation'), '', 'fa fa-comments imgforviewmode', DOL_URL_ROOT.'/societe/messaging.php?socid='.$object->id);
+		$morehtmlcenter .= dolGetButtonTitle($langs->trans('FullList'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/societe/agenda.php?socid='.$object->id);
+		$morehtmlcenter .= '</div>';
+
+		// List of actions on element
+		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
+		$formactions = new FormActions($db);
+		$somethingshown = $formactions->showactions($object, 'conferenceorboothattendee', 0, 1, '', $MAXEVENT, '', $morehtmlcenter); // Show all action for attendee
 
 		print '</div></div>';
 	}

@@ -109,3 +109,4 @@ PAYBOX_PBX_SITE=Érték erre: PBX SITE
 PAYBOX_PBX_RANG=Érték erre: PBX Rang
 PAYBOX_PBX_IDENTIFIANT=Érték erre: PBX ID
 PAYBOX_HMAC_KEY=HMAC kulcs
+FeatureNotUsedAccordingtoSetup=Feature not used according to your %s setup

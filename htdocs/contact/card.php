@@ -8,7 +8,7 @@
  * Copyright (C) 2013-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2014		Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
- * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2019		Josep Lluís Amador			<joseplluis@lliuretic.cat>
  * Copyright (C) 2020-2026	Open-Dsi					<support@open-dsi.fr>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
@@ -36,6 +36,15 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/contact.lib.php';
@@ -44,20 +53,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Societe $mysoc
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'users', 'other', 'commercial'));
@@ -75,7 +74,6 @@ $socid = GETPOSTINT('socid');
 
 // Initialize a technical object
 $object = new Contact($db);
-$extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -160,7 +158,7 @@ if (empty($reshook)) {
 
 	// Create user from contact
 	if ($action == 'confirm_create_user' && $confirm == 'yes' && $user->hasRight('user', 'user', 'creer')) {
-		// Recuperation contact actuel
+		// Retrieve current contact
 		$result = $object->fetch($id);
 
 		if ($result > 0) {
@@ -352,6 +350,39 @@ if (empty($reshook)) {
 			}
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	}
+
+	// Merge a contact into the current one. As on the third party card, the confirmation popup submits
+	// with a GET, the request being protected by the CSRF token of main.inc.php. All the permission and
+	// perimeter checks on the two contacts are done by Contact::mergeContact() itself.
+	if ($action == 'confirm_merge' && $confirm == 'yes' && $permissiontoadd && $user->hasRight('societe', 'contact', 'supprimer')) {
+		$contact_origin_id = GETPOSTINT('contact_origin');
+
+		if ($contact_origin_id <= 0) {
+			$langs->load('errors');
+			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('MergeOriginContact')), null, 'errors');
+		} else {
+			// fetch() returns the id when found, 2 when several records were found, 0 when not found
+			// and -1 on error: a plain "<= 0" test would report an empty error on the not found case
+			$result = $object->fetch($id);
+			if ($result == 0) {
+				$langs->load('errors');
+				setEventMessages($langs->trans('ErrorRecordNotFound'), null, 'errors');
+			} elseif ($result != $id) {
+				$langs->load('errors');
+				setEventMessages($object->error ? $object->error : $langs->trans('ErrorBadParameters'), $object->errors, 'errors');
+			} elseif ($object->mergeContact($contact_origin_id) < 0) {
+				setEventMessages($object->error, $object->errors, 'errors');
+			} else {
+				setEventMessages($langs->trans('ContactsMergeSuccess'), null, 'mesgs');
+				// The merge is committed, but the files are moved afterwards and may have failed
+				if (!empty($object->warnings)) {
+					setEventMessages(null, $object->warnings, 'warnings');
+				}
+				header("Location: ".$_SERVER['PHP_SELF'].'?id='.$object->id);
+				exit;
+			}
 		}
 	}
 
@@ -602,6 +633,25 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		if ($action == 'delete') {
 			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id.($backtopage ? '&backtopage='.$backtopage : ''), $langs->trans("DeleteContact"), $langs->trans("ConfirmDeleteContact"), "confirm_delete", '', 0, 1);
 		}
+	}
+
+	// Confirm merging contact
+	if ($action == 'merge' && $permissiontoadd && $user->hasRight('societe', 'contact', 'supprimer')) {
+		// The current contact is excluded with the $filter parameter and not with $exclude, the latter
+		// being applied by selectcontacts() only when it receives an array while the ajax branch gives
+		// it a string. With CONTACT_USE_SEARCH_TO_SELECT the exclusion is lost anyway, contact/ajax
+		// /contact.php overwriting the filter it receives: merging a contact into itself is then refused
+		// by mergeContact() instead. The third party is shown to tell homonyms apart.
+		$formquestion = array(
+			array(
+				'name' => 'contact_origin',
+				'label' => $langs->trans("MergeOriginContact"),
+				'type' => 'other',
+				'value' => $form->select_contact(0, '', 'contact_origin', 1, '', '', 1, 'minwidth200', false, 1, 0, array(), '', '', '', '(sp.rowid:!=:'.((int) $id).')')
+			)
+		);
+
+		print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id, $langs->trans("MergeContacts"), $langs->trans("ConfirmMergeContacts"), "confirm_merge", $formquestion, 'no', 1, 300);
 	}
 
 	/*
@@ -1305,7 +1355,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		// Show errors
 		dol_htmloutput_errors(is_numeric($error) ? '' : $error, $errors);
 
-		print dol_get_fiche_head($head, 'card', $title, -1, 'contact');
+		print dol_get_fiche_head($head, 'card', $title, -1, 'contact', 0, '', '', 0, '', 1);
 
 		if ($action == 'create_user') {
 			// Full firstname and lastname separated with a dot : firstname.lastname
@@ -1364,9 +1414,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<table class="border tableforfield" width="100%">';
 
 		// Civility
-		print '<tr><td class="titlefield">'.$langs->trans("UserTitle").'</td><td>';
-		print $object->getCivilityLabel();
-		print '</td></tr>';
+		if (getDolGlobalString('MAIN_USE_TITLE_FOR_CONTACT')) {
+			print '<tr><td class="titlefield">'.$langs->trans("UserTitle").'</td><td>';
+			print $object->getCivilityLabel();
+			print '</td></tr>';
+		}
 
 		// Job / position
 		print '<tr><td>'.$langs->trans("PostOrFunction").'</td><td>'.$object->poste.'</td></tr>';
@@ -1375,7 +1427,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		if (isModEnabled('mailing')) {
 			$langs->load("mails");
 			print '<tr><td>'.$langs->trans("NbOfEMailingsSend").'</td>';
-			print '<td><a href="'.DOL_URL_ROOT.'/comm/mailing/list.php?filteremail='.urlencode($object->email).'">'.$object->getNbOfEMailings().'</a></td></tr>';
+			print '<td><a class="badge badge-info" href="'.DOL_URL_ROOT.'/comm/mailing/list.php?filteremail='.urlencode($object->email).'">'.$object->getNbOfEMailings().'</a></td></tr>';
 		}
 
 		// Unsubscribe opt-out
@@ -1407,7 +1459,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		}
 
 		print '<tr><td>'.$langs->trans("ContactVisibility").'</td><td>';
-		print $object->LibPubPriv($object->priv);
+		print $object->LibPubPriv($object->priv, 1);
 		print '</td></tr>';
 
 		print '</table>';
@@ -1566,6 +1618,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			// Desactiver
 			if ($object->status == 1 && $user->hasRight('societe', 'contact', 'creer')) {
 				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=disable&id='.$object->id.'&token='.newToken().'">'.$langs->trans("DisableUser").'</a>';
+			}
+
+			// Merge
+			if ($permissiontoadd && $user->hasRight('societe', 'contact', 'supprimer')) {
+				print dolGetButtonAction($langs->trans("MergeContacts"), $langs->trans("Merge"), 'danger', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=merge&token='.newToken(), '', $user->hasRight('societe', 'contact', 'supprimer'));
 			}
 
 			// Delete

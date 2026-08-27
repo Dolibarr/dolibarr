@@ -4,7 +4,7 @@
  * Copyright (C) 2021 Greg Rastklan <greg.rastklan@atm-consulting.fr>
  * Copyright (C) 2021 Jean-Pascal BOUDET <jean-pascal.boudet@atm-consulting.fr>
  * Copyright (C) 2021 Grégory BLEMAND <gregory.blemand@atm-consulting.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -180,6 +180,7 @@ if (!$permissiontoread || ($action === 'create' && !$permissiontoadd)) {
  */
 
 $parameters = array();
+$job = null;
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -292,7 +293,7 @@ if ($action == 'create') {
 
 	//dol_set_focus('input[name="ref"]');
 }
-if ($job->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'))) {
+if ($job !== null && $job->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'))) {
 	if ($backtopage) {
 		print '<input type="hidden" name="backtopage" value="' . $backtopage . '">';
 	}
@@ -431,6 +432,7 @@ if ($job->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'
 		}
 	}
 	// if total of record found is smaller than limit, no need to do paging and to restart another select with limits set.
+	$resql = null;
 	if (is_numeric($nbtotalofrecords) && ($limit > $nbtotalofrecords || empty($limit))) {
 		$num = $nbtotalofrecords;
 	} else {
@@ -448,7 +450,7 @@ if ($job->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'
 	}
 
 	// Direct jump if only one record found
-	if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all && !$page) {
+	if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all && !$page && $resql !== null) {
 		$obj = $db->fetch_object($resql);
 		$id = $obj->rowid;
 		header("Location: " . dol_buildpath('/hrm/position.php', 1) . '?id=' . $id);
@@ -648,7 +650,7 @@ if ($job->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'
 	$i = 0;
 	$totalarray = array();
 	$totalarray['nbfield'] = 0;
-	while ($i < ($limit ? min($num, $limit) : $num)) {
+	while ($i < ($limit ? min($num, $limit) : $num) && $resql !== null) {
 		$obj = $db->fetch_object($resql);
 		if (empty($obj)) {
 			break; // Should not happen
@@ -745,7 +747,9 @@ if ($job->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'
 	}
 
 
-	$db->free($resql);
+	if ($resql !== null) {
+		$db->free($resql);
+	}
 
 	$parameters = array('arrayfields' => $arrayfields, 'sql' => $sql);
 	$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object); // Note that $action and $object may have been modified by hook

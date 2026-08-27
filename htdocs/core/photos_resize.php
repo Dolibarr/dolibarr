@@ -3,7 +3,7 @@
  * Copyright (C) 2009		Meos
  * Copyright (C) 2012		Regis Houssin				<regis.houssin@inodbox.com>
  * Copyright (C) 2016		Juanjo Menent				<jmenent@2byte.es>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
@@ -38,6 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
+ * @var string $dolibarr_main_data_root
  */
 
 // Load translation files required by the page
@@ -131,6 +132,7 @@ if (!$accessallowed) {
 
 // Define dir according to modulepart
 $dir = '';
+$object = null;
 if ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'service' || $modulepart == 'produit|service') {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 	$object = new Product($db);
@@ -567,7 +569,7 @@ if (!empty($conf->use_javascript_ajax)) {
 	print $langs->trans("DefineNewAreaToPick").'...<br>';
 	print '<br><div class="center">';
 
-	if (empty($conf->dol_no_mouse_hover)) {
+	if (empty($conf->dol_no_mouse_hover) && $object !== null) {
 		print '<div style="border: 1px solid #888888; width: '.$widthforcrop.'px;">';
 		print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.urlencode($modulepart).'&entity='.((int) $object->entity).'&file='.urlencode($original_file).'" alt="" id="cropbox" width="'.$widthforcrop.'px"/>';
 		print '</div>';

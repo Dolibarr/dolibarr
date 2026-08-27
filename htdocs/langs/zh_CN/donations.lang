@@ -57,3 +57,7 @@ donAnonymous=Anonymous donation
 AnonymousDonationTooltip=Check this box if you want your donation to remain anonymous. Your personal information will not be asked.
 publicDonationFieldHelp=%s can publish my donation in the public register
 listOfPublicDonations=List of public donations
+donationErrorMessageContactEmail=An error has occurred. To complete your donation, please contact us at %s
+descDonationLineInInvoice=Donation and contribution
+companyBusinessNumber=Business Registration Number
+companyTIN=Tax Identification Number

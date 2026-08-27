@@ -7,7 +7,7 @@
  * Copyright (C) 2010       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2018       Florian Henry           <florian.henry@open-concept.pro
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -86,7 +86,6 @@ if (!$sortorder) {
 
 // Initialize a technical objects
 
-$extrafields = new ExtraFields($db);
 $hookmanager->initHooks(array('agendaresource'));
 
 $object = new Dolresource($db);

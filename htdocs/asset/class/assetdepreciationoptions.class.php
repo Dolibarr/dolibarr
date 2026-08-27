@@ -38,7 +38,7 @@ class AssetDepreciationOptions extends CommonObject
 
 	/**
 	 *  'type' field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]', 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter[:Sortfield]]]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'text:none', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
-	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
+	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'picto' is code of a picto to show before value in forms
 	 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalString("MY_SETUP_PARAM")'
@@ -494,7 +494,7 @@ class AssetDepreciationOptions extends CommonObject
 
 		foreach ($this->deprecation_options_fields as $mode_key => $mode_info) {
 			// Delete old accountancy codes
-			$sql = "DELETE FROM " . MAIN_DB_PREFIX . $mode_info['table'];
+			$sql = "DELETE FROM " . MAIN_DB_PREFIX . $mode_info['table'];  // From safe table @phan-suppress-current-line SqlInjection
 			$sql .= " WHERE " . ($asset_id > 0 ? " fk_asset = " . (int) $asset_id : " fk_asset_model = " . (int) $asset_model_id);
 			$resql = $this->db->query($sql);
 			if (!$resql) {

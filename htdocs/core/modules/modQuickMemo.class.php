@@ -43,7 +43,7 @@ class modQuickMemo extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $conf;
+		global $conf, $langs;
 
 		$this->db = $db;
 
@@ -56,7 +56,7 @@ class modQuickMemo extends DolibarrModules
 
 		// Family can be 'base' (core modules),'crm','financial','hr','projects','products','ecm','technic' (transverse modules),'interface' (link with external tools),'other','...'
 		// It is used to group modules by family in module setup page
-		$this->family = "other";
+		$this->family = "technic";
 
 		// Module position in the family on 2 digits ('01', '10', '20', ...)
 		$this->module_position = '90';
@@ -67,10 +67,12 @@ class modQuickMemo extends DolibarrModules
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
 
 		// DESCRIPTION_FLAG
+		$langs->load("quickmemo");
+
 		// Module description, used if translation string 'ModuleQuickMemoDesc' not found (QuickMemo is name of module).
-		$this->description = "QuickMemoDescription";
+		$this->description = $langs->trans("ModuleQuickMemoDesc");
 		// Used only if file README.md and README-LL.md not found.
-		$this->descriptionlong = "QuickMemoDescription";
+		$this->descriptionlong = $langs->trans("ModuleQuickMemoDesc");
 
 		// Author
 		$this->editor_squarred_logo = '';					// Must be image filename into the module/img directory followed with @modulename. Example: 'myimage.png@quickmemo'

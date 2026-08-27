@@ -5,7 +5,6 @@ ChangeIntoRepeatableIntervention=Cambiar a intervención repetible
 ListOfInterventions=Lista de intervenciones
 ActionsOnFicheInter=Acciones de intervención
 LastInterventions=Últimas intervenciones de %s
-InterventionContact=Contacto de intervención
 ValidateIntervention=Validar la intervención
 SignIntervention=Intervención de signos
 ModifyIntervention=Modificar la intervención

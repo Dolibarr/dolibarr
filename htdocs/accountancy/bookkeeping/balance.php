@@ -3,7 +3,7 @@
  * Copyright (C) 2016       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2016-2026  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024       MDW                     <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW                     <mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -102,7 +102,7 @@ $form = new Form($db);
 
 if (empty($search_date_start) && empty($search_date_end) && !GETPOSTISSET('formfilteraction')) {
 	$sql = "SELECT date_start, date_end";
-	$sql .=" FROM ".MAIN_DB_PREFIX."accounting_fiscalyear ";
+	$sql .= " FROM ".MAIN_DB_PREFIX."accounting_fiscalyear ";
 	if (getDolGlobalInt('ACCOUNTANCY_FISCALYEAR_DEFAULT')) {
 		$sql .= " WHERE rowid = " . getDolGlobalInt('ACCOUNTANCY_FISCALYEAR_DEFAULT');
 	} else {
@@ -372,10 +372,10 @@ if ($action != 'export') {
 		});
 		</script>';
 
-		$newcardbutton .= dolGetButtonTitle($langs->trans('ExportToPdf'), '', 'fa fa-file-pdf paddingleft', $_SERVER['PHP_SELF'], 'exportpdfbutton', $permissiontoexport, array('morecss' => 'marginleftonly'));
+		$newcardbutton .= dolGetButtonTitle($langs->trans('ExportToPdf'), '', 'fa fa-file-pdf paddingleft', $_SERVER['PHP_SELF'] . '&token=' . newToken(), 'exportpdfbutton', $permissiontoexport, array('morecss' => 'marginleftonly'));
 
 		$newcardbutton .= dolGetButtonTitleSeparator();
-		$newcardbutton .= dolGetButtonTitle($langs->trans('NewAccountingMvt'), '', 'fa fa-plus-circle paddingleft', DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?action=create'.(!empty($type)?'&type=sub':'').'&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $permissiontoadd);
+		$newcardbutton .= dolGetButtonTitle($langs->trans('NewAccountingMvt'), '', 'fa fa-plus-circle paddingleft', DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?action=create'.(!empty($type) ? '&type=sub' : '').'&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $permissiontoadd);
 	}
 	if ($contextpage != $_SERVER["PHP_SELF"]) {
 		$param .= '&contextpage='.urlencode($contextpage);
@@ -515,7 +515,7 @@ if ($action != 'export') {
 	if (getDolGlobalString('ACCOUNTANCY_SHOW_OPENING_BALANCE')) {
 		$sql = "SELECT t.numero_compte, (SUM(t.debit) - SUM(t.credit)) as opening_balance";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as t";
-		$sql .= " WHERE t.entity = " . $conf->entity;        // Never do sharing into accounting features
+		$sql .= " WHERE t.entity = " . ((int) $conf->entity);        // Never do sharing into accounting features
 		$sql .= " AND t.doc_date < '" . $db->idate($search_date_start) . "'";
 		$sql .= " GROUP BY t.numero_compte";
 

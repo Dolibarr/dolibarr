@@ -98,8 +98,6 @@ if ($resultproject < 0) {
 
 $hookmanager->initHooks(array('newpayment'));
 
-$extrafields = new ExtraFields($db);
-
 $user->loadDefaultValues();
 
 // Security check

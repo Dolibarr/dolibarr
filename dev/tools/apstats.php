@@ -2,7 +2,7 @@
 <?php
 /*
  * Copyright (C) 2023-2024 	Laurent Destailleur 	<eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -103,7 +103,7 @@ $PHPSTANLEVEL = 9;
 // PHAN setup. Configuration is required, otherwise phan is disabled.
 $PHAN_CONFIG = "{$path}phan/config_extended.php";
 $PHAN_BASELINE = "{$path}phan/baseline_extended.txt";		// BASELINE is ignored if it does not exist
-$PHAN_MIN_PHP = "7.0";
+$PHAN_MIN_PHP = "7.2";  // Set to minimum target version, avoids PhanCompatibleNullableTypePHP70 for instance
 $PHAN_MEMORY_OPT = "--memory-limit 5G";
 
 if (!is_readable($PHAN_CONFIG)) {
@@ -169,7 +169,7 @@ $output_phan_json = array();
 $res_exec_phan = 0;
 if ($dir_phan != 'disabled') {
 	if (is_readable($PHAN_BASELINE)) {
-		$PHAN_BASELINE_OPT = "-B '${PHAN_BASELINE}'";
+		$PHAN_BASELINE_OPT = "-B '{$PHAN_BASELINE}'";
 	} else {
 		$PHAN_BASELINE_OPT = '';
 	}
@@ -194,7 +194,7 @@ foreach (array('proj', 'dep') as $source) {
 	print 'Analyze SCC result for lines of code for '.$source."\n";
 	if ($source == 'proj') {
 		$output_arr = &$output_arrproj;
-	} elseif ($source == 'dep') {
+	} elseif ($source == 'dep') {  // @phpstan-ignore equal.alwaysTrue
 		$output_arr = &$output_arrdep;
 	} else {
 		print 'Bad value for $source';
@@ -317,7 +317,7 @@ foreach ($output_arrglpu as $valgitlog) {		// The most recent lines are first.
 			exec($commandgetbranch, $output_arrgetbranch, $resexecgetbranch);
 
 			foreach ($output_arrgetbranch as $valbranch) {
-				if (empty($tmpval['branch'])) {
+				if (!array_key_exists('branch', $tmpval)) {
 					$tmpval['branch'] = array();
 				}
 				if (preg_match('/^\s*origin\/(develop|\d)/', $valbranch)) {
@@ -326,8 +326,8 @@ foreach ($output_arrglpu as $valgitlog) {		// The most recent lines are first.
 			}
 
 			$arrayofalerts[$tmpval['commitid']] = $tmpval;
-		} else {
-			if (empty($arrayofalerts[$alreadyfoundcommitid]['commitidbis'])) {
+		} else { // Test for static analysis
+			if (!array_key_exists($alreadyfoundcommitid, $arrayofalerts) || !array_key_exists('commitidbis', $arrayofalerts[$alreadyfoundcommitid])) {
 				$arrayofalerts[$alreadyfoundcommitid]['commitidbis'] = array();
 			}
 
@@ -339,7 +339,7 @@ foreach ($output_arrglpu as $valgitlog) {		// The most recent lines are first.
 			exec($commandgetbranch, $output_arrgetbranch, $resexecgetbranch);
 
 			foreach ($output_arrgetbranch as $valbranch) {
-				if (empty($tmpval['branch'])) {
+				if (!array_key_exists('branch', $tmpval)) {
 					$tmpval['branch'] = array();
 				}
 				if (preg_match('/^\s*origin\/(develop|\d)/', $valbranch)) {
@@ -599,7 +599,7 @@ foreach (array('proj', 'dep') as $source) {
 			$html .= '<td class="right nowrap">'.(empty($val['Files']) ? '' : formatNumber($val['Files'])).'</td>';
 			$html .= '<td class="right nowrap">'.(empty($val['Lines']) ? '' : formatNumber($val['Lines'])).'</td>';
 			$html .= '<td class="nowrap">';
-			$percent = $val['Lines'] / $arrayofmax['Lines'];
+			$percent = (float) $val['Lines'] / (int) $arrayofmax['Lines'];
 			$widthbar = round(200 * $percent);
 			$html .= '<div class="bargraph" style="width: '.max(1, $widthbar).'px">&nbsp;</div>';
 			$html .= '</td>';
@@ -755,7 +755,7 @@ $html .= '</div>';
 if (array_key_exists('proj', $arraycocomo)) {
 	$html .= '<div class="box inline-box back2">';
 	$html .= 'COCOMO effort<br><span class="small opacitymedium">(Basic/Semi-detached model)</span><br>';
-	$html .= '<b>'.formatNumber($arraycocomo['proj']['people'] * $arraycocomo['proj']['effort'] + $arraycocomo['dep']['people'] * $arraycocomo['dep']['effort']);
+	$html .= '<b>'.formatNumber((int) $arraycocomo['proj']['people'] * (float) $arraycocomo['proj']['effort'] + (int) $arraycocomo['dep']['people'] * (float) $arraycocomo['dep']['effort']);
 	$html .= ' months people</b>';
 	$html .= '</div>';
 }
@@ -836,7 +836,7 @@ $title_security_short = "Last security issues";
 $title_security = ($project ? "[".$project."] " : "").$title_security_short;
 
 $html .= '<section class="chapter" id="securityalerts">'."\n";
-$html .= '<h2><span class="fas fa-code pictofixedwidth"></span>'.$title_security_short.' <span class="opacitymedium">(last '.($nbofmonth != 1 ? $nbofmonth.' months' : 'month').')</span></h2>'."\n";
+$html .= '<h2><span class="fas fa-code pictofixedwidth"></span>'.$title_security_short.' <span class="opacitymedium">(last '.($nbofmonth != 1 ? $nbofmonth.' months' : 'month').')</span></h2>'."\n";  // @phpstan-ignore  notEqual.alwaysTrue
 
 $html .= '<div class="boxallwidth">'."\n";
 $html .= '<div class="div-table-responsive">'."\n";
@@ -1103,8 +1103,8 @@ if ($fh) {
 /**
  * function to format a number
  *
- * @param	string|int		$number			Number to format
- * @param	int				$nbdec			Number of decimal digits
+ * @param	string|float	$number			Number to format
+ * @param	int<0,max>		$nbdec			Number of decimal digits
  * @return	string							Formatted string
  */
 function formatNumber($number, $nbdec = 0)
@@ -1115,8 +1115,8 @@ function formatNumber($number, $nbdec = 0)
 /**
  * cleanVal
  *
- * @param array 	$val		Array of a PR
- * @return 						Array of a PR
+ * @param object 	$val		Array of a PR
+ * @return array{url:string,number:string,title:string,created_at:string,updated_at:string}	Array of a PR
  */
 function cleanVal($val)
 {
@@ -1134,8 +1134,8 @@ function cleanVal($val)
 /**
  * cleanVal2
  *
- * @param array 	$val		Array of a PR
- * @return 						Array of a PR
+ * @param string 	$val		Line of a PR
+ * @return array{commitid:string,url:string,issueid:string,issueidvdp:string,issueidcve:string,title:string,created_at:string,updated_at:string,branch:string[]}	Array of a PR
  */
 function cleanVal2($val)
 {
@@ -1150,6 +1150,7 @@ function cleanVal2($val)
 	$tmpval['title'] = array_key_exists(5, $tmp) ? preg_replace('/\.$/', '', $tmp[5]) : '';
 	$tmpval['created_at'] = array_key_exists(0, $tmp) ? $tmp[0] : '';
 	$tmpval['updated_at'] = '';
+	$tmpval['branch'] = array();
 
 	$reg = array();
 	if (preg_match('/#(\d+)/', $tmpval['title'], $reg)) {

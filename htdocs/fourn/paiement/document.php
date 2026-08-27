@@ -7,7 +7,7 @@
  * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
  * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
  * Copyright (C) 2021      Jesus Jerez       	 <jesusballesteros@protonmail.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -54,6 +54,8 @@ if (isModEnabled('project')) {
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'bills', 'companies', 'suppliers', 'other'));
 
+$hookmanager->initHooks(array('paymentsupplierdocument', 'globalcard'));
+
 
 // Get Parameters
 $id = GETPOSTINT('id');
@@ -61,10 +63,18 @@ $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
+// Load object
+$object = new PaiementFourn($db);
+$upload_dir = null;
+if ($object->fetch($id, $ref)) {
+	$object->fetch_thirdparty();
+	$ref = dol_sanitizeFileName($object->ref);
+	$upload_dir = $conf->fournisseur->payment->dir_output.'/'.dol_sanitizeFileName($object->ref);
+}
 
 // Security check
-if ($user->socid) {
-	$socid = $user->socid;
+if ($user->isExternalUser()) {
+	$socid = $user->isExternalUser();
 }
 $result = restrictedArea($user, $object->element, $object->id, 'paiementfourn', '');
 
@@ -84,15 +94,6 @@ if (!$sortorder) {
 }
 if (!$sortfield) {
 	$sortfield = "name";
-}
-
-// Load object
-$object = new PaiementFourn($db);
-$upload_dir = null;
-if ($object->fetch($id, $ref)) {
-	$object->fetch_thirdparty();
-	$ref = dol_sanitizeFileName($object->ref);
-	$upload_dir = $conf->fournisseur->payment->dir_output.'/'.dol_sanitizeFileName($object->ref);
 }
 
 $permissiontoadd = ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer")); // Used by the include of actions_setnotes.inc.php

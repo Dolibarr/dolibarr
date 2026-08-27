@@ -172,3 +172,6 @@ SalaryWaitingWithdraw=वेतन क्रेडिट ट्रांसफ�
 RefSalary=वेतन
 NoSalaryInvoiceToWithdraw='%s' के लिए कोई वेतन प्रतीक्षा नहीं है। अनुरोध करने के लिए वेतन कार्ड पर टैब '%s' पर जाएं।
 SalaryInvoiceWaitingWithdraw=वेतन क्रेडिट ट्रांसफर द्वारा भुगतान की प्रतीक्षा में
+ErrorBankTransferNoPaymentRequestSelected=No payment request selected.
+AmountRequestedAlreadyReachesTotal=The total invoice amount has already been requested for payment
+AmountExceedsRemainingToRequest=The requested amount exceeds the remaining amount available for payment requests

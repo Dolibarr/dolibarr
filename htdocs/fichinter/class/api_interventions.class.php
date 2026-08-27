@@ -132,7 +132,7 @@ class Interventions extends DolibarrApi
 	 * @param	int		$limit					Limit for list
 	 * @param	int		$page					Page number
 	 * @param	string	$thirdparty_ids			Thirdparty ids to filter orders of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
-	 * @param	string	$sqlfilters				Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param	string	$sqlfilters				Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:>:'20160101')"
 	 * @param	string	$properties				Restrict the data returned to these properties. Ignored if empty. Comma separated list of property names
 	 * @param	string	$contact_type			Type of contacts: thirdparty, internal or external
 	 * @param	bool	$pagination_data		If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
@@ -331,7 +331,7 @@ class Interventions extends DolibarrApi
 			}
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->fichinter->array_options[$index] = $this->_checkValForAPI($field, $val, $this->fichinter);
+					$this->fichinter->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->fichinter);
 				}
 				continue;
 			}
@@ -831,10 +831,18 @@ class Interventions extends DolibarrApi
 		}
 		$request_data = (object) $request_data;
 
-		$request_data->desc = sanitizeVal($request_data->desc, 'restricthtml');
-		$request_data->date = sanitizeVal($request_data->date);
-		$request_data->duration = sanitizeVal($request_data->duration);
-		$request_data->rang = sanitizeVal($request_data->rang);
+		if (isset($request_data->desc) || isset($request_data->description)) {
+			$objectline->desc = sanitizeVal($request_data->desc ?? $request_data->description, 'restricthtml');
+		}
+		if (isset($request_data->date)) {
+			$objectline->date = (int) sanitizeVal($request_data->date);
+		}
+		if (isset($request_data->duration)) {
+			$objectline->duration = (int) sanitizeVal($request_data->duration);
+		}
+		if (isset($request_data->rang)) {
+			$objectline->rang = (int) sanitizeVal($request_data->rang);
+		}
 
 		$updateRes = $objectline->update(DolibarrApiAccess::$user);
 

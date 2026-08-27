@@ -4,7 +4,7 @@
  * Copyright (C) 2010-2012	Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010		Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -180,9 +180,8 @@ function commande_prepare_head(Commande $object)
  */
 function order_admin_prepare_head()
 {
-	global $langs, $conf, $db;
+	global $langs, $conf, $extrafields;
 
-	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('commande');
 	$extrafields->fetch_name_optionals_label('commandedet');
 
@@ -196,7 +195,7 @@ function order_admin_prepare_head()
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'order_admin');
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/admin/order_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'commande'));
 	$head[$h][1] = $langs->trans("ExtraFields");
 	$nbExtrafields = $extrafields->attributes['commande']['count'];
 	if ($nbExtrafields > 0) {
@@ -205,7 +204,7 @@ function order_admin_prepare_head()
 	$head[$h][2] = 'attributes';
 	$h++;
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/admin/orderdet_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'commandedet'));
 	$head[$h][1] = $langs->trans("ExtraFieldsLines");
 	$nbExtrafields = $extrafields->attributes['commandedet']['count'];
 	if ($nbExtrafields > 0) {

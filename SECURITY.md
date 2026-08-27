@@ -5,16 +5,14 @@ This file contains some policies about the security reports on Dolibarr ERP CRM 
 
 ## Supported Versions for security reports
 
-Security report are valid only on any current stable version for the last 5 major versions (see https://dolibarr.org web site to get current stable version) or on development version (branch "develop" on https://github.com/Dolibarr/dolibarr).
+Security report are valid only on any current stable version for the last 2 major stable versions (see https://dolibarr.org web site to get current stable version) or on development version (branch "develop" on https://github.com/Dolibarr/dolibarr), and ONLY if the vulnerability is also confirmed into the "develop" branch (meaning the vulnerability was already reported).
 
 
 ## Reporting a Vulnerability
 
 To report a vulnerability, for a private report, you can:
 
-- Send your report as an issue on https://github.com/Dolibarr/dolibarr/issues or on GitHub Vulnerability Disclosure Program tool (VDP): https://github.com/Dolibarr/dolibarr/security/advisories (recommended). Do 1 report only per vulnerability. Reports combining several vulnerabilities, as well as reports generated using IA will be rejected. 
-
-NOTE: This is a private vulnerability report process: Advisories are sent to users by our internal channel (RSS at https://cti.dolibarr.org/index-security.rss), we do not publish CVE reports.
+- Send your report as an issue on https://github.com/Dolibarr/dolibarr/issues or, if you have an allowed account, on GitHub Vulnerability Disclosure Program tool (VDP): https://github.com/Dolibarr/dolibarr/security/advisories (recommended). Do 1 report only per vulnerability. Reports combining several vulnerabilities, as well as reports generated using IA will be rejected. 
 
 <!--
 - Send your report on Vulnerability Disclosure Program (VDP) [https://app.yogosha.com/cvd/dolibarr/10VxeNx6Ui3rSEhAgX63US](https://app.yogosha.com/cvd/dolibarr/10VxeNx6Ui3rSEhAgX63US) (recommended for everybody)
@@ -23,7 +21,7 @@ NOTE: This is a private vulnerability report process: Advisories are sent to use
 
 - Or send an email to security@dolibarr.org with clear textual description of the report along with steps to reproduce the issue, include attachments such as screenshots or proof of concept code as necessary (in such a case, the issue may be created by the developer that will fix the vulnerability or the Release Manager).
 
-NOTE: This is a private vulnerability report process: Advisories are sent to application end users by our own live channel (RSS at https://cti.dolibarr.org/index-security.rss, you can subscribe to it with any RSS reader). We do not publish CVE reports ourself (we have no CNA number), but you are free to do it yourself.
+NOTE: Both process are private vulnerability report process: Advisories are sent to application end users by our own live channel (RSS at https://cti.dolibarr.org/index-security.rss, you can subscribe to it with any RSS reader). We do not publish CVE reports ourself (we have no CNA number), but you are free to do it yourself.
 
 Also, note that we are a project developed by volunteers and have no found for bounties.
 
@@ -39,9 +37,11 @@ Any type of denial-of-service attack is strictly forbidden, as well as any inter
 
 We recommend to install Dolibarr ERP CRM on your own server (as most Open Source software, download and use is free: [https://www.dolibarr.org/download](https://www.dolibarr.org/download)) to get access on every side of application.
 
+
 ### User Agent
 
-If you try to find bug on Dolibarr, we recommend to append to your user-agent header the following value: '-securitytest-for-dolibarr'.
+If you try to find bug on a dedicated hosted instance of Dolibarr, we recommend to append to your user-agent header the following value: '-securitytest-for-dolibarr'.
+
 
 ### Account access
 
@@ -66,7 +66,7 @@ Reports are processed around once a month.
 ONLY vulnerabilities discovered, when the following setup on test platform is used, are "valid":
 
 * The version to analyze must be the last version available in the "develop" branch. Also, reports on vulnerabilities already fixed (so already reported) in the develop branch will not be validated.
-* Installation must be done properly for a production usage. This oncludes:
+* Installation must be done properly for a production usage. This includes:
 ** creation of the install.lock in the last step of installation process.
 ** $dolibarr_main_prod must be set to 1 in conf.php
 ** $dolibarr_nocsrfcheck must be kept to the value 0 in conf.php (this is the default value)
@@ -124,7 +124,8 @@ Scope is the web application (backoffice) and the APIs.
 * SSL/TLS practices (cypher enabled or not)
 * Invalid or missing SPF (Sender Policy Framework) records (Incomplete or missing SPF/DKIM/DMARC)
 * Physical or social engineering attempts or issues that require physical access to a victim’s computer/device
-* Vulnerabilities of type XSS exploited by using javascript into a website page of the website module or by using php code into a website page (being able to set javascript or php code is the expected behaviour in the website module), except if the user does not have the permission to edit page or php code.
+* Vulnerabilities of type XSS exploited by using Javascript into a website page of the website module is not a vulnerability when user has the permission "Edit page" (being able to set javascript in the CMS is the expected behaviour in the website module).
+* Vulnerabilities that allow to run PHP code on the server into a website page is not a vulnerability when user has the superpermission "Edit PHP content in website page" (being able to run php code is the expected behaviour in the website module), except if the command is a RCE command (and $dolibarr_website_allow_custom_php remains to 0 or 1).
 
 
 ## Be informed of a new vulnerability

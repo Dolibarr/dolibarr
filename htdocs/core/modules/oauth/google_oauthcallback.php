@@ -176,6 +176,16 @@ if (!GETPOST('code')) {
 
 	// If we enter this page without 'code' parameter, it means we click on the link from login page ($forlogin is set) or from setup page and we want to get the redirect
 	// to the OAuth provider login page.
+	// $backtourl should be a relative url like /mypage.php?param1=value1 but without param token and action. Part after the # should also have been removed by caller.
+
+	// Clean the backtourl we can use after an OAuth authentication
+	$backtourl = preg_replace('/token=[^&]+/', '', $backtourl);	// We remove any token into url so we are sure only url with no action are qualified as call back urls.
+	$backtourl = preg_replace('/action=[a-z0-9]+/i', '', $backtourl);	// We remove any token into url so we are sure only url with no action are qualified as call back urls.
+	$backtourl = preg_replace('/save_lastsearch_values=[a-z0-9]+/i', '', $backtourl);
+	$backtourl = preg_replace('/mainmenu=[a-z0-9]+/i', '', $backtourl);
+	$backtourl = preg_replace('/leftmenu=[a-z0-9]+/i', '', $backtourl);
+	$backtourl = preg_replace('/#.*$/i', '', $backtourl);	// We remove part after the #...
+
 	$_SESSION["backtourlsavedbeforeoauthjump"] = $backtourl;
 	$_SESSION["oauthkeyforproviderbeforeoauthjump"] = $keyforprovider;
 	$_SESSION['oauthstateanticsrf'] = $state;
@@ -392,7 +402,9 @@ if (!GETPOST('code')) {
 			// If call back to this url was for a OAUTH2 login
 			if ($forlogin) {
 				// _SESSION['googleoauth_receivedlogin'] has been set to the key to validate the next test by function_googleoauth(), so we can make the redirect
-				$backtourl .= '?actionlogin=login&afteroauthloginreturn=google&mainmenu=home'.($username ? '&username='.urlencode($username) : '').'&token='.newToken();
+				// $backtourl is a relative url like /mypage.php?param1=value1 but without param token and action. Part after the # should also have been removed when saving it.
+				$backtourl = DOL_MAIN_URL_ROOT.$backtourl;
+				$backtourl .= (preg_match('/\?/', $backtourl) ? '&' : '?').'actionlogin=login&afteroauthloginreturn=google&mainmenu=home'.($username ? '&username='.urlencode($username) : '').'&token='.newToken();
 				if (!empty($tmparray['entity'])) {
 					$backtourl .= '&entity='.$tmparray['entity'];
 				}

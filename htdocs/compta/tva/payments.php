@@ -129,7 +129,7 @@ $sql .= " INNER JOIN " . MAIN_DB_PREFIX . "bank as b ON (b.rowid = ptva.fk_bank)
 $sql .= " INNER JOIN " . MAIN_DB_PREFIX . "bank_account as bank ON (bank.rowid = b.fk_account)";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_paiement as pct ON ptva.fk_typepaiement = pct.id";
 $sql .= " WHERE ptva.fk_tva = tva.rowid";
-$sql .= " AND tva.entity = " . $conf->entity;
+$sql .= " AND tva.entity = " . ((int) $conf->entity);
 if ($year > 0) {
 	$sql .= " AND (";
 	// If the date range is provided, use it as a lookup condition.  Otherwise we use the due date.
@@ -150,6 +150,7 @@ if (preg_match('/^cs\./', $sortfield)
 //print $sql;
 
 dol_syslog("compta/tva/payments.php: select payment", LOG_DEBUG);
+$num = 0;
 $resql = $db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql);
@@ -202,7 +203,7 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 	$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "bank_account as bank ON (bank.rowid = b.fk_account)";
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_paiement as pct ON ptva.fk_typepaiement = pct.id";
 	$sql .= " WHERE ptva.fk_tva = tva.rowid";
-	$sql .= " AND tva.entity = " . $conf->entity;
+	$sql .= " AND tva.entity = " . ((int) $conf->entity);
 	if ($year > 0) {
 		$sql .= " AND (";
 		// We'll use the specified period as the date filter, unless it's missing, in which case we'll use the due date.

@@ -258,7 +258,7 @@ OtherFilteredTasks=Kitos filtruotos užduotys
 NoAssignedTasks=Nerasta priskirtų užduočių (priskirkite projektą / užduotis dabartiniam vartotojui iš viršutinio pasirinkimo laukelio, kad įvestumėte laiką)
 ThirdPartyRequiredToGenerateIntervention=Kad būtų galima sukurti intervenciją, projekte turi būti apibrėžta trečioji šalis.
 ThirdPartyRequiredToGenerateInvoice=Trečioji šalis turi būti apibrėžta projekte, kad būtų galima išrašyti sąskaitą faktūrą.
-ChooseANotYetAssignedTask=Pasirinkite užduotį, kuri jums dar nepriskirta
+ChooseANotYetAssignedTask=Tasks not yet assigned to you
 # Comments trans
 AllowCommentOnTask=Leisti vartotojams komentuoti užduotis
 AllowCommentOnProject=Leisti vartotojams komentuoti projektus

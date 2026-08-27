@@ -28,6 +28,7 @@ BillFrom=De
 BillTo=A
 SupplierBillsToPay=Facturas impagas de proveedor
 CustomerBillsUnpaid=Facturas impaga de cliente
+RecurringInvoiceSource=Source recurring invoice
 AbsoluteDiscount=Descuento absoluto
 CreditNote=Nota de crédito
 CreditNotes=Notas de credito

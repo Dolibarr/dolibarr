@@ -47,6 +47,7 @@ create table llx_extrafields
 	css             varchar(128),                               -- to store css on create/update forms
 	cssview         varchar(128),                               -- to store css on view form
 	csslist         varchar(128),                               -- to store css on list
+    personal_data	tinyint DEFAULT 0,						-- 1 if field contains personal data (GDPR/nLPD/LGPD)
 	fk_user_author	integer,									-- user making creation
 	fk_user_modif	integer,	                                -- user making last change
 	datec			datetime,									-- date de creation

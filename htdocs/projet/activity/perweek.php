@@ -485,11 +485,11 @@ if ($mine || ($usertoprocess->id == $user->id)) {
 	}
 }
 if ($mine || ($usertoprocess->id == $user->id)) {
-	$s .= $langs->trans("OnlyYourTaskAreVisible").'<br>';
+	$s .= $langs->trans("OnlyYourTaskAreVisible");
 } else {
-	$s .= $langs->trans("AllTaskVisibleButEditIfYouAreAssigned").'<br>';
+	$s .= $langs->trans("AllTaskVisibleButEditIfYouAreAssigned");
 }
-print info_admin($s, 0, 0, 'info', 'nomargintop hideonsmartphone');
+print info_admin($s, 0, 0, 'info', 'nomargintop nomarginbottom hideonsmartphone');
 
 print dol_get_fiche_end();
 

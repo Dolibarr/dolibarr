@@ -6,7 +6,7 @@
  * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
  * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,17 +31,18 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT .'/product/class/product.class.php';
-require_once DOL_DOCUMENT_ROOT .'/societe/class/societe.class.php';
-require_once DOL_DOCUMENT_ROOT .'/fourn/class/fournisseur.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT .'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT .'/societe/class/societe.class.php';
+require_once DOL_DOCUMENT_ROOT .'/fourn/class/fournisseur.class.php';
+
 
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'suppliers'));
@@ -78,15 +79,14 @@ if (!$sortorder) {
 }
 
 $fourn_id = GETPOST('fourn_id', 'intcomma');
-if ($user->socid) {
-	$fourn_id = $user->socid;
+if ($user->isExternalUser()) {
+	$fourn_id = $user->isExternalUser();
 }
 
 $catid = GETPOST('catid', 'intcomma');
 
 // Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('supplierpricelist'));
-$extrafields = new ExtraFields($db);
 
 if (!$user->hasRight("produit", "lire") && !$user->hasRight("service", "lire")) {
 	accessforbidden();

@@ -676,11 +676,11 @@ if ($action == 'create') {
 				$totalarray['type'][$totalarray['nbfield']] = '';
 			}
 
-			if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
+			if (!getDolGlobalString('PRODUIT_MULTIPRICES') && !getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 				print_liste_field_titre("SellPriceMin", "", "p.price", "", "&id=".$object->id, '', $sortfield, $sortorder, 'right ');
 				$totalarray['nbfield']++;
 			}
-			if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
+			if (!getDolGlobalString('PRODUIT_MULTIPRICES') && !getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 				print_liste_field_titre("EstimatedStockValueSellShort", "", "", "", "&id=".$object->id, '', $sortfield, $sortorder, 'right ');
 				$totalarray['nbfield']++;
 				$totalarray['pos'][$totalarray['nbfield']] = 'totalvaluesell';
@@ -847,7 +847,7 @@ if ($action == 'create') {
 					}
 					$pricemin = 0;
 					// Price sell min
-					if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
+					if (!getDolGlobalString('PRODUIT_MULTIPRICES') && !getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 						$pricemin = $objp->price;
 						print '<td class="right">';
 						print price(price2num($pricemin, 'MU'), 1);

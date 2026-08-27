@@ -207,6 +207,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	} elseif ($postorget == 'HEAD') {
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'HEAD'); // HTTP request is 'HEAD'
 		curl_setopt($ch, CURLOPT_NOBODY, true);
+		curl_setopt($ch, CURLOPT_HEADER, true);
 	} elseif ($postorget == 'DELETE') {
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE'); // POST
 	} else {
@@ -246,7 +247,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 
 		// Parse $newUrl
 		$newUrlArray = parse_url($newUrl);
-		$hosttocheck = $newUrlArray['host'];
+		$hosttocheck = $newUrlArray['host'] ?: $newUrlArray['path'];
 		$hosttocheck = str_replace(array('[', ']'), '', $hosttocheck); // Remove brackets of IPv6
 
 		// Deny some reserved host names
@@ -259,6 +260,11 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 			return array('http_code' => 400, 'content' => $info['content'], 'curl_error_no' => 1, 'curl_error_msg' => $info['content']);
 		}
 
+		/* Discard full numeric hostname */
+		if (preg_match('/^[x0-9a-f]+$/', $hosttocheck)) {
+			return array('http_code' => 400, 'content' => '', 'curl_error_no' => 1, 'curl_error_msg' => 'Host is a numeric address that is not allowed');
+		}
+
 		// Clean host name $hosttocheck to convert it into an IP $iptocheck
 		if (in_array($hosttocheck, array('localhost', 'localhost.domain'))) {
 			$iptocheck = '127.0.0.1';
@@ -266,12 +272,15 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 			$iptocheck = '::1';
 		} else {
 			// Resolve $hosttocheck to get the IP $iptocheck
+			// Not that a bad numeric hostname like 2130706433 will be resolved int 127.0.0.1 but
+			// this case is filtered previously.
 			$iptocheck = resolveDns($hosttocheck);
 		}
 
 		// Check $iptocheck is an IP (v4 or v6), if not clear value.
-		if (!filter_var($iptocheck, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_IPV6)) {	// This is not an IP, we clean data
+		if (!filter_var($iptocheck, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_IPV6)) {	// This is not an IP
 			$iptocheck = '0'; // will disabled check on IP
+			return array('http_code' => 400, 'content' => '', 'curl_error_no' => 1, 'curl_error_msg' => 'Host is a numeric address that is not allowed');
 		}
 
 		if ($iptocheck) {
@@ -373,7 +382,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		// Add more keys to $rep
 		if ($response) {
 			$rep['content'] = (string) $response;
-			if (getDolGlobalInt('MAIN_CURL_GET_RESPONSE_HEADER')) { // In this case, response contains header + body
+			if ($postorget == 'HEAD' || getDolGlobalInt('MAIN_CURL_GET_RESPONSE_HEADER')) { // In this case, response contains header + body
 				$rep['header'] = substr($rep['content'], 0, intval($rep['header_size']));
 				$rep['content'] = substr($rep['content'], intval($rep['header_size']));
 			}

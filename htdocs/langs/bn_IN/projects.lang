@@ -258,7 +258,7 @@ OtherFilteredTasks=অন্যান্য ফিল্টার করা ক�
 NoAssignedTasks=কোন বরাদ্দকৃত কাজ পাওয়া যায়নি (এতে সময় লিখতে শীর্ষ নির্বাচন বাক্স থেকে বর্তমান ব্যবহারকারীকে প্রকল্প/কাজ বরাদ্দ করুন)
 ThirdPartyRequiredToGenerateIntervention=প্রকল্পে হস্তক্ষেপ তৈরি করতে সক্ষম হওয়ার জন্য একটি তৃতীয় পক্ষকে সংজ্ঞায়িত করতে হবে।
 ThirdPartyRequiredToGenerateInvoice=এটি চালান করতে সক্ষম হতে একটি তৃতীয় পক্ষকে প্রকল্পে সংজ্ঞায়িত করতে হবে।
-ChooseANotYetAssignedTask=এমন একটি টাস্ক বেছে নিন যা আপনাকে এখনও অ্যাসাইন করা হয়নি
+ChooseANotYetAssignedTask=Tasks not yet assigned to you
 # Comments trans
 AllowCommentOnTask=কাজগুলিতে ব্যবহারকারীর মন্তব্যের অনুমতি দিন
 AllowCommentOnProject=প্রকল্পগুলিতে ব্যবহারকারীর মন্তব্যের অনুমতি দিন

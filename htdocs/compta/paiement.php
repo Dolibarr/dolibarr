@@ -690,11 +690,11 @@ if ($result >= 0) {
 			if (isModEnabled("multicurrency")) {
 				$langs->load("multicurrency");
 				$labeltoshow = '<span class="small nowraponall">'.$langs->trans("MulticurrencyOriginalCurrency").'</span>';
-				print '<th>'.$langs->trans('Currency').'</th>';
-				print '<th class="right">'.$langs->trans('AmountTTC').' <span class="opacitymedium">('.$labeltoshow.')</span></th>';
-				print '<th class="right">'.$multicurrencyalreadypayedlabel.' <span class="opacitymedium">('.$labeltoshow.')</span></th>';
-				print '<th class="right">'.$multicurrencyremaindertopay.' <span class="opacitymedium">('.$labeltoshow.')</span></th>';
-				print '<th class="center">'.$langs->trans('PaymentAmount').' <span class="opacitymedium">('.$labeltoshow.')</span></th>';
+				print '<td>'.$langs->trans('Currency').'</th>';
+				print '<td class="right">'.$langs->trans('AmountTTC').' <span class="opacitymedium">('.$labeltoshow.')</span></td>';
+				print '<td class="right">'.$multicurrencyalreadypayedlabel.' <span class="opacitymedium">('.$labeltoshow.')</span></td>';
+				print '<td class="right">'.$multicurrencyremaindertopay.' <span class="opacitymedium">('.$labeltoshow.')</span></td>';
+				print '<td class="center">'.$langs->trans('PaymentAmount').' <span class="opacitymedium">('.$labeltoshow.')</span></td>';
 			}
 			print '<td class="right">'.$langs->trans('AmountTTC').'</td>';
 			print '<td class="right">'.$alreadypayedlabel.'</td>';
@@ -849,7 +849,7 @@ if ($result >= 0) {
 					if ($objp->multicurrency_code && $objp->multicurrency_code != $conf->currency) {
 						if ($action != 'add_paiement') {
 							if (!empty($conf->use_javascript_ajax)) {
-								print '<button class="btn-low-emphasis --btn-icon AutoFillAmount" data-rowname="'.$namef.'" data-value="'.($sign * (float) $multicurrency_remaintopay).'">';
+								print '<button type="button" class="btn-low-emphasis --btn-icon AutoFillAmount" data-rowname="'.$namef.'" data-value="'.($sign * (float) $multicurrency_remaintopay).'">';
 								print img_picto("Auto fill", 'rightarrow.png');
 								print '</button>';
 							}
@@ -922,7 +922,7 @@ if ($result >= 0) {
 
 				if ($action != 'add_paiement') {
 					if (!empty($conf->use_javascript_ajax)) {
-						print '<button  class="btn-low-emphasis --btn-icon AutoFillAmount" data-rowname="'.$namef.'" data-value="'.($sign * (float) $remaintopay).'">';
+						print '<button type="button" class="btn-low-emphasis --btn-icon AutoFillAmount" data-rowname="'.$namef.'" data-value="'.($sign * (float) $remaintopay).'">';
 						print img_picto("Auto fill", 'rightarrow.png');
 						print '</button>';
 					}

@@ -22,6 +22,8 @@ body:
       label: Dolibarr Version
       description: Affected Dolibarr version(s)
       placeholder: 19.0, develop, ...
+    validations:
+      required: true
 
   - type: input
     id: environment-php
@@ -40,6 +42,8 @@ body:
     attributes:
       label: Steps to reproduce the behavior and expected behavior
       description: Verbose description
+    validations:
+      required: true
 
   - type: textarea
     id: files

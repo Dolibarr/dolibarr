@@ -43,7 +43,6 @@ if (empty($_GET['keysearch']) && !defined('NOREQUIREHTML')) {	// Keep $_GET here
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -73,6 +72,7 @@ $warehouseId = GETPOSTINT('warehouseid');
 
 // Security check
 restrictedArea($user, 'produit|service|commande|propal|facture', 0, 'product&product');
+
 
 /*
  * Actions
@@ -113,7 +113,7 @@ if ($action == 'fetch' && !empty($id)) {
 		$outtva_tx = 0;
 		$outdefault_vat_code = '';
 		$outqty = 1;
-		$outdiscount = 0;
+		$outdiscount = null;								// A discount on product price level is defined only for some price mode (like a price per customer 'PRODUIT_CUSTOMER_PRICES' or a price percustomer and quantity 'PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')
 		$mandatory_period = $object->mandatory_period;
 		$found = false;
 
@@ -295,15 +295,19 @@ if ($action == 'fetch' && !empty($id)) {
 			'qty' => $outqty,
 			'discount' => $outdiscount,
 			'mandatory_period' => $mandatory_period,
+
 			'array_options' => $object->array_options,
 
-			'default_unit'=>$default_unit
+			'default_unit' => $default_unit
 		);
 	}
 
 	echo json_encode($outjson);
 } else {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+	if (!isset($form) || !is_object($form)) {
+		$form = new Form($db);
+	}
 
 	$langs->loadLangs(array("main", "products"));
 
@@ -329,10 +333,6 @@ if ($action == 'fetch' && !empty($id)) {
 
 	// When used from jQuery, the search term is added as GET param "term".
 	$searchkey = (($idprod && GETPOST($idprod, 'alpha')) ? GETPOST($idprod, 'alpha') : (GETPOST($htmlname, 'alpha') ? GETPOST($htmlname, 'alpha') : ''));
-
-	if (!isset($form) || !is_object($form)) {
-		$form = new Form($db);
-	}
 
 	$arrayresult = [];
 	if (empty($mode) || $mode == 1) {  // mode=1: customer

@@ -5,7 +5,7 @@
  * Copyright (C) 2007       Patrick Raguin          <patrick.raguin@gmail.com>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2019-2026  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -114,16 +114,16 @@ $arrayofcss = array('/public/includes/jquery/plugins/jquerytreeview/jquery.treev
 
 llxHeader('', $title, $help_url, '', 0, 0, $arrayofjs, $arrayofcss, '', 'bodyforlist mod-user page-hierarchy');
 
-$filters = [];
+$sql_filters_arr = [];
 if (($search_status != '' && $search_status >= 0)) {
-	$filters[] = "(statut:=:".((int) $search_status).")";
+	$sql_filters_arr[] = "(statut:=:".((int) $search_status).")";
 }
 if ($search_employee == 1) {
-	$filters[] = "(employee:=:1)";
+	$sql_filters_arr[] = "(employee:=:1)";
 }
 $sqlfilter = '';
-if (!empty($filters)) {
-	$sqlfilter = implode(' AND ', $filters);
+if (!empty($sql_filters_arr)) {
+	$sqlfilter = implode(' AND ', $sql_filters_arr);
 }
 // Load hierarchy of users
 $user_arbo_all = $userstatic->get_full_tree(0, '');

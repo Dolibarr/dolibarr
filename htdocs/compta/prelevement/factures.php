@@ -223,7 +223,8 @@ if ($id > 0 || $ref) {
 if ($salaryBonPl) {
 	$sql = "SELECT pf.rowid, p.type,";
 	$sql .= " f.rowid as salaryid, f.ref as ref, f.amount,";
-	$sql .= " u.rowid as userid, u.firstname, u.lastname, pl.statut as status, pl.amount as amount_requested";
+	$sql .= " u.rowid as userid, u.firstname, u.lastname,";
+	$sql .= " pl.statut as status, pl.amount as amount_requested";
 	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."prelevement_lignes as pl ON pl.fk_prelevement_bons = p.rowid";
 	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."prelevement as pf ON pf.fk_prelevement_lignes = pl.rowid";
@@ -242,7 +243,8 @@ if ($salaryBonPl) {
 	if ($object->type == 'bank-transfer') {
 		$sql .= " f.ref_supplier,";
 	}
-	$sql .= " s.rowid as socid, s.nom as name, pl.statut as status, pl.amount as amount_requested";
+	$sql .= " s.rowid as socid, s.nom as name,";
+	$sql .= " pl.statut as status, pl.amount as amount_requested";
 	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p,";
 	$sql .= " ".MAIN_DB_PREFIX."prelevement_lignes as pl,";
 	$sql .= " ".MAIN_DB_PREFIX."prelevement as pf";

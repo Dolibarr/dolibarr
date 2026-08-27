@@ -58,6 +58,7 @@ $search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_en
 $search_account = GETPOST('search_account', 'alpha');
 $search_amount = GETPOST('search_amount', 'alpha');
 $mode = GETPOST('mode', 'alpha');
+$toselect = GETPOST('toselect', 'array:int');
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -108,6 +109,7 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('chequelist'));
 $object = new RemiseCheque($db);
+$arrayofselected = is_array($toselect) ? $toselect : array();
 
 // Security check
 $result = restrictedArea($user, 'banque', '', '');
@@ -259,7 +261,7 @@ if ($resql) {
 		$param .= '&search_account='.urlencode((string) ($search_account));
 	}
 
-	$url = DOL_URL_ROOT.'/compta/paiement/cheque/card.php?action=new';
+	$url = DOL_URL_ROOT.'/compta/paiement/cheque/card.php?action=create2';
 
 	$newcardbutton  = '';
 	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
@@ -449,7 +451,7 @@ if ($resql) {
 
 			$account = new Account($db);
 			$account->fetch($objp->bid);
-			$checkdepositstatic->account_id = $account->getNomUrl(1);
+			$checkdepositstatic->account_id = $account->id;
 
 			if ($mode == 'kanban') {
 				if ($i == 0) {

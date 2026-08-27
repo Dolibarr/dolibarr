@@ -5,7 +5,8 @@
  * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2019       Thibault FOUCART        <support@ptibogxiv.net>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026       Alexandre Spangaro      <alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +33,7 @@ require '../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
@@ -91,7 +93,6 @@ $pagenext = $page + 1;
 
 // Initialize a technical objects
 $object = new Don($db);
-$extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->don->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array($contextpage)); 	// Note that conf->hooks_modules contains array of activated contexes
 
@@ -237,7 +238,7 @@ $morecss = array();
 // Build and execute select
 // --------------------------------------------------------------------
 $sql = "SELECT d.rowid, d.ref, d.datedon, d.fk_soc as socid, d.firstname, d.lastname, d.societe,";
-$sql .= " d.amount, d.fk_statut as status,";
+$sql .= " d.amount, d.fk_statut as status, s.nom,";
 $sql .= " p.rowid as pid, p.ref as pref, p.title, p.public";
 // Add fields from hooks
 $parameters = array();
@@ -328,21 +329,6 @@ if ($num == 1 && getDolGlobalInt('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $sear
 // --------------------------------------------------------------------
 
 llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'mod-donation page-list bodyforlist');	// Can use also classforhorizontalscrolloftabs instead of bodyforlist for no horizontal scroll
-
-// Example : Adding jquery code
-// print '<script type="text/javascript">
-// jQuery(document).ready(function() {
-// 	function init_myfunc()
-// 	{
-// 		jQuery("#myid").removeAttr(\'disabled\');
-// 		jQuery("#myid").attr(\'disabled\',\'disabled\');
-// 	}
-// 	init_myfunc();
-// 	jQuery("#mybutton").click(function() {
-// 		init_myfunc();
-// 	});
-// });
-// </script>';
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
@@ -563,7 +549,7 @@ if ($conf->main_checkbox_left_column) {
 print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "d.rowid", "", $param, "", $sortfield, $sortorder);
 $totalarray['nbfield']++;
 if (getDolGlobalString('DONATION_USE_THIRDPARTIES')) {
-	print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "d.fk_soc", "", $param, "", $sortfield, $sortorder);
+	print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "s.nom", "", $param, "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 } else {
 	print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "d.societe", "", $param, "", $sortfield, $sortorder);
@@ -602,10 +588,10 @@ while ($i < $imaxinloop) {
 
 	$donationstatic->setVarsFromFetchObj($obj);
 
-	$donationstatic->id = $obj->rowid;
+	$donationstatic->id = (int) $obj->rowid;
 	$donationstatic->ref = ($obj->ref ? $obj->ref : $obj->rowid);
 	$donationstatic->date = $db->jdate($obj->datedon);
-	$donationstatic->status = $obj->status;
+	$donationstatic->status = (int) $obj->status;
 	$donationstatic->lastname = $obj->lastname;
 	$donationstatic->firstname = $obj->firstname;
 	$object = $donationstatic;
@@ -699,7 +685,7 @@ while ($i < $imaxinloop) {
 		print '<td class="right"><span class="amount">'.price($obj->amount).'</span></td>';
 
 		// Status
-		print '<td class="center">'.$donationstatic->LibStatut($obj->status, 5).'</td>';
+		print '<td class="center">'.$donationstatic->LibStatut($donationstatic->status, 5).'</td>';
 
 		// Action column
 		if (empty($conf->main_checkbox_left_column)) {

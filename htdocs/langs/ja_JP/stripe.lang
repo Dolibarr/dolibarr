@@ -109,3 +109,4 @@ PAYBOX_PBX_SITE=PBX SITEの値
 PAYBOX_PBX_RANG=PBX Rangの値
 PAYBOX_PBX_IDENTIFIANT=PBX IDの値
 PAYBOX_HMAC_KEY=HMACキー
+FeatureNotUsedAccordingtoSetup=お使いの%s設定に従って、この機能は使用されていません。

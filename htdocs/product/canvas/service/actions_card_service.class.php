@@ -274,7 +274,7 @@ class ActionsCardService
 			$this->tpl['note'] = $this->note;
 
 			// Duration unit
-			// TODO creer fonction
+			// TODO create function
 			$duration_unit = '<input name="duration_unit" type="radio" value="h"'.($this->object->duration_unit == 'h' ? ' checked' : '').'>'.$langs->trans("Hour");
 			$duration_unit .= '&nbsp; ';
 			$duration_unit .= '<input name="duration_unit" type="radio" value="d"'.($this->object->duration_unit == 'd' ? ' checked' : '').'>'.$langs->trans("Day");
@@ -322,7 +322,7 @@ class ActionsCardService
 		$sql = "SELECT rowid, name, alias, title, align, sort, search, visible, enabled, rang";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_field_list";
 		$sql .= " WHERE element = '".$this->db->escape($this->fieldListName)."'";
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " AND entity = ".((int) $conf->entity);
 		$sql .= " ORDER BY rang ASC";
 
 		$resql = $this->db->query($sql);

@@ -2,6 +2,7 @@
 ActionsOwnedBy=Evento propiedad de
 ListOfActions=Lista de eventos
 EventReports=Informes de evento
+Location=Ubicación
 ToUserOfGroup=Evento Asignado a cualquier usuario del grupo
 EventOnFullDay=Evento de todo el día(s)
 MenuToDoActions=Todos los eventos incompletos
@@ -33,7 +34,6 @@ ShippingValidated=Envío %s validado
 CANCELInDolibarr=Cancelado
 DateActionEnd=Fecha de finalización
 AgendaUrlOptions1=También puede agregar los siguientes parámetros para filtrar la salida:
-AgendaUrlOptions3=<b>logina=%s</b> para restringir la salida a las acciones propiedad del usuario <b>%s</b>.
 AgendaUrlOptions4=<b>logint=%s</b> para restringir la salida a acciones asignadas al usuario <b>%s</b>.
 ExportDataset_event1=Lista de eventos de la agenda
 DefaultWorkingDays=Rango de días laborales por defecto en una semana (Example: 1-5, 1-6)

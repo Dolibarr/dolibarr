@@ -7,7 +7,7 @@
  * Copyright (C) 2018-2024  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2021      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2021      Open-Dsi             <support@open-dsi.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,6 +57,19 @@ $month_start = $month_current;
 $refresh = true;
 
 include DOL_DOCUMENT_ROOT.'/compta/tva/initdatesforvat.inc.php';
+/**
+ * Variables from include:
+ *
+ * @var int $date_start
+ * @var int $date_end
+ * @var string $date_start_month
+ * @var string $date_start_year
+ * @var string $date_start_day
+ * @var string $date_end_month
+ * @var string $date_end_year
+ * @var string $date_end_day
+ */
+
 '
 @phan-var-force int $date_start
 @phan-var-force int $date_end
@@ -410,6 +423,7 @@ if ($refresh === true) {
 
 		$action = "tva";
 		$object = array(&$x_coll, &$x_paye, &$x_both);
+		$parameters = array();
 		$parameters["mode"] = $modetax;
 		$parameters["year"] = $y;
 		$parameters["month"] = $m;
@@ -547,7 +561,7 @@ if ($refresh === true) {
 
 	$sql .= "SELECT SUM(amount) as mm, date_format(tva.datev,'%Y-%m') as dm, 'claimed' as mode";
 	$sql .= " FROM " . MAIN_DB_PREFIX . "tva as tva";
-	$sql .= " WHERE tva.entity = " . $conf->entity;
+	$sql .= " WHERE tva.entity = " . ((int) $conf->entity);
 	$sql .= " AND (tva.datev >= '" . $db->idate($date_start) . "' AND tva.datev <= '" . $db->idate($date_end) . "')";
 	$sql .= " GROUP BY dm";
 
@@ -556,7 +570,7 @@ if ($refresh === true) {
 	$sql .= "SELECT SUM(ptva.amount) as mm, date_format(tva.datev,'%Y-%m') as dm, 'paid' as mode";
 	$sql .= " FROM " . MAIN_DB_PREFIX . "tva as tva";
 	$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "payment_vat as ptva ON (tva.rowid = ptva.fk_tva)";
-	$sql .= " WHERE tva.entity = " . $conf->entity;
+	$sql .= " WHERE tva.entity = " . ((int) $conf->entity);
 	$sql .= " AND (tva.datev >= '" . $db->idate($date_start) . "' AND tva.datev <= '" . $db->idate($date_end) . "')";
 	$sql .= " GROUP BY dm";
 

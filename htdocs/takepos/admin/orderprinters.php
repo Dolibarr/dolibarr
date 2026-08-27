@@ -189,7 +189,8 @@ if ($nbofentries > 0) {
 	print '</tr>';
 }
 print "</table>";
-print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'"></form><br><br>';
+print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'"></form>';
+print '<br><br>';
 
 //Printer2
 print '<table class="liste nohover" width="100%">';
@@ -224,6 +225,7 @@ if ($nbofentries > 0) {
 }
 print "</table>";
 print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'"></form>';
+print '<br><br>';
 
 //Printer3
 print '<table class="liste nohover" width="100%">';

@@ -162,15 +162,15 @@ if (in_array($db->type, array('mysql', 'mysqli'))) {
 }
 
 $tabfac = array();
+$tabht = array();
+$tabtva = array();
+$tablocaltax1 = array();
+$tablocaltax2 = array();
+$tabttc = array();
+$tabcompany = array();
 
 $result = $db->query($sql);
 if ($result) {
-	$tabht = array();
-	$tabtva = array();
-	$tablocaltax1 = array();
-	$tablocaltax2 = array();
-	$tabttc = array();
-	$tabcompany = array();
 	$account_localtax1 = 0;
 	$account_localtax2 = 0;
 
@@ -179,7 +179,7 @@ if ($result) {
 	$resligne = array();
 	while ($i < $num) {
 		$obj = $db->fetch_object($result);
-		// les variables
+		// the variables
 		$cptcli = getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER', $langs->trans("CodeNotDef"));
 		$compta_soc = (!empty($obj->code_compta_client) ? $obj->code_compta_client : $cptcli);
 		$compta_prod = $obj->accountancy_code_sell;

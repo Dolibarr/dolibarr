@@ -900,7 +900,7 @@ class MouvementStock extends CommonObject
 	 *
 	 * @param 	int			$productidselected		Id of product to count
 	 * @param 	integer 	$datebefore				Date limit
-	 * @return	int			Number
+	 * @return	float		Number
 	 */
 	public function calculateBalanceForProductBefore($productidselected, $datebefore)
 	{
@@ -915,7 +915,7 @@ class MouvementStock extends CommonObject
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
 			if ($obj) {
-				$nb = (int) $obj->nb;
+				$nb = (float) $obj->nb;
 			}
 			return (empty($nb) ? 0 : $nb);
 		} else {

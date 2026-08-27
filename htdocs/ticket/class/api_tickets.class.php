@@ -2,6 +2,7 @@
 /* Copyright (C) 2016   Jean-François Ferry     <hello@librethic.io>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Jose Martinez				<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -220,7 +221,7 @@ class Tickets extends DolibarrApi
 	 * @param string	$sortorder			Sort order
 	 * @param int		$limit				Limit for list
 	 * @param int		$page				Page number
-	 * @param string	$sqlfilters 		Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101') and (t.fk_statut:=:1)"
+	 * @param string	$sqlfilters 		Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:>:'20160101') and (t.fk_statut:=:1)"
 	 * @param string    $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param int		$loadcontacts		Load also contacts/addresses (0=No, 1=Yes)
 	 * @param bool      $pagination_data    If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
@@ -435,7 +436,14 @@ class Tickets extends DolibarrApi
 			$this->ticket->$field = $this->_checkValForAPI($field, $value, $this->ticket);
 		}
 		$ticketMessageText = $this->ticket->message;
-		$result = $this->ticket->fetch(0, '', $this->ticket->track_id);
+		// Allow targeting the ticket by id or ref, not only track_id
+		if (!empty($this->ticket->id)) {
+			$result = $this->ticket->fetch($this->ticket->id);
+		} elseif (!empty($this->ticket->ref)) {
+			$result = $this->ticket->fetch(0, $this->ticket->ref);
+		} else {
+			$result = $this->ticket->fetch(0, '', $this->ticket->track_id);
+		}
 		if (!$result) {
 			throw new RestException(404, 'Ticket not found');
 		}
@@ -575,7 +583,7 @@ class Tickets extends DolibarrApi
 			}
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->ticket->array_options[$index] = $this->_checkValForAPI($field, $val, $this->ticket);
+					$this->ticket->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->ticket);
 				}
 				continue;
 			}

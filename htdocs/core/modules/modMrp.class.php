@@ -4,6 +4,7 @@
  * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2019       Destailleur Laurent     <eldy@users.sourceforge.net>
  * Copyright (C) 2024       Charlene Benke     		<charlene@patas-monkey.com>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -136,8 +137,8 @@ class modMrp extends DolibarrModules
 		// );
 		$this->const = array(
 			//1=>array('MRP_MO_ADDON_PDF', 'chaine', 'vinci', 'Name of default PDF model of MO', 0),
-			2=>array('MRP_MO_ADDON', 'chaine', 'mod_mo_standard', 'Name of numbering rules of MO', 0),
-			3=>array('MRP_MO_ADDON_PDF_ODT_PATH', 'chaine', 'DOL_DATA_ROOT'.($conf->entity > 1 ? '/'.$conf->entity : '').'/doctemplates/mrps', '', 0)
+			2 => array('MRP_MO_ADDON', 'chaine', 'mod_mo_standard', 'Name of numbering rules of MO', 0),
+			3 => array('MRP_MO_ADDON_PDF_ODT_PATH', 'chaine', 'DOL_DATA_ROOT'.($conf->entity > 1 ? '/'.$conf->entity : '').'/doctemplates/mrps', '', 0)
 		);
 
 		// Some keys to add into the overwriting translation tables
@@ -245,59 +246,59 @@ class modMrp extends DolibarrModules
 		// Exports profiles provided by this module
 		$r = 1;
 
-		$this->export_code[$r]=$this->rights_class.'_'.$r;
-		$this->export_label[$r]='MOs';	// Translation key (used only if key ExportDataset_xxx_z not found)
-		$this->export_icon[$r]='mrp';
+		$this->export_code[$r] = $this->rights_class.'_'.$r;
+		$this->export_label[$r] = 'MOs';	// Translation key (used only if key ExportDataset_xxx_z not found)
+		$this->export_icon[$r] = 'mrp';
 		$this->export_fields_array[$r] = array(
-			'm.rowid'=>"Id",
-			'm.ref'=>"Ref",
-			'm.label'=>"Label",
-			'm.fk_project'=>'Project',
-			'm.fk_bom'=>"Bom",
-			'm.date_start_planned'=>"DateStartPlanned",
-			'm.date_end_planned'=>"DateEndPlanned",
-			'm.fk_product'=>"Product",
-			'm.status'=>'Status',
-			'm.model_pdf'=>'Model',
-			'm.fk_user_valid'=>'ValidatedById',
-			'm.fk_user_modif'=>'ModifiedById',
-			'm.fk_user_creat'=>'CreatedById',
-			'm.date_valid'=>'DateValidation',
-			'm.note_private'=>'NotePrivate',
-			'm.note_public'=>'Note',
-			'm.fk_soc'=>'ThirdParty:ID',
-			'm.qty'=>'Qty',
-			'm.date_creation'=>'DateCreation',
-			'm.tms'=>'DateModification',
-			'm.fk_warehouse'=>'WarehouseForProduction:ID',
-			'e.ref'=>'WarehouseForProduction:Ref'
+			'm.rowid' => "Id",
+			'm.ref' => "Ref",
+			'm.label' => "Label",
+			'm.fk_project' => 'Project',
+			'm.fk_bom' => "Bom",
+			'm.date_start_planned' => "DateStartPlanned",
+			'm.date_end_planned' => "DateEndPlanned",
+			'm.fk_product' => "Product",
+			'm.status' => 'Status',
+			'm.model_pdf' => 'Model',
+			'm.fk_user_valid' => 'ValidatedById',
+			'm.fk_user_modif' => 'ModifiedById',
+			'm.fk_user_creat' => 'CreatedById',
+			'm.date_valid' => 'DateValidation',
+			'm.note_private' => 'NotePrivate',
+			'm.note_public' => 'Note',
+			'm.fk_soc' => 'ThirdParty:ID',
+			'm.qty' => 'Qty',
+			'm.date_creation' => 'DateCreation',
+			'm.tms' => 'DateModification',
+			'm.fk_warehouse' => 'WarehouseForProduction:ID',
+			'e.ref' => 'WarehouseForProduction:Ref'
 		);
 		$keyforselect = 'mrp_mo';
 		$keyforelement = 'mrp_mo';
 		$keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		$this->export_TypeFields_array[$r] = array(
-			'm.ref'=>"Text",
-			'm.label'=>"Text",
-			'm.fk_project'=>'Numeric',
-			'm.fk_bom'=>"Numeric",
-			'm.date_end_planned'=>"Date",
-			'm.date_start_planned'=>"Date",
-			'm.fk_product'=>"Numeric",
-			'm.status'=>'Numeric',
-			'm.model_pdf'=>'Text',
-			'm.fk_user_valid'=>'Numeric',
-			'm.fk_user_modif'=>'Numeric',
-			'm.fk_user_creat'=>'Numeric',
-			'm.date_valid'=>'Date',
-			'm.note_private'=>'Text',
-			'm.note_public'=>'Text',
-			'm.fk_soc'=>'Numeric',
-			'm.qty'=>'Numeric',
-			'm.date_creation'=>'Date',
-			'm.tms'=>'Date',
-			'm.fk_warehouse'=>'Numeric',
-			'e.ref'=>'Text',
+			'm.ref' => "Text",
+			'm.label' => "Text",
+			'm.fk_project' => 'Numeric',
+			'm.fk_bom' => "Numeric",
+			'm.date_end_planned' => "Date",
+			'm.date_start_planned' => "Date",
+			'm.fk_product' => "Numeric",
+			'm.status' => 'Numeric',
+			'm.model_pdf' => 'Text',
+			'm.fk_user_valid' => 'Numeric',
+			'm.fk_user_modif' => 'Numeric',
+			'm.fk_user_creat' => 'Numeric',
+			'm.date_valid' => 'Date',
+			'm.note_private' => 'Text',
+			'm.note_public' => 'Text',
+			'm.fk_soc' => 'Numeric',
+			'm.qty' => 'Numeric',
+			'm.date_creation' => 'Date',
+			'm.tms' => 'Date',
+			'm.fk_warehouse' => 'Numeric',
+			'e.ref' => 'Text',
 		);
 		$this->export_entities_array[$r] = array('m.fk_warehouse' => 'warehouse', 'e.ref' => 'warehouse'); // We define here only fields that use another icon that the one defined into import_icon
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
@@ -308,30 +309,30 @@ class modMrp extends DolibarrModules
 
 		// Export of MO + liste of consumption / production
 		$r++;
-		$this->export_code[$r]=$this->rights_class.'_'.$r;
-		$this->export_label[$r]='ConsumptionAndProductionInMos';	// Translation key (used only if key ExportDataset_xxx_z not found)
-		$this->export_icon[$r]='mrp';
+		$this->export_code[$r] = $this->rights_class.'_'.$r;
+		$this->export_label[$r] = 'ConsumptionAndProductionInMos';	// Translation key (used only if key ExportDataset_xxx_z not found)
+		$this->export_icon[$r] = 'mrp';
 		$this->export_fields_array[$r] = array(
-			'm.rowid'=>"Id",
-			'm.ref'=>"Ref",
-			'm.label'=>"Label",
-			'm.fk_project'=>'ProjectId',
-			'm.fk_bom'=>"Bom:ID",
-			'm.date_start_planned'=>"DateStartPlanned",
-			'm.date_end_planned'=>"DateEndPlanned",
-			'm.fk_product'=>"Product",
-			'm.status'=>'Status',
-			'm.model_pdf'=>'Model',
-			'm.fk_user_valid'=>'ValidatedById',
-			'm.fk_user_modif'=>'ModifiedById',
-			'm.fk_user_creat'=>'CreatedById',
-			'm.date_valid'=>'DateValidation',
-			'm.note_private'=>'NotePrivate',
-			'm.note_public'=>'Note',
-			'm.fk_soc'=>'ThirdParty',
-			'm.qty'=>'Qty',
-			'm.date_creation'=>'DateCreation',
-			'm.tms'=>'DateModification',
+			'm.rowid' => "Id",
+			'm.ref' => "Ref",
+			'm.label' => "Label",
+			'm.fk_project' => 'ProjectId',
+			'm.fk_bom' => "Bom:ID",
+			'm.date_start_planned' => "DateStartPlanned",
+			'm.date_end_planned' => "DateEndPlanned",
+			'm.fk_product' => "Product",
+			'm.status' => 'Status',
+			'm.model_pdf' => 'Model',
+			'm.fk_user_valid' => 'ValidatedById',
+			'm.fk_user_modif' => 'ModifiedById',
+			'm.fk_user_creat' => 'CreatedById',
+			'm.date_valid' => 'DateValidation',
+			'm.note_private' => 'NotePrivate',
+			'm.note_public' => 'Note',
+			'm.fk_soc' => 'ThirdParty',
+			'm.qty' => 'Qty',
+			'm.date_creation' => 'DateCreation',
+			'm.tms' => 'DateModification',
 			//'e.rowid'=>'WarehouseId',
 			//'e.ref'=>'WarehouseRef',
 		);
@@ -356,27 +357,27 @@ class modMrp extends DolibarrModules
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 
 		$this->export_TypeFields_array[$r] = array(
-			'm.ref'=>"Text",
-			'm.label'=>"Text",
-			'm.fk_project'=>'Numeric',
-			'm.fk_bom'=>"Numeric",
-			'm.date_end_planned'=>"Date",
-			'm.date_start_planned'=>"Date",
-			'm.fk_product'=>"Numeric",
-			'm.status'=>'Numeric',
-			'm.model_pdf'=>'Text',
-			'm.fk_user_valid'=>'Numeric',
-			'm.fk_user_modif'=>'Numeric',
-			'm.fk_user_creat'=>'Numeric',
-			'm.date_valid'=>'Date',
-			'm.note_private'=>'Text',
-			'm.note_public'=>'Text',
-			'm.fk_soc'=>'Numeric',
-			'm.qty'=>'Numeric',
-			'm.date_creation'=>'Date',
-			'm.tms'=>'Date',
-			'e.fk_warehouse'=>'Numeric',
-			'e.ref'=>'Text',
+			'm.ref' => "Text",
+			'm.label' => "Text",
+			'm.fk_project' => 'Numeric',
+			'm.fk_bom' => "Numeric",
+			'm.date_end_planned' => "Date",
+			'm.date_start_planned' => "Date",
+			'm.fk_product' => "Numeric",
+			'm.status' => 'Numeric',
+			'm.model_pdf' => 'Text',
+			'm.fk_user_valid' => 'Numeric',
+			'm.fk_user_modif' => 'Numeric',
+			'm.fk_user_creat' => 'Numeric',
+			'm.date_valid' => 'Date',
+			'm.note_private' => 'Text',
+			'm.note_public' => 'Text',
+			'm.fk_soc' => 'Numeric',
+			'm.qty' => 'Numeric',
+			'm.date_creation' => 'Date',
+			'm.tms' => 'Date',
+			'e.fk_warehouse' => 'Numeric',
+			'e.ref' => 'Text',
 			'mp.qty' => 'Numeric',
 			'mp.batch' => 'Text',
 			'mp.fk_product' => 'Numeric',
@@ -427,39 +428,39 @@ class modMrp extends DolibarrModules
 		 $r++; */
 		/* END MODULEBUILDER IMPORT MO */
 		$r++;
-		$this->import_code[$r]=$this->rights_class.'_'.$r;
-		$this->import_label[$r]='MOs';	// Translation key (used only if key ExportDataset_xxx_z not found)
-		$this->import_icon[$r]='mrp';
+		$this->import_code[$r] = $this->rights_class.'_'.$r;
+		$this->import_label[$r] = 'MOs';	// Translation key (used only if key ExportDataset_xxx_z not found)
+		$this->import_icon[$r] = 'mrp';
 		$this->import_entities_array[$r] = array(); // We define here only fields that use a different icon from the one defined in import_icon
-		$this->import_tables_array[$r] = array('m'=>MAIN_DB_PREFIX.'mrp_mo', 'extra'=>MAIN_DB_PREFIX.'mrp_mo_extrafields');
-		$this->import_tables_creator_array[$r] = array('m'=>'fk_user_creat'); // Fields to store import user id
+		$this->import_tables_array[$r] = array('m' => MAIN_DB_PREFIX.'mrp_mo', 'extra' => MAIN_DB_PREFIX.'mrp_mo_extrafields');
+		$this->import_tables_creator_array[$r] = array('m' => 'fk_user_creat'); // Fields to store import user id
 		$this->import_fields_array[$r] = array(
 			'm.ref' => "Ref*",
 			'm.label' => "Label*",
-			'm.fk_project'=>'Project',
-			'm.fk_bom'=>"Bom",
-			'm.date_start_planned'=>"DateStartPlanned",
-			'm.date_end_planned'=>"DateEndPlanned",
-			'm.fk_product'=>"Product*",
-			'm.status'=>'Status',
-			'm.model_pdf'=>'Model',
-			'm.fk_user_valid'=>'ValidatedById',
-			'm.fk_user_modif'=>'ModifiedById',
-			'm.fk_user_creat'=>'CreatedById',
-			'm.date_valid'=>'DateValidation',
-			'm.note_private'=>'NotePrivate',
-			'm.note_public'=>'Note',
-			'm.fk_soc'=>'ThirdParty',
-			'm.fk_warehouse'=>'Warehouse',
-			'm.qty'=>'Qty*',
-			'm.date_creation'=>'DateCreation',
-			'm.tms'=>'DateModification',
+			'm.fk_project' => 'Project',
+			'm.fk_bom' => "Bom",
+			'm.date_start_planned' => "DateStartPlanned",
+			'm.date_end_planned' => "DateEndPlanned",
+			'm.fk_product' => "Product*",
+			'm.status' => 'Status',
+			'm.model_pdf' => 'Model',
+			'm.fk_user_valid' => 'ValidatedById',
+			'm.fk_user_modif' => 'ModifiedById',
+			'm.fk_user_creat' => 'CreatedById',
+			'm.date_valid' => 'DateValidation',
+			'm.note_private' => 'NotePrivate',
+			'm.note_public' => 'Note',
+			'm.fk_soc' => 'ThirdParty',
+			'm.fk_warehouse' => 'Warehouse',
+			'm.qty' => 'Qty*',
+			'm.date_creation' => 'DateCreation',
+			'm.tms' => 'DateModification',
 		);
 		$import_sample = array();
 
 		// Add extra fields
 		$import_extrafield_sample = array();
-		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'mrp_mo' AND entity IN (0, ".$conf->entity.")";
+		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'mrp_mo' AND entity IN (0, ".((int) $conf->entity).")";
 		$resql = $this->db->query($sql);
 
 		if ($resql) {

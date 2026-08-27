@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2011		Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2022-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2022-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -131,9 +131,8 @@ function payment_expensereport_prepare_head(PaymentExpenseReport $object)
  */
 function expensereport_admin_prepare_head()
 {
-	global $langs, $conf, $user, $db;
+	global $langs, $conf, $user, $extrafields;
 
-	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('expensereport');
 
 	$h = 0;
@@ -162,7 +161,7 @@ function expensereport_admin_prepare_head()
 	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'expensereport_admin');
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/expensereport_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'expensereport'));
 	$head[$h][1] = $langs->trans("ExtraFields");
 	$nbExtrafields = $extrafields->attributes['expensereport']['count'];
 	if ($nbExtrafields > 0) {

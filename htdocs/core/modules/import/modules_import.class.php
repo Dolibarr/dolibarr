@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1003,7 +1003,7 @@ class ModeleImports
 	{
 		global $langs, $conf, $user;
 		global $thirdparty_static; // Specific to thirdparty import
-		global $tablewithentity_cache; // Cache to avoid to call  desc at each rows on tables
+		global $tablewithentity_cache; // Cache to avoid to call entity desc at each rows on tables
 
 		if (is_array($arrayrecord) && !empty($recordpositionbase)) {
 			$arrayrecord = array_values($arrayrecord);
@@ -1020,7 +1020,6 @@ class ModeleImports
 
 		//var_dump($array_match_file_to_database);
 		//var_dump($arrayrecord); exit;
-
 		$array_match_database_to_file = array_flip($array_match_file_to_database);
 		$sort_array_match_file_to_database = $array_match_file_to_database;
 		ksort($sort_array_match_file_to_database);
@@ -1040,8 +1039,8 @@ class ModeleImports
 			foreach ($objimport->array_import_tables[0] as $alias => $tablename) {
 				// Build sql request
 				$sql = '';
-				$listfields = array();
-				$listvalues = array();
+				$sql_listfields = array();
+				$sql_listvalues = array();
 				$i = 0;
 				$errorforthistable = 0;
 
@@ -1082,7 +1081,7 @@ class ModeleImports
 					}
 
 					if ($key <= $maxfields) {
-						// Set $newval with value to insert and set $listvalues with sql request part for insert
+						// Set $newval with value to insert and set $sql_listvalues with sql request part for insert
 						$newval = '';
 						if ($arrayrecord[($key - 1)]['type'] > 0) {
 							$newval = $arrayrecord[($key - 1)]['val']; // If type of field into input file is not empty string (so defined into input file), we get value
@@ -1200,11 +1199,11 @@ class ModeleImports
 
 									if ($isidorref == 'ref') {
 										$file = (empty($objimport->array_import_convertvalue[0][$val]['classfile']) ? $objimport->array_import_convertvalue[0][$val]['file'] : $objimport->array_import_convertvalue[0][$val]['classfile']);
-											$class = $objimport->array_import_convertvalue[0][$val]['class'];
-											$method = $objimport->array_import_convertvalue[0][$val]['method'];
-											$codefromfield = $objimport->array_import_convertvalue[0][$val]['codefromfield'];
-											$code = $arrayrecord[$arrayfield[$codefromfield]]['val'];
-											$cachekey = $file.'_'.$class.'_'.$method.'_'.$code;
+										$class = $objimport->array_import_convertvalue[0][$val]['class'];
+										$method = $objimport->array_import_convertvalue[0][$val]['method'];
+										$codefromfield = $objimport->array_import_convertvalue[0][$val]['codefromfield'];
+										$code = $arrayrecord[$arrayfield[$codefromfield]]['val'];
+										$cachekey = $file.'_'.$class.'_'.$method.'_'.$code;
 										if (isset($this->cacheconvert[$cachekey][$newval]) && $this->cacheconvert[$cachekey][$newval] != '') {
 											$newval = $this->cacheconvert[$cachekey][$newval];
 										} else {
@@ -1237,11 +1236,11 @@ class ModeleImports
 										$newval = '0';
 									}
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'fetchidfromcodeunits' || $objimport->array_import_convertvalue[0][$val]['rule'] == 'fetchscalefromcodeunits') {
-										$file = (empty($objimport->array_import_convertvalue[0][$val]['classfile']) ? $objimport->array_import_convertvalue[0][$val]['file'] : $objimport->array_import_convertvalue[0][$val]['classfile']);
-										$class = $objimport->array_import_convertvalue[0][$val]['class'];
-										$method = $objimport->array_import_convertvalue[0][$val]['method'];
-										$units = $objimport->array_import_convertvalue[0][$val]['units'];
-										$cachekey = $file.'_'.$class.'_'.$method.'_'.$units;
+									$file = (empty($objimport->array_import_convertvalue[0][$val]['classfile']) ? $objimport->array_import_convertvalue[0][$val]['file'] : $objimport->array_import_convertvalue[0][$val]['classfile']);
+									$class = $objimport->array_import_convertvalue[0][$val]['class'];
+									$method = $objimport->array_import_convertvalue[0][$val]['method'];
+									$units = $objimport->array_import_convertvalue[0][$val]['units'];
+									$cachekey = $file.'_'.$class.'_'.$method.'_'.$units;
 									if (isset($this->cacheconvert[$cachekey][$newval]) && $this->cacheconvert[$cachekey][$newval] != '') {
 										$newval = $this->cacheconvert[$cachekey][$newval];
 									} else {
@@ -1351,8 +1350,8 @@ class ModeleImports
 										break;
 									}
 									$classinstance = new $class($this->db);
-										$computedFieldPos = isset($arrayfield[$fieldname]) ? ((int) $arrayfield[$fieldname]) : 0;
-										$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord, $arrayfield, $computedFieldPos));
+									$computedFieldPos = isset($arrayfield[$val]) ? ((int) $arrayfield[$val]) : 0;
+									$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord, $arrayfield, $computedFieldPos));
 									if (empty($classinstance->error) && empty($classinstance->errors)) {
 										$newval = $res; 	// We get new value computed.
 									} else {
@@ -1448,38 +1447,38 @@ class ModeleImports
 							// ...
 						}
 
-						// Define $listfields and $listvalues to build the SQL request
+						// Define $sql_listfields and $sql_listvalues to build the SQL request
 						if (isModEnabled("socialnetworks") && strpos($fieldname, "socialnetworks") !== false) {
-							if (!in_array("socialnetworks", $listfields)) {
-								$listfields[] = "socialnetworks";
-								$socialkey = array_search("socialnetworks", $listfields);	// Return position of 'socialnetworks' key in array
-								$listvalues[$socialkey] = '';
+							if (!in_array("socialnetworks", $sql_listfields)) {
+								$sql_listfields[] = "socialnetworks";
+								$socialkey = array_search("socialnetworks", $sql_listfields);	// Return position of 'socialnetworks' key in array
+								$sql_listvalues[$socialkey] = '';
 							}
 							//var_dump($newval); var_dump($arrayrecord[($key - 1)]['type']);
 							if (!empty($newval) && $arrayrecord[($key - 1)]['type'] > 0) {
-								$socialkey = array_search("socialnetworks", $listfields);	// Return position of 'socialnetworks' key in array
+								$socialkey = array_search("socialnetworks", $sql_listfields);	// Return position of 'socialnetworks' key in array
 								//var_dump('sk='.$socialkey);	// socialkey=19
 								$socialnetwork = explode("_", $fieldname)[1];
-								if (empty($listvalues[$socialkey]) || $listvalues[$socialkey] == "null") {
+								if (empty($sql_listvalues[$socialkey]) || $sql_listvalues[$socialkey] == "null") {
 									$json = new stdClass();
 									$json->$socialnetwork = $newval;
-									$listvalues[$socialkey] = json_encode($json);
+									$sql_listvalues[$socialkey] = json_encode($json);  // Supposed proper escape elsewhere!! @phan-suppress-current-line SqlInjection
 								} else {
-									$jsondata = $listvalues[$socialkey];
+									$jsondata = $sql_listvalues[$socialkey];
 									$json = json_decode($jsondata);
 									$json->$socialnetwork = $newval;
-									$listvalues[$socialkey] = json_encode($json);
+									$sql_listvalues[$socialkey] = json_encode($json);  // Supposed proper escape elsewhere!! @phan-suppress-current-line SqlInjection
 								}
 							}
 						} else {
-							$listfields[] = $fieldname;
+							$sql_listfields[] = $this->db->sanitize($fieldname);
 							// Note: arrayrecord (and 'type') is filled with ->import_read_record called by import.php page before calling import_insert
 							if (empty($newval) && $arrayrecord[($key - 1)]['type'] < 0) {
-								$listvalues[] = ($newval == '0' ? (int) $newval : "null");
+								$sql_listvalues[] = ($newval == '0' ? (int) $newval : "null");
 							} elseif (empty($newval) && $arrayrecord[($key - 1)]['type'] == 0) {
-								$listvalues[] = "''";
+								$sql_listvalues[] = "''";
 							} else {
-								$listvalues[] = "'".$this->db->escape($newval)."'";
+								$sql_listvalues[] = "'".$this->db->escape($newval)."'";
 							}
 						}
 					}
@@ -1489,7 +1488,7 @@ class ModeleImports
 				// We add hidden fields (but only if there is at least one field to add into table)
 				// We process here all the fields that were declared into the array $this->import_fieldshidden_array of the descriptor file.
 				// Previously we processed the ->import_fields_array.
-				if (!empty($listfields) && is_array($objimport->array_import_fieldshidden[0])) {
+				if (!empty($sql_listfields) && is_array($objimport->array_import_fieldshidden[0])) {
 					// Loop on each hidden fields to add them into listfields/listvalues
 					foreach ($objimport->array_import_fieldshidden[0] as $tmpkey => $tmpval) {
 						if (!preg_match('/^' . preg_quote($alias, '/') . '\./', $tmpkey)) {
@@ -1497,22 +1496,22 @@ class ModeleImports
 						}
 						$keyfieldcache = preg_replace('/^' . preg_quote($alias, '/') . '\./', '', $tmpkey);
 
-						if (in_array($keyfieldcache, $listfields)) {		// avoid duplicates in insert
+						if (in_array($keyfieldcache, $sql_listfields)) {		// avoid duplicates in insert
 							continue;
 						} elseif ($tmpval == 'user->id') {
-							$listfields[] = $keyfieldcache;
-							$listvalues[] = ((int) $user->id);
+							$sql_listfields[] = $keyfieldcache;  // @phan-suppress-current-line SqlInjection
+							$sql_listvalues[] = ((int) $user->id);
 						} elseif (preg_match('/^lastrowid-/', $tmpval)) {
 							$tmp = explode('-', $tmpval);
 							$lastinsertid = (isset($last_insert_id_array[$tmp[1]])) ? $last_insert_id_array[$tmp[1]] : 0;
-							$listfields[] = $keyfieldcache;
-							$listvalues[] = (int) $lastinsertid;
+							$sql_listfields[] = $keyfieldcache;  // @phan-suppress-current-line SqlInjection
+							$sql_listvalues[] = (int) $lastinsertid;
 							$keyfield = $keyfieldcache;
-							//print $tmpkey."-".$tmpval."-".$listfields."-".$listvalues."<br>";exit;
+							//print $tmpkey."-".$tmpval."-".$sql_listfields."-".$sql_listvalues."<br>";exit;
 						} elseif (preg_match('/^const-/', $tmpval)) {
 							$tmp = explode('-', $tmpval, 2);
-							$listfields[] = $keyfieldcache;
-							$listvalues[] = "'".$this->db->escape($tmp[1])."'";
+							$sql_listfields[] = $keyfieldcache;  // @phan-suppress-current-line SqlInjection
+							$sql_listvalues[] = "'".$this->db->escape($tmp[1])."'";
 						} elseif (preg_match('/^rule-/', $tmpval)) {	// Example: rule-computeAmount, rule-computeDirection, ...
 							$fieldname = $tmpkey;
 							if (!empty($objimport->array_import_convertvalue[0][$fieldname])) {
@@ -1527,22 +1526,22 @@ class ModeleImports
 										break;
 									}
 									$classinstance = new $class($this->db);
-										$computedFieldPos = isset($arrayfield[$fieldname]) ? ((int) $arrayfield[$fieldname]) : 0;
-										$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord, $arrayfield, $computedFieldPos));
+									$computedFieldPos = isset($arrayfield[$fieldname]) ? ((int) $arrayfield[$fieldname]) : 0;
+									$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord, $arrayfield, $computedFieldPos));
 									if (empty($classinstance->error) && empty($classinstance->errors)) {
 										$fieldArr = explode('.', $fieldname);
 										if (count($fieldArr) > 0) {
 											$fieldname = $fieldArr[1];
 										}
 
-										// Set $listfields and $listvalues
-										$listfields[] = $fieldname;
+										// Set $sql_listfields and $sql_listvalues
+										$sql_listfields[] = $this->db->sanitize($fieldname);
 										if ($type == 'int') {
-											$listvalues[] = (int) $res;
+											$sql_listvalues[] = (int) $res;
 										} elseif ($type == 'double') {
-											$listvalues[] = (float) $res;
+											$sql_listvalues[] = (float) $res;
 										} else {
-											$listvalues[] = "'".$this->db->escape($res)."'";
+											$sql_listvalues[] = "'".$this->db->escape($res)."'";
 										}
 									} else {
 										$this->errors[$error]['type'] = 'CLASSERROR';
@@ -1562,50 +1561,75 @@ class ModeleImports
 						}
 					}
 				}
-				//print 'listfields='.$listfields.'<br>listvalues='.$listvalues.'<br>';
+				//print 'listfields='.$sql_listfields.'<br>listvalues='.$sql_listvalues.'<br>';
 
-				// If no error for this $alias/$tablename, we have a complete $listfields and $listvalues that are defined
+				// If no error for this $alias/$tablename, we have a complete $sql_listfields and $sql_listvalues that are defined
 				// so we can try to make the insert or update now.
 				if (!$errorforthistable) {
-					//print "$alias/$tablename/$listfields/$listvalues<br>";
-					if (!empty($listfields)) {
+					//print "$alias/$tablename/$sql_listfields/$sql_listvalues<br>";
+					if (!empty($sql_listfields)) {
 						$updatedone = false;
 						$insertdone = false;
 						$where = array();
 
 						$is_table_category_link = false;
-						$fname = 'rowid';
+						$sanitizedfname = 'rowid';
 						if (strpos($tablename, '_categorie_') !== false) {
 							$is_table_category_link = true;
-							$fname = '*';
+							$sanitizedfname = '*';
 						}
 
 						if (!empty($updatekeys)) {
 							// We do SELECT to get the rowid, if we already have the rowid, it's to be used below for related tables (extrafields)
 
 							if (empty($lastinsertid)) {	// No insert done yet for a parent table
-								$sqlSelect = "SELECT ".$fname." FROM ".$tablename;
-								$data = array_combine($listfields, $listvalues);
+								$sqlSelect = "SELECT ".$sanitizedfname." FROM ".$this->db->sanitize($tablename);
+								$data = array_combine($sql_listfields, $sql_listvalues);
 								$where = array();	// filters to forge SQL request
 								$filters = array();	// filters to forge output error message
 								foreach ($updatekeys as $key) {
-									$col = $objimport->array_import_updatekeys[0][$key];
-									$key = preg_replace('/^.*\./i', '', $key);
-									if (isModEnabled("socialnetworks") && strpos($key, "socialnetworks") !== false) {
-										$tmp = explode("_", $key);
-										$key = $tmp[0];
+									if (! array_key_exists($key, $objimport->array_import_updatekeys[0])) {
+										$this->errors[$error]['lib'] = 'You try to search duplicates on field '.dol_string_nohtmltag($key).' that is not an allowed field.';
+										$this->errors[$error]['type'] = 'UPDATEKEYBADCOLUMN';
+										$error++;
+										break;
+									}
+									$col = $objimport->array_import_updatekeys[0][$key];				// Label for field name
+									$keyfordata = preg_replace('/^.*\./i', '', $key);					// Keep only field name without table name
+									$keyfordata = preg_replace('/[^a-zA-Z0-9\._]/', '', $keyfordata);	// Sanitize field name
+
+									if (isModEnabled("socialnetworks") && strpos($keyfordata, "socialnetworks") !== false) {
+										$tmp = explode("_", $keyfordata);
+										$keyfordata = $tmp[0];
 										$socialnetwork = $tmp[1];
-										$jsondata = $data[$key];
+										$jsondata = $data[$keyfordata];
 										$json = json_decode($jsondata);
 										$stringtosearch = json_encode($socialnetwork).':'.json_encode($json->$socialnetwork);
 										//var_dump($stringtosearch);
 										//var_dump($this->db->escape($stringtosearch));	// This provide a value for sql string (but not for a like)
-										$where[] = $key." LIKE '%".$this->db->escape($this->db->escapeforlike($stringtosearch))."%'";
+										$where[] = $this->db->sanitize($keyfordata)." LIKE '%".$this->db->escape($this->db->escapeforlike($stringtosearch))."%'";
 										$filters[] = $col." LIKE '%".$this->db->escape($this->db->escapeforlike($stringtosearch))."%'";
 										//var_dump($where[1]); // This provide a value for sql string inside a like
 									} else {
-										$where[] = $key.' = '.$data[$key];
-										$filters[] = $col.' = '.$data[$key];
+										$sanitizedvalue = $data[$keyfordata];  // @phan-suppress-current-line SqlInjection
+										/* Not required, the value in $data[$key] seems already sanitized
+										$type = $objimport->array_import_types[0][$key]['type'] ?? 'string';
+										if ($type == 'int') {
+											$sanitizedvalue = (int) $data[$key];
+										} elseif ($type == 'double') {
+											$sanitizedvalue = (float) $data[$key];
+										} else {
+											$sanitizedvalue = "'".$this->db->escape($data[$key])."'";
+										}
+										*/
+										if ((string) $sanitizedvalue === '') {
+											$this->errors[$error]['lib'] = 'You request to search duplicates on field '.$keyfordata.' but no value was provided for this field on this line.';
+											$this->errors[$error]['type'] = 'UPDATEKEYBADVALUE';
+											$error++;
+										} else {
+											$where[] = $this->db->sanitize($keyfordata)." = ".$sanitizedvalue;
+											$filters[] = $col." = ".$sanitizedvalue;
+										}
 									}
 								}
 								if (!empty($tablewithentity_cache[$tablename])) {
@@ -1614,29 +1638,31 @@ class ModeleImports
 								}
 								$sqlSelect .= " WHERE ".implode(' AND ', $where);
 
-								$resql = $this->db->query($sqlSelect);
-								if ($resql) {
-									$num_rows = $this->db->num_rows($resql);
-									if ($num_rows == 1) {
-										$res = $this->db->fetch_object($resql);
-										$lastinsertid = $res->rowid;
-										$keyfield = 'rowid';
-										if ($is_table_category_link) {
-											$lastinsertid = 'linktable';
-										} // used to apply update on tables like llx_categorie_product and avoid being blocked for all file content if at least one entry already exists
-										$last_insert_id_array[$tablename] = $lastinsertid;
-									} elseif ($num_rows > 1) {
-										$this->errors[$error]['lib'] = $langs->trans('MultipleRecordFoundWithTheseFilters', implode(', ', $filters));
+								if (!$error) {
+									$resql = $this->db->query($sqlSelect);
+									if ($resql) {
+										$num_rows = $this->db->num_rows($resql);
+										if ($num_rows == 1) {
+											$res = $this->db->fetch_object($resql);
+											$lastinsertid = $res->rowid;
+											$keyfield = 'rowid';
+											if ($is_table_category_link) {
+												$lastinsertid = 'linktable';
+											} // used to apply update on tables like llx_categorie_product and avoid being blocked for all file content if at least one entry already exists
+											$last_insert_id_array[$tablename] = $lastinsertid;
+										} elseif ($num_rows > 1) {
+											$this->errors[$error]['lib'] = $langs->trans('MultipleRecordFoundWithTheseFilters', implode(', ', $filters));
+											$this->errors[$error]['type'] = 'SQL';
+											$error++;
+										} else {
+											// No record found with filters, insert will be tried below
+										}
+									} else {
+										//print 'E';
+										$this->errors[$error]['lib'] = $this->db->lasterror();
 										$this->errors[$error]['type'] = 'SQL';
 										$error++;
-									} else {
-										// No record found with filters, insert will be tried below
 									}
-								} else {
-									//print 'E';
-									$this->errors[$error]['lib'] = $this->db->lasterror();
-									$this->errors[$error]['type'] = 'SQL';
-									$error++;
 								}
 							} else {
 								// We have a last INSERT ID (got by previous pass), so we check if we have a row referencing this foreign key.
@@ -1649,7 +1675,7 @@ class ModeleImports
 									$keyfield = 'rowid';
 								}
 
-								$sqlSelect .= " WHERE ".$keyfield." = ".((int) $lastinsertid);
+								$sqlSelect .= " WHERE ".$this->db->sanitize($keyfield)." = ".((int) $lastinsertid);
 
 								if (!empty($tablewithentity_cache[$tablename])) {
 									$sqlSelect .= " AND entity IN (".getEntity($this->getElementFromTableWithPrefix($tablename)).")";
@@ -1675,26 +1701,26 @@ class ModeleImports
 
 							if (!empty($lastinsertid)) {
 								// We db escape social network field because he isn't in field creation
-								if (in_array("socialnetworks", $listfields)) {
-									$socialkey = array_search("socialnetworks", $listfields);
-									$tmpsql =  $listvalues[$socialkey];
-									$listvalues[$socialkey] = "'".$this->db->escape($tmpsql)."'";
+								if (in_array("socialnetworks", $sql_listfields)) {
+									$socialkey = array_search("socialnetworks", $sql_listfields);
+									$tmpsql =  $sql_listvalues[$socialkey];
+									$sql_listvalues[$socialkey] = "'".$this->db->escape($tmpsql)."'";
 								}
 
 								// Build SQL UPDATE request
 								$sqlstart = "UPDATE ".$tablename;
 
-								$data = array_combine($listfields, $listvalues);
-								$set = array();
+								$data = array_combine($sql_listfields, $sql_listvalues);
+								$sql_set = array();
 								foreach ($data as $key => $val) {
-									$set[] = $key." = ".$val;	// $val was escaped/sanitized previously
+									$sql_set[] = $key." = ".$val;	// $val was escaped/sanitized previously @phan-suppress-current-line SqlInjection
 								}
-								$sqlstart .= " SET ".implode(', ', $set).", import_key = '".$this->db->escape($importid)."'";
+								$sqlstart .= " SET ".implode(', ', $sql_set).", import_key = '".$this->db->escape($importid)."'";
 								if (empty($keyfield)) {
 									$keyfield = 'rowid';
 								}
 
-								$sqlend = " WHERE ".$keyfield." = ".((int) $lastinsertid);
+								$sqlend = " WHERE ".$this->db->sanitize($keyfield)." = ".((int) $lastinsertid);
 
 								if ($is_table_category_link && !empty($where)) {
 									'@phan-var-force string[] $where';
@@ -1734,28 +1760,28 @@ class ModeleImports
 						// Update not done, we do insert
 						if (!$error && !$updatedone) {
 							// We db escape social network field because he isn't in field creation
-							if (in_array("socialnetworks", $listfields)) {
-								$socialkey = array_search("socialnetworks", $listfields);
-								$tmpsql =  $listvalues[$socialkey];
-								$listvalues[$socialkey] = "'".$this->db->escape($tmpsql)."'";
+							if (in_array("socialnetworks", $sql_listfields)) {
+								$socialkey = array_search("socialnetworks", $sql_listfields);
+								$tmpsql =  $sql_listvalues[$socialkey];
+								$sql_listvalues[$socialkey] = "'".$this->db->escape($tmpsql)."'";
 							}
 
 							// Build SQL INSERT request
-							$sqlstart = "INSERT INTO ".$tablename."(".implode(", ", $listfields).", import_key";
-							$sqlend = ") VALUES(".implode(', ', $listvalues).", '".$this->db->escape($importid)."'";
+							$sqlstart = "INSERT INTO ".$tablename."(".implode(", ", $sql_listfields).", import_key";
+							$sqlend = ") VALUES(".implode(', ', $sql_listvalues).", '".$this->db->escape($importid)."'";
 							if (!empty($tablewithentity_cache[$tablename])) {
 								$sqlstart .= ", entity";
-								$sqlend .= ", ".$conf->entity;
+								$sqlend .= ", ".((int) $conf->entity);
 							}
 							if (!empty($objimport->array_import_tables_creator[0][$alias])) {
-								$sqlstart .= ", ".$objimport->array_import_tables_creator[0][$alias];
-								$sqlend .= ", ".$user->id;
+								$sqlstart .= ", ".$this->db->sanitize($objimport->array_import_tables_creator[0][$alias]);
+								$sqlend .= ", ".((int) $user->id);
 							}
-								$sql = $sqlstart.$sqlend.")";
-								//dol_syslog("import_csv.modules", LOG_DEBUG);
+							$sql = $sqlstart.$sqlend.")";
+							//dol_syslog("import_csv.modules", LOG_DEBUG);
 
-								// Run insert request
-								$resql = $this->db->query($sql);
+							// Run insert request
+							$resql = $this->db->query($sql);
 							if ($resql) {
 								if (!$is_table_category_link) {
 									$last_insert_id_array[$tablename] = $this->db->last_insert_id($tablename); // store the last inserted auto_increment id for each table, so that child tables can be inserted with the appropriate id. This must be done just after the INSERT request, else we risk losing the id (because another sql query will be issued somewhere in Dolibarr).
@@ -1808,11 +1834,11 @@ class ModeleImports
 	 *
 	 *	@param	array<string,array{val:mixed,type:int<-1,1>}>|boolean	$arrayrecord                    Array of read values: [fieldpos] => (['val']=>val, ['type']=>-1=null,0=blank,1=string), [fieldpos+1]...
 	 *	@param	array<int|string,string>	$array_match_file_to_database   Array of target fields where to insert data: [fieldpos] => 's.fieldname', [fieldpos+1]...
-	 *	@param	Object		$objimport                      Object import (contains objimport->array_import_tables, objimport->array_import_fields, objimport->array_import_convertvalue, ...)
-	 *	@param	int	$maxfields					Max number of fields to use
-	 *	@param	string		$importid			Import key
-	 *	@param	string[]	$updatekeys			Array of keys to use to try to do an update first before insert. This field are defined into the module descriptor.
-	 *	@return	int								Return integer <0 if KO, >0 if OK
+	 *	@param	Object						$objimport                      Object import (contains objimport->array_import_tables, objimport->array_import_fields, objimport->array_import_convertvalue, ...)
+	 *	@param	int							$maxfields						Max number of fields to use
+	 *	@param	string						$importid						Import key
+	 *	@param	string[]					$updatekeys						Array of keys to use to try to do an update first before insert. This field are defined into the module descriptor.
+	 *	@return	int															Return integer <0 if KO, >0 if OK
 	 */
 	public function import_insert($arrayrecord, $array_match_file_to_database, $objimport, $maxfields, $importid, $updatekeys)
 	{

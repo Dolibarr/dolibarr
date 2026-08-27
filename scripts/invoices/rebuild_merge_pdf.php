@@ -51,6 +51,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice2.lib.php';
  * @var DoliDB $db
  * @var HookManager $hookmanager
  * @var Translate $langs
+ *
+ * @var int $dolibarr_main_db_readonly
  */
 
 // Load main language strings
@@ -306,7 +308,11 @@ function rebuild_merge_pdf_usage()
 	print "To exclude deposit invoices, use filter=nodeposit\n";
 	print "To exclude some thirdparties, use filter=excludethirdparties id1,id2...\n";
 	print "To limit to some thirdparties, use filter=onlythirdparties id1,id2...\n";
-	print "To regenerate existing PDF, use regenerate=templatename or regeneratenomerge=templatename\n";
+	print "\n";
+	print "To regenerate existing PDF before merge, use regenerate=templatename\n";
+	print "To regenerate existing PDF with no merge (regenerate only), use regeneratenomerge=templatename\n";
+	print "To merge by reusing existing PDF (generation only for non already existing PDF), use regenerate=no or nothing\n";
+	print "\n";
 	print "To generate documents in a given language, use lang=xx_XX\n";
 	print "To set prefix of generated file name, use prefix=myfileprefix\n";
 	print "\n";

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2025 		Open-Dsi         <support@open-dsi.fr>
+ * Copyright (C) 2026		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,9 +54,11 @@ class RadioField extends CommonSelectField
 
 		$moreCss = $this->getInputCss($fieldInfos, $moreCss);
 		$moreAttrib = trim((string) $moreAttrib);
-		if (empty($moreAttrib)) $moreAttrib = ' ' . $moreAttrib;
+		if (empty($moreAttrib)) {
+			$moreAttrib = ' ' . $moreAttrib;
+		}
 		$htmlName = $keyPrefix . $key . $keySuffix;
-		$value = $this->isEmptyValue($fieldInfos, $value) ? array() : (is_string($value) ? explode(',', $value) : (is_array($value) ? $value: array($value)));
+		$value = $this->isEmptyValue($fieldInfos, $value) ? array() : (is_string($value) ? explode(',', $value) : (is_array($value) ? $value : array($value)));
 
 		$optionsList = array();
 		$options = $this->getOptions($fieldInfos, $key);
@@ -82,7 +85,9 @@ class RadioField extends CommonSelectField
 	{
 		$moreCss = $this->getInputCss($fieldInfos, $moreCss);
 		$moreAttrib = trim((string) $moreAttrib);
-		if (empty($moreAttrib)) $moreAttrib = ' ' . $moreAttrib;
+		if (empty($moreAttrib)) {
+			$moreAttrib = ' ' . $moreAttrib;
+		}
 		$htmlName = $keyPrefix . $key . $keySuffix;
 
 		$selectedValue = $this->isEmptyValue($fieldInfos, $value) ? '' : (string) $value;
@@ -253,8 +258,9 @@ class RadioField extends CommonSelectField
 			$alias = $fieldInfos->sqlAlias ?? 't.';
 			$field = $this->db->sanitize($alias . ($fieldInfos->nameInTable ?? $key));
 
-			$tmp = "'" . implode("','", array_map(array($this->db, 'escape'), $value)) . "'";
-			return " AND " . $field . " IN (" . $this->db->sanitize($tmp, 1) . ")";
+			$sanitizedSqlIn = "'" . implode("','", array_map(array($this->db, 'escape'), $value)) . "'";
+			$sqlPartialCond = " AND " . $field . " IN (" . $sanitizedSqlIn . ")";
+			return $sqlPartialCond;
 		}
 
 		return '';

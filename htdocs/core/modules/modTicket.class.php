@@ -346,7 +346,7 @@ class modTicket extends DolibarrModules
 			'url' => '/ticket/stats/index.php',
 			'langs' => 'ticket',
 			'position' => 107,
-			'enabled' => 'isModEnabled("ticket")',
+			'enabled' => 'isModEnabled("ticket") && getDolGlobalString("MAIN_STATISTICS_IN_MENU")',
 			'perms' => '$user->hasRight("ticket","read")',
 			'target' => '',
 			'user' => 0,
@@ -436,7 +436,7 @@ class modTicket extends DolibarrModules
 			["sql" => "INSERT INTO ".$this->db->prefix()."c_type_contact(rowid, element, source, code, libelle, active ) values (110122, 'ticket',  'external', 'SUPPORTCLI', 'Contact client suivi incident', 1);", "ignoreerror" => 1],
 			["sql" => "INSERT INTO ".$this->db->prefix()."c_type_contact(rowid, element, source, code, libelle, active ) values (110123, 'ticket',  'external', 'CONTRIBUTOR', 'Intervenant', 1);", "ignoreerror" => 1],
 			// remove old settings
-			"DELETE FROM ".$this->db->prefix()."document_model WHERE nom = 'TICKET_ADDON_PDF_ODT_PATH' AND type = 'ticket' AND entity = ".((int) $conf->entity),
+			["sql" => "DELETE FROM ".$this->db->prefix()."document_model WHERE nom = 'TICKET_ADDON_PDF_ODT_PATH' AND type = 'ticket' AND entity = ".((int) $conf->entity), "ignoreerror" => 1],
 			// activate default odt templates
 			["sql" => "INSERT INTO ".$this->db->prefix()."document_model (nom, type, libelle, entity, description) VALUES('generic_ticket_odt','ticket','ODT templates',".((int) $conf->entity).",'TICKET_ADDON_PDF_ODT_PATH');", "ignoreerror" => 1],
 		];

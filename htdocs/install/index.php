@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2005  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,11 @@
 
 define('ALLOWED_IF_UPGRADE_UNLOCK_FOUND', 1);
 include_once 'inc.php';
+/**
+ * @var string $conffile
+ * @var ?string $dolibarr_main_url_root
+ */
+'@phan-var-force string $conffile'; // From inc.php
 include_once '../core/class/html.form.class.php';
 include_once '../core/class/html.formadmin.class.php';
 
@@ -36,6 +41,7 @@ $err = 0;
 
 // If the config file exists and is filled, we're not on first install so we skip the language selection page
 if (file_exists($conffile) && isset($dolibarr_main_url_root)) {
+	//header("Location: '.$dolibarr_main_url_root.'/install/check.php?testget=ok");
 	header("Location: check.php?testget=ok");
 	exit;
 }

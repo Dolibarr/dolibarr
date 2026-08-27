@@ -705,7 +705,8 @@ while ($i < $imaxinloop) {
 	}
 
 	if (!empty($arrayfields['t.email']['checked'])) {
-		print '<td>'.dol_print_email($objectstatic->email, 0, 0, 1, 0, 0, 1).'</td>';
+		$showinvalidemail = (int) !getDolGlobalInt('MAIN_SHOW_INVALID_EMAIL_IN_LIST'); // to avoid slow display
+		print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute($obj->email).'">'.dol_print_email($objectstatic->email, 0, 0, 1, 0, $showinvalidemail, 1).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}

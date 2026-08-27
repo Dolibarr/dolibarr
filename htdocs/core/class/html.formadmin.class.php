@@ -146,9 +146,9 @@ class FormAdmin
 			}
 			if ($showcode == 2 || $showcode == 3) {
 				if ($mainlangonly) {
-					$valuetoshow = $value.' <span class="opacitymedium">b'.($showcode == 3 ? '' : '(').preg_replace('/[_-].*$/', '', $key).($showcode == 3 ? '' : ')').'</span>';
+					$valuetoshow = $value.' <span class="opacitymedium">'.($showcode == 3 ? '' : '(').preg_replace('/[_-].*$/', '', $key).($showcode == 3 ? '' : ')').'</span>';
 				} else {
-					$valuetoshow = $value.' <span class="opacitymedium">a'.($showcode == 3 ? '' : '(').$key.($showcode == 3 ? '' : ')').'</span>';
+					$valuetoshow = $value.' <span class="opacitymedium">'.($showcode == 3 ? '' : '(').$key.($showcode == 3 ? '' : ')').'</span>';
 				}
 			}
 

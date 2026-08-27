@@ -934,7 +934,7 @@ function getListOfProductsOrServices($authentication, $filterproduct)
 	if (!$error) {
 		$sql = "SELECT rowid, ref, ref_ext";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product";
-		$sql .= " WHERE entity=".$conf->entity;
+		$sql .= " WHERE entity=".((int) $conf->entity);
 		foreach ($filterproduct as $key => $val) {
 			if ($key == 'type' && $val >= 0) {
 				$sql .= " AND fk_product_type = ".((int) $val);

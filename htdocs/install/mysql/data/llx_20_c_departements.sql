@@ -70,6 +70,7 @@
 -- Panama
 -- Peru
 -- Portugal
+-- République démocratique du Congo
 -- Romania
 -- San Salvador -> El Salvador
 -- Slovenia   (need to check code SI-Id)
@@ -1177,6 +1178,34 @@ INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc
 INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (15001, 'PT-VR', NULL, NULL, 'VILA REAL', 'Vila Real');
 INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (15001, 'PT-VI', NULL, NULL, 'VISEU', 'Viseu');
 
+-- République démocratique du Congo Provinces & Territories (id country=73)
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES ( 7301, 'KN', '', 0, '', 'Kinshasa');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES ( 7301, 'BC', '', 0, '', 'Kongo Central');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES ( 7301, 'KG', '', 0, '', 'Kwango');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES ( 7301, 'KL', '', 0, '', 'Kwilu');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES ( 7301, 'MN', '', 0, '', 'Mai-Ndombe');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES ( 7301, 'KS', '', 0, '', 'Kasaï');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES ( 7301, 'KC', '', 0, '', 'Kasaï-Central');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES ( 7301, 'KE', '', 0, '', 'Kasaï-Oriental');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES ( 7301, 'LO', '', 0, '', 'Lomami');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES ( 7301, 'SA', '', 0, '', 'Sankuru');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES ( 7301, 'MA', '', 0, '', 'Maniema');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES ( 7301, 'SK', '', 0, '', 'South Kivu');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES ( 7301, 'NK', '', 0, '', 'North Kivu');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES ( 7301, 'IT', '', 0, '', 'Ituri');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES ( 7301, 'HU', '', 0, '', 'Haut-Uele');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES ( 7301, 'TO', '', 0, '', 'Tshopo');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES ( 7301, 'BU', '', 0, '', 'Bas-Uele');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES ( 7301, 'NU', '', 0, '', 'Nord-Ubangi');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES ( 7301, 'MO', '', 0, '', 'Mongala');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES ( 7301, 'SU', '', 0, '', 'Sud-Ubangi');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES ( 7301, 'EQ', '', 0, '', 'Équateur');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES ( 7301, 'TU', '', 0, '', 'Tshuapa');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES ( 7301, 'TA', '', 0, '', 'Tanganyika');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES ( 7301, 'HL', '', 0, '', 'Haut-Lomami');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES ( 7301, 'LU', '', 0, '', 'Lualaba');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES ( 7301, 'HK', '', 0, '', 'Haut-Katanga');
+
 
 -- Romania Provinces (id country=188)
 INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (18801, 'AB', '', 0, '', 'Alba');
@@ -1828,6 +1857,9 @@ INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, nc
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('VE-V', 23209, '', 0, 'VE-V', 'Zulia', 1);
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('VE-S', 23209, '', 0, 'VE-S', 'Táchira', 1);
 
+
+-- RDC Communes (id country=61) -- https://fr.wikipedia.org/wiki/Communes_du_Burundi
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (7301, 'KS', '', 0, '', 'Kinshasa');
 
 -- Burundi Communes (id country=61) -- https://fr.wikipedia.org/wiki/Communes_du_Burundi
 INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (6101, 'BI0001', '', 0, '', 'Bubanza');

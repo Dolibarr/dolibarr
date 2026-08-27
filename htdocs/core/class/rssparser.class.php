@@ -367,6 +367,7 @@ class RssParser
 						return -1;
 					}
 
+					// @phan-suppress-next-line PhanDeprecatedFunctionInternal
 					xml_set_object($xmlparser, $this);
 					// @phan-suppress-next-line PhanUndeclaredFunctionInCallable
 					xml_set_element_handler($xmlparser, 'feed_start_element', 'feed_end_element'); // @phpstan-ignore-line

@@ -114,6 +114,11 @@ if (!defined('LOG_DEBUG')) {
 	}
 }
 
+if (!defined('SUBTOTALS_SPECIAL_CODE')) {
+	define('SUBTOTALS_SPECIAL_CODE', 81);
+}
+
+
 /*
  * Disable some not used PHP stream
  */

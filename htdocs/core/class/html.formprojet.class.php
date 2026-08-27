@@ -827,6 +827,8 @@ class FormProjets extends Form
 		require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 
 		$out = '';
+		$labeltoshow = '';
+
 		if (empty($lineOnly)) {
 			// Search Invoice
 			$sql = "SELECT f.rowid, f.ref as fref,";
@@ -911,6 +913,7 @@ class FormProjets extends Form
 
 				$out .= '<select class="valignmiddle flat' . ($morecss ? ' ' . $morecss : '') . '" id="' . $htmlNameInvoiceLine . '" name="' . $htmlNameInvoiceLine . '">';
 			}
+
 			$num = $this->db->num_rows($resql);
 			if ($num) {
 				while ($obj = $this->db->fetch_object($resql)) {

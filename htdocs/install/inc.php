@@ -52,6 +52,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 @phan-var-force ?string $dolibarr_main_db_prefix
 ';
 
+$realpathconf = realpath(DOL_DOCUMENT_ROOT.'/core/class/conf.class.php');
+
 $conf = new Conf();
 
 // Force $_REQUEST["logtohtml"]
@@ -216,7 +218,11 @@ if (!defined('DONOTLOADCONF') && file_exists($conffile) && filesize($conffile) >
 		}
 
 		// Clean parameters
-		$dolibarr_main_data_root = isset($dolibarr_main_data_root) ? trim($dolibarr_main_data_root) : DOL_DOCUMENT_ROOT.'/../documents';
+		// isset() is true on an empty string, which would let DOL_DATA_ROOT
+		// resolve to '' and the lock file to /install.lock (rejected by a
+		// restrictive open_basedir). Use !empty() so an empty value falls
+		// back to the default relative documents path.
+		$dolibarr_main_data_root = !empty($dolibarr_main_data_root) ? trim($dolibarr_main_data_root) : DOL_DOCUMENT_ROOT.'/../documents';
 		$dolibarr_main_url_root         = isset($dolibarr_main_url_root) ? trim($dolibarr_main_url_root) : '';
 		$dolibarr_main_url_root_alt     = isset($dolibarr_main_url_root_alt) ? trim($dolibarr_main_url_root_alt) : '';
 		$dolibarr_main_document_root    = isset($dolibarr_main_document_root) ? trim($dolibarr_main_document_root) : '';
@@ -241,7 +247,7 @@ if (!defined('DONOTLOADCONF') && file_exists($conffile) && filesize($conffile) >
 
 		// Create conf object
 		if (!empty($dolibarr_main_document_root)) {
-			$result = conf($dolibarr_main_document_root);
+			$result = conf($dolibarr_main_document_root, $realpathconf);
 		}
 		// Load database driver
 		if ($result > 0) {
@@ -268,7 +274,7 @@ if (!isset($dolibarr_main_db_prefix) || !$dolibarr_main_db_prefix) {
 define('MAIN_DB_PREFIX', (isset($dolibarr_main_db_prefix) ? $dolibarr_main_db_prefix : ''));
 
 define('DOL_CLASS_PATH', 'class/'); // Filesystem path to class dir
-define('DOL_DATA_ROOT', (isset($dolibarr_main_data_root) ? $dolibarr_main_data_root : DOL_DOCUMENT_ROOT.'/../documents'));
+define('DOL_DATA_ROOT', (!empty($dolibarr_main_data_root) ? $dolibarr_main_data_root : DOL_DOCUMENT_ROOT.'/../documents'));
 define('DOL_MAIN_URL_ROOT', (isset($dolibarr_main_url_root) ? $dolibarr_main_url_root : '')); // URL relative root
 $uri = preg_replace('/^http(s?):\/\//i', '', constant('DOL_MAIN_URL_ROOT')); // $uri contains url without http*
 $suburi = strstr($uri, '/'); // $suburi contains url without domain
@@ -416,10 +422,11 @@ if (GETPOST('lang', 'aZ09')) {
 /**
  * Load conf file (file must exists)
  *
- * @param	string		$dolibarr_main_document_root		Root directory of Dolibarr bin files
+ * @param	string		$dolibarr_main_document_root		Root directory of Dolibarr program files
+ * @param	?string		$realpathconf						Real path of conf class if class was already included
  * @return	int												Return integer <0 if KO, >0 if OK
  */
-function conf($dolibarr_main_document_root)
+function conf($dolibarr_main_document_root, $realpathconf = null)
 {
 	global $conf;
 	global $dolibarr_main_db_type;
@@ -433,6 +440,13 @@ function conf($dolibarr_main_document_root)
 	global $character_set_client;
 	global $dolibarr_main_instance_unique_id;
 	global $dolibarr_main_cookie_cryptkey;
+
+	if ($realpathconf) {
+		if (realpath($dolibarr_main_document_root.'/core/class/conf.class.php') != $realpathconf) {
+			print 'Warning: You are running files from directory ('.preg_replace('/core\/class\/conf\.class\.php$/', '', $realpathconf).') that differs from the directory already defined into the existing conf.php file ($dolibarr_main_document_root = '.$dolibarr_main_document_root.').';
+			die(-1);
+		}
+	}
 
 	$return = @include_once $dolibarr_main_document_root.'/core/class/conf.class.php';
 	if (!$return) {

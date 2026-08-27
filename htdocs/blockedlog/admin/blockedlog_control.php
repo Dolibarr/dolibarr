@@ -210,7 +210,7 @@ if ($inputregistrationnumber && strlen($inputregistrationnumber) < 8) {
 	if (!isModEnabled('captureserver')) {
 		print 'The module captureserver to capture the signals from installed instance is not enabled. Is this instance the master instance of the Dolibarr foundation ?';
 	} else {
-		// Reportregistration
+		// Report registration
 		$sql = "SELECT rowid, registerid, registername, registerprofid, registeremail, date_creation, tms, content, comment,";
 		$sql .= " versiondolibarr, versionblockedlog, country_code";
 		$sql .= " FROM ".MAIN_DB_PREFIX."captureserver_captureserver";

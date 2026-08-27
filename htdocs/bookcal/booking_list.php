@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2012  Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2010-2014  Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2017       Ferran Marcet			<fmarcet@2byte.es>
- * Copyright (C) 2023-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2023-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -33,6 +33,7 @@ require '../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
@@ -54,6 +55,7 @@ $ref = GETPOST('ref', 'alpha');
 $socid = GETPOSTINT('socid');
 $action = GETPOST('action', 'aZ09');
 $type = GETPOST('type', 'aZ09');
+$lineid = GETPOSTINT('lineid');
 
 $fieldid = (!empty($ref) ? 'ref' : 'rowid');
 if ($user->socid) {
@@ -124,7 +126,7 @@ llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'mod-bookcal page-list');
 if ($object->id > 0) {
 	$head = calendarPrepareHead($object);
 
-	print dol_get_fiche_head($head, 'booking', $langs->trans("Calendar"), -1, $object->picto, 0, '', '', 0, '', 1);
+	print dol_get_fiche_head($head, 'booking', $langs->trans("Calendar"), -1, $object->picto);
 
 	$formconfirm = '';
 

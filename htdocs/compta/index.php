@@ -11,7 +11,7 @@
  * Copyright (C) 2020       Josep Lluís Amador      <joseplluis@lliuretic.cat>
  * Copyright (C) 2021-2026  Frédéric France		    <frederic.france@free.fr>
  * Copyright (C) 2024       Rafael San José         <rsanjose@alxarafe.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,6 +45,7 @@ require '../main.inc.php';
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
@@ -75,23 +76,34 @@ if ($user->socid > 0) {
 }
 
 // Maximum elements of the tables
-$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
-$maxDraftCount = !getDolGlobalString('MAIN_MAXLIST_OVERLOAD') ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD;
+$max = getDolUserInt('MAIN_SIZE_SHORTLIST_LIMIT', getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5));
+
 $maxLatestEditCount = 5;
-$maxOpenCount = !getDolGlobalString('MAIN_MAXLIST_OVERLOAD') ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD;
+$maxDraftCount = getDolGlobalInt('MAIN_MAXLIST_OVERLOAD', 500);
+$maxOpenCount = getDolGlobalInt('MAIN_MAXLIST_OVERLOAD', 500);
+$maxofloop = getDolGlobalInt('MAIN_MAXLIST_OVERLOAD', 500);
 
 // Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('invoiceindex'));
 
-
-$maxofloop = getDolGlobalString('MAIN_MAXLIST_OVERLOAD', 500);
 
 
 /*
  * Actions
  */
 
-// None
+if (GETPOST('addbox')) {
+	// Add box (when submit is done from a form when ajax disabled)
+	require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
+	$zone = GETPOSTINT('areacode');
+	$userid = GETPOSTINT('userid');
+	$boxorder = GETPOST('boxorder', 'aZ09');
+	$boxorder .= GETPOST('boxcombo', 'aZ09');
+	$result = InfoBox::saveboxorder($db, $zone, $boxorder, $userid);
+	if ($result > 0) {
+		setEventMessages($langs->trans("BoxAdded"), null);
+	}
+}
 
 
 /*
@@ -104,9 +116,12 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 $thirdpartystatic = new Societe($db);
 
+// Load $resultboxes
+$resultboxes = FormOther::getBoxesArea($user, "9");
+
 llxHeader("", $langs->trans("InvoicesArea"));
 
-print load_fiche_titre($langs->trans("InvoicesArea"), '', 'bill');
+print load_fiche_titre($langs->trans("InvoicesArea"), $resultboxes['selectboxlist'], 'bill');
 
 
 print '<div class="fichecenter">';
@@ -136,6 +151,8 @@ if (isModEnabled('fournisseur') || isModEnabled('supplier_invoice')) {
 	print '<br>';
 }
 
+
+print $resultboxes['boxlista'];
 
 print '</div><div class="secondcolumn fichehalfright boxhalfright" id="boxhalfright">';
 
@@ -682,6 +699,7 @@ if (isModEnabled('invoice') && isModEnabled('order') && $user->hasRight("command
 			print '</tr>';
 
 			$tot_ht = $tot_ttc = $tot_tobill = 0;
+			$total_ht = $total_ttc = 0;
 			$societestatic = new Societe($db);
 			while ($i < $num) {
 				$obj = $db->fetch_object($resql);
@@ -796,6 +814,8 @@ if ($sql) {
 	print "</table></div><br>";
 }
 
+
+print $resultboxes['boxlistb'];
 
 print '</div></div></div>';
 

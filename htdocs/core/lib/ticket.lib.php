@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2018	Jean-François FERRY	<hello@librethic.io>
  * Copyright (C) 2016		Christophe Battarel	<christophe@altairis.fr>
- * Copyright (C) 2019-2025  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2019-2026  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Benjamin Falière	<benjamin@faliere.com>
  *
@@ -32,9 +32,8 @@
  */
 function ticketAdminPrepareHead()
 {
-	global $langs, $conf, $db;
+	global $langs, $conf, $extrafields;
 
-	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('ticket');
 
 	$langs->load("ticket");
@@ -47,7 +46,7 @@ function ticketAdminPrepareHead()
 	$head[$h][2] = 'settings';
 	$h++;
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/ticket_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'ticket'));
 	$head[$h][1] = $langs->trans("ExtraFieldsTicket");
 	$nbExtrafields = $extrafields->attributes['ticket']['count'];
 	if ($nbExtrafields > 0) {
@@ -219,7 +218,7 @@ function showDirectPublicLink($object)
 	$email = CMailFile::getValidAddress($object->origin_email, 2);
 	$url = '';
 	if ($email) {
-		$url = getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', dol_buildpath('/public/ticket/', 3)).'view.php?track_id='.$object->track_id.'&email='.$email;
+		$url = getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', dol_buildpath('/public/ticket/', 3)).'view.php?track_id='.urlencode($object->track_id).'&email='.urlencode($email);
 	}
 
 	$out = '';
@@ -258,7 +257,7 @@ function generate_random_id($car = 16)
 	for ($i = 0; $i < $car; $i++) {
 		try {
 			$key = random_int(0, $max);
-		} catch (\Exception $e) {
+		} catch (Exception $e) {
 			// Fallback. We let PHP makes the seed automatically (no manual mt_srand)
 			$key = mt_rand(0, $max);
 		}

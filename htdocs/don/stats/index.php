@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2009  Regis Houssin        	<regis.houssin@inodbox.com>
  * Copyright (C) 2015       Alexandre Spangaro   	<aspangaro@open-dsi.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -124,7 +124,7 @@ if (!$mesg) {
 $data = $stats->getAmountByMonthWithPrevYear($endyear, $startyear);
 
 $filenameamount = $dir."/donationamount-".$year.".png";
-$fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=donationStats&amp;file=donationamoutinyear-'.$year.'.png';
+$fileurlamount = dolBuildUrl(DOL_URL_ROOT.'/viewimage.php', ['modulepart' => 'donationStats', 'file' => 'donationamoutinyear-'.$year.'.png']);
 
 $px2 = new DolGraph();
 $mesg = $px2->isGraphKo();
@@ -153,7 +153,7 @@ if (!$mesg) {
 $data = $stats->getAverageByMonthWithPrevYear($endyear, $startyear);
 
 $filename_avg = $dir."/donationaverage-".$year.".png";
-$fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=donationStats&file=donationaverageinyear-'.$year.'.png';
+$fileurl_avg = dolBuildUrl(DOL_URL_ROOT.'/viewimage.php', ['modulepart' => 'donationStats', 'file' => 'donationaverageinyear-'.$year.'.png']);
 
 $px3 = new DolGraph();
 $mesg = $px3->isGraphKo();
@@ -290,7 +290,7 @@ foreach ($data as $val) {
 	while (!empty($year) && $oldyear > (int) $year + 1) {
 		$oldyear--;
 		print '<tr class="oddeven" height="24">';
-		print '<td class="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'">'.$oldyear.'</a></td>';
+		print '<td class="center"><a href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['year' => $oldyear]).'">'.$oldyear.'</a></td>';
 
 		print '<td class="right">0</td>';
 		print '<td class="right"></td>';
@@ -306,7 +306,14 @@ foreach ($data as $val) {
 	$greenavg = (empty($val['avg_diff']) || $val['avg_diff'] >= 0);
 
 	print '<tr class="oddeven" height="24">';
-	print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.($socid > 0 ? '&socid='.$socid : '').($userid > 0 ? '&userid='.$userid : '').'">'.$year.'</a></td>';
+	$query = ['year' => $year, 'mode' => $mode];
+	if ($socid > 0) {
+		$query += ['socid' => $socid];
+	}
+	if ($userid > 0) {
+		$query += ['userid' => $userid];
+	}
+	print '<td align="center"><a href="'.dolBuildUrl($_SERVER["PHP_SELF"], $query).'">'.$year.'</a></td>';
 	print '<td class="right">'.$val['nb'].'</td>';
 	print '<td class="right opacitylow" style="'.($greennb ? 'color: green;' : 'color: red;').'">'.(!empty($val['nb_diff']) && $val['nb_diff'] < 0 ? '' : '+').round(!empty($val['nb_diff']) ? $val['nb_diff'] : 0).'%</td>';
 	print '<td class="right"><span class="amount">'.price(price2num($val['total'], 'MT'), 1).'</span></td>';

@@ -3,7 +3,7 @@
  * Copyright (C) 2018	   	Nicolas ZABOURI 			<info@inovea-conseil.com>
  * Copyright (C) 2019 		Maxime Kohlhaas 			<maxime@atm-consulting.fr>
  * Copyright (C) 2021 		Ferran Marcet 				<fmarcet@2byte.es>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Rafael San José				<rsanjose@alxarafe.com>
  * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  *
@@ -342,7 +342,7 @@ class modBom extends DolibarrModules
 
 		// Add extra fields
 		$import_extrafield_sample = array();
-		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'bom_bom' AND entity IN (0, ".$conf->entity.")";
+		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'bom_bom' AND entity IN (0, ".((int) $conf->entity).")";
 		$resql = $this->db->query($sql);
 
 		if ($resql) {
@@ -413,7 +413,7 @@ class modBom extends DolibarrModules
 		);
 
 		// Add extra fields
-		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'bom_bomline' AND entity IN (0, ".$conf->entity.")";
+		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'bom_bomline' AND entity IN (0, ".((int) $conf->entity).")";
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			while ($obj = $this->db->fetch_object($resql)) {

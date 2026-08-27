@@ -166,6 +166,7 @@ if ($action == 'generate_key') {
 	}
 }
 
+
 /*
  * VIEW
  */
@@ -224,8 +225,10 @@ print ajax_constantonoff('AI_MCP_ENABLED', array(), null, 0, 0, 1);
 print '</div>';
 
 print '<br>';
+print '<br>';
 
 if (getDolGlobalString('AI_MCP_ENABLED')) {
+	/*
 	print load_fiche_titre($langs->trans("PrivateModeTitle"), '', 'fas fa-lock');
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
@@ -237,31 +240,31 @@ if (getDolGlobalString('AI_MCP_ENABLED')) {
 
 	// Input Mode
 	print '<tr class="oddeven">';
-	print '<td>Default Interface Mode</td>';
+	print '<td>';
+	print $form->textwithpicto('Default Interface', $langs->trans("InputMethodHelp"));
+	print '</td>';
 	print '<td>';
 	$input_modes = [
-		'text' => '💬 ' . $langs->trans('OptionTextOnly'),
-		'native' => '☁️ ' . $langs->trans('OptionCloudFast') . ' - ' . $langs->trans('OptionCloudFasthelp'),
-		'whisper' => '🔒 ' . $langs->trans('OptionWhisperLocal') . ' - ' . $langs->trans('OptionWhisperLocalhelp')
+		'text' => $langs->trans('OptionTextOnly'),
+		'native' => $langs->trans('OptionCloudFast') . ' - ' . $langs->trans('OptionCloudFasthelp'),
+		'whisper' => $langs->trans('OptionWhisperLocal') . ' - ' . $langs->trans('OptionWhisperLocalhelp')
 	];
 	print $form->selectarray('AI_DEFAULT_INPUT_MODE', $input_modes, getDolGlobalString('AI_DEFAULT_INPUT_MODE'), 0, 0, 0);
-	print '<br><span class="opacitymedium small">' . $langs->trans("InputMethodHelp") . '</span>';
 	print '</td>';
 	print '</tr>';
 
 	// Enhanced Privacy control
 	print '<tr class="oddeven">';
-	print '<td class="titlefield" width="30%">' . $langs->trans('ObfuscatePIIData') . '</td>';
+	print '<td>' . $langs->trans('ObfuscatePIIData') . '</td>';
 	print '<td>';
 	print ajax_constantonoff('AI_PRIVACY_REDACTION');
-	print ' <span class="opacitymedium">' . $langs->trans("RedactionHelp") . '</span>';
+	print ' &nbsp; <span class="opacitymedium">' . $langs->trans("RedactionHelp") . '</span>';
 	print '</td>';
 	print '</tr>';
 
 	// Confirmation Level
 	print '<tr class="oddeven">';
-	print '<td class="titlefield" width="30%">' . $langs->trans("AskConfirmation");
-	print ' <span class="fa fa-info-circle" title="' . $langs->trans("AskConfirmationHelp") . '"></span></td>';
+	print '<td>' . $form->textwithpicto($langs->trans("AskConfirmation"), $langs->trans("AskConfirmationHelp")).'</td>';
 	print '<td>';
 	$confirmation_options = [
 		'0' => $langs->trans("ConfirmNever"),
@@ -274,16 +277,16 @@ if (getDolGlobalString('AI_MCP_ENABLED')) {
 
 	// Logging
 	print '<tr class="oddeven">';
-	print '<td class="titlefield" width="30%">' . $langs->trans('EnableLogging') . '</td>';
+	print '<td>' . $langs->trans('EnableLogging') . '</td>';
 	print '<td>';
 	print ajax_constantonoff('AI_LOG_REQUESTS');
-	print ' <a href="' . DOL_URL_ROOT . '/ai/admin/log_viewer.php" target="_blank" class="button" style="padding-top: 4px; padding-bottom: 4px;">View Logs</a>';
+	print ' &nbsp; <a href="' . DOL_URL_ROOT . '/ai/admin/log_viewer.php" target="_blank" style="padding-top: 4px; padding-bottom: 4px;">'.$langs->trans("ViewLogs").'</a>';
 	print '</td>';
 	print '</tr>';
 
 	print '<tr class="oddeven">';
 	print '<td>' . $langs->trans("LogRetention") . '</td>';
-	print '<td><input type="number" name="AI_LOG_RETENTION" value="' . getDolGlobalInt('AI_LOG_RETENTION', 30) . '" size="5"> (0 = Forever)</td>';
+	print '<td><input class="width50" type="number" name="AI_LOG_RETENTION" value="' . getDolGlobalInt('AI_LOG_RETENTION', 30) . '"> (0 = Forever)</td>';
 	print '</tr>';
 
 	// System Prompt
@@ -302,7 +305,8 @@ if (getDolGlobalString('AI_MCP_ENABLED')) {
 	print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></div>';
 	print '</form>';
 
-
+	print '<br>';
+	print '<br>';
 
 	// AI Provider Config and Connection testing
 	$services = getListOfAIServices();
@@ -319,7 +323,7 @@ if (getDolGlobalString('AI_MCP_ENABLED')) {
 		print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("AIProvider").'</td><td>'.$services[$currentService]['label'].'</td></tr>';
 
 		$prefix = 'AI_API_'.strtoupper($currentService);
-		$modelVal = getDolGlobalString($prefix.'_MODEL', $services[$currentService]['textgeneration']);
+		$modelVal = getDolGlobalString($prefix.'_MODEL_TEXT', $services[$currentService]['textgeneration']['default']);
 
 		print '<tr class="oddeven"><td>'.$langs->trans("AI_API_MODEL").'</td><td>'.$modelVal.'</td></tr>';
 		print '</table></div>';
@@ -327,16 +331,17 @@ if (getDolGlobalString('AI_MCP_ENABLED')) {
 		print '<div class="center">';
 
 		if ($currentService && $currentService !== '-1') {
-			print ' <a href="'.$_SERVER["PHP_SELF"].'?action=test_provider&service_key='.$currentService.'" class="button">Test Connection</a>';
+			print ' <a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=test_provider&token='.newToken().'&service_key='.$currentService.'" class="button">Test Connection</a>';
 		}
 
 		print '</div>';
 	}
-	print '</div>';
-	print '</form>';
+
+	print '<br><br>';
+	*/
 
 	// External Access Configuration
-	print load_fiche_titre($langs->trans("AiMcpExternalAccess"), '', 'fas fa-lock-open text-danger');
+	print load_fiche_titre($langs->trans("AiMcpExternalAccess"), '', 'fas fa-lock-open');
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -362,11 +367,10 @@ if (getDolGlobalString('AI_MCP_ENABLED')) {
 	print '<td>';
 	if ($apiKey) {
 		print '<input type="text" id="apikey" value="'.$apiKey.'" readonly style="width:400px; padding:6px; background:#f4f4f4; border:1px solid #ccc; color:#555;">';
-		print ' <button type="button" class="button small" onclick="navigator.clipboard.writeText(document.getElementById(\'apikey\').value)">' . $langs->trans("Copy") . '</button>';
-		print ' <a class="button" href="'.$_SERVER["PHP_SELF"].'?action=generate_key&token='.newToken().'">Generate New Key</a>';
+		print ' <a class="button smallpaddingimp" href="'.$_SERVER["PHP_SELF"].'?action=generate_key&token='.newToken().'">Generate New Key</a>';
 	} else {
 		print '<span class="opacitymedium">' . $langs->trans("NoKeyWarning") . '</span>';
-		print ' <a class="button" href="' . $_SERVER["PHP_SELF"] . '?action=generate_key&token=' . newToken() . '">' . $langs->trans("GenerateKey") . '</a>';
+		print ' <a class="button smallpaddingimp" href="' . $_SERVER["PHP_SELF"] . '?action=generate_key&token=' . newToken() . '">' . $langs->trans("GenerateKey") . '</a>';
 	}
 	print '</td>';
 	print '</tr>';
@@ -390,7 +394,8 @@ if (getDolGlobalString('AI_MCP_ENABLED')) {
 	print '<div style="background:#fcfcfc; border:1px solid #eee; padding:15px; border-radius:5px;">';
 	print '<strong>' . $langs->trans("ClaudeDesktopConfig") . '</strong><br>';
 	print '<pre style="background:#333; color:#fff; padding:10px; border-radius:4px; overflow:auto; margin-top:10px;">';
-	echo htmlspecialchars('{
+	echo htmlspecialchars('
+	{
 	  "mcpServers": {
 	    "dolibarr": {
 	      "command": "node",

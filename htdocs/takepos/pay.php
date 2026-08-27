@@ -138,7 +138,7 @@ function unexpectedDisconnect() {
 
 function fetchConnectionToken() {
 		<?php
-		$urlconnexiontoken = DOL_URL_ROOT.'/stripe/ajax/ajax.php?action=getConnexionToken&token='.newToken().'&servicestatus='.urlencode((string) ($servicestatus));
+		$urlconnexiontoken = DOL_URL_ROOT.'/stripe/ajax/ajax.php?action=getConnexionToken&token='.currentToken().'&servicestatus='.urlencode((string) ($servicestatus));
 		if (getDolGlobalString('STRIPE_LOCATION')) {
 			$urlconnexiontoken .= '&location='.urlencode(getDolGlobalString('STRIPE_LOCATION'));
 		}
@@ -295,6 +295,7 @@ if (!getDolGlobalInt("TAKEPOS_NUMPAD")) {
 
 ?>
 	var alreadypayed = <?php echo $alreadypayed ?>;
+	var invoicetype = <?php echo $invoice->type ?>;
 
 	function addreceived(price)
 	{
@@ -307,23 +308,29 @@ if (!getDolGlobalInt("TAKEPOS_NUMPAD")) {
 		?>
 		$('.change1').html(pricejs(parseFloat(received), 'MT'));
 		$('.change1').val(parseFloat(received));
-		console.log(alreadypayed);
-		console.log(received);
-		alreadypaydplusreceived = price2numjs(alreadypayed + parseFloat(received));
-		//console.log("already+received = "+alreadypaydplusreceived);
+		console.log("invoicetype="+invoicetype);
+		console.log("alreadyreceived="+alreadypayed);
+		console.log("received="+received);
+		if (invoicetype == 2) {
+			alreadypaydplusreceived = price2numjs(alreadypayed - parseFloat(received));
+		} else {
+			alreadypaydplusreceived = price2numjs(alreadypayed + parseFloat(received));
+		}
+		console.log("already+received = "+alreadypaydplusreceived);
 		//console.log("total_ttc = "+<?php echo (float) $invoice->total_ttc; ?>);
-		if (alreadypaydplusreceived > <?php echo (float) $invoice->total_ttc; ?>)
-		   {
-			var change=parseFloat(alreadypayed + parseFloat(received) - <?php echo (float) $invoice->total_ttc; ?>);
+		if (Math.abs(alreadypaydplusreceived) > Math.abs(<?php echo ((float) $invoice->total_ttc); ?>)) {
+			if (invoicetype == 2) {
+				var change = parseFloat(alreadypayed + parseFloat(received) + <?php echo (float) $invoice->total_ttc; ?>);
+			} else {
+				var change = parseFloat(alreadypayed + parseFloat(received) - <?php echo (float) $invoice->total_ttc; ?>);
+			}
 			$('.change2').html(pricejs(change, 'MT'));
 			$('.change2').val(change);
 			$('.change1').removeClass('colorred');
 			$('.change1').addClass('colorgreen');
 			$('.change2').removeClass('colorwhite');
 			$('.change2').addClass('colorred');
-		}
-		else
-		{
+		} else {
 			$('.change2').html(pricejs(0, 'MT'));
 			$('.change2').val(0);
 			if (alreadypaydplusreceived == <?php echo (float) $invoice->total_ttc; ?>) {
@@ -367,7 +374,7 @@ if (!getDolGlobalInt("TAKEPOS_NUMPAD")) {
 			amountpayed = <?php echo (float) $invoice->total_ttc; ?>;
 		}
 		console.log("We click on the payment mode to pay amount = "+amountpayed);
-		parent.$("#poslines").load("invoice.php?place=<?php echo $place; ?>&action=valid&token=<?php echo newToken(); ?>&pay="+payment+"&amount="+amountpayed+"&excess="+excess+"&invoiceid="+invoiceid+"&accountid="+accountid, function() {
+		parent.$("#poslines").load("invoice.php?place=<?php echo $place; ?>&action=valid&token=<?php echo currentToken(); ?>&pay="+payment+"&amount="+amountpayed+"&excess="+excess+"&invoiceid="+invoiceid+"&accountid="+accountid, function() {
 			if (amountpayed > <?php echo (float) $remaintopay; ?> || amountpayed == <?php echo (float) $remaintopay; ?> || amountpayed == 0 ) {
 				console.log("Close popup");
 				parent.$('#invoiceid').val("");
@@ -384,7 +391,7 @@ if (!getDolGlobalInt("TAKEPOS_NUMPAD")) {
 	function fetchPaymentIntentClientSecret(amount, invoiceid) {
 	  const bodyContent = JSON.stringify({ amount : amount, invoiceid : invoiceid });
   <?php
-	$urlpaymentintent = DOL_URL_ROOT.'/stripe/ajax/ajax.php?action=createPaymentIntent&token='.newToken().'&servicestatus='.urlencode((string) $servicestatus);
+	$urlpaymentintent = DOL_URL_ROOT.'/stripe/ajax/ajax.php?action=createPaymentIntent&token='.currentToken().'&servicestatus='.urlencode((string) $servicestatus);
 	if (!empty($stripeacc)) {
 		$urlpaymentintent .= '&stripeacc='.$stripeacc;
 	}
@@ -408,7 +415,7 @@ if (!getDolGlobalInt("TAKEPOS_NUMPAD")) {
 	function capturePaymentIntent(paymentIntentId) {
 	const bodyContent = JSON.stringify({"id": paymentIntentId})
   <?php
-	$urlpaymentintent = DOL_URL_ROOT.'/stripe/ajax/ajax.php?action=capturePaymentIntent&token='.newToken().'&servicestatus='.urlencode((string) ($servicestatus));
+	$urlpaymentintent = DOL_URL_ROOT.'/stripe/ajax/ajax.php?action=capturePaymentIntent&token='.currentToken().'&servicestatus='.urlencode((string) ($servicestatus));
 	if (!empty($stripeacc)) {
 		$urlpaymentintent .= '&stripeacc='.urlencode($stripeacc);
 	}
@@ -582,7 +589,7 @@ if (isModEnabled('multicurrency') && $sessioncurrency != "" && $conf->currency !
 		</div>
 	<?php } ?>
 	<div class="paymentbordline paymentbordlinereceived center">
-		<span class="takepospay colorwhite"><?php echo $langs->trans("Received"); ?>: <span class="change1 colorred"><?php
+		<span class="takepospay colorwhite"><?php echo $invoice->type == $invoice::TYPE_CREDIT_NOTE ? $langs->trans("Refunded") : $langs->trans("Received"); ?>: <span class="change1 colorred"><?php
 		echo price(0, 1, '', 1, -1, -1, $conf->currency);
 		if ($multicurrency !== null) {
 			print ' &nbsp; <span id="linecolht-span-total opacitymedium" style="font-size:0.9em; font-style:italic;">(' . price(0 * $multicurrency->rate->rate) . ' ' . $sessioncurrency . ')</span>';

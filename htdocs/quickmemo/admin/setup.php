@@ -73,28 +73,94 @@ if (!class_exists('FormSetup')) {
 $formSetup = new FormSetup($db);
 
 $item = $formSetup->newItem('QUICKMEMO_COLORS_PRESET');
-$item->fieldInputOverride = '
-<div class="color-manager">
-    <div class="controls">
-        <input type="color" id="colorPicker" list="predefinedColors">
-		<datalist id="predefinedColors">
-		  <option value="#fff8a6">
-		  <option value="#ffd6d6">
-		  <option value="#d6ffd9">
-		  <option value="#d6e6ff">
-		  <option value="#f3d6ff">
-		  <option value="#ffffff">
-		  <option value="#f5f5f5">
-		</datalist>
-        <button title="'.$langs->trans('Add').'" class="btn-low-emphasis --btn-icon" type="button" id="addColor"><span class="fa fa-plus"></span></button>
-    </div>
+/**
+ * Callback used to generate the custom HTML input field.
+ *
+ * @param FormSetupItem $item Current form/configuration item.
+ * @return string Generated HTML content.
+ */
+$item->fieldInputCallBack = function ($item) {
+	global $langs;
 
-    <div class="palette" id="palette"></div>
+	$item->fieldInputOverride = '
+		<div class="color-manager">
+			<div class="controls">
+				<input type="color" id="colorPicker" list="predefinedColors">
+				<datalist id="predefinedColors">
+				  <option value="#fff8a6">
+				  <option value="#ffd6d6">
+				  <option value="#d6ffd9">
+				  <option value="#d6e6ff">
+				  <option value="#f3d6ff">
+				  <option value="#ffffff">
+				  <option value="#f5f5f5">
+				</datalist>
+				<button title="'.$langs->trans('Add').'" class="btn-low-emphasis --btn-icon" type="button" id="addColor"><span class="fa fa-plus"></span></button>
+			</div>
 
-    <div class="colors-container" id="colorsContainer"></div>
+			<div class="palette" id="palette"></div>
 
-    <input type="hidden" name="QUICKMEMO_COLORS_PRESET" id="colorsInput">
-</div>';
+			<div class="colors-container" id="colorsContainer"></div>
+
+			<input type="hidden" name="QUICKMEMO_COLORS_PRESET" id="colorsInput">
+		</div>';
+	return $item->fieldInputOverride;
+};
+
+
+
+$formSetup->newItem('QUICKMEMO_AUTO_RESIZE_FONT_SIZE_SECTION')->setAsTitle();
+
+$formSetup->newItem('QUICKMEMO_DISABLE_AUTO_RESIZE_FONT_SIZE')->setAsYesNo();
+$item = $formSetup->newItem('QUICKMEMO_AUTO_RESIZE_MIN_FONT_SIZE');
+$item->defaultFieldValue = '1';
+/**
+ * Callback used to generate the custom HTML input field.
+ *
+ * @param FormSetupItem $item Current form/configuration item.
+ * @return string Generated HTML content.
+ */
+$item->fieldInputCallBack = function ($item) {
+	$item->fieldInputOverride = '
+		<input
+			type="range"
+			class="quickmemo-fontsize-config"
+			id="autoResizeFontMin"
+			name="QUICKMEMO_AUTO_RESIZE_MIN_FONT_SIZE"
+			min="0.5" max="3" step="0.05"
+			value="' . getDolGlobalString('QUICKMEMO_AUTO_RESIZE_MIN_FONT_SIZE', 1) . '"
+		/>
+		<div id="previewMinText" class="example-of-memo-text-size">Lorem ipsum dolor sit amet</div>
+	';
+	return $item->fieldInputOverride;
+};
+
+$item = $formSetup->newItem('QUICKMEMO_AUTO_RESIZE_MAX_FONT_SIZE');
+$item->defaultFieldValue = '1.4';
+/**
+ * Callback used to generate the custom HTML input field.
+ *
+ * @param FormSetupItem $item Current form/configuration item.
+ * @return string Generated HTML content.
+ */
+$item->fieldInputCallBack = function ($item) {
+	$item->fieldInputOverride = '
+		<input
+			type="range"
+			id="autoResizeFontMax"
+			name="QUICKMEMO_AUTO_RESIZE_MAX_FONT_SIZE"
+			class="quickmemo-fontsize-config"
+			min="0.5" max="3" step="0.05"
+			value="' . getDolGlobalString('QUICKMEMO_AUTO_RESIZE_MAX_FONT_SIZE', 1.4) . '"
+		/>
+
+		<div id="previewMaxText" class="example-of-memo-text-size">Lorem ipsum dolor sit amet</div>
+
+	';
+
+	return $item->fieldInputOverride;
+};
+
 
 $setupnotempty += count($formSetup->items);
 
@@ -134,6 +200,9 @@ llxHeader('', $langs->trans($title), $help_url, '', 0, 0, '', ['quickmemo/css/se
 <script nonce="<?php print getNonce(); ?>">
 document.addEventListener('DOMContentLoaded', function () {
 
+	/**
+	 * PRELOADED COLORS
+	 */
 	const PRELOADED_COLORS = <?php print json_encode(Memo::getColorPreset()); ?>;
 
 	const colorPicker = document.getElementById('colorPicker');
@@ -252,6 +321,73 @@ document.addEventListener('DOMContentLoaded', function () {
 
 	PRELOADED_COLORS.forEach(color => {
 		addColor(color);
+	});
+
+
+	/**
+	 * FONT SIZE
+	 */
+
+	const QUICKMEMO_DISABLE_AUTO_RESIZE_FONT_SIZE = <?php print json_encode(getDolGlobalInt('QUICKMEMO_DISABLE_AUTO_RESIZE_FONT_SIZE')); ?>;
+
+	(function() {
+		const minInput = document.getElementById('autoResizeFontMin');
+		const maxInput = document.getElementById('autoResizeFontMax');
+
+
+		const previewMinText = document.getElementById('previewMinText');
+		const previewMaxText = document.getElementById('previewMaxText');
+
+		function updatePreview(changed) {
+
+			let min = parseFloat(minInput.value);
+			let max = parseFloat(maxInput.value);
+
+			if (changed === 'min' && min > max) {
+				max = min;
+				maxInput.value = max.toFixed(1);
+			}
+
+			if (changed === 'max' && max < min) {
+				min = max;
+				minInput.value = min.toFixed(1);
+			}
+
+			previewMinText.style.fontSize = min + 'em';
+			previewMaxText.style.fontSize = max + 'em';
+		}
+
+		minInput.addEventListener('input', () => updatePreview('min'));
+		maxInput.addEventListener('input', () => updatePreview('max'));
+
+		updatePreview();
+
+	})();
+
+	const toggleDisplayLineSize = function (display = true) {
+		const ids = [
+			'setup-line-item_QUICKMEMO_AUTO_RESIZE_MIN_FONT_SIZE',
+			'setup-line-item_QUICKMEMO_AUTO_RESIZE_MAX_FONT_SIZE'
+		];
+
+		ids.forEach(id => {
+			const el = document.getElementById(id);
+			if (el) el.style.display = display ? '' : 'none';
+		});
+	};
+
+	toggleDisplayLineSize(!QUICKMEMO_DISABLE_AUTO_RESIZE_FONT_SIZE);
+
+	Dolibarr.on('delConstant', (data) => {
+		if(data.code === 'QUICKMEMO_DISABLE_AUTO_RESIZE_FONT_SIZE'){
+			toggleDisplayLineSize(true);
+		}
+	});
+
+	Dolibarr.on('setConstant', (data) => {
+		if(data.code === 'QUICKMEMO_DISABLE_AUTO_RESIZE_FONT_SIZE'){
+			toggleDisplayLineSize(false);
+		}
 	});
 });
 </script>

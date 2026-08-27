@@ -29,6 +29,7 @@ ViewWeek=Ugevisning
 ViewPerUser=Per brugervisning
 ViewPerType=Per typevisning
 AutoActions= Automatisk udfyldning
+ManualActions=Oprettet manuelt af en bruger
 AgendaAutoActionDesc= Her kan du definere events som du vil have Dolibarr til skabe automatically i Agenda. Hvis intet er valgt, vil kun manuelle handlinger blive inkluderet i logfiler and, der vises i Agenda. Automatisk sporing af forretningshandlinger udført på objekter (validation, status ændring) bliver ikke gemt.
 AgendaSetupOtherDesc= Denne side giver mulighed for at tillade eksport af dine Dolibarr events i en ekstern kalender (Thunderbird, Google Kalender osv. ..)
 AgendaExtSitesDesc=Denne side giver mulighed for at angive eksterne kalendere, så deres begivenheder kan ses i tidsplanen i Dolibarr.
@@ -215,3 +216,8 @@ EventPartOfARecurringSerie=Begivenheden er en del af en tilbagevendende serie me
 BookCalSystem=Online booking
 BookCalInitHelp=For at starte skal du gå ind i menuen for at oprette en ny kalender med tilgængelighed...
 PublicLinkForBooking=Offentligt link til booking
+STOCKTRANSFER_CLOSEInDolibarr=Lageroverførsel %s fuldført.
+STOCKTRANSFER_VALIDATEInDolibarr=Lageroverførsel %s valideret.
+
+STOCKTRANSFER_UNVALIDATEInDolibarr=Lageroverførsel %s sat tilbage til kladde.
+STOCKTRANSFER_MODIFYInDolibarr=Lageroverførsel %s ændret.

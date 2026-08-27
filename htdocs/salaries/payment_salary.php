@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2014  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2016-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2016-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2021		Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -116,7 +116,7 @@ if (($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == '
 		$paiement->fk_salary    = $id;
 		$paiement->chid         = $id;	// deprecated
 		$paiement->datep        = $datepaye;
-		$paiement->amounts      = $amounts; // Tableau de montant
+		$paiement->amounts      = $amounts; // Amount array
 		$paiement->fk_typepayment = GETPOSTINT("paiementtype");
 		$paiement->num_payment  = GETPOST("num_payment", 'alphanohtml');
 		$paiement->note         = GETPOST("note", 'restricthtml');
@@ -164,7 +164,7 @@ llxHeader('', '', $help_url);
 $salary = $object;
 $sumpaid = 0.0;
 
-// Formulaire de creation d'un paiement de charge
+// Payment creation form
 if ($action == 'create') {
 	$salary->accountid = $salary->fk_account ? $salary->fk_account : $salary->accountid;
 	$salary->fk_typepayment = $salary->mode_reglement_id ? $salary->mode_reglement_id : $salary->paiementtype;
@@ -328,7 +328,7 @@ if ($action == 'create') {
 
 	print '<br>';
 
-	// Bouton Save payment
+	// Save payment button
 	print '<div class="center">';
 	print '<div class="paddingbottom"><input type="checkbox" checked name="closepaidsalary" id="closepaidsalary" class="marginrightonly"><label for="closepaidsalary" class="opacitymedium">'.$langs->trans("ClosePaidSalaryAutomatically").'</label></div>';
 	print $form->buttonsSaveCancel("ToMakePayment", "Cancel", array(), true);

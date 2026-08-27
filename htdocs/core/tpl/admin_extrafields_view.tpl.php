@@ -44,11 +44,15 @@ if (empty($langs) || !is_object($langs)) {
 }
 global $action, $form, $langs;
 
+// Prefer $pagekey (the whitelisted request key) for self-referencing links; fall back to
+// $elementtype for older-style callers of this shared template that don't define $pagekey.
+$pagekeyforurl = isset($pagekey) ? $pagekey : $elementtype;
+
 $langs->load("modulebuilder");
 
 if ($action == 'delete') {
 	$attributekey = GETPOST('attrname', 'aZ09');
-	print $form->formconfirm($_SERVER['PHP_SELF']."?attrname=$attributekey", $langs->trans("DeleteExtrafield"), $langs->trans("ConfirmDeleteExtrafield", $attributekey), "confirm_delete", '', 0, 1);
+	print $form->formconfirm($_SERVER['PHP_SELF']."?attrname=$attributekey&elementtype=".urlencode($pagekeyforurl), $langs->trans("DeleteExtrafield"), $langs->trans("ConfirmDeleteExtrafield", $attributekey), "confirm_delete", '', 0, 1);
 }
 
 ?>
@@ -59,7 +63,7 @@ if ($action == 'delete') {
 $title = '<span class="opacitymedium">'.$langs->trans("DefineHereComplementaryAttributes", empty($textobject) ? '' : $textobject).'</span><br>'."\n";
 //if ($action != 'create' && $action != 'edit') {
 $newcardbutton = '';
-$newcardbutton .= dolGetButtonTitle($langs->trans('NewAttribute'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?action=create', '', 1);
+$newcardbutton .= dolGetButtonTitle($langs->trans('NewAttribute'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?action=create&elementtype='.urlencode($pagekeyforurl), '', 1);
 /*} else {
 	$newcardbutton = '';
 }*/
@@ -95,6 +99,7 @@ print '<td>'.$langs->trans("ComputedFormula").'</td>';
 print '<td class="center">'.$langs->trans("Unique").'</td>';
 print '<td class="center">'.$langs->trans("Mandatory").'</td>';
 print '<td class="center">'.$form->textwithpicto($langs->trans("AlwaysEditable"), $langs->trans("EditableWhenDraftOnly")).'</td>';
+print '<td class="center">'.$form->textwithpicto($langs->trans("IsPersonalData"), $langs->trans("IsPersonalDataDesc")).'</td>';
 print '<td class="center">'.$form->textwithpicto($langs->trans("EmptyOnClone"), $langs->trans("EmptyOnCloneDesc")).'</td>';
 print '<td class="center">'.$form->textwithpicto($langs->trans("Visibility"), $langs->trans("VisibleDesc").'<br><br>'.$langs->trans("ItCanBeAnExpression")).'</td>';
 print '<td class="center">'.$form->textwithpicto($langs->trans("DisplayOnPdf"), $langs->trans("DisplayOnPdfDesc")).'</td>';
@@ -127,10 +132,10 @@ if (isset($extrafields->attributes[$elementtype]['type']) && is_array($extrafiel
 		// Actions
 		if ($conf->main_checkbox_left_column) {
 			print '<td class="center nowraponall">';
-			print '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&attrname='.urlencode($key).'#formeditextrafield">'.img_edit().'</a>';
-			print '&nbsp; <a class="paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&attrname='.urlencode($key).'">'.img_delete().'</a>';
+			print '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&attrname='.urlencode($key).'&elementtype='.urlencode($pagekeyforurl).'#formeditextrafield">'.img_edit().'</a>';
+			print '&nbsp; <a class="paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&attrname='.urlencode($key).'&elementtype='.urlencode($pagekeyforurl).'">'.img_delete().'</a>';
 			if ($extrafields->attributes[$elementtype]['type'][$key] == 'password' && !empty($extrafields->attributes[$elementtype]['param'][$key]['options']) && array_key_exists('dolcrypt', $extrafields->attributes[$elementtype]['param'][$key]['options'])) {
-				print '&nbsp; <a class="aaa" href="'.$_SERVER["PHP_SELF"].'?action=encrypt&token='.newToken().'&attrname='.urlencode($key).'" title="'.dol_escape_htmltag($langs->trans("ReEncryptDesc")).'">'.img_picto('', 'refresh').'</a>';
+				print '&nbsp; <a class="aaa" href="'.$_SERVER["PHP_SELF"].'?action=encrypt&token='.newToken().'&attrname='.urlencode($key).'&elementtype='.urlencode($pagekeyforurl).'" title="'.dol_escape_htmltag($langs->trans("ReEncryptDesc")).'">'.img_picto('', 'refresh').'</a>';
 			}
 			print '</td>'."\n";
 		}
@@ -165,6 +170,8 @@ if (isset($extrafields->attributes[$elementtype]['type']) && is_array($extrafiel
 		print '<td class="center">'.yn($extrafields->attributes[$elementtype]['required'][$key])."</td>\n";
 		// Can always be editable ?
 		print '<td class="center">'.yn($extrafields->attributes[$elementtype]['alwayseditable'][$key])."</td>\n";
+		// Personal data ?
+		print '<td class="center">'.yn($extrafields->attributes[$elementtype]['personal_data'][$key])."</td>\n";
 		// Will be emptied on clone ?
 		print '<td class="center">'.yn($extrafields->attributes[$elementtype]['emptyonclone'][$key])."</td>\n";
 		// Visible
@@ -203,17 +210,17 @@ if (isset($extrafields->attributes[$elementtype]['type']) && is_array($extrafiel
 		// Actions
 		if (!$conf->main_checkbox_left_column) {
 			print '<td class="right nowraponall">';
-			print '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&attrname='.urlencode($key).'#formeditextrafield">'.img_edit().'</a>';
-			print '&nbsp; <a class="paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&attrname='.urlencode($key).'">'.img_delete().'</a>';
+			print '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&attrname='.urlencode($key).'&elementtype='.urlencode($pagekeyforurl).'#formeditextrafield">'.img_edit().'</a>';
+			print '&nbsp; <a class="paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&attrname='.urlencode($key).'&elementtype='.urlencode($pagekeyforurl).'">'.img_delete().'</a>';
 			if ($extrafields->attributes[$elementtype]['type'][$key] == 'password' && !empty($extrafields->attributes[$elementtype]['param'][$key]['options']) && array_key_exists('dolcrypt', $extrafields->attributes[$elementtype]['param'][$key]['options'])) {
-				print '&nbsp; <a class="aaa" href="'.$_SERVER["PHP_SELF"].'?action=encrypt&token='.newToken().'&attrname='.urlencode($key).'" title="'.dol_escape_htmltag($langs->trans("ReEncryptDesc")).'">'.img_picto('', 'refresh').'</a>';
+				print '&nbsp; <a class="aaa" href="'.$_SERVER["PHP_SELF"].'?action=encrypt&token='.newToken().'&attrname='.urlencode($key).'&elementtype='.urlencode($pagekeyforurl).'" title="'.dol_escape_htmltag($langs->trans("ReEncryptDesc")).'">'.img_picto('', 'refresh').'</a>';
 			}
 			print '</td>'."\n";
 		}
 		print "</tr>";
 	}
 } else {
-	$colspan = 17;
+	$colspan = 18;
 	if (isModEnabled('multicompany')) {
 		$colspan++;
 	}
