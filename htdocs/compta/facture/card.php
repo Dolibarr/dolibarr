@@ -2296,7 +2296,7 @@ if (empty($reshook)) {
 						// If fk_remise_except defined we check if the reduction has already been applied
 						if ($line->fk_remise_except) {
 							$discount = new DiscountAbsolute($line->db);
-							$result = $discount->fetch($line->fk_remise_except);
+							$result = $discount->fetch((int) $line->fk_remise_except);
 							if ($result > 0) {
 								// Check if discount not already affected to another invoice
 								if ($discount->fk_facture_line > 0) {
@@ -7087,7 +7087,7 @@ if ($action == 'create') {
 				&& $usercanunvalidate
 			) {
 				if (price2num($object->total_ttc - $totalcreditnotes, 'MT') == 0) {
-					print '<a id="butSituationOut" class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'&action=situationout">'.$langs->trans("RemoveSituationFromCycle").'</a>';
+					print '<a id="butSituationOut" class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'&action=situationout&token='.newToken().'">'.$langs->trans("RemoveSituationFromCycle").'</a>';
 				} else {
 					print '<a id="butSituationOutRefused" class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("DisabledBecauseNotEnouthCreditNote").'" >'.$langs->trans("RemoveSituationFromCycle").'</a>';
 				}

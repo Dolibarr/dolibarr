@@ -1033,7 +1033,7 @@ class Export
 				$obj = $this->db->fetch_object($result);
 				$keyModel = array_search($obj->type, $this->array_export_code);
 				print "<tr>";
-				print '<td><a href=export.php?step=2&action=select_model&exportmodelid='.$obj->rowid.'&datatoexport='.$obj->type.'>'.$obj->label.'</a></td>';
+				print '<td><a href=export.php?step=2&action=select_model&token='.newToken().'&exportmodelid='.$obj->rowid.'&datatoexport='.$obj->type.'>'.$obj->label.'</a></td>';
 				print '<td>';
 				print img_object($this->array_export_module[$keyModel]->getName(), $this->array_export_icon[$keyModel]).' ';
 				print $this->array_export_module[$keyModel]->getName().' - ';

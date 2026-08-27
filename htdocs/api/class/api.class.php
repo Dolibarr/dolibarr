@@ -483,15 +483,16 @@ class DolibarrApi
 	/**
 	 * Check access by user to a given resource
 	 *
-	 * @param 	string				$resource		element to check
-	 * @param 	int|string|Object	$resource_id	Full object or object ID or list of object id. For example if we want to check a particular record (optional) is linked to a owned thirdparty (optional).
-	 * @param 	string				$dbtablename	'TableName&SharedElement' with Tablename is table where object is stored. SharedElement is an optional key to define where to check entity. Not used if objectid is null (optional)
-	 * @param 	string				$feature2		Feature to check, second level of permission (optional). Can be or check with 'level1|level2'.
-	 * @param 	string				$dbt_keyfield   Field name for socid foreign key if not fk_soc. Not used if objectid is null (optional)
-	 * @param 	string				$dbt_select     Field name for select if not rowid. Not used if objectid is null (optional)
+	 * @param 	string				$resource				Element code to check
+	 * @param 	int|string|Object	$resource_id			Full object or object ID or list of object id. For example if we want to check a particular record (optional) is linked to a owned thirdparty (optional).
+	 * @param 	string				$dbtablename			'TableName&SharedElement' with Tablename is table where object is stored. SharedElement is an optional key to define where to check entity. Not used if objectid is null (optional)
+	 * @param 	string				$feature2				Feature to check, second level of permission (optional). Can be or check with 'level1|level2'.
+	 * @param 	string				$dbt_keyfield   		Field name for socid foreign key if not fk_soc. Not used if objectid is null (optional)
+	 * @param 	string				$dbt_select     		Field name for select if not rowid. Not used if objectid is null (optional)
+	 * @param 	string				$parenttableforentity  	Parent table for entity. Example 'fk_website@website'
 	 * @return 	bool
 	 */
-	protected static function _checkAccessToResource($resource, $resource_id = 0, $dbtablename = '', $feature2 = '', $dbt_keyfield = 'fk_soc', $dbt_select = 'rowid')
+	protected static function _checkAccessToResource($resource, $resource_id = 0, $dbtablename = '', $feature2 = '', $dbt_keyfield = 'fk_soc', $dbt_select = 'rowid', $parenttableforentity = '')
 	{
 		// phpcs:enable
 		// Features/modules to check
@@ -507,7 +508,7 @@ class DolibarrApi
 			$feature2 = explode("|", $feature2);
 		}
 
-		return checkUserAccessToObject(DolibarrApiAccess::$user, $featuresarray, $resource_id, $dbtablename, $feature2, $dbt_keyfield, $dbt_select);
+		return checkUserAccessToObject(DolibarrApiAccess::$user, $featuresarray, $resource_id, $dbtablename, $feature2, $dbt_keyfield, $dbt_select, $parenttableforentity);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore

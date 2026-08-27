@@ -134,7 +134,7 @@ if ($resql) {
 		print '<td class="center">';
 
 		if ($objp->statut == 0) {
-			print '<a href="card.php?id='.$objp->rowid.'&amp;action=valide">'.$langs->trans("PaymentStatusToValidShort").'</a>';
+			print '<a href="card.php?id='.$objp->rowid.'&amp;action=valide&amp;token='.newToken().'">'.$langs->trans("PaymentStatusToValidShort").'</a>';
 		} else {
 			print "-";
 		}
