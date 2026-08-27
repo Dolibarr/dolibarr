@@ -38,9 +38,15 @@ if (!defined('IMAGETYPE_WEBP')) {
 
 
 /**
- *      Return default values for image sizes
+ *  Return default values for image sizes
  *
- *      @return array{maxwidthsmall:int,maxheightsmall:int,maxwidthmini:int,maxheightmini:int,quality:int}		Array of default values
+ *  @return array{
+ *      maxwidthsmall:int,
+ *      maxheightsmall:int,
+ *      maxwidthmini:int,
+ *      maxheightmini:int,
+ *      quality:int
+ *  } Array of default values
  */
 function getDefaultImageSizes()
 {
