@@ -25,6 +25,7 @@
 global $conf,$user,$langs,$db;
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/modulebuilder/class/SyncReport.class.php';
+require_once dirname(__FILE__).'/../../htdocs/modulebuilder/class/RightsSyncCommand.class.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 /**
@@ -66,5 +67,42 @@ class ModuleBuilderRightsSyncTest extends CommonClassTest
 		$skippedReport = new SyncReport(0, 1, array(), array());
 		$this->assertSame(1, $skippedReport->skipped);
 		$this->assertTrue($skippedReport->isNoop());
+	}
+
+	/**
+	 * Each factory pins one scope/action pair, and the constructor refuses an incomplete command.
+	 *
+	 * @return void
+	 */
+	public function testRightsSyncCommandFactories()
+	{
+		$perms = array(array(1 => 'Read', 4 => 'myobject', 5 => 'read'));
+
+		$cmd = RightsSyncCommand::forObjectCreation('MyModule', '/tmp/modMyModule.class.php', $perms, 'MyObject');
+		$this->assertSame(RightsSyncCommand::SCOPE_OBJECT, $cmd->scope);
+		$this->assertSame(RightsSyncCommand::ACTION_ADD, $cmd->actionType);
+		$this->assertSame('MyObject', $cmd->objectName);
+		$this->assertNull($cmd->rightKey);
+
+		$cmd = RightsSyncCommand::forObjectDeletion('MyModule', '/tmp/modMyModule.class.php', $perms, 'MyObject');
+		$this->assertSame(RightsSyncCommand::SCOPE_OBJECT, $cmd->scope);
+		$this->assertSame(RightsSyncCommand::ACTION_DELETE, $cmd->actionType);
+
+		$cmd = RightsSyncCommand::forRightAddition('MyModule', '/tmp/modMyModule.class.php', $perms, 'myobject', 'Export MyObject', 'export');
+		$this->assertSame(RightsSyncCommand::SCOPE_RIGHT, $cmd->scope);
+		$this->assertSame(RightsSyncCommand::ACTION_ADD, $cmd->actionType);
+		$this->assertSame('export', $cmd->rightCrud);
+
+		$cmd = RightsSyncCommand::forRightUpdate('MyModule', '/tmp/modMyModule.class.php', $perms, 0, 'myobject', 'Read it', 'read');
+		$this->assertSame(RightsSyncCommand::ACTION_UPDATE, $cmd->actionType);
+		$this->assertSame(0, $cmd->rightKey);
+
+		$cmd = RightsSyncCommand::forRightDeletion('MyModule', '/tmp/modMyModule.class.php', $perms, 0);
+		$this->assertSame(RightsSyncCommand::ACTION_DELETE, $cmd->actionType);
+		$this->assertSame('', $cmd->objectName);
+
+		// An empty module name is never a valid target
+		$this->expectException(\InvalidArgumentException::class);
+		RightsSyncCommand::forRightDeletion('', '/tmp/modMyModule.class.php', $perms, 0);
 	}
 }
