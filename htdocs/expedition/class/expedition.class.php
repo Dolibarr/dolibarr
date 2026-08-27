@@ -2131,7 +2131,7 @@ class Expedition extends CommonObject
 
 					// We delete PDFs
 					$ref = dol_sanitizeFileName($this->ref);
-					if (!empty($conf->expedition->dir_output)) {
+					if (!empty($conf->expedition->dir_output) && !empty($ref)) {
 						$dir = $conf->expedition->dir_output . '/sending/' . $ref;
 						$file = $dir . '/' . $ref . '.pdf';
 						if (file_exists($file)) {
@@ -3240,7 +3240,7 @@ class Expedition extends CommonObject
 				$langs->load("agenda");
 
 				// Loop on each product line to add a stock movement
-				// TODO possibilite d'expedier a partir d'une propale ou autre origine
+				// TODO possibility to ship from a proposal or other origin
 				$sql = "SELECT cd.fk_product, cd.subprice,";
 				$sql .= " ed.rowid, ed.qty, ed.fk_entrepot,";
 				$sql .= " edb.rowid as edbrowid, edb.eatby, edb.sellby, edb.batch, edb.qty as edbqty, edb.fk_origin_stock";
