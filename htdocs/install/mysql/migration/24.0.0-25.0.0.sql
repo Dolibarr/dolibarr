@@ -110,4 +110,7 @@ ALTER TABLE llx_product ADD INDEX idx_product_tms (tms);
 
 
 
+-- Supplier proposal: add supplier reference on header
+ALTER TABLE llx_supplier_proposal ADD COLUMN ref_supplier varchar(255) DEFAULT NULL AFTER ref_ext;
+
 -- end of migration

@@ -378,9 +378,6 @@ ALTER TABLE llx_reception ADD UNIQUE INDEX idx_reception_uk_ref (ref, entity);
 ALTER TABLE llx_reception ADD INDEX idx_reception_fk_soc (fk_soc);
 ALTER TABLE llx_reception ADD INDEX idx_reception_fk_user_author (fk_user_author);
 ALTER TABLE llx_reception ADD INDEX idx_reception_fk_user_valid (fk_user_valid);
-
--- Supplier proposal: add supplier reference on header
-ALTER TABLE llx_supplier_proposal ADD COLUMN ref_supplier varchar(255) DEFAULT NULL AFTER ref_ext;
 ALTER TABLE llx_reception ADD INDEX idx_reception_fk_shipping_method (fk_shipping_method);
 
 create table llx_reception_extrafields
