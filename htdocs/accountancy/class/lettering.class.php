@@ -910,7 +910,7 @@ class Lettering extends BookKeeping
 	/**
 	 * Get element ids grouped by link or element in common
 	 *
-	 * @param	array<int,array<string,int>>	$link_by_element	List of payment ids by link key
+	 * @param	array<int,array<string,int|string>>	$link_by_element	List of payment ids by link key
 	 * @param	array<string,array<int,int>>	$element_by_link	List of element ids by link key
 	 * @param	string							$link_key			Link key (used for recursive function)
 	 * @param	array<int,int>					$current_group		Current group (used for recursive function)

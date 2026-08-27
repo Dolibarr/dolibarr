@@ -13,7 +13,7 @@
  * Copyright (C) 2016-2022 Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2021-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2022       Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -152,8 +152,7 @@ class Commande extends CommonOrder
 	public $cond_reglement_doc;
 
 	/**
-	 * @var float 	Deposit percent for payment terms.
-	 *				Populated by $CommonObject->setPaymentTerms().
+	 * @var string|float 	Deposit percent for payment terms. Populated by $CommonObject->setPaymentTerms().
 	 * @see setPaymentTerms()
 	 */
 	public $deposit_percent;
@@ -1051,7 +1050,7 @@ class Commande extends CommonOrder
 		$sql .= ", ".($this->ref_client ? "'".$this->db->escape($this->ref_client)."'" : "null");
 		$sql .= ", '".$this->db->escape($this->model_pdf)."'";
 		$sql .= ", ".($this->cond_reglement_id > 0 ? ((int) $this->cond_reglement_id) : "null");
-		$sql .= ", ".(!empty($this->deposit_percent) ? "'".$this->db->escape((string) $this->deposit_percent)."'" : "null");
+		$sql .= ", ".(!empty($this->deposit_percent) ? "'".$this->db->escape($this->deposit_percent)."'" : "null");
 		$sql .= ", ".($this->mode_reglement_id > 0 ? ((int) $this->mode_reglement_id) : "null");
 		$sql .= ", ".($this->fk_account > 0 ? ((int) $this->fk_account) : 'NULL');
 		$sql .= ", ".($this->availability_id > 0 ? ((int) $this->availability_id) : "null");
@@ -1309,7 +1308,7 @@ class Commande extends CommonOrder
 			if ($objsoc->fetch($socid) > 0) {
 				$this->socid = $objsoc->id;
 				$this->cond_reglement_id	= (!empty($objsoc->cond_reglement_id) ? $objsoc->cond_reglement_id : 0);
-				$this->deposit_percent		= (!empty($objsoc->deposit_percent) ? $objsoc->deposit_percent : 0);
+				$this->deposit_percent		= (!empty($objsoc->deposit_percent) ? $objsoc->deposit_percent : '0');
 				$this->mode_reglement_id	= (!empty($objsoc->mode_reglement_id) ? $objsoc->mode_reglement_id : 0);
 				$this->fk_project = 0;
 				$this->fk_delivery_address = 0;
@@ -3419,26 +3418,26 @@ class Commande extends CommonOrder
 		$sql .= " fk_soc=".(isset($this->socid) ? $this->socid : "null").",";
 		$sql .= " date_commande=".(strval($this->date_commande) != '' ? "'".$this->db->idate($this->date_commande)."'" : 'null').",";
 		$sql .= " date_valid=".(strval($this->date_validation) != '' ? "'".$this->db->idate($this->date_validation)."'" : 'null').",";
-		$sql .= " total_tva=".(isset($this->total_tva) ? $this->total_tva : "null").",";
-		$sql .= " localtax1=".(isset($this->total_localtax1) ? $this->total_localtax1 : "null").",";
-		$sql .= " localtax2=".(isset($this->total_localtax2) ? $this->total_localtax2 : "null").",";
-		$sql .= " total_ht=".(isset($this->total_ht) ? $this->total_ht : "null").",";
-		$sql .= " total_ttc=".(isset($this->total_ttc) ? $this->total_ttc : "null").",";
-		$sql .= " fk_statut=".(isset($this->status) ? $this->status : "null").",";
-		$sql .= " fk_user_modif=".(isset($user->id) ? $user->id : "null").",";
-		$sql .= " fk_user_valid=".((isset($this->user_validation_id) && $this->user_validation_id > 0) ? $this->user_validation_id : "null").",";
-		$sql .= " fk_projet=".(isset($this->fk_project) ? $this->fk_project : "null").",";
-		$sql .= " fk_cond_reglement=".(isset($this->cond_reglement_id) ? $this->cond_reglement_id : "null").",";
-		$sql .= " deposit_percent=".(!empty($this->deposit_percent) ? strval($this->deposit_percent) : "null").",";
+		$sql .= " total_tva=".(isset($this->total_tva) ? (float) $this->total_tva : "null").",";
+		$sql .= " localtax1=".(isset($this->total_localtax1) ? (float) $this->total_localtax1 : "null").",";
+		$sql .= " localtax2=".(isset($this->total_localtax2) ? (float) $this->total_localtax2 : "null").",";
+		$sql .= " total_ht=".(isset($this->total_ht) ? (float) $this->total_ht : "null").",";
+		$sql .= " total_ttc=".(isset($this->total_ttc) ? (float) $this->total_ttc : "null").",";
+		$sql .= " fk_statut=".(isset($this->status) ? (int) $this->status : "null").",";
+		$sql .= " fk_user_modif=".(isset($user->id) ? (int) $user->id : "null").",";
+		$sql .= " fk_user_valid=".((isset($this->user_validation_id) && $this->user_validation_id > 0) ? (int) $this->user_validation_id : "null").",";
+		$sql .= " fk_projet=".(isset($this->fk_project) ? (int) $this->fk_project : "null").",";
+		$sql .= " fk_cond_reglement=".(isset($this->cond_reglement_id) ? (int) $this->cond_reglement_id : "null").",";
+		$sql .= " deposit_percent=".(!empty($this->deposit_percent) ? "'".$this->db->escape($this->deposit_percent)."'" : "null").",";
 		$sql .= " fk_mode_reglement=".(isset($this->mode_reglement_id) ? $this->mode_reglement_id : "null").",";
 		$sql .= " date_livraison=".(strval($this->delivery_date) != '' ? "'".$this->db->idate($this->delivery_date)."'" : 'null').",";
-		$sql .= " fk_shipping_method=".(isset($this->shipping_method_id) ? $this->shipping_method_id : "null").",";
-		$sql .= " fk_account=".($this->fk_account > 0 ? $this->fk_account : "null").",";
-		$sql .= " fk_input_reason=".($this->demand_reason_id > 0 ? $this->demand_reason_id : "null").",";
+		$sql .= " fk_shipping_method=".(isset($this->shipping_method_id) ? (int) $this->shipping_method_id : "null").",";
+		$sql .= " fk_account=".($this->fk_account > 0 ? (int) $this->fk_account : "null").",";
+		$sql .= " fk_input_reason=".($this->demand_reason_id > 0 ? (int) $this->demand_reason_id : "null").",";
 		$sql .= " note_private=".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
 		$sql .= " note_public=".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
 		$sql .= " model_pdf=".(isset($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null").",";
-		$sql .= " fk_warehouse=".($this->warehouse_id > 0 ? $this->warehouse_id : "null").",";
+		$sql .= " fk_warehouse=".($this->warehouse_id > 0 ? (int) $this->warehouse_id : "null").",";
 		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null").",";
 		$sql .= " module_source = ".(isset($this->module_source) ? "'".$this->db->escape($this->module_source)."'" : "null").",";
 		$sql .= " pos_source = ".(isset($this->pos_source) ? "'".$this->db->escape($this->pos_source)."'" : "null");

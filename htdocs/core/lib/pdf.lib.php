@@ -2523,8 +2523,22 @@ function pdf_getlineprogress($object, $i, $outputlangs, $hidedetails = 0, $hookm
 				// - old mode but we want to show a delta or
 				// - new mode but we want to show a total
 				$prev_progress = 0;
-				if (method_exists($object->lines[$i], 'get_prev_progress')) {
-					$prev_progress = $object->lines[$i]->get_prev_progress($object->id);
+				if ($isCumulative) {
+					// old mode: the previous line already holds the running total
+					if (method_exists($object->lines[$i], 'get_prev_progress')) {
+						$prev_progress = $object->lines[$i]->get_prev_progress($object->id);
+					}
+				} else {
+					// new mode: each line holds its own delta, so we must sum every previous one.
+					// get_prev_progress() only reads the line pointed by fk_prev_id, which is the last
+					// delta and not the accumulated progress, so it under-reports from the third
+					// situation on. getAllPrevProgress() walks the whole fk_prev_id chain, and it is
+					// what the screen uses to compute the same value.
+					if (method_exists($object->lines[$i], 'getAllPrevProgress')) {
+						$prev_progress = $object->lines[$i]->getAllPrevProgress($object->id);
+					} elseif (method_exists($object->lines[$i], 'get_prev_progress')) {
+						$prev_progress = $object->lines[$i]->get_prev_progress($object->id);
+					}
 				}
 				$result = $isCumulative ?
 					// old mode: we need to compute the delta (total - sum of previous)
@@ -2995,7 +3009,7 @@ function pdf_render_subtotals(
 
 	if ($isSubtotal && $applySubtotalLogic && $object->lines[$i]->qty < 0) {
 		$outputlangs->load("subtotals");
-		$object->lines[$i]->desc = $outputlangs->trans("SubtotalOf", $object->lines[$i]->desc);
+		$object->lines[$i]->desc = getDolGlobalString("SUBTOTAL_LINE_TEXT_DOES_NOT_INCLUDE_TITLE_TEXT") ? $outputlangs->trans("SubTotal") : $outputlangs->trans("SubtotalOf", $object->lines[$i]->desc);
 		$generator->cols['desc']['content']['align'] = ($prevAlign === 'L') ? 'R' : 'L';
 	}
 

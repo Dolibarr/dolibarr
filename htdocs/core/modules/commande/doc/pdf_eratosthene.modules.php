@@ -561,6 +561,8 @@ class pdf_eratosthene extends ModelePDFCommandes
 				$pdf_sub_options['titleshowuponpdf'] = 1;
 				$pdf_sub_options['titleshowtotalexludingvatonpdf'] = 1;
 
+				$hidenextline = 0;
+
 				for ($i = 0; $i < $nblines; $i++) {
 					$linePosition = $i + 1;
 					$curY = $nexY;
@@ -570,6 +572,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 					if ($object->lines[$i]->special_code == SUBTOTALS_SPECIAL_CODE) {
 						$level = $object->lines[$i]->qty;
 						if ($sub_options) {
+							$hidenextline = 0;
 							if (isset($sub_options['titleshowuponpdf'])) {
 								$pdf_sub_options['titleshowuponpdf'] = isset($pdf_sub_options['titleshowuponpdf']) && $pdf_sub_options['titleshowuponpdf'] < $level ? $pdf_sub_options['titleshowuponpdf'] : $level;
 							} elseif (isset($pdf_sub_options['titleshowuponpdf']) && abs($level) <= $pdf_sub_options['titleshowuponpdf']) {
@@ -590,167 +593,178 @@ class pdf_eratosthene extends ModelePDFCommandes
 						}
 					}
 
-					if (($curY + 6) > ($this->page_hauteur - $heightforfooter) || isset($sub_options['titleforcepagebreak']) && !($pdf->getNumPages() == 1 && $curY == $tab_top + $this->tabTitleHeight)) {
-						$object->lines[$i]->pagebreak = true;
+					if ($object->lines[$i]->special_code == SUBTOTALS_SPECIAL_CODE && isset($sub_options['subtotalshowtotalexludingvatonpdf']) && getDolGlobalString('SUBTOTAL_HIDE_LINES_UNDER_TITLE')) {	// TODO Use $sub_options['titlehidelinesundertitle'] instead of SUBTOTAL_HIDE_LINES_UNDER_TITLE
+						$hidenextline = 0;
+						$pdf_sub_options = array();
+						$pdf_sub_options['titleshowuponpdf'] = 1;
+						$pdf_sub_options['titleshowtotalexludingvatonpdf'] = 1;
 					}
 
-					// in First Check line page break and add page if needed
-					if (isset($object->lines[$i]->pagebreak) && $object->lines[$i]->pagebreak) {
-						// New page
-						$pdf->AddPage();
-						if (!empty($tplidx)) {
-							$pdf->useTemplate($tplidx);
+					//var_dump($i, $sub_options, $hidenextline);
+					if ($hidenextline) {
+						$linePosition--;
+					} else {
+						if (($curY + 6) > ($this->page_hauteur - $heightforfooter) || isset($sub_options['titleforcepagebreak']) && !($pdf->getNumPages() == 1 && $curY == $tab_top + $this->tabTitleHeight)) {
+							$object->lines[$i]->pagebreak = true;
 						}
 
-						$pdf->setPage($pdf->getNumPages());
-						$nexY = $curY = $tab_top_newpage;
-					}
-
-					$this->resetAfterColsLinePositionsData($nexY, $pdf->getPage());
-
-
-					$pdf->SetFont('', '', $default_font_size - 1); // Into loop to work with multipage
-					$pdf->SetTextColor(0, 0, 0);
-
-					// Define size of image if we need it
-					$imglinesize = array();
-					if (!empty($realpatharray[$i])) {
-						$imglinesize = pdf_getSizeForImage($realpatharray[$i]);
-					}
-
-					$pdf->setTopMargin($tab_top_newpage);
-					$pdf->setPageOrientation('', true, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
-					$pageposbefore = $pdf->getPage();
-					$curYBefore = $curY;
-
-					// Allows data in the first page if description is long enough to break in multiples pages
-					$showpricebeforepagebreak = getDolGlobalInt('MAIN_PDF_DATA_ON_FIRST_PAGE');
-					$posYAfterImage = 0;
-
-					if ($this->getColumnStatus('photo')) {
-						// We start with Photo of product line
-						$imageTopMargin = 1;
-						if (isset($imglinesize['width']) && isset($imglinesize['height']) && ($curY + $imageTopMargin + $imglinesize['height']) > ($this->page_hauteur - $heightforfooter)) {	// If photo too high, we moved completely on new page
-							$pdf->AddPage('', '', true);
+						// in First Check line page break and add page if needed
+						if (isset($object->lines[$i]->pagebreak) && $object->lines[$i]->pagebreak) {
+							// New page
+							$pdf->AddPage();
 							if (!empty($tplidx)) {
 								$pdf->useTemplate($tplidx);
 							}
-							$pdf->setPage($pageposbefore + 1);
-							$pdf->setPageOrientation('', true, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
-							$curY = $tab_top_newpage;
-							$showpricebeforepagebreak = 0;
+
+							$pdf->setPage($pdf->getNumPages());
+							$nexY = $curY = $tab_top_newpage;
 						}
 
-						// I remove the line commented below because it probably uselesss (or bug source) no need to change bottom margin because we have checked image fit
-						//$pdf->setPageOrientation('', 0, $heightforfooter + $heightforfreetext); // The only function to edit the bottom margin of current page to set it.
+						$this->resetAfterColsLinePositionsData($nexY, $pdf->getPage());
 
-						// @phan-suppress-next-line PhanTypeMismatchProperty
-						if (!empty($this->cols['photo']) && isset($imglinesize['width']) && isset($imglinesize['height'])) {
-							$pdf->Image($realpatharray[$i], $this->getColumnContentXStart('photo'), $curY + $imageTopMargin, $imglinesize['width'], $imglinesize['height'], '', '', '', 2, 300); // Use 300 dpi
-							// $pdf->Image does not increase value return by getY, so we save it manually
-							$posYAfterImage = $curY + $imglinesize['height'];
-							$this->setAfterColsLinePositionsData('photo', $posYAfterImage, $pdf->getPage());
+
+						$pdf->SetFont('', '', $default_font_size - 1); // Into loop to work with multipage
+						$pdf->SetTextColor(0, 0, 0);
+
+						// Define size of image if we need it
+						$imglinesize = array();
+						if (!empty($realpatharray[$i])) {
+							$imglinesize = pdf_getSizeForImage($realpatharray[$i]);
 						}
-					}
 
-					// restore Page orientation for text
-					$pdf->setPageOrientation('', true, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
+						$pdf->setTopMargin($tab_top_newpage);
+						$pdf->setPageOrientation('', true, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
+						$pageposbefore = $pdf->getPage();
+						$curYBefore = $curY;
 
-					// Description of product line
-					if ($this->getColumnStatus('desc')) {
-						if ($object->lines[$i]->special_code != SUBTOTALS_SPECIAL_CODE) {
-							$this->printColDescContent($pdf, $curY, 'desc', $object, $i, $outputlangs, $hideref, $hidedesc);
-							$this->setAfterColsLinePositionsData('desc', $pdf->GetY(), $pdf->getPage());
-						} else {
-							$bg_color = colorStringToArray(getDolGlobalString("SUBTOTAL_BACK_COLOR_LEVEL_".abs($object->lines[$i]->qty), 'ffffff'));
-							pdf_render_subtotals($pdf, $this, $curY, $object, $i, $outputlangs, $hideref, $hidedesc, $bg_color, true, true);
+						// Allows data in the first page if description is long enough to break in multiples pages
+						$showpricebeforepagebreak = getDolGlobalInt('MAIN_PDF_DATA_ON_FIRST_PAGE');
+						$posYAfterImage = 0;
+
+						if ($this->getColumnStatus('photo')) {
+							// We start with Photo of product line
+							$imageTopMargin = 1;
+							if (isset($imglinesize['width']) && isset($imglinesize['height']) && ($curY + $imageTopMargin + $imglinesize['height']) > ($this->page_hauteur - $heightforfooter)) {	// If photo too high, we moved completely on new page
+								$pdf->AddPage('', '', true);
+								if (!empty($tplidx)) {
+									$pdf->useTemplate($tplidx);
+								}
+								$pdf->setPage($pageposbefore + 1);
+								$pdf->setPageOrientation('', true, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
+								$curY = $tab_top_newpage;
+								$showpricebeforepagebreak = 0;
+							}
+
+							// I remove the line commented below because it probably uselesss (or bug source) no need to change bottom margin because we have checked image fit
+							//$pdf->setPageOrientation('', 0, $heightforfooter + $heightforfreetext); // The only function to edit the bottom margin of current page to set it.
+
+							// @phan-suppress-next-line PhanTypeMismatchProperty
+							if (!empty($this->cols['photo']) && isset($imglinesize['width']) && isset($imglinesize['height'])) {
+								$pdf->Image($realpatharray[$i], $this->getColumnContentXStart('photo'), $curY + $imageTopMargin, $imglinesize['width'], $imglinesize['height'], '', '', '', 2, 300); // Use 300 dpi
+								// $pdf->Image does not increase value return by getY, so we save it manually
+								$posYAfterImage = $curY + $imglinesize['height'];
+								$this->setAfterColsLinePositionsData('photo', $posYAfterImage, $pdf->getPage());
+							}
 						}
-					}
 
-					$afterPosData = $this->getMaxAfterColsLinePositionsData();
-					$pdf->setPage($pageposbefore);
-					$pdf->setTopMargin($this->marge_haute);
-					$pdf->setPageOrientation('', false, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
+						// restore Page orientation for text
+						$pdf->setPageOrientation('', true, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
 
-					// We suppose that a too long description or photo were moved completely on next page
-					if ($afterPosData['page'] > $pageposbefore && (empty($showpricebeforepagebreak) || ($curY + 4) > ($this->page_hauteur - $heightforfooter))) {
-						$pdf->setPage($afterPosData['page']);
-						$curY = $tab_top_newpage;
-					}
-
-					$pdf->SetFont('', '', $default_font_size - 1); // We reposition the default font
-
-					// Line position
-					if ($this->getColumnStatus('position')) {
-						$this->printStdColumnContent($pdf, $curY, 'position', strval($linePosition));
-					}
-
-					// VAT Rate
-					if ($this->getColumnStatus('vat') && $object->lines[$i]->special_code != SUBTOTALS_SPECIAL_CODE) {
-						$vat_rate = pdf_getlinevatrate($object, $i, $outputlangs, $hidedetails);
-						$this->printStdColumnContent($pdf, $curY, 'vat', $vat_rate);
-					}
-
-					// Unit price before discount
-					if ($this->getColumnStatus('subprice') && $object->lines[$i]->special_code != SUBTOTALS_SPECIAL_CODE && isset($pdf_sub_options['titleshowuponpdf'])) {
-						$up_excl_tax = pdf_getlineupexcltax($object, $i, $outputlangs, $hidedetails);
-						$this->printStdColumnContent($pdf, $curY, 'subprice', $up_excl_tax);
-					}
-
-					// Quantity
-					// Enough for 6 chars
-					if ($this->getColumnStatus('qty') && $object->lines[$i]->special_code != SUBTOTALS_SPECIAL_CODE) {
-						$qty = pdf_getlineqty($object, $i, $outputlangs, $hidedetails);
-						$this->printStdColumnContent($pdf, $curY, 'qty', $qty);
-					}
-
-
-					// Unit
-					if ($this->getColumnStatus('unit') && $object->lines[$i]->special_code != SUBTOTALS_SPECIAL_CODE) {
-						$unit = pdf_getlineunit($object, $i, $outputlangs, $hidedetails);
-						$this->printStdColumnContent($pdf, $curY, 'unit', $unit);
-					}
-
-					// Discount on line
-					if ($this->getColumnStatus('discount') && $object->lines[$i]->remise_percent && $object->lines[$i]->special_code != SUBTOTALS_SPECIAL_CODE) {
-						$remise_percent = pdf_getlineremisepercent($object, $i, $outputlangs, $hidedetails);
-						$this->printStdColumnContent($pdf, $curY, 'discount', $remise_percent);
-					}
-
-					// Total excl tax line (HT)
-					if ($this->getColumnStatus('totalexcltax')) {
-						if ($object->lines[$i]->special_code != SUBTOTALS_SPECIAL_CODE && isset($pdf_sub_options['titleshowtotalexludingvatonpdf'])) {
-							$total_excl_tax = pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails);
-							$this->printStdColumnContent($pdf, $curY, 'totalexcltax', $total_excl_tax);
-						} elseif ($object->lines[$i]->qty < 0 && isset($sub_options['subtotalshowtotalexludingvatonpdf'])) {
-							if (isModEnabled('multicurrency') && $object->multicurrency_code != getDolCurrency()) {
-								$total_excl_tax = $object->getSubtotalLineMulticurrencyAmount($object->lines[$i]);
+						// Description of product line
+						if ($this->getColumnStatus('desc')) {
+							if ($object->lines[$i]->special_code != SUBTOTALS_SPECIAL_CODE) {
+								$this->printColDescContent($pdf, $curY, 'desc', $object, $i, $outputlangs, $hideref, $hidedesc);
+								$this->setAfterColsLinePositionsData('desc', $pdf->GetY(), $pdf->getPage());
 							} else {
-								$total_excl_tax = $object->getSubtotalLineAmount($object->lines[$i]);
-							}
-							$this->printStdColumnContent($pdf, $curY, 'totalexcltax', $total_excl_tax);
-						}
-					}
-
-					// Total with tax line (TTC)
-					if ($this->getColumnStatus('totalincltax')) {
-						$total_incl_tax = pdf_getlinetotalwithtax($object, $i, $outputlangs, $hidedetails);
-						$this->printStdColumnContent($pdf, $curY, 'totalincltax', $total_incl_tax);
-					}
-
-					// Extrafields
-					if (!empty($object->lines[$i]->array_options)) {
-						foreach ($object->lines[$i]->array_options as $extrafieldColKey => $extrafieldValue) {
-							if ($this->getColumnStatus($extrafieldColKey)) {
-								$extrafieldValue = $this->getExtrafieldContent($object->lines[$i], $extrafieldColKey, $outputlangs);
-								$this->printStdColumnContent($pdf, $curY, $extrafieldColKey, $extrafieldValue);
-								$this->setAfterColsLinePositionsData('options_'.$extrafieldColKey, $pdf->GetY(), $pdf->getPage());
+								$bg_color = colorStringToArray(getDolGlobalString("SUBTOTAL_BACK_COLOR_LEVEL_".abs($object->lines[$i]->qty), 'ffffff'));
+								pdf_render_subtotals($pdf, $this, $curY, $object, $i, $outputlangs, $hideref, $hidedesc, $bg_color, true, true);
 							}
 						}
-					}
 
-					$afterPosData = $this->getMaxAfterColsLinePositionsData();
-					$parameters = array(
+						$afterPosData = $this->getMaxAfterColsLinePositionsData();
+						$pdf->setPage($pageposbefore);
+						$pdf->setTopMargin($this->marge_haute);
+						$pdf->setPageOrientation('', false, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
+
+						// We suppose that a too long description or photo were moved completely on next page
+						if ($afterPosData['page'] > $pageposbefore && (empty($showpricebeforepagebreak) || ($curY + 4) > ($this->page_hauteur - $heightforfooter))) {
+							$pdf->setPage($afterPosData['page']);
+							$curY = $tab_top_newpage;
+						}
+
+						$pdf->SetFont('', '', $default_font_size - 1); // We reposition the default font
+
+						// Line position
+						if ($this->getColumnStatus('position')) {
+							$this->printStdColumnContent($pdf, $curY, 'position', strval($linePosition));
+						}
+
+						// VAT Rate
+						if ($this->getColumnStatus('vat') && $object->lines[$i]->special_code != SUBTOTALS_SPECIAL_CODE) {
+							$vat_rate = pdf_getlinevatrate($object, $i, $outputlangs, $hidedetails);
+							$this->printStdColumnContent($pdf, $curY, 'vat', $vat_rate);
+						}
+
+						// Unit price before discount
+						if ($this->getColumnStatus('subprice') && $object->lines[$i]->special_code != SUBTOTALS_SPECIAL_CODE && isset($pdf_sub_options['titleshowuponpdf'])) {
+							$up_excl_tax = pdf_getlineupexcltax($object, $i, $outputlangs, $hidedetails);
+							$this->printStdColumnContent($pdf, $curY, 'subprice', $up_excl_tax);
+						}
+
+						// Quantity
+						// Enough for 6 chars
+						if ($this->getColumnStatus('qty') && $object->lines[$i]->special_code != SUBTOTALS_SPECIAL_CODE) {
+							$qty = pdf_getlineqty($object, $i, $outputlangs, $hidedetails);
+							$this->printStdColumnContent($pdf, $curY, 'qty', $qty);
+						}
+
+
+						// Unit
+						if ($this->getColumnStatus('unit') && $object->lines[$i]->special_code != SUBTOTALS_SPECIAL_CODE) {
+							$unit = pdf_getlineunit($object, $i, $outputlangs, $hidedetails);
+							$this->printStdColumnContent($pdf, $curY, 'unit', $unit);
+						}
+
+						// Discount on line
+						if ($this->getColumnStatus('discount') && $object->lines[$i]->remise_percent && $object->lines[$i]->special_code != SUBTOTALS_SPECIAL_CODE) {
+							$remise_percent = pdf_getlineremisepercent($object, $i, $outputlangs, $hidedetails);
+							$this->printStdColumnContent($pdf, $curY, 'discount', $remise_percent);
+						}
+
+						// Total excl tax line (HT)
+						if ($this->getColumnStatus('totalexcltax')) {
+							if ($object->lines[$i]->special_code != SUBTOTALS_SPECIAL_CODE && isset($pdf_sub_options['titleshowtotalexludingvatonpdf'])) {
+								$total_excl_tax = pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails);
+								$this->printStdColumnContent($pdf, $curY, 'totalexcltax', $total_excl_tax);
+							} elseif ($object->lines[$i]->qty < 0 && isset($sub_options['subtotalshowtotalexludingvatonpdf'])) {
+								if (isModEnabled('multicurrency') && $object->multicurrency_code != getDolCurrency()) {
+									$total_excl_tax = $object->getSubtotalLineMulticurrencyAmount($object->lines[$i]);
+								} else {
+									$total_excl_tax = $object->getSubtotalLineAmount($object->lines[$i]);
+								}
+								$this->printStdColumnContent($pdf, $curY, 'totalexcltax', $total_excl_tax);
+							}
+						}
+
+						// Total with tax line (TTC)
+						if ($this->getColumnStatus('totalincltax')) {
+							$total_incl_tax = pdf_getlinetotalwithtax($object, $i, $outputlangs, $hidedetails);
+							$this->printStdColumnContent($pdf, $curY, 'totalincltax', $total_incl_tax);
+						}
+
+						// Extrafields
+						if (!empty($object->lines[$i]->array_options)) {
+							foreach ($object->lines[$i]->array_options as $extrafieldColKey => $extrafieldValue) {
+								if ($this->getColumnStatus($extrafieldColKey)) {
+									$extrafieldValue = $this->getExtrafieldContent($object->lines[$i], $extrafieldColKey, $outputlangs);
+									$this->printStdColumnContent($pdf, $curY, $extrafieldColKey, $extrafieldValue);
+									$this->setAfterColsLinePositionsData('options_'.$extrafieldColKey, $pdf->GetY(), $pdf->getPage());
+								}
+							}
+						}
+
+						$afterPosData = $this->getMaxAfterColsLinePositionsData();
+						$parameters = array(
 						'object' => $object,
 						'i' => $i,
 						'pdf' => & $pdf,
@@ -758,9 +772,9 @@ class pdf_eratosthene extends ModelePDFCommandes
 						'nexY' => & $afterPosData['y'], // for backward module hook compatibility Y will be accessible by $object->getMaxAfterColsLinePositionsData()
 						'outputlangs' => $outputlangs,
 						'hidedetails' => $hidedetails
-					);
-					$reshook = $hookmanager->executeHooks('printPDFline', $parameters, $this); // Note that $object may have been modified by hook
-
+						);
+						$reshook = $hookmanager->executeHooks('printPDFline', $parameters, $this); // Note that $object may have been modified by hook
+					}
 
 					// Collection of totals by value of vat in $this->tva["rate"] = total_tva
 					if (isModEnabled("multicurrency") && $object->multicurrency_tx != 1) {
@@ -817,16 +831,22 @@ class pdf_eratosthene extends ModelePDFCommandes
 					}
 					$this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')] = array('vatrate' => $vatrate, 'vatcode' => $vatcode, 'amount' => $this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'] + $tvaligne);
 
-					$afterPosData = $this->getMaxAfterColsLinePositionsData();
-					$pdf->setPage($afterPosData['page']);
-					$nexY = $afterPosData['y'];
 
-					// Add line
-					if (getDolGlobalString('MAIN_PDF_DASH_BETWEEN_LINES') && $i < ($nblines - 1) && $afterPosData['y'] < $this->page_hauteur - $heightforfooter - 5) {
-						$pdf->SetLineStyle(array('dash' => '1,1', 'color' => array(80, 80, 80)));
-						//$pdf->SetDrawColor(190,190,200);
-						$pdf->line($this->marge_gauche, $nexY, $this->page_largeur - $this->marge_droite, $nexY);
-						$pdf->SetLineStyle(array('dash' => 0));
+					if (!$hidenextline) {
+						$afterPosData = $this->getMaxAfterColsLinePositionsData();
+						$pdf->setPage($afterPosData['page']);
+						$nexY = $afterPosData['y'];
+
+						// Add line
+						if (getDolGlobalString('MAIN_PDF_DASH_BETWEEN_LINES') && $i < ($nblines - 1) && $afterPosData['y'] < $this->page_hauteur - $heightforfooter - 5) {
+							$pdf->SetLineStyle(array('dash' => '1,1', 'color' => array(80, 80, 80)));
+							//$pdf->SetDrawColor(190,190,200);
+							$pdf->line($this->marge_gauche, $nexY, $this->page_largeur - $this->marge_droite, $nexY);
+							$pdf->SetLineStyle(array('dash' => 0));
+						}
+					}
+					if ($object->lines[$i]->special_code == SUBTOTALS_SPECIAL_CODE && (isset($sub_options['titleshowuponpdf']) || isset($sub_options['titleshowtotalexludingvatonpdf'])) && getDolGlobalString('SUBTOTAL_HIDE_LINES_UNDER_TITLE')) {	// TODO Use $sub_options['titlehidelinesundertitle'] instead of SUBTOTAL_HIDE_LINES_UNDER_TITLE
+						$hidenextline = 1;
 					}
 
 					$nexY += 0; // Add space between lines

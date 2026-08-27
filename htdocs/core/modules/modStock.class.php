@@ -75,38 +75,44 @@ class modStock extends DolibarrModules
 		$this->langfiles = array("stocks");
 
 		// Constants
-		$this->const = array();
-		$r = 0;
+		$this->const = [
+			[
+				'STOCK_DISALLOW_NEGATIVE_TRANSFER',
+				'chaine',
+				'1',
+				'',
+				0,
+			],
+			[
+				"STOCK_ADDON_PDF",
+				"chaine",
+				"standard_stock",
+				'Name of PDF model of stock',
+				0,
+			],
+			[
+				"MOUVEMENT_ADDON_PDF",
+				"chaine",
+				"standard_movement_stock",
+				'Name of PDF model of stock movement',
+				0,
+			],
+			[
+				"STOCK_ADDON_PDF_ODT_PATH",
+				"chaine",
+				"DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/stocks",
+				"",
+				0,
+			],
+			[
+				"MOUVEMENT_ADDON_PDF_ODT_PATH",
+				"chaine",
+				"DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/stocks/movements",
+				"",
+				0,
+			],
+		];
 
-		$this->const[$r] = array('STOCK_DISALLOW_NEGATIVE_TRANSFER', 'chaine', '1', '', 0);
-
-		$r++;
-		$this->const[$r][0] = "STOCK_ADDON_PDF";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "standard_stock";
-		$this->const[$r][3] = 'Name of PDF model of stock';
-		$this->const[$r][4] = 0;
-
-		$r++;
-		$this->const[$r][0] = "MOUVEMENT_ADDON_PDF";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "standard_movement_stock";
-		$this->const[$r][3] = 'Name of PDF model of stock movement';
-		$this->const[$r][4] = 0;
-
-		$r++;
-		$this->const[$r][0] = "STOCK_ADDON_PDF_ODT_PATH";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/stocks";
-		$this->const[$r][3] = "";
-		$this->const[$r][4] = 0;
-
-		$r++;
-		$this->const[$r][0] = "MOUVEMENT_ADDON_PDF_ODT_PATH";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/stocks/movements";
-		$this->const[$r][3] = "";
-		$this->const[$r][4] = 0;
 
 		// Boxes
 		$this->boxes = array();

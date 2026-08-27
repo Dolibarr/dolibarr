@@ -235,7 +235,7 @@ if ($resql) {
 				$sql .= " AND fd.product_type IN (0,1)";
 				$sql .= " AND f.type IN (".Facture::TYPE_STANDARD.",".Facture::TYPE_REPLACEMENT.",".Facture::TYPE_CREDIT_NOTE.",".(!getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS') ? Facture::TYPE_DEPOSIT."," : "").Facture::TYPE_SITUATION.")";
 				$sql .= " AND bu.fk_bank IN (".$db->sanitize(implode(',', $ids)).")";
-				$sql .= " GROUP BY fd.rowid, bu.fk_bank, pf.amount, bu.url_id";	// TODO Must never have a GROUP BY on a field if field is not inside an aggregate function.
+				//$sql .= " GROUP BY fd.rowid, bu.fk_bank, pf.amount, bu.url_id, f.rowid, f.ref, f.total_ht, f.total_ttc, fd.total_ht, fd.total_tva, fd.total_localtax1, fd.total_localtax2, fd.tva_tx, fd.total_ttc, fd.vat_src_code, aa.account_number, aa.label, bu.type";
 				$sql .= " ORDER BY aa.account_number";
 
 				$resql = $db->query($sql);
@@ -352,7 +352,7 @@ if ($resql) {
 				$sql .= " AND ffd.product_type IN (0,1)";
 				$sql .= " AND ff.type IN (".FactureFournisseur::TYPE_STANDARD.",".FactureFournisseur::TYPE_REPLACEMENT.",".FactureFournisseur::TYPE_CREDIT_NOTE.",".(!getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS') ? FactureFournisseur::TYPE_DEPOSIT."," : "").FactureFournisseur::TYPE_SITUATION.")";
 				$sql .= " AND bu.fk_bank IN (".$db->sanitize(implode(',', $ids)).")";
-				$sql .= " GROUP BY ffd.rowid, bu.fk_bank";
+				//$sql .= " GROUP BY ffd.rowid, bu.fk_bank, ff.rowid, ff.ref, ff.total_ht, ff.total_ttc, pff.amount, ffd.total_ht, ffd.tva, ffd.total_localtax1, ffd.total_localtax2, ffd.tva_tx, ffd.total_ttc, ffd.vat_src_code, aa.account_number, aa.label, bu.url_id, bu.type";
 				$sql .= " ORDER BY aa.account_number";
 
 				$resql = $db->query($sql);
@@ -463,7 +463,7 @@ if ($resql) {
 				}
 				$sql .= " AND er.fk_statut >= ".ExpenseReport::STATUS_APPROVED;
 				$sql .= " AND bu.fk_bank IN (".$db->sanitize(implode(',', $ids)).")";
-				$sql .= " GROUP BY erf.rowid, bu.fk_bank, per.amount, aa.label, bu.url_id";
+				//$sql .= " GROUP BY erf.rowid, bu.fk_bank, per.amount, aa.label, bu.url_id, er.rowid, er.ref, er.total_ht, er.total_ttc, erf.total_ht, erf.total_tva, erf.total_localtax1, erf.total_localtax2, erf.tva_tx, erf.total_ttc, erf.vat_src_code, ctf.accountancy_code, bu.type, aa.account_number";
 				$sql .= " ORDER BY aa.account_number";
 
 				$resql = $db->query($sql);

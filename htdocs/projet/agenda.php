@@ -245,7 +245,7 @@ if (!empty($object->id)) {
 		$param .= '&search_complete='.urlencode($search_complete);
 	}
 	if ($search_filtert != '') {
-		$param .= '&search_filtert='.urlencode($search_filtert);
+		$param .= '&search_filtert='.urlencode((string) $search_filtert);
 	}
 	if ($search_dateevent_start != '') {
 		$param .= '&dateevent_startyear='.GETPOSTINT('dateevent_startyear');

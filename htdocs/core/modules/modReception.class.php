@@ -71,38 +71,37 @@ class modReception extends DolibarrModules
 		$this->requiredby = array();
 		$this->conflictwith = array();
 		$this->langfiles = array('receptions');
-
 		// Constants
-		$this->const = array();
-		$r = 0;
-
-		$this->const[$r][0] = "RECEPTION_ADDON_PDF";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "squille";
-		$this->const[$r][3] = 'Nom du gestionnaire de generation des bons receptions en PDF';
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "RECEPTION_ADDON_NUMBER";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "mod_reception_beryl";
-		$this->const[$r][3] = 'Name for numbering manager for receptions';
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "RECEPTION_ADDON_PDF_ODT_PATH";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/receptions";
-		$this->const[$r][3] = "";
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "MAIN_SUBMODULE_RECEPTION";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "1";
-		$this->const[$r][3] = "Enable receptions";
-		$this->const[$r][4] = 0;
-		$r++;
+		$this->const = [
+			[
+				"RECEPTION_ADDON_PDF",
+				"chaine",
+				"squille",
+				'Nom du gestionnaire de generation des bons receptions en PDF',
+				0,
+			],
+			[
+				"RECEPTION_ADDON_NUMBER",
+				"chaine",
+				"mod_reception_beryl",
+				'Name for numbering manager for receptions',
+				0,
+			],
+			[
+				"RECEPTION_ADDON_PDF_ODT_PATH",
+				"chaine",
+				"DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/receptions",
+				"",
+				0,
+			],
+			[
+				"MAIN_SUBMODULE_RECEPTION",
+				"chaine",
+				"1",
+				"Enable receptions",
+				0,
+			],
+		];
 
 		// Boxes
 		$this->boxes = array();

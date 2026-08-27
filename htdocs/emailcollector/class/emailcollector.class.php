@@ -1767,7 +1767,7 @@ class EmailCollector extends CommonObject
 				$headers = array_combine($matches[1], $matches[2]);
 
 
-				$richarrayofemail[] = array('imapemail' => $imapemail, 'header' => $header, 'headers' => $headers, 'overview' => $overview, 'date' => strtotime($headers['Date']));
+				$richarrayofemail[] = array('imapemail' => $imapemail, 'header' => $header, 'headers' => $headers, 'overview' => $overview, 'date' => empty($headers['Date']) ? false : strtotime($headers['Date']));
 			}
 
 
@@ -1977,9 +1977,10 @@ class EmailCollector extends CommonObject
 					$ticketfoundby = '';
 					$candidaturefoundby = '';
 
-
 					if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
-						$dateformated = dol_print_date($overview['date'], 'dayrfc', 'gmt');		// May generate a warning "dol_print_date($overview['date'], 'dayrfc', 'gmt')" in log
+						// $overview['date'] is a DateTime/Carbon object when using the PHPIMAP driver, not a timestamp, so it must be converted first
+						$overviewdate = ($overview['date'] instanceof DateTimeInterface) ? $overview['date']->getTimestamp() : $overview['date'];
+						$dateformated = dol_print_date($overviewdate, 'dayrfc', 'gmt');		// May generate a warning "dol_print_date($overview['date'], 'dayrfc', 'gmt')" in log
 						dol_syslog("msgid=".$overview['message_id']." date=".$dateformated." from=".$overview['from']." to=".$overview['to']." subject=".$overview['subject']);
 
 						// Removed emojis
@@ -3708,7 +3709,7 @@ class EmailCollector extends CommonObject
 						// Stop the loop to process email if we reach maximum collected per collect
 						if ($this->maxemailpercollect > 0 && $nbemailok >= $this->maxemailpercollect) {
 							dol_syslog("EmailCollect::doCollectOneCollector We reach maximum of ".$nbemailok." collected with success, so we stop this collector now.");
-							$datelastok = strtotime($headers['Date']); // Set datetime
+							$datelastok = empty($headers['Date']) ? false : strtotime($headers['Date']); // Set datetime
 							break;
 						}
 					} else {

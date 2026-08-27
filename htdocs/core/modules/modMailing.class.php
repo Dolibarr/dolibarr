@@ -72,15 +72,16 @@ class modMailing extends DolibarrModules
 		$this->config_page_url = array("mailing.php");
 
 		// Constants
-		$this->const = array();
-		$r = 0;
+		$this->const = [
+			[
+				"MAILING_CONTACT_DEFAULT_BULK_STATUS",
+				"chaine",
+				"0",
+				'Default value for field "Refuse bulk email" when creating a contact',
+				0,
+			],
+		];
 
-		$this->const[$r][0] = "MAILING_CONTACT_DEFAULT_BULK_STATUS";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "0";
-		$this->const[$r][3] = 'Default value for field "Refuse bulk email" when creating a contact';
-		$this->const[$r][4] = 0;
-		$r++;
 
 		// Boxes
 		$this->boxes = array();

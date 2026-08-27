@@ -1104,8 +1104,10 @@ if ($user->hasRight("holiday", "read")) {
 			$event->type = 'holiday';
 			$event->type_picto = 'holiday';
 
-			$event->datep                   = $db->jdate($obj->date_start) + (empty($obj->halfday) || $obj->halfday == 1 ? 0 : 12) * 60 * 60;
-			$event->datef                   = $db->jdate($obj->date_end) + (empty($obj->halfday) || $obj->halfday == -1 ? 24 : 12) * 60 * 60 - 1;
+			// date_debut and date_fin are dates without time, so they must be read and rendered in GMT to
+			// stay independent from the server and user timezones (otherwise the calendar day box is shifted).
+			$event->datep                   = $db->jdate($obj->date_start, 'gmt') + (empty($obj->halfday) || $obj->halfday == 1 ? 0 : 12) * 60 * 60;
+			$event->datef                   = $db->jdate($obj->date_end, 'gmt') + (empty($obj->halfday) || $obj->halfday == -1 ? 24 : 12) * 60 * 60 - 1;
 			$event->date_start_in_calendar  = $event->datep;
 			$event->date_end_in_calendar    = $event->datef;
 
@@ -1124,14 +1126,14 @@ if ($user->hasRight("holiday", "read")) {
 
 
 			$daycursor = $event->date_start_in_calendar;
-			$annee = (int) dol_print_date($daycursor, '%Y', 'tzuserrel');
-			$mois = (int) dol_print_date($daycursor, '%m', 'tzuserrel');
-			$jour = (int) dol_print_date($daycursor, '%d', 'tzuserrel');
+			$annee = (int) dol_print_date($daycursor, '%Y', 'gmt');
+			$mois = (int) dol_print_date($daycursor, '%m', 'gmt');
+			$jour = (int) dol_print_date($daycursor, '%d', 'gmt');
 
 			$daycursorend = $event->date_end_in_calendar;
-			$anneeend = (int) dol_print_date($daycursorend, '%Y', 'tzuserrel');
-			$moisend = (int) dol_print_date($daycursorend, '%m', 'tzuserrel');
-			$jourend = (int) dol_print_date($daycursorend, '%d', 'tzuserrel');
+			$anneeend = (int) dol_print_date($daycursorend, '%Y', 'gmt');
+			$moisend = (int) dol_print_date($daycursorend, '%m', 'gmt');
+			$jourend = (int) dol_print_date($daycursorend, '%d', 'gmt');
 
 			// daykey must be date that represent day box in calendar so must be a user time
 			$daykey = dol_mktime(0, 0, 0, $mois, $jour, $annee, 'gmt');

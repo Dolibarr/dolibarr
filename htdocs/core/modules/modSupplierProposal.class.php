@@ -74,28 +74,29 @@ class modSupplierProposal extends DolibarrModules
 		$this->langfiles = array("supplier_proposal");
 
 		// Constants
-		$this->const = array();
-		$r = 0;
-
-		$this->const[$r][0] = "SUPPLIER_PROPOSAL_ADDON_PDF";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "aurore";
-		$this->const[$r][3] = 'Name of submodule to generate PDF for supplier quotation request';
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "SUPPLIER_PROPOSAL_ADDON";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "mod_supplier_proposal_marbre";
-		$this->const[$r][3] = 'Name of submodule to number supplier quotation request';
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "SUPPLIER_PROPOSAL_ADDON_PDF_ODT_PATH";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/supplier_proposals";
-		$this->const[$r][3] = "";
-		$this->const[$r][4] = 0;
+		$this->const = [
+			[
+				"SUPPLIER_PROPOSAL_ADDON_PDF",
+				"chaine",
+				"aurore",
+				'Name of submodule to generate PDF for supplier quotation request',
+				0,
+			],
+			[
+				"SUPPLIER_PROPOSAL_ADDON",
+				"chaine",
+				"mod_supplier_proposal_marbre",
+				'Name of submodule to number supplier quotation request',
+				0,
+			],
+			[
+				"SUPPLIER_PROPOSAL_ADDON_PDF_ODT_PATH",
+				"chaine",
+				"DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/supplier_proposals",
+				"",
+				0,
+			],
+		];
 
 		// Boxes
 		$this->boxes = array();
