@@ -179,6 +179,8 @@ if (empty($reshook)) {
 	}
 }
 
+$arrayofselected = !empty($arrayofselected) && is_array($arrayofselected) ? $arrayofselected : array();
+
 /*
  * View
  */
