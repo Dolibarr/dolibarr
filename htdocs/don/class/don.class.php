@@ -252,7 +252,7 @@ class Don extends CommonObject
 
 		$now = dol_now();
 
-		// Charge tableau des id de societe socids
+		// Load array of company ids socids
 		$socids = array();
 
 		$sql = "SELECT rowid";

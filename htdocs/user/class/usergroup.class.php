@@ -1036,7 +1036,7 @@ class UserGroup extends CommonObject
 
 		$langs->load("user");
 
-		// Positionne le modele sur le nom du modele a utiliser
+		// Set the model to the name of the model to use
 		if (!dol_strlen($modele)) {
 			if (getDolGlobalString('USERGROUP_ADDON_PDF')) {
 				$modele = getDolGlobalString('USERGROUP_ADDON_PDF');

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2015-2023 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -128,7 +128,13 @@ if (isModEnabled('invoice') && !getDolGlobalString('MAIN_SEARCHFORM_CUSTOMER_INV
 }
 
 if (isModEnabled('supplier_proposal') && !getDolGlobalString('MAIN_SEARCHFORM_SUPPLIER_PROPAL_DISABLED') && $user->hasRight('supplier_proposal', 'lire')) {
-	$arrayresult['searchintosupplierpropal'] = array('position' => getDolGlobalInt('SEARCHFORM_POSITION_SUPPLIER_PROPOSAL', 100), 'img' => 'object_supplier_proposal', 'label' => $langs->trans("SearchIntoSupplierProposals", $search_boxvalue), 'text' => img_picto('', 'object_supplier_proposal', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoSupplierProposals", $search_boxvalue), 'url' => DOL_URL_ROOT.'/supplier_proposal/list.php'.($search_boxvalue ? '?search_all='.urlencode($search_boxvalue) : ''));
+	$arrayresult['searchintosupplierpropal'] = array(
+		'position' => getDolGlobalInt('SEARCHFORM_POSITION_SUPPLIER_PROPOSAL', 100),
+		'img' => 'object_supplier_proposal',
+		'label' => $langs->trans("SearchIntoSupplierProposals", $search_boxvalue),
+		'text' => img_picto('', 'object_supplier_proposal', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoSupplierProposals", $search_boxvalue),
+		'url' => DOL_URL_ROOT.'/supplier_proposal/list.php'.($search_boxvalue ? '?search_all='.urlencode($search_boxvalue) : '')
+	);
 }
 if (((isModEnabled('fournisseur') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD') && $user->hasRight('fournisseur', 'commande', 'lire')) || (isModEnabled('supplier_order') &&  $user->hasRight('supplier_order', 'lire'))) && !getDolGlobalString('MAIN_SEARCHFORM_SUPPLIER_ORDER_DISABLED')) {
 	$arrayresult['searchintosupplierorder'] = array('position' => getDolGlobalInt('SEARCHFORM_POSITION_PURCHASE_ORDER', 110), 'img' => 'object_supplier_order', 'label' => $langs->trans("SearchIntoSupplierOrders", $search_boxvalue), 'text' => img_picto('', 'object_supplier_order', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoSupplierOrders", $search_boxvalue), 'url' => DOL_URL_ROOT.'/fourn/commande/list.php'.($search_boxvalue ? '?search_all='.urlencode($search_boxvalue) : ''));
