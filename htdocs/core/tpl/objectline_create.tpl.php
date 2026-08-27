@@ -558,7 +558,9 @@ if ($nolinesbefore) {
 		require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 		$formproductcreate = new FormProduct($object->db);
 		$defaultwhline = GETPOSTINT('entrepot_id');
+		// @phan-suppress-next-line PhanUndeclaredProperty
 		if (empty($defaultwhline) && !empty($object->fk_warehouse)) {
+			// @phan-suppress-next-line PhanUndeclaredProperty
 			$defaultwhline = (int) $object->fk_warehouse;	// Default warehouse set on the reception header
 		}
 		print $formproductcreate->selectWarehouses($defaultwhline > 0 ? $defaultwhline : '', 'entrepot_id', '', 1, 0, 0, '', 1);
