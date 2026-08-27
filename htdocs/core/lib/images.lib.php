@@ -27,9 +27,9 @@
 // Define size of logo small and mini
 // TODO Remove this and call getDefaultImageSizes() instead
 $maxwidthsmall = 480;
-$maxheightsmall = 270; // Near 16/9eme
+$maxheightsmall = 270; // Near 16:9 aspect ratio
 $maxwidthmini = 128;
-$maxheightmini = 72; // 16/9eme
+$maxheightmini = 72; // 16:9 aspect ratio
 $quality = 80;
 
 if (!defined('IMAGETYPE_WEBP')) {
@@ -51,9 +51,9 @@ if (!defined('IMAGETYPE_WEBP')) {
 function getDefaultImageSizes()
 {
 	$maxwidthsmall = 480;
-	$maxheightsmall = 270; // Near 16/9eme
+	$maxheightsmall = 270; // Near 16:9 aspect ratio
 	$maxwidthmini = 128;
-	$maxheightmini = 72; // 16/9eme
+	$maxheightmini = 72; // 16:9 aspect ratio
 	$quality = 80;
 
 	return array(
