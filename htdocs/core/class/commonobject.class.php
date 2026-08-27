@@ -1676,7 +1676,7 @@ abstract class CommonObject
 
 				if (!$list) {
 					$transkey = "TypeContact_".$obj->element."_".$obj->source."_".$obj->code;
-					$libelle_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->type_label);
+					$label_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->type_label);
 					$tab[$i] = array(
 						'parentId' => $this->id,
 						'source' => $obj->source,
@@ -1698,7 +1698,7 @@ abstract class CommonObject
 						'statuscontact' => $obj->statuscontact,
 						'rowid' => $obj->rowid,
 						'code' => $obj->code,
-						'libelle' => $libelle_type,
+						'libelle' => $label_type,
 						'status' => (int) $obj->statuslink,
 						'fk_c_type_contact' => $obj->fk_c_type_contact
 					);
@@ -1803,13 +1803,13 @@ abstract class CommonObject
 			$obj = $this->db->fetch_object($resql);
 
 			$transkey = "TypeContact_".$this->element."_".$source."_".$obj->code;
-			$libelle_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $langs->trans($obj->type_label));
+			$label_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $langs->trans($obj->type_label));
 			if (empty($option)) {
-				$tab[$obj->rowid] = $libelle_type;
+				$tab[$obj->rowid] = $label_type;
 			} elseif ($option == 1) {
-				$tab[$obj->code] = $libelle_type;
+				$tab[$obj->code] = $label_type;
 			} else {
-				$tab[$obj->rowid] = array('id' => $obj->rowid, 'code' => $obj->code, 'label' => $libelle_type);
+				$tab[$obj->rowid] = array('id' => $obj->rowid, 'code' => $obj->code, 'label' => $label_type);
 			}
 			$i++;
 		}
@@ -1884,11 +1884,11 @@ abstract class CommonObject
 						$modulename = 'fournisseur';
 					}
 					if (isModEnabled($modulename)) {
-						$libelle_element = $langs->trans('ContactDefault_'.$obj->element);
+						$label_element = $langs->trans('ContactDefault_'.$obj->element);
 						$tmpelement = $obj->element;
 						$transkey = "TypeContact_".$tmpelement."_".$source."_".$obj->code;
-						$libelle_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->type_label);
-						$tab[$obj->rowid] = $libelle_element.' - '.$libelle_type;
+						$label_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->type_label);
+						$tab[$obj->rowid] = $label_element.' - '.$label_type;
 					}
 				}
 			}
