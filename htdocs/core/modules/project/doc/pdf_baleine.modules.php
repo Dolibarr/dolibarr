@@ -328,7 +328,7 @@ class pdf_baleine extends ModelePDFProjects
 						// Label
 						$pdf->SetXY($this->posxlabel, $curY);
 						$posybefore = $pdf->GetY();
-						$pdf->MultiCell($this->posxworkload - $this->posxlabel, 3, $outputlangs->convToOutputCharset($libelleline), 0, 'L');
+						$pdf->MultiCell($this->posxworkload - $this->posxlabel, 3, $outputlangs->convToOutputCharset($labelline), 0, 'L');
 						$pageposafter = $pdf->getPage();
 						$posyafter = $pdf->GetY();
 						if ($posyafter > ($this->page_hauteur - ($heightforfooter + $heightforfreetext + $heightforinfotot))) {	// There is no space left for total+free text
