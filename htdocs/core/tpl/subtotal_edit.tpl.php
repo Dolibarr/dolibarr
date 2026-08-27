@@ -124,14 +124,25 @@ if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 
 
 	if (!$situationinvoicelinewithparent) {
-		print '<input type="text" name="line_desc" class="marginrightonly" id="line_desc" value="';
-		print GETPOSTISSET('product_desc') ? GETPOST('product_desc', 'restricthtml') : $line->description . '"';
 		$disabled = 0;
-		if ($line_type == 'subtotal') {
-			print ' readonly="readonly"';
-			$disabled = 1;
+		if (getDolGlobalString("SUBTOTAL_CAN_USE_LONG_TITLE")) {
+			print '<textarea name="line_desc" class="marginrightonly minwidth300 valignmiddle" id="line_desc"';
+			if ($line_type == 'subtotal') {
+				print ' readonly="readonly"';
+				$disabled = 1;
+			}
+			print '>';
+			print GETPOSTISSET('product_desc') ? GETPOST('product_desc', 'restricthtml') : $line->description;
+			print '</textarea>';
+		} else {
+			print '<input type="text" name="line_desc" class="marginrightonly minwidth300 valignmiddle" id="line_desc" value="';
+			print GETPOSTISSET('product_desc') ? GETPOST('product_desc', 'restricthtml') : $line->description . '"';
+			if ($line_type == 'subtotal') {
+				print ' readonly="readonly"';
+				$disabled = 1;
+			}
+			print '>';
 		}
-		print '>';
 		$depth_array = $this->getPossibleLevels($langs);
 		print $form->selectarray('line_depth', $depth_array, abs($line->qty), 0, 0, 0, '', 0, 0, $disabled);
 		if ($disabled) {

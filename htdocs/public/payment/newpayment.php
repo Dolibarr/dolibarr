@@ -2441,6 +2441,12 @@ if ($action != 'dopayment') {
 			print '<br><br><div class="amountpaymentcomplete size12x wrapimp">'.$langs->trans("OrderBilled").'</div>';
 		} elseif ($source == 'invoice' && $object->paye) {
 			print '<br><br><div class="amountpaymentcomplete size12x wrapimp">'.$langs->trans("InvoicePaid").'</div>';
+		} elseif ($source == 'invoice' && $object->status == Facture::STATUS_ABANDONED && $object->close_code == Facture::CLOSECODE_REPLACED) {
+			// Only refuse the payment when the invoice was closed because it has been replaced: the amount is
+			// then claimed by the replacement invoice and paying this link would pay it twice. An invoice
+			// abandoned for any other reason, a bad debt for instance, keeps its link usable, since a customer
+			// paying it anyway is a good outcome.
+			print '<br><br><div class="amountpaymentcomplete size12x wrapimp">'.$langs->trans("Abandoned").'</div>';
 		} elseif ($source == 'donation' && $object->paid) {
 			print '<br><br><div class="amountpaymentcomplete size12x wrapimp">'.$langs->trans("DonationPaid").'</div>';
 		} else {

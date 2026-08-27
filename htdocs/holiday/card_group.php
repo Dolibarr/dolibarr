@@ -271,14 +271,16 @@ if (empty($reshook)) {
 			// usergroup  select
 			// better perf on single sql
 			/** GROUPS */
-			$sql = ' SELECT DISTINCT u.rowid,u.lastname,u.firstname from ' . MAIN_DB_PREFIX . 'user as  u';
-			$sql .= ' LEFT JOIN  ' . MAIN_DB_PREFIX . 'usergroup_user as ug on ug.fk_user = u.rowid  ';
-			$sql .= ' WHERE  fk_usergroup in (' .$db->sanitize(implode(',', $groups)) . ')';
-			$resql = $db->query($sql);
+			if (is_array($groups) && count($groups) > 0) {
+				$sql = ' SELECT DISTINCT u.rowid,u.lastname,u.firstname from ' . MAIN_DB_PREFIX . 'user as  u';
+				$sql .= ' LEFT JOIN  ' . MAIN_DB_PREFIX . 'usergroup_user as ug on ug.fk_user = u.rowid  ';
+				$sql .= ' WHERE  fk_usergroup in (' .$db->sanitize(implode(',', $groups)) . ')';
+				$resql = $db->query($sql);
 
-			if ($resql) {
-				while ($obj = $db->fetch_object($resql)) {
-					$TusersToProcess[$obj->rowid] = $obj->rowid;
+				if ($resql) {
+					while ($obj = $db->fetch_object($resql)) {
+						$TusersToProcess[$obj->rowid] = $obj->rowid;
+					}
 				}
 			}
 			/** USERS  */
