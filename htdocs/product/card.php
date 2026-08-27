@@ -431,7 +431,6 @@ if (empty($reshook)) {
 							$dirlist = dol_dir_list($srcdir, 'files', 1);
 							foreach ($dirlist as $filetomove) {
 								$destfile = $destdir.'/'.$filetomove['relativename'];
-								//var_dump('Move file '.$filetomove['relativename'].' into '.$destfile);
 								dol_move($filetomove['fullname'], $destfile, '0', 0, 0, 1);
 							}
 							//exit;
@@ -1621,8 +1620,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			}
 
 			if ($showbarcode) {
-				//var_dump($modBarCodeProduct); exit;
-
 				print '<tr><td>'.$langs->trans('BarcodeType').'</td><td>';
 				if (GETPOSTISSET('fk_barcode_type')) {
 					$fk_barcode_type = GETPOST('fk_barcode_type') ? GETPOST('fk_barcode_type') : 0;
