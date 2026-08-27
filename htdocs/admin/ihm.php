@@ -300,7 +300,8 @@ if ($action == 'update') {
 		$dirforimage = $conf->mycompany->dir_output . '/logos/';
 		if ($_FILES[$varforimage]["tmp_name"]) {
 			$reg = array();
-			if (isset($_FILES[$varforimage]["name"]) && preg_match('/([^\\/:]+)$/i', (string) $_FILES[$varforimage]["name"], $reg)) {
+			// @phan-suppress-next-line PhanTypeInvalidDimOffset
+			if (preg_match('/([^\\/:]+)$/i', (string) $_FILES[$varforimage]["name"], $reg)) {
 				$original_file = $reg[1];
 
 				$isimage = image_format_supported($original_file);
@@ -309,6 +310,7 @@ if ($action == 'update') {
 					if (!is_dir($dirforimage)) {
 						dol_mkdir($dirforimage);
 					}
+					// @phan-suppress-next-line PhanTypeInvalidDimOffset
 					$result = dol_move_uploaded_file($_FILES[$varforimage]["tmp_name"], $dirforimage . $original_file, 1, 0, $_FILES[$varforimage]['error']);
 					if ($result > 0) {
 						dolibarr_set_const($db, "MAIN_LOGIN_BACKGROUND", $original_file, 'chaine', 0, '', $conf->entity);
