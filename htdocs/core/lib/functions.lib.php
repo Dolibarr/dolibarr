@@ -7974,6 +7974,17 @@ function price2num($amount, $rounding = '', $option = 0)
 }
 
 /**
+ * Style total amount of an object
+ *
+ * @param	string|float			$amount			Amount value to format
+ * @return  string                      			String to show amount with style of total
+ */
+function showTotalAmount($amount)
+{
+	return '<span class="amount">'.$amount.'</span>';
+}
+
+/**
  * Output a dimension with best unit
  *
  * @param   float       $dimension      	Dimension

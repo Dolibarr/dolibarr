@@ -52,6 +52,7 @@ $action     = GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view'; //
 $massaction = GETPOST('massaction', 'alpha');
 $toselect   = GETPOST('toselect', 'array:int'); // Array of ids of elements selected into a list
 $optioncss = GETPOST('optioncss', 'alpha');
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'supplierpricelist'; // To manage different context of search
 $mode       = GETPOST('mode', 'aZ'); // The output mode ('list', 'kanban', 'hierarchy', 'calendar', ...)
 
 $sref = GETPOST('sref', 'alphanohtml');
@@ -96,7 +97,7 @@ if (!$user->hasRight("produit", "lire") && !$user->hasRight("service", "lire")) 
 $permissiontoadd = ($user->hasRight('product', 'read') || $user->hasRight('service', 'read'));
 
 // Initialize technical object
-$object = $productstatic;
+$object = new ProductFournisseurPrice($db);
 // Definition of array of fields for columns
 $arrayfields = array();
 foreach ($object->fields as $key => $val) {
