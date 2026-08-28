@@ -184,7 +184,6 @@ if (empty($reshook)) {
 		$search_status = -1;
 		$search_lastresult = '';
 		$search_module_name = '';
-		$search_all = '';
 		$toselect = array();
 		$search_array_options = array();
 	}
