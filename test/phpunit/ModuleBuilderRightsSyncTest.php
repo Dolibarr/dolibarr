@@ -25,6 +25,7 @@
 global $conf,$user,$langs,$db;
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/files.lib.php';
+require_once dirname(__FILE__).'/../../htdocs/core/lib/modulebuilder.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/modulebuilder/class/SyncReport.class.php';
 require_once dirname(__FILE__).'/../../htdocs/modulebuilder/class/RightsSyncCommand.class.php';
 require_once dirname(__FILE__).'/../../htdocs/modulebuilder/class/PermissionsBlock.class.php';
@@ -723,5 +724,77 @@ class ModuleBuilderRightsSyncTest extends CommonClassTest
 		$this->assertTrue($report->hasWarnings());
 		$this->assertCount(2, $this->parseRenderedRights($path));
 		$this->assertStringNotContainsString('[2]', (string) file_get_contents($path));
+	}
+
+	/**
+	 * The legacy entry point keeps its signature and its 1/-1 contract for every action.
+	 *
+	 * @return void
+	 */
+	public function testLegacyReWriteAllPermissionsStillWorks()
+	{
+		$path = $this->makeDescriptorFixture('');
+		$this->assertSame(1, reWriteAllPermissions($path, array(), null, null, 'MyObject', 'MyModule', -2));
+		$this->assertCount(3, $this->parseRenderedRights($path));
+
+		// The object already owns rights: the legacy contract reports that as -1
+		$existing = array(array(1 => 'Read myobject', 4 => 'myobject', 5 => 'read'));
+		$this->assertSame(-1, reWriteAllPermissions($path, $existing, null, null, 'MyObject', 'MyModule', -2));
+
+		// Unknown action is refused
+		$this->assertSame(-1, reWriteAllPermissions($path, $existing, null, null, '', '', 7));
+
+		// action 2 really applies its change now
+		$path = $this->makeDescriptorFixture('');
+		$this->assertSame(1, reWriteAllPermissions(
+			$path,
+			array(array(1 => 'Read alpha', 4 => 'alpha', 5 => 'read')),
+			0,
+			array(1 => 'Renamed', 4 => 'alpha', 5 => 'read'),
+			'',
+			'MyModule',
+			2
+		));
+		$this->assertStringContainsString('Renamed', (string) file_get_contents($path));
+	}
+
+	/**
+	 * A block that cannot be rewritten keeps the legacy -1 code and leaves the file alone.
+	 *
+	 * @return void
+	 */
+	public function testLegacyReWriteAllPermissionsRefusesDynamicBlock()
+	{
+		$inner = "\t\tforeach (array('read') as \$crud) {\n\t\t\t\$r++;\n\t\t}\n";
+		$path = $this->makeDescriptorFixture($inner);
+		$before = (string) file_get_contents($path);
+
+		$this->assertSame(-1, reWriteAllPermissions($path, array(), null, null, 'MyObject', 'MyModule', -2));
+		$this->assertSame($before, (string) file_get_contents($path));
+	}
+
+	/**
+	 * deletePerms() empties the block, reports its status, and never loops on a truncated file.
+	 *
+	 * @return void
+	 */
+	public function testDeletePermsEmptiesBlockAndReportsStatus()
+	{
+		$path = $this->makeDescriptorFixture("\t\t\$this->rights[\$r][5] = 'read';\n\t\t\$r++;\n");
+		$this->assertSame(1, deletePerms($path));
+
+		$after = (string) file_get_contents($path);
+		$this->assertStringNotContainsString('$this->rights', $after);
+		$this->assertSame(1, substr_count($after, PermissionsBlock::BEGIN_MARKER));
+
+		// A descriptor without the END marker is reported, not looped over
+		$dir = sys_get_temp_dir().'/mbrightssync'.getmypid();
+		if (!is_dir($dir)) {
+			dol_mkdir($dir);
+		}
+		$truncated = $dir.'/modTruncated'.uniqid().'.php';
+		$this->fixtures[] = $truncated;
+		file_put_contents($truncated, "<?php\nclass modTruncated { function f() { ".PermissionsBlock::BEGIN_MARKER." } }\n");
+		$this->assertSame(-1, deletePerms($truncated));
 	}
 }
