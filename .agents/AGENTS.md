@@ -162,6 +162,7 @@ If possible:
     - Example: `FIX: #1234 Correct VAT calculation on credit notes`
 - Do not update the `ChangeLog` file (this file will be generated before the release from all commit titles)
 - When commiting, keep a commit and PR description short and mention the AI agent name in the message by adding a line "Co-authored-by:"
+- For code contribution on stable branches (non develop), PR must contains 1 and only 1 bug fix at once.
 
 ---
 
