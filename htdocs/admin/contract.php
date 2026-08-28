@@ -563,6 +563,14 @@ print '<td class="right">';
 print ajax_constantonoff('CONTRACT_ALLOW_EXTERNAL_DOWNLOAD', array(), null, 0, 0, 0, 2, 0, 1);
 print '</td>';
 print '</tr>';
+
+// Reminder by email before a contract service expires
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("CONTRACT_REMINDER_EMAIL", $langs->transnoentitiesnoconv("Contract")).'</td>';
+print '<td class="right">';
+print ajax_constantonoff('CONTRACT_REMINDER_EMAIL', array(), null, 0, 0, 0, 2, 0, 1, '', '', 'inline-block', 0, $langs->trans("CONTRACT_REMINDER_EMAILHelp", $langs->transnoentitiesnoconv("Contract")));
+print '</td>';
+print '</tr>';
 print '</table>';
 print '</div>';
 

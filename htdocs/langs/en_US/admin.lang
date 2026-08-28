@@ -1642,6 +1642,8 @@ MemberCreateAnExternalUserForSubscriptionValidated=Create automatically an exter
 VisitorCanChooseItsPaymentMode=Visitor can choose from any available payment modes
 MEMBER_REMINDER_EMAIL=Enable automatic reminder <b>by email</b> of expired subscriptions.
 MEMBER_REMINDER_EMAILHelp=Note: The module <strong>%s</strong> must be enabled and correctly setup to send reminders.
+CONTRACT_REMINDER_EMAIL=Enable automatic reminder <b>by email</b> of contract services about to expire.
+CONTRACT_REMINDER_EMAILHelp=Note: The module <strong>%s</strong> must be enabled and correctly setup to send reminders.
 MembersDocModules=Document templates for documents generated from member record
 ##### LDAP setup #####
 LDAPSetup=LDAP Setup
