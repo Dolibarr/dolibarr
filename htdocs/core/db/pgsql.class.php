@@ -77,8 +77,9 @@ class DoliDBPgsql extends DoliDB
 	 *	@param	    string	$pass		Password
 	 *	@param	    string	$name		Nom de la database
 	 *	@param	    int		$port		Port of database server
+	 *	@param	    bool	$forcenew	Force opening of a genuinely new connection instead of reusing one already opened to the same server/database in this process (see connect())
 	 */
-	public function __construct($type, $host, $user, $pass, $name = '', $port = 0)
+	public function __construct($type, $host, $user, $pass, $name = '', $port = 0, $forcenew = false)
 	{
 		global $conf, $langs;
 
@@ -116,7 +117,7 @@ class DoliDBPgsql extends DoliDB
 
 		// Essai connection serveur
 		//print "$host, $user, $pass, $name, $port";
-		$this->db = $this->connect($host, $user, $pass, $name, $port);
+		$this->db = $this->connect($host, $user, $pass, $name, $port, $forcenew);
 
 		if ($this->db) {
 			$this->connected = true;
@@ -405,10 +406,16 @@ class DoliDBPgsql extends DoliDB
 	 *	@param	    string		$passwd		Password
 	 *	@param		string		$name		Name of database (not used for mysql, used for pgsql)
 	 *	@param		integer		$port		Port of database server
+	 *	@param		bool		$forcenew	Force opening of a genuinely new connection instead of reusing one already opened to the same connection string in this process.
+	 *										By default, pg_connect() silently returns an existing connection resource when called again with an identical connection string within
+	 *										the same PHP process. This is dangerous whenever code intentionally opens a second, independent DoliDB instance to the same database
+	 *										(for example to run a piece of work on its own transaction) and later closes it: without $forcenew, that close() would actually close
+	 *										the shared underlying connection still in use by the original DoliDB instance, causing later queries on it to fail with
+	 *										"PostgreSQL connection has already been closed". Pass true whenever the caller needs a truly independent connection.
 	 *	@return		false|resource			Database access handler
 	 *	@see		close()
 	 */
-	public function connect($host, $login, $passwd, $name, $port = 0)
+	public function connect($host, $login, $passwd, $name, $port = 0, $forcenew = false)
 	{
 		// use pg_pconnect() instead of pg_connect() if you want to use persistent connection costing 1ms, instead of 30ms for non persistent
 
@@ -425,11 +432,13 @@ class DoliDBPgsql extends DoliDB
 			$name = "postgres"; // When try to connect using admin user
 		}
 
+		$connectflags = $forcenew ? PGSQL_CONNECT_FORCE_NEW : 0;
+
 		// try first Unix domain socket (local)
 		if ((!empty($host) && $host == "socket") && !defined('NOLOCALSOCKETPGCONNECT')) {
 			$con_string = "dbname='".$name."' user='".$login."' password='".$passwd."'"; // $name may be empty
 			try {
-				$this->db = @pg_connect($con_string);
+				$this->db = @pg_connect($con_string, $connectflags);
 			} catch (Exception $e) {
 				// No message
 			}
@@ -446,7 +455,7 @@ class DoliDBPgsql extends DoliDB
 
 			$con_string = "host='".$host."' port='".$port."' dbname='".$name."' user='".$login."' password='".$passwd."'";
 			try {
-				$this->db = @pg_connect($con_string);
+				$this->db = @pg_connect($con_string, $connectflags);
 			} catch (Exception $e) {
 				print $e->getMessage();
 			}
