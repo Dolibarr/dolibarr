@@ -30,7 +30,7 @@ jobs:
             --state open \
             --limit 2 \
             --json number,title,createdAt,updatedAt \
-            --jq '.[] | select(.updatedAt < "'"$(date -d '1 year ago' --iso-8601=seconds)"'") |
+            --jq '.[] | select(.updatedAt < "'"$(date -d '1 year ago' --iso-8601=seconds)"'")' |
           while IFS= read -r PR; do
 
             PR_NUMBER=$(echo "$PR" | jq -r '.number')
