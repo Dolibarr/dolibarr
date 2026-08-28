@@ -28,6 +28,7 @@ require_once dirname(__FILE__).'/../../htdocs/core/lib/files.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/modulebuilder/class/SyncReport.class.php';
 require_once dirname(__FILE__).'/../../htdocs/modulebuilder/class/RightsSyncCommand.class.php';
 require_once dirname(__FILE__).'/../../htdocs/modulebuilder/class/PermissionsBlock.class.php';
+require_once dirname(__FILE__).'/../../htdocs/modulebuilder/class/RightsSyncService.class.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 /**
@@ -63,6 +64,31 @@ class ModuleBuilderRightsSyncTest extends CommonClassTest
 		file_put_contents($path, $content);
 		$this->fixtures[] = $path;
 		return $path;
+	}
+
+	/**
+	 * Read back the rights actually declared by a fixture descriptor block.
+	 *
+	 * @param string $path Fixture path
+	 * @return array<int,array<int,string>> Rights as index => value maps
+	 */
+	private function parseRenderedRights(string $path): array
+	{
+		$content = (string) file_get_contents($path);
+		$matches = array();
+		preg_match_all("/\\\$this->rights\\[\\\$r\\]\\[(\\d+)\\] = '([^']*)'/", $content, $matches, PREG_SET_ORDER);
+
+		$rights = array();
+		$current = array();
+		foreach ($matches as $match) {
+			$current[(int) $match[1]] = $match[2];
+			if ((int) $match[1] === 5) {
+				$rights[] = $current;
+				$current = array();
+			}
+		}
+
+		return $rights;
 	}
 
 	/**
@@ -476,5 +502,226 @@ class ModuleBuilderRightsSyncTest extends CommonClassTest
 		$after = (string) file_get_contents($path);
 		$this->assertStringNotContainsString('$this->rights', $after);
 		$this->assertSame(2, substr_count($after, 'MODULEBUILDER PERMISSIONS'));
+	}
+
+	/**
+	 * Generating an object declares its three CRUD rights.
+	 *
+	 * @return void
+	 */
+	public function testObjectCreationDeclaresThreeRights()
+	{
+		$path = $this->makeDescriptorFixture('');
+		$report = (new DescriptorRightsSyncService())->sync(
+			RightsSyncCommand::forObjectCreation('MyModule', $path, array(), 'MyObject')
+		);
+
+		$this->assertFalse($report->hasConflicts());
+		$this->assertGreaterThan(0, $report->updatedLines);
+
+		$rights = $this->parseRenderedRights($path);
+		$this->assertCount(3, $rights);
+		$this->assertSame('myobject', $rights[0][4]);
+		$this->assertSame(array('read', 'write', 'delete'), array($rights[0][5], $rights[1][5], $rights[2][5]));
+		$this->assertSame('Read MyObject object of MyModule', $rights[0][1]);
+	}
+
+	/**
+	 * An object that already owns rights is skipped instead of duplicated.
+	 *
+	 * @return void
+	 */
+	public function testObjectCreationSkipsAlreadyDeclaredObject()
+	{
+		$path = $this->makeDescriptorFixture('');
+		$existing = array(array(1 => 'Read myobject', 4 => 'myobject', 5 => 'read'));
+		$before = (string) file_get_contents($path);
+
+		$report = (new DescriptorRightsSyncService())->sync(
+			RightsSyncCommand::forObjectCreation('MyModule', $path, $existing, 'MyObject')
+		);
+
+		$this->assertSame(1, $report->skipped);
+		$this->assertFalse($report->hasConflicts());
+		$this->assertSame($before, (string) file_get_contents($path));
+	}
+
+	/**
+	 * Deleting an object drops its rights and keeps every other object's.
+	 *
+	 * @return void
+	 */
+	public function testObjectDeletionKeepsOtherObjectsRights()
+	{
+		$path = $this->makeDescriptorFixture('');
+		$existing = array(
+			array(1 => 'Read alpha', 4 => 'alpha', 5 => 'read'),
+			array(1 => 'Read beta', 4 => 'beta', 5 => 'read'),
+			array(1 => 'Write beta', 4 => 'beta', 5 => 'write'),
+		);
+
+		(new DescriptorRightsSyncService())->sync(
+			RightsSyncCommand::forObjectDeletion('MyModule', $path, $existing, 'Alpha')
+		);
+
+		$rights = $this->parseRenderedRights($path);
+		$this->assertCount(2, $rights);
+		$this->assertSame('beta', $rights[0][4]);
+		$this->assertSame('beta', $rights[1][4]);
+	}
+
+	/**
+	 * Updating a right actually rewrites it — this is what never worked before.
+	 *
+	 * @return void
+	 */
+	public function testRightUpdateActuallyWritesTheNewValue()
+	{
+		$path = $this->makeDescriptorFixture('');
+		$existing = array(
+			array(1 => 'Read alpha', 4 => 'alpha', 5 => 'read'),
+			array(1 => 'Write alpha', 4 => 'alpha', 5 => 'write'),
+		);
+
+		$report = (new DescriptorRightsSyncService())->sync(
+			RightsSyncCommand::forRightUpdate('MyModule', $path, $existing, 1, 'alpha', 'Edit alpha entries', 'write')
+		);
+
+		$this->assertFalse($report->hasConflicts());
+
+		$rights = $this->parseRenderedRights($path);
+		$this->assertCount(2, $rights);
+		$this->assertSame('Edit alpha entries', $rights[1][1]);
+		$this->assertSame('Read alpha', $rights[0][1]);
+	}
+
+	/**
+	 * Update and deletion address the right by key, so identical labels cannot mislead them.
+	 *
+	 * @return void
+	 */
+	public function testRightOperationsAddressByKeyNotByValue()
+	{
+		$twins = array(
+			array(1 => 'Same label', 4 => 'alpha', 5 => 'read'),
+			array(1 => 'Same label', 4 => 'alpha', 5 => 'write'),
+		);
+
+		$path = $this->makeDescriptorFixture('');
+		(new DescriptorRightsSyncService())->sync(
+			RightsSyncCommand::forRightDeletion('MyModule', $path, $twins, 1)
+		);
+		$rights = $this->parseRenderedRights($path);
+		$this->assertCount(1, $rights);
+		$this->assertSame('read', $rights[0][5]);
+
+		$path = $this->makeDescriptorFixture('');
+		(new DescriptorRightsSyncService())->sync(
+			RightsSyncCommand::forRightUpdate('MyModule', $path, $twins, 1, 'alpha', 'Renamed second', 'write')
+		);
+		$rights = $this->parseRenderedRights($path);
+		$this->assertSame('Renamed second', $rights[1][1]);
+		$this->assertSame('Same label', $rights[0][1]);
+	}
+
+	/**
+	 * An out-of-range key is a conflict, and a conflict never writes.
+	 *
+	 * @return void
+	 */
+	public function testOutOfRangeKeyIsAConflictAndWritesNothing()
+	{
+		$path = $this->makeDescriptorFixture('');
+		$existing = array(array(1 => 'Read alpha', 4 => 'alpha', 5 => 'read'));
+		$before = (string) file_get_contents($path);
+
+		$report = (new DescriptorRightsSyncService())->sync(
+			RightsSyncCommand::forRightDeletion('MyModule', $path, $existing, 42)
+		);
+
+		$this->assertTrue($report->hasConflicts());
+		$this->assertSame($before, (string) file_get_contents($path));
+	}
+
+	/**
+	 * A descriptor with a dynamic permissions block is left byte-identical.
+	 *
+	 * @return void
+	 */
+	public function testDynamicBlockIsLeftUntouched()
+	{
+		$inner = "\t\tforeach (array('read', 'write') as \$crud) {\n\t\t\t\$this->rights[\$r][5] = \$crud;\n\t\t\t\$r++;\n\t\t}\n";
+		$path = $this->makeDescriptorFixture($inner);
+		$before = (string) file_get_contents($path);
+
+		$report = (new DescriptorRightsSyncService())->sync(
+			RightsSyncCommand::forRightAddition('MyModule', $path, array(), 'alpha', 'Read alpha', 'read')
+		);
+
+		$this->assertTrue($report->hasConflicts());
+		$this->assertSame($before, (string) file_get_contents($path));
+	}
+
+	/**
+	 * A missing permissions block is reported and never written to.
+	 *
+	 * @return void
+	 */
+	public function testMissingBlockIsReportedWithoutWriting()
+	{
+		$dir = sys_get_temp_dir().'/mbrightssync'.getmypid();
+		if (!is_dir($dir)) {
+			dol_mkdir($dir);
+		}
+		$path = $dir.'/modNoBlock'.uniqid().'.php';
+		$this->fixtures[] = $path;
+		file_put_contents($path, "<?php\nclass modNoBlock {}\n");
+		$before = (string) file_get_contents($path);
+
+		$report = (new DescriptorRightsSyncService())->sync(
+			RightsSyncCommand::forRightAddition('MyModule', $path, array(), 'alpha', 'Read alpha', 'read')
+		);
+
+		$this->assertTrue($report->hasConflicts());
+		$this->assertSame($before, (string) file_get_contents($path));
+	}
+
+	/**
+	 * Adding a right that already exists for the object is refused.
+	 *
+	 * @return void
+	 */
+	public function testRightAdditionRefusesDuplicateCrud()
+	{
+		$path = $this->makeDescriptorFixture('');
+		$existing = array(array(1 => 'Read alpha', 4 => 'alpha', 5 => 'read'));
+		$before = (string) file_get_contents($path);
+
+		$report = (new DescriptorRightsSyncService())->sync(
+			RightsSyncCommand::forRightAddition('MyModule', $path, $existing, 'alpha', 'Read alpha again', 'read')
+		);
+
+		$this->assertTrue($report->hasConflicts());
+		$this->assertSame($before, (string) file_get_contents($path));
+	}
+
+	/**
+	 * A legacy index warns but does not block the write.
+	 *
+	 * @return void
+	 */
+	public function testLegacyIndexWarnsButStillWrites()
+	{
+		$path = $this->makeDescriptorFixture('');
+		$existing = array(array(1 => 'Read alpha', 2 => 'r', 3 => 0, 4 => 'alpha', 5 => 'read'));
+
+		$report = (new DescriptorRightsSyncService())->sync(
+			RightsSyncCommand::forRightAddition('MyModule', $path, $existing, 'alpha', 'Write alpha', 'write')
+		);
+
+		$this->assertFalse($report->hasConflicts());
+		$this->assertTrue($report->hasWarnings());
+		$this->assertCount(2, $this->parseRenderedRights($path));
+		$this->assertStringNotContainsString('[2]', (string) file_get_contents($path));
 	}
 }
