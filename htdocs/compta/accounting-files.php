@@ -538,10 +538,10 @@ if ($result && $action == "dl" && !$error) {	// Test on permission not required 
 				continue;
 			}
 
-			$sqltags = "SELECT ct.fk_".$tablefortags." as fk_object, c.label";
-			$sqltags .= " FROM ".MAIN_DB_PREFIX."categorie_".$tablefortags." as ct, ".MAIN_DB_PREFIX."categorie as c";
+			$sqltags = "SELECT ct.fk_".$db->sanitize($tablefortags)." as fk_object, c.label";
+			$sqltags .= " FROM ".MAIN_DB_PREFIX."categorie_".$db->sanitize($tablefortags)." as ct, ".MAIN_DB_PREFIX."categorie as c";
 			$sqltags .= " WHERE ct.fk_categorie = c.rowid";
-			$sqltags .= " AND ct.fk_".$tablefortags." IN (".$db->sanitize(implode(',', $idsfortags)).")";
+			$sqltags .= " AND ct.fk_".$db->sanitize($tablefortags)." IN (".$db->sanitize(implode(',', $idsfortags)).")";
 			$sqltags .= " AND c.entity IN (".getEntity('category').")";
 			$sqltags .= " ORDER BY c.label";
 
