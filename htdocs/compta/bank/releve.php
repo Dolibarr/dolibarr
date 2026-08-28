@@ -499,7 +499,7 @@ if (empty($numref)) {
 
 	$totalc = $totald = 0;
 
-	// Recherche les ecritures pour le releve
+	// Search entries for the statement
 	$sql = $sqlrequestforbankline;
 
 	$resql = $db->query($sql);
@@ -522,7 +522,7 @@ if (empty($numref)) {
 			// Date operation
 			print '<td class="nowrap center">'.dol_print_date($db->jdate($objp->do), "day").'</td>';
 
-			// Date de valeur
+			// Value date
 			print '<td valign="center" class="center nowrap">';
 			print '<span class="spanforajaxedit">'.dol_print_date($db->jdate($objp->dv), "day").'</span>';
 			print '&nbsp;';

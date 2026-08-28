@@ -227,6 +227,24 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 		$parentfortableentity = 'fk_website@website';
 	} elseif ($features == 'project') {
 		$features = 'projet';
+	} elseif ($features == 'eventorganization' && is_object($object) && $object->element == 'conferenceorbooth') {
+		// The module of an event organization declares no permission of its own, on purpose, so a check on
+		// 'eventorganization' is refused to everyone, an administrator included. Check the parent project
+		// instead, which is what the card of the object does itself.
+		// The card refuses an external user before that check, and fk_project is nullable, so we must refuse
+		// both cases here too: with no parent project there is nothing left to check the access on, and
+		// granting it would be an access with no check at all.
+		if (!empty($user->socid) || empty($object->fk_project)) {
+			if ($mode) {
+				return 0;
+			} else {
+				accessforbidden();
+			}
+		}
+		$features = 'projet';
+		$tableandshare = 'projet&project';
+		$objectid = (int) $object->fk_project;
+		$object = $objectid;
 	} elseif ($features == 'product') {
 		$features = 'produit';
 	} elseif ($features == 'productbatch') {
@@ -235,6 +253,10 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 		$feature2 = 'charges';
 	} elseif ($features == 'workstation') {
 		$feature2 = 'workstation';
+	} elseif ($features == 'hrm' && is_object($object) && in_array($object->element, array('job', 'position', 'skill'))) {
+		$feature2 = 'all';	// These 3 objects have no permission of their own, they share the level "all"
+	} elseif ($features == 'stocktransfer' && is_object($object) && $object->element == 'stocktransfer') {
+		$feature2 = 'stocktransfer';	// This module declares no permission at its first level, only this one
 	} elseif ($features == 'fournisseur') {	// When vendor invoice and purchase order are into module 'fournisseur'
 		if (is_object($object) && $object->element == 'invoice_supplier') {
 			$feature2 = 'facture';
@@ -495,6 +517,11 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 				}
 			} elseif ($feature == 'payment') {
 				if (!$user->hasRight('facture', 'paiement')) {
+					$createok = 0;
+					$nbko++;
+				}
+			} elseif ($feature == 'payment_supplier') {	// Permission to write on a payment of an invoice is permission to edit an invoice.
+				if (!$user->hasRight('fournisseur', 'facture', 'creer')) {
 					$createok = 0;
 					$nbko++;
 				}
@@ -766,7 +793,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 		$checkonentitydone = 0;
 
 		// Array to define rules of checks to do
-		$check = array('adherent', 'banque', 'bom', 'don', 'mrp', 'user', 'usergroup', 'payment', 'payment_supplier', 'payment_sc', 'product', 'produit', 'service', 'produit|service', 'categorie', 'resource', 'expensereport', 'holiday', 'salaries', 'website', 'recruitment', 'chargesociales', 'knowledgemanagement', 'stock'); // Test on entity only (Objects with no link to company)
+		$check = array('adherent', 'banque', 'bom', 'don', 'mrp', 'user', 'usergroup', 'payment', 'payment_supplier', 'payment_sc', 'product', 'produit', 'service', 'produit|service', 'categorie', 'resource', 'expensereport', 'holiday', 'salaries', 'website', 'recruitment', 'chargesociales', 'knowledgemanagement', 'stock', 'stockmovement'); // Test on entity only (Objects with no link to company)
 		$checksoc = array('societe'); // Test for object Societe
 		$checkparentsoc = array('agenda', 'contact', 'contrat'); // Test on entity + link to third party on field $dbt_keyfield. Allowed if link is empty (Ex: contacts...).
 		$checkproject = array('projet', 'project'); // Test for project object
@@ -781,6 +808,30 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 		if (empty($dbtablename)) {
 			$dbtablename = $feature;
 			$sharedelement = (!empty($params[1]) ? $params[1] : $dbtablename); // We change dbtablename, so we set sharedelement too.
+		}
+
+		// The default rule reads the columns entity and $dbt_keyfield of the table, but some tables own neither of
+		// them. The sql was then built on columns that do not exist, so it always failed and the access was refused
+		// to the users that this rule applies to.
+		// The rule is selected on the table and not on the element of the object, because $object is an id and not
+		// an object for most of the callers, the card of an asset and the card of a workstation included.
+		if (!empty($objectid) && in_array($dbtablename, array('asset', 'paiement', 'paiementfourn', 'workstation_workstation', 'hrm_job', 'hrm_job_user', 'hrm_skill'))) {
+			// None of these objects is linked to a third party, so an external user can own none of them. The
+			// default rule refused him through a link that does not exist, we must refuse him explicitly instead,
+			// otherwise the rules below, which do not look at the third party of the user at all, would grant it.
+			if (!empty($user->socid)) {
+				return false;
+			}
+			if (in_array($dbtablename, array('hrm_job', 'hrm_job_user', 'hrm_skill'))) {
+				// These 3 tables have no entity column either, so no rule that reads the table can be run on them.
+				// The permission is still checked by restrictedArea(), and the $checkhierarchy rule below still runs.
+				// Note that these 3 objects are therefore not partitioned between entities at all, in the database
+				// itself: their cards already answer to a user of another entity, and their lists already show the
+				// records of all of them. This rule does not widen that, it aligns with it.
+				$nocheck[] = $feature;
+			} else {
+				$check[] = $feature;	// Test on the entity only, there is no third party to restrict on
+			}
 		}
 
 		// $objectid was already sanitized at begin of this method (can be an int or a list of int separated by comma).
@@ -822,6 +873,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 			}
 			$checkonentitydone = 1;
 		}
+
 		if (in_array($feature, $checksoc) && !empty($objectid)) {	// We check feature = checksoc. For $objectid = 0, no check
 			// If external user: Check permission for external users
 			if ($user->socid > 0) {

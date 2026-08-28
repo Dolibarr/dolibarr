@@ -202,6 +202,7 @@ DiscountReceived=İndirim alındı
 DONATION_ACCOUNTINGACCOUNT=Bağışların kaydedileceği hesap (Hesap Planı'ndan) (Bağış modülü)
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Üyelik aboneliklerini kaydetmek için kullanılacak hesap (Hesap Planından) (Üyelik modülü - üyeliğin faturasız kaydedilmesi durumunda)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Müşteri mevduatını kaydetmek için varsayılan hesap olarak kullanılacak hesap (Hesap Planından)
+ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT_FOR_VAT=Account (from the Chart Of Account) to be used as the default account for VAT on customer deposit used in bindings
 UseAuxiliaryAccountOnCustomerDeposit=Peşinat satırları için müşteri hesabını yardımcı defterde bireysel hesap olarak saklayın (devre dışı bırakılırsa peşinat satırları için bireysel hesap boş kalacaktır)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Tedarikçi mevduatının kaydedileceği varsayılan hesap olarak kullanılacak Hesap (Hesap Planı'ndan)
 UseAuxiliaryAccountOnSupplierDeposit=Peşinat satırları için tedarikçi hesabını yardımcı defterde bireysel hesap olarak saklayın (devre dışı bırakılırsa peşinat satırları için bireysel hesap boş kalacaktır)

@@ -155,9 +155,6 @@ ErrNoZipEngine=В этом PHP нет движка для архивирован
 ErrorFileMustBeADolibarrPackage=Файл %s  должен быть архивом zip системы Dolibarr
 ErrorModuleFileRequired=Вы должны выбрать файл пакета модуля Dolibarr
 ErrorFailToDownloadModuleFromSource=Failed to download the module from the source. Please check your internet connection or the source URL and try again.
-extModuleConfirmInstallTitle = Confirm module installation
-extModuleConfirmInstallText  = You are about to install the following module:<br><br><b>Name:</b> %s<br><b>Version:</b> %s<br><b>Reference:</b> %s<br><b>Last update:</b> %s<br><br>This action is not reversible, Do you confirm the installation of this module?
-install=Install
 ErrorPhpCurlNotInstalled=Модуль CURL для PHP  не установлен, он необходим для работы с PayPal
 ErrorFailedToAddToMailmanList=Невозможно добавить запись %s в список %s  системы Mailman или в базу  SPIP
 ErrorFailedToRemoveToMailmanList=Невозможно удалить  запись %s из  списка %s  системы Mailman или  базы  SPIP
@@ -443,6 +440,7 @@ WarningModuleAffiliatedToAReportedCompany=Внимание, об этом мод
 WarningModuleAffiliatedToAPiratPlatform=Будьте осторожны при получении модуль (Оплачен или бесплатного) с подозрительной неофициальной платформы, такой как %s
 WarningDNSServerNotAvailable=Warning, DNS server not available
 WarningSecureKeyNotSet=The value fo the securekey must not be empty
+WarningFullPathWasNotFoundSoWeUseAnAlternativeValue=Note: Full path was not found so we used the alternative value <b>%s</b>
 
 SwissQrOnlyVIR = Счёт SwissQR можно добавить только к счетам, для которых установлена оплата банковским переводом.
 SwissQrCreditorAddressInvalid = Адрес кредитора недействителен (указаны ли почтовый индекс и город? (%s)

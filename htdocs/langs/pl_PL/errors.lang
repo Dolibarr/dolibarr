@@ -155,9 +155,6 @@ ErrNoZipEngine=Brak silnika do spakowania/rozpakowania pliku %s w tym PHP
 ErrorFileMustBeADolibarrPackage=Plik% s musi być pakiet zip Dolibarr
 ErrorModuleFileRequired=Musisz wybrać plik pakietu modułu Dolibarr
 ErrorFailToDownloadModuleFromSource=Failed to download the module from the source. Please check your internet connection or the source URL and try again.
-extModuleConfirmInstallTitle = Confirm module installation
-extModuleConfirmInstallText  = You are about to install the following module:<br><br><b>Name:</b> %s<br><b>Version:</b> %s<br><b>Reference:</b> %s<br><b>Last update:</b> %s<br><br>This action is not reversible, Do you confirm the installation of this module?
-install=Install
 ErrorPhpCurlNotInstalled=PHP CURL nie jest zainstalowany, to jest niezbędne, aby porozmawiać z Paypal
 ErrorFailedToAddToMailmanList=Nie udało się dodać% s do% s listy Mailman lub podstawy SPIP
 ErrorFailedToRemoveToMailmanList=Nie udało się usunąć rekord% s do% s listy Mailman lub podstawy SPIP
@@ -443,6 +440,7 @@ WarningModuleAffiliatedToAReportedCompany=Warning, this module has been reported
 WarningModuleAffiliatedToAPiratPlatform=Zachowaj ostrożność, pobierając moduł (płatny lub bezpłatny) z podejrzanej, nieoficjalnej platformy, takiej jak %s
 WarningDNSServerNotAvailable=Warning, DNS server not available
 WarningSecureKeyNotSet=The value fo the securekey must not be empty
+WarningFullPathWasNotFoundSoWeUseAnAlternativeValue=Note: Full path was not found so we used the alternative value <b>%s</b>
 
 SwissQrOnlyVIR = Fakturę SwissQR można dodać wyłącznie do faktur ustawionych na płatność przelewem.
 SwissQrCreditorAddressInvalid = Adres wierzyciela jest nieprawidłowy (czy ustawiony jest kod pocztowy i miasto? (%s)

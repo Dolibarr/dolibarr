@@ -90,6 +90,7 @@ ThisIsInformationOnDocumentToSignFichinter=এটি স্বাক্ষর �
 ThisIsInformationOnDocumentToSignSociete_rib=এটি স্বাক্ষর করার জন্য SEPA ম্যান্ডেটের তথ্য
 ThisIsInformationOnDocumentToSignExpedition= এটি স্বাক্ষর করার জন্য চালানের তথ্য।
 SignatureProposalRef=উদ্ধৃতি/বাণিজ্যিক প্রস্তাবের স্বাক্ষর %s
+SignatureOrderRef=Signature of sale order %s
 SignatureContractRef=চুক্তি স্বাক্ষর %s
 SignatureFichinterRef=হস্তক্ষেপের স্বাক্ষর %s
 SignatureSociete_ribRef=SEPA ম্যান্ডেটের স্বাক্ষর %s

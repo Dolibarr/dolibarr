@@ -431,7 +431,6 @@ if (empty($reshook)) {
 							$dirlist = dol_dir_list($srcdir, 'files', 1);
 							foreach ($dirlist as $filetomove) {
 								$destfile = $destdir.'/'.$filetomove['relativename'];
-								//var_dump('Move file '.$filetomove['relativename'].' into '.$destfile);
 								dol_move($filetomove['fullname'], $destfile, '0', 0, 0, 1);
 							}
 							//exit;
@@ -1621,8 +1620,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			}
 
 			if ($showbarcode) {
-				//var_dump($modBarCodeProduct); exit;
-
 				print '<tr><td>'.$langs->trans('BarcodeType').'</td><td>';
 				if (GETPOSTISSET('fk_barcode_type')) {
 					$fk_barcode_type = GETPOST('fk_barcode_type') ? GETPOST('fk_barcode_type') : 0;
@@ -2075,7 +2072,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			$head = product_prepare_head($object);
 			$titre = $langs->trans("CardProduct".$object->type);
 			$picto = ($object->type == Product::TYPE_SERVICE ? 'service' : 'product');
-			print dol_get_fiche_head($head, 'card', $titre, 0, $picto, 0, '', '', 0, '', 1);
+			print dol_get_fiche_head($head, 'card', $titre, 0, $picto, 0, '', '', 0, '', 0);	// No drag and drop on the edit form, dropping a file reloads the page and discards it
 
 			// Call Hook tabContentEditProduct
 			$parameters = array();
@@ -3164,7 +3161,7 @@ print $formconfirm;
  * Action bar
  */
 if ($action != 'create' && $action != 'edit') {
-	$cloneProductUrl = $_SERVER["PHP_SELF"].'?action=clone&token='.newToken();
+	$cloneProductUrl = dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'clone'], true);
 	$cloneButtonId = 'action-clone-no-ajax';
 
 	print "\n".'<div class="tabsAction">'."\n";
@@ -3174,11 +3171,11 @@ if ($action != 'create' && $action != 'edit') {
 	if (empty($reshook)) {
 		if ($usercancreate) {
 			if (!isset($hookmanager->resArray['no_button_edit']) || $hookmanager->resArray['no_button_edit'] != 1) {
-				print dolGetButtonAction('', $langs->trans('Modify'), 'default', $_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$object->id, '', $usercancreate);
+				print dolGetButtonAction('', $langs->trans('Modify'), 'default', dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'edit', 'id' => $object->id], true), '', $usercancreate);
 			}
 
 			//Send
-			print dolGetButtonAction('', $langs->trans('SendMail'), 'email', $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init&token=' . newToken() . '#formmailbeforetitle');
+			print dolGetButtonAction('', $langs->trans('SendMail'), 'email', dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'presend', 'mode' => 'init'], true).'#formmailbeforetitle');
 
 			if (!isset($hookmanager->resArray['no_button_copy']) || $hookmanager->resArray['no_button_copy'] != 1) {
 				if (!empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile)) {
@@ -3196,7 +3193,7 @@ if ($action != 'create' && $action != 'edit') {
 					if (!empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile)) {
 						print dolGetButtonAction($langs->trans('Delete'), '', 'delete', '#', 'action-delete', true);
 					} else {
-						print dolGetButtonAction('', $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id, '');
+						print dolGetButtonAction('', $langs->trans('Delete'), 'delete', dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'delete', 'id' => $object->id], true), '');
 					}
 				}
 			} else {

@@ -202,6 +202,7 @@ DiscountReceived=割引を受けた
 DONATION_ACCOUNTINGACCOUNT=寄付の登録に使用するアカウント (勘定科目表から) (寄付モジュール)
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=メンバーシップのサブスクリプションを登録するために使用されるアカウント (アカウント チャートから) (メンバーシップ モジュール - メンバーシップが請求書なしで記録されている場合)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=顧客預金を登録するためのデフォルト口座として使用される口座 (勘定科目表から)
+ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT_FOR_VAT=Account (from the Chart Of Account) to be used as the default account for VAT on customer deposit used in bindings
 UseAuxiliaryAccountOnCustomerDeposit=顧客アカウントを頭金ラインの補助元帳に個人アカウントとして保存する（無効にした場合、頭金ラインの個人アカウントは空のままになる）
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=仕入先入金を登録するためのデフォルトアカウントとして使用されるアカウント（勘定科目表から）
 UseAuxiliaryAccountOnSupplierDeposit=仕入先勘定を、前払明細の補助元帳に個別勘定として保管する (無効にすると、前払明細の個別勘定は空のままになる)。

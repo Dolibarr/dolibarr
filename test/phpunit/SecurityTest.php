@@ -578,7 +578,11 @@ class SecurityTest extends CommonClassTest
 		include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 		include_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 
-		$conf->global->MAIN_USE_DOL_EVAL_NEW = 0;
+
+		global $dolibarr_main_use_dol_eval_new;
+		$dolibarr_main_use_dol_eval_new = 0;
+
+
 		//$conf->global->MAIN_USE_DOL_EVAL_NEW = 1;
 		$conf->global->MAIN_ALLOW_DOUBLE_COLON_IN_DOL_EVAL = 0;
 		$conf->global->MAIN_ALLOW_OBFUSCATION_METHODS_IN_DOL_EVAL = 1;
@@ -876,6 +880,51 @@ class SecurityTest extends CommonClassTest
 			print "result25 = ".$result."\n";
 			$this->assertStringContainsString('Bad string syntax to evaluate', json_encode($result), 'Test 25 - The string was not detected as evil - Can\'t find the string Bad string syntax when i should');
 		}
+	}
+
+	/**
+	 * testDolEvalNew
+	 *
+	 * Check that dol_eval_new() (engine used when MAIN_USE_DOL_EVAL_NEW is set) rejects
+	 * the callable-dispatch bypass reported in GitHub issue #39436: a forbidden function
+	 * name reached indirectly by a PHP callable-dispatch function like array_map/usort/...
+	 * instead of a direct call.
+	 *
+	 * @depends	testDolEval
+	 * @return void
+	 */
+	public function testDolEvalNew()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+
+		global $dolibarr_main_use_dol_eval_new;
+		$dolibarr_main_use_dol_eval_new = 1;
+
+
+		$s = "array_map('sys'.'tem', array('id'))";
+		$result = (string) dol_eval($s, 1, 1, '0');
+		print "resultnew1 = ".$result."\n";
+		$this->assertStringContainsString('is prohibited', $result, 'The string '.$s.' returned '.$result.', so was not detected as evil - array_map bypass');
+
+		$result = (string) dol_eval("usort(\$a, 'system')", 1, 1, '0');
+		print "resultnew2 = ".$result."\n";
+		$this->assertStringContainsString('is prohibited', $result, 'The string was not detected as evil - usort bypass');
+
+		$result = (string) dol_eval("preg_replace_callback('/a/', 'system', 'a')", 1, 1, '0');
+		print "resultnew3 = ".$result."\n";
+		$this->assertStringContainsString('is prohibited', $result, 'The string was not detected as evil - preg_replace_callback bypass');
+
+		// Sanity check: legitimate expressions still evaluate correctly
+		$result = dol_eval('1==1', 1, 0);
+		print "resultnew4 = ".json_encode($result)."\n";
+		$this->assertTrue($result);
+
+		$conf->global->MAIN_USE_DOL_EVAL_NEW = 0;
 	}
 
 

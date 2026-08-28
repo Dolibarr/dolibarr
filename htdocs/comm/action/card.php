@@ -2659,7 +2659,7 @@ if ($id > 0 && $action != 'create') {
 
 		print '</form>';
 	} else {
-		print dol_get_fiche_head($head, 'card', $langs->trans("Action"), -1, 'action');
+		print dol_get_fiche_head($head, 'card', $langs->trans("Action"), -1, 'action', 0, '', '', 0, '', 1);
 
 		$formconfirm = '';
 
@@ -3042,7 +3042,7 @@ if ($id > 0 && $action != 'create') {
 
 			if ($user->hasRight('agenda', 'allactions', 'create') ||
 			   (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->hasRight('agenda', 'myactions', 'create'))) {
-				print '<div class="inline-block divButAction"><a class="butAction butActionClone" href="card.php?action=clone&object='.$object->element.'&id='.$object->id.'">'.$langs->trans("ToClone").'</a></div>';
+				print '<div class="inline-block divButAction"><a class="butAction butActionClone" href="card.php?action=clone&token='.newToken().'&object='.$object->element.'&id='.$object->id.'">'.$langs->trans("ToClone").'</a></div>';
 			} else {
 				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("ToClone").'</a></div>';
 			}

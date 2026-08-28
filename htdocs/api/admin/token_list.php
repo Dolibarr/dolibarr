@@ -103,6 +103,9 @@ $arrayfields = array(
 	'oat.datec' => array('label' => "DateCreation", 'checked' => '1'),
 	'oat.tms' => array('label' => "DateModification", 'checked' => '1'),
 );
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 /*
  *	Action

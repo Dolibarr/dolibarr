@@ -202,6 +202,7 @@ DiscountReceived=Discount received
 DONATION_ACCOUNTINGACCOUNT=Konto (från kontoplanen) som ska användas för att registrera donationer (donationsmodul)
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Konto (från kontoplanen) som ska användas för att registrera medlemskapsabonnemang (Medlemsmodul - om medlemskap registrerats utan faktura)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Konto (från kontoplanen) som ska användas som standardkonto för att registrera kundinsättning
+ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT_FOR_VAT=Account (from the Chart Of Account) to be used as the default account for VAT on customer deposit used in bindings
 UseAuxiliaryAccountOnCustomerDeposit=Lagra kundkonto som individuellt konto i huvudboken för rader med förskottsbetalningar (om det är inaktiverat förblir individuellt konto för förskottsrader tomt)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default account to register supplier deposit
 UseAuxiliaryAccountOnSupplierDeposit=Lagra leverantörskonto som individuellt konto i huvudboken för rader med förskottsbetalningar (om det är inaktiverat förblir individuellt konto för förskottsrader tomt)
