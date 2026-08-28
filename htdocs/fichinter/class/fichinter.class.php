@@ -813,9 +813,10 @@ class Fichinter extends CommonObject
 	 *	Function used when fichinter is reopend after being closed.
 	 *
 	 *	@param      User	$user       Object user that change status
+	 *  @param		int		$notrigger	1=Does not execute triggers, 0=Execute triggers
 	 *	@return     int 	Return integer < 0 if KO, 0 if nothing is done, > 0 if OK
 	 */
-	public function setReopen($user)
+	public function setReopen($user, $notrigger = 0)
 	{
 		// phpcs:enable
 		$error = 0;
@@ -835,12 +836,14 @@ class Fichinter extends CommonObject
 		dol_syslog(get_class($this)."::set_reopen", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			// Call trigger
-			$result = $this->call_trigger('FICHINTER_REOPEN', $user);
-			if ($result < 0) {
-				$error++;
+			if (!$notrigger) {
+				// Call trigger
+				$result = $this->call_trigger('FICHINTER_REOPEN', $user);
+				if ($result < 0) {
+					$error++;
+				}
+				// End call triggers
 			}
-			// End call triggers
 		} else {
 			$error++;
 			$this->error = $this->db->lasterror();
