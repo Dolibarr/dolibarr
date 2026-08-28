@@ -28,7 +28,7 @@ jobs:
           gh pr list \
             --repo "$REPO" \
             --state open \
-            --limit 1000 \
+            --limit 2 \
             --json number,title,createdAt \
             --jq '.[] | select(.createdAt < "'"$ONE_YEAR_AGO"'")' |
           while IFS= read -r PR; do
