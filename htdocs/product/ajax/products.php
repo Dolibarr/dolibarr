@@ -281,7 +281,7 @@ if ($action == 'fetch' && !empty($id)) {
 			// when enabled, price_ht is kept as the fixed reference and price_ttc is recomputed from
 			// it and the buyer's actual VAT rate instead.
 			if (getDolGlobalString('PRODUIT_RECALCULATE_TTC_ACCORDING_TO_BUYER_VAT') && isset($outprice_ht)) {
-				$outprice_ttc = price(price2num($outprice_ht) * (1 + ($outtva_tx / 100)));
+				$outprice_ttc = price((float) price2num($outprice_ht) * (1 + ($outtva_tx / 100)));
 			}
 		}
 
