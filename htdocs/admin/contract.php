@@ -565,12 +565,14 @@ print '</td>';
 print '</tr>';
 
 // Reminder by email before a contract service expires
-print '<tr class="oddeven">';
-print '<td>'.$langs->trans("CONTRACT_REMINDER_EMAIL", $langs->transnoentitiesnoconv("Contract")).'</td>';
-print '<td class="right">';
-print ajax_constantonoff('CONTRACT_REMINDER_EMAIL', array(), null, 0, 0, 0, 2, 0, 1, '', '', 'inline-block', 0, $langs->trans("CONTRACT_REMINDER_EMAILHelp", $langs->transnoentitiesnoconv("Contract")));
-print '</td>';
-print '</tr>';
+if (isModEnabled('cron')) {
+	print '<tr class="oddeven">';
+	print '<td>'.$langs->trans("SendReminderForExpiredServicesTitle").'</td>';
+	print '<td class="right">';
+	print '<a href="'.dol_buildpath('/cron/list.php', 1).'?search_label=SendReminderForExpiredServicesTitle&status=-1">'.$langs->trans("ConfigureContractReminderCronjobToSetFrequency").'</a>';
+	print '</td>';
+	print '</tr>';
+}
 print '</table>';
 print '</div>';
 

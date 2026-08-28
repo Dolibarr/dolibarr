@@ -3050,11 +3050,6 @@ class Contrat extends CommonObject
 			$this->output = $langs->trans('ModuleNotEnabled', $langs->transnoentitiesnoconv("Contract"));
 			return 0;
 		}
-		if (!getDolGlobalString('CONTRACT_REMINDER_EMAIL')) {
-			$langs->load("agenda");
-			$this->output = $langs->trans('EventRemindersByEmailNotEnabled', $langs->transnoentitiesnoconv("Contract"));
-			return 0;
-		}
 
 		$now = dol_now();
 		$nbok = 0;
@@ -3135,7 +3130,7 @@ class Contrat extends CommonObject
 							$subject = make_substitutions($arraydefaultmessage->topic, $substitutionarray, $outputlangs);
 							$msg = make_substitutions($arraydefaultmessage->content, $substitutionarray, $outputlangs);
 							$email_from = getDolGlobalString('CONTRACT_MAIL_FROM', $conf->email_from);
-							$to = $contractstatic->thirdparty->email;
+							$to = (string) $contractstatic->thirdparty->email;
 							$cc = getDolGlobalString('CONTRACT_CC_MAIL_FROM');
 
 							$trackid = 'con'.$contractstatic->id;
