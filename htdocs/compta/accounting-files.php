@@ -520,6 +520,46 @@ if ($result && $action == "dl" && !$error) {	// Test on permission not required 
 	} else {
 		dol_mkdir($dirfortmpfile);
 
+		// Tags of the exported documents, read with one query per document type for the whole
+		// batch: a month of activity holds hundreds of documents and one query per document
+		// would make the export crawl. Only customer and supplier invoices can carry tags,
+		// the other items of the export (various payments, expense reports, salaries,
+		// donations, social contributions, loan payments) have no category type in Dolibarr
+		// and keep an empty column.
+		$tagsofdocuments = array();
+		foreach (array('Invoice' => 'invoice', 'SupplierInvoice' => 'supplier_invoice') as $itemfortags => $tablefortags) {
+			$idsfortags = array();
+			foreach ($filesarray as $filefortags) {
+				if ($filefortags['item'] == $itemfortags) {
+					$idsfortags[] = (int) $filefortags['id'];
+				}
+			}
+			if (empty($idsfortags)) {
+				continue;
+			}
+
+			$sqltags = "SELECT ct.fk_".$tablefortags." as fk_object, c.label";
+			$sqltags .= " FROM ".MAIN_DB_PREFIX."categorie_".$tablefortags." as ct, ".MAIN_DB_PREFIX."categorie as c";
+			$sqltags .= " WHERE ct.fk_categorie = c.rowid";
+			$sqltags .= " AND ct.fk_".$tablefortags." IN (".$db->sanitize(implode(',', $idsfortags)).")";
+			$sqltags .= " AND c.entity IN (".getEntity('category').")";
+			$sqltags .= " ORDER BY c.label";
+
+			$resqltags = $db->query($sqltags);
+			if ($resqltags) {
+				while ($objtags = $db->fetch_object($resqltags)) {
+					$keyfortags = $itemfortags.'_'.$objtags->fk_object;
+					if (empty($tagsofdocuments[$keyfortags])) {
+						$tagsofdocuments[$keyfortags] = array();
+					}
+					$tagsofdocuments[$keyfortags][] = $objtags->label;
+				}
+				$db->free($resqltags);
+			} else {
+				dol_print_error($db);
+			}
+		}
+
 		$log = $langs->transnoentitiesnoconv("Type");
 		if (isModEnabled('multicompany') && isset($mc) && is_object($mc)) {
 			$log .= ','.$langs->transnoentitiesnoconv("Entity");
@@ -540,7 +580,8 @@ if ($result && $action == "dl" && !$error) {	// Test on permission not required 
 		$log .= ','.$langs->transnoentitiesnoconv("Code");
 		$log .= ','.$langs->transnoentitiesnoconv("Country");
 		$log .= ','.$langs->transnoentitiesnoconv("VATIntra");
-		$log .= ','.$langs->transnoentitiesnoconv("Sens")."\n";
+		$log .= ','.$langs->transnoentitiesnoconv("Sens");
+		$log .= ','.$langs->transnoentitiesnoconv("Categories")."\n";
 		$zipname = $dirfortmpfile.'/'.dol_print_date($date_start, 'dayrfc', 'tzuserrel')."-".dol_print_date($date_stop, 'dayrfc', 'tzuserrel');
 		if (!empty($projectid)) {
 			$project = new Project($db);
@@ -586,6 +627,8 @@ if ($result && $action == "dl" && !$error) {	// Test on permission not required 
 				$log .= ',"'.$file['country_code'].'"';
 				$log .= ',"'.$file['vatnum'].'"';
 				$log .= ',"'.$file['sens'].'"';
+				$keyfortags = $file['item'].'_'.$file['id'];
+				$log .= ',"'.(empty($tagsofdocuments[$keyfortags]) ? '' : implode(',', $tagsofdocuments[$keyfortags])).'"';
 				$log .= "\n";
 			}
 			$zip->addFromString('transactions.csv', $log);
