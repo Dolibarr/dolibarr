@@ -229,8 +229,7 @@ class ModuleBuilderRightsSyncTest extends CommonClassTest
 	 */
 	public function testPermissionsBlockAcceptsCommentedTemplate()
 	{
-		$inner = "\t\t/*\n\t\t\$o = 1;\n\t\t\$this->rights[\$r][0] = \$this->numero . sprintf(\"%02d\", (\$o * 10) + 1);\n"
-			."\t\t\$this->rights[\$r][1] = 'Read objects of MyModule';\n\t\t\$r++;\n\t\t*/\n";
+		$inner = "\t\t/*\n\t\t\$o = 1;\n\t\t\$this->rights[\$r][0] = \$this->numero . sprintf(\"%02d\", (\$o * 10) + 1);\n\t\t\$this->rights[\$r][1] = 'Read objects of MyModule';\n\t\t\$r++;\n\t\t*/\n";
 		$block = PermissionsBlock::fromFile($this->makeDescriptorFixture($inner));
 
 		$this->assertSame(array(), $block->detectTextConflicts());
@@ -243,11 +242,7 @@ class ModuleBuilderRightsSyncTest extends CommonClassTest
 	 */
 	public function testPermissionsBlockAcceptsGeneratedBlock()
 	{
-		$inner = "\t\t\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', (0 * 10) + 0 + 1);\n"
-			."\t\t\$this->rights[\$r][1] = 'Read myobject object of Mymodule';\n"
-			."\t\t\$this->rights[\$r][4] = 'myobject';\n"
-			."\t\t\$this->rights[\$r][5] = 'read'; // trailing comment is fine\n"
-			."\t\t\$r++;\n";
+		$inner = "\t\t\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', (0 * 10) + 0 + 1);\n\t\t\$this->rights[\$r][1] = 'Read myobject object of Mymodule';\n\t\t\$this->rights[\$r][4] = 'myobject';\n\t\t\$this->rights[\$r][5] = 'read'; // trailing comment is fine\n\t\t\$r++;\n";
 		$block = PermissionsBlock::fromFile($this->makeDescriptorFixture($inner));
 
 		$this->assertSame(array(), $block->detectTextConflicts());
@@ -260,8 +255,7 @@ class ModuleBuilderRightsSyncTest extends CommonClassTest
 	 */
 	public function testPermissionsBlockRefusesDynamicRights()
 	{
-		$inner = "\t\tforeach (array('read', 'write') as \$crud) {\n"
-			."\t\t\t\$this->rights[\$r][5] = \$crud;\n\t\t\t\$r++;\n\t\t}\n";
+		$inner = "\t\tforeach (array('read', 'write') as \$crud) {\n\t\t\t\$this->rights[\$r][5] = \$crud;\n\t\t\t\$r++;\n\t\t}\n";
 		$block = PermissionsBlock::fromFile($this->makeDescriptorFixture($inner));
 
 		$conflicts = $block->detectTextConflicts();
@@ -270,18 +264,33 @@ class ModuleBuilderRightsSyncTest extends CommonClassTest
 	}
 
 	/**
-	 * A translated label cannot be reproduced by the renderer, so the block is refused.
+	 * A label read from a variable cannot be reproduced by the renderer, so the block is refused.
 	 *
 	 * @return void
 	 */
-	public function testPermissionsBlockRefusesTranslatedLabel()
+	public function testPermissionsBlockRefusesComputedLabel()
 	{
-		$inner = "\t\t\$this->rights[\$r][1] = \$langs->trans('ReadMyObject');\n\t\t\$r++;\n";
+		$inner = "\t\t\$this->rights[\$r][1] = \$computedLabel;\n\t\t\$r++;\n";
 		$block = PermissionsBlock::fromFile($this->makeDescriptorFixture($inner));
 
 		$conflicts = $block->detectTextConflicts();
 		$this->assertNotEmpty($conflicts);
-		$this->assertStringContainsString('$langs', $conflicts[0]);
+		$this->assertStringContainsString('$computedLabel', $conflicts[0]);
+	}
+
+	/**
+	 * Rights guarded by a global constant cannot be reproduced either.
+	 *
+	 * @return void
+	 */
+	public function testPermissionsBlockRefusesConditionalRights()
+	{
+		$inner = "\t\tif (getDolGlobalString('SOME_SETUP_KEY')) {\n\t\t\t\$this->rights[\$r][5] = 'read';\n\t\t\t\$r++;\n\t\t}\n";
+		$block = PermissionsBlock::fromFile($this->makeDescriptorFixture($inner));
+
+		$conflicts = $block->detectTextConflicts();
+		$this->assertNotEmpty($conflicts);
+		$this->assertStringContainsString('if', $conflicts[0]);
 	}
 
 	/**
@@ -805,10 +814,7 @@ class ModuleBuilderRightsSyncTest extends CommonClassTest
 	 */
 	public function testLiteralsAreNotMistakenForDynamicCode()
 	{
-		$inner = "\t\t\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', 1);\n"
-			."\t\t\$this->rights[\$r][3] = null;\n"
-			."\t\t\$this->rights[\$r][2] = true;\n"
-			."\t\t\$this->rights[\$r][5] = 'read';\n\t\t\$r++;\n";
+		$inner = "\t\t\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', 1);\n\t\t\$this->rights[\$r][3] = null;\n\t\t\$this->rights[\$r][2] = true;\n\t\t\$this->rights[\$r][5] = 'read';\n\t\t\$r++;\n";
 		$block = PermissionsBlock::fromFile($this->makeDescriptorFixture($inner));
 
 		$this->assertSame(array(), $block->detectTextConflicts());

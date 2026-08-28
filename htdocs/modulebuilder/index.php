@@ -306,42 +306,6 @@ function modulebuilderValidateGeneratedFile(string $destfile, NamingContract $nc
 }
 
 /**
- * Load the rights array declared by a module descriptor.
- *
- * @param string $module         Module name
- * @param string $descriptorFile Path to the mod<Module>.class.php descriptor
- * @param string $relpath        Descriptor path relative to a Dolibarr root, for dol_include_once()
- * @return array<int,array<int,string>>|null Rights array, or null when the descriptor cannot be used
- */
-function modulebuilderLoadDescriptorRights(string $module, string $descriptorFile, string $relpath): ?array
-{
-	global $db, $langs;
-
-	if (checkExistComment($descriptorFile, 1) < 0) {
-		setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Permissions"), "mod".$module."class.php"), null, 'warnings');
-		return null;
-	}
-
-	dol_include_once($relpath);
-	$class = 'mod'.$module;
-	if (!class_exists($class)) {
-		dol_syslog('modulebuilderLoadDescriptorRights could not load class '.$class, LOG_ERR);
-		return null;
-	}
-
-	try {
-		$moduleobj = new $class($db);
-	} catch (Exception $e) {
-		dol_syslog('modulebuilderLoadDescriptorRights failed to instantiate '.$class.': '.$e->getMessage(), LOG_ERR);
-		return null;
-	}
-	'@phan-var-force DolibarrModules $moduleobj';
-	/** @var DolibarrModules $moduleobj */
-
-	return is_array($moduleobj->rights) ? $moduleobj->rights : array();
-}
-
-/**
  * Run a permissions sync and report its outcome to the user.
  *
  * @param RightsSyncCommand $cmd Sync command to run
@@ -1564,12 +1528,34 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on 
 				$filetogenerate[$templateFile] = $ncObj->applyToFilename($templateFile);
 			}
 		}
+		$class = null;
 		if (GETPOST('generatepermissions', 'aZ09')) {
 			$firstobjectname = 'myobject';
+			$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
+			dol_include_once($pathtofile);
+			$class = 'mod'.$module;
+			$moduleobj = null;
+			if (class_exists($class)) {
+				try {
+					$moduleobj = new $class($db);
+					'@phan-var-force DolibarrModules $moduleobj';
+					/** @var DolibarrModules $moduleobj */
+				} catch (Exception $e) {
+					$error++;
+					dol_print_error($db, $e->getMessage());
+				}
+			}
+			if (is_object($moduleobj)) {
+				$rights = $moduleobj->rights;
+			} else {
+				$rights = [];
+			}
 			$moduledescriptorfile = $destdir.'/core/modules/mod'.$module.'.class.php';
-			$rights = modulebuilderLoadDescriptorRights($module, $moduledescriptorfile, $listofmodules[strtolower($module)]['moduledescriptorrelpath']);
-			if ($rights !== null) {
-				$reportPerms = modulebuilderSyncRights(RightsSyncCommand::forObjectCreation($module, $moduledescriptorfile, $rights, $objectname));
+			$checkComment = checkExistComment($moduledescriptorfile, 1);
+			if ($checkComment < 0) {
+				setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Permissions"), "mod".$module."class.php"), null, 'warnings');
+			} else {
+				$reportPerms = modulebuilderSyncRights(RightsSyncCommand::forObjectCreation($module, $moduledescriptorfile, is_array($rights) ? $rights : array(), $objectname));
 				if ($reportPerms->skipped > 0) {
 					setEventMessages($langs->trans("WarningPermissionAlreadyExist", $langs->transnoentities($objectname)), null, 'warnings');
 				}
