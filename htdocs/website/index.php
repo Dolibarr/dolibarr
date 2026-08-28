@@ -3138,6 +3138,7 @@ if ($action != 'preview' && $action != 'editcontent' && $action != 'editsource' 
 }
 
 
+$websitepage = null;
 $disabled = '';
 if (!GETPOST('hide_websitemenu')) {
 	if (!$user->hasRight('website', 'write')) {
@@ -3814,7 +3815,7 @@ if (!GETPOST('hide_websitemenu')) {
 															element_id: elementId,
 															element_type: elementType,
 															action: \'updatedElementContent\',
-															token: \'' . newToken() . '\'
+															token: \'' . currentToken() . '\'
 														},
 														success: function(response) {
 															console.log(response);
@@ -4029,6 +4030,7 @@ if (!GETPOST('hide_websitemenu')) {
                                 method: "POST",
                                 url: "'.DOL_URL_ROOT.'/core/ajax/saveinplace.php",
                                 data: {
+                                    token: \''.currentToken().'\',
                                     field: \'editval_virtualhost\',
                                     element: \'website\',
                                     table_element: \'website\',
@@ -5378,7 +5380,7 @@ if ($action == 'editcontent') {
 
 print "</div>\n";
 print "</form>\n";
-print '<!-- Now, output content of page ID='.$websitepage->id.', mode= '.$mode.' WEBSITE_SUBCONTAINERSINLINE='.getDolGlobalString('WEBSITE_SUBCONTAINERSINLINE').'  WEBSITE_EDITINLINE='.getDolGlobalString('WEBSITE_EDITINLINE').' -->'."\n";
+print '<!-- Now, output content of page ID='.($websitepage->id??'NULL').', mode= '.$mode.' WEBSITE_SUBCONTAINERSINLINE='.getDolGlobalString('WEBSITE_SUBCONTAINERSINLINE').'  WEBSITE_EDITINLINE='.getDolGlobalString('WEBSITE_EDITINLINE').' -->'."\n";
 
 
 if ($mode == 'replacesite' || $massaction == 'replace') {

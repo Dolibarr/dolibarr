@@ -1676,7 +1676,7 @@ abstract class CommonObject
 
 				if (!$list) {
 					$transkey = "TypeContact_".$obj->element."_".$obj->source."_".$obj->code;
-					$libelle_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->type_label);
+					$label_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->type_label);
 					$tab[$i] = array(
 						'parentId' => $this->id,
 						'source' => $obj->source,
@@ -1698,7 +1698,7 @@ abstract class CommonObject
 						'statuscontact' => $obj->statuscontact,
 						'rowid' => $obj->rowid,
 						'code' => $obj->code,
-						'libelle' => $libelle_type,
+						'libelle' => $label_type,
 						'status' => (int) $obj->statuslink,
 						'fk_c_type_contact' => $obj->fk_c_type_contact
 					);
@@ -1803,13 +1803,13 @@ abstract class CommonObject
 			$obj = $this->db->fetch_object($resql);
 
 			$transkey = "TypeContact_".$this->element."_".$source."_".$obj->code;
-			$libelle_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $langs->trans($obj->type_label));
+			$label_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $langs->trans($obj->type_label));
 			if (empty($option)) {
-				$tab[$obj->rowid] = $libelle_type;
+				$tab[$obj->rowid] = $label_type;
 			} elseif ($option == 1) {
-				$tab[$obj->code] = $libelle_type;
+				$tab[$obj->code] = $label_type;
 			} else {
-				$tab[$obj->rowid] = array('id' => $obj->rowid, 'code' => $obj->code, 'label' => $libelle_type);
+				$tab[$obj->rowid] = array('id' => $obj->rowid, 'code' => $obj->code, 'label' => $label_type);
 			}
 			$i++;
 		}
@@ -1884,11 +1884,11 @@ abstract class CommonObject
 						$modulename = 'fournisseur';
 					}
 					if (isModEnabled($modulename)) {
-						$libelle_element = $langs->trans('ContactDefault_'.$obj->element);
+						$label_element = $langs->trans('ContactDefault_'.$obj->element);
 						$tmpelement = $obj->element;
 						$transkey = "TypeContact_".$tmpelement."_".$source."_".$obj->code;
-						$libelle_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->type_label);
-						$tab[$obj->rowid] = $libelle_element.' - '.$libelle_type;
+						$label_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->type_label);
+						$tab[$obj->rowid] = $label_element.' - '.$label_type;
 					}
 				}
 			}
@@ -10811,7 +10811,7 @@ abstract class CommonObject
 				$queryarray[$field] = $this->{$field};  // @phan-suppress-current-line SqlInjection
 			}
 
-			if (array_key_exists('type', $info) && $info['type'] == 'timestamp' && empty($queryarray[$field])) {
+			if (is_array($info) && array_key_exists('type', $info) && !empty($info['type']) && $info['type'] == 'timestamp' && empty($queryarray[$field])) {
 				unset($queryarray[$field]);
 			}
 			if (!empty($info['notnull']) && $info['notnull'] == -1 && empty($queryarray[$field])) {
@@ -11060,7 +11060,7 @@ abstract class CommonObject
 		$this->db->begin();
 
 		if (!$error) {
-			$sql = "INSERT INTO ".$this->db->prefix().$this->table_element;
+			$sql = "INSERT INTO ".$this->db->prefix().$this->db->sanitize($this->table_element);
 			$sql .= " (".implode(", ", $sanitized_keys).')';
 			$sql .= " VALUES (".implode(", ", $sanitized_values).")";		// $sanitized_values can contains 'abc' or 123
 
@@ -11083,7 +11083,8 @@ abstract class CommonObject
 		if (!$error) {
 			// @phan-suppress-next-line PhanTypePossiblyInvalidDimOffset
 			if (array_key_exists('ref', $this->fields) && array_key_exists('notnull', $this->fields['ref']) && $this->fields['ref']['notnull'] > 0 && array_key_exists('default', $this->fields['ref']) && $this->fields['ref']['default'] == '(PROV)') {
-				$sql = "UPDATE ".$this->db->prefix().$this->table_element." SET ref = '(PROV".((int) $this->id).")' WHERE (ref = '(PROV)' OR ref = '') AND rowid = ".((int) $this->id);
+				$sql = "UPDATE ".$this->db->prefix().$this->db->sanitize($this->table_element);
+				$sql .= " SET ref = '(PROV".((int) $this->id).")' WHERE (ref = '(PROV)' OR ref = '') AND rowid = ".((int) $this->id);
 				$resqlupdate = $this->db->query($sql);
 
 				if ($resqlupdate === false) {
@@ -11235,7 +11236,7 @@ abstract class CommonObject
 		'@phan-var-force CommonObjectLine $objectline';
 
 		$sql = "SELECT ".$objectline->getFieldList('l');
-		$sql .= " FROM ".$this->db->prefix().$objectline->table_element." as l";
+		$sql .= " FROM ".$this->db->prefix().$this->db->sanitize($objectline->table_element)." as l";
 		$sql .= " WHERE l.fk_".$this->db->sanitize($this->element)." = ".((int) $this->id);
 		if ($morewhere) {
 			$sql .= $morewhere;
@@ -11335,18 +11336,18 @@ abstract class CommonObject
 			$value = $this->fields[$k];
 			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 			$values[$k] = $this->quote($v, $value);
-			if (($value["type"] == "text") && !empty($value['arrayofkeyval']) && is_array($value['arrayofkeyval'])) {
+			if ((!empty($value["type"]) && $value["type"] == "text") && !empty($value['arrayofkeyval']) && is_array($value['arrayofkeyval'])) {
 				// Clean values for text with selectbox
 				$v = preg_replace('/\s/', ',', $v);
 				$v = preg_replace('/,+/', ',', $v);
 			}
 			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition, SqlInjection
-			$sanitized_tmp[] = $k.'='.$this->quote($v, $this->fields[$k]);
+			$sanitized_tmp[] = $this->db->sanitize($k).'='.$this->quote($v, $this->fields[$k]);
 		}
 
 		// Clean and check mandatory fields
 		foreach ($keys as $key) {
-			if (preg_match('/^integer:/i', $this->fields[$key]['type']) && $values[$key] == '-1') {
+			if (!empty($this->fields[$key]['type']) && preg_match('/^integer:/i', $this->fields[$key]['type']) && $values[$key] == '-1') {
 				$values[$key] = ''; // This is an implicit foreign key field
 			}
 			if (!empty($this->fields[$key]['foreignkey']) && $values[$key] == '-1') {
@@ -11362,7 +11363,9 @@ abstract class CommonObject
 			 }*/
 		}
 
-		$sql = 'UPDATE '.$this->db->prefix().$this->table_element.' SET '.implode(', ', $sanitized_tmp).' WHERE rowid='.((int) $this->id);
+		$sql = "UPDATE ".$this->db->prefix().$this->db->sanitize($this->table_element);
+		$sql.= " SET ".implode(', ', $sanitized_tmp);
+		$sql.= " WHERE rowid = ".((int) $this->id);
 
 		$this->db->begin();
 
@@ -11420,7 +11423,8 @@ abstract class CommonObject
 
 		if ($forcechilddeletion) {	// Force also delete of childtables that should lock deletion in standard case when option force is off
 			foreach ($this->childtables as $table) {
-				$sql = "DELETE FROM ".$this->db->prefix().$this->db->sanitize($table)." WHERE ".$this->db->sanitize($this->fk_element)." = ".((int) $this->id);
+				$sql = "DELETE FROM ".$this->db->prefix().$this->db->sanitize($table);
+				$sql .= " WHERE ".$this->db->sanitize($this->fk_element)." = ".((int) $this->id);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$this->error = $this->db->lasterror();
@@ -11532,7 +11536,8 @@ abstract class CommonObject
 		}
 
 		if (!$error) {
-			$sql = 'DELETE FROM '.$this->db->prefix().$this->table_element.' WHERE rowid='.((int) $this->id);
+			$sql = "DELETE FROM ".$this->db->prefix().$this->db->sanitize($this->table_element);
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			$resql = $this->db->query($sql);
 			if (!$resql) {
@@ -11593,7 +11598,7 @@ abstract class CommonObject
 
 			$this->db->begin();
 
-			$sql = "SELECT rowid FROM ".$this->db->prefix().$this->table_element;
+			$sql = "SELECT rowid FROM ".$this->db->prefix().$this->db->sanitize($this->table_element);
 			$sql .= " WHERE ".$this->db->sanitize($parentField)." = ".(int) $parentId;
 
 			// Manage filter
@@ -11665,7 +11670,7 @@ abstract class CommonObject
 		// End call triggers
 
 		if (empty($error)) {
-			$sql = "DELETE FROM ".$this->db->prefix().$this->table_element_line;
+			$sql = "DELETE FROM ".$this->db->prefix().$this->db->sanitize($this->table_element_line);
 			$sql .= " WHERE rowid = ".((int) $idline);
 
 			$resql = $this->db->query($sql);
@@ -11721,7 +11726,7 @@ abstract class CommonObject
 			$statusfield = 'fk_statut';
 		}
 
-		$sql = "UPDATE ".$this->db->prefix().$this->table_element;
+		$sql = "UPDATE ".$this->db->prefix().$this->db->sanitize($this->table_element);
 		$sql .= " SET ".$this->db->sanitize($statusfield)." = ".((int) $status);
 		$sql .= " WHERE rowid = ".((int) $this->id);
 

@@ -128,7 +128,7 @@ class FactureLigne extends CommonInvoiceLine
 	public $tva_npr;
 
 	/**
-	 * @var float
+	 * @var float		Percent of discount
 	 */
 	public $remise_percent;
 

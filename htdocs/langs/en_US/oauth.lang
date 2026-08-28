@@ -51,3 +51,5 @@ RefreshTokenHelp=Use the Refresh Token to get a new Access Token
 OldTokenWasExpiredItHasBeenRefresh=Old token was expired, it has been refreshed
 OldTokenWasNotExpiredButItHasBeenRefresh=Old token was not expired but it has been refreshed
 OAuthErrorStateDiffers=Value for state=%s differs from value in session. Code is refused.
+OAuthErrorNoScopeInState=No scope received into the 'state' parameter. Dolibarr uses 'state' to carry the list of requested scopes, so this means the constant %s is empty or missing. Go to Home - Setup - Modules - OAuth, tick the scopes of this provider and save.
+OAuthErrorTokenRequestFailed=The OAuth provider refused to exchange the authorization code for a token. Answer of the provider: %s

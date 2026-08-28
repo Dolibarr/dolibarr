@@ -1,0 +1,78 @@
+name: "Close stale PRs with one failing check"
+
+on:
+  schedule:
+    - cron: "0 22 * * *"
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+  checks: read
+
+jobs:
+  close-old-failing-prs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Find and close old PRs with failing checks
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          ONE_YEAR_AGO=$(date -d "1 year ago" --iso-8601=seconds)
+
+          echo "Looking for PRs created before: $ONE_YEAR_AGO"
+
+          gh pr list \
+            --repo "$REPO" \
+            --state open \
+            --limit 1000 \
+            --json number,title,createdAt,updatedAt \
+            --jq '.[] | select(.updatedAt < "'"$ONE_YEAR_AGO"'")' | head -n 2 |
+          while IFS= read -r PR; do
+
+            PR_NUMBER=$(echo "$PR" | jq -r '.number')
+            PR_TITLE=$(echo "$PR" | jq -r '.title')
+            CREATED_AT=$(echo "$PR" | jq -r '.createdAt')
+            UPDATED_AT=$(echo "$PR" | jq -r '.updatedAt')
+
+            echo ""
+            echo "========================================"
+            echo "PR #$PR_NUMBER: $PR_TITLE"
+            echo "Created: $CREATED_AT"
+            echo "Updated: $UPDATED_AT"
+            echo "========================================"
+
+            # Get checks of last commit of PR
+            CHECKS=$(gh pr checks "$PR_NUMBER" \
+              --repo "$REPO" \
+              --json name,state \
+              --jq '.' 2>/dev/null || true)
+
+            FAILED_CHECKS=$(echo "$CHECKS" |
+              jq '[.[] | select(.state == "FAILURE")] | length')
+
+            echo "Failed checks: $FAILED_CHECKS"
+
+            if [ "$FAILED_CHECKS" -gt 0 ]; then
+
+              FAILED_NAMES=$(gh pr checks "$PR_NUMBER" \
+                --repo "$REPO" \
+                --json name,state \
+                --jq '[.[] | select(.state == "FAILURE") | .name] | join(", ")')
+
+              echo "Closing PR #$PR_NUMBER"
+
+              COMMENT=$(printf 'This PR has been closed automatically because it is older than 1 year and at least one CI check is still in failure.\nChecks with error : 🚫 %s\n\nYou can try to resubmit it if you think the trouble has been fixed.' "$FAILED_NAMES")
+
+              gh pr close "$PR_NUMBER" \
+                --repo "$REPO" \
+                --comment "$COMMENT"
+
+            else
+              echo "No failed checks. Keeping PR open."
+            fi
+
+          done
