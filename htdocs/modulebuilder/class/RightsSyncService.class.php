@@ -206,9 +206,16 @@ final class DescriptorRightsSyncService implements RightsSyncService
 	{
 		$target = strtolower($objectName);
 
-		return array_values(array_filter($permissions, static function ($right) use ($target) {
-			return !isset($right[self::INDEX_OBJECT]) || strtolower((string) $right[self::INDEX_OBJECT]) !== $target;
-		}));
+		return array_values(array_filter(
+			$permissions,
+			/**
+			 * @param 	array<int,string> $right Right to keep or drop
+			 * @return 	bool
+			 */
+			static function ($right) use ($target) {
+				return !isset($right[self::INDEX_OBJECT]) || strtolower((string) $right[self::INDEX_OBJECT]) !== $target;
+			}
+		));
 	}
 
 	/**

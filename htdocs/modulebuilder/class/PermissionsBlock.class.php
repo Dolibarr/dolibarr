@@ -304,9 +304,17 @@ final class PermissionsBlock
 			$assigned[] = array('offset' => $offset, 'right' => $right);
 		}
 
-		usort($assigned, static function (array $a, array $b): int {
-			return $a['offset'] <=> $b['offset'];
-		});
+		usort(
+			$assigned,
+			/**
+			 * @param 	array{offset:int,right:array<int,string>} $a First entry to compare
+			 * @param 	array{offset:int,right:array<int,string>} $b Second entry to compare
+			 * @return 	int
+			 */
+			static function (array $a, array $b): int {
+				return $a['offset'] <=> $b['offset'];
+			}
+		);
 
 		return $assigned;
 	}
