@@ -227,7 +227,7 @@ class Fichinter extends CommonObject
 	/**
 	 * Canceled status
 	 */
-	const STATUS_CANCELED = 4;
+	const STATUS_CANCELED = 9;
 
 	/**
 	 * Date of delivery of receipt
