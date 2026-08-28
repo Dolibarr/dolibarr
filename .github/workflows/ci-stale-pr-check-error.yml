@@ -28,7 +28,7 @@ jobs:
           gh pr list \
             --repo "$REPO" \
             --state open \
-            --limit 2 \
+            --limit 200 \
             --json number,title,createdAt,updatedAt \
             --jq '.[] | select(.createdAt < "'"$ONE_YEAR_AGO"'")' |
           while IFS= read -r PR; do
@@ -36,11 +36,13 @@ jobs:
             PR_NUMBER=$(echo "$PR" | jq -r '.number')
             PR_TITLE=$(echo "$PR" | jq -r '.title')
             CREATED_AT=$(echo "$PR" | jq -r '.createdAt')
+            UPDATED_AT=$(echo "$PR" | jq -r '.updatedAt')
 
             echo ""
             echo "========================================"
             echo "PR #$PR_NUMBER: $PR_TITLE"
             echo "Created: $CREATED_AT"
+            echo "Updated: $UPDATED_AT"
             echo "========================================"
 
             # Get checks of last commit of PR
