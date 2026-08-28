@@ -60,9 +60,11 @@ jobs:
 
               echo "Closing PR #$PR_NUMBER"
 
+              COMMENT=$(printf 'This PR has been closed automatically because it is older than 1 year and at least one CI check is still in failure.\nChecks with error : 🚫 %s\n\nYou can try to resubmit it if you think the trouble has been fixed.' "$FAILED_NAMES")
+
               gh pr close "$PR_NUMBER" \
                 --repo "$REPO" \
-                --comment "This PR has been closed automatically because it is older than 1 year and at least one CI check is still in failure. Checks with error : $FAILED_NAMES. You can try to resubmit it if you think the trouble has been fixed."
+                --comment "$COMMENT"
 
             else
               echo "No failed checks. Keeping PR open."
