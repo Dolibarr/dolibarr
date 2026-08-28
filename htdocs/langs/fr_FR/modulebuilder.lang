@@ -204,4 +204,4 @@ FieldsView=Vue des champs
 AIPromptExtrafield=Invite IA
 AIPromptExtrafieldDesc=Saisissez ici une invite qui doit renvoyer la valeur et uniquement. Les variables de substitution sont insérées dans l'invite avant l'appel à l'API AI.
 ModuleBuilderPermissionsNormalized=Certaines permissions ont été ajustées lors de la réécriture du descripteur du module :
-ModuleBuilderPermissionsBlockNotSafe=La section des permissions du descripteur du module n'a pas été modifiée car elle ne peut pas être réécrite sans risque :
+ModuleBuilderPermissionsNotChanged=La section des permissions du descripteur du module n'a pas été modifiée :

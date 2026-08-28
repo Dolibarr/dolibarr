@@ -77,9 +77,12 @@ final class SyncReport
 	}
 
 	/**
-	 * Whether the descriptor file was left untouched.
+	 * Whether the sync produced no permission line.
 	 *
-	 * @return bool True when nothing was written
+	 * This is not the same as "the file was left untouched": removing the last right of a module
+	 * writes an empty block, which changes the file while producing zero lines.
+	 *
+	 * @return bool True when no permission line was written
 	 */
 	public function isNoop(): bool
 	{

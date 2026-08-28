@@ -360,7 +360,7 @@ function modulebuilderSyncRights(RightsSyncCommand $cmd): SyncReport
 	}
 	if ($report->hasConflicts()) {
 		$safe = array_map('dol_escape_htmltag', array_slice($report->conflicts, 0, 5));
-		setEventMessages($langs->trans('ModuleBuilderPermissionsBlockNotSafe').'<br>'.implode('<br>', $safe), null, 'errors');
+		setEventMessages($langs->trans('ModuleBuilderPermissionsNotChanged').'<br>'.implode('<br>', $safe), null, 'errors');
 	}
 
 	return $report;

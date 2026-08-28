@@ -797,4 +797,59 @@ class ModuleBuilderRightsSyncTest extends CommonClassTest
 		file_put_contents($truncated, "<?php\nclass modTruncated { function f() { ".PermissionsBlock::BEGIN_MARKER." } }\n");
 		$this->assertSame(-1, deletePerms($truncated));
 	}
+
+	/**
+	 * null, true and false are T_STRING for the tokenizer and must not be read as dynamic code.
+	 *
+	 * @return void
+	 */
+	public function testLiteralsAreNotMistakenForDynamicCode()
+	{
+		$inner = "\t\t\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', 1);\n"
+			."\t\t\$this->rights[\$r][3] = null;\n"
+			."\t\t\$this->rights[\$r][2] = true;\n"
+			."\t\t\$this->rights[\$r][5] = 'read';\n\t\t\$r++;\n";
+		$block = PermissionsBlock::fromFile($this->makeDescriptorFixture($inner));
+
+		$this->assertSame(array(), $block->detectTextConflicts());
+	}
+
+	/**
+	 * A descriptor path carrying a parent directory reference is refused before any read.
+	 *
+	 * @return void
+	 */
+	public function testParentDirectoryReferenceInPathIsRefused()
+	{
+		$path = $this->makeDescriptorFixture('');
+		$traversal = dirname($path).'/../'.basename(dirname($path)).'/'.basename($path);
+
+		$report = (new DescriptorRightsSyncService())->sync(
+			RightsSyncCommand::forObjectCreation('Acme', $traversal, array(), 'Invoice')
+		);
+
+		$this->assertTrue($report->hasConflicts());
+		$this->assertStringContainsString('parent directory', $report->conflicts[0]);
+	}
+
+	/**
+	 * Removing the last right writes an empty block: no line written, yet the file did change.
+	 *
+	 * @return void
+	 */
+	public function testRemovingLastRightWritesAnEmptyBlock()
+	{
+		$path = $this->makeDescriptorFixture('');
+		$service = new DescriptorRightsSyncService();
+		$service->sync(RightsSyncCommand::forObjectCreation('Acme', $path, array(), 'Invoice'));
+
+		$before = md5_file($path);
+		$report = $service->sync(
+			RightsSyncCommand::forRightDeletion('Acme', $path, array(array(1 => 'Read invoice', 4 => 'invoice', 5 => 'read')), 0)
+		);
+
+		$this->assertTrue($report->isNoop());
+		$this->assertNotSame($before, md5_file($path));
+		$this->assertSame(array(), $this->parseRenderedRights($path));
+	}
 }

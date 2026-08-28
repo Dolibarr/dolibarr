@@ -41,12 +41,13 @@ final class PermissionsBlock
 	private const ALLOWED_VARIABLES = array('$this', '$r', '$o');
 
 	/**
-	 * Identifiers a rewritable block may mention: the two descriptor properties it assigns and
-	 * the single function the generated id expression calls.
+	 * Identifiers a rewritable block may mention: the two descriptor properties it assigns, the
+	 * single function the generated id expression calls, and the three literals the tokenizer
+	 * reports as T_STRING rather than as a dedicated token.
 	 *
 	 * @var string[]
 	 */
-	private const ALLOWED_IDENTIFIERS = array('rights', 'numero', 'sprintf');
+	private const ALLOWED_IDENTIFIERS = array('rights', 'numero', 'sprintf', 'null', 'true', 'false');
 
 	/**
 	 * Punctuation a rewritable block may contain.
@@ -106,6 +107,9 @@ final class PermissionsBlock
 	 */
 	public static function fromFile(string $file): self
 	{
+		if (strpos($file, '..') !== false) {
+			throw new \RuntimeException('Descriptor path must not contain a parent directory reference: '.$file);
+		}
 		if (!dol_is_file($file)) {
 			throw new \RuntimeException('Descriptor file not found: '.$file);
 		}

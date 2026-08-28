@@ -204,4 +204,4 @@ FieldsView=Fields view
 AIPromptExtrafield=AI Prompt
 AIPromptExtrafieldDesc=Enter here a prompt that should return a value and only the value. The substition variables are replaced into the prompt before calling the AI API.
 ModuleBuilderPermissionsNormalized=Some permissions were adjusted while rewriting the module descriptor:
-ModuleBuilderPermissionsBlockNotSafe=The permissions section of the module descriptor was left untouched because it cannot be rewritten safely:
+ModuleBuilderPermissionsNotChanged=The permissions section of the module descriptor was left unchanged:
