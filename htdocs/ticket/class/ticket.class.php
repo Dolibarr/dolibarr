@@ -3173,9 +3173,95 @@ class Ticket extends CommonObject
 									$sendto = $hookmanager->resArray;
 								}
 
+								// If standardised form submitted, override auto-computed recipients with user selection
+								if (GETPOSTISSET('receiver_multiselect')) {
+									$sendto_manual = array();
+
+									$receiver_selected = GETPOST('receiver', 'array');
+									if (is_array($receiver_selected)) {
+										foreach ($receiver_selected as $email) {
+											$email = trim((string) $email);
+											if ($email && filter_var($email, FILTER_VALIDATE_EMAIL)) {
+												$sendto_manual[$email] = $email;
+											}
+										}
+									}
+
+									// Free input: plain email or "Name <email>", comma-separated
+									$sendto_free = GETPOST('sendto', 'alphawithlgt');
+									if ($sendto_free !== '') {
+										foreach (explode(',', $sendto_free) as $entry) {
+											$entry = trim($entry);
+											if ($entry === '') {
+												continue;
+											}
+											if (preg_match('/.*<\s*([^>]+)\s*>/', $entry, $matches)) {
+												$email = trim($matches[1]);
+											} else {
+												$email = $entry;
+											}
+											if ($email && filter_var($email, FILTER_VALIDATE_EMAIL)) {
+												$sendto_manual[$email] = $entry;
+											}
+										}
+									}
+
+									$sendto = $sendto_manual;
+								}
+
+								// CC: start with TICKET_SEND_INTERNAL_CC, then append form selection
 								$sendtocc = array();
+								$sendtocc_emails = array(); // lowercase email index for case-insensitive dedup
 								if (getDolGlobalString("TICKET_SEND_INTERNAL_CC")) {
-									$sendtocc = explode(',', getDolGlobalString("TICKET_SEND_INTERNAL_CC"));
+									foreach (explode(',', getDolGlobalString("TICKET_SEND_INTERNAL_CC")) as $cc_entry) {
+										$cc_entry = trim($cc_entry);
+										if (!$cc_entry) {
+											continue;
+										}
+										// Extract bare email from optional "Name <email>" format
+										if (preg_match('/<\s*([^>]+)\s*>/', $cc_entry, $m)) {
+											$cc_email = strtolower(trim($m[1]));
+										} else {
+											$cc_email = strtolower($cc_entry);
+										}
+										if (!in_array($cc_email, $sendtocc_emails)) {
+											$sendtocc[] = $cc_entry;
+											$sendtocc_emails[] = $cc_email;
+										}
+									}
+								}
+
+								if (GETPOSTISSET('receivercc_multiselect')) {
+									$receivercc_selected = GETPOST('receivercc', 'array');
+									if (is_array($receivercc_selected)) {
+										foreach ($receivercc_selected as $email) {
+											$email = trim((string) $email);
+											if ($email && filter_var($email, FILTER_VALIDATE_EMAIL) && !in_array(strtolower($email), $sendtocc_emails)) {
+												$sendtocc[] = $email;
+												$sendtocc_emails[] = strtolower($email);
+											}
+										}
+									}
+
+									// Free input: plain email or "Name <email>", comma-separated
+									$sendtocc_free = GETPOST('sendtocc', 'alphawithlgt');
+									if ($sendtocc_free !== '') {
+										foreach (explode(',', $sendtocc_free) as $entry) {
+											$entry = trim($entry);
+											if ($entry === '') {
+												continue;
+											}
+											if (preg_match('/.*<\s*([^>]+)\s*>/', $entry, $matches)) {
+												$email = trim($matches[1]);
+											} else {
+												$email = $entry;
+											}
+											if ($email && filter_var($email, FILTER_VALIDATE_EMAIL) && !in_array(strtolower($email), $sendtocc_emails)) {
+												$sendtocc[] = $email;
+												$sendtocc_emails[] = strtolower($email);
+											}
+										}
+									}
 								}
 
 								// Don't try to send email when no recipient
