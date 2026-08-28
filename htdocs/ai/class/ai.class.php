@@ -1,9 +1,7 @@
 <?php
-use RectorPrefix202310\Illuminate\Contracts\Broadcasting\ShouldBeUnique;
-
 /* Copyright (C) 2024	Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024	Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,22 +35,22 @@ require_once DOL_DOCUMENT_ROOT."/ai/lib/ai.lib.php";
 class Ai
 {
 	/**
-	 * @var DoliDB $db Database object
+	 * @var DoliDB Database object
 	 */
 	protected $db;
 
 	/**
-	 * @var string $apiService
+	 * @var string
 	 */
 	private $apiService;
 
 	/**
-	 * @var string $apiKey
+	 * @var string
 	 */
 	private $apiKey;
 
 	/**
-	 * @var string $apiEndpoint
+	 * @var string
 	 */
 	private $apiEndpoint;
 
@@ -70,7 +68,6 @@ class Ai
 	 * Constructor
 	 *
 	 * @param	DoliDB	$db		 Database handler
-	 *
 	 */
 	public function __construct($db)
 	{
@@ -501,9 +498,9 @@ class Ai
 	/**
 	 * Decode JSON into array
 	 *
-	 * @param string	$json	Json
+	 * @param array{document_info?:array{reference?:string,invoice_number?:string,title?:string,issue_date?:string,due_date?:string,vendor?:array{name?:string,siren?:string,siret?:string,email?:string,professional_id?:array{siren?:string},vat_number?:string}}|null,summary?:array{currency?:string,subtotal_excluding_tax?:float,tax?:array{rate?:float,amount?:float}},items?:array<int|string,array{description?:string,service?:string,quantity?:float,tax?:array{vat_rate?:float,rate?:float,amount?:float},unit_price?:float,total_excluding_tax?:float,total_including_tax?:float,period_start?:string,period_end?:string,period?:array{start_date?:string,end_date?:string}}>}	$json JSON
 	 * @param string	$type	Type of document to get ('supplier_invoice', 'thirdparty', ...)
-	 * @return array<string,string|int|float>	Array of values
+	 * @return array<string,string|float>	Array of values
 	 */
 	public function decodeJsonIntoArray($json, $type)
 	{
