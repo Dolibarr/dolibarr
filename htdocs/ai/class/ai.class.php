@@ -498,7 +498,7 @@ class Ai
 	/**
 	 * Decode JSON into array
 	 *
-	 * @param array<string,mixed>|null	$json	Decoded json (result of json_decode(..., true)), null when decoding failed
+	 * @param array<string,mixed|array<string,mixed>>|null	$json	Decoded json (result of json_decode(..., true)), null when decoding failed
 	 * @param string	$type	Type of document to get ('supplier_invoice', 'thirdparty', ...)
 	 * @return array<string,mixed>	Array of values
 	 */
