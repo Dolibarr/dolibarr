@@ -28,9 +28,9 @@ jobs:
           gh pr list \
             --repo "$REPO" \
             --state open \
-            --limit 2 \
+            --limit 1000 \
             --json number,title,createdAt \
-            --jq '.[] | select(.createdAt < "'"$ONE_YEAR_AGO"'")' |
+            --jq '.[] | select(.createdAt < "'"$ONE_YEAR_AGO"'")' | head -n 2 |
           while IFS= read -r PR; do
 
             PR_NUMBER=$(echo "$PR" | jq -r '.number')
