@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011      Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2013	   Philippe Grand	    <philippe.grand@atoo-net.com>
- * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -171,7 +171,7 @@ class modExpedition extends DolibarrModules
 		$this->rights[$r][0] = 105; // id de la permission
 		$this->rights[$r][1] = 'Send shipments by email to customers'; // libelle de la permission
 		$this->rights[$r][2] = 'd'; // type de la permission (deprecated)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'shipping_advance';
 		$this->rights[$r][5] = 'send';
 

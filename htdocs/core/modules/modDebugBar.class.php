@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2019-2020 AXeL-dev <contact.axel.dev@gmail.com>
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -81,7 +82,7 @@ class modDebugBar extends DolibarrModules
 		$this->rights[1][0] = 431; // id de la permission
 		$this->rights[1][1] = 'Use Debug Bar'; // libelle de la permission
 		$this->rights[1][2] = 'u'; // type de la permission (deprecated)
-		$this->rights[1][3] = 0; // La permission est-elle une permission par default
+		$this->rights[1][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[1][4] = 'read';
 	}
 
