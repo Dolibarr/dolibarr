@@ -1407,7 +1407,7 @@ class Categorie extends CommonObject
 		global $hookmanager;
 		if (is_object($hookmanager)) {
 			$parameters = array('cats' => &$this->cats, 'motherof' => &$this->motherof, 'type' => $type);
-			$reshook = $hookmanager->executeHooks('completeFullArbo', $parameters, $this);
+			$reshook = $hookmanager->executeHooks('completeCategoryFullTree', $parameters, $this);
 			if ($reshook < 0) {
 				setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 			}
