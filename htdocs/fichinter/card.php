@@ -739,7 +739,7 @@ if (empty($reshook)) {
 		} else {
 			$mesg = $object->error;
 		}
-	} elseif ($action == 'confirm_cancel' && $confirm == 'yes' && $user->hasRight('ficheinter', 'supprimer')) {
+	} elseif ($action == 'confirm_cancel' && $confirm == 'yes' && $permissiontoadd) {
 		$result = $object->setCanceled($user);
 
 		if ($result < 0) {
