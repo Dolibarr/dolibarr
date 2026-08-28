@@ -22,12 +22,12 @@ jobs:
         run: |
           set -euo pipefail
 
-          ONE_YEAR_AGO=$(date -d "1 year ago" --iso-8601=seconds)
+          ONE_YEAR_AGO=$(date -d "6 months ago" --iso-8601=seconds)
 
           echo "Looking for open PRs not updated since: $ONE_YEAR_AGO"
 
           CLOSED_COUNT=0
-          MAX_CLOSED=2
+          MAX_CLOSED=20
 
           gh pr list \
             --repo "$REPO" \
@@ -62,7 +62,7 @@ jobs:
 
               echo "PR #$PR_NUMBER has merge conflicts."
 
-              COMMENT="This PR has been closed automatically because it has not been updated for more than 1 year and currently has merge conflicts so can't merged without author action. The PR must be reopened if the conflicts are resolved and the changes are still relevant."
+              COMMENT="This PR has been closed automatically because it has not been updated for more than 6 months, and currently has merge conflicts so can't merged without author action. The PR must be reopened if the conflicts are resolved and the changes are still relevant."
 
               echo "Closing PR #$PR_NUMBER"
 

@@ -21,11 +21,12 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
         run: |
-          ONE_YEAR_AGO=$(date -d "1 year ago" --iso-8601=seconds)
+          ONE_YEAR_AGO=$(date -d "6 months ago" --iso-8601=seconds)
 
           echo "Looking for PRs created before: $ONE_YEAR_AGO"
 
           CLOSED_COUNT=0
+          MAX_CLOSED=20
 
           gh pr list \
             --repo "$REPO" \
@@ -71,7 +72,7 @@ jobs:
 
               echo "Closing PR #$PR_NUMBER"
 
-              COMMENT=$(printf 'This PR has been closed automatically because it is older than 1 year and at least one CI check is still in failure.\nChecks with error : 🚫 %s\n\nYou can try to resubmit it if you think the trouble has been fixed.' "$FAILED_NAMES")
+              COMMENT=$(printf 'This PR has been closed automatically because it is older than 6 months, and at least one CI check is still in failure.\nChecks with error : 🚫 %s\n\nYou can try to resubmit it if you think the trouble has been fixed.' "$FAILED_NAMES")
 
               gh pr close "$PR_NUMBER" \
                 --repo "$REPO" \
@@ -80,7 +81,7 @@ jobs:
               CLOSED_COUNT=$((CLOSED_COUNT + 1))
               echo "Closed PRs: $CLOSED_COUNT"
 
-              if [ "$CLOSED_COUNT" -ge 2 ]; then
+              if [ "$CLOSED_COUNT" -ge "$MAX_CLOSED" ]; then
                 echo "Reached the maximum number of PRs to close. Stopping."
                 break
               fi
