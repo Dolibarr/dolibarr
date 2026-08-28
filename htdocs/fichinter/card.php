@@ -740,7 +740,7 @@ if (empty($reshook)) {
 			$mesg = $object->error;
 		}
 	} elseif ($action == 'confirm_cancel' && $confirm == 'yes' && $user->hasRight('ficheinter', 'cancel')) {
-		$result = $object->cancel();
+		$result = $object->setCanceled($user);
 
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');

@@ -753,15 +753,19 @@ class Fichinter extends CommonObject
 	}
 
 	/**
-	 * 	Cancel an fichinter
+	 * 	Cancel an intervention
 	 *
-	 *	@return	int			Return integer <0 if KO, >0 if OK
+	 * 	@param      User	$user       Object user that cancel
+	 *  @param		int		$notrigger	1=Does not execute triggers, 0=Execute triggers
+	 *	@return		int					Return integer <0 if KO, 0 if nothing done, >0 if OK
 	 */
-	public function cancel()
+	public function setCanceled($user, $notrigger = 0)
 	{
-		global $user;
-
 		$error = 0;
+
+		if ($this->status == self::STATUS_CANCELED) {
+			return 0;
+		}
 
 		$this->db->begin();
 
@@ -770,15 +774,18 @@ class Fichinter extends CommonObject
 		$sql .= " fk_user_modif = ".((int) $user->id);
 		$sql .= " WHERE rowid = ".((int) $this->id);
 		$sql .= " AND fk_statut = ".self::STATUS_VALIDATED;
+		$sql .= " AND entity IN (".getEntity('intervention').")";
 
-		dol_syslog(get_class($this)."::cancel", LOG_DEBUG);
+		dol_syslog(get_class($this)."::setCanceled", LOG_DEBUG);
 		if ($this->db->query($sql)) {
-			// Call trigger
-			$result = $this->call_trigger('FICHINTER_CANCEL', $user);
-			if ($result < 0) {
-				$error++;
+			if (!$notrigger) {
+				// Call trigger
+				$result = $this->call_trigger('FICHINTER_CANCEL', $user);
+				if ($result < 0) {
+					$error++;
+				}
+				// End call triggers
 			}
-			// End call triggers
 
 			if (!$error) {
 				$this->status = self::STATUS_CANCELED;
@@ -787,7 +794,7 @@ class Fichinter extends CommonObject
 				return 1;
 			} else {
 				foreach ($this->errors as $errmsg) {
-					dol_syslog(get_class($this)."::cancel ".$errmsg, LOG_ERR);
+					dol_syslog(get_class($this)."::setCanceled ".$errmsg, LOG_ERR);
 					$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 				}
 				$this->db->rollback();
