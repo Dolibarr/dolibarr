@@ -1406,7 +1406,6 @@ class Categorie extends CommonObject
 		// coming from other entities according to a sharing granularity they manage)
 		global $hookmanager;
 		if (is_object($hookmanager)) {
-			$hookmanager->initHooks(array('category'));
 			$parameters = array('cats' => &$this->cats, 'motherof' => &$this->motherof, 'type' => $type);
 			$reshook = $hookmanager->executeHooks('completeFullArbo', $parameters, $this);
 			if ($reshook < 0) {
