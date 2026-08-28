@@ -851,7 +851,8 @@ class Fichinter extends CommonObject
 		}
 
 		if (!$error) {
-			$this->statut = self::STATUS_VALIDATED;
+			$this->status = self::STATUS_VALIDATED;
+			$this->statut = self::STATUS_VALIDATED;	// deprecated
 			$this->billed = 0;
 
 			$this->db->commit();

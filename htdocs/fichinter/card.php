@@ -732,7 +732,7 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'confirm_reopen' && $permissiontoadd) {
 		// Reopen
-		$result = $object->setStatut(Fichinter::STATUS_VALIDATED);
+		$result = $object->setReopen($user);
 		if ($result > 0) {
 			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 			exit;
