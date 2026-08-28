@@ -1,4 +1,4 @@
-name: "Close old stale PRs with one failing check"
+name: "Close old PRs with one failing check"
 
 on:
   schedule:
