@@ -290,10 +290,10 @@ $tabsql[DICT_AVAILABILITY] = "SELECT c.rowid as rowid, c.code, c.label, c.type_d
 $tabsql[DICT_INPUT_REASON] = "SELECT t.rowid as rowid, t.code, t.label, t.active FROM ".MAIN_DB_PREFIX."c_input_reason as t";
 $tabsql[DICT_REVENUESTAMP] = "SELECT t.rowid as rowid, t.taux, t.revenuestamp_type, c.label as country, c.code as country_code, t.fk_pays as country_id, t.note, t.active, t.accountancy_code_sell, t.accountancy_code_buy FROM ".MAIN_DB_PREFIX."c_revenuestamp as t, ".MAIN_DB_PREFIX."c_country as c WHERE t.fk_pays=c.rowid";
 $tabsql[DICT_TYPE_RESOURCE] = "SELECT t.rowid as rowid, t.code, t.label, t.active FROM ".MAIN_DB_PREFIX."c_type_resource as t";
-$tabsql[DICT_TYPE_CONTAINER] = "SELECT t.rowid as rowid, t.code, t.label, t.active, t.module FROM ".MAIN_DB_PREFIX."c_type_container as t WHERE t.entity IN (".getEntity($tabname[DICT_TYPE_CONTAINER]).")";
+$tabsql[DICT_TYPE_CONTAINER] = "SELECT t.rowid as rowid, t.entity, t.code, t.label, t.active, t.module FROM ".MAIN_DB_PREFIX."c_type_container as t WHERE t.entity IN (".getEntity($tabname[DICT_TYPE_CONTAINER]).")";
 //$tabsql[DICT_UNITS]= "SELECT t.rowid as rowid, t.code, t.label, t.short_label, t.active FROM ".MAIN_DB_PREFIX."c_units as t";
 $tabsql[DICT_STCOMM] = "SELECT t.id    as rowid, t.code, t.libelle, t.picto, t.active FROM ".MAIN_DB_PREFIX."c_stcomm as t";
-$tabsql[DICT_HOLIDAY_TYPES] = "SELECT h.rowid as rowid, h.code, h.label, h.affect, h.delay, h.newbymonth, h.fk_country as country_id, c.code as country_code, c.label as country, h.block_if_negative, h.sortorder, h.active FROM ".MAIN_DB_PREFIX."c_holiday_types as h LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON h.fk_country=c.rowid WHERE h.entity IN (".getEntity($tabname[DICT_HOLIDAY_TYPES]).")";
+$tabsql[DICT_HOLIDAY_TYPES] = "SELECT h.rowid as rowid, h.entity, h.code, h.label, h.affect, h.delay, h.newbymonth, h.fk_country as country_id, c.code as country_code, c.label as country, h.block_if_negative, h.sortorder, h.active FROM ".MAIN_DB_PREFIX."c_holiday_types as h LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON h.fk_country=c.rowid WHERE h.entity IN (".getEntity($tabname[DICT_HOLIDAY_TYPES]).")";
 $tabsql[DICT_LEAD_STATUS] = "SELECT t.rowid as rowid, t.code, t.label, percent, t.position, t.active FROM ".MAIN_DB_PREFIX."c_lead_status as t";
 $tabsql[DICT_FORMAT_CARDS] = "SELECT t.rowid, t.code, t.name, t.paper_size, t.orientation, t.metric, t.leftmargin, t.topmargin, t.nx, t.ny, t.spacex, t.spacey, t.width, t.height, t.font_size, t.custom_x, t.custom_y, t.active FROM ".MAIN_DB_PREFIX."c_format_cards as t";
 $tabsql[DICT_INVOICE_SUBTYPE] = "SELECT t.rowid, t.code, t.label, c.label as country, c.code as country_code, t.fk_country as country_id, t.active FROM ".MAIN_DB_PREFIX."c_invoice_subtype as t, ".MAIN_DB_PREFIX."c_country as c WHERE t.fk_country = c.rowid";
@@ -2315,7 +2315,10 @@ if ($id > 0) {
 			while ($i < $num) {
 				$obj = $db->fetch_object($resql);
 
-				$withentity = null;
+				// Entity owning this row, when the dictionary is entity aware (the SELECT of
+				// $tabsql must then include the entity column). It is used to target the right row
+				// on write, and to tell rows of another entity apart just below.
+				$withentity = (isset($obj->entity) ? (int) $obj->entity : null);
 
 				// We discard empty lines
 				if ($id == DICT_COUNTRY) {
@@ -2368,6 +2371,18 @@ if ($id > 0) {
 					$canbedisabled = 0;
 					$canbemodified = 0;
 					$iserasable = 0;
+				}
+
+				// A row owned by another entity is read-only here. This happens when a dictionary
+				// is shared with the current entity (for instance the dictionary of the master
+				// entity that this entity only extends, with module multicompany): the row is
+				// legitimately listed, but editing it would change it for the other entity too.
+				// Without multicompany, getEntity() returns the current entity and every listed row
+				// belongs to it, so this never triggers.
+				if (!is_null($withentity) && $withentity != (int) getEntity($tabname[$id], 0)) {
+					$iserasable = 0;
+					$canbedisabled = 0;
+					$canbemodified = 0;
 				}
 				// Build Url. The table is id=, the id of line is rowid=
 				$rowidcol = empty($tabrowid[$id]) ? 'rowid' : $tabrowid[$id];
