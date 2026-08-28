@@ -739,7 +739,7 @@ if (empty($reshook)) {
 		} else {
 			$mesg = $object->error;
 		}
-	} elseif ($action == 'confirm_cancel' && $confirm == 'yes' && $user->hasRight('ficheinter', 'cancel')) {
+	} elseif ($action == 'confirm_cancel' && $confirm == 'yes' && $user->hasRight('ficheinter', 'supprimer')) {
 		$result = $object->setCanceled($user);
 
 		if ($result < 0) {
@@ -2037,7 +2037,7 @@ if ($action == 'create') {
 
 				// Cancel fichinter
 				if ($object->status == Fichinter::STATUS_VALIDATED) {
-					if ($user->hasRight('ficheinter', 'cancel')) {
+					if ($user->hasRight('ficheinter', 'supprimer')) {
 						print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=cancel&token='.newToken().'">'.$langs->trans("Cancel").'</a></div>';
 					} else {
 						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">'.$langs->trans('Cancel').'</a></div>';
