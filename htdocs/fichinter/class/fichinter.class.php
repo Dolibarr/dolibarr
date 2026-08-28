@@ -1019,8 +1019,6 @@ class Fichinter extends CommonObject
 		$statuscode = 'status'.$status;
 		if ($status == self::STATUS_BILLED || $status == self::STATUS_CLOSED) {
 			$statuscode = 'status6';
-		} elseif ($status == self::STATUS_CANCELED) {
-			$statuscode = 'status9';
 		}
 
 		$signed_label = ' (' . $this->getLibSignedStatus() . ')';
