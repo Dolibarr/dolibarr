@@ -130,23 +130,27 @@ class FichinterLigne extends CommonObjectLine
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			$objp = $this->db->fetch_object($resql);
-			$this->rowid          	= $objp->rowid;
-			$this->id               = $objp->rowid;
-			$this->fk_fichinter   	= $objp->fk_fichinter;
-			$this->date = $this->db->jdate($objp->date);
-			$this->datei = $this->db->jdate($objp->date);	// For backward compatibility
-			$this->desc           	= $objp->description;
-			$this->duration       	= $objp->duree;
-			$this->rang           	= $objp->rang;
+			if ($this->db->num_rows($resql)) {
+				$objp = $this->db->fetch_object($resql);
+				$this->rowid          	= $objp->rowid;
+				$this->id               = $objp->rowid;
+				$this->fk_fichinter   	= $objp->fk_fichinter;
+				$this->date = $this->db->jdate($objp->date);
+				$this->datei = $this->db->jdate($objp->date);	// For backward compatibility
+				$this->desc           	= $objp->description;
+				$this->duration       	= $objp->duree;
+				$this->rang           	= $objp->rang;
 
-			$this->extraparams = !empty($objp->extraparams) ? (array) json_decode($objp->extraparams, true) : array();
+				$this->extraparams = !empty($objp->extraparams) ? (array) json_decode($objp->extraparams, true) : array();
 
-			$this->db->free($resql);
+				$this->db->free($resql);
 
-			$this->fetch_optionals();
+				$this->fetch_optionals();
 
-			return 1;
+				return 1;
+			}
+
+			return 0;
 		} else {
 			$this->error = $this->db->error().' sql='.$sql;
 			return -1;
