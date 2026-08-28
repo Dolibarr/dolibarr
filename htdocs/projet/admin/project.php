@@ -787,7 +787,7 @@ if (!getDolGlobalString('PROJECT_HIDE_TASKS')) {
 									// Preview
 									print '<td class="center">';
 									if ($module->type == 'pdf') {
-										print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimentask&module='.$name.'">'.img_object($langs->trans("Preview"), 'bill').'</a>';
+										print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimentask&token='.newToken().'&module='.$name.'">'.img_object($langs->trans("Preview"), 'bill').'</a>';
 									} else {
 										print img_object($langs->transnoentitiesnoconv("PreviewNotAvailable"), 'generic');
 									}

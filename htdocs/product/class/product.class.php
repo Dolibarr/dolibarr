@@ -6154,7 +6154,7 @@ class Product extends CommonObject
 	 * @param  int       $hidedetails Hide details of lines
 	 * @param  int       $hidedesc    Hide description
 	 * @param  int       $hideref     Hide ref
-	 * @return int                         0 if KO, 1 if OK
+	 * @return int                    Return integer < 0 if KO, 0 = no doc generated, > 0 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
@@ -6163,14 +6163,22 @@ class Product extends CommonObject
 		$langs->load("products");
 		$outputlangs->load("products");
 
-		// Positionne le modele sur le nom du modele a utiliser
 		if (!dol_strlen($modele)) {
-			$modele = getDolGlobalString('PRODUCT_ADDON_PDF', 'strato');
+			$modele = '';	// No doc template/generation by default
+
+			if (!empty($this->model_pdf)) {
+				$modele = $this->model_pdf;
+			} elseif (getDolGlobalString('PRODUCT_ADDON_PDF')) {
+				$modele = getDolGlobalString('PRODUCT_ADDON_PDF');
+			}
 		}
 
-		$modelpath = "core/modules/product/doc/";
-
-		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+		if (empty($modele)) {
+			return 0;
+		} else {
+			$modelpath = "core/modules/product/doc/";
+			return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+		}
 	}
 
 	/**

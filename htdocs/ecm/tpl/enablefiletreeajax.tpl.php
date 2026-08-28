@@ -95,7 +95,7 @@ $(document).ready(function() {
 
 		$.get("<?php echo DOL_URL_ROOT.'/ecm/ajax/ecmdatabase.php'; ?>", {
 			action: 'build',
-			token: '<?php echo newToken(); ?>',
+			token: '<?php echo currentToken(); ?>',
 			element: 'ecm'
 		}, function(response) {
 			setTimeout(() => {

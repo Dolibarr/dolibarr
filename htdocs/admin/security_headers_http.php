@@ -300,11 +300,11 @@ llxHeader('', $langs->trans("MainHttpSecurityHeaders"), $wikihelp, '', 0, 0, '',
 print load_fiche_titre($langs->trans("SecuritySetup"), '', 'title_setup');
 $head = security_prepare_head();
 
+print '<div class="info">'.$langs->trans("HTTPHeaderEditor").'. '.$langs->trans("ReservedToAdvancedUsers").'.</div>';
+
 print dol_get_fiche_head($head, 'headers_http', '', -1);
 
 print '<br>';
-
-print '<span class="opacitymedium">'.$langs->trans("HTTPHeaderEditor").'. '.$langs->trans("ReservedToAdvancedUsers").'.</span><br><br>';
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'">';

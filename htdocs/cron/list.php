@@ -118,6 +118,9 @@ $fieldstosearchall = array();
 // Definition of array of fields for columns from ->fields
 $tableprefix = 't';
 $arrayfields = array();
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 /*
 foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field

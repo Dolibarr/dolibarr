@@ -36,7 +36,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -46,7 +45,6 @@ require '../../main.inc.php';
  * @var Translate $langs
  * @var User $user
  */
-
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formorder.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
