@@ -26,6 +26,7 @@
 '
 @phan-var-force DolibarrModules $this
 @phan-var-force int $r
+@phan-var-force stdClass $obj
 ';
 
 // $keyforselect = name of main table

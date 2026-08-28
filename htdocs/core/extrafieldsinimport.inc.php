@@ -23,7 +23,10 @@
  * @var string $keyforaliasextra
  * @var int $r
  */
-'@phan-var-force DolibarrModules $this';
+'
+@phan-var-force DolibarrModules $this
+@phan-var-force stdClass $obj
+';
 
 // $keyforselect = name of main table
 // keyforelement = name of picto
