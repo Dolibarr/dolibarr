@@ -162,7 +162,7 @@ If possible:
     - Example: `FIX: #1234 Correct VAT calculation on credit notes`
 - Do not update the `ChangeLog` file (this file will be generated before the release from all commit titles)
 - Do not introduce new syntax or features unavailable in the branch's minimum PHP version
-- When commiting, mention the AI agent name in the commit message (e.g. "Co-authored-by: AI Agent <ai-agent@dolibarr.org>")
+- When commiting, mention the AI agent name in the commit message by adding a line "Co-authored-by:"
 
 ---
 
