@@ -5090,7 +5090,6 @@ class Form
 				$i++;
 			}
 
-			$hookmanager->initHooks(array('dictionarycache'));
 			$parameters = array('dictionary' => 'paymentterm');
 			$reshook = $hookmanager->executeHooks('loadDictionaryCache', $parameters, $this); // Note that $action and $object may have been modified by hook
 			if (empty($reshook)) {
@@ -5370,7 +5369,6 @@ class Form
 				$i++;
 			}
 
-			$hookmanager->initHooks(array('dictionarycache'));
 			$parameters = array('dictionary' => 'paymenttype');
 			$reshook = $hookmanager->executeHooks('loadDictionaryCache', $parameters, $this); // Note that $action and $object may have been modified by hook
 			if (empty($reshook)) {
@@ -7946,7 +7944,6 @@ class Form
 					$this->cache_vatrates[$obj->rowid] = $tmparray;
 				}
 
-				$hookmanager->initHooks(array('dictionarycache'));
 				$parameters = array('dictionary' => 'vatrate', 'country_code' => $country_code);
 				$reshook = $hookmanager->executeHooks('loadDictionaryCache', $parameters, $this); // Note that $action and $object may have been modified by hook
 				if (empty($reshook)) {

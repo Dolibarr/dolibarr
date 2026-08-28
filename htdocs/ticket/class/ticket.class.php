@@ -1402,7 +1402,6 @@ class Ticket extends CommonObject
 				$i++;
 			}
 
-			$hookmanager->initHooks(array('dictionarycache'));
 			$parameters = array('dictionary' => 'tickettype');
 			$reshook = $hookmanager->executeHooks('loadDictionaryCache', $parameters, $this); // Note that $action and $object may have been modified by hook
 			if (empty($reshook)) {
@@ -1474,7 +1473,6 @@ class Ticket extends CommonObject
 			}
 			$conf->cache['category_tickets'] = $categorytickets;
 
-			$hookmanager->initHooks(array('dictionarycache'));
 			$parameters = array('dictionary' => 'ticketcategory', 'publicgroup' => $publicgroup);
 			$reshook = $hookmanager->executeHooks('loadDictionaryCache', $parameters, $this); // Note that $action and $object may have been modified by hook
 			if (empty($reshook)) {
@@ -1533,7 +1531,6 @@ class Ticket extends CommonObject
 			}
 			$conf->cache['severity_tickets'] = $severitytickets;
 
-			$hookmanager->initHooks(array('dictionarycache'));
 			$parameters = array('dictionary' => 'ticketseverity');
 			$reshook = $hookmanager->executeHooks('loadDictionaryCache', $parameters, $this); // Note that $action and $object may have been modified by hook
 			if (empty($reshook)) {
