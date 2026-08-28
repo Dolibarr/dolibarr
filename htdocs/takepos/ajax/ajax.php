@@ -449,7 +449,7 @@ if ($action == 'getProducts' && $user->hasRight('takepos', 'run')) {
 		$resultinccounter = 0;
 		$templateidtouse = 0;
 
-		$url = DOL_URL_ROOT."/blockedlog/ajax/block-add.php?id=".((int) $object->id).'&element='.urlencode($object->element)."&action=DOC_PREVIEW&token=".newToken();
+		$url = DOL_MAIN_URL_ROOT."/blockedlog/ajax/block-add.php?id=".((int) $object->id).'&element='.urlencode($object->element)."&action=DOC_PREVIEW&token=".newToken();
 
 		$result = getURLContent($url, 'GET', '', 1, array(), array('http', 'https'), 2);
 
