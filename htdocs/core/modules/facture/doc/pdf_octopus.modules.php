@@ -44,7 +44,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
 
-
 /**
  *	Class to manage PDF invoice template octopus
  */
