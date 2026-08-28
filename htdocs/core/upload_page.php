@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This file is a modified version of datepicker.php from phpBSM to fix some
  * bugs, to add new features and to dramatically increase speed.
@@ -435,7 +435,7 @@ if ($action == 'uploadfile' || $action == 'showsummary') {
 	print '<input type="hidden" name="prodid" value="'.$prodid.'">';
 	print '<input type="hidden" name="originalfilename" value="'.$fullnewname.'">';
 	print '<input type="hidden" name="jsonstring" id="ajax-result" value="jsonstringtoreplace">';
-	if ($action == 'upload') {
+	if ($action == 'uploadfile') {
 		print '<input type="submit" name="form-result-submit" class="" value="'.$langs->trans("Next").'">';		// TODO Hide.
 	}
 	print '</form>'."\n";
@@ -473,7 +473,7 @@ if ($action == 'showsummary') {
 			// TODO We can show a warning if we find a diff with autodetected value $nameindoc
 		} else {
 			// Try to find thirdparty
-			$result = $tmpthirdparty->findNearest(0, $nameindoc, '', '', $idprof1indoc, $idprof2indoc, '', '', '', '', $emailindoc, $vatnumberindoc, '', 0, 1);
+			$result = $tmpthirdparty->findNearest(0, $nameindoc, '', '', $idprof1indoc, $idprof2indoc, '', '', '', '', $emailindoc, $vatnumberindoc, 0, 0, '1');
 
 			if ($result > 0) {
 				$tmpthirdparty->id = $result;
