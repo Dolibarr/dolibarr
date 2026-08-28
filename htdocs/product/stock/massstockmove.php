@@ -2,7 +2,7 @@
 /* Copyright (C) 2013-2022  Laurent Destaileur		<ely@users.sourceforge.net>
  * Copyright (C) 2014	    Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -158,7 +158,6 @@ if ($action == 'addline' && $user->hasRight('stock', 'mouvement', 'creer')) {
 		}
 	}
 
-	//var_dump($_SESSION['massstockmove']);exit;
 	if (!$error) {
 		if (count(array_keys($listofdata)) > 0) {
 			$id = max(array_keys($listofdata)) + 1;
@@ -262,11 +261,6 @@ if ($action == 'createmovements' && $user->hasRight('stock', 'mouvement', 'creer
 						$firstrecord = array_shift($arraybatchinfo);
 						$dlc = $firstrecord['eatby'];
 						$dluo = $firstrecord['sellby'];
-						//var_dump($batch);
-						//var_dump($arraybatchinfo);
-						//var_dump($firstrecord);
-						//var_dump($dlc);
-						//var_dump($dluo); exit;
 					} else {
 						$dlc = '';
 						$dluo = '';
@@ -316,7 +310,6 @@ if ($action == 'createmovements' && $user->hasRight('stock', 'mouvement', 'creer
 			}
 		}
 	}
-	//var_dump($_SESSION['massstockmove']);exit;
 
 	if (!$error) {
 		unset($_SESSION['massstockmove']);
