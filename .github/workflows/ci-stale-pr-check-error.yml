@@ -46,10 +46,13 @@ jobs:
             echo "========================================"
 
             # Get checks of last commit of PR
-            FAILED_CHECKS=$(gh pr checks "$PR_NUMBER" \
+            CHECKS=$(gh pr checks "$PR_NUMBER" \
               --repo "$REPO" \
               --json name,state \
-              --jq '[.[] | select(.state == "FAILURE")] | length')
+              --jq '.' 2>/dev/null || true)
+
+            FAILED_CHECKS=$(echo "$CHECKS" |
+              jq '[.[] | select(.state == "FAILURE")] | length')
 
             echo "Failed checks: $FAILED_CHECKS"
 
