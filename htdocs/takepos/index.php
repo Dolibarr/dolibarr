@@ -528,8 +528,10 @@ function MoreProducts(moreorless) {
 				$("#proimg"+ishow).attr("src","genimg/empty.png");
 				$("#prodiv"+ishow).data("rowid","");
 				$("#prodiv"+ishow).attr("data-rowid","");
+				$("#prodiv"+ishow).addClass("divempty");
 			} else {
 				$("#prodivdesc"+ishow).show();
+				$("#prodiv"+ishow).removeClass("divempty");
 				<?php if (getDolGlobalInt('TAKEPOS_SHOW_PRODUCT_REFERENCE') == 1) { ?>
 					$("#prodesc"+ishow).html(data[parseInt(idata)]['ref'].bold() + ' - ' + data[parseInt(idata)]['label']);
 				<?php } elseif (getDolGlobalInt('TAKEPOS_SHOW_PRODUCT_REFERENCE') == 2) { ?>
@@ -794,6 +796,7 @@ function Search2(keyCodeForEnter, moreorless) {
 		$("[id^=proimg]").attr("src", "genimg/empty.png");
 		$("[id^=prodiv]").data("rowid", "");
 		$("[id^=prodiv]").attr("data-rowid", "");
+		$("[id^=prodiv]").addClass("divempty");
 		return;
 	}
 
@@ -848,6 +851,7 @@ function Search2(keyCodeForEnter, moreorless) {
 						$("#prodesc" + i).html(data[i]['label']);
 					<?php } ?>
 					$("#prodivdesc" + i).show();
+					$("#prodiv" + i).removeClass("divempty");
 					$("#probutton" + i).html(data[i]['label']);
 					$("#probutton" + i).show();
 					if (data[i]['price_formated']) {
