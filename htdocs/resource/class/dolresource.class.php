@@ -1104,7 +1104,7 @@ class Dolresource extends CommonObject
 		// Conflicts against interventions (fichinter has no usable header date range, so derive
 		// [min(line date), max(line date + duree)] from its lines instead). Skipped entirely if
 		// the Intervention module is disabled.
-		if (isModEnabled('ficheinter')) {
+		if (isModEnabled('intervention')) {
 			$sql = "SELECT f.rowid as element_id, f.ref as ref, MIN(fd.date) as dmin, MAX(fd.date + INTERVAL fd.duree SECOND) as dmax";
 			$sql .= " FROM ".MAIN_DB_PREFIX."element_resources as er";
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."fichinter as f ON f.rowid = er.element_id AND er.element_type = 'fichinter'";

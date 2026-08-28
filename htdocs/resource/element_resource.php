@@ -145,7 +145,7 @@ if (empty($reshook)) {
 			if (isModEnabled('agenda')) {
 				$elementsToCheck[] = 'action';
 			}
-			if (isModEnabled('ficheinter')) {
+			if (isModEnabled('intervention')) {
 				$elementsToCheck[] = 'fichinter';
 			}
 			if (getDolGlobalString('RESOURCE_USED_IN_EVENT_CHECK') && in_array($objstat->element, $elementsToCheck) && $resource_type == 'dolresource' && intval($busy) == 1) {
