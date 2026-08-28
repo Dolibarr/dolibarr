@@ -172,3 +172,6 @@ SalaryWaitingWithdraw=Kredit o'tkazish yo'li bilan to'lashni kutayotgan ish haqi
 RefSalary=Ish haqi
 NoSalaryInvoiceToWithdraw="%s" uchun maosh kutilmaydi. So‘rov yuborish uchun ish haqi kartasidagi “%s” sahifasiga o‘ting.
 SalaryInvoiceWaitingWithdraw=Kredit o'tkazish yo'li bilan to'lashni kutayotgan ish haqi
+ErrorBankTransferNoPaymentRequestSelected=No payment request selected.
+AmountRequestedAlreadyReachesTotal=The total invoice amount has already been requested for payment
+AmountExceedsRemainingToRequest=The requested amount exceeds the remaining amount available for payment requests

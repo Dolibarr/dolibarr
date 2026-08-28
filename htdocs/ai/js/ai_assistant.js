@@ -175,8 +175,8 @@ export function initAiAssistant(container) {
      */
     function updateInterfaceMode(mode) {
         // Reset all wrappers
-        micWrapper.classList.add('hidden');
-        uploadWrapper.classList.add('hidden');
+        micWrapper.classList.add('ai-hidden');
+        uploadWrapper.classList.add('ai-hidden');
 
         if (mode === 'text') {
             input.placeholder = t('TypeYourQuestion');
@@ -184,13 +184,13 @@ export function initAiAssistant(container) {
         }
         else if (mode === 'cloud' || mode === 'whisper') {
             // Voice Modes
-            micWrapper.classList.remove('hidden');
+            micWrapper.classList.remove('ai-hidden');
             input.placeholder = 'Type or speak...';
             initEngine(mode);
         }
         else if (mode === 'local_docs' || mode === 'cloud_docs') {
             // Document Modes
-            uploadWrapper.classList.remove('hidden');
+            uploadWrapper.classList.remove('ai-hidden');
             input.placeholder = mode === 'local_docs'
                 ? t('UploadLocalDoc')
                 : t('UploadCloudDoc');

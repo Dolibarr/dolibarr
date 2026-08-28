@@ -129,10 +129,10 @@ if ($mode == 'memberbycountry') {
 	//print $sql;
 } elseif ($mode == 'memberbyregion') {
 	$label = $langs->trans("Country");
-	$label2 = $langs->trans("Region"); //département
-	$tab = 'statsregion'; //onglet
+	$label2 = $langs->trans("Region"); // department
+	$tab = 'statsregion'; // tab
 
-	$data = array(); //tableau de donnée
+	$data = array(); // data array
 	$sql = "SELECT COUNT(DISTINCT d.rowid) as nb, COUNT(s.rowid) as nbsubscriptions, MAX(d.datevalid) as lastdate, MAX(s.dateadh) as lastsubscriptiondate, co.code, co.label, r.nom as label2";
 	$sql .= " FROM ".MAIN_DB_PREFIX."adherent as d";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as c on d.state_id = c.rowid";

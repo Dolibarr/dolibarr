@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2023		Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) ---Replace with your own copyright and developer email---
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -352,7 +353,7 @@ class ActionsMyModule extends CommonHookActions
 			$counter = count($parameters['head']);
 			$element = $parameters['object']->element;
 			$id = $parameters['object']->id;
-			// verifier le type d'onglet comme member_stats où ça ne doit pas apparaitre
+			// check the tab type like member_stats where it should not appear
 			// if (in_array($element, ['societe', 'member', 'contrat', 'fichinter', 'project', 'propal', 'commande', 'facture', 'order_supplier', 'invoice_supplier'])) {
 			if (in_array($element, ['context1', 'context2'])) {
 				$datacount = 0;

@@ -4,7 +4,7 @@
  * Copyright (C) 2013	   Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2016      Jonathan TISSEAU     <jonathan.tisseau@86dev.fr>
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 
 /**
  *       \file       htdocs/admin/mails.php
- *       \brief      Page to setup emails sending
+ *       \brief      Email setup page
  */
 
 // Load Dolibarr environment
@@ -738,10 +738,10 @@ if ($action == 'edit') {
 			print '<a class="butActionRefused classfortooltip" href="#" title="' . $langs->trans("FeatureNotAvailableOnLinux") . '">' . $langs->trans("DoTestServerAvailability") . '</a>';
 		}
 
-		print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?action=test&mode=init">' . $langs->trans("DoTestSend") . '</a>';
+		print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?action=test&mode=init&token=' . newToken() . '">' . $langs->trans("DoTestSend") . '</a>';
 
 		if (isModEnabled('fckeditor')) {
-			print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?action=testhtml&mode=init">' . $langs->trans("DoTestSendHTML") . '</a>';
+			print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?action=testhtml&mode=init&token=' . newToken() . '">' . $langs->trans("DoTestSendHTML") . '</a>';
 		}
 	}
 
@@ -798,7 +798,7 @@ if ($action == 'edit') {
 
 		print dol_get_fiche_head(array(), '', '', -1);
 
-		// Cree l'objet formulaire mail
+		// Create the mail form object
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 		$formmail = new FormMail($db);
 		$formmail->trackid = (($action == 'testhtml') ? "testhtml" : "test");
@@ -822,9 +822,9 @@ if ($action == 'edit') {
 		$formmail->withdeliveryreceipt = 1;
 		$formmail->withfckeditor = ($action == 'testhtml' ? 1 : 0);
 		$formmail->ckeditortoolbar = 'dolibarr_mailings';
-		// Tableau des substitutions
+		// Array of substitutions
 		$formmail->substit = $substitutionarrayfortest;
-		// Tableau des parameters complementaires du post
+		// Array of additional post parameters
 		$formmail->param["action"] = "send";
 		$formmail->param["models"] = "body";
 		$formmail->param["mailid"] = 0;

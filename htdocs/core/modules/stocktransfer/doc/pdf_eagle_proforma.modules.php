@@ -8,7 +8,7 @@
  * Copyright (C) 2012       Cedric Salvador     <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015       Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2017       Ferran Marcet       <fmarcet@2byte.es>
- * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2021 		Gauthier VERDOL 	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024	    Nick Fragoulis
@@ -1225,31 +1225,11 @@ class pdf_eagle_proforma extends ModelePDFStockTransfer
 		$pdf->SetXY($this->marge_gauche, $posy);
 
 		// Logo
-		if (!getDolGlobalInt('PDF_DISABLE_MYCOMPANY_LOGO')) {
-			if ($this->emetteur->logo) {
-				$logodir = $conf->mycompany->dir_output;
-				if (!empty($conf->mycompany->multidir_output[$object->entity ?? $conf->entity])) {
-					$logodir = $conf->mycompany->multidir_output[$object->entity ?? $conf->entity];
-				}
-				if (!getDolGlobalInt('MAIN_PDF_USE_LARGE_LOGO')) {
-					$logo = $logodir.'/logos/thumbs/'.$this->emetteur->logo_small;
-				} else {
-					$logo = $logodir.'/logos/'.$this->emetteur->logo;
-				}
-				if (is_readable($logo)) {
-					$height = pdf_getHeightForLogo($logo);
-					$pdf->Image($logo, $this->marge_gauche, $posy, 0, $height); // width=0 (auto)
-				} else {
-					$pdf->SetTextColor(200, 0, 0);
-					$pdf->SetFont('', 'B', $default_font_size - 2);
-					$pdf->MultiCell($w, 3, $outputlangs->transnoentities("ErrorLogoFileNotFound", $logo), 0, 'L');
-					$pdf->MultiCell($w, 3, $outputlangs->transnoentities("ErrorGoToGlobalSetup"), 0, 'L');
-				}
-			} else {
-				$text = $this->emetteur->name;
-				$pdf->MultiCell($w, 4, $outputlangs->convToOutputCharset($text), 0, 'L');
-			}
+		$logodir = $conf->mycompany->dir_output;
+		if (!empty($conf->mycompany->multidir_output[$object->entity ?? $conf->entity])) {
+			$logodir = $conf->mycompany->multidir_output[$object->entity ?? $conf->entity];
 		}
+		pdf_writeLogoOrCompanyName($pdf, $outputlangs, $this->emetteur, $logodir, $this->marge_gauche, $posy, $w, $default_font_size, 'L');
 
 		$pdf->SetDrawColor(128, 128, 128);
 
@@ -1264,7 +1244,7 @@ class pdf_eagle_proforma extends ModelePDFStockTransfer
 
 		$pdf->SetFont('', '', $default_font_size + 1);
 
-		// Date prévue depart
+		// Expected departure date
 		if (!empty($object->date_prevue_depart)) {
 			$posy += 4;
 			$pdf->SetXY($posx, $posy);
@@ -1272,7 +1252,7 @@ class pdf_eagle_proforma extends ModelePDFStockTransfer
 			$pdf->MultiCell($w, 4, $outputlangs->transnoentities("DatePrevueDepart")." : ".dol_print_date($object->date_prevue_depart, "day", false, $outputlangs, true), '', 'R');
 		}
 
-		// Date prévue arrivée
+		// Expected arrival date
 		if (!empty($object->date_prevue_arrivee)) {
 			$posy += 4;
 			$pdf->SetXY($posx, $posy);
@@ -1288,7 +1268,7 @@ class pdf_eagle_proforma extends ModelePDFStockTransfer
 			$pdf->MultiCell($w, 4, $outputlangs->transnoentities("DateReelleDepart")." : ".dol_print_date($object->date_reelle_depart, "day", false, $outputlangs, true), '', 'R');
 		}
 
-		// Date reelle arrivée
+		// Actual arrival date
 		if (!empty($object->date_reelle_arrivee)) {
 			$posy += 4;
 			$pdf->SetXY($posx, $posy);
@@ -1435,7 +1415,7 @@ class pdf_eagle_proforma extends ModelePDFStockTransfer
 			}
 
 			//Recipient name
-			// On peut utiliser le nom de la societe du contact
+			// We can use the name of the contact's company
 			if ($usecontact/* && !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)*/) {
 				$thirdparty = $object->contact;
 			} else {

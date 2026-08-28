@@ -278,6 +278,42 @@ class Boms extends DolibarrApi
 	}
 
 	/**
+	 * Validate BOM
+	 *
+	 * @param   int $id             BOM ID
+	 * @param   int $notrigger      1=Does not execute triggers, 0= execute triggers
+	 * @return  Object              Object with cleaned properties
+	 *
+	 * @url POST    {id}/validate
+	 *
+	 * @throws RestException 304
+	 * @throws RestException 401
+	 * @throws RestException 404
+	 * @throws RestException 500 System error
+	 */
+	public function validate($id, $notrigger = 0)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('bom', 'write')) {
+			throw new RestException(403);
+		}
+		$result = $this->bom->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Bom not found');
+		}
+
+		$result = $this->bom->validate(DolibarrApiAccess::$user, $notrigger);
+		if ($result == 0) {
+			throw new RestException(304, 'Error nothing done. May be object is already validated');
+		}
+		if ($result < 0) {
+			throw new RestException(500, 'Error when validating BOM: '.$this->bom->error);
+		}
+		$result = $this->bom->fetch($id);
+
+		return $this->_cleanObjectDatas($this->bom);
+	}
+
+	/**
 	 * Delete bom
 	 *
 	 * @param   int     $id   BOM ID
@@ -540,6 +576,7 @@ class Boms extends DolibarrApi
 		unset($object->civility_id);
 		unset($object->statut);
 		unset($object->state);
+		unset($object->region_id);
 		unset($object->state_id);
 		unset($object->state_code);
 		unset($object->region);
@@ -551,11 +588,26 @@ class Boms extends DolibarrApi
 		unset($object->barcode_type_code);
 		unset($object->barcode_type_label);
 		unset($object->barcode_type_coder);
+		unset($object->demand_reason_id);
+		unset($object->transport_mode_id);
+		unset($object->shipping_method);
+		unset($object->civility_code);
+		unset($object->actiontypecode);
+		unset($object->product);
+
 		unset($object->total_ht);
 		unset($object->total_tva);
 		unset($object->total_localtax1);
 		unset($object->total_localtax2);
 		unset($object->total_ttc);
+
+		unset($object->user);
+
+		unset($object->totalpaid);
+		unset($object->totalpaid_multicurrency);
+		unset($object->deposit_percent);
+		unset($object->cond_reglement_supplier_id);
+
 		unset($object->fk_account);
 		unset($object->comments);
 		unset($object->note);

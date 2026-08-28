@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2013       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2023       Alexandre Janniaux      <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,6 +79,10 @@ $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
+ * @phan-file-suppress PhanUndeclaredClass
+ * @phan-file-suppress PhanUndeclaredExtendedClass
+ * @phan-file-suppress PhanUndeclaredMethod
+ * @phan-file-suppress PhanUndeclaredProperty
  */
 class LangTest extends CommonClassTest
 {
@@ -122,13 +126,13 @@ class LangTest extends CommonClassTest
 		$newlang->setDefaultLang('fr_FR');
 		$newlang->load("admin");
 
-		// ErrorModuleRequirePHPVersion is a string than contains accent é and <b>
+		// ErrorModuleRequirePHPVersion is a string than contains accent é and <b> (french comment)
 		// The ->transnoentities() does not escape nothing into entities.
 		$result = $newlang->transnoentities("ModuleMustBeEnabled", '<b>é</b><span class="red">aaa</span>');
 		print "result=".$result.PHP_EOL;
 		$this->assertEquals('Le module <b><b>é</b><span class="red">aaa</span></b> doit être activé', $result, 'Translation transnoentities ko');
 
-		// ErrorModuleRequirePHPVersion is a string than contains accent é and <b>
+		// ErrorModuleRequirePHPVersion is a string than contains accent é and <b> (french comment)
 		// The ->trans() escapes content into ModuleMustBeEnabled except b, strong, a, i, br and span tags,
 		// but content of parameters are escaped
 		$result = $newlang->trans("ModuleMustBeEnabled", '<b>é</b><span class="red">aaa</span>');
@@ -310,11 +314,11 @@ class LangTest extends CommonClassTest
 	 * @param string  $dict        Dictionary file for translation
 	 * @param string  $expected    Expected translation result
 	 * @param string  $key         Key for translation
-	 * @param ?string $param1      Parameter 1 for translation
-	 * @param ?string $param2      Parameter 2 for translation
-	 * @return string
+	 * @param string  $param1      Parameter 1 for translation
+	 * @param string  $param2      Parameter 2 for translation
+	 * @return void
 	 */
-	public function testTrans($description, $langcode, $dict, $expected, $key, $param1 = null, $param2 = null)
+	public function testTrans($description, $langcode, $dict, $expected, $key, $param1 = '', $param2 = ''): void
 	{
 		global $conf,$user,$langs,$db;
 		$conf = $this->savconf;

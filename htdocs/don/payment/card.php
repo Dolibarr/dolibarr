@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2019-2026  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -110,7 +110,7 @@ if (empty($object->id)) {
 $h = 0;
 
 $head = [];
-$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/don/payment/card.php', ['id'=> $id]);
+$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/don/payment/card.php', ['id' => $id]);
 $head[$h][1] = $langs->trans("DonationPayment");
 $hselected = (string) $h;
 $h++;
@@ -172,7 +172,7 @@ $disable_delete = 0;
 $sql = 'SELECT d.rowid as did, d.paid, d.amount as d_amount, pd.amount';
 $sql .= ' FROM '.MAIN_DB_PREFIX.'payment_donation as pd,'.MAIN_DB_PREFIX.'don as d';
 $sql .= ' WHERE pd.fk_donation = d.rowid';
-$sql .= ' AND d.entity = '.$conf->entity;
+$sql .= ' AND d.entity = '.((int) $conf->entity);
 $sql .= ' AND pd.rowid = '.((int) $id);
 
 dol_syslog("don/payment/card.php", LOG_DEBUG);

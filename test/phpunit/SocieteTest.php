@@ -568,4 +568,50 @@ class SocieteTest extends CommonClassTest
 		print __METHOD__." result=".$result."\n";
 		return $result;
 	}
+
+	/**
+	 * Test that Societe::setMysoc() always resolves country_code to an ISO country code.
+	 *
+	 * Regression test for issue #37826: when MAIN_INFO_SOCIETE_COUNTRY uses the legacy
+	 * "id:label" (2-token) syntax, the second token is a country label (e.g. 'France'),
+	 * not an ISO code. setMysoc() must not leave that label in country_code (it would break
+	 * code-based lookups such as VAT rates and force a 0% rate), but rebuild it from the id.
+	 *
+	 * @return void
+	 */
+	public function testSetMysocCountryCode()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		require_once dirname(__FILE__).'/../../htdocs/core/lib/company.lib.php';
+
+		$frid = (int) getCountry('FR', '3', $db);
+		$this->assertGreaterThan(0, $frid, 'Country FR must exist in dictionary c_country');
+
+		$savcountryconst = getDolGlobalString('MAIN_INFO_SOCIETE_COUNTRY');
+
+		// Canonical 3-token syntax "id:code:label".
+		$conf->global->MAIN_INFO_SOCIETE_COUNTRY = $frid.':FR:France';
+		$soc3 = new Societe($db);
+		$soc3->setMysoc($conf);
+
+		// Legacy 2-token syntax "id:label" (the #37826 case), second token is a label not a code.
+		$conf->global->MAIN_INFO_SOCIETE_COUNTRY = $frid.':France';
+		$soc2 = new Societe($db);
+		$soc2->setMysoc($conf);
+
+		// Restore the constant before asserting so a failure does not leak state to other tests.
+		$conf->global->MAIN_INFO_SOCIETE_COUNTRY = $savcountryconst;
+
+		$this->assertEquals('FR', $soc3->country_code, 'country_code must be the ISO code from a 3-token constant');
+		$this->assertEquals($frid, $soc3->country_id);
+		$this->assertEquals('FR', $soc2->country_code, 'country_code must be an ISO code, not a label, from a legacy 2-token constant (#37826)');
+		$this->assertEquals($frid, $soc2->country_id);
+
+		print __METHOD__." ok\n";
+	}
 }

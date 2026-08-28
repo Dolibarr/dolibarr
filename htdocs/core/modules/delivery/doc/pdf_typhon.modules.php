@@ -260,7 +260,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite); // Left, Top, Right
 
 				/*
-				// Positionne $this->atleastonediscount si on a au moins une remise
+				// Set $this->atleastonediscount if there is at least one discount
 				for ($i = 0 ; $i < $nblines ; $i++)
 				{
 					 if ($object->lines[$i]->remise_percent)
@@ -434,7 +434,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 					 $pdf->MultiCell(23, 3, $total, 0, 'R', 0);
 
 					 // Collect of total by vat rate
-					 // dans le tableau tva["taux"]=total_tva
+					 // in the array tva["taux"]=total_tva
 					 $tvaligne=$object->lines[$i]->price * $object->lines[$i]->qty;
 					 if ($object->remise_percent) $tvaligne-=($tvaligne*$object->remise_percent)/100;
 					 $this->tva[ (string) $object->lines[$i]->tva_tx ] += $tvaligne;
@@ -509,7 +509,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 				}
 
 				// Check product remaining to be delivered
-				// TODO doit etre modifie
+				// TODO must be modified
 				//$waitingDelivery = $object->getRemainingDelivered();
 				/*
 				$waitingDelivery='';
@@ -679,7 +679,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 			$pdf->MultiCell($this->posxcomm - $this->posxdesc, 2, $outputlangs->transnoentities("Designation"), '', 'L');
 		}
 
-		// Modif SEB pour avoir une col en plus pour les commentaires clients
+		// SEB modification to add an extra column for customer comments
 		$pdf->line($this->posxcomm, $tab_top, $this->posxcomm, $tab_top + $tab_height);
 		if (empty($hidetop)) {
 			$pdf->SetXY($this->posxcomm, $tab_top + 1);

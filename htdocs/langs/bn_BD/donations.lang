@@ -57,3 +57,7 @@ donAnonymous=বেনামী দান
 AnonymousDonationTooltip=আপনার অনুদান গোপন রাখতে চাইলে এই বাক্সটি চেক করুন। আপনার ব্যক্তিগত তথ্য চাওয়া হবে না।
 publicDonationFieldHelp=%s আমার অনুদান পাবলিক রেজিস্টারে প্রকাশ করতে পারেন
 listOfPublicDonations=সরকারি অনুদানের তালিকা
+donationErrorMessageContactEmail=An error has occurred. To complete your donation, please contact us at %s
+descDonationLineInInvoice=Donation and contribution
+companyBusinessNumber=Business Registration Number
+companyTIN=Tax Identification Number

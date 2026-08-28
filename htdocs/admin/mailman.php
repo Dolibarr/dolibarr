@@ -156,7 +156,7 @@ print load_fiche_titre($langs->trans("MailmanSpipSetup"), $linkback, 'title_setu
 $head = mailmanspip_admin_prepare_head();
 
 if (getDolGlobalString('ADHERENT_USE_MAILMAN')) {
-	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" spellcheck="false">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 
@@ -224,7 +224,7 @@ if (getDolGlobalString('ADHERENT_USE_MAILMAN')) {
 
 
 if (getDolGlobalString('ADHERENT_USE_MAILMAN')) {
-	print '<form action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
+	print '<form action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'" spellcheck="false">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="testsubscribe">';
 
@@ -233,7 +233,7 @@ if (getDolGlobalString('ADHERENT_USE_MAILMAN')) {
 
 	print '</form>';
 
-	print '<form action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
+	print '<form action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'" spellcheck="false">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="testunsubscribe">';
 

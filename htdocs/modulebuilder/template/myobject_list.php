@@ -340,7 +340,7 @@ if (!empty($object->ismultientitymanaged) && (int) $object->ismultientitymanaged
 	$sql .= " WHERE t.entity IN (".getEntity($object->element, (GETPOSTINT('search_current_entity') ? 0 : 1)).")";
 } elseif (preg_match('/^\w+@\w+$/', (string) $object->ismultientitymanaged)) {
 	$tmparray = explode('@', (string) $object->ismultientitymanaged);
-	$sql .= " LEFT JOIN ".$object->db->prefix().$tmparray[1]." as pt ON t.".$db->sanitize($tmparray[0])." = pt.rowid";
+	$sql .= " LEFT JOIN ".$object->db->prefix().$db->sanitize($tmparray[1])." as pt ON t.".$db->sanitize($tmparray[0])." = pt.rowid";
 	$sql .= " WHERE pt.entity IN (".getEntity($object->element, (GETPOSTINT('search_current_entity') ? 0 : 1)).")";
 } else {
 	$sql .= " WHERE 1 = 1";
@@ -975,7 +975,7 @@ if (in_array('builddoc', array_keys($arrayofmassactions)) && ($nbtotalofrecords 
 	$genallowed = $permissiontoread;
 	$delallowed = $permissiontoadd;
 
-	print $formfile->showdocuments('massfilesarea_'.$object->module, '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
+	print $formfile->showdocuments('massfilesarea_'.$object->module, '', $filedir, $urlsource, $genallowed, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
 }
 
 // End of page

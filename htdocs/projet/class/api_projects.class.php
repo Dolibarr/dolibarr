@@ -1115,13 +1115,13 @@ class Projects extends DolibarrApi
 			throw new RestException(500, 'Error : ' . $this->project->error . 'result :' . $result);
 		}
 
-		// Si demandé, ajouter le contact aux tâches
+		// If requested, add the contact to tasks
 		if ($affect_to_tasks !== null) {
 			$this->project->getLinesArray(DolibarrApiAccess::$user);
 
 			foreach ($this->project->lines as $task) {
-				// Si $affect_to_tasks est vide, on affecte à toutes les tâches
-				// Sinon, on vérifie si la tâche est dans la liste
+				// If $affect_to_tasks is empty, assign to all tasks
+				// Otherwise, check if the task is in the list
 				if (empty($affect_to_tasks) || in_array($task->id, $affect_to_tasks)) {
 					$task->add_contact($fk_socpeople, $type_contact, $source, $notrigger);
 				}

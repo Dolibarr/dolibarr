@@ -1,3 +1,6 @@
+IntraCommReport=Intracomm ziņojums
+IntraCommReports=Intracomm ziņojumi
+
 Module68000Name = Intracomm ziņojums
 Module68000Desc = Intracomm ziņojumu pārvaldība (atbalsts franču DEB / DES formātam)
 IntracommReportSetup = Iekšējās atskaites moduļa iestatīšana
@@ -32,3 +35,4 @@ IntracommReportTypeDeclaration=Deklarācijas veids
 IntracommReportDownload=lejupielādēt XML failu
 # Invoice
 IntracommReportTransportMode=Transporta veids
+DeleteIntraCommReport=Dzēst IntraComm pārskatu

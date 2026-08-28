@@ -68,3 +68,4 @@ ApplyJobCandidature=Nộp đơn xin việc này
 ErrorRecruitmmentCandidatureAlreadyExists= Ứng viên tuyển dụng đã tồn tại với email %s
 RecruitmentCandidatureSaved=Đã lưu ứng viên tuyển dụng thành công
 NoOpenJobOffer=Không có việc làm nào đang tuyển dụng tại thời điểm này
+ShowPositionToBeFilled=Show Position to be filled

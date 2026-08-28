@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2012-2014 Charles-François BENKE <charles.fr@benke.fr>
  * Copyright (C) 2014      Marcos García          <marcosgdf@gmail.com>
- * Copyright (C) 2015-2025  Frédéric France        <frederic.france@free.fr>
+ * Copyright (C) 2015-2026  Frédéric France        <frederic.france@free.fr>
  * Copyright (C) 2016      Juan José Menent       <jmenent@2byte.es>
  * Copyright (C) 2020      Pierre Ardoin          <mapiolca@me.com>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
@@ -183,7 +183,7 @@ class box_project extends ModeleBoxes
 		}
 
 		if ($num > 0) {
-			// Add the sum à the bottom of the boxes
+			// Add the sum to the bottom of the boxes
 			$this->info_box_contents[$i][] = array(
 				'tr' => 'class="liste_total_wrap"',
 				'td' => 'class="liste_total"',

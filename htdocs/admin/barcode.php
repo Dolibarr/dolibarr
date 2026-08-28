@@ -84,7 +84,7 @@ if ($action == 'setcoder') {
 	$sqlp = "UPDATE ".MAIN_DB_PREFIX."c_barcode_type";
 	$sqlp .= " SET coder = '".$db->escape($coder)."'";
 	$sqlp .= " WHERE rowid = ".((int) $code_id);
-	$sqlp .= " AND entity = ".$conf->entity;
+	$sqlp .= " AND entity = ".((int) $conf->entity);
 
 	$resql = $db->query($sqlp);
 	if (!$resql) {
@@ -106,7 +106,7 @@ if ($action == 'setcoder') {
 } elseif ($action == 'updateengine') {
 	$sql = "SELECT rowid, coder";
 	$sql .= " FROM ".MAIN_DB_PREFIX."c_barcode_type";
-	$sql .= " WHERE entity = ".$conf->entity;
+	$sql .= " WHERE entity = ".((int) $conf->entity);
 	$sql .= " ORDER BY code";
 
 	$resql = $db->query($sql);
@@ -124,7 +124,7 @@ if ($action == 'setcoder') {
 				$sqlp = "UPDATE ".MAIN_DB_PREFIX."c_barcode_type";
 				$sqlp .= " SET coder = '".$db->escape($coder)."'";
 				$sqlp .= " WHERE rowid = ".((int) $code_id);
-				$sqlp .= " AND entity = ".$conf->entity;
+				$sqlp .= " AND entity = ".((int) $conf->entity);
 
 				$upsql = $db->query($sqlp);
 				if (!$upsql) {
@@ -158,7 +158,7 @@ print '<br>';
  * Usage
  */
 
-print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
+print '<form method="post" action="'.$_SERVER["PHP_SELF"].'" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print "<input type=\"hidden\" name=\"action\" value=\"update\">";
 
@@ -397,7 +397,7 @@ if (getDolGlobalString('BARCODE_USE_ON_PRODUCT') || getDolGlobalString('BARCODE_
 	print load_fiche_titre($langs->trans("BarcodeEncodeModule"), '', '');
 
 	if (empty($conf->use_javascript_ajax)) {
-		print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" id="form_engine">';
+		print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" id="form_engine" spellcheck="false">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="updateengine">';
 	}
@@ -413,7 +413,7 @@ if (getDolGlobalString('BARCODE_USE_ON_PRODUCT') || getDolGlobalString('BARCODE_
 
 	$sql = "SELECT rowid, code as encoding, libelle as label, coder, example";
 	$sql .= " FROM ".MAIN_DB_PREFIX."c_barcode_type";
-	$sql .= " WHERE entity = ".$conf->entity;
+	$sql .= " WHERE entity = ".((int) $conf->entity);
 	$sql .= " ORDER BY code";
 
 	dol_syslog("admin/barcode.php", LOG_DEBUG);
@@ -502,7 +502,7 @@ if (getDolGlobalString('BARCODE_USE_ON_PRODUCT') || getDolGlobalString('BARCODE_
 if (getDolGlobalString('BARCODE_USE_ON_PRODUCT') || getDolGlobalString('BARCODE_USE_ON_THIRDPARTY')) {
 	print load_fiche_titre($langs->trans("OtherOptions"), '', '');
 
-	print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
+	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'" spellcheck="false">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print "<input type=\"hidden\" name=\"action\" value=\"update\">";
 

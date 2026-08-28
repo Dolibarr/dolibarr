@@ -320,7 +320,7 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 			} else {
 				if ($result == -6) {	//login or email already exists
 					dolibarr_install_syslog('step5: AdminLoginAlreadyExists', LOG_WARNING);
-					print '<br><div class="warning">'.$newuser->error."</div><br>";
+					print '<div class="warning warningbackground">'.$newuser->error."</div>";
 					$success = 1;
 				} else {
 					dolibarr_install_syslog('step5: FailedToCreateAdminLogin '.$newuser->error, LOG_ERR);
@@ -522,7 +522,7 @@ if ($action == "set") {
 	if ($success) {
 		if (!getDolGlobalString('MAIN_VERSION_LAST_UPGRADE') || (getDolGlobalString('MAIN_VERSION_LAST_UPGRADE') == DOL_VERSION)) {
 			// Install is finished (database is on same version than files)
-			print '<br>'.$langs->trans("SystemIsInstalled")."<br>";
+			print '<br><div class="info">'.$langs->trans("SystemIsInstalled")."</div><br>";
 
 			// Create install.lock file
 			// No need for the moment to create it automatically, creation by web assistant means permissions are given
@@ -545,7 +545,7 @@ if ($action == "set") {
 				}
 			}
 			if (empty($createlock)) {
-				print '<div class="warning">'.$langs->trans("WarningRemoveInstallDir")."</div>";
+				print '<div class="warning warningbackground">'.$langs->trans("WarningRemoveInstallDir")."</div>";
 			}
 
 			print "<br>";
@@ -594,7 +594,7 @@ if ($action == "set") {
 			}
 		}
 		if (empty($createlock)) {
-			print '<br><div class="warning">'.$langs->trans("WarningRemoveInstallDir")."</div>";
+			print '<div class="warning warningbackground">'.$langs->trans("WarningRemoveInstallDir")."</div>";
 		}
 
 		// Delete the upgrade.unlock file it it exists

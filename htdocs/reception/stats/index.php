@@ -378,7 +378,7 @@ print '<td width="40%" class="center">'.$langs->trans("NbOfReceptions").'</td></
 $sql = "SELECT count(*) as nb, date_format(date_reception,'%Y') as dm";
 $sql.= " FROM ".MAIN_DB_PREFIX."reception";
 $sql.= " WHERE fk_statut > 0";
-$sql.= " AND entity = ".$conf->entity;
+$sql.= " AND entity = ".((int) $conf->entity);
 $sql.= " GROUP BY dm DESC";
 
 $resql=$db->query($sql);

@@ -295,10 +295,10 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 						$values = $db->fetch_array($resql);
 						if (is_array($values)) {
 							$i = 0;
-							$createsql = $values[1];
+							$createsql = $values[1];  // @phan-suppress-current-line SqlInjection
 							$reg = array();
 							while (preg_match('/CONSTRAINT `(0_[0-9a-zA-Z]+|[_0-9a-zA-Z]+_ibfk_[0-9]+)`/i', $createsql, $reg) && $i < 100) {
-								$sqldrop = "ALTER TABLE ".$val." DROP FOREIGN KEY ".$reg[1];
+								$sqldrop = "ALTER TABLE ".$db->sanitize($val)." DROP FOREIGN KEY ".$db->sanitize($reg[1]);
 								$resqldrop = $db->query($sqldrop);
 								if ($resqldrop) {
 									print '<tr><td colspan="2">'.$sqldrop.";</td></tr>\n";
@@ -335,7 +335,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 		$filelist = array();
 		$i = 0;
 		$ok = 0;
-		$from = '^'.preg_quote($newversionfrom, '/');
+		$from_regex = '^'.preg_quote($newversionfrom, '/');
 		$to = preg_quote($newversionto.'.sql', '/').'$';
 
 		// Get files list
@@ -354,7 +354,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 
 		// Define which file to run
 		foreach ($filesindir as $file) {
-			if (preg_match('/'.$from.'\-/i', $file)) {
+			if (preg_match('/'.$from_regex.'\-/i', $file)) {
 				$filelist[] = $file;
 			} elseif (preg_match('/\-'.$to.'/i', $file)) {	// First test may be false if we migrate from x.y.* to x.y.*
 				$filelist[] = $file;

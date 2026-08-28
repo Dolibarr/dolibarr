@@ -190,7 +190,7 @@ if (empty($user->socid)) {
 
 $checkedtypetiers = 0;
 $arrayfields = array(
-	// Détail commande
+	// Order detail
 	'rowid' => array('label' => 'LineID', 'checked' => '-1', 'position' => 1, 'enabled' => '1'),
 	'c.ref' => array('label' => "RefOrder", 'checked' => '1', 'position' => 5),
 	'pr.ref' => array('label' => 'ProductRef', 'checked' => '1', 'position' => 6),
@@ -240,6 +240,9 @@ $arrayfields = array(
 
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -754,7 +757,7 @@ if ($resql) {
 	if ($search_id) {
 		$param .= '&search_id='.urlencode($search_id);
 	}
-	// Détail commande
+	// Order detail
 	if ($search_refProduct) {
 		$param .= '&search_refProduct='.urlencode($search_refProduct);
 	}
@@ -1511,7 +1514,7 @@ if ($resql) {
 	$total_margin = 0;
 
 
-	// Détail commande
+	// Order detail
 	$totalqty = 0;
 	$oldref = null;
 

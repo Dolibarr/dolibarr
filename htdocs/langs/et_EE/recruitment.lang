@@ -68,3 +68,4 @@ ApplyJobCandidature=Kandideeri sellele tööle
 ErrorRecruitmmentCandidatureAlreadyExists= Värbamisavaldus on juba olemas e-posti aadressiga %s.
 RecruitmentCandidatureSaved=Värbamisavalduse salvestamine õnnestus
 NoOpenJobOffer=Hetkel pole ühtegi avatud tööpakkumist
+ShowPositionToBeFilled=Show Position to be filled

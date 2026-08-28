@@ -2,12 +2,12 @@
 /* Copyright (C) 2015       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2016-2023  Philippe Grand          <philippe.grand@atoo-net.com>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018       Francis Appels          <francis.appels@z-application.com>
  * Copyright (C) 2019       Markus Welters          <markus@welters.de>
  * Copyright (C) 2019       Rafael Ingenleuf        <ingenleuf@welters.de>
  * Copyright (C) 2020       Marc Guenneugues        <marc.guenneugues@simicar.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024	    Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
@@ -572,13 +572,13 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 	 * @param   TCPDF       	$pdf                Object PDF
 	 * @param   ExpenseReport	$object             Object to show
 	 * @param   int         	$linenumber         line number
-	 * @param   int         	$curY               current y position
+	 * @param   float         	$curY               current y position
 	 * @param   int         	$default_font_size  default font size
 	 * @param   Translate   	$outputlangs        Object lang for output
-	 * @param	int				$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
+	 * @param	int<0,2>		$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
 	 * @return  void
 	 */
-	protected function printLine(&$pdf, $object, $linenumber, $curY, $default_font_size, $outputlangs, $hidedetails = 0)
+	protected function printLine($pdf, $object, $linenumber, $curY, $default_font_size, $outputlangs, $hidedetails = 0)
 	{
 		global $conf;
 		$pdf->SetFont('', '', $default_font_size - 1);
@@ -661,11 +661,11 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 	 *
 	 *  @param	TCPDF			$pdf     		Object PDF
 	 *  @param  ExpenseReport	$object     	Object to show
-	 *  @param  int	    		$showaddress    0=no, 1=yes
+	 *  @param  int<0,1>		$showaddress    0=no, 1=yes
 	 *  @param  Translate		$outputlangs	Object lang for output
 	 *  @return	float|int                   	Return topshift value
 	 */
-	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
+	protected function _pagehead($pdf, $object, $showaddress, $outputlangs)
 	{
 		// global $conf, $langs, $hookmanager;
 		global $user, $langs, $conf, $mysoc, $db, $hookmanager;
@@ -676,7 +676,7 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		/*
-		// ajout du fondu vert en bas de page à droite
+		// add green fade at bottom right of page
 		$image_fondue = $conf->mycompany->dir_output.'/fondu_vert_.jpg';
 		$pdf->Image($image_fondue,20,107,200,190);
 
@@ -914,7 +914,7 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 	 *   @param		string		$currency		Currency code
 	 *   @return	void
 	 */
-	protected function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $currency = '')
+	protected function _tableau($pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $currency = '')
 	{
 		global $conf;
 
@@ -1032,7 +1032,7 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 	 *  @param  Translate		$outputlangs    Object langs for output
 	 *  @return int             				Return integer <0 if KO, >0 if OK
 	 */
-	protected function tablePayments(&$pdf, $object, $posy, $outputlangs)
+	protected function tablePayments($pdf, $object, $posy, $outputlangs)
 	{
 		global $conf;
 
@@ -1143,7 +1143,7 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 	 *  @param  int				$hidefreetext		1=Hide free text
 	 *  @return int									Return height of bottom margin including footer text
 	 */
-	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
+	protected function _pagefoot($pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
 		$showdetails = getDolGlobalInt('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS', 0);
 		return pdf_pagefoot($pdf, $outputlangs, 'EXPENSEREPORT_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext);

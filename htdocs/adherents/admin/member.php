@@ -8,7 +8,7 @@
  * Copyright (C) 2011-2012	Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2012		J. Fernando Lagrange		<fernando@demo-tic.org>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
- * Copyright (C) 2020-2025  Frédéric France      		<frederic.france@free.fr>
+ * Copyright (C) 2020-2026  Frédéric France      		<frederic.france@free.fr>
  * Copyright (C) 2023		Waël Almoman				<info@almoman.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
@@ -523,7 +523,7 @@ foreach ($dirmodels as $reldir) {
 								// Preview
 								print '<td class="center">';
 								if ($module->type == 'pdf') {
-									print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'contract').'</a>';
+									print '<a href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'specimen', 'module' => $name], true).'">'.img_object($langs->trans("Preview"), 'contract').'</a>';
 								} else {
 									print img_object($langs->transnoentitiesnoconv("PreviewNotAvailable"), 'generic');
 								}

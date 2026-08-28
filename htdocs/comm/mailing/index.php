@@ -81,17 +81,18 @@ print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder nohover centpercent">';
 print '<tr class="liste_titre"><td colspan="3">'.$titlesearch.'</td></tr>';
 print '<tr class="oddeven nohover"><td class="nowrap">';
-print $langs->trans("Ref").':</td><td><input type="text" class="flat inputsearch" name="sref"></td>';
-print '<td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-print '<tr class="oddeven nohover"><td class="nowrap">';
-print $langs->trans("Other").':</td><td><input type="text" class="flat inputsearch" name="search_all"></td>';
-
+print '<table class="noborderbottom centpercent">';
+print '<tr class="noborderbottom"><td>'.$langs->trans("Ref").':</td><td><input type="text" class="flat inputsearch maxwidth200" name="sref"></td>';
+print '<tr class="noborderbottom"><td>'.$langs->trans("Other").':</td><td><input type="text" class="flat inputsearch maxwidth200" name="search_all"></td></tr>';
+print '</table>';
+print '</td>';
+print '<td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
 print "</table></div></form><br>\n";
 
 
 
 
-// Affiche stats de tous les modules de destinataires mailings
+// Display stats of all recipient mailing modules
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("TargetsStatistics").'</td></tr>';
 

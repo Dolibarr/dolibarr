@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -383,6 +383,56 @@ abstract class CommonClassTest extends TestCase
 	}
 
 	/**
+	 * Assert that the sum of the persisted line totals matches the object header totals.
+	 * Catches bugs where update_price() forgets a line, or a total is not recalculated after a line change.
+	 *
+	 * @param CommonObject $localobject Object with a ->lines array of line objects having total_ht/total_tva/total_ttc
+	 * @param string       $message     Extra message to show on failure
+	 * @return void
+	 */
+	protected function assertLineTotalsMatchHeader($localobject, $message = '')
+	{
+		$sumht = 0.0;
+		$sumtva = 0.0;
+		$sumttc = 0.0;
+		foreach ($localobject->lines as $line) {
+			$sumht += (float) $line->total_ht;
+			$sumtva += (float) $line->total_tva;
+			$sumttc += (float) $line->total_ttc;
+		}
+
+		$this->assertEqualsWithDelta($sumht, (float) $localobject->total_ht, 0.01, 'total_ht does not match sum of lines. '.$message);
+		$this->assertEqualsWithDelta($sumtva, (float) $localobject->total_tva, 0.01, 'total_tva does not match sum of lines. '.$message);
+		$this->assertEqualsWithDelta($sumttc, (float) $localobject->total_ttc, 0.01, 'total_ttc does not match sum of lines. '.$message);
+	}
+
+	/**
+	 * Compare $localobject against a freshly built specimen of the same class (with the same mutation applied)
+	 * to detect fields unexpectedly changed by a lifecycle action such as update() or valid().
+	 *
+	 * @param object   $localobject         Object to check, already gone through create()/update()/valid()...
+	 * @param callable $mutate              Callback(object $specimen): void applying the same mutation that was applied to $localobject
+	 * @param array<int|string> $fieldstoignorearray Fields to ignore in the comparison (passed to objCompare)
+	 * @param array<mixed> $specimenparam   Param array passed to initAsSpecimen()
+	 * @return void
+	 */
+	protected function assertMatchesFreshSpecimen($localobject, callable $mutate, array $fieldstoignorearray, array $specimenparam = array())
+	{
+		global $db;
+
+		$class = get_class($localobject);
+		$newlocalobject = new $class($db);
+		$newlocalobject->initAsSpecimen($specimenparam);
+		$mutate($newlocalobject);
+
+		$clonedobject = clone $localobject;
+		unset($clonedobject->array_options);
+
+		$arraywithdiff = $this->objCompare($clonedobject, $newlocalobject, true, $fieldstoignorearray);
+		$this->assertEquals(array(), $arraywithdiff, 'Found differences '.var_export($arraywithdiff, true));
+	}
+
+	/**
 	 * Map deprecated module names to new module names
 	 */
 	const DEPRECATED_MODULE_MAPPING = array(
@@ -630,5 +680,27 @@ abstract class CommonClassTest extends TestCase
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * PHPUnit compatibility helper for assertMatchesRegularExpression
+	 *
+	 * assertMatchesRegularExpression was introduced in PHPUnit 8.0.
+	 * This method provides backward compatibility with PHPUnit 7.x which only has assertRegExp.
+	 *
+	 * @param string $pattern Regular expression pattern
+	 * @param string $string  String to match against
+	 * @param string $message Optional message
+	 * @return void
+	 */
+	public static function assertMatchesRegularExpression(string $pattern, string $string, string $message = ''): void
+	{
+		if (method_exists('PHPUnit\Framework\Assert', 'assertMatchesRegularExpression')) {
+			// PHPUnit 8.0+: call parent's method
+			PHPUnit\Framework\Assert::assertMatchesRegularExpression($pattern, $string, $message);
+		} else {
+			// PHPUnit 7.x and earlier: use assertRegExp
+			PHPUnit\Framework\Assert::assertRegExp($pattern, $string, $message);
+		}
 	}
 }

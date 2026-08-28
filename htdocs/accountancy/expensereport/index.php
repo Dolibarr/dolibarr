@@ -4,7 +4,7 @@
  * Copyright (C) 2013-2024	Alexandre Spangaro	<alexandre@inovea-conseil.com>
  * Copyright (C) 2014		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -233,7 +233,7 @@ for ($i = 1; $i <= 12; $i++) {
 		$param .= '&search_month='.$tmp['mon'].'&search_year='.$tmp['year'];
 		print '<a href="'.DOL_URL_ROOT.'/accountancy/expensereport/list.php?'.$param.'">';
 	}
-	print $langs->trans('MonthShort'.str_pad((string) $j, 2, '0', STR_PAD_LEFT));
+	print $langs->trans('MonthShort'.str_pad((string) ((int) $j), 2, '0', STR_PAD_LEFT));
 	if (!empty($tmp['mday'])) {
 		print '</a>';
 	}
@@ -248,8 +248,8 @@ for ($i = 1; $i <= 12; $i++) {
 	if ($j > 12) {
 		$j -= 12;
 	}
-	$sql .= "  SUM(".$db->ifsql("MONTH(er.date_debut) = ".((int) $j), "erd.total_ht", "0").") AS month".str_pad((string) $j, 2, "0", STR_PAD_LEFT).",";
-	$sql .= "  SUM(".$db->ifsql("MONTH(er.date_debut) = ".((string) $j), "1", "0").") AS nbmonth".str_pad((string) $j, 2, "0", STR_PAD_LEFT).",";
+	$sql .= "  SUM(".$db->ifsql("MONTH(er.date_debut) = ".((int) $j), "erd.total_ht", "0").") AS month".str_pad((string) ((int) $j), 2, "0", STR_PAD_LEFT).",";
+	$sql .= "  SUM(".$db->ifsql("MONTH(er.date_debut) = ".((int) $j), "1", "0").") AS nbmonth".str_pad((string) ((int) $j), 2, "0", STR_PAD_LEFT).",";
 }
 $sql .= " SUM(erd.total_ht) as total, COUNT(erd.rowid) as nb";
 $sql .= " FROM ".MAIN_DB_PREFIX."expensereport_det as erd";
@@ -361,7 +361,7 @@ for ($i = 1; $i <= 12; $i++) {
 		$param .= '&search_date_endday='.$tmp['mday'].'&search_date_endmonth='.$tmp['mon'].'&search_date_endyear='.$tmp['year'];
 		print '<a href="'.DOL_URL_ROOT.'/accountancy/expensereport/lines.php?'.$param.'">';
 	}
-	print $langs->trans('MonthShort'.str_pad((string) $j, 2, '0', STR_PAD_LEFT));
+	print $langs->trans('MonthShort'.str_pad((string) ((int) $j), 2, '0', STR_PAD_LEFT));
 	if (!empty($tmp['mday'])) {
 		print '</a>';
 	}
@@ -376,7 +376,7 @@ for ($i = 1; $i <= 12; $i++) {
 	if ($j > 12) {
 		$j -= 12;
 	}
-	$sql .= " SUM(".$db->ifsql("MONTH(er.date_debut) = ".((int) $j), "erd.total_ht", "0").") AS month".str_pad((string) $j, 2, "0", STR_PAD_LEFT).",";
+	$sql .= " SUM(".$db->ifsql("MONTH(er.date_debut) = ".((int) $j), "erd.total_ht", "0").") AS month".str_pad((string) ((int) $j), 2, "0", STR_PAD_LEFT).",";
 }
 $sql .= " ROUND(SUM(erd.total_ht),2) as total";
 $sql .= " FROM ".MAIN_DB_PREFIX."expensereport_det as erd";
@@ -450,7 +450,7 @@ if (getDolGlobalString('SHOW_TOTAL_OF_PREVIOUS_LISTS_IN_LIN_PAGE')) { // This pa
 		if ($j > 12) {
 			$j -= 12;
 		}
-		print '<td width="60" class="right">'.$langs->trans('MonthShort'.str_pad((string) $j, 2, '0', STR_PAD_LEFT)).'</td>';
+		print '<td width="60" class="right">'.$langs->trans('MonthShort'.str_pad((string) ((int) $j), 2, '0', STR_PAD_LEFT)).'</td>';
 	}
 	print '<td width="60" class="right"><b>'.$langs->trans("Total").'</b></td></tr>';
 
@@ -460,7 +460,7 @@ if (getDolGlobalString('SHOW_TOTAL_OF_PREVIOUS_LISTS_IN_LIN_PAGE')) { // This pa
 		if ($j > 12) {
 			$j -= 12;
 		}
-		$sql .= " SUM(".$db->ifsql("MONTH(er.date_create) = ".((int) $j), "erd.total_ht", "0").") AS month".str_pad((string) $j, 2, "0", STR_PAD_LEFT).",";
+		$sql .= " SUM(".$db->ifsql("MONTH(er.date_create) = ".((int) $j), "erd.total_ht", "0").") AS month".str_pad((string) ((int) $j), 2, "0", STR_PAD_LEFT).",";
 	}
 	$sql .= " SUM(erd.total_ht) as total";
 	$sql .= " FROM ".MAIN_DB_PREFIX."expensereport_det as erd";

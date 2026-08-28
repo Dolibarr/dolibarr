@@ -5,7 +5,6 @@ SupplierInvoices=Фактури за доставка
 ShowSupplierInvoice=Показване на фактура за доставка
 NewSupplier=Нов доставчик
 NewSupplierInvoice = Нова фактура на доставчика
-History=История
 ListOfSuppliers=Списък на доставчици
 ShowSupplier=Показване на доставчик
 BuyingPriceMin=Най-добра покупна цена

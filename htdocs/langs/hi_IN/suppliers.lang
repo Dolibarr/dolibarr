@@ -5,7 +5,6 @@ SupplierInvoices=विक्रेता चालान
 ShowSupplierInvoice=विक्रेता चालान दिखाएं
 NewSupplier=नया विक्रेता
 NewSupplierInvoice = नया विक्रेता चालान
-History=इतिहास
 ListOfSuppliers=विक्रेताओं की सूची
 ShowSupplier=विक्रेता दिखाएँ
 BuyingPriceMin=सर्वोत्तम खरीद मूल्य

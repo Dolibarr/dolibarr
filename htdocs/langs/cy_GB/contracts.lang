@@ -36,10 +36,18 @@ ActivateAllOnContract=Ysgogi'r holl wasanaethau
 CloseAContract=Cau contract
 ConfirmDeleteAContract=A ydych yn siŵr eich bod am ddileu'r contract hwn a'i holl wasanaethau?
 ConfirmValidateContract=A ydych yn siŵr eich bod am ddilysu'r contract hwn dan yr enw <b> %s </b> ?
+ConfirmSignContract=Are you sure you want to set this contract as signed ?
+ConfirmUnsignContract=Are you sure you want to set this contract as unsigned ?
 ConfirmActivateAllOnContract=Bydd hyn yn agor pob gwasanaeth (ddim yn weithredol eto). Ydych chi'n siŵr eich bod am agor pob gwasanaeth?
 ConfirmCloseContract=Bydd hyn yn cau pob gwasanaeth (wedi dod i ben ai peidio). Ydych chi'n siŵr eich bod am gau'r contract hwn?
 ConfirmCloseService=A ydych yn siŵr eich bod am gau'r gwasanaeth hwn gyda dyddiad <b> %s </b> ?
 ValidateAContract=Dilysu contract
+UnsignContract=Unsign contract
+ContractSign=Set Signed
+ContractUnsign=Set Unsigned
+ContractSignedInDolibarr=Contract signed
+ContractSignedOnline=Contract signed online
+ContractUnsignedInDolibarr=Contract unsigned
 ActivateService=Ysgogi gwasanaeth
 ConfirmActivateService=Ydych chi'n siŵr eich bod am actifadu'r gwasanaeth hwn gyda dyddiad <b> %s </b> ?
 RefContract=Cyfeirnod contract
@@ -95,7 +103,13 @@ ConfirmCloneContract=A ydych yn siŵr eich bod am glonio'r contract <b> %s </b> 
 LowerDateEndPlannedShort=Dyddiad gorffen cynlluniedig is ar gyfer gwasanaethau gweithredol
 SendContractRef=Gwybodaeth cytundeb __REF__
 OtherContracts=Contractau eraill
-##### Types de contacts #####
+##### Statistics #####
+ContractsStatistics=Contract's statistics
+NbOfContracts=Nb of contracts
+NumberOfContractsByMonth=Number of contracts by month
+AmountOfServices=Number of services
+AmountOfServicesByMonthHT=Number of services (excl. tax) by month
+##### Types of contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Cynrychiolydd gwerthu yn llofnodi contract
 TypeContact_contrat_internal_SALESREPFOLL=Contract dilynol cynrychiolydd gwerthu
 TypeContact_contrat_external_BILLING=Cyswllt cwsmer bilio

@@ -154,6 +154,7 @@ ErrUnzipFails=Fehler beim Entpacken von %s mit ZipArchive
 ErrNoZipEngine=Kein Pack/Entpackprogramm in PHP gefunden für Datei %s
 ErrorFileMustBeADolibarrPackage=Die Datei %s muss ein Dolibarr ZIP-Paket sein
 ErrorModuleFileRequired=Sie müssen eine Dolibarr Modul-Paket-Datei wählen
+ErrorFailToDownloadModuleFromSource=Der Download des Moduls von der Quelle ist fehlgeschlagen. Bitte prüfen Sie Ihre Internetverbindung und die Quell-URL und probieren Sie es erneut.
 ErrorPhpCurlNotInstalled=PHP CURL ist nicht installiert, aber erforderlich für Paypal
 ErrorFailedToAddToMailmanList=Fehler beim Hinzufügen von %s zur Mailman Liste %s oder SPIP basis
 ErrorFailedToRemoveToMailmanList=Fehler beim Löschen von %s von der Mailman Liste %s oder SPIP basis
@@ -168,8 +169,8 @@ ErrorPaymentModeDefinedToWithoutSetup=Eine Zahlungsart wurde auf Typ %s gesetzt,
 ErrorPHPNeedModule=Fehler, Ihr PHP muss das Modul <b>%s</b> installiert haben um diese Option zu benutzen.
 ErrorOpenIDSetupConfNotComplete=Aus Sicherheitsgründen müssen Sie außerdem die Dolibarr-Konfigurationsdatei conf.php anpassen, damit OpenID-Authentifizierung zugelassen wird.
 ErrorOpenIDSetupNotComplete=Sie haben im Dolibarr Konfigurationsfile eingestellt, dass die Anmeldung mit OpenID möglich ist, aber die URL zum OpenID Service ist noch nicht in %s definiert.
-OIDCAutocreateUserDisabled=Auto-creation of users on OIDC login is currently disabled. To enable it, add $dolibarr_main_authentication_autocreateuser=1 to your conf.php file.
-OIDCAutocreateUserEnabled=Auto-creation of users on OIDC login is enabled ($dolibarr_main_authentication_autocreateuser=1 is set in conf.php).
+OIDCAutocreateUserDisabled=Die automatische Benutzererstellung beim OIDC-Login ist derzeit deaktiviert. Um sie zu aktivieren, fügen Sie $dolibarr_main_authentication_autocreateuser=1 zu Ihrer conf.php Datei hinzu.
+OIDCAutocreateUserEnabled=Die automatische Erstellung von Benutzern bei der OIDC-Anmeldung ist aktiviert ($dolibarr_main_authentication_autocreateuser=1 ist in conf.php gesetzt).
 ErrorWarehouseMustDiffers=Ursprungs- und Ziel-Lager müssen unterschiedlich sein
 ErrorBadFormat=Falsches Format!
 ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst=Fehler: Dieses Mitglied ist noch nicht mit einem Partner verbunden. Verknüpfen Sie das Mitglied zuerst mit einem vorhandenen Partner oder legen Sie einen neuen an, bevor Sie ein Abonnement mit Rechnung erstellen.
@@ -365,7 +366,7 @@ ErrorTooManyAttempts= Zu viele Versuche. Bitte später erneut versuchen
 ErrorThisContactXIsAlreadyDefinedAsThisType=%s ist bereits als Kontakt für diesen Typ definiert.
 ErrorThisGroupIsAlreadyDefinedAsThisType=Die Kontakte dieser Gruppe sind bereits als Kontakt für diesen Typ definiert.
 ErrorIsNotInError=%s ist nicht fehlerhaft
-ErrorFilenameExtensionNotAllowed=Datei %s hat eine unzulässige Datei-Erweiterung
+ErrorFilenameExtensionNotAllowed=Die Datei %s hat eine unzulässige Dateinamen-Erweiterung
 ErrorNoValueForSelectListType=Fehler, ein Wert für diesen Feldtyp ist obligatorisch
 ErrorPaymentAmountMustNotBeNull=Fehler: Der Betrag der Zahlung muss definiert sein und darf nicht null sein
 ErrorOneLineContainsADisactivatedProduct=Fehler: Mindestens ein Produkt ist nicht oder nicht mehr für Verkauf oder Einkauf zugelassen
@@ -378,11 +379,18 @@ ErrorBadParameterWhenCallingCreateOfBlockedLog=Ungültiger Parameter beim Aufruf
 ErrorMaxDecimalsShownTooLowComparedToUnitOrTotal=Der Wert für „Max. Dezimalzahlen für die Anzeige von Preisen auf dem Bildschirm“ (%s) muss gleich oder größer sein als die beiden Werte für „Max. Dezimalzahlen für Einzelpreise“ (%s) und „Max. Dezimalstellen für die Gesamtsumme" (%s). Dies ist erforderlich, um Rundungsfehler in den Dokumenten zu vermeiden.
 ErrorOnlyDraftStatusCanBeDeletedInMassAction=Nur Elemente im Status 'Entwurf' können in einer Massenaktion gelöscht werden
 ErrorLDAPFunctionsAreDisabledOnThisPHP=Die LDAP-Funktionen sind bei diesem PHP deaktiviert.
+ErrorFailedToGetTokenFromClientIdAndSecret=Es konnte kein %s Token mit der Client-ID und dem Client-Geheimnis abgerufen werden.
+ErrorModuleBuilderNoFieldProperty=Property array ->fields wurde in der Klasse nicht gefunden. Die Klasse wurde wahrscheinlich nicht vom Modulgenerator generiert.
+ErrorModuleBuilderFailedToInit=Fehler bei der Initialisierung des Objekts mit dem neuen %s (%s).
+ErrorThirdPartyNotFound=Fehler Geschäftspartner nicht gefunden
+ErrorDynamicPHPContentNotAllowed=Fehler: %s=1, daher ist dynamischer PHP-Inhalt nur zulässig, wenn alle RCE-PHP-Funktionen (exec, shell_exec, ...) deaktiviert sind.
+ErrorTooManyLinksIntoHTMLString=Der HTML-Inhalt enthält zu viele Links oder Bilder. Reduzieren Sie die Anzahl oder erhöhen Sie den Wert von MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT.
+ErrorDeletingAClosedCashControlIsNotPossible=Das Löschen einer geschlossenen Kassenprüfung ist nicht möglich.
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Ihr PHP Parameter upload_max_filesize (%s) ist größer als Parameter post_max_size (%s). Dies ist eine inkonsistente Einstellung.
 WarningPasswordSetWithNoAccount=Es wurde ein Passwort für dieses Mitglied vergeben, aber kein Benutzer erstellt. Das Passwort wird gespeichert, aber kann nicht für die Anmeldung an Dolibarr verwendet werden. Es kann von einem externen Modul/einer Schnittstelle verwendet werden, aber wenn Sie kein Login oder Passwort für dieses Mitglied definiert müssen, können Sie die Option "Login für jedes Mitglied verwalten" in den Mitgliedseinstellungen deaktivieren. Wenn Sie ein Login aber kein Passwort benötige, lassen Sie dieses Feld leer, um diese Meldung zu deaktivieren. Anmerkung: Die E-Mail-Adresse kann auch zur Anmeldung verwendet werden, wenn das Mitglied mit einem Benutzer verbunden wird.
-WarningMandatorySetupNotComplete=Hier klicken, um die Hauptparameter einzurichten
+WarningMandatorySetupNotComplete=Konfiguration ist unvollständig! Hier klicken, um die wichtigsten Einstellungen vorzunehmen.
 WarningEnableYourModulesApplications=Hier klicken, um Module/Applikationen freizuschalten
 WarningSafeModeOnCheckExecDir=Achtung: Der PHP-Option <b>safe_mode</b> ist aktiviert, entsprechend müssen Befehle in einem mit <b>safe_mode_exec_dir</b> gekennzeichneten Verzeichnis ausgeführt werden.
 WarningBookmarkAlreadyExists=Ein Favorit mit diesem Titel oder dieser Adresse (URL) existiert bereits.
@@ -428,9 +436,11 @@ WarningReadBankAlsoAllowedIfUserHasPermission=Achtung: Einblick in Bankkonto ist
 WarningNoDataTransferedInAccountancyYet=Bitte beachten: es sind keine Daten in der Buchhaltung vorhanden. Bitte übertragen Sie Ihre in der Anwendung aufgezeichneten Daten in die Buchhaltung oder ändern Sie den Berechnungsmodus, um die außerhalb der Buchhaltung aufgezeichneten Daten zu analysieren.
 WarningChangingThisMayBreakStopTaskScheduler=Achtung, das Ändern dieses Wertes kann den Scheduler deaktivieren
 WarningAmountOfFileDiffersFromSumOfLines=Achtung, der Gesamtbetrag der Datei (%s) entspricht nicht der Betragssumme der Zeilen (%s)
-WarningModuleAffiliatedToAReportedCompany=Achtung, diese Modul wurde der Dolibarr Foundation gemeldet als von einem Unternehmen veröffentlicht, das illegale Praktiken anwendet (Nichteinhaltung der Regeln zur Verwendung der Marke Dolibarr, Erfassung Ihrer Daten ohne Ihre Zustimmung oder Bereitstellung von Malware).
+WarningModuleAffiliatedToAReportedCompany=Achtung, diese Modul wurde der Dolibarr Foundation gemeldet als von einem Unternehmen veröffentlicht, das illegale Praktiken anwendet (Nichteinhaltung der Regeln zur Verwendung der Marke Dolibarr, Verstoß gegen die Lizenz GPL, Erfassung von Daten ohne Ihre Zustimmung oder Bereitstellung von Malware).
 WarningModuleAffiliatedToAPiratPlatform=Seien Sie vorsichtig, wenn Sie ein Modul (kostenpflichtig oder kostenlos) von einer verdächtigen, nicht offiziellen Plattform wie %s erhalten.
 WarningDNSServerNotAvailable=Warnung, DNS Server nicht verfügbar
+WarningSecureKeyNotSet=Der Wert für den Sicherheitsschlüssel darf nicht leer sein
+WarningFullPathWasNotFoundSoWeUseAnAlternativeValue=Hinweis: Der vollständige Pfad wurde nicht gefunden, daher wurde der alternative Wert <b>%s</b> verwendet.
 
 SwissQrOnlyVIR = Eine SwissQR-Rechnung kann nur Rechnungen hinzugefügt werden, die per Überweisung bezahlt werden sollen.
 SwissQrCreditorAddressInvalid = Die Kreditorenadresse ist ungültig (sind PLZ und Stadt festgelegt? (%s)
@@ -469,4 +479,4 @@ SomeShipmentExists=Fehler, mit dem Auftrag ist eine Lieferung verknüpft. Lösch
 WarningEvaluationEmptyValidate=Die Bewertung kann nicht freigegeben werden, da die Kompetenzstufen nicht definiert sind
 ErrorBadParametersForDirectDebitFileCreate=Transferdatei für Bank kann nicht erstellt werden: Ein vom Format erwarteter Parameter ist nicht vorhanden.
 ErrorBadParametersForDirectDebitFileCreateDids=Transferdatei für Bank kann nicht erstellt werden: IDs von bestehenden Zahlungsanfragen wurden nicht angegeben.
-UserDoesNotHaveRightsToChangeHisPassword=Dieser Benutzer hat nicht die Berechtigung, sein eigenes Passwort zu ändern.
+ErrorExpeditionQtyTooHigh=Die gelieferte Menge (%s) übersteigt die noch zu liefernde Menge (%s).

@@ -10,7 +10,7 @@
  * Copyright (C) 2018       Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2018-2026  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2021       Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -173,6 +173,9 @@ $arrayfields = array(
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -1340,7 +1343,7 @@ if ($resql) {
 			$sqlforbalance .= " AND ba.entity IN (".getEntity('bank_account').")";
 			$sqlforbalance .= " AND b.fk_account = ".((int) $search_account);
 			// To limit record on the page
-			$sqlforbalance .= " AND (b.datev < '".$db->idate($db->jdate($objp->dv))."' OR (b.datev = '".$db->idate($db->jdate($objp->dv))."' AND (b.dateo < '".$db->idate($db->jdate($objp->do))."' OR (b.dateo = '".$db->idate($db->jdate($objp->do))."' AND b.rowid < ".$objp->rowid."))))";
+			$sqlforbalance .= " AND (b.datev < '".$db->idate($db->jdate($objp->dv))."' OR (b.datev = '".$db->idate($db->jdate($objp->dv))."' AND (b.dateo < '".$db->idate($db->jdate($objp->do))."' OR (b.dateo = '".$db->idate($db->jdate($objp->do))."' AND b.rowid < ".((int) $objp->rowid)."))))";
 			$resqlforbalance = $db->query($sqlforbalance);
 
 			//print $sqlforbalance;
@@ -1608,7 +1611,7 @@ if ($resql) {
 					// Show link with label $links[$key]['label']
 					print '<a href="'.$links[$key]['url'].$links[$key]['url_id'].'">';
 					if (preg_match('/^\((.*)\)$/i', $links[$key]['label'], $reg)) {
-						// Label generique car entre parentheses. On l'affiche en le traduisant
+						// Generic label because it is in parentheses. We display it translated.
 						if ($reg[1] == 'paiement') {
 							$reg[1] = 'Payment';
 						}

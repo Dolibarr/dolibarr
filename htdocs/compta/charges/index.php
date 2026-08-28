@@ -7,7 +7,7 @@
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2026       Nick Fragoulis
  *
@@ -456,7 +456,7 @@ while ($j < $numlt) {
 
 	$sql = "SELECT pv.rowid, pv.amount, pv.label, pv.datev as dm, pv.datep as dp";
 	$sql .= " FROM ".MAIN_DB_PREFIX."localtax as pv";
-	$sql .= " WHERE pv.entity = ".$conf->entity." AND localtaxtype = ".((int) $j);
+	$sql .= " WHERE pv.entity = ".((int) $conf->entity)." AND localtaxtype = ".((int) $j);
 	if ($year > 0) {
 		// If period defined, we use it as date criteria, if not  we use date echeance,
 		// so we are compatible when period is not mandatory

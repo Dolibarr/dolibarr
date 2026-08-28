@@ -91,7 +91,8 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 
-restrictedArea($user, $object->element, $object->id, 'payment', '');
+
+restrictedArea($user, $object->element, $object->id, 'paiement', '');
 
 $permissiontoadd = ($user->hasRight('facture', 'creer')); // Used by the include of actions_setnotes.inc.php
 

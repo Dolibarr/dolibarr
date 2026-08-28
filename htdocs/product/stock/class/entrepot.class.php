@@ -372,8 +372,8 @@ class Entrepot extends CommonObject
 
 		$sql = "UPDATE ".$this->db->prefix()."entrepot";
 		$sql .= " SET ref = '".$this->db->escape($this->label)."'";
-		$sql .= ", fk_parent = ".(($this->fk_parent > 0) ? $this->fk_parent : "NULL");
-		$sql .= ", fk_project = ".(($this->fk_project > 0) ? $this->fk_project : "NULL");
+		$sql .= ", fk_parent = ".(($this->fk_parent > 0) ? ((int) $this->fk_parent) : "NULL");
+		$sql .= ", fk_project = ".(($this->fk_project > 0) ? ((int) $this->fk_project) : "NULL");
 		$sql .= ", description = '".$this->db->escape($this->description)."'";
 		$sql .= ", statut = ".((int) $this->statut);
 		$sql .= ", lieu = '".$this->db->escape($this->lieu)."'";
