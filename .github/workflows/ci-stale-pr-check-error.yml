@@ -2,7 +2,7 @@ name: "Close old stale PRs with one failing check"
 
 on:
   schedule:
-    - cron: "0 22 * * *"
+    - cron: "10 21 * * *"
 
   workflow_dispatch:
 
@@ -43,8 +43,8 @@ jobs:
             echo ""
             echo "========================================"
             echo "PR #$PR_NUMBER: $PR_TITLE"
-            echo "Created: $CREATED_AT"
-            echo "Updated: $UPDATED_AT"
+            echo "Created:      $CREATED_AT"
+            echo "Last updated: $UPDATED_AT"
             echo "========================================"
 
             # Get checks of last commit of PR
@@ -81,7 +81,7 @@ jobs:
               echo "Closed PRs: $CLOSED_COUNT"
 
               if [ "$CLOSED_COUNT" -ge 2 ]; then
-                echo "We reach the limit of number of PR closed. Stopping."
+                echo "Reached the maximum number of PRs to close. Stopping."
                 break
               fi
 
