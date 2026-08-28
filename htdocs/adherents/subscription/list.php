@@ -137,6 +137,9 @@ $arrayfields = array(
 	'c.tms' => array('label' => "DateModificationShort", 'checked' => '0', 'position' => 500),
 //	'd.statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000)
 );
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 // Security check
 restrictedArea($user, 'adherent', '', '', 'cotisation');
