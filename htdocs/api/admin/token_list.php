@@ -207,7 +207,7 @@ $sql = "SELECT oat.rowid, oat.tokenstring, oat.entity, oat.state as rights, oat.
 $sql .= " oat.lastaccess, oat.apicount_total";
 $sql .= " FROM ".MAIN_DB_PREFIX."oauth_token as oat";
 $sql .= " WHERE service = 'dolibarr_rest_api'";
-$sql .= " AND EXISTS(SELECT 'exist' FROM llx_user as u WHERE u.api_key IS NOT NULL AND u.rowid = oat.fk_user)";
+$sql .= " AND EXISTS(SELECT 'exist' FROM ".MAIN_DB_PREFIX."user as u WHERE u.api_key IS NOT NULL AND u.rowid = oat.fk_user)";
 if ($search_user) {
 	$sql .= " AND EXISTS (SELECT 'exist' FROM ".MAIN_DB_PREFIX."user u";
 	$sql .= " WHERE (u.lastname LIKE '%".$db->escape($search_user)."%'";

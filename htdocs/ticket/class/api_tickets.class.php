@@ -816,7 +816,7 @@ class Tickets extends DolibarrApi
 		if ($source == "external") {
 			// Check external contact exists
 			$sqlCheckExternalContact = "SELECT 1 as exist";
-			$sqlCheckExternalContact .= " FROM llx_socpeople";
+			$sqlCheckExternalContact .= " FROM ".MAIN_DB_PREFIX."socpeople";
 			$sqlCheckExternalContact .= " WHERE rowid = " . intval($contactid);
 			$result = $this->db->query($sqlCheckExternalContact);
 
@@ -826,7 +826,7 @@ class Tickets extends DolibarrApi
 		} else {
 			// Check internal contact exists
 			$sqlCheckInternalContact = "SELECT 1 as exist";
-			$sqlCheckInternalContact .= " FROM llx_user";
+			$sqlCheckInternalContact .= " FROM ".MAIN_DB_PREFIX."user";
 			$sqlCheckInternalContact .= " WHERE rowid = " . intval($contactid);
 			$result = $this->db->query($sqlCheckInternalContact);
 
