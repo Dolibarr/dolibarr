@@ -1414,7 +1414,7 @@ class User extends CommonObject
 
 		if (!$alreadyloaded) {
 			// First user permissions
-			$sql = "SELECT DISTINCT r.module, r.perms, r.subperms";
+			$sql = "SELECT DISTINCT r.module, r.module_origin, r.perms, r.subperms";
 			$sql .= " FROM ".$this->db->prefix()."user_rights as ur,";
 			$sql .= " ".$this->db->prefix()."rights_def as r";
 			$sql .= " WHERE r.id = ur.fk_id";
@@ -1446,7 +1446,12 @@ class User extends CommonObject
 					$obj = $this->db->fetch_object($resql);
 
 					if ($obj) {
-						$module = $obj->module;
+						// module_origin (set only when the right was declared by another module
+						// via KEY_MODULE, to be filed into a foreign module's section of the
+						// permission grid) is the namespace actually used to check the right with
+						// hasRight(), so the declaring module keeps control of it regardless of
+						// which module's section it is grouped under for display.
+						$module = (!empty($obj->module_origin) ? $obj->module_origin : $obj->module);
 						$perms = $obj->perms;
 						$subperms = $obj->subperms;
 
@@ -1478,7 +1483,7 @@ class User extends CommonObject
 			}
 
 			// Now permissions of groups
-			$sql = "SELECT DISTINCT r.module, r.perms, r.subperms, r.entity";
+			$sql = "SELECT DISTINCT r.module, r.module_origin, r.perms, r.subperms, r.entity";
 			$sql .= " FROM ".$this->db->prefix()."usergroup_rights as gr,";
 			$sql .= " ".$this->db->prefix()."usergroup_user as gu,";
 			$sql .= " ".$this->db->prefix()."rights_def as r";
@@ -1519,7 +1524,12 @@ class User extends CommonObject
 					$obj = $this->db->fetch_object($resql);
 
 					if ($obj) {
-						$module = $obj->module;
+						// module_origin (set only when the right was declared by another module
+						// via KEY_MODULE, to be filed into a foreign module's section of the
+						// permission grid) is the namespace actually used to check the right with
+						// hasRight(), so the declaring module keeps control of it regardless of
+						// which module's section it is grouped under for display.
+						$module = (!empty($obj->module_origin) ? $obj->module_origin : $obj->module);
 						$perms = $obj->perms;
 						$subperms = $obj->subperms;
 
