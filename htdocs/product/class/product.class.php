@@ -5603,7 +5603,6 @@ class Product extends CommonObject
 			$multiply = 1;
 		}
 
-		//var_dump($prod);
 		foreach ($prod as $id_product => $desc_pere) {    // $id_product is 0 (first call starting with root top) or an id of a sub_product
 			if (is_array($desc_pere)) {    // If desc_pere is an array, this means it's a child
 				$id = (!empty($desc_pere[0]) ? $desc_pere[0] : '');
@@ -5672,7 +5671,6 @@ class Product extends CommonObject
 				}
 			}
 		}
-		//var_dump($res);
 		return $this->res;
 	}
 
