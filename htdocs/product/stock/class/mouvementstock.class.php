@@ -1058,6 +1058,12 @@ class MouvementStock extends CommonObject
 					$modulename = empty($origin_type_array[1]) ? strtolower($classname) : $origin_type_array[1];
 
 					$result = dol_include_once('/'.$modulename.'/class/'.$classname.'.class.php');
+					if (!$result) {
+						// Dolibarr names its class files in lowercase, so a CamelCase class name gives a path
+						// that does not exist on a case sensitive filesystem. Retry with a lowercase file name
+						// (class names themselves are case insensitive in PHP).
+						$result = dol_include_once('/'.$modulename.'/class/'.strtolower($classname).'.class.php');
+					}
 
 					if ($result) {
 						$classname = ucfirst($classname);
