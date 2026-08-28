@@ -28,9 +28,9 @@ jobs:
           gh pr list \
             --repo "$REPO" \
             --state open \
-            --limit 1000 \
-            --json number,title,createdAt \
-            --jq '.[] | select(.createdAt < "'"$ONE_YEAR_AGO"'")' |
+            --limit 2 \
+            --json number,title,createdAt,updatedAt \
+            --jq '.[] | select(.updatedAt < "'"$(date -d '1 year ago' --iso-8601=seconds)"'") |
           while IFS= read -r PR; do
 
             PR_NUMBER=$(echo "$PR" | jq -r '.number')
@@ -62,7 +62,7 @@ jobs:
 
               gh pr close "$PR_NUMBER" \
                 --repo "$REPO" \
-                --comment "This PR has been closed automatically because it is older than 1 year and at least one check is still in failure. Checks with error : $FAILED_NAMES. You can try to resubmit it if you think the trouble has been fixed."
+                --comment "This PR has been closed automatically because it is older than 1 year and at least one CI check is still in failure. Checks with error : $FAILED_NAMES. You can try to resubmit it if you think the trouble has been fixed."
 
             else
               echo "No failed checks. Keeping PR open."
