@@ -265,7 +265,8 @@ print '<input type="text" name="label" class="minwidth400" value="'.dol_escape_h
 print '</td>';
 print '<td>'.$langs->trans("InventoryCode").'</td>';
 print '<td>';
-print '<input class="maxwidth100onsmartphone" name="inventorycode" id="inventorycode" value="'.(GETPOSTISSET("inventorycode") ? GETPOST("inventorycode", 'alpha') : dol_print_date(dol_now(), '%Y%m%d%H%M%S')).'">';
+// Prefix the default inventory code so corrections can be told apart from other movement batches
+print '<input class="maxwidth100onsmartphone" name="inventorycode" id="inventorycode" value="'.(GETPOSTISSET("inventorycode") ? GETPOST("inventorycode", 'alpha') : getDolGlobalString('STOCK_CORRECTION_CODE_PREFIX', 'COR-').dol_print_date(dol_now(), '%Y%m%d%H%M%S')).'">';
 print '</td>';
 print '</tr>';
 

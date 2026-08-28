@@ -780,7 +780,7 @@ if (count($listofdata)) {
 	print '<input type="hidden" name="action" value="createmovements">';
 
 	// Button to record mass movement
-	$codemove = (GETPOSTISSET("codemove") ? GETPOST("codemove", 'alpha') : dol_print_date(dol_now(), '%Y%m%d%H%M%S'));
+	$codemove = (GETPOSTISSET("codemove") ? GETPOST("codemove", 'alpha') : getDolGlobalString('STOCK_MASSSTOCKMOVE_CODE_PREFIX', 'MSM-').dol_print_date(dol_now(), '%Y%m%d%H%M%S'));
 	$labelmovement = GETPOST("label") ? GETPOST('label') : $langs->trans("MassStockTransferShort").' '.dol_print_date($now, '%Y-%m-%d %H:%M');
 
 	print '<div class="center">';

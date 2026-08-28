@@ -154,7 +154,8 @@ print '<input type="text" name="label" class="minwidth300" value="'.dol_escape_h
 print '</td>';
 print '<td>'.$langs->trans("InventoryCode").'</td>';
 print '<td>';
-print '<input class="maxwidth100onsmartphone" name="inventorycode" id="inventorycode" value="'.(GETPOSTISSET("inventorycode") ? GETPOST("inventorycode", 'alpha') : dol_print_date(dol_now(), '%Y%m%d%H%M%S')).'">';
+// Prefix the default inventory code so transfers can be told apart from other movement batches
+print '<input class="maxwidth100onsmartphone" name="inventorycode" id="inventorycode" value="'.(GETPOSTISSET("inventorycode") ? GETPOST("inventorycode", 'alpha') : getDolGlobalString('STOCK_TRANSFER_CODE_PREFIX', 'TRA-').dol_print_date(dol_now(), '%Y%m%d%H%M%S')).'">';
 print '</td>';
 print '</tr>';
 
