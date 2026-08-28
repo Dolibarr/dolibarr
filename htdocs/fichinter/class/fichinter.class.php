@@ -809,8 +809,8 @@ class Fichinter extends CommonObject
 
 
 	/**
-	 *	Tag the fichinter as validated (opened)
-	 *	Function used when fichinter is reopend after being closed.
+	 *	Tag the intervention as validated (opened)
+	 *	Function used when the intervention is reopened after being closed or canceled.
 	 *
 	 *	@param      User	$user       Object user that change status
 	 *  @param		int		$notrigger	1=Does not execute triggers, 0=Execute triggers
@@ -822,7 +822,7 @@ class Fichinter extends CommonObject
 		$error = 0;
 
 		if ($this->statut != self::STATUS_CANCELED && $this->statut != self::STATUS_CLOSED) {
-			dol_syslog(get_class($this)."::set_reopen fichinter has not status closed", LOG_WARNING);
+			dol_syslog(get_class($this)."::setReopen intervention has not status closed or canceled", LOG_WARNING);
 			return 0;
 		}
 
@@ -833,7 +833,7 @@ class Fichinter extends CommonObject
 		$sql .= ", fk_user_modif = ".((int) $user->id);
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
-		dol_syslog(get_class($this)."::set_reopen", LOG_DEBUG);
+		dol_syslog(get_class($this)."::setReopen", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			if (!$notrigger) {
@@ -859,7 +859,7 @@ class Fichinter extends CommonObject
 			return 1;
 		} else {
 			foreach ($this->errors as $errmsg) {
-				dol_syslog(get_class($this)."::set_reopen ".$errmsg, LOG_ERR);
+				dol_syslog(get_class($this)."::setReopen ".$errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
 			$this->db->rollback();
