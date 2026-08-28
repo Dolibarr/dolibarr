@@ -1,4 +1,4 @@
-name: "Close stale PRs with one failing check"
+name: "Close old stale PRs with one failing check"
 
 on:
   schedule:
@@ -50,11 +50,15 @@ jobs:
             # Get checks of last commit of PR
             CHECKS=$(gh pr checks "$PR_NUMBER" \
               --repo "$REPO" \
-              --json name,state \
-              --jq '.' 2>/dev/null || true)
+              --json name,state 2>/dev/null) || 			  {
+                echo "Unable to retrieve checks for PR #$PR_NUMBER"
+                continue
+            }
 
             FAILED_CHECKS=$(echo "$CHECKS" |
               jq '[.[] | select(.state == "FAILURE")] | length')
+
+            FAILED_CHECKS=${FAILED_CHECKS:-0}
 
             echo "Failed checks: $FAILED_CHECKS"
 
