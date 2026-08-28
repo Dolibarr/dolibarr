@@ -850,7 +850,7 @@ class ContratLigne extends CommonObjectLine
 		$sql .= " '".$this->db->escape($this->localtax2_tx)."',";
 		$sql .= " '".$this->db->escape($this->localtax1_type)."',";
 		$sql .= " '".$this->db->escape($this->localtax2_type)."',";
-		$sql .= " ".price2num($this->remise_percent).",".price2num($this->subprice).",".price2num($this->subprice_ttc).",";
+		$sql .= " ".price2num($this->remise_percent).",".price2num($this->subprice).",".((float) price2num($this->subprice_ttc)).",";
 		$sql .= " ".price2num($this->total_ht).",".price2num($this->total_tva).",".price2num($this->total_localtax1).",".price2num($this->total_localtax2).",".price2num($this->total_ttc).",";
 		$sql .= " '".$this->db->escape((string) $this->info_bits)."',";
 		$sql .= " ".(empty($this->rang) ? '0' : (int) $this->rang).",";
