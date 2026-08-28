@@ -4383,7 +4383,6 @@ class Commande extends CommonOrder
 		);
 
 		if (is_object($hookmanager)) {
-			$hookmanager->initHooks(array($this->element.'dao'));
 			$parameters = array('options' => $options);
 			$reshook = $hookmanager->executeHooks('getShippableInfos', $parameters, $this);
 			if ($reshook < 0) {
