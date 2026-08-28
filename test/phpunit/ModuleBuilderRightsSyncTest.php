@@ -852,4 +852,23 @@ class ModuleBuilderRightsSyncTest extends CommonClassTest
 		$this->assertNotSame($before, md5_file($path));
 		$this->assertSame(array(), $this->parseRenderedRights($path));
 	}
+
+	/**
+	 * A right attached to no object could never be matched by hasRight(), so it is refused.
+	 *
+	 * @return void
+	 */
+	public function testRightWithoutObjectIsRefusedBeforeWriting()
+	{
+		$path = $this->makeDescriptorFixture('');
+		$before = (string) file_get_contents($path);
+
+		$report = (new DescriptorRightsSyncService())->sync(
+			RightsSyncCommand::forRightAddition('Acme', $path, array(), '', 'Orphan right', 'read')
+		);
+
+		$this->assertTrue($report->hasConflicts());
+		$this->assertSame(0, $report->updatedLines);
+		$this->assertSame($before, (string) file_get_contents($path));
+	}
 }

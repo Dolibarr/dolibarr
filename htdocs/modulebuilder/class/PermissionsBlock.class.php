@@ -80,21 +80,16 @@ final class PermissionsBlock
 	/** @var string Path to the descriptor file */
 	private $file;
 
-	/** @var string Full descriptor content as read from disk */
-	private $content;
-
 	/** @var string Content between the two markers, markers excluded */
 	private $innerBlock;
 
 	/**
 	 * @param string $file       Path to the descriptor file
-	 * @param string $content    Full descriptor content
 	 * @param string $innerBlock Content between the markers
 	 */
-	private function __construct(string $file, string $content, string $innerBlock)
+	private function __construct(string $file, string $innerBlock)
 	{
 		$this->file = $file;
-		$this->content = $content;
 		$this->innerBlock = $innerBlock;
 	}
 
@@ -127,7 +122,7 @@ final class PermissionsBlock
 		$start = $posBegin + strlen(self::BEGIN_MARKER);
 		$innerBlock = substr($content, $start, $posEnd - $start);
 
-		return new self($file, $content, $innerBlock);
+		return new self($file, $innerBlock);
 	}
 
 	/**
@@ -360,7 +355,6 @@ final class PermissionsBlock
 			return $result < 0 ? $result : -1;
 		}
 
-		$this->content = (string) file_get_contents($this->file);
 		$this->innerBlock = $newInnerBlock;
 
 		return 1;

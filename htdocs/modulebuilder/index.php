@@ -1569,8 +1569,8 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on 
 			$moduledescriptorfile = $destdir.'/core/modules/mod'.$module.'.class.php';
 			$rights = modulebuilderLoadDescriptorRights($module, $moduledescriptorfile, $listofmodules[strtolower($module)]['moduledescriptorrelpath']);
 			if ($rights !== null) {
-				$reportperms = modulebuilderSyncRights(RightsSyncCommand::forObjectCreation($module, $moduledescriptorfile, $rights, $objectname));
-				if ($reportperms->skipped > 0) {
+				$reportPerms = modulebuilderSyncRights(RightsSyncCommand::forObjectCreation($module, $moduledescriptorfile, $rights, $objectname));
+				if ($reportPerms->skipped > 0) {
 					setEventMessages($langs->trans("WarningPermissionAlreadyExist", $langs->transnoentities($objectname)), null, 'warnings');
 				}
 			}
@@ -2366,12 +2366,9 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname /* && $user->has
 		if ($rewritePerms < 0) {
 			setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Permissions"), "mod".$module."class.php"), null, 'warnings');
 		} else {
-			$reportperms = modulebuilderSyncRights(RightsSyncCommand::forObjectDeletion($module, $moduledescriptorfile, is_array($permissions) ? $permissions : array(), $objectname));
-			if ($reportperms->hasConflicts()) {
-				// The object files are still removed: a rights conflict must not cancel the deletion,
-				// the warning tells the user the leftover rights need a manual cleanup.
-				$rewritePerms = -1;
-			}
+			$reportPerms = modulebuilderSyncRights(RightsSyncCommand::forObjectDeletion($module, $moduledescriptorfile, is_array($permissions) ? $permissions : array(), $objectname));
+			// A rights conflict deliberately does not cancel the object deletion below: the warning
+			// already told the user the leftover rights need a manual cleanup.
 		}
 		if ($rewritePerms && $rewriteMenu) {
 			// check if documentation has been generated
@@ -2730,8 +2727,8 @@ if ($dirins && $action == 'addright' && !empty($module) && empty($cancel) /* && 
 		if ($rewrite < 0) {
 			setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Permissions"), "mod".$module."class.php"), null, 'warnings');
 		} else {
-			$reportperms = modulebuilderSyncRights(RightsSyncCommand::forRightAddition($module, $moduledescriptorfile, $permissions, $objectForPerms, $label, $crud));
-			if (!$reportperms->hasConflicts()) {
+			$reportPerms = modulebuilderSyncRights(RightsSyncCommand::forRightAddition($module, $moduledescriptorfile, $permissions, $objectForPerms, $label, $crud));
+			if (!$reportPerms->hasConflicts()) {
 				setEventMessages($langs->trans('PermissionAddedSuccesfuly'), null);
 
 				clearstatcache(true);
@@ -2853,8 +2850,8 @@ if ($dirins && GETPOST('action') == 'update_right' && GETPOST('modifyright') && 
 		if ($rewrite < 0) {
 			setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Permissions"), "mod".$module."class.php"), null, 'warnings');
 		} else {
-			$reportperms = modulebuilderSyncRights(RightsSyncCommand::forRightUpdate($module, $moduledescriptorfile, $permissions, $key, $objectForPerms, $label, $crud));
-			if (!$reportperms->hasConflicts()) {
+			$reportPerms = modulebuilderSyncRights(RightsSyncCommand::forRightUpdate($module, $moduledescriptorfile, $permissions, $key, $objectForPerms, $label, $crud));
+			if (!$reportPerms->hasConflicts()) {
 				setEventMessages($langs->trans('PermissionUpdatedSuccesfuly'), null);
 				clearstatcache(true);
 				if (function_exists('opcache_invalidate')) {
@@ -2907,8 +2904,8 @@ if ($dirins && $action == 'confirm_deleteright' && !empty($module) && GETPOSTINT
 		if ($rewrite < 0) {
 			setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Permissions"), "mod".$module."class.php"), null, 'warnings');
 		} else {
-			$reportperms = modulebuilderSyncRights(RightsSyncCommand::forRightDeletion($module, $moduledescriptorfile, $permissions, $key));
-			if (!$reportperms->hasConflicts()) {
+			$reportPerms = modulebuilderSyncRights(RightsSyncCommand::forRightDeletion($module, $moduledescriptorfile, $permissions, $key));
+			if (!$reportPerms->hasConflicts()) {
 				setEventMessages($langs->trans('PermissionDeletedSuccesfuly'), null);
 
 				clearstatcache(true);

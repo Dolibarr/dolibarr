@@ -104,6 +104,18 @@ final class DescriptorRightsSyncService implements RightsSyncService
 			return new SyncReport(0, 1, array(), $warnings);
 		}
 
+		// The shape check above ran on the incoming rights; the command may itself produce an
+		// unusable one, e.g. a right attached to no object, which hasRight() could never match.
+		$producedConflicts = $block->detectRightsShapeConflicts($permissions);
+		if (!empty($producedConflicts)) {
+			dol_syslog(
+				'DescriptorRightsSyncService::sync refused to write an unusable right into '.$cmd->descriptorFile.': '
+				.implode('; ', array_slice($producedConflicts, 0, 3)),
+				LOG_WARNING
+			);
+			return new SyncReport(0, 0, $producedConflicts, $warnings);
+		}
+
 		$newBlock = $block->render($permissions);
 		if ($block->write($newBlock) < 0) {
 			return new SyncReport(0, 0, array('Failed to write the permissions section of '.$cmd->descriptorFile), $warnings);
