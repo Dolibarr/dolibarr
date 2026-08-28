@@ -475,7 +475,7 @@ if ($action == 'edit') {
 		print '<tr class="drag drop oddeven hideifdefault"><td>'.$langs->trans("MAIN_MAIL_SMTPS_ID").'</td><td>';
 		// SuperAdministrator access only
 		if (!isModEnabled('multicompany') || ($user->admin && !$user->entity)) {
-			print '<input class="flat" name="MAIN_MAIL_SMTPS_ID_PASSWORDRESET" size="32" value="'.$mainstmpid.'">';
+			print '<input class="flat" name="MAIN_MAIL_SMTPS_ID_PASSWORDRESET" size="32" value="'.$mainstmpid.'" autocomplete="new-password">';
 		} else {
 			$htmltext = $langs->trans("ContactSuperAdminForChange");
 			print $form->textwithpicto(getDolGlobalString('MAIN_MAIL_SMTPS_ID_PASSWORDRESET'), $htmltext, 1, 'superadmin');
@@ -490,7 +490,7 @@ if ($action == 'edit') {
 		print '<tr class="drag drop oddeven smtp_pw hideifdefault"><td>'.$langs->trans("MAIN_MAIL_SMTPS_PW").'</td><td>';
 		// SuperAdministrator access only
 		if (!isModEnabled('multicompany') || ($user->admin && !$user->entity)) {
-			print '<input class="flat" type="password" name="MAIN_MAIL_SMTPS_PW_PASSWORDRESET" size="32" value="'.$mainsmtppw.'">';
+			print '<input class="flat" type="password" name="MAIN_MAIL_SMTPS_PW_PASSWORDRESET" size="32" value="'.$mainsmtppw.'" autocomplete="new-password">';
 		} else {
 			$htmltext = $langs->trans("ContactSuperAdminForChange");
 			print $form->textwithpicto(getDolGlobalString('MAIN_MAIL_SMTPS_PW_PASSWORDRESET'), $htmltext, 1, 'superadmin');
