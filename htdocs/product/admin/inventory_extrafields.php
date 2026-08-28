@@ -73,16 +73,16 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
 
 $textobject = $langs->transnoentitiesnoconv("Inventory");
 
-llxHeader('', $langs->trans("InventorySetup"), '', '', 0, 0, '', '', '', 'mod-product page-admin_inventory_extrafields');
+llxHeader('', $langs->trans("StockSetup"), '', '', 0, 0, '', '', '', 'mod-product page-admin_inventory_extrafields');
 
 
 $linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
-print load_fiche_titre($langs->trans("InventorySetup"), $linkback, 'title_setup');
+print load_fiche_titre($langs->trans("StockSetup"), $linkback, 'title_setup');
 
 
 $head = stock_admin_prepare_head();
 
-print dol_get_fiche_head($head, 'inventoryAttributes', $langs->trans("InventoryExtraFields"), -1, 'account');
+print dol_get_fiche_head($head, 'inventoryAttributes', $langs->trans("InventoryExtraFields"), -1, 'stock');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 
