@@ -136,6 +136,7 @@ ErrorLabelAlreadyExists=This label already exists
 ErrorCantReadFile=Failed to read file '%s'
 ErrorCantReadDir=Failed to read directory '%s'
 ErrorBadLoginPassword=Bad value for login or password
+ErrorLoginMustBePostMethod=For security reasons, login credentials must be sent using the POST method, not in the URL
 ErrorLoginDisabled=Your account has been disabled
 ErrorFailedToRunExternalCommand=Failed to run external command. Check it is available and runnable by your PHP server user. Check also the command is not protected on shell level by a security layer like apparmor.
 ErrorFailedToChangePassword=Failed to change password
