@@ -127,6 +127,13 @@ class modFicheinter extends DolibarrModules
 		$this->rights[$r][4] = 'creer';
 
 		$r++;
+		$this->rights[$r][0] = 63;
+		$this->rights[$r][1] = 'Annuler les fiches d\'intervention';
+		$this->rights[$r][2] = 'w';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'cancel';
+
+		$r++;
 		$this->rights[$r][0] = 64;
 		$this->rights[$r][1] = 'Supprimer les fiches d\'intervention';
 		$this->rights[$r][2] = 'd';

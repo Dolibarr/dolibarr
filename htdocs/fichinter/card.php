@@ -739,6 +739,12 @@ if (empty($reshook)) {
 		} else {
 			$mesg = $object->error;
 		}
+	} elseif ($action == 'confirm_cancel' && $confirm == 'yes' && $user->hasRight('ficheinter', 'cancel')) {
+		$result = $object->cancel();
+
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	} elseif ($action == 'updateline' && $permissiontoadd && GETPOST('save', 'alpha')) {
 		// Update an intervention line
 		$objectline = new FichinterLigne($db);
@@ -1345,6 +1351,11 @@ if ($action == 'create') {
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ReOpen'), $langs->trans('ConfirmReopenIntervention', $object->ref), 'confirm_reopen', '', 0, 1);
 	}
 
+	// Confirm back to open
+	if ($action == 'cancel') {
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans("Cancel"), $langs->trans('ConfirmCancelIntervention', $object->ref), 'confirm_cancel', '', 0, 1);
+	}
+
 	// Confirm deletion of line
 	if ($action == 'ask_deleteline') {
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&line_id='.$lineid, $langs->trans('DeleteInterventionLine'), $langs->trans('ConfirmDeleteInterventionLine'), 'confirm_deleteline', '', 0, 1);
@@ -1948,7 +1959,7 @@ if ($action == 'create') {
 
 				// Send
 				if (empty($user->socid)) {
-					if ($object->status > Fichinter::STATUS_DRAFT) {
+					if ($object->status > Fichinter::STATUS_DRAFT && $object->status != Fichinter::STATUS_CANCELED) {
 						if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || $user->hasRight('ficheinter', 'ficheinter_advance', 'send')) {
 							print dolGetButtonAction('', $langs->trans('SendMail'), 'email', dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'presend', 'mode' => 'init'], true).'#formmailbeforetitle', '');
 						} else {
@@ -2006,7 +2017,7 @@ if ($action == 'create') {
 				}
 
 				// Sign
-				if ($object->status > Fichinter::STATUS_DRAFT) {
+				if ($object->status > Fichinter::STATUS_DRAFT && $object->status != Fichinter::STATUS_CLOSED && $object->status != Fichinter::STATUS_CANCELED) {
 					if ($object->signed_status != Fichinter::$SIGNED_STATUSES['STATUS_SIGNED_ALL']) {
 						print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=sign&token=' . newToken() . '">' . $langs->trans("InterventionSign") . '</a></div>';
 					} else {
@@ -2022,6 +2033,15 @@ if ($action == 'create') {
 				// Clone
 				if ($permissiontoadd) {
 					print '<div class="inline-block divButAction"><a class="butAction butActionClone" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&socid='.$object->socid.'&action=clone&token='.newToken().'&object=ficheinter">'.$langs->trans("ToClone").'</a></div>';
+				}
+
+				// Cancel fichinter
+				if ($object->status == Fichinter::STATUS_VALIDATED) {
+					if ($user->hasRight('ficheinter', 'cancel')) {
+						print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=cancel&token='.newToken().'">'.$langs->trans("Cancel").'</a></div>';
+					} else {
+						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">'.$langs->trans('Cancel').'</a></div>';
+					}
 				}
 
 				// Delete
