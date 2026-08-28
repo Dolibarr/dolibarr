@@ -439,7 +439,7 @@ $imaxinloop = ($limit ? min($num, $limit) : $num);
 while ($i < $imaxinloop) {
 	$obj = $db->fetch_object($resql);
 
-	$object->rowid = $obj->rowid_line;
+	$object->id = $obj->rowid_line;
 	$object->status = $obj->status_line;
 	$object->amount = $obj->amount_line;
 

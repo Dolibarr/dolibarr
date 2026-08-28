@@ -38,6 +38,11 @@ class LignePrelevement
 	public $id;
 
 	/**
+	 * @var string String with name of icon
+	 */
+	public $picto = 'generic';
+
+	/**
 	 * @var float Amount
 	 */
 	public $amount;
