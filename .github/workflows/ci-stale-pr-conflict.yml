@@ -27,7 +27,7 @@ jobs:
           echo "Looking for open PRs not updated since: $ONE_YEAR_AGO"
 
           CLOSED_COUNT=0
-          MAX_CLOSED=2
+          MAX_CLOSED=20
 
           gh pr list \
             --repo "$REPO" \
