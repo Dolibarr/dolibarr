@@ -1015,9 +1015,6 @@ class User extends CommonObject
 
 		// In $conf->modules, we have 'accounting', 'product', 'facture', ...
 		// In $user->rights, we have 'accounting', 'produit', 'facture', ...
-		//var_dump($this->rights->$rightsPath);
-		//var_dump($conf->modules);
-		//if ($module == 'fournisseur') { var_dump($module.' '.isModEnabled($module).' '.$rightsPath.' '.$permlevel1.' '.$permlevel2); }
 
 		if (!isModEnabled($module)) {
 			return 0;
@@ -1050,8 +1047,6 @@ class User extends CommonObject
 			$permlevel1 = 'recruitmentjobposition';
 		}
 
-		//var_dump($this->rights);
-		//var_dump($rightsPath.' '.$permlevel1.' '.$permlevel2);
 		if (empty($rightsPath) || empty($this->rights) || empty($this->rights->$rightsPath) || empty($permlevel1)) {
 			return 0;
 		}

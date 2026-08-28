@@ -1230,7 +1230,7 @@ class FormCompany extends Form
 						$.ajax({
 							type: "POST",
 							url: \'' . DOL_URL_ROOT . '/core/ajax/ajaxstatusprospect.php\',
-							data: { id: statusid, prospectid: prospectid, token: \''. newToken() .'\', action: \'updatestatusprospect\' },
+							data: { id: statusid, prospectid: prospectid, token: \''. currentToken() .'\', action: \'updatestatusprospect\' },
 							success: function(response) {
 								console.log(response.img);
 								image.replaceWith(response.img);

@@ -29,6 +29,13 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
@@ -44,14 +51,6 @@ if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'stocks', 'orders'));
@@ -157,6 +156,9 @@ $arrayfields = array(
 );
 
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 if (getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
 	unset($arrayfields['pl.sellby']);
@@ -1603,20 +1605,20 @@ while ($i < $imaxinloop) {
 		}
 		// Inventory code
 		if (!empty($arrayfields['m.inventorycode']['checked'])) {
-			print '<td class="tdoverflowmax150" title="'.dolPrintHTML($obj->inventorycode).'">';
+			print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute($obj->inventorycode).'">';
 			if ($obj->inventorycode) {
 				print img_picto('', 'movement', 'class="pictofixedwidth"');
-				print '<a href="'.$_SERVER["PHP_SELF"].'?search_inventorycode='.urlencode('^'.$obj->inventorycode.'$').'">'.dol_escape_htmltag($obj->inventorycode).'</a>';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?search_inventorycode='.urlencode('^'.$obj->inventorycode.'$').'">'.dolPrintHTML($obj->inventorycode).'</a>';
 			}
 			print '</td>';
 		}
 		// Label of movement
 		if (!empty($arrayfields['m.label']['checked'])) {
-			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->label).'">'.dol_escape_htmltag($obj->label).'</td>';
+			print '<td class="tdoverflowmax250" title="'.dolPrintHTMLForAttributeUrl($obj->label).'">'.dolPrintHTML($obj->label).'</td>';
 		}
 		// Origin of movement
 		if (!empty($arrayfields['origin']['checked'])) {
-			print '<td class="nowraponall">'.$origin.'</td>';
+			print '<td class="nowraponall">'.dolPrintHTML($origin).'</td>';
 		}
 		// Project
 		if (!empty($arrayfields['m.fk_projet']['checked'])) {
@@ -1638,11 +1640,11 @@ while ($i < $imaxinloop) {
 			if ($obj->qty > 0) {
 				print '<span class="stockmovemententry">';
 				print '+';
-				print $obj->qty;
+				print dolPrintHTML($obj->qty);
 				print '</span>';
 			} else {
 				print '<span class="stockmovementexit">';
-				print $obj->qty;
+				print dolPrintHTML($obj->qty);
 				print '</span>';
 			}
 			print '</td>';
