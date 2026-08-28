@@ -19,6 +19,7 @@
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Lenin Rivas				<lenin.rivas777@gmail.com>
  * Copyright (C) 2026		Anthony Berton			<anthony.berton@bb2a.fr>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -5602,7 +5603,6 @@ class Product extends CommonObject
 			$multiply = 1;
 		}
 
-		//var_dump($prod);
 		foreach ($prod as $id_product => $desc_pere) {    // $id_product is 0 (first call starting with root top) or an id of a sub_product
 			if (is_array($desc_pere)) {    // If desc_pere is an array, this means it's a child
 				$id = (!empty($desc_pere[0]) ? $desc_pere[0] : '');
@@ -5671,7 +5671,6 @@ class Product extends CommonObject
 				}
 			}
 		}
-		//var_dump($res);
 		return $this->res;
 	}
 
@@ -6156,7 +6155,7 @@ class Product extends CommonObject
 	 * @param  int       $hidedetails Hide details of lines
 	 * @param  int       $hidedesc    Hide description
 	 * @param  int       $hideref     Hide ref
-	 * @return int                         0 if KO, 1 if OK
+	 * @return int                    Return integer < 0 if KO, 0 = no doc generated, > 0 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
@@ -6167,12 +6166,21 @@ class Product extends CommonObject
 
 		// Set the model to the name of the model to use
 		if (!dol_strlen($modele)) {
-			$modele = getDolGlobalString('PRODUCT_ADDON_PDF', 'strato');
+			$modele = '';	// No doc template/generation by default
+
+			if (!empty($this->model_pdf)) {
+				$modele = $this->model_pdf;
+			} elseif (getDolGlobalString('PRODUCT_ADDON_PDF')) {
+				$modele = getDolGlobalString('PRODUCT_ADDON_PDF');
+			}
 		}
 
-		$modelpath = "core/modules/product/doc/";
-
-		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+		if (empty($modele)) {
+			return 0;
+		} else {
+			$modelpath = "core/modules/product/doc/";
+			return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+		}
 	}
 
 	/**
@@ -6583,7 +6591,8 @@ class Product extends CommonObject
 		}
 		// Include manufacturing
 		if (isModEnabled('mrp')) {
-			$result = $this->load_stats_inproduction(0, '1,2', 1, $dateofvirtualstock);
+			$filterStatus = getDolGlobalString('MO_STATUS_FOR_VIRTUAL_STOCK', '1,2');
+			$result = $this->load_stats_inproduction(0, $filterStatus, 1, $dateofvirtualstock);
 			if ($result < 0) {
 				dol_print_error($this->db, $this->error);
 			}
@@ -6642,7 +6651,7 @@ class Product extends CommonObject
 		if (!empty($this->stock_warehouse) && getDolGlobalString('STOCK_ALLOW_VIRTUAL_STOCK_PER_WAREHOUSE')) {
 			foreach ($this->stock_warehouse as $warehouseid => $stockwarehouse) {
 				if (isModEnabled('mrp')) {
-					$result = $this->load_stats_inproduction(0, '1,2', 1, $dateofvirtualstock, $warehouseid);
+					$result = $this->load_stats_inproduction(0, getDolGlobalString('MO_STATUS_FOR_VIRTUAL_STOCK', '1,2'), 1, $dateofvirtualstock, $warehouseid);
 					if ($result < 0) {
 						dol_print_error($this->db, $this->error);
 					}

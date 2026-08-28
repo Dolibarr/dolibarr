@@ -3788,7 +3788,7 @@ class pdf_octopus extends ModelePDFFactures
 					foreach ($invoice->lines as $l) {
 						if ($l->fk_remise_except > 0) {
 							$discount = new DiscountAbsolute($this->db);
-							$result = $discount->fetch($l->fk_remise_except);
+							$result = $discount->fetch((int) $l->fk_remise_except);
 							if ($result > 0) {
 								$rem += $discount->total_ht;
 							}
