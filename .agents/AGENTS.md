@@ -83,6 +83,7 @@ Before writing any code, the agent **must**:
   ```php
   $hookmanager->executeHooks('actionName', $parameters, $object, $action);
   ```
+- Never call $hookmanager->initHooks() in class or function. This is done only once in the main parent page.
 - Name hooks clearly and descriptively (e.g., `formObjectOptions`, `addMoreActionsButtons`)
 
 ---
