@@ -26,7 +26,6 @@
 '
 @phan-var-force DolibarrModules $this
 @phan-var-force int $r
-@phan-var-force stdClass $obj
 ';
 
 // $keyforselect = name of main table
@@ -59,6 +58,7 @@ if (!isset($conf->cache['extrafieldsinexport'][$cachekey])) {
 }
 if (!empty($conf->cache['extrafieldsinexport'][$cachekey])) {
 	foreach ($conf->cache['extrafieldsinexport'][$cachekey] as $obj) {
+		'@phan-var-force stdClass $obj';
 		$fieldname = $keyforaliasextra.'.'.$obj->name;
 		$fieldlabel = ucfirst($obj->label);
 		$typeFilter = "Text";

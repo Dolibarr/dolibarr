@@ -23,10 +23,7 @@
  * @var string $keyforaliasextra
  * @var int $r
  */
-'
-@phan-var-force DolibarrModules $this
-@phan-var-force stdClass $obj
-';
+'@phan-var-force DolibarrModules $this';
 
 // $keyforselect = name of main table
 // keyforelement = name of picto
@@ -58,6 +55,7 @@ if (!isset($conf->cache['extrafieldsinimport'][$cachekey])) {
 }
 if (!empty($conf->cache['extrafieldsinimport'][$cachekey])) {
 	foreach ($conf->cache['extrafieldsinimport'][$cachekey] as $obj) {
+		'@phan-var-force stdClass $obj';
 		$fieldname = $keyforaliasextra.'.'.$obj->name;
 		$fieldlabel = ucfirst($obj->label);
 		$typeFilter = "Text";
