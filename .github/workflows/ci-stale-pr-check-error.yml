@@ -25,12 +25,14 @@ jobs:
 
           echo "Looking for PRs created before: $ONE_YEAR_AGO"
 
+          CLOSED_COUNT=0
+
           gh pr list \
             --repo "$REPO" \
             --state open \
             --limit 1000 \
             --json number,title,createdAt,updatedAt \
-            --jq '.[] | select(.updatedAt < "'"$ONE_YEAR_AGO"'")' | head -n 2 |
+            --jq '.[] | select(.updatedAt < "'"$ONE_YEAR_AGO"'")' |
           while IFS= read -r PR; do
 
             PR_NUMBER=$(echo "$PR" | jq -r '.number')
@@ -70,6 +72,14 @@ jobs:
               gh pr close "$PR_NUMBER" \
                 --repo "$REPO" \
                 --comment "$COMMENT"
+
+              CLOSED_COUNT=$((CLOSED_COUNT + 1))
+              echo "Closed PRs: $CLOSED_COUNT"
+
+              if [ "$CLOSED_COUNT" -ge 2 ]; then
+                echo "We reach the limit of number of PR closed. Stopping."
+                break
+              fi
 
             else
               echo "No failed checks. Keeping PR open."
