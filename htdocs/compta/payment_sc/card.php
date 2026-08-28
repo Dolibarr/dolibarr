@@ -252,7 +252,7 @@ if (getDolGlobalString('BILL_ADD_PAYMENT_VALIDATION')) {
 	if ($user->socid == 0 && $object->statut == 0 && $action == '')
 	{
 		if ($user->hasRight('facture', 'paiement')){
-			print '<a class="butAction" href="card.php?id='.GETPOSTINT('id').'&amp;facid='.$objp->facid.'&amp;action=valide">'.$langs->trans('Valid').'</a>';
+			print '<a class="butAction" href="card.php?id='.GETPOSTINT('id').'&amp;facid='.$objp->facid.'&amp;action=valide&amp;token='.newToken().'">'.$langs->trans('Valid').'</a>';
 		}
 	}
 }
