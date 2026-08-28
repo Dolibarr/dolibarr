@@ -863,8 +863,8 @@ class FactureFournisseurRec extends CommonInvoice
 				$line->total_localtax2          = $objp->total_localtax2;
 				$line->total_ttc                = $objp->total_ttc;
 				$line->product_type             = $objp->product_type;
-				$line->date_start               = $objp->date_start; // Not a SQL datetime string, jdate() would corrupt it
-				$line->date_end                 = $objp->date_end; // Not a SQL datetime string, jdate() would corrupt it
+				$line->date_start               = $objp->date_start; // Not a SQL datetime string, but a boolean 0 or 1, jdate() would corrupt it
+				$line->date_end                 = $objp->date_end; // Not a SQL datetime string, but a boolean 0 or 1, jdate() would corrupt it
 				$line->info_bits                = $objp->info_bits	;
 				$line->special_code             = $objp->special_code;
 				$line->rang                     = $objp->rang;
