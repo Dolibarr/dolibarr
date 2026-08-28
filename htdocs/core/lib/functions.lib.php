@@ -537,14 +537,15 @@ function isDolTms($timestamp)
  * @param	string	$pass		Password (clear)
  * @param	string	$name		Name of database
  * @param	int		$port		Port of database server
+ * @param	bool	$forcenew	Force opening of a genuinely new connection instead of reusing one already opened to the same server/database in this process (only meaningful for drivers, like pgsql, that may otherwise transparently reuse a matching connection)
  * @return	DoliDB				A DoliDB instance
  */
-function getDoliDBInstance($type, $host, $user, $pass, $name, $port)
+function getDoliDBInstance($type, $host, $user, $pass, $name, $port, $forcenew = false)
 {
 	require_once DOL_DOCUMENT_ROOT . "/core/db/" . $type . '.class.php';
 
 	$class = 'DoliDB' . ucfirst($type);
-	$db = new $class($type, $host, $user, $pass, $name, $port);
+	$db = new $class($type, $host, $user, $pass, $name, $port, $forcenew);
 	return $db;
 }
 

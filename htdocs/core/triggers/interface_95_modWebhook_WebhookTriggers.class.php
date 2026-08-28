@@ -157,7 +157,10 @@ class InterfaceWebhookTriggers extends DolibarrTriggers
 				}
 
 				if (empty($dbhistory)) {
-					$dbhistory = getDoliDBInstance($conf->db->type, $conf->db->host, (string) $conf->db->user, $dolibarr_main_db_pass, $conf->db->name, (int) $conf->db->port);
+					// Force a genuinely new connection (not one silently reused/shared with the main $db, as pg_connect() would otherwise do for
+					// an identical connection string): $dbhistory is closed independently below, and closing a connection shared with $this->db
+					// would break any later query on $this->db (e.g. the caller's pending commit) with "PostgreSQL connection has already been closed".
+					$dbhistory = getDoliDBInstance($conf->db->type, $conf->db->host, (string) $conf->db->user, $dolibarr_main_db_pass, $conf->db->name, (int) $conf->db->port, true);
 				}
 
 				$dbhistory->begin();
