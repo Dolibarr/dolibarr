@@ -3045,14 +3045,14 @@ class Contrat extends CommonObject
 
 		$blockingerrormsg = '';
 
-		if (!isModEnabled('contrat')) { // Should not happen. If module disabled, cron job should not be visible.
+		if (!isModEnabled('contract')) { // Should not happen. If module disabled, cron job should not be visible.
 			$langs->load("agenda");
-			$this->output = $langs->trans('ModuleNotEnabled', $langs->transnoentitiesnoconv("Contrat"));
+			$this->output = $langs->trans('ModuleNotEnabled', $langs->transnoentitiesnoconv("Contract"));
 			return 0;
 		}
 		if (!getDolGlobalString('CONTRACT_REMINDER_EMAIL')) {
 			$langs->load("agenda");
-			$this->output = $langs->trans('EventRemindersByEmailNotEnabled', $langs->transnoentitiesnoconv("Contrat"));
+			$this->output = $langs->trans('EventRemindersByEmailNotEnabled', $langs->transnoentitiesnoconv("Contract"));
 			return 0;
 		}
 

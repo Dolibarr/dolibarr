@@ -114,7 +114,7 @@ class modContrat extends DolibarrModules
 				'unitfrequency' => 3600 * 24,
 				'priority' => 50,
 				'status' => 1,
-				'test' => 'isModEnabled("contrat")',
+				'test' => 'isModEnabled("contract")',
 				'datestart' => $datestart
 			),
 		);
