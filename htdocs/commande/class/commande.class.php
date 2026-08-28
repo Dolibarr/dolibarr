@@ -13,7 +13,7 @@
  * Copyright (C) 2016-2022 Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2021-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2022       Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -152,8 +152,7 @@ class Commande extends CommonOrder
 	public $cond_reglement_doc;
 
 	/**
-	 * @var float 	Deposit percent for payment terms.
-	 *				Populated by $CommonObject->setPaymentTerms().
+	 * @var string|float 	Deposit percent for payment terms. Populated by $CommonObject->setPaymentTerms().
 	 * @see setPaymentTerms()
 	 */
 	public $deposit_percent;
@@ -1051,7 +1050,7 @@ class Commande extends CommonOrder
 		$sql .= ", ".($this->ref_client ? "'".$this->db->escape($this->ref_client)."'" : "null");
 		$sql .= ", '".$this->db->escape($this->model_pdf)."'";
 		$sql .= ", ".($this->cond_reglement_id > 0 ? ((int) $this->cond_reglement_id) : "null");
-		$sql .= ", ".(!empty($this->deposit_percent) ? "'".$this->db->escape((string) $this->deposit_percent)."'" : "null");
+		$sql .= ", ".(!empty($this->deposit_percent) ? "'".$this->db->escape($this->deposit_percent)."'" : "null");
 		$sql .= ", ".($this->mode_reglement_id > 0 ? ((int) $this->mode_reglement_id) : "null");
 		$sql .= ", ".($this->fk_account > 0 ? ((int) $this->fk_account) : 'NULL');
 		$sql .= ", ".($this->availability_id > 0 ? ((int) $this->availability_id) : "null");
@@ -1309,7 +1308,7 @@ class Commande extends CommonOrder
 			if ($objsoc->fetch($socid) > 0) {
 				$this->socid = $objsoc->id;
 				$this->cond_reglement_id	= (!empty($objsoc->cond_reglement_id) ? $objsoc->cond_reglement_id : 0);
-				$this->deposit_percent		= (!empty($objsoc->deposit_percent) ? $objsoc->deposit_percent : 0);
+				$this->deposit_percent		= (!empty($objsoc->deposit_percent) ? $objsoc->deposit_percent : '0');
 				$this->mode_reglement_id	= (!empty($objsoc->mode_reglement_id) ? $objsoc->mode_reglement_id : 0);
 				$this->fk_project = 0;
 				$this->fk_delivery_address = 0;
