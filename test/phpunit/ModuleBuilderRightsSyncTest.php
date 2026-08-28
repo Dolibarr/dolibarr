@@ -367,4 +367,114 @@ class ModuleBuilderRightsSyncTest extends CommonClassTest
 		$this->assertSame(count($matches[1]), count(array_unique($matches[1])));
 		$this->assertSame(3, substr_count($rendered, '$r++;'));
 	}
+
+	/**
+	 * Writing replaces the block in one pass and leaves exactly one marker pair.
+	 *
+	 * @return void
+	 */
+	public function testWriteReplacesBlockInOnePass()
+	{
+		$path = $this->makeDescriptorFixture("\t\t// nothing yet\n");
+		$block = PermissionsBlock::fromFile($path);
+		$rendered = $block->render(array(array(1 => 'Read alpha', 4 => 'alpha', 5 => 'read')));
+
+		$this->assertSame(1, $block->write($rendered));
+
+		$after = (string) file_get_contents($path);
+		$this->assertSame(1, substr_count($after, PermissionsBlock::BEGIN_MARKER));
+		$this->assertSame(1, substr_count($after, PermissionsBlock::END_MARKER));
+		$this->assertStringContainsString("\$this->rights[\$r][4] = 'alpha';", $after);
+		$this->assertStringNotContainsString('// nothing yet', $after);
+
+		// The block just written must itself be rewritable
+		$reread = PermissionsBlock::fromFile($path);
+		$this->assertSame(array(), $reread->detectTextConflicts());
+	}
+
+	/**
+	 * A __(Key)__ or __[obj]__ pattern elsewhere in the descriptor must survive the write untouched.
+	 *
+	 * @return void
+	 */
+	public function testWriteDoesNotSubstituteTranslationPatterns()
+	{
+		$path = $this->makeDescriptorFixture('');
+		$original = (string) file_get_contents($path);
+		file_put_contents($path, str_replace(
+			'class modFixture',
+			"// descriptionlong: __(SomeTranslationKey)__\n// object: __[llx_societe:Societe:fetch:1]__\nclass modFixture",
+			$original
+		));
+
+		$block = PermissionsBlock::fromFile($path);
+		$block->write($block->render(array(array(1 => 'Read alpha', 4 => 'alpha', 5 => 'read'))));
+
+		$after = (string) file_get_contents($path);
+		$this->assertStringContainsString('__(SomeTranslationKey)__', $after);
+		$this->assertStringContainsString('__[llx_societe:Societe:fetch:1]__', $after);
+	}
+
+	/**
+	 * Whatever a label contains, reading the written descriptor back yields it verbatim.
+	 *
+	 * @return void
+	 */
+	public function testWrittenLabelsSurviveRoundTrip()
+	{
+		if (!function_exists('exec')) {
+			$this->markTestSkipped('exec() is disabled, cannot lint the generated descriptor');
+		}
+
+		$labels = array(
+			'Cost $1 per unit',
+			"Backref \\1 test",
+			"Read l'objet",
+			'Path C:\\temp',
+			"x'; echo 'pwned",
+		);
+
+		$dir = sys_get_temp_dir().'/mbrightssync'.getmypid();
+		if (!is_dir($dir)) {
+			dol_mkdir($dir);
+		}
+
+		foreach ($labels as $i => $label) {
+			$class = 'modRoundTrip'.getmypid().'x'.$i;
+			$path = $dir.'/'.$class.'.php';
+			$this->fixtures[] = $path;
+			file_put_contents($path, "<?php\nclass ".$class." {\n\tpublic \$rights = array();\n\tpublic \$numero = 500000;\n\tpublic function initRights() {\n\t\t\$r = 0;\n\t\t"
+				.PermissionsBlock::BEGIN_MARKER."\n\t\t".PermissionsBlock::END_MARKER."\n\t}\n}\n");
+
+			$block = PermissionsBlock::fromFile($path);
+			$block->write($block->render(array(array(1 => $label, 4 => 'alpha', 5 => 'read'))));
+
+			$output = array();
+			$code = 0;
+			exec('php -l '.escapeshellarg($path).' 2>&1', $output, $code);
+			$this->assertSame(0, $code, 'Generated descriptor does not parse: '.implode("\n", $output));
+
+			require $path;
+			$descriptor = new $class();
+			$descriptor->initRights();
+			$this->assertSame($label, $descriptor->rights[0][1]);
+		}
+	}
+
+	/**
+	 * Writing an empty block clears the section but keeps its markers.
+	 *
+	 * @return void
+	 */
+	public function testWriteEmptyBlockKeepsMarkers()
+	{
+		$path = $this->makeDescriptorFixture("\t\t\$this->rights[\$r][5] = 'read';\n\t\t\$r++;\n");
+		$block = PermissionsBlock::fromFile($path);
+
+		$this->assertSame(1, $block->write(''));
+
+		$after = (string) file_get_contents($path);
+		$this->assertStringNotContainsString('$this->rights', $after);
+		$this->assertSame(2, substr_count($after, 'MODULEBUILDER PERMISSIONS'));
+	}
 }

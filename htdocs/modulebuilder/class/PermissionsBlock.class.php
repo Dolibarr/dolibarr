@@ -325,4 +325,40 @@ final class PermissionsBlock
 	{
 		return str_replace(array('\\', "'"), array('\\\\', "\\'"), $value);
 	}
+
+	/**
+	 * Replace the whole permissions block, markers included, in a single write.
+	 *
+	 * dolReplaceInFile() already writes to a .tmp file and dol_move()s it into place, so the write
+	 * itself is atomic. What matters here is that there is exactly ONE of them: the historical code
+	 * deleted the block and then inserted the new one, leaving the descriptor without any
+	 * permissions block whenever the second write failed.
+	 *
+	 * Regex mode is mandatory, not a style choice: in plain mode dolReplaceInFile() runs the whole
+	 * file through make_substitutions(), which expands __(Key)__ and __[class:method:id]__ patterns
+	 * anywhere in the descriptor and even instantiates classes to do so.
+	 *
+	 * @param string $newInnerBlock New block content, markers excluded
+	 * @return int 1 if OK, <0 if KO
+	 */
+	public function write(string $newInnerBlock): int
+	{
+		$pattern = '/'.preg_quote(self::BEGIN_MARKER, '/').'.*?'.preg_quote(self::END_MARKER, '/').'/s';
+		$replacement = self::BEGIN_MARKER."\n".$newInnerBlock."\t\t".self::END_MARKER;
+
+		// preg_replace() reads $1 and \1 in the replacement as backreferences, and a permission
+		// label can legitimately contain either.
+		$replacement = str_replace(array('\\', '$'), array('\\\\', '\\$'), $replacement);
+
+		$result = dolReplaceInFile($this->file, array($pattern => $replacement), '', '0', 0, 1);
+		if ($result <= 0) {
+			dol_syslog('PermissionsBlock::write failed on '.$this->file.' with code '.$result, LOG_ERR);
+			return $result < 0 ? $result : -1;
+		}
+
+		$this->content = (string) file_get_contents($this->file);
+		$this->innerBlock = $newInnerBlock;
+
+		return 1;
+	}
 }
