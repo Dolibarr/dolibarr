@@ -137,7 +137,7 @@ class modReception extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = $this->numero.$r; // id de la permission
-		$this->rights[$r][1] = 'Send receptions to customers'; // libelle de la permission
+		$this->rights[$r][1] = 'Send receptions to customers'; // Permission label
 		$this->rights[$r][2] = 'd'; // type de la permission (deprecated)
 		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'reception_advance';

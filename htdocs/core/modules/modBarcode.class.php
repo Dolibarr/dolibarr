@@ -80,21 +80,21 @@ class modBarcode extends DolibarrModules
 		$r = 0;
 
 		$this->rights[$r][0] = 301; // id de la permission
-		$this->rights[$r][1] = 'Generate PDF sheets of barcodes'; // libelle de la permission
+		$this->rights[$r][1] = 'Generate PDF sheets of barcodes'; // Permission label
 		$this->rights[$r][2] = 'r'; // type de la permission (deprecated)
 		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'read';
 		$r++;
 
 		$this->rights[$r][0] = 304; // id de la permission
-		$this->rights[$r][1] = 'Read barcodes'; // libelle de la permission
+		$this->rights[$r][1] = 'Read barcodes'; // Permission label
 		$this->rights[$r][2] = 'r'; // type de la permission (deprecated)
 		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'lire_advance';
 		$r++;
 
 		$this->rights[$r][0] = 305; // id de la permission
-		$this->rights[$r][1] = 'Create/modify barcodes'; // libelle de la permission
+		$this->rights[$r][1] = 'Create/modify barcodes'; // Permission label
 		$this->rights[$r][2] = 'w'; // type de la permission (deprecated)
 		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'creer_advance';

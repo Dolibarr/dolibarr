@@ -169,7 +169,7 @@ class modExpedition extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 105; // id de la permission
-		$this->rights[$r][1] = 'Send shipments by email to customers'; // libelle de la permission
+		$this->rights[$r][1] = 'Send shipments by email to customers'; // Permission label
 		$this->rights[$r][2] = 'd'; // type de la permission (deprecated)
 		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'shipping_advance';

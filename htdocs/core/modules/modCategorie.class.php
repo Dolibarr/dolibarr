@@ -94,21 +94,21 @@ class modCategorie extends DolibarrModules
 		$r = 0;
 
 		$this->rights[$r][0] = 241; // id de la permission
-		$this->rights[$r][1] = 'Lire les categories'; // libelle de la permission
+		$this->rights[$r][1] = 'Lire les categories'; // Permission label
 		$this->rights[$r][2] = 'r'; // type de la permission (deprecated)
 		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'lire';
 		$r++;
 
 		$this->rights[$r][0] = 242; // id de la permission
-		$this->rights[$r][1] = 'Creer/modifier les categories'; // libelle de la permission
+		$this->rights[$r][1] = 'Creer/modifier les categories'; // Permission label
 		$this->rights[$r][2] = 'w'; // type de la permission (deprecated)
 		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'creer';
 		$r++;
 
 		$this->rights[$r][0] = 243; // id de la permission
-		$this->rights[$r][1] = 'Supprimer les categories'; // libelle de la permission
+		$this->rights[$r][1] = 'Supprimer les categories'; // Permission label
 		$this->rights[$r][2] = 'd'; // type de la permission (deprecated)
 		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'supprimer';

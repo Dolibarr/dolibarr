@@ -127,21 +127,21 @@ class modMargin extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 59001; // id de la permission
-		$this->rights[$r][1] = 'Visualiser les marges'; // libelle de la permission
+		$this->rights[$r][1] = 'Visualiser les marges'; // Permission label
 		$this->rights[$r][2] = 'r'; // type de la permission (deprecated)
 		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'liretous';
 
 		$r++;
 		$this->rights[$r][0] = 59002; // id de la permission
-		$this->rights[$r][1] = 'Définir les marges'; // libelle de la permission
+		$this->rights[$r][1] = 'Définir les marges'; // Permission label
 		$this->rights[$r][2] = 'w'; // type de la permission (deprecated)
 		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'creer';
 
 		$r++;
 		$this->rights[$r][0] = 59003; // id de la permission
-		$this->rights[$r][1] = 'Read every user margin'; // libelle de la permission
+		$this->rights[$r][1] = 'Read every user margin'; // Permission label
 		$this->rights[$r][2] = 'r'; // type de la permission (deprecated)
 		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'read';
