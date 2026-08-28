@@ -140,7 +140,15 @@ if (empty($reshook)) {
 			$objstat->element = $element; // For externals module, we need to keep @xx
 
 			// check if the resource is already busy on another event or intervention that overlaps
-			if (getDolGlobalString('RESOURCE_USED_IN_EVENT_CHECK') && in_array($objstat->element, array('action', 'fichinter')) && $resource_type == 'dolresource' && intval($busy) == 1) {
+			// (only for the element types whose module is actually enabled)
+			$elementsToCheck = array();
+			if (isModEnabled('agenda')) {
+				$elementsToCheck[] = 'action';
+			}
+			if (isModEnabled('ficheinter')) {
+				$elementsToCheck[] = 'fichinter';
+			}
+			if (getDolGlobalString('RESOURCE_USED_IN_EVENT_CHECK') && in_array($objstat->element, $elementsToCheck) && $resource_type == 'dolresource' && intval($busy) == 1) {
 				$bookingDateStart = null;
 				$bookingDateEnd = null;
 
