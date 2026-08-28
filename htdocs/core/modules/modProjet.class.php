@@ -155,61 +155,61 @@ class modProjet extends DolibarrModules
 		$r = 0;
 
 		$r++;
-		$this->rights[$r][0] = 41; // id de la permission
+		$this->rights[$r][0] = 41; // Permission id (must not be already used)
 		$this->rights[$r][1] = "Read projects and tasks (shared projects or projects I am contact for)"; // Permission label
-		$this->rights[$r][2] = 'r'; // type de la permission (deprecated)
+		$this->rights[$r][2] = 'r'; // Permission type (deprecated)
 		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'lire';
 
 		$r++;
-		$this->rights[$r][0] = 42; // id de la permission
+		$this->rights[$r][0] = 42; // Permission id (must not be already used)
 		$this->rights[$r][1] = "Create/modify projects and tasks (shared projects or projects I am contact for)"; // Permission label
-		$this->rights[$r][2] = 'w'; // type de la permission (deprecated)
+		$this->rights[$r][2] = 'w'; // Permission type (deprecated)
 		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'creer';
 
 		$r++;
-		$this->rights[$r][0] = 44; // id de la permission
+		$this->rights[$r][0] = 44; // Permission id (must not be already used)
 		$this->rights[$r][1] = "Delete project and tasks (shared projects or projects I am contact for)"; // Permission label
-		$this->rights[$r][2] = 'd'; // type de la permission (deprecated)
+		$this->rights[$r][2] = 'd'; // Permission type (deprecated)
 		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'supprimer';
 
 		$r++;
-		$this->rights[$r][0] = 45; // id de la permission
+		$this->rights[$r][0] = 45; // Permission id (must not be already used)
 		$this->rights[$r][1] = "Export projects"; // Permission label
-		$this->rights[$r][2] = 'd'; // type de la permission (deprecated)
+		$this->rights[$r][2] = 'd'; // Permission type (deprecated)
 		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'export';
 
 		$r++;
-		$this->rights[$r][0] = 141; // id de la permission
+		$this->rights[$r][0] = 141; // Permission id (must not be already used)
 		$this->rights[$r][1] = "Read all projects and tasks (also private projects I am not contact for)"; // Permission label
-		$this->rights[$r][2] = 'r'; // type de la permission (deprecated)
+		$this->rights[$r][2] = 'r'; // Permission type (deprecated)
 		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'all';
 		$this->rights[$r][5] = 'lire';
 
 		$r++;
-		$this->rights[$r][0] = 142; // id de la permission
+		$this->rights[$r][0] = 142; // Permission id (must not be already used)
 		$this->rights[$r][1] = "Create/modify all projects and tasks (also private projects I am not contact for)"; // Permission label
-		$this->rights[$r][2] = 'w'; // type de la permission (deprecated)
+		$this->rights[$r][2] = 'w'; // Permission type (deprecated)
 		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'all';
 		$this->rights[$r][5] = 'creer';
 
 		$r++;
-		$this->rights[$r][0] = 144; // id de la permission
+		$this->rights[$r][0] = 144; // Permission id (must not be already used)
 		$this->rights[$r][1] = "Delete all projects and tasks (also private projects I am not contact for)"; // Permission label
-		$this->rights[$r][2] = 'd'; // type de la permission (deprecated)
+		$this->rights[$r][2] = 'd'; // Permission type (deprecated)
 		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'all';
 		$this->rights[$r][5] = 'supprimer';
 
 		$r++;
-		$this->rights[$r][0] = 145; // id de la permission
+		$this->rights[$r][0] = 145; // Permission id (must not be already used)
 		$this->rights[$r][1] = "Can enter time consumed on assigned tasks (timesheet)"; // Permission label
-		$this->rights[$r][2] = 'w'; // type de la permission (deprecated)
+		$this->rights[$r][2] = 'w'; // Permission type (deprecated)
 		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'time';
 

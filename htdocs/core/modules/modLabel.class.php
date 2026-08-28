@@ -76,17 +76,17 @@ class modLabel extends DolibarrModules
 		$this->rights = array();
 		$this->rights_class = 'label';
 
-		$this->rights[1][0] = 601; // id de la permission
+		$this->rights[1][0] = 601; // Permission id (must not be already used)
 		$this->rights[1][1] = 'Read stickers';
 		$this->rights[1][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[1][4] = 'lire';
 
-		$this->rights[2][0] = 602; // id de la permission
+		$this->rights[2][0] = 602; // Permission id (must not be already used)
 		$this->rights[2][1] = 'Create/modify stickers';
 		$this->rights[2][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[2][4] = 'creer';
 
-		$this->rights[4][0] = 609; // id de la permission
+		$this->rights[4][0] = 609; // Permission id (must not be already used)
 		$this->rights[4][1] = 'Delete stickers';
 		$this->rights[4][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[4][4] = 'supprimer';

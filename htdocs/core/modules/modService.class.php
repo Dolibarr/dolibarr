@@ -89,39 +89,39 @@ class modService extends DolibarrModules
 		$this->rights_class = 'service';
 		$r = 0;
 
-		$this->rights[$r][0] = 531; // id de la permission
+		$this->rights[$r][0] = 531; // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Read services'; // Permission label
-		$this->rights[$r][2] = 'r'; // type de la permission (deprecated)
+		$this->rights[$r][2] = 'r'; // Permission type (deprecated)
 		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'lire';
 		$r++;
 
-		$this->rights[$r][0] = 532; // id de la permission
+		$this->rights[$r][0] = 532; // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Create/modify services'; // Permission label
-		$this->rights[$r][2] = 'w'; // type de la permission (deprecated)
+		$this->rights[$r][2] = 'w'; // Permission type (deprecated)
 		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'creer';
 		$r++;
 
-		$this->rights[$r][0] = 533; // id de la permission
+		$this->rights[$r][0] = 533; // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Read prices services'; // Permission label
-		$this->rights[$r][2] = 'w'; // type de la permission (deprecated)
+		$this->rights[$r][2] = 'w'; // Permission type (deprecated)
 		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'service_advance';
 		$this->rights[$r][5] = 'read_prices';
 		$r++;
 
-		$this->rights[$r][0] = 535; // id de la permission
+		$this->rights[$r][0] = 535; // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Read supplier prices'; // Permission label
-		$this->rights[$r][2] = 'w'; // type de la permission (deprecated)
+		$this->rights[$r][2] = 'w'; // Permission type (deprecated)
 		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'service_advance';
 		$this->rights[$r][5] = 'read_supplier_prices';
 		$r++;
 
-		$this->rights[$r][0] = 534; // id de la permission
+		$this->rights[$r][0] = 534; // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Delete les services'; // Permission label
-		$this->rights[$r][2] = 'd'; // type de la permission (deprecated)
+		$this->rights[$r][2] = 'd'; // Permission type (deprecated)
 		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'supprimer';
 		$r++;

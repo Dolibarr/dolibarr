@@ -79,9 +79,9 @@ class modDebugBar extends DolibarrModules
 		// Permissions
 		$this->rights = array();
 
-		$this->rights[1][0] = 431; // id de la permission
+		$this->rights[1][0] = 431; // Permission id (must not be already used)
 		$this->rights[1][1] = 'Use Debug Bar'; // Permission label
-		$this->rights[1][2] = 'u'; // type de la permission (deprecated)
+		$this->rights[1][2] = 'u'; // Permission type (deprecated)
 		$this->rights[1][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[1][4] = 'read';
 	}
