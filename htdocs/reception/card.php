@@ -821,7 +821,10 @@ if (empty($reshook)) {
 
 
 			if (!$error) {
-				$result = $object->updatelinefree(GETPOSTINT('lineid'), (float) $qty, $element_type, $fk_product, GETPOSTINT('units'), $rang, $description, 0, $array_options, GETPOSTISSET('cost_price') ? price2num(GETPOST('cost_price', 'alpha')) : null, GETPOSTISSET('fourn_ref') ? GETPOST('fourn_ref', 'alphanohtml') : null, GETPOSTISSET('entrepot_id') ? GETPOSTINT('entrepot_id') : -1, GETPOSTISSET('batch') ? GETPOST('batch', 'alphanohtml') : null);
+				// Warehouse: the empty choice of the select posts -1, which means "clear the warehouse" (0),
+				// while an absent field means "do not change" (-1)
+				$wh_line = GETPOSTISSET('entrepot_id') ? max(0, GETPOSTINT('entrepot_id')) : -1;
+				$result = $object->updatelinefree(GETPOSTINT('lineid'), (float) $qty, $element_type, $fk_product, GETPOSTINT('units'), $rang, $description, 0, $array_options, GETPOSTISSET('cost_price') ? price2num(GETPOST('cost_price', 'alpha')) : null, GETPOSTISSET('fourn_ref') ? GETPOST('fourn_ref', 'alphanohtml') : null, $wh_line, GETPOSTISSET('batch') ? GETPOST('batch', 'alphanohtml') : null);
 
 				if ($result >= 0) {
 					if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
@@ -1135,7 +1138,7 @@ if (empty($reshook)) {
 				if ($reffourn_line === '' && !empty($reffourn_from_pfp)) {
 					$reffourn_line = $reffourn_from_pfp;
 				}
-				$wh_line = GETPOSTINT('entrepot_id');	// May be empty: a line without warehouse deliberately generates no stock movement
+				$wh_line = max(0, GETPOSTINT('entrepot_id'));	// Empty choice of the select posts -1: store 0 (a line without warehouse deliberately generates no stock movement)
 				$result = $object->addlinefree((float) $qty, $element_type, $idprod, $fk_unit, min($rank, count($object->lines) + 1), $description, $array_options, (float) $finalcost, $reffourn_line, $wh_line, GETPOST('batch', 'alphanohtml'));
 
 				if ($result > 0) {
