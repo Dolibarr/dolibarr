@@ -24,4 +24,3 @@ ALTER TABLE llx_hrm_skilldet ADD CONSTRAINT llx_hrm_skilldet_fk_user_creat FOREI
 --ALTER TABLE llx_hrm_skilldet ADD UNIQUE INDEX uk_hrm_skilldet_fieldxy(fieldx, fieldy);
 
 ALTER TABLE llx_hrm_skilldet ADD CONSTRAINT llx_hrm_skilldet_fk_skill FOREIGN KEY (fk_skill) REFERENCES llx_hrm_skill(rowid);
-

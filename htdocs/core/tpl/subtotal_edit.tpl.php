@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2014-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,8 +20,8 @@
 
 /**
  * @var CommonObject $this
- * @var CommonObject $object
- * @var CommonObjectLine $line
+ * @var Propal|Contrat|Commande|Facture|Expedition|Delivery|CommandeFournisseur|FactureFournisseur|SupplierProposal|Fichinter $object
+ * @var PropaleLigne|ContratLigne|OrderLine|FactureLigne|ExpeditionLigne|DeliveryLine|CommandeFournisseurLigne|SupplierInvoiceLine|SupplierProposalLine|FichinterLigne $line
  * @var Form $form
  * @var Translate $langs
  * @var User $user
@@ -30,8 +30,9 @@
  */
 
 '
-@phan-var-force Propal|Contrat|Commande|Facture|Expedition|Delivery|FactureFournisseur|FactureFournisseur|SupplierProposal $object
-@phan-var-force CommonObjectLine|CommonInvoiceLine|CommonOrderLine|ExpeditionLigne|PropaleLigne $line
+@phan-var-force Propal|Contrat|Commande|Facture|Expedition|Delivery|CommandeFournisseur|FactureFournisseur|SupplierProposal|Fichinter $object
+@phan-var-force CommonObjectLine|CommonInvoiceLine|CommonOrderLine|ExpeditionLigne|PropaleLigne|FichinterLigne $line
+@phan-var-force int $i
 ';
 
 // Options for subtotal
@@ -124,15 +125,26 @@ if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 
 
 	if (!$situationinvoicelinewithparent) {
-		print '<input type="text" name="line_desc" class="marginrightonly" id="line_desc" value="';
-		print GETPOSTISSET('product_desc') ? GETPOST('product_desc', 'restricthtml') : $line->description . '"';
 		$disabled = 0;
-		if ($line_type == 'subtotal') {
-			print ' readonly="readonly"';
-			$disabled = 1;
+		if (getDolGlobalString("SUBTOTAL_CAN_USE_LONG_TITLE")) {
+			print '<textarea name="line_desc" class="marginrightonly minwidth300 valignmiddle" id="line_desc"';
+			if ($line_type == 'subtotal') {
+				print ' readonly="readonly"';
+				$disabled = 1;
+			}
+			print '>';
+			print GETPOSTISSET('product_desc') ? GETPOST('product_desc', 'restricthtml') : $line->description;
+			print '</textarea>';
+		} else {
+			print '<input type="text" name="line_desc" class="marginrightonly minwidth300 valignmiddle" id="line_desc" value="';
+			print GETPOSTISSET('product_desc') ? GETPOST('product_desc', 'restricthtml') : $line->description . '"';
+			if ($line_type == 'subtotal') {
+				print ' readonly="readonly"';
+				$disabled = 1;
+			}
+			print '>';
 		}
-		print '>';
-		$depth_array = $this->getPossibleLevels($langs);
+		$depth_array = $this->getPossibleLevels($langs);  // Suppose CommonSubtotal trait @phan-suppress-current-line PhanUndeclaredMethod
 		print $form->selectarray('line_depth', $depth_array, abs($line->qty), 0, 0, 0, '', 0, 0, $disabled);
 		if ($disabled) {
 			print '<input type="hidden" name="line_depth" value="' . $line->qty . '">';
@@ -140,10 +152,15 @@ if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 		print '<div><ul class="ecmjqft">';
 		foreach ($line_options as $key => $value) {
 			if (in_array($line_type, $value['type'])) {
-				print '<li><label for="' . $key . '">' . $langs->trans($value['trans_key']) . '</label>';
-				print '<input style="float: left;" id="' . $key . '" type="checkbox" name="' . $key . '" value="' . $value['value'] . '" ';
-				print $value['checked'] ? 'checked' : '';
-				print '></li>';
+				if ($line_type == 'title') {
+					print '<li><label for="' . $key . '">' . $langs->trans($value['trans_key']) . '</label>';
+					print '<input style="float: left;margin-top: 9px;" id="' . $key . '" type="checkbox" name="' . $key . '" value="' . $value['value'] . '" ';
+					print $value['checked'] ? 'checked' : '';
+					print '></li>';
+				}
+				if ($line_type == 'subtotal') {
+					print '<input style="float: left;margin-top: 9px;" id="' . $key . '" type="hidden" name="' . $key . '" value="' . $value['value'] . '">';
+				}
 			}
 		}
 		print '</ul></div></td>';

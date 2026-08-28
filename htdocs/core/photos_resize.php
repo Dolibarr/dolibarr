@@ -3,9 +3,9 @@
  * Copyright (C) 2009		Meos
  * Copyright (C) 2012		Regis Houssin				<regis.houssin@inodbox.com>
  * Copyright (C) 2016		Juanjo Menent				<jmenent@2byte.es>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,6 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
+ * @var string $dolibarr_main_data_root
  */
 
 // Load translation files required by the page
@@ -131,6 +132,7 @@ if (!$accessallowed) {
 
 // Define dir according to modulepart
 $dir = '';
+$object = null;
 if ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'service' || $modulepart == 'produit|service') {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 	$object = new Product($db);
@@ -139,12 +141,12 @@ if ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'serv
 		if ($result <= 0) {
 			dol_print_error($db, 'Failed to load object');
 		}
-		$dir = $conf->product->multidir_output[$object->entity]; // By default
+		$dir = $conf->product->multidir_output[$object->entity ?? $conf->entity]; // By default
 		if ($object->type == Product::TYPE_PRODUCT) {
-			$dir = $conf->product->multidir_output[$object->entity];
+			$dir = $conf->product->multidir_output[$object->entity ?? $conf->entity];
 		}
 		if ($object->type == Product::TYPE_SERVICE) {
-			$dir = $conf->service->multidir_output[$object->entity];
+			$dir = $conf->service->multidir_output[$object->entity ?? $conf->entity];
 		}
 	}
 } elseif ($modulepart == 'project') {
@@ -155,7 +157,7 @@ if ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'serv
 		if ($result <= 0) {
 			dol_print_error($db, 'Failed to load object');
 		}
-		$dir = $conf->project->multidir_output[$object->entity]; // By default
+		$dir = $conf->project->multidir_output[$object->entity ?? $conf->entity]; // By default
 	}
 } elseif ($modulepart == 'propal') {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
@@ -165,7 +167,7 @@ if ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'serv
 		if ($result <= 0) {
 			dol_print_error($db, 'Failed to load object');
 		}
-		$dir = $conf->propal->multidir_output[$object->entity]; // By default
+		$dir = $conf->propal->multidir_output[$object->entity ?? $conf->entity]; // By default
 	}
 } elseif ($modulepart == 'holiday') {
 	require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
@@ -418,8 +420,8 @@ if ($action == 'confirm_resize' && GETPOSTISSET("file") && GETPOSTISSET("sizex")
 	}
 }
 
-// Crop d'une image
-if ($action == 'confirm_crop') {
+// Crop if image
+if ($action == 'confirm_crop') {		// Test on permission already done
 	if (empty($dir)) {
 		print 'Bug: Value for $dir could not be defined.';
 	}
@@ -487,8 +489,8 @@ if ($action == 'confirm_crop') {
 
 $head = '';
 $title = $langs->trans("ImageEditor");
-$morejs = array('/includes/jquery/plugins/jcrop/js/jquery.Jcrop.min.js', '/core/js/lib_photosresize.js');
-$morecss = array('/includes/jquery/plugins/jcrop/css/jquery.Jcrop.css');
+$morejs = array('/public/includes/jquery/plugins/jcrop/js/jquery.Jcrop.min.js', '/core/js/lib_photosresize.js');
+$morecss = array('/public/includes/jquery/plugins/jcrop/css/jquery.Jcrop.css');
 
 llxHeader($head, $title, '', '', 0, 0, $morejs, $morecss);
 
@@ -518,8 +520,8 @@ print '<input type="hidden" name="backtourl" value="'.$backtourl.'">';
 print '<fieldset id="redim_file">';
 print '<legend>'.$langs->trans("Resize").'</legend>';
 print $langs->trans("ResizeDesc").'<br>';
-print $langs->trans("NewLength").': <input name="sizex" type="number" class="flat maxwidth50 right"> px  &nbsp; <span class="opacitymedium">'.$langs->trans("or").'</span> &nbsp; ';
-print $langs->trans("NewHeight").': <input name="sizey" type="number" class="flat maxwidth50 right"> px &nbsp; <br>';
+print $langs->trans("NewLength").': <input name="sizex" type="number" class="flat maxwidth75 right"> px  &nbsp; <span class="opacitymedium">'.$langs->trans("or").'</span> &nbsp; ';
+print $langs->trans("NewHeight").': <input name="sizey" type="number" class="flat maxwidth75 right"> px &nbsp; <br>';
 
 print '<input type="hidden" name="file" value="'.dol_escape_htmltag($file).'" />';
 print '<input type="hidden" name="action" value="confirm_resize" />';
@@ -567,7 +569,7 @@ if (!empty($conf->use_javascript_ajax)) {
 	print $langs->trans("DefineNewAreaToPick").'...<br>';
 	print '<br><div class="center">';
 
-	if (empty($conf->dol_no_mouse_hover)) {
+	if (empty($conf->dol_no_mouse_hover) && $object !== null) {
 		print '<div style="border: 1px solid #888888; width: '.$widthforcrop.'px;">';
 		print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.urlencode($modulepart).'&entity='.((int) $object->entity).'&file='.urlencode($original_file).'" alt="" id="cropbox" width="'.$widthforcrop.'px"/>';
 		print '</div>';

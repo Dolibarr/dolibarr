@@ -28,9 +28,12 @@
 //define('NOSCANPHPSELFFORINJECTION', 1);
 //define('NOSCANGETFORINJECTION', 1);
 //define('NOSCANPOSTFORINJECTION', 1 or array('param1', 'param2'...));
+//define('NOSCANAUDIOFORINJECTION', 1);
+//define('NOSCANIFRAMEFORINJECTION', 1);
+//define('NOSCANOBJECTFORINJECTION', 1);
 
 
- /**
+/**
  * Return array of Emojis. We can't move this function inside a common lib because we need it for security before loading any file.
  *
  * @return 	array<string,array<string>>			Array of Emojis in hexadecimal
@@ -89,9 +92,9 @@ function realCharForNumericEntities($matches)
 }
 
 /**
- * Security: WAF layer for SQL Injection and XSS Injection (scripts) protection (Filters on GET, POST, PHP_SELF).
- * Warning: Such a protection can't be enough. It is not reliable as it will always be possible to bypass this. Good protection can
- * only be guaranteed by escaping data during output.
+ * Security: WAF layer for SQL Injection and XSS Injection (scripts) protection (Filters on GET, POST, SERVER['PHP_SELF']).
+ * Warning: Such a protection seems enough for SERVER['PHP_SELF'] but can't be enough for GET and POST. It is not reliable as it will always be possible
+ * to bypass this. Good protection can only be guaranteed by escaping data during output.
  *
  * @param		string		$val		Brute value found into $_GET, $_POST or PHP_SELF
  * @param		int<0, 3>	$type		0=POST, 1=GET, 2=PHP_SELF, 3=GET without sql reserved keywords (the less tolerant test)
@@ -178,10 +181,16 @@ function testSqlAndScriptInject($val, $type)
 	// When it found '<script', 'javascript:', '<style', 'onload\s=' on body tag, '="&' on a tag size with old browsers
 	// All examples on page: http://ha.ckers.org/xss.html#XSScalc
 	// More on https://www.owasp.org/index.php/XSS_Filter_Evasion_Cheat_Sheet
-	$inj += preg_match('/<audio/i', $val);
 	$inj += preg_match('/<embed/i', $val);
-	$inj += preg_match('/<iframe/i', $val);
-	$inj += preg_match('/<object/i', $val);
+	if (!defined('NOSCANAUDIOFORINJECTION')) {
+		$inj += preg_match('/<audio/i', $val);
+	}
+	if (!defined('NOSCANIFRAMEFORINJECTION')) {
+		$inj += preg_match('/<iframe/i', $val);
+	}
+	if (!defined('NOSCANOBJECTFORINJECTION')) {
+		$inj += preg_match('/<object/i', $val);
+	}
 	$inj += preg_match('/<script/i', $val);
 	$inj += preg_match('/Set\.constructor/i', $val); // ECMA script 6
 	if (!defined('NOSTYLECHECK')) {
@@ -198,21 +207,24 @@ function testSqlAndScriptInject($val, $type)
 	$inj += preg_match('/on(paste|pause|play|playing|progress|ratechange|reset|resize|scroll|select|search|seeked|seeking|show|stalled|start|submit|suspend)[a-z]*\s*=/i', $val);
 	$inj += preg_match('/on(timeupdate|touch|transition|toggle|unload|volumechange|waiting|wheel)[a-z]*\s*=/i', $val);
 	// More not into the previous list
-	$inj += preg_match('/on(repeat|begin|finish)[a-z]*\s*=/i', $val);
+	$inj += preg_match('/on(repeat|begin|finish|page|slot)[a-z]*\s*=/i', $val);
+	$inj += preg_match('/on(webkit|moz|ms|o)[a-z]*\s*=/i', $val);
 
 	// We refuse html into html because some hacks try to obfuscate evil strings by inserting HTML into HTML.
-	// Example: <img on<a>error=alert(1) or <img onerror<>=alert(1) to bypass test on onerror=
+	// Example: <div on<a>click=alert(1) or <img onclick<>=alert(1) to bypass test on onclick=
+	// What about cases like <div on<a<a>>click=alert(1) ? Seems blocked by browsers
 	$tmpval = preg_replace('/<[^<]*>/', '', $val);
 
 	// List of dom events is on https://www.w3schools.com/jsref/dom_obj_event.asp and https://developer.mozilla.org/en-US/docs/Web/Events
-	$inj += preg_match('/on(mouse|drag|key|load|touch|pointer|select|transition)[a-z]*\s*=/i', $tmpval); // onmousexxx can be set on img or any html tag like <img title='...' onmouseover=alert(1)>
-	$inj += preg_match('/on(abort|after|animation|auxclick|before|blur|bounce|cancel|canplay|canplaythrough|change|click|close|contextmenu|cuechange|copy|cut)[a-z]*\s*=/i', $tmpval);
-	$inj += preg_match('/on(dblclick|drop|durationchange|emptied|end|ended|error|focus|focusin|focusout|formdata|gotpointercapture|hashchange|input|invalid)[a-z]*\s*=/i', $tmpval);
-	$inj += preg_match('/on(lostpointercapture|offline|online|pagehide|pageshow)[a-z]*\s*=/i', $tmpval);
-	$inj += preg_match('/on(paste|pause|play|playing|progress|ratechange|reset|resize|scroll|search|seeked|seeking|show|stalled|start|submit|suspend)[a-z]*\s*=/i', $tmpval);
-	$inj += preg_match('/on(timeupdate|toggle|unload|volumechange|waiting|wheel)[a-z]*\s*=/i', $tmpval);
+	$inj += preg_match('/on(abort|after|animation|auxclick|before|blur|bounce|cancel|canplay|canplaythrough|change|click|close|content|contextmenu|cuechange|copy|cut)[a-z]*\s*=/i', $tmpval);
+	$inj += preg_match('/on(dblclick|drag|drop|durationchange|emptied|end|ended|error|focus|focusin|focusout|formdata|gotpointercapture|hashchange|input|invalid)[a-z]*\s*=/i', $tmpval);
+	$inj += preg_match('/on(key|load|lostpointercapture|mouse)[a-z]*\s*=/i', $tmpval); // onmousexxx can be set on img or any html tag like <img title='...' onmouseover=alert(1)>
+	$inj += preg_match('/on(offline|online|pagehide|pageshow|pointer)[a-z]*\s*=/i', $tmpval);
+	$inj += preg_match('/on(paste|pause|play|playing|progress|ratechange|reset|resize|scroll|select|search|seeked|seeking|show|stalled|start|submit|suspend)[a-z]*\s*=/i', $tmpval);
+	$inj += preg_match('/on(timeupdate|touch|transition|toggle|unload|volumechange|waiting|wheel)[a-z]*\s*=/i', $tmpval);
 	// More not into the previous list
-	$inj += preg_match('/on(repeat|begin|finish)[a-z]*\s*=/i', $tmpval);
+	$inj += preg_match('/on(repeat|begin|finish|page|slot)[a-z]*\s*=/i', $tmpval);
+	$inj += preg_match('/on(webkit|moz|ms|o)[a-z]*\s*=/i', $tmpval);
 
 	//$inj += preg_match('/on[A-Z][a-z]+\*=/', $val);   // To lock event handlers onAbort(), ...
 	$inj += preg_match('/&#58;|&#0000058|&#x3A/i', $val); // refused string ':' encoded (no reason to have it encoded) to lock 'javascript:...'
@@ -226,7 +238,8 @@ function testSqlAndScriptInject($val, $type)
 		}
 	}
 	if ($type == 2) {
-		$inj += preg_match('/[:;"\'<>\?\(\){}\$%]/', $val); // PHP_SELF is a file system (or url path without parameters). It can contains spaces.
+		$inj += preg_match('/[:;"\'<>\?\(\){}\$%#]/', $val); // PHP_SELF is a file system (or url path without parameters). It can contains spaces.
+		$inj += preg_match('/\.\./', $val); // PHP_SELF is a file system (or url path without parameters). It must not contains '..'
 	}
 
 	return $inj;
@@ -255,7 +268,7 @@ function analyseVarsForSqlAndScriptsInjection(&$var, $type, $stopcode = 1)
 			} else {
 				http_response_code(403);
 
-				// Get remote IP: PS: We do not use getRemoteIP(), function is not yet loaded and we need a value that can't be spoofed
+				// Get remote IP: PS: We do not use getUserRemoteIP(), function is not yet loaded and we need a value that can't be spoofed
 				$ip = (empty($_SERVER['REMOTE_ADDR']) ? 'unknown' : $_SERVER['REMOTE_ADDR']);
 
 				if ($stopcode) {
@@ -300,9 +313,16 @@ function analyseVarsForSqlAndScriptsInjection(&$var, $type, $stopcode = 1)
 	}
 }
 
+// Prevent the use of method TRACE in case of the web server authorizes it (some do it by default). TRACE method can be used by attacker to steal cookies or other sensitive information.
+if (!empty($_SERVER["REQUEST_METHOD"]) && $_SERVER["REQUEST_METHOD"] == "TRACE") {
+	print 'Access refused with request method TRACE';
+	http_response_code(405);
+	exit();
+}
+
 // Sanity check on URL
 if (!defined('NOSCANPHPSELFFORINJECTION') && !empty($_SERVER["PHP_SELF"])) {
-	$morevaltochecklikepost = array($_SERVER["PHP_SELF"]);
+	$morevaltochecklikepost = array($_SERVER["PHP_SELF"]);		// Note:if an url is called with mypage.php/aaa/bbb (used only by API) the aaa/bbb is also part of $_SERVER["PHP_SELF"] so analyzed too.
 	analyseVarsForSqlAndScriptsInjection($morevaltochecklikepost, 2);
 }
 // Sanity check on GET parameters

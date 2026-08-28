@@ -119,7 +119,7 @@ case "$1" in
 
 		# Create document directory for uploaded data files
 		mkdir -p $docdir
-		chown -R www-data:www-data $docdir
+		chown -R www-data:www-data $docdir || true
 		chmod -R 775 $docdir
 		chmod -R g+s $docdir
 

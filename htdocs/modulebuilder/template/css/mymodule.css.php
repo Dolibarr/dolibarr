@@ -51,7 +51,7 @@ session_cache_limiter('public');
 $res = 0;
 // Try main.inc.php into web root known defined into CONTEXT_DOCUMENT_ROOT (not always defined)
 if (!$res && !empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) {
-	$res = @include $_SERVER["CONTEXT_DOCUMENT_ROOT"]."/main.inc.php";
+	$res = @include str_replace("..", "", $_SERVER["CONTEXT_DOCUMENT_ROOT"])."/main.inc.php";
 }
 // Try main.inc.php into web root detected using web root calculated from SCRIPT_FILENAME
 $tmp = empty($_SERVER['SCRIPT_FILENAME']) ? '' : $_SERVER['SCRIPT_FILENAME'];
@@ -92,20 +92,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 header('Content-type: text/css');
 // Important: Following code is to cache this file to avoid page request by browser at each Dolibarr page access.
 // You can use CTRL+F5 to refresh your browser cache.
-if (empty($dolibarr_nocache)) {
-	header('Cache-Control: max-age=10800, public, must-revalidate');
-} else {
-	header('Cache-Control: no-cache');
-}
+header('Cache-Control: max-age=10800, public, must-revalidate');
 
 ?>
 
-div.mainmenu.mymodule::before {
-	content: "\f249";
-}
-div.mainmenu.mymodule {
-	background-image: none;
-}
 
 .myclasscss {
 	/* ... */

@@ -63,7 +63,7 @@ class modAsset extends DolibarrModules
 		$this->descriptionlong = "Asset module to manage fixed asset module and depreciation charge";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'
-		$this->version = 'experimental';
+		$this->version = 'dolibarr';
 		// Key used in llx_const table to save module status enabled/disabled (where ASSETS is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Name of image file used for this module.
@@ -92,10 +92,9 @@ class modAsset extends DolibarrModules
 		$this->langfiles = array("assets");
 		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(7, 0); // Minimum version of Dolibarr required by module
-		$this->warnings_activation = array(); // Warning to show when we activate module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
-		$this->warnings_activation_ext = array(); // Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
+		$this->warnings_activation = array();
+		$this->warnings_activation_ext = array();
 		//$this->automatic_activation = array('FR'=>'AssetsWasAutomaticallyActivatedBecauseOfYourCountryChoice');
-		//$this->always_enabled = true;								// If true, can't be disabled
 
 		// Constants
 		// List of particular constants to add when module is enabled (key, 'chaine', value, desc, visible, 'current' or 'allentities', deleteonunactive)
@@ -133,8 +132,8 @@ class modAsset extends DolibarrModules
 		// Array to add new pages in new tabs
 		$this->tabs = array();
 		// Example:
-		// $this->tabs[] = array('data'=>'objecttype:+tabname1:Title1:mylangfile@assets:$user->rights->assets->read:/asset/mynewtab1.php?id=__ID__');  					// To add a new tab identified by code tabname1
-		// $this->tabs[] = array('data'=>'objecttype:+tabname2:SUBSTITUTION_Title2:mylangfile@assets:$user->rights->othermodule->read:/asset/mynewtab2.php?id=__ID__',  	// To add another new tab identified by code tabname2. Label will be result of calling all substitution functions on 'Title2' key.
+		// $this->tabs[] = array('data'=>'objecttype:+tabname1:Title1:mylangfile@assets:$user->hasRight("assets","read"):/asset/mynewtab1.php?id=__ID__');  					// To add a new tab identified by code tabname1
+		// $this->tabs[] = array('data'=>'objecttype:+tabname2:SUBSTITUTION_Title2:mylangfile@assets:$user->hasRight("othermodule","read"):/asset/mynewtab2.php?id=__ID__',  	// To add another new tab identified by code tabname2. Label will be result of calling all substitution functions on 'Title2' key.
 		// $this->tabs[] = array('data'=>'objecttype:-tabname:NU:conditiontoremove');                                                     										// To remove an existing tab identified by code tabname
 		//
 		// Where objecttype can be

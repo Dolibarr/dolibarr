@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2007      Patrick Raguin 		<patrick.raguin@gmail.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,7 +56,7 @@ class FormAdmin
 	/**
 	 *  Return html select list with available languages (key='en_US', value='United States' for example)
 	 *
-	 *  @param      string|string[]	$selected       Language pre-selected. Can be an array if $multiselect is 1.
+	 *  @param      string|string[]	$selected       Language preselected. Can be an array if $multiselect is 1.
 	 *  @param      string			$htmlname       Name of HTML select
 	 *  @param      int<0,1>		$showauto       Show 'auto' choice
 	 *  @param      string[]		$filter         Array of keys to exclude in list (opposite of $onlykeys)
@@ -64,7 +64,7 @@ class FormAdmin
 	 *  @param      int<0,1>		$showwarning    Show a warning if language is not complete
 	 *  @param		int<0,1>		$disabled		Disable edit of select
 	 *  @param		string			$morecss		Add more css styles
-	 *  @param      int<0,2>       	$showcode       1=Add language code into label at beginning, 2=Add language code into label at end
+	 *  @param      int<0,2>       	$showcode       1=Add language code into label at beginning, 2=Add language code into label at end, 3=Add language code into label at end with no parenthesis
 	 *  @param		int<0,1>		$forcecombo		Force to use combo box (so no ajax beautify effect)
 	 *  @param		int<0,1>		$multiselect	Make the combo a multiselect
 	 *  @param		string[]		$onlykeys		Array of language keys to restrict list with the following keys (opposite of $filter). Example array('fr', 'es', ...)
@@ -86,7 +86,7 @@ class FormAdmin
 		$langs_available = $langs->get_available_languages(DOL_DOCUMENT_ROOT, 12, 0, $mainlangonly);
 
 		// If empty value is not allowed and the language to select is not inside the list of available language and we must find
-		// an alternative of the language code to pre-select (to avoid to have first element in list pre-selected).
+		// an alternative of the language code to preselect (to avoid to have first element in list preselected).
 		if ($selected && empty($showempty)) {
 			if (!is_array($selected) && !array_key_exists($selected, $langs_available)) {
 				$tmparray = explode('_', $selected);
@@ -126,7 +126,11 @@ class FormAdmin
 			if ($selected === 'auto') {
 				$out .= ' selected';
 			}
-			$out .= '>'.$langs->trans("AutoDetectLang").'</option>';
+			if ($showcode > 0) {
+				$out .= '>'.$langs->trans("AutoDetectLang").'</option>';
+			} else {
+				$out .= '>'.$langs->trans("AutoDetectLangShort").'</option>';
+			}
 		}
 
 		asort($langs_available);	// array('XX' => 'Language (Country)', ...)
@@ -140,11 +144,11 @@ class FormAdmin
 					$valuetoshow = '<span class="opacitymedium">'.$key.'</span> - '.$value;
 				}
 			}
-			if ($showcode == 2) {
+			if ($showcode == 2 || $showcode == 3) {
 				if ($mainlangonly) {
-					$valuetoshow = $value.' <span class="opacitymedium">('.preg_replace('/[_-].*$/', '', $key).')</span>';
+					$valuetoshow = $value.' <span class="opacitymedium">'.($showcode == 3 ? '' : '(').preg_replace('/[_-].*$/', '', $key).($showcode == 3 ? '' : ')').'</span>';
 				} else {
-					$valuetoshow = $value.' <span class="opacitymedium">('.$key.')</span>';
+					$valuetoshow = $value.' <span class="opacitymedium">'.($showcode == 3 ? '' : '(').$key.($showcode == 3 ? '' : ')').'</span>';
 				}
 			}
 
@@ -161,6 +165,7 @@ class FormAdmin
 			}
 
 			$valuetoshow = picto_from_langcode($key, 'class="saturatemedium"').' '.$valuetoshow;
+
 			if ((is_string($selected) && (string) $selected == (string) $keytouse) || (is_array($selected) && in_array($keytouse, $selected))) {
 				$out .= '<option value="'.$keytouse.'" selected data-html="'.dol_escape_htmltag($valuetoshow).'">'.$valuetoshow.'</option>';
 			} else {
@@ -169,7 +174,7 @@ class FormAdmin
 		}
 		$out .= '</select>';
 
-		// Make select dynamic
+		// Make autocompletion
 		if (!$forcecombo) {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 			$out .= ajax_combobox($htmlname);
@@ -303,7 +308,7 @@ class FormAdmin
 	/**
 	 *  Return combo list of available menu families
 	 *
-	 *  @param	string		$selected        Menu pre-selected
+	 *  @param	string		$selected        Menu preselected
 	 *  @param	string		$htmlname        Name of html select
 	 *  @param	string[]	$dirmenuarray    Directories to scan
 	 *  @return	void
@@ -381,8 +386,8 @@ class FormAdmin
 	/**
 	 *  Return a HTML select list of timezones
 	 *
-	 *  @param	string		$selected        Menu pre-selectionnee
-	 *  @param  string		$htmlname        Nom de la zone select
+	 *  @param	string		$selected        Preselected Menu
+	 *  @param  string		$htmlname        Name of the selected zone
 	 *  @return	void
 	 */
 	public function select_timezone($selected, $htmlname)
@@ -434,7 +439,7 @@ class FormAdmin
 	/**
 	 *  Return html select list with available languages (key='en_US', value='United States' for example)
 	 *
-	 *  @param      string	$selected       Paper format pre-selected
+	 *  @param      string	$selected       Paper format preselected
 	 *  @param      string	$htmlname       Name of HTML select field
 	 *  @param		string	$filter			Value to filter on code
 	 *  @param		int		$showempty		Add empty value

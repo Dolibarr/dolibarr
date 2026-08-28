@@ -70,7 +70,7 @@ class Yahoo extends AbstractService
         );
 
 
-        
+
         $headers = array_merge($authorizationHeader, $this->getExtraOAuthHeaders(), array());
 
         $responseBody = $this->httpClient->retrieveResponse($this->getAccessTokenEndpoint(), $bodyParams, $headers);

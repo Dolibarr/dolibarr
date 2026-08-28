@@ -37,16 +37,9 @@ if (!defined('NOREQUIREAJAX')) {
 if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
 }
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', '1');
-}
-if (!defined('NOREQUIREHTML')) {
-	define('NOREQUIREHTML', '1');
-}
 
 // Load Dolibarr environment
 include '../../main.inc.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -56,7 +49,7 @@ include '../../main.inc.php';
  * @var User $user
  */
 
-$objectType = GETPOST('objectType', 'aZ09');
+$objectType = GETPOST('objectType', 'aZ09');	// modulepart
 $objectId = GETPOST('objectId', 'aZ09');
 $field = GETPOST('field', 'aZ09');
 $value = GETPOST('value', 'alpha');
@@ -70,11 +63,24 @@ if (is_numeric($objectId)) {
 	$objectId = 0;
 }
 $object = fetchObjectByElement($objectId, $objectType, $element_ref);
+if (empty($object->element)) {
+	httponly_accessforbidden('Failed to get object with fetchObjectByElement(id=' . $objectId . ', objecttype=' . $objectType . ')');
+}
+
+$module = $object->module;
+$element = $object->element;
 
 // Security check
-if (!$user->hasRight($module, $object->element, 'write') && !$user->hasRight($module, 'write')) {
-	accessforbidden();
+$usesublevelpermission = ($module != $element ? $element : '');
+if ($usesublevelpermission && !$user->hasRight($module, $element, 'write') && !$user->hasRight($module, 'write')) {	// There is no permission on object defined, we will check permission on module directly
+	$usesublevelpermission = '';
 }
+// print $object->id.' - '.$object->module.' - '.$object->element.' - '.$object->table_element.' - '.$usesublevelpermission."\n";
+
+restrictedArea($user, $object->module, $object, $object->table_element, $usesublevelpermission);
+
+
+
 
 /*
  * View
@@ -89,10 +95,26 @@ if ($object->id > 0 && $field && isset($value)) {
 	// Fetch optionals attributes and labels
 	$extrafields->fetch_name_optionals_label($object->table_element);
 
-	// TODO Test specific permission of extrafield $field for object $object. It is stored into
-	// $extrafields->attributes[$object->table_element]['label']['perms'][$key]
+	// Test specific permission of extrafield $field for object $object. It is stored into $extrafields->attributes[$object->table_element]['label']['perms'][$key]
+	if (empty($field)
+	 || empty($extrafields->attributes[$object->table_element]['label'][$field])
+	 || !dol_eval((string) $extrafields->attributes[$object->table_element]['enabled'][$field])) {
+		http_response_code(403);
+		accessforbidden('Can\'t edit the invalid or disabled extrafield '.$field);
+	}
+
+	$fieldPermsExpr = $extrafields->attributes[$object->table_element]['perms'][$field] ?? '';
+
+	if (!empty($fieldPermsExpr)) {
+		$allowed = (int) dol_eval((string) $fieldPermsExpr);
+		if (empty($allowed)) {
+			http_response_code(403);
+			accessforbidden('The extrafield '.$field.' has dedicated permission and you are not allowed to edit it.');
+		}
+	}
 
 	$object->array_options['options_'.$field] = $value;
+
 	if ($object instanceof Societe) {
 		$result = $object->update($object->id, $user);
 	} else {

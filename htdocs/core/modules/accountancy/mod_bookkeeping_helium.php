@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2007  Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009  Regis Houssin               <regis.houssin@inodbox.com>
  * Copyright (C) 2008       Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
- * Copyright (C) 2019-2024  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2019-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025	    Jean-Rémi Taponier   		<jean-remi@netlogic.fr>
  *
@@ -82,13 +82,16 @@ class mod_bookkeeping_helium extends ModeleNumRefBookkeeping
 		$texte .= '<table class="nobordernopadding centpercent">';
 
 		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("Bookkeeping"), $langs->transnoentities("Bookkeeping"));
-		$tooltip .= $langs->trans("GenericMaskCodes2");
+		$tooltip .= $langs->trans("GenericMaskCodes1");
+		//$tooltip .= $langs->trans("GenericMaskCodes2");
+		$tooltip .= '<br>';
 		$tooltip .= $langs->trans("GenericMaskCodes3");
+		$tooltip .= '<br>';
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("Bookkeeping"), $langs->transnoentities("Bookkeeping"));
 		$tooltip .= $langs->trans("GenericMaskCodes5");
-		$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5b");
+		//$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5b");
 
-		// Parametrage du prefix
+		// Setting of prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
 		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskbookkeeping" value="'.getDolGlobalString("BOOKKEEPING_HELIUM_MASK").'">', $tooltip, 1, 'help', 'valignmiddle', 0, 3, $this->name).'</td>';
 

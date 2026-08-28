@@ -76,6 +76,7 @@ $server->soap_defencoding = 'UTF-8';
 $server->decode_utf8 = false;
 $ns = 'http://www.dolibarr.org/ns/';
 $server->configureWSDL('WebServicesDolibarrActionComm', $ns);
+// @phan-suppress-next-line PhanUndeclaredProperty
 $server->wsdl->schemaTargetNamespace = $ns;
 
 
@@ -402,8 +403,8 @@ function getListActionCommType($authentication)
 			$result = $cactioncomm->liste_array('', 'code');
 			if ($result > 0) {
 				$resultarray = array();
-				foreach ($cactioncomm->liste_array as $code => $libeller) {
-					$resultarray[] = array('code' => $code, 'libelle' => $libeller);
+				foreach ($cactioncomm->liste_array as $code => $dataarray) {
+					$resultarray[] = array('code' => $code, 'data' => $dataarray);
 				}
 
 				$objectresp = array(

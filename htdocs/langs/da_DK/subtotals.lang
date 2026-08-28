@@ -1,0 +1,54 @@
+# Dolibarr language file - Source file is en_US - subtotal
+
+#
+# Global
+#
+Subtotal=Subtotal
+SubTotalModuleDesc=Subtotal og titellinjer for bestemte dokumenter
+#
+# Admin
+#
+SubtotalSetup=Opsætning af subtotalmodul
+MaxSubtotalLevel=Maksimalt niveau
+SubtotalLineBackColor=Baggrundsfarve for niveau %s linjer
+NotSupportedByAllPDF=Vil fungere med nyere PDF-filer, men ikke med gamle. %s
+
+#
+# Card
+#
+AddTitleLine=Tilføj titellinje
+AddSubtotalLine=Tilføj subtotallinje
+TitleNeedDesc=Du skal indtaste en gyldig beskrivelse for at oprette en titel.
+TitleAddedLevelTooHigh=Titelniveauet er for højt (tilføjet med niveau %s i stedet).
+TitleEditedLevelTooHigh=Redigeret titelniveau for højt (redigeret med niveau %s i stedet).
+DeleteSubtotalLine=Slet subtotallinje
+ConfirmDeleteSubtotalLine=Er du sikker på, at du vil slette denne subtotallinje?
+DeleteTitleLine=Slet titellinje
+ConfirmDeleteTitleLine=Er du sikker på, at du vil slette denne titellinje?
+DeleteCorrespondingSubtotalLine=Slet den tilsvarende subtotallinje?
+SubtotalLevel=Niveau %s
+SubtotalLineDesc=Linjebeskrivelse
+SubtotalLineLevel=Linjeniveau
+ShowUPOnPDF=Vis enhedspris på PDF
+ShowTotalExludingVATOnPDF=Vis totalbeløbet eksklusive moms i PDF-filen
+ForcePageBreak=Tving sideskift før titel
+NoTitleError=Du har ingen titellinje, eller de har allerede alle en tilsvarende subtotallinje
+CorrespondingTitleLine=Tilsvarende titellinje
+SelectVATRate=Vælg momssats
+EnterRemisePercent=Indtast rabatprocent
+ApplyVATForBlock=Anvend moms for denne blok
+ApplyDiscountForBlock=Anvend rabat for denne blok
+TitleUnderSameLevelSTLine=Titel på samme niveau skal være under den forrige titels subtotallinje.
+TitleUnderSameLevelOrGreater=Titlen skal være under en titel på samme niveau eller højere.
+TitleAfterStLineOfSameLevelTitle=Titlen skal stå efter subtotallinjen i den forrige titel.
+PreviousTitleLevelTooHigh=Den forrige titel er to niveauer eller mere større end den flyttede linje.
+STLineUnderCorrespondingTitleDesc=Subtotallinjen skal være under en titel med samme niveau, der har samme beskrivelse.
+STLineUnderCorrespondingTitle=Subtotallinjen skal være under en titel på samme niveau og med samme beskrivelse.
+STLineUnderTitle=Subtotallinjen skal være under sin titel
+UnsupportedModuleError=Du kan ikke tilføje en subtotallinje i et ikke-understøttet modul
+CorrespondingTitleNotFound=Den tilhørende titel blev ikke fundet
+
+#
+# PDF
+#
+SubtotalOf=Subtotal af %s:

@@ -4,9 +4,9 @@
  * Copyright (C) 2005		Marc Barilley / Ocebo	<marc@ocebo.com>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2013		Cédric Salvador			<csalvador@gpcsolutions.fr>
- * Copyright (C) 2016		Alexandre Spangaro		<aspangaro@open-dsi.fr>
+ * Copyright (C) 2016-2026  Alexandre Spangaro		<alexandre@inovea-conseil.com>
  * Copyright (C) 2017		Ferran Marcet       	<fmarcet@2byte.es>
- * Copyright (C) 2021-2024  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2021-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -31,15 +31,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
-require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-if (isModEnabled('project')) {
-	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-}
 
 /**
  * @var Conf $conf
@@ -49,6 +40,16 @@ if (isModEnabled('project')) {
  * @var Translate $langs
  * @var User $user
  */
+
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+if (isModEnabled('project')) {
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+}
 
 $langs->loadLangs(array('bills', 'other', 'companies'));
 
@@ -83,10 +84,11 @@ if (!$sortfield) {
 }
 
 $object = new FactureFournisseur($db);
+$upload_dir = null;
 if ($object->fetch($id, $ref)) {
 	$object->fetch_thirdparty();
 	$ref = dol_sanitizeFileName($object->ref);
-	$upload_dir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier').$ref;
+	$upload_dir = getMultidirOutput($object).'/'.get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier').$ref;
 }
 
 $permissiontoadd = ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer")); // Used by the include of actions_setnotes.inc.php
@@ -109,9 +111,9 @@ $title = $object->ref." - ".$langs->trans('Documents');
 $helpurl = "EN:Module_Suppliers_Invoices|FR:Module_Fournisseurs_Factures|ES:Módulo_Facturas_de_proveedores";
 llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'mod-fourn-facture page-card_document');
 
-if ($object->id > 0) {
+if ($object->id > 0 && $upload_dir !== null) {
 	$head = facturefourn_prepare_head($object);
-	print dol_get_fiche_head($head, 'documents', $langs->trans('SupplierInvoice'), -1, 'supplier_invoice');
+	print dol_get_fiche_head($head, 'documents', $langs->trans('SupplierInvoice'), -1, $object->picto);
 
 	$totalpaid = $object->getSommePaiement();
 
@@ -124,16 +126,16 @@ if ($object->id > 0) {
 	// Thirdparty
 	$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1);
 	if (!getDolGlobalString('MAIN_DISABLE_OTHER_LINK') && $object->thirdparty->id > 0) {
-		$morehtmlref .= ' <div class="inline-block valignmiddle">(<a class="valignmiddle" href="'.DOL_URL_ROOT.'/fourn/facture/list.php?socid='.$object->thirdparty->id.'&search_company='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherBills").'</a>)</div>';
+		$morehtmlref .= ' <div class="inline-block valignmiddle">(<a class="valignmiddle" href="'.DOL_URL_ROOT.'/fourn/facture/list.php?socid='.$object->thirdparty->id.'">'.$langs->trans("OtherBills").'</a>)</div>';
 	}
 	// Project
 	if (isModEnabled('project')) {
 		$langs->load("projects");
 		$morehtmlref .= '<br>';
-		if (0) {
+		if (0) {	// @phpstan-ignore-line
 			$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 			if ($action != 'classify') {
-				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
+				$morehtmlref .= '<a class="editfielda" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true).'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
 			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (!getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') ? $object->socid : -1), (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {

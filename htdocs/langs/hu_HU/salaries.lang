@@ -1,29 +1,55 @@
-# Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Számla (a Számlatáblázatból) alapértelmezés szerint a fizetéseknél használt "felhasználók" számára
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=A felhasználói kártyán meghatározott dedikált számla kizárólag Alkönyvelésre szolgál. Ez lesz a főkönyvnél, de az alkönyvi könyvelés alapértelmezett értékeként is használható, ha a felhasználónál nincs dedikált felhasználói fiók.
-SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Alapértelmezés szerint könyvelési számla a bérfizetéshez
-CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=A fizetés létrehozásakor alapértelmezés szerint hagyja üresen az "Összfizetés automatikus létrehozása" lehetőséget
 Salary=Fizetés
 Salaries=Fizetések
 NewSalary=Új fizetés
 AddSalary=Bér hozzáadása
 NewSalaryPayment=Új bérkártya
 AddSalaryPayment=Bérfizetés hozzáadása
-SalaryID=Salary ID
-SalaryAmount=Salary amount
 SalaryPayment=Bérfizetés
 SalariesPayments=Bérek kifizetése
 SalariesPaymentsOf=%s fizetések
 ShowSalaryPayment=Mutasd a fizetést
-THM=Átlagos óradíj
-TJM=Átlagos napi díj
+SalaryID=Fizetési azonosító
+SalaryAmount=Fizetés összege
+SalaryDate=Salary date
+SalaryPaid=Salary paid
+SalaryNotPaid=Salary not paid
+
+SalarySlip=Salary slip
+StandardSalaryDocModel=Standard salary slip document
+
+BasicSalary=Basic salary
+Bonus=Bonus
+Allowance=Allowance
+Overtime=Overtime
+Deduction=Deduction
+Deductions=Deductions
+Earnings=Earnings
+TotalEarnings=Total earnings
+TotalDeductions=Total deductions
+NetPaid=Nettó fizetett
+
+# Accounting
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Számla (a Számlatáblázatból) alapértelmezés szerint a fizetéseknél használt "felhasználók" számára
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=A felhasználói kártyán meghatározott dedikált számla kizárólag Alkönyvelésre szolgál. Ez lesz a főkönyvnél, de az alkönyvi könyvelés alapértelmezett értékeként is használható, ha a felhasználónál nincs dedikált felhasználói fiók.
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Alapértelmezés szerint könyvelési számla a bérfizetéshez
+CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=A fizetés létrehozásakor alapértelmezés szerint hagyja üresen az "Összfizetés automatikus létrehozása" lehetőséget
+
+# Stats / Info
 CurrentSalary=Jelenlegi fizetés
-THMDescription=Ez az érték használható a felhasználók által beírt projektben eltöltött idő költségének kiszámítására, ha modulprojektet használnak
-TJMDescription=Ez az érték jelenleg csak tájékoztató jellegű, és nem használható semmilyen számításhoz
 LastSalaries=A legutóbbi %s fizetések
 AllSalaries=Minden fizetés
 SalariesStatistics=Bérstatisztika
 SalariesAndPayments=Bérek és kifizetések
+UserPaySlip=Fizetési jegyzék
+PayPeriod=Pay period
+
+# THM / TJM
+THM=Átlagos óradíj
+THMDescription=Ez az érték használható a felhasználók által beírt projektben eltöltött idő költségének kiszámítására, ha modulprojektet használnak
+TJM=Átlagos napi díj
+TJMDescription=Ez az érték jelenleg csak tájékoztató jellegű, és nem használható semmilyen számításhoz
+
+# Other actions
 ConfirmDeleteSalaryPayment=Törölni szeretné ezt a fizetési kifizetést?
 FillFieldFirst=Először töltse ki az alkalmazott mezőt
 UpdateAmountWithLastSalary=Állítsa be az utolsó fizetés összegét
@@ -31,5 +57,11 @@ MakeTransferRequest=Indítsa el az átviteli kérelmet
 VirementOrder=Hitelátutalási kérelem
 WithdrawalReceipt=Átutalási megbízás
 OrderWaiting=Függőben megrendelés
-FillEndOfMonth=Töltse ki a hónap végével
-UserPaySlip=Pay Slip
+FillEndOfMonth=A hónap vége
+
+# Shortcuts
+PreviousMonthShort=Előző hónap
+CurrentMonthShort=Aktuális hónap
+NextMonthShort=Next month
+PreviousWeekShort=Előző hét
+CurrentWeekShort=Aktuális hét

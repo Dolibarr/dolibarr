@@ -2,6 +2,7 @@
 /* Copyright (C) 2022       Quatadah Nasdami     <quatadah.nasdami@gmail.com>
  * Copyright (C) 2022       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -94,7 +95,7 @@ class Receptions extends DolibarrApi
 	 * @param int			   $limit				Limit for list
 	 * @param int			   $page				Page number
 	 * @param string		   $thirdparty_ids		Thirdparty ids to filter receptions of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
-	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:>:'20160101'). (el.fk_source:=:123) allows filtering by supplier order id"
 	 * @param string           $properties	        Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool             $pagination_data     If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @return  array                               Array of reception objects
@@ -112,7 +113,7 @@ class Receptions extends DolibarrApi
 		$obj_ret = array();
 
 		// case of external user, $thirdparty_ids param is ignored and replaced by user's socid
-		$socids = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : $thirdparty_ids;
+		$socids = DolibarrApiAccess::$user->socid ?: $thirdparty_ids;
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
@@ -123,6 +124,9 @@ class Receptions extends DolibarrApi
 		$sql = "SELECT t.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."reception AS t";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."reception_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
+		if (preg_match("/el\.fk_source:=:\d+/", $sqlfilters)) {
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = t.rowid AND el.targettype = 'reception' AND el.sourcetype = 'order_supplier'";
+		}
 		$sql .= ' WHERE t.entity IN ('.getEntity('reception').')';
 		if ($socids) {
 			$sql .= " AND t.fk_soc IN (".$this->db->sanitize($socids).")";
@@ -207,7 +211,7 @@ class Receptions extends DolibarrApi
 	public function post($request_data = null)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('reception', 'creer')) {
-			throw new RestException(403, "Insuffisant rights");
+			throw new RestException(403, "Insufficiant rights");
 		}
 		// Check mandatory fields
 		$result = $this->_validate($request_data);
@@ -502,7 +506,7 @@ class Receptions extends DolibarrApi
 
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->reception->array_options[$index] = $this->_checkValForAPI($field, $val, $this->reception);
+					$this->reception->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->reception);
 				}
 				continue;
 			}
@@ -726,9 +730,12 @@ class Receptions extends DolibarrApi
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Clean sensible object datas
+	 * @phpstan-template T
 	 *
 	 * @param   Object  $object     Object to clean
 	 * @return  Object              Object with cleaned properties
+	 * @phpstan-param T $object
+	 * @phpstan-return T
 	 */
 	protected function _cleanObjectDatas($object)
 	{

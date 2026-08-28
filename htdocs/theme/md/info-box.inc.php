@@ -6,17 +6,23 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by steelsheet');
 }
 
+// Expected to be defined by including parent
 /**
  * @var Conf $conf
+ * @var string $left
+ * @var string $right
  */
-
-// Expected to be defined by including parent
 '
 @phan-var-force string $right
 @phan-var-force string $left
 ';
 
 $borderradius = getDolGlobalString('THEME_ELDY_USEBORDERONTABLE') ? getDolGlobalInt('THEME_ELDY_BORDER_RADIUS', 6) : 0;
+
+$heightbox = 94;
+if (isModEnabled("bank") && isModEnabled("prelevement") && isModEnabled("paymentbybanktransfer")) {
+	$heightbox = 110;
+}
 
 ?>
 
@@ -45,12 +51,21 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 
 ?>
 
+.spannature {
+	padding-top: 5px !important;
+	padding-bottom: 6px !important;
+	vertical-align: middle;
+	white-space: nowrap;
+	display: inline-block;
+}
+
 .nonature-back {
-	background-color: #EEE;
+	background-color: var(--colorwhitelight);
 	padding: 2px;
 	margin: 2px;
 	border-radius: 3px;
 }
+
 .prospect-back {
 	background-color: #a7c5b0 !important;
 	color: #FFF !important;
@@ -79,28 +94,37 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	margin: 2px;
 	border-radius: 3px;
 }
-.member-company-back {
-	padding: 2px;
-	margin: 2px;
-	background-color: #e4e4e4;
-	color: #666;
-	border-radius: 3px;
-	white-space: nowrap;
-}
 .member-individual-back {
 	padding: 2px;
 	margin: 2px;
-	background-color: #e4e4e4;
-	color: #666;
+	background-color: #258fa5;
+	color: #fff;
 	border-radius: 3px;
 	white-space: nowrap;
 }
+.member-company-back {
+	padding: 2px;
+	margin: 2px;
+	background-color: #557b95;
+	color: #fff;
+	border-radius: 3px;
+	white-space: nowrap;
+}
+.member-individual-company-back {
+	padding: 2px;
+	margin: 2px;
+	background-color: #40859d;
+	color: #fff;
+	border-radius: 3px;
+	white-space: nowrap;
+}
+
 
 .bg-infobox-project{
 	<?php echo $prefix; ?>color: #6c6aa8 !important;
 }
 .bg-infobox-action{
-	<?php echo $prefix; ?>color: #a47080  !important;
+	<?php echo $prefix; ?>color: #906080  !important;
 }
 .bg-infobox-propal, .bg-infobox-facture, .bg-infobox-commande {
 	<?php echo $prefix; ?>color: #65953d !important;
@@ -136,14 +160,14 @@ div.login_block_other:not(.takepos) a {
 	color: var(--colortextbackvmenu);
 }
 
-.infobox-adherent, .infobox-member {
+.infobox-adherent, .infobox-member, .infobox-expensereport {
 	color: #79633f;
 }
 .infobox-project{
 	color: #6c6aa8;
 }
 .infobox-action{
-	color: #a47080;
+	color: #906080;
 }
 /* Color for customer object */
 .infobox-propal:not(.pictotitle):not(.error),
@@ -164,12 +188,6 @@ div.login_block_other:not(.takepos) a {
 .infobox-bank_account{
 	color: #b0a53e;
 }
-.infobox-adherent, .infobox-member {
-	color: #79633f;
-}
-.infobox-expensereport{
-	color: #79633f;
-}
 .infobox-holiday{
 	color: #755114;
 }
@@ -183,17 +201,17 @@ a.info-box-text.info-box-text-a {
 	/* display: table-cell; */
 	display: contents;
 }
-a.info-box-text-a i.fa.fa-exclamation-triangle {
+a.info-box-text-a i.fa.fa-exclamation-triangle, span.badge i.fa.fa-exclamation-triangle {
 	font-size: 0.9em;
 }
 
 .info-box {
 	display: block;
 	position: relative;
-	min-height: 94px;
+	min-height: <?php echo $heightbox; ?>px;
 	background: var(--colorbacklineimpair2);
 	width: 100%;
-	/* box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1); */
+	box-shadow: 1px 1px 3px rgba(128, 128, 128, 0.1);
 	border-radius: 2px;
 	margin-bottom: 15px;
 	border: 1px solid #e9e9e9;
@@ -243,8 +261,8 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 	float: left;
 	text-align: center;
 	font-size: 45px;
-	line-height: 94px;	/* must be same height as min-height of .info-box */
-	height: 94px;		/* must be same height as min-height of .info-box */
+	line-height: <?php echo $heightbox; ?>px;	/* must be same height as min-height of .info-box */
+	height: <?php echo $heightbox; ?>px;		/* must be same height as min-height of .info-box */
 	width: 86px;
 	background: var(--colorbacktitle1) !important;
 	border-top-left-radius: <?php print $borderradius; ?>px;
@@ -301,7 +319,8 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 }
 .info-box-line-text {
 	overflow: hidden;
-	width: calc(100% - 76px);
+	width: calc(100% - 92px);
+	max-width: calc(100% - 82px);
 	text-overflow: ellipsis;
 }
 
@@ -406,7 +425,7 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 }
 .info-box-sm .info-box-module-enabled {
 	/* background: linear-gradient(0.35turn, #fff, #fff, #f6faf8, #e4efe8) */
-	background: var(--infoboxmoduleenabledbgcolor);
+	/* background: var(--infoboxmoduleenabledbgcolor); */
 	border-radius: 6px;
 }
 .info-box-content-warning span.font-status4 {
@@ -436,7 +455,10 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 	width: calc(100% - 20px);
 }
 .info-box-text{
-	font-size: 0.90em;
+	font-size: 0.88em;
+}
+.info-box-desc {
+	font-size: 0.91em;
 }
 /* Force values for small screen 480 */
 /*
@@ -480,7 +502,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	color: #605ca8 !important;
 }
 .bg-infobox-action i.fa{
-	color: #d84b80  !important;
+	color: #906080  !important;
 }
 .bg-infobox-propal i.fa,
 .bg-infobox-facture i.fa,
@@ -575,7 +597,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 }
 .fa-weather-level4:before{
 	content: "\f0e7";
-	color : #b01000;
+	color : #993013;
 }
 
 
@@ -609,6 +631,8 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 .kanban.kanbancollapsed {
 	flex: unset;
 	width: 80px;
+	max-width: 80px;
+	overflow: hidden;
 }
 .kanban.kanbancollapsed .kanbanlabel, .text-vertical {
 	writing-mode: vertical-rl;
@@ -716,4 +740,35 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	.box-flex-item {
 		width: 250px;
 	}
+}
+
+/* customize section for home box link */
+.infobox-haslink .info-box-icon i {
+	transition: opacity 0.2s ease-in-out;
+}
+.infobox-haslink .info-box-icon:hover i {
+	opacity: 0.2;
+}
+.infobox-haslink .info-box-icon .info-box-createlink {
+	height:100%;
+	width:100%;
+	display:block;
+	position:absolute;
+	top:0;
+	left:0;
+	font-size:0.6em;
+	display: flex;
+	opacity: 0;
+	transition: opacity 0.2s ease-in-out;
+	color:inherit;
+	text-decoration: none;
+}
+.infobox-haslink .info-box-icon:hover .info-box-createlink {
+	opacity: 1;
+}
+.infobox-haslink .info-box-icon .info-box-createlink span.fas {
+	margin:auto;
+}
+.infobox-haslink i.fa.fa-exclamation-triangle.hideonsmartphone {
+	display: none;
 }

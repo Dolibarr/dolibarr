@@ -295,8 +295,8 @@ CurrencyXPF=CFP Francs
 CurrencySingXPF=CFP Franc
 CurrencyCentEUR=cents
 CurrencyCentSingEUR=cent
-CurrencyCentINR=paisa
-CurrencyCentSingINR=paise
+CurrencyCentINR=paise
+CurrencyCentSingINR=paisa
 CurrencyThousandthSingTND=thousandth
 #### Input reasons #####
 DemandReasonTypeSRC_INTE=Internet

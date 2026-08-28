@@ -2,7 +2,7 @@
 /* Copyright (C) 2012      Charles-François BENKE <charles.fr@benke.fr>
  * Copyright (C) 2005-2017 Laurent Destailleur    <eldy@users.sourceforge.net>
  * Copyright (C) 2014-2025  Frédéric France        <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ class box_lastlogin extends ModeleBoxes
 	 *  @param  DoliDB  $db         Database handler
 	 *  @param  string  $param      More parameters
 	 */
-	public function __construct($db, $param)
+	public function __construct($db, $param)  // @phpstan-ignore constructor.unusedParameter
 	{
 		$this->db = $db;
 	}
@@ -82,7 +82,7 @@ class box_lastlogin extends ModeleBoxes
 			'text' => $langs->trans("PreviousConnexion"),
 		);
 		if ($user->datepreviouslogin) {
-			$tmp = dol_print_date($user->datepreviouslogin, "dayhour", 'tzuserrel').' - <span class="opacitymedium">'.$langs->trans("FromIP").' '.dol_print_ip($user->ippreviouslogin).'</span>';
+			$tmp = dol_print_date((int) $user->datepreviouslogin, "dayhour", 'tzuserrel').' - <span class="opacitymedium">'.$langs->trans("FromIP").' '.dol_print_ip($user->ippreviouslogin).'</span>';
 		} else {
 			$tmp = '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>';
 		}
@@ -98,7 +98,7 @@ class box_lastlogin extends ModeleBoxes
 			'text' => $langs->trans("LastPasswordChange"),
 		);
 		if ($user->datelastpassvalidation) {
-			$tmp = dol_print_date($user->datelastpassvalidation, "dayhour", 'tzuserrel');
+			$tmp = dol_print_date((int) $user->datelastpassvalidation, "dayhour", 'tzuserrel');
 		} else {
 			$tmp = '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>';
 		}

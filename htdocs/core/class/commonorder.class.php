@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2012 Regis Houssin  <regis.houssin@inodbox.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -247,7 +247,7 @@ abstract class CommonOrderLine extends CommonObjectLine
 	/**
 	 * Liste d'options cumulables:
 	 * Bit 0:	0 si TVA normal - 1 si TVA NPR
-	 * Bit 1:	0 si ligne normal - 1 si bit discount (link to line into llx_remise_except)
+	 * Bit 1:	0 si standard line - 1 if with discount (link to line into llx_remise_except)
 	 * @var int
 	 */
 	public $info_bits = 0;

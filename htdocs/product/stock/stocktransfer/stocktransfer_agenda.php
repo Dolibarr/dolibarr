@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2021  Gauthier VERDOL <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ $langs->loadLangs(array("stocks", "other"));
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'alpha');
-$cancel     = GETPOST('cancel', 'aZ09');
+$cancel     = GETPOST('cancel');
 $backtopage = GETPOST('backtopage', 'alpha');
 
 if (GETPOST('actioncode', 'array')) {
@@ -62,8 +62,8 @@ $search_rowid = GETPOST('search_rowid');
 $search_agenda_label = GETPOST('search_agenda_label');
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST("sortfield", 'aZ09comma');
+$sortorder = GETPOST("sortorder", 'aZ09comma');
 $socid = GETPOSTINT('socid');
 $page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
@@ -90,7 +90,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'. Include fetch and fetch_thirdparty but not fetch_optionals
 if ($id > 0 || !empty($ref)) {
-	$upload_dir = (!empty($conf->stocktransfer->multidir_output[$object->entity]) ? $conf->stocktransfer->multidir_output[$object->entity] : $conf->stocktransfer->dir_output)."/".$object->id;
+	$upload_dir = (!empty($conf->stocktransfer->multidir_output[$object->entity ?? $conf->entity]) ? $conf->stocktransfer->multidir_output[$object->entity ?? $conf->entity] : $conf->stocktransfer->dir_output)."/".$object->id;
 }
 
 $permissiontoread = $user->hasRight('stocktransfer', 'stocktransfer', 'read');
@@ -104,8 +104,8 @@ $upload_dir = $conf->stocktransfer->multidir_output[isset($object->entity) ? $ob
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (($object->statut == $object::STATUS_DRAFT) ? 1 : 0);
-//$result = restrictedArea($user, 'stocktransfer', $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
-//$result = restrictedArea($user, 'stocktransfer', $object->id, '', 'stocktransfer');
+//restrictedArea($user, 'stocktransfer', $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
+//restrictedArea($user, 'stocktransfer', $object->id, '', 'stocktransfer');
 
 if (!$permissiontoread || ($action === 'create' && !$permissiontoadd)) {
 	accessforbidden();

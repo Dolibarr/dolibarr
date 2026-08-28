@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2020  Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -85,6 +85,7 @@ if ($action == 'updateMask') {
 	$maskconst = GETPOST('maskconstjob', 'alpha');
 	$maskvalue = GETPOST('maskjob', 'alpha');
 
+	$res = -1;
 	if ($maskconst && preg_match('/_MASK$/', $maskconst)) {
 		$res = dolibarr_set_const($db, $maskconst, $maskvalue, 'chaine', 0, '', $conf->entity);
 	}
@@ -192,7 +193,7 @@ $page_name = "RecruitmentSetup";
 llxHeader('', $langs->trans($page_name));
 
 // Subheader
-$linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1').'">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1').'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 
 print load_fiche_titre($langs->trans($page_name), $linkback, 'title_setup');
 
@@ -205,7 +206,7 @@ print dol_get_fiche_head($head, 'settings', '', -1, '');
 
 
 if ($action == 'edit') {
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 
@@ -371,7 +372,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 		$sql = "SELECT nom";
 		$sql .= " FROM ".MAIN_DB_PREFIX."document_model";
 		$sql .= " WHERE type = '".$db->escape($type)."'";
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " AND entity = ".((int) $conf->entity);
 		$resql = $db->query($sql);
 		if ($resql) {
 			$i = 0;

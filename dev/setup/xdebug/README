@@ -16,4 +16,4 @@ xdebug.show_local_vars=off
 xdebug.profiler_output_dir=/var/tmp
 xdebug.profiler_append=0
 
-Then xdebug profiling can be enabled by adding XDEBUG_PROFILE=1 on URL. 
+Then xdebug profiling can be enabled by adding XDEBUG_PROFILE=1 on URL.

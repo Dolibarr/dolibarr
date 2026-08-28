@@ -20,11 +20,12 @@
 
 create table llx_element_contact
 (
-  rowid           integer AUTO_INCREMENT PRIMARY KEY,
-  datecreate      datetime NULL, 			-- date of creation of record
-  statut          smallint DEFAULT 5, 		-- 5 inactif, 4 actif
+  rowid               integer AUTO_INCREMENT PRIMARY KEY,
+  datecreate          datetime NULL, 			-- date of creation of record
+  statut              smallint DEFAULT 5, 		-- 5 disabled, 4 enabled
 
-  element_id		int NOT NULL, 		    -- ID of element.
-  fk_c_type_contact	int NOT NULL,	        -- nature of contact.
-  fk_socpeople      integer NOT NULL        -- ID of contact
+  element_id		  int NOT NULL, 		    -- ID of element.
+  mandatory_signature tinyint,                  -- 1=Indicate that signature is mandatory for this contact on the objet
+  fk_c_type_contact	  int NOT NULL,	            -- nature of contact.
+  fk_socpeople        integer NOT NULL          -- ID of contact
 )ENGINE=innodb;

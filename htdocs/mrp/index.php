@@ -4,7 +4,7 @@
  * Copyright (C) 2004-2019	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
  * Copyright (C) 2019		Nicolas ZABOURI				<info@inovea-conseil.com>
- * Copyright (C) 2019-2024  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2019-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -32,6 +32,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
 require_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 /**
  * @var Conf $conf
@@ -50,7 +51,25 @@ $langs->loadLangs(array("companies", "mrp"));
 // Security check
 $result = restrictedArea($user, 'bom|mrp');
 
-$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
+$max = getDolUserInt('MAIN_SIZE_SHORTLIST_LIMIT', getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5));
+
+
+/*
+ * Actions
+ */
+
+if (GETPOST('addbox')) {
+	// Add box (when submit is done from a form when ajax disabled)
+	require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
+	$zone = GETPOSTINT('areacode');
+	$userid = GETPOSTINT('userid');
+	$boxorder = GETPOST('boxorder', 'aZ09');
+	$boxorder .= GETPOST('boxcombo', 'aZ09');
+	$result = InfoBox::saveboxorder($db, $zone, $boxorder, $userid);
+	if ($result > 0) {
+		setEventMessages($langs->trans("BoxAdded"), null);
+	}
+}
 
 
 /*
@@ -63,9 +82,12 @@ $staticmo = new Mo($db);
 $title = $langs->trans('MRP');
 $help_url = 'EN:Module_Manufacturing_Orders|FR:Module_Ordres_de_Fabrication|DE:Modul_Fertigungsauftrag';
 
+// Load $resultboxes
+$resultboxes = FormOther::getBoxesArea($user, "6");
+
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-mrp page-index');
 
-print load_fiche_titre($langs->trans("MRPArea"), '', 'mrp');
+print load_fiche_titre($langs->trans("MRPArea"), $resultboxes['selectboxlist'], 'mrp');
 
 
 print '<div class="fichecenter">';
@@ -95,6 +117,15 @@ if (isModEnabled('mrp') && $conf->use_javascript_ajax) {
 		$colorseries = array();
 		$vals = array();
 
+		/**
+		 * @var string $badgeStatus0
+		 * @var string $badgeStatus1
+		 * @var string $badgeStatus4
+		 * @var string $badgeStatus5
+		 * @var string $badgeStatus6
+		 * @var string $badgeStatus8
+		 * @var string $badgeStatus9
+		 */
 		include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 
 		while ($i < $num) {
@@ -165,6 +196,8 @@ if (isModEnabled('mrp') && $conf->use_javascript_ajax) {
 
 print '<br>';
 
+
+print $resultboxes['boxlista'];
 
 print '</div><div class="secondcolumn fichehalfright boxhalfright" id="boxhalfright">';
 
@@ -292,6 +325,8 @@ if (isModEnabled('mrp')) {
 		dol_print_error($db);
 	}
 }
+
+print $resultboxes['boxlistb'];
 
 print '</div></div></div>';
 

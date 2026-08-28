@@ -69,7 +69,7 @@ class ImagickEscposImage extends EscposImage
         $im = $this -> getImageFromFile($filename);
         $this -> setImgWidth($im -> getimagewidth());
         $this -> setImgHeight($im -> getimageheight());
-        
+
         /* Strip transparency */
         $im = self::alphaRemove($im);
         $im -> setformat('pbm');
@@ -94,7 +94,7 @@ class ImagickEscposImage extends EscposImage
             /* Set to blank image */
             return parent::loadImageData($filename);
         }
-    
+
         $im = $this -> getImageFromFile($filename);
         $this -> readImageFromImagick($im);
     }

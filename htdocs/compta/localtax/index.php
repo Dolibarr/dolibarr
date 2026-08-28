@@ -3,7 +3,7 @@
  * Copyright (C) 2014       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -444,6 +444,7 @@ while ((($y < $yend) || ($y == $yend && $m <= $mend)) && $mcursor < 1000) {	// $
 
 	$action = "tva";
 	$object = array(&$x_coll, &$x_paye, &$x_both);
+	$parameters = array();
 	$parameters["mode"] = $modetax;
 	$parameters["year"] = $y;
 	$parameters["month"] = $m;
@@ -469,8 +470,7 @@ while ((($y < $yend) || ($y == $yend && $m <= $mend)) && $mcursor < 1000) {	// $
 				// Define type
 				// We MUST use dtype (type in line). We can use something else, only if dtype is really unknown.
 				$type = (isset($fields['dtype']) ? $fields['dtype'] : $fields['ptype']);
-				// Try to enhance type detection using date_start and date_end for free lines where type
-				// was not saved.
+				// Try to enhance type detection using date_start and date_end for free lines where type was not saved.
 				if (!empty($fields['ddate_start'])) {
 					$type = 1;
 				}
@@ -509,8 +509,7 @@ while ((($y < $yend) || ($y == $yend && $m <= $mend)) && $mcursor < 1000) {	// $
 				// Define type
 				// We MUST use dtype (type in line). We can use something else, only if dtype is really unknown.
 				$type = (isset($fields['dtype']) ? $fields['dtype'] : $fields['ptype']);
-				// Try to enhance type detection using date_start and date_end for free lines where type
-				// was not saved.
+				// Try to enhance type detection using date_start and date_end for free lines where type was not saved.
 				if (!empty($fields['ddate_start'])) {
 					$type = 1;
 				}
@@ -583,7 +582,7 @@ $sql = '';
 
 $sql .= "SELECT SUM(amount) as mm, date_format(f.datev,'%Y-%m') as dm, 'claimed' as mode";
 $sql .= " FROM ".MAIN_DB_PREFIX."localtax as f";
-$sql .= " WHERE f.entity = ".$conf->entity;
+$sql .= " WHERE f.entity = ".((int) $conf->entity);
 $sql .= " AND (f.datev >= '".$db->idate($date_start)."' AND f.datev <= '".$db->idate($date_end)."')";
 $sql .= " AND localtaxtype=".((int) $localTaxType);
 $sql .= " GROUP BY dm";
@@ -592,7 +591,7 @@ $sql .= " UNION ";
 
 $sql .= "SELECT SUM(amount) as mm, date_format(f.datep,'%Y-%m') as dm, 'paid' as mode";
 $sql .= " FROM ".MAIN_DB_PREFIX."localtax as f";
-$sql .= " WHERE f.entity = ".$conf->entity;
+$sql .= " WHERE f.entity = ".((int) $conf->entity);
 $sql .= " AND (f.datep >= '".$db->idate($date_start)."' AND f.datep <= '".$db->idate($date_end)."')";
 $sql .= " AND localtaxtype=".((int) $localTaxType);
 $sql .= " GROUP BY dm";

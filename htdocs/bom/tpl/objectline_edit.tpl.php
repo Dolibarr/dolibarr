@@ -5,7 +5,7 @@
  * Copyright (C) 2012       Cédric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2012-2014  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2013		Florian Henry		    <florian.henry@open-concept.pro>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		Vincent Maury		    <vmaury@timgroup.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -38,6 +38,7 @@ require_once DOL_DOCUMENT_ROOT."/product/class/html.formproduct.class.php";
  * @var BOMLine $line
  * @var CommonObject $this
  * @var CommonObject $object
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Societe $buyer
  * @var Societe $seller
@@ -102,7 +103,6 @@ $coldisplay++;
 	<input type="hidden" id="product_type" name="type" value="<?php echo $line->product_type; ?>">
 	<input type="hidden" id="product_id" name="productid" value="<?php echo(!empty($line->fk_product) ? $line->fk_product : 0); ?>" />
 	<input type="hidden" id="special_code" name="special_code" value="<?php echo $line->special_code; ?>">
-	<input type="hidden" id="fk_parent_line" name="fk_parent_line" value="<?php echo $line->fk_parent_line; ?>">
 
 <?php
 // Predefined product/service
@@ -113,8 +113,7 @@ if ($line->fk_product > 0) {
 }
 
 if (is_object($hookmanager)) {
-	$fk_parent_line = (GETPOST('fk_parent_line') ? GETPOST('fk_parent_line') : $line->fk_parent_line);
-	$parameters = array('line' => $line, 'fk_parent_line' => $fk_parent_line, 'var' => $var, 'dateSelector' => $dateSelector, 'seller' => $seller, 'buyer' => $buyer);
+	$parameters = array('line' => $line, 'var' => $var, 'seller' => $seller, 'buyer' => $buyer);
 	$reshook = $hookmanager->executeHooks('formEditProductOptions', $parameters, $this, $action);
 }
 
@@ -141,7 +140,7 @@ print '</td>';
 $coldisplay++;
 
 print '<td class="nobottom linecolqty right">';
-if (($line->info_bits & 2) != 2) {
+if (((int) $line->info_bits & 2) != 2) {
 	// I comment this because it shows info even when not required
 	// for example always visible on invoice but must be visible only if stock module on and stock decrease option is on invoice validation and status is not validated
 	// must also not be output for most entities (proposal, intervention, ...)

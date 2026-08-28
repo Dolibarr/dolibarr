@@ -22,7 +22,7 @@ printSellby=銷售日期 : %s
 printQty=數量：%d
 printPlannedWarehouse=倉庫 : %s
 AddDispatchBatchLine=新增一行列來分配保質期
-WhenProductBatchModuleOnOptionAreForced=當 批次 / 序列號 模組啟用時，自動減少存貨會被強制設置為 %s，而自動增加模式會被強制設置為 %s。某些選項可能不可用。其他選項可以按您的需求設定
+WhenProductBatchModuleOnOptionAreForced=When module Lot/Serial is on, some modes for automatic stock decrease or increase may be not available. The other options have no restriction.
 ProductDoesNotUseBatchSerial=此產品不使用 批次號 / 序號
 ProductLotSetup=批次 / 序列模組設置
 ShowCurrentStockOfLot=顯示 配對產品 / 批次 的當前存貨
@@ -50,3 +50,6 @@ ToReplace=替換
 CantMoveNonExistantSerial=錯誤。您要求移動一個已不存在的序列號記錄。可能同一序列號在同一倉庫內多次使用於同一貨運中，或者被另一貨運使用。請刪除該貨運並重新準備另一個。
 TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=批次表格不完整，請使用參數 '...repair.php?standard=confirmed' 進行修復操作
 IlligalQtyForSerialNumbers= 由於序號唯一，因此需要進行存貨更正
+ErrorBatchesNeedStockManagement=Error. A product with batch/lot management must also be managed in stock.
+ForceBatchesNeedStockManagement=A product with batch/lot management must be managed in stock (stock management force to yes)
+BatchInformationNotfound=Batch information not found

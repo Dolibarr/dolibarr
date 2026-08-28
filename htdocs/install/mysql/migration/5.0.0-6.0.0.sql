@@ -77,7 +77,7 @@ ALTER TABLE llx_socpeople MODIFY COLUMN zip varchar(25);
 ALTER TABLE llx_extrafields ADD COLUMN fieldcomputed text;
 ALTER TABLE llx_extrafields ADD COLUMN fielddefault varchar(255);
 
-ALTER TABLE llx_c_typent MODIFY COLUMN libelle varchar(64); 
+ALTER TABLE llx_c_typent MODIFY COLUMN libelle varchar(64);
 
 
 ALTER TABLE llx_holiday ADD COLUMN ref	varchar(30) NULL;
@@ -120,24 +120,24 @@ ALTER TABLE llx_expedition ADD COLUMN fk_projet integer DEFAULT NULL after fk_so
 
 
 ALTER TABLE llx_holiday ADD COLUMN import_key				varchar(14);
-ALTER TABLE llx_holiday ADD COLUMN extraparams				varchar(255);	
+ALTER TABLE llx_holiday ADD COLUMN extraparams				varchar(255);
 
 ALTER TABLE llx_expensereport ADD COLUMN import_key			varchar(14);
-ALTER TABLE llx_expensereport ADD COLUMN extraparams		varchar(255);	
+ALTER TABLE llx_expensereport ADD COLUMN extraparams		varchar(255);
 
 ALTER TABLE llx_actioncomm ADD COLUMN import_key			varchar(14);
-ALTER TABLE llx_actioncomm ADD COLUMN extraparams			varchar(255);	
+ALTER TABLE llx_actioncomm ADD COLUMN extraparams			varchar(255);
 
 
-ALTER TABLE llx_bank_account ADD COLUMN extraparams		varchar(255);	
+ALTER TABLE llx_bank_account ADD COLUMN extraparams		varchar(255);
 
-ALTER TABLE llx_bank ADD COLUMN numero_compte varchar(32) NULL; 
+ALTER TABLE llx_bank ADD COLUMN numero_compte varchar(32) NULL;
 
 -- VMYSQL4.1 ALTER TABLE llx_bank_account MODIFY COLUMN state_id integer DEFAULT NULL;
 -- VPGSQL8.2 ALTER TABLE llx_bank_account ALTER COLUMN state_id DROP DEFAULT;
 -- VPGSQL8.2 ALTER TABLE llx_bank_account MODIFY COLUMN state_id integer USING state_id::integer;
 -- VPGSQL8.2 ALTER TABLE llx_bank_account ALTER COLUMN state_id SET DEFAULT NULL;
- 
+
 -- VMYSQL4.1 ALTER TABLE llx_adherent MODIFY COLUMN state_id integer DEFAULT NULL;
 -- VPGSQL8.2 ALTER TABLE llx_adherent ALTER COLUMN state_id DROP DEFAULT;
 -- VPGSQL8.2 ALTER TABLE llx_adherent MODIFY COLUMN state_id integer USING state_id::integer;
@@ -256,7 +256,7 @@ ALTER TABLE llx_accounting_bookkeeping CHANGE COLUMN code_tiers thirdparty_code 
 
 --Subledger account
 ALTER TABLE llx_accounting_bookkeeping ADD COLUMN subledger_account varchar(32);
-ALTER TABLE llx_accounting_bookkeeping CHANGE COLUMN thirdparty_label subledger_label varchar(255);    	-- If field was already created, rename it	
+ALTER TABLE llx_accounting_bookkeeping CHANGE COLUMN thirdparty_label subledger_label varchar(255);    	-- If field was already created, rename it
 ALTER TABLE llx_accounting_bookkeeping ADD COLUMN subledger_label varchar(255) AFTER subledger_account;	-- If field dod not exists yet
 
 UPDATE llx_accounting_bookkeeping SET subledger_account = numero_compte WHERE subledger_account IS NULL;
@@ -273,7 +273,7 @@ ALTER TABLE llx_accounting_bookkeeping ADD COLUMN journal_label varchar(255) AFT
 ALTER TABLE llx_accounting_bookkeeping ADD COLUMN date_validated datetime AFTER validated;
 
 DROP TABLE llx_accounting_bookkeeping_tmp;
-CREATE TABLE llx_accounting_bookkeeping_tmp 
+CREATE TABLE llx_accounting_bookkeeping_tmp
 (
   rowid                 integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
   entity                integer DEFAULT 1 NOT NULL,	-- 					| multi company id
@@ -282,7 +282,7 @@ CREATE TABLE llx_accounting_bookkeeping_tmp
   doc_ref               varchar(300) NOT NULL,		-- 					| facture_client/reglement_client/... reference number
   fk_doc                integer NOT NULL,			-- 					| facture_client/reglement_client/... rowid
   fk_docdet             integer NOT NULL,			-- 					| facture_client/reglement_client/... line rowid
-  thirdparty_code       varchar(32),				-- Third party code (customer or supplier) when record is saved (may help debug) 
+  thirdparty_code       varchar(32),				-- Third party code (customer or supplier) when record is saved (may help debug)
   subledger_account     varchar(32),				-- FEC:CompAuxNum	| account number of subledger account
   subledger_label       varchar(255),				-- FEC:CompAuxLib	| label of subledger account
   numero_compte         varchar(32),				-- FEC:CompteNum	| account number
@@ -299,12 +299,12 @@ CREATE TABLE llx_accounting_bookkeeping_tmp
   fk_user_author        integer NOT NULL,			-- 					| user creating
   fk_user_modif         integer,					-- 					| user making last change
   date_creation         datetime,					-- FEC:EcritureDate	| creation date
-  tms                   timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,					--					| date last modification 
+  tms                   timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,					--					| date last modification
   import_key            varchar(14),
   code_journal          varchar(32) NOT NULL,		-- FEC:JournalCode
   journal_label         varchar(255),				-- FEC:JournalLib
   piece_num             integer NOT NULL,			-- FEC:EcritureNum
-  validated             tinyint DEFAULT 0 NOT NULL,	-- 					| 0 line not validated / 1 line validated (No deleting / No modification) 
+  validated             tinyint DEFAULT 0 NOT NULL,	-- 					| 0 line not validated / 1 line validated (No deleting / No modification)
   date_validated        datetime					-- FEC:ValidDate
 ) ENGINE=innodb;
 
@@ -436,37 +436,37 @@ ALTER TABLE llx_supplier_proposaldet ADD CONSTRAINT fk_supplier_proposaldet_fk_u
 ALTER TABLE llx_supplier_proposaldet ADD CONSTRAINT fk_supplier_proposaldet_fk_supplier_proposal FOREIGN KEY (fk_supplier_proposal) REFERENCES llx_supplier_proposal (rowid);
 
 -- NEW inventory module
-CREATE TABLE llx_inventory 
-( 
-rowid integer NOT NULL AUTO_INCREMENT PRIMARY KEY, 
-entity integer DEFAULT 0, 
+CREATE TABLE llx_inventory
+(
+rowid integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
+entity integer DEFAULT 0,
 ref varchar(48),
 datec datetime DEFAULT NULL,
-tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
+tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 fk_user_author	integer,
 fk_user_modif     integer,
 fk_user_valid		integer,
-fk_warehouse integer DEFAULT 0, 
-status integer DEFAULT 0, 
-title varchar(255) NOT NULL, 
+fk_warehouse integer DEFAULT 0,
+status integer DEFAULT 0,
+title varchar(255) NOT NULL,
 date_inventory datetime DEFAULT NULL,
 import_key  varchar(14)
 )ENGINE=InnoDB;
 
-CREATE TABLE llx_inventorydet 
-( 
-rowid integer NOT NULL AUTO_INCREMENT PRIMARY KEY, 
+CREATE TABLE llx_inventorydet
+(
+rowid integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
 datec datetime DEFAULT NULL,
-tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
-fk_inventory integer DEFAULT 0, 
+tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+fk_inventory integer DEFAULT 0,
 fk_warehouse integer DEFAULT 0,
-fk_product integer DEFAULT 0,  
+fk_product integer DEFAULT 0,
 batch varchar(30) DEFAULT NULL,
 qty_view double DEFAULT NULL,
 qty_stock double DEFAULT NULL,
 qty_regulated double DEFAULT NULL,
-pmp double DEFAULT 0, 
-pa double DEFAULT 0, 
+pmp double DEFAULT 0,
+pa double DEFAULT 0,
 new_pmp double DEFAULT 0
 )ENGINE=InnoDB;
 
@@ -505,9 +505,9 @@ CREATE TABLE llx_loan_schedule
 (
   rowid				integer AUTO_INCREMENT PRIMARY KEY,
   fk_loan			integer,
-  datec				datetime,         
+  datec				datetime,
   tms				timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  datep				datetime,         
+  datep				datetime,
   amount_capital	real DEFAULT 0,
   amount_insurance	real DEFAULT 0,
   amount_interest	real DEFAULT 0,
@@ -516,8 +516,8 @@ CREATE TABLE llx_loan_schedule
   note_private      text,
   note_public       text,
   fk_bank			integer NOT NULL,
-  fk_user_creat		integer,          
-  fk_user_modif		integer           
+  fk_user_creat		integer,
+  fk_user_modif		integer
 )ENGINE=innodb;
 
 ALTER TABLE llx_tva ADD COLUMN datec date AFTER tms;
@@ -543,8 +543,8 @@ CREATE TABLE llx_website_page
 	rowid         integer AUTO_INCREMENT NOT NULL PRIMARY KEY,
 	fk_website    integer NOT NULL,
 	pageurl       varchar(16) NOT NULL,
-	title         varchar(255),						
-	description   varchar(255),						
+	title         varchar(255),
+	description   varchar(255),
 	keywords      varchar(255),
 	content		  mediumtext,		-- text is not enough in size
     status        integer,
@@ -559,7 +559,7 @@ ALTER TABLE llx_website_page ADD UNIQUE INDEX uk_website_page_url (fk_website,pa
 ALTER TABLE llx_website_page ADD CONSTRAINT fk_website_page_website FOREIGN KEY (fk_website) REFERENCES llx_website (rowid);
 
 ALTER TABLE llx_website_page ADD COLUMN fk_user_create integer;
-ALTER TABLE llx_website_page ADD COLUMN fk_user_modif integer; 
+ALTER TABLE llx_website_page ADD COLUMN fk_user_modif integer;
 
 
 UPDATE llx_extrafields set elementtype='categorie' where elementtype='categories';
@@ -567,34 +567,34 @@ UPDATE llx_extrafields set elementtype='categorie' where elementtype='categories
 
 -- For new module blockedlog
 
-CREATE TABLE llx_blockedlog 
-( 
-	rowid integer AUTO_INCREMENT PRIMARY KEY, 
+CREATE TABLE llx_blockedlog
+(
+	rowid integer AUTO_INCREMENT PRIMARY KEY,
 	tms	timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-	action varchar(50), 
-	amounts real NOT NULL, 
-	signature varchar(100) NOT NULL, 
-	signature_line varchar(100) NOT NULL, 
-	element varchar(50), 
+	action varchar(50),
+	amounts real NOT NULL,
+	signature varchar(100) NOT NULL,
+	signature_line varchar(100) NOT NULL,
+	element varchar(50),
 	fk_object integer,
-	ref_object varchar(100), 
+	ref_object varchar(100),
 	date_object	datetime,
 	object_data	text,
 	fk_user	integer,
-	entity integer DEFAULT 1 NOT NULL, 
+	entity integer DEFAULT 1 NOT NULL,
 	certified integer
 ) ENGINE=innodb;
 
 ALTER TABLE llx_blockedlog ADD INDEX signature (signature);
 ALTER TABLE llx_blockedlog ADD INDEX fk_object_element (fk_object,element);
 ALTER TABLE llx_blockedlog ADD INDEX entity (entity);
-ALTER TABLE llx_blockedlog ADD INDEX fk_user (fk_user); 
+ALTER TABLE llx_blockedlog ADD INDEX fk_user (fk_user);
 ALTER TABLE llx_blockedlog ADD INDEX entity_action (entity,action);
 ALTER TABLE llx_blockedlog ADD INDEX entity_action_certified (entity,action,certified);
 
-CREATE TABLE llx_blockedlog_authority 
-( 
-	rowid integer AUTO_INCREMENT PRIMARY KEY, 
+CREATE TABLE llx_blockedlog_authority
+(
+	rowid integer AUTO_INCREMENT PRIMARY KEY,
 	blockchain longtext NOT NULL,
 	signature varchar(100) NOT NULL,
 	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP

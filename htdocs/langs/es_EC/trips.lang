@@ -41,7 +41,6 @@ ExpenseReportRefusedMessage=El informe de gastos %s fue rechazado. <br>- Usuario
 ExpenseReportWaitingForApproval=Se ha presentado un nuevo informe de gastos para su aprobación
 ExpenseReportWaitingForApprovalMessage=Se ha enviado un nuevo informe de gastos y está esperando su aprobación. <br> - Usuario: %s <br> - Período: %s<br> haga clic aquí para validar: %s
 ExpenseReportWaitingForReApproval=Se ha presentado un informe de gastos para su re-aprobación
-ExpenseReportWaitingForReApprovalMessage=Se ha enviado un informe de gastos y está a la espera de la nueva aprobación. <br> El usuario %s,  negó la aprobación del informe de gastos por este motivo: %s. <br> Se ha propuesto una nueva versión y está esperando su aprobación. <br> - Usuario: %s<br> - Período: %s<br> haga clic aquí para validar: %s
 ExpenseReportsToApprove=Informes de gastos para aprobar
 ExpenseReportsToPay=Informes de gastos a pagar
 ExpensesArea=Área de informes de gastos

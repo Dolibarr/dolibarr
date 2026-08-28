@@ -4,7 +4,7 @@
  * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2023		anthony Berton			<anthony.berton@bb2a.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,6 +39,14 @@ if (!defined('NOBROWSERNOTIF')) {
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $dolibarr_main_url_root
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -54,14 +62,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/public.lib.php';
 if (!isModEnabled('bookcal')) {
 	httponly_accessforbidden('Module Bookcal isn\'t enabled');
 }
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var Translate $langs
- *
- * @var string $dolibarr_main_url_root
- */
 
 $langs->loadLangs(array("main", "other", "dict", "agenda", "errors", "companies"));
 
@@ -137,11 +137,12 @@ $errmsg = '';
  * @param 	int    		$disablehead		More content into html header
  * @param 	string[]|string	$arrayofjs			Array of complementary js files
  * @param 	string[]|string	$arrayofcss			Array of complementary css files
+ * @param 	string			$ws					Website ref if we are called from a website
  * @return	void
  */
-function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])  // @phan-suppress-current-line PhanRedefineFunction
+function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [], $ws = '')  // @phan-suppress-current-line PhanRedefineFunction
 {
-	global $conf, $langs, $mysoc;
+	global $langs, $mysoc;
 
 	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss); // Show html headers
 
@@ -170,97 +171,101 @@ if ($action == 'add') {	// Test on permission not required here (anonymous actio
 		$user = new User($db);
 	}
 
-	$db->begin();
+	if ($object->status != $object::STATUS_DRAFT) {		// If calendar is open
+		$db->begin();
 
-	if (!GETPOST("lastname")) {
-		$error++;
-		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Lastname"))."<br>\n";
-	}
-	if (!GETPOST("firstname")) {
-		$error++;
-		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Firstname"))."<br>\n";
-	}
-	if (!GETPOST("email")) {
-		$error++;
-		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Email"))."<br>\n";
-	}
+		if (!GETPOST("lastname")) {
+			$error++;
+			$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Lastname"))."<br>\n";
+		}
+		if (!GETPOST("firstname")) {
+			$error++;
+			$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Firstname"))."<br>\n";
+		}
+		if (!GETPOST("email")) {
+			$error++;
+			$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Email"))."<br>\n";
+		}
 
-	if (!$error) {
-		$sql = "SELECT s.rowid";
-		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as s";
-		$sql .= " WHERE s.lastname = '".$db->escape(GETPOST("lastname"))."'";
-		$sql .= " AND s.firstname = '".$db->escape(GETPOST("firstname"))."'";
-		$sql .= " AND s.email = '".$db->escape(GETPOST("email"))."'";
-		$resql = $db->query($sql);
+		if (!$error) {
+			$sql = "SELECT s.rowid";
+			$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as s";
+			$sql .= " WHERE s.lastname = '".$db->escape(GETPOST("lastname"))."'";
+			$sql .= " AND s.firstname = '".$db->escape(GETPOST("firstname"))."'";
+			$sql .= " AND s.email = '".$db->escape(GETPOST("email"))."'";
+			$resql = $db->query($sql);
 
-		if ($resql) {
-			$num = $db->num_rows($resql);
-			if ($num > 0) {
-				$obj = $db->fetch_object($resql);
-				$idcontact = $obj->rowid;
-				$contact->fetch($idcontact);
-			} else {
-				$contact->lastname = GETPOST("lastname");
-				$contact->firstname = GETPOST("firstname");
-				$contact->email = GETPOST("email");
-				$contact->ip = getUserRemoteIP();
-
-				if (checkNbPostsForASpeceificIp($contact, $nb_post_max) <= 0) {
-					$error++;
-					$errmsg .= implode('<br>', $contact->errors);
+			if ($resql) {
+				$num = $db->num_rows($resql);
+				if ($num > 0) {
+					$obj = $db->fetch_object($resql);
+					$idcontact = $obj->rowid;
+					$contact->fetch($idcontact);
 				} else {
-					$result = $contact->create($user);
-					if ($result < 0) {
+					$contact->lastname = GETPOST("lastname");
+					$contact->firstname = GETPOST("firstname");
+					$contact->email = GETPOST("email");
+					$contact->ip = getUserRemoteIP();
+
+					if (checkNbPostsForASpeceificIp($contact, $nb_post_max) <= 0) {
 						$error++;
-						$errmsg .= $contact->error." ".implode(',', $contact->errors);
+						$errmsg .= implode('<br>', $contact->errors);
+					} else {
+						$result = $contact->create($user);
+						if ($result < 0) {
+							$error++;
+							$errmsg .= $contact->error." ".implode(',', $contact->errors);
+						}
 					}
 				}
-			}
-		} else {
-			$error++;
-			$errmsg .= $db->lasterror();
-		}
-	}
-
-	if (!$error) {
-		$dateend = dol_time_plus_duree(GETPOSTINT("datetimebooking"), GETPOSTINT("durationbooking"), 'i');
-
-		$actioncomm->label = $langs->trans("BookcalBookingTitle");
-		$actioncomm->type = 'AC_RDV';
-		$actioncomm->type_id = 5;
-		$actioncomm->datep = GETPOSTINT("datetimebooking");
-		$actioncomm->datef = $dateend;
-		$actioncomm->note_private = GETPOST("description");
-		$actioncomm->percentage = -1;
-		$actioncomm->fk_bookcal_calendar = $id;
-		$actioncomm->userownerid = $calendar->visibility;
-		$actioncomm->contact_id = $contact->id;
-		$actioncomm->socpeopleassigned = [
-			$contact->id => [
-				'id' => $contact->id,
-				'mandatory' => 0,
-				'answer_status' => 0,
-				'transparency' => 0,
-			]
-		];
-		$actioncomm->ip = getUserRemoteIP();
-		if (checkNbPostsForASpeceificIp($actioncomm, $nb_post_max) <= 0) {
-			$error++;
-			$errmsg .= implode('<br>', $actioncomm->errors);
-		} else {
-			$result = $actioncomm->create($user);
-			if ($result < 0) {
+			} else {
 				$error++;
-				$errmsg .= $actioncomm->error." ".implode(',', $actioncomm->errors);
+				$errmsg .= $db->lasterror();
 			}
 		}
-	}
 
-	if (!$error) {
-		$db->commit();
-		$action = 'afteradd';
+		if (!$error) {
+			$dateend = dol_time_plus_duree(GETPOSTINT("datetimebooking"), GETPOSTINT("durationbooking"), 'i');
+
+			$actioncomm->label = $langs->trans("BookcalBookingTitle");
+			$actioncomm->type = 'AC_RDV';
+			$actioncomm->type_id = 5;
+			$actioncomm->datep = GETPOSTINT("datetimebooking");
+			$actioncomm->datef = $dateend;
+			$actioncomm->note_private = GETPOST("description");
+			$actioncomm->percentage = -1;
+			$actioncomm->fk_bookcal_calendar = $id;
+			$actioncomm->userownerid = $calendar->visibility;
+			$actioncomm->contact_id = $contact->id;
+			$actioncomm->socpeopleassigned = [
+				$contact->id => [
+					'id' => $contact->id,
+					'mandatory' => 0,
+					'answer_status' => 0,
+					'transparency' => 0,
+				]
+			];
+			$actioncomm->ip = getUserRemoteIP();
+			if (checkNbPostsForASpeceificIp($actioncomm, $nb_post_max) <= 0) {
+				$error++;
+				$errmsg .= implode('<br>', $actioncomm->errors);
+			} else {
+				$result = $actioncomm->create($user);
+				if ($result < 0) {
+					$error++;
+					$errmsg .= $actioncomm->error." ".implode(',', $actioncomm->errors);
+				}
+			}
+		}
+
+		if (!$error) {
+			$db->commit();
+			$action = 'afteradd';
+		} else {
+			$db->rollback();
+			$action = 'create';
+		}
 	} else {
-		$db->rollback();
 		$action = 'create';
 	}
 }
@@ -283,6 +288,11 @@ $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain
 llxHeaderVierge('BookingCalendar');
 
 print '<center><br><h2>'.(!empty($object->label) ? $object->label : $object->ref).'</h2></center>';
+
+if ($object->status == $object::STATUS_DRAFT) {
+	$langs->trans("errors");
+	$errmsg = $langs->trans("ErrorCalendarIsNotYetOpenOrHasBeenClosed");
+}
 
 dol_htmloutput_errors($errmsg);
 
@@ -308,7 +318,7 @@ if ($action == 'afteradd') {
 	print '<tr>';
 	print '<td>';
 	if ($action != 'create') {
-		print '<form name="formsearch" action="'.$_SERVER["PHP_SELF"].'">';
+		print '<form name="formsearch" class="bookcalsearch" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 		print '<input type="hidden" name="id" value="'.$id.'">';
 
 		$nav = '<a href="?id='.$id."&year=".$prev_year."&month=".$prev_month.$param.'"><i class="fa fa-chevron-left"></i></a> &nbsp;'."\n";
@@ -347,7 +357,7 @@ if ($action == 'afteradd') {
 		print '</td>';
 
 		print '<td>';
-		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+		print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 		print '<table class="border" summary="form to subscribe" id="tablesubscribe">'."\n";
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="add">';
@@ -383,7 +393,7 @@ if ($action == 'afteradd') {
 		print '  <td class="center hideonsmartphone">#</td>';
 		$i = 0;
 		while ($i < 7) {
-			$numdayinweek = (($i + (isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : 1)) % 7);
+			$numdayinweek = (($i + getDolGlobalInt('MAIN_START_WEEK', 1)) % 7);
 			if (!empty($conf->dol_optimize_smallscreen)) {
 				print '  <td class="center bold uppercase tdfordaytitle'.($i == 0 ? ' borderleft' : '').'">';
 				$labelshort = array(0 => 'SundayMin', 1 => 'MondayMin', 2 => 'TuesdayMin', 3 => 'WednesdayMin', 4 => 'ThursdayMin', 5 => 'FridayMin', 6 => 'SaturdayMin');
@@ -411,8 +421,8 @@ if ($action == 'afteradd') {
 			setEventMessages($availability->error, $availability->errors, 'errors');
 		} else {
 			foreach ($arrayofavailabilities as $key => $value) {
-				$startarray = dol_getdate($value->start);
-				$endarray = dol_getdate($value->end);
+				$startarray = dol_getdate((int) $value->start);
+				$endarray = dol_getdate((int) $value->end);
 				for ($i = $startarray['mday']; $i <= $endarray['mday']; $i++) {
 					if ($todayarray['mon'] >= $startarray['mon'] && $todayarray['mon'] <= $endarray['mon']) {
 						$arrayofavailabledays[dol_mktime(0, 0, 0, $todayarray['mon'], $i, $todayarray['year'])] = dol_mktime(0, 0, 0, $todayarray['mon'], $i, $todayarray['year']);
@@ -492,7 +502,7 @@ if ($action == 'afteradd') {
 		print '<td>'; // Column visible after selection of a day
 		print '<div class="center bookingtab" style="height:50%">';
 		print '<div style="height:100%">';
-		print '<form id="formbooking" name="formbooking" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+		print '<form id="formbooking" name="formbooking" method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 		print '<input type="hidden" name="id" value="'.$id.'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="create">';
@@ -554,7 +564,7 @@ if ($action == 'afteradd') {
 				url: "'.DOL_URL_ROOT.'/public/bookcal/bookcalAjax.php",
 				data: {
 					action: "verifyavailability",
-					id: '.$id.',
+					id: '.((int) $id).',
 					datetocheck: $(this).children("div").data("datetime"),
 					token: "'.currentToken().'",
 				}

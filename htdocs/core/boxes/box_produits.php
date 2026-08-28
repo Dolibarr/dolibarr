@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2025  Frédéric France      <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 
 /**
  *	\file       htdocs/core/boxes/box_produits.php
- *	\ingroup    produits,services
+ *	\ingroup    product,services
  *	\brief      Module to generate box of last products/services
  */
 
@@ -37,7 +37,7 @@ class box_produits extends ModeleBoxes
 	public $boxcode = "lastproducts";
 	public $boximg = "object_product";
 	public $boxlabel = "BoxLastProducts";
-	public $depends = array("produit");
+	public $depends = array("product");
 
 	/**
 	 *  Constructor
@@ -45,7 +45,7 @@ class box_produits extends ModeleBoxes
 	 *  @param  DoliDB  $db         Database handler
 	 *  @param  string  $param      More parameters
 	 */
-	public function __construct($db, $param)
+	public function __construct($db, $param)  // @phpstan-ignore constructor.unusedParameter
 	{
 		global $user;
 
@@ -101,7 +101,7 @@ class box_produits extends ModeleBoxes
 				$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $productstatic); // Note that $action and $object may have been modified by hook
 				$sql .= $hookmanager->resPrint;
 			}
-			$sql .= $this->db->order('p.datec', 'DESC');
+			$sql .= $this->db->order('p.tms', 'DESC');
 			$sql .= $this->db->plimit($max, 0);
 
 			$result = $this->db->query($sql);

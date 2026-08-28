@@ -24,6 +24,11 @@ if (strpos($_SERVER["PHP_SELF"], 'website/samples/wrapper.php')) {
 if (!defined('USEDOLIBARRSERVER') && !defined('USEDOLIBARREDITOR')) {
 	require_once './master.inc.php';
 } // Load master if not already loaded
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Translate $langs
+ */
 include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 
 $encoding = '';
@@ -146,7 +151,7 @@ if ($rss) {
 	$format = 'rss';
 	$type = '';
 	$filename = $original_file;
-	$dir_temp = $conf->website->dir_temp;
+	$dir_temp = (string) $conf->website->dir_temp;
 
 	include_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
 	include_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
@@ -257,7 +262,7 @@ if ($rss) {
 		header('Content-Disposition: attachment; filename="'.$filename.'"');
 	}
 
-	// Ajout directives pour resoudre bug IE
+	// Add directives to fix IE bug
 	//header('Cache-Control: Public, must-revalidate');
 	//header('Pragma: public');
 	if ($cachedelay) {

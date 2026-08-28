@@ -4,8 +4,8 @@
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2016       Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2020       Tobias Sekan			<tobias.sekan@startmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,14 +23,11 @@
 
 /**
  *      \file       htdocs/admin/system/phpinfo.php
- *		\brief      Page des infos systeme de php
+ *		\brief      Page of PHP system information
  */
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -38,6 +35,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 $langs->loadLangs(array("admin", "install", "errors"));
 
@@ -53,10 +52,7 @@ if (!$user->admin) {
 llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-system_phpinfo');
 
 $title = 'InfoPHP';
-
-if (isset($title)) {
-	print load_fiche_titre($langs->trans($title), '', 'title_setup');
-}
+print load_fiche_titre($langs->trans($title), '', 'title_setup');
 
 
 // Check PHP setup is OK
@@ -104,14 +100,10 @@ if ($maxphp > 0 && $maxphp2 > 0 && $maxphp > $maxphp2) {
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td></td></tr>';
 
-$ErrorPicturePath = "../../theme/eldy/img/error.png";
-$WarningPicturePath = "../../theme/eldy/img/warning.png";
-$OkayPicturePath = "../../theme/eldy/img/tick.png";
-
 print '<tr><td>'.$langs->trans("Version").'</td><td>';
 
-$arrayphpminversionerror = array(5, 5, 0);
-$arrayphpminversionwarning = array(5, 6, 0);
+$arrayphpminversionerror = array(7, 1, 0);
+$arrayphpminversionwarning = array(7, 1, 0);
 
 if (versioncompare(versionphparray(), $arrayphpminversionerror) < 0) {
 	print img_picto('Error', 'error').' '.$langs->trans("ErrorPHPVersionTooLow", versiontostring($arrayphpminversionerror));
@@ -160,6 +152,16 @@ print '<tr class="liste_titre">';
 print '<td class="titlefield">'.$langs->trans("Extension").'</td>';
 print '<td>'.$langs->trans("Test").'</td>';
 print '</tr>';
+
+if ($db->type == 'mysqli') {
+	$functions = ["mysqli_connect"];
+	$name      = "MySQLi";
+
+	print "<tr>";
+	print "<td>".$name."</td>";
+	print getResultColumn($name, $activatedExtensions, $loadedExtensions, $functions);
+	print "</tr>";
+}
 
 $functions = ["mb_check_encoding"];
 $name      = "MBString";
@@ -236,8 +238,24 @@ print getResultColumn($name, $activatedExtensions, $loadedExtensions, $functions
 print "</tr>";
 
 $functions = array();
-$name      = "xDebug";
+$name = "bz2";
+print "<tr>";
+print "<td>".$name."</td>";
+print getResultColumn($name, $activatedExtensions, $loadedExtensions, $functions, $langs->trans("Optional"));
+print "</tr>";
 
+// bcmath is used only by swiftmailer for NTLM authentication that is not implemented by Dolibarr core for the moment, so i comment this.
+/*
+$functions = array();
+$name = "bcmath";
+print "<tr>";
+print "<td>".$name."</td>";
+print getResultColumn($name, $activatedExtensions, $loadedExtensions, $functions, $langs->trans("Optional").' (NTLM authentication of Swiftmailer)');
+print "</tr>";
+*/
+
+$functions = array();
+$name      = "xDebug";
 print "<tr>";
 print "<td>".$name."</td>";
 print getResultColumn($name, $activatedExtensions, $loadedExtensions, $functions);
@@ -281,7 +299,7 @@ foreach ($phparray as $key => $value) {
 			if ($keyparam == 'X-ChromePhp-Data') {
 				$valtoshow = dol_trunc($keyvalue, 80);
 			}
-			print '<td colspan="2" class="wordbreak">';
+			print '<td colspan="2" class="wordbreak minwidth100">';
 			if ($keyparam == 'Path') {
 				$valtoshow = implode('; ', explode(';', trim($valtoshow)));
 			}
@@ -325,13 +343,14 @@ $db->close();
 /**
  * Return a result column with a translated result text
  *
- * @param string $name			The name of the PHP extension
- * @param string[] $activated		A list with all activated PHP extensions. Deprecated.
- * @param string[] $loaded			A list with all loaded PHP extensions
- * @param string[] $functions		A list with all PHP functions to check
- * @return string
+ * @param 	string 		$name			The name of the PHP extension
+ * @param 	string[] 	$activated		A list with all activated PHP extensions. Deprecated.
+ * @param 	string[] 	$loaded			A list with all loaded PHP extensions
+ * @param 	string[] 	$functions		A list with all PHP functions to check
+ * @param	string		$optional		String with message when module is optional
+ * @return 	string
  */
-function getResultColumn($name, array $activated, array $loaded, array $functions)
+function getResultColumn($name, array $activated, array $loaded, array $functions, $optional = '')
 {
 	global $langs;
 
@@ -366,7 +385,11 @@ function getResultColumn($name, array $activated, array $loaded, array $function
 		if (strtolower($name) == 'xdebug') {
 			$html .= yn(0).' - ';
 		} else {
-			$html .= img_warning($langs->trans("ModuleActivated", "xdebug"));
+			if ($optional) {
+				$html .= img_picto($langs->trans("NotFound"), 'minus');
+			} else {
+				$html .= img_warning($langs->trans("NotFound"));
+			}
 		}
 		if (in_array(strtolower($name), $loaded)) {
 			$html .= ' '.$langs->trans("Loaded").' - ';
@@ -374,6 +397,9 @@ function getResultColumn($name, array $activated, array $loaded, array $function
 			//$html .= ' '.$langs->trans("NotLoaded").' - ';
 		}
 		$html .= ' '.$langs->trans("ErrorPHPDoesNotSupport", $name);
+		if ($optional) {
+			$html .= ' <span class="opacitymedium">'.$optional.'</span>';
+		}
 	}
 	$html .= "</td>";
 

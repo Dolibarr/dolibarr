@@ -22,7 +22,7 @@
 
 create table llx_actioncomm_resources
 (
-  rowid           	integer AUTO_INCREMENT PRIMARY KEY,  
+  rowid           	integer AUTO_INCREMENT PRIMARY KEY,
   fk_actioncomm		integer NOT NULL,			-- Id into llx_actioncomm
   element_type		varchar(50) NOT NULL,		-- Type of resource ('user', 'resource')
   fk_element		integer NOT NULL,			-- Id into table llx_user or llx_resource

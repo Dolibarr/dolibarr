@@ -2,8 +2,8 @@
 /* Copyright (C) 2017		Franck Moreau				<franck.moreau@theobald.com>
  * Copyright (C) 2018-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2020		Maxime DEMAREST				<maxime@indelog.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France				<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,13 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/loan.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -36,14 +43,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 $loanid = GETPOSTINT('loanid');
 $action = GETPOST('action', 'aZ09');
@@ -83,6 +82,7 @@ $permissiontoadd = $user->hasRight('loan', 'write');
  */
 
 if ($action == 'createecheancier' && empty($pay_without_schedule) && $permissiontoadd) {
+	$result = -1;
 	$db->begin();
 	$i = 1;
 	while ($i < $object->nbterm + 1) {
@@ -120,6 +120,7 @@ if ($action == 'createecheancier' && empty($pay_without_schedule) && $permission
 }
 
 if ($action == 'updateecheancier' && empty($pay_without_schedule) && $permissiontoadd) {
+	$result = -1;
 	$db->begin();
 	$i = 1;
 	while ($i < $object->nbterm + 1) {
@@ -179,7 +180,7 @@ if (isModEnabled('project')) {
 	$morehtmlref .= '<br>'.$langs->trans('Project').' : ';
 	if ($user->hasRight('loan', 'write')) {
 		if ($action != 'classify') {
-			//$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
+			//$morehtmlref .= '<a class="editfielda" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true).'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
 			if ($action == 'classify') {
 				//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
 				$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
@@ -270,7 +271,6 @@ if (count($echeances->lines) > 0) {
 	print '<input type="hidden" name="action" value="createecheancier">';
 }
 
-//print_fiche_titre($langs->trans("FinancialCommitment"));
 print '<br>';
 
 print '<div class="div-table-responsive-no-min">';

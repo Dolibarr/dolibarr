@@ -94,9 +94,8 @@ ALTER TABLE llx_product DROP FOREIGN KEY fk_product_default_warehouse;
 
 DROP TABLE llx_contratdet_log;
 
-ALTER TABLE llx_societe_rib MODIFY COLUMN iban_prefix varchar(80);
-ALTER TABLE llx_bank_account MODIFY COLUMN iban_prefix varchar(80);
-ALTER TABLE llx_user_rib MODIFY COLUMN iban_prefix varchar(80);
+ALTER TABLE llx_bank_account MODIFY COLUMN iban_prefix varchar(100);
+ALTER TABLE llx_user_rib MODIFY COLUMN iban_prefix varchar(100);
 
 ALTER TABLE llx_bom_bom ADD COLUMN last_main_doc varchar(255) AFTER model_pdf;
 
@@ -547,3 +546,5 @@ ALTER TABLE llx_mailing_advtarget CHANGE COLUMN tms tms timestamp DEFAULT CURREN
 ALTER TABLE llx_receptiondet_batch_extrafields CHANGE COLUMN tms tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 -- 19.0 -> 20.0 rename llx_commande_fournisseur_dispatch to llx_receptiondet_batch
 ALTER TABLE llx_receptiondet_batch CHANGE COLUMN tms tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+
+ALTER TABLE llx_adherent MODIFY COLUMN societe VARCHAR(128);

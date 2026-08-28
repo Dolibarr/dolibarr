@@ -13,7 +13,8 @@
  * Copyright (C) 2018       Nicolas ZABOURI			<info@inovea-conseil.com>
  * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020       Lenin Rivas         	<lenin@leninrivas.com>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -138,7 +139,7 @@ class ExpeditionLigne extends CommonObjectLine
 	/**
 	 * Detail of lot and qty = array(id in llx_expeditiondet_batch, fk_expeditiondet, batch, qty, fk_origin_stock)
 	 * We can use this to know warehouse planned to be used for each lot.
-	 * @var stdClass|ExpeditionLineBatch[]
+	 * @var null|stdClass|ExpeditionLineBatch[]
 	 */
 	public $detail_batch;
 
@@ -334,7 +335,7 @@ class ExpeditionLigne extends CommonObjectLine
 	 */
 	public function fetch($rowid)
 	{
-		$sql = 'SELECT ed.rowid, ed.fk_expedition, ed.fk_entrepot, ed.fk_elementdet, ed.element_type, ed.qty, ed.rang, ed.extraparams';
+		$sql = 'SELECT ed.rowid, ed.fk_expedition, ed.fk_entrepot, ed.description, ed.fk_unit, ed.fk_elementdet, ed.element_type, ed.qty, ed.rang, ed.extraparams';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as ed';
 		$sql .= ' WHERE ed.rowid = '.((int) $rowid);
 		$result = $this->db->query($sql);
@@ -343,6 +344,8 @@ class ExpeditionLigne extends CommonObjectLine
 			$this->id = $objp->rowid;
 			$this->fk_expedition = $objp->fk_expedition;
 			$this->entrepot_id = $objp->fk_entrepot;
+			$this->description = $objp->description;
+			$this->fk_unit = $objp->fk_unit;
 			$this->fk_elementdet = $objp->fk_elementdet;
 			$this->element_type = $objp->element_type;
 			$this->qty = $objp->qty;
@@ -367,7 +370,7 @@ class ExpeditionLigne extends CommonObjectLine
 	 *	@param      int		$notrigger		1 = disable triggers
 	 *	@return     int						Return integer <0 if KO, line id >0 if OK
 	 */
-	public function insert($user, $notrigger = 0)
+	public function insert($user = null, $notrigger = 0)
 	{
 		global $langs;
 		$error = 0;
@@ -384,17 +387,32 @@ class ExpeditionLigne extends CommonObjectLine
 		}
 
 		// Check parameters
-		if ((empty($this->fk_expedition)
-			|| empty($this->fk_product) // product id is mandatory
-			|| (empty($this->fk_elementdet) && empty($this->fk_parent)) // at least origin line id of parent line id is set
-			|| !is_numeric($this->qty))
-			&& !$skip_check_parameters) {
-			$langs->load('errors');
-			$this->errors[] = $langs->trans('ErrorMandatoryParametersNotProvided');
-			return -1;
+		$origin_id = $this->origin_id;
+		if ($origin_id > 0) {
+			if ((empty($this->fk_expedition)
+				|| (empty($this->fk_elementdet) && empty($this->fk_parent)) // at least origin line id of parent line id is set
+				|| !is_numeric($this->qty))
+				&& !$skip_check_parameters) {
+				$langs->load('errors');
+				$this->errors[] = $langs->trans('ErrorMandatoryParametersNotProvided');
+				return -1;
+			}
+		} else {
+			if (empty($this->fk_expedition) || !is_numeric($this->qty)) {
+				$langs->load('errors');
+				$this->errors[] = $langs->trans('ErrorMandatoryParametersNotProvided');
+				return -1;
+			}
 		}
-
 		$this->db->begin();
+
+		if (getDolGlobalString('STOCK_EXPEDITION_NO_MORE_THAN_ORDER') && !empty($this->fk_elementdet) && !empty($this->fk_expedition)) {
+			$this->checkQtyVsOrderLine($this->fk_elementdet, $this->qty, 0);
+			if (!empty($this->error)) {
+				$this->db->rollback();
+				return -5;
+			}
+		}
 
 		if (empty($this->rang)) {
 			$this->rang = 0;
@@ -415,15 +433,19 @@ class ExpeditionLigne extends CommonObjectLine
 		$sql .= ", fk_product";
 		$sql .= ", element_type";
 		$sql .= ", qty";
+		$sql .= ", fk_unit";
+		$sql .= ", description";
 		$sql .= ", rang";
 		$sql .= ") VALUES (";
-		$sql .= $this->fk_expedition;
-		$sql .= ", ".(empty($this->entrepot_id) ? 'NULL' : $this->entrepot_id);
-		$sql .= ", ".(empty($this->fk_elementdet) ? 'NULL' : $this->fk_elementdet);
-		$sql .= ", ".(empty($this->fk_parent) ? 'NULL' : $this->fk_parent);
-		$sql .= ", ".(empty($this->fk_product) ? 'NULL' : $this->fk_product);
+		$sql .= ((int) $this->fk_expedition);
+		$sql .= ", ".(empty($this->entrepot_id) ? 'NULL' : ((int) $this->entrepot_id));
+		$sql .= ", ".(empty($this->fk_elementdet) ? 'NULL' : ((int) $this->fk_elementdet));
+		$sql .= ", ".(empty($this->fk_parent) ? 'NULL' : ((int) $this->fk_parent));
+		$sql .= ", ".(empty($this->fk_product) ? 'NULL' : ((int) $this->fk_product));
 		$sql .= ", '".(empty($this->element_type) ? 'order' : $this->db->escape($this->element_type))."'";
 		$sql .= ", ".price2num($this->qty, 'MS');
+		$sql .= ", ".((int) $this->fk_unit);
+		$sql .= ", '".(empty($this->description) ? '' : $this->db->escape($this->description))."'";
 		$sql .= ", ".((int) $ranktouse);
 		$sql .= ")";
 
@@ -650,113 +672,143 @@ class ExpeditionLigne extends CommonObjectLine
 
 		$this->db->begin();
 
+		if (!empty($this->id) && empty($this->fk_elementdet)) {
+			$sql = "SELECT fk_elementdet FROM ".MAIN_DB_PREFIX."expeditiondet";
+			$sql .= " WHERE rowid = ".((int) $this->id);
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				$obj = $this->db->fetch_object($resql);
+				if ($obj) {
+					$this->fk_elementdet = $obj->fk_elementdet;
+				}
+			}
+		}
+
+		if (getDolGlobalString('STOCK_EXPEDITION_NO_MORE_THAN_ORDER') && !empty($this->fk_elementdet)) {
+			$qty_to_check = $this->qty;
+			if (!empty($this->detail_batch)) {
+				if (is_array($this->detail_batch)) {
+					$qty_to_check = array_sum(array_column($this->detail_batch, 'qty'));
+				} else {
+					$qty_to_check = $this->detail_batch->qty;
+				}
+			}
+			$this->checkQtyVsOrderLine($this->fk_elementdet, $qty_to_check, $this->id);
+			if (!empty($this->error)) {
+				$this->db->rollback();
+				return -5;
+			}
+		}
+
 		// Clean parameters
 		if (empty($this->qty)) {
 			$this->qty = 0;
 		}
 		$qty = price2num($this->qty);
+		$fk_unit = $this->fk_unit;
 		$remainingQty = 0;
 		$batch = null;
 		$batch_id = 0;
 		$expedition_batch_id = 0;
-		if (is_array($this->detail_batch)) { 	// array of ExpeditionLineBatch
-			if (count($this->detail_batch) > 1) {
-				dol_syslog(get_class($this).'::update only possible for one batch', LOG_ERR);
-				$this->errors[] = 'ErrorBadParameters';
-				$error++;
-			} else {
-				$batch = $this->detail_batch[0]->batch;
-				$batch_id = $this->detail_batch[0]->fk_origin_stock;
-				$expedition_batch_id = $this->detail_batch[0]->id;
-				if ($this->entrepot_id != $this->detail_batch[0]->entrepot_id) {
+		$origin_id = $this->origin_id;
+		if ($origin_id > 0) {
+			if (is_array($this->detail_batch)) { 	// array of ExpeditionLineBatch
+				if (count($this->detail_batch) > 1) {
+					dol_syslog(get_class($this).'::update only possible for one batch', LOG_ERR);
+					$this->errors[] = 'ErrorBadParameters';
+					$error++;
+				} else {
+					$batch = $this->detail_batch[0]->batch;
+					$batch_id = $this->detail_batch[0]->fk_origin_stock;
+					$expedition_batch_id = $this->detail_batch[0]->id;
+					if ($this->entrepot_id != $this->detail_batch[0]->entrepot_id) {
+						dol_syslog(get_class($this).'::update only possible for batch of same warehouse', LOG_ERR);
+						$this->errors[] = 'ErrorBadParameters';
+						$error++;
+					}
+					$qty = price2num($this->detail_batch[0]->qty);
+				}
+			} elseif (!empty($this->detail_batch)) {
+				$batch = $this->detail_batch->batch;
+				$batch_id = $this->detail_batch->fk_origin_stock;
+				$expedition_batch_id = $this->detail_batch->id;
+				if ($this->entrepot_id != $this->detail_batch->entrepot_id) {
 					dol_syslog(get_class($this).'::update only possible for batch of same warehouse', LOG_ERR);
 					$this->errors[] = 'ErrorBadParameters';
 					$error++;
 				}
-				$qty = price2num($this->detail_batch[0]->qty);
+				$qty = price2num($this->detail_batch->qty);
 			}
-		} elseif (!empty($this->detail_batch)) {
-			$batch = $this->detail_batch->batch;
-			$batch_id = $this->detail_batch->fk_origin_stock;
-			$expedition_batch_id = $this->detail_batch->id;
-			if ($this->entrepot_id != $this->detail_batch->entrepot_id) {
-				dol_syslog(get_class($this).'::update only possible for batch of same warehouse', LOG_ERR);
-				$this->errors[] = 'ErrorBadParameters';
-				$error++;
-			}
-			$qty = price2num($this->detail_batch->qty);
-		}
 
-		// check parameters
-		if (!isset($this->id) || !isset($this->entrepot_id)) {
-			dol_syslog(get_class($this).'::update missing line id and/or warehouse id', LOG_ERR);
-			$langs->load('errors');
-			$this->errors[] = $langs->trans('ErrorMandatoryParametersNotProvided');
-			$error++;
-			return -1;
-		}
-
-		// update lot
-
-		if (!empty($batch) && isModEnabled('productbatch')) {
-			$batch_id_str = $batch_id ?? 'null';
-			dol_syslog(get_class($this)."::update expedition batch id=$expedition_batch_id, batch_id=$batch_id_str, batch=$batch");
-
-			if (empty($batch_id) || empty($this->fk_product)) {
-				dol_syslog(get_class($this).'::update missing fk_origin_stock (batch_id) and/or fk_product', LOG_ERR);
+			// check parameters
+			if (!isset($this->id) || !isset($this->entrepot_id)) {
+				dol_syslog(get_class($this).'::update missing line id and/or warehouse id', LOG_ERR);
 				$langs->load('errors');
 				$this->errors[] = $langs->trans('ErrorMandatoryParametersNotProvided');
 				$error++;
+				return -1;
 			}
 
-			// fetch remaining lot qty
-			$shipmentlinebatch = new ExpeditionLineBatch($this->db);
-			$lotArray = $shipmentlinebatch->fetchAll($this->id);
-			if (!$error && $lotArray < 0) {
-				$this->errors[] = $this->db->lasterror()." - ExpeditionLineBatch::fetchAll";
-				$error++;
-			} else {
-				// calculate new total line qty
-				foreach ($lotArray as $lot) {
-					if ($expedition_batch_id != $lot->id) {
-						$remainingQty += $lot->qty;
-					}
-				}
-				$qty += $remainingQty;
+			// update lot
+			if (!empty($batch) && isModEnabled('productbatch')) {
+				$batch_id_str = $batch_id ?? 'null';
+				dol_syslog(get_class($this)."::update expedition batch id=$expedition_batch_id, batch_id=$batch_id_str, batch=$batch");
 
-				//fetch lot details
-
-				// fetch from product_lot
-				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
-				$lot = new Productlot($this->db);
-				if ($lot->fetch(0, $this->fk_product, $batch) < 0) {
-					$this->errors = array_merge($this->errors, $lot->errors);
+				if (empty($batch_id) || empty($this->fk_product)) {
+					dol_syslog(get_class($this).'::update missing fk_origin_stock (batch_id) and/or fk_product', LOG_ERR);
+					$langs->load('errors');
+					$this->errors[] = $langs->trans('ErrorMandatoryParametersNotProvided');
 					$error++;
 				}
-				if (!$error && !empty($expedition_batch_id)) {
-					// delete lot expedition line
-					$sql = "DELETE FROM ".MAIN_DB_PREFIX."expeditiondet_batch";
-					$sql .= " WHERE fk_expeditiondet = ".((int) $this->id);
-					$sql .= " AND rowid = ".((int) $expedition_batch_id);
 
-					if (!$this->db->query($sql)) {
-						$this->errors[] = $this->db->lasterror()." - sql=$sql";
+				// fetch remaining lot qty
+				$shipmentlinebatch = new ExpeditionLineBatch($this->db);
+				$lotArray = $shipmentlinebatch->fetchAll($this->id);
+				if (!$error && $lotArray < 0) {
+					$this->errors[] = $this->db->lasterror()." - ExpeditionLineBatch::fetchAll";
+					$error++;
+				} else {
+					// calculate new total line qty
+					foreach ($lotArray as $lot) {
+						if ($expedition_batch_id != $lot->id) {
+							$remainingQty += $lot->qty;
+						}
+					}
+					$qty += $remainingQty;
+
+					//fetch lot details
+					// fetch from product_lot
+					require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
+					$lot = new Productlot($this->db);
+					if ($lot->fetch(0, $this->fk_product, $batch) < 0) {
+						$this->errors = array_merge($this->errors, $lot->errors);
 						$error++;
 					}
-				}
-				if (!$error && $this->detail_batch->qty > 0) {
-					// create lot expedition line
-					if (isset($lot->id)) {
-						$shipmentLot = new ExpeditionLineBatch($this->db);
-						$shipmentLot->batch = $lot->batch;
-						$shipmentLot->eatby = $lot->eatby;
-						$shipmentLot->sellby = $lot->sellby;
-						$shipmentLot->fk_warehouse = $this->detail_batch->entrepot_id;
-						$shipmentLot->qty = $this->detail_batch->qty;
-						$shipmentLot->fk_origin_stock = (int) $batch_id;
-						if ($shipmentLot->create($this->id) < 0) {
-							$this->errors = $shipmentLot->errors;
+					if (!$error && !empty($expedition_batch_id)) {
+						// delete lot expedition line
+						$sql = "DELETE FROM ".MAIN_DB_PREFIX."expeditiondet_batch";
+						$sql .= " WHERE fk_expeditiondet = ".((int) $this->id);
+						$sql .= " AND rowid = ".((int) $expedition_batch_id);
+
+						if (!$this->db->query($sql)) {
+							$this->errors[] = $this->db->lasterror()." - sql=$sql";
 							$error++;
+						}
+					}
+					if (!$error && $this->detail_batch->qty > 0) {
+						// create lot expedition line
+						if (isset($lot->id)) {
+							$shipmentLot = new ExpeditionLineBatch($this->db);
+							$shipmentLot->batch = $lot->batch;
+							$shipmentLot->eatby = $lot->eatby;
+							$shipmentLot->sellby = $lot->sellby;
+							$shipmentLot->fk_warehouse = $this->detail_batch->entrepot_id;
+							$shipmentLot->qty = $this->detail_batch->qty;
+							$shipmentLot->fk_origin_stock = (int) $batch_id;
+							if ($shipmentLot->create($this->id) < 0) {
+								$this->errors = $shipmentLot->errors;
+								$error++;
+							}
 						}
 					}
 				}
@@ -765,8 +817,9 @@ class ExpeditionLigne extends CommonObjectLine
 		if (!$error) {
 			// update line
 			$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
-			$sql .= " fk_entrepot = ".($this->entrepot_id > 0 ? $this->entrepot_id : 'null');
+			$sql .= " fk_entrepot = ".($this->entrepot_id > 0 ? ((int) $this->entrepot_id) : 'null');
 			$sql .= " , qty = ".((float) price2num($qty, 'MS'));
+			$sql .= " , fk_unit = ".((int) $this->fk_unit);
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			if (!$this->db->query($sql)) {
@@ -803,5 +856,57 @@ class ExpeditionLigne extends CommonObjectLine
 			$this->db->rollback();
 			return -1 * $error;
 		}
+	}
+
+	/**
+	 * Check that qty to ship does not exceed remaining qty on order line.
+	 * Sets $this->error if check fails.
+	 *
+	 * @param  int   $fk_elementdet   rowid of order line (commandedet)
+	 * @param  float $qty             quantity to check
+	 * @param  int   $exclude_line_id rowid of current expeditiondet to exclude (0 for insert)
+	 * @return bool  true if OK, false if exceeded
+	 */
+	private function checkQtyVsOrderLine(int $fk_elementdet, float $qty, int $exclude_line_id): bool
+	{
+		global $langs;
+
+		// Ordered quantity on the source order line
+		require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+		$orderline = new OrderLine($this->db);
+		if ($orderline->fetch($fk_elementdet) <= 0) {
+			return true; // Order line not found, skip check
+		}
+		if ($orderline->product_type == 9) {
+			return true; // Skip check for title/separator lines, they have no deliverable quantity
+		}
+		$qty_ordered = (float) $orderline->qty;
+
+		// Quantity already shipped on other shipment lines
+		$sql  = "SELECT COALESCE(SUM(ed.qty), 0) as qty_shipped";
+		$sql .= " FROM ".MAIN_DB_PREFIX."expeditiondet as ed";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."expedition as e ON e.rowid = ed.fk_expedition";
+		$sql .= " WHERE ed.fk_elementdet = ".((int) $fk_elementdet);
+		$sql .= " AND e.fk_statut >= 0"; // exclude only deleted ones
+		if ($exclude_line_id > 0) {
+			$sql .= " AND ed.rowid != ".((int) $exclude_line_id); // exclude current line being edited
+		}
+
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			return true;
+		}
+		$obj = $this->db->fetch_object($resql);
+		$qty_already_shipped = $obj ? (float) $obj->qty_shipped : 0;
+
+		$qty_remaining = $qty_ordered - $qty_already_shipped;
+
+		if ($qty > $qty_remaining) {
+			$langs->load('errors');
+			$this->error = $langs->trans('ErrorExpeditionQtyTooHigh', $qty, max(0, $qty_remaining));
+			return false;
+		}
+
+		return true;
 	}
 }

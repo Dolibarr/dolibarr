@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -22,15 +22,11 @@
 /**
  *       \file       htdocs/product/stats/contrat.php
  *       \ingroup    product service contrat
- *       \brief      Page des stats des contrats pour un produit
+ *       \brief      Page of contracts stats for a product
  */
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -39,11 +35,18 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
  * @var User $user
  */
 
+require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+
 // Load translation files required by the page
 $langs->loadLangs(array('contracts', 'products', 'companies'));
 
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
+
+$search_month = GETPOSTINT('search_month');
+$search_year = GETPOSTINT('search_year');
 
 // Security check
 $fieldvalue = (!empty($id) ? $id : (!empty($ref) ? $ref : ''));
@@ -124,8 +127,8 @@ if ($id > 0 || !empty($ref)) {
 
 		print '<div class="fichecenter">';
 
-		print '<div class="underbanner clearboth"></div>';
-		print '<table class="border tableforfield" width="100%">';
+		print '<div class="clearboth"></div>';
+		print '<table class="noborder tableforfield centpercent">';
 
 		$nboflines = show_stats_for_company($product, $socid);
 
@@ -187,17 +190,17 @@ if ($id > 0 || !empty($ref)) {
 			if ($limit > 0 && $limit != $conf->liste_limit) {
 				$option .= '&limit='.((int) $limit);
 			}
-			/*
 			if (!empty($search_month)) {
-				$option .= '&search_month='.urlencode($search_month);
+				$option .= '&search_month='.urlencode((string) $search_month);
 			}
 			if (!empty($search_year)) {
-				$option .= '&search_year='.urlencode((string) ($search_year));
+				$option .= '&search_year='.urlencode((string) $search_year);
 			}
-			*/
 
+			print '<span id="anchorundermenu" class="anchorundermenu"></span>';
 			print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$product->id.'" name="search_form">'."\n";
 			print '<input type="hidden" name="token" value="'.newToken().'">';
+			print '<input type="hidden" name="page_y" value="">';
 			if (!empty($sortfield)) {
 				print '<input type="hidden" name="sortfield" value="'.$sortfield.'"/>';
 			}

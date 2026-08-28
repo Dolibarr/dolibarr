@@ -28,7 +28,7 @@ create table llx_chargesociales
   libelle           varchar(80) NOT NULL,
   entity            integer DEFAULT 1 NOT NULL,     -- multi company id
   tms               timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  date_creation     datetime,                       -- date de creation 
+  date_creation     datetime,                       -- date de creation
   date_valid        datetime,                       -- date de validation
   fk_user integer   DEFAULT NULL,		    -- utilisateur concerné
   fk_user_author    integer,                        -- user making creation
@@ -46,7 +46,7 @@ create table llx_chargesociales
   import_key        varchar(14)
 )ENGINE=innodb;
 
--- 
+--
 -- List of codes for the field entity
 --
 -- 1 : first company tax

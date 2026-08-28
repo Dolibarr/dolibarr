@@ -64,16 +64,87 @@ class CommonInvoiceTest extends CommonClassTest
 
 		$localobject = new Facture($db);
 		$localobject->fetch(1);
-		$localobject->date = dol_mktime(12, 0, 0, 1, 1, 2010);
 
 		$result = 0;
 
-		// TODO Insert payment terms
+		print "\n";
 
+		if (in_array($db->type, array('mysql', 'mysqli'))) {
+			// Add 45 days, take end of month, add 15 days
+			$localobject->date = dol_mktime(12, 0, 0, 1, 1, 2010);
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."c_payment_term(code, libelle, nbjour, type_cdr, decalage) VALUES ('TEST1', 'TEST1', 45, 1, 15)";
+			$resql = $db->query($sql);
+			$id = $db->last_insert_id("c_payment_term");
+			$result = $localobject->calculate_date_lim_reglement($id);
+			print __METHOD__." date=".dol_print_date($localobject->date, 'standard', 'gmt')."\n";
+			print __METHOD__." result=".dol_print_date($result, 'standard', 'gmt')."\n";
+			$this->assertEquals('2010-03-15 12:00:00', dol_print_date($result, 'standard', 'gmt'));
 
-		//$result=$localobject->calculate_date_lim_reglement(1);
-		//print __METHOD__." result=".$result."\n";
-		$this->assertEquals($result, 0);
+			// Add 45 days, take end of month, add 15 days
+			$localobject->date = dol_mktime(12, 0, 0, 3, 31, 2010);
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."c_payment_term(code, libelle, nbjour, type_cdr, decalage) VALUES ('TEST1b', 'TEST1b', 45, 1, 15)";
+			$resql = $db->query($sql);
+			$id = $db->last_insert_id("c_payment_term");
+			$result = $localobject->calculate_date_lim_reglement($id);
+			print __METHOD__." date=".dol_print_date($localobject->date, 'standard', 'gmt')."\n";
+			print __METHOD__." result=".dol_print_date($result, 'standard', 'gmt')."\n";
+			$this->assertEquals('2010-06-15 12:00:00', dol_print_date($result, 'standard', 'gmt'));
+
+			// Test on the mode type_cdr = 2
+
+			// 2010-01-01  Add 45 days, go to the next 15th
+			$localobject->date = dol_mktime(12, 0, 0, 1, 1, 2010);
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."c_payment_term(code, libelle, nbjour, type_cdr, decalage) VALUES ('TEST2', 'TEST2', 45, 2, 15)";
+			$resql = $db->query($sql);
+			$id = $db->last_insert_id("c_payment_term");
+			if ($id <= 0) {
+				die(1);
+			}
+			$result = $localobject->calculate_date_lim_reglement($id);
+			print __METHOD__." date=".dol_print_date($localobject->date, 'standard', 'gmt')."\n";
+			print __METHOD__." result=".dol_print_date($result, 'standard', 'gmt')."\n";
+			$this->assertEquals('2010-02-15 00:00:00', dol_print_date($result, 'standard', 'gmt'));
+
+			// 2010-03-30  Add 45 days, go to the next 15th
+			$localobject->date = dol_mktime(12, 0, 0, 3, 30, 2010);
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."c_payment_term(code, libelle, nbjour, type_cdr, decalage) VALUES ('TEST3', 'TEST3', 45, 2, 15)";
+			$resql = $db->query($sql);
+			$id = $db->last_insert_id("c_payment_term");
+			if ($id <= 0) {
+				die(1);
+			}
+			$result = $localobject->calculate_date_lim_reglement($id);
+			print __METHOD__." date=".dol_print_date($localobject->date, 'standard', 'gmt')."\n";
+			print __METHOD__." result=".dol_print_date($result, 'standard', 'gmt')."\n";
+			$this->assertEquals('2010-05-15 00:00:00', dol_print_date($result, 'standard', 'gmt'));
+
+			// 2010-03-31  Add 45 days, go to the next 15th
+			$localobject->date = dol_mktime(12, 0, 0, 3, 31, 2010);
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."c_payment_term(code, libelle, nbjour, type_cdr, decalage) VALUES ('TEST3b', 'TEST3b', 45, 2, 15)";
+			$resql = $db->query($sql);
+			$id = $db->last_insert_id("c_payment_term");
+			if ($id <= 0) {
+				die(1);
+			}
+			$result = $localobject->calculate_date_lim_reglement($id);
+			print __METHOD__." date=".dol_print_date($localobject->date, 'standard', 'gmt')."\n";
+			print __METHOD__." result=".dol_print_date($result, 'standard', 'gmt')."\n";
+			$this->assertEquals('2010-05-15 00:00:00', dol_print_date($result, 'standard', 'gmt'));
+
+			// 2010-04-01  Add 45 days, go to the next 15th
+			$localobject->date = dol_mktime(12, 0, 0, 4, 1, 2010);
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."c_payment_term(code, libelle, nbjour, type_cdr, decalage) VALUES ('TEST3c', 'TEST3c', 45, 2, 15)";
+			$resql = $db->query($sql);
+			$id = $db->last_insert_id("c_payment_term");
+			if ($id <= 0) {
+				die(1);
+			}
+			$result = $localobject->calculate_date_lim_reglement($id);
+			print __METHOD__." date=".dol_print_date($localobject->date, 'standard', 'gmt')."\n";
+			print __METHOD__." result=".dol_print_date($result, 'standard', 'gmt')."\n";
+			$this->assertEquals('2010-06-15 00:00:00', dol_print_date($result, 'standard', 'gmt'));
+		}
+
 		return $result;
 	}
 }

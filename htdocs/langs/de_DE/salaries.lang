@@ -1,29 +1,55 @@
-# Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Buchungskonto (aus dem Kontenplan), das standardmäßig für „Benutzer“ für Gehälter verwendet wird
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Das auf der Benutzerkarte definierte dedizierte Buchungskonto wird nur für Nebenbuch-Buchhaltung verwendet. Dieser Wert wird für das Hauptbuch verwendet, aber auch als Standardwert von Nebenbuch-Buchungen, wenn für den Benutzer kein dediziertes Buchungskonto definiert ist.
-SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Standard-Buchungskonto für Gehaltszahlungen
-CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=Lassen Sie beim Erstellen eines Gehalts standardmäßig die Option "Gesamtzahlung automatisch erstellen" leer
 Salary=Gehalt
 Salaries=Gehälter
 NewSalary=Neue Gehaltszahlung
 AddSalary=Gehalt hinzufügen
 NewSalaryPayment=Neue Gehaltskarte
 AddSalaryPayment=Gehaltszahlung hinzufügen
-SalaryID=Gehalts-ID
-SalaryAmount=Betrag Gehalt
 SalaryPayment=Gehaltszahlung
 SalariesPayments=Gehaltszahlungen
 SalariesPaymentsOf=Gehaltszahlungen von %s
 ShowSalaryPayment=Gehaltszahlung anzeigen
-THM=Durchschnittlicher Stundensatz
-TJM=Durchschnittlicher Tagessatz
+SalaryID=Gehalts-ID
+SalaryAmount=Betrag Gehalt
+SalaryDate=Gehalt Datum
+SalaryPaid=Gezahlter Lohn
+SalaryNotPaid=Gehalt nicht bezahlt
+
+SalarySlip=Gehaltsbeleg
+StandardSalaryDocModel=Standard-Dokument für Gehaltsbeege
+
+BasicSalary=Grundgehalt
+Bonus=Bonus
+Allowance=Zulage
+Overtime=Überstunden
+Deduction=Abzug
+Deductions=Abzüge
+Earnings=Einnahmen
+TotalEarnings=Gesamteinnahmen
+TotalDeductions=Gesamtabzüge
+NetPaid=Ausgaben (netto)
+
+# Accounting
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Buchungskonto (aus dem Kontenplan), das standardmäßig für „Benutzer“ für Gehälter verwendet wird
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Das auf der Benutzerkarte definierte dedizierte Buchungskonto wird nur für Nebenbuch-Buchhaltung verwendet. Dieser Wert wird für das Hauptbuch verwendet, aber auch als Standardwert von Nebenbuch-Buchungen, wenn für den Benutzer kein dediziertes Buchungskonto definiert ist.
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Standard-Buchungskonto für Gehaltszahlungen
+CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=Lassen Sie beim Erstellen eines Gehalts standardmäßig die Option "Gesamtzahlung automatisch erstellen" leer
+
+# Stats / Info
 CurrentSalary=Aktuelles Gehalt
-THMDescription=Dieser Wert kann verwendet werden, um die Kosten für die aufgewendete Zeit eines Benutzers zu berechnen, wenn das Modul Projektverwaltung verwendet wird
-TJMDescription=Dieser Wert dient derzeit nur zur Information und wird für keine Berechnung verwendet
 LastSalaries=Letzte %s Gehälter
 AllSalaries=Alle Gehälter
 SalariesStatistics=Statistik Gehälter
 SalariesAndPayments=Gehälter und Gehaltszahlungen
+UserPaySlip=Gehaltsabrechnung
+PayPeriod=Abrechnungszeitraum
+
+# THM / TJM
+THM=Durchschnittlicher Stundensatz
+THMDescription=Dieser Wert kann verwendet werden, um die Kosten für die aufgewendete Zeit eines Benutzers zu berechnen, wenn das Modul Projektverwaltung verwendet wird
+TJM=Durchschnittlicher Tagessatz
+TJMDescription=Dieser Wert dient derzeit nur zur Information und wird für keine Berechnung verwendet
+
+# Other actions
 ConfirmDeleteSalaryPayment=Möchten Sie diese Gehaltszahlung löschen?
 FillFieldFirst=Zuerst das Mitarbeiterfeld ausfüllen
 UpdateAmountWithLastSalary=Als Betrag letztes Gehalt vorbelegen
@@ -31,5 +57,11 @@ MakeTransferRequest=Überweisungsanforderung erstellen
 VirementOrder=Überweisungsauftrag
 WithdrawalReceipt=Überweisungsauftrag
 OrderWaiting=Ausstehender Auftrag
-FillEndOfMonth=Füllen Sie das Monatsende aus
-UserPaySlip=Gehaltsabrechnung
+FillEndOfMonth=Ende des Monats
+
+# Shortcuts
+PreviousMonthShort=Vorheriger Monat
+CurrentMonthShort=Aktueller Monat
+NextMonthShort=Nächster Monat
+PreviousWeekShort=Vorherige Woche
+CurrentWeekShort=Aktuelle Woche

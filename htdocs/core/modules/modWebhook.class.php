@@ -145,10 +145,9 @@ class modWebhook extends DolibarrModules
 		$this->need_dolibarr_version = array(11, -3); // Minimum version of Dolibarr required by module
 
 		// Messages at activation
-		$this->warnings_activation = array(); // Warning to show when we activate module. array('always'='text') or array('FR'='textfr','MX'='textmx'...)
-		$this->warnings_activation_ext = array(); // Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','MX'='textmx'...)
+		$this->warnings_activation = array();
+		$this->warnings_activation_ext = array();
 		//$this->automatic_activation = array('FR'=>'WebhookWasAutomaticallyActivatedBecauseOfYourCountryChoice');
-		//$this->always_enabled = true;								// If true, can't be disabled
 
 		// Constants
 		// List of particular constants to add when module is enabled (key, 'chaine', value, desc, visible, 'current' or 'allentities', deleteonunactive)
@@ -247,7 +246,7 @@ class modWebhook extends DolibarrModules
 			//      'frequency' => 2,
 			//      'unitfrequency' => 3600,
 			//      'status' => 0,
-			//      'test' => '$conf->webhook->enabled',
+			//      'test' => 'isModEnabled('webhook')',
 			//      'priority' => 50,
 			//  ),
 		);
@@ -258,24 +257,9 @@ class modWebhook extends DolibarrModules
 
 		// Permissions provided by this module
 		$this->rights = array();
-		$r = 0;
+
 		// Add here entries to declare new permissions
 		/* BEGIN MODULEBUILDER PERMISSIONS */
-		$this->rights[$r][0] = $this->numero . sprintf("%02d", $r + 1); // Permission id (must not be already used)
-		$this->rights[$r][1] = 'Read Webhooks'; // Permission label
-		$this->rights[$r][4] = 'webhook_target';
-		$this->rights[$r][5] = 'read'; // In php code, permission will be checked by test if ($user->rights->webhook->webhook_target->read)
-		$r++;
-		$this->rights[$r][0] = $this->numero . sprintf("%02d", $r + 1); // Permission id (must not be already used)
-		$this->rights[$r][1] = 'Create/Update Webhooks'; // Permission label
-		$this->rights[$r][4] = 'webhook_target';
-		$this->rights[$r][5] = 'write'; // In php code, permission will be checked by test if ($user->rights->webhook->webhook_target->write)
-		$r++;
-		$this->rights[$r][0] = $this->numero . sprintf("%02d", $r + 1); // Permission id (must not be already used)
-		$this->rights[$r][1] = 'Delete Webhooks'; // Permission label
-		$this->rights[$r][4] = 'webhook_target';
-		$this->rights[$r][5] = 'delete'; // In php code, permission will be checked by test if ($user->rights->webhook->webhook_target->delete)
-		$r++;
 		/* END MODULEBUILDER PERMISSIONS */
 
 		// Main menu entries to add
