@@ -187,8 +187,7 @@ llxHeader('', $langs->trans("Passwords"), $wikihelp, '', 0, 0, '', '', '', 'mod-
 
 print load_fiche_titre($langs->trans("SecuritySetup"), '', 'title_setup');
 
-print '<span class="opacitymedium">'.$langs->trans("GeneratedPasswordDesc")."</span><br>\n";
-print "<br>\n";
+print '<div class="info">'.$langs->trans("GeneratedPasswordDesc")."</div>\n";
 
 
 $head = security_prepare_head();

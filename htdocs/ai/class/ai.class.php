@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2024	Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024	Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,22 +35,22 @@ require_once DOL_DOCUMENT_ROOT."/ai/lib/ai.lib.php";
 class Ai
 {
 	/**
-	 * @var DoliDB $db Database object
+	 * @var DoliDB Database object
 	 */
 	protected $db;
 
 	/**
-	 * @var string $apiService
+	 * @var string
 	 */
 	private $apiService;
 
 	/**
-	 * @var string $apiKey
+	 * @var string
 	 */
 	private $apiKey;
 
 	/**
-	 * @var string $apiEndpoint
+	 * @var string
 	 */
 	private $apiEndpoint;
 
@@ -68,7 +68,6 @@ class Ai
 	 * Constructor
 	 *
 	 * @param	DoliDB	$db		 Database handler
-	 *
 	 */
 	public function __construct($db)
 	{
@@ -494,5 +493,114 @@ class Ai
 				'function' => $function
 			);
 		}
+	}
+
+	/**
+	 * Decode JSON into array
+	 *
+	 * @param array{document_info?:array{reference?:string,invoice_number?:string,title?:string,issue_date?:string,due_date?:string,vendor?:array{name?:string,siren?:string,siret?:string,email?:string,professional_id?:array{siren?:string},vat_number?:string}}|null,summary?:array{currency?:string,subtotal_excluding_tax?:float,tax?:array{rate?:float,amount?:float}},items?:array<int|string,array{description?:string,service?:string,quantity?:float,tax?:array{vat_rate?:float,rate?:float,amount?:float},unit_price?:float,total_excluding_tax?:float,total_including_tax?:float,period_start?:string,period_end?:string,period?:array{start_date?:string,end_date?:string}}>}	$json JSON
+	 * @param string	$type	Type of document to get ('supplier_invoice', 'thirdparty', ...)
+	 * @return array<string,string|float>	Array of values
+	 */
+	public function decodeJsonIntoArray($json, $type)
+	{
+		$tmparray = array();
+
+		//var_dump($json['items']);
+		if ($type == 'supplier_invoice') {
+			// Invoice info
+			if (!empty($json['document_info']['reference'])) {
+				$tmparray['supplierref'] = $json['document_info']['reference'];
+			} elseif (!empty($json['document_info']['invoice_number'])) {
+				$tmparray['supplierref'] = $json['document_info']['invoice_number'];
+			}
+
+			if (!empty($json['document_info']['title'])) {
+				$tmparray['title'] = $json['document_info']['title'];
+			}
+
+			if (!empty($json['document_info']['issue_date']) && preg_match('/^([0-9]{4})-([0-9]{2})-([0-9]{2})$/', $json['document_info']['issue_date'])) {
+				$tmparray['issue_date'] = dol_stringtotime($json['document_info']['issue_date'], 'tzuserrel');
+			}
+			if (!empty($json['document_info']['due_date']) && preg_match('/^([0-9]{4})-([0-9]{2})-([0-9]{2})$/', $json['document_info']['due_date'])) {
+				$tmparray['due_date'] = dol_stringtotime($json['document_info']['due_date'], 'tzuserrel');
+			}
+			// Currency
+			if ($json['summary']['currency'] == '€') {
+				$tmparray['currency_code'] = 'EUR';
+			} elseif (strlen($json['summary']['currency']) == 3) {
+				$tmparray['currency_code'] = $json['summary']['currency'];
+			}
+
+			// Vendor
+			if (!empty($json['document_info']['vendor'])) {
+				if (!empty($json['document_info']['vendor']['name'])) {
+					$tmparray['vendor_name'] = $json['document_info']['vendor']['name'];
+				}
+				if (!empty($json['document_info']['vendor']['siren'])) {
+					$tmparray['vendor_profid1'] = $json['document_info']['vendor']['siren'];
+				}
+				if (!empty($json['document_info']['vendor']['siret'])) {
+					$tmparray['vendor_profid2'] = $json['document_info']['vendor']['siret'];
+				}
+				if (!empty($json['document_info']['vendor']['email'])) {
+					$tmparray['vendor_email'] = $json['document_info']['vendor']['email'];
+				}
+				if (!empty($json['document_info']['vendor']['professional_id'])) {
+					$tmparray['vendor_profid1'] = $json['document_info']['vendor']['professional_id']['siren'];
+				}
+				if (!empty($json['document_info']['vendor']['vat_number'])) {
+					$tmparray['vendor_vat_number'] = $json['document_info']['vendor']['vat_number'];
+				}
+			}
+
+			if (empty($json['items'])) {
+				if (!empty($json['summary']['subtotal_excluding_tax'])) {
+					$tmparray['description'] = 'Undefined';
+					$tmparray['total_ht'] = (float) $json['summary']['subtotal_excluding_tax'];
+					$tmparray['vat_rate'] =  (float) $json['summary']['tax']['rate'];
+				}
+			} else {
+				$i = 0;
+				foreach ($json['items'] as $item) {
+					$i++;
+					$tmparray['lines'][$i] = array();
+
+					if (!empty($item['description'])) {
+						$tmparray['lines'][$i]['desc'] = $item['description'];
+					} elseif (!empty($item['service'] && is_string($item['service']))) {
+						$tmparray['lines'][$i]['desc'] = $item['service'];
+					}
+
+					if (!empty($item['service'])) {
+						$tmparray['lines'][$i]['qty'] = $item['quantity'];
+						$tmparray['lines'][$i]['vat_rate'] = $item['tax']['vat_rate'];
+						//$tmparray['lines'][$i]['vat_amount'] = $item['tax']['amount'];
+						$tmparray['lines'][$i]['subprice'] = $item['unit_price'];
+						$tmparray['lines'][$i]['total_ht'] = $item['total_excluding_tax'];
+						$tmparray['lines'][$i]['total_ttc'] = $item['total_including_tax'];
+					} else {
+						$tmparray['lines'][$i]['qty'] = $item['quantity'];
+						$tmparray['lines'][$i]['vat_rate'] = $item['tax']['rate'];
+						$tmparray['lines'][$i]['vat_amount'] = $item['tax']['amount'];
+						$tmparray['lines'][$i]['subprice'] = $item['unit_price'];
+						$tmparray['lines'][$i]['total_ht'] = $item['total_excluding_tax'];
+						$tmparray['lines'][$i]['total_ttc'] = $item['total_including_tax'];
+					}
+					if (!empty($item['period_start'])) {
+						$tmparray['lines'][$i]['date_start'] = dol_stringtotime($item['period_start'], 'tzuserrel');
+					}
+					if (!empty($item['period_end'])) {
+						$tmparray['lines'][$i]['date_end'] = dol_stringtotime($item['period_end'], 'tzuserrel');
+					}
+					if (!empty($item['period'])) {
+						$tmparray['lines'][$i]['date_start'] = dol_stringtotime($item['period']['start_date'], 'tzuserrel');
+						$tmparray['lines'][$i]['date_end'] = dol_stringtotime($item['period']['end_date'], 'tzuserrel');
+					}
+				}
+			}
+		}
+
+		return $tmparray;
 	}
 }

@@ -4056,121 +4056,130 @@ function dragAndDropFileUpload($htmlname)
 	// server that accepts it, so a request could close the script tag below and open one of its own.
 	$pageurl = str_replace('</', '<\\/', dol_escape_js($_SERVER["PHP_SELF"], 1));
 
+	// Values interpolated into the heredoc below via {$...}: dol_escape_js() is still called with
+	// mode 1 on each of them for the same reason as $pageurl above (they are embedded into JS '...' strings).
+	$nonce = getNonce();
+	$fkElement = dol_escape_js((string) $object->id, 1);
+	$elementType = dol_escape_js($object->element, 1);
+	$token = currentToken();
+	$ajaxUrl = DOL_URL_ROOT.'/core/ajax/fileupload.php';
+
 	$out = "";
 	$out .= '<div id="'.$htmlname.'Message" class="dragDropAreaMessage hidden"><span>'.img_picto("", 'download').'<br>'.$langs->trans("DropFileToAddItToObject").'</span></div>';
 	$out .= "\n<!-- JS CODE TO ENABLE DRAG AND DROP OF FILE -->\n";
-	$out .= '<script nonce="'.getNonce().'">';
-	$out .= '
-		jQuery(document).ready(function() {
-			var enterTargetDragDrop = null;
+	$out .= <<<JS
+<script nonce="{$nonce}">
+	jQuery(document).ready(function() {
+		var enterTargetDragDrop = null;
 
-			$(\'#'.$htmlname.'\').addClass(\'cssDragDropArea\');
+		$('#{$htmlname}').addClass('cssDragDropArea');
 
-			$(".cssDragDropArea").on("dragenter", function(ev, ui) {
-				var dataTransfer = ev.originalEvent.dataTransfer;
-				var dataTypes = dataTransfer.types;
-				//console.log(dataTransfer);
-				//console.log(dataTypes);
+		$(".cssDragDropArea").on("dragenter", function(ev, ui) {
+			var dataTransfer = ev.originalEvent.dataTransfer;
+			var dataTypes = dataTransfer.types;
+			// console.log(dataTransfer);
+			// console.log(dataTypes);
 
-				if (!dataTypes || ($.inArray(\'Files\', dataTypes) === -1)) {
-				    // The element dragged is not a file, so we avoid the "dragenter"
-				    ev.preventDefault();
-    				return false;
-  				}
-
-				// Entering drop area. Highlight area
-				console.log("dragAndDropFileUpload: We add class highlightDragDropArea")
-				enterTargetDragDrop = ev.target;
-				$(this).addClass("highlightDragDropArea");
-				$(\'#'.$htmlname.'Message\').removeClass(\'hidden\');
-				ev.preventDefault();
-			});
-
-			$(".cssDragDropArea").on("dragleave", function(ev) {
-				// Going out of drop area. Remove Highlight
-				if (enterTargetDragDrop == ev.target){
-					console.log("dragAndDropFileUpload: We remove class highlightDragDropArea")
-					$(\'#'.$htmlname.'Message\').addClass(\'hidden\');
-					$(this).removeClass("highlightDragDropArea");
-				}
-			});
-
-			$(".cssDragDropArea").on("dragover", function(ev) {
+			if (!dataTypes || ($.inArray('Files', dataTypes) === -1)) {
+				// The element dragged is not a file, so we avoid the "dragenter"
 				ev.preventDefault();
 				return false;
-			});
+			}
 
-			$(".cssDragDropArea").on("drop", function(e) {
-				console.log(\'Trigger event file dropped. fk_element='.dol_escape_js((string) $object->id, 1).' element='.dol_escape_js($object->element, 1).'\');
-				e.preventDefault();
-				fd = new FormData();
-				fd.append(\'fk_element\', \''.dol_escape_js((string) $object->id, 1).'\');
-				fd.append(\'element\', \''.dol_escape_js($object->element, 1).'\');
-				fd.append(\'token\', \''.currentToken().'\');
-				fd.append("action", "linkit");
-
-				var dataTransfer = e.originalEvent.dataTransfer;
-
-				if (dataTransfer.files && dataTransfer.files.length){
-					var droppedFiles = e.originalEvent.dataTransfer.files;
-					$.each(droppedFiles, function(index,file){
-						fd.append("files[]", file,file.name)
-					});
-				}
-				$(".cssDragDropArea").removeClass("highlightDragDropArea");
-				counterdragdrop = 0;
-				$.ajax({
-					url: \''.DOL_URL_ROOT.'/core/ajax/fileupload.php\',
-					type: "POST",
-					processData: false,
-					contentType: false,
-					data: fd,
-					success:function() {
-						console.log("Uploaded.", arguments);
-						/* arguments[0] is the json string of files */
-						/* arguments[1] is the value for variable "success", can be 0 or 1 */
-						let listoffiles = [];
-						/* The answer is not the expected json when php stopped before answering, for example when
-						   post_max_size was reached. Without this, the exception of JSON.parse() would leave the
-						   user on a page with no message at all, thinking the file was added. */
-						try {
-							listoffiles = JSON.parse(arguments[0]);
-						} catch (e) {
-							window.location.href = \''.$pageurl.'?id='.dol_escape_js((string) $object->id, 1).'&seteventmessages=ErrorUploadFileDragDrop:errors\';
-							return;
-						}
-						console.log(listoffiles);
-						let nboferror = 0;
-						for (let i = 0; i < listoffiles.length; i++) {
-							console.log(listoffiles[i].error);
-							if (listoffiles[i].error) {
-								nboferror++;
-							}
-						}
-						console.log(nboferror);
-						/* An empty list means no file was stored at all, so it is an error and not a success:
-						   php empties $_FILES when post_max_size is reached. */
-						if (listoffiles.length == 0) {
-							window.location.href = \''.$pageurl.'?id='.dol_escape_js((string) $object->id, 1).'&seteventmessages=ErrorUploadFileDragDrop:errors\';
-						} else if (nboferror > 0) {
-							window.location.href = \''.$pageurl.'?id='.dol_escape_js((string) $object->id, 1).'&seteventmessages=ErrorOnAtLeastOneFileUpload:warnings\';
-						} else {
-							window.location.href = \''.$pageurl.'?id='.dol_escape_js((string) $object->id, 1).'&seteventmessages=UploadFileDragDropSuccess:mesgs\';
-						}
-					},
-					error:function(jqXHR) {
-						console.log("Error Uploading.", arguments)
-						if (jqXHR.status == 403) {
-							window.location.href = \''.$pageurl.'?id='.dol_escape_js((string) $object->id, 1).'&seteventmessages=ErrorUploadFileDragDropPermissionDenied:errors\';
-						} else {
-							window.location.href = \''.$pageurl.'?id='.dol_escape_js((string) $object->id, 1).'&seteventmessages=ErrorUploadFileDragDrop:errors\';
-						}
-					},
-				})
-			});
+			// Entering drop area. Highlight area
+			console.log("dragAndDropFileUpload: We add class highlightDragDropArea")
+			enterTargetDragDrop = ev.target;
+			$(this).addClass("highlightDragDropArea");
+			$('#{$htmlname}Message').removeClass('hidden');
+			ev.preventDefault();
 		});
-	';
-	$out .= "</script>\n";
+
+		$(".cssDragDropArea").on("dragleave", function(ev) {
+			// Going out of drop area. Remove Highlight
+			if (enterTargetDragDrop == ev.target){
+				console.log("dragAndDropFileUpload: We remove class highlightDragDropArea")
+				$('#{$htmlname}Message').addClass('hidden');
+				$(this).removeClass("highlightDragDropArea");
+			}
+		});
+
+		$(".cssDragDropArea").on("dragover", function(ev) {
+			ev.preventDefault();
+			return false;
+		});
+
+		$(".cssDragDropArea").on("drop", function(e) {
+			console.log('Trigger event file dropped. fk_element={$fkElement} element={$elementType}');
+			e.preventDefault();
+			fd = new FormData();
+			fd.append('fk_element', '{$fkElement}');
+			fd.append('element', '{$elementType}');
+			fd.append('token', '{$token}');
+			fd.append("action", "linkit");
+
+			var dataTransfer = e.originalEvent.dataTransfer;
+
+			if (dataTransfer.files && dataTransfer.files.length){
+				var droppedFiles = e.originalEvent.dataTransfer.files;
+				$.each(droppedFiles, function(index,file){
+					fd.append("files[]", file,file.name)
+				});
+			}
+			$(".cssDragDropArea").removeClass("highlightDragDropArea");
+			counterdragdrop = 0;
+			$.ajax({
+				url: '{$ajaxUrl}',
+				type: "POST",
+				processData: false,
+				contentType: false,
+				data: fd,
+				success:function() {
+					console.log("Uploaded.", arguments);
+					/* arguments[0] is the json string of files */
+					/* arguments[1] is the value for variable "success", can be 0 or 1 */
+					let listoffiles = [];
+					/* The answer is not the expected json when php stopped before answering, for example when
+					   post_max_size was reached. Without this, the exception of JSON.parse() would leave the
+					   user on a page with no message at all, thinking the file was added. */
+					try {
+						listoffiles = JSON.parse(arguments[0]);
+					} catch (e) {
+						window.location.href = '{$pageurl}?id={$fkElement}&seteventmessages=ErrorUploadFileDragDrop:errors';
+						return;
+					}
+					console.log(listoffiles);
+					let nboferror = 0;
+					for (let i = 0; i < listoffiles.length; i++) {
+						console.log(listoffiles[i].error);
+						if (listoffiles[i].error) {
+							nboferror++;
+						}
+					}
+					console.log(nboferror);
+					/* An empty list means no file was stored at all, so it is an error and not a success:
+					   php empties \$_FILES when post_max_size is reached. */
+					if (listoffiles.length == 0) {
+						window.location.href = '{$pageurl}?id={$fkElement}&seteventmessages=ErrorUploadFileDragDrop:errors';
+					} else if (nboferror > 0) {
+						window.location.href = '{$pageurl}?id={$fkElement}&seteventmessages=ErrorOnAtLeastOneFileUpload:warnings';
+					} else {
+						window.location.href = '{$pageurl}?id={$fkElement}&seteventmessages=UploadFileDragDropSuccess:mesgs';
+					}
+				},
+				error:function(jqXHR) {
+					console.log("Error Uploading.", arguments)
+					if (jqXHR.status == 403) {
+						window.location.href = '{$pageurl}?id={$fkElement}&seteventmessages=ErrorUploadFileDragDropPermissionDenied:errors';
+					} else {
+						window.location.href = '{$pageurl}?id={$fkElement}&seteventmessages=ErrorUploadFileDragDrop:errors';
+					}
+				},
+			})
+		});
+	});
+</script>
+
+JS;
 	return $out;
 }
 
