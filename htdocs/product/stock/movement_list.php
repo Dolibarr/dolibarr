@@ -53,7 +53,7 @@ if (isModEnabled('project')) {
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array('products', 'stocks', 'orders'));
+$langs->loadLangs(array('products', 'stocks', 'orders', 'bills', 'sendings', 'receptions', 'mrp'));
 if (isModEnabled('productbatch')) {
 	$langs->load("productbatch");
 }
@@ -95,6 +95,7 @@ $search_user = trim(GETPOST("search_user"));
 $search_batch = trim(GETPOST("search_batch"));
 $search_qty = trim(GETPOST("search_qty"));
 $search_type_mouvement = GETPOST('search_type_mouvement');
+$search_origintype = GETPOST('search_origintype', 'aZ09');
 $search_fk_project = GETPOST("search_fk_project");
 
 $type = GETPOSTINT("type");
@@ -252,6 +253,7 @@ if (empty($reshook)) {
 		$search_ref = '';
 		$search_movement = "";
 		$search_type_mouvement = "";
+		$search_origintype = "";
 		$search_inventorycode = "";
 		$search_product_ref = "";
 		$search_product = "";
@@ -797,6 +799,13 @@ if ($search_qty != '') {
 if ($search_type_mouvement != '' && $search_type_mouvement != '-1') {
 	$sql .= natural_search('m.type_mouvement', $search_type_mouvement, 2);
 }
+if ($search_origintype != '' && $search_origintype != '-1') {
+	if ($search_origintype == 'none') {
+		$sql .= " AND (m.origintype IS NULL OR m.origintype = '')";
+	} else {
+		$sql .= " AND m.origintype = '".$db->escape($search_origintype)."'";
+	}
+}
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 // Add where from hooks
@@ -1093,6 +1102,9 @@ if ($search_inventorycode) {
 if ($search_type_mouvement) {
 	$param .= '&search_type_mouvement='.urlencode($search_type_mouvement);
 }
+if ($search_origintype) {
+	$param .= '&search_origintype='.urlencode($search_origintype);
+}
 if ($search_product_ref) {
 	$param .= '&search_product_ref='.urlencode($search_product_ref);
 }
@@ -1288,9 +1300,30 @@ if (!empty($arrayfields['m.label']['checked'])) {
 	print '</td>';
 }
 if (!empty($arrayfields['origin']['checked'])) {
-	// Origin of movement
+	// Origin of movement. The origin is a polymorphic couple (origintype, fk_origin) resolved in PHP,
+	// so it cannot be joined in SQL: we filter on the origin type, using the types get_origin() handles.
+	// Note: 'project' is not offered because _create() moves it to fk_projet and clears origintype,
+	// so no movement can ever carry origintype='project'.
 	print '<td class="liste_titre left">';
-	print '&nbsp; ';
+	$arrayoforigintypes = array(
+		'commande' => $langs->trans('Order'),
+		'shipping' => $langs->trans('Shipment'),
+		'facture' => $langs->trans('Invoice'),
+		'order_supplier' => $langs->trans('SupplierOrder'),
+		'invoice_supplier' => $langs->trans('SupplierInvoice'),
+		'reception' => $langs->trans('Reception'),
+		'inventory' => $langs->trans('Inventory'),
+		'mo' => $langs->trans('ManufacturingOrder'),
+		'user' => $langs->trans('User'),
+		'none' => $langs->trans('None'),
+	);
+	print '<select id="search_origintype" name="search_origintype" class="maxwidth150">';
+	print '<option value=""'.(($search_origintype == '') ? ' selected="selected"' : '').'>&nbsp;</option>';
+	foreach ($arrayoforigintypes as $keyorigintype => $valorigintype) {
+		print '<option value="'.$keyorigintype.'"'.(($search_origintype == $keyorigintype) ? ' selected="selected"' : '').'>'.dol_escape_htmltag($valorigintype).'</option>';
+	}
+	print '</select>';
+	print ajax_combobox('search_origintype');
 	print '</td>';
 }
 if (!empty($arrayfields['m.fk_projet']['checked'])) {
