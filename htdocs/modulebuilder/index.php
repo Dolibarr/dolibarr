@@ -56,6 +56,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/modulebuilder.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/modulebuilder/class/NamingContractValidator.class.php';
+require_once DOL_DOCUMENT_ROOT.'/modulebuilder/class/RightsSyncService.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
 
@@ -302,6 +303,67 @@ function modulebuilderValidateGeneratedFile(string $destfile, NamingContract $nc
 		$safeErrors = array_map('dol_escape_htmltag', array_slice($errors, 0, 5));
 		setEventMessages(implode('<br>', $safeErrors), null, 'warnings');
 	}
+}
+
+/**
+ * Load the rights array declared by a module descriptor.
+ *
+ * @param string $module         Module name
+ * @param string $descriptorFile Path to the mod<Module>.class.php descriptor
+ * @param string $relpath        Descriptor path relative to a Dolibarr root, for dol_include_once()
+ * @return array<int,array<int,string>>|null Rights array, or null when the descriptor cannot be used
+ */
+function modulebuilderLoadDescriptorRights(string $module, string $descriptorFile, string $relpath): ?array
+{
+	global $db, $langs;
+
+	if (checkExistComment($descriptorFile, 1) < 0) {
+		setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Permissions"), "mod".$module."class.php"), null, 'warnings');
+		return null;
+	}
+
+	dol_include_once($relpath);
+	$class = 'mod'.$module;
+	if (!class_exists($class)) {
+		dol_syslog('modulebuilderLoadDescriptorRights could not load class '.$class, LOG_ERR);
+		return null;
+	}
+
+	try {
+		$moduleobj = new $class($db);
+	} catch (Exception $e) {
+		dol_syslog('modulebuilderLoadDescriptorRights failed to instantiate '.$class.': '.$e->getMessage(), LOG_ERR);
+		return null;
+	}
+	'@phan-var-force DolibarrModules $moduleobj';
+	/** @var DolibarrModules $moduleobj */
+
+	return is_array($moduleobj->rights) ? $moduleobj->rights : array();
+}
+
+/**
+ * Run a permissions sync and report its outcome to the user.
+ *
+ * @param RightsSyncCommand $cmd Sync command to run
+ * @return SyncReport Outcome — check hasConflicts() before claiming success or redirecting
+ */
+function modulebuilderSyncRights(RightsSyncCommand $cmd): SyncReport
+{
+	global $langs;
+
+	$service = new DescriptorRightsSyncService();
+	$report = $service->sync($cmd);
+
+	if ($report->hasWarnings()) {
+		$safe = array_map('dol_escape_htmltag', array_slice($report->warnings, 0, 5));
+		setEventMessages($langs->trans('ModuleBuilderPermissionsNormalized').'<br>'.implode('<br>', $safe), null, 'warnings');
+	}
+	if ($report->hasConflicts()) {
+		$safe = array_map('dol_escape_htmltag', array_slice($report->conflicts, 0, 5));
+		setEventMessages($langs->trans('ModuleBuilderPermissionsBlockNotSafe').'<br>'.implode('<br>', $safe), null, 'errors');
+	}
+
+	return $report;
 }
 
 if ($dirins && $action == 'initmodule' && $modulename) {		// Test on permission already done
@@ -1502,35 +1564,13 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on 
 				$filetogenerate[$templateFile] = $ncObj->applyToFilename($templateFile);
 			}
 		}
-		$class = null;
 		if (GETPOST('generatepermissions', 'aZ09')) {
 			$firstobjectname = 'myobject';
-			$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
-			dol_include_once($pathtofile);
-			$class = 'mod'.$module;
-			$moduleobj = null;
-			if (class_exists($class)) {
-				try {
-					$moduleobj = new $class($db);
-					'@phan-var-force DolibarrModules $moduleobj';
-					/** @var DolibarrModules $moduleobj */
-				} catch (Exception $e) {
-					$error++;
-					dol_print_error($db, $e->getMessage());
-				}
-			}
-			if (is_object($moduleobj)) {
-				$rights = $moduleobj->rights;
-			} else {
-				$rights = [];
-			}
 			$moduledescriptorfile = $destdir.'/core/modules/mod'.$module.'.class.php';
-			$checkComment = checkExistComment($moduledescriptorfile, 1);
-			if ($checkComment < 0) {
-				setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Permissions"), "mod".$module."class.php"), null, 'warnings');
-			} else {
-				$generatePerms = reWriteAllPermissions($moduledescriptorfile, $rights, null, null, $objectname, $module, -2);
-				if ($generatePerms < 0) {
+			$rights = modulebuilderLoadDescriptorRights($module, $moduledescriptorfile, $listofmodules[strtolower($module)]['moduledescriptorrelpath']);
+			if ($rights !== null) {
+				$reportperms = modulebuilderSyncRights(RightsSyncCommand::forObjectCreation($module, $moduledescriptorfile, $rights, $objectname));
+				if ($reportperms->skipped > 0) {
 					setEventMessages($langs->trans("WarningPermissionAlreadyExist", $langs->transnoentities($objectname)), null, 'warnings');
 				}
 			}
@@ -2326,7 +2366,12 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname /* && $user->has
 		if ($rewritePerms < 0) {
 			setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Permissions"), "mod".$module."class.php"), null, 'warnings');
 		} else {
-			reWriteAllPermissions($moduledescriptorfile, $permissions, null, null, $objectname, '', -1);
+			$reportperms = modulebuilderSyncRights(RightsSyncCommand::forObjectDeletion($module, $moduledescriptorfile, is_array($permissions) ? $permissions : array(), $objectname));
+			if ($reportperms->hasConflicts()) {
+				// The object files are still removed: a rights conflict must not cancel the deletion,
+				// the warning tells the user the leftover rights need a manual cleanup.
+				$rewritePerms = -1;
+			}
 		}
 		if ($rewritePerms && $rewriteMenu) {
 			// check if documentation has been generated
@@ -2634,7 +2679,6 @@ if ($dirins && $action == 'addright' && !empty($module) && empty($cancel) /* && 
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Rights")), null, 'errors');
 	}
 
-	$id = GETPOST('id', 'alpha');
 	$label = GETPOST('label', 'alpha');
 	$objectForPerms = strtolower(GETPOST('permissionObj', 'alpha'));
 	$crud = GETPOST('crud', 'alpha');
@@ -2670,17 +2714,7 @@ if ($dirins && $action == 'addright' && !empty($module) && empty($cancel) /* && 
 		}
 	}
 
-	$rightToAdd = array();
 	if (!$error) {
-		$key = $countPerms + 1;
-		//prepare right to add
-		$rightToAdd = array(
-			0 => $id,
-			1 => $label,
-			4 => $objectForPerms,
-			5 => $crud
-		);
-
 		if (isModEnabled(strtolower($module))) {
 			$result = unActivateModule(strtolower($module));
 			dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", getDolGlobalInt('MAIN_IHM_PARAMS_REV') + 1, 'chaine', 0, '', $conf->entity);
@@ -2696,15 +2730,17 @@ if ($dirins && $action == 'addright' && !empty($module) && empty($cancel) /* && 
 		if ($rewrite < 0) {
 			setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Permissions"), "mod".$module."class.php"), null, 'warnings');
 		} else {
-			reWriteAllPermissions($moduledescriptorfile, $permissions, $key, $rightToAdd, '', '', 1);
-			setEventMessages($langs->trans('PermissionAddedSuccesfuly'), null);
+			$reportperms = modulebuilderSyncRights(RightsSyncCommand::forRightAddition($module, $moduledescriptorfile, $permissions, $objectForPerms, $label, $crud));
+			if (!$reportperms->hasConflicts()) {
+				setEventMessages($langs->trans('PermissionAddedSuccesfuly'), null);
 
-			clearstatcache(true);
-			if (function_exists('opcache_invalidate')) {
-				opcache_reset();	// remove the include cache hell !
+				clearstatcache(true);
+				if (function_exists('opcache_invalidate')) {
+					opcache_reset();	// remove the include cache hell !
+				}
+				header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=permissions&module='.$module);
+				exit;
 			}
-			header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=permissions&module='.$module);
-			exit;
 		}
 	}
 }
@@ -2817,15 +2853,16 @@ if ($dirins && GETPOST('action') == 'update_right' && GETPOST('modifyright') && 
 		if ($rewrite < 0) {
 			setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Permissions"), "mod".$module."class.php"), null, 'warnings');
 		} else {
-			$rightUpdated = null;  // I not set at this point
-			reWriteAllPermissions($moduledescriptorfile, $permissions, $key, $rightUpdated, '', '', 2);
-			setEventMessages($langs->trans('PermissionUpdatedSuccesfuly'), null);
-			clearstatcache(true);
-			if (function_exists('opcache_invalidate')) {
-				opcache_reset();	// remove the include cache hell !
+			$reportperms = modulebuilderSyncRights(RightsSyncCommand::forRightUpdate($module, $moduledescriptorfile, $permissions, $key, $objectForPerms, $label, $crud));
+			if (!$reportperms->hasConflicts()) {
+				setEventMessages($langs->trans('PermissionUpdatedSuccesfuly'), null);
+				clearstatcache(true);
+				if (function_exists('opcache_invalidate')) {
+					opcache_reset();	// remove the include cache hell !
+				}
+				header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=permissions&module='.$module);
+				exit;
 			}
-			header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=permissions&module='.$module);
-			exit;
 		}
 	}
 }
@@ -2870,16 +2907,18 @@ if ($dirins && $action == 'confirm_deleteright' && !empty($module) && GETPOSTINT
 		if ($rewrite < 0) {
 			setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Permissions"), "mod".$module."class.php"), null, 'warnings');
 		} else {
-			reWriteAllPermissions($moduledescriptorfile, $permissions, $key, null, '', '', 0);
-			setEventMessages($langs->trans('PermissionDeletedSuccesfuly'), null);
+			$reportperms = modulebuilderSyncRights(RightsSyncCommand::forRightDeletion($module, $moduledescriptorfile, $permissions, $key));
+			if (!$reportperms->hasConflicts()) {
+				setEventMessages($langs->trans('PermissionDeletedSuccesfuly'), null);
 
-			clearstatcache(true);
-			if (function_exists('opcache_invalidate')) {
-				opcache_reset();	// remove the include cache hell !
+				clearstatcache(true);
+				if (function_exists('opcache_invalidate')) {
+					opcache_reset();	// remove the include cache hell !
+				}
+
+				header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=permissions&module='.$module);
+				exit;
 			}
-
-			header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=permissions&module='.$module);
-			exit;
 		}
 	}
 }
