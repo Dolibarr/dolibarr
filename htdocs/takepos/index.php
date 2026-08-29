@@ -757,6 +757,27 @@ function New() {
 	});
 }
 /**
+ * Delete (discard) the current sale, after confirmation.
+ *
+ * return   void
+ */
+function DeleteSale() {
+	if (typeof place === 'undefined') {
+		return;
+	}
+	if (confirm('<?php echo dol_escape_js($langs->transnoentitiesnoconv("ConfirmDeletionOfThisPOSSale")); ?>')) {
+		// Fully remove the draft (its tab disappears), then switch to the main cart.
+		$("#poslines").load("invoice.php?action=discardsale&token=<?php echo newToken(); ?>&place=" + place, function () {
+			place = '0';
+			invoiceid = 0;
+			ClearSearch(false);
+			$("#idcustomer").val("");
+			Refresh();
+		});
+	}
+}
+
+/**
  * Search products
  *
  * @param   keyCodeForEnter     Key code for "enter" or '' if not
@@ -1607,7 +1628,9 @@ if (getDolGlobalString('TAKEPOS_WEIGHING_SCALE')) {
 	$menus[$r++] = array('title' => '<span class="fa fa-balance-scale pictofixedwidth"></span><div class="trunc">'.$langs->trans("WeighingScale").'</div>', 'action' => 'WeighingScale();');
 }
 
-// Each menu entry supports: 'title' (html), 'action' (js), 'style' (inline css) and 'class' (extra css class on the button).
+// Button to delete (discard) the current sale
+$menus[$r++] = array('title' => '<span class="fa fa-trash-alt paddingrightonly"></span><div class="trunc">'.$langs->trans("DeleteSale").'</div>', 'action' => 'DeleteSale();', 'style' => 'background-color: #d9534f !important; color: #000 !important;');
+
 $parameters = array('menus' => $menus);
 $reshook = $hookmanager->executeHooks('ActionButtons', $parameters);
 if ($reshook == 0) {  //add buttons

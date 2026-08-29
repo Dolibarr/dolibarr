@@ -5090,7 +5090,7 @@ class Form
 				$i++;
 			}
 
-			$parameters = array('context' => 'paymentterm');
+			$parameters = array('dictionary' => 'paymentterm');
 			$reshook = $hookmanager->executeHooks('loadDictionaryCache', $parameters, $this); // Note that $action and $object may have been modified by hook
 			if (empty($reshook)) {
 				if (is_array($hookmanager->resArray) && count($hookmanager->resArray)) {
@@ -5369,7 +5369,7 @@ class Form
 				$i++;
 			}
 
-			$parameters = array('context' => 'paymenttype');
+			$parameters = array('dictionary' => 'paymenttype');
 			$reshook = $hookmanager->executeHooks('loadDictionaryCache', $parameters, $this); // Note that $action and $object may have been modified by hook
 			if (empty($reshook)) {
 				if (is_array($hookmanager->resArray) && count($hookmanager->resArray)) {
@@ -7884,7 +7884,7 @@ class Form
 	public function load_cache_vatrates($country_code)
 	{
 		// phpcs:enable
-		global $langs, $user;
+		global $langs, $user, $hookmanager;
 
 		$num = count($this->cache_vatrates);
 		if ($num > 0) {
@@ -7893,7 +7893,9 @@ class Form
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		$sql = "SELECT t.rowid, t.type_vat, t.code, t.taux, t.localtax1, t.localtax1_type, t.localtax2, t.localtax2_type, t.recuperableonly, t.einvoice_vatex";
+		// entity and fk_pays are returned so a hook on loadDictionaryCache can tell two rows apart
+		// when the dictionary is read across entities (most rows carry an empty code)
+		$sql = "SELECT t.rowid, t.entity, t.fk_pays, t.type_vat, t.code, t.taux, t.localtax1, t.localtax1_type, t.localtax2, t.localtax2_type, t.recuperableonly, t.einvoice_vatex";
 		$sql .= " FROM ".$this->db->prefix()."c_tva as t, ".$this->db->prefix()."c_country as c";
 		$sql .= " WHERE t.fk_pays = c.rowid";
 		$sql .= " AND t.active > 0";
@@ -7910,6 +7912,8 @@ class Form
 
 					$tmparray = array();
 					$tmparray['rowid']			= (int) $obj->rowid;
+					$tmparray['entity']			= (int) $obj->entity;
+					$tmparray['fk_pays']		= (int) $obj->fk_pays;
 					$tmparray['type_vat']		= ($obj->type_vat <= 0 ? 0 : $obj->type_vat);	// Some version have type_vat corrupted with value -1
 					$tmparray['code']			= $obj->code;
 					$tmparray['txtva']			= $obj->taux;
@@ -7940,7 +7944,17 @@ class Form
 					$this->cache_vatrates[$obj->rowid] = $tmparray;
 				}
 
-				return $num;
+				$parameters = array('dictionary' => 'vatrate', 'country_code' => $country_code);
+				$reshook = $hookmanager->executeHooks('loadDictionaryCache', $parameters, $this); // Note that $action and $object may have been modified by hook
+				if (empty($reshook)) {
+					if (is_array($hookmanager->resArray) && count($hookmanager->resArray)) {
+						$this->cache_vatrates = array_merge($this->cache_vatrates, $hookmanager->resArray);
+					}
+				} else {
+					$this->cache_vatrates = $hookmanager->resArray;
+				}
+
+				return count($this->cache_vatrates);
 			} else {
 				$this->error = '<span class="error">';
 				$this->error .= $langs->trans("ErrorNoVATRateDefinedForSellerCountry", $country_code);
