@@ -1397,6 +1397,7 @@ class Facture extends CommonInvoice
 
 		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';
+		$object->context['clonefromref'] = $objFrom->ref;
 		$result = $object->create($user);
 
 		if ($result < 0) {
@@ -1429,7 +1430,7 @@ class Facture extends CommonInvoice
 			}
 		}
 
-		unset($object->context['createfromclone']);
+		unset($object->context['createfromclone'], $object->context['clonefromref']);
 
 		// End
 		if (!$error) {

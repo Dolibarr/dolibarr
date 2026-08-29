@@ -1351,6 +1351,7 @@ class Commande extends CommonOrder
 
 		// Create clone
 		$this->context['createfromclone'] = 'createfromclone';
+		$this->context['clonefromref'] = $objFrom->ref;
 		$result = $this->create($user);
 		if ($result < 0) {
 			$error++;
@@ -1385,7 +1386,7 @@ class Commande extends CommonOrder
 			}
 		}
 
-		unset($this->context['createfromclone']);
+		unset($this->context['createfromclone'], $this->context['clonefromref']);
 
 		// End
 		if (!$error) {

@@ -1488,6 +1488,7 @@ class Propal extends CommonObject
 
 		// Load source object
 		$object->fetch($this->id);
+		$cloneFromRef = (string) $object->ref;
 
 		$objsoc = new Societe($this->db);
 
@@ -1609,6 +1610,7 @@ class Propal extends CommonObject
 		}
 		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';
+		$object->context['clonefromref'] = $cloneFromRef;
 		$result = $object->create($user);
 		if ($result < 0) {
 			$this->setErrorsFromObject($object);
@@ -1644,7 +1646,7 @@ class Propal extends CommonObject
 			}
 		}
 
-		unset($object->context['createfromclone']);
+		unset($object->context['createfromclone'], $object->context['clonefromref']);
 
 		// End
 		if (!$error) {
