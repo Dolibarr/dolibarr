@@ -184,6 +184,7 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 								"properties" => [
 									"product_id" => ["type" => "integer", "default" => 0, "description" => "Product ID (0 if not found)"],
 									"product_ref" => ["type" => "string", "description" => "Product reference/SKU as written on the source document (preferred when the numeric product_id is unknown; matched against catalog refs, barcodes and labels)"],
+									"barcode" => ["type" => "string", "description" => "Product barcode (EAN13/UPC) as written on the source document; used to enrich a product created on the fly"],
 									"description" => ["type" => "string", "description" => "Product name or description"],
 									"quantity" => ["type" => "number", "default" => 1, "description" => "Quantity ordered"],
 									"unit_price" => ["type" => "number", "description" => "Selling price per unit (optional)"],
@@ -227,6 +228,7 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 								"properties" => [
 									"product_id" => ["type" => "integer", "default" => 0],
 									"product_ref" => ["type" => "string", "description" => "Product reference/SKU as written on the source document (preferred when the numeric product_id is unknown; matched against catalog refs, barcodes and labels)"],
+									"barcode" => ["type" => "string", "description" => "Product barcode (EAN13/UPC) as written on the source document; used to enrich a product created on the fly"],
 									"description" => ["type" => "string"],
 									"quantity" => ["type" => "number", "default" => 1],
 									"unit_price" => ["type" => "number"],
@@ -274,6 +276,7 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 								"properties" => [
 									"product_id" => ["type" => "integer", "default" => 0],
 									"product_ref" => ["type" => "string", "description" => "Product reference/SKU as written on the source document (preferred when the numeric product_id is unknown; matched against catalog refs, barcodes and labels)"],
+									"barcode" => ["type" => "string", "description" => "Product barcode (EAN13/UPC) as written on the source document; used to enrich a product created on the fly"],
 									"description" => ["type" => "string"],
 									"quantity" => ["type" => "number", "default" => 1],
 									"unit_price" => ["type" => "number"],
@@ -297,6 +300,7 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 						"parent_id" => ["type" => "integer"],
 						"product_id" => ["type" => "integer", "default" => 0],
 									"product_ref" => ["type" => "string", "description" => "Product reference/SKU as written on the source document (preferred when the numeric product_id is unknown; matched against catalog refs, barcodes and labels)"],
+									"barcode" => ["type" => "string", "description" => "Product barcode (EAN13/UPC) as written on the source document; used to enrich a product created on the fly"],
 						"description" => ["type" => "string"],
 						"quantity" => ["type" => "number", "default" => 1],
 						"unit_price" => ["type" => "number"],
@@ -632,6 +636,9 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 			$newprod->type = Product::TYPE_PRODUCT;
 			$newprod->status = 1;
 			$newprod->status_buy = 1;
+			if (!empty($args['barcode'])) {
+				$newprod->barcode = trim((string) $args['barcode']);
+			}
 			if ($price !== null) {
 				$newprod->cost_price = (float) $price;
 			}
