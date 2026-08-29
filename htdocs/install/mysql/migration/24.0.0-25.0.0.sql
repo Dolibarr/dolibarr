@@ -97,12 +97,21 @@ UPDATE llx_const SET value = 'eratosthene' WHERE value = 'einstein' AND name ='C
 UPDATE llx_document_model SET nom = 'eratosthene' WHERE nom = 'einstein' AND type = 'order' AND NOT EXISTS (SELECT subquery.nom FROM (SELECT nom, entity FROM llx_document_model WHERE nom = 'eratosthene' AND type = 'order') as subquery WHERE subquery.entity = entity);
 DELETE FROM llx_document_model WHERE nom = 'einstein' AND type = 'order';
 
+-- Index fk_statut on llx_commande for order status filtering (llx_facture already has idx_facture_fk_statut)
+ALTER TABLE llx_commande ADD INDEX idx_commande_fk_statut (fk_statut);
+
 -- Indexes on llx_product for the most common product/service list filters
 ALTER TABLE llx_product ADD INDEX idx_product_entity_tosell (entity, tosell);
 ALTER TABLE llx_product ADD INDEX idx_product_entity_tobuy (entity, tobuy);
 ALTER TABLE llx_product ADD INDEX idx_product_datec (datec);
 ALTER TABLE llx_product ADD INDEX idx_product_tms (tms);
 
+-- Optional fine position for rights_def, used by rights filed into another module's
+-- section via module_origin (KEY_MODULE) to sort next to a given native right of that module
+ALTER TABLE llx_rights_def ADD COLUMN right_position integer DEFAULT 0 NOT NULL AFTER family_position;
+
+-- Add supplier ref on reception lines (standalone receptions)
+ALTER TABLE llx_receptiondet_batch ADD COLUMN ref_fourn varchar(128) NULL AFTER cost_price;
 
 
 

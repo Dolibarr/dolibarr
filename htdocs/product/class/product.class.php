@@ -5633,7 +5633,6 @@ class Product extends CommonObject
 			$multiply = 1;
 		}
 
-		//var_dump($prod);
 		foreach ($prod as $id_product => $desc_pere) {    // $id_product is 0 (first call starting with root top) or an id of a sub_product
 			if (is_array($desc_pere)) {    // If desc_pere is an array, this means it's a child
 				$id = (!empty($desc_pere[0]) ? $desc_pere[0] : '');
@@ -5702,7 +5701,6 @@ class Product extends CommonObject
 				}
 			}
 		}
-		//var_dump($res);
 		return $this->res;
 	}
 
@@ -6187,7 +6185,7 @@ class Product extends CommonObject
 	 * @param  int       $hidedetails Hide details of lines
 	 * @param  int       $hidedesc    Hide description
 	 * @param  int       $hideref     Hide ref
-	 * @return int                         0 if KO, 1 if OK
+	 * @return int                    Return integer < 0 if KO, 0 = no doc generated, > 0 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
@@ -6198,12 +6196,21 @@ class Product extends CommonObject
 
 		// Set the model to the name of the model to use
 		if (!dol_strlen($modele)) {
-			$modele = getDolGlobalString('PRODUCT_ADDON_PDF', 'strato');
+			$modele = '';	// No doc template/generation by default
+
+			if (!empty($this->model_pdf)) {
+				$modele = $this->model_pdf;
+			} elseif (getDolGlobalString('PRODUCT_ADDON_PDF')) {
+				$modele = getDolGlobalString('PRODUCT_ADDON_PDF');
+			}
 		}
 
-		$modelpath = "core/modules/product/doc/";
-
-		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+		if (empty($modele)) {
+			return 0;
+		} else {
+			$modelpath = "core/modules/product/doc/";
+			return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+		}
 	}
 
 	/**
