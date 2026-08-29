@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2010  Laurent Destailleur 	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009  Regis Houssin       	<regis.houssin@inodbox.com>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This file is an example to follow to add your own email selector inside
  * the Dolibarr email tool.
@@ -84,7 +84,7 @@ class mailing_partnership extends MailingTargets
 	public function add_to_target($mailing_id)
 	{
 		// phpcs:enable
-		global $conf, $langs;
+		global $langs;
 
 		$cibles = array();
 		$addDescription = '';
@@ -105,9 +105,7 @@ class mailing_partnership extends MailingTargets
 		if (GETPOSTISSET('filter_status_partnership') && GETPOSTINT('filter_status_partnership') >= 0) {
 			$sql .= " AND p.status = ".((int) GETPOSTINT('filter_status_partnership'));
 		}
-		if (empty($this->evenunsubscribe)) {
-			$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = s.email and mu.entity = ".((int) $conf->entity).")";
-		}
+		$sql .= $this->getSqlToExcludeUnsubscribed('s.email');
 
 		$sql .= " UNION ";
 
@@ -127,9 +125,7 @@ class mailing_partnership extends MailingTargets
 		if (GETPOSTISSET('filter_status_partnership') && GETPOSTINT('filter_status_partnership') >= 0) {
 			$sql .= " AND p.status = ".((int) GETPOSTINT('filter_status_partnership'));
 		}
-		if (empty($this->evenunsubscribe)) {
-			$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = s.email and mu.entity = ".((int) $conf->entity).")";
-		}
+		$sql .= $this->getSqlToExcludeUnsubscribed('s.email');
 
 		$sql .= " ORDER BY email";
 
@@ -205,15 +201,11 @@ class mailing_partnership extends MailingTargets
 	 */
 	public function getNbOfRecipients($sql = '')
 	{
-		global $conf;
-
 		$sql = "SELECT count(distinct(s.email)) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."partnership as p, ".MAIN_DB_PREFIX."societe as s";
 		$sql .= " WHERE s.rowid = p.fk_soc AND s.email <> ''";
 		$sql .= " AND s.entity IN (".getEntity('societe').")";
-		if (empty($this->evenunsubscribe)) {
-			$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = s.email and mu.entity = ".((int) $conf->entity).")";
-		}
+		$sql .= $this->getSqlToExcludeUnsubscribed('s.email');
 
 		$sql .= " UNION ";
 
@@ -221,9 +213,7 @@ class mailing_partnership extends MailingTargets
 		$sql .= " FROM ".MAIN_DB_PREFIX."partnership as p, ".MAIN_DB_PREFIX."adherent as s";
 		$sql .= " WHERE s.rowid = p.fk_member AND s.email <> ''";
 		$sql .= " AND s.entity IN (".getEntity('member').")";
-		if (empty($this->evenunsubscribe)) {
-			$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = s.email and mu.entity = ".((int) $conf->entity).")";
-		}
+		$sql .= $this->getSqlToExcludeUnsubscribed('s.email');
 
 		//print $sql;
 
