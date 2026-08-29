@@ -381,6 +381,14 @@ try {
 		if (!is_string($model) || $model === '') {
 			$model = (string) $defModel;
 		}
+		// Optional per-request model override sent by the chat model picker.
+		// Sanitized to the provider model-id charset; empty/invalid = keep default.
+		if (!empty($data['model']) && is_string($data['model'])) {
+			$reqModel = preg_replace('/[^a-zA-Z0-9._:\/-]/', '', $data['model']);
+			if ($reqModel !== '' && strlen($reqModel) <= 100) {
+				$model = $reqModel;
+			}
+		}
 		$adapterType = $servicesList[$serviceKey]['adapter_type'] ?? 'openai';
 
 

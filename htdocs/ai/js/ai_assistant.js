@@ -58,6 +58,7 @@ export function initAiAssistant(container) {
 
     const clearBtn = container.querySelector('#clear-btn');
     const engineSelect = container.querySelector('#engine-select');
+    const modelSelect = container.querySelector('#model-select');
     const input = container.querySelector('#user-input');
     const chat = container.querySelector('#chat-history');
     const statusBar = container.querySelector('#status-bar');
@@ -126,6 +127,9 @@ export function initAiAssistant(container) {
 
     // Initialize Doc Parsing UI Listeners
     initDocParsingUI();
+
+    // Initialize the model picker (presets + dynamic provider model list)
+    initModelPicker();
 
     // Listen for custom event to trigger PDF download from buttons
     // (scoped to the container: each chat instance reacts only to its own buttons)
@@ -378,6 +382,77 @@ export function initAiAssistant(container) {
         s = s.replace(/(^|\n)[-•]\s/g, '$1• ');
         s = s.replace(/\n/g, '<br>');
         return s;
+    }
+
+    // =========================================================================
+    // MODEL PICKER
+    // =========================================================================
+
+    let modelList = [];   // model ids fetched from the provider (via list_models.php)
+
+    /** Populate the model pill: Auto + presets, then the provider's model list. */
+    function initModelPicker() {
+        if (!modelSelect) return;
+        let saved = '';
+        try { saved = localStorage.getItem('aiModelChoice') || ''; } catch (e) { /* private mode */ }
+
+        const presets = [
+            ['preset:fast', '⚡ ' + t('AIModelFast')],
+            ['preset:balanced', '⚖️ ' + t('AIModelBalanced')],
+            ['preset:deep', '🧠 ' + t('AIModelDeep')]
+        ];
+        presets.forEach(([val, label]) => {
+            const o = document.createElement('option');
+            o.value = val; o.textContent = label;
+            modelSelect.appendChild(o);
+        });
+
+        const applySaved = () => {
+            if (saved && Array.prototype.some.call(modelSelect.options, (o) => o.value === saved)) {
+                modelSelect.value = saved;
+            }
+        };
+        applySaved();
+
+        fetch(epUrl('../ajax/list_models.php'))
+            .then((r) => r.json())
+            .then((j) => {
+                modelList = (j && j.models) || [];
+                if (modelList.length) {
+                    const grp = document.createElement('optgroup');
+                    grp.label = '──';
+                    modelList.forEach((id) => {
+                        const o = document.createElement('option');
+                        o.value = id; o.textContent = id;
+                        grp.appendChild(o);
+                    });
+                    modelSelect.appendChild(grp);
+                }
+                applySaved();
+            })
+            .catch(() => { /* provider unreachable: keep Auto + presets */ });
+
+        modelSelect.addEventListener('change', () => {
+            try { localStorage.setItem('aiModelChoice', modelSelect.value); } catch (e) { /* ignore */ }
+        });
+    }
+
+    /**
+     * Resolve the picker value to a concrete model id ('' = provider default).
+     * Presets map onto the dynamic list with a heuristic regex on the id.
+     */
+    function resolveModel() {
+        if (!modelSelect) return '';
+        const v = modelSelect.value;
+        if (!v) return '';
+        if (v.indexOf('preset:') === 0) {
+            const kind = v.substring(7);
+            const re = (kind === 'fast') ? /haiku|mini|flash|lite|instant/i
+                : ((kind === 'balanced') ? /sonnet|4o|medium|small/i : /opus|o1|pro|large/i);
+            const hit = modelList.find((id) => re.test(id));
+            return hit || '';
+        }
+        return v;
     }
 
     // =========================================================================
@@ -1265,9 +1340,10 @@ export function initAiAssistant(container) {
         appendTyping();
         const loadingMsg = chat.lastElementChild;
         try {
+            const chosenModel = resolveModel();
             const intentRes = await fetch(epUrl('parse_intent.php'), {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ query: sentQuery })
+                body: JSON.stringify(chosenModel ? { query: sentQuery, model: chosenModel } : { query: sentQuery })
             });
             const intent = await intentRes.json();
             loadingMsg.remove();
