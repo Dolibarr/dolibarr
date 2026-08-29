@@ -31,7 +31,9 @@ env:
   GITHUB_JSON: ${{ toJSON(github) }}  # Helps in debugging Github Action
   DB_NAME: dolibarr
   DB_HOST: 127.0.0.1
-  DB_PREFIX: llx_
+  # Deliberately NOT "llx_": any table reference hardcoded as "llx_xxx"
+  # instead of MAIN_DB_PREFIX / $db->prefix() will then fail loudly.
+  DB_PREFIX: dolici_
   # Dolibarr admin account created by the installer
   DOLI_ADMIN_LOGIN: admin
   # Must be "admin": the WebservicesXxxTest SOAP clients log in as admin/admin
