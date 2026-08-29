@@ -110,6 +110,8 @@ ALTER TABLE llx_product ADD INDEX idx_product_tms (tms);
 -- section via module_origin (KEY_MODULE) to sort next to a given native right of that module
 ALTER TABLE llx_rights_def ADD COLUMN right_position integer DEFAULT 0 NOT NULL AFTER family_position;
 
+-- Add supplier ref on reception lines (standalone receptions)
+ALTER TABLE llx_receptiondet_batch ADD COLUMN ref_fourn varchar(128) NULL AFTER cost_price;
 
 
 
