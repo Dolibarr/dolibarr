@@ -1853,7 +1853,7 @@ function dol_delete_dir_recursive($dir, $count = 0, $nophperrors = 0, $onlysub =
 					if (is_dir(dol_osencode("$dir/$item")) && !is_link(dol_osencode("$dir/$item"))) {
 						$count = dol_delete_dir_recursive("$dir/$item", $count, $nophperrors, 0, $countdeleted, $indexdatabase, $nolog, ($level + 1));
 					} else {
-						chmod(dol_osencode("$dir/$item"), 0755);
+						dolChmod(dol_osencode("$dir/$item"));	// Try to set permission to write on file
 						$result = dol_delete_file("$dir/$item", 1, $nophperrors, 0, null, false, $indexdatabase, $nolog);
 						$count++;
 						if ($result) {
@@ -2161,8 +2161,6 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $updatesessionor
 				$destfile = dol_sanitizeFileName($info['filename'].($info['extension'] != '' ? ('.'.strtolower($info['extension'])) : ''));
 
 				// Check extension is allowed for upload.
-				// Guard against partial upgrades where files.lib.php has been refreshed
-				// but functions.lib.php has not been reloaded with getExecutableContent() yet.
 				$defaultexecutableextensions = function_exists('getExecutableContent') ? implode(',', getExecutableContent()) : 'htm,html,shtml,js,phar,php,php3,php4,php5,phtml,pht,pl,py,cgi,ksh,sh,bash,bat,cmd,wpk,exe';
 				$fileextensionrestriction = getDolGlobalString("MAIN_FILE_EXTENSION_UPLOAD_RESTRICTION", $defaultexecutableextensions);
 				if (!empty($fileextensionrestriction)) {
