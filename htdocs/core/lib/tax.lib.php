@@ -546,10 +546,11 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 		$sql .= " d.total_localtax1 as total_localtax1, d.total_localtax2 as total_localtax2, ";
 		$sql .= " e.date_debut as date_start, e.date_fin as date_end, e.fk_user_author,";
 		$sql .= " e.ref as facnum, e.total_ttc as ftotal_ttc, e.date_create, d.fk_c_type_fees as type,";
-		$sql .= " p.fk_bank as payment_id, p.amount as payment_amount, p.rowid as pid, e.ref as pref";
+		$sql .= " p.fk_bank as payment_id, per.amount as payment_amount, p.rowid as pid, e.ref as pref";
 		$sql .= " FROM ".MAIN_DB_PREFIX."expensereport as e";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."expensereport_det as d ON d.fk_expensereport = e.rowid ";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."payment_expensereport as p ON p.fk_expensereport = e.rowid ";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paymentexpensereport_expensereport as per ON per.fk_expensereport = e.rowid ";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."payment_expensereport as p ON p.rowid = per.fk_payment ";
 		$sql .= " WHERE e.entity = ".((int) $conf->entity);
 		$sql .= " AND e.fk_statut IN (" . ExpenseReport::STATUS_CLOSED . ")";
 		if ($y && $m) {
@@ -571,7 +572,7 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 		if (getDolGlobalString('MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS')) {
 			$sql .= " AND (d.".$db->sanitize($f_rate)." <> 0 OR d.total_tva <> 0)";
 		}
-		$sql .= " ORDER BY e.rowid";
+		$sql .= " ORDER BY e.rowid, d.rowid, p.rowid";
 
 		dol_syslog("Tax.lib.php::tax_by_thirdparty", LOG_DEBUG);
 		$resql = $db->query($sql);
@@ -1083,10 +1084,11 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 		$sql .= " d.total_localtax1 as total_localtax1, d.total_localtax2 as total_localtax2, ";
 		$sql .= " e.date_debut as date_start, e.date_fin as date_end, e.fk_user_author,";
 		$sql .= " e.ref as facnum, e.ref as pref, e.total_ttc as ftotal_ttc, e.date_create, d.fk_c_type_fees as type,";
-		$sql .= " p.fk_bank as payment_id, p.amount as payment_amount, p.rowid as pid";
+		$sql .= " p.fk_bank as payment_id, per.amount as payment_amount, p.rowid as pid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."expensereport as e";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."expensereport_det as d ON d.fk_expensereport = e.rowid";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."payment_expensereport as p ON p.fk_expensereport = e.rowid";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paymentexpensereport_expensereport as per ON per.fk_expensereport = e.rowid";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."payment_expensereport as p ON p.rowid = per.fk_payment";
 		$sql .= " WHERE e.entity = ".((int) $conf->entity);
 		$sql .= " AND e.fk_statut IN (" . ExpenseReport::STATUS_CLOSED . ")";
 		if ($y && $m) {
@@ -1108,7 +1110,7 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 		if (getDolGlobalString('MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS')) {
 			$sql .= " AND (d.".$db->sanitize($f_rate)." <> 0 OR d.total_tva <> 0)";
 		}
-		$sql .= " ORDER BY e.rowid";
+		$sql .= " ORDER BY e.rowid, d.rowid, p.rowid";
 
 		dol_syslog("Tax.lib.php::tax_by_rate", LOG_DEBUG);
 		$resql = $db->query($sql);

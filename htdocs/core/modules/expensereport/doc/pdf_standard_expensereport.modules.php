@@ -1069,15 +1069,16 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 		// Loop on each payment
 		// TODO create method on expensereport class to get payments
 		// Payments already done (from payment on this expensereport)
-		$sql = "SELECT p.rowid, p.num_payment, p.datep as dp, p.amount, p.fk_bank,";
+		$sql = "SELECT p.rowid, p.num_payment, p.datep as dp, per.amount, p.fk_bank,";
 		$sql .= "c.code as p_code, c.libelle as payment_type,";
 		$sql .= "ba.rowid as baid, ba.ref as baref, ba.label, ba.number as banumber, ba.account_number, ba.fk_accountancy_journal";
-		$sql .= " FROM ".MAIN_DB_PREFIX."expensereport as e, ".MAIN_DB_PREFIX."payment_expensereport as p";
+		$sql .= " FROM ".MAIN_DB_PREFIX."expensereport as e";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."paymentexpensereport_expensereport as per ON per.fk_expensereport = e.rowid";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."payment_expensereport as p ON p.rowid = per.fk_payment";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_typepayment = c.id";
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON b.fk_account = ba.rowid';
 		$sql .= " WHERE e.rowid = ".((int) $object->id);
-		$sql .= " AND p.fk_expensereport = e.rowid";
 		$sql .= ' AND e.entity IN ('.getEntity('expensereport').')';
 		$sql .= " ORDER BY dp";
 

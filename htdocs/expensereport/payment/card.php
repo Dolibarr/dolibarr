@@ -166,14 +166,16 @@ print dol_get_fiche_end();
 
 
 /*
- * List of expense report paid
+ * List of expense reports paid
  */
 
 $sql = 'SELECT er.rowid as eid, er.paid, er.total_ttc, per.amount';
-$sql .= ' FROM '.MAIN_DB_PREFIX.'payment_expensereport as per,'.MAIN_DB_PREFIX.'expensereport as er';
-$sql .= ' WHERE per.fk_expensereport = er.rowid';
+$sql .= ' FROM '.MAIN_DB_PREFIX.'paymentexpensereport_expensereport as per';
+$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'expensereport as er';
+$sql .= ' ON er.rowid = per.fk_expensereport';
+$sql .= ' WHERE per.fk_payment = '.((int) $id);
 $sql .= ' AND er.entity IN ('.getEntity('expensereport').')';
-$sql .= ' AND per.rowid = '.((int) $id);
+$sql .= ' ORDER BY per.rowid';
 
 dol_syslog("expensereport/payment/card.php", LOG_DEBUG);
 $resql = $db->query($sql);
@@ -216,7 +218,14 @@ if ($resql) {
 			print '<td class="right">'.price($objp->amount).'</td>';
 
 			// Remain to pay
-			print '<td class="right">'.price($objp->total_ttc - $objp->amount).'</td>';
+			$totalpaidonexpensereport = $expensereport->getSumPayments();
+
+			$remaintopay = price2num(
+				$objp->total_ttc - $totalpaidonexpensereport,
+				'MT'
+			);
+
+			print '<td class="right">'.price($remaintopay).'</td>';
 
 			// Status
 			print '<td class="center">'.$expensereport->getLibStatut(4).'</td>';

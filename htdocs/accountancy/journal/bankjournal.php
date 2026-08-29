@@ -1661,8 +1661,10 @@ function getSourceDocRef($val, $typerecord)
 		$ref = $langs->transnoentitiesnoconv("SupplierInvoice");
 	} elseif ($typerecord == 'payment_expensereport') {
 		$sqlmid = 'SELECT e.rowid as id, e.ref';
-		$sqlmid .= " FROM ".MAIN_DB_PREFIX."payment_expensereport as pe, ".MAIN_DB_PREFIX."expensereport as e";
-		$sqlmid .= " WHERE pe.rowid=".((int) $val["paymentexpensereport"])." AND pe.fk_expensereport = e.rowid";
+		$sqlmid .= " FROM ".MAIN_DB_PREFIX."paymentexpensereport_expensereport as per";
+		$sqlmid .= " INNER JOIN ".MAIN_DB_PREFIX."expensereport as e ON e.rowid = per.fk_expensereport";
+		$sqlmid .= " WHERE per.fk_payment=".((int) $val["paymentexpensereport"]);
+		$sqlmid .= " ORDER BY per.rowid";
 		$ref = $langs->transnoentitiesnoconv("ExpenseReport");
 	} elseif ($typerecord == 'payment_salary') {
 		$sqlmid = 'SELECT s.rowid as ref';
