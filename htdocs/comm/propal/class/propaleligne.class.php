@@ -20,6 +20,7 @@
  * Copyright (C) 2022      	Gauthier VERDOL     	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2023		William Mead			<william.mead@manchenumerique.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Lionel Vessiller		<lvessiller@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -366,19 +367,6 @@ class PropaleLigne extends CommonObjectLine
 	}
 
 	/**
-	 *	Return true if the unit price was originally entered including tax (TTC mode).
-	 *	Useful to preserve the entry mode on no-op edits and to avoid total drift.
-	 *	Note: cannot use !empty() because MySQL returns doubles as strings like "0.00000000"
-	 *	which empty() treats as non-empty.
-	 *
-	 *	@return	bool
-	 */
-	public function wasEnteredIncludingTax()
-	{
-		return isset($this->subprice_ttc) && (float) $this->subprice_ttc != 0;
-	}
-
-	/**
 	 *	Retrieve the propal line object
 	 *
 	 *	@param	int		$rowid		Propal line id
@@ -522,6 +510,9 @@ class PropaleLigne extends CommonObjectLine
 		}
 		if (empty($this->total_localtax2)) {
 			$this->total_localtax2 = 0;
+		}
+		if (empty($this->subprice_ttc)) {
+			$this->subprice_ttc = 0;
 		}
 		if (empty($this->rang)) {
 			$this->rang = 0;
@@ -774,6 +765,9 @@ class PropaleLigne extends CommonObjectLine
 		}
 		if (empty($this->subprice)) {
 			$this->subprice = 0;
+		}
+		if (empty($this->subprice_ttc)) {
+			$this->subprice_ttc = 0;
 		}
 		if (empty($this->pa_ht)) {
 			$this->pa_ht = 0;

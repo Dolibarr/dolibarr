@@ -3,7 +3,7 @@
  * Copyright (C) 2014-2016  Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -337,7 +337,6 @@ class Inventory extends CommonObject
 					} else {
 						$inventoryline->qty_stock = $obj->reel;
 					}
-					//var_dump($obj->batch.' '.$obj->qty.' '.$obj->reel.' '.$this->error);exit;
 
 					$resultline = $inventoryline->create($user);
 					if ($resultline <= 0) {

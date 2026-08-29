@@ -155,9 +155,6 @@ ErrNoZipEngine=इस PHP में %s फ़ाइल को ज़िप/अ�
 ErrorFileMustBeADolibarrPackage=फ़ाइल %s एक Dolibarr ज़िप पैकेज होना चाहिए
 ErrorModuleFileRequired=आपको एक Dolibarr मॉड्यूल पैकेज फ़ाइल का चयन करना होगा
 ErrorFailToDownloadModuleFromSource=Failed to download the module from the source. Please check your internet connection or the source URL and try again.
-extModuleConfirmInstallTitle = Confirm module installation
-extModuleConfirmInstallText  = You are about to install the following module:<br><br><b>Name:</b> %s<br><b>Version:</b> %s<br><b>Reference:</b> %s<br><b>Last update:</b> %s<br><br>This action is not reversible, Do you confirm the installation of this module?
-install=Install
 ErrorPhpCurlNotInstalled=PHP CURL स्थापित नहीं है, यह Paypal से बात करने के लिए आवश्यक है
 ErrorFailedToAddToMailmanList=%s रिकॉर्ड को मेलमैन सूची %s या SPIP बेस में जोड़ने में विफल
 ErrorFailedToRemoveToMailmanList=%s रिकॉर्ड को मेलमैन सूची %s या SPIP बेस से हटाने में विफल
@@ -443,6 +440,7 @@ WarningModuleAffiliatedToAReportedCompany=Warning, this module has been reported
 WarningModuleAffiliatedToAPiratPlatform=%s जैसे संदिग्ध गैर-आधिकारिक प्लेटफ़ॉर्म से मॉड्यूल (भुगतान या निःशुल्क) प्राप्त करते समय सावधान रहें
 WarningDNSServerNotAvailable=Warning, DNS server not available
 WarningSecureKeyNotSet=The value fo the securekey must not be empty
+WarningFullPathWasNotFoundSoWeUseAnAlternativeValue=Note: Full path was not found so we used the alternative value <b>%s</b>
 
 SwissQrOnlyVIR = स्विसक्यूआर चालान केवल उन चालानों पर जोड़ा जा सकता है जिनका भुगतान क्रेडिट ट्रांसफर भुगतान से किया जाना निर्धारित है।
 SwissQrCreditorAddressInvalid = ऋणदाता का पता अमान्य है (क्या ज़िप और शहर सेट है? (%s)

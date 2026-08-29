@@ -207,8 +207,8 @@ class Paiement extends CommonObject
 	 */
 	public $bank_line;
 
-	// fk_paiement dans llx_paiement est l'id du type de paiement (7 pour CHQ, ...)
-	// fk_paiement dans llx_paiement_facture est le rowid du paiement
+	// fk_paiement in llx_paiement is the id of the payment type (7 for CHQ, ...)
+	// fk_paiement in llx_paiement_facture is rowid of payment
 	/**
 	 * @var int payment id
 	 */
@@ -659,7 +659,7 @@ class Paiement extends CommonObject
 			dol_syslog(get_class($this).'::create Now we call the triggers if no error (error = '.$error.')', LOG_DEBUG);
 
 			if (!$error) {    // All payments into $this->amounts were recorded without errors
-				// Appel des triggers
+				// Call triggers
 				$result = $this->call_trigger('PAYMENT_CUSTOMER_CREATE', $user);
 				if ($result < 0) {
 					$error++;
@@ -875,8 +875,8 @@ class Paiement extends CommonObject
 				(float) $totalamount_main_currency
 			);
 
-			// Mise a jour fk_bank dans llx_paiement
-			// On connait ainsi le paiement qui a genere l'ecriture bancaire
+			// Update fk_bank in llx_paiement
+			// This way we know the payment that generated the bank entry
 			if ($bank_line_id > 0) {
 				$result = $this->update_fk_bank($bank_line_id);
 				if ($result <= 0) {
@@ -970,7 +970,7 @@ class Paiement extends CommonObject
 				}
 
 				if (!$error && !$notrigger) {
-					// Appel des triggers
+					// Call triggers
 					$result = $this->call_trigger('PAYMENT_ADD_TO_BANK', $user);
 					if ($result < 0) {
 						$error++;
@@ -1387,6 +1387,36 @@ class Paiement extends CommonObject
 
 
 	/**
+	 * Return array with content of the tooltip, so the getNomUrl() tooltip becomes hookable
+	 * (a module can toggle, reorder or add entries through the getTooltipContent hook).
+	 *
+	 * @param  array<string,mixed>  $params  Params to construct tooltip data
+	 * @return array<string,string>          Data to show in tooltip
+	 */
+	public function getTooltipContentArray($params)
+	{
+		global $conf, $langs;
+
+		$datas = array();
+		$datas['picto'] = img_picto('', $this->picto).' <u>'.$langs->trans("Payment").'</u>';
+		$datas['ref'] = '<br><strong>'.$langs->trans("Ref").':</strong> '.$this->ref;
+		$dateofpayment = ($this->datepaye ? $this->datepaye : $this->date);
+		if ($dateofpayment) {
+			$tmparray = dol_getdate($dateofpayment);
+			if ($tmparray['seconds'] == 0 && $tmparray['minutes'] == 0 && ($tmparray['hours'] == 0 || $tmparray['hours'] == 12)) {	// We set hours to 0:00 or 12:00 because we don't know it
+				$datas['date'] = '<br><strong>'.$langs->trans("Date").':</strong> '.dol_print_date($dateofpayment, 'day');
+			} else {	// Hours was set to real date of payment (special case for POS for example)
+				$datas['date'] = '<br><strong>'.$langs->trans("Date").':</strong> '.dol_print_date($dateofpayment, 'dayhour', 'tzuser');
+			}
+		}
+		if ($this->amount) {
+			$datas['amount'] = '<br><strong>'.$langs->trans("Amount").':</strong> '.price($this->amount, 0, $langs, 1, -1, -1, $conf->currency);
+		}
+
+		return $datas;
+	}
+
+	/**
 	 *  Return clickable name (with picto eventually)
 	 *
 	 *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
@@ -1406,21 +1436,8 @@ class Paiement extends CommonObject
 
 		$result = '';
 
-		$label = img_picto('', $this->picto).' <u>'.$langs->trans("Payment").'</u><br>';
-		$label .= '<strong>'.$langs->trans("Ref").':</strong> '.$this->ref;
-		$dateofpayment = ($this->datepaye ? $this->datepaye : $this->date);
-		if ($dateofpayment) {
-			$label .= '<br><strong>'.$langs->trans("Date").':</strong> ';
-			$tmparray = dol_getdate($dateofpayment);
-			if ($tmparray['seconds'] == 0 && $tmparray['minutes'] == 0 && ($tmparray['hours'] == 0 || $tmparray['hours'] == 12)) {	// We set hours to 0:00 or 12:00 because we don't know it
-				$label .= dol_print_date($dateofpayment, 'day');
-			} else {	// Hours was set to real date of payment (special case for POS for example)
-				$label .= dol_print_date($dateofpayment, 'dayhour', 'tzuser');
-			}
-		}
-		if ($this->amount) {
-			$label .= '<br><strong>'.$langs->trans("Amount").':</strong> '.price($this->amount, 0, $langs, 1, -1, -1, $conf->currency);
-		}
+		$params = array();
+		$label = $this->getTooltipContent($params);
 		if ($mode == 'withlistofinvoices') {
 			$arraybill = $this->getBillsArray();
 			if (is_array($arraybill) && count($arraybill) > 0) {

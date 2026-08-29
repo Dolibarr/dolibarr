@@ -155,9 +155,6 @@ ErrNoZipEngine=Ushbu PHP-da %s faylini ziplash / ochish uchun vosita yo'q
 ErrorFileMustBeADolibarrPackage=%s fayli Dolibarr zip to'plami bo'lishi kerak
 ErrorModuleFileRequired=Dolibarr moduli to'plami faylini tanlashingiz kerak
 ErrorFailToDownloadModuleFromSource=Failed to download the module from the source. Please check your internet connection or the source URL and try again.
-extModuleConfirmInstallTitle = Confirm module installation
-extModuleConfirmInstallText  = You are about to install the following module:<br><br><b>Name:</b> %s<br><b>Version:</b> %s<br><b>Reference:</b> %s<br><b>Last update:</b> %s<br><br>This action is not reversible, Do you confirm the installation of this module?
-install=Install
 ErrorPhpCurlNotInstalled=PHP CURL o'rnatilmagan, bu Paypal bilan suhbatlashish uchun juda muhimdir
 ErrorFailedToAddToMailmanList=%s yoki MailIP ro'yxatiga %s yozuvini yoki SPIP bazasini qo'shib bo'lmadi
 ErrorFailedToRemoveToMailmanList=%s yozuvini %s yoki SPIP bazasini pochtachilar ro'yxatiga o'chirib bo'lmadi
@@ -443,6 +440,7 @@ WarningModuleAffiliatedToAReportedCompany=Warning, this module has been reported
 WarningModuleAffiliatedToAPiratPlatform=%s kabi shubhali norasmiy platformadan modul (pullik yoki bepul) olayotganda ehtiyot bo'ling.
 WarningDNSServerNotAvailable=Warning, DNS server not available
 WarningSecureKeyNotSet=The value fo the securekey must not be empty
+WarningFullPathWasNotFoundSoWeUseAnAlternativeValue=Note: Full path was not found so we used the alternative value <b>%s</b>
 
 SwissQrOnlyVIR = SwissQR hisob-fakturasini faqat kredit o'tkazmalari bilan to'lanadigan hisob-fakturalarga qo'shish mumkin.
 SwissQrCreditorAddressInvalid = Kreditor manzili noto‘g‘ri (zip va shahar o‘rnatilganmi? (%s)

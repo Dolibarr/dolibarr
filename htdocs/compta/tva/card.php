@@ -583,7 +583,7 @@ if ($id > 0) {
 		$formconfirm = $hookmanager->resPrint;
 	}
 
-	print dol_get_fiche_head($head, 'card', $langs->trans("VATPayment"), -1, 'payment', 0, '', '', 0, '', 1);
+	print dol_get_fiche_head($head, 'card', $langs->trans("VATPayment"), -1, 'payment', 0, '', '', 0, '', ($action == 'edit' ? 0 : 1));
 
 	// Print form confirm
 	print $formconfirm;

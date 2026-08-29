@@ -155,9 +155,6 @@ ErrNoZipEngine=ບໍ່ມີເຄື່ອງມືສຳລັບ Zip/Unzip 
 ErrorFileMustBeADolibarrPackage=ໄຟລ໌ %s ຕ້ອງເປັນແພັກເກັດ Zip ຂອງ Dolibarr
 ErrorModuleFileRequired=ທ່ານຕ້ອງເລືອກໄຟລ໌ແພັກເກັດໂມດູນ Dolibarr
 ErrorFailToDownloadModuleFromSource=ດາວໂຫລດໂມດູນຈາກແຫຼ່ງຂໍ້ມູນບໍ່ສຳເລັດ
-extModuleConfirmInstallTitle = ຢືນຢັນການຕິດຕັ້ງໂມດູນ
-extModuleConfirmInstallText  = ທ່ານກຳລັງຈະຕິດຕັ້ງໂມດູນດັ່ງນີ້:<br><br><b>ຊື່:</b> %s<br><b>ເວີຊັນ:</b> %s<br><b>ອ້າງອີງ:</b> %s<br><b>ອັບເດດຫຼ້າສຸດ:</b> %s<br><br>ການດຳເນີນການນີ້ບໍ່ສາມາດຍົກເລີກໄດ້ ທ່ານຢືນຢັນການຕິດຕັ້ງຫຼືບໍ່?
-install=ຕິດຕັ້ງ
 ErrorPhpCurlNotInstalled=ບໍ່ໄດ້ຕິດຕັ້ງ PHP CURL ເຊິ່ງຈຳເປັນສຳລັບການເຊື່ອມຕໍ່ກັບ Paypal
 ErrorFailedToAddToMailmanList=ເພີ່ມຂໍ້ມູນ %s ເຂົ້າໃນ Mailman list %s ບໍ່ສຳເລັດ
 ErrorFailedToRemoveToMailmanList=ລຶບຂໍ້ມູນ %s ອອກຈາກ Mailman list %s ບໍ່ສຳເລັດ
@@ -443,6 +440,7 @@ WarningModuleAffiliatedToAReportedCompany=ຄຳເຕືອນ, ໂມດູນ
 WarningModuleAffiliatedToAPiratPlatform=ລະວັງເມື່ອດາວໂຫລດໂມດູນຈາກແພລດຟອມທີ່ບໍ່ເປັນທາງການເຊັ່ນ %s
 WarningDNSServerNotAvailable=ຄຳເຕືອນ, ເຊີເວີ DNS ບໍ່ສາມາດໃຊ້ງານໄດ້
 WarningSecureKeyNotSet=ຄ່າຂອງ securekey ຕ້ອງບໍ່ວ່າງເປົ່າ
+WarningFullPathWasNotFoundSoWeUseAnAlternativeValue=ໝາຍເຫດ: ບໍ່ພົບເສັ້ນທາງເຕັມ ດັ່ງນັ້ນພວກເຮົາຈຶ່ງໄດ້ໃຊ້ຄ່າທາງເລືອກ <b> %s</b>
 
 SwissQrOnlyVIR = ໃບແຈ້ງໜີ້ SwissQR ສາມາດເພີ່ມໄດ້ໃນໃບແຈ້ງໜີ້ທີ່ຊຳລະຜ່ານການໂອນເງິນເທົ່ານັ້ນ
 SwissQrCreditorAddressInvalid = ທີ່ຢູ່ຜູ້ຮັບເງິນບໍ່ຖືກຕ້ອງ (%s)

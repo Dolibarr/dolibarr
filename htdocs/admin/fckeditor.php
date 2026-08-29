@@ -227,7 +227,7 @@ if (empty($conf->use_javascript_ajax)) {
 
 	// Other options
 
-	print '<form name="formeditorbackend" method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+	print '<form name="formeditorbackend" method="POST" action="'.$_SERVER["PHP_SELF"].'" spellcheck="false">'."\n";
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="setbackend">';
 	print '<input type="hidden" name="mode" value="'.$mode.'">';
@@ -281,7 +281,7 @@ if (empty($conf->use_javascript_ajax)) {
 	print '<br><br><br>'."\n";
 
 
-	print '<form name="formtest" method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+	print '<form name="formtest" method="POST" action="'.$_SERVER["PHP_SELF"].'" spellcheck="false">'."\n";
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="page_y" value="">';
 

@@ -155,9 +155,6 @@ ErrNoZipEngine=Tässä PHP:ssä ei ole konetta, jota pakata/purkaa %s tiedosto
 ErrorFileMustBeADolibarrPackage=tiedosto %s on oltava Dolibarrin zip-paketti
 ErrorModuleFileRequired=Sinun on valittava Dolibarr-moduulipaketti tiedosto
 ErrorFailToDownloadModuleFromSource=Failed to download the module from the source. Please check your internet connection or the source URL and try again.
-extModuleConfirmInstallTitle = Confirm module installation
-extModuleConfirmInstallText  = You are about to install the following module:<br><br><b>Name:</b> %s<br><b>Version:</b> %s<br><b>Reference:</b> %s<br><b>Last update:</b> %s<br><br>This action is not reversible, Do you confirm the installation of this module?
-install=Install
 ErrorPhpCurlNotInstalled=PHP CURL:ää ei ole asennettu, tämä on välttämätöntä Paypalin kanssa puhumiseen
 ErrorFailedToAddToMailmanList=Tietueen %s lisääminen postimiesluetteloon %s tai SPIP-pohjaan epäonnistui
 ErrorFailedToRemoveToMailmanList=Tietueen %s poistaminen postimiesluettelosta %s tai SPIP-pohjasta epäonnistui
@@ -443,6 +440,7 @@ WarningModuleAffiliatedToAReportedCompany=Warning, this module has been reported
 WarningModuleAffiliatedToAPiratPlatform=Ole varovainen, kun hankit moduulin (maksullisen tai ilmaisen) epäilyttävältä epäviralliselta alustalta, kuten %s
 WarningDNSServerNotAvailable=Warning, DNS server not available
 WarningSecureKeyNotSet=The value fo the securekey must not be empty
+WarningFullPathWasNotFoundSoWeUseAnAlternativeValue=Note: Full path was not found so we used the alternative value <b>%s</b>
 
 SwissQrOnlyVIR = SwissQR-lasku voidaan lisätä vain tilisiirtomaksuilla maksettaviin laskuihin.
 SwissQrCreditorAddressInvalid = Luotonantajan osoite on virheellinen (onko ZIP ja kaupunki asetettu? (%s)

@@ -196,6 +196,7 @@ NonPercuRecuperable=No recuperable
 SetConditions=Establecer condiciones de pago
 SetMode=Establecer tipo de pago
 SetRevenuStamp=Establecer sello de ingresos
+RecurringInvoiceSource=Source recurring invoice
 Repeatable=Modelo
 ChangeIntoRepeatableInvoice=Convertir en plantilla de factura
 CreateFromRepeatableInvoice=Crear desde la plantilla de factura

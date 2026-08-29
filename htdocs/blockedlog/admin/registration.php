@@ -487,7 +487,7 @@ if ($mode == "forceregistration") {
 	);
 
 	// Output js code to register data.
-	// Note: You can force thereigstration message by calling page /index.php?foreceregistration=1
+	// Note: You can force the registration message by calling page /index.php?foreceregistration=1
 	printCodeForPing("MAIN_LAST_REGISTRATION_KO_DATE", "MAIN_FIRST_REGISTRATION_OK_DATE", $arrayofdata, 1);
 
 	if (!isModEnabled("blockedlog")) {

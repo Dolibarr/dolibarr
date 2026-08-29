@@ -90,6 +90,7 @@ ThisIsInformationOnDocumentToSignFichinter=Це інформація про вт
 ThisIsInformationOnDocumentToSignSociete_rib=Це інформація про мандат SEPA для підписання
 ThisIsInformationOnDocumentToSignExpedition= Це інформація про відправлення, яку потрібно підписати
 SignatureProposalRef=Підпис пропозиції/комерційної пропозиції %s
+SignatureOrderRef=Signature of sale order %s
 SignatureContractRef=Підпис контракту %s
 SignatureFichinterRef=Підпис втручання %s
 SignatureSociete_ribRef=Підпис доручення SEPA %s

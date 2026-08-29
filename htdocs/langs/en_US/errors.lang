@@ -136,6 +136,7 @@ ErrorLabelAlreadyExists=This label already exists
 ErrorCantReadFile=Failed to read file '%s'
 ErrorCantReadDir=Failed to read directory '%s'
 ErrorBadLoginPassword=Bad value for login or password
+ErrorLoginMustBePostMethod=For security reasons, login credentials must be sent using the POST method, not in the URL
 ErrorLoginDisabled=Your account has been disabled
 ErrorFailedToRunExternalCommand=Failed to run external command. Check it is available and runnable by your PHP server user. Check also the command is not protected on shell level by a security layer like apparmor.
 ErrorFailedToChangePassword=Failed to change password
@@ -334,6 +335,7 @@ ErrorFieldValue=Value for <b>%s</b> is incorrect
 ErrorCoherenceMenu=<b>%s</b> is required when <b>%s</b> is 'left'
 ErrorUploadFileDragDrop=There was an error while the file(s) upload
 ErrorUploadFileDragDropPermissionDenied=There was an error while the file(s) upload : Permission denied
+ErrorOnAtLeastOneFileUpload=There was an error while uploading at least one file
 ErrorFixThisHere=<a href="%s">Fix this here</a>
 ErrorTheUrlOfYourDolInstanceDoesNotMatchURLIntoOAuthSetup=Error: The URL of you current instance (%s) does not match the URL defined into your OAuth2 login setup (%s). Doing OAuth2 login in such a configuration is not allowed.
 ErrorMenuExistValue=A Menu already exist with this Title or URL
