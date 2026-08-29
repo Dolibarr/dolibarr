@@ -1761,14 +1761,6 @@ class Commande extends CommonOrder
 
 			$tabprice = calcul_price_total($qty, (float) $pu, $remise_percent, $txtva, (float) $txlocaltax1, (float) $txlocaltax2, 0, $price_base_type, $info_bits, $product_type, $mysoc, $localtaxes_type, 100, $this->multicurrency_tx, (float) $pu_ht_devise);
 
-			/*var_dump($txlocaltax1);
-			 var_dump($txlocaltax2);
-			 var_dump($localtaxes_type);
-			 var_dump($tabprice);
-			 var_dump($tabprice[9]);
-			 var_dump($tabprice[10]);
-			 exit;*/
-
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
 			$total_ttc = $tabprice[2];
@@ -1995,7 +1987,7 @@ class Commande extends CommonOrder
 			 * }
 			 * }
 			 * }
-			 **/
+			 */
 		}
 	}
 
@@ -4361,13 +4353,16 @@ class Commande extends CommonOrder
 	/**
 	 * Compute shippable status and tooltip/icon for the order.
 	 *
-	 * @param array<mixed> $options Extra options (reserved for future use)
-	 * @return  array<string,mixed>        Array with keys: has_product, shippable, texticon, textinfo, warning
-	 * /
+	 * Can be overridden by a module through the 'getShippableInfos' hook (context
+	 * '<element>dao'). The hook result is merged over the default skeleton, so every key of
+	 * the contract stays defined whatever the module returns.
+	 *
+	 * @param array<mixed> $options 	Extra options, forwarded as-is to the hook
+	 * @return  array<string,mixed>     Array with keys: has_product, shippable, texticon, textinfo, warning
 	 */
 	public function getShippableInfos(array $options = array()): array
 	{
-		global $conf, $langs;
+		global $conf, $langs, $hookmanager;
 
 		$langs->loadLangs(array('orders', 'sendings', 'stocks', 'products'));
 
@@ -4378,6 +4373,18 @@ class Commande extends CommonOrder
 			'textinfo'    => '',
 			'warning'     => false,
 		);
+
+		if (is_object($hookmanager)) {
+			$parameters = array('options' => $options);
+			$reshook = $hookmanager->executeHooks('getShippableInfos', $parameters, $this);
+			if ($reshook < 0) {
+				dol_syslog(__METHOD__.' hook getShippableInfos failed: '.$hookmanager->error, LOG_ERR);
+			}
+			if (!empty($hookmanager->resArray['shippableinfos'])
+				&& is_array($hookmanager->resArray['shippableinfos'])) {
+				return array_merge($result, $hookmanager->resArray['shippableinfos']);
+			}
+		}
 
 		// Requested naming for statuses
 		if ($this->status == self::STATUS_DRAFT || $this->status == self::STATUS_CLOSED) {

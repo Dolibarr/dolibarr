@@ -128,7 +128,7 @@ class FactureLigne extends CommonInvoiceLine
 	public $tva_npr;
 
 	/**
-	 * @var float
+	 * @var float		Percent of discount
 	 */
 	public $remise_percent;
 
@@ -438,6 +438,9 @@ class FactureLigne extends CommonInvoiceLine
 		if (empty($this->subprice)) {
 			$this->subprice = 0;
 		}
+		if (empty($this->subprice_ttc)) {
+			$this->subprice_ttc = 0;
+		}
 		if (empty($this->ref_ext)) {
 			$this->ref_ext = '';
 		}
@@ -652,6 +655,9 @@ class FactureLigne extends CommonInvoiceLine
 		$this->desc = trim($this->desc);
 		if (empty($this->ref_ext)) {
 			$this->ref_ext = '';
+		}
+		if (empty($this->subprice_ttc)) {
+			$this->subprice_ttc = 0;
 		}
 		if (empty($this->tva_tx)) {
 			$this->tva_tx = 0;

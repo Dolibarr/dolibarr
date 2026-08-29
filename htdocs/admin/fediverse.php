@@ -285,7 +285,7 @@ $title = $langs->trans("ConfigImportSocialNetwork");
 print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', '', '', '', -1, '', 'tools', 0, '', '', -1, 0, 0, 0, '');
 
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
 print '<div class="div-table-responsive-no-min">';
@@ -492,7 +492,7 @@ if ($resql) {
 		$result = $fediverseparser->fetchPosts($socialNetworkUrl, 5, 300, $path_fediverse, $authParams);
 
 		print "<br>";
-		print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">'."\n";
+		print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" spellcheck="false">'."\n";
 		print '<input type="hidden" name="token" value="'.newToken().'">'."\n";
 
 		print '<table class="noborder centpercent">'."\n";

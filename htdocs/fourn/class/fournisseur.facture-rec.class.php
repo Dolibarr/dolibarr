@@ -1274,7 +1274,7 @@ class FactureFournisseurRec extends CommonInvoice
 		$sql .= ', special_code = ' . (int) $special_code;
 		$sql .= ', rang = ' . (int) $rang;
 		$sql .= ', fk_unit = ' . ($fk_unit ? "'" . $this->db->escape($fk_unit) . "'" : 'null');
-		$sql .= ', fk_user_modif = ' . (int) $user;
+		$sql .= ', fk_user_modif = ' . (int) $user->id;
 		$sql .= ', multicurrency_subprice = '.price2num($pu_ht_devise);
 		$sql .= ', multicurrency_total_ht = '.price2num($multicurrency_total_ht);
 		$sql .= ', multicurrency_total_tva = '.price2num($multicurrency_total_tva);

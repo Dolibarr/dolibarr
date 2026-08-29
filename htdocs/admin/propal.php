@@ -536,7 +536,7 @@ print '</div>';
 print '<br>';
 print load_fiche_titre($langs->trans("SuggestedPaymentModesIfNotDefinedInProposal"), '', '');
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'" />';
 
 print '<table class="noborder centpercent">';
@@ -637,7 +637,7 @@ print '<br>';
 
 print load_fiche_titre($langs->trans("OtherOptions"), '', '');
 
-print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
+print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="page_y" value="">';
 print '<input type="hidden" name="action" value="update">';

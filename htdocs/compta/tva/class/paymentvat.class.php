@@ -769,7 +769,7 @@ class PaymentVAT extends CommonObject
 			$labeltoshow = $this->label;
 			$reg = array();
 			if (preg_match('/^\((.*)\)$/i', $this->label, $reg)) {
-				// Label generique car entre parentheses. On l'affiche en le traduisant
+				// Generic label because it is in parentheses. We display it translated.
 				if ($reg[1] == 'paiement') {
 					$reg[1] = 'Payment';
 				}

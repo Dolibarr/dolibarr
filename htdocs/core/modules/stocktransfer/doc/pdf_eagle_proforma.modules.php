@@ -1415,7 +1415,7 @@ class pdf_eagle_proforma extends ModelePDFStockTransfer
 			}
 
 			//Recipient name
-			// On peut utiliser le nom de la societe du contact
+			// We can use the name of the contact's company
 			if ($usecontact/* && !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)*/) {
 				$thirdparty = $object->contact;
 			} else {

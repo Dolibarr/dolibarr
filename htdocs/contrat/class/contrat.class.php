@@ -1592,7 +1592,7 @@ class Contrat extends CommonObject
 				}
 			}
 
-			// Insertion dans la base
+			// Insert into database
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."contratdet";
 			$sql .= " (fk_contrat, label, description, fk_product, qty, tva_tx, vat_src_code,";
 			$sql .= " localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, remise_percent, subprice, subprice_ttc,";
@@ -1619,7 +1619,7 @@ class Contrat extends CommonObject
 			$sql .= " '".$this->db->escape($localtax2_type)."',";
 			$sql .= " ".price2num($remise_percent).",";
 			$sql .= " ".price2num($pu_ht).",";
-			$sql .= " ".($price_base_type === 'TTC' ? price2num($pu_ttc) : "0").",";
+			$sql .= " ".($price_base_type === 'TTC' ? (float) price2num($pu_ttc) : 0).",";
 			$sql .= " ".price2num($total_ht).",".price2num($total_tva).",".price2num($total_localtax1).",".price2num($total_localtax2).",".price2num($total_ttc).",";
 			$sql .= " ".((int) $info_bits).",";
 			if (isset($fk_fournprice)) {
