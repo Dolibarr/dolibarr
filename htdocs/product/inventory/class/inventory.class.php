@@ -5,6 +5,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -774,6 +775,42 @@ class Inventory extends CommonObject
 		} else {
 			return -1;
 		}
+	}
+
+	/**
+	 *  Create a document onto disk according to template module.
+	 *
+	 *  @param	string		$modele			Force template to use ('' to not force)
+	 *  @param	Translate	$outputlangs	Object lang to use for translations
+	 *  @param  int<0,1>	$hidedetails    Hide details of lines
+	 *  @param  int<0,1>	$hidedesc       Hide description
+	 *  @param  int<0,1>	$hideref        Hide ref
+	 *  @param  ?array<string,mixed>	$moreparams		Array to provide more information
+	 *  @return int<-1,1>				0 if KO, 1 if OK
+	 */
+	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
+	{
+		global $langs;
+
+		$langs->load("stocks");
+
+		if (!dol_strlen($modele)) {
+			$modele = ''; // Remove this once a pdf_standard.php exists.
+
+			if ($this->model_pdf) {
+				$modele = $this->model_pdf;
+			} elseif (getDolGlobalString('INVENTORY_ADDON_PDF')) {
+				$modele = getDolGlobalString('INVENTORY_ADDON_PDF');
+			}
+		}
+
+		$modelpath = "core/modules/inventory/doc/";
+
+		if (empty($modele)) {
+			return 1; // Remove this once a pdf_standard.php exists.
+		}
+
+		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 	}
 }
 
