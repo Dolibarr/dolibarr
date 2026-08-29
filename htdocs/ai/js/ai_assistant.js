@@ -742,7 +742,11 @@ export function initAiAssistant(container) {
     }
 
     async function processCloudFile(file) {
-        const base64 = await fileToBase64(file);
+        // fileToBase64 resolves the FULL data URL ("data:image/png;base64,AAAA…").
+        // Strip the prefix: the server-side extractor (parse_intent.php) expects
+        // pure base64 after '::' and hands it to the LLM as a native multimodal
+        // part — with the prefix left in, the marker is never recognized.
+        const base64 = String(await fileToBase64(file)).split(',').pop();
         return `__FILE_ATTACHMENT__[${file.type}]::${base64}`;
     }
 

@@ -113,6 +113,31 @@ try {
 		exit;
 	}
 
+	// Extract file attachments sent by the chat (paperclip flow). The JS embeds
+	// cloud-parsed documents as "__FILE_ATTACHMENT__[mime]::<base64>" markers in
+	// the query. They MUST be stripped here, before the privacy/thirdparty
+	// candidate pipeline (which would run regexes over megabytes of base64), and
+	// are handed to the LLM adapter as NATIVE multimodal parts — inlining base64
+	// into the text prompt makes every provider fail or hallucinate.
+	$attachments = array();
+	if (strpos($query, '__FILE_ATTACHMENT__') !== false) {
+		$query = preg_replace_callback(
+			'/__FILE_ATTACHMENT__\[([^\]]*)\]::([A-Za-z0-9+\/=\r\n]+)/',
+			static function ($m) use (&$attachments) {
+				$attachments[] = array(
+					'mime' => ($m[1] !== '' ? $m[1] : 'application/octet-stream'),
+					'data' => preg_replace('/\s+/', '', $m[2])
+				);
+				return '[attached document]';
+			},
+			$query
+		);
+		$query = trim((string) $query);
+		if ($query === '' || $query === '[attached document]') {
+			$query = 'Analyze the attached document and describe its content.';
+		}
+	}
+
 	// Privacy (Name Resolution & Masking)
 	$langs->loadLangs(array("main", "bills", "orders", "propal", "supplier_invoice", "supplier_order", "projects", "other"));
 
@@ -364,7 +389,7 @@ try {
 
 			dol_syslog("parse_intent.php Call AI API", LOG_DEBUG);
 
-			$rawResponse = $adapter->generate($systemPrompt, $query);
+			$rawResponse = $adapter->generate($systemPrompt, $query, 'text', $attachments);
 
 			// $rawResponse should be a json string with format '{"tool":..., "arguments":{text answer}}' but sometimes it is just 'text answer'
 			dol_syslog('rawResponse='.$rawResponse, LOG_DEBUG);

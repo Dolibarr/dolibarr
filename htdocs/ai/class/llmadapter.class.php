@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2026		Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2026		Nick Fragoulis
+ * Copyright (C) 2026	Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,17 +71,22 @@ class UniversalLLMAdapter
 	 * @param string $system   The system prompt/instruction
 	 * @param string $userMsg  The specific user query
 	 * @param string $mode     'json' for strict JSON (MCP), 'text' for legacy (default)
+	 * @param array<int,array{mime:string,data:string}> $attachments  Optional documents/images to
+	 *                         send along the message as NATIVE multimodal parts (each entry is
+	 *                         ['mime' => 'image/png', 'data' => '<base64>']). Passing them here —
+	 *                         instead of inlining base64 into the text prompt — is what allows the
+	 *                         provider to actually see the file (vision/document understanding).
 	 * @return string|null     The text response from the AI or null on failure
 	 */
-	public function generate(string $system, string $userMsg, string $mode = 'text'): ?string
+	public function generate(string $system, string $userMsg, string $mode = 'text', array $attachments = array()): ?string
 	{
 		switch ($this->type) {
 			case 'anthropic':
-				return $this->callAnthropic($system, $userMsg, $mode);
+				return $this->callAnthropic($system, $userMsg, $mode, $attachments);
 			case 'google':
-				return $this->callGoogle($system, $userMsg, $mode);
+				return $this->callGoogle($system, $userMsg, $mode, $attachments);
 			default:
-				return $this->callOpenAI($system, $userMsg, $mode);
+				return $this->callOpenAI($system, $userMsg, $mode, $attachments);
 		}
 	}
 
@@ -92,18 +98,31 @@ class UniversalLLMAdapter
 	 * @param string $mode 'json' or 'text'
 	 * @return string|null Response content or null on failure
 	 */
-	private function callOpenAI(string $sys, string $msg, string $mode = 'text'): ?string
+	private function callOpenAI(string $sys, string $msg, string $mode = 'text', array $attachments = array()): ?string
 	{
 		$url = $this->baseUrl;
 		if (strpos($url, '/chat/completions') === false && strpos($url, '/generate') === false) {
 			$url .= '/chat/completions';
 		}
 
+		// With attachments, the user content becomes an array of typed parts
+		// (vision input); without, it stays a plain string (widest compatibility).
+		$userContent = $msg;
+		if (!empty($attachments)) {
+			$userContent = array(array("type" => "text", "text" => $msg));
+			foreach ($attachments as $att) {
+				$userContent[] = array(
+					"type" => "image_url",
+					"image_url" => array("url" => "data:".$att['mime'].";base64,".$att['data'])
+				);
+			}
+		}
+
 		$data = array(
 			"model" => $this->model,
 			"messages" => array(
 				array("role" => "system", "content" => $sys),
-				array("role" => "user", "content" => $msg)
+				array("role" => "user", "content" => $userContent)
 			),
 			"temperature" => 0.1
 		);
@@ -131,16 +150,32 @@ class UniversalLLMAdapter
 	 *
 	 * @return string|null Response content or null on failure
 	 */
-	private function callAnthropic(string $sys, string $msg, string $mode = 'text')
+	private function callAnthropic(string $sys, string $msg, string $mode = 'text', array $attachments = array())
 	{
 
 		$url = $this->baseUrl . (strpos($this->baseUrl, '/messages') === false ? '/messages' : '');
 
+		// With attachments, content becomes an array of typed blocks: PDFs go as
+		// 'document' blocks, images as 'image' blocks (Anthropic native formats).
+		$userContent = $msg;
+		$maxTokens = 1024;
+		if (!empty($attachments)) {
+			$userContent = array();
+			foreach ($attachments as $att) {
+				$userContent[] = array(
+					"type" => ($att['mime'] === 'application/pdf' ? "document" : "image"),
+					"source" => array("type" => "base64", "media_type" => $att['mime'], "data" => $att['data'])
+				);
+			}
+			$userContent[] = array("type" => "text", "text" => $msg);
+			$maxTokens = 4096;	// document extraction answers are much longer than intent JSON
+		}
+
 		$data = array(
 			"model" => $this->model,
 			"system" => $sys,
-			"messages" => array(array("role" => "user", "content" => $msg)),
-			"max_tokens" => 1024
+			"messages" => array(array("role" => "user", "content" => $userContent)),
+			"max_tokens" => $maxTokens
 		);
 
 		$this->lastRequest = json_encode($data, JSON_PRETTY_PRINT);
@@ -157,7 +192,7 @@ class UniversalLLMAdapter
 	 *
 	 * @return string|null Response content or null on failure
 	 */
-	private function callGoogle(string $sys, string $msg, string $mode = 'text')
+	private function callGoogle(string $sys, string $msg, string $mode = 'text', array $attachments = array())
 	{
 		$url = $this->baseUrl;
 
@@ -171,9 +206,17 @@ class UniversalLLMAdapter
 
 		$url .= "?key=" . $this->key;
 
+		// With attachments, prepend native inline_data parts (Gemini vision /
+		// document understanding) before the text part.
+		$parts = array();
+		foreach ($attachments as $att) {
+			$parts[] = array("inline_data" => array("mime_type" => $att['mime'], "data" => $att['data']));
+		}
+		$parts[] = array("text" => $sys . "\nUser: " . $msg);
+
 		$data = array(
 			"contents" => array(
-				array("parts" => array(array("text" => $sys . "\nUser: " . $msg)))
+				array("parts" => $parts)
 			),
 			"generationConfig" => array("temperature" => 0.1)
 		);
