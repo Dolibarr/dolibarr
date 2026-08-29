@@ -336,13 +336,13 @@ $sql .= " typent.code as typent_code, c.note_public, c.note_private,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
 // TODO Add a denormalized field "denormalized_lower_planned_end_date" so we can remove this subrequests ?
 if ($arrayfields['lower_planned_end_date']['checked'] || ($search_dfyear > 0 && $search_op2df)) {
-	$sql .= " (SELECT MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") FROM llx_contratdet as cd WHERE cd.fk_contrat = c.rowid) as lower_planned_end_date,";	// lowest expiration date among open service lines
+	$sql .= " (SELECT MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") FROM ".MAIN_DB_PREFIX."contratdet as cd WHERE cd.fk_contrat = c.rowid) as lower_planned_end_date,";	// lowest expiration date among open service lines
 }
-$sql .= " (SELECT SUM(".$db->ifsql("cd.statut=0", '1', '0').') FROM llx_contratdet as cd WHERE cd.fk_contrat = c.rowid) as nb_initial,';
-$sql .= " (SELECT SUM(".$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NULL OR cd.date_fin_validite >= '".$db->idate($now)."')", '1', '0').') FROM llx_contratdet as cd WHERE cd.fk_contrat = c.rowid) as nb_running,';
-$sql .= " (SELECT SUM(".$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NOT NULL AND cd.date_fin_validite < '".$db->idate($now)."')", '1', '0').') FROM llx_contratdet as cd WHERE cd.fk_contrat = c.rowid) as nb_expired,';
-$sql .= " (SELECT SUM(".$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NOT NULL AND cd.date_fin_validite < '".$db->idate($now - $conf->contract->services->expires->warning_delay)."')", '1', '0').') FROM llx_contratdet as cd WHERE cd.fk_contrat = c.rowid) as nb_late,';
-$sql .= " (SELECT SUM(".$db->ifsql("cd.statut=5", '1', '0').') FROM llx_contratdet as cd WHERE cd.fk_contrat = c.rowid) as nb_closed';
+$sql .= " (SELECT SUM(".$db->ifsql("cd.statut=0", '1', '0').') FROM '.MAIN_DB_PREFIX.'contratdet as cd WHERE cd.fk_contrat = c.rowid) as nb_initial,';
+$sql .= " (SELECT SUM(".$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NULL OR cd.date_fin_validite >= '".$db->idate($now)."')", '1', '0').') FROM '.MAIN_DB_PREFIX.'contratdet as cd WHERE cd.fk_contrat = c.rowid) as nb_running,';
+$sql .= " (SELECT SUM(".$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NOT NULL AND cd.date_fin_validite < '".$db->idate($now)."')", '1', '0').') FROM '.MAIN_DB_PREFIX.'contratdet as cd WHERE cd.fk_contrat = c.rowid) as nb_expired,';
+$sql .= " (SELECT SUM(".$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NOT NULL AND cd.date_fin_validite < '".$db->idate($now - $conf->contract->services->expires->warning_delay)."')", '1', '0').') FROM '.MAIN_DB_PREFIX.'contratdet as cd WHERE cd.fk_contrat = c.rowid) as nb_late,';
+$sql .= " (SELECT SUM(".$db->ifsql("cd.statut=5", '1', '0').') FROM '.MAIN_DB_PREFIX.'contratdet as cd WHERE cd.fk_contrat = c.rowid) as nb_closed';
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {

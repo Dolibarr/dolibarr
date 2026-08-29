@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2016   Jean-François Ferry     <hello@librethic.io>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -816,7 +816,7 @@ class Tickets extends DolibarrApi
 		if ($source == "external") {
 			// Check external contact exists
 			$sqlCheckExternalContact = "SELECT 1 as exist";
-			$sqlCheckExternalContact .= " FROM llx_socpeople";
+			$sqlCheckExternalContact .= " FROM ".MAIN_DB_PREFIX."socpeople";
 			$sqlCheckExternalContact .= " WHERE rowid = " . intval($contactid);
 			$result = $this->db->query($sqlCheckExternalContact);
 
@@ -826,7 +826,7 @@ class Tickets extends DolibarrApi
 		} else {
 			// Check internal contact exists
 			$sqlCheckInternalContact = "SELECT 1 as exist";
-			$sqlCheckInternalContact .= " FROM llx_user";
+			$sqlCheckInternalContact .= " FROM ".MAIN_DB_PREFIX."user";
 			$sqlCheckInternalContact .= " WHERE rowid = " . intval($contactid);
 			$result = $this->db->query($sqlCheckInternalContact);
 

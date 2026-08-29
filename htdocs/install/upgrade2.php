@@ -5697,7 +5697,7 @@ function migrate_apiresttokens()
 
 	if (!$error) {
 		$sql = "SELECT 'dolibarr_rest_api' AS service, u.api_key AS tokenstring, u.rowid AS fk_user, u.entity";
-		$sql .= " FROM llx_user AS u";
+		$sql .= " FROM ".MAIN_DB_PREFIX."user AS u";
 		$sql .= " WHERE u.api_key IS NOT NULL AND u.api_key <> ''";
 
 		$result = $db->query($sql);
