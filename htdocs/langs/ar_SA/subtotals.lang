@@ -3,52 +3,52 @@
 #
 # Global
 #
-Subtotal=Subtotals
-SubTotalModuleDesc=Subtotal and title lines for certain documents
+Subtotal=الإجماليات الفرعية
+SubTotalModuleDesc=بنود الإجماليات الفرعية والعناوين لبعض المستندات
 #
 # Admin
 #
-SubtotalSetup=Subtotals module setup
-MaxSubtotalLevel=Maximum level
-SubtotalLineBackColor=Level %s lines background color
-NotSupportedByAllPDF=Will work with newer PDF but not with old ones %s
+SubtotalSetup=إعدادات وحدة الإجماليات الفرعية
+MaxSubtotalLevel=الحد الأقصى للمستوى
+SubtotalLineBackColor=لون خلفية بنود المستوى %s
+NotSupportedByAllPDF=يعمل مع نماذج PDF الأحدث، وليس مع النماذج القديمة %s
 
 #
 # Card
 #
-AddTitleLine=Add title line
-AddSubtotalLine=Add subtotal line
-TitleNeedDesc=You must enter a valid description to create a title.
-TitleAddedLevelTooHigh=Added title level too high (added with level %s instead).
-TitleEditedLevelTooHigh=Edited title level too high (edited with level %s instead).
-DeleteSubtotalLine=Delete subtotal line
-ConfirmDeleteSubtotalLine=Are you sure you want to delete this subtotal line?
-DeleteTitleLine=Delete title line
-ConfirmDeleteTitleLine=Are you sure you want to delete this title line?
-DeleteCorrespondingSubtotalLine=Delete the corresponding subtotal line ?
-SubtotalLevel=Level %s
-SubtotalLineDesc=Line description
-SubtotalLineLevel=Line level
-ShowUPOnPDF=Show unit price on PDF
-ShowTotalExludingVATOnPDF=Show the total excluding VAT on the PDF
-ForcePageBreak=Force page break before title
-NoTitleError=You have no title line or they already all have a corresponding subtotal line
-CorrespondingTitleLine=Corresponding title line
-SelectVATRate=Select VAT rate
-EnterRemisePercent=Enter discount percent
-ApplyVATForBlock=Apply VAT for this block
-ApplyDiscountForBlock=Apply discount for this block
-TitleUnderSameLevelSTLine=Title of the same level must be under the previous title's subtotal line.
-TitleUnderSameLevelOrGreater=Title must be under a title of the same level or greater.
-TitleAfterStLineOfSameLevelTitle=Title must be after the subtotal line of the previous title.
-PreviousTitleLevelTooHigh=Previous title is two level or more greater than moved line.
-STLineUnderCorrespondingTitleDesc=Subtotal line must be under a title with the same level that has the same description.
-STLineUnderCorrespondingTitle=Subtotal line must be under a title of the same level and the same description.
-STLineUnderTitle=Subtotal line must be under its title
-UnsupportedModuleError=You can't add a subtotals line in unsupported module
-CorrespondingTitleNotFound=The corresponding title was not found
+AddTitleLine=إضافة بند عنوان
+AddSubtotalLine=إضافة بند إجمالي فرعي
+TitleNeedDesc=يجب إدخال وصف صالح لإنشاء عنوان.
+TitleAddedLevelTooHigh=مستوى العنوان المضاف مرتفع جدًا (أُضيف بالمستوى %s بدلًا منه).
+TitleEditedLevelTooHigh=مستوى العنوان المعدّل مرتفع جدًا (عُدّل إلى المستوى %s بدلًا منه).
+DeleteSubtotalLine=حذف بند الإجمالي الفرعي
+ConfirmDeleteSubtotalLine=هل أنت متأكد من حذف بند الإجمالي الفرعي هذا؟
+DeleteTitleLine=حذف بند العنوان
+ConfirmDeleteTitleLine=هل أنت متأكد من حذف بند العنوان هذا؟
+DeleteCorrespondingSubtotalLine=حذف بند الإجمالي الفرعي المقابل؟
+SubtotalLevel=المستوى %s
+SubtotalLineDesc=وصف البند
+SubtotalLineLevel=مستوى البند
+ShowUPOnPDF=إظهار سعر الوحدة في ملف PDF
+ShowTotalExludingVATOnPDF=إظهار الإجمالي من دون ضريبة القيمة المضافة في ملف PDF
+ForcePageBreak=فرض فاصل صفحة قبل العنوان
+NoTitleError=لا توجد بنود عناوين، أو أن جميعها مرتبط بالفعل ببنود إجماليات فرعية مقابلة
+CorrespondingTitleLine=بند العنوان المقابل
+SelectVATRate=اختيار معدل ضريبة القيمة المضافة
+EnterRemisePercent=إدخال نسبة الخصم
+ApplyVATForBlock=تطبيق ضريبة القيمة المضافة على هذا القسم
+ApplyDiscountForBlock=تطبيق الخصم على هذا القسم
+TitleUnderSameLevelSTLine=يجب أن يكون العنوان من المستوى نفسه أسفل بند الإجمالي الفرعي للعنوان السابق.
+TitleUnderSameLevelOrGreater=يجب أن يكون العنوان أسفل عنوان من المستوى نفسه أو من مستوى أعلى.
+TitleAfterStLineOfSameLevelTitle=يجب أن يأتي العنوان بعد بند الإجمالي الفرعي للعنوان السابق.
+PreviousTitleLevelTooHigh=مستوى العنوان السابق أعلى بمستويين أو أكثر من مستوى البند المنقول.
+STLineUnderCorrespondingTitleDesc=يجب أن يقع بند الإجمالي الفرعي أسفل عنوان بالمستوى نفسه ويحمل الوصف نفسه.
+STLineUnderCorrespondingTitle=يجب أن يقع بند الإجمالي الفرعي أسفل عنوان من المستوى نفسه وبالوصف نفسه.
+STLineUnderTitle=يجب أن يقع بند الإجمالي الفرعي أسفل عنوانه
+UnsupportedModuleError=لا يمكنك إضافة بند إجمالي فرعي في وحدة غير مدعومة
+CorrespondingTitleNotFound=لم يُعثر على بند العنوان المقابل
 
 #
 # PDF
 #
-SubtotalOf=Subtotal of %s:
+SubtotalOf=الإجمالي الفرعي لـ %s:

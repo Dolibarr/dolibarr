@@ -202,6 +202,7 @@ DiscountReceived=Discount received
 DONATION_ACCOUNTINGACCOUNT=Xayriyalarni ro'yxatdan o'tkazish uchun foydalaniladigan hisob (Hisob jadvalidan) (Xayriya moduli)
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Aʼzolik obunalarini roʻyxatdan oʻtkazish uchun foydalaniladigan hisob (Hisob jadvalidan) (Aʼzolik moduli – agar aʼzolik fakturasiz qayd etilgan boʻlsa)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Mijoz depozitini ro'yxatdan o'tkazish uchun standart hisob sifatida foydalaniladigan hisob (Hisob jadvalidan).
+ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT_FOR_VAT=Account (from the Chart Of Account) to be used as the default account for VAT on customer deposit used in bindings
 UseAuxiliaryAccountOnCustomerDeposit=Mijoz hisobini dastlabki to‘lovlar qatori uchun yordamchi daftarda shaxsiy hisob sifatida saqlang (agar o‘chirib qo‘yilgan bo‘lsa, dastlabki to‘lovlar uchun shaxsiy hisob bo‘sh qoladi)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default account to register supplier deposit
 UseAuxiliaryAccountOnSupplierDeposit=Ta'minotchi hisobvarag'ini dastlabki to'lovlar qatorlari uchun yordamchi daftarda shaxsiy hisob sifatida saqlang (agar o'chirilgan bo'lsa, dastlabki to'lovlar uchun shaxsiy hisob bo'sh qoladi)

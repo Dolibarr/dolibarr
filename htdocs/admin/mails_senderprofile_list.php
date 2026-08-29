@@ -128,6 +128,9 @@ foreach ($object->fields as $key => $val) {
 }
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -420,7 +423,7 @@ $arrayofmassactions = array(
 //if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions = array();
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
-print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'" spellcheck="false">'."\n";
 if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 }
@@ -464,7 +467,7 @@ if ($action != 'create') {
 		print $form->buttonsSaveCancel();
 	}
 } else {
-	/*print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
+	/*print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'" spellcheck="false">';
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';

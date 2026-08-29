@@ -202,6 +202,7 @@ DiscountReceived=Discount received
 DONATION_ACCOUNTINGACCOUNT=บัญชี (จากผังบัญชี) เพื่อใช้ลงทะเบียนการบริจาค (โมดูลการบริจาค)
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=บัญชี (จากผังบัญชี) ที่จะใช้ในการลงทะเบียนสมัครสมาชิก (โมดูลสมาชิก - หากบันทึกสมาชิกโดยไม่มีใบแจ้งหนี้)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=บัญชี (จากผังบัญชี) เพื่อใช้เป็นบัญชีเริ่มต้นในการลงทะเบียนเงินฝากของลูกค้า
+ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT_FOR_VAT=Account (from the Chart Of Account) to be used as the default account for VAT on customer deposit used in bindings
 UseAuxiliaryAccountOnCustomerDeposit=จัดเก็บบัญชีลูกค้าเป็นบัญชีแต่ละบัญชีในบัญชีแยกประเภทบริษัทในเครือสำหรับรายการการชำระเงินดาวน์ (ถ้าปิดใช้งาน บัญชีแต่ละบัญชีสำหรับรายการการชำระเงินดาวน์จะยังคงว่างเปล่า)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default account to register supplier deposit
 UseAuxiliaryAccountOnSupplierDeposit=บัญชีซัพพลายเออร์ของร้านค้าเป็นบัญชีแต่ละบัญชีในบัญชีแยกประเภทบริษัทในเครือสำหรับรายการการชำระเงินดาวน์ (ถ้าปิดใช้งาน บัญชีแต่ละบัญชีสำหรับรายการการชำระเงินดาวน์จะยังคงว่างเปล่า)

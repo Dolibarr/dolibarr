@@ -7,7 +7,7 @@
  * Copyright (C) 2012       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2020       Tobias Sekan            <tobias.sekan@startmail.com>
  * Copyright (C) 2024       MDW                     <mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025-2026  Charlene Benke          <charlene@patas-monkey.com>
  * Copyright (C) 2026       Alexandre Spangaro      <alexandre@inovea-conseil.com>
  *
@@ -135,7 +135,6 @@ if (empty($reshook)) {
 		$qs = preg_replace('/&action=addrights/', '', $qs);
 		$qs = preg_replace('/&token=[0-9a-f]+/i', '', $qs);
 		$qs = preg_replace('/&confirm=yes/', '', $qs);
-		//var_dump($qs);exit;
 		header("Location: ".$_SERVER["PHP_SELF"].($qs ? "?".$qs : ""));
 		exit;
 	}
@@ -522,7 +521,6 @@ if ($result) {
 	$num = $db->num_rows($result);
 	$i = 0;
 
-	//var_dump($cookietohidegrouparray);
 
 	while ($i < $num) {
 		$obj = $db->fetch_object($result);
@@ -534,7 +532,7 @@ if ($result) {
 			$obj->family = 'external';
 		}
 
-		// Si la famille n'existe pas dans $familyinfo, on utilise 'other'
+		// If the family does not exist in $familyinfo, use 'other'
 		if (!empty($obj->family) && !isset($familyinfo[$obj->family])) {
 			$obj->family = 'other';
 		}
@@ -592,7 +590,6 @@ foreach ($arrayofpermission as $i => $obj) {
 		$ishidden = 0;
 	}
 	$isexpanded = ! $ishidden;
-	//var_dump("isexpanded=".$isexpanded);
 
 	$permsgroupbyentitypluszero = array();
 	if (!empty($permsgroupbyentity[0])) {
@@ -601,7 +598,6 @@ foreach ($arrayofpermission as $i => $obj) {
 	if (!empty($permsgroupbyentity[$entity])) {
 		$permsgroupbyentitypluszero = array_merge($permsgroupbyentitypluszero, $permsgroupbyentity[$entity]);
 	}
-	//var_dump($permsgroupbyentitypluszero);
 
 	// Break found, it's a new module to catch
 	if (isset($obj->module) && ($oldmod != $obj->module)) {
@@ -616,7 +612,6 @@ foreach ($arrayofpermission as $i => $obj) {
 			$ishidden = 0;
 		}
 		$isexpanded = ! $ishidden;
-		//var_dump('$obj->module='.$obj->module.' isexpanded='.$isexpanded);
 
 		// Break detected, we get objMod
 		$objMod = $modules[$obj->module];

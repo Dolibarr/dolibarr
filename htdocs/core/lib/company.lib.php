@@ -611,7 +611,7 @@ function societe_admin_prepare_head()
 	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'company_admin');
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/societe/admin/societe_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'societe'));
 	$head[$h][1] = $langs->trans("ExtraFieldsThirdParties");
 	$nbExtrafields = $extrafields->attributes['societe']['count'];
 	if ($nbExtrafields > 0) {
@@ -620,7 +620,7 @@ function societe_admin_prepare_head()
 	$head[$h][2] = 'attributes';
 	$h++;
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/societe/admin/contact_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'socpeople'));
 	$head[$h][1] = $langs->trans("ExtraFieldsContacts");
 	$nbExtrafields = $extrafields->attributes['socpeople']['count'];
 	if ($nbExtrafields > 0) {
@@ -2563,7 +2563,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 			$out .= '<td class="tdoverflowmax300"';
 			if (isset($histo[$key]['type']) && $histo[$key]['type'] == 'action') {
 				$transcode = $langs->trans("Action" . $histo[$key]['acode']);
-				//$libelle = ($transcode != "Action".$histo[$key]['acode'] ? $transcode : $histo[$key]['alabel']);
+				//$label_trans = ($transcode != "Action".$histo[$key]['acode'] ? $transcode : $histo[$key]['alabel']);
 				$label = $histo[$key]['note'];
 				$actionstatic->id = $histo[$key]['id'];
 				$out .= ' title="' . dol_escape_htmltag($label) . '">';
