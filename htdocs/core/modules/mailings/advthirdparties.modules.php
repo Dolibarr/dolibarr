@@ -82,7 +82,7 @@ class mailing_advthirdparties extends MailingTargets
 	public function add_to_target_spec($mailing_id, $socid, $type_of_target, $contactid)
 	{
 		// phpcs:enable
-		global $conf, $langs;
+		global $conf;
 
 		dol_syslog(get_class($this)."::add_to_target_spec socid=".formatLogObject($socid).' contactid='.formatLogObject($contactid));
 
@@ -188,7 +188,6 @@ class mailing_advthirdparties extends MailingTargets
 				}
 			}
 		}
-
 
 		dol_syslog(get_class($this)."::add_to_target_spec mailing cibles=".formatLogObject($cibles), LOG_DEBUG);
 
@@ -312,15 +311,23 @@ class mailing_advthirdparties extends MailingTargets
 	 */
 	public function url($id, $type)
 	{
+		$s = "";
 		if ($type == 'thirdparty') {
 			$companystatic = new Societe($this->db);
 			$companystatic->fetch($id);
-			return $companystatic->getNomUrl(0, '', 0, 1);
+			$s = $companystatic->getNomUrl(0, 'nolink', 32, 1, 0);
 		} elseif ($type == 'contact') {
 			$contactstatic = new Contact($this->db);
 			$contactstatic->fetch($id);
-			return $contactstatic->getNomUrl(0, '', 0, '', -1, 1);
+			$s = $contactstatic->getNomUrl(0, 'nolink', 1, '', 0, 32);
 		}
-		return "";
+
+		// When link is too long (for example because of hook in getNomUrl that complete the url), we return empty string.
+		// Link is still possible with new source_id and source_type in db llx_mailing_cibles.
+		if (strlen($s) > 255) {
+			$s = "";
+		}
+
+		return $s;
 	}
 }
