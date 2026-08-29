@@ -673,7 +673,7 @@ if (empty($reshook)) {
 		// Action update
 		$error = 0;
 
-		if ($action == 'setwarehouse') {	// Default warehouse for the lines
+		if ($action == 'setwarehouse' && $permissiontoadd) {	// Default warehouse for the lines
 			$object->setValueFrom('fk_warehouse', (GETPOSTINT('warehouse_id') > 0 ? GETPOSTINT('warehouse_id') : null), '', null, 'int', '', $user);
 			$object->fk_warehouse = GETPOSTINT('warehouse_id');
 		}
@@ -2355,7 +2355,7 @@ if ($action == 'create' && $permissiontoadd) {
 			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editwarehouse&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetWarehouse'), 1).'</a></td>';
 		}
 		print '</tr></table></td><td colspan="3">';
-		if ($action == 'editwarehouse') {
+		if ($action == 'editwarehouse' && $permissiontoadd) {
 			$formproduct->formSelectWarehouses($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_warehouse, 'warehouse_id', 1);
 		} else {
 			$formproduct->formSelectWarehouses($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_warehouse, 'none');
