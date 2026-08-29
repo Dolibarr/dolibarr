@@ -1690,6 +1690,12 @@ class Holiday extends CommonObject
 
 			// Get month of last update
 			$stringInDBForLastUpdate = $this->getConfCP('lastUpdate', dol_print_date($now, '%Y%m%d%H%M%S'));	// Example '20200101120000'
+			// The lastUpdate config row is created empty (value NULL) at install, so getConfCP() returns an empty value
+			// the first time. Treat an empty value as "start from now" (like define_holiday.php does) instead of a very
+			// old date, otherwise the catch-up loop below would credit every user with years of monthly accrual at once.
+			if (empty($stringInDBForLastUpdate)) {
+				$stringInDBForLastUpdate = dol_print_date($now, '%Y%m%d%H%M%S');
+			}
 			// Protection when $lastUpdate has a not valid value
 			if ($stringInDBForLastUpdate < '20000101000000') {
 				$stringInDBForLastUpdate = '20000101000000';

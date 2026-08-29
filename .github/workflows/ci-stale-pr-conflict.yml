@@ -1,0 +1,86 @@
+name: "Close old PRs with merge conflicts"
+
+on:
+  schedule:
+    - cron: "20 21 * * *"
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  close-old-conflicting-prs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Find and close old PRs with merge conflicts
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+
+          ONE_YEAR_AGO=$(date -d "6 months ago" --iso-8601=seconds)
+
+          echo "Looking for open PRs not updated since: $ONE_YEAR_AGO"
+
+          CLOSED_COUNT=0
+          MAX_CLOSED=20
+
+          gh pr list \
+            --repo "$REPO" \
+            --state open \
+            --limit 1000 \
+            --json number,title,createdAt,updatedAt |
+          jq -c '.[] | select(.updatedAt < "'"$ONE_YEAR_AGO"'")' |
+          while IFS= read -r PR; do
+
+            PR_NUMBER=$(echo "$PR" | jq -r '.number')
+            PR_TITLE=$(echo "$PR" | jq -r '.title')
+            CREATED_AT=$(echo "$PR" | jq -r '.createdAt')
+            UPDATED_AT=$(echo "$PR" | jq -r '.updatedAt')
+
+            echo ""
+            echo "========================================"
+            echo "PR #$PR_NUMBER: $PR_TITLE"
+            echo "Created:      $CREATED_AT"
+            echo "Last updated: $UPDATED_AT"
+            echo "========================================"
+
+            echo "Checking merge status..."
+
+            MERGEABLE=$(gh pr view "$PR_NUMBER" \
+              --repo "$REPO" \
+              --json mergeable \
+              --jq '.mergeable')
+
+            echo "Mergeable status: $MERGEABLE"
+
+            if [ "$MERGEABLE" = "CONFLICTING" ]; then
+
+              echo "PR #$PR_NUMBER has merge conflicts."
+
+              COMMENT="This PR has been closed automatically because it has not been updated for more than 6 months, and currently has merge conflicts so can't merged without author action. The PR must be reopened if the conflicts are resolved and the changes are still relevant."
+
+              echo "Closing PR #$PR_NUMBER"
+
+              gh pr close "$PR_NUMBER" \
+                --repo "$REPO" \
+                --comment "$COMMENT"
+
+              CLOSED_COUNT=$((CLOSED_COUNT + 1))
+
+              echo "Closed PRs: $CLOSED_COUNT/$MAX_CLOSED"
+
+              if [ "$CLOSED_COUNT" -ge "$MAX_CLOSED" ]; then
+                echo "Reached the maximum number of PRs to close. Stopping."
+                break
+              fi
+
+            else
+              echo "PR #$PR_NUMBER has no merge conflict. Keeping it open."
+            fi
+
+          done

@@ -1031,6 +1031,10 @@ if ($id > 0 || !empty($ref)) {
 						if (isModEnabled('productbatch') && $objp->tobatch > 0) {
 							$type = 'batch';
 							print img_picto($langs->trans('AddStockLocationLine'), 'split', 'class="splitbutton" onClick="addDispatchLine('.$i.', \''.$type.'\')"');
+							if ($objp->tobatch == 2) {
+								// Product managed with unique serial numbers: allow to enter several serial numbers at once (one line per serial)
+								print img_picto($langs->trans('EnterMultipleSerialNumbers'), 'barcode', 'class="splitbutton marginleftonly" onClick="addDispatchLinesFromSerialList('.$i.', \''.$type.'\')"');
+							}
 						} else {
 							$type = 'dispatch';
 							print img_picto($langs->trans('AddStockLocationLine'), 'split', 'class="splitbutton" onClick="addDispatchLine('.$i.', \''.$type.'\')"');
@@ -1392,16 +1396,16 @@ if ($id > 0 || !empty($ref)) {
 							$disabled = 1;
 						}
 						if (empty($objp->status)) {
-							print '<a class="button'.($disabled ? ' buttonRefused' : '').'" href="'.$_SERVER["PHP_SELF"]."?id=".$id."&action=checkdispatchline&lineid=".$objp->dispatchlineid.'">'.$langs->trans("Approve").'</a>';
-							print '<a class="button'.($disabled ? ' buttonRefused' : '').'" href="'.$_SERVER["PHP_SELF"]."?id=".$id."&action=denydispatchline&lineid=".$objp->dispatchlineid.'">'.$langs->trans("Deny").'</a>';
+							print '<a class="button'.($disabled ? ' buttonRefused' : '').'" href="'.$_SERVER["PHP_SELF"]."?id=".$id."&action=checkdispatchline&token=".newToken()."&lineid=".$objp->dispatchlineid.'">'.$langs->trans("Approve").'</a>';
+							print '<a class="button'.($disabled ? ' buttonRefused' : '').'" href="'.$_SERVER["PHP_SELF"]."?id=".$id."&action=denydispatchline&token=".newToken()."&lineid=".$objp->dispatchlineid.'">'.$langs->trans("Deny").'</a>';
 						}
 						if ($objp->status == 1) {
-							print '<a class="button'.($disabled ? ' buttonRefused' : '').'" href="'.$_SERVER["PHP_SELF"]."?id=".$id."&action=uncheckdispatchline&lineid=".$objp->dispatchlineid.'">'.$langs->trans("Reinit").'</a>';
-							print '<a class="button'.($disabled ? ' buttonRefused' : '').'" href="'.$_SERVER["PHP_SELF"]."?id=".$id."&action=denydispatchline&lineid=".$objp->dispatchlineid.'">'.$langs->trans("Deny").'</a>';
+							print '<a class="button'.($disabled ? ' buttonRefused' : '').'" href="'.$_SERVER["PHP_SELF"]."?id=".$id."&action=uncheckdispatchline&token=".newToken()."&lineid=".$objp->dispatchlineid.'">'.$langs->trans("Reinit").'</a>';
+							print '<a class="button'.($disabled ? ' buttonRefused' : '').'" href="'.$_SERVER["PHP_SELF"]."?id=".$id."&action=denydispatchline&token=".newToken()."&lineid=".$objp->dispatchlineid.'">'.$langs->trans("Deny").'</a>';
 						}
 						if ($objp->status == 2) {
-							print '<a class="button'.($disabled ? ' buttonRefused' : '').'" href="'.$_SERVER["PHP_SELF"]."?id=".$id."&action=uncheckdispatchline&lineid=".$objp->dispatchlineid.'">'.$langs->trans("Reinit").'</a>';
-							print '<a class="button'.($disabled ? ' buttonRefused' : '').'" href="'.$_SERVER["PHP_SELF"]."?id=".$id."&action=checkdispatchline&lineid=".$objp->dispatchlineid.'">'.$langs->trans("Approve").'</a>';
+							print '<a class="button'.($disabled ? ' buttonRefused' : '').'" href="'.$_SERVER["PHP_SELF"]."?id=".$id."&action=uncheckdispatchline&token=".newToken()."&lineid=".$objp->dispatchlineid.'">'.$langs->trans("Reinit").'</a>';
+							print '<a class="button'.($disabled ? ' buttonRefused' : '').'" href="'.$_SERVER["PHP_SELF"]."?id=".$id."&action=checkdispatchline&token=".newToken()."&lineid=".$objp->dispatchlineid.'">'.$langs->trans("Approve").'</a>';
 						}
 					}
 					print '</td>';

@@ -311,6 +311,10 @@ if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
+// Add hook to complete $arrayfields
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+
 // Permissions
 $permissiontoread = $user->hasRight('propal', 'lire');
 $permissiontoadd = $user->hasRight('propal', 'creer');
@@ -2170,7 +2174,7 @@ while ($i < $imaxinloop) {
 		}
 		// Amount HT
 		if (!empty($arrayfields['p.total_ht']['checked'])) {
-			print '<td class="nowrap right"><span class="amount">'.price($obj->total_ht)."</span></td>\n";
+			print '<td class="nowrap right">'.showTotalAmount(price($obj->total_ht))."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

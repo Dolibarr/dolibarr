@@ -377,8 +377,10 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 			'createsite',
 			'createcard',
 			'edit',
+			'editcss',
 			'editcontract',
 			'editfile',
+			'editsecurity',
 			'editvalidator',
 			'file_manager',
 			'getCategories',
@@ -399,12 +401,12 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 			$sensitiveget = true;
 		}
 	} elseif (getDolGlobalInt('MAIN_SECURITY_CSRF_WITH_TOKEN') >= 2) {
-		// Few GET actions coded with a &token into url are also processed as sensitive.
+		// We need a valid token for action that are strictly equals to these values.
 		$arrayofactiontoforcetokencheck = array(
 			'activate',
 			'doprev', 'donext', 'dvprev', 'dvnext',
 			'freezone', 'install',
-			'reopen'
+			'reopen', 'swapstatut'
 		);
 		if (in_array($tmpaction, $arrayofactiontoforcetokencheck)) {
 			$sensitiveget = true;
@@ -742,6 +744,18 @@ if (!defined('NOLOGIN')) {
 			// TODO Read option $dolibarr_main_no_leaked_credentials with value 1, 2, ... and return
 			//dol_syslog("--- Access to ".(empty($_SERVER["REQUEST_METHOD"]) ? '' : $_SERVER["REQUEST_METHOD"].' ').$_SERVER["PHP_SELF"].' refused by option $dolibarr_main_no_leaked_credentials='.$dolibarr_main_no_leaked_credentials, LOG_NOTICE);
 			dol_syslog('--- Security warning: credentials reported as leaked were used to try to login. HTTP_EXPOSED_CREDENTIAL_CHECK='.((int) $_SERVER['HTTP_EXPOSED_CREDENTIAL_CHECK']), LOG_NOTICE);
+		}
+
+		// Refuse a login submission that carries credentials in the query string.
+		// This avoids the username/password ending up in web server access logs,
+		// the browser history, the Referrer header or any HTTP proxy log (CWE-598).
+		// OAuth callbacks legitimately use GET and never carry "username" or
+		// "password" in the query string, so this does not affect them.
+		if (GETPOST('actionlogin', 'aZ09') == 'login' && (isset($_GET['username']) || isset($_GET['password']))) {
+			dol_syslog("--- Login submission with credentials in the query string refused for ".$_SERVER["PHP_SELF"], LOG_WARNING);
+			$langs->loadLangs(array('main', 'errors'));
+			$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("ErrorLoginMustBePostMethod");
+			$test = false;
 		}
 
 		// Validation of login/pass/entity

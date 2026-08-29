@@ -83,8 +83,8 @@ if ($action == 'set_default') {
 } elseif ($action == 'setdoc') {
 	// Set default model
 	if (dolibarr_set_const($db, "USER_ADDON_PDF_ODT", $value, 'chaine', 0, '', $conf->entity)) {
-		// La constante qui a ete lue en avant du nouveau set
-		// on passe donc par une variable pour avoir un affichage coherent
+		// The constant that was read before the new set
+		// so we go through a variable to get a consistent display
 		$conf->global->USER_ADDON_PDF_ODT = $value;
 	}
 
@@ -203,7 +203,7 @@ print '<br>';
 
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
-// Defini tableau def des modeles
+// Define array def of models
 $def = array();
 $sql = "SELECT nom";
 $sql .= " FROM ".MAIN_DB_PREFIX."document_model";

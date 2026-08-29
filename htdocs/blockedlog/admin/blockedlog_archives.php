@@ -1322,7 +1322,7 @@ if ($action != 'check' && $action != 'checkconfirmed') {
 		print '<input type="hidden" name="withtab" value="'.GETPOST('withtab', 'alpha').'">';
 		print '<input type="submit" name="downloadcsv" class="button" value="'.$langs->trans('DownloadLogCSV').'">';
 		/*if (getDolGlobalString('BLOCKEDLOG_USE_REMOTE_AUTHORITY')) {
-			print ' | <a href="?action=downloadblockchain'.(GETPOST('withtab', 'alpha') ? '&withtab='.GETPOST('withtab', 'alpha') : '').'">'.$langs->trans('DownloadBlockChain').'</a>';
+			print ' | <a href="?action=downloadblockchain&token='.newToken().''.(GETPOST('withtab', 'alpha') ? '&withtab='.GETPOST('withtab', 'alpha') : '').'">'.$langs->trans('DownloadBlockChain').'</a>';
 		}*/
 		print ' </div><br>';
 

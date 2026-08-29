@@ -2,6 +2,7 @@
 /* Copyright (C) 2017       ATM Consulting          <contact@atm-consulting.fr>
  * Copyright (C) 2017-2018  Laurent Destailleur	    <eldy@users.sourceforge.net>
  * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -133,16 +134,16 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 			return -1;
 		}
 
+		/** @var Facture|Don|Paiement|PaymentDonation|Subscription|PaymentVarious|CashControl $object */
+		'@phan-var-force Facture|Don|Paiement|PaymentDonation|Subscription|PaymentVarious|CashControl $object';
+
 		if ($action === 'BILL_UNVALIDATE') {
-			/** @var Facture $object */
-			'@phan-var-force Facture $object';
 			if ($object->isEditable() <= 0) {
 				$this->errors[] = 'Modifying this invoice is not allowed';
 				return -2;
 			}
 		}
 
-		/** @var Facture|Don|Paiement|PaymentDonation|Subscription|PaymentVarious|CashControl $object */
 		dol_syslog("Trigger '".$this->name."' for action '".$action."' launched by ".__FILE__.". id=".$object->id);
 
 		require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
@@ -200,7 +201,7 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 				|| ($object->oldcopy->thirdparty->idprof1 != $object->thirdparty->idprof1)	// Siren
 				|| ($object->oldcopy->thirdparty->idprof2 != $object->thirdparty->idprof2)	// Siret
 				|| ($object->oldcopy->thirdparty->tva_intra != $object->thirdparty->tva_intra)
-				) {
+			) {
 				$this->errors[] = 'You try to modify a property that is locked once the invoice has been validated (total, revenu stamp, professional id).';
 				return -2;
 			}
