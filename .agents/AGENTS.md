@@ -140,6 +140,7 @@ If possible:
 - Use JOINs or batch queries instead of multiple sequential queries
 - Apply `LIMIT` and proper indexes on list queries
 - Cache repeated calls to `getDolGlobalString()` or `$conf->global->` in local variables
+- If you need a cache array to be used into a loop, you can use `$conf->cache['aNameForYourCacheArray'] = array();`
 
 ---
 
