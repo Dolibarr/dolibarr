@@ -359,6 +359,27 @@ export function initAiAssistant(container) {
             + '<span class="chip-name">' + escapeHtml(name) + '</span></span>';
     }
 
+    /**
+     * Light markdown rendering for free-text LLM answers: the models reply with
+     * markdown (bold, lists, line breaks) that innerHTML would otherwise flatten
+     * into one unreadable block with literal asterisks. HTML is escaped FIRST,
+     * so the LLM cannot inject markup.
+     * @param {string} text Raw model answer
+     * @return {string} Safe HTML
+     */
+    function renderMarkdownLite(text) {
+        let s = escapeHtml(String(text));
+        s = s.replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>');
+        s = s.replace(/(^|[\s(])\*([^*\n]+)\*(?=[\s).,;:!?]|$)/g, '$1<em>$2</em>');
+        s = s.replace(/`([^`\n]+)`/g, '<code>$1</code>');
+        // Numbered/bulleted list items get their own line even when the model
+        // packed them into a single paragraph ("… 5,20 € 2. **Référence** …").
+        s = s.replace(/\s(\d{1,2}\.\s)(?=<strong>|\S)/g, '<br>$1');
+        s = s.replace(/(^|\n)[-•]\s/g, '$1• ');
+        s = s.replace(/\n/g, '<br>');
+        return s;
+    }
+
     // =========================================================================
     // LIBRARY LOADERS & EXTRACTORS
     // =========================================================================
@@ -1078,7 +1099,7 @@ export function initAiAssistant(container) {
 
     function handleClarification(question, context) {
         clarificationContext = context;
-        let html = `<div><strong>${question}</strong></div><input type="text" id="clarification-input" placeholder="${t('TypeResponse')}" style="width:100%; margin-top:10px; padding:8px; border:1px solid #ccc; border-radius:4px;">`;
+        let html = `<div><strong>${renderMarkdownLite(question)}</strong></div><input type="text" id="clarification-input" placeholder="${t('TypeResponse')}" style="width:100%; margin-top:10px; padding:8px; border:1px solid #ccc; border-radius:4px;">`;
         const actions = [
             {
                 text: t('Submit'), class: 'primary', icon: 'fa-check', onclick: () => {
@@ -1106,7 +1127,7 @@ export function initAiAssistant(container) {
 
     function handleResponse(message) {
         if (!message) message = t('EmptyAIResponse');
-        appendMsg('bot', message);
+        appendMsg('bot', renderMarkdownLite(message));
     }
 
     function handleConfirmation(action, details, originalIntent) {
