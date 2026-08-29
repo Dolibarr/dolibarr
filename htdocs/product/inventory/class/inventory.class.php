@@ -777,6 +777,57 @@ class Inventory extends CommonObject
 		}
 	}
 
+
+	/**
+	 *  Returns the reference to the following non used object depending on the active numbering module.
+	 *  When no numbering module is configured, returns an empty string: the reference is typed freely.
+	 *
+	 *  @return string		Object free reference, or '' when the reference is manual
+	 */
+	public function getNextNumRef()
+	{
+		global $langs, $conf;
+		$langs->load("stocks");
+
+		if (!getDolGlobalString('INVENTORY_ADDON')) {
+			return '';	// Free reference, typed by the user (historical behaviour)
+		}
+
+		$mybool = false;
+
+		$file = getDolGlobalString('INVENTORY_ADDON').".php";
+		$classname = getDolGlobalString('INVENTORY_ADDON');
+
+		// Include file with class
+		$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+		foreach ($dirmodels as $reldir) {
+			$dir = dol_buildpath($reldir."core/modules/inventory/");
+
+			// Load file with numbering class (if found)
+			$mybool = ((bool) @include_once $dir.$file) || $mybool;
+		}
+
+		if (!$mybool) {
+			dol_print_error(null, "Failed to include file ".$file);
+			return '';
+		}
+
+		if (class_exists($classname)) {
+			$obj = new $classname();
+			'@phan-var-force ModeleNumRefInventory $obj';
+			$numref = $obj->getNextValue($this);
+
+			if ($numref != '' && $numref != '-1') {
+				return $numref;
+			} else {
+				$this->error = $obj->error;
+				return '';
+			}
+		}
+
+		return '';
+	}
+
 	/**
 	 *  Create a document onto disk according to template module.
 	 *
