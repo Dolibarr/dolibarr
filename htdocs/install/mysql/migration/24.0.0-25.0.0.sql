@@ -121,6 +121,8 @@ ALTER TABLE llx_receptiondet_batch ADD COLUMN ref_fourn varchar(128) NULL AFTER 
 -- VPGSQL ALTER TABLE llx_bookcal_availabilities RENAME COLUMN start TO date_start;
 -- VPGSQL ALTER TABLE llx_bookcal_availabilities RENAME COLUMN "end" TO date_end;
 
+ALTER TABLE llx_facturedet ADD INDEX idx_facturedet_fk_prev_id (fk_prev_id);
+ALTER TABLE llx_facture ADD INDEX idx_facture_situation_cycle_ref (situation_cycle_ref);
 
 
 

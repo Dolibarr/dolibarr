@@ -453,7 +453,4 @@ ALTER TABLE llx_workstation_workstation_extrafields ADD INDEX idx_workstation_wo
 
 ALTER TABLE llx_adherent MODIFY COLUMN societe VARCHAR(128);
 
-ALTER TABLE llx_facturedet ADD INDEX idx_facturedet_fk_prev_id (fk_prev_id);
-ALTER TABLE llx_facture ADD INDEX idx_facture_situation_cycle_ref (situation_cycle_ref);
-
 -- end of migration
