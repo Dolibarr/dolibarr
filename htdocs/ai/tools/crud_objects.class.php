@@ -183,6 +183,7 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 								"type" => "object",
 								"properties" => [
 									"product_id" => ["type" => "integer", "default" => 0, "description" => "Product ID (0 if not found)"],
+									"product_ref" => ["type" => "string", "description" => "Product reference/SKU as written on the source document (preferred when the numeric product_id is unknown; matched against catalog refs, barcodes and labels)"],
 									"description" => ["type" => "string", "description" => "Product name or description"],
 									"quantity" => ["type" => "number", "default" => 1, "description" => "Quantity ordered"],
 									"unit_price" => ["type" => "number", "description" => "Selling price per unit (optional)"],
@@ -225,6 +226,7 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 								"type" => "object",
 								"properties" => [
 									"product_id" => ["type" => "integer", "default" => 0],
+									"product_ref" => ["type" => "string", "description" => "Product reference/SKU as written on the source document (preferred when the numeric product_id is unknown; matched against catalog refs, barcodes and labels)"],
 									"description" => ["type" => "string"],
 									"quantity" => ["type" => "number", "default" => 1],
 									"unit_price" => ["type" => "number"],
@@ -269,6 +271,7 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 								"type" => "object",
 								"properties" => [
 									"product_id" => ["type" => "integer", "default" => 0],
+									"product_ref" => ["type" => "string", "description" => "Product reference/SKU as written on the source document (preferred when the numeric product_id is unknown; matched against catalog refs, barcodes and labels)"],
 									"description" => ["type" => "string"],
 									"quantity" => ["type" => "number", "default" => 1],
 									"unit_price" => ["type" => "number"],
@@ -291,6 +294,7 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 						"object_type" => ["type" => "string", "enum" => array_keys($this->map)],
 						"parent_id" => ["type" => "integer"],
 						"product_id" => ["type" => "integer", "default" => 0],
+									"product_ref" => ["type" => "string", "description" => "Product reference/SKU as written on the source document (preferred when the numeric product_id is unknown; matched against catalog refs, barcodes and labels)"],
 						"description" => ["type" => "string"],
 						"quantity" => ["type" => "number", "default" => 1],
 						"unit_price" => ["type" => "number"],
@@ -558,7 +562,7 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 		}
 
 		// Normalize Inputs
-		$productIdentifier = isset($args['product']) ? (string) $args['product'] : (isset($args['description']) ? (string) $args['description'] : '');
+		$productIdentifier = isset($args['product']) ? (string) $args['product'] : (isset($args['product_ref']) ? (string) $args['product_ref'] : (isset($args['description']) ? (string) $args['description'] : ''));
 
 		$qtyInput = $args['qty'] ?? $args['quantity'] ?? 1;
 		$qty = (float) $qtyInput;
