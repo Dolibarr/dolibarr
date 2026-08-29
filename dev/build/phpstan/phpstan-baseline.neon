@@ -4669,12 +4669,6 @@ parameters:
 			path: ../../../htdocs/expensereport/class/paymentexpensereport.class.php
 
 		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../../htdocs/expensereport/class/paymentexpensereport.class.php
-
-		-
 			message: '#^Comparison operation "\>" between 1 and 1 is always false\.$#'
 			identifier: greater.alwaysFalse
 			count: 1
@@ -6317,12 +6311,6 @@ parameters:
 			identifier: booleanNot.alwaysTrue
 			count: 1
 			path: ../../../htdocs/product/dynamic_price/class/price_global_variable_updater.class.php
-
-		-
-			message: '#^If condition is always false\.$#'
-			identifier: if.alwaysFalse
-			count: 1
-			path: ../../../htdocs/product/inventory/card.php
 
 		-
 			message: '#^Negated boolean expression is always true\.$#'
