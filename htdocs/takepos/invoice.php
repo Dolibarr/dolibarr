@@ -1160,6 +1160,18 @@ if (empty($reshook)) {
 		}
 	}
 
+	// Action to fully remove (discard) the current sale: delete the draft invoice so its tab disappears
+	// (the "delete" action above only empties and resets the cart).
+	if ($action == "discardsale" && ($user->hasRight('takepos', 'run') || defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE'))) {
+		if ($placeid > 0) {
+			$result = $invoice->fetch($placeid);
+			if ($result > 0 && $invoice->status == Facture::STATUS_DRAFT) {
+				$invoice->delete($user);
+				$placeid = 0;
+			}
+		}
+	}
+
 	if ($action == "updateqty") {	// Test on permission is done later
 		foreach ($invoice->lines as $line) {
 			if ($line->id == $idline) {
