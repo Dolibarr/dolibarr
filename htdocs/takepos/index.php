@@ -1607,6 +1607,7 @@ if (getDolGlobalString('TAKEPOS_WEIGHING_SCALE')) {
 	$menus[$r++] = array('title' => '<span class="fa fa-balance-scale pictofixedwidth"></span><div class="trunc">'.$langs->trans("WeighingScale").'</div>', 'action' => 'WeighingScale();');
 }
 
+// Each menu entry supports: 'title' (html), 'action' (js), 'style' (inline css) and 'class' (extra css class on the button).
 $parameters = array('menus' => $menus);
 $reshook = $hookmanager->executeHooks('ActionButtons', $parameters);
 if ($reshook == 0) {  //add buttons
@@ -1656,12 +1657,12 @@ if ($reshook == 0) {  //add buttons
 			if (count($menus) > 12 and $i == 12) {
 				echo '<button style="'.(empty($menu['style']) ? '' : $menu['style']).'" type="button" id="actionnext" class="actionbutton" onclick="MoreActions('.count($menus).')">'.$langs->trans("Next").'</button>';
 				echo '<button style="display: none;" type="button" id="actionprevious" class="actionbutton" onclick="MoreActions('.count($menus).')">'.$langs->trans("Previous").'</button>';
-				echo '<button style="display: none;" type="button" id="action'.$i.'" class="actionbutton" onclick="'.(empty($menu['action']) ? '' : $menu['action']).'">'.$menu['title'].'</button>';
+				echo '<button style="display: none;" type="button" id="action'.$i.'" class="actionbutton'.(empty($menu['class']) ? '' : ' '.dol_escape_htmltag($menu['class'])).'" onclick="'.(empty($menu['action']) ? '' : $menu['action']).'">'.$menu['title'].'</button>';
 			} elseif ($i > 12) {
-				echo '<button style="display: none;" type="button" id="action'.$i.'" class="actionbutton" onclick="'.(empty($menu['action']) ? '' : $menu['action']).'">'.$menu['title'].'</button>';
+				echo '<button style="display: none;" type="button" id="action'.$i.'" class="actionbutton'.(empty($menu['class']) ? '' : ' '.dol_escape_htmltag($menu['class'])).'" onclick="'.(empty($menu['action']) ? '' : $menu['action']).'">'.$menu['title'].'</button>';
 				// TODO keep style but hide button
 			} else {
-				echo '<button style="'.(empty($menu['style']) ? '' : $menu['style']).'" type="button" id="action'.$i.'" class="actionbutton" onclick="'.(empty($menu['action']) ? '' : $menu['action']).'">'.$menu['title'].'</button>';
+				echo '<button style="'.(empty($menu['style']) ? '' : $menu['style']).'" type="button" id="action'.$i.'" class="actionbutton'.(empty($menu['class']) ? '' : ' '.dol_escape_htmltag($menu['class'])).'" onclick="'.(empty($menu['action']) ? '' : $menu['action']).'">'.$menu['title'].'</button>';
 			}
 		}
 
