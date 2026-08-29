@@ -1053,9 +1053,13 @@ class Reception extends CommonObject
 	 * @param   int			$rang             				Position of line
 	 * @param 	string		$description					Description of line product
 	 * @param	array<string,mixed>		$array_options		extrafields array
+	 * @param	float		$cost_price		Buying price of the line (used by stock movement at validation)
+	 * @param	string		$ref_fourn		Supplier ref of the product for this line
+	 * @param	int			$fk_entrepot	Id of destination warehouse (0 = not set)
+	 * @param	string		$batch			Batch/serial number
 	 * @return	int											Return integer <0 if KO, >0 if OK
 	 */
-	public function addlinefree($qty, $element_type, $fk_product, $fk_unit, $rang, $description, $array_options = [])
+	public function addlinefree($qty, $element_type, $fk_product, $fk_unit, $rang, $description, $array_options = [], $cost_price = 0, $ref_fourn = '', $fk_entrepot = 0, $batch = '')
 	{
 		global $mysoc, $langs, $user;
 
@@ -1085,6 +1089,14 @@ class Reception extends CommonObject
 			$this->line->qty = (float) $qty;
 			$this->line->fk_unit = $fk_unit;
 			$this->line->rang = $ranktouse;
+			$this->line->cost_price = (float) $cost_price;
+			$this->line->ref_fourn = trim((string) $ref_fourn);
+			if ((int) $fk_entrepot > 0) {
+				$this->line->fk_entrepot = (int) $fk_entrepot;
+			}
+			if ((string) $batch !== '') {
+				$this->line->batch = trim((string) $batch);
+			}
 
 			if (is_array($array_options) && count($array_options) > 0) {
 				$this->line->array_options = $array_options;
@@ -1215,7 +1227,7 @@ class Reception extends CommonObject
 
 		$this->lines = array();
 
-		$sql = 'SELECT rc.rowid, rc.fk_reception, rc.fk_entrepot, rc.fk_product, rc.fk_unit, rc.description, rc.fk_elementdet, rc.fk_element, rc.element_type, rc.qty, rc.rang';
+		$sql = 'SELECT rc.rowid, rc.fk_reception, rc.fk_entrepot, rc.fk_product, rc.fk_unit, rc.description, rc.fk_elementdet, rc.fk_element, rc.element_type, rc.qty, rc.rang, rc.cost_price, rc.ref_fourn, rc.batch, rc.eatby, rc.sellby';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'receptiondet_batch as rc';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON (p.rowid = rc.fk_product)';
 		$sql .= ' WHERE rc.fk_reception = '.((int) $this->id);
@@ -1240,6 +1252,11 @@ class Reception extends CommonObject
 				$line->description      = $objp->description;
 				$line->qty              = $objp->qty;
 				$line->fk_entrepot      = $objp->fk_entrepot;
+				$line->cost_price       = $objp->cost_price;
+				$line->ref_fourn        = $objp->ref_fourn;
+				$line->batch            = $objp->batch;
+				$line->eatby            = $objp->eatby;
+				$line->sellby           = $objp->sellby;
 				$line->fk_product       = $objp->fk_product;
 
 				$line->rang             = $objp->rang;

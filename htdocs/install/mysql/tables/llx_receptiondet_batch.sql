@@ -44,6 +44,7 @@ create table llx_receptiondet_batch
   datec          datetime,
   tms            timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   cost_price     double(24,8) DEFAULT 0,
+  ref_fourn      varchar(128),									-- supplier ref of the product for this reception line
   rang 			 integer  DEFAULT 0,							-- Position of line
   extraparams	 varchar(255)				 					-- to stock other parameters in json format
 )ENGINE=innodb;
