@@ -68,14 +68,14 @@ class UniversalLLMAdapter
 	/**
 	 * Generate a response using the configured LLM provider
 	 *
+	 * Attachments are sent as NATIVE multimodal parts — instead of inlining base64 into
+	 * the text prompt — which is what allows the provider to actually see the file
+	 * (vision/document understanding).
+	 *
 	 * @param string $system   The system prompt/instruction
 	 * @param string $userMsg  The specific user query
 	 * @param string $mode     'json' for strict JSON (MCP), 'text' for legacy (default)
-	 * @param array<int,array{mime:string,data:string}> $attachments  Optional documents/images to
-	 *                         send along the message as NATIVE multimodal parts (each entry is
-	 *                         ['mime' => 'image/png', 'data' => '<base64>']). Passing them here —
-	 *                         instead of inlining base64 into the text prompt — is what allows the
-	 *                         provider to actually see the file (vision/document understanding).
+	 * @param array<int,array{mime:string,data:string}> $attachments Optional documents/images, each entry is array('mime' => 'image/png', 'data' => '<base64>')
 	 * @return string|null     The text response from the AI or null on failure
 	 */
 	public function generate(string $system, string $userMsg, string $mode = 'text', array $attachments = array()): ?string
@@ -96,6 +96,7 @@ class UniversalLLMAdapter
 	 * @param string $sys System prompt
 	 * @param string $msg User message
 	 * @param string $mode 'json' or 'text'
+	 * @param array<int,array{mime:string,data:string}> $attachments Optional attachments sent as native multimodal parts
 	 * @return string|null Response content or null on failure
 	 */
 	private function callOpenAI(string $sys, string $msg, string $mode = 'text', array $attachments = array()): ?string
@@ -147,6 +148,7 @@ class UniversalLLMAdapter
 	 * @param string $sys System prompt
 	 * @param string $msg User message
 	 * @param string $mode Response mode (default: text)
+	 * @param array<int,array{mime:string,data:string}> $attachments Optional attachments sent as native multimodal parts
 	 *
 	 * @return string|null Response content or null on failure
 	 */
@@ -189,6 +191,7 @@ class UniversalLLMAdapter
 	 * @param string $sys System prompt
 	 * @param string $msg User message
 	 * @param string $mode Response mode (default: text)
+	 * @param array<int,array{mime:string,data:string}> $attachments Optional attachments sent as native multimodal parts
 	 *
 	 * @return string|null Response content or null on failure
 	 */
