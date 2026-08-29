@@ -46,6 +46,11 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/ai/lib/ai.lib.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var User $user
+ */
 
 top_httphead('application/json');
 
