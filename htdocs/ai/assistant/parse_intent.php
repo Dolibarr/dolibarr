@@ -123,7 +123,11 @@ try {
 	if (strpos($query, '__FILE_ATTACHMENT__') !== false) {
 		$query = preg_replace_callback(
 			'/__FILE_ATTACHMENT__\[([^\]]*)\]::([A-Za-z0-9+\/=\r\n]+)/',
-			static function ($m) use (&$attachments) {
+			/**
+			 * @param string[] $m Regex matches: [1] = mime type, [2] = base64 payload
+			 * @return string
+			 */
+			static function (array $m) use (&$attachments) {
 				$attachments[] = array(
 					'mime' => ($m[1] !== '' ? $m[1] : 'application/octet-stream'),
 					'data' => preg_replace('/\s+/', '', $m[2])
