@@ -3,6 +3,7 @@
  * Copyright (C) 2014	    Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -780,7 +781,7 @@ if (count($listofdata)) {
 	print '<input type="hidden" name="action" value="createmovements">';
 
 	// Button to record mass movement
-	$codemove = (GETPOSTISSET("codemove") ? GETPOST("codemove", 'alpha') : dol_print_date(dol_now(), '%Y%m%d%H%M%S'));
+	$codemove = (GETPOSTISSET("codemove") ? GETPOST("codemove", 'alpha') : getDolGlobalString('STOCK_MASSSTOCKMOVE_CODE_PREFIX', 'MSM-').dol_print_date(dol_now(), '%Y%m%d%H%M%S'));
 	$labelmovement = GETPOST("label") ? GETPOST('label') : $langs->trans("MassStockTransferShort").' '.dol_print_date($now, '%Y-%m-%d %H:%M');
 
 	print '<div class="center">';
