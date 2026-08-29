@@ -697,6 +697,11 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 			// then the global default, then the first active warehouse.
 			$recWarehouse = (int) ($args['warehouse_id'] ?? 0);
 			if ($recWarehouse <= 0) {
+				// Reception::$fk_warehouse (default warehouse on the reception header) is
+				// introduced by #39294; until that lands it is an undeclared/dynamic
+				// property that simply resolves to null here, so we fall through to the
+				// global default warehouse.
+				// @phan-suppress-next-line PhanUndeclaredProperty
 				$recWarehouse = (int) (!empty($object->fk_warehouse) ? $object->fk_warehouse : getDolGlobalInt('MAIN_DEFAULT_WAREHOUSE'));
 			}
 			if ($recWarehouse <= 0) {
