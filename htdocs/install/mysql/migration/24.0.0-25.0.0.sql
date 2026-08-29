@@ -113,6 +113,14 @@ ALTER TABLE llx_rights_def ADD COLUMN right_position integer DEFAULT 0 NOT NULL 
 -- Add supplier ref on reception lines (standalone receptions)
 ALTER TABLE llx_receptiondet_batch ADD COLUMN ref_fourn varchar(128) NULL AFTER cost_price;
 
+-- Rename bookcal availabilities date columns: "end" is a reserved word in
+-- PostgreSQL so "CREATE TABLE ... end date ..." never worked there. The
+-- PostgreSQL variant must quote "end".
+-- VMYSQL ALTER TABLE llx_bookcal_availabilities CHANGE COLUMN start date_start date;
+-- VMYSQL ALTER TABLE llx_bookcal_availabilities CHANGE COLUMN end date_end date;
+-- VPGSQL ALTER TABLE llx_bookcal_availabilities RENAME COLUMN start TO date_start;
+-- VPGSQL ALTER TABLE llx_bookcal_availabilities RENAME COLUMN "end" TO date_end;
+
 
 
 
