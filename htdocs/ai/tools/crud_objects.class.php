@@ -688,10 +688,24 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 				return ["success" => false, "error" => "Reception standalone mode required to add lines manually."];
 			}
 			require_once DOL_DOCUMENT_ROOT . '/reception/class/receptionlinebatch.class.php';
-			// Reception::addlinefree(qty, element_type, fk_product, fk_unit, rang, description, array_options)
-			// The last argument is the extrafields array; passing 0 (int) breaks under PHP 8.
+			// Reception::addlinefree(qty, element_type, fk_product, fk_unit, rang, description, array_options, cost_price, ref_fourn, fk_entrepot, batch)
+			// A reception line WITHOUT a destination warehouse generates no stock movement on
+			// validation, so pass the reception's default warehouse (falling back to the company
+			// default warehouse). array_options must be an array ([]) — passing 0 breaks under PHP 8.
 			/** @var Reception $object */
-			$res = $object->addlinefree($qty, 'reception', $fkProduct, $fk_unit, 0, $desc, []);
+			// Resolve a destination warehouse: explicit arg, then the reception's default,
+			// then the global default, then the first active warehouse.
+			$recWarehouse = (int) ($args['warehouse_id'] ?? 0);
+			if ($recWarehouse <= 0) {
+				$recWarehouse = (int) (!empty($object->fk_warehouse) ? $object->fk_warehouse : getDolGlobalInt('MAIN_DEFAULT_WAREHOUSE'));
+			}
+			if ($recWarehouse <= 0) {
+				$resqlw = $this->db->query("SELECT rowid FROM " . MAIN_DB_PREFIX . "entrepot WHERE entity IN (" . getEntity('stock') . ") AND statut = 1 ORDER BY rowid ASC");
+				if ($resqlw && ($objw = $this->db->fetch_object($resqlw))) {
+					$recWarehouse = (int) $objw->rowid;
+				}
+			}
+			$res = $object->addlinefree($qty, 'reception', $fkProduct, $fk_unit, 0, $desc, [], 0, '', $recWarehouse);
 		} else {
 			return ["success" => false, "error" => "Type $docType not supported for lines"];
 		}
