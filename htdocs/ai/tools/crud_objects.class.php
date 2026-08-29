@@ -525,6 +525,14 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 			}
 		}
 
+		// Some ::create() implementations (e.g. Reception) write the provisional
+		// reference (PROVxx) to the database but leave $obj->ref empty in memory,
+		// so the caller would show an empty ref. Reload the object to return the
+		// real reference.
+		if (empty($obj->ref) && method_exists($obj, 'fetch')) {
+			$obj->fetch($id);
+		}
+
 		return [
 			"success"     => true,
 			"id"          => (int) $id,
