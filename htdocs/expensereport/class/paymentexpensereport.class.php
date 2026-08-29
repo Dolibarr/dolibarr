@@ -25,6 +25,7 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 
 /**
@@ -388,6 +389,18 @@ class PaymentExpenseReport extends CommonObject
 		$error = 0;
 
 		$this->db->begin();
+
+		if ($this->bank_line > 0) {
+			$accline = new AccountLine($this->db);
+			$result = $accline->fetch($this->bank_line);
+			if ($result > 0) {
+				$result = $accline->delete($user);
+				if ($result < 0) {
+					$this->errors[] = $accline->error;
+					$error++;
+				}
+			}
+		}
 
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_url";
