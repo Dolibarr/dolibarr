@@ -121,9 +121,13 @@ ALTER TABLE llx_receptiondet_batch ADD COLUMN ref_fourn varchar(128) NULL AFTER 
 -- VPGSQL ALTER TABLE llx_bookcal_availabilities RENAME COLUMN start TO date_start;
 -- VPGSQL ALTER TABLE llx_bookcal_availabilities RENAME COLUMN "end" TO date_end;
 
+-- Inventory: add last_main_doc used to save the relative path of last generated main document
+ALTER TABLE llx_inventory ADD COLUMN last_main_doc varchar(255) DEFAULT NULL AFTER date_validation;
+
 ALTER TABLE llx_facturedet ADD INDEX idx_facturedet_fk_prev_id (fk_prev_id);
 ALTER TABLE llx_facture ADD INDEX idx_facture_situation_cycle_ref (situation_cycle_ref);
 
 
 
--- end of migration
+
+-- end of migration - nothing after this line

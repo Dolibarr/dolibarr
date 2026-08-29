@@ -139,6 +139,14 @@ if (empty($reshook)) {
 	$triggermodname = 'STOCK_INVENTORY_MODIFY'; // Name of trigger action code to execute when we modify record
 
 	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
+	if ($action == 'add' && $permissiontoadd && !GETPOST('ref', 'alphanohtml')) {
+		// A numbering module is configured and no reference was typed: generate it
+		$tmpnumref = $object->getNextNumRef();
+		if ($tmpnumref) {
+			$_POST['ref'] = $tmpnumref;
+		}
+	}
+
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
 
 	// Actions when linking object each other
@@ -195,6 +203,14 @@ llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-product page-invento
 
 // Part to create
 if ($action == 'create') {
+	// Suggest the next reference when a numbering module is configured
+	if (!GETPOSTISSET('ref')) {
+		$tmpnumref = $object->getNextNumRef();
+		if ($tmpnumref) {
+			$object->ref = $tmpnumref;
+			$_GET['ref'] = $tmpnumref;
+		}
+	}
 	print load_fiche_titre($langs->trans("NewInventory"), '', 'product');
 
 	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
