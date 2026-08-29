@@ -3,7 +3,7 @@
  * Copyright (C) 2013-2015 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
+ * Copyright (C) 2026		Jose Martinez		<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -208,9 +208,10 @@ if ($action == 'convert') {
 			} else {
 				$sweepwhere .= " AND (default_vat_code IS NULL OR default_vat_code = '')";
 			}
-			$newcodesql = ($vat_src_code_new ? "'".$db->escape($vat_src_code_new)."'" : "null");
-			$db->query("UPDATE ".MAIN_DB_PREFIX."product SET tva_tx = '".$db->escape($newvatrateclean)."', default_vat_code = ".$newcodesql." WHERE entity IN (".getEntity('product').")".$sweepwhere);
-			$db->query("UPDATE ".MAIN_DB_PREFIX."product_price SET tva_tx = '".$db->escape($newvatrateclean)."', default_vat_code = ".$newcodesql." WHERE 1 = 1".$sweepwhere);
+			$sweepproductsql = "UPDATE ".MAIN_DB_PREFIX."product SET tva_tx = '".$db->escape($newvatrateclean)."', default_vat_code = '".$db->escape($vat_src_code_new)."' WHERE entity IN (".getEntity('product').")".$sweepwhere;
+			$db->query($sweepproductsql);
+			$sweeppricesql = "UPDATE ".MAIN_DB_PREFIX."product_price SET tva_tx = '".$db->escape($newvatrateclean)."', default_vat_code = '".$db->escape($vat_src_code_new)."' WHERE 1 = 1".$sweepwhere;
+			$db->query($sweeppricesql);
 		}
 
 		$fourn = new Fournisseur($db);
