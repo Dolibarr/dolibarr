@@ -182,7 +182,8 @@ class ToolApiBridge extends McpTool
 			'methods' => [
 				'index' => [
 					'description' => "History of physical stock changes; each movement carries product, warehouse, qty (signed) and date."
-				]
+				],
+				'get' => []
 			]
 		],
 		'warehouses' => [
@@ -347,9 +348,10 @@ class ToolApiBridge extends McpTool
 
 		$doc = (string) $rm->getDocComment();
 
-		// First docblock line = human description of the endpoint.
+		// First docblock line = human description of the endpoint. The leading
+		// asterisk of the line is excluded so "/**\n * Foo" yields "Foo", not "* Foo".
 		$summary = '';
-		if (preg_match('/\*\s+([^@\s\/][^\n]*)/', $doc, $m)) {
+		if (preg_match('/\*\s+([^@\s\/*][^\n]*)/', $doc, $m)) {
 			$summary = trim($m[1]);
 		}
 
