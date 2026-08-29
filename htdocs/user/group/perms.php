@@ -359,7 +359,7 @@ $sql .= " AND r.entity = ".((int) $entity);
 if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 	$sql .= " AND r.perms NOT LIKE '%_advance'"; // Hide advanced perms if option is not enabled
 }
-$sql .= " ORDER BY r.family_position, r.module_position, r.module, r.id";
+$sql .= " ORDER BY r.family_position, r.module_position, r.right_position, r.module, r.id";
 
 $familyinfo = array(
 	'hr' => array('position' => '001', 'label' => $langs->trans("ModuleFamilyHr")),
