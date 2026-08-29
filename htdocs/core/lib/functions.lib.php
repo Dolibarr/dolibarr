@@ -7974,6 +7974,17 @@ function price2num($amount, $rounding = '', $option = 0)
 }
 
 /**
+ * Style total amount of an object
+ *
+ * @param	string|float			$amount			Amount value to format
+ * @return  string                      			String to show amount with style of total
+ */
+function showTotalAmount($amount)
+{
+	return '<span class="amount">'.$amount.'</span>';
+}
+
+/**
  * Output a dimension with best unit
  *
  * @param   float       $dimension      	Dimension
@@ -9346,15 +9357,13 @@ function dol_string_onlythesehtmlattributes($stringtoclean, $allowed_attributes 
 	}
 
 	if (class_exists('DOMDocument') && !empty($stringtoclean)) {
-		//$stringtoclean = '<?xml encoding="UTF-8"><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"></head><body>'.$stringtoclean.'</body></html>';
-		$stringtoclean = '<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"></head><body>' . $stringtoclean . '</body></html>';
-
 		// Warning: loadHTML does not support HTML5 on old libxml versions.
 		$dom = new DOMDocument('', 'UTF-8');
 		// If $stringtoclean is wrong, it will generates warnings. So we disable warnings and restore them later.
 		$savwarning = error_reporting();
 		error_reporting(E_ALL & ~E_WARNING & ~E_NOTICE);
-		$dom->loadHTML($stringtoclean, LIBXML_ERR_NONE | LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_NONET | LIBXML_NOWARNING | LIBXML_NOXMLDECL);
+		$wrapperId = "dol_string_onlythesehtmlattributes___wrapper";
+		$dom->loadHTML('<?xml encoding="UTF-8"><div id="' . $wrapperId . '">' . $stringtoclean . '</div>', LIBXML_HTML_NODEFDTD | LIBXML_ERR_NONE | LIBXML_HTML_NOIMPLIED | LIBXML_NONET | LIBXML_NOWARNING | LIBXML_NOERROR | LIBXML_NOXMLDECL);
 		error_reporting($savwarning);
 
 		if ($dom instanceof DOMDocument) {
@@ -9399,13 +9408,11 @@ function dol_string_onlythesehtmlattributes($stringtoclean, $allowed_attributes 
 		}
 
 		$dom->encoding = 'UTF-8';
-
-		$return = $dom->saveHTML();	// This may add a LF at end of lines, so we will trim later
-		//$return = '<html><body>aaaa</p>bb<p>ssdd</p>'."\n<p>aaa</p>aa<p>bb</p>";
-
-		//$return = preg_replace('/^'.preg_quote('<?xml encoding="UTF-8">', '/').'/', '', $return);
-		$return = preg_replace('/^' . preg_quote('<html><head><', '/') . '[^<>]*' . preg_quote('></head><body>', '/') . '/', '', $return);
-		$return = preg_replace('/' . preg_quote('</body></html>', '/') . '$/', '', trim($return));
+		$wrapper = $dom->getElementById($wrapperId);
+		$return = '';
+		foreach ($wrapper->childNodes as $child) {
+			$return .= $dom->saveHTML($child);
+		}
 
 		return trim($return);
 	} else {
@@ -9584,14 +9591,8 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 					//  like 'abc' that wrongly ends up, without the trick, with '<p>abc</p>'
 					// Add also a trick <html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"> to solve utf8 lost.
 					// I don't know what the xml encoding is the trick for
-					if ($outishtml) {
-						//$out = '<?xml encoding="UTF-8"><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"></head><body><div class="tricktoremove">'.$out.'</div></body></html>';
-						$out = '<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"></head><body><div class="tricktoremove">' . $out . '</div></body></html>';
-						//$out = '<html><head><meta charset="utf-8"></head><body><div class="tricktoremove">'.$out.'</div></body></html>';
-					} else {
-						//$out = '<?xml encoding="UTF-8"><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"></head><body><div class="tricktoremove">'.dol_nl2br($out).'</div></body></html>';
-						$out = '<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"></head><body><div class="tricktoremove">' . dol_nl2br($out) . '</div></body></html>';
-						//$out = '<html><head><meta charset="utf-8"></head><body><div class="tricktoremove">'.dol_nl2br($out).'</div></body></html>';
+					if (!$outishtml) {
+						$out = dol_nl2br($out);
 					}
 
 					// Note: <a href="https://__[aaa]__/aaa.html"> is transformed into <a href="https://__[aaa]__/aaa.html">
@@ -9607,8 +9608,8 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 						},
 						$out
 					);
-
-					$dom->loadHTML($out, LIBXML_HTML_NODEFDTD | LIBXML_ERR_NONE | LIBXML_HTML_NOIMPLIED | LIBXML_NONET | LIBXML_NOWARNING | LIBXML_NOERROR | LIBXML_NOXMLDECL);
+					$wrapperId = "dol_htmlwithnojs___wrapper___toremove";
+					$dom->loadHTML('<?xml encoding="UTF-8"><div id="' . $wrapperId . '">' . $out . '</div>', LIBXML_HTML_NODEFDTD | LIBXML_ERR_NONE | LIBXML_HTML_NOIMPLIED | LIBXML_NONET | LIBXML_NOWARNING | LIBXML_NOERROR | LIBXML_NOXMLDECL);
 
 					$dom->encoding = 'UTF-8';
 
@@ -9646,7 +9647,12 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 						}
 					}
 
-					$out = trim($dom->saveHTML());
+					$wrapper = $dom->getElementById($wrapperId);
+					$result = '';
+					foreach ($wrapper->childNodes as $child) {
+						$result .= $dom->saveHTML($child);
+					}
+					$out = trim($result);
 
 					// Restore [ and ] that were protected before loadHTML
 					$out = preg_replace_callback(
@@ -9660,16 +9666,8 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 						},
 						$out
 					);
-
-					// Remove the trick added to solve pb with text in utf8 and text without parent tag
-					//$out = preg_replace('/^'.preg_quote('<?xml encoding="UTF-8">', '/').'/', '', $out);
-					$out = preg_replace('/^' . preg_quote('<html><head><', '/') . '[^<>]+' . preg_quote('></head><body><div class="tricktoremove">', '/') . '/', '', $out);
-					$out = preg_replace('/' . preg_quote('</div></body></html>', '/') . '$/', '', trim($out));
-					//$out = preg_replace('/^<\?xml encoding="UTF-8"><div class="tricktoremove">/', '', $out);
-					//$out = preg_replace('/<\/div>$/', '', $out);
-
-					if (!$outishtml) {		// If $out was not HTML content we made before a dol_nl2br so we must do the opposite operation now
-						$out = str_replace('<br>', '', $out);
+					if (!$outishtml) {        // If $out was not HTML content we made before a dol_nl2br so we must do the opposite operation now
+						$out = preg_replace('/<br\s*\/?>/i', "\n", $out);
 					}
 				} catch (Exception $e) {
 					// If error, invalid HTML string with no way to clean it
@@ -11496,7 +11494,7 @@ function dol_htmloutput_events($disabledoutputofmessages = 0)
  *
  *	@param	string		$mesgstring		Message string or message key
  *	@param	string[]	$mesgarray      Array of message strings or message keys
- *  @param  string		$style          Style of message output ('ok' or 'error')
+ *  @param  string		$style          Style of message output ('ok', 'warning' or 'error')
  *  @param  int			$keepembedded   Set to 1 in error message must be kept embedded into its html place (this disable jnotify)
  *	@return	string						Return html output
  *
@@ -11540,12 +11538,42 @@ function get_htmloutput_mesg($mesgstring = '', $mesgarray = [], $style = 'ok', $
 
 	if ($out) {
 		if (!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_DISABLE_JQUERY_JNOTIFY') && empty($keepembedded)) {
-			$return = '<script nonce="' . getNonce() . '">
-				$(document).ready(function() {
-					/* jnotify(message, preset of message type, keepmessage) */
-					$.jnotify("' . dol_escape_js($out) . '", "' . ($style == "ok" ? 3000 : $style) . '", ' . ($style == "ok" ? "false" : "true") . ',{ remove: function (){} } );
-				});
-			</script>';
+			if ($style == "ok") {
+				// For success messages (green), allow manual click to close immediately without fade
+				$return = '<script nonce="' . getNonce() . '">
+					/* jnotify(message, params) */
+					$(document).ready(function() {
+						$.jnotify(\'' . dol_escape_js($out) . '\', {
+							delay: 3000,
+							type: \'' . dol_escape_js($style) . '\',
+							sticky: false,
+							create: function($note) {
+								$note.css("cursor", "pointer").click(function(e) {
+									e.stopPropagation();
+									$note.remove();
+								});
+							}
+						});
+					});
+				</script>';
+			} else {
+				// For error and warning messages, close immediately on click without fade
+				$return = '<script nonce="' . getNonce() . '">
+					$(document).ready(function() {
+						$.jnotify(\'' . dol_escape_js($out) . '\', {
+							delay: 3000,
+							type: \'' . dol_escape_js($style) . '\',
+							sticky: true,
+							create: function($note) {
+								$note.find("a.jnotify-close").click(function(e) {
+									e.stopPropagation();
+									$note.remove();
+								});
+							}
+						});
+					});
+				</script>';
+			}
 		} else {
 			$return = $out;
 		}

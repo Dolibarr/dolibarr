@@ -106,6 +106,12 @@ ALTER TABLE llx_product ADD INDEX idx_product_entity_tobuy (entity, tobuy);
 ALTER TABLE llx_product ADD INDEX idx_product_datec (datec);
 ALTER TABLE llx_product ADD INDEX idx_product_tms (tms);
 
+-- Optional fine position for rights_def, used by rights filed into another module's
+-- section via module_origin (KEY_MODULE) to sort next to a given native right of that module
+ALTER TABLE llx_rights_def ADD COLUMN right_position integer DEFAULT 0 NOT NULL AFTER family_position;
+
+-- Add supplier ref on reception lines (standalone receptions)
+ALTER TABLE llx_receptiondet_batch ADD COLUMN ref_fourn varchar(128) NULL AFTER cost_price;
 
 
 
