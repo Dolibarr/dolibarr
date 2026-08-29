@@ -239,7 +239,7 @@ if ($action == 'getProducts' && $user->hasRight('takepos', 'run')) {
 
 						$ig = '../public/theme/common/nophoto.png';
 						if (!getDolGlobalString('TAKEPOS_HIDE_PRODUCT_IMAGES')) {
-							$image = $objProd->show_photos('product', $conf->product->multidir_output[$objProd->entity], 'small', 1);
+							$image = $objProd->show_photos('product', $conf->product->multidir_output[(int) $objProd->entity], 'small', 1);
 
 							$match = array();
 							preg_match('@src="([^"]+)"@', $image, $match);
@@ -357,7 +357,7 @@ if ($action == 'getProducts' && $user->hasRight('takepos', 'run')) {
 		while ($obj = $db->fetch_object($resql)) {
 			$objProd = new Product($db);
 			$objProd->fetch($obj->rowid);
-			$image = $objProd->show_photos('product', $conf->product->multidir_output[$objProd->entity], 'small', 1);
+			$image = $objProd->show_photos('product', $conf->product->multidir_output[(int) $objProd->entity], 'small', 1);
 
 			$match = array();
 			preg_match('@src="([^"]+)"@', $image, $match);
