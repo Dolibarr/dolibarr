@@ -82,7 +82,8 @@ function check_user_password_googleoauth($usertotest, $passwordtotest, $entityto
 
 			$oauthstateanticsrf = bin2hex(random_bytes(128/8));
 			$_SESSION['oauthstateanticsrf'] = $shortscope.'-'.$oauthstateanticsrf;
-			$backtourl = $_SERVER['REQUEST_URI'];	// Here we are using a relative URL.
+			// Convert the server-root URI to the Dolibarr-root-relative URL expected by the callback.
+			$backtourl = preg_replace('/^'.preg_quote(DOL_URL_ROOT, '/').'/', '', $_SERVER['REQUEST_URI']);
 
 			// Clean the backtourl we can use after an OAuth authentication
 			$backtourl = preg_replace('/token=[^&]+/', '', $backtourl);	// We remove any token into url so we are sure only url with no action are qualified as call back urls.
