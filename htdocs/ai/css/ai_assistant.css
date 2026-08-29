@@ -1,3 +1,4 @@
+/* Copyright (C) 2026	Jose Martinez			<jose.martinez@pichinov.com> */
 /* ===========================================================================
  * AI Assistant chat stylesheet
  * Used by the standalone page (ai/assistant/index.php) and by the topbar
@@ -1070,3 +1071,23 @@ body.ai-fullpage {
         height: calc(100vh - var(--ai-popover-top, 48px));
     }
 }
+
+/* -------------------------------------------------------------------------
+ * Attached-file chip (paperclip flow): shown above the input pill while a
+ * document is attached, and inline (read-only) inside the sent user message.
+ * ------------------------------------------------------------------------- */
+.file-chip-area { padding: 0 14px 6px; }
+.ai-in-popover .file-chip-area { padding: 0 10px 4px; }
+.file-chip {
+	display: inline-flex; align-items: center; gap: 6px;
+	max-width: 260px; padding: 4px 10px; border-radius: 10px;
+	background: rgba(127, 127, 127, 0.12);
+	border: 1px solid rgba(127, 127, 127, 0.25);
+	font-size: 0.85em;
+}
+.file-chip .chip-icon { opacity: .8; }
+.file-chip .chip-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.file-chip .chip-x { border: 0; background: none; cursor: pointer; font-size: 1.1em; line-height: 1; padding: 0 2px; opacity: .6; color: inherit; }
+.file-chip .chip-x:hover { opacity: 1; }
+.file-chip.chip-error { border-color: #d9534f; color: #d9534f; }
+.file-chip.chip-inline { margin-bottom: 4px; }
