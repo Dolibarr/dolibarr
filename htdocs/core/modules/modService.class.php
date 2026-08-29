@@ -6,6 +6,7 @@
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2020-2021	Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -88,40 +89,40 @@ class modService extends DolibarrModules
 		$this->rights_class = 'service';
 		$r = 0;
 
-		$this->rights[$r][0] = 531; // id de la permission
-		$this->rights[$r][1] = 'Read services'; // libelle de la permission
-		$this->rights[$r][2] = 'r'; // type de la permission (deprecated)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][0] = 531; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Read services'; // Permission label
+		$this->rights[$r][2] = 'r'; // Permission type (deprecated)
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'lire';
 		$r++;
 
-		$this->rights[$r][0] = 532; // id de la permission
-		$this->rights[$r][1] = 'Create/modify services'; // libelle de la permission
-		$this->rights[$r][2] = 'w'; // type de la permission (deprecated)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][0] = 532; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Create/modify services'; // Permission label
+		$this->rights[$r][2] = 'w'; // Permission type (deprecated)
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'creer';
 		$r++;
 
-		$this->rights[$r][0] = 533; // id de la permission
-		$this->rights[$r][1] = 'Read prices services'; // libelle de la permission
-		$this->rights[$r][2] = 'w'; // type de la permission (deprecated)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][0] = 533; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Read prices services'; // Permission label
+		$this->rights[$r][2] = 'w'; // Permission type (deprecated)
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'service_advance';
 		$this->rights[$r][5] = 'read_prices';
 		$r++;
 
-		$this->rights[$r][0] = 535; // id de la permission
-		$this->rights[$r][1] = 'Read supplier prices'; // libelle de la permission
-		$this->rights[$r][2] = 'w'; // type de la permission (deprecated)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][0] = 535; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Read supplier prices'; // Permission label
+		$this->rights[$r][2] = 'w'; // Permission type (deprecated)
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'service_advance';
 		$this->rights[$r][5] = 'read_supplier_prices';
 		$r++;
 
-		$this->rights[$r][0] = 534; // id de la permission
-		$this->rights[$r][1] = 'Delete les services'; // libelle de la permission
-		$this->rights[$r][2] = 'd'; // type de la permission (deprecated)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][0] = 534; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Delete les services'; // Permission label
+		$this->rights[$r][2] = 'd'; // Permission type (deprecated)
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'supprimer';
 		$r++;
 

@@ -2,6 +2,7 @@
 /* <one line to give the program's name and a brief idea of what it does.>
  * Copyright (C) 2015 ATM Consulting <support@atm-consulting.fr>
  * Copyright (C) 2024		MDW				<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
