@@ -3,6 +3,7 @@
 /* Copyright (C) 2018		ATM Consulting		<support@atm-consulting.fr>
  * Copyright (C) 2021-2024  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2025-2026	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		José MARTINEZ			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
