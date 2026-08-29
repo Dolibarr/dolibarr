@@ -281,25 +281,25 @@ if (!$rowid) {
 			$reshook = $hookmanager->executeHooks('printStripeChargeField', $parameters);
 			print $hookmanager->resPrint;
 			if ($reshook <= 0) {
-			if ($charge->metadata->dol_type == "order" || $charge->metadata->dol_type == "commande") {
-				$object = new Commande($db);
-				$object->fetch($charge->metadata->dol_id);
-				if ($object->id > 0) {
-					print "<a href='".DOL_URL_ROOT."/commande/card.php?id=".$object->id."'>".img_picto('', 'order')." ".$object->ref."</a>";
+				if ($charge->metadata->dol_type == "order" || $charge->metadata->dol_type == "commande") {
+					$object = new Commande($db);
+					$object->fetch($charge->metadata->dol_id);
+					if ($object->id > 0) {
+						print "<a href='".DOL_URL_ROOT."/commande/card.php?id=".$object->id."'>".img_picto('', 'order')." ".$object->ref."</a>";
+					} else {
+						print $FULLTAG;
+					}
+				} elseif ($charge->metadata->dol_type == "invoice" || $charge->metadata->dol_type == "facture") {
+					$object = new Facture($db);
+					$object->fetch($charge->metadata->dol_id);
+					if ($object->id > 0) {
+						print "<a href='".DOL_URL_ROOT."/compta/facture/card.php?facid=".$charge->metadata->dol_id."'>".img_picto('', 'bill')." ".$object->ref."</a>";
+					} else {
+						print $FULLTAG;
+					}
 				} else {
 					print $FULLTAG;
 				}
-			} elseif ($charge->metadata->dol_type == "invoice" || $charge->metadata->dol_type == "facture") {
-				$object = new Facture($db);
-				$object->fetch($charge->metadata->dol_id);
-				if ($object->id > 0) {
-					print "<a href='".DOL_URL_ROOT."/compta/facture/card.php?facid=".$charge->metadata->dol_id."'>".img_picto('', 'bill')." ".$object->ref."</a>";
-				} else {
-					print $FULLTAG;
-				}
-			} else {
-				print $FULLTAG;
-			}
 			}
 			print "</td>\n";
 
