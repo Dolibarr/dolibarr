@@ -440,7 +440,7 @@ if (GETPOST('dateyear', 'int') > 0) {
 	$param .= '&dateyear='.GETPOST('dateyear', 'int');
 }
 
-print_barre_liste($langs->trans('ProductValuesAndMovements'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'stock', 0, '', '', $limit, 0, 0, 1);
+print_barre_liste(($mode == 'future' ? $langs->trans('VirtualStockAtDate') : $langs->trans('ProductValuesAndMovements')), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'stock', 0, '', '', $limit, 0, 0, 1);
 
 print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 print '<table class="liste centpercent">';
@@ -513,7 +513,7 @@ if ($mode == 'future') {
 	print_liste_field_titre($stocklabel, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre("EstimatedStockValue", $_SERVER["PHP_SELF"], "estimatedvalue", '', $param, '', $sortfield, $sortorder, 'right ', $langs->trans("AtDate"), 1);
 	print_liste_field_titre("EstimatedStockValueSell", $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'right ', $langs->trans("AtDate"), 1);
-	print_liste_field_titre('Movements', $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre('Movements', $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ', 'MovementsSinceDate', 1);
 	print_liste_field_titre('CurrentStock', $_SERVER["PHP_SELF"], $fieldtosortcurrentstock, $param, '', '', $sortfield, $sortorder, 'right ');
 }
 

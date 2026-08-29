@@ -99,6 +99,7 @@ RealStockDesc=Le stock physique ou réel est le stock présent dans les entrepô
 RealStockWillAutomaticallyWhen=Le stock réel sera modifié selon ces règles (voir la configuration du module Stock) :
 VirtualStock=Stock virtuel
 VirtualStockAtDate=Stock virtuel à une date future
+MovementsSinceDate=Mouvements depuis la date
 VirtualStockAtDateDesc=Stock virtuel une fois que tous les ordres en attente, prévus d'être traités avant la date choisie, soient terminés
 VirtualStockDesc=Le stock virtuel est la quantité de produit en stock après que toutes les opérations ouvertes/en cours (et qui affectent les stocks) soient terminées (réceptions de commandes fournisseurs, expéditions de commandes clients, production des ordres de fabrications, etc)
 AtDate=À date
