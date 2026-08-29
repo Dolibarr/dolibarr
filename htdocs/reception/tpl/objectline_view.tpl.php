@@ -110,8 +110,14 @@ $tmprecep = new Reception($object->db);
 if ($line->fk_product > 0) {
 	print $tmpproduct->getNomUrl(1);
 	print ' - '.$tmpproduct->label;
+	if (!empty($tmpproduct->barcode)) {
+		// Barcode (EAN/UPC) shown under the product name: handy to check received
+		// goods against the supplier's delivery note without opening each product.
+		print '<br><span class="opacitymedium small">'.$langs->trans("BarCode").' : '.dol_escape_htmltag($tmpproduct->barcode).'</span>';
+	}
 } else {
-	print ' - '.$line->description;
+	// Free-text line: no leading dash (there is no product name before it)
+	print $line->description;
 }
 print '</td>';
 
