@@ -107,10 +107,10 @@ ALTER TABLE llx_product ADD INDEX idx_product_datec (datec);
 ALTER TABLE llx_product ADD INDEX idx_product_tms (tms);
 
 
-
-
-
--- end of migration
-
 -- Inventory: add last_main_doc used to save the relative path of last generated main document
 ALTER TABLE llx_inventory ADD COLUMN last_main_doc varchar(255) DEFAULT NULL AFTER date_validation;
+
+
+
+
+-- end of migration - nothing after this line
