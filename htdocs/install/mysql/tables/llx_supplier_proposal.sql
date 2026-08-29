@@ -20,6 +20,7 @@ CREATE TABLE llx_supplier_proposal (
   ref varchar(30) NOT NULL,
   entity integer NOT NULL DEFAULT 1,
   ref_ext varchar(255) DEFAULT NULL,
+  ref_supplier varchar(255) DEFAULT NULL,
   fk_soc integer DEFAULT NULL,
   fk_projet integer DEFAULT NULL,
   tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
