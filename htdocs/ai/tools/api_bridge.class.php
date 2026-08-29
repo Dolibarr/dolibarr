@@ -393,7 +393,13 @@ class ToolApiBridge extends McpTool
 			$properties[$pname] = $prop;
 		}
 
-		$verb = ($method === 'index') ? 'List / search' : 'Get one record of';
+		if ($method === 'index') {
+			$verb = 'List / search';
+		} elseif ($method === 'get') {
+			$verb = 'Get one record of';
+		} else {
+			$verb = 'Read from';	// other whitelisted read helpers (e.g. product variants)
+		}
 		$schema = ['type' => 'object', 'properties' => $properties];
 		if ($required) {
 			$schema['required'] = $required;
