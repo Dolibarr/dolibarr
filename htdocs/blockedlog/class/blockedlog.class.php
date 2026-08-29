@@ -1225,14 +1225,6 @@ class BlockedLog
 	 */
 	public function dolEncodeBlockedData($data, $mode = 1)
 	{
-		// Safety net: never serialize a live database handler into the
-		// immutable log (it would leak connection info and, with some
-		// drivers, its cached query strings break the INSERT).
-		if (is_object($data) && isset($data->db)) {
-			$data = clone $data;
-			unset($data->db);
-		}
-
 		$aaa = json_encode($data);
 
 		return $aaa;
@@ -1310,6 +1302,13 @@ class BlockedLog
 		if (empty($this->object_data)) {
 			$langs->load("errors");
 			$this->error = $langs->trans("ErrorBlockLogNeedObject");
+			dol_syslog($this->error, LOG_WARNING);
+			return -2;
+		}
+
+		if (empty($this->date_object)) {	// date_object is a critical field, it is included into the line signature
+			$langs->load("errors");
+			$this->error = $langs->trans("ErrorBlockLogNeedDateObject");
 			dol_syslog($this->error, LOG_WARNING);
 			return -2;
 		}
@@ -1407,7 +1406,7 @@ class BlockedLog
 		$sql .= "'".$this->db->escape($this->signature)."',";
 		$sql .= "'".$this->db->escape($this->element)."',";
 		$sql .= (int) $this->fk_object.",";
-		$sql .= (empty($this->date_object) ? "null" : "'".$this->db->idate($this->date_object, $tz)."'").",";	// PostgreSQL rejects '' for a timestamp column
+		$sql .= "'".$this->db->idate($this->date_object, $tz)."',";
 		$sql .= "'".$this->db->escape($this->ref_object)."',";
 		$sql .= "'".$this->db->escape($this->type_code)."',";
 		$sql .= ($this->linktoref ? "'".$this->db->escape($this->linktoref)."'" : "null").",";
