@@ -21,6 +21,12 @@ jobs:
     needs: [pre-commit]
     with:
       gh_event: ${{ github.event_name }}
+  install-phpunit:
+    needs: [pre-commit, phan, phpstan]
+    secrets: inherit
+    uses: ./.github/workflows/ci-install-phpunit.yml
+    with:
+      gh_event: ${{ github.event_name }}
   #windows-ci:
   #  needs: [pre-commit, phan, phpstan]
   #  secrets: inherit
