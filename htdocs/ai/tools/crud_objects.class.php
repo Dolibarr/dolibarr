@@ -636,8 +636,17 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 			$newprod->type = Product::TYPE_PRODUCT;
 			$newprod->status = 1;
 			$newprod->status_buy = 1;
+			// Trace AI-created products (convention akin to the scanner module's
+			// SCANyymmdd): lets admins list or purge a whole AI import batch.
+			$newprod->import_key = 'AI'.dol_print_date(dol_now(), '%y%m%d');
 			if (!empty($args['barcode'])) {
 				$newprod->barcode = trim((string) $args['barcode']);
+				// Dolibarr barcode features need the type (e.g. 2=EAN13): use the
+				// instance default when configured.
+				$defbctype = getDolGlobalInt('PRODUIT_DEFAULT_BARCODE_TYPE');
+				if ($defbctype > 0) {
+					$newprod->barcode_type = $defbctype;
+				}
 			}
 			if ($price !== null) {
 				$newprod->cost_price = (float) $price;
