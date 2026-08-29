@@ -31,9 +31,21 @@
  *      central authentication bridge (DolibarrApiAccess::$user = service user),
  *      catching RestException.
  *
- * Deliberate WIP limitations (POC scope):
- *   - Read-only: only index() (list) and get() are exposed. Write methods need a
- *     confirmation gate + body schemas harvested from each object's ->fields.
+ * Exposure model (per review feedback on the PR):
+ *   - Explicit whitelist: a method is exposed ONLY if it is listed under the
+ *     'methods' key of its endpoint entry below — nothing is exposed just
+ *     because reflection finds it. The current whitelist is read-only
+ *     (index/get + a few product read helpers); any write method will have to
+ *     be consciously whitelisted later, behind a confirmation gate + body
+ *     schemas harvested from each object's ->fields.
+ *   - Enrichment: reflection + docblock parsing give the skeleton (route, main
+ *     params); each whitelisted method can carry a hand-written complement
+ *     ('description' appended to the tool description, 'params' overriding
+ *     per-parameter docs) merged over the derived schema, in the spirit of the
+ *     hand-written getDefinitions() of the legacy ai/tools/*.class.php — but
+ *     only as a complement, never a full rewrite.
+ *
+ * Remaining WIP limitations (POC scope):
  *   - Endpoint map is a small explicit list; TODO generalize with the same
  *     dolGetModulesDirs()/getModuleDirForApiClass() scan used by api/index.php.
  *   - Schemas come from a light docblock parser; TODO reuse Restler's
@@ -64,100 +76,168 @@ class ToolApiBridge extends McpTool
 	private $routes = [];
 
 	/**
-	 * POC endpoint map: endpoint key => module condition, api class file and class name.
-	 * TODO Replace with the dynamic scan of api_*.class.php used by api/index.php.
+	 * Endpoint map + method whitelist: endpoint key => module condition, api class
+	 * file/class, and the EXPLICIT list of exposed methods with their optional
+	 * hand-written enrichment. A method absent from 'methods' is never exposed.
+	 * Per method: 'suffix' (tool name suffix, defaults to list/get/lowercased),
+	 * 'description' (appended to the derived tool description), 'params'
+	 * (per-parameter doc overriding what the docblock parser guessed).
+	 * TODO Replace path/class discovery with the dynamic scan of api_*.class.php
+	 * used by api/index.php.
 	 *
-	 * @var array<string, array{module:string, path:string, class:string, label:string}>
+	 * @var array<string, array{module:string, path:string, class:string, label:string, methods:array<string, array{suffix?:string, description?:string, params?:array<string,string>}>}>
 	 */
 	private $endpoints = [
 		'thirdparties' => [
 			'module' => 'societe',
 			'path' => '/societe/class/api_thirdparties.class.php',
 			'class' => 'Thirdparties',
-			'label' => 'third parties (customers, prospects, suppliers)'
+			'label' => 'third parties (customers, prospects, suppliers)',
+			'methods' => [
+				'index' => [
+					'description' => "Use 'mode' to restrict to a nature of third party instead of filtering on names.",
+					'params' => [
+						'mode' => "Nature filter: 0=all (default), 1=customers/prospects, 2=prospects only, 3=neither customer nor prospect, 4=suppliers.",
+						'category' => "Rowid of a third-party category (tag) to restrict the list to."
+					]
+				],
+				'get' => []
+			]
 		],
 		'proposals' => [
 			'module' => 'propal',
 			'path' => '/comm/propal/class/api_proposals.class.php',
 			'class' => 'Proposals',
-			'label' => 'commercial proposals (quotes / devis)'
+			'label' => 'commercial proposals (quotes / devis)',
+			'methods' => [
+				'index' => [
+					'params' => [
+						'thirdparty_ids' => "Comma-separated third-party rowids to restrict to (e.g. '1,5')."
+					]
+				],
+				'get' => []
+			]
 		],
 		'tickets' => [
 			'module' => 'ticket',
 			'path' => '/ticket/class/api_tickets.class.php',
 			'class' => 'Tickets',
-			'label' => 'support tickets'
+			'label' => 'support tickets',
+			'methods' => ['index' => [], 'get' => []]
 		],
 		'projects' => [
 			'module' => 'projet',
 			'path' => '/projet/class/api_projects.class.php',
 			'class' => 'Projects',
-			'label' => 'projects (including opportunities/leads)'
+			'label' => 'projects (including opportunities/leads)',
+			'methods' => ['index' => [], 'get' => []]
 		],
 		'tasks' => [
 			'module' => 'projet',
 			'path' => '/projet/class/api_tasks.class.php',
 			'class' => 'Tasks',
-			'label' => 'project tasks'
+			'label' => 'project tasks',
+			'methods' => ['index' => [], 'get' => []]
 		],
 		'agendaevents' => [
 			'module' => 'agenda',
 			'path' => '/comm/action/class/api_agendaevents.class.php',
 			'class' => 'AgendaEvents',
-			'label' => 'agenda / calendar events (meetings, calls)'
+			'label' => 'agenda / calendar events (meetings, calls)',
+			'methods' => ['index' => [], 'get' => []]
 		],
 		'interventions' => [
 			'module' => 'ficheinter',
 			'path' => '/fichinter/class/api_interventions.class.php',
 			'class' => 'Interventions',
-			'label' => 'field service interventions'
+			'label' => 'field service interventions',
+			'methods' => ['index' => [], 'get' => []]
 		],
 		'contracts' => [
 			'module' => 'contrat',
 			'path' => '/contrat/class/api_contracts.class.php',
 			'class' => 'Contracts',
-			'label' => 'contracts (recurring services)'
+			'label' => 'contracts (recurring services)',
+			'methods' => ['index' => [], 'get' => []]
 		],
 		'members' => [
 			'module' => 'adherent',
 			'path' => '/adherents/class/api_members.class.php',
 			'class' => 'Members',
-			'label' => 'foundation/association members'
+			'label' => 'foundation/association members',
+			'methods' => ['index' => [], 'get' => []]
 		],
 		'subscriptions' => [
 			'module' => 'adherent',
 			'path' => '/adherents/class/api_subscriptions.class.php',
 			'class' => 'Subscriptions',
-			'label' => 'member subscriptions'
+			'label' => 'member subscriptions',
+			'methods' => ['index' => [], 'get' => []]
 		],
 		'stockmovements' => [
 			'module' => 'stock',
 			'path' => '/product/stock/class/api_stockmovements.class.php',
 			'class' => 'StockMovements',
-			'label' => 'stock movements (in/out/transfer history)'
+			'label' => 'stock movements (in/out/transfer history)',
+			'methods' => [
+				'index' => [
+					'description' => "History of physical stock changes; each movement carries product, warehouse, qty (signed) and date."
+				]
+			]
 		],
 		'warehouses' => [
 			'module' => 'stock',
 			'path' => '/product/stock/class/api_warehouses.class.php',
 			'class' => 'Warehouses',
-			'label' => 'warehouses'
+			'label' => 'warehouses',
+			'methods' => ['index' => [], 'get' => []]
 		],
 		'expensereports' => [
 			'module' => 'expensereport',
 			'path' => '/expensereport/class/api_expensereports.class.php',
 			'class' => 'ExpenseReports',
-			'label' => 'employee expense reports (notes de frais)'
+			'label' => 'employee expense reports (notes de frais)',
+			'methods' => ['index' => [], 'get' => []]
 		],
 		'products' => [
 			'module' => 'product',
 			'path' => '/product/class/api_products.class.php',
 			'class' => 'Products',
 			'label' => 'products and services catalog',
-			// Extra read methods beyond index/get: product variants & attributes
-			'extra' => ['getAttributes' => 'attributes_list', 'getVariants' => 'variants_list']
+			'methods' => [
+				'index' => [],
+				'get' => [],
+				'getAttributes' => [
+					'suffix' => 'attributes_list',
+					'description' => "Variant attributes (e.g. Size, Color) defined in the catalog."
+				],
+				'getVariants' => [
+					'suffix' => 'variants_list',
+					'description' => "Variants of one parent product.",
+					'params' => ['id' => 'Rowid of the PARENT product.']
+				]
+			]
 		],
 		// NB: stock inventories have no REST API class in core yet (no api_inventories) —
 		// they cannot be bridged until one exists.
+	];
+
+	/**
+	 * Fallback docs for parameters shared by most API index()/get() methods, used
+	 * when neither the per-method 'params' enrichment nor the docblock provides a
+	 * usable description. Kept in one place so every bridged list tool documents
+	 * the pagination/filter contract the same way.
+	 *
+	 * @var array<string, string>
+	 */
+	private $commonParamDocs = [
+		'sortfield' => "Field to sort on, prefixed with 't.' (e.g. 't.rowid', 't.ref', 't.datec').",
+		'sortorder' => "Sort direction: 'ASC' or 'DESC'.",
+		'limit' => "Maximum number of records to return.",
+		'page' => "Zero-based page index for pagination.",
+		'sqlfilters' => "Universal search filter. Example: \"(t.ref:like:'PR%') and (t.datec:>=:'2026-01-01')\". Field names are prefixed with 't.'; operators: =, !=, <, <=, >, >=, like, is; combine clauses with 'and'/'or' and parentheses.",
+		'properties' => "Comma-separated list of properties to include in the response, to reduce its size (e.g. 'id,ref,label').",
+		'id' => "Rowid (numeric technical id) of the record."
 	];
 
 	/**
@@ -224,18 +304,16 @@ class ToolApiBridge extends McpTool
 				continue;
 			}
 
-			// Read-only POC: expose list (index) and get, plus optional per-endpoint
-			// extra read methods (e.g. product variants/attributes).
-			$methodsToExpose = ['index' => 'list', 'get' => 'get'];
-			if (!empty($ep['extra']) && is_array($ep['extra'])) {
-				$methodsToExpose += $ep['extra'];
-			}
-			foreach ($methodsToExpose as $method => $suffix) {
+			// Explicit whitelist: only the methods listed in the endpoint's
+			// 'methods' entry are exposed — nothing else, whatever reflection
+			// could find on the API class.
+			foreach ($ep['methods'] as $method => $meta) {
 				if (!method_exists($ep['class'], $method)) {
-					continue;
+					continue;	// whitelisted method absent in this Dolibarr version
 				}
+				$suffix = $meta['suffix'] ?? ($method === 'index' ? 'list' : strtolower($method));
 				$toolname = 'api_' . $key . '_' . $suffix;
-				$def = $this->buildToolDefinition($ep, $key, $method, $toolname);
+				$def = $this->buildToolDefinition($ep, $key, $method, $toolname, $meta);
 				if ($def) {
 					$this->defs[] = $def;
 					$this->routes[$toolname] = [$key, $method];
@@ -247,15 +325,19 @@ class ToolApiBridge extends McpTool
 	}
 
 	/**
-	 * Build one MCP tool definition from an API class method via reflection + docblock.
+	 * Build one MCP tool definition from an API class method: reflection + docblock
+	 * give the skeleton, then the hand-written per-method enrichment is merged over
+	 * it ('description' appended, 'params' overriding parameter docs, shared
+	 * common docs as last fallback).
 	 *
-	 * @param array{module:string, path:string, class:string, label:string} $ep       Endpoint entry
+	 * @param array{module:string, path:string, class:string, label:string} $ep Endpoint entry
 	 * @param string $key      Endpoint key (e.g. 'thirdparties')
-	 * @param string $method   API method name ('index' or 'get')
+	 * @param string $method   Whitelisted API method name (e.g. 'index', 'get')
 	 * @param string $toolname Generated tool name
+	 * @param array{suffix?:string, description?:string, params?:array<string,string>} $meta Hand-written enrichment for this method
 	 * @return array<string, mixed>|null Tool definition, or null on reflection failure
 	 */
-	private function buildToolDefinition(array $ep, string $key, string $method, string $toolname)
+	private function buildToolDefinition(array $ep, string $key, string $method, string $toolname, array $meta = [])
 	{
 		try {
 			$rm = new ReflectionMethod($ep['class'], $method);
@@ -284,9 +366,18 @@ class ToolApiBridge extends McpTool
 		foreach ($rm->getParameters() as $p) {
 			$pname = $p->getName();
 			$ptype = isset($paramDocs[$pname]) ? $this->docTypeToJson($paramDocs[$pname]['type']) : 'string';
+			// Parameter doc priority: hand-written per-method enrichment, then the
+			// description guessed from the docblock, then the shared common docs.
+			if (isset($meta['params'][$pname])) {
+				$pdesc = $meta['params'][$pname];
+			} elseif (!empty($paramDocs[$pname]['desc'])) {
+				$pdesc = $paramDocs[$pname]['desc'];
+			} else {
+				$pdesc = $this->commonParamDocs[$pname] ?? '';
+			}
 			$prop = [
 				'type' => $ptype,
-				'description' => isset($paramDocs[$pname]) ? $paramDocs[$pname]['desc'] : ''
+				'description' => $pdesc
 			];
 			if ($p->isOptional()) {
 				try {
@@ -306,9 +397,14 @@ class ToolApiBridge extends McpTool
 			$schema['required'] = $required;
 		}
 
+		$description = $verb . ' ' . $ep['label'] . ' through the Dolibarr REST API (auto-generated tool). ' . $summary;
+		if (!empty($meta['description'])) {
+			$description = rtrim($description) . ' ' . $meta['description'];
+		}
+
 		return [
 			'name' => $toolname,
-			'description' => $verb . ' ' . $ep['label'] . ' through the Dolibarr REST API (auto-generated tool). ' . $summary,
+			'description' => $description,
 			'inputSchema' => $schema
 		];
 	}
