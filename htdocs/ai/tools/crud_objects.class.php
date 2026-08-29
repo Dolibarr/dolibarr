@@ -652,6 +652,9 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 				$newprod->cost_price = (float) $price;
 			}
 			if ($newprod->create($this->user) > 0) {
+				// Product::create() does not persist import_key: set it with a
+				// targeted UPDATE right after creation.
+				$this->db->query("UPDATE ".MAIN_DB_PREFIX."product SET import_key='".$this->db->escape($newprod->import_key)."' WHERE rowid=".(int) $newprod->id);
 				$prod = $newprod;
 			}
 			// On failure (duplicate ref, numbering rule...): fall through to a free-text line
