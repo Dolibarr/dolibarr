@@ -1048,76 +1048,7 @@ if ($resql) {
 // BIRTHDATES CALENDAR
 // Complete $eventarray with birthdates
 if ($showbirthday) {  // always false @phpstan-ignore-line
-	// Add events in array
-	$sql = 'SELECT sp.rowid, sp.lastname, sp.firstname, sp.birthday';
-	$sql .= ' FROM '.MAIN_DB_PREFIX.'socpeople as sp';
-	$sql .= ' WHERE (priv=0 OR (priv=1 AND fk_user_creat='.((int) $user->id).'))';
-	$sql .= " AND sp.entity IN (".getEntity('contact').")";
-	if ($mode == 'show_day') {
-		$sql .= ' AND MONTH(birthday) = '.((int) $month);
-		$sql .= ' AND DAY(birthday) = '.((int) $day);
-	} else {
-		$sql .= ' AND MONTH(birthday) = '.((int) $month);
-	}
-	$sql .= ' ORDER BY birthday';
-
-	dol_syslog("comm/action/index.php", LOG_DEBUG);
-	$resql = $db->query($sql);
-	if ($resql) {
-		$num = $db->num_rows($resql);
-		$i = 0;
-		while ($i < $num) {
-			$obj = $db->fetch_object($resql);
-
-			$event = new ActionComm($db);
-
-			$event->id = $obj->rowid; // We put contact id in action id for birthdays events
-			$event->ref = (string) $event->id;
-
-			$datebirth = dol_stringtotime($obj->birthday, 1);
-			//print 'ee'.$obj->birthday.'-'.$datebirth;
-			$datearray = dol_getdate($datebirth, true);
-			$event->datep = dol_mktime(0, 0, 0, $datearray['mon'], $datearray['mday'], $year, true); // For full day events, date are also GMT but they won't but converted during output
-			$event->datef = $event->datep;
-
-			$event->type_code = 'BIRTHDAY';
-			$event->type_label = '';
-			$event->type_color = '';
-			$event->type = 'birthdate';
-			$event->type_picto = 'birthdate';
-
-			$event->label = $langs->trans("Birthday").' '.dolGetFirstLastname($obj->firstname, $obj->lastname);
-			$event->percentage = 100;
-			$event->fulldayevent = 1;
-
-			$event->contact_id = $obj->rowid;
-
-			$event->date_start_in_calendar = $db->jdate($event->datep);
-			$event->date_end_in_calendar = $db->jdate($event->datef);
-
-			// Add an entry in eventarray for each day
-			$daycursor = $event->datep;
-			$annee = (int) dol_print_date($daycursor, '%Y', 'tzuserrel');
-			$mois = (int) dol_print_date($daycursor, '%m', 'tzuserrel');
-			$jour = (int) dol_print_date($daycursor, '%d', 'tzuserrel');
-
-			$daykey = dol_mktime(0, 0, 0, $mois, $jour, $annee, 'gmt');
-
-			$eventarray[$daykey][] = $event;
-
-			/*$loop = true;
-			 $daykey = dol_mktime(0, 0, 0, $mois, $jour, $annee);
-			 do {
-			 $eventarray[$daykey][] = $event;
-			 $daykey += 60 * 60 * 24;
-			 if ($daykey > $event->date_end_in_calendar) $loop = false;
-			 } while ($loop);
-			 */
-			$i++;
-		}
-	} else {
-		dol_print_error($db);
-	}
+	agenda_get_birthday_events($db, $langs, $user, $mode, $month, $day, $year, $eventarray, $nbevents);
 }
 
 // LEAVE-HOLIDAY CALENDAR
