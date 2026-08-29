@@ -673,7 +673,7 @@ if (empty($reshook)) {
 		// Action update
 		$error = 0;
 
-		if ($action == 'setwarehouse' && $permissiontoadd) {	// Default warehouse for the lines
+		if ($action == 'setwarehouse') {	// Default warehouse for the lines
 			$object->setValueFrom('fk_warehouse', (GETPOSTINT('warehouse_id') > 0 ? GETPOSTINT('warehouse_id') : null), '', null, 'int', '', $user);
 			$object->fk_warehouse = GETPOSTINT('warehouse_id');
 		}
