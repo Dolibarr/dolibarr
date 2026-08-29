@@ -2826,7 +2826,7 @@ class Form
 					$outarray2[($show_empty < 0 ? $show_empty : -1)] = array(
 						'id' => ($show_empty < 0 ? $show_empty : -1),
 						'label' => $textforempty,
-						'labelhtml' => dol_escape_htmltag($textforempty),
+						'labelhtml' => $textforempty,
 						'color' => '',
 						'picto' => ''
 					);
