@@ -151,11 +151,6 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	const KEY_ENABLED = 7;
 
 	/**
-	 * @var array<string,array{family:string,position:int}> Cache of family/position looked up by rights_class, used by getModuleInfoByRightsClass(). Shared across all module instances for the duration of the request.
-	 */
-	protected static $keyModuleInfoCache = array();
-
-	/**
 	 * @var array<array{commentgroup?:string,mainmenu:string,leftmenu:string,langs:string,enabled:int|string,target:string,titre:string,user:int,fk_menu:string,fk_parent:string,url:string,position:int,positionfull:int|string,perms:string,type:string}>|int<1,1> 	Module menu entries (1 means the menu entries are not declared into module descriptor but are hardcoded into menu manager)
 	 */
 	public $menu = array();
@@ -2171,10 +2166,10 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 */
 	protected function getModuleInfoByRightsClass($rightsclass)
 	{
-		global $db;
+		global $conf, $db;
 
-		if (isset(self::$keyModuleInfoCache[$rightsclass])) {
-			return self::$keyModuleInfoCache[$rightsclass];
+		if (isset($conf->cache['keyModuleInfoCache'][$rightsclass])) {
+			return $conf->cache['keyModuleInfoCache'][$rightsclass];
 		}
 
 		// Fallback: if no module with this rights_class is found (typo, or module removed from disk),
@@ -2206,7 +2201,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 			}
 		}
 
-		self::$keyModuleInfoCache[$rightsclass] = $result;
+		$conf->cache['keyModuleInfoCache'][$rightsclass] = $result;
 
 		return $result;
 	}
