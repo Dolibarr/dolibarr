@@ -1,0 +1,323 @@
+---
+# This workflow installs Dolibarr "from zero" with the install wizard CLI
+# scripts (step1 -> step2 -> step5) on a brand new empty database - no demo
+# dump, no migration replay - then runs the full PHPUnit suite on it.
+#
+# The suite needs a bit of data to run (AllTests.php and several test classes
+# call die() when fixtures such as the "PINKDRESS" product or a thirdparty are
+# missing). That data is created, using Dolibarr's own classes, by
+# test/phpunit/init_data.php right after the install.
+#
+# It runs once per database engine (matrix "db"): MariaDB and PostgreSQL.
+name: Install + PHPUnit
+
+# yamllint disable-line rule:truthy
+on:
+  # workflow called by a parent workflow (ci-on-push.yml / ci-on-pull_request.yml)
+  workflow_call:
+    inputs:
+      gh_event:
+        required: true
+        type: string
+  # can be run manually from the Actions tab
+  workflow_dispatch:
+
+concurrency:
+  group: install-phpunit-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  gh_event: ${{ inputs.gh_event || github.event_name }}
+  GITHUB_JSON: ${{ toJSON(github) }}  # Helps in debugging Github Action
+  DB_NAME: dolibarr
+  DB_HOST: 127.0.0.1
+  DB_PREFIX: llx_
+  # Dolibarr admin account created by the installer
+  DOLI_ADMIN_LOGIN: admin
+  # Must be "admin": the WebservicesXxxTest SOAP clients log in as admin/admin
+  DOLI_ADMIN_PASSWORD: admin
+  # Built-in PHP web server used by the HTTP based unit tests
+  PHPSERVER_DOMAIN_PORT: 127.0.0.1:8000
+  PHPUNIT_LOG: phpunit_tests.log
+  DOLIBARR_LOG: documents/dolibarr.log
+
+jobs:
+  install-phpunit:
+    name: install-phpunit (${{ matrix.db }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - db: mariadb
+            php-version: '8.3'
+          - db: pgsql
+            php-version: '8.3'
+
+    # Both service containers always start; each matrix leg uses only one.
+    services:
+      mariadb:
+        image: mariadb:11.4
+        env:
+          MARIADB_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: dolibarr
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+
+    steps:
+      # Clone into ${{ github.workspace }} = /home/runner/work/dolibarr/dolibarr
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 1
+
+      - name: Setup PHP ${{ matrix.php-version }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          coverage: none  # disable xdebug / pcov
+          # PHPUnit comes from setup-php - the Dolibarr repo has no root
+          # composer.json (htdocs/includes/ is vendored). Pin to ^8 like
+          # .travis.yml does for PHP 8.x ("composer require phpunit/phpunit ^8").
+          tools: phpunit:8.5
+          extensions: calendar, json, imagick, gd, zip, mbstring, intl, opcache,
+            imap, mysqli, pgsql, pdo_pgsql, sqlite3, ldap, xml, mcrypt, soap
+          ini-values: memory_limit=-1, error_reporting=E_ALL, display_errors=On
+
+      - name: Configure database variables for ${{ matrix.db }}
+        run: |
+          if [ "${{ matrix.db }}" = "pgsql" ]; then
+            {
+              echo "DB_KIND=pgsql"
+              echo "DB_TYPE=pgsql"       # value for dolibarr_main_db_type / force_install_type
+              echo "DB_PORT=5432"
+              echo "DB_USER=postgres"
+              echo "DB_PASS=postgres"
+              echo "DB_CREATE=false"     # the postgres service already created the database
+            } >> "$GITHUB_ENV"
+          else
+            {
+              echo "DB_KIND=mariadb"
+              echo "DB_TYPE=mysqli"
+              echo "DB_PORT=3306"
+              echo "DB_USER=root"
+              echo "DB_PASS=root"
+              echo "DB_CREATE=true"
+            } >> "$GITHUB_ENV"
+          fi
+
+      - name: Show versions
+        run: |
+          php -v
+          phpunit --version
+          php -m | grep -iE 'imagick|gd|pgsql|mysqli' || true
+          mysql --version || true
+          psql --version || true
+
+      - name: Allow ImageMagick to read PDF (FilesLibTest::testDolConvertFile)
+        run: |
+          # Ghostscript is the PDF delegate; ImageMagick's policy.xml blocks PDF
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ghostscript
+          for p in /etc/ImageMagick-6/policy.xml /etc/ImageMagick-7/policy.xml; do
+            [ -f "$p" ] || continue
+            # drop every "rights=none" rule mentioning PDF/PS/EPS/XPS
+            sudo sed -i -E '/(PDF|PS|EPS|XPS)/ s/rights="none"/rights="read|write"/g' "$p"
+            echo "--- patched $p ---"
+            grep -E 'PDF|PS|coder' "$p" || true
+          done
+          gs --version || true
+
+      - name: Wait for the ${{ matrix.db }} database
+        run: |
+          # The service health check already gates step start; this is a
+          # best-effort extra probe and must not hard-fail.
+          if [ "${DB_KIND}" = "pgsql" ]; then
+            for i in $(seq 1 30); do
+              if PGPASSWORD="${DB_PASS}" psql -h "${DB_HOST}" -p "${DB_PORT}" -U "${DB_USER}" -d "${DB_NAME}" -c "SELECT version();" 2>/dev/null; then
+                exit 0
+              fi
+              echo "Waiting for PostgreSQL ($i)..."
+              sleep 2
+            done
+          else
+            for i in $(seq 1 30); do
+              if mysqladmin ping -h"${DB_HOST}" -P"${DB_PORT}" -u"${DB_USER}" -p"${DB_PASS}" --silent 2>/dev/null; then
+                mysql -h"${DB_HOST}" -P"${DB_PORT}" -u"${DB_USER}" -p"${DB_PASS}" -e "SELECT VERSION();"
+                exit 0
+              fi
+              echo "Waiting for MariaDB ($i)..."
+              sleep 2
+            done
+          fi
+          echo "Database did not answer the probe (continuing anyway)" >&2
+
+      - name: Prepare documents directory
+        run: |
+          # Data root + admin/temp subdir required by several unit tests
+          mkdir -p "${GITHUB_WORKSPACE}/documents/admin/temp"
+          chmod -R 777 "${GITHUB_WORKSPACE}/documents"
+          echo "***** First line of dolibarr.log" > "${GITHUB_WORKSPACE}/documents/dolibarr.log"
+          chmod 666 "${GITHUB_WORKSPACE}/documents/dolibarr.log"
+
+      - name: Generate conf.php
+        run: |
+          CONF_FILE="${GITHUB_WORKSPACE}/htdocs/conf/conf.php"
+          echo "Writing ${CONF_FILE}"
+          {
+            echo '<?php'
+            echo "\$dolibarr_main_url_root='http://${PHPSERVER_DOMAIN_PORT}';"
+            echo "\$dolibarr_main_document_root='${GITHUB_WORKSPACE}/htdocs';"
+            echo "\$dolibarr_main_data_root='${GITHUB_WORKSPACE}/documents';"
+            echo "\$dolibarr_main_db_host='${DB_HOST}';"
+            echo "\$dolibarr_main_db_port='${DB_PORT}';"
+            echo "\$dolibarr_main_db_name='${DB_NAME}';"
+            echo "\$dolibarr_main_db_prefix='${DB_PREFIX}';"
+            echo "\$dolibarr_main_db_user='${DB_USER}';"
+            echo "\$dolibarr_main_db_pass='${DB_PASS}';"
+            echo "\$dolibarr_main_db_type='${DB_TYPE}';"
+            if [ "${DB_KIND}" != "pgsql" ]; then
+              echo "\$dolibarr_main_db_character_set='utf8mb4';"
+              echo "\$dolibarr_main_db_collation='utf8mb4_unicode_ci';"
+            fi
+            echo "\$dolibarr_main_authentication='dolibarr';"
+            echo "\$dolibarr_main_instance_unique_id='ci0123456789abcdef';"
+          } > "${CONF_FILE}"
+          chmod 666 "${CONF_FILE}"
+          cat "${CONF_FILE}"
+
+      - name: Generate install.forced.php
+        run: |
+          INSTALL_FORCED_FILE="${GITHUB_WORKSPACE}/htdocs/install/install.forced.php"
+          echo "Writing ${INSTALL_FORCED_FILE}"
+          {
+            echo '<?php'
+            echo "\$force_install_noedit=2;"
+            echo "\$force_install_nophpinfo=true;"
+            echo "\$force_install_type='${DB_TYPE}';"
+            echo "\$force_install_dbserver='${DB_HOST}';"
+            echo "\$force_install_port='${DB_PORT}';"
+            echo "\$force_install_database='${DB_NAME}';"
+            echo "\$force_install_databaselogin='${DB_USER}';"
+            echo "\$force_install_databasepass='${DB_PASS}';"
+            echo "\$force_install_databaserootlogin='${DB_USER}';"
+            echo "\$force_install_databaserootpass='${DB_PASS}';"
+            echo "\$force_install_prefix='${DB_PREFIX}';"
+            echo "\$force_install_createdatabase=${DB_CREATE};"
+            echo "\$force_install_createuser=false;"
+            echo "\$force_install_mainforcehttps=false;"
+            echo "\$force_install_dolibarrlogin='${DOLI_ADMIN_LOGIN}';"
+            echo "\$force_install_main_data_root='${GITHUB_WORKSPACE}/documents';"
+            # Do NOT lock here: the lock is created at the very end.
+            echo "\$force_install_lockinstall=false;"
+          } > "${INSTALL_FORCED_FILE}"
+          cat "${INSTALL_FORCED_FILE}"
+
+      # -------------------------------------------------------------------
+      # Part 1 - install "from zero" (validates the installer)
+      # -------------------------------------------------------------------
+
+      - name: Fresh install - step1 (create database schema)
+        working-directory: htdocs/install
+        run: |
+          set -e
+          # Args are still passed for the document root / URL which are not
+          # part of install.forced.php ; DB params come from install.forced.php.
+          php step1.php set auto \
+            "${GITHUB_WORKSPACE}/htdocs" \
+            "${GITHUB_WORKSPACE}/documents" \
+            "http://${PHPSERVER_DOMAIN_PORT}" \
+            "${DB_USER}" "${DB_PASS}" \
+            "${DB_TYPE}" "${DB_HOST}" "${DB_NAME}" "${DB_USER}" "${DB_PASS}" "${DB_PORT}" "${DB_PREFIX}" \
+            0 0 \
+            | tee "${GITHUB_WORKSPACE}/install_step1.log"
+
+      - name: Fresh install - step2 (keys, functions, reference data)
+        working-directory: htdocs/install
+        run: |
+          set -e
+          php step2.php set | tee "${GITHUB_WORKSPACE}/install_step2.log"
+
+      - name: Fresh install - step5 (create admin, finalize)
+        working-directory: htdocs/install
+        run: |
+          set -e
+          # last arg 0 = do not create install.lock yet
+          php step5.php "" "" auto set \
+            "${DOLI_ADMIN_LOGIN}" "${DOLI_ADMIN_PASSWORD}" "${DOLI_ADMIN_PASSWORD}" 0 \
+            | tee "${GITHUB_WORKSPACE}/install_step5.log"
+
+      # -------------------------------------------------------------------
+      # Part 2 - seed, through Dolibarr's own code, the data the suite needs
+      # -------------------------------------------------------------------
+
+      - name: Seed PHPUnit data (modules, constants, fixtures)
+        run: |
+          set -o pipefail
+          # init_data.php exits non-zero if the "member" module is not enabled
+          php test/phpunit/init_data.php 2>&1 | tee "${GITHUB_WORKSPACE}/init_data.log"
+
+      - name: Finalize install (create install.lock)
+        run: |
+          mkdir -p "${GITHUB_WORKSPACE}/documents/admin/temp"
+          chmod -R 777 "${GITHUB_WORKSPACE}/documents"
+          echo "Install finished by CI $(date -u)" > "${GITHUB_WORKSPACE}/documents/install.lock"
+
+      # -------------------------------------------------------------------
+      # Part 3 - run the suite
+      # -------------------------------------------------------------------
+
+      - name: Start PHP built-in web server
+        run: |
+          nohup php -S "${PHPSERVER_DOMAIN_PORT}" -t "${GITHUB_WORKSPACE}/htdocs" > "${GITHUB_WORKSPACE}/phpserver.log" 2>&1 &
+          sleep 3
+          curl -sSI "http://${PHPSERVER_DOMAIN_PORT}/" | head -n 20 || true
+
+      - name: Configure PHPUnit (do not stop on first failure)
+        run: |
+          sed -i -e 's/stopOnFailure="[^"]*"/stopOnFailure="false"/' test/phpunit/phpunittest.xml
+
+      - name: Run PHPUnit test suite
+        run: |
+          set -o pipefail
+          phpunit -d memory_limit=-1 \
+            -c test/phpunit/phpunittest.xml \
+            test/phpunit/AllTests.php \
+            2>&1 | tee "${PHPUNIT_LOG}"
+
+      - name: Provide logs as artifact
+        uses: actions/upload-artifact@v7
+        if: ${{ ! cancelled() }}
+        with:
+          name: install-phpunit-logs-${{ matrix.db }}-php${{ matrix.php-version }}
+          path: |
+            ${{ env.PHPUNIT_LOG }}
+            ${{ env.DOLIBARR_LOG }}
+            phpserver.log
+            install_step1.log
+            install_step2.log
+            install_step5.log
+            init_data.log
+          retention-days: 2
+
+# ---------------------------------------------------------------------------
+# This workflow is called (job "install-phpunit") by:
+#   - ci-on-push.yml         : on the "develop" branch only, like windows-ci
+#   - ci-on-pull_request.yml : on every pull request
+# ---------------------------------------------------------------------------
