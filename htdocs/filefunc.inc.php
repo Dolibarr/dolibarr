@@ -36,6 +36,8 @@
 
 require_once 'version.inc.php';		// Define the DOL_VERSION
 
+// Dolibarr must always work with numeric in english format when they are in memory (example: 1234.56)
+setlocale(LC_NUMERIC, 'C');
 
 // Define syslog constants
 if (!defined('LOG_DEBUG')) {
@@ -315,6 +317,7 @@ if (empty(DOL_DOCUMENT_ROOT) || !file_exists(DOL_DOCUMENT_ROOT."/core/lib/functi
 
 // Included by default (must be before the CSRF check so wa can use the dol_syslog)
 include_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
+include_once DOL_DOCUMENT_ROOT.'/core/lib/html.lib.php';
 include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/securitycore.lib.php';
 //print memory_get_usage();

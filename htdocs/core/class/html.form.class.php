@@ -2357,7 +2357,7 @@ class Form
 
 			if ($showempty && !is_numeric($showempty)) {
 				$textforempty = $showempty;
-				$out .= '<option class="optiongrey" value="-1"' . (in_array(-1, $selected) ? ' selected' : '') . '>' . $textforempty . '</option>';
+				$out .= '<option class="optiongrey" value="-1"' . (in_array(-1, $selected) ? ' selected' : '') . '>' . dol_escape_htmltag($textforempty) . '</option>';
 			} else {
 				if (($showempty == 1 || ($showempty == 3 && $num > 1)) && !$multiple) {
 					$out .= '<option value="0"' . (in_array(0, $selected) ? ' selected' : '') . '>&nbsp;</option>';
@@ -2820,7 +2820,7 @@ class Form
 					if (!is_numeric($show_empty)) {
 						$textforempty = $show_empty;
 					}
-					$out .= '<option class="optiongrey" value="' . ($show_empty < 0 ? $show_empty : -1) . '"' . ((empty($selected) || in_array(-1, $selected)) ? ' selected' : '') . '>' . $textforempty . '</option>' . "\n";
+					$out .= '<option class="optiongrey" value="' . ($show_empty < 0 ? $show_empty : -1) . '"' . ((empty($selected) || in_array(-1, $selected)) ? ' selected' : '') . '>' . dol_escape_htmltag($textforempty) . '</option>' . "\n";
 
 					$outarray[($show_empty < 0 ? $show_empty : -1)] = $textforempty;
 					$outarray2[($show_empty < 0 ? $show_empty : -1)] = array(
@@ -10198,7 +10198,7 @@ class Form
 			if (!is_numeric($show_empty)) {
 				$textforempty = $show_empty;
 			}
-			$out .= '<option class="optiongrey" ' . ($moreparamonempty ? $moreparamonempty . ' ' : '') . 'value="' . (((int) $show_empty) < 0 ? $show_empty : -1) . '"' . ($id == $show_empty ? ' selected' : '') . '>' . $textforempty . '</option>' . "\n";
+			$out .= '<option class="optiongrey" ' . ($moreparamonempty ? $moreparamonempty . ' ' : '') . 'value="' . (((int) $show_empty) < 0 ? $show_empty : -1) . '"' . ($id == $show_empty ? ' selected' : '') . '>' . dol_escape_htmltag($textforempty) . '</option>' . "\n";
 		}
 		if (is_array($array)) {
 			// Translate
@@ -12010,7 +12010,7 @@ class Form
 	 *
 	 * @param int|object|array<int|object> 	$selected	Id group or group(s) preselected
 	 * @param string 				$htmlname 			Field name in form
-	 * @param int<0,1> 				$show_empty 		0=list without null value, 1=add an unknown value
+	 * @param int<0,1>|string 		$show_empty 		0=list without null value, 1=add an empty value into list (key is -1 and value is '&nbsp;'), or a string to use as the empty option's label instead
 	 * @param string|int[] 			$exclude 			Array list of groups id to exclude
 	 * @param int<0,1> 				$disabled 			If select list must be disabled
 	 * @param string|int[] 			$include 			Array list of groups id to include
@@ -12079,7 +12079,11 @@ class Form
 			$i = 0;
 			if ($num) {
 				if ($show_empty && !$multiple) {
-					$out .= '<option value="-1"' . (in_array(-1, $selected) ? ' selected' : '') . '>&nbsp;</option>' . "\n";
+					$textforempty = '&nbsp;';
+					if (!is_numeric($show_empty)) {
+						$textforempty = dol_escape_htmltag($show_empty);
+					}
+					$out .= '<option value="-1"' . (in_array(-1, $selected) ? ' selected' : '') . '>' . $textforempty . '</option>' . "\n";
 				}
 
 				while ($i < $num) {
