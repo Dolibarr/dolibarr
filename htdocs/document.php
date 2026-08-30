@@ -289,7 +289,7 @@ $sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
 $fullpath_original_file     = $check_access['original_file']; // $fullpath_original_file is now a full path name
 //var_dump($modulepart.' '.$entity.' '.$fullpath_original_file.' '.$original_file.' '.$accessallowed);exit;
 
-if (!empty($hashp)) {
+if (!empty($hashp) && $hashp != 'shared') {
 	$accessallowed = 1; // When using hashp, link is public so we force $accessallowed
 	$sqlprotectagainstexternals = '';
 } else {
