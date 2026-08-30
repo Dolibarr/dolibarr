@@ -1704,7 +1704,7 @@ if ($action == 'create') {
 
 		// Intervention lines
 		$sql = 'SELECT ft.rowid, ft.description, ft.fk_fichinter, ft.duree, ft.rang,';
-		$sql .= ' ft.special_code, ft.product_type,';
+		$sql .= ' ft.special_code, ft.product_type, ft.extraparams,';
 		$sql .= ' ft.date as date_intervention';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'fichinterdet as ft';
 		$sql .= ' WHERE ft.fk_fichinter = '.((int) $object->id);
@@ -1748,8 +1748,8 @@ if ($action == 'create') {
 					}
 					if (!empty($objp->special_code) || $objp->product_type == 9) {
 						$line_color = $object->getSubtotalColors($objp->duree);
-						$line_options = json_decode($objp->extraparams, true);
-						$line_options = is_array($line_options) ? $line_options['subtotal'] : array();
+						$line_options = !empty($objp->extraparams) ? (array) json_decode($objp->extraparams, true) : array();
+						$line_options = $line_options['subtotal'] ?? array();
 						print '<td colspan="3" ><strong>'.dol_htmlentitiesbr($objp->description).'</strong>';
 						if (array_key_exists('titleshowuponpdf', $line_options)) {
 							echo '&nbsp;' . img_picto($langs->trans("ShowUPOnPDF"), 'invoicing');
