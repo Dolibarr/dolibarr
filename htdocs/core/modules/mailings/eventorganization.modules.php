@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2010  Laurent Destailleur 	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009  Regis Houssin       	<regis.houssin@inodbox.com>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This file is an example to follow to add your own email selector inside
  * the Dolibarr email tool.
@@ -77,7 +77,7 @@ class mailing_eventorganization extends MailingTargets
 	public function add_to_target($mailing_id)
 	{
 		// phpcs:enable
-		global $conf, $langs;
+		global $langs;
 
 		$cibles = array();
 		$addDescription = '';
@@ -93,9 +93,7 @@ class mailing_eventorganization extends MailingTargets
 		if (GETPOSTINT('filter_eventorganization') > 0) {
 			$sql .= " AND e.fk_project = ".(GETPOSTINT('filter_eventorganization'));
 		}
-		if (empty($this->evenunsubscribe)) {
-			$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = e.email and mu.entity = ".((int) $conf->entity).")";
-		}
+		$sql .= $this->getSqlToExcludeUnsubscribed('e.email');
 		$sql .= " ORDER BY e.email";
 
 		// Stock recipients emails into targets table
@@ -170,21 +168,17 @@ class mailing_eventorganization extends MailingTargets
 	 */
 	public function getNbOfRecipients($sql = '')
 	{
-		global $conf;
-
 		$sql = "SELECT COUNT(DISTINCT(e.email)) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."eventorganization_conferenceorboothattendee as e, ";
 		$sql .= " ".MAIN_DB_PREFIX."projet as p";
 		$sql .= " WHERE e.email <> ''";
 		$sql .= " AND e.fk_project = p.rowid";
 		$sql .= " AND p.entity IN (".getEntity('project').")";
-		if (empty($this->evenunsubscribe)) {
-			$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = e.email and mu.entity = ".((int) $conf->entity).")";
-		}
+		$sql .= $this->getSqlToExcludeUnsubscribed('e.email');
 
 		//print $sql;
 
-		// La requete doit retourner un champ "nb" pour etre comprise par parent::getNbOfRecipients
+		// The query must return a field "nb" to be understood by parent::getNbOfRecipients
 		return parent::getNbOfRecipients($sql);
 	}
 

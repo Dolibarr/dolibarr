@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2026  Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2026 Nathan Pixodeo <nathan@pixodeo.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +28,7 @@ global $conf,$user,$langs,$db;
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/mrp/class/mo.class.php';
 require_once dirname(__FILE__).'/../../htdocs/product/class/product.class.php';
+require_once dirname(__FILE__).'/../../htdocs/categories/class/categorie.class.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
@@ -178,7 +180,7 @@ class MoTest extends CommonClassTest
 
 		$this->assertEquals(Mo::STATUS_VALIDATED, $localobject->status);
 		$this->assertNotEquals($oldref, $localobject->ref, 'validate() must replace the provisional ref with a definitive one');
-		$this->assertNotRegExp('/^\(?PROV/i', $localobject->ref);
+		$this->assertTrue(!preg_match('/^\(?PROV/i', $localobject->ref));
 
 		return $localobject;
 	}
@@ -263,5 +265,53 @@ class MoTest extends CommonClassTest
 		$this->assertGreaterThan(0, $result, $localobject->errorsToString());
 		print __METHOD__." id=".$id." result=".$result."\n";
 		return $result;
+	}
+
+	/**
+	 * Deleting an MO must also delete its category links.
+	 *
+	 * @return void
+	 */
+	public function testMoDeleteRemovesCategoryLinks()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$mo = new Mo($db);
+		$mo->initAsSpecimen();
+		$mo->ref = 'MoTestCategoryDelete';
+		$mo->fk_product = 1;
+		$mo->mrptype = 0;
+		$mo->qty = 1;
+		$moid = $mo->create($user, 1);
+		$this->assertGreaterThan(0, $moid, $mo->errorsToString());
+
+		$category = new Categorie($db);
+		$category->label = 'MoTestCategoryDelete';
+		$category->type = Categorie::TYPE_MO;
+		$categoryid = $category->create($user, 1);
+		$this->assertGreaterThan(0, $categoryid, $category->errorsToString());
+
+		$result = $mo->setCategories(array($categoryid));
+		$this->assertGreaterThan(0, $result, $mo->errorsToString());
+
+		$sql = "SELECT COUNT(*) AS nb FROM ".MAIN_DB_PREFIX."categorie_mo WHERE fk_mo = ".((int) $moid);
+		$resql = $db->query($sql);
+		$this->assertNotFalse($resql, $db->lasterror());
+		$obj = $db->fetch_object($resql);
+		$db->free($resql);
+		$this->assertSame(1, (int) $obj->nb);
+
+		$result = $mo->delete($user, 1);
+		$this->assertGreaterThan(0, $result, $mo->errorsToString());
+
+		$resql = $db->query($sql);
+		$this->assertNotFalse($resql, $db->lasterror());
+		$obj = $db->fetch_object($resql);
+		$db->free($resql);
+		$this->assertSame(0, (int) $obj->nb);
 	}
 }

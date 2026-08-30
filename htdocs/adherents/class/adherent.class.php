@@ -2098,7 +2098,6 @@ class Adherent extends CommonObject
 			if (!$error && $option == 'bankviainvoice' && $accountid) {
 				require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 				require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-				require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 
 				$amounts = array();
 				$amounts[$invoice->id] = (float) price2num($amount);

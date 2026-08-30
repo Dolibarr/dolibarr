@@ -1137,9 +1137,9 @@ class Contact extends CommonObject
 				$this->fk_prospectlevel = $obj->fk_prospectlevel;
 
 				$transcode = $langs->trans('StatusProspect'.$obj->fk_stcommcontact);
-				$libelle = ($transcode != 'StatusProspect'.$obj->fk_stcommcontact ? $transcode : $obj->stcomm);
+				$label_sale_status = ($transcode != 'StatusProspect'.$obj->fk_stcommcontact ? $transcode : $obj->stcomm);
 				$this->stcomm_id = $obj->fk_stcommcontact; // id statut commercial
-				$this->statut_commercial = $libelle; // libelle statut commercial
+				$this->statut_commercial = $label_sale_status; // libelle statut commercial
 				$this->stcomm_picto = $obj->stcomm_picto; // Picto statut commercial
 
 				$this->phone_pro = trim($obj->phone);
@@ -2582,8 +2582,8 @@ class Contact extends CommonObject
 			if ($num > 0) {
 				while ($obj = $this->db->fetch_object($resql)) {
 					$transkey = "TypeContact_".$obj->element."_".$obj->source."_".$obj->code;
-					$libelle_element = $langs->trans('ContactDefault_'.$obj->element);
-					$this->roles[$obj->contactroleid] = array('id' => $obj->rowid, 'socid' => $obj->socid, 'element' => $obj->element, 'source' => $obj->source, 'code' => $obj->code, 'label' => $libelle_element.' - '.($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->label));
+					$label_element = $langs->trans('ContactDefault_'.$obj->element);
+					$this->roles[$obj->contactroleid] = array('id' => $obj->rowid, 'socid' => $obj->socid, 'element' => $obj->element, 'source' => $obj->source, 'code' => $obj->code, 'label' => $label_element.' - '.($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->label));
 				}
 			}
 		} else {

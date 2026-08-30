@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2010-2018	Laurent Destailleur	    <eldy@users.sourceforge.net>
  * Copyright (C) 2012-2021	Regis Houssin		    <regis.houssin@inodbox.com>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -34,9 +34,17 @@
  *
  * @var string $action
  * @var string $elementtype
+ * @var ?string $pagekey
  * @var string $textobject
  * @var string[] $type2label
  */
+'
+@phan-var-force string $action
+@phan-var-force string $elementtype
+@phan-var-force ?string $pagekey
+@phan-var-force string $textobject
+@phan-var-force string[] $type2label
+';
 // Protection to avoid direct call of template
 if (empty($langs) || !is_object($langs)) {
 	print "Error, template page can't be called as URL";
@@ -155,9 +163,12 @@ if (isset($extrafields->attributes[$elementtype]['type']) && is_array($extrafiel
 		// Key
 		print '<td title="'.dol_escape_htmltag($key).'" class="tdoverflowmax100">'.dol_escape_htmltag($key)."</td>\n";
 		// Type
-		$typetoshow = $type2label[$extrafields->attributes[$elementtype]['type'][$key]];
+		$fieldtype = $extrafields->attributes[$elementtype]['type'][$key];
+		// $type2label may not contain the type of an already existing field when that type has been
+		// disabled by config (icon => MAIN_USE_EXTRAFIELDS_ICON, point/polygon/... => MAIN_USE_GEOPHP)
+		$typetoshow = $type2label[$fieldtype] ?? $fieldtype;
 		print '<td title="'.dol_escape_htmltag($typetoshow).'" class="tdoverflowmax100">';
-		print getPictoForType($extrafields->attributes[$elementtype]['type'][$key]);
+		print getPictoForType($fieldtype);
 		print dol_escape_htmltag($typetoshow);
 		print "</td>\n";
 		// Size
