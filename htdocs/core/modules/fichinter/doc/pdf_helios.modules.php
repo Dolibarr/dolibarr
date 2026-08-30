@@ -790,8 +790,8 @@ class pdf_helios extends ModelePDFFicheinter
 	/**
 	 *  Define Array Column Field
 	 *
-	 *  @param	Fichinter	$object			common object
-	 *  @param	Translate	$outputlangs	langs
+	 *  @param	CommonObject	$object			common object
+	 *  @param	Translate		$outputlangs	langs
 	 *  @param	int<0,1>	$hidedetails	Do not show line details
 	 *  @param	int<0,1>	$hidedesc		Do not show desc
 	 *  @param	int<0,1>	$hideref		Do not show ref
