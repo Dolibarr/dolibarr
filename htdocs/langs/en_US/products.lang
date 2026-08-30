@@ -470,3 +470,5 @@ UseBarCodeForProducts=Use barcode for products
 UseBarCodeForThirdParties=Use barcode for third parties
 NotSupportedOnKits=Not supported on kits
 ProductLangExtrafieldsSetup=Product translations Extrafields
+
+WithoutVATCode=Without VAT code

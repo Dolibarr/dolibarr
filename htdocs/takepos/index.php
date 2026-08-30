@@ -757,6 +757,27 @@ function New() {
 	});
 }
 /**
+ * Delete (discard) the current sale, after confirmation.
+ *
+ * return   void
+ */
+function DeleteSale() {
+	if (typeof place === 'undefined') {
+		return;
+	}
+	if (confirm('<?php echo dol_escape_js($langs->transnoentitiesnoconv("ConfirmDeletionOfThisPOSSale")); ?>')) {
+		// Fully remove the draft (its tab disappears), then switch to the main cart.
+		$("#poslines").load("invoice.php?action=discardsale&token=<?php echo newToken(); ?>&place=" + place, function () {
+			place = '0';
+			invoiceid = 0;
+			ClearSearch(false);
+			$("#idcustomer").val("");
+			Refresh();
+		});
+	}
+}
+
+/**
  * Search products
  *
  * @param   keyCodeForEnter     Key code for "enter" or '' if not
@@ -1607,6 +1628,9 @@ if (getDolGlobalString('TAKEPOS_WEIGHING_SCALE')) {
 	$menus[$r++] = array('title' => '<span class="fa fa-balance-scale pictofixedwidth"></span><div class="trunc">'.$langs->trans("WeighingScale").'</div>', 'action' => 'WeighingScale();');
 }
 
+// Button to delete (discard) the current sale
+$menus[$r++] = array('title' => '<span class="fa fa-trash-alt paddingrightonly"></span><div class="trunc">'.$langs->trans("DeleteSale").'</div>', 'action' => 'DeleteSale();', 'style' => 'background-color: #d9534f !important; color: #000 !important;');
+
 $parameters = array('menus' => $menus);
 $reshook = $hookmanager->executeHooks('ActionButtons', $parameters);
 if ($reshook == 0) {  //add buttons
@@ -1656,12 +1680,12 @@ if ($reshook == 0) {  //add buttons
 			if (count($menus) > 12 and $i == 12) {
 				echo '<button style="'.(empty($menu['style']) ? '' : $menu['style']).'" type="button" id="actionnext" class="actionbutton" onclick="MoreActions('.count($menus).')">'.$langs->trans("Next").'</button>';
 				echo '<button style="display: none;" type="button" id="actionprevious" class="actionbutton" onclick="MoreActions('.count($menus).')">'.$langs->trans("Previous").'</button>';
-				echo '<button style="display: none;" type="button" id="action'.$i.'" class="actionbutton" onclick="'.(empty($menu['action']) ? '' : $menu['action']).'">'.$menu['title'].'</button>';
+				echo '<button style="display: none;" type="button" id="action'.$i.'" class="actionbutton'.(empty($menu['class']) ? '' : ' '.dol_escape_htmltag($menu['class'])).'" onclick="'.(empty($menu['action']) ? '' : $menu['action']).'">'.$menu['title'].'</button>';
 			} elseif ($i > 12) {
-				echo '<button style="display: none;" type="button" id="action'.$i.'" class="actionbutton" onclick="'.(empty($menu['action']) ? '' : $menu['action']).'">'.$menu['title'].'</button>';
+				echo '<button style="display: none;" type="button" id="action'.$i.'" class="actionbutton'.(empty($menu['class']) ? '' : ' '.dol_escape_htmltag($menu['class'])).'" onclick="'.(empty($menu['action']) ? '' : $menu['action']).'">'.$menu['title'].'</button>';
 				// TODO keep style but hide button
 			} else {
-				echo '<button style="'.(empty($menu['style']) ? '' : $menu['style']).'" type="button" id="action'.$i.'" class="actionbutton" onclick="'.(empty($menu['action']) ? '' : $menu['action']).'">'.$menu['title'].'</button>';
+				echo '<button style="'.(empty($menu['style']) ? '' : $menu['style']).'" type="button" id="action'.$i.'" class="actionbutton'.(empty($menu['class']) ? '' : ' '.dol_escape_htmltag($menu['class'])).'" onclick="'.(empty($menu['action']) ? '' : $menu['action']).'">'.$menu['title'].'</button>';
 			}
 		}
 

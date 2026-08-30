@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2018		Destailleur Laurent	<eldy@users.sourceforge.net>
- * Copyright (C) 2024		Frederic France		<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France		<frederic.france@free.fr>
  * Copyright (C) 2025-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -266,7 +266,7 @@ class CDavLibTest extends CommonClassTest
 		$cdavlib = new CdavLib($user, $db, $langs);
 
 		if ($db->type != 'mysqli') {
-			return;
+			$this->markTestSkipped('This test is only implemented for MySQL/MariaDB.');
 		}
 
 		// Start a transaction for database operations

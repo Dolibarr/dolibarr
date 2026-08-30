@@ -5,7 +5,7 @@
  * Copyright (C) 2011-2017  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2015	    Marcos García		    <marcosgdf@gmail.com>
  * Copyright (C) 2018	    Nicolas ZABOURI	        <info@inovea-conseil.com>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  *
@@ -1396,6 +1396,79 @@ class ActionComm extends CommonObject
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
+	}
+
+	/**
+	 *  Check if any resource attached to this event would become double-booked if the
+	 *  event's dates were changed to the given range. Only checks when the
+	 *  RESOURCE_USED_IN_EVENT_CHECK option is enabled and $this->element is 'action';
+	 *  returns no conflict otherwise.
+	 *
+	 *  @param	int		$newdatep	New start date to check (Unix timestamp)
+	 *  @param	int		$newdatef	New end date to check (Unix timestamp), 0 if none
+	 *  @return	array<int,array{r_ref:string,ac_id:int,ac_label:string}>|int<-1,-1>	Array of conflicting resource/event pairs (empty array = no conflict), -1 if a DB error occurred (check $this->error)
+	 */
+	public function checkResourceConflicts($newdatep, $newdatef)
+	{
+		if (!getDolGlobalString('RESOURCE_USED_IN_EVENT_CHECK') || $this->element != 'action') {
+			return array();
+		}
+
+		$sql  = "SELECT er.rowid, r.ref as r_ref, ac.id as ac_id, ac.label as ac_label";
+		$sql .= " FROM ".MAIN_DB_PREFIX."element_resources as er";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."resource as r ON r.rowid = er.resource_id AND er.resource_type = 'dolresource'";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm as ac ON ac.id = er.element_id AND er.element_type = '".$this->db->escape($this->element)."'";
+		$sql .= " WHERE ac.id <> ".((int) $this->id);
+		$sql .= " AND er.resource_id IN (";
+		$sql .= " SELECT resource_id FROM ".MAIN_DB_PREFIX."element_resources";
+		$sql .= " WHERE element_id = ".((int) $this->id);
+		$sql .= " AND element_type = '".$this->db->escape($this->element)."'";
+		$sql .= " AND busy = 1";
+		$sql .= ")";
+		$sql .= " AND er.busy = 1";
+		$sql .= " AND (";
+		$sql .= " (ac.datep <= '".$this->db->idate($newdatep)."' AND (ac.datep2 IS NULL OR ac.datep2 >= '".$this->db->idate($newdatep)."'))";
+		if (!empty($newdatef)) {
+			$sql .= " OR (ac.datep <= '".$this->db->idate($newdatef)."' AND (ac.datep2 >= '".$this->db->idate($newdatef)."'))";
+		}
+		$sql .= " OR (";
+		$sql .= "ac.datep >= '".$this->db->idate($newdatep)."'";
+		if (!empty($newdatef)) {
+			$sql .= " AND (ac.datep2 IS NOT NULL AND ac.datep2 <= '".$this->db->idate($newdatef)."')";
+		}
+		$sql .= ")";
+		$sql .= ")";
+
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+
+		$conflicts = array();
+		while ($obj = $this->db->fetch_object($resql)) {
+			$conflicts[] = array('r_ref' => $obj->r_ref, 'ac_id' => (int) $obj->ac_id, 'ac_label' => $obj->ac_label);
+		}
+		$this->db->free($resql);
+
+		return $conflicts;
+	}
+
+	/**
+	 *  Format an array of resource conflicts (as returned by checkResourceConflicts()) into a
+	 *  translated, HTML-formatted error message.
+	 *
+	 *  @param	array<int,array{r_ref:string,ac_id:int,ac_label:string}>	$conflicts	Conflicts array
+	 *  @param	Translate	$langs	Translate object to use for translation
+	 *  @return	string	Translated HTML message listing the conflicts
+	 */
+	public function formatResourceConflicts($conflicts, $langs)
+	{
+		$message = $langs->trans('ErrorResourcesAlreadyInUse').' : ';
+		foreach ($conflicts as $conflict) {
+			$message .= '<br> - '.$langs->trans('ErrorResourceUseInEvent', $conflict['r_ref'], $conflict['ac_label'].' ['.$conflict['ac_id'].']');
+		}
+		return $message;
 	}
 
 	/**

@@ -463,6 +463,14 @@ div.paymentbordline
 	padding-bottom:10px;
 }
 
+/* When the categories column is hidden (TAKEPOS_HIDE_CATEGORIES), index.php gives the
+ * products area the centpercent class so it takes the whole row, but the generic
+ * .centpercent rule of the theme loses against .div5 above, which is loaded later:
+ * make the intent explicit. */
+.div5.centpercent {
+	width: 100%;
+}
+
 .div1, .div2, .div3, .div4, .div5 {
 	padding-right: 5px;
 	padding-left: 5px;
