@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2010-2018	Laurent Destailleur	    <eldy@users.sourceforge.net>
  * Copyright (C) 2012-2021	Regis Houssin		    <regis.houssin@inodbox.com>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -37,6 +37,12 @@
  * @var string $textobject
  * @var string[] $type2label
  */
+'
+@phan-var-force string $action
+@phan-var-force string $elementtype
+@phan-var-force string $textobject
+@phan-var-force string[] $type2label
+';
 // Protection to avoid direct call of template
 if (empty($langs) || !is_object($langs)) {
 	print "Error, template page can't be called as URL";
