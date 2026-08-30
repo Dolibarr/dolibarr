@@ -670,9 +670,64 @@ if (empty($reshook)) {
 		$creditnote->update_price(1);
 
 		// The credit note is created here.
-		// We DO NOT validate it automatically so that it can be edited from TakePOS (e.g. to modify quantities or batches).
+		// If TAKEPOS_VALIDATE_CREDIT_NOTE_ON_CREATION is set, we validate it immediately (old behavior).
+		// Otherwise, it is left as draft so it can be edited from TakePOS (e.g. to modify quantities or batches).
 		// Stock movements will be done when the credit note is validated later (via Payment / Valid action).
 		$res = 1;
+		if (getDolGlobalString('TAKEPOS_VALIDATE_CREDIT_NOTE_ON_CREATION')) {
+			$constantforkey = 'CASHDESK_NO_DECREASE_STOCK'.(isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '');
+			$allowstockchange = getDolGlobalString($constantforkey) != "1";
+
+			if (isModEnabled('stock') && !isModEnabled('productbatch') && $allowstockchange) {
+				$savconst = getDolGlobalString('STOCK_CALCULATE_ON_BILL');
+				$conf->global->STOCK_CALCULATE_ON_BILL = 1; // Force stock update on invoice validation
+
+				$constantforkey = 'CASHDESK_ID_WAREHOUSE'.(isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '');
+				$warehouseid = getDolGlobalInt($constantforkey);
+
+				dol_syslog("Validate invoice with stock change into warehouse defined into constant ".$constantforkey." = ".getDolGlobalString($constantforkey)." or warehouseid= ".$warehouseid." if defined.");
+
+				$batch_rule = 0; // Module productbatch is disabled here, so no need for a batch_rule.
+				$res = $creditnote->validate($user, '', $warehouseid, 0, $batch_rule);
+				if ($res < 0) {
+					$error++;
+					dol_htmloutput_errors($creditnote->error, $creditnote->errors, 1);
+				}
+
+				// Restore setup
+				$conf->global->STOCK_CALCULATE_ON_BILL = $savconst;
+			} else {
+				$res = $creditnote->validate($user);
+			}
+
+			// Update stock for batch products
+			if (!$error && $res >= 0) {
+				if (isModEnabled('stock') && isModEnabled('productbatch') && $allowstockchange) {
+					dol_syslog("Now we record the stock movement for each qualified line");
+
+					require_once DOL_DOCUMENT_ROOT . "/product/stock/class/mouvementstock.class.php";
+					$constantforkey = 'CASHDESK_ID_WAREHOUSE'.(isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '');
+					$inventorycode = dol_print_date(dol_now(), 'dayhourlog');
+					$labeltakeposmovement = 'TakePOS - '.$langs->trans("CreditNote").' '.$creditnote->ref;
+
+					foreach ($creditnote->lines as $line) {
+						// Use the warehouse id defined on invoice line else in the setup
+						$warehouseid = ($line->fk_warehouse ? $line->fk_warehouse : getDolGlobalInt($constantforkey));
+
+						$mouvP = new MouvementStock($db);
+						$mouvP->setOrigin($creditnote->element, $creditnote->id);
+
+						$batch_to_use = ($line->batch != '' && $warehouseid > 0) ? $line->batch : '';
+
+						$res = $mouvP->reception($user, $line->fk_product, $warehouseid, $line->qty, $line->price, $labeltakeposmovement, '', '', $batch_to_use, '', 0, $inventorycode);
+						if ($res < 0) {
+							dol_htmloutput_errors($mouvP->error, $mouvP->errors, 1);
+							$error++;
+						}
+					}
+				}
+			}
+		}
 
 		if (!$error) {
 			$db->commit();
