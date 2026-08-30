@@ -398,7 +398,7 @@ TLSv1.2=TLSv1.2
 TLS/STARTTLS=TLS/STARTTLS
 FillExtrafieldWithAi=Fill extrafield with AI content
 ExtrafieldFiller=Extrafield filler
-OurProductSelection=The product to discover
+OurProductSelection=Products to Discover
 NoSupportedModulesHaveBeenActivated=The reporting tool can generate dynamic reports for some modules only. There is no supported module enabled yet.
 TryAnotherConnectionMode=Try another connection mode
 # Bookmarks
