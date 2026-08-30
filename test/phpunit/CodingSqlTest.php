@@ -154,10 +154,13 @@ class CodingSqlTest extends CommonClassTest
 				print 'Check sql file '.$file."\n";
 				$filecontent = file_get_contents($dir.'/'.$file);
 
-				// Allow ` for 'rank' column name only
-				$filecontent = str_replace('`rank`', '_rank_', $filecontent);
+				// Allow some string sequences
+				$filecontent = str_replace(
+					array('`rank`', '["', '"]', '{"', '"}', '("', '")', 'href="', '">'),
+					array('_rank_', '__OKSTRING__', '__OKSTRING__', '__OKSTRING__', '__OKSTRING__', '__OKSTRING__', '__OKSTRING__', '__OKSTRING__'),
+					$filecontent
+				);
 
-				$filecontent = str_replace(array('["', '"]', '{"', '"}', '("', '")', 'href="', '">'), '__OKSTRING__', $filecontent);
 				// To accept " after the comment tag
 				//$filecontent = preg_replace('/^--.*$/', '', $filecontent);
 				$filecontent = preg_replace('/--.*?\n/', '', $filecontent);
