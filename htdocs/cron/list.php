@@ -183,7 +183,7 @@ if (empty($reshook)) {
 		$search_label = '';
 		$search_status = -1;
 		$search_lastresult = '';
-		$search_all = '';
+		$search_module_name = '';
 		$toselect = array();
 		$search_array_options = array();
 	}

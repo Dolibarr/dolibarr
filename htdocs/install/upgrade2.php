@@ -4430,7 +4430,10 @@ function migrate_delete_old_files($db, $langs, $conf)
 		'/install/mysql/tables/llx_c_ticketsup_severity.key.sql',
 		'/install/mysql/tables/llx_c_ticketsup_severity.sql',
 		'/install/mysql/tables/llx_c_ticketsup_type.key.sql',
-		'/install/mysql/tables/llx_c_ticketsup_type.sql'
+		'/install/mysql/tables/llx_c_ticketsup_type.sql',
+
+		'/install/mysql/tables/llx_categorie_mo-mrp_mo.sql',
+		'/install/mysql/tables/llx_categorie_mo-mrp_mo.key.sql'
 	);
 
 	/*
