@@ -4,6 +4,7 @@
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026		Anthony Damhet			<a.damhet@progiseize.fr>
  * Copyright (C) 2026		Nick Fragoulis
+ * Copyright (C) 2026	Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -656,8 +657,9 @@ function getAiChatAssistantHtml($mode = 'page')
 	$out .= '<option value="text">'.$langs->transnoentitiesnoconv("OptionTextOnly").'</option>';
 	$out .= '<option value="cloud">'.$langs->transnoentitiesnoconv("OptionCloudFast").'</option>';
 	$out .= '<option value="whisper">'.$langs->transnoentitiesnoconv("OptionWhisperLocal").'</option>';
-	$out .= '<option value="local_docs">'.$langs->transnoentitiesnoconv("OptionLocalParsing").'</option>';
-	$out .= '<option value="cloud_docs">'.$langs->transnoentitiesnoconv("OptionCloudParsing").'</option>';
+	// Note: the legacy 'local_docs'/'cloud_docs' selector modes are gone — documents
+	// are now attached with the always-visible paperclip button and routed
+	// automatically (local extraction first, cloud parsing as fallback).
 	$out .= '</select>';
 	// Clear Button
 	$out .= '<button type="button" id="clear-btn" class="icon-btn" title="'.dol_escape_htmltag($langs->trans("ClearChatHistoryTitle")).'">';
@@ -709,9 +711,13 @@ function getAiChatAssistantHtml($mode = 'page')
 	// Controls: a single rounded "pill" holding the attach/mic buttons, the
 	// textarea and the send button.
 	$out .= '<div class="chat-controls">';
+	// Attached-file chip (icon + name + remove cross), shown above the input pill
+	// once a document has been attached with the paperclip. The document content
+	// itself NEVER appears in the input nor in the conversation.
+	$out .= '<div id="file-chip-area" class="file-chip-area ai-hidden"></div>';
 	$out .= '<div class="chat-input-pill">';
-	// Upload Wrapper (Visible only in Doc modes)
-	$out .= '<div id="upload-wrapper" class="upload-wrapper ai-hidden">';
+	// Upload Wrapper (always visible: documents can be attached in any mode)
+	$out .= '<div id="upload-wrapper" class="upload-wrapper">';
 	$out .= '<input type="file" id="file-upload" accept=".pdf,.txt,.xml,.png,.jpg,.jpeg,.doc,.docx,.xls,.xlsx,.odt,.ods" style="display: none;">';
 	$out .= '<button type="button" id="upload-btn" class="round-btn" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("AttachFile")).'">'.img_picto('', 'fa-paperclip').'</button>';
 	$out .= '</div>';
