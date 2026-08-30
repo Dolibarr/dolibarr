@@ -253,7 +253,10 @@ if ($action == "start" && $permissiontoadd) {
 		}
 		dol_syslog('The closing date will be '.dol_print_date($dateclosegmt, 'standard', 'gmt').' UTC');
 
-		$tmparray = dol_getdate($dateclosegmt, false, 'gmt');
+		// The closing timestamp is built from the date the user picked, in the user timezone, so it must
+		// be split back in that same timezone. Splitting it in GMT shifts the stored period to the next
+		// day in UTC- timezones, since 23:59:59 local is already the day after in UTC (#39046).
+		$tmparray = dol_getdate($dateclosegmt, false, empty($_SESSION["dol_tz_string"]) ? @date_default_timezone_get() : $_SESSION["dol_tz_string"]);
 
 		$object->day_close = GETPOSTINT('closeday') ? $tmparray['mday'] : null;
 		$object->month_close = GETPOSTINT('closemonth') ? $tmparray['mon'] : null;
