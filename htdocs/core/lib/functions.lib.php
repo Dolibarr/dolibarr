@@ -11463,7 +11463,7 @@ function dolForgeSQLCriteriaCallback($matches)
 	// Test that operand is not a forbidden search field
 	if (!empty($newforbiddenfields)) {
 		$operandwithoutprefix = preg_replace('/^[a-z0-9_]+\./i', '', $operand);	// Remove prefix like t. or o. or s. or u. or d. or ...
-		if (in_array($operandwithoutprefix, $newforbiddenfields)) {
+		if (in_array(strtolower($operandwithoutprefix), $newforbiddenfields)) {
 			return '1=1';
 		}
 	}
