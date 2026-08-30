@@ -11,6 +11,7 @@
  * Copyright (C) 2015      Bahfir Abbes         <bafbes@gmail.com>
  * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024      Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2026      Nathan Pixodeo       <nathan@pixodeo.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -362,6 +363,9 @@ if (empty($dolibarr_main_url_root) && !defined('NOREQUIREVIRTUALURL')) {
 	die;
 }
 
+if (empty($dolibarr_main_url_root_alt)) {
+	$dolibarr_main_url_root_alt = '/custom';
+}
 if (empty($dolibarr_main_document_root_alt)) {
 	$dolibarr_main_document_root_alt = $dolibarr_main_document_root.'/custom';
 }
