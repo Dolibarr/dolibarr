@@ -2675,6 +2675,8 @@ if (empty($reshook)) {
 
 		$line = new FactureLigne($db);
 		$line->fetch(GETPOSTINT('lineid'));
+
+		//here percent is to check if progress is more than previous one
 		$percent = $line->get_prev_progress($object->id);
 		$progress = price2num(GETPOST('progress', 'alpha'));
 

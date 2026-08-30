@@ -2399,7 +2399,11 @@ function pdf_getlineprogress($object, $i, $outputlangs, $hidedetails = 0, $hookm
 			if (getDolGlobalString('SITUATION_DISPLAY_DIFF_ON_PDF')) {
 				$prev_progress = 0;
 				if (method_exists($object->lines[$i], 'get_prev_progress')) {
-					$prev_progress = $object->lines[$i]->get_prev_progress($object->id);
+					if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
+						$prev_progress = 0; // New situation percent must be 0 (No cumulative)
+					} else {
+						$prev_progress = $object->lines[$i]->get_prev_progress($object->id);
+					}
 				}
 				$result = round($object->lines[$i]->situation_percent - $prev_progress, 1).'%';
 			} else {
@@ -2454,7 +2458,11 @@ function pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails = 0)
 				$prev_progress = 0;
 				$progress = 1;
 				if (method_exists($object->lines[$i], 'get_prev_progress')) {
-					$prev_progress = $object->lines[$i]->get_prev_progress($object->id);
+					if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
+						$prev_progress = 0; // New situation percent must be 0 (No cumulative)
+					} else {
+						$prev_progress = $object->lines[$i]->get_prev_progress($object->id);
+					}
 					$progress = ($object->lines[$i]->situation_percent - $prev_progress) / 100;
 				}
 				$result .= price($sign * ($total_ht / ($object->lines[$i]->situation_percent / 100)) * $progress, 0, $outputlangs);
@@ -2510,7 +2518,11 @@ function pdf_getlinetotalwithtax($object, $i, $outputlangs, $hidedetails = 0)
 				$prev_progress = 0;
 				$progress = 1;
 				if (method_exists($object->lines[$i], 'get_prev_progress')) {
-					$prev_progress = $object->lines[$i]->get_prev_progress($object->id);
+					if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
+						$prev_progress = 0; // New situation percent must be 0 (No cumulative)
+					} else {
+						$prev_progress = $object->lines[$i]->get_prev_progress($object->id);
+					}
 					$progress = ($object->lines[$i]->situation_percent - $prev_progress) / 100;
 				}
 				$result .= price($sign * ($total_ttc / ($object->lines[$i]->situation_percent / 100)) * $progress, 0, $outputlangs);
