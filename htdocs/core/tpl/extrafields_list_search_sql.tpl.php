@@ -51,7 +51,7 @@ if (!empty($extrafieldsobjectkey) && !empty($search_array_options) && is_array($
 		$extrafieldsobjectprefix = 'ef.';
 	}
 	if (empty($search_options_pattern)) {
-		$search_options_pattern = 'search_options_';
+		$search_options_pattern = 'search_(task_)?options_';
 	}
 
 	$sqlMoreWhere = '';
