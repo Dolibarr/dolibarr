@@ -58,8 +58,9 @@ class DoliDBMysqli extends DoliDB
 	 *	@param	    string	$pass		Password of database user
 	 *	@param	    string	$name		Name of database
 	 *	@param	    int		$port		Port of database server
+	 *	@param	    bool	$forcenew	Not used by this driver: mysqli always opens a genuinely new connection. Kept for signature parity with the Database interface.
 	 */
-	public function __construct($type, $host, $user, $pass, $name = '', $port = 0)  // @phpstan-ignore constructor.unusedParameter
+	public function __construct($type, $host, $user, $pass, $name = '', $port = 0, $forcenew = false)  // @phpstan-ignore constructor.unusedParameter
 	{
 		global $conf, $langs;
 
@@ -245,10 +246,11 @@ class DoliDBMysqli extends DoliDB
 	 * @param   string          $passwd         Password
 	 * @param   string          $name           Name of database (not used for mysql, used for pgsql)
 	 * @param   integer         $port           Port of database server
+	 * @param   bool            $forcenew       Not used by this driver: mysqli always opens a genuinely new connection. Kept for signature parity with the Database interface.
 	 * @return  mysqli|mysqliDoli|false         Database access object
 	 * @see close()
 	 */
-	public function connect($host, $login, $passwd, $name, $port = 0)
+	public function connect($host, $login, $passwd, $name, $port = 0, $forcenew = false)
 	{
 		dol_syslog(get_class($this)."::connect host=$host, port=$port, login=$login, passwd=--hidden--, name=$name", LOG_DEBUG);
 
