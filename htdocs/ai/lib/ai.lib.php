@@ -488,6 +488,123 @@ function getAiAssistantProviderLabel()
 }
 
 /**
+ * Return the list of model ids offered by the configured AI provider, with a
+ * 1-hour cache in the constant AI_MODELS_LIST_CACHE (Anthropic GET /models,
+ * Google GET /models, OpenAI-compatible GET /models). Shared by the AJAX
+ * endpoint ai/ajax/list_models.php (datalists, chat picker) and by the
+ * scheduled availability check (AiModelWatch).
+ *
+ * @param DoliDB $db           Database handler (to store the cache constant)
+ * @param bool   $forcerefresh True to bypass the cache (the scheduled check must see the live list)
+ * @return array{service:string,models:string[]} Active service key and its sorted model ids (empty list when the provider is not configured, offers no listing API, or the call fails)
+ */
+function getAiProviderModelList($db, $forcerefresh = false)
+{
+	global $conf;
+
+	$serviceKey = getDolGlobalString('AI_API_SERVICE');
+	if (empty($serviceKey) || $serviceKey == '-1') {
+		return array('service' => '', 'models' => array());
+	}
+
+	if (!$forcerefresh) {
+		$cacheraw = getDolGlobalString('AI_MODELS_LIST_CACHE');
+		if ($cacheraw) {
+			$cache = json_decode($cacheraw, true);
+			if (is_array($cache) && !empty($cache['service']) && $cache['service'] === $serviceKey
+				&& !empty($cache['ts']) && (dol_now() - (int) $cache['ts']) < 3600
+				&& !empty($cache['models']) && is_array($cache['models'])) {
+				return array('service' => $serviceKey, 'models' => $cache['models']);
+			}
+		}
+	}
+
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+
+	$servicesList = getListOfAIServices();
+	$adapterType = $servicesList[$serviceKey]['adapter_type'] ?? 'openai';
+	$defUrl = $servicesList[$serviceKey]['url'] ?? '';
+	$baseUrl = rtrim(getDolGlobalString('AI_API_'.strtoupper($serviceKey).'_URL') ?: $defUrl, '/');
+
+	$apiKey = getDolGlobalString('AI_API_'.strtoupper($serviceKey).'_KEY');
+	if (preg_match('/^crypt:/', $apiKey)) {
+		$apiKey = dolDecrypt($apiKey, $conf->file->instance_unique_id);
+	}
+	if (empty($apiKey) || empty($baseUrl)) {
+		return array('service' => $serviceKey, 'models' => array());
+	}
+
+	$models = array();
+	if ($adapterType === 'anthropic') {
+		$headers = array('x-api-key: '.$apiKey, 'anthropic-version: 2023-06-01');
+		$res = getURLContent($baseUrl.'/models?limit=100', 'GET', '', 1, $headers, array('http', 'https'), 2);
+		$json = json_decode($res['content'] ?? '', true);
+		foreach ((array) ($json['data'] ?? array()) as $m) {
+			if (!empty($m['id'])) {
+				$models[] = (string) $m['id'];
+			}
+		}
+	} elseif ($adapterType === 'google') {
+		$res = getURLContent($baseUrl.'/models?pageSize=200&key='.urlencode($apiKey), 'GET', '', 1, array(), array('http', 'https'), 2);
+		$json = json_decode($res['content'] ?? '', true);
+		foreach ((array) ($json['models'] ?? array()) as $m) {
+			if (!empty($m['name'])) {
+				$models[] = preg_replace('/^models\//', '', (string) $m['name']);
+			}
+		}
+	} else {
+		// OpenAI-compatible providers (OpenAI, Mistral, Groq, DeepSeek, custom...)
+		$headers = array('Authorization: Bearer '.$apiKey);
+		$res = getURLContent($baseUrl.'/models', 'GET', '', 1, $headers, array('http', 'https'), 2);
+		$json = json_decode($res['content'] ?? '', true);
+		foreach ((array) ($json['data'] ?? array()) as $m) {
+			if (!empty($m['id'])) {
+				$models[] = (string) $m['id'];
+			}
+		}
+	}
+
+	$models = array_values(array_unique($models));
+	sort($models);
+
+	if (count($models)) {
+		dolibarr_set_const($db, 'AI_MODELS_LIST_CACHE', json_encode(array('service' => $serviceKey, 'ts' => dol_now(), 'models' => $models)), 'chaine', 0, '', $conf->entity);
+	}
+
+	return array('service' => $serviceKey, 'models' => $models);
+}
+
+/**
+ * Suggest the closest available model id for a model that disappeared from the
+ * provider's list: same family first (shared leading token, e.g. 'gemini',
+ * 'gpt', 'claude'), then overall string similarity. Used by the availability
+ * alerts (scheduled check, admin banner) to propose a replacement.
+ *
+ * @param string   $missing Configured model id that is no longer offered
+ * @param string[] $models  Model ids currently offered by the provider
+ * @return string Closest model id, or '' when nothing is similar enough to be a useful suggestion
+ */
+function aiSuggestClosestModel($missing, array $models)
+{
+	$best = '';
+	$bestScore = -1.0;
+	foreach ($models as $cand) {
+		$pct = 0.0;
+		similar_text(strtolower($missing), strtolower($cand), $pct);
+		$score = $pct;
+		if (strtok(strtolower($missing), '-') === strtok(strtolower($cand), '-')) {
+			$score += 15.0;	// same family beats a slightly closer string of another family
+		}
+		if ($score > $bestScore) {
+			$bestScore = $score;
+			$best = $cand;
+		}
+	}
+	return ($bestScore >= 50.0) ? $best : '';
+}
+
+/**
  * Build the configuration array consumed by the AI Assistant chat frontend (ai/js/ai_assistant.js).
  * It is serialized as JSON into the data-ai-config attribute of the chat container.
  *

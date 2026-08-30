@@ -230,6 +230,40 @@ class UniversalLLMAdapter
 	}
 
 	/**
+	 * Record a "model not found / retired" type provider failure into the constant
+	 * AI_MODEL_RUNTIME_FAILURE, displayed as a warning banner on the models admin
+	 * page. Runtime is the only fully reliable signal for a retired model: a
+	 * provider's listing can be incomplete, and a listed model can still be
+	 * rejected at call time (e.g. models restricted to existing customers).
+	 *
+	 * @param int    $httpCode HTTP status returned by the provider
+	 * @param string $msg      Error message returned by the provider
+	 * @return void
+	 */
+	private function recordModelFailure(int $httpCode, string $msg)
+	{
+		global $db, $conf;
+
+		if (!is_object($db) || !is_object($conf)) {
+			return;	// no Dolibarr runtime (defensive: adapter may be unit-tested standalone)
+		}
+		// Only errors that talk about the model itself, not quota/auth/network ones.
+		if (!preg_match('/model/i', $msg)) {
+			return;
+		}
+		if (!preg_match('/not.?found|does not exist|not exist|unsupported|not supported|deprecated|no longer|retired|invalid/i', $msg)) {
+			return;
+		}
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+		dolibarr_set_const($db, 'AI_MODEL_RUNTIME_FAILURE', json_encode(array(
+			'model' => $this->model,
+			'ts' => dol_now(),
+			'http_code' => $httpCode,
+			'message' => dol_trunc($msg, 300)
+		)), 'chaine', 0, '', $conf->entity);
+	}
+
+	/**
 	 * Execute HTTP Request via cURL
 	 *
 	 * @param string 				$url       	Target API URL
@@ -277,6 +311,7 @@ class UniversalLLMAdapter
 
 		if (isset($json['error'])) {
 			$msg = $json['error']['message'] ?? json_encode($json['error']);
+			$this->recordModelFailure($httpCode, (string) $msg);
 			return "Error: API " . $msg;
 		}
 

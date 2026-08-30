@@ -446,6 +446,30 @@ if ($action == 'edit' || $action == 'create' || $action == 'deleteproperty') {
 	print '<br>';
 }
 
+// Availability alerts: results of the scheduled check (AiModelWatch cron) and of
+// the adapter's runtime "model not found" detection, surfaced on the page where
+// the models are actually fixed. Warn only — nothing is changed automatically.
+$watch = json_decode(getDolGlobalString('AI_MODEL_WATCH_LAST_RESULT'), true);
+if (is_array($watch) && !empty($watch['missing']) && is_array($watch['missing'])) {
+	$msg = $langs->trans("AIModelWatchBanner", dol_print_date((int) $watch['ts'], 'dayhour'), (string) count($watch['missing']));
+	foreach ($watch['missing'] as $miss) {
+		$msg .= '<br> - <b>'.dol_escape_htmltag($miss['const'].' = '.$miss['model']).'</b>';
+		if (!empty($miss['suggest'])) {
+			$msg .= ' — '.dol_escape_htmltag($langs->trans("AIModelClosestAvailable", $miss['suggest']));
+		}
+	}
+	print info_admin($msg, 0, 0, 'warning');
+}
+$runfail = json_decode(getDolGlobalString('AI_MODEL_RUNTIME_FAILURE'), true);
+if (is_array($runfail) && !empty($runfail['model'])) {
+	print info_admin($langs->trans(
+		"AIModelRuntimeFailureBanner",
+		dol_escape_htmltag((string) $runfail['model']),
+		dol_print_date((int) ($runfail['ts'] ?? 0), 'dayhour'),
+		dol_escape_htmltag((string) ($runfail['message'] ?? ''))
+	), 0, 0, 'warning');
+}
+
 // Custom models
 if ($action == 'edit' || $action == 'create' || $action == 'deleteproperty') {
 	print load_fiche_titre($langs->trans("AIModelForFeature", $arrayofai[$aiservice]['label']), '', '');
@@ -476,9 +500,19 @@ fetch("'.dol_buildpath('/ai/ajax/list_models.php', 1).'").then(function (r) { re
 	document.querySelectorAll("input[name*=\'_MODEL_\']").forEach(function (i) {
 		i.setAttribute("list", "ai-model-ids");
 		if (i.value && j.models.indexOf(i.value) < 0) {
+			// Closest-match suggestion: longest shared prefix with an offered id
+			var v = i.value.toLowerCase(), best = "", bestlen = 0;
+			j.models.forEach(function (m) {
+				var b = m.toLowerCase(), n = 0;
+				while (n < v.length && n < b.length && v.charAt(n) === b.charAt(n)) n++;
+				if (n > bestlen) { bestlen = n; best = m; }
+			});
 			var w = document.createElement("span");
 			w.className = "fas fa-exclamation-triangle pictowarning paddingleft";
 			w.title = "'.dol_escape_js($langs->trans("AIModelNotInProviderList")).'";
+			if (best && bestlen >= 4) {
+				w.title += " '.dol_escape_js($langs->trans("AIModelClosestAvailable", '{m}')).'".replace("{m}", best);
+			}
 			i.insertAdjacentElement("afterend", w);
 		}
 	});

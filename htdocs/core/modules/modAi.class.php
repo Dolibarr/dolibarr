@@ -235,6 +235,20 @@ class modAi extends DolibarrModules
 		// Cronjobs (List of cron jobs entries to add when module is enabled)
 		// unit_frequency must be 60 for minute, 3600 for hour, 86400 for day, 604800 for week
 		$this->cronjobs = array(
+			0 => array(
+				'label' => 'AIModelWatchJobLabel',
+				'jobtype' => 'method',
+				'class' => '/ai/class/aimodelwatch.class.php',
+				'objectname' => 'AiModelWatch',
+				'method' => 'checkConfiguredModels',
+				'parameters' => '',
+				'comment' => 'No AI provider offers webhooks for model retirement, so this daily check polls the provider model list, compares it with the configured models, and alerts the admin by email with a closest-match suggestion when one disappeared.',
+				'frequency' => 1,
+				'unitfrequency' => 86400,
+				'status' => 1,
+				'test' => 'isModEnabled(\'ai\')',
+				'priority' => 50,
+			),
 			//  0 => array(
 			//      'label' => 'MyJob label',
 			//      'jobtype' => 'method',
