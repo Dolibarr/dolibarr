@@ -50,6 +50,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 '
 @phan-var-force ?string $dolibarr_main_url_root_alt
+@phan-var-force ?string $dolibarr_main_document_root_alt
 @phan-var-force ?string $dolibarr_main_db_prefix
 ';
 
@@ -60,7 +61,7 @@ $conf = new Conf();
 // Force $_REQUEST["logtohtml"]
 $_REQUEST["logtohtml"] = 1;
 
-// Correction PHP_SELF (ex pour apache via caudium) car PHP_SELF doit valoir URL relative
+// Fix PHP_SELF (e.g. for apache via caudium) because PHP_SELF must be a relative URL
 // et non path absolu.
 if (isset($_SERVER["DOCUMENT_URI"]) && $_SERVER["DOCUMENT_URI"]) {
 	$_SERVER["PHP_SELF"] = $_SERVER["DOCUMENT_URI"];
@@ -224,9 +225,9 @@ if (!defined('DONOTLOADCONF') && file_exists($conffile) && filesize($conffile) >
 		// restrictive open_basedir). Use !empty() so an empty value falls
 		// back to the default relative documents path.
 		$dolibarr_main_data_root = !empty($dolibarr_main_data_root) ? trim($dolibarr_main_data_root) : DOL_DOCUMENT_ROOT.'/../documents';
-		$dolibarr_main_url_root         = isset($dolibarr_main_url_root) ? trim($dolibarr_main_url_root) : '';
-		$dolibarr_main_url_root_alt     = isset($dolibarr_main_url_root_alt) ? trim($dolibarr_main_url_root_alt) : '';
-		$dolibarr_main_document_root    = isset($dolibarr_main_document_root) ? trim($dolibarr_main_document_root) : '';
+		$dolibarr_main_url_root = isset($dolibarr_main_url_root) ? trim($dolibarr_main_url_root) : '';
+		$dolibarr_main_url_root_alt = isset($dolibarr_main_url_root_alt) ? trim($dolibarr_main_url_root_alt) : '';
+		$dolibarr_main_document_root = isset($dolibarr_main_document_root) ? trim($dolibarr_main_document_root) : '';
 		$dolibarr_main_document_root_alt = isset($dolibarr_main_document_root_alt) ? trim($dolibarr_main_document_root_alt) : '';
 
 		// Remove last / or \ on directories or url value
@@ -269,10 +270,10 @@ if (!defined('DONOTLOADCONF') && file_exists($conffile) && filesize($conffile) >
 $conf->global->MAIN_ENABLE_LOG_TO_HTML = 1;
 
 // Define prefix
-if (!isset($dolibarr_main_db_prefix) || !$dolibarr_main_db_prefix) {
+if (empty($dolibarr_main_db_prefix)) {
 	$dolibarr_main_db_prefix = 'llx_';
 }
-define('MAIN_DB_PREFIX', (isset($dolibarr_main_db_prefix) ? $dolibarr_main_db_prefix : ''));
+define('MAIN_DB_PREFIX', $dolibarr_main_db_prefix);
 
 define('DOL_CLASS_PATH', 'class/'); // Filesystem path to class dir
 define('DOL_DATA_ROOT', (!empty($dolibarr_main_data_root) ? $dolibarr_main_data_root : DOL_DOCUMENT_ROOT.'/../documents'));

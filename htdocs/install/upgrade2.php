@@ -345,7 +345,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
 				dol_syslog("Run migrate_... versionto is between ".json_encode($afterversionarray)." and ".json_encode($beforeversionarray));
 
-				// Script pour V2 -> V2.1
+				// Script for V2 -> V2.1
 				migrate_paiements($db, $langs, $conf);
 
 				migrate_contracts_det($db, $langs, $conf);
@@ -371,7 +371,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 				migrate_paiementfourn_facturefourn($db, $langs, $conf);
 
 
-				// Script pour V2.1 -> V2.2
+				// Script for V2.1 -> V2.2
 				migrate_paiements_orphelins_1($db, $langs, $conf);
 
 				migrate_paiements_orphelins_2($db, $langs, $conf);
@@ -379,7 +379,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 				migrate_links_transfert($db, $langs, $conf);
 
 
-				// Script pour V2.2 -> V2.4
+				// Script for V2.2 -> V2.4
 				migrate_commande_expedition($db, $langs, $conf);
 
 				migrate_commande_livraison($db, $langs, $conf);
@@ -387,11 +387,11 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 				migrate_detail_livraison($db, $langs, $conf);
 
 
-				// Script pour V2.5 -> V2.6
+				// Script for V2.5 -> V2.6
 				migrate_stocks($db, $langs, $conf);
 
 
-				// Script pour V2.6 -> V2.7
+				// Script for V2.6 -> V2.7
 				migrate_menus($db, $langs, $conf);
 
 				migrate_commande_deliveryaddress($db, $langs, $conf);
@@ -1138,7 +1138,7 @@ function migrate_paiements_orphelins_2($db, $langs, $conf)
 	$result = $db->DDLDescTable(MAIN_DB_PREFIX."paiement", "fk_facture");
 	$obj = $db->fetch_object($result);
 	if ($obj) {
-		// Tous les enregistrements qui sortent de cette requete devrait avoir un pere dans llx_paiement_facture
+		// All records returned by this query should have a parent in llx_paiement_facture
 		$sql = "SELECT DISTINCT p.rowid, p.datec, p.amount as pamount, bu.fk_bank, b.amount as bamount,";
 		$sql .= " bu2.url_id as socid";
 		$sql .= " FROM (".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."bank_url as bu, ".MAIN_DB_PREFIX."bank as b)";
@@ -1750,7 +1750,7 @@ function migrate_price_facture($db, $langs, $conf)
 				$total_ttc_f = $obj->total_ttc_f;
 				$info_bits = $obj->info_bits;
 
-				// On met a jour les 3 nouveaux champs
+				// We update the 3 new fields
 				$facligne = new FactureLigne($db);
 				$facligne->fetch($rowid);
 
@@ -1934,9 +1934,9 @@ function migrate_price_contrat($db, $langs, $conf)
 				$remise_percent = $obj->remise_percent;
 				$info_bits = $obj->info_bits;
 
-				// On met a jour les 3 nouveaux champs
+				// We update the 3 new fields
 				$contratligne = new ContratLigne($db);
-				//$contratligne->fetch($rowid); Non requis car le update_total ne met a jour que chp redefinis
+				//$contratligne->fetch($rowid); Not required because update_total only updates redefined fields
 				$contratligne->fetch($rowid);
 
 				$result = calcul_price_total($qty, $pu, $remise_percent, $vatrate, 0, 0, 0, 'HT', $info_bits, $contratligne->product_type, $tmpmysoc);
@@ -2016,7 +2016,7 @@ function migrate_price_commande($db, $langs, $conf)
 				$remise_percent_global = $obj->remise_percent_global;
 				$info_bits = $obj->info_bits;
 
-				// On met a jour les 3 nouveaux champs
+				// We update the 3 new fields
 				$commandeligne = new OrderLine($db);
 				$commandeligne->fetch($rowid);
 
@@ -2109,7 +2109,7 @@ function migrate_price_commande_fournisseur($db, $langs, $conf)
 				$remise_percent_global = $obj->remise_percent_global;
 				$info_bits = $obj->info_bits;
 
-				// On met a jour les 3 nouveaux champs
+				// We update the 3 new fields
 				$commandeligne = new CommandeFournisseurLigne($db);
 				$commandeligne->fetch($rowid);
 
