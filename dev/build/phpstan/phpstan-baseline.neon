@@ -3507,12 +3507,6 @@ parameters:
 		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
-			count: 3
-			path: ../../../htdocs/core/lib/html.lib.php
-
-		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
 			count: 1
 			path: ../../../htdocs/core/lib/functions2.lib.php
 
