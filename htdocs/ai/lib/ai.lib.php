@@ -573,7 +573,14 @@ function getAiChatAssistantConfig()
 
 		// Context
 		'DocContextIntro',
-		'DocContextOutro'
+		'DocContextOutro',
+
+		// Model picker
+		'AIModelAuto',
+		'AIModelFast',
+		'AIModelBalanced',
+		'AIModelDeep',
+		'AIModelSavedGone'
 	);
 
 	$ai_translations = array();
@@ -652,6 +659,11 @@ function getAiChatAssistantHtml($mode = 'page')
 		$out .= '</div>';
 	}
 	$out .= '<div class="header-controls">';
+	// Model picker pill: 'Auto' (provider default) + presets + the dynamic model
+	// list fetched from ajax/list_models.php by the JS. Choice kept in localStorage.
+	$out .= '<select id="model-select" class="engine-select model-select" title="'.dol_escape_htmltag($langs->trans("AIModelToUse")).'">';
+	$out .= '<option value="">'.$langs->transnoentitiesnoconv("AIModelAuto").'</option>';
+	$out .= '</select>';
 	// Engine Switcher (restyled as a pill with a sparkle icon)
 	$out .= '<select id="engine-select" class="engine-select">';
 	$out .= '<option value="text">'.$langs->transnoentitiesnoconv("OptionTextOnly").'</option>';
