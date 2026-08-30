@@ -113,7 +113,21 @@ ALTER TABLE llx_rights_def ADD COLUMN right_position integer DEFAULT 0 NOT NULL 
 -- Add supplier ref on reception lines (standalone receptions)
 ALTER TABLE llx_receptiondet_batch ADD COLUMN ref_fourn varchar(128) NULL AFTER cost_price;
 
+-- Rename bookcal availabilities date columns: "end" is a reserved word in
+-- PostgreSQL so "CREATE TABLE ... end date ..." never worked there. The
+-- PostgreSQL variant must quote "end".
+-- VMYSQL ALTER TABLE llx_bookcal_availabilities CHANGE COLUMN start date_start date;
+-- VMYSQL ALTER TABLE llx_bookcal_availabilities CHANGE COLUMN end date_end date;
+-- VPGSQL ALTER TABLE llx_bookcal_availabilities RENAME COLUMN start TO date_start;
+-- VPGSQL ALTER TABLE llx_bookcal_availabilities RENAME COLUMN "end" TO date_end;
+
+-- Inventory: add last_main_doc used to save the relative path of last generated main document
+ALTER TABLE llx_inventory ADD COLUMN last_main_doc varchar(255) DEFAULT NULL AFTER date_validation;
+
+ALTER TABLE llx_facturedet ADD INDEX idx_facturedet_fk_prev_id (fk_prev_id);
+ALTER TABLE llx_facture ADD INDEX idx_facture_situation_cycle_ref (situation_cycle_ref);
 
 
 
--- end of migration
+
+-- end of migration - nothing after this line

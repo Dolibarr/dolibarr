@@ -82,7 +82,6 @@ class FormFile
 	{
 		global $langs;
 
-		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 
