@@ -4373,8 +4373,8 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
 		} else { // $displayMode >= 6
 			$return = $htmlLabel . ' ' . $htmlImg;
 		}
-	} elseif (!getDolGlobalString('MAIN_STATUS_USES_IMAGES') && !empty($displayMode)) {
-		// Use new badge
+	} elseif (!empty($displayMode)) {
+		// Use new badge (MAIN_STATUS_USES_IMAGES already handled by the previous branch)
 		$statusLabelShort = (empty($statusLabelShort) ? $statusLabel : $statusLabelShort);
 
 		$dolGetBadgeParams['attr']['class'] = 'badge-status';
@@ -5291,9 +5291,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 				}
 			} elseif (is_object($filterobj) && get_class($filterobj) == 'Contact' && $filterobj->id) {
 				$sql .= " AND a.fk_contact = sp.rowid";
-				if ($filterobj->id) {
-					$sql .= " AND a.fk_contact = " . ((int) $filterobj->id);
-				}
+				$sql .= " AND a.fk_contact = " . ((int) $filterobj->id);
 			} elseif (is_object($filterobj) && get_class($filterobj) == 'Facture') {
 				$sql .= " AND a.fk_element = o.rowid";
 				if ($filterobj->id) {
@@ -5308,9 +5306,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 				if (is_object($filterobj) && !empty($filterobj->element) && !empty($filterobj->id) && array_key_exists('ref', $filterobj->fields)) {
 					$sql .= " AND a.fk_element = o.rowid";
 					$sql .= " AND a.elementtype = '" . $db->escape($filterobj->element) . "'";
-					if ($filterobj->id) {
-						$sql .= " AND a.fk_element = " . ((int) $filterobj->id);
-					}
+					$sql .= " AND a.fk_element = " . ((int) $filterobj->id);
 				}
 			}
 		} else {
@@ -5857,13 +5853,11 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 						$contact = $conf->cache['contact'][$cid];
 					}
 
-					if ($contact) {
-						$contactList .= !empty($contactList) ? ', ' : '';
-						$contactList .= $contact->getNomUrl(1);
-						if (isset($histo[$key]['acode']) && $histo[$key]['acode'] == 'AC_TEL') {
-							if (!empty($contact->phone_pro)) {
-								$contactList .= '(' . dol_print_phone($contact->phone_pro) . ')';
-							}
+					$contactList .= !empty($contactList) ? ', ' : '';
+					$contactList .= $contact->getNomUrl(1);
+					if (isset($histo[$key]['acode']) && $histo[$key]['acode'] == 'AC_TEL') {
+						if (!empty($contact->phone_pro)) {
+							$contactList .= '(' . dol_print_phone($contact->phone_pro) . ')';
 						}
 					}
 				}

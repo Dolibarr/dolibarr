@@ -3517,18 +3517,6 @@ parameters:
 			path: ../../../htdocs/core/lib/functions2.lib.php
 
 		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
-			count: 3
-			path: ../../../htdocs/core/lib/html.lib.php
-
-		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../../htdocs/core/lib/html.lib.php
-
-		-
 			message: '#^Call to function function_exists\(\) with ''imagecreatefromavif''\|''imagecreatefromgif''\|''imagecreatefromjpeg''\|''imagecreatefrompng''\|''imagecreatefromwbmp''\|''imagecreatefromwebp'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 3
