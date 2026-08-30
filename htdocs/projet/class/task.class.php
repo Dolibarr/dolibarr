@@ -1268,7 +1268,11 @@ class Task extends CommonObjectLine
 		// Add where from extra fields
 		$extrafieldsobjectkey = 'projet_task';
 		$extrafieldsobjectprefix = 'efpt.';
-		$search_options_pattern = 'search_task_options_'; // Aligned with perweek.php/perday.php that build $search_array_options with this prefix (via extrafields->getOptionalsFromPost('projet_task', '', 'search_task_')). Without it, the SQL template falls back to 'search_options_' and the preg_replace fails to strip the actual prefix, generating phantom column names like efpt.search_task_options_<field>.
+		// $search_array_options may arrive with either the 'search_options_' prefix (projet/tasks.php, built
+		// with getOptionalsFromPost(..., 'search_')) or the 'search_task_options_' prefix (perweek/perday/
+		// permonth.php, built with getOptionalsFromPost(..., 'search_task_')). Strip either one so the SQL
+		// template gets the bare field name and not a phantom column like efpt.search_[task_]options_<field>.
+		$search_options_pattern = 'search_(?:task_)?options_';
 		global $db, $conf; // needed for extrafields_list_search_sql.tpl
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 
