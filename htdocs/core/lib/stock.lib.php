@@ -109,6 +109,11 @@ function stock_admin_prepare_head()
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
+	$head[$h][0] = DOL_URL_ROOT.'/admin/inventory.php';
+	$head[$h][1] = $langs->trans("Inventory");
+	$head[$h][2] = 'inventory';
+	$h++;
+
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'stock_admin');
 
 	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'entrepot'));

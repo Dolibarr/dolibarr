@@ -6,7 +6,7 @@
  * Copyright (C) 2005-2011  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2016  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -397,12 +397,11 @@ if (!$error && $db !== null && $db->connected) {
 		$defaultCharacterSet = 'utf8';
 		$defaultDBSortingCollation = 'utf8_unicode_ci';
 	}
-	// Force to avoid utf8mb4 because index on field char 255 reach limit of 767 char for indexes (example with mysql 5.6.34 = mariadb 10.0.29)
-	// TODO Remove this when utf8mb4 is supported
-	if ($defaultCharacterSet == 'utf8mb4' || $defaultDBSortingCollation == 'utf8mb4_unicode_ci') {
-		$defaultCharacterSet = 'utf8';
-		$defaultDBSortingCollation = 'utf8_unicode_ci';
-	}
+	// Note: utf8mb4 is no longer downgraded to utf8 here. The 767-byte InnoDB index
+	// prefix limit that motivated this only applied to MySQL < 5.7.7 / MariaDB < 10.2.2
+	// (innodb_large_prefix off by default); modern servers support 3072 bytes, enough
+	// for a VARCHAR(255) index in utf8mb4. If the database was created (or already
+	// exists) as utf8mb4, we now keep it as-is instead of forcing it back to utf8.
 
 	print '<input type="hidden" name="dolibarr_main_db_character_set" value="'.$defaultCharacterSet.'">';
 	print '<input type="hidden" name="dolibarr_main_db_collation" value="'.$defaultDBSortingCollation.'">';

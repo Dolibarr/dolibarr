@@ -470,3 +470,5 @@ UseBarCodeForProducts=Utilisez code-barre pour produits
 UseBarCodeForThirdParties=Utilisez code-barre pour les tiers
 NotSupportedOnKits=Non pris en charge sur les kits
 ProductLangExtrafieldsSetup=produit traductions Champs supplémentaires
+
+WithoutVATCode=Sans code de TVA

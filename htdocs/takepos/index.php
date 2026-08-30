@@ -4,6 +4,7 @@
  * Copyright (C) 2020	Thibault FOUCART	<support@ptibogxiv.net>
  * Copyright (C) 2024-2026	MDW				<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026       Jose Martinez           <jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -527,8 +528,10 @@ function MoreProducts(moreorless) {
 				$("#proimg"+ishow).attr("src","genimg/empty.png");
 				$("#prodiv"+ishow).data("rowid","");
 				$("#prodiv"+ishow).attr("data-rowid","");
+				$("#prodiv"+ishow).addClass("divempty");
 			} else {
 				$("#prodivdesc"+ishow).show();
+				$("#prodiv"+ishow).removeClass("divempty");
 				<?php if (getDolGlobalInt('TAKEPOS_SHOW_PRODUCT_REFERENCE') == 1) { ?>
 					$("#prodesc"+ishow).html(data[parseInt(idata)]['ref'].bold() + ' - ' + data[parseInt(idata)]['label']);
 				<?php } elseif (getDolGlobalInt('TAKEPOS_SHOW_PRODUCT_REFERENCE') == 2) { ?>
@@ -754,6 +757,27 @@ function New() {
 	});
 }
 /**
+ * Delete (discard) the current sale, after confirmation.
+ *
+ * return   void
+ */
+function DeleteSale() {
+	if (typeof place === 'undefined') {
+		return;
+	}
+	if (confirm('<?php echo dol_escape_js($langs->transnoentitiesnoconv("ConfirmDeletionOfThisPOSSale")); ?>')) {
+		// Fully remove the draft (its tab disappears), then switch to the main cart.
+		$("#poslines").load("invoice.php?action=discardsale&token=<?php echo newToken(); ?>&place=" + place, function () {
+			place = '0';
+			invoiceid = 0;
+			ClearSearch(false);
+			$("#idcustomer").val("");
+			Refresh();
+		});
+	}
+}
+
+/**
  * Search products
  *
  * @param   keyCodeForEnter     Key code for "enter" or '' if not
@@ -793,6 +817,7 @@ function Search2(keyCodeForEnter, moreorless) {
 		$("[id^=proimg]").attr("src", "genimg/empty.png");
 		$("[id^=prodiv]").data("rowid", "");
 		$("[id^=prodiv]").attr("data-rowid", "");
+		$("[id^=prodiv]").addClass("divempty");
 		return;
 	}
 
@@ -821,7 +846,7 @@ function Search2(keyCodeForEnter, moreorless) {
 			}
 
 			$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=search&token=<?php echo currentToken();?>&search_term=' + search_term + '&thirdpartyid=' + socid + '&search_start=' + search_start + '&search_limit=' + search_limit, function (data) {
-				for (i = 0; i < <?php echo $MAXPRODUCT ?>; i++) {
+				for (i = 0; i < <?php echo $MAXPRODUCT - 2; ?>; i++) {	// the last 2 slots are the pager arrows, not product slots
 					if (typeof (data[i]) == "undefined") {
 						$("#prowatermark" + i).html("");
 						$("#prodesc" + i).text("");
@@ -847,6 +872,7 @@ function Search2(keyCodeForEnter, moreorless) {
 						$("#prodesc" + i).html(data[i]['label']);
 					<?php } ?>
 					$("#prodivdesc" + i).show();
+					$("#prodiv" + i).removeClass("divempty");
 					$("#probutton" + i).html(data[i]['label']);
 					$("#probutton" + i).show();
 					if (data[i]['price_formated']) {
@@ -1602,6 +1628,9 @@ if (getDolGlobalString('TAKEPOS_WEIGHING_SCALE')) {
 	$menus[$r++] = array('title' => '<span class="fa fa-balance-scale pictofixedwidth"></span><div class="trunc">'.$langs->trans("WeighingScale").'</div>', 'action' => 'WeighingScale();');
 }
 
+// Button to delete (discard) the current sale
+$menus[$r++] = array('title' => '<span class="fa fa-trash-alt paddingrightonly"></span><div class="trunc">'.$langs->trans("DeleteSale").'</div>', 'action' => 'DeleteSale();', 'style' => 'background-color: #d9534f !important; color: #000 !important;');
+
 $parameters = array('menus' => $menus);
 $reshook = $hookmanager->executeHooks('ActionButtons', $parameters);
 if ($reshook == 0) {  //add buttons
@@ -1651,12 +1680,12 @@ if ($reshook == 0) {  //add buttons
 			if (count($menus) > 12 and $i == 12) {
 				echo '<button style="'.(empty($menu['style']) ? '' : $menu['style']).'" type="button" id="actionnext" class="actionbutton" onclick="MoreActions('.count($menus).')">'.$langs->trans("Next").'</button>';
 				echo '<button style="display: none;" type="button" id="actionprevious" class="actionbutton" onclick="MoreActions('.count($menus).')">'.$langs->trans("Previous").'</button>';
-				echo '<button style="display: none;" type="button" id="action'.$i.'" class="actionbutton" onclick="'.(empty($menu['action']) ? '' : $menu['action']).'">'.$menu['title'].'</button>';
+				echo '<button style="display: none;" type="button" id="action'.$i.'" class="actionbutton'.(empty($menu['class']) ? '' : ' '.dol_escape_htmltag($menu['class'])).'" onclick="'.(empty($menu['action']) ? '' : $menu['action']).'">'.$menu['title'].'</button>';
 			} elseif ($i > 12) {
-				echo '<button style="display: none;" type="button" id="action'.$i.'" class="actionbutton" onclick="'.(empty($menu['action']) ? '' : $menu['action']).'">'.$menu['title'].'</button>';
+				echo '<button style="display: none;" type="button" id="action'.$i.'" class="actionbutton'.(empty($menu['class']) ? '' : ' '.dol_escape_htmltag($menu['class'])).'" onclick="'.(empty($menu['action']) ? '' : $menu['action']).'">'.$menu['title'].'</button>';
 				// TODO keep style but hide button
 			} else {
-				echo '<button style="'.(empty($menu['style']) ? '' : $menu['style']).'" type="button" id="action'.$i.'" class="actionbutton" onclick="'.(empty($menu['action']) ? '' : $menu['action']).'">'.$menu['title'].'</button>';
+				echo '<button style="'.(empty($menu['style']) ? '' : $menu['style']).'" type="button" id="action'.$i.'" class="actionbutton'.(empty($menu['class']) ? '' : ' '.dol_escape_htmltag($menu['class'])).'" onclick="'.(empty($menu['action']) ? '' : $menu['action']).'">'.$menu['title'].'</button>';
 			}
 		}
 

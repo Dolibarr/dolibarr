@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2016   Jean-François Ferry     <hello@librethic.io>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026		Jose Martinez				<jose.martinez@pichinov.com>
  *
@@ -22,6 +22,7 @@ use Luracast\Restler\RestException;
 
 require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ticket.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 
 /**
@@ -258,9 +259,9 @@ class Tickets extends DolibarrApi
 		// Search on sale representative
 		if ($search_sale && $search_sale != '-1') {
 			if ($search_sale == -2) {
-				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc)";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', 0, 1);
 			} elseif ($search_sale > 0) {
-				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', (int) $search_sale);
 			}
 		}
 		// Add sql filters
@@ -824,7 +825,7 @@ class Tickets extends DolibarrApi
 		if ($source == "external") {
 			// Check external contact exists
 			$sqlCheckExternalContact = "SELECT 1 as exist";
-			$sqlCheckExternalContact .= " FROM llx_socpeople";
+			$sqlCheckExternalContact .= " FROM ".MAIN_DB_PREFIX."socpeople";
 			$sqlCheckExternalContact .= " WHERE rowid = " . intval($contactid);
 			$result = $this->db->query($sqlCheckExternalContact);
 
@@ -834,7 +835,7 @@ class Tickets extends DolibarrApi
 		} else {
 			// Check internal contact exists
 			$sqlCheckInternalContact = "SELECT 1 as exist";
-			$sqlCheckInternalContact .= " FROM llx_user";
+			$sqlCheckInternalContact .= " FROM ".MAIN_DB_PREFIX."user";
 			$sqlCheckInternalContact .= " WHERE rowid = " . intval($contactid);
 			$result = $this->db->query($sqlCheckInternalContact);
 
