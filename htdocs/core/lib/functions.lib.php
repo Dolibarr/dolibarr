@@ -10624,6 +10624,23 @@ function getElementProperties($elementType)
 		$module = 'product';
 		$subelement = 'product';
 		$table_element = 'product';
+	} elseif ($elementType == 'product_attribute') {
+		$module = 'variants';
+		$element = 'product_attribute';
+		$subelement = 'product_attribute';
+		$classpath = 'variants/class';
+		$classfile = 'ProductAttribute';
+		$classname = 'ProductAttribute';
+		$table_element = 'product_attribute';
+	} elseif ($elementType == 'product_attribute_value') {
+		$module = 'variants';
+		$element = 'product_attribute_value';
+		$subelement = 'product_attribute_value';
+		$classpath = 'variants/class';
+		$classfile = 'ProductAttributeValue';
+		$classname = 'ProductAttributeValue';
+		$table_element = 'product_attribute_value';
+		$parent_element = 'product_attribute';
 	} elseif ($elementType == 'salary') {
 		$classpath = 'salaries/class';
 		$module = 'salaries';
