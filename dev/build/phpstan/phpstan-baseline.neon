@@ -3451,12 +3451,6 @@ parameters:
 			path: ../../../htdocs/core/lib/functions.lib.php
 
 		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
-			count: 3
-			path: ../../../htdocs/core/lib/functions.lib.php
-
-		-
 			message: '#^Instanceof between DOMDocument and DOMDocument will always evaluate to true\.$#'
 			identifier: instanceof.alwaysTrue
 			count: 1
@@ -3483,7 +3477,7 @@ parameters:
 		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
-			count: 2
+			count: 1
 			path: ../../../htdocs/core/lib/functions.lib.php
 
 		-
@@ -3505,16 +3499,34 @@ parameters:
 			path: ../../../htdocs/core/lib/functions.lib.php
 
 		-
-			message: '#^Ternary operator condition is always false\.$#'
-			identifier: ternary.alwaysFalse
+			message: '#^Ternary operator condition is always true\.$#'
+			identifier: ternary.alwaysTrue
 			count: 1
 			path: ../../../htdocs/core/lib/functions.lib.php
 
 		-
+			message: '#^If condition is always true\.$#'
+			identifier: if.alwaysTrue
+			count: 3
+			path: ../../../htdocs/core/lib/html.lib.php
+
+		-
+			message: '#^Negated boolean expression is always true\.$#'
+			identifier: booleanNot.alwaysTrue
+			count: 1
+			path: ../../../htdocs/core/lib/html.lib.php
+
+		-
+			message: '#^Ternary operator condition is always false\.$#'
+			identifier: ternary.alwaysFalse
+			count: 1
+			path: ../../../htdocs/core/lib/html.lib.php
+
+		-
 			message: '#^Ternary operator condition is always true\.$#'
 			identifier: ternary.alwaysTrue
-			count: 7
-			path: ../../../htdocs/core/lib/functions.lib.php
+			count: 6
+			path: ../../../htdocs/core/lib/html.lib.php
 
 		-
 			message: '#^If condition is always true\.$#'
