@@ -320,6 +320,6 @@ jobs:
 
 # ---------------------------------------------------------------------------
 # This workflow is called (job "install-phpunit") by:
-#   - ci-on-push.yml         : on the "develop" branch only, like windows-ci
+#   - ci-on-push.yml         : on the "24.0" branch only, like windows-ci
 #   - ci-on-pull_request.yml : on every pull request
 # ---------------------------------------------------------------------------

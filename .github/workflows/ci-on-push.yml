@@ -34,7 +34,7 @@ jobs:
     with:
       gh_event: ${{ github.event_name }}
   install-phpunit:
-    if: github.ref == 'refs/heads/develop'  # Condition for branch "develop"
+    if: github.ref == 'refs/heads/24.0'  # Condition for branch "24.0"
     needs: [pre-commit, phan, phpstan]
     secrets: inherit
     uses: ./.github/workflows/ci-install-phpunit.yml
