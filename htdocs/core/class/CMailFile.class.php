@@ -1436,6 +1436,7 @@ class CMailFile
 
 				// send mail
 				$failedRecipients = array();
+
 				$result = false;
 				try {
 					$result = $this->mailer->send($this->message, $failedRecipients);

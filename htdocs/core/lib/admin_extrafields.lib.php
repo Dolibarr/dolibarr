@@ -212,7 +212,7 @@ function getExtrafieldsAdminMap()
 			'headlabel'    => 'InventoryExtraFields',
 			'textobject'   => 'Inventory',
 			'headpicto'    => 'account',
-			'title'        => 'InventorySetup',
+			'title'        => 'StockSetup',
 			'helpurl'      => '',
 			'langs'        => array('stock@stock', 'admin'),
 		),
