@@ -30,6 +30,7 @@ env:
   - DEBUG=true
 
 cache:
+  apt: true
   directories:
     - ~/.cache
 
