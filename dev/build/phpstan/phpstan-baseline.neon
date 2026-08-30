@@ -3523,12 +3523,6 @@ parameters:
 			path: ../../../htdocs/core/lib/html.lib.php
 
 		-
-			message: '#^Ternary operator condition is always true\.$#'
-			identifier: ternary.alwaysTrue
-			count: 6
-			path: ../../../htdocs/core/lib/html.lib.php
-
-		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 1
