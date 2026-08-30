@@ -5960,12 +5960,13 @@ function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, 
  *
  *	@param	string		$stringtoclean		String to clean
  *  @param	string[]	$allowed_attributes	Array of tags not allowed
+ *  @param	int|null	$ishtml				Use 1 if string is not an HTML content. 0 if it is, null if unknown.
  *	@return string	    					String cleaned
  *
  * 	@see	dol_htmlwithnojs() dol_escape_htmltag() strip_tags() dol_string_nohtmltag() dol_string_onlythesehtmltags() dol_string_neverthesehtmltags()
  * 	@phan-suppress PhanUndeclaredProperty
  */
-function dol_string_onlythesehtmlattributes($stringtoclean, $allowed_attributes = null)
+function dol_string_onlythesehtmlattributes($stringtoclean, $allowed_attributes = null, $ishtml = null)
 {
 	if (is_null($allowed_attributes)) {
 		$allowed_attributes = array(
@@ -6010,6 +6011,10 @@ function dol_string_onlythesehtmlattributes($stringtoclean, $allowed_attributes 
 	}
 
 	if (class_exists('DOMDocument') && !empty($stringtoclean)) {
+		if ($ishtml === 0) {
+			$stringtoclean = str_replace('&', '__AMPINTEXT__', $stringtoclean);	// Restore & char not entity
+		}
+
 		// Warning: loadHTML does not support HTML5 on old libxml versions.
 		$dom = new DOMDocument('', 'UTF-8');
 		// If $stringtoclean is wrong, it will generates warnings. So we disable warnings and restore them later.
@@ -6065,6 +6070,10 @@ function dol_string_onlythesehtmlattributes($stringtoclean, $allowed_attributes 
 		$return = '';
 		foreach ($wrapper->childNodes as $child) {
 			$return .= $dom->saveHTML($child);
+		}
+
+		if ($ishtml === 0) {
+			$return = str_replace('__AMPINTEXT__', '&', $return);	// Restore & char not entity
 		}
 
 		return trim($return);
@@ -6244,7 +6253,10 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 					//  like 'abc' that wrongly ends up, without the trick, with '<p>abc</p>'
 					// Add also a trick <html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"> to solve utf8 lost.
 					// I don't know what the xml encoding is the trick for
+
 					if (!$outishtml) {
+						$out = preg_replace('/&(?![a-zA-Z0-9#]+;)/', '__AMPINTEXT__', $out);
+
 						$out = dol_nl2br($out);
 					}
 
@@ -6319,7 +6331,9 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 						},
 						$out
 					);
+
 					if (!$outishtml) {        // If $out was not HTML content we made before a dol_nl2br so we must do the opposite operation now
+						$out = str_replace('__AMPINTEXT__', '&', $out);	// Restore & char not entity
 						$out = preg_replace('/<br\s*\/?>/i', "\n", $out);
 					}
 				} catch (Exception $e) {
@@ -6423,7 +6437,7 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 
 			// Keep only some html attributes and exclude non expected HTML attributes and clean content of some attributes (keep only alt=, title=...).
 			if (getDolGlobalString('MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES')) {
-				$out = dol_string_onlythesehtmlattributes($out);
+				$out = dol_string_onlythesehtmlattributes($out, null, $outishtml);
 			}
 
 			// Restore entity &apos; into &#39; (restricthtml is for html content so we can use html entity) because it is
