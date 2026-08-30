@@ -5959,7 +5959,7 @@ function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, 
  *  This method is used for example by dol_htmlwithnojs() when option MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES is set to 1.
  *
  *	@param	string		$stringtoclean		String to clean
- *  @param	string[]	$allowed_attributes	Array of tags not allowed
+ *  @param	string[]|null	$allowed_attributes	Array of attributes to keep (null = default list)
  *  @param	int|null	$ishtml				Use 1 if string is not an HTML content. 0 if it is, null if unknown.
  *	@return string	    					String cleaned
  *
