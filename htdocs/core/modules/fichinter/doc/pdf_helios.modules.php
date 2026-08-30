@@ -2,14 +2,7 @@
 /* Copyright (C) 2003		Rodolphe Quiedeville		<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
- * Copyright (C) 2008		Raphael Bertrand (Resultic)	<raphael.bertrand@resultic.fr>
- * Copyright (C) 2011		Fabrice CHERRIER
- * Copyright (C) 2013		Cédric Salvador				<csalvador@gpcsolutions.fr>
- * Copyright (C) 2015       Marcos García               <marcosgdf@gmail.com>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024	    Nick Fragoulis
- * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2026		Frédéric France				<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,9 +20,9 @@
  */
 
 /**
- *	\file       htdocs/core/modules/fichinter/doc/pdf_soleil.modules.php
+ *	\file       htdocs/core/modules/fichinter/doc/pdf_helios.modules.php
  *	\ingroup    ficheinter
- *	\brief      File of Class to build interventions documents with model Soleil
+ *	\brief      Class to build intervention documents with model Helios (column based, supports the subtotals module)
  */
 require_once DOL_DOCUMENT_ROOT.'/core/modules/fichinter/modules_fichinter.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -39,9 +32,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 
 /**
- *	Class to build interventions documents with model Soleil
+ *	Class to build intervention documents with model Helios.
+ *
+ *	Same layout family as "soleil" but built on the auto-column system
+ *	(defineColumnField / printColDescContent / printStdColumnContent), so it
+ *	renders the subtotals module lines through pdf_render_subtotals().
  */
-class pdf_soleil extends ModelePDFFicheinter
+class pdf_helios extends ModelePDFFicheinter
 {
 	/**
 	 * @var DoliDB Database handler
@@ -69,8 +66,7 @@ class pdf_soleil extends ModelePDFFicheinter
 	public $type;
 
 	/**
-	 * Dolibarr version of the loaded document
-	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
+	 * @var string Dolibarr version of the loaded document
 	 */
 	public $version = 'dolibarr';
 
@@ -85,9 +81,9 @@ class pdf_soleil extends ModelePDFFicheinter
 		global $langs, $mysoc;
 
 		$this->db = $db;
-		$this->name = 'soleil';
+		$this->name = 'helios';
 		$this->description = $langs->trans("DocumentModelStandardPDF");
-		$this->update_main_doc_field = 1; // Save the name of generated file as the main doc when generating a doc with this template
+		$this->update_main_doc_field = 1;
 
 		// Page size for A4 format
 		$this->type = 'pdf';
@@ -101,18 +97,20 @@ class pdf_soleil extends ModelePDFFicheinter
 		$this->marge_basse = getDolGlobalInt('MAIN_PDF_MARGIN_BOTTOM', 10);
 		$this->corner_radius = getDolGlobalInt('MAIN_PDF_FRAME_CORNER_RADIUS', 0);
 		$this->option_logo = 1; // Display logo
-		$this->option_tva = 0; // Manage the vat option FACTURE_TVAOPTION
-		$this->option_modereg = 0; // Display payment mode
-		$this->option_condreg = 0; // Display payment terms
+		$this->option_tva = 0;
+		$this->option_modereg = 0;
+		$this->option_condreg = 0;
 		$this->option_multilang = 1; // Available in several languages
 		$this->option_draft_watermark = 1; // Support add of a watermark on drafts
 		$this->watermark = '';
+
+		$this->tabTitleHeight = 5; // default height
 
 		// Define position of columns
 		$this->posxdesc = $this->marge_gauche + 1;
 
 		if ($mysoc === null) {
-			dol_syslog(get_class($this).'::__construct() Global $mysoc should not be null.'. getCallerInfoString(), LOG_ERR);
+			dol_syslog(get_class($this).'::__construct() Global $mysoc should not be null.'.getCallerInfoString(), LOG_ERR);
 			return;
 		}
 
@@ -138,7 +136,7 @@ class pdf_soleil extends ModelePDFFicheinter
 	public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
 		// phpcs:enable
-		global $user, $langs, $conf, $mysoc, $db, $hookmanager;
+		global $user, $langs, $conf, $mysoc, $hookmanager;
 
 		if (!is_object($outputlangs)) {
 			$outputlangs = $langs;
@@ -182,18 +180,17 @@ class pdf_soleil extends ModelePDFFicheinter
 					include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 					$hookmanager = new HookManager($this->db);
 				}
-
 				$hookmanager->initHooks(array('pdfgeneration'));
 				$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 				global $action;
 				$reshook = $hookmanager->executeHooks('beforePDFCreation', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
-				$nblines = count($object->lines);
+				$nblines = is_array($object->lines) ? count($object->lines) : 0;
 
 				// Create pdf instance
 				$pdf = pdf_getInstance($this->format);
 				$default_font_size = pdf_getPDFFontSize($outputlangs); // Must be after pdf_getInstance
-				$heightforinfotot = 50; // Height reserved to output the info and total part
+				$heightforinfotot = 40; // Height reserved to output the total line + the name/signature boxes
 				$heightforfreetext = getDolGlobalInt('MAIN_PDF_FREETEXT_HEIGHT', 5); // Height reserved to output the free text on last page
 				$heightforfooter = $this->marge_basse + 8; // Height reserved to output the footer (value include bottom margin)
 				if (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS')) {
@@ -208,7 +205,7 @@ class pdf_soleil extends ModelePDFFicheinter
 				$pdf->SetFont(pdf_getPDFFont($outputlangs));
 				// Set path to the background PDF File
 				if (getDolGlobalString('MAIN_ADD_PDF_BACKGROUND')) {
-					$pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/' . getDolGlobalString('MAIN_ADD_PDF_BACKGROUND'));
+					$pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/'.getDolGlobalString('MAIN_ADD_PDF_BACKGROUND'));
 					$tplidx = $pdf->importPage(1);
 				}
 
@@ -245,13 +242,17 @@ class pdf_soleil extends ModelePDFFicheinter
 
 				// Display notes
 				$notetoshow = empty($object->note_public) ? '' : $object->note_public;
+				$extranote = $this->getExtrafieldsInHtml($object, $outputlangs);
+				if (!empty($extranote)) {
+					$notetoshow = dol_concatdesc($notetoshow, $extranote);
+				}
 				if ($notetoshow) {
 					$substitutionarray = pdf_getSubstitutionArray($outputlangs, null, $object);
 					complete_substitutions_array($substitutionarray, $outputlangs, $object);
-					$notetoshow = make_substitutions($notetoshow, $substitutionarray, $outputlangs);
+					$notetoshow = make_substitutions((string) $notetoshow, $substitutionarray, $outputlangs);
 					$notetoshow = convertBackOfficeMediasLinksToPublicLinks($notetoshow);
 
-					$tab_top = 78 + $this->marge_haute;
+					$tab_top -= 2;
 
 					$pdf->SetFont('', '', $default_font_size - 1);
 					$pdf->writeHTMLCell(190, 3, $this->posxdesc - 1, $tab_top, dol_htmlentitiesbr($notetoshow), 0, 1);
@@ -268,192 +269,178 @@ class pdf_soleil extends ModelePDFFicheinter
 					$height_note = 0;
 				}
 
-				$iniY = $tab_top + 7;
-				$curY = $tab_top + 7;
-				$nexY = $tab_top + 7;
+				// Use new auto column system
+				$this->prepareArrayColumnField($object, $outputlangs, $hidedetails, $hidedesc, $hideref);
 
-				$pdf->SetXY($this->marge_gauche, $tab_top);
-				$pdf->MultiCell(190, 5, $outputlangs->transnoentities("Description"), 0, 'L', false);
-				$pdf->line($this->marge_gauche, $tab_top + 5, $this->page_largeur - $this->marge_droite, $tab_top + 5);
+				// Table simulation to know the height of the title line
+				$pdf->startTransaction();
+				$this->pdfTabTitles($pdf, $tab_top, $tab_height, $outputlangs);
+				$pdf->rollbackTransaction(true);
 
-				$pdf->SetFont('', '', $default_font_size - 1);
-
-				$pdf->SetXY($this->marge_gauche, $tab_top + 5);
-				$text = $object->description;
-				if ($object->duration > 0) {
-					$totaltime = convertSecondToTime($object->duration, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY);
-					$text .= ($text ? ' - ' : '').$langs->trans("Total").": ".$totaltime;
-				}
-				$desc = dol_htmlentitiesbr($text, 1);
-				//print $outputlangs->convToOutputCharset($desc); exit;
-
-				$pdf->writeHTMLCell(180, 3, $this->posxdesc - 1, $tab_top + 5, $outputlangs->convToOutputCharset($desc), 0, 1);
-				$nexY = $pdf->GetY();
-
-				$pdf->line($this->marge_gauche, $nexY, $this->page_largeur - $this->marge_droite, $nexY);
-
-				$nblines = count($object->lines);
+				$nexY = $tab_top + $this->tabTitleHeight;
 
 				// Loop on each lines
+				$pageposbeforeprintlines = $pdf->getPage();
+				$pagenb = $pageposbeforeprintlines;
 				for ($i = 0; $i < $nblines; $i++) {
 					$objectligne = $object->lines[$i];
 
-					$valide = empty($objectligne->id) ? 0 : $objectligne->fetch($objectligne->id);
-					if ($valide > 0 || $object->specimen) {
-						$curY = $nexY;
-						$pdf->SetFont('', '', $default_font_size - 1); // Into loop to work with multipage
-						$pdf->SetTextColor(0, 0, 0);
+					$curY = $nexY;
 
-						$pdf->setTopMargin($tab_top_newpage);
-						$pdf->setPageOrientation('', true, $heightforfooter + $heightforfreetext + $heightforinfotot); // The only function to edit the bottom margin of current page to set it.
-						$pageposbefore = $pdf->getPage();
+					$issubtotalline = (defined('SUBTOTALS_SPECIAL_CODE') && $objectligne->special_code == SUBTOTALS_SPECIAL_CODE);
+					$sub_options = is_array($objectligne->extraparams) ? ($objectligne->extraparams["subtotal"] ?? array()) : array();
 
-						// Description of product line
-						$curX = $this->posxdesc - 1;
+					// Fichinter::fetch_lines() already stores the subtotal depth in ->qty, but be defensive if the
+					// line was built elsewhere: for fichinter the depth lives in the duree/duration field.
+					if ($issubtotalline && empty($objectligne->qty)) {
+						$objectligne->qty = (int) $objectligne->duration;
+					}
 
-						// Subtotals module: a title / subtotal / free-text line has no date nor duration,
-						// it is shown as a (possibly coloured) section band instead of a standard line.
-						$issubtotalline = (defined('SUBTOTALS_SPECIAL_CODE') && $objectligne->special_code == SUBTOTALS_SPECIAL_CODE);
-						$subtotalbgcolor = null;
+					if (($curY + 6) > ($this->page_hauteur - $heightforfooter)
+						|| (isset($sub_options['titleforcepagebreak']) && !($pdf->getNumPages() == 1 && $curY == $tab_top + $this->tabTitleHeight))) {
+						$pdf->AddPage();
+						if (!empty($tplidx)) {
+							$pdf->useTemplate($tplidx);
+						}
+						$pdf->setPage($pdf->getNumPages());
+						$nexY = $curY = $tab_top_newpage;
+					}
 
+					$pdf->SetFont('', '', $default_font_size - 1); // Into loop to work with multipage
+					$pdf->SetTextColor(0, 0, 0);
+
+					$pdf->setTopMargin($tab_top_newpage);
+					$pdf->setPageOrientation('', true, $heightforfooter + $heightforfreetext + $heightforinfotot); // The only function to edit the bottom margin of current page to set it.
+					$pageposbefore = $pdf->getPage();
+
+					// Description of line
+					if ($this->getColumnStatus('desc')) {
 						if ($issubtotalline) {
-							$outputlangs->load('subtotals');
-							$level = (int) $objectligne->duration;	// For fichinter the subtotal depth is stored in the duree field
-							$linetext = $objectligne->desc;
-							if ($level < 0) {
-								// Closing "subtotal" line: an intervention PDF has no amount to sum, so it is only a section marker
-								$linetext = getDolGlobalString('SUBTOTAL_LINE_TEXT_DOES_NOT_INCLUDE_TITLE_TEXT') ? $outputlangs->transnoentities('SubTotal') : $outputlangs->transnoentities('SubtotalOf', $objectligne->desc);
-							}
-							$indent = str_repeat('&nbsp;', max(0, abs($level) - 1) * 4);
-							$txt = '';
-							$desc = $indent.($level != 0 ? '<strong>' : '').dol_htmlentitiesbr($linetext, 1).($level != 0 ? '</strong>' : '');
-							if ($level != 0) {
-								$subtotalbgcolor = colorStringToArray(getDolGlobalString('SUBTOTAL_BACK_COLOR_LEVEL_'.abs($level), 'ffffff'));
-							}
+							$bg_color = colorStringToArray(getDolGlobalString("SUBTOTAL_BACK_COLOR_LEVEL_".abs((int) $objectligne->qty), 'ffffff'));
+							pdf_render_subtotals($pdf, $this, $curY, $object, $i, $outputlangs, $hideref, $hidedesc, $bg_color, true, true);
 						} else {
-							// Description of product line
-							if (!getDolGlobalString('FICHINTER_DATE_WITHOUT_HOUR')) {
-								$txt = $outputlangs->transnoentities("Date")." : ".dol_print_date($objectligne->datei, 'dayhour', false, $outputlangs, true);
-							} else {
-								$txt = $outputlangs->transnoentities("Date")." : ".dol_print_date($objectligne->datei, 'day', false, $outputlangs, true);
-							}
-
-							if ($objectligne->duration > 0) {
-								$txt .= " - ".$outputlangs->transnoentities("Duration")." : ".convertSecondToTime($objectligne->duration);
-							}
-							$txt = '<strong>'.dol_htmlentitiesbr($txt, 1, $outputlangs->charset_output).'</strong>';
-							$desc = dol_htmlentitiesbr($objectligne->desc, 1);
-						}
-
-						// Paint the coloured band behind a title/subtotal line (measure its height first)
-						if ($issubtotalline && is_array($subtotalbgcolor)) {
 							$pdf->startTransaction();
-							$pdf->writeHTMLCell(0, 0, $curX, $curY + 1, dol_concatdesc($txt, $desc), 0, 1, false);
-							$subtotalh = $pdf->GetY() - $curY;
-							$subtotalpage = $pdf->getPage();
-							$pdf->rollbackTransaction(true);
-							if ($subtotalpage == $pageposbefore) {
-								$pdf->SetFillColor($subtotalbgcolor[0], $subtotalbgcolor[1], $subtotalbgcolor[2]);
-								$pdf->Rect($this->marge_gauche, $curY + 1, $this->page_largeur - $this->marge_gauche - $this->marge_droite, max(2, $subtotalh), 'F');
-								if (!colorIsLight(implode(',', $subtotalbgcolor))) {
-									$pdf->SetTextColor(255, 255, 255);
-								}
-							}
-						}
 
-						$pdf->startTransaction();
-						$pdf->writeHTMLCell(0, 0, $curX, $curY + 1, dol_concatdesc($txt, $desc), 0, 1, false);
-						$pageposafter = $pdf->getPage();
-						if ($pageposafter > $pageposbefore) {	// There is a pagebreak
-							$pdf->rollbackTransaction(true);
-							$pageposafter = $pageposbefore;
-							//print $pageposafter.'-'.$pageposbefore;exit;
-							$pdf->setPageOrientation('', true, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
-							$pdf->writeHTMLCell(0, 0, $curX, $curY, dol_concatdesc($txt, $desc), 0, 1, false);
+							$this->printColDescContent($pdf, $curY, 'desc', $object, $i, $outputlangs, $hideref, $hidedesc);
+
 							$pageposafter = $pdf->getPage();
-							$posyafter = $pdf->GetY();
-							//var_dump($posyafter); var_dump(($this->page_hauteur - ($heightforfooter+$heightforfreetext+$heightforinfotot))); exit;
-							if ($posyafter > ($this->page_hauteur - ($heightforfooter + $heightforfreetext + $heightforinfotot))) {	// There is no space left for total+free text
-								if ($i == ($nblines - 1)) {	// No more lines, and no space left to show total, so we create a new page
-									$pdf->AddPage('', '', true);
-									if (!empty($tplidx)) {
-										$pdf->useTemplate($tplidx);
+							if ($pageposafter > $pageposbefore) {	// There is a pagebreak
+								$pdf->rollbackTransaction(true);
+
+								$this->printColDescContent($pdf, $curY, 'desc', $object, $i, $outputlangs, $hideref, $hidedesc);
+
+								$pageposafter = $pdf->getPage();
+								$posyafter = $pdf->GetY();
+								if ($posyafter > ($this->page_hauteur - ($heightforfooter + $heightforfreetext + $heightforinfotot))) {	// There is no space left for total+free text
+									if ($i == ($nblines - 1)) {	// No more lines, and no space left to show total, so we create a new page
+										$pdf->AddPage('', '', true);
+										if (!empty($tplidx)) {
+											$pdf->useTemplate($tplidx);
+										}
+										$pdf->setPage($pageposafter + 1);
 									}
-									if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
-										$this->_pagehead($pdf, $object, 0, $outputlangs);
-									}
-									$pdf->setPage($pageposafter + 1);
+								}
+							} else { // No pagebreak
+								$pdf->commitTransaction();
+							}
+						}
+					}
+
+					$nexY = $pdf->GetY();
+					$pageposafter = $pdf->getPage();
+
+					$pdf->setPage($pageposbefore);
+					$pdf->setTopMargin($this->marge_haute);
+					$pdf->setPageOrientation('', true, 0); // The only function to edit the bottom margin of current page to set it.
+
+					// We suppose that a too long description is moved completely on next page
+					if ($pageposafter > $pageposbefore) {
+						$pdf->setPage($pageposafter);
+						$curY = $tab_top_newpage;
+					}
+
+					$pdf->SetFont('', '', $default_font_size - 1); // We reposition the default font
+
+					// # of line
+					if ($this->getColumnStatus('position')) {
+						$this->printStdColumnContent($pdf, $curY, 'position', (string) ($i + 1));
+					}
+
+					// Date and duration are not printed for the subtotals module lines
+					if (!$issubtotalline) {
+						if ($this->getColumnStatus('date')) {
+							$dateformat = getDolGlobalString('FICHINTER_DATE_WITHOUT_HOUR') ? 'day' : 'dayhour';
+							$this->printStdColumnContent($pdf, $curY, 'date', dol_print_date($objectligne->datei, $dateformat, false, $outputlangs, true));
+						}
+						if ($this->getColumnStatus('duration') && $objectligne->duration > 0) {
+							$this->printStdColumnContent($pdf, $curY, 'duration', convertSecondToTime((int) $objectligne->duration));
+						}
+
+						// Extrafields
+						if (!empty($objectligne->array_options)) {
+							foreach ($objectligne->array_options as $extrafieldColKey => $extrafieldValue) {
+								if ($this->getColumnStatus($extrafieldColKey)) {
+									$extrafieldValue = $this->getExtrafieldContent($objectligne, $extrafieldColKey, $outputlangs);
+									$this->printStdColumnContent($pdf, $curY, $extrafieldColKey, $extrafieldValue);
 								}
 							}
-						} else { // No pagebreak
-							$pdf->commitTransaction();
 						}
+					}
 
-						if ($issubtotalline) {
-							$pdf->SetTextColor(0, 0, 0);
+					$parameters = array(
+						'object' => $object,
+						'i' => $i,
+						'pdf' => & $pdf,
+						'curY' => & $curY,
+						'nexY' => & $nexY,
+						'outputlangs' => $outputlangs,
+						'hidedetails' => $hidedetails
+					);
+					$hookmanager->executeHooks('printPDFline', $parameters, $this);
+
+					// Add a line separator between lines
+					if (getDolGlobalString('MAIN_PDF_DASH_BETWEEN_LINES') && $i < ($nblines - 1)) {
+						$pdf->setPage($pageposafter);
+						$pdf->SetLineStyle(array('dash' => '1,1', 'color' => array(80, 80, 80)));
+						$pdf->line($this->marge_gauche, $nexY, $this->page_largeur - $this->marge_droite, $nexY);
+						$pdf->SetLineStyle(array('dash' => 0));
+					}
+
+					// Detect if some page were added automatically and output _tableau for past pages
+					while ($pagenb < $pageposafter) {
+						$pdf->setPage($pagenb);
+						if ($pagenb == $pageposbeforeprintlines) {
+							$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1);
+						} else {
+							$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1);
 						}
-
-						$nexY = $pdf->GetY();
-						$pageposafter = $pdf->getPage();
-						$pdf->setPage($pageposbefore);
-						$pdf->setTopMargin($this->marge_haute);
+						$this->_pagefoot($pdf, $object, $outputlangs, 1);
+						$pagenb++;
+						$pdf->setPage($pagenb);
 						$pdf->setPageOrientation('', true, 0); // The only function to edit the bottom margin of current page to set it.
-
-						// We suppose that a too long description is moved completely on next page
-						if ($pageposafter > $pageposbefore) {
-							$pdf->setPage($pageposafter);
-							$curY = $tab_top_newpage;
+						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
+							$this->_pagehead($pdf, $object, 0, $outputlangs);
 						}
-
-						$pdf->SetFont('', '', $default_font_size - 1); // We reposition the default font
-
-						// Detect if some page were added automatically and output _tableau for past pages
-						while ($pagenb < $pageposafter) {
-							$pdf->setPage($pagenb);
-							if ($pagenb == 1) {
-								$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1, $object);
-							} else {
-								$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1, $object);
-							}
-							$this->_pagefoot($pdf, $object, $outputlangs, 1);
-							$pagenb++;
-							$pdf->setPage($pagenb);
-							$pdf->setPageOrientation('', true, 0); // The only function to edit the bottom margin of current page to set it.
-							if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
-								$this->_pagehead($pdf, $object, 0, $outputlangs);
-							}
-							if (!empty($tplidx)) {
-								$pdf->useTemplate($tplidx);
-							}
-						}
-						if (isset($object->lines[$i + 1]->pagebreak) && $object->lines[$i + 1]->pagebreak) {  // @phan-suppress-current-line PhanUndeclaredProperty
-							if ($pagenb == 1) {
-								$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1, $object);
-							} else {
-								$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1, $object);
-							}
-							$this->_pagefoot($pdf, $object, $outputlangs, 1);
-							// New page
-							$pdf->AddPage();
-							if (!empty($tplidx)) {
-								$pdf->useTemplate($tplidx);
-							}
-							$pagenb++;
-							if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
-								$this->_pagehead($pdf, $object, 0, $outputlangs);
-							}
+						if (!empty($tplidx)) {
+							$pdf->useTemplate($tplidx);
 						}
 					}
 				}
 
 				// Show square
-				if ($pagenb == 1) {
-					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 0, 0, $object);
+				if ($pagenb == $pageposbeforeprintlines) {
+					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 0, 0);
 					$bottomlasttab = $this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
 				} else {
-					$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 1, 0, $object);
+					$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 1, 0);
 					$bottomlasttab = $this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
 				}
+
+				// Display total area (total duration of the intervention)
+				$this->_tableau_tot($pdf, $object, $bottomlasttab, $outputlangs);
+
+				// Signatures + Pagefoot
+				$this->_tableau_signature($pdf, $object, $bottomlasttab + 6, $outputlangs);
 
 				$this->_pagefoot($pdf, $object, $outputlangs);
 				if (method_exists($pdf, 'AliasNbPages')) {
@@ -466,7 +453,6 @@ class pdf_soleil extends ModelePDFFicheinter
 				// Add pdfgeneration hook
 				$hookmanager->initHooks(array('pdfgeneration'));
 				$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
-				global $action;
 				$reshook = $hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				$this->warnings = $hookmanager->warnings;
 				if ($reshook < 0) {
@@ -492,75 +478,118 @@ class pdf_soleil extends ModelePDFFicheinter
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Show total line (total duration of the intervention)
+	 *
+	 *  @param	TCPDF		$pdf     		Object PDF
+	 *  @param	Fichinter	$object			Object to show
+	 *  @param	float		$posy			Y start position
+	 *  @param	Translate	$outputlangs	Object lang for output
+	 *  @return	float						Y position for the suite
+	 */
+	protected function _tableau_tot(&$pdf, $object, $posy, $outputlangs)
+	{
+		// phpcs:enable
+		global $conf;
+
+		$default_font_size = pdf_getPDFFontSize($outputlangs);
+		$pdf->SetFont('', 'B', $default_font_size - 1);
+		$pdf->SetTextColor(0, 0, 0);
+
+		if ($this->getColumnStatus('desc')) {
+			$this->printStdColumnContent($pdf, $posy, 'desc', $outputlangs->transnoentities("TotalDuration"));
+		}
+		if ($this->getColumnStatus('duration') && !empty($object->duration)) {
+			$totaltime = convertSecondToTime((int) $object->duration, 'all', getDolGlobalInt('MAIN_DURATION_OF_WORKDAY', 28800));
+			$this->printStdColumnContent($pdf, $posy, 'duration', $totaltime);
+		}
+
+		$pdf->SetFont('', '', $default_font_size - 1);
+
+		return $posy + 4;
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Show name / signature boxes for the internal and external contacts
+	 *
+	 *  @param	TCPDF		$pdf     		Object PDF
+	 *  @param	Fichinter	$object			Object to show
+	 *  @param	float		$posy			Y start position
+	 *  @param	Translate	$outputlangs	Object lang for output
+	 *  @return	void
+	 */
+	protected function _tableau_signature(&$pdf, $object, $posy, $outputlangs)
+	{
+		// phpcs:enable
+		$default_font_size = pdf_getPDFFontSize($outputlangs);
+		$pdf->SetFont('', '', $default_font_size - 1);
+		$pdf->SetTextColor(0, 0, 0);
+
+		$employee_name = '';
+		$arrayidcontact = $object->getIdContact('internal', 'INTERVENING');
+		if (count($arrayidcontact) > 0) {
+			$object->fetch_user($arrayidcontact[0]);
+			$employee_name = $object->user->getFullName($outputlangs);
+		}
+
+		$boxwidth = ($this->page_largeur - $this->marge_gauche - $this->marge_droite - 10) / 2;
+
+		$pdf->SetXY($this->marge_gauche, $posy);
+		$pdf->MultiCell($boxwidth, 5, $outputlangs->transnoentities("NameAndSignatureOfInternalContact"), 0, 'L', false);
+		$pdf->SetXY($this->marge_gauche, $posy + 5);
+		$pdf->MultiCell($boxwidth, 20, $employee_name, 1, 'L');
+
+		$pdf->SetXY($this->marge_gauche + $boxwidth + 10, $posy);
+		$pdf->MultiCell($boxwidth, 5, $outputlangs->transnoentities("NameAndSignatureOfExternalContact"), 0, 'L', false);
+		$pdf->SetXY($this->marge_gauche + $boxwidth + 10, $posy + 5);
+		$pdf->MultiCell($boxwidth, 20, '', 1);
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *   Show table for lines
 	 *
 	 *   @param		TCPDF		$pdf     		Object PDF
 	 *   @param		float|int	$tab_top		Top position of table
 	 *   @param		float|int	$tab_height		Height of table (rectangle)
-	 *   @param		int			$nexY			Y
+	 *   @param		float		$nexY			Y
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @param		int			$hidetop		Hide top bar of array
 	 *   @param		int			$hidebottom		Hide bottom bar of array
-	 *   @param		?Fichinter	$object			FichInter Object
 	 *   @return	void
 	 */
-	protected function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $object = null)
+	protected function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0)
 	{
 		global $conf;
 
+		// Force to disable hidetop and hidebottom
+		$hidebottom = 0;
+		if ($hidetop) {
+			$hidetop = -1;
+		}
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
-		/*
-		$pdf->SetXY($this->marge_gauche, $tab_top);
-		$pdf->MultiCell(190,8,$outputlangs->transnoentities("Description"),0,'L',0);
-		$pdf->line($this->marge_gauche, $tab_top + 8, $this->page_largeur-$this->marge_droite, $tab_top + 8);
 
-		$pdf->SetFont('','', $default_font_size - 1);
+		$pdf->SetTextColor(0, 0, 0);
+		$pdf->SetFont('', '', $default_font_size - 2);
 
-		$pdf->MultiCell(0, 3, '');		// Set interline to 3
-		$pdf->SetXY($this->marge_gauche, $tab_top + 8);
-		$text=$object->description;
-		if ($object->duration > 0)
-		{
-			$totaltime=convertSecondToTime($object->duration,'all',$conf->global->MAIN_DURATION_OF_WORKDAY);
-			$text.=($text?' - ':'').$langs->trans("Total").": ".$totaltime;
+		if (empty($hidetop) && getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')) {
+			$pdf->RoundedRect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_droite - $this->marge_gauche, $this->tabTitleHeight, $this->corner_radius, '1001', 'F', array(), explode(',', getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')));
 		}
-		$desc=dol_htmlentitiesbr($text,1);
-		//print $outputlangs->convToOutputCharset($desc); exit;
 
-		$pdf->writeHTMLCell(180, 3, 10, $tab_top + 8, $outputlangs->convToOutputCharset($desc), 0, 1);
-		$nexY = $pdf->GetY();
-
-		$pdf->line($this->marge_gauche, $nexY, $this->page_largeur-$this->marge_droite, $nexY);
-
-		$pdf->MultiCell(0, 3, '');		// Set interline to 3. Then writeMultiCell must use 3 also.
-		*/
+		$pdf->SetDrawColor(128, 128, 128);
+		$pdf->SetFont('', '', $default_font_size - 1);
 
 		// Output Rect
-		$this->printRoundedRect($pdf, $this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $tab_height + 1, $this->corner_radius, 0, 0, 'D');	 // Rect takes a length in 3rd parameter and 4th parameter
+		$this->printRoundedRect($pdf, $this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $tab_height, $this->corner_radius, $hidetop, $hidebottom, 'D');
 
-		if (empty($hidebottom)) {
-			$employee_name = '';
-			if (!empty($object)) {
-				$arrayidcontact = $object->getIdContact('internal', 'INTERVENING');
-				if (count($arrayidcontact) > 0) {
-					$object->fetch_user($arrayidcontact[0]);
-					$employee_name = $object->user->getFullName($outputlangs);
-				}
-			}
+		$this->pdfTabTitles($pdf, $tab_top, $tab_height, $outputlangs, $hidetop);
 
-			$pdf->SetXY(20, 230);
-			$pdf->MultiCell(80, 5, $outputlangs->transnoentities("NameAndSignatureOfInternalContact"), 0, 'L', false);
-
-			$pdf->SetXY(20, 235);
-			$pdf->MultiCell(80, 25, $employee_name, 1, 'L');
-
-			$pdf->SetXY(110, 230);
-			$pdf->MultiCell(80, 5, $outputlangs->transnoentities("NameAndSignatureOfExternalContact"), 0, 'L', false);
-
-			$pdf->SetXY(110, 235);
-			$pdf->MultiCell(80, 25, '', 1);
+		if (empty($hidetop)) {
+			$pdf->line($this->marge_gauche, $tab_top + $this->tabTitleHeight, $this->page_largeur - $this->marge_droite, $tab_top + $this->tabTitleHeight);
 		}
 	}
 
@@ -585,7 +614,6 @@ class pdf_soleil extends ModelePDFFicheinter
 
 		pdf_pagehead($pdf, $outputlangs, $this->page_hauteur);
 
-		//Prepare next
 		$pdf->SetTextColor(0, 0, 60);
 		$pdf->SetFont('', 'B', $default_font_size + 3);
 
@@ -607,15 +635,13 @@ class pdf_soleil extends ModelePDFFicheinter
 				$pdf->MultiCell(100, 3, $outputlangs->transnoentities("ErrorGoToGlobalSetup"), 0, 'L');
 			}
 		} else {
-			$text = $this->emetteur->name;
-			$pdf->MultiCell(100, 4, $outputlangs->convToOutputCharset($text), 0, 'L');
+			$pdf->MultiCell(100, 4, $outputlangs->convToOutputCharset($this->emetteur->name), 0, 'L');
 		}
 
 		$pdf->SetFont('', 'B', $default_font_size + 3);
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
-		$title = $outputlangs->transnoentities("InterventionCard");
-		$pdf->MultiCell(100, 4, $title, '', 'R');
+		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("InterventionCard"), '', 'R');
 
 		$pdf->SetFont('', 'B', $default_font_size + 2);
 
@@ -636,9 +662,8 @@ class pdf_soleil extends ModelePDFFicheinter
 			$posy += 4;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("RefCustomer") . " : " . dol_trunc($outputlangs->convToOutputCharset($object->ref_client), 65), '', 'R');
+			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("RefCustomer")." : ".dol_trunc($outputlangs->convToOutputCharset($object->ref_client), 65), '', 'R');
 		}
-
 
 		if (!getDolGlobalString('MAIN_PDF_HIDE_CUSTOMER_CODE') && $object->thirdparty->code_client) {
 			$posy += 4;
@@ -647,28 +672,14 @@ class pdf_soleil extends ModelePDFFicheinter
 			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("CustomerCode")." : ".$outputlangs->transnoentities((string) $object->thirdparty->code_client), '', 'R');
 		}
 
-		if (!getDolGlobalString('MAIN_PDF_HIDE_CUSTOMER_ACCOUNTING_CODE') && $object->thirdparty->code_compta_client) {
-			$posy += 4;
-			$pdf->SetXY($posx, $posy);
-			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("CustomerAccountancyCode")." : ".$outputlangs->transnoentities((string) $object->thirdparty->code_compta_client), '', 'R');
-		}
-
 		if ($showaddress) {
 			// Sender properties
 			$carac_emetteur = '';
-			// Add internal contact of object if defined
 			$arrayidcontact = $object->getIdContact('internal', 'INTERREPFOLL');
 			if (count($arrayidcontact) > 0) {
 				$object->fetch_user($arrayidcontact[0]);
 				$labelbeforecontactname = ($outputlangs->transnoentities("FromContactName") != 'FromContactName' ? $outputlangs->transnoentities("FromContactName") : $outputlangs->transnoentities("Name"));
-				$carac_emetteur .= ($carac_emetteur ? "\n" : '').$labelbeforecontactname.": ".$outputlangs->convToOutputCharset($object->user->getFullName($outputlangs));
-				$carac_emetteur .= (getDolGlobalInt('PDF_SHOW_PHONE_AFTER_USER_CONTACT') || getDolGlobalInt('PDF_SHOW_EMAIL_AFTER_USER_CONTACT')) ? ' (' : '';
-				$carac_emetteur .= (getDolGlobalInt('PDF_SHOW_PHONE_AFTER_USER_CONTACT') && !empty($object->user->office_phone)) ? $object->user->office_phone : '';
-				$carac_emetteur .= (getDolGlobalInt('PDF_SHOW_PHONE_AFTER_USER_CONTACT') && getDolGlobalInt('PDF_SHOW_EMAIL_AFTER_USER_CONTACT')) ? ', ' : '';
-				$carac_emetteur .= (getDolGlobalInt('PDF_SHOW_EMAIL_AFTER_USER_CONTACT') && !empty($object->user->email)) ? $object->user->email : '';
-				$carac_emetteur .= (getDolGlobalInt('PDF_SHOW_PHONE_AFTER_USER_CONTACT') || getDolGlobalInt('PDF_SHOW_EMAIL_AFTER_USER_CONTACT')) ? ')' : '';
-				$carac_emetteur .= "\n";
+				$carac_emetteur .= $labelbeforecontactname.": ".$outputlangs->convToOutputCharset($object->user->getFullName($outputlangs))."\n";
 			}
 
 			$carac_emetteur .= pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'source', $object);
@@ -685,7 +696,6 @@ class pdf_soleil extends ModelePDFFicheinter
 			if (!getDolGlobalString('MAIN_PDF_NO_SENDER_FRAME')) {
 				$pdf->SetTextColor(0, 0, 0);
 				$pdf->SetFont('', '', $default_font_size - 2);
-				$pdf->SetXY($posx, $posy - 5);
 				$pdf->SetXY($posx, $posy);
 				$pdf->SetFillColor(230, 230, 230);
 				$pdf->RoundedRect($posx, $posy, 82, $hautcadre, $this->corner_radius, '1234', 'F');
@@ -704,7 +714,6 @@ class pdf_soleil extends ModelePDFFicheinter
 			$pdf->SetFont('', '', $default_font_size - 1);
 			$pdf->SetXY($posx + 2, $posy);
 			$pdf->MultiCell(80, 4, $carac_emetteur, 0, 'L');
-
 
 			// If CUSTOMER contact defined, we use it
 			$usecontact = false;
@@ -769,11 +778,124 @@ class pdf_soleil extends ModelePDFFicheinter
 	 * 		@param	Fichinter	$object				Object to show
 	 *      @param	Translate	$outputlangs		Object lang for output
 	 *      @param	int			$hidefreetext		1=Hide free text
-	 *      @return	integer
+	 *      @return	int
 	 */
 	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
 		$showdetails = getDolGlobalInt('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS', 0);
 		return pdf_pagefoot($pdf, $outputlangs, 'FICHINTER_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext, $this->page_largeur, $this->watermark);
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Define Array Column Field
+	 *
+	 *  @param	CommonObject	$object			common object
+	 *  @param	Translate		$outputlangs	langs
+	 *  @param	int<0,1>	$hidedetails	Do not show line details
+	 *  @param	int<0,1>	$hidedesc		Do not show desc
+	 *  @param	int<0,1>	$hideref		Do not show ref
+	 *  @return	void
+	 */
+	public function defineColumnField($object, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
+	{
+		// phpcs:enable
+		global $hookmanager;
+
+		// Default field style for content
+		$this->defaultContentsFieldsStyle = array(
+			'align' => 'R', // R,C,L
+			'padding' => array(1, 0.5, 1, 0.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+		);
+
+		// Default field style for title
+		$this->defaultTitlesFieldsStyle = array(
+			'align' => 'C', // R,C,L
+			'padding' => array(0.5, 0, 0.5, 0), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+		);
+
+		$rank = 0; // do not use negative rank
+		$this->cols['position'] = array(
+			'rank' => $rank,
+			'width' => 10,
+			'status' => getDolGlobalInt('PDF_ADD_POSITION') ? true : false,
+			'title' => array(
+				'textkey' => '#',
+				'align' => 'C',
+				'padding' => array(0.5, 0.5, 0.5, 0.5),
+			),
+			'content' => array(
+				'align' => 'C',
+				'padding' => array(1, 0.5, 1, 1.5),
+			),
+		);
+
+		$rank += 10;
+		$this->cols['desc'] = array(
+			'rank' => $rank,
+			'width' => false, // only for desc
+			'status' => true,
+			'title' => array(
+				'textkey' => 'Designation',
+				'align' => 'L',
+				'padding' => array(0.5, 0.5, 0.5, 0.5),
+			),
+			'content' => array(
+				'align' => 'L',
+				'padding' => array(1, 0.5, 1, 1.5),
+			),
+		);
+
+		$rank += 10;
+		$this->cols['date'] = array(
+			'rank' => $rank,
+			'width' => 40, // in mm
+			'status' => true,
+			'title' => array(
+				'textkey' => 'Date',
+			),
+			'border-left' => true,
+			'content' => array(
+				'align' => 'C',
+			),
+		);
+
+		$rank += 10;
+		$this->cols['duration'] = array(
+			'rank' => $rank,
+			'width' => 25, // in mm
+			'status' => true,
+			'title' => array(
+				'textkey' => 'Duration',
+			),
+			'border-left' => true,
+			'content' => array(
+				'align' => 'C',
+			),
+		);
+
+		// Add extrafields cols
+		if (!empty($object->lines)) {
+			$line = reset($object->lines);
+			$this->defineColumnExtrafield($line, $outputlangs, $hidedetails);
+		}
+
+		$parameters = array(
+			'object' => $object,
+			'outputlangs' => $outputlangs,
+			'hidedetails' => $hidedetails,
+			'hidedesc' => $hidedesc,
+			'hideref' => $hideref
+		);
+
+		$reshook = $hookmanager->executeHooks('defineColumnField', $parameters, $this); // Note that $object may have been modified by hook
+		if ($reshook < 0) {
+			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+		} elseif (empty($reshook)) {
+			// @phan-suppress-next-line PhanPluginSuspiciousParamOrderInternal
+			$this->cols = array_replace($this->cols, $hookmanager->resArray); // array_replace is used to preserve keys
+		} else {
+			$this->cols = $hookmanager->resArray;
+		}
 	}
 }
