@@ -712,6 +712,95 @@ if (empty($reshook)) {
 		}
 		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
 		exit();
+	} elseif ($action == 'confirm_addsubtotalline' && $permissiontoadd) {
+		// Handling adding a new subtotal line for subtotals module
+
+		$langs->load('subtotals');
+
+		$choosen_line = GETPOST('subtotaltitleline', 'alphanohtml');
+		foreach ($object->lines as $line) {
+			if ($line->desc == $choosen_line && $line->special_code == SUBTOTALS_SPECIAL_CODE) {
+				$desc = $line->desc;
+				$depth = -$line->qty;
+			}
+		}
+
+		$subtotal_options = array();
+
+		foreach (Fichinter::$SUBTOTAL_OPTIONS as $option) {
+			$value = GETPOST($option, 'alphanohtml');
+			if ($value) {
+				$subtotal_options[$option] = $value == 'on' ? 1 : $value;
+			}
+		}
+
+		// Insert line
+		if (isset($desc) && isset($depth)) {
+			$result = $object->addSubtotalLine($langs, $desc, (int) $depth, $subtotal_options);
+		} else {
+			$result = -1;
+			$object->errors[] = $langs->trans("CorrespondingTitleNotFound");
+		}
+
+		if ($result >= 0) {
+			$ret = $object->fetch($object->id); // Reload to get new records
+			$object->fetch_thirdparty();
+
+			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
+				// Define output language
+				$outputlangs = $langs;
+				$newlang = GETPOST('lang_id', 'alpha');
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
+					$newlang = $object->thirdparty->default_lang;
+				}
+				if (!empty($newlang)) {
+					$outputlangs = new Translate("", $conf);
+					$outputlangs->setDefaultLang($newlang);
+				}
+
+				$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			}
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
+		exit();
+	} elseif ($action == 'confirm_addtextline' && $permissiontoadd) {
+		// Handling adding a new text line for subtotals module
+
+		$langs->load('subtotals');
+
+		$desc = GETPOST('subtotaltextcontent', 'restricthtml');
+
+		// Insert line
+		$result = $object->addSubtotalLine($langs, $desc, 0, array());
+
+		if ($result >= 0) {
+			if ($result == 0) {
+				setEventMessages($object->error, $object->errors, 'warnings');
+			}
+			$ret = $object->fetch($object->id); // Reload to get new records
+			$object->fetch_thirdparty();
+
+			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
+				// Define output language
+				$outputlangs = $langs;
+				$newlang = GETPOST('lang_id', 'alpha');
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
+					$newlang = $object->thirdparty->default_lang;
+				}
+				if (!empty($newlang)) {
+					$outputlangs = new Translate("", $conf);
+					$outputlangs->setDefaultLang($newlang);
+				}
+
+				$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			}
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
+		exit();
 	} elseif ($action == 'classifybilled' && $permissiontoadd) {
 		// Classify Billed
 		$result = $object->setStatut(Fichinter::STATUS_BILLED);
@@ -765,7 +854,9 @@ if (empty($reshook)) {
 
 		$objectline->date = $date_inter;
 		$objectline->desc = $desc;
-		$objectline->duration = $duration;
+		if ($objectline->special_code != SUBTOTALS_SPECIAL_CODE) {
+			$objectline->duration = $duration;
+		}
 
 		// Extrafields
 		$extrafields->fetch_name_optionals_label($object->table_element_line);
@@ -830,6 +921,19 @@ if (empty($reshook)) {
 		}
 		if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 			fichinter_create($db, $object, $object->model_pdf, $outputlangs);
+		}
+	} elseif ($action == 'confirm_delete_subtotalline' && $confirm == 'yes' && $permissiontoadd) {
+		// Remove a subtotal / title / text line (subtotals module)
+		$object->fetch($id);
+
+		$result = $object->deleteSubtotalLine($langs, GETPOSTINT('lineid'), (bool) GETPOST('deletecorrespondingsubtotalline'));
+		if ($result > 0) {
+			$object->line_order(true);
+			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
+			exit;
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
+			$action = '';
 		}
 	} elseif ($action == 'up' && $permissiontoadd) {
 		// Set position of lines
@@ -1361,6 +1465,20 @@ if ($action == 'create') {
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&line_id='.$lineid, $langs->trans('DeleteInterventionLine'), $langs->trans('ConfirmDeleteInterventionLine'), 'confirm_deleteline', '', 0, 1);
 	}
 
+	// Confirmation to delete a subtotal / title / text line (subtotals module)
+	if ($action == 'ask_subtotal_deleteline') {
+		$langs->load('subtotals');
+		$subtotaltitle = 'DeleteSubtotalLine';
+		$subtotalquestion = 'ConfirmDeleteSubtotalLine';
+		$subtotalformquestion = array();
+		if (GETPOST('type') == 'title') {
+			$subtotalformquestion = array(array('type' => 'checkbox', 'name' => 'deletecorrespondingsubtotalline', 'label' => $langs->trans('DeleteCorrespondingSubtotalLine'), 'value' => 0));
+			$subtotaltitle = 'DeleteTitleLine';
+			$subtotalquestion = 'ConfirmDeleteTitleLine';
+		}
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.GETPOSTINT('lineid'), $langs->trans($subtotaltitle), $langs->trans($subtotalquestion), 'confirm_delete_subtotalline', $subtotalformquestion, 'no', 1);
+	}
+
 	// Clone confirmation
 	if ($action == 'clone') {
 		// Create an array for form
@@ -1401,6 +1519,10 @@ if ($action == 'create') {
 		$langs->load('subtotals');
 		$type = 'subtotal';
 		$titles = $object->getPossibleTitles();
+		require dol_buildpath('/core/tpl/subtotal_create.tpl.php');
+	} elseif ($action == 'add_text_line') {
+		$langs->load('subtotals');
+		$type = 'text';
 		require dol_buildpath('/core/tpl/subtotal_create.tpl.php');
 	}
 
@@ -1906,7 +2028,8 @@ if ($action == 'create') {
 		if ($user->socid == 0) {
 			if ($action != 'editdescription' && ($action != 'presend')) {
 				// Subtotal
-				if ($object->status == Fichinter::STATUS_DRAFT && isModEnabled('subtotals') && getDolGlobalString('SUBTOTAL_TITLE_'.strtoupper($object->element))) {
+				if ($object->status == Fichinter::STATUS_DRAFT && isModEnabled('subtotals')
+					&& (getDolGlobalString('SUBTOTAL_TITLE_'.strtoupper($object->element)) || getDolGlobalString('SUBTOTAL_'.strtoupper($object->element)) || getDolGlobalString('SUBTOTAL_TEXT_'.strtoupper($object->element)))) {
 					$langs->load('subtotals');
 
 					$url_button = array();
@@ -1924,6 +2047,14 @@ if ($action == 'create') {
 						'perm' => (bool) $permissiontoadd,
 						'label' => $langs->trans('AddSubtotalLine'),
 						'url' => '/fichinter/card.php?id='.$object->id.'&action=add_subtotal_line&token='.newToken()
+					);
+
+					$url_button[] = array(
+						'lang' => 'subtotals',
+						'enabled' => (isModEnabled('intervention') && $object->status == Fichinter::STATUS_DRAFT),
+						'perm' => (bool) $permissiontoadd,
+						'label' => $langs->trans('AddTextLine'),
+						'url' => '/fichinter/card.php?id='.$object->id.'&action=add_text_line&token='.newToken()
 					);
 					print dolGetButtonAction('', $langs->trans('SubTotal'), 'default', $url_button, '', true);
 				}
