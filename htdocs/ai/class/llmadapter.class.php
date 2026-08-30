@@ -251,7 +251,7 @@ class UniversalLLMAdapter
 		if (!preg_match('/model/i', $msg)) {
 			return;
 		}
-		if (!preg_match('/not.?found|does not exist|not exist|unsupported|not supported|deprecated|no longer|retired|invalid/i', $msg)) {
+		if (!preg_match('/not.?found|does not exist|not exist|unsupported|not supported|not available|unavailable|deprecated|no longer|retired|invalid/i', $msg)) {
 			return;
 		}
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
