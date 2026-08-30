@@ -34,12 +34,14 @@
  *
  * @var string $action
  * @var string $elementtype
+ * @var ?string $pagekey
  * @var string $textobject
  * @var string[] $type2label
  */
 '
 @phan-var-force string $action
 @phan-var-force string $elementtype
+@phan-var-force ?string $pagekey
 @phan-var-force string $textobject
 @phan-var-force string[] $type2label
 ';
