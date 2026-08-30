@@ -4373,8 +4373,8 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
 		} else { // $displayMode >= 6
 			$return = $htmlLabel . ' ' . $htmlImg;
 		}
-	} elseif (!getDolGlobalString('MAIN_STATUS_USES_IMAGES') && !empty($displayMode)) {
-		// Use new badge
+	} elseif (!empty($displayMode)) {
+		// Use new badge (MAIN_STATUS_USES_IMAGES already handled by the previous branch)
 		$statusLabelShort = (empty($statusLabelShort) ? $statusLabel : $statusLabelShort);
 
 		$dolGetBadgeParams['attr']['class'] = 'badge-status';
