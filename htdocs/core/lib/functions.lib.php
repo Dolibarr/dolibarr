@@ -9284,15 +9284,6 @@ function dol_string_neverthesehtmltags($stringtoclean, $disallowed_tags = array(
 
 
 /**
- * Return first line of text. Cut will depends if content is HTML or not.
- *
- * @param 	string	$text		Input text
- * @param	int		$nboflines  Nb of lines to get (default is 1 = first line only)
- * @param   string  $charset    Charset of $text string (UTF-8 by default)
- * @return	string				Output text
- * @see dol_nboflines_bis(), dol_string_nohtmltag(), dol_escape_htmltag()
- */
-/**
  *  Close the HTML tags left open in a truncated HTML string.
  *  Truncating HTML on a separator can cut inside a block, and an unclosed tag makes the browser nest
  *  everything that follows inside it. Only tags really left open are closed, in reverse order.
@@ -9336,6 +9327,15 @@ function dolCloseUnclosedHtmlTags($text)
 	return $text;
 }
 
+/**
+ * Return first line of text. Cut will depends if content is HTML or not.
+ *
+ * @param 	string	$text		Input text
+ * @param	int		$nboflines  Nb of lines to get (default is 1 = first line only)
+ * @param   string  $charset    Charset of $text string (UTF-8 by default)
+ * @return	string				Output text
+ * @see dol_nboflines_bis(), dol_string_nohtmltag(), dol_escape_htmltag()
+ */
 function dolGetFirstLineOfText($text, $nboflines = 1, $charset = 'UTF-8')
 {
 	if ($nboflines == 1) {
