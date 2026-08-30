@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -114,6 +114,30 @@ class MailingTargets // This can't be abstract as it is used for some method
 			$s .= ' '.$form->textwithpicto('', $langs->trans($this->tooltip), 1, 'help');
 		}
 		return $s;
+	}
+
+	/**
+	 * Return the SQL fragment that excludes email addresses which opted out of emailings
+	 * for the current entity. Returns an empty string when the selector is configured to
+	 * keep unsubscribed addresses ($this->evenunsubscribe).
+	 *
+	 * @param	string	$emailfield		SQL expression of the email column to test (e.g. 's.email', 'c.email'); it is passed through $db->sanitize()
+	 * @return	string					SQL fragment (with a leading space) to append to a WHERE clause, or ''
+	 */
+	public function getSqlToExcludeUnsubscribed($emailfield)
+	{
+		global $conf;
+
+		if (!empty($this->evenunsubscribe)) {
+			return '';
+		}
+
+		// $emailfield is a column expression of the outer query (e.g. 's.email'); it is compared to mu.email.
+		$sql = " AND NOT EXISTS (SELECT rowid FROM ".$this->db->prefix()."mailing_unsubscribe as mu";
+		$sql .= " WHERE ".$this->db->sanitize($emailfield)." = mu.email";
+		$sql .= " AND mu.entity = ".((int) $conf->entity).")";
+
+		return $sql;
 	}
 
 	/**

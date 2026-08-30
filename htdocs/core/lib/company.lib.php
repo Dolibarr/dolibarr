@@ -2751,6 +2751,44 @@ function show_subsidiaries($conf, $langs, $db, $object)
 
 	return $i;
 }
+
+/**
+ * Build the "EXISTS(...)" sub-query on llx_societe_commerciaux used to restrict a
+ * thirdparty-related list to the thirdparties handled by one or more sales representatives.
+ *
+ * The returned fragment has no leading " AND " / " OR " so the caller composes it, e.g.:
+ *   $sql .= " AND ".getSalesRepresentativeSqlFilter('s.rowid', $db->sanitize($search_sale));
+ *   $sql .= " AND ".getSalesRepresentativeSqlFilter('c.fk_soc', 0, 1);  // thirdparty assigned to nobody
+ *
+ * @param	string				$socidfield	SQL expression of the thirdparty rowid to test (e.g. 's.rowid', 'c.fk_soc'); passed through $db->sanitize()
+ * @param	int|string|int[]	$userids	Sales representative user id, an array of ids, or a comma-separated list of
+ *                                          ids. 0 / '' / empty array => only test that the thirdparty is assigned to
+ *                                          at least one sales representative.
+ * @param	int<0,1>			$not		1 to return "NOT EXISTS(...)" instead of "EXISTS(...)"
+ * @return	string							SQL "EXISTS(...)" / "NOT EXISTS(...)" fragment
+ */
+function getSalesRepresentativeSqlFilter($socidfield, $userids = 0, $not = 0)
+{
+	global $db;
+
+	if (!is_array($userids)) {
+		$userids = ($userids === '' || $userids === null) ? array() : explode(',', (string) $userids);
+	}
+	$userids = array_values(array_filter(array_map('intval', $userids), static function (int $v): bool {
+		return $v > 0;
+	}));
+
+	$sql = ($not ? 'NOT EXISTS' : 'EXISTS');
+	// $socidfield is a column expression of the outer query (e.g. 's.rowid'); it is compared to sc.fk_soc
+	$sql .= ' (SELECT sc.fk_soc FROM '.$db->prefix().'societe_commerciaux as sc WHERE '.$db->sanitize($socidfield).' = sc.fk_soc';
+	if (!empty($userids)) {
+		$sql .= ' AND sc.fk_user IN ('.$db->sanitize(implode(',', $userids)).')';
+	}
+	$sql .= ')';
+
+	return $sql;
+}
+
 /**
  * 		Add Event Type SQL
  *
