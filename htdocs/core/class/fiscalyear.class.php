@@ -519,7 +519,7 @@ class Fiscalyear extends CommonObject
 		$sql = "SELECT count(DISTINCT piece_num) as nb";
 		$sql .= " FROM ".$this->db->prefix()."accounting_bookkeeping";
 		$sql .= " WHERE entity IN (".getEntity('bookkeeping', 0).")";
-		$sql .= " AND doc_date >= '".$this->db->idate($datestart)."' and doc_date <= '".$this->db->idate($dateend)."'";
+		$sql .= " AND doc_date >= DATE('".$this->db->idate($datestart)."') and doc_date <= DATE('".$this->db->idate($dateend)."')";
 
 		$nb = 0;
 		$resql = $this->db->query($sql);
@@ -554,7 +554,7 @@ class Fiscalyear extends CommonObject
 		$sql = "SELECT count(rowid) as nb";
 		$sql .= " FROM ".$this->db->prefix()."accounting_bookkeeping ";
 		$sql .= " WHERE entity IN (".getEntity('bookkeeping', 0).")";
-		$sql .= " AND doc_date >= '".$this->db->idate($datestart)."' and doc_date <= '".$this->db->idate($dateend)."'";
+		$sql .= " AND doc_date >= DATE('".$this->db->idate($datestart)."') and doc_date <= DATE('".$this->db->idate($dateend)."')";
 
 		$nb = 0;
 		$resql = $this->db->query($sql);
