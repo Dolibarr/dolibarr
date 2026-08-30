@@ -1371,7 +1371,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 			}
 			$moreatt = trim($moreatt);
 
-			$enabledisablehtml = '<span class="' . $faprefix . ' ' . $fakey . ($marginleftonlyshort ? ($marginleftonlyshort == 1 ? ' marginleftonlyshort' : ' marginleftonly') : '');
+			$enabledisablehtml = '<span class="' . $faprefix . ' ' . $fakey;
 			$enabledisablehtml .= ($morecss ? ' ' . $morecss : '') . '" style="' . ($fasize ? ('font-size: ' . $fasize . ';') : '') . ($facolor ? (' color: ' . $facolor . ';') : '') . ($morestyle ? ' ' . $morestyle : '') . '"' . (($notitle || empty($titlealt)) ? '' : ' title="' . dol_escape_htmltag($titlealt) . '"') . ($moreatt ? ' ' . $moreatt : '') . '>';
 			$enabledisablehtml .= '</span>';
 
