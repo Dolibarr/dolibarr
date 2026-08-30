@@ -618,16 +618,10 @@ class modSociete extends DolibarrModules
 			}
 		}
 		// Add extra fields
-		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type <> 'separate' AND elementtype = 'societe' AND entity IN (0, ".((int) $conf->entity).")";
-		$resql = $this->db->query($sql);
-		if ($resql) {    // This can fail when class is used on old database (during migration for example)
-			while ($obj = $this->db->fetch_object($resql)) {
-				$fieldname = 'extra.'.$obj->name;
-				$fieldlabel = ucfirst($obj->label);
-				$this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
-			}
-		}
-		// End add extra fields
+		$keyforselect = 'societe';
+		$keyforelement = 'company';
+		$keyforaliasextra = 'extra';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinimport.inc.php';
 		$this->import_fieldshidden_array[$r] = array(
 			's.fk_user_creat' => 'user->id',
 			'extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'societe'
@@ -859,16 +853,10 @@ class modSociete extends DolibarrModules
 			}
 		}
 		// Add extra fields
-		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type <> 'separate' AND elementtype = 'socpeople' AND entity IN (0, ".((int) $conf->entity).")";
-		$resql = $this->db->query($sql);
-		if ($resql) {    // This can fail when class is used on an old database (during a migration for example)
-			while ($obj = $this->db->fetch_object($resql)) {
-				$fieldname = 'extra.'.$obj->name;
-				$fieldlabel = ucfirst($obj->label);
-				$this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
-			}
-		}
-		// End add extra fields
+		$keyforselect = 'socpeople';
+		$keyforelement = 'contact';
+		$keyforaliasextra = 'extra';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinimport.inc.php';
 		$this->import_fieldshidden_array[$r] = array(
 			's.fk_user_creat' => 'user->id',
 			'extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'socpeople'
