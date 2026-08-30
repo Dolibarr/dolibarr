@@ -155,6 +155,9 @@ if (empty($modulepart) && empty($hashp)) {
 if (empty($original_file) && empty($hashp)) {
 	httponly_accessforbidden('Bad link. Missing identification to find file (original_file or hashp)', 400);
 }
+if ($hashp == 'shared') {
+	httponly_accessforbidden('Bad link. Bad value for parameter hashp', 400);
+}
 if ($modulepart == 'fckeditor') {
 	$modulepart = 'medias'; // For backward compatibility
 }
