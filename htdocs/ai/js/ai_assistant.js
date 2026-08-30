@@ -427,6 +427,14 @@ export function initAiAssistant(container) {
                         grp.appendChild(o);
                     });
                     modelSelect.appendChild(grp);
+                    // Saved model no longer offered by the provider: fall back to
+                    // Auto, forget the stale choice, and tell the user ONCE (so the
+                    // picker never looks silently ignored, cf. review on #39878).
+                    if (saved && saved.indexOf('preset:') !== 0 && modelList.indexOf(saved) < 0) {
+                        appendMsg('system', escapeHtml(t('AIModelSavedGone').replace('%s', saved)));
+                        try { localStorage.removeItem('aiModelChoice'); } catch (e) { /* ignore */ }
+                        saved = '';
+                    }
                 }
                 applySaved();
             })

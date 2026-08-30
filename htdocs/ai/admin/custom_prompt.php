@@ -461,14 +461,27 @@ if (empty($setupnotempty)) {
 
 // Datalist of the provider's available model ids (fed by ajax/list_models.php,
 // cached 1h server-side): every *_MODEL_* text input gets autocompletion, which
-// avoids typos in the seven free-text model fields.
+// avoids typos in the seven free-text model fields. The fields stay plain free
+// text (a datalist only suggests, never constrains — required for local AI
+// providers with no model-listing API, where this whole block is a no-op).
+// Active check: a saved model absent from the provider's current list gets a
+// warning picto — warn only, never block, since a listing can be incomplete
+// (aliases, fine-tunes) while the value still works.
 print '<datalist id="ai-model-ids"></datalist>'."\n";
-print '<script>
+print '<script nonce="'.getNonce().'">
 fetch("'.dol_buildpath('/ai/ajax/list_models.php', 1).'").then(function (r) { return r.json(); }).then(function (j) {
 	if (!j || !j.models || !j.models.length) return;
 	var dl = document.getElementById("ai-model-ids");
 	j.models.forEach(function (id) { var o = document.createElement("option"); o.value = id; dl.appendChild(o); });
-	document.querySelectorAll("input[name*=\'_MODEL_\']").forEach(function (i) { i.setAttribute("list", "ai-model-ids"); });
+	document.querySelectorAll("input[name*=\'_MODEL_\']").forEach(function (i) {
+		i.setAttribute("list", "ai-model-ids");
+		if (i.value && j.models.indexOf(i.value) < 0) {
+			var w = document.createElement("span");
+			w.className = "fas fa-exclamation-triangle pictowarning paddingleft";
+			w.title = "'.dol_escape_js($langs->trans("AIModelNotInProviderList")).'";
+			i.insertAdjacentElement("afterend", w);
+		}
+	});
 }).catch(function () {});
 </script>'."\n";
 

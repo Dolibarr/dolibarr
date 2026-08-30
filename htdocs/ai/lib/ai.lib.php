@@ -579,7 +579,8 @@ function getAiChatAssistantConfig()
 		'AIModelAuto',
 		'AIModelFast',
 		'AIModelBalanced',
-		'AIModelDeep'
+		'AIModelDeep',
+		'AIModelSavedGone'
 	);
 
 	$ai_translations = array();
