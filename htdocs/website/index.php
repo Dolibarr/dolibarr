@@ -2,7 +2,7 @@
 /* Copyright (C) 2016-2023  Laurent Destailleur  		<eldy@users.sourceforge.net>
  * Copyright (C) 2020 	    Nicolas ZABOURI				<info@inovea-conseil.com>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -3624,7 +3624,7 @@ if (!GETPOST('hide_websitemenu')) {
 				// Confirmation to clone
 				if ($action == 'createpagefromclone') {
 					// Create an array for form
-					$preselectedlanguage = GETPOST('newlang', 'aZ09') ? GETPOST('newlang', 'aZ09') : ($objectpage->lang ?: ''); // Dy default, we do not force any language on pages
+					$preselectedlanguage = GETPOST('newlang', 'aZ09') ? GETPOST('newlang', 'aZ09') : ($objectpage->lang ?: ''); // By default, we do not force any language on pages
 					$onlylang = array();
 					if ($website->otherlang) {
 						if (!empty($website->lang)) {
