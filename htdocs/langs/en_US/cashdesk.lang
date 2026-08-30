@@ -147,6 +147,7 @@ HideStockOnLine=Hide stock on line
 ShowOnlyProductInStock=Show only the products in stock
 ShowCategoryDescription=Show categories description
 ShowProductReference=Show reference or label of products
+DeleteSale=Delete sale
 UsePriceHT=Use price excl. taxes and not price incl. taxes when modifying a price
 TerminalName=Terminal %s
 TerminalNameDesc=Terminal name

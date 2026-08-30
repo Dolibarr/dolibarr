@@ -576,3 +576,458 @@ function calendars_prepare_head($param)
 
 	return $head;
 }
+
+/**
+ * Build $eventarray (list of ActionComm objects, indexed by day) for the agenda calendar views
+ * (month/week/day), applying the exact same date-range and filter logic the calendar page itself uses.
+ * Extracted from htdocs/comm/action/index.php so the same logic can be shared by other agenda views.
+ *
+ * @param	DoliDB			$db					Database handler
+ * @param	HookManager		$hookmanager		Hook manager
+ * @param	User			$user				Current user
+ * @param	null|CommonObject|array<int|string,mixed>|string	$object		Object passed to hooks (may be modified by hooks)
+ * @param	string			$action				Action string passed to hooks (may be modified by hooks)
+ * @param	string			$mode				View mode: 'show_day', 'show_week', 'show_month', or ''
+ * @param	int				$year				Year
+ * @param	int				$month				Month
+ * @param	int				$day				Day
+ * @param	int				$firstdaytoshow		Start of the visible date range (Unix timestamp)
+ * @param	int				$lastdaytoshow		End of the visible date range (Unix timestamp, exclusive)
+ * @param	array{usergroup:string,filtert:string,resourceid:int,actioncode:string|string[],pid:int,socid:int,type:string,status:string,search_categ_cus:int}	$filters	Already-resolved filter values
+ * @param	int|null		$sincedatec			If set, only return events created (datec) or modified (tms) after this Unix timestamp; null = no restriction (identical to today's behavior)
+ * @return	array{eventarray:array<int,array<int,ActionComm>>,nbevents:int,maxonsamepage:int}
+ */
+function agenda_build_eventarray($db, $hookmanager, $user, &$object, &$action, $mode, $year, $month, $day, $firstdaytoshow, $lastdaytoshow, $filters, $sincedatec = null)
+{
+	$usergroup = $filters['usergroup'];
+	$filtert = $filters['filtert'];
+	$resourceid = $filters['resourceid'];
+	$actioncode = $filters['actioncode'];
+	$pid = $filters['pid'];
+	$socid = $filters['socid'];
+	$type = $filters['type'];
+	$status = $filters['status'];
+	$search_categ_cus = $filters['search_categ_cus'];
+
+	// Load events from database into $eventarray
+	$eventarray = array();
+	$nbevents = 0;
+
+	// DEFAULT CALENDAR + AUTOEVENT CALENDAR + CONFERENCEBOOTH CALENDAR
+	$sql = 'SELECT ';
+	if ($usergroup > 0) {
+		$sql .= " DISTINCT";
+	}
+	$sql .= ' a.id, a.label,';
+	$sql .= ' a.datep,';
+	$sql .= ' a.datep2,';
+	$sql .= ' a.percent,';
+	$sql .= ' a.fk_user_author,a.fk_user_action,';
+	$sql .= ' a.transparency, a.priority, a.fulldayevent, a.location,';
+	$sql .= ' a.fk_soc, a.fk_contact, a.fk_project, a.fk_bookcal_calendar,';
+	$sql .= ' a.fk_element, a.elementtype,';
+	$sql .= ' ca.code as type_code, ca.libelle as type_label, ca.color as type_color, ca.type as type_type, ca.picto as type_picto';
+
+	// Add fields from hooks
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	$sql .= $hookmanager->resPrint;
+
+	$sqlfields = $sql; // $sql fields to remove for count total
+
+	$sql .= " FROM ".MAIN_DB_PREFIX."c_actioncomm as ca, ".MAIN_DB_PREFIX."actioncomm as a";
+
+	// We must filter on assignment table
+	if (($filtert != '-1' && $filtert != '-2') || $usergroup > 0) {
+		// TODO Replace with a AND EXISTS
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm_resources as ar ON ar.fk_actioncomm = a.id AND ar.element_type = 'user'";
+		if ($filtert != '-1' && $filtert != '-2'  && $filtert != '-3') {
+			$sql .= " AND (ar.fk_element IN (".$db->sanitize($filtert).") OR (ar.fk_element IS NULL AND a.fk_user_action = ".((int) $filtert)."))"; // The OR is for backward compatibility
+		} elseif ($filtert == '-3') {
+			$sql .= " AND ar.fk_element IN (".$db->sanitize(implode(',', $user->getAllChildIds(1))).")";
+		}
+		if ($usergroup > 0) {
+			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."usergroup_user as ugu ON ugu.fk_user = ar.fk_element AND ugu.fk_usergroup = ".((int) $usergroup);
+		}
+	}
+
+	// We must filter on resource table
+	if ($resourceid > 0) {
+		$sql .= ", ".MAIN_DB_PREFIX."element_resources as r";
+	}
+
+	// Add table from hooks
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	$sql .= $hookmanager->resPrint;
+
+	$sql .= " WHERE a.fk_action = ca.id";
+	$sql .= " AND a.entity IN (".getEntity('agenda').")";	// bookcal is a "virtual view" of agenda
+	// Condition on actioncode
+	if (!empty($actioncode)) {
+		if (!getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
+			if ((is_array($actioncode) && in_array('AC_NON_AUTO', $actioncode)) || $actioncode == 'AC_NON_AUTO') {
+				$sql .= " AND ca.type != 'systemauto'";
+			} elseif ((is_array($actioncode) && in_array('AC_ALL_AUTO', $actioncode)) || $actioncode == 'AC_ALL_AUTO') {
+				$sql .= " AND ca.type = 'systemauto'";
+			} else {
+				if ((is_array($actioncode) && in_array('AC_OTH', $actioncode)) || $actioncode == 'AC_OTH') {
+					$sql .= " AND ca.type != 'systemauto'";
+				}
+				if ((is_array($actioncode) && in_array('AC_OTH_AUTO', $actioncode)) || $actioncode == 'AC_OTH_AUTO') {
+					$sql .= " AND ca.type = 'systemauto'";
+				}
+			}
+		} else {
+			if ((is_array($actioncode) && in_array('AC_NON_AUTO', $actioncode)) || $actioncode === 'AC_NON_AUTO') {
+				$sql .= " AND ca.type != 'systemauto'";
+			} elseif ((is_array($actioncode) && in_array('AC_ALL_AUTO', $actioncode))	|| $actioncode === 'AC_ALL_AUTO') {
+				$sql .= " AND ca.type = 'systemauto'";
+			} else {
+				if (is_array($actioncode)) {
+					// Remove all -1 values
+					$actioncode = array_filter(
+						$actioncode,
+						/**
+						 * @param string $value
+						 * @return	bool
+						 */
+						function ($value) {
+							return ((string) $value !== '-1');
+						}
+					);
+					if (count($actioncode)) {
+						$sql .= " AND ca.code IN (".$db->sanitize("'".implode("','", $actioncode)."'", 1).")";
+					}
+				} elseif ($actioncode !== '-1') {
+					$sql .= " AND ca.code IN (".$db->sanitize("'".implode("','", explode(',', $actioncode))."'", 1).")";
+				}
+			}
+		}
+	}
+	if ($resourceid > 0) {
+		$sql .= " AND r.element_type = 'action' AND r.element_id = a.id AND r.resource_id = ".((int) $resourceid);
+	}
+	if ($pid) {
+		$sql .= " AND a.fk_project=".((int) $pid);
+	}
+	// If the internal user must only see his customers, force searching by him
+	$search_sale = 0;
+	if (isModEnabled("societe") && !$user->hasRight('societe', 'client', 'voir')) {
+		$search_sale = $user->id;
+	}
+	// Search on sale representative
+	if ($search_sale && $search_sale != '-1') {
+		if ($search_sale == -2) {
+			$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = a.fk_soc)";
+		} elseif ($search_sale > 0) {
+			$sql .= " AND (a.fk_soc IS NULL OR EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = a.fk_soc AND sc.fk_user = ".((int) $search_sale)."))";
+		}
+	}
+	// Search on socid
+	if ($socid > 0) {
+		$sql .= " AND a.fk_soc = ".((int) $socid);
+	}
+	//var_dump($day.' '.$month.' '.$year);
+	if ($mode == 'show_day') {
+		$sql .= " AND (";
+		$sql .= " (a.datep BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month, $day, $year, 'tzuserrel'))."'";
+		$sql .= " AND '".$db->idate(dol_mktime(23, 59, 59, $month, $day, $year, 'tzuserrel'))."')";
+		$sql .= " OR ";
+		$sql .= " (a.datep2 BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month, $day, $year, 'tzuserrel'))."'";
+		$sql .= " AND '".$db->idate(dol_mktime(23, 59, 59, $month, $day, $year, 'tzuserrel'))."')";
+		$sql .= " OR ";
+		$sql .= " (a.datep < '".$db->idate(dol_mktime(0, 0, 0, $month, $day, $year, 'tzuserrel'))."'";
+		$sql .= " AND a.datep2 > '".$db->idate(dol_mktime(23, 59, 59, $month, $day, $year, 'tzuserrel'))."')";
+		$sql .= ')';
+	} else {
+		// To limit array
+		$sql .= " AND (";
+		$sql .= " (a.datep BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month, 1, $year) - (60 * 60 * 24 * 7))."'"; // Start 7 days before
+		$sql .= " AND '".$db->idate(dol_mktime(23, 59, 59, $month, 28, $year) + (60 * 60 * 24 * 10))."')"; // End 7 days after + 3 to go from 28 to 31
+		$sql .= " OR ";
+		$sql .= " (a.datep2 BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month, 1, $year) - (60 * 60 * 24 * 7))."'";
+		$sql .= " AND '".$db->idate(dol_mktime(23, 59, 59, $month, 28, $year) + (60 * 60 * 24 * 10))."')";
+		$sql .= " OR ";
+		$sql .= " (a.datep < '".$db->idate(dol_mktime(0, 0, 0, $month, 1, $year) - (60 * 60 * 24 * 7))."'";
+		$sql .= " AND a.datep2 > '".$db->idate(dol_mktime(23, 59, 59, $month, 28, $year) + (60 * 60 * 24 * 10))."')";
+		$sql .= ')';
+	}
+	if ($sincedatec !== null) {
+		$sql .= " AND (a.datec > '".$db->idate($sincedatec)."' OR a.tms > '".$db->idate($sincedatec)."')";
+	}
+	if ($type) {
+		$sql .= " AND ca.id = ".((int) $type);
+	}
+	if ($status == '0') {
+		// To do (not started)
+		$sql .= " AND a.percent = 0";
+	}
+	if ($status === 'na') {
+		// Not applicable
+		$sql .= " AND a.percent = -1";
+	}
+	if ($status == '50') {
+		// Running already started
+		$sql .= " AND (a.percent > 0 AND a.percent < 100)";
+	}
+	if ($status == 'done' || $status == '100') {
+		$sql .= " AND (a.percent = 100)";
+	}
+	if ($status == 'todo') {
+		$sql .= " AND (a.percent >= 0 AND a.percent < 100)";
+	}
+
+	// Search in categories, -1 is all and -2 is no categories
+	if ($search_categ_cus != -1) {
+		if ($search_categ_cus == -2) {
+			$sql .= " AND NOT EXISTS (SELECT ca.fk_actioncomm FROM ".MAIN_DB_PREFIX."categorie_actioncomm as ca WHERE ca.fk_actioncomm = a.id)";
+		} elseif ($search_categ_cus > 0) {
+			$sql .= " AND EXISTS (SELECT ca.fk_actioncomm FROM ".MAIN_DB_PREFIX."categorie_actioncomm as ca WHERE ca.fk_actioncomm = a.id AND ca.fk_categorie IN (".$db->sanitize((string) $search_categ_cus)."))";
+		}
+	}
+
+	// Sort on date
+	$sql .= $db->order("datep");
+
+	$MAXONSAMEPAGE = getDolGlobalInt('AGENDA_MAX_ON_SAME_PAGE', 5000); // Useless to have more. Protection to avoid memory overload when high number of event (for example after a mass import)
+
+	$sql .= $db->plimit($MAXONSAMEPAGE + 1);
+
+	dol_syslog("agenda_build_eventarray", LOG_DEBUG);
+
+	$resql = $db->query($sql);
+	if ($resql) {
+		$num = $db->num_rows($resql);
+		$nbevents += $num;
+
+		$i = 0;
+		while ($i < $num && $i < $MAXONSAMEPAGE) {
+			$obj = $db->fetch_object($resql);
+
+			// Discard auto action if option is on
+			if (getDolGlobalString('AGENDA_ALWAYS_HIDE_AUTO') && $obj->type_code == 'AC_OTH_AUTO') {
+				$i++;
+				continue;
+			}
+
+			// Create a new object action
+			$event = new ActionComm($db);
+
+			$event->id = $obj->id;
+			$event->ref = (string) $event->id;
+
+			$event->fulldayevent = $obj->fulldayevent;
+
+			// event->datep and event->datef must be GMT date.
+			if ($event->fulldayevent) {
+				$tzforfullday = getDolGlobalString('MAIN_STORE_FULL_EVENT_IN_GMT');
+				$event->datep = $db->jdate($obj->datep, $tzforfullday ? 'tzuser' : 'tzserver');	// If saved in $tzforfullday = gmt, we must invert date to be in user tz
+				$event->datef = $db->jdate($obj->datep2, $tzforfullday ? 'tzuser' : 'tzserver');
+			} else {
+				// Example: $obj->datep = '1970-01-01 01:00:00', jdate will return 0 if TZ of PHP server is Europe/Berlin (+1)
+				$event->datep = $db->jdate($obj->datep, 'tzserver');
+				$event->datef = $db->jdate($obj->datep2, 'tzserver');
+			}
+			//$event->datep_formated_gmt = dol_print_date($event->datep, 'dayhour', 'gmt');
+			//var_dump($obj->id.' '.$obj->datep.' '.dol_print_date($obj->datep, 'dayhour', 'gmt'));
+			//var_dump($obj->id.' '.$event->datep.' '.dol_print_date($event->datep, 'dayhour', 'gmt'));
+
+			$event->type_code = $obj->type_code;
+			$event->type_label = $obj->type_label;
+			$event->type_color = $obj->type_color;
+			$event->type = $obj->type_type;
+			$event->type_picto = $obj->type_picto;
+
+			$event->label = $obj->label;
+			$event->percentage = $obj->percent;
+
+			$event->authorid = $obj->fk_user_author; // user id of creator
+			$event->userownerid = $obj->fk_user_action; // user id of owner
+			$event->fetch_userassigned(); // This load $event->userassigned
+
+			$event->priority = $obj->priority;
+			$event->location = $obj->location;
+			$event->transparency = $obj->transparency;
+			$event->fk_element = $obj->fk_element;
+			$event->elementid = $obj->fk_element;
+			$event->elementtype = $obj->elementtype;
+
+			$event->fk_project = $obj->fk_project;
+
+			$event->socid = $obj->fk_soc;
+			$event->contact_id = $obj->fk_contact;
+			$event->fk_bookcal_calendar = $obj->fk_bookcal_calendar;
+			if (!empty($event->fk_bookcal_calendar)) {
+				$event->type = "bookcal_calendar";
+			}
+
+			// Defined date_start_in_calendar and date_end_in_calendar property
+			// They are date start and end of action but modified to not be outside calendar view.
+			$event->date_start_in_calendar = $event->datep;
+			if ($event->datef != '' && $event->datef >= $event->datep) {
+				$event->date_end_in_calendar = $event->datef;
+			} else {
+				$event->date_end_in_calendar = $event->datep;
+			}
+
+			// Check values
+			if ($event->date_end_in_calendar < $firstdaytoshow || $event->date_start_in_calendar >= $lastdaytoshow) {
+				// This record is out of visible range
+			} else {
+				if ($event->date_start_in_calendar < $firstdaytoshow) {
+					$event->date_start_in_calendar = $firstdaytoshow;
+				}
+				if ($event->date_end_in_calendar >= $lastdaytoshow) {
+					$event->date_end_in_calendar = ($lastdaytoshow - 1);
+				}
+
+				// Add an entry in actionarray for each day
+				$daycursor = $event->date_start_in_calendar;
+				$annee = (int) dol_print_date($daycursor, '%Y', 'tzuserrel');
+				$mois = (int) dol_print_date($daycursor, '%m', 'tzuserrel');
+				$jour = (int) dol_print_date($daycursor, '%d', 'tzuserrel');
+
+				$daycursorend = $event->date_end_in_calendar;
+				$anneeend = (int) dol_print_date($daycursorend, '%Y', 'tzuserrel');
+				$moisend = (int) dol_print_date($daycursorend, '%m', 'tzuserrel');
+				$jourend = (int) dol_print_date($daycursorend, '%d', 'tzuserrel');
+
+				//var_dump(dol_print_date($event->date_start_in_calendar, 'dayhour', 'gmt'));	// Hour at greenwich
+				//var_dump($annee.'-'.$mois.'-'.$jour);
+				//print 'annee='.$annee.' mois='.$mois.' jour='.$jour.'<br>';
+
+				// Loop on each day covered by action to prepare an index to show on calendar
+				$loop = true;
+				$j = 0;
+				$daykey = dol_mktime(0, 0, 0, $mois, $jour, $annee, 'gmt');	// $mois, $jour, $annee has been set for user tz
+				$daykeyend = dol_mktime(0, 0, 0, $moisend, $jourend, $anneeend, 'gmt');	// $moisend, $jourend, $anneeend has been set for user tz
+				/*
+				 print 'GMT '.$event->date_start_in_calendar.' '.dol_print_date($event->date_start_in_calendar, 'dayhour', 'gmt').'<br>';
+				 print 'TZSERVER '.$event->date_start_in_calendar.' '.dol_print_date($event->date_start_in_calendar, 'dayhour', 'tzserver').'<br>';
+				 print 'TZUSERREL '.$event->date_start_in_calendar.' '.dol_print_date($event->date_start_in_calendar, 'dayhour', 'tzuserrel').'<br>';
+				 print 'GMT '.$event->date_end_in_calendar.' '.dol_print_date($event->date_end_in_calendar, 'dayhour', 'gmt').'<br>';
+				 print 'TZSERVER '.$event->date_end_in_calendar.' '.dol_print_date($event->date_end_in_calendar, 'dayhour', 'tzserver').'<br>';
+				 print 'TZUSER '.$event->date_end_in_calendar.' '.dol_print_date($event->date_end_in_calendar, 'dayhour', 'tzuserrel').'<br>';
+				 */
+				do {
+					//if ($event->id==408)
+					//print 'daykey='.$daykey.' daykeyend='.$daykeyend.' '.dol_print_date($daykey, 'dayhour', 'gmt').' - '.dol_print_date($event->datep, 'dayhour', 'gmt').' '.dol_print_date($event->datef, 'dayhour', 'gmt').'<br>';
+					//print 'daykey='.$daykey.' daykeyend='.$daykeyend.' '.dol_print_date($daykey, 'dayhour', 'tzuserrel').' - '.dol_print_date($event->datep, 'dayhour', 'tzuserrel').' '.dol_print_date($event->datef, 'dayhour', 'tzuserrel').'<br>';
+
+					$eventarray[$daykey][] = $event;
+					$j++;
+
+					$daykey += 60 * 60 * 24;
+					//if ($daykey > $event->date_end_in_calendar) {
+					if ($daykey > $daykeyend) {
+						$loop = false;
+					}
+				} while ($loop);
+				//var_dump($eventarray);
+				//print 'Event '.$i.' id='.$event->id.' (start='.dol_print_date($event->datep).'-end='.dol_print_date($event->datef);
+				//print ' startincalendar='.dol_print_date($event->date_start_in_calendar).'-endincalendar='.dol_print_date($event->date_end_in_calendar).') was added in '.$j.' different index key of array<br>';
+			}
+
+			$parameters['obj'] = $obj;
+			$reshook = $hookmanager->executeHooks('hookEventElements', $parameters, $event, $action); // Note that $action and $object may have been modified by some hooks
+			$event = $hookmanager->resPrint;
+			if ($reshook < 0) {
+				setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+			}
+
+			$i++;
+		}
+	} else {
+		dol_print_error($db);
+	}
+	//var_dump($eventarray);
+
+	return array('eventarray' => $eventarray, 'nbevents' => $nbevents, 'maxonsamepage' => $MAXONSAMEPAGE);
+}
+
+/**
+ * Complete an agenda calendar event array with contact birthday pseudo-events.
+ * Shared by the month, week and day agenda views (comm/action/index.php, comm/action/peruser.php).
+ *
+ * @param	DoliDB							$db			Database handler
+ * @param	Translate						$langs		Language object (already loaded)
+ * @param	User							$user		Current user (used for private contact visibility)
+ * @param	string							$mode		'show_day' restricts to the given day, any other value = whole month
+ * @param	int								$month		Month number (1-12)
+ * @param	int								$day		Day of month (only used when $mode == 'show_day')
+ * @param	int								$year		Year the birthday events must be placed in
+ * @param	array<int,ActionComm[]>			$eventarray	Event array to complete, keyed by GMT day timestamp (modified by reference)
+ * @param	int								$nbevents	Running event counter (modified by reference)
+ * @return	int											Number of birthday events added, or <0 if the SQL query failed
+ */
+function agenda_get_birthday_events($db, $langs, $user, $mode, $month, $day, $year, &$eventarray, &$nbevents)
+{
+	require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+
+	$sql = 'SELECT sp.rowid, sp.lastname, sp.firstname, sp.birthday';
+	$sql .= ' FROM '.MAIN_DB_PREFIX.'socpeople as sp';
+	$sql .= ' WHERE (priv=0 OR (priv=1 AND fk_user_creat='.((int) $user->id).'))';
+	$sql .= " AND sp.entity IN (".getEntity('contact').")";
+	if ($mode == 'show_day') {
+		$sql .= ' AND MONTH(birthday) = '.((int) $month);
+		$sql .= ' AND DAY(birthday) = '.((int) $day);
+	} else {
+		$sql .= ' AND MONTH(birthday) = '.((int) $month);
+	}
+	$sql .= ' ORDER BY birthday';
+
+	dol_syslog("agenda.lib.php::agenda_get_birthday_events", LOG_DEBUG);
+	$resql = $db->query($sql);
+	if (!$resql) {
+		dol_print_error($db);
+		return -1;
+	}
+
+	$num = $db->num_rows($resql);
+	$nbevents += $num;
+
+	$i = 0;
+	while ($i < $num) {
+		$obj = $db->fetch_object($resql);
+
+		$event = new ActionComm($db);
+
+		$event->id = $obj->rowid; // We put contact id in action id for birthdays events
+		$event->ref = (string) $event->id;
+
+		$datebirth = dol_stringtotime($obj->birthday, 1);
+		$datearray = dol_getdate($datebirth, true);
+		$event->datep = dol_mktime(0, 0, 0, $datearray['mon'], $datearray['mday'], $year, true); // For full day events, date are also GMT but they won't but converted during output
+		$event->datef = $event->datep;
+
+		$event->type_code = 'BIRTHDAY';
+		$event->type_label = '';
+		$event->type_color = '';
+		$event->type = 'birthdate';
+		$event->type_picto = 'birthdate';
+
+		$event->label = $langs->trans("Birthday").' '.dolGetFirstLastname($obj->firstname, $obj->lastname);
+		$event->percentage = 100;
+		$event->fulldayevent = 1;
+
+		$event->contact_id = $obj->rowid;
+
+		$event->date_start_in_calendar = $event->datep;
+		$event->date_end_in_calendar = $event->datef;
+
+		// Add an entry in eventarray for each day
+		$daycursor = $event->datep;
+		$annee = (int) dol_print_date($daycursor, '%Y', 'tzuserrel');
+		$mois = (int) dol_print_date($daycursor, '%m', 'tzuserrel');
+		$jour = (int) dol_print_date($daycursor, '%d', 'tzuserrel');
+
+		$daykey = dol_mktime(0, 0, 0, $mois, $jour, $annee, 'gmt');
+
+		$eventarray[$daykey][] = $event;
+
+		$i++;
+	}
+
+	return $num;
+}

@@ -1403,7 +1403,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 						rewinddir($handle);
 
-						// Run update_xxx.sql files
+						// Run update_xxx.sql files (sorted by name)
 						$files = array();
 						while (($file = readdir($handle)) !== false) {
 							$files[] = $file;
@@ -1418,6 +1418,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 									//print 'File '.$file.' match suffix '.$onlywithsuffix.' so we keep it<br>'."\n";
 								}
 							}
+
 							if (preg_match('/\.sql$/i', $file) && !preg_match('/\.key\.sql$/i', $file) && substr($file, 0, 6) == 'update') {
 								$result = run_sql($dir.$file, !getDolGlobalString('MAIN_DISPLAY_SQL_INSTALL_LOG') ? 1 : 0, 0, 1);
 								if ($result <= 0) {
@@ -1981,9 +1982,13 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 * @param  int<0,1>	$reinitadminperms 	If 1, we also grant them to all admin users
 	 * @param  ?int		$force_entity     	Force current entity
 	 * @param  int<0,1> $notrigger        	1=Does not execute triggers, 0= execute triggers
+	 * @param  ?array<int,int>	$existingrightsdefids	Optional preloaded map of rights_def.id => 1 already present for the target entity (as returned
+	 *                                                  by a single "SELECT id FROM llx_rights_def WHERE entity = X" done by the caller). When provided,
+	 *                                                  it is used instead of issuing one "SELECT count(*)" query per permission of this module - useful
+	 *                                                  for callers (like user/perms.php) that call insert_permissions() in a loop for many modules.
 	 * @return int		                	Error count (0 if OK)
 	 */
-	public function insert_permissions($reinitadminperms = 0, $force_entity = null, $notrigger = 0)
+	public function insert_permissions($reinitadminperms = 0, $force_entity = null, $notrigger = 0, $existingrightsdefids = null)
 	{
 		// phpcs:enable
 		global $conf, $user;
@@ -2042,60 +2047,66 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 					$r_enabled	= $this->rights[$key][self::KEY_ENABLED] ?? '1';
 
 					// Search if perm already present
-					$sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."rights_def";
-					$sql .= " WHERE entity = ".((int) $entity);
-					$sql .= " AND id = ".((int) $r_id);
+					if ($existingrightsdefids !== null) {
+						$rightalreadyexists = !empty($existingrightsdefids[$r_id]);
+					} else {
+						$sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."rights_def";
+						$sql .= " WHERE entity = ".((int) $entity);
+						$sql .= " AND id = ".((int) $r_id);
 
-					$resqlselect = $this->db->query($sql);
-					if ($resqlselect) {
-						$objcount = $this->db->fetch_object($resqlselect);
-						if ($objcount && $objcount->nb == 0) {
-							$sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def (";
-							$sql .= "id";
-							$sql .= ", entity";
-							$sql .= ", libelle";
-							$sql .= ", module";
-							$sql .= ", module_origin";
-							$sql .= ", module_position";		// Not that module_position can be fixed eynamically when accessing page user/perms.php
-							$sql .= ", family";
-							$sql .= ", family_position";
-							$sql .= ", type";	// Not used yet
-							$sql .= ", bydefault";
-							$sql .= ", perms";
-							$sql .= ", subperms";
-							$sql .= ", enabled";
-							$sql .= ") VALUES (";
-							$sql .= ((int) $r_id);
-							$sql .= ", ".((int) $entity);
-							$sql .= ", '".$this->db->escape($r_label)."'";
-							$sql .= ", '".$this->db->escape($r_module)."'";
-							$sql .= ", '".$this->db->escape($r_module_origin)."'";
-							$sql .= ", '".$this->db->escape((string) $r_module_position)."'";
-							$sql .= ", '".$this->db->escape($r_family)."'";
-							$sql .= ", '".$this->db->escape((string) $r_family_position)."'";
-							$sql .= ", '".$this->db->escape($r_type)."'";	// Not used yet
-							$sql .= ", ".((int) $r_default);
-							$sql .= ", '".$this->db->escape($r_perms)."'";
-							$sql .= ", '".$this->db->escape($r_subperms)."'";
-							$sql .= ", '".$this->db->escape($r_enabled)."'";
-							$sql .= ")";
+						$rightalreadyexists = true; // Assume it exists if the select fails, so we never try to insert on a query error
+						$resqlselect = $this->db->query($sql);
+						if ($resqlselect) {
+							$objcount = $this->db->fetch_object($resqlselect);
+							$rightalreadyexists = !($objcount && $objcount->nb == 0);
+							$this->db->free($resqlselect);
+						}
+					}
 
-							$resqlinsert = $this->db->query($sql, 1);
+					if (!$rightalreadyexists) {
+						$sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def (";
+						$sql .= "id";
+						$sql .= ", entity";
+						$sql .= ", libelle";
+						$sql .= ", module";
+						$sql .= ", module_origin";
+						$sql .= ", module_position";		// Not that module_position can be fixed eynamically when accessing page user/perms.php
+						$sql .= ", family";
+						$sql .= ", family_position";
+						$sql .= ", type";	// Not used yet
+						$sql .= ", bydefault";
+						$sql .= ", perms";
+						$sql .= ", subperms";
+						$sql .= ", enabled";
+						$sql .= ") VALUES (";
+						$sql .= ((int) $r_id);
+						$sql .= ", ".((int) $entity);
+						$sql .= ", '".$this->db->escape($r_label)."'";
+						$sql .= ", '".$this->db->escape($r_module)."'";
+						$sql .= ", '".$this->db->escape($r_module_origin)."'";
+						$sql .= ", '".$this->db->escape((string) $r_module_position)."'";
+						$sql .= ", '".$this->db->escape($r_family)."'";
+						$sql .= ", '".$this->db->escape((string) $r_family_position)."'";
+						$sql .= ", '".$this->db->escape($r_type)."'";	// Not used yet
+						$sql .= ", ".((int) $r_default);
+						$sql .= ", '".$this->db->escape($r_perms)."'";
+						$sql .= ", '".$this->db->escape($r_subperms)."'";
+						$sql .= ", '".$this->db->escape($r_enabled)."'";
+						$sql .= ")";
 
-							if (!$resqlinsert) {
-								if ($this->db->errno() != "DB_ERROR_RECORD_ALREADY_EXISTS") {
-									$this->error = $this->db->lasterror();
-									$err++;
-									break;
-								} else {
-									dol_syslog(get_class($this)."::insert_permissions record already exists", LOG_INFO);
-								}
+						$resqlinsert = $this->db->query($sql, 1);
+
+						if (!$resqlinsert) {
+							if ($this->db->errno() != "DB_ERROR_RECORD_ALREADY_EXISTS") {
+								$this->error = $this->db->lasterror();
+								$err++;
+								break;
+							} else {
+								dol_syslog(get_class($this)."::insert_permissions record already exists", LOG_INFO);
 							}
-
-							$this->db->free($resqlinsert);
 						}
 
-						$this->db->free($resqlselect);
+						$this->db->free($resqlinsert);
 					}
 
 					// If we want to init permissions on admin users

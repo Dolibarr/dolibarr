@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2014-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		Charlene Benke			<charlene@patas-monkey.com>
  * Copyright (C) 2026		Lionel Vessiller		<lvessiller@open-dsi.fr>
  *
@@ -59,6 +59,7 @@ trait CommonSubtotal
 		'supplier_proposal',
 		'order_supplier',
 		'invoice_supplier',
+		'fichinter',
 	];
 
 
@@ -388,6 +389,10 @@ trait CommonSubtotal
 			$line = new SupplierInvoiceLine($this->db);
 			$line->id = $id;
 			$result = $line->delete();
+		} elseif ($current_module == 'fichinter') {
+			$line = new FichinterLigne($this->db);
+			$line->id = $id;
+			$result = $line->deleteLine($user);
 		}
 
 		return $result >= 0 ? $result : -1; // Return line ID or false
@@ -848,6 +853,58 @@ trait CommonSubtotal
 			$depth_array[$i + 1] = $langs->trans("SubtotalLevel", $i + 1);
 		}
 		return $depth_array;
+	}
+
+	/**
+	 * Retrieve the list of active predefined titles usable as description of a title line.
+	 *
+	 * @return array<string,string>	Array with the title label as both key and value, sorted alphabetically
+	 *
+	 * @phan-suppress PhanUndeclaredProperty
+	 * @phan-suppress PhanPluginUnknownObjectMethodCall
+	 */
+	public function getPredefinedTitles()
+	{
+		$titles = array();
+
+		$sql = "SELECT label FROM ".MAIN_DB_PREFIX."c_subtotals_titles";
+		$sql .= " WHERE active = 1 AND entity IN (".getEntity('c_subtotals_titles').")";
+		$sql .= " ORDER BY label ASC";
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			while ($obj = $this->db->fetch_object($resql)) {
+				$titles[dol_escape_htmltag($obj->label)] = $obj->label;
+			}
+		}
+
+		return $titles;
+	}
+
+	/**
+	 * Retrieve the list of active predefined texts usable as content of a free-text line.
+	 *
+	 * @return array<int,array{label:string,content:string}>	Array keyed by rowid, each entry has a 'label' and 'content', sorted alphabetically by label
+	 *
+	 * @phan-suppress PhanUndeclaredProperty
+	 * @phan-suppress PhanPluginUnknownObjectMethodCall
+	 */
+	public function getPredefinedTexts()
+	{
+		$texts = array();
+
+		$sql = "SELECT rowid, label, content FROM ".MAIN_DB_PREFIX."c_subtotals_texts";
+		$sql .= " WHERE active = 1 AND entity IN (".getEntity('c_subtotals_texts').")";
+		$sql .= " ORDER BY label ASC";
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			while ($obj = $this->db->fetch_object($resql)) {
+				$texts[(int) $obj->rowid] = array('label' => $obj->label, 'content' => $obj->content);
+			}
+		}
+
+		return $texts;
 	}
 
 	/**

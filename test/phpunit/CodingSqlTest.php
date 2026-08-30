@@ -174,6 +174,10 @@ class CodingSqlTest extends CommonClassTest
 				//print __METHOD__." Result for checking we don't have 'int(' instead of 'integer' = ".$result."\n";
 				$this->assertTrue($result === false, 'Found int(x) or tinyint(x) instead of integer or tinyint into '.$file.'. Bad.');
 
+				$result = strpos($filecontent, 'ADD UNIQUE KEY');
+				//print __METHOD__." Result for checking we don't have 'ON DELETE CASCADE' = ".$result."\n";
+				$this->assertTrue($result === false, 'Found ADD UNIQUE KEY instead of ADD UNIQUE INDEX into '.$file.'. Bad.');
+
 				$result = strpos($filecontent, 'ON DELETE CASCADE');
 				//print __METHOD__." Result for checking we don't have 'ON DELETE CASCADE' = ".$result."\n";
 				$this->assertTrue($result === false, 'Found ON DELETE CASCADE into '.$file.'. Bad.');

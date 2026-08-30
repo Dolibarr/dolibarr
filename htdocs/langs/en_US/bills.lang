@@ -724,6 +724,7 @@ DisputeLost=Dispute lost
 DisputeWon=Dispute won
 DisputeClosed=Dispute closed
 Dispute=Dispute
+InvoicesDispute=Disputed invoices
 Sales=Sales
 AutoSendEmail=Automatic email sending
 EmailTemplateForAutoSend=Email template for automatic sending

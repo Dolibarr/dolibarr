@@ -29,7 +29,7 @@ ModuleAssetsDesc=Assets description
 # Admin page
 AssetSetup=Assets setup
 AssetSetupPage=Assets setup page
-ExtraFieldsAssetModel=Complementary attributes (Asset's model)
+ExtraFieldsAssetModel=Additionnal fields (Asset's model)
 AssetsType=Asset model
 AssetsTypeId=Asset model id
 AssetsTypeLabel=Asset model label

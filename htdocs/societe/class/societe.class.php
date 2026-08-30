@@ -2420,9 +2420,10 @@ class Societe extends CommonObject
 	 *    @param    string	$ref_alias 		Name_alias of third party (Warning, this can return several records)
 	 * 	  @param	int		$is_client		Only client third party
 	 *    @param	int		$is_supplier	Only supplier third party
+	 *    @param	string	$vatnumber		VAT number
 	 *    @return   int						ID of thirdparty found if OK, <0 if KO (-2 if two records found or other negative if error), 0 if not found.
 	 */
-	public function findNearest($rowid = 0, $ref = '', $ref_ext = '', $barcode = '', $idprof1 = '', $idprof2 = '', $idprof3 = '', $idprof4 = '', $idprof5 = '', $idprof6 = '', $email = '', $ref_alias = '', $is_client = 0, $is_supplier = 0)
+	public function findNearest($rowid = 0, $ref = '', $ref_ext = '', $barcode = '', $idprof1 = '', $idprof2 = '', $idprof3 = '', $idprof4 = '', $idprof5 = '', $idprof6 = '', $email = '', $ref_alias = '', $is_client = 0, $is_supplier = 0, $vatnumber = '')
 	{
 		// A rowid is known, it is a unique key so we found it
 		if ($rowid) {
@@ -2491,6 +2492,12 @@ class Societe extends CommonObject
 				$sqlprof .= " OR";
 			}
 			$sqlprof .= " s.idprof6 = '".$this->db->escape($idprof6)."'";
+		}
+		if ($vatnumber) {
+			if ($sqlprof) {
+				$sqlprof .= " OR";
+			}
+			$sqlprof .= " s.tva_intra = '".$this->db->escape($vatnumber)."'";
 		}
 
 		if ($sqlprof) {
@@ -3411,7 +3418,7 @@ class Societe extends CommonObject
 	 *      @param	string		$morecss					More CSS
 	 *		@return	string						          	String with URL
 	 */
-	public function getNomUrl($withpicto = 0, $option = '', $maxlen = 0, $notooltip = 0, $save_lastsearch_value = -1, $noaliasinname = 0, $target = '', $morecss = '')
+	public function getNomUrl($withpicto = 0, $option = '', $maxlen = 0, $notooltip = 0, $save_lastsearch_value = -1, $noaliasinname = 0, $target = '', $morecss = 'valignmiddle')
 	{
 		global $conf, $langs, $hookmanager, $user;
 
@@ -3521,7 +3528,7 @@ class Societe extends CommonObject
 				$linkclose .= ' target="'.dol_escape_htmltag($target).'"';
 			}
 		} else {
-			$linkclose .= ' class="valignmiddle'.($morecss ? ' '.$morecss : '').'"';
+			$linkclose .= ' class="'.($morecss ? ' '.$morecss : '').'"';
 		}
 		$linkstart .= $linkclose.'>';
 		$linkend = '</a>';
@@ -5930,7 +5937,7 @@ class Societe extends CommonObject
 	 *    @param    string      $code       Filter on this code of contact type ('SHIPPING', 'BILLING', ...)
 	 *	  @param    string      $element    Filter on this element of default contact type ('facture', 'propal', 'commande' ...)
 	 *    @param    int         $status     Filter by contact status: 1=Active only, 0=Inactive only, -1=All (default)
-	 *    @return int[]|array<array{source:string,socid:int,id:int,nom:string,civility:string,lastname:string,firstname:string,email:string,login:string,photo:string,statuscontact:string,rowid:int,code:string,element:string,libelle:string,status:string,fk_c_type_contact:int}>|-1		Array of contacts, -1 if error
+	 *    @return 	int[]|array<array{source:string,socid:int,id:int,nom:string,civility:string,lastname:string,firstname:string,email:string,login:string,photo:string,statuscontact:string,rowid:int,code:string,element:string,libelle:string,status:string,fk_c_type_contact:int}>|-1		Array of contacts, -1 if error
 	 */
 	public function getContacts($list = 0, $code = '', $element = '', $status = -1)
 	{
@@ -5975,7 +5982,7 @@ class Societe extends CommonObject
 
 				if (!$list) {
 					$transkey = "TypeContact_".$obj->element."_".$obj->source."_".$obj->code;
-					$libelle_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->type_label);
+					$label_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->type_label);
 					$tab[$obj->id] = array(
 						'source' => $obj->source,
 						'socid' => (int) $obj->socid,
@@ -5991,7 +5998,7 @@ class Societe extends CommonObject
 						'rowid' => (int) $obj->rowid,
 						'code' => $obj->code,
 						'element' => $obj->element,
-						'libelle' => $libelle_type,
+						'libelle' => $label_type,
 						'status' => $obj->statuslink,
 						'fk_c_type_contact' => (int) $obj->fk_c_type_contact
 					);
