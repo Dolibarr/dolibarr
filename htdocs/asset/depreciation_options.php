@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT . '/asset/class/assetdepreciationoptions.class.ph
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
@@ -44,14 +45,13 @@ $langs->loadLangs(array("assets", "companies"));
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
-$cancel = GETPOST('cancel', 'aZ09');
+$cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');	// if not set, $backtopage will be used
 
 // Initialize a technical objects
 $object = new Asset($db);
 $assetdepreciationoptions = new AssetDepreciationOptions($db);
-$extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->asset->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('assetdepreciationoptions', 'globalcard')); // Note that conf->hooks_modules contains array
 // Fetch optionals attributes and labels
@@ -151,7 +151,7 @@ if ($id > 0 || !empty($ref)) {
 
 	// Object card
 	// ------------------------------------------------------------
-	$linkback = '<a href="'.DOL_URL_ROOT.'/asset/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/asset/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref = '<div class="refidno">';
 	$morehtmlref .= '</div>';
@@ -161,6 +161,8 @@ if ($id > 0 || !empty($ref)) {
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
 	print '</div>';
+
+	print '<br>';
 
 	if ($action == 'edit') {
 		print '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '">';
@@ -173,11 +175,7 @@ if ($id > 0 || !empty($ref)) {
 			print '<input type="hidden" name="backtopageforcancel" value="' . $backtopageforcancel . '">';
 		}
 
-		print dol_get_fiche_head(array(), '');
-
 		include DOL_DOCUMENT_ROOT . '/asset/tpl/depreciation_options_edit.tpl.php';
-
-		print dol_get_fiche_end();
 
 		print $form->buttonsSaveCancel();
 

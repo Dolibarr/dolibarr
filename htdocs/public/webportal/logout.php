@@ -48,7 +48,12 @@ if (session_status() === PHP_SESSION_ACTIVE) {
 }
 
 // Not sure this is required
-if (isset($_SESSION['webportal_logged_thirdparty_account_id'])) unset($_SESSION['webportal_logged_thirdparty_account_id']);
+if (isset($_SESSION['webportal_logged_thirdparty_account_id'])) {
+	unset($_SESSION['webportal_logged_thirdparty_account_id']);
+}
+if (isset($_SESSION['webportal_logged_member_account_id'])) {
+	unset($_SESSION['webportal_logged_member_account_id']);
+}
 
 if (GETPOST('noredirect')) {
 	return;

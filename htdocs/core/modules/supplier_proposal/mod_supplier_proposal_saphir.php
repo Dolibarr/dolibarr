@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2007 Regis Houssin               <regis.houssin@inodbox.com>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,7 +47,7 @@ class mod_supplier_proposal_saphir extends ModeleNumRefSupplierProposal
 	public $error = '';
 
 	/**
-	 * @var string Nom du modele
+	 * @var string Name of model
 	 * @deprecated
 	 * @see $name
 	 */
@@ -77,10 +78,15 @@ class mod_supplier_proposal_saphir extends ModeleNumRefSupplierProposal
 		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
 		$texte .= '<input type="hidden" name="action" value="updateMask">';
 		$texte .= '<input type="hidden" name="maskconstsupplier_proposal" value="SUPPLIER_PROPOSAL_SAPHIR_MASK">';
-		$texte .= '<table class="nobordernopadding" width="100%">';
+		$texte .= '<input type="hidden" name="page_y" value="">';
+
+		$texte .= '<table class="nobordernopadding centpercent">';
 
 		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("CommRequest"), $langs->transnoentities("CommRequest"));
+		$tooltip .= $langs->trans("GenericMaskCodes1");
+		$tooltip .= '<br>';
 		$tooltip .= $langs->trans("GenericMaskCodes2");
+		$tooltip .= '<br>';
 		$tooltip .= $langs->trans("GenericMaskCodes3");
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("CommRequest"), $langs->transnoentities("CommRequest"));
 		$tooltip .= $langs->trans("GenericMaskCodes5");
@@ -88,11 +94,11 @@ class mod_supplier_proposal_saphir extends ModeleNumRefSupplierProposal
 
 		$mask = getDolGlobalString('SUPPLIER_PROPOSAL_SAPHIR_MASK');
 
-		// Parametrage du prefix
+		// Setting of prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
 		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="masksupplier_proposal" value="'.$mask.'">', $tooltip, 1, 'help', 'valignmiddle', 0, 3, $this->name).'</td>';
 
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="Button"value="'.$langs->trans("Modify").'"></td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="Button" value="'.$langs->trans("Save").'"></td>';
 
 		$texte .= '</tr>';
 

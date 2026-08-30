@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -43,7 +43,7 @@ $langs->loadLangs(array("recruitment", "companies"));
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
-$cancel = GETPOST('cancel', 'aZ09');
+$cancel = GETPOST('cancel');
 $backtopage = GETPOST('backtopage', 'alpha');
 
 // Initialize a technical objects
@@ -57,7 +57,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 // Security check - Protection if external user
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
-//$result = restrictedArea($user, 'recruitment', $id);
+//restrictedArea($user, 'recruitment', $id);
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'. Include fetch and fetch_thirdparty but not fetch_optionals
@@ -118,12 +118,13 @@ if ($id > 0 || !empty($ref)) {
 	*/
 	// Project
 	if (isModEnabled('project')) {
+		require_once DOL_DOCUMENT_ROOT."/core/class/html.formprojet.class.php";
 		$formproject = new FormProjets($db);
 		$langs->load("projects");
 		$morehtmlref .= $langs->trans('Project').' ';
 		if ($permissiontoadd) {
 			if ($action != 'classify') {
-				//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+				//$morehtmlref.='<a class="editfielda" href="' . dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true) . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 				$morehtmlref .= ' : ';
 			}
 			if ($action == 'classify') {
@@ -131,7 +132,7 @@ if ($id > 0 || !empty($ref)) {
 				$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 				$morehtmlref .= '<input type="hidden" name="action" value="classin">';
 				$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-				$morehtmlref .= $formproject->select_projects($object->socid, (string) $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+				$morehtmlref .= $formproject->select_projects($object->socid, (string) $object->fk_project, 'projectid', 0, 0, 1, 0, 1, 0, 0, '', 1);
 				$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 				$morehtmlref .= '</form>';
 			} else {

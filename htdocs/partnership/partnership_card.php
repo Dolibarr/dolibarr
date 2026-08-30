@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2017-2021 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2021      NextGestion			<contact@nextgestion.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,12 +26,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
-require_once DOL_DOCUMENT_ROOT.'/partnership/class/partnership.class.php';
-require_once DOL_DOCUMENT_ROOT.'/partnership/lib/partnership.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -40,6 +34,11 @@ require_once DOL_DOCUMENT_ROOT.'/partnership/lib/partnership.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+require_once DOL_DOCUMENT_ROOT.'/partnership/class/partnership.class.php';
+require_once DOL_DOCUMENT_ROOT.'/partnership/lib/partnership.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("partnership", "other"));
@@ -49,7 +48,7 @@ $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
-$cancel = GETPOST('cancel', 'aZ09');
+$cancel = GETPOST('cancel');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : str_replace('_', '', basename(dirname(__FILE__)).basename(__FILE__, '.php')); // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
@@ -151,28 +150,26 @@ if (empty($reshook)) {
 		if ($result >= 0) {
 			// Define output language
 			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
-				if (method_exists($object, 'generateDocument')) {
-					$outputlangs = $langs;
-					$newlang = '';
-					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
-						$newlang = GETPOST('lang_id', 'aZ09');
-					}
-					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
-						$newlang = $object->thirdparty->default_lang;
-					}
-					if (!empty($newlang)) {
-						$outputlangs = new Translate("", $conf);
-						$outputlangs->setDefaultLang($newlang);
-					}
+				$outputlangs = $langs;
+				$newlang = '';
+				if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
+					$newlang = GETPOST('lang_id', 'aZ09');
+				}
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
+					$newlang = $object->thirdparty->default_lang;
+				}
+				if (!empty($newlang)) {
+					$outputlangs = new Translate("", $conf);
+					$outputlangs->setDefaultLang($newlang);
+				}
 
-					$ret = $object->fetch($id); // Reload to get new records
+				$ret = $object->fetch($id); // Reload to get new records
 
-					$model = $object->model_pdf;
+				$model = $object->model_pdf;
 
-					$retgen = $object->generateDocument($model, $outputlangs, 0, 0, 0);
-					if ($retgen < 0) {
-						setEventMessages($object->error, $object->errors, 'warnings');
-					}
+				$retgen = $object->generateDocument($model, $outputlangs, 0, 0, 0);
+				if ($retgen < 0) {
+					setEventMessages($object->error, $object->errors, 'warnings');
 				}
 			}
 		} else {
@@ -183,28 +180,26 @@ if (empty($reshook)) {
 		if ($result >= 0) {
 			// Define output language
 			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
-				if (method_exists($object, 'generateDocument')) {
-					$outputlangs = $langs;
-					$newlang = '';
-					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
-						$newlang = GETPOST('lang_id', 'aZ09');
-					}
-					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
-						$newlang = $object->thirdparty->default_lang;
-					}
-					if (!empty($newlang)) {
-						$outputlangs = new Translate("", $conf);
-						$outputlangs->setDefaultLang($newlang);
-					}
+				$outputlangs = $langs;
+				$newlang = '';
+				if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
+					$newlang = GETPOST('lang_id', 'aZ09');
+				}
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
+					$newlang = $object->thirdparty->default_lang;
+				}
+				if (!empty($newlang)) {
+					$outputlangs = new Translate("", $conf);
+					$outputlangs->setDefaultLang($newlang);
+				}
 
-					$ret = $object->fetch($id); // Reload to get new records
+				$ret = $object->fetch($id); // Reload to get new records
 
-					$model = $object->model_pdf;
+				$model = $object->model_pdf;
 
-					$retgen = $object->generateDocument($model, $outputlangs, 0, 0, 0);
-					if ($retgen < 0) {
-						setEventMessages($object->error, $object->errors, 'warnings');
-					}
+				$retgen = $object->generateDocument($model, $outputlangs, 0, 0, 0);
+				if ($retgen < 0) {
+					setEventMessages($object->error, $object->errors, 'warnings');
 				}
 			}
 		} else {
@@ -217,7 +212,7 @@ if (empty($reshook)) {
 			$action = 'refuse';
 		} else {
 			// prevent browser refresh from closing proposal several times
-			if ($object->statut != $object::STATUS_REFUSED) {
+			if ($object->status != $object::STATUS_REFUSED) {
 				$db->begin();
 
 				$result = $object->refused($user, GETPOST('reason_decline_or_cancel', 'restricthtml'));
@@ -293,7 +288,7 @@ if ($action == 'create') {
 
 	print load_fiche_titre($langs->trans("NewPartnership"), '', 'object_'.$object->picto);
 
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 	if ($backtopage) {
@@ -328,7 +323,7 @@ if ($action == 'create') {
 if (($id || $ref) && $action == 'edit') {
 	print load_fiche_titre($langs->trans("Partnership"), '', 'object_'.$object->picto);
 
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
@@ -362,7 +357,7 @@ if (($id || $ref) && $action == 'edit') {
 if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'))) {
 	$head = partnershipPrepareHead($object);
 
-	print dol_get_fiche_head($head, 'card', $langs->trans("Partnership"), -1, $object->picto);
+	print dol_get_fiche_head($head, 'card', $langs->trans("Partnership"), -1, $object->picto, 0, '', '', 0, '', 1);
 
 	$formconfirm = '';
 
@@ -390,7 +385,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	if ($action == 'reopen') {
 		// Create an array for form
 		$formquestion = array();
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToReopon'), $langs->trans('ConfirmReoponAsk', $object->ref), 'confirm_reopen', $formquestion, 'yes', 1);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('PartnershipToReopen'), $langs->trans('PartnershipConfirmReOpenAsk', $object->ref), 'confirm_reopen', $formquestion, 'yes', 1);
 	}
 
 	// Refuse confirmation
@@ -429,37 +424,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$linkback = '<a href="'.dol_buildpath('/partnership/partnership_list.php', 1).'?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref = '<div class="refidno">';
-	/*
-	 // Ref customer
-	 $morehtmlref .= $form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', 0, 1);
-	 $morehtmlref .= $form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', null, null, '', 1);
-	 // Thirdparty
-		$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1, 'customer');
-		if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) {
-			$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->thirdparty->id.'&search_societe='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherOrders").'</a>)';
-		}
-	 // Project
-		if (isModEnabled('project')) {
-			$langs->load("projects");
-			$morehtmlref .= '<br>';
-			if ($permissiontoadd) {
-				$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
-				if ($action != 'classify') {
-					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
-				}
-				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
-			} else {
-				if (!empty($object->fk_project)) {
-					$proj = new Project($db);
-					$proj->fetch($object->fk_project);
-					$morehtmlref .= $proj->getNomUrl(1);
-					if ($proj->title) {
-						$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';
-					}
-				}
-			}
-		}
-	*/
 	$morehtmlref .= '</div>';
 
 	if ($managedfor == 'member') {
@@ -478,14 +442,64 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Common attributes
 	//$keyforbreak='fieldkeytoswitchonsecondcolumn';	// We change column just before this field
-	//unset($object->fields['fk_project']);				// Hide field already shown in banner
-	//unset($object->fields['fk_soc']);					// Hide field already shown in banner
+	unset($object->fields['fk_member']);				// Hide field already shown later
+	unset($object->fields['fk_soc']);					// Hide field already shown later
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
 
 	// End of subscription date
-	if ($managedfor == 'member') {
+	if ($managedfor == 'thirdparty' && isModEnabled('societe')) {
+		print '<tr><td class="titlefieldmiddle">'.$langs->trans("ThirdParty").'</td><td class="valeur">';
+		print $object->thirdparty->getNomUrl(-1);
+		print '</td></tr>';
+
+		if (isModEnabled('member')) {
+			include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+			include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
+			$fadherent = new Adherent($db);
+			$fadherent->fetch(0, '', $object->fk_soc);
+			print '<tr><td>'.$langs->trans("Member").'</td><td class="valeur">';
+			if ($fadherent->id > 0) {
+				print $fadherent->getNomUrl(-1);
+			}
+			print '</td></tr>';
+
+			if ($fadherent->id > 0) {
+				print '<tr><td>'.$langs->trans("SubscriptionEndDate").'</td><td class="valeur">';
+				if ($fadherent->datefin) {
+					print dol_print_date($fadherent->datefin, 'day');
+					if ($fadherent->hasDelay()) {
+						print " ".img_warning($langs->trans("Late"));
+					}
+				} else {
+					$adht = new AdherentType($db);
+					$adht->fetch($fadherent->typeid);
+					if (!$adht->subscription) {
+						print $langs->trans("SubscriptionNotRecorded");
+						if ($fadherent->status > 0) {
+							print " ".img_warning($langs->trans("Late")); // Display a delay picto only if it is not a draft and is not canceled
+						}
+					} else {
+						print $langs->trans("SubscriptionNotReceived");
+						if ($fadherent->status > 0) {
+							print " ".img_warning($langs->trans("Late")); // Display a delay picto only if it is not a draft and is not canceled
+						}
+					}
+				}
+				print '</td></tr>';
+			}
+		}
+	}
+	if ($managedfor == 'member' && isModEnabled('member') && $object->fk_member > 0) {
+		include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+		include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
+
 		$fadherent = new Adherent($db);
 		$fadherent->fetch($object->fk_member);
+
+		print '<tr><td class="titlefieldmiddle">'.$langs->trans("Member").'</td><td class="valeur">';
+		print $fadherent->getNomUrl(-1);
+		print '</td></tr>';
+
 		print '<tr><td>'.$langs->trans("SubscriptionEndDate").'</td><td class="valeur">';
 		if ($fadherent->datefin) {
 			print dol_print_date($fadherent->datefin, 'day');
@@ -493,14 +507,16 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				print " ".img_warning($langs->trans("Late"));
 			}
 		} else {
+			$adht = new AdherentType($db);
+			$adht->fetch($fadherent->typeid);
 			if (!$adht->subscription) {
 				print $langs->trans("SubscriptionNotRecorded");
-				if ($fadherent->statut > 0) {
+				if ($fadherent->status > 0) {
 					print " ".img_warning($langs->trans("Late")); // Display a delay picto only if it is not a draft and is not canceled
 				}
 			} else {
 				print $langs->trans("SubscriptionNotReceived");
-				if ($fadherent->statut > 0) {
+				if ($fadherent->status > 0) {
 					print " ".img_warning($langs->trans("Late")); // Display a delay picto only if it is not a draft and is not canceled
 				}
 			}
@@ -560,7 +576,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 				}
 				if (empty($reshook)) {
-					$object->formAddObjectLine(1, $mysoc, $soc);
+					$object->formAddObjectLine(1, $mysoc, null);
 				}
 			}
 		}
@@ -587,7 +603,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		if (empty($reshook)) {
 			// Send
 			if (empty($user->socid)) {
-				print dolGetButtonAction('', $langs->trans('SendMail'), 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&token='.newToken().'&mode=init#formmailbeforetitle');
+				print dolGetButtonAction('', $langs->trans('SendMail'), 'email', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&token='.newToken().'&mode=init#formmailbeforetitle');
 			}
 
 			print dolGetButtonAction('', $langs->trans('Modify'), 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken(), '', $permissiontoadd);

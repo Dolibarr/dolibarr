@@ -102,12 +102,6 @@ class DateLibTest extends CommonClassTest
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals(3, $result);
 
-		/*
-		$result = num_between_day(1514332800, 1538265600, 0);
-		print __METHOD__." result=".$result."\n";
-		$this->assertEquals(277, $result);
-		*/
-
 		return $result;
 	}
 
@@ -192,6 +186,15 @@ class DateLibTest extends CommonClassTest
 		$langs = $this->savlangs;
 		$db = $this->savdb;
 
+
+		// Check for sunday/sunday with time changing - Sunday 25 october 2025 - Sunday 1 november 2025
+		$date1 = dol_mktime(0, 0, 0, 10, 26, 2025, 'gmt');
+		$date2 = dol_mktime(0, 0, 0, 11, 1, 2025, 'gmt');
+		$result = num_open_day($date1, $date2, 0, 1, 0, 'FR');
+		print __METHOD__." result ".$result."\n";
+		$this->assertEquals(5, $result, 'NumPublicHoliday for FR with date start before date change end inding after');
+
+
 		// With same hours - Tuesday/Wednesday jan 2013
 		$date1 = dol_mktime(0, 0, 0, 1, 1, 2013, 'gmt');	// tuesday
 		$date2 = dol_mktime(0, 0, 0, 1, 2, 2013, 'gmt');	// wednesday
@@ -231,6 +234,42 @@ class DateLibTest extends CommonClassTest
 		$result = num_open_day($date1, $date2, 'XX', 1);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals(3, $result, 'NumOpenDay for XX when saturday + sunday are working days');   // 3 opened day, 0 closes (even if country unknown)
+
+		// Define specific dates for these tests
+		$date_friday_4 = dol_mktime(0, 0, 0, 1, 4, 2013, 'gmt');   // Friday
+		$date_saturday_5 = dol_mktime(0, 0, 0, 1, 5, 2013, 'gmt'); // Saturday
+		$date_monday_7 = dol_mktime(0, 0, 0, 1, 7, 2013, 'gmt');   // Monday
+		$date_friday_11 = dol_mktime(0, 0, 0, 1, 11, 2013, 'gmt');  // Following Friday
+
+		// Case 1: Weekend Boundary (Friday morning -> Saturday morning)
+		// Expected: 1 day. No half-day deduction for end date on a non-working day.
+		// $starthalfday = 'morning', $endhalfday = 'morning' -> $halfday = 1
+		$conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY = 1;
+		$conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY = 1;
+		$result = num_open_day($date_friday_4, $date_saturday_5, 0, 1, 1, 'FR');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals(1, $result, 'Case 1: Friday morning to Saturday morning should be 1 day');
+
+		// Case 2: Full week with half-day (Friday morning -> Following Friday morning)
+		// Expected: 5.5 days.
+		// $starthalfday = 'morning', $endhalfday = 'morning' -> $halfday = 1
+		$result = num_open_day($date_friday_4, $date_friday_11, 0, 1, 1, 'FR');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals(5.5, $result, 'Case 2: Friday morning to next Friday morning should be 5.5 days');
+
+		// Case 3: Single Half-Day (Monday afternoon)
+		// Expected: 0.5 days.
+		// $starthalfday = 'afternoon' -> $halfday = -1
+		$result = num_open_day($date_monday_7, $date_monday_7, 0, 1, -1, 'FR');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals(0.5, $result, 'Case 3: A single Monday afternoon should be 0.5 days');
+
+		// Case 4: Standard Leave (Monday morning -> Friday evening)
+		// Expected: 5 days.
+		// $starthalfday = 'morning', $endhalfday = 'evening' -> $halfday = 0
+		$result = num_open_day($date_monday_7, $date_friday_11, 0, 1, 0, 'FR');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals(5, $result, 'Case 4: Monday morning to Friday evening should be 5 days');
 	}
 
 	/**
@@ -365,6 +404,15 @@ class DateLibTest extends CommonClassTest
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('Thu Jan January', $result);
 
+		// Check date output in a use timezone
+		$_SESSION['dol_tz'] = 1;
+		$_SESSION['dol_dst'] = 0;
+		$_SESSION['dol_tz_string'] = 'Europe/Paris';
+
+		$result = dol_print_date(0, '%H', 'tzuserrel', $outputlangs);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('01', $result);
+
 		return $result;
 	}
 
@@ -386,9 +434,14 @@ class DateLibTest extends CommonClassTest
 		$outputlangs->setDefaultLang('fr_FR');
 		$outputlangs->load("main");
 
-		$result = dol_print_date(dol_time_plus_duree(dol_time_plus_duree(dol_time_plus_duree(0, 1, 'm'), 1, 'y'), 1, 'd'), 'dayhour', true, $outputlangs);
+		$result = dol_print_date(dol_time_plus_duree(dol_time_plus_duree(dol_time_plus_duree(0, 1, 'm'), 1, 'y'), 1, 'd'), 'dayhour', 'gmt', $outputlangs);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('02/02/1971 00:00', $result);
+
+		// Add 4 days on a date just before daylight change
+		$result = dol_print_date(dol_time_plus_duree(dol_mktime(0, 0, 0, 10, 24, 2025, 'gmt'), 4, 'd'), 'dayhour', 'gmt', $outputlangs);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('28/10/2025 00:00', $result);
 
 		return $result;
 	}
@@ -460,6 +513,54 @@ class DateLibTest extends CommonClassTest
 		return 1;
 	}
 
+	/**
+	 * testGetFirstDayOfEachWeek
+	 *
+	 * @return int
+	 */
+	public function testGetFirstDayOfEachWeek()
+	{
+		// June 2026 (no year overlap): weeks 23 to 27
+		$TWeek = getWeekNumbersOfMonth(6, 2026);
+		$this->assertEquals(array('23' => '01', '24' => '08', '25' => '15', '26' => '22', '27' => '29'), getFirstDayOfEachWeek($TWeek, 2026));
+
+		// December 2025 ends with week 01 of 2026: week 01 starts on monday 2025-12-29
+		$TWeek = getWeekNumbersOfMonth(12, 2025);
+		$this->assertEquals(array('49' => '01', '50' => '08', '51' => '15', '52' => '22', '01' => '29'), getFirstDayOfEachWeek($TWeek, 2025));
+
+		// January 2022 starts with week 52 of 2021 (monday 2021-12-27). Week 01 of 2022 starts on monday the 3rd,
+		// week 02 on the 10th, ... (weeks 01 to 05 must not be shifted to next year)
+		$TWeek = getWeekNumbersOfMonth(1, 2022);
+		$this->assertEquals(array('52' => '27', '01' => '03', '02' => '10', '03' => '17', '04' => '24', '05' => '31'), getFirstDayOfEachWeek($TWeek, 2022));
+
+		// January 2021 starts with week 53 of 2020 (monday 2020-12-28)
+		$TWeek = getWeekNumbersOfMonth(1, 2021);
+		$this->assertEquals(array('53' => '28', '01' => '04', '02' => '11', '03' => '18', '04' => '25'), getFirstDayOfEachWeek($TWeek, 2021));
+
+		return 1;
+	}
+
+	/**
+	 * testGetLastDayOfEachWeek
+	 *
+	 * @return int
+	 */
+	public function testGetLastDayOfEachWeek()
+	{
+		// June 2026 (no year overlap): weeks 23 to 27
+		$TWeek = getWeekNumbersOfMonth(6, 2026);
+		$this->assertEquals(array('23' => '07', '24' => '14', '25' => '21', '26' => '28', '27' => '05'), getLastDayOfEachWeek($TWeek, 2026));
+
+		// December 2025 ends with week 01 of 2026: week 01 ends on sunday 2026-01-04
+		$TWeek = getWeekNumbersOfMonth(12, 2025);
+		$this->assertEquals(array('49' => '07', '50' => '14', '51' => '21', '52' => '28', '01' => '04'), getLastDayOfEachWeek($TWeek, 2025));
+
+		// January 2022 starts with week 52 of 2021: week 52 ends on sunday 2022-01-02
+		$TWeek = getWeekNumbersOfMonth(1, 2022);
+		$this->assertEquals(array('52' => '02', '01' => '09', '02' => '16', '03' => '23', '04' => '30', '05' => '06'), getLastDayOfEachWeek($TWeek, 2022));
+
+		return 1;
+	}
 
 	/**
 	 * testDolGetFirstHour

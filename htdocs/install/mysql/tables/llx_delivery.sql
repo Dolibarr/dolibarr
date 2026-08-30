@@ -24,10 +24,10 @@ create table llx_delivery
   ref                   varchar(30)  NOT NULL,			-- delivery number
   entity                integer DEFAULT 1 NOT NULL,		-- multi company id
   fk_soc                integer      NOT NULL,
-  
+
   ref_ext               varchar(255),					-- reference into an external system (not used by dolibarr)
   ref_customer          varchar(255),					-- customer number
-  
+
   date_creation         datetime,						-- date de creation
   fk_user_author        integer,						-- createur du bon de livraison
   date_valid            datetime,						-- date de validation

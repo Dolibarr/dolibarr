@@ -64,6 +64,7 @@ ShowOrder=mostrar orden
 OrdersOpened=pedidos a procesar
 NoDraftOrders=Sin borradores de órdenes
 NoOrder=Sin orden
+NoSupplierOrder=Sin orden de compra
 LastOrders=Últimos pedidos de venta %s
 LastCustomerOrders=Últimos pedidos de venta %s
 LastSupplierOrders=Últimas órdenes de compra %s

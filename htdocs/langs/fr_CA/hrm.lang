@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - hrm
-HRM_EMAIL_EXTERNAL_SERVICE=Email pour empêcher le service externe de GRH
+HRM_EMAIL_EXTERNAL_SERVICE=Courriel pour empêcher le service externe de GRH
 Establishments=Établissements
 Establishment=Établissement
 ConfirmDeleteEstablishment=Etes-vous sûr de vouloir supprimer cet établissement ?
@@ -46,12 +46,11 @@ DateLastEval=Date de la dernière évaluation
 NoEval=Aucune évaluation n'a été effectuée pour cet employé
 HowManyUserWithThisMaxNote=Nombre d'utilisateurs avec ce rang
 HighestRank=Rang le plus élevé
+ExpectedRank=rang attendu
 ActionsOnJob=Événements sur ce poste
 VacantPosition=poste vacant
 VacantCheckboxHelper=Cocher cette option affichera les postes non pourvus (poste vacant)
 SaveLevelSkill =Niveau(x) de compétence(s) sauvegardé(s)
 EvaluationsExtraFields=Attributs complémentaires (Évaluations de compétences)
-NeedBusinessTravels=Besoin de voyages d'affaires
-NoDescription=Aucune description
 TheJobProfileHasNoSkillsDefinedFixBefore=Le profil de poste évalué de cet employé ne comporte aucune compétence définie. Veuillez ajouter une ou plusieurs compétences, puis supprimer et relancer l'évaluation.
 SkillNotRequired=Compétence non requise

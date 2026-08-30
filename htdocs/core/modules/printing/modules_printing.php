@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2014-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2014-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,6 @@
  *      \ingroup    printing
  *      \brief      File with parent class of printing modules
  */
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 
@@ -46,7 +45,6 @@ class PrintingDriver
 	 * @var string[] Error codes (or messages)
 	 */
 	public $errors = array();
-
 
 	/**
 	 * @var string Name

@@ -1,0 +1,54 @@
+# Dolibarr language file - Source file is en_US - subtotal
+
+#
+# Global
+#
+Subtotal=Részösszegek
+SubTotalModuleDesc=Részösszeg és felirat sorok bizonyos dokumentumokhoz
+#
+# Admin
+#
+SubtotalSetup=Részösszegek modul beállítása
+MaxSubtotalLevel=Maximális szint
+SubtotalLineBackColor=%s szintű sorok háttérszíne
+NotSupportedByAllPDF=Újabb PDF fájlokkal működni fog, de régebbiekkel nem %s
+
+#
+# Card
+#
+AddTitleLine=Felirat sor hozzáadása
+AddSubtotalLine=Részösszeg sor hozzáadása
+TitleNeedDesc=Érvényes leírást kell megadni felirat sor létrehozásához.
+TitleAddedLevelTooHigh=Hozzáadott felirat sor szintje túl magas (helyette %s szinttel lett hozzáadva).
+TitleEditedLevelTooHigh=Módosított felriat sor szintje túl magas (helyette %s szinttel lett módosítva).
+DeleteSubtotalLine=Részösszeg sor törlése
+ConfirmDeleteSubtotalLine=Biztos törölni akarja ezt a részösszeg sort?
+DeleteTitleLine=Felirat sor törlése
+ConfirmDeleteTitleLine=Biztos törölni akarja ezt a felirat sort?
+DeleteCorrespondingSubtotalLine=Törölni szeretné a hozzá tartozó részösszeg sort?
+SubtotalLevel=%s. szint
+SubtotalLineDesc=Sor leírás
+SubtotalLineLevel=Sor szint
+ShowUPOnPDF=Egységár megjelenítése PDF-en
+ShowTotalExludingVATOnPDF=Nettó végösszeg megjelenítése PDF-en
+ForcePageBreak=Sortörés kényszerítése a felirat előtt
+NoTitleError=Nincs felirat sor vagy már az összes hozzá van rendelve részösszeg sorhoz
+CorrespondingTitleLine=Hozzá tartozó felirat sor
+SelectVATRate=Válasszon ÁFA-kulcsot
+EnterRemisePercent=Kedvezmény százalék megadása
+ApplyVATForBlock=ÁFA alkalmazása erre a blokkra
+ApplyDiscountForBlock=Kedvezmény alkalmazása erre a blokkra
+TitleUnderSameLevelSTLine=Azonos szintű feliratnak az előző felirat részösszeg sora alatt kell lennie.
+TitleUnderSameLevelOrGreater=A feliratnak az azonos vagy magasabb szintű felirat alatt kell lennie.
+TitleAfterStLineOfSameLevelTitle=A feliratnak az előző felirat részösszeg sora alatt kell lennie.
+PreviousTitleLevelTooHigh=Az előző felirat két vagy több szinttel magasabb, mint az áthelyezett sor.
+STLineUnderCorrespondingTitleDesc=A részösszeg sornak egy azonos szintű és azonos leírású felirat alatt kell lennie.
+STLineUnderCorrespondingTitle=A részösszeg sornak egy azonos szintű és azonos leírású felirat alatt kell lennie.
+STLineUnderTitle=A részösszeg sornak a felirata alatt kell lennie
+UnsupportedModuleError=Részösszeg sort nem lehet hozzáadni nem támogatott modulhoz
+CorrespondingTitleNotFound=A hozzá tartozó felirat nem található
+
+#
+# PDF
+#
+SubtotalOf=%s részösszege:

@@ -7,10 +7,11 @@
  * Copyright (C) 2014-2016	Ferran Marcet				<fmarcet@2byte.es>
  * Copyright (C) 2014		Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2014		Florian Henry				<florian.henry@open-concept.pro>
- * Copyright (C) 2018		Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2020		Maxime DEMAREST				<maxime@indelog.fr>
  * Copyright (C) 2021-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2024		Yoan Mollard				<ymollard@users.noreply.github.com>
+ * Copyright (C) 2026		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,11 +56,11 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'bills', 'donation', 'salaries', 'accountancy', 'loan'));
 
-$date_startmonth = GETPOSTINT('date_startmonth');
 $date_startday = GETPOSTINT('date_startday');
+$date_startmonth = GETPOSTINT('date_startmonth');
 $date_startyear = GETPOSTINT('date_startyear');
-$date_endmonth = GETPOSTINT('date_endmonth');
 $date_endday = GETPOSTINT('date_endday');
+$date_endmonth = GETPOSTINT('date_endmonth');
 $date_endyear = GETPOSTINT('date_endyear');
 $showaccountdetail = GETPOST('showaccountdetail', 'aZ09') ? GETPOST('showaccountdetail', 'aZ09') : 'yes';
 
@@ -83,16 +84,16 @@ if (!$sortorder) {
 // Date range
 $year = GETPOSTINT('year');		// this is used for navigation previous/next. It is the last year to show in filter
 if (empty($year)) {
-	$year_current = dol_print_date(dol_now(), "%Y");
-	$month_current = dol_print_date(dol_now(), "%m");
+	$year_current = (int) dol_print_date(dol_now(), "%Y");
+	$month_current = (int) dol_print_date(dol_now(), "%m");
 	$year_start = $year_current;
 } else {
 	$year_current = $year;
-	$month_current = dol_print_date(dol_now(), "%m");
+	$month_current = (int) dol_print_date(dol_now(), "%m");
 	$year_start = $year;
 }
-$date_start = dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_startyear);
-$date_end = dol_mktime(23, 59, 59, $date_endmonth, $date_endday, $date_endyear);
+$date_start = dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_startyear, 'tzserver');
+$date_end = dol_mktime(23, 59, 59, $date_endmonth, $date_endday, $date_endyear, 'tzserver');
 
 // We define date_start and date_end
 if (empty($date_start) || empty($date_end)) { // We define date_start and date_end
@@ -107,10 +108,7 @@ if (empty($date_start) || empty($date_end)) { // We define date_start and date_e
 				$year_start--;
 				$year_end--;
 			}
-			if (getDolGlobalInt('SOCIETE_FISCAL_MONTH_START') > 1) {
-				$month_end = $month_start - 1;
-				$year_end = $year_start + 1;
-			}
+			$month_end = $month_start - 1;
 			if ($month_end < 1) {
 				$month_end = 12;
 			}
@@ -147,11 +145,10 @@ $nbofyear = ($year_end - $year_start) + 1;
 //var_dump("year_start=".$year_start." year_end=".$year_end." nbofyear=".$nbofyear." date_start=".dol_print_date($date_start, 'dayhour')." date_end=".dol_print_date($date_end, 'dayhour'));
 
 // Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES' or 'BOOKKEEPING')
-$modecompta = getDolGlobalString('ACCOUNTING_MODE');
-if (isModEnabled('accounting')) {
-	// $modecompta = 'BOOKKEEPING';
-	$modecompta = 'CREANCES-DETTES';
-}
+$modecompta = getDolGlobalString('ACCOUNTING_MODE', 'CREANCES-DETTES');
+/*if (isModEnabled('accounting')) {
+	$modecompta = 'BOOKKEEPING';
+}*/
 if (GETPOST("modecompta", 'alpha')) {
 	$modecompta = GETPOST("modecompta", 'alpha');
 }
@@ -189,26 +186,41 @@ $total_ttc = 0;
 $name = $langs->trans("ReportInOut").', '.$langs->trans("ByProjects");
 $period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 $builddate = dol_now();
+$description = '';
 
 // Display report header
 if ($modecompta == "CREANCES-DETTES") {
 	$name = $langs->trans("ReportInOut").', '.$langs->trans("ByProjects");
 	$period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 	$periodlink = ($year_start ? "<a href='".$_SERVER["PHP_SELF"]."?year=".($tmps['year'] - 1)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($tmps['year'] + 1)."&modecompta=".$modecompta."'>".img_next()."</a>" : "");
+	$description = $langs->trans("RulesAmountWithTaxExcluded");
+	$description .= '<br>'.$langs->trans("RulesResultDue");
+	if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
+		$description .= "<br>".$langs->trans("DepositsAreNotIncluded");
+	} else {
+		$description .= "<br>".$langs->trans("DepositsAreIncluded");
+	}
+	if (getDolGlobalString('FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS')) {
+		$description .= $langs->trans("SupplierDepositsAreNotIncluded");
+	}
 	$builddate = dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
 } elseif ($modecompta == "RECETTES-DEPENSES") {
 	$name = $langs->trans("ReportInOut").', '.$langs->trans("ByProjects");
 	$period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 	$periodlink = ($year_start ? "<a href='".$_SERVER["PHP_SELF"]."?year=".($tmps['year'] - 1)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($tmps['year'] + 1)."&modecompta=".$modecompta."'>".img_next()."</a>" : "");
+	$description = $langs->trans("RulesAmountWithTaxIncluded");
+	$description .= '<br>'.$langs->trans("RulesResultInOut");
 	$builddate = dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
 } elseif ($modecompta == "BOOKKEEPING") {
 	$name = $langs->trans("ReportInOut").', '.$langs->trans("ByProjects");
 	$period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
-	$arraylist = array('no'=>$langs->trans("CustomerCode"), 'yes'=>$langs->trans("AccountWithNonZeroValues"), 'all'=>$langs->trans("All"));
+	$arraylist = array('no' => $langs->trans("CustomerCode"), 'yes' => $langs->trans("AccountWithNonZeroValues"), 'all' => $langs->trans("All"));
 	$period .= ' &nbsp; &nbsp; <span class="opacitymedium">'.$langs->trans("DetailBy").'</span> '.$form->selectarray('showaccountdetail', $arraylist, $showaccountdetail, 0);
 	$periodlink = ($year_start ? "<a href='".$_SERVER["PHP_SELF"]."?year=".($tmps['year'] - 1)."&modecompta=".$modecompta."&showaccountdetail=".$showaccountdetail."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($tmps['year'] + 1)."&modecompta=".$modecompta."&showaccountdetail=".$showaccountdetail."'>".img_next()."</a>" : "");
+	$description = $langs->trans("RulesAmountOnInOutBookkeepingRecord");
+	$description .= ' ('.$langs->trans("SeePageForSetup", DOL_URL_ROOT.'/accountancy/admin/account.php?mainmenu=accountancy&leftmenu=accountancy_admin', $langs->transnoentitiesnoconv("Accountancy").' / '.$langs->transnoentitiesnoconv("Setup").' / '.$langs->transnoentitiesnoconv("Chartofaccounts")).')';
 	$builddate = dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
 }
@@ -232,7 +244,13 @@ if (isModEnabled('accounting')) {
 }
 $calcmode .= '</label>';
 
-report_header($name, '', $period, $periodlink, "", $builddate, $exportlink, array('modecompta'=>$modecompta, 'showaccountdetail'=>$showaccountdetail), $calcmode);
+report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink, array('modecompta' => $modecompta, 'showaccountdetail' => $showaccountdetail), $calcmode);
+
+/*
+if (isModEnabled('accounting') && $modecompta != 'BOOKKEEPING') {
+	print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, '1');
+}
+*/
 
 // Show report array
 $param = '&modecompta='.urlencode($modecompta).'&showaccountdetail='.urlencode($showaccountdetail);
@@ -288,7 +306,8 @@ $total_ht_outcome = $total_ttc_outcome = $total_ht_income = $total_ttc_income = 
 
 if ($modecompta == 'BOOKKEEPING') {
 	echo "<p>BOOKKEEPING mode not implemented for this report type by project.</p>";
-} else {
+}
+if (isModEnabled('invoice') && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES")) {
 	/*
 	 * Customer invoices
 	 */
@@ -296,7 +315,7 @@ if ($modecompta == 'BOOKKEEPING') {
 
 	$sql = '';
 	if ($modecompta == 'CREANCES-DETTES') {
-		$sql = "SELECT p.rowid as rowid, p.ref as project_name, sum(f.total_ht) as amount_ht, sum(f.total_ttc) as amount_ttc";
+		$sql = "SELECT p.rowid as rowid, p.ref as project_ref, sum(f.total_ht) as amount_ht, sum(f.total_ttc) as amount_ttc";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 		$sql .= ", ".MAIN_DB_PREFIX."facture as f";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON f.fk_projet = p.rowid";
@@ -308,16 +327,19 @@ if ($modecompta == 'BOOKKEEPING') {
 		} else {
 			$sql .= " AND f.type IN (0,1,2,3,5)";
 		}
-		if (!empty($date_start) && !empty($date_end)) {
-			$sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
+		if (!empty($date_start)) {
+			$sql .= " AND f.datef >= '".$db->idate($date_start)."'";
+		}
+		if (!empty($date_end)) {
+			$sql .= " AND f.datef <= '".$db->idate($date_end)."'";
 		}
 		if ($socid) {
 			$sql .= " AND f.fk_soc = ".((int) $socid);
 		}
-		$sql .= " GROUP BY p.rowid, project_name";
+		$sql .= " GROUP BY p.rowid, project_ref";
 		$sql .= $db->order($sortfield, $sortorder);
 	} elseif ($modecompta == 'RECETTES-DEPENSES') {
-		$sql = "SELECT p.rowid as rowid, p.ref as project_name, sum(pf.amount) as amount_ttc";
+		$sql = "SELECT p.rowid as rowid, p.ref as project_ref, sum(pf.amount) as amount_ttc";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 		$sql .= ", ".MAIN_DB_PREFIX."facture as f";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON f.fk_projet = p.rowid";
@@ -327,13 +349,16 @@ if ($modecompta == 'BOOKKEEPING') {
 		$sql .= " AND pf.fk_facture = f.rowid";
 		$sql .= " AND f.fk_soc = s.rowid";
 		$sql .= " AND f.entity IN (".getEntity('invoice').")";
+		if (!empty($date_start)) {
+			$sql .= " AND pa.datep >= '".$db->idate($date_start)."'";
+		}
 		if (!empty($date_start) && !empty($date_end)) {
-			$sql .= " AND pa.datep >= '".$db->idate($date_start)."' AND pa.datep <= '".$db->idate($date_end)."'";
+			$sql .= " AND pa.datep <= '".$db->idate($date_end)."'";
 		}
 		if ($socid) {
 			$sql .= " AND f.fk_soc = ".((int) $socid);
 		}
-		$sql .= " GROUP BY p.rowid, project_name";
+		$sql .= " GROUP BY p.rowid, p.ref";
 		$sql .= $db->order($sortfield, $sortorder);
 	}
 
@@ -347,16 +372,17 @@ if ($modecompta == 'BOOKKEEPING') {
 			echo '<tr class="oddeven">';
 			echo '<td>&nbsp;</td>';
 			echo "<td>".$langs->trans("Project")." ";
-			if (!empty($objp->project_name)) {
-				echo ' <a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$objp->rowid.'">'.$objp->project_name.'</a>';
+			if (!empty($objp->project_ref)) {
+				echo ' <a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$objp->rowid.'">'.$objp->project_ref.'</a>';
 			} else {
 				echo $langs->trans("None");
 			}
-			$detailed_list_url = '';
-			//$detailed_list_url .= '?search_project_ref='.urlencode($search_project_ref);
-			$detailed_list_url .= empty($objp->project_name)? "!*": $objp->project_name;
-			$detailed_list_url .= $search_date_url;
-			echo ' (<a href="'.DOL_URL_ROOT.'/compta/facture/list.php'.$detailed_list_url.'">'.$langs->trans("DetailedListLowercase")."</a>)\n";
+			if ($modecompta == 'CREANCES-DETTES') {	// In mode payment, we can't filter on date of invoice that is different than date of payment.
+				$detailed_list_url = '';
+				$detailed_list_url .= empty($objp->project_ref) ? "?search_project_ref=^$" : "?search_project_ref=".urlencode($objp->project_ref);
+				$detailed_list_url .= $search_date_url;
+				echo ' (<a href="'.DOL_URL_ROOT.'/compta/facture/list.php'.$detailed_list_url.'">'.$langs->trans("DetailedListLowercase")."</a>)\n";
+			}
 			echo "</td>\n";
 			echo '<td class="right">';
 			if ($modecompta == 'CREANCES-DETTES') {
@@ -399,42 +425,42 @@ if ($modecompta == 'BOOKKEEPING') {
 	/*
 	 * Donations
 	 */
-
 	if (isModEnabled('don')) {
 		echo '<tr class="trforbreak"><td colspan="4">'.$langs->trans("Donations").'</td></tr>';
 
-		if ($modecompta == 'CREANCES-DETTES' || $modecompta == 'RECETTES-DEPENSES') {
-			if ($modecompta == 'CREANCES-DETTES') {
-				$sql = "SELECT p.rowid as rowid, p.ref as project_name, sum(d.amount) as amount";
-				$sql .= " FROM ".MAIN_DB_PREFIX."don as d";
-				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON d.fk_projet = p.rowid";
-				$sql .= " WHERE d.entity IN (".getEntity('donation').")";
-				$sql .= " AND d.fk_statut in (1,2)";
-			} else {
-				$sql = "SELECT p.rowid as rowid, p.ref as project_name, sum(d.amount) as amount";
-				$sql .= " FROM ".MAIN_DB_PREFIX."don as d";
-				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."payment_donation as pe ON pe.fk_donation = d.rowid";
-				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON d.fk_projet = p.rowid";
-				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON pe.fk_typepayment = c.id";
-				$sql .= " WHERE d.entity IN (".getEntity('donation').")";
-				$sql .= " AND d.fk_statut >= 2";
-			}
-			if (!empty($date_start) && !empty($date_end)) {
-				$sql .= " AND d.datedon >= '".$db->idate($date_start)."' AND d.datedon <= '".$db->idate($date_end)."'";
-			}
+		if ($modecompta == 'CREANCES-DETTES') {
+			$sql = "SELECT p.rowid as rowid, p.ref as project_ref, sum(d.amount) as amount";
+			$sql .= " FROM ".MAIN_DB_PREFIX."don as d";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON d.fk_projet = p.rowid";
+			$sql .= " WHERE d.entity IN (".getEntity('donation').")";
+			$sql .= " AND d.fk_statut in (1,2)";
+		} else {
+			$sql = "SELECT p.rowid as rowid, p.ref as project_ref, sum(d.amount) as amount";
+			$sql .= " FROM ".MAIN_DB_PREFIX."don as d";
+			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."payment_donation as pe ON pe.fk_donation = d.rowid";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON d.fk_projet = p.rowid";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON pe.fk_typepayment = c.id";
+			$sql .= " WHERE d.entity IN (".getEntity('donation').")";
+			$sql .= " AND d.fk_statut >= 2";
+		}
+		if (!empty($date_start)) {
+			$sql .= " AND d.datedon >= '".$db->idate($date_start)."'";
+		}
+		if (!empty($date_end)) {
+			$sql .= " AND d.datedon <= '".$db->idate($date_end)."'";
 		}
 		$sql .= " GROUP BY p.rowid, p.ref";
-		$newsortfield = $sortfield;
-		if ($newsortfield == 's.nom, s.rowid') {
-			$newsortfield = 'p.ref';
+		$sqlNewSortField = $sortfield;  // @phan-suppress-current-line SqlInjection
+		if ($sqlNewSortField == 's.nom, s.rowid') {
+			$sqlNewSortField = 'p.ref';
 		}
-		if ($newsortfield == 'amount_ht') {
-			$newsortfield = 'amount';
+		if ($sqlNewSortField == 'amount_ht') {
+			$sqlNewSortField = 'amount';
 		}
-		if ($newsortfield == 'amount_ttc') {
-			$newsortfield = 'amount';
+		if ($sqlNewSortField == 'amount_ttc') {
+			$sqlNewSortField = 'amount';
 		}
-		$sql .= $db->order($newsortfield, $sortorder);
+		$sql .= $db->order($sqlNewSortField, $sortorder);
 
 		dol_syslog("by project, get dunning");
 		$result = $db->query($sql);
@@ -454,8 +480,8 @@ if ($modecompta == 'BOOKKEEPING') {
 
 					echo '<tr class="oddeven">';
 					echo '<td>&nbsp;</td>';
-					$project_name = empty($obj->project_name)? $langs->trans("None"): $obj->project_name;
-					echo "<td>".$langs->trans("Project")." <a href=\"".DOL_URL_ROOT."/projet/card.php?id=".$obj->ref."\">".$project_name."</a></td>\n";
+					$project_ref = empty($obj->project_ref) ? $langs->trans("None") : $obj->project_ref;
+					echo "<td>".$langs->trans("Project").' <a href="'.DOL_URL_ROOT."/projet/card.php?id=".((int) $obj->rowid).'">'.$project_ref."</a></td>\n";
 
 					echo '<td class="right">';
 					if ($modecompta == 'CREANCES-DETTES') {
@@ -494,7 +520,7 @@ if ($modecompta == 'BOOKKEEPING') {
 	 * Suppliers invoices
 	 */
 	if ($modecompta == 'CREANCES-DETTES') {
-		$sql = "SELECT p.rowid as rowid, p.ref as project_name, sum(f.total_ht) as amount_ht, sum(f.total_ttc) as amount_ttc";
+		$sql = "SELECT p.rowid as rowid, p.ref as project_ref, sum(f.total_ht) as amount_ht, sum(f.total_ttc) as amount_ttc";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 		$sql .= ", ".MAIN_DB_PREFIX."facture_fourn as f";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON f.fk_projet = p.rowid";
@@ -505,19 +531,25 @@ if ($modecompta == 'BOOKKEEPING') {
 		} else {
 			$sql .= " AND f.type IN (0,1,2,3)";
 		}
-		if (!empty($date_start) && !empty($date_end)) {
-			$sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
+		if (!empty($date_start)) {
+			$sql .= " AND f.datef >= '".$db->idate($date_start)."'";
+		}
+		if (!empty($date_end)) {
+			$sql .= " AND f.datef <= '".$db->idate($date_end)."'";
 		}
 	} elseif ($modecompta == 'RECETTES-DEPENSES') {
-		$sql = "SELECT pr.rowid as rowid, pr.ref as project_name, sum(pf.amount) as amount_ttc";
+		$sql = "SELECT pr.rowid as rowid, pr.ref as project_ref, sum(pf.amount) as amount_ttc";
 		$sql .= " FROM ".MAIN_DB_PREFIX."paiementfourn as p";
 		$sql .= ", ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture_fourn as f ON pf.fk_facturefourn = f.rowid";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as pr ON f.fk_projet = pr.rowid";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON f.fk_soc = s.rowid";
 		$sql .= " WHERE p.rowid = pf.fk_paiementfourn ";
-		if (!empty($date_start) && !empty($date_end)) {
-			$sql .= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
+		if (!empty($date_start)) {
+			$sql .= " AND p.datep >= '".$db->idate($date_start)."'";
+		}
+		if (!empty($date_end)) {
+			$sql .= " AND p.datep <= '".$db->idate($date_end)."'";
 		}
 	}
 
@@ -525,7 +557,7 @@ if ($modecompta == 'BOOKKEEPING') {
 	if ($socid) {
 		$sql .= " AND f.fk_soc = ".((int) $socid);
 	}
-	$sql .= " GROUP BY rowid, project_name";
+	$sql .= " GROUP BY rowid, project_ref";
 	$sql .= $db->order($sortfield, $sortorder);
 
 	echo '<tr class="trforbreak"><td colspan="4">'.$langs->trans("SuppliersInvoices").'</td></tr>';
@@ -545,14 +577,14 @@ if ($modecompta == 'BOOKKEEPING') {
 				echo '<td>&nbsp;</td>';
 
 				echo "<td>".$langs->trans("Project")." ";
-				if (!empty($objp->project_name)) {
-					echo ' <a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$objp->rowid.'">'.$objp->project_name.'</a>';
+				if (!empty($objp->project_ref)) {
+					echo ' <a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$objp->rowid.'">'.$objp->project_ref.'</a>';
 				} else {
 					echo $langs->trans("None");
 				}
 				$detailed_list_url = '';
 				//$detailed_list_url .= '?search_project='.urlencode($search_project_ref);
-				$detailed_list_url .= empty($objp->project_name)? "!*": $objp->project_name;
+				$detailed_list_url .= empty($objp->project_ref) ? "?search_project_ref=^$" : '?search_project_ref='.urlencode($objp->project_ref);
 				$detailed_list_url .= $search_date_url;
 				echo ' (<a href="'.DOL_URL_ROOT.'/fourn/facture/list.php'.$detailed_list_url.'">'.$langs->trans("DetailedListLowercase")."</a>)\n";
 				echo "</td>\n";
@@ -601,50 +633,53 @@ if ($modecompta == 'BOOKKEEPING') {
 	/*
 	 * Salaries
 	 */
-
 	if (isModEnabled('salaries')) {
 		echo '<tr class="trforbreak"><td colspan="4">'.$langs->trans("Salaries").'</td></tr>';
 
-		if ($modecompta == 'CREANCES-DETTES' || $modecompta == 'RECETTES-DEPENSES') {
-			if ($modecompta == 'CREANCES-DETTES') {
-				$column = 's.dateep';	// We use the date of end of period of salary
+		if ($modecompta == 'CREANCES-DETTES') {
+			$column = 's.dateep';	// We use the date of end of period of salary
 
-				$sql = "SELECT p.rowid as rowid, p.ref as project_name, sum(s.amount) as amount";
-				$sql .= " FROM ".MAIN_DB_PREFIX."salary as s";
-				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = s.fk_user";
-				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON s.fk_projet = p.rowid";
-				$sql .= " WHERE s.entity IN (".getEntity('salary').")";
-				if (!empty($date_start) && !empty($date_end)) {
-					$sql .= " AND ".$db->sanitize($column)." >= '".$db->idate($date_start)."' AND $column <= '".$db->idate($date_end)."'";
-				}
-			} else {
-				$column = 'ps.datep';
+			$sql = "SELECT p.rowid as rowid, p.ref as project_ref, sum(s.amount) as amount";
+			$sql .= " FROM ".MAIN_DB_PREFIX."salary as s";
+			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = s.fk_user";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON s.fk_projet = p.rowid";
+			$sql .= " WHERE s.entity IN (".getEntity('salary').")";
+			if (!empty($date_start)) {
+				$sql .= " AND ".$db->sanitize($column)." >= '".$db->idate($date_start)."'";
+			}
+			if (!empty($date_end)) {
+				$sql .= " AND ".$db->sanitize($column)." <= '".$db->idate($date_end)."'";
+			}
+		} else {
+			$column = 'ps.datep';
 
-				$sql = "SELECT pr.rowid as rowid, pr.ref as project_name, sum(ps.amount) as amount";
-				$sql .= " FROM ".MAIN_DB_PREFIX."payment_salary as ps";
-				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."salary as s ON s.rowid = ps.fk_salary";
-				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = s.fk_user";
-				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as pr ON s.fk_projet = pr.rowid";
-				$sql .= " WHERE ps.entity IN (".getEntity('payment_salary').")";
-				if (!empty($date_start) && !empty($date_end)) {
-					$sql .= " AND ".$db->sanitize($column)." >= '".$db->idate($date_start)."' AND $column <= '".$db->idate($date_end)."'";
-				}
+			$sql = "SELECT pr.rowid as rowid, pr.ref as project_ref, sum(ps.amount) as amount";
+			$sql .= " FROM ".MAIN_DB_PREFIX."payment_salary as ps";
+			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."salary as s ON s.rowid = ps.fk_salary";
+			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = s.fk_user";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as pr ON s.fk_projet = pr.rowid";
+			$sql .= " WHERE ps.entity IN (".getEntity('payment_salary').")";
+			if (!empty($date_start)) {
+				$sql .= " AND ".$db->sanitize($column)." >= '".$db->idate($date_start)."'";
 			}
-
-
-			$sql .= " GROUP BY rowid, project_name";
-			$newsortfield = $sortfield;
-			if ($newsortfield == 's.nom, s.rowid') {
-				$newsortfield = 'project_name';
+			if (!empty($date_end)) {
+				$sql .= " AND ".$db->sanitize($column)." <= '".$db->idate($date_end)."'";
 			}
-			if ($newsortfield == 'amount_ht') {
-				$newsortfield = 'amount';
-			}
-			if ($newsortfield == 'amount_ttc') {
-				$newsortfield = 'amount';
-			}
-			$sql .= $db->order($newsortfield, $sortorder);
 		}
+
+
+		$sql .= " GROUP BY rowid, project_ref";
+		$sqlNewSortField = $sortfield;  // @phan-suppress-current-line SqlInjection
+		if ($sqlNewSortField == 's.nom, s.rowid') {
+			$sqlNewSortField = 'project_ref';
+		}
+		if ($sqlNewSortField == 'amount_ht') {
+			$sqlNewSortField = 'amount';
+		}
+		if ($sqlNewSortField == 'amount_ttc') {
+			$sqlNewSortField = 'amount';
+		}
+		$sql .= $db->order($sqlNewSortField, $sortorder);
 
 		dol_syslog("by project, get salaries");
 		$result = $db->query($sql);
@@ -657,7 +692,7 @@ if ($modecompta == 'BOOKKEEPING') {
 				while ($i < $num) {
 					$obj = $db->fetch_object($result);
 
-					$project_name = !empty($obj->project_name) ? $obj->project_name : $langs->trans("None");
+					$project_ref = !empty($obj->project_ref) ? $obj->project_ref : $langs->trans("None");
 
 					$total_ht -= $obj->amount;
 					$total_ttc -= $obj->amount;
@@ -666,8 +701,8 @@ if ($modecompta == 'BOOKKEEPING') {
 
 					echo '<tr class="oddeven"><td>&nbsp;</td>';
 					echo "<td>".$langs->trans("Project")." ";
-					if (!empty($objp->project_name)) {
-						echo ' <a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$objp->rowid.'">'.$objp->project_name.'</a>';
+					if (!empty($objp->project_ref)) {
+						echo ' <a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$objp->rowid.'">'.$objp->project_ref.'</a>';
 					} else {
 						echo $langs->trans("None");
 					}
@@ -710,42 +745,41 @@ if ($modecompta == 'BOOKKEEPING') {
 	/*
 	 * Expense report
 	 */
-
 	if (isModEnabled('expensereport')) {
-		if ($modecompta == 'CREANCES-DETTES' || $modecompta == 'RECETTES-DEPENSES') {
-			$langs->load('trips');
-			if ($modecompta == 'CREANCES-DETTES') {
-				$sql = "SELECT ed.rowid as rowid, ed.fk_projet, p.rowid as project_rowid, p.ref as project_name, sum(ed.total_ht) as amount_ht, sum(ed.total_ttc) as amount_ttc";
-				$sql .= " FROM ".MAIN_DB_PREFIX."expensereport_det as ed";
-				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."expensereport as e ON ed.fk_expensereport = e.rowid";
-				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON ed.fk_projet = p.rowid";
-				$sql .= " WHERE e.entity IN (".getEntity('expensereport').")";
-				$sql .= " AND e.fk_statut >= 5";
+		$langs->load('trips');
+		if ($modecompta == 'CREANCES-DETTES') {
+			$sql = "SELECT ed.rowid as rowid, ed.fk_projet, p.rowid as project_rowid, p.ref as project_ref, sum(ed.total_ht) as amount_ht, sum(ed.total_ttc) as amount_ttc";
+			$sql .= " FROM ".MAIN_DB_PREFIX."expensereport_det as ed";
+			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."expensereport as e ON ed.fk_expensereport = e.rowid";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON ed.fk_projet = p.rowid";
+			$sql .= " WHERE e.entity IN (".getEntity('expensereport').")";
+			$sql .= " AND e.fk_statut >= 5";
 
-				$column = 'e.date_valid';
-			} else {
-				$sql = "SELECT ed.rowid as rowid, ed.fk_projet, p.rowid as project_rowid, p.ref as project_name, sum(DISTINCT pe.amount) as amount_ht, sum(DISTINCT pe.amount) as amount_ttc";
-				$sql .= " FROM ".MAIN_DB_PREFIX."expensereport_det as ed";
-				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."expensereport as e ON ed.fk_expensereport = e.rowid";
-				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."payment_expensereport as pe ON pe.fk_expensereport = e.rowid";
-				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON ed.fk_projet = p.rowid";
-				$sql .= " WHERE e.entity IN (".getEntity('expensereport').")";
-				$sql .= " AND e.fk_statut >= 5";
+			$column = 'e.date_valid';
+		} else {
+			$sql = "SELECT ed.rowid as rowid, ed.fk_projet, p.rowid as project_rowid, p.ref as project_ref, sum(DISTINCT pe.amount) as amount_ht, sum(DISTINCT pe.amount) as amount_ttc";
+			$sql .= " FROM ".MAIN_DB_PREFIX."expensereport_det as ed";
+			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."expensereport as e ON ed.fk_expensereport = e.rowid";
+			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."payment_expensereport as pe ON pe.fk_expensereport = e.rowid";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON ed.fk_projet = p.rowid";
+			$sql .= " WHERE e.entity IN (".getEntity('expensereport').")";
+			$sql .= " AND e.fk_statut >= 5";
 
-				$column = 'pe.datep';
-			}
-
-			if (!empty($date_start) && !empty($date_end)) {
-				$sql .= " AND ".$db->sanitize($column)." >= '".$db->idate($date_start)."' AND $column <= '".$db->idate($date_end)."'";
-			}
-
-			$sql .= " GROUP BY ed.rowid, ed.fk_projet, p.rowid, p.ref";
-			$newsortfield = $sortfield;
-			if ($newsortfield == 's.nom, s.rowid') {
-				$newsortfield = 'project_name';
-			}
-			$sql .= $db->order($newsortfield, $sortorder);
+			$column = 'pe.datep';
 		}
+		if (!empty($date_start)) {
+			$sql .= " AND ".$db->sanitize($column)." >= '".$db->idate($date_start)."'";
+		}
+		if (!empty($date_end)) {
+			$sql .= " AND ".$db->sanitize($column)." <= '".$db->idate($date_end)."'";
+		}
+
+		$sql .= " GROUP BY ed.rowid, ed.fk_projet, p.rowid, p.ref";
+		$sqlNewSortField = $sortfield;  // @phan-suppress-current-line SqlInjection
+		if ($sqlNewSortField == 's.nom, s.rowid') {
+			$sqlNewSortField = 'project_ref';
+		}
+		$sql .= $db->order($sqlNewSortField, $sortorder);
 
 		echo '<tr class="trforbreak"><td colspan="4">'.$langs->trans("ExpenseReport").'</td></tr>';
 
@@ -757,7 +791,7 @@ if ($modecompta == 'BOOKKEEPING') {
 			$num = $db->num_rows($result);
 			if ($num) {
 				while ($obj = $db->fetch_object($result)) {
-					$project_name = !empty($obj->project_name) ? $obj->project_name : $langs->trans("None");
+					$project_ref = !empty($obj->project_ref) ? $obj->project_ref : $langs->trans("None");
 
 					$total_ht -= $obj->amount_ht;
 					$total_ttc -= $obj->amount_ttc;
@@ -768,8 +802,8 @@ if ($modecompta == 'BOOKKEEPING') {
 					echo '<td>&nbsp;</td>';
 
 					echo "<td>".$langs->trans("Project")." ";
-					if (!empty($obj->project_name)) {
-						echo ' <a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$obj->project_rowid.'">'.$obj->project_name.'</a>';
+					if (!empty($obj->project_ref)) {
+						echo ' <a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$obj->project_rowid.'">'.$obj->project_ref.'</a>';
 					} else {
 						echo $langs->trans("None");
 					}
@@ -818,22 +852,24 @@ if ($modecompta == 'BOOKKEEPING') {
 	 * Various Payments
 	 */
 	//$conf->global->ACCOUNTING_REPORTS_INCLUDE_VARPAY = 1;
-
-	if (getDolGlobalString('ACCOUNTING_REPORTS_INCLUDE_VARPAY') && isModEnabled("bank") && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES")) {
+	if (getDolGlobalString('ACCOUNTING_REPORTS_INCLUDE_VARPAY') && isModEnabled("bank")) {
 		$subtotal_ht = 0;
 		$subtotal_ttc = 0;
 
 		echo '<tr class="trforbreak"><td colspan="4">'.$langs->trans("VariousPayment").'</td></tr>';
 
 		// Debit
-		$sql = "SELECT p.rowid as rowid, p.ref as project_name, SUM(p.amount) AS amount FROM ".MAIN_DB_PREFIX."payment_various as p";
+		$sql = "SELECT p.rowid as rowid, p.ref as project_ref, SUM(p.amount) AS amount FROM ".MAIN_DB_PREFIX."payment_various as p";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as pj ON p.fk_projet = pj.rowid";
 		$sql .= ' WHERE 1 = 1';
-		if (!empty($date_start) && !empty($date_end)) {
-			$sql .= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
+		if (!empty($date_start)) {
+			$sql .= " AND p.datep >= '".$db->idate($date_start)."'";
 		}
-		$sql .= ' GROUP BY p.rowid, project_name';
-		$sql .= ' ORDER BY project_name';
+		if (!empty($date_end)) {
+			$sql .= " AND p.datep <= '".$db->idate($date_end)."'";
+		}
+		$sql .= ' GROUP BY p.rowid, project_ref';
+		$sql .= ' ORDER BY project_ref';
 
 		dol_syslog('get various payments', LOG_DEBUG);
 		$result = $db->query($sql);
@@ -841,7 +877,7 @@ if ($modecompta == 'BOOKKEEPING') {
 			$num = $db->num_rows($result);
 			if ($num) {
 				while ($obj = $db->fetch_object($result)) {
-					$project_name = !empty($obj->project_name) ? $obj->project_name : $langs->trans("None");
+					$project_ref = !empty($obj->project_ref) ? $obj->project_ref : $langs->trans("None");
 
 					// Debit (payment of suppliers for example)
 					if (isset($obj->amount)) {
@@ -853,7 +889,7 @@ if ($modecompta == 'BOOKKEEPING') {
 					}
 					echo '<tr class="oddeven">';
 					echo '<td>&nbsp;</td>';
-					echo "<td>".$langs->trans("Project")." <a href=\"".DOL_URL_ROOT."/projet/card.php?id=".urlencode($obj->project_id)."\">".$project_name."</a></td>\n";
+					echo "<td>".$langs->trans("Project").' <a href="'.DOL_URL_ROOT."/projet/card.php?id=".((int) $obj->rowid).'">'.$project_ref."</a></td>\n";
 					echo '<td class="right">';
 					if ($modecompta == 'CREANCES-DETTES') {
 						echo '<span class="amount">'.price(-$obj->amount).'</span>';
@@ -871,7 +907,7 @@ if ($modecompta == 'BOOKKEEPING') {
 						$total_ttc_income += $obj->amount;
 					}
 					echo '<tr class="oddeven"><td>&nbsp;</td>';
-					echo "<td>".$langs->trans("Project")." <a href=\"".DOL_URL_ROOT."/projet/card.php?id=".urlencode($obj->project_id)."\">".$project_name."</a></td>\n";
+					echo "<td>".$langs->trans("Project")." <a href=\"".DOL_URL_ROOT."/projet/card.php?id=".((int) $obj->rowid)."\">".$project_ref."</a></td>\n";
 					echo '<td class="right">';
 					if ($modecompta == 'CREANCES-DETTES') {
 						echo '<span class="amount">'.price($obj->amount).'</span>';
@@ -908,33 +944,36 @@ if ($modecompta == 'BOOKKEEPING') {
 	/*
 	 * Payment Loan
 	 */
-
-	if (getDolGlobalString('ACCOUNTING_REPORTS_INCLUDE_LOAN') && isModEnabled('don') && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES")) {
+	if (getDolGlobalString('ACCOUNTING_REPORTS_INCLUDE_LOAN') && isModEnabled('don')) {
 		$subtotal_ht = 0;
 		$subtotal_ttc = 0;
 
 		echo '<tr class="trforbreak"><td colspan="4">'.$langs->trans("PaymentLoan").'</td></tr>';
 
-		$sql = 'SELECT pj.rowid as rowid, pj.ref as project_name, SUM(p.amount_capital + p.amount_insurance + p.amount_interest) as amount FROM '.MAIN_DB_PREFIX.'payment_loan as p';
+		$sql = 'SELECT pj.rowid as rowid, pj.ref as project_ref, SUM(p.amount_capital + p.amount_insurance + p.amount_interest) as amount FROM '.MAIN_DB_PREFIX.'payment_loan as p';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'loan AS l ON l.rowid = p.fk_loan';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet AS pj ON l.fk_projet = pj.rowid';
 		$sql .= ' WHERE 1 = 1';
-		if (!empty($date_start) && !empty($date_end)) {
-			$sql .= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
+		if (!empty($date_start)) {
+			$sql .= " AND p.datep >= '".$db->idate($date_start)."'";
 		}
-		$sql .= ' GROUP BY pj.rowid, project_name';
-		$sql .= ' ORDER BY project_name';
+		if (!empty($date_end)) {
+			$sql .= " AND p.datep <= '".$db->idate($date_end)."'";
+		}
+		$sql .= ' GROUP BY pj.rowid, project_ref';
+		$sql .= ' ORDER BY project_ref';
 
 		dol_syslog('get loan payments', LOG_DEBUG);
 		$result = $db->query($sql);
 		if ($result) {
 			require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
 			$loan_static = new Loan($db);
+
 			while ($obj = $db->fetch_object($result)) {
-				$project_name = !empty($obj->project_name) ? $obj->project_name : $langs->trans("None");
+				$project_ref = !empty($obj->project_ref) ? $obj->project_ref : $langs->trans("None");
 
 				echo '<tr class="oddeven"><td>&nbsp;</td>';
-				echo "<td>".$langs->trans("Project")." <a href=\"".DOL_URL_ROOT."/projet/card.php?id=".urlencode($obj->project_id)."\">".$project_name."</a></td>\n";
+				echo "<td>".$langs->trans("Project").' <a href="'.DOL_URL_ROOT."/projet/card.php?id=".((int) $obj->rowid).'">'.$project_ref."</a></td>\n";
 				if ($modecompta == 'CREANCES-DETTES') {
 					echo '<td class="right"><span class="amount">'.price(-$obj->amount).'</span></td>';
 				}
@@ -967,17 +1006,20 @@ if ($modecompta == 'BOOKKEEPING') {
 
 $action = "balanceclient";
 $object = array(&$total_ht, &$total_ttc);
+$parameters = array();
 $parameters["mode"] = $modecompta;
 $parameters["date_start"] = $date_start;
 $parameters["date_end"] = $date_end;
 // Initialize technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('externalbalance'));
-$reshook = $hookmanager->executeHooks('addBalanceLine', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+$reshook = $hookmanager->executeHooks('addReportInfo', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 echo $hookmanager->resPrint;
 
 
 
 // Total
+
+$nbcols = 0;
 echo '<tr>';
 echo '<td colspan="'.($modecompta == 'BOOKKEEPING' ? 3 : 4).'">&nbsp;</td>';
 echo '</tr>';

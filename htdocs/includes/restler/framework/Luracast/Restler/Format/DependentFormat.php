@@ -53,4 +53,4 @@ abstract class DependentFormat extends Format
         $this->checkDependency();
     }
 
-} 
+}

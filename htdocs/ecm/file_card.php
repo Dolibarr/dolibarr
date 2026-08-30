@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2008-2020 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2008-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +25,16 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $dolibarr_main_url_root
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
@@ -31,22 +42,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ecm.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- *
- * @var string $dolibarr_main_url_root
- */
-
 // Load translation files required by page
 $langs->loadLangs(array('ecm', 'companies', 'other', 'users', 'orders', 'propal', 'bills', 'contracts', 'categories'));
 
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
+$module = GETPOST('module', 'aZ09arobase');
 
 // Get parameters
 $socid = GETPOSTINT("socid");
@@ -87,7 +89,7 @@ if (!$urlfile) {
 
 // Load ecm object
 $ecmdir = new EcmDirectory($db);
-$result = $ecmdir->fetch(GETPOST("section", 'alpha'));
+$result = $ecmdir->fetch(GETPOSTINT("section"));
 if (!($result > 0)) {
 	dol_print_error($db, $ecmdir->error);
 	exit;
@@ -103,7 +105,7 @@ $filepathtodocument = $relativetodocument.$urlfile;
 
 // Try to load object from index
 $object = new EcmFiles($db);
-$extrafields = new ExtraFields($db);
+
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
@@ -133,7 +135,11 @@ if ($cancel) {
 		header("Location: ".$backtopage);
 		exit;
 	} else {
-		header('Location: '.$_SERVER["PHP_SELF"].'?urlfile='.urlencode($urlfile).'&section='.urlencode($section).($module ? '&module='.urlencode($module) : ''));
+		$paramscancel = array('urlfile' => $urlfile, 'section' => $section);
+		if ($module) {
+			$paramscancel['module'] = $module;
+		}
+		header('Location: '.dolBuildUrl($_SERVER["PHP_SELF"], $paramscancel));
 		exit;
 	}
 }
@@ -234,7 +240,7 @@ if ($action == 'update' && $permissiontoadd) {
 			$urlfile .= '.noexe';
 		}
 
-		header('Location: '.$_SERVER["PHP_SELF"].'?urlfile='.urlencode($urlfile).'&section='.urlencode($section));
+		header('Location: '.dolBuildUrl($_SERVER["PHP_SELF"], array('urlfile' => $urlfile, 'section' => $section)));
 		exit;
 	} else {
 		$db->rollback();
@@ -341,19 +347,16 @@ print '<tr><td>';
 print $form->textwithpicto($langs->trans("DirectDownloadInternalLink"), $langs->trans("PrivateDownloadLinkDesc"));
 print '</td><td>';
 $modulepart = 'ecm';
-$forcedownload = 1;
-$rellink = '/document.php?modulepart='.$modulepart;
-if ($forcedownload) {
-	$rellink .= '&attachment=1';
-}
+$paramsrellink = array('modulepart' => $modulepart, 'attachment' => 1);
 if (!empty($object->entity)) {
-	$rellink .= '&entity='.$object->entity;
+	$paramsrellink['entity'] = $object->entity;
 }
-$rellink .= '&file='.urlencode($filepath);
+$paramsrellink['file'] = $filepath;
+$rellink = dolBuildUrl('/document.php', $paramsrellink);
 $fulllink = $urlwithroot.$rellink;
 print img_picto('', 'globe').' ';
 if ($action != 'edit') {
-	print '<input type="text" class="maxquatrevingtpercent widthcentpercentminusxx" id="downloadinternallink" name="downloadinternellink" value="'.dol_escape_htmltag($fulllink).'">';
+	print '<input type="text" class="maxquatrevingtpercent widthcentpercentminusxx small" id="downloadinternallink" name="downloadinternellink" value="'.dol_escape_htmltag($fulllink).'">';
 } else {
 	print $fulllink;
 }
@@ -372,37 +375,27 @@ if ($action != 'edit') {
 print '</td><td>';
 if (!empty($object->share)) {
 	if ($action != 'edit') {
-		$forcedownload = 0;
-
-		$paramlink = '';
-		if (!empty($object->share)) {
-			$paramlink .= ($paramlink ? '&' : '').'hashp='.$object->share; // Hash for public share
-		}
-		if ($forcedownload) {
-			$paramlink .= ($paramlink ? '&' : '').'attachment=1';
-		}
-
-		$fulllink = $urlwithroot.'/document.php'.($paramlink ? '?'.$paramlink : '');
+		$fulllink = $urlwithroot.'/document.php?hashp='.$object->share; // Hash for public share
 		//if (!empty($object->ref))       $fulllink.='&hashn='.$object->ref;		// Hash of file path
 		//elseif (!empty($object->label)) $fulllink.='&hashc='.$object->label;		// Hash of file content
 
 		print img_picto('', 'globe').' ';
 		if ($action != 'edit') {
-			print '<input type="text" class="quatrevingtpercent nopadding small" id="downloadlink" name="downloadexternallink" value="'.dol_escape_htmltag($fulllink).'">';
+			print '<input type="text" class="maxquatrevingtpercent widthcentpercentminusxx nopadding small downloadexternallink" id="downloadlink" name="downloadexternallink" value="'.dol_escape_htmltag($fulllink).'" spellcheck="false">';
 		} else {
 			print $fulllink;
 		}
 		if ($action != 'edit') {
-			print ' <a href="'.$fulllink.'">'.$langs->trans("Download").'</a>'; // No target here
+			print ' <a href="'.$fulllink.'">'.img_picto($langs->trans("Download"), 'download', 'class="opacitymedium paddingrightonly"').'</a>'; // No target here
 		}
 	} else {
-		print '<input type="checkbox" name="shareenabled"'.($object->share ? ' checked="checked"' : '').' /> ';
+		print '<input type="checkbox" name="shareenabled" checked="checked" /> ';
 	}
 } else {
 	if ($action != 'edit') {
 		print '<span class="opacitymedium">'.$langs->trans("FileNotShared").'</span>';
 	} else {
-		print '<input type="checkbox" name="shareenabled"'.($object->share ? ' checked="checked"' : '').' /> ';
+		print '<input type="checkbox" name="shareenabled" /> ';
 	}
 }
 print '</td>';
@@ -425,7 +418,7 @@ if ($action == 'edit') {
 
 // Confirm deletion of a file
 if ($action == 'deletefile') {
-	print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.urlencode($section), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile', $urlfile), 'confirm_deletefile', '', 1, 1);
+	print $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], array('section' => $section)), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile', $urlfile), 'confirm_deletefile', '', 1, 1);
 }
 
 if ($action != 'edit') {
@@ -433,7 +426,7 @@ if ($action != 'edit') {
 	print '<div class="tabsAction">';
 
 	if ($user->hasRight('ecm', 'setup')) {
-		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&section='.urlencode($section).'&urlfile='.urlencode($urlfile).'">'.$langs->trans('Edit').'</a>';
+		print '<a class="butAction" href="'.dolBuildUrl($_SERVER['PHP_SELF'], array('action' => 'edit', 'section' => $section, 'urlfile' => $urlfile)).'">'.$langs->trans('Edit').'</a>';
 	}
 
 	print '</div>';

@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2011-2014  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2011-2025  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -18,8 +18,9 @@
  */
 
 /**
- *       \file       htdocs/core/ajax/loadinplace.php
- *       \brief      File to load field value. used only when option "Edit In Place" is set (MAIN_USE_JQUERY_JEDITABLE).
+ *       \file      htdocs/core/ajax/loadinplace.php
+ *       \brief     File to load (loadinplace.php) or update (saveinplace.php) a field value.
+ *       			Was used in past when option "Edit In Place" is set (MAIN_USE_EDIT_IN_PLACE).
  */
 
 if (!defined('NOTOKENRENEWAL')) {
@@ -37,8 +38,6 @@ if (!defined('NOREQUIRESOC')) {
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -46,6 +45,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
 
 $field = GETPOST('field', 'alpha');
 $element = GETPOST('element', 'alpha');
@@ -77,8 +77,8 @@ if (!$result) {
 	httponly_accessforbidden('Not allowed by restrictArea');
 }
 
-if (!getDolGlobalString('MAIN_USE_JQUERY_JEDITABLE')) {
-	httponly_accessforbidden('Can be used only when option MAIN_USE_JQUERY_JEDITABLE is set');
+if (!getDolGlobalString('MAIN_USE_EDIT_IN_PLACE')) {
+	httponly_accessforbidden('Can be used only when option MAIN_USE_EDIT_IN_PLACE is set');
 }
 
 
@@ -151,7 +151,7 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 			}
 		} else {
 			$object = new GenericObject($db);
-			$value = $object->$loadmethod($table_element, $fk_element, $field);
+			$value = $object->$loadmethod($table_element, (int) $fk_element, $field);
 			echo $value;
 		}
 	} else {

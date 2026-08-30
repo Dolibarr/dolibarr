@@ -25,7 +25,7 @@ create table llx_stock_mouvement
   fk_product      integer NOT NULL,				-- Id of product
   batch           varchar(128) DEFAULT NULL,	-- Lot or serial number
   eatby           date DEFAULT NULL,			-- Eatby date (deprecated, we should get value from batch number in table llx_product_lot)
-  sellby          date DEFAULT NULL,			-- Sellby date (deprecated, we should get value from batch number in table llx_product_lot) 
+  sellby          date DEFAULT NULL,			-- Sellby date (deprecated, we should get value from batch number in table llx_product_lot)
   fk_entrepot     integer NOT NULL,				-- Id warehouse
   value			  real,							-- Qty of movement
   price           double(24,8) DEFAULT 0,		-- Entry price (used to calculate PMP, FIFO or LIFO value)

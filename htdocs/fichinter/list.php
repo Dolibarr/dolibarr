@@ -1,16 +1,17 @@
 <?php
-/* Copyright (C) 2002-2003	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2014	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2011-2012	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2013		Cédric Salvador			<csalvador@gpcsolutions.fr>
- * Copyright (C) 2015       Jean-François Ferry		<jfefe@aternatik.fr>
- * Copyright (C) 2018    	Ferran Marcet			<fmarcet@2byte.es>
- * Copyright (C) 2021-2024  Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2022		Charlène Benke			<charlene@patas-monkey.com>
- * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Benjamin Falière		<benjamin.faliere@altairis.fr>
+/* Copyright (C) 2002-2003  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2014  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2011-2012  Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2021-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2022-2026  Charlène Benke          <charlene@patas-monkey.com>
+ * Copyright (C) 2024       William Mead            <william.mead@manchenumerique.fr>
+ * Copyright (C) 2024-2026  MDW                     <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Benjamin Falière        <benjamin.faliere@altairis.fr>
+ * Copyright (C) 2026       Alexandre Spangaro      <alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +35,14 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
@@ -41,17 +50,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
+if (isModEnabled('category')) {
+	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
+}
 if (isModEnabled('contract')) {
 	require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 }
 
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'bills', 'interventions'));
@@ -61,14 +67,23 @@ if (isModEnabled('project')) {
 if (isModEnabled('contract')) {
 	$langs->load("contracts");
 }
+if (isModEnabled('category')) {
+	$langs->load("categories");
+}
 
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOSTINT('show_files');
 $confirm = GETPOST('confirm', 'alpha');
-$toselect = GETPOST('toselect', 'array');
+$toselect = GETPOST('toselect', 'array:int');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'interventionlist';
 $mode = GETPOST('mode', 'alpha');
+
+if (getDolGlobalInt('MAIN_SEE_SUBORDINATES')) {
+	$userschilds = $user->getAllChildIds();
+} else {
+	$userschilds = array();
+}
 
 $search_ref = GETPOST('search_ref') ? GETPOST('search_ref', 'alpha') : GETPOST('search_inter', 'alpha');
 $search_ref_client = GETPOST('search_ref_client', 'alpha');
@@ -89,6 +104,18 @@ $search_date_start = dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_s
 $search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_endday, $search_date_endyear);
 $optioncss = GETPOST('optioncss', 'alpha');
 $socid = GETPOSTINT('socid');
+
+$searchCategoryFichinterOperator = 0;
+if (GETPOSTISSET('formfilteraction')) {
+	$searchCategoryFichinterOperator = GETPOSTINT('search_category_fichinter_operator');
+} elseif (getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT')) {
+	$searchCategoryFichinterOperator = getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT');
+}
+$searchCategoryFichinterList = GETPOST('search_category_fichinter_list', 'array');
+$catid = GETPOST('catid', 'int');
+if (!empty($catid) && empty($searchCategoryFichinterList)) {
+	$searchCategoryFichinterList = array($catid);
+}
 
 $diroutputmassaction = $conf->ficheinter->dir_output.'/temp/massgeneration/'.$user->id;
 
@@ -114,8 +141,6 @@ if (!$sortfield) {
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new Fichinter($db);
 $hookmanager->initHooks(array($contextpage)); 	// Note that conf->hooks_modules contains array of activated contexes
-
-$extrafields = new ExtraFields($db);
 
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -155,13 +180,15 @@ $arrayfields = array(
 	'fd.date' => array('label' => 'DateOfLine', 'checked' => '1', 'enabled' => getDolGlobalString('FICHINTER_DISABLE_DETAILS') != '1' ? '1' : '0'),
 	'fd.duree' => array('label' => 'DurationOfLine', 'type' => 'duration', 'checked' => '1', 'enabled' => !getDolGlobalString('FICHINTER_DISABLE_DETAILS') ? '1' : '0'), //type duration is here because in database, column 'duree' is double
 );
-'@phan-var-force array{label:string,type?:string,checked:string,position?:int,enabled?:string,langfile?:string,help:string} $arrayfields';
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
+// Add hook to complete $arrayfields
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
-'@phan-var-force array{label:string,type?:string,checked:string,position?:int,enabled?:string,langfile?:string,help:string} $arrayfields'; // dol_sort_array looses type for Phan
 
 // Security check
 $id = GETPOSTINT('id');
@@ -170,6 +197,7 @@ if ($user->socid) {
 }
 $result = restrictedArea($user, 'ficheinter', $id, 'fichinter');
 
+$permissiontoreadallthirdparty = $user->hasRight('societe', 'client', 'voir');
 $permissiontoread = $user->hasRight('ficheinter', 'lire');
 $permissiontoadd = $user->hasRight('ficheinter', 'creer');
 $permissiontodelete = $user->hasRight('ficheinter', 'supprimer');
@@ -201,6 +229,7 @@ if (empty($reshook)) {
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 		$search_ref = "";
 		$search_ref_client = "";
+		$searchCategoryFichinterList = array();
 		$search_company = "";
 		$search_projet_ref = "";
 		$search_contrat_ref = "";
@@ -309,9 +338,6 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
-if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
-	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-}
 $sql .= ", ".MAIN_DB_PREFIX."societe as s";
 $sql .= " WHERE f.entity IN (".getEntity('intervention').")";
 $sql .= " AND f.fk_soc = s.rowid";
@@ -337,11 +363,39 @@ if ($search_desc) {
 		$sql .= natural_search(array('f.description'), $search_desc);
 	}
 }
+// Search for tag/category ($searchCategoryFichinterList is an array of ID)
+if (!empty($searchCategoryFichinterList)) {
+	$searchCategoryFichinterSqlList = array();
+	$listofcategoryid = '';
+	foreach ($searchCategoryFichinterList as $searchCategoryFichinter) {
+		if (intval($searchCategoryFichinter) == -2) {
+			$searchCategoryFichinterSqlList[] = "NOT EXISTS (SELECT ck.fk_fichinter FROM ".MAIN_DB_PREFIX."categorie_fichinter as ck WHERE f.rowid = ck.fk_fichinter)";
+		} elseif (intval($searchCategoryFichinter) > 0) {
+			if ($searchCategoryFichinterOperator == 0) {
+				$searchCategoryFichinterSqlList[] = " EXISTS (SELECT ck.fk_fichinter FROM ".MAIN_DB_PREFIX."categorie_fichinter as ck WHERE f.rowid = ck.fk_fichinter AND ck.fk_categorie = ".((int) $searchCategoryFichinter).")";
+			} else {
+				$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryFichinter);
+			}
+		}
+	}
+	if ($listofcategoryid) {
+		$searchCategoryFichinterSqlList[] = " EXISTS (SELECT ck.fk_fichinter FROM ".MAIN_DB_PREFIX."categorie_fichinter as ck WHERE f.rowid = ck.fk_fichinter AND ck.fk_categorie IN (".$db->sanitize($listofcategoryid)."))";
+	}
+	if ($searchCategoryFichinterOperator == 1) {
+		if (!empty($searchCategoryFichinterSqlList)) {
+			$sql .= " AND (".implode(' OR ', $searchCategoryFichinterSqlList).")";
+		}
+	} else {
+		if (!empty($searchCategoryFichinterSqlList)) {
+			$sql .= " AND (".implode(' AND ', $searchCategoryFichinterSqlList).")";
+		}
+	}
+}
 if ($search_status != '' && $search_status >= 0) {
-	$sql .= ' AND f.fk_statut = '.urlencode($search_status);
+	$sql .= ' AND f.fk_statut = '.((int) ($search_status));
 }
 if ($search_signed_status != '' && $search_signed_status >= 0) {
-	$sql .= ' AND f.signed_status = '.urlencode($search_signed_status);
+	$sql .= ' AND f.signed_status = '.((int) $search_signed_status);
 }
 if (!getDolGlobalString('FICHINTER_DISABLE_DETAILS') && $atleastonefieldinlines) {
 	if ($search_date_start) {
@@ -351,12 +405,18 @@ if (!getDolGlobalString('FICHINTER_DISABLE_DETAILS') && $atleastonefieldinlines)
 		$sql .= " AND fd.date <= '".$db->idate($search_date_end)."'";
 	}
 }
-if (!$user->hasRight('societe', 'client', 'voir')) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
-}
-if ($socid) {
+if ($socid > 0) {
 	$sql .= " AND s.rowid = ".((int) $socid);
 }
+// Restriction on sale representative
+if (empty($user->socid) && !$permissiontoreadallthirdparty) {
+	$sql .= " AND (EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = f.fk_soc AND sc.fk_user = ".((int) $user->id).")";
+	if (getDolGlobalInt('MAIN_SEE_SUBORDINATES') && $userschilds) {
+		$sql .= " OR EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = f.fk_soc AND sc.fk_user IN (".$db->sanitize(implode(',', $userschilds))."))";
+	}
+	$sql .= ")";
+}
+
 if ($search_all) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
@@ -394,7 +454,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -427,6 +487,10 @@ if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $s
 
 // Output page
 // --------------------------------------------------------------------
+$paramsCat = '';
+foreach ($searchCategoryFichinterList as $searchCategoryFichinter) {
+	$paramsCat .= "&search_category_fichinter_list[]=".urlencode($searchCategoryFichinter);
+}
 
 llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'bodyforlist mod-fichinter page-list');	// Can use also classforhorizontalscrolloftabs instead of bodyforlist for no horizontal scroll
 
@@ -456,6 +520,12 @@ if ($search_all) {
 }
 if ($socid) {
 	$param .= "&socid=".urlencode((string) ($socid));
+}
+if ($searchCategoryFichinterOperator == 1) {
+	$param .= "&search_category_fichinter_operator=".urlencode((string) $searchCategoryFichinterOperator);
+}
+foreach ($searchCategoryFichinterList as $searchCategoryFichinter) {
+	$param .= "&search_category_fichinter_list[]=".urlencode($searchCategoryFichinter);
 }
 if ($search_ref) {
 	$param .= "&search_ref=".urlencode($search_ref);
@@ -515,7 +585,10 @@ $arrayofmassactions = array(
 if (!empty($permissiontodelete)) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
-if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predelete'))) {
+if (isModEnabled('category') && $user->hasRight('categorie', 'creer')) {
+	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
+}
+if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predelete', 'preaffecttag'))) {
 	$arrayofmassactions = array();
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
@@ -543,6 +616,7 @@ if (!empty($socid)) {
 $newcardbutton = '';
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', DOL_URL_ROOT.'/fichinter/stats/index.php?'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', ($mode == 'statistics' ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitleSeparator();
 $newcardbutton .= dolGetButtonTitle($langs->trans('NewIntervention'), '', 'fa fa-plus-circle', $url, '', $user->hasRight('ficheinter', 'creer'));
 
@@ -554,6 +628,14 @@ $objecttmp = new Fichinter($db);
 $trackid = 'int'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
+if (!empty($catid)) {
+	print "<div id='ways'>";
+	$c = new Categorie($db);
+	$ways = $c->print_all_ways(' &gt; ', 'fichinter/list.php');
+	print " &gt; ".$ways[0]."<br>\n";
+	print "</div><br>";
+}
+
 if ($search_all) {
 	$setupstring = '';
 	foreach ($fieldstosearchall as $key => $val) {
@@ -564,8 +646,12 @@ if ($search_all) {
 	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).implode(', ', $fieldstosearchall).'</div>'."\n";
 }
 
+// Filter on categories
 $moreforfilter = '';
-
+if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
+	$formcategory = new FormCategory($db);
+	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_FICHINTER, $searchCategoryFichinterList, 'minwidth300', $searchCategoryFichinterOperator ? $searchCategoryFichinterOperator : 0);
+}
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 if (empty($reshook)) {
@@ -581,7 +667,7 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
 $selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
@@ -592,7 +678,7 @@ print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwit
 // --------------------------------------------------------------------
 print '<tr class="liste_titre_filter">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
@@ -658,17 +744,14 @@ if (!empty($arrayfields['f.note_private']['checked'])) {
 // Status
 if (!empty($arrayfields['f.fk_statut']['checked'])) {
 	print '<td class="liste_titre right parentonrightofpage">';
-	$liststatus = [
-		$object::STATUS_DRAFT => $langs->transnoentitiesnoconv('Draft'),
-		$object::STATUS_VALIDATED => $langs->transnoentitiesnoconv('Validated'),
-		$object::STATUS_BILLED => $langs->transnoentitiesnoconv('StatusInterInvoiced'),
-		$object::STATUS_CLOSED => $langs->transnoentitiesnoconv('Done'),
-	];
+	$objecttmp->getLibStatut();
+
 	if (!getDolGlobalString('FICHINTER_CLASSIFY_BILLED')) {
-		unset($liststatus[2]); // Option deprecated. In a future, billed must be managed with a dedicated field to 0 or 1
+		unset($objecttmp->labelStatus[Fichinter::STATUS_BILLED]); // Option deprecated. In a future, billed must be managed with a dedicated field to 0 or 1
 	}
+
 	// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
-	print $form->selectarray('search_status', $liststatus, $search_status, 1, 0, 0, '', 1, 0, 0, '', 'search_status width100 onrightofpage');
+	print $form->selectarray('search_status', $objecttmp->labelStatus, $search_status, 1, 0, 0, '', 1, 0, 0, '', 'search_status width100 onrightofpage');
 	print '</td>';
 }
 // Signed status
@@ -696,7 +779,7 @@ if (!empty($arrayfields['fd.duree']['checked'])) {
 	print '<td class="liste_titre">&nbsp;</td>';
 }
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
@@ -711,7 +794,7 @@ $totalarray['nbfield'] = 0;
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 	$totalarray['nbfield']++;
 }
@@ -784,7 +867,7 @@ if (!empty($arrayfields['fd.duree']['checked'])) {
 }
 
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 	$totalarray['nbfield']++;
 }
@@ -850,9 +933,9 @@ while ($i < $imaxinloop) {
 	} else {
 		// Show here line of result
 		$j = 0;
-		print '<tr data-rowid="'.$object->id.'" class="oddeven">';
+		print '<tr data-rowid="'.$object->id.'" class="oddeven row-with-select">';
 		// Action column
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;
@@ -985,7 +1068,7 @@ while ($i < $imaxinloop) {
 		// Note public
 		if (!empty($arrayfields['f.note_public']['checked'])) {
 			print '<td class="sensiblehtmlcontent center">';
-			print dolPrintHTML($obj->note_public);
+			print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_public, 5)).'</div>';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -994,7 +1077,7 @@ while ($i < $imaxinloop) {
 		// Note private
 		if (!empty($arrayfields['f.note_private']['checked'])) {
 			print '<td class="sensiblehtmlcontent center">';
-			print dolPrintHTML($obj->note_private);
+			print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_private, 5)).'</div>';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1048,7 +1131,7 @@ while ($i < $imaxinloop) {
 			$totalarray['val']['fd.duree'] += $obj->duree;
 		}
 		// Action column
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if (!$conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;

@@ -1,10 +1,11 @@
 <?php
-/* Copyright (C) 2016       Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2014       Juanjo Menent       <jmenent@2byte.es>
- * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
- * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2016       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2014       Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2015       Florian Henry           <florian.henry@open-concept.pro>
+ * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Vincent de Grandpré		<vincent@de-grandpre.quebec>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,8 +29,7 @@
 
 // Put here all includes required by your class file
 //require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
-//require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
-//require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
+
 
 /**
  * Class Cchargesociales
@@ -72,7 +72,7 @@ class Cchargesociales
 	 */
 	public $deductible;
 	/**
-	 * @var string
+	 * @var ?int<0,1>
 	 */
 	public $active;
 	/**
@@ -81,7 +81,7 @@ class Cchargesociales
 	public $code;
 
 	/**
-	 * @var int ID
+	 * @var ?int ID
 	 */
 	public $fk_pays;
 
@@ -127,13 +127,17 @@ class Cchargesociales
 			array(
 				'libelle',
 				'deductible',
-				'active',
 				'code',
-				'fk_pays',
 				'module',
 				'accountancy_code',
 			)
 		);
+		if (isset($this->fk_pays)) {
+			$this->fk_pays = (int) $this->fk_pays;
+		}
+		if (isset($this->active)) {
+			$this->active = (int) $this->active;
+		}
 
 		// Check parameters
 		// Put here code to add control on parameters values
@@ -145,14 +149,14 @@ class Cchargesociales
 		$sql .= 'active,';
 		$sql .= 'code,';
 		$sql .= 'fk_pays,';
-		$sql .= 'module';
+		$sql .= 'module,';
 		$sql .= 'accountancy_code';
 		$sql .= ') VALUES (';
 		$sql .= ' '.(!isset($this->libelle) ? 'NULL' : "'".$this->db->escape($this->libelle)."'").',';
-		$sql .= ' '.(!isset($this->deductible) ? 'NULL' : $this->deductible).',';
-		$sql .= ' '.(!isset($this->active) ? 'NULL' : $this->active).',';
+		$sql .= ' '.(!isset($this->deductible) ? 'NULL' : "'".$this->db->escape($this->deductible)."'").',';
+		$sql .= ' ' . (int) $this->active . ',';
 		$sql .= ' '.(!isset($this->code) ? 'NULL' : "'".$this->db->escape($this->code)."'").',';
-		$sql .= ' '.(!isset($this->fk_pays) ? 'NULL' : $this->fk_pays).',';
+		$sql .= ' '.(!isset($this->fk_pays) ? 'NULL' : ((int) $this->fk_pays)).',';
 		$sql .= ' '.(!isset($this->module) ? 'NULL' : "'".$this->db->escape($this->module)."'").',';
 		$sql .= ' '.(!isset($this->accountancy_code) ? 'NULL' : "'".$this->db->escape($this->accountancy_code)."'");
 		$sql .= ')';
@@ -271,14 +275,17 @@ class Cchargesociales
 			array(
 				'libelle',
 				'deductible',
-				'active',
 				'code',
-				'fk_pays',
 				'module',
 				'accountancy_code',
 			)
 		);
-
+		if (isset($this->fk_pays)) {
+			$this->fk_pays = (int) $this->fk_pays;
+		}
+		if (isset($this->active)) {
+			$this->active = (int) $this->active;
+		}
 
 		// Check parameters
 		// Put here code to add a control on parameters values
@@ -542,7 +549,7 @@ class Cchargesociales
 		$this->libelle = '';
 		$this->label = '';
 		$this->deductible = '';
-		$this->active = '';
+		$this->active = 0;
 		$this->code = '';
 		$this->fk_pays = 0;
 		$this->module = '';

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2014-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,30 +29,39 @@
 // $nomessageinupdate can be set to 1
 // $nomessageinsetmoduleoptions can be set to 1
 // $formSetup may be defined
+
 /**
  * @var Conf $conf
  * @var DoliDB $db
  * @var FormSetup $formSetup
  * @var Translate $langs
  * @var User $user
+ *
  * @var string $action
  * @var int $error
  * @var ?int $nomessageinupdate
  * @var ?int $nomessageinsetmoduleoptions
+ * @var ?string $modulepart
+ * @var ?string $websitetemplateconf
+ * @var ?string $upload_dir
+ * @var ?array<string,mixed> $arrayofparameters
  */
 
 '
 @phan-var-force FormSetup $formSetup
+@phan-var-force string $action
+@phan-var-force int $error
+@phan-var-force ?string $modulepart
+@phan-var-force ?string $websitetemplateconf
+@phan-var-force ?string $upload_dir
 ';
 
-if ($action == 'update' && !empty($formSetup) && is_object($formSetup) && !empty($user->admin)) {
+if (($action == 'update' || !empty($websitetemplateconf)) && !empty($formSetup) && is_object($formSetup) && !empty($user->admin)) {
 	$formSetup->saveConfFromPost();
 	return;
 }
 
-$upload_dir = null;
-
-if ($action == 'update' && !empty($arrayofparameters) && is_array($arrayofparameters) && !empty($user->admin)) {
+if (($action == 'update' || !empty($websitetemplateconf)) && !empty($arrayofparameters) && is_array($arrayofparameters) && !empty($user->admin)) {
 	$db->begin();
 
 	foreach ($arrayofparameters as $key => $val) {
@@ -113,10 +122,12 @@ if ($action == 'deletefile' && $modulepart == 'doctemplates' && !empty($user->ad
 		}
 	}
 
-	$filetodelete = $tmpdir.'/'.GETPOST('file');
-	$result = dol_delete_file($filetodelete);
-	if ($result > 0) {
-		setEventMessages($langs->trans("FileWasRemoved", GETPOST('file')), null, 'mesgs');
+	if ($upload_dir) {
+		$filetodelete = $upload_dir.'/'.GETPOST('file');
+		$result = dol_delete_file($filetodelete, 1);
+		if ($result > 0) {
+			setEventMessages($langs->trans("FileWasRemoved", GETPOST('file')), null, 'mesgs');
+		}
 	}
 }
 
@@ -171,7 +182,54 @@ if ($action == 'setModuleOptions' && !empty($user->admin)) {
 			}
 		}
 
-		if ($upload_dir) {
+		// Restrict uploads for ODT template setup pages.
+		if (preg_match('/_ADDON_PDF_ODT_PATH$/', $keyforuploaddir) && !empty($_FILES['uploadfile'])) {
+			$allowedext = array('odt', 'ods');
+			$allowedmimes = array(
+				'application/vnd.oasis.opendocument.text',
+				'application/vnd.oasis.opendocument.spreadsheet',
+				'application/zip',
+				'application/x-zip-compressed',
+				'application/octet-stream'
+			);
+			$files = $_FILES['uploadfile'];
+			if (!is_array($files['name'])) {
+				foreach ($files as $key => &$val) {
+					$val = array($val);
+				}
+				unset($val);
+			}
+			foreach ($files['name'] as $idx => $filename) {
+				if (empty($filename)) {
+					continue;
+				}
+
+				$extension = strtolower(pathinfo((string) $filename, PATHINFO_EXTENSION));
+				if (!in_array($extension, $allowedext, true)) {
+					$error++;
+					setEventMessages($langs->trans("ErrorFileNotUploaded").' (Only .odt/.ods templates are allowed)', null, 'errors');
+					dol_syslog(__FILE__." ODT template upload refused on extension filename=".$filename, LOG_WARNING);
+					break;
+				}
+
+				$detectedmime = '';
+				if (!empty($files['tmp_name'][$idx]) && function_exists('finfo_open')) {
+					$finfo = finfo_open(FILEINFO_MIME_TYPE);
+					if ($finfo) {
+						$detectedmime = (string) finfo_file($finfo, $files['tmp_name'][$idx]);
+						finfo_close($finfo);
+					}
+				}
+				if (!empty($detectedmime) && !in_array(strtolower($detectedmime), $allowedmimes, true)) {
+					$error++;
+					setEventMessages($langs->trans("ErrorFileNotUploaded").' (Invalid MIME type for ODT/ODS template)', null, 'errors');
+					dol_syslog(__FILE__." ODT template upload refused on mime filename=".$filename." mime=".$detectedmime, LOG_WARNING);
+					break;
+				}
+			}
+		}
+
+		if ($upload_dir && !$error) {
 			$result = dol_add_file_process($upload_dir, 1, 1, 'uploadfile', '');
 			if ($result <= 0) {
 				$error++;

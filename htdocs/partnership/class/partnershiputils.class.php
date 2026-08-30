@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2021 NextGestion  <contact@nextgestion.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -177,7 +178,7 @@ class PartnershipUtils
 							// Define output language
 							$outputlangs = $langs;
 							$newlang = '';
-							if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+							if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 								$newlang = GETPOST('lang_id', 'aZ09');
 							}
 							if (!empty($newlang)) {
@@ -324,7 +325,7 @@ class PartnershipUtils
 
 		$this->db->begin();
 
-		$sql = "SELECT p.rowid, p.status, p.".$fk_partner;
+		$sql = "SELECT p.rowid, p.status, p.".$this->db->sanitize($fk_partner);
 		$sql .= ", p.url_to_check, p.last_check_backlink";
 		$sql .= ', partner.url, partner.email';
 		$sql .= " FROM ".MAIN_DB_PREFIX."partnership as p";
@@ -333,7 +334,7 @@ class PartnershipUtils
 		} else {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as partner on (partner.rowid = p.fk_soc)";
 		}
-		$sql .= " WHERE p.".$fk_partner." > 0";
+		$sql .= " WHERE p.".$this->db->sanitize($fk_partner)." > 0";
 		$sql .= " AND p.status = ".((int) $partnership::STATUS_APPROVED); // Only accepted and not yet canceled
 		$sql .= " AND (p.last_check_backlink IS NULL OR p.last_check_backlink <= '".$this->db->idate($now - 24 * 3600)."')"; // Never more than 1 check every day to check that website contains a referral link.
 		$sql .= $this->db->order('p.rowid', 'ASC');
@@ -403,7 +404,7 @@ class PartnershipUtils
 									// Define output language
 									$outputlangs = $langs;
 									$newlang = '';
-									if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+									if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 										$newlang = GETPOST('lang_id', 'aZ09');
 									}
 									if (!empty($newlang)) {
@@ -539,10 +540,10 @@ class PartnershipUtils
 
 		// $website = 'https://nextgestion.com/'; // For Test
 		$tmpgeturl = getURLContent($website, 'GET', '', 1, array(), array('http', 'https'), 0);
-		if ($tmpgeturl['curl_error_no']) {
+		if (!empty($tmpgeturl['curl_error_no'])) {
 			$error++;
 			dol_syslog('Error getting '.$website.': '.$tmpgeturl['curl_error_msg']);
-		} elseif ($tmpgeturl['http_code'] != '200') {
+		} elseif ($tmpgeturl['http_code'] != 200) {
 			$error++;
 			dol_syslog('Error getting '.$website.': '.$tmpgeturl['curl_error_msg']);
 		} else {
@@ -560,7 +561,7 @@ class PartnershipUtils
 				$url = $href->getAttribute('href');
 				$url = filter_var($url, FILTER_SANITIZE_URL);
 				if (!(!filter_var($url, FILTER_VALIDATE_URL))) {
-					$webcontent .= $url;
+					$webcontent .= $url;	// $webcontent is used for a test only, so having content not completely sanitized is not a problem.
 				}
 			}
 		}

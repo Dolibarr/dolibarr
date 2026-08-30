@@ -1,11 +1,12 @@
 <?php
-/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2010-2014 Juanjo Menent	    <jmenent@2byte.es>
- * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2016      Abbes Bahfir         <contact@dolibarrpar.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2003       Rodolphe Quiedeville<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2014  Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2010-2014  Juanjo Menent	    <jmenent@2byte.es>
+ * Copyright (C) 2015       Marcos García       <marcosgdf@gmail.com>
+ * Copyright (C) 2016       Abbes Bahfir        <contact@dolibarrpar.com>
+ * Copyright (C) 2024-2025  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Charlene Benke		<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,11 +30,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/triggers/interface_50_modNotification_Notification.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -41,6 +37,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/triggers/interface_50_modNotification_Noti
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/triggers/interface_50_modNotification_Notification.class.php';
 
 // Load translation files required by page
 $langs->loadLangs(array('companies', 'mails', 'admin', 'other', 'errors'));
@@ -52,7 +52,9 @@ if (!isset($id) || empty($id)) {
 	accessforbidden();
 }
 
+$contextpage = GETPOST('contextpage');
 $action = GETPOST('action', 'aZ09');
+
 $actionid = GETPOSTINT('actionid');
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
@@ -81,7 +83,7 @@ if ($id > 0 || !empty($ref)) {
 	$object->loadRights();
 }
 
-$permissiontoadd = (($object->id == $user->id) || ($user->hasRight('user', 'user', 'lire')));
+$permissiontoadd = (($object->id == $user->id) || ($user->hasRight('user', 'user', 'creer')));
 
 // Security check
 if ($user->socid) {
@@ -159,7 +161,7 @@ if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', 
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-user page-notify_card');
-
+$type = array('email' => $langs->trans("EMail"), 'sms' => $langs->trans("SMS"));
 
 if ($result > 0) {
 	$langs->load("other");
@@ -170,12 +172,12 @@ if ($result > 0) {
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-	$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'&output=file&file='.urlencode(dol_sanitizeFileName($object->getFullName($langs).'.vcf')).'" class="refid" rel="noopener">';
-	$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
+	$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'&output=file&file='.urlencode(dol_sanitizeFileName($object->getFullName($langs).'.vcf')).'" class="refid valignmiddle" rel="noopener">';
+	$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard', 'class="valignmiddle marginleftonly paddingrightonly"');
 	$morehtmlref .= '</a>';
 
 	$urltovirtualcard = '/user/virtualcard.php?id='.((int) $object->id);
-	$morehtmlref .= dolButtonToOpenUrlInDialogPopup('publicvirtualcard', $langs->transnoentitiesnoconv("PublicVirtualCardUrl").' - '.$object->getFullName($langs), img_picto($langs->trans("PublicVirtualCardUrl"), 'card', 'class="valignmiddle marginleftonly paddingrightonly"'), $urltovirtualcard, '', 'nohover');
+	$morehtmlref .= dolButtonToOpenUrlInDialogPopup('publicvirtualcard', $langs->transnoentitiesnoconv("PublicVirtualCardUrl").' - '.$object->getFullName($langs), img_picto($langs->trans("PublicVirtualCardUrl"), 'card', 'class="valignmiddle marginleftonly paddingrightonly"'), $urltovirtualcard, '', 'refid valignmiddle nohover');
 
 	dol_banner_tab($object, 'id', $linkback, $user->hasRight('user', 'user', 'lire') || $user->admin, 'rowid', 'ref', $morehtmlref, '', 0, '', '', 0, '');
 
@@ -195,9 +197,9 @@ if ($result > 0) {
 		$addadmin = '';
 		if (property_exists($object, 'admin')) {
 			if (isModEnabled('multicompany') && !empty($object->admin) && empty($object->entity)) {
-				$addadmin .= img_picto($langs->trans("SuperAdministratorDesc"), "redstar", 'class="paddingleft"');
+				$addadmin .= img_picto($langs->trans("SuperAdministratorDesc"), "superadmin", 'class="paddingleft valignmiddle"');
 			} elseif (!empty($object->admin)) {
-				$addadmin .= img_picto($langs->trans("AdministratorDesc"), "star", 'class="paddingleft"');
+				$addadmin .= img_picto($langs->trans("AdministratorDesc"), "admin", 'class="paddingleft valignmiddle"');
 			}
 		}
 		print showValueWithClipboardCPButton($object->login).$addadmin;
@@ -252,6 +254,7 @@ if ($result > 0) {
 	$sql .= " AND n.entity IN (".getEntity('notify_def').')';
 
 	$resql = $db->query($sql);
+	$num = 0;
 	if ($resql) {
 		$num = $db->num_rows($resql);
 	} else {
@@ -305,7 +308,6 @@ if ($result > 0) {
 			print img_picto('', 'object_action', '', 0, 0, 0, '', 'paddingright').$form->selectarray("actionid", $actions, '', 1);
 			print '</td>';
 			print '<td>';
-			$type = array('email' => $langs->trans("EMail"));
 			print $form->selectarray("typeid", $type);
 			print '</td>';
 			print '<td class="nowraponall">';
@@ -354,12 +356,7 @@ if ($result > 0) {
 				print '</td>';
 
 				print '<td>';
-				if ($obj->type == 'email') {
-					print $langs->trans("Email");
-				}
-				if ($obj->type == 'sms') {
-					print $langs->trans("SMS");
-				}
+				print $type[$obj->type];
 				print '</td>';
 				print '<td class="right"><a href="card.php?id='.$id.'&action=delete&token='.newToken().'&actid='.$obj->rowid.'">'.img_delete().'</a></td>';
 				print '</tr>';
@@ -436,7 +433,7 @@ if ($result > 0) {
 	if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		$result = $db->query($sql);
 		$nbtotalofrecords = $db->num_rows($result);
-		if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+		if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 			$page = 0;
 			$offset = 0;
 		}
@@ -460,9 +457,9 @@ if ($result > 0) {
 	}
 
 	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'" name="formfilter">';
-	if (isset($optioncss) && $optioncss != '') {
-		print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-	}
+	//if (isset($optioncss) && $optioncss != '') {
+	//	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	//}
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
@@ -516,12 +513,7 @@ if ($result > 0) {
 			print img_picto('', 'object_action', '', 0, 0, 0, '', 'pictofixedwidth').$label;
 			print '</td>';
 			print '<td>';
-			if ($obj->type == 'email') {
-				print $langs->trans("Email");
-			}
-			if ($obj->type == 'sms') {
-				print $langs->trans("Sms");
-			}
+			print $type[$obj->type];
 			print '</td>';
 			// TODO Add link to object here for other types
 			/*print '<td>';
@@ -546,7 +538,7 @@ if ($result > 0) {
 
 	print '</form>';
 } else {
-	dol_print_error(null, 'RecordNotFound');
+	recordNotFound('', 0);
 }
 
 // End of page

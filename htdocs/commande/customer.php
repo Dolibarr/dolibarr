@@ -5,7 +5,8 @@
  * Copyright (C) 2012	   Andreu Bisquerra Gaya	<jove@bisquerra.com>
  * Copyright (C) 2012	   David Rodriguez Martinez <davidrm146@gmail.com>
  * Copyright (C) 2012	   Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2026		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +32,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 /**
  * @var Conf $conf
@@ -46,6 +48,8 @@ $action = GETPOST('action', 'aZ09');
 if ($user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;
+} else {
+	$socid = 0;
 }
 
 if (!$user->hasRight('facture', 'creer')) {
@@ -80,13 +84,9 @@ if (!$sortfield) {
 
 llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-commande page-customer');
 
-$thirdpartystatic = new Societe($db);
+// Mode List
 
-/*
- * Mode List
- */
-
-$sql = "SELECT s.rowid, s.nom as name, s.client, s.town, s.datec, s.datea,";
+$sql = "SELECT s.rowid, s.nom as name, s.client, s.town, s.datec,";
 $sql .= " st.libelle as stcomm, s.prefix_comm, s.code_client, s.code_compta as code_compta_client";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st, ".MAIN_DB_PREFIX."commande as c";
 $sql .= " WHERE s.fk_stcomm = st.id AND c.fk_soc = s.rowid";
@@ -100,9 +100,6 @@ if (GETPOST("search_compta")) {
 if (GETPOST("search_code_client")) {
 	$sql .= natural_search("s.code_client", GETPOST("search_code_client"));
 }
-if (dol_strlen($begin)) {
-	$sql .= " AND s.nom LIKE '".$db->escape($begin)."'";
-}
 // If the internal user must only see his customers, force searching by him
 $search_sale = 0;
 if (!$user->hasRight('societe', 'client', 'voir')) {
@@ -111,9 +108,9 @@ if (!$user->hasRight('societe', 'client', 'voir')) {
 // Search on sale representative
 if ($search_sale && $search_sale != '-1') {
 	if ($search_sale == -2) {
-		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = c.fk_soc)";
+		$sql .= " AND ".getSalesRepresentativeSqlFilter('c.fk_soc', 0, 1);
 	} elseif ($search_sale > 0) {
-		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = c.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+		$sql .= " AND ".getSalesRepresentativeSqlFilter('c.fk_soc', (int) $search_sale);
 	}
 }
 // Search on socid
@@ -121,7 +118,7 @@ if ($socid) {
 	$sql .= " AND c.fk_soc = ".((int) $socid);
 }
 $sql .= " AND c.fk_statut in (1, 2) AND c.facture = 0";
-$sql .= " GROUP BY s.nom";
+$sql .= " GROUP BY s.nom, s.rowid";
 $sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
@@ -130,7 +127,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -146,7 +143,7 @@ if ($resql) {
 
 	print_barre_liste($langs->trans("MenuOrdersToBill"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num);
 
-	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="GET" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 
 	print '<table class="liste centpercent">';
 	print '<tr class="liste_titre">';
@@ -155,7 +152,7 @@ if ($resql) {
 	print_liste_field_titre("Town", $_SERVER["PHP_SELF"], "s.town", "", "", 'valign="center"', $sortfield, $sortorder);
 	print_liste_field_titre("CustomerCode", $_SERVER["PHP_SELF"], "s.code_client", "", "", 'align="left"', $sortfield, $sortorder);
 	print_liste_field_titre("AccountancyCode", $_SERVER["PHP_SELF"], "s.code_compta", "", "", 'align="left"', $sortfield, $sortorder);
-	print_liste_field_titre("DateCreation", $_SERVER["PHP_SELF"], "datec", $addu, "", 'class="right"', $sortfield, $sortorder);
+	print_liste_field_titre("DateCreation", $_SERVER["PHP_SELF"], "datec", "", "", 'class="right"', $sortfield, $sortorder);
 	print "</tr>\n";
 
 	// Fields title search
@@ -184,7 +181,7 @@ if ($resql) {
 		$obj = $db->fetch_object($resql);
 
 		print '<tr class="oddeven">';
-		print '<td>';
+		print '<td class="tdoverflowmax150">';
 
 		$result = '';
 		$link = $linkend = '';
@@ -192,7 +189,7 @@ if ($resql) {
 		$linkend = '</a>';
 		$name = $obj->name;
 		$result .= ($link.img_object($langs->trans("ShowCompany").': '.$name, 'company').$linkend);
-		$result .= $link.(dol_trunc($name, $maxlen)).$linkend;
+		$result .= $link.$name.$linkend;
 
 		print $result;
 		print '</td>';

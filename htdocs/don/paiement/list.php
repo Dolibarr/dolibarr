@@ -4,8 +4,8 @@
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2019       Thibault FOUCART        <support@ptibogxiv.net>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,8 +49,9 @@ $action     = GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view'; //
 $massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'sclist';
 $mode = GETPOST('mode', 'alpha');
+$toselect = GETPOST('toselect', 'array:int'); // Array of ids of elements selected into a list
 
-$paiementid				= GETPOSTINT('paiementid');
+$paiementid = GETPOSTINT('paiementid');
 
 $search_ref = GETPOST("search_ref", "alpha");
 $search_date_startday = GETPOSTINT('search_date_startday');
@@ -87,6 +88,8 @@ if (!$sortfield) {
 
 $search_all = trim(GETPOST('search_all', 'alphanohtml'));
 
+$object = new Don($db);
+
 $morejs = array();
 $morecss = array();
 
@@ -104,12 +107,14 @@ $arrayfields = array(
 	's.nom'				=> array('label' => "ThirdParty", 'checked' => '1', 'position' => 30),
 	'c.code'			=> array('label' => "Type", 'checked' => '1', 'position' => 40),
 	'pd.num_paiement'	=> array('label' => "Numero", 'checked' => '1', 'position' => 50, 'tooltip' => "ChequeOrTransferNumber"),
-	'transaction'		=> array('label' => "BankTransactionLine", 'checked' => '1', 'position' => 60, 'enabled' => (string) (isModEnabled("bank"))),
-	'ba.label'			=> array('label' => "BankAccount", 'checked' => '1', 'position' => 70, 'enabled' => (string) (isModEnabled("bank"))),
+	'transaction'		=> array('label' => "BankTransactionLine", 'checked' => '1', 'position' => 60, 'enabled' => (string) (int) (isModEnabled("bank"))),
+	'ba.label'			=> array('label' => "BankAccount", 'checked' => '1', 'position' => 70, 'enabled' => (string) (int) (isModEnabled("bank"))),
 	'pd.amount'			=> array('label' => "Amount", 'checked' => '1', 'position' => 80),
 );
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $arrayfields = dol_sort_array($arrayfields, 'position');
-'@phan-var-force array<string,array{label:string,checked:string,position?:int,help?:string,enabled?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 $optioncss = GETPOST('optioncss', 'alpha');
 $moreforfilter = GETPOST('moreforfilter', 'alpha');
@@ -164,7 +169,6 @@ if (empty($reshook)) {
  */
 
 $form = new Form($db);
-$donationstatic = new Don($db);
 $companystatic = new Societe($db);
 $bankline = new AccountLine($db);
 $accountstatic = new Account($db);
@@ -242,7 +246,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -270,6 +274,7 @@ $num = $db->num_rows($resql);
 
 llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'bodyforlist');	// Can use also classforhorizontalscrolloftabs instead of bodyforlist for no horizontal scroll
 
+$arrayofselected = is_array($toselect) ? $toselect : array();
 $param = '';
 if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
@@ -317,7 +322,7 @@ if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
 }
 
-print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 }
@@ -339,11 +344,11 @@ if ($search_all) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
-$massactionbutton = '';
-if ($massactionbutton) {
-	$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
-}
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column); // This also change content of $arrayfields
+// $massactionbutton = '';
+// if ($massactionbutton) {
+// 	$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
+// }
 
 $moreforfilter = '';
 print '<div class="div-table-responsive">';
@@ -353,7 +358,7 @@ print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwit
 // --------------------------------------------------------------------
 print '<tr class="liste_titre_filter">';
 // Action column
-if (getDolGlobalInt('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
@@ -430,7 +435,7 @@ $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $obje
 print $hookmanager->resPrint;
 
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
@@ -446,7 +451,7 @@ $totalarray['nbfield'] = 0;
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
 	$totalarray['nbfield']++;
 }
@@ -472,7 +477,7 @@ if (!empty($arrayfields['c.code']['checked'])) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['pd.num_paiement']['checked'])) {
-	print_liste_field_titre($arrayfields['pd.num_paiement']['label'], $_SERVER["PHP_SELF"], "pd.num_payment", '', $param, '', $sortfield, $sortorder, '', $arrayfields['p.num_paiement']['tooltip']);
+	print_liste_field_titre($arrayfields['pd.num_paiement']['label'], $_SERVER["PHP_SELF"], "pd.num_payment", '', $param, '', $sortfield, $sortorder, '', $arrayfields['pd.num_paiement']['tooltip']);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['transaction']['checked'])) {
@@ -495,7 +500,7 @@ $parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
 	$totalarray['nbfield']++;
 }
@@ -528,9 +533,9 @@ while ($i < $imaxinloop) {
 	$result = $company->fetch($obj->socid);
 
 	print '<tr class="oddeven">';
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		print '<td class="nowrap center">';
-		if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+		if (/* $massactionbutton || */ $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 			$selected = 0;
 			if (in_array($obj->id_paiement, $arrayofselected)) {
 				$selected = 1;
@@ -566,7 +571,7 @@ while ($i < $imaxinloop) {
 		if ($obj->soc_id > 0) {
 			print $companystatic->getNomUrl(1, '', 24);
 		} else {
-			print $donationstatic->societe = $obj->societe;
+			print $object->societe = $obj->societe;
 		}
 		print '</td>';
 		if (!$i) {
@@ -635,6 +640,21 @@ while ($i < $imaxinloop) {
 			$totalarray['val']['amount'] = $obj->amount;
 		} else {
 			$totalarray['val']['amount'] += $obj->amount;
+		}
+	}
+
+	if (!$conf->main_checkbox_left_column) {
+		print '<td class="nowrap center">';
+		if (/* $massactionbutton || */ $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+			$selected = 0;
+			if (in_array($obj->id_paiement, $arrayofselected)) {
+				$selected = 1;
+			}
+			print '<input id="cb'.$obj->id_paiement.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->id_paiement.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
+		print '</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
 		}
 	}
 

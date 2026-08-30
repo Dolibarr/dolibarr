@@ -61,7 +61,7 @@ if (is_numeric($entity)) {
 // Error if CLI mode
 if (php_sapi_name() == "cli") {
 	echo "Error: This page can't be used as a CLI script. For the CLI version of script, launch cron_run_job.php available into scripts/cron/ directory.\n";
-	exit(-1);
+	exit(1);
 }
 
 // core library
@@ -81,7 +81,7 @@ global $langs, $conf, $db;
 $langs->loadLangs(array("admin", "cron", "dict"));
 
 // Security check
-if (empty($conf->cron->enabled)) {
+if (!isModEnabled('cron')) {
 	httponly_accessforbidden('Module Cron not enabled');
 }
 
@@ -142,6 +142,49 @@ if (!empty($id)) {
 	$filter['t.rowid'] = $id;
 }
 
+// Update old jobs that were not closed correctly so processing is moved from 1 to 0 (otherwise task stopped with fatal error are always in status "in progress")
+$sql = "UPDATE ".MAIN_DB_PREFIX."cronjob set processing = 0";
+$sql .= " WHERE processing = 1";
+$sql .= " AND datelastrun <= '".$db->idate(dol_now() - getDolGlobalInt('CRON_MAX_DELAY_FOR_JOBS', 24) * 3600, 'gmt')."'";
+$sql .= " AND datelastresult IS NULL";
+$db->query($sql);
+
+// Also unlock jobs that have a PID but the process does not exist anymore (SIGKILL, crash, segfault, ...).
+if (function_exists('posix_kill') && function_exists('posix_get_last_error')) {
+	$sql = "SELECT rowid, pid";
+	$sql .= " FROM ".MAIN_DB_PREFIX."cronjob";
+	$sql .= " WHERE processing = 1";
+	$sql .= " AND datelastresult IS NULL";
+	$sql .= " AND pid IS NOT NULL";
+	$resql = $db->query($sql);
+	if ($resql) {
+		while ($obj = $db->fetch_object($resql)) {
+			$pid = (int) $obj->pid;
+			if ($pid <= 0) {
+				continue;
+			}
+
+			$isalive = @posix_kill($pid, 0);
+			if (!$isalive) {
+				$errno = posix_get_last_error();
+				if ($errno === 3) { // ESRCH = No such process
+					$nowcleanup = dol_now();
+					$msg = 'Cron job unlocked: stale PID '.$pid;
+
+					$sqlu = "UPDATE ".MAIN_DB_PREFIX."cronjob";
+					$sqlu .= " SET processing = 0, pid = NULL, datelastresult = '".$db->idate($nowcleanup)."', lastresult = '-1', lastoutput = '".$db->escape($msg)."'";
+					$sqlu .= " WHERE rowid = ".((int) $obj->rowid)." AND processing = 1 AND pid = ".((int) $pid)." AND datelastresult IS NULL";
+					$db->query($sqlu);
+
+					dol_syslog("cron_run_jobs_by_url.php unlocked stuck job id=".$obj->rowid." (stale pid ".$pid.")", LOG_WARNING);
+					echo "Unlocked stuck job id=".$obj->rowid." (stale pid ".$pid.")\n";
+				}
+			}
+		}
+		$db->free($resql);
+	}
+}
+
 $result = $object->fetchAll('ASC,ASC,ASC', 't.priority,t.entity,t.rowid', 0, 0, 1, $filter, 0);
 if ($result < 0) {
 	echo "Error: ".$object->error;
@@ -179,12 +222,12 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 				if ($result < 0) {
 					echo "\nUser Error: ".$user->error."\n";
 					dol_syslog("cron_run_jobs.php:: User Error:".$user->error, LOG_ERR);
-					exit(-1);
+					exit(1);
 				} else {
 					if ($result == 0) {
 						echo "\nUser login: ".$userlogin." does not exists for entity ".$conf->entity."\n";
 						dol_syslog("User login:".$userlogin." does not exists", LOG_ERR);
-						exit(-1);
+						exit(1);
 					}
 				}
 				$user->loadRights();

@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011      Herve Prot           <herve.prot@symeos.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -58,14 +58,14 @@ if (!$user->admin) {
 if ($action == 'add') {
 	$sql = "UPDATE ".MAIN_DB_PREFIX."rights_def SET bydefault=1";
 	$sql .= " WHERE id = ".GETPOSTINT("pid");
-	$sql .= " AND entity = ".$conf->entity;
+	$sql .= " AND entity = ".((int) $conf->entity);
 	$db->query($sql);
 }
 
 if ($action == 'remove') {
 	$sql = "UPDATE ".MAIN_DB_PREFIX."rights_def SET bydefault=0";
 	$sql .= " WHERE id = ".GETPOSTINT('pid');
-	$sql .= " AND entity = ".$conf->entity;
+	$sql .= " AND entity = ".((int) $conf->entity);
 	$db->query($sql);
 }
 
@@ -153,7 +153,7 @@ $sql .= " AND r.entity = ".((int) $entity);
 if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 	$sql .= " AND r.perms NOT LIKE '%_advance'"; // Hide advanced perms if option is not enabled
 }
-$sql .= " ORDER BY r.family_position, r.module_position, r.module, r.id";
+$sql .= " ORDER BY r.family_position, r.module_position, r.right_position, r.module, r.id";
 
 $result = $db->query($sql);
 if ($result) {

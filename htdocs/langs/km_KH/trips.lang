@@ -72,7 +72,8 @@ ExpenseReportRulesDesc=អ្នកអាចកំណត់ច្បាប់ច
 ExpenseReportWaitingForApproval=របាយការណ៍ចំណាយថ្មីត្រូវបានដាក់ជូនសម្រាប់ការអនុម័ត
 ExpenseReportWaitingForApprovalMessage=A new expense report has been submitted and is waiting for approval.<br> - User: %s<br> - Period: %s<br>Click here to validate: %s
 ExpenseReportWaitingForReApproval=របាយការណ៍ចំណាយត្រូវបានដាក់ជូនសម្រាប់ការអនុម័តឡើងវិញ
-ExpenseReportWaitingForReApprovalMessage=An expense report has been submitted and is waiting for re-approval.<br>The %s, you refused to approve the expense report for this reason: %s.<br>A new version has been proposed and waiting for your approval.<br> - User: %s<br> - Period: %s<br>Click here to validate: %s
+ExpenseReportWaitingForReApprovalMessage=An expense report has been submitted and is waiting for re-approval.<br>The %s, you refused to approve the expense report for this reason: %s.<br>A new version has been proposed and waiting for your approval.<br> - User: %s<br> - Period: %s<br>
+ExpenseReportWaitingForReApprovalMessage2=Click here to validate: %s
 ExpenseReportsIk=ការកំណត់រចនាសម្ព័ន្ធការគិតប្រាក់ចំងាយ
 ExpenseReportsRules=ច្បាប់នៃរបាយការណ៍ចំណាយ
 ExpenseReportsToApprove=របាយការណ៍ចំណាយដើម្បីអនុម័ត
@@ -120,7 +121,6 @@ ValideTrip=អនុម័តរបាយការណ៍ចំណាយ
 ExpenseReportPayments=ការទូទាត់របាយការណ៍ចំណាយ
 TaxUndefinedForThisCategory = ពន្ធមិនត្រូវបានកំណត់សម្រាប់ប្រភេទនេះទេ។
 errorComputeTtcOnMileageExpense=មាន​បញ្ហា​ក្នុង​ការ​គណនា​ចំណាយ​លើ​ចម្ងាយ​ផ្លូវ
-ErrorOnlyDraftStatusCanBeDeletedInMassAction=មានតែធាតុនៅក្នុងស្ថានភាពព្រាងប៉ុណ្ណោះដែលអាចលុបបាននៅក្នុងសកម្មភាពដ៏ធំ
 
 ## Dictionary
 EX_BRE=អាហារពេលព្រឹក
@@ -156,3 +156,6 @@ TF_PEAGE=ថ្លៃឈ្នួល
 TF_TAXI=តាក់ស៊ី
 TF_TRAIN=រថភ្លើង
 TF_TRIP=ការដឹកជញ្ជូន
+FailedToSetPaid=Failed to set as paid
+FailedToSetToCancel=Failed to cancel
+NobodyHasPermissionToValidateExpenseReport=Nobody has permission to validate expensereport

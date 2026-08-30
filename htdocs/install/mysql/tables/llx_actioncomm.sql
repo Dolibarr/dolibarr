@@ -76,13 +76,14 @@ create table llx_actioncomm
   num_vote          integer DEFAULT NULL,          -- use for Event Organization module
   event_paid        smallint NOT NULL DEFAULT 0,    -- use for Event Organization module
   status            smallint NOT NULL DEFAULT 0,    -- use for Event Organization module for now, but could be use after for event global status
+  max_participants  integer DEFAULT NULL,           -- Maximum number of participants allowed for this action (event, meeting, shift)
 
   fk_element		integer DEFAULT NULL,			-- For link to an element (proposal, invoice, order, ...)
   elementtype		varchar(255) DEFAULT NULL,		-- For link to an element (proposal, invoice, order, ...)
 
-  ip            varchar(250),              --ip used to create record (for public submission page)
+  ip            varchar(250),              -- ip used to create record (for public submission page)
 
-  fk_bookcal_calendar integer DEFAULT NULL, --fk_bookcal_calendar used to link booking to bookcal calendar
+  fk_bookcal_calendar integer DEFAULT NULL, -- fk_bookcal_calendar used to link booking to bookcal calendar
 
   import_key		varchar(14),
   extraparams		varchar(255)					-- for other parameters with json format

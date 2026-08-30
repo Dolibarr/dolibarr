@@ -1,7 +1,7 @@
 --
 -- Be carefull to requests order.
 -- This file must be loaded by calling /install/index.php page
--- when current version is 3.5.0 or higher. 
+-- when current version is 3.5.0 or higher.
 --
 -- To rename a table:       ALTER TABLE llx_table RENAME TO llx_table_new;
 -- To add a column:         ALTER TABLE llx_table ADD COLUMN newcol varchar(60) NOT NULL DEFAULT '0' AFTER existingcol;
@@ -56,8 +56,8 @@ create table llx_commandedet_extrafields
 (
   rowid            integer AUTO_INCREMENT PRIMARY KEY,
   tms              timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  fk_object        integer NOT NULL,    
-  import_key       varchar(14)      	
+  fk_object        integer NOT NULL,
+  import_key       varchar(14)
 )ENGINE=innodb;
 
 ALTER TABLE llx_commandedet_extrafields ADD INDEX idx_commandedet_extrafields (fk_object);
@@ -96,7 +96,7 @@ ALTER TABLE llx_c_chargesociales ADD accountancy_code varchar(24) DEFAULT NULL;
 
 DELETE FROM llx_boxes where box_id IN (SELECT rowid FROM llx_boxes_def where file='box_activity.php' AND note IS NULL);
 DELETE FROM llx_boxes_def where file='box_activity.php' AND note IS NULL;
-  
+
 ALTER TABLE llx_cronjob ADD libname VARCHAR(255);
 
 INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (30,'PROJECT_CREATE','Project creation','Executed when a project is created','project',30);
@@ -351,7 +351,7 @@ UPDATE llx_const SET name='COMPANY_DONOTSEARCH_ANYWHERE' WHERE name='SOCIETE_DON
 --Task 172
 create table llx_actioncomm_resources
 (
-  rowid           	integer AUTO_INCREMENT PRIMARY KEY,  
+  rowid           	integer AUTO_INCREMENT PRIMARY KEY,
   fk_actioncomm		integer NOT NULL,
   element_type		varchar(50) NOT NULL,
   fk_element		integer NOT NULL,

@@ -2,7 +2,8 @@
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +25,6 @@
  *		\ingroup    mailing
  *		\brief      File with parent class of emailing target selectors modules
  */
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 
 
 /**
@@ -117,9 +117,33 @@ class MailingTargets // This can't be abstract as it is used for some method
 	}
 
 	/**
+	 * Return the SQL fragment that excludes email addresses which opted out of emailings
+	 * for the current entity. Returns an empty string when the selector is configured to
+	 * keep unsubscribed addresses ($this->evenunsubscribe).
+	 *
+	 * @param	string	$emailfield		SQL expression of the email column to test (e.g. 's.email', 'c.email'); it is passed through $db->sanitize()
+	 * @return	string					SQL fragment (with a leading space) to append to a WHERE clause, or ''
+	 */
+	public function getSqlToExcludeUnsubscribed($emailfield)
+	{
+		global $conf;
+
+		if (!empty($this->evenunsubscribe)) {
+			return '';
+		}
+
+		// $emailfield is a column expression of the outer query (e.g. 's.email'); it is compared to mu.email.
+		$sql = " AND NOT EXISTS (SELECT rowid FROM ".$this->db->prefix()."mailing_unsubscribe as mu";
+		$sql .= " WHERE ".$this->db->sanitize($emailfield)." = mu.email";
+		$sql .= " AND mu.entity = ".((int) $conf->entity).")";
+
+		return $sql;
+	}
+
+	/**
 	 *	Return number of records for email selector
 	 *
-	 *  @return     integer      Example
+	 *  @return     int      Example
 	 */
 	public function getNbOfRecords()
 	{
@@ -127,10 +151,10 @@ class MailingTargets // This can't be abstract as it is used for some method
 	}
 
 	/**
-	 * Retourne nombre de destinataires
+	 * Return the number of recipients
 	 *
-	 * @param      string		$sql        Sql request to count
-	 * @return     int|string      			Nb of recipient, or <0 if error, or '' if NA
+	 * @param      string		$sql    Sql request to count
+	 * @return     int<-1,max> 			Nb of recipients, or <0 if error
 	 */
 	public function getNbOfRecipients($sql)
 	{
@@ -138,7 +162,7 @@ class MailingTargets // This can't be abstract as it is used for some method
 		if ($result) {
 			$total = 0;
 			while ($obj = $this->db->fetch_object($result)) {
-				$total += $obj->nb;
+				$total += (int) $obj->nb;
 			}
 			return $total;
 		} else {
@@ -148,10 +172,9 @@ class MailingTargets // This can't be abstract as it is used for some method
 	}
 
 	/**
-	 * Affiche formulaire de filtre qui apparait dans page de selection
-	 * des destinataires de mailings
+	 * Displays filter form that appears on the mailing recipient selection page
 	 *
-	 * @return     string      Retourne zone select
+	 * @return     string      Returns select area
 	 */
 	public function formFilter()
 	{
@@ -160,21 +183,21 @@ class MailingTargets // This can't be abstract as it is used for some method
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Met a jour nombre de destinataires
+	 * Update the number of recipients
 	 *
-	 * @param	int		$mailing_id          Id of emailing
-	 * @return  int			                 Return integer < 0 si erreur, nb destinataires si ok
+	 * @param	int		$mailing_id			Id of emailing
+	 * @return  int							Return integer < 0 if error, otherwise number of recipients
 	 */
 	public function update_nb($mailing_id)
 	{
 		// phpcs:enable
-		// Mise a jour nombre de destinataire dans table des mailings
+		// Update the number of recipients in the mailing table
 		$sql = "SELECT COUNT(*) nb FROM ".$this->db->prefix()."mailing_cibles";
 		$sql .= " WHERE fk_mailing = ".((int) $mailing_id);
 		$result = $this->db->query($sql);
 		if ($result) {
 			$obj = $this->db->fetch_object($result);
-			$nb = $obj->nb;
+			$nb = (int) $obj->nb;
 
 			$sql = "UPDATE ".$this->db->prefix()."mailing";
 			$sql .= " SET nbemail = ".((int) $nb)." WHERE rowid = ".((int) $mailing_id);
@@ -230,7 +253,7 @@ class MailingTargets // This can't be abstract as it is used for some method
 					$j++;
 				} else {
 					if ($this->db->errno() != 'DB_ERROR_RECORD_ALREADY_EXISTS') {
-						// Si erreur autre que doublon
+						// If error other than duplicate
 						dol_syslog($this->db->error().' : '.$targetarray['email']);
 						$this->error = $this->db->error().' : '.$targetarray['email'];
 						$this->db->rollback();
@@ -243,27 +266,27 @@ class MailingTargets // This can't be abstract as it is used for some method
 		dol_syslog(__METHOD__.": mailing ".$j." targets added");
 
 		/*
-		//Update the status to show thirdparty mail that don't want to be contacted anymore'
+		//Update the status to show third-party emails that no longer wish to be contacted'
 		$sql = "UPDATE ".$this->db->prefix()."mailing_cibles";
 		$sql .= " SET statut=3";
 		$sql .= " WHERE fk_mailing = ".((int) $mailing_id)." AND email in (SELECT email FROM ".$this->db->prefix()."societe where fk_stcomm=-1)";
 		$sql .= " AND source_type='thirdparty'";
-		dol_syslog(__METHOD__.": mailing update status to display thirdparty mail that do not want to be contacted");
+		dol_syslog(__METHOD__.": mailing update status to display third-party emails that no longer wish to be contacted");
 		$result=$this->db->query($sql);
 
-		//Update the status to show contact mail that don't want to be contacted anymore'
+		//Update the status to show contact emails that no longer wish to be contacted'
 		$sql = "UPDATE ".$this->db->prefix()."mailing_cibles";
 		$sql .= " SET statut=3";
 		$sql .= " WHERE fk_mailing = ".((int) $mailing_id)." AND source_type='contact' AND (email in (SELECT sc.email FROM ".$this->db->prefix()."socpeople AS sc ";
 		$sql .= " INNER JOIN ".$this->db->prefix()."societe s ON s.rowid=sc.fk_soc WHERE s.fk_stcomm=-1 OR no_email=1))";
-		dol_syslog(__METHOD__.": mailing update status to display contact mail that do not want to be contacted",LOG_DEBUG);
+		dol_syslog(__METHOD__.": mailing update status to display contact emails that no longer wish to be contacted",LOG_DEBUG);
 		$result=$this->db->query($sql);
 		*/
 
 		if (empty($this->evenunsubscribe)) {
 			$sql = "UPDATE ".$this->db->prefix()."mailing_cibles as mc";
-			$sql .= " SET mc.statut = 3";
-			$sql .= " WHERE mc.fk_mailing = ".((int) $mailing_id);
+			$sql .= " SET statut = 3";
+			$sql .= " WHERE fk_mailing = ".((int) $mailing_id);
 			$sql .= " AND EXISTS (SELECT rowid FROM ".$this->db->prefix()."mailing_unsubscribe as mu WHERE mu.email = mc.email and mu.entity = ".((int) $conf->entity).")";
 
 			dol_syslog(__METHOD__.":mailing update status to display emails that do not want to be contacted anymore", LOG_DEBUG);
@@ -283,7 +306,7 @@ class MailingTargets // This can't be abstract as it is used for some method
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Supprime tous les destinataires de la table des cibles
+	 *  Deletes all recipients from the targets table
 	 *
 	 *  @param  int		$mailing_id        Id of emailing
 	 *  @return	void
@@ -413,7 +436,7 @@ class MailingTargets // This can't be abstract as it is used for some method
 				$widget[$j]['relpath'] = $relpath[$key];
 				$widget[$j]['iscoreorexternal'] = $iscoreorexternal[$key];
 				$widget[$j]['version'] = empty($objMod->version) ? '' : $objMod->version;
-				$widget[$j]['status'] = img_picto($langs->trans("Active"), 'tick');
+				$widget[$j]['status'] = img_picto($langs->trans("Active"), 'tick', 'class="pictofixedwidth"');
 				if ($disabledbyname > 0 || $disabledbymodule > 1) {
 					$widget[$j]['status'] = '';
 				}

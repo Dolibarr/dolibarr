@@ -1,2 +1,8 @@
 # Dolibarr language file - Source file is en_US - holiday
-RefuseCP=مرفوض
+HRM=إدارة الموارد البشرية (HRM)
+Holiday=الإجازات
+ApprovedCP=تمت الموافقة
+CancelCP=تم الإلغاء
+EditCP=تحرير
+ActionByCP=تم التحديث بواسطة المستخدم
+NoticePeriod=فترة الإشعار

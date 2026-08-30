@@ -1,9 +1,11 @@
 <?php
 /* Copyright (C) 2004-2017	Laurent Destailleur			<eldy@users.sourceforge.net>
- * Copyright (C) 2022		Alice Adminson				<aadminson@example.com>
+ * Copyright (C) 2022		Lamrani Abdel
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	Frédéric France				<frederic.france@free.fr>
  * Coryright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2026		Nick Fragoulis
+ * Copyright (C) 2026		Jose Martinez				<jose.martinez@pichinov.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -11,7 +13,7 @@
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * but WITHOUT ANY WARRANTY, without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
@@ -27,10 +29,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
-require_once DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php";
-require_once DOL_DOCUMENT_ROOT."/ai/lib/ai.lib.php";
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -38,6 +36,9 @@ require_once DOL_DOCUMENT_ROOT."/ai/lib/ai.lib.php";
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
+require_once DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php";
+require_once DOL_DOCUMENT_ROOT."/ai/lib/ai.lib.php";
 
 $langs->loadLangs(array("admin", "website", "other"));
 
@@ -66,34 +67,46 @@ if (!class_exists('FormSetup')) {
 
 $formSetup = new FormSetup($db);
 
-// List all available IA
-$arrayofia = getListOfAIServices();
+// List all available AI
+$arrayofai = getListOfAIServices();
 
 // List all available features
 $arrayofaifeatures = getListOfAIFeatures();
 
+// Main Service Selection
 $item = $formSetup->newItem('AI_API_SERVICE');	// Name of constant must end with _KEY so it is encrypted when saved into database.
-$item->setAsSelect($arrayofia);
+$item->setAsSelect($arrayofai);
 $item->cssClass = 'minwidth150';
 
-foreach ($arrayofia as $ia => $ialabel) {
+// Loop for Provider Configs
+foreach ($arrayofai as $ia => $iarecord) {
+	if ($ia == '-1') {
+		continue;
+	}
+	$ialabel = $iarecord['label'];
 	// Setup conf AI_PUBLIC_INTERFACE_TOPIC
 	/*$item = $formSetup->newItem('AI_API_'.strtoupper($ia).'_ENDPOINT');	// Name of constant must end with _KEY so it is encrypted when saved into database.
 	$item->defaultFieldValue = '';
 	$item->cssClass = 'minwidth500';*/
 
+	// API Key
 	$item = $formSetup->newItem('AI_API_'.strtoupper($ia).'_KEY')->setAsSecureKey();	// Name of constant must end with _KEY so it is encrypted when saved into database.
 	$item->nameText = $langs->trans("AI_API_KEY").' ('.$ialabel.')';
 	$item->defaultFieldValue = '';
 	$item->fieldParams['hideGenerateButton'] = 1;
 	$item->fieldParams['trClass'] = 'iaservice '.$ia;
 	$item->cssClass = 'minwidth500 text-security input'.$ia;
+	$item->helpText = '<span class="helptoshow">HelpToShow</span>';
 
+	// API URL
 	$item = $formSetup->newItem('AI_API_'.strtoupper($ia).'_URL');	// Name of constant must end with _KEY so it is encrypted when saved into database.
 	$item->nameText = $langs->trans("AI_API_URL").' ('.$ialabel.')';
-	$item->defaultFieldValue = '';
-	$item->fieldParams['trClass'] = 'iaservice '.$ia;
+	$item->defaultFieldValue =  $iarecord['url'];
+	$item->fieldParams['trClass'] = 'iaservice iaurl '.$ia;
 	$item->cssClass = 'minwidth500 input'.$ia;
+	if ($ia == 'custom') {
+		$item->fieldAttr['placeholder'] = 'https://domainofapi.com/v1/';
+	}
 }
 
 $setupnotempty = + count($formSetup->items);
@@ -102,6 +115,10 @@ $setupnotempty = + count($formSetup->items);
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 // Access control
+// Setup intentionally stays admin-only: per @sonikf and @eldy feedback,
+// the AI module's technical setup (API keys, provider configuration) is
+// a task done by the admin user, just like for every other Dolibarr module.
+// Per-user/group AI usage is gated separately by 'ai/assistant/use'.
 if (!$user->admin) {
 	accessforbidden();
 }
@@ -123,15 +140,13 @@ $action = 'edit';
  * View
  */
 
-$form = new Form($db);
-
 $help_url = '';
 $title = "AiSetup";
 
 llxHeader('', $langs->trans($title), $help_url, '', 0, 0, '', '', '', 'mod-ai page-admin');
 
 // Subheader
-$linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1').'">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.($backtopage ? $backtopage : dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1])).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 
 print load_fiche_titre($langs->trans($title), $linkback, 'title_setup');
 
@@ -142,7 +157,6 @@ print dol_get_fiche_head($head, 'settings', $langs->trans($title), -1, "ai");
 
 if ($action == 'edit') {
 	print $formSetup->generateOutput(true);
-	print '<br>';
 } elseif (!empty($formSetup->items)) {
 	print $formSetup->generateOutput();
 	print '<div class="tabsAction">';
@@ -160,11 +174,43 @@ if (empty($setupnotempty)) {
 print '<script type="text/javascript">
     jQuery(document).ready(function() {
 		function showHideAIService(aiservice) {
-			console.log("We select the AI service "+aiservice);
+			console.log("showHideAIService: We select the AI service "+aiservice);
 			jQuery(".iaservice").hide();
 
 			if (aiservice != "-1") {
 				jQuery(".iaservice."+aiservice).show();
+				const arrayofia = {';
+$i = 0;
+foreach ($arrayofai as $key => $airecord) {
+	if ($key == -1) {
+		continue;
+	}
+	if ($i) {
+		print ', ';
+	}
+	$i++;
+	print dol_escape_js($key).': \''.dol_escape_js($airecord['url']).'\'';
+}
+print '};
+				const arrayofextlink = {';
+$i = 0;
+foreach ($arrayofai as $key => $airecord) {
+	if ($key == -1) {
+		continue;
+	}
+	if ($i) {
+		print ', ';
+	}
+	$i++;
+	print dol_escape_js($key).': \''.dol_escape_js($airecord['setup']).'\'';
+}
+print '};
+				console.log("Check URL for .iaurl."+aiservice+" .input"+aiservice);
+				if (jQuery(".iaurl."+aiservice+" .input"+aiservice).val() == \'\') {
+					console.log("URL is empty, we fill with default value of IA selected");
+					jQuery(".iaurl."+aiservice+" .input"+aiservice).val(arrayofia[aiservice]);
+				}
+				jQuery(".helptoshow").text(arrayofextlink[aiservice]);
 			}
 		}
 
@@ -172,6 +218,8 @@ print '<script type="text/javascript">
 	        var aiservice = $(this).val();
 
 			showHideAIService(aiservice);
+
+			jQuery(".sectiontest").hide();	/* Hide test section, will appear after the save */
 		});
 
 		showHideAIService("'.getDolGlobalString("AI_API_SERVICE").'");
@@ -182,60 +230,77 @@ print '<script type="text/javascript">
 print dol_get_fiche_end();
 
 
+// The section for test
+
 if (getDolGlobalString("AI_API_SERVICE")) {
+	print '<br><div class="sectiontest">';
+
 	// Section to test
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
-	$functioncode = GETPOST('functioncode');
-	$out = '';
 
-	if ($functioncode) {
-		$labeloffeature = empty($arrayofaifeatures[GETPOST('functioncode')]['label']) ? 'Undefined' : $arrayofaifeatures[GETPOST('functioncode')]['label'];
+	$key = 'textgenerationother';	// The HTML ID of field to fill
 
-		//$out .= $langs->trans("Test").' '.$labeloffeature.'...<br><br>';
+	//if (GETPOST('functioncode') == 'textgenerationemail') {
 
-		if (GETPOST('functioncode') == 'textgenerationemail') {
-			$key = 'textgenerationemail';	// The HTML ID of field to fill
+	print '<br>';
+	//print '<hr>';
 
-			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-			$showlinktoai = $key;		// 'textgeneration', 'imagegeneration', ...
-			$showlinktoailabel = $langs->trans("Test").' '.$labeloffeature;
-			$showlinktolayout = 0;
-			$formmail = new FormMail($db);
-			$htmlname = $key;
+	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+	include_once DOL_DOCUMENT_ROOT."/core/class/html.formai.class.php";
+	$formai = new FormAI($db);
+	$formmail = new FormMail($db);
 
-			// Fill $out
-			include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';
+	$showlinktoai = $key;		// 'textgeneration', 'imagegeneration', ...
+	$showlinktoailabel = $langs->trans("AITestText");
+	$showlinktolayout = 0;
+	$htmlname = $key;
+	$formmail->withaiprompt = '';
 
-			$out .= '<div id="'.$key.'"></div>';
-		} else {
-			$out .= $langs->trans("FeatureNotYetAvailable").'<br><br>';
-			$functioncode = '';
-		}
-	}
+	// Fill $out
 
-	if (!$functioncode) {
-		// Combo list of AI features
-		$out .= '<select name="functioncode" id="functioncode" class="flat minwidth300" placeholder="Test feature">';
-		$out .= '<option value="-1">'.$langs->trans("SelectFeatureToTest").'</option>';
-		foreach ($arrayofaifeatures as $key => $val) {
-			$labelhtml = $langs->trans($arrayofaifeatures[$key]['label']).($arrayofaifeatures[$key]['status'] == 'notused' ? ' <span class="opacitymedium">('.$langs->trans("NotYetAvailable").')</span>' : "");
-			$labeltext = $langs->trans($arrayofaifeatures[$key]['label']);
-			$out .= '<option value="'.$key.'" data-html="'.dol_escape_htmltag($labelhtml).'"';
-			$out .= (GETPOST('functioncode') == $key ? ' selected="selected"' : '');
-			$out .= '>'.dol_escape_htmltag($labeltext).'</option>';
-		}
-		$out .= '</select>';
-		$out .= ajax_combobox("functioncode");
-
-		$out .= '<input class="button small" type="submit" name="testmode" value="'.$langs->trans("Test").'">';
-	}
+	$out = $langs->trans("Test").': &nbsp; ';
+	include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';
 	print $out;
 
+	print ' &nbsp; ';
+	if (getDolGlobalString("AI_DEBUG")) {
+		print ' <span class="small opacitymedium">'.$langs->trans("DebugOnInFile", 'dolibarr_ai.log').'</span>';
+	} else {
+		print ' <span class="small opacitymedium">'.$langs->trans("DebugOff", 'dolibarr_ai.log').'</span>';
+	}
+
+	print '<br><textarea id="'.$htmlname.'" placeholder="Click on picto to enter a prompt or enter a message and click picto to make text transformation..." class="quatrevingtpercent" rows="4"></textarea>';	// The div
+
+	print '<br><br>';
+
+
+	$showlinktoai .= 'html';
+	$htmlname .= 'html';
+	$formmail->withaiprompt = 'html';
+
+	// Fill $out
+	$out = $langs->trans("Test").': &nbsp; ';
+	include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';
+	print $out;
+
+	print ' &nbsp; ';
+	if (getDolGlobalString("AI_DEBUG")) {
+		print ' <span class="small opacitymedium">'.$langs->trans("DebugOnInFile", 'dolibarr_ai.log').'</span>';
+	} else {
+		print ' <span class="small opacitymedium">'.$langs->trans("DebugOff", 'dolibarr_ai.log').'</span>';
+	}
+
+	print '<br>';
+	$doleditor = new DolEditor($htmlname, '', '', 150, 'dolibarr_details');
+	print $doleditor->Create(1);
+
 	print '</form>';
+
+	print '</div>';
 }
 
 llxFooter();

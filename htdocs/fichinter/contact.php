@@ -1,8 +1,10 @@
 <?php
-/* Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2007-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2012      Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2005-2012  Regis Houssin               <regis.houssin@inodbox.com>
+ * Copyright (C) 2007-2009  Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2012       Juanjo Menent               <jmenent@2byte.es>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2025       MDW                         <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026       Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,20 +28,20 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fichinter.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array('interventions', 'sendings', 'companies'));
@@ -49,8 +51,8 @@ $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
 // Security check
-if ($user->socid) {
-	$socid = $user->socid;
+if ($user->isExternalUser()) {
+	$socid = $user->isExternalUser();
 }
 $result = restrictedArea($user, 'ficheinter', $id, 'fichinter');
 
@@ -114,7 +116,10 @@ $contactstatic = new Contact($db);
 $userstatic = new User($db);
 $formproject = new FormProjets($db);
 
-llxHeader('', $langs->trans("Intervention"), '', '', 0, 0, '', '', '', 'mod-fichinter page-card_contact');
+$title = $object->ref . " - " . $langs->trans('ContactsAddresses');
+$help_url = 'EN:Module_Interventions|FR:Module_Fiches_d\'interventions';
+
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-fichinter page-card_contact');
 
 // Mode vue et edition
 
@@ -122,7 +127,7 @@ if ($id > 0 || !empty($ref)) {
 	$object->fetch_thirdparty();
 
 	$head = fichinter_prepare_head($object);
-	print dol_get_fiche_head($head, 'contact', $langs->trans("InterventionCard"), -1, 'intervention');
+	print dol_get_fiche_head($head, 'contact', $langs->trans("InterventionCard"), -1, $object->picto);
 
 
 	// Intervention card
@@ -133,8 +138,8 @@ if ($id > 0 || !empty($ref)) {
 	// Ref customer
 	//$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, $user->rights->ficheinter->creer, 'string', '', 0, 1);
 	//$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, $user->rights->ficheinter->creer, 'string', '', null, null, '', 1);
-	$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', 0, 1);
-	$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', null, null, '', 1);
+	$morehtmlref .= $form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', 0, 1);
+	$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', null, null, '', 1);
 	// Thirdparty
 	$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1, 'customer');
 	// Project
@@ -144,9 +149,9 @@ if ($id > 0 || !empty($ref)) {
 		if ($usercancreate && 0) {
 			$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 			if ($action != 'classify') {
-				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
+				$morehtmlref .= '<a class="editfielda" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true).'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
-			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
@@ -176,9 +181,12 @@ if ($id > 0 || !empty($ref)) {
 	// Contacts lines (modules that overwrite templates must declare this into descriptor)
 	$dirtpls = array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
 	foreach ($dirtpls as $reldir) {
-		$res = @include dol_buildpath($reldir.'/contacts.tpl.php');
-		if ($res) {
-			break;
+		$file = dol_buildpath($reldir.'/contacts.tpl.php');
+		if (file_exists($file)) {
+			$res = @include $file;
+			if ($res) {
+				break;
+			}
 		}
 	}
 }

@@ -94,14 +94,14 @@
 	        /* @CHANGE LDR We set DOLAPIKEY into header */
     	    /* log("added key " + key); */
     	    log("added key");
-        
-            
+
+
         	/* Disabled for security reason. We keep only param in header
 	        var apiKeyAuth = new SwaggerClient.ApiKeyAuthorization("api_key", key, "query");
             window.swaggerUi.api.clientAuthorizations.add("api_key", apiKeyAuth);
             log("added key " + key);
             */
-	
+
 	        var apiKeyAuth = new SwaggerClient.ApiKeyAuthorization("DOLAPIKEY", key, "header");
             window.swaggerUi.api.clientAuthorizations.add("api_key", apiKeyAuth);
     	    /* log("header DOLAPIKEY added with value "+key); */
@@ -110,7 +110,7 @@
       }
 
       $('#input_apiKey').change(addApiKeyAuthorization);
-      
+
       window.swaggerUi.load();
 
       function log() {
@@ -120,12 +120,12 @@
       }
   });
   </script>
-  
+
   <style>
 	.info_title, .info_description, .info_contact, .info_name, .info_url, .info_email, .info_license, #api_info, #input_baseUrl {
 		display: none !important;
 	}
-  </style>  
+  </style>
 </head>
 
 <body class="swagger-section">

@@ -2,7 +2,8 @@
 /* Copyright (C) 2013-2016  Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2013-2024  Alexandre Spangaro      <aspangaro@easya.solutions>
  * Copyright (C) 2016-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,9 +27,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -36,19 +34,21 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("accountancy", "admin", "bills", "compta", "errors", "hrm", "salaries"));
 
-$mesg = '';
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
-$id = GETPOSTINT('id');
-$rowid = GETPOSTINT('rowid');
 $massaction = GETPOST('massaction', 'aZ09');
 $optioncss = GETPOST('optioncss', 'alpha');
 $mode = GETPOST('mode', 'aZ'); // The output mode ('list', 'kanban', 'hierarchy', 'calendar', ...)
-$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'accountingsubaccountlist'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : str_replace('_', '', basename(dirname(__FILE__)).basename(__FILE__, '.php')); // To manage different context of search
+
+$id = GETPOSTINT('id');
+$rowid = GETPOSTINT('rowid');
 
 $search_subaccount = GETPOST('search_subaccount', 'alpha');
 $search_label = GETPOST('search_label', 'alpha');
@@ -74,10 +74,10 @@ if (!$sortorder) {
 }
 
 $arrayfields = array(
-	'subaccount'=>array('label'=>$langs->trans("AccountNumber"), 'checked'=>1),
-	'label'=>array('label'=>$langs->trans("Label"), 'checked'=>1),
-	'type'=>array('label'=>$langs->trans("Type"), 'checked'=>1),
-	'reconcilable'=>array('label'=>$langs->trans("Reconcilable"), 'checked'=>1)
+	'subaccount' => array('label' => $langs->trans("AccountNumber"), 'checked' => '1'),
+	'label' => array('label' => $langs->trans("Label"), 'checked' => '1'),
+	'type' => array('label' => $langs->trans("Type"), 'checked' => '1'),
+	'reconcilable' => array('label' => $langs->trans("Reconcilable"), 'checked' => '1')
 );
 
 if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -297,7 +297,7 @@ $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$resql = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($resql);
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -334,7 +334,7 @@ if ($resql) {
 	// List of mass actions available
 	$arrayofmassactions = array();
 
-	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" id="searchFormList" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	if ($optioncss != '') {
 		print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	}
@@ -345,12 +345,13 @@ if ($resql) {
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit, 0, 0, 1);
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'accounting_account', 0, '', '', $limit, 0, 0, 1);
 
 	print '<div class="info">'.$langs->trans("WarningCreateSubAccounts").'</div>';
+	print '<br>';
 
 	$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-	$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
+	$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
 	$selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 	$selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
@@ -363,7 +364,7 @@ if ($resql) {
 	// Line for search fields
 	print '<tr class="liste_titre_filter">';
 	// Action column
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		print '<td class="liste_titre center maxwidthsearch">';
 		$searchpicto = $form->showFilterAndCheckAddButtons($massactionbutton ? 1 : 0, 'checkforselect', 1);
 		print $searchpicto;
@@ -376,7 +377,7 @@ if ($resql) {
 		print '<td class="liste_titre"><input type="text" class="flat" size="20" name="search_label" value="'.$search_label.'"></td>';
 	}
 	if (!empty($arrayfields['type']['checked'])) {
-		print '<td class="liste_titre center">'.$form->selectarray('search_type', array('1'=>$langs->trans('Customer').' / '.$langs->trans("Prospect"), '2'=>$langs->trans('Supplier'), '3'=>$langs->trans('Employee')), $search_type, 1).'</td>';
+		print '<td class="liste_titre center">'.$form->selectarray('search_type', array('1' => $langs->trans('Customer').' / '.$langs->trans("Prospect"), '2' => $langs->trans('Supplier'), '3' => $langs->trans('Employee')), $search_type, 1).'</td>';
 	}
 	if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 		if (!empty($arrayfields['reconcilable']['checked'])) {
@@ -384,7 +385,7 @@ if ($resql) {
 		}
 	}
 	// Action column
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		print '<td class="liste_titre maxwidthsearch">';
 		$searchpicto = $form->showFilterAndCheckAddButtons($massactionbutton ? 1 : 0, 'checkforselect', 1);
 		print $searchpicto;
@@ -394,7 +395,7 @@ if ($resql) {
 
 	print '<tr class="liste_titre">';
 	// Action column
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'center maxwidthsearch ');
 	}
 	if (!empty($arrayfields['subaccount']['checked'])) {
@@ -412,7 +413,7 @@ if ($resql) {
 		}
 	}
 	// Action column
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'center maxwidthsearch ');
 	}
 	print "</tr>\n";
@@ -426,12 +427,12 @@ if ($resql) {
 		$obj = $db->fetch_object($resql);
 
 		if ($obj->type == 1) {
-			$companystatic->id = $obj->id;
+			$companystatic->id = $obj->rowid;
 			$companystatic->client = $obj->nature;
 			$companystatic->fournisseur = 0;
 		}
 		if ($obj->type == 2) {
-			$companystatic->id = $obj->id;
+			$companystatic->id = $obj->rowid;
 			$companystatic->client = 0;
 			$companystatic->fournisseur = $obj->nature2;
 		}
@@ -439,7 +440,7 @@ if ($resql) {
 		print '<tr class="oddeven">';
 
 		// Action column
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($conf->main_checkbox_left_column) {
 			print '<td class="center">';
 			$e = '';
 
@@ -528,7 +529,7 @@ if ($resql) {
 		}
 
 		// Action column
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if (!$conf->main_checkbox_left_column) {
 			print '<td class="center">';
 			$e = '';
 
@@ -566,7 +567,7 @@ if ($resql) {
 
 	$db->free($resql);
 
-	$parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
+	$parameters = array('arrayfields' => $arrayfields, 'sql' => $sql);
 	$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 

@@ -88,7 +88,7 @@ class ActionsCardCompany extends ActionsCardCommon
 	public function assign_values(&$action, $id = 0, $ref = '')
 	{
 		// phpcs:enable
-		global $conf, $langs, $user, $mysoc;
+		global $conf, $langs;
 		global $form, $formcompany;
 
 		$ret = $this->getObject($id, $ref);
@@ -150,7 +150,7 @@ class ActionsCardCompany extends ActionsCardCommon
 
 			for ($i = 1; $i <= 4; $i++) {
 				$this->tpl['langprofid'.$i]		= $langs->transcountry('ProfId'.$i, $this->object->country_code);
-				$this->tpl['checkprofid'.$i]	= $this->object->id_prof_check($i, $this->object);
+				$this->tpl['checkprofid'.$i]	= $this->object->id_prof_check($i);
 				$this->tpl['urlprofid'.$i] = $this->object->id_prof_url($i, $this->object);
 			}
 

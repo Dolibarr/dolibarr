@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2017 Maxime Kohlhaas <support@atm-consulting.fr>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -44,7 +44,7 @@ class mod_expensereport_sand extends ModeleNumRefExpenseReport
 	public $error = '';
 
 	/**
-	 * @var string Nom du modele
+	 * @var string Name of model
 	 * @deprecated
 	 * @see $name
 	 */
@@ -75,21 +75,25 @@ class mod_expensereport_sand extends ModeleNumRefExpenseReport
 		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
 		$texte .= '<input type="hidden" name="action" value="updateMask">';
 		$texte .= '<input type="hidden" name="maskconst" value="EXPENSEREPORT_SAND_MASK">';
+		$texte .= '<input type="hidden" name="page_y" value="">';
+
 		$texte .= '<table class="nobordernopadding centpercent">';
 
 		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("ExpenseReport"), $langs->transnoentities("ExpenseReport"));
+		$tooltip .= $langs->trans("GenericMaskCodes1");
+		$tooltip .= '<br>';
 		//$tooltip.=$langs->trans("GenericMaskCodes2");
 		$tooltip .= $langs->trans("GenericMaskCodes3");
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("ExpenseReport"), $langs->transnoentities("ExpenseReport"));
 		$tooltip .= $langs->trans("GenericMaskCodes5");
 		$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5b");
 
-		// Parametrage du prefix
+		// Setting of prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
 		$mask = getDolGlobalString('EXPENSEREPORT_SAND_MASK');
 		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskvalue" value="'.$mask.'">', $tooltip, 1, 'help', 'valignmiddle', 0, 3, $this->name).'</td>';
 
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="Button" value="'.$langs->trans("Modify").'"></td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="Button" value="'.$langs->trans("Save").'"></td>';
 
 		$texte .= '</tr>';
 

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2024   	Florian Charlaix     <fcharlaix@easya.solutions>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +28,7 @@ use Luracast\Restler\RestException;
 class Webhook extends DolibarrApi
 {
 	/**
-	 * @var array       Mandatory fields, checked when we create and update the object
+	 * @var string[]       Mandatory fields, checked when we create and update the object
 	 */
 	public static $FIELDS = array(
 		'url',
@@ -80,6 +81,8 @@ class Webhook extends DolibarrApi
 	 * @param   string  $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool $pagination_data If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @return  array               Array of target objects
+	 * @phan-return Target[]|array{data:Target[],pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 * @phpstan-return Target[]|array{data:Target[],pagination:array{total:int,page:int,page_count:int,limit:int}}
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '', $pagination_data = false)
 	{
@@ -167,8 +170,13 @@ class Webhook extends DolibarrApi
 		if (!DolibarrApiAccess::$user->hasRight('webhook', 'webhook_target', 'write')) {
 			throw new RestException(403);
 		}
-		// Check mandatory fields
-		$request_data = $this->_validate($request_data);
+
+		if (!is_array($request_data)) {
+			$request_data = array();
+		}
+
+		// Check mandatory fields (not using output, only possible exception is important)
+		$this->_validate($request_data);
 
 		foreach ($request_data as $field => $value) {
 			$this->target->$field = $this->_checkValForAPI($field, $value, $this->target);
@@ -259,6 +267,8 @@ class Webhook extends DolibarrApi
 	 * Get the list of all available triggers
 	 *
 	 * @return array
+	 * @phan-return array<string,string>
+	 * @phpstan-return array<string,string>
 	 *
 	 * @url GET triggers
 	 */
@@ -313,9 +323,12 @@ class Webhook extends DolibarrApi
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Clean sensible object datas
+	 * @phpstan-template T
 	 *
 	 * @param   Object  $object     Object to clean
 	 * @return  Object				Object with cleaned properties
+	 * @phpstan-param T $object
+	 * @phpstan-return T
 	 */
 	protected function _cleanObjectDatas($object)
 	{
@@ -371,14 +384,9 @@ class Webhook extends DolibarrApi
 		unset($object->date_validation);
 		unset($object->date_modification);
 		unset($object->date_cloture);
-		unset($object->user_author);
-		unset($object->user_creation);
 		unset($object->user_creation_id);
-		unset($object->user_valid);
-		unset($object->user_validation);
 		unset($object->user_validation_id);
 		unset($object->user_closing_id);
-		unset($object->user_modification);
 		unset($object->user_modification_id);
 		unset($object->specimen);
 		unset($object->extraparams);

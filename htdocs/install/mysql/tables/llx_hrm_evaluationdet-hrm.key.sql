@@ -26,4 +26,3 @@ ALTER TABLE llx_hrm_evaluationdet ADD INDEX idx_hrm_evaluationdet_fk_evaluation 
 --ALTER TABLE llx_hrm_evaluationdet ADD UNIQUE INDEX uk_hrm_evaluationdet_fieldxy(fieldx, fieldy);
 
 ALTER TABLE llx_hrm_evaluationdet ADD CONSTRAINT llx_hrm_evaluationdet_fk_evaluation FOREIGN KEY (fk_evaluation) REFERENCES llx_hrm_evaluation(rowid);
-

@@ -2,7 +2,7 @@
 
 ![Downloads per day](https://img.shields.io/sourceforge/dw/dolibarr.svg)
 ![Docker hub pulls](https://img.shields.io/docker/pulls/dolibarr/dolibarr.svg)
-[![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%207.1-8892BF.svg?style=flat-square)](https://php.net/)
+[![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%207.2-8892BF.svg?style=flat-square)](https://php.net/)
 [![GitHub release](https://img.shields.io/github/v/release/Dolibarr/dolibarr)](https://github.com/Dolibarr/dolibarr)
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/5521/badge)](https://bestpractices.coreinfrastructure.org/projects/5521)
 
@@ -34,11 +34,11 @@ There is a lot of different solutions to install Dolibarr.
 
 ### Using packages 
 
-If you have low technical skills and you're looking to install Dolibarr ERP/CRM with just few clicks, you can use one of the packaged versions (see next chapter if you have IT knowledge) :
+If you have low technical skills and you're looking to install Dolibarr ERP/CRM with just a few clicks, you can use one of the packaged versions (see next chapter if you have IT knowledge):
 
 - [DoliWamp for Windows](https://wiki.dolibarr.org/index.php/Dolibarr_for_Windows_(DoliWamp))
 - [DoliDeb for Debian, Ubuntu](https://wiki.dolibarr.org/index.php/Dolibarr_for_Ubuntu_or_Debian)
-- DoliRpm for Red Hat, Fedora, OpenSuse, Mandriva or Mageia
+- DoliRpm for Red Hat, Fedora, openSUSE, Mandriva or Mageia
 - The Docker image (see chapter "Using Docker")
 
 Releases can be downloaded from [official website](https://www.dolibarr.org/).
@@ -88,11 +88,11 @@ Dolibarr supports upgrading, usually without the need for any (commercial) suppo
 
 Follow these step-by-step instructions to seamlessly upgrade Dolibarr to the latest version:
 
-- At first make a backup of your Dolibarr files & then [see](https://wiki.dolibarr.org/index.php/Installation_-_Upgrade#Upgrade_Dolibarr)
+- First, make a backup of your Dolibarr files, then see [the upgrade guide](https://wiki.dolibarr.org/index.php/Installation_-_Upgrade#Upgrade_Dolibarr)
 - Verify that your installed PHP version is supported by the new version [see PHP support](https://wiki.dolibarr.org/index.php/Releases).
 - Overwrite all old files from the 'dolibarr' directory with files provided in the new version's package.
-- At your next access, Dolibarr will redirect you to the "install/" page to follow the upgrade process.
-  If an `install.lock` file exists to lock any other upgrade process, the application will ask you to remove the file manually (you should find the `install.lock` file in the directory used to store generated and uploaded documents, in most cases, it is the directory called "*documents*").
+- On your next access, Dolibarr will redirect you to the "install/" page to follow the upgrade process.
+  If an `install.lock` file exists (which locks any other upgrade process), the application will ask you to remove the file manually (you should find the `install.lock` file in the directory used to store generated and uploaded documents; in most cases, this is the directory called "*documents*").
 
 
 ## WHAT'S NEW
@@ -116,6 +116,7 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 - Product Variants
 - Bill of Materials (BOM)
 - Manufacturing Orders (MO)
+- Workstations / Workplaces
 
  Customer/Sales Management
 
@@ -175,12 +176,13 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 - Data export/import
 - Barcodes
 - LDAP connectivity
-- ClickToDial integration
+- Click-To-Dial integration
 - Mass emailing
 - RSS integration
 - Social platforms linking
 - Payment platforms integration (PayPal, Stripe, Paybox...)
 - Email-Collector
+- AI support via API
 
 (around 100 modules available by default, 1000+ addons at the official marketplace Dolistore.com)
 
@@ -203,7 +205,7 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
   - Argentina invoice numbering using A,B,C...
   - Greece fetch customer vat details from AADE, all invoice types, MyData(external free module)
   - ZATCA e-invoicing QR-Code
-  - Compatible with [European directives](https://europa.eu/legislation_summaries/taxation/l31057_en.htm) (2006/112/CE ... 2010/45/UE)
+  - Compatible with [European directives](https://commission.europa.eu/topics/taxation_en) (2006/112/CE ... 2010/45/UE)
   - Compatible with data privacy rules (Europe's GDPR, ...)
   - ...
 - Flexible PDF & ODT generation for invoices, proposals, orders...
@@ -215,7 +217,7 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 - MariaDB, MySQL or PostgreSQL
 - Compatible with all Cloud solutions that match PHP & MySQL or PostgreSQL prerequisites.
 
-See exact requirements on the [Wiki](https://wiki.dolibarr.org/index.php/Prerequisite)
+See exact requirements on the [Wiki](https://wiki.dolibarr.org/index.php/Prerequisites)
 
 ### Extending
 
@@ -237,14 +239,16 @@ These are features that Dolibarr does **not** yet fully support:
 Administrator, user, developer and translator's documentation are available along with other community resources in the [Wiki](https://wiki.dolibarr.org).
 
 
-## CONTRIBUTING
+## CONTRIBUTING AND RELEASE PROCESS
 
 This project exists thanks to all the people who contribute.
-Please read the instructions on how to contribute (report a bug/error, a feature request, send code, ...)  [[Contributing](https://github.com/Dolibarr/dolibarr/blob/develop/.github/CONTRIBUTING.md)]
+Please read the instructions on how to contribute (report a bug/error, a feature request, send code, ...)  [Contributing](https://github.com/Dolibarr/dolibarr/blob/develop/.github/CONTRIBUTING.md)
 
 A View on Contributors:
 
 [![Dolibarr](https://opencollective.com/dolibarr/contributors.svg?width=890&button=false)](https://github.com/Dolibarr/dolibarr/graphs/contributors)
+
+The release process is described in the file dev/build/makepack-howto.md
 
 
 ## CREDITS
@@ -258,9 +262,12 @@ See [COPYRIGHT](https://github.com/Dolibarr/dolibarr/blob/develop/COPYRIGHT) fil
 
 Follow Dolibarr project on:
 
-- [Facebook](https://www.facebook.com/dolibarr)
-- [X](https://x.com/dolibarr)
 - [LinkedIn](https://www.linkedin.com/company/association-dolibarr)
+- [Mastodon](https://pouet.chapril.org/@dolibarr)
+- [BlueSky](https://bsky.app/profile/dolibarr.org)
+- [Threads](https://www.threads.net/@dolibarr)
+- [X](https://x.com/dolibarr)
+- [Facebook](https://www.facebook.com/dolibarr)
 - [Reddit](https://www.reddit.com/r/Dolibarr_ERP_CRM/)
 - [YouTube](https://www.youtube.com/user/DolibarrERPCRM)
 - [GitHub](https://github.com/Dolibarr/dolibarr)
@@ -268,4 +275,4 @@ Follow Dolibarr project on:
 
 ## Sponsors
 
-Support this project by becoming a sponsor. Your logo will show up here. 🙏 [[Become a sponsor/backer](https://opencollective.com/dolibarr#backer)]
+Support this project by becoming a sponsor. Your logo will show up here. 🙏 [Become a sponsor/backer](https://opencollective.com/dolibarr#backer)]

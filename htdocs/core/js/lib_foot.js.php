@@ -50,8 +50,6 @@ require_once '../../main.inc.php';
 /**
  * @var Conf $conf
  * @var Translate $langs
- *
- * @var int $dolibarr_nocache
  */
 
 
@@ -62,100 +60,73 @@ require_once '../../main.inc.php';
 // Define javascript type
 top_httphead('text/javascript; charset=UTF-8');
 // Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
-if (empty($dolibarr_nocache)) {
-	header('Cache-Control: max-age=10800, public, must-revalidate');
-} else {
-	header('Cache-Control: no-cache');
-}
+header('Cache-Control: max-age=10800, public, must-revalidate');
 
-//var_dump($conf);
 
+$jsConst = [
+	'DOL_URL_ROOT' => DOL_URL_ROOT,
+	'classfortooltiponclicktextWidth' => ($conf->browser->layout == 'phone' ? max((empty($_SESSION['dol_screenwidth']) ? 0 : $_SESSION['dol_screenwidth']) - 20, 320) : 700),
+	'dol_no_mouse_hover' => !empty($conf->dol_no_mouse_hover)
+];
+
+
+include __DIR__ . '/lib_initTooltips.js';
+
+?>
 
 // Wrapper to show tooltips (html or onclick popup)
-print "\n/* JS CODE TO ENABLE Tooltips on all object with class classfortooltip */
-jQuery(document).ready(function () {\n";
+/* JS CODE TO ENABLE Tooltips on all object with class classfortooltip */
+jQuery(function() {
 
-if (empty($conf->dol_no_mouse_hover)) {
-	print '
-	/* for standard tooltip */
-	jQuery(".classfortooltip").tooltip({
-		tooltipClass: "mytooltip",
-		show: { collision: "flipfit", effect:"toggle", delay:50, duration: 20 },
-		hide: { delay: 250, duration: 20 },
-		content: function () {
-			console.log("Return title for popup");
-			return $(this).prop("title");		/* To force to get title as is */
-		}
-	});
+	const footerConst = <?php print json_encode($jsConst); ?>;
 
-	var opendelay = 100;
-	var elemtostoretooltiptimer = jQuery("#dialogforpopup");
-	var currenttoken = jQuery("meta[name=anti-csrf-currenttoken]").attr("content");
 
-	/* for ajax tooltip */
-	target = jQuery(".classforajaxtooltip");
-	target.tooltip({
-		tooltipClass: "mytooltip",
-		show: { collision: "flipfit", effect:"toggle", delay: 0, duration: 20 },
-		hide: { delay: 250, duration: 20 }
-	});
+	if(!footerConst.dol_no_mouse_hover) {
+		// --------------------------------
+		// Initial page load
+		// --------------------------------
+		initTooltips(document.body); // initialize all tooltips on page load
+		initAjaxTooltips(document.body, footerConst.DOL_URL_ROOT); // initialize all AJAX tooltips on page load
 
-	target.off("mouseover mouseout");
-	target.on("mouseover", function(event) {
-		console.log("we will create timer for ajax call");
-		event.stopImmediatePropagation();
-		clearTimeout(elemtostoretooltiptimer.data("openTimeoutId"));
 
-		var params = JSON.parse($(this).attr("data-params"));
-		params.token = currenttoken;
-		var elemfortooltip = $(this);
-
-		elemtostoretooltiptimer.data("openTimeoutId", setTimeout(function() {
-			target.tooltip("close");
-			$.ajax({
-				url:"'. DOL_URL_ROOT.'/core/ajax/ajaxtooltip.php",
-				type: "post",
-				async: true,
-				data: params,
-				success: function(response){
-					// Setting content option
-					console.log("ajax success");
-					if (elemfortooltip.is(":hover")) {
-						elemfortooltip.tooltip("option","content",response);
-						elemfortooltip.tooltip("open");
-					}
-				}
+		// --------------------------------
+		// Dynamic reload via Dolibarr hook
+		// --------------------------------
+		if (typeof Dolibarr !== "undefined" && Dolibarr.on) {
+			// Because Dolibarr context isn't in all Dolibarr page and lib_foot.js.php can be loaded everywhere
+			// it useful to check Dolibarr context is loaded before but we are already in a jQuery(function() so event Dolibarr:Ready can't be used here
+			Dolibarr.on('initNewContent', ({targets}) => {
+				targets.forEach(container => {
+					initTooltips(container);
+					initAjaxTooltips(container, footerConst.DOL_URL_ROOT);
+				})
 			});
-		}, opendelay));
-	});
-	target.on("mouseout", function(event) {
-		console.log("mouse out of a .classforajaxtooltip");
-	    event.stopImmediatePropagation();
-	    clearTimeout(elemtostoretooltiptimer.data("openTimeoutId"));
-	    target.tooltip("close");
-	});
-	';
-}
+		};
+	}
 
-print '
-	jQuery(".classfortooltiponclicktext").dialog({
-		closeOnEscape: true, classes: { "ui-dialog": "highlight" },
-		maxHeight: window.innerHeight-60, width: '.($conf->browser->layout == 'phone' ? max((empty($_SESSION['dol_screenwidth']) ? 0 : $_SESSION['dol_screenwidth']) - 20, 320) : 700).',
-		modal: true,
-		autoOpen: false
-	}).css("z-index: 5000");
-	jQuery(".classfortooltiponclick").click(function () {
-		console.log("We click on tooltip for element with dolid="+$(this).attr(\'dolid\'));
-		if ($(this).attr(\'dolid\')) {
-			obj=$("#idfortooltiponclick_"+$(this).attr(\'dolid\'));		/* obj is a div component */
-			obj.dialog("open");
-			return false;
-		}
+	// --------------------------------
+	// Initial page load
+	// --------------------------------
+	jQuery(function() {
+		initTooltipDialogs(document.body);
 	});
+
+	// --------------------------------
+	// Dynamic reload via Dolibarr hook
+	// --------------------------------
+
+	if (typeof Dolibarr !== "undefined" && Dolibarr.on) {
+		// Because Dolibarr context isn't in all Dolibarr page and lib_foot.js.php can be loaded everywhere
+		// it useful to check Dolibarr context is loaded before but we are already in a jQuery(function() so event Dolibarr:Ready can't be used here
+		Dolibarr.on('initNewContent', ({ targets }) => {
+			targets.forEach(container => initTooltipDialogs(container, footerConst.classfortooltiponclicktextWidth));
+		});
+	};
+
 });
-';
 
 
+<?php
 // Wrapper to manage dropdown
 if (!defined('JS_JQUERY_DISABLE_DROPDOWN')) {
 	print "\n/* JS CODE TO ENABLE dropdown (hamburger, linkto, ...) */\n";
@@ -165,7 +136,6 @@ if (!defined('JS_JQUERY_DISABLE_DROPDOWN')) {
                   // Click onto the link "link to" or "hamburger", toggle dropdown
 				  $(document).on(\'click\', \'.dropdown dt a\', function () {
                   	  console.log("toggle dropdown dt a");
-                  	  setTimeout(() => { $(\'.inputsearch_dropdownselectedfields\').focus(); }, 200);
 
                       //$(this).parent().parent().find(\'dd ul\').slideToggle(\'fast\');
                       $(".ulselectedfields").removeClass("open");
@@ -233,7 +203,11 @@ if ($conf->browser->layout != 'phone') {
 					// Click on the preview picto
 			        jQuery(".documentpreview").click(function () {
             		    console.log("We click on preview for element with href="+$(this).attr(\'href\')+" mime="+$(this).attr(\'mime\'));
-            		    document_preview($(this).attr(\'href\'), $(this).attr(\'mime\'), \''.dol_escape_js($langs->transnoentities("Preview")).'\');
+						var titledocpreview = $(this).attr(\'data-title\');
+						if (titledocpreview == undefined || titledocpreview == "") {
+							titledocpreview = \''.dol_escape_js($langs->transnoentities("Preview")).'\'
+						}
+            		    document_preview($(this).attr(\'href\'), $(this).attr(\'mime\'), titledocpreview);
                 		return false;
         			});
 		});'."\n";
@@ -416,3 +390,8 @@ print '
 		});
 	});
 '."\n";
+
+
+// JS CODE USED by form::getSearchFilterToolInput
+include __DIR__ . '/lib_foot_search_tool.js';
+include __DIR__ . '/lib_tooltip-freeze-by-alt-keypress.js';

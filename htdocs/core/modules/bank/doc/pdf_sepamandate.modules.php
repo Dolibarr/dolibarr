@@ -71,7 +71,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	 */
 	public function __construct($db)
 	{
-		global $conf, $langs, $mysoc;
+		global $langs, $mysoc;
 
 		// Translations
 		$langs->loadLangs(array("main", "bank", "withdrawals", "companies"));
@@ -212,7 +212,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("SepaMandate"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
-				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
+				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getAnonymisableFullName($outputlangs)));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("SepaMandate"));
 				if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 					$pdf->SetCompression(false);
@@ -229,15 +229,15 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				$pdf->MultiCell(0, 3, ''); // Set interline to 3
 				$pdf->SetTextColor(0, 0, 0);
 
-				$tab_top = 50;
-				$tab_top_newpage = 40;
+				$tab_top = 40 + $this->marge_haute;
+				$tab_top_newpage = 30 + $this->marge_haute;
 
 				$tab_height = $this->page_hauteur - $tab_top - $this->heightforfooter  - $this->heightforfreetext ;
 
 				// Show notes
 				if (!empty($object->note_public)) {
 					$pdf->SetFont('', '', $default_font_size - 1);
-					$pdf->writeHTMLCell(190, 3, $this->posxref, $tab_top - 2, dol_htmlentitiesbr($object->note_public), 0, 1);
+					$pdf->writeHTMLCell(190, 3, $this->posxref, $tab_top - 2, dol_htmlentitiesbr((string) $object->note_public), 0, 1);
 					$nexY = $pdf->GetY();
 					$height_note = $nexY - ($tab_top - 2);
 
@@ -459,9 +459,12 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 				global $action;
 				$reshook = $hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+				$this->warnings = $hookmanager->warnings;
 				if ($reshook < 0) {
 					$this->error = $hookmanager->error;
 					$this->errors = $hookmanager->errors;
+					dolChmod($file);
+					return -1;
 				}
 
 				dolChmod($file);
@@ -526,7 +529,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 
 		$pdf->SetXY($this->marge_gauche, $posy);
 		$pdf->SetFont('', '', $default_font_size);
-		$pdf->MultiCell(100, 3, $outputlangs->transnoentitiesnoconv("PleaseReturnMandate", $mysoc->email).':', 0, 'L', false);
+		$pdf->MultiCell(100, 3, $outputlangs->transnoentitiesnoconv("PleaseReturnMandate", (string) $mysoc->email).':', 0, 'L', false);
 		$posy = $pdf->GetY() + 2;
 
 		$pdf->SetXY($this->marge_gauche, $posy);
@@ -558,7 +561,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 		$tab_hl = 4;
 
 		$posx = $this->marge_gauche;
-		$pdf->SetXY($posx, $tab_top);
+		$pdf->SetXY($posx, $tab_top + $this->marge_haute);
 
 		$pdf->SetFont('', '', $default_font_size - 2);
 

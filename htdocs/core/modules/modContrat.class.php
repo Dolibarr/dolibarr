@@ -167,7 +167,7 @@ class modContrat extends DolibarrModules
 		's.code_compta_fournisseur'=>'SupplierAccountancyCode', 's.tva_intra'=>'VATIntra',
 		'co.rowid'=>"Id", 'co.ref'=>"Ref", 'co.datec'=>"DateCreation", 'co.date_contrat'=>"DateContract",
 		'co.fin_validite'=>"ContractEndDate", 'co.date_cloture'=>"DateClosing", 'co.note_private'=>"NotePrivate", 'co.note_public'=>"NotePublic",
-		'cod.rowid'=>'LineId', 'cod.label'=>"LineLabel", 'cod.description'=>"LineDescription", 'cod.price_ht'=>"LineUnitPrice", 'cod.tva_tx'=>"LineVATRate",
+		'cod.rowid'=>'LineId', 'cod.label'=>"LineLabel", 'cod.description'=>"LineDescription", 'cod.tva_tx'=>"LineVATRate",
 		'cod.qty'=>"LineQty", 'cod.total_ht'=>"LineTotalHT", 'cod.total_tva'=>"LineTotalVAT", 'cod.total_ttc'=>"LineTotalTTC",
 		'cod.date_ouverture'=>"DateStart", 'cod.date_ouverture_prevue'=>"DateStartPlanned", 'cod.date_fin_validite'=>"DateEndPlanned", 'cod.date_cloture'=>"DateEnd",
 		'p.rowid'=>'ProductId', 'p.ref'=>'ProductRef', 'p.label'=>'ProductLabel');
@@ -177,7 +177,7 @@ class modContrat extends DolibarrModules
 		's.idprof4'=>'company', 's.code_compta'=>'company', 's.code_compta_fournisseur'=>'company', 's.tva_intra'=>'company',
 		'co.rowid'=>"contract", 'co.ref'=>"contract", 'co.datec'=>"contract", 'co.date_contrat'=>"contract",
 		'co.fin_validite'=>"contract", 'co.date_cloture'=>"contract", 'co.note_private'=>"contract", 'co.note_public'=>"contract",
-		'cod.rowid'=>'contract_line', 'cod.label'=>"contract_line", 'cod.description'=>"contract_line", 'cod.price_ht'=>"contract_line", 'cod.tva_tx'=>"contract_line",
+		'cod.rowid'=>'contract_line', 'cod.label'=>"contract_line", 'cod.description'=>"contract_line", 'cod.tva_tx'=>"contract_line",
 		'cod.qty'=>"contract_line", 'cod.total_ht'=>"contract_line", 'cod.total_tva'=>"contract_line", 'cod.total_ttc'=>"contract_line",
 		'cod.date_ouverture'=>"contract_line", 'cod.date_ouverture_prevue'=>"contract_line", 'cod.date_fin_validite'=>"contract_line", 'cod.date_cloture'=>"contract_line",
 		'p.rowid'=>'product', 'p.ref'=>'product', 'p.label'=>'product');
@@ -187,7 +187,7 @@ class modContrat extends DolibarrModules
 		's.code_compta_fournisseur'=>'Text', 's.tva_intra'=>'Text',
 		'co.ref'=>"Text", 'co.datec'=>"Date", 'co.date_contrat'=>"Date",
 		'co.fin_validite'=>"Date", 'co.date_cloture'=>"Date", 'co.note_private'=>"Text", 'co.note_public'=>"Text",
-		'cod.label'=>"Text", 'cod.description'=>"Text", 'cod.price_ht'=>"Numeric", 'cod.tva_tx'=>"Numeric",
+		'cod.label'=>"Text", 'cod.description'=>"Text", 'cod.tva_tx'=>"Numeric",
 		'cod.qty'=>"Numeric", 'cod.total_ht'=>"Numeric", 'cod.total_tva'=>"Numeric", 'cod.total_ttc'=>"Numeric",
 		'cod.date_ouverture'=>"Date", 'cod.date_ouverture_prevue'=>"Date", 'cod.date_fin_validite'=>"Date", 'cod.date_cloture'=>"Date",
 		'p.rowid'=>'List:product:label', 'p.ref'=>'Text', 'p.label'=>'Text');

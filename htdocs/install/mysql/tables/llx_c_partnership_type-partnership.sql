@@ -1,7 +1,7 @@
 -- ========================================================================
 -- Copyright (C) 2021 Laurent Destailleur  <eldy@users.sourceforge.net>
 -- Copyright (C) 2022 Juanjo Menent        <jmenent@2byte.es>
--- 
+--
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
 -- the Free Software Foundation; either version 3 of the License, or
@@ -31,7 +31,6 @@ create table llx_c_partnership_type
   entity        integer DEFAULT 1 NOT NULL,
   code          varchar(32) NOT NULL,
   label 	    varchar(128)	NOT NULL,
-  keyword		varchar(128),					-- a keyword to check into url of partner website or a dedicated url defined into partneship record 
+  keyword		varchar(128),					-- a keyword to check into url of partner website or a dedicated url defined into partneship record
   active  	    tinyint DEFAULT 1 NOT NULL
 )ENGINE=innodb;
-

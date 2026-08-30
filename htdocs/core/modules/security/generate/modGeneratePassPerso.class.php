@@ -143,7 +143,16 @@ class modGeneratePassPerso extends ModeleGenPassword
 		}
 
 		$pattern = $this->Min.(!empty($this->NbMaj) ? $this->Maj : '').(!empty($this->NbNum) ? $this->Nb : '').(!empty($this->NbSpe) ? $this->Spe : '');
-		$this->All = str_shuffle($pattern);
+
+		// Use the Fisher-Yate to shake (this replace str_shuffle)
+		$passwordArray = str_split($pattern);
+		for ($i = count($passwordArray) - 1; $i > 0; $i--) {
+			$j = random_int(0, $i);
+			$tmp = $passwordArray[$i];
+			$passwordArray[$i] = $passwordArray[$j];
+			$passwordArray[$j] = $tmp;
+		}
+		$this->All = implode('', $passwordArray);
 	}
 
 	/**
@@ -199,8 +208,17 @@ class modGeneratePassPerso extends ModeleGenPassword
 			$pass .= $this->All[mt_rand(0, strlen($this->All) - 1)];
 		}
 
-		$pass = str_shuffle($pass);
+		// Use the Fisher-Yate to shake (this replace str_shuffle)
+		$passwordArray = str_split($pass);
+		for ($i = count($passwordArray) - 1; $i > 0; $i--) {
+			$j = random_int(0, $i);
+			$tmp = $passwordArray[$i];
+			$passwordArray[$i] = $passwordArray[$j];
+			$passwordArray[$j] = $tmp;
+		}
+		$pass = implode('', $passwordArray);
 
+		// Check that generation was ok
 		if ($this->validatePassword($pass)) {
 			return $pass;
 		}

@@ -40,7 +40,7 @@ URLOfOAuthServiceEndpointsExample=https://mastodon.voorbeeld.com
 URLOfServiceForAuthorization=URL verstrekt door OAuth-service voor authenticatie
 Scopes=Machtigingen (bereiken)
 ScopeUndefined=Machtigingen (bereiken) undefined (zie vorig tabblad)
-ScopesDesc=Example: read,write with Mastodon
+ScopesDesc=Voorbeeld: "lezen", "schrijven" met Mastodon of "geen"
 TokenRawValue=Volledig token (object)
 AccessToken=Toegangstoken
 TokenExpired=Verlopen
@@ -50,3 +50,4 @@ RefreshToken=Token vernieuwen
 RefreshTokenHelp=Gebruik de Refresh Token om een nieuwe Access Token te krijgen
 OldTokenWasExpiredItHasBeenRefresh=Oude token was verlopen, deze is vernieuwd
 OldTokenWasNotExpiredButItHasBeenRefresh=Het oude token was niet verlopen, maar is vernieuwd
+OAuthErrorStateDiffers=De waarde voor state=%s verschilt van de waarde in de sessie. De code wordt geweigerd.

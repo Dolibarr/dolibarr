@@ -58,7 +58,7 @@ print load_fiche_titre($langs->trans("CreatePoll"), '', 'poll');
 print '<form name="formulaire" action="create_survey.php" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<div class="center">';
-print '<p>'.$langs->trans("OrganizeYourMeetingEasily").'</p>';
+print '<span class="opacitymedium">'.$langs->trans("OrganizeYourMeetingEasily").'</span><br><br>';
 print '<div class="corps">';
 print '<br>';
 print '<div class="index_date">';

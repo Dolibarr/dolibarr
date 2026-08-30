@@ -31,4 +31,4 @@ class Arr
         }
         return $copy;
     }
-} 
+}

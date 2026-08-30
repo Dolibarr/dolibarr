@@ -2,7 +2,7 @@
 /* Copyright (C) 2008-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2022-2025  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2022-2026  Frédéric France		<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -44,10 +44,11 @@
  * @param	string			$action				Action string
  * @param	array<array{type:string,sr:string,name:string,offsettz:int,color:string,default:string,buggedfile:string}>|int<-1,-1>		$showextcals		Array with list of external calendars (used to show links to select calendar), or -1 to show no legend
  * @param	string|string[]	$actioncode			Preselected value(s) of actioncode for filter on event type
- * @param	int				$usergroupid		Id of group to filter on users
- * @param	string			$excludetype		A type to exclude ('systemauto', 'system', '')
+ * @param	int|int[]		$usergroupid		Id of group to filter on users
+ * @param	''|'systemauto'|'system'	$excludetype	A type to exclude ('systemauto', 'system', '')
  * @param	int   			$resourceid			Preselected value of resource for filter on resource
  * @param	int     		$search_categ_cus	Tag id
+ * @param	string			$search_import_key	Import IDfilter
  * @return	void
  */
 function print_actions_filter(
@@ -69,7 +70,8 @@ function print_actions_filter(
 	$usergroupid = 0,
 	$excludetype = '',
 	$resourceid = 0,
-	$search_categ_cus = 0
+	$search_categ_cus = 0,
+	$search_import_key = ''
 ) {
 	global $user, $langs, $db, $hookmanager;
 	global $massaction;
@@ -80,7 +82,6 @@ function print_actions_filter(
 	$formactions = new FormActions($db);
 
 	// Filters
-	//print '<form name="listactionsfilter" class="listactionsfilter" action="' . $_SERVER["PHP_SELF"] . '" method="get">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="year" value="'.((int) $year).'">';
 	print '<input type="hidden" name="month" value="'.((int) $month).'">';
@@ -104,13 +105,13 @@ function print_actions_filter(
 		// Assigned to user
 		print '<div class="divsearchfield">';
 		print img_picto($langs->trans("ActionsToDoBy"), 'user', 'class="pictofixedwidth inline-block"');
-		print $form->select_dolusers($filtert, 'search_filtert', 1, '', !$canedit, '', '', 0, 0, 0, '', 0, '', 'minwidth100 maxwidth250 widthcentpercentminusx');
+		print $form->select_dolusers($filtert, 'search_filtert', 1, null, (int) !$canedit, '', '', '0', 0, 0, '', 2, '', 'minwidth100 maxwidth250 widthcentpercentminusx');
 		print '</div>';
 
 		// Assigned to user group
 		print '<div class="divsearchfield">';
 		print img_picto($langs->trans("ToUserOfGroup"), 'object_group', 'class="pictofixedwidth inline-block"');
-		print $form->select_dolgroups($usergroupid, 'usergroup', 1, '', !$canedit, '', array(), '0', false, 'minwidth100 maxwidth250 widthcentpercentminusx');
+		print $form->select_dolgroups($usergroupid, 'usergroup', 1, '', (int) !$canedit, '', array(), '0', false, 'minwidth100 maxwidth250 widthcentpercentminusx');
 		print '</div>';
 
 		if (isModEnabled('resource')) {
@@ -150,7 +151,7 @@ function print_actions_filter(
 
 		print '<div class="divsearchfield">';
 		print img_picto($langs->trans('Categories'), 'category', 'class="pictofixedwidth"');
-		print $formother->select_categories('actioncomm', $search_categ_cus, 'search_categ_cus', 1, $langs->trans('ActionCommCategoriesArea'), 'minwidth100 maxwidth250 widthcentpercentminusx');
+		print $formother->select_categories('actioncomm', $search_categ_cus, 'search_categ_cus', 1, $langs->trans('Categories'), 'minwidth100 maxwidth250 widthcentpercentminusx');
 		print '</div>';
 	}
 
@@ -215,7 +216,7 @@ function show_array_actions_to_do($max = 5)
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("LastActionsToDo", $max).'</th>';
-		print '<th colspan="2" class="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/comm/action/list.php?mode=show_list&status=todo">'.$langs->trans("FullList").'</a></th>';
+		print '<th colspan="2" class="right"><a class="commonlink" href="'.dolBuildUrl(DOL_URL_ROOT.'/comm/action/list.php', ['mode' => 'show_list', 'status' => 'todo']).'">'.$langs->trans("FullList").'</a></th>';
 		print '</tr>';
 
 		$i = 0;
@@ -332,7 +333,7 @@ function show_array_last_actions_done($max = 5)
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("LastDoneTasks", $max).'</th>';
-		print '<th colspan="2" class="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/comm/action/list.php?mode=show_list&status=done">'.$langs->trans("FullList").'</a></th>';
+		print '<th colspan="2" class="right"><a class="commonlink" href="'.dolBuildUrl(DOL_URL_ROOT.'/comm/action/list.php', ['mode'=> 'show_list', 'status' => 'done']).'">'.$langs->trans("FullList").'</a></th>';
 		print '</tr>';
 
 		$i = 0;
@@ -379,8 +380,8 @@ function show_array_last_actions_done($max = 5)
 			print "</tr>\n";
 			$i++;
 		}
-		// TODO Ajouter rappel pour "il y a des contrats a mettre en service"
-		// TODO Ajouter rappel pour "il y a des contrats qui arrivent a expiration"
+		// TODO Add a reminder for "contracts need to be put in service."
+		// TODO Add reminder for "contracts expiring soon."
 		print "</table></div><br>";
 
 		$db->free($resql);
@@ -397,42 +398,41 @@ function show_array_last_actions_done($max = 5)
  */
 function agenda_prepare_head()
 {
-	global $langs, $conf, $user, $db;
+	global $langs, $conf, $user, $extrafields;
 
-	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('actioncomm');
 
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/agenda_other.php";
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT."/admin/agenda_other.php");
 	$head[$h][1] = $langs->trans("Miscellaneous");
 	$head[$h][2] = 'other';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/agenda.php";
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT."/admin/agenda.php");
 	$head[$h][1] = $langs->trans("AutoActions");
 	$head[$h][2] = 'autoactions';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/agenda_reminder.php";
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT."/admin/agenda_reminder.php");
 	$head[$h][1] = $langs->trans("Reminders");
 	$head[$h][2] = 'reminders';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/agenda_xcal.php";
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT."/admin/agenda_xcal.php");
 	$head[$h][1] = $langs->trans("ExportCal");
 	$head[$h][2] = 'xcal';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/agenda_extsites.php";
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT."/admin/agenda_extsites.php");
 	$head[$h][1] = $langs->trans("ExtSites");
 	$head[$h][2] = 'extsites';
 	$h++;
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'agenda_admin');
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/agenda_extrafields.php";
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'agenda'));
 	$head[$h][1] = $langs->trans("ExtraFields");
 	$nbExtrafields = $extrafields->attributes['actioncomm']['count'];
 	if ($nbExtrafields > 0) {
@@ -460,7 +460,7 @@ function actions_prepare_head($object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/comm/action/card.php?id='.$object->id;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/comm/action/card.php', ['id'=> $object->id]);
 	$head[$h][1] = $langs->trans("CardAction");
 	$head[$h][2] = 'card';
 	$h++;
@@ -470,7 +470,7 @@ function actions_prepare_head($object)
 		include_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
 		$resource = new Dolresource($db);
 
-		$head[$h][0] = DOL_URL_ROOT.'/resource/element_resource.php?element=action&element_id='.$object->id;
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/resource/element_resource.php', ['element' => 'action', 'element_id'=> $object->id]);
 		$listofresourcelinked = $resource->getElementResources($object->element, $object->id);
 		$nbResources = (is_array($listofresourcelinked) ? count($listofresourcelinked) : 0);
 		$head[$h][1] = $langs->trans("Resources");
@@ -487,7 +487,7 @@ function actions_prepare_head($object)
 	$upload_dir = $conf->agenda->dir_output."/".$object->id;
 	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
 	$nbLinks = Link::count($db, $object->element, $object->id);
-	$head[$h][0] = DOL_URL_ROOT.'/comm/action/document.php?id='.$object->id;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/comm/action/document.php', ['id' => $object->id]);
 	$head[$h][1] = $langs->trans("Documents");
 	if (($nbFiles + $nbLinks) > 0) {
 		$head[$h][1] .= (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>' : '');
@@ -495,7 +495,7 @@ function actions_prepare_head($object)
 	$head[$h][2] = 'documents';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/comm/action/info.php?id='.$object->id;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/comm/action/info.php', ['id' => $object->id]);
 	$head[$h][1] = $langs->trans('Info');
 	$head[$h][2] = 'info';
 	$h++;
@@ -520,29 +520,36 @@ function calendars_prepare_head($param)
 
 	$h = 0;
 	$head = array();
+	$query = [];
+	parse_str($param, $query);
 
-	$head[$h][0] = DOL_URL_ROOT.'/comm/action/list.php?mode=show_list'.($param ? '&'.$param : '');
+	$query = array_merge($query, ['mode' => 'show_list']);
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/comm/action/list.php', $query);
 	$head[$h][1] = $langs->trans("ViewList");
 	$head[$h][2] = 'cardlist';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/comm/action/index.php?mode=show_month'.($param ? '&'.$param : '');
+	$query['mode'] = 'show_month';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/comm/action/index.php', $query);
 	$head[$h][1] = $langs->trans("ViewCal");
 	$head[$h][2] = 'cardmonth';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/comm/action/index.php?mode=show_week'.($param ? '&'.$param : '');
+	$query['mode'] = 'show_week';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/comm/action/index.php', $query);
 	$head[$h][1] = $langs->trans("ViewWeek");
 	$head[$h][2] = 'cardweek';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/comm/action/index.php?mode=show_day'.($param ? '&'.$param : '');
+	$query['mode'] = 'show_day';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/comm/action/index.php', $query);
 	$head[$h][1] = $langs->trans("ViewDay");
 	$head[$h][2] = 'cardday';
 	$h++;
 
+	unset($query['mode']);
 	if (getDolGlobalString('AGENDA_SHOW_PERTYPE')) {
-		$head[$h][0] = DOL_URL_ROOT.'/comm/action/pertype.php'.($param ? '?'.$param : '');
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/comm/action/pertype.php', $query);
 		$head[$h][1] = $langs->trans("ViewPerType");
 		$head[$h][2] = 'cardpertype';
 		$h++;
@@ -550,7 +557,10 @@ function calendars_prepare_head($param)
 
 	$newparam = $param;
 	$newparam = preg_replace('/&?search_filtert=\d+/', '', $newparam);
-	$head[$h][0] = DOL_URL_ROOT.'/comm/action/peruser.php'.($newparam ? '?'.$newparam : '');
+	$query = [];
+	parse_str($newparam, $query);
+
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/comm/action/peruser.php', $query);
 	$head[$h][1] = $langs->trans("ViewPerUser");
 	$head[$h][2] = 'cardperuser';
 	$h++;
@@ -565,4 +575,90 @@ function calendars_prepare_head($param)
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'agenda', 'remove');
 
 	return $head;
+}
+
+/**
+ * Complete an agenda calendar event array with contact birthday pseudo-events.
+ * Shared by the month, week and day agenda views (comm/action/index.php, comm/action/peruser.php).
+ *
+ * @param	DoliDB							$db			Database handler
+ * @param	Translate						$langs		Language object (already loaded)
+ * @param	User							$user		Current user (used for private contact visibility)
+ * @param	string							$mode		'show_day' restricts to the given day, any other value = whole month
+ * @param	int								$month		Month number (1-12)
+ * @param	int								$day		Day of month (only used when $mode == 'show_day')
+ * @param	int								$year		Year the birthday events must be placed in
+ * @param	array<int,ActionComm[]>			$eventarray	Event array to complete, keyed by GMT day timestamp (modified by reference)
+ * @param	int								$nbevents	Running event counter (modified by reference)
+ * @return	int											Number of birthday events added, or <0 if the SQL query failed
+ */
+function agenda_get_birthday_events($db, $langs, $user, $mode, $month, $day, $year, &$eventarray, &$nbevents)
+{
+	require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+
+	$sql = 'SELECT sp.rowid, sp.lastname, sp.firstname, sp.birthday';
+	$sql .= ' FROM '.MAIN_DB_PREFIX.'socpeople as sp';
+	$sql .= ' WHERE (priv=0 OR (priv=1 AND fk_user_creat='.((int) $user->id).'))';
+	$sql .= " AND sp.entity IN (".getEntity('contact').")";
+	if ($mode == 'show_day') {
+		$sql .= ' AND MONTH(birthday) = '.((int) $month);
+		$sql .= ' AND DAY(birthday) = '.((int) $day);
+	} else {
+		$sql .= ' AND MONTH(birthday) = '.((int) $month);
+	}
+	$sql .= ' ORDER BY birthday';
+
+	dol_syslog("agenda.lib.php::agenda_get_birthday_events", LOG_DEBUG);
+	$resql = $db->query($sql);
+	if (!$resql) {
+		dol_print_error($db);
+		return -1;
+	}
+
+	$num = $db->num_rows($resql);
+	$nbevents += $num;
+
+	$i = 0;
+	while ($i < $num) {
+		$obj = $db->fetch_object($resql);
+
+		$event = new ActionComm($db);
+
+		$event->id = $obj->rowid; // We put contact id in action id for birthdays events
+		$event->ref = (string) $event->id;
+
+		$datebirth = dol_stringtotime($obj->birthday, 1);
+		$datearray = dol_getdate($datebirth, true);
+		$event->datep = dol_mktime(0, 0, 0, $datearray['mon'], $datearray['mday'], $year, true); // For full day events, date are also GMT but they won't but converted during output
+		$event->datef = $event->datep;
+
+		$event->type_code = 'BIRTHDAY';
+		$event->type_label = '';
+		$event->type_color = '';
+		$event->type = 'birthdate';
+		$event->type_picto = 'birthdate';
+
+		$event->label = $langs->trans("Birthday").' '.dolGetFirstLastname($obj->firstname, $obj->lastname);
+		$event->percentage = 100;
+		$event->fulldayevent = 1;
+
+		$event->contact_id = $obj->rowid;
+
+		$event->date_start_in_calendar = $event->datep;
+		$event->date_end_in_calendar = $event->datef;
+
+		// Add an entry in eventarray for each day
+		$daycursor = $event->datep;
+		$annee = (int) dol_print_date($daycursor, '%Y', 'tzuserrel');
+		$mois = (int) dol_print_date($daycursor, '%m', 'tzuserrel');
+		$jour = (int) dol_print_date($daycursor, '%d', 'tzuserrel');
+
+		$daykey = dol_mktime(0, 0, 0, $mois, $jour, $annee, 'gmt');
+
+		$eventarray[$daykey][] = $event;
+
+		$i++;
+	}
+
+	return $num;
 }
