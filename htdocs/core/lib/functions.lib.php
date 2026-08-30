@@ -9675,8 +9675,12 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 						);
 
 						// Tidy
+						$locale = setlocale(LC_NUMERIC, '0');	// Tidy has a bug and is changing the PHP locale. So we save it to restore it after.
+
 						$tidy = new tidy();
 						$out = $tidy->repairString($out, $config, 'utf8');
+
+						setlocale(LC_NUMERIC, $locale);			// Restore original local
 
 						//print "xxx".$out;exit;
 					}
