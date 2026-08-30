@@ -1372,14 +1372,16 @@ class Ticket extends CommonObject
 	 */
 	public function loadCacheTypesTickets()
 	{
-		global $langs;
+		global $langs, $hookmanager;
 
 		if (!empty($this->cache_types_tickets) && count($this->cache_types_tickets)) {
 			return 0;
 		}
 		// Cache deja charge
 
-		$sql = "SELECT rowid, code, label, use_default, pos, description";
+		// entity is returned so a hook on loadDictionaryCache can tell two rows apart when the
+		// dictionary is read across entities
+		$sql = "SELECT rowid, entity, code, label, use_default, pos, description";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_ticket_type";
 		$sql .= " WHERE entity IN (".getEntity('c_ticket_type').")";
 		$sql .= " AND active > 0";
@@ -1396,9 +1398,21 @@ class Ticket extends CommonObject
 				$this->cache_types_tickets[$obj->rowid]['label'] = $label;
 				$this->cache_types_tickets[$obj->rowid]['use_default'] = $obj->use_default;
 				$this->cache_types_tickets[$obj->rowid]['pos'] = $obj->pos;
+				$this->cache_types_tickets[$obj->rowid]['entity'] = (int) $obj->entity;
 				$i++;
 			}
-			return $num;
+
+			$parameters = array('dictionary' => 'tickettype');
+			$reshook = $hookmanager->executeHooks('loadDictionaryCache', $parameters, $this); // Note that $action and $object may have been modified by hook
+			if (empty($reshook)) {
+				if (is_array($hookmanager->resArray) && count($hookmanager->resArray)) {
+					$this->cache_types_tickets = array_merge($this->cache_types_tickets, $hookmanager->resArray);
+				}
+			} else {
+				$this->cache_types_tickets = $hookmanager->resArray;
+			}
+
+			return count($this->cache_types_tickets);
 		} else {
 			dol_print_error($this->db);
 			return -1;
@@ -1413,14 +1427,16 @@ class Ticket extends CommonObject
 	 */
 	public function loadCacheCategoriesTickets($publicgroup = -1)
 	{
-		global $conf, $langs;
+		global $conf, $langs, $hookmanager;
 
 		if ($publicgroup == -1 && !empty($conf->cache['category_tickets']) && count($conf->cache['category_tickets'])) {
 			// Cache already loaded
 			return 0;
 		}
 
-		$sql = "SELECT rowid, code, label, use_default, pos, description, public, active, force_severity, fk_parent";
+		// entity is returned so a hook on loadDictionaryCache can tell two rows apart when the
+		// dictionary is read across entities
+		$sql = "SELECT rowid, entity, code, label, use_default, pos, description, public, active, force_severity, fk_parent";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_ticket_category";
 		$sql .= " WHERE entity IN (".getEntity('c_ticket_category').")";
 		$sql .= " AND active > 0";
@@ -1435,24 +1451,39 @@ class Ticket extends CommonObject
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 			$i = 0;
+			$categorytickets = array();
+			'@phan-var-force array<int,array{code:string,label:string,use_default:int,pos:int,public:int,active:int,force_severity:?string,fk_parent:int}> $categorytickets';
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
-				$conf->cache['category_tickets'][$obj->rowid]['code'] = $obj->code;
-				$conf->cache['category_tickets'][$obj->rowid]['use_default'] = $obj->use_default;
-				$conf->cache['category_tickets'][$obj->rowid]['pos'] = $obj->pos;
-				$conf->cache['category_tickets'][$obj->rowid]['public'] = $obj->public;
-				$conf->cache['category_tickets'][$obj->rowid]['active'] = $obj->active;
-				$conf->cache['category_tickets'][$obj->rowid]['force_severity'] = $obj->force_severity;
-				$conf->cache['category_tickets'][$obj->rowid]['fk_parent'] = $obj->fk_parent;
+				$categorytickets[$obj->rowid]['code'] = $obj->code;
+				$categorytickets[$obj->rowid]['use_default'] = $obj->use_default;
+				$categorytickets[$obj->rowid]['pos'] = $obj->pos;
+				$categorytickets[$obj->rowid]['public'] = $obj->public;
+				$categorytickets[$obj->rowid]['active'] = $obj->active;
+				$categorytickets[$obj->rowid]['force_severity'] = $obj->force_severity;
+				$categorytickets[$obj->rowid]['fk_parent'] = $obj->fk_parent;
 
 				// If  translation exists, we use it to store already translated string.
 				// Warning: You should not use this and recompute the translated string into caller code to get the value into expected language
 				$label = ($langs->trans("TicketCategoryShort".$obj->code) != "TicketCategoryShort".$obj->code ? $langs->trans("TicketCategoryShort".$obj->code) : ($obj->label != '-' ? $obj->label : ''));
-				$conf->cache['category_tickets'][$obj->rowid]['label'] = $label;
+				$categorytickets[$obj->rowid]['label'] = $label;
+				$categorytickets[$obj->rowid]['entity'] = (int) $obj->entity;
 
 				$i++;
 			}
-			return $num;
+			$conf->cache['category_tickets'] = $categorytickets;
+
+			$parameters = array('dictionary' => 'ticketcategory', 'publicgroup' => $publicgroup);
+			$reshook = $hookmanager->executeHooks('loadDictionaryCache', $parameters, $this); // Note that $action and $object may have been modified by hook
+			if (empty($reshook)) {
+				if (is_array($hookmanager->resArray) && count($hookmanager->resArray)) {
+					$conf->cache['category_tickets'] = array_merge($conf->cache['category_tickets'], $hookmanager->resArray);
+				}
+			} else {
+				$conf->cache['category_tickets'] = $hookmanager->resArray;
+			}
+
+			return count($conf->cache['category_tickets']);
 		} else {
 			dol_print_error($this->db);
 			return -1;
@@ -1466,14 +1497,16 @@ class Ticket extends CommonObject
 	 */
 	public function loadCacheSeveritiesTickets()
 	{
-		global $conf, $langs;
+		global $conf, $langs, $hookmanager;
 
 		if (!empty($conf->cache['severity_tickets']) && count($conf->cache['severity_tickets'])) {
 			// Cache already loaded
 			return 0;
 		}
 
-		$sql = "SELECT rowid, code, label, use_default, pos, description";
+		// entity is returned so a hook on loadDictionaryCache can tell two rows apart when the
+		// dictionary is read across entities
+		$sql = "SELECT rowid, entity, code, label, use_default, pos, description";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_ticket_severity";
 		$sql .= " WHERE entity IN (".getEntity('c_ticket_severity').")";
 		$sql .= " AND active > 0";
@@ -1483,17 +1516,32 @@ class Ticket extends CommonObject
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 			$i = 0;
+			$severitytickets = array();
+			'@phan-var-force array<int,array{code:string,label:string,use_default:int,pos:int}> $severitytickets';
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
 
-				$conf->cache['severity_tickets'][$obj->rowid]['code'] = $obj->code;
+				$severitytickets[$obj->rowid]['code'] = $obj->code;
 				$label = ($langs->trans("TicketSeverityShort".$obj->code) != "TicketSeverityShort".$obj->code ? $langs->trans("TicketSeverityShort".$obj->code) : ($obj->label != '-' ? $obj->label : ''));
-				$conf->cache['severity_tickets'][$obj->rowid]['label'] = $label;
-				$conf->cache['severity_tickets'][$obj->rowid]['use_default'] = $obj->use_default;
-				$conf->cache['severity_tickets'][$obj->rowid]['pos'] = $obj->pos;
+				$severitytickets[$obj->rowid]['label'] = $label;
+				$severitytickets[$obj->rowid]['use_default'] = $obj->use_default;
+				$severitytickets[$obj->rowid]['pos'] = $obj->pos;
+				$severitytickets[$obj->rowid]['entity'] = (int) $obj->entity;
 				$i++;
 			}
-			return $num;
+			$conf->cache['severity_tickets'] = $severitytickets;
+
+			$parameters = array('dictionary' => 'ticketseverity');
+			$reshook = $hookmanager->executeHooks('loadDictionaryCache', $parameters, $this); // Note that $action and $object may have been modified by hook
+			if (empty($reshook)) {
+				if (is_array($hookmanager->resArray) && count($hookmanager->resArray)) {
+					$conf->cache['severity_tickets'] = array_merge($conf->cache['severity_tickets'], $hookmanager->resArray);
+				}
+			} else {
+				$conf->cache['severity_tickets'] = $hookmanager->resArray;
+			}
+
+			return count($conf->cache['severity_tickets']);
 		} else {
 			dol_print_error($this->db);
 			return -1;
@@ -3167,9 +3215,95 @@ class Ticket extends CommonObject
 									$sendto = $hookmanager->resArray;
 								}
 
+								// If standardised form submitted, override auto-computed recipients with user selection
+								if (GETPOSTISSET('receiver_multiselect')) {
+									$sendto_manual = array();
+
+									$receiver_selected = GETPOST('receiver', 'array');
+									if (is_array($receiver_selected)) {
+										foreach ($receiver_selected as $email) {
+											$email = trim((string) $email);
+											if ($email && filter_var($email, FILTER_VALIDATE_EMAIL)) {
+												$sendto_manual[$email] = $email;
+											}
+										}
+									}
+
+									// Free input: plain email or "Name <email>", comma-separated
+									$sendto_free = GETPOST('sendto', 'alphawithlgt');
+									if ($sendto_free !== '') {
+										foreach (explode(',', $sendto_free) as $entry) {
+											$entry = trim($entry);
+											if ($entry === '') {
+												continue;
+											}
+											if (preg_match('/.*<\s*([^>]+)\s*>/', $entry, $matches)) {
+												$email = trim($matches[1]);
+											} else {
+												$email = $entry;
+											}
+											if ($email && filter_var($email, FILTER_VALIDATE_EMAIL)) {
+												$sendto_manual[$email] = $entry;
+											}
+										}
+									}
+
+									$sendto = $sendto_manual;
+								}
+
+								// CC: start with TICKET_SEND_INTERNAL_CC, then append form selection
 								$sendtocc = array();
+								$sendtocc_emails = array(); // lowercase email index for case-insensitive dedup
 								if (getDolGlobalString("TICKET_SEND_INTERNAL_CC")) {
-									$sendtocc = explode(',', getDolGlobalString("TICKET_SEND_INTERNAL_CC"));
+									foreach (explode(',', getDolGlobalString("TICKET_SEND_INTERNAL_CC")) as $cc_entry) {
+										$cc_entry = trim($cc_entry);
+										if (!$cc_entry) {
+											continue;
+										}
+										// Extract bare email from optional "Name <email>" format
+										if (preg_match('/<\s*([^>]+)\s*>/', $cc_entry, $m)) {
+											$cc_email = strtolower(trim($m[1]));
+										} else {
+											$cc_email = strtolower($cc_entry);
+										}
+										if (!in_array($cc_email, $sendtocc_emails)) {
+											$sendtocc[] = $cc_entry;
+											$sendtocc_emails[] = $cc_email;
+										}
+									}
+								}
+
+								if (GETPOSTISSET('receivercc_multiselect')) {
+									$receivercc_selected = GETPOST('receivercc', 'array');
+									if (is_array($receivercc_selected)) {
+										foreach ($receivercc_selected as $email) {
+											$email = trim((string) $email);
+											if ($email && filter_var($email, FILTER_VALIDATE_EMAIL) && !in_array(strtolower($email), $sendtocc_emails)) {
+												$sendtocc[] = $email;
+												$sendtocc_emails[] = strtolower($email);
+											}
+										}
+									}
+
+									// Free input: plain email or "Name <email>", comma-separated
+									$sendtocc_free = GETPOST('sendtocc', 'alphawithlgt');
+									if ($sendtocc_free !== '') {
+										foreach (explode(',', $sendtocc_free) as $entry) {
+											$entry = trim($entry);
+											if ($entry === '') {
+												continue;
+											}
+											if (preg_match('/.*<\s*([^>]+)\s*>/', $entry, $matches)) {
+												$email = trim($matches[1]);
+											} else {
+												$email = $entry;
+											}
+											if ($email && filter_var($email, FILTER_VALIDATE_EMAIL) && !in_array(strtolower($email), $sendtocc_emails)) {
+												$sendtocc[] = $email;
+												$sendtocc_emails[] = strtolower($email);
+											}
+										}
+									}
 								}
 
 								// Don't try to send email when no recipient

@@ -298,7 +298,7 @@ class FormCompany extends Form
 
 		$out = '';
 
-		// Search departements/cantons/province active d'une region et pays actif
+		// Search active departments/cantons/provinces of a region and active country
 		$sql = "SELECT d.rowid, d.code_departement as code, d.nom as name, d.active, c.label as country, c.code as country_code, r.nom as region_name FROM";
 		$sql .= " " . $this->db->prefix() . "c_departements as d, " . $this->db->prefix() . "c_regions as r," . $this->db->prefix() . "c_country as c";
 		$sql .= " WHERE d.fk_region=r.code_region and r.fk_pays=c.rowid";
@@ -1230,7 +1230,7 @@ class FormCompany extends Form
 						$.ajax({
 							type: "POST",
 							url: \'' . DOL_URL_ROOT . '/core/ajax/ajaxstatusprospect.php\',
-							data: { id: statusid, prospectid: prospectid, token: \''. newToken() .'\', action: \'updatestatusprospect\' },
+							data: { id: statusid, prospectid: prospectid, token: \''. currentToken() .'\', action: \'updatestatusprospect\' },
 							success: function(response) {
 								console.log(response.img);
 								image.replaceWith(response.img);

@@ -422,16 +422,16 @@ script:
     set -e
     # Exclusions are defined in the ruleset.xml file
     if [ "$TRAVIS_TYPE" = "push" ] && [ "$TRAVIS_PHP_VERSION" = "8.1" ]; then
-       var-dump-check --extensions php --tracy --exclude htdocs/includes --exclude test/ --exclude htdocs/public/test/ --exclude htdocs/core/lib/functions.lib.php .
+       var-dump-check --extensions php --tracy --exclude htdocs/includes --exclude test/ --exclude htdocs/public/test/ --exclude htdocs/core/lib/html.lib.php .
     fi
     if [ "$TRAVIS_TYPE" = "push" ] && [ "$TRAVIS_PHP_VERSION" = "8.2" ]; then
-       var-dump-check --extensions php --tracy --exclude htdocs/includes --exclude test/ --exclude htdocs/public/test/ --exclude htdocs/core/lib/functions.lib.php .
+       var-dump-check --extensions php --tracy --exclude htdocs/includes --exclude test/ --exclude htdocs/public/test/ --exclude htdocs/core/lib/html.lib.php .
     fi
     if [ "$TRAVIS_TYPE" = "push" ] && [ "$TRAVIS_PHP_VERSION" = "8.3" ]; then
-       var-dump-check --extensions php --tracy --exclude htdocs/includes --exclude test/ --exclude htdocs/public/test/ --exclude htdocs/core/lib/functions.lib.php .
+       var-dump-check --extensions php --tracy --exclude htdocs/includes --exclude test/ --exclude htdocs/public/test/ --exclude htdocs/core/lib/html.lib.php .
     fi
     if [ "$TRAVIS_TYPE" = "push" ] && [ "$TRAVIS_PHP_VERSION" = "8.4" ]; then
-       var-dump-check --extensions php --tracy --exclude htdocs/includes --exclude test/ --exclude htdocs/public/test/ --exclude htdocs/core/lib/functions.lib.php .
+       var-dump-check --extensions php --tracy --exclude htdocs/includes --exclude test/ --exclude htdocs/public/test/ --exclude htdocs/core/lib/html.lib.php .
     fi
     set +e
     echo

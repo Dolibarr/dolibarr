@@ -83,6 +83,7 @@ Before writing any code, the agent **must**:
   ```php
   $hookmanager->executeHooks('actionName', $parameters, $object, $action);
   ```
+- Never call $hookmanager->initHooks() in class or function. This is done only once in the main parent page.
 - Name hooks clearly and descriptively (e.g., `formObjectOptions`, `addMoreActionsButtons`)
 
 ---
@@ -125,7 +126,11 @@ If possible:
 - Always validate user inputs (`GET`, `POST`) via `GETPOST()` with a type parameter
 - Prevent SQL injection (use `db->escape()` or cast into `(int)` or `(float)`)
 - Prevent XSS injection by escaping HTML output (use `dolPrintHTML()`, `dolPrintHTMLForAttribute()`)
-- Always include Dolibarr CSRF tokens in POST forms: `<input type="hidden" name="token" value="'.newToken().'">`
+- Always include Dolibarr CSRF tokens:
+  - POST forms: `<input type="hidden" name="token" value="'.newToken().'">`
+  - GET links with a modifying `action`: `...&token='.newToken().'`
+  - Ajax calls: use `currentToken()` instead of `newToken()`, and set `NOTOKENRENEWAL` on the called ajax endpoint
+- Public endpoints called without a session (e.g. webhooks) are exempt via `NOCSRFCHECK` (page-level constant) or, exceptionally, `$dolibarr_nocsrfcheck` (global conf.php override)
 
 ---
 
@@ -135,6 +140,7 @@ If possible:
 - Use JOINs or batch queries instead of multiple sequential queries
 - Apply `LIMIT` and proper indexes on list queries
 - Cache repeated calls to `getDolGlobalString()` or `$conf->global->` in local variables
+- If you need a cache array to be used into a loop, you can use `$conf->cache['aNameForYourCacheArray'] = array();`
 
 ---
 
@@ -156,8 +162,8 @@ If possible:
     - Types: `NEW`, `FIX` or `CLOSE`
     - Example: `FIX: #1234 Correct VAT calculation on credit notes`
 - Do not update the `ChangeLog` file (this file will be generated before the release from all commit titles)
-- Do not introduce new syntax or features unavailable in the branch's minimum PHP version
-- When commiting, mention the AI agent name in the commit message (e.g. "Co-authored-by: AI Agent <ai-agent@dolibarr.org>")
+- When commiting, keep a commit and PR description short and mention the AI agent name in the message by adding a line "Co-authored-by:"
+- For code contribution on stable branches (non develop), PR must contains 1 and only 1 bug fix at once.
 
 ---
 

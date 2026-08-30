@@ -1455,7 +1455,7 @@ if ($action == 'create') {
 			);
 			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id, $langs->trans("ActivateAllOnContract"), $langs->trans("ConfirmActivateAllOnContract"), "confirm_activate", $formquestion, 'yes', 1, 300);
 		} elseif ($action == 'clone') {
-			$filter = '(s.client:IN:1,2,3)';
+			$filter = '(s.client:IN:1,2,3) OR (s.fournisseur:=:1)';
 			// Clone confirmation
 			$formquestion = array(array('type' => 'other', 'name' => 'socid', 'label' => $langs->trans("SelectThirdParty"), 'value' => $form->select_company(GETPOSTINT('socid'), 'socid', $filter)));
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneContract', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
@@ -2119,7 +2119,7 @@ if ($action == 'create') {
 						$arraycontractid[$contractcursor->id] = $contractcursor->ref;
 					}
 					//var_dump($arraycontractid);
-					// Cree un tableau formulaire
+					// Create a form array
 					$formquestion = array(
 						'text' => $langs->trans("ConfirmMoveToAnotherContractQuestion"),
 						0 => array('type' => 'select', 'name' => 'newcid', 'values' => $arraycontractid));
@@ -2475,9 +2475,9 @@ if ($action == 'create') {
 
 				if (getDolGlobalString('CONTRACT_HIDE_CLOSED_SERVICES_BY_DEFAULT') && $object->nbofservicesclosed > 0) {
 					if ($action == 'showclosedlines') {
-						print '<div class="inline-block divButAction"><a class="butAction" id="btnhideclosedlines" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=hideclosedlines">'.$langs->trans("HideClosedServices").'</a></div>';
+						print '<div class="inline-block divButAction"><a class="butAction" id="btnhideclosedlines" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=hideclosedlines&amp;token='.newToken().'">'.$langs->trans("HideClosedServices").'</a></div>';
 					} else {
-						print '<div class="inline-block divButAction"><a class="butAction" id="btnshowclosedlines" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=showclosedlines">'.$langs->trans("ShowClosedServices").'</a></div>';
+						print '<div class="inline-block divButAction"><a class="butAction" id="btnshowclosedlines" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=showclosedlines&amp;token='.newToken().'">'.$langs->trans("ShowClosedServices").'</a></div>';
 					}
 				}
 

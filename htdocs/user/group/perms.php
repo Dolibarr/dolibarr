@@ -126,7 +126,6 @@ if (empty($reshook)) {
 		$qs = preg_replace('/&action=addrights/', '', $qs);
 		$qs = preg_replace('/&token=[0-9a-f]+/i', '', $qs);
 		$qs = preg_replace('/&confirm=yes/', '', $qs);
-		//var_dump($qs);exit;
 		header("Location: ".$_SERVER["PHP_SELF"].($qs ? "?".$qs : ""));
 		exit;
 	}
@@ -151,7 +150,6 @@ if (empty($reshook)) {
 		$qs = preg_replace('/&action=delrights/', '', $qs);
 		$qs = preg_replace('/&token=[0-9a-f]+/i', '', $qs);
 		$qs = preg_replace('/&confirm=yes/', '', $qs);
-		//var_dump($qs);exit;
 		header("Location: ".$_SERVER["PHP_SELF"].($qs ? "?".$qs : ""));
 		exit;
 	}
@@ -177,12 +175,45 @@ $head = group_prepare_head($object);
 $title = $langs->trans("Group");
 print dol_get_fiche_head($head, 'rights', $title, -1, 'group');
 
-// Charge les modules soumis a permissions
+// Load modules subject to permissions
 $modules = array();
 $modulesdir = dolGetModulesDirs();
 
 // Modules to ignore depending on supplier module mode
 $excludedModules = getDolGlobalInt('MAIN_USE_NEW_SUPPLIERMOD') ? array('modFournisseur') : array('modSupplierOrder', 'modSupplierInvoice');
+
+// Preload MAIN_MODULE_* enablement for the target entity in one query, so we can skip calling
+// insert_permissions() (which starts by re-checking this same enablement with its own query) on
+// every disabled module found on disk. If we are looking at our own entity, $conf->global already
+// has this cached from bootstrap and no query is needed at all.
+if ($entity == $conf->entity) {
+	$enabledmoduleconst = (array) $conf->global;
+} else {
+	$enabledmoduleconst = array();
+	$sql = "SELECT ".$db->decrypt('name')." as name, ".$db->decrypt('value')." as value";
+	$sql .= " FROM ".MAIN_DB_PREFIX."const";
+	$sql .= " WHERE entity IN (0, ".((int) $entity).")";
+	$sql .= " ORDER BY entity"; // entity 0 first, then entity-specific overrides it
+	$resql = $db->query($sql);
+	if ($resql) {
+		while ($obj = $db->fetch_object($resql)) {
+			$enabledmoduleconst[$obj->name] = $obj->value;
+		}
+		$db->free($resql);
+	}
+}
+
+// Preload the ids of rights already present in llx_rights_def for this entity in one query, so insert_permissions()
+// below can check existence in-memory instead of issuing one "SELECT count(*)" query per permission of every module.
+$existingrightsdefids = array();
+$sql = "SELECT id FROM ".MAIN_DB_PREFIX."rights_def WHERE entity = ".((int) $entity);
+$resql = $db->query($sql);
+if ($resql) {
+	while ($obj = $db->fetch_object($resql)) {
+		$existingrightsdefids[$obj->id] = 1;
+	}
+	$db->free($resql);
+}
 
 $db->begin();
 
@@ -212,7 +243,11 @@ foreach ($modulesdir as $dir) {
 					}
 					// Load all permissions
 					if ($objMod->rights_class) {
-						$objMod->insert_permissions(0, $entity);
+						// Skip the DB round trip insert_permissions() would do just to find out the
+						// module is disabled for this entity - we already know from the preload above.
+						if (empty($objMod->const_name) || !empty($enabledmoduleconst[$objMod->const_name])) {
+							$objMod->insert_permissions(0, $entity, 0, $existingrightsdefids);
+						}
 						$modules[$objMod->rights_class] = $objMod;
 					}
 				}
@@ -231,6 +266,7 @@ $sql .= " FROM ".MAIN_DB_PREFIX."rights_def as r,";
 $sql .= " ".MAIN_DB_PREFIX."usergroup_rights as gr";
 $sql .= " WHERE gr.fk_id = r.id";
 $sql .= " AND gr.entity = ".((int) $entity);
+$sql .= " AND r.entity = ".((int) $entity);
 $sql .= " AND gr.fk_usergroup = ".((int) $object->id);
 
 dol_syslog("get user perms", LOG_DEBUG);
@@ -361,7 +397,7 @@ $sql .= " AND r.entity = ".((int) $entity);
 if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 	$sql .= " AND r.perms NOT LIKE '%_advance'"; // Hide advanced perms if option is not enabled
 }
-$sql .= " ORDER BY r.family_position, r.module_position, r.module, r.id";
+$sql .= " ORDER BY r.family_position, r.module_position, r.right_position, r.module, r.id";
 
 $familyinfo = array(
 	'hr' => array('position' => '001', 'label' => $langs->trans("ModuleFamilyHr")),
@@ -387,7 +423,6 @@ if ($result) {
 	$num = $db->num_rows($result);
 	$i = 0;
 
-	//var_dump($cookietohidegrouparray);
 
 	while ($i < $num) {
 		$obj = $db->fetch_object($result);
@@ -449,7 +484,6 @@ foreach ($arrayofpermission as $i => $obj) {
 		$ishidden = 0;
 	}
 	$isexpanded = ! $ishidden;
-	//var_dump("isexpanded=".$isexpanded);
 
 	$permsgroupbyentitypluszero = array();
 	if (!empty($permsgroupbyentity[0])) {
@@ -458,7 +492,6 @@ foreach ($arrayofpermission as $i => $obj) {
 	if (!empty($permsgroupbyentity[$entity])) {
 		$permsgroupbyentitypluszero = array_merge($permsgroupbyentitypluszero, $permsgroupbyentity[$entity]);
 	}
-	//var_dump($permsgroupbyentitypluszero);
 
 	// Break found, it's a new module to catch
 	if (isset($obj->module) && ($oldmod != $obj->module)) {
@@ -473,7 +506,6 @@ foreach ($arrayofpermission as $i => $obj) {
 			$ishidden = 0;
 		}
 		$isexpanded = ! $ishidden;
-		//var_dump('$obj->module='.$obj->module.' isexpanded='.$isexpanded);
 
 		// Break detected, we get objMod
 		$objMod = $modules[$obj->module];

@@ -90,6 +90,9 @@ if (!$sortorder) {
 }
 
 $arrayfields = array();
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array();

@@ -36,7 +36,6 @@ define('NOTOKENRENEWAL', '1');
 define('NOCSRFCHECK', 1);
 
 require '../../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 
 /**
  * @var string $dolibarr_main_url_root

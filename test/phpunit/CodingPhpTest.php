@@ -702,7 +702,7 @@ class CodingPhpTest extends CommonClassTest
 		$matches = array();
 		preg_match_all('/<br\s+\/>/', $filecontent, $matches, PREG_SET_ORDER);
 		foreach ($matches as $key => $val) {
-			if ($file['name'] != 'functions.lib.php') {
+			if ($file['name'] != 'functions.lib.php' && $file['name'] != 'html.lib.php') {
 				$ok = false;
 				break;
 			}

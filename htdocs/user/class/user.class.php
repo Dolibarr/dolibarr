@@ -614,7 +614,7 @@ class User extends CommonObject
 		}
 
 		if ($sid) {
-			// permet une recherche du user par son SID ActiveDirectory ou Samba
+			// allows searching for the user by their ActiveDirectory or Samba SID
 			$sql .= " AND (u.ldap_sid = '".$this->db->escape($sid)."' OR u.login = '".$this->db->escape($login)."')";
 		} elseif ($login) {
 			$sql .= " AND u.login = '".$this->db->escape($login)."'";
@@ -631,7 +631,7 @@ class User extends CommonObject
 		$sql .= " ORDER BY u.entity ASC"; // Avoid random result when there is 2 login in 2 different entities
 
 		if ($sid) {
-			// permet une recherche du user par son SID ActiveDirectory ou Samba
+			// allows searching for the user by their ActiveDirectory or Samba SID
 			$sql .= ' '.$this->db->plimit(1);
 		}
 
@@ -1015,9 +1015,6 @@ class User extends CommonObject
 
 		// In $conf->modules, we have 'accounting', 'product', 'facture', ...
 		// In $user->rights, we have 'accounting', 'produit', 'facture', ...
-		//var_dump($this->rights->$rightsPath);
-		//var_dump($conf->modules);
-		//if ($module == 'fournisseur') { var_dump($module.' '.isModEnabled($module).' '.$rightsPath.' '.$permlevel1.' '.$permlevel2); }
 
 		if (!isModEnabled($module)) {
 			return 0;
@@ -1050,8 +1047,6 @@ class User extends CommonObject
 			$permlevel1 = 'recruitmentjobposition';
 		}
 
-		//var_dump($this->rights);
-		//var_dump($rightsPath.' '.$permlevel1.' '.$permlevel2);
 		if (empty($rightsPath) || empty($this->rights) || empty($this->rights->$rightsPath) || empty($permlevel1)) {
 			return 0;
 		}
@@ -1267,7 +1262,7 @@ class User extends CommonObject
 			$module = $perms = $subperms = '';
 
 			// When the request is to delete a specific permissions, this gets the
-			// les charactis for the module, permissions and sub-permission of this permission.
+			// characteristics for the module, permissions and sub-permission of this permission.
 			$sql = "SELECT module, perms, subperms";
 			$sql .= " FROM ".$this->db->prefix()."rights_def";
 			$sql .= " WHERE id = ".((int) $rid);
@@ -1419,7 +1414,7 @@ class User extends CommonObject
 
 		if (!$alreadyloaded) {
 			// First user permissions
-			$sql = "SELECT DISTINCT r.module, r.perms, r.subperms";
+			$sql = "SELECT DISTINCT r.module, r.module_origin, r.perms, r.subperms";
 			$sql .= " FROM ".$this->db->prefix()."user_rights as ur,";
 			$sql .= " ".$this->db->prefix()."rights_def as r";
 			$sql .= " WHERE r.id = ur.fk_id";
@@ -1451,7 +1446,12 @@ class User extends CommonObject
 					$obj = $this->db->fetch_object($resql);
 
 					if ($obj) {
-						$module = $obj->module;
+						// module_origin (set only when the right was declared by another module
+						// via KEY_MODULE, to be filed into a foreign module's section of the
+						// permission grid) is the namespace actually used to check the right with
+						// hasRight(), so the declaring module keeps control of it regardless of
+						// which module's section it is grouped under for display.
+						$module = (!empty($obj->module_origin) ? $obj->module_origin : $obj->module);
 						$perms = $obj->perms;
 						$subperms = $obj->subperms;
 
@@ -1483,7 +1483,7 @@ class User extends CommonObject
 			}
 
 			// Now permissions of groups
-			$sql = "SELECT DISTINCT r.module, r.perms, r.subperms, r.entity";
+			$sql = "SELECT DISTINCT r.module, r.module_origin, r.perms, r.subperms, r.entity";
 			$sql .= " FROM ".$this->db->prefix()."usergroup_rights as gr,";
 			$sql .= " ".$this->db->prefix()."usergroup_user as gu,";
 			$sql .= " ".$this->db->prefix()."rights_def as r";
@@ -1524,7 +1524,12 @@ class User extends CommonObject
 					$obj = $this->db->fetch_object($resql);
 
 					if ($obj) {
-						$module = $obj->module;
+						// module_origin (set only when the right was declared by another module
+						// via KEY_MODULE, to be filed into a foreign module's section of the
+						// permission grid) is the namespace actually used to check the right with
+						// hasRight(), so the declaring module keeps control of it regardless of
+						// which module's section it is grouped under for display.
+						$module = (!empty($obj->module_origin) ? $obj->module_origin : $obj->module);
 						$perms = $obj->perms;
 						$subperms = $obj->subperms;
 

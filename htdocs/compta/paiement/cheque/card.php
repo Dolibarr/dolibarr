@@ -178,11 +178,11 @@ if ($action == 'create' && GETPOSTINT("accountid") > 0 && $user->hasRight('banqu
 			exit;
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
-			$action = 'new';
+			$action = 'create2';
 		}
 	} else {
 		setEventMessages($langs->trans("ErrorSelectAtLeastOne"), null, 'mesgs');
-		$action = 'new';
+		$action = 'create2';
 	}
 }
 
@@ -310,7 +310,7 @@ if (GETPOST('removefilter')) {
 	$filteraccountid = 0;
 }
 
-if ($action == 'new') {
+if ($action == 'create2') {
 	$title = $langs->trans("NewChequeDeposit");
 } else {
 	if ($type == 'CHQ') {
@@ -327,7 +327,7 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 
 
-if ($action == 'new') {
+if ($action == 'create2') {
 	$head = array();
 	$h = 0;
 	$head[$h][0] = $_SERVER["PHP_SELF"].'?action=new';
@@ -383,7 +383,7 @@ if ($action == 'new') {
 
 $accounts = array();
 
-if ($action == 'new') {
+if ($action == 'create2') {
 	$paymentstatic = new Paiement($db);
 	$accountlinestatic = new AccountLine($db);
 
@@ -400,7 +400,7 @@ if ($action == 'new') {
 
 	print '<form class="nocellnopadd" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
-	print '<input type="hidden" name="action" value="new">';
+	print '<input type="hidden" name="action" value="create2">';
 
 	print dol_get_fiche_head();
 
@@ -437,7 +437,9 @@ if ($action == 'new') {
 	print '</td></tr>';
 	print '<tr><td>'.$langs->trans("BankAccount").'</td><td>';
 	print img_picto('', 'account', 'class="pictofixedwidth"');
-	$form->select_comptes($filteraccountid, 'accountid', 0, 'courant <> 2', 1);
+	// Filter must use the Universal Search Filter syntax, select_comptes() runs it through
+	// forgeSQLFromUniversalSearchCriteria(). != is mapped to <>, so cash registers stay excluded.
+	$form->select_comptes($filteraccountid, 'accountid', 0, '(courant:!=:2)', 1);
 	print '</td></tr>';
 	print '</table>';
 
@@ -831,8 +833,8 @@ print '</div>';
 
 
 
-if ($action != 'new') {
-	if ($object->statut == 1) {
+if ($action != 'create2') {
+	if ($object->status == 1) {
 		// Documents
 		$objref = dol_sanitizeFileName($object->ref);
 		$filedir = $upload_dir.'/'.$objref;
