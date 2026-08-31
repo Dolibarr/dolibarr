@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -130,6 +130,7 @@ class CodingSqlTest extends CommonClassTest
 	/**
 	 * testSql
 	 *
+	 * @group lint
 	 * @return string
 	 */
 	public function testSql()
@@ -228,6 +229,7 @@ class CodingSqlTest extends CommonClassTest
 	/**
 	 * testInitData
 	 *
+	 * @group lint
 	 * @return string
 	 */
 	public function testInitData()
