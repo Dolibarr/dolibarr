@@ -391,19 +391,26 @@ class AllTests
 		require_once dirname(__FILE__).'/WebsiteTest.php';
 		$suite->addTestSuite('WebsiteTest');
 
+		// Test /custom dir
+		require_once dirname(__FILE__).'/RepositoryTest.php';
+		$suite->addTestSuite('RepositoryTest');
+
+		// Test DDL functions
+		require_once dirname(__FILE__).'/DoliDBTest.php';
+		$suite->addTestSuite('DoliDBTest');
+
 		// --- At end because it's the longer
 
 		// Rules into source files content
-		require_once dirname(__FILE__).'/RepositoryTest.php';
-		$suite->addTestSuite('RepositoryTest');
-		require_once dirname(__FILE__).'/LangTest.php';
-		$suite->addTestSuite('LangTest');
-		require_once dirname(__FILE__).'/CodingSqlTest.php';
-		$suite->addTestSuite('CodingSqlTest');
-		require_once dirname(__FILE__).'/CodingPhpTest.php';
-		$suite->addTestSuite('CodingPhpTest');
-		require_once dirname(__FILE__).'/DoliDBTest.php';
-		$suite->addTestSuite('DoliDBTest');
+		$filter = isset($_SERVER['argv'][1]) ? $_SERVER['argv'][1] : '';
+		if ($filter !== 'nosource') {
+			require_once dirname(__FILE__).'/LangTest.php';
+			$suite->addTestSuite('LangTest');
+			require_once dirname(__FILE__).'/CodingSqlTest.php';
+			$suite->addTestSuite('CodingSqlTest');
+			require_once dirname(__FILE__).'/CodingPhpTest.php';
+			$suite->addTestSuite('CodingPhpTest');
+		}
 
 		// --- At very end, the LAST ONE.
 
