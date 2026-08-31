@@ -9035,6 +9035,7 @@ class Form
 	 */
 	public function selectForForms($objectdesc, $htmlname, $preSelectedValue, $showempty = '', $searchkey = '', $placeholder = '', $morecss = '', $moreparams = '', $forcecombo = 0, $disabled = 0, $selected_input_value = '', $objectfield = '')
 	{
+		dol_syslog(__METHOD__.'::begin', LOG_DEBUG);
 		global $conf, $extrafields, $user;
 
 		// Example of common usage for a link to a thirdparty
@@ -9228,9 +9229,8 @@ class Form
 	 */
 	public function selectForFormsList($objecttmp, $htmlname, $preselectedvalue, $showempty = '', $searchkey = '', $placeholder = '', $morecss = '', $moreparams = '', $forcecombo = 0, $outputmode = 0, $disabled = 0, $sortfield = '', $filter = '', $sortorder = 'ASC')
 	{
+		dol_syslog(__METHOD__.'::begin', LOG_DEBUG);
 		global $langs, $user, $hookmanager;
-
-		//print "$htmlname, $preselectedvalue, $showempty, $searchkey, $placeholder, $morecss, $moreparams, $forcecombo, $outputmode, $disabled";
 
 		$prefixforautocompletemode = $objecttmp->element;
 		if ($prefixforautocompletemode == 'societe') {
@@ -9329,7 +9329,7 @@ class Form
 				if ($objecttmp->ismultientitymanaged == 1) {
 					$sql .= " AND t.entity IN (" . getEntity($objecttmp->element) . ")";
 				}
-				if (!is_numeric($objecttmp->ismultientitymanaged)) {
+				if (!is_numeric($objecttmp->ismultientitymanaged) && $objecttmp->ismultientitymanaged != 'fk_project@projet') {
 					$sql .= " AND parenttable.entity = t." . $this->db->sanitize($tmparray[0]);
 				}
 				// If the parent table is llx_societe and user is not an external user (a more robust test done later for external users),
