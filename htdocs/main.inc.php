@@ -752,12 +752,12 @@ if (!defined('NOLOGIN')) {
 			dol_syslog('--- Security warning: credentials reported as leaked were used to try to login. HTTP_EXPOSED_CREDENTIAL_CHECK='.((int) $_SERVER['HTTP_EXPOSED_CREDENTIAL_CHECK']), LOG_NOTICE);
 		}
 
-		// Refuse a login submission that carries credentials in the query string.
-		// This avoids the username/password ending up in web server access logs,
+		// Refuse a login submission that carries a password in a GET query string.
+		// This avoids the password ending up in web server access logs,
 		// the browser history, the Referrer header or any HTTP proxy log (CWE-598).
-		// OAuth callbacks legitimately use GET and never carry "username" or
-		// "password" in the query string, so this does not affect them.
-		if (GETPOST('actionlogin', 'aZ09') == 'login' && !GETPOST('afteroauthloginreturn') && (isset($_GET['username']) || isset($_GET['password']))) {
+		// OAuth callbacks legitimately use GET but use afteroauthloginreturn.
+		// Other external pluginn using login_hashin GET are also legitimate.
+		if (GETPOST('actionlogin', 'aZ09') == 'login' && !GETPOST('afteroauthloginreturn', 'alphanohtml', 1) && GETPOST('password', 'password', 1)) {
 			dol_syslog("--- Login submission with credentials in the query string refused for ".$_SERVER["PHP_SELF"], LOG_WARNING);
 			$langs->loadLangs(array('main', 'errors'));
 			$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("ErrorLoginMustBePostMethod");
