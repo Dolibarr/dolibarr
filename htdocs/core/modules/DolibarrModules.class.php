@@ -2021,10 +2021,6 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 					$r_perms = $this->rights[$key][self::KEY_FIRST_LEVEL] ?? '';
 					$r_subperms = $this->rights[$key][self::KEY_SECOND_LEVEL] ?? '';
 
-					$r_module_position = $this->getModulePosition();
-					$r_family = $this->family;
-					$r_family_position = 0;
-
 					// KEY_FIRST_LEVEL (perms) must not be empty
 					if (empty($r_perms)) {
 						continue;
@@ -2042,6 +2038,20 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 						// name of the module from which the right comes
 						$r_module_origin = (empty($this->rights_class) ? strtolower($this->name) : $this->rights_class);
 					}
+
+					if (!empty($r_module_origin) && $r_module !== $r_module_origin) {
+						// This right is filed under a different module's section of the permission
+						// grid (KEY_MODULE) than the one declaring it: use that target module's own
+						// family/position so it appears grouped with its native rights instead of
+						// opening a second, misplaced section for the same module.
+						$r_targetmoduleinfo = $this->getModuleInfoByRightsClass($r_module);
+						$r_module_position = $r_targetmoduleinfo['position'];
+						$r_family = $r_targetmoduleinfo['family'];
+					} else {
+						$r_module_position = $this->getModulePosition();
+						$r_family = $this->family;
+					}
+					$r_family_position = 0;
 
 					// condition to show or hide a user right (default: 1) (eg isModEnabled('anothermodule') or ($conf->global->MAIN_FEATURES_LEVEL > 0) or etc..)
 					$r_enabled	= $this->rights[$key][self::KEY_ENABLED] ?? '1';
@@ -2151,6 +2161,59 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		}
 
 		return $err;
+	}
+
+	/**
+	 * Look up the family and module_position of another module by its rights_class, so a right
+	 * filed under that module via KEY_MODULE can share its family/position and be grouped with
+	 * that module's native rights instead of opening a second, misplaced section on the same
+	 * permission grid page (see insert_permissions()). Result is cached per rights_class for the
+	 * duration of the request since this scans every module descriptor found on disk. Falls back
+	 * to this module's own family/position if no module with that rights_class is found.
+	 *
+	 * @param  string 						$rightsclass	rights_class of the target module (value used as KEY_MODULE)
+	 * @return array{family:string,position:int}			family and module_position of the target module
+	 */
+	protected function getModuleInfoByRightsClass($rightsclass)
+	{
+		global $conf, $db;
+
+		if (isset($conf->cache['keyModuleInfoCache'][$rightsclass])) {
+			return $conf->cache['keyModuleInfoCache'][$rightsclass];
+		}
+
+		// Fallback: if no module with this rights_class is found (typo, or module removed from disk),
+		// still register something under its own family/position rather than leaving it undefined.
+		$result = array('family' => $this->family, 'position' => (int) $this->getModulePosition());
+
+		$modulesdir = dolGetModulesDirs();
+		foreach ($modulesdir as $dir) {
+			$handle = @opendir(dol_osencode($dir));
+			if (is_resource($handle)) {
+				while (($file = readdir($handle)) !== false) {
+					if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod' && substr($file, dol_strlen($file) - 10) == '.class.php') {
+						$modName = substr($file, 0, dol_strlen($file) - 10);
+						if ($modName && $modName != get_class($this)) {
+							include_once $dir.$file;
+							if (class_exists($modName)) {
+								'@phan-var-force class-string<DolibarrModules> $modName';
+								$objMod = new $modName($db);
+								'@phan-var-force DolibarrModules $objMod';
+								if (!empty($objMod->rights_class) && $objMod->rights_class === $rightsclass) {
+									$result = array('family' => $objMod->family, 'position' => (int) $objMod->getModulePosition());
+									break 2;
+								}
+							}
+						}
+					}
+				}
+				closedir($handle);
+			}
+		}
+
+		$conf->cache['keyModuleInfoCache'][$rightsclass] = $result;
+
+		return $result;
 	}
 
 

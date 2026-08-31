@@ -835,7 +835,7 @@ class CodingPhpTest extends CommonClassTest
 			Note that $action and $object may have been modified by some hooks
 
 			if ($action == 'add' && $permissiontoadd) {
-			// aaa
+			// my code
 
 			EOT;
 			*/
