@@ -390,7 +390,7 @@ print '</td>';
 print '</tr>'."\n";
 
 // Get list of all permissions
-$sql = "SELECT r.id, r.libelle as label, r.module, r.perms, r.subperms, r.module_position, r.bydefault, r.family, r.family_position";
+$sql = "SELECT r.id, r.libelle as label, r.module, r.module_origin, r.perms, r.subperms, r.module_position, r.bydefault, r.family, r.family_position";
 $sql .= " FROM ".MAIN_DB_PREFIX."rights_def as r";
 $sql .= " WHERE r.libelle NOT LIKE 'tou%'";  // We ignore permission "tous les tiers". Why ?
 $sql .= " AND r.entity = ".((int) $entity);
@@ -550,6 +550,15 @@ foreach ($arrayofpermission as $i => $obj) {
 
 	$permlabel = (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && ($langs->trans("PermissionAdvanced".$obj->id) != "PermissionAdvanced".$obj->id) ? $langs->trans("PermissionAdvanced".$obj->id) : (($langs->trans("Permission".$obj->id) != "Permission".$obj->id) ? $langs->trans("Permission".$obj->id) : $langs->trans($obj->label)));
 
+	// This right is declared by another module (module_origin) but filed into this module's
+	// section for display (KEY_MODULE): show a small badge so it is not mistaken for a native
+	// right of this module.
+	if (!empty($obj->module_origin) && $obj->module_origin != $obj->module && !empty($modules[$obj->module_origin])) {
+		$permoriginmod = $modules[$obj->module_origin];
+		$permoriginpicto = ($permoriginmod->picto ? $permoriginmod->picto : 'generic');
+		$permlabel = img_picto($langs->trans("RightProvidedByModule", $permoriginmod->getName()), $permoriginpicto, 'class="paddingrightonly"').$permlabel;
+	}
+
 	print '<!-- '.$obj->module.'->'.$obj->perms.($obj->subperms ? '->'.$obj->subperms : '').' -->'."\n";
 	print '<tr class="oddeven trtohide_'.$obj->module.'"'.(!$isexpanded ? ' style="display:none"' : '').'>';
 
@@ -616,7 +625,10 @@ foreach ($arrayofpermission as $i => $obj) {
 	if ($user->admin) {
 		print '<td class="right">';
 		$htmltext = $langs->trans("ID").': '.$obj->id;
-		$htmltext .= '<br>'.$langs->trans("Permission").': user->hasRight(\''.dol_escape_htmltag($obj->module).'\', \''.dol_escape_htmltag($obj->perms).'\''.($obj->subperms ? ', \''.dol_escape_htmltag($obj->subperms).'\'' : '').')';
+		// hasRight() is actually checked against module_origin when set, not the display
+		// module column, see User::loadRights().
+		$htmltextmodule = (!empty($obj->module_origin) ? $obj->module_origin : $obj->module);
+		$htmltext .= '<br>'.$langs->trans("Permission").': user->hasRight(\''.dol_escape_htmltag($htmltextmodule).'\', \''.dol_escape_htmltag($obj->perms).'\''.($obj->subperms ? ', \''.dol_escape_htmltag($obj->subperms).'\'' : '').')';
 		print $form->textwithpicto('', $htmltext, 1, 'help', 'inline-block marginrightonly');
 		//print '<span class="opacitymedium">'.$obj->id.'</span>';
 		print '</td>';
