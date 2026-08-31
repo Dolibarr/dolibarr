@@ -5819,6 +5819,10 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 				$out .= '<div class="timeline-body wordbreak small">';
 				$truncateLines = getDolGlobalInt('MAIN_TRUNCATE_TIMELINE_MESSAGE', 3);
 				$truncatedText = dolGetFirstLineOfText($newmess, $truncateLines);
+				// dolGetFirstLineOfText() cuts on <br> without caring about tag balance, so a message wrapped in
+				// a block tag leaves the excerpt with an unclosed tag. The browser then nests the read more link
+				// and the full text inside the excerpt, and hiding the excerpt hides the whole message (#39035).
+				$truncatedText = dolCloseUnclosedHtmlTags($truncatedText);
 				if ($truncateLines > 0 && strlen($newmess) > strlen($truncatedText)) {
 					$out .= '<div class="readmore-block --closed" >';
 					$out .= '	<div class="readmore-block__excerpt">';
@@ -5853,11 +5857,13 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 						$contact = $conf->cache['contact'][$cid];
 					}
 
-					$contactList .= !empty($contactList) ? ', ' : '';
-					$contactList .= $contact->getNomUrl(1);
-					if (isset($histo[$key]['acode']) && $histo[$key]['acode'] == 'AC_TEL') {
-						if (!empty($contact->phone_pro)) {
-							$contactList .= '(' . dol_print_phone($contact->phone_pro) . ')';
+					if ($contact) {
+						$contactList .= !empty($contactList) ? ', ' : '';
+						$contactList .= $contact->getNomUrl(1);
+						if (isset($histo[$key]['acode']) && $histo[$key]['acode'] == 'AC_TEL') {
+							if (!empty($contact->phone_pro)) {
+								$contactList .= '(' . dol_print_phone($contact->phone_pro) . ')';
+							}
 						}
 					}
 				}

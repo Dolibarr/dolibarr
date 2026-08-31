@@ -432,7 +432,7 @@ class DoliDBPgsql extends DoliDB
 			$con_string = "dbname='".$name."' user='".$login."' password='".$passwd."'"; // $name may be empty
 			try {
 				$this->db = @pg_connect($con_string);
-			} catch (Exception $e) {
+			} catch (Throwable $e) {
 				// No message
 			}
 		}
@@ -449,7 +449,7 @@ class DoliDBPgsql extends DoliDB
 			$con_string = "host='".$host."' port='".$port."' dbname='".$name."' user='".$login."' password='".$passwd."'";
 			try {
 				$this->db = @pg_connect($con_string);
-			} catch (Exception $e) {
+			} catch (Throwable $e) {
 				print $e->getMessage();
 			}
 		}

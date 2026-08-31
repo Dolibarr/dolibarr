@@ -473,3 +473,4 @@ NotSupportedOnKits=Not supported on kits
 ProductLangExtrafieldsSetup=Product translations Extrafields
 
 WithoutVATCode=Without VAT code
+MassConvertInProgress=Conversion in progress, please wait. On a large catalog this can run for several minutes.
