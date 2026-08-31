@@ -99,6 +99,26 @@ class modContrat extends DolibarrModules
 			1=>array('file'=>'box_services_expired.php', 'enabledbydefaulton'=>'Home')
 		);
 
+		// Cronjobs
+		$arraydate = dol_getdate(dol_now());
+		$datestart = dol_mktime(22, 0, 0, $arraydate['mon'], $arraydate['mday'], $arraydate['year']);
+		$this->cronjobs = array(
+			0 => array(
+				'label' => 'SendReminderForExpiredServicesTitle',
+				'jobtype' => 'method', 'class' => 'contrat/class/contrat.class.php',
+				'objectname' => 'Contrat',
+				'method' => 'sendReminderForExpiredServices',
+				'parameters' => '10;0',
+				'comment' => 'SendReminderForExpiredServices',
+				'frequency' => 1,
+				'unitfrequency' => 3600 * 24,
+				'priority' => 50,
+				'status' => 1,
+				'test' => 'isModEnabled("contract")',
+				'datestart' => $datestart
+			),
+		);
+
 		// Permissions
 		$this->rights = array();
 		$this->rights_class = 'contrat';
