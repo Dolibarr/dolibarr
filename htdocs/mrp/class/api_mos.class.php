@@ -671,7 +671,30 @@ class Mos extends DolibarrApi
 							$stockmove->origin_type = 'mo';
 							$stockmove->origin_id = $this->mo->id;
 							if ($qtytoprocess >= 0) {
-								$idstockmove = $stockmove->reception(DolibarrApiAccess::$user, $line->fk_product, (int) $line->fk_warehouse, $qtytoprocess, 0, $labelmovement, '', '', (string) $tmpproduct->status_batch, dol_now(), $id_product_batch, $codemovement);
+								// Entering the produced goods into stock is the only movement that may carry
+								// a value: the manufacturing cost of one unit, that is the sum of qty * unit
+								// cost over the lines to consume, divided by the quantity produced. Unit cost
+								// follows the same priority chain as the web UI: cost_price, then pmp, then
+								// the lowest supplier price. Computed here, inside the stock entry branch, so
+								// it can never reach a stock exit.
+								$mfgcost = 0;
+								foreach ($this->mo->lines as $consumedline) {
+									if ($consumedline->role == 'toconsume') {
+										$consumedproduct = new Product($this->db);
+										$consumedproduct->fetch($consumedline->fk_product);
+										$consumedcost = price2num(!empty($consumedproduct->cost_price) ? $consumedproduct->cost_price : $consumedproduct->pmp);
+										if (empty($consumedcost)) {
+											require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+											$productFournisseur = new ProductFournisseur($this->db);
+											if ($productFournisseur->find_min_price_product_fournisseur($consumedline->fk_product, $consumedline->qty) > 0) {
+												$consumedcost = $productFournisseur->fourn_unitprice;
+											}
+										}
+										$mfgcost += price2num(($consumedline->qty * $consumedcost) / ($this->mo->qty > 0 ? $this->mo->qty : 1), 'MU');
+									}
+								}
+								$mfgcost = (float) price2num($mfgcost, 'MU');
+								$idstockmove = $stockmove->reception(DolibarrApiAccess::$user, $line->fk_product, (int) $line->fk_warehouse, $qtytoprocess, $mfgcost, $labelmovement, '', '', (string) $tmpproduct->status_batch, dol_now(), $id_product_batch, $codemovement);
 							} else {
 								$idstockmove = $stockmove->livraison(DolibarrApiAccess::$user, $line->fk_product, (int) $line->fk_warehouse, $qtytoprocess, 0, $labelmovement, dol_now(), '', '', (string) $tmpproduct->status_batch, $id_product_batch, $codemovement);
 							}
