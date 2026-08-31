@@ -757,7 +757,7 @@ if (!defined('NOLOGIN')) {
 		// the browser history, the Referrer header or any HTTP proxy log (CWE-598).
 		// OAuth callbacks legitimately use GET and never carry "username" or
 		// "password" in the query string, so this does not affect them.
-		if (GETPOST('actionlogin', 'aZ09') == 'login' && (isset($_GET['username']) || isset($_GET['password']))) {
+		if (GETPOST('actionlogin', 'aZ09') == 'login' && !GETPOST('afteroauthloginreturn') && (isset($_GET['username']) || isset($_GET['password']))) {
 			dol_syslog("--- Login submission with credentials in the query string refused for ".$_SERVER["PHP_SELF"], LOG_WARNING);
 			$langs->loadLangs(array('main', 'errors'));
 			$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("ErrorLoginMustBePostMethod");
