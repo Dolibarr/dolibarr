@@ -7294,7 +7294,7 @@ abstract class CommonObject
 		// Update also the user of last modification in parent table
 		if (!$error && !empty($this->fields['fk_user_modif'])) {  // @phan-suppress-current-line PhanTypeMismatchProperty
 			$sql = "UPDATE ".$this->db->prefix().$this->table_element;
-			$sql .= " SET fk_user_modif = ".(int) $user->id;
+			$sql .= " SET fk_user_modif = ".(int) $userused->id;
 			$sql .= " WHERE ".(empty($this->table_rowid) ? 'rowid' : $this->db->sanitize($this->table_rowid))." = ".((int) $this->id);
 			$this->db->query($sql);
 		}
@@ -7733,7 +7733,7 @@ abstract class CommonObject
 			// Update also the user of last modification in parent table
 			if (!$error && !empty($this->fields['fk_user_modif'])) {
 				$sql = "UPDATE ".$this->db->prefix().$this->table_element;
-				$sql .= " SET fk_user_modif = ".(int) $user->id;
+				$sql .= " SET fk_user_modif = ".(int) $userused->id;
 				$sql .= " WHERE ".(empty($this->table_rowid) ? 'rowid' : $this->db->sanitize($this->table_rowid))." = ".((int) $this->id);
 				$this->db->query($sql);
 			}
