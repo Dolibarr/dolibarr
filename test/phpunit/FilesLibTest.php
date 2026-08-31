@@ -629,6 +629,8 @@ class FilesLibTest extends CommonClassTest
 			$this->assertEquals(1, $result, 'Failed to convert PDF file into '.$fileimage.', error '.$result);
 		} else {
 			print __METHOD__." skipped because Imagick is not installed.\n";
+
+			$this->expectNotToPerformAssertions();
 		}
 	}
 }

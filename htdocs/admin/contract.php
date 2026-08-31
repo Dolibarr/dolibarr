@@ -563,6 +563,16 @@ print '<td class="right">';
 print ajax_constantonoff('CONTRACT_ALLOW_EXTERNAL_DOWNLOAD', array(), null, 0, 0, 0, 2, 0, 1);
 print '</td>';
 print '</tr>';
+
+// Reminder by email before a contract service expires
+if (isModEnabled('cron')) {
+	print '<tr class="oddeven">';
+	print '<td>'.$langs->trans("SendReminderForExpiredServicesTitle").'</td>';
+	print '<td class="right">';
+	print '<a href="'.DOL_URL_ROOT.'cron/list.php?search_label=SendReminderForExpiredServicesTitle&status=-1">'.$langs->trans("ConfigureContractReminderCronjobToSetFrequency").'</a>';
+	print '</td>';
+	print '</tr>';
+}
 print '</table>';
 print '</div>';
 
