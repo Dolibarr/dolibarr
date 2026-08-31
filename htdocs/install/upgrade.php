@@ -430,6 +430,21 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 
 	print '</table>';
 
+	// Notify when conf.php variables documented in conf.php.example are absent from the conf.php in place
+	// (their default value applies). Useful after a version upgrade to review new available parameters.
+	require_once DOL_DOCUMENT_ROOT.'/core/class/conffilemanager.class.php';
+	if (is_file($conffile) && filesize($conffile) > 0) {
+		$rawconfupgrade = file_get_contents($conffile);
+		if ($rawconfupgrade !== false) {
+			$confmanagerupgrade = new ConfFileManager();
+			$parsedupgrade = $confmanagerupgrade->parse($rawconfupgrade);
+			$diffupgrade = $confmanagerupgrade->diff($parsedupgrade['values']);
+			if (!empty($diffupgrade['newVars'])) {
+				print '<div class="info">'.$langs->trans("ConfNewVarsAvailable", count($diffupgrade['newVars'])).'</div>';
+			}
+		}
+	}
+
 	if ($db->connected) {
 		$db->close();
 	}

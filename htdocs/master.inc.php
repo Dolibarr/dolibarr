@@ -72,6 +72,8 @@ require_once 'filefunc.inc.php';
 @phan-var-force ?string $dolibarr_main_db_cryptkey
 @phan-var-force ?string $dolibarr_main_limit_users
 @phan-var-force ?string $dolibarr_main_url_root_alt
+@phan-var-force ?string $dolibarr_main_csrf_with_token
+@phan-var-force ?string $dolibarr_main_disable_dns_get_record
 ';
 require_once DOL_DOCUMENT_ROOT.'/core/class/conf.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
@@ -167,6 +169,8 @@ $conf->file->main_limit_users = $dolibarr_main_limit_users;
 $conf->file->mailing_limit_sendbyweb = empty($dolibarr_mailing_limit_sendbyweb) ? 0 : $dolibarr_mailing_limit_sendbyweb;
 $conf->file->mailing_limit_sendbycli = empty($dolibarr_mailing_limit_sendbycli) ? 0 : $dolibarr_mailing_limit_sendbycli;
 $conf->file->mailing_limit_sendbyday = empty($dolibarr_mailing_limit_sendbyday) ? 0 : $dolibarr_mailing_limit_sendbyday;
+$conf->file->csrf_with_token = isset($dolibarr_main_csrf_with_token) ? $dolibarr_main_csrf_with_token : ''; // conf.php override for the MAIN_SECURITY_CSRF_WITH_TOKEN constant
+$conf->file->disable_dns_get_record = isset($dolibarr_main_disable_dns_get_record) ? $dolibarr_main_disable_dns_get_record : ''; // conf.php override for the MAIN_DISABLE_DNS_GET_RECORD constant
 $conf->file->main_authentication = empty($dolibarr_main_authentication) ? 'dolibarr' : $dolibarr_main_authentication; // Identification mode
 $conf->file->main_force_https = empty($dolibarr_main_force_https) ? '' : $dolibarr_main_force_https; // Force https
 $conf->file->strict_mode = empty($dolibarr_strict_mode) ? '' : $dolibarr_strict_mode; // Force php strict mode (for debug)
