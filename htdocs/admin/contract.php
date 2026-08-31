@@ -569,7 +569,7 @@ if (isModEnabled('cron')) {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("SendReminderForExpiredServicesTitle").'</td>';
 	print '<td class="right">';
-	print '<a href="'.dol_buildpath('/cron/list.php', 1).'?search_label=SendReminderForExpiredServicesTitle&status=-1">'.$langs->trans("ConfigureContractReminderCronjobToSetFrequency").'</a>';
+	print '<a href="'.DOL_URL_ROOT.'cron/list.php?search_label=SendReminderForExpiredServicesTitle&status=-1">'.$langs->trans("ConfigureContractReminderCronjobToSetFrequency").'</a>';
 	print '</td>';
 	print '</tr>';
 }
