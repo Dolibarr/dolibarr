@@ -57,8 +57,6 @@ if ($user->socid) {
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('stockreplenishlist'));
 
-$result = restrictedArea($user, 'produit|service');
-
 //checks if a product has been ordered
 
 $action = GETPOST('action', 'aZ09');
@@ -142,16 +140,27 @@ if ($mode == 'virtual') {
 	$usevirtualstock = 1;
 }
 
-$parameters = array();
-$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) {
-	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+$object = new CommandeFournisseur($db);
+
+if (!isModEnabled('stock')) {
+	accessforbidden("Module stock must be enabled to use this feature");
 }
+if (!$user->hasRight('stock', 'read')) {
+	accessforbidden("You need permission to read stock to access this feature");
+}
+
+restrictedArea($user, 'produit|service');
 
 
 /*
  * Actions
  */
+
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // Both test are required to be compatible with all browsers
 	$search_ref = '';

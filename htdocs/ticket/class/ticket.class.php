@@ -1372,14 +1372,16 @@ class Ticket extends CommonObject
 	 */
 	public function loadCacheTypesTickets()
 	{
-		global $langs;
+		global $langs, $hookmanager;
 
 		if (!empty($this->cache_types_tickets) && count($this->cache_types_tickets)) {
 			return 0;
 		}
 		// Cache deja charge
 
-		$sql = "SELECT rowid, code, label, use_default, pos, description";
+		// entity is returned so a hook on loadDictionaryCache can tell two rows apart when the
+		// dictionary is read across entities
+		$sql = "SELECT rowid, entity, code, label, use_default, pos, description";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_ticket_type";
 		$sql .= " WHERE entity IN (".getEntity('c_ticket_type').")";
 		$sql .= " AND active > 0";
@@ -1396,9 +1398,21 @@ class Ticket extends CommonObject
 				$this->cache_types_tickets[$obj->rowid]['label'] = $label;
 				$this->cache_types_tickets[$obj->rowid]['use_default'] = $obj->use_default;
 				$this->cache_types_tickets[$obj->rowid]['pos'] = $obj->pos;
+				$this->cache_types_tickets[$obj->rowid]['entity'] = (int) $obj->entity;
 				$i++;
 			}
-			return $num;
+
+			$parameters = array('dictionary' => 'tickettype');
+			$reshook = $hookmanager->executeHooks('loadDictionaryCache', $parameters, $this); // Note that $action and $object may have been modified by hook
+			if (empty($reshook)) {
+				if (is_array($hookmanager->resArray) && count($hookmanager->resArray)) {
+					$this->cache_types_tickets = array_merge($this->cache_types_tickets, $hookmanager->resArray);
+				}
+			} else {
+				$this->cache_types_tickets = $hookmanager->resArray;
+			}
+
+			return count($this->cache_types_tickets);
 		} else {
 			dol_print_error($this->db);
 			return -1;
@@ -1413,14 +1427,16 @@ class Ticket extends CommonObject
 	 */
 	public function loadCacheCategoriesTickets($publicgroup = -1)
 	{
-		global $conf, $langs;
+		global $conf, $langs, $hookmanager;
 
 		if ($publicgroup == -1 && !empty($conf->cache['category_tickets']) && count($conf->cache['category_tickets'])) {
 			// Cache already loaded
 			return 0;
 		}
 
-		$sql = "SELECT rowid, code, label, use_default, pos, description, public, active, force_severity, fk_parent";
+		// entity is returned so a hook on loadDictionaryCache can tell two rows apart when the
+		// dictionary is read across entities
+		$sql = "SELECT rowid, entity, code, label, use_default, pos, description, public, active, force_severity, fk_parent";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_ticket_category";
 		$sql .= " WHERE entity IN (".getEntity('c_ticket_category').")";
 		$sql .= " AND active > 0";
@@ -1451,11 +1467,23 @@ class Ticket extends CommonObject
 				// Warning: You should not use this and recompute the translated string into caller code to get the value into expected language
 				$label = ($langs->trans("TicketCategoryShort".$obj->code) != "TicketCategoryShort".$obj->code ? $langs->trans("TicketCategoryShort".$obj->code) : ($obj->label != '-' ? $obj->label : ''));
 				$categorytickets[$obj->rowid]['label'] = $label;
+				$categorytickets[$obj->rowid]['entity'] = (int) $obj->entity;
 
 				$i++;
 			}
 			$conf->cache['category_tickets'] = $categorytickets;
-			return $num;
+
+			$parameters = array('dictionary' => 'ticketcategory', 'publicgroup' => $publicgroup);
+			$reshook = $hookmanager->executeHooks('loadDictionaryCache', $parameters, $this); // Note that $action and $object may have been modified by hook
+			if (empty($reshook)) {
+				if (is_array($hookmanager->resArray) && count($hookmanager->resArray)) {
+					$conf->cache['category_tickets'] = array_merge($conf->cache['category_tickets'], $hookmanager->resArray);
+				}
+			} else {
+				$conf->cache['category_tickets'] = $hookmanager->resArray;
+			}
+
+			return count($conf->cache['category_tickets']);
 		} else {
 			dol_print_error($this->db);
 			return -1;
@@ -1469,14 +1497,16 @@ class Ticket extends CommonObject
 	 */
 	public function loadCacheSeveritiesTickets()
 	{
-		global $conf, $langs;
+		global $conf, $langs, $hookmanager;
 
 		if (!empty($conf->cache['severity_tickets']) && count($conf->cache['severity_tickets'])) {
 			// Cache already loaded
 			return 0;
 		}
 
-		$sql = "SELECT rowid, code, label, use_default, pos, description";
+		// entity is returned so a hook on loadDictionaryCache can tell two rows apart when the
+		// dictionary is read across entities
+		$sql = "SELECT rowid, entity, code, label, use_default, pos, description";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_ticket_severity";
 		$sql .= " WHERE entity IN (".getEntity('c_ticket_severity').")";
 		$sql .= " AND active > 0";
@@ -1496,10 +1526,22 @@ class Ticket extends CommonObject
 				$severitytickets[$obj->rowid]['label'] = $label;
 				$severitytickets[$obj->rowid]['use_default'] = $obj->use_default;
 				$severitytickets[$obj->rowid]['pos'] = $obj->pos;
+				$severitytickets[$obj->rowid]['entity'] = (int) $obj->entity;
 				$i++;
 			}
 			$conf->cache['severity_tickets'] = $severitytickets;
-			return $num;
+
+			$parameters = array('dictionary' => 'ticketseverity');
+			$reshook = $hookmanager->executeHooks('loadDictionaryCache', $parameters, $this); // Note that $action and $object may have been modified by hook
+			if (empty($reshook)) {
+				if (is_array($hookmanager->resArray) && count($hookmanager->resArray)) {
+					$conf->cache['severity_tickets'] = array_merge($conf->cache['severity_tickets'], $hookmanager->resArray);
+				}
+			} else {
+				$conf->cache['severity_tickets'] = $hookmanager->resArray;
+			}
+
+			return count($conf->cache['severity_tickets']);
 		} else {
 			dol_print_error($this->db);
 			return -1;
@@ -3084,7 +3126,7 @@ class Ticket extends CommonObject
 									$array_external = array(array('id' => -1, 'firstname' => '', 'lastname' => $object->origin_replyto, 'email' => $object->origin_replyto, 'libelle' => $langs->transnoentities('Customer'), 'socid' => 0));
 									$external_contacts = array_merge($external_contacts, $array_external);
 								} elseif (empty($object->fk_soc) && !empty($object->origin_email)) {
-									$array_external = array(array('id' => -1, 'firstname' => '', 'lastname' => $object->origin_email, 'email' => $object->thirdparty->email, 'libelle' => $langs->transnoentities('Customer'), 'socid' => $object->thirdparty->id));
+									$array_external = array(array('id' => -1, 'firstname' => '', 'lastname' => $object->origin_email, 'email' => $object->origin_email, 'libelle' => $langs->transnoentities('Customer'), 'socid' => 0)); // no fk_soc here, so $object->thirdparty was never fetched (mirrors the origin_replyto branch above)
 									$external_contacts = array_merge($external_contacts, $array_external);
 								}
 							}

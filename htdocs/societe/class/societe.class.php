@@ -3418,7 +3418,7 @@ class Societe extends CommonObject
 	 *      @param	string		$morecss					More CSS
 	 *		@return	string						          	String with URL
 	 */
-	public function getNomUrl($withpicto = 0, $option = '', $maxlen = 0, $notooltip = 0, $save_lastsearch_value = -1, $noaliasinname = 0, $target = '', $morecss = '')
+	public function getNomUrl($withpicto = 0, $option = '', $maxlen = 0, $notooltip = 0, $save_lastsearch_value = -1, $noaliasinname = 0, $target = '', $morecss = 'valignmiddle')
 	{
 		global $conf, $langs, $hookmanager, $user;
 
@@ -3528,7 +3528,7 @@ class Societe extends CommonObject
 				$linkclose .= ' target="'.dol_escape_htmltag($target).'"';
 			}
 		} else {
-			$linkclose .= ' class="valignmiddle'.($morecss ? ' '.$morecss : '').'"';
+			$linkclose .= ' class="'.($morecss ? ' '.$morecss : '').'"';
 		}
 		$linkstart .= $linkclose.'>';
 		$linkend = '</a>';

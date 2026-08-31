@@ -949,6 +949,18 @@ class Mo extends CommonObject
 			}
 		}
 
+		// Remove linked categories.
+		if (!$error) {
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_mo";
+			$sql .= " WHERE fk_mo = ".((int) $this->id);
+
+			$result = $this->db->query($sql);
+			if (!$result) {
+				$error++;
+				$this->errors[] = $this->db->lasterror();
+			}
+		}
+
 		if (!$error) {
 			$result = $this->deleteCommon($user, $notrigger);
 			if ($result < 0) {

@@ -349,12 +349,6 @@ parameters:
 			path: ../../../htdocs/admin/boxes.php
 
 		-
-			message: '#^Call to function is_null\(\) with null will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/admin/dict.php
-
-		-
 			message: '#^Loose comparison using \!\= between ''create'' and ''edit'' will always evaluate to true\.$#'
 			identifier: notEqual.alwaysTrue
 			count: 1
@@ -1215,7 +1209,7 @@ parameters:
 		-
 			message: '#^Ternary operator condition is always true\.$#'
 			identifier: ternary.alwaysTrue
-			count: 2
+			count: 1
 			path: ../../../htdocs/comm/action/index.php
 
 		-
@@ -1347,7 +1341,7 @@ parameters:
 		-
 			message: '#^Loose comparison using \=\= between ''show_peruser'' and ''show_day'' will always evaluate to false\.$#'
 			identifier: equal.alwaysFalse
-			count: 2
+			count: 1
 			path: ../../../htdocs/comm/action/peruser.php
 
 		-
@@ -3139,12 +3133,6 @@ parameters:
 			path: ../../../htdocs/core/class/html.formticket.class.php
 
 		-
-			message: '#^Call to function is_array\(\) with list\<non\-falsy\-string\> will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/core/class/html.formticket.class.php
-
-		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 1
@@ -3349,6 +3337,12 @@ parameters:
 			path: ../../../htdocs/core/lib/agenda.lib.php
 
 		-
+			message: '#^Ternary operator condition is always true\.$#'
+			identifier: ternary.alwaysTrue
+			count: 1
+			path: ../../../htdocs/core/lib/agenda.lib.php
+
+		-
 			message: '#^Left side of && is always true\.$#'
 			identifier: booleanAnd.leftAlwaysTrue
 			count: 1
@@ -3463,12 +3457,6 @@ parameters:
 			path: ../../../htdocs/core/lib/functions.lib.php
 
 		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
-			count: 3
-			path: ../../../htdocs/core/lib/functions.lib.php
-
-		-
 			message: '#^Instanceof between DOMDocument and DOMDocument will always evaluate to true\.$#'
 			identifier: instanceof.alwaysTrue
 			count: 1
@@ -3495,7 +3483,7 @@ parameters:
 		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
-			count: 2
+			count: 1
 			path: ../../../htdocs/core/lib/functions.lib.php
 
 		-
@@ -3517,15 +3505,9 @@ parameters:
 			path: ../../../htdocs/core/lib/functions.lib.php
 
 		-
-			message: '#^Ternary operator condition is always false\.$#'
-			identifier: ternary.alwaysFalse
-			count: 1
-			path: ../../../htdocs/core/lib/functions.lib.php
-
-		-
 			message: '#^Ternary operator condition is always true\.$#'
 			identifier: ternary.alwaysTrue
-			count: 7
+			count: 1
 			path: ../../../htdocs/core/lib/functions.lib.php
 
 		-
@@ -3591,7 +3573,7 @@ parameters:
 		-
 			message: '#^Strict comparison using \!\=\= between string and false will always evaluate to true\.$#'
 			identifier: notIdentical.alwaysTrue
-			count: 2
+			count: 1
 			path: ../../../htdocs/core/lib/modulebuilder.lib.php
 
 		-
@@ -4677,12 +4659,6 @@ parameters:
 		-
 			message: '#^Call to function property_exists\(\) with \$this\(PaymentExpenseReport\) and ''fk_typepayment'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/expensereport/class/paymentexpensereport.class.php
-
-		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
 			count: 1
 			path: ../../../htdocs/expensereport/class/paymentexpensereport.class.php
 
@@ -6329,12 +6305,6 @@ parameters:
 			identifier: booleanNot.alwaysTrue
 			count: 1
 			path: ../../../htdocs/product/dynamic_price/class/price_global_variable_updater.class.php
-
-		-
-			message: '#^If condition is always false\.$#'
-			identifier: if.alwaysFalse
-			count: 1
-			path: ../../../htdocs/product/inventory/card.php
 
 		-
 			message: '#^Negated boolean expression is always true\.$#'
