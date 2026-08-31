@@ -32,6 +32,7 @@
  * @var string $extrafieldsobjectkey
  */
 '
+@phan-var-force CommonObject $object
 @phan-var-force string $sql
 ';
 
