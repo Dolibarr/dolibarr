@@ -395,6 +395,17 @@ if (empty($mysoc->country_code)) {
 	print '</div>';
 
 	print '</form>';
+
+	// The conversion loops over every matching product with updatePrice(): on a large
+	// catalog the request runs for minutes with no feedback, which invites re-submits.
+	// Show the native blocking overlay (dolBlockUI + working.gif) while it runs.
+	print '<script>
+	jQuery(function() {
+		jQuery("#convert_vatrate").closest("form").on("submit", function() {
+			dolBlockUI("'.dol_escape_js($langs->transnoentities("MassConvertInProgress")).'");
+		});
+	});
+	</script>';
 }
 
 // End of page
