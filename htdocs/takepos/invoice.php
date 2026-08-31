@@ -281,7 +281,8 @@ if (empty($reshook)) {
 	$tmpcurrentday = dol_getdate(dol_now());
 
 	$sql = "SELECT MIN(ref) as firstref FROM ".MAIN_DB_PREFIX."pos_cash_fence";
-	$sql .= " WHERE posnumber = ".((int) $takeposterminal);
+	$sql .= " WHERE entity = ".((int) $conf->entity);
+	$sql .= " AND posnumber = ".((int) $takeposterminal);
 	$sql .= " AND year_close = ".((int) $tmpcurrentday['year']);
 	$sql .= " AND (";
 	$sql .= " (month_close IS NULL AND day_close IS NULL)";

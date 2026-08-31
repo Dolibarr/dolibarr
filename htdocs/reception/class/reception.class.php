@@ -1209,8 +1209,6 @@ class Reception extends CommonObject
 	public function fetch_lines_free()
 	{
 		// phpcs:enable
-		global $mysoc;
-
 		$this->lines = array();
 
 		$sql = 'SELECT rc.rowid, rc.fk_reception, rc.fk_entrepot, rc.fk_product, rc.fk_unit, rc.description, rc.fk_elementdet, rc.fk_element, rc.element_type, rc.qty, rc.rang';
@@ -1248,8 +1246,6 @@ class Reception extends CommonObject
 				$line->fk_elementdet 	= $objp->fk_elementdet;
 				$line->fk_element_type	= $objp->element_type;
 				$line->fetch_optionals();
-
-
 
 				$this->lines[$i] = $line;
 
@@ -2325,7 +2321,7 @@ class Reception extends CommonObject
 	public function setDraft($user)
 	{
 		// phpcs:enable
-		global $conf, $langs;
+		global $langs;
 
 		$error = 0;
 
