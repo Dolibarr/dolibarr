@@ -340,7 +340,9 @@ class AllTests
 		require_once dirname(__FILE__).'/BlockedLogAndLNETest.php';
 		$suite->addTestSuite('BlockedLogAndLNETest');
 
-		if ($filter !== 'disableapi' && !getenv('PHPUNIT_DISABLE_API')) {
+		if ($filter !== 'PHPUNIT_DISABLE_API' && !getenv('PHPUNIT_DISABLE_API')) {
+			print "Run test on APIs.\n";
+
 			// Rest
 			require_once dirname(__FILE__).'/RestAPIUserTest.php';
 			$suite->addTestSuite('RestAPIUserTest');
@@ -364,7 +366,10 @@ class AllTests
 			$suite->addTestSuite('WebservicesThirdpartyTest');
 			require_once dirname(__FILE__).'/WebservicesUserTest.php';
 			$suite->addTestSuite('WebservicesUserTest');
+		} else {
+			print "Check on API has been disabled by parameter or env var 'PHPUNIT_DISABLE_API'.\n";
 		}
+
 
 		require_once dirname(__FILE__).'/ExportTest.php';
 		$suite->addTestSuite('ExportTest');
@@ -406,7 +411,7 @@ class AllTests
 		// --- At end because it's the longer
 
 		// Rules into source files content
-		if ($filter !== 'disablesourcescan' && !getenv('PHPUNIT_DISABLE_SOURCE_SCAN')) {
+		if ($filter !== 'PHPUNIT_DISABLE_SOURCE_SCAN' && !getenv('PHPUNIT_DISABLE_SOURCE_SCAN')) {
 			print "Check on static source code is enabled, we run tests on source.\n";
 			require_once dirname(__FILE__).'/LangTest.php';
 			$suite->addTestSuite('LangTest');
@@ -415,7 +420,7 @@ class AllTests
 			require_once dirname(__FILE__).'/CodingPhpTest.php';
 			$suite->addTestSuite('CodingPhpTest');
 		} else {
-			print "Check on source code has been disabled by parameter 'disablesourcescan'.\n";
+			print "Check on source code has been disabled by parameter or env var 'PHPUNIT_DISABLE_SOURCE_SCAN'.\n";
 		}
 
 		// --- At very end, the LAST ONE.
