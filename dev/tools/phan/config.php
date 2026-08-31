@@ -411,6 +411,7 @@ return [
 	'SqlInjectionPlugin' => ['debug' => false],
 	'plugins' => [
 		__DIR__.'/plugins/NoVarDumpPlugin.php',
+		__DIR__.'/plugins/DolibarrForbiddenFunctionPlugin.php',
 		__DIR__.'/plugins/ParamMatchRegexPlugin.php',
 		__DIR__.'/plugins/SqlInjectionPlugin.php',
 		// checks if a function, closure or method unconditionally returns.
