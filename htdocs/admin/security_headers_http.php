@@ -358,9 +358,9 @@ foreach ($selectarrayCSPSources as $key => $values) {
 	print '</div>';
 }
 print ' ';
-print '<div class="div_input_data_MAIN_SECURITY_FORCECSP hidden inline-block maxwidth200"><input id="input_data_MAIN_SECURITY_FORCECSP" name="input_data_MAIN_SECURITY_FORCECSP"></div>';
+print '<div class="div_input_data_MAIN_SECURITY_FORCECSP hidden inline-block maxwidth200"><input id="input_data_MAIN_SECURITY_FORCECSP" name="input_data_MAIN_SECURITY_FORCECSP" class="valignmiddle marginright"></div>';
 print ' ';
-print '<div class="div_btn_class_MAIN_SECURITY_FORCECSP inline-block maxwidth200"><input type="submit" id="btn_MAIN_SECURITY_FORCECSP" name="btn_MAIN_SECURITY_FORCECSP" class="butAction small smallpaddingimp" value="'.$langs->trans("Add").'" disabled></div>';
+print '<div class="div_btn_class_MAIN_SECURITY_FORCECSP inline-block maxwidth200 marginleftonly"><input type="submit" id="btn_MAIN_SECURITY_FORCECSP" name="btn_MAIN_SECURITY_FORCECSP" class="butAction small smallpaddingimp valignmiddle" value="'.$langs->trans("Add").'" disabled></div>';
 print '<br><br>';
 print '</div>';
 
