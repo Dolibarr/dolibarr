@@ -150,6 +150,8 @@ class AllTests
 		$suite->addTestSuite('ProfidLibTest');
 		require_once dirname(__FILE__).'/XCalLibTest.php';
 		$suite->addTestSuite('XCalLibTest');
+		require_once dirname(__FILE__).'/ModulebuilderIncludeRewriteTest.php';
+		$suite->addTestSuite('ModulebuilderIncludeRewriteTest');
 
 		require_once dirname(__FILE__).'/SecurityTest.php';
 		$suite->addTestSuite('SecurityTest');

@@ -67,8 +67,8 @@ if (!$res) {
  */
 include_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 include_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-dol_include_once('/mymodule/class/myobject.class.php');
-dol_include_once('/mymodule/lib/mymodule_myobject.lib.php');
+include_once __DIR__.'/class/myobject.class.php';
+include_once __DIR__.'/lib/mymodule_myobject.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("mymodule@mymodule", "companies", "other", "mails"));

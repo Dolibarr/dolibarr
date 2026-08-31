@@ -108,7 +108,7 @@ print load_fiche_titre($langs->trans($title), $linkback, 'title_setup');
 $head = mymoduleAdminPrepareHead();
 print dol_get_fiche_head($head, 'about', $langs->trans($title), 0, 'mymodule@mymodule');
 
-dol_include_once('/mymodule/core/modules/modMyModule.class.php');
+include_once __DIR__.'/../core/modules/modMyModule.class.php';
 $tmpmodule = new modMyModule($db);
 print $tmpmodule->getDescLong();
 

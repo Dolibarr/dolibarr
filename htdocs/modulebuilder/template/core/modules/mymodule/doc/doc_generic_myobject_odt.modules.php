@@ -29,7 +29,7 @@
  *	\brief      File of class to build ODT documents for myobjects
  */
 
-dol_include_once('/mymodule/core/modules/mymodule/modules_myobject.php');
+include_once __DIR__.'/../modules_myobject.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';

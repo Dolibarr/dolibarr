@@ -28,7 +28,7 @@
  */
 include_once DOL_DOCUMENT_ROOT.'/core/class/stats.class.php';
 include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-dol_include_once('/mymodule/class/myobject.class.php');
+include_once __DIR__.'/myobject.class.php';
 
 
 /**

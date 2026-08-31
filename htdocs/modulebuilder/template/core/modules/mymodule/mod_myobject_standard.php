@@ -24,7 +24,7 @@
  *  \ingroup    mymodule
  *  \brief      File of class to manage MyObject numbering rules standard
  */
-dol_include_once('/mymodule/core/modules/mymodule/modules_myobject.php');
+include_once __DIR__.'/modules_myobject.php';
 
 
 /**
