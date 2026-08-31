@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2026	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -798,7 +799,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 				$morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref"></div>';
 			} else {    // Show no photo link
 				$nophoto = '/public/theme/common/nophoto.png';
-				$morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref"><img class="photo' . $modulepart . ($cssclass ? ' ' . $cssclass : '') . '" title="' . dol_escape_htmltag($langs->trans("UploadAnImageToSeeAPhotoHere", $langs->transnoentitiesnoconv("Documents"))) . '" alt="No photo"' . ($width ? ' style="width: ' . $width . 'px"' : '') . ' src="' . DOL_URL_ROOT . $nophoto . '"></div>';
+				$morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref"><img class="photo' . $modulepart . ' ' . $cssclass . '" title="' . dol_escape_htmltag($langs->trans("UploadAnImageToSeeAPhotoHere", $langs->transnoentitiesnoconv("Documents"))) . '" alt="No photo" style="width: ' . $width . 'px" src="' . DOL_URL_ROOT . $nophoto . '"></div>';
 			}
 		}
 	} elseif ($object->element == 'category') {
@@ -819,7 +820,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 				$morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref"></div>';
 			} else {    // Show no photo link
 				$nophoto = '/public/theme/common/nophoto.png';
-				$morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref"><img class="photo' . $modulepart . ($cssclass ? ' ' . $cssclass : '') . '" title="' . dol_escape_htmltag($langs->trans("UploadAnImageToSeeAPhotoHere", $langs->transnoentitiesnoconv("Documents"))) . '" alt="No photo"' . ($width ? ' style="width: ' . $width . 'px"' : '') . ' src="' . DOL_URL_ROOT . $nophoto . '"></div>';
+				$morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref"><img class="photo' . $modulepart . ' ' . $cssclass . '" title="' . dol_escape_htmltag($langs->trans("UploadAnImageToSeeAPhotoHere", $langs->transnoentitiesnoconv("Documents"))) . '" alt="No photo" style="width: ' . $width . 'px" src="' . DOL_URL_ROOT . $nophoto . '"></div>';
 			}
 		}
 	} elseif ($object->element == 'bom') {
@@ -840,7 +841,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 				$morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref"></div>';
 			} else {    // Show no photo link
 				$nophoto = '/public/theme/common/nophoto.png';
-				$morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref"><img class="photo' . $modulepart . ($cssclass ? ' ' . $cssclass : '') . '" title="' . dol_escape_htmltag($langs->trans("UploadAnImageToSeeAPhotoHere", $langs->transnoentitiesnoconv("Documents"))) . '" alt="No photo"' . ($width ? ' style="width: ' . $width . 'px"' : '') . ' src="' . DOL_URL_ROOT . $nophoto . '"></div>';
+				$morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref"><img class="photo' . $modulepart . ' ' . $cssclass . '" title="' . dol_escape_htmltag($langs->trans("UploadAnImageToSeeAPhotoHere", $langs->transnoentitiesnoconv("Documents"))) . '" alt="No photo" style="width: ' . $width . 'px" src="' . DOL_URL_ROOT . $nophoto . '"></div>';
 			}
 		}
 	} elseif ($object->element == 'ticket') {
@@ -1370,7 +1371,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 			}
 			$moreatt = trim($moreatt);
 
-			$enabledisablehtml = '<span class="' . $faprefix . ' ' . $fakey . ($marginleftonlyshort ? ($marginleftonlyshort == 1 ? ' marginleftonlyshort' : ' marginleftonly') : '');
+			$enabledisablehtml = '<span class="' . $faprefix . ' ' . $fakey;
 			$enabledisablehtml .= ($morecss ? ' ' . $morecss : '') . '" style="' . ($fasize ? ('font-size: ' . $fasize . ';') : '') . ($facolor ? (' color: ' . $facolor . ';') : '') . ($morestyle ? ' ' . $morestyle : '') . '"' . (($notitle || empty($titlealt)) ? '' : ' title="' . dol_escape_htmltag($titlealt) . '"') . ($moreatt ? ' ' . $moreatt : '') . '>';
 			$enabledisablehtml .= '</span>';
 
@@ -4372,8 +4373,8 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
 		} else { // $displayMode >= 6
 			$return = $htmlLabel . ' ' . $htmlImg;
 		}
-	} elseif (!getDolGlobalString('MAIN_STATUS_USES_IMAGES') && !empty($displayMode)) {
-		// Use new badge
+	} elseif (!empty($displayMode)) {
+		// Use new badge (MAIN_STATUS_USES_IMAGES already handled by the previous branch)
 		$statusLabelShort = (empty($statusLabelShort) ? $statusLabel : $statusLabelShort);
 
 		$dolGetBadgeParams['attr']['class'] = 'badge-status';
@@ -5290,9 +5291,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 				}
 			} elseif (is_object($filterobj) && get_class($filterobj) == 'Contact' && $filterobj->id) {
 				$sql .= " AND a.fk_contact = sp.rowid";
-				if ($filterobj->id) {
-					$sql .= " AND a.fk_contact = " . ((int) $filterobj->id);
-				}
+				$sql .= " AND a.fk_contact = " . ((int) $filterobj->id);
 			} elseif (is_object($filterobj) && get_class($filterobj) == 'Facture') {
 				$sql .= " AND a.fk_element = o.rowid";
 				if ($filterobj->id) {
@@ -5307,9 +5306,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 				if (is_object($filterobj) && !empty($filterobj->element) && !empty($filterobj->id) && array_key_exists('ref', $filterobj->fields)) {
 					$sql .= " AND a.fk_element = o.rowid";
 					$sql .= " AND a.elementtype = '" . $db->escape($filterobj->element) . "'";
-					if ($filterobj->id) {
-						$sql .= " AND a.fk_element = " . ((int) $filterobj->id);
-					}
+					$sql .= " AND a.fk_element = " . ((int) $filterobj->id);
 				}
 			}
 		} else {
@@ -5822,6 +5819,10 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 				$out .= '<div class="timeline-body wordbreak small">';
 				$truncateLines = getDolGlobalInt('MAIN_TRUNCATE_TIMELINE_MESSAGE', 3);
 				$truncatedText = dolGetFirstLineOfText($newmess, $truncateLines);
+				// dolGetFirstLineOfText() cuts on <br> without caring about tag balance, so a message wrapped in
+				// a block tag leaves the excerpt with an unclosed tag. The browser then nests the read more link
+				// and the full text inside the excerpt, and hiding the excerpt hides the whole message (#39035).
+				$truncatedText = dolCloseUnclosedHtmlTags($truncatedText);
 				if ($truncateLines > 0 && strlen($newmess) > strlen($truncatedText)) {
 					$out .= '<div class="readmore-block --closed" >';
 					$out .= '	<div class="readmore-block__excerpt">';

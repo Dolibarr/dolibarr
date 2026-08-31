@@ -2,7 +2,8 @@
 /* Copyright (C) 2004-2017	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2022		Alice Adminson				<aadminson@example.com>
  * Copyright (C) 2024-2026  Frédéric France				<frederic.france@free.fr>
- * Coryright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2026	Jose Martinez			<jose.martinez@pichinov.com>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -457,6 +458,32 @@ if (empty($setupnotempty)) {
 	print '<br>'.$langs->trans("NothingToSetup");
 }
 
+
+// Datalist of the provider's available model ids (fed by ajax/list_models.php,
+// cached 1h server-side): every *_MODEL_* text input gets autocompletion, which
+// avoids typos in the seven free-text model fields. The fields stay plain free
+// text (a datalist only suggests, never constrains — required for local AI
+// providers with no model-listing API, where this whole block is a no-op).
+// Active check: a saved model absent from the provider's current list gets a
+// warning picto — warn only, never block, since a listing can be incomplete
+// (aliases, fine-tunes) while the value still works.
+print '<datalist id="ai-model-ids"></datalist>'."\n";
+print '<script nonce="'.getNonce().'">
+fetch("'.dol_buildpath('/ai/ajax/list_models.php', 1).'").then(function (r) { return r.json(); }).then(function (j) {
+	if (!j || !j.models || !j.models.length) return;
+	var dl = document.getElementById("ai-model-ids");
+	j.models.forEach(function (id) { var o = document.createElement("option"); o.value = id; dl.appendChild(o); });
+	document.querySelectorAll("input[name*=\'_MODEL_\']").forEach(function (i) {
+		i.setAttribute("list", "ai-model-ids");
+		if (i.value && j.models.indexOf(i.value) < 0) {
+			var w = document.createElement("span");
+			w.className = "fas fa-exclamation-triangle pictowarning paddingleft";
+			w.title = "'.dol_escape_js($langs->trans("AIModelNotInProviderList")).'";
+			i.insertAdjacentElement("afterend", w);
+		}
+	});
+}).catch(function () {});
+</script>'."\n";
 
 // Page end
 print dol_get_fiche_end();

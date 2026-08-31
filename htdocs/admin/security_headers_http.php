@@ -344,7 +344,7 @@ print '<td>';
 
 print '<div class="div-table-responsive-no-min">';
 
-print '<input class="minwidth500 quatrevingtpercent" name="MAIN_SECURITY_FORCECSP" id="MAIN_SECURITY_FORCECSP" value="'.$forceCSP.'" spellcheck="false"> <a href="#" id="btnaddcontentsecuritypolicy">'.img_picto('', 'add').'</a><br>';
+print '<input class="minwidth500 quatrevingtpercent" name="MAIN_SECURITY_FORCECSP" id="MAIN_SECURITY_FORCECSP" value="'.$forceCSP.'" spellcheck="false"> <span id="btnaddcontentsecuritypolicy" class="cursorpointer">'.img_picto('', 'add').'</span><br>';
 
 print '<br class="selectaddcontentsecuritypolicy hidden">';
 

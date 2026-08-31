@@ -107,6 +107,9 @@ class AllTests
 	{
 		$suite = new PHPUnit\Framework\TestSuite('PHPUnit Framework');
 
+		$filter = isset($_SERVER['argv'][2]) ? $_SERVER['argv'][2] : '';
+
+
 		//require_once dirname(__FILE__).'/CoreTest.php';
 		//$suite->addTestSuite('CoreTest');
 		require_once dirname(__FILE__).'/AdminLibTest.php';
@@ -211,6 +214,8 @@ class AllTests
 
 		require_once dirname(__FILE__).'/BOMTest.php';
 		$suite->addTestSuite('BOMTest');
+		require_once dirname(__FILE__).'/MoTest.php';
+		$suite->addTestSuite('MoTest');
 
 		require_once dirname(__FILE__).'/MoTest.php';
 		$suite->addTestSuite('MoTest');
@@ -333,32 +338,31 @@ class AllTests
 		require_once dirname(__FILE__).'/BlockedLogAndLNETest.php';
 		$suite->addTestSuite('BlockedLogAndLNETest');
 
-		// Rest
-		require_once dirname(__FILE__).'/RestAPIUserTest.php';
-		$suite->addTestSuite('RestAPIUserTest');
-		require_once dirname(__FILE__).'/RestAPIContactTest.php';
-		$suite->addTestSuite('RestAPIContactTest');
-		require_once dirname(__FILE__).'/RestAPIDocumentTest.php';
-		$suite->addTestSuite('RestAPIDocumentTest');
-		require_once dirname(__FILE__).'/RestAPIMoTest.php';
-		$suite->addTestSuite('RestAPIMoTest');
+		if ($filter !== 'disableapi') {
+			// Rest
+			require_once dirname(__FILE__).'/RestAPIUserTest.php';
+			$suite->addTestSuite('RestAPIUserTest');
+			require_once dirname(__FILE__).'/RestAPIContactTest.php';
+			$suite->addTestSuite('RestAPIContactTest');
+			require_once dirname(__FILE__).'/RestAPIDocumentTest.php';
+			$suite->addTestSuite('RestAPIDocumentTest');
+			require_once dirname(__FILE__).'/RestAPIMoTest.php';
+			$suite->addTestSuite('RestAPIMoTest');
 
-		// Test only with php7.2 or less
-		//if ((float) phpversion() < 7.3)
-		//{
-		require_once dirname(__FILE__).'/WebservicesProductsTest.php';
-		$suite->addTestSuite('WebservicesProductsTest');
-		require_once dirname(__FILE__).'/WebservicesInvoicesTest.php';
-		$suite->addTestSuite('WebservicesInvoicesTest');
-		require_once dirname(__FILE__).'/WebservicesOrdersTest.php';
-		$suite->addTestSuite('WebservicesOrdersTest');
-		require_once dirname(__FILE__).'/WebservicesOtherTest.php';
-		$suite->addTestSuite('WebservicesOtherTest');
-		require_once dirname(__FILE__).'/WebservicesThirdpartyTest.php';
-		$suite->addTestSuite('WebservicesThirdpartyTest');
-		require_once dirname(__FILE__).'/WebservicesUserTest.php';
-		$suite->addTestSuite('WebservicesUserTest');
-		//}
+			// Old WS
+			require_once dirname(__FILE__).'/WebservicesProductsTest.php';
+			$suite->addTestSuite('WebservicesProductsTest');
+			require_once dirname(__FILE__).'/WebservicesInvoicesTest.php';
+			$suite->addTestSuite('WebservicesInvoicesTest');
+			require_once dirname(__FILE__).'/WebservicesOrdersTest.php';
+			$suite->addTestSuite('WebservicesOrdersTest');
+			require_once dirname(__FILE__).'/WebservicesOtherTest.php';
+			$suite->addTestSuite('WebservicesOtherTest');
+			require_once dirname(__FILE__).'/WebservicesThirdpartyTest.php';
+			$suite->addTestSuite('WebservicesThirdpartyTest');
+			require_once dirname(__FILE__).'/WebservicesUserTest.php';
+			$suite->addTestSuite('WebservicesUserTest');
+		}
 
 		require_once dirname(__FILE__).'/ExportTest.php';
 		$suite->addTestSuite('ExportTest');
@@ -389,19 +393,28 @@ class AllTests
 		require_once dirname(__FILE__).'/WebsiteTest.php';
 		$suite->addTestSuite('WebsiteTest');
 
+		// Test /custom dir
+		require_once dirname(__FILE__).'/RepositoryTest.php';
+		$suite->addTestSuite('RepositoryTest');
+
+		// Test DDL functions
+		require_once dirname(__FILE__).'/DoliDBTest.php';
+		$suite->addTestSuite('DoliDBTest');
+
 		// --- At end because it's the longer
 
 		// Rules into source files content
-		require_once dirname(__FILE__).'/RepositoryTest.php';
-		$suite->addTestSuite('RepositoryTest');
-		require_once dirname(__FILE__).'/LangTest.php';
-		$suite->addTestSuite('LangTest');
-		require_once dirname(__FILE__).'/CodingSqlTest.php';
-		$suite->addTestSuite('CodingSqlTest');
-		require_once dirname(__FILE__).'/CodingPhpTest.php';
-		$suite->addTestSuite('CodingPhpTest');
-		require_once dirname(__FILE__).'/DoliDBTest.php';
-		$suite->addTestSuite('DoliDBTest');
+		if ($filter !== 'disablesourcescan') {
+			print "Check on static source code is enabled, we run tests on source.\n";
+			require_once dirname(__FILE__).'/LangTest.php';
+			$suite->addTestSuite('LangTest');
+			require_once dirname(__FILE__).'/CodingSqlTest.php';
+			$suite->addTestSuite('CodingSqlTest');
+			require_once dirname(__FILE__).'/CodingPhpTest.php';
+			$suite->addTestSuite('CodingPhpTest');
+		} else {
+			print "Check on source code has been disabled by parameter 'disablesourcescan'.\n";
+		}
 
 		// --- At very end, the LAST ONE.
 

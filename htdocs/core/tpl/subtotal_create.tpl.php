@@ -99,7 +99,7 @@ if ($type == 'title') {
 		);
 	}
 
-	$formquestion[] = array('type' => 'textarea', 'name' => 'subtotaltextcontent', 'label' => $langs->trans("SubtotalTextContent"));
+	$formquestion[] = array('type' => 'textarea', 'name' => 'subtotaltextcontent', 'label' => $langs->trans("SubtotalTextContent"), 'morecss' => 'quatrevingtpercent', 'moreattr' => 'rows="4"');
 }
 
 $page = $_SERVER["PHP_SELF"];

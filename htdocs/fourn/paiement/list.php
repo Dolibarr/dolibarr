@@ -150,6 +150,8 @@ if ((!$user->hasRight("fournisseur", "facture", "lire") && !getDolGlobalString('
 	accessforbidden();
 }
 
+$arrayofselected = !empty($arrayofselected) && is_array($arrayofselected) ? $arrayofselected : array();
+
 
 /*
  * Actions
@@ -185,9 +187,11 @@ if (empty($reshook)) {
 	}
 }
 
+
 /*
  * View
  */
+
 $title = $langs->trans('ListPayment');
 $help_url = '';
 

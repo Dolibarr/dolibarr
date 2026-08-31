@@ -4,6 +4,7 @@
  * Copyright (C) 2024-2025	MDW					 <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France		 <frederic.france@free.fr>
  * Copyright (C) 2024	    Nick Fragoulis
+ * Copyright (C) 2026       Nathan Pixodeo        <nathan@pixodeo.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -128,7 +129,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	 *	@param	int<0,1>				$hidedetails		Do not show line details
 	 *	@param	int<0,1>				$hidedesc			Do not show desc
 	 *	@param	int<0,1>				$hideref			Do not show ref
-	 *  @param  ?array<string,string>	$moreparams			More parameters
+	 *  @param  ?array<string,mixed>	$moreparams			More parameters
 	 *	@return	int<-1,1>									1 if OK, <=0 if KO
 	 */
 	public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
@@ -139,6 +140,9 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 		if (!$object instanceof CompanyBankAccount) {
 			dol_syslog(get_class($this)."::write_file object is of type ".get_class($object)." which is not expected", LOG_ERR);
 			return -1;
+		}
+		if (empty($moreparams) && !empty($object->context['moreparams']) && is_array($object->context['moreparams'])) {
+			$moreparams = $object->context['moreparams'];
 		}
 
 		if (!is_object($outputlangs)) {

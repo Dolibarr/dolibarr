@@ -1023,7 +1023,7 @@ if ($id > 0 || !empty($ref)) {
 							$btnLabel = $langs->trans("Fill").' : '.$remaintodispatch;
 							print '<button class="auto-fill-qty btn-low-emphasis --btn-icon" data-rowname="qty'.$suffix.'" data-value="'.$remaintodispatch.'" title="'.dol_escape_htmltag($btnLabel).'" aria-label="'.dol_escape_htmltag($btnLabel).'" >'.img_picto($btnLabel, 'fa-arrow-right', 'aria-hidden="true"', 0, 0, 1).'</button>';
 						}
-						print '<input id="qty'.$suffix.'" name="qty'.$suffix.'" type="number" step="any" class="width50 right qtydispatchinput" value="'.(GETPOSTISSET('qty'.$suffix) ? GETPOSTINT('qty'.$suffix) : (!getDolGlobalString('SUPPLIER_ORDER_DISPATCH_FORCE_QTY_INPUT_TO_ZERO') ? $remaintodispatch : 0)).'">';
+						print '<input id="qty'.$suffix.'" name="qty'.$suffix.'" type="number" step="any" class="width75 right qtydispatchinput" value="'.(GETPOSTISSET('qty'.$suffix) ? GETPOSTINT('qty'.$suffix) : (!getDolGlobalString('SUPPLIER_ORDER_DISPATCH_FORCE_QTY_INPUT_TO_ZERO') ? $remaintodispatch : 0)).'">';
 						print '<button class="resetline btn-low-emphasis --btn-icon" id="reset'.$suffix.'" title="'.dol_escape_htmltag($langs->trans("Reset")).'" >'.img_picto($langs->trans("Reset"), 'eraser', 'aria-hidden="true"', 0, 0, 1).'</button>';
 						print '</td>';
 
