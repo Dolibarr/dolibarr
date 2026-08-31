@@ -84,9 +84,9 @@ notifications:
 
 before_install:
 - |
-  echo "Remove awful phpenv and run apt update"
-  sudo rm -fr ~/.phpenv
-  sudo rm -fr /root/.phpenv
+  echo "Remove awful phpenv"
+  sudo rm -fr ~/.phpenv; sudo rm -fr /root/.phpenv
+  echo "Remove run apt update to discover all PHP versions"
   sudo add-apt-repository -y ppa:ondrej/php
   sudo apt update
   echo TRAVIS_PHP_VERSION=$TRAVIS_PHP_VERSION
@@ -146,9 +146,6 @@ before_install:
 
 install:
 - |
-  if [ "$TRAVIS_PHP_VERSION" = '7.0' ]; then
-    sudo update-alternatives --set php /usr/bin/php7.0
-  fi
   if [ "$TRAVIS_PHP_VERSION" = '7.1' ]; then
     sudo update-alternatives --set php /usr/bin/php7.1
   fi

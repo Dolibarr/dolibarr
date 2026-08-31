@@ -4,6 +4,7 @@ UserCard=User card
 GroupCard=Group card
 Permission=Permission
 Permissions=Permissions
+RightProvidedByModule=Right provided by module: %s
 EditPassword=Edit password
 SendNewPassword=Regenerate and send password
 SendNewPasswordLink=Send link to reset password
