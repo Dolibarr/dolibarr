@@ -293,6 +293,9 @@ class Form
 		if ($typeofdata == 'datetime') {
 			$typeofdata = 'dayhour';
 		}
+		if ($typeofdata == 'date') {
+			$typeofdata = 'day';
+		}
 		$reg = array();
 		if (preg_match('/^(\w+)\((\d+)\)$/', $typeofdata, $reg)) {
 			if ($reg[1] == 'varchar') {
@@ -2357,7 +2360,7 @@ class Form
 
 			if ($showempty && !is_numeric($showempty)) {
 				$textforempty = $showempty;
-				$out .= '<option class="optiongrey" value="-1"' . (in_array(-1, $selected) ? ' selected' : '') . '>' . $textforempty . '</option>';
+				$out .= '<option class="optiongrey" value="-1"' . (in_array(-1, $selected) ? ' selected' : '') . '>' . dol_escape_htmltag($textforempty) . '</option>';
 			} else {
 				if (($showempty == 1 || ($showempty == 3 && $num > 1)) && !$multiple) {
 					$out .= '<option value="0"' . (in_array(0, $selected) ? ' selected' : '') . '>&nbsp;</option>';
@@ -2820,7 +2823,7 @@ class Form
 					if (!is_numeric($show_empty)) {
 						$textforempty = $show_empty;
 					}
-					$out .= '<option class="optiongrey" value="' . ($show_empty < 0 ? $show_empty : -1) . '"' . ((empty($selected) || in_array(-1, $selected)) ? ' selected' : '') . '>' . $textforempty . '</option>' . "\n";
+					$out .= '<option class="optiongrey" value="' . ($show_empty < 0 ? $show_empty : -1) . '"' . ((empty($selected) || in_array(-1, $selected)) ? ' selected' : '') . '>' . dol_escape_htmltag($textforempty) . '</option>' . "\n";
 
 					$outarray[($show_empty < 0 ? $show_empty : -1)] = $textforempty;
 					$outarray2[($show_empty < 0 ? $show_empty : -1)] = array(
@@ -5090,7 +5093,7 @@ class Form
 				$i++;
 			}
 
-			$parameters = array('context' => 'paymentterm');
+			$parameters = array('dictionary' => 'paymentterm');
 			$reshook = $hookmanager->executeHooks('loadDictionaryCache', $parameters, $this); // Note that $action and $object may have been modified by hook
 			if (empty($reshook)) {
 				if (is_array($hookmanager->resArray) && count($hookmanager->resArray)) {
@@ -5369,7 +5372,7 @@ class Form
 				$i++;
 			}
 
-			$parameters = array('context' => 'paymenttype');
+			$parameters = array('dictionary' => 'paymenttype');
 			$reshook = $hookmanager->executeHooks('loadDictionaryCache', $parameters, $this); // Note that $action and $object may have been modified by hook
 			if (empty($reshook)) {
 				if (is_array($hookmanager->resArray) && count($hookmanager->resArray)) {
@@ -6682,9 +6685,9 @@ class Form
 						$more .= '<div class="tagtr"><div class="tagtd' . (empty($input['tdclass']) ? '' : (' ' . $input['tdclass'])) . '">' . ($input['label'] ?? '') . '</div><div class="tagtd"><input type="password" class="flat' . $morecss . '" id="' . dol_escape_htmltag($input['name']) . '" name="' . dol_escape_htmltag($input['name']) . '"' . $size . ' value="' . (empty($input['value']) ? '' : $input['value']) . '"' . $moreattr . ' /></div></div>' . "\n";
 					} elseif ($input['type'] == 'textarea') {
 						$moreonecolumn .= '<div class="margintoponly">';
-						$moreonecolumn .= $input['label'] . '<br>';
+						$moreonecolumn .= ($input['label'] ?? '') . '<br>';
 						$moreonecolumn .= '<textarea name="' . dol_escape_htmltag($input['name']) . '" id="' . dol_escape_htmltag($input['name']) . '" class="' . $morecss . '"' . $moreattr . '>';
-						$moreonecolumn .= $input['value'];
+						$moreonecolumn .= $input['value'] ?? '';	// 'value' is optional (blank textarea by default), like for the 'text' and 'password' types above
 						$moreonecolumn .= '</textarea>';
 						$moreonecolumn .= '</div>';
 					} elseif (in_array($input['type'], ['select', 'multiselect'])) {
@@ -6775,7 +6778,7 @@ class Form
 						$more .= '</div></div>' . "\n";
 					} elseif ($input['type'] == 'onecolumn') {
 						$moreonecolumn .= '<div class="margintoponly">';
-						$moreonecolumn .= $input['value'];
+						$moreonecolumn .= $input['value'] ?? '';
 						$moreonecolumn .= '</div>' . "\n";
 					} elseif ($input['type'] == 'hidden') {
 						// Do nothing more, already added by a previous loop
@@ -6878,6 +6881,7 @@ class Form
 			}
 
 			$postconfirmas = 'GET';
+			$maxurllengthforget = getDolGlobalInt('MAIN_MAX_URL_LENGTH_FOR_GET', 2000);
 
 			$formconfirm .= '
 					resizable: false,
@@ -6910,7 +6914,7 @@ class Form
 							var urljump = pageyes + (pageyes.indexOf("?") < 0 ? "?" : "&") + options;
 							if (pageyes.length > 0) {';
 			if ($postconfirmas == 'GET') {
-				$formconfirm .= 'location.href = urljump;';
+				$formconfirm .= 'dolSubmitConfirmForm(urljump, pageyes, options, ' . $maxurllengthforget . ');';
 			} else {
 				$formconfirm .= $jsforcursor;
 				$formconfirm .= 'var post = $.post(
@@ -6942,7 +6946,7 @@ class Form
 							//alert(urljump);
 							if (pageno.length > 0) {';
 			if ($postconfirmas == 'GET') {
-				$formconfirm .= 'location.href = urljump;';
+				$formconfirm .= 'dolSubmitConfirmForm(urljump, pageno, options, ' . $maxurllengthforget . ');';
 			} else {
 				$formconfirm .= $jsforcursor;
 				$formconfirm .= 'var post = $.post(
@@ -7883,7 +7887,7 @@ class Form
 	public function load_cache_vatrates($country_code)
 	{
 		// phpcs:enable
-		global $langs, $user;
+		global $langs, $user, $hookmanager;
 
 		$num = count($this->cache_vatrates);
 		if ($num > 0) {
@@ -7892,7 +7896,9 @@ class Form
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		$sql = "SELECT t.rowid, t.type_vat, t.code, t.taux, t.localtax1, t.localtax1_type, t.localtax2, t.localtax2_type, t.recuperableonly, t.einvoice_vatex";
+		// entity and fk_pays are returned so a hook on loadDictionaryCache can tell two rows apart
+		// when the dictionary is read across entities (most rows carry an empty code)
+		$sql = "SELECT t.rowid, t.entity, t.fk_pays, t.type_vat, t.code, t.taux, t.localtax1, t.localtax1_type, t.localtax2, t.localtax2_type, t.recuperableonly, t.einvoice_vatex";
 		$sql .= " FROM ".$this->db->prefix()."c_tva as t, ".$this->db->prefix()."c_country as c";
 		$sql .= " WHERE t.fk_pays = c.rowid";
 		$sql .= " AND t.active > 0";
@@ -7909,6 +7915,8 @@ class Form
 
 					$tmparray = array();
 					$tmparray['rowid']			= (int) $obj->rowid;
+					$tmparray['entity']			= (int) $obj->entity;
+					$tmparray['fk_pays']		= (int) $obj->fk_pays;
 					$tmparray['type_vat']		= ($obj->type_vat <= 0 ? 0 : $obj->type_vat);	// Some version have type_vat corrupted with value -1
 					$tmparray['code']			= $obj->code;
 					$tmparray['txtva']			= $obj->taux;
@@ -7939,7 +7947,17 @@ class Form
 					$this->cache_vatrates[$obj->rowid] = $tmparray;
 				}
 
-				return $num;
+				$parameters = array('dictionary' => 'vatrate', 'country_code' => $country_code);
+				$reshook = $hookmanager->executeHooks('loadDictionaryCache', $parameters, $this); // Note that $action and $object may have been modified by hook
+				if (empty($reshook)) {
+					if (is_array($hookmanager->resArray) && count($hookmanager->resArray)) {
+						$this->cache_vatrates = array_merge($this->cache_vatrates, $hookmanager->resArray);
+					}
+				} else {
+					$this->cache_vatrates = $hookmanager->resArray;
+				}
+
+				return count($this->cache_vatrates);
 			} else {
 				$this->error = '<span class="error">';
 				$this->error .= $langs->trans("ErrorNoVATRateDefinedForSellerCountry", $country_code);
@@ -10183,7 +10201,7 @@ class Form
 			if (!is_numeric($show_empty)) {
 				$textforempty = $show_empty;
 			}
-			$out .= '<option class="optiongrey" ' . ($moreparamonempty ? $moreparamonempty . ' ' : '') . 'value="' . (((int) $show_empty) < 0 ? $show_empty : -1) . '"' . ($id == $show_empty ? ' selected' : '') . '>' . $textforempty . '</option>' . "\n";
+			$out .= '<option class="optiongrey" ' . ($moreparamonempty ? $moreparamonempty . ' ' : '') . 'value="' . (((int) $show_empty) < 0 ? $show_empty : -1) . '"' . ($id == $show_empty ? ' selected' : '') . '>' . dol_escape_htmltag($textforempty) . '</option>' . "\n";
 		}
 		if (is_array($array)) {
 			// Translate
@@ -11995,7 +12013,7 @@ class Form
 	 *
 	 * @param int|object|array<int|object> 	$selected	Id group or group(s) preselected
 	 * @param string 				$htmlname 			Field name in form
-	 * @param int<0,1> 				$show_empty 		0=list without null value, 1=add an unknown value
+	 * @param int<0,1>|string 		$show_empty 		0=list without null value, 1=add an empty value into list (key is -1 and value is '&nbsp;'), or a string to use as the empty option's label instead
 	 * @param string|int[] 			$exclude 			Array list of groups id to exclude
 	 * @param int<0,1> 				$disabled 			If select list must be disabled
 	 * @param string|int[] 			$include 			Array list of groups id to include
@@ -12064,7 +12082,11 @@ class Form
 			$i = 0;
 			if ($num) {
 				if ($show_empty && !$multiple) {
-					$out .= '<option value="-1"' . (in_array(-1, $selected) ? ' selected' : '') . '>&nbsp;</option>' . "\n";
+					$textforempty = '&nbsp;';
+					if (!is_numeric($show_empty)) {
+						$textforempty = dol_escape_htmltag($show_empty);
+					}
+					$out .= '<option value="-1"' . (in_array(-1, $selected) ? ' selected' : '') . '>' . $textforempty . '</option>' . "\n";
 				}
 
 				while ($i < $num) {

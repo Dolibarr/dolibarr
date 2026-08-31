@@ -147,6 +147,7 @@ HideStockOnLine=Hide stock on line
 ShowOnlyProductInStock=Show only the products in stock
 ShowCategoryDescription=Show categories description
 ShowProductReference=Show reference or label of products
+DeleteSale=Delete sale
 UsePriceHT=Use price excl. taxes and not price incl. taxes when modifying a price
 TerminalName=Terminal %s
 TerminalNameDesc=Terminal name
@@ -198,3 +199,6 @@ CashLifetime=Cash lifetime
 ChequeLifetime=Cheque lifetime
 CardLifetime=Card lifetime
 DefaultCashPOSLabel=Cash account for POS
+
+TakeposValidateCreditNoteOnCreation=Validate credit note on creation
+TakeposValidateCreditNoteOnCreationDesc=If enabled, credit notes created in TakePOS will be validated immediately. If disabled, they will remain as drafts to allow editing quantities before payment.

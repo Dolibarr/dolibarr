@@ -1208,7 +1208,8 @@ class CMailFile
 						if (is_object($tokenobj)) {
 							$this->smtps->setToken($tokenobj->getAccessToken());
 						} else {
-							$this->error = "Token not found";
+							$this->error = "OAuth2 token not found for service '".$OAUTH_SERVICENAME."' (setup constant ".$keyforsmtpoauthservice.", send context '".$this->sendcontext."'). Compare it with the service column of llx_oauth_token.";
+							dol_syslog("CMailFile::sendfile: ".$this->error, LOG_ERR);
 						}
 					} catch (Exception $e) {
 						// Return an error if token not found
@@ -1393,8 +1394,8 @@ class CMailFile
 							$this->transport->setAuthMode('XOAUTH2');
 							$this->transport->setPassword($tokenobj->getAccessToken());
 						} else {
-							$this->errors[] = "Token not found";
-							dol_syslog("CMailFile::sendfile: OAuth2 token object is not valid", LOG_ERR);
+							$this->errors[] = "OAuth2 token not found for service '".$OAUTH_SERVICENAME."' (setup constant ".$keyforsmtpoauthservice.", send context '".$this->sendcontext."'). Compare it with the service column of llx_oauth_token.";
+							dol_syslog("CMailFile::sendfile: ".end($this->errors), LOG_ERR);
 						}
 					} catch (Exception $e) {
 						// Return an error if token not found
@@ -1435,6 +1436,7 @@ class CMailFile
 
 				// send mail
 				$failedRecipients = array();
+
 				$result = false;
 				try {
 					$result = $this->mailer->send($this->message, $failedRecipients);

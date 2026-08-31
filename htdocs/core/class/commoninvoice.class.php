@@ -1408,7 +1408,7 @@ abstract class CommonInvoice extends CommonObject
 				$mois += 1;
 			}
 			// We move at the beginning of the next month, and we take a day off
-			$datelim = dol_mktime(12, 0, 0, $mois, 1, $annee);
+			$datelim = dol_mktime(12, 0, 0, $mois, 1, $annee, 'gmt');
 			$datelim -= (3600 * 24);
 
 			$datelim += ($cdr_decalage * 3600 * 24);
@@ -1417,8 +1417,8 @@ abstract class CommonInvoice extends CommonObject
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 			$datelim = $this->date + ($cdr_nbjour * 3600 * 24);
 
-			$date_piece = dol_mktime(0, 0, 0, (int) date('m', $datelim), (int) date('d', $datelim), (int) date('Y', $datelim)); // Sans les heures minutes et secondes
-			$date_lim_current = dol_mktime(0, 0, 0, (int) date('m', $datelim), (int) $cdr_decalage, (int) date('Y', $datelim)); // Sans les heures minutes et secondes
+			$date_piece = dol_mktime(0, 0, 0, (int) date('m', $datelim), (int) date('d', $datelim), (int) date('Y', $datelim), 'gmt'); // without hours, minutes and seconds
+			$date_lim_current = dol_mktime(0, 0, 0, (int) date('m', $datelim), (int) $cdr_decalage, (int) date('Y', $datelim), 'gmt'); // without hours, minutes and seconds
 			$date_lim_next = dol_time_plus_duree((int) $date_lim_current, 1, 'm'); // Add 1 month
 
 			$diff = $date_piece - $date_lim_current;

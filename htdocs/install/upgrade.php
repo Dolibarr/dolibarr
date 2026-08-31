@@ -76,7 +76,7 @@ $ok = 0;
 
 
 // Cette page peut etre longue. On augmente le delai autorise.
-// Ne fonctionne que si on est pas en safe_mode.
+// Only works if not in safe_mode.
 $err = error_reporting();
 error_reporting(0);
 @set_time_limit(300);
@@ -253,7 +253,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 		}
 	}
 
-	// Force l'affichage de la progression
+	// Force display of progress
 	if ($ok) {
 		print '<tr><td colspan="2"><span class="opacitymedium messagebepatient">'.$langs->trans("PleaseBePatient").'</span></td></tr>';
 		print '</table>';
@@ -387,7 +387,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 					$handlemodule = @opendir($dirroot); // $dirroot may be '..'
 					if (is_resource($handlemodule)) {
 						while (($filemodule = readdir($handlemodule)) !== false) {
-							if (!preg_match('/\./', $filemodule) && is_dir($dirroot.'/'.$filemodule.'/sql')) {	// We exclude filemodule that contains . (are not directories) and are not directories.
+							if (!preg_match('/\./', $filemodule) && @is_dir($dirroot.'/'.$filemodule.'/sql')) {	// We exclude filemodule that contains . (are not directories) and are not directories. $dirroot may be '..' (see opendir() above), same open_basedir edge case, silence it here too
 								//print "Scan for ".$dirroot . '/' . $filemodule . '/sql/'.$file;
 								if (is_file($dirroot.'/'.$filemodule.'/sql/dolibarr_'.$file)) {
 									$modulesfile[$dirroot.'/'.$filemodule.'/sql/dolibarr_'.$file] = '/'.$filemodule.'/sql/dolibarr_'.$file;

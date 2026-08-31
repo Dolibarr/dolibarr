@@ -24,7 +24,9 @@
  *      \file       test/phpunit/AllTests.php
  *      \ingroup    test
  *      \brief      This file is a test suite to run all unit tests
- *      \remarks    To run this script as CLI:  phpunit filename.php
+ *      \remarks    To run this script as CLI:
+ *      			phpunit filename.php
+ *      			phpunit --stop-on-failure filename.php
  */
 
 print "PHP Version: ".phpversion()."\n";
@@ -115,8 +117,10 @@ class AllTests
 		$suite->addTestSuite('DateLibTest');
 		require_once dirname(__FILE__).'/UtilsTest.php';
 		$suite->addTestSuite('UtilsTest');
+
 		require_once dirname(__FILE__).'/LesscTest.php';
 		$suite->addTestSuite('LesscTest');
+
 		//require_once dirname(__FILE__).'/DateLibTzFranceTest.php';
 		//$suite->addTestSuite('DateLibTzFranceTest');
 		require_once dirname(__FILE__).'/MarginsLibTest.php';
@@ -144,6 +148,7 @@ class AllTests
 
 		require_once dirname(__FILE__).'/SecurityTest.php';
 		$suite->addTestSuite('SecurityTest');
+
 		require_once dirname(__FILE__).'/SecurityGETPOSTTest.php';
 		$suite->addTestSuite('SecurityGETPOSTTest');
 
@@ -157,6 +162,7 @@ class AllTests
 
 		require_once dirname(__FILE__).'/NumberingModulesTest.php';
 		$suite->addTestSuite('NumberingModulesTest');
+
 		require_once dirname(__FILE__).'/CronjobTest.php';
 		$suite->addTestSuite('CronjobTest');
 		require_once dirname(__FILE__).'/PgsqlTest.php';
@@ -205,6 +211,8 @@ class AllTests
 
 		require_once dirname(__FILE__).'/BOMTest.php';
 		$suite->addTestSuite('BOMTest');
+		require_once dirname(__FILE__).'/MoTest.php';
+		$suite->addTestSuite('MoTest');
 
 		require_once dirname(__FILE__).'/MoTest.php';
 		$suite->addTestSuite('MoTest');
@@ -241,6 +249,7 @@ class AllTests
 		require_once dirname(__FILE__).'/CommonInvoiceTest.php';
 		$suite->addTestSuite('CommonInvoiceTest');
 		require_once dirname(__FILE__).'/FactureTest.php';
+
 		$suite->addTestSuite('FactureTest');
 		require_once dirname(__FILE__).'/PropalCommandeFactureWorkflowTest.php';
 		$suite->addTestSuite('PropalCommandeFactureWorkflowTest');

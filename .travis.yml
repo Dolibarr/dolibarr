@@ -30,6 +30,7 @@ env:
   - DEBUG=true
 
 cache:
+  apt: true
   directories:
     - ~/.cache
 
@@ -39,12 +40,27 @@ jobs:
   allow_failures:
   - php: 'latest'
   include:
-    - stage: PHP min
-      if: type = push
+    - stage: PHP min push
+      if: type = push and commit_message !~ /latest php/
       php: '7.2'
       env:
       - DB=postgresql
       - TRAVIS_PHP_VERSION=7.2
+      - TRAVIS_TYPE=push
+    - stage: PHP max push
+      if: type = push and commit_message !~ /latest php/
+      php: '8.4'
+      env:
+      - DB=mysql
+      - TRAVIS_PHP_VERSION=8.4
+      - TRAVIS_TYPE=push
+    - stage: PHP latest push
+      if: type = cron or commit_message =~ /latest php/
+      php: 'latest'
+      language: php
+      env:
+      - DB=mysql
+      - TRAVIS_PHP_VERSION=latest
       - TRAVIS_TYPE=push
     - stage: PHP max pull_request
       if: type = pull_request
@@ -53,20 +69,6 @@ jobs:
       - DB=mysql
       - TRAVIS_PHP_VERSION=8.4
       - TRAVIS_TYPE=pull_request
-    - stage: PHP max
-      if: type = push
-      php: '8.4'
-      env:
-      - DB=mysql
-      - TRAVIS_PHP_VERSION=8.4
-      - TRAVIS_TYPE=push
-    - stage: PHP latest
-      if: type = push AND branch = develop
-      php: 'latest'
-      env:
-      - DB=mysql
-      - TRAVIS_PHP_VERSION=latest
-      - TRAVIS_TYPE=push
 
 notifications:
   email:
@@ -82,17 +84,19 @@ notifications:
 
 before_install:
 - |
-  echo "Remove awful phpenv and install packages"
+  echo "Remove awful phpenv and run apt update"
   sudo rm -fr ~/.phpenv
   sudo rm -fr /root/.phpenv
   sudo add-apt-repository -y ppa:ondrej/php
-  sudo apt-get update
+  sudo apt update
   echo TRAVIS_PHP_VERSION=$TRAVIS_PHP_VERSION
   echo TRAVIS_TYPE=$TRAVIS_TYPE
 
 - |
   echo Install packages for PHP
-  sudo apt-get install -y pgloader memcached
+  if [ "$DB" = 'postgresql' ]; then
+  	sudo apt install -y pgloader memcached
+  fi
   if [ "$TRAVIS_PHP_VERSION" = '7.1' ]; then
   	sudo apt install unzip apache2 php7.1 php7.1-cli php7.1-curl php7.1-mysql php7.1-pgsql php7.1-gd php7.1-imap php7.1-intl php7.1-ldap php7.1-xml php7.1-mbstring php7.1-xml php7.1-zip libapache2-mod-php7.1
   fi
@@ -112,7 +116,7 @@ before_install:
     sudo apt install unzip apache2 php8.4 php8.4-cli php8.4-curl php8.4-mysql php8.4-pgsql php8.4-gd php8.4-imap php8.4-intl php8.4-ldap php8.4-xml php8.4-mbstring php8.4-xml php8.4-zip libapache2-mod-php8.4
   fi
   if [ "$TRAVIS_PHP_VERSION" = 'latest' ]; then
-    sudo apt install unzip apache2 php8.4 php8.4-cli php8.4-curl php8.4-mysql php8.4-pgsql php8.4-gd php8.4-imap php8.4-intl php8.4-ldap php8.4-xml php8.4-mbstring php8.4-xml php8.4-zip libapache2-mod-php8.4
+    sudo apt install unzip apache2 php8.5 php8.5-cli php8.5-curl php8.5-mysql php8.5-pgsql php8.5-gd php8.5-imap php8.5-intl php8.5-ldap php8.5-xml php8.5-mbstring php8.5-xml php8.5-zip libapache2-mod-php8.5
   fi
 
 - |
@@ -421,17 +425,8 @@ script:
     # Ensure we catch errors
     set -e
     # Exclusions are defined in the ruleset.xml file
-    if [ "$TRAVIS_TYPE" = "push" ] && [ "$TRAVIS_PHP_VERSION" = "8.1" ]; then
-       var-dump-check --extensions php --tracy --exclude htdocs/includes --exclude test/ --exclude htdocs/public/test/ --exclude htdocs/core/lib/functions.lib.php .
-    fi
-    if [ "$TRAVIS_TYPE" = "push" ] && [ "$TRAVIS_PHP_VERSION" = "8.2" ]; then
-       var-dump-check --extensions php --tracy --exclude htdocs/includes --exclude test/ --exclude htdocs/public/test/ --exclude htdocs/core/lib/functions.lib.php .
-    fi
-    if [ "$TRAVIS_TYPE" = "push" ] && [ "$TRAVIS_PHP_VERSION" = "8.3" ]; then
-       var-dump-check --extensions php --tracy --exclude htdocs/includes --exclude test/ --exclude htdocs/public/test/ --exclude htdocs/core/lib/functions.lib.php .
-    fi
-    if [ "$TRAVIS_TYPE" = "push" ] && [ "$TRAVIS_PHP_VERSION" = "8.4" ]; then
-       var-dump-check --extensions php --tracy --exclude htdocs/includes --exclude test/ --exclude htdocs/public/test/ --exclude htdocs/core/lib/functions.lib.php .
+    if [ "$TRAVIS_TYPE" = "push" ] && [ "$TRAVIS_PHP_VERSION" = "latest" ]; then
+       var-dump-check --extensions php --tracy --exclude htdocs/includes --exclude test/ --exclude htdocs/public/test/ --exclude htdocs/core/lib/html.lib.php .
     fi
     set +e
     echo
