@@ -31,6 +31,8 @@
 
 print "PHP Version: ".phpversion()."\n";
 print "Memory limit: ". ini_get('memory_limit')."\n";
+print "PHPUNIT_DISABLE_API: ". getenv('PHPUNIT_DISABLE_API')."\n";
+print "PHPUNIT_DISABLE_SOURCE_SCAN: ". getenv('PHPUNIT_DISABLE_SOURCE_SCAN')."\n";
 
 // Workaround for false security issue with main.inc.php on Windows in tests:
 if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
@@ -338,7 +340,7 @@ class AllTests
 		require_once dirname(__FILE__).'/BlockedLogAndLNETest.php';
 		$suite->addTestSuite('BlockedLogAndLNETest');
 
-		if ($filter !== 'disableapi') {
+		if ($filter !== 'disableapi' && !getenv('PHPUNIT_DISABLE_API')) {
 			// Rest
 			require_once dirname(__FILE__).'/RestAPIUserTest.php';
 			$suite->addTestSuite('RestAPIUserTest');
@@ -404,7 +406,7 @@ class AllTests
 		// --- At end because it's the longer
 
 		// Rules into source files content
-		if ($filter !== 'disablesourcescan') {
+		if ($filter !== 'disablesourcescan' && !getenv('PHPUNIT_DISABLE_SOURCE_SCAN')) {
 			print "Check on static source code is enabled, we run tests on source.\n";
 			require_once dirname(__FILE__).'/LangTest.php';
 			$suite->addTestSuite('LangTest');
