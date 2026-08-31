@@ -41,21 +41,21 @@ jobs:
   - php: 'latest'
   include:
     - stage: PHP min push
-      if: type = push
+      if: type = push and commit_message !~ /latest php/
       php: '7.2'
       env:
       - DB=postgresql
       - TRAVIS_PHP_VERSION=7.2
       - TRAVIS_TYPE=push
     - stage: PHP max push
-      if: type = push
+      if: type = push and commit_message !~ /latest php/
       php: '8.4'
       env:
       - DB=mysql
       - TRAVIS_PHP_VERSION=8.4
       - TRAVIS_TYPE=push
     - stage: PHP latest push
-      if: type = cron
+      if: type = cron or commit_message =~ /latest php/
       php: 'latest'
       env:
       - DB=mysql
