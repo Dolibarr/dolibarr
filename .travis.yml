@@ -37,8 +37,8 @@ cache:
 
 jobs:
   fast_finish: true
-  allow_failures:
-  - php: 'latest'
+  #allow_failures:
+  #- php: 'latest'
   include:
     - stage: PHP min push
       if: type = push and commit_message !~ /latest php/ and (branch =~ /^develop/ OR branch =~ /^[0-9]+/)
@@ -49,10 +49,10 @@ jobs:
       - TRAVIS_TYPE=push
     - stage: PHP max push
       if: type = push and commit_message !~ /latest php/ and (branch =~ /^develop/ OR branch =~ /^[0-9]+/)
-      php: '8.4'
+      php: '8.5'
       env:
       - DB=mysql
-      - TRAVIS_PHP_VERSION=8.4
+      - TRAVIS_PHP_VERSION=8.5
       - TRAVIS_TYPE=push
     - stage: PHP latest push or cron
       if: type = cron or commit_message =~ /latest php/
