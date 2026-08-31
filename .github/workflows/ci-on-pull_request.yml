@@ -21,6 +21,12 @@ jobs:
     needs: [pre-commit]
     with:
       gh_event: ${{ github.event_name }}
+  coding-rules:
+    uses: ./.github/workflows/coding-rules.yml
+    secrets: inherit
+    needs: [pre-commit]
+    with:
+      gh_event: ${{ github.event_name }}
   #windows-ci:
   #  needs: [pre-commit, phan, phpstan]
   #  secrets: inherit

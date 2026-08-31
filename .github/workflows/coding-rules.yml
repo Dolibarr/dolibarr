@@ -1,0 +1,47 @@
+---
+# Static coding-convention checks (SQL install/migration file rules for now).
+#
+# These checks are pure file scanning - they depend neither on the PHP version
+# nor on the DB engine - so instead of re-running them on every PHPUnit matrix
+# leg they run a single time here, via dev/tools/lint-coding-rules.php.
+#
+# The same rules are still available as PHPUnit tests (test/phpunit/CodingSqlTest,
+# @group lint) for local use.
+name: Coding rules
+
+# yamllint disable-line rule:truthy
+on:
+  # workflow called by a parent workflow (ci-on-push.yml / ci-on-pull_request.yml)
+  workflow_call:
+    inputs:
+      gh_event:
+        required: true
+        type: string
+  # can be run manually from the Actions tab
+  workflow_dispatch:
+
+concurrency:
+  group: coding-rules-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  gh_event: ${{ inputs.gh_event || github.event_name }}
+  GITHUB_JSON: ${{ toJSON(github) }}  # Helps in debugging Github Action
+
+jobs:
+  coding-rules:
+    name: Run coding rules
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 1
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none  # disable xdebug / pcov
+
+      - name: Run coding-rules lint
+        run: php dev/tools/lint-coding-rules.php

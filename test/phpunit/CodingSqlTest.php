@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -130,143 +130,37 @@ class CodingSqlTest extends CommonClassTest
 	/**
 	 * testSql
 	 *
-	 * @return string
+	 * The rules themselves live in dev/tools/CodingRulesLint.class.php so they can
+	 * also be run once per pipeline by dev/tools/lint-coding-rules.php (CI job
+	 * "coding-rules") instead of once per PHPUnit matrix leg - they are pure file
+	 * scanning and depend neither on the PHP version nor on the DB engine.
+	 *
+	 * @group lint
+	 * @return void
 	 */
 	public function testSql()
 	{
-		global $conf,$user,$langs,$db;
-		$conf = $this->savconf;
-		$user = $this->savuser;
-		$langs = $this->savlangs;
-		$db = $this->savdb;
+		require_once dirname(__FILE__).'/../../dev/tools/CodingRulesLint.class.php';
 
-		$listofsqldir = array(DOL_DOCUMENT_ROOT.'/install/mysql/data', DOL_DOCUMENT_ROOT.'/install/mysql/tables', DOL_DOCUMENT_ROOT.'/install/mysql/migration');
+		$lint = new CodingRulesLint(DOL_DOCUMENT_ROOT);
+		$lint->checkInstallSqlFiles();
 
-		foreach ($listofsqldir as $dir) {
-			print 'Process dir '.$dir."\n";
-			$filesarray = scandir($dir);
-
-			foreach ($filesarray as $key => $file) {
-				if (! preg_match('/\.sql$/', $file)) {
-					continue;
-				}
-
-				print 'Check sql file '.$file."\n";
-				$filecontent = file_get_contents($dir.'/'.$file);
-
-				// Allow some string sequences
-				$filecontent = str_replace(
-					array('`rank`', '["', '"]', '{"', '"}', '("', '")', 'href="', '">'),
-					array('_rank_', '__OKSTRING__', '__OKSTRING__', '__OKSTRING__', '__OKSTRING__', '__OKSTRING__', '__OKSTRING__', '__OKSTRING__'),
-					$filecontent
-				);
-
-				// To accept " after the comment tag
-				//$filecontent = preg_replace('/^--.*$/', '', $filecontent);
-				$filecontent = preg_replace('/--.*?\n/', '', $filecontent);
-
-				$result = strpos($filecontent, '`');
-				//print __METHOD__." Result for checking we don't have back quote = ".$result."\n";
-				$this->assertTrue($result === false, 'Found back quote into '.$file.'. Bad.');
-
-				$result = strpos($filecontent, '"');
-				//print __METHOD__." Result for checking we don't have double quote = ".$result."\n";
-				$this->assertTrue($result === false, 'Found double quote that is not [" neither {" (used for json content) neither (" (used for content with string like isModEnabled("")) into '.$file.'. Bad.');
-
-				$result = strpos($filecontent, 'int(');
-				//print __METHOD__." Result for checking we don't have 'int(' instead of 'integer' = ".$result."\n";
-				$this->assertTrue($result === false, 'Found int(x) or tinyint(x) instead of integer or tinyint into '.$file.'. Bad.');
-
-				$result = strpos($filecontent, 'ADD UNIQUE KEY');
-				//print __METHOD__." Result for checking we don't have 'ON DELETE CASCADE' = ".$result."\n";
-				$this->assertTrue($result === false, 'Found ADD UNIQUE KEY instead of ADD UNIQUE INDEX into '.$file.'. Bad.');
-
-				$result = strpos($filecontent, 'ON DELETE CASCADE');
-				//print __METHOD__." Result for checking we don't have 'ON DELETE CASCADE' = ".$result."\n";
-				$this->assertTrue($result === false, 'Found ON DELETE CASCADE into '.$file.'. Bad.');
-
-				$result = strpos($filecontent, 'NUMERIC(');
-				//print __METHOD__." Result for checking we don't have 'NUMERIC(' = ".$result."\n";
-				$this->assertTrue($result === false, 'Found NUMERIC( into '.$file.'. Bad.');
-
-				$result = strpos($filecontent, 'NUMERIC(');
-				//print __METHOD__." Result for checking we don't have 'curdate(' = ".$result."\n";
-				$this->assertTrue($result === false, 'Found curdate( into '.$file.'. Bad. Current date must be generated with PHP.');
-
-				$result = strpos($filecontent, 'integer(');
-				//print __METHOD__." Result for checking we don't have 'integer(' = ".$result."\n";
-				$this->assertTrue($result === false, 'Found value in parenthesis after the integer. It must be integer not integer(x) into '.$file.'. Bad.');
-
-				$result = strpos($filecontent, 'timestamp,');
-				//print __METHOD__." Result for checking we don't have 'NUMERIC(' = ".$result."\n";
-				$this->assertTrue($result === false, 'Found type timestamp without option DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP after into '.$file.'. Bad.');
-
-				if ($dir == DOL_DOCUMENT_ROOT.'/install/mysql/migration') {
-					// Test for migration files only
-				} elseif ($dir == DOL_DOCUMENT_ROOT.'/install/mysql/data') {
-					// Test for data files only
-				} else {
-					if (preg_match('/\.key\.sql$/', $file)) {
-						// Test for key files only
-					} else {
-						// Test for non key files only
-						$result = (strpos($filecontent, 'KEY ') && strpos($filecontent, 'PRIMARY KEY') == 0);
-						//print __METHOD__." Result for checking we don't have ' KEY ' instead of a sql file to create index = ".$result."\n";
-						$this->assertTrue($result === false, 'Found KEY into '.$file.'. Bad.');
-
-						$result = stripos($filecontent, 'ENGINE=innodb');
-						//print __METHOD__." Result for checking we have the ENGINE=innodb string = ".$result."\n";
-						$this->assertGreaterThan(0, $result, 'The ENGINE=innodb was not found into '.$file.'. Add it or just fix syntax to match case.');
-					}
-				}
-			}
-		}
-
-		return;
+		$this->assertSame(array(), $lint->violations, "\n".implode("\n", $lint->violations));
 	}
 
 	/**
 	 * testInitData
 	 *
-	 * @return string
+	 * @group lint
+	 * @return void
 	 */
 	public function testInitData()
 	{
-		global $conf,$user,$langs,$db;
-		$conf = $this->savconf;
-		$user = $this->savuser;
-		$langs = $this->savlangs;
-		$db = $this->savdb;
+		require_once dirname(__FILE__).'/../../dev/tools/CodingRulesLint.class.php';
 
-		$filesarray = scandir(DOL_DOCUMENT_ROOT.'/../dev/initdemo');
-		foreach ($filesarray as $key => $file) {
-			if (! preg_match('/\.sql$/', $file)) {
-				continue;
-			}
+		$lint = new CodingRulesLint(DOL_DOCUMENT_ROOT);
+		$lint->checkInitDemoFiles();
 
-			print 'Check sql file '.$file."\n";
-			$filecontent = file_get_contents(DOL_DOCUMENT_ROOT.'/../dev/initdemo/'.$file);
-
-			// We protect this string key that is legitimate into the init of demo file
-			$filecontent = str_replace("BLOCKEDLOG_HMAC_KEY',0,'dolcrypt:", "__STRINGOK__", $filecontent);
-
-			$result = strpos($filecontent, 'dolcrypt:');
-			print __METHOD__." Result for checking we don't have a crypted value that could not be decrypted on a restored instance with other key = ".$result."\n";
-			$this->assertTrue($result === false, 'Found a "dolcrypt:" into file '.$file);
-
-			$result = strpos($filecontent, '@gmail.com');
-			print __METHOD__." Result for checking we don't have personal data = ".$result."\n";
-			$this->assertTrue($result === false, 'Found a bad key @gmail into file '.$file);
-
-			$result = strpos($filecontent, 'eldy@');
-			print __METHOD__." Result for checking we don't have personal data = ".$result."\n";
-			$this->assertTrue($result === false, 'Found a bad key eldy@ into file '.$file);
-
-			$result = strpos($filecontent, 'INSERT INTO `llx_oauth_token`');
-			print __METHOD__." Result for checking we don't have data into llx_oauth_token = ".$result."\n";
-			$this->assertTrue($result === false, 'Found a non expected insert into file '.$file);
-		}
-
-		return;
+		$this->assertSame(array(), $lint->violations, "\n".implode("\n", $lint->violations));
 	}
 }

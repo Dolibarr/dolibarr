@@ -26,6 +26,12 @@ jobs:
     needs: [pre-commit]
     with:
       gh_event: ${{ github.event_name }}
+  coding-rules:
+    uses: ./.github/workflows/coding-rules.yml
+    secrets: inherit
+    needs: [pre-commit]
+    with:
+      gh_event: ${{ github.event_name }}
   windows-ci:
     if: github.ref == 'refs/heads/develop'  # Condition for branch "develop"
     needs: [pre-commit, phan, phpstan]
