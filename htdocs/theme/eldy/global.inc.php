@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2024	Laurent Destailleur			<eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Marc de Lima Lucio			<marc-dll@user.noreply.github.com>
  *
@@ -5261,7 +5261,7 @@ tr.liste_sub_total, tr.liste_sub_total td {
 	border-bottom: 1px solid #aaa;
 }
 /* to avoid too much border on contract card */
-.tableforservicepart1 .impair, .tableforservicepart1 .pair, .tableforservicepart2 .impair, .tableforservicepart2 .pair {
+.tableforservicepart1 .impair, .tableforservicepart1 .pair, .tableforservicepart1 .oddeven, .tableforservicepart2 .impair, .tableforservicepart2 .pair, .tableforservicepart2 .oddeven {
 	background: #FFF;
 }
 .tableforservicepart1 tbody tr td, .tableforservicepart2 tbody tr td {

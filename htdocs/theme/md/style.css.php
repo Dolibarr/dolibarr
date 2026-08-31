@@ -8,7 +8,7 @@
  * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2021-2023  Anthony Berton          <anthony.berton@bb2a.fr>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2025		Marc de Lima Lucio			<marc-dll@user.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -5279,7 +5279,7 @@ tr.liste_sub_total, tr.liste_sub_total td {
 	border-bottom: 2px solid #aaa;
 }
 
-.tableforservicepart1 .impair, .tableforservicepart1 .pair, .tableforservicepart2 .impair, .tableforservicepart2 .pair {
+.tableforservicepart1 .impair, .tableforservicepart1 .pair, .tableforservicepart1 .oddeven, .tableforservicepart2 .impair, .tableforservicepart2 .pair, .tableforservicepart2 .oddeven {
 	background: #FFF;
 }
 .tableforservicepart1 tbody tr td, .tableforservicepart2 tbody tr td {
