@@ -41,20 +41,20 @@ jobs:
   - php: 'latest'
   include:
     - stage: PHP min push
-      if: type = push and commit_message !~ /latest php/
+      if: type = push and commit_message !~ /latest php/ and (branch =~ /^develop/ OR branch =~ /^[0-9]+/)
       php: '7.2'
       env:
       - DB=postgresql
       - TRAVIS_PHP_VERSION=7.2
       - TRAVIS_TYPE=push
     - stage: PHP max push
-      if: type = push and commit_message !~ /latest php/
+      if: type = push and commit_message !~ /latest php/ and (branch =~ /^develop/ OR branch =~ /^[0-9]+/)
       php: '8.4'
       env:
       - DB=mysql
       - TRAVIS_PHP_VERSION=8.4
       - TRAVIS_TYPE=push
-    - stage: PHP latest push
+    - stage: PHP latest push or cron
       if: type = cron or commit_message =~ /latest php/
       php: 'latest'
       language: php
