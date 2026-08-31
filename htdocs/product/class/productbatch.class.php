@@ -428,8 +428,6 @@ class Productbatch extends CommonObject
 		} else {
 			$sql .= ", ".$this->db->prefix()."product_stock as ps";
 			$sql .= " WHERE t.fk_product_stock = ps.rowid AND ps.fk_entrepot = ".((int) $fk_warehouse);
-			// The same batch number can exist on several products, so the product must be part of the
-			// filter when it is known, otherwise the first matching row of another product is returned.
 			if ($fk_product > 0) {
 				$sql .= " AND ps.fk_product = ".((int) $fk_product);
 			}
