@@ -377,8 +377,13 @@ jobs:
       - name: Run PHPUnit test suite
         run: |
           set -o pipefail
+          # --exclude-group lint: the CodingPhp / CodingSql file-convention
+          # checks are static analysis - independent of the PHP version and
+          # the DB engine - so there is no point re-running them on each
+          # matrix leg. They still run in the regular CI-PULL-REQUEST suite.
           phpunit -d memory_limit=-1 \
             -c test/phpunit/phpunittest.xml \
+            --exclude-group lint \
             test/phpunit/AllTests.php \
             2>&1 | tee "${PHPUNIT_LOG}"
 
