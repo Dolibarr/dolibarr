@@ -44,7 +44,86 @@ env:
   DOLIBARR_LOG: documents/dolibarr.log
 
 jobs:
+  # ---------------------------------------------------------------------------
+  # Gate: the full "install + PHPUnit" run below is expensive (two from-zero
+  # installs + the whole test suite, on two DB engines). Only run it when the
+  # change actually touches something that can affect the installer, the module
+  # table creation, the DB layer or the test suite itself. A manual run
+  # (workflow_dispatch) or a push with no usable base always runs.
+  # ---------------------------------------------------------------------------
+  changes:
+    name: detect install-relevant changes
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      run: ${{ steps.filter.outputs.run }}
+    steps:
+      - name: Decide whether install-phpunit must run
+        id: filter
+        uses: actions/github-script@v9
+        with:
+          script: |
+            // A changed file matching any of these -> run the install-phpunit job.
+            const patterns = [
+              /^htdocs\/install\//,
+              /^htdocs\/core\/db\//,
+              /^htdocs\/core\/modules\//,
+              /^htdocs\/[^/]+\/sql\//,
+              /^htdocs\/[^/]+\/[^/]+\/sql\//,
+              /^test\/phpunit\//,
+              /^\.github\/workflows\/ci-install-phpunit\.yml$/,
+              /^\.github\/workflows\/ci-on-push\.yml$/,
+              /^\.github\/workflows\/ci-on-pull_request\.yml$/,
+            ];
+
+            const always = (why) => { core.info(why + ': always run'); core.setOutput('run', 'true'); };
+
+            if (context.eventName === 'workflow_dispatch') { always('workflow_dispatch'); return; }
+
+            let files = [];
+            if (context.eventName === 'pull_request') {
+              const list = await github.paginate(github.rest.pulls.listFiles, {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: context.payload.pull_request.number,
+                per_page: 100,
+              });
+              // paginate() caps at 3000 files; if we hit that, don't risk a false skip.
+              if (list.length >= 3000) { always('PR too large to diff reliably'); return; }
+              files = list.map(f => f.filename);
+            } else if (context.eventName === 'push') {
+              const base = context.payload.before;
+              const head = context.payload.after;
+              if (!base || /^0+$/.test(base)) { always('push with no base commit'); return; }
+              const cmp = await github.rest.repos.compareCommitsWithBasehead({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                basehead: `${base}...${head}`,
+              });
+              const cmpFiles = cmp.data.files || [];
+              // The compare endpoint lists at most 300 files; above that, play safe.
+              if (cmpFiles.length >= 300) { always('push touches too many files to diff reliably'); return; }
+              files = cmpFiles.map(f => f.filename);
+            } else {
+              always(`event ${context.eventName}`);
+              return;
+            }
+
+            core.info(`Changed files (${files.length}):\n${files.join('\n')}`);
+            const matched = files.filter(f => patterns.some(re => re.test(f)));
+            if (matched.length) {
+              core.info(`Install-relevant change(s):\n${matched.join('\n')}`);
+              core.setOutput('run', 'true');
+            } else {
+              core.info('No install-relevant change: skipping install-phpunit');
+              core.setOutput('run', 'false');
+            }
+
   install-phpunit:
+    needs: changes
+    if: needs.changes.outputs.run == 'true'
     name: install-phpunit (${{ matrix.db }})
     runs-on: ubuntu-latest
     strategy:
@@ -322,4 +401,8 @@ jobs:
 # This workflow is called (job "install-phpunit") by:
 #   - ci-on-push.yml         : on the "24.0" branch only, like windows-ci
 #   - ci-on-pull_request.yml : on every pull request
+#
+# The "changes" job then gates the heavy "install-phpunit" job: it runs only
+# when the diff touches the installer, module SQL, the DB layer or the test
+# suite (see the pattern list above), or on a manual workflow_dispatch.
 # ---------------------------------------------------------------------------
