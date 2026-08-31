@@ -8,6 +8,7 @@ English Dolibarr ChangeLog
 
 For users:
 ----------
+NEW: Password reset now emails an expiring link only (no cleartext password in email), and the user chooses their own password on the reset page.
 NEW: Unify all per-object extrafields admin pages into a single secured page (htdocs/admin/extrafields.php), replacing ~79 near-identical wrapper pages with one whitelist-controlled controller
 NEW: Experimental module "Quick memo" to put post-it on any screens (#37422)
 NEW: Thirdparty bank account asks for bank country, state, currency and status (#38031)
@@ -207,6 +208,8 @@ The following changes may create regressions for some external modules, but were
 * Library jeditable was not used by the core (used by a hidden option with no security rules), so it has been removed.
 * Old deprecated module Paybox has been removed.
 * Old deprecated module Deplacement has been removed.
+* User::send_password() no longer includes a cleartext password in any email; it always sends a password-reset LINK. The $changelater parameter is kept for backward compatibility but no longer changes the behavior. The REST call GET users/{id}/setPassword with send_password=true no longer sets a new password immediately — it emails a reset link so the user chooses their own password.
+* The hidden option URL_REDIRECTION_AFTER_CHANGEPASSWORD is now used to redirect the user after the password has been changed on the reset page (it was previously only the "go to application" link of the email that contained the cleartext password).
 
 
 

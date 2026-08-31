@@ -30,7 +30,6 @@ if (!defined('NOBROWSERNOTIF')) {
  * @var Translate $langs
  *
  * @var string $action
- * @var string $captcha
  * @var string $disabled
  * @var string $dol_url_root
  * @var string $focus_element
@@ -46,10 +45,8 @@ if (!defined('NOBROWSERNOTIF')) {
  *
  * @var int $setnewpassword
  */
-// Only vars provided by including page - htdocs/user/passwordforgotten.php:
-// $newpass1 and $newpass2 are not set!!!
+// Only vars provided by including page - htdocs/user/passwordforgotten.php
 '
-@phan-var-force string $captcha
 @phan-var-force string $disabled
 @phan-var-force string $dol_url_root
 @phan-var-force string $focus_element
@@ -107,7 +104,6 @@ if (!empty($conf->dol_use_jmobile)) {
 
 $php_self = $_SERVER['PHP_SELF'];
 $php_self .= dol_escape_htmltag($_SERVER["QUERY_STRING"]) ? '?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]) : '';
-$php_self = str_replace('action=validatenewpassword', '', $php_self);
 
 $titleofpage = $langs->trans('ResetPassword');
 
@@ -136,7 +132,8 @@ $colorbackhmenu1 = implode(',', colorStringToArray($colorbackhmenu1)); // Normal
 $edituser = new User($db);
 
 
-// Validate parameters
+// Validate parameters. The password fields are shown only if the link is still usable.
+$resetlinkvalid = false;
 if ($setnewpassword && $username && $passworduidhash) {
 	$result = $edituser->fetch(0, $username);
 	if ($result < 0) {
@@ -145,11 +142,16 @@ if ($setnewpassword && $username && $passworduidhash) {
 		global $conf;
 
 		//print $edituser->pass_temp.'-'.$edituser->id.'-'.$conf->file->instance_unique_id.' '.$passworduidhash;
-		if ($edituser->pass_temp && dol_verifyHash($edituser->pass_temp.'-'.$edituser->id.'-'.$conf->file->instance_unique_id, $passworduidhash)) {
+		$resverifytpl = dolVerifyPasswordResetHash($edituser->pass_temp, $edituser->id, $passworduidhash);
+		if ($resverifytpl == 1) {
 			// Clear session
 			unset($_SESSION['dol_login']);
 
 			// Parameters to reset the user are validated
+			$resetlinkvalid = true;
+		} elseif ($resverifytpl == -1) {
+			$langs->load("errors");
+			$message = '<div class="error">'.$langs->trans("PasswordResetLinkExpired").'</div>';
 		} else {
 			$langs->load("errors");
 			$message = '<div class="error">'.$langs->trans("ErrorFailedToValidatePasswordReset").'</div>';
@@ -190,7 +192,10 @@ if (!getDolGlobalString('ADD_UNSPLASH_LOGIN_BACKGROUND')) {
 
 <form id="login" name="login" method="POST" action="<?php echo $php_self; ?>">
 <input type="hidden" name="token" value="<?php echo newToken(); ?>">
-<input type="hidden" name="action" value="buildnewpassword">
+<input type="hidden" name="action" value="setnewpassword">
+<input type="hidden" name="username" value="<?php echo dol_escape_htmltag($username); ?>">
+<input type="hidden" name="passworduidhash" value="<?php echo dol_escape_htmltag($passworduidhash); ?>">
+<input type="hidden" name="setnewpassword" value="1">
 
 
 <!-- Title with version -->
@@ -222,66 +227,22 @@ if (!empty($disablenofollow)) {
 
 <div class="tagtable centpercent" title="Login pass" >
 
+<?php if ($resetlinkvalid) { ?>
 <!-- New pass 1 -->
 <div class="trinputlogin">
 <div class="tagtd nowraponall center valignmiddle tdinputlogin">
-<!-- <span class="span-icon-user">-->
-<span class="fa fa-user"></span>
-<input type="text" maxlength="255" placeholder="<?php echo $langs->trans("NewPassword"); ?>" <?php echo $disabled; ?> id="newpass1" name="newpass1" class="flat input-icon-user minwidth150" value="<?php echo dol_escape_htmltag($newpass1); ?>" tabindex="1" autofocus />
+<input type="password" maxlength="255" placeholder="<?php echo $langs->trans("NewPassword"); ?>" <?php echo $disabled; ?> id="newpass1" name="newpass1" class="flat minwidth150" value="<?php echo dol_escape_htmltag($newpass1); ?>" tabindex="1" autofocus />
 </div>
 </div>
 <div class="trinputlogin">
 <div class="tagtd nowraponall center valignmiddle tdinputlogin">
-<!-- <span class="span-icon-user">-->
-<span class="fa fa-user"></span>
-<input type="text" maxlength="255" placeholder="<?php echo $langs->trans("PasswordRetype"); ?>" <?php echo $disabled; ?> id="newpass2" name="newpass2" class="flat input-icon-user minwidth150" value="<?php echo dol_escape_htmltag($newpass2); ?>" tabindex="1" />
+<input type="password" maxlength="255" placeholder="<?php echo $langs->trans("PasswordRetype"); ?>" <?php echo $disabled; ?> id="newpass2" name="newpass2" class="flat minwidth150" value="<?php echo dol_escape_htmltag($newpass2); ?>" tabindex="1" />
 </div>
 </div>
+<?php } ?>
 
 
 <?php
-if (!empty($captcha)) {
-	// Add a variable param to force not using cache (jmobile)
-	$php_self = preg_replace('/[&\?]time=(\d+)/', '', $php_self); // Remove param time
-	if (preg_match('/\?/', $php_self)) {
-		$php_self .= '&time='.dol_print_date(dol_now(), 'dayhourlog');
-	} else {
-		$php_self .= '?time='.dol_print_date(dol_now(), 'dayhourlog');
-	}
-
-	$classfile = DOL_DOCUMENT_ROOT."/core/modules/security/captcha/modCaptcha".ucfirst($captcha).'.class.php';
-	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-	$captchaobj = null;
-	if (dol_is_file($classfile)) {
-		// Charging the numbering class
-		$classname = "modCaptcha".ucfirst($captcha);
-		require_once $classfile;
-
-		$captchaobj = new $classname($db, $conf, $langs, $user);
-	}
-
-	if (is_object($captchaobj) && method_exists($captchaobj, 'getCaptchaCodeForForm')) {
-		// TODO: get this code using a method of captcha
-	} else {
-		?>
-	<!-- Captcha -->
-	<div class="trinputlogin">
-	<div class="tagtd tdinputlogin nowrap none valignmiddle">
-
-	<span class="fa fa-unlock"></span>
-	<span class="nofa inline-block">
-	<input id="securitycode" placeholder="<?php echo $langs->trans("SecurityCode"); ?>" class="flat input-icon-security width125" type="text" maxlength="5" name="code" tabindex="3" autocomplete="off" />
-	</span>
-	<span class="nowrap inline-block">
-	<img class="inline-block valignmiddle" src="<?php echo DOL_URL_ROOT ?>/core/antispamimage.php" border="0" width="80" height="32" id="img_securitycode" />
-	<a class="inline-block valignmiddle" href="<?php echo $php_self; ?>" tabindex="4"><?php echo img_picto($langs->trans("Refresh"), 'refresh', 'id="captcha_refresh_img"'); ?></a>
-	</span>
-
-	</div>
-	</div>
-		<?php
-	}
-}
 
 if (!empty($morelogincontent)) {
 	if (is_array($morelogincontent)) {
@@ -308,7 +269,9 @@ if (!empty($morelogincontent)) {
 <div id="login_line2" style="clear: both">
 
 <!-- Button "Regenerate and Send password" -->
+<?php if ($resetlinkvalid) { ?>
 <br><input type="submit" <?php echo $disabled; ?> class="butAction butActionLogin noborderfocus small" name="button_password" value="<?php echo $langs->trans('Save'); ?>" tabindex="4" />
+<?php } ?>
 
 <br>
 <div class="center" style="margin-top: 15px;">

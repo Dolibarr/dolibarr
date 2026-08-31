@@ -32,6 +32,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 if (isModEnabled('ldap')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/ldap.class.php';
 }
@@ -62,8 +63,10 @@ if (!$mode) {
 }
 
 $username = GETPOST('username', 'alphanohtml');
-$passworduidhash = GETPOST('passworduidhash', 'alpha');
+$passworduidhash = GETPOST('passworduidhash', 'aZ09');	// dolGetPasswordResetHash() returns an hexadecimal hash
 $setnewpassword = GETPOST('setnewpassword', 'aZ09');
+$newpass1 = GETPOST('newpass1', 'password');
+$newpass2 = GETPOST('newpass2', 'password');
 
 $conf->entity = (GETPOSTINT('entity') ? GETPOSTINT('entity') : 1);
 
@@ -87,6 +90,21 @@ if (GETPOST('dol_use_jmobile', 'alpha') || !empty($_SESSION['dol_use_jmobile']))
 	$conf->dol_use_jmobile = 1;
 }
 
+// Send password button enabled ?
+$disabled = 'disabled';
+if (preg_match('/dolibarr/i', $mode)) {
+	$disabled = '';
+}
+if (getDolGlobalString('MAIN_SECURITY_ENABLE_SENDPASSWORD')) {
+	$disabled = ''; // To force button enabled
+}
+
+// Security graphical code. Same value is used to render the captcha on the form and to validate the submitted code.
+$captcha = '';
+if (!$disabled) {
+	$captcha = getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_HANDLER', 'standard');
+}
+
 
 /*
  * Actions
@@ -101,37 +119,86 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
-	// Validate new password
-	if ($action == 'validatenewpassword' && $username && $passworduidhash) {	// Test on permission not required here. Security is managed by $passworduihash
-		$edituser = new User($db);
-		$result = $edituser->fetch(0, $username, '', 0, $conf->entity);
-		if ($result < 0) {
-			$message = '<div class="error">'.dol_escape_htmltag($langs->trans("ErrorTechnicalError")).'</div>';
+	// Set the user-chosen new password (posted from the passwordreset.tpl.php page)
+	if ($action == 'setnewpassword' && $username && $passworduidhash) {	// Security is managed by $passworduidhash (proof of possession of the emailed link); no captcha needed on this step
+		if ($newpass1 === '' || $newpass2 === '') {
+			$message = '<div class="error">'.$langs->trans("NewPasswordEmpty").'</div>';
+		} elseif ($newpass1 !== $newpass2) {
+			$message = '<div class="error">'.$langs->trans("NewPasswordMismatch").'</div>';
 		} else {
-			global $conf;
-
-			//print $edituser->pass_temp.'-'.$edituser->id.'-'.$conf->file->instance_unique_id.' '.$passworduidhash;
-			if ($edituser->pass_temp && dol_verifyHash($edituser->pass_temp.'-'.$edituser->id.'-'.$conf->file->instance_unique_id, $passworduidhash)) {
-				// Clear session
-				unset($_SESSION['dol_login']);
-				$_SESSION['dol_loginmesg'] = '<!-- warning -->'.$langs->transnoentitiesnoconv('NewPasswordValidated'); // Save message for the session page
-
-				$newpassword = $edituser->setPassword($user, $edituser->pass_temp, 0);
-				dol_syslog("passwordforgotten.php new password for user->id=".$edituser->id." validated in database");
-
-				header("Location: ".DOL_URL_ROOT.'/?username='.urlencode($edituser->login));
-				exit;
+			$edituser = new User($db);
+			$result = $edituser->fetch(0, $username, '', 0, $conf->entity);
+			if ($result < 0) {
+				$message = '<div class="error">'.dol_escape_htmltag($langs->trans("ErrorTechnicalError")).'</div>';
 			} else {
-				$langs->load("errors");
-				$message = '<div class="error">'.$langs->trans("ErrorFailedToValidatePasswordReset").'</div>';
+				$resverify = dolVerifyPasswordResetHash($edituser->pass_temp, $edituser->id, $passworduidhash);
+				if ($resverify < 0) {
+					$langs->load("errors");
+					$message = '<div class="error">'.$langs->trans("PasswordResetLinkExpired").'</div>';
+				} elseif ($resverify == 0) {
+					$langs->load("errors");
+					$message = '<div class="error">'.$langs->trans("ErrorFailedToValidatePasswordReset").'</div>';
+				} else {
+					$res = $edituser->setPassword($user, $newpass1, 0);	// validates against the active password policy
+					if (is_int($res) && $res < 0) {
+						$message = '<div class="error">'.dol_escape_htmltag($edituser->error ? $edituser->error : $langs->trans("ErrorFailedToChangePassword")).'</div>';
+					} else {
+						unset($_SESSION['dol_login']);
+						$_SESSION['dol_loginmesg'] = '<!-- warning -->'.$langs->transnoentitiesnoconv("NewPasswordValidated");
+						dol_syslog("passwordforgotten.php new user-chosen password for user->id=".$edituser->id." set in database");
+
+						// Where to send the user once the password has been changed (setup may point to another front, ie a portal)
+						$urlafterchange = DOL_URL_ROOT.'/?username='.urlencode($edituser->login);
+						if (getDolGlobalString('URL_REDIRECTION_AFTER_CHANGEPASSWORD')) {
+							$urlafterchange = dol_sanitizeUrl(getDolGlobalString('URL_REDIRECTION_AFTER_CHANGEPASSWORD'), 0);
+						}
+
+						header("Location: ".$urlafterchange);
+						exit;
+					}
+				}
 			}
 		}
 	}
 
 	// Action to set a temporary password and send email for reset
 	if ($action == 'buildnewpassword' && $username) {	// Test on permission not required here. This action is done anonymously.
-		$sessionkey = 'dol_antispam_value';
-		$ok = (array_key_exists($sessionkey, $_SESSION) && (strtolower($_SESSION[$sessionkey]) == strtolower(GETPOST('code'))));
+		// Validate the captcha code with the active captcha handler (the one that rendered the code on the form).
+		// $captcha is empty only when the setup disabled the captcha, in which case no code can be validated.
+		$ok = true;
+		if (!empty($captcha)) {
+			$ok = false;
+
+			// List of directories where we can find captcha handlers
+			$dirModCaptcha = array_merge(array('main' => '/core/modules/security/captcha/'), (isset($conf->modules_parts['captcha']) && is_array($conf->modules_parts['captcha'])) ? $conf->modules_parts['captcha'] : array());
+			$fullpathclassfile = '';
+			foreach ($dirModCaptcha as $dir) {
+				$fullpathclassfile = dol_buildpath($dir."modCaptcha".ucfirst($captcha).'.class.php', 0, 2);
+				if ($fullpathclassfile) {
+					break;
+				}
+			}
+
+			if ($fullpathclassfile) {
+				include_once $fullpathclassfile;
+				$classname = "modCaptcha".ucfirst($captcha);
+				if (class_exists($classname)) {
+					/** @var ModeleCaptcha $captchaobj */
+					$captchaobj = new $classname($db, $conf, $langs, $user);
+					'@phan-var-force ModeleCaptcha $captchaobj';
+
+					if (method_exists($captchaobj, 'validateCodeAfterLoginSubmit')) {
+						$ok = ($captchaobj->validateCodeAfterLoginSubmit() > 0);	// @phan-suppress-current-line PhanUndeclaredMethod
+					} else {
+						dol_syslog('Error, the captcha handler '.get_class($captchaobj).' does not have any method validateCodeAfterLoginSubmit()', LOG_ERR);
+					}
+				} else {
+					dol_syslog('Error, the captcha handler class '.$classname.' was not found after the include', LOG_ERR);
+				}
+			} else {
+				dol_syslog('Error, the captcha handler '.$captcha.' has no class file found modCaptcha'.ucfirst($captcha), LOG_ERR);
+			}
+		}
 
 		// Verify code
 		if (!$ok) {
@@ -174,13 +241,13 @@ if (empty($reshook)) {
 					usleep(20000);	// add delay to simulate setPassword() and send_password() actions delay (0.02s)
 					$message .= $messagewarning;
 				} else {
-					$newpassword = $edituser->setPassword($user, '', 1);
-					if (is_int($newpassword) && $newpassword < 0) {
+					$armed = $edituser->requestPasswordReset();
+					if (is_int($armed) && $armed < 0) {
 						// Technical failure
 						$message = '<div class="error">'.$langs->trans("ErrorFailedToChangePassword").'</div>';
 					} else {
-						// Success to set temporary password, send email
-						if ($edituser->send_password($user, $newpassword, 1) > 0) {
+						// Success to arm reset token, send link-only email
+						if ($edituser->send_password($user, $armed, 1) > 0) {
 							$message .= $messagewarning;
 							$username = '';
 						} else {
@@ -248,21 +315,6 @@ if (!empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/log
 	$urllogo = DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/dolibarr_logo.svg';
 } elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo.svg')) {
 	$urllogo = DOL_URL_ROOT.'/theme/dolibarr_logo.svg';
-}
-
-// Send password button enabled ?
-$disabled = 'disabled';
-if (preg_match('/dolibarr/i', $mode)) {
-	$disabled = '';
-}
-if (getDolGlobalString('MAIN_SECURITY_ENABLE_SENDPASSWORD')) {
-	$disabled = ''; // To force button enabled
-}
-
-// Security graphical code
-$captcha = '';
-if (!$disabled) {
-	$captcha = getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_HANDLER', 'standard');
 }
 
 // Execute hook getPasswordForgottenPageOptions (for table)

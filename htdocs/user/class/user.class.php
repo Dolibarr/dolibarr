@@ -39,6 +39,7 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonpeople.class.php';
@@ -2787,13 +2788,62 @@ class User extends CommonObject
 		}
 	}
 
+	/**
+	 * Arm an expiring password-reset token in pass_temp.
+	 *
+	 * Stores 'r:<YYYYMMDDHHMMSS gmt>:<randomsecret>' in pass_temp and returns that
+	 * value so the caller can build the link hash with dolGetPasswordResetHash().
+	 * No password is set until the user confirms via setPassword($user, $chosen, 0).
+	 *
+	 * @param	int		$ttlseconds		Link validity in seconds (0 = USER_PASSWORD_RESET_LINK_VALIDITY, default 3600)
+	 * @return	string|int				Stored pass_temp value, or < 0 on error
+	 */
+	public function requestPasswordReset(int $ttlseconds = 0)
+	{
+		if (empty($ttlseconds)) {
+			$ttlseconds = getDolGlobalInt('USER_PASSWORD_RESET_LINK_VALIDITY', 3600);
+		}
+
+		$secret = getRandomPassword(true);	// generic random, not bound to the user password policy
+		$expiry = dol_print_date(dol_now('gmt') + $ttlseconds, '%Y%m%d%H%M%S', 'gmt');
+		$value = 'r:'.$expiry.':'.$secret;
+
+		$sql = "UPDATE ".$this->db->prefix()."user";
+		$sql .= " SET pass_temp = '".$this->db->escape($value)."'";
+		$sql .= " WHERE rowid = ".((int) $this->id);
+
+		dol_syslog(get_class($this)."::requestPasswordReset", LOG_DEBUG);
+		if ($this->db->query($sql)) {
+			$this->pass_temp = $value;
+			return $value;
+		}
+		$this->error = $this->db->lasterror();
+		return -1;
+	}
+
+	/**
+	 * Build the HTML body of a password-reset LINK email (no password in body).
+	 *
+	 * @param	Translate	$outputlangs	Output language object (already loaded)
+	 * @param	string		$link			Absolute reset link
+	 * @return	string						HTML email body
+	 */
+	public function getPasswordResetEmailContent(Translate $outputlangs, string $link): string
+	{
+		$mesg  = $outputlangs->transnoentitiesnoconv("RequestToResetPasswordReceived")."<br>\n<br>\n";
+		$mesg .= $outputlangs->transnoentitiesnoconv("YouMustClickToChange")." :<br>\n";
+		$mesg .= '<a href="'.dol_escape_htmltag($link).'" rel="noopener">'.$outputlangs->transnoentitiesnoconv("ConfirmPasswordChange").'</a>'."<br>\n<br>\n";
+		$mesg .= $outputlangs->transnoentitiesnoconv("ForgetIfNothing")."<br>\n";
+		return $mesg;
+	}
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Send a new password (or instructions to reset it) by email
 	 *
 	 *  @param	User	$user           Object user that send the email (not the user we send to) @todo object $user is not used !
 	 *  @param	string	$password       New password
-	 *	@param	int		$changelater	0=Send clear passwod into email, 1=Change password only after clicking on confirm email. @todo Add method 2 = Send link to reset password
+	 *	@param	int		$changelater	Unused, kept for backward-compat: the email is always link-only (no cleartext password is ever sent)
 	 *  @return int 		            Return integer < 0 si erreur, > 0 si ok
 	 */
 	public function send_password($user, $password = '', $changelater = 0)
@@ -2828,44 +2878,19 @@ class User extends CommonObject
 		$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
 		$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
 
-		if (!$changelater) {
-			$url = $urlwithroot.'/';
-			if (getDolGlobalString('URL_REDIRECTION_AFTER_CHANGEPASSWORD')) {
-				$url = getDolGlobalString('URL_REDIRECTION_AFTER_CHANGEPASSWORD');
-			}
-
-			dol_syslog(get_class($this)."::send_password changelater is off, url=".$url);
-
-			$mesg .= $outputlangs->transnoentitiesnoconv("RequestToResetPasswordReceived")."\n";
-			$mesg .= $outputlangs->transnoentitiesnoconv("NewKeyIs")." :\n\n";
-			$mesg .= $outputlangs->transnoentitiesnoconv("Login")." = ".$this->login."\n";
-			$mesg .= $outputlangs->transnoentitiesnoconv("Password")." = ".$password."\n\n";
-			$mesg .= "\n";
-
-			$mesg .= $outputlangs->transnoentitiesnoconv("ClickHereToGoTo", $appli).': '.$url."\n\n";
-			$mesg .= "--\n";
-			$mesg .= $user->getFullName($outputlangs); // Username that send the email (not the user for who we want to reset password)
-		} else {
-			//print $password.'-'.$this->id.'-'.$conf->file->instance_unique_id;
-			$url = $urlwithroot.'/user/passwordforgotten.php?action=validatenewpassword';
-			$url .= '&username='.urlencode($this->login)."&passworduidhash=".urlencode(dol_hash($password.'-'.$this->id.'-'.$conf->file->instance_unique_id));
-			if (isModEnabled('multicompany')) {
-				$url .= '&entity='.(!empty($this->entity) ? $this->entity : 1);
-			}
-
-			dol_syslog(get_class($this)."::send_password changelater is on, url=".$url);
-
-			$msgishtml = 1;
-
-			$mesg .= $outputlangs->transnoentitiesnoconv("RequestToResetPasswordReceived")."<br>\n";
-			$mesg .= $outputlangs->transnoentitiesnoconv("NewKeyWillBe")." :<br>\n<br>\n";
-			$mesg .= '<strong>'.$outputlangs->transnoentitiesnoconv("Login")."</strong> = ".$this->login."<br>\n";
-			$mesg .= '<strong>'.$outputlangs->transnoentitiesnoconv("Password")."</strong> = ".$password."<br>\n<br>\n";
-			$mesg .= "<br>\n";
-			$mesg .= $outputlangs->transnoentitiesnoconv("YouMustClickToChange")." :<br>\n";
-			$mesg .= '<a href="'.$url.'" rel="noopener">'.$outputlangs->transnoentitiesnoconv("ConfirmPasswordChange").'</a>'."<br>\n<br>\n";
-			$mesg .= $outputlangs->transnoentitiesnoconv("ForgetIfNothing")."<br>\n<br>\n";
+		// Link-only email in every mode: never send a cleartext password (the user chooses it on the reset page).
+		// $password is the armed pass_temp value produced by User::requestPasswordReset().
+		$hash = dolGetPasswordResetHash($password, $this->id);
+		$url = $urlwithroot.'/user/passwordforgotten.php?setnewpassword=1';
+		$url .= '&username='.urlencode($this->login).'&passworduidhash='.urlencode($hash);
+		if (isModEnabled('multicompany')) {
+			$url .= '&entity='.(!empty($this->entity) ? $this->entity : 1);
 		}
+
+		dol_syslog(get_class($this)."::send_password link-only url=".$url);
+
+		$msgishtml = 1;
+		$mesg = $this->getPasswordResetEmailContent($outputlangs, $url);
 
 		$trackid = 'use'.$this->id;
 		$sendcontext = 'passwordreset';
