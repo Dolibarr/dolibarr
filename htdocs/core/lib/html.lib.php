@@ -5851,13 +5851,14 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 				foreach ($histo[$key]['socpeopleassigned'] as $cid => $Tab) {
 					if (empty($conf->cache['contact'][$cid])) {
 						$contact = new Contact($db);
-						$contact->fetch($cid);
+						$result = $contact->fetch($cid);
 						$conf->cache['contact'][$cid] = $contact;
 					} else {
 						$contact = $conf->cache['contact'][$cid];
+						$result = ($contact instanceof Contact) ? $contact->id : 0;
 					}
 
-					if ($contact) {
+					if ($result > 0) {
 						$contactList .= !empty($contactList) ? ', ' : '';
 						$contactList .= $contact->getNomUrl(1);
 						if (isset($histo[$key]['acode']) && $histo[$key]['acode'] == 'AC_TEL') {
