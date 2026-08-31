@@ -64,10 +64,10 @@ jobs:
       - TRAVIS_TYPE=push
     - stage: PHP max pull_request
       if: type = pull_request
-      php: '8.4'
+      php: '8.5'
       env:
       - DB=mysql
-      - TRAVIS_PHP_VERSION=8.4
+      - TRAVIS_PHP_VERSION=8.5
       - TRAVIS_TYPE=pull_request
 
 notifications:
