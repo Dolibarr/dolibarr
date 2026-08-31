@@ -130,4 +130,17 @@ ALTER TABLE llx_facture ADD INDEX idx_facture_situation_cycle_ref (situation_cyc
 
 
 
+-- Categories support extrafields (Categorie::fetch_optionals is called and the list joins the table)
+-- but the table was never created, so the category list failed as soon as an extrafield was defined.
+create table llx_categorie_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)
+) ENGINE=innodb;
+
+ALTER TABLE llx_categorie_extrafields ADD UNIQUE INDEX uk_categorie_extrafields (fk_object);
+
+
 -- end of migration - nothing after this line
