@@ -7492,6 +7492,55 @@ class Product extends CommonObject
 		$return .= '</div>';
 		return $return;
 	}
+
+	/**
+	 * Enrich the file array with database information (position, cover, keywords...) and sort it.
+	 *
+	 * @param array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string}> $filearray	Array of files (from dol_dir_list)
+	 * @param string $modulepart	Module part (e.g. 'produit')
+	 * @param string $sortfield	Field to sort on when not ordering by position
+	 * @param string $sortorder	Sort order ('ASC' or 'DESC')
+	 * @return array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string}>	Enriched (and sorted) file array
+	 */
+	public function enrichFileArrayWithDatabaseInfos(array $filearray, string $modulepart = 'produit', string $sortfield = 'position_name', string $sortorder = 'ASC'): array
+	{
+
+		$relativedir = get_exdir(0, 0, 0, 0, $this, $modulepart);
+		$relativedir = preg_replace('/^[\\/]/', '', $relativedir);
+		$relativedir = preg_replace('/[\\/]$/', '', $relativedir);
+		$filearrayindatabase = dol_dir_list_in_database($modulepart.'/'.$relativedir);
+
+		foreach ($filearray as $key => $val) {
+			$tmpfilename = preg_replace('/\.noexe$/', '', $filearray[$key]['name']);
+			$found = 0;
+			foreach ($filearrayindatabase as $key2 => $val2) {
+				if (($filearrayindatabase[$key2]['path'] == $filearray[$key]['path']) && ($filearrayindatabase[$key2]['name'] == $tmpfilename)) {
+					$filearray[$key]['position_name'] = ($filearrayindatabase[$key2]['position'] ? $filearrayindatabase[$key2]['position'] : '0') . '_' . $filearrayindatabase[$key2]['name'];
+					$filearray[$key]['position'] = $filearrayindatabase[$key2]['position'];
+					$filearray[$key]['cover'] = $filearrayindatabase[$key2]['cover'];
+					$filearray[$key]['keywords'] = $filearrayindatabase[$key2]['keywords'];
+					$filearray[$key]['acl'] = $filearrayindatabase[$key2]['acl'];
+					$filearray[$key]['rowid'] = $filearrayindatabase[$key2]['rowid'];
+					$filearray[$key]['label'] = $filearrayindatabase[$key2]['label'];
+					$filearray[$key]['share'] = $filearrayindatabase[$key2]['share'];
+					$found = 1;
+					break;
+				}
+			}
+		}
+
+		if (count($filearray)) {
+			if ($sortfield && $sortorder) {
+				if (getDolGlobalInt('MAIN_SORT_PHOTO_BY_POSITION')) {
+					$filearray = dol_sort_array($filearray, 'position', $sortorder);
+				} else {
+					$filearray = dol_sort_array($filearray, $sortfield, $sortorder);
+				}
+			}
+		}
+
+		return $filearray;
+	}
 }
 
 /**
