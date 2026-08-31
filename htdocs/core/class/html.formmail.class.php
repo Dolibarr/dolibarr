@@ -8,6 +8,7 @@
  * Copyright (C) 2022		Charlene Benke			<charlene@patas-monkey.com>
  * Copyright (C) 2023		Anthony Berton			<anthony.berton@bb2a.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Vincent Maury TimGroup	<vmaury@timgroup.fr>
  * Copyright (C) 2026		Jose MARTINEZ			<jose.martinez@pichinov.com>
  *
  *
@@ -166,6 +167,11 @@ class FormMail extends Form
 	public $withfile;
 
 	/**
+	 * @var array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string}> Array of array('name'=>'xxx','fullname'=>'/abc/xxx','date'=>'yyy','size'=>99,'type'=>'dir|file',...)>	Files array (like returned by dol_dir_list) attached to the origin object
+	 */
+	public $objfilearray;
+
+	/**
 	 * @var string					Use case string to a button "Fill with layout" for this use case. Example 'wesitepage', 'emailing', 'email', ...
 	 */
 	public $withlayout;
@@ -310,6 +316,7 @@ class FormMail extends Form
 		$this->withbodyreadonly = 0;
 		$this->withdeliveryreceiptreadonly = 0;
 		$this->withfckeditor = -1; // -1 = Auto
+		$this->objfilearray = [];
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -437,6 +444,15 @@ class FormMail extends Form
 		}
 		if (!empty($_SESSION["listofmimes".$keytoavoidconflict])) {
 			$listofmimes = explode(';', $_SESSION["listofmimes".$keytoavoidconflict]);
+		}
+		if (!empty($_SESSION['objfilearray'.$keytoavoidconflict]) && is_array($_SESSION['objfilearray'.$keytoavoidconflict]) && count($_SESSION['objfilearray'.$keytoavoidconflict]) > 0) {
+			foreach ($_SESSION['objfilearray'.$keytoavoidconflict] as $iof=>$ofile) {
+				if (GETPOSTINT('addofile_'.$iof)) {
+					$listofpaths[] = $ofile['fullname'];
+					$listofnames[] = $ofile['name'];
+					$listofmimes[] = dol_mimetype($ofile['name']);
+				}
+			}
 		}
 		return array('paths' => $listofpaths, 'names' => $listofnames, 'mimes' => $listofmimes);
 	}
@@ -1015,6 +1031,37 @@ class FormMail extends Form
 						}
 						$out .= ' ';
 						$out .= '<input type="submit" class="button smallpaddingimp" id="'.$addfileaction.'" name="'.$addfileaction.'" value="'.$langs->trans("MailingAddFile").'" />';
+						// possibility to add files still attached to the object
+						unset($_SESSION['objfilearray'.$keytoavoidconflict]);
+						if (count($this->objfilearray)) {
+							foreach ($this->objfilearray as $iof=>$ofile) {
+								if (in_array($ofile['fullname'], $listofpaths)) unset($this->objfilearray[$iof]);
+							}
+							if (count($this->objfilearray)) {
+								$nbMaxDispFiles = getDolGlobalInt('FORM_MAIL_MAX_DISP_FILES') > 0 ? getDolGlobalInt('FORM_MAIL_MAX_DISP_FILES') : 5;
+								$fcnt = 0;
+								$out .= '<div class="addofilelist">';
+								$out .= '<span class="block valignmiddle print-barre-liste">'.$langs->trans("AttachedFiles").' : </span>';
+								$_SESSION['objfilearray'.$keytoavoidconflict] = $this->objfilearray;
+								foreach ($this->objfilearray as $iof=>$ofile) {
+									$fcnt ++;
+									$classsmxdpf = $fcnt > $nbMaxDispFiles ? ' classsmxdpf' : '';
+									$dispsize = $ofile['size'] > 0 ? ' ('.dol_print_size($ofile['size']).')' : '';
+									$out .= '<span class="block'.$classsmxdpf.'"><input type="checkbox" name="addofile_'.$iof.'" value="1" class="addofile" ';
+									$out .= (GETPOSTINT('addofile_'.$iof) ? ' checked="checked" ' : '').'> '.$ofile['name'].$dispsize.'</span>';
+								}
+								if ($fcnt > $nbMaxDispFiles) {
+									$out .= '<script>';
+									$out .= 'jQuery("span.classsmxdpf").hide();';
+									$out .= 'function toggleSmxdpf() {';
+									$out .= '	jQuery("span.classsmxdpf").toggle();';
+									$out .= '}';
+									$out .= '</script>';
+									$out .= '<span class="block cursorpointer" onclick="toggleSmxdpf()"><strong><i class="fas fa-arrows-alt-v"></i> '.$langs->trans("ShowMoreLines").'</strong></span>';
+								}
+								$out .=	'</div>';
+							}
+						}
 					}
 				} else {
 					$out .= $this->withfile;
