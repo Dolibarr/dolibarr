@@ -30,6 +30,7 @@ global $conf,$user,$langs,$db,$mysoc;
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/functions_be.lib.php';
+require_once dirname(__FILE__).'/../../htdocs/core/class/commoninvoice.class.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 
@@ -57,5 +58,61 @@ class FunctionsBELibTest extends CommonClassTest
 
 		// Random test
 		$this->assertEquals(dolBECalculateStructuredCommunication('FA3698-5455', '0'), '+++203/6985/45505+++');
+	}
+
+	/**
+	 * testBuildEPCQrCodeStringUsesStructuredCommunication
+	 *
+	 * @return	void
+	 */
+	public function testBuildEPCQrCodeStringUsesStructuredCommunication()
+	{
+		global $conf, $db, $mysoc;
+
+		$oldvalue = isset($conf->global->INVOICE_PAYMENT_ENABLE_STRUCTURED_COMMUNICATION) ? $conf->global->INVOICE_PAYMENT_ENABLE_STRUCTURED_COMMUNICATION : null;
+
+		$invoice = new class($db) extends CommonInvoice {
+			/**
+			 * Constructor
+			 *
+			 * @param DoliDB $db Database handler
+			 */
+			public function __construct($db)
+			{
+				$this->db = $db;
+			}
+
+			/**
+			 * Return fixed amount to pay for the test.
+			 *
+			 * @param int $multicurrency Return multicurrency amount
+			 * @return float
+			 */
+			public function getRemainToPay($multicurrency = 0)
+			{
+				return 123.45;
+			}
+		};
+		$invoice->ref = 'it-comp-25057';
+		$invoice->type = 0;
+		$invoice->fk_account = 0;
+		$invoice->fk_bank = 0;
+		$mysoc->name = 'My Company';
+
+		unset($conf->global->INVOICE_PAYMENT_ENABLE_STRUCTURED_COMMUNICATION);
+		$lines = explode("\n", $invoice->buildEPCQrCodeString());
+		$this->assertEquals('', $lines[9]);
+		$this->assertEquals('it-comp-25057', $lines[10]);
+
+		$conf->global->INVOICE_PAYMENT_ENABLE_STRUCTURED_COMMUNICATION = 1;
+		$lines = explode("\n", $invoice->buildEPCQrCodeString());
+		$this->assertEquals('+++200/0025/05702+++', $lines[9]);
+		$this->assertEquals('', $lines[10]);
+
+		if ($oldvalue === null) {
+			unset($conf->global->INVOICE_PAYMENT_ENABLE_STRUCTURED_COMMUNICATION);
+		} else {
+			$conf->global->INVOICE_PAYMENT_ENABLE_STRUCTURED_COMMUNICATION = $oldvalue;
+		}
 	}
 }
