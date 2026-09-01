@@ -864,13 +864,19 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 	// Assigned to
 	print '<tr><td>'.$langs->trans("AffectedTo").'</td><td>';
 	print img_picto('', 'user', 'class="pictofixedwidth"');
+	$preselect = '-4';
+	$show_empty = 0;
+	if (getDolGlobalString("PROJECT_TASK_DEFAULT_NOBODY")) {
+		$preselect = '-1';
+		$show_empty = $langs->trans('Nobody');
+	}
 	if (is_array($contactsofproject) && count($contactsofproject)) {
-		print $form->select_dolusers('-4', 'userid', 0, null, 0, '', $contactsofproject, '0', 0, 0, '(statut:=:1)', 4, '', 'maxwidth500 widthcentpercentminusx');
+		print $form->select_dolusers($preselect, 'userid', $show_empty, null, 0, '', $contactsofproject, '0', 0, 0, '(statut:=:1)', 4, '', 'maxwidth500 widthcentpercentminusx');
 	} else {
 		if ((isset($projectid) && $projectid > 0) || $object->id > 0) {
 			print '<span class="opacitymedium">'.$langs->trans("NoUserAssignedToTheProject").'</span>';
 		} else {
-			print $form->select_dolusers('-4', 'userid', 0, null, 0, '', '', '0', 0, 0, '(statut:=:1)', 4, '', 'maxwidth500 widthcentpercentminusx');
+			print $form->select_dolusers($preselect, 'userid', $show_empty, null, 0, '', '', '0', 0, 0, '(statut:=:1)', 4, '', 'maxwidth500 widthcentpercentminusx');
 		}
 	}
 	print '</td></tr>';
