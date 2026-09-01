@@ -17,5 +17,6 @@
 -- ===================================================================
 
 
+ALTER TABLE llx_onlinepayment_session ADD INDEX idx_onlinepayment_session_ext_payment_id (ext_payment_id);
 ALTER TABLE llx_onlinepayment_session ADD INDEX idx_onlinepayment_session_date_creation (date_creation);
 ALTER TABLE llx_onlinepayment_session ADD INDEX idx_onlinepayment_session_entity (entity);

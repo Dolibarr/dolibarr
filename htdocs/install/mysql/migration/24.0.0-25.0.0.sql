@@ -136,12 +136,14 @@ create table llx_onlinepayment_session
 (
   rowid             integer AUTO_INCREMENT PRIMARY KEY,
   ext_payment_site  varchar(64) NOT NULL,
+  ext_payment_id    varchar(128),
   data              text,
   date_creation     datetime NOT NULL,
   tms               timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   entity            integer DEFAULT 1 NOT NULL
 )ENGINE=innodb;
 
+ALTER TABLE llx_onlinepayment_session ADD INDEX idx_onlinepayment_session_ext_payment_id (ext_payment_id);
 ALTER TABLE llx_onlinepayment_session ADD INDEX idx_onlinepayment_session_date_creation (date_creation);
 ALTER TABLE llx_onlinepayment_session ADD INDEX idx_onlinepayment_session_entity (entity);
 
