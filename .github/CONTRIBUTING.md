@@ -95,11 +95,11 @@ Use clear commit messages with the following structure:
 LONGDESC
 ```
 
-We provide a [.gitmessage](/.gitmessage) file to help you fit the template.
+We provide a [/dev/setup/git/gitmessage](/dev/setup/git/gitmessage) file to help you fit the template.
 
 You can add it to your git configuration using:
 ```
-git config --local commit.template .gitmessage
+git config --local commit.template ./dev/setup/git/gitmessage
 ```
 
 with
