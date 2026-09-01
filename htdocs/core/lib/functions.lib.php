@@ -7734,6 +7734,102 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		$substitutionarray['__[AnyConstantKey]__'] = $outputlangs->transnoentitiesnoconv('ValueOfConstantKey');
 	}
 
+	// Supplier order bank account substitutions (CommandeFournisseur, element = 'order_supplier')
+	if ($onlykey == 2 || (is_object($object) && !empty($object->element) && $object->element === 'order_supplier')) {
+		$substitutionarray['__SUPPLIER_BANK_LAST4__'] = ($onlykey == 2 ? 'Supplier default bank account last 4 digits' : '');
+		$substitutionarray['__SUPPLIER_BANK_MASKED__'] = ($onlykey == 2 ? 'Supplier default bank account masked (****1234)' : '');
+		$substitutionarray['__SUPPLIER_BANK_LAST4_TEXT__'] = ($onlykey == 2 ? 'Sentence with supplier bank account last 4 digits (or fallback)' : '');
+	}
+
+	if (is_object($object) && !empty($object->element) && $object->element === 'order_supplier' && $onlykey != 2) {
+		$supplierSocId = 0;
+		if (!empty($object->thirdparty) && is_object($object->thirdparty) && !empty($object->thirdparty->id)) {
+			$supplierSocId = (int) $object->thirdparty->id;
+		}
+		if ($supplierSocId <= 0) {
+			if (!empty($object->socid)) {
+				$supplierSocId = (int) $object->socid;
+			} elseif (!empty($object->fk_soc)) {
+				$supplierSocId = (int) $object->fk_soc;
+			}
+		}
+		if ($supplierSocId <= 0 && method_exists($object, 'fetch_thirdparty')) {
+			$object->fetch_thirdparty();
+			if (!empty($object->thirdparty) && is_object($object->thirdparty) && !empty($object->thirdparty->id)) {
+				$supplierSocId = (int) $object->thirdparty->id;
+			}
+		}
+
+		$extractLast4FromAccount = static function (mixed $raw): string {
+			$raw = trim((string) $raw);
+			if ($raw === '') {
+				return '';
+			}
+			$digits = preg_replace('/[^0-9]/', '', $raw);
+			if (!is_string($digits) || strlen($digits) < 4) {
+				return '';
+			}
+			return substr($digits, -4);
+		};
+
+		$supplierBankLast4 = '';
+		if ($supplierSocId > 0) {
+			require_once DOL_DOCUMENT_ROOT . '/societe/class/companybankaccount.class.php';
+
+			$rib = new CompanyBankAccount($db);
+			$resFetch = $rib->fetch(0, '', $supplierSocId, 1, 'ban');
+			if ($resFetch > 0 && !empty($rib->id)) {
+				$supplierBankLast4 = $extractLast4FromAccount($rib->iban);
+				if ($supplierBankLast4 === '') {
+					$supplierBankLast4 = $extractLast4FromAccount($rib->number);
+				}
+			}
+
+			// Fallback: any bank account if no default one exists or has no usable digits.
+			if ($supplierBankLast4 === '') {
+				$ribAny = new CompanyBankAccount($db);
+				$resFetchAny = $ribAny->fetch(0, '', $supplierSocId, -1, 'ban');
+				if ($resFetchAny > 0 && !empty($ribAny->id)) {
+					$supplierBankLast4 = $extractLast4FromAccount($ribAny->iban);
+					if ($supplierBankLast4 === '') {
+						$supplierBankLast4 = $extractLast4FromAccount($ribAny->number);
+					}
+				}
+			}
+		}
+
+		$supplierBankMasked = ($supplierBankLast4 !== '' ? '****'.$supplierBankLast4 : '');
+
+		$templateWithLast4 = trim((string) getDolGlobalString('MAIN_MAIL_SUPPLIER_BANK_LAST4_MESSAGE'));
+		if ($templateWithLast4 === '') {
+			$templateWithLast4 = $outputlangs->transnoentitiesnoconv('MailSupplierBankLast4MessageDefault');
+		}
+		if ($templateWithLast4 === '' || $templateWithLast4 === 'MailSupplierBankLast4MessageDefault') {
+			$templateWithLast4 = 'According to our records, the bank account on file ends with these 4 digits: %s';
+		}
+
+		$templateFallback = trim((string) getDolGlobalString('MAIN_MAIL_SUPPLIER_BANK_LAST4_FALLBACK'));
+		if ($templateFallback === '') {
+			$templateFallback = $outputlangs->transnoentitiesnoconv('MailSupplierBankLast4FallbackDefault');
+		}
+		if ($templateFallback === '' || $templateFallback === 'MailSupplierBankLast4FallbackDefault') {
+			$templateFallback = 'We currently do not have bank details recorded for this supplier.';
+		}
+
+		$supplierBankText = $templateFallback;
+		if ($supplierBankLast4 !== '') {
+			if (strpos($templateWithLast4, '%s') !== false) {
+				$supplierBankText = strtr($templateWithLast4, array('%s' => $supplierBankLast4));
+			} else {
+				$supplierBankText = trim($templateWithLast4).' '.$supplierBankLast4;
+			}
+		}
+
+		$substitutionarray['__SUPPLIER_BANK_LAST4__'] = $supplierBankLast4;
+		$substitutionarray['__SUPPLIER_BANK_MASKED__'] = $supplierBankMasked;
+		$substitutionarray['__SUPPLIER_BANK_LAST4_TEXT__'] = $supplierBankText;
+	}
+
 	// Note: The lazyload variables are replaced only during the call by make_substitutions, and only if necessary
 
 	return $substitutionarray;
