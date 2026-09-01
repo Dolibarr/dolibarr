@@ -341,6 +341,7 @@ NewContactAddress=New Contact/Address
 MyContacts=My contacts
 Capital=Capital
 CapitalOf=Capital of %s
+CapitalCurrency=Capital currency
 EditCompany=Edit company
 ThisUserIsNot=This user is not a prospect, customer or vendor
 VATIntraCheck=Check
