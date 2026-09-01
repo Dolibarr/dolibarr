@@ -3211,7 +3211,7 @@ function dol_now($mode = 'gmt')
 	}
 
 	if ($mode == 'gmt') {
-		$ret = time(); // Time for now at greenwich.
+		$ret = time(); // Time for now at greenwich.  @phan-suppress-current-line DolibarrForbiddenFunctionPlugin
 	} elseif ($mode == 'tzserver') {		// Time for now with PHP server timezone added
 		require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 		$tzsecond = getServerTimeZoneInt('now'); // Contains tz+dayling saving time
