@@ -37,7 +37,7 @@ if (empty($conf) || !is_object($conf)) {
 @phan-var-force CommonObjectLine|CommonInvoiceLine|CommonOrderLine|ExpeditionLigne|PropaleLigne $line
 ';
 
-print '<tr data-id="'.$this->tpl['id'].'" class="'.(empty($this->tpl['strike']) ? '' : ' strikefordisabled').'" style="background:#'.$this->getSubtotalColors($line->qty).'">';
+print '<tr data-id="'.$this->tpl['id'].'" class="'.(empty($this->tpl['strike']) ? '' : ' strikefordisabled').'" style="background:#'.$this->getSubtotalColors($line->qty).'; color: '.$this->getSubtotalCssTextColor($line->qty).'">';
 print '<td class="linecolref">'.$this->tpl['description'].'</td>';
 print '<td class="linecoldescription"></td>';
 print '<td class="linecolvat right"></td>';
