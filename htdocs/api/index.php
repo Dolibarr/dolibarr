@@ -133,8 +133,16 @@ $dolibarr_allow_unsecured_select_in_extrafields_filter = 0;
 
 
 $url = $_SERVER['PHP_SELF'];
-if (preg_match('/api\/index\.php$/', $url)) {	// sometimes $_SERVER['PHP_SELF'] is 'api\/index\.php' instead of 'api\/index\.php/explorer.php' or 'api\/index\.php/method'
-	$url = $_SERVER['PHP_SELF'].(empty($_SERVER['PATH_INFO']) ? $_SERVER['ORIG_PATH_INFO'] : $_SERVER['PATH_INFO']);
+// so API explorer works with FrankenPHP
+if (preg_match('/api\/index\.php$/', $url)) {
+	$uri = $_SERVER['REQUEST_URI'];
+	$uri = explode('?', $uri)[0];
+	if (preg_match('#^/api/index\.php(.*)$#', $uri, $matches)) {
+		$path_info = $matches[1];
+	} else {
+		$path_info = $_SERVER['PATH_INFO'] ?? ($_SERVER['ORIG_PATH_INFO'] ?? '');
+	}
+	$url = $_SERVER['PHP_SELF'] . $path_info;
 }
 // Fix for some NGINX setups (this should not be required even with NGINX, however setup of NGINX are often mysterious and this may help is such cases)
 if (getDolGlobalString('MAIN_NGINX_FIX')) {
