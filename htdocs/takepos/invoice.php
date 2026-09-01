@@ -989,8 +989,6 @@ if (empty($reshook)) {
 		}
 
 		if (count($invoice->lines) == 0) {
-			$invoice->delete($user);
-
 			if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 				header("Location: ".DOL_URL_ROOT."/takepos/public/auto_order.php");
 			} else {
