@@ -246,6 +246,20 @@ if (!class_exists('ZipArchive')) {
 	$extensionok[] = 'ZIP';
 }
 
+// Check if DOM is supported (used by dol_htmlwithnojs/DOMDocument, login.tpl.php fatals otherwise)
+if (!class_exists('DOMDocument')) {
+	$extensionko[] = 'DOM';
+} else {
+	$extensionok[] = 'DOM';
+}
+
+// Check if Ctype is supported (used by several html sanitizers; missing it surfaces as white pages too)
+if (!function_exists('ctype_alpha')) {
+	$extensionko[] = 'Ctype';
+} else {
+	$extensionok[] = 'Ctype';
+}
+
 if (!empty($extensionok)) {
 	//print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle pictofixedwidth"> ';
 	print img_picto('', 'tick', 'class="pictofixedwidth"');
