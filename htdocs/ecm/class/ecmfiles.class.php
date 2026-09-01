@@ -1040,6 +1040,10 @@ class EcmFiles extends CommonObject
 		}
 
 		if ($option) {
+			// $this->filepath is relative to DOL_DATA_ROOT, so its leading numeric part, when present, is the
+			// entity the file is physically stored into. It may differ from $this->entity, which is the entity
+			// of the session when the file was indexed (case of a thirdparty shared between entities).
+			$entityoffile = (preg_match('/^(\d+)\//', $this->filepath, $reg) ? (int) $reg[1] : 1);
 			if ($option == 'facture_fournisseur') {
 				$tmppath = preg_replace('/^(\d+\/)?fournisseur\/facture\//', '', $this->filepath);
 			} elseif ($option == 'commande_fournisseur') {
@@ -1049,15 +1053,10 @@ class EcmFiles extends CommonObject
 			} elseif ($option == 'remisecheque') {	// Remove part "tax/vat/"
 				$tmppath = preg_replace('/^bank\/checkdeposits\//', '', $this->filepath);
 			} else {
-				if ((int) $this->entity > 1) {
-					// Remove the part "entityid/commande/" into "entityid/commande/REFXXX" to get only the ref
-					$tmppath = preg_replace('/^\d+\/[^\/]+\//', '', $this->filepath);
-				} else {
-					// Remove the part "commande/" into "commande/REFXXX" to get only the ref
-					$tmppath = preg_replace('/^[^\/]+\//', '', $this->filepath);
-				}
+				// Remove the part "[entityid/]commande/" into "[entityid/]commande/REFXXX" to get only the ref
+				$tmppath = preg_replace('/^(\d+\/)?[^\/]+\//', '', $this->filepath);
 			}
-			$url = DOL_URL_ROOT.'/document.php?modulepart='.urlencode($option).'&file='.urlencode($tmppath.'/'.$this->filename).'&entity='.((int) $this->entity);
+			$url = DOL_URL_ROOT.'/document.php?modulepart='.urlencode($option).'&file='.urlencode($tmppath.'/'.$this->filename).'&entity='.$entityoffile;
 		} else {
 			$url = DOL_URL_ROOT.'/ecm/file_card.php?id='.$this->id;
 		}
