@@ -31,6 +31,7 @@ global $conf,$user,$langs,$db;
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/projet/class/project.class.php';
 require_once dirname(__FILE__).'/../../htdocs/projet/class/task.class.php';
+require_once dirname(__FILE__).'/../../htdocs/core/lib/project.lib.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
@@ -196,6 +197,36 @@ class ProjectTest extends CommonClassTest
 
 		$this->assertLessThan($result, 0);
 		print __METHOD__." id=".$id." result=".$result."\n";
+
+		return $localobject;
+	}
+
+	/**
+	 * testTaskPrepareHeadHasSubtasksTab
+	 *
+	 * @param	Task	$localobject	Task
+	 * @return	Task
+	 *
+	 * @depends testTaskFetch
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testTaskPrepareHeadHasSubtasksTab($localobject)
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$head = task_prepare_head($localobject);
+
+		$tabcodes = array();
+		foreach ($head as $entry) {
+			$tabcodes[] = $entry[2];
+		}
+
+		print __METHOD__." id=".$localobject->id." tabs=".implode(',', $tabcodes)."\n";
+		$this->assertTrue(in_array('task_subtasks', $tabcodes, true), 'task_prepare_head must expose a "task_subtasks" tab so users can see subtasks of a parent task (#38186).');
 
 		return $localobject;
 	}

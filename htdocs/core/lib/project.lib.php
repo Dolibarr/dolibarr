@@ -477,6 +477,15 @@ function task_prepare_head($object)
 	$head[$h][2] = 'task_time';
 	$h++;
 
+	$nbSubtasks = (int) $object->hasChildren();
+	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/subtasks.php?id='.urlencode((string) $object->id).(GETPOST('withproject') ? '&withproject=1' : '');
+	$head[$h][1] = $langs->trans("Subtasks");
+	if ($nbSubtasks > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbSubtasks.'</span>';
+	}
+	$head[$h][2] = 'task_subtasks';
+	$h++;
+
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
