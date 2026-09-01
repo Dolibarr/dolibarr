@@ -4336,7 +4336,7 @@ abstract class CommonObject
 				'@phan-var-force Facture $this';
 				include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';  // Note: possibly useless as $this is normally already Facture, so the class file should be loaded
 				if ($this->type != Facture::TYPE_CREDIT_NOTE) {	// @phpstan-ignore-line
-					if (getDolGlobalInt('INVOICE_USE_SITUATION') != 2) {
+					if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
 						$prev_sits = $this->get_prev_sits();
 
 						foreach ($prev_sits as $sit) {                // $sit is an object Facture loaded with a fetch.
