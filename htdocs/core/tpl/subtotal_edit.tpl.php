@@ -166,7 +166,8 @@ if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 			if ($line_type == 'title') {
 				$predefinedtitles = $this->getPredefinedTitles();  // @phan-suppress-current-line PhanUndeclaredMethod
 				if (!empty($predefinedtitles)) {
-					print $form->selectarray('line_predefinedtitle', $predefinedtitles, '', 1, 0, 0, 'onchange="var v = jQuery(this).val(); if (v && v != \'-1\') { jQuery(\'#line_desc\').val(v); }"', 0, 0, 0, '', 'minwidth100');
+					print '<script>var subtotalEditPredefinedTitlesMap = ' . json_encode($predefinedtitles, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) . ';</script>';
+					print $form->selectarray('line_predefinedtitle', $predefinedtitles, '', 1, 0, 0, 'onchange="var v = subtotalEditPredefinedTitlesMap[jQuery(this).val()]; if (v !== undefined) { jQuery(\'#line_desc\').val(v); }"', 0, 0, 0, '', 'minwidth100');
 				}
 			}
 		}
