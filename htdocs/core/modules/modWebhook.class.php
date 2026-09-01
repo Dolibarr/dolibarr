@@ -154,7 +154,9 @@ class modWebhook extends DolibarrModules
 		// Example: $this->const=array(1 => array('WEBHOOK_MYNEWCONST1', 'chaine', 'myvalue', 'This is a constant to add', 1),
 		//                             2 => array('WEBHOOK_MYNEWCONST2', 'chaine', 'myvalue', 'This is another constant to add', 0, 'current', 1)
 		// );
-		$this->const = array();
+		$this->const = array(
+			1 => array('WEBHOOK_ALLOW_LOCALURL', 'yesno', '0', 'Allow webhooks targeting URLs hosted on the same server (SSRF protection)', 1, 'current', 1)
+		);
 
 		// Some keys to add into the overwriting translation tables
 		/*$this->overwrite_translation = array(
