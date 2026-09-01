@@ -1,14 +1,15 @@
 <?php
-/* Copyright (C) 2010-2012	Regis Houssin		        <regis.houssin@inodbox.com>
+/* Copyright (C) 2010-2012	Regis Houssin		    <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2012	Laurent Destailleur	    <eldy@users.sourceforge.net>
- * Copyright (C) 2012		    Christophe Battarel	    <christophe.battarel@altairis.fr>
+ * Copyright (C) 2012		    Christophe Battarel	<christophe.battarel@altairis.fr>
  * Copyright (C) 2012       Cédric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2012-2014  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2013		    Florian Henry		        <florian.henry@open-concept.pro>
+ * Copyright (C) 2013		    Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		    Vincent Maury		        <vmaury@timgroup.fr>
- * Copyright (C) 2024		    MDW						          <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		    Vincent Maury		<vmaury@timgroup.fr>
+ * Copyright (C) 2024		    MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		    Nick Fragoulis
+ * Copyright (C) 2026		Pierre Ardoin			<developpeur@lesmetiersdubatiment.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -151,6 +152,19 @@ if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 	$coldisplay++;
 	print '<td class="left">';
 	print $form->selectUnits(GETPOSTISSET('units') ? GETPOST('units') : $line->fk_unit, "units", 0, $unit_type);
+	print '</td>';
+}
+
+if (isModEnabled('stock')) {
+	$coldisplay++;
+	print '<td class="nobottom linecolwarehousesource left">';
+	if (!empty($line->fk_product)) {
+		$stockMin = false;
+		if (getDolGlobalInt('STOCK_DISALLOW_NEGATIVE_TRANSFER')) {
+			$stockMin = 0;
+		}
+		print $formproduct->selectWarehouses(!empty($line->entrepot_id) ? $line->entrepot_id : 'ifone', 'entrepot_id', '', 1, 0, $line->fk_product, '', 1, 0, array(), 'minwidth200', array(), 1, $stockMin, 'stock DESC, e.ref');
+	}
 	print '</td>';
 }
 
