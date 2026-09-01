@@ -66,6 +66,16 @@ With
 
 
 
+PHP RESTLER:
+------------
+* In htdocs/includes/restler/framework/Luracast/Restler/Data/Validator.php
+
+Add a guard to skip type-specific prefilters when the validation type is an array
+(PHPDoc union types such as datetime|string or string|float). This avoids a fatal
+"Illegal offset type" error and lets the existing union-type validation logic handle it.
+
+
+
 PHP SABRE:
 ----------
 rm -fr ./htdocs/includes/sabre/sabre/bin;
