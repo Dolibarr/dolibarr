@@ -1265,6 +1265,7 @@ class Task extends CommonObjectLine
 		// Add where from extra fields
 		$extrafieldsobjectkey = 'projet_task';
 		$extrafieldsobjectprefix = 'efpt.';
+		$search_options_pattern = 'search_(task_)?options_'; // Callers use keys 'search_options_xxx' (tasks.php) or 'search_task_options_xxx' (perweek.php)
 		global $db, $conf; // needed for extrafields_list_search_sql.tpl
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 
