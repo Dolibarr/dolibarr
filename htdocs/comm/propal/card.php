@@ -2390,7 +2390,6 @@ if ($action == 'create') {
 
 		print '<td class="titlefieldcreate fieldrequired">' . $langs->trans('Customer') . '</td>';
 		$shipping_method_id = 0;
-		$warehouse_id = 0;
 
 		if ($socid > 0) {
 			print '<td class="valuefieldcreate">';
