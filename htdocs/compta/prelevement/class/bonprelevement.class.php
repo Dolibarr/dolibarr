@@ -345,8 +345,8 @@ class BonPrelevement extends CommonObject
 	 * @param	string	$code_guichet 	code of bank's office
 	 * @param	string	$number bank 	account number
 	 * @param	string	$number_key 	number key of account number
-	 * @param	string	$type			'debit-order' or 'bank-transfer'
-	 * @param   string  $sourcetype     'salary' for salary, '' for invoices
+	 * @param	'debit-order'|'bank-transfer'	$type	'debit-order' or 'bank-transfer'
+	 * @param   'salary'|''	$sourcetype	'salary' for salary, '' for invoices
 	 * @param	string	$bic			BIC used
 	 * @param	string	$iban			IBAN used
 	 * @param	string	$rum			RUM
@@ -414,7 +414,7 @@ class BonPrelevement extends CommonObject
 	 *	@param	string	$code_guichet 	code of bank's office (Deprecated, not used)
 	 *	@param	string	$number 		bank account number (Deprecated, not used)
 	 *	@param  string	$number_key 	number key of account number (Deprecated, not used)
-	 *  @param  string  $sourcetype     'salary' for salary, '' for invoices
+	 *  @param  'salary'|''	$sourcetype	'salary' for salary, '' for invoices
 	 *  @param	string	$bic			BIC used
 	 *  @param	string	$iban			IBAN used
 	 *  @param	string	$rum			RUM used
@@ -935,9 +935,9 @@ class BonPrelevement extends CommonObject
 	/**
 	 *	Returns amount waiting for direct debit payment or credit transfer payment
 	 *
-	 *	@param	string	$mode		'direct-debit' or 'bank-transfer'
-	 *  @param  string  $type      	for type=salary
-	 *	@return	float 	 			Return integer <O if KO, Total amount
+	 *  @param	'direct-debit'|'bank-transfer'	$mode	'direct-debit' or 'bank-transfer'
+	 *  @param  'salary'|''						$type	for type=salary
+	 *	@return	float				 			Return integer <O if KO, Total amount
 	 */
 	public function SommeAPrelever($mode = 'direct-debit', $type = '')
 	{
@@ -1085,13 +1085,13 @@ class BonPrelevement extends CommonObject
 	 *  @param	string	$format				FRST, RCUR or ALL
 	 *  @param  int  	$executiondate		Date to execute the transfer
 	 *  @param	int	    $notrigger			Disable triggers
-	 *  @param	string	$type				'direct-debit' or 'bank-transfer'
+	 *  @param	'direct-debit'|'bank-transfer'	$type	'direct-debit' or 'bank-transfer'
 	 * 	@param	array<int>|int	$dids		ID(s) of existing payment request(s).
 	 * 										- If $dids is 0, we use all existing requests.
 	 * 										- If $dids is an int > 0, we use the existing payment request.
 	 * 										- If $dids is an array, the created BonsPrelevement will include these payment requests.
 	 *  @param	int		$fk_bank_account	Bank account ID the receipt is generated for. Will use the ID into the setup of module Direct Debit or Credit Transfer if 0.
-	 *  @param	string	$sourcetype			Source is 'invoice' or 'supplier_invoice' or 'salary'
+	 *  @param	'invoice'|'supplier_invoice'|'salary'	$sourcetype	Source is 'invoice' or 'supplier_invoice' or 'salary'
 	 *	@return	int							Return integer <0 if KO, No of invoice included into file if OK
 	 */
 	public function create($banque = '', $agence = '', $mode = 'real', $format = 'ALL', $executiondate = 0, $notrigger = 0, $type = 'direct-debit', $dids = 0, $fk_bank_account = 0, $sourcetype = 'invoice')
@@ -1882,7 +1882,7 @@ class BonPrelevement extends CommonObject
 	 *
 	 * @param   string  $format				FRST, RCUR or ALL
 	 * @param 	int 	$executiondate		Timestamp date to execute transfer
-	 * @param	string	$type				'direct-debit' or 'bank-transfer'
+	 * @param	'direct-debit'|'bank-transfer'	$type	'direct-debit' or 'bank-transfer'
 	 * @param   int     $fk_bank_account	Bank account ID the receipt is generated for. Will use the ID into the setup of module Direct Debit or Credit Transfer if 0.
 	 * @param   int  	$forsalary          If the SEPA is to pay salaries
 	 * @param   int  	$thirdpartyBANId	If defined, will use this ID to get the RIB. Otherwise, the BAN of request will be used. If not defined, the first default BAN of thirdparty will be taken.
@@ -2364,7 +2364,7 @@ class BonPrelevement extends CommonObject
 	 *	@param	string	$ref			ref of invoice
 	 *	@param	int		$facid			id of invoice
 	 *  @param	string	$rib_dom		bank address
-	 *  @param	string	$type			'direct-debit' or 'bank-transfer'
+	 *  @param	'direct-debit'|'bank-transfer'	$type	'direct-debit' or 'bank-transfer'
 	 *	@return	void
 	 *  @see EnregDestinataireSEPA()
 	 */
@@ -2447,7 +2447,7 @@ class BonPrelevement extends CommonObject
 	 *	@param	int 		$row_datec			rib.datec,
 	 *	@param	string		$row_drum			rib.rowid used to generate rum
 	 * 	@param	string		$row_rum			rib.rum Rum defined on company bank account
-	 *  @param	string		$type				'direct-debit' or 'bank-transfer'
+	 *  @param	'direct-debit'|'bank-transfer'	$type	'direct-debit' or 'bank-transfer'
 	 *  @param  string      $row_comment		A free text string for the Unstructured data field
 	 *	@return	string							Return string with SEPA part DrctDbtTxInf
 	 *  @see EnregDestinataire()
@@ -2640,7 +2640,7 @@ class BonPrelevement extends CommonObject
 	 *	Write sender of request (me).
 	 *  TODO This method seems not used anymore. What is it for ?
 	 *
-	 *  @param	string		$type				'direct-debit' or 'bank-transfer'
+	 *  @param	'direct-debit'|'bank-transfer'	$type	'direct-debit' or 'bank-transfer'
 	 *	@return	void
 	 *  @see EnregEmetteurSEPA()
 	 */
@@ -2717,7 +2717,7 @@ class BonPrelevement extends CommonObject
 	 *	@param	float	$total				Total
 	 *	@param	string	$CrLf				End of line character
 	 *  @param	string	$format				FRST or RCUR or ALL
-	 *  @param	string	$type				'direct-debit' or 'bank-transfer'
+	 *  @param	'direct-debit'|'bank-transfer'	$type	'direct-debit' or 'bank-transfer'
 	 *  @param	int		$fk_bank_account	Bank account ID the receipt is generated for. Will use the ID into the setup of module Direct Debit or Credit Transfer if 0.
 	 *	@return	string						String with SEPA Sender
 	 */
