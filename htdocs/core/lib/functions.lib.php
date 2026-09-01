@@ -3960,7 +3960,11 @@ function dol_print_phone($phone, $countrycode = '', $contactid = 0, $socid = 0, 
 		$rep .= $newphoneastart;
 		$rep .= ($withpicto ? img_picto($titlealt, $picto) : '');
 		if ($separ != 'hidenum') {
-			$rep .= ($withpicto ? ' ' : '') . $newphone;
+			if (getDolGlobalString('MAIN_PHONE_COPY_ON_CLICK')) {
+			    $rep .= ($withpicto ? ' ' : '').showValueWithClipboardCPButton($phone,1,$newphone);
+			} else {
+		    	$rep .= ($withpicto ? ' ' : '').$newphone;
+			}
 		}
 		$rep .= $newphoneaend;
 
