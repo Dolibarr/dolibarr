@@ -4084,7 +4084,7 @@ if ($action == 'create') {
 	}
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	print '<input name="ref" type="hidden" value="provisoire">';
-	print '<input name="ref_client" type="hidden" value="'.$ref_client.'">';
+	//print '<input name="ref_client" type="hidden" value="'.$ref_client.'">';
 	print '<input name="force_cond_reglement_id" type="hidden" value="0">';
 	print '<input name="force_mode_reglement_id" type="hidden" value="0">';
 	print '<input name="force_fk_account" type="hidden" value="0">';
@@ -4111,13 +4111,20 @@ if ($action == 'create') {
 		}
 
 		// Ref
-		/*
 		print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans('Ref').'</td>';
 		print '<td colspan="2">';
 		print $langs->trans("Draft");
 		print '</td>';
 		print '</tr>'."\n";
-		*/
+
+		// Customer Ref
+		print '<tr><td>' . $langs->trans('RefCustomer') . '</td><td>';
+		if (!empty($origin) && !empty($originid)) {
+			print '<input type="text" name="ref_client" value="' . $ref_client . '"></td>';
+		} else {
+			print '<input type="text" name="ref_client" value="' . GETPOST('ref_client') . '"></td>';
+		}
+		print '</tr>'."\n";
 
 		// Thirdparty
 		if ($soc->id > 0 && (!GETPOSTINT('fac_rec') || !empty($invoice_predefined->frequency))) {
