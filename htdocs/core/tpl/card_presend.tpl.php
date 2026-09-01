@@ -5,6 +5,7 @@
  * Copyright (C) 2023       Benjamin GREMBI         <benjamin@oarces.com>
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Lenin Rivas				<lenin.rivas777@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -448,13 +449,45 @@ if ($action == 'presend') {
 	// Array of substitutions
 	$formmail->substit = $substitutionarray;
 
+	$fileinit = array();
+	$nbmostrecentfiles = 0;
+	if ($object->element == 'facture' && getDolGlobalInt('MAIN_FACTURE_EMAIL_ATTACH_MOST_RECENT_FILES') > 0) {
+		$nbmostrecentfiles = getDolGlobalInt('MAIN_FACTURE_EMAIL_ATTACH_MOST_RECENT_FILES');
+	} elseif (getDolGlobalInt('MAIN_EMAIL_ATTACH_MOST_RECENT_FILES') > 0) {
+		$nbmostrecentfiles = getDolGlobalInt('MAIN_EMAIL_ATTACH_MOST_RECENT_FILES');
+	}
+
+	if ($nbmostrecentfiles > 0) {
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+		if ($object->element == 'invoice_supplier') {
+			$dir = $diroutput.'/'.get_exdir($object->id, 2, 0, 0, $object, $object->element).$ref;
+		} else {
+			$dir = $diroutput.'/'.$ref;
+		}
+		$recentfiles = dol_most_recent_file($dir, '', array('(\.meta|_preview.*\.png)$', '^\.'), 0, 0, $nbmostrecentfiles);
+		if (is_array($recentfiles) && count($recentfiles) > 0) {
+			if (isset($recentfiles['fullname'])) {
+				$recentfiles = array($recentfiles);
+			}
+			foreach ($recentfiles as $fileentry) {
+				if (!empty($fileentry['fullname']) && is_readable($fileentry['fullname'])) {
+					$fileinit[] = $fileentry['fullname'];
+				}
+			}
+		}
+	}
+
+	if (empty($fileinit) && !empty($file)) {
+		$fileinit = array($file);
+	}
+
 	// Array of other parameters
 	$formmail->param['action'] = 'send';
 	$formmail->param['models'] = $modelmail;
 	$formmail->param['models_id'] = GETPOSTINT('modelmailselected');
 	$formmail->param['id'] = $object->id;
 	$formmail->param['returnurl'] = $_SERVER["PHP_SELF"].'?id='.$object->id;
-	$formmail->param['fileinit'] = array($file);
+	$formmail->param['fileinit'] = $fileinit;
 	$formmail->param['object_entity'] = $object->entity;
 
 	// Show form
