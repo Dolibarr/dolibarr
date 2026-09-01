@@ -130,4 +130,22 @@ ALTER TABLE llx_facture ADD INDEX idx_facture_situation_cycle_ref (situation_cyc
 
 
 
+-- Table to persist the data an online payment return page needs, server side, instead of relying
+-- on the PHP session, which is lost when the browser drops the cookie on the cross site return.
+create table llx_onlinepayment_session
+(
+  rowid             integer AUTO_INCREMENT PRIMARY KEY,
+  ext_payment_site  varchar(64) NOT NULL,
+  ext_payment_id    varchar(128),
+  data              text,
+  date_creation     datetime NOT NULL,
+  tms               timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  entity            integer DEFAULT 1 NOT NULL
+)ENGINE=innodb;
+
+ALTER TABLE llx_onlinepayment_session ADD INDEX idx_onlinepayment_session_ext_payment_id (ext_payment_id);
+ALTER TABLE llx_onlinepayment_session ADD INDEX idx_onlinepayment_session_date_creation (date_creation);
+ALTER TABLE llx_onlinepayment_session ADD INDEX idx_onlinepayment_session_entity (entity);
+
+
 -- end of migration - nothing after this line
