@@ -1284,7 +1284,20 @@ if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUS
 				}
 				foreach ($extralabels as $key => $value) {
 					if (!empty($extrafields->attributes["product_price"]['list'][$key]) && $extrafields->attributes["product_price"]['list'][$key] != 3) {
-						print '<td align="right">'.$extrafields->showOutputField($key, $genericObject->array_options['options_' . $key], '', 'product_price')."</td>";
+						$extravalue = $genericObject->array_options['options_' . $key];
+						// If field is a computed field, we make computation to get value
+						if (!empty($extrafields->attributes["product_price"]['computed'][$key])) {
+							$genericObject->price = $object->multiprices[$i];
+							$genericObject->price_ttc = $object->multiprices_ttc[$i];
+							$genericObject->price_base_type = $object->multiprices_base_type[$i];
+							$genericObject->price_min = $object->multiprices_min[$i];
+							$genericObject->price_min_ttc = $object->multiprices_min_ttc[$i];
+							$genericObject->tva_tx = $object->multiprices_tva_tx[$i];
+
+							$objectoffield = $genericObject; // For compatibility with the computed formula. $objectoffield is exported by dol_eval().
+							$extravalue = dol_eval((string) $extrafields->attributes["product_price"]['computed'][$key], 1, 1, '2');
+						}
+						print '<td align="right">'.$extrafields->showOutputField($key, $extravalue, '', 'product_price')."</td>";
 					}
 				}
 				$db->free($resql1);
@@ -2645,17 +2658,19 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 					$sql .= " WHERE fk_object = ".((int) $line->id);
 					$resql = $db->query($sql);
 					if ($resql) {
-						if ($db->num_rows($resql) != 1) {
-							foreach ($extralabels as $key => $value) {
-								if (!empty($extrafields->attributes["product_customer_price"]['list'][$key]) && $extrafields->attributes["product_customer_price"]['list'][$key] != 3) {
-									print "<td></td>";
-								}
-							}
-						} else {
-							$obj = $db->fetch_object($resql);
-							foreach ($extralabels as $key => $value) {
-								if (!empty($extrafields->attributes["product_customer_price"]['list'][$key]) && $extrafields->attributes["product_customer_price"]['list'][$key] != 3) {
+						// Row may not exist yet (e.g. if the only extrafield configured is a computed one, no row is ever inserted)
+						$obj = ($db->num_rows($resql) == 1) ? $db->fetch_object($resql) : null;
+						foreach ($extralabels as $key => $value) {
+							if (!empty($extrafields->attributes["product_customer_price"]['list'][$key]) && $extrafields->attributes["product_customer_price"]['list'][$key] != 3) {
+								// If field is a computed field, we make computation to get value, whether or not a stored row exists
+								if (!empty($extrafields->attributes["product_customer_price"]['computed'][$key])) {
+									$objectoffield = $line; // For compatibility with the computed formula. $objectoffield is exported by dol_eval().
+									$extravalue = dol_eval((string) $extrafields->attributes["product_customer_price"]['computed'][$key], 1, 1, '2');
+									print '<td align="right">'.$extrafields->showOutputField($key, $extravalue, '', 'product_customer_price')."</td>";
+								} elseif ($obj) {
 									print '<td align="right">'.$extrafields->showOutputField($key, $obj->{$key}, '', 'product_customer_price')."</td>";
+								} else {
+									print "<td></td>";
 								}
 							}
 						}
