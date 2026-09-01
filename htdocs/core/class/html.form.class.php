@@ -1565,6 +1565,88 @@ class Form
 		return $htmltoenteralink;
 	}
 
+	/**
+	 *  Generate HTML table rows for ticket linking.
+	 *
+	 *  Uses getNomUrl() for clickable links to ticket, company, and project records.
+	 *
+	 * @param 	CommonObject 			$object 			The source object we are linking from (e.g., propal, order)
+	 * @param 	string 					$key 				The element type key ('ticket')
+	 * @param 	array{enabled:bool,perms:int,label:string,sql:string,linkname?:string} $possiblelink Array containing link configuration
+	 * @param 	int 					$num 				Number of records returned from the SQL query
+	 * @param 	mysqli_result|resource|true	$resqllist		Database result resource from the SQL query
+	 * @return  string 									HTML table rows for the ticket link selection table
+	 */
+	private function makeAddLinkToTicket($object, $key, $possiblelink, $num, $resqllist)
+	{
+		dol_syslog(__METHOD__, LOG_DEBUG);
+		global $langs, $form;
+		require_once DOL_DOCUMENT_ROOT . '/ticket/class/ticket.class.php';
+		require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
+		require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+		$ticketstatic = new Ticket($this->db);
+		$companystatic = new Societe($this->db);
+		$projectstatic = new Project($this->db);
+		if (empty($form)) {
+			$form = new Form($this->db);
+		}
+		$htmltoenteralink = '';
+		$i = 0;
+
+		// headers
+		$htmltoenteralink .= '<tr class="liste_titre">';
+		$htmltoenteralink .= '<td class="nowrap"></td>';
+		$htmltoenteralink .= '<td>' . $langs->trans("Ref") . '</td>';
+		$htmltoenteralink .= '<td>' . $langs->trans("Subject") . '</td>';
+		$htmltoenteralink .= '<td>' . $langs->trans("Company") . '</td>';
+		$htmltoenteralink .= '<td>' . $langs->trans("Project") . '</td>';
+		$htmltoenteralink .= '<td>' . $langs->trans("DateCreation") . '</td>';
+		$htmltoenteralink .= '</tr>';
+
+		// rows with data
+		while ($i < $num) {
+			$objp = $this->db->fetch_object($resqllist);
+			$alreadylinked = false;
+			if (!empty($object->linkedObjectsIds[$possiblelink['linkname'] ?? $key])) {
+				if (in_array($objp->rowid, array_values($object->linkedObjectsIds[$possiblelink['linkname'] ?? $key]))) {
+					$alreadylinked = true;
+				}
+			}
+			$htmltoenteralink .= '<tr class="oddeven">';
+			$htmltoenteralink .= '<td>';
+			if ($alreadylinked) {
+				$htmltoenteralink .= img_picto('', 'link');
+			} else {
+				$htmltoenteralink .= '<input type="checkbox" name="idtolinkto[' . $key . '_' . $objp->rowid . ']" id="' . $key . '_' . $objp->rowid . '" value="' . $objp->rowid . '">';
+			}
+			$htmltoenteralink .= '</td>';
+			$fetchticket = $ticketstatic->fetch($objp->rowid);
+			if ($fetchticket) {
+				$htmltoenteralink .= '<td>' . $ticketstatic->getNomUrl(0). '</td>';
+			} else {
+				$htmltoenteralink .= '<td><label for="' . $key . '_' . $objp->rowid . '">' . $objp->ref . '</label></td>';
+			}
+			$htmltoenteralink .= '<td>' . $objp->subject . '</td>';
+			$fetchcompany = $companystatic->fetch($objp->socid);
+			if ($fetchcompany) {
+				$htmltoenteralink .= '<td>' . $companystatic->getNomUrl(0). '</td>';
+			} else {
+				$htmltoenteralink .= '<td>' . $objp->name . '</td>';
+			}
+			$fetchcproject = $projectstatic->fetch($objp->fk_project);
+			if ($fetchcproject) {
+				$htmltoenteralink .= '<td>' . $projectstatic->getNomUrl(0). '</td>';
+			} else {
+				$htmltoenteralink .= '<td>' . $objp->fk_project . '</td>';
+			}
+			$htmltoenteralink .= '<td>' . $objp->dateCreation . '</td>';
+			$htmltoenteralink .= '</tr>';
+			$i++;
+		}
+
+		return $htmltoenteralink;
+	}
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 
 	/**
@@ -11252,7 +11334,7 @@ class Form
 					'enabled' => isModEnabled('ticket'),
 					'perms' => 1,
 					'label' => 'LinkToTicket',
-					'sql' => "SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.track_id, '0' as total_ht FROM " . $this->db->prefix() . "societe as s, " . $this->db->prefix() . "ticket as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND t.entity IN (' . getEntity('ticket') . ')'.($dontIncludeCompletedItems ? ' AND t.fk_statut < 8' : ''),
+					'sql' => "SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.track_id, t.fk_project as fk_project, t.subject as subject, t.datec as dateCreation, '0' as total_ht FROM " . $this->db->prefix() . "societe as s, " . $this->db->prefix() . "ticket as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND t.entity IN (' . getEntity('ticket') . ')'.($dontIncludeCompletedItems ? ' AND t.fk_statut < 8' : ''),
 				),
 				'mo' => array(
 					'enabled' => isModEnabled('mrp'),
@@ -11355,6 +11437,11 @@ class Form
 							case 'conferenceorboothattendee':
 								// Custom logic for linking to attendees
 								$htmltoenteralink .= $this->makeAddLinkToAttendee($object, $key, $possiblelink, $num, $resqllist);
+								break;
+
+							case 'ticket':
+								// Custom logic for linking to tickets
+								$htmltoenteralink .= $this->makeAddLinkToTicket($object, $key, $possiblelink, $num, $resqllist);
 								break;
 
 							default:
