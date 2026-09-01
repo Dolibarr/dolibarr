@@ -304,6 +304,53 @@ class MailingTargets // This can't be abstract as it is used for some method
 		return $j;
 	}
 
+	/**
+	 * Delete a list of targets from the database
+	 *
+	 * @param	int		$mailing_id    Id of emailing
+	 * @param	array<array{lastname:string,firstname:string,email:string,source_type:string}>		$cibles		Array with targets
+	 * @return  int      			   Return integer < 0 if error, nb added if OK
+	 */
+	public function deleteTargetsFromDatabase($mailing_id, $cibles)
+	{
+		global $conf;
+
+		$this->db->begin();
+
+		// Insert emailing targets from array into database
+		$j = 0;
+		$num = count($cibles);
+		foreach ($cibles as $targetarray) {
+			if (!empty($targetarray['email'])) {
+				$sql = "DELETE FROM ".$this->db->prefix()."mailing_cibles WHERE";
+				$sql .= " fk_mailing = ".((int) $mailing_id);
+				$sql .= " AND ";
+				$sql .= " email = '".((string) $targetarray['email'])."'";
+				$sql .= " AND ";
+				$sql .= " firstname = '".((string) $targetarray['firstname'])."'";
+				$sql .= " AND ";
+				$sql .= " lastname = '".((string) $targetarray['lastname'])."'";
+				$sql .= " AND ";
+				$sql .= " source_type = '".((string) $targetarray['source_type'])."'";
+
+				dol_syslog(__METHOD__, LOG_DEBUG);
+				$result = $this->db->query($sql);
+				if ($result) {
+					$j++;
+				} else {
+					dol_syslog($this->db->error().' : '.$targetarray['email']);
+					$this->error = $this->db->error().' : '.$targetarray['email'];
+					$this->db->rollback();
+					return -1;
+				}
+			}
+		}
+
+		$this->db->commit();
+
+		return $j;
+	}
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Deletes all recipients from the targets table
@@ -481,6 +528,22 @@ class MailingTargets // This can't be abstract as it is used for some method
 	 *  @return int                     Return integer < 0 on error, count of added when ok
 	 */
 	public function add_to_target($mailing_id)
+	{
+		// phpcs:enable
+		// Needs to be implemented in child class
+		$msg = get_class($this)."::".__FUNCTION__." not implemented";
+		dol_syslog($msg, LOG_ERR);
+		return -1;
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Delete recipients from the targets table
+	 *
+	 *  @param  int     $mailing_id     Id of emailing
+	 *  @return int                     Return integer < 0 on error, count of added when ok
+	 */
+	public function delete_from_target($mailing_id)
 	{
 		// phpcs:enable
 		// Needs to be implemented in child class
