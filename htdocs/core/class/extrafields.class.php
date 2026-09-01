@@ -2870,7 +2870,7 @@ class ExtraFields
 			$disabledcookiewrite = 1; // We keep status of group unchanged into the cookie
 		}
 
-		$out = '<'.$tagtype.' id="trextrafieldseparator'.$key.(!empty($object->id) ? '_'.$object->id : '').'" class="trextrafieldseparator trextrafieldseparator'.$key.(!empty($object->id) ? '_'.$object->id : '').'">';
+		$out = '<'.$tagtype.' id="trextrafieldseparator'.$key.'" class="trextrafieldseparator trextrafieldseparator'.$key.'">';
 		$out .= '<'.$tagtype_dyn.' '.(!empty($colspan) ? 'colspan="' . $colspan . '"' : '').'>';
 		if ($mode == 'create' || $mode == 'edit') {
 			$out .= '<br>';
