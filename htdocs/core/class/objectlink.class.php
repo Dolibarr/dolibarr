@@ -232,6 +232,7 @@ class ObjectLink extends CommonObject
 	 */
 	public function create($user, $fk_source, $sourcetype, $fk_target, $targettype, $relationtype = null, $notrigger = 0)
 	{
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		global $conf, $langs;
 		$error = 0;
 
@@ -280,8 +281,8 @@ class ObjectLink extends CommonObject
 		} else {
 			$sql .= " (fk_source, sourcetype, fk_target, targettype )";
 		}
-		$sql .= " VALUES (".((int) $this->fk_source).", '".$this->db->escape($sourcetype)."', ";
-		$sql .= ((int) $this->fk_target).", '".$this->db->escape($targettype)."'";
+		$sql .= " VALUES (".((int) $fk_source).", '".$this->db->escape($sourcetype)."', ";
+		$sql .= ((int) $fk_target).", '".$this->db->escape($targettype)."'";
 		if ($relationtype) {
 			$sql .= ", '".$this->db->escape($relationtype)."'";
 		}
@@ -310,9 +311,16 @@ class ObjectLink extends CommonObject
 	 */
 	private function _makeobject($objectid, $objecttype)
 	{
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		if ($objecttype == 'adherent') {
 			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 			$newobject = new Adherent($this->db);
+			$result = $newobject->fetch($objectid);
+			return $result;
+		}
+		if ($objecttype == 'conferenceorboothattendee') {
+			require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorboothattendee.class.php';
+			$newobject = new ConferenceOrBoothAttendee($this->db);
 			$result = $newobject->fetch($objectid);
 			return $result;
 		}

@@ -1457,16 +1457,17 @@ abstract class CommonObject
 	/**
 	 *    Copy contact from one element to current
 	 *
-	 *    @param    CommonObject    $objFrom    Source element
-	 *    @param    'internal'|'external'	$source	Nature of contact ('internal' or 'external')
+	 *    @param    CommonObject    		$objFrom    Source element
+	 *    @param    'internal'|'external'	$source		Nature of contact ('internal' or 'external')
+	 *    @param	int<0,1>				$notrigger	0=launch triggers after, 1=disable triggers
 	 *    @return   int                         >0 if OK, <0 if KO
 	 */
-	public function copy_linked_contact($objFrom, $source = 'internal')
+	public function copy_linked_contact($objFrom, $source = 'internal', $notrigger = 0)
 	{
 		// phpcs:enable
 		$contacts = $objFrom->liste_contact(-1, $source);
 		foreach ($contacts as $contact) {
-			if ($this->add_contact($contact['id'], $contact['fk_c_type_contact'], $contact['source']) < 0) {
+			if ($this->add_contact($contact['id'], $contact['fk_c_type_contact'], $contact['source'], $notrigger) < 0) {
 				return -1;
 			}
 		}
@@ -5211,6 +5212,39 @@ abstract class CommonObject
 		}
 	}
 
+	/**
+	 *	fetch object link Relationtype By Values, not id
+	 *
+	 *  @param		int		$fk_source		source id of object we link from
+	 *  @param		string	$sourcetype		type of the source object
+	 *  @param		int		$fk_target		target id of object we link to
+	 *  @param		string	$targettype 	type of the target object
+	 *	@return 	string|null			    Return integer <0 if KO, >0 if OK
+	 */
+	public function getRelationtypeByValues($fk_source, $sourcetype, $fk_target, $targettype)
+	{
+		$sql = "SELECT relationtype FROM";
+		$sql .= " ".MAIN_DB_PREFIX.'element_element';
+		$sql .= " WHERE fk_source=".((int) $fk_source);
+		$sql .= " AND sourcetype='".$this->db->escape($sourcetype)."'";
+		$sql .= " AND fk_target=".((int) $fk_target);
+		$sql .= " AND targettype='".$this->db->escape($targettype)."'";
+
+		dol_syslog(__METHOD__, LOG_DEBUG);
+		$result = $this->db->query($sql);
+		if ($result) {
+			$obj = $this->db->fetch_object($result);
+			if ($obj) {
+				return $obj->relationtype;
+			} else {
+				$this->error = $this->db->error();
+				return null;
+			}
+		} else {
+			$this->error = $this->db->error();
+			return null;
+		}
+	}
 
 	/**
 	 * 	Get special code of a line
@@ -11711,7 +11745,7 @@ abstract class CommonObject
 	 *	@param	User	$user			Object user that modify
 	 *  @param	int		$status			New status to set (often a constant like self::STATUS_XXX)
 	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *  @param  string  $triggercode    Trigger code to use
+	 *  @param  string  $triggercode    Trigger code to use, 'auto' will make it try to find the right triggercode to use based on the status to change to.
 	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 *  @see setStatut()
 	 */
@@ -11721,6 +11755,10 @@ abstract class CommonObject
 
 		$this->db->begin();
 
+		if ($triggercode == 'auto' && isset($this->list_possible_triggercode)) {
+			$triggercode = isset($this->list_possible_triggercode[$status]) ? $this->list_possible_triggercode[$status] : '';
+			dol_syslog(get_class($this).' change to status='.$status.' uses triggercode='.$triggercode, LOG_DEBUG);
+		}
 		$statusfield = 'status';
 		if (in_array($this->element, array('don', 'donation', 'shipping', 'project_task'))) {
 			$statusfield = 'fk_statut';
