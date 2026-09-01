@@ -751,7 +751,8 @@ $viewmode .= '</div>';
 
 $viewmode .= '<span class="marginrightonly"></span>';
 
-$tmpforcreatebutton = dol_getdate(dol_now('tzuserrel'), true);
+// Force user timezone to get correct hour regardless of server timezone
+$tmpforcreatebutton = dol_getdate(dol_now('gmt'), true, !empty($_SESSION['dol_tz_string']) ? $_SESSION['dol_tz_string'] : 'UTC');
 
 $newparam = '&month='.str_pad((string) $month, 2, "0", STR_PAD_LEFT).'&year='.$tmpforcreatebutton['year'];
 
