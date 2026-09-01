@@ -1238,6 +1238,7 @@ class EmailCollector extends CommonObject
 					$expire = false;
 					if (is_object($tokenobj) && method_exists($tokenobj, 'getEndOfLife')) {
 						$endOfLife = $tokenobj->getEndOfLife();
+						// time() is used internally in token @phan-suppress-next-line DolibarrForbiddenFunctionPlugin
 						if ($endOfLife !== -9002 && $endOfLife !== -9001 && time() > ($endOfLife - 30)) {
 							$expire = true;
 						}

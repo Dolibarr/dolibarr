@@ -2545,7 +2545,7 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
 			$ospid = sprintf("%7s", dol_trunc((string) getmypid(), 7, 'right', 'UTF-8', 1));
 			$osuser = " " . sprintf("%6s", dol_trunc(function_exists('posix_getuid') ? posix_getuid() : '', 6, 'right', 'UTF-8', 1));
 
-			$conf->logbuffer[] = dol_print_date(time(), "%Y-%m-%d %H:%M:%S") . " " . sprintf("%-7s", $logLevels[$level]) . " " . $ospid . " " . $osuser . " " . $message;
+			$conf->logbuffer[] = dol_print_date(dol_now(), "%Y-%m-%d %H:%M:%S") . " " . sprintf("%-7s", $logLevels[$level]) . " " . $ospid . " " . $osuser . " " . $message;
 		}
 
 		//TODO: Remove this. MAIN_ENABLE_LOG_INLINE_HTML should be deprecated and use a log handler dedicated to HTML output

@@ -4599,8 +4599,8 @@ class Product extends CommonObject
 		}
 
 		if (empty($year)) {
-			$year = dol_print_date(time(), '%Y');
-			$month = dol_print_date(time(), '%m');
+			$year = dol_print_date(dol_now(), '%Y');
+			$month = dol_print_date(dol_now(), '%m');
 		} elseif ($year == -1) {
 			$year = '';
 			$month = 12; // We imagine we are at end of year, so we get last 12 month before, so all correct year.

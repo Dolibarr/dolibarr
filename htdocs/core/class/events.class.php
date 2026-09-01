@@ -318,9 +318,9 @@ class Events // extends CommonObject
 	{
 		$this->id = 0;
 
-		$this->tms = time();
+		$this->tms = dol_now();
 		$this->type = '';
-		$this->dateevent = time();
+		$this->dateevent = dol_now();
 		$this->description = 'This is a specimen event';
 		$this->ip = '1.2.3.4';
 		$this->user_agent = 'Mozilla specimen User Agent X.Y';

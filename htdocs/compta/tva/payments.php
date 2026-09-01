@@ -54,7 +54,7 @@ $year = GETPOSTINT("year");
 $filtre = GETPOST("filtre", 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
 if (!$year && $mode != 'tvaonly') {
-	$year = date("Y", time());
+	$year = (int) dol_print_date(dol_now(), "%Y");
 }
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2026	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2574,7 +2575,7 @@ function dol_print_error($db = null, $error = '', $errors = null)
 		}
 		$out .= $langs->trans("InformationToHelpDiagnose") . ":<br>\n";
 
-		$out .= "<b>" . $langs->trans("Date") . ":</b> " . dol_print_date(time(), 'dayhourlog') . "<br>\n";
+		$out .= "<b>" . $langs->trans("Date") . ":</b> " . dol_print_date(dol_now(), 'dayhourlog') . "<br>\n";
 		$out .= "<b>" . $langs->trans("Dolibarr") . ":</b> " . DOL_VERSION . " - https://www.dolibarr.org<br>\n";
 		if (isset($conf->global->MAIN_FEATURES_LEVEL)) {
 			$out .= "<b>" . $langs->trans("LevelOfFeature") . ":</b> " . getDolGlobalInt('MAIN_FEATURES_LEVEL') . "<br>\n";

@@ -1162,6 +1162,7 @@ class CMailFile
 						$expire = false;
 						// Is token expired or will token expire in the next 30 seconds
 						if (is_object($tokenobj)) {
+							// time() is used in tokenobj @phan-suppress-next-line DolibarrForbiddenFunctionPlugin
 							$expire = ($tokenobj->getEndOfLife() !== -9002 && $tokenobj->getEndOfLife() !== -9001 && time() > ($tokenobj->getEndOfLife() - 30));
 						}
 						// Token expired so we refresh it
@@ -1350,6 +1351,7 @@ class CMailFile
 						$expire = false;
 						// Is token expired or will token expire in the next 30 seconds
 						if (is_object($tokenobj)) {
+							// time() is used in tokenobj @phan-suppress-next-line DolibarrForbiddenFunctionPlugin
 							$expire = ($tokenobj->getEndOfLife() !== -9002 && $tokenobj->getEndOfLife() !== -9001 && time() > ($tokenobj->getEndOfLife() - 30));
 						}
 						// Token expired so we refresh it
