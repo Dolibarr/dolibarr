@@ -5,7 +5,7 @@
  * Copyright (C) 2017		Ferran Marcet				<fmarcet@2byte.es>
  * Copyright (C) 2023       Christian Foellmann			<christian@foellmann.de>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -25,19 +25,11 @@
 /**
  *      \file       htdocs/contrat/contact.php
  *      \ingroup    contrat
- *      \brief      Onglet de gestion des contacts des contrats
+ *      \brief      Tab for management of contracts
  */
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/contract.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
-require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-if (isModEnabled('project')) {
-	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-}
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -45,6 +37,13 @@ if (isModEnabled('project')) {
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/contract.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+if (isModEnabled('project')) {
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array('contracts', 'companies'));
@@ -97,7 +96,7 @@ if (empty($reshook)) {
 		} else {
 			if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 				$langs->load("errors");
-				$msg = $langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType");
+				$mesg = $langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType");
 			} else {
 				$mesg = $object->error;
 			}
@@ -216,21 +215,20 @@ if ($id > 0 || !empty($ref)) {
 		print '<table class="border tableforfield" width="100%">';
 
 
-		// Ligne info remises tiers
+		// Third-party discount info
 		print '<tr><td class="titlefield">'.$langs->trans('Discount').'</td><td colspan="3">';
 		if ($object->thirdparty->remise_percent) {
 			print $langs->trans("CompanyHasRelativeDiscount", $object->thirdparty->remise_percent);
 		} else {
-			print $langs->trans("CompanyHasNoRelativeDiscount");
+			print '<span class="hideonsmartphone opacitymedium">'.$langs->trans("CompanyHasNoRelativeDiscount").'</span>';
 		}
 		$absolute_discount = $object->thirdparty->getAvailableDiscounts();
 		print '. ';
 		if ($absolute_discount) {
 			print $langs->trans("CompanyHasAbsoluteDiscount", price($absolute_discount), $langs->trans("Currency".$conf->currency));
 		} else {
-			print $langs->trans("CompanyHasNoAbsoluteDiscount");
+			print '<span class="hideonsmartphone opacitymedium">'.$langs->trans("CompanyHasNoAbsoluteDiscount").'</span>';
 		}
-		print '.';
 		print '</td></tr>';
 
 		// Date

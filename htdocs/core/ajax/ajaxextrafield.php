@@ -40,13 +40,13 @@ if (!defined('NOHEADERNOFOOTER')) {
 }
 
 include '../../main.inc.php';
-include_once DOL_DOCUMENT_ROOT . '/core/class/html.form.class.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
  * @var Translate $langs
  * @var User $user
  */
+include_once DOL_DOCUMENT_ROOT . '/core/class/html.form.class.php';
 
 // object id
 $objectid = GETPOST('objectid', 'aZ09');
@@ -166,9 +166,9 @@ if ($object instanceof CommonObject) {
 		}
 		if (count($InfoFieldList) > 4 && !empty($InfoFieldList[4])) {
 			if (strpos($InfoFieldList[4], 'extra.') !== false) {
-				$keyList = 'main.' . $InfoFieldList[2] . ' as rowid';
+				$keyList = 'main.' . $db->sanitize($InfoFieldList[2]) . ' as rowid';
 			} else {
-				$keyList = $InfoFieldList[2] . ' as rowid';
+				$keyList = $db->sanitize($InfoFieldList[2]) . ' as rowid';
 			}
 		}
 
@@ -187,8 +187,8 @@ if ($object instanceof CommonObject) {
 			}
 
 			$sqlwhere = '';
-			$sql = "SELECT " . $keyList;
-			$sql .= ' FROM ' . $db->prefix() . $InfoFieldList[0];
+			$sql = "SELECT " . $db->sanitize($keyList, 0, 0, 1);
+			$sql .= ' FROM ' . $db->prefix() . $db->sanitize($InfoFieldList[0]);
 
 			// Add filter from 4th field
 			if (!empty($InfoFieldList[4])) {
@@ -196,8 +196,9 @@ if ($object instanceof CommonObject) {
 				if (strpos($InfoFieldList[4], '$ENTITY$') !== false) {
 					$InfoFieldList[4] = str_replace('$ENTITY$', (string) $conf->entity, $InfoFieldList[4]);
 				}
-				// can use SELECT request
-				if (!getDolGlobalString("MAIN_DISALLOW_UNSECURED_SELECT_INTO_EXTRAFIELDS_FILTER")) {
+				// can use SELECT sub request
+				global $dolibarr_allow_unsecured_select_in_extrafields_filter;
+				if (!empty($dolibarr_allow_unsecured_select_in_extrafields_filter)) {
 					if (strpos($InfoFieldList[4], '$SEL$') !== false) {
 						$InfoFieldList[4] = str_replace('$SEL$', 'SELECT', $InfoFieldList[4]);
 					}

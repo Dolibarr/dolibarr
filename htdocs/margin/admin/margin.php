@@ -145,7 +145,7 @@ if (getDolGlobalString('MARGIN_TYPE') == 'costprice') {
 print '/> ';
 print '<label for="MARGIN_TYPE3">'.$langs->trans('MargeType3').'</label>';
 print '</td>';
-print '<td class="minwidth200"><span class="small">'.$langs->trans('MarginTypeDesc').'</span>';
+print '<td class="minwidth200" style="max-width:50%"><span class="small opacitymedium">'.$langs->trans('MarginTypeDesc').'</span>';
 print '</td>';
 print '</tr>';
 
@@ -163,7 +163,7 @@ if (!empty($conf->use_javascript_ajax)) {
 	}
 }
 print '</td>';
-print '<td><span class="small">'.$langs->trans('MarginRate').' = '.$langs->trans('Margin').' / '.$langs->trans('BuyingPrice').'</span></td>';
+print '<td><span class="small opacitymedium">'.$langs->trans('MarginRate').' = '.$langs->trans('Margin').' / '.$langs->trans('BuyingPrice').'</span></td>';
 print '</tr>';
 
 // DISPLAY MARK RATES
@@ -180,7 +180,7 @@ if (!empty($conf->use_javascript_ajax)) {
 	}
 }
 print '</td>';
-print '<td><span class="small">'.$langs->trans('MarkRate').' = '.$langs->trans('Margin').' / '.$langs->trans('SellingPrice').'</span></td>';
+print '<td><span class="small opacitymedium">'.$langs->trans('MarkRate').' = '.$langs->trans('Margin').' / '.$langs->trans('SellingPrice').'</span></td>';
 print '</tr>';
 
 
@@ -197,7 +197,7 @@ if (!empty($conf->use_javascript_ajax)) {
 	}
 }
 print '</td>';
-print '<td><span class="small">'.$langs->trans('ForceBuyingPriceIfNullDetails').'</span></td>';
+print '<td><span class="small opacitymedium">'.$langs->trans('ForceBuyingPriceIfNullDetails').'</span></td>';
 print '</tr>';
 
 // GLOBAL DISCOUNT MANAGEMENT
@@ -213,7 +213,7 @@ print '<td>'.$langs->trans("MARGIN_METHODE_FOR_DISCOUNT").'</td>';
 print '<td class="left">';
 print Form::selectarray('MARGIN_METHODE_FOR_DISCOUNT', $methods, getDolGlobalString('MARGIN_METHODE_FOR_DISCOUNT'));
 print '</td>';
-print '<td><span class="small">'.$langs->trans('MARGIN_METHODE_FOR_DISCOUNT_DETAILS').'</span></td>';
+print '<td><span class="small opacitymedium">'.$langs->trans('MARGIN_METHODE_FOR_DISCOUNT_DETAILS').'</span></td>';
 print '</tr>';
 
 // INTERNAL CONTACT TYPE USED AS COMMERCIAL AGENT
@@ -224,7 +224,7 @@ $formcompany = new FormCompany($db);
 $facture = new Facture($db);
 print $formcompany->selectTypeContact($facture, getDolGlobalString('AGENT_CONTACT_TYPE'), "AGENT_CONTACT_TYPE", "internal", "code", 1, "maxwidth250");
 print '</td>';
-print '<td><span class="small">'.$langs->trans('AgentContactTypeDetails').'</span></td>';
+print '<td><span class="small opacitymedium">'.$langs->trans('AgentContactTypeDetails').'</span></td>';
 print '</tr>';
 
 print '</table>';

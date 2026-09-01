@@ -1,5 +1,5 @@
 ---
-exclude: (?x)^( htdocs/includes/ckeditor/.*|htdocs/public/includes/ckeditor/.*|(\.(?!github/workflows)[^/]*/.*))$
+exclude: (?x)^( htdocs/includes/ckeditor/.*|htdocs/public/includes/ckeditor/.*|htdocs/public/includes/jquery/.*|(\.(?!github/workflows)[^/]*/.*))$
 repos:
   # Several miscellaneous checks and fix (on yaml files, end of files fix)
   - repo: https://github.com/pre-commit/pre-commit-hooks
@@ -52,7 +52,7 @@ repos:
       # Check that shell files are executables
       - id: check-shebang-scripts-are-executable
         exclude:
-          (?x)^( dev/tools/dolibarr-postgres2mysql.php |test/other/test_serialize.php
+          (?x)^( dev/tools/dolibarr-postgres2mysql.php
           |test/phpunit/textutf8.txt |test/phpunit/textiso.txt |htdocs/includes/.*
           |htdocs/modulebuilder/template/.* |dev/build/debian/dolibarr.postrm |dev/build/debian/dolibarr.postinst
           |dev/build/debian/dolibarr.config )$
@@ -67,6 +67,7 @@ repos:
     hooks:
       - id: gitleaks
 
+  # Check github actions
   - repo: https://github.com/rhysd/actionlint
     rev: v1.7.12
     hooks:
@@ -75,7 +76,7 @@ repos:
 
   # Beautify shell scripts
   #- repo: https://github.com/lovesegfault/beautysh.git
-  #  rev: v6.4.1
+  #  rev: v6.4.2
   #  hooks:
   #    - id: beautysh
   #      exclude: |
@@ -133,6 +134,18 @@ repos:
         language: script
         entry: ./dev/tools/fixaltlanguages_pre-commit.sh
         pass_filenames: true
+      - id: php-stan
+        name: Run local PHPStan
+        language: script
+        entry: ./dev/tools/phpstan/allow_phpstan_in_precommit.sh
+        pass_filenames: true
+        stages: [pre-commit]
+      - id: phan
+        name: Run local Phan
+        language: script
+        entry: ./dev/tools/phan/allow_phan_in_precommit.sh
+        pass_filenames: true
+        stages: [pre-commit]
 
   # Check PHP syntax
   - repo: https://github.com/mdeweerd/pre-commit-php
@@ -208,7 +221,7 @@ repos:
 
   # Execute codespell to fix typo errors (setup of codespell into dev/tools/codespell/)
   - repo: https://github.com/codespell-project/codespell
-    rev: v2.4.1
+    rev: v2.4.2
     hooks:
       - id: codespell
         # Due to a current limitation of configuration files,
@@ -249,6 +262,7 @@ repos:
           - --uri-ignore-words-list
           - ned
 
+  # Check some shell scripts
   - repo: https://github.com/shellcheck-py/shellcheck-py
     rev: v0.11.0.1
     hooks:
@@ -269,13 +283,9 @@ repos:
           |htdocs/includes/.*
           |htdocs/install/doctemplates/websites/.*
           |htdocs/install/mysql/data/llx_20_c_departements\.sql
-          |htdocs/install/mysql/data/llx_accounting_account_.*\.sql
           |htdocs/install/mysql/migration/3\..*\.sql
           |htdocs/install/mysql/migration/(1[0-5]|[456789])\.0\.0-.*\.sql
-          |htdocs/install/mysql/migration/repair\.sql
-          |htdocs/install/mysql/tables/llx_bookcal_availabilities-bookcal\.sql
           |htdocs/install/mysql/tables/llx_categorie.*\.key\.sql
-          |htdocs/install/mysql/tables/llx_rights_def\.key\.sql
           |htdocs/install/pgsql/functions/functions.*\.sql
           |htdocs/modulebuilder/template/sql/.*\.sql
           )$
@@ -297,4 +307,4 @@ repos:
   #      # virtualmin excluded - reason https://github.com/Dolibarr/dolibarr/pull/36370#issuecomment-3565101823
   #      exclude: (?x)^
   #        (dev/build/perl/virtualmin/dolibarr.pl
-  #        )$
+  # across all file typese        )$

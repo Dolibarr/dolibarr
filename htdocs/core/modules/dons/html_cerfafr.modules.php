@@ -45,7 +45,7 @@ class html_cerfafr extends ModeleDon
 	 */
 	public function __construct($db)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$this->db = $db;
 		$this->name = "cerfafr";
@@ -106,7 +106,7 @@ class html_cerfafr extends ModeleDon
 				$dir = $conf->don->dir_output;
 				$file = $dir."/SPECIMEN.html";
 			} else {
-				$donref = dol_sanitizeFileName($don->ref);
+				$donref = dol_sanitizeFileName((string) $don->ref);
 				$dir = $conf->don->dir_output."/".$donref;
 				$file = $dir."/".$donref.".html";
 			}
@@ -171,7 +171,7 @@ class html_cerfafr extends ModeleDon
 					if ($donatorthirdparty->fetch($don->socid) > 0) {
 						if (dol_strlen(trim($donatorsociete.$donatorlastname.$donatorfirstname)) == 0) {
 							// A third party holds a single name field, even for a private individual, so it goes
-							// to the "Nom" cell of the form and the "Prénoms" cell is left empty.
+							// to the "Name" cell of the form and the "Firstname" cell is left empty.
 							$donatorsociete = (string) $donatorthirdparty->name;
 						}
 						if (dol_strlen(trim($donatoraddress)) == 0) {
@@ -204,11 +204,12 @@ class html_cerfafr extends ModeleDon
 				$form = str_replace('__AMOUNTLETTERS__', $this->amountToLetters($don->amount), $form);
 				$form = str_replace('__CURRENCY__', $outputlangs->transnoentitiesnoconv("Currency".$currency), $form);
 				$form = str_replace('__CURRENCYCODE__', $conf->currency, $form);
-				$form = str_replace('__MAIN_INFO_SOCIETE_NOM__', $mysoc->name, $form);
+				$form = str_replace('__MAIN_INFO_SOCIETE_NOM__', (string) $mysoc->name, $form);
 				$form = str_replace('__MAIN_INFO_SOCIETE_ADDRESS__', (string) $mysoc->address, $form);
 				$form = str_replace('__MAIN_INFO_SOCIETE_ZIP__', (string) $mysoc->zip, $form);
 				$form = str_replace('__MAIN_INFO_SOCIETE_TOWN__', (string) $mysoc->town, $form);
-				$form = str_replace('__MAIN_INFO_SOCIETE_OBJECT__', $mysoc->socialobject, $form);
+
+				$form = str_replace('__MAIN_INFO_SOCIETE_OBJECT__', (string) $mysoc->socialobject, $form);
 
 				$form = str_replace('__DONATOR_FIRSTNAME__', dol_escape_htmltag($donatorfirstname), $form);
 				// The template concatenates __DONATOR_SOCIETE__ and __DONATOR_LASTNAME__ with no separator,
@@ -216,6 +217,7 @@ class html_cerfafr extends ModeleDon
 				$donatorlastnameprefix = (dol_strlen(trim($donatorsociete)) > 0 && dol_strlen(trim($donatorlastname)) > 0) ? '<br>' : '';
 				$form = str_replace('__DONATOR_LASTNAME__', $donatorlastnameprefix.dol_escape_htmltag($donatorlastname), $form);
 				$form = str_replace('__DONATOR_SOCIETE__', dol_escape_htmltag($donatorsociete), $form);
+
 				$form = str_replace('__DONATOR_STATUT__', (string) $don->statut, $form);
 				$form = str_replace('__DONATOR_ADDRESS__', dol_nl2br(dol_escape_htmltag($donatoraddress, 0, 1)), $form);
 				$form = str_replace('__DONATOR_ZIP__', dol_escape_htmltag($donatorzip), $form);
@@ -294,12 +296,12 @@ class html_cerfafr extends ModeleDon
 	/**
 	 * numbers to letters
 	 *
-	 * @param   mixed   $montant    amount
+	 * @param   mixed   $amount    amount
 	 * @param   string  $devise1    devise 1 ex: euro
 	 * @param   string  $devise2    devise 2 ex: centimes
 	 * @return string               amount in letters
 	 */
-	private function amountToLetters($montant, $devise1 = '', $devise2 = '')
+	private function amountToLetters($amount, $devise1 = '', $devise2 = '')
 	{
 		$unite = array();
 		$dix = array();
@@ -314,19 +316,19 @@ class html_cerfafr extends ModeleDon
 		} else {
 			$dev2 = $devise2;
 		}
-		$valeur_entiere = intval($montant);
-		$valeur_decimal = intval(round($montant - intval($montant), 2) * 100);
-		$dix_c = intval($valeur_decimal % 100 / 10);
-		$cent_c = intval($valeur_decimal % 1000 / 100);
-		$unite[1] = $valeur_entiere % 10;
-		$dix[1] = intval($valeur_entiere % 100 / 10);
-		$cent[1] = intval($valeur_entiere % 1000 / 100);
-		$unite[2] = intval($valeur_entiere % 10000 / 1000);
-		$dix[2] = intval($valeur_entiere % 100000 / 10000);
-		$cent[2] = intval($valeur_entiere % 1000000 / 100000);
-		$unite[3] = intval($valeur_entiere % 10000000 / 1000000);
-		$dix[3] = intval($valeur_entiere % 100000000 / 10000000);
-		$cent[3] = intval($valeur_entiere % 1000000000 / 100000000);
+		$integerAmount = intval($amount);
+		$fractionalAmount = intval(round($amount - intval($amount), 2) * 100);
+		$dix_c = intval($fractionalAmount % 100 / 10);
+		$cent_c = intval($fractionalAmount % 1000 / 100);
+		$unite[1] = $integerAmount % 10;
+		$dix[1] = intval($integerAmount % 100 / 10);
+		$cent[1] = intval($integerAmount % 1000 / 100);
+		$unite[2] = intval($integerAmount % 10000 / 1000);
+		$dix[2] = intval($integerAmount % 100000 / 10000);
+		$cent[2] = intval($integerAmount % 1000000 / 100000);
+		$unite[3] = intval($integerAmount % 10000000 / 1000000);
+		$dix[3] = intval($integerAmount % 100000000 / 10000000);
+		$cent[3] = intval($integerAmount % 1000000000 / 100000000);
 		$chif = array('', 'un', 'deux', 'trois', 'quatre', 'cinq', 'six', 'sept', 'huit', 'neuf', 'dix', 'onze', 'douze', 'treize', 'quatorze', 'quinze', 'seize', 'dix sept', 'dix huit', 'dix neuf');
 		$secon_c = '';
 		$trio_c = '';

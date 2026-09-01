@@ -220,10 +220,20 @@ print $formadmin->selectTypeOfFields('type', GETPOST('type', 'alpha'));
 <tr><td class="titlefield"><?php echo $langs->trans("LanguageFile"); ?></td><td class="valeur"><input type="text" id="langfile" name="langfile" class="minwidth200" value="<?php echo dol_escape_htmltag(GETPOST('langfile', 'alpha')); ?>"></td></tr>
 <!-- Computed Value -->
 <tr class="extra_computed_value">
-<?php if (!getDolGlobalString('MAIN_STORE_COMPUTED_EXTRAFIELDS')) { ?>
-	<td><?php echo $form->textwithpicto($langs->trans("ComputedFormula"), $langs->trans("ComputedFormulaDesc", '$db, $langs, $mysoc, $user, $objectoffield').'<br>'.$langs->trans("ComputedFormulaDesc2").'<br><br>'.$langs->trans("ComputedFormulaDesc3"), 1, 'help', '', 0, 2, 'tooltipcompute'); ?></td>
-<?php } else { ?>
-	<td><?php echo $form->textwithpicto($langs->trans("ComputedFormula"), $langs->trans("ComputedFormulaDesc", '$db, $langs, $mysoc, $user, $objectoffield').'<br>'.$langs->trans("ComputedFormulaDesc2").'<br><br>'.$langs->trans("ComputedFormulaDesc3")).$form->textwithpicto($langs->trans("Computedpersistent"), $langs->trans("ComputedpersistentDesc"), 1, 'warning'); ?></td>
+<?php
+	global $dolibarr_main_restrict_eval_methods;
+if (!isset($dolibarr_main_restrict_eval_methods)) {
+	$showfunctions = 'getDolGlobalString, getDolGlobalInt, getDolCurrency, getDolEntity, getDolDBType, fetchNoCompute, hasRight, isAdmin, isExternalUser, isModEnabled, isStringVarMatching, abs, min, max, round, dol_now, preg_match';
+} else {
+	$showfunctions = $dolibarr_main_restrict_eval_methods ? $dolibarr_main_restrict_eval_methods : $langs->transnoentitiesnoconv("None");
+}
+
+if (!getDolGlobalString('MAIN_STORE_COMPUTED_EXTRAFIELDS')) {
+	?>
+	<td><?php echo $form->textwithpicto($langs->trans("ComputedFormula"), $langs->trans("ComputedFormulaDesc", '$objectoffield', $showfunctions).'<br>'.$langs->trans("ComputedFormulaDesc2").'<br><br>'.$langs->trans("ComputedFormulaDesc3"), 1, 'help', '', 0, 2, 'tooltipcompute'); ?></td>
+<?php } else {
+	?>
+	<td><?php echo $form->textwithpicto($langs->trans("ComputedFormula"), $langs->trans("ComputedFormulaDesc", '$objectoffield', $showfunctions).'<br>'.$langs->trans("ComputedFormulaDesc2").'<br><br>'.$langs->trans("ComputedFormulaDesc3")).$form->textwithpicto($langs->trans("Computedpersistent"), $langs->trans("ComputedpersistentDesc"), 1, 'warning'); ?></td>
 <?php } ?>
 <td class="valeur"><textarea name="computed_value" id="computed_value" class="quatrevingtpercent" rows="<?php echo ROWS_4 ?>"><?php echo(GETPOSTISSET('computed_value') ? GETPOST('computed_value', 'restricthtml') : ''); ?></textarea></td>
 </tr>
@@ -249,30 +259,39 @@ print $formadmin->selectTypeOfFields('type', GETPOST('type', 'alpha'));
 		$elementprop["module"] = "intervention";
 	}
 	$substitutionarray = getCommonSubstitutionArray($langs, 1, null, $object, array("object", $elementprop["module"]));
-	$texthelp = $langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
+	$texthelp = $langs->trans("AIPromptExtrafieldDesc").'<br><br>';
+	$texthelp .= $langs->trans("FollowingConstantsWillBeSubstituted").'<br><small>';
 	foreach ($substitutionarray as $key => $val) {
 		$texthelp .= $key.' -> '.$val.'<br>';
 	}
+	$texthelp .= '</small>';
 	echo $form->textwithpicto($langs->trans("AIPromptExtrafield"), $texthelp, 1, 'help', 'valignmiddle', 0, 3, 'abc');?></td>
 <td class="valeur"><textarea name="ai_prompt" id="ai_prompt" class="quatrevingtpercent" rows="<?php echo ROWS_4 ?>"><?php echo(GETPOSTISSET('ai_prompt') ? GETPOST('ai_prompt', 'restricthtml') : ''); ?></textarea></td></tr>
 <!-- Default Value (at sql setup level) -->
-<tr class="extra_default_value"><td><?php echo $langs->trans("DefaultValue").' ('.$langs->trans("Database").')'; ?></td><td class="valeur"><input id="default_value" type="text" name="default_value" class="minwidth200" value="<?php echo(GETPOST('default_value', 'alpha') ? GETPOST('default_value', 'alpha') : ''); ?>"></td></tr>
+<tr class="extra_default_value"><td><?php echo $langs->trans("DefaultValue").' <span class="opacitymedium small">('.$langs->trans("Database").')</span>'; ?></td><td class="valeur"><input id="default_value" type="text" name="default_value" class="minwidth200" value="<?php echo(GETPOST('default_value', 'alpha') ? GETPOST('default_value', 'alpha') : ''); ?>" spellcheck="false"></td></tr>
 <!-- Unique -->
-<tr class="extra_unique"><td><?php echo $langs->trans("Unique"); ?></td><td class="valeur"><input id="unique" type="checkbox" name="unique"<?php echo(GETPOST('unique', 'alpha') ? ' checked' : ''); ?>></td></tr>
+<tr class="extra_unique"><td><?php echo $langs->trans("Unique").' <span class="opacitymedium small">('.$langs->trans("Database").')</span>'; ?></td><td class="valeur"><input id="unique" type="checkbox" name="unique"<?php echo(GETPOST('unique', 'alpha') ? ' checked' : ''); ?>></td></tr>
 <!-- Required -->
-<tr class="extra_required"><td><?php echo $langs->trans("Mandatory"); ?></td><td class="valeur"><input id="required" type="checkbox" name="required"<?php echo(GETPOST('required', 'alpha') ? ' checked' : ''); ?>></td></tr>
+<tr class="extra_required"><td><?php echo $langs->trans("Mandatory").' <span class="opacitymedium small">('.$langs->trans("Database").')</span>'; ?></td><td class="valeur"><input id="required" type="checkbox" name="required"<?php echo(GETPOST('required', 'alpha') ? ' checked' : ''); ?>></td></tr>
 <!-- Always editable -->
 <tr class="extra_alwayseditable"><td><?php echo $form->textwithpicto($langs->trans("AlwaysEditable"), $langs->trans("EditableWhenDraftOnly")); ?></td><td class="valeur"><input id="alwayseditable" type="checkbox" name="alwayseditable"<?php echo((GETPOST('alwayseditable', 'alpha') || !GETPOST('button', 'alpha')) ? ' checked' : ''); ?>></td></tr>
 <!-- Empty on clone -->
 <tr class="extra_emptyonclone"><td><?php echo $form->textwithpicto($langs->trans("EmptyOnClone"), $langs->trans("EmptyOnCloneDesc")); ?></td><td class="valeur"><input id="emptyonclone" type="checkbox" name="emptyonclone"<?php echo((GETPOST('emptyonclone', 'alpha')) ? ' checked' : ''); ?>></td></tr>
+<!-- Personal Data (RGPD) -->
+<tr class="extra_personal_data"><td><?php echo $form->textwithpicto($langs->trans("IsPersonalData"), $langs->trans("IsPersonalDataDesc")); ?></td><td class="valeur"><input id="personal_data" type="checkbox" name="personal_data" value="1"<?php echo (GETPOST('personal_data', 'alpha') ? ' checked' : ''); ?>></td></tr>
 <!-- Visibility -->
 <tr><td class="extra_list"><?php echo $form->textwithpicto($langs->trans("Visibility"), $langs->trans("VisibleDesc").'<br><br>'.$langs->trans("ItCanBeAnExpression")); ?>
 </td><td class="valeur"><input id="list" class="minwidth200" type="text" name="list" value="<?php echo GETPOSTISSET('list') ? GETPOST('list') : '1'; ?>"></td></tr>
 <!-- Visibility for PDF-->
 <tr><td class="extra_pdf"><?php echo $form->textwithpicto($langs->trans("DisplayOnPdf"), $langs->trans("DisplayOnPdfDesc")); ?>
 </td><td class="valeur"><input id="printable" class="width50" type="text" name="printable" value="<?php echo dolPrintHTMLForAttribute(GETPOSTISSET('printable') ? GETPOST('printable') : '0'); ?>"></td></tr>
+
+<!-- Visibility for getNomUrl -->
+<tr><td class="extra_showintooltip"><?php echo $form->textwithpicto($langs->trans("DisplayExtraOnTooltip"), $langs->trans("DisplayExtraOnTooltipDesc")); ?>
+</td><td class="valeur"><input id="showintooltip" type="checkbox" name="showintooltip" value="1" <?php echo(GETPOST('showintooltip', 'alpha') ? ' checked' : ''); ?>></td></tr>
+
 <!-- Totalizable -->
-<tr class="extra_totalizable"><td><?php echo $langs->trans("Totalizable"); ?></td><td class="valeur"><input id="totalizable" type="checkbox" name="totalizable"<?php echo(GETPOST('totalizable', 'alpha') ? ' checked' : ''); ?>></td></tr>
+<tr class="extra_totalizable"><td><?php echo $langs->trans("Totalizable"); ?></td><td class="valeur"><input id="totalizable" type="checkbox" name="totalizable" <?php echo(GETPOST('totalizable', 'alpha') ? ' checked' : ''); ?> ></td></tr>
 <!-- Help tooltip -->
 <tr class="help"><td><?php echo $form->textwithpicto($langs->trans("HelpOnTooltip"), $langs->trans("HelpOnTooltipDesc")); ?></td><td class="valeur"><input id="help" class="quatrevingtpercent" type="text" name="help" value="<?php echo dol_escape_htmltag((empty($help) ? '' : $help)); ?>"></td></tr>
 

@@ -2,7 +2,7 @@
 /* Copyright (C) 2018	Andreu Bisquerra	<jove@bisquerra.com>
  * Copyright (C) 2019	Josep Lluís Amador	<joseplluis@lliuretic.cat>
  * Copyright (C) 2020	Thibault FOUCART	<support@ptibogxiv.net>
- * Copyright (C) 2024-2025	MDW				<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW				<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -76,7 +76,7 @@ if (empty($_SESSION["takeposterminal"])) {
 }
 
 if ($setterminal > 0) {
-	$_SESSION["takeposterminal"] = $setterminal;
+	$_SESSION["takeposterminal"] = (int) $setterminal;
 	dolSetCookie("takeposterminal", (string) $setterminal, -1); // takeposterminal var in a 1 year cookie
 }
 
@@ -373,7 +373,7 @@ function LoadProducts(position, issubcat) {
 	}
 
 	// Only show products for sale (tosell=1)
-	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=getProducts&token=<?php echo newToken();?>&thirdpartyid=' + socid + '&category='+currentcat+'&tosell=1&limit='+limit+'&offset=0', function(data) {
+	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=getProducts&token=<?php echo currentToken();?>&thirdpartyid=' + socid + '&category='+currentcat+'&tosell=1&limit='+limit+'&offset=0', function(data) {
 		/* Fill thumbs from ishow to end max of products with products loaded into data array */
 		console.log("Call ajax.php (in LoadProducts) to get Products of category "+currentcat+" then loop on result to fill image thumbs");
 		console.log("Found "+data.length+" record");
@@ -499,7 +499,7 @@ function MoreProducts(moreorless) {
 	}
 
 	var nb_cat_shown = $('.div5 div.wrapper2[data-iscat=1]').length;
-	var offset = <?php echo ($MAXPRODUCT - 2); ?> * pageproducts - nb_cat_shown;
+	var offset = <?php echo($MAXPRODUCT - 2); ?> * pageproducts - nb_cat_shown;
 
 	// Get socid
 	let socid = jQuery('#thirdpartyid').val();
@@ -508,7 +508,7 @@ function MoreProducts(moreorless) {
 	}
 
 	// Only show products for sale (tosell=1)
-	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=getProducts&token=<?php echo newToken();?>&thirdpartyid=' + socid + '&category='+currentcat+'&tosell=1&limit='+limit+'&offset='+offset, function(data) {
+	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=getProducts&token=<?php echo currentToken();?>&thirdpartyid=' + socid + '&category='+currentcat+'&tosell=1&limit='+limit+'&offset='+offset, function(data) {
 		console.log("Call ajax.php (in MoreProducts) to get Products of category "+currentcat);
 
 		if (typeof (data[0]) == "undefined" && moreorless=="more"){ // Return if no more pages
@@ -566,7 +566,7 @@ function MoreProducts(moreorless) {
 	ClearSearch(false);
 }
 
-function ClickProduct(position, qty = 1) {
+function ClickProduct(position, qty = 1, qty_std = 0) {
 	console.log("ClickProduct at position"+position);
 	if ($('#invoiceid').val() == "") {
 		invoiceid = $('#invoiceid').val();
@@ -579,19 +579,33 @@ function ClickProduct(position, qty = 1) {
 		LoadProducts(position, true);
 	}
 	else{
-		console.log($('#prodiv4').data('rowid'));
 		invoiceid = $("#invoiceid").val();
 		idproduct=$('#prodiv'+position).data('rowid');
 		console.log("Click on product at position "+position+" for idproduct "+idproduct+", qty="+qty+" invoiceid="+invoiceid);
 		if (idproduct == "") {
 			return;
 		}
-		// Call page invoice.php to generate the section with product lines
-		$("#poslines").load("invoice.php?action=addline&token=<?php echo newToken(); ?>&place="+place+"&idproduct="+idproduct+"&selectedline="+selectedline+"&qty="+qty+"&invoiceid="+invoiceid, function() {
-			<?php if (getDolGlobalString('TAKEPOS_CUSTOMER_DISPLAY')) {
-				echo "CustomerDisplay();";
-			}?>
-		});
+
+		addInvoiceLine = function(qty, qty_std_inner = 0) {
+			// Call page invoice.php to generate the section with product lines
+			  $("#poslines").load("invoice.php?action=addline&token=<?php echo currentToken(); ?>&place="+place+"&idproduct="+idproduct+"&selectedline="+selectedline+"&qty="+qty+"&invoiceid="+invoiceid+(qty_std_inner ? '&qty_std=1' : ''), function() {
+				idproduct = "";
+				<?php if (getDolGlobalString('TAKEPOS_CUSTOMER_DISPLAY')) {
+					echo "CustomerDisplay();";
+				}?>
+			});
+		};
+
+		// call WeighingScale() if product is a product that need to measure weight
+		<?php if (getDolGlobalString('TAKEPOS_WEIGHING_SCALE')) { ?>
+			if ($('#prodiv'+position).data('unit') == 2) {
+				WeighingScale(addInvoiceLine);
+			} else {
+				addInvoiceLine(qty, qty_std);
+			}
+		<?php } else { ?>
+			addInvoiceLine(qty, qty_std);
+		<?php } ?>
 	}
 
 	ClearSearch(false);
@@ -600,7 +614,7 @@ function ClickProduct(position, qty = 1) {
 function ChangeThirdparty(idcustomer) {
 	 console.log("ChangeThirdparty");
 		// Call page list.php to change customer
-		$("#poslines").load("<?php echo DOL_URL_ROOT ?>/societe/list.php?action=change&token=<?php echo newToken();?>&type=t&contextpage=poslist&idcustomer="+idcustomer+"&place="+place+"", function() {
+		$("#poslines").load("<?php echo DOL_URL_ROOT ?>/societe/list.php?action=change&token=<?php echo currentToken();?>&type=t&contextpage=poslist&idcustomer="+idcustomer+"&place="+place+"", function() {
 		});
 
 	ClearSearch(false);
@@ -609,7 +623,7 @@ function ChangeThirdparty(idcustomer) {
 function deleteline() {
 	invoiceid = $("#invoiceid").val();
 	console.log("Delete line invoiceid="+invoiceid);
-	$("#poslines").load("invoice.php?action=deleteline&token=<?php echo newToken(); ?>&place="+place+"&idline="+selectedline+"&invoiceid="+invoiceid, function() {
+	$("#poslines").load("invoice.php?action=deleteline&token=<?php echo currentToken(); ?>&place="+place+"&idline="+selectedline+"&invoiceid="+invoiceid, function() {
 		//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
 	});
 	ClearSearch(false);
@@ -709,7 +723,17 @@ function New() {
 
 	console.log("New with place = <?php echo $place; ?>, js place="+place+", invoiceid="+invoiceid);
 
-	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=getInvoice&token=<?php echo newToken();?>&id='+invoiceid, function(data) {
+	if (invoiceid == '') {
+		$("#poslines").load("invoice.php?action=delete&token=<?php echo currentToken(); ?>&place=" + place, function () {
+			//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
+		});
+
+		ClearSearch(false);
+		$("#idcustomer").val("");
+		return;
+	}
+
+	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=getInvoice&token=<?php echo currentToken();?>&id='+invoiceid, function(data) {
 		var r;
 
 		if (parseInt(data['paye']) === 1) {
@@ -720,7 +744,7 @@ function New() {
 
 		if (r == true) {
 			// Reload section with invoice lines
-			$("#poslines").load("invoice.php?action=delete&token=<?php echo newToken(); ?>&place=" + place, function () {
+			$("#poslines").load("invoice.php?action=delete&token=<?php echo currentToken(); ?>&place=" + place, function () {
 				//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
 			});
 
@@ -729,7 +753,6 @@ function New() {
 		}
 	});
 }
-
 /**
  * Search products
  *
@@ -797,7 +820,7 @@ function Search2(keyCodeForEnter, moreorless) {
 				socid = parseInt("<?php echo dol_escape_js($socid); ?>");
 			}
 
-			$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=search&token=<?php echo newToken();?>&search_term=' + search_term + '&thirdpartyid=' + socid + '&search_start=' + search_start + '&search_limit=' + search_limit, function (data) {
+			$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=search&token=<?php echo currentToken();?>&search_term=' + search_term + '&thirdpartyid=' + socid + '&search_start=' + search_start + '&search_limit=' + search_limit, function (data) {
 				for (i = 0; i < <?php echo $MAXPRODUCT ?>; i++) {
 					if (typeof (data[i]) == "undefined") {
 						$("#prowatermark" + i).html("");
@@ -872,7 +895,7 @@ function Search2(keyCodeForEnter, moreorless) {
 					}
 					else if ('product' == data[0]['object'] && $('#search').val() == data[0]['barcode']) {
 						console.log("There is only 1 answer and we found search on a barcode, so we add the product in basket, qty="+data[0]['qty']);
-						ClickProduct(0, data[0]['qty']);
+						ClickProduct(0, data[0]['qty'], 1);
 					}
 				}
 				if (eventKeyCode == keyCodeForEnter){
@@ -929,7 +952,7 @@ function Edit(number) {
 		return;
 	} else if (number=='qty') {
 		if (editaction=='qty' && editnumber != '') {
-			$("#poslines").load("invoice.php?action=updateqty&token=<?php echo newToken(); ?>&place="+place+"&idline="+selectedline+"&number="+editnumber, function() {
+			$("#poslines").load("invoice.php?action=updateqty&token=<?php echo currentToken(); ?>&place="+place+"&idline="+selectedline+"&number="+editnumber, function() {
 				editnumber="";
 				//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
 				$("#qty").html("<?php echo $langs->trans("Qty"); ?>").removeClass('clicked');
@@ -943,7 +966,7 @@ function Edit(number) {
 		}
 	} else if (number=='p') {
 		if (editaction=='p' && editnumber!="") {
-			$("#poslines").load("invoice.php?action=updateprice&token=<?php echo newToken(); ?>&place="+place+"&idline="+selectedline+"&number="+editnumber, function() {
+			$("#poslines").load("invoice.php?action=updateprice&token=<?php echo currentToken(); ?>&place="+place+"&idline="+selectedline+"&number="+editnumber, function() {
 				editnumber="";
 				//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
 				$("#price").html("<?php echo $langs->trans("Price"); ?>").removeClass('clicked');
@@ -957,7 +980,7 @@ function Edit(number) {
 		}
 	} else if (number=='r') {
 		if (editaction=='r' && editnumber!="") {
-			$("#poslines").load("invoice.php?action=updatereduction&token=<?php echo newToken(); ?>&place="+place+"&idline="+selectedline+"&number="+editnumber, function() {
+			$("#poslines").load("invoice.php?action=updatereduction&token=<?php echo currentToken(); ?>&place="+place+"&idline="+selectedline+"&number="+editnumber, function() {
 				editnumber="";
 				//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
 				$("#reduction").html("<?php echo $langs->trans("LineDiscountShort"); ?>").removeClass('clicked');
@@ -997,14 +1020,14 @@ function Edit(number) {
 
 function TakeposPrintingOrder(){
 	console.log("TakeposPrintingOrder output invoice to print order");
-	$("#poslines").load("invoice.php?action=order&token=<?php echo newToken();?>&place="+place, function() {
+	$("#poslines").load("invoice.php?action=order&token=<?php echo currentToken();?>&place="+place, function() {
 		//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
 	});
 }
 
 function TakeposPrintingTemp(){
 	console.log("TakeposPrintingTemp");
-	$("#poslines").load("invoice.php?action=temp&token=<?php echo newToken();?>&place="+place, function() {
+	$("#poslines").load("invoice.php?action=temp&token=<?php echo currentToken();?>&place="+place, function() {
 		//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
 	});
 }
@@ -1027,11 +1050,11 @@ function OpenDrawer(){
 
 /* Click on button to open drawer */
 function DolibarrOpenDrawer() {
-	console.log("DolibarrOpenDrawer call ajax url /takepos/ajax/ajax.php?action=opendrawer&token=<?php echo newToken();?>&term=<?php print urlencode(empty($_SESSION["takeposterminal"]) ? '' : $_SESSION["takeposterminal"]); ?>");
+	console.log("DolibarrOpenDrawer call ajax url /takepos/ajax/ajax.php?action=opendrawer&token=<?php echo currentToken();?>&term=<?php print urlencode(empty($_SESSION["takeposterminal"]) ? '' : $_SESSION["takeposterminal"]); ?>");
 	$.ajax({
 		type: "GET",
 		data: { token: '<?php echo currentToken(); ?>' },
-		url: "<?php print DOL_URL_ROOT.'/takepos/ajax/ajax.php?action=opendrawer&token='.newToken().'&term='.urlencode(empty($_SESSION["takeposterminal"]) ? '' : $_SESSION["takeposterminal"]); ?>",
+		url: "<?php print DOL_URL_ROOT.'/takepos/ajax/ajax.php?action=opendrawer&token='.currentToken().'&term='.urlencode(empty($_SESSION["takeposterminal"]) ? '' : $_SESSION["takeposterminal"]); ?>",
 	});
 }
 
@@ -1058,7 +1081,10 @@ function CashReport(rowid)
 	$.colorbox({href:"../compta/cashcontrol/report.php?id="+rowid+"&contextpage=takepos", width:"60%", height:"90%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("CashReport"); ?>"});
 }
 
-// TakePOS Popup
+/*
+ * TakePOS Popup
+ * Open the <div id='ModalID'>in a popup. Example with ModalID='ModalCreditNote'
+ */
 function ModalBox(ModalID)
 {
 	var modal = document.getElementById(ModalID);
@@ -1067,7 +1093,7 @@ function ModalBox(ModalID)
 
 function DirectPayment(){
 	console.log("DirectPayment");
-	$("#poslines").load("invoice.php?place="+place+"&action=valid&token=<?php echo newToken(); ?>&pay=LIQ", function() {
+	$("#poslines").load("invoice.php?place="+place+"&action=valid&token=<?php echo currentToken(); ?>&pay=LIQ", function() {
 		$('#invoiceid').val("");
 	});
 }
@@ -1076,18 +1102,53 @@ function FullScreen() {
 	document.documentElement.requestFullscreen();
 }
 
-function WeighingScale(){
-	console.log("Weighing Scale");
+function WeighingScale(callback) {
+	console.log("Weighing Scale: invoiceid = " + placeid + ", lineid = " + selectedline);
+	<?php if (getDolGlobalString('TAKEPOS_CONNECTOR_TO_WHB_SCALE')) {?>
+		<?php if (getDolGlobalString('WEIGHINGSCALE_PROTOCOL') == "diag06") { ?>
+			// Protocole Dialog-06, il a besoin du prix unitaire, le demander s'il manque
+			var urlProduct;
+			if (idproduct == "" && selectedline > 0) {
+				urlProduct = "<?php echo DOL_URL_ROOT; ?>/api/index.php/takeposconnector/invoices/" + placeid + "/lines/" + selectedline + "/product";
+			} else {
+				urlProduct = "<?php echo DOL_URL_ROOT; ?>/api/index.php/products/" + idproduct;
+			}
+			$.ajax({
+				type: "GET",
+				headers: { "DOLAPIKEY": '<?php echo $user->api_key; ?>' },
+				url: urlProduct,
+			})
+			.done(function(product) {
+				if (callback === undefined) {
+					callback = function(qty) {
+						$("#poslines").load("invoice.php?token=<?php echo currentToken(); ?>&action=updateqty&place="+place+"&idline="+selectedline+"&number="+qty);
+					};
+				}
+				if (product.fk_unit == "2") {
+					askForWeight(product.multiprices_ttc[1], callback, function (errorMessage) {
+						console.log("Erreur: " + errorMessage);
+					});
+				}
+			});
+		<?php } else { ?>
+			// Protocole par défaut de takeposconnector: réception continue du poids/stabilité
+			editnumber = globalWeight;
+			$("#poslines").load("invoice.php?token=<?php echo currentToken(); ?>&action=updateqty&place="+place+"&idline="+selectedline+"&number="+editnumber, function() {
+				editnumber="";
+			});
+		<?php } ?>
+	<?php } else { ?> // utilisation du new TakePOS-Connector PHP: envoie "$" à la balance pour avoir le poids
 	$.ajax({
 		type: "POST",
 		data: { token: 'notrequired' },
 		url: '<?php print getDolGlobalString('TAKEPOS_PRINT_SERVER'); ?>/scale/index.php',
 	})
 	.done(function( editnumber ) {
-		$("#poslines").load("invoice.php?token=<?php echo newToken(); ?>&place="+place+"&idline="+selectedline+"&number="+editnumber, function() {
+		$("#poslines").load("invoice.php?token=<?php echo currentToken(); ?>&action=updateqty&place="+place+"&idline="+selectedline+"&number="+editnumber, function() {
 				editnumber="";
 			});
 	});
+	<?php } ?>
 }
 
 $( document ).ready(function() {
@@ -1296,7 +1357,7 @@ if (!getDolGlobalString('TAKEPOS_HIDE_HEAD_BAR')) {
 			$resql = $db->query($sql);
 			if ($resql) {
 				while ($obj = $db->fetch_object($resql)) {
-					print '<button type="button" class="block" onclick="location.href=\'index.php?setcurrency='.$obj->code.'\'">'.$obj->code.'</button>';
+					print '<button type="button" class="block" onclick="location.href=\'index.php?setcurrency='.urlencode($obj->code).'\'">'.$obj->code.'</button>';
 				}
 			}
 			?>
@@ -1305,7 +1366,7 @@ if (!getDolGlobalString('TAKEPOS_HIDE_HEAD_BAR')) {
 </div>
 <?php } ?>
 
-<!-- Modal terminal Credit Note -->
+<!-- Modal popup to create a Credit Note -->
 <div id="ModalCreditNote" class="modal">
 	<div class="modal-content">
 		<div class="modal-header">
@@ -1435,7 +1496,9 @@ if (!getDolGlobalString('TAKEPOS_BAR_RESTAURANT')) {
 }
 
 // Add a non predefined product
-$menus[$r++] = array('title' => '<span class="fa fa-cube paddingrightonly"></span><div class="trunc">'.$langs->trans("FreeZone").'</div>', 'action' => 'FreeZone();');
+if (!getDolGlobalString('TAKEPOS_NO_FREE_ZONE_PRODUCT')) {
+	$menus[$r++] = array('title' => '<span class="fa fa-cube paddingrightonly"></span><div class="trunc">'.$langs->trans("FreeZone").'</div>', 'action' => 'FreeZone();');
+}
 
 // BAR RESTAURANT specific menu "Print on kitchen/order printer"
 if (getDolGlobalString('TAKEPOS_BAR_RESTAURANT')) {
@@ -1462,32 +1525,39 @@ if (getDolGlobalString('TAKEPOS_DIRECT_PAYMENT')) {
 }
 
 $customprinterallowed = false;
+$customprinttemplateallowed = true;
 
 // BAR RESTAURANT specific menu
 if (getDolGlobalString('TAKEPOS_BAR_RESTAURANT')) {
 	// Button to print receipt before payment
 	$customprinterallowed = true;
 	$customprinttemplateallowed = true;
-	include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
-	if (isALNERunningVersion()) {		// No need to show this option because it has no effect when isALNERunningVersion is true.
-		$customprinttemplateallowed = false;	// Custom printer may be allowed if mandatory information in template are guaranteed. For the moment, we prefer not allow this.
-	}
+}
+
+include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
+if (isALNERunningVersion()) {
+	// Custom printer may be allowed if mandatory information in template are guaranteed. For the moment, we prefer not allow this.
+	$customprinttemplateallowed = false;
 }
 
 // Button to print receipt
+// This section should be same than into invoice.php
 if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {		// deprecated method
 	if (getDolGlobalString('TAKEPOS_PRINT_SERVER') && filter_var(getDolGlobalString('TAKEPOS_PRINT_SERVER'), FILTER_VALIDATE_URL) == true) {
-		$menus[$r++] = array('title' => '<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("PrintTicket").'</div>', 'action' => 'TakeposConnector(placeid);');
+		// If TAKEPOS_PRINT_SERVER is an URL
+		$menus[$r++] = array('title' => '<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("PrintTicket").'</div>', 'action' => 'PrintByESCPOSOld(placeid);');
 	} else {
-		$menus[$r++] = array('title' => '<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("PrintTicket").'</div>', 'action' => 'TakeposPrinting(placeid);');
+		// If TAKEPOS_PRINT_SERVER is an IP
+		// Print by calling the receipt.php to get HTML content and send the HTML content to TAKEPOS_PRINT_SERVER:8111/print
+		$menus[$r++] = array('title' => '<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("PrintTicket").'</div>', 'action' => 'PrintHTMLToSlashPrint(placeid);');
 	}
-} elseif ($customprinterallowed && (isModEnabled('receiptprinter') && getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term) > 0) || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "receiptprinter") {		// @phpstan-ignore-line
-	// Button Print Receipt on special printer
+} elseif ($customprinterallowed && $customprinttemplateallowed && (isModEnabled('receiptprinter') && getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term) > 0) || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "receiptprinter") {		// @phpstan-ignore-line
+	// Button Print Receipt on special custom printer using custom template
 	$nameOfPrinter = dol_getIdFromCode($db, getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term), 'printer_receipt', 'rowid', 'name', 1);
-	$menus[$r++] = array('title' => '<div title="'.dolPrintHTMLForAttribute($langs->trans("PrintOn", $nameOfPrinter)).'"><span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("PrintTicket").'</div></div>', 'action' => 'DolibarrTakeposPrinting(placeid);');
+	$menus[$r++] = array('title' => '<div title="'.dolPrintHTMLForAttribute($langs->trans("PrintOn", $nameOfPrinter)).'"><span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("PrintTicket").'</div></div>', 'action' => 'PrintByESCPOS(placeid);');
 } else {
 	// Button Print Receipt on browser
-	$menus[$r++] = array('title' => '<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("PrintTicket").'</div>', 'action' => 'Print(placeid);');
+	$menus[$r++] = array('title' => '<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("PrintTicket").'</div>', 'action' => 'PrintByBrowser(placeid);');
 }
 
 if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector" && getDolGlobalString('TAKEPOS_ORDER_NOTES') == 1) {
@@ -1505,6 +1575,7 @@ if (getDolGlobalInt('TAKEPOS_ADD_BUTTON_OPEN_DRAWER'.$term) > 0) {
 	);
 }
 
+// If there is an open cash control started
 $sql = "SELECT rowid, status, entity FROM ".MAIN_DB_PREFIX."pos_cash_fence WHERE";
 $sql .= " entity = ".((int) $conf->entity)." AND ";
 $sql .= " posnumber = ".((int) empty($_SESSION["takeposterminal"]) ? 0 : $_SESSION["takeposterminal"])." AND ";
@@ -1543,7 +1614,7 @@ if ($reshook == 0) {  //add buttons
 	}
 } elseif ($reshook == 1) {
 	$r = 0; //replace buttons
-	if (is_array($hookmanager->resArray) ) {
+	if (is_array($hookmanager->resArray)) {
 		foreach ($hookmanager->resArray as $resArray) {
 			foreach ($resArray as $butmenu) {
 				$menus[$r++] = $butmenu;
@@ -1656,14 +1727,14 @@ if ($reshook == 0) {  //add buttons
 
 	while ($count < $MAXPRODUCT) {
 		print '<div class="wrapper2'.(($count >= ($MAXPRODUCT - 2)) ? ' arrow' : '').'" id="prodiv'.$count.'" '; ?>
-													<?php if ($count == ($MAXPRODUCT - 2)) {
-														?> onclick="MoreProducts('less')" <?php
-													}
-													if ($count == ($MAXPRODUCT - 1)) {
-														?> onclick="MoreProducts('more')" <?php
-													} else {
-														echo 'onclick="ClickProduct('.((int) $count).')"';
-													} ?>>
+															<?php if ($count == ($MAXPRODUCT - 2)) {
+																?> onclick="MoreProducts('less')" <?php
+															}
+															if ($count == ($MAXPRODUCT - 1)) {
+																?> onclick="MoreProducts('more')" <?php
+															} else {
+																echo 'onclick="ClickProduct('.((int) $count).')"';
+															} ?>>
 					<?php
 					if ($count == ($MAXPRODUCT - 2)) {
 						//echo '<img class="imgwrapper" src="img/arrow-prev-top.png" height="100%" id="proimg'.$count.'" />';

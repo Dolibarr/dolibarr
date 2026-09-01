@@ -2,6 +2,7 @@
 # This clean the caches of a branch when we close the pull request.
 # See https://github.com/actions/cache/blob/main/tips-and-workarounds.md#force-deletion-of-caches-overriding-default-cache-eviction-policy
 name: Cleanup caches of a closed branch
+
 on:
   pull_request:
     types: [closed]
@@ -18,7 +19,7 @@ jobs:
       contents: read
     steps:
       - name: Check out code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - name: Cleanup
         run: |
           gh extension install actions/gh-actions-cache

@@ -49,7 +49,7 @@ $langs->loadLangs(array("admin", "errors"));
 
 $action = GETPOST('action', 'aZ09');
 
-if (!isset($conf->global->GEOIP_VERSION)) {
+if (!getDolGlobalString("GEOIP_VERSION")) {
 	$conf->global->GEOIP_VERSION = '2';
 }
 

@@ -2,8 +2,8 @@
 /* Copyright (C) 2006-2016	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012		JF FERRY			<jfefe@aternatik.fr>
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
 *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -559,7 +559,7 @@ function getOrdersForThirdParty($authentication, $idthirdparty)
 
 		$sql = 'SELECT c.rowid as orderid';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'commande as c';
-		$sql .= " WHERE c.entity = ".$conf->entity;
+		$sql .= " WHERE c.entity = ".((int) $conf->entity);
 		if ($idthirdparty != 'all') {
 			$sql .= " AND c.fk_soc = ".((int) $idthirdparty);
 		}
@@ -576,7 +576,7 @@ function getOrdersForThirdParty($authentication, $idthirdparty)
 				$order = new Commande($db);
 				$order->fetch($obj->orderid);
 
-				// Sécurité pour utilisateur externe
+				// Security check for external user
 				if ($socid && ($socid != $order->socid)) {
 					$error++;
 					$errorcode = 'PERMISSION_DENIED';

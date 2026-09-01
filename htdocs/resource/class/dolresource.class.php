@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2015		Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2023-2024		William Mead		<william.mead@manchenumerique.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -202,7 +202,7 @@ class Dolresource extends CommonObject
 		$sql .= "datec, ";
 		$sql .= "fk_user_author ";
 		$sql .= ") VALUES (";
-		$sql .= (int) (empty($this->entity) ? $conf->entity : $this->entity) . ", ";
+		$sql .= (int) (empty($this->entity) ? ((int) $conf->entity) : ((int) $this->entity)) . ", ";
 		foreach ($new_resource_values as $value) {
 			$sql .= " " . (!empty($value) ? "'" . $this->db->escape($value) . "'" : 'NULL') . ",";
 		}
@@ -288,7 +288,7 @@ class Dolresource extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_type_resource as ty ON ty.code=t.fk_code_type_resource";
 		if ($id) {
-			$sql .= " WHERE t.rowid = ".($id);
+			$sql .= " WHERE t.rowid = ".((int) $id);
 		} else {
 			$sql .= " WHERE t.ref = '".$this->db->escape($ref)."'";
 		}
@@ -482,7 +482,7 @@ class Dolresource extends CommonObject
 		$sql .= " t.fk_user_create,";
 		$sql .= " t.tms as date_modification";
 		$sql .= " FROM ".MAIN_DB_PREFIX."element_resources as t";
-		$sql .= " WHERE t.rowid = ".($id);
+		$sql .= " WHERE t.rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -536,7 +536,7 @@ class Dolresource extends CommonObject
 		$this->db->begin();
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element;
-		$sql .= " WHERE rowid = ".($rowid);
+		$sql .= " WHERE rowid = ".((int) $rowid);
 
 		dol_syslog(get_class($this), LOG_DEBUG);
 		if ($this->db->query($sql)) {

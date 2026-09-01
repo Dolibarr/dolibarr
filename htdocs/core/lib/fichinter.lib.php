@@ -5,7 +5,7 @@
  * Copyright (C) 2016		Gilles Poirier 		    <glgpoirier@gmail.com>
  * Copyright (C) 2018-2024	Charlene Benke 		    <charlene@patas-monkey.com>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,7 +50,7 @@ function fichinter_prepare_head($object)
 	if (!getDolGlobalString('MAIN_DISABLE_CONTACTS_TAB')) {
 		$nbContact = count($object->liste_contact(-1, 'internal')) + count($object->liste_contact(-1, 'external'));
 		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/fichinter/contact.php', ['id' => $object->id]);
-		$head[$h][1] = $langs->trans('InterventionContact');
+		$head[$h][1] = $langs->trans('ContactsAddresses');
 		if ($nbContact > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
 		}
@@ -169,9 +169,8 @@ function fichinter_prepare_head($object)
  */
 function fichinter_admin_prepare_head()
 {
-	global $langs, $conf, $user, $db;
+	global $langs, $conf, $user, $extrafields;
 
-	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('fichinter');
 	$extrafields->fetch_name_optionals_label('fichinterdet');
 

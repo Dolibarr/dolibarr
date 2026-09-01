@@ -9,7 +9,8 @@
  * Copyright (C) 2012		J. Fernando Lagrange		<fernando@demo-tic.org>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,9 +34,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -43,6 +41,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "members"));
@@ -52,7 +52,7 @@ if (!$user->admin) {
 }
 
 
-$oldtypetonewone = array('texte'=>'text', 'chaine'=>'string'); // old type to new ones
+$oldtypetonewone = array('texte' => 'text', 'chaine' => 'string'); // old type to new ones
 
 $action = GETPOST('action', 'aZ09');
 
@@ -65,19 +65,18 @@ $helptext .= '__COMPANY__, __ADDRESS__, __ZIP__, __TOWN__, __COUNTRY__, __EMAIL_
 
 // Editing global variables not related to a specific theme
 $constantes = array(
-	'MEMBER_REMINDER_EMAIL'                         => array('type'=>'yesno', 'label' => $langs->trans('MEMBER_REMINDER_EMAIL', $langs->transnoentities("Module2300Name")), 'help' => $langs->trans('MEMBER_REMINDER_EMAILHelp', $langs->transnoentities("Module2300Name"))),
-	'ADHERENT_EMAIL_TEMPLATE_REMIND_EXPIRATION' 	=> array('type'=>'emailtemplate:member', 'label'=>''),
-	'ADHERENT_EMAIL_TEMPLATE_AUTOREGISTER'			=> array('type'=>'emailtemplate:member', 'label'=>''),
-	'ADHERENT_EMAIL_TEMPLATE_MEMBER_VALIDATION'		=> array('type'=>'emailtemplate:member', 'label'=>''),
-	'ADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION'			=> array('type'=>'emailtemplate:member', 'label'=>''),
-	'ADHERENT_EMAIL_TEMPLATE_CANCELATION'			=> array('type'=>'emailtemplate:member', 'label'=>''),
-	'ADHERENT_EMAIL_TEMPLATE_EXCLUSION'				=> array('type'=>'emailtemplate:member', 'label'=>''),
-	'ADHERENT_MAIL_FROM'							=> array('type'=>'string', 'label'=>''),
-	'ADHERENT_CC_MAIL_FROM'							=> array('type'=>'string', 'label'=>''),
-	'ADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT'		=> array('type'=>'string', 'label'=>''),
-	'ADHERENT_AUTOREGISTER_NOTIF_MAIL'				=> array('type'=>'html', 'tooltip' => $helptext, 'label' => '')
+	'MEMBER_REMINDER_EMAIL'                         => array('type' => 'yesno', 'label' => $langs->trans('MEMBER_REMINDER_EMAIL', $langs->transnoentities("Module2300Name")), 'help' => $langs->trans('MEMBER_REMINDER_EMAILHelp', $langs->transnoentities("Module2300Name"))),
+	'ADHERENT_EMAIL_TEMPLATE_REMIND_EXPIRATION' 	=> array('type' => 'emailtemplate:member', 'label' => ''),
+	'ADHERENT_EMAIL_TEMPLATE_AUTOREGISTER'			=> array('type' => 'emailtemplate:member', 'label' => ''),
+	'ADHERENT_EMAIL_TEMPLATE_MEMBER_VALIDATION'		=> array('type' => 'emailtemplate:member', 'label' => ''),
+	'ADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION'			=> array('type' => 'emailtemplate:member', 'label' => ''),
+	'ADHERENT_EMAIL_TEMPLATE_CANCELATION'			=> array('type' => 'emailtemplate:member', 'label' => ''),
+	'ADHERENT_EMAIL_TEMPLATE_EXCLUSION'				=> array('type' => 'emailtemplate:member', 'label' => ''),
+	'ADHERENT_MAIL_FROM'							=> array('type' => 'string', 'label' => ''),
+	'ADHERENT_CC_MAIL_FROM'							=> array('type' => 'string', 'label' => ''),
+	'ADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT'		=> array('type' => 'string', 'label' => ''),
+	'ADHERENT_AUTOREGISTER_NOTIF_MAIL'				=> array('type' => 'html', 'tooltip' => $helptext, 'label' => '')
 );
-
 
 
 /*
@@ -173,7 +172,7 @@ $tableau = $constantes;
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
-print '<td class="">'.$langs->trans("Description").'</td>';
+print '<td class="">'.$langs->trans("Parameter").'</td>';
 print '<td>';
 print '</td>';
 print "</tr>\n";
@@ -188,7 +187,7 @@ foreach ($tableau as $key => $const) {	// Loop on each param
 	$sql = "SELECT rowid, ".$db->decrypt('name')." as name, ".$db->decrypt('value')." as value, type, note";
 	$sql .= " FROM ".MAIN_DB_PREFIX."const";
 	$sql .= " WHERE ".$db->decrypt('name')." = '".$db->escape($const)."'";
-	$sql .= " AND entity IN (0, ".$conf->entity.")";
+	$sql .= " AND entity IN (0, ".((int) $conf->entity).")";
 	$sql .= " ORDER BY name ASC, entity DESC";
 	$resql = $db->query($sql);
 
@@ -223,19 +222,18 @@ foreach ($tableau as $key => $const) {	// Loop on each param
 		}
 
 		if (!empty($tableau[$key]['tooltip'])) {
-			print $form->textwithpicto($label ? $label : $langs->trans('Desc'.$const), $tableau[$key]['tooltip']);
+			print $form->textwithpicto($label ? $label : $langs->trans('Desc'.$const), $tableau[$key]['tooltip'] . $help);
 		} else {
+			print '<span class="valignmiddle">';
 			print($label ? $label : $langs->trans('Desc'.$const));
+			print '</span>';
+			if ($help) {
+				print $form->textwithpicto('', $help);
+			}
 		}
 
 		if (in_array($const, ['ADHERENT_MAIL_FROM', 'ADHERENT_CC_MAIL_FROM'])) {
 			print ' '.img_help(1, $langs->trans("EMailHelpMsgSPFDKIM"));
-		}
-		if ($help) {
-			print '<br><span class="opacitymedium">';
-			//print $langs->trans("MEMBER_REMINDER_EMAILHelp");
-			print $help;
-			print '</span>';
 		}
 
 		print "</td>\n";
@@ -280,7 +278,7 @@ foreach ($tableau as $key => $const) {	// Loop on each param
 			print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/mails_templates.php', ['action' => 'create', 'type_template' => $tmp[1], 'backtopage' => dolBuildUrl($_SERVER["PHP_SELF"])]).'">'.img_picto('', 'add').'</a>';
 		} elseif (preg_match('/MAIL_FROM$/i', $const)) {
 			print img_picto('', 'email', 'class="pictofixedwidth"').'<input type="text" class="flat minwidth300" name="constvalue_'.$const.'" value="'.dol_escape_htmltag($obj->value).'">';
-		} else { // type = 'string' ou 'chaine'
+		} else { // type = 'string' or 'chaine'
 			print '<input type="text" class="flat minwidth300" name="constvalue_'.$const .'" value="'.dol_escape_htmltag($obj->value).'">';
 		}
 		print '</td>';

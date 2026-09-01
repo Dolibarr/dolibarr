@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2021		Florian Henry			<florian.henry@scopen.fr>
- * Copyright (C) 2023       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2023-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -30,9 +30,8 @@
  */
 function eventorganizationAdminPrepareHead()
 {
-	global $langs, $conf, $db;
+	global $langs, $conf, $extrafields;
 
-	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('actioncomm');
 	$extrafields->fetch_name_optionals_label('eventorganization_conferenceorboothattendee');
 

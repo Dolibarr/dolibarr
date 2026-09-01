@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025	Charlene Benke			<charlene@patas-monkey.com>
  * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025       Jessica Kowal        <jessicakowal69@gmail.com>
@@ -28,6 +28,7 @@ require_once DOL_DOCUMENT_ROOT . '/projet/class/task.class.php';
 /**
  * API class for projects
  *
+ * @since	5.0.0	Initial implementation
  * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
  */
@@ -68,6 +69,7 @@ class Projects extends DolibarrApi
 	 *
 	 * Return an array with project information
 	 *
+	 * @since	5.0.0	Initial implementation
 	 * @param   int         $id         ID of project
 	 * @return  Object					Object with cleaned properties
 	 *
@@ -97,6 +99,7 @@ class Projects extends DolibarrApi
 	 *
 	 * Return an array with project information
 	 *
+	 * @since	20.0.0	Initial implementation
 	 * @param	string	$ref			Ref of project
 	 * @return  Object					Object with cleaned properties
 	 *
@@ -128,6 +131,7 @@ class Projects extends DolibarrApi
 	 *
 	 * Return an array with project information
 	 *
+	 * @since	20.0.0	Initial implementation
 	 * @param	string	$ref_ext			Ref_Ext of project
 	 * @return  Object					Object with cleaned properties
 	 *
@@ -159,6 +163,7 @@ class Projects extends DolibarrApi
 	 *
 	 * Return an array with project information
 	 *
+	 * @since	20.0.0	Initial implementation
 	 * @param	string	$email_msgid	Email msgid of project
 	 * @return  Object					Object with cleaned properties
 	 *
@@ -190,13 +195,14 @@ class Projects extends DolibarrApi
 	 *
 	 * Get a list of projects
 	 *
+	 * @since	5.0.0	Initial implementation
 	 * @param string		   $sortfield			Sort field
 	 * @param string		   $sortorder			Sort order
 	 * @param int			   $limit				Limit for list
 	 * @param int			   $page				Page number
 	 * @param string		   $thirdparty_ids		Thirdparty ids to filter projects of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
 	 * @param  int    $category   Use this param to filter list by category
-	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:>:'20160101')"
 	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool             $pagination_data     If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @return  array                               Array of project objects
@@ -307,6 +313,7 @@ class Projects extends DolibarrApi
 	/**
 	 * Create project object
 	 *
+	 * @since	5.0.0	Initial implementation
 	 * @param   array   $request_data   Request data
 	 * @phan-param array<string,mixed> $request_data
 	 * @phpstan-param array<string,mixed> $request_data
@@ -390,6 +397,7 @@ class Projects extends DolibarrApi
 	/**
 	 * Adds a contact to an project
 	 *
+	 * @since	23.0.0	Initial implementation
 	 * @param   int		$id					project ID
 	 * @param   int		$fk_socpeople		Id of thirdparty contact (if source = 'external') or id of user (if source = 'internal') to link
 	 * @param   string	$type_contact       Type of contact (code). Must a code found into table llx_c_type_contact. For example: BILLING
@@ -431,6 +439,7 @@ class Projects extends DolibarrApi
 	/**
 	 * Delete a contact type of given project
 	 *
+	 * @since	23.0.0	Initial implementation
 	 * @param	int    $id             Id of project to update
 	 * @param	int    $contactid      Row key of the contact in the array contact_ids.
 	 * @param	string $type           Type of the contact (BILLING, SHIPPING, CUSTOMER).
@@ -475,6 +484,7 @@ class Projects extends DolibarrApi
 	 * Get tasks of a project.
 	 * See also API /tasks
 	 *
+	 * @since	5.0.0	Initial implementation
 	 * @param int   $id                     Id of project
 	 * @param int   $includetimespent       0=Return only list of tasks. 1=Include a summary of time spent, 2=Include details of time spent lines
 	 * @return array
@@ -515,11 +525,12 @@ class Projects extends DolibarrApi
 	/**
 	 * Get roles a user is assigned to a project with
 	 *
+	 * @since	5.0.0	Initial implementation
 	 * @param   int   $id             Id of project
 	 * @param   int   $userid         Id of user (0 = connected user)
 	 * @return array
-	 * @phan-return Object[]
-	 * @phpstan-return Object[]
+	 * @phan-return string[]
+	 * @phpstan-return string[]
 	 *
 	 * @url	GET {id}/roles
 	 */
@@ -693,6 +704,7 @@ class Projects extends DolibarrApi
 	/**
 	 * Update project general fields (won't touch lines of project)
 	 *
+	 * @since	5.0.0	Initial implementation
 	 * @param 	int   	$id             	Id of project to update
 	 * @param 	array 	$request_data   	Datas
 	 * @phan-param ?array<string,mixed> $request_data
@@ -726,7 +738,7 @@ class Projects extends DolibarrApi
 			}
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->project->array_options[$index] = $this->_checkValForAPI($field, $val, $this->project);
+					$this->project->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->project);
 				}
 				continue;
 			}
@@ -744,6 +756,7 @@ class Projects extends DolibarrApi
 	/**
 	 * Delete project
 	 *
+	 * @since	5.0.0	Initial implementation
 	 * @param   int     $id         Project ID
 	 *
 	 * @return  array
@@ -781,6 +794,7 @@ class Projects extends DolibarrApi
 	 * You can test this API with the following input message
 	 * { "notrigger": 0 }
 	 *
+	 * @since	5.0.0	Initial implementation
 	 * @param   int $id             Project ID
 	 * @param   int $notrigger      1=Does not execute triggers, 0= execute triggers
 	 * @phan-param int<0,1> $notrigger
@@ -831,13 +845,14 @@ class Projects extends DolibarrApi
 	/**
 	 * Get all timespent
 	 *
+	 * @since	23.0.0	Initial implementation
 	 * @param string		   $sortfield			Sort field
 	 * @param string		   $sortorder			Sort order
 	 * @param int			   $limit				Limit for list
 	 * @param int			   $page				Page number
 	 * @param string		   $thirdparty_ids		Thirdparty ids to filter projects of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
 	 * @param  int    		   $category   		Use this param to filter list by category
-	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:>:'20160101')"
 	 * @param string    	   $properties		Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool             $pagination_data     If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @return  array                               Array of project objects
@@ -1027,6 +1042,7 @@ class Projects extends DolibarrApi
 	 *
 	 * Return an array with contact information
 	 *
+	 * @since	23.0.0	Initial implementation
 	 * @param int    $id     ID of project
 	 * @param string $type   Type of the contact
 	 * @return array<int,mixed>         Array with cleaned properties
@@ -1061,6 +1077,7 @@ class Projects extends DolibarrApi
 	/**
 	 * Adds a contact to a project
 	 *
+	 * @since	23.0.0	Initial implementation
 	 * @param int    $id             Project ID
 	 * @param int    $fk_socpeople   Id of thirdparty contact (if source = 'external') or id of user (if source = 'internal') to link
 	 * @param string $type_contact   Type of contact (code). Must a code found into table llx_c_type_contact. For example: BILLING
@@ -1098,13 +1115,13 @@ class Projects extends DolibarrApi
 			throw new RestException(500, 'Error : ' . $this->project->error . 'result :' . $result);
 		}
 
-		// Si demandé, ajouter le contact aux tâches
+		// If requested, add the contact to tasks
 		if ($affect_to_tasks !== null) {
 			$this->project->getLinesArray(DolibarrApiAccess::$user);
 
 			foreach ($this->project->lines as $task) {
-				// Si $affect_to_tasks est vide, on affecte à toutes les tâches
-				// Sinon, on vérifie si la tâche est dans la liste
+				// If $affect_to_tasks is empty, assign to all tasks
+				// Otherwise, check if the task is in the list
 				if (empty($affect_to_tasks) || in_array($task->id, $affect_to_tasks)) {
 					$task->add_contact($fk_socpeople, $type_contact, $source, $notrigger);
 				}
@@ -1121,6 +1138,7 @@ class Projects extends DolibarrApi
 	/**
 	 * Delete a contact type of given project
 	 *
+	 * @since	23.0.0	Initial implementation
 	 * @param int    $id         Id of project to update
 	 * @param int    $contactid  Row key of the contact in the array contact_ids.
 	 * @param string $type       Type of the contact (BILLING, SHIPPING, CUSTOMER).
@@ -1167,6 +1185,7 @@ class Projects extends DolibarrApi
 	/**
 	 * Get timespent of a project (from all its tasks)
 	 *
+	 * @since	23.0.0	Initial implementation
 	 * @param int   $id         ID of project
 	 * @return array<int,mixed>            Array of timespent objects
 	 *

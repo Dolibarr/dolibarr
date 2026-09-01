@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2014-2018  Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2015-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2015-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -310,7 +310,7 @@ class Loan extends CommonObject
 		$sql .= " '".$this->db->escape($this->account_interest)."',";
 		$sql .= " ".((int) $conf->entity).",";
 		$sql .= " '".$this->db->idate($now)."',";
-		$sql .= " ".(empty($this->fk_project) ? 'NULL' : $this->fk_project).",";
+		$sql .= " ".(empty($this->fk_project) ? 'NULL' : ((int) $this->fk_project)).",";
 		$sql .= " ".((int) $user->id).",";
 		$sql .= " '".price2num($newinsuranceamount)."'";
 		$sql .= ")";
@@ -588,7 +588,7 @@ class Loan extends CommonObject
 	 *  @param  int     $notooltip                  1=Disable tooltip
 	 *  @param  string  $morecss                    Add more css on link
 	 *  @param  int     $save_lastsearch_value      -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-	 *  @return	string								Chaine with URL
+	 *  @return	string								Text with URL
 	 */
 	public function getNomUrl($withpicto = 0, $maxlen = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
@@ -697,14 +697,12 @@ class Loan extends CommonObject
 	 */
 	public function getSumPayment()
 	{
-		$table = 'payment_loan';
-		$field = 'fk_loan';
-
-		$sql = 'SELECT sum(amount_capital) as amount';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.$table;
-		$sql .= " WHERE ".$field." = ".((int) $this->id);
+		$sql = "SELECT sum(amount_capital) as amount";
+		$sql .= " FROM ".MAIN_DB_PREFIX."payment_loan";
+		$sql .= " WHERE fk_loan = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::getSumPayment", LOG_DEBUG);
+
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$amount = 0;

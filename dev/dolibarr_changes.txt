@@ -19,15 +19,6 @@ With
 
 
 
-PHP PrestaShopWebservice:
--------------------------
-Replace
-	$params = array('filter', 'display', 'sort', 'limit', 'id_shop', 'id_group_shop');
-With
-	$params = array('filter', 'display', 'sort', 'limit', 'id_shop', 'id_group_shop', 'date');
-
-
-
 PHP PHPIMAP:
 ------------
 * In htdocs/includes/webklex/php-imap/vendor/nesbot/carbon/src/Carbon/Traits/Creator.php
@@ -63,6 +54,11 @@ Replace
 	private $connector;
 With
 	protected $connector;
+
+Replace
+	if (!is_resource($im)) {
+With
+	if (!is_resource($im) && !($im instanceof \GdImage)) {
 
 
 
@@ -259,11 +255,24 @@ with
 with
 	if (isset($res[0]) && $res[0] == PDF_TYPE_OBJECT)
 
+* Replace
+	public function Error($msg) {
+        die("<strong>TCPDI_PARSER ERROR [{$this->uniqueid}]: </strong>".$msg);
+    }
+with
+	public function Error($msg) {
+        // Respect K_TCPDF_THROW_EXCEPTION_ERROR like TCPDF does
+        if (defined('K_TCPDF_THROW_EXCEPTION_ERROR') && K_TCPDF_THROW_EXCEPTION_ERROR) {
+            throw new \Exception("TCPDI_PARSER ERROR [{$this->uniqueid}]: ".$msg);
+        }
+        // Default: exit program and print error
+        die("<strong>TCPDI_PARSER ERROR [{$this->uniqueid}]: </strong>".$msg);
+    }
 
 
 PHP JQUERYFILETREE:
 -------------------
-* Remove directory htdocs/includes/jquery/plugins/jqueryFileTree/connectors
+* Remove directory htdocs/public/includes/jquery/plugins/jqueryFileTree/connectors
 
 
 
@@ -406,6 +415,18 @@ Modify function
 		return new Uri($url);
 	}
 
+Into OAuth/Common/HTTP/Client/CurlClient.php, add code
+
+        // @CHANGE DOL_LDR Add log
+        if (function_exists('getDolGlobalString') && getDolGlobalString('OAUTH_DEBUG')) {
+        	file_put_contents(DOL_DATA_ROOT . "/dolibarr_oauth.log", $endpoint->getAbsoluteUri()."\n", FILE_APPEND);
+        	file_put_contents(DOL_DATA_ROOT . "/dolibarr_oauth.log", $requestBody."\n", FILE_APPEND);
+        	file_put_contents(DOL_DATA_ROOT . "/dolibarr_oauth.log", $method."\n", FILE_APPEND);
+        	file_put_contents(DOL_DATA_ROOT . "/dolibarr_oauth.log", var_export($extraHeaders, true)."\n", FILE_APPEND);
+        	if (function_exists('dolChmod')) {
+        		dolChmod(DOL_DATA_ROOT . "/dolibarr_oauth.log");
+        	}
+        }
 
 
 JS JSGANTT:

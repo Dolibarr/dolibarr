@@ -41,6 +41,7 @@ create table llx_user
   pass                varchar(128),
   pass_crypted        varchar(128),
   pass_temp           varchar(128),			                  -- temporary password when asked for forget password or 'hashtoallowreset:YYYMMDDHHMMSS' (where date is max date of validity)
+  force_pass_change   tinyint       DEFAULT 0,                -- 1 if user must change password at next login
   api_key             varchar(128),			                  -- key to use REST API by this user
   gender              varchar(10),
   civility            varchar(6),
@@ -86,7 +87,7 @@ create table llx_user
   last_main_doc           varchar(255),					            -- relative filepath+filename of last main generated document
   datelastlogin           datetime,
   datepreviouslogin       datetime,
-  datelastpassvalidation  datetime,				                    -- last date we change password or we made a disconnect all
+  datelastpassvalidation  datetime,				                    -- last date we change password or we made a disconnect all. Open session with a start date before this date will be disabled.
   datestartvalidity       datetime,
   dateendvalidity         datetime,
   flagdelsessionsbefore   datetime DEFAULT NULL,					-- set this to a date if we need to launch an external process to invalidate all sessions for the same login created before this date

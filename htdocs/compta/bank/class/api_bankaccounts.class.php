@@ -357,7 +357,7 @@ class BankAccounts extends DolibarrApi
 
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$account->array_options[$index] = $this->_checkValForAPI($field, $val, $account);
+					$account->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $account);
 				}
 				continue;
 			}
@@ -679,7 +679,7 @@ class BankAccounts extends DolibarrApi
 	 */
 	public function updateLine($id, $line_id, $label)
 	{
-		if (!DolibarrApiAccess::$user->rights->banque->modifier) {
+		if (!DolibarrApiAccess::$user->hasRight('banque', 'modifier')) {
 			throw new RestException(403);
 		}
 
@@ -721,7 +721,7 @@ class BankAccounts extends DolibarrApi
 	 */
 	public function deleteLine($id, $line_id)
 	{
-		if (!DolibarrApiAccess::$user->rights->banque->modifier) {
+		if (!DolibarrApiAccess::$user->hasRight('banque', 'modifier')) {
 			throw new RestException(403);
 		}
 

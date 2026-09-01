@@ -2,7 +2,7 @@
 /* Copyright (C) 2013 Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2013 Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2015-2025  Frédéric France	<frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@ class box_ficheinter extends ModeleBoxes
 	 *  @param  DoliDB  $db         Database handler
 	 *  @param  string  $param      More parameters
 	 */
-	public function __construct($db, $param)
+	public function __construct($db, $param)  // @phpstan-ignore constructor.unusedParameter
 	{
 		global $user;
 
@@ -88,7 +88,7 @@ class box_ficheinter extends ModeleBoxes
 			}
 			$sql .= ", ".MAIN_DB_PREFIX."fichinter as f";
 			$sql .= " WHERE f.fk_soc = s.rowid ";
-			$sql .= " AND f.entity = ".$conf->entity;
+			$sql .= " AND f.entity = ".((int) $conf->entity);
 			if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}

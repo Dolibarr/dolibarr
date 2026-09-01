@@ -78,7 +78,7 @@ print load_fiche_titre($langs->trans("StockSetup"), $linkback, 'title_setup');
 
 $head = stock_admin_prepare_head();
 
-print dol_get_fiche_head($head, 'attributes', $langs->trans("StockSetup"), -1, 'stock');
+print dol_get_fiche_head($head, 'attributes', $langs->trans("StockSetupExtraFields"), -1, 'stock');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 

@@ -3,7 +3,7 @@
  * Copyright (C) 2021		Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2022		Anthony Berton		<anthony.berton@bb2a.fr>
  * Copyright (C) 2023-2024	William Mead		<william.mead@manchenumerique.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -246,9 +246,10 @@ class Utils
 	 */
 	public function dumpDatabase($compression = 'none', $type = 'auto', $usedefault = 1, $file = 'auto', $keeplastnfiles = 0, $execmethod = 0, $lowmemorydump = 0)
 	{
-		global $db, $conf, $langs, $dolibarr_main_data_root;
+		global $db, $conf, $langs;
 		global $dolibarr_main_db_name, $dolibarr_main_db_host, $dolibarr_main_db_user, $dolibarr_main_db_port, $dolibarr_main_db_pass;
 		global $dolibarr_main_db_character_set;
+		global $dolibarr_main_restrict_os_commands;
 
 		$langs->load("admin");
 
@@ -317,6 +318,23 @@ class Utils
 			}
 			$outputerror = $outputfile.'.err';
 			dol_mkdir($conf->admin->dir_output.'/backup');
+
+			$cmddump = dol_sanitizePathName($cmddump);											// Sanitize path
+			$cmddump = dol_string_nospecial($cmddump, '', array("|", ";", "<", ">", "&", "+")); // Sanitize command
+			$basenamecmddump = basename(str_replace('\\', '/', $cmddump));
+
+			// Sanitize and validate $cmddump
+			if (!empty($dolibarr_main_restrict_os_commands)) {
+				$arrayofallowedcommand = explode(',', $dolibarr_main_restrict_os_commands);
+				$arrayofallowedcommand = array_map('trim', $arrayofallowedcommand);
+				dol_syslog("Command are restricted to ".$dolibarr_main_restrict_os_commands.". We check that one of this command is inside ".$cmddump);
+				if (!in_array($basenamecmddump, $arrayofallowedcommand)) {	// the provided command $cmddump must be an allowed command
+					$langs->load("errors");
+					$this->error = $langs->trans('CommandIsNotInsideAllowedCommands');
+					$this->error .= '<br>'.$langs->trans('ErrorCheckTheCommandInsideTheAdvancedOptions');
+					return -1;
+				}
+			}
 
 			// Parameters execution
 			$command = $cmddump;
@@ -631,6 +649,23 @@ class Utils
 			$outputerror = $outputfile.'.err';
 			dol_mkdir($conf->admin->dir_output.'/backup');
 
+			// Sanitize and validate $cmddump
+			$cmddump = dol_sanitizePathName($cmddump);											// Sanitize path
+			$cmddump = dol_string_nospecial($cmddump, '', array("|", ";", "<", ">", "&", "+")); // Sanitize command
+			$basenamecmddump = basename(str_replace('\\', '/', $cmddump));
+
+			if (!empty($dolibarr_main_restrict_os_commands)) {
+				$arrayofallowedcommand = explode(',', $dolibarr_main_restrict_os_commands);
+				$arrayofallowedcommand = array_map('trim', $arrayofallowedcommand);
+				dol_syslog("Command are restricted to ".$dolibarr_main_restrict_os_commands.". We check that one of this command is inside ".$cmddump);
+				if (!in_array($basenamecmddump, $arrayofallowedcommand)) {	// the provided command $cmddump must be an allowed command
+					$langs->load("errors");
+					$this->error = $langs->trans('CommandIsNotInsideAllowedCommands');
+					$this->error .= '<br>'.$langs->trans('ErrorCheckTheCommandInsideTheAdvancedOptions');
+					return -1;
+				}
+			}
+
 			// Parameters execution
 			$command = $cmddump;
 			$command = preg_replace('/(\$|%)/', '', $command); // We removed chars that can be used to inject vars that contains space inside path of command without seeing there is a space to bypass the escapeshellarg.
@@ -817,6 +852,7 @@ class Utils
 		dol_include_once($modulelowercase.'/core/modules/mod'.$module.'.class.php');
 		$class = 'mod'.$module;
 
+		$moduleobj = null;
 		if (class_exists($class)) {
 			try {
 				$moduleobj = new $class($this->db);
@@ -831,7 +867,7 @@ class Utils
 			exit;
 		}
 
-		$arrayversion = explode('.', $moduleobj->version, 3);
+		$arrayversion = $moduleobj === null ? array() : explode('.', $moduleobj->version, 3);
 		if (count($arrayversion)) {
 			$FILENAMEASCII = strtolower($module).'.asciidoc';
 			$FILENAMEDOC = strtolower($module).'.html';

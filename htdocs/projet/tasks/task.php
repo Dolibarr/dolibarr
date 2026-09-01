@@ -787,7 +787,7 @@ if ($id > 0 || !empty($ref)) {
 					print '<a class="butAction classfortooltip reposition" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_close&confirm=yes&token='.newToken().'&withproject='.((int) $withproject).'" title="'.$langs->trans("Close").'">'.$langs->trans('Close').'</a>';
 				}
 
-				print '<a class="butAction reposition" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&token='.newToken().'&withproject='.((int) $withproject).'">'.$langs->trans('Clone').'</a>';
+				print '<a class="butAction butActionClone reposition" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&token='.newToken().'&withproject='.((int) $withproject).'">'.$langs->trans('Clone').'</a>';
 
 				print '<a class="butActionDelete classfortooltip reposition" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=merge&token='.newToken().'&withproject='.((int) $withproject).'" title="'.$langs->trans("MergeTasks").'">'.$langs->trans('Merge').'</a>';
 			} else {

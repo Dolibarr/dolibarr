@@ -262,7 +262,7 @@ jQuery(document).ready(function() {
 				,type: 'POST'
 				,data: {
 					'action': 'getDurationUnitByProduct'
-					,'token' : "<?php echo newToken() ?>"
+					,'token' : "<?php echo currentToken() ?>"
 					,'idproduct' : idproduct
 				}
 			}).done(function(data) {
@@ -276,7 +276,7 @@ jQuery(document).ready(function() {
 				,type: 'POST'
 				,data: {
 					'action': 'getWorkstationByProduct'
-					,'token' :  "<?php echo newToken() ?>"
+					,'token' :  "<?php echo currentToken() ?>"
 					,'idproduct' : idproduct
 				}
 			}).done(function(data) {

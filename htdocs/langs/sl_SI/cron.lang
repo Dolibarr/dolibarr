@@ -77,6 +77,7 @@ CronType=Vrsta dela
 CronType_method=Klicna metoda razreda PHP
 CronType_command=Ukaz lupine
 CronCannotLoadClass=Ni mogoče naložiti datoteke razreda %s (za uporabo razreda %s)
+CronModuleNotEnabledInThisEntity=Cron module not enabled in this entity (to use %s method of %s object)
 CronCannotLoadObject=Datoteka razreda %s je bila naložena, vendar v njej ni bilo najdenega predmeta %s
 UseMenuModuleToolsToAddCronJobs=Pojdite v meni " <a href="%s"> Domov - Skrbniška orodja - Načrtovana opravila </a> " za ogled in urejanje načrtovanih opravil.
 JobDisabled=Delo onemogočeno

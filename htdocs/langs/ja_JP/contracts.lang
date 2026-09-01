@@ -103,7 +103,13 @@ ConfirmCloneContract=コントラクト<b>%s </b>のクローンを作成して�
 LowerDateEndPlannedShort=アクティブなサービスの計画終了日を短縮
 SendContractRef=契約情報__REF__
 OtherContracts=その他契約
-##### Types de contacts #####
+##### Statistics #####
+ContractsStatistics=契約の統計
+NbOfContracts=契約数
+NumberOfContractsByMonth=月ごとの契約件数
+AmountOfServices=サービスの数
+AmountOfServicesByMonthHT=月ごとのサービス件数（税抜）
+##### Types of contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=営業担当者の署名契約
 TypeContact_contrat_internal_SALESREPFOLL=営業担当者には、次のアップ契約
 TypeContact_contrat_external_BILLING=課金顧客の連絡先

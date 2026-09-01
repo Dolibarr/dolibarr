@@ -5,6 +5,7 @@
  * Copyright (C) 2010		Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015 Claudio Aschieri				<c.aschieri@19.coop>
  * Copyright (C) 2024		MDW								<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -118,10 +119,9 @@ function reception_prepare_head(Reception $object)
  */
 function reception_admin_prepare_head()
 {
-	global $langs, $conf, $user, $db;
+	global $langs, $conf, $user, $extrafields;
 	$langs->load("receptions");
 
-	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('reception');
 	$extrafields->fetch_name_optionals_label('receptiondet_batch');
 

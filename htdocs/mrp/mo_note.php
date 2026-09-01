@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007-2017	Laurent Destailleur			<eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -26,19 +26,19 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 
 require_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
 require_once DOL_DOCUMENT_ROOT.'/mrp/lib/mrp_mo.lib.php';
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array("mrp", "companies"));
@@ -52,7 +52,6 @@ $backtopage = GETPOST('backtopage', 'alpha');
 
 // Initialize a technical objects
 $object = new Mo($db);
-$extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->mrp->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('monote', 'globalcard')); // Note that conf->hooks_modules contains array
 
@@ -156,8 +155,13 @@ if ($id > 0 || !empty($ref)) {
 
 
 	$cssclass = "titlefield";
-	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
-
+	$dirtpls = array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
+	foreach ($dirtpls as $reldir) {
+		$res = @include dol_buildpath($reldir.'/notes.tpl.php');
+		if ($res) {
+			break;
+		}
+	}
 	print '</div>';
 
 	print dol_get_fiche_end();

@@ -39,6 +39,9 @@
 @phan-var-force string $hidedetails
 @phan-var-force string $hidedesc
 @phan-var-force string $hideref
+@phan-var-force ?string $confirm
+@phan-var-force ?int $lineid
+@phan-var-force ?int $id
 ';
 /**
  * @var Conf $conf
@@ -173,8 +176,8 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 		if (!empty($object->fields[$key]['foreignkey']) && $value == '-1') {
 			$value = ''; // This is an explicit foreign key field
 		}
-		if (preg_match('/^sellist:/i', $object->fields[$key]['type']) && $value == '0') {
-			$value = ''; // sellist blank option posts "0"; normalize to '' so notnull check works on PHP 8.0+ (see github.com/Dolibarr/dolibarr/issues/38199)
+		if ((preg_match('/^sellist/i', $object->fields[$key]['type']) || $object->fields[$key]['type'] == 'select') && $value === '0') {
+			$value = ''; // sellist / select blank option posts "0"; normalize to '' so notnull check works on PHP 8.0+ (see github.com/Dolibarr/dolibarr/issues/38199)
 		}
 
 		//var_dump($key.' '.$value.' '.$object->fields[$key]['type'].' '.$object->fields[$key]['notnull']);
@@ -338,8 +341,8 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 		if (!empty($object->fields[$key]['foreignkey']) && $value == '-1') {
 			$value = ''; // This is an explicit foreign key field
 		}
-		if (preg_match('/^sellist:/i', $object->fields[$key]['type']) && $value == '0') {
-			$value = ''; // sellist blank option posts "0"; normalize to '' so notnull check works on PHP 8.0+ (see github.com/Dolibarr/dolibarr/issues/38199)
+		if ((preg_match('/^sellist/i', $object->fields[$key]['type']) || $object->fields[$key]['type'] == 'select') && $value === '0') {
+			$value = ''; // sellist / select blank option posts "0"; normalize to '' so notnull check works on PHP 8.0+ (see github.com/Dolibarr/dolibarr/issues/38199)
 		}
 
 		$object->$key = $value;

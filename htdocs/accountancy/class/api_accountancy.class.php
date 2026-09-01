@@ -78,7 +78,7 @@ class Accountancy extends DolibarrApi
 	 * @param		int			$alreadyexport			[=0] by default export data only if it's not yet exported or 1 already exported (always export data even if 'date_export" is set)
 	 * @param		int			$notnotifiedasexport	[=0] by default notified as exported or 1 not notified as exported (when the export is done, notified or not the column 'date_export')
 	 *
-	 * @return	string
+	 * @return	array{modulepart:string,relative_path:string,filename:string,mimetype:string}	Generated file metadata
 	 *
 	 * @url		GET exportdata
 	 *
@@ -271,7 +271,24 @@ class Accountancy extends DolibarrApi
 				throw new RestException(500, 'Error accountancy export : '.implode(',', $accountancyexport->errors));
 			} else {
 				$this->db->commit();
-				exit();
+
+				$filedata = $accountancyexport->generatedfiledata;
+				if (empty($filedata['downloadFilePath']) || empty($filedata['downloadFileFullName'])) {
+					throw new RestException(500, 'Accounting export generated no downloadable file');
+				}
+
+				$outputdir = !empty($conf->accounting->multidir_output[$conf->entity]) ? $conf->accounting->multidir_output[$conf->entity] : $conf->accounting->dir_output;
+				$outputdir = rtrim($outputdir, '/').'/';
+				if (strpos($filedata['downloadFilePath'], $outputdir) !== 0) {
+					throw new RestException(500, 'Accounting export generated a file outside the accounting output directory');
+				}
+
+				return array(
+					'modulepart' => 'export_compta',
+					'relative_path' => substr($filedata['downloadFilePath'], strlen($outputdir)),
+					'filename' => basename($filedata['downloadFileFullName']),
+					'mimetype' => $filedata['downloadFileMimeType'],
+				);
 			}
 		}
 	}

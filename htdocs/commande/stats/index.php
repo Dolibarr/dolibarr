@@ -30,14 +30,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
-require_once DOL_DOCUMENT_ROOT.'/commande/class/commandestats.class.php';
-require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formorder.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -45,6 +37,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+require_once DOL_DOCUMENT_ROOT.'/commande/class/commandestats.class.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formorder.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 
 $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
@@ -110,18 +109,50 @@ $formcompany = new FormCompany($db);
 $formother = new FormOther($db);
 
 $picto = 'order';
-$title = $langs->trans("OrdersStatistics");
-$dir = $conf->commande->dir_temp;
+$title = $langs->trans("Orders");
+$dir = $conf->order->dir_temp;
 
 if ($mode == 'supplier') {
 	$picto = 'supplier_order';
-	$title = $langs->trans("OrdersStatisticsSuppliers");
+	$title = $langs->trans("SuppliersOrders");
 	$dir = $conf->fournisseur->commande->dir_temp;
 }
 
 llxHeader('', $title, '', '', 0, 0, '', '', '', 'mod-order page-stats');
 
-print load_fiche_titre($title, '', $picto);
+$page = 0;
+$param = '';
+$sortfield = '';
+$sortorder = '';
+$massactionbutton = '';
+$num = 0;
+$nbtotalofrecords = $langs->trans("Statistics");
+$limit = 0;
+
+$newcardbutton = '';
+if ($mode == 'supplier') {
+	$urlnew = DOL_URL_ROOT.'/fourn/commande/card.php?action=create';
+	if (!empty($socid)) {
+		$urlnew .= '&socid='.$socid;
+	}
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/fourn/commande/list.php?mode=common', '', 1, array('morecss' => 'reposition'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', DOL_URL_ROOT.'/fourn/commande/list.php?mode=kanban', '', 1, array('morecss' => 'reposition'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', DOL_URL_ROOT.'/commande/stats/index.php?mode=supplier', '', 2, array('morecss' => 'reposition'));
+	$newcardbutton .= dolGetButtonTitleSeparator();
+	$newcardbutton .= dolGetButtonTitle($langs->trans('NewSupplierOrderShort'), '', 'fa fa-plus-circle', $urlnew, '', (int) ($user->hasRight('fournisseur', 'commande', 'creer') || $user->hasRight('supplier_order', 'creer')));
+} else {
+	$urlnew = DOL_URL_ROOT.'/commande/card.php?action=create';
+	if (!empty($socid)) {
+		$urlnew .= '&socid='.$socid;
+	}
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/commande/list.php?mode=common', '', 1, array('morecss' => 'reposition'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', DOL_URL_ROOT.'/commande/list.php?mode=kanban', '', 1, array('morecss' => 'reposition'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', DOL_URL_ROOT.'/commande/stats/index.php', '', 2, array('morecss' => 'reposition'));
+	$newcardbutton .= dolGetButtonTitleSeparator();
+	$newcardbutton .= dolGetButtonTitle($langs->trans('NewOrder'), '', 'fa fa-plus-circle', $urlnew, '', $user->hasRight('commande', 'creer'));
+}
+
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 dol_mkdir($dir);
 

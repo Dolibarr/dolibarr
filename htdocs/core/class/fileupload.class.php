@@ -3,7 +3,7 @@
 /* Copyright (C) 2011-2022	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2011-2023	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,6 +83,7 @@ class FileUpload
 		}
 
 		$object_ref = 'UndefinedReference';
+		$object = null;
 		// If pathname and filename are null then we can still upload files if we have specified upload_dir on $options
 		if ($pathname !== null && $filename !== null) {
 			// Get object from its id and type
@@ -90,9 +91,9 @@ class FileUpload
 
 			$object_ref = dol_sanitizeFileName($object->ref);
 
-			// add object reference as file name prefix if const MAIN_DISABLE_SUGGEST_REF_AS_PREFIX is not enabled
+			// Add object reference as file name prefix if const MAIN_DISABLE_SUGGEST_REF_AS_PREFIX is not enabled
 			if (!getDolGlobalInt('MAIN_DISABLE_SUGGEST_REF_AS_PREFIX')) {
-				$savingDocMask = $object_ref.'-__file__';
+				$savingDocMask = $object_ref . '-__file__';
 			}
 
 			// Special cases to forge $object_ref used to forge $upload_dir
@@ -106,11 +107,13 @@ class FileUpload
 
 				dol_include_once('/'.$parentElement.'/class/'.$parentObject.'.class.php');
 				$parent = new $parentClass($db);
-				$parent->fetch($object->$parentForeignKey);
-				if (!empty($parent->socid)) {
-					$parent->fetch_thirdparty();
+				if ($object->$parentForeignKey !== null) {
+					$parent->fetch((int) $object->$parentForeignKey);
+					if (!empty($parent->socid)) {
+						$parent->fetch_thirdparty();
+					}
+					$object->$parentObject = clone $parent;
 				}
-				$object->$parentObject = clone $parent;
 
 				$object_ref = dol_sanitizeFileName($object->project->ref).'/'.$object_ref;
 			}
@@ -403,6 +406,7 @@ class FileUpload
 		// Remove path information and dots around the filename, to prevent uploading
 		// into different directories or replacing hidden system files.
 		$file_name = basename(dol_sanitizeFileName($name));
+		$file_name = preg_replace('/ {2,}/', ' ', $file_name); // replaces multiple spaces into one space like the upload flow via input field
 		// Add missing file extension for known image types:
 		$matches = array();
 		if (strpos($file_name, '.') === false && preg_match('/^image\/(gif|jpe?g|png)/', $type, $matches)) {
@@ -446,7 +450,7 @@ class FileUpload
 
 		if ($validate) {
 			if (dol_mkdir($this->options['upload_dir']) >= 0) {
-				// add object reference as file name prefix if const MAIN_DISABLE_SUGGEST_REF_AS_PREFIX is not enabled
+				// Add object reference as file name prefix if const MAIN_DISABLE_SUGGEST_REF_AS_PREFIX is not enabled
 				$fileNameWithoutExt = preg_replace('/\.[^\.]+$/', '', $file->name);
 				$savingDocMask = $this->options['saving_doc_mask'];
 				if ($savingDocMask && strpos($savingDocMask, $fileNameWithoutExt) !== 0) {

@@ -4,7 +4,7 @@
  * Copyright (C) 2004-2020	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
  * Copyright (C) 2019		Nicolas ZABOURI				<info@inovea-conseil.com>
- * Copyright (C) 2021-2025  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2021-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2021-2023	Waël Almoman				<info@almoman.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
@@ -31,12 +31,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
-require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -44,16 +38,16 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "members"));
 
-
-$hookmanager = new HookManager($db);
-
 // Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('membersindex'));
-
 
 // Security check
 $result = restrictedArea($user, 'adherent');
@@ -108,7 +102,7 @@ if ($conf->use_javascript_ajax) {
 
 	$boxgraph .= '<div class="div-table-responsive-no-min">';
 	$boxgraph .= '<table class="noborder nohover centpercent">';
-	$boxgraph .= '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").($numberyears ? ' ('.($year - $numberyears).' - '.$year.')' : '').'</th></tr>';
+	$boxgraph .= '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("Status").' '.($numberyears ? ' ('.($year - $numberyears).' - '.$year.')' : '').'</th></tr>';
 	$boxgraph .= '<tr><td class="center" colspan="2">';
 
 	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherentstats.class.php';

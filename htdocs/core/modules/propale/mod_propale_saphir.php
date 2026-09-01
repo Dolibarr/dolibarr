@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2010 Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin               <regis.houssin@inodbox.com>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -52,14 +52,7 @@ class mod_propale_saphir extends ModeleNumRefPropales
 	public $position = 40;
 
 	/**
-	 * @var string Nom du modele
-	 * @deprecated
-	 * @see $name
-	 */
-	public $nom = 'Saphir';
-
-	/**
-	 * @var string model name
+	 * @var string Name of model
 	 */
 	public $name = 'Saphir';
 
@@ -97,7 +90,7 @@ class mod_propale_saphir extends ModeleNumRefPropales
 		$tooltip .= $langs->trans("GenericMaskCodes5");
 		$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5b");
 
-		// Parametrage du prefix
+		// Setting of prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
 		$mask = !getDolGlobalString('PROPALE_SAPHIR_MASK') ? '' : $conf->global->PROPALE_SAPHIR_MASK;
 		$texte .= '<td class="right nowraponall">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskpropal" value="'.$mask.'">', $tooltip, 1, 'help', 'valignmiddle', 0, 3, $this->name).'</td>';

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2014-2016  Jean-François Ferry	<hello@librethic.io>
  * Copyright (C) 2016       Christophe Battarel <christophe@altairis.fr>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025       Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2023-2025	Benjamin Falière	<benjamin@faliere.com>
  *
@@ -378,8 +378,8 @@ class InterfaceTicketEmail extends DolibarrTriggers
 		$appli = $mysoc->name;
 
 		/* Send email to admin */
-		$subject = '['.$appli.'] '.$langs->transnoentities($base_subject, $object->ref, $object->track_id);
-		$message_admin = $langs->transnoentities($body, $object->track_id).'<br>';
+		$subject = '['.$appli.'] '.$langs->transnoentities($base_subject, (string) $object->ref, (string) $object->track_id);
+		$message_admin = $langs->transnoentities($body, (string) $object->track_id).'<br>';
 		$message_admin .= '<ul><li>'.$langs->trans('Title').' : '.$object->subject.'</li>';
 		$message_admin .= '<li>'.$langs->trans('Type').' : '.$langs->getLabelFromKey($this->db, 'TicketTypeShort'.$object->type_code, 'c_ticket_type', 'code', 'label', $object->type_code).'</li>';
 		$message_admin .= '<li>'.$langs->trans('TicketCategory').' : '.$langs->getLabelFromKey($this->db, 'TicketCategoryShort'.$object->category_code, 'c_ticket_category', 'code', 'label', $object->category_code).'</li>';
@@ -407,7 +407,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 		$message_admin .= '<p>'.$langs->trans('Message').' : <br><br>'.$message.'</p><br>';
 		$message_admin .= '<p><a href="'.dol_buildpath('/ticket/card.php', 2).'?track_id='.$object->track_id.'">'.$langs->trans('SeeThisTicketIntomanagementInterface').'</a></p>';
 
-		$from = (getDolGlobalString('MAIN_INFO_SOCIETE_NOM') ? getDolGlobalString('MAIN_INFO_SOCIETE_NOM') . ' ' : '') . '<' . getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM').'>';
+		$email_from = (getDolGlobalString('MAIN_INFO_SOCIETE_NOM') ? getDolGlobalString('MAIN_INFO_SOCIETE_NOM') . ' ' : '') . '<' . getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM').'>';
 
 		$trackid = 'tic'.$object->id;
 
@@ -417,7 +417,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 			$conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
 		}
 		include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-		$mailfile = new CMailFile($subject, $sendto, $from, $message_admin, $filepaths, $mimetypes, $filenames, '', '', 0, -1, '', '', $trackid, '', 'ticket');
+		$mailfile = new CMailFile($subject, $sendto, $email_from, $message_admin, $filepaths, $mimetypes, $filenames, '', '', 0, -1, '', '', $trackid, '', 'ticket');
 		if ($mailfile->error) {
 			dol_syslog($mailfile->error, LOG_DEBUG);
 		} else {
@@ -449,7 +449,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 		$appli = $mysoc->name;
 
 		$subject = '['.$appli.'] '.$langs->transnoentities($base_subject);
-		$message_customer = $langs->transnoentities($body, $object->track_id).'<br>';
+		$message_customer = $langs->transnoentities($body, (string) $object->track_id).'<br>';
 		$message_customer .= '<ul><li>'.$langs->trans('Title').' : '.$object->subject.'</li>';
 		$message_customer .= '<li>'.$langs->trans('Type').' : '.$langs->getLabelFromKey($this->db, 'TicketTypeShort'.$object->type_code, 'c_ticket_type', 'code', 'label', $object->type_code).'</li>';
 		$message_customer .= '<li>'.$langs->trans('TicketCategory').' : '.$langs->getLabelFromKey($this->db, 'TicketCategoryShort'.$object->category_code, 'c_ticket_category', 'code', 'label', $object->category_code).'</li>';
@@ -490,14 +490,14 @@ class InterfaceTicketEmail extends DolibarrTriggers
 		$message_customer .= '<p>'.$langs->trans('Message').' : <br><br>'.$message.'</p><br>';
 
 		if (getDolGlobalInt('TICKET_ENABLE_PUBLIC_INTERFACE')) {
-			$url_public_ticket = getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', dol_buildpath('/public/ticket/', 2)).'view.php?track_id='.urlencode($object->track_id);
+			$url_public_ticket = getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', dol_buildpath('/public/ticket/', 2)).'view.php?track_id='.urlencode((string) $object->track_id);
 			$message_customer .= '<p>'.$langs->trans($see_ticket).' : <a href="'.$url_public_ticket.'">'.$url_public_ticket.'</a></p>';
 			$message_customer .= '<p>'.$langs->trans('TicketEmailPleaseDoNotReplyToThisEmail').'</p>';
 		} else {
 			$message_customer .= '<p>'.$langs->trans('TicketEmailPleaseDoNotReplyToThisEmailNoInterface').'</p>';
 		}
 
-		$from = (getDolGlobalString('MAIN_INFO_SOCIETE_NOM') ? getDolGlobalString('MAIN_INFO_SOCIETE_NOM') . ' ' : '').'<' . getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM').'>';
+		$email_from = (getDolGlobalString('MAIN_INFO_SOCIETE_NOM') ? getDolGlobalString('MAIN_INFO_SOCIETE_NOM') . ' ' : '').'<' . getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM').'>';
 
 		$trackid = 'tic'.$object->id;
 
@@ -508,7 +508,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 		}
 
 		include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-		$mailfile = new CMailFile($subject, $sendto, $from, $message_customer, $filepaths, $mimetypes, $filenames, '', '', 0, -1, '', '', $trackid, '', 'ticket');
+		$mailfile = new CMailFile($subject, $sendto, $email_from, $message_customer, $filepaths, $mimetypes, $filenames, '', '', 0, -1, '', '', $trackid, '', 'ticket');
 		if ($mailfile->error) {
 			dol_syslog($mailfile->error, LOG_DEBUG);
 		} else {
@@ -547,7 +547,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 		$appli = $mysoc->name;
 
 		$subject = '['.$appli.'] '.$langs->transnoentities($base_subject);
-		$message = '<p>'.$langs->transnoentities($body, $object->track_id, dolGetFirstLastname($user->firstname, $user->lastname))."</p>";
+		$message = '<p>'.$langs->transnoentities($body, (string) $object->track_id, dolGetFirstLastname($user->firstname, $user->lastname))."</p>";
 		$message .= '<ul><li>'.$langs->trans('Title').' : '.$object->subject.'</li>';
 		$message .= '<li>'.$langs->trans('Type').' : '.$object->type_label.'</li>';
 		$message .= '<li>'.$langs->trans('Category').' : '.$object->category_label.'</li>';
@@ -563,7 +563,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 		$message .= '<p>'.$langs->trans('Message').' : <br>'.$object->message.'</p>';
 		$message .= '<p><a href="'.dol_buildpath('/ticket/card.php', 2).'?track_id='.$object->track_id.'">'.$langs->trans($see_ticket).'</a></p>';
 
-		$from = dolGetFirstLastname($user->firstname, $user->lastname).'<'.$user->email.'>';
+		$email_from = dolGetFirstLastname($user->firstname, $user->lastname).'<'.$user->email.'>';
 
 		$message = dol_nl2br($message);
 
@@ -574,7 +574,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 		}
 
 		include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-		$mailfile = new CMailFile($subject, $sendto, $from, $message, $filepaths, $mimetypes, $filenames, '', '', 0, -1);
+		$mailfile = new CMailFile($subject, $sendto, $email_from, $message, $filepaths, $mimetypes, $filenames, '', '', 0, -1);
 		if ($mailfile->error) {
 			setEventMessages($mailfile->error, $mailfile->errors, 'errors');
 		} else {

@@ -4,7 +4,7 @@
  * Copyright (C) 2006-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2012       J. Fernando Lagrange    <fernando@demo-tic.org>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2021       Waël Almoman            <info@almoman.com>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
@@ -112,9 +112,10 @@ if (!is_object($user)) {
  * @param 	int<0,1>	$disablehead		More content into html header
  * @param 	string[]	$arrayofjs			Array of complementary js files
  * @param 	string[]	$arrayofcss			Array of complementary css files
+ * @param 	string			$ws					Website ref if we are called from a website
  * @return	void
  */
-function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])  // @phan-suppress-current-line PhanRedefineFunction
+function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [], $ws = '')  // @phan-suppress-current-line PhanRedefineFunction
 {
 	global $conf, $langs, $mysoc;
 
@@ -429,11 +430,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 							$urlback .= '&email='.urlencode(GETPOST('email'));
 						}
 						if (getDolGlobalString('PAYMENT_SECURITY_TOKEN()) {
-							if (getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE()) {
-								$urlback .= '&securekey='.urlencode(dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN').'membersubscription'.$partnership->ref, '2'));
-							} else {
-								$urlback .= '&securekey='.urlencode(getDolGlobalString('PAYMENT_SECURITY_TOKEN'));
-							}
+							$urlback .= '&securekey='.urlencode(dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN').'membersubscription'.$partnership->ref, '2'));
 						}
 					} elseif (getDolGlobalString('PARTNERSHIP_NEWFORM_PAYONLINE') == 'paybox') {
 						$urlback = DOL_MAIN_URL_ROOT.'/public/paybox/newpayment.php?from=partnershipnewform&source=membersubscription&ref='.urlencode($partnership->ref);
@@ -444,11 +441,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 							$urlback .= '&email='.urlencode(GETPOST('email'));
 						}
 						if (getDolGlobalString('PAYMENT_SECURITY_TOKEN')) {
-							if (getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
-								$urlback .= '&securekey='.urlencode(dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN').'membersubscription'.$partnership->ref, '2'));
-							} else {
-								$urlback .= '&securekey='.urlencode(getDolGlobalString('PAYMENT_SECURITY_TOKEN'));
-							}
+							$urlback .= '&securekey='.urlencode(dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN').'membersubscription'.$partnership->ref, '2'));
 						}
 					} elseif (getDolGlobalString('PARTNERSHIP_NEWFORM_PAYONLINE') == 'paypal') {
 						$urlback = DOL_MAIN_URL_ROOT.'/public/paypal/newpayment.php?from=partnershipnewform&source=membersubscription&ref='.urlencode($partnership->ref);
@@ -459,11 +452,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 							$urlback .= '&email='.urlencode(GETPOST('email'));
 						}
 						if (getDolGlobalString('PAYMENT_SECURITY_TOKEN')) {
-							if (getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
-								$urlback .= '&securekey='.urlencode(dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN').'membersubscription'.$partnership->ref, '2'));
-							} else {
-								$urlback .= '&securekey='.urlencode(getDolGlobalString('PAYMENT_SECURITY_TOKEN'));
-							}
+							$urlback .= '&securekey='.urlencode(dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN').'membersubscription'.$partnership->ref, '2'));
 						}
 					} elseif (getDolGlobalString('PARTNERSHIP_NEWFORM_PAYONLINE') == 'stripe') {
 						$urlback = DOL_MAIN_URL_ROOT.'/public/stripe/newpayment.php?from=partnershipnewform&source=membersubscription&ref='.$partnership->ref;
@@ -474,11 +463,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 							$urlback .= '&email='.urlencode(GETPOST('email'));
 						}
 						if (getDolGlobalString('PAYMENT_SECURITY_TOKEN')) {
-							if (getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
-								$urlback .= '&securekey='.urlencode(dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN').'membersubscription'.$partnership->ref, '2'));
-							} else {
-								$urlback .= '&securekey='.urlencode(getDolGlobalString('PAYMENT_SECURITY_TOKEN'));
-							}
+							$urlback .= '&securekey='.urlencode(dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN').'membersubscription'.$partnership->ref, '2'));
 						}
 					} else {
 						dol_print_error(null, "Autosubscribe form is setup to ask an online payment for a not managed online payment");

@@ -28,6 +28,7 @@ require '../../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
@@ -54,7 +55,6 @@ $error = 0;
 
 // Initialize a technical objects
 $object = new Fiscalyear($db);
-$extrafields = new ExtraFields($db);
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.

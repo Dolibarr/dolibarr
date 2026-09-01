@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2005-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2026  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2007       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2007-2012  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2015-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2015-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2017       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -39,16 +39,25 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
 
 $langs->load("admin");
 
 $mode = GETPOST('mode', 'aZ09');
 
-if (!$user->admin) {
+if (!$user->admin && !$user->hasRight('bockedlog', 'read')) {
 	accessforbidden();
 }
 
 $error = 0;
+
+// Version blockedlog
+$versionbadge = '<span class="badge-text badge-secondary">'.getBlockedLogVersionToShow();
+if ($mysoc->country_code == 'FR' && !constant('CERTIF_LNE')) {
+	// Can add an edditional mention
+	$versionbadge .= ' - '.$langs->trans("NeedAThirdPartyStatement");
+}
+$versionbadge .= '</span>';
 
 
 /*
@@ -61,13 +70,15 @@ llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-system_filecheck');
 
 print load_fiche_titre($langs->trans("FileCheckDolibarr"), '', 'title_setup');
 
-print '<div class="opacitymedium hideonsmartphone justify">'.$langs->trans("FileCheckDesc");
+print '<div class="opacitymedium hideonsmartphone justify">'.$langs->trans("FileCheckDesc").'</div>';
 if (isModEnabled('blockedlog')) {
-	$s = $langs->trans("DataIntegrityDesc", '{s}');
-	$s = str_replace('{s}', DOL_URL_ROOT.'/blockedlog/admin/blockedlog_list.php', $s);
-	print '<br>'.$s;
+	print '<span class="opacitymedium">';
+	print $langs->trans("DataIntegrityDesc").': ';
+	print '</span>';
+	print '<a href="'.DOL_URL_ROOT.'/blockedlog/admin/blockedlog_list.php">'.img_picto('', 'url', 'class="pictofixedwidth"').$langs->trans("BlockedLog").'</a><br>';
 }
-print'</div><br>';
+print'<br>';
+
 
 // Version
 print '<div class="div-table-responsive-no-min">';
@@ -77,7 +88,8 @@ $htmltooltip = '';
 $htmltooltip .= $langs->trans("VersionLastInstall").': '.getDolGlobalString('MAIN_VERSION_LAST_INSTALL').'<br>'."\n";
 $htmltooltip .= $langs->trans("VersionLastUpgrade").': '.getDolGlobalString('MAIN_VERSION_LAST_UPGRADE').'<br>'."\n";
 
-print '<tr class="oddeven nohover"><td width="300">'.$langs->trans("VersionProgram").'</td><td>';
+print '<tr class="oddeven nohover">';
+print '<td width="300">'.$langs->trans("VersionProgram").'</td><td>';
 print '<span class="badge-text badge-secondary valignmiddle">'.DOL_VERSION.'</span>';
 // If current version differs from last upgrade
 if (!getDolGlobalString('MAIN_VERSION_LAST_UPGRADE')) {
@@ -93,8 +105,45 @@ if (!getDolGlobalString('MAIN_VERSION_LAST_UPGRADE')) {
 }
 print ' '.$form->textwithpicto('', $htmltooltip);
 print '</td></tr>'."\n";
+
+$showblockedlogversion = 0;
+if ($mysoc->country_code == 'FR') {
+	$showblockedlogversion = 1;
+}
+if (isALNERunningVersion()) {
+	$showblockedlogversion = 1;
+}
+
+if ($showblockedlogversion) {
+	print '<tr class="oddeven nohover">';
+	print '<td width="300">'.$langs->trans("VersionOfModule", $langs->transnoentitiesnoconv("BlockedLog")).'</td><td>';
+	print $versionbadge;
+	print '</td>';
+	print '</tr>';
+}
+
 print '</table>';
 print '</div>';
+
+// Add a complementary optional information
+$infotoshow = '';
+if ($mysoc->country_code == 'FR') {
+	$islne = isALNEQualifiedVersion(1, 1);
+	if ($islne) {
+		if (preg_match('/\-/', getBlockedLogVersionToShow())) {
+			// This is an alpha or beta version
+			$infotoshow = $langs->trans("LNECandidateVersionForCertificationFR", getBlockedLogVersionToShow());
+		} else {
+			$infotoshow = $langs->trans("LNECertifiedVersionFR", getBlockedLogVersionToShow());
+		}
+	} else {
+		$infotoshow = $langs->trans("NotCertifiedVersionFR", getBlockedLogVersionToShow());
+	}
+}
+if ($infotoshow) {
+	print info_admin($infotoshow, 0, 0, 'info');
+}
+
 print '<br><br>';
 
 
@@ -438,9 +487,13 @@ if (empty($error) && !empty($xml)) {
 				$i++;
 				$out .= '<tr class="oddeven">';
 				$out .= '<td>'.$i.'</td>'."\n";
-				$out .= '<td>'.dol_escape_htmltag($file['filename']).'</td>'."\n";
-				$out .= '<td class="center">'.dol_escape_htmltag($file['expectedhash']).'</td>'."\n";
-				$out .= '<td class="center">'.dol_escape_htmltag($file['hash']).'</td>'."\n";
+				$out .= '<td>'.dol_escape_htmltag($file['filename']);
+				$out .= ' <a href="#" class="showfilediff" data-file="'.dol_escape_htmltag($file['filename']).'" data-algo="'.dol_escape_htmltag($file['algo']).'" data-hash="'.dol_escape_htmltag($file['expectedhash']).'">';
+				$out .= img_picto($langs->trans("ShowDiffWithOriginal"), 'split', 'class="paddingleft"');
+				$out .= '</a>';
+				$out .= '</td>'."\n";
+				$out .= '<td class="center" title="'.dol_escape_htmltag($file['expectedhash']).'">'.dol_escape_htmltag(dol_trunc($file['expectedhash'], 16)).'</td>'."\n";
+				$out .= '<td class="center" title="'.dol_escape_htmltag($file['hash']).'">'.dol_escape_htmltag(dol_trunc($file['hash'], 16)).'</td>'."\n";
 				$out .= '<td class="right">';
 				if ($file['expectedsize']) {
 					$out .= dol_print_size((int) $file['expectedsize']);
@@ -466,6 +519,28 @@ if (empty($error) && !empty($xml)) {
 		}
 		$out .= '</table>';
 		$out .= '</div>';
+
+		// Ajax loader for the per-file diff against the original version
+		$out .= '<script>'."\n";
+		$out .= 'jQuery(document).ready(function() {'."\n";
+		$out .= '	jQuery(".showfilediff").on("click", function(e) {'."\n";
+		$out .= '		e.preventDefault();'."\n";
+		$out .= '		var link = jQuery(this);'."\n";
+		$out .= '		var row = link.closest("tr");'."\n";
+		$out .= '		var existing = row.next(".filediffrow");'."\n";
+		$out .= '		if (existing.length) { existing.toggle(); return false; }'."\n";
+		$out .= '		var colspan = row.children("td").length;'."\n";
+		$out .= '		var newrow = jQuery(\'<tr class="filediffrow"><td colspan="\'+colspan+\'"><div class="filediffcontent opacitymedium">'.dol_escape_js($langs->trans("Loading")).'...</div></td></tr>\');'."\n";
+		$out .= '		row.after(newrow);'."\n";
+		$out .= '		jQuery.get("'.dol_escape_js(DOL_URL_ROOT).'/blockedlog/admin/filecheck_diff.php", { file: link.attr("data-file"), algo: link.attr("data-algo"), expectedhash: link.attr("data-hash"), token: "'.newToken().'" }, function(data) {'."\n";
+		$out .= '			newrow.find(".filediffcontent").removeClass("opacitymedium").html(data);'."\n";
+		$out .= '		}).fail(function() {'."\n";
+		$out .= '			newrow.find(".filediffcontent").html("'.dol_escape_js($langs->trans("Error")).'");'."\n";
+		$out .= '		});'."\n";
+		$out .= '		return false;'."\n";
+		$out .= '	});'."\n";
+		$out .= '});'."\n";
+		$out .= '</script>'."\n";
 
 		$out .= '<br>';
 
@@ -497,8 +572,8 @@ if (empty($error) && !empty($xml)) {
 						$out .= ' '.$form->textwithpicto('', $htmltext, 1, 'help', '', 0, 2, 'helprm'.$i);
 					}
 					$out .= '</td>'."\n";
-					$out .= '<td class="center">'.dol_escape_htmltag((string) $file['expectedhash']).'</td>'."\n";  // @phan-suppress-current-line PhanTypeInvalidDimOffset
-					$out .= '<td class="center">'.dol_escape_htmltag($file['hash']).'</td>'."\n";
+					$out .= '<td class="center" title="'.dol_escape_htmltag((string) $file['expectedhash']).'">'.dol_escape_htmltag(dol_trunc((string) $file['expectedhash'], 16)).'</td>'."\n";  // @phan-suppress-current-line PhanTypeInvalidDimOffset
+					$out .= '<td class="center" title="'.dol_escape_htmltag((string) $file['hash']).'">'.dol_escape_htmltag(dol_trunc($file['hash'], 16)).'</td>'."\n";
 					$size = dol_filesize(DOL_DOCUMENT_ROOT.'/'.$file['filename']);
 					$totalsize += $size;
 					$out .= '<td class="right">'.dol_print_size($size).'</td>'."\n";
@@ -589,7 +664,7 @@ if (empty($error) && !empty($xml)) {
 
 		// Print list of files
 		$outforlistoffiles = '<a href="#" onclick="console.log(\'Click\'); jQuery(\'#listofunalterablefiles\').toggle(); return false;">'.$langs->trans("ShowListOfFiles").'</a><br>';
-		$outforlistoffiles .= '<textarea id="listofunalterablefiles" class="hideobject quatrevingtpercent" rows="12">';
+		$outforlistoffiles .= '<textarea id="listofunalterablefiles" class="hideobject quatrevingtpercent" rows="12" spellcheck="false">';
 		$i = 0;
 		foreach ($listoffilestoanalyze as $dirtoanalyze) {
 			$entry = array();

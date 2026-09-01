@@ -88,7 +88,6 @@ class modMargin extends DolibarrModules
 		// New pages on tabs
 		$this->tabs = array(
 				'product:+margin:Margins:margins:$user->hasRight("margins","liretous"):/margin/tabs/productMargins.php?id=__ID__',
-				'thirdparty:+margin:Margins:margins:empty($user->socid) && $user->hasRight("margins","liretous") && ($object->client > 0):/margin/tabs/thirdpartyMargins.php?socid=__ID__'
 		);
 
 

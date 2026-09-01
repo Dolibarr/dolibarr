@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2010-2018 Regis Houssin  <regis.houssin@inodbox.com>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -94,10 +94,14 @@ class ActionsCardService
 	 */
 	public $object;
 
-	//! Template container
+	/**
+	 * @var array<string,mixed> Template container
+	 */
 	public $tpl = array();
 
-	// List of fields for action=list
+	/**
+	 * @var array<int,array<string,bool|string>> List of fields for action=list
+	 */
 	public $field_list = array();
 
 	/**
@@ -318,7 +322,7 @@ class ActionsCardService
 		$sql = "SELECT rowid, name, alias, title, align, sort, search, visible, enabled, rang";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_field_list";
 		$sql .= " WHERE element = '".$this->db->escape($this->fieldListName)."'";
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " AND entity = ".((int) $conf->entity);
 		$sql .= " ORDER BY rang ASC";
 
 		$resql = $this->db->query($sql);

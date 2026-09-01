@@ -31,5 +31,6 @@ create table llx_c_ticket_category
   force_severity varchar(32) NULL,				-- To force the severity if we choosed this category
   description	 varchar(255),					-- A long description of ticket
   pos			 integer DEFAULT 0 NOT NULL,
-  active		 integer DEFAULT 1
+  active		 integer DEFAULT 1,
+  fk_ticket_type integer NULL
 )ENGINE=innodb;

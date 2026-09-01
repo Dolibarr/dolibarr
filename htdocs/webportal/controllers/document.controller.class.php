@@ -158,14 +158,19 @@ class DocumentController extends Controller
 
 		// Check security and set return info with full path of file
 		$accessallowed = 0; // not allowed by default
+
+		$tmparray = getElementProperties($modulepart);
+
 		$moduleName = $modulepart;
 		$moduleNameEn = $moduleName;
+
 		if ($moduleName == 'commande') {
 			$moduleNameEn = 'order';
 		} elseif ($moduleName == 'facture') {
 			$moduleNameEn = 'invoice';
 		}
 		$moduleNameUpperEn = strtoupper($moduleNameEn);
+
 		// Hooks
 		$hookmanager->initHooks(array('document'));
 		$parameters = array('ecmfile' => $ecmfile, 'modulepart' => $modulepart, 'original_file' => &$original_file, 'socId' => $socId,
@@ -177,7 +182,8 @@ class DocumentController extends Controller
 			dol_syslog("document.php - Errors when executing the hook 'accessDownloadDocument' : " . $errors);
 			print "ErrorDownloadDocumentHooks: " . $errors;
 			exit;
-		} elseif (empty($reshook)) {
+		}
+		if (empty($reshook)) {
 			// check config access
 			// and file mime type (only PDF)
 			// and check login access
@@ -187,18 +193,50 @@ class DocumentController extends Controller
 				&& $context->logged_thirdparty->id == $socId
 			) {
 				if (isModEnabled($moduleName) && isset($conf->{$moduleName}->multidir_output[$entity])) {
-					$original_file = $conf->{$moduleName}->multidir_output[$entity] . '/' . $original_file;
-					$accessallowed = 1;
+					// List of module supported in security tests (others are forbidden if not security test to check that document is owned by company is done)
+					if (in_array($moduleName, array('facture', 'invoice', 'commande', 'order', 'propal', 'ticket', 'ficheinter'))) {
+						$sql = "SELECT rowid, src_object_id, src_object_type FROM ".MAIN_DB_PREFIX.'ecm_files';
+						$sql .= " WHERE filename = '".$this->db->escape(basename($original_file))."'";
+						$sql .= " AND filepath = '".$this->db->escape(basename($tmparray['dir_output']).'/'.dirname($original_file))."'";
+						$resql = $this->db->query($sql);
+						if ($resql) {
+							$obj = $this->db->fetch_object($resql);
+
+							if ($obj->src_object_id && $obj->src_object_type) {
+								// Create the virtual user
+								$tmpuser = new User($this->db);
+								$tmpuser->socid = $socId;
+
+								include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
+								include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
+								// Use dol_check_secure_access_document(); instead or not ?
+								$ok = checkUserAccessToObject($tmpuser, array($obj->src_object_type), $obj->src_object_id, '', '', 'fk_soc');
+
+								$accessallowed = ($ok ? 1 : 0);
+								$pathdir = $tmparray['dir_output'];
+							}
+						} else {
+							dol_print_error($this->db);
+						}
+					}
 				}
 			}
+		} else {
+			$pathdir = $hookmanager->resArray['pathdir'];
 		}
-		$fullpath_original_file = $original_file; // $fullpath_original_file is now a full path name
 
 		// Security:
 		// Limit access if permissions are wrong
 		if (!$accessallowed) {
 			accessforbidden();
 		}
+
+		if (empty($pathdir)) {
+			print "ErrorDownloadDocument: No path defined to find files";
+		}
+
+		$fullpath_original_file = $pathdir . '/' . $original_file; // $fullpath_original_file is now a full path name
 
 		// Security:
 		// We refuse directory transversal change and pipes in file names

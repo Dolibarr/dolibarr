@@ -7,11 +7,11 @@
  * Copyright (C) 2008		Raphael Bertrand (Resultic)	<raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2020	Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2013-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2021-2025  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2021-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2015		Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2020		Open-Dsi					<support@open-dsi.fr>
  * Copyright (C) 2022		Anthony Berton				<anthony.berton@bb2a.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +35,15 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -70,15 +79,6 @@ if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 }
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Societe $mysoc
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'banks', 'commercial'));
@@ -129,7 +129,6 @@ if (!$sortfield) {
 $cancel = GETPOST('cancel', 'alpha');
 
 $object = new Client($db);
-$extrafields = new ExtraFields($db);
 $formfile = new FormFile($db);
 
 // fetch optionals attributes and labels
@@ -565,7 +564,8 @@ if ($object->id > 0) {
 		print '<td>';
 		print $form->editfieldkey("OutstandingBill", 'outstanding_limit', $object->outstanding_limit, $object, $permissiontoadd);
 		print '</td><td>';
-		$limit_field_type = (getDolGlobalString('MAIN_USE_JQUERY_JEDITABLE')) ? 'numeric' : 'amount';
+		//$limit_field_type = (getDolGlobalString('MAIN_USE_EDIT_IN_PLACE')) ? 'numeric' : 'amount'; // TODO deprecated ?
+		$limit_field_type = 'amount';
 		print $form->editfieldval("OutstandingBill", 'outstanding_limit', $object->outstanding_limit, $object, $permissiontoadd, $limit_field_type, ($object->outstanding_limit != '' ? price($object->outstanding_limit) : ''));
 		print '</td>';
 		print '</tr>';
@@ -831,17 +831,17 @@ if ($object->id > 0) {
 			$warn = ' '.img_warning($langs->trans("OutstandingBillReached"));
 		}
 		$text = $langs->trans("CurrentOutstandingBill");
+
 		$link = DOL_URL_ROOT.'/compta/recap-compta.php?socid='.$object->id;
 		$icon = 'bill';
+		$boxstattmp = '<div class="boxstats" title="'.dol_escape_htmltag($text).'">';
+		$boxstattmp .= '<span class="boxstatstext">'.img_object("", $icon).' <span>'.$text.'</span></span><br>';
+		$boxstattmp .= '<span class="boxstatsindicator'.($outstandingOpened > 0 ? ' amountremaintopay' : '').'">'.price($outstandingOpened, 1, $langs, 1, -1, -1, $conf->currency).$warn.'</span>';
+		$boxstattmp .= '</div>';
 		if ($link) {
-			$boxstat .= '<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
-		}
-		$boxstat .= '<div class="boxstats" title="'.dol_escape_htmltag($text).'">';
-		$boxstat .= '<span class="boxstatstext">'.img_object("", $icon).' <span>'.$text.'</span></span><br>';
-		$boxstat .= '<span class="boxstatsindicator'.($outstandingOpened > 0 ? ' amountremaintopay' : '').'">'.price($outstandingOpened, 1, $langs, 1, -1, -1, $conf->currency).$warn.'</span>';
-		$boxstat .= '</div>';
-		if ($link) {
-			$boxstat .= '</a>';
+			$boxstat .= dolButtonToOpenUrlInDialogPopup('popupoutstanding', $text, $boxstattmp, '/compta/recap-compta.php?socid='.$object->id, '', '');
+		} else {
+			$boxstat .= $boxstattmp;
 		}
 
 		$tmp = $object->getOutstandingBills('customer', 1);
@@ -852,20 +852,66 @@ if ($object->id > 0) {
 				$warn = ' '.img_warning($langs->trans("OutstandingBillReached"));
 			}
 			$text = $langs->trans("CurrentOutstandingBillLate");
+
 			$link = DOL_URL_ROOT.'/compta/recap-compta.php?socid='.$object->id;
 			$icon = 'bill';
+			$boxstattmp = '<div class="boxstats" title="'.dol_escape_htmltag($text).'">';
+			$boxstattmp .= '<span class="boxstatstext">'.img_object("", $icon).' <span>'.$text.'</span></span><br>';
+			$boxstattmp .= '<span class="boxstatsindicator'.($outstandingOpenedLate > 0 ? ' amountremaintopay' : '').'">'.price($outstandingOpenedLate, 1, $langs, 1, -1, -1, $conf->currency).$warn.'</span>';
+			$boxstattmp .= '</div>';
 			if ($link) {
-				$boxstat .= '<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
-			}
-			$boxstat .= '<div class="boxstats" title="'.dol_escape_htmltag($text).'">';
-			$boxstat .= '<span class="boxstatstext">'.img_object("", $icon).' <span>'.$text.'</span></span><br>';
-			$boxstat .= '<span class="boxstatsindicator'.($outstandingOpenedLate > 0 ? ' amountremaintopay' : '').'">'.price($outstandingOpenedLate, 1, $langs, 1, -1, -1, $conf->currency).$warn.'</span>';
-			$boxstat .= '</div>';
-			if ($link) {
-				$boxstat .= '</a>';
+				$boxstat .= dolButtonToOpenUrlInDialogPopup('popupoutstanding', $text, $boxstattmp, '/compta/recap-compta.php?socid='.$object->id, '', '');
+			} else {
+				$boxstat .= $boxstattmp;
 			}
 		}
 	}
+
+	// Margins
+	if (isModEnabled('margin') && $user->hasRight('margin', 'liretous')) {
+		// Box margin
+		$sql = "SELECT ";
+		$sql .= " sum(d.total_ht) as selling_price,"; // may be negative or positive
+		$sql .= " sum(d.qty * d.buy_price_ht * (d.situation_percent / 100)) as buying_price,"; // always positive
+		$sql .= " sum(d.total_ht - (".$db->ifsql('f.type = '.Facture::TYPE_CREDIT_NOTE, '-1', '1')." * (d.buy_price_ht * d.qty * (d.situation_percent / 100)))) as marge";
+		$sql .= " FROM ".MAIN_DB_PREFIX."facture as f,";
+		$sql .= " ".MAIN_DB_PREFIX."facturedet as d";
+		$sql .= " WHERE f.fk_soc = ".((int) $id);
+		$sql .= " AND f.fk_statut > 0";
+		$sql .= " AND f.entity IN (".getEntity('invoice').")";
+		$sql .= " AND d.fk_facture = f.rowid";
+		$sql .= " AND d.buy_price_ht IS NOT NULL";
+		// We should not use this here. Option ForceBuyingPriceIfNull should have effect only when inserting data. Once data is recorded, it must be used as it is for report.
+		// We keep it with value ForceBuyingPriceIfNull = 2 for retroactive effect but results are unpredictable.
+		if (getDolGlobalInt('ForceBuyingPriceIfNull') == 2) {
+			$sql .= " AND d.buy_price_ht <> 0";
+		}
+
+		$marginTotal = 0;
+
+		$resql = $db->query($sql);
+		if ($resql) {
+			$obj = $db->fetch_object($resql);
+			if ($obj) {
+				$marginTotal = $obj->marge;
+			}
+		}
+
+		$text = $langs->transnoentitiesnoconv("Margins");
+
+		$link = DOL_URL_ROOT.'/margin/tabs/thirdpartyMargins.php?socid='.$object->id;
+		$icon = 'margin';
+		$boxstattmp = '<div class="boxstats" title="'.dol_escape_htmltag($text).'">';
+		$boxstattmp .= '<span class="boxstatstext">'.img_object("", $icon).' <span>'.$text.'</span></span><br>';
+		$boxstattmp .= '<span class="boxstatsindicator">'.price($marginTotal, 1, $langs, 1, -1, -1, $conf->currency).'</span>';
+		$boxstattmp .= '</div>';
+		if ($link) {
+			$boxstat .= dolButtonToOpenUrlInDialogPopup('popupmargin', $text, $boxstattmp, '/margin/tabs/thirdpartyMargins.php?socid='.$object->id, '', '');
+		} else {
+			$boxstat .= $boxstattmp;
+		}
+	}
+
 
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('addMoreBoxStatsCustomer', $parameters, $object, $action);
@@ -878,6 +924,7 @@ if ($object->id > 0) {
 	$boxstat .= '</div>';
 
 	print $boxstat;
+
 
 
 	/*
@@ -955,7 +1002,7 @@ if ($object->id > 0) {
 						}
 					}
 					$relativepath = dol_sanitizeFileName($objp->ref).'/'.dol_sanitizeFileName($objp->ref).'.pdf';
-					print $formfile->showPreview($file_list, $propal_static->element, $relativepath, 0, 'entity=' . $objp->entity);
+					print $formfile->showPreview($file_list[0], $propal_static->element, $relativepath, 0, 'entity=' . $objp->entity);
 				}
 				print '</td><td class="tdoverflowmax125">';
 				if ($propal_static->fk_project > 0) {
@@ -987,6 +1034,7 @@ if ($object->id > 0) {
 
 	$orders2invoice = null;
 	$param = "";
+
 	/*
 	 * Latest orders
 	 */
@@ -1076,7 +1124,7 @@ if ($object->id > 0) {
 						}
 					}
 					$relativepath = dol_sanitizeFileName($objp->ref).'/'.dol_sanitizeFileName($objp->ref).'.pdf';
-					print $formfile->showPreview($file_list, $commande_static->element, $relativepath, 0, 'entity=' . $objp->entity);
+					print $formfile->showPreview($file_list[0], $commande_static->element, $relativepath, 0, 'entity=' . $objp->entity);
 				}
 				print '</td><td class="tdoverflowmax125">';
 				if ($commande_static->fk_project > 0) {
@@ -1182,7 +1230,7 @@ if ($object->id > 0) {
 					}
 					$relativepath = dol_sanitizeFileName($objp->ref).'/'.dol_sanitizeFileName($objp->ref).'.pdf';
 
-					print $formfile->showPreview($file_list, $sendingstatic->element, $relativepath, 0, $param);
+					print $formfile->showPreview($file_list[0], $sendingstatic->element, $relativepath, 0, $param);
 				}
 				print '</td><td class="tdoverflowmax125">';
 				if ($sendingstatic->fk_project > 0) {
@@ -1296,7 +1344,7 @@ if ($object->id > 0) {
 							}
 						}
 						$relativepath = dol_sanitizeFileName($objp->ref).'/'.dol_sanitizeFileName($objp->ref).'.pdf';
-						print $formfile->showPreview($file_list, $contrat->element, $relativepath, 0, 'entity=' . $objp->entity);
+						print $formfile->showPreview($file_list[0], $contrat->element, $relativepath, 0, 'entity=' . $objp->entity);
 					}
 				}
 				// $filename = dol_sanitizeFileName($objp->ref);
@@ -1397,7 +1445,7 @@ if ($object->id > 0) {
 						}
 					}
 					$relativepath = dol_sanitizeFileName($objp->ref).'/'.dol_sanitizeFileName($objp->ref).'.pdf';
-					print $formfile->showPreview($file_list, $fichinter_static->element, $relativepath, 0, 'entity=' . $objp->entity);
+					print $formfile->showPreview($file_list[0], $fichinter_static->element, $relativepath, 0, 'entity=' . $objp->entity);
 				}
 				print '</td><td class="tdoverflowmax125">';
 				if ($fichinter_static->fk_project > 0) {
@@ -1543,7 +1591,7 @@ if ($object->id > 0) {
 		$sql .= ', f.total_tva';
 		$sql .= ', f.total_ttc';
 		$sql .= ', f.entity';
-		$sql .= ', f.datef as df, f.date_lim_reglement as dl, f.datec as dc, f.paye as paye, f.fk_statut as status';
+		$sql .= ', f.datef as df, f.date_lim_reglement as dl, f.datec as dc, f.paye as paye, f.fk_statut as status, f.dispute_status';
 		$sql .= ', s.nom, s.rowid as socid';
 		$sql .= ', SUM(pf.amount) as am';
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
@@ -1593,6 +1641,7 @@ if ($object->id > 0) {
 				$facturestatic->total_ttc = $objp->total_ttc;
 				$facturestatic->statut = $objp->status;	// deprecated
 				$facturestatic->status = $objp->status;
+				$facturestatic->dispute_status = $objp->dispute_status;
 				$facturestatic->paye = $objp->paye;
 
 				$facturestatic->alreadypaid = $objp->am;
@@ -1628,7 +1677,7 @@ if ($object->id > 0) {
 						}
 					}
 					$relativepath = dol_sanitizeFileName($objp->ref).'/'.dol_sanitizeFileName($objp->ref).'.pdf';
-					print $formfile->showPreview($file_list, $facturestatic->element, $relativepath, 0, 'entity=' . $objp->entity);
+					print $formfile->showPreview($file_list[0], $facturestatic->element, $relativepath, 0, 'entity=' . $objp->entity);
 				}
 				print '</td><td class="tdoverflowmax125">';
 				if ($facturestatic->fk_project > 0) {
@@ -1666,7 +1715,7 @@ if ($object->id > 0) {
 					print '</td>';
 				}
 
-				print '<td class="nowrap right" style="min-width: 60px">'.($facturestatic->LibStatut($objp->paye, $objp->status, 5, $objp->am)).'</td>';
+				print '<td class="nowrap right" style="min-width: 60px">'.$facturestatic->getLibStatut(5, $objp->am).'</td>';
 				print "</tr>\n";
 				$i++;
 			}
@@ -1705,63 +1754,75 @@ if ($object->id > 0) {
 	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
 
 	if (empty($reshook)) {
-		if ($object->status != 1) {
-			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("ThirdPartyIsClosed")).'" href="#">'.$langs->trans("ThirdPartyIsClosed").'</a></div>';
-		}
-
-		if (isModEnabled("propal") && $user->hasRight('propal', 'creer') && $object->status == 1) {
+		if (isModEnabled("propal") && $user->hasRight('propal', 'creer')) {
 			$langs->load("propal");
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/comm/propal/card.php?socid='.$object->id.'&action=create">'.$langs->trans("AddProp").'</a></div>';
+			if ($object->status == 1) {
+				print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/comm/propal/card.php?socid='.$object->id.'&action=create">'.$langs->trans("AddProp").'</a></div>';
+			} else {
+				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("ThirdPartyIsClosed")).'" href="#">'.$langs->trans("AddProp").'</a></div>';
+			}
 		}
 
-		if (isModEnabled('order') && $user->hasRight('commande', 'creer') && $object->status == 1) {
+		if (isModEnabled('order') && $user->hasRight('commande', 'creer')) {
 			$langs->load("orders");
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/commande/card.php?socid='.$object->id.'&action=create">'.$langs->trans("AddOrder").'</a></div>';
+			if ($object->status == 1) {
+				print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/commande/card.php?socid='.$object->id.'&action=create">'.$langs->trans("AddOrder").'</a></div>';
+			} else {
+				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("ThirdPartyIsClosed")).'" href="#">'.$langs->trans("AddOrder").'</a></div>';
+			}
 		}
 
-		if ($user->hasRight('contrat', 'creer') && $object->status == 1) {
+		if (isModEnabled('contract') && $user->hasRight('contrat', 'creer')) {
 			$langs->load("contracts");
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/contrat/card.php?socid='.$object->id.'&action=create">'.$langs->trans("AddContract").'</a></div>';
+			if ($object->status == 1) {
+				print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/contrat/card.php?socid='.$object->id.'&action=create">'.$langs->trans("AddContract").'</a></div>';
+			} else {
+				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("ThirdPartyIsClosed")).'" href="#">'.$langs->trans("AddContract").'</a></div>';
+			}
 		}
 
-		if (isModEnabled('intervention') && $user->hasRight('ficheinter', 'creer') && $object->status == 1) {
+		if (isModEnabled('intervention') && $user->hasRight('ficheinter', 'creer')) {
 			$langs->load("interventions");
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/fichinter/card.php?socid='.$object->id.'&action=create">'.$langs->trans("AddIntervention").'</a></div>';
+			if ($object->status == 1) {
+				print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/fichinter/card.php?socid='.$object->id.'&action=create">'.$langs->trans("AddIntervention").'</a></div>';
+			} else {
+				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("ThirdPartyIsClosed")).'" href="#">'.$langs->trans("AddIntervention").'</a></div>';
+			}
 		}
 
-		// Add invoice
-		if (isModEnabled('deplacement') && $object->status == 1) {
-			$langs->load("trips");
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/deplacement/card.php?socid='.$object->id.'&action=create">'.$langs->trans("AddTrip").'</a></div>';
-		}
-
-		if (isModEnabled('invoice') && $object->status == 1) {
+		if (isModEnabled('invoice')) {
 			if (!$user->hasRight('facture', 'creer')) {
 				$langs->load("bills");
-				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("NotAllowed")).'" href="#">'.$langs->trans("AddBill").'</a></div>';
+				if ($object->status == 1) {
+					print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("NotAllowed")).'" href="#">'.$langs->trans("AddBill").'</a></div>';
+				} else {
+					print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("ThirdPartyIsClosed")).'" href="#">'.$langs->trans("AddBill").'</a></div>';
+				}
 			} else {
 				$langs->loadLangs(array("orders", "bills"));
 
 				if ($object->client != 0 && $object->client != 2) {
-					print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddBill").'</a></div>';
+					if ($object->status == 1) {
+						print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddBill").'</a></div>';
+					} else {
+						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("ThirdPartyIsClosed")).'" href="#">'.$langs->trans("AddBill").'</a></div>';
+					}
 				} else {
 					print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("ThirdPartyMustBeEditAsCustomer")).'" href="#">'.$langs->trans("AddBill").'</a></div>';
 				}
 			}
 		}
 
-		if (isModEnabled('invoice') && $object->status == 1) {
-			if ($user->hasRight('facture', 'creer')) {
-				if (isModEnabled('order')) {
-					if ($object->client != 0 && $object->client != 2) {
-						if (!empty($orders2invoice) && $orders2invoice > 0) {
-							print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->id.'&search_billed=0&autoselectall=1">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
-						} else {
-							print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("NoOrdersToInvoice")).'" href="#">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
-						}
+		if (isModEnabled('invoice') && $user->hasRight('facture', 'creer')) {
+			if (isModEnabled('order') && $object->status == 1) {
+				if ($object->client != 0 && $object->client != 2) {
+					if (!empty($orders2invoice) && $orders2invoice > 0) {
+						print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->id.'&search_billed=0&autoselectall=1">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
 					} else {
-						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("ThirdPartyMustBeEditAsCustomer")).'" href="#">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
+						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("NoOrdersToInvoice")).'" href="#">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
 					}
+				} else {
+					print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("ThirdPartyMustBeEditAsCustomer")).'" href="#">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
 				}
 			}
 		}

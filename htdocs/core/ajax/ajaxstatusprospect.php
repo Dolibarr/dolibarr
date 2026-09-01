@@ -44,8 +44,6 @@ if (!defined('NOREQUIRESOC')) {
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -53,6 +51,7 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 
 $idstatus = GETPOSTINT('id');
 $idprospect = GETPOSTINT('prospectid');

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2014-2016  Laurent Destailleur  	<eldy@users.sourceforge.net>
  * Copyright (C) 2014-2025  Frédéric France      	<frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,8 @@
  *  \ingroup        core
  *  \brief          Code for actions print_file to print file (with calling trigger) when using the Direct Print feature.
  *  				The relative filename to print must be provided into GETPOST('file', 'alpha') parameter
+ *
+ *  				This file is no more used for certified version, direct print feature has been disabled.
  */
 
 
@@ -46,11 +48,16 @@ if ($action == 'print_file' && $user->hasRight('printing', 'read')) {
 	if (!empty($list)) {
 		$printerfound = 0;
 		foreach ($list as $driver) {
+			$classfile = null;
 			foreach ($dirmodels as $dir) {
-				if (file_exists(dol_buildpath($dir, 0).$driver.'.modules.php')) {
-					$classfile = dol_buildpath($dir, 0).$driver.'.modules.php';
+				$tmpclassfile = dol_buildpath($dir, 0).$driver.'.modules.php';
+				if (file_exists($tmpclassfile)) {
+					$classfile = $tmpclassfile;
 					break;
 				}
+			}
+			if ($classfile === null) {
+				continue;
 			}
 			require_once $classfile;
 			$classname = 'printing_'.$driver;
@@ -58,27 +65,13 @@ if ($action == 'print_file' && $user->hasRight('printing', 'read')) {
 			'@phan-var-force PrintingDriver $printer';
 			/** @var PrintingDriver $printer */
 			$langs->load('printing');
-			// print '<pre>'.print_r($printer, true).'</pre>';
 
 			if (getDolGlobalString($printer->active)) {
 				$printerfound++;
 
 				$subdir = '';
 				$module = GETPOST('printer', 'alpha');
-				// TODO make conversion in printing module
-				switch ($module) {
-					case 'livraison':
-						$subdir = 'receipt';
-						$module = 'expedition';
-						break;
-					case 'expedition':
-						$subdir = 'sending';
-						break;
-					case 'commande_fournisseur':
-						$module = 'commande_fournisseur';
-						$subdir = 'commande';
-						break;
-				}
+
 				try {
 					// Case of printing an invoice
 					$filetoprint = GETPOST('file', 'alpha');		//Example FAYYMM-123/FAYYMM-123-xxx.pdf
@@ -94,7 +87,7 @@ if ($action == 'print_file' && $user->hasRight('printing', 'read')) {
 							$db->query($sql);
 
 							//$tmpinvoice->pos_print_counter += 1;
-							//$tmpinvoice->update($user, 1);	// We disable trigger here because we already call the trigger $action = DOC_PREVIEW or DOC_DOWNLOAD just after
+							//$tmpinvoice->update($user, 1);			// We disable trigger here because we already call the trigger $action = DOC_PREVIEW or DOC_DOWNLOAD just after
 						}
 					}
 

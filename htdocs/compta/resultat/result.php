@@ -3,7 +3,7 @@
  * Copyright (C) 2016-2022  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018-2020  Laurent Destailleur     <eldy@destailleur.fr>
  * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -207,6 +207,7 @@ $builddate = 0;
 $name = '';
 $period = '';
 $calcmode = 0;
+$description = '';
 
 $form = new Form($db);
 
@@ -373,9 +374,12 @@ if ($modecompta == 'CREANCES-DETTES') {
 					$vars[$un_cat['code']] = 0;
 				}
 
+				$code = null;
+
 				// Previous Fiscal year (N-1)
-				foreach ($sommes as $code => $det) {
-					$vars[$code] = empty($det['NP']) ? 0 : $det['NP'];
+				foreach ($sommes as $code_idx => $det) {
+					$code = $code_idx;
+					$vars[$code_idx] = empty($det['NP']) ? 0 : $det['NP'];
 				}
 
 				$result = strtr($formula, $vars);
@@ -397,7 +401,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 					}
 				}
 
-				if (!isset($sommes[$code])) {
+				if ($code !== null && !isset($sommes[$code])) {
 					$sommes[$code] = array();
 				}
 				// Year N
@@ -409,9 +413,10 @@ if ($modecompta == 'CREANCES-DETTES') {
 				}
 
 				// Current fiscal year (N)
-				if (is_array($sommes) && !empty($sommes)) {
-					foreach ($sommes as $code => $det) {
-						$vars[$code] = empty($det['N']) ? 0 : $det['N'];
+				if (!empty($sommes)) {
+					foreach ($sommes as $code_idx => $det) {
+						$code = $code_idx;
+						$vars[$code_idx] = empty($det['N']) ? 0 : $det['N'];
 					}
 				}
 
@@ -435,8 +440,9 @@ if ($modecompta == 'CREANCES-DETTES') {
 				// Detail by month
 				foreach ($months as $k => $v) {
 					if (($k + 1) >= $date_startmonth && (($date_startmonth <= $date_endmonth && ($k + 1) <= $date_endmonth) || ($date_startmonth > $date_endmonth))) {
-						foreach ($sommes as $code => $det) {
-							$vars[$code] = empty($det['M'][$k]) ? 0 : $det['M'][$k];
+						foreach ($sommes as $code_idx => $det) {
+							$code = $code_idx;
+							$vars[$code_idx] = empty($det['M'][$k]) ? 0 : $det['M'][$k];
 						}
 						$result = strtr($formula, $vars);
 						$result = str_replace('--', '+', $result);
@@ -461,8 +467,9 @@ if ($modecompta == 'CREANCES-DETTES') {
 				if ($date_startmonth > $date_endmonth) {
 					foreach ($months as $k => $v) {
 						if (($k + 1) < $date_startmonth && ($k + 1) <= $date_endmonth) {
-							foreach ($sommes as $code => $det) {
-								$vars[$code] = empty($det['M'][$k]) ? 0 : $det['M'][$k];
+							foreach ($sommes as $code_idx => $det) {
+								$code = $code_idx;
+								$vars[$code_idx] = empty($det['M'][$k]) ? 0 : $det['M'][$k];
 							}
 							$result = strtr($formula, $vars);
 							$result = str_replace('--', '+', $result);

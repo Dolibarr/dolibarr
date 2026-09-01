@@ -1,10 +1,10 @@
 #!/usr/bin/env php
 <?php
 /**
- * Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2017 Regis Houssin <regis.houssin@inodbox.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2005       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2006       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2017       Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -24,7 +24,7 @@
 /**
  * \file scripts/members/sync_members_types_dolibarr2ldap.php
  * \ingroup ldap core
- * \brief Script de mise a jour des types de membres dans LDAP depuis base Dolibarr
+ * \brief Script to update member types in LDAP from the Dolibarr database
  */
 
 if (!defined('NOSESSION')) {

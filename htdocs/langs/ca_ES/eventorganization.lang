@@ -48,6 +48,7 @@ ConferenceOrBoothTab = Conferència o estand
 AmountPaid = Quantitat pagada
 DateOfRegistration = Data de registre
 ConferenceOrBoothAttendee = Assistent a conferències o estands
+ConferenceOrBoothAttendeesShort = Conf. or Booth Attendees
 ApplicantOrVisitor=Sol·licitant o visitant
 Speaker=Conferenciant
 # Template Mail
@@ -81,8 +82,8 @@ ListOfAttendeesOfEvent=Llista d'assistents als projectes de l'esdeveniment
 ListOfConfOrBoothOfEvent=Llistat de conferències o estands de projectes d'esdeveniments
 DownloadICSLink=Descarrega el fitxer ICS
 EVENTORGANIZATION_SECUREKEY=Llavor per a assegurar la clau de la pàgina de registre públic per a suggerir una conferència
-SERVICE_BOOTH_LOCATION=Servei que s'utilitza per a la fila de factures sobre una ubicació de l'estand
-SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION=Servei utilitzat per a la fila de factura sobre la subscripció d'un assistent a un esdeveniment
+SERVICE_BOOTH_LOCATION=Servei a utilitzar a la línia de factura per a la venda d'una caseta.
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION=Servei a utilitzar a la línia de factura per a les quotes de participació.
 NbVotes=Nombre de vots
 # Status
 EvntOrgDraft = Esborrany

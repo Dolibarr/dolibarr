@@ -328,6 +328,12 @@ class ObjectLink extends CommonObject
 			$result = $newobject->fetch($objectid);
 			return $result;
 		}
+		if ($objecttype == 'invoice_supplier') {
+			require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+			$newobject = new FactureFournisseur($this->db);
+			$result = $newobject->fetch($objectid);
+			return $result;
+		}
 		if ($objecttype == 'propal') {
 			require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 			$newobject = new Propal($this->db);

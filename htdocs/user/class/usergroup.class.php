@@ -7,8 +7,8 @@
  * Copyright (C) 2014		Alexis Algoud			<alexis@atm-consulting.fr>
  * Copyright (C) 2018       Nicolas ZABOURI			<info@inovea-conseil.com>
  * Copyright (C) 2019       Abbes Bahfir            <dolipar@dolipar.org>
- * Copyright (C) 2023-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2023-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025       Charlene Benke          <charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -222,7 +222,7 @@ class UserGroup extends CommonObject
 		if (isModEnabled('multicompany') && $conf->entity == 1 && $user->admin && !$user->entity) {
 			$sql .= " AND g.entity IS NOT NULL";
 		} else {
-			$sql .= " AND g.entity IN (0,".$conf->entity.")";
+			$sql .= " AND g.entity IN (0,".((int) $conf->entity).")";
 		}
 		$sql .= " ORDER BY g.nom";
 
@@ -282,7 +282,7 @@ class UserGroup extends CommonObject
 		if (isModEnabled('multicompany') && $conf->entity == 1 && $user->admin && !$user->entity) {
 			$sql .= " AND u.entity IS NOT NULL";
 		} else {
-			$sql .= " AND u.entity IN (0,".$conf->entity.")";
+			$sql .= " AND u.entity IN (0,".((int) $conf->entity).")";
 		}
 		if (!empty($excludefilter)) {
 			$sql .= ' AND ('.$excludefilter.')';
@@ -404,7 +404,8 @@ class UserGroup extends CommonObject
 			$sql .= " FROM ".$this->db->prefix()."rights_def";
 			$sql .= " WHERE entity = ".((int) $entity);
 			if (!empty($whereforadd) && $whereforadd != 'allmodules') {
-				$sql .= " AND ".$whereforadd;
+				$sanitizedwhereforadd = $whereforadd;
+				$sql .= " AND ".$sanitizedwhereforadd;
 			}
 
 			$result = $this->db->query($sql);
@@ -458,8 +459,8 @@ class UserGroup extends CommonObject
 	 *    Remove a permission from group
 	 *
 	 *    @param	int		$rid		id du droit a retirer
-	 *    @param	string	$allmodule	Retirer tous les droits du module allmodule
-	 *    @param	string	$allperms	Retirer tous les droits du module allmodule, perms allperms
+	 *    @param	string	$allmodule	Remove all rights of the module allmodule
+	 *    @param	string	$allperms	Remove all rights of the module allmodule, perms allperms
 	 *    @param	int		$entity		Entity to use
 	 *    @return	int					> 0 if OK, < 0 if OK
 	 */
@@ -477,8 +478,8 @@ class UserGroup extends CommonObject
 		if (!empty($rid)) {
 			$module = $perms = $subperms = '';
 
-			// Si on a demande suppression d'un droit en particulier, on recupere
-			// les caracteristiques module, perms et subperms de ce droit.
+			// If a specific permission deletion was requested, we retrieve
+			// the module characteristics, perms and subperms of this right.
 			$sql = "SELECT module, perms, subperms";
 			$sql .= " FROM ".$this->db->prefix()."rights_def";
 			$sql .= " WHERE id = ".((int) $rid);
@@ -499,7 +500,7 @@ class UserGroup extends CommonObject
 
 			// Where for the list of permissions to delete
 			$wherefordel = "id = ".((int) $rid);
-			// Suppression des droits induits
+			// Deletion of inherited permissions
 			if ($subperms == 'lire' || $subperms == 'read') {
 				$wherefordel .= " OR (module='".$this->db->escape($module)."' AND perms='".$this->db->escape($perms)."' AND subperms IS NOT NULL)";
 			}
@@ -507,7 +508,7 @@ class UserGroup extends CommonObject
 				$wherefordel .= " OR (module='".$this->db->escape($module)."')";
 			}
 
-			// Pour compatibilite, si lowid = 0, on est en mode suppression de tout
+			// Pour compatibility, if lowid = 0, we are in removal all mode
 			// TODO To remove when this will be implemented by the caller
 			//if (substr($rid,-1,1) == 0) $wherefordel="module='$module'";
 		} else {
@@ -524,14 +525,15 @@ class UserGroup extends CommonObject
 			}
 		}
 
-		// Suppression des droits de la liste wherefordel
+		// Deletion of permissions of the list wherefordel
 		if (!empty($wherefordel)) {
 			//print "$module-$perms-$subperms";
 			$sql = "SELECT id";
 			$sql .= " FROM ".$this->db->prefix()."rights_def";
 			$sql .= " WHERE entity = ".((int) $entity);
 			if (!empty($wherefordel) && $wherefordel != 'allmodules') {
-				$sql .= " AND ".$wherefordel;
+				$sanitizedwherefordel = $wherefordel;
+				$sql .= " AND ".$sanitizedwherefordel;
 			}
 
 			$result = $this->db->query($sql);
@@ -547,7 +549,7 @@ class UserGroup extends CommonObject
 					}
 
 					$sql = "DELETE FROM ".$this->db->prefix()."usergroup_rights";
-					$sql .= " WHERE fk_usergroup = $this->id AND fk_id=".((int) $nid);
+					$sql .= " WHERE fk_usergroup = ".((int) $this->id)." AND fk_id=".((int) $nid);
 					$sql .= " AND entity = ".((int) $entity);
 					if (!$this->db->query($sql)) {
 						$error++;
@@ -920,7 +922,7 @@ class UserGroup extends CommonObject
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Retourne chaine DN complete dans l'annuaire LDAP pour l'objet
+	 *	Returns the full DN string in the LDAP directory for the object.
 	 *
 	 *	@param	array<string,mixed>	$info	Info array loaded by _load_ldap_info
 	 *	@param	int<0,2>	$mode		0=Return full DN (uid=qqq,ou=xxx,dc=aaa,dc=bbb)

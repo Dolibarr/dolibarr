@@ -54,6 +54,13 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	/** @var CommandeFournisseur $objectlink */
 	'@phan-var-force CommandeFournisseur $objectlink';
 	$ilink++;
+	$refSupplierWithThirdparty = $objectlink->ref_supplier ? dolPrintHTML($objectlink->ref_supplier) . '<br>' : '';
+
+	$objectlink->fetch_thirdparty();
+
+	$refSupplierWithThirdparty = '<span class="small">'.$refSupplierWithThirdparty;
+	$refSupplierWithThirdparty .= $objectlink->thirdparty->getNomUrl(1);
+	$refSupplierWithThirdparty .= '</span>';
 
 	$trclass = 'oddeven';
 	if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) {
@@ -62,8 +69,13 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	<tr class="<?php echo $trclass; ?>">
 		<td class="tdoverflowmax125" title="<?php echo dolPrintHTMLForAttribute($langs->trans("SupplierOrder")); ?>"><?php echo dolPrintHTML($langs->trans("SupplierOrder")); ?></td>
 		<td><?php print $objectlink->getNomUrl(1); ?></td>
-		<td class="left linkedcol-ref tdoverflowmax125" title="<?php echo dolPrintHTMLForAttributeUrl($objectlink->ref_supplier); ?>"><?php echo dolPrintHTML($objectlink->ref_supplier); ?></td>
-		<td class="center"><?php echo dol_print_date($objectlink->date, 'day'); ?></td>
+		<td class="left linkedcol-ref tdoverflowmax125 nopaddingtopimp nopaddingbottomimp" title="<?php echo dolPrintHTMLForAttributeUrl($objectlink->ref_supplier); ?>"><?php echo $refSupplierWithThirdparty ?></td>
+		<td class="center"><?php
+		echo img_picto($langs->trans("Date"), 'generic', 'class="pictofixedwidth"').dol_print_date($objectlink->date, 'day');
+		if (!empty($objectlink->delivery_date)) {
+			echo '<br>'.img_picto($langs->trans("DateDeliveryPlanned"), 'reception', 'class="pictofixedwidth"').dol_print_date($objectlink->delivery_date, 'day');
+		}
+		?></td>
 		<td class="right"><?php
 		if ($user->hasRight("fournisseur", "commande", "lire")) {
 			$total += $objectlink->total_ht;

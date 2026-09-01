@@ -128,6 +128,7 @@ ShipmentDistribution=Shipment distribution
 ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combinations of warehouse, product, batch code was found (%s).
 ErrorNoCombinationBatchcode=Could not save the line %s as the combination of warehouse-product-lot/serial (%s, %s, %s) was not found in stock.
 ErrorTooMuchShipped=Quantity shipped should not be greater than quantity ordered for line %s
+NoShipmentLineChangeDetected=No shipment line change was detected.
 ##### Types of contacts #####
 TypeContact_shipping_internal_SALESREPFOLL=Representative following-up shipping
 TypeContact_shipping_external_BILLING=Customer invoice contact

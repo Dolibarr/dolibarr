@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017-2024  Alexandre Spangaro   <aspangaro@easya.solutions>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -164,6 +164,10 @@ $sourceList = array(
 	'9' => $langs->trans('AccountingJournalType9'),
 );
 
+if (getDolGlobalInt('ACCOUNTING_DISSOCIATE_CASH_SALES')) {
+	$sourceList['6'] = $langs->trans('AccountingJournalType6');
+}
+
 /*
  * Actions
  */
@@ -194,7 +198,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 		$ok = 0;
 	}
 
-	// Si verif ok et action add, on ajoute la ligne
+	// In case of 'actionadd' and with valid parameters, add the line
 	if ($ok && GETPOST('actionadd', 'alpha')) {
 		$newid = 0;  // Initialise before if for static analysis
 		if ($tabrowid[$id]) {
@@ -221,7 +225,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 
 		// List of values
 		if ($tabrowid[$id] && !in_array($tabrowid[$id], $listfieldinsert)) {
-			$sql .= $newid.",";
+			$sql .= ((int) $newid).",";
 		}
 		$i = 0;
 		foreach ($listfieldinsert as $f => $value) {
@@ -235,7 +239,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 			}
 			$i++;
 		}
-		$sql .= ",1,".$conf->entity.")";
+		$sql .= ",1,".((int) $conf->entity).")";
 
 		dol_syslog("actionadd", LOG_DEBUG);
 		$result = $db->query($sql);
@@ -251,7 +255,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 		}
 	}
 
-	// Si verif ok et action modify, on modifie la ligne
+	// If check ok and action modify, we modify the line
 	if ($ok && GETPOST('actionmodify', 'alpha')) {
 		if ($tabrowid[$id]) {
 			$rowidcol = $tabrowid[$id];
@@ -261,7 +265,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 
 		// Modify entry
 		$sql = "UPDATE ".$db->sanitize($tabname[$id])." SET ";
-		// Modifie valeur des champs
+		// Modify the field values
 		if ($tabrowid[$id] && !in_array($tabrowid[$id], $listfieldmodify)) {
 			$sql .= $db->sanitize($tabrowid[$id])." = ";
 			$sql .= "'".$db->escape($rowid)."', ";
@@ -322,7 +326,7 @@ if ($action == $acts[0]) {
 	} elseif ($code) {
 		$sql = "UPDATE ".$db->sanitize($tabname[$id])." SET active = 1 WHERE code = '".$db->escape($code)."'";
 	}
-	$sql .= " AND entity = ".$conf->entity;
+	$sql .= " AND entity = ".((int) $conf->entity);
 
 	$result = $db->query($sql);
 	if (!$result) {
@@ -344,7 +348,7 @@ if ($action == $acts[1]) {
 	} elseif ($code) {
 		$sql = "UPDATE ".$db->sanitize($tabname[$id])." SET active = 0 WHERE code='".$db->escape($code)."'";
 	}
-	$sql .= " AND entity = ".$conf->entity;
+	$sql .= " AND entity = ".((int) $conf->entity);
 
 	$result = $db->query($sql);
 	if (!$result) {
@@ -373,7 +377,7 @@ $titlepicto = 'title_accountancy';
 print load_fiche_titre($titre, $linkback, $titlepicto);
 
 
-// Confirmation de la suppression de la ligne
+// Generate a form to confirm the deletion of the row
 if ($action == 'delete') {
 	print $form->formconfirm($_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.$rowid.'&code='.$code.'&id='.$id, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete', '', 0, 1);
 }
@@ -382,7 +386,7 @@ if ($action == 'delete') {
  * Show a dictionary
  */
 
-// Complete requete recherche valeurs avec critere de tri
+// Complete the search query with sort criteria
 $sql = $tabsql[$id];
 $sql .= " WHERE a.entity = ".((int) $conf->entity);
 
@@ -409,8 +413,8 @@ if ($tabname[$id]) {
 	// Line for title
 	print '<tr class="liste_titre">';
 	foreach ($fieldlist as $field => $value) {
-		// Determine le nom du champ par rapport aux noms possibles
-		// dans les dictionnaires de donnees
+		// Determine the field name based on the possible names
+		// in the data dictionaries.
 		$valuetoshow = ucfirst($fieldlist[$field]); // By default
 		$valuetoshow = $langs->trans($valuetoshow); // try to translate
 		$class = "left";
@@ -522,8 +526,8 @@ if ($resql) {
 	// Title of lines
 	print '<tr class="liste_titre liste_titre_add">';
 	foreach ($fieldlist as $field => $value) {
-		// Determine le nom du champ par rapport aux noms possibles
-		// dans les dictionnaires de donnees
+		// Determine the field name based on the possible names
+		// in the data dictionaries.
 		$class = "left";
 		$sortable = 1;
 		$valuetoshow = '';

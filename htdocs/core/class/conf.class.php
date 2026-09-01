@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2017  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2006 	    Jean Heimburger         <jean@tiaris.info>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,30 +34,35 @@
 class Conf extends stdClass
 {
 	/**
-	 * @var Object 	Associative array with properties found in conf file
+	 * @var Object 		Associative array with properties found in conf file
 	 */
 	public $file;
 
 	/**
-	 * @var Object 	Associative array with some properties ->type, ->db, ...
+	 * @var Object 		Associative array with some properties ->type, ->db, ...
 	 */
 	public $db;
 
 	/**
-	 * @var Object To store global setup found into database
+	 * @var Object 		To store global setup found into database
 	 */
 	public $global;
 
 	/**
-	 * @var stdClass To store browser info (->name, ->os, ->version, ->ua, ->layout, ...)
+	 * @var stdClass 	To store browser info (->name, ->os, ->version, ->ua, ->layout, ...). Set with the result of a call of getBrowserInfo()
 	 */
 	public $browser;
 
-	//! To store some setup of generic modules
 	/**
-	 * @var stdClass
+	 * @var stdClass	To store some setup of generic modules
 	 */
 	public $mycompany;
+
+	/**
+	 * @var array<string,int>	To store warnings delays
+	 */
+	public $warning_delays;
+
 
 	/**
 	 * @var stdClass
@@ -75,11 +80,6 @@ class Conf extends stdClass
 	public $multicompany;
 
 	/**
-	 * @var ?mixed
-	 */
-	public $delivery_note;
-
-	/**
 	 * @var int To store if javascript/ajax is enabled
 	 */
 	public $use_javascript_ajax;
@@ -90,7 +90,7 @@ class Conf extends stdClass
 	public $disable_compute;
 
 	/**
-	 * @var string Used to store current currency (ISO code like 'USD', 'EUR', ...). To get the currency symbol:->getCurrencySymbol($this->currency)
+	 * @var string Used to store current currency (ISO code like 'USD', 'EUR', ...). To get this property, you can use getDolCurrency(). To get the currency symbol:->getCurrencySymbol(getDolCurrency()).
 	 */
 	public $currency;
 
@@ -189,6 +189,10 @@ class Conf extends stdClass
 	 * @var string
 	 */
 	public $format_hour_short;
+	/**
+	 * @var string
+	 */
+	public $format_hour_sec_short;
 	/**
 	 * @var string
 	 */
@@ -325,6 +329,11 @@ class Conf extends stdClass
 	 * @var stdClass
 	 */
 	public $bank;
+
+	/**
+	 * @var ?mixed
+	 */
+	public $delivery_note;
 
 	/**
 	 * @var stdClass
@@ -550,7 +559,7 @@ class Conf extends stdClass
 			$sql = "SELECT ".$db->decrypt('name')." as name,";
 			$sql .= " ".$db->decrypt('value')." as value, entity";
 			$sql .= " FROM ".$db->prefix()."const";
-			$sql .= " WHERE entity IN (0,".$this->entity.")";
+			$sql .= " WHERE entity IN (0,".((int) $this->entity).")";
 			$sql .= " ORDER BY entity"; // This is to have entity 0 first, then entity 1 that overwrite.
 
 			$resql = $db->query($sql);
@@ -624,6 +633,12 @@ class Conf extends stdClass
 								}
 								if ($modulename == 'supplierproposal') {
 									$modulename = 'supplier_proposal';
+								}
+								if ($modulename == 'supplierorder') {
+									$modulename = 'supplier_order';
+								}
+								if ($modulename == 'supplierinvoice') {
+									$modulename = 'supplier_invoice';
 								}
 								$this->modules[$modulename] = $modulename; // Add this module in list of enabled modules
 
@@ -746,12 +761,19 @@ class Conf extends stdClass
 			// Define default dir_output and dir_temp for directories of modules
 			foreach ($this->modules as $module) {
 				//var_dump($module);
+				$dirformodule = $module;
+				// Add code to manage compatibility for old module name
+				if ($dirformodule == 'banque') {
+					$dirformodule = 'bank';
+				}
+				// To complete...
+
 				// For multicompany sharings
-				$this->$module->multidir_output = array($this->entity => $rootfordata."/".$module);
-				$this->$module->multidir_temp = array($this->entity => $rootfortemp."/".$module."/temp");
+				$this->$dirformodule->multidir_output = array($this->entity => $rootfordata."/".$dirformodule);
+				$this->$dirformodule->multidir_temp = array($this->entity => $rootfortemp."/".$dirformodule."/temp");
 				// For backward compatibility
-				$this->$module->dir_output = $rootfordata."/".$module;
-				$this->$module->dir_temp = $rootfortemp."/".$module."/temp";
+				$this->$dirformodule->dir_output = $rootfordata."/".$dirformodule;
+				$this->$dirformodule->dir_temp = $rootfortemp."/".$dirformodule."/temp";
 			}
 
 			// External modules storage
@@ -886,13 +908,6 @@ class Conf extends stdClass
 			$this->contrat->dir_output = $rootfordata."/contract";
 			$this->contrat->dir_temp = $rootfortemp."/contract/temp";
 
-			// Module bank
-			$this->bank->multidir_output = array($this->entity => $rootfordata."/bank");
-			$this->bank->multidir_temp = array($this->entity => $rootfortemp."/bank/temp");
-			// For backward compatibility
-			$this->bank->dir_output = $rootfordata."/bank";
-			$this->bank->dir_temp = $rootfortemp."/bank/temp";
-
 			// Set some default values
 			//$this->global->MAIN_LIST_FILTER_ON_DAY=1;		// On filter that show date, we must show input field for day before or after month
 			$this->global->MAIN_MAIL_USE_MULTI_PART = 1;
@@ -993,7 +1008,7 @@ class Conf extends stdClass
 				$this->global->THEME_SHOW_BORDER_ON_INPUT = 1;
 			}
 			if (!isset($this->global->THEME_ELDY_BORDER_RADIUS)) {
-				$this->global->THEME_ELDY_BORDER_RADIUS = 6;
+				$this->global->THEME_ELDY_BORDER_RADIUS = 10;
 			}
 
 			// By default, suppliers objects can be linked to all projects
@@ -1004,6 +1019,11 @@ class Conf extends stdClass
 			// By default we enable feature to bill time spent
 			if (!isset($this->global->PROJECT_BILL_TIME_SPENT)) {
 				$this->global->PROJECT_BILL_TIME_SPENT = 1;
+			}
+
+			// By default we enable feature to feature of layout for email
+			if (!isset($this->global->MAIN_EMAIL_USE_LAYOUT)) {
+				$this->global->MAIN_EMAIL_USE_LAYOUT = 1;
 			}
 
 			// MAIN_HTML_TITLE
@@ -1019,15 +1039,8 @@ class Conf extends stdClass
 			// This value can be overwritten by user choice in main.inc.php
 			$this->liste_limit = getDolGlobalInt('MAIN_SIZE_LISTE_LIMIT', 15);
 			if ((int) $this->liste_limit <= 0) {
-				// Mode automatic. Similar code than into main.inc.php
-				$this->liste_limit = 15;
-				if (!empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] < 700) {
-					$this->liste_limit = 8;
-				} elseif (!empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] < 910) {
-					$this->liste_limit = 10;
-				} elseif (!empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] > 1130) {
-					$this->liste_limit = 20;
-				}
+				// Mode automatic.
+				$this->liste_limit = getListLimitFromScreenHeight();
 			}
 
 			// Set PRODUIT_LIMIT_SIZE if never defined
@@ -1074,6 +1087,7 @@ class Conf extends stdClass
 			$this->format_date_short = "%d/%m/%Y"; // Format of day with PHP/C tags (strftime functions)
 			$this->format_date_short_java = "dd/MM/yyyy"; // Format of day with Java tags
 			$this->format_hour_short = "%H:%M";
+			$this->format_hour_sec_short = "%H:%M:%S";
 			$this->format_hour_short_duration = "%H:%M";
 			$this->format_date_text_short = "%d %b %Y";
 			$this->format_date_text = "%d %B %Y";
@@ -1155,6 +1169,11 @@ class Conf extends stdClass
 				$this->global->ADHERENT_LOGIN_NOT_REQUIRED = 1;
 			}
 
+			// By default, we use this constant now
+			if (! isset($this->global->MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION)) {
+				$this->global->MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION = 1;
+			}
+
 			// Use a SCA ready workflow with Stripe module (STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION by default if nothing defined)
 			if (!isset($this->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION) && !getDolGlobalString('STRIPE_USE_NEW_CHECKOUT')) {
 				$this->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION = 1;
@@ -1199,27 +1218,34 @@ class Conf extends stdClass
 			}
 
 			// Delay before warnings
-			// Avoid strict errors. TODO: Replace xxx->warning_delay with a property ->warning_delay_xxx
+			// Avoid strict errors. TODO: Replace conf->xxx->warning_delay with a property conf->warning_delays['xxx']
 			if (isset($this->agenda)) {
+				$this->warning_delays['subscription'] = getDolGlobalInt('MAIN_DELAY_MEMBERS') * 86400;
 				$this->adherent->subscription = new stdClass();
 				$this->adherent->subscription->warning_delay = getDolGlobalInt('MAIN_DELAY_MEMBERS') * 86400;
 			}
 			if (isset($this->agenda)) {
+				$this->warning_delays['agenda'] = getDolGlobalInt('MAIN_DELAY_ACTIONS_TODO', 7) * 86400;
 				$this->agenda->warning_delay = getDolGlobalInt('MAIN_DELAY_ACTIONS_TODO', 7) * 86400;
 			}
 			if (isset($this->projet)) {
+				$this->warning_delays['project'] = (getDolGlobalInt('MAIN_DELAY_PROJECT_TO_CLOSE', 7) * 86400);
+				$this->warning_delays['task'] = (getDolGlobalInt('MAIN_DELAY_TASKS_TODO', 7) * 86400);
 				$this->projet->warning_delay = (getDolGlobalInt('MAIN_DELAY_PROJECT_TO_CLOSE', 7) * 86400);
 				$this->projet->task = new stdClass();
 				$this->projet->task->warning_delay = (getDolGlobalInt('MAIN_DELAY_TASKS_TODO', 7) * 86400);
 			}
-
 			if (isset($this->commande)) {
+				$this->warning_delays['order'] = getDolGlobalInt('MAIN_DELAY_ORDERS_TO_PROCESS', 2) * 86400;
+				$this->warning_delays['purchase_order'] = getDolGlobalInt('MAIN_DELAY_SUPPLIER_ORDERS_TO_PROCESS', 7) * 86400;
 				$this->commande->client = new stdClass();
 				$this->commande->fournisseur = new stdClass();
 				$this->commande->client->warning_delay = getDolGlobalInt('MAIN_DELAY_ORDERS_TO_PROCESS', 2) * 86400;
 				$this->commande->fournisseur->warning_delay = getDolGlobalInt('MAIN_DELAY_SUPPLIER_ORDERS_TO_PROCESS', 7) * 86400;
 			}
 			if (isset($this->propal)) {
+				$this->warning_delays['proposal_close'] = getDolGlobalInt('MAIN_DELAY_PROPALS_TO_CLOSE') * 86400;
+				$this->warning_delays['proposal_invoice'] = getDolGlobalInt('MAIN_DELAY_PROPALS_TO_BILL') * 86400;
 				$this->propal->cloture = new stdClass();
 				$this->propal->facturation = new stdClass();
 				$this->propal->cloture->warning_delay = getDolGlobalInt('MAIN_DELAY_PROPALS_TO_CLOSE') * 86400;
@@ -1227,18 +1253,24 @@ class Conf extends stdClass
 			}
 			// @phpstan-ignore-next-line
 			if (isset($this->supplier_proposal)) {
+				$this->warning_delays['supplier_proposal_close'] = getDolGlobalInt('MAIN_DELAY_SUPPLIER_PROPALS_TO_CLOSE') * 86400;
+				$this->warning_delays['supplier_proposal_invoice'] = getDolGlobalInt('MAIN_DELAY_SUPPLIER_PROPALS_TO_BILL') * 86400;
 				$this->supplier_proposal->cloture = new stdClass();
 				$this->supplier_proposal->facturation = new stdClass();
 				$this->supplier_proposal->cloture->warning_delay = getDolGlobalInt('MAIN_DELAY_SUPPLIER_PROPALS_TO_CLOSE') * 86400;
 				$this->supplier_proposal->facturation->warning_delay = getDolGlobalInt('MAIN_DELAY_SUPPLIER_PROPALS_TO_BILL') * 86400;
 			}
 			if (isset($this->facture)) {
+				$this->warning_delays['invoice'] = getDolGlobalInt('MAIN_DELAY_CUSTOMER_BILLS_UNPAYED') * 86400;
+				$this->warning_delays['supplier_invoice'] = getDolGlobalInt('MAIN_DELAY_SUPPLIER_BILLS_TO_PAY') * 86400;
 				$this->facture->client = new stdClass();
 				$this->facture->fournisseur = new stdClass();
 				$this->facture->client->warning_delay = getDolGlobalInt('MAIN_DELAY_CUSTOMER_BILLS_UNPAYED') * 86400;
 				$this->facture->fournisseur->warning_delay = getDolGlobalInt('MAIN_DELAY_SUPPLIER_BILLS_TO_PAY') * 86400;
 			}
 			if (isset($this->contrat)) {
+				$this->warning_delays['contract_inactive'] = getDolGlobalInt('MAIN_DELAY_NOT_ACTIVATED_SERVICES') * 86400;
+				$this->warning_delays['contract_expired'] = getDolGlobalInt('MAIN_DELAY_RUNNING_SERVICES') * 86400;
 				$this->contrat->services = new stdClass();
 				$this->contrat->services->inactifs = new stdClass();
 				$this->contrat->services->expires = new stdClass();
@@ -1246,22 +1278,30 @@ class Conf extends stdClass
 				$this->contrat->services->expires->warning_delay = getDolGlobalInt('MAIN_DELAY_RUNNING_SERVICES') * 86400;
 			}
 
+			$this->warning_delays['bank_cheque_to_conciliate'] = getDolGlobalInt('MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE') * 86400;
+			$this->warning_delays['bank_cheque_to_be_deposited'] = getDolGlobalInt('MAIN_DELAY_CHEQUES_TO_DEPOSIT') * 86400;
+			$this->warning_delays['bank_direct_debit'] = getDolGlobalInt('MAIN_DELAY_BANK_DIRECT_DEBIT', 15) * 86400;
+			$this->warning_delays['bank_credit_transfer'] = getDolGlobalInt('MAIN_DELAY_BANK_CREDIT_TRANSFER', 15) * 86400;
 			$this->bank->rappro	= new stdClass();
 			$this->bank->cheque	= new stdClass();
 			$this->bank->rappro->warning_delay = getDolGlobalInt('MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE') * 86400;
 			$this->bank->cheque->warning_delay = getDolGlobalInt('MAIN_DELAY_CHEQUES_TO_DEPOSIT') * 86400;
 
 			if (isset($this->expensereport)) {
+				$this->warning_delays['expensereport_approve'] = getDolGlobalInt('MAIN_DELAY_EXPENSEREPORTS') * 86400;
+				$this->warning_delays['expense_report_payment'] = getDolGlobalInt('MIN_DELAY_EXPENSEREPORTS_TO_PAY') * 86400;
 				$this->expensereport->approve = new stdClass();
 				$this->expensereport->approve->warning_delay = getDolGlobalInt('MAIN_DELAY_EXPENSEREPORTS') * 86400;
 				$this->expensereport->payment = new stdClass();
 				$this->expensereport->payment->warning_delay = getDolGlobalInt('MIN_DELAY_EXPENSEREPORTS_TO_PAY') * 86400;
 			}
 			if (isset($this->holiday)) {
+				$this->warning_delays['holiday_approve'] = getDolGlobalInt('MAIN_DELAY_HOLIDAYS') * 86400;
 				$this->holiday->approve = new stdClass();
 				$this->holiday->approve->warning_delay = getDolGlobalInt('MAIN_DELAY_HOLIDAYS') * 86400;
 			}
 			if (isset($this->mrp)) {
+				$this->warning_delays['mrp'] = getDolGlobalInt('MAIN_DELAY_MRP') * 86400;
 				$this->mrp->progress = new stdClass();
 				$this->mrp->progress->warning_delay = getDolGlobalInt('MAIN_DELAY_MRP') * 86400;
 			}
@@ -1316,7 +1356,7 @@ class Conf extends stdClass
 				// Value 1 makes CSRF check for all POST parameters only
 				// Value 2 makes also CSRF check for GET requests with action = a sensitive requests like action=del, action=remove...
 				// Value 3 makes also CSRF check for all GET requests with a param action or massaction (except some non sensitive values)
-				$this->global->MAIN_SECURITY_CSRF_WITH_TOKEN = 2; // TODO Switch value to 3
+				$this->global->MAIN_SECURITY_CSRF_WITH_TOKEN = (defined('MAIN_SECURITY_CSRF_WITH_TOKEN') ? constant('MAIN_SECURITY_CSRF_WITH_TOKEN') : 3);
 				// Note: Set MAIN_SECURITY_CSRF_TOKEN_RENEWAL_ON_EACH_CALL=1 to have a renewal of token at each page call instead of each session (not recommended)
 			}
 
@@ -1351,10 +1391,8 @@ class Conf extends stdClass
 			if (!isset($this->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY) && extension_loaded('tidy') && class_exists("tidy")) {
 				$this->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 1;
 			}
-
-			if (!isset($this->global->MAIN_DISALLOW_UNSECURED_SELECT_INTO_EXTRAFIELDS_FILTER)) {
-				// Note value is always forced to 1 in API context to avoid bind SQL injection into API filters.
-				$this->global->MAIN_DISALLOW_UNSECURED_SELECT_INTO_EXTRAFIELDS_FILTER = 0;		// TODO Move this into 1 by default
+			if (!isset($this->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES)) {
+				$this->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 0;	// TODO Move this to 1
 			}
 
 			if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
@@ -1372,11 +1410,11 @@ class Conf extends stdClass
 				}
 			}
 			// For backward compatibility
-			if (!empty($this->global->LDAP_MEMBER_ACTIVE) && $this->global->LDAP_MEMBER_ACTIVE == 'ldap2dolibarr') {
+			if (getDolGlobalString('LDAP_MEMBER_ACTIVE') == 'ldap2dolibarr') {
 				$this->global->LDAP_MEMBER_ACTIVE = 2;
 			}
 			// For backward compatibility
-			if (!empty($this->global->LDAP_MEMBER_TYPE_ACTIVE) && $this->global->LDAP_MEMBER_TYPE_ACTIVE == 'ldap2dolibarr') {
+			if (getDolGlobalString('LDAP_MEMBER_TYPE_ACTIVE') == 'ldap2dolibarr') {
 				$this->global->LDAP_MEMBER_TYPE_ACTIVE = 2;
 			}
 

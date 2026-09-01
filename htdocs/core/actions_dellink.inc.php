@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2015-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -26,6 +26,7 @@
 
 // $action must be defined
 // $object must be defined
+// $id must be defined
 // $permissiondellink must be defined
 
 /**
@@ -35,7 +36,14 @@
  *
  * @var string $action
  * @var int $permissiondellink
+ * @var int $id
  */
+'
+@phan-var-force CommonObject $object
+@phan-var-force string $action
+@phan-var-force int $permissiondellink
+@phan-var-force int $id
+';
 
 $dellinkid = GETPOSTINT('dellinkid');
 $addlink = GETPOST('addlink', 'alpha');

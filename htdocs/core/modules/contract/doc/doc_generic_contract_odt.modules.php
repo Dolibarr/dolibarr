@@ -250,7 +250,7 @@ class doc_generic_contract_odt extends ModelePDFContract
 			$object->fetch_thirdparty();
 
 			$dir = $conf->contract->multidir_output[$object->entity ?? $conf->entity];
-			$objectref = dol_sanitizeFileName($object->ref);
+			$objectref = dol_sanitizeFileName((string) $object->ref);
 			if (!preg_match('/specimen/i', $objectref)) {
 				$dir .= "/".$objectref;
 			}

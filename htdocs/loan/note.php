@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2007	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
  * Copyright (C) 2013		Florian Henry				<florian.henry@open-concept.pro>
- * Copyright (C) 2015-2025  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2015-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2016-2025	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2017		Ferran Marcet				<fmarcet@2byte.es>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
@@ -30,11 +30,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/loan.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
-require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -42,6 +37,10 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/loan.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 $action = GETPOST('action', 'aZ09');
 

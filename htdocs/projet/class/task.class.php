@@ -2,11 +2,11 @@
 /* Copyright (C) 2008-2014	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2014       Marcos García       <marcosgdf@gmail.com>
- * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2020       Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2022-2025  Charlene Benke		<charlene@patas-monkey.com>
  * Copyright (C) 2023      	Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Vincent de Grandpré <vincent@de-grandpre.quebec>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -677,20 +677,20 @@ class Task extends CommonObjectLine
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."projet_task SET";
-		$sql .= " fk_projet=".(isset($this->fk_project) ? $this->fk_project : "null").",";
+		$sql .= " fk_projet=".(isset($this->fk_project) ? ((int) $this->fk_project) : "null").",";
 		$sql .= " ref=".(isset($this->ref) ? "'".$this->db->escape($this->ref)."'" : "'".$this->db->escape((string) $this->id)."'").",";
-		$sql .= " fk_task_parent=".(isset($this->fk_task_parent) ? $this->fk_task_parent : "null").",";
+		$sql .= " fk_task_parent=".(isset($this->fk_task_parent) ? ((int) $this->fk_task_parent) : "null").",";
 		$sql .= " label=".(isset($this->label) ? "'".$this->db->escape($this->label)."'" : "null").",";
 		$sql .= " description=".(isset($this->description) ? "'".$this->db->escape($this->description)."'" : "null").",";
 		$sql .= " note_public=".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
 		$sql .= " note_private=".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
-		$sql .= " duration_effective=".(isset($this->duration_effective) ? $this->duration_effective : "null").",";
-		$sql .= " planned_workload=".((isset($this->planned_workload) && $this->planned_workload != '') ? $this->planned_workload : "null").",";
+		$sql .= " duration_effective=".(isset($this->duration_effective) ? ((int) $this->duration_effective) : "null").",";
+		$sql .= " planned_workload=".((isset($this->planned_workload) && $this->planned_workload != '') ? ((int) $this->planned_workload) : "null").",";
 		$sql .= " datec=".(isDolTms($this->date_c) ? "'".$this->db->idate($this->date_c)."'" : 'null').",";
 		$sql .= " dateo=".(isDolTms($this->date_start) ? "'".$this->db->idate($this->date_start)."'" : 'null').",";
 		$sql .= " datee=".(isDolTms($this->date_end) ? "'".$this->db->idate($this->date_end)."'" : 'null').",";
-		$sql .= " progress=".(($this->progress != '' && $this->progress >= 0) ? $this->progress : 'null').",";
-		$sql .= " budget_amount=".(($this->budget_amount != '' && $this->budget_amount >= 0) ? $this->budget_amount : 'null').",";
+		$sql .= " progress=".(($this->progress != '' && $this->progress >= 0) ? ((int) $this->progress) : 'null').",";
+		$sql .= " budget_amount=".(($this->budget_amount != '' && $this->budget_amount >= 0) ? ((float) $this->budget_amount) : 'null').",";
 		$sql .= " rang=".((!empty($this->rang)) ? ((int) $this->rang) : "0").",";
 		$sql .= " priority=".((!empty($this->priority)) ? ((int) $this->priority) : "0").",";
 		$sql .= " billable=".((int) $this->billable).",";
@@ -1017,7 +1017,7 @@ class Task extends CommonObjectLine
 	 *  @param	string	$sep			Separator between ref and label if option addlabel is set
 	 *  @param	int   	$notooltip		1=Disable tooltip
 	 *  @param  int     $save_lastsearch_value    -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-	 *	@return	string					Chaine avec URL
+	 *	@return	string					String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $mode = 'task', $addlabel = 0, $sep = ' - ', $notooltip = 0, $save_lastsearch_value = -1)
 	{
@@ -1931,11 +1931,11 @@ class Task extends CommonObjectLine
 		}
 		if ($dates > 0) {
 			$datefieldname = "element_datehour";
-			$sql .= " AND (".$datefieldname." >= '".$this->db->idate((int) $dates)."' OR ".$datefieldname." IS NULL)";
+			$sql .= " AND (".$this->db->sanitize($datefieldname)." >= '".$this->db->idate((int) $dates)."' OR ".$this->db->sanitize($datefieldname)." IS NULL)";
 		}
 		if ($datee > 0) {
 			$datefieldname = "element_datehour";
-			$sql .= " AND (".$datefieldname." <= '".$this->db->idate((int) $datee)."' OR ".$datefieldname." IS NULL)";
+			$sql .= " AND (".$this->db->sanitize($datefieldname)." <= '".$this->db->idate((int) $datee)."' OR ".$this->db->sanitize($datefieldname)." IS NULL)";
 		}
 		//print $sql;
 
@@ -2285,7 +2285,7 @@ class Task extends CommonObjectLine
 
 		if (!$error) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."projet_task";
-			$sql .= " SET duration_effective = duration_effective - ".$this->db->escape($this->timespent_duration ? (string) $this->timespent_duration : '0');
+			$sql .= " SET duration_effective = duration_effective - ".((int) $this->timespent_duration);
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::delTimeSpent", LOG_DEBUG);

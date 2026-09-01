@@ -46,12 +46,10 @@ $export->load_arrays($user);
 $import = new Import($db);
 $import->load_arrays($user);
 
-if (isModEnabled('import')) {
-	//$usercanimport = restrictedArea($user, 'import', 0, '', 'run');
-	$usercanimport = restrictedArea($user, 'import');
-}
-if (isModEnabled('export')) {
-	$usercanexport = restrictedArea($user, 'export');
+$usercanimport = isModEnabled('import') && restrictedArea($user, 'import', 0, '', '', 'fk_soc', 'rowid', 0, 1);
+$usercanexport = isModEnabled('export') && restrictedArea($user, 'export', 0, '', '', 'fk_soc', 'rowid', 0, 1);
+if (!$usercanimport && !$usercanexport) {
+	accessforbidden();
 }
 
 
@@ -75,7 +73,7 @@ print load_fiche_titre($langs->trans($title));
 
 
 // List of available import format
-if (isModEnabled('import')) {
+if ($usercanimport) {
 	$out = '';
 	$out .= '<div class="div-table-responsive-no-min">';
 	$out .= '<table class="noborder centpercent nomarginbottom">';
@@ -85,7 +83,7 @@ if (isModEnabled('import')) {
 	$out .= '<td class="right">'.$langs->trans("LibraryVersion").'</td>';
 	$out .= '</tr>';
 
-	include_once DOL_DOCUMENT_ROOT.'/core/modules/import/modules_import.php';
+	include_once DOL_DOCUMENT_ROOT.'/core/modules/import/modules_import.class.php';
 	$model = new ModeleImports();
 	$list = $model->listOfAvailableImportFormat($db);
 
@@ -122,7 +120,7 @@ if (isModEnabled('import')) {
 
 
 // List of available export formats
-if (isModEnabled('export')) {
+if ($usercanexport) {
 	$out = '';
 	$out .= '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	$out .= '<table class="noborder centpercent nomarginbottom">';

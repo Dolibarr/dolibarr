@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2014-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015-2025  Frédéric France      <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -82,17 +82,17 @@ class modOauth extends DolibarrModules
 		// Boxes
 		$this->boxes = array();
 
-		// Permissions
+		// Rights
 		$this->rights = array();
 		$this->rights_class = 'oauth';
 
 		$r = 0;
-		// $this->rights[$r][0]     Id permission (unique tous modules confondus)
-		// $this->rights[$r][1]     Libelle par default si traduction de cle "PermissionXXX" non trouvee (XXX = Id permission)
-		// $this->rights[$r][2]     Non utilise
-		// $this->rights[$r][3]     1=Permis par default, 0=Non permis par default
-		// $this->rights[$r][4]     Niveau 1 pour nommer permission dans code
-		// $this->rights[$r][5]     Niveau 2 pour nommer permission dans code
+		// $this->rights[$r][0]     Id for right (unique across all modules)
+		// $this->rights[$r][1]     Default label if the translation key "PermissionXXX" is not found (XXX = Id for right)
+		// $this->rights[$r][2]     Not used
+		// $this->rights[$r][3]     1=Authorised by default, 0=Denied by default
+		// $this->rights[$r][4]     Level 1 to name right in the code
+		// $this->rights[$r][5]     Level 2 to name right in the code
 
 		/*$r++;
 		$this->rights[$r][0] = 66000;

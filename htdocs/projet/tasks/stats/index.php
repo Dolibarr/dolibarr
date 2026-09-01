@@ -47,6 +47,10 @@ if (!$user->hasRight('projet', 'lire')) {
 $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 
+$mode = GETPOST('mode', 'alpha');
+
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'projectlist';
+
 $userid = GETPOSTINT('userid');
 $socid = GETPOSTINT('socid');
 // Security check
@@ -77,7 +81,33 @@ llxHeader('', $langs->trans('Tasks'), '', '', 0, 0, '', '', '', 'mod-project pro
 $title = $langs->trans("TasksStatistics");
 $dir = $conf->project->dir_output.'/temp';
 
-print load_fiche_titre($title, '', 'projecttask');
+$page = 0;
+$sortfield = '';
+$sortorder = '';
+$massactionbutton = '';
+$num = 0;
+$nbtotalofrecords = $langs->trans("Statistics");
+$param = '';
+$limit = 0;
+
+$newcardbutton = '';
+
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/projet/tasks/list.php?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'common' ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', DOL_URL_ROOT.'/projet/tasks/list.php?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', DOL_URL_ROOT.'/projet/tasks/stats/index.php?mode=statistics&contextpage='.$contextpage.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', 2, array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitleSeparator();
+$newcardbutton .= dolGetButtonTitle($langs->trans('NewTask'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/tasks.php?action=create&backtopage='.urlencode(DOL_URL_ROOT.'/projet/tasks/list.php'), '', $user->hasRight('projet', 'creer'));
+
+
+// Show description of content
+$htmltooltip = '';
+if ($user->hasRight('projet', 'all', 'lire') && !$socid) {
+	$htmltooltip .= $langs->trans("TasksOnProjectsDesc");
+} else {
+	$htmltooltip .= $langs->trans("TasksOnProjectsPublicDesc");
+}
+
+print_barre_liste($form->textwithpicto($title, $htmltooltip), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'projecttask', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 dol_mkdir($dir);
 

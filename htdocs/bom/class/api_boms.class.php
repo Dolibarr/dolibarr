@@ -97,7 +97,7 @@ class Boms extends DolibarrApi
 	 * @param string		   $sortorder			Sort order
 	 * @param int			   $limit				Limit for list
 	 * @param int			   $page				Page number
-	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:>:'20160101')"
 	 * @param string		   $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array                               Array of order objects
 	 * @phan-return BOM[]
@@ -261,7 +261,7 @@ class Boms extends DolibarrApi
 
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->bom->array_options[$index] = $this->_checkValForAPI($field, $val, $this->bom);
+					$this->bom->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->bom);
 				}
 				continue;
 			}
@@ -576,6 +576,7 @@ class Boms extends DolibarrApi
 		unset($object->civility_id);
 		unset($object->statut);
 		unset($object->state);
+		unset($object->region_id);
 		unset($object->state_id);
 		unset($object->state_code);
 		unset($object->region);
@@ -587,11 +588,26 @@ class Boms extends DolibarrApi
 		unset($object->barcode_type_code);
 		unset($object->barcode_type_label);
 		unset($object->barcode_type_coder);
+		unset($object->demand_reason_id);
+		unset($object->transport_mode_id);
+		unset($object->shipping_method);
+		unset($object->civility_code);
+		unset($object->actiontypecode);
+		unset($object->product);
+
 		unset($object->total_ht);
 		unset($object->total_tva);
 		unset($object->total_localtax1);
 		unset($object->total_localtax2);
 		unset($object->total_ttc);
+
+		unset($object->user);
+
+		unset($object->totalpaid);
+		unset($object->totalpaid_multicurrency);
+		unset($object->deposit_percent);
+		unset($object->cond_reglement_supplier_id);
+
 		unset($object->fk_account);
 		unset($object->comments);
 		unset($object->note);

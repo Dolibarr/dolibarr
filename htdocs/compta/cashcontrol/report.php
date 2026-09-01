@@ -63,7 +63,7 @@ $summaryonly = GETPOSTINT('summaryonly');		// May be used for ticket Z
 $object = new CashControl($db);
 $object->fetch($id);
 
-//$limit = GETPOST('limit')?GETPOST('limit', 'int'):$conf->liste_limit;
+//$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortorder = 'ASC';
 $sortfield = 'b.datev,b.dateo,b.rowid';
 
@@ -106,7 +106,7 @@ $conf->dol_hide_leftmenu = 1;
 
 llxHeader('', $title, '', '', 0, 0, array(), array(), $param);
 
-print '<!-- Begin div id-container --><div id="id-container" class="id-container center">';
+print '<!-- Begin div id-container --><div id="id-container" class="id-container centpercent">';
 
 $dates = $datee = 0;
 
@@ -122,31 +122,34 @@ if ($syear && !$smonth) {
 $datefilter = 'p.datep';
 $modulesourcefilter = 'f.module_source';
 $amountfield = 'pf.amount';
+$possource = 'f.pos_source';
+$fieldentity = 'p.entity';
 $joinleft = 'LEFT ';
 if (isALNERunningVersion() && $mysoc->country_code == 'FR') {
 	$datefilter = 'bl.date_creation';	// By using this as a filter, it is like the LEFT JOIN is an INNER JOIN
 	$modulesourcefilter = 'bl.module_source';
 	$amountfield = 'bl.amounts';
+	$possource = 'bl.pos_source';
+	$fieldentity = 'bl.entity';
 	$joinleft = '';
 }
 
 // NOTE: This request must use similar fields and filters to the one into cashcontrol_card to count and sum amount
-$sql = "SELECT p.rowid, p.datep as datep, cp.code,";
+$sql = "SELECT p.rowid, p.ref as pref, p.datep as datep, cp.code,";
 $sql .= " f.rowid as facid, f.ref, f.datef as datef, ".$db->sanitize($amountfield)." as amount,";
 $sql .= " b.fk_account as bankid,";
 $sql .= " bl.signature";
 $sql .= " FROM ".MAIN_DB_PREFIX."paiement_facture as pf, ".MAIN_DB_PREFIX."facture as f,";
 $sql .= " ".MAIN_DB_PREFIX."paiement as p";
-//$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."blockedlog as bl ON bl.ref_object = p.ref AND bl.entity = ".((int) $conf->entity).",";
 $sql .= " ".$db->sanitize($joinleft)." JOIN ".MAIN_DB_PREFIX."blockedlog as bl ON bl.action = 'PAYMENT_CUSTOMER_CREATE'";
 $sql .= " AND bl.element = 'payment' AND bl.fk_object = p.rowid AND bl.entity = ".((int) $conf->entity);
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON p.fk_bank = b.rowid,";
 $sql .= " ".MAIN_DB_PREFIX."c_paiement as cp";
 $sql .= " WHERE pf.fk_facture = f.rowid AND p.rowid = pf.fk_paiement AND cp.id = p.fk_paiement";
 $sql .= " AND ".$db->sanitize($modulesourcefilter)." = '".$db->escape($posmodule)."'";
-$sql .= " AND f.pos_source = '".$db->escape($terminalid)."'";
-$sql .= " AND p.entity = ".((int) $conf->entity); // Never share entities for features related to accountancy
+$sql .= " AND ".$db->sanitize($possource)." = '".$db->escape($terminalid)."'";
 $sql .= " AND ".$db->sanitize($datefilter)." BETWEEN '".$db->idate($dates)."' AND '".$db->idate($datee)."'";
+$sql .= " AND ".$db->sanitize($fieldentity)." = ".((int) $conf->entity); // Never share entities for features related to accountancy
 $sql .= " ORDER BY ".$db->sanitize($datefilter)." ASC, rowid ASC"; // Required so later we can use the parameter $previoushash of checkSignature()
 
 $resql = $db->query($sql);
@@ -175,7 +178,7 @@ if ($resql) {
 	$uservalid = new User($db);
 	if ($userauthor > 0) {
 		$uservalid->fetch($userauthor);
-		print '<br>'.$langs->trans("Author").': '.$uservalid->getFullName($langs);
+		print ' - '.$langs->trans("Author").': '.$uservalid->getFullName($langs);
 	}
 	print '<br>'.$langs->trans("Period").': '.$object->year_close.($object->month_close ? '-'.sprintf("%02d", $object->month_close) : '').($object->day_close ? '-'.sprintf("%02d", $object->day_close) : '');
 	print '</center>';
@@ -273,6 +276,14 @@ if ($resql) {
 				$transactionspertype[$objp->code] = 0;
 			}
 			$transactionspertype[$objp->code] += 1;
+		} elseif ($objp->code == 'LIQ') {
+			$cash += $objp->amount;
+			// } elseif (getDolGlobalString($var2) == $bankaccount->id) $bank+=$objp->amount;
+			//elseif (getDolGlobalString($var3) == $bankaccount->id) $cheque+=$objp->amount;
+			if (empty($transactionspertype['CASH'])) {
+				$transactionspertype['CASH'] = 0;
+			}
+			$transactionspertype['CASH'] += 1;
 		} else {
 			if (getDolGlobalString($var1) == $bankaccount->id) {
 				$cash += $objp->amount;
@@ -302,6 +313,7 @@ if ($resql) {
 			$amountpertype[$objp->code] -= $objp->amount;
 		}
 
+		// List of all invoices
 		if (!$summaryonly) {
 			print '<tr class="oddeven">';
 
@@ -374,6 +386,7 @@ if ($resql) {
 
 	if (!$summaryonly) {
 		// Show total line
+		$moreinfoontotal = ' ('.$num.' '.$langs->trans($num > 1 ? "Invoices" : "Invoice").')';		// Used in the .tpl
 		include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 
 		print "</table>";
@@ -386,7 +399,7 @@ if ($resql) {
 	print '<div style="text-align: right">';
 	print '<h2>';
 
-	print $langs->trans("Cash").(!empty($transactionspertype['CASH']) ? ' ('.$transactionspertype['CASH'].' '.$langs->trans("Articles").')' : '').' : ';
+	print $langs->trans("Cash").(!empty($transactionspertype['CASH']) ? ' ('.$transactionspertype['CASH'].' '.$langs->trans("Payments").')' : '').' : ';
 	if (!$summaryonly) {
 		print '<div class="inline-block amount width100">'.($cash >= 0 ? '+' : '').price($cash).'</div>';
 		print '<div class="inline-block amount width100">'.price($newcash).'</div>';
@@ -395,35 +408,40 @@ if ($resql) {
 		print '<div class="inline-block amount width100">'.price($cash).'</div>';
 	}
 	if (!$summaryonly && $object->status == $object::STATUS_CLOSED && price2num($newcash) != price2num((float) $object->cash_declared)) {
-		print ' <div class="inline-block amountremaintopay fontsizeunset small"><> '.$langs->trans("Declared").': '.price($object->cash_declared).'</div>';
+		//$s = '<div class="inline-block amountremaintopay fontsizeunset small">';
+		$s = $langs->trans("Declared").': '.price($object->cash_declared);
+		print img_picto($s, 'warning');
 	}
 	print "<br>";
 
 	//print '<br>';
-	print $langs->trans("PaymentTypeCHQ").(!empty($transactionspertype['CHQ']) ? ' ('.$transactionspertype['CHQ'].' '.$langs->trans("Articles").')' : '').' : ';
+	print $langs->trans("PaymentTypeCHQ").(!empty($transactionspertype['CHQ']) ? ' ('.$transactionspertype['CHQ'].' '.$langs->trans("Payments").')' : '').' : ';
 	print '<div class="inline-block amount width100"></div>';
 	print '<div class="inline-block amount width100">'.price($cheque).'</div>';
 	if (!$summaryonly && $object->status == $object::STATUS_CLOSED && price2num($cheque) != price2num((float) $object->cheque_declared)) {
-		print ' <div class="inline-block amountremaintopay fontsizeunset small"><> '.$langs->trans("Declared").' : '.price($object->cheque_declared).'</div>';
+		//print ' <div class="inline-block amountremaintopay fontsizeunset small"><> '.$langs->trans("Declared").' : '.price($object->cheque_declared).'</div>';
+		$s = $langs->trans("Declared").': '.price($object->cheque_declared);
 	}
 	print "<br>";
 
 	//print '<br>';
-	print $langs->trans("PaymentTypeCB").(!empty($transactionspertype['CB']) ? ' ('.$transactionspertype['CB'].' '.$langs->trans("Articles").')' : '').' : ';
+	print $langs->trans("PaymentTypeCB").(!empty($transactionspertype['CB']) ? ' ('.$transactionspertype['CB'].' '.$langs->trans("Payments").')' : '').' : ';
 	print '<div class="inline-block amount width100"></div>';
 	print '<div class="inline-block amount width100">'.price($bank).'</div>';
 	if (!$summaryonly && $object->status == $object::STATUS_CLOSED && price2num($bank) != price2num((float) $object->card_declared)) {
-		print ' <div class="inline-block amountremaintopay fontsizeunset small"><> '.$langs->trans("Declared").': '.price($object->card_declared).'</div>';
+		//print ' <div class="inline-block amountremaintopay fontsizeunset small"><> '.$langs->trans("Declared").': '.price($object->card_declared).'</div>';
+		$s = $langs->trans("Declared").': '.price($object->card_declared);
 	}
 	print "<br>";
 
 	// print '<br>';
 	if ($other) {
-		print ''.$langs->trans("Other").(!empty($transactionspertype['OTHER']) ? ' ('.$transactionspertype['OTHER'].' '.$langs->trans("Articles").')' : '').' : ';
+		print ''.$langs->trans("Other").(!empty($transactionspertype['OTHER']) ? ' ('.$transactionspertype['OTHER'].' '.$langs->trans("Payments").')' : '').' : ';
 		print '<div class="inline-block amount width100"></div>';
 		print '<div class="inline-block amount width100">'.price($other)."</div>";
 		print '<br>';
 	}
+
 
 	print "<br>";
 

@@ -329,6 +329,7 @@ class Setup extends DolibarrApi
 
 		return $list;
 	}
+
 	/**
 	 * Get the list of regions.
 	 *
@@ -568,23 +569,25 @@ class Setup extends DolibarrApi
 	 * @param string    $filter     To filter the countries by name
 	 * @param string    $lang       Code of the language the label of the countries must be translated to
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
-	 * @return array                List of countries
-	 * @phan-return Ccountry[]
-	 * @phpstan-return Ccountry[]
+	 * @param	int		$loadregions	Load also Regions for countries: 0 (default), 1 load regions
+	 * @param	int		$loadstates		Load also States for countries: 0 (default), 1 load states
+	 * @return list<Ccountry|CcountryExtended>
+	 * @phpstan-return list<Ccountry|CcountryExtended>
+	 * @phan-return list<Ccountry|CcountryExtended>
 	 *
 	 * @url     GET dictionary/countries
 	 *
 	 * @throws	RestException	400		Bad value for sqlfilters
 	 * @throws	RestException	503		Error retrieving list of countries
 	 */
-	public function getListOfCountries($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $filter = '', $lang = '', $sqlfilters = '')
+	public function getListOfCountries($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $filter = '', $lang = '', $sqlfilters = '', $loadregions = 0, $loadstates = 0)
 	{
 		$list = array();
 
 		// Note: The filter is not applied in the SQL request because it must
 		// be applied to the translated names, not to the names in database.
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."c_country as t";
-		$sql .= " WHERE 1 = 1";
+		$sql .= " WHERE rowid > 0";
 		// Add sql filters
 		if ($sqlfilters) {
 			$errormessage = '';
@@ -612,8 +615,16 @@ class Setup extends DolibarrApi
 			$min = min($num, ($limit <= 0 ? $num : $limit));
 			for ($i = 0; $i < $min; $i++) {
 				$obj = $this->db->fetch_object($result);
-				$country = new Ccountry($this->db);
-				if ($country->fetch($obj->rowid) > 0) {
+				$country = new CcountryExtended($this->db);
+				$fetchres = $country->fetch($obj->rowid);
+				if ($fetchres && $loadregions) {
+					$country->regions = $this->getListOfRegions("code_region", 'ASC', 0, 0, $obj->rowid);
+				}
+				if ($fetchres && $loadstates) {
+					$country->states = $this->getListOfStates("code_departement", 'ASC', 0, 0, $obj->rowid);
+				}
+
+				if ($fetchres > 0) {
 					// Translate the name of the country if needed
 					// and then apply the filter if there is one.
 					$this->translateLabel($country, $lang, 'Country');
@@ -633,20 +644,26 @@ class Setup extends DolibarrApi
 	/**
 	 * Get country by ID.
 	 *
-	 * @param 	int       $id        	ID of country
-	 * @param 	string    $lang      	Code of the language the name of the country must be translated to
+	 * @param 	int		$id        		ID of country
+	 * @param 	string	$lang      		Code of the language the name of the country must be translated to
+	 * @param	int		$loadregions	Load also Regions for this country: 0 (default), 1 load regions
+	 * @param	int		$loadstates		Load also States for this country: 0 (default), 1 load states
 	 * @return 	Object 					Object with cleaned properties
-	 * @phan-return Ccountry
-	 * @phpstan-return Ccountry
+	 * @phan-return Ccountry|CcountryExtended
+	 * @phpstan-return Ccountry|CcountryExtended
 	 *
 	 * @url     GET dictionary/countries/{id}
 	 *
+	 * @throws	RestException	400		Bad Request
 	 * @throws	RestException	404		Country not found
 	 * @throws	RestException	503		Error retrieving country
 	 */
-	public function getCountryByID($id, $lang = '')
+	public function getCountryByID($id, $lang = '', $loadregions = 0, $loadstates = 0)
 	{
-		return $this->_fetchCcountry($id, '', '', $lang);
+		if ($id < 1) {
+			throw new RestException(400, 'Error: id < 1');
+		}
+		return $this->_fetchCcountry($id, '', '', $lang = '', $loadregions, $loadstates);
 	}
 
 	/**
@@ -654,18 +671,21 @@ class Setup extends DolibarrApi
 	 *
 	 * @param 	string    $code      	Code of country (2 characters)
 	 * @param 	string    $lang      	Code of the language the name of the country must be translated to
+	 * @param	int		$loadregions	Load also Regions for this country: 0 (default), 1 load regions
+	 * @param	int		$loadstates		Load also States for this country: 0 (default), 1 load states
 	 * @return 	Object 					Object with cleaned properties
-	 * @phan-return Ccountry
-	 * @phpstan-return Ccountry
+	 * @phan-return Ccountry|CcountryExtended
+	 * @phpstan-return Ccountry|CcountryExtended
 	 *
 	 * @url     GET dictionary/countries/byCode/{code}
 	 *
+	 * @throws	RestException	400		Bad Request
 	 * @throws	RestException	404		Country not found
 	 * @throws	RestException	503		Error retrieving country
 	 */
-	public function getCountryByCode($code, $lang = '')
+	public function getCountryByCode($code, $lang = '', $loadregions = 0, $loadstates = 0)
 	{
-		return $this->_fetchCcountry(0, $code, '', $lang);
+		return $this->_fetchCcountry(0, $code, '', $lang = '', $loadregions, $loadstates);
 	}
 
 	/**
@@ -673,16 +693,20 @@ class Setup extends DolibarrApi
 	 *
 	 * @param 	string    $iso       	ISO of country (3 characters)
 	 * @param 	string    $lang     	Code of the language the name of the country must be translated to
+	 * @param	int		$loadregions	Load also Regions for this country: 0 (default), 1 load regions
+	 * @param	int		$loadstates		Load also States for this country: 0 (default), 1 load states
 	 * @return 	Object 					Object with cleaned properties
-	 *
+	 * @phan-return Ccountry|CcountryExtended
+	 * @phpstan-return Ccountry|CcountryExtended
 	 * @url     GET dictionary/countries/byISO/{iso}
 	 *
+	 * @throws	RestException	400		Bad Request
 	 * @throws	RestException	404		Country not found
 	 * @throws	RestException	503		Error retrieving country
 	 */
-	public function getCountryByISO($iso, $lang = '')
+	public function getCountryByISO($iso, $lang = '', $loadregions = 0, $loadstates = 0)
 	{
-		return $this->_fetchCcountry(0, '', $iso, $lang);
+		return $this->_fetchCcountry(0, '', $iso, $lang = '', $loadregions, $loadstates);
 	}
 
 	/**
@@ -742,22 +766,36 @@ class Setup extends DolibarrApi
 	 * @param 	string    $code      	Code of country (2 characters)
 	 * @param 	string    $iso       	ISO of country (3 characters)
 	 * @param 	string    $lang      	Code of the language the name of the country must be translated to
+	 * @param	int		$loadregions	Load also Regions for this country: 0 (default), 1 load regions
+	 * @param	int		$loadstates		Load also States for this country: 0 (default), 1 load states
 	 * @return 	Object 					Object with cleaned properties
-	 * @phan-return Ccountry
-	 * @phpstan-return Ccountry
+	 * @phan-return Ccountry|CcountryExtended
+	 * @phpstan-return Ccountry|CcountryExtended
 	 *
 	 * @throws RestException
 	 */
-	private function _fetchCcountry($id, $code = '', $iso = '', $lang = '')
+	private function _fetchCcountry($id, $code = '', $iso = '', $lang = '', $loadregions = 0, $loadstates = 0)
 	{
-		$country = new Ccountry($this->db);
-
+		if ($loadregions || $loadstates) {
+			$country = new CcountryExtended($this->db);
+		} else {
+			$country = new Ccountry($this->db);
+		}
 		$result = $country->fetch($id, $code, $iso);
 
 		if ($result < 0) {
 			throw new RestException(503, 'Error when retrieving country : '.$country->error);
 		} elseif ($result == 0) {
 			throw new RestException(404, 'Country not found');
+		} else {
+			if ($loadregions > 0) {
+				$regions = $this->getListOfRegions($sortfield = "code_region", $sortorder = 'ASC', $limit = 0, $page = 0, $country->id, $filter = '', $sqlfilters = '');
+				$country->regions = $regions;
+			}
+			if ($loadstates > 0) {
+				$states = $this->getListOfStates($sortfield = "code_departement", $sortorder = 'ASC', $limit = 0, $page = 0, $country->id, $filter = '', $sqlfilters = '');
+				$country->states = $states;
+			}
 		}
 
 		$this->translateLabel($country, $lang, 'Country');
@@ -1472,6 +1510,7 @@ class Setup extends DolibarrApi
 					$list[$tab->elementtype][$tab->name]['perms'] = $tab->perms;
 					$list[$tab->elementtype][$tab->name]['list'] = $tab->list;
 					$list[$tab->elementtype][$tab->name]['printable'] = $tab->printable;
+					$list[$tab->elementtype][$tab->name]['showintooltip'] = $tab->showintooltip;
 					$list[$tab->elementtype][$tab->name]['totalizable'] = $tab->totalizable;
 					$list[$tab->elementtype][$tab->name]['langs'] = $tab->langs;
 					$list[$tab->elementtype][$tab->name]['help'] = $tab->help;
@@ -1557,7 +1596,7 @@ class Setup extends DolibarrApi
 		}
 
 		$sql = "SELECT t.rowid as id, t.name, t.entity, t.elementtype, t.label, t.type, t.size, t.fieldcomputed, t.fielddefault,";
-		$sql .= " t.fieldunique, t.fieldrequired, t.perms, t.enabled, t.pos, t.alwayseditable, t.param, t.list, t.printable,";
+		$sql .= " t.fieldunique, t.fieldrequired, t.perms, t.enabled, t.pos, t.alwayseditable, t.param, t.list, t.printable, t.showintooltip,";
 		$sql .= " t.totalizable, t.langs, t.help, t.css, t.cssview, t.csslist, t.fk_user_author, t.fk_user_modif, t.datec, t.tms";
 		$sql .= " FROM ".MAIN_DB_PREFIX."extrafields as t";
 		$sql .= " WHERE t.entity IN (".getEntity('extrafields').")";
@@ -1584,6 +1623,7 @@ class Setup extends DolibarrApi
 					$answer[$tab->elementtype][$tab->name]['perms'] = $tab->perms;
 					$answer[$tab->elementtype][$tab->name]['list'] = $tab->list;
 					$answer[$tab->elementtype][$tab->name]['printable'] = $tab->printable;
+					$answer[$tab->elementtype][$tab->name]['showintooltip'] = $tab->showintooltip;
 					$answer[$tab->elementtype][$tab->name]['totalizable'] = $tab->totalizable;
 					$answer[$tab->elementtype][$tab->name]['langs'] = $tab->langs;
 					$answer[$tab->elementtype][$tab->name]['help'] = $tab->help;
@@ -1657,6 +1697,7 @@ class Setup extends DolibarrApi
 		$default_value = $request_data['default'];
 		$totalizable = $request_data['totalizable'];
 		$printable = $request_data['printable'];
+		$showintooltip = $request_data['showintooltip'];
 		$required = $request_data['required'];
 		$langfile = $request_data['langfile'];
 		$computed = $request_data['computed'];
@@ -1710,6 +1751,7 @@ class Setup extends DolibarrApi
 	 */
 	public function updateExtrafields($attrname, $elementtype, $request_data = null)
 	{
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		if (!DolibarrApiAccess::$user->admin) {
 			throw new RestException(403, 'Only an admin user can create an extrafield');
 		}
@@ -1742,6 +1784,7 @@ class Setup extends DolibarrApi
 		$default_value = $request_data['default'];
 		$totalizable = $request_data['totalizable'];
 		$printable = $request_data['printable'];
+		$showintooltip = $request_data['showintooltip'];
 		$required = $request_data['required'];
 		$langfile = $request_data['langfile'];
 		$computed = $request_data['computed'];
@@ -2701,6 +2744,9 @@ class Setup extends DolibarrApi
 	public function getEstablishments()
 	{
 		$list = array();
+		if (!DolibarrApiAccess::$user->admin) {
+			throw new RestException(403, 'Error API open to admin users only');
+		}
 
 		$limit = 0;
 
@@ -2739,12 +2785,19 @@ class Setup extends DolibarrApi
 	 */
 	public function getEtablishmentByID($id)
 	{
+		if (!DolibarrApiAccess::$user->admin) {
+			throw new RestException(403, 'Error API open to admin users only');
+		}
+
 		$establishment = new Establishment($this->db);
 
 		$result = $establishment->fetch($id);
 		if ($result < 0) {
 			throw new RestException(503, 'Error when retrieving establishment : '.$establishment->error);
 		} elseif ($result == 0) {
+			throw new RestException(404, 'Establishment not found');
+		}
+		if (!in_array($establishment->entity, explode(',', getEntity('establishment')))) {
 			throw new RestException(404, 'Establishment not found');
 		}
 
@@ -2799,7 +2852,6 @@ class Setup extends DolibarrApi
 	 */
 	public function getConfs()
 	{
-		global $conf;
 		$list = array();
 
 		if (!DolibarrApiAccess::$user->admin
@@ -3313,7 +3365,7 @@ class Setup extends DolibarrApi
 								$objMod = new $modName($db);
 								//$name = strtoupper(preg_replace('/^mod/i', '', get_class($objMod)));
 								if ($state) {
-									activateModule($modulename);
+									activateModule($modulename, 1, 0);
 									return array('result' => 'success', 'message' => 'Module '.$this->db->escape($modulename).' activated');
 								} else {
 									unActivateModule($modulename);

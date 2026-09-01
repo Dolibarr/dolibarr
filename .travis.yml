@@ -52,7 +52,7 @@ jobs:
       php: '8.5'
       env:
       - DB=mysql
-      - TRAVIS_PHP_VERSION=8.4
+      - TRAVIS_PHP_VERSION=8.5
       - TRAVIS_TYPE=push
     - stage: PHP latest push or cron
       if: type = cron or commit_message =~ /latest php/
@@ -64,10 +64,10 @@ jobs:
       - TRAVIS_TYPE=push
     - stage: PHP max pull_request
       if: type = pull_request
-      php: '8.4'
+      php: '8.5'
       env:
       - DB=mysql
-      - TRAVIS_PHP_VERSION=8.4
+      - TRAVIS_PHP_VERSION=8.5
       - TRAVIS_TYPE=pull_request
 
 notifications:
@@ -377,7 +377,7 @@ script:
     # Ensure we catch errors
     set -e
     # Exclusions are defined in the ruleset.xml file
-    if [ "$TRAVIS_TYPE" = "push" ] && [ "$TRAVIS_PHP_VERSION" = "8.4" ]; then
+    if [ "$TRAVIS_TYPE" = "push" ] && [ "$TRAVIS_PHP_VERSION" = "8.5" ]; then
       parallel-lint -e php --exclude dev/tools/test/namespacemig --exclude htdocs/includes/composer --exclude htdocs/includes/myclabs --exclude htdocs/includes/phpspec --exclude dev/initdata/dbf/includes \
         --exclude htdocs/includes/sabre --exclude htdocs/includes/phpoffice/PhpSpreadsheet --exclude htdocs/includes/sebastian \
         --exclude htdocs/includes/squizlabs/php_codesniffer --exclude htdocs/includes/jakub-onderka --exclude htdocs/includes/php-parallel-lint --exclude htdocs/includes/symfony \
@@ -393,7 +393,7 @@ script:
     set -e
     CACHE_OPT="--cache=${HOME}/.cache/dolibarr-phpcs-${TRAVIS_PHP_VERSION}.cache"
     # Exclusions are defined in the ruleset.xml file
-    if [ "$TRAVIS_TYPE" = "push" ] && [ "$TRAVIS_PHP_VERSION" = "8.4" ]; then
+    if [ "$TRAVIS_TYPE" = "push" ] && [ "$TRAVIS_PHP_VERSION" = "8.5" ]; then
       phpcs -s -p -d memory_limit=-1 --extensions=php --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --severity=1 ${CACHE_OPT} --runtime-set ignore_warnings_on_exit true .;
     fi
     set +e
@@ -518,6 +518,9 @@ script:
     php upgrade.php 22.0.0 23.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade22002300.log || cat $TRAVIS_BUILD_DIR/upgrade22002300.log
     php upgrade2.php 22.0.0 23.0.0 > $TRAVIS_BUILD_DIR/upgrade22002300-2.log || cat $TRAVIS_BUILD_DIR/upgrade22002300-2.log
     php step5.php 22.0.0 23.0.0 > $TRAVIS_BUILD_DIR/upgrade22002300-3.log || cat $TRAVIS_BUILD_DIR/upgrade22002300-3.log
+    php upgrade.php 23.0.0 24.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade23002400.log || cat $TRAVIS_BUILD_DIR/upgrade23002400.log
+    php upgrade2.php 23.0.0 24.0.0 > $TRAVIS_BUILD_DIR/upgrade23002400-2.log || cat $TRAVIS_BUILD_DIR/upgrade23002400-2.log
+    php step5.php 23.0.0 24.0.0 > $TRAVIS_BUILD_DIR/upgrade23002400-3.log || cat $TRAVIS_BUILD_DIR/upgrade23002400-3.log
     set +e
     echo
 
@@ -556,7 +559,7 @@ script:
   - |
     echo "Unit testing"
     # Execute phpunit, check its exit status and that the phpunit output shows a test summary
-    if [ "$TRAVIS_PHP_VERSION" = "8.4" ]; then
+    if [ "$TRAVIS_PHP_VERSION" = "8.5" ]; then
       phpunit -d memory_limit=-1 -c test/phpunit/phpunittest.xml test/phpunit/AllTests.php | tee /dev/tty | grep -qE "(OK .*[0-9]+ tests.*[0-9]+ assertions|Tests: [0-9]+)" ; phpunitresult=$((PIPESTATUS[0]?PIPESTATUS[0]:PIPESTATUS[2]))
     else
       PHPUNIT_DISABLE_SOURCE_SCAN=1 phpunit -d memory_limit=-1 -c test/phpunit/phpunittest.xml test/phpunit/AllTests.php | tee /dev/tty | grep -qE "(OK .*[0-9]+ tests.*[0-9]+ assertions|Tests: [0-9]+)" ; phpunitresult=$((PIPESTATUS[0]?PIPESTATUS[0]:PIPESTATUS[2]))

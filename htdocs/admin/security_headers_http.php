@@ -166,7 +166,7 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg)) {
 			$sourcetype = $sourcesarray[$directivetype][$sourcecsp]["data-sourcetype"];
 		}
 		$securitycspstring = "";
-		if (isset($sourcetype) && $sourcetype == "data") {
+		if ($sourcetype == "data") {
 			$forceCSPArr[$directivecsp][] = "data:".$sourcedatacsp;
 		} elseif (isset($sourcetype) && $sourcetype == "blob") {
 			$forceCSPArr[$directivecsp][] = "blob:".$sourcedatacsp;
@@ -300,11 +300,11 @@ llxHeader('', $langs->trans("MainHttpSecurityHeaders"), $wikihelp, '', 0, 0, '',
 print load_fiche_titre($langs->trans("SecuritySetup"), '', 'title_setup');
 $head = security_prepare_head();
 
+print '<div class="info">'.$langs->trans("HTTPHeaderEditor").'. '.$langs->trans("ReservedToAdvancedUsers").'.</div>';
+
 print dol_get_fiche_head($head, 'headers_http', '', -1);
 
 print '<br>';
-
-print '<span class="opacitymedium">'.$langs->trans("HTTPHeaderEditor").'. '.$langs->trans("ReservedToAdvancedUsers").'.</span><br><br>';
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -342,7 +342,7 @@ print '<td>';
 
 print '<div class="div-table-responsive-no-min">';
 
-print '<input class="minwidth500 quatrevingtpercent" name="MAIN_SECURITY_FORCECSP" id="MAIN_SECURITY_FORCECSP" value="'.$forceCSP.'" spellcheck="false"> <a href="#" id="btnaddcontentsecuritypolicy">'.img_picto('', 'add').'</a><br>';
+print '<input class="minwidth500 quatrevingtpercent" name="MAIN_SECURITY_FORCECSP" id="MAIN_SECURITY_FORCECSP" value="'.$forceCSP.'" spellcheck="false"> <span id="btnaddcontentsecuritypolicy" class="cursorpointer">'.img_picto('', 'add').'</span><br>';
 
 print '<br class="selectaddcontentsecuritypolicy hidden">';
 
@@ -356,9 +356,9 @@ foreach ($selectarrayCSPSources as $key => $values) {
 	print '</div>';
 }
 print ' ';
-print '<div class="div_input_data_MAIN_SECURITY_FORCECSP hidden inline-block maxwidth200"><input id="input_data_MAIN_SECURITY_FORCECSP" name="input_data_MAIN_SECURITY_FORCECSP"></div>';
+print '<div class="div_input_data_MAIN_SECURITY_FORCECSP hidden inline-block maxwidth200"><input id="input_data_MAIN_SECURITY_FORCECSP" name="input_data_MAIN_SECURITY_FORCECSP" class="valignmiddle marginright"></div>';
 print ' ';
-print '<div class="div_btn_class_MAIN_SECURITY_FORCECSP inline-block maxwidth200"><input type="submit" id="btn_MAIN_SECURITY_FORCECSP" name="btn_MAIN_SECURITY_FORCECSP" class="butAction small smallpaddingimp" value="'.$langs->trans("Add").'" disabled></div>';
+print '<div class="div_btn_class_MAIN_SECURITY_FORCECSP inline-block maxwidth200 marginleftonly"><input type="submit" id="btn_MAIN_SECURITY_FORCECSP" name="btn_MAIN_SECURITY_FORCECSP" class="butAction small smallpaddingimp valignmiddle" value="'.$langs->trans("Add").'" disabled></div>';
 print '<br><br>';
 print '</div>';
 

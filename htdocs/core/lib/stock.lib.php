@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -90,9 +91,8 @@ function stock_prepare_head($object)
  */
 function stock_admin_prepare_head()
 {
-	global $langs, $conf, $user, $db;
+	global $langs, $conf, $user, $extrafields;
 
-	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('entrepot');
 	$extrafields->fetch_name_optionals_label('stock_mouvement');
 	$extrafields->fetch_name_optionals_label('inventory');
@@ -112,7 +112,7 @@ function stock_admin_prepare_head()
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'stock_admin');
 
 	$head[$h][0] = DOL_URL_ROOT.'/product/admin/stock_extrafields.php';
-	$head[$h][1] = $langs->trans("ExtraFields");
+	$head[$h][1] = $langs->trans("StockSetupExtraFields");
 	$nbExtrafields = $extrafields->attributes['entrepot']['count'];
 	if ($nbExtrafields > 0) {
 		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';

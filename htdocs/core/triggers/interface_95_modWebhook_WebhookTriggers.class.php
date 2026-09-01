@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2022	SuperAdmin		<test@dolibarr.com>
  * Copyright (C) 2023	William Mead	<william.mead@manchenumerique.fr>
+ * Copyright (C) 2026		MDW				<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -157,7 +158,7 @@ class InterfaceWebhookTriggers extends DolibarrTriggers
 				}
 
 				if (empty($dbhistory)) {
-					$dbhistory = getDoliDBInstance($conf->db->type, $conf->db->host, (string) $conf->db->user, $dolibarr_main_db_pass, $conf->db->name, (int) $conf->db->port);
+					$dbhistory = getDoliDBInstance($conf->db->type, $conf->db->host, (string) $conf->db->user, $dolibarr_main_db_pass, (string) $conf->db->name, (int) $conf->db->port);
 				}
 
 				$dbhistory->begin();

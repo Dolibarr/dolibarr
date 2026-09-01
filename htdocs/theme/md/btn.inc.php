@@ -55,6 +55,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 			--btncolorborderhover: none;
 			--btncolorborder: #FFF;
 			--butactiondeletebg: rgb(234,228,225);
+			--butactioncancelbg: #bbb;
 			--butactionbg: rgb(<?php print $butactionbg; ?>);
 			--textbutaction: rgb(<?php print $textbutaction; ?>);
 }
@@ -75,6 +76,7 @@ if (getDolGlobalString('THEME_DARKMODEENABLED')) {
             --btncolorborderhover: #ffffff;
             --btncolorborder: #2b2c2e;
             --butactiondeletebg: rgb(252,84,91);
+			--butactioncancelbg: #888;
 			--butactionbg: rgb(173,140,79);
 			--textbutaction: rgb(255,255,255);
 
@@ -107,6 +109,9 @@ div.tabsActionNoBottom > a.butAction, div.tabsActionNoBottom > a.butActionRefuse
 span.butAction, span.butActionDelete {
 	cursor: pointer;
 }
+.paginationafterarrows .butAction {
+	font-size: 0.9em;
+}
 
 .butAction {
 	background: var(--butactionbg);
@@ -127,19 +132,10 @@ span.butAction, span.butActionDelete {
 
 	margin: 0em <?php echo($dol_optimize_smallscreen ? '0.6' : '0.9'); ?>em;
 	padding: 0.6em <?php echo($dol_optimize_smallscreen ? '0.6' : '0.7'); ?>em;
-	font-family: <?php print $fontlist ?>;
 	display: inline-block;
 	text-align: center;
 	cursor: pointer;
 	color: #444;
-
-	/* border: 1px solid #aaa; */
-	/* border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25); */
-
-	/*border-top-right-radius: 0 !important;
-	border-bottom-right-radius: 0 !important;
-	border-top-left-radius: 0 !important;
-	border-bottom-left-radius: 0 !important;*/
 }
 .butActionNew, .butActionNewRefused, .butActionNew:link, .butActionNew:visited, .butActionNew:hover, .butActionNew:active {
 	text-decoration: none;
@@ -264,9 +260,16 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 	background: var(--butactiondeletebg);
 	color: #633 !important;
 }
+.button.button-cancel:not(.buttongen), .button.button-cancel:link:not(.buttongen), .button.button-cancel:visited:not(.buttongen), .button.button-cancel:hover:not(.buttongen), .button.button-cancel:active:not(.buttongen), .button.button-cancel:not(.buttongen) {
+	background: var(--butactioncancelbg) !important;
+	color: #888 !important;
+}
 
 .butActionDelete:hover {
 	box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
+}
+.button.button-cancel:hover:not(.buttongen) {
+	box-shadow: 0px 0px 4px 1px rgba(50, 50, 50, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
 }
 
 .butActionRefused {
@@ -349,10 +352,10 @@ table.table-fiche-title tr.titre td.col-right a.btnTitle {
 	margin: 0 0 0 10px;
 	text-align: center;
 	color: var(--btncolortext);
-	border: none;
 	font-size: 12px;
 	font-weight: 300;
 	/* background-color: #fbfbfb; */
+	border: 1px solid transparent;
 }
 /* *:not(.paginationafterarrows) > .btnTitle, *:not(.paginationafterarrows) > a.btnTitle { */
 .btnTitle, a.btnTitle {
@@ -547,4 +550,22 @@ button.btn-low-emphasis.--btn-icon:active {
 	background-color:  hsla(var(--colortextlink-h),var(--colortextlink-s) ,var(--colortextlink-l) , 0.1);
 	background-size: 100%;
 	transition: background 0s;/* used for hover ripple effect */
+}
+
+
+input.button-save, input.button-cancel {
+	min-width: 110px;
+	margin-left: 8px !important;
+	margin-right: 8px !important;
+}
+
+/* smartphone */
+
+@media only screen and (max-width: 767px)
+{
+	input.button-save, input.button-cancel {
+		min-width: 90px;
+		margin-left: 4px !important;
+		margin-right: 4px !important;
+	}
 }

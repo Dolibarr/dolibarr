@@ -2,7 +2,7 @@
 /* Copyright (C) 2012       Nicolas Villa aka Boyquotes http://informetic.fr
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concpt.pro>
  * Copyright (C) 2013-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -350,7 +350,7 @@ if (($action == "create") || ($action == "edit")) {
 
 	print '<tr><td class="fieldrequired titlefieldcreate">';
 	print $langs->trans('CronLabel')."</td>";
-	print '<td><input type="text" class="width200" name="label" value="'.dol_escape_htmltag($object->label).'"> ';
+	print '<td><input type="text" class="width200" name="label" value="'.dol_escape_htmltag($object->label).'" spellcheck="false"> ';
 	print "</td>";
 	print "<td>";
 	print "</td>";
@@ -366,7 +366,7 @@ if (($action == "create") || ($action == "edit")) {
 
 	print '<tr class="blockmethod"><td>';
 	print $langs->trans('CronModule')."</td><td>";
-	print '<input type="text" class="width200" name="module_name" value="'.dol_escape_htmltag($object->module_name).'"> ';
+	print '<input type="text" class="width200" name="module_name" value="'.dol_escape_htmltag($object->module_name).'" spellcheck="false"> ';
 	print "</td>";
 	print "<td>";
 	print $form->textwithpicto('', $langs->trans("CronModuleHelp"), 1, 'help');
@@ -375,7 +375,7 @@ if (($action == "create") || ($action == "edit")) {
 
 	print '<tr class="blockmethod"><td>';
 	print $langs->trans('CronClassFile')."</td><td>";
-	print '<input type="text" class="minwidth300" name="classesname" value="'.dol_escape_htmltag($object->classesname).'"> ';
+	print '<input type="text" class="minwidth300" name="classesname" value="'.dol_escape_htmltag($object->classesname).'" spellcheck="false"> ';
 	print "</td>";
 	print "<td>";
 	print $form->textwithpicto('', $langs->trans("CronClassFileHelp"), 1, 'help');
@@ -384,7 +384,7 @@ if (($action == "create") || ($action == "edit")) {
 
 	print '<tr class="blockmethod"><td>';
 	print $langs->trans('CronObject')."</td><td>";
-	print '<input type="text" class="width200" name="objectname" value="'.dol_escape_htmltag($object->objectname).'"> ';
+	print '<input type="text" class="width200" name="objectname" value="'.dol_escape_htmltag($object->objectname).'" spellcheck="false"> ';
 	print "</td>";
 	print "<td>";
 	print $form->textwithpicto('', $langs->trans("CronObjectHelp"), 1, 'help');
@@ -393,7 +393,7 @@ if (($action == "create") || ($action == "edit")) {
 
 	print '<tr class="blockmethod"><td>';
 	print $langs->trans('CronMethod')."</td><td>";
-	print '<input type="text" class="minwidth300" name="methodename" value="'.dol_escape_htmltag($object->methodename).'" /> ';
+	print '<input type="text" class="minwidth300" name="methodename" value="'.dol_escape_htmltag($object->methodename).'" spellcheck="false"> ';
 	print "</td>";
 	print "<td>";
 	print $form->textwithpicto('', $langs->trans("CronMethodHelp"), 1, 'help');
@@ -402,7 +402,7 @@ if (($action == "create") || ($action == "edit")) {
 
 	print '<tr class="blockmethod"><td>';
 	print $langs->trans('CronArgs')."</td><td>";
-	print '<input type="text" class="quatrevingtpercent" name="params" value="'.$object->params.'" /> ';
+	print '<input type="text" class="quatrevingtpercent" name="params" value="'.dol_escape_htmltag($object->params).'" spellcheck="false"> ';
 	print "</td>";
 	print "<td>";
 	print $form->textwithpicto('', $langs->trans("CronArgsHelp"), 1, 'help');
@@ -411,7 +411,7 @@ if (($action == "create") || ($action == "edit")) {
 
 	print '<tr class="blockcommand"><td>';
 	print $langs->trans('CronCommand')."</td><td>";
-	print '<input type="text" class="minwidth150" name="command" value="'.$object->command.'" /> ';
+	print '<input type="text" class="minwidth150" name="command" value="'.dol_escape_htmltag($object->command).'"  spellcheck="false" /> ';
 	print "</td>";
 	print "<td>";
 	print $form->textwithpicto('', $langs->trans("CronCommandHelp"), 1, 'help');
@@ -439,6 +439,7 @@ if (($action == "create") || ($action == "edit")) {
 	print '<tr><td class="fieldrequired">';
 	print $langs->trans('CronEvery')."</td>";
 	print "<td>";
+	print img_picto('', 'recurring', 'class="pictofixedwidth"');
 	print '<select name="nbfrequency" id="nbfrequency" class="width50 maxwidth50imp">';
 	for ($i = 1; $i <= 60; $i++) {
 		if ($object->frequency == $i) {
@@ -649,7 +650,7 @@ if (($action == "create") || ($action == "edit")) {
 	print dol_escape_htmltag($object->email_alert);
 	print "</td></tr>";
 
-	if (isModEnabled('multicompany')) {
+	if (isModEnabled('multicompany') && isset($mc)) {
 		print '<tr><td>';
 		print $langs->trans('Entity')."</td><td>";
 		if (empty($object->entity)) {
@@ -672,6 +673,7 @@ if (($action == "create") || ($action == "edit")) {
 	print '<tr><td class="titlefieldmiddle">';
 	print $langs->trans('CronEvery')."</td>";
 	print "<td>";
+	print img_picto('', 'recurring', 'class="pictofixedwidth"');
 	if ($object->unitfrequency == "60") {
 		print $langs->trans('CronEach')." ".($object->frequency)." ".$langs->trans('Minutes');
 	}
@@ -811,12 +813,12 @@ if (($action == "create") || ($action == "edit")) {
 	}
 
 
-	print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=clone&token='.newToken().'&id='.$object->id.'">'.$langs->trans("ToClone").'</a>';
+	print '<a class="butAction butActionClone" href="'.$_SERVER['PHP_SELF'].'?action=clone&token='.newToken().'&id='.$object->id.'">'.$langs->trans("ToClone").'</a>';
 
 	if (empty($object->status)) {
 		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=activate&token='.newToken().'&id='.$object->id.'">'.$langs->trans("CronStatusActiveBtn").'</a>';
 	} else {
-		print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=inactive&id='.$object->id.'">'.$langs->trans("CronStatusInactiveBtn").'</a>';
+		print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=inactive&token='.newToken().'&id='.$object->id.'">'.$langs->trans("CronStatusInactiveBtn").'</a>';
 	}
 
 

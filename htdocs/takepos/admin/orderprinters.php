@@ -108,10 +108,10 @@ $title = $langs->trans("Categories");
 $title .= ' ('.$langs->trans(empty(Categorie::$MAP_TYPE_TITLE_AREA[$type]) ? ucfirst($type) : Categorie::$MAP_TYPE_TITLE_AREA[$type]).')';
 
 $arrayofjs = array(
-	'/includes/jquery/plugins/jquerytreeview/jquery.treeview.js',
-	'/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js',
+	'/public/includes/jquery/plugins/jquerytreeview/jquery.treeview.js',
+	'/public/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js',
 );
-$arrayofcss = array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css');
+$arrayofcss = array('/public/includes/jquery/plugins/jquerytreeview/jquery.treeview.css');
 
 llxHeader('', $title, '', '', 0, 0, $arrayofjs, $arrayofcss, '', 'mod-takepos page-admin_orderprinters');
 
@@ -189,7 +189,8 @@ if ($nbofentries > 0) {
 	print '</tr>';
 }
 print "</table>";
-print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'"></form><br><br>';
+print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'"></form>';
+print '<br><br>';
 
 //Printer2
 print '<table class="liste nohover" width="100%">';
@@ -224,6 +225,7 @@ if ($nbofentries > 0) {
 }
 print "</table>";
 print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'"></form>';
+print '<br><br>';
 
 //Printer3
 print '<table class="liste nohover" width="100%">';

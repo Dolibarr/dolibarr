@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2012 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2014-2015 Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2018-2025  Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2021 	   Gauthier VERDOL 	    <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024	   Nick Fragoulis
@@ -335,7 +335,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("StockTransfer"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
-				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
+				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getAnonymisableFullName($outputlangs)));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("StockTransfer"));
 				if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 					$pdf->SetCompression(false);
@@ -424,7 +424,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 					// Notes
 					if (!empty($object->note_public)) {
 						$pdf->SetFont('', '', $default_font_size - 1); // Dans boucle pour gerer multi-page
-						$pdf->writeHTMLCell(190, 3, $this->posxdesc - 1, $tab_top_alt, dol_htmlentitiesbr($object->note_public), 0, 1);
+						$pdf->writeHTMLCell(190, 3, $this->posxdesc - 1, $tab_top_alt, dol_htmlentitiesbr((string) $object->note_public), 0, 1);
 					}
 
 					$nexY = $pdf->GetY();
@@ -451,10 +451,10 @@ class pdf_eagle extends ModelePDFStockTransfer
 					$barcode_path = '';
 					$result = 0;
 					if ($module->encodingIsSupported($encoding)) {
-						$result = $module->writeBarCode($object->ref, $encoding);
+						$result = $module->writeBarCode((string) $object->ref, $encoding);
 
 						// get path of qrcode image
-						$newcode = $object->ref;
+						$newcode = (string) $object->ref;
 						if (!preg_match('/^\w+$/', $newcode) || dol_strlen($newcode) > 32) {
 							$newcode = dol_hash($newcode, 'md5');
 						}
@@ -534,18 +534,19 @@ class pdf_eagle extends ModelePDFStockTransfer
 					$curX = $this->posxdesc - 1;
 
 					$pdf->startTransaction();
-					if (method_exists($object->lines[$i], 'fetch_product')) {
+
+					if (is_object($object->lines[$i]) && method_exists($object->lines[$i], 'fetch_product')) {
 						$object->lines[$i]->fetch_product();
 						$object->lines[$i]->label = $object->lines[$i]->product->label;
 						$object->lines[$i]->description = $object->lines[$i]->product->description;
 						$object->lines[$i]->weight = $object->lines[$i]->product->weight;
-						$object->lines[$i]->weight_units = $object->lines[$i]->product->weight_units;
+						$object->lines[$i]->weight_units = (int) $object->lines[$i]->product->weight_units;
 						$object->lines[$i]->length = $object->lines[$i]->product->length;
-						$object->lines[$i]->length_units = $object->lines[$i]->product->length_units;
+						$object->lines[$i]->length_units = (int) $object->lines[$i]->product->length_units;
 						$object->lines[$i]->surface = $object->lines[$i]->product->surface;
-						$object->lines[$i]->surface_units = $object->lines[$i]->product->surface_units;
+						$object->lines[$i]->surface_units = (int) $object->lines[$i]->product->surface_units;
 						$object->lines[$i]->volume = $object->lines[$i]->product->volume;
-						$object->lines[$i]->volume_units = $object->lines[$i]->product->volume_units;
+						$object->lines[$i]->volume_units = (int) $object->lines[$i]->product->volume_units;
 						$object->lines[$i]->fk_unit = $object->lines[$i]->product->fk_unit;
 						//var_dump($object->lines[$i]);exit;
 					}
@@ -610,7 +611,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 
 					$pdf->SetFont('', '', $default_font_size - 1); // We reposition the default font
 
-					// Lot / série
+					// Batch / serial number
 					if (isModEnabled('productbatch')) {
 						$pdf->SetXY($this->posxlot, $curY);
 						$pdf->MultiCell(($this->posxweightvol - $this->posxlot), 3, $object->lines[$i]->batch, '', 'C');
@@ -1074,7 +1075,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 
 		$pdf->SetFont('', '', $default_font_size + 1);
 
-		// Date prévue depart
+		// Expected departure date
 		if (!empty($object->date_prevue_depart)) {
 			$posy += 4;
 			$pdf->SetXY($posx, $posy);
@@ -1082,7 +1083,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 			$pdf->MultiCell($w, 4, $outputlangs->transnoentities("DatePrevueDepart")." : ".dol_print_date($object->date_prevue_depart, "day", false, $outputlangs, true), '', 'R');
 		}
 
-		// Date prévue arrivée
+		// Expected arrival date
 		if (!empty($object->date_prevue_arrivee)) {
 			$posy += 4;
 			$pdf->SetXY($posx, $posy);
@@ -1098,7 +1099,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 			$pdf->MultiCell($w, 4, $outputlangs->transnoentities("DateReelleDepart")." : ".dol_print_date($object->date_reelle_depart, "day", false, $outputlangs, true), '', 'R');
 		}
 
-		// Date reelle arrivée
+		// Actual arrival date
 		if (!empty($object->date_reelle_arrivee)) {
 			$posy += 4;
 			$pdf->SetXY($posx, $posy);
@@ -1110,7 +1111,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 			$posy += 4;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("CustomerCode")." : ".$outputlangs->transnoentities($object->thirdparty->code_client), '', 'R');
+			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("CustomerCode")." : ".$outputlangs->transnoentities((string) $object->thirdparty->code_client), '', 'R');
 		}
 
 

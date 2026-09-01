@@ -44,7 +44,7 @@ if (!$user->hasRight('categorie', 'lire')) {
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array('categories', 'sendings'));
+$langs->loadLangs(array('categories', 'mrp', 'sendings'));
 
 $socid = 0;
 $id = GETPOSTINT('id');

@@ -4,7 +4,7 @@
  * Copyright (C) 2013	   Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2016      Jonathan TISSEAU     <jonathan.tisseau@86dev.fr>
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -475,7 +475,7 @@ if ($action == 'edit') {
 		print '<tr class="drag drop oddeven hideifdefault"><td>'.$langs->trans("MAIN_MAIL_SMTPS_ID").'</td><td>';
 		// SuperAdministrator access only
 		if (!isModEnabled('multicompany') || ($user->admin && !$user->entity)) {
-			print '<input class="flat" name="MAIN_MAIL_SMTPS_ID_PASSWORDRESET" size="32" value="'.$mainstmpid.'">';
+			print '<input class="flat" name="MAIN_MAIL_SMTPS_ID_PASSWORDRESET" size="32" value="'.$mainstmpid.'" autocomplete="new-password">';
 		} else {
 			$htmltext = $langs->trans("ContactSuperAdminForChange");
 			print $form->textwithpicto(getDolGlobalString('MAIN_MAIL_SMTPS_ID_PASSWORDRESET'), $htmltext, 1, 'superadmin');
@@ -490,7 +490,7 @@ if ($action == 'edit') {
 		print '<tr class="drag drop oddeven smtp_pw hideifdefault"><td>'.$langs->trans("MAIN_MAIL_SMTPS_PW").'</td><td>';
 		// SuperAdministrator access only
 		if (!isModEnabled('multicompany') || ($user->admin && !$user->entity)) {
-			print '<input class="flat" type="password" name="MAIN_MAIL_SMTPS_PW_PASSWORDRESET" size="32" value="'.$mainsmtppw.'">';
+			print '<input class="flat" type="password" name="MAIN_MAIL_SMTPS_PW_PASSWORDRESET" size="32" value="'.$mainsmtppw.'" autocomplete="new-password">';
 		} else {
 			$htmltext = $langs->trans("ContactSuperAdminForChange");
 			print $form->textwithpicto(getDolGlobalString('MAIN_MAIL_SMTPS_PW_PASSWORDRESET'), $htmltext, 1, 'superadmin');
@@ -589,7 +589,20 @@ if ($action == 'edit') {
 	print dol_get_fiche_head($head, 'common_passwordreset', '', -1);
 
 	print '<span class="opacitymedium">'.$langs->trans("EMailsDesc")."</span><br>\n";
-	print "<br><br>\n";
+	print "<br>\n";
+
+	print '<div class="neutral nomargintop">';
+	print $langs->trans("MAIN_DISABLE_ALL_MAILS");
+	if (!empty($conf->use_javascript_ajax)) {
+		print ajax_constantonoff('MAIN_DISABLE_ALL_MAILS', array(), null, 0, 0, 1, 2, 0, 0, '_red').'</a>';
+	} else {
+		print yn(getDolGlobalString('MAIN_DISABLE_ALL_MAILS'));
+		if (getDolGlobalString('MAIN_DISABLE_ALL_MAILS')) {
+			print img_warning($langs->trans("Disabled"));
+		}
+	}
+	print '</div>';
+	print "<br>\n";
 
 	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	print '<table class="noborder centpercent">';
@@ -770,16 +783,16 @@ if ($action == 'edit') {
 	if (getDolGlobalString('MAIN_MAIL_SENDMODE_PASSWORDRESET') && getDolGlobalString('MAIN_MAIL_SENDMODE_PASSWORDRESET') != 'default') {
 		if (getDolGlobalString('MAIN_MAIL_SENDMODE_PASSWORDRESET') != 'mail' || !$linuxlike) {
 			if (function_exists('fsockopen') && $port && $server) {
-				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=testconnect">'.$langs->trans("DoTestServerAvailability").'</a>';
+				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=testconnect&token='.newToken().'">'.$langs->trans("DoTestServerAvailability").'</a>';
 			}
 		} else {
 			print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("FeatureNotAvailableOnLinux").'">'.$langs->trans("DoTestServerAvailability").'</a>';
 		}
 
-		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=test&amp;mode=init">'.$langs->trans("DoTestSend").'</a>';
+		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=test&amp;mode=init&amp;token='.newToken().'">'.$langs->trans("DoTestSend").'</a>';
 
 		if (isModEnabled('fckeditor')) {
-			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=testhtml&amp;mode=init">'.$langs->trans("DoTestSendHTML").'</a>';
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=testhtml&amp;mode=init&amp;token='.newToken().'">'.$langs->trans("DoTestSendHTML").'</a>';
 		}
 	}
 
@@ -799,18 +812,33 @@ if ($action == 'edit') {
 		include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 		$mail = new CMailFile('', '', '', '', array(), array(), array(), '', '', 0, 0, '', '', '', $trackid, $sendcontext);
 
-		$result = $mail->check_server_port((string) $server, (int) $port);
-		if ($result) {
-			print '<div class="ok">'.$langs->trans("ServerAvailableOnIPOrPort", (string) $server, (string) $port).'</div>';
-		} else {
-			$errormsg = $langs->trans("ServerNotAvailableOnIPOrPort", (string) $server, (string) $port);
+		$errormsg = '';
 
+		$listOfAllowedPorts = array('25', '465', '587', '2525');
+		if (!in_array((string) $port, $listOfAllowedPorts)) {
+			$errormsg = $langs->trans("Testing the SMTP port on different ports than ".implode(', ', $listOfAllowedPorts)." is not allowed.");
+		}
+
+		if (empty($errormsg)) {
+			$result = $mail->check_server_port((string) $server, (int) $port);
+			if ($result && !is_array($result)) {
+				print '<div class="ok">'.$langs->trans("ServerAvailableOnIPOrPort", (string) $server, (string) $port).'</div>';
+			} else {
+				$errormsg = $langs->trans("ServerNotAvailableOnIPOrPort", (string) $server, (string) $port);
+				if (is_array($result)) {
+					$errormsg .= '<br>'.$result['content'];
+				}
+			}
+		}
+
+		if ($errormsg) {
 			if ($mail->error) {
 				$errormsg .= ' - '.$mail->error;
 			}
 
 			setEventMessages($errormsg, null, 'errors');
 		}
+
 		print '<br>';
 	}
 
@@ -821,7 +849,7 @@ if ($action == 'edit') {
 
 		print dol_get_fiche_head(array(), '', '', -1);
 
-		// Cree l'objet formulaire mail
+		// Create the email form object
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 		$formmail = new FormMail($db);
 		$formmail->fromname = (GETPOSTISSET('fromname') ? GETPOST('fromname', 'restricthtml') : getDolGlobalString('MAIN_MAIL_EMAIL_FROM'));

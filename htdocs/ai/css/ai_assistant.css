@@ -1,0 +1,1072 @@
+/* ===========================================================================
+ * AI Assistant chat stylesheet
+ * Used by the standalone page (ai/assistant/index.php) and by the topbar
+ * popover (#topmenu-ai-popover shell emitted by top_menu_ai() in main.inc.php).
+ *
+ * Colors are mapped onto the theme CSS custom properties defined by the theme
+ * (htdocs/theme/eldy/global.inc.php) so the chat follows the active palette,
+ * including dark mode, with hardcoded values only as fallbacks.
+ * ======================================================================== */
+
+.ai-chat-container,
+.ai-popover {
+    --ai-accent: var(--colortextlink, #2b6cb0);
+    --ai-surface: var(--colorbackbody, #fff);
+    --ai-surface-2: var(--colorbackgrey, #f4f5f7);
+    --ai-text: var(--colortext, #333);
+    --ai-border: var(--inputbordercolor, rgba(0, 0, 0, 0.15));
+    --ai-input-bg: var(--inputbackgroundcolor, #fff);
+}
+
+/* Avatars, user bubble and send button follow the configurable top menu colors
+ * (var(--colorbackhmenu1) / var(--colortextbackhmenu)) of the Dolibarr theme. */
+
+/* Container */
+.ai-chat-container {
+    background: var(--ai-surface);
+    color: var(--ai-text);
+    border: 1px solid var(--ai-border);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    height: 70vh;
+    min-height: 650px;
+}
+
+/* Full page (body.ai-fullpage): the chat is no longer a centered card but fills
+ * the whole content area edge-to-edge. The .fiche wrapper padding is removed so
+ * the assistant header/input reach the borders; an inner column keeps the
+ * messages and input at a comfortable reading width (like the mockup). */
+body.ai-fullpage #id-container,
+body.ai-fullpage #id-right,
+body.ai-fullpage div.fiche {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+
+/* Never let this page scroll horizontally: a 1px horizontal overflow would
+ * show a bottom scrollbar that eats vertical space and triggers a vertical
+ * scrollbar in turn (vertical body scroll stays available for long menus). */
+body.ai-fullpage {
+    overflow-x: hidden;
+}
+
+.ai-chat-container:not(.ai-in-popover) {
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+    /* Fallback height (JS sets the exact value to fill down to the viewport
+     * bottom, see initAiAssistant); avoids a scrollbar/blank strip. */
+    height: calc(100vh - 52px);
+    min-height: 420px;
+}
+
+/* Center an 820px reading column via horizontal padding. Using padding (the %
+ * resolves against the container width) keeps the messages, the input pill and
+ * the footer note on the exact same column, unaffected by the chat-history
+ * scrollbar (which lives far out in the right padding zone). */
+.ai-chat-container:not(.ai-in-popover) .chat-history,
+.ai-chat-container:not(.ai-in-popover) .chat-controls {
+    padding-left: max(16px, calc(50% - 410px));
+    padding-right: max(16px, calc(50% - 410px));
+}
+
+/* Full page: the input pill floats on the page, no divider line above it. The
+ * bottom breathing room lives on the status bar below (so the status line sits
+ * right under the input, not pushed far down). */
+.ai-chat-container:not(.ai-in-popover) .chat-controls {
+    border-top: none;
+    padding-bottom: 6px;
+}
+
+/* Full page: status line centered just under the input; keep the bottom
+ * breathing room even when the line is empty (text-only mode). */
+.ai-chat-container:not(.ai-in-popover) #status-bar,
+.ai-chat-container:not(.ai-in-popover) #status-bar:empty {
+    text-align: center;
+    padding: 2px 16px 30px;
+    min-height: 0;
+}
+
+/* Header */
+.chat-header {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--ai-border);
+    background: #f8f8f8;
+    border-radius: 12px 12px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.chat-header h2 {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--ai-text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Popover only: the title links to the full standalone page */
+.ai-header-link {
+    color: inherit;
+    text-decoration: none;
+}
+
+.ai-header-link:hover {
+    color: var(--ai-accent);
+}
+
+/* Full page: assistant identity block (avatar + title + online status) */
+.chat-header-id {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+}
+
+.chat-header-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 9px;
+    background: var(--colorbackhmenu1, #2b2f3a);
+    color: var(--colortextbackhmenu, #fff);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+
+.chat-header-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.25;
+    min-width: 0;
+}
+
+.chat-header-title {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--ai-text);
+}
+
+/* Subtle line under the title showing the LLM model currently in use */
+.chat-header-status {
+    font-size: 0.72rem;
+    color: var(--ai-text);
+    opacity: 0.6;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.chat-header-status i {
+    font-size: 0.7rem;
+    opacity: 0.8;
+}
+
+.header-controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+}
+
+/* Mode selector restyled as a pill: a sparkle on the left, a chevron on the
+ * right (both as background SVGs so the native <select> is kept for a11y). */
+.engine-select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    padding: 6px 28px 6px 30px;
+    border-radius: 5px;
+    border: 1px solid var(--ai-border);
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--ai-text);
+    background-color: var(--ai-surface);
+    background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%237c5cff'%3E%3Cpath d='M12 2l2.2 6.3L20.5 11l-6.3 2.2L12 20l-2.2-6.3L3.5 11l6.3-2.2z'/%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat, no-repeat;
+    background-position: left 9px center, right 9px center;
+    background-size: 14px 14px, 12px 12px;
+    max-width: 200px;
+    min-width: 0;
+    cursor: pointer;
+}
+
+.engine-select:hover {
+    background-color: var(--ai-surface-2);
+}
+
+/* Header buttons (Clear, and popover window controls) */
+.icon-btn {
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    padding: 5px 8px;
+    cursor: pointer;
+    color: var(--ai-text);
+    opacity: 0.7;
+    transition: opacity 0.15s, background-color 0.15s;
+    font-size: 0.85em;
+    text-decoration: none !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.icon-btn:hover {
+    background: var(--ai-surface-2);
+    opacity: 1;
+}
+
+/* Clear button: same pill look as the engine-select next to it */
+#clear-btn {
+    padding: 6px 14px;
+    border-radius: 5px;
+    border: 1px solid var(--ai-border);
+    background: var(--ai-surface);
+    color: var(--ai-text);
+    opacity: 1;
+    font-size: 0.8rem;
+    font-weight: 500;
+    gap: 6px;
+}
+
+#clear-btn:hover {
+    background: var(--ai-surface-2);
+}
+
+/* Chat History */
+.chat-history {
+    flex-grow: 1;
+    /* min-height:0 lets a long conversation scroll internally instead of pushing
+     * the input area off the fixed-height container (flexbox min-height:auto fix). */
+    min-height: 0;
+    overflow-y: auto;
+    padding: 16px;
+    background: var(--ai-surface);
+    scroll-behavior: smooth;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Messages */
+.msg {
+    margin-bottom: 12px;
+    padding: 10px 14px;
+    border-radius: 14px;
+    max-width: 85%;
+    line-height: 1.5;
+    font-size: 0.92rem;
+    position: relative;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+/* User & bot messages are rows: [avatar] [bubble]. The visual bubble styling
+ * moves to .msg-bubble; the .msg row itself is a transparent flex container. */
+.msg.user,
+.msg.bot {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    max-width: 100%;
+    padding: 0;
+    margin-bottom: 18px;
+    background: transparent;
+    border-radius: 0;
+}
+
+.msg.user {
+    flex-direction: row-reverse;
+}
+
+.msg-avatar {
+    flex-shrink: 0;
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+
+.msg-avatar.bot {
+    background: var(--colorbackhmenu1, #2b2f3a);
+    color: var(--colortextbackhmenu, #fff);
+}
+
+.msg-avatar.user {
+    background: var(--ai-surface);
+    color: var(--ai-text);
+    border: 1px solid var(--ai-border);
+}
+
+.msg-bubble {
+    padding: 11px 15px;
+    border-radius: 14px;
+    line-height: 1.5;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    min-width: 0;
+}
+
+.msg.user .msg-bubble {
+    background: var(--colorbackhmenu1, #2b2f3a);
+    color: var(--colortextbackhmenu, #fff);
+    /* Squared corner on the top side nearest the avatar (top-right for the user) */
+    border-top-right-radius: 4px;
+    max-width: 78%;
+}
+
+.msg.user .msg-bubble a {
+    color: #fff;
+    text-decoration: underline;
+}
+
+.msg.bot .msg-bubble {
+    background: var(--ai-surface);
+    color: var(--ai-text);
+    border: 1px solid var(--ai-border);
+    /* Squared corner on the top side nearest the avatar (top-left for the bot) */
+    border-top-left-radius: 4px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+    max-width: calc(100% - 40px);
+}
+
+.msg.system {
+    text-align: center;
+    background: transparent;
+    color: var(--ai-text);
+    opacity: 0.6;
+    font-size: 0.82rem;
+    font-style: italic;
+    padding: 4px;
+    margin: 8px auto;
+    border: none;
+    max-width: 100%;
+}
+
+/* ---------------------------------------------------------------------------
+ * Welcome / empty-state screen (full page only). Centered vertically in the
+ * flex column via margin:auto; hidden by JS once the conversation starts.
+ * ------------------------------------------------------------------------- */
+.chat-welcome {
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 16px;
+    width: 100%;
+    max-width: 720px;
+    padding: 24px 0;
+}
+
+.chat-welcome-avatar {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    background: var(--colorbackhmenu1, #2b2f3a);
+    color: var(--colortextbackhmenu, #fff);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    flex-shrink: 0;
+}
+
+.chat-welcome-title {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--ai-text);
+}
+
+.chat-welcome-subtitle {
+    margin: -6px 0 6px;
+    font-size: 0.92rem;
+    color: var(--ai-text);
+    opacity: 0.6;
+}
+
+.chat-welcome-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    width: 100%;
+}
+
+.ai-quick-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    text-align: left;
+    padding: 14px 16px;
+    border: 1px solid var(--ai-border);
+    border-radius: 8px;
+    background: var(--ai-surface);
+    color: var(--ai-text);
+    cursor: pointer;
+    transition: background-color 0.15s, border-color 0.15s;
+}
+
+.ai-quick-card:hover {
+    background: var(--ai-surface-2);
+    border-color: var(--ai-accent);
+}
+
+.ai-quick-icon {
+    flex-shrink: 0;
+    color: var(--ai-text);
+    opacity: 0.7;
+    font-size: 1rem;
+    margin-top: 2px;
+}
+
+.ai-quick-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.ai-quick-title {
+    font-weight: 600;
+    font-size: 0.92rem;
+}
+
+.ai-quick-desc {
+    font-size: 0.8rem;
+    color: var(--ai-text);
+    opacity: 0.6;
+}
+
+@media (max-width: 560px) {
+    .chat-welcome-actions {
+        grid-template-columns: 1fr;
+    }
+}
+
+.msg.error {
+    background: #ffebee;
+    color: #c62828;
+    margin: 10px auto;
+    text-align: center;
+    border: 1px solid #ef9a9a;
+}
+
+.msg.clarification {
+    background: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeeba;
+    margin: 10px auto;
+}
+
+.msg.confirmation {
+    background: #d1ecf1;
+    color: #0c5460;
+    border: 1px solid #bee5eb;
+    margin: 10px auto;
+}
+
+/* Typing indicator: bot row whose bubble holds three animated dots */
+.typing-indicator .msg-bubble {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 15px 16px;
+}
+
+.typing-indicator .msg-bubble span {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--ai-text);
+    opacity: 0.4;
+    animation: ai-typing 1.2s infinite ease-in-out;
+}
+
+.typing-indicator .msg-bubble span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.typing-indicator .msg-bubble span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes ai-typing {
+
+    0%,
+    60%,
+    100% {
+        transform: translateY(0);
+        opacity: 0.4;
+    }
+
+    30% {
+        transform: translateY(-5px);
+        opacity: 0.9;
+    }
+}
+
+/* Footer / Controls */
+.chat-controls {
+    padding: 12px 14px;
+    background: var(--ai-surface);
+    border-top: 1px solid var(--ai-border);
+    border-radius: 0 0 12px 12px;
+    width: 100%;
+    box-sizing: border-box;
+    flex-shrink: 0;
+}
+
+/* The whole input lives in a single rounded pill */
+.chat-input-pill {
+    display: flex;
+    align-items: flex-end;
+    gap: 6px;
+    border: 1px solid var(--ai-border);
+    background: var(--ai-input-bg);
+    border-radius: 5px;
+    padding: 5px 6px 5px 12px;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.chat-input-pill:focus-within {
+    border-color: var(--ai-accent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--ai-accent) 18%, transparent);
+}
+
+#mic-wrapper,
+#upload-wrapper {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    /* Prevents buttons from squishing when the screen is small */
+}
+
+/* Round Buttons (Mic & Upload) */
+.round-btn {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    border-radius: 50%;
+    border: 1px solid var(--ai-border);
+    background: var(--ai-input-bg);
+    color: var(--ai-text);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    transition: all 0.2s ease;
+    outline: none;
+}
+
+.round-btn:hover {
+    background: var(--ai-surface-2);
+}
+
+/* Mic Specific States */
+.mic-btn.listening {
+    background: #ff5252;
+    color: white;
+    border-color: #ff5252;
+    animation: pulse 1.5s infinite;
+}
+
+.mic-btn.processing {
+    background: #ff9800;
+    color: white;
+    border-color: #ff9800;
+    animation: spin 1s infinite linear;
+    cursor: pointer !important;
+}
+
+.mic-btn.processing:hover {
+    background: #f57c00;
+    border-color: #f57c00;
+}
+
+.mic-btn.cancelling {
+    background: #9e9e9e;
+    color: white;
+    border-color: #9e9e9e;
+    animation: spin 1s infinite linear;
+}
+
+.mic-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Input Field */
+#user-input::placeholder {
+	font-size: 0.95rem;
+}
+@media (max-width: 768px) {
+	#user-input::placeholder {
+    	opacity: 0;
+	}
+}
+
+#user-input {
+    flex-grow: 1;
+    padding: 11px 15px;
+    border: 1px solid var(--ai-border);
+    background: var(--ai-input-bg);
+    color: var(--ai-text);
+    border-radius: 20px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+
+    /* Allow expansion, but set limits */
+    height: 40px;
+    min-height: 40px;
+    max-height: 150px;
+
+    box-sizing: border-box;
+    min-width: 0;
+
+    /* Prevent manual resize and hide scrollbar until max height */
+    resize: none;
+    overflow-y: auto;
+
+    /* Hide the scrollbar while keeping scroll (Firefox + IE/Edge legacy) */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+
+    font-family: inherit;
+    font-size: 0.92rem;
+    line-height: 1.4;
+}
+
+/* Hide the scrollbar while keeping scroll (Chrome/Safari/WebKit) */
+#user-input::-webkit-scrollbar {
+    display: none;
+}
+
+#user-input:focus {
+    border-color: var(--ai-accent);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--ai-accent) 20%, transparent);
+}
+
+/* Inside the pill the textarea is borderless/transparent (the pill shows focus) */
+.chat-input-pill #user-input {
+    border: none;
+    background: transparent;
+    border-radius: 0;
+    padding: 9px 4px;
+}
+
+.chat-input-pill #user-input:focus {
+    border: none;
+    box-shadow: none;
+}
+
+/* Attach/mic buttons are flat inside the pill, but keep their recording states */
+.chat-input-pill .round-btn {
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
+    border: none;
+    box-shadow: none;
+    font-size: 1.05rem;
+}
+
+/* The pill bottom-aligns its items (so the send button stays at the bottom when
+ * the textarea grows); the left mic/upload icons must stay vertically centered
+ * on a single-line input instead of sitting low. */
+.chat-input-pill #mic-wrapper,
+.chat-input-pill #upload-wrapper {
+    align-self: center;
+}
+
+.chat-input-pill .round-btn:not(.listening):not(.processing):not(.cancelling) {
+    background: transparent;
+    color: var(--ai-text);
+    opacity: 0.7;
+}
+
+.chat-input-pill .round-btn:not(.listening):not(.processing):not(.cancelling):hover {
+    background: var(--ai-surface-2);
+    opacity: 1;
+}
+
+/* Circular send button (dark) */
+#send-btn {
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    padding: 0;
+    border: none;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--colorbackhmenu1, #2b2f3a);
+    color: var(--colortextbackhmenu, #fff);
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: filter 0.15s;
+}
+
+#send-btn:hover {
+    filter: brightness(1.2);
+}
+
+/* Animations */
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(255, 82, 82, 0.4);
+    }
+
+    70% {
+        box-shadow: 0 0 0 10px rgba(255, 82, 82, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(255, 82, 82, 0);
+    }
+}
+
+@keyframes spin {
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Helpers */
+.ai-hidden {
+    display: none !important;
+}
+
+#status-bar {
+    font-size: 0.75rem;
+    color: var(--ai-text);
+    opacity: 0.6;
+    text-align: right;
+    padding: 0 16px 8px;
+    background: var(--ai-surface);
+    border-radius: 0 0 12px 12px;
+    min-height: 18px;
+    flex-shrink: 0;
+}
+
+/* Collapse the status bar when empty so it leaves no blank space below the input */
+#status-bar:empty {
+    padding: 0;
+    min-height: 0;
+}
+
+/* Tables in chat */
+.chat-table-wrap {
+    overflow-x: auto;
+    margin-top: 8px;
+}
+
+.chat-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88em;
+}
+
+.chat-table th {
+    background: transparent;
+    padding: 8px 10px;
+    text-align: left;
+    border-bottom: 1px solid var(--ai-border);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ai-text);
+    opacity: 0.55;
+    white-space: nowrap;
+}
+
+.chat-table td {
+    padding: 9px 10px;
+    border-bottom: 1px solid var(--ai-border);
+}
+
+.chat-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.chat-table tbody tr:hover td {
+    background: var(--ai-surface-2);
+}
+
+/* Reference links inside chat tables/results */
+.chat-link {
+    color: var(--ai-accent);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.chat-link:hover {
+    text-decoration: underline;
+}
+
+/* Single-object result rendered as a key/value list */
+.chat-object {
+    background: var(--ai-surface-2);
+    padding: 10px 12px;
+    border-radius: 8px;
+}
+
+.chat-object ul {
+    padding-left: 18px;
+    margin: 0;
+}
+
+/* Toolbar under a result (e.g. Download PDF / Open record) */
+.msg-toolbar {
+    margin-top: 8px;
+    border-top: 1px solid var(--ai-border);
+    padding-top: 6px;
+    text-align: right;
+}
+
+/* Action buttons in messages */
+.msg-actions {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.msg-action-btn {
+    padding: 5px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--ai-border);
+    background: var(--ai-surface);
+    color: var(--ai-text);
+    cursor: pointer;
+    font-size: 0.85rem;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.2s;
+}
+
+.msg-action-btn:hover {
+    background: var(--ai-surface-2);
+}
+
+.msg-action-btn.primary {
+    background: var(--ai-accent);
+    color: white;
+    border-color: var(--ai-accent);
+}
+
+.msg-action-btn.primary:hover {
+    filter: brightness(0.9);
+}
+
+.msg-action-btn.danger {
+    background: #dc3545;
+    color: white;
+    border-color: #dc3545;
+}
+
+.msg-action-btn.danger:hover {
+    background: #c82333;
+    border-color: #c82333;
+}
+
+/* Confirmation Dialog Styles */
+.confirmation-dialog {
+    border: 1px solid var(--ai-border);
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 10px 0;
+    background: var(--ai-surface);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.confirmation-header {
+    background: var(--ai-surface-2);
+    padding: 10px 15px;
+    border-bottom: 1px solid var(--ai-border);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.confirmation-header i {
+    color: #17a2b8;
+}
+
+.confirmation-body {
+    padding: 15px;
+}
+
+.confirmation-details {
+    background: var(--ai-surface-2);
+    padding: 8px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    margin: 10px 0;
+}
+
+.voice-hint {
+    font-size: 0.85em;
+    color: var(--ai-text);
+    opacity: 0.7;
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.voice-feedback {
+    background: #fff3cd;
+    color: #856404;
+    padding: 8px 12px;
+    border-radius: 4px;
+    margin-top: 10px;
+    font-size: 0.85em;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+}
+
+
+/* ===========================================================================
+ * Topbar popover (#topmenu-ai-popover, shell emitted by top_menu_ai()).
+ *
+ * Anchored top-right under the top menu (--ai-popover-top is set by the
+ * bootstrap JS from the real topbar height). Show/hide uses opacity +
+ * visibility instead of display so the width/height transition of the
+ * .expanded state can animate. z-index 1010 = above the menu bar (eldy).
+ * ======================================================================== */
+.ai-popover {
+    position: fixed;
+    top: var(--ai-popover-top, 48px);
+    right: 12px;
+    width: 460px;
+    height: min(560px, calc(100vh - var(--ai-popover-top, 48px) - 16px));
+    z-index: 1010;
+    display: flex;
+    flex-direction: column;
+    background: var(--ai-surface);
+    border: 1px solid var(--ai-border);
+    border-radius: 12px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
+    overflow: hidden;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-8px);
+    transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s,
+        width 0.25s ease, height 0.25s ease;
+}
+
+.ai-popover.open {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+}
+
+/* Enlarged state: same top-right anchor, grows leftwards/downwards */
+.ai-popover.expanded {
+    width: min(720px, calc(100vw - 24px));
+    height: min(80vh, calc(100vh - var(--ai-popover-top, 48px) - 16px));
+}
+
+.ai-popover-body {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+}
+
+.ai-popover-loading {
+    margin: auto;
+    font-size: 1.4rem;
+    color: var(--ai-text);
+    opacity: 0.5;
+}
+
+/* Chat container injected inside the popover: fill the panel, drop the
+ * standalone chrome. min-height:0 lets .chat-history shrink and scroll
+ * internally instead of overflowing the panel (flexbox min-height:auto fix). */
+.ai-in-popover {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.ai-in-popover .chat-history {
+    min-height: 0;
+}
+
+/* The rich full-page chrome (avatars, wide column) is dropped in the narrow
+ * popover: hide avatars and let bubbles use the available width. */
+.ai-in-popover .msg-avatar {
+    display: none;
+}
+
+.ai-in-popover .msg.bot .msg-bubble {
+    max-width: 100%;
+}
+
+.ai-in-popover .msg.user .msg-bubble {
+    max-width: 88%;
+}
+
+/* Compact header in the popover: keep controls tight, hide the Clear label */
+.ai-in-popover .ai-btn-label {
+    display: none;
+}
+
+.ai-in-popover .engine-select {
+    max-width: 110px;
+}
+
+.ai-popover.expanded .engine-select {
+    max-width: 160px;
+}
+
+/* Small screens: full-width panel */
+@media (max-width: 480px) {
+
+    .ai-popover,
+    .ai-popover.expanded {
+        right: 0;
+        left: 0;
+        width: auto;
+        border-radius: 0;
+        height: calc(100vh - var(--ai-popover-top, 48px));
+    }
+}

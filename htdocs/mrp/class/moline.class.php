@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2020  Lenin Rivas		   <lenin@leninrivas.com>
- * Copyright (C) 2023-2025  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2023-2026  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
  *
@@ -64,7 +64,7 @@ class MoLine extends CommonObjectLine
 	 *  	'date', 'datetime', 'timestamp', 'duration',
 	 *  	'boolean', 'checkbox', 'radio', 'array',
 	 *  	'mail', 'phone', 'url', 'password', 'ip'
-	 *		Note: Filter must be a Dolibarr Universal Filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
+	 *		Note: Filter must be a Dolibarr Universal Filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'alias' the alias used into some old hard coded SQL requests
 	 *  'picto' is code of a picto to show before value in forms
@@ -198,6 +198,11 @@ class MoLine extends CommonObjectLine
 	public $fk_default_workstation;
 
 	/**
+	 * @var ?int Id of the child BOM linked to this line (not stored in the line table, set on the fly for display)
+	 */
+	public $fk_bom_child;
+
+	/**
 	 * Constructor
 	 *
 	 * @param DoliDB $db Database handler
@@ -310,7 +315,7 @@ class MoLine extends CommonObjectLine
 				}
 			}
 			if (count($sqlwhere) > 0) {
-				$sql .= ' AND ('.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
+				$sql .= ' AND ('.implode(' '.$this->db->sanitize($filtermode).' ', $sqlwhere).')';
 			}
 
 			$filter = '';

@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2014	   Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This file is a modified version of datepicker.php from phpBSM to fix some
@@ -144,7 +144,7 @@ if ($qualified) {
 print '</body></html>'."\n";
 
 /**
- * 	Convert date to timestamp
+ * 	Convert date string to a Unix timestamp
  *
  * 	@param	string		$mysqldate		Date YYYMMDD
  *  @return	integer					Timestamp
@@ -160,7 +160,7 @@ function xyzToUnixTimestamp($mysqldate)
 }
 
 /**
- * Show box
+ * Displays the date picker box
  *
  * @param	string	$selectedDate	Date YYYYMMDD
  * @param	int		$month			Month
@@ -274,7 +274,7 @@ function displayBox($selectedDate, $month, $year)
 			exit;
 		}
 
-		// Sur click dans calendrier, appelle fonction dpClickDay
+		// Upon a click in the calendar, call dpClickDay function
 		echo "<td class=\"".$dayclass."\"";
 		echo " onMouseOver=\"dpHighlightDay(".$mydate["year"].",parseInt('".dol_print_date($thedate, "%m")."',10),".$mydate["mday"].",tradMonths)\"";
 		echo " onClick=\"dpClickDay(".$mydate["year"].",parseInt('".dol_print_date($thedate, "%m")."',10),".$mydate["mday"].",'".$langs->trans("FormatDateShortJavaInput")."')\"";

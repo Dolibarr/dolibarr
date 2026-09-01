@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2019 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -267,7 +267,7 @@ if (empty($reshook)) {
 						// is the accountancy-codes flag; using it to gate the pmp write here means we
 						// silently write into a row that fetch never looks at (#37773).
 						if (getDolGlobalString('MULTICOMPANY_PRODUCT_SHARING_ENABLED') && getDolGlobalString('MULTICOMPANY_PMP_PER_ENTITY_ENABLED')) {
-							$sqlpmp = 'UPDATE '.MAIN_DB_PREFIX.'product_perentity SET pmp = '.((float) $line->pmp_real).' WHERE fk_product = '.((int) $line->fk_product).' AND entity='.$conf->entity;
+							$sqlpmp = 'UPDATE '.MAIN_DB_PREFIX.'product_perentity SET pmp = '.((float) $line->pmp_real).' WHERE fk_product = '.((int) $line->fk_product).' AND entity='.((int) $conf->entity);
 							$resqlpmp = $db->query($sqlpmp);
 							if (! $resqlpmp) {
 								$error++;
@@ -804,7 +804,7 @@ if ($action == 'updatebyscaning') {
 							console.log("We change #"+product.Id+"_input to match input in scanner box");
 							if(product.hasOwnProperty("reelqty")){
 								$.ajax({ url: \''.DOL_URL_ROOT.'/product/inventory/ajax/searchfrombarcode.php\',
-									data: { "token":"'.newToken().'", "action":"addnewlineproduct", "fk_entrepot":product.Warehouse, "batch":product.Batch, "fk_inventory":'.dol_escape_js((string) $object->id).', "fk_product":product.fk_product, "reelqty":product.reelqty},
+									data: { "token":"'.currentToken().'", "action":"addnewlineproduct", "fk_entrepot":product.Warehouse, "batch":product.Batch, "fk_inventory":'.dol_escape_js((string) $object->id).', "fk_product":product.fk_product, "reelqty":product.reelqty},
 									type: \'POST\',
 									async: false,
 									success: function(response) {

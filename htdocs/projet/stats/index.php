@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2014-2015 Florian HENRY       <florian.henry@open-concept.pro>
- * Copyright (C) 2015-2021 Laurent Destailleur <ldestailleur@users.sourceforge.net>
+/* Copyright (C) 2014-2015 	Florian HENRY       <florian.henry@open-concept.pro>
+ * Copyright (C) 2015-2026 	Laurent Destailleur <ldestailleur@users.sourceforge.net>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
@@ -26,11 +26,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/projet/class/projectstats.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -38,11 +33,22 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/projectstats.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/projet/class/projectstats.class.php';
 
 $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 
+$mode = GETPOST('mode', 'alpha');
+
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'projectlist';
+
+$search_project_user = GETPOSTINT('search_project_user');
 $search_opp_status = GETPOST("search_opp_status", 'alpha');
+$search_usage_event_organization = GETPOST('search_usage_event_organization', 'intcomma');
+$search_usage_opportunity = GETPOST('search_usage_opportunity', 'intcomma');
 
 $userid = GETPOSTINT('userid');
 $socid = GETPOSTINT('socid');
@@ -74,12 +80,63 @@ $formproject = new FormProjets($db);
 
 $includeuserlist = array();
 
-llxHeader('', $langs->trans('Projects'), '', '', 0, 0, '', '', '', 'mod-project page-stats');
+$help_url = "EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
+$title = $langs->trans("LeadsOrProjects");
+if (!getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
+	$title = $langs->trans("Projects");
+}
+if (getDolGlobalInt('PROJECT_USE_OPPORTUNITIES') == 2) {	// 2 = leads only
+	$title = $langs->trans("Leads");
+}
 
-$title = $langs->trans("ProjectsStatistics");
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-project page-stats');
+
 $dir = $conf->project->dir_output.'/temp';
 
-print load_fiche_titre($title, '', 'project');
+$page = 0;
+$sortfield = '';
+$sortorder = '';
+$massactionbutton = '';
+$num = 0;
+$nbtotalofrecords = $langs->trans("Statistics");
+$param = '';
+$limit = 0;
+
+$url = DOL_URL_ROOT.'/projet/card.php?action=create';
+if (!empty($socid)) {
+	$url .= '&socid='.$socid;
+}
+if ($search_usage_event_organization == 1) {
+	$url .= '&usage_organize_event=1';
+	if (((int) $search_usage_opportunity) < 1) {
+		$url .= '&usage_opportunity=0';
+	}
+}
+
+$newcardbutton = '';
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/projet/list.php?mode=common'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', ($mode == 'common' ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', DOL_URL_ROOT.'/projet/list.php?mode=kanban'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
+if ($contextpage == 'lead') {
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanbanGroupBy'), '', 'fa fa-grip-vertical imgforviewmode', DOL_URL_ROOT.'/projet/list.php?mode=kanbangroupby&groupby=p.fk_opp_status'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', ($mode == 'kanbangroupby' ? 2 : 1), array('morecss' => 'reposition'));
+}
+$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', DOL_URL_ROOT.'/projet/stats/index.php?mode=statistics'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', 2, array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitleSeparator();
+$newcardbutton .= dolGetButtonTitle($langs->trans('NewProject'), '', 'fa fa-plus-circle', $url, '', $user->hasRight('projet', 'creer'));
+
+// Show description of content
+$htmltooltip = '';
+if ($search_project_user == $user->id) {
+	$htmltooltip .= $langs->trans("MyProjectsDesc");
+} else {
+	if ($user->hasRight('projet', 'all', 'lire') && !$socid) {
+		$htmltooltip .= $langs->trans("ProjectsDesc");
+	} else {
+		$htmltooltip .= $langs->trans("ProjectsPublicDesc");
+	}
+}
+
+print_barre_liste($form->textwithpicto($title, $htmltooltip), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'project', 0, $newcardbutton, '', $limit, 0, 0, 1);
+
 
 dol_mkdir($dir);
 

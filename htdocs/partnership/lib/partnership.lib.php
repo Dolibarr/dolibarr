@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2021       Dorian Laurent              <i.merraha@sofimedmaroc.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -30,11 +30,10 @@
  */
 function partnershipAdminPrepareHead()
 {
-	global $langs, $conf, $db;
+	global $langs, $conf, $extrafields;
 
 	$langs->loadLangs(array("members", "partnership"));
 
-	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('partnership');
 
 	$h = 0;

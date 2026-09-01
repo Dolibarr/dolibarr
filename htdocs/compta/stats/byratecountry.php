@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2018       Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022       Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,14 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -37,14 +45,6 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.php';
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array("other", "compta", "banks", "bills", "companies", "product", "trips", "admin", "accountancy"));
@@ -323,7 +323,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql .= " fd.product_type AS product_type,";
 	$sql .= " cc.code, cc.label AS country,";
 	for ($i = 1; $i <= 12; $i++) {
-		$sql .= " SUM(".$db->ifsql("MONTH(f.datef)=".$i, "fd.total_ht", "0").") AS month".str_pad((string) $i, 2, "0", STR_PAD_LEFT).",";
+		$sql .= " SUM(".$db->ifsql("MONTH(f.datef)=".((int) $i), "fd.total_ht", "0").") AS month".str_pad((string) ((int) $i), 2, "0", STR_PAD_LEFT).",";
 	}
 	$sql .= "  SUM(fd.total_ht) as total";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facturedet as fd";
@@ -410,7 +410,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql2 .= " ffd.product_type AS product_type,";
 	$sql2 .= " cc.code, cc.label AS country,";
 	for ($i = 1; $i <= 12; $i++) {
-		$sql2 .= " SUM(".$db->ifsql("MONTH(ff.datef)=".$i, "ffd.total_ht", "0").") AS month".str_pad((string) $i, 2, "0", STR_PAD_LEFT).",";
+		$sql2 .= " SUM(".$db->ifsql("MONTH(ff.datef)=".((int) $i), "ffd.total_ht", "0").") AS month".str_pad((string) ((int) $i), 2, "0", STR_PAD_LEFT).",";
 	}
 	$sql2 .= "  SUM(ffd.total_ht) as total";
 	$sql2 .= " FROM ".MAIN_DB_PREFIX."facture_fourn_det as ffd";

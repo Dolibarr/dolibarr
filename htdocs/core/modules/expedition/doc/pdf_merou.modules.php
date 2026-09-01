@@ -240,7 +240,7 @@ class pdf_merou extends ModelePdfExpedition
 				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("Shipment"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
-				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
+				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getAnonymisableFullName($outputlangs)));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("Shipment"));
 				if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 					$pdf->SetCompression(false);
@@ -265,7 +265,7 @@ class pdf_merou extends ModelePdfExpedition
 				// Display notes
 				if (!empty($object->note_public)) {
 					$pdf->SetFont('', '', $default_font_size - 1);
-					$pdf->writeHTMLCell(190, 3, $this->marge_gauche, $tab_top, dol_htmlentitiesbr($object->note_public), 0, 1);
+					$pdf->writeHTMLCell(190, 3, $this->marge_gauche, $tab_top, dol_htmlentitiesbr((string) $object->note_public), 0, 1);
 					$nexY = $pdf->GetY();
 					$height_note = $nexY - $tab_top;
 
@@ -608,7 +608,7 @@ class pdf_merou extends ModelePdfExpedition
 			$posy = $Yoff;
 			$pdf->SetXY($Xoff, $posy);
 			$pdf->SetTextColor(0, 0, 0);
-			$pdf->MultiCell($this->page_largeur - $this->marge_droite - $Xoff, 3, $outputlangs->transnoentities("CustomerCode")." : ".$outputlangs->transnoentities($object->thirdparty->code_client), '', 'R');
+			$pdf->MultiCell($this->page_largeur - $this->marge_droite - $Xoff, 3, $outputlangs->transnoentities("CustomerCode")." : ".$outputlangs->transnoentities((string) $object->thirdparty->code_client), '', 'R');
 		}
 
 		// Date delivery
@@ -630,7 +630,7 @@ class pdf_merou extends ModelePdfExpedition
 		$pdf->SetTextColor(0, 0, 0);
 
 		if (!empty($object->tracking_number)) {
-			$object->getUrlTrackingStatus($object->tracking_number);
+			$object->getUrlTrackingStatus((string) $object->tracking_number);
 			if (!empty($object->tracking_url)) {
 				if ($object->shipping_method_id > 0) {
 					// Get code using getLabelFromKey

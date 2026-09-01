@@ -121,3 +121,15 @@
 input.inputhour, input.inputminute, .maxwidthdate  {
 	max-width: 110px;
 }
+
+/* Text area with array option */
+.text-area-multi-input-add-group {
+	display:flex; gap:0.5rem;
+}
+.text-area-multi-input-add-group select {
+	flex: 1 1 auto;
+	min-width: 0;
+}
+.text-area-multi-input-add-group :where(button, input[type="button"]) {
+	max-width: 250px;
+}

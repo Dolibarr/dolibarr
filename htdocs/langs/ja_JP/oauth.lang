@@ -31,8 +31,8 @@ OAUTH_URL_FOR_CREDENTIAL=<a class="notasortlink" href="%s" target="_blank" rel="
 OAUTH_STRIPE_TEST_NAME=ストライプテスト
 OAUTH_STRIPE_LIVE_NAME=ストライプライブ
 OAUTH_ID=OAuth クライアント ID
-OAUTH_SECRET=OAuth Secret
-OAUTH_TENANT=OAuth Tenant
+OAUTH_SECRET=OAuthシークレット
+OAUTH_TENANT=OAuthテナント
 OAuthProviderAdded=OAuthプロバイダーが追加された
 AOAuthEntryForThisProviderAndLabelAlreadyHasAKey=このプロバイダーとラベルのOAuthエントリは既に存在する
 URLOfOAuthServiceEndpoints=OAuth サービス エンドポイントのベース URL

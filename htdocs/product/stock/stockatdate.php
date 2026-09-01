@@ -112,6 +112,8 @@ if ($user->socid) {
 $result = restrictedArea($user, 'produit|service');	// Must have permission to read product
 $result = restrictedArea($user, 'stock');	// Must have permission to read stock
 
+$usercancreadsupplierprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('product', 'product_advance', 'read_supplier_prices') : $user->hasRight('product', 'read');
+
 $dateIsValid = true;
 if ($mode == 'future') {
 	if ($date && $date < $now) {
@@ -411,7 +413,7 @@ if ($ext == 'csv') {
 	// Lines of title
 	print implode(";", ($mode == 'future') ?
 		array('"Product Reference"', '"Label"', '"Current Stock"', '"'.$stocklabel.'"', '"Virtual Stock"') :
-		array('"Product Reference"', '"Label"', '"'.$stocklabel.'"', '"Estimated Stock Value"', '"Estimate Sell Value"', '"Movements"', '"Current Stock"'))."\r\n";
+		array('"Product Reference"', '"Label"', '"'.$stocklabel.'"', ($usercancreadsupplierprice ?'"Estimated Stock Value"' : '""'), '"Estimate Sell Value"', '"Movements"', '"Current Stock"'))."\r\n";
 } else {
 	llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'mod-product page-stock_stockatdate');
 
@@ -531,7 +533,7 @@ if ($ext == 'csv') {
 
 	// Fields title search
 	print '<tr class="liste_titre_filter">';
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		print '<td class="liste_titre center maxwidthsearch">';
 		$searchpicto = $form->showFilterButtons('left');
 		print $searchpicto;
@@ -554,7 +556,7 @@ if ($ext == 'csv') {
 	print $hookmanager->resPrint;
 
 	// Action column
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		print '<td class="liste_titre center maxwidthsearch">';
 		$searchpicto = $form->showFilterButtons();
 		print $searchpicto;
@@ -570,7 +572,7 @@ if ($ext == 'csv') {
 	// Lines of title
 	print '<tr class="liste_titre">';
 	// Action column
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		print_liste_field_titre('', $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'left ');
 	}
 	print_liste_field_titre('ProductRef', $_SERVER["PHP_SELF"], 'p.ref', '', $param, '', $sortfield, $sortorder);
@@ -584,11 +586,13 @@ if ($ext == 'csv') {
 	} else {
 		print_liste_field_titre($stocklabel, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
 		$tooltiptext = $langs->trans("QtyAtDate").' x '.$langs->trans("AverageUnitPricePMPShort").' ('.$langs->trans("Currently").')';
-		print_liste_field_titre("EstimatedStockValue", $_SERVER["PHP_SELF"], "currentvalue", '', $param, '', $sortfield, $sortorder, 'right ', $tooltiptext, 1);
+		if ($usercancreadsupplierprice) {
+			print_liste_field_titre("EstimatedStockValue", $_SERVER["PHP_SELF"], "currentvalue", '', $param, '', $sortfield, $sortorder, 'right ', $tooltiptext, 1);
+		}
 		$tooltiptext = $langs->trans("QtyAtDate").' x '.$langs->trans("SellingPrice").' ('.$langs->trans("Currently").')';
 		print_liste_field_titre("EstimatedStockValueSell", $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'right ', $tooltiptext, 1);
 		$tooltiptext = $langs->trans("MovementsSinceDate");
-		print_liste_field_titre('', $_SERVER["PHP_SELF"], '', '', $param, '', '', '', 'right ', $tooltiptext, 1);
+		print_liste_field_titre('since', $_SERVER["PHP_SELF"], '', '', $param, '', '', '', 'right ', $tooltiptext, 1);
 		print_liste_field_titre('CurrentStock', $_SERVER["PHP_SELF"], $fieldtosortcurrentstock, '', $param, '', $sortfield, $sortorder, 'right ');
 	}
 
@@ -598,7 +602,7 @@ if ($ext == 'csv') {
 	print $hookmanager->resPrint;
 
 	// Action column
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		print_liste_field_titre('', $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
 	}
 
@@ -694,11 +698,13 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 					'"'.$objp->ref.'"',
 					'"'.$objp->label.'"',
 					'"'.price(price2num($stock, 'MS')).'"',
-					price2num($stock * $objp->pmp, 'MT') ? '"'.price2num($stock * $objp->pmp, 'MT').'"' : '',
+					($usercancreadsupplierprice ? (price2num($stock * $objp->pmp, 'MT') ? '"'.price2num($stock * $objp->pmp, 'MT').'"' : '') : ''),
 					(!getDolGlobalString('PRODUIT_MULTIPRICES') && !getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) ? '"'.price2num($stock * $objp->price, 'MT').'"' : '"'.$langs->trans("Variable").'('.$langs->trans("OptionMULTIPRICESIsOn").')"',
 					"$nbofmovement",
 					'"'.price2num($currentstock, 'MS').'"'))."\r\n";
-				$totalbuyingprice += $stock * $objp->pmp;
+				if ($usercancreadsupplierprice) {
+					$totalbuyingprice += $stock * $objp->pmp;
+				}
 				$totalsellingprice += $stock * $objp->price;
 			}
 			$totalcurrentstock += $currentstock;
@@ -706,7 +712,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			print '<tr class="oddeven">';
 
 			// Action column
-			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			if ($conf->main_checkbox_left_column) {
 				print '<td class="left"></td>';
 			}
 
@@ -737,14 +743,16 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 
 				// PMP value
 				$estimatedvalue = $stock * $objp->pmp;
-				print '<td class="right" title="'.dolPrintHTMLForAttribute($langs->trans("AverageUnitPricePMPShort").' ('.$langs->trans("Currently").'): '.price(price2num($objp->pmp, 'MU'), 1)).'">';
-				if (price2num($estimatedvalue, 'MT')) {
-					print '<span class="amount">'.price(price2num($estimatedvalue, 'MT'), 1).'</span>';
-				} else {
-					print '';
+				if ($usercancreadsupplierprice) {
+					print '<td class="right" title="'.dolPrintHTMLForAttribute($langs->trans("AverageUnitPricePMPShort").' ('.$langs->trans("Currently").'): '.price(price2num($objp->pmp, 'MU'), 1)).'">';
+					if (price2num($estimatedvalue, 'MT')) {
+						print '<span class="amount">'.price(price2num($estimatedvalue, 'MT'), 1).'</span>';
+					} else {
+						print '';
+					}
+					$totalbuyingprice += $estimatedvalue;
+					print '</td>';
 				}
-				$totalbuyingprice += $estimatedvalue;
-				print '</td>';
 
 				// Selling value
 				print '<td class="right"';
@@ -803,7 +811,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			print $hookmanager->resPrint;
 
 			// Action column
-			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			if (!$conf->main_checkbox_left_column) {
 				print '<td class="right"></td>';
 			}
 
@@ -837,8 +845,8 @@ if ($ext == 'csv') {
 		'"'.$langs->trans("Totalforthispage").'"',
 		'',
 		'',
-		'"'.price2num($totalbuyingprice, 'MT').'"',
-			(!getDolGlobalString('PRODUIT_MULTIPRICES') && !getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) ? '"'.price2num($totalsellingprice, 'MT').'"' : '',
+		'"'.($usercancreadsupplierprice ? price2num($totalbuyingprice, 'MT') : '').'"',
+		(!getDolGlobalString('PRODUIT_MULTIPRICES') && !getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) ? '"'.price2num($totalsellingprice, 'MT').'"' : '',
 		'',
 		$productid > 0 ? price2num($totalcurrentstock, 'MS') : '')
 	);
@@ -856,7 +864,9 @@ if ($ext == 'csv') {
 			print '<td class="right">'.price(price2num($totalvirtualstock, 'MS')).'</td>';
 		} else {
 			print '<td></td>';
-			print '<td class="right">'.price(price2num($totalbuyingprice, 'MT')).'</td>';
+			if ($usercancreadsupplierprice) {
+				print '<td class="right">'.price(price2num($totalbuyingprice, 'MT')).'</td>';
+			}
 			if (!getDolGlobalString('PRODUIT_MULTIPRICES') && !getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 				print '<td class="right">'.price(price2num($totalsellingprice, 'MT')).'</td>';
 			} else {

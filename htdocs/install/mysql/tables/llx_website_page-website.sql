@@ -28,6 +28,7 @@ CREATE TABLE llx_website_page
 	description   varchar(255),
 	image         varchar(255),
 	keywords      varchar(255),
+	metarobots    varchar(128),
 	lang          varchar(6),
 	fk_page       integer,
 	allowed_in_frames  integer DEFAULT 0,
@@ -40,7 +41,8 @@ CREATE TABLE llx_website_page
     author_alias  varchar(64),
     date_creation datetime,
 	tms           timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    import_key    varchar(14),      -- import key
-    object_type   varchar(255),		-- To link page to an object
-    fk_object     varchar(255)		-- To link page to an object
+    import_key    varchar(14),      	-- import key
+    object_type   varchar(255),			-- To link page to an object
+    fk_object     varchar(255),			-- To link page to an object
+    keep_history  integer DEFAULT 5		-- 0=keep all history change, 1=keep only last version, n=keep only the n last changes
 ) ENGINE=innodb;

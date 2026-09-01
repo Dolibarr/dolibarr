@@ -219,7 +219,7 @@ if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE');
 } else {
 	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-	print $form->selectarray("MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE", $arrval, $conf->global->MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE);
+	print $form->selectarray("MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE", $arrval, getDolGlobalInt("MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE"));
 }
 print '</td></tr>';
 
@@ -232,7 +232,7 @@ if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('MULTICURRENCY_USE_ORIGIN_TX', array(), null, 0, 0, 0, 2, 0, 1);
 } else {
 	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-	print $form->selectarray("MULTICURRENCY_USE_ORIGIN_TX", $arrval, $conf->global->MULTICURRENCY_USE_ORIGIN_TX);
+	print $form->selectarray("MULTICURRENCY_USE_ORIGIN_TX", $arrval, getDolGlobalInt("MULTICURRENCY_USE_ORIGIN_TX"));
 }
 print '</td></tr>';
 
@@ -245,7 +245,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 		print ajax_constantonoff('MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT');
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT", $arrval, $conf->global->MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT);
+		print $form->selectarray("MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT", $arrval, getDolGlobalInt("MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT"));
 	}
 	print '</td></tr>';
 }

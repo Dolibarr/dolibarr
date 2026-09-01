@@ -2,7 +2,7 @@
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2023	Ferran Marcet			<fmarcet@2byte.es>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -340,6 +340,7 @@ class DolibarrApiAccess implements iAuthenticate
 		}
 
 		$userClass::setCacheIdentifier(static::$role);
+
 		Resources::$accessControlFunction = 'DolibarrApiAccess::verifyAccess';
 		$requirefortest = static::$requires;
 		if (!is_array($requirefortest)) {
@@ -359,7 +360,7 @@ class DolibarrApiAccess implements iAuthenticate
 	}
 
 	/**
-	 * Verify access
+	 * Check that the role of user is among a the given list defined into static::$requires
 	 *
 	 * @param   array{class:array{DolibarrApiAccess:array{properties:array{requires?:bool}}}} $m Properties of method
 	 *

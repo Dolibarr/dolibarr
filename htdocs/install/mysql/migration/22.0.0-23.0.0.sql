@@ -56,6 +56,7 @@ ALTER TABLE llx_categorie_project_task ADD PRIMARY KEY pk_categorie_propal (fk_c
 ALTER TABLE llx_categorie_project_task ADD INDEX idx_categorie_project_fk_categorie (fk_categorie);
 
 ALTER TABLE llx_categorie_project_task ADD CONSTRAINT fk_categorie_project_task_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
+
 ALTER TABLE llx_categorie_project_task DROP FOREIGN KEY fk_categorie_project_task_rowid;
 -- VMYSQL4.1 DROP INDEX idx_categorie_project_fk_task ON llx_categorie_project_task;
 -- VPGSQL8.2 DROP INDEX idx_categorie_project_fk_task;
@@ -222,7 +223,6 @@ UPDATE llx_rights_def SET module_position = 62 WHERE module = 'accounting' AND m
 ALTER TABLE llx_prelevement_lignes ADD COLUMN bic   varchar(11);   -- 11 according to ISO 9362
 ALTER TABLE llx_prelevement_lignes ADD COLUMN iban	varchar(80);   -- full iban. 34 according to ISO 13616 but we set 80 to allow to store it with encryption information
 ALTER TABLE llx_prelevement_lignes ADD COLUMN rum	varchar(32);   -- rum used
-
 
 ALTER TABLE llx_product_customer_price CHANGE COLUMN localtax1_tx localtax1_tx varchar(20) DEFAULT '0';
 ALTER TABLE llx_product_customer_price CHANGE COLUMN localtax2_tx localtax2_tx varchar(20) DEFAULT '0';

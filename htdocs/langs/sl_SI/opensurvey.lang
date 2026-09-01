@@ -61,3 +61,5 @@ SurveyExpiredInfo=Glasovanje je bilo zaprto ali pa je potekel zamik glasovanja.
 EmailSomeoneVoted=%s je izpolnil vrstico.\nVašo anketo lahko najdete na povezavi: \n%s
 ShowSurvey=Pokaži anketo
 UserMustBeSameThanUserUsedToVote=Za objavo komentarja morate glasovati in uporabiti isto uporabniško ime kot tisti, ki je glasoval
+ListOfOpenSurveys=Seznam odprtih anket
+AddTheVote=Click to add the vote

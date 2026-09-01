@@ -1,7 +1,5 @@
 # Dolibarr language file - Source file is en_US - banks
 MenuBankCash=Bancos | Efectivo
-MenuVariousPayment=Manual Journal Entries
-MenuNewVariousPayment=New manual journal entry
 BankAccounts=Cuentas bancarias
 AccountRef=Ref de cuenta financiera
 AccountLabel=Etiqueta de cuenta financiera
@@ -120,10 +118,6 @@ DocumentModelSepaMandate=Plantilla de mandato SEPA. Útil para países europeos 
 DocumentModelBan=Plantilla para imprimir una página con información BAN.
 NewVariousPayment=Nuevo pago misceláneo
 VariousPayment=Pago misceláneo
-ShowVariousPayment=Show manual journal entries
-AddVariousPayment=Add manual journal entries
-VariousPaymentId=Manual journal entry ID
-VariousPaymentLabel=Manual journal entry label
 ConfirmCloneVariousPayment=Confirmar el duplicado de un pago misceláneo
 YourSEPAMandate=Tu mandato SEPA
 FindYourSEPAMandate=Este es su mandato SEPA para autorizar a nuestra empresa a realizar una orden de domiciliación bancaria a su banco. Devuélvalo firmado (escaneado del documento firmado) o envíelo por correo a
