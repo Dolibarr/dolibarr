@@ -3838,6 +3838,14 @@ if ($action == 'create' && $usercancreate) {
 				print showOnlinePaymentUrl('order', $object->ref) . '<br>';
 			}
 
+			// Show online signature link
+			$useonlinesignature = getDolGlobalInt('ORDER_ALLOW_ONLINESIGN');
+			if ($object->status != Commande::STATUS_DRAFT && $useonlinesignature) {
+				print '<br><!-- Link to sign -->';
+				require_once DOL_DOCUMENT_ROOT . '/core/lib/signature.lib.php';
+				print showOnlineSignatureUrl('order', $object->ref, $object) . '<br>';
+			}
+
 			print '</div><div class="fichehalfright">';
 
 			$MAXEVENT = 10;
