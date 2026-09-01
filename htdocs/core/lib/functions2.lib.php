@@ -2671,8 +2671,13 @@ function getModuleDirForApiClass($moduleobject)
 		$moduledirforclass = 'adherents';
 	} elseif ($moduleobject == 'don' || $moduleobject == 'donations') {
 		$moduledirforclass = 'don';
-	} elseif ($moduleobject == 'banque' || $moduleobject == 'bankaccounts') {
+	} elseif ($moduleobject == 'banque' || $moduleobject == 'bankaccounts' || $moduleobject == 'variouspayments') {
 		$moduledirforclass = 'compta/bank';
+	} elseif (in_array($moduleobject, array('vatpayments', 'localtaxes', 'socialcontributions'))) {
+		// The tax module exposes its API classes from htdocs/tax/class/ (its module dir),
+		// even though the business classes live under compta/tva, compta/localtax and
+		// compta/sociales. The API Explorer discovers them there via the default 'tax' dir.
+		$moduledirforclass = 'tax';
 	} elseif ($moduleobject == 'category' || $moduleobject == 'categorie') {
 		$moduledirforclass = 'categories';
 	} elseif ($moduleobject == 'order' || $moduleobject == 'orders') {
