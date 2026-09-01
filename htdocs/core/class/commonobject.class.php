@@ -275,6 +275,11 @@ abstract class CommonObject
 	public $linkedObjects;
 
 	/**
+	 * @var array<int, string>  Maps element_element rowid (int) to relationtype string (e.g., 'clone', 'parent').
+	 */
+	public $linkedObjectsRelationtype = array();
+
+	/**
 	 * @var array<int,bool>	Array of boolean with object id as key and value as true if linkedObjects full loaded for object id. Loaded by OBJECT->fetchObjectLinked. Important for pdf generation time reduction.
 	 */
 	private $linkedObjectsFullLoaded = array();
@@ -4412,14 +4417,15 @@ abstract class CommonObject
 	/**
 	 *	Add an object link into llx_element_element.
 	 *
-	 *	@param		string	$origin		Linked element type
-	 *	@param		int		$origin_id	Linked element id
-	 * 	@param		User	$f_user		User that create
-	 * 	@param		int		$notrigger	1=Does not execute triggers, 0=execute triggers
-	 *	@return		int					Return integer <=0 if KO, >0 if OK
+	 *	@param	string		$origin			Linked element type
+	 *	@param	int			$origin_id		Linked element id
+	 * 	@param	User		$f_user			User that create
+	 * 	@param	int			$notrigger		1=Does not execute triggers, 0=execute triggers
+	 *  @param	string|null	$relationtype	Type of relation (e.g., 'clone', 'parent'). Default null.
+	 *	@return	int			Return integer <=0 if KO, >0 if OK
 	 *	@see		fetchObjectLinked(), updateObjectLinked(), deleteObjectLinked()
 	 */
-	public function add_object_linked($origin = null, $origin_id = null, $f_user = null, $notrigger = 0)
+	public function add_object_linked($origin = null, $origin_id = null, $f_user = null, $notrigger = 0, $relationtype = null)
 	{
 		// phpcs:enable
 		global $user, $hookmanager, $action;
@@ -4466,11 +4472,17 @@ abstract class CommonObject
 		$sql .= ", sourcetype";
 		$sql .= ", fk_target";
 		$sql .= ", targettype";
+		if (!empty($relationtype)) {
+			$sql .= ", relationtype";
+		}
 		$sql .= ") VALUES (";
 		$sql .= ((int) $origin_id);
 		$sql .= ", '" . $this->db->escape($origin) . "'";
 		$sql .= ", " . ((int) $this->id);
 		$sql .= ", '" . $this->db->escape($targettype) . "'";
+		if (!empty($relationtype)) {
+			$sql .= ", '".$this->db->escape($relationtype)."'";
+		}
 		$sql .= ")";
 
 		dol_syslog(get_class($this) . "::add_object_linked", LOG_DEBUG);
@@ -4589,10 +4601,11 @@ abstract class CommonObject
 	 *  @param  int<0,1>	$alsosametype		0=Return only links to object that differs from source type. 1=Include also link to objects of same type.
 	 *  @param  string		$orderby			SQL 'ORDER BY' clause
 	 *  @param	int<0,1>|string	$loadalsoobjects	Load also the array $this->linkedObjects. Use 0 to not load (increase performances), Use 1 to load all, Use value of type ('facture', 'facturerec', ...) to load only a type of object.
-	 *	@return int<-1,1>						Return integer <0 if KO, >0 if OK
+	 *  @param	string			$relationtype		Filter by relation type (e.g., 'clone', 'parent'). Default null (no filter).
+	 *	@return int<-1,1>							Return integer <0 if KO, >0 if OK
 	 *  @see	add_object_linked(), updateObjectLinked(), deleteObjectLinked()
 	 */
-	public function fetchObjectLinked($sourceid = null, $sourcetype = '', $targetid = null, $targettype = '', $clause = 'OR', $alsosametype = 1, $orderby = 'sourcetype', $loadalsoobjects = 1)
+	public function fetchObjectLinked($sourceid = null, $sourcetype = '', $targetid = null, $targettype = '', $clause = 'OR', $alsosametype = 1, $orderby = 'sourcetype', $loadalsoobjects = 1, $relationtype = null)
 	{
 		global $hookmanager, $action;
 
@@ -4605,6 +4618,7 @@ abstract class CommonObject
 
 		$this->linkedObjectsIds = array();
 		$this->linkedObjects = array();
+		$this->linkedObjectsRelationtype = array();
 
 		// Hook for allowing modules to completely alter the behavior of the method
 		$parameters = array(
@@ -4672,7 +4686,7 @@ abstract class CommonObject
 		 }*/
 
 		// Links between objects are stored in table element_element
-		$sql = "SELECT rowid, fk_source, sourcetype, fk_target, targettype";
+		$sql = "SELECT rowid, fk_source, sourcetype, fk_target, targettype, relationtype";
 		$sql .= " FROM ".$this->db->prefix()."element_element";
 		$sql .= " WHERE ";
 		if ($justsource || $justtarget) {
@@ -4693,6 +4707,9 @@ abstract class CommonObject
 			if ($loadalsoobjects && $this->id > 0 && $sourceid == $this->id && $sourcetype == $this->element && $targetid == $this->id && $targettype == $this->element && $clause == 'OR') {
 				$this->linkedObjectsFullLoaded[$this->id] = true;
 			}
+		}
+		if (!empty($relationtype)) {
+			$sql .= " AND relationtype = '".$this->db->escape($relationtype)."'";
 		}
 		$sql .= $this->db->order($orderby);
 
@@ -4717,6 +4734,9 @@ abstract class CommonObject
 					if ($obj->fk_target == $targetid && $obj->targettype == $targettype) {
 						$this->linkedObjectsIds[$obj->sourcetype][$obj->rowid] = $obj->fk_source;
 					}
+				}
+				if (!empty($obj->relationtype)) {
+					$this->linkedObjectsRelationtype[$obj->rowid] = $obj->relationtype;
 				}
 				$i++;
 			}
@@ -4782,10 +4802,11 @@ abstract class CommonObject
 	 *	@param  string	$targettype		Object target type
 	 * 	@param	User	$f_user			User that create
 	 * 	@param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
+	 *	@param	string	$relationtype	Type of relation (e.g., 'clone', 'parent'). Default null (do not update).
 	 *	@return							int	>0 if OK, <0 if KO
 	 *	@see	add_object_linked(), fetObjectLinked(), deleteObjectLinked()
 	 */
-	public function updateObjectLinked($sourceid = null, $sourcetype = '', $targetid = null, $targettype = '', $f_user = null, $notrigger = 0)
+	public function updateObjectLinked($sourceid = null, $sourcetype = '', $targetid = null, $targettype = '', $f_user = null, $notrigger = 0, $relationtype = null)
 	{
 		global $user;
 		$updatesource = false;
@@ -4806,11 +4827,17 @@ abstract class CommonObject
 		if ($updatesource) {
 			$sql .= "fk_source = " . ((int) $sourceid);
 			$sql .= ", sourcetype = '" . $this->db->escape($sourcetype) . "'";
+			if (!empty($relationtype)) {
+				$sql .= ", relationtype = '" . $this->db->escape($relationtype) . "'";
+			}
 			$sql .= " WHERE fk_target = " . ((int) $this->id);
 			$sql .= " AND targettype = '" . $this->db->escape($this->element) . "'";
 		} elseif ($updatetarget) {
 			$sql .= "fk_target = " . ((int) $targetid);
 			$sql .= ", targettype = '" . $this->db->escape($targettype) . "'";
+			if (!empty($relationtype)) {
+				$sql .= ", relationtype = '" . $this->db->escape($relationtype) . "'";
+			}
 			$sql .= " WHERE fk_source = " . ((int) $this->id);
 			$sql .= " AND sourcetype = '" . $this->db->escape($this->element) . "'";
 		}
@@ -4823,6 +4850,9 @@ abstract class CommonObject
 				$this->context['link_source_type'] = $sourcetype;
 				$this->context['link_target_id'] = $targetid;
 				$this->context['link_target_type'] = $targettype;
+				if (!empty($relationtype)) {
+					$this->context['link_relationtype'] = $relationtype;
+				}
 
 				$result = $this->call_trigger('OBJECT_LINK_MODIFY', $f_user);	// Note: We should have used here a hook. Not a business event
 				if ($result < 0) {
@@ -4854,10 +4884,11 @@ abstract class CommonObject
 	 *  @param	int		$rowid			Row id of line to delete. If defined, other parameters are not used.
 	 * 	@param	?User	$f_user			User that create
 	 * 	@param	int<0,1>	$notrigger		1=Does not execute triggers, 0= execute triggers
-	 *	@return     					int	>0 if OK, <0 if KO
+	 *	@param	string		$relationtype	Type of relation (e.g., 'clone', 'parent'). Default null (delete all matching).
+	 *	@return     						int	>0 if OK, <0 if KO
 	 *	@see	add_object_linked(), updateObjectLinked(), fetchObjectLinked()
 	 */
-	public function deleteObjectLinked($sourceid = null, $sourcetype = '', $targetid = null, $targettype = '', $rowid = 0, $f_user = null, $notrigger = 0)
+	public function deleteObjectLinked($sourceid = null, $sourcetype = '', $targetid = null, $targettype = '', $rowid = 0, $f_user = null, $notrigger = 0, $relationtype = null)
 	{
 		global $user;
 		$deletesource = false;
@@ -4885,6 +4916,9 @@ abstract class CommonObject
 			$this->context['link_source_type'] = $sourcetype;
 			$this->context['link_target_id'] = $targetid;
 			$this->context['link_target_type'] = $targettype;
+			if (!empty($relationtype)) {
+				$this->context['link_relationtype'] = $relationtype;
+			}
 
 			$result = $this->call_trigger('OBJECT_LINK_DELETE', $f_user);	// Note: We should have used here a hook. Not a business event
 			if ($result < 0) {
@@ -4910,6 +4944,9 @@ abstract class CommonObject
 					$sql .= " OR";
 					$sql .= " (fk_target = " . ((int) $this->id) . " AND targettype = '" . $this->db->escape($element) . "')";
 				}
+			}
+			if (!empty($relationtype)) {
+				$sql .= " AND relationtype = '" . $this->db->escape($relationtype) . "'";
 			}
 
 			dol_syslog(get_class($this) . "::deleteObjectLinked", LOG_DEBUG);
