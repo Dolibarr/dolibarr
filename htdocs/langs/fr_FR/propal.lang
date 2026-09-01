@@ -128,3 +128,7 @@ ExpeditionSigned=Envoi signé
 SignExpedition=Signer l'envoi
 PROPOSAL_SHOW_SHIPPING_ADDRESS=Afficher l'adresse de livraison
 PROPOSAL_SHOW_SHIPPING_ADDRESSMore=Indication obligatoire dans certains pays (France, ...)
+PropalSignedCantDelete=Cette proposition est acceptée (signée) et ne peut pas être supprimée
+PropalLinkedToOrderCantDelete=Cette proposition est liée à une commande et ne peut pas être supprimée
+ErrorPropalSignedCantDelete=Suppression impossible : cette proposition est acceptée (signée)
+ErrorPropalLinkedToOrderCantDelete=Suppression impossible : cette proposition est liée à une commande
