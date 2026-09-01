@@ -334,7 +334,9 @@ if (empty($reshook)) {
 	// Purge search criteria
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 		$search_user = '';
-		$search_sale = '';
+		if ($user->hasRight('societe', 'client', 'voir')) {
+			$search_sale = '';
+		}
 		$search_ref = '';
 		$search_refcustomer = '';
 		$search_refproject = '';
@@ -408,6 +410,14 @@ if (empty($reshook)) {
 	$objectlabel = 'Proposals';
 	$uploaddir = $conf->propal->multidir_output[$conf->entity];
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
+}
+
+if (!$user->hasRight('societe', 'client', 'voir')) {
+	if (!$user->hasRight('user', 'user', 'lire')) {
+		$search_login = $user->getFullName($langs);
+	}
+} elseif (!$user->hasRight('user', 'user', 'lire')) {
+	$search_login = $user->getFullName($langs);
 }
 
 if ($action == 'validate' && $permissiontovalidate) {
@@ -1165,7 +1175,7 @@ if ($user->hasRight('user', 'user', 'lire')) {
 if ($user->hasRight('user', 'user', 'lire')) {
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('LinkedToSpecificUsers');
-	$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$form->select_dolusers((empty($search_user) ? -2 : 0), 'search_user', $tmptitle, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth250 widthcentpercentminusx');
+	$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$form->select_dolusers((empty($search_user) ? -2 : $search_user), 'search_user', $tmptitle, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth250 widthcentpercentminusx');
 	$moreforfilter .= '</div>';
 }
 // If the user can view products
