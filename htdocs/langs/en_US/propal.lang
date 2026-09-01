@@ -128,3 +128,4 @@ ExpeditionSigned=Shipment signed
 SignExpedition=Sign shipment
 PROPOSAL_SHOW_SHIPPING_ADDRESS=Show shipping address
 PROPOSAL_SHOW_SHIPPING_ADDRESSMore=Compulsory indication in some countries (France, ...)
+ErrorPropalDeleteDraftWithDefinitiveRefRequiresDeletePerm=Only temporary draft proposals (PROV* or empty reference) can be deleted with this permission. Use delete permission for definitive references.

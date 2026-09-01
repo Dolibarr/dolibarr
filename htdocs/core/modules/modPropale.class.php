@@ -199,6 +199,14 @@ class modPropale extends DolibarrModules
 		$this->rights[$r][4] = 'propal_advance';
 		$this->rights[$r][5] = 'reopen';
 
+		$r++;
+		$this->rights[$r][0] = 30; // id de la permission
+		$this->rights[$r][1] = 'Delete draft commercial proposals (temporary reference only)'; // Delete proposal draft
+		$this->rights[$r][2] = 'd'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][4] = 'propal_advance';
+		$this->rights[$r][5] = 'deletedraft';
+
 		// Menus
 		//-------
 		$this->menu = 1; // This module add menu entries. They are coded into menu manager.

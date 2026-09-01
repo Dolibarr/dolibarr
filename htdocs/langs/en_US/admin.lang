@@ -792,6 +792,7 @@ Permission25=Send commercial proposals
 Permission26=Close commercial proposals
 Permission27=Delete commercial proposals
 Permission28=Export commercial proposals
+Permission30=Delete draft commercial proposals (temporary reference only)
 Permission31=Read products
 Permission32=Create/modify products
 Permission33=Read prices products
