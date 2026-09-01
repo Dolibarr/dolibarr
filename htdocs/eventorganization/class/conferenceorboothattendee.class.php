@@ -2,6 +2,7 @@
 /* Copyright (C) 2017	Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026       Jon Bendtsen	    <jon.bendtsen.github@jonb.dk>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,6 +58,12 @@ class ConferenceOrBoothAttendee extends CommonObject
 	const STATUS_VALIDATED = 1;
 	const STATUS_USED = 5;					// was present, presence confirmed, no more entrances can be done using this ticket
 	const STATUS_CANCELED = 9;
+	const STATUS_REPLACED = 13;				// This event attendee has been replaced with a different event Attendee which should be recorded in field fk_replacement
+
+	/**
+	 * @var array<int, int> list of possible statuses for this object
+	 */
+	public $list_possible_status = [self::STATUS_DRAFT, self::STATUS_VALIDATED, self::STATUS_USED, self::STATUS_CANCELED, self::STATUS_REPLACED];
 
 	/**
 	 *  'type' field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter]]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'text:none', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
@@ -111,7 +118,8 @@ class ConferenceOrBoothAttendee extends CommonObject
 		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'position' => 1000, 'notnull' => -1, 'visible' => -2,),
 		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'Model pdf', 'enabled' => 1, 'position' => 1010, 'notnull' => -1, 'visible' => 0,),
 		'ip' => array('type' => 'varchar(250)', 'label' => 'IPAddress', 'enabled' => 1, 'position' => 900, 'notnull' => -1, 'visible' => -2,),
-		'status' => array('type' => 'smallint', 'label' => 'Status', 'enabled' => 1, 'position' => 1000, 'default' => '0', 'notnull' => 1, 'visible' => 1, 'index' => 1, 'arrayofkeyval' => array('0' => 'Draft', '1' => 'Registered', '5' => 'ShowedUp', '9' => 'Canceled'),),
+		'status' => array('type' => 'smallint', 'label' => 'Status', 'enabled' => 1, 'position' => 1000, 'default' => '0', 'notnull' => 1, 'visible' => 1, 'index' => 1, 'arrayofkeyval' => array('0' => 'Draft', '1' => 'Registered', '5' => 'ShowedUp', '9' => 'Canceled', '13' => 'Replaced'),),
+		'fk_replacement' => array('type' => 'integer:ConferenceOrBoothAttendee:eventorganization/class/conferenceorboothattendee.class.php', 'label' => 'ReplacementAttendee', 'enabled' => 1, 'position' => 66, 'notnull' => -1, 'visible' => 1, 'noteditable' => 1, 'index' => 1, 'help' => "ReplaceThisAttendeeWithAnother", 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150'),
 	);
 	/**
 	 * @var int
@@ -187,6 +195,11 @@ class ConferenceOrBoothAttendee extends CommonObject
 	 * @var ?int
 	 */
 	public $status;
+
+	/**
+	 * @var int|null
+	 */
+	public $fk_replacement = null;
 	// END MODULEBUILDER PROPERTIES
 
 
@@ -342,6 +355,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 		unset($object->fk_user_creat);
 		unset($object->user_creation_id);
 		unset($object->import_key);
+		unset($object->fk_replacement);
 
 		// Clear fields
 		$object->ref = "(PROV)";
