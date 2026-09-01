@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2008-2020	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -77,7 +77,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	}
 
 	//setting the curl parameters.
-	$ch = curl_init();
+	$ch = curl_init();  // @phan-suppress-current-line DolibarrForbiddenFunctionPlugin
 
 	/*print $API_Endpoint."-".$API_version."-".$PAYPAL_API_USER."-".$PAYPAL_API_PASSWORD."-".$PAYPAL_API_SIGNATURE."<br>";
 	 print $USE_PROXY."-".$gv_ApiErrorURL."<br>";
@@ -316,9 +316,9 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		*/
 
 		// Getting response from server
-		$response = curl_exec($ch);		// return false on error, result on success
+		$response = curl_exec($ch);		// return false on error, result on success  @phan-suppress-current-line DolibarrForbiddenFunctionPlugin
 
-		$info = curl_getinfo($ch); // Reading of request must be done after sending request
+		$info = curl_getinfo($ch); // Reading of request must be done after sending request  @phan-suppress-current-line DolibarrForbiddenFunctionPlugin
 		$http_code = $info['http_code'];
 
 		if ($followlocation && ($http_code == 301 || $http_code == 302 || $http_code == 303 || $http_code == 307)) {
@@ -331,7 +331,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		$http_code = 0;
 	} while ($http_code);	// Stop if http_code is 0
 
-	$request = curl_getinfo($ch, CURLINFO_HEADER_OUT); // Reading of request must be done after sending request
+	$request = curl_getinfo($ch, CURLINFO_HEADER_OUT); // Reading of request must be done after sending request @phan-suppress-current-line DolibarrForbiddenFunctionPlugin
 
 	dol_syslog("getURLContent request without content body=".$request);
 	if (getDolGlobalInt('MAIN_CURL_DEBUG')) {
@@ -358,7 +358,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 
 		$rep['http_code'] = 0;
 		$rep['curl_error_no'] = curl_errno($ch);
-		$rep['curl_error_msg'] = curl_error($ch);
+		$rep['curl_error_msg'] = curl_error($ch);  // @phan-suppress-current-line DolibarrForbiddenFunctionPlugin
 
 		dol_syslog("getURLContent response array is ".implode(',', $rep));
 
@@ -395,7 +395,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	}
 
 	//closing the curl
-	curl_close($ch);
+	curl_close($ch);  // @phan-suppress-current-line DolibarrForbiddenFunctionPlugin
 
 	// We must exclude phpstant wwarning, because all fields found in result of curl_getinfo may not be all defined into description of this method.
 	// @phpstan-ignore-next-line
@@ -477,7 +477,7 @@ function isIPAllowed($iptocheck, $localurl)
 
 	// Common check on ip (local and external)
 	// See list on https://tagmerge.com/gist/a7b9d57ff8ec11d63642f8778609a0b8
-	// Not evasive url that ar enot IP are excluded by test on IP v4/v6 validity.
+	// Not evasive url that are not IP are excluded by test on IP v4/v6 validity.
 	$arrayofmetadataserver = array(
 		'100.100.100.200' => 'Alibaba',
 		'192.0.0.192' => 'Oracle',
