@@ -368,6 +368,7 @@ if (empty($reshook)) {
 						'Propal' => '/comm/propal/class/propal.class.php',
 						'Reception' => '/reception/class/reception.class.php',
 						'SupplierProposal' => '/supplier_proposal/class/supplier_proposal.class.php',
+						'MouvementStock' => '/product/stock/class/mouvementstock.class.php',
 					);
 
 					// First, all core objects must update their tables
@@ -412,6 +413,52 @@ if (empty($reshook)) {
 						$error++;
 					}
 					// End call triggers
+				}
+				// Merge per-warehouse stock quantities from origin into destination
+				// This must happen before delete() which wipes product_stock of origin
+				$origin_stock = 0;
+				$dest_stock = 0;
+				if (!$error) {
+					// Read stocks from DB before merge (stock_reel is not loaded by fetch())
+					$sql = "SELECT fk_product, SUM(reel) as qty FROM ".MAIN_DB_PREFIX."product_stock";
+					$sql .= " WHERE fk_product = ".((int) $productOrigin->id)." OR fk_product = ".((int) $object->id);
+					$sql .= " GROUP BY fk_product";
+					$resql = $db->query($sql);
+					if ($resql) {
+						while ($obj = $db->fetch_object($resql)) {
+							if ((int) $obj->fk_product == (int) $productOrigin->id) {
+								$origin_stock = max(0, (float) $obj->qty);
+							} else {
+								$dest_stock = max(0, (float) $obj->qty);
+							}
+						}
+					}
+					// Merge stock quantities
+					$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_stock (fk_product, fk_entrepot, reel)";
+					$sql .= " SELECT ".((int) $object->id).", ps.fk_entrepot, ps.reel";
+					$sql .= " FROM ".MAIN_DB_PREFIX."product_stock ps";
+					$sql .= " WHERE ps.fk_product = ".((int) $productOrigin->id);
+					$sql .= " ON DUPLICATE KEY UPDATE reel = reel + VALUES(reel)";
+					if (!$db->query($sql)) {
+						$error++;
+						setEventMessages($db->lasterror(), null, 'errors');
+					}
+				}
+				// Recalculate PMP of destination as weighted average of both products
+				if (!$error) {
+					$total_stock = $dest_stock + $origin_stock;
+					if ($total_stock > 0 && ($productOrigin->pmp > 0 || $object->pmp > 0)) {
+						$new_pmp = price2num(
+							($dest_stock * (float) $object->pmp + $origin_stock * (float) $productOrigin->pmp) / $total_stock,
+							'MU'
+						);
+						$sql = "UPDATE ".MAIN_DB_PREFIX."product SET pmp = ".((float) $new_pmp);
+						$sql .= " WHERE rowid = ".((int) $object->id);
+						if (!$db->query($sql)) {
+							$error++;
+							setEventMessages($db->lasterror(), null, 'errors');
+						}
+					}
 				}
 
 				if (!$error) {
@@ -1457,12 +1504,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 		if (!empty($conf->use_javascript_ajax)) {
 			print '<script type="text/javascript">';
 			print '$(document).ready(function () {
-                        $("#selectcountry_id").change(function() {
+						$("#selectcountry_id").change(function() {
 							console.log("selectcountry_id change");
-                        	document.formprod.action.value="create";
-                        	document.formprod.submit();
-                        });
-                     });';
+							document.formprod.action.value="create";
+							document.formprod.submit();
+						});
+					 });';
 			print '</script>'."\n";
 		}
 
@@ -2040,10 +2087,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			if (!empty($conf->use_javascript_ajax)) {
 				print '<script type="text/javascript">';
 				print '$(document).ready(function () {
-                        $("#selectcountry_id").change(function () {
-                        	document.formprod.action.value="edit";
-                        	document.formprod.submit();
-                        });
+						$("#selectcountry_id").change(function () {
+							document.formprod.action.value="edit";
+							document.formprod.submit();
+						});
 				});';
 				print '</script>'."\n";
 			}
@@ -2578,10 +2625,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 			print '<script>';
 			print '$(document).ready(function() {
-            	$("#stockable_product").change(function() {
-	                $(".showifstockable").toggle(this.checked);
-    	        });
-        	});';
+				$("#stockable_product").change(function() {
+					$(".showifstockable").toggle(this.checked);
+				});
+			});';
 
 			print '</script>';
 

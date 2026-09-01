@@ -1408,4 +1408,19 @@ class MouvementStock extends CommonObject
 
 		return $date;
 	}
+	/**
+	 * Function used to replace a product id with another one.
+	 *
+	 * @param  DoliDB $db        Database handler
+	 * @param  int    $origin_id Old product id
+	 * @param  int    $dest_id   New product id
+	 * @return bool
+	 */
+	public static function replaceProduct(DoliDB $db, $origin_id, $dest_id)
+	{
+		$tables = array(
+			'stock_mouvement',
+		);
+		return CommonObject::commonReplaceProduct($db, $origin_id, $dest_id, $tables);
+	}
 }
