@@ -1140,7 +1140,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'confirm_delete' && $confirm == 'yes') {       // delete
+	if ($action == 'confirm_delete' && $confirm == 'yes' && $user->admin) {       // delete
 		if ($tabrowid[$id]) {
 			$rowidcol = $tabrowid[$id];
 		} else {
