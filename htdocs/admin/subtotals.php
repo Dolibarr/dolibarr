@@ -93,7 +93,7 @@ $conditions = [
 $max_depth = 0;
 
 foreach ($modules as $const => $desc) {
-	$const_depth = getDolGlobalString('SUBTOTAL_' . $const . '_MAX_DEPTH', 2);
+	$const_depth = getDolGlobalInt('SUBTOTAL_' . $const . '_MAX_DEPTH', 2);
 
 	$constante_title = 'SUBTOTAL_TITLE_' . $const;
 	$constante_subtotal = 'SUBTOTAL_' . $const;
@@ -210,7 +210,7 @@ if (empty($conf->use_javascript_ajax)) {
 		print '<input type="hidden" name="action" value="SUBTOTAL_' . $const . '_MAX_DEPTH">';
 		print '<input size="3" type="text" class="center"';
 		print $can_modify ? '' : ' disabled="disabled" ';
-		print 'name="SUBTOTAL_' . $const . '_MAX_DEPTH" value="' . getDolGlobalString('SUBTOTAL_' . $const . '_MAX_DEPTH', $can_modify ? 2 : 0) . '">';
+		print 'name="SUBTOTAL_' . $const . '_MAX_DEPTH" value="' . getDolGlobalInt('SUBTOTAL_' . $const . '_MAX_DEPTH', $can_modify ? 2 : 0) . '">';
 		print $can_modify ? '<input type="submit" class="button button-edit reposition smallpaddingimp" name="Button"value="' . $langs->trans("Modify") . '">' : '';
 		print '</form>';
 		print '</td>';

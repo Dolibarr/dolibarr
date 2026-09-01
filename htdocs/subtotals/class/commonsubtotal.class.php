@@ -848,7 +848,7 @@ trait CommonSubtotal
 	public function getPossibleLevels($langs)
 	{
 		$depth_array = array();
-		$max_depth = getDolGlobalString('SUBTOTAL_'.strtoupper($this->element).'_MAX_DEPTH', 2);
+		$max_depth = getDolGlobalInt('SUBTOTAL_'.strtoupper($this->element).'_MAX_DEPTH', 2);
 		for ($i = 0; $i < $max_depth; $i++) {
 			$depth_array[$i + 1] = $langs->trans("SubtotalLevel", $i + 1);
 		}
