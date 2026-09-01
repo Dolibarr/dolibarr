@@ -1682,9 +1682,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			// @phan-suppress-next-line PhanUndeclaredProperty
 			if (property_exists($object, 'attachedfiles') && is_array($object->attachedfiles) && array_key_exists('paths', $object->attachedfiles) && count($object->attachedfiles['paths']) > 0) {
 				// Note: None of the dolibarr classes seem to have an attachedfiles property
-				// Get directory of object
-				$tmpelems = getElementProperties($object->element.($object->module ? '@'.$object->module : ''));
-				$destdir = $tmpelems['dir_output'].'/'.$ret;
+				$destdir = $conf->agenda->dir_output.'/'.dol_sanitizeFileName($actioncomm->ref);
 
 				// @phan-suppress-next-line PhanUndeclaredProperty
 				foreach ($object->attachedfiles['paths'] as $key => $filespath) {
