@@ -31,6 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 if (isModEnabled('category')) {
@@ -46,7 +47,7 @@ if (isModEnabled('category')) {
  */
 
 // Load translation files required by the page
-$langsLoad = array('projects', 'users', 'companies');
+$langsLoad = array('projects', 'users', 'companies', 'main', 'errors');
 if (isModEnabled('eventorganization')) {
 	$langsLoad[] = 'eventorganization';
 }
@@ -135,6 +136,7 @@ $extrafields->fetch_name_optionals_label($taskstatic->table_element);
 $search_array_options = $extrafields->getOptionalsFromPost($taskstatic->table_element, '', 'search_');
 
 // Default to no permission
+$permissiontoadd = 0;
 $permissiontoread = 0;
 $permissiontodelete = 0;
 
@@ -636,12 +638,18 @@ if ($id > 0 || !empty($ref)) {
 
 	$arrayofmassactions = array();
 	if ($user->hasRight('projet', 'creer')) {
+		$arrayofmassactions['preassignusers'] = img_picto('', 'user', 'class="pictofixedwidth"').$langs->trans("AssignTaskToUser", $langs->trans("Users").' | '.$langs->trans("Groups"));
+		if (!empty($object->thirdparty->id)) {
+			$arrayofmassactions['preassignthirdcontacts'] = img_picto('', 'company', 'class="pictofixedwidth"').$langs->trans("AssignTaskToUser", $langs->trans("ThirdPartyContacts"));
+		}
+		// NEW: Assign to Project Contacts (Always available)
+		$arrayofmassactions['preassignprojectcontacts'] = img_picto('', 'contact', 'class="pictofixedwidth"').$langs->trans("AssignTaskToUser", $langs->trans("ProjectContact"));
 		$arrayofmassactions['preclonetasks'] = img_picto('', 'clone', 'class="pictofixedwidth"').$langs->trans("Clone");
 	}
 	if ($permissiontodelete) {
 		$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 	}
-	if (in_array($massaction, array('presend', 'predelete'))) {
+	if (in_array($massaction, array('presend', 'predelete', 'preassignusers', 'preassignprojectcontacts', 'preassignthirdcontacts'))) {
 		$arrayofmassactions = array();
 	}
 	$massactionbutton = $form->selectMassAction('', $arrayofmassactions) ?? '';
@@ -981,6 +989,489 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 	$objecttmp = new Task($db);
 	$trackid = 'task'.$taskstatic->id;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
+
+	// Convert "pre" mass actions into confirmation actions
+	if ($massaction == 'preassignusers') {
+		$action = 'confirm_assignusers';
+	}
+	// Convert "pre" mass actions into confirmation actions
+	if ($massaction == 'preassignprojectcontacts') {
+		$action = 'confirm_assignprojectcontacts';
+	}
+	// Convert "pre" mass actions into confirmation actions
+	if ($massaction == 'preassignthirdcontacts') {
+		$action = 'confirm_assignthirdcontacts';
+	}
+	// Assign users confirmation form
+	if ($action == 'confirm_assignusers') {
+		// 1. Define the help text
+		$helpText = $object->public
+			? $langs->trans("HelpPublicProjectUserAssignment")
+			: $langs->trans("HelpPrivateProjectUserAssignment");
+
+		// 2. Build the visibility value (clean, no help icon here)
+		$visibilityHtml = (
+			img_picto($langs->trans($object->public ? 'SharedProject' : 'PrivateProject'), $object->public ? 'fa-globe' : 'fa-lock', 'class="paddingrightonly"') . $langs->trans($object->public ? 'SharedProject' : 'PrivateProject')
+		);
+
+		// Build user array based on project visibility
+		$userArray = array();
+
+		if ($object->public) {
+			// Public: any active internal user
+			$sql = "SELECT u.rowid, u.firstname, u.lastname";
+			$sql .= " FROM " . MAIN_DB_PREFIX . "user u";
+			$sql .= " WHERE u.statut = 1 AND u.entity IN (" . getEntity('user') . ")";
+			$sql .= " ORDER BY u.lastname, u.firstname";
+		} else {
+			// Private: only users already assigned as internal contacts to this project
+			$sql = "SELECT u.rowid, u.firstname, u.lastname";
+			$sql .= " FROM " . MAIN_DB_PREFIX . "user u";
+			$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "element_contact ec ON ec.fk_socpeople = u.rowid";
+			$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "c_type_contact ctc ON ctc.rowid = ec.fk_c_type_contact";
+			$sql .= " WHERE ec.element_id = " . ((int) $object->id);
+			$sql .= " AND ctc.element = 'project' AND ctc.source = 'internal'";
+			$sql .= " AND u.statut = 1";
+			$sql .= " GROUP BY u.rowid, u.firstname, u.lastname";
+			$sql .= " ORDER BY u.lastname, u.firstname";
+		}
+
+		$resql = $db->query($sql);
+		if ($resql) {
+			while ($obj = $db->fetch_object($resql)) {
+				$userArray[$obj->rowid] = dolGetFirstLastname($obj->firstname, $obj->lastname);
+			}
+			$db->free($resql);
+		}
+
+		// 4. Build formquestion
+		$formquestion = array();
+
+		// Visibility info (always)
+		$formquestion[] = array(
+			'type'  => 'other',
+			'name'  => 'visibility',
+			'label' => $langs->trans("Project") . ' ' . $langs->trans("Visibility"),
+			'value' => $visibilityHtml
+		);
+
+		// Group selector (public only)
+		if ($object->public) {
+			$formquestion[] = array(
+				'type'  => 'other',
+				'name'  => 'groupid',
+				'label' => $langs->trans("Group"),
+				'value' => $form->select_dolgroups(0, 'groupid', 1, '', 0, '', array(), 0, 0, 'minwidth250')
+			);
+		}
+
+		// Multi-user selector (always, content varies)
+		$formquestion[] = array(
+			'type'  => 'other',
+			'name'  => 'userids',
+			'label' => $langs->trans("Users"),
+			'value' => $form->multiselectarray('userids', $userArray, array(), 0, 0, 'minwidth250', 0, 0, '', '', '', 1)
+		);
+
+		$statictask = new Task($db);
+		$formcompany = new FormCompany($db);
+		// Role selector (always)
+		$formquestion[] = array(
+			'type'  => 'other',
+			'name'  => 'taskrole',
+			'label' => $langs->trans("ContactRole"),
+			'value' => $formcompany->selectTypeContact($statictask, '', 'taskrole', 'internal', 'position', 0, 'minwidth200', 0, 1)
+		);
+
+		// Build a string of task IDs
+		$taskIdsStr = implode(',', $arrayofselected);
+		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$id.'&taskselect='.$taskIdsStr, $langs->transnoentities('Select1ToXAndRole', $langs->trans("Users").' / '.$langs->trans("Groups")), $langs->trans('AssignUsersToSelectedTasks', count($arrayofselected)), 'assignusers', $formquestion, '', 1, 400, 600, 0, 'Yes', 'No', $helpText);
+	}
+
+	// Process the user assignment
+	$permissiontoadd = $user->hasRight('projet', 'creer');
+	if ($action == 'assignusers' && $confirm == 'yes' && $permissiontoadd) {
+		// 1. Get Task IDs from URL (safe and reliable)
+		$taskIdsRaw = GETPOST('taskselect', 'alpha'); // e.g., "5,6,7"
+		$selectedTasks = array();
+		if (!empty($taskIdsRaw)) {
+			$selectedTasks = explode(',', $taskIdsRaw);
+			$selectedTasks = array_map('intval', $selectedTasks);
+			$selectedTasks = array_unique($selectedTasks, SORT_NUMERIC); // Remove duplicates
+		}
+
+		// 2. Resolve User IDs
+		$allSelectedUserIds = array();
+
+		// A. Expand Group if selected
+		$groupid = GETPOSTINT('groupid');
+		if ($groupid > 0) {
+			require_once DOL_DOCUMENT_ROOT . '/user/class/usergroup.class.php';
+			$usergroup = new UserGroup($db);
+			if ($usergroup->fetch($groupid) > 0) {
+				$groupUsers = $usergroup->listUsersForGroup('statut = 1', 0);
+				if (is_array($groupUsers)) {
+					foreach ($groupUsers as $u) $allSelectedUserIds[] = $u->id;
+				}
+			}
+		}
+
+		// B. Add Manual Selection
+		$useridsRaw = GETPOST('userids', 'alpha');
+		if (!empty($useridsRaw)) {
+			$manualIds = array_map('intval', explode(',', $useridsRaw));
+			$allSelectedUserIds = array_merge($allSelectedUserIds, $manualIds);
+		}
+
+		// C. Deduplicate
+		$allSelectedUserIds = array_unique($allSelectedUserIds, SORT_NUMERIC);
+
+		// 3. ENFORCE PRIVACY
+		if (!$object->public) {
+			// Get allowed IDs (ensure they are integers)
+			$allowedIds = array_map('intval', array_column($object->liste_contact(-1, 'internal'), 'id'));
+
+			if (!empty($allowedIds)) {
+				// Intersect with numeric comparison
+				$validUserIds = array_intersect($allSelectedUserIds, $allowedIds);
+				// Re-index array to avoid gaps (optional but good practice)
+				$validUserIds = array_values($validUserIds);
+			} else {
+				$validUserIds = array();
+			}
+		} else {
+			$validUserIds = $allSelectedUserIds;
+		}
+
+		// 4. Validation
+		if (empty($validUserIds)) {
+			setEventMessages($langs->trans("ErrorNoGoodSelected", $langs->trans("Users")), null, 'errors');
+			header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
+			exit;
+		}
+
+		// Task roles
+		$taskrole = GETPOSTINT('taskrole');
+		if (empty($taskrole)) {
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("ContactRole")), null, 'errors');
+			header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
+			exit;
+		}
+
+		// 6. Execute Assignment
+		$taskstatic = new Task($db);
+		$successCount = 0;
+		$failCount = 0;
+		$skippedCount = 0;
+		$failMessages = array();
+		$skipMessages = array();
+		$successMessages = array();
+
+		foreach ($selectedTasks as $taskId) {
+			if ($taskstatic->fetch($taskId) > 0) {
+				$taskLink = $taskstatic->getNomUrl(0);
+				foreach ($validUserIds as $uid) {
+					$userTmp = new User($db);
+					if ($userTmp->fetch($uid) > 0) {
+						$userLink = $userTmp->getNomUrl(0);
+						$baseMsg = '&emsp;' . $taskLink . ' : ' . $userLink;
+
+						$res = $taskstatic->add_contact($uid, $taskrole, 'internal');
+
+						if ($res > 0) {
+							$successCount++;
+							$successMessages[] = $baseMsg;
+						} elseif ($res == 0) {
+							$skippedCount++;
+							$skipMessages[] = $baseMsg;
+						} else {
+							if ($taskstatic->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+								$skippedCount++;
+								$skipMessages[] = $baseMsg;
+							} else {
+								$failCount++;
+								$failMessages[] = $baseMsg . ' : ' . $taskstatic->error;
+							}
+						}
+					} else {
+						$failCount++;
+						$failMessages[] = '&emsp;' . $langs->trans("User") . ' #' . $uid . ' : ' . $taskLink . ' : ' . $langs->trans("ErrorRecordNotFound");
+					}
+				}
+				$successMessages[] = '&emsp;';
+				$skipMessages[] = '&emsp;';
+				$failMessages[] = '&emsp;';
+			}
+		}
+
+		// 7. Feedback
+		if ($successCount > 0) {
+			setEventMessages($langs->trans("SuccessfullyAssignedToTasks", $successCount, $langs->trans("Users")), $successMessages, 'mesgs');
+		}
+		if ($skippedCount > 0) {
+			setEventMessages($langs->trans("SkippedAlreadyAssigned", $skippedCount), $skipMessages, 'warnings');
+		}
+		if ($failCount > 0) {
+			setEventMessages($langs->trans("ErrorAssignToTasks", $failCount, $langs->trans("Users")), $failMessages, 'errors');
+		}
+
+		if (!headers_sent()) {
+			header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
+			exit;
+		} else {
+			// Fallback: Reload via JS or just exit (messages will show on current page)
+			echo '<script>window.location.href="' . $_SERVER["PHP_SELF"] . '?id=' . $id . '";</script>';
+			exit;
+		}
+	}
+
+	// --- MODAL 1: Assign Third Party Contacts ---
+	if ($action == 'confirm_assignthirdcontacts') {
+		if (empty($object->thirdparty->id)) {
+			setEventMessages($langs->trans("ErrorRefNotFound", $langs->trans("ThirdParty")), null, 'errors');
+		} else {
+			// 1. Fetch formatted contacts using the new helper
+			// Format: "Firstname Lastname (email)"
+			$tpContacts = $object->thirdparty->getContactListFormatted(
+				1, // Status: Active only
+				array('name', ' (', 'email', ')') // Custom format
+			);
+
+			if (empty($tpContacts)) {
+				setEventMessages($langs->trans("ErrorRefNotFound", $langs->trans("ThirdPartyContacts")), null, 'warnings');
+			}
+
+			$formquestion = array();
+			$formquestion[] = array(
+				'type'  => 'other',
+				'name'  => 'tp_info',
+				'label' => $langs->trans("ThirdParty"),
+				'value' => $object->thirdparty->getNomUrl(1, '', 42)
+			);
+			$tpSelectHtml = $form->multiselectarray('tp_contacts', $tpContacts, array(), 0, 0, 'minwidth250', 0, 0, '', '', '', 1);
+			$formquestion[] = array(
+				'type'  => 'other',
+				'name'  => 'tp_contacts',
+				'label' => $langs->trans("Contacts"),
+				'value' => $tpSelectHtml
+			);
+
+			// Role Selector
+			$statictask = new Task($db);
+			$formcompany = new FormCompany($db);
+			$formquestion[] = array(
+				'type'  => 'other',
+				'name'  => 'taskrole',
+				'label' => $langs->trans("ContactRole"),
+				'value' => $formcompany->selectTypeContact($statictask, '', 'taskrole', 'external', 'position', 0, 'minwidth200', 0, 1)
+			);
+
+			$taskIdsStr = implode(',', $arrayofselected);
+			print $form->formconfirm(
+				$_SERVER["PHP_SELF"].'?id='.$id.'&taskselect='.$taskIdsStr,
+				$langs->transnoentities('Select1ToXAndRole', $langs->trans("ThirdPartyContacts")),
+				$langs->trans('AssignContactsToSelectedTasks', count($arrayofselected)),
+				'assignthirdcontacts',
+				$formquestion,
+				'',
+				1,
+				400,
+				600,
+				0,
+				'Yes',
+				'No',
+				$langs->trans("HelpAssignThirdPartyContacts")
+			);
+		}
+	}
+
+	// --- MODAL 2: Assign Project Contacts ---
+	if ($action == 'confirm_assignprojectcontacts') {
+		// 1. Fetch Project Contacts (Using your existing logic)
+		$projectContacts = array();
+		$rawProjectContacts = $object->liste_contact(-1, 'external');
+
+		if (is_array($rawProjectContacts)) {
+			$contactStatic = new Contact($db);
+			foreach ($rawProjectContacts as $contactData) {
+				$contactTmp = new Contact($db);
+				if ($contactTmp->fetch($contactData['id']) > 0 && $contactTmp->statut == 1) {
+					$fullName = trim($contactTmp->firstname . ' ' . $contactTmp->lastname);
+					if (empty($fullName)) $fullName = "Contact #" . $contactTmp->id;
+					$emailSuffix = !empty($contactTmp->email) ? ' (' . $contactTmp->email . ')' : '';
+					$projectContacts[$contactTmp->id] = $fullName . $emailSuffix;
+				}
+			}
+		}
+
+		$formquestion = array();
+		$formquestion[] = array(
+			'type'  => 'other',
+			'name'  => 'project_info',
+			'label' => $langs->trans("Project"),
+			'value' => $object->getNomUrl(1, '', 42)
+		);
+		if (empty($projectContacts)) {
+			$formquestion[] = array(
+				'type'  => 'other',
+				'name'  => 'project_contacts',
+				'label' => $langs->trans("Contacts"),
+				'value' => '<span class="warning">' . $langs->trans("ErrorRefNotFound", $langs->trans("ProjectContact")) . '</span>'
+			);
+		} else {
+			$projectSelectHtml = $form->multiselectarray('project_contacts', $projectContacts, array(), 0, 0, 'minwidth250', 0, 0, '', '', '', 1);
+			$formquestion[] = array(
+				'type'  => 'other',
+				'name'  => 'project_contacts',
+				'label' => $langs->trans("Contacts"),
+				'value' => $projectSelectHtml
+			);
+		}
+
+		// Role Selector
+		$statictask = new Task($db);
+		$formcompany = new FormCompany($db);
+		$formquestion[] = array(
+			'type'  => 'other',
+			'name'  => 'taskrole',
+			'label' => $langs->trans("ContactRole"),
+			'value' => $formcompany->selectTypeContact($statictask, '', 'taskrole', 'external', 'position', 0, 'minwidth200', 0, 1)
+		);
+
+		$taskIdsStr = implode(',', $arrayofselected);
+		print $form->formconfirm(
+			$_SERVER["PHP_SELF"].'?id='.$id.'&taskselect='.$taskIdsStr,
+			$langs->transnoentities('Select1ToXAndRole', $langs->trans("ProjectContact")),
+			$langs->trans('AssignContactsToSelectedTasks', count($arrayofselected)),
+			'assignprojectcontacts',
+			$formquestion,
+			'',
+			1,
+			400,
+			600,
+			0,
+			'Yes',
+			'No',
+			$langs->trans("HelpAssignProjectContacts")
+		);
+	}
+
+	// --- BLOCK 1: Validation Check (Abort if not ready) ---
+	if ($action == 'assignthirdcontacts' || $action == 'assignprojectcontacts') {
+		$contactVarName = ($action == 'assignthirdcontacts') ? 'tp_contacts' : 'project_contacts';
+		$selectedContactIds = GETPOST($contactVarName, 'array');
+		$role = GETPOSTINT('taskrole');
+		$taskIdsRaw = GETPOST('taskselect', 'alpha');
+
+		$taskIds = array();
+		if (!empty($taskIdsRaw)) {
+			$taskIds = explode(',', $taskIdsRaw);
+			$taskIds = array_map('intval', $taskIds);
+			$taskIds = array_filter($taskIds);
+		}
+
+		if (!$user->hasRight('projet', 'creer')) {
+			setEventMessages($langs->trans("ErrorForbidden"), null, 'errors');
+			$action = '';
+			$massaction = '';
+		} elseif (empty($selectedContactIds)) {
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("SearchIntoContacts")), null, 'errors');
+			$action = '';
+			$massaction = '';
+		} elseif (empty($role)) {
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("ContactRole")), null, 'errors');
+			$action = '';
+			$massaction = '';
+		} elseif (empty($taskIds)) {
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("Tasks")), null, 'errors');
+			$action = '';
+			$massaction = '';
+		}
+	}
+
+	// --- BLOCK 2: Process Data (Only if ready) ---
+	// Assumes Block 1 has already validated everything.
+	if ($action == 'assignthirdcontacts' || $action == 'assignprojectcontacts') {
+		$contactVarName = ($action == 'assignthirdcontacts') ? 'tp_contacts' : 'project_contacts';
+		$selectedContactIds = GETPOST($contactVarName, 'array');
+		$role = GETPOSTINT('taskrole');
+		$taskIdsRaw = GETPOST('taskselect', 'alpha');
+
+		// Parse Task IDs (Safe extraction, no validation needed)
+		$selectedTasks = array();
+		if (!empty($taskIdsRaw)) {
+			$selectedTasks = explode(',', $taskIdsRaw);
+			$selectedTasks = array_map('intval', $selectedTasks);
+			$selectedTasks = array_unique($selectedTasks, SORT_NUMERIC);
+		}
+
+		// Execute Assignment
+		$taskStatic = new Task($db);
+		$successCount = 0;
+		$skippedCount = 0;
+		$failCount = 0;
+
+		$successMessages = array();
+		$skipMessages = array();
+		$failMessages = array();
+
+		foreach ($selectedTasks as $taskId) {
+			if ($taskStatic->fetch($taskId) > 0) {
+				$taskLink = $taskStatic->getNomUrl(0);
+
+				foreach ($selectedContactIds as $cid) {
+					$contactTmp = new Contact($db);
+					if ($contactTmp->fetch($cid) > 0) {
+						$contactLink = $contactTmp->getNomUrl(0);
+						$baseMsg = '&emsp;' . $taskLink . ' : ' . $contactLink;
+
+						$res = $taskStatic->add_contact($cid, $role, 'external');
+
+						if ($res > 0) {
+							$successCount++;
+							$successMessages[] = $baseMsg;
+						} elseif ($res == 0) {
+							// res=0 means "already added" -> Skip
+							$skippedCount++;
+							$skipMessages[] = $baseMsg;
+						} else {
+							// res < 0 means real error
+							$failCount++;
+							$failMessages[] = $baseMsg . ' : ' . $taskStatic->error;
+						}
+					} else {
+						// Should not happen if Block 1 passed, but safe fallback
+						$failCount++;
+						$failMessages[] = '&emsp;' . $langs->trans("Contact") . ' #' . $cid . ' : ' . $taskLink . ' : ' . $langs->trans("ErrorRecordNotFound");
+					}
+				}
+				// Spacing
+				$successMessages[] = '&emsp;';
+				$skipMessages[] = '&emsp;';
+				$failMessages[] = '&emsp;';
+			}
+		}
+
+		// Feedback
+		if ($successCount > 0) {
+			setEventMessages($langs->trans("SuccessfullyAssignedToTasks", $successCount, $langs->trans("TaskContact")), $successMessages, 'mesgs');
+		}
+		if ($skippedCount > 0) {
+			setEventMessages($langs->trans("SkippedAlreadyAssigned", $skippedCount), $skipMessages, 'warnings');
+		}
+		if ($failCount > 0) {
+			setEventMessages($langs->trans("ErrorAssignToTasks", $failCount, $langs->trans("TaskContact")), $failMessages, 'errors');
+		}
+
+		// Redirect
+		if (!headers_sent()) {
+			header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
+			exit;
+		} else {
+			echo '<script>window.location.href="' . $_SERVER["PHP_SELF"] . '?id=' . $id . '";</script>';
+			exit;
+		}
+	}
 
 	// Get list of tasks in tasksarray and taskarrayfiltered
 	// We need all tasks (even not limited to a user because a task to user can have a parent that is not affected to him).

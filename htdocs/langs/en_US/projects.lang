@@ -337,3 +337,12 @@ TaskHourlyRateUpdated=Task's hourly rate updated
 UpdateWithLastHourlyRate=Update all recorded time spent of each user with the last hourly rate of the user
 UpdateUndefinedWithLastHourlyRate=Update the time spent that has no hourly rate defined with the last hourly rate of the user
 EnterUsersHourlyRateFirst=First, enter the hourly rate for the user(s)...
+AssignUsersToSelectedTasks=Assign selected users to selected tasks?
+AssignContactsToSelectedTasks=Assign selected contacts to selected tasks?
+Select1ToXAndRole=Select 1 to n %s & 1 role
+SuccessfullyAssignedToTasks=Successfully performed %s assignments of %s to tasks
+# Help texts
+HelpPublicProjectUserAssignment=Public project: Any active user | group can be assigned.
+HelpPrivateProjectUserAssignment=Private project: Only project contacts can be assigned, so groups and other users are hidden.
+HelpAssignThirdPartyContacts=Thirdparty Project: Only contacts of this thirdparty can be assigned
+HelpAssignProjectContacts=Only showing contacts already assigned to this project, because all possible contacts would too big
