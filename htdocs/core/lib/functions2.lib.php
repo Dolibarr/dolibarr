@@ -1257,7 +1257,14 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 
 		$numFinal = $ref;
 	} elseif ($mode == 'next') {
-		$counter++;
+		//Begin Customisation: Accellier Ltd: If Increment in SN is required more than 1
+		$snAdvancedIncrement = getDolGlobalString('SN_ADVANCED_INCREMENT');
+		if (empty($snAdvancedIncrement)) {
+			$counter++;
+		} else {
+			$counter += (int) $snAdvancedIncrement;
+		}
+		//End Customisation
 		$maskrefclient_counter = 0;
 
 		// If value for $counter has a length higher than $maskcounter chars
