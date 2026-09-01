@@ -508,6 +508,7 @@ class CEmailTemplate extends CommonObject
 		$sql .= " e.content_lines FROM ".$this->db->prefix().$this->table_element." as e";
 		if ($id) {
 			$sql .= " WHERE e.rowid = ".((int) $id);
+			$sql .= " AND e.entity IN (".getEntity($this->table_element).")";
 		} else {
 			$sql .= " WHERE e.entity IN (".getEntity($this->table_element).")";
 			if ($label) {
