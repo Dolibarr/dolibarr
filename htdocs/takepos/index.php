@@ -364,14 +364,14 @@ function LoadProducts(position, issubcat) {
 
 			$("#prodivdesc"+ishow).show();
 			var back_html = '<span class="fa fa-chevron-left paddingright"></span> ' + parent_cat_label;
-			
+
 			<?php if (getDolGlobalString('TAKEPOS_SHOW_CATEGORY_DESCRIPTION') == 1) { ?>
 				$("#prodesc"+ishow).html('<strong>' + back_html + '</strong>');
 			<?php } else { ?>
 				$("#prodesc"+ishow).html(back_html);
 			<?php } ?>
 			$("#probutton"+ishow).html(back_html);
-			
+
 			$("#probutton"+ishow).show();
 			$("#proprice"+ishow).attr("class", "hidden");
 			$("#proprice"+ishow).html("");
@@ -386,7 +386,7 @@ function LoadProducts(position, issubcat) {
 			$("#prowatermark"+ishow).show();
 			ishow++;
 		}
-		
+
 		console.log("Loop on each category level 2 or more");
 		jQuery.each(subcategories, function(i, val) {
 			if (currentcat == val.fk_parent) {
