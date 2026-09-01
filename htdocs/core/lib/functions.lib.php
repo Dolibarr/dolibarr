@@ -6615,6 +6615,9 @@ function dol_htmlentitiesbr($stringtoencode, $nl2brmode = 0, $pagecodefrom = 'UT
 		$newstring = strtr($newstring, array('&' => '__PROTECTand__', '<' => '__PROTECTlt__', '>' => '__PROTECTgt__', '"' => '__PROTECTdquot__'));
 		$newstring = dol_htmlentities($newstring, ENT_COMPAT, $pagecodefrom); // Make entity encoding
 		$newstring = strtr($newstring, array('__PROTECTand__' => '&', '__PROTECTlt__' => '<', '__PROTECTgt__' => '>', '__PROTECTdquot__' => '"'));
+		if (strlen($newstring) > 1000000) {// limit, to avoid memory problem
+			return substr($newstring, 0, 1000000) . '...';
+		}
 	} else {
 		if ($removelasteolbr) {
 			$newstring = preg_replace('/(\r\n|\r|\n)$/i', '', $newstring); // Remove last \n (may remove several)
