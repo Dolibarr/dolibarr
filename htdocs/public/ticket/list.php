@@ -70,6 +70,7 @@ $langs->loadLangs(array("companies", "other", "ticket"));
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel');
 
+$projectid = GETPOSTINT('projectid');
 $track_id = GETPOST('track_id', 'alpha');
 $email = strtolower(GETPOST('email', 'alpha'));
 $suffix = "";
@@ -441,6 +442,7 @@ if ($action == "view_ticketlist") {
 				print '<input type="hidden" name="action" value="view_ticketlist">';
 				print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 				print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+				print '<input type="hidden" name="projectid" value="'.$projectid.'">';
 
 				$varpage = empty($contextpage) ? $url_page_current : $contextpage;
 				$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
