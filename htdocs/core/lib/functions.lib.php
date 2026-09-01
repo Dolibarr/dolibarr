@@ -13642,6 +13642,10 @@ function dolIsAllowedForPreview($file)
 	if (getDolGlobalString('MAIN_ALLOW_SVG_FILES_AS_IMAGES')) {
 		$mime_preview[] = 'svg+xml';
 	}
+	if (getDolGlobalString('MAIN_ALLOW_XML_FILES_AS_PREVIEW')) {
+		$mime_preview[] = 'xml';
+	}
+
 	//$mime_preview[]='vnd.oasis.opendocument.presentation';
 	//$mime_preview[]='archive';
 	$num_mime = array_search(dol_mimetype($file, '', 1), $mime_preview);
