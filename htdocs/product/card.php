@@ -2688,6 +2688,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 						print '</form>';
 					} else {
 						print showValueWithClipboardCPButton($object->barcode);
+						print '<span class="paddingleft valignmiddle"><a href="'.dolBuildUrl(DOL_URL_ROOT . '/barcode/printsheet.php', ['productid' => $object->id, 'selectorforbarcode' => 'fillfromproduct', 'submitproduct' => '1']).'">'.$langs->trans("BarCodePrintsheet").'</a></span>';
 					}
 					print '</td></tr>'."\n";
 				}
