@@ -100,8 +100,10 @@ if ($type == 'bank-transfer') {
 
 if ($type == 'bank-transfer') {
 	$usercancreate = ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer);
+	$usercandelete = $user->hasRight('paymentbybanktransfer', 'delete');
 } else {
 	$usercancreate = $user->hasRight('facture', 'creer');
+	$usercandelete = $user->hasRight('prelevement', 'bons', 'delete');
 }
 
 
@@ -145,7 +147,7 @@ if (empty($reshook)) {
 		$action = '';
 	}
 
-	if ($action == "delete" && $usercancreate) {
+	if ($action == "delete" && $usercandelete) {
 		if ($object->id > 0) {
 			$result = $object->demande_prelevement_delete($user, GETPOSTINT('did'));
 			if ($result == 0) {
@@ -1000,9 +1002,11 @@ if ($object->id > 0) {
 			// Action column
 			if ($conf->main_checkbox_left_column) {
 				print '<td class="center">';
-				print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken().'&did='.$obj->rowid.'&type='.urlencode($type).'">';
-				print img_delete();
-				print '</a>';
+				if ($usercandelete) {
+					print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken().'&did='.$obj->rowid.'&type='.urlencode($type).'">';
+					print img_delete();
+					print '</a>';
+				}
 				print '</td>';
 			}
 
@@ -1076,9 +1080,12 @@ if ($object->id > 0) {
 			// Action column
 			if (!$conf->main_checkbox_left_column) {
 				print '<td class="center">';
-				print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken().'&did='.$obj->rowid.'&type='.urlencode($type).'">';
-				print img_delete();
-				print '</a></td>';
+				if ($usercandelete) {
+					print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken().'&did='.$obj->rowid.'&type='.urlencode($type).'">';
+					print img_delete();
+					print '</a>';
+				}
+				print '</td>';
 			}
 
 			print "</tr>\n";
