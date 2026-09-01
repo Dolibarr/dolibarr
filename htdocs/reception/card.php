@@ -1866,7 +1866,6 @@ if ($action == 'create' && $permissiontoadd) {
 					}
 					$deliverableQty = $dispatchLines[$indiceAsked]['qty'];
 					$cost_price = $dispatchLines[$indiceAsked]['pu'];
-
 					// Quantity to send
 					print '<td class="center">';
 					if ($line->product_type == Product::TYPE_PRODUCT || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
