@@ -43,3 +43,8 @@ BoxLastKnowledgerecordContent=Last articles
 BoxLastKnowledgerecordModifiedContent=Last modified articles
 BoxLastModifiedKnowledgerecordDescription=Last %s modified articles
 BoxLastModifiedKnowledgerecord=Last modified articles
+#Index page
+KnowledgeStatByStatus= Knowledge StatsBy Status
+NoKnowledgeRecord=No Knowledge Record
+DraftKnowledgeManagement=Draft Knowledge Management
+
