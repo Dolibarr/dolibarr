@@ -878,7 +878,6 @@ if ($action == 'updatebyscaning') {
 			BarcodeIsInProduct=0;
 			newproductrow=0
 			result=false;
-
 			tabproduct.forEach(product => {
 				$.ajax({ url: \''.DOL_URL_ROOT.'/product/inventory/ajax/searchfrombarcode.php\',
 					data: { "token":"'.newToken().'", "action":"existbarcode", '.(!empty($object->fk_warehouse) ? '"fk_entrepot":'.$object->fk_warehouse.', ' : '').(!empty($object->fk_product) ? '"fk_product":'.$object->fk_product.', ' : '').'"barcode":element, "product":product, "mode":mode},
