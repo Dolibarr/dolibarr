@@ -2120,21 +2120,145 @@ class Expedition extends CommonObject
 		// NOTE: This fetch_lines is special because it groups all lines with the same origin_line_id into one line.
 		// TODO: See if we can restore a common fetch_lines (one line = one record)
 
-		$sql = "SELECT cd.rowid, cd.fk_product, cd.label as custom_label, cd.description, cd.qty as qty_asked, cd.product_type, cd.fk_unit";
-		$sql .= ", cd.total_ht, cd.total_localtax1, cd.total_localtax2, cd.total_ttc, cd.total_tva";
-		$sql .= ", cd.fk_remise_except, cd.fk_product_fournisseur_price as fk_fournprice";
-		$sql .= ", cd.vat_src_code, cd.tva_tx, cd.localtax1_tx, cd.localtax2_tx, cd.localtax1_type, cd.localtax2_type, cd.info_bits, cd.price, cd.subprice, cd.remise_percent,cd.buy_price_ht as pa_ht";
-		$sql .= ", cd.fk_multicurrency, cd.multicurrency_code, cd.multicurrency_subprice, cd.multicurrency_total_ht, cd.multicurrency_total_tva, cd.multicurrency_total_ttc, cd.rang, cd.date_start, cd.date_end, cd.special_code";
-		$sql .= ", ed.rowid as line_id, ed.qty as qty_shipped, ed.fk_element, ed.fk_elementdet, ed.element_type, ed.fk_entrepot, ed.extraparams";
-		$sql .= ", p.ref as product_ref, p.label as product_label, p.fk_product_type, p.barcode as product_barcode";
-		$sql .= ", p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units";
-		$sql .= ", p.surface, p.surface_units, p.volume, p.volume_units, p.tosell as product_tosell, p.tobuy as product_tobuy";
-		$sql .= ", p.tobatch as product_tobatch, p.stockable_product";
-		$sql .= " FROM ".MAIN_DB_PREFIX."expeditiondet as ed, ".MAIN_DB_PREFIX."commandedet as cd";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = cd.fk_product";
-		$sql .= " WHERE ed.fk_expedition = ".((int) $this->id);
-		$sql .= " AND ed.fk_elementdet = cd.rowid";
-		$sql .= " ORDER BY cd.rang, ed.fk_elementdet";		// We need after a break on fk_elementdet but when there is no break on fk_elementdet, cd.rang is same so we can add it as first order criteria.
+		$sqlcommon = ", ed.rowid as line_id, ed.qty as qty_shipped, ed.fk_element, ed.fk_elementdet, ed.element_type, ed.fk_entrepot, ed.extraparams";
+		$sqlcommon .= ", p.ref as product_ref, p.label as product_label, p.fk_product_type, p.barcode as product_barcode";
+		$sqlcommon .= ", p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units";
+		$sqlcommon .= ", p.surface, p.surface_units, p.volume, p.volume_units, p.tosell as product_tosell, p.tobuy as product_tobuy";
+		$sqlcommon .= ", p.tobatch as product_tobatch, p.stockable_product";
+
+		$sqlunion = array();
+
+		$sqlcommande = "SELECT cd.rowid as rowid";
+		$sqlcommande .= ", cd.fk_product as fk_product";
+		$sqlcommande .= ", cd.label as custom_label";
+		$sqlcommande .= ", COALESCE(cd.description, ed.description) as description";
+		$sqlcommande .= ", CASE WHEN ed.fk_elementdet IS NULL OR ed.fk_elementdet = 0 THEN ed.qty ELSE cd.qty END as qty_asked";
+		$sqlcommande .= ", COALESCE(cd.product_type, p.fk_product_type, 0) as product_type";
+		$sqlcommande .= ", COALESCE(cd.fk_unit, ed.fk_unit) as fk_unit";
+		$sqlcommande .= ", cd.total_ht as total_ht";
+		$sqlcommande .= ", cd.total_localtax1 as total_localtax1";
+		$sqlcommande .= ", cd.total_localtax2 as total_localtax2";
+		$sqlcommande .= ", cd.total_ttc as total_ttc";
+		$sqlcommande .= ", cd.total_tva as total_tva";
+		$sqlcommande .= ", cd.fk_remise_except as fk_remise_except";
+		$sqlcommande .= ", cd.fk_product_fournisseur_price as fk_fournprice";
+		$sqlcommande .= ", cd.vat_src_code as vat_src_code";
+		$sqlcommande .= ", cd.tva_tx as tva_tx";
+		$sqlcommande .= ", cd.localtax1_tx as localtax1_tx";
+		$sqlcommande .= ", cd.localtax2_tx as localtax2_tx";
+		$sqlcommande .= ", cd.localtax1_type as localtax1_type";
+		$sqlcommande .= ", cd.localtax2_type as localtax2_type";
+		$sqlcommande .= ", cd.info_bits as info_bits";
+		$sqlcommande .= ", cd.price as price";
+		$sqlcommande .= ", cd.subprice as subprice";
+		$sqlcommande .= ", cd.remise_percent as remise_percent";
+		$sqlcommande .= ", cd.buy_price_ht as pa_ht";
+		$sqlcommande .= ", cd.fk_multicurrency as fk_multicurrency";
+		$sqlcommande .= ", cd.multicurrency_code as multicurrency_code";
+		$sqlcommande .= ", cd.multicurrency_subprice as multicurrency_subprice";
+		$sqlcommande .= ", cd.multicurrency_total_ht as multicurrency_total_ht";
+		$sqlcommande .= ", cd.multicurrency_total_tva as multicurrency_total_tva";
+		$sqlcommande .= ", cd.multicurrency_total_ttc as multicurrency_total_ttc";
+		$sqlcommande .= ", COALESCE(cd.rang, ed.rang, ed.rowid) as rang";
+		$sqlcommande .= ", cd.date_start as date_start";
+		$sqlcommande .= ", cd.date_end as date_end";
+		$sqlcommande .= ", COALESCE(cd.special_code, 0) as special_code";
+		$sqlcommande .= ", CASE WHEN ed.fk_elementdet IS NULL OR ed.fk_elementdet = 0 THEN ed.rowid ELSE ed.fk_elementdet END as sort_group_id";
+		$sqlcommande .= $sqlcommon;
+		$sqlcommande .= " FROM ".MAIN_DB_PREFIX."expeditiondet as ed";
+		$sqlcommande .= " INNER JOIN ".MAIN_DB_PREFIX."commandedet as cd ON ed.fk_elementdet = cd.rowid AND ed.element_type IN ('commande', 'order')";
+		$sqlcommande .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = cd.fk_product";
+		$sqlcommande .= " WHERE ed.fk_expedition = ".((int) $this->id);
+		$sqlunion[] = $sqlcommande;
+
+		$sqlpropal = "SELECT pd.rowid as rowid";
+		$sqlpropal .= ", pd.fk_product as fk_product";
+		$sqlpropal .= ", pd.label as custom_label";
+		$sqlpropal .= ", COALESCE(pd.description, ed.description) as description";
+		$sqlpropal .= ", CASE WHEN ed.fk_elementdet IS NULL OR ed.fk_elementdet = 0 THEN ed.qty ELSE pd.qty END as qty_asked";
+		$sqlpropal .= ", COALESCE(pd.product_type, p.fk_product_type, 0) as product_type";
+		$sqlpropal .= ", COALESCE(pd.fk_unit, ed.fk_unit) as fk_unit";
+		$sqlpropal .= ", pd.total_ht as total_ht";
+		$sqlpropal .= ", pd.total_localtax1 as total_localtax1";
+		$sqlpropal .= ", pd.total_localtax2 as total_localtax2";
+		$sqlpropal .= ", pd.total_ttc as total_ttc";
+		$sqlpropal .= ", pd.total_tva as total_tva";
+		$sqlpropal .= ", pd.fk_remise_except as fk_remise_except";
+		$sqlpropal .= ", pd.fk_product_fournisseur_price as fk_fournprice";
+		$sqlpropal .= ", pd.vat_src_code as vat_src_code";
+		$sqlpropal .= ", pd.tva_tx as tva_tx";
+		$sqlpropal .= ", pd.localtax1_tx as localtax1_tx";
+		$sqlpropal .= ", pd.localtax2_tx as localtax2_tx";
+		$sqlpropal .= ", pd.localtax1_type as localtax1_type";
+		$sqlpropal .= ", pd.localtax2_type as localtax2_type";
+		$sqlpropal .= ", pd.info_bits as info_bits";
+		$sqlpropal .= ", pd.price as price";
+		$sqlpropal .= ", pd.subprice as subprice";
+		$sqlpropal .= ", pd.remise_percent as remise_percent";
+		$sqlpropal .= ", pd.buy_price_ht as pa_ht";
+		$sqlpropal .= ", pd.fk_multicurrency as fk_multicurrency";
+		$sqlpropal .= ", pd.multicurrency_code as multicurrency_code";
+		$sqlpropal .= ", pd.multicurrency_subprice as multicurrency_subprice";
+		$sqlpropal .= ", pd.multicurrency_total_ht as multicurrency_total_ht";
+		$sqlpropal .= ", pd.multicurrency_total_tva as multicurrency_total_tva";
+		$sqlpropal .= ", pd.multicurrency_total_ttc as multicurrency_total_ttc";
+		$sqlpropal .= ", COALESCE(pd.rang, ed.rang, ed.rowid) as rang";
+		$sqlpropal .= ", pd.date_start as date_start";
+		$sqlpropal .= ", pd.date_end as date_end";
+		$sqlpropal .= ", COALESCE(pd.special_code, 0) as special_code";
+		$sqlpropal .= ", CASE WHEN ed.fk_elementdet IS NULL OR ed.fk_elementdet = 0 THEN ed.rowid ELSE ed.fk_elementdet END as sort_group_id";
+		$sqlpropal .= $sqlcommon;
+		$sqlpropal .= " FROM ".MAIN_DB_PREFIX."expeditiondet as ed";
+		$sqlpropal .= " INNER JOIN ".MAIN_DB_PREFIX."propaldet as pd ON ed.fk_elementdet = pd.rowid AND ed.element_type = 'propal'";
+		$sqlpropal .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = pd.fk_product";
+		$sqlpropal .= " WHERE ed.fk_expedition = ".((int) $this->id);
+		$sqlunion[] = $sqlpropal;
+
+		$sqlfree = "SELECT ed.rowid as rowid";
+		$sqlfree .= ", ed.fk_product as fk_product";
+		$sqlfree .= ", '' as custom_label";
+		$sqlfree .= ", ed.description as description";
+		$sqlfree .= ", ed.qty as qty_asked";
+		$sqlfree .= ", COALESCE(p.fk_product_type, 0) as product_type";
+		$sqlfree .= ", ed.fk_unit as fk_unit";
+		$sqlfree .= ", 0 as total_ht";
+		$sqlfree .= ", 0 as total_localtax1";
+		$sqlfree .= ", 0 as total_localtax2";
+		$sqlfree .= ", 0 as total_ttc";
+		$sqlfree .= ", 0 as total_tva";
+		$sqlfree .= ", NULL as fk_remise_except";
+		$sqlfree .= ", NULL as fk_fournprice";
+		$sqlfree .= ", '' as vat_src_code";
+		$sqlfree .= ", 0 as tva_tx";
+		$sqlfree .= ", 0 as localtax1_tx";
+		$sqlfree .= ", 0 as localtax2_tx";
+		$sqlfree .= ", '' as localtax1_type";
+		$sqlfree .= ", '' as localtax2_type";
+		$sqlfree .= ", 0 as info_bits";
+		$sqlfree .= ", 0 as price";
+		$sqlfree .= ", 0 as subprice";
+		$sqlfree .= ", 0 as remise_percent";
+		$sqlfree .= ", 0 as pa_ht";
+		$sqlfree .= ", 0 as fk_multicurrency";
+		$sqlfree .= ", '' as multicurrency_code";
+		$sqlfree .= ", 0 as multicurrency_subprice";
+		$sqlfree .= ", 0 as multicurrency_total_ht";
+		$sqlfree .= ", 0 as multicurrency_total_tva";
+		$sqlfree .= ", 0 as multicurrency_total_ttc";
+		$sqlfree .= ", COALESCE(ed.rang, ed.rowid) as rang";
+		$sqlfree .= ", NULL as date_start";
+		$sqlfree .= ", NULL as date_end";
+		$sqlfree .= ", 0 as special_code";
+		$sqlfree .= ", ed.rowid as sort_group_id";
+		$sqlfree .= $sqlcommon;
+		$sqlfree .= " FROM ".MAIN_DB_PREFIX."expeditiondet as ed";
+		$sqlfree .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = ed.fk_product";
+		$sqlfree .= " WHERE ed.fk_expedition = ".((int) $this->id);
+		$sqlfree .= " AND (ed.element_type NOT IN ('commande', 'order', 'propal') OR ed.element_type IS NULL OR ed.element_type = '')";
+		$sqlunion[] = $sqlfree;
+
+		$sql = "SELECT * FROM (".implode(" UNION ALL ", $sqlunion).") as shipment_lines";
+		$sql .= " ORDER BY rang, sort_group_id, line_id";
 
 		dol_syslog(get_class($this)."::fetch_lines", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -2145,7 +2269,7 @@ class Expedition extends CommonObject
 			$i = 0;
 			$line = new ExpeditionLigne($this->db);
 			$lineindex = 0;
-			$originline = 0;
+			$originline = '';
 
 			$this->total_ht = 0;
 			$this->total_tva = 0;
@@ -2163,7 +2287,8 @@ class Expedition extends CommonObject
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
 
-				if ($originline > 0 && $originline == $obj->fk_elementdet) {
+				$currentlinekey = (!empty($obj->fk_elementdet) ? $obj->element_type.'#'.$obj->fk_elementdet : 'shipping#'.$obj->line_id);
+				if ($originline !== '' && $originline === $currentlinekey) {
 					// '@phan-var-force ExpeditionLigne $line'; // $line from previous loop
 					$line->entrepot_id = 0; // entrepod_id in details_entrepot
 					$line->qty_shipped += $obj->qty_shipped;
@@ -2276,7 +2401,7 @@ class Expedition extends CommonObject
 				$this->multicurrency_total_tva 	+= $obj->multicurrency_total_tva;
 				$this->multicurrency_total_ttc 	+= $obj->multicurrency_total_ttc;
 
-				if ($originline != $obj->fk_elementdet) {
+				if ($originline !== $currentlinekey) {
 					$line->detail_batch = array();
 				}
 
@@ -2285,7 +2410,7 @@ class Expedition extends CommonObject
 					$newdetailbatch = $shipmentlinebatch->fetchAll($obj->line_id, $obj->fk_product);
 
 					if (is_array($newdetailbatch)) {
-						if ($originline != $obj->fk_elementdet) {
+						if ($originline !== $currentlinekey) {
 							$line->detail_batch = $newdetailbatch;
 						} else {
 							$line->detail_batch = array_merge($line->detail_batch, $newdetailbatch);
@@ -2322,7 +2447,7 @@ class Expedition extends CommonObject
 
 				$line->fetch_optionals();
 
-				if ($originline != $obj->fk_elementdet) {
+				if ($originline !== $currentlinekey) {
 					$this->lines[$lineindex] = $line;
 					$lineindex++;
 				} else {
@@ -2334,7 +2459,7 @@ class Expedition extends CommonObject
 				}
 
 				$i++;
-				$originline = $obj->fk_elementdet;
+				$originline = $currentlinekey;
 			}
 			$this->db->free($resql);
 			return 1;
