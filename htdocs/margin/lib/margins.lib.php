@@ -142,11 +142,7 @@ function getMarginInfos($pv_ht, $remise_percent, $tva_tx, $localtax1_tx, $localt
 	$pu_ht_remise = price2num($pu_ht_remise, 'MU');
 
 	// calcul marge
-	if ($pu_ht_remise < 0) {
-		$marge = -1 * (abs((float) $pu_ht_remise) - $pa_ht_ret);
-	} else {
-		$marge = (float) $pu_ht_remise - $pa_ht_ret;
-	}
+	$marge = (float) $pu_ht_remise - $pa_ht_ret;
 
 	// calcul taux marge
 	if ($pa_ht_ret != 0) {
