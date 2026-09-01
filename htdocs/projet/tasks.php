@@ -98,6 +98,7 @@ $search_progressdeclare = GETPOST('search_progressdeclare');
 $search_task_budget_amount = GETPOST('search_task_budget_amount');
 $search_task_billable = GETPOST('search_task_billable');
 $search_status = GETPOST('search_status');
+$search_assignment = GETPOST('search_assignment', 'alpha');
 
 $search_date_start_startmonth = GETPOSTINT('search_date_start_startmonth');
 $search_date_start_startyear = GETPOSTINT('search_date_start_startyear');
@@ -277,6 +278,7 @@ if (empty($reshook)) {
 		$search_task_budget_amount = '';
 		$search_task_billable = '';
 		$search_status = -1;
+		$search_assignment = '';
 		$toselect = array();
 		$search_array_options = array();
 		$search_date_start_startmonth = "";
@@ -363,6 +365,35 @@ if ($search_task_budget_amount) {
 }
 if ($search_task_billable && $search_task_billable != '-1') {
 	$morewherefilterarray[] = " t.billable = ".($search_task_billable == "yes" ? 1 : 0);
+}
+
+// Assignment filter: works from both $search_user_id and $search_assignment
+$assignmentFilter = 0;
+if (!empty($search_user_id) && $search_user_id < -1) {
+	$assignmentFilter = $search_user_id;
+} elseif (!empty($search_assignment)) {
+	$assignmentFilter = (int) $search_assignment;
+}
+
+if ($assignmentFilter != 0) {
+	$subq = "SELECT 1 FROM " . $db->prefix() . "element_contact ec INNER JOIN " . $db->prefix() . "c_type_contact tc ON ec.fk_c_type_contact = tc.rowid WHERE ec.element_id = t.rowid AND tc.element = 'project_task'";
+
+	// this is ugly, find the variable called assignmentOptions and see the explanation for these numbers.
+	// we use these numbers because select_dolusers() wants to use integers and not strings.
+	switch ($assignmentFilter) {
+		case -100:
+			$morewherefilterarray[] = "EXISTS (" . $subq . ")";
+			break;
+		case -101:
+			$morewherefilterarray[] = "NOT EXISTS (" . $subq . ")";
+			break;
+		case -102:
+			$morewherefilterarray[] = "EXISTS (" . $subq . " AND tc.source = 'internal')";
+			break;
+		case -103:
+			$morewherefilterarray[] = "EXISTS (" . $subq . " AND tc.source = 'external')";
+			break;
+	}
 }
 //var_dump($morewherefilterarray);
 
@@ -621,6 +652,9 @@ if ($id > 0 || !empty($ref)) {
 	}
 	if ($search_status) {
 		$param .= '&search_status='.urlencode((string) ($search_status));
+	}
+	if ($search_assignment) {
+		$param .= '&search_assignment='.urlencode($search_assignment);
 	}
 	if ($search_task_budget_amount) {
 		$param .= '&search_task_budget_amount='.urlencode($search_task_budget_amount);
@@ -977,6 +1011,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 
 	//print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $linktotasks, $num, $totalnboflines, 'generic', 0, '', '', 0, 1);
 	print load_fiche_titre($title, $linktotasks.' &nbsp; '.$linktocreatetask, 'projecttask', 0, '', '', $massactionbutton);
+	print '<!-- load_fiche_titre -->';
 
 	$objecttmp = new Task($db);
 	$trackid = 'task'.$taskstatic->id;
@@ -1001,12 +1036,21 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 		include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
 	}
 
+	// 1. Define custom options with safe negative keys
+	$assignmentOptions = array(
+		-100 => $langs->trans("Assigned"),
+		-101 => $langs->trans("Unassigned"),
+		-102 => $langs->trans("AssignedToInternalUsers"),
+		-103 => $langs->trans("AssignedToExternalContacts"),
+	);
+
 	// Filter on assigned users
 	$moreforfilter = '';
 	$moreforfilter .= '<div class="divsearchfield">';
 	$moreforfilter .= img_picto('', 'user', 'class="pictofixedwidth"');
-	$moreforfilter .= $form->select_dolusers($tmpuser->id > 0 ? $tmpuser->id : '', 'search_user_id', $langs->trans("TasksAssignedTo"), null, 0, '', '');
+	$moreforfilter .= $form->select_dolusers(($tmpuser->id > 0 ? $tmpuser->id : ''), 'search_user_id', $langs->trans("TasksAssignedTo"), null, 0, '', '', '0', 0, 0, '', 0, '', '', 0, 0, false, 0, $assignmentOptions);
 	$moreforfilter .= '</div>';
+
 	if ($moreforfilter) {
 		print '<div class="liste_titre liste_titre_bydiv centpercent">';
 		print $moreforfilter;
@@ -1137,6 +1181,8 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 
 	if (!empty($arrayfields['c.assigned']['checked'])) {
 		print '<td class="liste_titre right">';
+		print '<!-- c.assigned -->';
+		print $form->selectarray('search_assignment', (array) $assignmentOptions, (string) $search_assignment, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth150');
 		print '</td>';
 	}
 
@@ -1242,7 +1288,21 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 
 	$nboftaskshown = 0;
 	if (count($tasksarray) > 0) {
-		// Show all lines in taskarray (recursive function to go down on tree)
+		if (!empty($search_assignment)) {
+			$existingIds = array();
+			foreach ($tasksarray as $task) {
+				$existingIds[$task->id] = true;
+			}
+
+			foreach ($tasksarray as $task) {
+				if ($task->fk_task_parent > 0) {
+					if (!isset($existingIds[$task->fk_task_parent])) {
+						$task->fk_task_parent = 0;
+					}
+				}
+			}
+		}
+
 		$j = 0;
 		$level = 0;
 		$nboftaskshown = projectLinesa($j, 0, $tasksarray, $level, '', 0, $tasksrole, (string) $object->id, 1, $object->id, '', ($object->usage_bill_time ? 1 : 0), $arrayfields, $arrayofselected);
