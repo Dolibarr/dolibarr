@@ -446,28 +446,26 @@ if ($action == 'edit' || $action == 'create' || $action == 'deleteproperty') {
 	print '<br>';
 }
 
-// Availability alerts: results of the scheduled check (AiModelWatch cron) and of
-// the adapter's runtime "model not found" detection, surfaced on the page where
-// the models are actually fixed. Warn only — nothing is changed automatically.
-$watch = json_decode(getDolGlobalString('AI_MODEL_WATCH_LAST_RESULT'), true);
-if (is_array($watch) && !empty($watch['missing']) && is_array($watch['missing'])) {
-	$msg = $langs->trans("AIModelWatchBanner", dol_print_date((int) $watch['ts'], 'dayhour'), (string) count($watch['missing']));
-	foreach ($watch['missing'] as $miss) {
-		$msg .= '<br> - <b>'.dol_escape_htmltag($miss['const'].' = '.$miss['model']).'</b>';
-		if (!empty($miss['suggest'])) {
-			$msg .= ' — '.dol_escape_htmltag($langs->trans("AIModelClosestAvailable", $miss['suggest']));
-		}
-	}
-	print info_admin($msg, 0, 0, 'warning');
-}
+// Availability alert: when the adapter recorded a runtime "model not found /
+// retired" provider error, warn on screen on the page where the models are
+// actually fixed, suggesting the closest model currently offered. Warn only —
+// nothing is changed automatically.
 $runfail = json_decode(getDolGlobalString('AI_MODEL_RUNTIME_FAILURE'), true);
 if (is_array($runfail) && !empty($runfail['model'])) {
-	print info_admin($langs->trans(
+	$msg = $langs->trans(
 		"AIModelRuntimeFailureBanner",
 		dol_escape_htmltag((string) $runfail['model']),
 		dol_print_date((int) ($runfail['ts'] ?? 0), 'dayhour'),
 		dol_escape_htmltag((string) ($runfail['message'] ?? ''))
-	), 0, 0, 'warning');
+	);
+	$modellist = getAiProviderModelList($db);
+	if (!empty($modellist['models'])) {
+		$suggest = aiSuggestClosestModel((string) $runfail['model'], $modellist['models']);
+		if ($suggest !== '') {
+			$msg .= ' '.dol_escape_htmltag($langs->trans("AIModelClosestAvailable", $suggest));
+		}
+	}
+	print info_admin($msg, 0, 0, 'warning');
 }
 
 // Custom models

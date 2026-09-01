@@ -492,10 +492,10 @@ function getAiAssistantProviderLabel()
  * 1-hour cache in the constant AI_MODELS_LIST_CACHE (Anthropic GET /models,
  * Google GET /models, OpenAI-compatible GET /models). Shared by the AJAX
  * endpoint ai/ajax/list_models.php (datalists, chat picker) and by the
- * scheduled availability check (AiModelWatch).
+ * model-availability warning banner of the admin models page.
  *
  * @param DoliDB $db           Database handler (to store the cache constant)
- * @param bool   $forcerefresh True to bypass the cache (the scheduled check must see the live list)
+ * @param bool   $forcerefresh True to bypass the cache and query the live list
  * @return array{service:string,models:string[]} Active service key and its sorted model ids (empty list when the provider is not configured, offers no listing API, or the call fails)
  */
 function getAiProviderModelList($db, $forcerefresh = false)
@@ -578,8 +578,8 @@ function getAiProviderModelList($db, $forcerefresh = false)
 /**
  * Suggest the closest available model id for a model that disappeared from the
  * provider's list: same family first (shared leading token, e.g. 'gemini',
- * 'gpt', 'claude'), then overall string similarity. Used by the availability
- * alerts (scheduled check, admin banner) to propose a replacement.
+ * 'gpt', 'claude'), then overall string similarity. Used by the warning banner
+ * of the admin models page to propose a replacement.
  *
  * @param string   $missing Configured model id that is no longer offered
  * @param string[] $models  Model ids currently offered by the provider
