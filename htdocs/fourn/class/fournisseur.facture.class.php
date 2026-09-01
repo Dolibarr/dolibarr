@@ -44,6 +44,7 @@ require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.ligne.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/subtotals/class/commonsubtotal.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/traits/trackingtrait.class.php';
 
 if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
@@ -55,7 +56,7 @@ if (isModEnabled('accounting')) {
  */
 class FactureFournisseur extends CommonInvoice
 {
-	use CommonSubtotal;
+	use CommonSubtotal, TrackingTrait;
 
 	/**
 	 * @var string ID to identify managed object
@@ -582,8 +583,8 @@ class FactureFournisseur extends CommonInvoice
 		$sql .= ")";
 		$sql .= " VALUES (";
 		$sql .= "'(PROV)'";
-		$sql .= ", '".$this->db->escape($this->ref_supplier)."'";
-		$sql .= ", '".$this->db->escape($this->ref_ext)."'";
+		$sql .= ", ".(isset($this->ref_supplier) ? "'".$this->db->escape($this->ref_supplier)."'" : 'NULL');
+		$sql .= ", ".(isset($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : 'NULL');
 		$sql .= ", ".((int) $this->entity);
 		$sql .= ", '".$this->db->escape((string) $this->type)."'";
 		$sql .= ", ".(isset($this->subtype) ? (int) $this->subtype : "null");
