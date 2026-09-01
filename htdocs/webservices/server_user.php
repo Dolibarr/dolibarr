@@ -393,7 +393,7 @@ function getUser($authentication, $id, $ref = '', $ref_ext = '')
 						'fk_member' => $user->fk_member,
 						'datelastlogin' => dol_print_date($user->datelastlogin, 'dayhourrfc'),
 						'datepreviouslogin' => dol_print_date($user->datepreviouslogin, 'dayhourrfc'),
-						'statut' => (int) $user->statut,
+						'statut' => (int) $user->status,	// 'statut' key kept for backward compatibility of the SOAP response
 						'status' => (int) $user->status,
 						'photo' => $user->photo,
 						'lang' => $user->lang,

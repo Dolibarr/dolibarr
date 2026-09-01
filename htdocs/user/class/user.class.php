@@ -1670,11 +1670,11 @@ class User extends CommonObject
 		$error = 0;
 
 		// Check parameters
-		if (isset($this->statut)) {
-			if ($this->statut == $status) {
+		if (isset($this->status)) {
+			if ($this->status == $status) {
 				return 0;
 			}
-		} elseif (isset($this->status) && $this->status == $status) {
+		} elseif (isset($this->statut) && $this->statut == $status) {	// $this->statut is deprecated
 			return 0;
 		}
 
@@ -3443,7 +3443,7 @@ class User extends CommonObject
 	 */
 	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut(isset($this->statut) ? (int) $this->statut : (int) $this->status, $mode);
+		return $this->LibStatut(isset($this->status) ? (int) $this->status : (int) $this->statut, $mode);	// $this->statut is deprecated
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
