@@ -164,7 +164,10 @@ if (empty($reshook)) {
 			} else {
 				$value = GETPOSTISSET($html_name) ? GETPOST($html_name, 'alpha') : $assetdepreciationoptions->$field_key;
 			}
-			if (!empty($field_info['noteditable'])) {
+			if (!empty($field_info['computedfromcore'])) {
+				// Value is provided by the core and is not stored, so it can't be edited
+				print '<span class="opacitymedium">'.$langs->trans("AutomaticallyCalculated").'</span>';
+			} elseif (!empty($field_info['noteditable'])) {
 				print $assetdepreciationoptions->showOutputField($field_info, $field_key, $value, '', '', $prefix_html_name, 0);
 			} else {
 				if ($field_key == 'lang') {
