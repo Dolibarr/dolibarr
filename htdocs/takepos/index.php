@@ -335,7 +335,7 @@ function LoadProducts(position, issubcat) {
 	ishow=0; //product to show counter
 
 	var parent_cat = 0;
-	var parent_cat_label = '<?php echo dol_escape_js($langs->trans('Back')); ?>';
+	var parent_cat_label = '<?php echo dol_escape_js($langs->trans('GoBack')); ?>';
 	if (currentcat != "supplements") {
 		jQuery.each(subcategories, function(i, val) {
 			if (val.rowid == currentcat) {
