@@ -284,7 +284,7 @@ class modStockTransfer extends DolibarrModules
 			'langs'=>'stocktransfer@stocktransfer',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position'=>1000+$r,
 			'enabled'=>'$conf->stocktransfer->enabled',  // Define condition to show or hide menu entry. Use '$conf->stocktransfer->enabled' if entry must be visible if module is enabled.
-			'perms'=>'$user->rights->stocktransfer->stocktransfer->read',			                // Use 'perms'=>'$user->rights->stocktransfer->level1->level2' if you want your menu with a permission rules
+			'perms'=>'$user->hasRight("stocktransfer", "stocktransfer", "read")',			                // Use 'perms'=>'$user->rights->stocktransfer->level1->level2' if you want your menu with a permission rules
 			'target'=>'',
 			'user'=>2,				                // 0=Menu for internal users, 1=external users, 2=both
 		);
@@ -298,7 +298,7 @@ class modStockTransfer extends DolibarrModules
 			'langs'=>'stocktransfer@stocktransfer',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position'=>1000+$r,
 			'enabled'=>'$conf->stocktransfer->enabled',  // Define condition to show or hide menu entry. Use '$conf->stocktransfer->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'perms'=>'$user->rights->stocktransfer->stocktransfer->read',			                // Use 'perms'=>'$user->rights->stocktransfer->level1->level2' if you want your menu with a permission rules
+			'perms'=>'$user->hasRight("stocktransfer", "stocktransfer", "read")',			                // Use 'perms'=>'$user->rights->stocktransfer->level1->level2' if you want your menu with a permission rules
 			'target'=>'',
 			'user'=>2,				                // 0=Menu for internal users, 1=external users, 2=both
 		);
@@ -312,7 +312,7 @@ class modStockTransfer extends DolibarrModules
 			'langs'=>'stocktransfer@stocktransfer',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position'=>1000+$r,
 			'enabled'=>'$conf->stocktransfer->enabled',  // Define condition to show or hide menu entry. Use '$conf->stocktransfer->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'perms'=>'$user->rights->stocktransfer->stocktransfer->write',			                // Use 'perms'=>'$user->rights->stocktransfer->level1->level2' if you want your menu with a permission rules
+			'perms'=>'$user->hasRight("stocktransfer", "stocktransfer", "write")',			                // Use 'perms'=>'$user->rights->stocktransfer->level1->level2' if you want your menu with a permission rules
 			'target'=>'',
 			'user'=>2,				                // 0=Menu for internal users, 1=external users, 2=both
 		);
