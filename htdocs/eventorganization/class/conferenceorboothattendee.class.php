@@ -59,6 +59,16 @@ class ConferenceOrBoothAttendee extends CommonObject
 	const STATUS_CANCELED = 9;
 
 	/**
+	 * @var array<int, int> list of possible statuses for this object
+	 */
+	public $list_possible_status = [self::STATUS_DRAFT, self::STATUS_VALIDATED, self::STATUS_USED, self::STATUS_CANCELED];
+
+	/**
+	 * @var array<int, string> list of possible triggercode for this object
+	 */
+	public $list_possible_triggercode = [self::STATUS_DRAFT => 'CONFERENCEORBOOTHATTENDEE_UNVALIDATE', self::STATUS_VALIDATED => 'CONFERENCEORBOOTHATTENDEE_VALIDATE', self::STATUS_USED => 'CONFERENCEORBOOTHATTENDEE_USED', self::STATUS_CANCELED => 'CONFERENCEORBOOTHATTENDEE_CANCEL'];
+
+	/**
 	 *  'type' field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter]]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'text:none', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
 	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
@@ -314,9 +324,12 @@ class ConferenceOrBoothAttendee extends CommonObject
 	 *
 	 * @param  	User 	$user      	User that creates
 	 * @param  	int 	$fromid     Id of object to clone
-	 * @return 	mixed 				New object created, <0 if KO
+	 * @param	int 	$notrigger	0=launch triggers after, 1=disable triggers
+	 * @param	int 	$nolink		0=make link between source and clone, 1=do not link
+	 * @param	array<string, mixed>	$changes	Default empty array else array[field] = value, naturally not id/rowid, but this could be used to create the clone in a different fk_project: $changes["fk_project"] = $newprojectid
+	 * @return ConferenceOrBoothAttendee|int
 	 */
-	public function createFromClone(User $user, $fromid)
+	public function createFromClone(User $user, $fromid, $notrigger = 0, $nolink = 0, $changes = array())
 	{
 		global $langs, $extrafields;
 		$error = 0;
@@ -336,6 +349,24 @@ class ConferenceOrBoothAttendee extends CommonObject
 		// get lines so they will be clone
 		//foreach($this->lines as $line)
 		//	$line->fetch_optionals();
+
+		// handle changes to fields
+		foreach ($changes as $key => $value) {
+			if ($key == "fields") {
+				dol_syslog('this->fields MUST NOT BE CHANGED', LOG_ERR);
+				$this->error = 'this->fields MUST NOT BE CHANGED';
+				return -2;
+			} elseif (array_key_exists((string) $key, $this->fields)) {
+				dol_syslog('key='.$key.' changed from '.$object->$key, LOG_DEBUG);
+				$object->$key = $value;
+				dol_syslog('key='.$key.' changed to '.$value, LOG_DEBUG);
+			} else {
+				$error++;
+				dol_syslog('key='.$key.' was not found in $this->fields', LOG_ERR);
+				$this->error = 'key='.$key.' was not found in $this->fields';
+				return -3;
+			}
+		}
 
 		// Reset some properties
 		unset($object->id);
@@ -362,18 +393,18 @@ class ConferenceOrBoothAttendee extends CommonObject
 
 		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';
-		$result = $object->createCommon($user);
+		$result = $object->createCommon($user, $notrigger);
 		if ($result < 0) {
 			$error++;
 			$this->setErrorsFromObject($object);
 		} else {
 			$object->ref = (string) $object->id;
-			$result = $object->update($user);
+			$result = $object->update($user, $notrigger);
 		}
 
 		if (!$error) {
 			// copy internal contacts
-			if ($this->copy_linked_contact($object, 'internal') < 0) {
+			if ($this->copy_linked_contact($object, 'internal', $notrigger) < 0) {
 				$error++;
 			}
 		}
@@ -381,7 +412,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 		if (!$error) {
 			// copy external contacts if same company
 			if (!empty($this->fk_soc) && $this->fk_soc == $object->socid) {
-				if ($this->copy_linked_contact($object, 'external') < 0) {
+				if ($this->copy_linked_contact($object, 'external', $notrigger) < 0) {
 					$error++;
 				}
 			}
@@ -392,6 +423,20 @@ class ConferenceOrBoothAttendee extends CommonObject
 		// End
 		if (!$error) {
 			$this->db->commit();
+
+			require_once DOL_DOCUMENT_ROOT.'/core/class/objectlink.class.php';
+			$staticobjectlink = new ObjectLink($this->db);
+			if (!$nolink) {
+				$linkresult = $staticobjectlink->create($user, $this->id, $this->element, $object->id, $object->element, 'clone', $notrigger);
+				if ($linkresult) {
+					return $object;
+				} else {
+					dol_syslog('Failed to objectlink clone + source='.$this->id.' '.$staticobjectlink->error, LOG_ERR);
+					$this->db->rollback();
+					$this->error = $staticobjectlink->error;
+					return -1;
+				}
+			}
 			return $object;
 		} else {
 			$this->db->rollback();

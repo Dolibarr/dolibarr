@@ -2106,6 +2106,86 @@ class Project extends CommonObject
 	}
 
 	/**
+	 * Load id of event organization projects
+	 *
+	 * @param	User		$user			Object user to evaluate for project permissions
+	 * @param	int			$timeline		-1 only show past events, 0 show both past and future events, 1 (default) only show future events.
+	 * @param	int			$fromdate		0 (default) means now, -1 means read $this->date_start_event, any number higher than 0 will be used as date_start_event
+	 * @param	int			$mode			0 means just rowid, 1 means rowid, ref, title, date_start_event, date_end_event, location, max_attendees, public, fk_statut
+	 * @param	int			$limit        	limit
+	 * @param	int			$offset       	Offset
+	 * @param	int			$showmin 		event organization project with status below this value will not be shown. Default is 0 (draft)
+	 * @param	int			$showmax 		event organization project with status above this value will not be shown. Default is 1 (validated)
+	 *
+	 * @return int|list<int>|list<array{rowid:int, ref:string, title:string, date_start_event:string, date_end_event:string, location:string, max_attendees:int, public:int, fk_statut:int}>
+	 */
+	public function fetchEventOrgIds($user, $timeline = 1, $fromdate = 0, $mode = 0, $limit = 0, $offset = 0, $showmin = 0, $showmax = 1)
+	{
+		dol_syslog(__METHOD__, LOG_DEBUG);
+
+		$records = array();
+
+		if ($mode) {
+			$sql = 'SELECT rowid, ref, title, date_start_event, date_end_event, location, max_attendees, public, fk_statut';
+		} else {
+			$sql = 'SELECT rowid';
+		}
+		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
+		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) {
+			$sql .= ' WHERE t.entity IN ('.getEntity($this->element).')';
+		} else {
+			$sql .= ' WHERE 1 = 1';
+		}
+		$sql .= ' AND usage_organize_event = 1';
+		$sql .= ' AND fk_statut >= '.(int) $showmin;
+		$sql .= ' AND fk_statut <= '.(int) $showmax;
+
+		if ($fromdate == -1) {
+			$date_start_event = (isset($this->date_start_event)) ? ($this->date_start_event) : dol_now();
+		} elseif ($fromdate == 0) {
+			$date_start_event = dol_now();
+		} else {
+			$date_start_event = $fromdate;
+		}
+		if ($timeline < 0 ) {
+			$sql .= ' AND date_start_event < '.(int) $date_start_event;
+		} elseif ($timeline > 0) {
+			$sql .= ' AND date_start_event > '.(int) $date_start_event;
+		}
+
+		$sql .= ' ORDER BY date_start_event ASC';
+
+		if (!empty($limit)) {
+			$sql .= $this->db->plimit($limit, $offset);
+		}
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			while ($i < ($limit ? min($limit, $num) : $num)) {
+				$obj = $this->db->fetch_object($resql);
+
+				if ($mode == 0 ) {
+					$records[] = $obj->rowid;
+				} elseif ($mode == 1) {
+					$element = array();
+					$records[] = (array) $obj;
+				}
+				$i++;
+			}
+			$this->db->free($resql);
+
+			return $records;
+		} else {
+			$this->errors[] = 'Error '.$this->db->lasterror();
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
+
+			return -1;
+		}
+	}
+
+	/**
 	 *  Create an intervention document on disk using template defined into PROJECT_ADDON_PDF
 	 *
 	 *  @param	string		$modele			Force template to use ('' by default)
