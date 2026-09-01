@@ -24,6 +24,7 @@ create table llx_onlinepayment_session
 (
   rowid             integer AUTO_INCREMENT PRIMARY KEY,
   ext_payment_site  varchar(64) NOT NULL,          -- 'Stripe', 'StripeTest', 'Stancer', ...
+  ext_payment_id    varchar(128),                  -- id of the transaction on the platform, propagated in the return URL
   data              text,                          -- json of the data to propagate to the callback page
   date_creation     datetime NOT NULL,
   tms               timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
