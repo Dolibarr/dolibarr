@@ -2,7 +2,8 @@
 /* Copyright (C) 2017		Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         	<frederic.france@free.fr>
+ * Copyright (C) 2026       Jon Bendtsen	         	<jon.bendtsen.github@jonb.dk>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,6 +71,7 @@ $withproject = GETPOSTISSET('withproject') ? GETPOSTINT('withproject'): 1;
 
 // Initialize a technical objects
 $object = new ConferenceOrBoothAttendee($db);
+$attendeestatic = new ConferenceOrBoothAttendee($db);
 $extrafields = new ExtraFields($db);
 $projectstatic = new Project($db);
 $diroutputmassaction = $conf->eventorganization->dir_output.'/temp/massgeneration/'.$user->id;
@@ -495,6 +497,9 @@ if (!empty($withproject)) {
 
 // Part to create an attendee
 if ($action == 'create' && $confOrBooth === null) {
+	$object->fk_replacement = 0;
+	unset($object->fields['fk_replacement']);
+	// because else some preset data showed up in create form? and we don't want it here anyway
 	print load_fiche_titre($langs->trans("NewObject", $langs->transnoentitiesnoconv("ConferenceOrBoothAttendee")), '', 'object_'.$object->picto);
 
 
@@ -610,6 +615,231 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$formquestion = array();
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneAsk', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 	}
+	// popup to confirmation Set replace or edit replace
+	if ($action == 'replace' || $action == 'undoreplace') {
+		$langs->loadLangs(array("productbatch", "eventorganization", "admin", "bills", "main"));
+		$fetchme = $attendeestatic->fetch($id);
+		if ($fetchme) {
+			// Create an array for form
+			$formquestion = array();
+
+			$current_fk_replacement = $attendeestatic->fk_replacement ?? 0;
+			$filter = '((t.fk_project:=:' . ((int) $attendeestatic->fk_project) . ') AND (t.status:IN:[' . $attendeestatic::STATUS_VALIDATED . ',' . $attendeestatic::STATUS_DRAFT . ']) AND (t.rowid:!=:' . ((int) $id) . '))';
+			$attendee_list = $attendeestatic->fetchAll('', '', 0, 0, $filter);
+			$reformat_list = array();
+			foreach ($attendee_list as $attendee) {
+				if ($current_fk_replacement == $attendee->id) {
+					$reformat_list[$attendee->id] = '✓ '.$attendee->getFullName($langs, 0, -1, 0);
+				} else {
+					$reformat_list[$attendee->id] = $attendee->getFullName($langs, 0, -1, 0);
+				}
+			}
+
+			// 655360? well, 640k is enough for everybody :-D and if I used -1 then it would show very fain where as with 655360 the text is clearly seen, and I can not use 0, because that is draft :-(
+			$source_status_list = array();
+			$source_status_list[655360] = $langs->trans("Unchanged");
+			foreach ($attendeestatic->list_possible_status as $statusid) {
+				$source_status_list[(int) $statusid] = $attendeestatic->LibStatut($statusid, 1);
+			}
+			$replace_status_list = array();
+			$replace_status_list[655360] = $langs->trans("CopyOriginal");
+			foreach ($attendeestatic->list_possible_status as $statusid) {
+				$replace_status_list[(int) $statusid] = $attendeestatic->LibStatut($statusid, 1);
+			}
+			$select_replace_attendee = $langs->trans("SelectOneReplacementAttendee");
+			/**
+			 * @var array<array{name: string, label: string, type: 'select'|'checkbox', values?: array<int|string, string>, default?: string|int, value?: int, inputko?: int}> $formquestion
+			 */
+			if ($action == 'replace') {
+				$attendee_selection_list = [
+					'name'     => 'select_replace_attendee',
+					'label'    => $select_replace_attendee,
+					'type'     => 'select',
+					'values'   => (array) $reformat_list,
+					'default'  => '-1'
+				];
+				$oldstatus_selection_list = [
+					'name'     => 'oldobject_status',
+					'label'    => $langs->trans("OriginalAttendee").' &ndash; '.$langs->trans("SetToStatus"),
+					'type'     => 'select',
+					'values'   => (array) $source_status_list,
+					'default'  => 13,
+				];
+				$newstatus_selection_list = [
+					'name'     => 'newobject_status',
+					'label'    => $langs->trans("ReplacementAttendee").' &ndash; '.$langs->trans("SetToStatus"),
+					'type'     => 'select',
+					'values'   => (array) $replace_status_list,
+					'default'  => 1,
+				];
+			} else {
+				$reformat_list[-2] = '--- '.$langs->trans("None").' ---';
+				$attendee_selection_list = [
+					'name'     => 'select_replace_attendee',
+					'label'    => $select_replace_attendee,
+					'type'     => 'select',
+					'values'   => (array) $reformat_list,
+					'default'  => $current_fk_replacement,
+				];
+				$oldstatus_selection_list = [
+					'name'     => 'oldobject_status',
+					'label'    => $langs->trans("OriginalAttendee").' &ndash; '.$langs->trans("SetToStatus"),
+					'type'     => 'select',
+					'values'   => (array) $source_status_list,
+					'default'  => 1,
+				];
+				$newstatus_selection_list = [
+					'name'     => 'newobject_status',
+					'label'    => $langs->trans("ReplacementAttendee").' &ndash; '.$langs->trans("SetToStatus"),
+					'type'     => 'select',
+					'values'   => (array) $replace_status_list,
+					'default'  => 0,
+				];
+			}
+
+			$formquestion = [$attendee_selection_list, $oldstatus_selection_list, $newstatus_selection_list,
+				[
+					'name'    => 'autotrigger',
+					'label'   => $langs->trans("AutomaticTrigger"),
+					'type'    => 'checkbox',
+					'value'   => 1,
+					'default' => 1,
+					'inputko' => 1,
+				]
+			];
+
+			// Reason: The function expects 'string[]' (indexed 0,1,2), but Dolibarr requires associative arrays (Key=>Label) for selects.
+			// Our keys (-1, 1, 5) are valid for the runtime logic but violate the strict 'string[]' type hint.
+			/** @phan-suppress-next-line PhanTypeMismatchArgument */
+			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToReplace'), $langs->trans('ConfirmReplaceAsk', $attendeestatic->getFullName($langs, 0, -1, 0)), 'confirm_replace_attendee', $formquestion, 'yes', 1);
+		}
+	}
+
+	// Action replace object
+	$select_replace_attendee = GETPOSTINT('select_replace_attendee');
+	if ($action == 'confirm_replace_attendee' && $confirm == 'yes' && !empty($permissiontoadd) && $select_replace_attendee == -1) {
+		$langs->loadLangs(array("eventorganization", "errors"));
+		setEventMessages($langs->trans("NoReplacementAttendeeSelected"), null, 'errors');
+	} elseif ($action == 'confirm_replace_attendee' && $confirm == 'yes' && $id > 0 && $id == $select_replace_attendee) {
+		$langs->loadLangs(array("eventorganization", "admin"));
+		dol_syslog('Aborted - Attempt to replace attendee='.(int) $id.' with itself!', LOG_WARNING);
+		setEventMessages($langs->trans("ErrorCannotReplaceSelf2"), null, 'errors');
+	} elseif ($action == 'confirm_replace_attendee' && $confirm == 'yes' && !empty($permissiontoadd) && ($select_replace_attendee > 0 || $select_replace_attendee == -2)) {
+		$langs->loadLangs(array("eventorganization", "errors", "blockedlog", "bills", "main"));
+		// can not reuse attendeestatic because I modify it
+		$attendeesource = new ConferenceOrBoothAttendee($db);
+		if ($id > 0) {
+			$fetchme = $attendeesource->fetch($id);
+		} else {
+			dol_syslog('Attendee='.(int) $id.' not found', LOG_WARNING);
+			setEventMessages($langs->trans("ErrorObjectNotFound", $langs->trans("Attendee")), null, 'errors');
+			$fetchme = 0;
+		}
+		if ($fetchme > 0 && $attendeesource->fk_project > 0) {
+			$fetchproject = $projectstatic->fetch($attendeesource->fk_project);
+		} else {
+			dol_syslog('fk_project='.(string) $attendeesource->fk_project.' on attendee='.(int) $id.' not found', LOG_WARNING);
+			setEventMessages($langs->trans("ErrorObjectNotFound", $langs->trans("ProjectRef")), null, 'errors');
+			$fetchproject = 0;
+		}
+		if ($fetchproject > 0) {
+			$userHasProjectRights = $projectstatic->restrictedProjectArea($user, 'write');
+		} else {
+			$userHasProjectRights = null;
+		}
+
+		if ($userHasProjectRights < 1) {
+			dol_syslog('User='.$user->id.' has no write access to project='.$attendeesource->fk_project, LOG_WARNING);
+			setEventMessages($langs->trans("NoProjectWritePermission"), null, 'errors');
+		} else {
+			$label_config = array('firstname', ' ', 'lastname', ' (#', 'id', ')');
+			$oldobject_status_id = GETPOSTINT('oldobject_status');
+			$newobject_status_id = GETPOSTINT('newobject_status');
+			$oldobject_status_id = (is_null($oldobject_status_id) || is_numeric($oldobject_status_id)) ? (int) $oldobject_status_id : (int) 13; // default is set the old objects status to 13 (replaced)
+			$newobject_status_id = (is_null($newobject_status_id) || is_numeric($newobject_status_id)) ? (int) $newobject_status_id : (int) 1;  // default for new replaced attendee to 1 (registered)
+
+			$autotrigger = GETPOST('autotrigger', 'alpha') ? GETPOST('autotrigger', 'alpha') : null;
+			$notrigger = ($autotrigger == 'on') ? 0 : 1;
+
+			$attendeereplace = new ConferenceOrBoothAttendee($db);
+			$tempObj = new ConferenceOrBoothAttendee($db);
+			if (isset($attendeesource->fk_replacement) && $attendeesource->fk_replacement == $select_replace_attendee) {
+				$fetchReplace = 0;
+			} elseif ($select_replace_attendee > 0) {
+				$fetchReplace = $attendeereplace->fetch($select_replace_attendee);
+			} else {
+				$fetchReplace = null;
+			}
+
+			$replaceResult = null;
+			if (is_null($fetchReplace)) {
+				$replaceResult = $attendeesource->replaceMeWithAttendee($user, null, 0, 0, 0, 0);
+			} elseif ($fetchReplace > 0) {
+				$any_existing_fk_replacement = $attendeesource->fk_replacement;
+				$check_any_existing_fk_replacement = 0;
+				if ($any_existing_fk_replacement > 0) {
+					$check_any_existing_fk_replacement = $tempObj->fetch($any_existing_fk_replacement);
+				}
+				if ($check_any_existing_fk_replacement > 0) {
+					$force_fk_replacement = 1;
+					dol_syslog('Source attendee='.$id.' already had fk_replacement='.$any_existing_fk_replacement.' now replaced with new value='.$select_replace_attendee, LOG_WARNING);
+					$warn_message = $langs->trans("ExistingAttendeeReplacementTarget", $attendeesource->getNomUrl(1, '', 0, '', -1, $label_config), $tempObj->getNomUrl(1, '', 0, '', -1, $label_config), $attendeereplace->getNomUrl(1, '', 0, '', -1, $label_config));
+					setEventMessages($warn_message, null, 'warnings');
+				} else {
+					$force_fk_replacement = 0;
+				}
+				$replaceResult = $attendeesource->replaceMeWithAttendee($user, $attendeereplace, $newobject_status_id, $oldobject_status_id, $notrigger, $force_fk_replacement);
+			} elseif ($fetchReplace < 0) {
+				setEventMessages($langs->trans("ErrorObjectNotFound", $langs->trans("ReplacementAttendee")), null, 'errors');
+			}
+
+			if ($replaceResult > 0) {
+				dol_syslog('Replacing attendee='.$id.' with attendee='.$select_replace_attendee, LOG_INFO);
+				if ($select_replace_attendee == -2) {
+					$info_message = $langs->trans("AttendeeReplacementSourceReset", $attendeesource->getNomUrl(1, '', 0, '', -1, $label_config));
+				} else {
+					$info_message = $langs->trans("AttendeeReplacedBy", $attendeesource->getNomUrl(1, '', 0, '', -1, $label_config), $attendeereplace->getNomUrl(1, '', 0, '', -1, $label_config));
+				}
+				setEventMessages($info_message, null, 'mesgs');
+				$url = htmlspecialchars($_SERVER['PHP_SELF']) . '?id=' . $id;
+				echo '<meta http-equiv="refresh" content="0;url=' . $url . '">';
+				echo '<p>Redirecting to <a href="' . $url . '">new page</a>...</p>';
+				exit;
+				// header() method does not work, it gives this error
+				// PHP Warning:  Cannot modify header information - headers already sent by (output started at /var/www/html/main.inc.php:2098)
+			} elseif ($replaceResult == 0) {
+				// No Change: Show Info message
+				$langs->loadLangs(array("eventorganization"));
+				setEventMessages($langs->trans("NoChangeMade"), null, 'mesgs'); // Add this key
+				// Redirect back
+				$url = htmlspecialchars($_SERVER['PHP_SELF']) . '?id=' . $id;
+				echo '<meta http-equiv="refresh" content="0;url=' . $url . '">';
+				exit;
+			} else {
+				// Map error codes to numbered translation keys
+				$transKeys = array(
+					-1 => 'ErrorStatusNotAllowed1',
+					-2 => 'ErrorCannotReplaceSelf2',
+					-3 => 'ErrorInvalidStatusReplacement3',
+					-4 => 'ErrorInvalidStatusSource4',
+					-5 => 'ErrorAlreadyHasReplacement5',
+					-6 => 'ErrorNothingToUndo6',
+					-7 => 'ErrorChainNotEmpty7',
+					-8 => 'ErrorFetchFailed8'
+				);
+
+				if (isset($transKeys[$replaceResult])) {
+					$error_msg = $langs->trans($transKeys[$replaceResult]);
+				} else {
+					// Fallback for unknown error codes using core Dolibarr error key
+					// Format: "Unknown error '%s'" where %s is the code
+					$error_msg = $langs->trans("ErrorPriceExpressionUnknown", $replaceResult);
+				}
+
+				setEventMessages($error_msg, null, 'errors');
+			}
+		}
+	}
 
 	// Call Hook formConfirm
 	$parameters = array('formConfirm' => $formconfirm, 'lineid' => $lineid);
@@ -677,6 +907,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			// Clone
 			print dolGetButtonAction('', $langs->trans('ToClone'), 'clone', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&token='.newToken().(!empty($projectstatic->id) ? '&fk_project='.$projectstatic->id : ''), '', $permissiontoadd);
 
+			// Replace
+			$langs->loadLangs(array("productbatch"));
+			if (empty($object->fk_replacement)) {
+				print dolGetButtonAction('', $langs->trans('ToReplace'), 'replace', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=replace&token='.newToken().(!empty($projectstatic->id) ? '&fk_project='.$projectstatic->id : ''), '', $permissiontoadd);
+			} else {
+				print dolGetButtonAction('', $langs->trans("EditReplacement"), 'undoreplace', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=undoreplace&token='.newToken().(!empty($projectstatic->id) ? '&fk_project='.$projectstatic->id : ''), '', $permissiontoadd);
+			}
 			// Delete (need delete permission, or if draft, just need create/modify permission)
 			print dolGetButtonAction('', $langs->trans('Delete'), 'delete', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken().(!empty($projectstatic->id) ? '&fk_project='.$projectstatic->id : ''), '', $permissiontodelete || ($object->status == $object::STATUS_DRAFT && $permissiontoadd));
 		}

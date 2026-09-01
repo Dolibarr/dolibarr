@@ -1116,7 +1116,8 @@ while ($i < $imaxinloop) {
 					}
 					print $object->getNomUrl(1, $optionLink);
 				} else {
-					print $object->showOutputField($val, $key, (string) $object->$key, '');
+					$label_config = array('firstname', ' #', 'id');
+					print $object->showOutputField($val, $key, (string) $object->$key, '', '', '', '', $label_config);
 				}
 				print '</td>';
 				if (!$i) {
