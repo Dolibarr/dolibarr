@@ -334,7 +334,59 @@ function LoadProducts(position, issubcat) {
 	pageproducts=0;
 	ishow=0; //product to show counter
 
+	var parent_cat = 0;
+	var parent_cat_label = '<?php echo dol_escape_js($langs->trans('GoBack')); ?>';
 	if (currentcat != "supplements") {
+		jQuery.each(subcategories, function(i, val) {
+			if (val.rowid == currentcat) {
+				parent_cat = val.fk_parent;
+				return false;
+			}
+		});
+
+		if (parent_cat > 0) {
+			var found = false;
+			jQuery.each(categories, function(i, val) {
+				if (val.rowid == parent_cat) {
+					parent_cat_label = val.label;
+					found = true;
+					return false;
+				}
+			});
+			if (!found) {
+				jQuery.each(subcategories, function(i, val) {
+					if (val.rowid == parent_cat) {
+						parent_cat_label = val.label;
+						return false;
+					}
+				});
+			}
+
+			$("#prodivdesc"+ishow).show();
+			var back_html = '<span class="fa fa-chevron-left paddingright"></span> ' + parent_cat_label;
+
+			<?php if (getDolGlobalString('TAKEPOS_SHOW_CATEGORY_DESCRIPTION') == 1) { ?>
+				$("#prodesc"+ishow).html('<strong>' + back_html + '</strong>');
+			<?php } else { ?>
+				$("#prodesc"+ishow).html(back_html);
+			<?php } ?>
+			$("#probutton"+ishow).html(back_html);
+
+			$("#probutton"+ishow).show();
+			$("#proprice"+ishow).attr("class", "hidden");
+			$("#proprice"+ishow).html("");
+			<?php if (!getDolGlobalString('TAKEPOS_HIDE_PRODUCT_IMAGES')) { ?>
+			$("#proimg"+ishow).attr("src", "genimg/index.php?query=cat&id="+parent_cat);
+			<?php } ?>
+			$("#prodiv"+ishow).data("rowid", parent_cat);
+			$("#prodiv"+ishow).attr("data-rowid", parent_cat);
+			$("#prodiv"+ishow).data("iscat", 1);
+			$("#prodiv"+ishow).attr("data-iscat", 1);
+			$("#prodiv"+ishow).removeClass("divempty");
+			$("#prowatermark"+ishow).show();
+			ishow++;
+		}
+
 		console.log("Loop on each category level 2 or more");
 		jQuery.each(subcategories, function(i, val) {
 			if (currentcat == val.fk_parent) {
