@@ -766,7 +766,7 @@ trait CommonSubtotal
 						$this->lines[$i]->product_type,
 						$this->lines[$i]->array_options,
 						$this->lines[$i]->ref_supplier,
-						$this->lines[$i]->fk_unit,
+						(int) $this->lines[$i]->fk_unit,
 						$this->lines[$i]->multicurrency_subprice
 					);
 				} elseif ($current_module == 'order_supplier' && $this instanceof CommandeFournisseur) {
