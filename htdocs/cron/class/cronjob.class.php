@@ -557,6 +557,7 @@ class Cronjob extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."cronjob as t";
 		if ($id > 0) {
 			$sql .= " WHERE t.rowid = ".((int) $id);
+			$sql .= " AND t.entity IN(0, ".getEntity('cron').")";
 		} elseif ($label) {
 			$sql .= " WHERE t.entity IN(0, ".getEntity('cron').")";
 			$sql .= " AND t.label = '".$this->db->escape($label)."'";
@@ -935,6 +936,7 @@ class Cronjob extends CommonObject
 		$sql .= " libname=".(isset($this->libname) ? "'".$this->db->escape($this->libname)."'" : "null").",";
 		$sql .= " test=".(isset($this->test) ? "'".$this->db->escape($this->test)."'" : "null");
 		$sql .= " WHERE rowid=".((int) $this->id);
+		$sql .= " AND entity IN(0, ".getEntity('cron').")";
 
 		$this->db->begin();
 
@@ -975,6 +977,7 @@ class Cronjob extends CommonObject
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."cronjob";
 		$sql .= " WHERE rowid=".((int) $this->id);
+		$sql .= " AND entity IN(0, ".getEntity('cron').")";
 
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);
