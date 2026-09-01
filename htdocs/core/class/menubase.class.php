@@ -241,14 +241,17 @@ class Menubase
 			}
 		}
 
-		// Check that entry does not exists yet on key menu_handler-fk_menu-position-url-entity, to avoid errors with postgresql
+		// Check that entry does not exists yet on key menu_handler-fk_menu-position-url-entity, to avoid errors with postgresql.
+		// Scope on $this->entity (the target entity for this row) instead of $conf->entity (the entity of the current request).
+		// The unique key includes the entity column, so two entities can legitimately host an entry at the same
+		// (menu_handler, fk_menu, position, url); a $conf->entity-based pre-check refused the second one (#34653).
 		$sql = "SELECT count(*)";
 		$sql .= " FROM ".$this->db->prefix()."menu";
 		$sql .= " WHERE menu_handler = '".$this->db->escape($this->menu_handler)."'";
 		$sql .= " AND fk_menu = ".((int) $this->fk_menu);
 		$sql .= " AND position = ".((int) $this->position);
 		$sql .= " AND url = '".$this->db->escape($this->url)."'";
-		$sql .= " AND entity IN (0, ".$conf->entity.")";
+		$sql .= " AND entity IN (0, ".((int) $this->entity).")";
 
 		$result = $this->db->query($sql);
 		if ($result) {
