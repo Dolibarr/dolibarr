@@ -222,6 +222,12 @@ if ($result > 0) {
 	print $object->num_payment ? ' - '.$object->num_payment : '';
 	print '</td></tr>';
 
+	// Payment number
+	print '<tr><td>'.$form->editfieldkey("Numero", 'num_paiement', $object->num_payment, $object, $object->statut == 0 && $user->hasRight("fournisseur", "facture", "creer")).'</td>';
+	print '<td>';
+	print $form->editfieldval("Numero", 'num_paiement', $object->num_payment, $object, $object->statut == 0 && $user->hasRight("fournisseur", "facture", "creer"), 'string', '', null, $langs->trans('PaymentNumberUpdateSucceeded'));
+	print '</td></tr>';
+
 	// Payment numero
 	/* TODO Add field num_payment into payment table and save it
 	print '<tr><td>'.$form->editfieldkey("Numero",'num_paiement',$object->num_paiement,$object,$object->statut == 0 && $user->hasRight("fournisseur", "facture", "creer")).'</td>';
