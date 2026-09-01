@@ -758,6 +758,40 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 
 	/* JQuery for product free or predefined select */
 	jQuery(document).ready(function() {
+		function getSelectedProductCombinationsData() {
+			var data = {};
+			jQuery('#attributes_box select[name^="combinations["]').each(function() {
+				data[jQuery(this).attr('name')] = jQuery(this).val();
+			});
+			return data;
+		}
+
+		function refreshProductPriceFromSelectedCombinations() {
+			var productId = jQuery('#idprod').val();
+			if (!productId) {
+				return;
+			}
+
+			var postData = jQuery.extend({
+				'id': productId,
+				'socid': <?php print $object->socid; ?>,
+				'token': '<?php print currentToken(); ?>',
+				'addalsovatforthirdpartyid': 1
+			}, getSelectedProductCombinationsData());
+
+			jQuery.post('<?php echo DOL_URL_ROOT; ?>/product/ajax/products.php?action=fetch', postData, function(data) {
+				if (<?php echo (int) $inputalsopricewithtax; ?> == 1 && data.pricebasetype == 'TTC' && <?php print getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX') ? 'false' : 'true'; ?>) {
+					jQuery('#price_ttc').val(data.price_ttc);
+				} else {
+					jQuery('#price_ht').val(data.price_ht);
+				}
+			}, 'json');
+		}
+
+		jQuery(document).on('change', '#attributes_box select[name^="combinations["]', function() {
+			refreshProductPriceFromSelectedCombinations();
+		});
+
 		jQuery("#price_ht").keyup(function(event) {
 			// console.log(event.which);		// discard event tag and arrows
 			if (event.which != 9 && (event.which < 37 ||event.which > 40) && jQuery("#price_ht").val() != '') {
@@ -892,7 +926,7 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 					// Get the price for the product and display it
 					console.log("Load unit price and set it into #price_ht or #price_ttc for product id="+$(this).val()+" socid=<?php print $object->socid; ?>");
 					$.post('<?php echo DOL_URL_ROOT; ?>/product/ajax/products.php?action=fetch',
-						{ 'id': $(this).val(), 'socid': <?php print $object->socid; ?>, 'token': '<?php print currentToken(); ?>', 'addalsovatforthirdpartyid': 1 },
+						jQuery.extend({ 'id': $(this).val(), 'socid': <?php print $object->socid; ?>, 'token': '<?php print currentToken(); ?>', 'addalsovatforthirdpartyid': 1 }, getSelectedProductCombinationsData()),
 						function(data) {
 							console.log("objectline_create.tpl Load unit price ends, we got value ht="+data.price_ht+" ttc="+data.price_ttc+" pricebasetype="+data.pricebasetype);
 
