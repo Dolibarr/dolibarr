@@ -483,3 +483,6 @@ WarningEvaluationEmptyValidate=Can't validate evaluation, levels on skills not d
 ErrorBadParametersForDirectDebitFileCreate=Can't create bank transfer file: expected format parameter is not provided.
 ErrorBadParametersForDirectDebitFileCreateDids=Can't create bank transfer file: IDs of existing payment requests are not provided.
 ErrorExpeditionQtyTooHigh=Shipped quantity (%s) exceeds the remaining quantity to deliver (%s).
+SkippedAlreadyAssigned=Skipped %s - already assigned
+ErrorNoGoodSelected=No valid %s selected for assignment
+ErrorAssignToTasks=Failed to make %s assignments of %s to tasks
