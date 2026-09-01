@@ -690,7 +690,7 @@ if ($id > 0 || !empty($ref)) {
 		}
 
 		//$sql = "SELECT l.rowid, l.fk_product, l.subprice, l.remise_percent, l.ref AS sref, SUM(l.qty) as qty,";
-		$sql = "SELECT l.rowid, l.fk_product, l.subprice, l.remise_percent, l.ref AS sref, l.qty as qty,";
+		$sql = "SELECT l.rowid, l.fk_product, l.subprice, l.remise_percent, l.ref AS sref, l.qty as qty, l.description,";
 		$sql .= " p.ref, p.label, p.tobatch, p.fk_default_warehouse";
 
 		// Enable hooks to alter the SQL query (SELECT)
@@ -816,9 +816,6 @@ if ($id > 0 || !empty($ref)) {
 					if ($remaintodispatch || !getDolGlobalString('SUPPLIER_ORDER_DISABLE_STOCK_DISPATCH_WHEN_TOTAL_REACHED')) {
 						$nbproduct++;
 
-						// To show detail cref and description value, we must make calculation by cref
-						// print ($objp->cref?' ('.$objp->cref.')':'');
-						// if ($objp->description) print '<br>'.nl2br($objp->description);
 						$suffix = '_0_'.$i;
 
 						print "\n";
@@ -838,6 +835,9 @@ if ($id > 0 || !empty($ref)) {
 
 						$linktoprod = $tmpproduct->getNomUrl(1);
 						$linktoprod .= ' - '.$objp->label."\n";
+						if (!empty($objp->description) && $objp->description != $objp->label) {
+							$linktoprod = $form->textwithtooltip($linktoprod, dol_htmlentitiesbr($objp->description));
+						}
 
 						if (isModEnabled('productbatch')) {
 							if ($objp->tobatch) {
