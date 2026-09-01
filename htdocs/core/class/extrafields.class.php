@@ -1544,15 +1544,15 @@ class ExtraFields
 							} elseif (substr($_SERVER["PHP_SELF"], -8) == 'list.php') {
 								// In filters of list views, we do not want $ID$ replaced by 0. So we remove the '=' condition.
 								// Do nothing if condition is using 'IN' keyword
-								// Replace 'column = $ID$' by "column"
+								// Replace 'column = $ID$' by an always true test, the parent object is unknown in a list
 								$word = '#\b([a-zA-Z0-9-\.-_]+)\b *= *\$ID\$#';
-								$InfoFieldList[4] = preg_replace($word, '$1', $InfoFieldList[4]);
-								// Replace '$ID$ = column' by "column"
+								$InfoFieldList[4] = preg_replace($word, '1 = 1', $InfoFieldList[4]);
+								// Replace '$ID$ = column' by an always true test
 								$word = '#\$ID\$ *= *\b([a-zA-Z0-9-\.-_]+)\b#';
-								$InfoFieldList[4] = preg_replace($word, '$1', $InfoFieldList[4]);
-								// Same with the Universal Search Filter syntax, '(column:=:$ID$)' by "(column)"
+								$InfoFieldList[4] = preg_replace($word, '1 = 1', $InfoFieldList[4]);
+								// Same with the Universal Search Filter syntax, '(column:=:$ID$)'
 								$word = '#\b([a-zA-Z0-9-\.-_]+)\b *: *[<>!=]?= *: *\$ID\$#';
-								$InfoFieldList[4] = preg_replace($word, '$1', $InfoFieldList[4]);
+								$InfoFieldList[4] = preg_replace($word, '1 = 1', $InfoFieldList[4]);
 							} else {
 								$InfoFieldList[4] = str_replace('$ID$', '0', $InfoFieldList[4]);
 							}
@@ -1814,15 +1814,15 @@ class ExtraFields
 						} elseif (substr($_SERVER["PHP_SELF"], -8) == 'list.php') {
 							// In filters of list views, we do not want $ID$ replaced by 0. So we remove the '=' condition.
 							// Do nothing if condition is using 'IN' keyword
-							// Replace 'column = $ID$' by "column"
+							// Replace 'column = $ID$' by an always true test, the parent object is unknown in a list
 							$word = '#\b([a-zA-Z0-9-\.-_]+)\b *= *\$ID\$#';
-							$InfoFieldList[4] = preg_replace($word, '$1', $InfoFieldList[4]);
-							// Replace '$ID$ = column' by "column"
+							$InfoFieldList[4] = preg_replace($word, '1 = 1', $InfoFieldList[4]);
+							// Replace '$ID$ = column' by an always true test
 							$word = '#\$ID\$ *= *\b([a-zA-Z0-9-\.-_]+)\b#';
-							$InfoFieldList[4] = preg_replace($word, '$1', $InfoFieldList[4]);
-							// Same with the Universal Search Filter syntax, '(column:=:$ID$)' by "column"
+							$InfoFieldList[4] = preg_replace($word, '1 = 1', $InfoFieldList[4]);
+							// Same with the Universal Search Filter syntax, '(column:=:$ID$)'
 							$word = '#\b([a-zA-Z0-9-\.-_]+)\b *: *[<>!=]?= *: *\$ID\$#';
-							$InfoFieldList[4] = preg_replace($word, '$1', $InfoFieldList[4]);
+							$InfoFieldList[4] = preg_replace($word, '1 = 1', $InfoFieldList[4]);
 						} else {
 							$InfoFieldList[4] = str_replace('$ID$', '0', $InfoFieldList[4]);
 						}
