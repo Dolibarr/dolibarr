@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2023-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026       Jon Bendtsen        <jon.bendtsen.github@jonb.dk>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -127,6 +128,49 @@ trait CommonPeople
 		$ret .= dolGetFirstLastname($firstname, $lastname, $nameorder);
 
 		return dol_string_nohtmltag(dol_trunc($ret, $maxlen));
+	}
+
+	/**
+	 *  Return number of "Commerce" (Proposal, Order, Invoice) belonging to this CommonPeople (most likely Thirdparty)
+	 *  Not checking if user has permission, because the webpage that shows these numbers should do that checking
+	 *
+	 *  @param	string	$commerceType	The type of commerce object to look at: Proposal, Order, Invoice
+	 *  @return	int     				-1 when error, 0 or more = Number of "Commerce" Objects
+	 */
+	public function getNbOfCommerce($commerceType)
+	{
+		if ($commerceType == "propal") {
+			$table_element = 'propal';
+		} elseif ($commerceType == "commande") {
+			$table_element = 'commande';
+		} elseif ($commerceType == "facture") {
+			$table_element = 'facture';
+		} elseif ($commerceType == 'supplier_proposal') {
+			$table_element = 'supplier_proposal';
+		} elseif ($commerceType == 'order_supplier') {
+			$table_element = 'commande_fournisseur';
+		} elseif ($commerceType == 'invoice_supplier') {
+			$table_element = 'facture_fourn';
+		} else {
+			dol_syslog("Don't know which table_element to use for commerceType=".$commerceType, LOG_ERR);
+			return -1;
+		}
+
+		$sql = "SELECT count(*) as nb";
+		$sql .= " FROM ".MAIN_DB_PREFIX.$table_element;
+		$sql .= " WHERE fk_soc = ".(int) $this->id;
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$obj = $this->db->fetch_object($resql);
+			$nb = (int) $obj->nb;
+
+			$this->db->free($resql);
+			return $nb;
+		} else {
+			$this->error = $this->db->error();
+			return -1;
+		}
 	}
 
 	/**
