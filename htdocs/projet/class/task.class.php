@@ -733,7 +733,10 @@ class Task extends CommonObjectLine
 						1
 					);
 					if ($projectCompleted) {
-						if ($project->setClose($user) <= 0) {
+						// Opportunities require an explicit WON/LOST status to be closed, so they are not auto-closed
+						// when their tasks are complete (issue #23821): they must be closed manually from the card.
+						$isopportunity = (getDolGlobalString('PROJECT_USE_OPPORTUNITIES') && !empty($project->usage_opportunity));
+						if (!$isopportunity && $project->setClose($user) <= 0) {
 							$error++;
 						}
 					}
