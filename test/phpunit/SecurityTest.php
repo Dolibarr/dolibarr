@@ -1480,7 +1480,6 @@ class SecurityTest extends CommonClassTest
 		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = $sav1;
 		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = $sav2;
 
-
 		// With HTML TIDY
 		if (extension_loaded('tidy') && class_exists("tidy")) {
 			$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 0;
