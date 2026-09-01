@@ -92,6 +92,7 @@ class InterfaceWebhookTriggers extends DolibarrTriggers
 
 		// Create new instance of db for webhook history save
 		$dbhistory = null;
+		$useglobaldb = true;
 
 		$sendmanualtriggers = (!empty($object->context['sendmanualtriggers']) ? $object->context['sendmanualtriggers'] : "");
 		foreach ($target_url as $key => $tmpobject) {
@@ -158,6 +159,7 @@ class InterfaceWebhookTriggers extends DolibarrTriggers
 
 				if (empty($dbhistory)) {
 					$dbhistory = getDoliDBInstance($conf->db->type, $conf->db->host, (string) $conf->db->user, $dolibarr_main_db_pass, $conf->db->name, (int) $conf->db->port);
+					$useglobaldb = false;
 				}
 
 				$dbhistory->begin();
@@ -183,7 +185,8 @@ class InterfaceWebhookTriggers extends DolibarrTriggers
 			}
 		}
 
-		if ($dbhistory) {
+		// Test if dbhistory exist and IS different to main db used. Else postgres will crash because there is no db left for end of pages
+		if ($dbhistory && $useglobaldb) {
 			$dbhistory->close();
 		}
 
