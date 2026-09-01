@@ -473,7 +473,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 					$diff_array = array_diff_assoc($qtyordred, $qtyshipped);
 					if (count($diff_array) == 0) {
 						//No diff => mean everything is shipped
-						$ret = $order->cloture($user);
+						$ret = $order->setStatut(Commande::STATUS_CLOSED, $object->origin_id, $object->origin_type, 'ORDER_CLOSE'); // setStatus needed as closure function checks for permissions
 						if ($ret < 0) {
 							$this->setErrorsFromObject($order);
 							return $ret;
