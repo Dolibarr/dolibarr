@@ -101,6 +101,9 @@ if ($element == 'action') {
 if ($element == 'fichinter') {
 	$result = restrictedArea($user, 'ficheinter', $element_id, 'fichinter');
 }
+if ($element == 'project') {
+	$result = restrictedArea($user, 'project', $element_id, 'project);
+}
 if ($element == 'product' || $element == 'service') {	// When RESOURCE_ON_PRODUCTS or RESOURCE_ON_SERVICES is set
 	$tmpobject = new Product($db);
 	$tmpobject->fetch($element_id);
@@ -561,6 +564,42 @@ if (!$ret) {
 		}
 	}
 
+	// Specific to project module
+	if (($element_id || $element_ref) && $element == 'project') {
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
+
+		$project = new Project($db);
+		$project->fetch($element_id, $element_ref);
+		$project->fetch_thirdparty();
+
+		$usercancreate = $user->hasRight('project', 'creer');
+
+		if (is_object($project)) {
+			$head = project_prepare_head($project);
+			print dol_get_fiche_head($head, 'resource', $langs->trans("Project"), -1, 'project');
+
+			// Project card
+			$linkback = '<a href="'.DOL_URL_ROOT.'/project/list.php'.(!empty($socid) ? '?socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
+
+
+			$morehtmlref = '<div class="refidno">';
+			// Ref customer
+			//$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $fichinter->ref_client, $fichinter, $user->rights->ficheinter->creer, 'string', '', 0, 1);
+			//$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $fichinter->ref_client, $fichinter, $user->rights->ficheinter->creer, 'string', '', null, null, '', 1);
+			$morehtmlref .= $form->editfieldkey("RefCustomer", 'ref_client', $project->ref_client, $project, 0, 'string', '', 0, 1);
+			$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_client', $project->ref_client, $project, 0, 'string', '', null, null, '', 1);
+			// Thirdparty
+			if (isset($project->thirdparty)) {
+				$morehtmlref .= '<br>'.$project->thirdparty->getNomUrl(1, 'customer');
+				$morehtmlref .= '</div>';
+			}
+
+			dol_banner_tab($project, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '&element='.$element, 0, '', '', 1);
+
+			print dol_get_fiche_end();
+		}
+	}
+
 	// Specific to fichinter module
 	if (($element_id || $element_ref) && $element == 'fichinter') {
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/fichinter.lib.php';
@@ -712,3 +751,4 @@ if (!$ret) {
 // End of page
 llxFooter();
 $db->close();
+
