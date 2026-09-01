@@ -1081,7 +1081,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 					if ($object->qty > 0) {
 						// add free consume line cost to $bomcostupdated
-						$costprice = price2num((!empty($tmpproduct->cost_price)) ? $tmpproduct->cost_price : $tmpproduct->pmp);
+						// Fix #38378: cost_price is a DECIMAL stored as "0.00000000" by default,
+						// so empty($string) evaluates to false and the PMP fallback is unreachable.
+						// Cast to (double) so empty() evaluates the numeric value, not the string shape.
+						$costprice = price2num((!empty((double) $tmpproduct->cost_price)) ? $tmpproduct->cost_price : $tmpproduct->pmp);
 						if (empty($costprice)) {
 							require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 							$productFournisseur = new ProductFournisseur($db);
@@ -1786,9 +1789,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 								$manufacturingcost = $bomcost;
 								$manufacturingcostsrc = $langs->trans("ValueFromBom");
 							}
+							// Fix #38378: avoid relying on price2num("0.00000000") happening to collapse to "0".
+							// Guard the cost_price branch explicitly so cascade falls through to PMP when needed.
 							if (empty($manufacturingcost)) {
-								$manufacturingcost = price2num($tmpproduct->cost_price, 'MU');
-								$manufacturingcostsrc = $langs->trans("CostPrice");
+								if (!empty((double) $tmpproduct->cost_price)) {
+									$manufacturingcost = price2num($tmpproduct->cost_price, 'MU');
+									$manufacturingcostsrc = $langs->trans("CostPrice");
+								}
 							}
 							if (empty($manufacturingcost)) {
 								$manufacturingcost = price2num($tmpproduct->pmp, 'MU');
@@ -1939,9 +1946,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 									$manufacturingcost = $bomcost;
 									$manufacturingcostsrc = $langs->trans("ValueFromBom");
 								}
+								// Fix #38378: same defensive guard as the cascade above.
 								if (empty($manufacturingcost)) {
-									$manufacturingcost = price2num($tmpproduct->cost_price, 'MU');
-									$manufacturingcostsrc = $langs->trans("CostPrice");
+									if (!empty((double) $tmpproduct->cost_price)) {
+										$manufacturingcost = price2num($tmpproduct->cost_price, 'MU');
+										$manufacturingcostsrc = $langs->trans("CostPrice");
+									}
 								}
 								if (empty($manufacturingcost)) {
 									$manufacturingcost = price2num($tmpproduct->pmp, 'MU');
