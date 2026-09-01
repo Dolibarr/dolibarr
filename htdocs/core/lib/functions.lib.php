@@ -4483,7 +4483,7 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 	}
 	$amount = (is_numeric($amount) ? $amount : 0); // Check if amount is numeric, for example, an error occurred when amount value = o (letter) instead 0 (number)
 	if ($rounding == -1) {
-		$rounding = min(getDolGlobalString('MAIN_MAX_DECIMALS_UNIT'), getDolGlobalString('MAIN_MAX_DECIMALS_TOT'));
+		$rounding = min(getDolGlobalString('MAIN_MAX_DECIMALS_UNIT'), getDolGlobalString('MAIN_MAX_DECIMALS_TOT_LINE'), getDolGlobalString('MAIN_MAX_DECIMALS_TOT'));
 	}
 	$nbdecimal = $rounding;
 
@@ -4543,6 +4543,8 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 	if ((string) $forcerounding != '-1' && (string) $forcerounding != '') {
 		if ($forcerounding === 'MU') {
 			$nbdecimal = getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT');
+    } elseif ($forcerounding === 'MTL') {
+			$nbdecimal = getDolGlobalInt('MAIN_MAX_DECIMALS_TOT_LINE');
 		} elseif ($forcerounding === 'MT') {
 			$nbdecimal = getDolGlobalInt('MAIN_MAX_DECIMALS_TOT');
 		} elseif ($forcerounding >= 0) {
@@ -4699,6 +4701,8 @@ function price2num($amount, $rounding = '', $option = 0)
 		$nbofdectoround = '';
 		if ($rounding == 'MU') {
 			$nbofdectoround = getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT');	// usually 5
+    } elseif ($rounding == 'MTL') {
+			$nbofdectoround = getDolGlobaInt('MAIN_MAX_DECIMALS_TOT_LINE'); // usually 2
 		} elseif ($rounding == 'MT') {
 			$nbofdectoround = getDolGlobalInt('MAIN_MAX_DECIMALS_TOT');		// usually 2 or 3
 		} elseif ($rounding == 'MS') {

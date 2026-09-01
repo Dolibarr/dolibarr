@@ -259,10 +259,10 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 	}
 
 	if ($uselocaltax1_rate && $apply_tax) {
-		$result[14] = price2num(($tot_sans_remise_withvat * (1 + ($localtax1_rate / 100))) - $tot_sans_remise_withvat, 'MT');
+		$result[14] = price2num(($tot_sans_remise_withvat * (1 + ($localtax1_rate / 100))) - $tot_sans_remise_withvat, 'MTL');
 		$localtaxes[0] += $result[14];
 
-		$result[9] = price2num(($tot_avec_remise_withvat * (1 + ($localtax1_rate / 100))) - $tot_avec_remise_withvat, 'MT');
+		$result[9] = price2num(($tot_avec_remise_withvat * (1 + ($localtax1_rate / 100))) - $tot_avec_remise_withvat, 'MTL');
 		$localtaxes[1] += $result[9];
 
 		$result[11] = price2num(($pu_withmainvat * (1 + ($localtax1_rate / 100))) - $pu_withmainvat, 'MU');
@@ -286,10 +286,10 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 			break;
 	}
 	if ($uselocaltax2_rate && $apply_tax) {
-		$result[15] = price2num(($tot_sans_remise_withvat * (1 + ($localtax2_rate / 100))) - $tot_sans_remise_withvat, 'MT');
+		$result[15] = price2num(($tot_sans_remise_withvat * (1 + ($localtax2_rate / 100))) - $tot_sans_remise_withvat, 'MTL');
 		$localtaxes[0] += $result[15];
 
-		$result[10] = price2num(($tot_avec_remise_withvat * (1 + ($localtax2_rate / 100))) - $tot_avec_remise_withvat, 'MT');
+		$result[10] = price2num(($tot_avec_remise_withvat * (1 + ($localtax2_rate / 100))) - $tot_avec_remise_withvat, 'MTL');
 		$localtaxes[1] += $result[10];
 
 		$result[12] = price2num(($pu_withmainvat * (1 + ($localtax2_rate / 100))) - $pu_withmainvat, 'MU');
@@ -299,15 +299,15 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 	//dol_syslog("price.lib::calcul_price_total $qty, $pu, $remise_percent_ligne, $txtva, $price_base_type $info_bits");
 	if ($price_base_type != 'TTC') {
 		// We work to define prices using the price without tax
-		$result[6] = price2num($tot_sans_remise, 'MT');
-		$result[8] = price2num($tot_sans_remise * (1 + ((($info_bits & 1) ? 0 : $txtva) / 100)) + $localtaxes[0], 'MT'); // Selon TVA NPR ou non
-		$result8bis = price2num($tot_sans_remise * (1 + ($txtva / 100)) + $localtaxes[0], 'MT'); // Si TVA consideree normal (non NPR)
-		$result[7] = price2num((float) $result8bis - ((float) $result[6] + $localtaxes[0]), 'MT');
+		$result[6] = price2num($tot_sans_remise, 'MTL');
+		$result[8] = price2num($tot_sans_remise * (1 + ((($info_bits & 1) ? 0 : $txtva) / 100)) + $localtaxes[0], 'MTL'); // Selon TVA NPR ou non
+		$result8bis = price2num($tot_sans_remise * (1 + ($txtva / 100)) + $localtaxes[0], 'MTL'); // Si TVA consideree normal (non NPR)
+		$result[7] = price2num((float) $result8bis - ((float) $result[6] + $localtaxes[0]), 'MTL');
 
-		$result[0] = price2num($tot_avec_remise, 'MT');
-		$result[2] = price2num($tot_avec_remise * (1 + ((($info_bits & 1) ? 0 : $txtva) / 100)) + $localtaxes[1], 'MT'); // Selon TVA NPR ou non
-		$result2bis = price2num($tot_avec_remise * (1 + ($txtva / 100)) + $localtaxes[1], 'MT'); // Si TVA consideree normal (non NPR)
-		$result[1] = price2num((float) $result2bis - ((float) $result[0] + $localtaxes[1]), 'MT'); // Total VAT = TTC - (HT + localtax)
+		$result[0] = price2num($tot_avec_remise, 'MTL');
+		$result[2] = price2num($tot_avec_remise * (1 + ((($info_bits & 1) ? 0 : $txtva) / 100)) + $localtaxes[1], 'MTL'); // Selon TVA NPR ou non
+		$result2bis = price2num($tot_avec_remise * (1 + ($txtva / 100)) + $localtaxes[1], 'MTL'); // Si TVA consideree normal (non NPR)
+		$result[1] = price2num((float) $result2bis - ((float) $result[0] + $localtaxes[1]), 'MTL'); // Total VAT = TTC - (HT + localtax)
 
 		$result[3] = price2num($pu, 'MU');
 		$result[5] = price2num($pu * (1 + ((($info_bits & 1) ? 0 : $txtva) / 100)) + $localtaxes[2], 'MU'); // Selon TVA NPR ou non
@@ -315,15 +315,15 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 		$result[4] = price2num((float) $result5bis - ((float) $result[3] + $localtaxes[2]), 'MU');
 	} else {
 		// We work to define prices using the price with tax
-		$result[8] = price2num($tot_sans_remise + $localtaxes[0], 'MT');
-		$result[6] = price2num($tot_sans_remise / (1 + ((($info_bits & 1) ? 0 : $txtva) / 100)), 'MT'); // Selon TVA NPR ou non
-		$result6bis = price2num($tot_sans_remise / (1 + ($txtva / 100)), 'MT'); // Si TVA consideree normal (non NPR)
-		$result[7] = price2num((float) $result[8] - ((float) $result6bis + $localtaxes[0]), 'MT');
+		$result[8] = price2num($tot_sans_remise + $localtaxes[0], 'MTL');
+		$result[6] = price2num($tot_sans_remise / (1 + ((($info_bits & 1) ? 0 : $txtva) / 100)), 'MTL'); // Selon TVA NPR ou non
+		$result6bis = price2num($tot_sans_remise / (1 + ($txtva / 100)), 'MTL'); // Si TVA consideree normal (non NPR)
+		$result[7] = price2num((float) $result[8] - ((float) $result6bis + $localtaxes[0]), 'MTL');
 
-		$result[2] = price2num((float) $tot_avec_remise + (float) $localtaxes[1], 'MT');
-		$result[0] = price2num((float) $tot_avec_remise / (1 + ((($info_bits & 1) ? 0 : (float) $txtva) / 100)), 'MT'); // Selon TVA NPR ou non
-		$result0bis = price2num((float) $tot_avec_remise / (1 + ((float) $txtva / 100)), 'MT'); // Si TVA consideree normal (non NPR)
-		$result[1] = price2num((float) $result[2] - ((float) $result0bis + (float) $localtaxes[1]), 'MT'); // Total VAT = TTC - (HT + localtax)
+		$result[2] = price2num((float) $tot_avec_remise + (float) $localtaxes[1], 'MTL');
+		$result[0] = price2num((float) $tot_avec_remise / (1 + ((($info_bits & 1) ? 0 : (float) $txtva) / 100)), 'MTL'); // Selon TVA NPR ou non
+		$result0bis = price2num((float) $tot_avec_remise / (1 + ((float) $txtva / 100)), 'MTL'); // Si TVA consideree normal (non NPR)
+		$result[1] = price2num((float) $result[2] - ((float) $result0bis + (float) $localtaxes[1]), 'MTL'); // Total VAT = TTC - (HT + localtax)
 
 		$result[5] = price2num($pu + $localtaxes[2], 'MU');
 		$result[3] = price2num($pu / (1 + ((($info_bits & 1) ? 0 : $txtva) / 100)), 'MU'); // Selon TVA NPR ou non
@@ -350,10 +350,10 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 			break;
 	}
 	if ($uselocaltax1_rate && $apply_tax) {
-		$result[14] = price2num(($tot_sans_remise_withoutvat * (1 + ($localtax1_rate / 100))) - $tot_sans_remise_withoutvat, 'MT'); // amount tax1 for total_ht_without_discount
+		$result[14] = price2num(($tot_sans_remise_withoutvat * (1 + ($localtax1_rate / 100))) - $tot_sans_remise_withoutvat, 'MTL'); // amount tax1 for total_ht_without_discount
 		$result[8] += $result[14]; // total_ttc_without_discount + tax1
 
-		$result[9] = price2num(($tot_avec_remise_withoutvat * (1 + ($localtax1_rate / 100))) - $tot_avec_remise_withoutvat, 'MT'); // amount tax1 for total_ht
+		$result[9] = price2num(($tot_avec_remise_withoutvat * (1 + ($localtax1_rate / 100))) - $tot_avec_remise_withoutvat, 'MTL'); // amount tax1 for total_ht
 		$result[2] += $result[9]; // total_ttc + tax1
 
 		$result[11] = price2num(($pu_withouttax * (1 + ($localtax1_rate / 100))) - $pu_withouttax, 'MU'); // amount tax1 for pu_ht
@@ -377,10 +377,10 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 			break;
 	}
 	if ($uselocaltax2_rate && $apply_tax) {
-		$result[15] = price2num(($tot_sans_remise_withoutvat * (1 + ($localtax2_rate / 100))) - $tot_sans_remise_withoutvat, 'MT'); // amount tax2 for total_ht_without_discount
+		$result[15] = price2num(($tot_sans_remise_withoutvat * (1 + ($localtax2_rate / 100))) - $tot_sans_remise_withoutvat, 'MTL'); // amount tax2 for total_ht_without_discount
 		$result[8] += $result[15]; // total_ttc_without_discount + tax2
 
-		$result[10] = price2num(($tot_avec_remise_withoutvat * (1 + ($localtax2_rate / 100))) - $tot_avec_remise_withoutvat, 'MT'); // amount tax2 for total_ht
+		$result[10] = price2num(($tot_avec_remise_withoutvat * (1 + ($localtax2_rate / 100))) - $tot_avec_remise_withoutvat, 'MTL'); // amount tax2 for total_ht
 		$result[2] += $result[10]; // total_ttc + tax2
 
 		$result[12] = price2num(($pu_withouttax * (1 + ($localtax2_rate / 100))) - $pu_withouttax, 'MU'); // amount tax2 for pu_ht
@@ -390,16 +390,16 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 	// If rounding is not using base 10 (rare)
 	if (getDolGlobalString('MAIN_ROUNDING_RULE_TOT')) {
 		if ($price_base_type != 'TTC') {
-			$result[0] = price2num(round((float) $result[0] / getDolGlobalFloat('MAIN_ROUNDING_RULE_TOT'), 0) * getDolGlobalFloat('MAIN_ROUNDING_RULE_TOT'), 'MT');
-			$result[1] = price2num(round((float) $result[1] / getDolGlobalFloat('MAIN_ROUNDING_RULE_TOT'), 0) * getDolGlobalFloat('MAIN_ROUNDING_RULE_TOT'), 'MT');
-			$result[9] = price2num(round((float) $result[9] / getDolGlobalFloat('MAIN_ROUNDING_RULE_TOT'), 0) * getDolGlobalFloat('MAIN_ROUNDING_RULE_TOT'), 'MT');
-			$result[10] = price2num(round((float) $result[10] / getDolGlobalFloat('MAIN_ROUNDING_RULE_TOT'), 0) * getDolGlobalFloat('MAIN_ROUNDING_RULE_TOT'), 'MT');
+			$result[0] = price2num(round((float) $result[0] / getDolGlobalFloat('MAIN_ROUNDING_RULE_TOT'), 0) * getDolGlobalFloat('MAIN_ROUNDING_RULE_TOT'), 'MTL');
+			$result[1] = price2num(round((float) $result[1] / getDolGlobalFloat('MAIN_ROUNDING_RULE_TOT'), 0) * getDolGlobalFloat('MAIN_ROUNDING_RULE_TOT'), 'MTL');
+			$result[9] = price2num(round((float) $result[9] / getDolGlobalFloat('MAIN_ROUNDING_RULE_TOT'), 0) * getDolGlobalFloat('MAIN_ROUNDING_RULE_TOT'), 'MTL');
+			$result[10] = price2num(round((float) $result[10] / getDolGlobalFloat('MAIN_ROUNDING_RULE_TOT'), 0) * getDolGlobalFloat('MAIN_ROUNDING_RULE_TOT'), 'MTL');
 			$result[2] = price2num((float) $result[0] + (float) $result[1] + (float) $result[9] + (float) $result[10], 'MT');
 		} else {
-			$result[1] = price2num(round((float) $result[1] / getDolGlobalFloat('MAIN_ROUNDING_RULE_TOT'), 0) * getDolGlobalFloat('MAIN_ROUNDING_RULE_TOT'), 'MT');
-			$result[2] = price2num(round((float) $result[2] / getDolGlobalFloat('MAIN_ROUNDING_RULE_TOT'), 0) * getDolGlobalFloat('MAIN_ROUNDING_RULE_TOT'), 'MT');
-			$result[9] = price2num(round((float) $result[9] / getDolGlobalFloat('MAIN_ROUNDING_RULE_TOT'), 0) * getDolGlobalFloat('MAIN_ROUNDING_RULE_TOT'), 'MT');
-			$result[10] = price2num(round((float) $result[10] / getDolGlobalFloat('MAIN_ROUNDING_RULE_TOT'), 0) * getDolGlobalFloat('MAIN_ROUNDING_RULE_TOT'), 'MT');
+			$result[1] = price2num(round((float) $result[1] / getDolGlobalFloat('MAIN_ROUNDING_RULE_TOT'), 0) * getDolGlobalFloat('MAIN_ROUNDING_RULE_TOT'), 'MTL');
+			$result[2] = price2num(round((float) $result[2] / getDolGlobalFloat('MAIN_ROUNDING_RULE_TOT'), 0) * getDolGlobalFloat('MAIN_ROUNDING_RULE_TOT'), 'MTL');
+			$result[9] = price2num(round((float) $result[9] / getDolGlobalFloat('MAIN_ROUNDING_RULE_TOT'), 0) * getDolGlobalFloat('MAIN_ROUNDING_RULE_TOT'), 'MTL');
+			$result[10] = price2num(round((float) $result[10] / getDolGlobalFloat('MAIN_ROUNDING_RULE_TOT'), 0) * getDolGlobalFloat('MAIN_ROUNDING_RULE_TOT'), 'MTL');
 			$result[0] = price2num((float) $result[2] - (float) $result[1] - (float) $result[9] - (float) $result[10], 'MT');
 		}
 	}
