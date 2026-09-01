@@ -1565,6 +1565,94 @@ class Form
 		return $htmltoenteralink;
 	}
 
+	/**
+	 *  Generate HTML table rows for member contribution linking.
+	 *
+	 *  It displays Ref, Name, Email, Company, DateOfRegistration, and Project columns.
+	 *  Uses getNomUrl() for clickable links to Subscription, company, and project records.
+	 *
+	 * @param 	CommonObject 			$object 			The source object we are linking from (e.g., propal, order)
+	 * @param 	string 					$key 				The element type key ('subscription')
+	 * @param 	array{enabled:bool,perms:int,label:string,sql:string,linkname?:string} $possiblelink Array containing link configuration
+	 * @param 	int 					$num 				Number of records returned from the SQL query
+	 * @param 	mysqli_result|resource|true	$resqllist		Database result resource from the SQL query
+	 * @return  string 									HTML table rows for the subscription link selection table
+	 */
+	private function makeAddLinkToSubscription($object, $key, $possiblelink, $num, $resqllist)
+	{
+		dol_syslog(__METHOD__, LOG_DEBUG);
+		global $langs, $form;
+		require_once DOL_DOCUMENT_ROOT . '/adherents/class/adherent.class.php';
+		require_once DOL_DOCUMENT_ROOT . '/adherents/class/subscription.class.php';
+		require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
+		$companystatic = new Societe($this->db);
+		$memberstatic = new Adherent($this->db);
+		$subscriptionstatic = new Subscription($this->db);
+		if (empty($form)) {
+			$form = new Form($this->db);
+		}
+		$htmltoenteralink = '';
+		$i = 0;
+
+		// headers
+		$htmltoenteralink .= '<tr class="liste_titre">';
+		$htmltoenteralink .= '<td class="nowrap"></td>';
+		$htmltoenteralink .= '<td>' . $langs->trans("Ref") . '</td>';
+		$htmltoenteralink .= '<td>' . $langs->trans("Label") . '</td>';
+		$htmltoenteralink .= '<td>' . $langs->trans("Amount") . '</td>';
+		$htmltoenteralink .= '<td>' . $langs->trans("Member") . '</td>';
+		$htmltoenteralink .= '<td>' . $langs->trans("Company") . '</td>';
+		$htmltoenteralink .= '<td>' . $langs->trans("DateSubscription") . '</td>';
+		$htmltoenteralink .= '<td>' . $langs->trans("DateEndSubscription") . '</td>';
+		$htmltoenteralink .= '</tr>';
+
+		// rows with data
+		while ($i < $num) {
+			$objp = $this->db->fetch_object($resqllist);
+			$alreadylinked = false;
+			if (!empty($object->linkedObjectsIds[$possiblelink['linkname'] ?? $key])) {
+				if (in_array($objp->rowid, array_values($object->linkedObjectsIds[$possiblelink['linkname'] ?? $key]))) {
+					$alreadylinked = true;
+				}
+			}
+			$htmltoenteralink .= '<tr class="oddeven">';
+			$htmltoenteralink .= '<td>';
+			if ($alreadylinked) {
+				$htmltoenteralink .= img_picto('', 'link');
+			} else {
+				$htmltoenteralink .= '<input type="checkbox" name="idtolinkto[' . $key . '_' . $objp->rowid . ']" id="' . $key . '_' . $objp->rowid . '" value="' . $objp->rowid . '">';
+			}
+			$htmltoenteralink .= '</td>';
+			$fetchsubscription = $subscriptionstatic->fetch($objp->rowid);
+			if ($fetchsubscription) {
+				$htmltoenteralink .= '<td>' . $subscriptionstatic->getNomUrl(0). '</td>';
+			} else {
+				$htmltoenteralink .= '<td><label for="' . $key . '_' . $objp->rowid . '">' . $objp->ref . '</label></td>';
+			}
+			$htmltoenteralink .= '<td>' . $objp->note . '</td>';
+			$htmltoenteralink .= '<td>' . price($objp->total_ht) . '</td>';
+			$fetchcmember = $memberstatic->fetch($objp->fk_adherent);
+			if ($fetchcmember) {
+				$htmltoenteralink .= '<td>' . $memberstatic->getNomUrl(0). '</td>';
+			} else {
+				$htmltoenteralink .= '<td>' . $objp->fk_adherent . '</td>';
+			}
+
+			$fetchcompany = $companystatic->fetch($objp->socid);
+			if ($fetchcompany) {
+				$htmltoenteralink .= '<td>' . $companystatic->getNomUrl(0). '</td>';
+			} else {
+				$htmltoenteralink .= '<td>' . $objp->name . '</td>';
+			}
+			$htmltoenteralink .= '<td>' . $objp->dateadh . '</td>';
+			$htmltoenteralink .= '<td>' . $objp->datef . '</td>';
+			$htmltoenteralink .= '</tr>';
+			$i++;
+		}
+
+		return $htmltoenteralink;
+	}
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 
 	/**
@@ -11191,7 +11279,7 @@ class Form
 					'enabled' => isModEnabled('member'),
 					'perms' => 1,
 					'label' => 'LinkToMemberSubscription',
-					'sql' => "SELECT a.fk_soc as socid, CONCAT(a.firstname, ' ', a.lastname) as name, a.entity as client, sub.rowid, sub.note as ref, '' as ref_client, sub.subscription as total_ht FROM " . $this->db->prefix() . "adherent as a, " . $this->db->prefix() . "subscription as sub WHERE sub.fk_adherent = a.rowid AND a.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND a.entity IN (' . getEntity('subscription') . ')',
+					'sql' => "SELECT a.fk_soc as socid, CONCAT(a.firstname, ' ', a.lastname) as name, a.entity as client, sub.rowid as rowid, sub.note as note, sub.dateadh as dateadh, sub.datef as datef, sub.fk_adherent as fk_adherent, sub.subscription as total_ht FROM " . $this->db->prefix() . "adherent as a, " . $this->db->prefix() . "subscription as sub WHERE sub.fk_adherent = a.rowid AND a.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND a.entity IN (' . getEntity('subscription') . ')',
 					'linkname' => 'subscription',
 				),
 				'conferenceorboothattendee' => array(
@@ -11355,6 +11443,11 @@ class Form
 							case 'conferenceorboothattendee':
 								// Custom logic for linking to attendees
 								$htmltoenteralink .= $this->makeAddLinkToAttendee($object, $key, $possiblelink, $num, $resqllist);
+								break;
+
+							case 'subscription':
+								// Custom logic for linking to member subscriptions
+								$htmltoenteralink .= $this->makeAddLinkToSubscription($object, $key, $possiblelink, $num, $resqllist);
 								break;
 
 							default:
