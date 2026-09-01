@@ -28,6 +28,7 @@ return [
 
     // Currently, file_suppressions and directory_suppressions are the only supported suppressions
     'file_suppressions' => [
+        'htdocs/api/class/api_documents.class.php' => ['PhanTypeInvalidDimOffset'],
         'htdocs/comm/action/index.php' => ['PhanTypeMismatchProperty'],
         'htdocs/comm/action/pertype.php' => ['PhanTypeExpectedObjectPropAccess'],
         'htdocs/comm/action/peruser.php' => ['PhanTypeMismatchArgument'],
