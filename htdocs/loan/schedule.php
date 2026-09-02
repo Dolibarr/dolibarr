@@ -364,7 +364,7 @@ if ($object->nbterm > 0 && count($echeances->lines) == 0) {
 print '</table>';
 print '</div>';
 
-print '<br/>';
+print '<br />';
 
 if (count($echeances->lines) == 0) {
 	$label = $langs->trans("Create");

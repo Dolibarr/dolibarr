@@ -2739,7 +2739,7 @@ if ($action == 'create' && $permissiontoadd) {
 							print '<td class="nowraponall left"><input name="batch'.$line_id.'" id="batch'.$line_id.'" type="text" value="'.$lines[$i]->batch.'"><br>';
 							if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
 								print $langs->trans('SellByDate').' : ';
-								print $form->selectDate($lines[$i]->sellby, 'dlc'.$line_id, 0, 0, 1, "").'<br/>';
+								print $form->selectDate($lines[$i]->sellby, 'dlc'.$line_id, 0, 0, 1, "").'<br />';
 							}
 							if (!getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
 								print $langs->trans('EatByDate').' : ';
