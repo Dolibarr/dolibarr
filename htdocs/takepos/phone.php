@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2018	Andreu Bisquerra	<jove@bisquerra.com>
  * Copyright (C) 2024   Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,7 +67,7 @@ $idproduct = GETPOSTINT('idproduct');
 $mobilepage = GETPOST('mobilepage', 'alphanohtml');	// Set when page is loaded by a js .load()
 
 if ($setterminal > 0) {
-	$_SESSION["takeposterminal"] = $setterminal;
+	$_SESSION["takeposterminal"] = ((int) $setterminal);
 }
 
 $langs->loadLangs(array("bills", "orders", "commercial", "cashdesk", "receiptprinter"));

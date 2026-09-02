@@ -41,4 +41,4 @@ CurrencyCode=Valuta code
 CurrencyUnitPrice=Eenheidsprijs in vreemde valuta
 CurrencyPrice=Prijs in vreemde valuta
 MutltiCurrencyAutoUpdateCurrencies=Update alle valutakoersen
-MulticurrencyOriginalCurrency=original currency
+MulticurrencyOriginalCurrency=oorspronkelijke valuta

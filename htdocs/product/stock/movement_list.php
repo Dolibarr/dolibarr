@@ -4,8 +4,9 @@
  * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2015		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2018-2022	Ferran Marcet			<fmarcet@2byte.es>
- * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2019-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +30,13 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
@@ -45,16 +53,8 @@ if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
-
 // Load translation files required by the page
-$langs->loadLangs(array('products', 'stocks', 'orders'));
+$langs->loadLangs(array('products', 'stocks', 'orders', 'bills', 'sendings', 'receptions', 'mrp'));
 if (isModEnabled('productbatch')) {
 	$langs->load("productbatch");
 }
@@ -96,6 +96,7 @@ $search_user = trim(GETPOST("search_user"));
 $search_batch = trim(GETPOST("search_batch"));
 $search_qty = trim(GETPOST("search_qty"));
 $search_type_mouvement = GETPOST('search_type_mouvement');
+$search_origintype = GETPOST('search_origintype', 'aZ09');
 $search_fk_project = GETPOST("search_fk_project");
 
 $type = GETPOSTINT("type");
@@ -157,6 +158,9 @@ $arrayfields = array(
 );
 
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 if (getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
 	unset($arrayfields['pl.sellby']);
@@ -250,6 +254,7 @@ if (empty($reshook)) {
 		$search_ref = '';
 		$search_movement = "";
 		$search_type_mouvement = "";
+		$search_origintype = "";
 		$search_inventorycode = "";
 		$search_product_ref = "";
 		$search_product = "";
@@ -265,6 +270,9 @@ if (empty($reshook)) {
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')
 		|| GETPOST('button_search_x', 'alpha') || GETPOST('button_search.x', 'alpha') || GETPOST('button_search', 'alpha')) {
 		$massaction = ''; // Protection to avoid mass action if we force a new search during a mass action confirmation
+		if ($action == 'confirm_reverse') {	// Test on permission not required here, we only cancel a pending action
+			$action = 'list'; // Protection to avoid the reverse if we force a new search during the reverse confirmation
+		}
 	}
 
 	// Mass actions
@@ -631,8 +639,9 @@ if ($action == "transfert_stock" && $permissiontoadd && !$cancel) {
 }
 
 // reverse movement of stock
-if ($action == 'confirm_reverse' && $confirm == "yes" && $permissiontoadd) {
+if (!$error && $action == 'confirm_reverse' && $confirm == "yes" && $permissiontoadd) {
 	$toselect = array_map('intval', $toselect);
+	$error = 0;
 
 	$db->begin();
 
@@ -644,7 +653,6 @@ if ($action == 'confirm_reverse' && $confirm == "yes" && $permissiontoadd) {
 	if ($resql) {
 		$num = $db->num_rows($resql);
 		$i = 0;
-		$error =0;
 		while ($i < $num) {
 			$obj = $db->fetch_object($resql);
 
@@ -791,6 +799,13 @@ if ($search_qty != '') {
 }
 if ($search_type_mouvement != '' && $search_type_mouvement != '-1') {
 	$sql .= natural_search('m.type_mouvement', $search_type_mouvement, 2);
+}
+if ($search_origintype != '' && $search_origintype != '-1') {
+	if ($search_origintype == 'none') {
+		$sql .= " AND (m.origintype IS NULL OR m.origintype = '')";
+	} else {
+		$sql .= " AND m.origintype = '".$db->escape($search_origintype)."'";
+	}
 }
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
@@ -1088,6 +1103,9 @@ if ($search_inventorycode) {
 if ($search_type_mouvement) {
 	$param .= '&search_type_mouvement='.urlencode($search_type_mouvement);
 }
+if ($search_origintype) {
+	$param .= '&search_origintype='.urlencode($search_origintype);
+}
 if ($search_product_ref) {
 	$param .= '&search_product_ref='.urlencode($search_product_ref);
 }
@@ -1163,7 +1181,7 @@ $modelmail = "movementstock";
 $objecttmp = new MouvementStock($db);
 $trackid = 'mov'.$warehouse->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
-if ($massaction == 'prereverse') {
+if ($massaction == 'prereverse' && count($toselect) <= getDolGlobalInt('MAIN_LIMIT_FOR_MASS_ACTIONS', 1000)) {
 	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassReverse"), $langs->trans("ConfirmMassReverseQuestion", count($toselect)), "confirm_reverse", null, '', 0, 200, 500, 1, 'Yes');
 }
 
@@ -1283,9 +1301,30 @@ if (!empty($arrayfields['m.label']['checked'])) {
 	print '</td>';
 }
 if (!empty($arrayfields['origin']['checked'])) {
-	// Origin of movement
+	// Origin of movement. The origin is a polymorphic couple (origintype, fk_origin) resolved in PHP,
+	// so it cannot be joined in SQL: we filter on the origin type, using the types get_origin() handles.
+	// Note: 'project' is not offered because _create() moves it to fk_projet and clears origintype,
+	// so no movement can ever carry origintype='project'.
 	print '<td class="liste_titre left">';
-	print '&nbsp; ';
+	$arrayoforigintypes = array(
+		'commande' => $langs->trans('Order'),
+		'shipping' => $langs->trans('Shipment'),
+		'facture' => $langs->trans('Invoice'),
+		'order_supplier' => $langs->trans('SupplierOrder'),
+		'invoice_supplier' => $langs->trans('SupplierInvoice'),
+		'reception' => $langs->trans('Reception'),
+		'inventory' => $langs->trans('Inventory'),
+		'mo' => $langs->trans('ManufacturingOrder'),
+		'user' => $langs->trans('User'),
+		'none' => $langs->trans('None'),
+	);
+	print '<select id="search_origintype" name="search_origintype" class="maxwidth150">';
+	print '<option value=""'.(($search_origintype == '') ? ' selected="selected"' : '').'>&nbsp;</option>';
+	foreach ($arrayoforigintypes as $keyorigintype => $valorigintype) {
+		print '<option value="'.$keyorigintype.'"'.(($search_origintype == $keyorigintype) ? ' selected="selected"' : '').'>'.dol_escape_htmltag($valorigintype).'</option>';
+	}
+	print '</select>';
+	print ajax_combobox('search_origintype');
 	print '</td>';
 }
 if (!empty($arrayfields['m.fk_projet']['checked'])) {
@@ -1600,20 +1639,20 @@ while ($i < $imaxinloop) {
 		}
 		// Inventory code
 		if (!empty($arrayfields['m.inventorycode']['checked'])) {
-			print '<td class="tdoverflowmax150" title="'.dolPrintHTML($obj->inventorycode).'">';
+			print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute($obj->inventorycode).'">';
 			if ($obj->inventorycode) {
 				print img_picto('', 'movement', 'class="pictofixedwidth"');
-				print '<a href="'.$_SERVER["PHP_SELF"].'?search_inventorycode='.urlencode('^'.$obj->inventorycode.'$').'">'.dol_escape_htmltag($obj->inventorycode).'</a>';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?search_inventorycode='.urlencode('^'.$obj->inventorycode.'$').'">'.dolPrintHTML($obj->inventorycode).'</a>';
 			}
 			print '</td>';
 		}
 		// Label of movement
 		if (!empty($arrayfields['m.label']['checked'])) {
-			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->label).'">'.dol_escape_htmltag($obj->label).'</td>';
+			print '<td class="tdoverflowmax250" title="'.dolPrintHTMLForAttributeUrl($obj->label).'">'.dolPrintHTML($obj->label).'</td>';
 		}
 		// Origin of movement
 		if (!empty($arrayfields['origin']['checked'])) {
-			print '<td class="nowraponall">'.$origin.'</td>';
+			print '<td class="nowraponall">'.dolPrintHTML($origin).'</td>';
 		}
 		// Project
 		if (!empty($arrayfields['m.fk_projet']['checked'])) {
@@ -1635,11 +1674,11 @@ while ($i < $imaxinloop) {
 			if ($obj->qty > 0) {
 				print '<span class="stockmovemententry">';
 				print '+';
-				print $obj->qty;
+				print dolPrintHTML($obj->qty);
 				print '</span>';
 			} else {
 				print '<span class="stockmovementexit">';
-				print $obj->qty;
+				print dolPrintHTML($obj->qty);
 				print '</span>';
 			}
 			print '</td>';
@@ -1714,6 +1753,7 @@ if (count($arrayofuniqueproduct) == 1 && !empty($search_date_startyear) && is_nu
 	print "<br>";
 
 	$productidselected = 0;
+	$productlabelselected = '';
 	foreach ($arrayofuniqueproduct as $key => $val) {
 		$productidselected = $key;
 		$productlabelselected = $val;

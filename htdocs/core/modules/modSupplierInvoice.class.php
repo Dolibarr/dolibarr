@@ -693,17 +693,10 @@ class modSupplierInvoice extends DolibarrModules
 		}
 		// Add extra fields
 		$import_extrafield_sample = array();
-		$sql = "SELECT name, label, fieldrequired FROM " . MAIN_DB_PREFIX . "extrafields WHERE type <> 'separate' AND elementtype = 'facture_fourn' AND entity IN (0, " . $conf->entity . ")";
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			while ($obj = $this->db->fetch_object($resql)) {
-				$fieldname = 'extra.' . $obj->name;
-				$fieldlabel = ucfirst($obj->label);
-				$this->import_fields_array[$r][$fieldname] = $fieldlabel . ($obj->fieldrequired ? '*' : '');
-				$import_extrafield_sample[$fieldname] = $fieldlabel;
-			}
-		}
-		// End add extra fields
+		$keyforselect = 'facture_fourn';
+		$keyforelement = 'supplier_invoice';
+		$keyforaliasextra = 'extra';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinimport.inc.php';
 		$this->import_fieldshidden_array[$r] = array('extra.fk_object' => 'lastrowid-' . MAIN_DB_PREFIX . 'facture_fourn');
 		if (empty($conf->multicurrency->enabled)) {
 			$this->import_fieldshidden_array[$r]['f.multicurrency_code'] = 'const-' . $conf->currency;
@@ -788,17 +781,10 @@ class modSupplierInvoice extends DolibarrModules
 		}
 		// Add extra fields
 		$import_extrafield_sample = array();
-		$sql = "SELECT name, label, fieldrequired FROM " . MAIN_DB_PREFIX . "extrafields WHERE type <> 'separate' AND elementtype = 'facture_fourn_det' AND entity IN (0, " . $conf->entity . ")";
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			while ($obj = $this->db->fetch_object($resql)) {
-				$fieldname = 'extra.' . $obj->name;
-				$fieldlabel = ucfirst($obj->label);
-				$this->import_fields_array[$r][$fieldname] = $fieldlabel . ($obj->fieldrequired ? '*' : '');
-				$import_extrafield_sample[$fieldname] = $fieldlabel;
-			}
-		}
-		// End add extra fields
+		$keyforselect = 'facture_fourn_det';
+		$keyforelement = 'supplier_invoice';
+		$keyforaliasextra = 'extra';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinimport.inc.php';
 		$this->import_fieldshidden_array[$r] = array('extra.fk_object' => 'lastrowid-' . MAIN_DB_PREFIX . 'facture_fourn_det');
 		$this->import_regex_array[$r] = array('fd.product_type' => '[0|1]$', 'fd.fk_product' => 'rowid@' . MAIN_DB_PREFIX . 'product', 'fd.multicurrency_code' => 'code@' . MAIN_DB_PREFIX . 'multicurrency');
 		$import_sample = array(

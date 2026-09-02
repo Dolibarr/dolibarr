@@ -76,6 +76,16 @@ if ((isset($_GET["modulepart"]) && $_GET["modulepart"] == 'medias')) {
 	}
 }
 
+// For MultiCompany modules, if an entity is set in query parameters (required to point an object because a ref can exists
+// in 2 entities), then if user is not already into a session, the user must be loaded on this entity, so permission will
+// be the one of this entity.
+// Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
+$entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 0));
+if ($entity > 0) {
+	// An entity was forced on param, so we force the constant to allow master.inc.php to use this entity if not already logged.
+	// It has no effect if already logged.
+	define("DOLENTITY", $entity);
+}
 
 /**
  * Header empty
@@ -136,7 +146,7 @@ $original_file = GETPOST('file', 'alphanohtml');
 $hashp = GETPOST('hashp', 'aZ09');
 $modulepart = GETPOST('modulepart', 'alpha');
 $urlsource = GETPOST('urlsource', 'alpha');
-$entity = GETPOSTISSET('entity') ? GETPOSTINT('entity') : $conf->entity;
+$entity = ($entity > 0 ? $entity : $conf->entity);
 
 // Security check
 if (empty($modulepart) && empty($hashp)) {
@@ -144,6 +154,9 @@ if (empty($modulepart) && empty($hashp)) {
 }
 if (empty($original_file) && empty($hashp)) {
 	httponly_accessforbidden('Bad link. Missing identification to find file (original_file or hashp)', 400);
+}
+if ($hashp == 'shared') {
+	httponly_accessforbidden('Bad link. Bad value for parameter hashp', 400);
 }
 if ($modulepart == 'fckeditor') {
 	$modulepart = 'medias'; // For backward compatibility
@@ -176,7 +189,7 @@ if (in_array($modulepart, array('facture_paiement', 'unpaid'))) {
 
 // If we have a hash public (hashp), we guess the original_file.
 $ecmfile = '';
-if (!empty($hashp)) {
+if (!empty($hashp) && $hashp != 'shared') {
 	if (GETPOST('type', 'alpha') == 'link') {
 		require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 		$link = new Link($db);
@@ -226,6 +239,8 @@ if (!empty($hashp)) {
 			if ($entity != $conf->entity) {
 				$conf->entity = $entity;
 				$conf->setValues($db);
+				// Multicompany: Here we are switching entity and later we will check the requested object is in this entity but may be that user is not allowed to log/see entity
+				// but we don't mind, we are using the public hash to get file.
 			}
 		} else {
 			$langs->load("errors");
@@ -277,7 +292,7 @@ $sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
 $fullpath_original_file     = $check_access['original_file']; // $fullpath_original_file is now a full path name
 //var_dump($modulepart.' '.$entity.' '.$fullpath_original_file.' '.$original_file.' '.$accessallowed);exit;
 
-if (!empty($hashp)) {
+if (!empty($hashp) && $hashp != 'shared') {
 	$accessallowed = 1; // When using hashp, link is public so we force $accessallowed
 	$sqlprotectagainstexternals = '';
 } else {
@@ -442,7 +457,7 @@ if ($attachment > 0) {
 } elseif (empty($attachment)) {
 	header('Content-Disposition: inline; filename="'.$filename.'"');
 }
-// Ajout directives pour resoudre bug IE
+// Add directives to fix IE bug
 header('Cache-Control: Public, must-revalidate');
 header('Pragma: public');
 $readfile = true;

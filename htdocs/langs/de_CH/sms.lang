@@ -1,10 +1,11 @@
 # Dolibarr language file - Source file is en_US - sms
 SmsSetup=SMS Einrichtung
 SmsDesc=Hier kommen die globalen SMS - Einstellungen rein.
+SmsCard=SMS Karte
 AllSms=Alle SMS - Kampagnen
+SmsTo=Ziel
 SmsTopic=Thema der SMS
 ListOfSms=SMS Kampagnen anzeigen
-NewSms=Neue SMS Kampagne
 EditSms=SMS anpassen
 DeleteSms=SMS Kampagne löschen
 DeleteASms=SMS Kampagne löschen
@@ -22,4 +23,5 @@ NbOfSms=Anzahl Handynummern
 SmsInfoCharRemain=Restliche Buchstaben
 SmsInfoNumero=(internationales Format z.B.: +41 79 999 99 99)
 SmsNoPossibleSenderFound=Kein Absender verfügbar. Prüfen Sie die Einstellungen Ihres SMS Anbieters.
+SmsNoPossibleRecipientFound=Keine möglichen Empfänger gefunden. Prüfen Sie die Einstellungen Ihres SMS Anbieters.
 DisableStopIfSupported=STOP Meldung unterbinden (wenn möglich)

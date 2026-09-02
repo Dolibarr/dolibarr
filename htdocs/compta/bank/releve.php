@@ -6,7 +6,7 @@
  * Copyright (C) 2017       Patrick Delcroix        <pmpdelcroix@gmail.com>
  * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2022       Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -31,6 +31,13 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
@@ -47,15 +54,6 @@ require_once DOL_DOCUMENT_ROOT.'/loan/class/paymentloan.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
 //show files
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array("banks", "categories", "companies", "bills", "trips", "donations", "loan", "salaries"));
@@ -481,7 +479,7 @@ if (empty($numref)) {
 	print '<td>&nbsp;</td>';
 	print "</tr>\n";
 
-	// Calcul du solde de depart du releve
+	// Calculate the opening balance of the statement
 	$sql = "SELECT sum(b.amount) as amount";
 	$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
 	$sql .= " WHERE b.num_releve < '".$db->escape($numref)."'";
@@ -499,7 +497,7 @@ if (empty($numref)) {
 
 	$totalc = $totald = 0;
 
-	// Recherche les ecritures pour le releve
+	// Search entries for the statement
 	$sql = $sqlrequestforbankline;
 
 	$resql = $db->query($sql);
@@ -522,7 +520,7 @@ if (empty($numref)) {
 			// Date operation
 			print '<td class="nowrap center">'.dol_print_date($db->jdate($objp->do), "day").'</td>';
 
-			// Date de valeur
+			// Value date
 			print '<td valign="center" class="center nowrap">';
 			print '<span class="spanforajaxedit">'.dol_print_date($db->jdate($objp->dv), "day").'</span>';
 			print '&nbsp;';

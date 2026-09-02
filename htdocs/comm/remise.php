@@ -108,7 +108,7 @@ if (! ($socid > 0)) {
 	accessforbidden('Record not found');
 }
 
-// On recupere les donnees societes par l'objet
+// Retrieve third-party data via the object
 $object = new Societe($db);
 $object->fetch($socid);
 

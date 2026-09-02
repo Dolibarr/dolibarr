@@ -211,7 +211,7 @@ print "</table>";
 print '</div><div class="fichetwothirdright">';
 
 
-$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
+$max = getDolUserInt('MAIN_SIZE_SHORTLIST_LIMIT', getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5));
 
 
 /*

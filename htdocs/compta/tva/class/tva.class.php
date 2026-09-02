@@ -257,14 +257,16 @@ class Tva extends CommonObject
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."tva SET";
-		$sql .= " tms='".$this->db->idate($this->tms)."',";
-		$sql .= " datep='".$this->db->idate($this->datep)."',";
-		$sql .= " datev='".$this->db->idate($this->datev)."',";
-		$sql .= " amount=".price2num($this->amount).",";
-		$sql .= " label='".$this->db->escape($this->label)."',";
-		$sql .= " note='".$this->db->escape($this->note)."',";
-		$sql .= " fk_user_creat=".((int) $this->fk_user_creat).",";
-		$sql .= " fk_user_modif=".((int) ($this->fk_user_modif > 0 ? $this->fk_user_modif : $user->id));
+		if (!empty($this->tms)) {
+			$sql .= " tms='".$this->db->idate($this->tms)."',";
+		}
+		$sql .= " datep = '".$this->db->idate($this->datep)."',";
+		$sql .= " datev = '".$this->db->idate($this->datev)."',";
+		$sql .= " amount = ".(float) price2num($this->amount).",";
+		$sql .= " label = '".$this->db->escape($this->label)."',";
+		$sql .= " note = '".$this->db->escape($this->note)."',";
+		$sql .= " fk_user_creat = ".((int) $this->fk_user_creat).",";
+		$sql .= " fk_user_modif = ".((int) ($this->fk_user_modif > 0 ? ((int) $this->fk_user_modif) : ((int) $user->id)));
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);

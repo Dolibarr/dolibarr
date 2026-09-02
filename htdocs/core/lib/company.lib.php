@@ -611,7 +611,7 @@ function societe_admin_prepare_head()
 	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'company_admin');
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/societe/admin/societe_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'societe'));
 	$head[$h][1] = $langs->trans("ExtraFieldsThirdParties");
 	$nbExtrafields = $extrafields->attributes['societe']['count'];
 	if ($nbExtrafields > 0) {
@@ -620,7 +620,7 @@ function societe_admin_prepare_head()
 	$head[$h][2] = 'attributes';
 	$h++;
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/societe/admin/contact_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'socpeople'));
 	$head[$h][1] = $langs->trans("ExtraFieldsContacts");
 	$nbExtrafields = $extrafields->attributes['socpeople']['count'];
 	if ($nbExtrafields > 0) {
@@ -2133,7 +2133,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 				&& $filterobj->table_element && $filterobj->element
 			) {
 				// Generic case (if there is a $filterobj and a field rowid and (ref or label) exists.
-				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = '" . $db->escape($filterobj->element) . ($module ? "@" . $module : "") . "'";
+				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = '" . $db->escape($filterobj->element. ($module ? "@" . $module : "")) . "'";
 				if ($filterobj->id) {
 					$sql .= " AND a.fk_element = " . ((int) $filterobj->id);
 				}
@@ -2225,7 +2225,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 		$limit = $MAXWITHOUTPAGINATION;
 
 		// Complete request and execute it with limit
-		$sql .= $db->order($sortfield_new, $sortorder);
+		$sql .= $db->order($sortfield_new, $sortorder);  // @phan-suppress-current-line SqlInjection
 		if ($limit) {	// @phpstan-ignore-line
 			$sql .= $db->plimit($limit + 1, $offset);
 		}
@@ -2563,7 +2563,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 			$out .= '<td class="tdoverflowmax300"';
 			if (isset($histo[$key]['type']) && $histo[$key]['type'] == 'action') {
 				$transcode = $langs->trans("Action" . $histo[$key]['acode']);
-				//$libelle = ($transcode != "Action".$histo[$key]['acode'] ? $transcode : $histo[$key]['alabel']);
+				//$label_trans = ($transcode != "Action".$histo[$key]['acode'] ? $transcode : $histo[$key]['alabel']);
 				$label = $histo[$key]['note'];
 				$actionstatic->id = $histo[$key]['id'];
 				$out .= ' title="' . dol_escape_htmltag($label) . '">';
@@ -2751,6 +2751,44 @@ function show_subsidiaries($conf, $langs, $db, $object)
 
 	return $i;
 }
+
+/**
+ * Build the "EXISTS(...)" sub-query on llx_societe_commerciaux used to restrict a
+ * thirdparty-related list to the thirdparties handled by one or more sales representatives.
+ *
+ * The returned fragment has no leading " AND " / " OR " so the caller composes it, e.g.:
+ *   $sql .= " AND ".getSalesRepresentativeSqlFilter('s.rowid', $db->sanitize($search_sale));
+ *   $sql .= " AND ".getSalesRepresentativeSqlFilter('c.fk_soc', 0, 1);  // thirdparty assigned to nobody
+ *
+ * @param	string				$socidfield	SQL expression of the thirdparty rowid to test (e.g. 's.rowid', 'c.fk_soc'); passed through $db->sanitize()
+ * @param	int|string|int[]	$userids	Sales representative user id, an array of ids, or a comma-separated list of
+ *                                          ids. 0 / '' / empty array => only test that the thirdparty is assigned to
+ *                                          at least one sales representative.
+ * @param	int<0,1>			$not		1 to return "NOT EXISTS(...)" instead of "EXISTS(...)"
+ * @return	string							SQL "EXISTS(...)" / "NOT EXISTS(...)" fragment
+ */
+function getSalesRepresentativeSqlFilter($socidfield, $userids = 0, $not = 0)
+{
+	global $db;
+
+	if (!is_array($userids)) {
+		$userids = ($userids === '' || $userids === null) ? array() : explode(',', (string) $userids);
+	}
+	$userids = array_values(array_filter(array_map('intval', $userids), static function (int $v): bool {
+		return $v > 0;
+	}));
+
+	$sql = ($not ? 'NOT EXISTS' : 'EXISTS');
+	// $socidfield is a column expression of the outer query (e.g. 's.rowid'); it is compared to sc.fk_soc
+	$sql .= ' (SELECT sc.fk_soc FROM '.$db->prefix().'societe_commerciaux as sc WHERE '.$db->sanitize($socidfield).' = sc.fk_soc';
+	if (!empty($userids)) {
+		$sql .= ' AND sc.fk_user IN ('.$db->sanitize(implode(',', $userids)).')';
+	}
+	$sql .= ')';
+
+	return $sql;
+}
+
 /**
  * 		Add Event Type SQL
  *

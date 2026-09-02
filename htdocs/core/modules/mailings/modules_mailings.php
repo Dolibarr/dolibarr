@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,6 @@
  *		\ingroup    mailing
  *		\brief      File with parent class of emailing target selectors modules
  */
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 
 
 /**
@@ -118,6 +117,30 @@ class MailingTargets // This can't be abstract as it is used for some method
 	}
 
 	/**
+	 * Return the SQL fragment that excludes email addresses which opted out of emailings
+	 * for the current entity. Returns an empty string when the selector is configured to
+	 * keep unsubscribed addresses ($this->evenunsubscribe).
+	 *
+	 * @param	string	$emailfield		SQL expression of the email column to test (e.g. 's.email', 'c.email'); it is passed through $db->sanitize()
+	 * @return	string					SQL fragment (with a leading space) to append to a WHERE clause, or ''
+	 */
+	public function getSqlToExcludeUnsubscribed($emailfield)
+	{
+		global $conf;
+
+		if (!empty($this->evenunsubscribe)) {
+			return '';
+		}
+
+		// $emailfield is a column expression of the outer query (e.g. 's.email'); it is compared to mu.email.
+		$sql = " AND NOT EXISTS (SELECT rowid FROM ".$this->db->prefix()."mailing_unsubscribe as mu";
+		$sql .= " WHERE ".$this->db->sanitize($emailfield)." = mu.email";
+		$sql .= " AND mu.entity = ".((int) $conf->entity).")";
+
+		return $sql;
+	}
+
+	/**
 	 *	Return number of records for email selector
 	 *
 	 *  @return     int      Example
@@ -149,10 +172,9 @@ class MailingTargets // This can't be abstract as it is used for some method
 	}
 
 	/**
-	 * Affiche formulaire de filtre qui apparait dans page de selection
-	 * des destinataires de mailings
+	 * Displays filter form that appears on the mailing recipient selection page
 	 *
-	 * @return     string      Retourne zone select
+	 * @return     string      Returns select area
 	 */
 	public function formFilter()
 	{
@@ -231,7 +253,7 @@ class MailingTargets // This can't be abstract as it is used for some method
 					$j++;
 				} else {
 					if ($this->db->errno() != 'DB_ERROR_RECORD_ALREADY_EXISTS') {
-						// Si erreur autre que doublon
+						// If error other than duplicate
 						dol_syslog($this->db->error().' : '.$targetarray['email']);
 						$this->error = $this->db->error().' : '.$targetarray['email'];
 						$this->db->rollback();
@@ -244,20 +266,20 @@ class MailingTargets // This can't be abstract as it is used for some method
 		dol_syslog(__METHOD__.": mailing ".$j." targets added");
 
 		/*
-		//Update the status to show thirdparty mail that don't want to be contacted anymore'
+		//Update the status to show third-party emails that no longer wish to be contacted'
 		$sql = "UPDATE ".$this->db->prefix()."mailing_cibles";
 		$sql .= " SET statut=3";
 		$sql .= " WHERE fk_mailing = ".((int) $mailing_id)." AND email in (SELECT email FROM ".$this->db->prefix()."societe where fk_stcomm=-1)";
 		$sql .= " AND source_type='thirdparty'";
-		dol_syslog(__METHOD__.": mailing update status to display thirdparty mail that do not want to be contacted");
+		dol_syslog(__METHOD__.": mailing update status to display third-party emails that no longer wish to be contacted");
 		$result=$this->db->query($sql);
 
-		//Update the status to show contact mail that don't want to be contacted anymore'
+		//Update the status to show contact emails that no longer wish to be contacted'
 		$sql = "UPDATE ".$this->db->prefix()."mailing_cibles";
 		$sql .= " SET statut=3";
 		$sql .= " WHERE fk_mailing = ".((int) $mailing_id)." AND source_type='contact' AND (email in (SELECT sc.email FROM ".$this->db->prefix()."socpeople AS sc ";
 		$sql .= " INNER JOIN ".$this->db->prefix()."societe s ON s.rowid=sc.fk_soc WHERE s.fk_stcomm=-1 OR no_email=1))";
-		dol_syslog(__METHOD__.": mailing update status to display contact mail that do not want to be contacted",LOG_DEBUG);
+		dol_syslog(__METHOD__.": mailing update status to display contact emails that no longer wish to be contacted",LOG_DEBUG);
 		$result=$this->db->query($sql);
 		*/
 
@@ -284,7 +306,7 @@ class MailingTargets // This can't be abstract as it is used for some method
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Supprime tous les destinataires de la table des cibles
+	 *  Deletes all recipients from the targets table
 	 *
 	 *  @param  int		$mailing_id        Id of emailing
 	 *  @return	void

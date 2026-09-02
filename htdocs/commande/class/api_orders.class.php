@@ -22,6 +22,7 @@
 use Luracast\Restler\RestException;
 
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 /**
  * API class for orders
@@ -216,9 +217,9 @@ class Orders extends DolibarrApi
 		// Search on sale representative
 		if ($search_sale && $search_sale != '-1') {
 			if ($search_sale == -2) {
-				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc)";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', 0, 1);
 			} elseif ($search_sale > 0) {
-				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', (int) $search_sale);
 			}
 		}
 		$parameters = array();
@@ -1019,6 +1020,10 @@ class Orders extends DolibarrApi
 			throw new RestException(404, 'Order not found');
 		}
 
+		if (!DolibarrApi::_checkAccessToResource('commande', $this->commande->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		$result = $this->commande->set_reopen(DolibarrApiAccess::$user);
 		if ($result < 0) {
 			throw new RestException(405, $this->commande->error);
@@ -1056,18 +1061,13 @@ class Orders extends DolibarrApi
 			throw new RestException(404, 'Order not found');
 		}
 
+		if (!DolibarrApi::_checkAccessToResource('commande', $this->commande->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		$result = $this->commande->classifyBilled(DolibarrApiAccess::$user);
 		if ($result < 0) {
 			throw new RestException(400, $this->commande->error);
-		}
-
-		$result = $this->commande->fetch($id);
-		if (!$result) {
-			throw new RestException(404, 'Order not found');
-		}
-
-		if (!DolibarrApi::_checkAccessToResource('commande', $this->commande->id)) {
-			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$this->commande->fetchObjectLinked();

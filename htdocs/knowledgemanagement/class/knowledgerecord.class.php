@@ -434,7 +434,7 @@ class KnowledgeRecord extends CommonObject
 				}
 			}
 			if (count($sqlwhere) > 0) {
-				$sql .= ' AND ('.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
+				$sql .= ' AND ('.implode(' '.$this->db->sanitize($filtermode).' ', $sqlwhere).')';
 			}
 
 			$filter = '';
@@ -645,14 +645,14 @@ class KnowledgeRecord extends CommonObject
 			if (preg_match('/^[\(]?PROV/i', $this->ref)) {
 				// Now we rename also files into index
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'knowledgerecord/".$this->db->escape($this->newref)."'";
-				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'knowledgerecord/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'knowledgerecord/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++;
 					$this->error = $this->db->lasterror();
 				}
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'knowledgerecord/".$this->db->escape($this->newref)."'";
-				$sql .= " WHERE filepath = 'knowledgerecord/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$sql .= " WHERE filepath = 'knowledgerecord/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++;

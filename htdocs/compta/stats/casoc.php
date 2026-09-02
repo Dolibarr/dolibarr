@@ -223,10 +223,6 @@ $form = new Form($db);
 $thirdparty_static = new Societe($db);
 $formother = new FormOther($db);
 
-// TODO Report from bookkeeping not yet available, so we switch on report on business events
-if ($modecompta == "BOOKKEEPING") {
-	$modecompta = "CREANCES-DETTES";
-}
 if ($modecompta == "BOOKKEEPINGCOLLECTED") {
 	$modecompta = "RECETTES-DEPENSES";
 }
@@ -259,8 +255,12 @@ if ($modecompta == "CREANCES-DETTES") {
 	$description .= $langs->trans("DepositsAreIncluded");
 	$builddate = dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
-} // elseif ($modecompta == "BOOKKEEPING") {
-// } elseif ($modecompta == "BOOKKEEPINGCOLLECTED") {
+} elseif ($modecompta == "BOOKKEEPING") {
+	$name = $langs->trans("Turnover").', '.$langs->trans("ByThirdParties");
+	$calcmode = $langs->trans("CalcModeBookkeeping");
+	$description = $langs->trans("RulesCADue");
+	$builddate = dol_now();
+} // elseif ($modecompta == "BOOKKEEPINGCOLLECTED") {
 // }
 $period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0, 0, '', '', '', '', 1, '', '', 'tzserver');
 $period .= ' - ';
@@ -345,9 +345,40 @@ if ($modecompta == 'CREANCES-DETTES') {
 		$sql .= ")";
 		$sql .= " AND cs.fk_categorie = c.rowid AND cs.fk_soc = s.rowid";
 	}
-} // elseif ($modecompta == "BOOKKEEPING") {
-// } elseif ($modecompta == "BOOKKEEPINGCOLLECTED") {
-// }
+} elseif ($modecompta == "BOOKKEEPING") {
+	// Turnover computed from the accounting ledger (llx_accounting_bookkeeping): HT is the sum of
+	// postings on INCOME-type accounts, TTC is the amount posted on the thirdparty subledger line
+	// (the customer control account line of each invoice), matched back to the thirdparty by
+	// thirdparty_code (set at transfer time from societe.code_client, see accountancy/journal/sellsjournal.php).
+	$charofaccountstring = dol_getIdFromCode($db, getDolGlobalString('CHARTOFACCOUNTS'), 'accounting_system', 'rowid', 'pcg_version');
+
+	$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias, s.zip, s.town, s.fk_pays,";
+	$sql .= " SUM(CASE WHEN b.subledger_account IS NOT NULL AND b.subledger_account != '' THEN b.debit - b.credit ELSE 0 END) as amount_ttc,";
+	$sql .= " SUM(CASE WHEN aa.pcg_type = 'INCOME' THEN b.credit - b.debit ELSE 0 END) as amount";
+	$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as b";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa ON aa.account_number = b.numero_compte AND aa.entity = b.entity AND aa.fk_pcg_version = '".$db->escape($charofaccountstring)."'";
+	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe as s ON s.code_client = b.thirdparty_code";
+	if ($selected_cat === -2) {	// Without any category
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_societe as cs ON s.rowid = cs.fk_soc";
+	} elseif ($selected_cat) { 	// Into a specific category
+		$sql .= ", ".MAIN_DB_PREFIX."categorie as c, ".MAIN_DB_PREFIX."categorie_societe as cs";
+	}
+	$sql .= " WHERE b.doc_type = 'customer_invoice'";
+	$sql .= " AND b.thirdparty_code IS NOT NULL AND b.thirdparty_code != ''";
+	if ($date_start && $date_end) {
+		$sql .= " AND b.doc_date >= '".$db->idate($date_start)."' AND b.doc_date <= '".$db->idate($date_end)."'";
+	}
+	if ($selected_cat === -2) {	// Without any category
+		$sql .= " AND cs.fk_soc is null";
+	} elseif ($selected_cat) {	// Into a specific category
+		$sql .= " AND (c.rowid = ".((int) $selected_cat);
+		if ($subcat) {
+			$sql .= " OR c.fk_parent = ".((int) $selected_cat);
+		}
+		$sql .= ")";
+		$sql .= " AND cs.fk_categorie = c.rowid AND cs.fk_soc = s.rowid";
+	}
+}
 if (!empty($search_societe)) {
 	$sql .= natural_search('s.nom', $search_societe);
 }
@@ -360,9 +391,16 @@ if (!empty($search_town)) {
 if ($search_country > 0) {
 	$sql .= ' AND s.fk_pays = '.((int) $search_country);
 }
-$sql .= " AND f.entity IN (".getEntity('invoice').")";
-if ($socid) {
-	$sql .= " AND f.fk_soc = ".((int) $socid);
+if ($modecompta == 'BOOKKEEPING') {
+	$sql .= " AND b.entity = ".((int) $conf->entity);
+	if ($socid) {
+		$sql .= " AND s.rowid = ".((int) $socid);
+	}
+} else {
+	$sql .= " AND f.entity IN (".getEntity('invoice').")";
+	if ($socid) {
+		$sql .= " AND f.fk_soc = ".((int) $socid);
+	}
 }
 $sql .= " GROUP BY s.rowid, s.nom, s.name_alias, s.zip, s.town, s.fk_pays";
 $sql .= " ORDER BY s.rowid";
@@ -667,7 +705,7 @@ if (count($amount)) {
 
 		// Amount w/o VAT
 		print '<td class="right">';
-		if ($modecompta != 'CREANCES-DETTES') {
+		if ($modecompta == 'RECETTES-DEPENSES') {
 			if ($key > 0) {
 				print '<a href="'.DOL_URL_ROOT.'/compta/paiement/list.php?socid='.$key.'">';
 			} else {
@@ -727,7 +765,7 @@ if (count($amount)) {
 	print '<td>&nbsp;</td>';
 	print '<td>&nbsp;</td>';
 	print '<td>&nbsp;</td>';
-	if ($modecompta != 'CREANCES-DETTES') {
+	if ($modecompta == 'RECETTES-DEPENSES') {
 		print '<td></td>';
 	} else {
 		print '<td class="right">'.price($catotal_ht).'</td>';

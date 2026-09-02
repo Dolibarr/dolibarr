@@ -8,7 +8,7 @@
  * Copyright (C) 2018       Nicolas ZABOURI			<info@inovea-conseil.com>
  * Copyright (C) 2019       Abbes Bahfir            <dolipar@dolipar.org>
  * Copyright (C) 2023-2026  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025       Charlene Benke          <charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -222,7 +222,7 @@ class UserGroup extends CommonObject
 		if (isModEnabled('multicompany') && $conf->entity == 1 && $user->admin && !$user->entity) {
 			$sql .= " AND g.entity IS NOT NULL";
 		} else {
-			$sql .= " AND g.entity IN (0,".$conf->entity.")";
+			$sql .= " AND g.entity IN (0,".((int) $conf->entity).")";
 		}
 		$sql .= " ORDER BY g.nom";
 
@@ -282,7 +282,7 @@ class UserGroup extends CommonObject
 		if (isModEnabled('multicompany') && $conf->entity == 1 && $user->admin && !$user->entity) {
 			$sql .= " AND u.entity IS NOT NULL";
 		} else {
-			$sql .= " AND u.entity IN (0,".$conf->entity.")";
+			$sql .= " AND u.entity IN (0,".((int) $conf->entity).")";
 		}
 		if (!empty($excludefilter)) {
 			$sql .= ' AND ('.$excludefilter.')';
@@ -549,7 +549,7 @@ class UserGroup extends CommonObject
 					}
 
 					$sql = "DELETE FROM ".$this->db->prefix()."usergroup_rights";
-					$sql .= " WHERE fk_usergroup = $this->id AND fk_id=".((int) $nid);
+					$sql .= " WHERE fk_usergroup = ".((int) $this->id)." AND fk_id=".((int) $nid);
 					$sql .= " AND entity = ".((int) $entity);
 					if (!$this->db->query($sql)) {
 						$error++;
@@ -620,7 +620,7 @@ class UserGroup extends CommonObject
 		}
 
 		// Load permission from group
-		$sql = "SELECT r.module, r.perms, r.subperms ";
+		$sql = "SELECT r.module, r.module_origin, r.perms, r.subperms ";
 		$sql .= " FROM ".$this->db->prefix()."usergroup_rights as u, ".$this->db->prefix()."rights_def as r";
 		$sql .= " WHERE r.id = u.fk_id";
 		$sql .= " AND r.entity = ".((int) $conf->entity);
@@ -640,7 +640,12 @@ class UserGroup extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 
 				if ($obj) {
-					$module = $obj->module;
+					// module_origin (set only when the right was declared by another module via
+					// KEY_MODULE, to be filed into a foreign module's section of the permission
+					// grid) is the namespace actually used to check the right with hasRight(),
+					// so the declaring module keeps control of it regardless of which module's
+					// section it is grouped under for display.
+					$module = (!empty($obj->module_origin) ? $obj->module_origin : $obj->module);
 					$perms = $obj->perms;
 					$subperms = $obj->subperms;
 
@@ -1036,7 +1041,7 @@ class UserGroup extends CommonObject
 
 		$langs->load("user");
 
-		// Positionne le modele sur le nom du modele a utiliser
+		// Set the model to the name of the model to use
 		if (!dol_strlen($modele)) {
 			if (getDolGlobalString('USERGROUP_ADDON_PDF')) {
 				$modele = getDolGlobalString('USERGROUP_ADDON_PDF');

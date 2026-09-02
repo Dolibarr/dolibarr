@@ -390,6 +390,9 @@ if ($end_d != '') {
 if ($search_categ_cus != 0) {
 	$param .= '&search_categ_cus='.urlencode((string) ($search_categ_cus));
 }
+if ($check_holiday) {
+	$param .= '&check_holiday=1';
+}
 $param .= "&maxprint=".urlencode((string) ($maxprint));
 
 $paramnoactionodate = $param;
@@ -579,7 +582,27 @@ if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 	$s .= '<script type="text/javascript">'."\n";
 	$s .= 'jQuery(document).ready(function () {'."\n";
 	$s .= 'jQuery(".check_birthday").click(function() { console.log("Click on .check_birthday so we toggle class .peruser_birthday"); jQuery(".peruser_birthday").addClass("peruser_birthday_imp"); });'."\n";
-	$s .= 'jQuery(".check_holiday").click(function() { console.log("Click on .check_holiday so we toggle class .peruser_holiday"); if (jQuery(".peruser_holiday").hasClass("peruser_holiday_imp")) { jQuery(".peruser_holiday").removeClass("peruser_holiday_imp"); } else { jQuery(".peruser_holiday").addClass("peruser_holiday_imp"); } });'."\n";
+
+	$s .= 'jQuery(".check_holiday").click(function() {';
+	$s .= '	console.log("Click on .check_holiday so we toggle class .peruser_holiday");';
+	$s .= '	if (jQuery(".peruser_holiday").hasClass("peruser_holiday_imp")) {';
+	$s .= '		jQuery(".peruser_holiday").removeClass("peruser_holiday_imp");';
+	$s .= '	} else { ';
+	$s .= '		jQuery(".peruser_holiday").addClass("peruser_holiday_imp");';
+	$s .= '	}';
+	// add check_holiday params to navigation links when click on check holiday input
+	$s .= '	var checkHoliday = jQuery(this).is(":checked") ? 1 : 0;';
+	$s .= '	jQuery(".navselectiondate a, .navmode a").each(function(index, elem) { ';
+	$s .= '		var navLinkElem = jQuery(elem);';
+	$s .= '		var navLinkHref = navLinkElem.attr("href");';
+	$s .= '		var navLinkParts = navLinkHref.split("?");';
+	$s .= '		var navLinkPath = navLinkParts[0];';
+	$s .= '		var navLinkParams = new URLSearchParams(navLinkParts[1] || "");';
+	$s .= '		navLinkParams.set("check_holiday", checkHoliday);';
+	$s .= '		navLinkElem.attr("href", navLinkPath + "?" + navLinkParams.toString());';
+	$s .= '	});';
+	$s .= '});'."\n";
+
 	if (isModEnabled("bookcal") && !empty($bookcalcalendars["calendars"])) {
 		foreach ($bookcalcalendars["calendars"] as $key => $value) {
 			$s .= 'jQuery(".check_bookcal_calendar_'.$value['id'].'").click(function() { console.log("Toggle Bookcal Calendar '.$value['id'].'"); jQuery(".family_bookcal_calendar_'.$value['id'].'").toggle(); });'."\n";
@@ -729,6 +752,11 @@ if (($filtert != '-1' && $filtert != '-2') || $usergroup > 0) {
 	}
 }
 
+// Add table from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
+
 $sql .= " WHERE a.fk_action = ca.id";
 $sql .= " AND a.entity IN (".getEntity('agenda').")";	// bookcal is a "virtual view" of agenda
 
@@ -869,7 +897,7 @@ $resql = $db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql);
 
-	$MAXONSAMEPAGE = 10000; // Useless to have more. Protection to avoid memory overload when high number of event (for example after a mass import)
+	$MAXONSAMEPAGE = getDolGlobalInt('AGENDA_MAX_ON_SAME_PAGE', 5000); // Useless to have more. Protection to avoid memory overload when high number of event (for example after a mass import)
 	$i = 0;
 	while ($i < $num && $i < $MAXONSAMEPAGE) {
 		$obj = $db->fetch_object($resql);
@@ -1020,76 +1048,7 @@ if ($resql) {
 // BIRTHDATES CALENDAR
 // Complete $eventarray with birthdates
 if ($showbirthday) {  // always false @phpstan-ignore-line
-	// Add events in array
-	$sql = 'SELECT sp.rowid, sp.lastname, sp.firstname, sp.birthday';
-	$sql .= ' FROM '.MAIN_DB_PREFIX.'socpeople as sp';
-	$sql .= ' WHERE (priv=0 OR (priv=1 AND fk_user_creat='.((int) $user->id).'))';
-	$sql .= " AND sp.entity IN (".getEntity('contact').")";
-	if ($mode == 'show_day') {
-		$sql .= ' AND MONTH(birthday) = '.((int) $month);
-		$sql .= ' AND DAY(birthday) = '.((int) $day);
-	} else {
-		$sql .= ' AND MONTH(birthday) = '.((int) $month);
-	}
-	$sql .= ' ORDER BY birthday';
-
-	dol_syslog("comm/action/index.php", LOG_DEBUG);
-	$resql = $db->query($sql);
-	if ($resql) {
-		$num = $db->num_rows($resql);
-		$i = 0;
-		while ($i < $num) {
-			$obj = $db->fetch_object($resql);
-
-			$event = new ActionComm($db);
-
-			$event->id = $obj->rowid; // We put contact id in action id for birthdays events
-			$event->ref = (string) $event->id;
-
-			$datebirth = dol_stringtotime($obj->birthday, 1);
-			//print 'ee'.$obj->birthday.'-'.$datebirth;
-			$datearray = dol_getdate($datebirth, true);
-			$event->datep = dol_mktime(0, 0, 0, $datearray['mon'], $datearray['mday'], $year, true); // For full day events, date are also GMT but they won't but converted during output
-			$event->datef = $event->datep;
-
-			$event->type_code = 'BIRTHDAY';
-			$event->type_label = '';
-			$event->type_color = '';
-			$event->type = 'birthdate';
-			$event->type_picto = 'birthdate';
-
-			$event->label = $langs->trans("Birthday").' '.dolGetFirstLastname($obj->firstname, $obj->lastname);
-			$event->percentage = 100;
-			$event->fulldayevent = 1;
-
-			$event->contact_id = $obj->rowid;
-
-			$event->date_start_in_calendar = $db->jdate($event->datep);
-			$event->date_end_in_calendar = $db->jdate($event->datef);
-
-			// Add an entry in eventarray for each day
-			$daycursor = $event->datep;
-			$annee = (int) dol_print_date($daycursor, '%Y', 'tzuserrel');
-			$mois = (int) dol_print_date($daycursor, '%m', 'tzuserrel');
-			$jour = (int) dol_print_date($daycursor, '%d', 'tzuserrel');
-
-			$daykey = dol_mktime(0, 0, 0, $mois, $jour, $annee, 'gmt');
-
-			$eventarray[$daykey][] = $event;
-
-			/*$loop = true;
-			 $daykey = dol_mktime(0, 0, 0, $mois, $jour, $annee);
-			 do {
-			 $eventarray[$daykey][] = $event;
-			 $daykey += 60 * 60 * 24;
-			 if ($daykey > $event->date_end_in_calendar) $loop = false;
-			 } while ($loop);
-			 */
-			$i++;
-		}
-	} else {
-		dol_print_error($db);
-	}
+	agenda_get_birthday_events($db, $langs, $user, $mode, $month, $day, $year, $eventarray, $nbevents);
 }
 
 // LEAVE-HOLIDAY CALENDAR
@@ -1126,8 +1085,10 @@ if ($user->hasRight("holiday", "read")) {
 			$event->type = 'holiday';
 			$event->type_picto = 'holiday';
 
-			$event->datep                   = $db->jdate($obj->date_start) + (int) ((empty($obj->halfday) || $obj->halfday == 1 ? 0 : 12) * 60 * 60);
-			$event->datef                   = $db->jdate($obj->date_end) + (int) ((empty($obj->halfday) || $obj->halfday == -1 ? 24 : 12) * 60 * 60 - 1);
+			// date_debut and date_fin are dates without time, so they must be read and rendered in GMT to
+			// stay independent from the server and user timezones (otherwise the calendar day box is shifted).
+			$event->datep                   = (int) $db->jdate($obj->date_start, 'gmt') + ((empty($obj->halfday) || $obj->halfday == 1) ? 0 : 12) * 60 * 60;
+			$event->datef                   = (int) $db->jdate($obj->date_end, 'gmt') + ((empty($obj->halfday) || $obj->halfday == -1) ? 24 : 12) * 60 * 60 - 1;
 			$event->date_start_in_calendar  = $event->datep;
 			$event->date_end_in_calendar    = $event->datef;
 
@@ -1146,14 +1107,14 @@ if ($user->hasRight("holiday", "read")) {
 
 
 			$daycursor = $event->date_start_in_calendar;
-			$annee = (int) dol_print_date($daycursor, '%Y', 'tzuserrel');
-			$mois = (int) dol_print_date($daycursor, '%m', 'tzuserrel');
-			$jour = (int) dol_print_date($daycursor, '%d', 'tzuserrel');
+			$annee = (int) dol_print_date($daycursor, '%Y', 'gmt');
+			$mois = (int) dol_print_date($daycursor, '%m', 'gmt');
+			$jour = (int) dol_print_date($daycursor, '%d', 'gmt');
 
 			$daycursorend = $event->date_end_in_calendar;
-			$anneeend = (int) dol_print_date($daycursorend, '%Y', 'tzuserrel');
-			$moisend = (int) dol_print_date($daycursorend, '%m', 'tzuserrel');
-			$jourend = (int) dol_print_date($daycursorend, '%d', 'tzuserrel');
+			$anneeend = (int) dol_print_date($daycursorend, '%Y', 'gmt');
+			$moisend = (int) dol_print_date($daycursorend, '%m', 'gmt');
+			$jourend = (int) dol_print_date($daycursorend, '%d', 'gmt');
 
 			// daykey must be date that represent day box in calendar so must be a user time
 			$daykey = dol_mktime(0, 0, 0, $mois, $jour, $annee, 'gmt');

@@ -129,7 +129,7 @@ llxHeader('', $titre, '', '', 0, 0, '', '', '', 'mod-fourn-facture page-rapport'
 
 print load_fiche_titre($titre, '', 'supplier_invoice');
 
-// Formulaire de generation
+// Generation form
 print '<form method="post" action="rapport.php?year='.$year.'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="builddoc">';

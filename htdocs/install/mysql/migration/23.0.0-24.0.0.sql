@@ -50,6 +50,7 @@ ALTER TABLE llx_categorie_project_task DROP FOREIGN KEY fk_categorie_project_tas
 -- VPGSQL8.2 DROP INDEX idx_categorie_project_fk_task;
 ALTER TABLE llx_categorie_project_task ADD INDEX idx_categorie_project_fk_task (fk_project_task);
 ALTER TABLE llx_categorie_project_task ADD CONSTRAINT fk_categorie_project_task_rowid FOREIGN KEY (fk_project_task) REFERENCES llx_projet_task (rowid);
+ALTER TABLE llx_stock_mouvement ADD INDEX idx_stock_mouvement_batch_entrepot_type_datem (batch, fk_entrepot, type_mouvement, datem);
 
 -- V24 migration
 ALTER TABLE llx_expensereport_det ADD COLUMN tcheck_file	integer DEFAULT NULL after fk_ecm_files;
@@ -92,7 +93,7 @@ CREATE TABLE llx_accounting_transaction_template_det (
 ) ENGINE=innodb;
 
 ALTER TABLE llx_accounting_transaction_template_det ADD INDEX idx_accounting_transaction_template_det_rowid (rowid);
-ALTER TABLE llx_accounting_transaction_template_det ADD CONSTRAINT llx_accounting_transaction_template_det_fk_transaction_template FOREIGN KEY (fk_transaction_template) REFERENCES llx_accounting_transaction_template(rowid);
+ALTER TABLE llx_accounting_transaction_template_det ADD CONSTRAINT fk_accounting_transaction_template_det_template FOREIGN KEY (fk_transaction_template) REFERENCES llx_accounting_transaction_template(rowid);
 
 create table llx_categorie_mo
 (

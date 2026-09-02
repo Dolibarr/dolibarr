@@ -31,9 +31,9 @@ UseDiscountOnTotal=Pada subtotal
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Menentukan apakah diskon global diperlakukan sebagai produk, layanan, atau hanya pada subtotal untuk perhitungan margin.
 MARGIN_TYPE=Harga Beli / Biaya disarankan secara default untuk perhitungan margin
 MargeType1=Marjin pada harga vendor terbaik
-MargeType2=Marjin Harga Rata-Rata Tertimbang (WAP)
+MargeType2=Margin on Weighted Average Cost (WAC)
 MargeType3=Margin pada Harga Biaya
-MarginTypeDesc=* Margin pada harga beli terbaik = Harga jual - Harga vendor terbaik yang ditentukan pada kartu produk<br>* Margin untuk Harga Rata-rata Tertimbang (WAP) = Harga jual - Harga Rata-Rata Tertimbang Produk (WAP) atau harga vendor terbaik jika WAP belum didefinisikan<br>* Margin pada Harga biaya = Harga jual - Harga biaya ditentukan pada kartu produk atau WAP jika harga biaya tidak ditentukan, atau harga vendor terbaik jika WAP belum ditetapkan
+MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Cost (WAC) = Selling price - Product Weighted Average Price (WAP) or best vendor price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAC if cost price not defined, or best vendor price if WAC not yet defined
 CostPrice=Harga biaya
 UnitCharges=Biaya unit
 Charges=Biaya

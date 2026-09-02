@@ -43,7 +43,6 @@ if (empty($_GET['keysearch']) && !defined('NOREQUIREHTML')) {	// Keep $_GET here
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -73,6 +72,7 @@ $warehouseId = GETPOSTINT('warehouseid');
 
 // Security check
 restrictedArea($user, 'produit|service|commande|propal|facture', 0, 'product&product');
+
 
 /*
  * Actions
@@ -113,7 +113,7 @@ if ($action == 'fetch' && !empty($id)) {
 		$outtva_tx = 0;
 		$outdefault_vat_code = '';
 		$outqty = 1;
-		$outdiscount = 0;
+		$outdiscount = null;								// A discount on product price level is defined only for some price mode (like a price per customer 'PRODUIT_CUSTOMER_PRICES' or a price percustomer and quantity 'PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')
 		$mandatory_period = $object->mandatory_period;
 		$found = false;
 
@@ -272,6 +272,17 @@ if ($action == 'fetch' && !empty($id)) {
 					$outdefault_vat_code = '';
 				}
 			}
+
+			// The VAT rate above was just changed to the one applicable to this buyer, but price_ht/
+			// price_ttc are still whatever was set for the product/price line, so they can now be an
+			// inconsistent triple (e.g. a price defined as tax included, VAT rate now 0 for an EU
+			// reverse-charge buyer, but price_ttc is still the original tax-included amount). Off by
+			// default to keep historical behavior (price_ttc unchanged, whatever VAT rate applies);
+			// when enabled, price_ht is kept as the fixed reference and price_ttc is recomputed from
+			// it and the buyer's actual VAT rate instead.
+			if (getDolGlobalString('PRODUIT_RECALCULATE_TTC_ACCORDING_TO_BUYER_VAT') && isset($outprice_ht)) {
+				$outprice_ttc = price((float) price2num($outprice_ht) * (1 + ($outtva_tx / 100)));
+			}
 		}
 
 		$outjson = array(
@@ -305,6 +316,9 @@ if ($action == 'fetch' && !empty($id)) {
 	echo json_encode($outjson);
 } else {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+	if (!isset($form) || !is_object($form)) {
+		$form = new Form($db);
+	}
 
 	$langs->loadLangs(array("main", "products"));
 
@@ -330,10 +344,6 @@ if ($action == 'fetch' && !empty($id)) {
 
 	// When used from jQuery, the search term is added as GET param "term".
 	$searchkey = (($idprod && GETPOST($idprod, 'alpha')) ? GETPOST($idprod, 'alpha') : (GETPOST($htmlname, 'alpha') ? GETPOST($htmlname, 'alpha') : ''));
-
-	if (!isset($form) || !is_object($form)) {
-		$form = new Form($db);
-	}
 
 	$arrayresult = [];
 	if (empty($mode) || $mode == 1) {  // mode=1: customer

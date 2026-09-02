@@ -93,7 +93,7 @@ function check_user_password_googleoauth($usertotest, $passwordtotest, $entityto
 			$backtourl = preg_replace('/#.*$/i', '', $backtourl);	// We remove part after the #...
 
 
-			$url = $urlwithroot.'/core/modules/oauth/google_oauthcallback.php?shortscope='.urlencode($shortscope).'&state='.urlencode('forlogin-'.$shortscope.'-'.$oauthstateanticsrf).'&username='.urlencode($usertotest).'&backtourl='.urldecode($backtourl);
+			$url = $urlwithroot.'/core/modules/oauth/google_oauthcallback.php?shortscope='.urlencode($shortscope).'&state='.urlencode('forlogin-'.$shortscope.'-'.$oauthstateanticsrf).'&username='.urlencode($usertotest).'&backtourl='.urlencode($backtourl);
 
 			// we go on oauth provider authorization page
 			header('Location: '.$url);

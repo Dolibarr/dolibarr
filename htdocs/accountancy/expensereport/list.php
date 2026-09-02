@@ -6,7 +6,7 @@
  * Copyright (C) 2014		Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2016		Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
- * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -132,6 +132,9 @@ $arrayfields = array(
 	'aa.data_suggest'       => array('label' => "DataUsedToSuggestAccount",     'position' => 1, 'checked' => '1', 'enabled' => '1'), // Seems not used in search.
 	'aa.account_number'     => array('label' => "AccountAccountingSuggest",     'position' => 1, 'checked' => '1', 'enabled' => '1'),
 );
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 if (getDolGlobalString('ACCOUNTANCY_USE_EXPENSE_REPORT_VALIDATION_DATE')) {
 	$arrayfields['er.date_valid'] = array('label' => "DateValidation",           'position' => 1, 'checked' => '1', 'enabled' => '1');
 }
@@ -274,7 +277,7 @@ $sql .= " FROM ".MAIN_DB_PREFIX."expensereport as er";
 $sql .= " INNER JOIN ".MAIN_DB_PREFIX."expensereport_det as erd ON er.rowid = erd.fk_expensereport";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_type_fees as f ON f.id = erd.fk_c_type_fees";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = er.fk_user_author";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa ON f.accountancy_code = aa.account_number AND aa.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa.entity = ".$conf->entity;
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa ON f.accountancy_code = aa.account_number AND aa.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa.entity = ".((int) $conf->entity);
 // Add table from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook

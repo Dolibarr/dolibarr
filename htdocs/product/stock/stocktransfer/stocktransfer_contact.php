@@ -106,6 +106,7 @@ if (!$permissiontoread || ($action === 'create' && !$permissiontoadd)) {
  */
 
 if ($action == 'addcontact' && $user->hasRight('stocktransfer', 'stocktransfer', 'write')) {
+	$result = -1;
 	if ($object->id > 0) {
 		$contactid = (GETPOSTINT('userid') ? GETPOSTINT('userid') : GETPOSTINT('contactid'));
 		$result = $object->add_contact($contactid, GETPOST("typecontact") ? GETPOST("typecontact") : GETPOST("type"), GETPOST("source"));
@@ -162,7 +163,7 @@ if ($object->id > 0) {
 	// Thirdparty
 	$morehtmlref .= empty($object->thirdparty) ? '' : $object->thirdparty->getNomUrl(1, 'customer');
 	if (!getDolGlobalInt('MAIN_DISABLE_OTHER_LINK') && $object->thirdparty->id > 0) {
-		$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->thirdparty->id.'&search_societe='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherOrders").'</a>)';
+		$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->thirdparty->id.'">'.$langs->trans("OtherOrders").'</a>)';
 	}
 	// Project
 	if (isModEnabled('project')) {

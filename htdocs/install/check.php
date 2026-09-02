@@ -449,7 +449,7 @@ if (!file_exists($conffile)) {
 			$dolibarrlastupgradeversionarray = preg_split('/[\.-]/', getDolGlobalString('MAIN_VERSION_LAST_UPGRADE', getDolGlobalString('MAIN_VERSION_LAST_INSTALL')));
 			$dolibarrversiontoinstallarray = versiondolibarrarray();
 		} elseif ($validfoundconf) {
-			print 'Failed to connect with data found int the current conf.php file.<br>';
+			print 'Failed to connect with data found in the current conf.php file.<br>';
 		}
 
 		// Show title

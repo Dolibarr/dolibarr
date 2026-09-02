@@ -52,7 +52,7 @@ if ($rss) {
 }
 
 // If we have a hash public (hashp), we guess the original_file.
-if (!empty($hashp)) {
+if (!empty($hashp) && $hashp != 'shared') {
 	include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 	$ecmfile = new EcmFiles($db);
@@ -262,7 +262,7 @@ if ($rss) {
 		header('Content-Disposition: attachment; filename="'.$filename.'"');
 	}
 
-	// Ajout directives pour resoudre bug IE
+	// Add directives to fix IE bug
 	//header('Cache-Control: Public, must-revalidate');
 	//header('Pragma: public');
 	if ($cachedelay) {

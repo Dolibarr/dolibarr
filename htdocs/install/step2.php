@@ -51,7 +51,7 @@ $db = null;
 
 
 // This page can be long. We increase the time allowed. / Cette page peut etre longue. On augmente le delai autorise.
-// Only works if you are not in safe_mode. / Ne fonctionne que si on est pas en safe_mode.
+// Only works if you are not in safe_mode.
 
 $err = error_reporting();
 error_reporting(0);      // Disable all errors
@@ -353,7 +353,7 @@ if ($action == "set") {		// Test on permission not required. Already managed by 
 				fclose($fp);
 
 				// If several requests, we loop on each
-				$listesql = explode(';', $buffer);
+				$listesql = explode(';', $buffer);  // @phan-suppress-current-line SqlInjection
 				foreach ($listesql as $req) {
 					$buffer = trim($req);
 					if ($buffer) {
@@ -441,7 +441,7 @@ if ($action == "set") {		// Test on permission not required. Already managed by 
 			//$buffer=preg_replace('/;\';/',";'§",$buffer);
 
 			// If several requests, we loop on each of them
-			$listesql = explode('§', $buffer);
+			$listesql = explode('§', $buffer);  // @phan-suppress-current-line SqlInjection
 			foreach ($listesql as $buffer) {
 				$buffer = trim($buffer);
 				if ($buffer) {

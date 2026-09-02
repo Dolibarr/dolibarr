@@ -287,7 +287,7 @@ class ToolCategories extends McpTool
 	 * Executes the requested tool function based on its name.
 	 *
 	 * @param string $name The name of the tool to execute.
-	 * @param array<string, mixed> $args The arguments for the tool (key-value pairs).
+	 * @param array<string, mixed> $args The arguments for the tool (key-value pairs). Only SQL safe arguments!
 	 * @return mixed The result of the tool execution (usually an array) or an error array.
 	 */
 	public function execute(string $name, array $args)
@@ -406,6 +406,8 @@ class ToolCategories extends McpTool
 	/**
 	 * Searches for categories based on a query and type.
 	 *
+	 * Note: Only call with sql safe parameters
+	 *
 	 * @param array<string, mixed> $args Array containing 'query' (string), 'scope' (string), 'limit' (int), 'offset' (int).
 	 * @return array{error:string}|array{count:int}|list<array<string, mixed>> A list of found categories or an error array.
 	 */
@@ -442,9 +444,9 @@ class ToolCategories extends McpTool
 		$sql .= " WHERE c.entity IN (" . getEntity('category') . ")";
 
 		if (!empty($query)) {
-			$query_lower = strtolower($query);
+			$sqlSearchText = $this->db->escape(strtolower($query));
 
-			$sql .= " AND (LOWER(c.label) LIKE '%" . $this->db->escape($query_lower) . "%' OR LOWER(c.description) LIKE '%" . $this->db->escape($query_lower) . "%')";
+			$sql .= " AND (LOWER(c.label) LIKE '%" . $sqlSearchText . "%' OR LOWER(c.description) LIKE '%" . $sqlSearchText . "%')";
 		}
 
 		if (!empty($scope_filter)) {

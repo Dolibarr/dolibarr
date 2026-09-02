@@ -457,7 +457,7 @@ if (!getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
 			$this->export_sql_end[$r] .= ' WHERE f.fk_soc = s.rowid AND f.rowid = fd.fk_facture_fourn';
 			$this->export_sql_end[$r] .= ' AND f.entity IN (' . getEntity('supplier_invoice') . ')';
 			if (is_object($user) && !$user->hasRight('societe', 'client', 'voir')) {
-				$this->export_sql_end[$r] .= ' AND sc.fk_user = ' . ( (int) $user->id);
+				$this->export_sql_end[$r] .= ' AND sc.fk_user = ' . ((int) $user->id);
 			}
 
 			// Invoices and payments
@@ -540,7 +540,7 @@ if (!getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
 			$this->export_sql_end[$r] .= ' WHERE f.fk_soc = s.rowid';
 			$this->export_sql_end[$r] .= ' AND f.entity IN (' . getEntity('supplier_invoice') . ')';
 			if (is_object($user) && !$user->hasRight('societe', 'client', 'voir')) {
-				$this->export_sql_end[$r] .= ' AND sc.fk_user = ' . ( (int) $user->id);
+				$this->export_sql_end[$r] .= ' AND sc.fk_user = ' . ((int) $user->id);
 			}
 
 			// Order
@@ -620,7 +620,7 @@ if (!getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
 			$this->export_sql_end[$r] .= ' WHERE f.fk_soc = s.rowid AND f.rowid = fd.fk_commande';
 			$this->export_sql_end[$r] .= ' AND f.entity IN (' . getEntity('supplier_order') . ')';
 			if (is_object($user) && !$user->hasRight('societe', 'client', 'voir')) {
-				$this->export_sql_end[$r] .= ' AND sc.fk_user = ' . ( (int) $user->id);
+				$this->export_sql_end[$r] .= ' AND sc.fk_user = ' . ((int) $user->id);
 			}
 
 			//Import Supplier Invoice
@@ -668,17 +668,10 @@ if (!getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
 			}
 			// Add extra fields
 			$import_extrafield_sample = array();
-			$sql = "SELECT name, label, fieldrequired FROM " . MAIN_DB_PREFIX . "extrafields WHERE type <> 'separate' AND elementtype = 'facture_fourn' AND entity IN (0, " . $conf->entity . ")";
-			$resql = $this->db->query($sql);
-			if ($resql) {
-				while ($obj = $this->db->fetch_object($resql)) {
-					$fieldname = 'extra.' . $obj->name;
-					$fieldlabel = ucfirst($obj->label);
-					$this->import_fields_array[$r][$fieldname] = $fieldlabel . ($obj->fieldrequired ? '*' : '');
-					$import_extrafield_sample[$fieldname] = $fieldlabel;
-				}
-			}
-			// End add extra fields
+			$keyforselect = 'facture_fourn';
+			$keyforelement = 'supplier_invoice';
+			$keyforaliasextra = 'extra';
+			include DOL_DOCUMENT_ROOT.'/core/extrafieldsinimport.inc.php';
 			$this->import_fieldshidden_array[$r] = array('extra.fk_object' => 'lastrowid-' . MAIN_DB_PREFIX . 'facture_fourn');
 			if (empty($conf->multicurrency->enabled)) {
 				$this->import_fieldshidden_array[$r]['f.multicurrency_code'] = 'const-' . $conf->currency;
@@ -763,17 +756,10 @@ if (!getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
 			}
 			// Add extra fields
 			$import_extrafield_sample = array();
-			$sql = "SELECT name, label, fieldrequired FROM " . MAIN_DB_PREFIX . "extrafields WHERE type <> 'separate' AND elementtype = 'facture_fourn_det' AND entity IN (0, " . $conf->entity . ")";
-			$resql = $this->db->query($sql);
-			if ($resql) {
-				while ($obj = $this->db->fetch_object($resql)) {
-					$fieldname = 'extra.' . $obj->name;
-					$fieldlabel = ucfirst($obj->label);
-					$this->import_fields_array[$r][$fieldname] = $fieldlabel . ($obj->fieldrequired ? '*' : '');
-					$import_extrafield_sample[$fieldname] = $fieldlabel;
-				}
-			}
-			// End add extra fields
+			$keyforselect = 'facture_fourn_det';
+			$keyforelement = 'supplier_invoice';
+			$keyforaliasextra = 'extra';
+			include DOL_DOCUMENT_ROOT.'/core/extrafieldsinimport.inc.php';
 			$this->import_fieldshidden_array[$r] = array('extra.fk_object' => 'lastrowid-' . MAIN_DB_PREFIX . 'facture_fourn_det');
 			$this->import_regex_array[$r] = array('fd.product_type' => '[0|1]$', 'fd.fk_product' => 'rowid@' . MAIN_DB_PREFIX . 'product', 'fd.multicurrency_code' => 'code@' . MAIN_DB_PREFIX . 'multicurrency');
 			$import_sample = array(
@@ -850,18 +836,10 @@ if (!getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
 
 			// Add extra fields
 			$import_extrafield_sample = array();
-			$sql = "SELECT name, label, fieldrequired FROM " . MAIN_DB_PREFIX . "extrafields WHERE type <> 'separate' AND elementtype = 'commande_fournisseur' AND entity IN (0, " . $conf->entity . ")";
-			$resql = $this->db->query($sql);
-
-			if ($resql) {
-				while ($obj = $this->db->fetch_object($resql)) {
-					$fieldname = 'extra.' . $obj->name;
-					$fieldlabel = ucfirst($obj->label);
-					$this->import_fields_array[$r][$fieldname] = $fieldlabel . ($obj->fieldrequired ? '*' : '');
-					$import_extrafield_sample[$fieldname] = $fieldlabel;
-				}
-			}
-			// End add extra fields
+			$keyforselect = 'commande_fournisseur';
+			$keyforelement = 'supplier_order';
+			$keyforaliasextra = 'extra';
+			include DOL_DOCUMENT_ROOT.'/core/extrafieldsinimport.inc.php';
 
 			$this->import_fieldshidden_array[$r] = array('extra.fk_object' => 'lastrowid-' . MAIN_DB_PREFIX . 'commande_fournisseur');
 			$this->import_regex_array[$r] = array(
@@ -932,16 +910,10 @@ if (!getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
 			}
 
 			// Add extra fields
-			$sql = "SELECT name, label, fieldrequired FROM " . MAIN_DB_PREFIX . "extrafields WHERE type <> 'separate' AND elementtype = 'commande_fournisseurdet' AND entity IN (0, " . $conf->entity . ")";
-			$resql = $this->db->query($sql);
-			if ($resql) {
-				while ($obj = $this->db->fetch_object($resql)) {
-					$fieldname = 'extra.' . $obj->name;
-					$fieldlabel = ucfirst($obj->label);
-					$this->import_fields_array[$r][$fieldname] = $fieldlabel . ($obj->fieldrequired ? '*' : '');
-				}
-			}
-			// End add extra fields
+			$keyforselect = 'commande_fournisseurdet';
+			$keyforelement = 'supplier_order';
+			$keyforaliasextra = 'extra';
+			include DOL_DOCUMENT_ROOT.'/core/extrafieldsinimport.inc.php';
 
 			$this->import_fieldshidden_array[$r] = array('extra.fk_object' => 'lastrowid-' . MAIN_DB_PREFIX . 'commande_fournisseurdet');
 			$this->import_regex_array[$r] = array(
@@ -995,8 +967,8 @@ if (!getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
 			}
 
 			$sql_order = array(
-				"DELETE FROM " . MAIN_DB_PREFIX . "document_model WHERE nom = '" . $this->db->escape($this->const[0][2]) . "' AND type = 'order_supplier' AND entity = " . ( (int) $conf->entity),
-				"INSERT INTO " . MAIN_DB_PREFIX . "document_model (nom, type, entity) VALUES('" . $this->db->escape($this->const[0][2]) . "', 'order_supplier', " . ( (int) $conf->entity) . ")",
+				"DELETE FROM " . MAIN_DB_PREFIX . "document_model WHERE nom = '" . $this->db->escape($this->const[0][2]) . "' AND type = 'order_supplier' AND entity = " . ((int) $conf->entity),
+				"INSERT INTO " . MAIN_DB_PREFIX . "document_model (nom, type, entity) VALUES('" . $this->db->escape($this->const[0][2]) . "', 'order_supplier', " . ((int) $conf->entity) . ")",
 			);
 
 			//ODT template for Supplier Invoice

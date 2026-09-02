@@ -258,7 +258,7 @@ OtherFilteredTasks=Tugas yang difilter lainnya
 NoAssignedTasks=Tidak ada tugas yang ditugaskan ditemukan (menetapkan proyek / tugas untuk pengguna saat ini dari kotak pilih atas untuk memasukkan waktu di sana)
 ThirdPartyRequiredToGenerateIntervention=Pihak ketiga harus ditentukan dalam proyek agar dapat menciptakan intervensi.
 ThirdPartyRequiredToGenerateInvoice=Pihak ketiga harus ditentukan pada proyek untuk dapat menagihnya.
-ChooseANotYetAssignedTask=Pilih tugas yang belum ditugaskan untuk Anda
+ChooseANotYetAssignedTask=Tasks not yet assigned to you
 # Comments trans
 AllowCommentOnTask=Izinkan komentar pengguna tentang tugas
 AllowCommentOnProject=Izinkan komentar pengguna tentang proyek

@@ -6,7 +6,7 @@
  * Copyright (C) 2012		Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2013		Christophe Battarel			<christophe.battarel@altairis.fr>
  * Copyright (C) 2013		Cédric Salvado				<csalvador@gpcsolutions.fr>
- * Copyright (C) 2015-2025  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2015-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2015		Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
  * Copyright (C) 2016-2023	Ferran Marcet				<fmarcet@2byte.es>
@@ -279,10 +279,18 @@ if ($reshook > 0) {
 
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+
+// Add hook to complete $arrayfields
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 $object->fields = dol_sort_array($object->fields, 'position');
 //$arrayfields['anotherfield'] = array('type'=>'integer', 'label'=>'AnotherField', 'checked'=>1, 'enabled'=>1, 'position'=>90, 'csslist'=>'right');
 $arrayfields = dol_sort_array($arrayfields, 'position');
+
 
 
 // Security check
@@ -411,7 +419,7 @@ if (empty($reshook)) {
 	$month = "";
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
-	if ($massaction == 'confirm_createbills') {   // Create bills from orders.
+	if ($massaction == 'confirm_createbills' && $user->hasRight('facture', 'creer')) {   // Create bills from orders.
 		$orders = GETPOST('toselect', 'array:int');
 		$createbills_onebythird = GETPOSTINT('createbills_onebythird');
 		$validate_invoices = GETPOSTINT('validate_invoices');
@@ -436,6 +444,15 @@ if (empty($reshook)) {
 			if ($cmd->fetch($id_order) <= 0) {
 				continue;
 			}
+
+			// Skip orders that cannot be billed, to mirror the "CreateBill" button availability on the order card
+			// (card.php only shows it when status > STATUS_DRAFT and the order is not already billed): this excludes
+			// draft and canceled orders, as well as orders already classified as billed.
+			if ($cmd->status <= Commande::STATUS_DRAFT || !empty($cmd->billed)) {
+				setEventMessages($langs->trans('WarningOrderNotEligibleForInvoicing', $cmd->ref), null, 'warnings');
+				continue;
+			}
+
 			$cmd->fetch_thirdparty();
 
 			$objecttmp = new Facture($db);
@@ -695,6 +712,7 @@ if (empty($reshook)) {
 				}
 
 				$id = $objecttmp->id; // For builddoc action
+				$lastref = $objecttmp->ref; // Refresh ref after validation (was the draft PROVxxxx ref set at creation)
 
 				// Builddoc
 				$donotredirect = 1;
@@ -1023,9 +1041,9 @@ if ($socid > 0) {
 }
 // Restriction on sale representative
 if (empty($user->socid) && !$permissiontoreadallthirdparty) {
-	$sql .= " AND (EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = c.fk_soc AND sc.fk_user = ".((int) $user->id).")";
+	$sql .= " AND (".getSalesRepresentativeSqlFilter('c.fk_soc', (int) $user->id);
 	if (getDolGlobalInt('MAIN_SEE_SUBORDINATES') && $userschilds) {
-		$sql .= " OR EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = c.fk_soc AND sc.fk_user IN (".$db->sanitize(implode(',', $userschilds))."))";
+		$sql .= " OR ".getSalesRepresentativeSqlFilter('c.fk_soc', $db->sanitize(implode(',', $userschilds)));
 	}
 	$sql .= ")";
 }
@@ -1192,9 +1210,9 @@ if ($search_user > 0) {
 // Search on sale representative
 if ($search_sale && $search_sale != '-1') {
 	if ($search_sale == -2) {
-		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = c.fk_soc)";
+		$sql .= " AND ".getSalesRepresentativeSqlFilter('c.fk_soc', 0, 1);
 	} elseif ($search_sale > 0) {
-		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = c.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+		$sql .= " AND ".getSalesRepresentativeSqlFilter('c.fk_soc', (int) $search_sale);
 	}
 }
 
@@ -3013,7 +3031,7 @@ while ($i < $imaxinloop) {
 					print '</a>';
 
 					if (!empty($shippableInfos['warning'])) {
-						// On ne remonte plus le détail textwarning, mais on garde l’icône d’avertissement
+						// We no longer show the textwarning detail, but we keep the warning icon
 						print $form->textwithtooltip('', $langs->trans("NotEnoughForAllOrders"), 2, 1, img_picto('', 'error', '', 0, 0, 0, '', '2'), '', 2);
 					}
 				}

@@ -450,17 +450,17 @@ if (isModEnabled('invoice') && ($modecompta == 'CREANCES-DETTES' || $modecompta 
 			$sql .= " AND d.datedon <= '".$db->idate($date_end)."'";
 		}
 		$sql .= " GROUP BY p.rowid, p.ref";
-		$newsortfield = $sortfield;
-		if ($newsortfield == 's.nom, s.rowid') {
-			$newsortfield = 'p.ref';
+		$sqlNewSortField = $sortfield;  // @phan-suppress-current-line SqlInjection
+		if ($sqlNewSortField == 's.nom, s.rowid') {
+			$sqlNewSortField = 'p.ref';
 		}
-		if ($newsortfield == 'amount_ht') {
-			$newsortfield = 'amount';
+		if ($sqlNewSortField == 'amount_ht') {
+			$sqlNewSortField = 'amount';
 		}
-		if ($newsortfield == 'amount_ttc') {
-			$newsortfield = 'amount';
+		if ($sqlNewSortField == 'amount_ttc') {
+			$sqlNewSortField = 'amount';
 		}
-		$sql .= $db->order($newsortfield, $sortorder);
+		$sql .= $db->order($sqlNewSortField, $sortorder);
 
 		dol_syslog("by project, get dunning");
 		$result = $db->query($sql);
@@ -669,17 +669,17 @@ if (isModEnabled('invoice') && ($modecompta == 'CREANCES-DETTES' || $modecompta 
 
 
 		$sql .= " GROUP BY rowid, project_ref";
-		$newsortfield = $sortfield;
-		if ($newsortfield == 's.nom, s.rowid') {
-			$newsortfield = 'project_ref';
+		$sqlNewSortField = $sortfield;  // @phan-suppress-current-line SqlInjection
+		if ($sqlNewSortField == 's.nom, s.rowid') {
+			$sqlNewSortField = 'project_ref';
 		}
-		if ($newsortfield == 'amount_ht') {
-			$newsortfield = 'amount';
+		if ($sqlNewSortField == 'amount_ht') {
+			$sqlNewSortField = 'amount';
 		}
-		if ($newsortfield == 'amount_ttc') {
-			$newsortfield = 'amount';
+		if ($sqlNewSortField == 'amount_ttc') {
+			$sqlNewSortField = 'amount';
 		}
-		$sql .= $db->order($newsortfield, $sortorder);
+		$sql .= $db->order($sqlNewSortField, $sortorder);
 
 		dol_syslog("by project, get salaries");
 		$result = $db->query($sql);
@@ -775,11 +775,11 @@ if (isModEnabled('invoice') && ($modecompta == 'CREANCES-DETTES' || $modecompta 
 		}
 
 		$sql .= " GROUP BY ed.rowid, ed.fk_projet, p.rowid, p.ref";
-		$newsortfield = $sortfield;
-		if ($newsortfield == 's.nom, s.rowid') {
-			$newsortfield = 'project_ref';
+		$sqlNewSortField = $sortfield;  // @phan-suppress-current-line SqlInjection
+		if ($sqlNewSortField == 's.nom, s.rowid') {
+			$sqlNewSortField = 'project_ref';
 		}
-		$sql .= $db->order($newsortfield, $sortorder);
+		$sql .= $db->order($sqlNewSortField, $sortorder);
 
 		echo '<tr class="trforbreak"><td colspan="4">'.$langs->trans("ExpenseReport").'</td></tr>';
 

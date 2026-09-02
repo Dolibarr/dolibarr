@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2012  Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2010-2014  Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2017       Ferran Marcet			<fmarcet@2byte.es>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -99,7 +99,7 @@ if ($type == 'bank-transfer') {
 }
 
 if ($type == 'bank-transfer') {
-	$usercancreate = ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer);
+	$usercancreate = ($user->hasRight('fournisseur', 'facture', 'creer') || $user->hasRight('supplier_invoice', 'creer'));
 } else {
 	$usercancreate = $user->hasRight('facture', 'creer');
 }
@@ -372,11 +372,11 @@ if ($object->id > 0) {
 	$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1);
 	if ($type == 'bank-transfer') {
 		if (!getDolGlobalString('MAIN_DISABLE_OTHER_LINK') && $object->thirdparty->id > 0) {
-			$morehtmlref .= ' <div class="inline-block valignmiddle">(<a class="valignmiddle" href="'.DOL_URL_ROOT.'/fourn/facture/list.php?socid='.$object->thirdparty->id.'&search_company='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherBills").'</a>)</div>';
+			$morehtmlref .= ' <div class="inline-block valignmiddle">(<a class="valignmiddle" href="'.DOL_URL_ROOT.'/fourn/facture/list.php?socid='.((int) $object->thirdparty->id).'">'.$langs->trans("OtherBills").'</a>)</div>';
 		}
 	} else {
 		if (!getDolGlobalString('MAIN_DISABLE_OTHER_LINK') && $object->thirdparty->id > 0) {
-			$morehtmlref .= ' <div class="inline-block valignmiddle">(<a class="valignmiddle" href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$object->thirdparty->id.'&search_company='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherBills").'</a>)</div>';
+			$morehtmlref .= ' <div class="inline-block valignmiddle">(<a class="valignmiddle" href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.((int) $object->thirdparty->id).'">'.$langs->trans("OtherBills").'</a>)</div>';
 		}
 	}
 	// Project
@@ -386,7 +386,7 @@ if ($object->id > 0) {
 		if (0) {	// @phpstan-ignore-line
 			$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 			if ($action != 'classify') {
-				$morehtmlref .= '<a class="editfielda" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true).'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
+				$morehtmlref .= '<a class="editfielda" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => ((int) $object->id)], true).'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
 			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {

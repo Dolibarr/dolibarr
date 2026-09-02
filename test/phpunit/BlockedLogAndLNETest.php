@@ -2,7 +2,7 @@
 /* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  * Copyright (C) ---Put here your own copyright and developer email---
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -85,17 +85,19 @@ class BlockedLogAndLNETest extends CommonClassTest
 		$db = $this->savdb;
 
 		$localobject = new BlockedLog($db);
-		$localobject->action = 'TEST';
 
 		$element = new Facture($db);
 		$element->initAsSpecimen();
-		$localobject->element = $element->element;
-		$localobject->object_data = $element;
+
+		// Build a clean object_data (a stdClass) - do not assign the raw
+		// business object, whose $db property would be serialized into the
+		// immutable log and break the INSERT on PostgreSQL.
+		$localobject->setObjectData($element, 'TEST', 0);
 
 		$result = $localobject->create($user);
 
 		print __METHOD__." result=".$result."\n";
-		$this->assertLessThan($result, 0);
+		$this->assertLessThan($result, 0, $localobject->error);
 
 		return $result;
 	}

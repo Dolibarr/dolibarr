@@ -55,13 +55,24 @@ document.addEventListener('Dolibarr:Init', function(e) {
 			return `DolibarrLangs_${hashedPath}`;
 		}
 
+		function stringToHex(str) {
+		    return [...new TextEncoder().encode(str)]
+		        .map(b => b.toString(16).padStart(2, "0"))
+		        .join("");
+		}
+
 		// Simple function to generate a hash from a string
 		async function hashString(str) {
 			const encoder = new TextEncoder();
 			const data = encoder.encode(str);
-			const hashBuffer = await crypto.subtle.digest('SHA-1', data);
-			const hashArray = Array.from(new Uint8Array(hashBuffer));
-			return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+			if (globalThis.crypto?.subtle) {
+				const hashBuffer = await crypto.subtle.digest('SHA-1', data);
+				const hashArray = Array.from(new Uint8Array(hashBuffer));
+				return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+			} else {
+				const hashBuffer = stringToHex(data);
+				return hashBuffer;
+			}
 		}
 
 		/**

@@ -173,3 +173,5 @@ ErrorObjectMustNotBeFinishedToModifyDateEnd = Objekt %s darf nicht bereits abges
 ErrorObjectMustNotBeFinishedToModifyDateStart = Objekt %s darf nicht bereits abgeschlossen sein, wenn das Start-Datum verändert werden soll.
 BOM_SUB_BOM=Unterstücklisten (Sub-BOMs) verwenden
 UseSearchToSelectBom=Warten, bis eine Taste gedrückt wird, bevor der Inhalt der Stücklisten/BOM-Kombolisten geladen wird.<br>Dies kann die Leistung verbessern, wenn Sie eine große Zahl an Listen haben, ist aber weniger komfortabel.
+ReInitialize=Neu initialisieren
+ReInitializeHelp=Initialisiert die Zeilen für den Verbrauch und die Produktion neu (falls sich die Stückliste geändert und die Produktion noch nicht begonnen hat).

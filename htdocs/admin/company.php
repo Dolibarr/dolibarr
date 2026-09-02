@@ -75,6 +75,12 @@ $hookmanager->initHooks(array('admincompany', 'globaladmin'));
 
 $object = new Societe($db);
 
+if (!getDolGlobalString('MAIN_INFO_SOCIETE_NOM') || !getDolGlobalString('MAIN_INFO_SOCIETE_COUNTRY') || getDolGlobalString('MAIN_INFO_SOCIETE_SETUP_TODO_WARNING')) {
+	$setupcompanynotcomplete = 1;
+} else {
+	$setupcompanynotcomplete = 0;
+}
+
 
 /*
  * Actions
@@ -263,6 +269,9 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 	}
 
 	dolibarr_set_const($db, "FACTURE_TVAOPTION", $usevat, 'chaine', 0, '', $conf->entity);
+
+	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_VAT_EXEMPTION_CODE", GETPOST('MAIN_INFO_SOCIETE_VAT_EXEMPTION_CODE'), 'chaine', 0, '', $conf->entity);
+
 	dolibarr_set_const($db, "FACTURE_LOCAL_TAX1_OPTION", $uselocaltax1, 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "FACTURE_LOCAL_TAX2_OPTION", $uselocaltax2, 'chaine', 0, '', $conf->entity);
 
@@ -444,8 +453,8 @@ $head = company_admin_prepare_head();
 
 print dol_get_fiche_head($head, 'company', '', -1, '');
 
-print '<span class="opacitymedium">'.$langs->trans("CompanyFundationDesc", $langs->transnoentities("Save"))."</span><br>\n";
-print "<br><br>\n";
+print '<div class="'.($setupcompanynotcomplete ? 'warning' : 'info').'">'.$langs->trans("CompanyFundationDesc", $langs->transnoentities("Save"))."</div>\n";
+print "<br>\n";
 
 
 // Edit parameters

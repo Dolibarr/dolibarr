@@ -12,7 +12,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es.com>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022-2023  George Gkantinas        <info@geowv.eu>
  * Copyright (C) 2023       Nick Fragoulis
  * Copyright (C) 2023       Alexandre Janniaux      <alexandre.janniaux@gmail.com>
@@ -53,7 +53,6 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
@@ -523,6 +522,9 @@ if (empty($reshook)) {
 					$tmparray = getCountry($object->country_id, 'all');
 					$object->country_code = $tmparray['code'];
 					$object->country = $tmparray['label'];
+				}
+				if (empty($object->tva_intra)) {
+					$object->tva_intra = $object->calculateVATNumberFromProperties($object);
 				}
 			}
 		}
@@ -1046,7 +1048,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 		// Define if customer/prospect or supplier status is set or not
 		if (GETPOST("type", 'aZ') != 'f') {
-			$object->client = -1;
+			$object->client = 0;
 			if (getDolGlobalString('THIRDPARTY_CUSTOMERPROSPECT_BY_DEFAULT')) {
 				$object->client = 3;
 			}
@@ -1194,6 +1196,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			$object->country = $tmparray['label'];
 		}
 		$object->forme_juridique_code = GETPOSTINT('forme_juridique_code');
+		$object->birth = dol_mktime(0, 0, 0, GETPOSTINT('birthmonth'), GETPOSTINT('birthday'), GETPOSTINT('birthyear'));
 
 		// We set multicurrency_code if enabled
 		if (isModEnabled("multicurrency")) {
@@ -1795,7 +1798,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			// Vat is used
 			print '<tr><td><label for="assujtva_value">'.$form->editfieldkey('VATIsUsed', 'assujtva_value', '', $object, 0).'</label></td>';
 			print '<td>';
-			print '<input id="assujtva_value" name="assujtva_value" type="checkbox" ' . (GETPOSTISSET('assujtva_value') ? (GETPOST('assujtva_value', 'alpha') != '' ? ' checked="checked"' : '') : 'checked="checked"') . ' value="1">'; // Assujeti par default en creation
+			print '<input id="assujtva_value" name="assujtva_value" type="checkbox" ' . (GETPOSTISSET('assujtva_value') ? (GETPOST('assujtva_value', 'alpha') != '' ? ' checked="checked"' : '') : 'checked="checked"') . ' value="1">'; // Subject to VAT by default at creation
 			print '</td>';
 			if ($conf->browser->layout == 'phone') {
 				print '</tr><tr>';
@@ -1836,7 +1839,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 			// VAT reverse charge by default
 			if (getDolGlobalString('ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE')) {
-				print '<tr><td><label for="vat_reverse_charge">' . $form->editfieldkey('VATReverseChargeByDefault', 'vat_reverse_charge', '', $object, 0) . '</label></td><td colspan="3">';
+				print '<tr><td><label for="vat_reverse_charge">' . $form->editfieldkey('VATReverseChargeByDefault', 'vat_reverse_charge', '', $object, 0, 'string', '', 0, 0, 'id', $langs->trans('ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC')) . '</label></td><td colspan="3">';
 				print '<input type="checkbox" name="vat_reverse_charge" id="vat_reverse_charge" '.($object->vat_reverse_charge == '1' ? ' checked' : '').'>';
 				print '</td></tr>';
 			}

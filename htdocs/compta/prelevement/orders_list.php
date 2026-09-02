@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2009  Regis Houssin               <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2012  Juanjo Menent               <jmenent@2byte.es>
  * Copyright (C) 2024-2026  Alexandre Spangaro          <alexandre@inovea-conseil.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024       MDW                         <mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -98,6 +98,29 @@ if ($type == 'bank-transfer') {
 } else {
 	$result = restrictedArea($user, 'prelevement', '', '', 'bons');
 }
+
+// Definition of array of fields for columns from ->fields
+$tableprefix = 't';
+$arrayfields = array();
+foreach ($object->fields as $key => $val) {
+	// If $val['visible']==0, then we never show the field
+	if (!empty($val['visible'])) {
+		$visible = (int) dol_eval((string) $val['visible'], 1);
+		$arrayfields[$tableprefix.'.'.$key] = array(
+			'label' => $val['label'],
+			'checked' => (($visible < 0) ? '0' : '1'),
+			'enabled' => (string) (int) (abs($visible) != 3 && (bool) dol_eval((string) $val['enabled'], 1)),
+			'position' => $val['position'],
+			'help' => isset($val['help']) ? $val['help'] : ''
+		);
+	}
+}
+
+// Extra fields
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 
 /*
@@ -257,31 +280,31 @@ $num = $db->num_rows($resql);
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist');
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
-$param = '';
+$query = [];
 if ($type == 'bank-transfer') {
-	$param .= '&type=bank-transfer';
+	$query += ['type' => 'bank-transfer'];
 }
 if (!empty($mode)) {
-	$param .= '&mode='.urlencode($mode);
+	$query += ['mode' => $mode];
 }
 if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
-	$param .= '&contextpage='.urlencode($contextpage);
+	$query += ['contextpage' => $contextpage];
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.((int) $limit);
+	$query += ['limit' => (int) $limit];
 }
 if ($optioncss != '') {
-	$param .= '&optioncss='.urlencode($optioncss);
+	$query += ['optioncss' => $optioncss];
 }
 if ($search_amount) {
-	$param .= '&search_amount='.urlencode($search_amount);
+	$query += ['search_amount' => $search_amount];
 }
 if (is_array($search_status)) {
 	if (!empty($search_status)) {
-		$param .= '&search_status='.implode(',', $search_status);
+		$query += ['search_status' => implode(',', $search_status)];
 	}
 } elseif ((string) $search_status != '' && (string) $search_status != '-1') {
-	$param .= '&search_status='.((int) $search_status);
+	$query += ['search_status' => (int) $search_status];
 }
 
 $arrayofmassactions = array(
@@ -310,11 +333,12 @@ print '<input type="hidden" name="mode" value="'.$mode.'">';
 if ($type != '') {
 	print '<input type="hidden" name="type" value="'.$type.'">';
 }
+$param = http_build_query($query);
 
 $newcardbutton = '';
-$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
-$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
-$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', DOL_URL_ROOT.'/compta/prelevement/stats.php?'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', ($mode == 'statistics' ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common&'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban&'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', dolBuildUrl(DOL_URL_ROOT.'/compta/prelevement/stats.php', $query), '', ($mode == 'statistics' ? 2 : 1), array('morecss' => 'reposition'));
 if ($usercancreate) {
 	$newcardbutton .= dolGetButtonTitleSeparator();
 	$newcardbutton .= dolGetButtonTitle($langs->trans('NewStandingOrder'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/prelevement/create.php?type='.urlencode($type));

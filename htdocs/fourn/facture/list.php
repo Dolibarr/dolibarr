@@ -15,7 +15,7 @@
  * Copyright (C) 2019-2026	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2023		Nick Fragoulis
  * Copyright (C) 2023		Joachim Kueter				<git-jk@bloxera.com>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -773,9 +773,9 @@ if ($search_fk_fac_rec_source) {
 // Search on sale representative
 if ($search_sale && $search_sale != '-1') {
 	if ($search_sale == -2) {
-		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = f.fk_soc)";
+		$sql .= " AND ".getSalesRepresentativeSqlFilter('f.fk_soc', 0, 1);
 	} elseif ($search_sale > 0) {
-		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = f.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+		$sql .= " AND ".getSalesRepresentativeSqlFilter('f.fk_soc', (int) $search_sale);
 	}
 }
 // Search for tag/category ($searchCategorySupplierInvoiceList is an array of ID)
@@ -870,7 +870,7 @@ if ($filter && $filter != -1) {
 	$aFilter = explode(',', $filter);
 	foreach ($aFilter as $fil) {
 		$filt = explode(':', $fil);
-		$sql .= " AND ".$db->escape(trim($filt[0]))." = '".$db->escape(trim($filt[1]))."'";
+		$sql .= " AND ".$db->sanitize(trim($filt[0]))." = '".$db->escape(trim($filt[1]))."'";
 	}
 }
 

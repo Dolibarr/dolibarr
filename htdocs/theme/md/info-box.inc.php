@@ -60,11 +60,12 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 }
 
 .nonature-back {
-	background-color: #EEE;
+	background-color: var(--colorwhitelight);
 	padding: 2px;
 	margin: 2px;
 	border-radius: 3px;
 }
+
 .prospect-back {
 	background-color: #a7c5b0 !important;
 	color: #FFF !important;

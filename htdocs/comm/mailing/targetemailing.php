@@ -501,8 +501,6 @@ if ($object->fetch($id) >= 0) {
 
 	print dol_get_fiche_end();
 
-	print '<br>';
-
 
 	$newcardbutton = '';
 	$allowaddtarget = ($object->status == $object::STATUS_DRAFT);
@@ -515,14 +513,19 @@ if ($object->fetch($id) >= 0) {
 
 	// Show email selectors
 	if ($allowaddtarget && $user->hasRight('mailing', 'creer')) {
-		print load_fiche_titre($langs->trans("ToAddRecipientsChooseHere").'...', ($user->admin ? info_admin($langs->trans("YouCanAddYourOwnPredefindedListHere"), 1) : ''), '');
+		print '<div class="info">';
+		print $langs->trans("ToAddRecipientsChooseHere").'...';
+		//print ($user->admin ? info_admin($langs->trans("YouCanAddYourOwnPredefindedListHere"), 1) : '');
+		print '</div>';
 
 		print '<div class="div-table-responsive">';
 		print '<div class="tagtable centpercentwithout1imp liste_titre_bydiv borderbottom" id="tablelines">';
 
 		print '<div class="tagtr liste_titre">';
 		print '<div class="tagtd"></div>';
-		print '<div class="tagtd">'.$langs->trans("RecipientSelectionModules").'</div>';
+		print '<div class="tagtd">'.$langs->trans("RecipientSelectionModules");
+		print ($user->admin ? info_admin($langs->trans("YouCanAddYourOwnPredefindedListHere"), 1) : '');
+		print '</div>';
 		print '<div class="tagtd center maxwidth150">';
 		if ($object->messtype != 'sms') {
 			print $langs->trans("NbOfUniqueEMails");
@@ -532,11 +535,24 @@ if ($object->fetch($id) >= 0) {
 		print '</div>';
 		print '<div class="tagtd left"><div class="inline-block">'.$langs->trans("Filters").'</div>';
 		if ($object->messtype != 'sms') {
-			print ' &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <div class="inline-block valignmiddle">'.$langs->trans("EvenUnsubscribe").' ';
-			print ajax_object_onoff($object, 'evenunsubscribe', 'evenunsubscribe', 'EvenUnsubscribe:switch_on:warning', 'EvenUnsubscribe', array(), 'small valignmiddle reposition', '', 1);
+			print ' &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <div class="inline-block valignmiddle">';
+			print '<span id="evenunsubscribe_text_'.$object->id.'" class="linkobject" style="cursor: pointer;">'.$langs->trans("EvenUnsubscribe").'</span> ';
+			print ajax_object_onoff($object, 'evenunsubscribe', 'evenunsubscribe', 'EvenUnsubscribe:switch_on:warning', 'EvenUnsubscribe', array(), 'small valignmiddle reposition', '', 1, 'allowaddtarget=1');
 			print '</div>';
 		}
-		print '</div>';
+		print '</div>'."\n";
+		// Add JavaScript to make EvenUnsubscribe text clickable
+		/* This does not work, don't know why
+		print '<script>'."\n";
+		print '$(document).ready(function() {';
+		print '    $("#evenunsubscribe_text_'.dol_escape_js($object->id).'").click(function() {'."\n";
+		print '		   console.log("We click on link to switch unsubscribed emails");';
+		print '        jQuery("#set_evenunsubscribe_'.dol_escape_js($object->id).'").trigger("click");';
+		print '        jQuery("#del_evenunsubscribe_'.dol_escape_js($object->id).'").trigger("click");';
+		print '    });'."\n";
+		print '});'."\n";
+		print '</script>'."\n";
+		*/
 		print '<div class="tagtd">&nbsp;</div>';
 		print '</div>';	// End tr
 
@@ -596,6 +612,7 @@ if ($object->fetch($id) >= 0) {
 						print '<input type="hidden" name="token" value="'.newToken().'">';
 						print '<input type="hidden" name="action" value="add">';
 						print '<input type="hidden" name="page_y" value="'.newToken().'">';
+						//print '<input type="hidden" name="allowaddtarget" value="1">';
 					} else {
 						print '<div class="oddeven trforbreakperms trforbreaknobg impair tagtr">';
 					}
@@ -935,7 +952,7 @@ if ($object->fetch($id) >= 0) {
 					}
 					/*if ($obj->status == -1)	// Sent with error
 					 {
-					 print '<a href="'.$_SERVER['PHP_SELF'].'?action=retry&rowid='.$obj->rowid.$param.'">'.$langs->trans("Retry").'</a>';
+					 print '<a href="'.$_SERVER['PHP_SELF'].'?action=retry&token='.newToken().'&rowid='.$obj->rowid.$param.'">'.$langs->trans("Retry").'</a>';
 					 }*/
 					print '</td>';
 				}
@@ -1012,7 +1029,7 @@ if ($object->fetch($id) >= 0) {
 					}
 					/*if ($obj->status == -1)	// Sent with error
 					{
-						print '<a href="'.$_SERVER['PHP_SELF'].'?action=retry&rowid='.$obj->rowid.$param.'">'.$langs->trans("Retry").'</a>';
+						print '<a href="'.$_SERVER['PHP_SELF'].'?action=retry&token='.newToken().'&rowid='.$obj->rowid.$param.'">'.$langs->trans("Retry").'</a>';
 					}*/
 					print '</td>';
 				}

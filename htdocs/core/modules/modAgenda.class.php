@@ -498,10 +498,10 @@ class modAgenda extends DolibarrModules
 		$this->export_sql_end[$r] .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = ac.fk_project";
 		$this->export_sql_end[$r] .= ' WHERE ac.entity IN ('.getEntity('agenda').')';
 		if (!empty($user) && !$user->hasRight('societe', 'client', 'voir')) {
-			$this->export_sql_end[$r] .= ' AND (sc.fk_user = '.(empty($user) ? 0 : $user->id).' OR ac.fk_soc IS NULL)';
+			$this->export_sql_end[$r] .= ' AND (sc.fk_user = '.(empty($user) ? 0 : ((int) $user->id)).' OR ac.fk_soc IS NULL)';
 		}
 		if (!empty($user) && !$user->hasRight('agenda', 'allactions', 'read')) {
-			$this->export_sql_end[$r] .= ' AND acr.fk_element = '.(empty($user) ? 0 : $user->id);
+			$this->export_sql_end[$r] .= ' AND acr.fk_element = '.(empty($user) ? 0 : ((int) $user->id));
 		}
 		$this->export_sql_end[$r] .= ' AND ac.entity IN ('.getEntity('agenda').')';
 		$this->export_sql_order[$r] = ' ORDER BY ac.datep';
@@ -541,17 +541,10 @@ class modAgenda extends DolibarrModules
 
 		// Add extra fields
 		$import_extrafield_sample = array();
-		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'actioncomm' AND entity IN (0, ".$conf->entity.")";
-		$resql = $this->db->query($sql);
-
-		if ($resql) {
-			while ($obj = $this->db->fetch_object($resql)) {
-				$fieldname = 'extra.'.$obj->name;
-				$fieldlabel = ucfirst($obj->label);
-				$this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
-			}
-		}
-		// End add extra fields
+		$keyforselect = 'actioncomm';
+		$keyforelement = 'action';
+		$keyforaliasextra = 'extra';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinimport.inc.php';
 
 		$this->import_examplevalues_array[$r] = array_merge($import_sample, $import_extrafield_sample);
 		$this->import_fieldshidden_array[$r] = array('extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'actioncomm');

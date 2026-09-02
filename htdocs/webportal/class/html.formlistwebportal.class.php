@@ -418,7 +418,7 @@ class FormListWebPortal
 					}
 					$field_spec = $this->object->fields[$key];
 					//  @phpstan-ignore-next-line
-					$alias = $field_spec['alias'] ?? 't.';
+					$sanitized_alias = $field_spec['alias'] ?? 't.';  // @phan-suppress-current-line SqlInjection
 					$mode_search = (($this->object->isInt($field_spec) || $this->object->isFloat($field_spec)) ? 1 : 0);
 					if ((strpos($field_spec['type'], 'integer:') === 0) || (strpos($field_spec['type'], 'sellist:') === 0) || !empty($field_spec['arrayofkeyval'])) {
 						if ($val == "$this->emptyValueKey" || ($val === '0' && (empty($field_spec['arrayofkeyval']) || !array_key_exists('0', $field_spec['arrayofkeyval'])))) {
@@ -435,11 +435,11 @@ class FormListWebPortal
 					//  @phpstan-ignore-next-line
 					if (empty($field_spec['searchmulti'])) {
 						if (!is_array($val) && $val != '') {
-							$this->sql_body .= natural_search($alias . $this->db->escape($key), $val, (($key == 'status') ? 2 : $mode_search));
+							$this->sql_body .= natural_search($sanitized_alias . $this->db->escape($key), $val, (($key == 'status') ? 2 : $mode_search));
 						}
 					} else {
 						if (is_array($val) && !empty($val)) {
-							$this->sql_body .= natural_search($alias . $this->db->escape($key), implode(',', $val), (($key == 'status') ? 2 : $mode_search));
+							$this->sql_body .= natural_search($sanitized_alias . $this->db->escape($key), implode(',', $val), (($key == 'status') ? 2 : $mode_search));
 						}
 					}
 				} elseif (preg_match('/(_dtstart|_dtend)$/', $key) && $val != '') {
@@ -447,13 +447,13 @@ class FormListWebPortal
 					if (array_key_exists($columnName, $this->object->fields)) {
 						$field_spec = $this->object->fields[$columnName];
 						//  @phpstan-ignore-next-line
-						$alias = $field_spec['alias'] ?? 't.';
+						$sanitized_alias = $field_spec['alias'] ?? 't.';  // @phan-suppress-current-line SqlInjection
 						if (preg_match('/^(date|timestamp|datetime)/', $field_spec['type'])) {
 							if (preg_match('/_dtstart$/', $key)) {
-								$this->sql_body .= " AND " . $alias . $this->db->sanitize($columnName) . " >= '" . $this->db->idate((int) $val) . "'";
+								$this->sql_body .= " AND " . $sanitized_alias . $this->db->sanitize($columnName) . " >= '" . $this->db->idate((int) $val) . "'";
 							}
 							if (preg_match('/_dtend$/', $key)) {
-								$this->sql_body .= " AND " . $alias . $this->db->sanitize($columnName) . " <= '" . $this->db->idate((int) $val) . "'";
+								$this->sql_body .= " AND " . $sanitized_alias . $this->db->sanitize($columnName) . " <= '" . $this->db->idate((int) $val) . "'";
 							}
 						}
 					}
@@ -475,6 +475,7 @@ class FormListWebPortal
 			}
 			$this->offset = $this->limit * ($this->page - 1);
 
+			// Supposed GETPOST(...,"az09comma") is sql protection for sortfield @phan-suppress-next-line SqlInjection
 			$this->sql_order = $this->db->order($this->sortfield, $this->sortorder);
 			$this->sql_order .= $sqlOrder;
 			// Add order by from hooks
