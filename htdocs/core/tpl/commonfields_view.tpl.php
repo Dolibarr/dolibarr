@@ -2,6 +2,7 @@
 /* Copyright (C) 2017       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Anthony Berton			<anthony.berton@bb2a.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -86,11 +87,7 @@ foreach ($object->fields as $key => $val) {
 	if (!empty($val['help'])) {
 		$labeltoshow .= $form->textwithpicto($langs->trans($val['label']), $langs->trans($val['help']));
 	} else {
-		if (isset($val['copytoclipboard']) && $val['copytoclipboard'] == 1) {
-			$labeltoshow .= showValueWithClipboardCPButton($value, 0, $langs->transnoentitiesnoconv($val['label']));
-		} else {
-			$labeltoshow .= $langs->trans($val['label']);
-		}
+		$labeltoshow .= $langs->trans($val['label']);
 	}
 	if (empty($val['alwayseditable'])) {
 		print $labeltoshow;
@@ -117,12 +114,7 @@ foreach ($object->fields as $key => $val) {
 			print picto_from_langcode($value, 'class="paddingrightonly saturatemedium opacitylow"');
 			print $labellang;
 		} else {
-			if (isset($val['copytoclipboard']) && $val['copytoclipboard'] == 2) {
-				$out = $object->showOutputField($val, $key, $value, '', '', '', 0);
-				print showValueWithClipboardCPButton($out, 0, $out);
-			} else {
-				print $object->showOutputField($val, $key, $value, '', '', '', 0);
-			}
+			print $object->showOutputField($val, $key, $value, '', '', '', 0);
 		}
 		//print dol_escape_htmltag($object->$key, 1, 1);
 		if (preg_match('/^(text|html)/', $val['type'])) {
@@ -177,11 +169,7 @@ foreach ($object->fields as $key => $val) {
 	if (!empty($val['help'])) {
 		$labeltoshow .= $form->textwithpicto($langs->trans($val['label']), $langs->trans($val['help']));
 	} else {
-		if (isset($val['copytoclipboard']) && $val['copytoclipboard'] == 1) {
-			$labeltoshow .= showValueWithClipboardCPButton($value, 0, $langs->transnoentitiesnoconv($val['label']));
-		} else {
-			$labeltoshow .= $langs->trans($val['label']);
-		}
+		$labeltoshow .= $langs->trans($val['label']);
 	}
 	if (empty($val['alwayseditable'])) {
 		$rightpart .= $labeltoshow;
@@ -208,12 +196,7 @@ foreach ($object->fields as $key => $val) {
 			$rightpart .= picto_from_langcode($value, 'class="paddingrightonly saturatemedium opacitylow"');
 			$rightpart .= $labellang;
 		} else {
-			if (isset($val['copytoclipboard']) && $val['copytoclipboard'] == 2) {
-				$out = $object->showOutputField($val, $key, $value, '', '', '', 0);
-				$rightpart .= showValueWithClipboardCPButton($out, 0, $out);
-			} else {
-				$rightpart .= $object->showOutputField($val, $key, $value, '', '', '', 0);
-			}
+			$rightpart .= $object->showOutputField($val, $key, $value, '', '', '', 0);
 		}
 		if (preg_match('/^(text|html)/', $val['type'])) {
 			$rightpart .= '</div>';

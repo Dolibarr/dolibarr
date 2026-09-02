@@ -23,7 +23,6 @@
  * Copyright (C) 2025		Vincent Maury		<vmaury@timgroup.fr>
  * Copyright (C) 2026		Pierre Ardoin		<developpeur@lesmetiersdubatiment.fr>
  * Copyright (C) 2026		Anthony Berton		<anthony.berton@bb2a.fr>
-
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -9343,6 +9342,15 @@ abstract class CommonObject
 				$value = str_replace(',', "\n", $value);
 			}
 			$value = dol_htmlentitiesbr((string) $value);
+		}
+
+		if (!empty($val['copytoclipboard']) && !empty($value)) {
+			if ($val['copytoclipboard'] == 1) {
+				$value = showValueWithClipboardCPButton(dol_escape_htmltag($value), 0, 'none') . $value;
+			}
+			if ($val['copytoclipboard'] == 2) {
+				$value .= showValueWithClipboardCPButton(dol_escape_htmltag($value), 0, 'none');
+			}
 		}
 
 		//print $type.'-'.$size.'-'.$value;
