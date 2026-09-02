@@ -383,6 +383,7 @@ $documentation->showSidebar(); ?>
 			'print $form->getSearchFilterToolInput(',
 			'   \'#demo-filter .search-item\',',
 			'   \'search-tools-input\',',
+			'   \'\',',
 			'   [\'attr\' => [',
 			'           \'data-no-item-target\' => \'#demo-filter .search-tool-no-results\', ',
 			'           \'data-counter-target\' => \'#demo-filter .counter\', ',
