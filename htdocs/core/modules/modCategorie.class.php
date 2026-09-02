@@ -358,7 +358,8 @@ class modCategorie extends DolibarrModules
 		}
 
 		// 4 Contacts
-		if (isModEnabled("contact")) {
+		// Contacts belong to the societe module, there is no "contact" module to enable
+		if (isModEnabled("societe")) {
 			$categcode = 'contact';
 			$r++;
 			$this->export_code[$r] = $this->rights_class.'_4_'.$categcode;
