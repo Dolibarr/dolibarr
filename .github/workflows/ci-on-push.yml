@@ -1,6 +1,12 @@
 name: "CI-PUSH"
 
-on: [push]
+on:
+  push:
+    # Executer only on push of the main repository, not on fork.
+    branches:
+      - develop
+      - master
+      - '=.0'
 
 jobs:
   pre-commit:
@@ -20,13 +26,13 @@ jobs:
     needs: [pre-commit]
     with:
       gh_event: ${{ github.event_name }}
-  windows-ci:
-    if: github.ref == 'refs/heads/develop'  # Condition for branch "develop"
-    needs: [pre-commit, phan, phpstan]
-    secrets: inherit
-    uses: ./.github/workflows/windows-ci.yml
-    with:
-      gh_event: ${{ github.event_name }}
+  #windows-ci:
+  #  if: github.ref == 'refs/heads/develop'  # Condition for branch "develop"
+  #  needs: [pre-commit, phan, phpstan]
+  #  secrets: inherit
+  #  uses: ./.github/workflows/windows-ci.yml
+  #  with:
+  #    gh_event: ${{ github.event_name }}
   # gh-travis:  # Runs travis script on github runner (not on travis)
   #   if: false
   #   # needs: [pre-commit, phan]

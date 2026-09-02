@@ -560,17 +560,17 @@ if ($action == "importSignature") {
 										if (getDolGlobalString("FICHINTER_SIGNATURE_XFORIMGSTART")) {
 											$param['xforimgstart'] = getDolGlobalString("FICHINTER_SIGNATURE_XFORIMGSTART");
 										} else {
-											$param['xforimgstart'] = (empty($s['w']) ? 110 : $s['w'] / 2 - 2);
+											$param['xforimgstart'] = (empty($s['w']) ? 110 : round($s['w'] * 0.53));
 										}
 										if (getDolGlobalString("FICHINTER_SIGNATURE_YFORIMGSTART")) {
 											$param['yforimgstart'] = getDolGlobalString("FICHINTER_SIGNATURE_YFORIMGSTART");
 										} else {
-											$param['yforimgstart'] = (empty($s['h']) ? 250 : $s['h'] - 62);
+											$param['yforimgstart'] = (empty($s['h']) ? 250 : $s['h'] - 60);
 										}
 										if (getDolGlobalString("FICHINTER_SIGNATURE_WFORIMG")) {
 											$param['wforimg'] = getDolGlobalString("FICHINTER_SIGNATURE_WFORIMG");
 										} else {
-											$param['wforimg'] = $s['w'] - ($param['xforimgstart'] + 20);
+											$param['wforimg'] = $s['w'] - ($param['xforimgstart'] + 16);
 										}
 
 										dolPrintSignatureImage($pdf, $langs, $param);
@@ -586,9 +586,9 @@ if ($action == "importSignature") {
 								// A signature image file is 720 x 180 (ratio 1/4) but we use only the size into PDF
 								// TODO Get position of box from PDF template
 
-								$param['xforimgstart'] = (empty($s['w']) ? 110 : $s['w'] / 2 - 2);
-								$param['yforimgstart'] = (empty($s['h']) ? 250 : $s['h'] - 62);
-								$param['wforimg'] = $s['w'] - ($param['xforimgstart'] + 20);
+								$param['xforimgstart'] = (empty($s['w']) ? 110 : round($s['w'] * 0.53));
+								$param['yforimgstart'] = (empty($s['h']) ? 250 : $s['h'] - 60);
+								$param['wforimg'] = $s['w'] - ($param['xforimgstart'] + 16);
 
 								dolPrintSignatureImage($pdf, $langs, $param);
 							}
@@ -919,7 +919,7 @@ if ($action == "importSignature") {
 										// A signature image file is 720 x 180 (ratio 1/4) but we use only the size into PDF
 										// TODO Get position of box from PDF template
 
-										$param['xforimgstart'] = 111;
+										$param['xforimgstart'] = (empty($s['w']) ? 110 : round($s['w'] * 0.53));
 										$param['yforimgstart'] = (empty($s['h']) ? 250 : $s['h'] - 60);
 										$param['wforimg'] = $s['w'] - ($param['xforimgstart'] + 16);
 
@@ -936,7 +936,7 @@ if ($action == "importSignature") {
 								// A signature image file is 720 x 180 (ratio 1/4) but we use only the size into PDF
 								// TODO Get position of box from PDF template
 
-								$param['xforimgstart'] = 111;
+								$param['xforimgstart'] = (empty($s['w']) ? 110 : round($s['w'] * 0.53));
 								$param['yforimgstart'] = (empty($s['h']) ? 250 : $s['h'] - 60);
 								$param['wforimg'] = $s['w'] - ($param['xforimgstart'] + 16);
 

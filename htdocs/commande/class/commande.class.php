@@ -643,7 +643,7 @@ class Commande extends CommonOrder
 					if (@rename($dirsource, $dirdest)) {
 						dol_syslog("Rename ok");
 						// Rename docs starting with $oldref with $newref
-						$listoffiles = dol_dir_list($dirdest.'/'.$newref, 'files', 1, '^'.preg_quote($oldref, '/'));
+						$listoffiles = dol_dir_list($dirdest, 'files', 1, '^'.preg_quote($oldref, '/'));
 						foreach ($listoffiles as $fileentry) {
 							$dirsource = $fileentry['name'];
 							$dirdest = preg_replace('/^'.preg_quote($oldref, '/').'/', $newref, $dirsource);
@@ -1290,83 +1290,86 @@ class Commande extends CommonOrder
 	/**
 	 *	Load an object from its id and create a new one in database
 	 *
-	 *  @param	    User	$user		User making the clone
-	 *	@param		int		$socid		Id of thirdparty
-	 *	@return		int					New id of clone
+	 *  @param	    User	$user		    User making the clone
+	 *	@param		int		$socid		    Id of thirdparty
+	 *	@param		int		$forceentity	Entity id to force (used by multicompany to clone into another entity)
+	 *	@return		int					    New id of clone
 	 */
-	public function createFromClone(User $user, $socid = 0)
+	public function createFromClone(User $user, $socid = 0, $forceentity = null)
 	{
-		global $user, $hookmanager;
+		global $hookmanager;
 
 		$error = 0;
 
+		$object = new self($this->db);
+
 		$this->db->begin();
 
-		// get lines so they will be clone
-		foreach ($this->lines as $line) {
-			$line->fetch_optionals();
-		}
-
 		// Load source object
-		$objFrom = clone $this;
+		$object->fetch($this->id);
+
+		$objFrom = clone $object;
 
 		// Change socid if needed
-		if (!empty($socid) && $socid != $this->socid) {
+		if (!empty($socid) && $socid != $object->socid) {
 			$objsoc = new Societe($this->db);
 
 			if ($objsoc->fetch($socid) > 0) {
-				$this->socid = $objsoc->id;
-				$this->cond_reglement_id	= (!empty($objsoc->cond_reglement_id) ? $objsoc->cond_reglement_id : 0);
-				$this->deposit_percent		= (!empty($objsoc->deposit_percent) ? $objsoc->deposit_percent : '0');
-				$this->mode_reglement_id	= (!empty($objsoc->mode_reglement_id) ? $objsoc->mode_reglement_id : 0);
-				$this->fk_project = 0;
-				$this->fk_delivery_address = 0;
+				$object->socid = $objsoc->id;
+				$object->cond_reglement_id	= (!empty($objsoc->cond_reglement_id) ? $objsoc->cond_reglement_id : 0);
+				$object->deposit_percent		= (!empty($objsoc->deposit_percent) ? $objsoc->deposit_percent : '0');
+				$object->mode_reglement_id	= (!empty($objsoc->mode_reglement_id) ? $objsoc->mode_reglement_id : 0);
+				$object->fk_project = 0;
+				$object->fk_delivery_address = 0;
 			}
 
 			// TODO Change product price if multi-prices
 		}
 
-		$this->id = 0;
-		$this->ref = '';
-		$this->statut = self::STATUS_DRAFT;	// deprecated
-		$this->status = self::STATUS_DRAFT;
+		$object->entity = (!empty($forceentity) ? $forceentity : $object->entity);
+
+		$object->id = 0;
+		$object->ref = '';
+		$object->statut = self::STATUS_DRAFT;	// deprecated
+		$object->status = self::STATUS_DRAFT;
 
 		// Clear fields
-		$this->user_author_id = $user->id;
-		$this->user_validation_id = 0;
-		$this->date = dol_now();
-		$this->date_commande = dol_now();
-		$this->date_creation = '';
-		$this->date_validation = '';
+		$object->user_author_id = $user->id;
+		$object->user_validation_id = 0;
+		$object->date = dol_now();
+		$object->date_commande = dol_now();
+		$object->date_creation = '';
+		$object->date_validation = '';
 		if (!getDolGlobalString('MAIN_KEEP_REF_CUSTOMER_ON_CLONING')) {
-			$this->ref_client = '';
-			$this->ref_customer = '';
+			$object->ref_client = '';
+			$object->ref_customer = '';
 		}
 
 		// Do not clone ref_ext
-		$num = count($this->lines);
+		$num = count($object->lines);
 		for ($i = 0; $i < $num; $i++) {
-			$this->lines[$i]->ref_ext = '';
+			$object->lines[$i]->ref_ext = '';
 		}
 
 		// Create clone
-		$this->context['createfromclone'] = 'createfromclone';
-		$result = $this->create($user);
+		$object->context['createfromclone'] = 'createfromclone';
+		$result = $object->create($user);
 		if ($result < 0) {
 			$error++;
+			$this->setErrorsFromObject($object);
 		}
 
 		if (!$error) {
 			// copy internal contacts
-			if ($this->copy_linked_contact($objFrom, 'internal') < 0) {
+			if ($object->copy_linked_contact($objFrom, 'internal') < 0) {
 				$error++;
 			}
 		}
 
 		if (!$error) {
 			// copy external contacts if same company
-			if ($this->socid == $objFrom->socid) {
-				if ($this->copy_linked_contact($objFrom, 'external') < 0) {
+			if ($object->socid == $objFrom->socid) {
+				if ($object->copy_linked_contact($objFrom, 'external') < 0) {
 					$error++;
 				}
 			}
@@ -1375,9 +1378,9 @@ class Commande extends CommonOrder
 		if (!$error) {
 			// Hook of thirdparty module
 			if (is_object($hookmanager)) {
-				$parameters = array('objFrom' => $objFrom);
+				$parameters = array('objFrom' => $objFrom, 'clonedObj' => $object);
 				$action = '';
-				$reshook = $hookmanager->executeHooks('createFrom', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+				$reshook = $hookmanager->executeHooks('createFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) {
 					$this->setErrorsFromObject($hookmanager);
 					$error++;
@@ -1385,12 +1388,12 @@ class Commande extends CommonOrder
 			}
 		}
 
-		unset($this->context['createfromclone']);
+		unset($object->context['createfromclone']);
 
 		// End
 		if (!$error) {
 			$this->db->commit();
-			return $this->id;
+			return $object->id;
 		} else {
 			$this->db->rollback();
 			return -1;
@@ -1761,14 +1764,6 @@ class Commande extends CommonOrder
 
 			$tabprice = calcul_price_total($qty, (float) $pu, $remise_percent, $txtva, (float) $txlocaltax1, (float) $txlocaltax2, 0, $price_base_type, $info_bits, $product_type, $mysoc, $localtaxes_type, 100, $this->multicurrency_tx, (float) $pu_ht_devise);
 
-			/*var_dump($txlocaltax1);
-			 var_dump($txlocaltax2);
-			 var_dump($localtaxes_type);
-			 var_dump($tabprice);
-			 var_dump($tabprice[9]);
-			 var_dump($tabprice[10]);
-			 exit;*/
-
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
 			$total_ttc = $tabprice[2];
@@ -1995,7 +1990,7 @@ class Commande extends CommonOrder
 			 * }
 			 * }
 			 * }
-			 **/
+			 */
 		}
 	}
 
@@ -4361,13 +4356,16 @@ class Commande extends CommonOrder
 	/**
 	 * Compute shippable status and tooltip/icon for the order.
 	 *
-	 * @param array<mixed> $options Extra options (reserved for future use)
-	 * @return  array<string,mixed>        Array with keys: has_product, shippable, texticon, textinfo, warning
-	 * /
+	 * Can be overridden by a module through the 'getShippableInfos' hook (context
+	 * '<element>dao'). The hook result is merged over the default skeleton, so every key of
+	 * the contract stays defined whatever the module returns.
+	 *
+	 * @param array<mixed> $options 	Extra options, forwarded as-is to the hook
+	 * @return  array<string,mixed>     Array with keys: has_product, shippable, texticon, textinfo, warning
 	 */
 	public function getShippableInfos(array $options = array()): array
 	{
-		global $conf, $langs;
+		global $conf, $langs, $hookmanager;
 
 		$langs->loadLangs(array('orders', 'sendings', 'stocks', 'products'));
 
@@ -4378,6 +4376,18 @@ class Commande extends CommonOrder
 			'textinfo'    => '',
 			'warning'     => false,
 		);
+
+		if (is_object($hookmanager)) {
+			$parameters = array('options' => $options);
+			$reshook = $hookmanager->executeHooks('getShippableInfos', $parameters, $this);
+			if ($reshook < 0) {
+				dol_syslog(__METHOD__.' hook getShippableInfos failed: '.$hookmanager->error, LOG_ERR);
+			}
+			if (!empty($hookmanager->resArray['shippableinfos'])
+				&& is_array($hookmanager->resArray['shippableinfos'])) {
+				return array_merge($result, $hookmanager->resArray['shippableinfos']);
+			}
+		}
 
 		// Requested naming for statuses
 		if ($this->status == self::STATUS_DRAFT || $this->status == self::STATUS_CLOSED) {

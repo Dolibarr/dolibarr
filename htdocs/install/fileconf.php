@@ -364,7 +364,7 @@ if (!empty($force_install_noedit)) {
 		$nbok = $nbko = 0;
 		$option = '';
 
-		// Scan les drivers
+		// Scan the drivers
 		$dir = DOL_DOCUMENT_ROOT.'/core/db';
 		$handle = opendir($dir);
 		if (is_resource($handle)) {

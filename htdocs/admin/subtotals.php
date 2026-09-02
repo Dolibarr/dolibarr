@@ -158,7 +158,8 @@ if (empty($conf->use_javascript_ajax)) {
 	print '<tr class="liste_titre">';
 	print '<td width="1100">' . $langs->trans("Settings") . '</td>';
 	print '<td class="center">' . $langs->trans("Title") . '</td>';
-	print '<td class="center">' . $langs->trans("Subtotal") . '</td>';
+	print '<td class="center">' . $langs->trans("SubTotal") . '</td>';
+	print '<td class="center">' . $langs->trans("SubtotalTextColumnTitle") . '</td>';
 	print '<td class="center">' . $langs->trans("MaxSubtotalLevel") . '</td>';
 	print "</tr>\n";
 
@@ -173,6 +174,7 @@ if (empty($conf->use_javascript_ajax)) {
 
 		$constante_title = 'SUBTOTAL_TITLE_' . $const;
 		$constante_subtotal = 'SUBTOTAL_' . $const;
+		$constante_text = 'SUBTOTAL_TEXT_' . $const;
 		print '<!-- constant = ' . $constante_subtotal . ' -->' . "\n";
 		print '<tr class="oddeven">';
 		print '<td>';
@@ -195,9 +197,15 @@ if (empty($conf->use_javascript_ajax)) {
 		print $value_subtotal == 0 ? img_picto($langs->trans("Disabled"), 'switch_off') : img_picto($langs->trans("Enabled"), 'switch_on') . '</a>';
 		print '</td>';
 
+		print '<td class="center">';
+		$value_text = getDolGlobalInt($constante_text, 0);
+		print '<a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?action=' . $constante_text . '&token=' . newToken() . '">';
+		print $value_text == 0 ? img_picto($langs->trans("Disabled"), 'switch_off') : img_picto($langs->trans("Enabled"), 'switch_on') . '</a>';
+		print '</td>';
+
 		print '<td class="center nowraponall">';
 		$can_modify = !($value_subtotal == 0 && $value_title == 0);
-		print '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '" >';
+		print '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '"  spellcheck="false">';
 		print '<input type="hidden" name="token" value="' . newToken() . '">';
 		print '<input type="hidden" name="action" value="SUBTOTAL_' . $const . '_MAX_DEPTH">';
 		print '<input size="3" type="text" class="center"';
@@ -214,7 +222,7 @@ if (empty($conf->use_javascript_ajax)) {
 
 	// Other options
 
-	print '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '">';
+	print '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '" spellcheck="false">';
 	print '<input type="hidden" name="token" value="' . newToken() . '">';
 	print '<input type="hidden" name="action" value="update_colors">';
 

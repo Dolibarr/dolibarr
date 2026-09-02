@@ -1296,7 +1296,7 @@ class pdf_eagle_proforma extends ModelePDFStockTransfer
 				$posy += 3;
 				$pdf->SetXY($posx, $posy);
 				$pdf->SetTextColor(0, 0, 60);
-				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Project")." : ".(empty($object->project->title) ? '' : $object->project->title), '', 'R');
+				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Project")." : ".(empty($object->project->title) ? '' : dol_trunc($object->project->title, 50)), '', 'R');
 			}
 		}
 
@@ -1415,7 +1415,7 @@ class pdf_eagle_proforma extends ModelePDFStockTransfer
 			}
 
 			//Recipient name
-			// On peut utiliser le nom de la societe du contact
+			// We can use the name of the contact's company
 			if ($usecontact/* && !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)*/) {
 				$thirdparty = $object->contact;
 			} else {

@@ -172,7 +172,7 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 
 		dol_syslog("mod_codecompta_aquarium::get_code search code for type=".$type." company=".(!empty($societe->name) ? $societe->name : ''));
 
-		// Regle gestion compte compta
+		// Accounting account management rule
 		if ($type == 'customer') {
 			$codetouse = (!empty($societe->code_client) ? $societe->code_client : 'CUSTCODE');
 			$prefix = $this->prefixcustomeraccountancycode;

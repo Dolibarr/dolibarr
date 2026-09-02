@@ -1051,6 +1051,15 @@ class Categorie extends CommonObject
 				$sql .= " AND o.rowid = ".((int) $user->socid);
 			}
 
+			// Add where from hooks (for example to restrict to objects an external module shares
+			// with the current entity by a granularity finer than this category's own)
+			global $hookmanager;
+			if (is_object($hookmanager)) {
+				$parameters = array('type' => $type, 'alias' => 'o');
+				$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $this);
+				$sql .= $hookmanager->resPrint;
+			}
+
 			$errormessage = '';
 			$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
 			if ($errormessage) {
@@ -1349,7 +1358,7 @@ class Categorie extends CommonObject
 
 		// Init $this->cats array
 		// Note: The DISTINCT reduces pb with old tables with duplicates but should not be used
-		$sql = "SELECT DISTINCT c.rowid, c.label, c.ref_ext, c.description, c.color, c.position, c.fk_parent, c.visible";
+		$sql = "SELECT DISTINCT c.rowid, c.label, c.ref_ext, c.description, c.color, c.position, c.fk_parent, c.visible, c.entity";
 		if (getDolGlobalInt('MAIN_MULTILANGS') && $current_lang !== 'none') {
 			$sql .= ", t.label as label_trans, t.description as description_trans";
 		}
@@ -1379,6 +1388,7 @@ class Categorie extends CommonObject
 						'position' => (string) $obj->position,
 						'visible' => (int) $obj->visible,
 						'ref_ext' => (string) $obj->ref_ext,
+						'entity' => (int) $obj->entity,
 						'picto' => 'category',
 						// fields are filled with buildPathFromId later
 						'fullpath' => '',
@@ -1390,6 +1400,17 @@ class Categorie extends CommonObject
 		} else {
 			dol_print_error($this->db);
 			return -1;
+		}
+
+		// Let external modules complete or filter the tree (for example to restrict categories
+		// coming from other entities according to a sharing granularity they manage)
+		global $hookmanager;
+		if (is_object($hookmanager)) {
+			$parameters = array('cats' => &$this->cats, 'motherof' => &$this->motherof, 'type' => $type);
+			$reshook = $hookmanager->executeHooks('completeCategoryFullTree', $parameters, $this);
+			if ($reshook < 0) {
+				setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+			}
 		}
 
 		// We add the fullpath property to each elements of first level (no parent exists)

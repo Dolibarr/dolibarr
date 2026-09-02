@@ -244,14 +244,16 @@ abstract class CommonClassTest extends TestCase
 		*/
 
 		// Try to output DB info
-		print "\n";
-		print "########## We try to output some DB info".PHP_EOL;
-		$resql = $db->query("SHOW ENGINE INNODB STATUS");
-		if ($resql) {
-			$obj = $db->fetch_object($resql);
-			print $obj->Status.PHP_EOL;
-		} else {
-			print $db->lasterror().PHP_EOL;
+		if ($db->type == 'mysqli') {
+			print "\n";
+			print "########## We try to output some DB info".PHP_EOL;
+			$resql = $db->query("SHOW ENGINE INNODB STATUS");
+			if ($resql) {
+				$obj = $db->fetch_object($resql);
+				print $obj->Status.PHP_EOL;
+			} else {
+				print $db->lasterror().PHP_EOL;
+			}
 		}
 
 		print PHP_EOL;

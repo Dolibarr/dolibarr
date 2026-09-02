@@ -827,7 +827,7 @@ class ContratLigne extends CommonObjectLine
 
 		$error = 0;
 
-		// Insertion dans la base
+		// Insert into database
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."contratdet";
 		$sql .= " (fk_contrat, label, description, fk_product, qty, vat_src_code, tva_tx,";
 		$sql .= " localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, remise_percent, subprice, subprice_ttc,";
@@ -850,7 +850,7 @@ class ContratLigne extends CommonObjectLine
 		$sql .= " '".$this->db->escape($this->localtax2_tx)."',";
 		$sql .= " '".$this->db->escape($this->localtax1_type)."',";
 		$sql .= " '".$this->db->escape($this->localtax2_type)."',";
-		$sql .= " ".price2num($this->remise_percent).",".price2num($this->subprice).",".price2num($this->subprice_ttc).",";
+		$sql .= " ".price2num($this->remise_percent).",".price2num($this->subprice).",".((float) price2num($this->subprice_ttc)).",";
 		$sql .= " ".price2num($this->total_ht).",".price2num($this->total_tva).",".price2num($this->total_localtax1).",".price2num($this->total_localtax2).",".price2num($this->total_ttc).",";
 		$sql .= " '".$this->db->escape((string) $this->info_bits)."',";
 		$sql .= " ".(empty($this->rang) ? '0' : (int) $this->rang).",";

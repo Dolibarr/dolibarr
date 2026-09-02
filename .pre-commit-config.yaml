@@ -139,6 +139,7 @@ repos:
         language: script
         entry: ./dev/tools/phpstan/allow_phpstan_in_precommit.sh
         pass_filenames: true
+        files: \.(php)$
         stages: [pre-commit]
       - id: phan
         name: Run local Phan

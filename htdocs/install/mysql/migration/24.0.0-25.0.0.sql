@@ -68,19 +68,66 @@ ALTER TABLE llx_element_element ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTA
 
 ALTER TABLE llx_c_action_trigger ADD COLUMN enabled varchar(255);
 
--- Fix #37658 - subprice_ttc (pu_ttc for supplier invoices) now flags a line entered including tax (0 when
--- entered excluding tax). Supplier lines used to store it unconditionally (even for lines entered excluding
--- tax), so reset it on existing supplier lines to avoid them being wrongly treated as entered including tax
--- on clone/edit/bulk actions. A line can be re-entered including tax to set the value again.
--- Guarded on the upgrade source version (MAIN_VERSION_LAST_UPGRADE is still the source version at this point,
--- updated only at the end of step5) so re-running the migration on a 25.x base does NOT wipe values set since.
-UPDATE llx_commande_fournisseurdet SET subprice_ttc = 0 WHERE subprice_ttc <> 0 AND EXISTS (SELECT c.rowid FROM llx_const as c WHERE c.name = 'MAIN_VERSION_LAST_UPGRADE' AND c.value < '25.0.0');
-UPDATE llx_facture_fourn_det SET pu_ttc = 0 WHERE pu_ttc <> 0 AND EXISTS (SELECT c.rowid FROM llx_const as c WHERE c.name = 'MAIN_VERSION_LAST_UPGRADE' AND c.value < '25.0.0');
-UPDATE llx_supplier_proposaldet SET subprice_ttc = 0 WHERE subprice_ttc <> 0 AND EXISTS (SELECT c.rowid FROM llx_const as c WHERE c.name = 'MAIN_VERSION_LAST_UPGRADE' AND c.value < '25.0.0');
+-- Fix #37658 - pu_ttc for supplier invoices now flags a line entered including tax (0 when entered excluding
+-- tax). Before this change it was stored unconditionally (pu_ttc = total_ttc / qty), so reset it on existing
+-- lines to keep them behaving as excluding tax; it is set again when a line is re-entered including tax.
+-- Guarded on MAIN_VERSION_LAST_UPGRADE < major 25 (integer compare, not lexicographic; __DECRYPT handles the
+-- encrypted-const case).
+-- VMYSQL4.3 UPDATE llx_facture_fourn_det SET pu_ttc = 0 WHERE pu_ttc <> 0 AND EXISTS (SELECT rowid FROM llx_const WHERE __DECRYPT('name')__ = 'MAIN_VERSION_LAST_UPGRADE' AND CAST(SUBSTRING_INDEX(__DECRYPT('value')__, '.', 1) AS UNSIGNED) < 25);
+-- VPGSQL8.2 UPDATE llx_facture_fourn_det SET pu_ttc = 0 WHERE pu_ttc <> 0 AND EXISTS (SELECT rowid FROM llx_const WHERE __DECRYPT('name')__ = 'MAIN_VERSION_LAST_UPGRADE' AND CAST(split_part(__DECRYPT('value')__, '.', 1) AS INTEGER) < 25);
 
 -- Explicit contact address mode flag. NULL keeps the legacy resolution for existing records,
 -- so an existing alternative contact address stays independent from its thirdparty address.
 -- VMYSQL4.1 ALTER TABLE llx_socpeople ADD COLUMN use_thirdparty_address smallint DEFAULT NULL AFTER fk_soc;
 -- VPGSQL8.2 ALTER TABLE llx_socpeople ADD COLUMN use_thirdparty_address smallint DEFAULT NULL;
 
--- end of migration
+-- Add user information to const
+ALTER TABLE llx_const ADD COLUMN fk_user_creat integer;
+ALTER TABLE llx_const ADD COLUMN fk_user_modif integer;
+
+-- Switch all azur templates into cyan
+UPDATE llx_propal SET model_pdf = 'cyan' WHERE model_pdf = 'azur';
+UPDATE llx_const SET value = 'cyan' WHERE value = 'azur' AND name ='PROPALE_ADDON_PDF';
+UPDATE llx_document_model SET nom = 'cyan' WHERE nom = 'azur' AND type = 'propal' AND NOT EXISTS (SELECT subquery.nom FROM (SELECT nom, entity FROM llx_document_model WHERE nom = 'cyan' AND type = 'propal') as subquery WHERE subquery.entity = entity);
+DELETE FROM llx_document_model WHERE nom = 'azur' AND type = 'propal';
+
+-- Switch all einstein templates into eratosthene
+UPDATE llx_commande SET model_pdf = 'eratosthene' WHERE model_pdf = 'einstein';
+UPDATE llx_const SET value = 'eratosthene' WHERE value = 'einstein' AND name ='COMMANDE_ADDON_PDF';
+UPDATE llx_document_model SET nom = 'eratosthene' WHERE nom = 'einstein' AND type = 'order' AND NOT EXISTS (SELECT subquery.nom FROM (SELECT nom, entity FROM llx_document_model WHERE nom = 'eratosthene' AND type = 'order') as subquery WHERE subquery.entity = entity);
+DELETE FROM llx_document_model WHERE nom = 'einstein' AND type = 'order';
+
+-- Index fk_statut on llx_commande for order status filtering (llx_facture already has idx_facture_fk_statut)
+ALTER TABLE llx_commande ADD INDEX idx_commande_fk_statut (fk_statut);
+
+-- Indexes on llx_product for the most common product/service list filters
+ALTER TABLE llx_product ADD INDEX idx_product_entity_tosell (entity, tosell);
+ALTER TABLE llx_product ADD INDEX idx_product_entity_tobuy (entity, tobuy);
+ALTER TABLE llx_product ADD INDEX idx_product_datec (datec);
+ALTER TABLE llx_product ADD INDEX idx_product_tms (tms);
+
+-- Optional fine position for rights_def, used by rights filed into another module's
+-- section via module_origin (KEY_MODULE) to sort next to a given native right of that module
+ALTER TABLE llx_rights_def ADD COLUMN right_position integer DEFAULT 0 NOT NULL AFTER family_position;
+
+-- Add supplier ref on reception lines (standalone receptions)
+ALTER TABLE llx_receptiondet_batch ADD COLUMN ref_fourn varchar(128) NULL AFTER cost_price;
+
+-- Rename bookcal availabilities date columns: "end" is a reserved word in
+-- PostgreSQL so "CREATE TABLE ... end date ..." never worked there. The
+-- PostgreSQL variant must quote "end".
+-- VMYSQL ALTER TABLE llx_bookcal_availabilities CHANGE COLUMN start date_start date;
+-- VMYSQL ALTER TABLE llx_bookcal_availabilities CHANGE COLUMN end date_end date;
+-- VPGSQL ALTER TABLE llx_bookcal_availabilities RENAME COLUMN start TO date_start;
+-- VPGSQL ALTER TABLE llx_bookcal_availabilities RENAME COLUMN "end" TO date_end;
+
+-- Inventory: add last_main_doc used to save the relative path of last generated main document
+ALTER TABLE llx_inventory ADD COLUMN last_main_doc varchar(255) DEFAULT NULL AFTER date_validation;
+
+ALTER TABLE llx_facturedet ADD INDEX idx_facturedet_fk_prev_id (fk_prev_id);
+ALTER TABLE llx_facture ADD INDEX idx_facture_situation_cycle_ref (situation_cycle_ref);
+
+
+
+
+-- end of migration - nothing after this line

@@ -191,7 +191,7 @@ if ($action == 'searchfiles' || $action == 'dl') {	// Test on permission not req
 			if (!empty($sql)) {
 				$sql .= " UNION ALL";
 			}
-			$sql .= "SELECT t.rowid as id, t.entity, t.ref, t.paye as paid, t.total_ht, t.total_ttc, t.total_tva as total_vat,";
+			$sql .= " SELECT t.rowid as id, t.entity, t.ref, t.paye as paid, t.total_ht, t.total_ttc, t.total_tva as total_vat,";
 			$sql .= " t.localtax1, t.localtax2, t.revenuestamp,";
 			$sql .= " t.multicurrency_code as currency, t.fk_soc, t.datef as date, t.date_lim_reglement as date_due, 'Invoice' as item, s.nom as thirdparty_name, s.code_client as thirdparty_code, c.code as country_code, s.tva_intra as vatnum, ".PAY_CREDIT." as sens";
 			$sql .= " FROM ".MAIN_DB_PREFIX."facture as t LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = t.fk_soc LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON c.rowid = s.fk_pays";
@@ -520,6 +520,46 @@ if ($result && $action == "dl" && !$error) {	// Test on permission not required 
 	} else {
 		dol_mkdir($dirfortmpfile);
 
+		// Tags of the exported documents, read with one query per document type for the whole
+		// batch: a month of activity holds hundreds of documents and one query per document
+		// would make the export crawl. Only customer and supplier invoices can carry tags,
+		// the other items of the export (various payments, expense reports, salaries,
+		// donations, social contributions, loan payments) have no category type in Dolibarr
+		// and keep an empty column.
+		$tagsofdocuments = array();
+		foreach (array('Invoice' => 'invoice', 'SupplierInvoice' => 'supplier_invoice') as $itemfortags => $tablefortags) {
+			$idsfortags = array();
+			foreach ($filesarray as $filefortags) {
+				if ($filefortags['item'] == $itemfortags) {
+					$idsfortags[] = (int) $filefortags['id'];
+				}
+			}
+			if (empty($idsfortags)) {
+				continue;
+			}
+
+			$sqltags = "SELECT ct.fk_".$db->sanitize($tablefortags)." as fk_object, c.label";
+			$sqltags .= " FROM ".MAIN_DB_PREFIX."categorie_".$db->sanitize($tablefortags)." as ct, ".MAIN_DB_PREFIX."categorie as c";
+			$sqltags .= " WHERE ct.fk_categorie = c.rowid";
+			$sqltags .= " AND ct.fk_".$db->sanitize($tablefortags)." IN (".$db->sanitize(implode(',', $idsfortags)).")";
+			$sqltags .= " AND c.entity IN (".getEntity('category').")";
+			$sqltags .= " ORDER BY c.label";
+
+			$resqltags = $db->query($sqltags);
+			if ($resqltags) {
+				while ($objtags = $db->fetch_object($resqltags)) {
+					$keyfortags = $itemfortags.'_'.$objtags->fk_object;
+					if (empty($tagsofdocuments[$keyfortags])) {
+						$tagsofdocuments[$keyfortags] = array();
+					}
+					$tagsofdocuments[$keyfortags][] = $objtags->label;
+				}
+				$db->free($resqltags);
+			} else {
+				dol_print_error($db);
+			}
+		}
+
 		$log = $langs->transnoentitiesnoconv("Type");
 		if (isModEnabled('multicompany') && isset($mc) && is_object($mc)) {
 			$log .= ','.$langs->transnoentitiesnoconv("Entity");
@@ -540,7 +580,8 @@ if ($result && $action == "dl" && !$error) {	// Test on permission not required 
 		$log .= ','.$langs->transnoentitiesnoconv("Code");
 		$log .= ','.$langs->transnoentitiesnoconv("Country");
 		$log .= ','.$langs->transnoentitiesnoconv("VATIntra");
-		$log .= ','.$langs->transnoentitiesnoconv("Sens")."\n";
+		$log .= ','.$langs->transnoentitiesnoconv("Sens");
+		$log .= ','.$langs->transnoentitiesnoconv("Categories")."\n";
 		$zipname = $dirfortmpfile.'/'.dol_print_date($date_start, 'dayrfc', 'tzuserrel')."-".dol_print_date($date_stop, 'dayrfc', 'tzuserrel');
 		if (!empty($projectid)) {
 			$project = new Project($db);
@@ -586,6 +627,8 @@ if ($result && $action == "dl" && !$error) {	// Test on permission not required 
 				$log .= ',"'.$file['country_code'].'"';
 				$log .= ',"'.$file['vatnum'].'"';
 				$log .= ',"'.$file['sens'].'"';
+				$keyfortags = $file['item'].'_'.$file['id'];
+				$log .= ',"'.(empty($tagsofdocuments[$keyfortags]) ? '' : implode(',', $tagsofdocuments[$keyfortags])).'"';
 				$log .= "\n";
 			}
 			$zip->addFromString('transactions.csv', $log);

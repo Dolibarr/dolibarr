@@ -2,7 +2,7 @@
 /* Copyright (C) 2016-2023  Laurent Destailleur  		<eldy@users.sourceforge.net>
  * Copyright (C) 2020 	    Nicolas ZABOURI				<info@inovea-conseil.com>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1266,7 +1266,7 @@ if ($action == 'addcontainer' && $usercanedit) {
 
 	$pageid = 0;
 	if (!$error) {
-		// Create page. This also check there is no PHP content if user has no pemrissions for that.
+		// Create page. This also check there is no PHP content if user has no permissions for that.
 		$pageid = $objectpage->create($user);
 		if ($pageid <= 0) {
 			$error++;
@@ -3138,6 +3138,7 @@ if ($action != 'preview' && $action != 'editcontent' && $action != 'editsource' 
 }
 
 
+$websitepage = null;
 $disabled = '';
 if (!GETPOST('hide_websitemenu')) {
 	if (!$user->hasRight('website', 'write')) {
@@ -3623,7 +3624,7 @@ if (!GETPOST('hide_websitemenu')) {
 				// Confirmation to clone
 				if ($action == 'createpagefromclone') {
 					// Create an array for form
-					$preselectedlanguage = GETPOST('newlang', 'aZ09') ? GETPOST('newlang', 'aZ09') : ($objectpage->lang ?: ''); // Dy default, we do not force any language on pages
+					$preselectedlanguage = GETPOST('newlang', 'aZ09') ? GETPOST('newlang', 'aZ09') : ($objectpage->lang ?: ''); // By default, we do not force any language on pages
 					$onlylang = array();
 					if ($website->otherlang) {
 						if (!empty($website->lang)) {
@@ -3814,7 +3815,7 @@ if (!GETPOST('hide_websitemenu')) {
 															element_id: elementId,
 															element_type: elementType,
 															action: \'updatedElementContent\',
-															token: \'' . newToken() . '\'
+															token: \'' . currentToken() . '\'
 														},
 														success: function(response) {
 															console.log(response);
@@ -4029,6 +4030,7 @@ if (!GETPOST('hide_websitemenu')) {
                                 method: "POST",
                                 url: "'.DOL_URL_ROOT.'/core/ajax/saveinplace.php",
                                 data: {
+                                    token: \''.currentToken().'\',
                                     field: \'editval_virtualhost\',
                                     element: \'website\',
                                     table_element: \'website\',
@@ -4816,7 +4818,7 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 		$pageallowedinframes = 1;
 	}
 	if (GETPOST('htmlheader', 'restricthtmlallowlinkscript')) {		// Must accept tags like '<script>' and '<link>'
-		$pagehtmlheader = GETPOST('htmlheader', 'none');
+		$pagehtmlheader = GETPOST('htmlheader', 'restricthtmlallowlinkscript');
 	}
 
 	if ($action != 'createcontainer') {
@@ -5378,6 +5380,7 @@ if ($action == 'editcontent') {
 
 print "</div>\n";
 print "</form>\n";
+print '<!-- Now, output content of page ID='.($websitepage->id??'NULL').', mode= '.$mode.' WEBSITE_SUBCONTAINERSINLINE='.getDolGlobalString('WEBSITE_SUBCONTAINERSINLINE').'  WEBSITE_EDITINLINE='.getDolGlobalString('WEBSITE_EDITINLINE').' -->'."\n";
 
 
 if ($mode == 'replacesite' || $massaction == 'replace') {
@@ -5979,7 +5982,7 @@ if ((empty($action) || $action == 'preview' || $action == 'createfromclone' || $
 
 			ob_start();
 			try {
-				$res = include $filephp;
+				$res = include $filephp;	// Note that if file contains a fatal error (Example: declaration of a function that already exists), this may break code here
 				if (empty($res)) {
 					print "ERROR: Failed to include file '".$filephp."'. Try to edit and re-save page with this ID.";
 				}
@@ -5988,6 +5991,7 @@ if ((empty($action) || $action == 'preview' || $action == 'createfromclone' || $
 			}
 			$newcontent = ob_get_contents();
 			ob_end_clean();
+
 
 			// Restore data
 			$_COOKIE[$savsessionname] = $savsessionid;
