@@ -310,6 +310,7 @@ if (empty($reshook)) {
 			$object->ref = GETPOST('ref', 'alpha');
 			$object->ref_customer				= GETPOST('ref_customer', 'alpha');
 			$object->ref_supplier				= GETPOST('ref_supplier', 'alpha');
+			$object->fk_contract_type = GETPOSTINT('contract_type');
 
 			// If creation from another object of another module (Example: origin=propal, originid=1)
 			if (!empty($origin) && !empty($originid)) {
@@ -1266,6 +1267,7 @@ if ($action == 'create') {
 	print '<input type="hidden" name="socid" value="'.$soc->id.'">'."\n";
 	print '<input type="hidden" name="remise_percent" value="0">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+	print '<input type="hidden" name="contract_type" value="'.GETPOSTINT('contract_type').'">';
 
 	print dol_get_fiche_head();
 
@@ -1594,6 +1596,12 @@ if ($action == 'create') {
 		print '</td><td>';
 		print $form->editfieldval("Date", 'date_contrat', $object->date_contrat, $object, $user->hasRight('contrat', 'creer'), 'datehourpicker');
 		print '</td>';
+		print '</tr>';
+
+		// Contract type (read-only)
+		$contractTypeLabels = array(0 => $langs->trans('CustomerContract'), 1 => $langs->trans('SupplierContract'));
+		print '<tr><td class="titlefield">'.$langs->trans('ContractType').'</td>';
+		print '<td>'.dol_escape_htmltag($contractTypeLabels[(int) $object->fk_contract_type] ?? $contractTypeLabels[0]).'</td>';
 		print '</tr>';
 
 		// Other attributes

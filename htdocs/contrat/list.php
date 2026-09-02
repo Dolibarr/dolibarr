@@ -80,6 +80,7 @@ $search_type_thirdparty = GETPOST("search_type_thirdparty", 'intcomma');
 $search_contract = GETPOST('search_contract', 'alpha');
 $search_ref_customer = GETPOST('search_ref_customer', 'alpha');
 $search_ref_supplier = GETPOST('search_ref_supplier', 'alpha');
+$search_type = (GETPOSTISSET('search_type') ? GETPOSTINT('search_type') : -1);
 $search_all = GETPOST('search_all', 'alphanohtml');
 $search_status = GETPOST('search_status', 'alpha');
 $search_signed_status = GETPOST('search_signed_status', 'alpha');
@@ -194,6 +195,7 @@ $arrayfields = array(
 	'c.ref' => array('label' => $langs->trans("Ref"), 'checked' => '1', 'position' => 10),
 	'c.ref_customer' => array('label' => $langs->trans("RefCustomer"), 'checked' => '1', 'position' => 12),
 	'c.ref_supplier' => array('label' => $langs->trans("RefSupplier"), 'checked' => '1', 'position' => 14),
+	'c.fk_contract_type' => array('label' => $langs->trans("ContractType"), 'checked' => '1', 'position' => 16),
 	's.nom' => array('label' => $langs->trans("ThirdParty"), 'checked' => '1', 'position' => 30),
 	's.town' => array('label' => $langs->trans("Town"), 'checked' => '0', 'position' => 31),
 	's.zip' => array('label' => $langs->trans("Zip"), 'checked' => '1', 'position' => 32),
@@ -269,6 +271,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_contract = "";
 	$search_ref_customer = "";
 	$search_ref_supplier = "";
+	$search_type = -1;
 	$search_user = '';
 	$search_sale = '';
 	$search_product_category = '';
@@ -330,7 +333,7 @@ $now = dol_now();
 $title = "";
 
 $sql = 'SELECT';
-$sql .= " c.rowid, c.ref, c.datec as date_creation, c.tms as date_modification, c.date_contrat, c.statut, c.ref_customer, c.ref_supplier, c.note_private, c.note_public, c.entity, c.signed_status,";
+$sql .= " c.rowid, c.ref, c.datec as date_creation, c.tms as date_modification, c.date_contrat, c.statut, c.ref_customer, c.ref_supplier, c.fk_contract_type, c.note_private, c.note_public, c.entity, c.signed_status,";
 $sql .= ' s.rowid as socid, s.nom as name, s.name_alias, s.email, s.town, s.zip, s.fk_pays as country_id, s.phone, s.phone_mobile, s.client, s.code_client, s.status as company_status, s.logo as company_logo,';
 $sql .= " typent.code as typent_code, c.note_public, c.note_private,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
@@ -406,6 +409,9 @@ if (!empty($search_ref_customer)) {
 }
 if (!empty($search_ref_supplier)) {
 	$sql .= natural_search(array('c.ref_supplier'), $search_ref_supplier);
+}
+if ($search_type >= 0) {
+	$sql .= " AND c.fk_contract_type = ".((int) $search_type);
 }
 if ($search_zip) {
 	$sql .= natural_search(array('s.zip'), $search_zip);
@@ -687,6 +693,9 @@ if ($search_ref_customer != '') {
 if ($search_ref_supplier != '') {
 	$param .= '&search_ref_supplier='.urlencode($search_ref_supplier);
 }
+if ($search_type >= 0) {
+	$param .= '&search_type='.$search_type;
+}
 if ($search_note_private != '') {
 	$param .= '&search_note_private='.urlencode($search_note_private);
 }
@@ -943,6 +952,11 @@ if (!empty($arrayfields['c.ref_supplier']['checked'])) {
 	print '<input type="text" class="flat" size="6" name="search_ref_supplier" value="'.dol_escape_htmltag($search_ref_supplier).'">';
 	print '</td>';
 }
+if (!empty($arrayfields['c.fk_contract_type']['checked'])) {
+	print '<td class="liste_titre">';
+	print $form->selectarray('search_type', array('-1' => '', '0' => $langs->trans('CustomerContract'), '1' => $langs->trans('SupplierContract')), $search_type, 0, 0, 0, '', 0, 0, 0, '', 'flat maxwidth100');
+	print '</td>';
+}
 if (!empty($arrayfields['s.nom']['checked'])) {
 	print '<td class="liste_titre">';
 	print '<input type="text" class="flat" size="8" name="search_name" value="'.dol_escape_htmltag($search_name).'"'.($user->socid > 0 ? " disabled" : "").'>';
@@ -1100,6 +1114,10 @@ if (!empty($arrayfields['c.ref_customer']['checked'])) {
 if (!empty($arrayfields['c.ref_supplier']['checked'])) {
 	print_liste_field_titre($arrayfields['c.ref_supplier']['label'], $_SERVER["PHP_SELF"], "c.ref_supplier", "", $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;	// For the column action
+}
+if (!empty($arrayfields['c.fk_contract_type']['checked'])) {
+	print_liste_field_titre($arrayfields['c.fk_contract_type']['label'], $_SERVER["PHP_SELF"], "c.fk_contract_type", "", $param, '', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.nom']['checked'])) {
 	print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], "s.nom", "", $param, '', $sortfield, $sortorder);
@@ -1304,6 +1322,13 @@ while ($i < $imaxinloop) {
 		}
 		if (!empty($arrayfields['c.ref_supplier']['checked'])) {
 			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->ref_supplier).'">'.dol_escape_htmltag($obj->ref_supplier).'</td>';
+		}
+		if (!empty($arrayfields['c.fk_contract_type']['checked'])) {
+			$contractTypeLabels = array(0 => $langs->trans('CustomerContract'), 1 => $langs->trans('SupplierContract'));
+			print '<td>'.dol_escape_htmltag($contractTypeLabels[(int) $obj->fk_contract_type] ?? '').'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 		if (!empty($arrayfields['s.nom']['checked'])) {
 			print '<td class="tdoverflowmax150">';

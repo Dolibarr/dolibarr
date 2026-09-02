@@ -80,6 +80,7 @@ $search_total_tva = GETPOST("search_total_tva", 'alpha');
 $search_total_ttc = GETPOST("search_total_ttc", 'alpha');
 $search_contract = GETPOST("search_contract", 'alpha');
 $search_service = GETPOST("search_service", 'alpha');
+$search_type = (GETPOSTISSET('search_type') ? GETPOSTINT('search_type') : -1);
 $search_status = GETPOST("search_status", 'alpha');
 $search_option = GETPOST('search_option', 'alpha');
 $search_product_category = GETPOSTINT('search_product_category');
@@ -140,7 +141,8 @@ $companystatic = new Societe($db);
 
 $arrayfields = array(
 	'c.ref' => array('label' => "Contract", 'checked' => '1', 'position' => 80),
-	'p.description' => array('label' => "Service", 'checked' => '1', 'position' => 80),
+	'c.fk_contract_type' => array('label' => "ContractType", 'checked' => '1', 'position' => 82),
+	'p.description' => array('label' => "Service", 'checked' => '1', 'position' => 85),
 	's.nom' => array('label' => "ThirdParty", 'checked' => '1', 'position' => 90),
 	'cd.tva_tx' => array('label' => "VATRate", 'checked' => '-1', 'position' => 100),
 	'cd.subprice' => array('label' => "PriceUHT", 'checked' => '-1', 'position' => 105),
@@ -203,6 +205,7 @@ if (empty($reshook)) {
 		$search_total_ttc = "";
 		$search_contract = "";
 		$search_service = "";
+		$search_type = -1;
 		$search_status = "";
 		$search_option = '';
 		$opouvertureprevuemonth = "";
@@ -253,7 +256,7 @@ $help_url = 'EN:Module_Contracts|FR:Module_Contrat|ES:Contratos_de_servicio';
 
 // Build and execute select
 // --------------------------------------------------------------------
-$sql = "SELECT c.rowid as cid, c.ref, c.statut as cstatut, c.ref_customer, c.ref_supplier,";
+$sql = "SELECT c.rowid as cid, c.ref, c.statut as cstatut, c.ref_customer, c.ref_supplier, c.fk_contract_type,";
 $sql .= " s.rowid as socid, s.nom as name, s.email, s.client, s.fournisseur,";
 $sql .= " cd.rowid, cd.description, cd.statut, cd.product_type as type,";
 $sql .= " p.rowid as pid, p.ref as pref, p.label as label, p.fk_product_type as ptype, p.tobuy, p.tosell, p.barcode, p.entity as pentity,";
@@ -346,6 +349,9 @@ if ($search_name) {
 }
 if ($search_contract) {
 	$sql .= natural_search("c.ref", $search_contract);
+}
+if ($search_type >= 0) {
+	$sql .= " AND c.fk_contract_type = ".((int) $search_type);
 }
 if ($search_service) {
 	$sql .= natural_search(array("p.ref", "p.description", "cd.description"), $search_service);
@@ -474,6 +480,9 @@ if ($optioncss != '') {
 }
 if ($search_contract) {
 	$param .= '&amp;search_contract='.urlencode($search_contract);
+}
+if ($search_type >= 0) {
+	$param .= '&amp;search_type='.$search_type;
 }
 if ($search_name) {
 	$param .= '&amp;search_name='.urlencode($search_name);
@@ -630,6 +639,11 @@ if (!empty($arrayfields['c.ref']['checked'])) {
 	print '<input type="text" class="flat maxwidth75" name="search_contract" value="'.dol_escape_htmltag($search_contract).'">';
 	print '</td>';
 }
+if (!empty($arrayfields['c.fk_contract_type']['checked'])) {
+	print '<td class="liste_titre">';
+	print $form->selectarray('search_type', array('-1' => '', '0' => $langs->trans('CustomerContract'), '1' => $langs->trans('SupplierContract')), $search_type, 0, 0, 0, '', 0, 0, 0, '', 'flat maxwidth100');
+	print '</td>';
+}
 // Service label
 if (!empty($arrayfields['p.description']['checked'])) {
 	print '<td class="liste_titre">';
@@ -762,6 +776,9 @@ if (!empty($arrayfields['c.ref']['checked'])) {
 	// False positive @phan-suppress-next-line PhanTypeInvalidDimOffset
 	print_liste_field_titre($arrayfields['c.ref']['label'], $_SERVER["PHP_SELF"], "c.ref", "", $param, "", $sortfield, $sortorder);
 }
+if (!empty($arrayfields['c.fk_contract_type']['checked'])) {
+	print_liste_field_titre($arrayfields['c.fk_contract_type']['label'], $_SERVER["PHP_SELF"], "c.fk_contract_type", "", $param, "", $sortfield, $sortorder);
+}
 if (!empty($arrayfields['p.description']['checked'])) {
 	print_liste_field_titre($arrayfields['p.description']['label'], $_SERVER["PHP_SELF"], "p.description", "", $param, "", $sortfield, $sortorder);
 }
@@ -877,6 +894,13 @@ while ($i < $imaxinloop) {
 		print '<td class="nowraponall">';
 		print $contractstatic->getNomUrl(1, 16);
 		print '</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+	if (!empty($arrayfields['c.fk_contract_type']['checked'])) {
+		$contractTypeLabels = array(0 => $langs->trans('CustomerContract'), 1 => $langs->trans('SupplierContract'));
+		print '<td>'.dol_escape_htmltag($contractTypeLabels[(int) $obj->fk_contract_type] ?? '').'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}

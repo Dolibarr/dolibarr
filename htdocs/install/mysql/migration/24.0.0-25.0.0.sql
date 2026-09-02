@@ -130,4 +130,7 @@ ALTER TABLE llx_facture ADD INDEX idx_facture_situation_cycle_ref (situation_cyc
 
 
 
+-- Add contract type field (0=customer, 1=supplier)
+ALTER TABLE llx_contrat ADD COLUMN fk_contract_type tinyint DEFAULT 0 AFTER ref_ext;
+
 -- end of migration - nothing after this line

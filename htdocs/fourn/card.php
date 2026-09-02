@@ -56,9 +56,12 @@ if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 }
+if (isModEnabled('contract')) {
+	require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
+}
 
 // Load translation files required by page
-$langs->loadLangs(array('accountancy', 'companies', 'suppliers', 'products', 'bills', 'orders', 'commercial'));
+$langs->loadLangs(array('accountancy', 'companies', 'suppliers', 'products', 'bills', 'orders', 'commercial', 'contracts'));
 
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
@@ -1043,6 +1046,82 @@ if ($object->id > 0) {
 		}
 	}
 
+	/*
+	 * Latest supplier contracts
+	 */
+	if (isModEnabled('contract') && $user->hasRight('contrat', 'lire')) {
+		$sql = "SELECT s.nom, s.rowid, c.rowid as id, c.ref as ref, c.fk_projet, c.statut as contract_status, c.datec as dc, c.date_contrat as dcon, c.ref_customer as refcus, c.ref_supplier as refsup, c.entity,";
+		$sql .= " c.last_main_doc, c.model_pdf";
+		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c";
+		$sql .= " WHERE c.fk_soc = s.rowid";
+		$sql .= " AND s.rowid = ".((int) $object->id);
+		$sql .= " AND c.fk_contract_type = 1";
+		$sql .= " AND c.entity IN (".getEntity('contract').")";
+		$sql .= " ORDER BY c.datec DESC";
+
+		$resql = $db->query($sql);
+		if ($resql) {
+			$contrat = new Contrat($db);
+
+			$num = $db->num_rows($resql);
+			if ($num > 0) {
+				print '<div class="div-table-responsive-no-min">';
+				print '<table class="noborder centpercent lastrecordtable">';
+
+				print '<tr class="liste_titre">';
+				print '<td colspan="5"><table class="centpercent nobordernopadding"><tr><td>'.$langs->trans("LastSupplierContracts", ($num <= $MAXLIST ? "" : $MAXLIST)).'</td>';
+				print '<td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/contrat/list.php?socid='.$object->id.'&search_type=1">'.$langs->trans("AllContracts").'<span class="badge marginleftonlyshort">'.$num.'</span></a></td>';
+				print '</tr></table></td>';
+				print '</tr>';
+			}
+
+			$i = 0;
+			while ($i < $num && $i < $MAXLIST) {
+				$objp = $db->fetch_object($resql);
+
+				$contrat->id = $objp->id;
+				$contrat->ref = $objp->ref ? $objp->ref : $objp->id;
+				$contrat->ref_customer = $objp->refcus;
+				$contrat->ref_supplier = $objp->refsup;
+				$contrat->fk_project = $objp->fk_projet;
+				$contrat->statut = $objp->contract_status;
+				$contrat->status = $objp->contract_status;
+				$contrat->last_main_doc = $objp->last_main_doc;
+				$contrat->model_pdf = $objp->model_pdf;
+
+				print '<tr class="oddeven">';
+				print '<td class="nowraponall">';
+				print $contrat->getNomUrl(1, 12);
+				print '</td>';
+				print '<td class="tdoverflowmax125">';
+				if ($contrat->fk_project > 0) {
+					require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+					$project = new Project($db);
+					$project->fetch($contrat->fk_project);
+					print $project->getNomUrl(1);
+				}
+				print "</td>\n";
+				print '<td class="nowrap">';
+				print dol_trunc($objp->refsup, 12);
+				print "</td>\n";
+				print '<td class="right" width="80px"><span title="'.$langs->trans("DateContract").'">'.dol_print_date($db->jdate($objp->dcon), 'day')."</span></td>\n";
+				print '<td class="nowraponall right">';
+				print $contrat->getLibStatut(4);
+				print "</td>\n";
+				print '</tr>';
+				$i++;
+			}
+			$db->free($resql);
+
+			if ($num > 0) {
+				print "</table>";
+				print '</div>';
+			}
+		} else {
+			dol_print_error($db);
+		}
+	}
+
 	// Allow external modules to add their own shortlist of recent objects
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('addMoreRecentObjects', $parameters, $object, $action);
@@ -1083,6 +1162,12 @@ if ($object->id > 0) {
 			} else {
 				print dolGetButtonAction($langs->trans('ThirdPartyIsClosed'), $langs->trans('AddSupplierOrderShort'), 'default', $_SERVER['PHP_SELF'].'#', '', false);
 			}
+		}
+
+		if (isModEnabled('contract') && $user->hasRight('contrat', 'creer') && $object->status == 1) {
+			print dolGetButtonAction('', $langs->trans('AddContract'), 'default', DOL_URL_ROOT.'/contrat/card.php?action=create&amp;socid='.$object->id.'&amp;contract_type=1', '');
+		} elseif (isModEnabled('contract') && $user->hasRight('contrat', 'creer')) {
+			print dolGetButtonAction($langs->trans('ThirdPartyIsClosed'), $langs->trans('AddContract'), 'default', $_SERVER['PHP_SELF'].'#', '', false);
 		}
 
 		if ($user->hasRight('fournisseur', 'facture', 'creer') || $user->hasRight('supplier_invoice', 'creer')) {

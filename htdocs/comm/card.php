@@ -1272,6 +1272,7 @@ if ($object->id > 0) {
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c";
 		$sql .= " WHERE c.fk_soc = s.rowid ";
 		$sql .= " AND s.rowid = ".((int) $object->id);
+		$sql .= " AND c.fk_contract_type = 0";
 		$sql .= " AND c.entity IN (".getEntity('contract').")";
 		$sql .= " ORDER BY c.datec DESC";
 
