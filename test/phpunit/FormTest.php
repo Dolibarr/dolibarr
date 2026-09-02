@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -148,5 +148,35 @@ class FormTest extends CommonClassTest
 		$this->assertStringNotContainsString('KEYWORD', $visibleText);
 		$this->assertStringContainsString('PVC Pipe 1/2" Standard Quality', $searchText);
 		$this->assertStringContainsString('KEYWORD', $searchText);
+	}
+
+	/**
+	 * testSelectDolusersForeventUsesListParam
+	 *
+	 * select_dolusers_forevent() must build the list of attendees from its
+	 * $listofuserid parameter, not from the legacy global $_SESSION['assignedtouser']
+	 * (which comm/action/card.php no longer feeds since the session key was scoped
+	 * per event id).
+	 *
+	 * @return void
+	 */
+	public function testSelectDolusersForeventUsesListParam()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		// Make sure the legacy global session bucket cannot mask the bug
+		unset($_SESSION['assignedtouser']);
+
+		$form = new Form($db);
+
+		$listofuserid = array(1 => array('id' => 1, 'mandatory' => 0, 'transparency' => 1));
+		$out = $form->select_dolusers_forevent('view', 'assignedtouser', 1, array(), 0, '', array(), '0', 0, 0, '', 1, $listofuserid);
+
+		$this->assertStringContainsString('<ul class="attendees">', $out, 'select_dolusers_forevent ignored its $listofuserid parameter');
+		$this->assertStringContainsString('/user/card.php?id=1', $out, 'the attendee from $listofuserid is not rendered');
 	}
 }
