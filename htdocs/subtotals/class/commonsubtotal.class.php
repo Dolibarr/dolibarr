@@ -302,7 +302,14 @@ trait CommonSubtotal
 		}
 
 
-		if ($current_module != 'shipping') {
+		if ($current_module != 'shipping' && $result > 0) {
+			// SupplierProposal::addline() and Fichinter::addline() do not append the new line
+			// to $this->lines, so reload the lines before looking the new one up by id.
+			if ($current_module == 'supplier_proposal') {
+				$this->fetch($this->id);
+			} elseif ($current_module == 'fichinter') {
+				$this->fetch_lines();
+			}
 			foreach ($this->lines as $line) {
 				'@phan-var-force CommonObjectLine $line';
 				/** @var CommonObjectLine $line */
