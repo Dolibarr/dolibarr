@@ -3768,7 +3768,7 @@ if ($action == 'create' && $usercancreate) {
 	 *    Boutons actions
 	 */
 
-	if (($user->socid == 0) && ($action != 'presend')) {
+	if (($user->socid == 0) && ($action != 'presend') && ($action != 'editline')) {
 		print '<div class="tabsAction">';
 
 		$parameters = array();
