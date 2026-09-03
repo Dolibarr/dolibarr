@@ -56,6 +56,7 @@ Before writing any code, the agent **must**:
 - Write short, readable, and testable functions
 - Avoid side effects
 - Prefer typed properties and return types when PHP version allows
+- Parse user-entered amounts with `price2num()` and format amounts for display with `price()`; do not use `number_format()` or a raw cast
 
 ---
 
