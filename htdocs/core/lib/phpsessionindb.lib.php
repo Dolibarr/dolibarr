@@ -130,12 +130,17 @@ function dolSessionWrite($sess_id, $val)
 		$time_stamp = dol_now();
 
 		if (empty($sessionidfound)) {
+			// A new session row is about to be created. When session.gc_probability is 0
+			// (or the save handler was registered after session_start(), so PHP never rolled
+			// the GC dice), dolSessionGC() is never triggered by PHP. Emulate a probabilistic
+			// garbage collection here, using session.gc_divisor as the odds, so the llx_session
+			// table does not grow unbounded. dol_now() is used inside dolSessionGC().
 			if ((int) ini_get('session.gc_probability') == 0) {
-				// dolSessionGC will be never called
-				$max_lifetime = min(3600 * 24, max(getDolGlobalInt('MAIN_SESSION_TIMEOUT'), (int) ini_get('session.gc_maxlifetime')));
-				$delete_query = "DELETE FROM ".MAIN_DB_PREFIX."session";
-				$delete_query .= " WHERE last_accessed < '".$dbsession->idate($time_stamp - $max_lifetime)."'";
-				$dbsession->query($delete_query);
+				$gc_divisor = max(1, (int) ini_get('session.gc_divisor'));
+				if (mt_rand(1, $gc_divisor) == 1) {
+					$max_lifetime = min(3600 * 24, max(getDolGlobalInt('MAIN_SESSION_TIMEOUT'), (int) ini_get('session.gc_maxlifetime')));
+					dolSessionGC($max_lifetime);
+				}
 			}
 
 			// No session found, insert a new one
@@ -247,6 +252,7 @@ function dolSessionGC($max_lifetime)
 	if ($resql) {
 		return true;
 	} else {
+		dol_syslog("dolSessionGC failed to purge expired sessions: ".$dbsession->lasterror(), LOG_WARNING);
 		return false;
 	}
 }
