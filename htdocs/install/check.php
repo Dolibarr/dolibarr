@@ -193,6 +193,15 @@ if (!function_exists("simplexml_load_string")) {
 	print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle paddingright"> '.$langs->trans("PHPSupport", "Xml")."<br>\n";
 }
 
+// Check if Ctype is supported. Dolibarr uses ctype_* on several pages, without any fallback.
+if (!extension_loaded("ctype")) {
+	$langs->load("errors");
+	print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle paddingright"> '.$langs->trans("ErrorPHPDoesNotSupport", "Ctype")."<br>\n";
+	// $checksok = 0;	// If ko, just warning. So check must still be 1 (otherwise no way to install)
+} else {
+	print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle paddingright"> '.$langs->trans("PHPSupport", "Ctype")."<br>\n";
+}
+
 // Check if UTF8 is supported
 if (!function_exists("utf8_encode")) {
 	$langs->load("errors");
