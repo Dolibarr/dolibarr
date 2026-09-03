@@ -88,6 +88,16 @@ Before writing any code, the agent **must**:
 
 ---
 
+## Standarization
+
+- Use Dolibarr native dol_move() function if you need to move files.
+- Use Dolibarr native dol_delete_file(), dol_delete_dir() or dol_delete_dir_recursive() function if you need to delete files or directories.
+- Use Dolibarr native dol_mkdir() function if you need to create directories.
+- Read configuration with `getDolGlobalString()` / `getDolGlobalInt()` / `getDolGlobalBool()`, not `$conf->global->XXX`
+- Check module activation with `isModEnabled('module')`, not `!empty($conf->module->enabled)`
+
+--
+
 ## Internationalisation
 
 - Never hardcode user-facing strings — always use `$langs->trans('Key')`
@@ -95,20 +105,6 @@ Before writing any code, the agent **must**:
 - All code comments and variables or functions names must be in English.
 - Language key names must use PascalCase (e.g., `MyModuleLabel`, not `monLibelléModule`)
 - Load the language file at the top of the page: `$langs->load('mymodule@mymodule')`
-
----
-
-## Testing & Validation
-
-Before any modification, verify:
-- Creation / edition / deletion workflows
-- User rights enforcement (`$user->hasRight("module", "permission")` or `$user->hasRight("module", "objectname", "permission")`)
-- Multi-entity compatibility (add ` AND entity IN ('.getEntity("tablename").')`)
-
-If possible:
-- If doing an external module, add a PHPUnit test file in `yourmoduledir/test/phpunit/`
-- If modifying the Dolibarr code project, add a PHPUnit test file into `test/phpunit/` and add the entry into file `test/phpunit/AllTests.php`.
-
 
 ---
 
@@ -150,6 +146,19 @@ If possible:
 - Use `dol_syslog()` for all logging (with appropriate log level: `LOG_DEBUG`, `LOG_WARNING`, `LOG_ERR`)
 - Do not leave `var_dump()`, `print_r()`, or `die()` in committed code
 - Use Dolibarr's `setEventMessages()` to display user-facing messages
+
+---
+
+## Testing & Validation
+
+Before any modification, verify:
+- Creation / edition / deletion workflows
+- User rights enforcement (`$user->hasRight("module", "permission")` or `$user->hasRight("module", "objectname", "permission")`)
+- Multi-entity compatibility (add ` AND entity IN ('.getEntity("tablename").')`)
+
+If possible:
+- If doing an external module, add a PHPUnit test file in `yourmoduledir/test/phpunit/`
+- If modifying the Dolibarr code project, add a PHPUnit test file into `test/phpunit/` and add the entry into file `test/phpunit/AllTests.php`.
 
 ---
 
