@@ -66,6 +66,7 @@ Before writing any code, the agent **must**:
     - In classes: use `$this->db`
 -  SQL forged by PHP must escaped fields with `db->escape()`, `db->sanitize()`, or by casting values to `(int)` or `(float)`
 -  Always use `$db->query()` followed by `$db->fetch_object()` or `$db->fetch_array()` to retrieve results
+-  Convert timestamps and SQL datetime with `$db->idate()` (PHP timestamp -> SQL) and `$db->jdate()` (SQL -> PHP timestamp); use `dol_now()` instead of `time()`, `dol_print_date()` instead of `date()`, `dol_mktime()` instead of `mktime()`
 -  SQL scripts for table and index creation must be placed in `htdocs/install/mysql/tables/` (see existing files for examples)
 -  Never run SQL queries inside loops (avoid N+1 problem — use JOINs or batch queries instead)
 -  Always use `LIMIT` on list queries for performance
