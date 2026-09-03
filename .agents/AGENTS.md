@@ -49,14 +49,13 @@ Before writing any code, the agent **must**:
 
 ## PHP Best Practices
 
-- PHP >= 7.3 (minimum support); PHP 8.1+ recommended for new external modules
--  When writing a **bug fix**, always target the lowest compatible PHP version
+- Try to use the more portable PHP code possible >= 7.2
+- When writing a **bug fix**, always target the lowest compatible PHP version
   of the branch being patched — do not use PHP 8.x syntax on a fix targeting v19 or v20
 - Respect PSR-12, but **indentations must use Tabs, not Spaces**
 - Write short, readable, and testable functions
 - Avoid side effects
 - Prefer typed properties and return types when PHP version allows
-- Parse user-entered amounts with `price2num()` and format amounts for display with `price()`; do not use `number_format()` or a raw cast
 
 ---
 
@@ -96,6 +95,7 @@ Before writing any code, the agent **must**:
 - Use Dolibarr native dol_mkdir() function if you need to create directories.
 - Read configuration with `getDolGlobalString()` / `getDolGlobalInt()` / `getDolGlobalBool()`, not `$conf->global->XXX`
 - Check module activation with `isModEnabled('module')`, not `!empty($conf->module->enabled)`
+- Parse user-entered amounts with `price2num()` and format amounts for display with `price()`; do not use `number_format()` or a raw cast
 
 --
 
