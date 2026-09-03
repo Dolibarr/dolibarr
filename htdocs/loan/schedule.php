@@ -412,16 +412,19 @@ if (count($echeances->lines) > 0) {
 }
 print '</tr>'."\n";
 
+$cap_rest = 0.0;
+$total_insurance = 0.0;
+$total_interest = 0.0;
+$total_amort = 0.0;
+$total_mens = 0.0;
+
 if ($object->nbterm > 0 && count($echeances->lines) == 0) {
 	$i = 1;
 	$capital = $object->capital;
+	$cap_rest = (float) $capital;
 	$insurance = (float) $object->insurance_amount / $object->nbterm;
 	$insurance = price2num($insurance, 'MT');
 	$regulInsurance = price2num((float) $object->insurance_amount - ((float) $insurance * $object->nbterm));
-	$total_insurance = 0;
-	$total_interest = 0;
-	$total_amort = 0;
-	$total_mens = 0;
 
 	while ($i < $object->nbterm + 1) {
 		$mens = price2num($echeances->calcMonthlyPayments($capital, $object->rate / 100, $object->nbterm - $i + 1), 'MT');
@@ -457,13 +460,10 @@ if ($object->nbterm > 0 && count($echeances->lines) == 0) {
 } elseif (count($echeances->lines) > 0) {
 	$i = 1;
 	$capital = $object->capital;
+	$cap_rest = (float) $capital;
 	$insurance = (float) $object->insurance_amount / $object->nbterm;
 	$insurance = price2num($insurance, 'MT');
 	$regulInsurance = price2num((float) $object->insurance_amount - ((float) $insurance * $object->nbterm));
-	$total_insurance = 0;
-	$total_interest = 0;
-	$total_amort = 0;
-	$total_mens = 0;
 	$printed = false;
 
 	foreach ($echeances->lines as $line) {
