@@ -6281,7 +6281,7 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 		// First clean HTML content
 		do {
 			if ($antiinfinitloop >= 20) {
-				dol_print_error('', "Infinite loop detected after ".$antiinfinitloop." iterations in dol_htmlwithnojs");
+				dol_print_error(null, "Infinite loop detected after ".$antiinfinitloop." iterations in dol_htmlwithnojs");
 				die;	// We must not break and we must not return a string for security issue. This should never happen.
 			}
 			$antiinfinitloop++;
