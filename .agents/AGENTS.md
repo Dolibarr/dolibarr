@@ -137,7 +137,7 @@ If possible:
 
 ## Performance
 
-- Avoid SQL queries inside loops (N+1 problem)
+- Never run SQL queries inside loops (N+1 problem)
 - Use JOINs or batch queries instead of multiple sequential queries
 - Apply `LIMIT` and proper indexes on list queries
 - Cache repeated calls to `getDolGlobalString()` or `$conf->global->` in local variables
