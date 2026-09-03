@@ -3,9 +3,9 @@
  * Copyright (C) 2016       	Christophe Battarel 	<christophe@altairis.fr>
  * Copyright (C) 2022-2023  	Udo Tamm            	<dev@dolibit.de>
  * Copyright (C) 2023       	Alexandre Spangaro  	<aspangaro@easya.solutions>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025		Benjamin Falière		<benjamin.faliere@altairis.fr>
+ * Copyright (C) 2024-2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025		Benjamin Falière		<benjamin@faliere.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -655,6 +655,55 @@ print '</form>';
 
 print '<br>';
 
+
+/*
+ * Display setup
+ */
+
+print load_fiche_titre($langs->trans("GUISetup"), '', '');
+
+print '<table class="noborder centpercent">';
+
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" enctype="multipart/form-data" >';
+print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="action" value="setvar">';
+print '<input type="hidden" name="page_y" value="">';
+
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Parameter").'</td>';
+print '<td></td>';
+print '<td class="center" width="40"></td>';
+print "</tr>\n";
+
+// Display messages directly into ticket card
+print '<tr class="oddeven"><td>'.$langs->trans("TicketShowMessagesOnCard").'</td>';
+print '<td class="left">';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('TICKET_SHOW_MESSAGES_ON_CARD');
+} else {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $formcategory->selectarray("TICKET_SHOW_MESSAGES_ON_CARD", $arrval, getDolGlobalString('TICKET_SHOW_MESSAGES_ON_CARD'));
+}
+print '</td>';
+print '<td class="center">';
+print $formcategory->textwithpicto('', $langs->trans("TicketShowMessagesOnCardHelp"), 1, 'help');
+print '</td>';
+print '</tr>';
+
+// Limit view to assigned user only
+print '<tr class="oddeven"><td>'.$langs->trans("TicketsLimitViewAssignedOnly").'</td>';
+print '<td class="left">';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('TICKET_LIMIT_VIEW_ASSIGNED_ONLY');
+} else {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $formcategory->selectarray("TICKET_LIMIT_VIEW_ASSIGNED_ONLY", $arrval, getDolGlobalString('TICKET_LIMIT_VIEW_ASSIGNED_ONLY'));
+}
+print '</td>';
+print '<td class="center">';
+print $formcategory->textwithpicto('', $langs->trans("TicketsLimitViewAssignedOnlyHelp"), 1, 'help');
+print '</td>';
+print '</tr>';
 
 // TODO Use the notification module
 
