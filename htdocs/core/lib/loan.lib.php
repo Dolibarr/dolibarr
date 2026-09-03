@@ -98,9 +98,13 @@ function loan_prepare_head($object)
  * @param   float   $rate				Loan rate
  * @param   int     $numactualloadterm	Actual loan term
  * @param   int   	$nbterm  			Total number of term for this loan
- * @return array<array{cap_rest:float,cap_rest_str:string,interet:float,interet_str:string,mens:string}>		Array with remaining capital, interest, and mensuality for each remaining terms
+ * @param   null|float|string $amort	Capital amortization for this term (optional)
+ * @param   string  $source				Source of modification ('mens', 'amort' or 'interet')
+ * @param   int     $grace_period		Number of terms with grace period (amortization = 0)
+ * @param   null|float|string $int		Interest amount for this term (optional)
+ * @return array<array{cap_rest:float,cap_rest_str:string,interet:float,interet_str:string,amort:string,amort_num:float,mens:string,mens_num:float}>		Array with remaining capital, interest, amortization and mensuality for each remaining terms
  */
-function loanCalcMonthlyPayment($mens, $capital, $rate, $numactualloadterm, $nbterm)
+function loanCalcMonthlyPayment($mens, $capital, $rate, $numactualloadterm, $nbterm, $amort = null, $source = 'mens', $grace_period = 0, $int = null)
 {
 	global $conf, $db;
 	require_once DOL_DOCUMENT_ROOT.'/loan/class/loanschedule.class.php';
@@ -108,44 +112,95 @@ function loanCalcMonthlyPayment($mens, $capital, $rate, $numactualloadterm, $nbt
 	$output = array();
 
 	// Sanitize data in case of
-	$mens = price2num($mens);
-	$capital = price2num($capital);
-	$rate = price2num($rate);
+	$mens = (float) price2num($mens);
+	$capital = (float) price2num($capital);
+	$rate = (float) price2num($rate);
 	$numactualloadterm = ((int) $numactualloadterm);
 	$nbterm = ((int) $nbterm);
+	$grace_period = ((int) $grace_period);
+	$amort = ($amort !== null && $amort !== '') ? (float) price2num($amort) : null;
+	$int = ($int !== null && $int !== '') ? (float) price2num($int) : null;
 
-	// If mensuality is 0 we don't pay interests and remaining capital not modified
-	if ($mens == 0) {
-		$int = 0;
+	if ($grace_period > 0 && $numactualloadterm <= $grace_period) {
+		$amort = 0.0;
+		$int = ($int !== null && $int > 0) ? $int : round((float) $capital * ((float) $rate / 12), 2, PHP_ROUND_HALF_UP);
+		$mens = $int;
 		$cap_rest = $capital;
+	} elseif ($source === 'amort') {
+		$amort = ($amort !== null) ? $amort : 0.0;
+		$int = ($int !== null && $int > 0) ? $int : round((float) $capital * ((float) $rate / 12), 2, PHP_ROUND_HALF_UP);
+		$mens = round((float) $amort + (float) $int, 2, PHP_ROUND_HALF_UP);
+		$cap_rest = round((float) $capital - (float) $amort, 2, PHP_ROUND_HALF_UP);
+	} elseif ($source === 'interet') {
+		$int = ($int !== null) ? $int : round((float) $capital * ((float) $rate / 12), 2, PHP_ROUND_HALF_UP);
+		$amort = ($amort !== null) ? $amort : 0.0;
+		$mens = round((float) $amort + (float) $int, 2, PHP_ROUND_HALF_UP);
+		$cap_rest = round((float) $capital - (float) $amort, 2, PHP_ROUND_HALF_UP);
 	} else {
-		$int = ((float) $capital * ((float) $rate / 12));
-		$int = round($int, 2, PHP_ROUND_HALF_UP);
-		$cap_rest = round((float) $capital - ((float) $mens - $int), 2, PHP_ROUND_HALF_UP);
+		// source === 'mens'
+		if ($amort !== null && $amort == 0) {
+			// Zero capital amortization: payment is interest/fees and capital stays intact
+			$amort = 0.0;
+			$int = $mens;
+			$cap_rest = $capital;
+		} else {
+			$int = ($int !== null && $int > 0) ? $int : round((float) $capital * ((float) $rate / 12), 2, PHP_ROUND_HALF_UP);
+			$amort = round((float) $mens - (float) $int, 2, PHP_ROUND_HALF_UP);
+			if ($amort < 0) {
+				$amort = 0.0;
+				$int = $mens;
+				$cap_rest = $capital;
+			} else {
+				$cap_rest = round((float) $capital - (float) $amort, 2, PHP_ROUND_HALF_UP);
+			}
+		}
 	}
+
 	$output[$numactualloadterm] = array(
 		'cap_rest' => $cap_rest,
 		'cap_rest_str' => price($cap_rest, 0, '', 1, -1, -1, $conf->currency),
 		'interet' => $int,
 		'interet_str' => price($int, 0, '', 1, -1, -1, $conf->currency),
+		'amort' => price($amort),
+		'amort_num' => (float) $amort,
 		'mens' => price($mens),
+		'mens_num' => (float) $mens,
 	);
 
 	$numactualloadterm++;
 	$capital = $cap_rest;
 	while ($numactualloadterm <= $nbterm) {
-		$mens = round($object->calcMonthlyPayments($capital, (float) $rate, $nbterm - $numactualloadterm + 1), 2, PHP_ROUND_HALF_UP);
+		if ($grace_period > 0 && $numactualloadterm <= $grace_period) {
+			$amort = 0.0;
+			$int = ((float) $capital * ((float) $rate / 12));
+			$int = round($int, 2, PHP_ROUND_HALF_UP);
+			$mens = $int;
+			$cap_rest = $capital;
+		} else {
+			$mens = round($object->calcMonthlyPayments($capital, (float) $rate, $nbterm - $numactualloadterm + 1), 2, PHP_ROUND_HALF_UP);
 
-		$int = ($capital * ((float) $rate / 12));
-		$int = round($int, 2, PHP_ROUND_HALF_UP);
-		$cap_rest = round($capital - ($mens - $int), 2, PHP_ROUND_HALF_UP);
+			$int = ($capital * ((float) $rate / 12));
+			$int = round($int, 2, PHP_ROUND_HALF_UP);
+			$amort = round($mens - $int, 2, PHP_ROUND_HALF_UP);
+			$cap_rest = round($capital - $amort, 2, PHP_ROUND_HALF_UP);
+
+			// Adjust rounding difference on the last installment if small remainder
+			if ($numactualloadterm == $nbterm && abs($cap_rest) <= 0.05 && $capital > 0) {
+				$amort = $capital;
+				$cap_rest = 0.0;
+				$mens = round($amort + $int, 2, PHP_ROUND_HALF_UP);
+			}
+		}
 
 		$output[$numactualloadterm] = array(
 			'cap_rest' => $cap_rest,
 			'cap_rest_str' => price($cap_rest, 0, '', 1, -1, -1, $conf->currency),
 			'interet' => $int,
 			'interet_str' => price($int, 0, '', 1, -1, -1, $conf->currency),
+			'amort' => price($amort),
+			'amort_num' => (float) $amort,
 			'mens' => price($mens),
+			'mens_num' => (float) $mens,
 		);
 		$capital = $cap_rest;
 		$numactualloadterm++;
