@@ -177,8 +177,8 @@ If possible:
     - Types: `NEW`, `FIX`, `CLOSE`, `QUAL`, `PERF`, `UIUX` (uppercase, so it appears in the ChangeLog)
     - Example: `FIX: #1234 Correct VAT calculation on credit notes`
 - Do not update the `ChangeLog` file (this file will be generated before the release from all commit titles)
-- When commiting, keep your commit comment short and add a line "Co-authored-by:" to mention the AI agent name
-- When making a Pull Request, keep the PR description short (never exceed 50 lines) and mention the AI agent name in the description by adding a line "Co-authored-by:"
+- When commiting, keep your commit comment short (never exceed 50 lines) and add a line "Co-authored-by:" to mention the AI agent name
+- When making a Pull Request, keep the PR description short (never exceed 50 lines) and mention the AI agent name in the description with a line like "Submited with <AI agent name> (see commit comments for attributions)"
 - A pull request can contain database structure change only, or one new feature, or one bug fix, or only refactoring but never a mix of these. 
 - For code contribution on stable branches (non develop), PR must contains 1 and only 1 bug fix at once. Never introduce new features or refactoring if the target branch is not develop.
 
