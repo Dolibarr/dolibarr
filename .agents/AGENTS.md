@@ -66,6 +66,7 @@ Before writing any code, the agent **must**:
     - In classes: use `$this->db`
 -  SQL forged by PHP must escaped fields with `db->escape()`, `db->sanitize()`, or by casting values to `(int)` or `(float)`
 -  Always use `$db->query()` followed by `$db->fetch_object()` or `$db->fetch_array()` to retrieve results
+-  Convert timestamps and SQL datetime with `$db->idate()` (PHP timestamp -> SQL) and `$db->jdate()` (SQL -> PHP timestamp); use `dol_now()` instead of `time()`, `dol_print_date()` instead of `date()`, `dol_mktime()` instead of `mktime()`
 -  SQL scripts for table and index creation must be placed in `htdocs/install/mysql/tables/` (see existing files for examples)
 -  Never run SQL queries inside loops (avoid N+1 problem — use JOINs or batch queries instead)
 -  Always use `LIMIT` on list queries for performance
@@ -89,6 +90,16 @@ Before writing any code, the agent **must**:
 
 ---
 
+## Standarization
+
+- Use Dolibarr native dol_move() function if you need to move files.
+- Use Dolibarr native dol_delete_file(), dol_delete_dir() or dol_delete_dir_recursive() function if you need to delete files or directories.
+- Use Dolibarr native dol_mkdir() function if you need to create directories.
+- Read configuration with `getDolGlobalString()` / `getDolGlobalInt()` / `getDolGlobalBool()`, not `$conf->global->XXX`
+- Check module activation with `isModEnabled('module')`, not `!empty($conf->module->enabled)`
+
+--
+
 ## Internationalisation
 
 - Never hardcode user-facing strings — always use `$langs->trans('Key')`
@@ -96,20 +107,6 @@ Before writing any code, the agent **must**:
 - All code comments and variables or functions names must be in English.
 - Language key names must use PascalCase (e.g., `MyModuleLabel`, not `monLibelléModule`)
 - Load the language file at the top of the page: `$langs->load('mymodule@mymodule')`
-
----
-
-## Testing & Validation
-
-Before any modification, verify:
-- Creation / edition / deletion workflows
-- User rights enforcement (`$user->hasRight("module", "permission")` or `$user->hasRight("module", "objectname", "permission")`)
-- Multi-entity compatibility (add ` AND entity IN ('.getEntity("tablename").')`)
-
-If possible:
-- If doing an external module, add a PHPUnit test file in `yourmoduledir/test/phpunit/`
-- If modifying the Dolibarr code project, add a PHPUnit test file into `test/phpunit/` and add the entry into file `test/phpunit/AllTests.php`.
-
 
 ---
 
@@ -133,6 +130,7 @@ If possible:
   - GET links with a modifying `action`: `...&token='.newToken().'`
   - Ajax calls: use `currentToken()` instead of `newToken()`, and set `NOTOKENRENEWAL` on the called ajax endpoint
 - Public endpoints called without a session (e.g. webhooks) are exempt via `NOCSRFCHECK` (page-level constant) or, exceptionally, `$dolibarr_nocsrfcheck` (global conf.php override)
+- Use the Dolibarr filesystem wrappers (`dol_mkdir()`, `dol_delete_file()`, `dol_copy()`, `dol_is_file()`, `dol_is_dir()`) and sanitize any user-provided name with `dol_sanitizeFileName()` / `dol_sanitizePathName()`, never raw PHP `mkdir()` / `unlink()` / `file_exists()`
 
 ---
 
@@ -140,7 +138,7 @@ If possible:
 
 - Never run SQL queries inside loops (N+1 problem)
 - Use JOINs or batch queries instead of multiple sequential queries
-- Apply `LIMIT` and proper indexes on list queries
+- Use limit on query list with `db->limit()` for performance
 - Cache repeated calls to `getDolGlobalString()` or `$conf->global->` in local variables
 - If you need a cache array to be used into a loop, you can use `$conf->cache['aNameForYourCacheArray'] = array();`
 
@@ -151,6 +149,19 @@ If possible:
 - Use `dol_syslog()` for all logging (with appropriate log level: `LOG_DEBUG`, `LOG_WARNING`, `LOG_ERR`)
 - Do not leave `var_dump()`, `print_r()`, or `die()` in committed code
 - Use Dolibarr's `setEventMessages()` to display user-facing messages
+
+---
+
+## Testing & Validation
+
+Before any modification, verify:
+- Creation / edition / deletion workflows
+- User rights enforcement (`$user->hasRight("module", "permission")` or `$user->hasRight("module", "objectname", "permission")`)
+- Multi-entity compatibility (add ` AND entity IN ('.getEntity("tablename").')`)
+
+If possible:
+- If doing an external module, add a PHPUnit test file in `yourmoduledir/test/phpunit/`
+- If modifying the Dolibarr code project, add a PHPUnit test file into `test/phpunit/` and add the entry into file `test/phpunit/AllTests.php`.
 
 ---
 
