@@ -91,6 +91,7 @@ Before writing any code, the agent **must**:
 ## Internationalisation
 
 - Never hardcode user-facing strings — always use `$langs->trans('Key')`
+- Use `$langs->trans()` for direct HTML output; use `$langs->transnoentities()` when the result is placed where it will be HTML-escaped again (tag attributes, JS strings, `dol_escape_htmltag()` arguments) to avoid double-encoding
 - Language files must be placed in `mymodule/langs/en_US/` (and other locales as needed)
 - All code comments and variables or functions names must be in English.
 - Language key names must use PascalCase (e.g., `MyModuleLabel`, not `monLibelléModule`)
