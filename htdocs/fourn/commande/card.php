@@ -675,6 +675,7 @@ if (empty($reshook)) {
 			$db->commit();
 
 			$ret = $object->fetch($object->id); // Reload to get new records
+			$object->fetch_thirdparty(); // fetch() reset thirdparty to null, reload it before reading default_lang
 
 			// Define output language
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
