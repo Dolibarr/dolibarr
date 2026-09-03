@@ -132,6 +132,7 @@ If possible:
   - GET links with a modifying `action`: `...&token='.newToken().'`
   - Ajax calls: use `currentToken()` instead of `newToken()`, and set `NOTOKENRENEWAL` on the called ajax endpoint
 - Public endpoints called without a session (e.g. webhooks) are exempt via `NOCSRFCHECK` (page-level constant) or, exceptionally, `$dolibarr_nocsrfcheck` (global conf.php override)
+- Use the Dolibarr filesystem wrappers (`dol_mkdir()`, `dol_delete_file()`, `dol_copy()`, `dol_is_file()`, `dol_is_dir()`) and sanitize any user-provided name with `dol_sanitizeFileName()` / `dol_sanitizePathName()`, never raw PHP `mkdir()` / `unlink()` / `file_exists()`
 
 ---
 
