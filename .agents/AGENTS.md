@@ -137,7 +137,7 @@ Before writing any code, the agent **must**:
 
 - Never run SQL queries inside loops (N+1 problem)
 - Use JOINs or batch queries instead of multiple sequential queries
-- Apply `LIMIT` and proper indexes on list queries
+- Use limit on query list with `db->limit()` for performance
 - Cache repeated calls to `getDolGlobalString()` or `$conf->global->` in local variables
 - If you need a cache array to be used into a loop, you can use `$conf->cache['aNameForYourCacheArray'] = array();`
 
