@@ -132,6 +132,7 @@ If possible:
   - GET links with a modifying `action`: `...&token='.newToken().'`
   - Ajax calls: use `currentToken()` instead of `newToken()`, and set `NOTOKENRENEWAL` on the called ajax endpoint
 - Public endpoints called without a session (e.g. webhooks) are exempt via `NOCSRFCHECK` (page-level constant) or, exceptionally, `$dolibarr_nocsrfcheck` (global conf.php override)
+- Build internal URLs (links, `header("Location: ...")` redirects) with `dolBuildUrl($url, $params, $addtoken)` instead of concatenating a query string by hand: it `http_build_query()`-encodes the parameters and, with `$addtoken = true`, appends the CSRF `token`
 
 ---
 
