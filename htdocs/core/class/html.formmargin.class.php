@@ -107,18 +107,18 @@ class FormMargin
 			$pa_ht = (($pv < 0 || ($pv == 0 && in_array($object->element, array('facture', 'facture_fourn')) && $object->type == $object::TYPE_CREDIT_NOTE)) ? -$line->pa_ht : $line->pa_ht);
 			'@phan-var-force CommonObject $object';
 
-			if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {	// Special case for old situation mode
+			$pa = $line->qty * $pa_ht;
+
+			$situationmode = getDolGlobalInt('INVOICE_USE_SITUATION');	// 0 = disabled, 1 = cumulative, 2 = progress
+
+			if (($situationmode == 1 || $situationmode == 2) && $object->element == 'facture') {
 				'@phan-var-force Facture $object';
 				/** @var Facture $object */
-				if (($object->element == 'facture' && $object->type == $object::TYPE_SITUATION)
-					|| ($object->element == 'facture' && $object->type == $object::TYPE_CREDIT_NOTE && getDolGlobalInt('INVOICE_USE_SITUATION_CREDIT_NOTE') && $object->situation_counter > 0)) {
-					// We need a compensation relative to $line->situation_percent
-					$pa = $line->qty * $pa_ht * ($line->situation_percent / 100);
-				} else {
-					$pa = $line->qty * $pa_ht;
+				if ($object->type == $object::TYPE_SITUATION
+					|| ($object->type == $object::TYPE_CREDIT_NOTE && getDolGlobalInt('INVOICE_USE_SITUATION_CREDIT_NOTE') && $object->situation_counter > 0)) {
+					// total_ht of a situation line is already prorated by abs(situation_percent); the sign is carried by $pa_ht, so never by the ratio
+					$pa *= abs($line->situation_percent) / 100;
 				}
-			} else {
-				$pa = $line->qty * $pa_ht;
 			}
 
 			// calcul des marges
