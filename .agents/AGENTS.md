@@ -69,6 +69,7 @@ Before writing any code, the agent **must**:
 -  SQL scripts for table and index creation must be placed in `htdocs/install/mysql/tables/` (see existing files for examples)
 -  Never run SQL queries inside loops (avoid N+1 problem — use JOINs or batch queries instead)
 -  Always use `LIMIT` on list queries for performance
+-  Build list-filter `WHERE` clauses with `natural_search($fields, $value, $mode)` rather than assembling `LIKE` conditions by hand
 
 ---
 
