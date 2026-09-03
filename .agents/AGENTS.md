@@ -169,11 +169,10 @@ If possible:
 
 ## Git Workflow
 
-- Never try to make commit or Pull request except if it was explicitely requested. 
+- Never try to make commit or Pull request, except if it was explicitely requested. 
 - Branch strategy:
     - One branch per major version (bug fixes only)
     - `develop` branch for both fixes and new features
-- Never commit directly to `main` or `develop` or any branch name matching regex `^\d+\.\d+$` but use a Pull Request.
 - Commit message format: `TYPE: #issueNumber Short description`
     - Types: `NEW`, `FIX`, `CLOSE`, `QUAL`, `PERF`, `UIUX` (uppercase, so it appears in the ChangeLog)
     - Example: `FIX: #1234 Correct VAT calculation on credit notes`
