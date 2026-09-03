@@ -169,6 +169,7 @@ If possible:
 
 ## Git Workflow
 
+- Never try to make commit or Pull request except if it was explicitely requested. 
 - Branch strategy:
     - One branch per major version (bug fixes only)
     - `develop` branch for both fixes and new features
