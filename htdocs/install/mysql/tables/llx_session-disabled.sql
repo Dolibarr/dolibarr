@@ -25,5 +25,6 @@ create table llx_session
   last_accessed datetime NOT NULL,
   fk_user integer NOT NULL,
   remote_ip varchar(64) NULL,
-  user_agent varchar(255) NULL
+  user_agent varchar(255) NULL,
+  KEY idx_session_last_accessed (last_accessed)
 )ENGINE=innodb;
