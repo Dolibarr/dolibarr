@@ -87,7 +87,7 @@ Before writing any code, the agent **must**:
 
 ---
 
-## Standarization
+## Standardization
 
 - Use Dolibarr native dol_move() function if you need to move files.
 - Use Dolibarr native dol_delete_file(), dol_delete_dir() or dol_delete_dir_recursive() function if you need to delete files or directories.
@@ -136,7 +136,7 @@ Before writing any code, the agent **must**:
 - Never run SQL queries inside loops (N+1 problem)
 - Use JOINs or batch queries instead of multiple sequential queries
 - Use LIMIT on SQL query list with `db->limit()`
-- Cache repeated calls to `getDolGlobalString()` or `$conf->global->` in local variables
+- Cache repeated calls to `getDolGlobalString()` in local variables
 - If you need a cache array to be used into a loop, you can use `$conf->cache['aNameForYourCacheArray'] = array();`
 
 ---
