@@ -233,10 +233,10 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 				// checkIfAccountancyCodeIsAlreadyUsed(): per-entity table when
 				// MAIN_COMPANY_PERENTITY_SHARED is enabled, otherwise the main societe table.
 				if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
-					$table = MAIN_DB_PREFIX.'societe_perentity';
+					$table = $db->prefix().'societe_perentity';
 					$column = ($type == 'supplier') ? 'accountancy_code_supplier' : 'accountancy_code_customer';
 				} else {
-					$table = MAIN_DB_PREFIX.'societe';
+					$table = $db->prefix().'societe';
 					$column = ($type == 'supplier') ? 'code_compta_fournisseur' : 'code_compta';
 				}
 
