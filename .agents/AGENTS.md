@@ -68,8 +68,6 @@ Before writing any code, the agent **must**:
 -  Always use `$db->query()` followed by `$db->fetch_object()` or `$db->fetch_array()` to retrieve results
 -  Convert timestamps and SQL datetime with `$db->idate()` (PHP timestamp -> SQL) and `$db->jdate()` (SQL -> PHP timestamp); use `dol_now()` instead of `time()`, `dol_print_date()` instead of `date()`, `dol_mktime()` instead of `mktime()`
 -  SQL scripts for table and index creation must be placed in `htdocs/install/mysql/tables/` (see existing files for examples)
--  Never run SQL queries inside loops (avoid N+1 problem — use JOINs or batch queries instead)
--  Always use `LIMIT` on list queries for performance
 -  Build list-filter `WHERE` clauses with `natural_search($fields, $value, $mode)` rather than assembling `LIKE` conditions by hand
 
 ---
@@ -90,7 +88,7 @@ Before writing any code, the agent **must**:
 
 ---
 
-## Standarization
+## Standardization
 
 - Use Dolibarr native dol_move() function if you need to move files.
 - Use Dolibarr native dol_delete_file(), dol_delete_dir() or dol_delete_dir_recursive() function if you need to delete files or directories.
@@ -134,12 +132,12 @@ Before writing any code, the agent **must**:
 
 ---
 
-## Performance
+## For Performance
 
 - Never run SQL queries inside loops (N+1 problem)
 - Use JOINs or batch queries instead of multiple sequential queries
-- Use limit on query list with `db->limit()` for performance
-- Cache repeated calls to `getDolGlobalString()` or `$conf->global->` in local variables
+- Use LIMIT on SQL query list with `db->limit()`
+- Cache repeated calls to `getDolGlobalString()` in local variables
 - If you need a cache array to be used into a loop, you can use `$conf->cache['aNameForYourCacheArray'] = array();`
 
 ---
