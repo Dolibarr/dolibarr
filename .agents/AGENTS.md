@@ -16,6 +16,7 @@ Every modification must respect:
 -  Do not introduce external dependencies without validation
 -  Separate page actions in the `/* Actions */` section of the PHP code and the rendering part in the `/* Views */` section
 -  Never use PHP native curl functions to call a GET or POST URL, but use instead the Dolibarr function getURLContent()
+-  Never use PHP native functions when Dolibarr provides wrappers: time()→dol_now(), strtolower()→dol_strtolower(), strtoupper()→dol_strtoupper(), strlen()→dol_strlen(), mktime()→dol_mktime(), getdate()→dol_getdate(), strtotime()→dol_stringtotime(), ucfirst()→dol_ucfirst(), ucwords()→dol_ucwords(), substr()→dol_substr(), basename()→dol_basename()
 -  Use Dolibarr hooks whenever possible
 -  Respect existing naming conventions
 -  All database table names must use the `llx_` prefix
