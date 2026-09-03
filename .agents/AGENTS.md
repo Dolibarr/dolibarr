@@ -160,7 +160,7 @@ If possible:
     - `develop` branch for both fixes and new features
 - Never commit directly to `main` or `develop` or any branch name matching regex `^\d+\.\d+$` but use a Pull Request.
 - Commit message format: `TYPE: #issueNumber Short description`
-    - Types: `NEW`, `FIX` or `CLOSE`
+    - Types: `NEW`, `FIX`, `CLOSE`, `QUAL`, `PERF`, `UIUX` (uppercase, so it appears in the ChangeLog)
     - Example: `FIX: #1234 Correct VAT calculation on credit notes`
 - Do not update the `ChangeLog` file (this file will be generated before the release from all commit titles)
 - When commiting, keep your commit comment short and add a line "Co-authored-by:" to mention the AI agent name
