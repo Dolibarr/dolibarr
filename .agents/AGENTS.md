@@ -19,6 +19,8 @@ Every modification must respect:
 -  Use Dolibarr hooks whenever possible
 -  Respect existing naming conventions
 -  All database table names must use the `llx_` prefix
+-  Read configuration with `getDolGlobalString()` / `getDolGlobalInt()` / `getDolGlobalBool()`, not `$conf->global->XXX`
+-  Check module activation with `isModEnabled('module')`, not `!empty($conf->module->enabled)`
 
 ---
 
