@@ -3663,11 +3663,11 @@ if (empty($reshook)) {
 	} elseif ($action == 'import_lines_from_object' && $usercancreate && $object->status == Facture::STATUS_DRAFT
 		&& ($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_REPLACEMENT || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_PROFORMA || $object->type == Facture::TYPE_SITUATION)) {
 		// add lines from objectlinked
-		$fromElement = GETPOST('fromelement');
+		$fromElement = GETPOST('fromelement', 'aZ09');
 		$fromElementid = GETPOST('fromelementid');
 		$importLines = GETPOST('line_checkbox');
 
-		if (!empty($importLines) && is_array($importLines) && !empty($fromElement) && ctype_alpha($fromElement) && !empty($fromElementid)) {
+		if (!empty($importLines) && is_array($importLines) && !empty($fromElement) && !empty($fromElementid)) {
 			$lineClassName = '';
 			if ($fromElement == 'commande') {
 				dol_include_once('/'.$fromElement.'/class/'.$fromElement.'.class.php');
