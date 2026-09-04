@@ -36,12 +36,13 @@ jobs:
   #  uses: ./.github/workflows/windows-ci.yml
   #  with:
   #    gh_event: ${{ github.event_name }}
-  # gh-travis:  # Runs travis script on github runner (not on travis)
-  #   if: false
-  #   # needs: [pre-commit, phan]
-  #   # needs: [windows-ci]
-  #   secrets: inherit
-  #   needs: [pre-commit, phan, phpstan]
-  #   uses: ./.github/workflows/gh-travis.yml
-  #   with:
-  #     gh_event: ${{ github.event_name }}
+  gh-travis:  # Runs travis script on github runner (not on travis)
+    # Always run on the reference branches: the push stages of .travis.yml do
+    # more than the pull_request one (php lint, phpcs) and pushes here are far
+    # less frequent than pull request updates.
+    # needs: [windows-ci]
+    secrets: inherit
+    needs: [pre-commit, phan, phpstan]
+    uses: ./.github/workflows/gh-travis.yml
+    with:
+      gh_event: ${{ github.event_name }}
