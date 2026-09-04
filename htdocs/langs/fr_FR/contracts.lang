@@ -120,3 +120,4 @@ ShowClosedServices=Afficher les services fermés
 HideClosedServices=Masquer les services fermés
 UserStartingService=Utilisateur démarrant le service
 UserClosingService=Utilisateur stoppant le service
+ContractID=ID du contrat

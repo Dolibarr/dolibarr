@@ -72,6 +72,8 @@ if (!$sortorder) {
 	$sortorder = "ASC";
 }
 
+$search_id = trim(GETPOST("search_id", "int"));
+$search_contract_id = trim(GETPOST("search_contract_id", "int"));
 $search_name = GETPOST("search_name", 'alpha');
 $search_subprice = GETPOST("search_subprice", 'alpha');
 $search_qty = GETPOST("search_qty", 'alpha');
@@ -139,6 +141,8 @@ $staticcontratligne = new ContratLigne($db);
 $companystatic = new Societe($db);
 
 $arrayfields = array(
+	'cd.rowid'=>array('label'=>"TechnicalID", 'position'=>1, 'checked'=>(getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID')), 'enabled'=>(getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID'))),
+	'c.rowid'=>array('label'=>"ContractID", 'position'=>2, 'checked'=>(getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID')), 'enabled'=>(getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID'))),
 	'c.ref' => array('label' => "Contract", 'checked' => '1', 'position' => 80),
 	'p.description' => array('label' => "Service", 'checked' => '1', 'position' => 80),
 	's.nom' => array('label' => "ThirdParty", 'checked' => '1', 'position' => 90),
@@ -194,6 +198,8 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All test are required to be compatible with all browsers
+		$search_id = "";
+		$search_contract_id = "";
 		$search_product_category = 0;
 		$search_name = "";
 		$search_subprice = "";
@@ -317,6 +323,12 @@ if ($search_status == "4&filter=notexpired" || ($search_status == '4' && $filter
 }
 if ($search_status == "5") {
 	$sql .= " AND cd.statut = 5";
+}
+if ($search_id > 0) {
+	$sql .= natural_search("cd.rowid", $search_id, 1);
+}
+if ($search_contract_id > 0) {
+	$sql .= natural_search("c.rowid", $search_contract_id, 1);
 }
 if ($search_option == 'late' && $search_status != '0') {
 	$warning_date = $db->idate(dol_now() - (int) $conf->contract->services->expires->warning_delay);
@@ -472,6 +484,12 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
 }
+if ($search_id > 0) {
+	$param .= '&search_id='.urlencode($search_id);
+}
+if ($search_contract_id > 0) {
+	$param .= '&amp;search_contract_id='.urlencode($search_contract_id);
+}
 if ($search_contract) {
 	$param .= '&amp;search_contract='.urlencode($search_contract);
 }
@@ -624,6 +642,16 @@ if ($conf->main_checkbox_left_column) {
 	print $searchpicto;
 	print '</td>';
 }
+if (!empty($arrayfields['cd.rowid']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input class="flat searchstring" type="text" name="search_id" size="1" value="'.dol_escape_htmltag($search_id).'">';
+	print '</td>';
+}
+if (!empty($arrayfields['c.rowid']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input class="flat searchstring" type="text" name="search_contract_id" size="1" value="'.dol_escape_htmltag($search_contract_id).'">';
+	print '</td>';
+}
 if (!empty($arrayfields['c.ref']['checked'])) {
 	print '<td class="liste_titre">';
 	print '<input type="hidden" name="mode" value="'.$mode.'">';
@@ -758,6 +786,12 @@ if ($conf->main_checkbox_left_column) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
+if (!empty($arrayfields['cd.rowid']['checked'])) {
+	print_liste_field_titre($arrayfields['cd.rowid']['label'], $_SERVER["PHP_SELF"], "cd.rowid", "", $param, "", $sortfield, $sortorder);
+}
+if (!empty($arrayfields['c.rowid']['checked'])) {
+	print_liste_field_titre($arrayfields['c.rowid']['label'], $_SERVER["PHP_SELF"], "c.rowid", "", $param, "", $sortfield, $sortorder);
+}
 if (!empty($arrayfields['c.ref']['checked'])) {
 	// False positive @phan-suppress-next-line PhanTypeInvalidDimOffset
 	print_liste_field_titre($arrayfields['c.ref']['label'], $_SERVER["PHP_SELF"], "c.ref", "", $param, "", $sortfield, $sortorder);
@@ -872,6 +906,27 @@ while ($i < $imaxinloop) {
 			$totalarray['nbfield']++;
 		}
 	}
+
+	// Technical ID
+	if (!empty($arrayfields['cd.rowid']['checked'])) {
+		print '<td class="tdoverflowmax50" data-key="id">';
+		print $obj->rowid;
+		print "</td>\n";
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+
+	// Contract ID
+	if (!empty($arrayfields['c.rowid']['checked'])) {
+		print '<td class="nowraponall">';
+		print $obj->cid;
+		print '</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+
 	// Ref
 	if (!empty($arrayfields['c.ref']['checked'])) {
 		print '<td class="nowraponall">';
