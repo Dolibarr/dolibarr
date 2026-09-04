@@ -401,8 +401,8 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 					$handle = @opendir($dir);
 					if (is_resource($handle)) {
 						while (($file = readdir($handle)) !== false) {
-							if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod' && substr($file, dol_strlen($file) - 10) == '.class.php') {
-								$modName = substr($file, 0, dol_strlen($file) - 10);
+							if (is_readable($dir.$file) && dol_substr($file, 0, 3) == 'mod' && dol_substr($file, dol_strlen($file) - 10) == '.class.php') {
+								$modName = dol_substr($file, 0, dol_strlen($file) - 10);
 								if ($modName) {
 									if (!empty($modNameLoaded[$modName])) {   // In cache of already loaded modules ?
 										$mesg = "Error: Module ".$modName." was found twice: Into ".$modNameLoaded[$modName]." and ".$dir.". You probably have an old file on your disk.<br>";

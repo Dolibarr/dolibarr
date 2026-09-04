@@ -1329,7 +1329,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 									//print 'File '.$file.' match suffix '.$onlywithsuffix.' so we keep it<br>'."\n";
 								}
 							}
-							if (preg_match('/\.sql$/i', $file) && !preg_match('/\.key\.sql$/i', $file) && substr($file, 0, 4) == 'llx_') {
+							if (preg_match('/\.sql$/i', $file) && !preg_match('/\.key\.sql$/i', $file) && dol_substr($file, 0, 4) == 'llx_') {
 								$result = run_sql($dir.$file, !getDolGlobalString('MAIN_DISPLAY_SQL_INSTALL_LOG') ? 1 : 0, 0, 1);
 								if ($result <= 0) {
 									$error++;
@@ -1354,7 +1354,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 									//print 'File '.$file.' match suffix '.$onlywithsuffix.' so we keep it<br>'."\n";
 								}
 							}
-							if (preg_match('/\.key\.sql$/i', $file) && substr($file, 0, 4) == 'llx_') {
+							if (preg_match('/\.key\.sql$/i', $file) && dol_substr($file, 0, 4) == 'llx_') {
 								$result = run_sql($dir.$file, !getDolGlobalString('MAIN_DISPLAY_SQL_INSTALL_LOG') ? 1 : 0, 0, 1);
 								if ($result <= 0) {
 									$error++;
@@ -1379,7 +1379,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 									//print 'File '.$file.' match suffix '.$onlywithsuffix.' so we keep it<br>'."\n";
 								}
 							}
-							if (preg_match('/\.sql$/i', $file) && !preg_match('/\.key\.sql$/i', $file) && substr($file, 0, 9) == 'functions') {
+							if (preg_match('/\.sql$/i', $file) && !preg_match('/\.key\.sql$/i', $file) && dol_substr($file, 0, 9) == 'functions') {
 								$result = run_sql($dir.$file, !getDolGlobalString('MAIN_DISPLAY_SQL_INSTALL_LOG') ? 1 : 0, 0, 1);
 								if ($result <= 0) {
 									$error++;
@@ -1404,7 +1404,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 									//print 'File '.$file.' match suffix '.$onlywithsuffix.' so we keep it<br>'."\n";
 								}
 							}
-							if (preg_match('/\.sql$/i', $file) && !preg_match('/\.key\.sql$/i', $file) && substr($file, 0, 4) == 'data') {
+							if (preg_match('/\.sql$/i', $file) && !preg_match('/\.key\.sql$/i', $file) && dol_substr($file, 0, 4) == 'data') {
 								$result = run_sql($dir.$file, !getDolGlobalString('MAIN_DISPLAY_SQL_INSTALL_LOG') ? 1 : 0, 0, 1);
 								if ($result <= 0) {
 									$error++;
@@ -1430,7 +1430,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 								}
 							}
 
-							if (preg_match('/\.sql$/i', $file) && !preg_match('/\.key\.sql$/i', $file) && substr($file, 0, 6) == 'update') {
+							if (preg_match('/\.sql$/i', $file) && !preg_match('/\.key\.sql$/i', $file) && dol_substr($file, 0, 6) == 'update') {
 								$result = run_sql($dir.$file, !getDolGlobalString('MAIN_DISPLAY_SQL_INSTALL_LOG') ? 1 : 0, 0, 1);
 								if ($result <= 0) {
 									$error++;
@@ -2265,8 +2265,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 			$handle = @opendir(dol_osencode($dir));
 			if (is_resource($handle)) {
 				while (($file = readdir($handle)) !== false) {
-					if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod' && substr($file, dol_strlen($file) - 10) == '.class.php') {
-						$modName = substr($file, 0, dol_strlen($file) - 10);
+					if (is_readable($dir.$file) && dol_substr($file, 0, 3) == 'mod' && dol_substr($file, dol_strlen($file) - 10) == '.class.php') {
+						$modName = dol_substr($file, 0, dol_strlen($file) - 10);
 						if ($modName && $modName != get_class($this)) {
 							include_once $dir.$file;
 							if (class_exists($modName)) {

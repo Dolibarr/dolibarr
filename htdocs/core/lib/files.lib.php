@@ -1082,7 +1082,7 @@ function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayrep
 		while ($file = readdir($dir_handle)) {
 			if ($file != "." && $file != ".." && !is_link($ossrcfile."/".$file)) {
 				if (is_dir($ossrcfile."/".$file)) {
-					if (empty($excludesubdir) || ($excludesubdir == 2 && strlen($file) == 2)) {
+					if (empty($excludesubdir) || ($excludesubdir == 2 && dol_strlen($file) == 2)) {
 						$newfile = $file;
 						// Replace destination filename with a new one
 						if (is_array($arrayreplacement)) {
@@ -2708,7 +2708,7 @@ function dol_compress_file($inputfile, $outputfile, $mode = "gz", &$errorstring 
 						$fileName = $file->getFilename();
 						$fileFullRealPath = $file->getRealPath();	// the full path with name and transformed to use real path directory.
 
-						//$relativePath = substr($fileFullRealPath, strlen($rootPath) + 1);
+						//$relativePath = dol_substr($fileFullRealPath, strlen($rootPath) + 1);
 						$relativePath = substr(($filePath ? $filePath.'/' : '').$fileName, strlen($rootPath) + 1);
 
 						// Add current file to archive
@@ -2982,7 +2982,7 @@ function dol_compress_dir($inputdir, $outputfile, $mode = "zip", $excludefiles =
 						$fileName = $file->getFilename();
 						$fileFullRealPath = $file->getRealPath();	// the full path with name and transformed to use real path directory.
 
-						//$relativePath = ($rootdirinzip ? $rootdirinzip.'/' : '').substr($fileFullRealPath, strlen($inputdir) + 1);
+						//$relativePath = ($rootdirinzip ? $rootdirinzip.'/' : '').dol_substr($fileFullRealPath, strlen($inputdir) + 1);
 						$relativePath = ($rootdirinzip ? $rootdirinzip.'/' : '').substr(($filePath ? $filePath.'/' : '').$fileName, strlen($inputdir) + 1);
 
 						//var_dump($filePath);var_dump($fileFullRealPath);var_dump($relativePath);
