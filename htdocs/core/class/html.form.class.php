@@ -7158,7 +7158,7 @@ class Form
 					$out .= $label;
 				} else {
 					$langs->load('errors');
-					$out .= $langs->trans('ErrorNotInDictionaryPaymentConditions');
+					$out .= $langs->trans('ErrorNotInDictionaryPaymentConditions', $selected);
 				}
 			} else {
 				$out .= '&nbsp;';
