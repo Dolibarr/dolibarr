@@ -73,7 +73,7 @@ function dol_dir_list($utf8_path, $types = "all", $recursive = 0, $filter = "", 
 		// Verify filters (only on the first call of the function)
 		$filter_ok = true;
 		if (!empty($filter) && !is_array($filter)) {
-			if (strlen($filter) > 25000) {	// Note that limit depends on syntax of filter
+			if (dol_strlen($filter) > 25000) {	// Note that limit depends on syntax of filter
 				dol_syslog("Value for filter is too large", LOG_ERR);
 				$filter_ok = false;
 			} else {
@@ -154,7 +154,7 @@ function dol_dir_list($utf8_path, $types = "all", $recursive = 0, $filter = "", 
 
 		// $hookmanager->resArray may contain array stacked by other modules
 		if (empty($reshook)) {
-			if (!is_dir($os_path)) {
+			if (!is_dir($os_path)) {  // @phan-suppress-current-line DolibarrForbiddenFunctionPlugin
 				continue;
 			}
 
@@ -188,7 +188,7 @@ function dol_dir_list($utf8_path, $types = "all", $recursive = 0, $filter = "", 
 				//print $utf8_fullpathfile.' '.$utf8_file.' '.$qualified.'<br>';
 
 				if ($qualified) {
-					$isdir = is_dir($os_fullpathfile);
+					$isdir = is_dir($os_fullpathfile);  // @phan-suppress-current-line DolibarrForbiddenFunctionPlugin
 					// Check whether this is a file or directory and whether we're interested in that type
 					if ($isdir) {
 						// Add entry into file_list array
@@ -244,7 +244,7 @@ function dol_dir_list($utf8_path, $types = "all", $recursive = 0, $filter = "", 
 
 						// if we're in a directory and we want recursive behavior, call this function again
 						if ($recursive > 0) {
-							if (empty($donotfollowsymlinks) || !is_link($os_fullpathfile)) {
+							if (empty($donotfollowsymlinks) || !is_link($os_fullpathfile)) {  // @phan-suppress-current-line DolibarrForbiddenFunctionPlugin
 								//var_dump('eee '. $utf8_fullpathfile. ' '.is_dir($utf8_fullpathfile).' '.is_link($utf8_fullpathfile));
 								$file_list = array_merge($file_list, dol_dir_list($utf8_fullpathfile, $types, $recursive + 1, $filter, $exclude_array, $sortcriteria, $sortorder, $mode, $nohook, ($relativename != '' ? $relativename.'/' : '').$utf8_file, $donotfollowsymlinks, $nbsecondsold));
 							}
@@ -446,9 +446,9 @@ function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir, $object = 
 		global $object;
 		if (!empty($object->id)) {
 			if (isModEnabled("product")) {
-				$upload_dirold = $conf->product->multidir_output[$object->entity ?? $conf->entity].'/'.substr(substr("000".$object->id, -2), 1, 1).'/'.substr(substr("000".$object->id, -2), 0, 1).'/'.$object->id."/photos";
+				$upload_dirold = $conf->product->multidir_output[$object->entity ?? $conf->entity].'/'.dol_substr(dol_substr("000".$object->id, -2), 1, 1).'/'.dol_substr(dol_substr("000".$object->id, -2), 0, 1).'/'.$object->id."/photos";
 			} else {
-				$upload_dirold = $conf->service->multidir_output[$object->entity ?? $conf->entity].'/'.substr(substr("000".$object->id, -2), 1, 1).'/'.substr(substr("000".$object->id, -2), 0, 1).'/'.$object->id."/photos";
+				$upload_dirold = $conf->service->multidir_output[$object->entity ?? $conf->entity].'/'.dol_substr(dol_substr("000".$object->id, -2), 1, 1).'/'.dol_substr(dol_substr("000".$object->id, -2), 0, 1).'/'.$object->id."/photos";
 			}
 
 			$relativedirold = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $upload_dirold);
@@ -548,7 +548,7 @@ function dol_compare_file($a, $b)
 {
 	global $sortorder, $sortfield;
 
-	$sortorder = strtoupper($sortorder);
+	$sortorder = dol_strtoupper($sortorder);
 
 	if ($sortorder == 'ASC') {
 		$retup = -1;
@@ -590,7 +590,7 @@ function dol_compare_file($a, $b)
 function dol_is_dir($folder)
 {
 	$newfolder = dol_osencode($folder);
-	if (is_dir($newfolder)) {
+	if (is_dir($newfolder)) {  // @phan-suppress-current-line DolibarrForbiddenFunctionPlugin
 		return true;
 	} else {
 		return false;
@@ -620,7 +620,7 @@ function dol_is_dir_empty($dir)
 function dol_is_file($pathoffile)
 {
 	$newpathoffile = dol_osencode($pathoffile);
-	return is_file($newpathoffile);
+	return is_file($newpathoffile);  // @phan-suppress-current-line DolibarrForbiddenFunctionPlugin
 }
 
 /**
@@ -632,7 +632,7 @@ function dol_is_file($pathoffile)
 function dol_is_link($pathoffile)
 {
 	$newpathoffile = dol_osencode($pathoffile);
-	return is_link($newpathoffile);
+	return is_link($newpathoffile);  // @phan-suppress-current-line DolibarrForbiddenFunctionPlugin
 }
 
 /**
@@ -644,7 +644,7 @@ function dol_is_link($pathoffile)
 function dol_is_writable($folderorfile)
 {
 	$newfolderorfile = dol_osencode($folderorfile);
-	return is_writable($newfolderorfile);
+	return is_writable($newfolderorfile);  // @phan-suppress-current-line DolibarrForbiddenFunctionPlugin
 }
 
 /**
@@ -670,7 +670,7 @@ function dol_is_url($uri)
 function dol_dir_is_emtpy($folder)
 {
 	$newfolder = dol_osencode($folder);
-	if (is_dir($newfolder)) {
+	if (is_dir($newfolder)) {  // @phan-suppress-current-line DolibarrForbiddenFunctionPlugin
 		$handle = opendir($newfolder);
 		$folder_content = '';
 		$name_array = [];
@@ -736,7 +736,7 @@ function dol_count_nb_of_line($file)
 function dol_filesize($pathoffile)
 {
 	$newpathoffile = dol_osencode($pathoffile);
-	return filesize($newpathoffile);
+	return filesize($newpathoffile);  // @phan-suppress-current-line DolibarrForbiddenFunctionPlugin
 }
 
 /**
@@ -748,7 +748,7 @@ function dol_filesize($pathoffile)
 function dol_filemtime($pathoffile)
 {
 	$newpathoffile = dol_osencode($pathoffile);
-	return @filemtime($newpathoffile); // @Is to avoid errors if files does not exists
+	return @filemtime($newpathoffile); // @Is to avoid errors if files does not exists  // @phan-suppress-current-line DolibarrForbiddenFunctionPlugin
 }
 
 /**
@@ -760,7 +760,7 @@ function dol_filemtime($pathoffile)
 function dol_fileperm($pathoffile)
 {
 	$newpathoffile = dol_osencode($pathoffile);
-	return fileperms($newpathoffile);
+	return fileperms($newpathoffile);  // @phan-suppress-current-line DolibarrForbiddenFunctionPlugin
 }
 
 /**
@@ -808,11 +808,11 @@ function dolReplaceInFile($srcfile, $arrayreplacement, $destfile = '', $newmask 
 	$newpathofdestfile = dol_osencode($destfile);
 	$newdirdestfile = dirname($newpathofdestfile);
 
-	if ($destexists && !is_writable($newpathofdestfile)) {
+	if ($destexists && !is_writable($newpathofdestfile)) {  // @phan-suppress-current-line DolibarrForbiddenFunctionPlugin
 		dol_syslog("files.lib.php::dolReplaceInFile failed Permission denied to overwrite target file", LOG_WARNING);
 		return -1;
 	}
-	if (!is_writable($newdirdestfile)) {
+	if (!is_writable($newdirdestfile)) {  // @phan-suppress-current-line DolibarrForbiddenFunctionPlugin
 		dol_syslog("files.lib.php::dolReplaceInFile failed Permission denied to write into target directory ".$newdirdestfile, LOG_WARNING);
 		return -2;
 	}
@@ -931,11 +931,11 @@ function dol_copy($srcfile, $destfile, $newmask = '0', $overwriteifexists = 1, $
 	$newpathofdestfile = dol_osencode($destfile);
 	$newdirdestfile = dirname($newpathofdestfile);
 
-	if ($destexists && !is_writable($newpathofdestfile)) {
+	if ($destexists && !dol_is_writable($newpathofdestfile)) {
 		dol_syslog("files.lib.php::dol_copy failed Permission denied to overwrite target file", LOG_WARNING);
 		return -1;
 	}
-	if (!is_writable($newdirdestfile)) {
+	if (!dol_is_writable($newdirdestfile)) {
 		dol_syslog("files.lib.php::dol_copy failed Permission denied to write into target directory ".$newdirdestfile, LOG_WARNING);
 		return -2;
 	}
@@ -1076,12 +1076,12 @@ function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayrep
 	$osdestfile = dol_osencode($destfile);
 
 	// Recursive function to copy all subdirectories and contents:
-	if (is_dir($ossrcfile)) {
+	if (is_dir($ossrcfile)) {  // @phan-suppress-current-line DolibarrForbiddenFunctionPlugin
 		$dir_handle = opendir($ossrcfile);
 		$tmpresult = 0;  // Initialised before loop to keep old behavior, may be needed inside loop
 		while ($file = readdir($dir_handle)) {
-			if ($file != "." && $file != ".." && !is_link($ossrcfile."/".$file)) {
-				if (is_dir($ossrcfile."/".$file)) {
+			if ($file != "." && $file != ".." && !is_link($ossrcfile."/".$file)) {  // @phan-suppress-current-line DolibarrForbiddenFunctionPlugin
+				if (is_dir($ossrcfile."/".$file)) {  // @phan-suppress-current-line DolibarrForbiddenFunctionPlugin
 					if (empty($excludesubdir) || ($excludesubdir == 2 && dol_strlen($file) == 2)) {
 						$newfile = $file;
 						// Replace destination filename with a new one
@@ -1365,8 +1365,8 @@ function dol_move_dir($srcdir, $destdir, $overwriteifexists = 1, $indexdatabase 
 		// On linux, if destination directory exists and is empty, command succeed. So no need to delete di destination directory first.
 		// Note: If dir exists and is not empty, it will and must fail on both linux and windows even, if option $overwriteifexists is on.
 		if ($overwriteifexists) {
-			if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-				if (is_dir($newpathofdestdir)) {
+			if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {  // @phan-suppress-current-line DolibarrForbiddenFunctionPlugin
+				if (is_dir($newpathofdestdir)) {  // @phan-suppress-current-line DolibarrForbiddenFunctionPlugin
 					@rmdir($newpathofdestdir);
 				}
 			}
@@ -1598,7 +1598,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 		$file_name_osencoded = dol_osencode($file_name);
 
 		// Check if destination dir is writable
-		if (!is_writable(dirname($file_name_osencoded))) {
+		if (!is_writable(dirname($file_name_osencoded))) {  // @phan-suppress-current-line DolibarrForbiddenFunctionPlugin
 			dol_syslog("Files.lib::dol_move_uploaded_file Dir ".dirname($file_name_osencoded)." is not writable. Return 'ErrorDirNotWritable'", LOG_WARNING);
 			return 'ErrorDirNotWritable';
 		}
@@ -1610,7 +1610,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 				return 'ErrorFileAlreadyExists';
 			}
 		} else {	// We are allowed to erase
-			if (is_dir($file_name_osencoded)) {	// If there is a directory with name of file to create
+			if (is_dir($file_name_osencoded)) {	// If there is a directory with name of file to create  // @phan-suppress-current-line DolibarrForbiddenFunctionPlugin
 				dol_syslog("Files.lib::dol_move_uploaded_file A directory with name ".$file_name." already exists. Return 'ErrorDirWithFileNameAlreadyExists'", LOG_WARNING);
 				return 'ErrorDirWithFileNameAlreadyExists';
 			}
@@ -1857,7 +1857,7 @@ function dol_delete_dir_recursive($dir, $count = 0, $nophperrors = 0, $onlysub =
 				}
 
 				if ($item != "." && $item != "..") {
-					if (is_dir(dol_osencode("$dir/$item")) && !is_link(dol_osencode("$dir/$item"))) {
+					if (is_dir(dol_osencode("$dir/$item")) && !is_link(dol_osencode("$dir/$item"))) {  // @phan-suppress-current-line DolibarrForbiddenFunctionPlugin
 						$count = dol_delete_dir_recursive("$dir/$item", $count, $nophperrors, 0, $countdeleted, $indexdatabase, $nolog, ($level + 1));
 					} else {
 						dolChmod(dol_osencode("$dir/$item"));	// Try to set permission to write on file
@@ -1931,20 +1931,20 @@ function dol_delete_preview($object)
 	$filepreviewold = $dir."/".$refsan.".pdf.png";
 
 	// For new preview files
-	if (file_exists($filepreviewnew) && is_writable($filepreviewnew)) {
+	if (file_exists($filepreviewnew) && dol_is_writable($filepreviewnew)) {
 		if (!dol_delete_file($filepreviewnew, 1)) {
 			$object->error = $langs->trans("ErrorFailedToDeleteFile", $filepreviewnew);
 			return 0;
 		}
 	}
-	if (file_exists($filepreviewnewbis) && is_writable($filepreviewnewbis)) {
+	if (file_exists($filepreviewnewbis) && dol_is_writable($filepreviewnewbis)) {
 		if (!dol_delete_file($filepreviewnewbis, 1)) {
 			$object->error = $langs->trans("ErrorFailedToDeleteFile", $filepreviewnewbis);
 			return 0;
 		}
 	}
 	// For old preview files
-	if (file_exists($filepreviewold) && is_writable($filepreviewold)) {
+	if (file_exists($filepreviewold) && dol_is_writable($filepreviewold)) {
 		if (!dol_delete_file($filepreviewold, 1)) {
 			$object->error = $langs->trans("ErrorFailedToDeleteFile", $filepreviewold);
 			return 0;
@@ -1954,7 +1954,7 @@ function dol_delete_preview($object)
 		for ($i = 0; $i < 20; $i++) {
 			$preview = $multiple.$i;
 
-			if (file_exists($preview) && is_writable($preview)) {
+			if (file_exists($preview) && dol_is_writable($preview)) {
 				if (!dol_delete_file($preview, 1)) {
 					$object->error = $langs->trans("ErrorFailedToOpenFile", $preview);
 					return 0;
@@ -2009,12 +2009,12 @@ function dol_meta_create($object)
 		$dir = $dir."/".$objectref;
 		$file = $dir."/".$objectref.".meta";
 
-		if (!is_dir($dir)) {
+		if (!dol_is_dir($dir)) {
 			dol_mkdir($dir);
 		}
 
 		$meta = '';
-		if (is_dir($dir)) {
+		if (dol_is_dir($dir)) {
 			if (is_countable($object->lines) && count($object->lines) > 0) {
 				$nblines = count($object->lines);
 			} else {
@@ -2163,9 +2163,9 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $updatesessionor
 				}
 				// dol_sanitizeFileName the file name and lowercase extension
 				$info = pathinfo($destfull);
-				$destfull = $info['dirname'].'/'.dol_sanitizeFileName($info['filename'].($info['extension'] != '' ? ('.'.strtolower($info['extension'])) : ''));
+				$destfull = $info['dirname'].'/'.dol_sanitizeFileName($info['filename'].($info['extension'] != '' ? ('.'.dol_strtolower($info['extension'])) : ''));
 				$info = pathinfo($destfile);
-				$destfile = dol_sanitizeFileName($info['filename'].($info['extension'] != '' ? ('.'.strtolower($info['extension'])) : ''));
+				$destfile = dol_sanitizeFileName($info['filename'].($info['extension'] != '' ? ('.'.dol_strtolower($info['extension'])) : ''));
 
 				// Check extension is allowed for upload.
 				$defaultexecutableextensions = function_exists('getExecutableContent') ? implode(',', getExecutableContent()) : 'htm,html,shtml,js,phar,php,php3,php4,php5,phtml,pht,pl,py,cgi,ksh,sh,bash,bat,cmd,wpk,exe';
@@ -2546,7 +2546,7 @@ function deleteFilesIntoDatabaseIndex($dir, $file, $mode = 'uploaded', $object =
  */
 function isRealPdf(string $filePath)
 {
-	if (!is_file($filePath) || !is_readable($filePath)) {
+	if (!dol_is_file($filePath) || !is_readable($filePath)) {
 		return false;
 	}
 
@@ -2617,7 +2617,7 @@ function dol_convert_file($fileinput, $ext = 'png', $fileoutput = '', $page = ''
 
 				$count = $image->getNumberImages();
 
-				if (!dol_is_file($fileoutput) || is_writable($fileoutput)) {
+				if (!dol_is_file($fileoutput) || dol_is_writable($fileoutput)) {
 					try {
 						$ret = $image->writeImages($fileoutput, true);
 					} catch (Exception $e) {
@@ -2708,8 +2708,8 @@ function dol_compress_file($inputfile, $outputfile, $mode = "gz", &$errorstring 
 						$fileName = $file->getFilename();
 						$fileFullRealPath = $file->getRealPath();	// the full path with name and transformed to use real path directory.
 
-						//$relativePath = dol_substr($fileFullRealPath, strlen($rootPath) + 1);
-						$relativePath = substr(($filePath ? $filePath.'/' : '').$fileName, strlen($rootPath) + 1);
+						//$relativePath = dol_substr($fileFullRealPath, dol_strlen($rootPath) + 1);
+						$relativePath = dol_substr(($filePath ? $filePath.'/' : '').$fileName, dol_strlen($rootPath) + 1);
 
 						// Add current file to archive
 						$zip->addFile($fileFullRealPath, $relativePath);
@@ -2788,7 +2788,7 @@ function dol_uncompress($inputfile, $outputdir)
 	global $langs, $db;
 
 	$fileinfo = pathinfo($inputfile);
-	$fileinfo["extension"] = strtolower($fileinfo["extension"]);
+	$fileinfo["extension"] = dol_strtolower($fileinfo["extension"]);
 
 	if ($fileinfo["extension"] == "zip") {
 		if (defined('ODTPHP_PATHTOPCLZIP') && !getDolGlobalString('MAIN_USE_ZIPARCHIVE_FOR_ZIP_UNCOMPRESS')) {
@@ -2870,7 +2870,7 @@ function dol_uncompress($inputfile, $outputdir)
 		dol_delete_file($outputfilename.'.tmp');
 		dol_delete_file($outputfilename.'.err');
 
-		$extension = strtolower(pathinfo($fileinfo["filename"], PATHINFO_EXTENSION));
+		$extension = dol_strtolower(pathinfo($fileinfo["filename"], PATHINFO_EXTENSION));
 		if ($extension == "tar") {
 			$cmd = 'tar -C '.escapeshellcmd(dol_sanitizePathName($outputdir)).' -xvf '.escapeshellcmd(dol_sanitizePathName($fileinfo["dirname"]).'/'.dol_sanitizeFileName($fileinfo["basename"]));
 
@@ -2925,7 +2925,7 @@ function dol_compress_dir($inputdir, $outputfile, $mode = "zip", $excludefiles =
 
 	dol_syslog("Try to zip dir ".$inputdir." into ".$outputfile." mode=".$mode);
 
-	if (!dol_is_dir(dirname($outputfile)) || !is_writable(dirname($outputfile))) {
+	if (!dol_is_dir(dirname($outputfile)) || !dol_is_writable(dirname($outputfile))) {
 		global $langs, $errormsg;
 		$langs->load("errors");
 		$errormsg = $langs->trans("ErrorFailedToWriteInDir", $outputfile);
@@ -2982,8 +2982,8 @@ function dol_compress_dir($inputdir, $outputfile, $mode = "zip", $excludefiles =
 						$fileName = $file->getFilename();
 						$fileFullRealPath = $file->getRealPath();	// the full path with name and transformed to use real path directory.
 
-						//$relativePath = ($rootdirinzip ? $rootdirinzip.'/' : '').dol_substr($fileFullRealPath, strlen($inputdir) + 1);
-						$relativePath = ($rootdirinzip ? $rootdirinzip.'/' : '').substr(($filePath ? $filePath.'/' : '').$fileName, strlen($inputdir) + 1);
+						//$relativePath = ($rootdirinzip ? $rootdirinzip.'/' : '').dol_substr($fileFullRealPath, dol_strlen($inputdir) + 1);
+						$relativePath = ($rootdirinzip ? $rootdirinzip.'/' : '').dol_substr(($filePath ? $filePath.'/' : '').$fileName, dol_strlen($inputdir) + 1);
 
 						//var_dump($filePath);var_dump($fileFullRealPath);var_dump($relativePath);
 						if (empty($excludefiles) || !preg_match($excludefiles, $fileFullRealPath)) {
@@ -4214,7 +4214,7 @@ function archiveOrBackupFile($srcfile, $max_versions = 5, $archivedir = '', $suf
 	foreach ($files_in_directory as $file) {
 		$files_with_timestamps[] = [
 			'file' => $file,
-			'timestamp' => filemtime($file)
+			'timestamp' => filemtime($file)  // @phan-suppress-current-line DolibarrForbiddenFunctionPlugin
 		];
 	}
 
