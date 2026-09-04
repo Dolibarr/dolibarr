@@ -1467,7 +1467,7 @@ class FactureRec extends CommonInvoice
 			$sql .= ' AND rowid = '.((int) $restrictioninvoiceid);
 		}
 		$sql .= $this->db->order('entity', 'ASC');
-		if(getDolGlobalInt('NB_REC_FACT_CUSTOMER_GEN_BY_CALL')) {
+		if (getDolGlobalInt('NB_REC_FACT_CUSTOMER_GEN_BY_CALL')) {
 			$sql .= $this->db->plimit(getDolGlobalInt('NB_REC_FACT_CUSTOMER_GEN_BY_CALL'));
 		}
 		//print $sql;exit;
