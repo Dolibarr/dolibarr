@@ -76,7 +76,7 @@ if (!$sortorder) {
 	$sortorder = "ASC";
 }
 if (!$sortfield) {
-	$sortfield = "position_name";
+	$sortfield = "position";
 }
 
 // Initialize objects
