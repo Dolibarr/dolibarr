@@ -38,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 
 
 /**
- *	Class to manage direct debit
+ *	Class to manage direct debit.
  */
 class BonPrelevement extends CommonObject
 {
