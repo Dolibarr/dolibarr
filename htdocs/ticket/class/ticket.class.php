@@ -1372,14 +1372,16 @@ class Ticket extends CommonObject
 	 */
 	public function loadCacheTypesTickets()
 	{
-		global $langs;
+		global $langs, $hookmanager;
 
 		if (!empty($this->cache_types_tickets) && count($this->cache_types_tickets)) {
 			return 0;
 		}
 		// Cache deja charge
 
-		$sql = "SELECT rowid, code, label, use_default, pos, description";
+		// entity is returned so a hook on loadDictionaryCache can tell two rows apart when the
+		// dictionary is read across entities
+		$sql = "SELECT rowid, entity, code, label, use_default, pos, description";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_ticket_type";
 		$sql .= " WHERE entity IN (".getEntity('c_ticket_type').")";
 		$sql .= " AND active > 0";
@@ -1396,9 +1398,21 @@ class Ticket extends CommonObject
 				$this->cache_types_tickets[$obj->rowid]['label'] = $label;
 				$this->cache_types_tickets[$obj->rowid]['use_default'] = $obj->use_default;
 				$this->cache_types_tickets[$obj->rowid]['pos'] = $obj->pos;
+				$this->cache_types_tickets[$obj->rowid]['entity'] = (int) $obj->entity;
 				$i++;
 			}
-			return $num;
+
+			$parameters = array('dictionary' => 'tickettype');
+			$reshook = $hookmanager->executeHooks('loadDictionaryCache', $parameters, $this); // Note that $action and $object may have been modified by hook
+			if (empty($reshook)) {
+				if (is_array($hookmanager->resArray) && count($hookmanager->resArray)) {
+					$this->cache_types_tickets = array_merge($this->cache_types_tickets, $hookmanager->resArray);
+				}
+			} else {
+				$this->cache_types_tickets = $hookmanager->resArray;
+			}
+
+			return count($this->cache_types_tickets);
 		} else {
 			dol_print_error($this->db);
 			return -1;
@@ -1413,14 +1427,16 @@ class Ticket extends CommonObject
 	 */
 	public function loadCacheCategoriesTickets($publicgroup = -1)
 	{
-		global $conf, $langs;
+		global $conf, $langs, $hookmanager;
 
 		if ($publicgroup == -1 && !empty($conf->cache['category_tickets']) && count($conf->cache['category_tickets'])) {
 			// Cache already loaded
 			return 0;
 		}
 
-		$sql = "SELECT rowid, code, label, use_default, pos, description, public, active, force_severity, fk_parent";
+		// entity is returned so a hook on loadDictionaryCache can tell two rows apart when the
+		// dictionary is read across entities
+		$sql = "SELECT rowid, entity, code, label, use_default, pos, description, public, active, force_severity, fk_parent";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_ticket_category";
 		$sql .= " WHERE entity IN (".getEntity('c_ticket_category').")";
 		$sql .= " AND active > 0";
@@ -1451,11 +1467,23 @@ class Ticket extends CommonObject
 				// Warning: You should not use this and recompute the translated string into caller code to get the value into expected language
 				$label = ($langs->trans("TicketCategoryShort".$obj->code) != "TicketCategoryShort".$obj->code ? $langs->trans("TicketCategoryShort".$obj->code) : ($obj->label != '-' ? $obj->label : ''));
 				$categorytickets[$obj->rowid]['label'] = $label;
+				$categorytickets[$obj->rowid]['entity'] = (int) $obj->entity;
 
 				$i++;
 			}
 			$conf->cache['category_tickets'] = $categorytickets;
-			return $num;
+
+			$parameters = array('dictionary' => 'ticketcategory', 'publicgroup' => $publicgroup);
+			$reshook = $hookmanager->executeHooks('loadDictionaryCache', $parameters, $this); // Note that $action and $object may have been modified by hook
+			if (empty($reshook)) {
+				if (is_array($hookmanager->resArray) && count($hookmanager->resArray)) {
+					$conf->cache['category_tickets'] = array_merge($conf->cache['category_tickets'], $hookmanager->resArray);
+				}
+			} else {
+				$conf->cache['category_tickets'] = $hookmanager->resArray;
+			}
+
+			return count($conf->cache['category_tickets']);
 		} else {
 			dol_print_error($this->db);
 			return -1;
@@ -1469,14 +1497,16 @@ class Ticket extends CommonObject
 	 */
 	public function loadCacheSeveritiesTickets()
 	{
-		global $conf, $langs;
+		global $conf, $langs, $hookmanager;
 
 		if (!empty($conf->cache['severity_tickets']) && count($conf->cache['severity_tickets'])) {
 			// Cache already loaded
 			return 0;
 		}
 
-		$sql = "SELECT rowid, code, label, use_default, pos, description";
+		// entity is returned so a hook on loadDictionaryCache can tell two rows apart when the
+		// dictionary is read across entities
+		$sql = "SELECT rowid, entity, code, label, use_default, pos, description";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_ticket_severity";
 		$sql .= " WHERE entity IN (".getEntity('c_ticket_severity').")";
 		$sql .= " AND active > 0";
@@ -1496,10 +1526,22 @@ class Ticket extends CommonObject
 				$severitytickets[$obj->rowid]['label'] = $label;
 				$severitytickets[$obj->rowid]['use_default'] = $obj->use_default;
 				$severitytickets[$obj->rowid]['pos'] = $obj->pos;
+				$severitytickets[$obj->rowid]['entity'] = (int) $obj->entity;
 				$i++;
 			}
 			$conf->cache['severity_tickets'] = $severitytickets;
-			return $num;
+
+			$parameters = array('dictionary' => 'ticketseverity');
+			$reshook = $hookmanager->executeHooks('loadDictionaryCache', $parameters, $this); // Note that $action and $object may have been modified by hook
+			if (empty($reshook)) {
+				if (is_array($hookmanager->resArray) && count($hookmanager->resArray)) {
+					$conf->cache['severity_tickets'] = array_merge($conf->cache['severity_tickets'], $hookmanager->resArray);
+				}
+			} else {
+				$conf->cache['severity_tickets'] = $hookmanager->resArray;
+			}
+
+			return count($conf->cache['severity_tickets']);
 		} else {
 			dol_print_error($this->db);
 			return -1;
@@ -2306,16 +2348,39 @@ class Ticket extends CommonObject
 	public function setCustomer($id)
 	{
 		if ($this->id) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX."ticket";
+			$this->db->begin();
+
+			$sql = "UPDATE ".$this->db->prefix()."ticket";
 			$sql .= " SET fk_soc = ".($id > 0 ? (int) $id : "null");
 			$sql .= " WHERE rowid = ".((int) $this->id);
 			dol_syslog(get_class($this).'::setCustomer sql='.$sql);
 			$resql = $this->db->query($sql);
-			if ($resql) {
-				return 1;
-			} else {
+			if (!$resql) {
+				$this->error = $this->db->lasterror();
+				dol_syslog(get_class($this).'::setCustomer '.$this->error, LOG_ERR);
+				$this->db->rollback();
+
 				return -1;
 			}
+
+			// The Agenda tab of a third party filters on actioncomm.fk_soc alone, so the events already recorded on
+			// the ticket must follow it, as Societe::mergeCompany() already does when two third parties are merged.
+			$sql = "UPDATE ".$this->db->prefix()."actioncomm";
+			$sql .= " SET fk_soc = ".($id > 0 ? (int) $id : "null");
+			$sql .= " WHERE elementtype = 'ticket' AND fk_element = ".((int) $this->id);
+			dol_syslog(get_class($this).'::setCustomer sql='.$sql);
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$this->error = $this->db->lasterror();
+				dol_syslog(get_class($this).'::setCustomer '.$this->error, LOG_ERR);
+				$this->db->rollback();
+
+				return -1;
+			}
+
+			$this->db->commit();
+
+			return 1;
 		} else {
 			return -1;
 		}
@@ -3173,9 +3238,95 @@ class Ticket extends CommonObject
 									$sendto = $hookmanager->resArray;
 								}
 
+								// If standardised form submitted, override auto-computed recipients with user selection
+								if (GETPOSTISSET('receiver_multiselect')) {
+									$sendto_manual = array();
+
+									$receiver_selected = GETPOST('receiver', 'array');
+									if (is_array($receiver_selected)) {
+										foreach ($receiver_selected as $email) {
+											$email = trim((string) $email);
+											if ($email && filter_var($email, FILTER_VALIDATE_EMAIL)) {
+												$sendto_manual[$email] = $email;
+											}
+										}
+									}
+
+									// Free input: plain email or "Name <email>", comma-separated
+									$sendto_free = GETPOST('sendto', 'alphawithlgt');
+									if ($sendto_free !== '') {
+										foreach (explode(',', $sendto_free) as $entry) {
+											$entry = trim($entry);
+											if ($entry === '') {
+												continue;
+											}
+											if (preg_match('/.*<\s*([^>]+)\s*>/', $entry, $matches)) {
+												$email = trim($matches[1]);
+											} else {
+												$email = $entry;
+											}
+											if ($email && filter_var($email, FILTER_VALIDATE_EMAIL)) {
+												$sendto_manual[$email] = $entry;
+											}
+										}
+									}
+
+									$sendto = $sendto_manual;
+								}
+
+								// CC: start with TICKET_SEND_INTERNAL_CC, then append form selection
 								$sendtocc = array();
+								$sendtocc_emails = array(); // lowercase email index for case-insensitive dedup
 								if (getDolGlobalString("TICKET_SEND_INTERNAL_CC")) {
-									$sendtocc = explode(',', getDolGlobalString("TICKET_SEND_INTERNAL_CC"));
+									foreach (explode(',', getDolGlobalString("TICKET_SEND_INTERNAL_CC")) as $cc_entry) {
+										$cc_entry = trim($cc_entry);
+										if (!$cc_entry) {
+											continue;
+										}
+										// Extract bare email from optional "Name <email>" format
+										if (preg_match('/<\s*([^>]+)\s*>/', $cc_entry, $m)) {
+											$cc_email = strtolower(trim($m[1]));
+										} else {
+											$cc_email = strtolower($cc_entry);
+										}
+										if (!in_array($cc_email, $sendtocc_emails)) {
+											$sendtocc[] = $cc_entry;
+											$sendtocc_emails[] = $cc_email;
+										}
+									}
+								}
+
+								if (GETPOSTISSET('receivercc_multiselect')) {
+									$receivercc_selected = GETPOST('receivercc', 'array');
+									if (is_array($receivercc_selected)) {
+										foreach ($receivercc_selected as $email) {
+											$email = trim((string) $email);
+											if ($email && filter_var($email, FILTER_VALIDATE_EMAIL) && !in_array(strtolower($email), $sendtocc_emails)) {
+												$sendtocc[] = $email;
+												$sendtocc_emails[] = strtolower($email);
+											}
+										}
+									}
+
+									// Free input: plain email or "Name <email>", comma-separated
+									$sendtocc_free = GETPOST('sendtocc', 'alphawithlgt');
+									if ($sendtocc_free !== '') {
+										foreach (explode(',', $sendtocc_free) as $entry) {
+											$entry = trim($entry);
+											if ($entry === '') {
+												continue;
+											}
+											if (preg_match('/.*<\s*([^>]+)\s*>/', $entry, $matches)) {
+												$email = trim($matches[1]);
+											} else {
+												$email = $entry;
+											}
+											if ($email && filter_var($email, FILTER_VALIDATE_EMAIL) && !in_array(strtolower($email), $sendtocc_emails)) {
+												$sendtocc[] = $email;
+												$sendtocc_emails[] = strtolower($email);
+											}
+										}
+									}
 								}
 
 								// Don't try to send email when no recipient

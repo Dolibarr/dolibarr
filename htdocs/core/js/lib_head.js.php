@@ -1198,6 +1198,49 @@ function getParameterByName(name, valueifnotfound)
 	return results === null ? valueifnotfound : decodeURIComponent(results[1].replace(/\+/g, " "));
 }
 
+/*
+ * Submit the form of a confirm box. Jump to the target url with a GET, but submit a POST form
+ * instead when this url is too long to be accepted by the web server ("Request-URI Too Long").
+ *
+ * @param	urljump				Target url with all its parameters, for the GET
+ * @param	page				Target page, used as action of the POST form
+ * @param	options				Parameters of the form, as a query string (token included)
+ * @param	maxurllength		Max length of an url we accept to use with a GET
+ * @return	void
+ */
+function dolSubmitConfirmForm(urljump, page, options, maxurllength)
+{
+	// A double quote in a GET parameter is always refused by the WAF (waf.inc.php, type 1),
+	// while a POST body is checked with type 0 which does not apply that rule. So a value
+	// containing a double quote must be posted, whatever the url length is.
+	var hasquote = urljump.indexOf('%22') >= 0 || urljump.indexOf('"') >= 0;
+
+	if (urljump.length <= maxurllength && !hasquote) {
+		location.href = urljump;
+		return;
+	}
+
+	console.log("dolSubmitConfirmForm: url is "+urljump.length+" chars long"+(hasquote ? " or contains a double quote" : "")+", we submit a POST form instead of a GET");
+
+	var form = document.createElement("form");
+	form.method = "POST";
+	form.action = page;
+	form.style.display = "none";
+
+	options.split("&").forEach(function(param) {
+		if (param === "") return;
+		var pos = param.indexOf("=");
+		var input = document.createElement("input");
+		input.type = "hidden";
+		input.name = (pos < 0 ? param : param.substring(0, pos));
+		input.value = (pos < 0 ? "" : decodeURIComponent(param.substring(pos + 1)));
+		form.appendChild(input);
+	});
+
+	document.body.appendChild(form);
+	form.submit();
+}
+
 /**
  * Get the list of possible operators for a given field type that we can use in the generic filter.
  */

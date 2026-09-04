@@ -51,3 +51,5 @@ RefreshTokenHelp=Utilisez le jeton d'actualisation pour obtenir un nouveau jeton
 OldTokenWasExpiredItHasBeenRefresh=L'ancien jeton avait expiré, il a été actualisé
 OldTokenWasNotExpiredButItHasBeenRefresh=L'ancien jeton n'avait pas expiré mais il a été actualisé
 OAuthErrorStateDiffers=La valeur de l'état %s diffère de la valeur de la session. Le code est refusé.
+OAuthErrorNoScopeInState=Aucun périmètre (scope) reçu dans le paramètre 'state'. Dolibarr utilise 'state' pour transporter la liste des périmètres demandés : la constante %s est donc vide ou absente. Allez dans Accueil - Configuration - Modules - OAuth, cochez les périmètres de ce fournisseur puis enregistrez.
+OAuthErrorTokenRequestFailed=Le fournisseur OAuth a refusé d'échanger le code d'autorisation contre un jeton. Réponse du fournisseur : %s

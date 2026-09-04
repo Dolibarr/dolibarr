@@ -557,7 +557,6 @@ class ExternalModules
 							$urldownload = 'https://www.dolistore.com/_service_download.php?t=free&p='.$reg[1];
 							$download_link .= '<a class="paddingleft paddingright valignmiddle" target="_blank" title="'.$langs->trans("Download").'" href="'.$urldownload.'" rel="noopener noreferrer">';
 							$download_link .= img_picto('', 'download', 'class="size2x paddingright"');
-							//$download_link .= '<img width="32" src="'.DOL_URL_ROOT.'/admin/remotestore/img/download.png" />';
 							$download_link .= '</a>';
 						}
 					}
@@ -569,7 +568,6 @@ class ExternalModules
 					$download_link .= '</a>';
 					$download_link .= '<a class="paddingleft paddingright" target="_blank" title="'.$langs->trans("Download").'" href="'.$urldownload.'" rel="noopener noreferrer">';
 					$download_link .= img_picto('', 'download', 'class="size2x paddingright"');
-					//$download_link .= '<img width="32" src="'.DOL_URL_ROOT.'/admin/remotestore/img/download.png" />';
 					$download_link .= '</a>';
 				}
 

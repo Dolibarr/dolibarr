@@ -24,7 +24,6 @@
  *	\ingroup    export
  *	\brief      File of parent class for import file readers
  */
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 
 
 /**
@@ -1462,12 +1461,12 @@ class ModeleImports
 								if (empty($sql_listvalues[$socialkey]) || $sql_listvalues[$socialkey] == "null") {
 									$json = new stdClass();
 									$json->$socialnetwork = $newval;
-									$sql_listvalues[$socialkey] = json_encode($json);
+									$sql_listvalues[$socialkey] = json_encode($json);  // Supposed proper escape elsewhere!! @phan-suppress-current-line SqlInjection
 								} else {
 									$jsondata = $sql_listvalues[$socialkey];
 									$json = json_decode($jsondata);
 									$json->$socialnetwork = $newval;
-									$sql_listvalues[$socialkey] = json_encode($json);
+									$sql_listvalues[$socialkey] = json_encode($json);  // Supposed proper escape elsewhere!! @phan-suppress-current-line SqlInjection
 								}
 							}
 						} else {

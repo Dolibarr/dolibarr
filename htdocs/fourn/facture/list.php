@@ -773,9 +773,9 @@ if ($search_fk_fac_rec_source) {
 // Search on sale representative
 if ($search_sale && $search_sale != '-1') {
 	if ($search_sale == -2) {
-		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = f.fk_soc)";
+		$sql .= " AND ".getSalesRepresentativeSqlFilter('f.fk_soc', 0, 1);
 	} elseif ($search_sale > 0) {
-		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = f.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+		$sql .= " AND ".getSalesRepresentativeSqlFilter('f.fk_soc', (int) $search_sale);
 	}
 }
 // Search for tag/category ($searchCategorySupplierInvoiceList is an array of ID)
@@ -2081,8 +2081,8 @@ while ($i < $imaxinloop) {
 		// Payment mode
 		if (!empty($arrayfields['f.fk_mode_reglement']['checked'])) {
 			$s = $form->form_modes_reglement($_SERVER['PHP_SELF'], $obj->fk_mode_reglement, 'none', '', -1, 0, '', 1);
-			print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($s).'">';
-			print dol_escape_htmltag($s);
+			print '<td class="tdoverflowmax100" title="'.dolPrintHTMLForAttribute($s).'">';
+			print dolPrintHTML($s);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

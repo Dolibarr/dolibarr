@@ -27,6 +27,8 @@
 
 use Luracast\Restler\RestException;
 
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+
 /**
  * API class for thirdparties
  *
@@ -207,9 +209,9 @@ class Thirdparties extends DolibarrApi
 		// Search on sale representative
 		if ($search_sale && $search_sale != '-1') {
 			if ($search_sale == -2) {
-				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.rowid)";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.rowid', 0, 1);
 			} elseif ($search_sale > 0) {
-				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.rowid AND sc.fk_user = ".((int) $search_sale).")";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.rowid', (int) $search_sale);
 			}
 		}
 		// Add sql filters
@@ -574,6 +576,37 @@ class Thirdparties extends DolibarrApi
 		}
 
 		return $this->_cleanObjectDatas($this->company);
+	}
+
+	/**
+	 * Get a customer representative to a third party
+	 *
+	 * @since	24.0.0	Initial implementation
+	 *
+	 * @param	int		$id					ID of the third party
+	 * @return	array<array{id:int,lastname:string,firstname:string,email:string,phone:string,office_phone:string,office_fax:string,user_mobile:string,personal_mobile:string,job:string,statut:int,status:int,entity:int,login:string,photo:string,gender:string}>			Return array of representatives if OK, < 0 if KO
+	 *
+	 * @url		GET		{id}/representative
+	 *
+	 * @throws RestException 401 Access not allowed for your login
+	 * @throws RestException 404 User or Third party not found
+	 */
+	public function getRepresentative($id)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('societe', 'reader')) {
+			throw new RestException(403);
+		}
+		$result = $this->company->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Thirdparty not found');
+		}
+		if (!DolibarrApi::_checkAccessToResource('societe', $this->company->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+		$result = $this->company->getSalesRepresentatives(DolibarrApiAccess::$user);
+		/** @var array<array{id:int,lastname:string,firstname:string,email:string,phone:string,office_phone:string,office_fax:string,user_mobile:string,personal_mobile:string,job:string,statut:int,status:int,entity:int,login:string,photo:string,gender:string}> $result */
+
+		return $result;
 	}
 
 	/**

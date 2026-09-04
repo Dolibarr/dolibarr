@@ -421,6 +421,13 @@ print '</td><td>';
 print ajax_constantonoff("TAKEPOS_NO_FREE_ZONE_PRODUCT", array(), $conf->entity, 0, 0, 1, 0);
 print "</td></tr>\n";
 
+// Validate credit note on creation
+print '<tr class="oddeven"><td>';
+print $form->textwithpicto($langs->trans('TakeposValidateCreditNoteOnCreation'), $langs->trans('TakeposValidateCreditNoteOnCreationDesc'));
+print '</td><td>';
+print ajax_constantonoff("TAKEPOS_VALIDATE_CREDIT_NOTE_ON_CREATION", array(), $conf->entity, 0, 0, 1, 0);
+print "</td></tr>\n";
+
 // Barcode rule to insert product
 if (isModEnabled('barcode')) {
 	print '<tr class="oddeven"><td>';

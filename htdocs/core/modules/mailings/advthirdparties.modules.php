@@ -2,7 +2,7 @@
 /* Copyright (C) 2005-2010  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
 *
 * This file is an example to follow to add your own email selector inside
 * the Dolibarr email tool.
@@ -82,8 +82,6 @@ class mailing_advthirdparties extends MailingTargets
 	public function add_to_target_spec($mailing_id, $socid, $type_of_target, $contactid)
 	{
 		// phpcs:enable
-		global $conf;
-
 		dol_syslog(get_class($this)."::add_to_target_spec socid=".formatLogObject($socid).' contactid='.formatLogObject($contactid));
 
 		$cibles = array();
@@ -95,9 +93,7 @@ class mailing_advthirdparties extends MailingTargets
 				$sql .= " FROM ".MAIN_DB_PREFIX."societe as s LEFT JOIN ".MAIN_DB_PREFIX."societe_extrafields se ON se.fk_object=s.rowid";
 				$sql .= " WHERE s.entity IN (".getEntity('societe').")";
 				$sql .= " AND s.rowid IN (".$this->db->sanitize(implode(',', $socid)).")";
-				if (empty($this->evenunsubscribe)) {
-					$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = s.email and mu.entity = ".((int) $conf->entity).")";
-				}
+				$sql .= $this->getSqlToExcludeUnsubscribed('s.email');
 				$sql .= " ORDER BY email";
 
 				// Stock recipients emails into targets table
@@ -148,9 +144,7 @@ class mailing_advthirdparties extends MailingTargets
 				if (count($socid) > 0) {
 					$sql .= " AND socp.fk_soc IN (".$this->db->sanitize(implode(',', $socid)).")";
 				}
-				if (empty($this->evenunsubscribe)) {
-					$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = socp.email and mu.entity = ".((int) $conf->entity).")";
-				}
+				$sql .= $this->getSqlToExcludeUnsubscribed('socp.email');
 				$sql .= " ORDER BY email";
 
 				// Stock recipients emails into targets table
@@ -223,17 +217,13 @@ class mailing_advthirdparties extends MailingTargets
 	 */
 	public function getNbOfRecipients($sql = '')
 	{
-		global $conf;
-
 		$sql = "SELECT count(distinct(s.email)) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 		$sql .= " WHERE s.email != ''";
 		$sql .= " AND s.entity IN (".getEntity('societe').")";
-		if (empty($this->evenunsubscribe)) {
-			$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = s.email and mu.entity = ".((int) $conf->entity).")";
-		}
+		$sql .= $this->getSqlToExcludeUnsubscribed('s.email');
 
-		// La requete doit retourner un champ "nb" pour etre comprise par parent::getNbOfRecipients
+		// The query must return a field "nb" to be understood by parent::getNbOfRecipients
 		return parent::getNbOfRecipients($sql);
 	}
 

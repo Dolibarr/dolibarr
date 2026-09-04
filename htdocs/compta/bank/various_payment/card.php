@@ -639,7 +639,7 @@ if ($id) {
 		print $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id]), $langs->trans('DeleteVariousPayment'), $text, 'confirm_delete', '', '', 2);
 	}
 
-	print dol_get_fiche_head($head, 'card', $langs->trans("VariousPayment"), -1, $object->picto);
+	print dol_get_fiche_head($head, 'card', $langs->trans("VariousPayment"), -1, $object->picto, 0, '', '', 0, '', 1);
 
 	$morehtmlref = '<div class="refidno">';
 	// Project

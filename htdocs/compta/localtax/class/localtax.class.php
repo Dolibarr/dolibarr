@@ -534,7 +534,7 @@ class Localtax extends CommonObject
 			$this->entity = $conf->entity;
 		}
 
-		// Insertion dans table des paiement localtax
+		// Insert into localtax payment table
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."localtax(localtaxtype, datep, datev, amount";
 		if ($this->note) {
 			$sql .= ", note";
@@ -562,7 +562,7 @@ class Localtax extends CommonObject
 			if ($this->id > 0) {
 				$ok = 1;
 				if (isModEnabled("bank")) {
-					// Insertion dans llx_bank
+					// Insert into llx_bank
 					require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 					$acc = new Account($this->db);

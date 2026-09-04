@@ -705,9 +705,11 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 							// Ref
 							print '<td data-col="object-name" class="nowraponall">';
 							print '<div class="inline-block lineheightsmall">';
+							print '<span data-field="ref">';
 							print $invoicesupplierstatic->getNomUrl(1);
-							print '<br><span class="opacitymedium small" title="'.$langs->trans("RefSupplier").'">';
-							print dolPrintHTML($objp->ref_supplier);
+							print '</span> ';
+							print '<br class="paiement-line-break-for-ref" /><span class="opacitymedium small" data-field="ref-supplier" title="'.$langs->trans("RefSupplier").'">';
+							print showValueWithClipboardCPButton($objp->ref_supplier);
 							print '</span>';
 							print '</div>';
 							print '</td>';

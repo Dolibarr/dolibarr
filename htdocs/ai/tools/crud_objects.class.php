@@ -3,6 +3,7 @@
  * Copyright (C) 2026	Nick Fragoulis
  * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026	Jose Martinez			<jose.martinez@pichinov.com>
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -531,7 +532,7 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 	 */
 	private function processAddLine(CommonObject $object, array $args)
 	{
-		global $mysoc, $conf;
+		global $mysoc;
 		// Check status (Dolibarr objects usually use 'statut' property, 0 = Draft)
 		if (isset($object->statut) && $object->statut != 0) {
 			return ["success" => false, "error" => "Document is not in draft status"];
@@ -544,8 +545,8 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 
 		// Get company default VAT
 		$companyDefaultVAT = 0.0;
-		if (! empty($conf->global->MAIN_VAT_DEFAULT)) {
-			$companyDefaultVAT = (float) $conf->global->MAIN_VAT_DEFAULT;
+		if (getDolGlobalString('MAIN_VAT_DEFAULT')) {
+			$companyDefaultVAT = getDolGlobalFloat('MAIN_VAT_DEFAULT');
 		}
 
 		// Normalize Inputs
@@ -619,7 +620,7 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 
 		// Product Unit handling
 		$fk_unit = 0;
-		if (! empty($conf->global->PRODUCT_USE_UNITS) && $prod && ! empty($prod->fk_unit)) {
+		if (getDolGlobalInt('PRODUCT_USE_UNITS') && $prod && ! empty($prod->fk_unit)) {
 			$fk_unit = (int) $prod->fk_unit;
 		}
 
@@ -678,7 +679,7 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 		// Update unit if needed (Logic for standard docs, Shipment/Reception handle units in addlinefree)
 		// Only trigger updateLineUnit for the standard commercial documents
 		$commercialDocs = ['invoice', 'order', 'proposal', 'supplier_invoice', 'supplier_order', 'supplier_proposal'];
-		if (in_array($docType, $commercialDocs, true) && $res > 0 && $fk_unit > 0 && ! empty($conf->global->PRODUCT_USE_UNITS)) {
+		if (in_array($docType, $commercialDocs, true) && $res > 0 && $fk_unit > 0 && getDolGlobalInt('PRODUCT_USE_UNITS')) {
 			$this->updateLineUnit($docType, $res, $fk_unit);
 		}
 
