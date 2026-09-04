@@ -4,7 +4,7 @@
  * Copyright (C) 2012       Charles-Fr BENKE    <charles.fr@benke.fr>
  * Copyright (C) 2016       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2026		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -242,9 +242,9 @@ class Export
 											$perm = $val;
 											//print_r("$perm[0]-$perm[1]-$perm[2]<br>");
 											if (!empty($perm[2])) {
-												$bool = isset($user->rights->{$perm[0]}->{$perm[1]}->{$perm[2]}) ? $user->rights->{$perm[0]}->{$perm[1]}->{$perm[2]} : false;
+												$bool = $user->hasRight($perm[0], $perm[1], $perm[2]);
 											} elseif (!empty($perm[1])) {
-												$bool = isset($user->rights->{$perm[0]}->{$perm[1]}) ? $user->rights->{$perm[0]}->{$perm[1]} : false;
+												$bool = $user->hasRight($perm[0], $perm[1]);
 											} else {
 												$bool = false;
 											}

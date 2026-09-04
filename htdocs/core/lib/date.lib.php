@@ -131,6 +131,7 @@ function dol_time_plus_duree($time, $duration_value, $duration_unit, $ruleforend
 	if (!in_array($duration_unit, array('s', 'i', 'mn', 'min', 'h', 'd', 'w', 'm', 'y'))) {
 		$errormsg = 'dol_time_plus_duree call to function with undefined or bad duration_unit : ' . $duration_unit;
 		dol_syslog($errormsg, LOG_ERR);
+		return $time;
 	}
 	if ($duration_unit == 's') {
 		return $time + (int) ($duration_value);
