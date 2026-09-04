@@ -422,6 +422,14 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	background-color: #499caf !important;
 	color: #FFF !important;
 }
+
+.none-nature-back {
+	background-color: #14343d !important;
+	color: #FFF !important;
+	padding: 2px;
+	margin: 2px;
+	border-radius: 3px;
+}
 .user-back {
 	background-color: #79633f !important;
 	color: #FFF !important;

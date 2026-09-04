@@ -296,17 +296,36 @@ if (empty($reshook)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ThirdPartyName")), null, 'errors');
 			$error++;
 		}
-		if (GETPOSTINT('customer') && GETPOSTINT('customer') < 0) {
-			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Customer")), null, 'errors');
+
+		if (
+			(GETPOSTINT('customer') && GETPOSTINT('customer') <= 0)
+			&& (GETPOSTINT('prospect') && GETPOSTINT('prospect') <= 0)
+			&& (GETPOSTINT('supplier') && GETPOSTINT('supplier') <= 0)
+			&& (GETPOSTISSET('nonature') && GETPOSTINT('nonature') <= 0)
+		) {
+			setEventMessages($langs->trans("ErrorNatureShouldBeChosen"), null, 'errors');
 			$error++;
-		}
-		if (GETPOSTINT('prospect') && GETPOSTINT('prospect') < 0) {
-			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Prospect")), null, 'errors');
-			$error++;
-		}
-		if (GETPOSTISSET('supplier') && GETPOSTINT('supplier') < 0) {
-			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Supplier")), null, 'errors');
-			$error++;
+		} elseif (GETPOSTISSET('nonature') && GETPOSTINT('nonature') > 0) {
+			foreach (['prospect', 'customer', 'supplier'] as $nature) {
+				if (GETPOSTINT($nature) > 0) {
+					setEventMessages($langs->trans("ErrorNoneNatureChosen", $langs->transnoentitiesnoconv(ucfirst($nature))), null, 'errors');
+					$error++;
+					break;
+				}
+			}
+		} else {
+			if (GETPOSTINT('customer') && GETPOSTINT('customer') < 0) {
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Customer")), null, 'errors');
+				$error++;
+			}
+			if (GETPOSTINT('prospect') && GETPOSTINT('prospect') < 0) {
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Prospect")), null, 'errors');
+				$error++;
+			}
+			if (GETPOSTISSET('supplier') && GETPOSTINT('supplier') < 0) {
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Supplier")), null, 'errors');
+				$error++;
+			}
 		}
 
 		if (isModEnabled('mailing') && getDolGlobalInt('MAILING_CONTACT_DEFAULT_BULK_STATUS') == 2 && GETPOSTINT('contact_no_email') == -1 && !empty(GETPOST('email', 'email'))) {
@@ -1500,6 +1519,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			$selectedprospect = ((GETPOSTISSET('prospect') && $action == 'create') ? GETPOSTINT('prospect') : $selectedprospect);
 			$selectedcustomer = ((GETPOSTISSET('customer') && $action == 'create') ? GETPOSTINT('customer') : $selectedcustomer);
 			$selectedsupplier = ((GETPOSTISSET('supplier') && $action == 'create') ? GETPOSTINT('supplier') : $object->fournisseur);
+			$selectedsupplier = ((GETPOSTISSET('nonature') && $action == 'create') ? GETPOSTINT('nonature') : 0);
 
 			if ($selectedprospect && $selectedcustomer && getDolGlobalString("SOCIETE_DISABLE_PROSPECTSCUSTOMERS")) {
 				// If both are not allowed, we reset $selectedcustomer
@@ -1525,6 +1545,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				// Supplier
 				print '<span id="spannature3" class="spannature vendor-back paddinglarge marginrightonly"><label for="supplierinput" class="spanlabel">'.$langs->trans("Vendor").'</label><input id="supplierinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="supplier" value="1"'.($selectedsupplier ? ' checked="checked"' : '').'></span>';
 			}
+
+			print '<span id="spannature4" class="spannature none-nature-back paddinglarge marginrightonly"><label for="nonatureinput" class="valignmiddle">'.$langs->trans("None").'<input id="nonatureinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="nonature" value="1"'.($selectednonature ? ' checked="checked"' : '').'></label></span>';
+
 			// Add js to manage the background of nature
 			if ($conf->use_javascript_ajax) {
 				print '<script>
@@ -1542,8 +1565,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 							if (id == 3) {
 								jQuery("#spannature"+(id)).addClass("vendor-back").removeClass("nonature-back");
 							}
+							if (id == 4) {
+								jQuery("#spannature"+(id)).addClass("none-nature-back").removeClass("nonature-back");
+							}
 						} else {
-							jQuery("#spannature"+(id)).removeClass("prospect-back").removeClass("customer-back").removeClass("vendor-back").addClass("nonature-back");
+							jQuery("#spannature"+(id)).removeClass("prospect-back").removeClass("customer-back").removeClass("vendor-back").removeClass("none-nature-back").addClass("nonature-back");
 						}
 					});
 				}
@@ -1559,9 +1585,23 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					}
 				}
 
+				function manageNoNature(element) {
+					console.log("We uncheck unwanted values on a nature");
+					id = $(element).attr("id").split("spannature")[1];
+					console.log(id)
+					if (id == 4){
+						$("#spannature1 .checkforselect").prop("checked", false);
+						$("#spannature2 .checkforselect").prop("checked", false);
+						$("#spannature3 .checkforselect").prop("checked", false);
+					} else {
+						$("#spannature4 .checkforselect").prop("checked", false);
+					}
+				}
+
 				jQuery(".spannature").click(function(){
 					console.log("We click on a nature");
 					'.(getDolGlobalString('SOCIETE_DISABLE_PROSPECTSCUSTOMERS') ? 'manageprospectcustomer($(this));' : '').'
+					manageNoNature($(this))
 					refreshNatureCss();
 				});
 				refreshNatureCss();
@@ -2417,6 +2457,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					print '<span id="spannature3" class="spannature vendor-back paddinglarge marginrightonly"><label for="supplierinput" class="">'.$langs->trans("Vendor").'<input id="supplierinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="supplier" value="1"'.($selected ? ' checked="checked"' : '').'></label></span>';
 				}
 
+				print '<span id="spannature4" class="spannature none-nature-back paddinglarge marginrightonly"><label for="nonatureinput" class="valignmiddle">'.$langs->trans("None").'<input id="nonatureinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="nonature" value="1"'.($selectednonature ? ' checked="checked"' : '').'></label></span>';
+
 				// Add js to manage the background of nature
 				if ($conf->use_javascript_ajax) {
 					print '<script>
@@ -2434,8 +2476,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 									if (id == 3) {
 										jQuery("#spannature"+(id)).addClass("vendor-back").removeClass("nonature-back");
 									}
+									if (id == 4) {
+										jQuery("#spannature"+(id)).addClass("none-nature-back").removeClass("nonature-back");
+									}
 								} else {
-									jQuery("#spannature"+(id)).removeClass("prospect-back").removeClass("customer-back").removeClass("vendor-back").addClass("nonature-back");
+									jQuery("#spannature"+(id)).removeClass("prospect-back").removeClass("customer-back").removeClass("vendor-back").removeClass("none-nature-back").addClass("nonature-back");
 								}
 							})
 						}
@@ -2443,6 +2488,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 						function manageprospectcustomer(element) {
 							console.log("We uncheck unwanted values on a nature");
 							id = $(element).attr("id").split("spannature")[1];
+														console.log(id)
+
 							if ( id == 1){
 								$("#spannature2 .checkforselect").prop("checked", false);
 							}
@@ -2451,9 +2498,23 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 							}
 						}
 
+						function manageNoNature(element) {
+							console.log("We uncheck unwanted values on a nature");
+							id = $(element).attr("id").split("spannature")[1];
+							console.log(id)
+							if (id == 4){
+								$("#spannature1 .checkforselect").prop("checked", false);
+								$("#spannature2 .checkforselect").prop("checked", false);
+								$("#spannature3 .checkforselect").prop("checked", false);
+							} else {
+								$("#spannature4 .checkforselect").prop("checked", false);
+							}
+						}
+
 						jQuery(".spannature").click(function(){
 							console.log("We click on a nature");
 							'.(getDolGlobalString('SOCIETE_DISABLE_PROSPECTSCUSTOMERS') ? 'manageprospectcustomer($(this));' : '').'
+							manageNoNature($(this))
 							refreshNatureCss();
 						});
 						refreshNatureCss();
