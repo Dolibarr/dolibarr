@@ -74,12 +74,6 @@ notifications:
   email:
     on_success: never # [always|never|change] default: change
     on_failure: never # [always|never|change] default: always
-  irc:
-    channels:
-    - "chat.freenode.net#dolibarr"
-    on_success: change
-    on_failure: always
-    use_notice: true
 
 
 before_install:

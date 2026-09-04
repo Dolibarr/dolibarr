@@ -2081,8 +2081,8 @@ while ($i < $imaxinloop) {
 		// Payment mode
 		if (!empty($arrayfields['f.fk_mode_reglement']['checked'])) {
 			$s = $form->form_modes_reglement($_SERVER['PHP_SELF'], $obj->fk_mode_reglement, 'none', '', -1, 0, '', 1);
-			print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($s).'">';
-			print dol_escape_htmltag($s);
+			print '<td class="tdoverflowmax100" title="'.dolPrintHTMLForAttribute($s).'">';
+			print dolPrintHTML($s);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
