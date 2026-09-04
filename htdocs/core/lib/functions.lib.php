@@ -1417,7 +1417,11 @@ function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options
 		case 'restricthtmlallowiframe':
 		case 'restricthtmlallowlinkscript':	// Allow link and script tag for head section.
 		case 'restricthtmlallowunvalid':
-			$out = dol_htmlwithnojs($out, 1, $check);
+			if (dol_textishtml($out)) {
+				$out = dol_htmlwithnojs($out, 1, $check);
+			} else {
+				$out = dol_string_nohtmltag($out, 0);
+			}
 			break;
 		case 'custom':
 			if (!empty($out)) {

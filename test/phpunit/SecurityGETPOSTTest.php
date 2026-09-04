@@ -280,7 +280,7 @@ class SecurityGETPOSTTest extends CommonClassTest
 
 		$result = GETPOST("param8e", 'restricthtml');
 		print __METHOD__." result param8e = ".$result."\n";
-		$this->assertEquals('', $result);
+		$this->assertEquals('<123abc is not html to clean', $result);
 
 		$result = GETPOST("param12", 'restricthtml');
 		print __METHOD__." result=".$result."\n";
