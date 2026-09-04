@@ -1758,7 +1758,8 @@ class Expedition extends CommonObject
 			$line->fetch($lineid);
 
 			if ($line->delete($user) > 0) {
-				//$this->update_price(1);
+				//global $mysoc;
+				//$this->update_price(1, 'none', 0, $mysoc);
 
 				$this->db->commit();
 				return 1;

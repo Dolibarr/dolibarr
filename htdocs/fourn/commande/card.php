@@ -324,7 +324,7 @@ if (empty($reshook)) {
 					}
 					$db->free($resql);
 				}
-				$object->update_price();
+				$object->update_price(0, 'none', 0, $object->thirdparty);
 			}
 		}
 		header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id);
