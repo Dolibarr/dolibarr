@@ -8,6 +8,7 @@
  * Copyright (C) 2022		Charlene Benke			<charlene@patas-monkey.com>
  * Copyright (C) 2023		Anthony Berton			<anthony.berton@bb2a.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Nathan Pixodeo			<nathan@pixodeo.net>
  *
  *
  * This program is free software; you can redistribute it and/or modify
@@ -713,6 +714,7 @@ class FormMail extends Form
 						&& !preg_match('/user_aliases/', $this->fromtype)
 						&& !preg_match('/global_aliases/', $this->fromtype)
 						&& !preg_match('/senderprofile/', $this->fromtype)
+						&& !preg_match('/from_template_(\d+)/', $this->fromtype)
 					) {
 						// Use this->fromname and this->frommail or error if not defined
 						$out .= $this->fromname;
