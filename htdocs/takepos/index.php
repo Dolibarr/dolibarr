@@ -1631,7 +1631,10 @@ if (getDolGlobalString('TAKEPOS_WEIGHING_SCALE')) {
 }
 
 // Button to delete (discard) the current sale
-$menus[$r++] = array('title' => '<span class="fa fa-trash-alt paddingrightonly"></span><div class="trunc">'.$langs->trans("DeleteSale").'</div>', 'action' => 'DeleteSale();', 'style' => 'background-color: #d9534f !important; color: #000 !important;');
+/* Hide this. This button must appear only if is_erasable() is true. So it must depend on open invoice. For this reason,
+ * the button could not be in this panel but must be on the left side inside the invoice.php file.
+$menus[$r++] = array('title' => '<span class="fa fa-trash-alt paddingrightonly"></span><div class="trunc truncdeletesale">'.$langs->trans("DeleteSale").'</div>', 'action' => 'DeleteSale();', 'class' => 'actionbuttondelete');
+*/
 
 $parameters = array('menus' => $menus);
 $reshook = $hookmanager->executeHooks('ActionButtons', $parameters);
