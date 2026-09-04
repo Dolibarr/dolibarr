@@ -255,6 +255,10 @@ if ($action == 'order' && GETPOST('valid')) {
 					if (empty($line->remise_percent)) {
 						$line->remise_percent = $order->thirdparty->remise_supplier_percent;
 					}
+					// Compute local taxes for the line (purchase: buyer is mysoc, seller is the supplier),
+					// otherwise localtax1/localtax2 stay empty and Tax 2 is missing on replenishment lines (#20876).
+					$line->localtax1_tx = get_localtax($line->tva_tx, 1, $mysoc, $order->thirdparty);
+					$line->localtax2_tx = get_localtax($line->tva_tx, 2, $mysoc, $order->thirdparty);
 					$result = $order->addline(
 						$line->desc,
 						$line->subprice,
@@ -299,6 +303,10 @@ if ($action == 'order' && GETPOST('valid')) {
 					if (empty($line->remise_percent)) {
 						$line->remise_percent = $order->thirdparty->remise_supplier_percent;
 					}
+					// Compute local taxes for the line (purchase: buyer is mysoc, seller is the supplier),
+					// otherwise localtax1/localtax2 stay empty and Tax 2 is missing on replenishment lines (#20876).
+					$line->localtax1_tx = get_localtax($line->tva_tx, 1, $mysoc, $order->thirdparty);
+					$line->localtax2_tx = get_localtax($line->tva_tx, 2, $mysoc, $order->thirdparty);
 					$order->lines[] = $line;
 				}
 				$order->cond_reglement_id = $order->thirdparty->cond_reglement_supplier_id;
