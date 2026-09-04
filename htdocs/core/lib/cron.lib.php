@@ -130,7 +130,10 @@ function dol_print_cron_urls()
 
 	print '<u>'.$langs->trans("FileToLaunchCronJobs").':</u><br>';
 
-	$pathtoscript = '/pathtoscript';
+	$pathtoscript = realpath(dirname(__DIR__, 3).'/scripts/cron');
+	if (!is_dir($pathtoscript)) {
+		$pathtoscript = '/pathtoscript';
+	}
 	if (getDolGlobalString('MAIN_DOL_SCRIPTS_ROOT')) {
 		$pathtoscript = getDolGlobalString('MAIN_DOL_SCRIPTS_ROOT');
 	}
