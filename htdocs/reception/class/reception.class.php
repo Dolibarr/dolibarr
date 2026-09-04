@@ -2073,7 +2073,7 @@ class Reception extends CommonObject
 
 						$qty = $obj->qty;
 
-						if ($qty <= 0) {
+						if ($qty == 0 || ($qty < 0 && !getDolGlobalInt('RECEPTION_ALLOW_NEGATIVE_QTY'))) {
 							continue;
 						}
 
@@ -2233,7 +2233,7 @@ class Reception extends CommonObject
 
 						$qty = $obj->qty;
 
-						if ($qty <= 0) {
+						if ($qty == 0 || ($qty < 0 && !getDolGlobalInt('RECEPTION_ALLOW_NEGATIVE_QTY'))) {
 							continue;
 						}
 						dol_syslog(get_class($this)."::reopen reception movement index ".$i." ed.rowid=".$obj->rowid);
@@ -2370,7 +2370,7 @@ class Reception extends CommonObject
 
 						$qty = $obj->qty;
 
-						if ($qty <= 0) {
+						if ($qty == 0 || ($qty < 0 && !getDolGlobalInt('RECEPTION_ALLOW_NEGATIVE_QTY'))) {
 							continue;
 						}
 
