@@ -4515,7 +4515,9 @@ class Product extends CommonObject
 			}
 			if ($month == 0) {
 				$month = 12;
-				$year -= 1;
+				if ($year !== '') { // $year is '' when we want stats for all years
+					$year -= 1;
+				}
 			}
 		}
 
