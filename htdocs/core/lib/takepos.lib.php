@@ -2,6 +2,7 @@
 /* Copyright (C) 2009       Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2022       Alexandre Spangaro  <aspangaro@open-dsi.fr>
  * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026       Jose Martinez       <jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,8 +58,13 @@ function takepos_admin_prepare_head()
 
 	$numterminals = max(1, getDolGlobalInt('TAKEPOS_NUM_TERMINALS', 1));
 	for ($i = 1; $i <= $numterminals; $i++) {
+		$label = getDolGlobalString('TAKEPOS_TERMINAL_NAME_'.$i, $langs->trans("TerminalName", $i));
+		if (!takeposTerminalIsEnabled($i)) {
+			// A disabled terminal is greyed out but still listed, so it can be enabled again
+			$label = '<span class="opacitymedium">'.$label.' ('.$langs->trans("Disabled").')</span>';
+		}
 		$head[$h][0] = DOL_URL_ROOT.'/takepos/admin/terminal.php?terminal='.$i;
-		$head[$h][1] = getDolGlobalString('TAKEPOS_TERMINAL_NAME_'.$i, $langs->trans("TerminalName", $i));
+		$head[$h][1] = $label;
 		$head[$h][2] = 'terminal'.$i;
 		$h++;
 	}
@@ -75,4 +81,43 @@ function takepos_admin_prepare_head()
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'takepos_admin', 'remove');
 
 	return $head;
+}
+
+/**
+ * Tell if a TakePOS terminal can be used.
+ *
+ * The feature must first be enabled with TAKEPOS_ALLOW_TERMINAL_DISABLING, so the behaviour
+ * of existing setups is strictly unchanged. A terminal is then enabled by default: the
+ * constant is only recorded when the terminal
+ * is explicitly disabled, so existing setups keep all their terminals available.
+ * Disabling a terminal only hides it from the terminal selection: its past invoices
+ * and its reference counter are left untouched.
+ *
+ * @param	int		$terminal	Terminal number (1 to TAKEPOS_NUM_TERMINALS)
+ * @return	bool				True if the terminal can be used
+ */
+function takeposTerminalIsEnabled($terminal)
+{
+	if (!getDolGlobalInt('TAKEPOS_ALLOW_TERMINAL_DISABLING')) {
+		return true;	// Feature not enabled: every terminal stays usable
+	}
+
+	return !getDolGlobalInt('TAKEPOS_TERMINAL_DISABLED_'.((int) $terminal));
+}
+
+/**
+ * Return the list of the TakePOS terminals that can be used.
+ *
+ * @return	int[]	Array of terminal numbers that are not disabled
+ */
+function takeposEnabledTerminals()
+{
+	$result = array();
+	$numterminals = max(1, getDolGlobalInt('TAKEPOS_NUM_TERMINALS', 1));
+	for ($i = 1; $i <= $numterminals; $i++) {
+		if (takeposTerminalIsEnabled($i)) {
+			$result[] = $i;
+		}
+	}
+	return $result;
 }
