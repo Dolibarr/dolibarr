@@ -167,6 +167,9 @@ if (getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
 } else {
 	$sql .= " p.accountancy_code_sell";
 }
+if (getDolGlobalInt('ACCOUNTANCY_SELL_JOURNAL_FIX_PRECISION_AND_GAP')) {
+	$sql .= ", f.total_ht AS invoice_total_ht, f.total_tva AS invoice_total_tva, f.localtax1 AS invoice_total_localtax1, f.localtax2 AS invoice_total_localtax2, f.total_ttc AS invoice_total_ttc";
+}
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
@@ -373,6 +376,14 @@ if ($result) {
 		$tabfac[$obj->rowid]["revenuestamp"] = $revenuestamp;
 		//$tabfac[$obj->rowid]["fk_facturedet"] = $obj->fdid;
 
+		if (getDolGlobalInt('ACCOUNTANCY_SELL_JOURNAL_FIX_PRECISION_AND_GAP')) {
+			$tabfac[$obj->rowid]["total_ht"] = $obj->invoice_total_ht;
+			$tabfac[$obj->rowid]["total_tva"] = $obj->invoice_total_tva;
+			$tabfac[$obj->rowid]["total_localtax1"] = $obj->invoice_total_localtax1;
+			$tabfac[$obj->rowid]["total_localtax2"] = $obj->invoice_total_localtax2;
+			$tabfac[$obj->rowid]["total_ttc"] = $obj->invoice_total_ttc;
+		}
+
 		// Avoid warnings
 		if (!isset($tabttc[$obj->rowid][$compta_soc])) {
 			$tabttc[$obj->rowid][$compta_soc] = 0;
@@ -504,6 +515,42 @@ if ($result) {
 	dol_print_error($db);
 }
 
+if (getDolGlobalInt('ACCOUNTANCY_SELL_JOURNAL_FIX_PRECISION_AND_GAP')) {
+	// Fix amount precision and gap
+	$tab_list = array('total_ht' => &$tabht, 'total_tva' => &$tabtva, 'total_localtax1' => &$tablocaltax1, 'total_localtax2' => &$tablocaltax2, 'total_ttc' => &$tabttc);
+	foreach ($tab_list as $total_property => $tab) {
+		foreach ($tabfac as $invoice_id => $invoice_info) {
+			// Fix HT
+			$total_amount = 0;
+			if (getDolGlobalString('INVOICE_USE_RETAINED_WARRANTY') && $total_property == 'total_ttc' && isset($tabwarranty[$invoice_id])) {
+				foreach ($tabwarranty[$invoice_id] as $compta_prod => $amount) {
+					// Fix precision
+					$amount = price2num($amount, 'MT');
+					$total_amount += $amount;
+					$tabwarranty[$invoice_id][$compta_prod] = $amount;
+				}
+			}
+			if (isset($tab[$invoice_id])) {
+				foreach ($tab[$invoice_id] as $compta_prod => $amount) {
+					// Fix precision
+					$amount = price2num($amount, 'MT');
+					$total_amount += $amount;
+					$tab[$invoice_id][$compta_prod] = $amount;
+				}
+				if (isset($invoice_info[$total_property]) && price2num($total_amount) != price2num($invoice_info[$total_property])) {
+					foreach ($tab[$invoice_id] as $compta_prod => $amount) {
+						if (!empty($amount)) {
+							// Fix gap
+							$amount += $invoice_info[$total_property] - $total_amount;
+							$tab[$invoice_id][$compta_prod] = $amount;
+							break;
+						}
+					}
+				}
+			}
+		}
+	}
+}
 
 $errorforinvoice = array();
 
