@@ -127,6 +127,19 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
+$search_all = GETPOST('search_all', 'alphanohtml');
+
+$fieldstosearchall = [
+	'p.label' => 'Product',
+	's.nom' => 'ThirdParty',
+];
+$parameters = ['fieldstosearchall' => $fieldstosearchall];
+$reshook = $hookmanager->executeHooks('completeFieldsToSearchAll', $parameters, $object, $action);
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
+$fieldstosearchall = array_merge($fieldstosearchall, $hookmanager->resArray);
+
 // Security check
 $contratid = GETPOSTINT('id');
 if (!empty($user->socid)) {
@@ -290,6 +303,12 @@ $sql .= " ".MAIN_DB_PREFIX."contratdet as cd";
 if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (cd.rowid = ef.fk_object)";
 }
+
+// Add table from hooks
+$parameters = [];
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
+
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON cd.fk_product = p.rowid";
 if ($search_product_category > 0) {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON cp.fk_product=cd.fk_product';
@@ -407,6 +426,9 @@ if (!empty($sqlfilter_opcloture) && $sqlfilter_opcloture != ' BETWEEN ' && $sqlf
 if (!empty($sqlfilter_opcloture) && $sqlfilter_opcloture == ' BETWEEN ') {
 	$sql .= " AND cd.date_cloture ".$db->sanitize($sqlfilter_opcloture)." '".$db->idate($filter_datecloture_start)."' AND '".$db->idate($filter_datecloture_end)."'";
 }
+if ($search_all) {
+	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
+}
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 
@@ -468,6 +490,9 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.((int) $limit);
+}
+if ($search_all != '') {
+	$param .= '&sall='.urlencode($search_all);
 }
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
@@ -565,12 +590,12 @@ $newcardbutton = '';
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'contract', 0, '', '', $limit);
 
-if (!empty($sall)) {
+if (!empty($search_all)) {
 	$fieldstosearchall = array();
 	foreach ($fieldstosearchall as $key => $val) {  // @phan-suppress-current-line PhanEmptyForeach
 		$fieldstosearchall[$key] = $langs->trans($val);
 	}
-	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall).implode(', ', $fieldstosearchall).'</div>';
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).implode(', ', $fieldstosearchall).'</div>';
 }
 
 $morefilter = '';
