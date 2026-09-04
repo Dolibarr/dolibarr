@@ -1522,7 +1522,10 @@ if (empty($reshook)) {
 			}
 		}
 	}
+}else {
+	$sectionwithinvoicelink=$hookmanager->resPrint;
 }
+
 
 
 /*
