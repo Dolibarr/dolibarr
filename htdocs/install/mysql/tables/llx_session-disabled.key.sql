@@ -1,5 +1,5 @@
 -- ========================================================================
--- Copyright (C) 2020 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2026 Frédéric France <frederic.france@free.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -14,16 +14,7 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
--- This table can be used for user defined session management
+-- Index used by the database session garbage collection (purge by last_accessed)
 -- ========================================================================
 
-create table llx_session
-(
-  session_id varchar(50) PRIMARY KEY,
-  session_variable text,
-  date_creation datetime NOT NULL,
-  last_accessed datetime NOT NULL,
-  fk_user integer NOT NULL,
-  remote_ip varchar(64) NULL,
-  user_agent varchar(255) NULL
-)ENGINE=innodb;
+ALTER TABLE llx_session ADD INDEX idx_session_last_accessed (last_accessed);
