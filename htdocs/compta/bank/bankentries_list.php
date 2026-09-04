@@ -173,6 +173,9 @@ $arrayfields = array(
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -1608,7 +1611,7 @@ if ($resql) {
 					// Show link with label $links[$key]['label']
 					print '<a href="'.$links[$key]['url'].$links[$key]['url_id'].'">';
 					if (preg_match('/^\((.*)\)$/i', $links[$key]['label'], $reg)) {
-						// Label generique car entre parentheses. On l'affiche en le traduisant
+						// Generic label because it is in parentheses. We display it translated.
 						if ($reg[1] == 'paiement') {
 							$reg[1] = 'Payment';
 						}

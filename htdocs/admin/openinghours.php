@@ -24,12 +24,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-
-$action = GETPOST('action', 'aZ09');
-$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'adminaccoutant'; // To manage different context of search
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -37,6 +31,11 @@ $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'ad
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+
+$action = GETPOST('action', 'aZ09');
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'adminaccoutant'; // To manage different context of search
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'companies', 'other'));
@@ -105,14 +104,14 @@ $head = company_admin_prepare_head();
 
 print dol_get_fiche_head($head, 'openinghours', '', -1, '');
 
-print '<span class="opacitymedium">'.$langs->trans("OpeningHoursDesc")."</span><br>\n";
-print "<br><br>\n";
+print '<div class="info">'.$langs->trans("OpeningHoursDesc")."</div>\n";
+print "<br>\n";
 
 if (empty($action) || $action == 'edit' || $action == 'updateedit') {
 	/**
 	 * Edit parameters
 	 */
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'" name="form_index">';
+	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'" name="form_index" spellcheck="false">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 

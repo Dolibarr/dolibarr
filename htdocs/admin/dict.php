@@ -168,7 +168,22 @@ $permissiontoadd = $allowed;
 // Put here declaration of dictionaries properties
 
 // Sort order to show dictionary (0 is space). All other dictionaries (added by modules) will be at end of this.
-$taborder = array(DICT_CURRENCIES, DICT_PAPER_FORMAT, DICT_FORMAT_CARDS, 0, DICT_COUNTRY, DICT_REGIONS, DICT_DEPARTEMENTS, 0, DICT_FORME_JURIDIQUE, DICT_TYPENT, DICT_EFFECTIF, DICT_PROSPECTLEVEL, DICT_PROSPECTCONTACTLEVEL, DICT_STCOMM, DICT_STCOMMCONTACT, DICT_SOCIALNETWORKS, 0, DICT_CIVILITY, DICT_TYPE_CONTACT, 0, DICT_ACTIONCOMM, DICT_TYPE_RESOURCE, 0, DICT_LEAD_STATUS, 0, DICT_HRM_DEPARTMENT, DICT_HRM_FUNCTION, DICT_HRM_PUBLIC_HOLIDAY, DICT_HOLIDAY_TYPES, DICT_TYPE_FEES, DICT_EXP_TAX_CAT, DICT_EXP_TAX_RANGE, 0, DICT_TVA, DICT_INVOICE_SUBTYPE, DICT_REVENUESTAMP, DICT_PAYMENT_TERM, DICT_PAIEMENT, DICT_CHARGESOCIALES, 0, DICT_ECOTAXE, 0, DICT_INPUT_REASON, DICT_INPUT_METHOD, DICT_SHIPMENT_MODE, DICT_AVAILABILITY, DICT_TRANSPORT_MODE, 0, DICT_UNITS, DICT_PRODUCT_NATURE, 0, DICT_PRODUCTBATCH_QCSTATUS, 0, DICT_TYPE_CONTAINER, 0, DICT_ASSET_DISPOSAL_TYPE, 0);
+$taborder = array(
+	DICT_CURRENCIES, DICT_PAPER_FORMAT, DICT_FORMAT_CARDS, 0,
+	DICT_COUNTRY, DICT_REGIONS, DICT_DEPARTEMENTS, 0,
+	DICT_FORME_JURIDIQUE, DICT_TYPENT, DICT_EFFECTIF, DICT_PROSPECTLEVEL, DICT_PROSPECTCONTACTLEVEL, DICT_STCOMM, DICT_STCOMMCONTACT, DICT_SOCIALNETWORKS, 0,
+	DICT_CIVILITY, DICT_TYPE_CONTACT, 0,
+	DICT_ACTIONCOMM, DICT_TYPE_RESOURCE, 0,
+	DICT_LEAD_STATUS, 0,
+	DICT_HRM_DEPARTMENT, DICT_HRM_FUNCTION, DICT_HRM_PUBLIC_HOLIDAY, DICT_HOLIDAY_TYPES, DICT_TYPE_FEES, DICT_EXP_TAX_CAT, DICT_EXP_TAX_RANGE, 0,
+	DICT_TVA, DICT_INVOICE_SUBTYPE, DICT_REVENUESTAMP, DICT_PAYMENT_TERM, DICT_PAIEMENT, DICT_CHARGESOCIALES, 0,
+	DICT_ECOTAXE, 0,
+	DICT_INPUT_REASON, DICT_INPUT_METHOD, DICT_SHIPMENT_MODE, DICT_AVAILABILITY, DICT_TRANSPORT_MODE, 0,
+	DICT_UNITS, DICT_PRODUCT_NATURE, 0,
+	DICT_PRODUCTBATCH_QCSTATUS, 0,
+	DICT_TYPE_CONTAINER, 0,
+	DICT_ASSET_DISPOSAL_TYPE, 0
+);
 
 // Name of SQL tables of dictionaries
 $tabname = array();
@@ -275,7 +290,11 @@ $tabsql[DICT_ACTIONCOMM] = "SELECT a.id    as rowid, a.code as code, a.libelle A
 $tabsql[DICT_CHARGESOCIALES] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.accountancy_code as accountancy_code, c.code as country_code, c.label as country, a.fk_pays as country_id, a.active FROM ".MAIN_DB_PREFIX."c_chargesociales AS a, ".MAIN_DB_PREFIX."c_country as c WHERE a.fk_pays = c.rowid and c.active = 1";
 $tabsql[DICT_TYPENT] = "SELECT t.id	 as rowid, t.code as code, t.libelle, t.fk_country as country_id, c.code as country_code, c.label as country, t.position, t.module, t.active FROM ".MAIN_DB_PREFIX."c_typent as t LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON t.fk_country=c.rowid";
 $tabsql[DICT_CURRENCIES] = "SELECT c.code_iso as code, c.label, c.unicode, c.active FROM ".MAIN_DB_PREFIX."c_currencies AS c";
-$tabsql[DICT_TVA] = "SELECT t.rowid, t.entity, t.code, t.type_vat, t.taux, t.localtax1_type, t.localtax1, t.localtax2_type, t.localtax2, t.einvoice_vatex, c.label as country, c.code as country_code, t.fk_pays as country_id, t.fk_department_buyer as department_buyer_id, db.nom as department_buyer, t.recuperableonly, t.note, t.active, t.accountancy_code_sell, t.accountancy_code_buy, t.use_default FROM ".MAIN_DB_PREFIX."c_tva as t INNER JOIN ".MAIN_DB_PREFIX."c_country as c ON t.fk_pays = c.rowid LEFT JOIN ".MAIN_DB_PREFIX."c_departements as db ON t.fk_department_buyer = db.rowid WHERE t.entity IN (".getEntity($tabname[DICT_TVA]).")";
+$tabsql[DICT_TVA] = "SELECT t.rowid, t.entity, t.code, t.type_vat, t.taux, t.localtax1_type, t.localtax1, t.localtax2_type, t.localtax2, t.einvoice_vatex, c.label as country, c.code as country_code, t.fk_pays as country_id, t.fk_department_buyer as department_buyer_id, db.nom as department_buyer, t.recuperableonly, t.note, t.active, t.accountancy_code_sell, t.accountancy_code_buy, t.use_default FROM "
+	.MAIN_DB_PREFIX."c_tva as t INNER JOIN "
+	.MAIN_DB_PREFIX."c_country as c ON t.fk_pays = c.rowid LEFT JOIN "
+	.MAIN_DB_PREFIX."c_departements as db ON t.fk_department_buyer = db.rowid WHERE t.entity IN ("
+	.getEntity($tabname[DICT_TVA]).")";
 $tabsql[DICT_TYPE_CONTACT] = "SELECT t.rowid as rowid, t.element, t.source, t.code, t.libelle, t.position, t.active FROM ".MAIN_DB_PREFIX."c_type_contact AS t";
 $tabsql[DICT_PAYMENT_TERM] = "SELECT c.rowid as rowid, c.code, c.libelle, c.libelle_facture, c.deposit_percent, c.nbjour, c.type_cdr, c.decalage, c.active, c.sortorder, c.entity FROM ".MAIN_DB_PREFIX."c_payment_term AS c WHERE c.entity IN (".getEntity($tabname[DICT_PAYMENT_TERM]).")";
 $tabsql[DICT_PAIEMENT] = "SELECT c.id    as rowid, c.code, c.libelle, c.type, c.accountancy_code, c.active, c.entity FROM ".MAIN_DB_PREFIX."c_paiement AS c WHERE c.entity IN (".getEntity($tabname[DICT_PAIEMENT]).")";
@@ -290,10 +309,10 @@ $tabsql[DICT_AVAILABILITY] = "SELECT c.rowid as rowid, c.code, c.label, c.type_d
 $tabsql[DICT_INPUT_REASON] = "SELECT t.rowid as rowid, t.code, t.label, t.active FROM ".MAIN_DB_PREFIX."c_input_reason as t";
 $tabsql[DICT_REVENUESTAMP] = "SELECT t.rowid as rowid, t.taux, t.revenuestamp_type, c.label as country, c.code as country_code, t.fk_pays as country_id, t.note, t.active, t.accountancy_code_sell, t.accountancy_code_buy FROM ".MAIN_DB_PREFIX."c_revenuestamp as t, ".MAIN_DB_PREFIX."c_country as c WHERE t.fk_pays=c.rowid";
 $tabsql[DICT_TYPE_RESOURCE] = "SELECT t.rowid as rowid, t.code, t.label, t.active FROM ".MAIN_DB_PREFIX."c_type_resource as t";
-$tabsql[DICT_TYPE_CONTAINER] = "SELECT t.rowid as rowid, t.code, t.label, t.active, t.module FROM ".MAIN_DB_PREFIX."c_type_container as t WHERE t.entity IN (".getEntity($tabname[DICT_TYPE_CONTAINER]).")";
+$tabsql[DICT_TYPE_CONTAINER] = "SELECT t.rowid as rowid, t.entity, t.code, t.label, t.active, t.module FROM ".MAIN_DB_PREFIX."c_type_container as t WHERE t.entity IN (".getEntity($tabname[DICT_TYPE_CONTAINER]).")";
 //$tabsql[DICT_UNITS]= "SELECT t.rowid as rowid, t.code, t.label, t.short_label, t.active FROM ".MAIN_DB_PREFIX."c_units as t";
 $tabsql[DICT_STCOMM] = "SELECT t.id    as rowid, t.code, t.libelle, t.picto, t.active FROM ".MAIN_DB_PREFIX."c_stcomm as t";
-$tabsql[DICT_HOLIDAY_TYPES] = "SELECT h.rowid as rowid, h.code, h.label, h.affect, h.delay, h.newbymonth, h.fk_country as country_id, c.code as country_code, c.label as country, h.block_if_negative, h.sortorder, h.active FROM ".MAIN_DB_PREFIX."c_holiday_types as h LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON h.fk_country=c.rowid WHERE h.entity IN (".getEntity($tabname[DICT_HOLIDAY_TYPES]).")";
+$tabsql[DICT_HOLIDAY_TYPES] = "SELECT h.rowid as rowid, h.entity, h.code, h.label, h.affect, h.delay, h.newbymonth, h.fk_country as country_id, c.code as country_code, c.label as country, h.block_if_negative, h.sortorder, h.active FROM ".MAIN_DB_PREFIX."c_holiday_types as h LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON h.fk_country=c.rowid WHERE h.entity IN (".getEntity($tabname[DICT_HOLIDAY_TYPES]).")";
 $tabsql[DICT_LEAD_STATUS] = "SELECT t.rowid as rowid, t.code, t.label, percent, t.position, t.active FROM ".MAIN_DB_PREFIX."c_lead_status as t";
 $tabsql[DICT_FORMAT_CARDS] = "SELECT t.rowid, t.code, t.name, t.paper_size, t.orientation, t.metric, t.leftmargin, t.topmargin, t.nx, t.ny, t.spacex, t.spacey, t.width, t.height, t.font_size, t.custom_x, t.custom_y, t.active FROM ".MAIN_DB_PREFIX."c_format_cards as t";
 $tabsql[DICT_INVOICE_SUBTYPE] = "SELECT t.rowid, t.code, t.label, c.label as country, c.code as country_code, t.fk_country as country_id, t.active FROM ".MAIN_DB_PREFIX."c_invoice_subtype as t, ".MAIN_DB_PREFIX."c_country as c WHERE t.fk_country = c.rowid";
@@ -704,6 +723,8 @@ if (empty($sortfield)) {
 	$sortorder = (!empty($tmp2[1]) ? $tmp2[1] : '');  // @phan-suppress-current-line SqlInjection
 	//var_dump($sortfield); //var_dump($sortorder);
 }
+
+global $elementList, $sourceList, $localtax_typeList, $type_vatList;  // Used in dictFieldList() below
 
 // Define elementList and sourceList (used for dictionary type of contacts "llx_c_type_contact")
 $elementList = array();
@@ -1154,7 +1175,7 @@ if (empty($reshook)) {
 		$tablename = preg_replace('/^'.preg_quote(MAIN_DB_PREFIX, '/').'/', '', $tablename);
 
 		if ($rowid) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$db->sanitize($tablename)." SET active = 1 WHERE ".$db->escape($rowidcol)." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$db->sanitize($tablename)." SET active = 1 WHERE ".$db->sanitize($rowidcol)." = ".((int) $rowid).($entity != '' ? " AND entity = ".(int) $entity : '');
 		} elseif ($code) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX.$db->sanitize($tablename)." SET active = 1 WHERE code = '".$db->escape(dol_escape_htmltag($code))."'".($entity != '' ? " AND entity = ".(int) $entity : '');
 		} else {
@@ -1379,6 +1400,7 @@ if (empty($reshook)) {
 /*
  * View
  */
+global $form, $formother; // Used in dictFieldList() below
 
 $form = new Form($db);
 $formother = new FormOther($db);
@@ -2312,7 +2334,10 @@ if ($id > 0) {
 			while ($i < $num) {
 				$obj = $db->fetch_object($resql);
 
-				$withentity = null;
+				// Entity owning this row, when the dictionary is entity aware (the SELECT of
+				// $tabsql must then include the entity column). It is used to target the right row
+				// on write, and to tell rows of another entity apart just below.
+				$withentity = (isset($obj->entity) ? (int) $obj->entity : null);
 
 				// We discard empty lines
 				if ($id == DICT_COUNTRY) {
@@ -2365,6 +2390,18 @@ if ($id > 0) {
 					$canbedisabled = 0;
 					$canbemodified = 0;
 					$iserasable = 0;
+				}
+
+				// A row owned by another entity is read-only here. This happens when a dictionary
+				// is shared with the current entity (for instance the dictionary of the master
+				// entity that this entity only extends, with module multicompany): the row is
+				// legitimately listed, but editing it would change it for the other entity too.
+				// Without multicompany, getEntity() returns the current entity and every listed row
+				// belongs to it, so this never triggers.
+				if (!is_null($withentity) && $withentity != (int) getEntity($tabname[$id], 0)) {
+					$iserasable = 0;
+					$canbedisabled = 0;
+					$canbemodified = 0;
 				}
 				// Build Url. The table is id=, the id of line is rowid=
 				$rowidcol = empty($tabrowid[$id]) ? 'rowid' : $tabrowid[$id];
@@ -2960,7 +2997,8 @@ function dictFieldList($fieldlist, $obj = null, $tabname = '', $context = '')
 		} elseif ($value == 'type' && $tabname == 'c_paiement') {
 			print '<td>';
 			$select_list = array(0 => $langs->trans('PaymentTypeCustomer'), 1 => $langs->trans('PaymentTypeSupplier'), 2 => $langs->trans('PaymentTypeBoth'));
-			print $form->selectarray($value, $select_list, (!empty($obj->{$value}) ? $obj->{$value} : '2'));
+			// Use isset(), not !empty(), because 0 (Customer) is a valid value that empty() would treat as unset
+			print $form->selectarray($value, $select_list, (isset($obj->{$value}) && $obj->{$value} !== '' ? $obj->{$value} : '2'));
 			print '</td>';
 		} elseif ($value == 'recuperableonly' || $value == 'type_cdr' || $value == 'deductible' || $value == 'category_type') {
 			if ($value == 'type_cdr') {
@@ -2983,7 +3021,7 @@ function dictFieldList($fieldlist, $obj = null, $tabname = '', $context = '')
 			print '<td class="'.$class.'">';
 			print '<input type="text" class="flat" value="'.(isset($obj->{$value}) ? $obj->{$value} : '').'" size="3" name="'. $value .'">';
 			print '</td>';
-		} elseif (in_array($value, array('libelle_facture'))) {
+		} elseif (in_array($value, array('libelle_facture', 'content'))) {
 			print '<td>';
 			$transfound = 0;
 			$transkey = '';

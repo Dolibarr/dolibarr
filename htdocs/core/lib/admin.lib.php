@@ -242,7 +242,8 @@ function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler
 			// Add line buf to buffer if not a comment
 			if ($nocommentremoval || !preg_match('/^\s*--/', $buf)) {
 				if (empty($nocommentremoval)) {
-					$buf = preg_replace('/([,;ERLT0\)])\s+--.*$/i', '\1', $buf); //remove comment on lines that does not start with --, before adding it to the buffer
+					$buf = preg_replace('/([,;ERLT05\)])\s+--\s.*$/i', '\1', $buf); // remove comment on lines that does not start with --, like "... -- a comment"
+					$buf = preg_replace('/([,;ERLT05\)])\s+--$/i', '\1', $buf); // remove comment on lines that does not start with --, like "... --"
 				}
 				if ($buffer) {
 					$buffer .= ' ';
@@ -507,6 +508,14 @@ function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler
 					'DB_ERROR_PRIMARY_KEY_ALREADY_EXISTS',
 					'DB_ERROR_22P02'
 				);
+				// The foreign key of the category link tables can target a table owned by a module that is not
+				// enabled, llx_categorie_mo referencing llx_mrp_mo for instance, so the key can not be created
+				// yet. The module creates it when it is enabled. Elsewhere this error must stay fatal, since it
+				// is what reports orphans or duplicates when a key is added on corrupted data.
+				if (preg_match('/^\s*ALTER\s+TABLE\s+[^\s]+_categorie_mo\s.*REFERENCES\s+[^\s(]+_mrp_mo\s*\(/i', $newsql)) {
+					$okerrors[] = 'DB_ERROR_CANNOT_ADD_FOREIGN_KEY_CONSTRAINT';
+				}
+
 				if ($okerror == 'none') {
 					$okerrors = array();
 				}
@@ -717,11 +726,11 @@ function dolibarr_set_const($db, $name, $value, $type = 'chaine', $visible = 0, 
 	$resql = $db->query($sql);
 
 	if (strcmp($value, '')) {	// true if different. Must work for $value='0' or $value=0
-		if (!preg_match('/^(MAIN_LOGEVENTS|MAIN_AGENDA_ACTIONAUTO)/', $name) && (preg_match('/(_KEY|_EXPORTKEY|_SECUREKEY|_SERVERKEY|_PASS|_PASSWORD|_PW|_PW_TICKET|_PW_EMAILING|_SECRET|_SECURITY_TOKEN|_WEB_TOKEN)$/', $name))) {
+		$tmpname = preg_replace('/(_TEST|_PROD)$/', '', $name);
+		if (!preg_match('/^(MAIN_LOGEVENTS|MAIN_AGENDA_ACTIONAUTO)/', $name) && (preg_match('/(_KEY|_EXPORTKEY|_SECUREKEY|_SERVERKEY|_PASS|_PASSWORD|_PW|_PW_TICKET|_PW_EMAILING|_SECRET|_SECURITY_TOKEN|_WEB_TOKEN)$/', $tmpname))) {
 			// This seems a sensitive constant, we encrypt its value
 			// To list all sensitive constant, you can make a
-			// WHERE name like '%\_KEY' or name like '%\_EXPORTKEY' or name like '%\_SECUREKEY' or name like '%\_SERVERKEY' or name like '%\_PASS' or name like '%\_PASSWORD' or name like '%\_SECRET'
-			// or name like '%\_SECURITY_TOKEN' or name like '%\WEB_TOKEN'
+			// SELECT * from llx_const WHERE name like '%\_KEY' or name like '%\_EXPORTKEY' or name like '%\_SECUREKEY' ...
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 			$newvalue = dolEncrypt($value);
 		} else {
@@ -1306,7 +1315,7 @@ function activateModule($value, $withdeps = 1, $noconfverification = 0, $options
 			}
 
 			if (isset($objMod->conflictwith) && is_array($objMod->conflictwith) && !empty($objMod->conflictwith)) {
-				// Deactivation des modules qui entrent en conflict
+				// Deactivation of modules that are in conflict
 				$num = count($objMod->conflictwith);
 				for ($i = 0; $i < $num; $i++) {
 					foreach ($modulesdir as $dir) {

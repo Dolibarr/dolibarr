@@ -56,6 +56,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/modulebuilder.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/modulebuilder/class/NamingContractValidator.class.php';
+require_once DOL_DOCUMENT_ROOT.'/modulebuilder/class/RightsSyncService.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
 
@@ -302,6 +303,31 @@ function modulebuilderValidateGeneratedFile(string $destfile, NamingContract $nc
 		$safeErrors = array_map('dol_escape_htmltag', array_slice($errors, 0, 5));
 		setEventMessages(implode('<br>', $safeErrors), null, 'warnings');
 	}
+}
+
+/**
+ * Run a permissions sync and report its outcome to the user.
+ *
+ * @param RightsSyncCommand $cmd Sync command to run
+ * @return SyncReport Outcome — check hasConflicts() before claiming success or redirecting
+ */
+function modulebuilderSyncRights(RightsSyncCommand $cmd): SyncReport
+{
+	global $langs;
+
+	$service = new DescriptorRightsSyncService();
+	$report = $service->sync($cmd);
+
+	if ($report->hasWarnings()) {
+		$safe = array_map('dol_escape_htmltag', array_slice($report->warnings, 0, 5));
+		setEventMessages($langs->trans('ModuleBuilderPermissionsNormalized').'<br>'.implode('<br>', $safe), null, 'warnings');
+	}
+	if ($report->hasConflicts()) {
+		$safe = array_map('dol_escape_htmltag', array_slice($report->conflicts, 0, 5));
+		setEventMessages($langs->trans('ModuleBuilderPermissionsNotChanged').'<br>'.implode('<br>', $safe), null, 'errors');
+	}
+
+	return $report;
 }
 
 if ($dirins && $action == 'initmodule' && $modulename) {		// Test on permission already done
@@ -1060,14 +1086,14 @@ if ($dirins && $action == 'confirm_removefile' && !empty($module) /* && $user->h
 			$removeFile = removeObjectFromApiFile($file_api, $objects, $objectname);
 
 			if (count($objects) == 0) {
-				$result = dol_delete_file($filetodelete);
+				$result = dol_delete_file($filetodelete, 1);
 			}
 
 			if ($removeFile) {
 				setEventMessages($langs->trans("ApiObjectDeleted"), null);
 			}
 		} else {
-			$result = dol_delete_file($filetodelete);
+			$result = dol_delete_file($filetodelete, 1);
 		}
 
 		if (!$result) {
@@ -1078,11 +1104,11 @@ if ($dirins && $action == 'confirm_removefile' && !empty($module) /* && $user->h
 				if (preg_match('/\.key\.sql$/', $relativefilename)) {
 					$relativefilename = preg_replace('/\.key\.sql$/', '.sql', $relativefilename);
 					$filetodelete = $dirins.'/'.$relativefilename;
-					$result = dol_delete_file($filetodelete);
+					$result = dol_delete_file($filetodelete, 1);
 				} elseif (preg_match('/\.sql$/', $relativefilename)) {
 					$relativefilename = preg_replace('/\.sql$/', '.key.sql', $relativefilename);
 					$filetodelete = $dirins.'/'.$relativefilename;
-					$result = dol_delete_file($filetodelete);
+					$result = dol_delete_file($filetodelete, 1);
 				}
 			}
 
@@ -1529,8 +1555,8 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on 
 			if ($checkComment < 0) {
 				setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Permissions"), "mod".$module."class.php"), null, 'warnings');
 			} else {
-				$generatePerms = reWriteAllPermissions($moduledescriptorfile, $rights, null, null, $objectname, $module, -2);
-				if ($generatePerms < 0) {
+				$reportPerms = modulebuilderSyncRights(RightsSyncCommand::forObjectCreation($module, $moduledescriptorfile, is_array($rights) ? $rights : array(), $objectname));
+				if ($reportPerms->skipped > 0) {
 					setEventMessages($langs->trans("WarningPermissionAlreadyExist", $langs->transnoentities($objectname)), null, 'warnings');
 				}
 			}
@@ -2326,7 +2352,9 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname /* && $user->has
 		if ($rewritePerms < 0) {
 			setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Permissions"), "mod".$module."class.php"), null, 'warnings');
 		} else {
-			reWriteAllPermissions($moduledescriptorfile, $permissions, null, null, $objectname, '', -1);
+			$reportPerms = modulebuilderSyncRights(RightsSyncCommand::forObjectDeletion($module, $moduledescriptorfile, is_array($permissions) ? $permissions : array(), $objectname));
+			// A rights conflict deliberately does not cancel the object deletion below: the warning
+			// already told the user the leftover rights need a manual cleanup.
 		}
 		if ($rewritePerms && $rewriteMenu) {
 			// check if documentation has been generated
@@ -2339,8 +2367,8 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname /* && $user->has
 			}
 			$resultko = 0;
 			foreach ($filetodelete as $tmpfiletodelete) {
-				$resulttmp = dol_delete_file($dir.'/'.$tmpfiletodelete, 0, 0, 1);
-				$resulttmp = dol_delete_file($dir.'/'.$tmpfiletodelete.'.back', 0, 0, 1);
+				$resulttmp = dol_delete_file($dir.'/'.$tmpfiletodelete, 1, 0, 1);
+				$resulttmp = dol_delete_file($dir.'/'.$tmpfiletodelete.'.back', 1, 0, 1);
 				if (!$resulttmp) {
 					$resultko++;
 				}
@@ -2634,7 +2662,6 @@ if ($dirins && $action == 'addright' && !empty($module) && empty($cancel) /* && 
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Rights")), null, 'errors');
 	}
 
-	$id = GETPOST('id', 'alpha');
 	$label = GETPOST('label', 'alpha');
 	$objectForPerms = strtolower(GETPOST('permissionObj', 'alpha'));
 	$crud = GETPOST('crud', 'alpha');
@@ -2670,17 +2697,7 @@ if ($dirins && $action == 'addright' && !empty($module) && empty($cancel) /* && 
 		}
 	}
 
-	$rightToAdd = array();
 	if (!$error) {
-		$key = $countPerms + 1;
-		//prepare right to add
-		$rightToAdd = array(
-			0 => $id,
-			1 => $label,
-			4 => $objectForPerms,
-			5 => $crud
-		);
-
 		if (isModEnabled(strtolower($module))) {
 			$result = unActivateModule(strtolower($module));
 			dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", getDolGlobalInt('MAIN_IHM_PARAMS_REV') + 1, 'chaine', 0, '', $conf->entity);
@@ -2696,15 +2713,17 @@ if ($dirins && $action == 'addright' && !empty($module) && empty($cancel) /* && 
 		if ($rewrite < 0) {
 			setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Permissions"), "mod".$module."class.php"), null, 'warnings');
 		} else {
-			reWriteAllPermissions($moduledescriptorfile, $permissions, $key, $rightToAdd, '', '', 1);
-			setEventMessages($langs->trans('PermissionAddedSuccesfuly'), null);
+			$reportPerms = modulebuilderSyncRights(RightsSyncCommand::forRightAddition($module, $moduledescriptorfile, $permissions, $objectForPerms, $label, $crud));
+			if (!$reportPerms->hasConflicts()) {
+				setEventMessages($langs->trans('PermissionAddedSuccesfuly'), null);
 
-			clearstatcache(true);
-			if (function_exists('opcache_invalidate')) {
-				opcache_reset();	// remove the include cache hell !
+				clearstatcache(true);
+				if (function_exists('opcache_invalidate')) {
+					opcache_reset();	// remove the include cache hell !
+				}
+				header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=permissions&module='.$module);
+				exit;
 			}
-			header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=permissions&module='.$module);
-			exit;
 		}
 	}
 }
@@ -2817,15 +2836,16 @@ if ($dirins && GETPOST('action') == 'update_right' && GETPOST('modifyright') && 
 		if ($rewrite < 0) {
 			setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Permissions"), "mod".$module."class.php"), null, 'warnings');
 		} else {
-			$rightUpdated = null;  // I not set at this point
-			reWriteAllPermissions($moduledescriptorfile, $permissions, $key, $rightUpdated, '', '', 2);
-			setEventMessages($langs->trans('PermissionUpdatedSuccesfuly'), null);
-			clearstatcache(true);
-			if (function_exists('opcache_invalidate')) {
-				opcache_reset();	// remove the include cache hell !
+			$reportPerms = modulebuilderSyncRights(RightsSyncCommand::forRightUpdate($module, $moduledescriptorfile, $permissions, $key, $objectForPerms, $label, $crud));
+			if (!$reportPerms->hasConflicts()) {
+				setEventMessages($langs->trans('PermissionUpdatedSuccesfuly'), null);
+				clearstatcache(true);
+				if (function_exists('opcache_invalidate')) {
+					opcache_reset();	// remove the include cache hell !
+				}
+				header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=permissions&module='.$module);
+				exit;
 			}
-			header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=permissions&module='.$module);
-			exit;
 		}
 	}
 }
@@ -2870,16 +2890,18 @@ if ($dirins && $action == 'confirm_deleteright' && !empty($module) && GETPOSTINT
 		if ($rewrite < 0) {
 			setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Permissions"), "mod".$module."class.php"), null, 'warnings');
 		} else {
-			reWriteAllPermissions($moduledescriptorfile, $permissions, $key, null, '', '', 0);
-			setEventMessages($langs->trans('PermissionDeletedSuccesfuly'), null);
+			$reportPerms = modulebuilderSyncRights(RightsSyncCommand::forRightDeletion($module, $moduledescriptorfile, $permissions, $key));
+			if (!$reportPerms->hasConflicts()) {
+				setEventMessages($langs->trans('PermissionDeletedSuccesfuly'), null);
 
-			clearstatcache(true);
-			if (function_exists('opcache_invalidate')) {
-				opcache_reset();	// remove the include cache hell !
+				clearstatcache(true);
+				if (function_exists('opcache_invalidate')) {
+					opcache_reset();	// remove the include cache hell !
+				}
+
+				header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=permissions&module='.$module);
+				exit;
 			}
-
-			header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=permissions&module='.$module);
-			exit;
 		}
 	}
 }

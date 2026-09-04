@@ -152,7 +152,7 @@ class ImportXlsx extends ModeleImports
 			return;
 		}
 		$this->label_lib = 'PhpSpreadSheet';
-		$this->version_lib = '1.8.0';
+		$this->version_lib = '1.12.0'; // No way to get info from library
 
 		$arrayofstreams = stream_get_wrappers();
 		if (!in_array('zip', $arrayofstreams)) {

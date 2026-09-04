@@ -302,6 +302,10 @@ $arrayfields['p.note_private'] = array('label' => 'NotePrivate', 'position' => 3
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
+// Add hook to complete $arrayfields
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+
 $object->fields = dol_sort_array($object->fields, 'position');
 //$arrayfields['anotherfield'] = array('type'=>'integer', 'label'=>'AnotherField', 'checked'=>1, 'enabled'=>1, 'position'=>90, 'csslist'=>'right');
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -755,12 +759,12 @@ if (isModEnabled('socialnetworks')) {
 		if ($value['active'] && strlen($search_[$key])) {
 			$searchkeyinjsonformat = preg_replace('/"$/', '', preg_replace('/^"/', '', json_encode($search_[$key])));
 			if (in_array($db->type, array('mysql', 'mysqli'))) {
-				$sql .= " AND p.socialnetworks REGEXP '\"".$db->escape($db->escapeforlike($key))."\":\"[^\"]*".$db->escape($db->escapeforlike($searchkeyinjsonformat))."'";
+				$sql .= " AND p.socialnetworks REGEXP '".$db->escape("\"".$db->escapeforlike($key)."\":\"[^\"]*".$db->escapeforlike($searchkeyinjsonformat))."'";
 			} elseif ($db->type == 'pgsql') {
-				$sql .= " AND p.socialnetworks ~ '\"".$db->escape($db->escapeforlike($key))."\":\"[^\"]*".$db->escape($db->escapeforlike($searchkeyinjsonformat))."'";
+				$sql .= " AND p.socialnetworks ~ '".$db->escape("\"".$db->escapeforlike($key)."\":\"[^\"]*".$db->escapeforlike($searchkeyinjsonformat))."'";
 			} else {
-				// Works with all database but not reliable because search only for social network code starting with earched value
-				$sql .= " AND p.socialnetworks LIKE '%\"".$db->escape($db->escapeforlike($key))."\":\"".$db->escape($db->escapeforlike($searchkeyinjsonformat))."%'";
+				// Works with all database but not reliable because search only for social network code starting with searched value
+				$sql .= " AND p.socialnetworks LIKE '".$db->escape("%\"".$db->escapeforlike($key."\":\"".$searchkeyinjsonformat)."%")."'";
 			}
 		}
 	}
@@ -1646,7 +1650,7 @@ while ($i < $imaxinloop) {
 		// Show here line of result
 		print '<tr data-rowid="'.$object->id.'" class="oddeven row-with-select"';
 		if ($contextpage == 'poslist') {
-			print ' onclick="location.href=\'list.php?action=change&contextpage=poslist&idcustomer='.$obj->socid.'&idcontact='.$obj->rowid.'&place='.urlencode($place).'\'"';
+			print ' onclick="location.href=\'list.php?action=change&token='.newToken().'&contextpage=poslist&idcustomer='.$obj->socid.'&idcontact='.$obj->rowid.'&place='.urlencode($place).'\'"';
 		}
 		print '>';
 

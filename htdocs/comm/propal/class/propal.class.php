@@ -937,7 +937,7 @@ class Propal extends CommonObject
 		global $mysoc, $langs;
 
 		dol_syslog(get_class($this)."::updateLine rowid=$rowid, pu=$pu, qty=$qty, remise_percent=$remise_percent,
-        txtva=$txtva, desc=$desc, price_base_type=$price_base_type, info_bits=$info_bits, special_code=$special_code, fk_parent_line=$fk_parent_line, pa_ht=$pa_ht, type=$type, date_start=$date_start, date_end=$date_end");
+        txtva=$txtva, desc=".dol_trunc($desc, 16).", price_base_type=$price_base_type, info_bits=$info_bits, special_code=$special_code, fk_parent_line=$fk_parent_line, pa_ht=$pa_ht, type=$type, date_start=$date_start, date_end=$date_end");
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
 		// Clean parameters
@@ -1369,17 +1369,19 @@ class Propal extends CommonObject
 							$origintype = $this->element;
 						}
 
+						// Preserve the original entry mode of the line so the total is computed from the typed value (no rounding drift).
+						$line_price_base_type = $line->getPriceBaseType();
 						$result = $this->addline(
 							$line->desc,
-							$line->subprice,
+							(float) $line->subprice,
 							$line->qty,
 							$vatrate,
 							$line->localtax1_tx,
 							$line->localtax2_tx,
 							$line->fk_product,
 							$line->remise_percent,
-							'HT',
-							0,
+							$line_price_base_type,
+							(float) $line->subprice_ttc,
 							$line->info_bits,
 							$line->product_type,
 							$line->rang,

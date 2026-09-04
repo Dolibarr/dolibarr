@@ -116,6 +116,7 @@ BoxLastCustomerShipments=Posljednje pošiljke kupaca
 BoxTitleLastCustomerShipments=Najnovije %s modificirane pošiljke kupaca
 BoxTitleLastLeaveRequests=Latest %s modified leave requests
 NoRecordedShipments=Nema evidentirane pošiljke kupaca
+NoUpcomingEvent=No upcoming events
 BoxCustomersOutstandingBillReached=Dostignuti su klijenti s nepodmirenim limitom
 BoxTitleLastFediverseInfos=Posljednje objave korisnika %s
 BoxLastFediverseInfos=Najnovija ažuriranja Fediverse-a: Vijesti i Trendovi

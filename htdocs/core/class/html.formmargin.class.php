@@ -127,7 +127,7 @@ class FormMargin
 				$pa = $line->qty * $pa_ht;
 			}
 
-			// calcul des marges
+			// margin calculation
 			if (isset($line->fk_remise_except) && isset($conf->global->MARGIN_METHODE_FOR_DISCOUNT)) {    // remise
 				if (getDolGlobalString('MARGIN_METHODE_FOR_DISCOUNT') == '1') { // global discount treated as product
 					$marginInfos['pa_products'] += $pa;

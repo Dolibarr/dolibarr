@@ -27,6 +27,7 @@
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  * Copyright (C) 2026		Lenin Rivas				<lenin.rivas777@gmail.com>
  * Copyright (C) 2026		Open-Dsi				<support@open-dsi.fr>
+ * Copyright (C) 2026		Jose MARTINEZ				<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -291,6 +292,9 @@ class Form
 		// Clean parameter $typeofdata
 		if ($typeofdata == 'datetime') {
 			$typeofdata = 'dayhour';
+		}
+		if ($typeofdata == 'date') {
+			$typeofdata = 'day';
 		}
 		$reg = array();
 		if (preg_match('/^(\w+)\((\d+)\)$/', $typeofdata, $reg)) {
@@ -1974,7 +1978,7 @@ class Form
 			$options_only = 0;
 			$limitto = '';
 
-			$out .= $this->selectcontacts($socid, $selected, $htmlname, $showempty, $exclude, $limitto, $showfunction, $morecss, $options_only, $showsoc, $forcecombo, $events, $moreparam, $htmlid, $multiple, $disableifempty);
+			$out .= $this->selectcontacts($socid, $selected, $htmlname, $showempty, $exclude, $limitto, $showfunction, $morecss, $options_only, $showsoc, $forcecombo, $events, $moreparam, $htmlid, $multiple, $disableifempty, $filter);
 		}
 
 		$conf->global->CONTACT_USE_SEARCH_TO_SELECT = $sav;
@@ -2356,7 +2360,7 @@ class Form
 
 			if ($showempty && !is_numeric($showempty)) {
 				$textforempty = $showempty;
-				$out .= '<option class="optiongrey" value="-1"' . (in_array(-1, $selected) ? ' selected' : '') . '>' . $textforempty . '</option>';
+				$out .= '<option class="optiongrey" value="-1"' . (in_array(-1, $selected) ? ' selected' : '') . '>' . dol_escape_htmltag($textforempty) . '</option>';
 			} else {
 				if (($showempty == 1 || ($showempty == 3 && $num > 1)) && !$multiple) {
 					$out .= '<option value="0"' . (in_array(0, $selected) ? ' selected' : '') . '>&nbsp;</option>';
@@ -2535,7 +2539,7 @@ class Form
 		// phpcs:enable
 		global $langs, $conf;
 
-		// On recherche les remises
+		// Search for the discounts
 		$sql = "SELECT re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc,";
 		$sql .= " re.description, re.fk_facture_source";
 		$sql .= " FROM " . $this->db->prefix() . "societe_remise_except as re";
@@ -2766,7 +2770,7 @@ class Form
 		if (getDolGlobalString('USER_HIDE_INACTIVE_IN_COMBOBOX') || $notdisabled) {
 			$sql .= " AND (u.statut <> 0";
 			if (!empty($selected)) {
-				$sql .= " OR rowid IN (".$this->db->sanitize(implode(',', $selected)).")";	// We must always keep the selected users to avoid to loose it/them when updating
+				$sql .= " OR u.rowid IN (".$this->db->sanitize(implode(',', $selected)).")";	// We must always keep the selected users to avoid to loose it/them when updating
 			}
 			$sql .= ")";
 		}
@@ -2819,7 +2823,7 @@ class Form
 					if (!is_numeric($show_empty)) {
 						$textforempty = $show_empty;
 					}
-					$out .= '<option class="optiongrey" value="' . ($show_empty < 0 ? $show_empty : -1) . '"' . ((empty($selected) || in_array(-1, $selected)) ? ' selected' : '') . '>' . $textforempty . '</option>' . "\n";
+					$out .= '<option class="optiongrey" value="' . ($show_empty < 0 ? $show_empty : -1) . '"' . ((empty($selected) || in_array(-1, $selected)) ? ' selected' : '') . '>' . dol_escape_htmltag($textforempty) . '</option>' . "\n";
 
 					$outarray[($show_empty < 0 ? $show_empty : -1)] = $textforempty;
 					$outarray2[($show_empty < 0 ? $show_empty : -1)] = array(
@@ -4419,10 +4423,18 @@ class Form
 
 		$selected_input_value = '';
 		if (!empty($conf->use_javascript_ajax) && getDolGlobalString('PRODUIT_USE_SEARCH_TO_SELECT')) {
+			$regtmpsel = array();
 			if ((int) $selected > 0) {
 				require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 				$producttmpselect = new Product($this->db);
 				$producttmpselect->fetch((int) $selected);
+				$selected_input_value = $producttmpselect->ref;
+				unset($producttmpselect);
+			} elseif (preg_match('/^idprod_([0-9]+)$/', (string) $selected, $regtmpsel)) {
+				// Preselect when a product without supplier price was just created ('idprod_ID' value, used by backtopage of creation popup)
+				require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+				$producttmpselect = new Product($this->db);
+				$producttmpselect->fetch((int) $regtmpsel[1]);
 				$selected_input_value = $producttmpselect->ref;
 				unset($producttmpselect);
 			}
@@ -4430,7 +4442,7 @@ class Form
 			// mode=2 means suppliers products
 			$urloption = ($socid > 0 ? 'socid=' . $socid . '&' : '') . 'htmlname=' . $htmlname . '&outjson=1&price_level=' . $price_level . '&type=' . $filtertype . '&mode=2&status=' . $status . '&finished=' . $finished . '&alsoproductwithnosupplierprice=' . $alsoproductwithnosupplierprice;
 
-			$s = ($hidelabel ? '' : $langs->trans("RefOrLabel") . ' : ') . '<input type="text" class="'.$morecss.'" name="search_' . $htmlname . '" id="search_' . $htmlname . '" value="' . $selected_input_value . '"' . ($placeholder ? ' placeholder="' . $placeholder . '"' : '') . '>';
+			$s = ($hidelabel ? '' : $langs->trans("RefOrLabel") . ' : ') . '<input type="text" class="'.$morecss.'" name="search_' . $htmlname . '" id="search_' . $htmlname . '" value="' . $selected_input_value . '"' . ($placeholder ? ' placeholder="' . $placeholder . '"' : '') . ' spellcheck="false">';
 
 			$s .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT . '/product/ajax/products.php', $urloption, getDolGlobalInt('PRODUIT_USE_SEARCH_TO_SELECT'), 0, $ajaxoptions);
 		} else {
@@ -5081,7 +5093,7 @@ class Form
 				$i++;
 			}
 
-			$parameters = array('context' => 'paymentterm');
+			$parameters = array('dictionary' => 'paymentterm');
 			$reshook = $hookmanager->executeHooks('loadDictionaryCache', $parameters, $this); // Note that $action and $object may have been modified by hook
 			if (empty($reshook)) {
 				if (is_array($hookmanager->resArray) && count($hookmanager->resArray)) {
@@ -5351,16 +5363,19 @@ class Form
 
 				// If a translation exists, we use is, otherwise, we take the label by default
 				$label = ($langs->transnoentitiesnoconv("PaymentTypeShort" . $obj->code) != "PaymentTypeShort" . $obj->code ? $langs->transnoentitiesnoconv("PaymentTypeShort" . $obj->code) : ($obj->label != '-' ? $obj->label : ''));
-				$this->cache_types_paiements[$obj->id]['id'] = (int) $obj->id;
-				$this->cache_types_paiements[$obj->id]['code'] = (string) $obj->code;
-				$this->cache_types_paiements[$obj->id]['label'] = (string) $label;
-				$this->cache_types_paiements[$obj->id]['type'] = (int) $obj->type;
-				$this->cache_types_paiements[$obj->id]['entity'] = (int) $obj->entity;
-				$this->cache_types_paiements[$obj->id]['active'] = (int) $obj->active;
+				$shortlabel = $label; // TODO
+
+				$this->cache_types_paiements[(int) $obj->id]['id'] = (int) $obj->id;
+				$this->cache_types_paiements[(int) $obj->id]['code'] = (string) $obj->code;
+				$this->cache_types_paiements[(int) $obj->id]['label'] = (string) $label;
+				$this->cache_types_paiements[(int) $obj->id]['shortlabel'] = (string) $shortlabel;
+				$this->cache_types_paiements[(int) $obj->id]['type'] = (int) $obj->type;
+				$this->cache_types_paiements[(int) $obj->id]['entity'] = (int) $obj->entity;
+				$this->cache_types_paiements[(int) $obj->id]['active'] = (int) $obj->active;
 				$i++;
 			}
 
-			$parameters = array('context' => 'paymenttype');
+			$parameters = array('dictionary' => 'paymenttype');
 			$reshook = $hookmanager->executeHooks('loadDictionaryCache', $parameters, $this); // Note that $action and $object may have been modified by hook
 			if (empty($reshook)) {
 				if (is_array($hookmanager->resArray) && count($hookmanager->resArray)) {
@@ -5484,18 +5499,31 @@ class Form
 			$out .= '
 				<script nonce="' . getNonce() . '">
 					$(document).ready(function () {
-						$("#' . $htmlname . '").change(function () {
-							let $selected = $(this).find("option:selected");
-							let depositPercent = $selected.attr("data-deposit_percent");
+						let $select = $("#' . $htmlname . '");
+						let $container = $("#' . $htmlname . '_deposit_percent_container");
+						let $input = $("#' . $htmlname . '_deposit_percent");
+
+						function refreshDepositPercent(isInit) {
+							let depositPercent = $select.find("option:selected").attr("data-deposit_percent") || "";
 
 							if (depositPercent.length > 0) {
-								$("#' . $htmlname . '_deposit_percent_container").show().find("#' . $htmlname . '_deposit_percent").val(depositPercent);
+								$container.show();
+								// On page load, keep an existing (possibly customized) value; on user change use the payment term default
+								if (!isInit || !parseFloat($input.val())) {
+									$input.val(depositPercent);
+								}
 							} else {
-								$("#' . $htmlname . '_deposit_percent_container").hide();
+								$container.hide();
 							}
+						}
 
+						$select.change(function () {
+							refreshDepositPercent(false);
 							return true;
 						});
+
+						// Initialize on load so a default payment term with a deposit is reflected without a manual change
+						refreshDepositPercent(true);
 					});
 				</script>';
 		}
@@ -5550,7 +5578,7 @@ class Form
 	 * Return list of payment methods
 	 * Constant MAIN_DEFAULT_PAYMENT_TYPE_ID can used to set default value but scope is all application, probably not what you want.
 	 *
-	 * @param 	string 		$selected 		Id or code or preselected payment mode
+	 * @param 	int|string 	$selected 		Id or code or preselected payment mode
 	 * @param 	string 		$htmlname 		Name of select field
 	 * @param 	string 		$filtertype 	To filter on field type in llx_c_paiement ('CRDT' or 'DBIT' or array('code'=>xx,'label'=>zz))
 	 * @param 	int 		$format 		0=id+label, 1=code+code, 2=code+label, 3=id+code
@@ -6388,20 +6416,17 @@ class Form
 
 		if (!getDolGlobalString('CATEGORY_EDIT_IN_MENU_NOT_IN_POPUP')) {
 			// Add html code to add the edit button and go back
-			$jsonclose = 'doJsCodeAfterPopupClose'.$htmlname.'()';
+			$jsonclose = 'doJsCodeAfterPopupClose'.dol_sanitizeKeyCode($htmlname).'()';
 			$urltoopen = '/categories/categorie_list.php?type='.urlencode($categtype).'&nosearch=1';
 
 			$s = dolButtonToOpenUrlInDialogPopup($htmlname, $langs->transnoentitiesnoconv("Categories"), img_picto('', 'add', 'class="editfielda"'), $urltoopen, '', '', '', $jsonclose);
 			$out .= $s;
 			// Add js code to add the edit button and go back
 			$out .= '<!-- Add js code to open the popup for category/edit/add -->'."\n";
-			$out .= '<script>function doJsCodeAfterPopupClose'.$htmlname.'() {
-				console.log("doJsCodeAfterPopupClose'.$htmlname.' has been called, we refresh the combo content + refresh select2...");
+			$out .= '<script>function doJsCodeAfterPopupClose'.dol_sanitizeKeyCode($htmlname).'() {
+				console.log("doJsCodeAfterPopupClose'.dol_sanitizeKeyCode($htmlname).' has been called, we refresh the combo content + refresh select2...");
 
 				// Call an ajax to reload values and update the select
-				// $("#'.dol_escape_js($htmlname).'").append(new Option("Option 4", "4"));
-
-				// Refresh select2 to take account of new values (enough for small change)
 
 		        $.ajax({
 		            url: \''.DOL_URL_ROOT.'/core/ajax/fetchCategories.php\',
@@ -6412,7 +6437,7 @@ class Form
 		            type: \'GET\',
 		            dataType: \'json\',
 		            success: function (data) {
-		                var $select = $(\'#'.dol_escape_js($htmlname).'\');
+		                var $select = $(\'#'.dol_sanitizeKeyCode($htmlname).'\');
 						var selectedValues = $select.val(); // This is an array of selected values
 						console.log(selectedValues);
 		                $select.empty();
@@ -6426,11 +6451,13 @@ class Form
 		            }
 		        });
 
-				$("#'.dol_escape_js($htmlname).'").trigger("change");
+				// Refresh select2 to take account of new values (enough for small change)
+				$("#'.dol_sanitizeKeyCode($htmlname).'").trigger("change");
+
 				// Alternative if change in select is complex
 				/*
-				$("#'.dol_escape_js($htmlname).'").select2("destroy");
-				$("#'.dol_escape_js($htmlname).'").select2();
+				$("#'.dol_sanitizeKeyCode($htmlname).'").select2("destroy");
+				$("#'.dol_sanitizeKeyCode($htmlname).'").select2();
 				*/
 			}</script>';
 		}
@@ -6654,7 +6681,7 @@ class Form
 						$moreattr = (!empty($input['moreattr']) ? ' ' . $input['moreattr'] : '');
 						$morecss = (!empty($input['morecss']) ? ' ' . $input['morecss'] : '');
 
-						$more .= '<input type="hidden" id="' . dol_escape_htmltag($input['name']) . '" name="' . dol_escape_htmltag($input['name']) . '" value="' . dol_escape_htmltag($input['value']) . '" class="' . $morecss . '"' . $moreattr . '>' . "\n";
+						$more .= '<input type="hidden" id="' . dol_escape_htmltag($input['name']) . '" name="' . dol_escape_htmltag($input['name']) . '" value="' . dol_escape_htmltag(isset($input['value']) ? $input['value'] : '') . '" class="' . $morecss . '"' . $moreattr . '>' . "\n"; // 'value' non fourni par tous les appelants
 					}
 				}
 			}
@@ -6674,9 +6701,9 @@ class Form
 						$more .= '<div class="tagtr"><div class="tagtd' . (empty($input['tdclass']) ? '' : (' ' . $input['tdclass'])) . '">' . ($input['label'] ?? '') . '</div><div class="tagtd"><input type="password" class="flat' . $morecss . '" id="' . dol_escape_htmltag($input['name']) . '" name="' . dol_escape_htmltag($input['name']) . '"' . $size . ' value="' . (empty($input['value']) ? '' : $input['value']) . '"' . $moreattr . ' /></div></div>' . "\n";
 					} elseif ($input['type'] == 'textarea') {
 						$moreonecolumn .= '<div class="margintoponly">';
-						$moreonecolumn .= $input['label'] . '<br>';
+						$moreonecolumn .= ($input['label'] ?? '') . '<br>';
 						$moreonecolumn .= '<textarea name="' . dol_escape_htmltag($input['name']) . '" id="' . dol_escape_htmltag($input['name']) . '" class="' . $morecss . '"' . $moreattr . '>';
-						$moreonecolumn .= $input['value'];
+						$moreonecolumn .= $input['value'] ?? '';	// 'value' is optional (blank textarea by default), like for the 'text' and 'password' types above
 						$moreonecolumn .= '</textarea>';
 						$moreonecolumn .= '</div>';
 					} elseif (in_array($input['type'], ['select', 'multiselect'])) {
@@ -6706,10 +6733,10 @@ class Form
 						$more .= '<div class="tagtr">';
 						$more .= '<div class="tagtd' . (empty($input['tdclass']) ? '' : (' ' . $input['tdclass'])) . '"><label for="' . dol_escape_htmltag($input['name']) . '">' . $input['label'] . '</label></div><div class="tagtd">';
 						$more .= '<input type="checkbox" class="flat' . ($morecss ? ' ' . $morecss : '') . '" id="' . dol_escape_htmltag($input['name']) . '" name="' . dol_escape_htmltag($input['name']) . '"' . $moreattr;
-						if (!is_bool($input['value']) && $input['value'] != 'false' && $input['value'] != '0' && $input['value'] != '') {
+						if (isset($input['value']) && !is_bool($input['value']) && $input['value'] != 'false' && $input['value'] != '0' && $input['value'] != '') {
 							$more .= ' checked';
 						}
-						if (is_bool($input['value']) && $input['value']) {
+						if (isset($input['value']) && is_bool($input['value']) && $input['value']) {
 							$more .= ' checked';
 						}
 						if (isset($input['disabled'])) {
@@ -6767,7 +6794,7 @@ class Form
 						$more .= '</div></div>' . "\n";
 					} elseif ($input['type'] == 'onecolumn') {
 						$moreonecolumn .= '<div class="margintoponly">';
-						$moreonecolumn .= $input['value'];
+						$moreonecolumn .= $input['value'] ?? '';
 						$moreonecolumn .= '</div>' . "\n";
 					} elseif ($input['type'] == 'hidden') {
 						// Do nothing more, already added by a previous loop
@@ -6870,6 +6897,7 @@ class Form
 			}
 
 			$postconfirmas = 'GET';
+			$maxurllengthforget = getDolGlobalInt('MAIN_MAX_URL_LENGTH_FOR_GET', 2000);
 
 			$formconfirm .= '
 					resizable: false,
@@ -6902,7 +6930,7 @@ class Form
 							var urljump = pageyes + (pageyes.indexOf("?") < 0 ? "?" : "&") + options;
 							if (pageyes.length > 0) {';
 			if ($postconfirmas == 'GET') {
-				$formconfirm .= 'location.href = urljump;';
+				$formconfirm .= 'dolSubmitConfirmForm(urljump, pageyes, options, ' . $maxurllengthforget . ');';
 			} else {
 				$formconfirm .= $jsforcursor;
 				$formconfirm .= 'var post = $.post(
@@ -6934,7 +6962,7 @@ class Form
 							//alert(urljump);
 							if (pageno.length > 0) {';
 			if ($postconfirmas == 'GET') {
-				$formconfirm .= 'location.href = urljump;';
+				$formconfirm .= 'dolSubmitConfirmForm(urljump, pageno, options, ' . $maxurllengthforget . ');';
 			} else {
 				$formconfirm .= $jsforcursor;
 				$formconfirm .= 'var post = $.post(
@@ -7148,7 +7176,7 @@ class Form
 					$out .= $label;
 				} else {
 					$langs->load('errors');
-					$out .= $langs->trans('ErrorNotInDictionaryPaymentConditions');
+					$out .= $langs->trans('ErrorNotInDictionaryPaymentConditions', $selected);
 				}
 			} else {
 				$out .= '&nbsp;';
@@ -7373,19 +7401,20 @@ class Form
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 
 	/**
-	 *    Show form with payment mode
+	 * Show form with payment mode
 	 *
-	 * @param string $page Page
-	 * @param string $selected Preselected Id for mode
-	 * @param string $htmlname Name of select html field
-	 * @param string $filtertype To filter on field type in llx_c_paiement ('CRDT' or 'DBIT' or array('code'=>xx,'label'=>zz))
-	 * @param int<-1,1> $active Active or not, -1 = all
-	 * @param int<0,1> $addempty 1=Add empty entry
-	 * @param string $type Type ('direct-debit' or 'bank-transfer')
-	 * @param int<0,1> $nooutput 1=Return string, no output
-	 * @return    string                    HTML output or ''
+	 * @param 	string 		$page 		Page
+	 * @param 	int|string 	$selected 	Preselected Id for mode
+	 * @param 	string 		$htmlname 	Name of select html field
+	 * @param 	string 		$filtertype To filter on field type in llx_c_paiement ('CRDT' or 'DBIT' or array('code'=>xx,'label'=>zz))
+	 * @param 	int<-1,1> 	$active 	Active or not, -1 = all
+	 * @param 	int<0,1> 	$addempty 	1=Add empty entry
+	 * @param 	string 		$type 		Type ('direct-debit' or 'bank-transfer')
+	 * @param 	int<0,1> 	$nooutput 	1=Return string, no output
+	 * @param	int			$short		1=Use short version
+	 * @return	string                  HTML output or ''
 	 */
-	public function form_modes_reglement($page, $selected = '', $htmlname = 'mode_reglement_id', $filtertype = '', $active = 1, $addempty = 0, $type = '', $nooutput = 0)
+	public function form_modes_reglement($page, $selected = '', $htmlname = 'mode_reglement_id', $filtertype = '', $active = 1, $addempty = 0, $type = '', $nooutput = 0, $short = 0)
 	{
 		// phpcs:enable
 		global $langs;
@@ -7402,9 +7431,13 @@ class Form
 			$out .= '<input type="submit" class="button smallpaddingimp valignmiddle" value="' . $langs->trans("Modify") . '">';
 			$out .= '</form>';
 		} else {
-			if ($selected) {
+			if ((int) $selected) {
 				$this->load_cache_types_paiements();
-				$out .= $this->cache_types_paiements[$selected]['label'];
+				if ($short) {
+					$out .= $this->cache_types_paiements[(int) $selected]['shortlabel'] ?? '&nbsp;';
+				} else {
+					$out .= $this->cache_types_paiements[(int) $selected]['label'] ?? '&nbsp;';
+				}
 			} else {
 				$out .= "&nbsp;";
 			}
@@ -7875,7 +7908,7 @@ class Form
 	public function load_cache_vatrates($country_code)
 	{
 		// phpcs:enable
-		global $langs, $user;
+		global $langs, $user, $hookmanager;
 
 		$num = count($this->cache_vatrates);
 		if ($num > 0) {
@@ -7884,7 +7917,9 @@ class Form
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		$sql = "SELECT t.rowid, t.type_vat, t.code, t.taux, t.localtax1, t.localtax1_type, t.localtax2, t.localtax2_type, t.recuperableonly, t.einvoice_vatex";
+		// entity and fk_pays are returned so a hook on loadDictionaryCache can tell two rows apart
+		// when the dictionary is read across entities (most rows carry an empty code)
+		$sql = "SELECT t.rowid, t.entity, t.fk_pays, t.type_vat, t.code, t.taux, t.localtax1, t.localtax1_type, t.localtax2, t.localtax2_type, t.recuperableonly, t.einvoice_vatex";
 		$sql .= " FROM ".$this->db->prefix()."c_tva as t, ".$this->db->prefix()."c_country as c";
 		$sql .= " WHERE t.fk_pays = c.rowid";
 		$sql .= " AND t.active > 0";
@@ -7901,6 +7936,8 @@ class Form
 
 					$tmparray = array();
 					$tmparray['rowid']			= (int) $obj->rowid;
+					$tmparray['entity']			= (int) $obj->entity;
+					$tmparray['fk_pays']		= (int) $obj->fk_pays;
 					$tmparray['type_vat']		= ($obj->type_vat <= 0 ? 0 : $obj->type_vat);	// Some version have type_vat corrupted with value -1
 					$tmparray['code']			= $obj->code;
 					$tmparray['txtva']			= $obj->taux;
@@ -7931,7 +7968,17 @@ class Form
 					$this->cache_vatrates[$obj->rowid] = $tmparray;
 				}
 
-				return $num;
+				$parameters = array('dictionary' => 'vatrate', 'country_code' => $country_code);
+				$reshook = $hookmanager->executeHooks('loadDictionaryCache', $parameters, $this); // Note that $action and $object may have been modified by hook
+				if (empty($reshook)) {
+					if (is_array($hookmanager->resArray) && count($hookmanager->resArray)) {
+						$this->cache_vatrates = array_merge($this->cache_vatrates, $hookmanager->resArray);
+					}
+				} else {
+					$this->cache_vatrates = $hookmanager->resArray;
+				}
+
+				return count($this->cache_vatrates);
 			} else {
 				$this->error = '<span class="error">';
 				$this->error .= $langs->trans("ErrorNoVATRateDefinedForSellerCountry", $country_code);
@@ -9886,7 +9933,7 @@ class Form
 			'@phan-var-force CommonObjectLine $objecttmp';
 			$parent_properties = getElementProperties($objecttmp->parent_element);
 			// @phan-suppress-next-line SqlInjection
-			$sql .= " INNER JOIN " . $this->db->prefix() . $this->db->sanitize($parent_properties['table_element']) . " as o ON o.rowid = t.".$objecttmp->fk_parent_attribute;
+			$sql .= " INNER JOIN " . $this->db->prefix() . $this->db->sanitize($parent_properties['table_element']) . " as o ON o.rowid = t.".$this->db->sanitize($objecttmp->fk_parent_attribute);
 		}
 		if (!empty($objecttmp->parent_element) && in_array($objecttmp->parent_element, ['commande', 'propal', 'facture', 'expedition'])) {
 			$sql .= " LEFT JOIN " . $this->db->prefix() . "product as p ON p.rowid = t.fk_product";
@@ -9933,12 +9980,17 @@ class Form
 				}
 			}
 
-			// If user is external user, we must also make a test on llx_societe_commerciaux
+			// If user is external user, we must also make a test on thirdparty
 			if (!empty($user->socid)) {
 				if ($objecttmp->element == 'societe') {
 					$sql .= " AND t.rowid = " . ((int) $user->socid);
 				} elseif (!empty($objecttmp->fields['fk_soc']) || !empty($objecttmp->fields['t.fk_soc']) || property_exists($objecttmp, 'fk_soc') || property_exists($objecttmp, 'socid')) {
 					$sql .= " AND t.fk_soc = " . ((int) $user->socid);
+				} elseif (!empty($objecttmp->parent_element)) {
+					$tmpparent = fetchObjectByElement(0, $objecttmp->parent_element, '', 1);
+					if (is_object($tmpparent) && (!empty($tmpparent->fields['fk_soc']) || !empty($tmpparent->fields['t.fk_soc']) || property_exists($tmpparent, 'fk_soc') || property_exists($tmpparent, 'socid'))) {
+						$sql .= " AND o.fk_soc = " . ((int) $user->socid);
+					}
 				}
 			}
 
@@ -10042,7 +10094,7 @@ class Form
 	 * Generates a set of HTML radio inputs from an array of key-value items.
 	 *
 	 * @param string $htmlName Name of the HTML input group
-	 * @param array<string, string|array{label: string,value?: string|int,attr?: array<string, string|int|bool|null>, unescapedAttr?: string[],attrLabel?: array<string, string|int|bool|null>,unescapedAttrLabel?: string[],disabled?: bool,css?: string,labelIsHtml?: bool}> $radioItems Array of items in the form key => label or key => array of item properties
+	 * @param array<string, string|array{label: string,value?: string|int,attr?: array<string, string|int|bool|null>, attrLabel?: array<string, string|int|bool|null>, disabled?: bool,css?: string,labelIsHtml?: bool}> $radioItems Array of items in the form key => label or key => array of item properties
 	 * @param string|int $selected Preselected key for selection.
 	 * @param array<string, array<string, string|int|bool|null>|string|bool> $moreGlobalParams Additional global parameters applied to all items (e.g., attributes)
 	 *
@@ -10057,9 +10109,7 @@ class Form
 				'type' => 'radio',
 				'name' => $htmlName,
 			],
-			'unescapedAttr' => [],
 			'attrLabel' => [],
-			'unescapedAttrLabel' => [],
 			'labelIsHtml' => false
 		];
 
@@ -10097,8 +10147,8 @@ class Form
 				}
 
 				// Build HTML attributes for input and label
-				$inputAttributes = implode(' ', commonHtmlAttributeBuilder($item['attr'], $item['unescapedAttr']));
-				$labelAttributes = implode(' ', commonHtmlAttributeBuilder($item['attrLabel'], $item['unescapedAttrLabel']));
+				$inputAttributes = implode(' ', commonHtmlAttributeBuilder($item['attr']));
+				$labelAttributes = implode(' ', commonHtmlAttributeBuilder($item['attrLabel']));
 
 				// prevent accidental Xss todo : escape $item['label'] but html friendly compatible
 				$text = $item['labelIsHtml'] ? $item['label'] : htmlspecialchars($item['label'], ENT_QUOTES | ENT_SUBSTITUTE);
@@ -10172,7 +10222,7 @@ class Form
 			if (!is_numeric($show_empty)) {
 				$textforempty = $show_empty;
 			}
-			$out .= '<option class="optiongrey" ' . ($moreparamonempty ? $moreparamonempty . ' ' : '') . 'value="' . (((int) $show_empty) < 0 ? $show_empty : -1) . '"' . ($id == $show_empty ? ' selected' : '') . '>' . $textforempty . '</option>' . "\n";
+			$out .= '<option class="optiongrey" ' . ($moreparamonempty ? $moreparamonempty . ' ' : '') . 'value="' . (((int) $show_empty) < 0 ? $show_empty : -1) . '"' . ($id == $show_empty ? ' selected' : '') . '>' . dol_escape_htmltag($textforempty) . '</option>' . "\n";
 		}
 		if (is_array($array)) {
 			// Translate
@@ -11169,7 +11219,11 @@ class Form
 					'enabled' => isModEnabled('eventorganization'),
 					'perms' => 1,
 					'label' => 'LinkToConferenceOrBoothAttendee',
-					'sql' => "SELECT s.rowid as socid, CONCAT(a.firstname, ' ', a.lastname) as name, a.rowid as rowid, a.fk_project as fk_project, a.ref as ref, a.email as email, a.date_subscription as date_subscription FROM " . $this->db->prefix() . "societe as s, " . $this->db->prefix() . "eventorganization_conferenceorboothattendee as a WHERE a.fk_soc = s.rowid AND a.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND s.entity IN (' . getEntity('conferenceorboothattendee') . ')' . (empty($object->fk_project) ? '' : ' AND a.fk_project = ' . (int) $object->fk_project),
+					'sql' => "SELECT s.rowid as socid, CONCAT(a.firstname, ' ', a.lastname) as name, a.rowid as rowid, a.fk_project as fk_project, a.ref as ref, a.email as email, a.date_subscription as date_subscription FROM "
+						.$this->db->prefix()."societe as s, "
+						.$this->db->prefix()."eventorganization_conferenceorboothattendee as a WHERE a.fk_soc = s.rowid AND a.fk_soc IN ("
+						.$this->db->sanitize($listofidcompanytoscan) . ') AND s.entity IN (' . getEntity('conferenceorboothattendee') . ')'
+						. (empty($object->fk_project) ? '' : ' AND a.fk_project = ' . (int) $object->fk_project),
 					'linkname' => 'attendee'
 				),
 				'invoice' => array(
@@ -11980,7 +12034,7 @@ class Form
 	 *
 	 * @param int|object|array<int|object> 	$selected	Id group or group(s) preselected
 	 * @param string 				$htmlname 			Field name in form
-	 * @param int<0,1> 				$show_empty 		0=list without null value, 1=add an unknown value
+	 * @param int<0,1>|string 		$show_empty 		0=list without null value, 1=add an empty value into list (key is -1 and value is '&nbsp;'), or a string to use as the empty option's label instead
 	 * @param string|int[] 			$exclude 			Array list of groups id to exclude
 	 * @param int<0,1> 				$disabled 			If select list must be disabled
 	 * @param string|int[] 			$include 			Array list of groups id to include
@@ -12049,7 +12103,11 @@ class Form
 			$i = 0;
 			if ($num) {
 				if ($show_empty && !$multiple) {
-					$out .= '<option value="-1"' . (in_array(-1, $selected) ? ' selected' : '') . '>&nbsp;</option>' . "\n";
+					$textforempty = '&nbsp;';
+					if (!is_numeric($show_empty)) {
+						$textforempty = dol_escape_htmltag($show_empty);
+					}
+					$out .= '<option value="-1"' . (in_array(-1, $selected) ? ' selected' : '') . '>' . $textforempty . '</option>' . "\n";
 				}
 
 				while ($i < $num) {

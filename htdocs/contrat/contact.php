@@ -30,14 +30,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/contract.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
-require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-if (isModEnabled('project')) {
-	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-}
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -45,6 +37,13 @@ if (isModEnabled('project')) {
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/contract.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+if (isModEnabled('project')) {
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array('contracts', 'companies'));
@@ -221,16 +220,15 @@ if ($id > 0 || !empty($ref)) {
 		if ($object->thirdparty->remise_percent) {
 			print $langs->trans("CompanyHasRelativeDiscount", $object->thirdparty->remise_percent);
 		} else {
-			print $langs->trans("CompanyHasNoRelativeDiscount");
+			print '<span class="hideonsmartphone opacitymedium">'.$langs->trans("CompanyHasNoRelativeDiscount").'</span>';
 		}
 		$absolute_discount = $object->thirdparty->getAvailableDiscounts();
 		print '. ';
 		if ($absolute_discount) {
 			print $langs->trans("CompanyHasAbsoluteDiscount", price($absolute_discount), $langs->trans("Currency".$conf->currency));
 		} else {
-			print $langs->trans("CompanyHasNoAbsoluteDiscount");
+			print '<span class="hideonsmartphone opacitymedium">'.$langs->trans("CompanyHasNoAbsoluteDiscount").'</span>';
 		}
-		print '.';
 		print '</td></tr>';
 
 		// Date

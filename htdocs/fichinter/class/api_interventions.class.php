@@ -28,6 +28,7 @@ use Luracast\Restler\RestException;
 
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 include_once DOL_DOCUMENT_ROOT."/fichinter/class/fichinterligne.class.php";
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 
 
@@ -173,9 +174,9 @@ class Interventions extends DolibarrApi
 		// Search on sale representative
 		if ($search_sale && $search_sale != '-1') {
 			if ($search_sale == -2) {
-				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc)";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', 0, 1);
 			} elseif ($search_sale > 0) {
-				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', (int) $search_sale);
 			}
 		}
 
@@ -353,31 +354,35 @@ class Interventions extends DolibarrApi
 	 *
 	 * @url	GET {id}/lines
 	 *
-	 * @return int
+	 * @return array
+	 * @phan-return FichinterLigne[]
+	 * @phpstan-return FichinterLigne[]
+	 *
+	 * @throws	RestException	403		Access denied
+	 * @throws	RestException	404		Intervention not found
 	 */
-	/* TODO
 	public function getLines($id)
 	{
-		if(! DolibarrApiAccess::$user->hasRight('ficheinter', 'lire')) {
+		if (!DolibarrApiAccess::$user->hasRight('ficheinter', 'lire')) {
 			throw new RestException(403);
 		}
 
 		$result = $this->fichinter->fetch($id);
-		if( ! $result ) {
+		if (!$result) {
 			throw new RestException(404, 'Intervention not found');
 		}
 
-		if( ! DolibarrApi::_checkAccessToResource('fichinter',$this->fichinter->id)) {
+		if (!DolibarrApi::_checkAccessToResource('fichinter', $this->fichinter->id)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
-		$this->fichinter->getLinesArray();
+
+		$this->fichinter->fetch_lines();
 		$result = array();
 		foreach ($this->fichinter->lines as $line) {
-			array_push($result,$this->_cleanObjectDatas($line));
+			$result[] = $this->_cleanObjectDatas($line);
 		}
 		return $result;
 	}
-	*/
 
 	/**
 	 * Add a line to an intervention

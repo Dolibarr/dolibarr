@@ -57,3 +57,7 @@ donAnonymous=Anonimowa darowizna
 AnonymousDonationTooltip=Zaznacz to pole, jeśli chcesz, aby Twoja darowizna pozostała anonimowa. Twoje dane osobowe nie będą pytane.
 publicDonationFieldHelp=%s może opublikować moją darowiznę w rejestrze publicznym
 listOfPublicDonations=Lista darowizn publicznych
+donationErrorMessageContactEmail=An error has occurred. To complete your donation, please contact us at %s
+descDonationLineInInvoice=Donation and contribution
+companyBusinessNumber=Business Registration Number
+companyTIN=Tax Identification Number

@@ -62,3 +62,4 @@ EmailSomeoneVoted=%s has filled a line.\nYou can find your poll at the link: \n%
 ShowSurvey=Прикажи анкета
 UserMustBeSameThanUserUsedToVote=Мора да сте гласале и да го користите истото корисничко име што го користел за гласање, за да објавите коментар
 ListOfOpenSurveys=Список на отворени анкети
+AddTheVote=Click to add the vote

@@ -1,3 +1,10 @@
+/* Copyright (C) 2026	Jose Martinez			<jose.martinez@pichinov.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ */
 /**
  * \file htdocs/ai/js/ai_assistant.js
  * \brief Frontend logic for the AI Assistant
@@ -47,9 +54,11 @@ export function initAiAssistant(container) {
     const uploadBtn = container.querySelector('#upload-btn');
     const uploadWrapper = container.querySelector('#upload-wrapper');
     const fileInput = container.querySelector('#file-upload');
+    const chipArea = container.querySelector('#file-chip-area');
 
     const clearBtn = container.querySelector('#clear-btn');
     const engineSelect = container.querySelector('#engine-select');
+    const modelSelect = container.querySelector('#model-select');
     const input = container.querySelector('#user-input');
     const chat = container.querySelector('#chat-history');
     const statusBar = container.querySelector('#status-bar');
@@ -67,6 +76,9 @@ export function initAiAssistant(container) {
     let lastResult = { data: null, tool: '', query: '' };
     let pendingIntent = null;     // Stores action waiting for confirmation
     let clarificationContext = null;
+    // Document attached via the paperclip: {name, payload}. Sent as context with
+    // the NEXT message; only a small chip (icon + name) is shown in the UI.
+    let attachedDoc = null;
 
     // Audio Hardware Context
     let audioContext, mediaStream, audioProcessor, audioChunks = [];
@@ -115,6 +127,9 @@ export function initAiAssistant(container) {
 
     // Initialize Doc Parsing UI Listeners
     initDocParsingUI();
+
+    // Initialize the model picker (presets + dynamic provider model list)
+    initModelPicker();
 
     // Listen for custom event to trigger PDF download from buttons
     // (scoped to the container: each chat instance reacts only to its own buttons)
@@ -170,13 +185,14 @@ export function initAiAssistant(container) {
     // =========================================================================
 
     /**
-     * Update UI visibility based on selected engine
-     * @param {string} mode - 'text', 'cloud', 'whisper', 'local_docs', 'cloud_docs'
+     * Update UI visibility based on selected engine.
+     * The paperclip (uploadWrapper) is ALWAYS visible: documents can be attached
+     * in any mode, like in modern chat UIs. The legacy 'local_docs'/'cloud_docs'
+     * selector modes are gone — routing local/cloud is automatic on attach.
+     * @param {string} mode - 'text', 'cloud', 'whisper'
      */
     function updateInterfaceMode(mode) {
-        // Reset all wrappers
-        micWrapper.classList.add('hidden');
-        uploadWrapper.classList.add('hidden');
+        micWrapper.classList.add('ai-hidden');
 
         if (mode === 'text') {
             input.placeholder = t('TypeYourQuestion');
@@ -184,16 +200,9 @@ export function initAiAssistant(container) {
         }
         else if (mode === 'cloud' || mode === 'whisper') {
             // Voice Modes
-            micWrapper.classList.remove('hidden');
+            micWrapper.classList.remove('ai-hidden');
             input.placeholder = 'Type or speak...';
             initEngine(mode);
-        }
-        else if (mode === 'local_docs' || mode === 'cloud_docs') {
-            // Document Modes
-            uploadWrapper.classList.remove('hidden');
-            input.placeholder = mode === 'local_docs'
-                ? t('UploadLocalDoc')
-                : t('UploadCloudDoc');
         }
     }
 
@@ -252,15 +261,40 @@ export function initAiAssistant(container) {
             const file = e.target.files[0];
             if (!file) return;
 
-            const mode = engineSelect.value;
-            statusBar.innerText = t('ProcessingFile') + ` ${file.name} (${mode})...`;
+            renderChip(file.name, 'loading');
+            statusBar.innerText = t('ProcessingFile') + ` ${file.name}...`;
 
             try {
-                let contentPayload = "";
+                // Automatic routing: try the in-browser extraction first, then
+                // fall back to server-side cloud parsing (multimodal) when the
+                // local result is empty or too short to be useful — typically a
+                // photographed PDF with no text layer.
+                //
+                // Two guards keep the chip from spinning for minutes:
+                // - a large image goes straight to cloud parsing (browser OCR on a
+                //   multi-MB photo downloads Tesseract + a language model and can
+                //   take minutes for a poor result);
+                // - any local extraction is capped by a hard timeout, after which
+                //   we fall back to cloud parsing (the orphan extraction result,
+                //   if it ever completes, is simply ignored).
+                const LOCAL_EXTRACT_TIMEOUT_MS = 20000;
+                const LOCAL_IMAGE_MAX_BYTES = 1500000;
+                const isImage = file.type.startsWith('image/') || /\.(png|jpe?g|gif|bmp|webp)$/i.test(file.name);
 
-                if (mode === 'local_docs') {
-                    contentPayload = await processLocalFile(file);
-                } else if (mode === 'cloud_docs') {
+                let contentPayload = '';
+                if (!(isImage && file.size > LOCAL_IMAGE_MAX_BYTES)) {
+                    try {
+                        contentPayload = await Promise.race([
+                            processLocalFile(file),
+                            new Promise((resolve) => setTimeout(() => resolve(''), LOCAL_EXTRACT_TIMEOUT_MS))
+                        ]);
+                    } catch (errLocal) {
+                        contentPayload = '';
+                    }
+                }
+                const usefulChars = (contentPayload || '').replace(/\s+/g, '').length;
+                if (usefulChars < 120) {
+                    statusBar.innerText = t('ProcessingFile') + ` ${file.name} (cloud)...`;
                     contentPayload = await processCloudFile(file);
                 }
 
@@ -268,30 +302,165 @@ export function initAiAssistant(container) {
                     throw new Error(t('UnsupportedFileType'));
                 }
 
-                const docContext = `${t('DocContextIntro')}
-
-		${contentPayload}
-
-		--- ${t('DocContextOutro')} ---
-		`;
-
-                input.value = docContext;
-                setTimeout(autoResizeInput, 0); // Trigger resize so the text is visible
-
-                // Update placeholder to guide the user
-                //input.placeholder = "Document loaded. Ask something (e.g., 'Summarize this', 'Create an invoice for line 2')...";
-
-                // Focus input so user can type immediately
+                // The content NEVER goes into the input nor the conversation:
+                // it is kept aside and sent as context with the next message.
+                attachedDoc = { name: file.name, payload: contentPayload };
+                renderChip(file.name, 'ready');
+                statusBar.innerText = '';
                 input.focus();
-                statusBar.innerText = t('DocLoaded');
-
             } catch (err) {
                 console.error(err);
+                attachedDoc = null;
+                renderChip(file.name, 'error');
                 statusBar.innerText = t('Error') + ": " + err.message;
             }
 
             fileInput.value = '';
         });
+    }
+
+    /** Pick a FontAwesome icon class from a file name extension. */
+    function chipIcon(name) {
+        const ext = (String(name).split('.').pop() || '').toLowerCase();
+        if (ext === 'pdf') return 'fa-file-pdf';
+        if (['png', 'jpg', 'jpeg', 'gif', 'bmp', 'webp'].indexOf(ext) !== -1) return 'fa-file-image';
+        if (['xls', 'xlsx', 'ods'].indexOf(ext) !== -1) return 'fa-file-excel';
+        if (['doc', 'docx', 'odt'].indexOf(ext) !== -1) return 'fa-file-word';
+        return 'fa-file-alt';
+    }
+
+    /** Minimal HTML escaping (appendMsg uses innerHTML). */
+    function escapeHtml(s) {
+        return String(s).replace(/[&<>"']/g, (c) => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]));
+    }
+
+    /** Render the attached-file chip above the input pill. */
+    function renderChip(name, state) {
+        if (!chipArea) return;
+        chipArea.classList.remove('ai-hidden');
+        const stateClass = (state === 'error') ? ' chip-error' : '';
+        const icon = (state === 'loading') ? 'fa-spinner fa-spin' : chipIcon(name);
+        chipArea.innerHTML = '<span class="file-chip' + stateClass + '">'
+            + '<i class="fa ' + icon + ' chip-icon"></i>'
+            + '<span class="chip-name">' + escapeHtml(name) + '</span>'
+            + '<button type="button" class="chip-x" title="' + escapeHtml(t('Cancel')) + '">&times;</button>'
+            + '</span>';
+        chipArea.querySelector('.chip-x').addEventListener('click', clearChip);
+    }
+
+    /** Remove the chip and forget the attached document. */
+    function clearChip() {
+        attachedDoc = null;
+        if (chipArea) {
+            chipArea.innerHTML = '';
+            chipArea.classList.add('ai-hidden');
+        }
+    }
+
+    /** Inline (read-only) chip markup shown inside a sent user message. */
+    function chipHtmlFor(name) {
+        return '<span class="file-chip chip-inline"><i class="fa ' + chipIcon(name) + ' chip-icon"></i>'
+            + '<span class="chip-name">' + escapeHtml(name) + '</span></span>';
+    }
+
+    /**
+     * Light markdown rendering for free-text LLM answers: the models reply with
+     * markdown (bold, lists, line breaks) that innerHTML would otherwise flatten
+     * into one unreadable block with literal asterisks. HTML is escaped FIRST,
+     * so the LLM cannot inject markup.
+     * @param {string} text Raw model answer
+     * @return {string} Safe HTML
+     */
+    function renderMarkdownLite(text) {
+        let s = escapeHtml(String(text));
+        s = s.replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>');
+        s = s.replace(/(^|[\s(])\*([^*\n]+)\*(?=[\s).,;:!?]|$)/g, '$1<em>$2</em>');
+        s = s.replace(/`([^`\n]+)`/g, '<code>$1</code>');
+        // Numbered/bulleted list items get their own line even when the model
+        // packed them into a single paragraph ("… 5,20 € 2. **Référence** …").
+        s = s.replace(/\s(\d{1,2}\.\s)(?=<strong>|\S)/g, '<br>$1');
+        s = s.replace(/(^|\n)[-•]\s/g, '$1• ');
+        s = s.replace(/\n/g, '<br>');
+        return s;
+    }
+
+    // =========================================================================
+    // MODEL PICKER
+    // =========================================================================
+
+    let modelList = [];   // model ids fetched from the provider (via list_models.php)
+
+    /** Populate the model pill: Auto + presets, then the provider's model list. */
+    function initModelPicker() {
+        if (!modelSelect) return;
+        let saved = '';
+        try { saved = localStorage.getItem('aiModelChoice') || ''; } catch (e) { /* private mode */ }
+
+        const presets = [
+            ['preset:fast', '⚡ ' + t('AIModelFast')],
+            ['preset:balanced', '⚖️ ' + t('AIModelBalanced')],
+            ['preset:deep', '🧠 ' + t('AIModelDeep')]
+        ];
+        presets.forEach(([val, label]) => {
+            const o = document.createElement('option');
+            o.value = val; o.textContent = label;
+            modelSelect.appendChild(o);
+        });
+
+        const applySaved = () => {
+            if (saved && Array.prototype.some.call(modelSelect.options, (o) => o.value === saved)) {
+                modelSelect.value = saved;
+            }
+        };
+        applySaved();
+
+        fetch(epUrl('../ajax/list_models.php'))
+            .then((r) => r.json())
+            .then((j) => {
+                modelList = (j && j.models) || [];
+                if (modelList.length) {
+                    const grp = document.createElement('optgroup');
+                    grp.label = '──';
+                    modelList.forEach((id) => {
+                        const o = document.createElement('option');
+                        o.value = id; o.textContent = id;
+                        grp.appendChild(o);
+                    });
+                    modelSelect.appendChild(grp);
+                    // Saved model no longer offered by the provider: fall back to
+                    // Auto, forget the stale choice, and tell the user ONCE (so the
+                    // picker never looks silently ignored, cf. review on #39878).
+                    if (saved && saved.indexOf('preset:') !== 0 && modelList.indexOf(saved) < 0) {
+                        appendMsg('system', escapeHtml(t('AIModelSavedGone').replace('%s', saved)));
+                        try { localStorage.removeItem('aiModelChoice'); } catch (e) { /* ignore */ }
+                        saved = '';
+                    }
+                }
+                applySaved();
+            })
+            .catch(() => { /* provider unreachable: keep Auto + presets */ });
+
+        modelSelect.addEventListener('change', () => {
+            try { localStorage.setItem('aiModelChoice', modelSelect.value); } catch (e) { /* ignore */ }
+        });
+    }
+
+    /**
+     * Resolve the picker value to a concrete model id ('' = provider default).
+     * Presets map onto the dynamic list with a heuristic regex on the id.
+     */
+    function resolveModel() {
+        if (!modelSelect) return '';
+        const v = modelSelect.value;
+        if (!v) return '';
+        if (v.indexOf('preset:') === 0) {
+            const kind = v.substring(7);
+            const re = (kind === 'fast') ? /haiku|mini|flash|lite|instant/i
+                : ((kind === 'balanced') ? /sonnet|4o|medium|small/i : /opus|o1|pro|large/i);
+            const hit = modelList.find((id) => re.test(id));
+            return hit || '';
+        }
+        return v;
     }
 
     // =========================================================================
@@ -677,7 +846,11 @@ export function initAiAssistant(container) {
     }
 
     async function processCloudFile(file) {
-        const base64 = await fileToBase64(file);
+        // fileToBase64 resolves the FULL data URL ("data:image/png;base64,AAAA…").
+        // Strip the prefix: the server-side extractor (parse_intent.php) expects
+        // pure base64 after '::' and hands it to the LLM as a native multimodal
+        // part — with the prefix left in, the marker is never recognized.
+        const base64 = String(await fileToBase64(file)).split(',').pop();
         return `__FILE_ATTACHMENT__[${file.type}]::${base64}`;
     }
 
@@ -1009,7 +1182,7 @@ export function initAiAssistant(container) {
 
     function handleClarification(question, context) {
         clarificationContext = context;
-        let html = `<div><strong>${question}</strong></div><input type="text" id="clarification-input" placeholder="${t('TypeResponse')}" style="width:100%; margin-top:10px; padding:8px; border:1px solid #ccc; border-radius:4px;">`;
+        let html = `<div><strong>${renderMarkdownLite(question)}</strong></div><input type="text" id="clarification-input" placeholder="${t('TypeResponse')}" style="width:100%; margin-top:10px; padding:8px; border:1px solid #ccc; border-radius:4px;">`;
         const actions = [
             {
                 text: t('Submit'), class: 'primary', icon: 'fa-check', onclick: () => {
@@ -1037,7 +1210,7 @@ export function initAiAssistant(container) {
 
     function handleResponse(message) {
         if (!message) message = t('EmptyAIResponse');
-        appendMsg('bot', message);
+        appendMsg('bot', renderMarkdownLite(message));
     }
 
     function handleConfirmation(action, details, originalIntent) {
@@ -1155,18 +1328,30 @@ export function initAiAssistant(container) {
 
     async function handleQuery() {
         const query = input.value.trim();
-        if (!query) return;
+        if (!query && !attachedDoc) return;
         if (welcome) welcome.style.display = 'none'; // leave the empty-state once a message is sent
-        appendMsg('user', query);
+
+        // What is SENT = document context + question; what is DISPLAYED = chip + question.
+        let sentQuery = query;
+        let displayHtml = escapeHtml(query);
+        if (attachedDoc) {
+            const docContext = `${t('DocContextIntro')}\n\n${attachedDoc.payload}\n\n--- ${t('DocContextOutro')} ---\n`;
+            sentQuery = docContext + (query ? '\n' + query : '');
+            displayHtml = chipHtmlFor(attachedDoc.name) + (query ? '<br>' + displayHtml : '');
+        }
+
+        appendMsg('user', displayHtml);
+        clearChip();
         input.value = '';
         input.style.height = '44px';
         input.disabled = true;
         appendTyping();
         const loadingMsg = chat.lastElementChild;
         try {
+            const chosenModel = resolveModel();
             const intentRes = await fetch(epUrl('parse_intent.php'), {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ query: query })
+                body: JSON.stringify(chosenModel ? { query: sentQuery, model: chosenModel } : { query: sentQuery })
             });
             const intent = await intentRes.json();
             loadingMsg.remove();

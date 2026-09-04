@@ -37,6 +37,7 @@
  * @var	string $forceFullTextIndexation
  */
 '
+@phan-var-force CommonObject $object
 @phan-var-force string $upload_dir
 @phan-var-force string $upload_dirold
 @phan-var-force string $confirm
@@ -168,9 +169,9 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes' && !empty($permissionto
 		$dir = dirname($file).'/'; // Path to the folder containing the original image
 		$dirthumb = $dir.'/thumbs/'; // Path to the folder containing the thumbnail (if file is an image)
 
-		$ret = dol_delete_file($file, 0, 0, 0, (is_object($object) ? $object : null));
+		$ret = dol_delete_file($file, 1, 0, 0, (is_object($object) ? $object : null));
 		if (!empty($fileold)) {
-			dol_delete_file($fileold, 0, 0, 0, (is_object($object) ? $object : null)); // Delete file using old path
+			dol_delete_file($fileold, 1, 0, 0, (is_object($object) ? $object : null)); // Delete file using old path
 		}
 
 		if ($ret) {
@@ -224,7 +225,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes' && !empty($permissionto
 
 	$link = new Link($db);
 	$f = $link->fetch(GETPOSTINT('linkid'));
-	if ($f) {
+	if ($f > 0) {
 		$link->url = GETPOST('link', 'alpha');
 		if (substr($link->url, 0, 7) != 'http://'
 			&& substr($link->url, 0, 8) != 'https://'
@@ -277,24 +278,31 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes' && !empty($permissionto
 		}
 
 		if (empty($error) && $filenamefrom != $filenameto) {
+			// For backward compatibility, the file to rename may be stored into an old path (see PRODUCT_USE_OLD_PATH_FOR_PHOTO).
+			// Upload and delete actions already fall back on $upload_dirold, so the rename action must do the same.
+			$dirforfile = $upload_dir;
+			if (!empty($upload_dirold) && !dol_is_file($upload_dir.'/'.$filenamefrom) && dol_is_file($upload_dirold.'/'.$filenamefrom)) {
+				$dirforfile = $upload_dirold;
+			}
+
 			// Security:
 			// Disallow file with some extensions. We rename them.
 			// Because if we put the documents directory into a directory inside web root (very bad), this allows to execute on demand arbitrary code.
 			if (isAFileWithExecutableContent($filenameto) && !getDolGlobalString('MAIN_DOCUMENT_IS_OUTSIDE_WEBROOT_SO_NOEXE_NOT_REQUIRED')) {
-				// $upload_dir ends with a slash, so be must be sure the medias dir to compare to ends with slash too.
+				// $dirforfile ends with a slash, so be must be sure the medias dir to compare to ends with slash too.
 				$publicmediasdirwithslash = $conf->medias->multidir_output[$conf->entity];
 				if (!preg_match('/\/$/', $publicmediasdirwithslash)) {
 					$publicmediasdirwithslash .= '/';
 				}
 
-				if (strpos($upload_dir, $publicmediasdirwithslash) !== 0) {	// We never add .noexe on files into media directory
+				if (strpos($dirforfile, $publicmediasdirwithslash) !== 0) {	// We never add .noexe on files into media directory
 					$filenameto .= '.noexe';
 				}
 			}
 
 			if ($filenamefrom && $filenameto) {
-				$srcpath = $upload_dir.'/'.$filenamefrom;
-				$destpath = $upload_dir.'/'.$filenameto;
+				$srcpath = $dirforfile.'/'.$filenamefrom;
+				$destpath = $dirforfile.'/'.$filenameto;
 				/* disabled. Too many bugs. All files of an object must remain into directory of object. link with event should be done in llx_ecm_files with column agenda_id.
 				if ($modulepart == "ticket" && !dol_is_file($srcpath)) {
 					$srcbis = $conf->agenda->dir_output.'/'.GETPOST('section_dir').$filenamefrom;
@@ -305,7 +313,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes' && !empty($permissionto
 				}*/
 
 				$reshook = $hookmanager->initHooks(array('actionlinkedfiles'));
-				$parameters = array('filenamefrom' => $filenamefrom, 'filenameto' => $filenameto, 'upload_dir' => $upload_dir);
+				$parameters = array('filenamefrom' => $filenamefrom, 'filenameto' => $filenameto, 'upload_dir' => $dirforfile);
 				$reshook = $hookmanager->executeHooks('renameUploadedFile', $parameters, $object);
 
 				if (empty($reshook)) {

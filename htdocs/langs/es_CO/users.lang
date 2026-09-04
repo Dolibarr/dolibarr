@@ -18,6 +18,7 @@ ConfirmDeleteGroup=¿Está seguro de que desea eliminar el grupo <b> %s </b>?
 ConfirmEnableUser=¿Está seguro de que desea habilitar al usuario <b> %s </b>?
 ConfirmReinitPassword=¿Está seguro de que desea generar una nueva contraseña para el usuario <b> %s </b>?
 ConfirmSendNewPassword=¿Está seguro de que desea generar y enviar una nueva contraseña para el usuario <b> %s </b>?
+NewUser=Nuevo Usuario
 LoginNotDefined=El inicio de sesión no está definido.
 NameNotDefined=El nombre no está definido.
 ListOfUsers=Lista de usuarios

@@ -3,6 +3,7 @@ IdAgenda=ID de Evento
 ActionsOwnedBy=Propietario del evento
 ListOfActions=Lista de eventos
 EventReports=Informes de evento
+Location=Ubicaciòn
 ToUserOfGroup=Evento Asignado a cualquier usuario del grupo
 EventOnFullDay=Evento todo el día(s)
 MenuToDoActions=Todos los eventos incompletos
@@ -14,10 +15,12 @@ ViewDay=Vista del día
 ViewWeek=Vista de la semana
 ViewPerType=Por tipo de vista
 AutoActions=Llenado automático
+ManualActions=Creados manualmente por un usuario
 AgendaSetupOtherDesc=Esta página ofrece opciones para permitir la exportación de sus eventos Dolibarr hacia un calendario externo (Thunderbird,Google Calendar etc...)
 AgendaExtSitesDesc=Esta página permite declarar fuentes externas de calendarios para ver sus eventos en la agenda de Dolibarr.
 ActionsEvents=Eventos para los que Dolibarr creará automáticamente una acción en agenda
 EventRemindersByEmailNotEnabled=Los Recordatorios de evento por correo electrónico no se habilitaron en el %s módulo de configuración.
+EventRemindersBySmsNotEnabled=Los recordatorios de eventos por SMS no están habilitados en la configuración del módulo %s.
 PropalClosedSignedInDolibarr=Propuesta %s firmada
 PropalClosedRefusedInDolibarr=Propuesta %s rechazada
 PropalValidatedInDolibarr=Propuesta %s validada
@@ -42,6 +45,7 @@ OrderRefusedInDolibarr=Orden%s rechazada
 OrderBackToDraftInDolibarr=Orden%s volver al estado de borrador
 ShippingSentByEMail=Detalle de entrega %s enviado por correo
 ShippingValidated=Envío %s validado
+InterventionSentByEMail=Intervención %s enviada por correo electrónico
 ProjectDeletedInDolibarr=Proyecto%s eliminado
 ProposalDeleted=Propuesta eliminada
 PRODUCT_CREATEInDolibarr=Producto%s creado
@@ -63,9 +67,12 @@ CANCELInDolibarr=Cancelado
 AgendaModelModule=Plantillas de documento para el evento
 DateActionEnd=Fecha de fin
 AgendaUrlOptions1=También puede agregar los siguientes parámetros para filtrar la salida:
-AgendaUrlOptions3=<b>logina =%s</b> para restringir la salida a acciones propiedad de un usuario<b>%s</b>.
+AgendaUrlOptions3=<b>logina=%s</b> para restringir la salida a acciones del usuario <b>%s</b> (use <b>logina=!%s</b> para excluirlos)
 AgendaUrlOptions4=<b>logint =%s</b> para restringir la salida a acciones asignadas al usuario <b>%s</b> (propietario y otros).
 AgendaUrlOptionsProject=<b>project = __ PROJECT_ID__</b> para restringir el resultado a acciones vinculadas al proyecto <b>__PROJECT_ID__</b>.
+AgendaUrlOptionsCode=<b>actioncode=%s</b> para obtener solo eventos con un código dado
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> para limitar a eventos de los últimos %s días (el predeterminado es %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> para limitar a los últimos 50 eventos (el predeterminado y máximo es %s).
 AgendaHideBirthdayEvents=Ocultar los cumpleaños de los contactos
 ExportDataset_event1=Lista de eventos de la agenda
 DefaultWorkingDays=Rango de días laborales por defecto en una semana (Example: 1-5, 1-6)
@@ -79,3 +86,15 @@ ConfirmCloneEvent=¿Seguro que quieres clonar el evento <b>%s</b>?
 DayOfMonth=Dia del mes
 DateStartPlusOne=Fecha de inicio + 1 hora
 DataFromWasMerged=Los datos de %s fueron fusionado
+MenuBookcalIndex=Cita en línea
+BookcalLabelAvailabilityHelp=Etiqueta del rango de disponibilidad. Por ejemplo:<br>Disponibilidad general<br>Disponibilidad durante las vacaciones
+BookCalSetup =Configuración de cita en línea
+BookCalSetupPage =Página de configuración de cita en línea
+BookCalAboutPage =Página de inicio de BookCal
+ThirdPartyBookCalHelp=Los eventos reservados en este calendario se vincularán automáticamente a este tercero.
+BookingSuccessfullyBooked=Su reserva ha sido guardada
+BookingReservationHourAfter=Confirmamos la reserva de nuestra reunión para la fecha %s
+BookcalBookingTitle=Cita en línea
+EventPartOfARecurringSerie=El evento forma parte de una serie recurrente con ID %s
+BookCalSystem=Reserva en línea
+STOCKTRANSFER_UNVALIDATEInDolibarr=Transferencia de stock %s devuelta a borrador.

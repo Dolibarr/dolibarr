@@ -48,6 +48,7 @@ ConferenceOrBoothTab = ኮንፈረንስ ወይም ቡዝ
 AmountPaid = የተከፈለው መጠን
 DateOfRegistration = የምዝገባ ቀን
 ConferenceOrBoothAttendee = የኮንፈረንስ ወይም ቡዝ ታዳሚ
+ConferenceOrBoothAttendeesShort = Conf. or Booth Attendees
 ApplicantOrVisitor=አመልካች ወይም ጎብኝ
 Speaker=ተናጋሪ
 # Template Mail

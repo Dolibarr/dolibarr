@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2014-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,13 +27,14 @@
  * @var Translate $langs
  * @var User $user
  *
- * @var array<int,string> $depth_array
- * @var array<string,string> $titles
+ * @var ?array<int,string> $depth_array
+ * @var ?array<string,string> $titles
  * @var string $type
  */
 
 '
-@phan-var-force Propal|Commande|Facture|FactureRec|Expedition|SupplierProposal|CommandeFournisseur|FactureFournisseur $this
+@phan-var-force CommonObject $this
+@phan-var-force Propal|Commande|Facture|FactureRec|Expedition|SupplierProposal|CommandeFournisseur|FactureFournisseur $object
 @phan-var-force ?array<int,string> $depth_array
 @phan-var-force ?array<string,string> $titles
 @phan-var-force string $type
@@ -50,18 +51,55 @@ if ($type == 'subtotal' && empty($titles)) {
 $formquestion = array();
 
 if ($type == 'title') {
-	$formquestion = array(
+	$formquestion = array();
+
+	$predefinedtitles = $object->getPredefinedTitles();
+	if (!empty($predefinedtitles)) {
+		$formquestion[] = array(
+			'type' => 'select',
+			'name' => 'subtotalpredefinedtitle',
+			'label' => $langs->trans("PredefinedTitle"),
+			'values' => $predefinedtitles,
+			'select_show_empty' => 1,
+			'moreattr' => 'onchange="var v = jQuery(this).val(); if (v && v != \'-1\') { jQuery(\'#subtotallinedesc\').val(v); }"',
+		);
+	}
+
+	$formquestion = array_merge($formquestion, array(
 		array('type' => 'text', 'name' => 'subtotallinedesc', 'label' => $langs->trans("SubtotalLineDesc"), 'moreattr' => 'placeholder="' . $langs->trans("Description") . '"'),
 		array('type' => 'select', 'name' => 'subtotallinelevel', 'label' => $langs->trans("SubtotalLineLevel"), 'values' => $depth_array, 'default' => 1, 'select_show_empty' => 0),
 		array('type' => 'checkbox', 'value' => true, 'name' => 'titleshowuponpdf', 'label' => $langs->trans("ShowUPOnPDF")),
 		array('type' => 'checkbox', 'value' => true, 'name' => 'titleshowtotalexludingvatonpdf', 'label' => $langs->trans("ShowTotalExludingVATOnPDF")),
 		array('type' => 'checkbox', 'value' => false, 'name' => 'titleforcepagebreak', 'label' => $langs->trans("ForcePageBreak")),
-	);
+	));
 } elseif ($type == 'subtotal') {
 	$formquestion = array(
 		array('type' => 'select', 'name' => 'subtotaltitleline', 'label' => $langs->trans("CorrespondingTitleLine"), 'values' => $titles, 'select_show_empty' => 0),
-		array('type' => 'checkbox', 'value' => true, 'name' => 'subtotalshowtotalexludingvatonpdf', 'label' => $langs->trans("ShowTotalExludingVATOnPDF")),
+		array('type' => 'hidden', 'value' => true, 'name' => 'subtotalshowtotalexludingvatonpdf', 'label' => $langs->trans("ShowTotalExludingVATOnPDF")),
 	);
+} elseif ($type == 'text') {
+	$formquestion = array();
+
+	$predefinedtexts = $object->getPredefinedTexts();
+	if (!empty($predefinedtexts)) {
+		$predefinedtextvalues = array();
+		$predefinedtextsmap = array();
+		foreach ($predefinedtexts as $rowid => $text) {
+			$predefinedtextvalues[$rowid] = $text['label'];
+			$predefinedtextsmap[$rowid] = $text['content'];
+		}
+		print '<script>var subtotalPredefinedTextsMap = ' . json_encode($predefinedtextsmap, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) . ';</script>';
+		$formquestion[] = array(
+			'type' => 'select',
+			'name' => 'subtotalpredefinedtext',
+			'label' => $langs->trans("PredefinedText"),
+			'values' => $predefinedtextvalues,
+			'select_show_empty' => 1,
+			'moreattr' => 'onchange="var v = subtotalPredefinedTextsMap[jQuery(this).val()]; if (v !== undefined) { jQuery(\'#subtotaltextcontent\').val(v); }"',
+		);
+	}
+
+	$formquestion[] = array('type' => 'textarea', 'name' => 'subtotaltextcontent', 'label' => $langs->trans("SubtotalTextContent"), 'morecss' => 'quatrevingtpercent', 'moreattr' => 'rows="4"');
 }
 
 $page = $_SERVER["PHP_SELF"];

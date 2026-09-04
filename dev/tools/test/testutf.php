@@ -1,3 +1,4 @@
+#!/usr/bin/env php
 <?php
 
 // This source file must be UTF-8 encoded
