@@ -288,6 +288,19 @@ class Documentation
 						'ExperimentalUxContributionTitle' => '#experimental-ux-contribution',
 					),
 				),
+				'UiDolibarrDialog' => array(
+					'url' => dol_buildpath($this->baseUrl.'/experimental/experiments/dialog/index.php', 1),
+					'icon' => 'fas fa-flask',
+					'submenu' => array(),
+					'summary' => array(
+						'DocBasicUsage' => '#dialogsection-basicusage',
+						'DocDialogHeaderAndFooter' => '#dialogsection-header',
+						'DocDialogData' => '#dialogsection-data',
+						'DocDialogForms' => '#dialogsection-forms',
+						'DocDialogSize' => '#dialogsection-size',
+						'DocDialogOthers' => '#dialogsection-params',
+					),
+				),
 				'UxMenuTooltipTheme' => array(
 					'url' => dol_buildpath($this->baseUrl.'/experimental/tooltip-themes/index.php', 1),
 					'icon' => 'fas fa-comment',

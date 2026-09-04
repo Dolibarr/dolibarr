@@ -1,0 +1,361 @@
+/* ============================================================
+   UI Dialog - Base
+   ============================================================ */
+
+dialog.dol-dialog {
+	position: relative;
+	border: none;
+	padding: 0;
+	background: #fff;
+	box-shadow: 0 4px 32px rgba(0, 0, 0, 0.18);
+	overflow: visible;
+}
+
+/* remove backdrop and click events */
+dialog.dol-dialog.no-backdrop::backdrop{
+	background: transparent !important;
+	pointer-events: none !important;
+}
+
+/* Disable page scrollbar when dialog (with backdrop) is open */
+body:has(dialog.dol-dialog[open]:not(.no-backdrop)) {
+	overflow: hidden;
+}
+
+dialog.dol-dialog[open] {
+	display: flex;
+	flex-direction: column;
+}
+
+/* ============================================================
+   UI Dialog - Size
+   ============================================================ */
+.dol-dialog {
+	width: clamp(320px, 90vw, 640px);
+}
+
+/* Extra small */
+.dol-dialog.dol-dialog-xs {
+	width: clamp(260px, 25vw, 360px);
+}
+
+/* Large */
+.dol-dialog.dol-dialog-lg {
+	width: clamp(420px, 50vw, 900px);
+}
+
+/* Extra large */
+.dol-dialog.dol-dialog-xl {
+	width: clamp(480px, 75vw, 1200px);
+}
+
+/* Full width */
+.dol-dialog.dol-dialog-xxl {
+	width: min(95vw, 1600px);
+}
+
+/* ============================================================
+   Header (optionnel)
+   ============================================================ */
+
+dialog.dol-dialog .dol-dialog-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 1rem 1.25rem;
+	border-bottom: 1px solid #e0e0e0;
+	flex-shrink: 0;
+}
+
+dialog.dol-dialog .dol-dialog-title {
+	margin: 0;
+	font-size: 1rem;
+	font-weight: 500;
+	display: flex;
+	align-items: center;
+	gap: 0.625rem;
+	flex: 1;
+}
+
+dialog.dol-dialog .dol-dialog-title .dol-dialog-icon {
+	color: var(--colorbackhmenu1);
+}
+
+/* ============================================================
+   Bouton fermer
+   ============================================================ */
+
+dialog.dol-dialog .dol-dialog-close {
+	width: 32px;
+	height: 32px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: none;
+	border: none;
+	cursor: pointer;
+	font-size: 1.2rem;
+	border-radius: 4px;
+	color: #666;
+	flex-shrink: 0;
+}
+
+dialog.dol-dialog .dol-dialog-close:hover {
+	background: #f0f0f0;
+	color: #000;
+}
+
+/* Bouton standalone (sans header) : absolu en haut à droite */
+dialog.dol-dialog > .dol-dialog-close {
+	position: absolute;
+	top: 0.4rem;
+	right: 0.4rem;
+}
+
+/* ============================================================
+   Contenu
+   ============================================================ */
+
+dialog.dol-dialog .dol-dialog-content {
+	padding: 1.25rem;
+	overflow-y: auto;
+	flex: 1;
+}
+
+/* Sans header : espace pour ne pas chevaucher le bouton fermer */
+dialog.dol-dialog:not(:has(.dol-dialog-header)) .dol-dialog-content {
+	padding-top: 2rem;
+}
+
+/* ============================================================
+   Spinner de chargement
+   ============================================================ */
+
+dialog.dol-dialog .dol-dialog-spinner {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 2rem;
+}
+
+dialog.dol-dialog .dol-dialog-spinner span {
+	display: block;
+	width: 32px;
+	height: 32px;
+	border: 3px solid #e0e0e0;
+	border-top-color: var(--colorbackhmenu1, #444);
+	border-radius: 50%;
+	animation: dol-dialog-spin 1.2s linear infinite;
+}
+
+@keyframes dol-dialog-spin {
+	to { transform: rotate(360deg); }
+}
+
+/* ============================================================
+   Footer (optionnel)
+   ============================================================ */
+
+dialog.dol-dialog .dol-dialog-footer {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end; /* right par défaut */
+	gap: 0.75rem;
+	padding: 1rem 1.25rem;
+	border-top: 1px solid #e0e0e0;
+	flex-shrink: 0;
+}
+
+dialog.dol-dialog .dol-dialog-footer--left   { justify-content: flex-start; }
+dialog.dol-dialog .dol-dialog-footer--center { justify-content: center; }
+
+dialog.dol-dialog .dol-dialog-footer--borderless {
+	border-top: none;
+}
+
+dialog.dol-dialog.dol-dialog__right .dol-dialog-footer {
+	margin-top: auto;
+}
+
+dialog.dol-dialog .dol-dialog-footer .butAction,
+dialog.dol-dialog .dol-dialog-footer .butActionDelete {margin: 0;}
+
+/* ============================================================
+   Animations
+   ============================================================ */
+
+@keyframes dol-dialog-fade-in  { from { opacity: 0; } to { opacity: 1; } }
+@keyframes dol-dialog-fade-out { from { opacity: 1; } to { opacity: 0; } }
+
+@keyframes dol-dialog-slide-in  { from { transform: translateX(100%); } to { transform: translateX(0); } }
+@keyframes dol-dialog-slide-out { from { transform: translateX(0); } to { transform: translateX(100%); } }
+
+/* ============================================================
+   Align: center
+   ============================================================ */
+
+dialog.dol-dialog.dol-dialog__center {
+	position: fixed;
+	inset: 0;
+	margin: auto;
+	border-radius: 8px;
+	max-height: 90dvh;
+	animation: dol-dialog-fade-in 0.2s ease;
+}
+
+dialog.dol-dialog.dol-dialog__center.is-closing {
+	animation: dol-dialog-fade-out 0.2s ease forwards;
+}
+
+dialog.dol-dialog.dol-dialog__center::backdrop {
+	background: rgba(0, 0, 0, 0.45);
+}
+
+/* ============================================================
+   Align: right
+   ============================================================ */
+
+dialog.dol-dialog.dol-dialog__right {
+	position: fixed;
+	inset: 0 0 0 auto;
+	margin: 0;
+	height: 100dvh;
+	max-height: 100dvh;
+	border-radius: 0;
+	animation: dol-dialog-slide-in 0.3s ease;
+}
+
+dialog.dol-dialog.dol-dialog__right.is-closing {
+	animation: dol-dialog-slide-out 0.3s ease forwards;
+}
+
+dialog.dol-dialog.dol-dialog__right::backdrop {
+	background: rgba(0, 0, 0, 0.3);
+}
+
+/* ============================================================
+   Erreur formulaire AJAX
+   ============================================================ */
+
+dialog.dol-dialog .dol-dialog-form-error {
+	color: #c0392b;
+	background: #fdf2f2;
+	border: 1px solid #f5c6cb;
+	border-radius: 4px;
+	padding: 0.5rem 0.75rem;
+	margin-bottom: 1rem;
+	font-size: 0.875rem;
+	white-space: pre-line;
+}
+
+/* ============================================================
+   No animation override — doit être en dernier
+   ============================================================ */
+
+dialog.dol-dialog.no-animation,
+dialog.dol-dialog.no-animation.is-closing {
+	animation: none;
+}
+
+
+
+/* ============================================================
+   No animation override — doit être en dernier
+   ============================================================ */
+/* Base button */
+.dialog-btn {
+	--color-btn-text: #1f2433;
+	--color-btn-bg: #ffffff;
+
+	display: inline-flex;
+	justify-content: center;
+	align-items: center;
+
+	height: 36px;
+	padding: 0 16px;
+
+	font-family: InterVariable, system-ui, sans-serif;
+	font-size: 14px;
+	font-weight: 600;
+	line-height: 20px;
+
+	border-radius: 6px;
+	border: 0;
+
+	background: var(--color-btn-bg);
+	color:  var(--color-btn-text);
+	box-shadow:
+			inset 0 0 0 1px #d9dee6,
+			0 1px 2px rgba(0, 0, 0, 0.05);
+
+	cursor: pointer;
+	transition: background-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.dialog-btn:hover {
+	--color-btn-bg: #f5f7fa;
+}
+
+/* PRIMARY */
+.dialog-btn.dialog-btn-primary {
+	--color-btn-text: var(--textbutaction);
+	--color-btn-bg: var(--butactionbg);
+
+	position: relative;
+	box-shadow: none;
+}
+
+.dialog-btn.dialog-btn-primary::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background: rgba(0,0,0,0);
+	transition: background 0.15s;
+}
+
+.dialog-btn.dialog-btn-primary:hover::after {
+	background: rgba(0,0,0,0.1);
+}
+
+/* DANGER / DESTRUCTIVE */
+.dialog-btn.dialog-btn-destructive {
+	--color-btn-text: #ffffff;
+	--color-btn-bg: #b91c1c;
+	box-shadow: none;
+}
+
+.dialog-btn.dialog-btn-destructive:hover {
+	--color-btn-bg: #a11818;
+}
+
+/** For color blind */
+[class*="colorblind-"] .dialog-btn.dialog-btn-destructive  {
+	outline: 2px dashed #fff;
+	outline-offset: -4px;
+}
+
+	/* WARNING */
+.dialog-btn.dialog-btn-warning {
+	--color-btn-text: #ffffff;
+	--color-btn-bg: #b9851c;
+	box-shadow: none;
+}
+.dialog-btn.dialog-btn-warning:hover {
+	--color-btn-bg: #936913;
+}
+
+/** For color blind */
+[class*="colorblind-"] .dialog-btn.dialog-btn-warning {
+	outline: 2px dashed #fff;
+	outline-offset: -4px;
+}
+
+/* SUCCESS */
+.dialog-btn.dialog-btn-success {
+	--color-btn-text: #ffffff;
+	--color-btn-bg: #468b18;
+	box-shadow: none;
+}
+.dialog-btn.dialog-btn-success:hover {
+	--color-btn-bg: #386f13;
+}
