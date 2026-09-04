@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +35,7 @@ require_once dirname(__FILE__).'/CommonClassTest.class.php';
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
-	$user->getrights();
+	$user->loadRights();
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
@@ -47,6 +48,15 @@ $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
+ * @phan-file-suppress PhanDeprecatedFunctionInternal
+ * @phan-file-suppress PhanPluginUnknownObjectMethodCall
+ * @phan-file-suppress PhanTypeMismatchReturn
+ * @phan-file-suppress PhanTypeMismatchReturnProbablyReal
+ * @phan-file-suppress PhanUndeclaredClass
+ * @phan-file-suppress PhanUndeclaredExtendedClass
+ * @phan-file-suppress PhanUndeclaredMethod
+ * @phan-file-suppress PhanUndeclaredProperty
+ * @phan-file-suppress PhanUndeclaredStaticMethod
  */
 class EmailCollectorTest extends CommonClassTest
 {
@@ -128,6 +138,34 @@ class EmailCollectorTest extends CommonClassTest
 		$this->assertEquals('{localhost:993/service=imap/ssl/novalidate-cert}', $result, 'Error in getConnectStringIMAP '.$localobject->error);
 
 		return $localobject->id;
+	}
+
+	/**
+	 * testEmailCollectorExtractBodyKeepsUtf8
+	 *
+	 * @return  void
+	 */
+	public function testEmailCollectorExtractBodyKeepsUtf8()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$localobject = new EmailCollector($db);
+		$object = new stdClass();
+		$object->element = 'societe';
+		$object->name = '';
+		$object->array_options = array();
+
+		$messagetext = "ThirdpartyName: Günni GmbH\nContactName: Günni Pfannenstiel\n";
+		$operationslog = '';
+		$args = array(&$object, 'name=EXTRACT:BODY:^ThirdpartyName:\s*([^\r\n]+)', $messagetext, '', '', &$operationslog);
+		$result = self::callMethod($localobject, 'overwritePropertiesOfObject', $args);
+
+		$this->assertSame(0, $result);
+		$this->assertSame('Günni GmbH', $object->name);
 	}
 
 	/**

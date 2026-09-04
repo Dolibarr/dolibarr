@@ -24,5 +24,3 @@ create table llx_overwrite_trans
   transkey	      varchar(128),
   transvalue      text
 )ENGINE=innodb;
-
-

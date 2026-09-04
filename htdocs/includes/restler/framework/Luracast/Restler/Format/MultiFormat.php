@@ -141,4 +141,3 @@ abstract class MultiFormat implements iFormat
         return $this->getExtension();
     }
 }
-

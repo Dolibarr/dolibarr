@@ -1,15 +1,15 @@
 <?php
-/* Copyright (C) 2003,2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
- * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2009-2011 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2013      Cedric Gross         <c.gross@kreiz-it.fr>
- * Copyright (C) 2015      Bahfir Abbes         <bafbes@gmail.com>
- * Copyright (C) 2017      Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+/* Copyright (C) 2003,2005  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2003       Jean-Louis Bergamo      <jlb@j1b.org>
+ * Copyright (C) 2004-2014  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2004       Sebastien Di Cintio     <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
+ * Copyright (C) 2009-2011  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2013       Cedric Gross            <c.gross@kreiz-it.fr>
+ * Copyright (C) 2015       Bahfir Abbes            <bafbes@gmail.com>
+ * Copyright (C) 2017       Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -123,20 +123,21 @@ class modAgenda extends DolibarrModules
 		$datestart = dol_now();
 		$this->cronjobs = array(
 			0 => array('label' => 'SendEmailsReminders', 'jobtype' => 'method', 'class' => 'comm/action/class/actioncomm.class.php', 'objectname' => 'ActionComm', 'method' => 'sendEmailsReminder', 'parameters' => '', 'comment' => 'SendEMailsReminder', 'frequency' => 5, 'unitfrequency' => 60, 'priority' => 10, 'status' => 1, 'test' => 'isModEnabled("agenda")', 'datestart' => $datestart),
+			1 => array('label' => 'SendSmsReminders', 'jobtype' => 'method', 'class' => 'comm/action/class/actioncomm.class.php', 'objectname' => 'ActionComm', 'method' => 'sendSmsReminder', 'parameters' => '', 'comment' => 'SendSmsReminder', 'frequency' => 5, 'unitfrequency' => 60, 'priority' => 10, 'status' => 1, 'test' => 'isModEnabled("agenda")', 'datestart' => $datestart),
 		);
 
-		// Permissions
+		// Rights
 		//------------
 		$this->rights = array();
 		$this->rights_class = 'agenda';
 		$r = 0;
 
-		// $this->rights[$r][0]     Id permission (unique tous modules confondus)
-		// $this->rights[$r][1]     Libelle par default si traduction de cle "PermissionXXX" non trouvee (XXX = Id permission)
-		// $this->rights[$r][2]     Non utilise
-		// $this->rights[$r][3]     1=Permis par default, 0=Non permis par default
-		// $this->rights[$r][4]     Niveau 1 pour nommer permission dans code
-		// $this->rights[$r][5]     Niveau 2 pour nommer permission dans code
+		// $this->rights[$r][0]     Id for right (unique across all modules)
+		// $this->rights[$r][1]     Default label if the translation key "PermissionXXX" is not found (XXX = Id for right)
+		// $this->rights[$r][2]     Not used
+		// $this->rights[$r][3]     1=Authorised by default, 0=Denied by default
+		// $this->rights[$r][4]     Level 1 to name right in the code
+		// $this->rights[$r][5]     Level 2 to name right in the code
 		// $r++;
 
 		$this->rights[$r][0] = 2401;
@@ -211,6 +212,8 @@ class modAgenda extends DolibarrModules
 		//							'target'=>'',
 		//							'user'=>2);				// 0=Menu for internal users, 1=external users, 2=both
 		// $r++;
+
+		// TODO Move the top menu entry into the code part (eldy_menu.php and auguria.sql) so we can have a top menu shown for resource module only.
 		$this->menu[$r] = array(
 			'fk_menu' => 0,
 			'type' => 'top',
@@ -247,7 +250,7 @@ class modAgenda extends DolibarrModules
 			'type' => 'left',
 			'titre' => 'NewAction',
 			'mainmenu' => 'agenda',
-			'url' => '/comm/action/card.php?mainmenu=agenda&amp;leftmenu=agenda&amp;action=create',
+			'url' => '/comm/action/card.php?mainmenu=agenda&amp;leftmenu=agenda&action=create',
 			'langs' => 'commercial',
 			'position' => 101,
 			'perms' => '($user->hasRight("agenda", "myactions", "create") || $user->hasRight("agenda", "allactions", "create"))',
@@ -420,11 +423,11 @@ class modAgenda extends DolibarrModules
 			'type' => 'left',
 			'titre' => 'Categories',
 			'mainmenu' => 'agenda',
-			'url' => '/categories/index.php?mainmenu=agenda&amp;leftmenu=agenda&type=10',
+			'url' => '/categories/categorie_list.php?mainmenu=agenda&amp;leftmenu=agenda&type=10',
 			'langs' => 'agenda',
 			'position' => 170,
 			'perms' => '$user->hasRight("agenda", "allactions", "read")',
-			'enabled' => 'isModEnabled("category")',
+			'enabled' => 'isModEnabled("category") && getDolGlobalString("CATEGORY_EDIT_IN_MENU_NOT_IN_POPUP")',
 			'target' => '',
 			'user' => 2
 		);
@@ -495,10 +498,10 @@ class modAgenda extends DolibarrModules
 		$this->export_sql_end[$r] .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = ac.fk_project";
 		$this->export_sql_end[$r] .= ' WHERE ac.entity IN ('.getEntity('agenda').')';
 		if (!empty($user) && !$user->hasRight('societe', 'client', 'voir')) {
-			$this->export_sql_end[$r] .= ' AND (sc.fk_user = '.(empty($user) ? 0 : $user->id).' OR ac.fk_soc IS NULL)';
+			$this->export_sql_end[$r] .= ' AND (sc.fk_user = '.(empty($user) ? 0 : ((int) $user->id)).' OR ac.fk_soc IS NULL)';
 		}
 		if (!empty($user) && !$user->hasRight('agenda', 'allactions', 'read')) {
-			$this->export_sql_end[$r] .= ' AND acr.fk_element = '.(empty($user) ? 0 : $user->id);
+			$this->export_sql_end[$r] .= ' AND acr.fk_element = '.(empty($user) ? 0 : ((int) $user->id));
 		}
 		$this->export_sql_end[$r] .= ' AND ac.entity IN ('.getEntity('agenda').')';
 		$this->export_sql_order[$r] = ' ORDER BY ac.datep';
@@ -538,17 +541,10 @@ class modAgenda extends DolibarrModules
 
 		// Add extra fields
 		$import_extrafield_sample = array();
-		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'actioncomm' AND entity IN (0, ".$conf->entity.")";
-		$resql = $this->db->query($sql);
-
-		if ($resql) {
-			while ($obj = $this->db->fetch_object($resql)) {
-				$fieldname = 'extra.'.$obj->name;
-				$fieldlabel = ucfirst($obj->label);
-				$this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
-			}
-		}
-		// End add extra fields
+		$keyforselect = 'actioncomm';
+		$keyforelement = 'action';
+		$keyforaliasextra = 'extra';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinimport.inc.php';
 
 		$this->import_examplevalues_array[$r] = array_merge($import_sample, $import_extrafield_sample);
 		$this->import_fieldshidden_array[$r] = array('extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'actioncomm');
@@ -581,7 +577,14 @@ class modAgenda extends DolibarrModules
 				'class' => 'CActionComm',
 				'method' => 'fetch',
 				'dict' => 'DictionaryActions'
-			)
+			),
+			'ac.fk_project' => array(
+				'rule'    => 'fetchidfromref',
+				'file'    => '/projet/class/project.class.php',
+				'class'   => 'Project',
+				'method'  => 'fetch',
+				'element' => 'Project'
+			),
 		);
 
 		// Import Event Extra Fields
@@ -602,15 +605,10 @@ class modAgenda extends DolibarrModules
 	 */
 	public function init($options = '')
 	{
-		global $conf;
-
 		// Permissions
 		$this->remove($options);
 
-		$sql = array(
-			"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[0][2])."' AND type='action' AND entity = ".((int) $conf->entity),
-			// "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[0][2])."','action',".((int) $conf->entity).")"
-		);
+		$sql = array();
 
 		return $this->_init($sql, $options);
 	}

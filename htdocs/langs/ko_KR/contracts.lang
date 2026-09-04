@@ -36,10 +36,18 @@ ActivateAllOnContract=모든 서비스 시작
 CloseAContract=계약 종료
 ConfirmDeleteAContract=해당 계약과 관련 서비스를 삭제하시겠습니까?
 ConfirmValidateContract=<b>%s</b>으로 이 계약을 승인하시겠습니까??
+ConfirmSignContract=Are you sure you want to set this contract as signed ?
+ConfirmUnsignContract=Are you sure you want to set this contract as unsigned ?
 ConfirmActivateAllOnContract=(활성화되지 않은) 모든 서비스가 시작될 것입니다. 모든 서비스를 시작하시겠습니까?
 ConfirmCloseContract=(만료되었거나 만료되지 않은) 모든 서비스가 종료될 것입니다. 해당 계약을 종료하시길 원하십니까?
 ConfirmCloseService=%s에 해당 서비스를 종료하시겠습니까?
 ValidateAContract=계약 승인
+UnsignContract=Unsign contract
+ContractSign=Set Signed
+ContractUnsign=Set Unsigned
+ContractSignedInDolibarr=Contract signed
+ContractSignedOnline=Contract signed online
+ContractUnsignedInDolibarr=Contract unsigned
 ActivateService=서비스 시작
 ConfirmActivateService=<b>%s</b>에 해당 서비스를 활성화하시겠습니까?
 RefContract=참고 계약
@@ -95,7 +103,13 @@ ConfirmCloneContract=계약 <b>%s</b>을 복사하시겠습니까?
 LowerDateEndPlannedShort=활성화 된 서비스 예정 종료 일자 연기
 SendContractRef=계약 정보 __참조___
 OtherContracts=다른 계약들
-##### Types de contacts #####
+##### Statistics #####
+ContractsStatistics=Contract's statistics
+NbOfContracts=Nb of contracts
+NumberOfContractsByMonth=Number of contracts by month
+AmountOfServices=Number of services
+AmountOfServicesByMonthHT=Number of services (excl. tax) by month
+##### Types of contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=계약 체결 영업 담당자
 TypeContact_contrat_internal_SALESREPFOLL=영업 담당자 후속 계약
 TypeContact_contrat_external_BILLING=청구 고객 연락처

@@ -23,7 +23,6 @@
  *   \ingroup    barcode
  *   \brief      File with parent classes for barcode document modules and numbering modules
  */
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonnumrefgenerator.class.php';
 
 
@@ -76,6 +75,21 @@ abstract class ModeleBarCode
 	}
 
 	/**
+	 *	Return an image file on the fly (no need to write on disk) with the HTTP content-type of image.
+	 *
+	 *	@param	string   	$code			  	Value to encode
+	 *	@param  string	 	$encoding		  	Mode of encoding
+	 *	@param  string	 	$readable		  	Code can be read (What is this ? is this used ?)
+	 *	@param	integer		$scale			  	Scale
+	 *  @param  integer     $nooutputiferror  	No output if error
+	 *	@return	int							  	Return integer <0 if KO, >0 if OK
+	 */
+	public function buildBarCode($code, $encoding, $readable = 'Y', $scale = 1, $nooutputiferror = 0)
+	{
+		return 1;
+	}
+
+	/**
 	 *  Return true if encoding is supported
 	 *
 	 *  @param  string  $encoding       Encoding norm
@@ -93,6 +107,9 @@ abstract class ModeleBarCode
 abstract class ModeleNumRefBarCode extends CommonNumRefGenerator
 {
 	// variables inherited from CommonNumRefGenerator
+	/**
+	 * @var int<0,1>
+	 */
 	public $code_null;
 
 

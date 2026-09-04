@@ -1,6 +1,7 @@
 <?php
-/* Copyright (c) 2015-2019 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (c) 2015-2019  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,12 +20,12 @@
 /**
  *	\file       htdocs/core/class/html.formmargin.class.php
  *  \ingroup    core
- *	\brief      Fichier de la class des functions predefinie de composants html autre
+ *	\brief      File of the class to manage "other" html components
  */
 
 
 /**
- *	Class permettant la generation de composants html autre
+ *	Class to manage "other" html components
  *	Only common components are here.
  */
 class FormMargin
@@ -57,8 +58,8 @@ class FormMargin
 	 *  TODO Move this in common class.
 	 *
 	 * 	@param	CommonObject	$object			Object we want to get margin information for
-	 * 	@param 	boolean			$force_price	True of not
-	 * 	@return array							Array with info
+	 * 	@param 	bool			$force_price	True of not
+	 *	@return	array{pa_products:float,pv_products:float, margin_on_products:float, margin_rate_products :float|'', mark_rate_products :float|string, pa_services:float, pv_services:float, margin_on_services:float, margin_rate_services :float|'', mark_rate_services :float|'', pa_total:float, pv_total:float, total_margin:float, total_margin_rate :float|'', total_mark_rate :float|''}		Array with info
 	 */
 	public function getMarginInfosArray($object, $force_price = false)
 	{
@@ -98,17 +99,27 @@ class FormMargin
 				$line->pa_ht = $line->subprice * (1 - ($line->remise_percent / 100));
 			}
 
-			$pv = $line->total_ht;
-			// We chose to have line->pa_ht always positive in database, so we guess the correct sign
-			// @phan-suppress-next-line PhanUndeclaredConstantOfClass
+			$pv = (float) $line->total_ht;
+
+			// $line->pa_ht is always positive in database, so we guess the correct sign
+
+			'@phan-var-force Facture|FactureFournisseur $object';
 			$pa_ht = (($pv < 0 || ($pv == 0 && in_array($object->element, array('facture', 'facture_fourn')) && $object->type == $object::TYPE_CREDIT_NOTE)) ? -$line->pa_ht : $line->pa_ht);
+			'@phan-var-force CommonObject $object';
+
 			if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {	// Special case for old situation mode
-				// @phan-suppress-next-line PhanUndeclaredConstantOfClass
+				'@phan-var-force Facture $object';
+				/** @var Facture $object */
 				if (($object->element == 'facture' && $object->type == $object::TYPE_SITUATION)
-					// @phan-suppress-next-line PhanUndeclaredConstantOfClass
 					|| ($object->element == 'facture' && $object->type == $object::TYPE_CREDIT_NOTE && getDolGlobalInt('INVOICE_USE_SITUATION_CREDIT_NOTE') && $object->situation_counter > 0)) {
-					// We need a compensation relative to $line->situation_percent
-					$pa = $line->qty * $pa_ht * ($line->situation_percent / 100);
+					// We need only the delta between this situation and the previous one to avoid cumulating margins across situation invoices
+					// total_ht is stored cumulatively (e.g. 60% of full price), so we extract only this invoice's share using the delta percent
+					$prevPercent = $line->get_prev_progress($object->id);
+					$deltaPercent = $line->situation_percent - $prevPercent;
+					if ($line->situation_percent > 0) {
+						$pv *= ($deltaPercent / $line->situation_percent);
+					}
+					$pa = $line->qty * $pa_ht * ($deltaPercent / 100);
 				} else {
 					$pa = $line->qty * $pa_ht;
 				}
@@ -116,9 +127,9 @@ class FormMargin
 				$pa = $line->qty * $pa_ht;
 			}
 
-			// calcul des marges
+			// margin calculation
 			if (isset($line->fk_remise_except) && isset($conf->global->MARGIN_METHODE_FOR_DISCOUNT)) {    // remise
-				if (getDolGlobalString('MARGIN_METHODE_FOR_DISCOUNT') == '1') { // remise globale considérée comme produit
+				if (getDolGlobalString('MARGIN_METHODE_FOR_DISCOUNT') == '1') { // global discount treated as product
 					$marginInfos['pa_products'] += $pa;
 					$marginInfos['pv_products'] += $pv;
 					$marginInfos['pa_total'] += $pa;
@@ -130,7 +141,7 @@ class FormMargin
 					//}
 					//else
 					$marginInfos['margin_on_products'] += $pv - $pa;
-				} elseif (getDolGlobalString('MARGIN_METHODE_FOR_DISCOUNT') == '2') { // remise globale considérée comme service
+				} elseif (getDolGlobalString('MARGIN_METHODE_FOR_DISCOUNT') == '2') { // global discount treated as service
 					$marginInfos['pa_services'] += $pa;
 					$marginInfos['pv_services'] += $pv;
 					$marginInfos['pa_total'] += $pa;
@@ -231,7 +242,7 @@ class FormMargin
 		if ($reshook < 0) {
 			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 		} elseif (empty($reshook)) {
-			$hidemargininfos = preg_replace('/[^a-zA-Z0-9_\-]/', '', $_COOKIE['DOLUSER_MARGININFO_HIDE_SHOW']) ?? ''; // Clean cookie
+			$hidemargininfos = preg_replace('/[^a-zA-Z0-9_\-]/', '', $_COOKIE['DOLUSER_MARGININFO_HIDE_SHOW'] ?? ''); // Clean cookie
 
 			$buttonToShowHideMargin = '<span id="showMarginInfos" class="linkobject valignmiddle ' . (!empty($hidemargininfos) ? '' : 'hideobject') . '">';
 			$buttonToShowHideMargin .= img_picto($langs->trans("ShowMarginInfos"), 'switch_off', '', 0, 0, 0, '', 'size15x');

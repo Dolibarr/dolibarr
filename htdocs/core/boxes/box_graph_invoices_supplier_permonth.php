@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@ class box_graph_invoices_supplier_permonth extends ModeleBoxes
 	 * 	@param	DoliDB	$db			Database handler
 	 *  @param	string	$param		More parameters
 	 */
-	public function __construct($db, $param)
+	public function __construct($db, $param)  // @phpstan-ignore constructor.unusedParameter
 	{
 		global $user;
 
@@ -87,7 +87,11 @@ class box_graph_invoices_supplier_permonth extends ModeleBoxes
 
 		$dir = ''; // We don't need a path because image file will not be saved into disk
 		$prefix = '';
+		$mesg = '';
 		$socid = 0;
+		$px1 = null;
+		$px2 = null;
+
 		if ($user->socid) {
 			$socid = $user->socid;
 		}
@@ -128,7 +132,7 @@ class box_graph_invoices_supplier_permonth extends ModeleBoxes
 			$HEIGHT = '192';
 
 			$stats = new FactureStats($this->db, $socid, $mode, 0);
-			$stats->where = "f.fk_statut > 0";
+			$stats->where = "f.entity IN (".getEntity('supplier_invoice').") AND f.fk_statut > 0";
 
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($shownb) {
@@ -225,7 +229,7 @@ class box_graph_invoices_supplier_permonth extends ModeleBoxes
 					});
 					</script>';
 				$stringtoshow .= '<div class="center hideobject" id="idfilter'.$this->boxcode.'">'; // hideobject is to start hidden
-				$stringtoshow .= '<form class="flat formboxfilter" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+				$stringtoshow .= '<form class="flat formboxfilter" method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 				$stringtoshow .= '<input type="hidden" name="token" value="'.newToken().'">';
 				$stringtoshow .= '<input type="hidden" name="action" value="'.$refreshaction.'">';
 				$stringtoshow .= '<input type="hidden" name="page_y" value="">';
@@ -242,14 +246,14 @@ class box_graph_invoices_supplier_permonth extends ModeleBoxes
 					$stringtoshow .= '<div class="fichecenter">';
 					$stringtoshow .= '<div class="fichehalfleft">';
 				}
-				if ($shownb) {
+				if ($shownb && $px1 !== null) {
 					$stringtoshow .= $px1->show();
 				}
 				if ($shownb && $showtot) {
 					$stringtoshow .= '</div>';
 					$stringtoshow .= '<div class="fichehalfright">';
 				}
-				if ($showtot) {
+				if ($showtot && $px2 !== null) {
 					$stringtoshow .= $px2->show();
 				}
 				if ($shownb && $showtot) {

@@ -59,7 +59,7 @@ CKEDITOR.editorConfig = function( config )
 	[
 	 	['Maximize','Preview'],
 	 	['SpellChecker', 'Scayt'],
-	 	['Undo','Redo','-','Find','Replace'],
+	 	['Find','Replace'],
 	 	['CreateDiv','ShowBlocks'],
 	    ['Format','Font','FontSize'],
 	 	['Bold','Italic','Underline','Strike','-','TextColor','RemoveFormat'],
@@ -74,8 +74,8 @@ CKEDITOR.editorConfig = function( config )
 	[
 	 	['Maximize'],
 	 	['SpellChecker', 'Scayt'],		// 'Cut','Copy','Paste','-', are useless, can be done with right click, even on smarpthone
-	 	['Undo','Redo','-','Find','Replace'],
-	    ['Font','FontSize'],
+	 	['Find','Replace'],
+	    ['Format','FontSize'],
 	 	['Bold','Italic','Underline','Strike','-','TextColor','RemoveFormat'],
 	 	['NumberedList','BulletedList','Outdent','Indent'],
 	 	['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],

@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,6 +39,9 @@ class mod_propale_marbre extends ModeleNumRefPropales
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
+	/**
+	 * @var string prefix
+	 */
 	public $prefix = 'PR';
 
 	/**
@@ -47,14 +50,12 @@ class mod_propale_marbre extends ModeleNumRefPropales
 	public $error = '';
 
 	/**
-	 * @var string Nom du modele
-	 * @deprecated
-	 * @see $name
+	 * @var int		Position
 	 */
-	public $nom = 'Marbre';
+	public $position = 10;
 
 	/**
-	 * @var string model name
+	 * @var string Name of model
 	 */
 	public $name = 'Marbre';
 
@@ -98,10 +99,10 @@ class mod_propale_marbre extends ModeleNumRefPropales
 		$max = '';
 
 		$posindice = strlen($this->prefix) + 6;
-		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
+		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".((int) $posindice).") AS SIGNED)) as max";
 		$sql .= " FROM ".MAIN_DB_PREFIX."propal";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " AND entity = ".((int) $conf->entity);
 
 		$resql = $db->query($sql);
 		if ($resql) {
@@ -124,7 +125,7 @@ class mod_propale_marbre extends ModeleNumRefPropales
 	/**
 	 *  Return next value
 	 *
-	 *  @param	Societe		$objsoc     Object third party
+	 *  @param	?Societe	$objsoc     Object third party
 	 * 	@param	Propal		$propal		Object commercial proposal
 	 *  @return string|int<-1,0>		Next value, <=0 if KO
 	 */
@@ -134,7 +135,7 @@ class mod_propale_marbre extends ModeleNumRefPropales
 
 		// First, we get the max value
 		$posindice = strlen($this->prefix) + 6;
-		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max"; // This is standard SQL
+		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".((int) $posindice).") AS SIGNED)) as max"; // This is standard SQL
 		$sql .= " FROM ".MAIN_DB_PREFIX."propal";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
 		$sql .= " AND entity IN (".getEntity('proposalnumber', 1, $propal).")";

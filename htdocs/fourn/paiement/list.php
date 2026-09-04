@@ -9,10 +9,10 @@
  * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2015		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2017-2023  Alexandre Spangaro		<aspangaro@easya.solutions>
- * Copyright (C) 2018-2021	Frédéric France			<frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2020		Tobias Sekan			<tobias.sekan@startmail.com>
  * Copyright (C) 2021		Ferran Marcet			<fmarcet@2byte.es>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,17 +30,26 @@
 
 /**
  *	\file		htdocs/fourn/paiement/list.php
-*	\ingroup	fournisseur,facture
+ *	\ingroup	fournisseur,facture
  *	\brief		Payment list for supplier invoices
  */
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
+
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'bills', 'banks', 'compta'));
@@ -70,9 +79,10 @@ $search_amount			= GETPOST('search_amount', 'alpha'); // alpha because we must b
 $search_sale            = GETPOSTINT('search_sale');
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
-$sortfield				= GETPOST('sortfield', 'aZ09comma');
-$sortorder				= GETPOST('sortorder', 'aZ09comma');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT('page');
+$toselect = GETPOST('toselect', 'array:int');
 
 if (empty($page) || $page == -1) {
 	$page = 0; // If $page is not defined, or '' or -1
@@ -88,7 +98,7 @@ if (!$sortfield) {
 	$sortfield = "p.datep";
 }
 
-$search_all = trim(GETPOSTISSET("search_all") ? GETPOST("search_all", 'alpha') : GETPOST('sall'));
+$search_all = trim(GETPOST('search_all', 'alphanohtml'));
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
@@ -99,16 +109,18 @@ $fieldstosearchall = array(
 );
 
 $arrayfields = array(
-	'p.ref'				=> array('label' => "RefPayment", 'checked' => 1, 'position' => 10),
-	'p.datep'			=> array('label' => "Date", 'checked' => 1, 'position' => 20),
-	's.nom'				=> array('label' => "ThirdParty", 'checked' => 1, 'position' => 30),
-	'c.libelle'			=> array('label' => "Type", 'checked' => 1, 'position' => 40),
-	'p.num_paiement'	=> array('label' => "Numero", 'checked' => 1, 'position' => 50, 'tooltip' => "ChequeOrTransferNumber"),
-	'ba.label'			=> array('label' => "BankAccount", 'checked' => 1, 'position' => 60, 'enable' => (isModEnabled("bank"))),
-	'p.amount'			=> array('label' => "Amount", 'checked' => 1, 'position' => 70),
+	'p.ref'				=> array('label' => "RefPayment", 'checked' => '1', 'position' => 10),
+	'p.datep'			=> array('label' => "Date", 'checked' => '1', 'position' => 20),
+	's.nom'				=> array('label' => "ThirdParty", 'checked' => '1', 'position' => 30),
+	'c.libelle'			=> array('label' => "Type", 'checked' => '1', 'position' => 40),
+	'p.num_paiement'	=> array('label' => "Numero", 'checked' => '1', 'position' => 50, 'tooltip' => "ChequeOrTransferNumber"),
+	'ba.label'			=> array('label' => "BankAccount", 'checked' => '1', 'position' => 60, 'enabled' => (string) (int) (isModEnabled("bank"))),
+	'p.amount'			=> array('label' => "Amount", 'checked' => '1', 'position' => 70),
 );
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $arrayfields = dol_sort_array($arrayfields, 'position');
-'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('paymentsupplierlist'));
@@ -119,8 +131,8 @@ if (!$user->hasRight('societe', 'client', 'voir')) {
 }
 
 // Security check
-if ($user->socid) {
-	$socid = $user->socid;
+if ($user->isExternalUser()) {
+	$socid = $user->isExternalUser();
 }
 
 // doesn't work :-(
@@ -136,6 +148,8 @@ if ((!$user->hasRight("fournisseur", "facture", "lire") && !getDolGlobalString('
 	|| (!$user->hasRight("supplier_invoice", "lire") && getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD'))) {
 	accessforbidden();
 }
+
+$arrayofselected = !empty($arrayofselected) ? $arrayofselected : array();
 
 
 /*
@@ -172,9 +186,11 @@ if (empty($reshook)) {
 	}
 }
 
+
 /*
  * View
  */
+
 $title = $langs->trans('ListPayment');
 $help_url = '';
 
@@ -246,9 +262,9 @@ if ($search_all) {
 // Search on sale representative
 if ($search_sale && $search_sale != '-1') {
 	if ($search_sale == -2) {
-		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = f.fk_soc)";
+		$sql .= " AND ".getSalesRepresentativeSqlFilter('f.fk_soc', 0, 1);
 	} elseif ($search_sale > 0) {
-		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = f.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+		$sql .= " AND ".getSalesRepresentativeSqlFilter('f.fk_soc', (int) $search_sale);
 	}
 }
 
@@ -272,7 +288,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -345,7 +361,22 @@ if ($search_amount) {
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
-print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+// List of mass actions available
+$arrayofmassactions = array(
+	//'validate'=>img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Validate"),
+	//'generate_doc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
+	//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
+	//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
+);
+/*if (!empty($permissiontodelete)) {
+	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
+}*/
+if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predelete'))) {
+	$arrayofmassactions = array();
+}
+$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
+
+print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 }
@@ -383,7 +414,7 @@ if ($moreforfilter) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column); // This also change content of $arrayfields
 if (!empty($massactionbutton)) {
 	$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
 }
@@ -396,7 +427,7 @@ print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwit
 print '<tr class="liste_titre_filter">';
 
 // Action column
-if (getDolGlobalInt('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
@@ -435,10 +466,10 @@ if (!empty($arrayfields['s.nom']['checked'])) {
 	print '</td>';
 }
 
-// Filter: Payment type
+// Filter: Payment mode
 if (!empty($arrayfields['c.libelle']['checked'])) {
 	print '<td class="liste_titre">';
-	$form->select_types_paiements($search_payment_type, 'search_payment_type', '', 2, 1, 1);
+	print $form->select_types_paiements($search_payment_type, 'search_payment_type', '', 2, 1, 1, 0, 1, 'maxwidth100', 1);
 	print '</td>';
 }
 
@@ -469,7 +500,7 @@ $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $obje
 print $hookmanager->resPrint;
 
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
@@ -485,7 +516,7 @@ $totalarray['nbfield'] = 0;
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
@@ -529,7 +560,7 @@ $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // No
 print $hookmanager->resPrint;
 
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
@@ -592,10 +623,10 @@ while ($i < $imaxinloop) {
 	} else {
 		// Show line of result
 		$j = 0;
-		print '<tr data-rowid="'.$object->id.'" class="oddeven">';
+		print '<tr data-rowid="'.$object->id.'" class="oddeven row-with-select">';
 
 		// Action column
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;
@@ -708,7 +739,12 @@ while ($i < $imaxinloop) {
 			}
 		}
 
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		// Fields from hook
+		$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$objp, 'i'=>$i, 'totalarray'=>&$totalarray);
+		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		print $hookmanager->resPrint;
+
+		if (!$conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;
@@ -725,6 +761,7 @@ while ($i < $imaxinloop) {
 
 		print '</tr>'."\n";
 	}
+
 	$i++;
 }
 

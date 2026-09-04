@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2009-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
  *  \brief		Set of function for modulebuilder management
  */
 
+require_once DOL_DOCUMENT_ROOT . '/modulebuilder/class/NamingContract.class.php';
 
 /**
  * 	Regenerate files .class.php
@@ -55,7 +56,7 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 
 	$error = 0;
 
-	// Check parameters
+	// Check parameters into $addfieldentry (this provided array is filled by modulebuilder/index.php)
 	if (is_array($addfieldentry) && count($addfieldentry) > 0) {
 		if (empty($addfieldentry['name'])) {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Name")), null, 'errors');
@@ -66,11 +67,12 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 			return -2;
 		}
 		if (!preg_match('/^(integer|price|sellist|varchar|double|text|html|duration|stars)/', $addfieldentry['type'])
-			&& !preg_match('/^(boolean|smallint|real|date|datetime|timestamp|phone|mail|url|ip|password)$/', $addfieldentry['type'])) {
+			&& !preg_match('/^(boolean|smallint|real|date|datetime|timestamp|phone|email|url|ip|password)$/', $addfieldentry['type'])) {	// Use email for email, mail is kept for compatibility
 			setEventMessages($langs->trans('BadValueForType', $addfieldentry['type']), null, 'errors');
 			return -2;
 		}
 		// Check for type stars(NumberOfStars), NumberOfStars must be an integer between 1 and 10
+		$matches = array();
 		if (preg_match('/^stars\((.+)\)$/', $addfieldentry['type'], $matches)) {
 			if (!ctype_digit($matches[1]) || $matches[1] < 1 || $matches[1] > 10) {
 				setEventMessages($langs->trans('BadValueForType', $addfieldentry['type']), null, 'errors');
@@ -143,10 +145,10 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 				$texttoinsert .= " 'notnull' => ".(empty($val['notnull']) ? 0 : (int) $val['notnull']).",";
 				$texttoinsert .= ' "visible" => "'.($val['visible'] !== '' ? dol_escape_js($val['visible']) : -1).'",';
 				if (!empty($val['noteditable'])) {
-					$texttoinsert .= ' "noteditable" => "'.dol_escape_php($val['noteditable']).'",';
+					$texttoinsert .= ' "noteditable" => "'.dol_escape_php((string) $val['noteditable']).'",';
 				}
 				if (!empty($val['alwayseditable'])) {
-					$texttoinsert .= ' "alwayseditable" => "'.dol_escape_php($val['alwayseditable']).'",';
+					$texttoinsert .= ' "alwayseditable" => "'.dol_escape_php((string) $val['alwayseditable']).'",';
 				}
 				if (array_key_exists('default', $val) && (!empty($val['default']) || $val['default'] === '0')) {
 					$texttoinsert .= ' "default" => "'.dol_escape_php($val['default']).'",';
@@ -155,7 +157,7 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 					$texttoinsert .= ' "index" => "'.(int) $val['index'].'",';
 				}
 				if (!empty($val['foreignkey'])) {
-					$texttoinsert .= ' "foreignkey" => "'.(int) $val['foreignkey'].'",';
+					$texttoinsert .= ' "foreignkey" => "'.dol_escape_php($val['foreignkey']).'",';
 				}
 				if (!empty($val['searchall'])) {
 					$texttoinsert .= ' "searchall" => "'.(int) $val['searchall'].'",';
@@ -331,7 +333,7 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 	// Backup old file
 	dol_copy($pathoffiletoedittarget, $pathoffiletoedittarget.'.back', $newmask, 1);
 
-	$contentsql = file_get_contents(dol_osencode($pathoffiletoeditsrc));
+	$contentsqlfile = file_get_contents(dol_osencode($pathoffiletoeditsrc));
 
 	$i = 0;
 	$texttoinsert = '-- BEGIN MODULEBUILDER FIELDS'."\n";
@@ -348,7 +350,9 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 				$type = 'double'; // html modulebuilder type is a text type in database
 			} elseif (in_array($type, array('link', 'sellist', 'duration'))) {
 				$type = 'integer';
-			} elseif ($type == 'mail') {
+			} elseif ($type == 'chkbxlst') {
+				$type = 'varchar(128)';
+			} elseif ($type == 'mail' || $type == 'email') {	// Prefer to use 'email'
 				$type = 'varchar(128)';
 			} elseif (strpos($type, 'stars(') === 0) {
 				$type = 'integer';
@@ -356,6 +360,8 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 				$type = 'varchar(20)';
 			} elseif ($type == 'ip') {
 				$type = 'varchar(32)';
+			} elseif ($type == 'url') {
+				$type = 'varchar(255)';
 			}
 
 			$texttoinsert .= "\t".$key." ".$type;
@@ -386,9 +392,9 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 	}
 	$texttoinsert .= "\t".'-- END MODULEBUILDER FIELDS';
 
-	$contentsql = preg_replace('/-- BEGIN MODULEBUILDER FIELDS.*END MODULEBUILDER FIELDS/ims', $texttoinsert, $contentsql);
+	$contentsqlfile = preg_replace('/-- BEGIN MODULEBUILDER FIELDS.*END MODULEBUILDER FIELDS/ims', $texttoinsert, $contentsqlfile);
 
-	$result = file_put_contents($pathoffiletoedittarget, $contentsql);
+	$result = file_put_contents($pathoffiletoedittarget, $contentsqlfile);
 	if ($result) {
 		dolChmod($pathoffiletoedittarget, $newmask);
 	} else {
@@ -401,7 +407,7 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 	$pathoffiletoedittarget = preg_replace('/\.sql$/', '.key.sql', $pathoffiletoedittarget);
 	$pathoffiletoedittarget = preg_replace('/\.sql.new$/', '.key.sql.new', $pathoffiletoedittarget);
 
-	$contentsql = file_get_contents(dol_osencode($pathoffiletoeditsrc));
+	$contentsqlfile = file_get_contents(dol_osencode($pathoffiletoeditsrc));
 
 	$i = 0;
 	$texttoinsert = '-- BEGIN MODULEBUILDER INDEXES'."\n";
@@ -409,7 +415,7 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 		foreach ($object->fields as $key => $val) {
 			$i++;
 			if (!empty($val['index'])) {
-				$texttoinsert .= "ALTER TABLE llx_".strtolower($module).'_'.strtolower($objectname)." ADD INDEX idx_".strtolower($module).'_'.strtolower($objectname)."_".$key." (".$key.");";
+				$texttoinsert .= "ALTER TABLE llx_".strtolower($module).'_'.strtolower($objectname)." ADD ".($key == 'ref' ? "UNIQUE INDEX uk_" : "INDEX idx_").strtolower($module).'_'.strtolower($objectname)."_".$key." (".$key.($key == 'ref' && array_key_exists('entity', $object->fields) ? ", entity" : "").");";
 				$texttoinsert .= "\n";
 			}
 			if (!empty($val['foreignkey'])) {
@@ -423,11 +429,11 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 	}
 	$texttoinsert .= '-- END MODULEBUILDER INDEXES';
 
-	$contentsql = preg_replace('/-- BEGIN MODULEBUILDER INDEXES.*END MODULEBUILDER INDEXES/ims', $texttoinsert, $contentsql);
+	$contentsqlfile = preg_replace('/-- BEGIN MODULEBUILDER INDEXES.*END MODULEBUILDER INDEXES/ims', $texttoinsert, $contentsqlfile);
 
 	dol_mkdir(dirname($pathoffiletoedittarget));
 
-	$result2 = file_put_contents($pathoffiletoedittarget, $contentsql);
+	$result2 = file_put_contents($pathoffiletoedittarget, $contentsqlfile);
 	if ($result2) {
 		dolChmod($pathoffiletoedittarget, $newmask);
 	} else {
@@ -516,54 +522,36 @@ function checkExistComment($file, $number)
 	return -1;
 }
 /**
- * Delete all permissions
+ * Delete all permissions declared in the permissions section of a module descriptor.
  *
  * @param	string	$file         file with path
- * @return	void
+ * @return	int<-1,1>			  1 if OK, -1 if KO
  */
 function deletePerms($file)
 {
-	$start = "/* BEGIN MODULEBUILDER PERMISSIONS */";
-	$end = "/* END MODULEBUILDER PERMISSIONS */";
-	$i = 1;
-	$array = array();
-	$lines = file($file);
-	// Search for start and end lines
-	foreach ($lines as $i => $line) {
-		if (strpos($line, $start) !== false) {
-			$start_line = $i + 1;
+	require_once DOL_DOCUMENT_ROOT.'/modulebuilder/class/PermissionsBlock.class.php';
 
-			// Copy lines until the end on array
-			while (($line = $lines[++$i]) !== false) {
-				if (strpos($line, $end) !== false) {
-					$end_line = $i + 1;
-					break;
-				}
-				$array[] = $line;
-			}
-			break;
-		}
+	try {
+		$block = PermissionsBlock::fromFile($file);
+	} catch (\RuntimeException $e) {
+		dol_syslog('deletePerms '.$e->getMessage(), LOG_WARNING);
+		return -1;
 	}
-	$allContent = implode("", $array);
-	dolReplaceInFile($file, array($allContent => ''));
+
+	return $block->write('') < 0 ? -1 : 1;
 }
 
-/**
- *  Compare two values
- * @param	int|string	$a	value 1
- * @param	int|string	$b	value 2
- * @return	int<-1,1> 		<=0 if str1 is less than str2; > 0 if str1 is greater than str2, and 0 if they are equal.
-*/
-function compareFirstValue($a, $b)
-{
-	return strcmp($a[0], $b[0]);
-}
 /**
  * Rewriting all permissions after any actions
+ *
+ * Kept for backward compatibility: this is a public core function that external modules may call.
+ * The signature and the 1/-1 contract are unchanged, the body delegates to
+ * DescriptorRightsSyncService.
+ *
  * @param	string		$file			filename or path
  * @param	array<int,string[]>	$permissions permissions existing in file
  * @param	?int		$key			key for permission needed
- * @param	?array{0:string,1:string}	$right           $right to update or add
+ * @param	?array<int,string>	$right		$right to update or add
  * @param	string		$objectname		name of object
  * @param	string		$module			name of module
  * @param	int<-2,2>	$action			0 for delete, 1 for add, 2 for update, -1 when delete object completely, -2 for generate rights after add
@@ -571,114 +559,68 @@ function compareFirstValue($a, $b)
  */
 function reWriteAllPermissions($file, $permissions, $key, $right, $objectname, $module, $action)
 {
-	$error = 0;
-	$rights = array();
-	if ($action == 0 && $key !== null) {
-		// delete right from permissions array
-		array_splice($permissions, array_search($permissions[$key], $permissions), 1);
-	} elseif ($action == 1) {
-		array_push($permissions, $right);
-	} elseif ($action == 2 && !empty($right) && $key !== null) {
-		// update right from permissions array
-		array_splice($permissions, array_search($permissions[$key], $permissions), 1, $right);
-	} elseif ($action == -1 && !empty($objectname)) {
-		// when delete object
-		$key = null;
-		$right = null;
-		foreach ($permissions as $perms) {
-			if ($perms[4] === strtolower($objectname)) {
-				array_splice($permissions, array_search($perms, $permissions), 1);
-			}
-		}
-	} elseif ($action == -2 && !empty($objectname) && !empty($module)) {
-		$key = null;
-		$right = null;
-		$objectOfRights = array();
-		//check if object already declared in rights file
-		foreach ($permissions as $right) {
-			$objectOfRights[] = $right[4];
-		}
-		if (in_array(strtolower($objectname), $objectOfRights)) {
-			$error++;
-		} else {
-			$permsToadd = array();
-			$perms = array(
-				'read' => 'Read '.$objectname.' object of '.ucfirst($module),
-				'write' => 'Create/Update '.$objectname.' object of '.ucfirst($module),
-				'delete' => 'Delete '.$objectname.' object of '.ucfirst($module)
-			);
-			$i = 0;
-			foreach ($perms as $index => $value) {
-				$permsToadd[$i][0] = '';
-				$permsToadd[$i][1] = $value;
-				$permsToadd[$i][4] = strtolower($objectname);
-				$permsToadd[$i][5] = $index;
-				array_push($permissions, $permsToadd[$i]);
-				$i++;
-			}
-		}
-	} else {
-		$error++;
+	require_once DOL_DOCUMENT_ROOT.'/modulebuilder/class/RightsSyncService.class.php';
+
+	$module = (string) $module;
+	$objectname = (string) $objectname;
+	$permissions = is_array($permissions) ? $permissions : array();
+	$right = is_array($right) ? $right : array();
+
+	// The legacy signature carries the module name only for action -2; the other actions recover
+	// it from the descriptor filename.
+	if ($module === '') {
+		$module = (string) preg_replace('/^mod|\.class\.php$/', '', basename($file));
 	}
-	'@phan-var-force array<int,string[]> $permissions';
-	if (!$error) {
-		// prepare permissions array
-		$count_perms = count($permissions);
-		foreach (array_keys($permissions) as $i) {
-			$permissions[$i][0] = "\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', \$r + 1)";
-			$permissions[$i][1] = "\$this->rights[\$r][1] = '".$permissions[$i][1]."'";
-			$permissions[$i][4] = "\$this->rights[\$r][4] = '".$permissions[$i][4]."'";
-			$permissions[$i][5] = "\$this->rights[\$r][5] = '".$permissions[$i][5]."';\n\t\t";
-		}
-		// for group permissions by object
-		$perms_grouped = array();
-		foreach ($permissions as $perms) {
-			$object = $perms[4];
-			if (!isset($perms_grouped[$object])) {
-				$perms_grouped[$object] = array();
-			}
-			$perms_grouped[$object][] = $perms;
-		}
-		//$perms_grouped = array_values($perms_grouped);
-		$permissions = $perms_grouped;
 
-
-		// parcourir les objects
-		$o = 0;
-		foreach ($permissions as &$object) {
-			// récupérer la permission de l'objet
-			$p = 1;
-			foreach ($object as &$obj) {
-				if (str_contains($obj[5], 'read')) {
-					$obj[0] = "\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', (".$o." * 10) + 0 + 1)";
-				} elseif (str_contains($obj[5], 'write')) {
-					$obj[0] = "\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', (".$o." * 10) + 1 + 1)";
-				} elseif (str_contains($obj[5], 'delete')) {
-					$obj[0] = "\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', (".$o." * 10) + 2 + 1)";
-				} else {
-					$obj[0] = "\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', (".$o." * 10) + ".$p." + 1)";
-					$p++;
-				}
-			}
-			usort($object, 'compareFirstValue');
-			$o++;
+	try {
+		switch ((int) $action) {
+			case -2:
+				$cmd = RightsSyncCommand::forObjectCreation($module, $file, $permissions, $objectname);
+				break;
+			case -1:
+				$cmd = RightsSyncCommand::forObjectDeletion($module, $file, $permissions, $objectname);
+				break;
+			case 1:
+				$cmd = RightsSyncCommand::forRightAddition(
+					$module,
+					$file,
+					$permissions,
+					(string) ($right[4] ?? ''),
+					(string) ($right[1] ?? ''),
+					(string) ($right[5] ?? '')
+				);
+				break;
+			case 2:
+				$cmd = RightsSyncCommand::forRightUpdate(
+					$module,
+					$file,
+					$permissions,
+					(int) $key,
+					(string) ($right[4] ?? ''),
+					(string) ($right[1] ?? ''),
+					(string) ($right[5] ?? '')
+				);
+				break;
+			case 0:
+				$cmd = RightsSyncCommand::forRightDeletion($module, $file, $permissions, (int) $key);
+				break;
+			default:
+				dol_syslog('reWriteAllPermissions got an unknown action: '.$action, LOG_WARNING);
+				return -1;
 		}
-
-		//convert to string
-		foreach ($permissions as $perms) {
-			foreach ($perms as $per) {
-				$rights[] = implode(";\n\t\t", $per)."\$r++;\n";
-			}
-		}
-		$rights_str = implode("\t\t", $rights);
-		// delete all permissions from file
-		deletePerms($file);
-		// rewrite all permissions again
-		dolReplaceInFile($file, array('/* BEGIN MODULEBUILDER PERMISSIONS */' => '/* BEGIN MODULEBUILDER PERMISSIONS */'."\n\t\t".$rights_str));
-		return 1;
-	} else {
+	} catch (\InvalidArgumentException $e) {
+		dol_syslog('reWriteAllPermissions '.$e->getMessage(), LOG_WARNING);
 		return -1;
 	}
+
+	$report = (new DescriptorRightsSyncService())->sync($cmd);
+
+	// The historical contract reports a skipped object creation as a failure.
+	if ($report->skipped > 0) {
+		return -1;
+	}
+
+	return $report->toLegacyReturnCode();
 }
 
 /**
@@ -842,12 +784,14 @@ function deletePropsAndPermsFromDoc($file, $objectname)
 		$search = '/' . preg_quote($start, '/') . '(.*?)' . preg_quote($end, '/') . '/s';
 		$new_contents = preg_replace($search, '', $str);
 		file_put_contents($file, $new_contents);
+		dolChmod($file);
 
 		//perms If Exist
 		$perms = "|*".strtolower($objectname)."*|";
 		$search_pattern_perms = '/' . preg_quote($perms, '/') . '.*?\n/';
 		$new_contents = preg_replace($search_pattern_perms, '', $new_contents);
 		file_put_contents($file, $new_contents);
+		dolChmod($file);
 	}
 }
 
@@ -1034,26 +978,22 @@ function addObjectsToApiFile($srcfile, $file, $objects, $modulename)
 
 	$allContent = implode("", $content);
 	file_put_contents($file, $allContent);
+	dolChmod($file);
 
 	// Add methods for each object
 	$allContent = getFromFile($srcfile, '/* BEGIN MODULEBUILDER API MYOBJECT */', '/* END MODULEBUILDER API MYOBJECT */');
 	foreach ($objects as $objectname) {
-		$arrayreplacement = array(
-			'mymodule' => strtolower($modulename),
-			'MyModule' => $modulename,
-			'MYMODULE' => strtoupper($modulename),
-			'My module' => $modulename,
-			'my module' => $modulename,
-			'Mon module' => $modulename,
-			'mon module' => $modulename,
-			'htdocs/modulebuilder/template' => strtolower($modulename),
-			'myobject' => strtolower($objectname),
-			'MyObject' => $objectname,
-			'MYOBJECT' => strtoupper($objectname),
-			'---Replace with your own copyright and developer email---' => dol_print_date($now, '%Y').' '.$user->getFullName($langs).($user->email ? ' <'.$user->email.'>' : '')
-		);
-		$contentReplaced = make_substitutions($allContent, $arrayreplacement, null);
-		//$contentReplaced = str_replace(["myobject","MyObject"], [strtolower($object),$object], $allContent);
+		if (strtolower($modulename) === strtolower($objectname)) {
+			dol_syslog('addObjectsToApiFile: skipping object "' . $objectname . '" — name collides with module "' . $modulename . '"', LOG_WARNING);
+			continue;
+		}
+		$nc = new NamingContract($modulename, $objectname);
+		$extraMap = [
+			'htdocs/modulebuilder/template'                              => $nc->moduleNameLower,
+			'---Replace with your own copyright and developer email---' => dol_print_date($now, '%Y') . ' ' . $user->getFullName($langs) . ($user->email ? ' <' . $user->email . '>' : ''),
+		];
+		$fullMap = array_merge($nc->getSubstitutionMap(), $extraMap);
+		$contentReplaced = str_replace(array_keys($fullMap), array_values($fullMap), $allContent);
 
 		dolReplaceInFile($file, array(
 			'/* BEGIN MODULEBUILDER API MYOBJECT */' => '/* BEGIN MODULEBUILDER API '.strtoupper($objectname).' */'.$contentReplaced."\t".'/* END MODULEBUILDER API '.strtoupper($objectname).' */'."\n\n\n\t".'/* BEGIN MODULEBUILDER API MYOBJECT */'
@@ -1103,6 +1043,7 @@ function removeObjectFromApiFile($file, $objects, $objectname)
 
 	$allContent = implode("", $content);
 	file_put_contents($file, $allContent);
+	dolChmod($file);
 
 	// for delete methods of object
 	$begin = '/* BEGIN MODULEBUILDER API '.strtoupper($objectname).' */';
@@ -1119,8 +1060,8 @@ function removeObjectFromApiFile($file, $objects, $objectname)
 
 /**
  * @param	string		$file		path of filename
- * @param	array<int,array{commentgroup:string,fk_menu:string,type:string,titre:string,mainmenu:string,leftmenu:string,url:string,langs:string,position:int,enabled:int,perms:string,target:string,user:int}>	$menus      all menus for module
- * @param	null|string|array{commentgroup:string,fk_menu:string,type:string,titre:string,mainmenu:string,leftmenu:string,url:string,langs:string,position:int,enabled:int,perms:string,target:string,user:int}	$menuWantTo  menu get for do actions
+ * @param	array<int,array{commentgroup?:string,fk_menu:string,type:string,titre:string,mainmenu:string,leftmenu:string,url:string,langs:string,position:int|string,enabled:int|string,perms:string,target:string,user:int}>	$menus      all menus for module
+ * @param	null|string|array{commentgroup?:string,fk_menu:string,type:string,titre:string,mainmenu:string,leftmenu:string,url:string,langs:string,position:int|string,enabled:int|string,perms:string,target:string,user:int}	$menuWantTo  menu get for do actions
  * @param	?int		$key		key for the concerned menu
  * @param	int<-1,2>	$action		for specify what action (0 = delete perm, 1 = add perm, 2 = update perm, -1 = when we delete object)
  * @return	int<-1,1>				1 if OK, -1 if KO
@@ -1460,4 +1401,86 @@ function countItemsInDirectory($path, $type = 1)
 		}
 	}
 	return $count;
+}
+
+/**
+ * Return the map of optional tabs that can be generated for a ModuleBuilder object.
+ * The CARD tab is always generated and is therefore not listed here.
+ * HISTORY is an alias of AGENDA (object event history is the agenda tab in Dolibarr).
+ *
+ * @return	array<string,array{file:string,var:string,marker:string,label:string}>	Map: tab key => metadata
+ */
+function getModuleBuilderObjectTabs()
+{
+	return array(
+		'contact'  => array('file' => 'myobject_contact.php',  'var' => 'showtabofpagecontact',  'marker' => 'CONTACT',  'label' => 'Contacts'),
+		'note'     => array('file' => 'myobject_note.php',      'var' => 'showtabofpagenote',     'marker' => 'NOTE',     'label' => 'Notes'),
+		'document' => array('file' => 'myobject_document.php',  'var' => 'showtabofpagedocument', 'marker' => 'DOCUMENT', 'label' => 'Documents'),
+		'agenda'   => array('file' => 'myobject_agenda.php',    'var' => 'showtabofpageagenda',   'marker' => 'AGENDA',   'label' => 'Events'),
+	);
+}
+
+/**
+ * Filter a list of requested tab keys against the known optional tabs map.
+ * Protects against injection of unknown keys, removes duplicates, normalizes order.
+ *
+ * @param	string[]	$requested	Raw tab keys requested by the user (e.g. from GETPOST array)
+ * @param	array<string,array{file:string,var:string,marker:string,label:string}>	$map	Map from getModuleBuilderObjectTabs()
+ * @return	string[]	Sanitized list of valid tab keys, in map order
+ */
+function filterEnabledTabs($requested, $map)
+{
+	$valid = array();
+	if (!is_array($requested) || empty($requested)) {
+		return $valid;
+	}
+	foreach (array_keys($map) as $tabkey) {
+		if (in_array($tabkey, $requested, true)) {
+			$valid[] = $tabkey;
+		}
+	}
+	return $valid;
+}
+
+/**
+ * Apply substitutions to a module descriptor file while preserving the MODULEBUILDER comment markers.
+ * Markers such as "BEGIN MODULEBUILDER LEFTMENU MYOBJECT" must keep their MYOBJECT/MYMODULE placeholder
+ * so that generating subsequent objects can still locate them (see checkExistComment()). A blanket
+ * substitution would rewrite them to the first object name and break the generation of further objects.
+ *
+ * @param	string					$file				Path to the module descriptor file
+ * @param	array<string,string>	$arrayreplacement	Substitution map (search => replace), applied as literal strings
+ * @return	int											1 on success, -1 on read/write error
+ */
+function dolReplaceInFilePreservingModuleBuilderMarkers($file, $arrayreplacement)
+{
+	if (!file_exists($file)) {
+		return -1;
+	}
+	$content = file_get_contents($file);
+	if ($content === false) {
+		return -1;
+	}
+
+	// Hide every "/* BEGIN|END MODULEBUILDER ... */" marker behind a sentinel before substituting
+	$foundmarkers = array();
+	preg_match_all('/\/\*\s*(?:BEGIN|END) MODULEBUILDER [^*]*\*\//', $content, $foundmarkers);
+	$sentinels = array();
+	foreach (array_values(array_unique($foundmarkers[0])) as $index => $marker) {
+		$key = "\0MODULEBUILDERMARKER".$index."\0";
+		$sentinels[$key] = $marker;
+		$content = str_replace($marker, $key, $content);
+	}
+
+	$content = str_replace(array_keys($arrayreplacement), array_values($arrayreplacement), $content);
+
+	// Restore the protected markers untouched
+	if (!empty($sentinels)) {
+		$content = strtr($content, $sentinels);
+	}
+
+	if (file_put_contents($file, $content) === false) {
+		return -1;
+	}
+	return 1;
 }

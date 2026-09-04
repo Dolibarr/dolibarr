@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2010-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,9 +22,25 @@
  *	\ingroup    projet
  *	\brief      Gantt diagram of a project
  */
-
+/**
+ * @var DoliDB $db
+ * @var Translate $langs
+ * @var string $dateformatinput
+ * @var string $dateformat
+ * @var string $datehourformat
+ * @var array<int,array{task_id:int,task_alternate_id:int,task_project_id:int,task_parent:int,task_is_group:int<0,1>,task_css:string,task_position:int,task_planned_workload:int,task_milestone:int,task_percent_complete:float,task_name:string,task_start_date:int,task_end_date:int,task_color:string,task_resources:string,note:string,task_parent_alternate_id:int}> $tasks
+ * @var array{} $task_dependencies
+ */
+'
+@phan-var-force string $dateformatinput
+@phan-var-force string $dateformat
+@phan-var-force string $datehourformat
+@phan-var-force array<int,array{task_id:int,task_alternate_id:int,task_project_id:int,task_parent:int,task_is_group:int<0,1>,task_css:string,task_position:int,task_planned_workload:int,task_milestone:int,task_percent_complete:float,task_name:string,task_start_date:int,task_end_date:int,task_color:string,task_resources:string,note:string,task_parent_alternate_id:int}> $tasks
+@phan-var-force array{} $task_dependencies
+';
 ?>
 
+<!-- ganttchart.inc.php::begin -->
 <div id="principal_content" style="margin-left: 0;">
 	<div style="margin-left: 0; position: relative;" class="gantt" id="GanttChartDIV"></div>
 
@@ -124,15 +142,15 @@ if (g.getDivId() != null)
 			$projecttmp = new Project($db);
 			$projecttmp->fetch($t['task_project_id']);
 			$tmpt = array(
-				'task_id'=> '-'.$t['task_project_id'],
-				'task_alternate_id'=> '-'.$t['task_project_id'],
-				'task_name'=>$projecttmp->ref.' '.$projecttmp->title,
-				'task_resources'=>'',
-				'task_start_date'=>'',
-				'task_end_date'=>'',
-				'task_is_group'=>1, 'task_position'=>0, 'task_css'=>'ggroupblack', 'task_milestone'=> 0, 'task_parent'=>0, 'task_parent_alternate_id'=>0,
-				'task_notes'=>'',
-				'task_planned_workload'=>0
+			'task_id' => (int) -$t['task_project_id'],
+			'task_alternate_id' => (int) -$t['task_project_id'],
+			'task_name' => $projecttmp->ref.' '.$projecttmp->title,
+			'task_resources' => '',
+			'task_start_date' => $projecttmp->date_start,
+			'task_end_date' => (!empty($projecttmp->date_end) ? $projecttmp->date_end : 0),
+			'task_is_group' => 1, 'task_position' => 0, 'task_css' => 'ggroupblack', 'task_milestone' => 0, 'task_parent' => 0, 'task_parent_alternate_id' => 0,
+			'note' => '',
+			'task_planned_workload' => 0
 			);
 			constructGanttLine($tasks, $tmpt, array(), 0, $t['task_project_id']);
 			$old_project_id = $t['task_project_id'];
@@ -156,24 +174,28 @@ else
 }
 </script>
 </div>
+<!-- ganttchart.inc.php::end -->
 
 
 
 <?php
 /**
- * Add a gant chart line
+ * Add a gantt chart line
  *
- * @param 	array	$tarr					Array of all tasks
- * @param	array	$task					Array with properties of one task
- * @param 	array	$task_dependencies		Task dependencies (array(array(0=>idtask,1=>idtasktofinishfisrt))
+ * @param 	array<int,array{task_id:int,task_alternate_id:int,task_name:string,task_resources:string,task_start_date:int,task_end_date:int,task_is_group:int<0,1>,task_position:int,task_css:string,task_milestone:int,task_parent:int,task_parent_alternate_id:int}>	$tarr					Array of all tasks
+ * @param	array{task_id:int,task_alternate_id:int,task_name:string,task_resources:string,task_start_date:int,task_end_date:int,task_is_group:int<0,1>,task_position:int,task_css:string,task_milestone:int,task_parent:int,task_parent_alternate_id:int}	$task					Array with properties of one task
+ * @param 	array<int[]>	$task_dependencies		Task dependencies (array(array(0=>idtask,1=>idtasktofinishfisrt))
  * @param 	int		$level					Level
  * @param 	int		$project_id				Id of project
  * @return	void
  */
 function constructGanttLine($tarr, $task, $task_dependencies, $level = 0, $project_id = null)
 {
-	global $langs;
+	global $langs, $db;
 	global $dateformatinput2;
+	$projectstatic = new Project($db);
+	$taskstatic = new Task($db);
+
 
 	$start_date = $task["task_start_date"];
 	$end_date = $task["task_end_date"];
@@ -205,21 +227,29 @@ function constructGanttLine($tarr, $task, $task_dependencies, $level = 0, $proje
 	}
 	// Define percent
 	$percent = empty($task['task_percent_complete']) ? 0 : $task['task_percent_complete'];
-	// Link (more information)
+
+	// Link and name (more information)
 	if ($task["task_id"] < 0) {
-		//$link=DOL_URL_ROOT.'/projet/tasks.php?withproject=1&id='.abs($task["task_id"]);
-		$link = '';
+		$link=DOL_URL_ROOT.'/projet/card.php?id='.abs($task["task_id"]);
+		$fetchresult = $projectstatic->fetch(abs($task["task_id"]));
+		if ($fetchresult > 0) {
+			$tmpname = $projectstatic->getNomUrl(0, 'withproject', 1);
+			$name = '<span style="font-size: 1.2em; font-weight: bold;">' . $tmpname . '</span>';
+		} else {
+			$name = $task['task_name'];
+		}
+		//$name = $task['task_name'];
 	} else {
 		$link = DOL_URL_ROOT.'/projet/tasks/contact.php?withproject=1&id='.$task["task_id"];
+		$fetchresult = $taskstatic->fetch($task["task_id"]);
+		if ($fetchresult > 0) {
+			$name = $taskstatic->getNomUrl(0, 'withproject', 'task', 1);
+		} else {
+			$name = $task['task_name'];
+		}
+		//$name = $task['task_name'];
 	}
 
-	// Name
-	//$name='<a href="'.DOL_URL_ROOT.'/projet/task/tasks.php?id='.$task['task_id'].'">'.$task['task_name'].'</a>';
-	$name = $task['task_name'];
-
-	/*for($i=0; $i < $level; $i++) {
-		$name=' - '.$name;
-	}*/
 	// Add line to gantt
 	/*
 	g.AddTaskItem(new JSGantt.TaskItem(1, 'Define Chart API','',          '',          'ggroupblack','', 0, 'Brian', 0,  1,0,1,'','','Some Notes text',g));
@@ -275,9 +305,9 @@ function constructGanttLine($tarr, $task, $task_dependencies, $level = 0, $proje
 /**
  * Find child Gantt line
  *
- * @param 	array	$tarr					tarr
+ * @param 	array<int,array{task_id:int,task_alternate_id:int,task_name:string,task_resources:string,task_start_date:int,task_end_date:int,task_is_group:int<0,1>,task_position:int,task_css:string,task_milestone:int,task_parent:int,task_parent_alternate_id:int}>	$tarr					tarr
  * @param	int		$parent					Parent
- * @param 	array	$task_dependencies		Task dependencies
+ * @param 	array<int[]>	$task_dependencies		Task dependencies
  * @param 	int		$level					Level
  * @return	void
  */
@@ -293,12 +323,12 @@ function findChildGanttLine($tarr, $parent, $task_dependencies, $level)
 			{
 				$tmpt = array(
 				'task_id'=> -98, 'task_name'=>'Level '.$level, 'task_resources'=>'', 'task_start_date'=>'', 'task_end_date'=>'',
-				'task_is_group'=>1, 'task_css'=>'ggroupblack', 'task_milestone'=> 0, 'task_parent'=>$tarr[$x]["task_parent"], 'task_notes'=>'');
+				'task_is_group'=>1, 'task_css'=>'ggroupblack', 'task_milestone'=> 0, 'task_parent'=>$tarr[$x]["task_parent"], 'note'=>'');
 				constructGanttLine($tasks, $tmpt, array(), 0, $tarr[$x]['task_project_id']);
 				$old_parent_id = $tarr[$x]['task_project_id'];
 			}*/
 
-			constructGanttLine($tarr, $tarr[$x], $task_dependencies, $level, null);
+			constructGanttLine($tarr, $tarr[$x], $task_dependencies, $level, 0);
 			findChildGanttLine($tarr, $tarr[$x]["task_id"], $task_dependencies, $level + 1);
 		}
 	}

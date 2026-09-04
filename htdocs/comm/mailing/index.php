@@ -4,6 +4,7 @@
  * Copyright (C) 2010      Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,10 +28,15 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-
-$hookmanager = new HookManager($db);
 
 // Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('mailingindex'));
@@ -74,18 +80,19 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder nohover centpercent">';
 print '<tr class="liste_titre"><td colspan="3">'.$titlesearch.'</td></tr>';
-print '<tr class="oddeven"><td class="nowrap">';
-print $langs->trans("Ref").':</td><td><input type="text" class="flat inputsearch" name="sref"></td>';
-print '<td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-print '<tr class="oddeven"><td class="nowrap">';
-print $langs->trans("Other").':</td><td><input type="text" class="flat inputsearch" name="sall"></td>';
-
+print '<tr class="oddeven nohover"><td class="nowrap">';
+print '<table class="noborderbottom centpercent">';
+print '<tr class="noborderbottom"><td>'.$langs->trans("Ref").':</td><td><input type="text" class="flat inputsearch maxwidth200" name="sref"></td>';
+print '<tr class="noborderbottom"><td>'.$langs->trans("Other").':</td><td><input type="text" class="flat inputsearch maxwidth200" name="search_all"></td></tr>';
+print '</table>';
+print '</td>';
+print '<td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
 print "</table></div></form><br>\n";
 
 
 
 
-// Affiche stats de tous les modules de destinataires mailings
+// Display stats of all recipient mailing modules
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("TargetsStatistics").'</td></tr>';
 
@@ -161,9 +168,10 @@ print '</div><div class="secondcolumn fichehalfright boxhalfright" id="boxhalfri
 $limit = 10;
 $sql  = "SELECT m.rowid, m.titre as title, m.nbemail, m.statut as status, m.date_creat, m.messtype";
 $sql .= " FROM ".MAIN_DB_PREFIX."mailing as m";
-$sql .= " WHERE m.entity = ".$conf->entity;
+$sql .= " WHERE m.entity = ".((int) $conf->entity);
 $sql .= " ORDER BY m.date_creat DESC";
-$sql .= " LIMIT ".$limit;
+$sql .= $db->plimit($limit);
+
 $result = $db->query($sql);
 if ($result) {
 	print '<div class="div-table-responsive-no-min">';
@@ -180,7 +188,7 @@ if ($result) {
 		print ' | '.$langs->trans("Phone");
 	}
 	print '</td>';
-	print '<td class="right"><a href="'.DOL_URL_ROOT.'/comm/mailing/list.php">'.$langs->trans("AllEMailings").'</a></td>';
+	print '<td class="right"><a href="'.DOL_URL_ROOT.'/comm/mailing/list.php" title="'.$langs->trans("AllEMailings").'"><span class="badge marginleftonlyshort">...</span></td>';
 	print '</tr>';
 
 	$num = $db->num_rows($result);

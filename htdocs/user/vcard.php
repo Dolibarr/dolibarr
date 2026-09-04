@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2012 	Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2020		Tobias Sekan		<tobias.sekan@startmail.com>
  * Copyright (C) 2021-2022 	Anthony Berton		<anthony.berton@bb2a.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +31,13 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/vcard.class.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 $id = GETPOSTINT('id');
 

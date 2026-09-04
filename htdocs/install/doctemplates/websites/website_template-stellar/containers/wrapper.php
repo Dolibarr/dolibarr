@@ -170,14 +170,14 @@ if ($rss) {
 				dol_syslog("build_exportfile ".$error, LOG_ERR);
 				dol_delete_file($outputfiletmp, 0, 1);
 				print $error;
-				exit(-1);
+				exit(1);
 			}
 		} else {
 			dol_syslog("build_exportfile build_xxxfile function fails to for format=".$format." outputfiletmp=".$outputfile, LOG_ERR);
 			dol_delete_file($outputfiletmp, 0, 1);
 			$langs->load("errors");
 			print $langs->trans("ErrorFailToCreateFile", $outputfile);
-			exit(-1);
+			exit(1);
 		}
 	}
 
@@ -201,7 +201,7 @@ if ($rss) {
 			header('Content-Disposition: attachment; filename="'.$filename.'"');
 		}
 
-		// Ajout directives pour resoudre bug IE
+		// Add directives to fix IE bug
 		//header('Cache-Control: Public, must-revalidate');
 		//header('Pragma: public');
 		if ($cachedelay) {

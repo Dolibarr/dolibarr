@@ -2,6 +2,8 @@
 /* Copyright (C) 2010 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2015 Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,9 +38,12 @@ require_once dirname(__FILE__).'/CommonClassTest.class.php';
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
-	$user->getrights();
+	$user->loadRights();
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
+
+$conf->global->MAIN_MAX_DECIMALS_UNIT = 5;
+$conf->global->MAIN_MAX_DECIMALS_TOT = 2;
 
 if (getDolGlobalString('MAIN_ROUNDING_RULE_TOT')) {
 	print "Parameter MAIN_ROUNDING_RULE_TOT must be set to 0 or not set.\n";
@@ -55,7 +60,7 @@ if (getDolGlobalString('MAIN_ROUNDING_RULE_TOT')) {
 class PricesTest extends CommonClassTest
 {
 	/**
-	 * Test function calcul_price_total
+	 * Test function for calculating price total
 	 *
 	 * @return 	boolean
 	 * @see		http://wiki.dolibarr.org/index.php/Draft:VAT_calculation_and_rounding#Standard_usage
@@ -199,7 +204,7 @@ class PricesTest extends CommonClassTest
 
 
 		/*
-		 * Country Côte d'Ivoire
+		 * Country Ivory Coast
 		 */
 
 		// 10 * 10 HT - 0% discount with 18% vat, seller using localtax1 type 2, not localtax2 (method we provide value)

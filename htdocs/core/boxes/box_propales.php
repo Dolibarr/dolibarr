@@ -2,9 +2,9 @@
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015-2021 Frederic France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2015-2025  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2020      Pierre Ardoin        <mapiolca@me.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ class box_propales extends ModeleBoxes
 	public $boxcode = "lastpropals";
 	public $boximg = "object_propal";
 	public $boxlabel = "BoxLastProposals";
-	public $depends = array("propal"); // conf->propal->enabled
+	public $depends = array("propal");
 
 	/**
 	 *  Constructor
@@ -45,7 +45,7 @@ class box_propales extends ModeleBoxes
 	 *  @param  DoliDB  $db         Database handler
 	 *  @param  string  $param      More parameters
 	 */
-	public function __construct($db, $param)
+	public function __construct($db, $param)  // @phpstan-ignore constructor.unusedParameter
 	{
 		global $user;
 
@@ -65,7 +65,7 @@ class box_propales extends ModeleBoxes
 	 */
 	public function loadBox($max = 5)
 	{
-		global $user, $langs, $conf;
+		global $user, $langs, $conf, $hookmanager;
 
 		$this->max = $max;
 
@@ -85,17 +85,23 @@ class box_propales extends ModeleBoxes
 			$sql .= ", s.logo, s.email, s.entity";
 			$sql .= ", p.rowid, p.ref, p.fk_statut as status, p.datep as dp, p.datec, p.fin_validite, p.date_cloture, p.total_ht, p.total_tva, p.total_ttc, p.tms";
 			$sql .= " FROM ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."societe as s";
-			if (!$user->hasRight('societe', 'client', 'voir')) {
+			if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
 			$sql .= " WHERE p.fk_soc = s.rowid";
 			$sql .= " AND p.entity IN (".getEntity('propal').")";
-			if (!$user->hasRight('societe', 'client', 'voir')) {
+			if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
-			if ($user->socid) {
-				$sql .= " AND s.rowid = ".((int) $user->socid);
+			// Add where from hooks
+			$parameters = array('socid' => $user->socid, 'boxcode' => $this->boxcode);
+			$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $propalstatic); // Note that $action and $object may have been modified by hook
+			if (empty($reshook)) {
+				if ($user->socid) {
+					$sql .= " AND s.rowid = " . ((int) $user->socid);
+				}
 			}
+			$sql .= $hookmanager->resPrint;
 			if (getDolGlobalString('MAIN_LASTBOX_ON_OBJECT_DATE')) {
 				$sql .= " ORDER BY p.datep DESC, p.ref DESC ";
 			} else {

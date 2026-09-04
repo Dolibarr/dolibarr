@@ -1,6 +1,8 @@
 <?php
-/* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) ---Put here your own copyright and developer email---
+/* Copyright (C) 2017       Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2025       MDW                         <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026       Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +24,14 @@
  *  \brief      Tab of events on Interventions
  */
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
@@ -36,7 +46,7 @@ $langs->loadLangs(array("fichinter", "other"));
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
-$cancel = GETPOST('cancel', 'aZ09');
+$cancel = GETPOST('cancel');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : str_replace('_', '', basename(dirname(__FILE__)).basename(__FILE__, '.php')); // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 
@@ -70,9 +80,8 @@ if (!$sortorder) {
 
 // Initialize a technical objects
 $object = new Fichinter($db);
-$extrafields = new ExtraFields($db);
 
-$hookmanager->initHooks(array('myobjectagenda', 'globalcard')); // Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('fichinteragenda', 'globalcard')); // Note that conf->hooks_modules contains array
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
@@ -83,8 +92,8 @@ $permissiontoread = $user->hasRight("fichinter", "lire");
 $permissiontoadd = $user->hasRight("fichinter", "creer");
 
 // Security check
-if (!empty($user->socid)) {
-	$socid = $user->socid;
+if ($user->isExternalUser()) {
+	$socid = $user->isExternalUser();
 }
 $isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 restrictedArea($user, 'ficheinter', $object->id, 'fichinter', '', 'fk_soc', 'rowid', $isdraft);
@@ -124,8 +133,8 @@ if (empty($reshook)) {
 $form = new Form($db);
 
 if ($object->id > 0) {
-	$title = $langs->trans("Agenda");
-	$help_url = 'EN:Module_Agenda_En|DE:Modul_Terminplanung';
+	$title = $object->ref . " - " . $langs->trans('Agenda');
+	$help_url = 'EN:Module_Interventions|FR:Module_Fiches_d\'interventions';
 	llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-fichinter page-card_agenda');
 
 	if (isModEnabled('notification')) {
@@ -150,12 +159,12 @@ if ($object->id > 0) {
 	if (isModEnabled('project')) {
 		$langs->load("projects");
 		$morehtmlref .= '<br>';
-		if (0) {
+		if (0) {	// @phpstan-ignore-line
 			$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 			if ($action != 'classify') {
-				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
+				$morehtmlref .= '<a class="editfielda" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true).'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
-			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
@@ -189,7 +198,7 @@ if ($object->id > 0) {
 	$objthirdparty = $object;
 	$objcon = new stdClass();
 
-	$out = '&origin='.urlencode((string) ($object->element.(property_exists($object, 'module') ? '@'.$object->module : ''))).'&originid='.urlencode((string) ($object->id));
+	$out = '&origin='.urlencode((string) ($object->element.(!empty($object->module) ? '@'.$object->module : ''))).'&originid='.urlencode((string) ($object->id));
 	$urlbacktopage = $_SERVER['PHP_SELF'].'?id='.$object->id;
 	$out .= '&backtopage='.urlencode($urlbacktopage);
 	$permok = $user->hasRight('agenda', 'myactions', 'create');
@@ -245,7 +254,7 @@ if ($object->id > 0) {
 		$filters['search_rowid'] = $search_rowid;
 
 		// TODO Replace this with same code than into list.php
-		show_actions_done($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder, property_exists($object, 'module') ? $object->module : '');
+		show_actions_done($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder, !empty($object->module) ? $object->module : '');
 	}
 }
 

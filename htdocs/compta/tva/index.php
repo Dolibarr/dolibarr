@@ -4,10 +4,10 @@
  * Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2014      Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2018      Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2021      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2021      Open-Dsi             <support@open-dsi.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +35,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/localtax/class/localtax.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("other", "compta", "banks", "bills", "companies", "product", "trips", "admin"));
 
@@ -49,6 +57,29 @@ $month_start = $month_current;
 $refresh = true;
 
 include DOL_DOCUMENT_ROOT.'/compta/tva/initdatesforvat.inc.php';
+/**
+ * Variables from include:
+ *
+ * @var int $date_start
+ * @var int $date_end
+ * @var string $date_start_month
+ * @var string $date_start_year
+ * @var string $date_start_day
+ * @var string $date_end_month
+ * @var string $date_end_year
+ * @var string $date_end_day
+ */
+
+'
+@phan-var-force int $date_start
+@phan-var-force int $date_end
+@phan-var-force string $date_start_month
+@phan-var-force string $date_start_year
+@phan-var-force string $date_start_day
+@phan-var-force string $date_end_month
+@phan-var-force string $date_end_year
+@phan-var-force string $date_end_day
+';
 
 // Define modetax (0 or 1)
 // 0=normal, 1=option vat for services is on debit, 2=option on payments for products
@@ -392,6 +423,7 @@ if ($refresh === true) {
 
 		$action = "tva";
 		$object = array(&$x_coll, &$x_paye, &$x_both);
+		$parameters = array();
 		$parameters["mode"] = $modetax;
 		$parameters["year"] = $y;
 		$parameters["month"] = $m;
@@ -417,8 +449,7 @@ if ($refresh === true) {
 					// Define type
 					// We MUST use dtype (type in line). We can use something else, only if dtype is really unknown.
 					$type = (isset($fields['dtype']) ? $fields['dtype'] : $fields['ptype']);
-					// Try to enhance type detection using date_start and date_end for free lines where type
-					// was not saved.
+					// Try to enhance type detection using date_start and date_end for free lines where type was not saved.
 					if (!empty($fields['ddate_start'])) {
 						$type = 1;
 					}
@@ -457,8 +488,7 @@ if ($refresh === true) {
 					// Define type
 					// We MUST use dtype (type in line). We can use something else, only if dtype is really unknown.
 					$type = (isset($fields['dtype']) ? $fields['dtype'] : $fields['ptype']);
-					// Try to enhance type detection using date_start and date_end for free lines where type
-					// was not saved.
+					// Try to enhance type detection using date_start and date_end for free lines where type was not saved.
 					if (!empty($fields['ddate_start'])) {
 						$type = 1;
 					}
@@ -531,7 +561,7 @@ if ($refresh === true) {
 
 	$sql .= "SELECT SUM(amount) as mm, date_format(tva.datev,'%Y-%m') as dm, 'claimed' as mode";
 	$sql .= " FROM " . MAIN_DB_PREFIX . "tva as tva";
-	$sql .= " WHERE tva.entity = " . $conf->entity;
+	$sql .= " WHERE tva.entity = " . ((int) $conf->entity);
 	$sql .= " AND (tva.datev >= '" . $db->idate($date_start) . "' AND tva.datev <= '" . $db->idate($date_end) . "')";
 	$sql .= " GROUP BY dm";
 
@@ -540,7 +570,7 @@ if ($refresh === true) {
 	$sql .= "SELECT SUM(ptva.amount) as mm, date_format(tva.datev,'%Y-%m') as dm, 'paid' as mode";
 	$sql .= " FROM " . MAIN_DB_PREFIX . "tva as tva";
 	$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "payment_vat as ptva ON (tva.rowid = ptva.fk_tva)";
-	$sql .= " WHERE tva.entity = " . $conf->entity;
+	$sql .= " WHERE tva.entity = " . ((int) $conf->entity);
 	$sql .= " AND (tva.datev >= '" . $db->idate($date_start) . "' AND tva.datev <= '" . $db->idate($date_end) . "')";
 	$sql .= " GROUP BY dm";
 

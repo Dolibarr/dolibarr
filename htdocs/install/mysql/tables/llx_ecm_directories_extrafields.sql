@@ -1,5 +1,5 @@
 -- ========================================================================
--- Copyright (C) 2020      Frédéric France  <frederic.france@netlogic.fr>
+-- Copyright (C) 2020       Frédéric France  <frederic.france@free.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -23,4 +23,3 @@ CREATE TABLE llx_ecm_directories_extrafields
   fk_object                 integer NOT NULL,
   import_key                varchar(14)                             -- import key
 ) ENGINE=innodb;
-

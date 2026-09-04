@@ -1,9 +1,10 @@
 <?php
 /* Copyright (C) 2016       Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2020       Josep Lluís Amador   <joseplluis@lliuretic.cat>
- * Copyright (C) 2024		MDW					 <mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France		 <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW					 <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France		 <frederic.france@free.fr>
  * Copyright (C) 2024	    Nick Fragoulis
+ * Copyright (C) 2026       Nathan Pixodeo        <nathan@pixodeo.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,7 +72,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	 */
 	public function __construct($db)
 	{
-		global $conf, $langs, $mysoc;
+		global $langs, $mysoc;
 
 		// Translations
 		$langs->loadLangs(array("main", "bank", "withdrawals", "companies"));
@@ -128,7 +129,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	 *	@param	int<0,1>				$hidedetails		Do not show line details
 	 *	@param	int<0,1>				$hidedesc			Do not show desc
 	 *	@param	int<0,1>				$hideref			Do not show ref
-	 *  @param  ?array<string,string>	$moreparams			More parameters
+	 *  @param  ?array<string,mixed>	$moreparams			More parameters
 	 *	@return	int<-1,1>									1 if OK, <=0 if KO
 	 */
 	public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
@@ -139,6 +140,9 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 		if (!$object instanceof CompanyBankAccount) {
 			dol_syslog(get_class($this)."::write_file object is of type ".get_class($object)." which is not expected", LOG_ERR);
 			return -1;
+		}
+		if (empty($moreparams) && !empty($object->context['moreparams']) && is_array($object->context['moreparams'])) {
+			$moreparams = $object->context['moreparams'];
 		}
 
 		if (!is_object($outputlangs)) {
@@ -197,7 +201,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				if (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS')) {
 					$this->heightforfooter  += 6;
 				}
-				$pdf->SetAutoPageBreak(1, 0);
+				$pdf->setAutoPageBreak(true, 0);
 
 				if (class_exists('TCPDF')) {
 					$pdf->setPrintHeader(false);
@@ -212,7 +216,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("SepaMandate"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
-				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
+				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getAnonymisableFullName($outputlangs)));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("SepaMandate"));
 				if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 					$pdf->SetCompression(false);
@@ -229,15 +233,15 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				$pdf->MultiCell(0, 3, ''); // Set interline to 3
 				$pdf->SetTextColor(0, 0, 0);
 
-				$tab_top = 50;
-				$tab_top_newpage = 40;
+				$tab_top = 40 + $this->marge_haute;
+				$tab_top_newpage = 30 + $this->marge_haute;
 
 				$tab_height = $this->page_hauteur - $tab_top - $this->heightforfooter  - $this->heightforfreetext ;
 
 				// Show notes
 				if (!empty($object->note_public)) {
 					$pdf->SetFont('', '', $default_font_size - 1);
-					$pdf->writeHTMLCell(190, 3, $this->posxref, $tab_top - 2, dol_htmlentitiesbr($object->note_public), 0, 1);
+					$pdf->writeHTMLCell(190, 3, $this->posxref, $tab_top - 2, dol_htmlentitiesbr((string) $object->note_public), 0, 1);
 					$nexY = $pdf->GetY();
 					$height_note = $nexY - ($tab_top - 2);
 
@@ -331,8 +335,8 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $sepaname, 0, 'L');
 
 				$sepavatid = '__________________________________________________';
-				if (!empty($thirdparty->idprof1)) {
-					$sepavatid = $thirdparty->idprof1;
+				if (!is_null($thirdparty->idprof1) && !empty($thirdparty->idprof1)) {
+					$sepavatid = (string) $thirdparty->idprof1;
 				}
 				$posY = $pdf->GetY();
 				$posY += 1;
@@ -459,9 +463,12 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 				global $action;
 				$reshook = $hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+				$this->warnings = $hookmanager->warnings;
 				if ($reshook < 0) {
 					$this->error = $hookmanager->error;
 					$this->errors = $hookmanager->errors;
+					dolChmod($file);
+					return -1;
 				}
 
 				dolChmod($file);
@@ -485,9 +492,9 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	 *   Show table for lines
 	 *
 	 *   @param		TCPDF		$pdf     		Object PDF
-	 *   @param		int 		$tab_top		Top position of table
-	 *   @param		int 		$tab_height		Height of table (rectangle)
-	 *   @param		int			$nexY			Y
+	 *   @param		float		$tab_top		Top position of table
+	 *   @param		float		$tab_height		Height of table (rectangle)
+	 *   @param		float		$nexY			Y
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @param		int			$hidetop		Hide top bar of array
 	 *   @param		int			$hidebottom		Hide bottom bar of array
@@ -509,7 +516,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	 *
 	 *   @param		TCPDF				$pdf     		Object PDF
 	 *   @param		CompanyBankAccount	$object			Object to show
-	 *   @param		int					$posy			Y
+	 *   @param		float				$posy			Y
 	 *   @param		Translate			$outputlangs	Langs object
 	 *   @return	float
 	 */
@@ -526,13 +533,13 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 
 		$pdf->SetXY($this->marge_gauche, $posy);
 		$pdf->SetFont('', '', $default_font_size);
-		$pdf->MultiCell(100, 3, $outputlangs->transnoentitiesnoconv("PleaseReturnMandate", $mysoc->email).':', 0, 'L', 0);
+		$pdf->MultiCell(100, 3, $outputlangs->transnoentitiesnoconv("PleaseReturnMandate", (string) $mysoc->email).':', 0, 'L', false);
 		$posy = $pdf->GetY() + 2;
 
 		$pdf->SetXY($this->marge_gauche, $posy);
 		$pdf->SetFont('', '', $default_font_size - $diffsizetitle);
-		$pdf->MultiCell(100, 6, $mysoc->name, 0, 'L', 0);
-		$pdf->MultiCell(100, 6, $outputlangs->convToOutputCharset($mysoc->getFullAddress(1)), 0, 'L', 0);
+		$pdf->MultiCell(100, 6, $mysoc->name, 0, 'L', false);
+		$pdf->MultiCell(100, 6, $outputlangs->convToOutputCharset($mysoc->getFullAddress(1)), 0, 'L', false);
 		$posy = $pdf->GetY() + 2;
 
 		return $posy;
@@ -546,9 +553,9 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	 *
 	 *	@param	TCPDF				$pdf           	Object PDF
 	 *	@param  CompanyBankAccount	$object         Object invoice
-	 *	@param	int					$posy			Position depart
+	 *	@param	float				$posy			Position depart
 	 *	@param	Translate			$outputlangs	Object langs
-	 *	@return int									Position pour suite
+	 *	@return float								Position pour suite
 	 */
 	protected function _signature_area(&$pdf, $object, $posy, $outputlangs)
 	{
@@ -558,13 +565,13 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 		$tab_hl = 4;
 
 		$posx = $this->marge_gauche;
-		$pdf->SetXY($posx, $tab_top);
+		$pdf->SetXY($posx, $tab_top + $this->marge_haute);
 
 		$pdf->SetFont('', '', $default_font_size - 2);
 
-		$pdf->MultiCell(100, 3, $outputlangs->transnoentitiesnoconv("DateSigning"), 0, 'L', 0);
+		$pdf->MultiCell(100, 3, $outputlangs->transnoentitiesnoconv("DateSigning"), 0, 'L', false);
 		$pdf->MultiCell(100, 3, ' ');
-		$pdf->MultiCell(100, 3, '______________________', 0, 'L', 0);
+		$pdf->MultiCell(100, 3, '______________________', 0, 'L', false);
 
 		$posx = $this->xPosSignArea;
 		$largcol = ($this->page_largeur - $this->marge_droite - $posx);
@@ -572,10 +579,11 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 		// Total HT
 		$pdf->SetFillColor(255, 255, 255);
 		$pdf->SetXY($posx, $tab_top);
-		$pdf->MultiCell($largcol, $tab_hl, $outputlangs->transnoentitiesnoconv("Signature"), 0, 'L', 1);
+		$pdf->MultiCell($largcol, $tab_hl, $outputlangs->transnoentitiesnoconv("Signature"), 0, 'L', true);
 
 		$pdf->SetXY($posx, $tab_top + $tab_hl);
-		$pdf->MultiCell($largcol, $tab_hl * 3, '', 1, 'R');
+		//$pdf->MultiCell($largcol, $tab_hl * 3, '', 1, 'R');
+		$pdf->RoundedRect($posx, $tab_top + $tab_hl + 3, $largcol, $tab_hl * 3, $this->corner_radius, '1234', 'D');
 
 		return ($tab_hl * 7);
 	}

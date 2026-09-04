@@ -3,6 +3,7 @@
  * Copyright (C) 2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2013 Cédric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +33,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('projects', 'other'));
 $hookmanager->initHooks(array('projectcarddocument'));
@@ -41,7 +50,6 @@ $confirm	= GETPOST('confirm', 'alpha');
 $id			= GETPOSTINT('id');
 $ref		= GETPOST('ref', 'alpha');
 $mine 		= (GETPOST('mode', 'alpha') == 'mine' ? 1 : 0);
-//if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 
 $object = new Project($db);
 
@@ -51,7 +59,7 @@ if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_PROJECT') && method_exists($obj
 }
 
 if ($id > 0 || !empty($ref)) {
-	$upload_dir = $conf->project->multidir_output[$object->entity]."/".dol_sanitizeFileName($object->ref);
+	$upload_dir = $conf->project->multidir_output[$object->entity ?? $conf->entity]."/".dol_sanitizeFileName($object->ref);
 }
 
 // Get parameters
@@ -92,6 +100,12 @@ $permissiontoadd = $user->hasRight('projet', 'creer');
  * Actions
  */
 
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
+
 include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 
@@ -111,7 +125,7 @@ llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-project page-card_do
 $form = new Form($db);
 
 if ($object->id > 0) {
-	$upload_dir = $conf->project->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
+	$upload_dir = $conf->project->multidir_output[$object->entity ?? $conf->entity].'/'.dol_sanitizeFileName($object->ref);
 
 	// To verify role of users
 	//$userAccess = $object->restrictedProjectArea($user,'read');
@@ -152,7 +166,7 @@ if ($object->id > 0) {
 	// Define a complementary filter for search of next/prev ref.
 	if (!$user->hasRight('projet', 'all', 'lire')) {
 		$objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
-		$object->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ? implode(',', array_keys($objectsListId)) : '0').")";
+		$object->next_prev_filter = "rowid:IN:".$db->sanitize(count($objectsListId) ? implode(',', array_keys($objectsListId)) : '0');
 	}
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);

@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - projects
-ProjectId=Id do projeto
+ProjectId=ID do projeto
 ProjectLabel=Etiqueta projeto
 ProjectsArea=Setor de projetos
 SharedProject=A todos
@@ -66,7 +66,6 @@ ListShippingAssociatedProject=Lista de embarques relacionados ao projeto
 ListFichinterAssociatedProject=Lista de intervenções relacionadas ao projeto
 ListExpenseReportsAssociatedProject=Lista de relatórios de despesas relacionados ao projeto
 ListDonationsAssociatedProject=Lista de doações relacionadas ao projeto
-ListVariousPaymentsAssociatedProject=Lista de pagamentos diversos relacionados ao projeto
 ListSalariesAssociatedProject=Lista de pagamentos de salários relacionados ao projeto
 ListActionsAssociatedProject=Lista de eventos relacionados ao projeto
 ListMOAssociatedProject=Lista de ordens de fabricação relacionadas ao projeto

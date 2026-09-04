@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2019-2024  Alexandre Spangaro      <aspangaro@easya.solutions>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +29,14 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "admin", "accountancy"));
@@ -121,6 +130,11 @@ print '<input type="hidden" name="action" value="update">';
 // Define main accounts for closure
 print '<table class="noborder centpercent">';
 
+print '<tr class="liste_titre">';
+print '<th>'.$langs->trans("Parameter").'</th>';
+print '<th>';
+print '</th></tr>';
+
 foreach ($list_account_main as $key) {
 	print '<tr class="oddeven value">';
 	// Param
@@ -128,7 +142,7 @@ foreach ($list_account_main as $key) {
 	$keydesc = $key.'_Desc';
 
 	$htmltext = $langs->trans($keydesc);
-	print '<td class="fieldrequired" width="50%">';
+	print '<td>';
 	print $form->textwithpicto($label, $htmltext);
 	print '</td>';
 	// Value
@@ -140,7 +154,7 @@ foreach ($list_account_main as $key) {
 
 // Journal
 print '<tr class="oddeven">';
-print '<td class="fieldrequired">'.$langs->trans("ACCOUNTING_CLOSURE_DEFAULT_JOURNAL").'</td>';
+print '<td>'.$langs->trans("ACCOUNTING_CLOSURE_DEFAULT_JOURNAL").'</td>';
 print '<td>';
 $defaultjournal = getDolGlobalString('ACCOUNTING_CLOSURE_DEFAULT_JOURNAL');
 print $formaccounting->select_journal($defaultjournal, "ACCOUNTING_CLOSURE_DEFAULT_JOURNAL", 9, 1, 0, 0);
@@ -148,7 +162,7 @@ print '</td></tr>';
 
 // Accounting groups used for the balance sheet account
 print '<tr class="oddeven">';
-print '<td class="fieldrequired">';
+print '<td>';
 print $form->textwithpicto($langs->trans("ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNT"), $langs->trans("ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNTHelp"));
 print '</td>';
 print '<td>';
@@ -157,7 +171,7 @@ print '</td></tr>';
 
 // Accounting groups used for the income statement
 print '<tr class="oddeven">';
-print '<td class="fieldrequired">';
+print '<td>';
 print $form->textwithpicto($langs->trans("ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT"), $langs->trans("ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENTHelp"));
 print '</td>';
 print '<td>';

@@ -2,6 +2,7 @@
 /* Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013      Juanjo Menent 		<jmenent@2byte.es>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +26,13 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
@@ -39,11 +47,11 @@ if (!$user->admin) {
 $action = GETPOST('action', 'aZ09');
 
 
-
 /*
  * Actions
  */
 
+$reg = array();
 if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg)) {
 	$code = $reg[1];
 	$value = (GETPOST($code, 'alpha') ? GETPOST($code, 'alpha') : 1);
@@ -67,11 +75,12 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg)) {
 	$res3 = 1;
 	$res4 = 1;
 	$res5 = 1;
+	$res6 = 1;
 	if (GETPOSTISSET('MAIN_APPLICATION_TITLE')) {
 		$res1 = dolibarr_set_const($db, "MAIN_APPLICATION_TITLE", GETPOST("MAIN_APPLICATION_TITLE", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 	}
 	if (GETPOSTISSET('MAIN_SESSION_TIMEOUT')) {
-		$res2 = dolibarr_set_const($db, "MAIN_SESSION_TIMEOUT", GETPOST("MAIN_SESSION_TIMEOUT", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+		$res2 = dolibarr_set_const($db, "MAIN_SESSION_TIMEOUT", max(120, min(3600 * 24, GETPOSTINT("MAIN_SESSION_TIMEOUT"))), 'chaine', 0, '', $conf->entity);	// Between 120 and 86400
 	}
 	if (GETPOSTISSET('MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT')) {
 		$res3 = dolibarr_set_const($db, "MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT", GETPOST("MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT", 'alphanohtml'), 'int', 0, '', $conf->entity);
@@ -82,7 +91,10 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg)) {
 	if (GETPOSTISSET('MAIN_SECURITY_MAX_ATTACHMENT_ON_FORMS')) {
 		$res5 = dolibarr_set_const($db, "MAIN_SECURITY_MAX_ATTACHMENT_ON_FORMS", GETPOST("MAIN_SECURITY_MAX_ATTACHMENT_ON_FORMS", 'alphanohtml'), 'int', 0, '', $conf->entity);
 	}
-	if ($res1 && $res2 && $res3 && $res4 && $res5) {
+	if (GETPOSTISSET('MAIN_SECURITY_MAX_NUMBER_FAILED_AUTH')) {
+		$res6 = dolibarr_set_const($db, "MAIN_SECURITY_MAX_NUMBER_FAILED_AUTH", GETPOST("MAIN_SECURITY_MAX_NUMBER_FAILED_AUTH", 'alphanohtml'), 'int', 0, '', $conf->entity);
+	}
+	if ($res1 && $res2 && $res3 && $res4 && $res5 && $res6) {
 		setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
 	}
 }
@@ -100,12 +112,11 @@ llxHeader('', $langs->trans("Miscellaneous"), $wikihelp, '', 0, 0, '', '', '', '
 
 print load_fiche_titre($langs->trans("SecuritySetup"), '', 'title_setup');
 
-print '<span class="opacitymedium">'.$langs->trans("MiscellaneousDesc")."</span><br>\n";
-print "<br>\n";
+print '<div class="info">'.$langs->trans("MiscellaneousDesc")."</div>\n";
 
 
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="updateform">';
 
@@ -158,13 +169,14 @@ if (!getDolGlobalString('MAIN_SESSION_TIMEOUT')) {
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("SessionTimeOut").'</td><td class="right">';
 if (ini_get("session.gc_probability") == 0) {
-	print $form->textwithpicto('', $langs->trans("SessionsPurgedByExternalSystem", ini_get("session.gc_maxlifetime")));
+	// For external cleaning of session, the delay used may be the one into the ini file, so get_cfg_var("session.gc_maxlifetime"), not the one overloaded in runtime.
+	print $form->textwithpicto('', $langs->trans("SessionsPurgedByExternalSystem", get_cfg_var("session.gc_maxlifetime")));
 } else {
 	print $form->textwithpicto('', $langs->trans("SessionExplanation", ini_get("session.gc_probability"), ini_get("session.gc_divisor"), ini_get("session.gc_maxlifetime")));
 }
 print '</td>';
 print '<td class="nowrap">';
-print '<input class="flat right width50" name="MAIN_SESSION_TIMEOUT" type="text" value="'.getDolGlobalInt('MAIN_SESSION_TIMEOUT').'"> '.strtolower($langs->trans("Seconds"));
+print '<input class="flat right width75" name="MAIN_SESSION_TIMEOUT" type="text" value="'.getDolGlobalInt('MAIN_SESSION_TIMEOUT').'"> '.strtolower($langs->trans("Seconds"));
 print '</td>';
 print '</tr>';
 
@@ -199,19 +211,6 @@ print '<td class="nowrap">';
 print '<input class="flat right width50" name="MAIN_SECURITY_MAX_NUMBER_FAILED_AUTH" type="text" value="'.getDolGlobalInt("MAIN_SECURITY_MAX_NUMBER_FAILED_AUTH", 100).'"> '.$langs->trans("FailedAuth");
 print '</td>';
 print '</tr>';
-
-/*
-if (empty($conf->global->MAIN_APPLICATION_TITLE)) {
-	$conf->global->MAIN_APPLICATION_TITLE = "";
-}
-print '<tr class="oddeven">';
-print '<td>'.$langs->trans("MAIN_APPLICATION_TITLE").'</td><td class="right">';
-print '</td>';
-print '<td class="nowrap">';
-print '<input class="flat" name="MAIN_APPLICATION_TITLE" type="text" size="20" value="'.dol_escape_htmltag($conf->global->MAIN_APPLICATION_TITLE).'"> ';
-print '</td>';
-print '</tr>';
-*/
 
 print '</table>';
 

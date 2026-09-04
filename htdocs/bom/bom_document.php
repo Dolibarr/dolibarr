@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -25,6 +25,14 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -44,7 +52,7 @@ $ref = GETPOST('ref', 'alpha');
 // Security check - Protection if external user
 // if ($user->socid > 0) accessforbidden();
 // if ($user->socid > 0) $socid = $user->socid;
-// $result = restrictedArea($user, 'bom', $id);
+// restrictedArea($user, 'bom', $id);
 
 // Load variables for pagination
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
@@ -67,8 +75,7 @@ if (!$sortfield) {
 
 // Initialize a technical objects
 $object = new BOM($db);
-$extrafields = new ExtraFields($db);
-$diroutputmassaction = $conf->bom->dir_output.'/temp/massgeneration/'.$user->id;
+$diroutputmassaction = getMultidirOutput($object, '', 0, 'temp') . 'massgeneration/'.$user->id;
 $hookmanager->initHooks(array('bomdocument', 'globalcard')); // Note that conf->hooks_modules contains array
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -116,7 +123,7 @@ if ($object->id && $upload_dir !== null) {
 	 */
 	$head = bomPrepareHead($object);
 
-	print dol_get_fiche_head($head, 'document', $langs->trans("BillOfMaterials"), -1, 'bom');
+	print dol_get_fiche_head($head, 'document', $langs->trans("BillOfMaterials"), -1, $object->picto);
 
 
 	// Build file list

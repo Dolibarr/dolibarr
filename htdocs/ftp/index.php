@@ -2,6 +2,7 @@
 /* Copyright (C) 2008-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2008-2009  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2019-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +30,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ftp.lib.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'other'));
@@ -98,6 +107,7 @@ $result = restrictedArea($user, 'ftp', '');
  */
 
 if ($action == 'uploadfile' && $user->hasRight('ftp', 'write')) {
+	$newsectioniso = null;
 	// set up a connection or die
 	if (!$conn_id) {
 		$newsectioniso = mb_convert_encoding($section, 'ISO-8859-1');
@@ -106,7 +116,7 @@ if ($action == 'uploadfile' && $user->hasRight('ftp', 'write')) {
 		$ok = $resultarray['ok'];
 		$mesg = $resultarray['mesg'];
 	}
-	if ($conn_id && $ok && !$mesg) {
+	if ($conn_id && $ok && !$mesg && $newsectioniso) {
 		$nbfile = count($_FILES['userfile']['name']);
 		for ($i = 0; $i < $nbfile; $i++) {
 			$newsection = $newsectioniso;
@@ -129,6 +139,7 @@ if ($action == 'uploadfile' && $user->hasRight('ftp', 'write')) {
 
 if ($action == 'addfolder' && $user->hasRight('ftp', 'write')) {
 	// set up a connection or die
+	$newsectioniso = null;
 	if (!$conn_id) {
 		$newsectioniso = mb_convert_encoding($section, 'ISO-8859-1');
 		$resultarray = dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $newsectioniso, $ftp_passive);
@@ -136,7 +147,7 @@ if ($action == 'addfolder' && $user->hasRight('ftp', 'write')) {
 		$ok = $resultarray['ok'];
 		$mesg = $resultarray['mesg'];
 	}
-	if ($conn_id && $ok && !$mesg) {
+	if ($conn_id && $ok && !$mesg && $newsectioniso) {
 		$result = dol_ftp_mkdir($conn_id, $newfolder, $newsectioniso);
 
 		if ($result) {
@@ -309,7 +320,7 @@ if ($action == 'download' && $user->hasRight('ftp', 'read')) {
 				header('Content-Disposition: inline; filename="'.$file.'"');
 			}
 
-			// Ajout directives pour resoudre bug IE
+			// Add directives to fix IE bug
 			header('Cache-Control: Public, must-revalidate');
 			header('Pragma: public');
 
@@ -379,7 +390,7 @@ if (!function_exists('ftp_connect')) {
 			print $form->formconfirm($_SERVER["PHP_SELF"].'?numero_ftp='.$numero_ftp.'&section='.urlencode(GETPOST('section')).'&file='.urlencode(GETPOST('file')), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile', GETPOST('file')), 'confirm_deletefile', '', '', 1);
 		}
 
-		// Confirmation de la suppression d'une ligne categorie
+		// Generate for to confirm deletion of a category line
 		if ($action == 'delete_section') {
 			print $form->formconfirm($_SERVER["PHP_SELF"].'?numero_ftp='.$numero_ftp.'&section='.urlencode(GETPOST('section')).'&file='.urlencode(GETPOST('file')), $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection', GETPOST('file')), 'confirm_deletesection', '', '', 1);
 		}
@@ -393,7 +404,7 @@ if (!function_exists('ftp_connect')) {
 		$sectionarray = preg_split('|[\/]|', $section);
 		// For /
 		$newsection = '/';
-		print '<a href="'.$_SERVER["PHP_SELF"].'?action=refreshmanual&numero_ftp='.$numero_ftp.($newsection ? '&section='.urlencode($newsection) : '').'">';
+		print '<a href="'.$_SERVER["PHP_SELF"].'?action=refreshmanual&token='.newToken().'&numero_ftp='.$numero_ftp.($newsection ? '&section='.urlencode($newsection) : '').'">';
 		print '/';
 		print '</a> ';
 		// For other directories
@@ -407,7 +418,7 @@ if (!function_exists('ftp_connect')) {
 				$newsection .= '/';
 			}
 			$newsection .= $val;
-			print '<a href="'.$_SERVER["PHP_SELF"].'?action=refreshmanual&numero_ftp='.$numero_ftp.($newsection ? '&section='.urlencode($newsection) : '').'">';
+			print '<a href="'.$_SERVER["PHP_SELF"].'?action=refreshmanual&token='.newToken().'&numero_ftp='.$numero_ftp.($newsection ? '&section='.urlencode($newsection) : '').'">';
 			print $val;
 			print '</a>';
 			$i++;
@@ -434,7 +445,7 @@ if (!function_exists('ftp_connect')) {
 		if ($conf->use_javascript_ajax) {
 			print '<a href="#" id="checkall">'.$langs->trans("All").'</a> / <a href="#" id="checknone">'.$langs->trans("None").'</a> ';
 		}
-		print '<a href="'.$_SERVER["PHP_SELF"].'?action=refreshmanual&numero_ftp='.$numero_ftp.($section ? '&section='.urlencode($section) : '').'">'.img_picto($langs->trans("Refresh"), 'refresh').'</a>&nbsp;';
+		print '<a href="'.$_SERVER["PHP_SELF"].'?action=refreshmanual&token='.newToken().'&numero_ftp='.$numero_ftp.($section ? '&section='.urlencode($section) : '').'">'.img_picto($langs->trans("Refresh"), 'refresh').'</a>&nbsp;';
 		print '</td>'."\n";
 		print '</tr>'."\n";
 
@@ -455,9 +466,10 @@ if (!function_exists('ftp_connect')) {
 			//$newsection='/home';
 
 			// List content of directory ($newsection = '/', '/home', ...)
-			if (getDolGlobalString('FTP_CONNECT_WITH_SFTP')) {
+			if (getDolGlobalString('FTP_CONNECT_WITH_SFTP') && !empty($conn_id)) {
 				if ($newsection == '/') {
 					//$newsection = '/./';
+					// @phpstan-ignore-next-line argument.type
 					$newsection = ssh2_sftp_realpath($conn_id, ".").'/./'; // workaround for bug https://bugs.php.net/bug.php?id=64169
 				}
 
@@ -465,7 +477,7 @@ if (!function_exists('ftp_connect')) {
 				//$dirHandle = opendir("ssh2.sftp://$conn_id".$newsection);
 				//$dirHandle = opendir("ssh2.sftp://".intval($conn_id).ssh2_sftp_realpath($conn_id, ".").'/./');
 
-				$contents = scandir('ssh2.sftp://'.intval($conn_id).$newsection);
+				$contents = scandir('ssh2.sftp://'.(is_resource($conn_id) ? intval($conn_id) : $conn_id).$newsection);
 				$buff = array();
 				foreach ($contents as $i => $key) {
 					$buff[$i] = "---------- - root root 1234 Aug 01 2000 ".$key;
@@ -484,9 +496,13 @@ if (!function_exists('ftp_connect')) {
 				//  }
 				//  $i++;
 				//}
-			} else {
+			} elseif (!empty($conn_id)) {
 				$buff = ftp_rawlist($conn_id, $newsectioniso);
 				$contents = ftp_nlist($conn_id, $newsectioniso); // Sometimes rawlist fails but never nlist
+			} else {
+				dol_syslog(__FILE__ . ": Unexpected state for ftp connection", LOG_ERR);
+				$buff = array();
+				$contents = array();
 			}
 
 			$nboflines = count($contents);

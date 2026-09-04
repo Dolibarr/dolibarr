@@ -10,7 +10,8 @@
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +38,6 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
@@ -47,6 +47,14 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 if (isModEnabled('member')) {
 	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 }
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "commercial", "bills", "banks", "users"));
@@ -117,7 +125,7 @@ if (!$user->hasRight('societe', 'contact', 'lire')) {
  * Actions
  */
 
-$parameters = array('id'=>$socid, 'objcanvas'=>$objcanvas);
+$parameters = array('id' => $socid, 'objcanvas' => $objcanvas);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -137,8 +145,8 @@ if (empty($reshook)) {
 }
 
 if ($action == 'confirm_delete' && $user->hasRight('societe', 'contact', 'delete')) {
-	$id = GETPOST('id', 'int');
-	if (!empty($id) && $socid > 0) {
+	$id = GETPOSTINT('id');
+	if ($id > 0 && $socid > 0) {
 		$contact = new Contact($db);
 		$ret = $contact->fetch($id);
 		if ($ret > 0) {
@@ -197,7 +205,11 @@ print dol_get_fiche_head($head, 'contact', $langs->trans("ThirdParty"), 0, 'comp
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-dol_banner_tab($object, 'socid', $linkback, ($user->socid ? 0 : 1), 'rowid', 'nom', '', '', 0, '', '', 1);
+$morehtmlref = '<a href="'.DOL_URL_ROOT.'/societe/vcard.php?id='.$socid.'" class="refid">';
+$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard', 'class="valignmiddle marginleftonly paddingrightonly"');
+$morehtmlref .= '</a>';
+
+dol_banner_tab($object, 'socid', $linkback, ($user->socid ? 0 : 1), 'rowid', 'nom', $morehtmlref, '', 0, '', '', 1);
 
 print dol_get_fiche_end();
 

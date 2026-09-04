@@ -54,3 +54,7 @@ SucessConvertImgWebp=Bilder ble duplisert
 SucessConvertChosenImgWebp=Det valgte bildet ble duplisert
 ECMDirName=Katalognavn
 ECMParentDirectory=Overordnet katalog
+ShowFile=Vis fil
+FullPathOrig=Full baneopprinnelse
+GenOrUpload=Filopprinnelse
+FileHasAnIndexedTextContent=Filen har et indeksert tekstinnhold

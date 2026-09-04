@@ -29,6 +29,16 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $dolibarr_main_url_root
+ */
+
 $supportedoauth2array = getSupportedOauth2Array();
 
 // Define $urlwithroot
@@ -76,7 +86,7 @@ if ($action == 'update') {
 			$constvalue = str_replace('_ID', '', $key);
 			$newconstvalue = $constvalue;
 			if (GETPOSTISSET($constvalue.'_NAME')) {
-				$newconstvalue = preg_replace('/-.*$/', '', $constvalue).'-'.GETPOST($constvalue.'_NAME');
+				$newconstvalue = preg_replace('/-.*$/', '', $constvalue).'-'.preg_replace('/[^a-z]/', '', GETPOST($constvalue.'_NAME'));
 			}
 
 			if (GETPOSTISSET($constvalue.'_ID')) {
@@ -91,7 +101,9 @@ if ($action == 'update') {
 				}
 			}
 			if (GETPOSTISSET($constvalue.'_URL')) {
-				if (!dolibarr_set_const($db, $newconstvalue.'_URL', GETPOST($constvalue.'_URL'), 'chaine', 0, '', $conf->entity)) {
+				$cleanurl = GETPOST($constvalue.'_URL');
+				$cleanurl = preg_replace('/\/$/', '', $cleanurl);
+				if (!dolibarr_set_const($db, $newconstvalue.'_URL', $cleanurl, 'chaine', 0, '', $conf->entity)) {
 					$error++;
 				}
 			}
@@ -207,7 +219,8 @@ if ($action == 'delete_entry') {
 		|| !dolibarr_del_const($db, $globalkey.'_SECRET', $conf->entity)
 		|| !dolibarr_del_const($db, $globalkey.'_URL', $conf->entity)
 		|| !dolibarr_del_const($db, $globalkey.'_URLAUTHORIZE', $conf->entity)
-		|| !dolibarr_del_const($db, $globalkey.'_SCOPE', $conf->entity)) {
+		|| !dolibarr_del_const($db, $globalkey.'_SCOPE', $conf->entity)
+		|| !dolibarr_del_const($db, $globalkey.'_TENANT', $conf->entity)) {
 		setEventMessages($langs->trans("ErrorInEntryDeletion"), null, 'errors');
 		$error++;
 	} else {
@@ -234,10 +247,11 @@ if ($action == 'delete') {
 }
 
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+
 print load_fiche_titre($title, $linkback, 'title_setup');
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="add">';
 
@@ -283,7 +297,7 @@ foreach ($list as $key) {
 }
 print '</select>';
 print ajax_combobox('provider');
-print ' <input type="text" name="label" value="" placeholder="'.$langs->trans("Label").'" pattern="^\S+$" title="'.$langs->trans("SpaceOrSpecialCharAreNotAllowed").'">';
+print ' <input type="text" name="label" value="" placeholder="'.$langs->trans("Label").'" pattern="^[a-zA-Z0-9]+$" title="'.$langs->trans("SpaceOrSpecialCharAreNotAllowed").'">';
 print ' <input type="submit" class="button small" name="add" value="'.$langs->trans("Add").'">';
 
 print '<br>';
@@ -310,7 +324,7 @@ foreach ($conf->global as $key => $val) {
 
 
 if (count($listinsetup) > 0) {
-	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" spellcheck="false">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 
@@ -431,7 +445,7 @@ if (count($listinsetup) > 0) {
 		print '</tr>';
 
 		// Tenant
-		if ($keybeforeprovider == 'MICROSOFT' || $keybeforeprovider == 'MICROSOFT2') {
+		if ($keybeforeprovider == 'MICROSOFT' || $keybeforeprovider == 'MICROSOFT2' || $keybeforeprovider == 'MICROSOFT3') {
 			print '<tr class="oddeven value">';
 			print '<td><label for="'.$key[2].'">'.$langs->trans("OAUTH_TENANT").'</label></td>';
 			print '<td><input type="text" size="100" id="OAUTH_'.$keybeforeprovider.($keyforprovider ? '-'.$keyforprovider : '').'_TENANT" name="OAUTH_'.$keybeforeprovider.($keyforprovider ? '-'.$keyforprovider : '').'_TENANT" value="'.getDolGlobalString('OAUTH_'.$keybeforeprovider.($keyforprovider ? '-'.$keyforprovider : '').'_TENANT').'">';

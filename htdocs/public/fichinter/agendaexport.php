@@ -2,6 +2,7 @@
 /* Copyright (C) 2008-2024 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2024 Charlene Benke  		<charlene@patas-monkey.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,6 +66,14 @@ if (is_numeric($entity)) {
 // Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 
 $fichinterStatic = new Fichinter($db);
 
@@ -170,7 +179,7 @@ if ($reshook < 0) {
 	}
 }
 
-// Define filename with prefix on filters predica (each predica set must have on cache file)
+// Define filename with prefix based on filter criteria (each criterion set must have a corresponding cache file)
 $shortfilename = 'dolibarrcalendar';
 $filename = $shortfilename;
 // Complete long filename
@@ -319,7 +328,7 @@ if ($format == 'rss') {
 			header('Content-Disposition: inline; filename="'.$filename.'"');
 		}
 
-		// Ajout directives pour resoudre bug IE
+		// Add directives to fix IE bug
 		//header('Cache-Control: Public, must-revalidate');
 		//header('Pragma: public');
 		if ($cachedelay) {
@@ -372,10 +381,10 @@ print '</body></html>';
 function build_exportfile($format, $type, $cachedelay, $filename, $filters)
 {
 
-	// quelques filtres possible au nivau du tableau $filters
-	// logina : user login who is create interventional (author)
-	// logini : user login who make the intenventional
-	// loginr : user login who is responsible of interventional
+	// some filters possible in the $filters array
+	// logina : user login who creates intervention (author)
+	// logini : user login who performs the intervention
+	// loginr : user login who is responsible for intervention
 
 	global $hookmanager;
 	global $db;
@@ -433,9 +442,9 @@ function build_exportfile($format, $type, $cachedelay, $filename, $filters)
 		$eventarray = array();
 
 		$sql = "SELECT f.rowid,";
-		$sql .= " fd.date,"; // on récupère la date et la durée sur le détail d'inter pour avoir aussi l'heure
-		$sql .= " f.datee,"; // End ne sera pas utilisée
-		$sql .= " fd.duree,"; // durée de l'intervention
+		$sql .= " fd.date,"; // We get the date and the duration from the detail of the interventaion as well as the hour
+		$sql .= " f.datee,"; // End will not be used
+		$sql .= " fd.duree,"; // Duration of the intervention
 		$sql .= " f.datec, f.tms as datem,";
 		$sql .= " f.ref, f.ref_client, fd.description, f.note_private, f.note_public,";
 		$sql .= " f.fk_soc,";
@@ -466,73 +475,73 @@ function build_exportfile($format, $type, $cachedelay, $filename, $filters)
 			}
 			if ($key == 'year') {
 				$sql .= " AND fd.date BETWEEN '".$db->idate(dol_get_first_day($value, 1))."'";
-				$sql .= "     AND '".$db->idate(dol_get_last_day($value, 12))."'";
+				$sql .= " AND '".$db->idate(dol_get_last_day($value, 12))."'";
 			}
 			if ($key == 'id') {
-				$sql .= " AND f.rowid = ".(is_numeric($value) ? $value : 0);
+				$sql .= " AND f.rowid = ".((int) $value);
 			}
 			if ($key == 'idfrom') {
-				$sql .= " AND f.rowid >= ".(is_numeric($value) ? $value : 0);
+				$sql .= " AND f.rowid >= ".((int) $value);
 			}
 			if ($key == 'idto') {
-				$sql .= " AND f.rowid <= ".(is_numeric($value) ? $value : 0);
+				$sql .= " AND f.rowid <= ".((int) $value);
 			}
 			if ($key == 'project') {
-				$sql .= " AND f.fk_project = ".(is_numeric($value) ? $value : 0);
+				$sql .= " AND f.fk_project = ".((int) $value);
 			}
 			if ($key == 'contract') {
-				$sql .= " AND f.fk_contract = ".(is_numeric($value) ? $value : 0);
+				$sql .= " AND f.fk_contract = ".((int) $value);
 			}
 
 			if ($key == 'logina') {
 				$logina = $value;
-				$condition = '=';
+				$sanitizedcondition = '=';
 				if (preg_match('/^!/', $logina)) {
 					$logina = preg_replace('/^!/', '', $logina);
-					$condition = '<>';
+					$sanitizedcondition = '<>';
 				}
 				$userforfilter = new User($db);
 				$result = $userforfilter->fetch(0, $logina);
 				if ($result > 0) {
-					$sql .= " AND a.fk_user_author ".$condition." ".$userforfilter->id;
-				} elseif ($result < 0 || $condition == '=') {
+					$sql .= " AND a.fk_user_author ".$sanitizedcondition." ".((int) $userforfilter->id);
+				} elseif ($result < 0 || $sanitizedcondition == '=') {
 					$sql .= " AND a.fk_user_author = 0";
 				}
 			}
 			if ($key == 'logini') {
 				$logini = $value;
-				$condition = '=';
+				$sanitizedcondition = '=';
 				if (preg_match('/^!/', $logini)) {
 					$logini = preg_replace('/^!/', '', $logini);
-					$condition = '<>';
+					$sanitizedcondition = '<>';
 				}
 				$userforfilter = new User($db);
 				$result = $userforfilter->fetch(0, $logini);
 				$sql .= " AND EXISTS (SELECT ec.rowid FROM ".MAIN_DB_PREFIX."element_contact as ec";
 				$sql .= " WHERE ec.element_id = f.rowid";
-				$sql .= " AND ec.fk_c_type_contact = 26";
+				$sql .= " AND ec.fk_c_type_contact = 26";	// FIXME do not use hardcoded ID
 				if ($result > 0) {
 					$sql .= " AND ec.fk_socpeople = ".((int) $userforfilter->id);
-				} elseif ($result < 0 || $condition == '=') {
+				} elseif ($result < 0 || $sanitizedcondition == '=') {
 					$sql .= " AND ec.fk_socpeople = 0";
 				}
 				$sql .= ")";
 			}
 			if ($key == 'loginr') {
 				$loginr = $value;
-				$condition = '=';
+				$sanitizedcondition = '=';
 				if (preg_match('/^!/', $loginr)) {
 					$loginr = preg_replace('/^!/', '', $loginr);
-					$condition = '<>';
+					$sanitizedcondition = '<>';
 				}
 				$userforfilter = new User($db);
 				$result = $userforfilter->fetch(0, $loginr);
 				$sql .= " AND EXISTS (SELECT ecr.rowid FROM ".MAIN_DB_PREFIX."element_contact as ecr";
 				$sql .= " WHERE ecr.element_id = f.rowid";
-				$sql .= " WHERE AND ecr.fk_c_type_contact = 27";
+				$sql .= " WHERE AND ecr.fk_c_type_contact = 27";	// FIXME do not use hardcoded ID
 				if ($result > 0) {
 					$sql .= " AND ecr.fk_socpeople = ".((int) $userforfilter->id);
-				} elseif ($result < 0 || $condition == '=') {
+				} elseif ($result < 0 || $sanitizedcondition == '=') {
 					$sql .= " AND ecr.fk_socpeople = 0";
 				}
 				$sql .= ")";
@@ -625,7 +634,7 @@ function build_exportfile($format, $type, $cachedelay, $filename, $filters)
 				// $event['event_paid'] = $this->event_paid;
 				$event['status'] = $obj->fk_statut;
 
-				// // TODO: find a way to call "$this->fetch_userassigned();" without override "$this" properties
+				// // TODO: find a way to call "$this->fetch_userassigned();" without overriding "$this" properties
 				// $this->id = $obj->rowid;
 				// $this->fetch_userassigned(false);
 
@@ -691,7 +700,7 @@ function build_exportfile($format, $type, $cachedelay, $filename, $filters)
 		}
 
 		// Create temp file
-		// Temporary file (allow call of function by different threads
+		// Temporary file (allows calling the function by different threads
 		$outputfiletmp = tempnam($conf->fichinter->dir_temp, 'tmp');
 		dolChmod($outputfiletmp);
 

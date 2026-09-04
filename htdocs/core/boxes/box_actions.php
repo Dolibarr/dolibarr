@@ -1,10 +1,10 @@
 <?php
-/* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2014 	   Charles-Fr BENKE        <charles.fr@benke.fr>
- * Copyright (C) 2015-2024  Frédéric France      <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2003-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2011  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2014       Charles-Fr BENKE        <charles.fr@benke.fr>
+ * Copyright (C) 2015-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW                     <mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@ class box_actions extends ModeleBoxes
 	 *  @param  DoliDB	$db      	Database handler
 	 *  @param	string	$param		More parameters
 	 */
-	public function __construct($db, $param)
+	public function __construct($db, $param)  // @phpstan-ignore constructor.unusedParameter
 	{
 		global $user;
 
@@ -68,7 +68,7 @@ class box_actions extends ModeleBoxes
 	 */
 	public function loadBox($max = 5)
 	{
-		global $user, $langs, $conf;
+		global $user, $langs;
 
 		$this->max = $max;
 
@@ -87,14 +87,14 @@ class box_actions extends ModeleBoxes
 			$sql .= ", s.code_client, s.code_compta as code_compta_client, s.client";
 			$sql .= ", s.logo, s.email, s.entity";
 			$sql .= " FROM ".MAIN_DB_PREFIX."c_actioncomm AS ta, ".MAIN_DB_PREFIX."actioncomm AS a";
-			if (!$user->hasRight('societe', 'client', 'voir')) {
+			if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
 			}
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
 			$sql .= " WHERE a.fk_action = ta.id";
 			$sql .= " AND a.entity IN (".getEntity('actioncomm').")";
 			$sql .= " AND a.percent >= 0 AND a.percent < 100";
-			if (!$user->hasRight('societe', 'client', 'voir')) {
+			if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= " AND (a.fk_soc IS NULL OR sc.fk_user = ".((int) $user->id).")";
 			}
 			if ($user->socid) {
@@ -217,6 +217,7 @@ class box_actions extends ModeleBoxes
 		if (getDolGlobalString('SHOW_DIALOG_HOMEPAGE')) {
 			$actioncejour = false;
 			$contents = $this->info_box_contents;
+			$nblines = 0;
 			if (is_countable($contents) && count($contents) > 0) {
 				$nblines = count($contents);
 			}
@@ -225,8 +226,8 @@ class box_actions extends ModeleBoxes
 				$out .= '<table width=100%>';
 				for ($line = 0, $n = $nblines; $line < $n; $line++) {
 					if (isset($contents[$line])) {
-						// on affiche que les évènement du jours ou passé
-						// qui ne sont pas à 100%
+						// we display events from today or the past
+						// that are not 100% certain
 						$actioncejour = true;
 
 						// TR

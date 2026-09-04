@@ -45,7 +45,7 @@ class DolibarrCollector extends DataCollector implements Renderable, AssetProvid
 	/**
 	 * Return collected data
 	 *
-	 * @return array       Array of collected data
+	 * @return array<string,mixed>		Array of collected data
 	 */
 	public function collect()
 	{
@@ -86,7 +86,7 @@ class DolibarrCollector extends DataCollector implements Renderable, AssetProvid
 		$info  = $langs->trans('Version').': <strong>'.DOL_VERSION.'</strong><br>';
 		$info .= $langs->trans('Theme').': <strong>'.$conf->theme.'</strong><br>';
 		$info .= $langs->trans('Locale').': <strong>' . getDolGlobalString('MAIN_LANG_DEFAULT').'</strong><br>';
-		$info .= $langs->trans('Currency').': <strong>'.$conf->currency.'</strong><br>';
+		$info .= $langs->trans('Currency').': <strong>'.getDolCurrency().'</strong><br>';
 		$info .= $langs->trans('Entity').': <strong>'.$conf->entity.'</strong><br>';
 		$info .= $langs->trans('MaxSizeList').': <strong>'.($conf->liste_limit ?: getDolGlobalString('MAIN_SIZE_LISTE_LIMIT')).'</strong><br>';
 		$info .= $langs->trans('MaxSizeForUploadedFiles').': <strong>' . getDolGlobalString('MAIN_UPLOAD_DOC').'</strong><br>';
@@ -125,7 +125,7 @@ class DolibarrCollector extends DataCollector implements Renderable, AssetProvid
 	/**
 	 *	Return widget settings
 	 *
-	 * 	@return array       Array
+	 *  @return array<string,array{icon?:string,indicator?:string,widget?:string,tooltip?:string|array{html:string,class:string},map:string,default:string}>      Array
 	 */
 	public function getWidgets()
 	{
@@ -164,9 +164,9 @@ class DolibarrCollector extends DataCollector implements Renderable, AssetProvid
 	}
 
 	/**
-	 *	Return collector assests
+	 *	Return collector assets
 	 *
-	 * @return array       Array
+	 * @return array<string,string>		Array
 	 */
 	public function getAssets()
 	{

@@ -2,7 +2,7 @@
 /* Copyright (C) 2004		Rodolphe Quiedeville		<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
- * Copyright (C) 2018-2021	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
@@ -28,12 +28,19 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/contact.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('companies', 'other'));
+$langs->loadLangs(array('companies', 'other', 'users'));
 
 $id = GETPOSTINT('id');
 $action = GETPOST('action', 'aZ09');
@@ -56,8 +63,10 @@ if ($action == 'update' && !GETPOST("cancel") && $user->hasRight('societe', 'con
 	$ret = $object->fetch($id);
 
 	// Note: Correct date should be completed with location to have exact GM time of birth.
-	$object->birthday = dol_mktime(0, 0, 0, GETPOST("birthdaymonth"), GETPOST("birthdayday"), GETPOST("birthdayyear"));
+	$object->birthday = dol_mktime(0, 0, 0, GETPOSTINT("birthdaymonth"), GETPOSTINT("birthdayday"), GETPOSTINT("birthdayyear"));
 	$object->birthday_alert = GETPOSTINT("birthday_alert");
+
+	$oldphoto = $object->photo;
 
 	if (GETPOST('deletephoto')) {
 		$object->photo = '';
@@ -65,9 +74,11 @@ if ($action == 'update' && !GETPOST("cancel") && $user->hasRight('societe', 'con
 		$object->photo = dol_sanitizeFileName($_FILES['photo']['name']);
 	}
 
+	$db->begin();
+
 	$result = $object->update_perso($id, $user);
 	if ($result > 0) {
-		$object->oldcopy = dol_clone($object, 2);
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 
 		// Logo/Photo save
 		$dir = $conf->societe->dir_output.'/contact/'.get_exdir($object->id, 0, 0, 1, $object, 'contact').'/photos';
@@ -76,9 +87,10 @@ if ($action == 'update' && !GETPOST("cancel") && $user->hasRight('societe', 'con
 		if ($file_OK) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
-			if (GETPOST('deletephoto')) {
-				$fileimg = $conf->societe->dir_output.'/contact/'.get_exdir($object->id, 0, 0, 1, $object, 'contact').'/photos/'.$object->photo;
-				$dirthumbs = $conf->societe->dir_output.'/contact/'.get_exdir($object->id, 0, 0, 1, $object, 'contact').'/photos/thumbs';
+
+			if (GETPOST('deletephoto') || ($oldphoto != $object->photo)) {
+				$fileimg = $dir.'/'.$oldphoto;
+				$dirthumbs = $dir.'/thumbs';
 				dol_delete_file($fileimg);
 				dol_delete_dir_recursive($dirthumbs);
 			}
@@ -109,8 +121,10 @@ if ($action == 'update' && !GETPOST("cancel") && $user->hasRight('societe', 'con
 					break;
 			}
 		}
+
+		$db->commit();
 	} else {
-		$error = $object->error;
+		$db->rollback();
 	}
 }
 
@@ -150,11 +164,6 @@ if ($action == 'edit') {
 
 	print '<table class="border centpercent">';
 
-	// Ref
-	print '<tr><td class="titlefieldcreate">'.$langs->trans("Ref").'</td><td>';
-	print $object->id;
-	print '</td>';
-
 	// Name
 	print '<tr><td>'.$langs->trans("Lastname").' / '.$langs->trans("Label").'</td><td>'.$object->lastname.'</td></tr>';
 	print '<tr><td>'.$langs->trans("Firstname").'</td><td>'.$object->firstname.'</td>';
@@ -174,10 +183,12 @@ if ($action == 'edit') {
 	}
 
 	// Civility
-	print '<tr><td><label for="civility_code">'.$langs->trans("UserTitle").'</label></td><td>';
-	print $object->getCivilityLabel();
-	//print $formcompany->select_civility(GETPOSTISSET("civility_code") ? GETPOST("civility_code", 'alpha') : $object->civility_code, 'civility_code');
-	print '</td></tr>';
+	if (getDolGlobalString('MAIN_USE_TITLE_FOR_CONTACT')) {
+		print '<tr><td><label for="civility_code">'.$langs->trans("UserTitle").'</label></td><td>';
+		print $object->getCivilityLabel();
+		//print $formcompany->select_civility(GETPOSTISSET("civility_code") ? GETPOST("civility_code", 'alpha') : $object->civility_code, 'civility_code');
+		print '</td></tr>';
+	}
 
 	// Photo
 	print '<tr class="hideonsmartphone">';
@@ -216,9 +227,9 @@ if ($action == 'edit') {
 	print ' &nbsp; &nbsp; ';
 	print '<label for="birthday_alert">'.$langs->trans("BirthdayAlert").':</label> ';
 	if (!empty($object->birthday_alert)) {
-		print '<input type="checkbox" id="birthday_alert" name="birthday_alert" checked>';
+		print '<input type="checkbox" id="birthday_alert" name="birthday_alert" value="1" checked>';
 	} else {
-		print '<input type="checkbox" id="birthday_alert" name="birthday_alert">';
+		print '<input type="checkbox" id="birthday_alert" name="birthday_alert" value="1">';
 	}
 	print '</td>';
 	print '</tr>';
@@ -238,7 +249,7 @@ if ($action == 'edit') {
 	$linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref = '<a href="'.DOL_URL_ROOT.'/contact/vcard.php?id='.$object->id.'" class="refid">';
-	$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
+	$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard', 'class="valignmiddle marginleftonly paddingrightonly"');
 	$morehtmlref .= '</a>';
 
 	$morehtmlref .= '<div class="refidno">';
@@ -284,9 +295,11 @@ if ($action == 'edit') {
 	}*/
 
 	// Civility
-	print '<tr><td class="titlefield">'.$langs->trans("UserTitle").'</td><td colspan="3">';
-	print $object->getCivilityLabel();
-	print '</td></tr>';
+	if (getDolGlobalString('MAIN_USE_TITLE_FOR_CONTACT')) {
+		print '<tr><td class="titlefield">'.$langs->trans("UserTitle").'</td><td colspan="3">';
+		print $object->getCivilityLabel();
+		print '</td></tr>';
+	}
 
 	// Date To Birth
 	print '<tr>';

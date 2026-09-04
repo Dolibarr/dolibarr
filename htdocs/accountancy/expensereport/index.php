@@ -4,6 +4,7 @@
  * Copyright (C) 2013-2024	Alexandre Spangaro	<alexandre@inovea-conseil.com>
  * Copyright (C) 2014		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +28,13 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
@@ -77,6 +85,8 @@ if (!$user->hasRight('accounting', 'bind', 'write')) {
  * Actions
  */
 
+$error = 0;
+
 if (($action == 'clean' || $action == 'validatehistory') && $user->hasRight('accounting', 'bind', 'write')) {
 	// Clean database by removing binding done on non existing or no more existing accounts
 	$db->begin();
@@ -102,7 +112,6 @@ if (($action == 'clean' || $action == 'validatehistory') && $user->hasRight('acc
 }
 
 if ($action == 'validatehistory' && $user->hasRight('accounting', 'bind', 'write')) {
-	$error = 0;
 	$nbbinddone = 0;
 	$nbbindfailed = 0;
 	$notpossible = 0;
@@ -188,17 +197,18 @@ $textnextyear = '&nbsp;<a href="'.$_SERVER["PHP_SELF"].'?year='.($year_current +
 
 print load_fiche_titre($langs->trans("ExpenseReportsVentilation")."&nbsp;".$textprevyear."&nbsp;".$langs->trans("Year")."&nbsp;".$year_start."&nbsp;".$textnextyear, '', 'title_accountancy');
 
-print '<span class="opacitymedium">'.$langs->trans("DescVentilExpenseReport").'</span><br>';
-print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("DescVentilExpenseReportMore", $langs->transnoentitiesnoconv("ValidateHistory"), $langs->transnoentitiesnoconv("ToBind")).'<br>';
-print '</span><br>';
-
+print '<div class="info">';
+print '<span class="">'.$langs->trans("DescVentilExpenseReport").'</span><br>';
+print '<span class="hideonsmartphone">'.$langs->trans("DescVentilExpenseReportMore", $langs->transnoentitiesnoconv("ValidateHistory"), $langs->transnoentitiesnoconv("ToBind")).'<br>';
+print '</span>';
+print '</div>';
 
 $y = $year_current;
 
 $buttonbind = '<a class="button small" href="'.$_SERVER['PHP_SELF'].'?action=validatehistory&token='.newToken().'&year='.$year_current.'">'.img_picto($langs->trans("ValidateHistory"), 'link', 'class="pictofixedwidth fa-color-unset"').$langs->trans("ValidateHistory").'</a>';
 
 
-print_barre_liste(img_picto('', 'unlink', 'class="paddingright fa-color-unset"').$langs->trans("OverviewOfAmountOfLinesNotBound"), '', '', '', '', '', '', -1, '', '', 0, '', '', 0, 1, 1, 0, $buttonbind);
+print_barre_liste(img_picto('', 'unlink', 'class="paddingright fa-color-unset"').$langs->trans("OverviewOfAmountOfLinesNotBound"), 0, '', '', '', '', '', -1, '', '', 0, '', '', 0, 1, 1, 0, $buttonbind);
 //print load_fiche_titre($langs->trans("OverviewOfAmountOfLinesNotBound"), $buttonbind, '');
 
 print '<div class="div-table-responsive-no-min">';
@@ -223,7 +233,7 @@ for ($i = 1; $i <= 12; $i++) {
 		$param .= '&search_month='.$tmp['mon'].'&search_year='.$tmp['year'];
 		print '<a href="'.DOL_URL_ROOT.'/accountancy/expensereport/list.php?'.$param.'">';
 	}
-	print $langs->trans('MonthShort'.str_pad((string) $j, 2, '0', STR_PAD_LEFT));
+	print $langs->trans('MonthShort'.str_pad((string) ((int) $j), 2, '0', STR_PAD_LEFT));
 	if (!empty($tmp['mday'])) {
 		print '</a>';
 	}
@@ -238,8 +248,8 @@ for ($i = 1; $i <= 12; $i++) {
 	if ($j > 12) {
 		$j -= 12;
 	}
-	$sql .= "  SUM(".$db->ifsql("MONTH(er.date_debut) = ".((int) $j), "erd.total_ht", "0").") AS month".str_pad((string) $j, 2, "0", STR_PAD_LEFT).",";
-	$sql .= "  SUM(".$db->ifsql("MONTH(er.date_debut) = ".((string) $j), "1", "0").") AS nbmonth".str_pad((string) $j, 2, "0", STR_PAD_LEFT).",";
+	$sql .= "  SUM(".$db->ifsql("MONTH(er.date_debut) = ".((int) $j), "erd.total_ht", "0").") AS month".str_pad((string) ((int) $j), 2, "0", STR_PAD_LEFT).",";
+	$sql .= "  SUM(".$db->ifsql("MONTH(er.date_debut) = ".((int) $j), "1", "0").") AS nbmonth".str_pad((string) ((int) $j), 2, "0", STR_PAD_LEFT).",";
 }
 $sql .= " SUM(erd.total_ht) as total, COUNT(erd.rowid) as nb";
 $sql .= " FROM ".MAIN_DB_PREFIX."expensereport_det as erd";
@@ -248,8 +258,8 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa ON aa.rowid = erd
 $sql .= " WHERE er.date_debut >= '".$db->idate($search_date_start)."'";
 $sql .= " AND er.date_debut <= '".$db->idate($search_date_end)."'";
 // Define begin binding date
-if (getDolGlobalString('ACCOUNTING_DATE_START_BINDING')) {
-	$sql .= " AND er.date_debut >= '".$db->idate(getDolGlobalString('ACCOUNTING_DATE_START_BINDING'))."'";
+if (getDolGlobalInt('ACCOUNTING_DATE_START_BINDING')) {
+	$sql .= " AND er.date_debut >= '".$db->idate(getDolGlobalInt('ACCOUNTING_DATE_START_BINDING'))."'";
 }
 $sql .= " AND er.fk_statut IN (".ExpenseReport::STATUS_APPROVED.", ".ExpenseReport::STATUS_CLOSED.")";
 $sql .= " AND er.entity IN (".getEntity('expensereport', 0).")"; // We don't share object for accountancy
@@ -296,10 +306,10 @@ if ($resql) {
 			$cursoryear = ($cursormonth < getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1)) ? $y + 1 : $y;
 			$tmp = dol_getdate(dol_get_last_day($cursoryear, $cursormonth, 'gmt'), false, 'gmt');
 
-			print '<td class="right nowraponall amount" title="'.price($row[2*$i - 2]).' - '.$row[2*$i - 1].' lines">';
-			print price($row[2*$i - 2]);
+			print '<td class="right nowraponall amount" title="'.price($row[2 * $i - 2]).' - '.$row[2 * $i - 1].' lines">';
+			print price($row[2 * $i - 2]);
 			// Add link to make binding
-			if (!empty(price2num($row[2*$i - 2])) || !empty($row[2*$i - 1])) {
+			if (!empty(price2num($row[2 * $i - 2])) || !empty($row[2 * $i - 1])) {
 				print '<a href="'.$_SERVER['PHP_SELF'].'?action=validatehistory&year='.$y.'&validatemonth='.((int) $cursormonth).'&validateyear='.((int) $cursoryear).'&token='.newToken().'">';
 				print img_picto($langs->trans("ValidateHistory").' ('.$langs->trans('Month'.str_pad((string) $cursormonth, 2, '0', STR_PAD_LEFT)).' '.$cursoryear.')', 'link', 'class="marginleft2"');
 				print '</a>';
@@ -326,7 +336,7 @@ print '</div>';
 print '<br>';
 
 
-print_barre_liste(img_picto('', 'link', 'class="paddingright fa-color-unset"').$langs->trans("OverviewOfAmountOfLinesBound"), '', '', '', '', '', '', -1, '', '', 0, '', '', 0, 1, 1);
+print_barre_liste(img_picto('', 'link', 'class="paddingright fa-color-unset"').$langs->trans("OverviewOfAmountOfLinesBound"), 0, '', '', '', '', '', -1, '', '', 0, '', '', 0, 1, 1);
 //print load_fiche_titre($langs->trans("OverviewOfAmountOfLinesBound"), '', '');
 
 
@@ -338,7 +348,24 @@ for ($i = 1; $i <= 12; $i++) {
 	if ($j > 12) {
 		$j -= 12;
 	}
-	print '<td width="60" class="right">'.$langs->trans('MonthShort'.str_pad((string) $j, 2, '0', STR_PAD_LEFT)).'</td>';
+	$cursormonth = $j;
+	if ($cursormonth > 12) {
+		$cursormonth -= 12;
+	}
+	$cursoryear = ($cursormonth < getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1)) ? $y + 1 : $y;
+	$tmp = dol_getdate(dol_get_last_day($cursoryear, $cursormonth, 'gmt'), false, 'gmt');
+
+	print '<td width="60" class="right">';
+	if (!empty($tmp['mday'])) {
+		$param = 'search_date_startday=1&search_date_startmonth='.$cursormonth.'&search_date_startyear='.$cursoryear;
+		$param .= '&search_date_endday='.$tmp['mday'].'&search_date_endmonth='.$tmp['mon'].'&search_date_endyear='.$tmp['year'];
+		print '<a href="'.DOL_URL_ROOT.'/accountancy/expensereport/lines.php?'.$param.'">';
+	}
+	print $langs->trans('MonthShort'.str_pad((string) ((int) $j), 2, '0', STR_PAD_LEFT));
+	if (!empty($tmp['mday'])) {
+		print '</a>';
+	}
+	print '</td>';
 }
 print '<td width="60" class="right"><b>'.$langs->trans("Total").'</b></td></tr>';
 
@@ -349,7 +376,7 @@ for ($i = 1; $i <= 12; $i++) {
 	if ($j > 12) {
 		$j -= 12;
 	}
-	$sql .= " SUM(".$db->ifsql("MONTH(er.date_debut) = ".((int) $j), "erd.total_ht", "0").") AS month".str_pad((string) $j, 2, "0", STR_PAD_LEFT).",";
+	$sql .= " SUM(".$db->ifsql("MONTH(er.date_debut) = ".((int) $j), "erd.total_ht", "0").") AS month".str_pad((string) ((int) $j), 2, "0", STR_PAD_LEFT).",";
 }
 $sql .= " ROUND(SUM(erd.total_ht),2) as total";
 $sql .= " FROM ".MAIN_DB_PREFIX."expensereport_det as erd";
@@ -358,8 +385,8 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa ON aa.rowid = erd
 $sql .= " WHERE er.date_debut >= '".$db->idate($search_date_start)."'";
 $sql .= " AND er.date_debut <= '".$db->idate($search_date_end)."'";
 // Define begin binding date
-if (getDolGlobalString('ACCOUNTING_DATE_START_BINDING')) {
-	$sql .= " AND er.date_debut >= '".$db->idate(getDolGlobalString('ACCOUNTING_DATE_START_BINDING'))."'";
+if (getDolGlobalInt('ACCOUNTING_DATE_START_BINDING')) {
+	$sql .= " AND er.date_debut >= '".$db->idate(getDolGlobalInt('ACCOUNTING_DATE_START_BINDING'))."'";
 }
 $sql .= " AND er.fk_statut IN (".ExpenseReport::STATUS_APPROVED.", ".ExpenseReport::STATUS_CLOSED.")";
 $sql .= " AND er.entity IN (".getEntity('expensereport', 0).")"; // We don't share object for accountancy
@@ -412,7 +439,7 @@ if (getDolGlobalString('SHOW_TOTAL_OF_PREVIOUS_LISTS_IN_LIN_PAGE')) { // This pa
 	print '<br>';
 	print '<br>';
 
-	print_barre_liste($langs->trans("OtherInfo"), '', '', '', '', '', '', -1, '', '', 0, '', '', 0, 1, 1);
+	print_barre_liste($langs->trans("OtherInfo"), 0, '', '', '', '', '', -1, '', '', 0, '', '', 0, 1, 1);
 	//print load_fiche_titre($langs->trans("OtherInfo"), '', '');
 
 	print '<div class="div-table-responsive-no-min">';
@@ -423,7 +450,7 @@ if (getDolGlobalString('SHOW_TOTAL_OF_PREVIOUS_LISTS_IN_LIN_PAGE')) { // This pa
 		if ($j > 12) {
 			$j -= 12;
 		}
-		print '<td width="60" class="right">'.$langs->trans('MonthShort'.str_pad((string) $j, 2, '0', STR_PAD_LEFT)).'</td>';
+		print '<td width="60" class="right">'.$langs->trans('MonthShort'.str_pad((string) ((int) $j), 2, '0', STR_PAD_LEFT)).'</td>';
 	}
 	print '<td width="60" class="right"><b>'.$langs->trans("Total").'</b></td></tr>';
 
@@ -433,7 +460,7 @@ if (getDolGlobalString('SHOW_TOTAL_OF_PREVIOUS_LISTS_IN_LIN_PAGE')) { // This pa
 		if ($j > 12) {
 			$j -= 12;
 		}
-		$sql .= " SUM(".$db->ifsql("MONTH(er.date_create) = ".((int) $j), "erd.total_ht", "0").") AS month".str_pad((string) $j, 2, "0", STR_PAD_LEFT).",";
+		$sql .= " SUM(".$db->ifsql("MONTH(er.date_create) = ".((int) $j), "erd.total_ht", "0").") AS month".str_pad((string) ((int) $j), 2, "0", STR_PAD_LEFT).",";
 	}
 	$sql .= " SUM(erd.total_ht) as total";
 	$sql .= " FROM ".MAIN_DB_PREFIX."expensereport_det as erd";
@@ -441,8 +468,8 @@ if (getDolGlobalString('SHOW_TOTAL_OF_PREVIOUS_LISTS_IN_LIN_PAGE')) { // This pa
 	$sql .= " WHERE er.date_debut >= '".$db->idate($search_date_start)."'";
 	$sql .= " AND er.date_debut <= '".$db->idate($search_date_end)."'";
 	// Define begin binding date
-	if (getDolGlobalString('ACCOUNTING_DATE_START_BINDING')) {
-		$sql .= " AND er.date_debut >= '".$db->idate(getDolGlobalString('ACCOUNTING_DATE_START_BINDING'))."'";
+	if (getDolGlobalInt('ACCOUNTING_DATE_START_BINDING')) {
+		$sql .= " AND er.date_debut >= '".$db->idate(getDolGlobalInt('ACCOUNTING_DATE_START_BINDING'))."'";
 	}
 	$sql .= " AND er.fk_statut IN (".ExpenseReport::STATUS_APPROVED.", ".ExpenseReport::STATUS_CLOSED.")";
 	$sql .= " AND er.entity IN (".getEntity('expensereport', 0).")"; // We don't share object for accountancy

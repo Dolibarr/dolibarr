@@ -1,12 +1,15 @@
 <?php
-/* Copyright (C) 2003-2007 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur   <eldy@users.sourceforge.net>
- * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2009 Regis Houssin         <regis.houssin@inodbox.com>
- * Copyright (C) 2005      Simon TOSSER          <simon@kornog-computing.com>
- * Copyright (C) 2011-2012 Juanjo Menent         <jmenent@2byte.es>
- * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
- * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
+/* Copyright (C) 2003-2007  Rodolphe Quiedeville        <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2010  Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2005       Marc Barilley / Ocebo       <marc@ocebo.com>
+ * Copyright (C) 2005-2009  Regis Houssin               <regis.houssin@inodbox.com>
+ * Copyright (C) 2005       Simon TOSSER                <simon@kornog-computing.com>
+ * Copyright (C) 2011-2012  Juanjo Menent               <jmenent@2byte.es>
+ * Copyright (C) 2013       Cédric Salvador             <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2017       Ferran Marcet               <fmarcet@2byte.es>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW                         <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026       Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,11 +28,18 @@
 /**
  *       \file       htdocs/fichinter/document.php
  *       \ingroup    fichinter
- *       \brief      Page des documents joints sur les contrats
+ *       \brief      Page for documents related to interventions
  */
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
@@ -48,8 +58,8 @@ $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
 // Security check
-if ($user->socid) {
-	$socid = $user->socid;
+if ($user->isExternalUser()) {
+	$socid = $user->isExternalUser();
 }
 $result = restrictedArea($user, 'ficheinter', $id, 'fichinter');
 
@@ -95,14 +105,17 @@ include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 $form = new Form($db);
 
-llxHeader('', $langs->trans("Intervention"), '', '', 0, 0, '', '', '', 'mod-fichinter page-card_document');
+$title = $object->ref . " - " . $langs->trans('Documents');
+$help_url = 'EN:Module_Interventions|FR:Module_Fiches_d\'interventions';
+
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-fichinter page-card_document');
 
 if ($object->id) {
 	$object->fetch_thirdparty();
 
 	$head = fichinter_prepare_head($object);
 
-	print dol_get_fiche_head($head, 'documents', $langs->trans("InterventionCard"), -1, 'intervention');
+	print dol_get_fiche_head($head, 'documents', $langs->trans("InterventionCard"), -1, $object->picto);
 
 
 	// Build file list
@@ -121,8 +134,8 @@ if ($object->id) {
 	// Ref customer
 	//$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, $user->rights->ficheinter->creer, 'string', '', 0, 1);
 	//$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, $user->rights->ficheinter->creer, 'string', '', null, null, '', 1);
-	$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', 0, 1);
-	$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', null, null, '', 1);
+	$morehtmlref .= $form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', 0, 1);
+	$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', null, null, '', 1);
 	// Thirdparty
 	$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1, 'customer');
 	// Project
@@ -132,9 +145,9 @@ if ($object->id) {
 		if ($permissiontoadd && 0) {
 			$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 			if ($action != 'classify') {
-				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
+				$morehtmlref .= '<a class="editfielda" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true).'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
-			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);

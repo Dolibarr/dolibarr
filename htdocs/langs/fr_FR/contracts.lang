@@ -36,10 +36,18 @@ ActivateAllOnContract=Activer tous les services
 CloseAContract=Clôturer un contrat
 ConfirmDeleteAContract=Êtes-vous sûr de vouloir supprimer ce contrat et tous ses services ?
 ConfirmValidateContract=Êtes-vous sûr de vouloir valider ce contrat sous la référence <b>%s</b> ?
+ConfirmSignContract=Êtes-vous sûr de pour définir ce contrat comme signé ?
+ConfirmUnsignContract=Êtes-vous sûr de pour définir ce contrat comme non signé ?
 ConfirmActivateAllOnContract=Cela activera tous les services (encore inactifs). Êtes-vous sur de vouloir activer tous les services ?
 ConfirmCloseContract=Cela clôturera tous les services (expirés ou non). Êtes-vous sûr de vouloir clôturer tous les services ?
 ConfirmCloseService=Êtes-vous sûr de vouloir fermer ce service à la date du <b>%s</b> ?
 ValidateAContract=Valider un contrat
+UnsignContract=Annuler la signature du contrat
+ContractSign=Définir à Signé
+ContractUnsign=Définir à Non signé
+ContractSignedInDolibarr=Contrat signé
+ContractSignedOnline=Contrat signé en ligne
+ContractUnsignedInDolibarr=Contrat non signé
 ActivateService=Activer le service
 ConfirmActivateService=Êtes-vous sûr de vouloir activer ce service en date du <b>%s</b> ?
 RefContract=Référence du contrat
@@ -95,7 +103,13 @@ ConfirmCloneContract=Etes vous sûr de vouloir cloner le contrat <b>%s</b> ?
 LowerDateEndPlannedShort=Date de fin de service la plus basse parmi les services actifs
 SendContractRef=Informations contrat __REF__
 OtherContracts=Autres contrats
-##### Types de contacts #####
+##### Statistics #####
+ContractsStatistics=Statistiques du contrat
+NbOfContracts=Nombre de contrats
+NumberOfContractsByMonth=Nombre de contrats par mois
+AmountOfServices=Nombre de services
+AmountOfServicesByMonthHT=Nombre de services (hors taxe) par mois
+##### Types of contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Commercial signataire du contrat
 TypeContact_contrat_internal_SALESREPFOLL=Commercial suivi du contrat
 TypeContact_contrat_external_BILLING=Contact client facturation contrat

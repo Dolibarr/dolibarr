@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2021		Thibault FOUCART	<support@ptibogxiv.net>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,6 +48,14 @@ require '../../main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/includes/stripe/stripe-php/init.php';
 require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 $action = GETPOST('action', 'aZ09');
 $location = GETPOST('location', 'alphanohtml');

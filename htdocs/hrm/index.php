@@ -4,8 +4,8 @@
  * Copyright (C) 2012-2014	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2015-2016	Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2019       Nicolas ZABOURI     <info@inovea-conseil.com>
- * Copyright (C) 2021-2024  Frédéric France		<frederic.france@free.fr>
- * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2021-2026  Frédéric France		<frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +30,13 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -38,9 +45,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 
-if (isModEnabled('deplacement')) {
-	require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php';
-}
 if (isModEnabled('expensereport')) {
 	require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 }
@@ -53,13 +57,11 @@ if (isModEnabled('holiday')) {
 }
 
 
-// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
-$hookmanager = new HookManager($db);
-
-$hookmanager->initHooks(array('hrmindex'));
-
 // Load translation files required by the page
 $langs->loadLangs(array('users', 'holiday', 'trips', 'boxes'));
+
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('hrmindex'));
 
 // Get Parameters
 $socid = GETPOSTINT("socid");
@@ -71,9 +73,11 @@ if ($user->socid > 0) {
 
 if (!getDolGlobalString('MAIN_INFO_SOCIETE_NOM') || !getDolGlobalString('MAIN_INFO_SOCIETE_COUNTRY')) {
 	$setupcompanynotcomplete = 1;
+} else {
+	$setupcompanynotcomplete = 0;
 }
 
-$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
+$max = getDolUserInt('MAIN_SIZE_SHORTLIST_LIMIT', getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5));
 
 
 /*
@@ -84,6 +88,19 @@ $max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
 if (isModEnabled('holiday') && !empty($setupcompanynotcomplete)) {
 	$holidaystatic = new Holiday($db);
 	$result = $holidaystatic->updateBalance();
+}
+
+if (GETPOST('addbox')) {
+	// Add box (when submit is done from a form when ajax disabled)
+	require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
+	$zone = GETPOSTINT('areacode');
+	$userid = GETPOSTINT('userid');
+	$boxorder = GETPOST('boxorder', 'aZ09');
+	$boxorder .= GETPOST('boxcombo', 'aZ09');
+	$result = InfoBox::saveboxorder($db, $zone, $boxorder, $userid);
+	if ($result > 0) {
+		setEventMessages($langs->trans("BoxAdded"), null);
+	}
 }
 
 
@@ -98,15 +115,18 @@ $childids[] = $user->id;
 
 $title = $langs->trans('HRMArea');
 
+// Load $resultboxes
+$resultboxes = FormOther::getBoxesArea($user, "10");
+
 llxHeader('', $title, '');
 
-print load_fiche_titre($langs->trans("HRMArea"), '', 'hrm');
+print load_fiche_titre($langs->trans("HRMArea"), $resultboxes['selectboxlist'], 'hrm');
 
 
 if (!empty($setupcompanynotcomplete)) {
 	$langs->load("errors");
 	$warnpicto = img_warning($langs->trans("WarningMandatorySetupNotComplete"));
-	print '<br><div class="warning"><a href="'.DOL_URL_ROOT.'/admin/company.php?mainmenu=home'.(empty($setupcompanynotcomplete) ? '' : '&action=edit&token='.newToken()).'">'.$warnpicto.' '.$langs->trans("WarningMandatorySetupNotComplete").'</a></div>';
+	print '<br><div class="warning"><a href="'.DOL_URL_ROOT.'/admin/company.php?mainmenu=home&action=edit&token='.newToken().'">'.$warnpicto.' '.$langs->trans("WarningMandatorySetupNotComplete").'</a></div>';
 
 	llxFooter();
 	exit;
@@ -191,6 +211,8 @@ if (isModEnabled('holiday')) {
 }
 
 
+print $resultboxes['boxlista'];
+
 print '</div><div class="secondcolumn fichehalfright boxhalfright" id="boxhalfright">';
 
 
@@ -200,7 +222,7 @@ if (isModEnabled('holiday') && $user->hasRight('holiday', 'read')) {
 	$sql .= " x.rowid, x.ref, x.fk_type, x.date_debut as date_start, x.date_fin as date_end, x.halfday, x.tms as dm, x.statut as status";
 	$sql .= " FROM ".MAIN_DB_PREFIX."holiday as x, ".MAIN_DB_PREFIX."user as u";
 	$sql .= " WHERE u.rowid = x.fk_user";
-	$sql .= " AND x.entity = ".$conf->entity;
+	$sql .= " AND x.entity = ".((int) $conf->entity);
 	if (!$user->hasRight('holiday', 'readall')) {
 		$sql .= ' AND x.fk_user IN ('.$db->sanitize(implode(',', $childids)).')';
 	}
@@ -266,7 +288,7 @@ if (isModEnabled('holiday') && $user->hasRight('holiday', 'read')) {
 				print '<td class="tdoverflowmax100">'.$userstatic->getNomUrl(-1, 'leave').'</td>';
 
 				$leavecode = empty($typeleaves[$obj->fk_type]) ? 'Undefined' : $typeleaves[$obj->fk_type]['code'];
-				print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($langs->trans($leavecode)).'">'.dol_escape_htmltag($langs->trans($leavecode)).'</td>';
+				print '<td class="tdoverflowmax80" title="'.dol_escape_htmltag($langs->trans($leavecode)).'">'.dol_escape_htmltag($langs->trans($leavecode)).'</td>';
 
 				$starthalfday = ($obj->halfday == -1 || $obj->halfday == 2) ? 'afternoon' : 'morning';
 				$endhalfday = ($obj->halfday == 1 || $obj->halfday == 2) ? 'morning' : 'afternoon';
@@ -306,7 +328,7 @@ if (isModEnabled('expensereport') && $user->hasRight('expensereport', 'read')) {
 	$sql .= " FROM ".MAIN_DB_PREFIX."expensereport as x, ".MAIN_DB_PREFIX."user as u";
 	//if (empty($user->rights->societe->client->voir) && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql .= " WHERE u.rowid = x.fk_user_author";
-	$sql .= " AND x.entity = ".$conf->entity;
+	$sql .= " AND x.entity = ".((int) $conf->entity);
 	if (!$user->hasRight('expensereport', 'readall') && !$user->hasRight('expensereport', 'lire_tous')) {
 		$sql .= ' AND x.fk_user_author IN ('.$db->sanitize(implode(',', $childids)).')';
 	}
@@ -345,7 +367,7 @@ if (isModEnabled('expensereport') && $user->hasRight('expensereport', 'read')) {
 
 				$expensereportstatic->id = $obj->rowid;
 				$expensereportstatic->ref = $obj->ref;
-				$expensereportstatic->statut = $obj->status;
+				$expensereportstatic->statut = $obj->status;	// deprecated
 				$expensereportstatic->status = $obj->status;
 
 				$userstatic->id = $obj->uid;
@@ -362,7 +384,7 @@ if (isModEnabled('expensereport') && $user->hasRight('expensereport', 'read')) {
 				print '<td class="tdoverflowmax150">'.$userstatic->getNomUrl(-1).'</td>';
 				print '<td class="right amount">'.price($obj->total_ht).'</td>';
 				print '<td class="right amount">'.price($obj->total_ttc).'</td>';
-				print '<td class="right">'.dol_print_date($db->jdate($obj->dm), 'dayreduceformat').'</td>';
+				print '<td class="right" title="'.$langs->trans("DateModification").': '.dol_print_date($db->jdate($obj->dm), 'dayhour').'">'.dol_print_date($db->jdate($obj->dm), 'dayreduceformat').'</td>';
 				print '<td class="right nowraponall" width="16">'.$expensereportstatic->LibStatut($obj->status, 3).'</td>';
 				print '</tr>';
 
@@ -396,7 +418,7 @@ if (isModEnabled('recruitment') && $user->hasRight('recruitment', 'recruitmentjo
 		$sql .= " AND rp.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {
-		$sql .= " AND rp.fk_soc = $socid";
+		$sql .= " AND rp.fk_soc = ".((int) $socid);
 	}
 	$sql .= $db->order("rc.tms", "DESC");
 	$sql .= $db->plimit($max, 0);
@@ -439,7 +461,7 @@ if (isModEnabled('recruitment') && $user->hasRight('recruitment', 'recruitmentjo
 				print '<td class="nowraponall">'.$staticrecruitmentcandidature->getNomUrl(1, '').'</td>';
 				print '<td class="tdoverflowmax150">'.$staticrecruitmentcandidature->getFullName($langs).'</td>';
 				print '<td class="nowraponall">'.$staticrecruitmentjobposition->getNomUrl(1).'</td>';
-				print '<td class="right nowrap">'.dol_print_date($db->jdate($objp->tms), 'dayreduceformat').'</td>';
+				print '<td class="right nowrap" title="'.$langs->trans("DateModification").': '.dol_print_date($db->jdate($objp->tms), 'dayhour').'">'.dol_print_date($db->jdate($objp->tms), 'dayreduceformat').'</td>';
 				print '<td class="right nowrap" width="16">';
 				print $staticrecruitmentcandidature->getLibStatut(3);
 				print "</td>";
@@ -458,6 +480,8 @@ if (isModEnabled('recruitment') && $user->hasRight('recruitment', 'recruitmentjo
 		dol_print_error($db);
 	}
 }
+
+print $resultboxes['boxlistb'];
 
 print '</div></div></div>';
 

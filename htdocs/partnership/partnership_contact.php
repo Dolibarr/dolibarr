@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2021		NextGestion			<contact@nextgestion.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +33,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/partnership/class/partnership.class.php';
 require_once DOL_DOCUMENT_ROOT.'/partnership/lib/partnership.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("partnership", "companies", "other", "mails"));
 
@@ -58,7 +68,7 @@ $managedfor = getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR', 'thirdparty');
 // Security check - Protection if external user
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
-//$result = restrictedArea($user, 'partnership', $object->id);
+//restrictedArea($user, 'partnership', $object->id);
 if (empty($conf->partnership->enabled)) {
 	accessforbidden();
 }
@@ -96,7 +106,7 @@ if ($action == 'addcontact' && $permission) {
 	}
 } elseif ($action == 'swapstatut' && $permission) {
 	// Toggle the status of a contact
-	$result = $object->swapContactStatus(GETPOST('ligne'));
+	$result = $object->swapContactStatus(GETPOSTINT('ligne'));
 } elseif ($action == 'deletecontact' && $permission) {
 	// Deletes a contact
 	$result = $object->delete_contact($lineid);
@@ -156,7 +166,7 @@ if ($object->id) {
 	 if ($permissiontoadd)
 	 {
 	 if ($action != 'classify')
-	 //$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+	 //$morehtmlref.='<a class="editfielda" href="' . dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true) . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 	 $morehtmlref.=' : ';
 	 if ($action == 'classify') {
 	 //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
@@ -190,9 +200,12 @@ if ($object->id) {
 	// Contacts lines (modules that overwrite templates must declare this into descriptor)
 	$dirtpls = array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
 	foreach ($dirtpls as $reldir) {
-		$res = @include dol_buildpath($reldir.'/contacts.tpl.php');
-		if ($res) {
-			break;
+		$file = dol_buildpath($reldir.'/contacts.tpl.php');
+		if (file_exists($file)) {
+			$res = @include $file;
+			if ($res) {
+				break;
+			}
 		}
 	}
 }

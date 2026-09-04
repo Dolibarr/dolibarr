@@ -23,3 +23,4 @@ BatchSerialNumberingModules=Regla de numeración para la generación automática
 QtyToAddAfterBarcodeScan=Cantidad a %s por cada código de barras/lote/serie escaneado
 EndOfLife=Fin de la vida
 CantMoveNonExistantSerial=Error. Pides un movimiento en un registro de un serial que ya no existe. Puede ser que tome el mismo serial en el mismo almacén varias veces en el mismo envío o que haya sido utilizado por otro envío. Retire este envío y prepare otro.
+IlligalQtyForSerialNumbers=Se requiere corrección de stock porque el número de serie es único.

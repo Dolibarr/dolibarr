@@ -3,6 +3,8 @@
  * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2012 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +35,14 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories', 'withdrawals', 'companies'));
 
@@ -55,6 +65,9 @@ $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
+$toselect = GETPOST('toselect', 'array:int');
+$massaction = GETPOST('massaction', 'alpha');
+
 if (empty($page) || $page == -1 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha') || (empty($toselect) && $massaction === '0')) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
@@ -206,10 +219,11 @@ if ($sourcetype != 'salary') {
 }
 // Count total nb of records
 $nbtotalofrecords = '';
+$resql = null;
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$resql = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($resql);
-	if (($page * $limit) > $nbtotalofrecords) {	// if total of record found is smaller than page * limit, goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total of record found is smaller than page * limit, goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -231,9 +245,9 @@ if (is_numeric($nbtotalofrecords) && $limit > $nbtotalofrecords) {
 
 
 
-$newcardbutton = '<a class="marginrightonly" href="'.DOL_URL_ROOT.'/compta/prelevement/index.php">'.$langs->trans("Back").'</a>';
+$newcardbutton = '<a class="marginrightonly" href="'.DOL_URL_ROOT.'/compta/prelevement/index.php">'.$langs->trans("GoBack").'</a>';
 if ($type == 'bank-transfer') {
-	$newcardbutton = '<a class="marginrightonly" href="'.DOL_URL_ROOT.'/compta/paymentbybanktransfer/index.php">'.$langs->trans("Back").'</a>';
+	$newcardbutton = '<a class="marginrightonly" href="'.DOL_URL_ROOT.'/compta/paymentbybanktransfer/index.php">'.$langs->trans("GoBack").'</a>';
 }
 if ($sourcetype != 'salary') {
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST"  id="searchFormList" name="searchFormList">';
@@ -268,7 +282,7 @@ print '<table class="liste centpercent">';
 
 print '<tr class="liste_titre">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print '<td class="liste_titre maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
@@ -279,7 +293,7 @@ print '<td class="liste_titre"><input type="text" class="flat maxwidth150" name=
 print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print '<td class="liste_titre maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
@@ -288,14 +302,14 @@ if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 print '</tr>';
 
 print '<tr class="liste_titre">';
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print_liste_field_titre('');
 }
 print_liste_field_titre(($sourcetype ? "RefSalary" : "Bill"), $_SERVER["PHP_SELF"]);
 print_liste_field_titre(($sourcetype ? "Employee" : "Company"), $_SERVER["PHP_SELF"]);
 print_liste_field_titre("AmountRequested", $_SERVER["PHP_SELF"], "", "", $param, '', '', '', 'right ');
 print_liste_field_titre("DateRequest", $_SERVER["PHP_SELF"], "", "", $param, '', '', '', 'center ');
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print_liste_field_titre('');
 }
 print '</tr>';
@@ -304,7 +318,7 @@ $userstatic = new User($db);
 $salarystatic = new Salary($db);
 
 $i = 0;
-while ($i < min($num, $limit)) {
+while ($i < min($num, $limit) && $resql !== null) {
 	$obj = $db->fetch_object($resql);
 	if (empty($obj)) {
 		break; // Should not happen
@@ -318,12 +332,12 @@ while ($i < min($num, $limit)) {
 	print '<tr class="oddeven">';
 
 	// Action column
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		print '<td class="right"></td>';
 	}
 
 	// Ref facture
-	print '<td>';
+	print '<td class="tdoverflowmax125">';
 	if ($sourcetype != 'salary') {
 		print $invoicestatic->getNomUrl(1, 'withdraw');
 	} else {
@@ -331,7 +345,7 @@ while ($i < min($num, $limit)) {
 	}
 	print '</td>';
 
-	print '<td>';
+	print '<td class="tdoverflowmax150">';
 	if ($sourcetype != 'salary') {
 		$thirdpartystatic->id = $obj->socid;
 		$thirdpartystatic->name = $obj->name;
@@ -343,14 +357,18 @@ while ($i < min($num, $limit)) {
 
 	print '<td class="right">';
 	print '<span class="amount">';
-	print price($obj->amount, 1, $langs, 1, -1, -1, $conf->currency).' / '.price($obj->total_ttc, 1, $langs, 1, -1, -1, $conf->currency);
+	if ($obj->amount != $obj->total_ttc) {
+		print price($obj->amount, 1, $langs, 1, -1, -1, $conf->currency).' / '.price($obj->total_ttc, 1, $langs, 1, -1, -1, $conf->currency);
+	} else {
+		print price($obj->total_ttc, 1, $langs, 1, -1, -1, $conf->currency);
+	}
 	print '</span>';
 	print '</td>';
 
 	print '<td class="center">'.dol_print_date($db->jdate($obj->date_demande), 'day').'</td>';
 
 	// Action column
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		print '<td class="right"></td>';
 	}
 

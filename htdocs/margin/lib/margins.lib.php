@@ -114,7 +114,7 @@ function marges_prepare_head()
  * @param 	float	$localtax2_tx		Vat rate special 2 (not used)
  * @param 	int		$fk_pa				Id of buying price (prefer set this to 0 and provide $pa_ht instead. With id, buying price may have change)
  * @param 	float	$pa_ht				Buying price without tax
- * @return	array						Array of margin info (buying price, marge rate, marque rate)
+ * @return	array{0:float,1:float,2:float}	Array of margin info (buying price, marge rate, marque rate)
  */
 function getMarginInfos($pv_ht, $remise_percent, $tva_tx, $localtax1_tx, $localtax2_tx, $fk_pa, $pa_ht)
 {

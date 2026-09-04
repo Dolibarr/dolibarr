@@ -8,6 +8,7 @@
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Nick Fragoulis
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +37,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'companies', 'languages', 'members', 'other', 'products', 'stocks', 'trips'));
@@ -223,8 +233,8 @@ $arraydetailsforpdffoot = array(
 
 $arraylistofpdfformat = array(
 	0 => $langs->transnoentitiesnoconv('PDF 1.7'),
-	1 => $langs->transnoentitiesnoconv('PDF/A-1b'),
-	3 => $langs->transnoentitiesnoconv('PDF/A-3b'),
+	1 => $langs->transnoentitiesnoconv('PDF/A-1b (1.4)'),
+	3 => $langs->transnoentitiesnoconv('PDF/A-3b (1.7)'),
 );
 
 $s = $langs->trans("LibraryToBuildPDF")."<br>";
@@ -274,7 +284,7 @@ print "<br>\n";
 
 $noCountryCode = empty($mysoc->country_code);
 
-print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 
@@ -284,6 +294,7 @@ clearstatcache();
 if (getDolGlobalString('PDF_SECURITY_ENCRYPTION')) {
 	print '<div class="warning">';
 	print 'The not supported and hidden option PDF_SECURITY_ENCRYPTION has been enabled. This means a lof of feature related to PDF will be broken, like mass PDF generation or online signature of PDF.'."\n";
+	print "Also note that if an 'encrypted PDF' provides a protection against manual change done by mistake, it does NOT provide any protection against modification of your PDF in a security point of view: A protected PDF can still be modified by any advanced PDF editors. Don't forget this: If a software can read the PDF, this software can also rebuild it differently !\n";
 	print 'You should disable this option.';
 	print '</div>';
 }
@@ -296,7 +307,7 @@ print load_fiche_titre($langs->trans("DictionaryPaperFormat"), '', '');
 
 print '<div class="div-table-responsive-no-min">';
 print '<table summary="more" class="noborder centpercent">';
-print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameters").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
+print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameters").'</td><td width="200px"></td></tr>';
 
 $selected = getDolGlobalString('MAIN_PDF_FORMAT');
 if (empty($selected)) {
@@ -505,7 +516,7 @@ print load_fiche_titre($langs->trans("Other"), '', '');
 
 print '<div class="div-table-responsive-no-min">';
 print '<table summary="more" class="noborder centpercent">';
-print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td></td></tr>';
 
 // Use 2 languages into PDF
 
@@ -602,7 +613,7 @@ if ($conf->use_javascript_ajax) {
 print '</td></tr>';
 
 // Switch in Bold
-
+/* Fight against optionflation: We don't need this for common usage. Must remain as advanced option.
 print '<tr class="oddeven"><td>'.$langs->trans("BoldLabelOnPDF").'</td><td>';
 if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('PDF_BOLD_PRODUCT_LABEL');
@@ -610,9 +621,10 @@ if ($conf->use_javascript_ajax) {
 	print $form->selectyesno('PDF_BOLD_PRODUCT_LABEL', getDolGlobalInt('PDF_BOLD_PRODUCT_LABEL'), 1);
 }
 print '</td></tr>';
+*/
 
 // Switch in Bold
-
+/* Fight against optionflation: We don't need this for common usage. Must remain as advanced option.
 print '<tr class="oddeven"><td>'.$langs->trans("BoldRefAndPeriodOnPDF").'</td><td>';
 if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('PDF_BOLD_PRODUCT_REF_AND_PERIOD');
@@ -620,6 +632,7 @@ if ($conf->use_javascript_ajax) {
 	print $form->selectyesno('PDF_BOLD_PRODUCT_REF_AND_PERIOD', getDolGlobalInt('PDF_BOLD_PRODUCT_REF_AND_PERIOD'), 1);
 }
 print '</td></tr>';
+*/
 
 // SHOW_SUBPRODUCT_REF_IN_PDF - Option to show the detail of product ref for kits.
 

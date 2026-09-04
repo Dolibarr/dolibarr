@@ -2,6 +2,7 @@
 /* Copyright (C) 2006-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2006-2021	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +21,7 @@
 /**
  *      \file       htdocs/user/ldap.php
  *      \ingroup    ldap
- *      \brief      Page fiche LDAP utilisateur
+ *      \brief      LDAP user record page
  */
 
 // Load Dolibarr environment
@@ -28,6 +29,14 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/ldap.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ldap.lib.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by page
 $langs->loadLangs(array('users', 'admin', 'companies', 'ldap'));
@@ -160,7 +169,7 @@ print dol_get_fiche_end();
 print '<div class="tabsAction">';
 
 if (getDolGlobalInt('LDAP_SYNCHRO_ACTIVE') === Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
-	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=dolibarr2ldap">'.$langs->trans("ForceSynchronize").'</a>';
+	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=dolibarr2ldap&amp;token='.newToken().'">'.$langs->trans("ForceSynchronize").'</a>';
 }
 
 print "</div>\n";

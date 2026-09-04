@@ -17,3 +17,4 @@ ResourceLinkedWithSuccess=Recurso vinculado con éxito
 ConfirmDeleteResource=Confirmar para eliminar este recurso
 IdResource=Identificación del recurso
 ResourceTypeCode=Código del tipo de recurso
+MaxUsersLabel=Máximo de usuarios

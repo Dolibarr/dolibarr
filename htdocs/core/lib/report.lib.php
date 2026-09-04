@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2008-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +35,7 @@
  *	@param 	string				$description    Description
  *	@param 	integer	            $builddate      Date generation
  *	@param 	string				$exportlink     Link for export or ''
- *	@param	array				$moreparam		Array with list of params to add into form
+ *	@param	array<string,mixed>	$moreparam		Array with list of params to add into form
  *	@param	string				$calcmode		Calculation mode
  *  @param  string              $varlink        Add a variable into the address of the page
  *	@return	void
@@ -65,7 +67,7 @@ function report_header($reportname, $notused, $period, $periodlink, $description
 
 	$variant = ($periodlink || $exportlink);
 
-	// Ligne de titre
+	// Title line
 	print '<tr>';
 	print '<td width="150">'.$langs->trans("ReportName").'</td>';
 	print '<td>';
@@ -89,7 +91,7 @@ function report_header($reportname, $notused, $period, $periodlink, $description
 		print '</tr>'."\n";
 	}
 
-	// Ligne de la periode d'analyse du rapport
+	// Report analysis period row
 	print '<tr>';
 	print '<td>'.$langs->trans("ReportPeriod").'</td>';
 	print '<td>';
@@ -102,7 +104,7 @@ function report_header($reportname, $notused, $period, $periodlink, $description
 	print '</td>';
 	print '</tr>'."\n";
 
-	// Ligne de description
+	// Description row
 	print '<tr>';
 	print '<td>'.$langs->trans("ReportDescription").'</td>';
 	print '<td>'.$description.'</td>';
@@ -111,7 +113,7 @@ function report_header($reportname, $notused, $period, $periodlink, $description
 	}
 	print '</tr>'."\n";
 
-	// Ligne d'export
+	// Export row
 	print '<tr>';
 	print '<td>'.$langs->trans("GeneratedOn").'</td>';
 	print '<td>';

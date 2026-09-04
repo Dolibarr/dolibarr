@@ -6,6 +6,7 @@
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +35,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "other"));
@@ -74,11 +82,12 @@ if (!$sortfield) {
 
 // Initialize objects
 $object = new Societe($db);
+$upload_dir = null;
 if ($id > 0 || !empty($ref)) {
 	$result = $object->fetch($id, $ref);
 
-	$upload_dir = $conf->societe->multidir_output[$object->entity]."/".$object->id;
-	$courrier_dir = $conf->societe->multidir_output[$object->entity]."/courrier/".get_exdir($object->id, 0, 0, 0, $object, 'thirdparty');
+	$upload_dir = $conf->societe->multidir_output[$object->entity ?? $conf->entity]."/".$object->id;
+	$courrier_dir = $conf->societe->multidir_output[$object->entity ?? $conf->entity]."/courrier/".get_exdir($object->id, 0, 0, 0, $object, 'thirdparty');
 }
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
@@ -93,7 +102,7 @@ if ($user->socid > 0) {
 }
 $result = restrictedArea($user, 'societe', $object->id, '&societe');
 
-if (empty($object->id)) {
+if (empty($object->id) || $upload_dir === null) {
 	accessforbidden();
 }
 
@@ -145,11 +154,6 @@ print '<tr><td class="titlefield">'.$langs->trans('NatureOfThirdParty').'</td><t
 print $object->getTypeUrl(1);
 print '</td></tr>';
 
-// Prefix
-if (getDolGlobalString('SOCIETE_USEPREFIX')) {  // Old not used prefix field
-	print '<tr><td class="titlefield">'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
-}
-
 if ($object->client) {
 	print '<tr><td class="titlefield">';
 	print $langs->trans('CustomerCode').'</td><td colspan="3">';
@@ -184,10 +188,11 @@ print '</div>';
 
 print dol_get_fiche_end();
 
-$modulepart = 'societe';
+$modulepart = 'company';
 $permissiontoadd = $user->hasRight('societe', 'creer');
 $permtoedit = $user->hasRight('societe', 'creer');
 $param = '&id='.$object->id;
+$relativepathwithnofile = $object->id . '/';
 include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 
 // End of page

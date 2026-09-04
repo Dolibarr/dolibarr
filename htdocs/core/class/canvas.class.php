@@ -121,8 +121,6 @@ class Canvas
 	 */
 	public function getCanvas($module, $card, $canvas)
 	{
-		global $conf, $langs;
-
 		// Set properties with value specific to dolibarr core: this->targetmodule, this->card, this->canvas
 		$this->targetmodule = $module;
 		$this->canvas = $canvas;
@@ -190,7 +188,12 @@ class Canvas
 			return 0;
 		}
 
-		if (file_exists($this->template_dir.(!empty($this->card) ? $this->card.'_' : '').$this->_cleanaction($action).'.tpl.php')) {
+		$newaction = $action;
+		if ($action && !in_array($action, array('create', 'view', 'edit', 'list'))) {
+			$newaction = 'view';
+		}
+
+		if (file_exists($this->template_dir.(!empty($this->card) ? $this->card.'_' : '').$this->_cleanaction($newaction).'.tpl.php')) {
 			return 1;
 		} else {
 			return 0;
@@ -208,11 +211,16 @@ class Canvas
 	public function display_canvas($action)
 	{
 		// phpcs:enable
-		global $db, $conf, $langs, $user, $canvas;
-		global $form, $formfile;
+		global $db, $conf, $langs, $user, $canvas;	// used into include
+		global $form, $formfile;					// used into include
+
+		$newaction = $action;
+		if ($action && !in_array($action, array('create', 'view', 'edit', 'list'))) {
+			$newaction = 'view';
+		}
 
 		//var_dump($this->card.'-'.$action);
-		include $this->template_dir.(!empty($this->card) ? $this->card.'_' : '').$this->_cleanaction($action).'.tpl.php'; // Include native PHP template
+		include $this->template_dir.(!empty($this->card) ? $this->card.'_' : '').$this->_cleanaction($newaction).'.tpl.php'; // Include native PHP template
 	}
 
 
@@ -237,13 +245,14 @@ class Canvas
 	 *
 	 * 	@param		string		$action	Action string
 	 * 	@param		int			$id			Object id
-	 * 	@return		mixed					Return return code of doActions of canvas
+	 * 	@return		?mixed					Return return code of doActions of canvas
 	 * 	@see		https://wiki.dolibarr.org/index.php/Canvas_development
 	 */
 	public function doActions(&$action = 'view', $id = 0)
 	{
-		if (method_exists($this->control, 'doActions')) {
-			$ret = $this->control->doActions($action, $id);
+		$control = $this->control;
+		if (method_exists($control, 'doActions')) {
+			$ret = $control->doActions($action, $id);
 			return $ret;
 		}
 		return null;

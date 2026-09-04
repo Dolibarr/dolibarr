@@ -5,6 +5,7 @@
  * Copyright (C) 2021 Jean-Pascal BOUDET <jean-pascal.boudet@atm-consulting.fr>
  * Copyright (C) 2021 Grégory BLEMAND <gregory.blemand@atm-consulting.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +38,14 @@ require_once DOL_DOCUMENT_ROOT . '/hrm/class/position.class.php';
 require_once DOL_DOCUMENT_ROOT . '/hrm/class/job.class.php';
 require_once DOL_DOCUMENT_ROOT . '/hrm/lib/hrm_position.lib.php';
 //dol_include_once('/hrm/position.php');
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Get Parameters
 $action 	= GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view'; // The action 'add', 'create', 'edit', 'update', 'view', ...
@@ -82,7 +91,7 @@ $fk_job = GETPOSTINT('fk_job');
 $ref 	= GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
-$cancel = GETPOST('cancel', 'aZ09');
+$cancel = GETPOST('cancel');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'positioncard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
@@ -262,13 +271,13 @@ function displayPositionCard(&$object)
 
 
 		$head = positionCardPrepareHead($object);
-		print dol_get_fiche_head($head, 'position', $langs->trans("Workstation"), -1, $object->picto);
+		print dol_get_fiche_head($head, 'position', $langs->trans("Workstation"), -1, $object->picto, 0, '', '', 0, '', 1);
 
 		$formconfirm = '';
 
 		// Confirmation to delete
 		if ($action == 'delete') {
-			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('DeletePosition'), $langs->trans('ConfirmDeleteObject'), 'confirm_delete', '', 0, 1);
+			$formconfirm = $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id]), $langs->trans('DeletePosition'), $langs->trans('ConfirmDeleteObject'), 'confirm_delete', '', 0, 1);
 		}
 
 		// Call Hook formConfirm
@@ -350,7 +359,7 @@ function displayPositionCard(&$object)
 //		/*
 //		 * Generated documents
 //		 */
-//		$filedir = $conf->societe->multidir_output[$object->entity].'/'.$object->id;
+//		$filedir = $conf->societe->multidir_output[$object->entity ?? $conf->entity].'/'.$object->id;
 //		$urlsource = $_SERVER["PHP_SELF"]."?socid=".$object->id;
 //		$genallowed = $user->hasRight('societe', 'lire');
 //		$delallowed = $user->hasRight('societe', 'creer');
@@ -384,9 +393,12 @@ if ($action !== 'edit' && $action !== 'create') {
 	print '<div class="fichecenter"><div class="fichehalfleft">';
 
 	// Show links to link elements
-	$linktoelem = $form->showLinkToObjectBlock($object, null, array('position'));
-	$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
+	$tmparray = $form->showLinkToObjectBlock($object, array(), array('position'), 1);
+	$linktoelem = $tmparray['linktoelem'];
+	$htmltoenteralink = $tmparray['htmltoenteralink'];
+	print $htmltoenteralink;
 
+	$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 	print '</div><div class="fichehalfright">';
 

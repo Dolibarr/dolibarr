@@ -62,3 +62,4 @@ EmailSomeoneVoted=%s qatorni to'ldirdi.\nSo'rovnomangizni havoladan topishingiz 
 ShowSurvey=So'rovnomani ko'rsatish
 UserMustBeSameThanUserUsedToVote=Siz ovoz bergan bo'lishingiz kerak va sharh yuborish uchun foydalanuvchi ovoz bergan foydalanuvchi nomidan foydalaning
 ListOfOpenSurveys=Ochiq so'rovlar ro'yxati
+AddTheVote=Ovoz qo'shish uchun bosing

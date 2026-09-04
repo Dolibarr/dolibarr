@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
+/* Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2019 Maxime Kohlhaas <maxime@atm-consulting.fr>
- * Copyright (C) 2020-2024  Frédéric France		<frederic.france@free.fr>
+ * Copyright (C) 2020-2025  Frédéric France		    <frederic.france@free.fr>
  * Copyright (C) 2022		Christian Humpel		<christian.humpel@live.com>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +22,7 @@
 use Luracast\Restler\RestException;
 
 require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 
 /**
@@ -38,7 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
 class Boms extends DolibarrApi
 {
 	/**
-	 * @var BOM $bom {@type BOM}
+	 * @var BOM {@type BOM}
 	 */
 	public $bom;
 
@@ -60,6 +62,8 @@ class Boms extends DolibarrApi
 	 *
 	 * @param	int		$id				ID of bom
 	 * @return  Object					Object with cleaned properties
+	 * @phan-return BOM
+	 * @phpstan-return BOM
 	 *
 	 * @url	GET {id}
 	 *
@@ -94,9 +98,11 @@ class Boms extends DolibarrApi
 	 * @param string		   $sortorder			Sort order
 	 * @param int			   $limit				Limit for list
 	 * @param int			   $page				Page number
-	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:>:'20160101')"
 	 * @param string		   $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array                               Array of order objects
+	 * @phan-return BOM[]
+	 * @phpstan-return BOM[]
 	 *
 	 * @throws	RestException	400		Bad sqlfilters
 	 * @throws	RestException	403		Access denied
@@ -111,7 +117,7 @@ class Boms extends DolibarrApi
 		$obj_ret = array();
 		$tmpobject = new BOM($this->db);
 
-		$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : '';
+		$socid = DolibarrApiAccess::$user->socid ?: '';
 
 		$restrictonsocid = 0; // Set to 1 if there is a field socid in table of object
 
@@ -134,9 +140,9 @@ class Boms extends DolibarrApi
 		// Search on sale representative
 		if ($search_sale && $search_sale != '-1') {
 			if ($search_sale == -2) {
-				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc)";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', 0, 1);
 			} elseif ($search_sale > 0) {
-				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', (int) $search_sale);
 			}
 		}
 		if ($sqlfilters) {
@@ -159,9 +165,10 @@ class Boms extends DolibarrApi
 
 		$result = $this->db->query($sql);
 		if ($result) {
-			$num = $this->db->num_rows($result);
 			$i = 0;
-			while ($i < $num) {
+			$num = $this->db->num_rows($result);
+			$min = min($num, ($limit <= 0 ? $num : $limit));
+			while ($i < $min) {
 				$obj = $this->db->fetch_object($result);
 				$bom_static = new BOM($this->db);
 				if ($bom_static->fetch($obj->rowid)) {
@@ -179,7 +186,9 @@ class Boms extends DolibarrApi
 	/**
 	 * Create bom object
 	 *
-	 * @param array $request_data   Request datas
+	 * @param array $request_data   Request data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return int  				ID of bom
 	 *
 	 * @throws	RestException	403		Access denied
@@ -215,8 +224,12 @@ class Boms extends DolibarrApi
 	 * Update bom
 	 *
 	 * @param 	int   		$id             Id of bom to update
-	 * @param 	array 		$request_data   Datas
+	 * @param 	array 		$request_data   Data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return 	Object						Object after update
+	 * @phan-return BOM
+	 * @phpstan-return BOM
 	 *
 	 * @throws	RestException	403		Access denied
 	 * @throws	RestException	404		BOM not found
@@ -249,11 +262,10 @@ class Boms extends DolibarrApi
 
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->bom->array_options[$index] = $this->_checkValForAPI('extrafields', $val, $this->bom);
+					$this->bom->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->bom);
 				}
 				continue;
 			}
-
 			$this->bom->$field = $this->_checkValForAPI($field, $value, $this->bom);
 		}
 
@@ -267,10 +279,48 @@ class Boms extends DolibarrApi
 	}
 
 	/**
+	 * Validate BOM
+	 *
+	 * @param   int $id             BOM ID
+	 * @param   int $notrigger      1=Does not execute triggers, 0= execute triggers
+	 * @return  Object              Object with cleaned properties
+	 *
+	 * @url POST    {id}/validate
+	 *
+	 * @throws RestException 304
+	 * @throws RestException 401
+	 * @throws RestException 404
+	 * @throws RestException 500 System error
+	 */
+	public function validate($id, $notrigger = 0)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('bom', 'write')) {
+			throw new RestException(403);
+		}
+		$result = $this->bom->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Bom not found');
+		}
+
+		$result = $this->bom->validate(DolibarrApiAccess::$user, $notrigger);
+		if ($result == 0) {
+			throw new RestException(304, 'Error nothing done. May be object is already validated');
+		}
+		if ($result < 0) {
+			throw new RestException(500, 'Error when validating BOM: '.$this->bom->error);
+		}
+		$result = $this->bom->fetch($id);
+
+		return $this->_cleanObjectDatas($this->bom);
+	}
+
+	/**
 	 * Delete bom
 	 *
 	 * @param   int     $id   BOM ID
 	 * @return  array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 *
 	 * @throws	RestException	403		Access denied
 	 * @throws	RestException	404		BOM not found
@@ -310,6 +360,8 @@ class Boms extends DolibarrApi
 	 * @url	GET {id}/lines
 	 *
 	 * @return array
+	 * @phan-return BOMLine[]
+	 * @phpstan-return BOMLine[]
 	 *
 	 * @throws	RestException	403		Access denied
 	 * @throws	RestException	404		BOM not found
@@ -341,6 +393,8 @@ class Boms extends DolibarrApi
 	 *
 	 * @param int   $id             Id of BOM to update
 	 * @param array $request_data   BOMLine data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 *
 	 * @url	POST {id}/lines
 	 *
@@ -376,7 +430,9 @@ class Boms extends DolibarrApi
 			$request_data->position,
 			$request_data->fk_bom_child,
 			$request_data->import_key,
-			$request_data->fk_unit
+			$request_data->fk_unit,
+			$request_data->array_options,
+			$request_data->fk_default_workstation
 		);
 
 		if ($updateRes > 0) {
@@ -392,6 +448,8 @@ class Boms extends DolibarrApi
 	 * @param int   $id             Id of BOM to update
 	 * @param int   $lineid         Id of line to update
 	 * @param array $request_data   BOMLine data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 *
 	 * @url	PUT {id}/lines/{lineid}
 	 *
@@ -425,7 +483,9 @@ class Boms extends DolibarrApi
 			$request_data->efficiency,
 			$request_data->position,
 			$request_data->import_key,
-			$request_data->fk_unit
+			$request_data->fk_unit,
+			$request_data->array_options,
+			$request_data->fk_default_workstation
 		);
 
 		if ($updateRes > 0) {
@@ -446,6 +506,8 @@ class Boms extends DolibarrApi
 	 * @url	DELETE {id}/lines/{lineid}
 	 *
 	 * @return array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 *
 	 * @throws	RestException	403		Access denied
 	 * @throws	RestException	404		BOM not found
@@ -494,9 +556,12 @@ class Boms extends DolibarrApi
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Clean sensible object datas
+	 * @phpstan-template T
 	 *
 	 * @param   Object  $object     Object to clean
 	 * @return  Object              Object with cleaned properties
+	 * @phpstan-param T $object
+	 * @phpstan-return T
 	 */
 	protected function _cleanObjectDatas($object)
 	{
@@ -512,6 +577,7 @@ class Boms extends DolibarrApi
 		unset($object->civility_id);
 		unset($object->statut);
 		unset($object->state);
+		unset($object->region_id);
 		unset($object->state_id);
 		unset($object->state_code);
 		unset($object->region);
@@ -523,11 +589,26 @@ class Boms extends DolibarrApi
 		unset($object->barcode_type_code);
 		unset($object->barcode_type_label);
 		unset($object->barcode_type_coder);
+		unset($object->demand_reason_id);
+		unset($object->transport_mode_id);
+		unset($object->shipping_method);
+		unset($object->civility_code);
+		unset($object->actiontypecode);
+		unset($object->product);
+
 		unset($object->total_ht);
 		unset($object->total_tva);
 		unset($object->total_localtax1);
 		unset($object->total_localtax2);
 		unset($object->total_ttc);
+
+		unset($object->user);
+
+		unset($object->totalpaid);
+		unset($object->totalpaid_multicurrency);
+		unset($object->deposit_percent);
+		unset($object->cond_reglement_supplier_id);
+
 		unset($object->fk_account);
 		unset($object->comments);
 		unset($object->note);
@@ -564,16 +645,19 @@ class Boms extends DolibarrApi
 	/**
 	 * Validate fields before create or update object
 	 *
-	 * @param	array		$data   Array of data to validate
-	 * @return	array
+	 * @param	?array<string,string>		$data   Array of data to validate
+	 * @return	array<string,string>
 	 *
 	 * @throws	RestException
 	 */
 	private function _validate($data)
 	{
+		if ($data === null) {
+			$data = array();
+		}
 		$myobject = array();
 		foreach ($this->bom->fields as $field => $propfield) {
-			if (in_array($field, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat')) || $propfield['notnull'] != 1) {
+			if (in_array($field, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat')) || empty($propfield['notnull']) || $propfield['notnull'] != 1) {
 				continue; // Not a mandatory field
 			}
 			if (!isset($data[$field])) {
@@ -592,17 +676,21 @@ class Boms extends DolibarrApi
 	private function checkRefNumbering()
 	{
 		$ref = substr($this->bom->ref, 1, 4);
-		if ($this->bom->status > 0 && $ref == 'PROV') {
+		if ($this->bom->status > BOM::STATUS_DRAFT && $ref == 'PROV') {
 			throw new RestException(400, "Wrong naming scheme '(PROV%)' is only allowed on 'DRAFT' status. For automatic increment use 'auto' on the 'ref' field.");
 		}
 
 		if (strtolower($this->bom->ref) == 'auto') {
-			if (empty($this->bom->id) && $this->bom->status == 0) {
+			if (empty($this->bom->id) && $this->bom->status == BOM::STATUS_DRAFT) {
 				$this->bom->ref = ''; // 'ref' will auto incremented with '(PROV' + newID + ')'
 			} else {
-				$this->bom->fetch_product();
-				$numref = $this->bom->getNextNumRef($this->bom->product);
-				$this->bom->ref = $numref;
+				$res = $this->bom->fetch_product();
+				if ($res > 0 && $this->bom->product instanceof Product) {
+					$numref = $this->bom->getNextNumRef($this->bom->product); // @phan-suppress-current-line PhanTypeMismatchArgumentNullable
+					$this->bom->ref = $numref;
+				} else {
+					throw new RestException(400, "Error when generating automatic increment on the 'ref' field.");
+				}
 			}
 		}
 	}

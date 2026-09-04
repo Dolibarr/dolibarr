@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2012-2013	Christophe Battarel	<christophe.battarel@altairis.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +20,7 @@
 /**
  *	\file       htdocs/margin/tabs/productMargins.php
  *	\ingroup    product margins
- *	\brief      Page des marges des factures clients pour un produit
+ *	\brief      Page for Product Margins on Customer Invoices
  */
 
 // Load Dolibarr environment
@@ -26,6 +28,14 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 $langs->loadLangs(array("companies", "bills", "products", "margins"));
 
@@ -159,6 +169,7 @@ if ($id > 0 || !empty($ref)) {
 		print dol_get_fiche_head($head, 'margin', $titre, -1, $picto);
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+		$object->next_prev_filter = "(te.fk_product_type:=:".((int) $object->type).")";
 
 		dol_banner_tab($object, 'ref', $linkback, ($user->socid ? 0 : 1), 'ref');
 
@@ -202,13 +213,26 @@ if ($id > 0 || !empty($ref)) {
 			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= " sc.fk_soc, sc.fk_user,";
 			}
-			$sql .= " sum(d.total_ht) as selling_price,"; // may be negative or positive
-			$sql .= " ".$db->ifsql('f.type = 2', -1, 1)." * sum(d.qty) as qty,"; // not always positive in case of Credit note
-			$sql .= " ".$db->ifsql('f.type = 2', -1, 1)." * sum(d.qty * d.buy_price_ht * (d.situation_percent / 100)) as buying_price,"; // not always positive in case of Credit note
-			$sql .= " ".$db->ifsql('f.type = 2', -1, 1)." * sum(abs(d.total_ht) - (d.buy_price_ht * d.qty * (d.situation_percent / 100))) as marge"; // not always positive in case of Credit note
+			// Special case for old situation mode: total_ht is stored cumulatively, use delta percent to avoid cumulating margins
+			if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
+				$sql_delta_pct = 'CASE WHEN f.type = '.Facture::TYPE_SITUATION.' AND d.situation_percent > 0 THEN (d.situation_percent - COALESCE(prev_d.situation_percent, 0)) ELSE d.situation_percent END';
+				$sql_delta_ht = 'CASE WHEN f.type = '.Facture::TYPE_SITUATION.' AND d.situation_percent > 0 THEN d.total_ht * ((d.situation_percent - COALESCE(prev_d.situation_percent, 0)) / d.situation_percent) ELSE d.total_ht END';
+				$sql .= " sum($sql_delta_ht) as selling_price,"; // may be negative or positive
+				$sql .= " ".$db->ifsql('f.type = 2', '-1', '1')." * sum(d.qty) as qty,"; // not always positive in case of Credit note
+				$sql .= " ".$db->ifsql('f.type = 2', '-1', '1')." * sum(d.qty * d.buy_price_ht * ($sql_delta_pct / 100)) as buying_price,"; // not always positive in case of Credit note
+				$sql .= " ".$db->ifsql('f.type = 2', '-1', '1')." * sum(abs($sql_delta_ht) - (d.buy_price_ht * d.qty * ($sql_delta_pct / 100))) as marge"; // not always positive in case of Credit note
+			} else {
+				$sql .= " sum(d.total_ht) as selling_price,"; // may be negative or positive
+				$sql .= " ".$db->ifsql('f.type = 2', '-1', '1')." * sum(d.qty) as qty,"; // not always positive in case of Credit note
+				$sql .= " ".$db->ifsql('f.type = 2', '-1', '1')." * sum(d.qty * d.buy_price_ht * (d.situation_percent / 100)) as buying_price,"; // not always positive in case of Credit note
+				$sql .= " ".$db->ifsql('f.type = 2', '-1', '1')." * sum(abs(d.total_ht) - (d.buy_price_ht * d.qty * (d.situation_percent / 100))) as marge"; // not always positive in case of Credit note
+			}
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 			$sql .= ", ".MAIN_DB_PREFIX."facture as f";
 			$sql .= ", ".MAIN_DB_PREFIX."facturedet as d";
+			if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
+				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facturedet AS prev_d ON prev_d.rowid = d.fk_prev_id";
+			}
 			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
@@ -289,7 +313,7 @@ if ($id > 0 || !empty($ref)) {
 				// --------------------------------------------------------------------
 				print '<tr class="liste_titre liste_titre_filter">';
 				// Action column
-				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if ($conf->main_checkbox_left_column) {
 					print '<th class="liste_titre center maxwidthsearch">';
 					$searchpicto = $form->showFilterButtons('left');
 					print $searchpicto;
@@ -351,7 +375,7 @@ if ($id > 0 || !empty($ref)) {
 				print '</th>';
 
 				// Action column
-				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if (!$conf->main_checkbox_left_column) {
 					print '<th class="liste_titre center maxwidthsearch">';
 					$searchpicto = $form->showFilterButtons();
 					print $searchpicto;
@@ -362,7 +386,7 @@ if ($id > 0 || !empty($ref)) {
 
 				print '<tr class="liste_titre">';
 				// Action column
-				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if ($conf->main_checkbox_left_column) {
 					print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'maxwidthsearch center ');
 				}
 				print_liste_field_titre("Invoice", $_SERVER["PHP_SELF"], "f.ref", "", $param, '', $sortfield, $sortorder);
@@ -381,7 +405,7 @@ if ($id > 0 || !empty($ref)) {
 				}
 				print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "f.paye,f.fk_statut", "", $param, '', $sortfield, $sortorder, 'right ');
 				// Action column
-				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if (!$conf->main_checkbox_left_column) {
 					print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'maxwidthsearch center ');
 				}
 				print "</tr>\n";
@@ -400,7 +424,7 @@ if ($id > 0 || !empty($ref)) {
 
 						print '<tr class="oddeven">';
 						// Action column
-						if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+						if ($conf->main_checkbox_left_column) {
 							print '<td class="nowrap center">';
 							print '</td>';
 						}
@@ -427,7 +451,7 @@ if ($id > 0 || !empty($ref)) {
 						print '<td class="right">'.$invoicestatic->LibStatut($objp->paye, $objp->statut, 5).'</td>';
 
 						// Action column
-						if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+						if (!$conf->main_checkbox_left_column) {
 							print '<td class="nowrap center">';
 							print '</td>';
 						}
@@ -451,7 +475,7 @@ if ($id > 0 || !empty($ref)) {
 				}
 				print '<tr class="liste_total">';
 				$colspan = 4;
-				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if ($conf->main_checkbox_left_column) {
 					$colspan++; // add action column
 				}
 				print '<td colspan="'.$colspan.'">'.$langs->trans('TotalMargin')."</td>";
@@ -466,7 +490,7 @@ if ($id > 0 || !empty($ref)) {
 					print '<td class="right">'.(($markRate === '') ? 'n/a' : price(price2num($markRate, 'MT'))."%")."</td>\n";
 				}
 				print '<td class="right">&nbsp;</td>';
-				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if (!$conf->main_checkbox_left_column) {
 					// add action column
 					print '<td class="center">';
 					print '</td>';
@@ -488,7 +512,7 @@ if ($id > 0 || !empty($ref)) {
 print '
     <script type="text/javascript">
     $(document).ready(function() {
-        $("#totalMargin").html("'. price(price2num($totalMargin, 'MT'), 1, $langs, 1, -1, -1, $conf->currency).'");
+        $("#totalMargin").html("'. price(price2num($totalMargin, 'MT'), 1, $langs, 1, -1, -1, getDolCurrency()).'");
         $("#marginRate").html("'.(($marginRate === '') ? 'n/a' : price(price2num($marginRate, 'MT'))."%").'");
         $("#markRate").html("'.(($markRate === '') ? 'n/a' : price(price2num($markRate, 'MT'))."%").'");
     });

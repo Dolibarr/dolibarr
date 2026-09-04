@@ -3,7 +3,8 @@
  * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2019		Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,8 +45,15 @@ class InfoBox
 				1 => 'UsersHome',
 				2 => 'MembersHome',
 				3 => 'ThirdpartiesHome',
+				4 => 'productindex',
+				6 => 'mrpindex',
+				8 => 'projectsindex',
+				9 => 'invoiceindex',
+				10 => 'hrmindex',
 				11 => 'TicketsHome',
-				27 => 'AccountancyHome'
+				20 => 'interventionindex',
+				27 => 'AccountancyHome',
+				28 => 'toolsindex'
 			);
 		} else {
 			return array(
@@ -76,7 +84,8 @@ class InfoBox
 				24 => 'expensereportindex',
 				25 => 'mailingindex',
 				26 => 'opensurveyindex',
-				27 => 'AccountancyHome'
+				27 => 'AccountancyHome',
+				28 => 'toolsindex'
 			);
 		}
 	}
@@ -103,20 +112,20 @@ class InfoBox
 			$sql .= " d.rowid as box_id, d.file, d.note, d.tms";
 			$sql .= " FROM ".$dbs->prefix()."boxes as b, ".$dbs->prefix()."boxes_def as d";
 			$sql .= " WHERE b.box_id = d.rowid";
-			$sql .= " AND b.entity IN (0,".$conf->entity.")";
+			$sql .= " AND b.entity IN (0,".((int) $conf->entity).")";
 			if ($zone >= 0) {
 				$sql .= " AND b.position = ".((int) $zone);
 			}
 			if (is_object($user)) {
-				$sql .= " AND b.fk_user IN (0,".$user->id.")";
+				$sql .= " AND b.fk_user IN (0,".((int) $user->id).")";
 			} else {
 				$sql .= " AND b.fk_user = 0";
 			}
-			$sql .= " ORDER BY b.box_order";
+			$sql .= " ORDER BY b.box_order, b.fk_user";
 		} else { // available
 			$sql = "SELECT d.rowid as box_id, d.file, d.note, d.tms";
 			$sql .= " FROM ".$dbs->prefix()."boxes_def as d";
-			$sql .= " WHERE d.entity IN (0, ".$conf->entity.")";
+			$sql .= " WHERE d.entity IN (0, ".((int) $conf->entity).")";
 		}
 
 		dol_syslog(self::class."::listBoxes get default box list for mode=".$mode." userid=".(is_object($user) ? $user->id : ''), LOG_DEBUG);
@@ -217,11 +226,11 @@ class InfoBox
 	/**
 	 *  Save order of boxes for area and user
 	 *
-	 *  @param	DoliDB	$dbs			Database handler
-	 *  @param	int		$zone       	Key of area (0 for Homepage, ...)
-	 *  @param  string  $boxorder   	List of boxes with correct order 'A:123,456,...-B:789,321...'
-	 *  @param  int     $userid     	Id of user
-	 *  @return int                   	Return integer <0 if KO, 0=Nothing done, > 0 if OK
+	 *  @param	DoliDB		$dbs			Database handler
+	 *  @param	int|string	$zone       	Key of area ('0' for Homepage, '1', 'pagename', ...)
+	 *  @param  string  	$boxorder   	List of boxes with correct order 'A:123,456,...-B:789,321...'
+	 *  @param  int     	$userid     	Id of user
+	 *  @return int         	          	Return integer <0 if KO, 0=Nothing done, > 0 if OK
 	 */
 	public static function saveboxorder($dbs, $zone, $boxorder, $userid = 0)
 	{
@@ -231,7 +240,7 @@ class InfoBox
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-		dol_syslog(get_class()."::saveboxorder zone=".$zone." userid=".$userid);
+		dol_syslog(self::class."::saveboxorder zone=".$zone." userid=".$userid);
 
 		if (!$userid || $userid == 0) {
 			return 0;
@@ -252,13 +261,17 @@ class InfoBox
 			return -3;
 		}
 
+		if (!is_numeric($zone)) {
+			$zone = '0';	// Force $zone to a numeric value string
+		}
+
 		// Delete all lines
 		$sql = "DELETE FROM ".$dbs->prefix()."boxes";
-		$sql .= " WHERE entity = ".$conf->entity;
+		$sql .= " WHERE entity = ".((int) $conf->entity);
 		$sql .= " AND fk_user = ".((int) $userid);
 		$sql .= " AND position = ".((int) $zone);
 
-		dol_syslog(get_class()."::saveboxorder", LOG_DEBUG);
+		dol_syslog(self::class."::saveboxorder", LOG_DEBUG);
 		$result = $dbs->query($sql);
 		if ($result) {
 			$colonnes = explode('-', $boxorder);
@@ -266,7 +279,7 @@ class InfoBox
 				$part = explode(':', $collist);
 				$colonne = $part[0];
 				$list = $part[1];
-				dol_syslog(get_class()."::saveboxorder column=".$colonne.' list='.$list);
+				dol_syslog(self::class."::saveboxorder column=".$colonne.' list='.$list);
 
 				$i = 0;
 				$listarray = explode(',', $list);

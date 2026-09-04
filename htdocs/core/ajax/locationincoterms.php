@@ -2,6 +2,7 @@
 /* Copyright (C) 2010      Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2014 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2021 	   Henry Guo <henrynopo@homtail.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,6 +44,14 @@ if (!defined('NOREQUIRESOC')) {
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Security check
 if (!isModEnabled('incoterm')) {
 	httponly_accessforbidden("Module incoterm not enabled");	// This includes the exit.
@@ -55,7 +64,7 @@ if (!isModEnabled('incoterm')) {
  * View
  */
 
-// Ajout directives pour resoudre bug IE
+// Add directives to fix IE bug
 //header('Cache-Control: Public, must-revalidate');
 //header('Pragma: public');
 

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2008-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2013	   Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,10 +25,16 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/events.class.php';
-
 
 if (!$user->admin) {
 	accessforbidden();
@@ -93,14 +100,13 @@ $selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
 $wikihelp = 'EN:Setup_Security|FR:Paramétrage_Sécurité|ES:Configuración_Seguridad';
 llxHeader('', $langs->trans("Audit"), $wikihelp, '', 0, 0, '', '', '', 'mod-admin page-events');
 
-//$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+//$linkback='<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("SecuritySetup"), '', 'title_setup');
 
-print '<span class="opacitymedium">'.$langs->trans("LogEventDesc", $langs->transnoentitiesnoconv("AdminTools"), $langs->transnoentitiesnoconv("Audit"))."</span><br>\n";
-print "<br>\n";
+print '<div class="info">'.$langs->trans("LogEventDesc", $langs->transnoentitiesnoconv("AdminTools"), $langs->transnoentitiesnoconv("Audit"))."</div>\n";
 
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="save">';
 
@@ -139,7 +145,7 @@ print "</form>\n";
 
 
 $s = $langs->trans("SeeReportPage", '{s1}'.$langs->transnoentities("Home").' - '.$langs->transnoentities("AdminTools").' - '.$langs->transnoentities("Audit").'{s2}');
-print str_replace('{s2}', '</a>', str_replace('{s1}', '<a href="'.DOL_URL_ROOT.'/admin/tools/listevents.php" target="_blank">', $s));
+print str_replace('{s2}', '</a>', str_replace('{s1}', '<a href="'.DOL_URL_ROOT.'/admin/tools/listevents.php" target="_blank">'.img_picto('', 'url', 'class="pictofixedwidth"'), $s));
 
 
 

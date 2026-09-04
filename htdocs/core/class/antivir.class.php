@@ -135,7 +135,7 @@ class AntiVir
 		$bz2archivememlim = 0; // limit memory usage for bzip2 (0/1)
 		$maxfilesize = 10485760; // archived files larger than this value (in bytes) will not be scanned
 
-		$command = getDolGlobalString('MAIN_ANTIVIRUS_COMMAND');
+		$command = getDolGlobalString('MAIN_ANTIVIRUS_COMMAND', '/usr/bin/clamdscan');
 		$param = getDolGlobalString('MAIN_ANTIVIRUS_PARAM');
 
 		$param = preg_replace('/%maxreclevel/', (string) $maxreclevel, $param);

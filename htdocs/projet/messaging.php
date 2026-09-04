@@ -2,6 +2,7 @@
 /* Copyright (C) 2005-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +26,13 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
@@ -55,24 +63,29 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-if (GETPOST('actioncode', 'array')) {
-	$actioncode = GETPOST('actioncode', 'array', 3);
+if (GETPOSTISARRAY('actioncode')) {
+	$actioncode = GETPOST('actioncode', 'array:alpha', 3);
 	if (!count($actioncode)) {
 		$actioncode = '0';
+	} else {
+		$actioncode = implode(',', $actioncode);
 	}
 } else {
 	$actioncode = GETPOST("actioncode", "alpha", 3) ? GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT'));
 }
+
 $search_rowid = GETPOST('search_rowid');
 $search_agenda_label = GETPOST('search_agenda_label');
 
 $hookmanager->initHooks(array('projectcardinfo'));
 
+$object = new Project($db);
+
 // Security check
 $id = GETPOSTINT("id");
 $socid = 0;
 //if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignment.
-$result = restrictedArea($user, 'projet', $id, 'projet&project');
+restrictedArea($user, 'projet', $id, 'projet&project');
 
 if (!$user->hasRight('projet', 'lire')) {
 	accessforbidden();
@@ -83,6 +96,15 @@ if (!$user->hasRight('projet', 'lire')) {
 /*
  * Actions
  */
+
+if ($id > 0 || !empty($ref)) {
+	$object->fetch($id, $ref);
+	$object->fetch_thirdparty();
+	if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_PROJECT') && method_exists($object, 'fetchComments') && empty($object->comments)) {
+		$object->fetchComments();
+	}
+	$object->info($object->id);
+}
 
 $parameters = array('id' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
@@ -103,16 +125,6 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
  */
 
 $form = new Form($db);
-$object = new Project($db);
-
-if ($id > 0 || !empty($ref)) {
-	$object->fetch($id, $ref);
-	$object->fetch_thirdparty();
-	if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_PROJECT') && method_exists($object, 'fetchComments') && empty($object->comments)) {
-		$object->fetchComments();
-	}
-	$object->info($object->id);
-}
 $agenda = (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) ? '/'.$langs->trans("Agenda") : '';
 $title = $langs->trans('Events').$agenda.' - '.$object->ref.' '.$object->name;
 if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/projectnameonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->name) {
@@ -148,7 +160,7 @@ $morehtmlref .= '</div>';
 // Define a complementary filter for search of next/prev ref.
 if (!$user->hasRight('projet', 'all', 'lire')) {
 	$objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
-	$object->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ? implode(',', array_keys($objectsListId)) : '0').")";
+	$object->next_prev_filter = "rowid:IN:".$db->sanitize(count($objectsListId) ? implode(',', array_keys($objectsListId)) : '0');
 }
 
 dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);

@@ -7,6 +7,8 @@
  * Copyright (C) 2010		Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2015		Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +37,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/contract.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('agenda', 'contracts', 'companies'));
 
@@ -60,10 +70,11 @@ $ref		= GETPOST('ref', 'alpha');
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
-if (empty($page) || $page == -1) {
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT('page');
+if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
-}     // If $page is not defined, or '' or -1
+}
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -131,7 +142,7 @@ if (empty($reshook)) {
 $form = new Form($db);
 
 // Load object modContract
-$module = (getDolGlobalString('CONTRACT_ADDON') ? $conf->global->CONTRACT_ADDON : 'mod_contract_serpis');
+$module = getDolGlobalString('CONTRACT_ADDON', 'mod_contract_serpis');
 if (substr($module, 0, 13) == 'mod_contract_' && substr($module, -3) == 'php') {
 	$module = substr($module, 0, dol_strlen($module) - 4);
 }
@@ -167,7 +178,7 @@ if (!empty($modCodeContract->code_auto)) {
 	$morehtmlref .= $object->ref;
 } else {
 	$morehtmlref .= $form->editfieldkey("", 'ref', $object->ref, $object, $user->hasRight('contrat', 'creer'), 'string', '', 0, 3);
-	$morehtmlref .= $form->editfieldval("", 'ref', $object->ref, $object, $user->hasRight('contrat', 'creer'), 'string', '', 0, 2);
+	$morehtmlref .= $form->editfieldval("", 'ref', $object->ref, $object, $user->hasRight('contrat', 'creer'), 'string', '', null, '2');
 }
 
 $permtoedit = 0;
@@ -183,18 +194,18 @@ $morehtmlref .= $form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_
 // Thirdparty
 $morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1);
 if (!getDolGlobalString('MAIN_DISABLE_OTHER_LINK') && $object->thirdparty->id > 0) {
-	$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/contrat/list.php?socid='.$object->thirdparty->id.'&search_name='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherContracts").'</a>)';
+	$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/contrat/list.php?socid='.$object->thirdparty->id.'">'.$langs->trans("OtherContracts").'</a>)';
 }
 // Project
 if (isModEnabled('project')) {
 	$langs->load("projects");
 	$morehtmlref .= '<br>';
-	if (0) {
+	if (0) {	// @phpstan-ignore-line
 		$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 		if ($action != 'classify') {
-			$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
+			$morehtmlref .= '<a class="editfielda" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true).'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 		}
-		$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+		$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 	} else {
 		if (!empty($object->fk_project)) {
 			$proj = new Project($db);

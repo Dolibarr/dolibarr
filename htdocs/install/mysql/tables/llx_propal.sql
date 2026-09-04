@@ -45,9 +45,11 @@ create table llx_propal
   fk_user_cloture		integer,						-- user closing
   fk_statut				smallint DEFAULT 0 NOT NULL,	-- 0=draft, 1=validated, 2=accepted, 3=refused, 4=billed/closed
   price					real         DEFAULT 0,			-- (obsolete)
-  remise_percent		real         DEFAULT 0,			-- remise globale relative en pourcent (obsolete)
-  remise_absolue		real         DEFAULT 0,			-- remise globale absolue (obsolete)
-  remise				real         DEFAULT 0,			-- remise calculee (obsolete)
+
+  remise_percent		real         DEFAULT 0,			-- remise globale relative en pourcent (deprecated, not used)
+  remise_absolue		real         DEFAULT 0,			-- remise globale absolue (deprecated, not used)
+  remise				real         DEFAULT 0,			-- remise calculee (deprecated, not used)
+
   total_ht				double(24,8) DEFAULT 0,			-- montant total ht apres remise globale
   total_tva             double(24,8) DEFAULT 0,			-- montant total tva apres remise globale
   localtax1				double(24,8) DEFAULT 0,			-- amount total localtax1

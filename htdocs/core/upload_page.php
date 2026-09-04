@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2005-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2005-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This file is a modified version of datepicker.php from phpBSM to fix some
  * bugs, to add new features and to dramatically increase speed.
@@ -25,48 +25,134 @@
  *       \brief      Page to show a generic upload file feature
  */
 
-//if (! defined('NOREQUIREUSER'))   define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
-//if (! defined('NOREQUIREDB'))   define('NOREQUIREDB','1');		// Not disabled cause need to load personalized language
-//if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC','1');
-//if (! defined('NOREQUIRETRAN')) define('NOREQUIRETRAN','1');		// Not disabled cause need to do translations
-/*
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', 1);
-}
-if (!defined('NOTOKENRENEWAL')) {
-	define('NOTOKENRENEWAL', 1);
-}
-*/
-//if (! defined('NOLOGIN')) define('NOLOGIN',1);					// Not disabled cause need to load personalized language
-/*
-if (!defined('NOREQUIREMENU')) {
-	define('NOREQUIREMENU', 1);
-}
-*/
-//if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML',1);
-
 require_once '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/ai/class/ai.class.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 
-if (GETPOST('lang', 'aZ09')) {
-	$langs->setDefaultLang(GETPOST('lang', 'aZ09')); // If language was forced on URL by the main.inc.php
-}
-
-$langs->loadLangs(array("main", "other"));
+$langs->loadLangs(array("main", "exports", "other"));
 
 $action = GETPOST('action', 'aZ09');
+$modulepart = GETPOST('modulepart', 'aZ09');
+$socid = GETPOSTINT('socid');
+$prodid = GETPOSTINT('prodid');
 
-/*$right = ($langs->trans("DIRECTION") == 'rtl' ? 'left' : 'right');
-$left = ($langs->trans("DIRECTION") == 'rtl' ? 'right' : 'left');*/
+
+// users/temp/import
+$upload_dir = $conf->user->dir_temp.'/import';
+dol_mkdir($upload_dir);
+
+$file = GETPOST('file');
+
+$originalfilename = $file;
+$uid = $thiid = $pid = $erid = $salid = 0;
+$reg = array();
+if (preg_match('/-uid([\d+])/', $file, $reg)) {
+	$uid = $reg[1];
+	$originalfilename = preg_replace('/-uid\d+/', '', $originalfilename);
+}
+if (preg_match('/-thiid([\d+])/', $file, $reg)) {
+	$thiid = $reg[1];
+	$originalfilename = preg_replace('/-thiid\d+/', '', $originalfilename);
+}
+if (preg_match('/-pid([\d+])/', $file, $reg)) {
+	$pid = $reg[1];
+	$originalfilename = preg_replace('/-pid\d+/', '', $originalfilename);
+}
+if (preg_match('/-erid([\d+])/', $file, $reg)) {
+	$erid = $reg[1];
+	$originalfilename = preg_replace('/-erid\d+/', '', $originalfilename);
+}
+if (preg_match('/-salid([\d+])/', $file, $reg)) {
+	$salid = $reg[1];
+	$originalfilename = preg_replace('/-salid\d+/', '', $originalfilename);
+}
+$originalfilename = preg_replace('/^upload_page-[a-z_]+-/', '', $originalfilename);
+
+$error = 0;
+
+$ai = new Ai($db);
+$ajaxFileUrl = '';
+$fullnewname = '';
 
 
 /*
  * Actions
  */
 
-// if ($action == 'aaa') {	// Test on permission not required here. Test will be done on the targeted page.
+if (getDolGlobalString('MAIN_USE_TOP_MENU_IMPORT_FILE') && !is_numeric(getDolGlobalString('MAIN_USE_TOP_MENU_IMPORT_FILE'))) {
+	$urlforuploadpage = getDolGlobalString('MAIN_USE_TOP_MENU_IMPORT_FILE');
 
-// }
+	header("Location: ".$urlforuploadpage);
+	exit(1);
+}
+
+if ($action == 'uploadfile') {	// Test on permission not required here. Done later
+	if (!$modulepart) {			// Should not happen
+		print 'Error, modulepart param is empty';
+		exit(1);
+	}
+
+	// $modulepart can be 'invoice_supplier', ...
+	$arrayobject = getElementProperties($modulepart);
+
+	$module = $arrayobject['module'];
+	$element = $arrayobject['element'];
+	$dir_output = $arrayobject['dir_output'];
+	$dir_temp = $arrayobject['dir_temp'];
+
+	$permlevel1 = 'read';
+	$permlevel2 = '';
+	$fileprefix = 'unknown';
+	if (in_array($modulepart, array('fournisseur', 'invoice_supplier'))) {
+		$permlevel1 = 'facture';
+		$permlevel2 = 'read';
+		$fileprefix = 'upload_page-'.$modulepart.'-uid'.$user->id.'-thiid'.(GETPOSTINT('socid') > 0 ? GETPOSTINT('socid') : 0).'-pid'.(GETPOSTINT('search_prodid') > 0 ? GETPOSTINT('search_prodid') : 0);
+	} elseif ($modulepart == 'expensereport') {
+		$fileprefix = 'upload_page-'.$modulepart.'-uid'.$user->id.'-erid'.(GETPOSTINT('userexpensereportid') > 0 ? GETPOSTINT('userexpensereportid') : 0).'-pid'.(GETPOSTINT('search_prodid') > 0 ? GETPOSTINT('search_prodid') : 0);
+	} elseif ($modulepart == 'salaries') {
+		$fileprefix = 'upload_page-'.$modulepart.'-uid'.$user->id.'-salid'.(GETPOSTINT('usersalaryid') > 0 ? GETPOSTINT('usersalaryid') : 0);
+	}
+
+	if ($permlevel2) {
+		$permissiontoadd = $user->hasRight($module, $permlevel1, $permlevel2);	// Used by actions_linkedfiles
+	} else {
+		$permissiontoadd = $user->hasRight($module, $permlevel1);				// Used by actions_linkedfiles
+	}
+	$forceFullTextIndexation = '0';												// Used by actions_linkedfiles
+
+
+	if (!empty($_FILES['userfile']['name'])) {
+		$fullnewname = $fileprefix.'-'.$_FILES['userfile']['name'];
+		$_FILES['userfile']['name'] = $fullnewname;
+
+		// $dir_output = output dir of object
+		// $dir_temp = temp dir of object
+		// $upload_dir is "users/temp/import"
+		include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';		// Save uploaded file into $upload_dir (with overwrite if file already exists)
+
+		// Call AI to decrypt the file
+		// Use AJAX call instead of redirect
+		// @phpstan-ignore-next-line $error may have been modified by actions_linkedfiles.inc.php
+		if (!$error) {
+			// We will make the AJAX call from the bottom of the page
+			$ajaxFileUrl = DOL_URL_ROOT.'/core/ajax/ajaxuploadpage.php?file='.urlencode($fullnewname);
+		}
+	}
+} else {
+	// Delete the temporary files that are used when uploading files
+	dol_delete_file($upload_dir.'/upload_page-by'.$user->id.'-*');
+}
 
 
 /*
@@ -76,7 +162,8 @@ $left = ($langs->trans("DIRECTION") == 'rtl' ? 'right' : 'left');*/
 $form = new Form($db);
 
 // Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
-if (empty($dolibarr_nocache) && GETPOSTINT('cache')) {
+/*
+if (GETPOSTINT('cache')) {
 	header('Cache-Control: max-age='.GETPOSTINT('cache').', public');
 	// For a .php, we must set an Expires to avoid to have it forced to an expired value by the web server
 	header('Expires: '.gmdate('D, d M Y H:i:s', dol_now('gmt') + GETPOSTINT('cache')).' GMT');
@@ -86,19 +173,17 @@ if (empty($dolibarr_nocache) && GETPOSTINT('cache')) {
 	// HTTP/1.0
 	header('Cache-Control: no-cache');
 }
+*/
 
 $title = $langs->trans("UploadFile");
 $help_url = '';
 
-// URL http://mydolibarr/core/search_page?dol_use_jmobile=1 can be used for tests
-$head = '<!-- Upload file -->'."\n";	// This is used by DoliDroid to know page is a search page
 $arrayofjs = array();
 $arrayofcss = array();
 
 llxHeader('', $title, $help_url, '', 0, 0, $arrayofjs, $arrayofcss, '', 'mod-upload page-card');
-//top_htmlhead($head, $title, 0, 0, $arrayofjs, $arrayofcss);
 
-print load_fiche_titre('', '', '', 0, '', '', '<h2>'.$title.'</h2>');
+print load_fiche_titre('', '', '', 0, '', '', '<h2>'.img_picto('', 'upload').' '.$title.'</h2>');
 
 
 // Instantiate hooks of thirdparty module
@@ -108,30 +193,84 @@ $hookmanager->initHooks(array('uploadform'));
 $uploadform = '';
 
 
-$uploadform = '<div class="display-flex">';
+// Form to upload a supplier invoice
+if (empty($action)) {
+	$uploadform = '<div class="display-flex">';
 
-$langs->load("bills");
-$uploadform .= '
-<div id="supplierinvoice" class="flex-item flex-item-uploadfile">'.img_picto('', 'bill', 'class="fa-2x"').'<br>
-<div>'.$langs->trans("SupplierInvoice").'<br><br>';
+	if (isModEnabled('supplier_invoice')) {
+		$prodtext = $langs->trans("RefOrLabel");
 
-$uploadform .= img_picto('', 'company', 'class="pictofixedwidth"');
-$uploadform .= $form->select_company(GETPOSTINT('socid'), 'socid', 'statut=0', $langs->transnoentitiesnoconv("Supplier"));
+		$langs->load("bills");
+		$uploadform .= '
+		<div id="supplierinvoice" class="flex-item flex-item-uploadfile">'.img_picto('', 'bill', 'class="fa-2x"').'<br>
+		<div>'.$langs->trans("SupplierInvoice").'<br><br>';
 
-$uploadform .= '<br><br>
-<small>('.$langs->trans("OrClickToSelectAFile").')</small>
-</div>
-</div>';
+		//$uploadform .= '<div class="disableautoopen paddingbottom">';
+		//$uploadform .= '<input type="checkbox" name="newsupplierinvoice" id="newsupplierinvoice" value="1" checked="checked" class="disableautoopen"><label for="newsupplierinvoice" class="disableautoopen">'.$langs->trans("NewInvoice").'</label><br>';
+		//$uploadform .= '</div>';
 
-$langs->load("salaries");
-$uploadform .= '
-<div id="userpayroll" class="flex-item flex-item-uploadfile">'.img_picto('', 'salary', 'class="fa-2x"').'<br>
-<div>'.$langs->trans("UserPaySlip").'<br>
-<small>('.$langs->trans("OrClickToSelectAFile").')</small>
-</div>
-</div>';
+		$uploadform .= img_picto('', 'company', 'class="pictofixedwidth"');
+		$uploadform .= $form->select_company($socid, 'socid', '(statut:=:0)', $langs->transnoentitiesnoconv("Supplier"), 0, 0, array(), 0, 'maxwidth200 disableautoopen');
 
-$uploadform .= '</div>';
+		$uploadform .= '<br>';
+
+		//$uploadform .= $form->select_produits_fournisseurs(0, $prodid, 'prodid', '', '', 0, 1, 2, $prodtext, 0, array(), GETPOSTINT('socid'), '1', 0, 'maxwidth200 disableautoopen', 0, '', null, 1);
+		$uploadform .= img_picto('', 'product', 'class="pictofixedwidth"');
+		$uploadform .= $form->select_produits_fournisseurs(0, $prodid, 'prodid', '', '', array(), 1, 1, 'maxwidth200 disableautoopen', $prodtext, 1);
+
+		$uploadform .= '<br>';
+
+		$uploadform .= '<br>
+		<small class="opacitymedium">'.$langs->trans("OrClickToSelectAFile").'...</small>
+		</div>
+		</div>';
+	}
+
+	// Form to upload an expense report
+	if (isModEnabled('expensereport')) {
+		$langs->load("expensereport");
+		$uploadform .= '
+		<div id="userexpensereport" class="flex-item flex-item-uploadfile">'.img_picto('', 'expensereport', 'class="fa-2x"').'<br>
+		<div>'.$langs->trans("ExpenseReport").'<br><br>';
+
+		$uploadform .= img_picto('', 'user', 'class="pictofixedwidth"');
+		//$uploadform .= '<span class="disableautoopen">';
+		$uploadform .= $form->select_dolusers(GETPOSTINT('userexpensereportid') > 0 ? GETPOSTINT('userexpensereportid') : $user->id, 'userexpensereportid', $langs->transnoentitiesnoconv("User"), null, 0, 'hierarchyme', '', '', 0, 0, '', 0, '', 'maxwidth200 disableautoopen', 1);
+		//$uploadform .= '</span>';
+
+		$uploadform .= '<br>';
+
+		$uploadform .= '<br>
+		<small class="opacitymedium">'.$langs->trans("OrClickToSelectAFile").'...</small>
+		</div>
+		</div>';
+	}
+
+
+	// Form to upload a salary document
+	if (isModEnabled('salaries')) {
+		$langs->load("salaries");
+		$uploadform .= '
+		<div id="userpayroll" class="flex-item flex-item-uploadfile">'.img_picto('', 'salary', 'class="fa-2x"').'<br>
+		<div>'.$langs->trans("UserPaySlip").'<br><br>';
+
+
+		$uploadform .= img_picto('', 'user', 'class="pictofixedwidth"');
+		//$uploadform .= '<span class="disableautoopen">';
+		$uploadform .= $form->select_dolusers(GETPOSTINT('usersalaryid') > 0 ? GETPOSTINT('usersalaryid') : $user->id, 'usersalaryid', $langs->transnoentitiesnoconv("Employee"), null, 0, 'hierarchyme', '', '', 0, 0, '', 0, '', 'maxwidth200 disableautoopen', 1);
+		//$uploadform .= '</span>';
+
+		$uploadform .= '<br>';
+
+		$uploadform .= '<br>
+		<small class="opacitymedium">'.$langs->trans("OrClickToSelectAFile").'...</small>
+		</div>
+		</div>';
+	}
+
+	$uploadform .= '</div>';
+}
+
 
 
 // Execute hook printSearchForm
@@ -146,47 +285,377 @@ if (empty($reshook)) {
 $uploadform .= '<br>';
 
 
-// Show all forms
-print "\n";
-print "<!-- Begin UploadForm -->\n";
-print '<form id="uploadform" enctype="multipart/form-data" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-print '<input type="hidden" name="token" value="'.newToken().'">';
-print '<input type="hidden" name="action" value="uploadfile">';
+if ($action == 'uploadfile' || $action == 'showsummary') {
+	print '<b>'.$langs->trans("ImportingFile", $originalfilename).'</b><br>';
+	print '<br>';
 
-print '<div class="center"><div class="center" style="padding: 30px;">';
-print '<style>.menu_titre { padding-top: 7px; }</style>';
-print '<div id="blockupload" class="center">'."\n";
-//print '<input name="filenamePDF" id="filenamePDF" type="hideobject">';
-print $uploadform;
+	print '<div class="'.($action == 'showsummary' ? 'green' : 'neutral').'" style="padding-left: 20px; padding-right: 20px;">';
 
-print '<input type="file" id="fileInput" class="hideobject" accept=".pdf, image/*">';
+	print '<div class="marginbottom">';
+	if ($action == 'showsummary') {
+		print $langs->trans("AIProcessingDone", $ai->getApiService());
+	} else {
+		print $langs->trans("AIProcessingPleaseWait", $ai->getApiService()).'...';
+	}
+	print '</div>';
+	print '<br>';
 
-print "<script>
-$(document).ready(function() {
-	jQuery('#supplierinvoice').on('click', function(event) {
-		console.log('Click on link to open input file');
-		console.log(event);
-		$('#fileInput').click();
+	print '<div class="progress" title="80%">
+	    <div class="progress-bar" role="progressbar" style="width: '.($action == 'showsummary' ? '100' : '0').'%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+	</div>';
+
+	print '</div>';
+
+	// Add AJAX call script
+	if (!empty($ajaxFileUrl)) {
+		print '<script>
+		$(document).ready(function() {
+			console.log("Call ajaxFileUrl: '.dol_escape_js($ajaxFileUrl).'");
+			$.ajax({
+				url: \''.dol_escape_js($ajaxFileUrl).'\',
+				type: "GET",
+				dataType: "json",
+				beforeSend: function() {
+					$(".progress-bar").css("width", "25%");
+				},
+				success: function(data, textStatus, jqXHR) {
+					if (jqXHR.status === 200) {
+						// Display the JSON content
+						console.log("Fill the #ajax-result with json result");
+						console.log(data);
+						$("#ajax-result").val(JSON.stringify(data, null, 2));
+						$(".progress-bar").css("width", "100%");
+						// Submit the form
+						//$("#form-result").submit();
+						$("#form-result-submit").show();
+					} else {
+						// Display error if status is not 200
+						$("#ajax-result").html("<div class=\"error\">Error: HTTP status " + jqXHR.status + "</div>");
+					}
+				},
+				error: function(jqXHR, textStatus, errorThrown) {
+					// Display error
+					$("#ajax-result").html("<div class=\"error\">Error: " + (jqXHR.responseText || errorThrown || "Unknown error") + "</div>");
+					$(".progress-bar").css("width", "100%");
+				}
+			});
+		});
+		</script>';
+	}
+
+	// Example of JSON result when importing a supplier PDF invoice
+	/* {
+		  "document_info": {
+			"type": "Facture",
+			"invoice_number": "MSTRL-API-1234-001",
+			"invoice_reference": "Pro - Annual",
+			"issue_date": "2026-08-21",
+			"due_date": "2026-08-21",
+			"payment_terms": {
+			  "days": 0,
+			  "description": "0 jours"
+			},
+			"organization": "MyBigCompany"
+		  },
+		  "vendor": {
+			"name": "Mistral AI SAS",
+			"address": {
+			  "street": "15, rue des Halles",
+			  "postal_code": "75001",
+			  "city": "Paris",
+			  "country": "France"
+			},
+			"vat_number": "FR95952418325",
+			"professional_id": {
+			  "siren": "952 418 325",
+			  "capital": "19,189.04 €",
+			  "rcs": "Paris"
+			},
+			"email": "no-reply@mistral.ai",
+			"contact_url": "https://help.mistral.ai/en"
+		  },
+		  "recipient": {
+			"name": "MyBigCompany",
+			"address": {
+			  "street": "1 rue de la paix",
+			  "postal_code": "75000",
+			  "city": "Paris",
+			  "country": "France"
+			},
+			"vat_number": "FR012345678901",
+			"email": "contact@mybigcompany.com"
+		  },
+		  "items": [
+			{
+			  "description": "Fee for use- August",
+			  "service": "Pro - Annual",
+			  "quantity": 1,
+			  "unit_price": 143.9,
+			  "vat_rate": 20,
+			  "total_excluding_tax": 143.9,
+			  "total_including_tax": 172.68,
+			  "period_start": "2026-08-21",
+			  "period_end": "2027-08-20"
+			}
+		  ],
+		  "summary": {
+			"subtotal_excluding_tax": 143.9,
+			"tax": {
+			  "rate": 20,
+			  "amount": 28.78,
+			  "description": "EU FR Standard (20.0% sur 143,90 €)"
+			},
+			"total_including_tax": 172.68
+		  },
+		  "payment_info": {
+			"due_date": "2026-08-21",
+			"amount_due": 172.68,
+			"currency": "EUR"
+		  },
+		  "other": {
+			"notes": [
+			  {
+				"type": "legal",
+				"content": "Mistral AI - SAS au capital de 19,189.04€ - 952 418 325 R.C.S. Paris"
+			  },
+			  {
+				"type": "contact",
+				"content": "For any inquiry, please refer to https://help.mistral.ai/en"
+			  }
+			]
+		  }
+		}
+	 */
+
+	print '<form class="" id="form-result" method="POST">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="modulepart" value="'.$modulepart.'">';
+	print '<input type="hidden" name="action" value="showsummary">';
+	print '<input type="hidden" name="socid" value="'.$socid.'">';
+	print '<input type="hidden" name="prodid" value="'.$prodid.'">';
+	print '<input type="hidden" name="originalfilename" value="'.$fullnewname.'">';
+	print '<input type="hidden" name="jsonstring" id="ajax-result" value="jsonstringtoreplace">';
+	if ($action == 'uploadfile') {
+		print '<input type="submit" name="form-result-submit" class="" value="'.$langs->trans("Next").'">';		// TODO Hide.
+	}
+	print '</form>'."\n";
+	print "\n";
+}
+
+if ($action == 'showsummary') {
+	print '<form class="" id="summary-result">';
+	print '<br>';
+	print '<div class="neutral">';
+
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+
+	$json = json_decode(GETPOST('jsonstring', 'restricthtml'), true);
+
+	if ($modulepart == 'invoice_supplier') {
+		print '
+			<div id="supplierinvoice" class="">';
+
+			//print '<div class="inline-block">'.img_picto('', 'bill', '').' '.$langs->trans("SupplierInvoice").'</div>';
+			//print '<br><br>';
+
+			$nameindoc = $json['vendor']['name'];
+			$addressindoc = $json['vendor']['address'];
+			$idprof1indoc = $json['professional_id']['siren'];
+			$idprof2indoc = $json['supplier']['siret'];
+			$emailindoc = $json['email'];
+			$vatnumberindoc = $json['vat_number'];
+
+			// Thirdparty
+			$tmpthirdparty = new Societe($db);
+			print img_picto('', 'company', 'class="pictofixedwidth"').$langs->trans("ThirdParty").'<br>';
+		if (GETPOSTINT('socid')) {
+			$tmpthirdparty->fetch(GETPOSTINT('socid'));
+			// TODO We can show a warning if we find a diff with autodetected value $nameindoc
+		} else {
+			// Try to find thirdparty
+			$result = $tmpthirdparty->findNearest(0, $nameindoc, '', '', $idprof1indoc, $idprof2indoc, '', '', '', '', $emailindoc, $vatnumberindoc, 0, 0, '1');
+
+			if ($result > 0) {
+				$tmpthirdparty->id = $result;
+			}
+		}
+
+			print '<span class="opacitymedium">'.$langs->trans("FoundInDocument").' :</span> ';
+			print $nameindoc.', &nbsp;'.implode(', ', $addressindoc);
+			print '<br>';
+		if (empty($tmpthirdparty->id)) {
+			print '<span class="opacitymedium">'.$langs->trans("NotFoundInDatabase").'</span><br>';
+			print $langs->trans("ChooseTheThirdPartyTouse").' ';
+			print $form->select_company($socid, 'socid', '(statut:=:0)', $langs->trans("Name"), 0, 0, array(), 0, 'maxwidth200 disableautoopen');
+			//print ' &nbsp; '.$langs->trans("or").' &nbsp; <input type="checkbox" name="createthirdparty" id="createthirdparty" value="1" checked><label for="createthirdparty"> '.$langs->trans("CreateIt").'</label>';
+		} else {
+			print $langs->trans("WillUse").' ';
+			print $tmpthirdparty->getNomUrl(1);
+			print '<input type="hidden" name="socid" value="'.$tmpthirdparty->id.'">';
+		}
+
+
+			print '<br><br>';
+
+
+			$nameprodindoc = $json['items'][0]['description'];
+
+
+			// Product
+			$prodid = GETPOSTINT('prodid');
+			$prodtext = $langs->trans("RefOrLabel");
+
+			$tmpproduct = new Product($db);
+			print img_picto('', 'product', 'class="pictofixedwidth"').$langs->trans("Product").'<br>';
+
+		if ($prodid) {
+			$tmpproduct->fetch($prodid);
+			// TODO We can show a warning if we find a diff with autodetected value $json['items']['service']
+		} else {
+			//$tmpproduct->ref = $json['ref'];
+		}
+
+			print '<span class="opacitymedium">'.$langs->trans("FoundInDocument").' :</span> ';
+			print $nameprodindoc;
+			print '<br>';
+		if (empty($tmpproduct->id)) {
+			print $langs->trans("ChooseTheProductTouse").' ';
+			print $form->select_produits_fournisseurs(0, $prodid, 'prodid', '', '', array(), 1, 1, 'maxwidth200 disableautoopen', $prodtext, 1);
+		} else {
+			print $langs->trans("WillUse").' ';
+			print $tmpproduct->getNomUrl(1);
+			print '<input type="hidden" name="prodid" value="'.$tmpproduct->id.'">';
+		}
+
+
+			print '<br><br>';
+
+			$tmpinvoice = new FactureFournisseur($db);
+
+			$invoiceindoc = $ai->decodeJsonIntoArray($json, 'supplier_invoice');
+
+			print img_picto('', 'supplier_invoice', 'class="pictofixedwidth"').$langs->trans("SupplierInvoice").'<br>';
+
+			print '<span class="opacitymedium">'.$langs->trans("FoundInDocument").' :</span> ';
+			print $invoiceindoc['supplierref'].' - '.$invoiceindoc['due_date'].' - '.$invoiceindoc['issue_date'];
+			print ' - '.$invoiceindoc['currency_code'];
+			print '<br>';
+
+			// Supplier invoice
+		if (!empty($invoiceindoc['supplierref'])) {
+			// Try to find supplier invoice
+			// TODO Search using ref (see code of einvoicing module)
+			//$tmpinvoice->find...
+		}
+
+		if (empty($tmpinvoice->id)) {
+			print $langs->trans("InvoiceWillBeCreated");
+		} else {
+			print $tmpinvoice->getNomUrl(1);
+			print '<input type="hidden name="invoiceid" value="'.$tmpinvoice->id.'">';
+		}
+
+			print '<br>
+
+			</div>
+			</div>';
+
+			print '<center><input type="submit" name="submit" class="button" value="'.$langs->trans("Create").'"></center>';
+	}
+
+	print '<input type="hidden" name="jsonstring" value="'.$json.'">';
+
+	print '</div>';
+	print '</form>';
+} else {
+	// Show all forms
+	print "\n";
+	print "<!-- Begin UploadForm -->\n";
+	print '<form id="uploadform" enctype="multipart/form-data" method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="action" value="uploadfile">';
+	print '<input type="hidden" name="sendit" value="1">';
+	print '<input type="hidden" name="modulepart" id="modulepart" value="">';
+	print '<input type="hidden" name="overwritefile" value="1">';
+
+	print '<div class="center"><div class="center" style="padding: 10px;">';
+	print '<style>.menu_titre { padding-top: 7px; }</style>';
+	print '<div id="blockupload" class="center">'."\n";
+	//print '<input name="filenamePDF" id="filenamePDF" type="hideobject">';
+	print $uploadform;
+
+
+	$accept = '.pdf,image/*';
+	$disablemulti = 1;
+	$perm = 1;
+	$capture = 1;
+
+	$maxfilesizearray = getMaxFileSizeArray();
+	$max = $maxfilesizearray['max'];
+	$maxmin = $maxfilesizearray['maxmin'];
+	$maxphptoshow = $maxfilesizearray['maxphptoshow'];
+	$maxphptoshowparam = $maxfilesizearray['maxphptoshowparam'];
+	$out = '';
+	if ($maxmin > 0) {
+		$out .= '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
+	}
+	$out .= '<input class="hideobject" type="file" id="fileInput" value=""';
+	// @phpstan-ignore-next-line
+	$out .= ((getDolGlobalString('MAIN_DISABLE_MULTIPLE_FILEUPLOAD') || $disablemulti) ? ' name="userfile"' : ' name="userfile[]" multiple');
+	// @phpstan-ignore-next-line
+	$out .= (!getDolGlobalString('MAIN_UPLOAD_DOC') || empty($perm) ? ' disabled' : '');
+	// @phpstan-ignore-next-line
+	$out .= (!empty($accept) ? ' accept="'.$accept.'"' : ' accept=""');
+	// @phpstan-ignore-next-line
+	$out .= (!empty($capture) ? ' capture="capture"' : '');
+	$out .= '>';
+
+	print $out;
+
+
+	print "<script>
+	$(document).ready(function() {
+		jQuery('#supplierinvoice:not(.disableautoopen)').on('click', function(event) {
+			console.log('Click on link supplierinvoice to open input file');
+			console.log(event);
+			if (!event.target.closest('.disableautoopen')) {
+				$('#modulepart').val('invoice_supplier');
+				$('#fileInput').click();
+			}
+		});
+
+		jQuery('#userexpensereport:not(.disableautoopen)').on('click', function(event) {
+			console.log('Click on link userexpensereport to open input file');
+			console.log(event);
+			if (!event.target.closest('.disableautoopen')) {
+				$('#modulepart').val('expensereport');
+				$('#fileInput').click();
+			}
+		});
+
+		jQuery('#userpayroll:not(.disableautoopen)').on('click', function(event) {
+			console.log('Click on link userpayroll to open input file');
+			console.log(event);
+			if (!event.target.closest('.disableautoopen')) {
+				$('#modulepart').val('salaries');
+				$('#fileInput').click();
+			}
+		});
+
+		jQuery('#fileInput').on('change', function(event) {
+			console.log(event);
+			console.log('A file was selected, we submit the form');
+			$('#uploadform').submit();
+		});
 	});
+	</script>";
 
-    jQuery('#search_socid').on('click', function(event) {
-        event.stopPropagation();
-		console.log('Avoid to open the input select');
-    });
+	print '</div>'."\n";
+	print '</div></div>';
 
-	jQuery('#fileInput').on('change', function() {
-		console.log('A file was selected, we submit the form');
-		$('#uploadform').submit();
-	});
-});
-</script>";
-
-print '</div>'."\n";
-print '</div></div>';
-
-print '</form>';
-print "\n<!-- End UploadForm -->\n";
-
+	print '</form>';
+	print "\n<!-- End UploadForm -->\n";
+}
 
 
 // End of page

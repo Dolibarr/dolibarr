@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2022       Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2015-2024  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -26,6 +26,15 @@
 // Load Dolibarr environment
 require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $dolibarr_main_url_root
+ */
+
 use OAuth\Common\Storage\DoliStorage;
 use OAuth\Common\Consumer\Credentials;
 
@@ -76,6 +85,8 @@ $credentials = new Credentials(
 	$currentUri->getAbsoluteUri()
 );
 
+$state = GETPOST('state');
+
 $requestedpermissionsarray = array();
 if (GETPOST('state')) {
 	$requestedpermissionsarray = explode(',', GETPOST('state')); // Example: 'user'. 'state' parameter is standard to retrieve some parameters back
@@ -87,9 +98,16 @@ if ($action != 'delete' && empty($requestedpermissionsarray)) {
 //var_dump($requestedpermissionsarray);exit;
 
 // Instantiate the Api service using the credentials, http client and storage mechanism for the token
-$apiService = $serviceFactory->createService('GitHub', $credentials, $storage, $requestedpermissionsarray);
-'@phan-var-force  OAuth\OAuth2\Service\AbstractService|OAuth\OAuth1\Service\AbstractService $apiService'; // createService is only ServiceInterface
-
+$apiService = null;
+$nameofservice = 'GitHub';
+try {
+	//$nameofservice = ucfirst(strtolower($genericstring));
+	$apiService = $serviceFactory->createService($nameofservice, $credentials, $storage, $requestedpermissionsarray);
+	'@phan-var-force  OAuth\OAuth2\Service\AbstractService|OAuth\OAuth1\Service\AbstractService $apiService'; // createService is only ServiceInterface
+} catch (Exception $e) {
+	print 'Error, failed to create service for provider '.$nameofservice.($keyforprovider ? '-'.$keyforprovider : '').'. Message was: '.$e->getMessage();
+	exit;
+}
 // access type needed to have oauth provider refreshing token
 //$apiService->setAccessType('offline');
 

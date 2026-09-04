@@ -1,5 +1,7 @@
 <?php
-
+/**
+ * A service class for generic OAuth2 providers added for Dolibarr project to manage generic use cases.
+ */
 namespace OAuth\OAuth2\Service;
 
 use OAuth\OAuth2\Token\StdOAuth2Token;
@@ -54,7 +56,9 @@ class Generic extends AbstractService
      */
     public function getRequestTokenEndpoint()
     {
-    	return new Uri($this->baseApiUri.'/oauth/request');
+    	$urltouse = (preg_match('/oauth2?\/?$/', $this->baseApiUri) ? $this->baseApiUri : $this->baseApiUri.'/oauth').'/request';
+
+    	return new Uri($urltouse);
     }
 
     /**
@@ -62,7 +66,8 @@ class Generic extends AbstractService
      */
     public function getAuthorizationEndpoint()
     {
-    	return new Uri($this->baseApiUri.'/oauth/authorize');
+    	$urltouse = (preg_match('/oauth2?\/?$/', $this->baseApiUri) ? $this->baseApiUri : $this->baseApiUri.'/oauth').'/authorize';
+    	return new Uri($urltouse);
     }
 
     /**
@@ -70,7 +75,9 @@ class Generic extends AbstractService
      */
     public function getAccessTokenEndpoint()
     {
-    	return new Uri($this->baseApiUri.'/oauth/token');
+    	$urltouse = (preg_match('/oauth2?\/?$/', $this->baseApiUri) ? $this->baseApiUri : $this->baseApiUri.'/oauth').'/token';
+
+    	return new Uri($urltouse);
     }
 
     /**
@@ -140,7 +147,7 @@ class Generic extends AbstractService
         	'redirect_uri'  => $this->credentials->getCallbackUrl(),
         	'grant_type'    => 'authorization_code',
             'code'             => $code,
-        	'consumer_key'     => $this->credentials->getConsumerId(),
+        	'consumer_key'     => $this->credentials->getConsumerId()
         );
 
         $responseBody = $this->httpClient->retrieveResponse(
