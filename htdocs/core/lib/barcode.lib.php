@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2016 Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2004-2010 Folke Ashberg: Some lines of code were inspired from work
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *                         of Folke Ashberg into PHP-Barcode 0.3pl2, available as GPL
  *                         source code at http://www.ashberg.de/bar.
  *
@@ -142,9 +142,9 @@ function barcode_encode($code, $encoding)
 	} elseif ((preg_match("/^ean$/i", $encoding))
 
 	|| (($encoding) && (preg_match("/^isbn$/i", $encoding))
-	&& ((strlen($code) == 9 || strlen($code) == 10) ||
-	(((preg_match("/^978/", $code) && strlen($code) == 12) ||
-	(strlen($code) == 13)))))
+	&& ((dol_strlen($code) == 9 || dol_strlen($code) == 10) ||
+	(((preg_match("/^978/", $code) && dol_strlen($code) == 12) ||
+	(dol_strlen($code) == 13)))))
 
 	|| ((!isset($encoding) || !$encoding || (preg_match("/^ANY$/i", $encoding)))
 	&& (preg_match("/^[0-9]{12,13}$/", $code)))
@@ -182,7 +182,7 @@ function barcode_gen_ean_sum($ean)
 	$even = true;
 	$esum = 0;
 	$osum = 0;
-	$ln = strlen($ean) - 1;
+	$ln = dol_strlen($ean) - 1;
 	for ($i = $ln; $i >= 0; $i--) {
 		if ($even) {
 			$esum += $ean[$i];
@@ -237,7 +237,7 @@ function barcode_encode_ean($ean, $encoding = "EAN-13")
 	if (preg_match("/[^0-9]/i", $ean)) {
 		return array("error" => "Invalid encoding/code. encoding=".$encoding." code=".$ean." (not a numeric)", "text" => "Invalid encoding/code. encoding=".$encoding." code=".$ean." (not a numeric)");
 	}
-	$encoding = strtoupper($encoding);
+	$encoding = dol_strtoupper($encoding);  // @phan-suppress-current-line PhanPluginSuspiciousParamPosition
 	if ($encoding == "ISBN") {
 		if (!preg_match("/^978/", $ean)) {
 			$ean = "978".$ean;
@@ -246,11 +246,11 @@ function barcode_encode_ean($ean, $encoding = "EAN-13")
 	if (preg_match("/^97[89]/", $ean)) {
 		$encoding = "ISBN";
 	}
-	if (strlen($ean) < 12 || strlen($ean) > 13) {
+	if (dol_strlen($ean) < 12 || dol_strlen($ean) > 13) {
 		return array("error" => "Invalid encoding/code. encoding=".$encoding." code=".$ean." (must have 12/13 digits)", "text" => "Invalid encoding/code. encoding=".$encoding." code=".$ean." (must have 12/13 digits)");
 	}
 
-	$ean = substr($ean, 0, 12);
+	$ean = dol_substr($ean, 0, 12);
 	$eansum = barcode_gen_ean_sum($ean);
 	$ean .= $eansum;
 	$bars = barcode_gen_ean_bars($ean);
@@ -293,12 +293,12 @@ function barcode_encode_upc($upc, $encoding = "UPC")
 	if (preg_match("/[^0-9]/i", $upc)) {
 		return array("error" => "Invalid encoding/code. encoding=".$encoding." code=".$upc." (not a numeric)", "text" => "Invalid encoding/code. encoding=".$encoding." code=".$upc." (not a numeric)");
 	}
-	$encoding = strtoupper($encoding);
-	if (strlen($upc) < 11 || strlen($upc) > 12) {
+	$encoding = dol_strtoupper($encoding);  // @phan-suppress-current-line PhanPluginSuspiciousParamPosition
+	if (dol_strlen($upc) < 11 || dol_strlen($upc) > 12) {
 		return array("error" => "Invalid encoding/code. encoding=".$encoding." code=".$upc." (must have 11/12 digits)", "text" => "Invalid encoding/code. encoding=".$encoding." code=".$upc." (must have 11/12 digits)");
 	}
 
-	$upc = substr("0".$upc, 0, 12);
+	$upc = dol_substr("0".$upc, 0, 12);
 	$eansum = barcode_gen_ean_sum($upc);
 	$upc .= $eansum;
 	$bars = barcode_gen_ean_bars($upc);
@@ -342,8 +342,8 @@ function barcode_encode_genbarcode($code, $encoding)
 	global $conf, $db, $genbarcode_loc;
 
 	// Clean parameters
-	if (preg_match("/^ean$/i", $encoding) && strlen($code) == 13) {
-		$code = substr($code, 0, 12);
+	if (preg_match("/^ean$/i", $encoding) && dol_strlen($code) == 13) {
+		$code = dol_substr($code, 0, 12);
 	}
 	if (!$encoding) {
 		$encoding = "ANY";
@@ -352,7 +352,7 @@ function barcode_encode_genbarcode($code, $encoding)
 	$code = dol_string_nospecial($code, "_");
 
 	$command = escapeshellarg($genbarcode_loc);
-	$paramclear = " ".escapeshellarg($code)." ".escapeshellarg(strtoupper($encoding));
+	$paramclear = " ".escapeshellarg($code)." ".escapeshellarg(dol_strtoupper($encoding));  // @phan-suppress-current-line PhanPluginSuspiciousParamPosition
 
 	$fullcommandclear = $command." ".$paramclear." 2>&1";
 	//print $fullcommandclear."<br>\n";exit;
@@ -434,9 +434,9 @@ function barcode_outimage($text, $bars, $scale = 1, $mode = "png", $total_y = 0,
 	/* count total width */
 	$xpos = 0;
 	$width = true;
-	$ln = strlen($bars);
+	$ln = dol_strlen($bars);
 	for ($i = 0; $i < $ln; $i++) {
-		$val = strtolower($bars[$i]);
+		$val = dol_strtolower($bars[$i]);
 		if ($width) {
 			$xpos += (int) $val * $scale;
 			$width = false;
@@ -467,9 +467,9 @@ function barcode_outimage($text, $bars, $scale = 1, $mode = "png", $total_y = 0,
 
 	/* paint the bars */
 	$width = true;
-	$ln = strlen($bars);
+	$ln = dol_strlen($bars);
 	for ($i = 0; $i < $ln; $i++) {
-		$val = strtolower($bars[$i]);
+		$val = dol_strtolower($bars[$i]);
 		if ($width) {
 			$xpos += (float) $val * $scale;
 			$width = false;
@@ -498,7 +498,7 @@ function barcode_outimage($text, $bars, $scale = 1, $mode = "png", $total_y = 0,
 	}
 
 	/* output the image */
-	$mode = strtolower($mode);
+	$mode = dol_strtolower($mode);
 	if (!empty($filebarcode) && (empty($mode) || $mode == 'png')) {
 		// To write into a file onto disk
 		imagepng($im, $filebarcode);

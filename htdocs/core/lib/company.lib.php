@@ -1385,9 +1385,9 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 	// Initialize array of search criteria
 	$search = array();
 	foreach ($arrayfields as $key => $val) {
-		$queryName = 'search_' . substr($key, 2);
+		$queryName = 'search_' . dol_substr($key, 2);
 		if (GETPOST($queryName, 'alpha')) {
-			$search[substr($key, 2)] = GETPOST($queryName, 'alpha');
+			$search[dol_substr($key, 2)] = GETPOST($queryName, 'alpha');
 		}
 	}
 	$search_array_options = $extrafields->getOptionalsFromPost($contactstatic->table_element, '', 'search_');
@@ -3091,7 +3091,7 @@ function htmlPrintOnlineFooter($fromcompany, $langs, $addformmessage = 0, $suffi
 	print '<span style="font-size: 10px;"><br><hr>' . "\n";
 	print $fromcompany->name . '<br>';
 	print $line1;
-	if (strlen($line1 . $line2) > 50) {
+	if (dol_strlen($line1 . $line2) > 50) {
 		print '<br>';
 	} else {
 		print ' - ';
