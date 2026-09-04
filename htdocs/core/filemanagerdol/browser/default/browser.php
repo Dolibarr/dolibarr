@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2011      Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2003-2010 Frederico Caldeira Knabben
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * Source modified from part of fckeditor (http://www.fckeditor.net)
  * retrieved as GPL v2 or later
@@ -23,7 +24,7 @@
 //require '../../../../main.inc.php';
 require '../../connectors/php/config.inc.php'; // This include the define('NOTOKENRENEWAL',1) and the require main.in.php
 
-global $Config;
+global $Config, $conf, $langs;
 
 top_httphead();
 

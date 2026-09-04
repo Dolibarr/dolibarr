@@ -2085,3 +2085,4 @@ PresetsForMcpServer=Preajustes de servidores MCP
 Tool=Herramientas
 Type=Tipo
 ChatAssistant=Asistente
+extModuleConfirmInstallTitle =Confirmar instalación del módulo

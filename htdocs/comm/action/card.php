@@ -1102,61 +1102,17 @@ if (empty($reshook) && $action == 'update' && $usercancreate) {
 		}
 
 		if (!$error) {
-			// check if an event resource is already in use
-			if (getDolGlobalString('RESOURCE_USED_IN_EVENT_CHECK') && $object->element == 'action') {
-				$eventDateStart = $object->datep;
-				$eventDateEnd = $object->datef;
-
-				$sql  = "SELECT er.rowid, r.ref as r_ref, ac.id as ac_id, ac.label as ac_label";
-				$sql .= " FROM ".MAIN_DB_PREFIX."element_resources as er";
-				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."resource as r ON r.rowid = er.resource_id AND er.resource_type = 'dolresource'";
-				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm as ac ON ac.id = er.element_id AND er.element_type = '".$db->escape($object->element)."'";
-				$sql .= " WHERE ac.id <> ".((int) $object->id);
-				$sql .= " AND er.resource_id IN (";
-				$sql .= " SELECT resource_id FROM ".MAIN_DB_PREFIX."element_resources";
-				$sql .= " WHERE element_id = ".((int) $object->id);
-				$sql .= " AND element_type = '".$db->escape($object->element)."'";
-				$sql .= " AND busy = 1";
-				$sql .= ")";
-				$sql .= " AND er.busy = 1";
-				$sql .= " AND (";
-
-				// event date start between ac.datep and ac.datep2 (if datep2 is null we consider there is no end)
-				$sql .= " (ac.datep <= '".$db->idate($eventDateStart)."' AND (ac.datep2 IS NULL OR ac.datep2 >= '".$db->idate($eventDateStart)."'))";
-				// event date end between ac.datep and ac.datep2
-				if (!empty($eventDateEnd)) {
-					$sql .= " OR (ac.datep <= '".$db->idate($eventDateEnd)."' AND (ac.datep2 >= '".$db->idate($eventDateEnd)."'))";
-				}
-				// event date start before ac.datep and event date end after ac.datep2
-				$sql .= " OR (";
-				$sql .= "ac.datep >= '".$db->idate($eventDateStart)."'";
-				if (!empty($eventDateEnd)) {
-					$sql .= " AND (ac.datep2 IS NOT NULL AND ac.datep2 <= '".$db->idate($eventDateEnd)."')";
-				}
-				$sql .= ")";
-
-				$sql .= ")";
-				$resql = $db->query($sql);
-				if (!$resql) {
-					$error++;
-					$object->error = $db->lasterror();
-					$object->errors[] = $object->error;
-				} else {
-					if ($db->num_rows($resql) > 0) {
-						// Resource already in use
-						$error++;
-						$object->error = $langs->trans('ErrorResourcesAlreadyInUse').' : ';
-						while ($obj = $db->fetch_object($resql)) {
-							$object->error .= '<br> - '.$langs->trans('ErrorResourceUseInEvent', $obj->r_ref, $obj->ac_label.' ['.$obj->ac_id.']');
-						}
-						$object->errors[] = $object->error;
-					}
-					$db->free($resql);
-				}
-
-				if ($error) {
-					setEventMessages($object->error, $object->errors, 'errors');
-				}
+			// Check that no resource attached to this event is already booked on the same slot
+			$conflicts = $object->checkResourceConflicts($object->datep, $object->datef);
+			if ($conflicts === -1) {
+				$error++;
+				$object->errors[] = $object->error;
+				setEventMessages($object->error, $object->errors, 'errors');
+			} elseif (!empty($conflicts)) {
+				$error++;
+				$object->error = $object->formatResourceConflicts($conflicts, $langs);
+				$object->errors[] = $object->error;
+				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
 
@@ -1265,8 +1221,9 @@ if (empty($reshook) && $action == 'confirm_delete' && GETPOST("confirm") == 'yes
 }
 
 /*
- * Action move update, used when user move an event in calendar by drag'n drop
- * TODO Move this into page comm/action/index that trigger this call by the drag and drop of event.
+ * Action move update, used when user moves an event in calendar by drag'n drop.
+ * The agenda calendar UI now calls comm/action/ajax/ajaxmoveevent.php instead (Ajax, no
+ * page reload); this handler is kept as a standalone POST entry point for any other caller.
  */
 if (empty($reshook) && GETPOST('actionmove', 'alpha') == 'mupdate' && $usercancreate) {
 	$error = 0;
@@ -1290,61 +1247,16 @@ if (empty($reshook) && GETPOST('actionmove', 'alpha') == 'mupdate' && $usercancr
 		$object->datep = $datep;
 
 		if (!$error) {
-			// check if an event resource is already in use
-			if (getDolGlobalString('RESOURCE_USED_IN_EVENT_CHECK') && $object->element == 'action') {
-				$eventDateStart = $object->datep;
-				$eventDateEnd = $object->datef;
-
-				$sql  = "SELECT er.rowid, r.ref as r_ref, ac.id as ac_id, ac.label as ac_label";
-				$sql .= " FROM ".MAIN_DB_PREFIX."element_resources as er";
-				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."resource as r ON r.rowid = er.resource_id AND er.resource_type = 'dolresource'";
-				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm as ac ON ac.id = er.element_id AND er.element_type = '".$db->escape($object->element)."'";
-				$sql .= " WHERE ac.id <> ".((int) $object->id);
-				$sql .= " AND er.resource_id IN (";
-				$sql .= " SELECT resource_id FROM ".MAIN_DB_PREFIX."element_resources";
-				$sql .= " WHERE element_id = ".((int) $object->id);
-				$sql .= " AND element_type = '".$db->escape($object->element)."'";
-				$sql .= " AND busy = 1";
-				$sql .= ")";
-				$sql .= " AND er.busy = 1";
-				$sql .= " AND (";
-
-				// event date start between ac.datep and ac.datep2 (if datep2 is null we consider there is no end)
-				$sql .= " (ac.datep <= '".$db->idate($eventDateStart)."' AND (ac.datep2 IS NULL OR ac.datep2 >= '".$db->idate($eventDateStart)."'))";
-				// event date end between ac.datep and ac.datep2
-				if (!empty($eventDateEnd)) {
-					$sql .= " OR (ac.datep <= '".$db->idate($eventDateEnd)."' AND (ac.datep2 >= '".$db->idate($eventDateEnd)."'))";
-				}
-				// event date start before ac.datep and event date end after ac.datep2
-				$sql .= " OR (";
-				$sql .= "ac.datep >= '".$db->idate($eventDateStart)."'";
-				if (!empty($eventDateEnd)) {
-					$sql .= " AND (ac.datep2 IS NOT NULL AND ac.datep2 <= '".$db->idate($eventDateEnd)."')";
-				}
-				$sql .= ")";
-
-				$sql .= ")";
-				$resql = $db->query($sql);
-				if (!$resql) {
-					$error++;
-					$object->error = $db->lasterror();
-					$object->errors[] = $object->error;
-				} else {
-					if ($db->num_rows($resql) > 0) {
-						// Resource already in use
-						$error++;
-						$object->error = $langs->trans('ErrorResourcesAlreadyInUse').' : ';
-						while ($obj = $db->fetch_object($resql)) {
-							$object->error .= '<br> - '.$langs->trans('ErrorResourceUseInEvent', $obj->r_ref, $obj->ac_label.' ['.$obj->ac_id.']');
-						}
-						$object->errors[] = $object->error;
-					}
-					$db->free($resql);
-				}
-
-				if ($error) {
-					setEventMessages($object->error, $object->errors, 'errors');
-				}
+			$conflicts = $object->checkResourceConflicts($object->datep, $object->datef);
+			if ($conflicts === -1) {
+				$error++;
+				$object->errors[] = $object->error;
+				setEventMessages($object->error, $object->errors, 'errors');
+			} elseif (!empty($conflicts)) {
+				$error++;
+				$object->error = $object->formatResourceConflicts($conflicts, $langs);
+				$object->errors[] = $object->error;
+				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
 
@@ -2659,7 +2571,7 @@ if ($id > 0 && $action != 'create') {
 
 		print '</form>';
 	} else {
-		print dol_get_fiche_head($head, 'card', $langs->trans("Action"), -1, 'action');
+		print dol_get_fiche_head($head, 'card', $langs->trans("Action"), -1, 'action', 0, '', '', 0, '', 1);
 
 		$formconfirm = '';
 
@@ -3042,7 +2954,7 @@ if ($id > 0 && $action != 'create') {
 
 			if ($user->hasRight('agenda', 'allactions', 'create') ||
 			   (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->hasRight('agenda', 'myactions', 'create'))) {
-				print '<div class="inline-block divButAction"><a class="butAction butActionClone" href="card.php?action=clone&object='.$object->element.'&id='.$object->id.'">'.$langs->trans("ToClone").'</a></div>';
+				print '<div class="inline-block divButAction"><a class="butAction butActionClone" href="card.php?action=clone&token='.newToken().'&object='.$object->element.'&id='.$object->id.'">'.$langs->trans("ToClone").'</a></div>';
 			} else {
 				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("ToClone").'</a></div>';
 			}

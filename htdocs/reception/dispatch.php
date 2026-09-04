@@ -76,7 +76,7 @@ if ($user->socid) {
 
 $hookmanager->initHooks(array('ordersupplierdispatch'));
 
-// Recuperation de l'id de projet
+// Retrieve the project id
 $projectid = 0;
 if (GETPOSTISSET("projectid")) {
 	$projectid = GETPOSTINT("projectid");
@@ -824,6 +824,10 @@ if ($id > 0 || !empty($ref)) {
 								if (isModEnabled('productbatch') && $objp->tobatch > 0) {
 									$type = 'batch';
 									print img_picto($langs->trans('AddStockLocationLine'), 'split', 'class="splitbutton" '.($numd != $j + 1 ? 'style="display:none"' : '').' onClick="addDispatchLine('.$i.', \''.$type.'\')"');
+									if ($objp->tobatch == 2) {
+										// Product managed with unique serial numbers: allow to enter several serial numbers at once (one line per serial)
+										print img_picto($langs->trans('EnterMultipleSerialNumbers'), 'barcode', 'class="splitbutton marginleftonly" '.($numd != $j + 1 ? 'style="display:none"' : '').' onClick="addDispatchLinesFromSerialList('.$i.', \''.$type.'\')"');
+									}
 								} else {
 									$type = 'dispatch';
 									print img_picto($langs->trans('AddStockLocationLine'), 'split', 'class="splitbutton" '.($numd != $j + 1 ? 'style="display:none"' : '').' onClick="addDispatchLine('.$i.', \''.$type.'\')"');
@@ -997,6 +1001,10 @@ if ($id > 0 || !empty($ref)) {
 							if (isModEnabled('productbatch') && $objp->tobatch > 0) {
 								$type = 'batch';
 								print img_picto($langs->trans('AddStockLocationLine'), 'split', 'class="splitbutton" onClick="addDispatchLine('.$i.', \''.$type.'\')"');
+								if ($objp->tobatch == 2) {
+									// Product managed with unique serial numbers: allow to enter several serial numbers at once (one line per serial)
+									print img_picto($langs->trans('EnterMultipleSerialNumbers'), 'barcode', 'class="splitbutton marginleftonly" onClick="addDispatchLinesFromSerialList('.$i.', \''.$type.'\')"');
+								}
 							} else {
 								$type = 'dispatch';
 								print img_picto($langs->trans('AddStockLocationLine'), 'split', 'class="splitbutton" onClick="addDispatchLine('.$i.', \''.$type.'\')"');

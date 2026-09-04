@@ -90,6 +90,7 @@ ThisIsInformationOnDocumentToSignFichinter=Ова е информација за
 ThisIsInformationOnDocumentToSignSociete_rib=Ова е информација за СЕПА мандатот за потпишување
 ThisIsInformationOnDocumentToSignExpedition= Ова се информации за пратката што треба да се потпише
 SignatureProposalRef=Потпис на понуда/комерцијален предлог %s
+SignatureOrderRef=Signature of sale order %s
 SignatureContractRef=Потпис на договорот %s
 SignatureFichinterRef=Потпис на интервенција %s
 SignatureSociete_ribRef=Потпис на SEPA мандат %s

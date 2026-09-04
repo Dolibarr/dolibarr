@@ -6,7 +6,7 @@
  * Copyright (C) 2005-2011  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2016  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -263,12 +263,12 @@ if (!filter_var($main_url, FILTER_VALIDATE_URL)) {
 	$error++;
 }
 
-// Remove last / into dans main_dir
+// Remove last / into main_dir
 if (substr($main_dir, dol_strlen($main_dir) - 1) == "/") {
 	$main_dir = substr($main_dir, 0, dol_strlen($main_dir) - 1);
 }
 
-// Remove last / into dans main_url
+// Remove last / into main_url
 if (!empty($main_url) && substr($main_url, dol_strlen($main_url) - 1) == "/") {
 	$main_url = substr($main_url, 0, dol_strlen($main_url) - 1);
 }
@@ -397,12 +397,11 @@ if (!$error && $db !== null && $db->connected) {
 		$defaultCharacterSet = 'utf8';
 		$defaultDBSortingCollation = 'utf8_unicode_ci';
 	}
-	// Force to avoid utf8mb4 because index on field char 255 reach limit of 767 char for indexes (example with mysql 5.6.34 = mariadb 10.0.29)
-	// TODO Remove this when utf8mb4 is supported
-	if ($defaultCharacterSet == 'utf8mb4' || $defaultDBSortingCollation == 'utf8mb4_unicode_ci') {
-		$defaultCharacterSet = 'utf8';
-		$defaultDBSortingCollation = 'utf8_unicode_ci';
-	}
+	// Note: utf8mb4 is no longer downgraded to utf8 here. The 767-byte InnoDB index
+	// prefix limit that motivated this only applied to MySQL < 5.7.7 / MariaDB < 10.2.2
+	// (innodb_large_prefix off by default); modern servers support 3072 bytes, enough
+	// for a VARCHAR(255) index in utf8mb4. If the database was created (or already
+	// exists) as utf8mb4, we now keep it as-is instead of forcing it back to utf8.
 
 	print '<input type="hidden" name="dolibarr_main_db_character_set" value="'.$defaultCharacterSet.'">';
 	print '<input type="hidden" name="dolibarr_main_db_collation" value="'.$defaultDBSortingCollation.'">';
@@ -984,7 +983,7 @@ function write_conf_file($conffile)
 		fwrite($fp, '$dolibarr_main_restrict_os_commands=\'mariadb-dump, mariadb, mysqldump, mysql, pg_dump, pg_restore, clamdscan, clamdscan.exe\';');
 		fwrite($fp, "\n");
 
-		fwrite($fp, '$dolibarr_main_restrict_eval_methods=\'getDolGlobalString, getDolGlobalInt, getDolCurrency, getDolEntity, getDolDBType, fetchNoCompute, hasRight, isAdmin, isModEnabled, isStringVarMatching, abs, min, max, round, dol_now, preg_match\';');
+		fwrite($fp, '$dolibarr_main_restrict_eval_methods=\'getDolGlobalString, getDolGlobalInt, getDolCurrency, getDolEntity, getDolDBType, fetchNoCompute, hasRight, isAdmin, isModEnabled, isStringVarMatching, dolSort, abs, min, max, round, dol_now, preg_match\';');
 		fwrite($fp, "\n");
 
 		fwrite($fp, '$dolibarr_nocsrfcheck=\'0\';');

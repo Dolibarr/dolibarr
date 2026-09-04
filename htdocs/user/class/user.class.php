@@ -12,7 +12,7 @@
  * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2018		charlene Benke			<charlie@patas-monkey.com>
  * Copyright (C) 2018-2021	Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2019-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2019-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2019		Abbes Bahfir			<dolipar@dolipar.org>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Lenin Rivas				<lenin.rivas777@gmail.com>
@@ -614,7 +614,7 @@ class User extends CommonObject
 		}
 
 		if ($sid) {
-			// permet une recherche du user par son SID ActiveDirectory ou Samba
+			// allows searching for the user by their ActiveDirectory or Samba SID
 			$sql .= " AND (u.ldap_sid = '".$this->db->escape($sid)."' OR u.login = '".$this->db->escape($login)."')";
 		} elseif ($login) {
 			$sql .= " AND u.login = '".$this->db->escape($login)."'";
@@ -631,7 +631,7 @@ class User extends CommonObject
 		$sql .= " ORDER BY u.entity ASC"; // Avoid random result when there is 2 login in 2 different entities
 
 		if ($sid) {
-			// permet une recherche du user par son SID ActiveDirectory ou Samba
+			// allows searching for the user by their ActiveDirectory or Samba SID
 			$sql .= ' '.$this->db->plimit(1);
 		}
 
@@ -1015,9 +1015,6 @@ class User extends CommonObject
 
 		// In $conf->modules, we have 'accounting', 'product', 'facture', ...
 		// In $user->rights, we have 'accounting', 'produit', 'facture', ...
-		//var_dump($this->rights->$rightsPath);
-		//var_dump($conf->modules);
-		//if ($module == 'fournisseur') { var_dump($module.' '.isModEnabled($module).' '.$rightsPath.' '.$permlevel1.' '.$permlevel2); }
 
 		if (!isModEnabled($module)) {
 			return 0;
@@ -1050,8 +1047,6 @@ class User extends CommonObject
 			$permlevel1 = 'recruitmentjobposition';
 		}
 
-		//var_dump($this->rights);
-		//var_dump($rightsPath.' '.$permlevel1.' '.$permlevel2);
 		if (empty($rightsPath) || empty($this->rights) || empty($this->rights->$rightsPath) || empty($permlevel1)) {
 			return 0;
 		}
@@ -1267,7 +1262,7 @@ class User extends CommonObject
 			$module = $perms = $subperms = '';
 
 			// When the request is to delete a specific permissions, this gets the
-			// les charactis for the module, permissions and sub-permission of this permission.
+			// characteristics for the module, permissions and sub-permission of this permission.
 			$sql = "SELECT module, perms, subperms";
 			$sql .= " FROM ".$this->db->prefix()."rights_def";
 			$sql .= " WHERE id = ".((int) $rid);
@@ -1419,7 +1414,7 @@ class User extends CommonObject
 
 		if (!$alreadyloaded) {
 			// First user permissions
-			$sql = "SELECT DISTINCT r.module, r.perms, r.subperms";
+			$sql = "SELECT DISTINCT r.module, r.module_origin, r.perms, r.subperms";
 			$sql .= " FROM ".$this->db->prefix()."user_rights as ur,";
 			$sql .= " ".$this->db->prefix()."rights_def as r";
 			$sql .= " WHERE r.id = ur.fk_id";
@@ -1451,7 +1446,12 @@ class User extends CommonObject
 					$obj = $this->db->fetch_object($resql);
 
 					if ($obj) {
-						$module = $obj->module;
+						// module_origin (set only when the right was declared by another module
+						// via KEY_MODULE, to be filed into a foreign module's section of the
+						// permission grid) is the namespace actually used to check the right with
+						// hasRight(), so the declaring module keeps control of it regardless of
+						// which module's section it is grouped under for display.
+						$module = (!empty($obj->module_origin) ? $obj->module_origin : $obj->module);
 						$perms = $obj->perms;
 						$subperms = $obj->subperms;
 
@@ -1483,7 +1483,7 @@ class User extends CommonObject
 			}
 
 			// Now permissions of groups
-			$sql = "SELECT DISTINCT r.module, r.perms, r.subperms, r.entity";
+			$sql = "SELECT DISTINCT r.module, r.module_origin, r.perms, r.subperms, r.entity";
 			$sql .= " FROM ".$this->db->prefix()."usergroup_rights as gr,";
 			$sql .= " ".$this->db->prefix()."usergroup_user as gu,";
 			$sql .= " ".$this->db->prefix()."rights_def as r";
@@ -1524,7 +1524,12 @@ class User extends CommonObject
 					$obj = $this->db->fetch_object($resql);
 
 					if ($obj) {
-						$module = $obj->module;
+						// module_origin (set only when the right was declared by another module
+						// via KEY_MODULE, to be filed into a foreign module's section of the
+						// permission grid) is the namespace actually used to check the right with
+						// hasRight(), so the declaring module keeps control of it regardless of
+						// which module's section it is grouped under for display.
+						$module = (!empty($obj->module_origin) ? $obj->module_origin : $obj->module);
 						$perms = $obj->perms;
 						$subperms = $obj->subperms;
 
@@ -2400,6 +2405,7 @@ class User extends CommonObject
 		if (!empty($user->admin) && empty($user->entity) && $user->id != $this->id) {
 			$sql .= ", entity = ".((int) $this->entity); // entity flag can be set/unset only by an another superadmin user
 		}
+
 		$sql .= ", default_range = ".($this->default_range > 0 ? ((int) $this->default_range) : 'null');
 		$sql .= ", default_c_exp_tax_cat = ".($this->default_c_exp_tax_cat > 0 ? ((int) $this->default_c_exp_tax_cat) : 'null');
 		$sql .= ", fk_warehouse = ".($this->fk_warehouse > 0 ? ((int) $this->fk_warehouse) : "null");
@@ -2655,11 +2661,9 @@ class User extends CommonObject
 		} else {
 			if (getDolGlobalString('USER_PASSWORD_GENERATED')) {
 				// Add a check on rules for password syntax using the setup of the password generator
-				$modGeneratePassClass = 'modGeneratePass'.ucfirst(getDolGlobalString('USER_PASSWORD_GENERATED'));
-
-				include_once DOL_DOCUMENT_ROOT.'/core/modules/security/generate/'.$modGeneratePassClass.'.class.php';
-				if (class_exists($modGeneratePassClass)) {
-					$modGeneratePass = new $modGeneratePassClass($this->db, $conf, $langs, $user);
+				require_once DOL_DOCUMENT_ROOT.'/core/modules/security/generate/modules_genpassword.php';
+				$modGeneratePass = ModeleGenPassword::loadAndInstantiate(getDolGlobalString('USER_PASSWORD_GENERATED'), $this->db, $conf, $langs, $user);
+				if ($modGeneratePass) {
 					'@phan-var-force ModeleGenPassword $modGeneratePass';
 
 					// To check an input user password, we disable the cleaning on ambiguous characters (this is used only for auto-generated password)
@@ -4197,6 +4201,25 @@ class User extends CommonObject
 		return CommonObject::commonReplaceThirdparty($dbs, $origin_id, $dest_id, $tables);
 	}
 
+	/**
+	 *  Function used to replace a contact id with another one when merging two contacts.
+	 *  llx_user.fk_socpeople has a unique key, so the case where both contacts are linked to a user
+	 *  is refused by Contact::mergeContact() before this method is called.
+	 *
+	 *  @param	DoliDB	$dbs		Database handler
+	 *  @param	int		$origin_id	Old contact id (the contact to delete)
+	 *  @param	int		$dest_id	New contact id (the contact that will receive elements of the other)
+	 *  @return	bool				True if success, False if error
+	 */
+	public static function replaceContact(DoliDB $dbs, $origin_id, $dest_id)
+	{
+		if (!CommonObject::commonReplaceContact($dbs, $origin_id, $dest_id, array('user'))) {
+			return false;
+		}
+
+		return CommonObject::commonReplaceContact($dbs, $origin_id, $dest_id, array('user_alert'), 'fk_contact');
+	}
+
 
 	/**
 	 *      Load metrics this->nb for dashboard
@@ -4320,7 +4343,8 @@ class User extends CommonObject
 		global $dolibarr_main_url_root;
 		global $conf;
 
-		$encodedsecurekey = dol_hash($conf->file->instance_unique_id.'uservirtualcard'.$this->id.'-'.$this->login, 'md5');
+		$instanceuniqueid = empty($conf->file->instance_unique_id) ? '' : $conf->file->instance_unique_id;
+		$encodedsecurekey = dol_hash($instanceuniqueid.'uservirtualcard'.$this->id.'-'.$this->login, 'md5');
 		if (isModEnabled('multicompany')) {
 			$entity_qr = '&entity='.((int) $conf->entity);
 		} else {

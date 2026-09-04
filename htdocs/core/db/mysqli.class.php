@@ -7,7 +7,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Charlene Benke	        <charlene@patas-monkey.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -132,7 +132,7 @@ class DoliDBMysqli extends DoliDB
 						// To upgrade database default, you can do: ALTER DATABASE databasename CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 						$this->db->set_charset($clientmustbe); // This set charset, but with a bad collation (colllation is forced later)
-					} catch (Exception $e) {
+					} catch (Throwable $e) {
 						print 'Failed to force character_set_client to '.$clientmustbe." (according to setup) to match the one of the server database.<br>\n";
 						print $e->getMessage();
 						print "<br>\n";
@@ -172,18 +172,12 @@ class DoliDBMysqli extends DoliDB
 				if (preg_match('/latin1/', $clientmustbe)) {
 					$clientmustbe = 'utf8';
 				}
-				if (preg_match('/utf8mb4/', $clientmustbe)) {
-					$clientmustbe = 'utf8';
-				}
 
 				if (empty($disableforcecharset) && $this->db->character_set_name() != $clientmustbe) {
-					$this->db->set_charset($clientmustbe); // This set utf8_unicode_ci
+					$this->db->set_charset($clientmustbe); // This set utf8_unicode_ci or utf8mb4_unicode_ci
 
 					$collation = (string) $conf->db->dolibarr_main_db_collation;
 					if (preg_match('/latin1/', $collation)) {
-						$collation = 'utf8_unicode_ci';
-					}
-					if (preg_match('/utf8mb4/', $collation)) {
 						$collation = 'utf8_unicode_ci';
 					}
 
@@ -236,7 +230,7 @@ class DoliDBMysqli extends DoliDB
 		$result = false;
 		try {
 			$result = $this->db->select_db($database);
-		} catch (Exception $e) {
+		} catch (Throwable $e) {
 			// Nothing done on error
 		}
 		return $result;
@@ -271,7 +265,7 @@ class DoliDBMysqli extends DoliDB
 			} else {
 				$tmp = new mysqli($host, $login, $passwd, $name, $port);
 			}
-		} catch (Exception $e) {
+		} catch (Throwable $e) {
 			dol_syslog(get_class($this)."::connect failed", LOG_DEBUG);
 		}
 		return $tmp;
@@ -359,7 +353,7 @@ class DoliDBMysqli extends DoliDB
 
 		try {
 			$ret = $this->db->query($query, $result_mode);
-		} catch (Exception $e) {
+		} catch (Throwable $e) {
 			dol_syslog(get_class($this)."::query Exception in query instead of returning an error: ".$e->getMessage(), LOG_ERR);
 			$ret = false;
 		}
@@ -514,7 +508,7 @@ class DoliDBMysqli extends DoliDB
 		if (!is_object($resultset)) {
 			$resultset = $this->_results;
 		}
-		// Si resultset is provided, free memory
+		// If resultset is provided, free memory
 		if (is_object($resultset)) {
 			$resultset->free_result();
 		}
@@ -551,7 +545,7 @@ class DoliDBMysqli extends DoliDB
 	public function errno()
 	{
 		if (!$this->connected) {
-			// Si il y a eu echec de connection, $this->db n'est pas valide.
+			// If the connection failed, $this->db is not valid.
 			return 'DB_ERROR_FAILED_TO_CONNECT';
 		} else {
 			// Constants to convert a MySql error code to a generic Dolibarr error code
@@ -981,7 +975,7 @@ class DoliDBMysqli extends DoliDB
 	public function DDLAddField($table, $field_name, $field_desc, $field_position = "")
 	{
 		// phpcs:enable
-		// cles recherchees dans le tableau des descriptions (field_desc) : type,value,attribute,null,default,extra
+		// keys looked up in the descriptions array (field_desc): type,value,attribute,null,default,extra
 		// ex. : $field_desc = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
 		$sql = "ALTER TABLE ".$this->sanitize($table)." ADD ".$this->sanitize($field_name)." ";
 

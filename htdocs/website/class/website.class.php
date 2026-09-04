@@ -1320,16 +1320,13 @@ class Website extends CommonObject
 		$arrayreplacement['__LOGO_KEY__'] = $this->db->escape($mysoc->logo);
 
 
-		// Copy containers directory
-		dolCopyDir($conf->website->dir_temp.'/'.$object->ref.'/containers', $conf->website->dir_output.'/'.$object->ref, '0', 1); // Overwrite if exists
-
-		// Make replacement into css and htmlheader file
-		$cssindestdir = $conf->website->dir_output.'/'.$object->ref.'/styles.css.php';
-		$result = dolReplaceInFile($cssindestdir, $arrayreplacement);
+		// Make replacement into css (replace dolSaveCssFile)
+		$cssinsrcdir = $conf->website->dir_temp.'/'.$object->ref.'/containers/styles.css.php';
+		$result = dolReplaceInFile($cssinsrcdir, $arrayreplacement);
 
 		// Test if imported CSS page contains dynamic PHP content
 		if (!$user->hasRight('website', 'writephp')) {
-			$newpathofsrcfile = dol_osencode($cssindestdir);
+			$newpathofsrcfile = dol_osencode($cssinsrcdir);
 			$csscontent = file_get_contents($newpathofsrcfile);
 
 			// Check there is no PHP content into the imported file (must be only HTML + JS)
@@ -1341,9 +1338,79 @@ class Website extends CommonObject
 				return -1;
 			}
 		}
+		dol_copy($conf->website->dir_temp.'/'.$object->ref.'/containers/styles.css.php', $conf->website->dir_output.'/'.$object->ref.'/styles.css.php', '0', 1);
 
-		$htmldeaderindestdir = $conf->website->dir_output.'/'.$object->ref.'/htmlheader.html';
-		$result = dolReplaceInFile($htmldeaderindestdir, $arrayreplacement);
+
+		// Make replacement in htmlheader.html (replace dolSaveHtmlHeader)
+		$htmldeaderinsrcdir = $conf->website->dir_output.'/'.$object->ref.'/containers/htmlheader.html';
+		$result = dolReplaceInFile($htmldeaderinsrcdir, $arrayreplacement);
+
+		// Test if imported html page contains dynamic PHP content
+		if (!$user->hasRight('website', 'writephp')) {
+			$newpathofsrcfile = dol_osencode($htmldeaderinsrcdir);
+			$htmlcontent = file_get_contents($newpathofsrcfile);
+
+			// Check there is no PHP content into the imported file (must be only HTML + JS)
+			$phpcontent = dolKeepOnlyPhpCode($htmlcontent);
+
+			if ($phpcontent) {
+				$this->error = 'Error: you try to import a website with a page with PHP dynamic content in htmlheader.html without having permissions for that.';
+				$this->errors[] = $this->error;
+				return -1;
+			}
+		}
+		dol_copy($conf->website->dir_temp.'/'.$object->ref.'/containers/htmlheader.html', $conf->website->dir_output.'/'.$object->ref.'/htmlheader.html', '0', 1);
+
+
+		//dolCopyDir($conf->website->dir_temp.'/'.$object->ref.'/containers', $conf->website->dir_output.'/'.$object->ref, '0', 1); // Overwrite if exists
+
+
+		// Copy special files (replace dolSaveLicense and dolSaveHtaccessFile)
+		foreach (array('robots.txt', '.dolibarr', '.htaccess', 'LICENSE', 'README.md') as $filename) {
+			// Test if imported file contains dynamic PHP content
+			$newpathofsrcfile = dol_osencode($conf->website->dir_temp.'/'.$object->ref.'/containers/'.$filename);
+			$filecontent = file_get_contents($newpathofsrcfile);
+
+			// Check there is no PHP content into the imported file (must be only HTML + JS)
+			$phpcontent = dolKeepOnlyPhpCode($filecontent);
+
+			if ($phpcontent) {
+				$this->error = 'Error: you try to import a website with a page with PHP dynamic content in '.$filename.'.';
+				$this->errors[] = $this->error;
+				return -1;
+			}
+
+			dol_copy($conf->website->dir_temp.'/'.$object->ref.'/containers/'.$filename, $conf->website->dir_output.'/'.$object->ref.'/'.$filename, '0', 1);
+		}
+
+		// Now generate the javascript.js.php
+		$filejs = dol_osencode($conf->website->dir_temp.'/'.$object->ref.'/containers/javascript.js.php');
+		$jscontent = @file_get_contents($filejs);
+		// Clean the php js file to remove php code and get only js part
+		$jscontent = preg_replace('/<\?php \/\/ BEGIN PHP[^\?]*END PHP( \?>)?\n*/ims', '', $jscontent);
+		$phpcontent = dolKeepOnlyPhpCode($jscontent);
+		if ($phpcontent) {
+			$this->error = 'Error: you try to import a website with a page with PHP dynamic content in '.$filename.'.';
+			$this->errors[] = $this->error;
+			return -1;
+		}
+		dolSaveJsFile($conf->website->dir_output.'/'.$object->ref.'/javascript.js.php', $jscontent);
+
+
+		// Now generate the manifest.json.php
+		$filemanifestjson = dol_osencode($conf->website->dir_temp.'/'.$object->ref.'/containers/manifest.json.php');
+		$manifestjsoncontent = @file_get_contents($filemanifestjson);
+		// Clean the manifestjson file to remove php code and get only html part
+		$manifestjsoncontent = preg_replace('/<\?php \/\/ BEGIN PHP[^\?]*END PHP( \?>)?\n*/ims', '', $manifestjsoncontent);
+		// Check there is no PHP content into the imported file (must be only HTML + JS)
+		$phpcontent = dolKeepOnlyPhpCode($manifestjsoncontent);
+		if ($phpcontent) {
+			$this->error = 'Error: you try to import a website with a page with PHP dynamic content in '.$filename.'.';
+			$this->errors[] = $this->error;
+			return -1;
+		}
+		dolSaveManifestJson($conf->website->dir_output.'/'.$object->ref.'/manifest.json.php', $manifestjsoncontent);
+
 
 		// Now generate the master.inc.php page
 		$filemaster = $conf->website->dir_output.'/'.$object->ref.'/master.inc.php';
@@ -1352,6 +1419,7 @@ class Website extends CommonObject
 			$this->errors[] = 'Failed to write file '.$filemaster;
 			$error++;
 		}
+
 
 		// Copy dir medias/image/websitekey
 		if (dol_is_dir($conf->website->dir_temp.'/'.$object->ref.'/medias/image/websitekey')) {

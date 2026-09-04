@@ -6,7 +6,7 @@
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015-2026  Charlene Benke          <charlene@patas-monkey.com>
  * Copyright (C) 2018       Nicolas ZABOURI	        <info@inovea-conseil.com>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023-2026  William Mead            <william@m34d.com>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -223,6 +223,11 @@ class Fichinter extends CommonObject
 	 * Closed
 	 */
 	const STATUS_CLOSED = 3;
+
+	/**
+	 * Canceled status
+	 */
+	const STATUS_CANCELED = 9;
 
 	/**
 	 * Date of delivery of receipt
@@ -748,6 +753,121 @@ class Fichinter extends CommonObject
 	}
 
 	/**
+	 * 	Cancel an intervention
+	 *
+	 * 	@param      User	$user       Object user that cancel
+	 *  @param		int		$notrigger	1=Does not execute triggers, 0=Execute triggers
+	 *	@return		int					Return integer <0 if KO, 0 if nothing done, >0 if OK
+	 */
+	public function setCanceled($user, $notrigger = 0)
+	{
+		$error = 0;
+
+		if ($this->status == self::STATUS_CANCELED) {
+			return 0;
+		}
+
+		$this->db->begin();
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter";
+		$sql .= " SET fk_statut = ".self::STATUS_CANCELED.",";
+		$sql .= " fk_user_modif = ".((int) $user->id);
+		$sql .= " WHERE rowid = ".((int) $this->id);
+		$sql .= " AND fk_statut = ".self::STATUS_VALIDATED;
+		$sql .= " AND entity IN (".getEntity('intervention').")";
+
+		dol_syslog(get_class($this)."::setCanceled", LOG_DEBUG);
+		if ($this->db->query($sql)) {
+			if (!$notrigger) {
+				// Call trigger
+				$result = $this->call_trigger('FICHINTER_CANCEL', $user);
+				if ($result < 0) {
+					$error++;
+				}
+				// End call triggers
+			}
+
+			if (!$error) {
+				$this->status = self::STATUS_CANCELED;
+				$this->statut = self::STATUS_CANCELED;	// deprecated
+				$this->db->commit();
+				return 1;
+			} else {
+				foreach ($this->errors as $errmsg) {
+					dol_syslog(get_class($this)."::setCanceled ".$errmsg, LOG_ERR);
+					$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
+				}
+				$this->db->rollback();
+				return -1 * $error;
+			}
+		} else {
+			$this->error = $this->db->error();
+			$this->db->rollback();
+			return -1;
+		}
+	}
+
+
+	/**
+	 *	Tag the intervention as validated (opened)
+	 *	Function used when the intervention is reopened after being closed or canceled.
+	 *
+	 *	@param      User	$user       Object user that change status
+	 *  @param		int		$notrigger	1=Does not execute triggers, 0=Execute triggers
+	 *	@return     int 	Return integer < 0 if KO, 0 if nothing is done, > 0 if OK
+	 */
+	public function setReopen($user, $notrigger = 0)
+	{
+		// phpcs:enable
+		$error = 0;
+
+		if ($this->statut != self::STATUS_CANCELED && $this->statut != self::STATUS_CLOSED) {
+			dol_syslog(get_class($this)."::setReopen intervention has not status closed or canceled", LOG_WARNING);
+			return 0;
+		}
+
+		$this->db->begin();
+
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'fichinter';
+		$sql .= ' SET fk_statut='.self::STATUS_VALIDATED;
+		$sql .= ", fk_user_modif = ".((int) $user->id);
+		$sql .= " WHERE rowid = ".((int) $this->id);
+
+		dol_syslog(get_class($this)."::setReopen", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			if (!$notrigger) {
+				// Call trigger
+				$result = $this->call_trigger('FICHINTER_REOPEN', $user);
+				if ($result < 0) {
+					$error++;
+				}
+				// End call triggers
+			}
+		} else {
+			$error++;
+			$this->error = $this->db->lasterror();
+			dol_print_error($this->db);
+		}
+
+		if (!$error) {
+			$this->status = self::STATUS_VALIDATED;
+			$this->statut = self::STATUS_VALIDATED;	// deprecated
+			$this->billed = 0;
+
+			$this->db->commit();
+			return 1;
+		} else {
+			foreach ($this->errors as $errmsg) {
+				dol_syslog(get_class($this)."::setReopen ".$errmsg, LOG_ERR);
+				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
+			}
+			$this->db->rollback();
+			return -1 * $error;
+		}
+	}
+
+	/**
 	 *  Close intervention
 	 *
 	 * 	@param      User	$user       Object user that close
@@ -888,10 +1008,12 @@ class Fichinter extends CommonObject
 			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Validated');
 			$this->labelStatus[self::STATUS_BILLED] = $langs->transnoentitiesnoconv('StatusInterInvoiced');
 			$this->labelStatus[self::STATUS_CLOSED] = $langs->transnoentitiesnoconv('Done');
+			$this->labelStatus[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Canceled');
 			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
 			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Validated');
 			$this->labelStatusShort[self::STATUS_BILLED] = $langs->transnoentitiesnoconv('StatusInterInvoiced');
 			$this->labelStatusShort[self::STATUS_CLOSED] = $langs->transnoentitiesnoconv('Done');
+			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Canceled');
 		}
 
 		$statuscode = 'status'.$status;
@@ -1202,7 +1324,7 @@ class Fichinter extends CommonObject
 
 			// Remove directory with files
 			$fichinterref = dol_sanitizeFileName($this->ref);
-			if ($conf->ficheinter->dir_output) {
+			if ($conf->ficheinter->dir_output && !empty($fichinterref)) {
 				$dir = $conf->ficheinter->dir_output."/".$fichinterref;
 				$file = $conf->ficheinter->dir_output."/".$fichinterref."/".$fichinterref.".pdf";
 				if (file_exists($file)) {
@@ -1588,7 +1710,7 @@ class Fichinter extends CommonObject
 		// phpcs:enable
 		$this->lines = array();
 
-		$sql = "SELECT rowid, fk_fichinter, description, duree, date, rang, extraparams";
+		$sql = "SELECT rowid, fk_fichinter, description, duree, date, rang, extraparams, special_code";
 		$sql .= " FROM ".MAIN_DB_PREFIX."fichinterdet";
 		$sql .= " WHERE fk_fichinter = ".((int) $this->id);
 		$sql .= " ORDER BY rang ASC, date ASC";
@@ -1607,8 +1729,14 @@ class Fichinter extends CommonObject
 				$line->fk_fichinter = $objp->fk_fichinter;
 				$line->desc = $objp->description;
 				$line->duration = $objp->duree;
-				//For invoicing we calculing hours
-				$line->qty = round($objp->duree / 3600, 2);
+				$line->special_code = (int) ($objp->special_code ?? 0);
+				if ($line->special_code == SUBTOTALS_SPECIAL_CODE) {
+					// Subtotals module lines store their depth (not a real duration) in duree — do not convert to hours
+					$line->qty = (int) $objp->duree;
+				} else {
+					//For invoicing we calculing hours
+					$line->qty = round($objp->duree / 3600, 2);
+				}
 				$line->date	= $this->db->jdate($objp->date);
 				$line->datei = $this->db->jdate($objp->date);	// For backward compatibility
 				$line->rang	= $objp->rang;
