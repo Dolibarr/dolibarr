@@ -91,7 +91,7 @@ if (!function_exists('str_starts_with')) {
 	 */
 	function str_starts_with($haystack, $needle)
 	{
-		return (string) $needle !== '' && strncmp($haystack, $needle, strlen($needle)) === 0;
+		return (string) $needle !== '' && strncmp($haystack, $needle, dol_strlen($needle)) === 0;
 	}
 }
 if (!function_exists('str_ends_with')) {
@@ -105,7 +105,7 @@ if (!function_exists('str_ends_with')) {
 	 */
 	function str_ends_with($haystack, $needle)
 	{
-		return $needle !== '' && substr($haystack, -strlen($needle)) === (string) $needle;
+		return $needle !== '' && dol_substr($haystack, -dol_strlen($needle)) === (string) $needle;
 	}
 }
 if (!function_exists('str_contains')) {
@@ -629,7 +629,7 @@ function getDoliDBInstance($type, $host, $user, $pass, $name, $port)
 {
 	require_once DOL_DOCUMENT_ROOT . "/core/db/" . $type . '.class.php';
 
-	$class = 'DoliDB' . ucfirst($type);
+	$class = 'DoliDB' . dol_ucfirst($type);
 	$db = new $class($type, $host, $user, $pass, $name, $port);
 	return $db;
 }
@@ -782,7 +782,7 @@ function getBrowserInfo($user_agent)
 	$os = 'unknown';
 	$phone = '';
 
-	$user_agent = substr($user_agent, 0, 512);	// Avoid to process too large user agent
+	$user_agent = dol_substr($user_agent, 0, 512);	// Avoid to process too large user agent
 
 	// @phan-suppress-next-line PhanTypeMismatchArgumentProbablyReal Bad definition of Mobile_Detect function
 	$detectmobile = new Mobile_Detect(null, $user_agent);
@@ -1557,7 +1557,7 @@ function dolSetCookie(string $cookiename, string $cookievalue, int $expire = -1)
 	global $dolibarr_main_force_https;
 
 	if ($expire == -1) {
-		$expire = (time() + (86400 * 354));	// keep cookie 1 year.
+		$expire = (dol_now() + (86400 * 354));	// keep cookie 1 year.
 	}
 
 	if (PHP_VERSION_ID < 70300) {
@@ -2257,7 +2257,7 @@ function dolSlugify($stringtoslugify)
 	}
 
 	// Convert to lowercase
-	$slug = strtolower($slug);
+	$slug = dol_strtolower($slug);
 
 	// Replace non-alphanumeric characters with hyphens
 	$slug = preg_replace('/[^a-z0-9]+/', '-', $slug);
@@ -2391,7 +2391,7 @@ function dol_strtolower($string, $encoding = "UTF-8")
 	if (function_exists('mb_strtolower')) {
 		return mb_strtolower($string, $encoding);
 	} else {
-		return strtolower($string);
+		return strtolower($string);  // @phan-suppress-current-line DolibarrForbiddenFunctionPlugin
 	}
 }
 
@@ -2408,7 +2408,7 @@ function dol_strtoupper($string, $encoding = "UTF-8")
 	if (function_exists('mb_strtoupper')) {
 		return mb_strtoupper($string, $encoding);
 	} else {
-		return strtoupper($string);
+		return strtoupper($string);  // @phan-suppress-current-line DolibarrForbiddenFunctionPlugin
 	}
 }
 
@@ -2425,7 +2425,7 @@ function dol_ucfirst($string, $encoding = "UTF-8")
 	if (function_exists('mb_substr')) {
 		return mb_strtoupper(mb_substr($string, 0, 1, $encoding), $encoding) . mb_substr($string, 1, null, $encoding);
 	} else {
-		return ucfirst($string);
+		return ucfirst($string);  // @phan-suppress-current-line DolibarrForbiddenFunctionPlugin
 	}
 }
 
@@ -2442,7 +2442,7 @@ function dol_ucwords($string, $encoding = "UTF-8")
 	if (function_exists('mb_convert_case')) {
 		return mb_convert_case($string, MB_CASE_TITLE, $encoding);
 	} else {
-		return ucwords($string);
+		return ucwords($string);  // @phan-suppress-current-line DolibarrForbiddenFunctionPlugin
 	}
 }
 
@@ -2542,7 +2542,7 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
 		if ((!empty($_REQUEST['logtohtml']) && getDolGlobalString('MAIN_ENABLE_LOG_TO_HTML'))
 			|| (is_object($user) && $user->hasRight('debugbar', 'read') && is_object($debugbar))
 		) {
-			$ospid = sprintf("%7s", dol_trunc((string) getmypid(), 7, 'right', 'UTF-8', 1));
+			$ospid = sprintf("%7s", dol_trunc((string) dol_getmypid(), 7, 'right', 'UTF-8', 1));
 			$osuser = " " . sprintf("%6s", dol_trunc(function_exists('posix_getuid') ? posix_getuid() : '', 6, 'right', 'UTF-8', 1));
 
 			$conf->logbuffer[] = dol_print_date(dol_now(), "%Y-%m-%d %H:%M:%S") . " " . sprintf("%-7s", $logLevels[$level]) . " " . $ospid . " " . $osuser . " " . $message;
@@ -2563,7 +2563,7 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
 			'user' => ((is_object($user) && $user->id) ? $user->login : ''),
 			'ip' => '',
 			'osuser' => function_exists('posix_getuid') ? (string) posix_getuid() : '',
-			'ospid' => (string) getmypid()	// on linux, max value is defined into cat /proc/sys/kernel/pid_max
+			'ospid' => (string) dol_getmypid()	// on linux, max value is defined into cat /proc/sys/kernel/pid_max
 		);
 
 		// For log, we want the reliable IP first.
@@ -2580,7 +2580,7 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
 				$j = 0;
 				foreach ($tmpips as $tmpip) {
 					$tmpip = trim($tmpip);
-					if (strtolower($tmpip) == strtolower($remoteip)) {
+					if (dol_strtolower($tmpip) == dol_strtolower($remoteip)) {
 						$foundremoteip = 1;
 					}
 					if (empty($data['ip'])) {
@@ -2602,7 +2602,7 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
 				$j = 0;
 				foreach ($tmpips as $tmpip) {
 					$tmpip = trim($tmpip);
-					if (strtolower($tmpip) == strtolower($remoteip)) {
+					if (dol_strtolower($tmpip) == dol_strtolower($remoteip)) {
 						$foundremoteip = 1;
 					}
 					if (empty($data['ip'])) {
@@ -3594,27 +3594,27 @@ function dol_print_profids($profID, $profIDtype, $countrycode = '', $addcpButton
 		$countrycode = $mysoc->country_code;
 	}
 	$newProfID = $profID;
-	$id = substr($profIDtype, -1);
+	$id = dol_substr($profIDtype, -1);
 	$ret = '';
-	if (strtoupper($countrycode) == 'FR') {
+	if (dol_strtoupper($countrycode) == 'FR') {
 		// France
 		// (see https://www.economie.gouv.fr/entreprises/numeros-identification-entreprise)
 
 		if ($id == 1 && dol_strlen($newProfID) == 9) {
 			// SIREN (ex: 123 123 123)
-			$newProfID = substr($newProfID, 0, 3) . ' ' . substr($newProfID, 3, 3) . ' ' . substr($newProfID, 6, 3);
+			$newProfID = dol_substr($newProfID, 0, 3) . ' ' . dol_substr($newProfID, 3, 3) . ' ' . dol_substr($newProfID, 6, 3);
 		}
 		if ($id == 2 && dol_strlen($newProfID) == 14) {
 			// SIRET (ex: 123 123 123 12345)
-			$newProfID = substr($newProfID, 0, 3) . ' ' . substr($newProfID, 3, 3) . ' ' . substr($newProfID, 6, 3) . ' ' . substr($newProfID, 9, 5);
+			$newProfID = dol_substr($newProfID, 0, 3) . ' ' . dol_substr($newProfID, 3, 3) . ' ' . dol_substr($newProfID, 6, 3) . ' ' . dol_substr($newProfID, 9, 5);
 		}
 		if ($id == 3 && dol_strlen($newProfID) == 5) {
 			// NAF/APE (ex: 69.20Z)
-			$newProfID = substr($newProfID, 0, 2) . '.' . substr($newProfID, 2, 3);
+			$newProfID = dol_substr($newProfID, 0, 2) . '.' . dol_substr($newProfID, 2, 3);
 		}
 		if ($profIDtype === 'VAT' && dol_strlen($newProfID) == 13) {
 			// TVA intracommunautaire (ex: FR12 123 123 123)
-			$newProfID = substr($newProfID, 0, 4) . ' ' . substr($newProfID, 4, 3) . ' ' . substr($newProfID, 7, 3) . ' ' . substr($newProfID, 10, 3);
+			$newProfID = dol_substr($newProfID, 0, 4) . ' ' . dol_substr($newProfID, 4, 3) . ' ' . dol_substr($newProfID, 7, 3) . ' ' . dol_substr($newProfID, 10, 3);
 		}
 	}
 	if (!empty($addcpButton)) {
@@ -3663,202 +3663,202 @@ function dol_print_phone($phone, $countrycode = '', $contactid = 0, $socid = 0, 
 
 	$newphone = $phone;
 	$newphonewa = $phone;
-	if (strtoupper($countrycode) == "FR") {
+	if (dol_strtoupper($countrycode) == "FR") {
 		// France
 		if (dol_strlen($phone) == 10) {
-			$newphone = substr($newphone, 0, 2) . $separ . substr($newphone, 2, 2) . $separ . substr($newphone, 4, 2) . $separ . substr($newphone, 6, 2) . $separ . substr($newphone, 8, 2);
+			$newphone = dol_substr($newphone, 0, 2) . $separ . dol_substr($newphone, 2, 2) . $separ . dol_substr($newphone, 4, 2) . $separ . dol_substr($newphone, 6, 2) . $separ . dol_substr($newphone, 8, 2);
 		} elseif (dol_strlen($phone) == 7) {
-			$newphone = substr($newphone, 0, 3) . $separ . substr($newphone, 3, 2) . $separ . substr($newphone, 5, 2);
+			$newphone = dol_substr($newphone, 0, 3) . $separ . dol_substr($newphone, 3, 2) . $separ . dol_substr($newphone, 5, 2);
 		} elseif (dol_strlen($phone) == 9) {
-			$newphone = substr($newphone, 0, 2) . $separ . substr($newphone, 2, 3) . $separ . substr($newphone, 5, 2) . $separ . substr($newphone, 7, 2);
+			$newphone = dol_substr($newphone, 0, 2) . $separ . dol_substr($newphone, 2, 3) . $separ . dol_substr($newphone, 5, 2) . $separ . dol_substr($newphone, 7, 2);
 		} elseif (dol_strlen($phone) == 11) {
-			$newphone = substr($newphone, 0, 3) . $separ . substr($newphone, 3, 2) . $separ . substr($newphone, 5, 2) . $separ . substr($newphone, 7, 2) . $separ . substr($newphone, 9, 2);
+			$newphone = dol_substr($newphone, 0, 3) . $separ . dol_substr($newphone, 3, 2) . $separ . dol_substr($newphone, 5, 2) . $separ . dol_substr($newphone, 7, 2) . $separ . dol_substr($newphone, 9, 2);
 		} elseif (dol_strlen($phone) == 12) {
-			$newphone = substr($newphone, 0, 3) . $separ . substr($newphone, 3, 1) . $separ . substr($newphone, 4, 2) . $separ . substr($newphone, 6, 2) . $separ . substr($newphone, 8, 2) . $separ . substr($newphone, 10, 2);
+			$newphone = dol_substr($newphone, 0, 3) . $separ . dol_substr($newphone, 3, 1) . $separ . dol_substr($newphone, 4, 2) . $separ . dol_substr($newphone, 6, 2) . $separ . dol_substr($newphone, 8, 2) . $separ . dol_substr($newphone, 10, 2);
 		} elseif (dol_strlen($phone) == 13) {
-			$newphone = substr($newphone, 0, 4) . $separ . substr($newphone, 4, 2) . $separ . substr($newphone, 6, 2) . $separ . substr($newphone, 8, 3) . $separ . substr($newphone, 11, 2);
+			$newphone = dol_substr($newphone, 0, 4) . $separ . dol_substr($newphone, 4, 2) . $separ . dol_substr($newphone, 6, 2) . $separ . dol_substr($newphone, 8, 3) . $separ . dol_substr($newphone, 11, 2);
 		}
-	} elseif (strtoupper($countrycode) == "CA") {
+	} elseif (dol_strtoupper($countrycode) == "CA") {
 		if (dol_strlen($phone) == 10) {
-			$newphone = ($separ != '' ? '(' : '') . substr($newphone, 0, 3) . ($separ != '' ? ')' : '') . $separ . substr($newphone, 3, 3) . ($separ != '' ? '-' : '') . substr($newphone, 6, 4);
+			$newphone = ($separ != '' ? '(' : '') . dol_substr($newphone, 0, 3) . ($separ != '' ? ')' : '') . $separ . dol_substr($newphone, 3, 3) . ($separ != '' ? '-' : '') . dol_substr($newphone, 6, 4);
 		}
-	} elseif (strtoupper($countrycode) == "PT") { //Portugal
+	} elseif (dol_strtoupper($countrycode) == "PT") { //Portugal
 		if (dol_strlen($phone) == 13) { //ex: +351_ABC_DEF_GHI
-			$newphone = substr($newphone, 0, 4) . $separ . substr($newphone, 4, 3) . $separ . substr($newphone, 7, 3) . $separ . substr($newphone, 10, 3);
+			$newphone = dol_substr($newphone, 0, 4) . $separ . dol_substr($newphone, 4, 3) . $separ . dol_substr($newphone, 7, 3) . $separ . dol_substr($newphone, 10, 3);
 		}
-	} elseif (strtoupper($countrycode) == "SR") { //Suriname
+	} elseif (dol_strtoupper($countrycode) == "SR") { //Suriname
 		if (dol_strlen($phone) == 10) { //ex: +597_ABC_DEF
-			$newphone = substr($newphone, 0, 4) . $separ . substr($newphone, 4, 3) . $separ . substr($newphone, 7, 3);
+			$newphone = dol_substr($newphone, 0, 4) . $separ . dol_substr($newphone, 4, 3) . $separ . dol_substr($newphone, 7, 3);
 		} elseif (dol_strlen($phone) == 11) { //ex: +597_ABC_DEFG
-			$newphone = substr($newphone, 0, 4) . $separ . substr($newphone, 4, 3) . $separ . substr($newphone, 7, 4);
+			$newphone = dol_substr($newphone, 0, 4) . $separ . dol_substr($newphone, 4, 3) . $separ . dol_substr($newphone, 7, 4);
 		}
-	} elseif (strtoupper($countrycode) == "DE") { //Deutschland
+	} elseif (dol_strtoupper($countrycode) == "DE") { //Deutschland
 		if (dol_strlen($phone) == 14) { //ex:  +49_ABCD_EFGH_IJK
-			$newphone = substr($newphone, 0, 3) . $separ . substr($newphone, 3, 4) . $separ . substr($newphone, 7, 4) . $separ . substr($newphone, 11, 3);
+			$newphone = dol_substr($newphone, 0, 3) . $separ . dol_substr($newphone, 3, 4) . $separ . dol_substr($newphone, 7, 4) . $separ . dol_substr($newphone, 11, 3);
 		} elseif (dol_strlen($phone) == 13) { //ex: +49_ABC_DEFG_HIJ
-			$newphone = substr($newphone, 0, 3) . $separ . substr($newphone, 3, 3) . $separ . substr($newphone, 6, 4) . $separ . substr($newphone, 10, 3);
+			$newphone = dol_substr($newphone, 0, 3) . $separ . dol_substr($newphone, 3, 3) . $separ . dol_substr($newphone, 6, 4) . $separ . dol_substr($newphone, 10, 3);
 		}
-	} elseif (strtoupper($countrycode) == "ES") { //Spain
+	} elseif (dol_strtoupper($countrycode) == "ES") { //Spain
 		if (dol_strlen($phone) == 12) { //ex:  +34_ABC_DEF_GHI
-			$newphone = substr($newphone, 0, 3) . $separ . substr($newphone, 3, 3) . $separ . substr($newphone, 6, 3) . $separ . substr($newphone, 9, 3);
+			$newphone = dol_substr($newphone, 0, 3) . $separ . dol_substr($newphone, 3, 3) . $separ . dol_substr($newphone, 6, 3) . $separ . dol_substr($newphone, 9, 3);
 		}
-	} elseif (strtoupper($countrycode) == "BF") { // Burkina Faso
+	} elseif (dol_strtoupper($countrycode) == "BF") { // Burkina Faso
 		if (dol_strlen($phone) == 12) { //ex :  +22 A BC_DE_FG_HI
-			$newphone = substr($newphone, 0, 3) . $separ . substr($newphone, 3, 1) . $separ . substr($newphone, 4, 2) . $separ . substr($newphone, 6, 2) . $separ . substr($newphone, 8, 2) . $separ . substr($newphone, 10, 2);
+			$newphone = dol_substr($newphone, 0, 3) . $separ . dol_substr($newphone, 3, 1) . $separ . dol_substr($newphone, 4, 2) . $separ . dol_substr($newphone, 6, 2) . $separ . dol_substr($newphone, 8, 2) . $separ . dol_substr($newphone, 10, 2);
 		}
-	} elseif (strtoupper($countrycode) == "RO") { // Roumanie
+	} elseif (dol_strtoupper($countrycode) == "RO") { // Roumanie
 		if (dol_strlen($phone) == 12) { //ex :  +40 AB_CDE_FG_HI
-			$newphone = substr($newphone, 0, 3) . $separ . substr($newphone, 3, 2) . $separ . substr($newphone, 5, 3) . $separ . substr($newphone, 8, 2) . $separ . substr($newphone, 10, 2);
+			$newphone = dol_substr($newphone, 0, 3) . $separ . dol_substr($newphone, 3, 2) . $separ . dol_substr($newphone, 5, 3) . $separ . dol_substr($newphone, 8, 2) . $separ . dol_substr($newphone, 10, 2);
 		}
-	} elseif (strtoupper($countrycode) == "TR") { //Turquie
+	} elseif (dol_strtoupper($countrycode) == "TR") { //Turquie
 		if (dol_strlen($phone) == 13) { //ex :  +90 ABC_DEF_GHIJ
-			$newphone = substr($newphone, 0, 3) . $separ . substr($newphone, 3, 3) . $separ . substr($newphone, 6, 3) . $separ . substr($newphone, 9, 4);
+			$newphone = dol_substr($newphone, 0, 3) . $separ . dol_substr($newphone, 3, 3) . $separ . dol_substr($newphone, 6, 3) . $separ . dol_substr($newphone, 9, 4);
 		}
-	} elseif (strtoupper($countrycode) == "US") { //Etat-Unis
+	} elseif (dol_strtoupper($countrycode) == "US") { //Etat-Unis
 		if (dol_strlen($phone) == 12) { //ex: +1 ABC_DEF_GHIJ
-			$newphone = substr($newphone, 0, 2) . $separ . substr($newphone, 2, 3) . $separ . substr($newphone, 5, 3) . $separ . substr($newphone, 8, 4);
+			$newphone = dol_substr($newphone, 0, 2) . $separ . dol_substr($newphone, 2, 3) . $separ . dol_substr($newphone, 5, 3) . $separ . dol_substr($newphone, 8, 4);
 		}
-	} elseif (strtoupper($countrycode) == "MX") { //Mexique
+	} elseif (dol_strtoupper($countrycode) == "MX") { //Mexique
 		if (dol_strlen($phone) == 12) { //ex: +52 ABCD_EFG_HI
-			$newphone = substr($newphone, 0, 3) . $separ . substr($newphone, 3, 4) . $separ . substr($newphone, 7, 3) . $separ . substr($newphone, 10, 2);
+			$newphone = dol_substr($newphone, 0, 3) . $separ . dol_substr($newphone, 3, 4) . $separ . dol_substr($newphone, 7, 3) . $separ . dol_substr($newphone, 10, 2);
 		} elseif (dol_strlen($phone) == 11) { //ex: +52 AB_CD_EF_GH
-			$newphone = substr($newphone, 0, 3) . $separ . substr($newphone, 3, 2) . $separ . substr($newphone, 5, 2) . $separ . substr($newphone, 7, 2) . $separ . substr($newphone, 9, 2);
+			$newphone = dol_substr($newphone, 0, 3) . $separ . dol_substr($newphone, 3, 2) . $separ . dol_substr($newphone, 5, 2) . $separ . dol_substr($newphone, 7, 2) . $separ . dol_substr($newphone, 9, 2);
 		} elseif (dol_strlen($phone) == 13) { //ex: +52 ABC_DEF_GHIJ
-			$newphone = substr($newphone, 0, 3) . $separ . substr($newphone, 3, 3) . $separ . substr($newphone, 6, 3) . $separ . substr($newphone, 9, 4);
+			$newphone = dol_substr($newphone, 0, 3) . $separ . dol_substr($newphone, 3, 3) . $separ . dol_substr($newphone, 6, 3) . $separ . dol_substr($newphone, 9, 4);
 		}
-	} elseif (strtoupper($countrycode) == "ML") { //Mali
+	} elseif (dol_strtoupper($countrycode) == "ML") { //Mali
 		if (dol_strlen($phone) == 12) { //ex: +223 AB_CD_EF_GH
-			$newphone = substr($newphone, 0, 4) . $separ . substr($newphone, 4, 2) . $separ . substr($newphone, 6, 2) . $separ . substr($newphone, 8, 2) . $separ . substr($newphone, 10, 2);
+			$newphone = dol_substr($newphone, 0, 4) . $separ . dol_substr($newphone, 4, 2) . $separ . dol_substr($newphone, 6, 2) . $separ . dol_substr($newphone, 8, 2) . $separ . dol_substr($newphone, 10, 2);
 		}
-	} elseif (strtoupper($countrycode) == "TH") { //Thailand
+	} elseif (dol_strtoupper($countrycode) == "TH") { //Thailand
 		if (dol_strlen($phone) == 11) { //ex: +66_ABC_DE_FGH
-			$newphone = substr($newphone, 0, 3) . $separ . substr($newphone, 3, 3) . $separ . substr($newphone, 6, 2) . $separ . substr($newphone, 8, 3);
+			$newphone = dol_substr($newphone, 0, 3) . $separ . dol_substr($newphone, 3, 3) . $separ . dol_substr($newphone, 6, 2) . $separ . dol_substr($newphone, 8, 3);
 		} elseif (dol_strlen($phone) == 12) { //ex: +66_A_BCD_EF_GHI
-			$newphone = substr($newphone, 0, 3) . $separ . substr($newphone, 3, 1) . $separ . substr($newphone, 4, 3) . $separ . substr($newphone, 7, 2) . $separ . substr($newphone, 9, 3);
+			$newphone = dol_substr($newphone, 0, 3) . $separ . dol_substr($newphone, 3, 1) . $separ . dol_substr($newphone, 4, 3) . $separ . dol_substr($newphone, 7, 2) . $separ . dol_substr($newphone, 9, 3);
 		}
-	} elseif (strtoupper($countrycode) == "MU") {
+	} elseif (dol_strtoupper($countrycode) == "MU") {
 		//Maurice
 		if (dol_strlen($phone) == 11) { //ex: +230_ABC_DE_FG
-			$newphone = substr($newphone, 0, 4) . $separ . substr($newphone, 4, 3) . $separ . substr($newphone, 7, 2) . $separ . substr($newphone, 9, 2);
+			$newphone = dol_substr($newphone, 0, 4) . $separ . dol_substr($newphone, 4, 3) . $separ . dol_substr($newphone, 7, 2) . $separ . dol_substr($newphone, 9, 2);
 		} elseif (dol_strlen($phone) == 12) { //ex: +230_ABCD_EF_GH
-			$newphone = substr($newphone, 0, 4) . $separ . substr($newphone, 4, 4) . $separ . substr($newphone, 8, 2) . $separ . substr($newphone, 10, 2);
+			$newphone = dol_substr($newphone, 0, 4) . $separ . dol_substr($newphone, 4, 4) . $separ . dol_substr($newphone, 8, 2) . $separ . dol_substr($newphone, 10, 2);
 		}
-	} elseif (strtoupper($countrycode) == "ZA") { //Afrique du sud
+	} elseif (dol_strtoupper($countrycode) == "ZA") { //Afrique du sud
 		if (dol_strlen($phone) == 12) { //ex: +27_AB_CDE_FG_HI
-			$newphone = substr($newphone, 0, 3) . $separ . substr($newphone, 3, 2) . $separ . substr($newphone, 5, 3) . $separ . substr($newphone, 8, 2) . $separ . substr($newphone, 10, 2);
+			$newphone = dol_substr($newphone, 0, 3) . $separ . dol_substr($newphone, 3, 2) . $separ . dol_substr($newphone, 5, 3) . $separ . dol_substr($newphone, 8, 2) . $separ . dol_substr($newphone, 10, 2);
 		}
-	} elseif (strtoupper($countrycode) == "SY") { //Syrie
+	} elseif (dol_strtoupper($countrycode) == "SY") { //Syrie
 		if (dol_strlen($phone) == 12) { //ex: +963_AB_CD_EF_GH
-			$newphone = substr($newphone, 0, 4) . $separ . substr($newphone, 4, 2) . $separ . substr($newphone, 6, 2) . $separ . substr($newphone, 8, 2) . $separ . substr($newphone, 10, 2);
+			$newphone = dol_substr($newphone, 0, 4) . $separ . dol_substr($newphone, 4, 2) . $separ . dol_substr($newphone, 6, 2) . $separ . dol_substr($newphone, 8, 2) . $separ . dol_substr($newphone, 10, 2);
 		} elseif (dol_strlen($phone) == 13) { //ex: +963_AB_CD_EF_GHI
-			$newphone = substr($newphone, 0, 4) . $separ . substr($newphone, 4, 2) . $separ . substr($newphone, 6, 2) . $separ . substr($newphone, 8, 2) . $separ . substr($newphone, 10, 3);
+			$newphone = dol_substr($newphone, 0, 4) . $separ . dol_substr($newphone, 4, 2) . $separ . dol_substr($newphone, 6, 2) . $separ . dol_substr($newphone, 8, 2) . $separ . dol_substr($newphone, 10, 3);
 		}
-	} elseif (strtoupper($countrycode) == "AE") { //Emirats Arabes Unis
+	} elseif (dol_strtoupper($countrycode) == "AE") { //Emirats Arabes Unis
 		if (dol_strlen($phone) == 12) { //ex: +971_ABC_DEF_GH
-			$newphone = substr($newphone, 0, 4) . $separ . substr($newphone, 4, 3) . $separ . substr($newphone, 7, 3) . $separ . substr($newphone, 10, 2);
+			$newphone = dol_substr($newphone, 0, 4) . $separ . dol_substr($newphone, 4, 3) . $separ . dol_substr($newphone, 7, 3) . $separ . dol_substr($newphone, 10, 2);
 		} elseif (dol_strlen($phone) == 13) { //ex: +971_ABC_DEF_GHI
-			$newphone = substr($newphone, 0, 4) . $separ . substr($newphone, 4, 3) . $separ . substr($newphone, 7, 3) . $separ . substr($newphone, 10, 3);
+			$newphone = dol_substr($newphone, 0, 4) . $separ . dol_substr($newphone, 4, 3) . $separ . dol_substr($newphone, 7, 3) . $separ . dol_substr($newphone, 10, 3);
 		} elseif (dol_strlen($phone) == 14) { //ex: +971_ABC_DEF_GHIK
-			$newphone = substr($newphone, 0, 4) . $separ . substr($newphone, 4, 3) . $separ . substr($newphone, 7, 3) . $separ . substr($newphone, 10, 4);
+			$newphone = dol_substr($newphone, 0, 4) . $separ . dol_substr($newphone, 4, 3) . $separ . dol_substr($newphone, 7, 3) . $separ . dol_substr($newphone, 10, 4);
 		}
-	} elseif (strtoupper($countrycode) == "DZ") { //Algeria
+	} elseif (dol_strtoupper($countrycode) == "DZ") { //Algeria
 		if (dol_strlen($phone) == 13) { //ex: +213_ABC_DEF_GHI
-			$newphone = substr($newphone, 0, 4) . $separ . substr($newphone, 4, 3) . $separ . substr($newphone, 7, 3) . $separ . substr($newphone, 10, 3);
+			$newphone = dol_substr($newphone, 0, 4) . $separ . dol_substr($newphone, 4, 3) . $separ . dol_substr($newphone, 7, 3) . $separ . dol_substr($newphone, 10, 3);
 		}
-	} elseif (strtoupper($countrycode) == "BE") { //Belgique
+	} elseif (dol_strtoupper($countrycode) == "BE") { //Belgique
 		if (dol_strlen($phone) == 11) { //ex: +32_ABC_DE_FGH
-			$newphone = substr($newphone, 0, 3) . $separ . substr($newphone, 3, 3) . $separ . substr($newphone, 6, 2) . $separ . substr($newphone, 8, 3);
+			$newphone = dol_substr($newphone, 0, 3) . $separ . dol_substr($newphone, 3, 3) . $separ . dol_substr($newphone, 6, 2) . $separ . dol_substr($newphone, 8, 3);
 		} elseif (dol_strlen($phone) == 12) { //ex: +32_ABC_DEF_GHI
-			$newphone = substr($newphone, 0, 3) . $separ . substr($newphone, 3, 3) . $separ . substr($newphone, 6, 3) . $separ . substr($newphone, 9, 3);
+			$newphone = dol_substr($newphone, 0, 3) . $separ . dol_substr($newphone, 3, 3) . $separ . dol_substr($newphone, 6, 3) . $separ . dol_substr($newphone, 9, 3);
 		}
-	} elseif (strtoupper($countrycode) == "PF") { //French Polynesia
+	} elseif (dol_strtoupper($countrycode) == "PF") { //French Polynesia
 		if (dol_strlen($phone) == 12) { //ex: +689_AB_CD_EF_GH
-			$newphone = substr($newphone, 0, 4) . $separ . substr($newphone, 4, 2) . $separ . substr($newphone, 6, 2) . $separ . substr($newphone, 8, 2) . $separ . substr($newphone, 10, 2);
+			$newphone = dol_substr($newphone, 0, 4) . $separ . dol_substr($newphone, 4, 2) . $separ . dol_substr($newphone, 6, 2) . $separ . dol_substr($newphone, 8, 2) . $separ . dol_substr($newphone, 10, 2);
 		}
-	} elseif (strtoupper($countrycode) == "CO") { //Colombie
+	} elseif (dol_strtoupper($countrycode) == "CO") { //Colombie
 		if (dol_strlen($phone) == 13) { //ex: +57_ABC_DEF_GH_IJ
-			$newphone = substr($newphone, 0, 3) . $separ . substr($newphone, 3, 3) . $separ . substr($newphone, 6, 3) . $separ . substr($newphone, 9, 2) . $separ . substr($newphone, 11, 2);
+			$newphone = dol_substr($newphone, 0, 3) . $separ . dol_substr($newphone, 3, 3) . $separ . dol_substr($newphone, 6, 3) . $separ . dol_substr($newphone, 9, 2) . $separ . dol_substr($newphone, 11, 2);
 		}
-	} elseif (strtoupper($countrycode) == "JO") { //Jordanie
+	} elseif (dol_strtoupper($countrycode) == "JO") { //Jordanie
 		if (dol_strlen($phone) == 12) { //ex: +962_A_BCD_EF_GH
-			$newphone = substr($newphone, 0, 4) . $separ . substr($newphone, 4, 1) . $separ . substr($newphone, 5, 3) . $separ . substr($newphone, 8, 2) . $separ . substr($newphone, 10, 2);
+			$newphone = dol_substr($newphone, 0, 4) . $separ . dol_substr($newphone, 4, 1) . $separ . dol_substr($newphone, 5, 3) . $separ . dol_substr($newphone, 8, 2) . $separ . dol_substr($newphone, 10, 2);
 		}
-	} elseif (strtoupper($countrycode) == "JM") { //Jamaica
+	} elseif (dol_strtoupper($countrycode) == "JM") { //Jamaica
 		if (dol_strlen($newphone) == 12) { //ex: +1867_ABC_DEFG
-			$newphone = substr($newphone, 0, 5) . $separ . substr($newphone, 5, 3) . $separ . substr($newphone, 8, 4);
+			$newphone = dol_substr($newphone, 0, 5) . $separ . dol_substr($newphone, 5, 3) . $separ . dol_substr($newphone, 8, 4);
 		}
-	} elseif (strtoupper($countrycode) == "MG") { //Madagascar
+	} elseif (dol_strtoupper($countrycode) == "MG") { //Madagascar
 		if (dol_strlen($phone) == 13) { //ex: +261_AB_CD_EFG_HI
-			$newphone = substr($newphone, 0, 4) . $separ . substr($newphone, 4, 2) . $separ . substr($newphone, 6, 2) . $separ . substr($newphone, 8, 3) . $separ . substr($newphone, 11, 2);
+			$newphone = dol_substr($newphone, 0, 4) . $separ . dol_substr($newphone, 4, 2) . $separ . dol_substr($newphone, 6, 2) . $separ . dol_substr($newphone, 8, 3) . $separ . dol_substr($newphone, 11, 2);
 		}
-	} elseif (strtoupper($countrycode) == "GB") { //Royaume uni
+	} elseif (dol_strtoupper($countrycode) == "GB") { //Royaume uni
 		if (dol_strlen($phone) == 13) { //ex: +44_ABCD_EFG_HIJ
-			$newphone = substr($newphone, 0, 3) . $separ . substr($newphone, 3, 4) . $separ . substr($newphone, 7, 3) . $separ . substr($newphone, 10, 3);
+			$newphone = dol_substr($newphone, 0, 3) . $separ . dol_substr($newphone, 3, 4) . $separ . dol_substr($newphone, 7, 3) . $separ . dol_substr($newphone, 10, 3);
 		}
-	} elseif (strtoupper($countrycode) == "CH") { //Suisse
+	} elseif (dol_strtoupper($countrycode) == "CH") { //Suisse
 		if (dol_strlen($phone) == 12) { //ex: +41_AB_CDE_FG_HI
-			$newphone = substr($newphone, 0, 3) . $separ . substr($newphone, 3, 2) . $separ . substr($newphone, 5, 3) . $separ . substr($newphone, 8, 2) . $separ . substr($newphone, 10, 2);
+			$newphone = dol_substr($newphone, 0, 3) . $separ . dol_substr($newphone, 3, 2) . $separ . dol_substr($newphone, 5, 3) . $separ . dol_substr($newphone, 8, 2) . $separ . dol_substr($newphone, 10, 2);
 		} elseif (dol_strlen($phone) == 15) { // +41_AB_CDE_FGH_IJKL
-			$newphone = $newphone = substr($newphone, 0, 3) . $separ . substr($newphone, 3, 2) . $separ . substr($newphone, 5, 3) . $separ . substr($newphone, 8, 3) . $separ . substr($newphone, 11, 4);
+			$newphone = $newphone = dol_substr($newphone, 0, 3) . $separ . dol_substr($newphone, 3, 2) . $separ . dol_substr($newphone, 5, 3) . $separ . dol_substr($newphone, 8, 3) . $separ . dol_substr($newphone, 11, 4);
 		}
-	} elseif (strtoupper($countrycode) == "TN") { //Tunisie
+	} elseif (dol_strtoupper($countrycode) == "TN") { //Tunisie
 		if (dol_strlen($phone) == 12) { //ex: +216_AB_CDE_FGH
-			$newphone = substr($newphone, 0, 4) . $separ . substr($newphone, 4, 2) . $separ . substr($newphone, 6, 3) . $separ . substr($newphone, 9, 3);
+			$newphone = dol_substr($newphone, 0, 4) . $separ . dol_substr($newphone, 4, 2) . $separ . dol_substr($newphone, 6, 3) . $separ . dol_substr($newphone, 9, 3);
 		}
-	} elseif (strtoupper($countrycode) == "GF") { //Guyane francaise
+	} elseif (dol_strtoupper($countrycode) == "GF") { //Guyane francaise
 		if (dol_strlen($phone) == 13) { //ex: +594_ABC_DE_FG_HI  (ABC=594 de nouveau)
-			$newphone = substr($newphone, 0, 4) . $separ . substr($newphone, 4, 3) . $separ . substr($newphone, 7, 2) . $separ . substr($newphone, 9, 2) . $separ . substr($newphone, 11, 2);
+			$newphone = dol_substr($newphone, 0, 4) . $separ . dol_substr($newphone, 4, 3) . $separ . dol_substr($newphone, 7, 2) . $separ . dol_substr($newphone, 9, 2) . $separ . dol_substr($newphone, 11, 2);
 		}
-	} elseif (strtoupper($countrycode) == "GP") { //Guadeloupe
+	} elseif (dol_strtoupper($countrycode) == "GP") { //Guadeloupe
 		if (dol_strlen($phone) == 13) { //ex: +590_ABC_DE_FG_HI  (ABC=590 de nouveau)
-			$newphone = substr($newphone, 0, 4) . $separ . substr($newphone, 4, 3) . $separ . substr($newphone, 7, 2) . $separ . substr($newphone, 9, 2) . $separ . substr($newphone, 11, 2);
+			$newphone = dol_substr($newphone, 0, 4) . $separ . dol_substr($newphone, 4, 3) . $separ . dol_substr($newphone, 7, 2) . $separ . dol_substr($newphone, 9, 2) . $separ . dol_substr($newphone, 11, 2);
 		}
-	} elseif (strtoupper($countrycode) == "MQ") { //Martinique
+	} elseif (dol_strtoupper($countrycode) == "MQ") { //Martinique
 		if (dol_strlen($phone) == 13) { //ex: +596_ABC_DE_FG_HI  (ABC=596 de nouveau)
-			$newphone = substr($newphone, 0, 4) . $separ . substr($newphone, 4, 3) . $separ . substr($newphone, 7, 2) . $separ . substr($newphone, 9, 2) . $separ . substr($newphone, 11, 2);
+			$newphone = dol_substr($newphone, 0, 4) . $separ . dol_substr($newphone, 4, 3) . $separ . dol_substr($newphone, 7, 2) . $separ . dol_substr($newphone, 9, 2) . $separ . dol_substr($newphone, 11, 2);
 		}
-	} elseif (strtoupper($countrycode) == "IT") { //Italie
+	} elseif (dol_strtoupper($countrycode) == "IT") { //Italie
 		if (dol_strlen($phone) == 12) { //ex: +39_ABC_DEF_GHI
-			$newphone = substr($newphone, 0, 3) . $separ . substr($newphone, 3, 3) . $separ . substr($newphone, 6, 3) . $separ . substr($newphone, 9, 3);
+			$newphone = dol_substr($newphone, 0, 3) . $separ . dol_substr($newphone, 3, 3) . $separ . dol_substr($newphone, 6, 3) . $separ . dol_substr($newphone, 9, 3);
 		} elseif (dol_strlen($phone) == 13) { //ex: +39_ABC_DEF_GH_IJ
-			$newphone = substr($newphone, 0, 3) . $separ . substr($newphone, 3, 3) . $separ . substr($newphone, 6, 3) . $separ . substr($newphone, 9, 2) . $separ . substr($newphone, 11, 2);
+			$newphone = dol_substr($newphone, 0, 3) . $separ . dol_substr($newphone, 3, 3) . $separ . dol_substr($newphone, 6, 3) . $separ . dol_substr($newphone, 9, 2) . $separ . dol_substr($newphone, 11, 2);
 		}
-	} elseif (strtoupper($countrycode) == "AU") {
+	} elseif (dol_strtoupper($countrycode) == "AU") {
 		//Australie
 		if (dol_strlen($phone) == 12) {
 			//ex: +61_A_BCDE_FGHI
-			$newphone = substr($newphone, 0, 3) . $separ . substr($newphone, 3, 1) . $separ . substr($newphone, 4, 4) . $separ . substr($newphone, 8, 4);
+			$newphone = dol_substr($newphone, 0, 3) . $separ . dol_substr($newphone, 3, 1) . $separ . dol_substr($newphone, 4, 4) . $separ . dol_substr($newphone, 8, 4);
 		}
-	} elseif (strtoupper($countrycode) == "LU") {
+	} elseif (dol_strtoupper($countrycode) == "LU") {
 		// Luxembourg
 		if (dol_strlen($phone) == 10) { // fix 6 digits +352_AA_BB_CC
-			$newphone = substr($newphone, 0, 4) . $separ . substr($newphone, 4, 2) . $separ . substr($newphone, 6, 2) . $separ . substr($newphone, 8, 2);
+			$newphone = dol_substr($newphone, 0, 4) . $separ . dol_substr($newphone, 4, 2) . $separ . dol_substr($newphone, 6, 2) . $separ . dol_substr($newphone, 8, 2);
 		} elseif (dol_strlen($phone) == 11) { // fix 7 digits +352_AA_BB_CC_D
-			$newphone = substr($newphone, 0, 4) . $separ . substr($newphone, 4, 2) . $separ . substr($newphone, 6, 2) . $separ . substr($newphone, 8, 2) . $separ . substr($newphone, 10, 1);
+			$newphone = dol_substr($newphone, 0, 4) . $separ . dol_substr($newphone, 4, 2) . $separ . dol_substr($newphone, 6, 2) . $separ . dol_substr($newphone, 8, 2) . $separ . dol_substr($newphone, 10, 1);
 		} elseif (dol_strlen($phone) == 12) { // fix 8 digits +352_AA_BB_CC_DD
-			$newphone = substr($newphone, 0, 4) . $separ . substr($newphone, 4, 2) . $separ . substr($newphone, 6, 2) . $separ . substr($newphone, 8, 2) . $separ . substr($newphone, 10, 2);
+			$newphone = dol_substr($newphone, 0, 4) . $separ . dol_substr($newphone, 4, 2) . $separ . dol_substr($newphone, 6, 2) . $separ . dol_substr($newphone, 8, 2) . $separ . dol_substr($newphone, 10, 2);
 		} elseif (dol_strlen($phone) == 13) { // mobile +352_AAA_BB_CC_DD
-			$newphone = substr($newphone, 0, 4) . $separ . substr($newphone, 4, 3) . $separ . substr($newphone, 7, 2) . $separ . substr($newphone, 9, 2) . $separ . substr($newphone, 11, 2);
+			$newphone = dol_substr($newphone, 0, 4) . $separ . dol_substr($newphone, 4, 3) . $separ . dol_substr($newphone, 7, 2) . $separ . dol_substr($newphone, 9, 2) . $separ . dol_substr($newphone, 11, 2);
 		}
-	} elseif (strtoupper($countrycode) == "PE") {
+	} elseif (dol_strtoupper($countrycode) == "PE") {
 		// Peru
 		if (dol_strlen($phone) == 7) { // fix 7 numbers without code AAA_BBBB
-			$newphone = substr($newphone, 0, 3) . $separ . substr($newphone, 3, 4);
+			$newphone = dol_substr($newphone, 0, 3) . $separ . dol_substr($newphone, 3, 4);
 		} elseif (dol_strlen($phone) == 9) { // mobile add code and fix 9 numbers +51_AAA_BBB_CCC
 			$newphonewa = '+51' . $newphone;
-			$newphone = substr($newphone, 0, 3) . $separ . substr($newphone, 3, 3) . $separ . substr($newphone, 6, 3);
+			$newphone = dol_substr($newphone, 0, 3) . $separ . dol_substr($newphone, 3, 3) . $separ . dol_substr($newphone, 6, 3);
 		} elseif (dol_strlen($phone) == 11) { // fix 11 numbers +511_AAA_BBBB
-			$newphone = substr($newphone, 0, 4) . $separ . substr($newphone, 4, 3) . $separ . substr($newphone, 7, 4);
+			$newphone = dol_substr($newphone, 0, 4) . $separ . dol_substr($newphone, 4, 3) . $separ . dol_substr($newphone, 7, 4);
 		} elseif (dol_strlen($phone) == 12) { // mobile +51_AAA_BBB_CCC
 			$newphonewa = $newphone;
-			$newphone = substr($newphone, 0, 3) . $separ . substr($newphone, 3, 3) . $separ . substr($newphone, 6, 3) . $separ . substr($newphone, 9, 3);
+			$newphone = dol_substr($newphone, 0, 3) . $separ . dol_substr($newphone, 3, 3) . $separ . dol_substr($newphone, 6, 3) . $separ . dol_substr($newphone, 9, 3);
 		}
-	} elseif (strtoupper($countrycode) == "IN") { //India
+	} elseif (dol_strtoupper($countrycode) == "IN") { //India
 		if (dol_strlen($phone) == 13) {
 			if ($withpicto == 'phone') { //ex: +91_AB_CDEF_GHIJ
-				$newphone = substr($newphone, 0, 3) . $separ . substr($newphone, 3, 2) . $separ . substr($newphone, 5, 4) . $separ . substr($newphone, 9, 4);
+				$newphone = dol_substr($newphone, 0, 3) . $separ . dol_substr($newphone, 3, 2) . $separ . dol_substr($newphone, 5, 4) . $separ . dol_substr($newphone, 9, 4);
 			} else { //ex: +91_ABCDE_FGHIJ
-				$newphone = substr($newphone, 0, 3) . $separ . substr($newphone, 3, 5) . $separ . substr($newphone, 8, 5);
+				$newphone = dol_substr($newphone, 0, 3) . $separ . dol_substr($newphone, 3, 5) . $separ . dol_substr($newphone, 8, 5);
 			}
 		}
 	}
@@ -4305,7 +4305,7 @@ function dol_strlen($string, $stringencoding = 'UTF-8')
 	if (function_exists('mb_strlen')) {
 		return mb_strlen($string, $stringencoding);
 	} else {
-		return strlen($string);
+		return strlen($string);  // @phan-suppress-current-line DolibarrForbiddenFunctionPlugin
 	}
 }
 
@@ -4332,13 +4332,13 @@ function dol_substr($string, $start, $length = null, $stringencoding = '', $trun
 		if (function_exists('mb_substr')) {
 			$ret = mb_substr($string, $start, $length, $stringencoding);
 		} else {
-			$ret = substr($string, $start, $length);
+			$ret = substr($string, $start, $length);  // @phan-suppress-current-line DolibarrForbiddenFunctionPlugin
 		}
 	} else {
 		if (function_exists('mb_strcut')) {
 			$ret = mb_strcut($string, $start, $length, $stringencoding);
 		} else {
-			$ret = substr($string, $start, $length);
+			$ret = substr($string, $start, $length);  // @phan-suppress-current-line DolibarrForbiddenFunctionPlugin
 		}
 	}
 	return $ret;
@@ -5587,15 +5587,15 @@ function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart = '
 		} else {
 			$num = preg_replace('/^.*\-/i', '', $num);
 		}
-		$num = substr("000" . $num, -$level);
+		$num = dol_substr("000" . $num, -$level);
 		if ($level == 1) {
-			$path = substr($num, 0, 1);
+			$path = dol_substr($num, 0, 1);
 		}
 		if ($level == 2) {
-			$path = substr($num, 1, 1) . '/' . substr($num, 0, 1);
+			$path = dol_substr($num, 1, 1) . '/' . dol_substr($num, 0, 1);
 		}
 		if ($level == 3) {
-			$path = substr($num, 2, 1) . '/' . substr($num, 1, 1) . '/' . substr($num, 0, 1);
+			$path = dol_substr($num, 2, 1) . '/' . dol_substr($num, 1, 1) . '/' . dol_substr($num, 0, 1);
 		}
 	} else {
 		// We will enhance here a common way of forging path for document storage.
@@ -5631,7 +5631,7 @@ function dol_mkdir($dir, $dataroot = '', $newmask = '')
 	$dir = dol_sanitizePathName($dir, '_', 0);
 
 	$dir_osencoded = dol_osencode($dir);
-	if (@is_dir($dir_osencoded)) {
+	if (@dol_is_dir($dir_osencoded)) {
 		return 0;
 	}
 
@@ -5658,11 +5658,11 @@ function dol_mkdir($dir, $dataroot = '', $newmask = '')
 			continue; // If the Windows path is incomplete, continue with next directory
 		}
 
-		// Attention, is_dir() can fail event if the directory exists
+		// Attention, dol_is_dir() can fail event if the directory exists
 		// (i.e. according the open_basedir configuration)
 		if ($ccdir) {
 			$ccdir_osencoded = dol_osencode($ccdir);
-			if (!@is_dir($ccdir_osencoded)) {
+			if (!@dol_is_dir($ccdir_osencoded)) {
 				dol_syslog("functions.lib::dol_mkdir: Directory '" . $ccdir . "' is not found (does not exists or is outside open_basedir PHP setting).", LOG_DEBUG);
 
 				umask(0);
@@ -6134,7 +6134,7 @@ function dolCloseUnclosedHtmlTags($text)
 	$opened = array();
 	if (preg_match_all('/<\s*(\/?)([a-zA-Z][a-zA-Z0-9]*)[^>]*?(\/?)\s*>/', $text, $matches, PREG_SET_ORDER)) {
 		foreach ($matches as $match) {
-			$tag = strtolower($match[2]);
+			$tag = dol_strtolower($match[2]);
 			if (in_array($tag, $selfclosing) || !empty($match[3])) {
 				continue;
 			}
@@ -6179,7 +6179,7 @@ function dolGetFirstLineOfText($text, $nboflines = 1, $charset = 'UTF-8')
 				$firstline = '';
 			}
 		}
-		return $firstline . (isset($firstline) && isset($text) && (strlen($firstline) != strlen($text)) ? '...' : '');
+		return $firstline . (isset($firstline) && isset($text) && (dol_strlen($firstline) != dol_strlen($text)) ? '...' : '');
 	} else {
 		$ishtml = 0;
 		if (dol_textishtml($text)) {
@@ -7396,27 +7396,27 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 					if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0) {
 						foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $label) {
 							if ($extrafields->attributes[$object->table_element]['type'][$key] == 'date') {
-								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = dol_print_date($object->array_options['options_' . $key], 'day');
-								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_LOCALE__'] = dol_print_date($object->array_options['options_' . $key], 'day', 'tzserver', $outputlangs);
-								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_RFC__'] = dol_print_date($object->array_options['options_' . $key], 'dayrfc');
+								$substitutionarray['__EXTRAFIELD_' . dol_strtoupper($key) . '__'] = dol_print_date($object->array_options['options_' . $key], 'day');
+								$substitutionarray['__EXTRAFIELD_' . dol_strtoupper($key) . '_LOCALE__'] = dol_print_date($object->array_options['options_' . $key], 'day', 'tzserver', $outputlangs);
+								$substitutionarray['__EXTRAFIELD_' . dol_strtoupper($key) . '_RFC__'] = dol_print_date($object->array_options['options_' . $key], 'dayrfc');
 							} elseif ($extrafields->attributes[$object->table_element]['type'][$key] == 'datetime') {
 								$datetime = $object->array_options['options_' . $key];
-								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = ($datetime != "0000-00-00 00:00:00" ? dol_print_date($datetime, 'dayhour') : '');
-								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_LOCALE__'] = ($datetime != "0000-00-00 00:00:00" ? dol_print_date($datetime, 'dayhour', 'tzserver', $outputlangs) : '');
-								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_DAY_LOCALE__'] = ($datetime != "0000-00-00 00:00:00" ? dol_print_date($datetime, 'day', 'tzserver', $outputlangs) : '');
-								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_RFC__'] = ($datetime != "0000-00-00 00:00:00" ? dol_print_date($datetime, 'dayhourrfc') : '');
+								$substitutionarray['__EXTRAFIELD_' . dol_strtoupper($key) . '__'] = ($datetime != "0000-00-00 00:00:00" ? dol_print_date($datetime, 'dayhour') : '');
+								$substitutionarray['__EXTRAFIELD_' . dol_strtoupper($key) . '_LOCALE__'] = ($datetime != "0000-00-00 00:00:00" ? dol_print_date($datetime, 'dayhour', 'tzserver', $outputlangs) : '');
+								$substitutionarray['__EXTRAFIELD_' . dol_strtoupper($key) . '_DAY_LOCALE__'] = ($datetime != "0000-00-00 00:00:00" ? dol_print_date($datetime, 'day', 'tzserver', $outputlangs) : '');
+								$substitutionarray['__EXTRAFIELD_' . dol_strtoupper($key) . '_RFC__'] = ($datetime != "0000-00-00 00:00:00" ? dol_print_date($datetime, 'dayhourrfc') : '');
 							} elseif ($extrafields->attributes[$object->table_element]['type'][$key] == 'phone') {
-								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = dol_print_phone($object->array_options['options_' . $key]);
+								$substitutionarray['__EXTRAFIELD_' . dol_strtoupper($key) . '__'] = dol_print_phone($object->array_options['options_' . $key]);
 							} elseif ($extrafields->attributes[$object->table_element]['type'][$key] == 'price') {
-								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = $object->array_options['options_' . $key];
-								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_FORMATED__'] = price($object->array_options['options_' . $key]);	// For compatibility
-								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_FORMATTED__'] = price($object->array_options['options_' . $key]);
+								$substitutionarray['__EXTRAFIELD_' . dol_strtoupper($key) . '__'] = $object->array_options['options_' . $key];
+								$substitutionarray['__EXTRAFIELD_' . dol_strtoupper($key) . '_FORMATED__'] = price($object->array_options['options_' . $key]);	// For compatibility
+								$substitutionarray['__EXTRAFIELD_' . dol_strtoupper($key) . '_FORMATTED__'] = price($object->array_options['options_' . $key]);
 							} elseif ($extrafields->attributes[$object->table_element]['type'][$key] == 'select') {
-								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = !empty($object->array_options['options_' . $key]) ? $object->array_options['options_' . $key] : '';
+								$substitutionarray['__EXTRAFIELD_' . dol_strtoupper($key) . '__'] = !empty($object->array_options['options_' . $key]) ? $object->array_options['options_' . $key] : '';
 								$val = $extrafields->attributes[$object->table_element]['param'][$key]['options'][$object->array_options['options_'.$key]] ?? $object->array_options['options_'.$key];
-								$substitutionarray['__EXTRAFIELD_'.strtoupper($key).'_LABEL__'] = $val;
+								$substitutionarray['__EXTRAFIELD_'.dol_strtoupper($key).'_LABEL__'] = $val;
 							} elseif ($extrafields->attributes[$object->table_element]['type'][$key] != 'separator') {
-								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = !empty($object->array_options['options_' . $key]) ? $object->array_options['options_' . $key] : '';
+								$substitutionarray['__EXTRAFIELD_' . dol_strtoupper($key) . '__'] = !empty($object->array_options['options_' . $key]) ? $object->array_options['options_' . $key] : '';
 							}
 						}
 					}
@@ -8127,7 +8127,7 @@ function dolSort($arraytosort)
 function dol_sort_array(&$array, $index, $order = 'asc', $natsort = 0, $case_sensitive = 0, $keepindex = 0)
 {
 	// Clean parameters
-	$order = strtolower($order);
+	$order = dol_strtolower($order);
 
 	if (is_array($array)) {
 		$sizearray = count($array);
@@ -8200,7 +8200,7 @@ function utf8_check($str)
 	$str = (string) $str;	// Sometimes string is an int.
 
 	// We must use here a binary strlen function (so not dol_strlen)
-	$strLength = strlen($str);
+	$strLength = dol_strlen($str);
 	for ($i = 0; $i < $strLength; $i++) {
 		if (ord($str[$i]) < 0x80) {
 			continue; // 0bbbbbbb
@@ -8218,7 +8218,7 @@ function utf8_check($str)
 			return false; // Does not match any model
 		}
 		for ($j = 0; $j < $n; $j++) { // n bytes matching 10bbbbbb follow ?
-			if ((++$i == strlen($str)) || ((ord($str[$i]) & 0xC0) != 0x80)) {
+			if ((++$i == dol_strlen($str)) || ((ord($str[$i]) & 0xC0) != 0x80)) {
 				return false;
 			}
 		}
@@ -9095,13 +9095,13 @@ function getLanguageCodeFromCountryCode($countrycode)
 		return null;
 	}
 
-	if (strtoupper($countrycode) == 'MQ') {
+	if (dol_strtoupper($countrycode) == 'MQ') {
 		return 'fr_CA';
 	}
-	if (strtoupper($countrycode) == 'SE') {
+	if (dol_strtoupper($countrycode) == 'SE') {
 		return 'sv_SE'; // se_SE is Sami/Sweden, and we want in priority sv_SE for SE country
 	}
-	if (strtoupper($countrycode) == 'CH') {
+	if (dol_strtoupper($countrycode) == 'CH') {
 		if ($mysoc->country_code == 'FR') {
 			return 'fr_CH';
 		}
@@ -9290,18 +9290,18 @@ function getLanguageCodeFromCountryCode($countrycode)
 		'zu-ZA',
 	);
 
-	$buildprimarykeytotest = strtolower($countrycode) . '-' . strtoupper($countrycode);
+	$buildprimarykeytotest = dol_strtolower($countrycode) . '-' . dol_strtoupper($countrycode);
 	if (in_array($buildprimarykeytotest, $locales)) {
-		return strtolower($countrycode) . '_' . strtoupper($countrycode);
+		return dol_strtolower($countrycode) . '_' . dol_strtoupper($countrycode);
 	}
 
 	if (function_exists('locale_get_primary_language') && function_exists('locale_get_region')) {    // Need extension php-intl
 		foreach ($locales as $locale) {
 			$locale_language = locale_get_primary_language($locale);
 			$locale_region = locale_get_region($locale);
-			if (strtoupper($countrycode) == $locale_region) {
+			if (dol_strtoupper($countrycode) == $locale_region) {
 				//var_dump($locale.' - '.$locale_language.' - '.$locale_region);
-				return strtolower($locale_language) . '_' . strtoupper($locale_region);
+				return dol_strtolower($locale_language) . '_' . dol_strtoupper($locale_region);
 			}
 		}
 	} else {
@@ -9371,10 +9371,10 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 				if ($posstart > 0) {
 					$posend = strpos($str, ')');
 					if ($posstart > 0) {
-						$res1 = substr($str, $posstart + 1, $posend - $posstart - 1);
+						$res1 = dol_substr($str, $posstart + 1, $posend - $posstart - 1);
 						if (is_numeric($res1)) {
 							$postab = (int) $res1;
-							$values[1] = '+' . substr($str, $posend + 1);
+							$values[1] = '+' . dol_substr($str, $posend + 1);
 						}
 					}
 				}
@@ -9501,7 +9501,7 @@ function dolExplodeIntoArray($string, $delimiter = ';', $kv = '=')
 		foreach ($a as $s) { // each part
 			if ($s) {
 				if ($pos = strpos($s, $kv)) { // key/value delimiter
-					$ka[trim(substr($s, 0, $pos))] = trim(substr($s, $pos + strlen($kv)));
+					$ka[trim(dol_substr($s, 0, $pos))] = trim(dol_substr($s, $pos + dol_strlen($kv)));
 				} else { // key delimiter not found
 					$ka[] = trim($s);
 				}
@@ -9578,7 +9578,7 @@ function dol_getmypid()
 	if (!function_exists('getmypid')) {
 		return mt_rand(99900000, 99965535);
 	} else {
-		return getmypid();	// May be a number on 64 bits (depending on OS)
+		return getmypid();	// May be a number on 64 bits (depending on OS)  // @phan-suppress-current-line DolibarrForbiddenFunctionPlugin
 	}
 }
 
@@ -9749,7 +9749,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0, $sqltoadd =
 					$table = $label = $key = null;
 
 					if (strpos($field, 'ef.') === 0) {
-						$extrafieldName = substr($field, 3);
+						$extrafieldName = dol_substr($field, 3);
 						$extrafields = new ExtraFields($db);
 						$extrafields->fetch_name_optionals_label('product');
 
@@ -10436,7 +10436,7 @@ function getElementProperties($elementType)
 	}
 
 	// Object lines will use parent classpath and module ref
-	if (substr($elementType, -3) == 'det') {
+	if (dol_substr($elementType, -3) == 'det') {
 		$module = preg_replace('/det$/', '', $element);
 		$subelement = preg_replace('/det$/', '', $subelement);
 		$classpath = $module . '/class';
@@ -10745,14 +10745,14 @@ function getElementProperties($elementType)
 	} elseif ($elementType == 'stocktransfer') {
 		$classpath = 'product/stock/stocktransfer/class';
 		$classfile = 'stocktransfer';
-		$classname = 'StockTransfer';	// Not the ucfirst() of the element, so it must be set explicitly
+		$classname = 'StockTransfer';	// Not the dol_ucfirst() of the element, so it must be set explicitly
 		$module = 'stocktransfer';
 		$subelement = 'stocktransfer';
 		$table_element = 'stocktransfer_stocktransfer';
 	} elseif ($elementType == 'job' || $elementType == 'position' || $elementType == 'skill' || $elementType == 'evaluation') {
 		$classpath = 'hrm/class';
 		$classfile = $elementType;
-		$classname = ucfirst($elementType);
+		$classname = dol_ucfirst($elementType);
 		$module = 'hrm';
 		$subelement = $elementType;
 		$table_element = ($elementType == 'position' ? 'hrm_job_user' : 'hrm_'.$elementType);
@@ -10861,10 +10861,10 @@ function getElementProperties($elementType)
 
 
 	if (empty($classfile)) {
-		$classfile = strtolower($subelement);
+		$classfile = dol_strtolower($subelement);
 	}
 	if (empty($classname)) {
-		$classname = ucfirst($subelement);
+		$classname = dol_ucfirst($subelement);
 	}
 	if (empty($classpath)) {
 		$classpath = $module . '/class';
@@ -11470,12 +11470,12 @@ function dolForgeSQLCriteriaCallback($matches)
 	// Test that operand is not a forbidden search field
 	if (!empty($newforbiddenfields)) {
 		$operandwithoutprefix = preg_replace('/^[a-z0-9_]+\./i', '', $operand);	// Remove prefix like t. or o. or s. or u. or d. or ...
-		if (in_array(strtolower($operandwithoutprefix), $newforbiddenfields)) {
+		if (in_array(dol_strtolower($operandwithoutprefix), $newforbiddenfields)) {
 			return '1=1';
 		}
 	}
 
-	$operator = strtoupper(preg_replace('/[^a-z<>!=]/i', '', trim($tmp[1])));
+	$operator = dol_strtoupper(preg_replace('/[^a-z<>!=]/i', '', trim($tmp[1])));
 
 	$realOperator = [
 		'NOTLIKE' => 'NOT LIKE',
@@ -11532,7 +11532,7 @@ function dolForgeSQLCriteriaCallback($matches)
 		// So we can complete format. For example we could complete a year with month and day.
 		$tmpescaped = "'" . $db->escape($regbis[1]) . "'";
 	} else {
-		if (strtoupper($tmpescaped) == 'NULL') {
+		if (dol_strtoupper($tmpescaped) == 'NULL') {
 			$tmpescaped = 'NULL';
 		} elseif (preg_match('/^[0-9]+$/', (string) $tmpescaped)) {	// if only 0-9 chars, no .
 			$tmpescaped = (int) $tmpescaped;
@@ -11543,7 +11543,7 @@ function dolForgeSQLCriteriaCallback($matches)
 		}
 	}
 
-	return '(' . $db->escape($operand) . ' ' . strtoupper($operator) . ' ' . $tmpescaped . ')';
+	return '(' . $db->escape($operand) . ' ' . dol_strtoupper($operator) . ' ' . $tmpescaped . ')';
 }
 
 
