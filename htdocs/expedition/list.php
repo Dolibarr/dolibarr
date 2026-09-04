@@ -362,11 +362,12 @@ if (empty($reshook)) {
 
 					for ($i = 0; $i < $num; $i++) {
 						$desc = ($lines[$i]->desc ? $lines[$i]->desc : '');
+						/*
 						// If we build one invoice for several sendings, we must put the ref of sending on the invoice line
 						if (!empty($createbills_onebythird)) {
 							$desc = dol_concatdesc($desc, $langs->trans("Order").': '.$expdCmdSrc->ref. ' - '. $langs->trans("Shipment").': '.$expd->ref.($expd->date_shipping ? ' - '.dol_print_date($expd->date_shipping, 'day') : ''));
 						}
-
+						*/
 						if ($lines[$i]->subprice < 0 && !getDolGlobalString('INVOICE_KEEP_DISCOUNT_LINES_AS_IN_ORIGIN')) {
 							// Negative line, we create a discount line
 							$discount = new DiscountAbsolute($db);
@@ -429,7 +430,15 @@ if (empty($reshook)) {
 							if (!empty($createbills_onebythird)) {
 								$rang = $TFactThirdNbLines[$expd->socid];
 							}
-
+							// if we insert first line of sending we must insert comment before first line
+							if ($i == 0) {
+								$titleexped = dol_concatdesc("", $langs->trans("Order").': '.$expdCmdSrc->ref. ' - '. $langs->trans("Shipment").': '.$expd->ref.($expd->date_shipping ? ' - '.dol_print_date($expd->date_shipping, 'day') : '')."id".$id_sending);
+								$depth = 1;
+								$subtotal_options = array();
+								$restitle = $objecttmp->addSubtotalLine($langs, $titleexped, (int) $depth, $subtotal_options);
+								$rang++;
+								$TFactThirdNbLines[$expd->socid]++;
+							}
 							$result = $objecttmp->addline(
 								$desc,
 								$lines[$i]->subprice,
