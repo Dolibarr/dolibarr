@@ -55,6 +55,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/takepos.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
@@ -69,8 +70,9 @@ $setcurrency = GETPOST('setcurrency', 'aZ09');
 
 $hookmanager->initHooks(array('takeposfrontend'));
 if (empty($_SESSION["takeposterminal"])) {
-	if (getDolGlobalInt('TAKEPOS_NUM_TERMINALS') == 1) {
-		$_SESSION["takeposterminal"] = 1; // Use terminal 1 if there is only 1 terminal
+	$enabledterminals = takeposEnabledTerminals();
+	if (count($enabledterminals) == 1) {
+		$_SESSION["takeposterminal"] = (int) $enabledterminals[0]; // Use the only usable terminal
 	} elseif (!empty($_COOKIE["takeposterminal"])) {
 		$_SESSION["takeposterminal"] = preg_replace('/[^a-zA-Z0-9_\-]/', '', $_COOKIE["takeposterminal"]); // Restore takeposterminal from previous session
 	}
@@ -1359,10 +1361,8 @@ if (!getDolGlobalString('TAKEPOS_HIDE_HEAD_BAR')) {
 		<h3><?php print $langs->trans("TerminalSelect"); ?></h3>
 	</div>
 	<div class="modal-body">
-		<button type="button" class="block" onclick="location.href='index.php?setterminal=1'"><?php print getDolGlobalString("TAKEPOS_TERMINAL_NAME_1", $langs->trans("TerminalName", 1)); ?></button>
 		<?php
-		$nbloop = getDolGlobalInt('TAKEPOS_NUM_TERMINALS');
-		for ($i = 2; $i <= $nbloop; $i++) {
+		foreach (takeposEnabledTerminals() as $i) {
 			print '<button type="button" class="block" onclick="location.href=\'index.php?setterminal='.$i.'\'">'.getDolGlobalString("TAKEPOS_TERMINAL_NAME_".$i, $langs->trans("TerminalName", $i)).'</button>';
 		}
 		?>

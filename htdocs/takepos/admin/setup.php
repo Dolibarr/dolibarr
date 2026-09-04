@@ -6,6 +6,7 @@
  * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2026       Charlene Benke      <charlene@patas-monkey.com>
+ * Copyright (C) 2026       Jose Martinez       <jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -287,6 +288,13 @@ print '<tr class="oddeven"><td>';
 print $langs->trans("NumberOfTerminals");
 print '<td>';
 print '<input type="number" name="TAKEPOS_NUM_TERMINALS" min="1" class="width50" value="' . getDolGlobalString('TAKEPOS_NUM_TERMINALS', '1') . '">';
+print "</td></tr>\n";
+
+// Allow to disable a terminal individually, without removing it
+print '<tr class="oddeven"><td>';
+print $form->textwithpicto($langs->trans("TakeposAllowTerminalDisabling"), $langs->trans("TakeposAllowTerminalDisablingHelp"));
+print '</td><td>';
+print ajax_constantonoff("TAKEPOS_ALLOW_TERMINAL_DISABLING", array(), $conf->entity, 0, 0, 1, 0);
 print "</td></tr>\n";
 
 // Services

@@ -5,6 +5,7 @@
  * Copyright (C) 2022      Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026      Jose Martinez        <jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -203,6 +204,17 @@ print '<tr class="oddeven"><td class="fieldrequired">'.$langs->trans("TerminalNa
 print '<td>';
 print '<input type="text" name="terminalname'.$terminal.'" value="'.getDolGlobalString("TAKEPOS_TERMINAL_NAME_".$terminal, $langs->trans("TerminalName", $terminal)).'" >';
 print '</td></tr>';
+
+// A disabled terminal is hidden from the terminal selection screen. Its invoices and its
+// reference counter are kept, so it can be enabled again later without losing anything.
+if (getDolGlobalInt('TAKEPOS_ALLOW_TERMINAL_DISABLING')) {
+	print '<tr class="oddeven"><td>';
+	print $form->textwithpicto($langs->trans("TakeposTerminalDisabled"), $langs->trans("TakeposTerminalDisabledHelp"));
+	print '</td>';
+	print '<td>';
+	print ajax_constantonoff("TAKEPOS_TERMINAL_DISABLED_".$terminal, array(), $conf->entity, 0, 0, 1, 0);
+	print '</td></tr>';
+}
 
 print '<tr class="oddeven"><td>'.$langs->trans("ForbidSalesToTheDefaultCustomer").'</td>';
 print '<td>';
