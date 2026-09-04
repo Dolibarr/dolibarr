@@ -406,7 +406,7 @@ class Productbatch extends CommonObject
 	 *  @param	int|''		$sellby   			sell-by date for object - deprecated: a search must be done on batch number
 	 *  @param	string		$batch_number   	batch number for object
 	 *  @param	int			$fk_warehouse		filter on warehouse (use it if you don't have $fk_product_stock)
-	 *  @param	int			$fk_product			filter on product (use it if you don't have $fk_product_stock)
+	 *  @param	int			$fk_product			filter on product (same batch number can exist on several products)
 	 *  @return int          					Return integer <0 if KO, >0 if OK
 	 */
 	public function find($fk_product_stock = 0, $eatby = '', $sellby = '', $batch_number = '', $fk_warehouse = 0, $fk_product = 0)
@@ -429,7 +429,7 @@ class Productbatch extends CommonObject
 			$sql .= ", ".$this->db->prefix()."product_stock as ps";
 			$sql .= " WHERE t.fk_product_stock = ps.rowid AND ps.fk_entrepot = ".((int) $fk_warehouse);
 			if ($fk_product > 0) {
-				 $sql .= " AND ps.fk_product = ".((int) $fk_product);
+				$sql .= " AND ps.fk_product = ".((int) $fk_product);
 			}
 		}
 		if (!empty($eatby)) {

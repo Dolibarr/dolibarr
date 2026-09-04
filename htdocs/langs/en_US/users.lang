@@ -158,6 +158,7 @@ NewToken=New token
 BackToTokenList=Back to token list
 MyTeam=My team
 TotalAPICall=Total API Calls
+OnlyAdminUsersCanDeleteAdminUsers=Only admin users can delete admin users
 TOTP=TOTP (Time-base One-Time Password)
 2FA=Two-factor authentication (2FA)
 UserRemovedFromGroup=User removed from group
