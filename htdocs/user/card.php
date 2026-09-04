@@ -279,7 +279,7 @@ if (empty($reshook)) {
 			}
 		}
 	}
-
+;
 	// Action Add user
 	if ($action == 'add' && $permissiontoadd) {
 		$error = 0;
@@ -334,6 +334,9 @@ if (empty($reshook)) {
 
 			$object->email = preg_replace('/\s+/', '', GETPOST("email", 'alphanohtml'));
 			$object->job = GETPOST("job", 'alphanohtml');
+			$object->country_id_job = GETPOSTINT('country_id_job');
+ 			$object->departament_id_job = GETPOSTINT('departament_id_job');
+	
 			$object->signature = GETPOST("signature", 'restricthtml');
 			// restricthtml may swap the value with the literal 'ErrorTooManyLinksIntoHTMLString'
 			// when the html exceeds MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT (see issue #27987).
@@ -520,7 +523,7 @@ if (empty($reshook)) {
 				$object->office_phone = GETPOST("office_phone", 'alphanohtml');
 				$object->office_fax = GETPOST("office_fax", 'alphanohtml');
 				$object->user_mobile = GETPOST("user_mobile", 'alphanohtml');
-
+				$object->departament_id_job = GETPOSTINT('departament_id_job');
 				if (isModEnabled('socialnetworks')) {
 					$object->socialnetworks = array();
 					foreach ($socialnetworks as $key => $value) {
@@ -1542,6 +1545,20 @@ if ($action == 'create' || $action == 'adduserldap') {
 	print '<td>';
 	print '<input class="maxwidth200 maxwidth150onsmartphone" type="text" name="job" value="'.dol_escape_htmltag(GETPOST('job', 'alphanohtml')).'">';
 	print '</td></tr>';
+
+	print '<tr><td>'.$form->editfieldkey('Country', 'country_id_job', '', $object, 0).'</td><td class="maxwidthonsmartphone">';
+ 	print img_picto('', 'country', 'class="pictofixedwidth"');
+ 	print $form->select_country(GETPOSTINT('country_id_job'), 'country_id_job');
+ 	if ($user->admin) {
+ 		print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+ 	}
+ 	print '</td></tr>';
+
+	print '<tr><td>'.$form->editfieldkey('State', 'departament_id_job', '', $object, 0).'</td><td class="maxwidthonsmartphone">';
+ 	print img_picto('', 'state', 'class="pictofixedwidth"');
+ 	print $formcompany->select_state_ajax('country_id_job', GETPOSTINT('departament_id_job'), GETPOSTINT('country_id_job'), 'departament_id_job');
+ 	print '</td></tr>';
+
 
 	if ($permissiontoseesalary) {
 		$langs->load("salaries");
@@ -3152,6 +3169,19 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print '<input type="hidden" name="job" value="'.dol_escape_htmltag($object->job).'">';
 				print dol_escape_htmltag($object->job);
 			}
+			print '</td></tr>';
+			
+			print '<tr><td>'.$form->editfieldkey('Country', 'selectcountry_id', '', $object, 0).'</td><td class="maxwidthonsmartphone">';
+			print img_picto('', 'country', 'class="pictofixedwidth"');
+			print $form->select_country((GETPOSTISSET('country_id_job') ? GETPOSTINT('country_id_job') : $object->country_id_job), 'country_id_job');
+			if ($user->admin) {
+				print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+			}
+ 			print '</td></tr>';
+
+			print '<tr><td>'.$form->editfieldkey('State', 'state_id', '', $object, 0).'</td><td class="maxwidthonsmartphone">';
+			print img_picto('', 'state', 'class="pictofixedwidth"');
+			print $formcompany->select_state_ajax('country_id_job', $object->departament_id_job, $object->country_id_job, 'departament_id_job');
 			print '</td></tr>';
 
 			// Weeklyhours

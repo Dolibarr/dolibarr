@@ -172,3 +172,4 @@ LeaveType = Tipo de saldo de días libres
 HolidayHrInformationsPreviousMonth=Resumen de las ausencias del último mes
 HolidayHrInformationsPreviousMonthTopic=Resumen de vacaciones del mes de __PREVIOUS_MONTH_TEXT__
 HolidayHrInformationsPreviousMonthContent=A continuación encontrará el resumen de las vacaciones correspondientes al mes de __PREVIOUS_MONTH_TEXT__ de la empresa __MYCOMPANY_NAME__.
+Departement=provincia
