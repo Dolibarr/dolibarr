@@ -759,7 +759,7 @@ if ($action == "dosign" && empty($cancel)) {
 						"entity" : \''.dol_escape_js((string) $entity).'\',
 					},
 					success: function(response) {
-						if (response.trim() === "success") {
+						if (response.includes("success")) {
 							console.log("Success on saving signature");
 							window.location.replace(\''.dol_escape_js($urltogo).'\');
 						} else {
