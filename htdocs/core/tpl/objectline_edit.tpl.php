@@ -319,7 +319,7 @@ $coldisplay++;
 	// Discount
 	$coldisplay++;
 	if (($line->info_bits & 2) != 2) {
-		print '<input type="text" class="flat right width40" name="remise_percent" id="remise_percent" value="'.(GETPOSTISSET('remise_percent') ? GETPOST('remise_percent') : ($line->remise_percent ? $line->remise_percent : '')).'"';
+		print '<input type="text" class="flat right width40" name="remise_percent" id="remise_percent" value="'.(GETPOSTISSET('remise_percent') ? GETPOST('remise_percent') : ($line->remise_percent ? price($line->remise_percent, 0, '', 0, 0) : '')).'"';
 		if ($situationinvoicelinewithparent) {
 			print ' readonly';
 		}
