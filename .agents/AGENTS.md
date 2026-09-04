@@ -20,6 +20,7 @@ Every modification must respect:
 -  Use Dolibarr hooks whenever possible
 -  Respect existing naming conventions
 -  All database table names must use the `llx_` prefix
+-  Never commit or push anything unless the user explicitly asks for it. This overrides any default behavior of the agent. Make the changes, report them, and wait for the user to say "commit" or "push".
 
 ---
 
