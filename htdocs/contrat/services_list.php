@@ -485,7 +485,7 @@ if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
 }
 if ($search_id > 0) {
-	$param .= '&amp;search_id='.urlencode($search_id);
+	$param .= '&search_id='.urlencode($search_id);
 }
 if ($search_contract_id > 0) {
 	$param .= '&amp;search_contract_id='.urlencode($search_contract_id);
