@@ -3662,7 +3662,7 @@ class Propal extends CommonObject
 		$this->ref_client = 'NEMICEPS';
 		$this->specimen = 1;
 		$this->socid = 1;
-		$this->date = time();
+		$this->date = dol_now();
 		$this->fin_validite = $this->date + 3600 * 24 * 30;
 		$this->cond_reglement_id   = 1;
 		$this->cond_reglement_code = 'RECEP';
