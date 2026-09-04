@@ -1,4 +1,28 @@
 <?php
+/* Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
+ */
+
+/**
+ * @var CommonObject $object
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $action
+ * @var string $withproject
+ * @var int $withproject
+ * @var int $id
+ * @var string $idcomment
+ */
+'
+@phan-var-force string $action
+@phan-var-force string $withproject
+@phan-var-force int $withproject
+@phan-var-force int $id
+@phan-var-force string $idcomment
+';
 
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
@@ -43,7 +67,7 @@ if ($action !== 'editcomment') {
 
 	$desc = GETPOST('comment_description');
 
-	$doleditor = new DolEditor('comment_description', $desc, '', 80, 'dolibarr_notes', 'In', 0, true, true, ROWS_3, '100%');
+	$doleditor = new DolEditor('comment_description', $desc, '', 80, 'dolibarr_notes', 'In', false, true, true, ROWS_3, '100%');
 	print $doleditor->Create(1);
 
 	print '</td>';
@@ -58,7 +82,7 @@ print '</table></form>';
 // List of comments
 if (!empty($object->comments)) {
 	// Default color for current user
-	$TColors = array($user->id => array('bgcolor'=>'efefef', 'color'=>'555'));
+	$TColors = array($user->id => array('bgcolor' => 'efefef', 'color' => '555'));
 	$first = true;
 	foreach ($object->comments as $comment) {
 		$fk_user = $comment->fk_user_author;
@@ -70,7 +94,7 @@ if (!empty($object->comments)) {
 				$bgcolor = $userstatic->color;
 			}
 			$color = (colorIsLight($bgcolor)) ? '555' : 'fff';
-			$TColors[$fk_user] = array('bgcolor'=>$bgcolor, 'color'=>$color);
+			$TColors[$fk_user] = array('bgcolor' => $bgcolor, 'color' => $color);
 		}
 		print '<div class="width100p" style="color:#'.$TColors[$fk_user]['color'].'">';
 		if ($fk_user != $user->id) {
@@ -100,7 +124,7 @@ if (!empty($object->comments)) {
 
 		print '<div class="comment-description comment-cell">';
 		if ($action === 'editcomment' && $comment->id == $idcomment) {
-			$doleditor = new DolEditor('comment_description', $comment->description, '', 80, 'dolibarr_notes', 'In', 0, true, true, ROWS_3, '100%');
+			$doleditor = new DolEditor('comment_description', $comment->description, '', 80, 'dolibarr_notes', 'In', false, true, true, ROWS_3, '100%');
 			print $doleditor->Create(1);
 		} else {
 			print $comment->description;
@@ -115,12 +139,12 @@ if (!empty($object->comments)) {
 		} else {
 			if ($fk_user == $user->id || $user->admin == 1) {
 				print '<a class="comment-edit comment-cell" href="'.$varpage.'?action=editcomment&token='.newToken().'&id='.$id.'&withproject=1&idcomment='.$comment->id.'#comment" title="'.$langs->trans('Edit').'">';
-				print img_picto('', 'edit.png');
+				print img_picto('', 'edit');
 				print '</a>';
 			}
 			if (($first && $fk_user == $user->id) || $user->admin == 1) {
 				print '<a class="comment-delete comment-cell" href="'.$varpage.'?action=deletecomment&token='.newToken().'&id='.$id.'&withproject=1&idcomment='.$comment->id.'" title="'.$langs->trans('Delete').'">';
-				print img_picto('', 'delete.png');
+				print img_picto('', 'delete');
 				print '</a>';
 			}
 		}

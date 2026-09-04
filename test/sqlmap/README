@@ -68,5 +68,3 @@ Without prefix
 ./sqlmap.py -A "securitytest" --threads=4 -u "http://localhostdev/" --crawl=2 --crawl-exclude="logout|user\/card|custom\/" \
   --skip=sortorder --skip=sortfield --dbms=mysql --os=linux --technique=B --batch --skip-waf \
   --cookie="DOLSESSID_xxxxxxxxx=yyyyyyyyyyyyyyyy;" -v
-
-

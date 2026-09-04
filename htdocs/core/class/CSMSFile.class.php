@@ -3,7 +3,7 @@
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,21 +65,48 @@ class CSMSFile
 	 * @var string address to
 	 */
 	public $addr_to;
+	/**
+	 * @var int
+	 */
 	public $deferred;
+	/**
+	 * @var int
+	 */
 	public $priority;
+	/**
+	 * @var int
+	 */
 	public $class;
+	/**
+	 * @var string
+	 */
 	public $message;
 	/**
 	 * @var bool
 	 */
 	public $nostop;
 
+	/**
+	 * @var int
+	 */
 	public $socid;
+	/**
+	 * @var int
+	 */
 	public $contact_id;
+	/**
+	 * @var int
+	 */
 	public $member_id;
 
+	/**
+	 * @var int
+	 */
 	public $fk_project;
 
+	/**
+	 * @var int
+	 */
 	public $deliveryreceipt;
 
 
@@ -169,6 +196,7 @@ class CSMSFile
 
 					if (class_exists($classname)) {
 						$sms = new $classname($this->db);
+						'@phan-var-force OvhSms $sms';  // Using original for analysis
 
 						$sms->expe = $this->addr_from;
 						$sms->dest = $this->addr_to;
@@ -218,7 +246,7 @@ class CSMSFile
 			dol_syslog("CSMSFile::sendfile: ".$this->error, LOG_WARNING);
 		}
 
-		error_reporting($errorlevel); // Reactive niveau erreur origine
+		error_reporting($errorlevel); // Restore original error reporting level
 
 		return $res;
 	}

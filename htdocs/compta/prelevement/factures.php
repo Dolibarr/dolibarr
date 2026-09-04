@@ -3,6 +3,8 @@
  * Copyright (C) 2005-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2012 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,8 +36,19 @@ require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories', 'bills', 'companies', 'withdrawals', 'salaries', 'suppliers'));
+
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : str_replace('_', '', basename(dirname(__FILE__)).basename(__FILE__, '.php')); // To manage different context of search
+$optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
 // Get supervariables
 $id = GETPOSTINT('id');
@@ -94,7 +107,6 @@ $thirdpartytmp = new Societe($db);
 llxHeader('', $langs->trans("WithdrawalsReceipts"));
 
 if ($id > 0 || $ref) {
-	$object->fetch($id, $ref);
 	if (empty($object->id)) {
 		$langs->load('errors');
 		echo '<div class="error">'.$langs->trans("ErrorRecordNotFound").'</div>';
@@ -211,7 +223,8 @@ if ($id > 0 || $ref) {
 if ($salaryBonPl) {
 	$sql = "SELECT pf.rowid, p.type,";
 	$sql .= " f.rowid as salaryid, f.ref as ref, f.amount,";
-	$sql .= " u.rowid as userid, u.firstname, u.lastname, pl.statut as status, pl.amount as amount_requested";
+	$sql .= " u.rowid as userid, u.firstname, u.lastname,";
+	$sql .= " pl.statut as status, pl.amount as amount_requested";
 	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."prelevement_lignes as pl ON pl.fk_prelevement_bons = p.rowid";
 	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."prelevement as pf ON pf.fk_prelevement_lignes = pl.rowid";
@@ -230,7 +243,8 @@ if ($salaryBonPl) {
 	if ($object->type == 'bank-transfer') {
 		$sql .= " f.ref_supplier,";
 	}
-	$sql .= " s.rowid as socid, s.nom as name, pl.statut as status, pl.amount as amount_requested";
+	$sql .= " s.rowid as socid, s.nom as name,";
+	$sql .= " pl.statut as status, pl.amount as amount_requested";
 	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p,";
 	$sql .= " ".MAIN_DB_PREFIX."prelevement_lignes as pl,";
 	$sql .= " ".MAIN_DB_PREFIX."prelevement as pf";
@@ -266,7 +280,7 @@ $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$resql = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($resql);
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -284,7 +298,7 @@ if ($resql) {
 	}
 
 	// Lines of title fields
-	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" id="searchFormList" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	if ($optioncss != '') {
 		print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	}
@@ -311,13 +325,17 @@ if ($resql) {
 		print_liste_field_titre("RefSupplierShort", $_SERVER["PHP_SELF"], "f.ref_supplier", '', $param, '', $sortfield, $sortorder);
 	}
 	print_liste_field_titre(($salaryBonPl ? "Employee" : "ThirdParty"), $_SERVER["PHP_SELF"], "s.nom", '', $param, '', $sortfield, $sortorder);
-	print_liste_field_titre(($salaryBonPl ? "AmountSalary" : "AmountInvoice"), $_SERVER["PHP_SELF"], "f.total_ttc", "", $param, 'class="right"', $sortfield, $sortorder);
-	print_liste_field_titre("AmountRequested", $_SERVER["PHP_SELF"], "pl.amount", "", $param, 'class="right"', $sortfield, $sortorder);
-	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "", "", $param, 'align="center"', $sortfield, $sortorder);
+	print_liste_field_titre(($salaryBonPl ? "AmountSalary" : "AmountInvoice"), $_SERVER["PHP_SELF"], "f.total_ttc", "", $param, '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre("AmountRequested", $_SERVER["PHP_SELF"], "pl.amount", "", $param, '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "", "", $param, '"', $sortfield, $sortorder, 'center ');
 	print "</tr>\n";
 
 	$totalinvoices = 0;
 	$totalamount_requested = 0;
+	$salarytmp = null;
+	$usertmp = null;
+	$invoicetmpcustomer = null;
+	$invoicetmpsupplier = null;
 
 	if ($salaryBonPl) {
 		$salarytmp = new Salary($db);
@@ -337,7 +355,7 @@ if ($resql) {
 			$salarytmp->fetch($obj->salaryid);
 			$usertmp->fetch($obj->userid);
 			$itemurl = $salarytmp->getNomUrl(1);
-			$partyurl = $usertmp->getNomUrl(1);
+			$partyurl = $usertmp->getNomUrl(-1);
 		} elseif ($invoicetmpcustomer instanceof Facture && $invoicetmpsupplier instanceof FactureFournisseur) {
 			if ($obj->type == 'bank-transfer') {
 				$invoicetmp = $invoicetmpsupplier;
@@ -413,8 +431,10 @@ if ($resql) {
 		print "</td>\n";
 		print '<td class="right">';
 		// If the page show all record (no pagination) and total does not match total of file, we show a warning. Should not happen.
-		if (($nbtotalofrecords <= $num) && $totalamount_requested != $object->amount) {
-			print img_warning("AmountOfFileDiffersFromSumOfInvoices");
+		if (($nbtotalofrecords <= $num) && $totalamount_requested != (float) $object->amount) {
+			$langs->load("errors");
+			// Warning, amount of file (%s) differs from the sum of lines (%s)
+			print img_warning($langs->trans("WarningAmountOfFileDiffersFromSumOfLines", price((float) $object->amount), price($totalamount_requested)));
 		}
 		print price($totalamount_requested);
 		print "</td>\n";

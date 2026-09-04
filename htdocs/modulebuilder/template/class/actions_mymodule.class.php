@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2023		Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) ---Replace with your own copyright and developer email---
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -102,25 +103,24 @@ class ActionsMyModule extends CommonHookActions
 	 */
 	public function doActions($parameters, &$object, &$action, $hookmanager)
 	{
-		global $conf, $user, $langs;
-
 		$error = 0; // Error counter
 
 		/* print_r($parameters); print_r($object); echo "action: " . $action; */
-		// @phan-suppress-next-line PhanPluginEmptyStatementIf
 		if (in_array($parameters['currentcontext'], array('somecontext1', 'somecontext2'))) {	    // do something only for the context 'somecontext1' or 'somecontext2'
 			// Do what you want here...
 			// You can for example load and use call global vars like $fieldstosearchall to overwrite them, or update the database depending on $action and GETPOST values.
+
+			if (!$error) {
+				$this->results = array('myreturn' => 999);
+				$this->resprints = 'A text to show';
+				return 0; // or return 1 to replace standard code
+			} else {
+				$this->errors[] = 'Error message';
+				return -1;
+			}
 		}
 
-		if (!$error) {
-			$this->results = array('myreturn' => 999);
-			$this->resprints = 'A text to show';
-			return 0; // or return 1 to replace standard code
-		} else {
-			$this->errors[] = 'Error message';
-			return -1;
-		}
+		return 0;
 	}
 
 
@@ -145,16 +145,18 @@ class ActionsMyModule extends CommonHookActions
 			foreach ($parameters['toselect'] as $objectid) {
 				// Do action on each object id
 			}
+
+			if (!$error) {
+				$this->results = array('myreturn' => 999);
+				$this->resprints = 'A text to show';
+				return 0; // or return 1 to replace standard code
+			} else {
+				$this->errors[] = 'Error message';
+				return -1;
+			}
 		}
 
-		if (!$error) {
-			$this->results = array('myreturn' => 999);
-			$this->resprints = 'A text to show';
-			return 0; // or return 1 to replace standard code
-		} else {
-			$this->errors[] = 'Error message';
-			return -1;
-		}
+		return 0;
 	}
 
 
@@ -163,13 +165,13 @@ class ActionsMyModule extends CommonHookActions
 	 *
 	 * @param	array<string,mixed>	$parameters     Hook metadata (context, etc...)
 	 * @param	CommonObject		$object         The object to process (an invoice if you are in invoice module, a propale in propale's module, etc...)
-	 * @param	?string	$action						Current action (if set). Generally create or edit or null
-	 * @param	HookManager	$hookmanager			Hook manager propagated to allow calling another hook
+	 * @param	?string				$action			Current action (if set). Generally create or edit or null
+	 * @param	HookManager			$hookmanager	Hook manager propagated to allow calling another hook
 	 * @return	int									Return integer < 0 on error, 0 on success, 1 to replace standard code
 	 */
 	public function addMoreMassActions($parameters, &$object, &$action, $hookmanager)
 	{
-		global $conf, $user, $langs;
+		global $langs;
 
 		$error = 0; // Error counter
 		$disabled = 1;
@@ -212,7 +214,8 @@ class ActionsMyModule extends CommonHookActions
 
 		/* print_r($parameters); print_r($object); echo "action: " . $action; */
 		// @phan-suppress-next-line PhanPluginEmptyStatementIf
-		if (in_array($parameters['currentcontext'], array('somecontext1', 'somecontext2'))) {		// do something only for the context 'somecontext1' or 'somecontext2'
+		if (in_array($parameters['currentcontext'], array('somecontext1', 'somecontext2'))) {
+			// do something only for the context 'somecontext1' or 'somecontext2'
 		}
 
 		return $ret;
@@ -299,13 +302,14 @@ class ActionsMyModule extends CommonHookActions
 	 * Overload the restrictedArea function : check permission on an object
 	 *
 	 * @param	array<string,mixed>	$parameters		Hook metadata (context, etc...)
+	 * @param   CommonObject    	$object         The object to process (an invoice if you are in invoice module, a propale in propale's module, etc...)
 	 * @param	string				$action			Current action (if set). Generally create or edit or null
 	 * @param	HookManager			$hookmanager	Hook manager propagated to allow calling another hook
 	 * @return	int									Return integer <0 if KO,
 	 *												=0 if OK but we want to process standard actions too,
 	 *												>0 if OK and we want to replace standard actions.
 	 */
-	public function restrictedArea($parameters, &$action, $hookmanager)
+	public function restrictedArea($parameters, $object, &$action, $hookmanager)
 	{
 		global $user;
 
@@ -328,7 +332,7 @@ class ActionsMyModule extends CommonHookActions
 	 * @param	array<string,mixed>	$parameters		Array of parameters
 	 * @param	CommonObject		$object			The object to process (an invoice if you are in invoice module, a propale in propale's module, etc...)
 	 * @param	string				$action			'add', 'update', 'view'
-	 * @param	Hookmanager			$hookmanager	Hookmanager
+	 * @param	HookManager			$hookmanager	Hookmanager
 	 * @return	int									Return integer <0 if KO,
 	 *												=0 if OK but we want to process standard actions too,
 	 *												>0 if OK and we want to replace standard actions.
@@ -349,7 +353,7 @@ class ActionsMyModule extends CommonHookActions
 			$counter = count($parameters['head']);
 			$element = $parameters['object']->element;
 			$id = $parameters['object']->id;
-			// verifier le type d'onglet comme member_stats où ça ne doit pas apparaitre
+			// check the tab type like member_stats where it should not appear
 			// if (in_array($element, ['societe', 'member', 'contrat', 'fichinter', 'project', 'propal', 'commande', 'facture', 'order_supplier', 'invoice_supplier'])) {
 			if (in_array($element, ['context1', 'context2'])) {
 				$datacount = 0;
@@ -362,12 +366,12 @@ class ActionsMyModule extends CommonHookActions
 				$parameters['head'][$counter][2] = 'mymoduleemails';
 				$counter++;
 			}
-			if ($counter > 0 && (int) DOL_VERSION < 14) {
+			if ($counter > 0 && (int) DOL_VERSION < 14) {  // @phpstan-ignore-line
 				$this->results = $parameters['head'];
 				// return 1 to replace standard code
 				return 1;
 			} else {
-				// From V14 onwards, $parameters['head'] is modifiable by referende
+				// From V14 onwards, $parameters['head'] is modifiable by reference
 				return 0;
 			}
 		} else {
@@ -376,5 +380,26 @@ class ActionsMyModule extends CommonHookActions
 		}
 	}
 
+
+	/**
+	 * Overload the showLinkToObjectBlock function : add or replace array of object linkable
+	 *
+	 * @param	array<string,mixed>	$parameters		Hook metadata (context, etc...)
+	 * @param	CommonObject		$object			The object to process (an invoice if you are in invoice module, a propale in propale's module, etc...)
+	 * @param	?string				$action			Current action (if set). Generally create or edit or null
+	 * @param	HookManager			$hookmanager	Hook manager propagated to allow calling another hook
+	 * @return	int									Return integer < 0 on error, 0 on success, 1 to replace standard code
+	 */
+	public function showLinkToObjectBlock($parameters, &$object, &$action, $hookmanager)
+	{
+		$myobject = new MyObject($object->db);
+		$this->results = array('myobject@mymodule' => array(
+			'enabled' => isModEnabled('mymodule'),
+			'perms' => 1,
+			'label' => 'LinkToMyObject',
+			'sql' => "SELECT t.rowid, t.ref, t.ref as 'name' FROM " . $this->db->prefix() . $myobject->table_element. " as t "),);
+
+		return 1;
+	}
 	/* Add other hook methods here... */
 }

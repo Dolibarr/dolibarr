@@ -10,7 +10,7 @@ use OAuth\Common\Http\Client\ClientInterface;
 use OAuth\Common\Storage\TokenStorageInterface;
 use OAuth\Common\Http\Uri\UriInterface;
 
-class Microsoft extends AbstractService
+class Microsoft2 extends AbstractService
 {
     const SCOPE_BASIC = 'basic';
     const SCOPE_OFFLINE_ACCESS = 'offline_access';

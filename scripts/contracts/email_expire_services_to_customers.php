@@ -1,11 +1,11 @@
 #!/usr/bin/env php
 <?php
 /*
- * Copyright (C) 2005       Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2013  Laurent Destailleur   <eldy@users.sourceforge.net>
- * Copyright (C) 2013       Juanjo Menent         <jmenent@2byte.es>
- * Copyright (C) 2024		    Frédéric France		    <frederic.france@free.fr>
- * Copyright (C) 2024		    MDW							      <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2005       Rodolphe Quiedeville  	<rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2013       Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2024	    Frédéric France		    <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,7 +55,15 @@ $mode = $argv[1];
 $targettype = $argv[2];
 
 require $path."../../htdocs/master.inc.php";
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functionscli.lib.php';
 require_once DOL_DOCUMENT_ROOT."/core/class/CMailFile.class.php";
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 $langs->loadLangs(array('main', 'contracts'));
 
@@ -72,7 +80,7 @@ $hookmanager->initHooks(array('cli'));
 
 @set_time_limit(0);
 print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
-dol_syslog($script_file." launched with arg ".join(',', $argv));
+dol_syslog($script_file." launched with arg ".implode(',', $argv));
 
 $now = dol_now('tzserver');
 $duration_value = isset($argv[3]) ? $argv[3] : 'none';
@@ -154,7 +162,7 @@ if ($resql) {
 			if ($startbreak) {
 				// Break onto sales representative (new email or cid)
 				if (dol_strlen($oldemail) && $oldemail != 'none' && empty($trackthirdpartiessent[$oldsid.'|'.$oldemail])) {
-					sendEmailTo($mode, $oldemail, $message, $total, $oldlang, $oldtarget, (int) $duration_value);
+					sendEmailToCustomer($mode, $oldemail, $message, price2num($total), $oldlang, $oldtarget, (int) $duration_value);
 					$trackthirdpartiessent[$oldsid.'|'.$oldemail] = 'contact id '.$oldcid;
 				} else {
 					if ($oldemail != 'none') {
@@ -186,7 +194,7 @@ if ($resql) {
 			$outputlangs->loadLangs(array("main", "contracts", "bills", "products"));
 
 			if (dol_strlen($newemail)) {
-				$message .= $outputlangs->trans("Contract")." ".$obj->ref.": ".$outputlangs->trans("Service")." ".dol_concatdesc($obj->plabel, $obj->description)." (".price($obj->total_ttc, 0, $outputlangs, 0, 0, -1, $conf->currency)."), ".$outputlangs->trans("DateEndPlannedShort")." ".dol_print_date($db->jdate($obj->date_fin_validite), 'day')."\n\n";
+				$message .= $outputlangs->trans("Contract")." ".$obj->ref.": ".$outputlangs->trans("Service")." ".dol_concatdesc($obj->plabel, $obj->description)." (".price($obj->total_ttc, 0, $outputlangs, 0, 0, -1, getDolCurrency())."), ".$outputlangs->trans("DateEndPlannedShort")." ".dol_print_date($db->jdate($obj->date_fin_validite), 'day')."\n\n";
 				dol_syslog("email_expire_services_to_customers.php: ".$newemail." ".$message);
 				$foundtoprocess++;
 			}
@@ -208,7 +216,7 @@ if ($resql) {
 		// If there are remaining messages to send in the buffer
 		if ($foundtoprocess) {
 			if (dol_strlen($oldemail) && $oldemail != 'none' && empty($trackthirdpartiessent[$oldsid.'|'.$oldemail])) { // Break onto email (new email)
-				sendEmailTo($mode, $oldemail, $message, $total, $oldlang, $oldtarget, (int) $duration_value);
+				sendEmailToCustomer($mode, $oldemail, $message, price2num($total), $oldlang, $oldtarget, (int) $duration_value);
 				$trackthirdpartiessent[$oldsid.'|'.$oldemail] = 'contact id '.$oldcid;
 			} else {
 				if ($oldemail != 'none') {
@@ -244,7 +252,7 @@ if ($resql) {
  * @param int 		$duration_value		duration value
  * @return int 							Int <0 if KO, >0 if OK
  */
-function sendEmailTo($mode, $oldemail, $message, $total, $userlang, $oldtarget, $duration_value)
+function sendEmailToCustomer($mode, $oldemail, $message, $total, $userlang, $oldtarget, $duration_value)
 {
 	global $conf, $langs;
 
@@ -259,9 +267,9 @@ function sendEmailTo($mode, $oldemail, $message, $total, $userlang, $oldtarget, 
 
 	if ($duration_value) {
 		if ($duration_value > 0) {
-			$title = $newlangs->transnoentities("ListOfServicesToExpireWithDuration", $duration_value);
+			$title = $newlangs->transnoentities("ListOfServicesToExpireWithDuration", (string) $duration_value);
 		} else {
-			$title = $newlangs->transnoentities("ListOfServicesToExpireWithDurationNeg", $duration_value);
+			$title = $newlangs->transnoentities("ListOfServicesToExpireWithDurationNeg", (string) $duration_value);
 		}
 	} else {
 		$title = $newlangs->transnoentities("ListOfServicesToExpire");
@@ -292,7 +300,6 @@ function sendEmailTo($mode, $oldemail, $message, $total, $userlang, $oldtarget, 
 		$allmessage .= "Please, find a summary of the services contracted by you that are about to expire.".($usehtml ? "<br>\n" : "\n").($usehtml ? "<br>\n" : "\n");
 	}
 	$allmessage .= $message.($usehtml ? "<br>\n" : "\n");
-	// $allmessage.= $langs->trans("Total")." = ".price($total,0,$userlang,0,0,-1,$conf->currency).($usehtml?"<br>\n":"\n");
 	if (getDolGlobalString('SCRIPT_EMAIL_EXPIRE_SERVICES_CUSTOMERS_FOOTER')) {
 		$allmessage .= getDolGlobalString('SCRIPT_EMAIL_EXPIRE_SERVICES_CUSTOMERS_FOOTER');
 		if (dol_textishtml(getDolGlobalString('SCRIPT_EMAIL_EXPIRE_SERVICES_CUSTOMERS_FOOTER'))) {

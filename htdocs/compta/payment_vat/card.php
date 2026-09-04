@@ -4,7 +4,7 @@
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2009 Regis Houssin         <regis.houssin@inodbox.com>
  * Copyright (C) 2021      Gauthier VERDOL       <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -38,6 +38,14 @@ if (isModEnabled("bank")) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'banks', 'companies'));
 
@@ -48,8 +56,8 @@ $confirm = GETPOST('confirm');
 if ($user->socid) {
 	$socid = $user->socid;
 }
-// TODO ajouter regle pour restreindre access paiement
-//$result = restrictedArea($user, 'facture', $id,'');
+// TODO add rule to restrict payment access
+//restrictedArea($user, 'facture', $id,'');
 
 $object = new PaymentVAT($db);
 if ($id > 0) {
@@ -79,16 +87,16 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('tax', '
 	}
 }
 
+$outputlangs = $langs;
+
 // Validate social contribution
 /*
-if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->tax->charges->creer)
-{
+if ($action == 'confirm_valide' && $confirm == 'yes' && $user->hasRight('tax', 'charges', '>creer') {
 	$db->begin();
 
 	$result=$object->valide();
 
-	if ($result > 0)
-	{
+	if ($result > 0) {
 		$db->commit();
 
 		$factures=array();	// TODO Get all id of invoices linked to this payment
@@ -110,9 +118,7 @@ if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->tax->char
 
 		header('Location: card.php?id='.$object->id);
 		exit;
-	}
-	else
-	{
+	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 		$db->rollback();
 	}
@@ -209,7 +215,7 @@ $disable_delete = 0;
 $sql = 'SELECT f.rowid as scid, f.label as label, f.paye, f.amount as tva_amount, pf.amount';
 $sql .= ' FROM '.MAIN_DB_PREFIX.'payment_vat as pf,'.MAIN_DB_PREFIX.'tva as f';
 $sql .= ' WHERE pf.fk_tva = f.rowid';
-$sql .= ' AND f.entity = '.$conf->entity;
+$sql .= ' AND f.entity = '.((int) $conf->entity);
 $sql .= ' AND pf.rowid = '.((int) $object->id);
 
 dol_syslog("compta/payment_vat/card.php", LOG_DEBUG);

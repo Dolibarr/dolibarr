@@ -4,6 +4,7 @@
  * Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2020      Josep Lluís Amador   <joseplluis@lliuretic.cat>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,6 +43,14 @@ if (empty($_GET['keysearch']) && !defined('NOREQUIREHTML')) {	// Keep $_GET here
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 
 $htmlname = GETPOST('htmlname', 'aZ09');
 $socid = GETPOSTINT('socid');
@@ -59,10 +68,11 @@ $finished = GETPOSTINT('finished');
 $alsoproductwithnosupplierprice = GETPOSTINT('alsoproductwithnosupplierprice');
 $warehouseStatus = GETPOST('warehousestatus', 'alpha');
 $hidepriceinlabel = GETPOSTINT('hidepriceinlabel');
-$warehouseId = GETPOST('warehouseid', 'int');
+$warehouseId = GETPOSTINT('warehouseid');
 
 // Security check
 restrictedArea($user, 'produit|service|commande|propal|facture', 0, 'product&product');
+
 
 /*
  * Actions
@@ -92,6 +102,7 @@ if ($action == 'fetch' && !empty($id)) {
 		$outref = $object->ref;
 		$outlabel = $object->label;
 		$outlabel_trans = '';
+		$default_unit = $object->fk_unit;
 		$outdesc = $object->description;
 		$outdesc_trans = '';
 		$outtype = $object->type;
@@ -102,7 +113,7 @@ if ($action == 'fetch' && !empty($id)) {
 		$outtva_tx = 0;
 		$outdefault_vat_code = '';
 		$outqty = 1;
-		$outdiscount = 0;
+		$outdiscount = null;								// A discount on product price level is defined only for some price mode (like a price per customer 'PRODUIT_CUSTOMER_PRICES' or a price percustomer and quantity 'PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')
 		$mandatory_period = $object->mandatory_period;
 		$found = false;
 
@@ -112,7 +123,7 @@ if ($action == 'fetch' && !empty($id)) {
 			if (getDolGlobalInt('MAIN_MULTILANGS') && getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE')) {
 				$needchangeaccordingtothirdparty = 1;
 			}
-			if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) {
+			if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')  || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 				$needchangeaccordingtothirdparty = 1;
 			}
 			if ($needchangeaccordingtothirdparty) {
@@ -135,7 +146,7 @@ if ($action == 'fetch' && !empty($id)) {
 				}
 
 				//Set price level according to thirdparty
-				if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) {
+				if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 					$price_level = $thirdpartytemp->price_level;
 				}
 			}
@@ -167,14 +178,14 @@ if ($action == 'fetch' && !empty($id)) {
 		}
 
 		// Multiprice (1 price per level)
-		if (!$found && isset($price_level) && $price_level >= 1 && (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES'))) { // If we need a particular price level (from 1 to 6)
+		if (!$found && isset($price_level) && $price_level >= 1 && (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES'))) { // If we need a particular price level (from 1 to 6)
 			$sql = "SELECT price, price_ttc, price_base_type,";
 			$sql .= " tva_tx, default_vat_code";	// Vat rate and code will be used if PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL is on.
 			$sql .= " FROM ".MAIN_DB_PREFIX."product_price ";
 			$sql .= " WHERE fk_product = ".((int) $id);
 			$sql .= " AND entity IN (".getEntity('productprice').")";
 			$sql .= " AND price_level = ".((int) $price_level);
-			$sql .= " ORDER BY date_price";
+			$sql .= " ORDER BY date_price DESC, rowid";
 			$sql .= " DESC LIMIT 1";
 
 			$result = $db->query($sql);
@@ -200,23 +211,30 @@ if ($action == 'fetch' && !empty($id)) {
 		}
 
 		// Price by customer
-		if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') && !empty($socid)) {
+		if ((getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) && !empty($socid)) {
 			require_once DOL_DOCUMENT_ROOT.'/product/class/productcustomerprice.class.php';
 
 			$prodcustprice = new ProductCustomerPrice($db);
 
-			$filter = array('t.fk_product' => $object->id, 't.fk_soc' => $socid);
+			$filter = array('t.fk_product' => (string) $object->id, 't.fk_soc' => (string) $socid);
 
 			$result = $prodcustprice->fetchAll('', '', 0, 0, $filter);
 			if ($result) {
 				if (count($prodcustprice->lines) > 0) {
-					$found = true;
-					$outprice_ht = price($prodcustprice->lines[0]->price);
-					$outprice_ttc = price($prodcustprice->lines[0]->price_ttc);
-					$outpricebasetype = $prodcustprice->lines[0]->price_base_type;
-					$outtva_tx_formated = price($prodcustprice->lines[0]->tva_tx);
-					$outtva_tx = price2num($prodcustprice->lines[0]->tva_tx);
-					$outdefault_vat_code = $prodcustprice->lines[0]->default_vat_code;
+					$date_now = (int) floor(dol_now() / 86400) * 86400; // date without hours
+					foreach ($prodcustprice->lines as $k => $custprice_line) {
+						if ($custprice_line->date_begin <= $date_now && (empty($custprice_line->date_end) || $date_now <= $custprice_line->date_end)) {
+							$found = true;
+							$outprice_ht = price($custprice_line->price);
+							$outprice_ttc = price($custprice_line->price_ttc);
+							$outpricebasetype = $custprice_line->price_base_type;
+							$outtva_tx_formated = price($custprice_line->tva_tx);
+							$outtva_tx = price2num($custprice_line->tva_tx);
+							$outdefault_vat_code = $custprice_line->default_vat_code;
+							$outdiscount = $custprice_line->discount_percent;
+							break;
+						}
+					}
 				}
 			}
 		}
@@ -243,7 +261,7 @@ if ($action == 'fetch' && !empty($id)) {
 			$tmpvatwithcode = get_default_tva($mysoc, $thirdparty_buyer, $id, 0);
 
 			if (!is_numeric($tmpvatwithcode) || $tmpvatwithcode != -1) {
-				$reg =array();
+				$reg = array();
 				if (preg_match('/(.+)\s\((.+)\)/', $tmpvatwithcode, $reg)) {
 					$outtva_tx = price2num($reg[1]);
 					$outtva_tx_formated = price($outtva_tx);
@@ -253,6 +271,17 @@ if ($action == 'fetch' && !empty($id)) {
 					$outtva_tx_formated = price($outtva_tx);
 					$outdefault_vat_code = '';
 				}
+			}
+
+			// The VAT rate above was just changed to the one applicable to this buyer, but price_ht/
+			// price_ttc are still whatever was set for the product/price line, so they can now be an
+			// inconsistent triple (e.g. a price defined as tax included, VAT rate now 0 for an EU
+			// reverse-charge buyer, but price_ttc is still the original tax-included amount). Off by
+			// default to keep historical behavior (price_ttc unchanged, whatever VAT rate applies);
+			// when enabled, price_ht is kept as the fixed reference and price_ttc is recomputed from
+			// it and the buyer's actual VAT rate instead.
+			if (getDolGlobalString('PRODUIT_RECALCULATE_TTC_ACCORDING_TO_BUYER_VAT') && isset($outprice_ht)) {
+				$outprice_ttc = price((float) price2num($outprice_ht) * (1 + ($outtva_tx / 100)));
 			}
 		}
 
@@ -277,13 +306,19 @@ if ($action == 'fetch' && !empty($id)) {
 			'qty' => $outqty,
 			'discount' => $outdiscount,
 			'mandatory_period' => $mandatory_period,
-			'array_options'=>$object->array_options
+
+			'array_options' => $object->array_options,
+
+			'default_unit' => $default_unit
 		);
 	}
 
 	echo json_encode($outjson);
 } else {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+	if (!isset($form) || !is_object($form)) {
+		$form = new Form($db);
+	}
 
 	$langs->loadLangs(array("main", "products"));
 
@@ -310,14 +345,11 @@ if ($action == 'fetch' && !empty($id)) {
 	// When used from jQuery, the search term is added as GET param "term".
 	$searchkey = (($idprod && GETPOST($idprod, 'alpha')) ? GETPOST($idprod, 'alpha') : (GETPOST($htmlname, 'alpha') ? GETPOST($htmlname, 'alpha') : ''));
 
-	if (!isset($form) || !is_object($form)) {
-		$form = new Form($db);
-	}
-
+	$arrayresult = [];
 	if (empty($mode) || $mode == 1) {  // mode=1: customer
-		$arrayresult = $form->select_produits_list("", $htmlname, $type, 0, $price_level, $searchkey, $status, $finished, $outjson, $socid, '1', 0, '', $hidepriceinlabel, $warehouseStatus, $status_purchase, $warehouseId);
+		$arrayresult = $form->select_produits_list(0, $htmlname, $type, getDolGlobalInt('PRODUIT_LIMIT_SIZE', 1000), $price_level, $searchkey, $status, $finished, $outjson, $socid, '1', 0, '', $hidepriceinlabel, $warehouseStatus, $status_purchase, $warehouseId);
 	} elseif ($mode == 2) {            // mode=2: supplier
-		$arrayresult = $form->select_produits_fournisseurs_list($socid, "", $htmlname, $type, "", $searchkey, $status, $outjson, 0, $alsoproductwithnosupplierprice);
+		$arrayresult = $form->select_produits_fournisseurs_list($socid, "", $htmlname, $type, "", $searchkey, $status, $outjson, getDolGlobalInt('PRODUIT_LIMIT_SIZE', 1000), $alsoproductwithnosupplierprice, '', getDolGlobalInt('SUPPLIER_SHOW_STOCK_IN_PRODUCTS_COMBO'));
 	}
 
 	$db->close();

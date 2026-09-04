@@ -28,4 +28,3 @@ CREATE TABLE llx_product_batch (
   qty double NOT NULL DEFAULT 0,
   import_key varchar(14) DEFAULT NULL
 ) ENGINE=innodb;
-

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +37,7 @@ $langs->load("dict");
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
-	$user->getrights();
+	$user->loadRights();
 }
 
 $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
@@ -277,6 +278,13 @@ class HolidayTest extends CommonClassTest
 
 		$result = $localobjectc->verifDateHolidayCP($user->id, $date_debut, $date_fin, 2);	// start afternoon and end morning
 		$this->assertTrue($result, 'result should be true, there is no overlapping');
+
+		$date_start_enclosing = dol_mktime(0, 0, 0, 12, 31, 2019);
+		$date_end_enclosing = dol_mktime(0, 0, 0, 1, 3, 2020);
+		foreach (array(0, -1, 1, 2) as $halfday) {
+			$result = $localobjectc->verifDateHolidayCP($user->id, $date_start_enclosing, $date_end_enclosing, $halfday);
+			$this->assertFalse($result, 'result should be false, an enclosing leave overlaps existing leave requests.');
+		}
 	}
 
 	/**

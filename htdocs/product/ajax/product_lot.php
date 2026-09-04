@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2023 	Laurent Destailleur  	<eldy@users.sourceforge.net>
  * Copyright (C) 2023   Lionel Vessiller     	<lvessiller@easya.solutions>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,6 +43,14 @@ if (!defined('NOBROWSERNOTIF')) {
 require '../../main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 $action = GETPOST('action', 'aZ09');
 $productId = GETPOSTINT('product_id');
 $batch = GETPOST('batch', 'alphanohtml');
@@ -60,7 +70,7 @@ $rows = array();
 
 if ($action == 'search' && $batch != '' && $permissiontoread) {
 	$productLot = new Productlot($db);
-	$result = $productLot->fetch('', $productId, $batch);
+	$result = $productLot->fetch(0, $productId, $batch);
 
 	if ($result > 0 && $productLot->id > 0) {
 		$rows[] = array(

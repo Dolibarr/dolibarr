@@ -108,7 +108,7 @@ abstract class ModeleNumRefMembers extends CommonNumRefGenerator
 		$s .= '<u>'.$langs->trans("ThisIsModuleRules").':</u><br>';
 
 		$s .= $langs->trans("Required").': '.$strikestart;
-		$s .= yn(!$this->code_null, 1, 2).$strikeend;
+		$s .= yn($this->code_null ? 0 : 1, 1, 2).$strikeend;
 		$s .= '<br>';
 		$s .= $langs->trans("CanBeModifiedIfOk").': ';
 		$s .= yn($this->code_modifiable, 1, 2);

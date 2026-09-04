@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2010-2011  Laurent Destailleur     <ely@users.sourceforge.net>
  * Copyright (C) 2016	    Charlie Benke           <charlie@patas-monkey.com>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,7 +74,12 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 		$this->option_freetext = 0; // Support add of a personalised text
 		$this->option_draft_watermark = 0; // Support add of a watermark on drafts
 
-		// Retrieves transmitter
+		if ($mysoc === null) {
+			dol_syslog(get_class($this).'::__construct() Global $mysoc should not be null.'. getCallerInfoString(), LOG_ERR);
+			return;
+		}
+
+		// Retrieves issuer
 		$this->emetteur = $mysoc;
 		if (!$this->emetteur->country_code) {
 			$this->emetteur->country_code = substr($langs->defaultlang, -2); // By default, if was not defined
@@ -90,7 +95,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 	 */
 	public function info($langs)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		// Load traductions files required by page
 		$langs->loadLangs(array("companies", "errors"));
@@ -137,7 +142,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 			$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1, 3, $this->name);
 			$texte .= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
 			//$texte .= '<table><tr><td>';
-			$texte .= '<textarea class="flat" cols="60" name="value1">';
+			$texte .= '<textarea class="flat textareafordir" spellcheck="false" cols="60" name="value1">';
 			$texte .= getDolGlobalString('COMPANY_ADDON_PDF_ODT_PATH');
 			$texte .= '</textarea>';
 			//$texte .= '</td>';
@@ -223,6 +228,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 			$hookmanager = new HookManager($this->db);
 		}
 		$hookmanager->initHooks(array('odtgeneration'));
+		global $action;
 
 		if (!is_object($outputlangs)) {
 			$outputlangs = $langs;
@@ -233,8 +239,8 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 		// Load translation files required by the page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "projects"));
 
-		if ($conf->societe->multidir_output[$object->entity]) {
-			$dir = $conf->societe->multidir_output[$object->entity];
+		if ($conf->societe->multidir_output[$object->entity ?? $conf->entity]) {
+			$dir = $conf->societe->multidir_output[$object->entity ?? $conf->entity];
 			$objectref = dol_sanitizeFileName((string) $object->id);
 			if (!preg_match('/specimen/i', $objectref)) {
 				$dir .= "/".$objectref;
@@ -292,7 +298,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 						$srctemplatepath,
 						array(
 							'PATH_TO_TMP'	  => $conf->societe->multidir_temp[$object->entity],
-							'ZIP_PROXY'		  => 'PclZipProxy', // PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
+							'ZIP_PROXY'		  => getDolGlobalString('MAIN_ODF_ZIP_PROXY', 'PclZipProxy'), // PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
 							'DELIMITER_LEFT'  => '{',
 							'DELIMITER_RIGHT' => '}'
 						)
@@ -313,6 +319,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 
 				$result = $this->db->query($sql);
 				$num = $this->db->num_rows($result);
+				$contactstatic = null;
 
 				if ($num) {
 					require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
@@ -328,15 +335,15 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 					}
 				}
 				if ((is_array($contact_arrray) && count($contact_arrray) > 0)) {
-					$foundtagforlines = 1;
+					$listlines = null;
 					try {
 						$listlines = $odfHandler->setSegment('companycontacts');
 					} catch (OdfExceptionSegmentNotFound $e) {
 						// We may arrive here if tags for lines not present into template
-						$foundtagforlines = 0;
+						$listlines = null;
 						dol_syslog($e->getMessage(), LOG_INFO);
 					}
-					if ($foundtagforlines) {
+					if ($listlines !== null && $contactstatic !== null) {
 						foreach ($contact_arrray as $array_key => $contact_id) {
 							$res_contact = $contactstatic->fetch($contact_id);
 							if ((int) $res_contact > 0) {
@@ -378,12 +385,19 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 				$parameters = array('odfHandler' => &$odfHandler, 'file' => $file, 'object' => $object, 'outputlangs' => $outputlangs, 'substitutionarray' => &$tmparray);
 				$reshook = $hookmanager->executeHooks('ODTSubstitution', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 
+				// retrieve the constant to apply a ratio for image size or set the ratio to 1
+				if (getDolGlobalString('MAIN_DOC_ODT_IMAGE_RATIO')) {
+					$ratio = (float) getDolGlobalString('MAIN_DOC_ODT_IMAGE_RATIO');
+				} else {
+					$ratio = 1;
+				}
+
 				// Replace variables into document
 				foreach ($tmparray as $key => $value) {
 					try {
 						if (preg_match('/logo$/', $key)) {	// Image
 							if (file_exists($value)) {
-								$odfHandler->setImage($key, $value);
+								$odfHandler->setImage($key, $value, $ratio);
 							} else {
 								$odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
 							}

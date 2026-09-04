@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2022       Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2015-2024  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -26,6 +26,16 @@
 // Load Dolibarr environment
 require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $dolibarr_main_url_root
+ */
+
 use OAuth\Common\Storage\DoliStorage;
 use OAuth\Common\Consumer\Credentials;
 
@@ -42,7 +52,6 @@ if (empty($keyforprovider) && !empty($_SESSION["oauthkeyforproviderbeforeoauthju
 	$keyforprovider = $_SESSION["oauthkeyforproviderbeforeoauthjump"];
 }
 $genericstring = 'MICROSOFT';
-
 
 /**
  * Create a new instance of the URI class with the current URI, stripping the query string
@@ -65,13 +74,14 @@ $httpClient = new \OAuth\Common\Http\Client\CurlClient();
 //$httpClient->setCurlParameters($params);
 $serviceFactory->setHttpClient($httpClient);
 
-// Dolibarr storage
-$storage = new DoliStorage($db, $conf, $keyforprovider);
-
 // Setup the credentials for the requests
 $keyforparamid = 'OAUTH_'.$genericstring.($keyforprovider ? '-'.$keyforprovider : '').'_ID';
 $keyforparamsecret = 'OAUTH_'.$genericstring.($keyforprovider ? '-'.$keyforprovider : '').'_SECRET';
 $keyforparamtenant = 'OAUTH_'.$genericstring.($keyforprovider ? '-'.$keyforprovider : '').'_TENANT';
+
+// Dolibarr storage
+$storage = new DoliStorage($db, $conf, $keyforprovider, getDolGlobalString($keyforparamtenant));
+
 $credentials = new Credentials(
 	getDolGlobalString($keyforparamid),
 	getDolGlobalString($keyforparamsecret),
@@ -85,7 +95,9 @@ if ($state) {
 	$requestedpermissionsarray = explode(',', $state); // Example: 'user'. 'state' parameter is standard to retrieve some parameters back
 }
 if ($action != 'delete' && empty($requestedpermissionsarray)) {
-	print 'Error, parameter state is not defined';
+	$langs->load("oauth");
+	print $langs->trans("OAuthErrorNoScopeInState", 'OAUTH_'.$genericstring.($keyforprovider ? '-'.$keyforprovider : '').'_SCOPE');
+	print '<br>'.dol_escape_htmltag(getOauthSetupDiagnostic($genericstring, $keyforprovider));
 	exit;
 }
 //var_dump($requestedpermissionsarray);exit;
@@ -95,7 +107,8 @@ if ($action != 'delete' && empty($requestedpermissionsarray)) {
 // $requestedpermissionsarray contains list of scopes.
 // Conversion into URL is done by Reflection on constant with name SCOPE_scope_in_uppercase
 try {
-	$apiService = $serviceFactory->createService(ucfirst(strtolower($genericstring)), $credentials, $storage, $requestedpermissionsarray);
+	$nameofservice = ucfirst(strtolower($genericstring));
+	$apiService = $serviceFactory->createService($nameofservice, $credentials, $storage, $requestedpermissionsarray);
 	'@phan-var-force  OAuth\OAuth2\Service\AbstractService|OAuth\OAuth1\Service\AbstractService $apiService'; // createService is only ServiceInterface
 } catch (Exception $e) {
 	print $e->getMessage();
@@ -119,10 +132,13 @@ if (empty($apiService)) {
 $langs->load("oauth");
 
 if (!getDolGlobalString($keyforparamid)) {
-	accessforbidden('Setup of service is not complete. Customer ID is missing');
+	accessforbidden('Setup of service is not complete. Customer ID is missing ('.$keyforparamid.')');
 }
 if (!getDolGlobalString($keyforparamsecret)) {
-	accessforbidden('Setup of service is not complete. Secret key is missing');
+	accessforbidden('Setup of service is not complete. Secret key is missing ('.$keyforparamsecret.')');
+}
+if (!getDolGlobalString($keyforparamtenant)) {
+	accessforbidden('Setup of service is not complete. Tenant/Annuary ID key is missing ('.$keyforparamtenant.')');
 }
 
 
@@ -151,7 +167,7 @@ if (GETPOST('code') || GETPOST('error')) {     // We are coming from oauth provi
 	// We should have
 	//$_GET=array('code' => string 'aaaaaaaaaaaaaa' (length=20), 'state' => string 'user,public_repo' (length=16))
 
-	dol_syslog("We are coming from the oauth provider page code=".dol_trunc(GETPOST('code'), 5)." error=".GETPOST('error'));
+	dol_syslog(basename(__FILE__)." We are coming from the oauth provider page code=".dol_trunc(GETPOST('code'), 5)." error=".GETPOST('error'));
 
 	// This was a callback request from service, get the token
 	try {
@@ -168,7 +184,7 @@ if (GETPOST('code') || GETPOST('error')) {     // We are coming from oauth provi
 			// Microsoft is a service that does not need state to be stored as second parameter of requestAccessToken
 
 			//print $token->getAccessToken().'<br><br>';
-			//print $token->getExtraParams()['id_token'].'<br>';
+			//print $token->getExtraParams()['id_token'].'<br><br>';
 			//print $token->getRefreshToken().'<br>';exit;
 
 			setEventMessages($langs->trans('NewTokenStored'), null, 'mesgs'); // Stored into object managed by class DoliStorage so into table oauth_token
@@ -180,7 +196,10 @@ if (GETPOST('code') || GETPOST('error')) {     // We are coming from oauth provi
 		header('Location: '.$backtourl);
 		exit();
 	} catch (Exception $e) {
-		print $e->getMessage();
+		$diag = getOauthSetupDiagnostic($genericstring, $keyforprovider);
+		dol_syslog(basename(__FILE__).' requestAccessToken failed: '.$e->getMessage().' - '.$diag, LOG_ERR);
+		print $langs->trans("OAuthErrorTokenRequestFailed", dol_escape_htmltag($e->getMessage()));
+		print '<br>'.dol_escape_htmltag($diag);
 	}
 } else {
 	// If we enter this page without 'code' parameter, we arrive here. This is the case when we want to get the redirect
@@ -195,8 +214,12 @@ if (GETPOST('code') || GETPOST('error')) {     // We are coming from oauth provi
 
 	// This may create record into oauth_state before the header redirect.
 	// Creation of record with state in this tables depend on the Provider used (see its constructor).
+	$params = array();
 	if ($state) {
-		$url = $apiService->getAuthorizationUri(array('state' => $state));
+		$params['state'] = $state;
+	}
+	if (!empty($params)) {
+		$url = $apiService->getAuthorizationUri($params);
 	} else {
 		$url = $apiService->getAuthorizationUri(); // Parameter state will be randomly generated
 	}

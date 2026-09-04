@@ -41,6 +41,15 @@ if (!defined('NOLOGIN') && $forlogin) {
 // Load Dolibarr environment
 require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $dolibarr_main_url_root
+ */
+
 use OAuth\Common\Storage\DoliStorage;
 use OAuth\Common\Consumer\Credentials;
 
@@ -105,7 +114,7 @@ if ($state) {
 
 // Add a test to check that the state parameter is provided into URL when we make the first call to ask the redirect or when we receive the callback
 // but not when callback was ok and we recall the page
-if ($action != 'delete' && !GETPOSTINT('afteroauthloginreturn') && (empty($statewithscopeonly) || empty($requestedpermissionsarray))) {
+if ($action != 'delete' && !GETPOST('afteroauthloginreturn') && (empty($statewithscopeonly) || empty($requestedpermissionsarray))) {
 	dol_syslog("state or statewithscopeonly and/or requestedpermissionsarray are empty");
 	setEventMessages($langs->trans('ScopeUndefined'), null, 'errors');
 	if (empty($backtourl)) {
@@ -124,9 +133,16 @@ $storage = new DoliStorage($db, $conf, $keyforprovider);
 // Instantiate the Api service using the credentials, http client and storage mechanism for the token
 // $requestedpermissionsarray contains list of scopes.
 // Conversion into URL is done by Reflection on constant with name SCOPE_scope_in_uppercase
-$apiService = $serviceFactory->createService('Google', $credentials, $storage, $requestedpermissionsarray);
-'@phan-var-force  OAuth\OAuth2\Service\Google $apiService'; // createService is only ServiceInterface
-
+$apiService = null;
+$nameofservice = 'Google';
+try {
+	//$nameofservice = ucfirst(strtolower($genericstring));
+	$apiService = $serviceFactory->createService($nameofservice, $credentials, $storage, $requestedpermissionsarray);
+	'@phan-var-force  OAuth\OAuth2\Service\Google $apiService'; // createService is only ServiceInterface
+} catch (Exception $e) {
+	print 'Error, failed to create service for provider '.$nameofservice.($keyforprovider ? '-'.$keyforprovider : '').'. Message was: '.$e->getMessage();
+	exit;
+}
 // access type needed to have oauth provider refreshing token
 // also note that a refresh token is sent only after a prompt
 $apiService->setAccessType('offline');
@@ -160,6 +176,75 @@ if (!GETPOST('code')) {
 
 	// If we enter this page without 'code' parameter, it means we click on the link from login page ($forlogin is set) or from setup page and we want to get the redirect
 	// to the OAuth provider login page.
+	// $backtourl should be a relative url like /mypage.php?param1=value1 but without param token and action. Part after the # should also have been removed by caller.
+
+	// Clean the backtourl we can use after an OAuth authentication
+	$backtourl = preg_replace('/token=[^&]+/', '', $backtourl);	// We remove any token into url so we are sure only url with no action are qualified as call back urls.
+	$backtourl = preg_replace('/action=[a-z0-9]+/i', '', $backtourl);	// We remove any token into url so we are sure only url with no action are qualified as call back urls.
+	$backtourl = preg_replace('/save_lastsearch_values=[a-z0-9]+/i', '', $backtourl);
+	$backtourl = preg_replace('/mainmenu=[a-z0-9]+/i', '', $backtourl);
+	$backtourl = preg_replace('/leftmenu=[a-z0-9]+/i', '', $backtourl);
+	$backtourl = preg_replace('/#.*$/i', '', $backtourl);	// We remove part after the #...
+
+	// TODO Try enable this section
+	/*
+	// Optimization: If this is for login and we already have a valid OAuth token, we can reuse it instead of redirecting to Google again
+	if ($forlogin && $storage->hasAccessToken('Google')) {
+		global $db, $conf;
+		$existingToken = $storage->retrieveAccessToken('Google');
+		if (!$existingToken->isExpired()) {
+			dol_syslog("Reusing existing valid Google OAuth token for login, skipping Google redirect");
+
+			// Extract email from existing token's extraParams (which contains the id_token JWT)
+			$extraparams = $existingToken->getExtraParams();
+			$useremail = '';
+			if (!empty($extraparams['id_token'])) {
+				$jwt = explode('.', $extraparams['id_token']);
+				if (!empty($jwt[1])) {
+					$userinfo = json_decode(base64_decode($jwt[1]), true);
+					$useremail = $userinfo['email'];
+				}
+			}
+
+			if (!empty($useremail)) {
+				// Find the user in Dolibarr
+				$entitytosearchuser = -1; // Search in all entities
+				$tmparray = (empty($_SESSION['datafromloginform']) ? array() : $_SESSION['datafromloginform']);
+				if (!empty($tmparray['entity'])) {
+					$entitytosearchuser = $tmparray['entity'];
+				}
+
+				$tmpuser = new User($db);
+				$res = $tmpuser->fetch(0, '', '', 0, $entitytosearchuser, $useremail, 0, 1);
+
+				if ($res > 0) {
+					$username = $tmpuser->login;
+					$_SESSION['googleoauth_receivedlogin'] = dol_hash($conf->file->instance_unique_id.$username, '0');
+					dol_syslog('Reused existing token - set $_SESSION["googleoauth_receivedlogin"]='.$_SESSION['googleoauth_receivedlogin']);
+
+					// Redirect back to login page with afteroauthloginreturn flag
+					$backtourl = DOL_MAIN_URL_ROOT.$backtourl;
+					$backtourl .= (preg_match('/\?/', $backtourl) ? '&' : '?').'actionlogin=login&afteroauthloginreturn=google&mainmenu=home&username='.urlencode($username).'&token='.newToken();
+					if (!empty($tmparray['entity'])) {
+						$backtourl .= '&entity='.$tmparray['entity'];
+					}
+
+					dol_syslog("Redirecting to backtourl with reused token: ".$backtourl);
+					header('Location: '.$backtourl);
+					exit();
+				} else {
+					// User not found, fall back to normal OAuth flow
+					dol_syslog("User with email '".$useremail."' was not found, falling back to Google OAuth");
+				}
+			} else {
+				dol_syslog("Existing token has no id_token in extraParams, falling back to Google OAuth");
+			}
+		} else {
+			dol_syslog("Existing token is expired, falling back to Google OAuth");
+		}
+	}
+	*/
+
 	$_SESSION["backtourlsavedbeforeoauthjump"] = $backtourl;
 	$_SESSION["oauthkeyforproviderbeforeoauthjump"] = $keyforprovider;
 	$_SESSION['oauthstateanticsrf'] = $state;
@@ -222,7 +307,7 @@ if (!GETPOST('code')) {
 	exit();
 } else {
 	// We are coming from the return of an OAuth2 provider page.
-	dol_syslog("We are coming from the oauth provider page keyforprovider=".$keyforprovider." code=".dol_trunc(GETPOST('code'), 5));
+	dol_syslog(basename(__FILE__)." We are coming from the oauth provider page keyforprovider=".$keyforprovider." code=".dol_trunc(GETPOST('code'), 5));
 
 	// We must validate that the $state is the same than the one into $_SESSION['oauthstateanticsrf'], return error if not.
 	if (isset($_SESSION['oauthstateanticsrf']) && $state != $_SESSION['oauthstateanticsrf']) {
@@ -240,16 +325,27 @@ if (!GETPOST('code')) {
 
 			$db->begin();
 
-			// This requests the token from the received OAuth code (call of the https://oauth2.googleapis.com/token endpoint)
-			// Result is stored into object managed by class DoliStorage into includes/OAuth/Common/Storage/DoliStorage.php and into database table llx_oauth_token
-			$token = $apiService->requestAccessToken(GETPOST('code'), $state);
+			$token = null;
+			try {
+				// This requests the token from the received OAuth code (call of the https://oauth2.googleapis.com/token endpoint)
+				// Result is stored into object managed by class DoliStorage into includes/OAuth/Common/Storage/DoliStorage.php and into database table llx_oauth_token
+				$token = $apiService->requestAccessToken(GETPOST('code'), $state);
+			} catch (Exception $e) {
+				dol_syslog("Failed to get token with requestAccessToken: ".$e->getMessage(), LOG_ERR);
+				setEventMessages("Failed to get token with requestAccessToken: ".$e->getMessage(), null, 'errors');
+				$errorincheck++;
+			}
 
 			// The refresh token is inside the object token if the prompt was forced only.
 			//$refreshtoken = $token->getRefreshToken();
 			//var_dump($refreshtoken);
+			dol_syslog("requestAccessToken complete");
 
 			// Note: The extraparams has the 'id_token' than contains a lot of information about the user.
-			$extraparams = $token->getExtraParams();
+			$extraparams = array();
+			if ($token) {
+				$extraparams = $token->getExtraParams();
+			}
 			$jwt = explode('.', $extraparams['id_token']);
 
 			$username = '';
@@ -259,7 +355,7 @@ if (!GETPOST('code')) {
 			if (!empty($jwt[1])) {
 				$userinfo = json_decode(base64_decode($jwt[1]), true);
 
-				dol_syslog("userinfo=".var_export($userinfo, true));
+				dol_syslog("userinfo=".formatLogObject($userinfo));
 
 				$useremail = $userinfo['email'];
 
@@ -315,9 +411,10 @@ if (!GETPOST('code')) {
 					dol_syslog("we received the login/email to log to, it is ".$useremail);
 
 					$tmparray = (empty($_SESSION['datafromloginform']) ? array() : $_SESSION['datafromloginform']);
-					$entitytosearchuser = (isset($tmparray['entity']) ? $tmparray['entity'] : -1);
+					$entitytosearchuser = ((isset($tmparray['entity']) && $tmparray['entity'] != '') ? $tmparray['entity'] : -1);
 
 					// Delete the old token
+					// TODO Try remove this	line
 					$storage->clearToken('Google');	// Delete the token called ("Google-".$storage->keyforprovider)
 
 					$tmpuser = new User($db);
@@ -338,6 +435,8 @@ if (!GETPOST('code')) {
 
 						dol_syslog($errormessage);
 					}
+				} else {
+					setEventMessages("TokenSaved", null);
 				}
 			} else {
 				// If call back to url for a OAUTH2 login
@@ -363,7 +462,9 @@ if (!GETPOST('code')) {
 			// If call back to this url was for a OAUTH2 login
 			if ($forlogin) {
 				// _SESSION['googleoauth_receivedlogin'] has been set to the key to validate the next test by function_googleoauth(), so we can make the redirect
-				$backtourl .= '?actionlogin=login&afteroauthloginreturn=1&mainmenu=home'.($username ? '&username='.urlencode($username) : '').'&token='.newToken();
+				// $backtourl is a relative url like /mypage.php?param1=value1 but without param token and action. Part after the # should also have been removed when saving it.
+				$backtourl = DOL_MAIN_URL_ROOT.$backtourl;
+				$backtourl .= (preg_match('/\?/', $backtourl) ? '&' : '?').'actionlogin=login&afteroauthloginreturn=google&mainmenu=home'.($username ? '&username='.urlencode($username) : '').'&token='.newToken();
 				if (!empty($tmparray['entity'])) {
 					$backtourl .= '&entity='.$tmparray['entity'];
 				}

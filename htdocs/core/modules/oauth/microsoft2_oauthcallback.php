@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2022       Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2015-2024  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -18,7 +18,7 @@
  */
 
 /**
- *      \file       htdocs/core/modules/oauth/microsoft_oauthcallback.php
+ *      \file       htdocs/core/modules/oauth/microsoft2_oauthcallback.php
  *      \ingroup    oauth
  *      \brief      Page to get oauth callback
  */
@@ -26,6 +26,16 @@
 // Load Dolibarr environment
 require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $dolibarr_main_url_root
+ */
+
 use OAuth\Common\Storage\DoliStorage;
 use OAuth\Common\Consumer\Credentials;
 
@@ -50,7 +60,8 @@ $genericstring = 'MICROSOFT2';
 $uriFactory = new \OAuth\Common\Http\Uri\UriFactory();
 //$currentUri = $uriFactory->createFromSuperGlobalArray($_SERVER);
 //$currentUri->setQuery('');
-$currentUri = $uriFactory->createFromAbsolute($urlwithroot.'/core/modules/oauth/microsoft_oauthcallback.php');
+
+$currentUri = $uriFactory->createFromAbsolute($urlwithroot.'/core/modules/oauth/microsoft2_oauthcallback.php');
 
 
 /**
@@ -65,18 +76,20 @@ $httpClient = new \OAuth\Common\Http\Client\CurlClient();
 //$httpClient->setCurlParameters($params);
 $serviceFactory->setHttpClient($httpClient);
 
-// Dolibarr storage
-$storage = new DoliStorage($db, $conf, $keyforprovider);
-
 // Setup the credentials for the requests
 $keyforparamid = 'OAUTH_'.$genericstring.($keyforprovider ? '-'.$keyforprovider : '').'_ID';
 $keyforparamsecret = 'OAUTH_'.$genericstring.($keyforprovider ? '-'.$keyforprovider : '').'_SECRET';
 $keyforparamtenant = 'OAUTH_'.$genericstring.($keyforprovider ? '-'.$keyforprovider : '').'_TENANT';
+
+// Dolibarr storage
+$storage = new DoliStorage($db, $conf, $keyforprovider, getDolGlobalString($keyforparamtenant));
+
 $credentials = new Credentials(
 	getDolGlobalString($keyforparamid),
 	getDolGlobalString($keyforparamsecret),
 	$currentUri->getAbsoluteUri()
 );
+
 
 $state = GETPOST('state');
 
@@ -85,7 +98,9 @@ if ($state) {
 	$requestedpermissionsarray = explode(',', $state); // Example: 'user'. 'state' parameter is standard to retrieve some parameters back
 }
 if ($action != 'delete' && empty($requestedpermissionsarray)) {
-	print 'Error, parameter state is not defined';
+	$langs->load("oauth");
+	print $langs->trans("OAuthErrorNoScopeInState", 'OAUTH_'.$genericstring.($keyforprovider ? '-'.$keyforprovider : '').'_SCOPE');
+	print '<br>'.dol_escape_htmltag(getOauthSetupDiagnostic($genericstring, $keyforprovider));
 	exit;
 }
 //var_dump($requestedpermissionsarray);exit;
@@ -95,7 +110,8 @@ if ($action != 'delete' && empty($requestedpermissionsarray)) {
 // $requestedpermissionsarray contains list of scopes.
 // Conversion into URL is done by Reflection on constant with name SCOPE_scope_in_uppercase
 try {
-	$apiService = $serviceFactory->createService(ucfirst(strtolower($genericstring)), $credentials, $storage, $requestedpermissionsarray);
+	$nameofservice = ucfirst(strtolower($genericstring));
+	$apiService = $serviceFactory->createService($nameofservice, $credentials, $storage, $requestedpermissionsarray);
 	'@phan-var-force  OAuth\OAuth2\Service\AbstractService|OAuth\OAuth1\Service\AbstractService $apiService'; // createService is only ServiceInterface
 } catch (Exception $e) {
 	print $e->getMessage();
@@ -119,10 +135,13 @@ if (empty($apiService)) {
 $langs->load("oauth");
 
 if (!getDolGlobalString($keyforparamid)) {
-	accessforbidden('Setup of service is not complete. Customer ID is missing');
+	accessforbidden('Setup of service is not complete. Customer ID is missing ('.$keyforparamid.')');
 }
 if (!getDolGlobalString($keyforparamsecret)) {
-	accessforbidden('Setup of service is not complete. Secret key is missing');
+	accessforbidden('Setup of service is not complete. Secret key is missing ('.$keyforparamsecret.')');
+}
+if (!getDolGlobalString($keyforparamtenant)) {
+	accessforbidden('Setup of service is not complete. Tenant/Annuary ID key is missing ('.$keyforparamtenant.')');
 }
 
 
@@ -151,7 +170,7 @@ if (GETPOST('code') || GETPOST('error')) {     // We are coming from oauth provi
 	// We should have
 	//$_GET=array('code' => string 'aaaaaaaaaaaaaa' (length=20), 'state' => string 'user,public_repo' (length=16))
 
-	dol_syslog("We are coming from the oauth provider page code=".dol_trunc(GETPOST('code'), 5)." error=".GETPOST('error'));
+	dol_syslog(basename(__FILE__)." We are coming from the oauth provider page code=".dol_trunc(GETPOST('code'), 5)." error=".GETPOST('error'));
 
 	// This was a callback request from service, get the token
 	try {
@@ -180,7 +199,10 @@ if (GETPOST('code') || GETPOST('error')) {     // We are coming from oauth provi
 		header('Location: '.$backtourl);
 		exit();
 	} catch (Exception $e) {
-		print $e->getMessage();
+		$diag = getOauthSetupDiagnostic($genericstring, $keyforprovider);
+		dol_syslog(basename(__FILE__).' requestAccessToken failed: '.$e->getMessage().' - '.$diag, LOG_ERR);
+		print $langs->trans("OAuthErrorTokenRequestFailed", dol_escape_htmltag($e->getMessage()));
+		print '<br>'.dol_escape_htmltag($diag);
 	}
 } else {
 	// If we enter this page without 'code' parameter, we arrive here. This is the case when we want to get the redirect

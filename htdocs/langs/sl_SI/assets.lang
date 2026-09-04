@@ -4,71 +4,52 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 NewAsset=Novo sredstvo
 AccountancyCodeAsset=Knjigovodska oznaka (sredstvo)
 AccountancyCodeDepreciationAsset=Knjigovodska šifra (konto amortizacije sredstev)
 AccountancyCodeDepreciationExpense=Knjigovodska oznaka (konto stroškov amortizacije)
 AssetsLines=Sredstva
+ConfirmValidateAsset=Are you sure you want to validate this asset with the reference <b>%s</b>?
 DeleteType=Izbriši
 DeleteAnAssetType=Izbrišite model sredstva
 ConfirmDeleteAssetType=Ali ste prepričani, da želite izbrisati ta model sredstva?
 ShowTypeCard=Pokaži model '%s'
-
 # Module label 'ModuleAssetsName'
 ModuleAssetsName=Sredstva
 # Module description 'ModuleAssetsDesc'
 ModuleAssetsDesc=Opis sredstev
-
-#
 # Admin page
-#
 AssetSetup=Nastavitev sredstev
 AssetSetupPage=Stran za nastavitev sredstev
 ExtraFieldsAssetModel=Dopolnilni atributi (model sredstva)
-
 AssetsType=Model sredstev
 AssetsTypeId=ID modela sredstva
 AssetsTypeLabel=Oznaka modela sredstva
 AssetsTypes=Modeli sredstev
 ASSET_ACCOUNTANCY_CATEGORY=Skupina za knjigovodstvo osnovnih sredstev
-
-#
+ASSET_DEPRECIATION_DURATION_PER_YEAR=Proportional period in days for calculating amortization over one year
 # Menu
-#
 MenuAssets=Sredstva
 MenuNewAsset=Novo sredstvo
 MenuAssetModels=Sredstva modela
 MenuListAssets=Seznam
 MenuNewAssetModel=Nov model sredstva
 MenuListAssetModels=Seznam
-
-#
 # Module
-#
 ConfirmDeleteAsset=Ali res želite odstraniti to sredstvo?
-
-#
 # Tab
-#
 AssetDepreciationOptions=Možnosti amortizacije
 AssetAccountancyCodes=Računovodski izkazi
 AssetDepreciation=Amortizacija
-
-#
 # Asset
-#
 Asset=Sredstvo
 Assets=Sredstva
 AssetReversalAmountHT=Znesek razveljavitve (brez davkov)
@@ -89,32 +70,21 @@ AssetNotDepreciated=Ni amortizirano
 AssetDisposal=Odstranjevanje
 AssetConfirmDisposalAsk=Ali ste prepričani, da želite razpolagati s sredstvom <b> %s </b>?
 AssetConfirmReOpenAsk=Ali ste prepričani, da želite znova odpreti sredstvo <b> %s </b>?
-
-#
 # Asset status
-#
+AssetInDraft=Osnutek
 AssetInProgress=V postopku
 AssetDisposed=Odstranjeno
 AssetRecorded=Obračunano
-
-#
 # Asset disposal
-#
 AssetDisposalDate=Datum odlaganja
 AssetDisposalAmount=Vrednost odlaganja
 AssetDisposalType=Vrsta odlaganja
 AssetDisposalDepreciated=Amortizirajte leto prenosa
 AssetDisposalSubjectToVat=Odtujitev je predmet DDV
-
-#
 # Asset model
-#
 AssetModel=Model sredstva
 AssetModels=Assetovi modeli
-
-#
 # Asset depreciation options
-#
 AssetDepreciationOptionEconomic=Ekonomska amortizacija
 AssetDepreciationOptionAcceleratedDepreciation=Pospešena amortizacija (davek)
 AssetDepreciationOptionDepreciationType=Vrsta amortizacije
@@ -122,7 +92,6 @@ AssetDepreciationOptionDepreciationTypeLinear=Linearno
 AssetDepreciationOptionDepreciationTypeDegressive=Degresivno
 AssetDepreciationOptionDepreciationTypeExceptional=Izjemen
 AssetDepreciationOptionDegressiveRate=Degresivna stopnja
-AssetDepreciationOptionAcceleratedDepreciation=Pospešena amortizacija (davek)
 AssetDepreciationOptionDuration=Trajanje
 AssetDepreciationOptionDurationType=Trajanje vrste
 AssetDepreciationOptionDurationTypeAnnual=Letna
@@ -132,10 +101,7 @@ AssetDepreciationOptionRate=Oceni (%%)
 AssetDepreciationOptionAmountBaseDepreciationHT=Amortizacijska osnova (brez DDV)
 AssetDepreciationOptionAmountBaseDeductibleHT=Odbitna osnova (brez DDV)
 AssetDepreciationOptionTotalAmountLastDepreciationHT=Skupni znesek zadnje amortizacije (brez DDV)
-
-#
 # Asset accountancy codes
-#
 AssetAccountancyCodeDepreciationEconomic=Ekonomska amortizacija
 AssetAccountancyCodeAsset=Sredstvo
 AssetAccountancyCodeDepreciationAsset=Amortizacija
@@ -149,10 +115,7 @@ AssetAccountancyCodeDepreciationAcceleratedDepreciation=Pospešena amortizacija 
 AssetAccountancyCodeAcceleratedDepreciation=Račun
 AssetAccountancyCodeEndowmentAcceleratedDepreciation=Stroški amortizacije
 AssetAccountancyCodeProvisionAcceleratedDepreciation=Ponovna posest/oskrba
-
-#
 # Asset depreciation
-#
 AssetBaseDepreciationHT=Amortizacijska osnova (brez DDV)
 AssetDepreciationBeginDate=Začetek amortizacije dne
 AssetDepreciationDuration=Trajanje
@@ -164,11 +127,8 @@ AssetResidualHT=Preostala vrednost (brez DDV)
 AssetDispatchedInBookkeeping=Evidentirana amortizacija
 AssetFutureDepreciationLine=Prihodnja amortizacija
 AssetDepreciationReversal=Preobrat
-
-#
 # Errors
-#
-AssetErrorAssetOrAssetModelIDNotProvide=ID sredstva ali zvok modela ni bil naveden
+AssetErrorAssetOrAssetModelIDNotProvide=ID sredstva ali najdenega modela ni bil naveden
 AssetErrorFetchAccountancyCodesForMode=Napaka pri pridobivanju računovodskih kontov za način amortizacije '%s'
 AssetErrorDeleteAccountancyCodesForMode=Napaka pri brisanju računovodskih kontov iz načina amortizacije '%s'
 AssetErrorInsertAccountancyCodesForMode=Napaka pri vstavljanju računovodskih kontov načina amortizacije '%s'

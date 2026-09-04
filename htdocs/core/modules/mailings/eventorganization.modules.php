@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2018-2018 Andre Schild        <a.schild@aarboard.ch>
- * Copyright (C) 2005-2010 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin       <regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2018-2018  Andre Schild        	<a.schild@aarboard.ch>
+ * Copyright (C) 2005-2010  Laurent Destailleur 	<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009  Regis Houssin       	<regis.houssin@inodbox.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This file is an example to follow to add your own email selector inside
  * the Dolibarr email tool.
@@ -31,15 +32,24 @@ class mailing_eventorganization extends MailingTargets
 	public $name = 'AttendeesOfOrganizedEvent';
 	public $desc = "Attendees of an organized event";
 
+	/**
+	 * @var int
+	 */
 	public $require_admin = 0;
 
-	public $require_module = array(); // This module allows to select by categories must be also enabled if category module is not activated
+	/**
+	 * @var string[] This module allows to select by categories must be also enabled if category module is not activated
+	 */
+	public $require_module = array();
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'conferenceorbooth';
 
+	/**
+	 * @var string condition to enable module
+	 */
 	public $enabled = 'isModEnabled("eventorganization")';
 
 
@@ -67,7 +77,7 @@ class mailing_eventorganization extends MailingTargets
 	public function add_to_target($mailing_id)
 	{
 		// phpcs:enable
-		global $conf, $langs;
+		global $langs;
 
 		$cibles = array();
 		$addDescription = '';
@@ -83,9 +93,7 @@ class mailing_eventorganization extends MailingTargets
 		if (GETPOSTINT('filter_eventorganization') > 0) {
 			$sql .= " AND e.fk_project = ".(GETPOSTINT('filter_eventorganization'));
 		}
-		if (empty($this->evenunsubscribe)) {
-			$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = e.email and mu.entity = ".((int) $conf->entity).")";
-		}
+		$sql .= $this->getSqlToExcludeUnsubscribed('e.email');
 		$sql .= " ORDER BY e.email";
 
 		// Stock recipients emails into targets table
@@ -108,12 +116,12 @@ class mailing_eventorganization extends MailingTargets
 					$otherTxt .= $addDescription;
 					$cibles[$j] = array(
 								'email' => $obj->email,
-								'fk_project' => $obj->fk_project,
+								'fk_project' => (int) $obj->fk_project,
 								'lastname' => $obj->lastname,
 								'firstname' => $obj->firstname,
 								'other' => $otherTxt,
 								'source_url' => $this->url($obj->id, $obj->source),
-								'source_id' => $obj->id,
+								'source_id' => (int) $obj->id,
 								'source_type' => $obj->source
 					);
 					$old = $obj->email;
@@ -160,21 +168,17 @@ class mailing_eventorganization extends MailingTargets
 	 */
 	public function getNbOfRecipients($sql = '')
 	{
-		global $conf;
-
 		$sql = "SELECT COUNT(DISTINCT(e.email)) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."eventorganization_conferenceorboothattendee as e, ";
 		$sql .= " ".MAIN_DB_PREFIX."projet as p";
 		$sql .= " WHERE e.email <> ''";
 		$sql .= " AND e.fk_project = p.rowid";
 		$sql .= " AND p.entity IN (".getEntity('project').")";
-		if (empty($this->evenunsubscribe)) {
-			$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = e.email and mu.entity = ".((int) $conf->entity).")";
-		}
+		$sql .= $this->getSqlToExcludeUnsubscribed('e.email');
 
 		//print $sql;
 
-		// La requete doit retourner un champ "nb" pour etre comprise par parent::getNbOfRecipients
+		// The query must return a field "nb" to be understood by parent::getNbOfRecipients
 		return parent::getNbOfRecipients($sql);
 	}
 
@@ -194,7 +198,7 @@ class mailing_eventorganization extends MailingTargets
 		$formproject = new FormProjets($this->db);
 
 		$s = img_picto($langs->trans("OrganizedEvent"), 'project', 'class="pictofixedwidth"');
-		$s .= $formproject->select_projects(-1, 0, "filter_eventorganization", 0, 0, $langs->trans("OrganizedEvent"), 1, 0, 0, 0, '', 1, 0, '', '', 'usage_organize_event=1');
+		$s .= $formproject->select_projects(-1, '0', "filter_eventorganization", 0, 0, $langs->trans("OrganizedEvent"), 1, 0, 0, 0, '', 1, 0, '', '', 'usage_organize_event=1');
 
 		return $s;
 	}

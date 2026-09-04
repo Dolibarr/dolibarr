@@ -2,6 +2,7 @@
 /* Copyright (C) 2022       Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2019       Thibault FOUCART     <support@ptibogxiv.net>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +27,15 @@
 // Load Dolibarr environment
 require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $dolibarr_main_url_root
+ */
+
 use OAuth\Common\Storage\DoliStorage;
 use OAuth\Common\Consumer\Credentials;
 
@@ -68,8 +78,8 @@ $serviceFactory->setHttpClient($httpClient);
 $storage = new DoliStorage($db, $conf, $keyforprovider);
 
 // Setup the credentials for the requests
-$keyforparamid = 'OAUTH_STRIPE_LIVE'.($keyforprovider ? '-'.$keyforprovider : '').'_ID';
-$keyforparamsecret = 'OAUTH_STRIPE_LIVE'.($keyforprovider ? '-'.$keyforprovider : '').'_SECRET';
+$keyforparamid = 'OAUTH_STRIPELIVE'.($keyforprovider ? '-'.$keyforprovider : '').'_ID';
+$keyforparamsecret = 'OAUTH_STRIPELIVE'.($keyforprovider ? '-'.$keyforprovider : '').'_SECRET';
 $credentials = new Credentials(
 	getDolGlobalString($keyforparamid),
 	getDolGlobalString($keyforparamsecret),
@@ -131,7 +141,7 @@ if (GETPOST('code')) {     // We are coming from oauth provider page
 	// We should have
 	//$_GET=array('code' => string 'aaaaaaaaaaaaaa' (length=20), 'state' => string 'user,public_repo' (length=16))
 
-	dol_syslog("We are coming from the oauth provider page code=".dol_trunc(GETPOST('code'), 5));
+	dol_syslog(basename(__FILE__)." We are coming from the oauth provider page code=".dol_trunc(GETPOST('code'), 5));
 
 	// This was a callback request from service, get the token
 	if ($apiService === null) {
@@ -168,6 +178,7 @@ if (GETPOST('code')) {     // We are coming from oauth provider page
 		if ($apiService === null) {
 			dol_syslog("No API Service", LOG_ERR);
 		} else {
+			'@phan-var-force OAuth\OAuth2\Service\AbstractService|OAuth\OAuth1\Service\AbstractService $apiService';
 			$url = $apiService->getAuthorizationUri(array('state' => GETPOST('state')));
 		}
 	} else {

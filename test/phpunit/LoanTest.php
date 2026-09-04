@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2018 Maxime Kohlhaas <support@atm-consulting.fr>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +35,7 @@ require_once dirname(__FILE__).'/CommonClassTest.class.php';
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
-	$user->getrights();
+	$user->loadRights();
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
@@ -65,7 +66,7 @@ class LoanTest extends CommonClassTest
 		$localobject->initAsSpecimen();
 		$result = $localobject->create($user);
 
-		$this->assertLessThan($result, 0);
+		$this->assertGreaterThan(0, $result);
 		print __METHOD__." result=".$result."\n";
 		return $result;
 	}
@@ -90,7 +91,7 @@ class LoanTest extends CommonClassTest
 		$localobject = new Loan($db);
 		$result = $localobject->fetch($id);
 
-		$this->assertLessThan($result, 0);
+		$this->assertGreaterThan(0, $result);
 		print __METHOD__." id=".$id." result=".$result."\n";
 		return $localobject;
 	}
@@ -141,7 +142,7 @@ class LoanTest extends CommonClassTest
 		$result = $localobject->delete($user);
 
 		print __METHOD__." id=".$id." result=".$result."\n";
-		$this->assertLessThan($result, 0);
+		$this->assertGreaterThan(0, $result);
 		return $result;
 	}
 }

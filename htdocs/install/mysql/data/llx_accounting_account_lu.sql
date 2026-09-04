@@ -759,9 +759,3 @@ INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, acc
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 17753, 'PCN2020-LUXEMBURG', 'INCOME', '782', 0, 'Régularisations de taxe d’abonnement', '1');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 17754, 'PCN2020-LUXEMBURG', 'INCOME', '783', 0, 'Régularisations d’impôts étrangers', '1');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 17755, 'PCN2020-LUXEMBURG', 'INCOME', '788', 0, 'Régularisations d’autres impôts', '1');
-
-
-
-
-
-

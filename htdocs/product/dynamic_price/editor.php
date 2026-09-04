@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2014	  Ion Agorria		  <ion@agorria.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,8 +30,16 @@ require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_expression.cl
 require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_global_variable.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
-$langs->loadLangs(array('products', 'accountancy')); //"Back" translation is on this accountancy file
+$langs->loadLangs(array('products', 'accountancy'));
 
 $id = GETPOSTINT('id');
 $eid = GETPOSTINT('eid');
@@ -195,7 +204,7 @@ print dol_get_fiche_end();
 //Buttons
 print '<div class="center">';
 print '<input type="submit" class="butAction button-save" value="'.$langs->trans("Save").'">';
-print '<span id="back" class="butAction">'.$langs->trans("Back").'</span>';
+print '<span id="back" class="butAction">'.$langs->trans("GoBack").'</span>';
 if ($eid == 0) {
 	print '<div class="inline-block divButAction"><span id="action-delete" class="butActionRefused classfortooltip">'.$langs->trans('Delete').'</span></div>'."\n";
 } else {

@@ -17,6 +17,7 @@ AccountancyCodeAsset=Código contable (activo)
 AccountancyCodeDepreciationAsset=Código contable (conta depreciación activo)
 AccountancyCodeDepreciationExpense=Código contable (conta depreciación gastos)
 AssetsLines=Activos
+ConfirmValidateAsset=Está certo de  querer validar este activo coa referencia <b>%s</b>?
 DeleteType=Eliminar
 DeleteAnAssetType=Eliminar un modelo de activo
 ConfirmDeleteAssetType=¿Está certo de querer eliminar este tipo de activo?
@@ -70,6 +71,7 @@ AssetDisposal=Disposición
 AssetConfirmDisposalAsk=Estás certo de querer eliminar o activo <b> %s </b>?
 AssetConfirmReOpenAsk=Estás seguro de querer abrir de novo o activo <b> %s </b>?
 # Asset status
+AssetInDraft=Non validada
 AssetInProgress=En progreso
 AssetDisposed=Disposto
 AssetRecorded=Contabilizado

@@ -1,6 +1,8 @@
 <?php
-/* Copyright (C) 2014	Maxime Kohlhaas		<support@atm-consulting.fr>
- * Copyright (C) 2014	Juanjo Menent		<jmenent@2byte.es>
+/* Copyright (C) 2014	    Maxime Kohlhaas		    <support@atm-consulting.fr>
+ * Copyright (C) 2014	    Juanjo Menent		    <jmenent@2byte.es>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026       Palisandro David Gamez  <pali@eisbcn.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,11 +20,24 @@
  * Need to have the following variables defined:
  * $object (invoice, order, ...)
  * $action
+ * $db
  * $conf
  * $langs
- *
  * $parameters
- * $cols
+ * $thirdpartytopropagateextrafieldsfrom
+ */
+
+/**
+ * @var CommonObject $object
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ *
+ * @var Societe $thirdpartytopropagateextrafieldsfrom
+ * @var string $action
+ * @var array<string,mixed> $parameters
  */
 
 // Protection to avoid direct call of template
@@ -30,6 +45,16 @@ if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
 	exit(1);
 }
+
+'
+@phan-var-force CommonObject $object
+@phan-var-force string $action
+@phan-var-force DoliDB $db
+@phan-var-force Conf $conf
+@phan-var-force Translate $langs
+@phan-var-force array<string,mixed> $parameters
+@phan-var-force Societe $thirdpartytopropagateextrafieldsfrom
+';
 
 ?>
 <!-- BEGIN PHP TEMPLATE extrafields_add.tpl.php -->
@@ -39,13 +64,6 @@ if (empty($conf) || !is_object($conf)) {
 if (!isset($parameters)) {
 	$parameters = array();
 }
-'
-@phan-var-force CommonObject $object
-@phan-var-force string $action
-@phan-var-force Conf $conf
-@phan-var-force Translate $conf
-@phan-var-force array<string,mixed> $parameters
-';
 
 $reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
@@ -58,6 +76,32 @@ if (empty($reshook)) {
 	}
 	if (!empty($parameters['tpl_context'])) {
 		$params['tpl_context'] = $parameters['tpl_context'];
+	}
+
+	// By default $thirdpartytopropagateextrafieldsfrom is not set.
+	// We can have it set to a thirdparty object to propagate also the extrafields from thirdparty to object.
+	if (!empty($thirdpartytopropagateextrafieldsfrom) && $thirdpartytopropagateextrafieldsfrom instanceof Societe && !empty($thirdpartytopropagateextrafieldsfrom->id)) {
+		// copy from thirdparty
+		$tpExtrafields = new ExtraFields($db);
+		$tpExtrafieldLabels = $tpExtrafields->fetch_name_optionals_label($thirdpartytopropagateextrafieldsfrom->table_element);
+		if ($thirdpartytopropagateextrafieldsfrom->fetch_optionals() > 0) {
+			$object->array_options = array_merge($object->array_options, $thirdpartytopropagateextrafieldsfrom->array_options);
+		}
+	}
+
+	// Propagate extrafields from an origin object (e.g. commande -> expedition) when the
+	// calling card.php passes its source object via $parameters['objectsrc']. This was
+	// inline logic in each card.php up to v21.x and was lost during the refactor to this
+	// shared template in v22.x. Only extrafields defined on the target elementtype are
+	// effectively displayed (showOptionals filters by target), so there are no side
+	// effects if origin and target have disjoint extrafield sets.
+	if (!empty($parameters['objectsrc']) && is_object($parameters['objectsrc'])
+		&& method_exists($parameters['objectsrc'], 'fetch_optionals')) {
+		$tmpobjectsrc = $parameters['objectsrc'];
+		'@phan-var-force CommonObject $tmpobjectsrc';
+		if ($tmpobjectsrc->fetch_optionals() > 0 && !empty($tmpobjectsrc->array_options)) {
+			$object->array_options = array_merge($object->array_options, $tmpobjectsrc->array_options);
+		}
 	}
 
 	print $object->showOptionals($extrafields, 'create', $params);

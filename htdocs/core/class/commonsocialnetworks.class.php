@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2012 Regis Houssin  <regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW			<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,6 +45,8 @@ trait CommonSocialNetworks
 	{
 		global $object, $form, $langs;
 
+		'@phan-var-force CommonSocialNetworks $object';
+
 		$nbofnetworks = count($socialnetworks);
 		$nbactive = 0;
 		foreach ($socialnetworks as $key => $value) {
@@ -55,10 +57,8 @@ trait CommonSocialNetworks
 
 		if ($nbofnetworks > 1) {
 			print '<tr><td colspan="'.$colspan.'"><br><a class="paddingtop paddingbottom socialnetworklnk onreposition" id="socialnetworklnk" href="#"></a>';
-			//print '</td>';
-			//print '<td'.($colspan ? ' colspan="'.($colspan-1).'"' : '').'>';
-			//print '<br>';
 			print ' <a class="paddingtop paddingbottom socialnetworklnk onreposition" href="#"><span class="badge badge-secondary socialnetworklnk">'.$nbactive.'</span></a>';
+			print ' <span class="soc_network">'.$form->textwithpicto("", $langs->transnoentitiesnoconv("YouCanChangeValuesForThisListFromModuleSetup", $langs->transnoentitiesnoconv("SocialNetworks"))).'</span>';
 			print '</td>';
 			print '</tr>';
 		}

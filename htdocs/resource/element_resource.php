@@ -1,9 +1,10 @@
 <?php
-/* Copyright (C) 2013-2018	Jean-François Ferry	<hello+jf@librethic.io>
- * Copyright (C) 2016		Gilles Poirier 		<glgpoirier@gmail.com>
- * Copyright (C) 2019		Josep Lluís Amador	<joseplluis@lliuretic.cat>
- * Copyright (C) 2021-2024	Frédéric France		<frederic.france@free.fr>
+/* Copyright (C) 2013-2018	Jean-François Ferry		<hello+jf@librethic.io>
+ * Copyright (C) 2016		Gilles Poirier 			<glgpoirier@gmail.com>
+ * Copyright (C) 2019		Josep Lluís Amador		<joseplluis@lliuretic.cat>
+ * Copyright (C) 2021-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2023		William Mead			<william.mead@manchenumerique.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,13 +40,21 @@ if (isModEnabled("product") || isModEnabled("service")) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('resource', 'other', 'interventions'));
 
 /*
-$sortorder                      = GETPOST('sortorder','alpha');
-$sortfield                      = GETPOST('sortfield','alpha');
-$page                           = GETPOST('page','int');
+$sortorder = GETPOST('sortorder','alpha');
+$sortfield = GETPOST('sortfield','alpha');
+$page = GETPOST('page','int');
 */
 
 $object = new Dolresource($db);
@@ -99,6 +108,12 @@ if ($element == 'product' || $element == 'service') {	// When RESOURCE_ON_PRODUC
 	$result = restrictedArea($user, 'produit|service', $element_id, 'product&product', '', '', (string) $fieldtype);
 }
 
+// TODO
+//$permissiontoadd should be set according to $element
+//$permissiontodelete should be set according to $element
+$permissiontoadd = $user->hasRight('resource', 'write');
+$permissiontodelete = $user->hasRight('resource', 'delete');
+
 
 /*
  * Actions
@@ -112,8 +127,9 @@ if ($reshook < 0) {
 
 if (empty($reshook)) {
 	$error = 0;
+	$objstat = null;
 
-	if ($action == 'add_element_resource' && !$cancel) {
+	if ($action == 'add_element_resource' && !$cancel && $permissiontoadd) {	// Test on permission already done in header before actions
 		$res = 0;
 		if (!($resource_id > 0)) {
 			$error++;
@@ -123,59 +139,64 @@ if (empty($reshook)) {
 			$objstat = fetchObjectByElement($element_id, $element, $element_ref);
 			$objstat->element = $element; // For externals module, we need to keep @xx
 
-			// TODO : add this check at update_linked_resource and when modifying event start or end date
-			// check if an event resource is already in use
-			if (getDolGlobalString('RESOURCE_USED_IN_EVENT_CHECK') && $objstat->element == 'action' && $resource_type == 'dolresource' && intval($busy) == 1) {
-				$eventDateStart = $objstat->datep;
-				$eventDateEnd   = $objstat->datef;
-				$isFullDayEvent = $objstat->fulldayevent;
-				if (empty($eventDateEnd)) {
-					if ($isFullDayEvent) {
-						$eventDateStartArr = dol_getdate($eventDateStart);
-						$eventDateStart = dol_mktime(0, 0, 0, $eventDateStartArr['mon'], $eventDateStartArr['mday'], $eventDateStartArr['year']);
-						$eventDateEnd   = dol_mktime(23, 59, 59, $eventDateStartArr['mon'], $eventDateStartArr['mday'], $eventDateStartArr['year']);
+			// check if the resource is already busy on another event or intervention that overlaps
+			// (only for the element types whose module is actually enabled)
+			$elementsToCheck = array();
+			if (isModEnabled('agenda')) {
+				$elementsToCheck[] = 'action';
+			}
+			if (isModEnabled('intervention')) {
+				$elementsToCheck[] = 'fichinter';
+			}
+			if (getDolGlobalString('RESOURCE_USED_IN_EVENT_CHECK') && in_array($objstat->element, $elementsToCheck) && $resource_type == 'dolresource' && intval($busy) == 1) {
+				$bookingDateStart = null;
+				$bookingDateEnd = null;
+
+				if ($objstat->element == 'action') {
+					/** @var ActionComm $objstat */
+					'@phan-var-force ActionComm $objstat';
+					$bookingDateStart = $objstat->datep;
+					$bookingDateEnd   = $objstat->datef;
+					if (empty($bookingDateEnd) && $objstat->fulldayevent) {
+						$eventDateStartArr = dol_getdate($bookingDateStart);
+						$bookingDateStart = dol_mktime(0, 0, 0, $eventDateStartArr['mon'], $eventDateStartArr['mday'], $eventDateStartArr['year']);
+						$bookingDateEnd = dol_mktime(23, 59, 59, $eventDateStartArr['mon'], $eventDateStartArr['mday'], $eventDateStartArr['year']);
+					}
+				} elseif ($objstat->element == 'fichinter') {
+					// Fichinter has no usable header date range of its own: derive it from its lines.
+					/** @var Fichinter $objstat */
+					'@phan-var-force Fichinter $objstat';
+					$sqlrange = "SELECT MIN(fd.date) as dmin, MAX(fd.date + INTERVAL fd.duree SECOND) as dmax";
+					$sqlrange .= " FROM ".MAIN_DB_PREFIX."fichinterdet as fd";
+					$sqlrange .= " WHERE fd.fk_fichinter = ".((int) $objstat->id);
+					$resqlrange = $db->query($sqlrange);
+					if ($resqlrange) {
+						$objrange = $db->fetch_object($resqlrange);
+						if ($objrange && $objrange->dmin) {
+							$bookingDateStart = $db->jdate($objrange->dmin);
+							$bookingDateEnd = $db->jdate($objrange->dmax);
+						}
+						$db->free($resqlrange);
 					}
 				}
 
-				$sql  = "SELECT er.rowid, r.ref as r_ref, ac.id as ac_id, ac.label as ac_label";
-				$sql .= " FROM ".MAIN_DB_PREFIX."element_resources as er";
-				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."resource as r ON r.rowid = er.resource_id AND er.resource_type = '".$db->escape($resource_type)."'";
-				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm as ac ON ac.id = er.element_id AND er.element_type = '".$db->escape($objstat->element)."'";
-				$sql .= " WHERE er.resource_id = ".((int) $resource_id);
-				$sql .= " AND er.busy = 1";
-				$sql .= " AND (";
-
-				// event date start between ac.datep and ac.datep2 (if datep2 is null we consider there is no end)
-				$sql .= " (ac.datep <= '".$db->idate($eventDateStart)."' AND (ac.datep2 IS NULL OR ac.datep2 >= '".$db->idate($eventDateStart)."'))";
-				// event date end between ac.datep and ac.datep2
-				if (!empty($eventDateEnd)) {
-					$sql .= " OR (ac.datep <= '".$db->idate($eventDateEnd)."' AND (ac.datep2 >= '".$db->idate($eventDateEnd)."'))";
-				}
-				// event date start before ac.datep and event date end after ac.datep2
-				$sql .= " OR (";
-				$sql .= "ac.datep >= '".$db->idate($eventDateStart)."'";
-				if (!empty($eventDateEnd)) {
-					$sql .= " AND (ac.datep2 IS NOT NULL AND ac.datep2 <= '".$db->idate($eventDateEnd)."')";
-				}
-				$sql .= ")";
-
-				$sql .= ")";
-				$resql = $db->query($sql);
-				if (!$resql) {
-					$error++;
-					$objstat->error    = $db->lasterror();
-					$objstat->errors[] = $objstat->error;
-				} else {
-					if ($db->num_rows($resql) > 0) {
+				if (!empty($bookingDateStart)) {
+					$resourcestatic = new Dolresource($db);
+					$resourcestatic->fetch($resource_id);
+					$conflicts = $resourcestatic->getBookingConflicts($resource_id, $resource_type, $bookingDateStart, ($bookingDateEnd ? $bookingDateEnd : $bookingDateStart), $objstat->element, $objstat->id);
+					if (!is_array($conflicts)) {
+						$error++;
+						$objstat->error    = $resourcestatic->error;
+						$objstat->errors[] = $objstat->error;
+					} elseif (count($conflicts) > 0) {
 						// Resource already in use
 						$error++;
 						$objstat->error = $langs->trans('ErrorResourcesAlreadyInUse').' : ';
-						while ($obj = $db->fetch_object($resql)) {
-							$objstat->error .= '<br> - '.$langs->trans('ErrorResourceUseInEvent', $obj->r_ref, $obj->ac_label.' ['.$obj->ac_id.']');
+						foreach ($conflicts as $conflict) {
+							$objstat->error .= '<br> - '.$langs->trans('ErrorResourceUseInEvent', $resourcestatic->ref, $conflict['ref'].' ['.$conflict['element_id'].']');
 						}
 						$objstat->errors[] = $objstat->error;
 					}
-					$db->free($resql);
 				}
 			}
 
@@ -184,7 +205,7 @@ if (empty($reshook)) {
 			}
 		}
 
-		if (!$error && $res > 0) {
+		if (!$error && $res > 0 && is_object($objstat)) {
 			setEventMessages($langs->trans('ResourceLinkedWithSuccess'), null, 'mesgs');
 			header("Location: ".$_SERVER['PHP_SELF'].'?element='.$element.'&element_id='.$objstat->id);
 			exit;
@@ -194,16 +215,16 @@ if (empty($reshook)) {
 	}
 
 	// Update resource
-	if ($action == 'update_linked_resource' && $user->hasRight('resource', 'write') && !GETPOST('cancel', 'alpha')) {
+	if ($action == 'update_linked_resource' && $permissiontoadd && !$cancel) {
 		$res = $object->fetchElementResource($lineid);
 		if ($res) {
 			$object->busy = $busy;
 			$object->mandatory = $mandatory;
 
-			if (getDolGlobalString('RESOURCE_USED_IN_EVENT_CHECK') && $object->element_type == 'action' && $object->resource_type == 'dolresource' && intval($object->busy) == 1) {
-				$eventDateStart = $object->objelement->datep;
-				$eventDateEnd   = $object->objelement->datef;
-				$isFullDayEvent = $objstat->fulldayevent;
+			if (getDolGlobalString('RESOURCE_USED_IN_EVENT_CHECK') && $object->objelement instanceof ActionComm && $object->element_type == 'action' && $object->resource_type == 'dolresource' && intval($object->busy) == 1) {
+				$eventDateStart = $object->objelement->datep;  // @phan-suppress-current-line PhanUndeclaredProperty
+				$eventDateEnd   = $object->objelement->datef;  // @phan-suppress-current-line PhanUndeclaredProperty
+				$isFullDayEvent = $object->objelement->fulldayevent; // @phan-suppress-current-line PhanUndeclaredProperty
 				if (empty($eventDateEnd)) {
 					if ($isFullDayEvent) {
 						$eventDateStartArr = dol_getdate($eventDateStart);
@@ -239,7 +260,7 @@ if (empty($reshook)) {
 				$resql = $db->query($sql);
 				if (!$resql) {
 					$error++;
-					$object->error    = $db->lasterror();
+					$object->error = $db->lasterror();
 					$object->errors[] = $object->error;
 				} else {
 					if ($db->num_rows($resql) > 0) {
@@ -249,7 +270,7 @@ if (empty($reshook)) {
 						while ($obj = $db->fetch_object($resql)) {
 							$object->error .= '<br> - '.$langs->trans('ErrorResourceUseInEvent', $obj->r_ref, $obj->ac_label.' ['.$obj->ac_id.']');
 						}
-						$object->errors[] = $objstat->error;
+						$object->errors[] = $object->error;
 					}
 					$db->free($resql);
 				}
@@ -273,20 +294,25 @@ if (empty($reshook)) {
 	}
 
 	// Delete a resource linked to an element
-	if ($action == 'confirm_delete_linked_resource' && $user->hasRight('resource', 'delete') && $confirm === 'yes') {
-		$result = $object->delete_resource($lineid, $element);
+	if ($action == 'confirm_delete_linked_resource' && $permissiontodelete && $confirm === 'yes') {
+		$res = $object->fetchElementResource($lineid); // to have correct object deleting resource
+		if ($res) {
+			$result = $object->objelement->delete_resource($lineid, '');
 
-		if ($result >= 0) {
-			setEventMessages($langs->trans('RessourceLineSuccessfullyDeleted'), null, 'mesgs');
-			header("Location: ".$_SERVER['PHP_SELF']."?element=".$element."&element_id=".$element_id);
-			exit;
+			if ($result >= 0) {
+				setEventMessages($langs->trans('RessourceLineSuccessfullyDeleted'), null, 'mesgs');
+				header("Location: ".$_SERVER['PHP_SELF']."?element=".$element."&element_id=".$element_id);
+				exit;
+			} else {
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 }
 
-$parameters = array('resource_id'=>$resource_id);
+$parameters = array('resource_id' => $resource_id);
 $reshook = $hookmanager->executeHooks('getElementResources', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -316,7 +342,7 @@ if ($ret == -1) {
 if (!$ret) {
 	print '<div class="warning">'.$langs->trans('NoResourceInDatabase').'</div>';
 } else {
-	// Confirmation suppression resource line
+	// Deletion confirmation resource line
 	if ($action == 'delete_resource') {
 		print $form->formconfirm("element_resource.php?element=".$element."&element_id=".$element_id."&id=".$id."&lineid=".$lineid, $langs->trans("DeleteResource"), $langs->trans("ConfirmDeleteResourceElement"), "confirm_delete_linked_resource", '', '', 1);
 	}
@@ -331,6 +357,7 @@ if (!$ret) {
 
 		$act = fetchObjectByElement($element_id, $element, $element_ref);
 		if (is_object($act)) {
+			'@phan-var-force ActionComm $act';
 			$head = actions_prepare_head($act);
 
 			print dol_get_fiche_head($head, 'resources', $langs->trans("Action"), -1, 'action');
@@ -383,12 +410,12 @@ if (!$ret) {
 			if (isModEnabled('project')) {
 				$langs->load("projects");
 				//$morehtmlref .= '<br>';
-				if (0) {
+				if (0) {	// @phpstan-ignore-line
 					$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 					if ($action != 'classify') {
-						$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
+						$morehtmlref .= '<a class="editfielda" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true).'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 					}
-					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 				} else {
 					if (!empty($object->fk_project)) {
 						$proj = new Project($db);
@@ -459,7 +486,7 @@ if (!$ret) {
 			$listofuserid = array();
 			if (empty($donotclearsession)) {
 				if ($act->userownerid > 0) {
-					$listofuserid[$act->userownerid] = array('id'=>$act->userownerid, 'transparency'=>$act->transparency); // Owner first
+					$listofuserid[$act->userownerid] = array('id' => $act->userownerid, 'transparency' => $act->transparency); // Owner first
 				}
 				if (!empty($act->userassigned)) {	// Now concat assigned users
 					// Restore array with key with same value than param 'id'
@@ -480,7 +507,7 @@ if (!$ret) {
 			$listofcontactid = array(); // not used yet
 			$listofotherid = array(); // not used yet
 			print '<div class="assignedtouser">';
-			print $form->select_dolusers_forevent('view', 'assignedtouser', 1, '', 0, '', '', 0, 0, 0, '', ($act->datep != $act->datef) ? 1 : 0, $listofuserid, $listofcontactid, $listofotherid);
+			print $form->select_dolusers_forevent('view', 'assignedtouser', 1, array(), 0, '', array(), '0', 0, 0, '', ($act->datep != $act->datef) ? 1 : 0, $listofuserid, $listofcontactid, $listofotherid);
 			print '</div>';
 			/*if (in_array($user->id,array_keys($listofuserid)))
 			{
@@ -502,6 +529,8 @@ if (!$ret) {
 	if (($element_id || $element_ref) && $element == 'societe') {
 		$socstatic = fetchObjectByElement($element_id, $element, $element_ref);
 		if (is_object($socstatic)) {
+			'@phan-var-force Societe $socstatic';
+			/** @var Societe $socstatic */
 			$savobject = $object;
 			$object = $socstatic;
 
@@ -554,8 +583,8 @@ if (!$ret) {
 			// Ref customer
 			//$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $fichinter->ref_client, $fichinter, $user->rights->ficheinter->creer, 'string', '', 0, 1);
 			//$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $fichinter->ref_client, $fichinter, $user->rights->ficheinter->creer, 'string', '', null, null, '', 1);
-			$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $fichinter->ref_client, $fichinter, 0, 'string', '', 0, 1);
-			$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $fichinter->ref_client, $fichinter, 0, 'string', '', null, null, '', 1);
+			$morehtmlref .= $form->editfieldkey("RefCustomer", 'ref_client', $fichinter->ref_client, $fichinter, 0, 'string', '', 0, 1);
+			$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_client', $fichinter->ref_client, $fichinter, 0, 'string', '', null, null, '', 1);
 			// Thirdparty
 			$morehtmlref .= '<br>'.$fichinter->thirdparty->getNomUrl(1, 'customer');
 			// Project
@@ -567,7 +596,7 @@ if (!$ret) {
 					if ($action != 'classify') {
 						$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$fichinter->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 					}
-					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$fichinter->id, $fichinter->socid, $fichinter->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$fichinter->id, $fichinter->socid, (string) $fichinter->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 				} else {
 					if (!empty($fichinter->fk_project)) {
 						$proj = new Project($db);
@@ -613,7 +642,7 @@ if (!$ret) {
 
 
 	// hook for other elements linked
-	$parameters = array('element'=>$element, 'element_id'=>$element_id, 'element_ref'=>$element_ref);
+	$parameters = array('element' => $element, 'element_id' => $element_id, 'element_ref' => $element_ref);
 	$reshook = $hookmanager->executeHooks('printElementTab', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 	if ($reshook < 0) {
 		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');

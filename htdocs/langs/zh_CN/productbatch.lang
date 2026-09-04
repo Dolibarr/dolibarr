@@ -22,7 +22,7 @@ printSellby=销售日期: %s
 printQty=数量: %d
 printPlannedWarehouse=仓库：%s
 AddDispatchBatchLine=添加一个用于货架寿命调度
-WhenProductBatchModuleOnOptionAreForced=当模块批次/序列打开时，自动库存减少模式强制为“%s”，自动增加模式强制为“%s” '。有些选择可能不可用。其他选项可以根据需要定义。
+WhenProductBatchModuleOnOptionAreForced=When module Lot/Serial is on, some modes for automatic stock decrease or increase may be not available. The other options have no restriction.
 ProductDoesNotUseBatchSerial=此产品不使用批号/序列号
 ProductLotSetup=模块批次/序列的设置
 ShowCurrentStockOfLot=显示成对产品/批次的当前库存
@@ -50,3 +50,6 @@ ToReplace=替换
 CantMoveNonExistantSerial=错误。您要求移动不存在的连续记录。可能您在同一个仓库同一个发货单多次发货同一批次的货，或者它已被另一个发货单使用过。请移除该发货单并准备另一个发货单。
 TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=Lot table incomplete run repair with parameter '...repair.php?standard=confirmed'
 IlligalQtyForSerialNumbers= Stock correction required because unique serial number.
+ErrorBatchesNeedStockManagement=Error. A product with batch/lot management must also be managed in stock.
+ForceBatchesNeedStockManagement=A product with batch/lot management must be managed in stock (stock management force to yes)
+BatchInformationNotfound=Batch information not found

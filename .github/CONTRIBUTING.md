@@ -36,12 +36,13 @@ Definition:
 
 As the Developer:
 
-1. [Fork](https://help.github.com/articles/fork-a-repo) the [GitHub repository](https://github.com/Dolibarr/dolibarr).
-2. Clone your fork.
-3. Choose a branch(See the [Branches](#branches) section below).
-4. Read our developer documentation on the [Dolibarr Wiki](https://wiki.dolibarr.org/index.php?title=Developer_documentation).
-5. Commit and push your changes.
-6. [Make a pull request](https://help.github.com/articles/creating-a-pull-request).
+1. Check you agree with the terms of the [DCO - Developer's Certificate of Origin](https://github.com/Dolibarr/dolibarr/blob/develop/DCO)
+2. [Fork](https://help.github.com/articles/fork-a-repo) the [GitHub repository](https://github.com/Dolibarr/dolibarr).
+3. Clone your fork.
+4. Choose a branch(See the [Branches](#branches) section below).
+5. Read our developer documentation on the [Dolibarr Wiki](https://wiki.dolibarr.org/index.php?title=Developer_documentation).
+6. Commit and push your changes.
+7. [Make a pull request](https://help.github.com/articles/creating-a-pull-request).
 
 As the PR Maintainer:
 
@@ -77,6 +78,8 @@ If you push a bug fix on a very old version it is still going to be merged and p
 
 - As the Developer: Do not submit changes into files xx_XX/afile.lang. They are language files and are updated/synced automatically from Transifex. If you need to add a new language file, just add it for the en_US language.
 
+- As the Developor: For code contribution on stable branches (non develop), PR must contains 1 and only 1 bug fix at once.
+
 - As the Release Maintainer: The Release Maintainer will decide to make a new release as soon as the planning of the release is reached and the code in the branch to release reach the status of "No more known serious bugs". 
 
 
@@ -99,7 +102,7 @@ You can add it to your git configuration using:
 git config --local commit.template .gitmessage
 ```
 
-where
+with
 
 #### Keyword
 In uppercase if you want to have the log comment appears into the generated ChangeLog file.
@@ -135,9 +138,9 @@ If your PR is a change on interface, you must also paste a screenshot showing th
 
 #### Examples
 <pre>
-FIX|Fix #456 Short description (where #456 is number of bug fix, if it exists. In upper case to appear into ChangeLog)
+FIX|Fix #456 Short description (where #456 is number of bug fix, if an issue ID exists, or #xxx456 with xxx as the name of the VDP platform in lower case for security issues. The "Fix" must be in upper case to appear into ChangeLog)
 or
-CLOSE|Close #456 Short description (where #456 is number of feature request, if it exists. In upper case to appear into ChangeLog)
+CLOSE|Close #456 Short description (where #456 is number of feature request, if it exists. The "Close" must be in upper case to appear into ChangeLog)
 or
 NEW|New|QUAL|Qual|PERF|Perf Short description (In upper case to appear into ChangeLog, use this if you add a feature not tracked, otherwise use CLOSE #xxx)
 or
@@ -152,7 +155,9 @@ Long description (Can span across multiple lines).
 Pull Request (PR) process is the process to submit a change (enhancement, bug fix, ...) into the code of the project. There is some rules to know and
 a process to follow to optimize the chance to have PRs merged efficiently...
 
-* A PR must be atomic. It means it must contains the lower possible changes for 1 need (1 bug fix or 1 new feature) without breaking usability of code. If a PR can be split into several PRs, it often means your PR is not atomic.
+* A PR must be atomic. It means it must contains the lower possible changes for 1 need (1 bug fix or 1 new feature) without breaking usability of code. If a PR can be split into several PRs, it often means your PR is not atomic. For PR on maintenance versions, the modified code must be as low as possible and only the absolutely necessary changes are allowed (You must have the number of lines modified as low as possible to have the visible bug fixed (no refactoring, no perf, no quality, no renaming must be joined). 
+This allow to reduce to the maximum the number of future conflicts (so the number of regressions) when merging fixes into higher version to reduce the time of any future impact analysis.
+WARNING: AI IS OFTEN DOING NON ATOMIC PR AND NON ATOMIC PR WILL BE REJECTED, SO BE CAREFULL IF USING AI.
 
 * Your Pull Request (PR) must pass the Continuous Integration checks and code quality checks.
 
@@ -184,9 +189,9 @@ A so high ratio is very rare on a so popular project and with the increasing pop
 
 Translations
 ------------
-The source language (en_US) is maintained in the repository. See the [Code](#code) section above.
+The source language (en_US) is maintained in the repository.
 
-All other translations are managed online at [Transifex](https://www.transifex.com/dolibarr-association/dolibarr/).
+All other translations are managed online at [Transifex](https://explore.transifex.com/dolibarr-association/).
 
 Translations done on transifex are available in the next major release.
 

@@ -16,7 +16,7 @@ ResourceFormLabel_description=Ressourcen-Beschreibung
 ResourceType=Ressourcen-Typ
 ResourceTypeID=Ressourcentyp ID
 ResourceTypeLabel=Ressourcentyp Bezeichnung
-ResourcesLinkedToElement=Mit Element verknüpfte Ressourcen 
+ResourcesLinkedToElement=Mit Element verknüpfte Ressourcen
 
 ShowResource=Ressource anzeigen
 ResourceElementPage=Ressourcen-Element
@@ -34,5 +34,6 @@ ResourceTypeCode=Ressourcen-Typ Code
 ImportDataset_resource_1=Ressourcen
 ErrorResourcesAlreadyInUse=Einige Ressourcen werden verwendet
 ErrorResourceUseInEvent=%s wird im Ereignis %s verwendet
-MaxUsers=Maximale Anzahl Benutzer (Plätze, Sitze, etc.)
+MaxUsers=Maximale Anzahl Benutzer
+MaxUsersResourceDesc=Wenn die Ressource von mehreren Personen gleichzeitig genutzt werden kann (Auto, Raum, …), können Sie hier die maximale Zahl Anzahl von Benutzern angeben, die die Ressource gleichzeitig nutzen dürfen (Anzahl von Sitzen, Platz, …).
 MaxUsersLabel=Maximale Benutzerzahl

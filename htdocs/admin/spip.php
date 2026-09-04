@@ -35,6 +35,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/mailmanspip.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "members", "mailmanspip"));
 
@@ -49,14 +57,15 @@ $action = GETPOST('action', 'aZ09');
 /*
  * Actions
  */
+$error = 0;
 
-// Action mise a jour ou ajout d'une constante
+// Action update or add a constant
 if ($action == 'update' || $action == 'add') {
 	$constnamearray = GETPOST("constname", 'array');
 	$constvaluearray = GETPOST("constvalue", 'array');
 	$constnotearray = GETPOST("constnote", 'array');
 
-	// Action mise a jour ou ajout d'une constante
+	// Action update or add a constant
 	if ($action == 'update' || $action == 'add') {
 		foreach ($constnamearray as $key => $val) {
 			$constname = dol_escape_htmltag($constnamearray[$key]);
@@ -78,7 +87,7 @@ if ($action == 'update' || $action == 'add') {
 	}
 }
 
-// Action activation d'un sous module du module adherent
+// Action activate a sub-module of the member module
 if ($action == 'set') {
 	$result = dolibarr_set_const($db, GETPOST("name", 'aZ09'), GETPOST("value"), '', 0, '', $conf->entity);
 	if ($result < 0) {
@@ -86,7 +95,7 @@ if ($action == 'set') {
 	}
 }
 
-// Action deactivation d'un sous module du module adherent
+// Action deactivate a sub-module of the member module
 if ($action == 'unset') {
 	$result = dolibarr_del_const($db, GETPOST("name", 'aZ09'), $conf->entity);
 	if ($result < 0) {
@@ -105,7 +114,8 @@ $help_url = '';
 llxHeader('', $langs->trans("MailmanSpipSetup"), $help_url, '', 0, 0, '', '', '', 'mod-admin page-spip');
 
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+
 print load_fiche_titre($langs->trans("MailmanSpipSetup"), $linkback, 'title_setup');
 
 
@@ -116,7 +126,7 @@ $head = mailmanspip_admin_prepare_head();
  * Spip
  */
 if (getDolGlobalString('ADHERENT_USE_SPIP')) {
-	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" spellcheck="false">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 
@@ -127,7 +137,7 @@ if (getDolGlobalString('ADHERENT_USE_SPIP')) {
 	//$link.=$langs->trans("Disable");
 	$link .= img_picto($langs->trans("Activated"), 'switch_on');
 	$link .= '</a>';
-	// Edition des variables globales
+	// Edit global variables
 	$constantes = array(
 		'ADHERENT_SPIP_SERVEUR',
 		'ADHERENT_SPIP_DB',

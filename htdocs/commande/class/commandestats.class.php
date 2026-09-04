@@ -4,6 +4,8 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2020      Maxime DEMAREST      <maxime@indelog.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,15 +42,49 @@ class CommandeStats extends Stats
 	 */
 	public $table_element;
 
+	/**
+	 * @var int ID
+	 */
 	public $socid;
+
+	/**
+	 * @var int ID
+	 */
 	public $userid;
 
+	/**
+	 * @var string	To store the FROM part of the main table of the SQL request
+	 */
 	public $from;
+
+	/**
+	 * @var string	To store the FROM part of the lines table of the SQL request
+	 */
 	public $from_line;
+
+	/**
+	 * @var string	To store the field
+	 */
 	public $field;
+
+	/**
+	 * @var string	To store the field of the line table of the SQL request
+	 */
 	public $field_line;
+
+	/**
+	 * @var string	To store the FROM part of the categorie table of the SQL request
+	 */
 	public $categ_link;
+
+	/**
+	 * @var string	To store the WHERE part of the main table of the SQL request
+	 */
 	public $where = '';
+
+	/**
+	 * @var string	To store the join
+	 */
 	public $join;
 
 
@@ -64,14 +100,14 @@ class CommandeStats extends Stats
 	 */
 	public function __construct($db, $socid, $mode, $userid = 0, $typentid = 0, $categid = 0)
 	{
-		global $user, $conf;
-
+		global $hookmanager;
 		$this->db = $db;
 
 		$this->socid = ($socid > 0 ? $socid : 0);
 		$this->userid = $userid;
 		$this->cachefilesuffix = $mode;
 		$this->join = '';
+		$object = null;
 
 		if ($mode == 'customer') {
 			$object = new Commande($this->db);
@@ -108,6 +144,10 @@ class CommandeStats extends Stats
 		if ($categid) {
 			$this->where .= ' AND EXISTS (SELECT rowid FROM '.$this->categ_link.' as cats WHERE cats.fk_soc = c.fk_soc AND cats.fk_categorie = '.((int) $categid).')';
 		}
+		// Add where from hooks
+		$parameters = array('socid' => $socid);
+		$hookmanager->executeHooks('printFieldListWhere', $parameters, $object); // Note that $action and $object may have been modified by hook
+		$this->where .= $hookmanager->resPrint;
 	}
 
 	/**
@@ -115,15 +155,15 @@ class CommandeStats extends Stats
 	 *
 	 * @param	int		$year		Year to scan
 	 *	@param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
-	 * @return	array				Array with number by month
+	 * @return	array<int<0,11>,array{0:int<1,12>,1:int}>	Array with number by month
 	 */
 	public function getNbByMonth($year, $format = 0)
 	{
 		global $user;
 
-		$sql = "SELECT date_format(c.date_commande,'%m') as dm, COUNT(*) as nb";
-		$sql .= " FROM ".$this->from;
-		if (!$user->hasRight('societe', 'client', 'voir')) {
+		$sql = "SELECT date_format(c.date_commande, '%m') as dm, COUNT(*) as nb";
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
+		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= "  INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		$sql .= $this->join;
@@ -139,16 +179,15 @@ class CommandeStats extends Stats
 	/**
 	 * Return orders number per year
 	 *
-	 * @return	array	Array with number by year
-	 *
+	 * @return	array<array{0:int,1:int}>				Array of nb each year
 	 */
 	public function getNbByYear()
 	{
 		global $user;
 
-		$sql = "SELECT date_format(c.date_commande,'%Y') as dm, COUNT(*) as nb, SUM(c.".$this->field.")";
-		$sql .= " FROM ".$this->from;
-		if (!$user->hasRight('societe', 'client', 'voir')) {
+		$sql = "SELECT date_format(c.date_commande, '%Y') as dm, COUNT(*) as nb, SUM(c.".$this->db->sanitize($this->field).")";
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
+		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= "  INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		$sql .= $this->join;
@@ -164,15 +203,15 @@ class CommandeStats extends Stats
 	 *
 	 * @param	int		$year		Year to scan
 	 * @param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
-	 * @return	array				Array with amount by month
+	 * @return array<int<0,11>,array{0:int<1,12>,1:int|float}>	Array with amount by month
 	 */
 	public function getAmountByMonth($year, $format = 0)
 	{
 		global $user;
 
-		$sql = "SELECT date_format(c.date_commande,'%m') as dm, SUM(c.".$this->field.")";
-		$sql .= " FROM ".$this->from;
-		if (!$user->hasRight('societe', 'client', 'voir')) {
+		$sql = "SELECT date_format(c.date_commande, '%m') as dm, SUM(c.".$this->db->sanitize($this->field).")";
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
+		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= "  INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		$sql .= $this->join;
@@ -189,15 +228,15 @@ class CommandeStats extends Stats
 	 * Return the orders amount average by month for a year
 	 *
 	 * @param	int		$year	year for stats
-	 * @return	array			array with number by month
+	 * @return	array<int<0,11>,array{0:int<1,12>,1:int|float}> 	Array with number by month
 	 */
 	public function getAverageByMonth($year)
 	{
 		global $user;
 
-		$sql = "SELECT date_format(c.date_commande,'%m') as dm, AVG(c.".$this->field.")";
-		$sql .= " FROM ".$this->from;
-		if (!$user->hasRight('societe', 'client', 'voir')) {
+		$sql = "SELECT date_format(c.date_commande, '%m') as dm, AVG(c.".$this->db->sanitize($this->field).")";
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
+		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= "  INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		$sql .= $this->join;
@@ -212,15 +251,15 @@ class CommandeStats extends Stats
 	/**
 	 *	Return nb, total and average
 	 *
-	 *	@return	array	Array of values
+	 *  @return array<array{year:string,nb:int,nb_diff?:float,total?:float,avg?:float,weighted?:float,total_diff?:float,avg_diff?:float,avg_weighted?:float}>    Array of values
 	 */
 	public function getAllByYear()
 	{
 		global $user;
 
-		$sql = "SELECT date_format(c.date_commande,'%Y') as year, COUNT(*) as nb, SUM(c.".$this->field.") as total, AVG(".$this->field.") as avg";
-		$sql .= " FROM ".$this->from;
-		if (!$user->hasRight('societe', 'client', 'voir')) {
+		$sql = "SELECT date_format(c.date_commande, '%Y') as year, COUNT(*) as nb, SUM(c.".$this->db->sanitize($this->field).") as total, AVG(".$this->db->sanitize($this->field).") as avg";
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
+		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= "  INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		$sql .= $this->join;
@@ -236,17 +275,17 @@ class CommandeStats extends Stats
 	 *
 	 *	@param	int		$year			Year to scan
 	 *  @param  int     $limit      	Limit
-	 *	@return	array					Array of values
+	 *	@return	array<int<0,11>,array{0:int<1,12>,1:int|float}>		Array of values
 	 */
 	public function getAllByProduct($year, $limit = 10)
 	{
 		global $user;
 
-		$sql = "SELECT product.ref, COUNT(product.ref) as nb, SUM(tl.".$this->field_line.") as total, AVG(tl.".$this->field_line.") as avg";
-		$sql .= " FROM ".$this->from;
-		$sql .= " INNER JOIN ".$this->from_line." ON c.rowid = tl.fk_commande";
+		$sql = "SELECT product.ref, COUNT(product.ref) as nb, SUM(tl.".$this->db->sanitize($this->field_line).") as total, AVG(tl.".$this->db->sanitize($this->field_line).") as avg";
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
+		$sql .= " INNER JOIN ".$this->db->sanitize($this->from_line, 0, 1, 1)." ON c.rowid = tl.fk_commande";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."product as product ON tl.fk_product = product.rowid";
-		if (!$user->hasRight('societe', 'client', 'voir')) {
+		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= "  INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		$sql .= $this->join;

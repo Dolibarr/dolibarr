@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2006-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,6 +51,10 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
+/**
+ * @var DoliDB $db
+ * @var Translate $langs
+ */
 
 dol_syslog("Call Dolibarr webservices interfaces");
 
@@ -250,7 +255,7 @@ function getDocument($authentication, $modulepart, $file, $refname = '')
 	if (!$error) {
 		$fuser->loadRights();
 
-		// Suppression de la chaine de character ../ dans $original_file
+		// Removing the "../" string from $original_file
 		$original_file = str_replace("../", "/", $original_file);
 
 		// find the subdirectory name as the reference
@@ -292,8 +297,8 @@ function getDocument($authentication, $modulepart, $file, $refname = '')
 		}
 
 		// Security:
-		// On interdit les remontees de repertoire ainsi que les pipe dans
-		// les noms de fichiers.
+		// We forbid directory traversal as well as pipes in
+		// file names.
 		if (preg_match('/\.\./', $original_file) || preg_match('/[<>|]/', $original_file)) {
 			dol_syslog("Refused to deliver file ".$original_file);
 			$errorcode = 'REFUSED';

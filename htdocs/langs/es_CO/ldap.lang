@@ -15,3 +15,5 @@ LDAPFieldSkype=Cuenta de Skype
 LDAPFieldSkypeExample=Ejemplo: skypeName
 ErrorFailedToReadLDAP=No se pudo leer la base de datos LDAP. Verifique la configuración del módulo LDAP y la accesibilidad a la base de datos.
 PasswordOfUserInLDAP=Contraseña de usuario en LDAP
+LDAPUserAccountControl =userAccountControl al crearse (directorio activo)
+LDAPUserAccountControlExample =512 Cuenta normal / 546 Cuenta normal + Sin contraseña + Deshabilitada (ver: https://fr.wikipedia.org/wiki/Active_Directory)

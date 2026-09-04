@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (c) 2011      Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2020      Maxime DEMAREST      <maxime@indelog.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,12 +42,34 @@ class PropaleStats extends Stats
 	 */
 	public $table_element;
 
+	/**
+	 * @var int ID
+	 */
 	public $socid;
+
+	/**
+	 * @var int ID
+	 */
 	public $userid;
 
+	/**
+	 * @var string sql from
+	 */
 	public $from;
+
+	/**
+	 * @var string sql fields
+	 */
 	public $field;
+
+	/**
+	 * @var string sql where
+	 */
 	public $where;
+
+	/**
+	 * @var string sql join
+	 */
 	public $join;
 
 
@@ -63,11 +85,12 @@ class PropaleStats extends Stats
 	 */
 	public function __construct($db, $socid = 0, $userid = 0, $mode = 'customer', $typentid = 0, $categid = 0)
 	{
+		global $hookmanager;
 		$this->db = $db;
 		$this->socid = ($socid > 0 ? $socid : 0);
 		$this->userid = $userid;
 		$this->join = '';
-
+		$object = null;
 		if ($mode == 'customer') {
 			$object = new Propal($this->db);
 
@@ -107,6 +130,10 @@ class PropaleStats extends Stats
 		if ($categid) {
 			$this->where .= ' AND EXISTS (SELECT rowid FROM '.MAIN_DB_PREFIX.'categorie_societe as cats WHERE cats.fk_soc = p.fk_soc AND cats.fk_categorie = '.((int) $categid).')';
 		}
+		// Add where from hooks
+		$parameters = array('socid' => $socid);
+		$hookmanager->executeHooks('printFieldListWhere', $parameters, $object); // Note that $action and $object may have been modified by hook
+		$this->where .= $hookmanager->resPrint;
 	}
 
 
@@ -115,15 +142,15 @@ class PropaleStats extends Stats
 	 *
 	 * @param	int		$year		Year to scan
 	 *	@param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
-	 * @return	array				Array with number by month
+	 * @return	array<int<0,11>,array{0:int<1,12>,1:int}>	Array with number by month
 	 */
 	public function getNbByMonth($year, $format = 0)
 	{
 		global $user;
 
-		$sql = "SELECT date_format(".$this->field_date.",'%m') as dm, COUNT(*) as nb";
-		$sql .= " FROM ".$this->from;
-		if (!$user->hasRight('societe', 'client', 'voir')) {
+		$sql = "SELECT date_format(".$this->db->sanitize($this->field_date).", '%m') as dm, COUNT(*) as nb";
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
+		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON p.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		$sql .= $this->join;
@@ -131,7 +158,6 @@ class PropaleStats extends Stats
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
 		$sql .= $this->db->order('dm', 'DESC');
-
 		$res = $this->_getNbByMonth($year, $sql, $format);
 		return $res;
 	}
@@ -139,16 +165,15 @@ class PropaleStats extends Stats
 	/**
 	 * Return propals number per year
 	 *
-	 * @return	array	Array with number by year
-	 *
+	 * @return	array<array{0:int,1:int}>				Array of nb each year
 	 */
 	public function getNbByYear()
 	{
 		global $user;
 
-		$sql = "SELECT date_format(".$this->field_date.",'%Y') as dm, COUNT(*) as nb, SUM(c.".$this->field.")";
-		$sql .= " FROM ".$this->from;
-		if (!$user->hasRight('societe', 'client', 'voir')) {
+		$sql = "SELECT date_format(".$this->db->sanitize($this->field_date).", '%Y') as dm, COUNT(*) as nb, SUM(c.".$this->db->sanitize($this->field).")";
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
+		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON p.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		$sql .= $this->join;
@@ -164,15 +189,15 @@ class PropaleStats extends Stats
 	 *
 	 * @param	int		$year		Year to scan
 	 * @param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
-	 * @return	array				Array with amount by month
+	 * @return array<int<0,11>,array{0:int<1,12>,1:int|float}>	Array with amount by month
 	 */
 	public function getAmountByMonth($year, $format = 0)
 	{
 		global $user;
 
-		$sql = "SELECT date_format(".$this->field_date.",'%m') as dm, SUM(p.".$this->field.")";
-		$sql .= " FROM ".$this->from;
-		if (!$user->hasRight('societe', 'client', 'voir')) {
+		$sql = "SELECT date_format(".$this->db->sanitize($this->field_date).", '%m') as dm, SUM(p.".$this->db->sanitize($this->field).")";
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
+		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON p.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		$sql .= $this->join;
@@ -189,15 +214,15 @@ class PropaleStats extends Stats
 	 * Return the propals amount average by month for a year
 	 *
 	 * @param	int		$year	year for stats
-	 * @return	array			array with number by month
+	 * @return	array<int<0,11>,array{0:int<1,12>,1:int|float}> 	Array with number by month
 	 */
 	public function getAverageByMonth($year)
 	{
 		global $user;
 
-		$sql = "SELECT date_format(".$this->field_date.",'%m') as dm, AVG(p.".$this->field.")";
-		$sql .= " FROM ".$this->from;
-		if (!$user->hasRight('societe', 'client', 'voir')) {
+		$sql = "SELECT date_format(".$this->db->sanitize($this->field_date).", '%m') as dm, AVG(p.".$this->db->sanitize($this->field).")";
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
+		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON p.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		$sql .= $this->join;
@@ -212,15 +237,15 @@ class PropaleStats extends Stats
 	/**
 	 *	Return nb, total and average
 	 *
-	 *	@return	array	Array of values
+	 *  @return array<array{year:string,nb:int,nb_diff?:float,total?:float,avg?:float,weighted?:float,total_diff?:float,avg_diff?:float,avg_weighted?:float}>    Array with nb, total amount, average for each year
 	 */
 	public function getAllByYear()
 	{
 		global $user;
 
-		$sql = "SELECT date_format(".$this->field_date.",'%Y') as year, COUNT(*) as nb, SUM(".$this->field.") as total, AVG(".$this->field.") as avg";
-		$sql .= " FROM ".$this->from;
-		if (!$user->hasRight('societe', 'client', 'voir')) {
+		$sql = "SELECT date_format(".$this->db->sanitize($this->field_date).", '%Y') as year, COUNT(*) as nb, SUM(".$this->db->sanitize($this->field).") as total, AVG(".$this->db->sanitize($this->field).") as avg";
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
+		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON p.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		$sql .= $this->join;
@@ -243,11 +268,11 @@ class PropaleStats extends Stats
 	{
 		global $user;
 
-		$sql = "SELECT product.ref, COUNT(product.ref) as nb, SUM(tl.".$this->field_line.") as total, AVG(tl.".$this->field_line.") as avg";
-		$sql .= " FROM ".$this->from;
-		$sql .= " INNER JOIN ".$this->from_line." ON p.rowid = tl.fk_propal";
+		$sql = "SELECT product.ref, COUNT(product.ref) as nb, SUM(tl.".$this->db->sanitize($this->field_line).") as total, AVG(tl.".$this->db->sanitize($this->field_line).") as avg";
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
+		$sql .= " INNER JOIN ".$this->db->sanitize($this->from_line, 0, 0, 1)." ON p.rowid = tl.fk_propal";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."product as product ON tl.fk_product = product.rowid";
-		if (!$user->hasRight('societe', 'client', 'voir')) {
+		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON p.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		$sql .= $this->join;

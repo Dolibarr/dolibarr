@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2021       Dorian Laurent              <i.merraha@sofimedmaroc.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,15 +26,14 @@
 /**
  * Prepare admin pages header
  *
- * @return array
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function partnershipAdminPrepareHead()
 {
-	global $langs, $conf, $db;
+	global $langs, $conf, $extrafields;
 
 	$langs->loadLangs(array("members", "partnership"));
 
-	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('partnership');
 
 	$h = 0;
@@ -45,7 +45,7 @@ function partnershipAdminPrepareHead()
 	$h++;
 
 
-	$head[$h][0] = DOL_URL_ROOT . '/partnership/admin/partnership_extrafields.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'partnership'));
 	$head[$h][1] = $langs->trans("ExtraFields");
 	$nbExtrafields = $extrafields->attributes['partnership']['count'];
 	if ($nbExtrafields > 0) {
@@ -78,7 +78,7 @@ function partnershipAdminPrepareHead()
  * Prepare array of tabs for Partnership
  *
  * @param	Partnership	$object		Partnership
- * @return 	array					Array of tabs
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function partnershipPrepareHead($object)
 {

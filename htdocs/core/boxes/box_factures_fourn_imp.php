@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2015-2026  Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ class box_factures_fourn_imp extends ModeleBoxes
 	public $boxcode = "oldestunpaidsupplierbills";
 	public $boximg = "object_bill";
 	public $boxlabel = "BoxOldestUnpaidSupplierBills";
-	public $depends = array("facture", "fournisseur");
+	public $depends = array("invoice", "fournisseur");
 
 	/**
 	 *  Constructor
@@ -42,7 +42,7 @@ class box_factures_fourn_imp extends ModeleBoxes
 	 *  @param  DoliDB  $db         Database handler
 	 *  @param  string  $param      More parameters
 	 */
-	public function __construct($db, $param)
+	public function __construct($db, $param)  // @phpstan-ignore constructor.unusedParameter
 	{
 		global $user;
 
@@ -93,14 +93,14 @@ class box_factures_fourn_imp extends ModeleBoxes
 			$sql2 = " FROM ".MAIN_DB_PREFIX."societe as s";
 			$sql2 .= ",".MAIN_DB_PREFIX."facture_fourn as f";
 			$sql2 .= " LEFT JOIN ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf ON f.rowid = pf.fk_facturefourn";
-			if (!$user->hasRight('societe', 'client', 'voir')) {
+			if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 				$sql2 .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
 			$sql2 .= " WHERE f.fk_soc = s.rowid";
 			$sql2 .= " AND f.entity IN (".getEntity('supplier_invoice').")";
 			$sql2 .= " AND f.paye = 0";
 			$sql2 .= " AND fk_statut = 1";
-			if (!$user->hasRight('societe', 'client', 'voir')) {
+			if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 				$sql2 .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			if ($user->socid) {
@@ -218,7 +218,7 @@ class box_factures_fourn_imp extends ModeleBoxes
 					$objp = $this->db->fetch_object($result);
 					$totalamount = $objp->total_ht;
 
-					// Add the sum à the bottom of the boxes
+					// Add the sum to the bottom of the boxes
 					$this->info_box_contents[$line][] = array(
 						'tr' => 'class="liste_total_wrap"',
 						'td' => 'class="liste_total"',
@@ -229,7 +229,7 @@ class box_factures_fourn_imp extends ModeleBoxes
 						'text' => "&nbsp;",
 					);
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="right liste_total" ',
+						'td' => 'class="nowraponall right liste_total"',
 						'text' => price($totalamount, 0, $langs, 0, -1, -1, $conf->currency),
 					);
 					$this->info_box_contents[$line][] = array(
@@ -258,11 +258,13 @@ class box_factures_fourn_imp extends ModeleBoxes
 		}
 	}
 
+
+
 	/**
-	 *	Method to show box
+	 *	Method to show box.  Called when the box needs to be displayed.
 	 *
-	 *	@param	?array{text?:string,sublink?:string,subpicto:?string,nbcol?:int,limit?:int,subclass?:string,graph?:string}	$head	Array with properties of box title
-	 *	@param	?array<array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:string}>>	$contents	Array with properties of box lines
+	 *	@param	?array<array{text?:string,sublink?:string,subtext?:string,subpicto?:?string,picto?:string,nbcol?:int,limit?:int,subclass?:string,graph?:int<0,1>,target?:string}>   $head       Array with properties of box title
+	 *	@param	?array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:int,asis?:int<0,1>}>   $contents   Array with properties of box lines
 	 *	@param	int<0,1>	$nooutput	No print, only return string
 	 *	@return	string
 	 */

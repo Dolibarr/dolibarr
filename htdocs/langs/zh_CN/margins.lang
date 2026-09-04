@@ -6,7 +6,7 @@ TotalMargin=总利润
 MarginOnProducts=利润 / 产品
 MarginOnServices=利润 / 服务
 MarginRate=利润率
-ModifyMarginRates=Modify margin rates
+ModifyMarginRates=变更利润率
 MarkRate=标记税率
 DisplayMarginRates=显示利润率
 DisplayMarkRates=显示mark rates
@@ -31,14 +31,14 @@ UseDiscountOnTotal=在小计
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=定义全局折扣是被视为产品，服务还是仅作为保证金计算的小计。
 MARGIN_TYPE=默认情况下建议的购买/成本价格用于保证金计算
 MargeType1=最佳供应商价格的保证金
-MargeType2=加权平均价差 (WAP)
+MargeType2=Margin on Weighted Average Cost (WAC)
 MargeType3=成本价格保证金
-MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Price (WAP) = Selling price - Product Weighted Average Price (WAP) or best vendor price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAP if cost price not defined, or best vendor price if WAP not yet defined
+MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Cost (WAC) = Selling price - Product Weighted Average Price (WAP) or best vendor price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAC if cost price not defined, or best vendor price if WAC not yet defined
 CostPrice=成本价
 UnitCharges=费用单位
 Charges=费用
 AgentContactType=商业代理联络类型
-AgentContactTypeDetails=Define what contact type (linked on invoices) will be used for margin report per contact/address. Note that reading statistics on a contact is not reliable since in most cases the contact may not be defined explicitely on the invoices.
+AgentContactTypeDetails= 定义用于每个联系人/地址利润报告的联系人类型 (发票上的链接)。请注意，读取联系人的统计数据并不可靠，因为在大多数情况下，发票上可能没有明确定义联系人。
 rateMustBeNumeric=税率必须为数字值
 markRateShouldBeLesserThan100=Mark rate 将低于 100
 ShowMarginInfos=显示利润信息

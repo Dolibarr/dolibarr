@@ -47,7 +47,7 @@ class ModelePDFLabels
 	 *
 	 *  @param  DoliDB	$db     			Database handler
 	 *  @param  integer	$maxfilenamelength  Max length of value to show
-	 *  @return	array						List of templates
+	 *  @return	string[]|int<-1,0>			List of templates
 	 */
 	public function liste_modeles($db, $maxfilenamelength = 0)
 	{
@@ -68,7 +68,7 @@ class ModelePDFLabels
  *  Create a document onto disk according to template module.
  *
  *	@param  DoliDB		$db					Database handler
- *	@param  array		$arrayofrecords		Array of records
+ *	@param  array{}		$arrayofrecords		Array of records
  *	@param	string		$modele				Force le modele a utiliser ('' to not force)
  *	@param	Translate	$outputlangs		Object lang a utiliser pour traduction
  *	@param	string		$outputdir			Output directory
@@ -93,7 +93,7 @@ function doc_label_pdf_create($db, $arrayofrecords, $modele, $outputlangs, $outp
 	$code = '';
 	$srctemplatepath = '';
 
-	// Positionne le modele sur le nom du modele a utiliser
+	// Set the model to the name of the model to use
 	if (!dol_strlen($modele)) {
 		if (getDolGlobalString('ADHERENT_ETIQUETTE_TYPE')) {
 			$code = getDolGlobalString('ADHERENT_ETIQUETTE_TYPE');
@@ -143,6 +143,7 @@ function doc_label_pdf_create($db, $arrayofrecords, $modele, $outputlangs, $outp
 		require_once $file;
 
 		$obj = new $classname($db);
+		'@phan-var-force CommonStickerGenerator $obj';
 
 		// We save charset_output to restore it because write_file can change it if needed for
 		// output format that does not support UTF8.
@@ -171,7 +172,7 @@ function doc_label_pdf_create($db, $arrayofrecords, $modele, $outputlangs, $outp
 				header('Content-Disposition: inline; filename="'.$filename.'"');
 			}
 
-			// Ajout directives pour resoudre bug IE
+			// Add directives to fix IE bug
 			header('Cache-Control: Public, must-revalidate');
 			header('Pragma: public');
 

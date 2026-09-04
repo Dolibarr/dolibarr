@@ -2,7 +2,8 @@
 /* Copyright (c) 2008-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2018 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,62 +57,69 @@ class FormActions
 	/**
 	 *  Show list of action status
 	 *
-	 * 	@param	string	$formname		Name of form where select is included
-	 * 	@param	string	$selected		Preselected value (-1..100)
-	 * 	@param	int		$canedit		1=can edit, 0=read only
-	 *  @param  string	$htmlname   	Name of html prefix for html fields (selectX and valX)
-	 *  @param	integer	$showempty		Show an empty line if select is used
-	 *  @param	integer	$onlyselect		0=Standard, 1=Hide percent of completion and force usage of a select list, 2=Same than 1 and add "Incomplete (Todo+Running)
-	 *  @param  string  $morecss        More css on select field
-	 * 	@return	void
+	 * 	@param	string		$formname		Name of form where select is included
+	 * 	@param	string		$selected		Preselected value (-1..100)
+	 * 	@param	int<0,1>	$canedit		1=can edit, 0=read only
+	 *  @param  string		$htmlname   	Name of html prefix for html fields (selectX and valX)
+	 *  @param	integer		$showempty		Show an empty line if select is used
+	 *  @param	integer		$onlyselect		0=Standard, 1=Hide percent of completion and force usage of a select list, 2=Same than 1 and add "Incomplete (Todo+Running)
+	 *  @param  string  	$morecss        More css on select field
+	 *  @param	int<0,1>	$nooutput		1=No output, return string. 0=Print on output
+	 * 	@return	void|string
+	 *  @phpstan-return ($nooutput is 1 ? void : string)
 	 */
-	public function form_select_status_action($formname, $selected, $canedit = 1, $htmlname = 'complete', $showempty = 0, $onlyselect = 0, $morecss = 'maxwidth100')
+	public function form_select_status_action($formname, $selected, $canedit = 1, $htmlname = 'complete', $showempty = 0, $onlyselect = 0, $morecss = 'maxwidth100', $nooutput = 0)
 	{
 		// phpcs:enable
 		global $langs, $conf;
 
-		$listofstatus = array(
+		$listofstatus = [
 			'na' => $langs->trans("ActionNotApplicable"),
 			'0' => $langs->trans("ActionsToDoShort"),
 			'50' => $langs->trans("ActionRunningShort"),
 			'100' => $langs->trans("ActionDoneShort")
-		);
+		];
 		// +ActionUncomplete
+
+		$out = '';
 
 		if (!empty($conf->use_javascript_ajax) || $onlyselect) {
 			//var_dump($selected);
 			if ($selected == 'done') {
 				$selected = '100';
 			}
-			print '<select '.($canedit ? '' : 'disabled ').'name="'.$htmlname.'" id="select'.$htmlname.'" class="flat'.($morecss ? ' '.$morecss : '').'">';
+			$out .= '<select '.($canedit ? '' : 'disabled ').'name="'.$htmlname.'" id="select'.$htmlname.'" class="flat'.($morecss ? ' '.$morecss : '').'">';
 			if ($showempty) {
-				print '<option value="-1"'.($selected == '' ? ' selected' : '').'>&nbsp;</option>';
+				$out .= '<option value="-1"'.($selected == '' ? ' selected' : '').'>&nbsp;</option>';
 			}
 			foreach ($listofstatus as $key => $val) {
-				print '<option value="'.$key.'"'.(($selected == $key && strlen($selected) == strlen($key)) || (($selected > 0 && $selected < 100) && $key == '50') ? ' selected' : '').'>'.$val.'</option>';
-				if ($key == '50' && $onlyselect == 2) {
-					print '<option value="todo"'.($selected == 'todo' ? ' selected' : '').'>'.$langs->trans("ActionUncomplete").' ('.$langs->trans("ActionsToDoShort")."+".$langs->trans("ActionRunningShort").')</option>';
+				$out .= '<option value="'.$key.'"'.(($selected == $key && strlen($selected) == strlen($key)) || (($selected > 0 && $selected < 100) && $key == '50') ? ' selected' : '').'>';
+				$out .= $val;
+				$out .= '</option>';
+				// Add a choice "Incomplete" at second position
+				if ($key === 'na' && $onlyselect == 2) {
+					$out .= '<option value="todo"'.($selected == 'todo' ? ' selected' : '').'>'.$langs->trans("ActionUncomplete").' ('.$langs->trans("ActionsToDoShort")." + ".$langs->trans("ActionRunningShort").')</option>';
 				}
 			}
-			print '</select>';
+			$out .= '</select>';
 			if ($selected == 0 || $selected == 100) {
 				$canedit = 0;
 			}
 
-			print ajax_combobox('select'.$htmlname, array(), 0, 0, 'resolve', '-1', $morecss);
+			$out .= ajax_combobox('select'.$htmlname, array(), 0, 0, 'resolve', '-1', $morecss);
 
 			if (empty($onlyselect)) {
-				print ' <input type="text" id="val'.$htmlname.'" name="percentage" class="flat hideifna" value="'.($selected >= 0 ? $selected : '').'" size="2"'.($canedit && ($selected >= 0) ? '' : ' disabled').'>';
-				print '<span class="hideonsmartphone hideifna">%</span>';
+				$out .= ' <input type="text" id="val'.$htmlname.'" name="percentage" class="flat hideifna heightofcombo" value="'.($selected >= 0 ? $selected : '').'" size="2"'.($canedit && ($selected >= 0) ? '' : ' disabled').'>';
+				$out .= '<span class="hideonsmartphone hideifna">%</span>';
 			}
 		} else {
-			print ' <input type="text" id="val'.$htmlname.'" name="percentage" class="flat" value="'.($selected >= 0 ? $selected : '').'" size="2"'.($canedit ? '' : ' disabled').'>%';
+			$out .= ' <input type="text" id="val'.$htmlname.'" name="percentage" class="flat" value="'.($selected >= 0 ? $selected : '').'" size="2"'.($canedit ? '' : ' disabled').'>%';
 		}
 
 		if (!empty($conf->use_javascript_ajax)) {
-			print "\n";
-			print '<script nonce="'.getNonce().'" type="text/javascript">';
-			print "
+			$out .= "\n";
+			$out .= '<script nonce="'.getNonce().'" type="text/javascript">';
+			$out .= "
                 var htmlname = '".dol_escape_js($htmlname)."';
 
                 $(document).ready(function () {
@@ -153,6 +161,12 @@ class FormActions
                     }
                 }
                 </script>\n";
+		}
+
+		if ($nooutput) {
+			return $out;
+		} else {
+			print $out;
 		}
 	}
 
@@ -197,7 +211,7 @@ class FormActions
 				$projectid = $object->id;
 			}
 			$taskid = 0;
-			if ($typeelement == 'task') {
+			if ($typeelement == 'project_task') {
 				$taskid = $object->id;
 			}
 
@@ -247,7 +261,6 @@ class FormActions
 				setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 			}
 
-			$error = 0;
 			if (empty($reshook)) {
 				print '<!-- formactions->showactions -->' . "\n";
 				print load_fiche_titre($title, $morehtmlright, '', 0, '', '', $morehtmlcenter);
@@ -262,7 +275,7 @@ class FormActions
 			print getTitleFieldOfList('Ref', 0, $_SERVER["PHP_SELF"], '', (string) $page, $param, '', $sortfield, $sortorder, '', 1);
 			print getTitleFieldOfList('Date', 0, $_SERVER["PHP_SELF"], 'a.datep', (string) $page, $param, '', $sortfield, $sortorder, 'center ', 1);
 			print getTitleFieldOfList('By', 0, $_SERVER["PHP_SELF"], '', (string) $page, $param, '', $sortfield, $sortorder, '', 1);
-			print getTitleFieldOfList('Type', 0, $_SERVER["PHP_SELF"], '', (string) $page, $param, '', $sortfield, $sortorder, '', 1);
+			print getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], '', (string) $page, $param, '', $sortfield, $sortorder, 'center ', 1);
 			print getTitleFieldOfList('Title', 0, $_SERVER["PHP_SELF"], '', (string) $page, $param, '', $sortfield, $sortorder, '', 1);
 			print getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], '', (string) $page, $param, '', $sortfield, $sortorder, 'right ', 1);
 			print '</tr>';
@@ -283,18 +296,8 @@ class FormActions
 					print '<td class="nowraponall nopaddingrightimp">'.$actioncomm->getNomUrl(1, -1).'</td>';
 
 					// Date
-					print '<td class="center nowraponall">'.dol_print_date($actioncomm->datep, 'dayhourreduceformat', 'tzuserrel');
-					if ($actioncomm->datef) {
-						$tmpa = dol_getdate($actioncomm->datep);
-						$tmpb = dol_getdate($actioncomm->datef);
-						if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year']) {
-							if ($tmpa['hours'] != $tmpb['hours'] || $tmpa['minutes'] != $tmpb['minutes']) {
-								print '-'.dol_print_date($actioncomm->datef, 'hour', 'tzuserrel');
-							}
-						} else {
-							print '-'.dol_print_date($actioncomm->datef, 'dayhourreduceformat', 'tzuserrel');
-						}
-					}
+					print '<td class="center nowraponall celldateheight">';
+					print dolOutputDates($actioncomm->datep, $actioncomm->datef, $actioncomm->fulldayevent, 0, '', 'tzuserrel', 1);
 					print '</td>';
 
 					// Owner
@@ -318,13 +321,17 @@ class FormActions
 					//$actionstatic->type_code = 'AC_OTHER_AUTO'
 
 					// Type
-					$labeltype = $actioncomm->getTypeLabel(0);
-					print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($labeltype).'">';
-					print $actioncomm->getTypePicto();
-					print $labeltype;
+					$labeltypelong = $actioncomm->getTypeLabel(2);
+					print '<td class="tdoverflowmax100 center valignmiddle" title="'.dolPrintHTML($labeltypelong).'">';
+					print $actioncomm->getTypePicto('valignmiddle');
+					if (preg_match('/PRIVATE/', $actioncomm->code)) {
+						print ' '.img_picto($langs->transnoentitiesnoconv("Private"), 'lock', 'class="valignmiddle"');
+					}
+					//$labeltype = $actioncomm->getTypeLabel(0);
+					//print $labeltype;
 					print '</td>';
 
-					// Label
+					// Label / Title
 					print '<td class="tdoverflowmax250">';
 					print $actioncomm->getNomUrl(0);
 					print '</td>';
@@ -357,17 +364,18 @@ class FormActions
 	/**
 	 *  Output html select list of type of event
 	 *
-	 *  @param	array|string	$selected       Type pre-selected (can be 'manual', 'auto' or 'AC_xxx'). Can be an array too.
+	 *  @param	string[]|string	$selected       Type preselected (can be 'manual', 'auto' or 'AC_xxx'). Can be an array too.
 	 *  @param  string		    $htmlname       Name of select field
 	 *  @param	string		    $excludetype	A type to exclude ('systemauto', 'system', '')
-	 *  @param	integer		    $onlyautoornot	1=Group all type AC_XXX into 1 line AC_MANUAL. 0=Keep details of type, -1=Keep details and add a combined line "All manual", -2=Combined line is disabled (not implemented yet)
-	 *  @param	int		        $hideinfohelp	1=Do not show info help, 0=Show, -1=Show+Add info to tell how to set default value
-	 *  @param  int		        $multiselect    1=Allow multiselect of action type
-	 *  @param  int             $nooutput       1=No output
+	 *  @param	int<-2,1>	    $onlyautoornot	1=Group all type AC_XXX into 1 line AC_MANUAL. 0=Keep details of type, -1=Keep details and add a combined line "All manual", -2=Combined line is disabled (not implemented yet)
+	 *  @param	int<-1,1>		$hideinfohelp	1=Do not show info help, 0=Show, -1=Show+Add info to tell how to set default value
+	 *  @param  int<0,1>        $multiselect    1=Allow multiselect of action type
+	 *  @param  int<0,1>		$nooutput       1=No output
 	 *  @param	string			$morecss		More css to add to SELECT component.
+	 *  @param	int<0,1>|string	$showempty		0 or 1 or 'Placeholder string'
 	 * 	@return	string
 	 */
-	public function select_type_actions($selected = '', $htmlname = 'actioncode', $excludetype = '', $onlyautoornot = 0, $hideinfohelp = 0, $multiselect = 0, $nooutput = 0, $morecss = 'minwidth300')
+	public function select_type_actions($selected = '', $htmlname = 'actioncode', $excludetype = '', $onlyautoornot = 0, $hideinfohelp = 0, $multiselect = 0, $nooutput = 0, $morecss = 'minwidth300', $showempty = 0)
 	{
 		// phpcs:enable
 		global $langs, $user, $form;
@@ -382,11 +390,6 @@ class FormActions
 
 		// Suggest a list with manual events or all auto events
 		$arraylist = $caction->liste_array(1, 'code', $excludetype, $onlyautoornot, '', 0);		// If we use param 'all' instead of 'code', there is no group by include in answer but the key 'type' of answer array contains the key for the group by.
-		if (empty($multiselect)) {
-			// Add empty line at start only if no multiselect
-			array_unshift($arraylist, '&nbsp;');
-		}
-		//asort($arraylist);
 
 		if ($selected == 'manual') {
 			$selected = 'AC_OTH';
@@ -395,7 +398,7 @@ class FormActions
 			$selected = 'AC_OTH_AUTO';
 		}
 
-		if (getDolGlobalString('AGENDA_ALWAYS_HIDE_AUTO')) {
+		if (array_key_exists('AC_OTH_AUTO', $arraylist) && getDolGlobalString('AGENDA_ALWAYS_HIDE_AUTO')) {
 			unset($arraylist['AC_OTH_AUTO']);
 		}
 
@@ -408,6 +411,7 @@ class FormActions
 			if (strpos($key, 'AC_ALL_') !== false && strpos($key, 'AC_ALL_AUTO') === false) {
 				$disabled = 'disabled';
 			}
+
 			$newarraylist[$key] = array('id' => $key, 'label' => $value, 'disabled' => $disabled);
 		}
 
@@ -415,9 +419,9 @@ class FormActions
 			if (!is_array($selected) && !empty($selected)) {
 				$selected = explode(',', $selected);
 			}
-			$out .= $form->multiselectarray($htmlname, $newarraylist, $selected, 0, 0, 'centpercent', 0, 0);
+			$out .= $form->multiselectarray($htmlname, $newarraylist, $selected, 0, 0, 'centpercent', 0, 0, '', '', (is_numeric($showempty) ? '' : $showempty));
 		} else {
-			$out .= $form->selectarray($htmlname, $newarraylist, $selected, 0, 0, 0, '', 0, 0, 0, '', $morecss, 1);
+			$out .= $form->selectarray($htmlname, $newarraylist, $selected, $showempty, 0, 0, '', 0, 0, 0, '', $morecss, 1);
 		}
 
 		if ($user->admin && empty($onlyautoornot) && $hideinfohelp <= 0) {

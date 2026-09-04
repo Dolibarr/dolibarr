@@ -25,4 +25,3 @@ create table llx_c_prospectlevel
   active          smallint    DEFAULT 1 NOT NULL,
   module          varchar(32) NULL
 ) ENGINE=innodb;
-

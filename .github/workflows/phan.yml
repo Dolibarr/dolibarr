@@ -1,30 +1,29 @@
 ---
+# This is a basic workflow to check code with PHPSTAN tool
+name: Phan
+
 on:
-  # pull_request:
-  # push:
-  # schedule:
-  #   # execute once a day, the 1st
-  #   - cron: 10 9 * * *
+  # workflow called by the parent workflow ci.yml
   workflow_call:
     inputs:
       gh_event:
         required: true
         type: string
+  # can run job manually
   workflow_dispatch:
 
 concurrency:
-  group: phan-${{ github.workflow }}-${{ github.ref }}
+  group: phan-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
+
 env:
   gh_event: ${{ inputs.gh_event || github.event_name }}
-  PHAN_CONFIG: >
-    ${{ 'dev/tools/phan/config.php' }}
+  PHAN_CONFIG: dev/tools/phan/config.php
   PHAN_BASELINE: dev/tools/phan/baseline.txt
-  PHAN_MIN_PHP: 7.0
+  PHAN_MIN_PHP: 7.2
   PHAN_QUICK: ${{ github.event.schedule && '' || '--quick' }}
   GITHUB_JSON: ${{ toJSON(github) }} # Helps in debugging Github Action
 
-name: phan
 jobs:
   phan:
     name: Run phan
@@ -34,25 +33,68 @@ jobs:
       github.repository == 'Dolibarr/dolibarr'
       || github.event.schedule == false
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
+
+      # Another method to get the list of changed files
+      # It sets the variable steps.changed-php.outputs.all_changed_files for other steps
+      - name: Get all changed php files (if PR)
+        id: changed-php
+        if: env.gh_event == 'pull_request'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: ./.github/scripts/get_changed_php.sh
+
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.2
+          php-version: 8.4
           coverage: none # disable xdebug, pcov
-          tools: cs2pr,phan
+          extensions: ast
+          tools: cs2pr:1.8.6,phan:5.5.2
+
+
       - name: Run Phan analysis
+        # Proceed when:
+        #   - the action is not cancelled
+        #  AND
+        #   - the branch is an integration branch (no merge), or,
+        #   - the merge from branch contains 'phan_full', or,
+        #   - there are changes in PHP files.
+        # Note: --output-mode=github does not provide file:line, so using checkstyle and cs2pr
+        if: ${{ ! cancelled() && (github.ref_name == 'develop' || github.ref_name == 'refs/heads/develop' || endsWith(github.ref_name, '.0') || contains(github.head_ref, 'phan_full') || steps.changed-php.outputs.phan_changed == 'true') }}
+        env:
+          ALL_CHANGED_FILES: ${{ steps.changed-php.outputs.all_changed_files }}
+          PHAN_CHANGED_FILES: ${{ steps.changed-php.outputs.phan_changed_files }}
+        # shellcheck disable=2086
+          FILE_CHANGED_LIST: /tmp/phan-changed.lst
         run: |
-          phan $PHAN_QUICK -k $PHAN_CONFIG -B $PHAN_BASELINE --analyze-twice --minimum-target-php-version $PHAN_MIN_PHP --output-mode=checkstyle -o _phan.xml
-      - name: Add results to PR
+          # shellcheck disable=2086
+          if [ "${{ github.ref_name }}" == "develop" ] || [[ "${{ github.ref_name }}" == *.0 ]]|| [[ "${{ github.head_ref }}" == *"phan_full"* ]] ; then
+            echo phan $PHAN_QUICK -k "$PHAN_CONFIG" -B "$PHAN_BASELINE" --analyze-twice --minimum-target-php-version "$PHAN_MIN_PHP" --output-mode=checkstyle -o _phan.xml
+            phan $PHAN_QUICK -k "$PHAN_CONFIG" -B "$PHAN_BASELINE" --analyze-twice --minimum-target-php-version "$PHAN_MIN_PHP" --output-mode=checkstyle -o _phan.xml
+          else
+            echo -n "" > "$FILE_CHANGED_LIST"
+            for f in $PHAN_CHANGED_FILES; do echo "$f" >> "$FILE_CHANGED_LIST"; done
+            # Must exclude same files as in phan configuration
+            grep -v -E '^htdocs/(custom/|.*/canvas/.*/tpl/.*.tpl.php|admin/tools/ui/|includes/(nusoap/|restler/|stripe/)|conf/conf.php)$' "$FILE_CHANGED_LIST"> "$FILE_CHANGED_LIST".tmp || true
+            mv "$FILE_CHANGED_LIST".tmp "$FILE_CHANGED_LIST"
+            if [ ! -s "$FILE_CHANGED_LIST" ] ; then
+               echo "All changed files are excluded for phan"
+            else
+               echo phan --file-list "$FILE_CHANGED_LIST" $PHAN_QUICK -k "$PHAN_CONFIG" -B "$PHAN_BASELINE" --analyze-twice --minimum-target-php-version "$PHAN_MIN_PHP" --output-mode=checkstyle -o _phan.xml
+               phan --file-list "$FILE_CHANGED_LIST" $PHAN_QUICK -k "$PHAN_CONFIG" -B "$PHAN_BASELINE" --analyze-twice --minimum-target-php-version "$PHAN_MIN_PHP" --output-mode=checkstyle -o _phan.xml
+            fi
+          fi
+
+      - name: Add results to PR as Github notices
         if: ${{ always() }}
         run: |
           cs2pr --prepend-filename --prepend-source --notices-as-warnings _phan.xml
+
       - name: Provide phan log as artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         if: ${{ always() }}
         with:
           name: phan-srcrt
-          # path: ${{ github.workspace }}/phan.log
           path: ${{ github.workspace }}/_phan.xml
           retention-days: 2

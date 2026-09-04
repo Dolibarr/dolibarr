@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  */
 // phpcs:disable PEAR.Commenting,Generic.NamingConventions,PEAR.NamingConventions,Squiz.Scope.MethodScope.Missing
 
@@ -3162,7 +3163,7 @@ namespace Luracast\Restler {
 			505 => 'HTTP Version Not Supported',
 		);
 		/**
-		 * @param string      $httpStatusCode http status code
+		 * @param int         $httpStatusCode http status code
 		 * @param string|null $errorMessage   error message
 		 * @param array       $details        any extra detail about the exception
 		 * @param Exception   $previous       previous exception if any

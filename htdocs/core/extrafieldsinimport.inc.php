@@ -1,4 +1,28 @@
 <?php
+/* Copyright (C) 2025		MDW	<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+/**
+ * @var Conf $conf
+ * @var DolibarrModules $this
+ * @var string $keyforselect
+ * @var string $keyforelement
+ * @var string $keyforaliasextra
+ * @var int $r
+ */
 '@phan-var-force DolibarrModules $this';
 
 // $keyforselect = name of main table
@@ -12,12 +36,26 @@ if (empty($keyforselect) || empty($keyforelement) || empty($keyforaliasextra)) {
 }
 
 // Add extra fields
-$sql = "SELECT name, label, type, param, fieldcomputed, fielddefault, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields";
-$sql .= " WHERE elementtype = '".$this->db->escape($keyforselect)."' AND type <> 'separate' AND entity IN (0, ".((int) $conf->entity).') ORDER BY pos ASC';
-//print $sql;
-$resql = $this->db->query($sql);
-if ($resql) {    // This can fail when class is used on old database (during migration for example)
-	while ($obj = $this->db->fetch_object($resql)) {
+// The list of extrafields for a given elementtype/entity is identical for every module that imports it,
+// so it is cached for the duration of the request instead of being re-queried on each inclusion of this file
+// (a page like user/perms.php that instantiates every module can otherwise trigger the same query dozens of times).
+$cachekey = $keyforselect.'_'.$conf->entity;
+if (!isset($conf->cache['extrafieldsinimport'][$cachekey])) {
+	$sql = "SELECT name, label, type, param, fieldcomputed, fielddefault, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields";
+	$sql .= " WHERE elementtype = '".$this->db->escape($keyforselect)."' AND type <> 'separate' AND entity IN (0, ".((int) $conf->entity).') ORDER BY pos ASC';
+	//print $sql;
+	$tmparrayextrafieldsinimport = array();
+	$resql = $this->db->query($sql);
+	if ($resql) {    // This can fail when class is used on old database (during migration for example)
+		while ($obj = $this->db->fetch_object($resql)) {
+			$tmparrayextrafieldsinimport[] = $obj;
+		}
+	}
+	$conf->cache['extrafieldsinimport'][$cachekey] = $tmparrayextrafieldsinimport;
+}
+if (!empty($conf->cache['extrafieldsinimport'][$cachekey])) {
+	foreach ($conf->cache['extrafieldsinimport'][$cachekey] as $obj) {
+		'@phan-var-force stdClass $obj';
 		$fieldname = $keyforaliasextra.'.'.$obj->name;
 		$fieldlabel = ucfirst($obj->label);
 		$typeFilter = "Text";
@@ -51,7 +89,7 @@ if ($resql) {    // This can fail when class is used on old database (during mig
 				$tmpparam = jsonOrUnserialize($obj->param); // $tmp may be array 'options' => array 'c_currencies:code_iso:code_iso' => null
 				if (is_array($tmpparam) && array_key_exists('options', $tmpparam) &&  $tmpparam['options'] && is_array($tmpparam['options'])) {
 					$tmpkeys = array_keys($tmpparam['options']);
-					$tmp = array_shift($tmpkeys);
+					$tmp = (string) array_shift($tmpkeys);
 				}
 				if (preg_match('/[a-z0-9_]+:[a-z0-9_]+:[a-z0-9_]+/', $tmp)) {
 					$typeFilter = "List:".$tmp;

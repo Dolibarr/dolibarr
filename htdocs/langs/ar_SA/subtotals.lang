@@ -1,0 +1,54 @@
+# Dolibarr language file - Source file is en_US - subtotal
+
+#
+# Global
+#
+Subtotal=الإجماليات الفرعية
+SubTotalModuleDesc=بنود الإجماليات الفرعية والعناوين لبعض المستندات
+#
+# Admin
+#
+SubtotalSetup=إعدادات وحدة الإجماليات الفرعية
+MaxSubtotalLevel=الحد الأقصى للمستوى
+SubtotalLineBackColor=لون خلفية بنود المستوى %s
+NotSupportedByAllPDF=يعمل مع نماذج PDF الأحدث، وليس مع النماذج القديمة %s
+
+#
+# Card
+#
+AddTitleLine=إضافة بند عنوان
+AddSubtotalLine=إضافة بند إجمالي فرعي
+TitleNeedDesc=يجب إدخال وصف صالح لإنشاء عنوان.
+TitleAddedLevelTooHigh=مستوى العنوان المضاف مرتفع جدًا (أُضيف بالمستوى %s بدلًا منه).
+TitleEditedLevelTooHigh=مستوى العنوان المعدّل مرتفع جدًا (عُدّل إلى المستوى %s بدلًا منه).
+DeleteSubtotalLine=حذف بند الإجمالي الفرعي
+ConfirmDeleteSubtotalLine=هل أنت متأكد من حذف بند الإجمالي الفرعي هذا؟
+DeleteTitleLine=حذف بند العنوان
+ConfirmDeleteTitleLine=هل أنت متأكد من حذف بند العنوان هذا؟
+DeleteCorrespondingSubtotalLine=حذف بند الإجمالي الفرعي المقابل؟
+SubtotalLevel=المستوى %s
+SubtotalLineDesc=وصف البند
+SubtotalLineLevel=مستوى البند
+ShowUPOnPDF=إظهار سعر الوحدة في ملف PDF
+ShowTotalExludingVATOnPDF=إظهار الإجمالي من دون ضريبة القيمة المضافة في ملف PDF
+ForcePageBreak=فرض فاصل صفحة قبل العنوان
+NoTitleError=لا توجد بنود عناوين، أو أن جميعها مرتبط بالفعل ببنود إجماليات فرعية مقابلة
+CorrespondingTitleLine=بند العنوان المقابل
+SelectVATRate=اختيار معدل ضريبة القيمة المضافة
+EnterRemisePercent=إدخال نسبة الخصم
+ApplyVATForBlock=تطبيق ضريبة القيمة المضافة على هذا القسم
+ApplyDiscountForBlock=تطبيق الخصم على هذا القسم
+TitleUnderSameLevelSTLine=يجب أن يكون العنوان من المستوى نفسه أسفل بند الإجمالي الفرعي للعنوان السابق.
+TitleUnderSameLevelOrGreater=يجب أن يكون العنوان أسفل عنوان من المستوى نفسه أو من مستوى أعلى.
+TitleAfterStLineOfSameLevelTitle=يجب أن يأتي العنوان بعد بند الإجمالي الفرعي للعنوان السابق.
+PreviousTitleLevelTooHigh=مستوى العنوان السابق أعلى بمستويين أو أكثر من مستوى البند المنقول.
+STLineUnderCorrespondingTitleDesc=يجب أن يقع بند الإجمالي الفرعي أسفل عنوان بالمستوى نفسه ويحمل الوصف نفسه.
+STLineUnderCorrespondingTitle=يجب أن يقع بند الإجمالي الفرعي أسفل عنوان من المستوى نفسه وبالوصف نفسه.
+STLineUnderTitle=يجب أن يقع بند الإجمالي الفرعي أسفل عنوانه
+UnsupportedModuleError=لا يمكنك إضافة بند إجمالي فرعي في وحدة غير مدعومة
+CorrespondingTitleNotFound=لم يُعثر على بند العنوان المقابل
+
+#
+# PDF
+#
+SubtotalOf=الإجمالي الفرعي لـ %s:

@@ -2,6 +2,7 @@
 /* Copyright (C) 2010      Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2023 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,6 +43,13 @@ if (!defined('NOREQUIRESOC')) {
 // Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Security check
 if (!getDolGlobalString('MAIN_USE_ZIPTOWN_DICTIONNARY')) {
@@ -94,12 +102,12 @@ if (GETPOST('zipcode') || GETPOST('town')) {
 		$sql .= " FROM ".MAIN_DB_PREFIX.'societe as s';
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as d ON s.fk_departement = d.rowid";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.'c_country as c ON s.fk_pays = c.rowid';
-		$sql .= " WHERE";
+		$sql .= " WHERE 1 = 1";
 		if ($zipcode) {
-			$sql .= " s.zip LIKE '".$db->escape($db->escapeforlike($zipcode))."%'";
+			$sql .= " AND s.zip LIKE '".$db->escape($db->escapeforlike($zipcode))."%'";
 		}
 		if ($town) {
-			$sql .= " s.town LIKE '%".$db->escape($db->escapeforlike($town))."%'";
+			$sql .= " AND s.town LIKE '%".$db->escape($db->escapeforlike($town))."%'";
 		}
 		$sql .= " ORDER BY s.fk_pays, s.zip, s.town";
 		$sql .= $db->plimit(100); // Avoid pb with bad criteria
@@ -132,7 +140,7 @@ if (GETPOST('zipcode') || GETPOST('town')) {
 			$row_array['state_id'] = $row['state_id'];
 
 			// TODO Use a cache here to avoid to make select_state in each pass (this make a SQL and lot of logs)
-			$row_array['states'] = $formcompany->select_state('', $row['country_id'], '');
+			$row_array['states'] = $formcompany->select_state(0, $row['country_id'], '');
 
 			array_push($return_arr, $row_array);
 		}
@@ -143,7 +151,7 @@ if (GETPOST('zipcode') || GETPOST('town')) {
 	top_httphead('text/html');
 
 	$formcompany = new FormCompany($db);
-	print $formcompany->select_state(GETPOSTINT('selected', 1), GETPOSTINT('country_codeid', 1), GETPOSTINT('htmlname', 1), GETPOSTINT('morecss', 1));
+	print $formcompany->select_state(GETPOSTINT('selected', 1), GETPOSTINT('country_codeid', 1), GETPOST('htmlname', 'alpha', 1), GETPOST('morecss', 'alpha', 1));
 }
 
 $db->close();

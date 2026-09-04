@@ -2,7 +2,8 @@
 /* Copyright (C) 2018-2018 Andre Schild        <a.schild@aarboard.ch>
  * Copyright (C) 2005-2010 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin       <regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This file is an example to follow to add your own email selector inside
  * the Dolibarr email tool.
@@ -25,13 +26,29 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/mailings/modules_mailings.php';
  */
 class mailing_thirdparties extends MailingTargets
 {
+	/**
+	 * @var string name of mailing module
+	 */
 	public $name = 'ThirdPartiesByCategories';
-	// This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
+
+	/**
+	 * @var string This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
+	 */
 	public $desc = "Third parties (by categories)";
+
+	/**
+	 * @var int<0,1>
+	 */
 	public $require_admin = 0;
 
-	public $require_module = array("societe"); // This module allows to select by categories must be also enabled if category module is not activated
+	/**
+	 * @var string[] This module allows to select by categories must be also enabled if category module is not activated
+	 */
+	public $require_module = array("societe");
 
+	/**
+	 * @var string condition to enable module
+	 */
 	public $enabled = 'isModEnabled("societe")';
 
 	/**
@@ -47,7 +64,7 @@ class mailing_thirdparties extends MailingTargets
 	 */
 	public function __construct($db)
 	{
-		global $conf, $langs;
+		global $langs;
 		$langs->load("companies");
 
 		$this->db = $db;
@@ -64,7 +81,7 @@ class mailing_thirdparties extends MailingTargets
 	public function add_to_target($mailing_id)
 	{
 		// phpcs:enable
-		global $conf, $langs;
+		global $langs;
 
 		$cibles = array();
 
@@ -138,9 +155,7 @@ class mailing_thirdparties extends MailingTargets
 			$sql .= " WHERE s.email <> ''";
 			$sql .= " AND s.entity IN (".getEntity('societe').")";
 			$sql .= " AND s.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".((int) $mailing_id).")";
-			if (empty($this->evenunsubscribe)) {
-				$sql .= " AND (SELECT count(*) FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE email = s.email) = 0";
-			}
+			$sql .= $this->getSqlToExcludeUnsubscribed('s.email');
 			$sql .= $addFilter;
 		} else {
 			$sql = "SELECT s.rowid as id, s.email as email, s.nom as name, null as fk_contact, null as firstname, c.label as label";
@@ -153,9 +168,7 @@ class mailing_thirdparties extends MailingTargets
 			if (GETPOSTINT('filter_thirdparties') > 0) {
 				$sql .= " AND c.rowid=".(GETPOSTINT('filter_thirdparties'));
 			}
-			if (empty($this->evenunsubscribe)) {
-				$sql .= " AND (SELECT count(*) FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE email = s.email) = 0";
-			}
+			$sql .= $this->getSqlToExcludeUnsubscribed('s.email');
 			$sql .= $addFilter;
 			$sql .= " UNION ";
 			$sql .= "SELECT s.rowid as id, s.email as email, s.nom as name, null as fk_contact, null as firstname, c.label as label";
@@ -168,9 +181,7 @@ class mailing_thirdparties extends MailingTargets
 			if (GETPOSTINT('filter_thirdparties') > 0) {
 				$sql .= " AND c.rowid=".(GETPOSTINT('filter_thirdparties'));
 			}
-			if (empty($this->evenunsubscribe)) {
-				$sql .= " AND (SELECT count(*) FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE email = s.email) = 0";
-			}
+			$sql .= $this->getSqlToExcludeUnsubscribed('s.email');
 			$sql .= $addFilter;
 		}
 		$sql .= " ORDER BY email";
@@ -197,12 +208,12 @@ class mailing_thirdparties extends MailingTargets
 					$otherTxt .= $addDescription;
 					$cibles[$j] = array(
 								'email' => $obj->email,
-								'fk_contact' => $obj->fk_contact,
+								'fk_contact' => (int) $obj->fk_contact,
 								'lastname' => $obj->name, // For a thirdparty, we must use name
 								'firstname' => '', // For a thirdparty, lastname is ''
 								'other' => $otherTxt,
 								'source_url' => $this->url($obj->id),
-								'source_id' => $obj->id,
+								'source_id' => (int) $obj->id,
 								'source_type' => 'thirdparty'
 					);
 					$old = $obj->email;
@@ -249,17 +260,13 @@ class mailing_thirdparties extends MailingTargets
 	 */
 	public function getNbOfRecipients($sql = '')
 	{
-		global $conf;
-
 		$sql = "SELECT count(distinct(s.email)) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 		$sql .= " WHERE s.email <> ''";
 		$sql .= " AND s.entity IN (".getEntity('societe').")";
-		if (empty($this->evenunsubscribe)) {
-			$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = s.email and mu.entity = ".((int) $conf->entity).")";
-		}
+		$sql .= $this->getSqlToExcludeUnsubscribed('s.email');
 
-		// La requete doit retourner un champ "nb" pour etre comprise par parent::getNbOfRecipients
+		// The query must return a field "nb" to be understood by parent::getNbOfRecipients
 		return parent::getNbOfRecipients($sql);
 	}
 
@@ -283,7 +290,7 @@ class mailing_thirdparties extends MailingTargets
 		$sql .= " FROM ".MAIN_DB_PREFIX."categorie";
 		$sql .= " WHERE type in (1,2)"; // We keep only categories for suppliers and customers/prospects
 		// $sql.= " AND visible > 0";	// We ignore the property visible because third party's categories does not use this property (only products categories use it).
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " AND entity = ".((int) $conf->entity);
 		$sql .= " ORDER BY label";
 
 		//print $sql;
@@ -368,7 +375,7 @@ class mailing_thirdparties extends MailingTargets
 			$formadmin = new FormAdmin($this->db);
 			$s .= img_picto($langs->trans("DefaultLang"), 'language', 'class="pictofixedwidth"');
 			//$s .= '<span class="opacitymedium">'.$langs->trans("DefaultLang").':</span> ';
-			$s .= $formadmin->select_language(GETPOST('filter_lang_thirdparties', 'aZ09'), 'filter_lang_thirdparties', 0, null, $langs->trans("DefaultLang"), 0, 0, '', 0, 0, 0, null, 1);
+			$s .= $formadmin->select_language(GETPOST('filter_lang_thirdparties', 'aZ09'), 'filter_lang_thirdparties', 0, array(), $langs->trans("DefaultLang"), 0, 0, '', 0, 0, 0, array(), 1);
 		}
 
 		return $s;

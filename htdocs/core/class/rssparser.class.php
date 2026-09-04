@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2011-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -99,6 +99,9 @@ class RssParser
 	 */
 	private $current_namespace;
 
+	/**
+	 * @var array<array<string,string>|array<string,array<string,string>>>
+	 */
 	public $items = array();
 	/**
 	 * @var array<string,string>|array<string,array<string,string>>
@@ -261,7 +264,7 @@ class RssParser
 	/**
 	 * getItems
 	 *
-	 * @return array
+	 * @return array<array{link:string,title:string,description:string,pubDate:string,category:string,id:string,author:string}>
 	 */
 	public function getItems()
 	{
@@ -364,6 +367,7 @@ class RssParser
 						return -1;
 					}
 
+					// @phan-suppress-next-line PhanDeprecatedFunctionInternal
 					xml_set_object($xmlparser, $this);
 					// @phan-suppress-next-line PhanUndeclaredFunctionInCallable
 					xml_set_element_handler($xmlparser, 'feed_start_element', 'feed_end_element'); // @phpstan-ignore-line
@@ -811,11 +815,14 @@ class RssParser
 			}
 		} else {
 			if (!empty($this->initem)) {
-				$this->concat($this->current_item[$el], $text);
+				// @phpstan-ignore-next-line argument.type
+				$this->concat($this->current_item[$el], $text);  // @phan-suppress-current-line PhanTypeMismatchArgument
 			} elseif (!empty($this->intextinput)) {
-				$this->concat($this->textinput[$el], $text);
+				// @phpstan-ignore-next-line argument.type
+				$this->concat($this->textinput[$el], $text);  // @phan-suppress-current-line PhanTypeMismatchArgument
 			} elseif (!empty($this->inimage)) {
-				$this->concat($this->image[$el], $text);
+				// @phpstan-ignore-next-line argument.type
+				$this->concat($this->image[$el], $text);  // @phan-suppress-current-line PhanTypeMismatchArgument
 			} elseif (!empty($this->inchannel)) {
 				$this->concat($this->channel[$el], $text);
 			}
@@ -885,21 +892,6 @@ class RssParser
 	}
 }
 
-/*
- * A method for the xml_set_external_entity_ref_handler()
- *
- * @param XMLParser $parser
- * @param string $ent
- * @param string|false $base
- * @param string $sysID
- * @param string|false $pubID
- * @return bool
-function extEntHandler($parser, $ent, $base, $sysID, $pubID)  {
-	print 'extEntHandler ran';
-	return true;
-}
-*/
-
 /**
  * Function to convert an XML object into an array
  *
@@ -933,7 +925,7 @@ function xml2php($xml)
 		}
 
 		//Let see if the new child is not in the array
-		if ($tab === false && in_array($key, array_keys($array))) {
+		if ($tab === false && array_key_exists($key, $array)) {
 			//If this element is already in the array we will create an indexed array
 			$tmp = $array[$key];
 			$array[$key] = null;

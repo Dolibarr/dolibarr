@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - commercial
 Commercial=Comercio
 CommercialArea=Area de Comercio
+Prospect=Cliente
 Prospects=Prospectos
 ConfirmDeleteAction=¿Seguro que quieres eliminar este evento?
 CardAction=Tarjeta de evento

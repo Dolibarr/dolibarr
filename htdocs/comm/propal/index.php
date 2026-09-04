@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2019		Nicolas ZABOURI			<info@inovea-conseil.com>
  * Copyright (C) 2020		Tobias Sekan			<tobias.sekan@startmail.com>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,23 +28,32 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/propal.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+
 
 // Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
-$hookmanager = new HookManager($db);
 $hookmanager->initHooks(array('proposalindex'));
 
 // Load translation files required by the page
 $langs->loadLangs(array('propal', 'companies'));
 
 $now = dol_now();
-$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
+
+$max = getDolUserInt('MAIN_SIZE_SHORTLIST_LIMIT', getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5));
 
 // Security check
 $socid = GETPOSTINT('socid');
-if (isset($user->socid) && $user->socid > 0) {
+if (!empty($user->socid) && $user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;
 }
@@ -93,20 +103,23 @@ if (isModEnabled("propal")) {
 	// Search on sale representative
 	if ($search_sale && $search_sale != '-1') {
 		if ($search_sale == -2) {
-			$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = p.fk_soc)";
+			$sql .= " AND ".getSalesRepresentativeSqlFilter('p.fk_soc', 0, 1);
 		} elseif ($search_sale > 0) {
-			$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = p.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+			$sql .= " AND ".getSalesRepresentativeSqlFilter('p.fk_soc', (int) $search_sale);
 		}
 	}
 	// Search on socid
 	if ($socid) {
 		$sql .= " AND p.fk_soc = ".((int) $socid);
 	}
-
+	// Add where from hooks
+	$parameters = array('socid' => $user->socid);
+	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $propalstatic); // Note that $action and $object may have been modified by hook
+	$sql .= $hookmanager->resPrint;
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num = $db->num_rows($resql);
-		$nbofloop = min($num, (!getDolGlobalString('MAIN_MAXLIST_OVERLOAD') ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD));
+		$nbofloop = min($num, getDolGlobalString('MAIN_MAXLIST_OVERLOAD', 500));
 		startSimpleTable("DraftPropals", "comm/propal/list.php", "search_status=".Propal::STATUS_DRAFT, 2, $num);
 
 		$total = 0;
@@ -162,12 +175,12 @@ print '<div class="fichetwothirdright">';
  * Last modified proposals
  */
 
-$sql = "SELECT c.rowid, c.entity, c.ref, c.fk_statut as status, date_cloture as datec, c.tms as datem,";
+$sql = "SELECT p.rowid, p.entity, p.ref, p.total_ht, p.total_tva, p.total_ttc, p.fk_statut as status, date_cloture as datec, p.tms as datem,";
 $sql .= " s.nom as socname, s.rowid as socid, s.canvas, s.client, s.email, s.code_compta as code_compta_client";
-$sql .= " FROM ".MAIN_DB_PREFIX."propal as c,";
+$sql .= " FROM ".MAIN_DB_PREFIX."propal as p,";
 $sql .= " ".MAIN_DB_PREFIX."societe as s";
-$sql .= " WHERE c.entity IN (".getEntity($propalstatic->element).")";
-$sql .= " AND c.fk_soc = s.rowid";
+$sql .= " WHERE p.entity IN (".getEntity($propalstatic->element).")";
+$sql .= " AND p.fk_soc = s.rowid";
 // If the internal user must only see his customers, force searching by him
 $search_sale = 0;
 if (!$user->hasRight('societe', 'client', 'voir')) {
@@ -176,16 +189,20 @@ if (!$user->hasRight('societe', 'client', 'voir')) {
 // Search on sale representative
 if ($search_sale && $search_sale != '-1') {
 	if ($search_sale == -2) {
-		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = c.fk_soc)";
+		$sql .= " AND ".getSalesRepresentativeSqlFilter('p.fk_soc', 0, 1);
 	} elseif ($search_sale > 0) {
-		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = c.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+		$sql .= " AND ".getSalesRepresentativeSqlFilter('p.fk_soc', (int) $search_sale);
 	}
 }
 // Search on socid
 if ($socid) {
-	$sql .= " AND c.fk_soc = ".((int) $socid);
+	$sql .= " AND p.fk_soc = ".((int) $socid);
 }
-$sql .= " ORDER BY c.tms DESC";
+// Add where from hooks
+$parameters = array('socid' => $user->socid);
+$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $propalstatic); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
+$sql .= " ORDER BY p.tms DESC";
 
 $sql .= $db->plimit($max, 0);
 
@@ -202,6 +219,9 @@ if ($resql) {
 
 			$propalstatic->id = $obj->rowid;
 			$propalstatic->ref = $obj->ref;
+			$propalstatic->total_ht = $obj->total_ht;
+			$propalstatic->total_tva = $obj->total_tva;
+			$propalstatic->total_ttc = $obj->total_ttc;
 
 			$companystatic->id = $obj->socid;
 			$companystatic->name = $obj->socname;
@@ -254,7 +274,7 @@ if ($resql) {
  */
 if (isModEnabled("propal") && $user->hasRight('propal', 'lire')) {
 	$sql = "SELECT s.nom as socname, s.rowid as socid, s.canvas, s.client, s.email, s.code_compta as code_compta_client,";
-	$sql .= " p.rowid as propalid, p.entity, p.total_ttc, p.total_ht, p.ref, p.fk_statut, p.datep as dp, p.fin_validite as dfv";
+	$sql .= " p.rowid as propalid, p.entity, p.total_ttc, p.total_ht, p.total_tva, p.ref, p.fk_statut, p.datep as dp, p.fin_validite as dfv";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s,";
 	$sql .= " ".MAIN_DB_PREFIX."propal as p";
 	$sql .= " WHERE p.fk_soc = s.rowid";
@@ -268,22 +288,26 @@ if (isModEnabled("propal") && $user->hasRight('propal', 'lire')) {
 	// Search on sale representative
 	if ($search_sale && $search_sale != '-1') {
 		if ($search_sale == -2) {
-			$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = p.fk_soc)";
+			$sql .= " AND ".getSalesRepresentativeSqlFilter('p.fk_soc', 0, 1);
 		} elseif ($search_sale > 0) {
-			$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = p.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+			$sql .= " AND ".getSalesRepresentativeSqlFilter('p.fk_soc', (int) $search_sale);
 		}
 	}
 	// Search on socid
 	if ($socid) {
 		$sql .= " AND p.fk_soc = ".((int) $socid);
 	}
+	// Add where from hooks
+	$parameters = array('socid' => $user->socid);
+	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $propalstatic); // Note that $action and $object may have been modified by hook
+	$sql .= $hookmanager->resPrint;
 	$sql .= " ORDER BY p.rowid DESC";
 
 	$resql = $db->query($sql);
 	if ($resql) {
 		$total = 0;
 		$num = $db->num_rows($resql);
-		$nbofloop = min($num, (!getDolGlobalString('MAIN_MAXLIST_OVERLOAD') ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD));
+		$nbofloop = min($num, getDolGlobalString('MAIN_MAXLIST_OVERLOAD', 500));
 		startSimpleTable("ProposalsOpened", "comm/propal/list.php", "search_status=".Propal::STATUS_VALIDATED, 4, $num);
 
 		if ($num > 0) {
@@ -293,6 +317,9 @@ if (isModEnabled("propal") && $user->hasRight('propal', 'lire')) {
 
 				$propalstatic->id = $obj->propalid;
 				$propalstatic->ref = $obj->ref;
+				$propalstatic->total_ht = $obj->total_ht;
+				$propalstatic->total_tva = $obj->total_tva;
+				$propalstatic->total_ttc = $obj->total_ttc;
 
 				$companystatic->id = $obj->socid;
 				$companystatic->name = $obj->socname;
@@ -306,7 +333,7 @@ if (isModEnabled("propal") && $user->hasRight('propal', 'lire')) {
 				$filedir = $conf->propal->multidir_output[$obj->entity].'/'.dol_sanitizeFileName($obj->ref);
 				$urlsource = $_SERVER['PHP_SELF'].'?id='.$obj->propalid;
 
-				$warning = ($db->jdate($obj->dfv) < ($now - $conf->propal->cloture->warning_delay)) ? img_warning($langs->trans("Late")) : '';
+				$warning = ($db->jdate($obj->dfv) < ($now - getWarningDelay('propal', 'cloture'))) ? img_warning($langs->trans("Late")) : '';
 
 				print '<tr class="oddeven">';
 

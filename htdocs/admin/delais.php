@@ -30,6 +30,14 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->load("admin");
 
@@ -90,6 +98,14 @@ $modules = array(
 		array(
 			'code' => 'MAIN_DELAY_SUPPLIER_BILLS_TO_PAY',
 			'img' => 'bill'
+		),
+		array(
+			'code' => 'MAIN_DELAY_SUPPLIER_PROPALS_TO_CLOSE',
+			'img' => 'propal'
+		),
+		array(
+			'code' => 'MAIN_DELAY_SUPPLIER_PROPALS_TO_BILL',
+			'img' => 'propal'
 		)
 	),
 	'service' => array(
@@ -135,6 +151,12 @@ $modules = array(
 			'img' => 'holiday'
 		),
 	),
+	'mrp' => array(
+		array(
+			'code' => 'MAIN_DELAY_MRP',
+			'img' => 'mrp'
+		),
+	),
 );
 
 $labelmeteo = array(0 => $langs->trans("No"), 1 => $langs->trans("Yes"), 2 => $langs->trans("OnMobileOnly"));
@@ -177,7 +199,6 @@ if ($action == 'update') {
 			}
 		}
 	}
-
 	dolibarr_set_const($db, "MAIN_DISABLE_METEO", GETPOST("MAIN_DISABLE_METEO"), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_USE_METEO_WITH_PERCENTAGE", GETPOST("MAIN_USE_METEO_WITH_PERCENTAGE"), 'chaine', 0, '', $conf->entity);
 
@@ -215,7 +236,7 @@ print "<br>\n";
 print "<br>\n";
 
 if ($action == 'edit') {
-	print '<form method="post" action="'.$_SERVER['PHP_SELF'].'" name="form_index">';
+	print '<form method="post" action="'.$_SERVER['PHP_SELF'].'" name="form_index" spellcheck="false">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 
@@ -241,11 +262,11 @@ if ($action == 'edit') {
 
 	// Show if meteo is enabled
 	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><td>'.$langs->trans("Option").'</td><td class="right">'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td>'.$langs->trans("Option").'</td><td class="right"></td></tr>';
 
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("MAIN_DISABLE_METEO").'</td><td class="right">';
-	print $form->selectarray('MAIN_DISABLE_METEO', $labelmeteo, (!getDolGlobalString('MAIN_DISABLE_METEO') ? 0 : $conf->global->MAIN_DISABLE_METEO));
+	print $form->selectarray('MAIN_DISABLE_METEO', $labelmeteo, getDolGlobalInt('MAIN_DISABLE_METEO'));
 	print '</td></tr>';
 
 	print '</table>';
@@ -255,7 +276,7 @@ if ($action == 'edit') {
 	 */
 
 	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("DelaysOfToleranceBeforeWarning").'</td><td class="right">'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("DelaysOfToleranceBeforeWarning").'</td><td class="right"></td></tr>';
 
 	foreach ($modules as $module => $delays) {
 		if (isModEnabled($module)) {
@@ -275,7 +296,7 @@ if ($action == 'edit') {
 
 	// Show if meteo is enabled
 	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><td>'.$langs->trans("Option").'</td><td class="right">'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td>'.$langs->trans("Option").'</td><td class="right"></td></tr>';
 
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("MAIN_DISABLE_METEO").'</td><td class="center">';
@@ -304,7 +325,7 @@ if (!getDolGlobalString('MAIN_DISABLE_METEO') || getDolGlobalInt('MAIN_DISABLE_M
 			$str_mode_enabled = $str_mode_percentage;
 		}
 		print '<br><a href="#" onclick="return false;" id="change_mode">'.$str_mode_enabled.'</a>';
-		print '<input type="hidden" id="MAIN_USE_METEO_WITH_PERCENTAGE" name="MAIN_USE_METEO_WITH_PERCENTAGE" value="'.(getDolGlobalString('MAIN_USE_METEO_WITH_PERCENTAGE') ? $conf->global->MAIN_USE_METEO_WITH_PERCENTAGE : '').'" />';
+		print '<input type="hidden" id="MAIN_USE_METEO_WITH_PERCENTAGE" name="MAIN_USE_METEO_WITH_PERCENTAGE" value="'.getDolGlobalString('MAIN_USE_METEO_WITH_PERCENTAGE').'" />';
 
 		print '<br><br>';
 	} else {
@@ -318,8 +339,6 @@ if (!getDolGlobalString('MAIN_DISABLE_METEO') || getDolGlobalInt('MAIN_DISABLE_M
 
 	$offset = 0;
 	$cursor = 10; // By default
-	//if (!empty($conf->global->MAIN_METEO_OFFSET)) $offset=$conf->global->MAIN_METEO_OFFSET;
-	//if (!empty($conf->global->MAIN_METEO_GAP)) $cursor=$conf->global->MAIN_METEO_GAP;
 	$level0 = $offset;
 	if (getDolGlobalString('MAIN_METEO_LEVEL0')) {
 		$level0 = getDolGlobalString('MAIN_METEO_LEVEL0');
