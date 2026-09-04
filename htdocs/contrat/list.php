@@ -45,6 +45,7 @@ require '../main.inc.php';
  * @var User $user
  */
 require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/phone.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
@@ -393,10 +394,10 @@ if ($search_email) {
 	$sql .= natural_search('s.email', $search_email);
 }
 if ($search_phone) {
-	$sql .= natural_search(array('s.phone', 's.phone_mobile'), $search_phone);
+	$sql .= dol_natural_search_phone($db, array('s.phone', 's.phone_mobile'), $search_phone);
 }
 if ($search_phone_mobile) {
-	$sql .= natural_search(array('s.phone', 's.phone_mobile'), $search_phone_mobile);
+	$sql .= dol_natural_search_phone($db, array('s.phone', 's.phone_mobile'), $search_phone_mobile);
 }
 if ($search_contract) {
 	$sql .= natural_search(array('c.rowid', 'c.ref'), $search_contract);
@@ -1357,7 +1358,7 @@ while ($i < $imaxinloop) {
 		}
 		// Email
 		if (!empty($arrayfields['s.email']['checked'])) {
-			print '<td class="tdoverflowmax200" title="'.dolPrintHTMLForAttribute($obj->email).'">'.dol_print_email($obj->email, 0, $obj->socid, 1, 0, $showinvalidemail, 1).'</td>';
+			print '<td class="tdoverflowmax200" title="'.dolPrintHTMLForAttribute((string) $obj->email).'">'.dol_print_email((string) $obj->email, 0, $obj->socid, 1, 0, $showinvalidemail, 1).'</td>';
 		}
 
 		// Type ent

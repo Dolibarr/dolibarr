@@ -347,8 +347,8 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 		// Phone
 		print '<td>'.$form->editfieldkey('Phone', 'phone', '', $object, 0).'</td>';
 		print '<td>';
-		print img_picto('', 'object_phoning', 'class="pictofixedwidth"');
-		print '<input type="tel" name="phone" id="phone" value="'.(GETPOSTISSET('phone') ? GETPOST('phone', 'alpha') : $object->phone).'"></td>';
+		print $form->showPhoneInput($object->phone, 'phone', $countryid, 'object_phoning', 'maxwidth150 widthcentpercentminusx');
+		print '</td>';
 		print '</tr>';
 
 		// Email

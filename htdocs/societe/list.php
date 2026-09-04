@@ -52,6 +52,7 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/phone.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 if (isModEnabled('category')) {
@@ -778,13 +779,13 @@ if ($search_noemail) {
 	$sql .= " AND EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = '".$db->escape($search_email)."' AND unsubscribegroup = '' AND entity IN (".getEntity('societe')."))";
 }
 if (strlen($search_phone)) {
-	$sql .= natural_search("s.phone", $search_phone);
+	$sql .= dol_natural_search_phone($db, "s.phone", $search_phone);
 }
 if (strlen($search_phone_mobile)) {
-	$sql .= natural_search("s.phone_mobile", $search_phone_mobile);
+	$sql .= dol_natural_search_phone($db, "s.phone_mobile", $search_phone_mobile);
 }
 if (strlen($search_fax)) {
-	$sql .= natural_search("s.fax", $search_fax);
+	$sql .= dol_natural_search_phone($db, "s.fax", $search_fax);
 }
 if ($search_url) {
 	$sql .= natural_search("s.url", $search_url);
@@ -2144,7 +2145,7 @@ while ($i < $imaxinloop) {
 		// Email
 		if (!empty($arrayfields['s.email']['checked'])) {
 			$showinvalidemail = (int) !getDolGlobalInt('MAIN_SHOW_INVALID_EMAIL_IN_LIST'); // to avoid slow display
-			print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute($obj->email).'">'.dol_print_email($obj->email, $obj->rowid, $obj->rowid, 1, 0, $showinvalidemail, 1)."</td>\n";
+			print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute((string) $obj->email).'">'.dol_print_email((string) $obj->email, $obj->rowid, $obj->rowid, 1, 0, $showinvalidemail, 1)."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
