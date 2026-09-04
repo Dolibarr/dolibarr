@@ -111,33 +111,13 @@ forbidden_files=""
 #fi
 
 
-# Decide if the full travis build (install + database upgrade + phpunit) must be
-# run. The phpunit suite scans the whole tree (CodingPhpTest reads every .php
-# file below htdocs/, CodingSqlTest reads htdocs/install/*/*.sql and
-# dev/initdemo/, LangTest reads htdocs/langs/*/main.lang), so we can not use a
-# short allow list of "core" directories: almost any php or sql file may change
-# the result. We use the opposite approach and list the files that can never
-# change it (documentation, images, styles, translations, tooling...).
-
-# Files that always require the build, even when the ignore list below matches.
-travis_force_regex='^(\.travis\.yml|\.github/workflows/(gh-travis|ci-on-push|ci-on-pull_request)\.yml|\.github/scripts/get_changed_php\.sh|composer\.json|htdocs/langs/[a-zA-Z_]+/main\.lang|dev/initdemo/)'
-# Files that can never change the result of the build.
-travis_ignore_regex='^(doc|dev|\.tx|\.phan|\.github|htdocs/langs)/|\.(md|txt|css|less|scss|png|jpg|jpeg|gif|svg|ico|webp|woff|woff2|ttf|eot)$|^(ChangeLog|COPYING|COPYRIGHT|DCO|\.editorconfig|\.gitignore|\.gitattributes|\.mailmap|\.pre-commit-config\.yaml|\.codeclimate\.yml|phpstan\.neon\.dist|pyproject\.toml)$'
-
+# Decide if the full travis build (install + database upgrade + phpunit) is
+# required. The same decision is taken by .travis.yml to end a build early, so
+# the rules live in a single script.
 travis_changed="false"
-for changed_file in "${changed_all_files[@]}"; do
-	if [[ "$changed_file" =~ $travis_force_regex ]]; then
-		echo "File $changed_file always requires the travis build"
-		travis_changed="true"
-		break
-	fi
-	if [[ "$changed_file" =~ $travis_ignore_regex ]]; then
-		continue
-	fi
-	echo "File $changed_file requires the travis build"
+if printf '%s\n' "${changed_all_files[@]}" | bash dev/build/ci/build_required.sh; then
 	travis_changed="true"
-	break
-done
+fi
 
 
 # Determine changed files flags
