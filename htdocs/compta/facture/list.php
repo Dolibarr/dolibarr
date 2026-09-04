@@ -1992,7 +1992,7 @@ if (!empty($arrayfields['f.fk_statut']['checked'])) {
 		'3' => $langs->trans("BillShortStatusCanceled")
 	);
 	// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
-	print $form->multiselectarray('search_status', $liststatus, $search_status, 0, 0, 'minwidth125', 1, 0);
+	print $form->multiselectarray('search_status', $liststatus, $search_status, 0, 0, 'search_status width100 onrightofpage', 1, 0);
 	print '</td>';
 }
 // Action column
@@ -2491,7 +2491,9 @@ if ($num > 0) {
 			if (!empty($arrayfields['f.ref_client']['checked'])) {
 				$tdcss = (getDolGlobalInt('MAIN_SHOW_GLOBAL_REF_CUSTOMER_SUPPLIER') ? 'class="minwidth400 maxwidth400"' : 'class="nowrap tdoverflowmax200"');
 				print '<td title="'.dolPrintHTMLForAttribute($obj->ref_client).'" '.$tdcss.'>';
-				print dol_escape_htmltag($obj->ref_client);
+				print '<span class="doltext opacitymedium">';
+				print dolPrintHTML($obj->ref_client);
+				print '</span>';
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
