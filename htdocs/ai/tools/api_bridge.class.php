@@ -76,6 +76,14 @@ class ToolApiBridge extends McpTool
 	private $routes = [];
 
 	/**
+	 * Endpoints found by discoverEndpoints(), keyed by name. Filled on the first
+	 * getDefinitions() call.
+	 *
+	 * @var array<string, array{module:string, path:string, class:string, label:string}>
+	 */
+	private $endpoints = [];
+
+	/**
 	 * Endpoint map + method whitelist: endpoint key => module condition, api class
 	 * file/class, and the EXPLICIT list of exposed methods with their optional
 	 * hand-written enrichment. A method absent from 'methods' is never exposed.
@@ -85,13 +93,16 @@ class ToolApiBridge extends McpTool
 	 * TODO Replace path/class discovery with the dynamic scan of api_*.class.php
 	 * used by api/index.php.
 	 *
-	 * @var array<string, array{module:string, path:string, class:string, label:string, methods:array<string, array{suffix?:string, description?:string, params?:array<string,string>}>}>
+	 * Endpoints are discovered at runtime by discoverEndpoints(); this map only
+	 * carries the hand-written complement for the ones we know well, keyed by
+	 * the same name the scan derives from the file (api_<key>.class.php). An
+	 * endpoint absent from this map is still exposed, with the description and
+	 * parameter docs reflection gives — that is the whole point of scanning.
+	 *
+	 * @var array<string, array{label?:string, methods?:array<string, array{suffix?:string, description?:string, params?:array<string,string>}>}>
 	 */
-	private $endpoints = [
+	private $enrichments = [
 		'thirdparties' => [
-			'module' => 'societe',
-			'path' => '/societe/class/api_thirdparties.class.php',
-			'class' => 'Thirdparties',
 			'label' => 'third parties (customers, prospects, suppliers)',
 			'methods' => [
 				'index' => [
@@ -105,9 +116,6 @@ class ToolApiBridge extends McpTool
 			]
 		],
 		'proposals' => [
-			'module' => 'propal',
-			'path' => '/comm/propal/class/api_proposals.class.php',
-			'class' => 'Proposals',
 			'label' => 'commercial proposals (quotes / devis)',
 			'methods' => [
 				'index' => [
@@ -119,65 +127,38 @@ class ToolApiBridge extends McpTool
 			]
 		],
 		'tickets' => [
-			'module' => 'ticket',
-			'path' => '/ticket/class/api_tickets.class.php',
-			'class' => 'Tickets',
 			'label' => 'support tickets',
 			'methods' => ['index' => [], 'get' => []]
 		],
 		'projects' => [
-			'module' => 'projet',
-			'path' => '/projet/class/api_projects.class.php',
-			'class' => 'Projects',
 			'label' => 'projects (including opportunities/leads)',
 			'methods' => ['index' => [], 'get' => []]
 		],
 		'tasks' => [
-			'module' => 'projet',
-			'path' => '/projet/class/api_tasks.class.php',
-			'class' => 'Tasks',
 			'label' => 'project tasks',
 			'methods' => ['index' => [], 'get' => []]
 		],
 		'agendaevents' => [
-			'module' => 'agenda',
-			'path' => '/comm/action/class/api_agendaevents.class.php',
-			'class' => 'AgendaEvents',
 			'label' => 'agenda / calendar events (meetings, calls)',
 			'methods' => ['index' => [], 'get' => []]
 		],
 		'interventions' => [
-			'module' => 'ficheinter',
-			'path' => '/fichinter/class/api_interventions.class.php',
-			'class' => 'Interventions',
 			'label' => 'field service interventions',
 			'methods' => ['index' => [], 'get' => []]
 		],
 		'contracts' => [
-			'module' => 'contrat',
-			'path' => '/contrat/class/api_contracts.class.php',
-			'class' => 'Contracts',
 			'label' => 'contracts (recurring services)',
 			'methods' => ['index' => [], 'get' => []]
 		],
 		'members' => [
-			'module' => 'adherent',
-			'path' => '/adherents/class/api_members.class.php',
-			'class' => 'Members',
 			'label' => 'foundation/association members',
 			'methods' => ['index' => [], 'get' => []]
 		],
 		'subscriptions' => [
-			'module' => 'adherent',
-			'path' => '/adherents/class/api_subscriptions.class.php',
-			'class' => 'Subscriptions',
 			'label' => 'member subscriptions',
 			'methods' => ['index' => [], 'get' => []]
 		],
 		'stockmovements' => [
-			'module' => 'stock',
-			'path' => '/product/stock/class/api_stockmovements.class.php',
-			'class' => 'StockMovements',
 			'label' => 'stock movements (in/out/transfer history)',
 			'methods' => [
 				'index' => [
@@ -187,23 +168,14 @@ class ToolApiBridge extends McpTool
 			]
 		],
 		'warehouses' => [
-			'module' => 'stock',
-			'path' => '/product/stock/class/api_warehouses.class.php',
-			'class' => 'Warehouses',
 			'label' => 'warehouses',
 			'methods' => ['index' => [], 'get' => []]
 		],
 		'expensereports' => [
-			'module' => 'expensereport',
-			'path' => '/expensereport/class/api_expensereports.class.php',
-			'class' => 'ExpenseReports',
 			'label' => 'employee expense reports (notes de frais)',
 			'methods' => ['index' => [], 'get' => []]
 		],
 		'products' => [
-			'module' => 'product',
-			'path' => '/product/class/api_products.class.php',
-			'class' => 'Products',
 			'label' => 'products and services catalog',
 			'methods' => [
 				'index' => [],
@@ -275,6 +247,150 @@ class ToolApiBridge extends McpTool
 	}
 
 	/**
+	 * Discover the REST API endpoints of every enabled module.
+	 *
+	 * Mirrors the scan htdocs/api/index.php performs to register endpoints with
+	 * Restler, so the bridge exposes exactly the API surface the REST layer
+	 * exposes — external modules included — instead of a list maintained by hand.
+	 *
+	 * The walk is the same in both places: dolGetModulesDirs() gives the module
+	 * directories, each mod*.class.php names a module, getModuleDirForApiClass()
+	 * maps it to the directory holding its API classes, and every
+	 * api_<key>.class.php there is one endpoint. A few modules are named
+	 * differently in their descriptor and in isModEnabled(); those exceptions are
+	 * copied from api/index.php rather than reinvented, so the two stay in step.
+	 *
+	 * Note the class name is resolved through class_exists(), which is
+	 * case-insensitive in PHP: api_agendaevents.class.php yields the candidate
+	 * "Agendaevents" and still matches the declared AgendaEvents. Reflection is
+	 * then used to recover the real spelling for display.
+	 *
+	 * @return array<string, array{module:string, path:string, class:string, label:string}> Endpoints keyed by name
+	 */
+	private function discoverEndpoints(): array
+	{
+		$endpoints = [];
+
+		foreach (dolGetModulesDirs() as $dir) {
+			$handle = @opendir(dol_osencode($dir));
+			if (!is_resource($handle)) {
+				continue;
+			}
+
+			while (($file = readdir($handle)) !== false) {
+				$regmod = [];
+				if (!is_readable($dir.$file) || !preg_match("/^mod(.*)\\.class\\.php$/i", $file, $regmod)) {
+					continue;
+				}
+
+				$module = strtolower($regmod[1]);
+				$moduledirforclass = getModuleDirForApiClass($module);
+
+				// Same descriptor-name to module-name exceptions as api/index.php.
+				$modulenameforenabled = $module;
+				if ($module == 'propale') {
+					$modulenameforenabled = 'propal';
+				} elseif ($module == 'supplierproposal') {
+					$modulenameforenabled = 'supplier_proposal';
+				} elseif ($module == 'ficheinter') {
+					$modulenameforenabled = 'intervention';
+				} elseif ($module == 'product' && !isModEnabled('product') && isModEnabled('service')) {
+					$modulenameforenabled = 'service';
+				}
+
+				if (!isModEnabled($modulenameforenabled)) {
+					continue;	// A disabled module exposes no tools.
+				}
+
+				$dir_part = dol_buildpath('/'.$moduledirforclass.'/class/');
+				$handle_part = @opendir(dol_osencode($dir_part));
+				if (!is_resource($handle_part)) {
+					continue;
+				}
+
+				while (($file_searched = readdir($handle_part)) !== false) {
+					if ($file_searched == 'api_access.class.php') {
+						continue;	// Authentication plumbing, not an endpoint.
+					}
+					$regapi = [];
+					if (!is_readable($dir_part.$file_searched) || !preg_match("/^api_(.*)\\.class\\.php$/i", $file_searched, $regapi)) {
+						continue;
+					}
+
+					$key = strtolower($regapi[1]);
+					if (isset($endpoints[$key])) {
+						continue;	// First module wins, as in the REST layer.
+					}
+
+					require_once $dir_part.$file_searched;
+					$candidate = str_replace('_', '', ucwords($regapi[1]));
+					$classname = '';
+					if (class_exists($candidate.'Api')) {
+						$classname = $candidate.'Api';
+					} elseif (class_exists($candidate)) {
+						$classname = $candidate;
+					}
+					if ($classname === '') {
+						continue;	// api_xxx file without the matching class.
+					}
+
+					try {
+						$classname = (new ReflectionClass($classname))->getName();
+					} catch (ReflectionException $e) {
+						continue;
+					}
+
+					$endpoints[$key] = [
+						'module' => $modulenameforenabled,
+						'path' => $dir_part.$file_searched,
+						'class' => $classname,
+						'label' => $this->enrichments[$key]['label'] ?? $key,
+					];
+				}
+				closedir($handle_part);
+			}
+			closedir($handle);
+		}
+
+		ksort($endpoints);
+
+		return $endpoints;
+	}
+
+	/**
+	 * Methods exposed for an endpoint carrying no hand-written entry.
+	 *
+	 * Deliberately the read-only pair, per the review that merged this bridge
+	 * ("we must start with only few methods exposed"). Discovery widens which
+	 * endpoints are reachable, never what may be done to them: a write method
+	 * still has to be whitelisted consciously, behind a confirmation gate.
+	 *
+	 * AI_MCP_API_BRIDGE_METHODS overrides the pair for administrators who want
+	 * a narrower surface — exposure stays configurable rather than implicit.
+	 *
+	 * @return array<string, array{}> Method name => empty enrichment
+	 */
+	private function defaultMethods(): array
+	{
+		$configured = getDolGlobalString('AI_MCP_API_BRIDGE_METHODS');
+		if ($configured !== '') {
+			$methods = [];
+			foreach (explode(',', $configured) as $method) {
+				$method = trim($method);
+				// Read-only only: the constant can restrict the default pair,
+				// never turn on a write method behind the whitelist's back.
+				if (in_array($method, ['index', 'get'], true)) {
+					$methods[$method] = [];
+				}
+			}
+
+			return $methods;
+		}
+
+		return ['index' => [], 'get' => []];
+	}
+
+	/**
 	 * Returns tool definitions derived from the enabled REST API endpoints.
 	 *
 	 * @return list<array<string, mixed>> Array of tool definitions.
@@ -291,24 +407,15 @@ class ToolApiBridge extends McpTool
 
 		$this->defs = [];
 		$this->routes = [];
+		$this->endpoints = $this->discoverEndpoints();
 
 		foreach ($this->endpoints as $key => $ep) {
-			if (!isModEnabled($ep['module'])) {
-				continue;	// Dynamic part: a disabled module exposes no tools.
-			}
-			$file = DOL_DOCUMENT_ROOT . $ep['path'];
-			if (!is_readable($file)) {
-				continue;
-			}
-			require_once $file;
-			if (!class_exists($ep['class'])) {
-				continue;
-			}
+			// Explicit whitelist: only the listed methods are exposed — nothing
+			// else, whatever reflection could find on the API class. Endpoints
+			// with no hand-written entry fall back to the read-only pair.
+			$methods = $this->enrichments[$key]['methods'] ?? $this->defaultMethods();
 
-			// Explicit whitelist: only the methods listed in the endpoint's
-			// 'methods' entry are exposed — nothing else, whatever reflection
-			// could find on the API class.
-			foreach ($ep['methods'] as $method => $meta) {
+			foreach ($methods as $method => $meta) {
 				if (!method_exists($ep['class'], $method)) {
 					continue;	// whitelisted method absent in this Dolibarr version
 				}
@@ -477,7 +584,7 @@ class ToolApiBridge extends McpTool
 		DolibarrApiAccess::$user = $this->user;
 		$GLOBALS['user'] = $this->user;
 
-		require_once DOL_DOCUMENT_ROOT . $ep['path'];
+		require_once $ep['path'];
 		$api = new $ep['class']();
 
 		// Map named MCP args onto the method's positional signature.
