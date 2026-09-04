@@ -1510,10 +1510,10 @@ if (!empty($arrayfields['f.note_private']['checked'])) {
 }
 // Status
 if (!empty($arrayfields['f.fk_statut']['checked'])) {
-	print '<td class="liste_titre center parentonrightofpage">';
+	print '<td class="liste_titre center minwidth75imp parentonrightofpage">';
 	$liststatus = array('0' => $langs->trans("Draft"), '1' => $langs->trans("Unpaid"), '2' => $langs->trans("Paid"));
 	// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
-	print $form->multiselectarray('search_status', $liststatus, (is_array($search_status) ? $search_status : array()), 0, 0, 'center search_status width125 onrightofpage', 1, 0);
+	print $form->multiselectarray('search_status', $liststatus, (is_array($search_status) ? $search_status : array()), 0, 0, 'center search_status width100 onrightofpage', 1, 0);
 	print '</td>';
 }
 // Action column
@@ -1895,8 +1895,10 @@ while ($i < $imaxinloop) {
 
 		// Supplier ref
 		if (!empty($arrayfields['f.ref_supplier']['checked'])) {
-			print '<td class="nowrap tdoverflowmax150" title="'.dol_escape_htmltag($obj->ref_supplier).'">';
-			print $obj->ref_supplier;
+			print '<td class="nowrap tdoverflowmax150" title="'.dolPrintHTMLForAttribute($obj->ref_supplier).'">';
+			print '<span class="doltext opacitymedium">';
+			print dolPrintHTML($obj->ref_supplier);
+			print '</span>';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

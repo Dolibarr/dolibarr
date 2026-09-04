@@ -12,7 +12,7 @@
  * Copyright (C) 2018-2026	Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2023-2026	Charlene Benke				<charlene@patas-monkey.com>
  * Copyright (C) 2023		Nick Fragoulis
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2025		William Mead				<william@m34d.com>
  * Copyright (C) 2026		Lionel Vessiller			<lvessiller@open-dsi.fr>
@@ -2208,7 +2208,7 @@ if ($action == 'create') {
 					if (GETPOST('remonth')) {
 						$dateactstart = dol_mktime(12, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
 					} elseif (!$dateactstart) {
-						$dateactstart = time();
+						$dateactstart = dol_now();
 					}
 
 					$dateactend = $objp->date_end;
@@ -2219,7 +2219,7 @@ if ($action == 'create') {
 							$product = new Product($db);
 							$product->fetch($objp->fk_product);
 							if (!empty($product->duration_value) && !empty($product->duration_unit)) {
-								$dateactend = dol_time_plus_duree(time(), $product->duration_value, $product->duration_unit);
+								$dateactend = dol_time_plus_duree(dol_now(), $product->duration_value, $product->duration_unit);
 							}
 						}
 					}
@@ -2265,7 +2265,7 @@ if ($action == 'create') {
 					if (GETPOST('remonth')) {
 						$dateactstart = dol_mktime(12, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
 					} elseif (!$dateactstart) {
-						$dateactstart = time();
+						$dateactstart = dol_now();
 					}
 
 					$dateactend = $objp->date_end_real;
@@ -2275,7 +2275,7 @@ if ($action == 'create') {
 						if ($objp->fk_product > 0) {
 							$product = new Product($db);
 							$product->fetch($objp->fk_product);
-							$dateactend = dol_time_plus_duree(time(), $product->duration_value, $product->duration_unit);
+							$dateactend = dol_time_plus_duree(dol_now(), $product->duration_value, $product->duration_unit);
 						}
 					}
 					$now = dol_now();

@@ -78,6 +78,23 @@ notifications:
 
 before_install:
 - |
+  echo "Check if the build is required (only for a pull request, we always build on push)"
+  if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ -n "$TRAVIS_PULL_REQUEST" ]; then
+    # The clone is shallow (see git.depth), so we ask for the parents of the merge
+    # commit of the pull request to know the list of files it changes.
+    git fetch -q --depth=2 origin "+refs/pull/$TRAVIS_PULL_REQUEST/merge" 2>/dev/null
+    changed_files=$(git diff --name-only FETCH_HEAD^1 FETCH_HEAD 2>/dev/null)
+    if [ -z "$changed_files" ]; then
+      echo "Can not get the list of changed files of pull request $TRAVIS_PULL_REQUEST, we run the build"
+    elif echo "$changed_files" | bash dev/build/ci/build_required.sh; then
+      echo "The build is required"
+    else
+      echo "No changed file of pull request $TRAVIS_PULL_REQUEST can change the result of the build, we stop here"
+      travis_terminate 0
+    fi
+  fi
+
+- |
   echo "Remove awful phpenv"
   sudo rm -fr ~/.phpenv; sudo rm -fr /root/.phpenv
   echo "Remove run apt update to discover all PHP versions"

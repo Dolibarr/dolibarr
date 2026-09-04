@@ -80,6 +80,10 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				if (!empty($object->context['closedfromonlinesignature'])) {
 					// If signature was done from the online signature page,
 					// we must force permission to create order so the workflow action will work.
+					// The technical user of that page has no rights loaded, so initialise the object first.
+					if (empty($user->rights->commande)) {
+						$user->rights->commande = new stdClass();
+					}
 					$user->rights->commande->creer = 1;
 				}
 				$object->fetchObjectLinked();

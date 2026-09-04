@@ -2125,7 +2125,9 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['p.title']['checked'])) {
 			print '<td class="" title="'.dolPrintHTMLForAttribute($obj->title).'">';
 			print '<div class="twolinesmax-normallineheight minwidth200onall">';
+			print '<span class="doltext opacitymedium">';
 			print dolPrintHTML($obj->title);
+			print '</span>';
 			print '</div>';
 			print '</td>';
 			if (!$i) {
@@ -2192,8 +2194,6 @@ while ($i < $imaxinloop) {
 			print '<td class="tdoverflowmax100">';
 			if ($obj->socid) {
 				print $companystatic->code_client;
-			} else {
-				print '&nbsp;';
 			}
 			print '</td>';
 			if (!$i) {
@@ -2205,8 +2205,6 @@ while ($i < $imaxinloop) {
 			print '<td class="tdoverflowmax100">';
 			if ($obj->socid) {
 				print $companystatic->code_fournisseur;
-			} else {
-				print '&nbsp;';
 			}
 			print '</td>';
 			if (!$i) {
