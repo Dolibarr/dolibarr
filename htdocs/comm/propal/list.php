@@ -1834,7 +1834,7 @@ if (isModEnabled('margin') && (
 	$with_margin_info = true;
 }
 
-$with_amount_invoiced_info = isModEnabled('facture') && (
+$with_amount_invoiced_info = isModEnabled('invoice') && (
 	!empty($arrayfields['p.total_ht_invoiced']['checked'])
 	|| !empty($arrayfields['p.total_invoiced']['checked'])
 	|| !empty($arrayfields['p.multicurrency_total_ht_invoiced']['checked'])
