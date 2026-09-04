@@ -32,8 +32,8 @@ if (!$res && !empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) {
 // Try main.inc.php into web root detected using web root calculated from SCRIPT_FILENAME
 $tmp = empty($_SERVER['SCRIPT_FILENAME']) ? '' : $_SERVER['SCRIPT_FILENAME'];
 $tmp2 = realpath(__FILE__);
-$i = strlen($tmp) - 1;
-$j = strlen($tmp2) - 1;
+$i = strlen($tmp) - 1;  // @phan-suppress-current-line DolibarrForbiddenFunctionPlugin
+$j = strlen($tmp2) - 1;  // @phan-suppress-current-line DolibarrForbiddenFunctionPlugin
 while ($i > 0 && $j > 0 && isset($tmp[$i]) && isset($tmp2[$j]) && $tmp[$i] == $tmp2[$j]) {
 	$i--;
 	$j--;
@@ -57,6 +57,7 @@ if (!$res) {
 
 // Libraries
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
+require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
 require_once '../lib/mymodule.lib.php';
 //require_once "../class/myclass.class.php";
 
@@ -240,9 +241,9 @@ if ($action == 'updateMask') {
 	$className = '';
 	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 	foreach ($dirmodels as $reldir) {
-		$file = dol_buildpath($reldir."core/modules/mymodule/doc/pdf_".$modele."_".strtolower($tmpobjectkey).".modules.php", 0);
+		$file = dol_buildpath($reldir."core/modules/mymodule/doc/pdf_".$modele."_".dol_strtolower($tmpobjectkey).".modules.php", 0);
 		if (file_exists($file)) {
-			$className = "pdf_".$modele."_".strtolower($tmpobjectkey);
+			$className = "pdf_".$modele."_".dol_strtolower($tmpobjectkey);
 			break;
 		}
 	}
@@ -256,7 +257,7 @@ if ($action == 'updateMask') {
 		'@phan-var-force ModelePDFMyObject $module';
 
 		if ($module->write_file($tmpobject, $langs) > 0) {
-			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=mymodule-".strtolower($tmpobjectkey)."&file=SPECIMEN.pdf");
+			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=mymodule-".dol_strtolower($tmpobjectkey)."&file=SPECIMEN.pdf");
 			exit;
 		} else {
 			setEventMessages($module->error, null, 'errors');
@@ -269,7 +270,7 @@ if ($action == 'updateMask') {
 } elseif ($action == 'setmod') {
 	// TODO Check if numbering module chosen can be activated by calling method canBeActivated
 	if (!empty($tmpobjectkey)) {
-		$constforval = 'MYMODULE_'.strtoupper($tmpobjectkey)."_ADDON";
+		$constforval = 'MYMODULE_'.dol_strtoupper($tmpobjectkey)."_ADDON";
 		dolibarr_set_const($db, $constforval, $value, 'chaine', 0, '', $conf->entity);
 	}
 } elseif ($action == 'set') {
@@ -279,7 +280,7 @@ if ($action == 'updateMask') {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0) {
 		if (!empty($tmpobjectkey)) {
-			$constforval = 'MYMODULE_'.strtoupper($tmpobjectkey).'_ADDON_PDF';
+			$constforval = 'MYMODULE_'.dol_strtoupper($tmpobjectkey).'_ADDON_PDF';
 			if (getDolGlobalString($constforval) == "$value") {
 				dolibarr_del_const($db, $constforval, $conf->entity);
 			}
@@ -288,7 +289,7 @@ if ($action == 'updateMask') {
 } elseif ($action == 'setdoc') {
 	// Set or unset default model
 	if (!empty($tmpobjectkey)) {
-		$constforval = 'MYMODULE_'.strtoupper($tmpobjectkey).'_ADDON_PDF';
+		$constforval = 'MYMODULE_'.dol_strtoupper($tmpobjectkey).'_ADDON_PDF';
 		if (dolibarr_set_const($db, $constforval, $value, 'chaine', 0, '', $conf->entity)) {
 			// The constant that was read before the new set
 			// We therefore requires a variable to have a coherent view
@@ -303,7 +304,7 @@ if ($action == 'updateMask') {
 	}
 } elseif ($action == 'unsetdoc') {
 	if (!empty($tmpobjectkey)) {
-		$constforval = 'MYMODULE_'.strtoupper($tmpobjectkey).'_ADDON_PDF';
+		$constforval = 'MYMODULE_'.dol_strtoupper($tmpobjectkey).'_ADDON_PDF';
 		dolibarr_del_const($db, $constforval, $conf->entity);
 	}
 }
@@ -393,7 +394,7 @@ if (!empty($refGenerationObjects)) {
 		foreach ($dirmodels as $reldir) {
 			$dir = dol_buildpath($reldir."core/modules/".$moduledir);
 
-			if (!is_dir($dir)) {
+			if (!dol_is_dir($dir)) {
 				continue;
 			}
 
@@ -403,7 +404,7 @@ if (!empty($refGenerationObjects)) {
 			}
 
 			while (($file = readdir($handle)) !== false) {
-				if (strpos($file, 'mod_'.strtolower($myTmpObjectKey).'_') !== 0 || dol_substr($file, dol_strlen($file) - 3, 3) != 'php') {
+				if (strpos($file, 'mod_'.dol_strtolower($myTmpObjectKey).'_') !== 0 || dol_substr($file, dol_strlen($file) - 3, 3) != 'php') {
 					continue;
 				}
 
@@ -424,7 +425,7 @@ if (!empty($refGenerationObjects)) {
 					continue;
 				}
 
-				dol_include_once('/'.$moduledir.'/class/'.strtolower($myTmpObjectKey).'.class.php');
+				dol_include_once('/'.$moduledir.'/class/'.dol_strtolower($myTmpObjectKey).'.class.php');
 
 				print '<tr class="oddeven"><td>'.$module->getName($langs)."</td><td>\n";
 				print $module->info($langs);
@@ -443,14 +444,14 @@ if (!empty($refGenerationObjects)) {
 				print '</td>'."\n";
 
 				print '<td class="center">';
-				$constforvar = 'MYMODULE_'.strtoupper($myTmpObjectKey).'_ADDON';
+				$constforvar = 'MYMODULE_'.dol_strtoupper($myTmpObjectKey).'_ADDON';
 				$defaultifnotset = 'thevaluetousebydefault';
 				$activenumberingmodel = getDolGlobalString($constforvar, $defaultifnotset);
 
 				if ($activenumberingmodel == $file) {
 					print img_picto($langs->trans("Activated"), 'switch_on');
 				} else {
-					print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&object='.urlencode(strtolower($myTmpObjectKey)).'&value='.urlencode($file).'">';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&object='.urlencode(dol_strtolower($myTmpObjectKey)).'&value='.urlencode($file).'">';
 					print img_picto($langs->trans("Disabled"), 'switch_off');
 					print '</a>';
 				}
@@ -516,7 +517,7 @@ if (!empty($docGenerationObjects)) {
 			continue;
 		}
 
-		$type = strtolower($myTmpObjectKey);
+		$type = dol_strtolower($myTmpObjectKey);
 
 		print '<tr class="liste_titre">';
 		print '<td colspan="6"><strong>'.$langs->trans($myTmpObjectArray['label']).'</strong></td>';
@@ -547,7 +548,7 @@ if (!empty($docGenerationObjects)) {
 				$realpath = $reldir."core/modules/".$moduledir.$valdir;
 				$dir = dol_buildpath($realpath);
 
-				if (!is_dir($dir)) {
+				if (!dol_is_dir($dir)) {
 					continue;
 				}
 
@@ -625,7 +626,7 @@ if (!empty($docGenerationObjects)) {
 					}
 
 					print '<td class="center">';
-					$constforvar = 'MYMODULE_'.strtoupper($myTmpObjectKey).'_ADDON_PDF';
+					$constforvar = 'MYMODULE_'.dol_strtoupper($myTmpObjectKey).'_ADDON_PDF';
 
 					if (getDolGlobalString($constforvar) == $name) {
 						print '<a href="'.$_SERVER["PHP_SELF"].'?action=unsetdoc&token='.newToken().'&object='.urlencode($type).'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'&amp;type='.urlencode($type).'" alt="'.$langs->trans("Disable").'">';
