@@ -43,23 +43,23 @@ function jsUnEscape($source)
 {
 	$decodedStr = "";
 	$pos = 0;
-	$len = strlen($source);
+	$len = dol_strlen($source);
 	while ($pos < $len) {
-		$charAt = substr($source, $pos, 1);
+		$charAt = dol_substr($source, $pos, 1);
 		if ($charAt == '%') {
 			$pos++;
-			$charAt = substr($source, $pos, 1);
+			$charAt = dol_substr($source, $pos, 1);
 			if ($charAt == 'u') {
 				// we got a unicode character
 				$pos++;
-				$unicodeHexVal = substr($source, $pos, 4);
+				$unicodeHexVal = dol_substr($source, $pos, 4);
 				$unicode = hexdec($unicodeHexVal);
 				$entity = "&#".$unicode.';';
 				$decodedStr .= mb_convert_encoding($entity, 'UTF-8', 'ISO-8859-1');
 				$pos += 4;
 			} else {
 				// we have an escaped ascii character
-				$hexVal = substr($source, $pos, 2);
+				$hexVal = dol_substr($source, $pos, 2);
 				$decodedStr .= chr(hexdec($hexVal));
 				$pos += 2;
 			}
@@ -101,8 +101,8 @@ function dolGetModulesDirs($subdir = '')
 					continue; // We discard module if it contains disabled into name.
 				}
 
-				if (dol_substr($file, 0, 1) != '.' && is_dir($dirroot.'/'.$file) && strtoupper(dol_substr($file, 0, 3)) != 'CVS' && $file != 'includes') {
-					if (is_dir($dirroot.'/'.$file.'/core/modules'.$subdir.'/')) {
+				if (dol_substr($file, 0, 1) != '.' && dol_is_dir($dirroot.'/'.$file) && dol_strtoupper(dol_substr($file, 0, 3)) != 'CVS' && $file != 'includes') {
+					if (dol_is_dir($dirroot.'/'.$file.'/core/modules'.$subdir.'/')) {
 						$modulesdir[$dirroot.'/'.$file.'/core/modules'.$subdir.'/'] = $dirroot.'/'.$file.'/core/modules'.$subdir.'/';
 					}
 				}
@@ -680,7 +680,7 @@ function clean_url($url, $http = 1)
 		}
 
 		// On passe le nom de domaine en minuscule
-		$CleanUrl = preg_replace('/^'.preg_quote($proto.$domain, '/').'/i', $newproto.strtolower($domain), $url);
+		$CleanUrl = preg_replace('/^'.preg_quote($proto.$domain, '/').'/i', $newproto.dol_strtolower($domain), $url);
 
 		return $CleanUrl;
 	} else {
@@ -722,12 +722,12 @@ function dolObfuscateEmail($mail, $replace = "*", $nbreplace = 8, $nbdisplaymail
 		$string_replace .= $replace;
 	}
 
-	if (strlen($mail_name) > $nbdisplaymail) {
-		$mail_name = substr($mail_name, 0, $nbdisplaymail);
+	if (dol_strlen($mail_name) > $nbdisplaymail) {
+		$mail_name = dol_substr($mail_name, 0, $nbdisplaymail);
 	}
 
-	if (strlen($mail_domaine) > $nbdisplaydomain) {
-		$mail_domaine = substr($mail_domaine, strlen($mail_domaine) - $nbdisplaydomain);
+	if (dol_strlen($mail_domaine) > $nbdisplaydomain) {
+		$mail_domaine = dol_substr($mail_domaine, dol_strlen($mail_domaine) - $nbdisplaydomain);
 	}
 
 	return $mail_name.$string_replace.$mail_domaine.$mail_tld;
@@ -863,7 +863,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 		$maskrefclient_maskclientcode = $regClientRef[1];
 		$maskrefclient_maskcounter = $regClientRef[2];
 		$maskrefclient_maskoffset = 0; //default value of maskrefclient_counter offset
-		$maskrefclient_clientcode = substr($valueforccc, 0, dol_strlen($maskrefclient_maskclientcode)); //get n first characters of client code where n is length in mask
+		$maskrefclient_clientcode = dol_substr($valueforccc, 0, dol_strlen($maskrefclient_maskclientcode)); //get n first characters of client code where n is length in mask
 		$maskrefclient_clientcode = str_pad($maskrefclient_clientcode, dol_strlen($maskrefclient_maskclientcode), "#", STR_PAD_RIGHT); //padding maskrefclient_clientcode for having exactly n characters in maskrefclient_clientcode
 		$maskrefclient_clientcode = dol_string_nospecial($maskrefclient_clientcode); //sanitize maskrefclient_clientcode for sql insert and sql select like
 		if (dol_strlen($maskrefclient_maskcounter) > 0 && dol_strlen($maskrefclient_maskcounter) < 3) {
@@ -898,7 +898,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 		}
 
 		$maskuser = $regUser[1];
-		$maskuser_value = substr($lastname, 0, dol_strlen($regUser[1])); // get n first characters of user firstname (where n is length in mask)
+		$maskuser_value = dol_substr($lastname, 0, dol_strlen($regUser[1])); // get n first characters of user firstname (where n is length in mask)
 		$maskuser_value = str_pad($maskuser_value, dol_strlen($regUser[1]), "#", STR_PAD_RIGHT); // we fill on right with # to have same number of char than into mask
 	} else {
 		$maskuser = '';
@@ -914,7 +914,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 		}
 
 		$maskjournal = $regJournal[1];
-		$maskjournal_value = substr($journalcode, 0, dol_strlen($regJournal[1])); // get n first characters of journal code (where n is length in mask)
+		$maskjournal_value = dol_substr($journalcode, 0, dol_strlen($regJournal[1])); // get n first characters of journal code (where n is length in mask)
 		$maskjournal_value = str_pad($maskjournal_value, dol_strlen($regJournal[1]), "#", STR_PAD_RIGHT); // we fill on right with # to have same number of char than into mask
 	} else {
 		$maskjournal = '';
@@ -1076,7 +1076,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 		} elseif ($yearlen == 2) {
 			$yearcomp = sprintf("%02d", idate("y", $date) + $yearoffset);
 		} elseif ($yearlen == 1) {
-			$yearcomp = (string) ((int) substr(date('y', $date), 1, 1) + $yearoffset);
+			$yearcomp = (string) ((int) dol_substr(date('y', $date), 1, 1) + $yearoffset);
 		}
 		if ($monthcomp > 1 && empty($resetEveryMonth)) {	// Test with month is useless if monthcomp = 1 (0 is same as 1)
 			if ($yearlen == 4) {
@@ -1329,11 +1329,11 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 		if (!empty($yearoffsettype) && !is_numeric($yearoffsettype) && $yearoffsettype != '=') {	// yearoffsettype is - or +, so we don't want current year
 			$numFinal = preg_replace('/\{yyyy\}/i', (string) ((int) date("Y", $date) + $yearoffset), $numFinal);
 			$numFinal = preg_replace('/\{yy\}/i', (string) ((int) date("y", $date) + $yearoffset), $numFinal);
-			$numFinal = preg_replace('/\{y\}/i', (string) ((int) substr((string) date("y", $date), 1, 1) + $yearoffset), $numFinal);
+			$numFinal = preg_replace('/\{y\}/i', (string) ((int) dol_substr((string) date("y", $date), 1, 1) + $yearoffset), $numFinal);
 		} else { // we want yyyy to be current year
 			$numFinal = preg_replace('/\{yyyy\}/i', date("Y", $date), $numFinal);
 			$numFinal = preg_replace('/\{yy\}/i', date("y", $date), $numFinal);
-			$numFinal = preg_replace('/\{y\}/i', substr(date("y", $date), 1, 1), $numFinal);
+			$numFinal = preg_replace('/\{y\}/i', dol_substr(date("y", $date), 1, 1), $numFinal);
 		}
 		$numFinal = preg_replace('/\{mm\}/i', date("m", $date), $numFinal);
 		$numFinal = preg_replace('/\{dd\}/i', date("d", $date), $numFinal);
@@ -1401,12 +1401,12 @@ function get_string_between($string, $start, $end)
 	if ($ini === false) {
 		return '';
 	}
-	$ini += strlen($start);
+	$ini += dol_strlen($start);
 	$endpos = strpos($string, $end, $ini);
 	if ($endpos === false) {
 		return '';
 	}
-	return substr($string, $ini, $endpos - $ini);
+	return dol_substr($string, $ini, $endpos - $ini);
 }
 
 /**
@@ -1447,7 +1447,7 @@ function check_value($mask, $value)
 		$maskrefclient_maskclientcode = $regClientRef[1];
 		$maskrefclient_maskcounter = $regClientRef[2];
 		$maskrefclient_maskoffset = 0; //default value of maskrefclient_counter offset
-		$maskrefclient_clientcode = substr('', 0, dol_strlen($maskrefclient_maskclientcode)); //get n first characters of client code to form maskrefclient_clientcode
+		$maskrefclient_clientcode = dol_substr('', 0, dol_strlen($maskrefclient_maskclientcode)); //get n first characters of client code to form maskrefclient_clientcode
 		$maskrefclient_clientcode = str_pad($maskrefclient_clientcode, dol_strlen($maskrefclient_maskclientcode), "#", STR_PAD_RIGHT); //padding maskrefclient_clientcode for having exactly n characters in maskrefclient_clientcode
 		$maskrefclient_clientcode = dol_string_nospecial($maskrefclient_clientcode); //sanitize maskrefclient_clientcode for sql insert and sql select like
 		if (dol_strlen($maskrefclient_maskcounter) > 0 && dol_strlen($maskrefclient_maskcounter) < 3) {
@@ -1556,7 +1556,7 @@ function binhex($bin, $pad = false, $upper = false)
 		}
 	}
 	if ($upper) {
-		$x = strtoupper($x);
+		$x = dol_strtoupper($x);
 	}
 	return $x;
 }
@@ -1582,6 +1582,8 @@ function hexbin($hexa)
  *
  *	@param	string	$time   	Date in 'timestamp' format
  *	@return string					Number of week
+ *
+ *	@phan-suppress DolibarrForbiddenFunctionPlugin
  */
 function numero_semaine($time)
 {
@@ -1913,7 +1915,7 @@ function getListOfModels($db, $type, $maxfilenamelength = 0, $showempty = 0)
 						unset($listofdir[$key]);
 						continue;
 					}
-					if (is_dir($tmpdir)) {
+					if (dol_is_dir($tmpdir)) {
 						// all type of template is allowed
 						$tmpfiles = dol_dir_list($tmpdir, 'files', 0, '', array(), 'name', SORT_ASC, 0);
 						if (count($tmpfiles)) {
@@ -2009,18 +2011,18 @@ function dol_buildlogin($lastname, $firstname)
 	}
 
 	if (getDolGlobalString('MAIN_BUILD_LOGIN_RULE') == 'flastname') {			// flastname
-		$login = strtolower(dol_string_unaccent(dol_trunc($firstname, 1, 'right', 'UTF-8', 1)));
-		$login .= strtolower(dol_string_unaccent($lastname));
+		$login = dol_strtolower(dol_string_unaccent(dol_trunc($firstname, 1, 'right', 'UTF-8', 1)));
+		$login .= dol_strtolower(dol_string_unaccent($lastname));
 		$login = dol_string_nospecial($login, ''); // For special names
 	} elseif (getDolGlobalString('MAIN_BUILD_LOGIN_RULE') == 'f.lastname') {	// f.lastname
-		$login = strtolower(dol_string_unaccent(dol_trunc($firstname, 1, 'right', 'UTF-8', 1)));
+		$login = dol_strtolower(dol_string_unaccent(dol_trunc($firstname, 1, 'right', 'UTF-8', 1)));
 		$login .= ($login ? $charforseparator : '');
-		$login .= strtolower(dol_string_unaccent($lastname));
+		$login .= dol_strtolower(dol_string_unaccent($lastname));
 		$login = dol_string_nospecial($login, ''); // For special names
 	} else {	// firstname.lastname
-		$login = strtolower(dol_string_unaccent($firstname));
+		$login = dol_strtolower(dol_string_unaccent($firstname));
 		$login .= ($login ? $charforseparator : '');
-		$login .= strtolower(dol_string_unaccent($lastname));
+		$login .= dol_strtolower(dol_string_unaccent($lastname));
 		$login = dol_string_nospecial($login, ''); // For special names
 	}
 
@@ -2179,8 +2181,8 @@ function dolGetElementUrl($objectid, $objecttype, $withpicto = 0, $option = '')
 	}
 
 	// Generic case for $classfile and $classname
-	$classfile = strtolower($myobject);
-	$classname = ucfirst($myobject);
+	$classfile = dol_strtolower($myobject);
+	$classname = dol_ucfirst($myobject);
 	//print "objecttype=".$objecttype." module=".$module." subelement=".$subelement." classfile=".$classfile." classname=".$classname." classpath=".$classpath;
 
 	if ($objecttype == 'invoice_supplier') {
@@ -2432,8 +2434,8 @@ function colorAgressiveness($hex, $ratio = -50, $brightness = 0)
 
 	// Normalize into a six character long hex string
 	$hex = str_replace('#', '', $hex);
-	if (strlen($hex) == 3) {
-		$hex = str_repeat(substr($hex, 0, 1), 2).str_repeat(substr($hex, 1, 1), 2).str_repeat(substr($hex, 2, 1), 2);
+	if (dol_strlen($hex) == 3) {
+		$hex = str_repeat(dol_substr($hex, 0, 1), 2).str_repeat(dol_substr($hex, 1, 1), 2).str_repeat(dol_substr($hex, 2, 1), 2);
 	}
 
 	// Split into three parts: R, G and B
@@ -2484,8 +2486,8 @@ function colorAdjustBrightness($hex, $steps)
 
 	// Normalize into a six character long hex string
 	$hex = str_replace('#', '', $hex);
-	if (strlen($hex) == 3) {
-		$hex = str_repeat(substr($hex, 0, 1), 2).str_repeat(substr($hex, 1, 1), 2).str_repeat(substr($hex, 2, 1), 2);
+	if (dol_strlen($hex) == 3) {
+		$hex = str_repeat(dol_substr($hex, 0, 1), 2).str_repeat(dol_substr($hex, 1, 1), 2).str_repeat(dol_substr($hex, 2, 1), 2);
 	}
 
 	// Split into three parts: R, G and B
@@ -2534,11 +2536,11 @@ function colorHexToRgb($hex, $alpha = false, $returnArray = false)
 {
 	$string = '';
 	$hex = str_replace('#', '', $hex);
-	$length = strlen($hex);
+	$length = dol_strlen($hex);
 	$rgb = array();
-	$rgb['r'] = hexdec($length == 6 ? substr($hex, 0, 2) : ($length == 3 ? str_repeat(substr($hex, 0, 1), 2) : 0));
-	$rgb['g'] = hexdec($length == 6 ? substr($hex, 2, 2) : ($length == 3 ? str_repeat(substr($hex, 1, 1), 2) : 0));
-	$rgb['b'] = hexdec($length == 6 ? substr($hex, 4, 2) : ($length == 3 ? str_repeat(substr($hex, 2, 1), 2) : 0));
+	$rgb['r'] = hexdec($length == 6 ? dol_substr($hex, 0, 2) : ($length == 3 ? str_repeat(dol_substr($hex, 0, 1), 2) : 0));
+	$rgb['g'] = hexdec($length == 6 ? dol_substr($hex, 2, 2) : ($length == 3 ? str_repeat(dol_substr($hex, 1, 1), 2) : 0));
+	$rgb['b'] = hexdec($length == 6 ? dol_substr($hex, 4, 2) : ($length == 3 ? str_repeat(dol_substr($hex, 2, 1), 2) : 0));
 	if ($alpha !== false) {
 		$rgb['a'] = (float) $alpha;
 		$string = 'rgba('.implode(',', array_map('strval', $rgb)).')';
@@ -2565,9 +2567,9 @@ function colorHexToHsl($hex, $alpha = false, $returnArray = false)
 {
 	$hex = colorArrayToHex(colorStringToArray($hex));
 	$hex = str_replace('#', '', $hex);
-	$red = hexdec(substr($hex, 0, 2)) / 255;
-	$green = hexdec(substr($hex, 2, 2)) / 255;
-	$blue = hexdec(substr($hex, 4, 2)) / 255;
+	$red = hexdec(dol_substr($hex, 0, 2)) / 255;
+	$green = hexdec(dol_substr($hex, 2, 2)) / 255;
+	$blue = hexdec(dol_substr($hex, 4, 2)) / 255;
 
 	$cmin = min($red, $green, $blue);
 	$cmax = max($red, $green, $blue);
@@ -2869,7 +2871,7 @@ function phpSyntaxError($code)
 	$inString = @ini_set('log_errors', false);
 	$token = @ini_set('display_errors', true);
 	ob_start();
-	$code = substr($code, strlen('<?php '));
+	$code = dol_substr($code, dol_strlen('<?php '));
 	$braces || $code = "if(0){{$code}\n}";
 	// @phan-suppress-next-line PhanPluginUnsafeEval
 	if (eval($code) === false) {
@@ -2885,7 +2887,7 @@ function phpSyntaxError($code)
 			$code[2] = (int) $code[2];
 			$code = $code[2] <= $braces
 				? array($code[1], $code[2])
-				: array('unexpected $end'.substr($code[1], 14), $braces);
+				: array('unexpected $end'.dol_substr($code[1], 14), $braces);
 		} else {
 			$code = array('syntax error', 0);
 		}
@@ -3143,7 +3145,7 @@ function printCodeForPing($constanttosavelastko, $constanttosavefirstok, $arrayo
 	$hash_unique_id = getHashUniqueIdOfRegistration($algo);
 
 	// Disable ping if $constanttosavelastpingko is set and is recent (this month)
-	if (getDolGlobalString($constanttosavelastko) && substr(getDolGlobalString($constanttosavelastko), 0, 6) == dol_print_date(dol_now(), '%Y%m') && !$forceping) {
+	if (getDolGlobalString($constanttosavelastko) && dol_substr(getDolGlobalString($constanttosavelastko), 0, 6) == dol_print_date(dol_now(), '%Y%m') && !$forceping) {
 		print "\n";
 		print '<!-- printCodeForPing: NO JS CODE TO ENABLE the call for '.$constanttosavefirstok.'. An error already occurred this month ('.$constanttosavelastko.' is set), we will re-try next month. -->'."\n";
 	} else {
@@ -3254,7 +3256,7 @@ function validateZipFile($zip, $originalfilename, $zipfile, $langs)
 				continue;
 			}
 			dol_syslog("We check if dir ".$dir.'/'.$file.'/htdocs exists');
-			if (is_dir($dir.'/'.$file.'/htdocs')) {
+			if (dol_is_dir($dir.'/'.$file.'/htdocs')) {
 				dol_syslog('Dir '.$dir.'/'.$file.'/htdocs exists. So we use dir='.$dir.'/'.$file.' as root for package to analyse.');
 				$dir = $dir.'/'.$file;
 				break;
@@ -3282,7 +3284,7 @@ function validateZipFile($zip, $originalfilename, $zipfile, $langs)
 	dol_syslog("Now dir is the directory with root of the zip = ".$dir, LOG_DEBUG);
 
 	$dirmoduletheme = $dir.'/'.($ismodule ? $ismodule : ($istheme ? $istheme : ''));
-	if (is_dir($dir.'/htdocs')) {
+	if (dol_is_dir($dir.'/htdocs')) {
 		$dirmoduletheme = $dir.'/htdocs/'.($ismodule ? $ismodule : ($istheme ? $istheme : ''));
 	}
 	$dirmodulethemeroot = dirname($dirmoduletheme);
@@ -3318,7 +3320,7 @@ function validateZipFile($zip, $originalfilename, $zipfile, $langs)
 		}
 
 		// It's a module or theme file (check htdocs directory)
-		if (! $error && ! empty($ismodule) && is_dir($dirmodulethemeroot) && $dh = opendir($dirmodulethemeroot)) {
+		if (! $error && ! empty($ismodule) && dol_is_dir($dirmodulethemeroot) && $dh = opendir($dirmodulethemeroot)) {
 			dol_syslog("Scanning module dir ".$dirmodulethemeroot." to ensure there is only one directory (with name of the module) in the root path");
 			$nbofsubdir = 0;
 			$lastdirfound = '';
@@ -3332,13 +3334,13 @@ function validateZipFile($zip, $originalfilename, $zipfile, $langs)
 				$nbofsubdir++;
 			}
 			closedir($dh);
-			if ($nbofsubdir >= 2 && ! is_file($dirmoduletheme.'/metapackage.conf')) {
+			if ($nbofsubdir >= 2 && ! dol_is_file($dirmoduletheme.'/metapackage.conf')) {
 				$return['errormsg'] .= $langs->trans("rootDirWarning", $nbofsubdir, basename($dirmoduletheme)) . '<br><br>';
 				$error++;
 			}
 
 			if ($ismodule != $lastdirfound) {
-				if (is_file($dirmoduletheme.'/metapackage.conf')) {
+				if (dol_is_file($dirmoduletheme.'/metapackage.conf')) {
 					// Check each dir found is inside list of modules
 				} else {
 					$return['errormsg'] .= $langs->trans("moduleNameMismatch", $lastdirfound, $ismodule) .'<br><br>';
@@ -3436,7 +3438,7 @@ function analyzeDirContents($dir, $search = array(), &$results = array(), &$coun
 
 	foreach ($files as $key => $value) {
 		$path = realpath($dir . DIRECTORY_SEPARATOR . $value);
-		if (!is_dir($path)) {
+		if (!is_dir($path)) {  // @phan-suppress-current-line DolibarrForbiddenFunctionPlugin
 			$content = file_get_contents($path);
 
 			// Clean the content of file to make analysis easier and avoid some false positive
