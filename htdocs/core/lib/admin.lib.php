@@ -1445,8 +1445,8 @@ function complete_dictionary_with_modules(&$taborder, &$tabname, &$tablib, &$tab
 		if (is_resource($handle)) {
 			while (($file = readdir($handle)) !== false) {
 				//print "$i ".$file."\n<br>";
-				if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod' && substr($file, dol_strlen($file) - 10) == '.class.php') {
-					$modName = substr($file, 0, dol_strlen($file) - 10);
+				if (is_readable($dir.$file) && dol_substr($file, 0, 3) == 'mod' && dol_substr($file, dol_strlen($file) - 10) == '.class.php') {
+					$modName = dol_substr($file, 0, dol_strlen($file) - 10);
 
 					if ($modName) {
 						if ($modName === 'modFournisseur' && getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
@@ -1622,8 +1622,8 @@ function activateModulesRequiredByCountry($country_code)
 		$handle = @opendir(dol_osencode($dir));
 		if (is_resource($handle)) {
 			while (($file = readdir($handle)) !== false) {
-				if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod' && substr($file, dol_strlen($file) - 10) == '.class.php') {
-					$modName = substr($file, 0, dol_strlen($file) - 10);
+				if (is_readable($dir.$file) && dol_substr($file, 0, 3) == 'mod' && dol_substr($file, dol_strlen($file) - 10) == '.class.php') {
+					$modName = dol_substr($file, 0, dol_strlen($file) - 10);
 
 					if ($modName) {
 						if ($modName === 'modFournisseur' && getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
@@ -1709,8 +1709,8 @@ function complete_elementList_with_modules(&$elementList)
 		if (is_resource($handle)) {
 			while (($file = readdir($handle)) !== false) {
 				//print "$i ".$file."\n<br>";
-				if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod' && substr($file, dol_strlen($file) - 10) == '.class.php') {
-					$modName = substr($file, 0, dol_strlen($file) - 10);
+				if (is_readable($dir.$file) && dol_substr($file, 0, 3) == 'mod' && dol_substr($file, dol_strlen($file) - 10) == '.class.php') {
+					$modName = dol_substr($file, 0, dol_strlen($file) - 10);
 
 					if ($modName) {
 						include_once $dir.$file;

@@ -403,11 +403,11 @@ if (!empty($refGenerationObjects)) {
 			}
 
 			while (($file = readdir($handle)) !== false) {
-				if (strpos($file, 'mod_'.strtolower($myTmpObjectKey).'_') !== 0 || substr($file, dol_strlen($file) - 3, 3) != 'php') {
+				if (strpos($file, 'mod_'.strtolower($myTmpObjectKey).'_') !== 0 || dol_substr($file, dol_strlen($file) - 3, 3) != 'php') {
 					continue;
 				}
 
-				$file = substr($file, 0, dol_strlen($file) - 4);
+				$file = dol_substr($file, 0, dol_strlen($file) - 4);
 
 				require_once $dir.'/'.$file.'.php';
 
@@ -578,8 +578,8 @@ if (!empty($docGenerationObjects)) {
 						continue;
 					}
 
-					$name = substr($file, 4, dol_strlen($file) - 16);
-					$className = substr($file, 0, dol_strlen($file) - 12);
+					$name = dol_substr($file, 4, dol_strlen($file) - 16);
+					$className = dol_substr($file, 0, dol_strlen($file) - 12);
 
 					require_once $dir.'/'.$file;
 
