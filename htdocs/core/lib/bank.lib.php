@@ -5,7 +5,7 @@
  * Copyright (C) 2016       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2021       Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2024       MDW                     <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW                     <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2026       Solution Libre SAS      <contact@solution-libre.fr>
  *
@@ -449,7 +449,7 @@ function checkBanForAccount($account)
 	if ($country_code == 'FR') { // France rules
 		$coef = array(62, 34, 3);
 		// Concatenate the code parts
-		$rib = strtolower(trim($account->code_banque).trim($account->code_guichet).trim($account->number).trim($account->cle));
+		$rib = dol_strtolower(trim($account->code_banque).trim($account->code_guichet).trim($account->number).trim($account->cle));
 		// Replace any letters with numbers.
 		//$rib = strtr($rib, "abcdefghijklmnopqrstuvwxyz","12345678912345678912345678");	// don't work
 		$rib = strtr($rib, "abcdefghijklmnopqrstuvwxyz", "12345678912345678923456789");
@@ -458,7 +458,7 @@ function checkBanForAccount($account)
 
 		$s = 0;
 		for ($i = 0; $i < 3; $i++) {
-			$code = substr($rib, 7 * $i, 7);
+			$code = dol_substr($rib, 7 * $i, 7);
 			$s += ((int) $code) * $coef[$i];
 		}
 		// Subtract modulo 97 of $s from 97 to get the key
@@ -475,18 +475,18 @@ function checkBanForAccount($account)
 	*/
 
 	if ($country_code == 'ES') { // Spanish rules
-		$CCC = strtolower(trim($account->number));
-		$rib = strtolower(trim($account->code_banque).trim($account->code_guichet));
-		$cle_rib = strtolower(checkES($rib, $CCC));
-		if ($cle_rib == strtolower($account->cle)) {
+		$CCC = dol_strtolower(trim($account->number));
+		$rib = dol_strtolower(trim($account->code_banque).trim($account->code_guichet));
+		$cle_rib = dol_strtolower(checkES($rib, $CCC));
+		if ($cle_rib == dol_strtolower($account->cle)) {
 			return true;
 		}
 		return false;
 	}
 	if ($country_code == 'AU') {  // Australian
-		if (strlen($account->code_banque) > 7) {
+		if (dol_strlen($account->code_banque) > 7) {
 			return false; // Should be 6 but can be 123-456
-		} elseif (strlen($account->code_banque) < 6) {
+		} elseif (dol_strlen($account->code_banque) < 6) {
 			return false; // Should be 6
 		} else {
 			return true;
@@ -514,7 +514,7 @@ function checkBanForAccount($account)
  */
 function checkES($IentOfi, $InumCta)
 {
-	if (empty($IentOfi) || empty($InumCta) || strlen($IentOfi) != 8 || strlen($InumCta) != 10) {
+	if (empty($IentOfi) || empty($InumCta) || dol_strlen($IentOfi) != 8 || dol_strlen($InumCta) != 10) {
 		$keycontrol = "";
 		return $keycontrol;
 	}
@@ -524,8 +524,8 @@ function checkES($IentOfi, $InumCta)
 
 	$i = 0;
 
-	while ($i <= strlen($ccc) - 1) {
-		if (strpos($numbers, substr($ccc, $i, 1)) === false) {
+	while ($i <= dol_strlen($ccc) - 1) {
+		if (strpos($numbers, dol_substr($ccc, $i, 1)) === false) {
 			$keycontrol = "";
 			return $keycontrol;
 		}
@@ -536,7 +536,7 @@ function checkES($IentOfi, $InumCta)
 	$sum = 0;
 
 	for ($i = 2; $i < 10; $i++) {
-		$sum += $values[$i] * (int) substr($IentOfi, $i - 2, 1);
+		$sum += $values[$i] * (int) dol_substr($IentOfi, $i - 2, 1);
 	}
 
 	$key = 11 - $sum % 11;
@@ -553,7 +553,7 @@ function checkES($IentOfi, $InumCta)
 	$sum = 0;
 
 	for ($i = 0; $i < 10; $i++) {
-		$sum += $values[$i] * (int) substr($InumCta, $i, 1); //int to cast result of substr to a number
+		$sum += $values[$i] * (int) dol_substr($InumCta, $i, 1); //int to cast result of substr to a number
 	}
 
 	$key = 11 - $sum % 11;

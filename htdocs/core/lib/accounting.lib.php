@@ -4,7 +4,7 @@
  * Copyright (C) 2014       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2019       Eric Seigne             <eric.seigne@cap-rel.fr>
  * Copyright (C) 2021-2026  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -162,7 +162,7 @@ function length_accountg($account)
 	$g = getDolGlobalInt('ACCOUNTING_LENGTH_GACCOUNT');
 	if (!is_empty($g)) {
 		// Clean parameters
-		$i = strlen($account);
+		$i = dol_strlen($account);
 
 		if ($i >= 1) {
 			while ($i < $g) {
@@ -200,7 +200,7 @@ function length_accounta($accounta)
 	$a = getDolGlobalInt('ACCOUNTING_LENGTH_AACCOUNT');
 	if (!is_empty($a)) {
 		// Clean parameters
-		$i = strlen($accounta);
+		$i = dol_strlen($accounta);
 
 		if ($i >= 1) {
 			while ($i < $a) {
@@ -230,7 +230,9 @@ function checkGeneralAccountAllowsAuxiliary($db, $general_account, $auxiliary_ac
 {
 	global $conf;
 
-	if (empty($auxiliary_account)) return true; // No check needed if no auxiliary account used
+	if (empty($auxiliary_account)) {
+		return true;
+	} // No check needed if no auxiliary account used
 
 	// Build SQL to get general account info based on rowid or account number
 	$sql = "SELECT rowid, account_number, centralized";

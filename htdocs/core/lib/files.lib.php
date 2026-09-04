@@ -244,7 +244,7 @@ function dol_dir_list($utf8_path, $types = "all", $recursive = 0, $filter = "", 
 
 						// if we're in a directory and we want recursive behavior, call this function again
 						if ($recursive > 0) {
-							if (empty($donotfollowsymlinks) || !is_link($os_fullpathfile)) {
+							if (empty($donotfollowsymlinks) || !is_link($os_fullpathfile)) {  // @phan-suppress-current-line DolibarrForbiddenFunctionPlugin
 								//var_dump('eee '. $utf8_fullpathfile. ' '.is_dir($utf8_fullpathfile).' '.is_link($utf8_fullpathfile));
 								$file_list = array_merge($file_list, dol_dir_list($utf8_fullpathfile, $types, $recursive + 1, $filter, $exclude_array, $sortcriteria, $sortorder, $mode, $nohook, ($relativename != '' ? $relativename.'/' : '').$utf8_file, $donotfollowsymlinks, $nbsecondsold));
 							}
@@ -736,7 +736,7 @@ function dol_count_nb_of_line($file)
 function dol_filesize($pathoffile)
 {
 	$newpathoffile = dol_osencode($pathoffile);
-	return filesize($newpathoffile);
+	return filesize($newpathoffile);  // @phan-suppress-current-line DolibarrForbiddenFunctionPlugin
 }
 
 /**
@@ -748,7 +748,7 @@ function dol_filesize($pathoffile)
 function dol_filemtime($pathoffile)
 {
 	$newpathoffile = dol_osencode($pathoffile);
-	return @filemtime($newpathoffile); // @Is to avoid errors if files does not exists
+	return @filemtime($newpathoffile); // @Is to avoid errors if files does not exists  // @phan-suppress-current-line DolibarrForbiddenFunctionPlugin
 }
 
 /**
@@ -760,7 +760,7 @@ function dol_filemtime($pathoffile)
 function dol_fileperm($pathoffile)
 {
 	$newpathoffile = dol_osencode($pathoffile);
-	return fileperms($newpathoffile);
+	return fileperms($newpathoffile);  // @phan-suppress-current-line DolibarrForbiddenFunctionPlugin
 }
 
 /**
@@ -1080,7 +1080,7 @@ function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayrep
 		$dir_handle = opendir($ossrcfile);
 		$tmpresult = 0;  // Initialised before loop to keep old behavior, may be needed inside loop
 		while ($file = readdir($dir_handle)) {
-			if ($file != "." && $file != ".." && !is_link($ossrcfile."/".$file)) {
+			if ($file != "." && $file != ".." && !is_link($ossrcfile."/".$file)) {  // @phan-suppress-current-line DolibarrForbiddenFunctionPlugin
 				if (is_dir($ossrcfile."/".$file)) {  // @phan-suppress-current-line DolibarrForbiddenFunctionPlugin
 					if (empty($excludesubdir) || ($excludesubdir == 2 && dol_strlen($file) == 2)) {
 						$newfile = $file;
@@ -4214,7 +4214,7 @@ function archiveOrBackupFile($srcfile, $max_versions = 5, $archivedir = '', $suf
 	foreach ($files_in_directory as $file) {
 		$files_with_timestamps[] = [
 			'file' => $file,
-			'timestamp' => filemtime($file)
+			'timestamp' => filemtime($file)  // @phan-suppress-current-line DolibarrForbiddenFunctionPlugin
 		];
 	}
 

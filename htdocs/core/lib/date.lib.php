@@ -970,7 +970,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $countryCodeOrId = '
 
 			if (in_array('genevafast', $specialdayrule)) {
 				// Geneva fast in Switzerland (Thursday after the first sunday in September)
-				$date_1sunsept = strtotime('next thursday', strtotime('next sunday', mktime(0, 0, 0, 9, 1, $annee)));
+				$date_1sunsept = strtotime('next thursday', strtotime('next sunday', mktime(0, 0, 0, 9, 1, $annee)));  // @phan-suppress-current-line DolibarrForbiddenFunctionPlugin
 				$jour_1sunsept = date("d", $date_1sunsept);
 				$mois_1sunsept = date("m", $date_1sunsept);
 				if ($jour_1sunsept == $jour && $mois_1sunsept == $mois) {
@@ -1270,7 +1270,7 @@ function listPublicHoliday($timestampStart, $timestampEnd, $countryCodeOrId = ''
 
 			if (in_array('genevafast', $specialdayrule)) {
 				// Geneva fast in Switzerland (Thursday after the first sunday in September)
-				$date_1sunsept = strtotime('next thursday', strtotime('next sunday', mktime(0, 0, 0, 9, 1, $annee)));
+				$date_1sunsept = strtotime('next thursday', strtotime('next sunday', mktime(0, 0, 0, 9, 1, $annee)));  // @phan-suppress-current-line DolibarrForbiddenFunctionPlugin
 				$jour_1sunsept = date("d", $date_1sunsept);
 				$mois_1sunsept = date("m", $date_1sunsept);
 				if ($jour_1sunsept == $jour && $mois_1sunsept == $mois) {
@@ -1511,7 +1511,7 @@ function getFirstDayOfEachWeek($TWeek, $year)
 		} elseif ($weekNb == '01' && in_array('52', $TWeek)) {
 			$yeartouse = $year + 1;
 		}
-		$TFirstDayOfWeek[$weekNb] = date('d', strtotime($yeartouse.'W'.$weekNb));
+		$TFirstDayOfWeek[$weekNb] = date('d', strtotime($yeartouse.'W'.$weekNb));  // @phan-suppress-current-line DolibarrForbiddenFunctionPlugin
 	}
 	return $TFirstDayOfWeek;
 }
@@ -1537,7 +1537,7 @@ function getLastDayOfEachWeek($TWeek, $year)
 		} elseif ($weekNb == '01' && in_array('52', $TWeek)) {
 			$yeartouse = $year + 1;
 		}
-		$TLastDayOfWeek[$weekNb] = date('d', strtotime($yeartouse.'W'.$weekNb.'+6 days'));
+		$TLastDayOfWeek[$weekNb] = date('d', strtotime($yeartouse.'W'.$weekNb.'+6 days'));  // @phan-suppress-current-line DolibarrForbiddenFunctionPlugin
 	}
 	return $TLastDayOfWeek;
 }
