@@ -611,8 +611,26 @@ class DiscountAbsolute extends CommonObject
 
 					$rescheck = $this->db->query($sqlcheck);
 					if ($rescheck && $this->db->num_rows($rescheck) === 0) {
-						$sqladd = "INSERT INTO ".$this->db->prefix()."element_element (fk_source, sourcetype, fk_target, targettype)";
-						$sqladd .= " VALUES (".((int) $sourceinvoiceid).", '".$this->db->escape($sourcetype)."', ".((int) $rowidinvoice).", '".$this->db->escape($targettype)."')";
+						$now = dol_now();
+						$sqladd = "INSERT INTO ".$this->db->prefix()."element_element (";
+						$sqladd .= " fk_source";
+						$sqladd .= ", sourcetype";
+						$sqladd .= ", fk_target";
+						$sqladd .= ", targettype";
+						$sqladd .= ", fk_user_creat";
+						$sqladd .= ", date_creation";
+						$sqladd .= ", fk_user_modif";
+						$sqladd .= ", tms";
+						$sqladd .= ") VALUES (";
+						$sqladd .= ((int) $sourceinvoiceid);
+						$sqladd .= ", '".$this->db->escape($sourcetype)."'";
+						$sqladd .= ", ".((int) $rowidinvoice);
+						$sqladd .= ", '".$this->db->escape($targettype)."'";
+						$sqladd .= ", ".((int) $user->id);
+						$sqladd .= ", '".$this->db->idate($now)."'";
+						$sqladd .= ", ".((int) $user->id);
+						$sqladd .= ", '".$this->db->idate($now)."'";
+						$sqladd .= ")";
 						$this->db->query($sqladd); // Best-effort: do not fail discount link if object link can't be created.
 					}
 				}
