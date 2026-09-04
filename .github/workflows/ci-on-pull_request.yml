@@ -30,20 +30,23 @@ jobs:
   #  uses: ./.github/workflows/windows-ci.yml
   #  with:
   #    gh_event: ${{ github.event_name }}
-  gh-travis:  # Runs travis script on github runner (not on travis)
-    # The build (install + database upgrade + phpunit) is long, so it is run
-    # only when a changed file may change its result, and only once the cheap
-    # checks passed. The default is to run it: it is skipped only when
-    # get_changed_php.sh could tell that no relevant file was modified.
-    # Add the label "ci: full" on the pull request to force the build.
-    # To also skip the build while the pull request is a draft, add
-    # "&& github.event.pull_request.draft == false" to the condition.
-    if: >-
-      needs.pre-commit.outputs.travis_changed != 'false'
-      || contains(github.event.pull_request.labels.*.name, 'ci: full')
-    # needs: [windows-ci]
-    secrets: inherit
-    needs: [pre-commit, phan, phpstan]
-    uses: ./.github/workflows/gh-travis.yml
-    with:
-      gh_event: ${{ github.event_name }}
+  # Runs travis script on github runner (not on travis). Still disabled: the
+  # .travis.yml build does not run as is on a github runner (the job matrix of
+  # .travis.yml is not applied, so TRAVIS_PHP_VERSION/TRAVIS_TYPE/DB are empty
+  # and no php/apache is installed, then the apache setup fails). Once the
+  # build is fixed, rename gh-travis.yml.disabled and uncomment this job: the
+  # condition below skips it when no changed file can change its result.
+  # The default is to run it, it is skipped only when get_changed_php.sh could
+  # tell that no relevant file was modified. The label "ci: full" forces it.
+  # To also skip it while the pull request is a draft, add
+  # "&& github.event.pull_request.draft == false" to the condition.
+  #gh-travis:
+  #  if: >-
+  #    needs.pre-commit.outputs.travis_changed != 'false'
+  #    || contains(github.event.pull_request.labels.*.name, 'ci: full')
+  #  # needs: [windows-ci]
+  #  secrets: inherit
+  #  needs: [pre-commit, phan, phpstan]
+  #  uses: ./.github/workflows/gh-travis.yml
+  #  with:
+  #    gh_event: ${{ github.event_name }}
