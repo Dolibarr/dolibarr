@@ -925,7 +925,16 @@ if ($step == 3 && $datatoexport) {
 				$tmp = $objexport->build_filterField($Typefieldsarray[$code], $code, $ValueFilter);
 				print $form->textwithpicto($tmp, $szInfoFiltre);
 			} else {
-				print $objexport->build_filterField($Typefieldsarray[$code], $code, $ValueFilter);
+				// Extrafields type list
+				if (preg_match('/^extra\./', $code) && preg_match('/^List:/', $Typefieldsarray[$code]) && preg_match('/_extrafields$/', $tablename)) {
+					$tmp = explode('_', $tablename); // Getting the table_element from the full length table's name
+					$extrafields = new ExtraFields($db);
+					$extrafields->fetch_name_optionals_label($tmp[1]);
+					$inputExtra = $extrafields->showInputField(preg_replace('/^extra\./', '', $code), $ValueFilter, '', '', '', '', 0, $tmp[1]);
+					print preg_replace('/name="options_/', 'name="extra.', $inputExtra); // Filter in export work only if prefixed by his table's alias
+				} else {
+					print $objexport->build_filterField($Typefieldsarray[$code], $code, $ValueFilter);
+				}
 			}
 		}
 		print '</td>';
