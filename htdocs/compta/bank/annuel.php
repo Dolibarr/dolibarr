@@ -61,7 +61,7 @@ $result = restrictedArea($user, 'banque', $fieldvalue, 'bank_account&bank_accoun
 
 $year_start = GETPOST('year_start');
 //$year_current = strftime("%Y", time());
-$year_current = (int) dol_print_date(time(), "%Y");
+$year_current = (int) dol_print_date(dol_now(), "%Y");
 if (!$year_start) {
 	$year_start = $year_current - 2;
 	$year_end = $year_current;
