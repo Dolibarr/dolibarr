@@ -6258,6 +6258,7 @@ function dol_nl2br($stringtoencode, $nl2brmode = 0, $forxml = false)
 /**
  * Sanitize a HTML to remove js, dangerous content and external links.
  * This function is used by dolPrintHTML... function for example.
+ * This function is tested by test/phpunit/SecurityTest.php
  *
  * @param	string	$stringtoencode				String to encode
  * @param	int     $nouseofiframesandbox		0=Default, 1=Allow use of option MAIN_SECURITY_USE_SANDBOX_FOR_HTMLWITHNOJS for html sanitizing (not yet working)
@@ -6275,8 +6276,16 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 	} else {
 		$out = $stringtoencode;
 
+		$antiinfinitloop = 0;
+
 		// First clean HTML content
 		do {
+			if ($antiinfinitloop >= 20) {
+				dol_print_error(null, "Infinite loop detected after ".$antiinfinitloop." iterations in dol_htmlwithnojs");
+				die;	// We must not break and we must not return a string for security issue. This should never happen.
+			}
+			$antiinfinitloop++;
+
 			$oldstringtoclean = $out;
 
 			$outishtml = 0;
@@ -6295,18 +6304,11 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 						libxml_disable_entity_loader(true);
 					}
 
-					$dom = new DOMDocument();
-					// Add a trick '<div class="tricktoremove">' to solve pb with text without parent tag
-					//  like '<h1>Foo</h1><p>bar</p>' that wrongly ends up, without the trick, with '<h1>Foo<p>bar</p></h1>'
-					//  like 'abc' that wrongly ends up, without the trick, with '<p>abc</p>'
-					// Add also a trick <html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"> to solve utf8 lost.
-					// I don't know what the xml encoding is the trick for
-
 					if (!$outishtml) {
 						$out = preg_replace('/&(?![a-zA-Z0-9#]+;)/', '__AMPINTEXT__', $out);
-
-						$out = dol_nl2br($out);
 					}
+
+					$dom = new DOMDocument();
 
 					// Note: <a href="https://__[aaa]__/aaa.html"> is transformed into <a href="https://__[aaa]__/aaa.html">
 					// We don't want that, so we protect __[xxx]__ by replacing [ and ] before loadHTML and restore them after saveHTML
@@ -6365,6 +6367,7 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 					foreach ($wrapper->childNodes as $child) {
 						$result .= $dom->saveHTML($child);
 					}
+
 					$out = trim($result);
 
 					// Restore [ and ] that were protected before loadHTML

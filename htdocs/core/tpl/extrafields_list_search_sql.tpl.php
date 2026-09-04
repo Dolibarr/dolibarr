@@ -30,6 +30,9 @@
  *
  * @var string $sql
  * @var string $extrafieldsobjectkey
+ * @var string $search_options_pattern
+ * @var string $extrafieldsobjectprefix
+ * @var array $search_array_options
  */
 '
 @phan-var-force CommonObject $object
@@ -52,7 +55,7 @@ if (!empty($extrafieldsobjectkey) && !empty($search_array_options) && is_array($
 		$extrafieldsobjectprefix = 'ef.';
 	}
 	if (empty($search_options_pattern)) {
-		$search_options_pattern = 'search_(task_)?options_';
+		$search_options_pattern = 'search_options_';
 	}
 
 	$sqlMoreWhere = '';

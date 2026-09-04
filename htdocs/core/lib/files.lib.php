@@ -1281,7 +1281,7 @@ function dol_move($srcfile, $destfile, $newmask = '0', $overwriteifexists = 1, $
 						$ecmfile->note_public = $moreinfo['note_public'];
 					}
 					if (!empty($moreinfo) && !empty($moreinfo['src_object_type'])) {
-						$ecmfile->src_object_type = $moreinfo['src_object_type'];
+						$ecmfile->src_object_type = $moreinfo['src_object_type'];		// Usually the $object->table_element
 					}
 					if (!empty($moreinfo) && !empty($moreinfo['src_object_id'])) {
 						$ecmfile->src_object_id = $moreinfo['src_object_id'];
