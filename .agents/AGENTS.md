@@ -202,6 +202,7 @@ If adding a unit test is requested:
 - Delete dead code
 - Add external dependencies (Composer packages, JS libraries) without prior validation
 - Modify the `ChangeLog` file (this file will be generated before the release from all commit titles)
+- Commit or push without an explicit request from the user
 
 ---
 
