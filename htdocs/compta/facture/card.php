@@ -1111,6 +1111,9 @@ if (empty($reshook)) {
 			$discount->fk_soc = $object->socid;
 			$discount->socid = $object->socid;
 			$discount->fk_facture_source = $object->id;
+			// Carry the currency and rate of the source invoice so the resulting discount keeps its foreign-currency identity
+			$discount->multicurrency_code = $object->multicurrency_code;
+			$discount->multicurrency_tx = $object->multicurrency_tx;
 
 			$error = 0;
 
@@ -6420,6 +6423,7 @@ if ($action == 'create') {
 			$creditnoteamount = 0;
 			$depositamount = 0;
 			$sql = "SELECT re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc,";
+			$sql .= " re.multicurrency_amount_ttc, re.multicurrency_code, re.multicurrency_tx,";
 			$sql .= " re.description, re.fk_facture_source";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as re";
 			$sql .= " WHERE fk_facture = ".((int) $object->id);
@@ -6441,6 +6445,14 @@ if ($action == 'create') {
 						print $langs->trans("Deposit").' ';
 					}
 					print $invoice->getNomUrl(0);
+					// Foreign-currency amount and rate, kept on a single line in the (wide) label cell (option MULTICURRENCY_PAYMENT_USE_REAL_AMOUNTS)
+					if (getDolGlobalInt('MULTICURRENCY_PAYMENT_USE_REAL_AMOUNTS') && isModEnabled('multicurrency') && !empty($obj->multicurrency_code)) {
+						print ' <span class="small nowraponall">'.price($obj->multicurrency_amount_ttc, 0, $langs, 1, -1, -1, $obj->multicurrency_code);
+						if (!empty($obj->multicurrency_tx) && $obj->multicurrency_tx > 0) {
+							print ' - '.$langs->trans('Rate').' : '.price2num($obj->multicurrency_tx, 'MU');
+						}
+						print '</span>';
+					}
 					print '</span>';
 					print '</td>';
 					// Delete discount
