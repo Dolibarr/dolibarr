@@ -101,7 +101,7 @@ $data = [
 if ($page == 1) {
 	$data['results'][] = [
 		'id' => -1,
-		'text' => '&nbsp;',
+		'text' => "\u{00A0}",	// Real non-breaking space (U+00A0), not the HTML entity '&nbsp;' which Select2 would escape and display as raw text
 	];
 }
 $i = 0;
