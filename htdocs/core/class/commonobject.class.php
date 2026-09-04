@@ -7212,7 +7212,11 @@ abstract class CommonObject
 
 							$obj = $this->db->getRow($sqlFetchObject);
 
-							if ($obj !== false) {
+							// getRow() returns an object on success, int 0 when the query succeeded but
+							// returned no row, and false on SQL failure. Testing "!== false" let the 0
+							// through as a success: $obj->rowid on an int is null, $res was set to 1 and
+							// null was stored in the column while a success was reported.
+							if (is_object($obj)) {
 								$objectId = $obj->rowid;
 								$res = 1;
 							} else {
