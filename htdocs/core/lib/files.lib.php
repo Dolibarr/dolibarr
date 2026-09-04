@@ -1429,7 +1429,7 @@ function dol_unescapefile($filename)
  *
  * @param   string      $src_file       Source file to check
  * @param   string      $dest_file      Destination file name (to know the expected type)
- * @return  string[]                    Array of errors, or empty array if not virus found
+ * @return  string[]                    Array of errors (the translation key of the error is used as array key when the check has one), or empty array if not virus found
  */
 function dolCheckVirus($src_file, $dest_file = '')
 {
@@ -1459,7 +1459,7 @@ function dolCheckVirus($src_file, $dest_file = '')
  *
  * @param   string      $src_file       Source file to check
  * @param   string      $dest_file      Destination file name (to know the expected type)
- * @return  string[]                    Array of errors, or empty array if not virus found
+ * @return  string[]                    Array of errors (the translation key of the error is used as array key when the check has one), or empty array if not virus found
  */
 function dolCheckOnFileName($src_file, $dest_file = '')
 {
@@ -1469,7 +1469,7 @@ function dolCheckOnFileName($src_file, $dest_file = '')
 
 			$tmp = file_get_contents(trim($src_file));
 			if (preg_match('/[\n\s]+\/JavaScript[\n\s]+/m', $tmp)) {
-				return array('File is a PDF with javascript inside');
+				return array('ErrorFileIsAnInfectedPDFWithJSInside' => 'File is a PDF with javascript inside');
 			}
 		} else {
 			dol_syslog("dolCheckOnFileName Check js into pdf disabled");
@@ -1544,7 +1544,14 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 			$checkvirusarray = dolCheckVirus($src_file, $dest_file);
 			if (count($checkvirusarray)) {
 				dol_syslog('Files.lib::dol_move_uploaded_file File "'.$src_file.'" (target name "'.$dest_file.'") KO with antivirus: errors='.implode(',', $checkvirusarray), LOG_WARNING);
-				return 'ErrorFileIsInfectedWithAVirus: '.implode(',', $checkvirusarray);
+				// We return a translation key alone, so the caller can translate it. The technical message of the
+				// antivirus is not appended to it (that would break the translation), it is kept into the log only.
+				foreach (array_keys($checkvirusarray) as $errorkey) {
+					if (is_string($errorkey)) {	// A check that knows its own error key returns it as array key
+						return $errorkey;
+					}
+				}
+				return 'ErrorFileIsInfectedWithAVirus';
 			}
 		}
 
@@ -2195,7 +2202,7 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $updatesessionor
 				// Move file from source directory to final destination. Check for virus is also embedded and a .noexe may also be appended on file name.
 				$resupload = dol_move_uploaded_file($TFile['tmp_name'][$i], $destfull, $allowoverwrite, 0, $TFile['error'][$i], 0, $keyforsourcefile, $upload_dir, $mode);
 
-				if (is_numeric($resupload) && $resupload > 0) {   // $resupload can be 'ErrorFileAlreadyExists', 'ErrorFileIsInfectedWithAVirus...'
+				if (is_numeric($resupload) && $resupload > 0) {   // $resupload can be 'ErrorFileAlreadyExists', 'ErrorFileIsInfectedWithAVirus'
 					include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 
 					$tmparraysize = getDefaultImageSizes();
@@ -2255,13 +2262,7 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $updatesessionor
 					$langs->load("errors");
 					if (is_numeric($resupload) && $resupload < 0) {	// Unknown error
 						setEventMessages($langs->trans("ErrorFileNotUploaded"), null, 'errors');
-					} elseif (preg_match('/ErrorFileIsInfectedWithAVirus/', $resupload)) {	// Files infected by a virus
-						if (preg_match('/File is a PDF with javascript inside/', $resupload)) {
-							setEventMessages($langs->trans("ErrorFileIsAnInfectedPDFWithJSInside"), null, 'errors');
-						} else {
-							setEventMessages($langs->trans("ErrorFileIsInfectedWithAVirus").'<br>'.dolGetFirstLineOfText($resupload), null, 'errors');
-						}
-					} else { // Known error
+					} else { // Known error, $resupload is a translation key
 						setEventMessages($langs->trans($resupload), null, 'errors');
 					}
 				}
