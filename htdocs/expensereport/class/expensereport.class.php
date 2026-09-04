@@ -2704,12 +2704,9 @@ class ExpenseReport extends CommonObject
 	 */
 	public function getSumPayments()
 	{
-		$table = 'payment_expensereport';
-		$field = 'fk_expensereport';
-
-		$sql = 'SELECT sum(amount) as amount';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.$table;
-		$sql .= " WHERE ".$this->db->sanitize($field)." = ".((int) $this->id);
+		$sql = 'SELECT SUM(amount) as amount';
+		$sql .= ' FROM '.MAIN_DB_PREFIX.'paymentexpensereport_expensereport';
+		$sql .= ' WHERE fk_expensereport = '.((int) $this->id);
 
 		dol_syslog(get_class($this)."::getSumPayments", LOG_DEBUG);
 		$resql = $this->db->query($sql);
