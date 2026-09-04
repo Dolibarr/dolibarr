@@ -85,7 +85,7 @@ function dolSessionRead($sess_id)
 	global $sessionlastvalueread;
 	global $sessionidfound;
 
-	$sql = "SELECT session_id, session_variable FROM ".MAIN_DB_PREFIX."session";
+	$sql = "SELECT session_id, session_variable, last_accessed FROM ".MAIN_DB_PREFIX."session";
 	$sql .= " WHERE session_id = '".$dbsession->escape($sess_id)."'";
 
 	// Execute the query
@@ -96,15 +96,32 @@ function dolSessionRead($sess_id)
 		$sessionlastvalueread = '';
 		$sessionidfound = '';
 		return '';
-	} else {
-		// Found a session - return the serialized string
-		$obj = $dbsession->fetch_object($resql);
-		$sessionlastvalueread = $obj->session_variable;
-		$sessionidfound = $obj->session_id;
-		//var_dump($sessionlastvalueread);
-		//var_dump($sessionidfound);
-		return $obj->session_variable;
 	}
+
+	$obj = $dbsession->fetch_object($resql);
+
+	// Enforce the session lifetime at read time, so an expired session is not honoured
+	// just because probabilistic garbage collection has not run yet (typically when
+	// session.gc_probability is 0). MAIN_SESSION_TIMEOUT is not available here (conf is
+	// not loaded yet during session_start()), so rely on session.gc_maxlifetime like
+	// PHP's native garbage collector does.
+	$max_lifetime = min(3600 * 24, (int) ini_get('session.gc_maxlifetime'));
+	if ($max_lifetime > 0 && $dbsession->jdate($obj->last_accessed) < (dol_now() - $max_lifetime)) {
+		// Expired: drop the stale row now, otherwise the INSERT done by dolSessionWrite()
+		// at the end of the request would collide with this still-existing primary key.
+		$delete_query = "DELETE FROM ".MAIN_DB_PREFIX."session";
+		$delete_query .= " WHERE session_id = '".$dbsession->escape($sess_id)."'";
+		$dbsession->query($delete_query);
+
+		$sessionlastvalueread = '';
+		$sessionidfound = '';
+		return '';
+	}
+
+	// Found a valid session - return the serialized string
+	$sessionlastvalueread = $obj->session_variable;
+	$sessionidfound = $obj->session_id;
+	return $obj->session_variable;
 }
 
 /**
