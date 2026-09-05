@@ -172,11 +172,11 @@ function init(){
 					console.log(roworder, table_element_line, fk_element, element_id, filepath, token);
 					if (reloadpage == 1) {
 						<?php
-						$redirectURL = empty($urltorefreshaftermove) ? ($_SERVER['PHP_SELF'].'?'.dol_escape_js($_SERVER['QUERY_STRING'])) : $urltorefreshaftermove;
+						$redirectURL = empty($urltorefreshaftermove) ? ($_SERVER['PHP_SELF'].'?'.dol_string_nohtmltag($_SERVER['QUERY_STRING'])) : $urltorefreshaftermove;
 						// remove action parameter from URL
 						$redirectURL = preg_replace('/(&|\?)action=[^&#]*/', '', $redirectURL);
 						?>
-						location.href = '<?php echo dol_escape_js($redirectURL); ?>';
+						location.href = <?php echo json_encode($redirectURL, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>;
 					}
 				});
 		},
