@@ -171,7 +171,6 @@ if ($resql) {
 		$obj = $db->fetch_object($resql);
 
 		$fuserstatic->id = $obj->rowid;
-		$fuserstatic->statut = $obj->statut;
 		$fuserstatic->status = $obj->statut;
 		$fuserstatic->lastname = $obj->lastname;
 		$fuserstatic->firstname = $obj->firstname;
