@@ -680,7 +680,7 @@ function dolibarr_get_const($db, $name, $entity = 1)
  */
 function dolibarr_set_const($db, $name, $value, $type = 'chaine', $visible = 0, $note = '', $entity = 1)
 {
-	global $conf, $hookmanager;
+	global $conf, $hookmanager, $user;
 
 	// Clean parameters
 	$name = trim($name);
@@ -714,6 +714,26 @@ function dolibarr_set_const($db, $name, $value, $type = 'chaine', $visible = 0, 
 
 	//dol_syslog("dolibarr_set_const name=$name, value=$value type=$type, visible=$visible, note=$note entity=$entity");
 
+	$userid = (!empty($user) && is_object($user) && $user->id > 0) ? (int) $user->id : 0;
+
+	// Keep the original creator across the delete+recreate done below
+	$fk_user_creat = 0;
+	$sql = "SELECT fk_user_creat FROM ".MAIN_DB_PREFIX."const";
+	$sql .= " WHERE name = ".$db->encrypt($name);
+	if ($entity >= 0) {
+		$sql .= " AND entity = ".((int) $entity);
+	}
+	$resql = $db->query($sql);
+	if ($resql) {
+		$obj = $db->fetch_object($resql);
+		if ($obj && $obj->fk_user_creat > 0) {
+			$fk_user_creat = (int) $obj->fk_user_creat;
+		}
+	}
+	if (empty($fk_user_creat)) {
+		$fk_user_creat = $userid;
+	}
+
 	$db->begin();
 
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
@@ -737,16 +757,32 @@ function dolibarr_set_const($db, $name, $value, $type = 'chaine', $visible = 0, 
 			$newvalue = $value;
 		}
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."const(name, value, type, visible, note, entity)";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."const(name, value, type, visible, note, entity, fk_user_creat, fk_user_modif)";
 		$sql .= " VALUES (";
 		$sql .= $db->encrypt($name);
 		$sql .= ", ".$db->encrypt($newvalue);
-		$sql .= ", '".$db->escape($type)."', ".((int) $visible).", '".$db->escape($note)."', ".((int) $entity).")";
+		$sql .= ", '".$db->escape($type)."', ".((int) $visible).", '".$db->escape($note)."', ".((int) $entity);
+		$sql .= ", ".($fk_user_creat > 0 ? (int) $fk_user_creat : "NULL");
+		$sql .= ", ".($userid > 0 ? (int) $userid : "NULL").")";
 
 		//print "sql".$value."-".pg_escape_string($value)."-".$sql;exit;
 		//print "xx".$db->escape($value);
 		dol_syslog("admin.lib::dolibarr_set_const", LOG_DEBUG);
 		$resql = $db->query($sql);
+
+		if (!$resql) {
+			// This function is also called by very old migration scripts (upgrade of a Dolibarr instance from an
+			// old version), at a point of the upgrade chain where llx_const may not yet have the fk_user_creat/fk_user_modif
+			// columns (added by a later migration). Fall back to the legacy insert so old upgrade paths keep working.
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."const(name, value, type, visible, note, entity)";
+			$sql .= " VALUES (";
+			$sql .= $db->encrypt($name);
+			$sql .= ", ".$db->encrypt($newvalue);
+			$sql .= ", '".$db->escape($type)."', ".((int) $visible).", '".$db->escape($note)."', ".((int) $entity).")";
+
+			dol_syslog("admin.lib::dolibarr_set_const", LOG_DEBUG);
+			$resql = $db->query($sql);
+		}
 	}
 
 	if ($resql) {
