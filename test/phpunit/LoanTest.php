@@ -30,6 +30,8 @@ global $conf,$user,$langs,$db;
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/loan/class/loan.class.php';
+require_once dirname(__FILE__).'/../../htdocs/loan/class/loanschedule.class.php';
+require_once dirname(__FILE__).'/../../htdocs/core/lib/loan.lib.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
