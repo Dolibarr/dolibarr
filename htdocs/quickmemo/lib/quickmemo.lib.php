@@ -40,7 +40,7 @@ function quickmemoAdminPrepareHead()
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = dolBuildUrl(DOL_DOCUMENT_ROOT."/quickmemo/admin/setup.php");
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT."/quickmemo/admin/setup.php");
 	$head[$h][1] = $langs->trans("Settings");
 	$head[$h][2] = 'settings';
 	$h++;

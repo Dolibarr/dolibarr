@@ -1013,8 +1013,8 @@ class UserGroup extends CommonObject
 
 		$this->name = 'DOLIBARR GROUP SPECIMEN';
 		$this->note = 'This is a note';
-		$this->datec = time();
-		$this->tms = time();
+		$this->datec = dol_now();
+		$this->tms = dol_now();
 
 		// Members of this group is just me
 		$this->members = array(

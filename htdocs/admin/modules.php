@@ -315,12 +315,12 @@ if ($action == 'install' && $allowonlineinstall) {
 					if (is_resource($handle)) {
 						while (($file = readdir($handle)) !== false) {
 							print $dir." ".$file."\n<br>";
-							if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod' && substr($file, dol_strlen($file) - 10) == '.class.php') {
-								$modName = substr($file, 0, dol_strlen($file) - 10);
+							if (is_readable($dir.$file) && dol_substr($file, 0, 3) == 'mod' && dol_substr($file, dol_strlen($file) - 10) == '.class.php') {
+								$modName = dol_substr($file, 0, dol_strlen($file) - 10);
 								if ($modName) {
 									try {
 										$res = include_once $dir.$file; // A class already exists in a different file will send a non catchable fatal error.
-										$modName = substr($file, 0, dol_strlen($file) - 10);
+										$modName = dol_substr($file, 0, dol_strlen($file) - 10);
 										if ($modName) {
 											if (class_exists($modName)) {
 												$objMod = new $modName($db);
@@ -569,8 +569,8 @@ foreach ($modulesdir as $dir) {
 	if (is_resource($handle)) {
 		while (($file = readdir($handle)) !== false) {
 			//print "$i ".$file."\n<br>";
-			if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod' && substr($file, dol_strlen($file) - 10) == '.class.php') {
-				$modName = substr($file, 0, dol_strlen($file) - 10);
+			if (is_readable($dir.$file) && dol_substr($file, 0, 3) == 'mod' && dol_substr($file, dol_strlen($file) - 10) == '.class.php') {
+				$modName = dol_substr($file, 0, dol_strlen($file) - 10);
 
 				if ($modName) {
 					if (!empty($modNameLoaded[$modName])) {   // In cache of already loaded modules ?

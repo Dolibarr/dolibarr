@@ -535,24 +535,34 @@ if ($action == 'makepayment_confirm' && $user->hasRight('facture', 'paiement')) 
 					$errorpayment++;
 				} else {
 					if ($facture->type != Facture::TYPE_CREDIT_NOTE && $facture->status == Facture::STATUS_VALIDATED && $facture->paye == 0) {
-						$paiementAmount = $facture->getSommePaiement();
+						// Get both the base-currency and invoice-currency paid amount in a single query
+						$sommePaiement = $facture->getSommePaiement(-1);
+						$paiementAmount = $sommePaiement['alreadypaid'];
+
 						$totalcreditnotes = $facture->getSumCreditNotesUsed();
 						$totaldeposits = $facture->getSumDepositsUsed();
 
 						$totalallpayments = $paiementAmount + $totalcreditnotes + $totaldeposits;
-						$remaintopay = price2num($facture->total_ttc - $totalallpayments);
+						$remaintopay = (float) price2num($facture->total_ttc - $totalallpayments);
+
+						// Remain to pay in the invoice currency (may differ from $remaintopay when multicurrency is used)
+						$multicurrency_remaintopay = (float) price2num($facture->multicurrency_total_ttc - $sommePaiement['alreadypaid_multicurrency']);
 
 						// hook to finalize the remaining amount, considering e.g. cash discount agreements
-						$parameters = array('remaintopay' => $remaintopay);
+						$parameters = array('remaintopay' => $remaintopay, 'multicurrency_remaintopay' => $multicurrency_remaintopay);
 						$reshook = $hookmanager->executeHooks('finalizeAmountOfInvoice', $parameters, $facture, $action); // Note that $action and $object may have been modified by some hooks
 						if ($reshook > 0) {
 							if (!empty($remain = $hookmanager->resArray['remaintopay'])) {
 								$remaintopay = $remain;
 							}
+							if (!empty($multicurrency_remain = $hookmanager->resArray['multicurrency_remaintopay'])) {
+								$multicurrency_remaintopay = $multicurrency_remain;
+							}
 						} elseif ($reshook < 0) {
 							$error++;
 							setEventMessages($facture->ref.' '.$langs->trans("ProcessingError"), $hookmanager->errors, 'errors');
 						}
+
 
 						if ($remaintopay != 0) {
 							$resultBank = $facture->setBankAccount($bankid);
@@ -563,7 +573,7 @@ if ($action == 'makepayment_confirm' && $user->hasRight('facture', 'paiement')) 
 								$paiement = new Paiement($db);
 								$paiement->datepaye = $paiementdate;
 								$paiement->amounts[$facture->id] = $remaintopay; // Array with all payments dispatching with invoice id
-								$paiement->multicurrency_amounts[$facture->id] = $remaintopay;
+								$paiement->multicurrency_amounts[$facture->id] = $multicurrency_remaintopay;
 								$paiement->paiementid = $paiementid;
 								$paiement->note_private = $note_private;
 								$paiement_id = $paiement->create($user, 1, $facture->thirdparty);
@@ -1992,7 +2002,7 @@ if (!empty($arrayfields['f.fk_statut']['checked'])) {
 		'3' => $langs->trans("BillShortStatusCanceled")
 	);
 	// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
-	print $form->multiselectarray('search_status', $liststatus, $search_status, 0, 0, 'minwidth125', 1, 0);
+	print $form->multiselectarray('search_status', $liststatus, $search_status, 0, 0, 'search_status width100 onrightofpage', 1, 0);
 	print '</td>';
 }
 // Action column
@@ -2491,7 +2501,9 @@ if ($num > 0) {
 			if (!empty($arrayfields['f.ref_client']['checked'])) {
 				$tdcss = (getDolGlobalInt('MAIN_SHOW_GLOBAL_REF_CUSTOMER_SUPPLIER') ? 'class="minwidth400 maxwidth400"' : 'class="nowrap tdoverflowmax200"');
 				print '<td title="'.dolPrintHTMLForAttribute($obj->ref_client).'" '.$tdcss.'>';
-				print dol_escape_htmltag($obj->ref_client);
+				print '<span class="doltext opacitymedium">';
+				print dolPrintHTML($obj->ref_client);
+				print '</span>';
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;

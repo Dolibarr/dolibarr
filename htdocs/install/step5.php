@@ -5,7 +5,7 @@
  * Copyright (C) 2004       Sebastien DiCintio      <sdicintio@ressource-toi.org>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2016  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -64,6 +64,8 @@ if (file_exists($conffile)) {
  * @var string	$dolibarr_main_db_cryptkey
  * @var string	$dolibarr_main_url_root
  * @var string	$modulesdir
+ * @var ?int    $force_install_dolibarrpassword
+ * @var ?int    $force_install_noedit
  */
 require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
 require_once $dolibarr_main_document_root.'/core/lib/security.lib.php'; // for dol_hash
@@ -73,6 +75,8 @@ require_once $dolibarr_main_document_root.'/core/lib/functions2.lib.php';
 @phan-var-force ?string $modulesdir
 @phan-var-force ?string $dolibarr_main_db_encryption
 @phan-var-force ?string $dolibarr_main_db_cryptkey
+@phan-var-force ?int $force_install_dolibarrpassword
+@phan-var-force ?int $force_install_noedit
 ';
 
 global $langs;
@@ -397,8 +401,8 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 					$handle = @opendir($dir);
 					if (is_resource($handle)) {
 						while (($file = readdir($handle)) !== false) {
-							if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod' && substr($file, dol_strlen($file) - 10) == '.class.php') {
-								$modName = substr($file, 0, dol_strlen($file) - 10);
+							if (is_readable($dir.$file) && dol_substr($file, 0, 3) == 'mod' && dol_substr($file, dol_strlen($file) - 10) == '.class.php') {
+								$modName = dol_substr($file, 0, dol_strlen($file) - 10);
 								if ($modName) {
 									if (!empty($modNameLoaded[$modName])) {   // In cache of already loaded modules ?
 										$mesg = "Error: Module ".$modName." was found twice: Into ".$modNameLoaded[$modName]." and ".$dir.". You probably have an old file on your disk.<br>";

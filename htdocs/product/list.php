@@ -1871,7 +1871,10 @@ while ($i < $imaxinloop) {
 
 		// Label
 		if (!empty($arrayfields['p.label']['checked'])) {
-			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($product_static->label).'">'.$product_static->label.'</td>';
+			print '<td class="tdoverflowmax200" title="'.dolPrintHTMLForAttribute($product_static->label).'">';
+			print '<span class="doltext opacitymedium">';
+			print dolPrintHTML($product_static->label);
+			print '</span>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
