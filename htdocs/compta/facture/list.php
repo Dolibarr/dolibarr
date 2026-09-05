@@ -543,7 +543,7 @@ if ($action == 'makepayment_confirm' && $user->hasRight('facture', 'paiement')) 
 						$totaldeposits = $facture->getSumDepositsUsed();
 
 						$totalallpayments = $paiementAmount + $totalcreditnotes + $totaldeposits;
-						$remaintopay = price2num($facture->total_ttc - $totalallpayments);
+						$remaintopay = (float) price2num($facture->total_ttc - $totalallpayments);
 
 						// hook to finalize the remaining amount, considering e.g. cash discount agreements
 						$parameters = array('remaintopay' => $remaintopay);
@@ -558,7 +558,7 @@ if ($action == 'makepayment_confirm' && $user->hasRight('facture', 'paiement')) 
 						}
 
 						// Remain to pay in the invoice currency (may differ from $remaintopay when multicurrency is used)
-						$multicurrency_remaintopay = price2num($facture->multicurrency_total_ttc - $sommePaiement['alreadypaid_multicurrency']);
+						$multicurrency_remaintopay = (float) price2num($facture->multicurrency_total_ttc - $sommePaiement['alreadypaid_multicurrency']);
 
 						if ($remaintopay != 0) {
 							$resultBank = $facture->setBankAccount($bankid);
@@ -569,7 +569,7 @@ if ($action == 'makepayment_confirm' && $user->hasRight('facture', 'paiement')) 
 								$paiement = new Paiement($db);
 								$paiement->datepaye = $paiementdate;
 								$paiement->amounts[$facture->id] = $remaintopay; // Array with all payments dispatching with invoice id
-								$paiement->multicurrency_amounts[$facture->id] = (float) $multicurrency_remaintopay;
+								$paiement->multicurrency_amounts[$facture->id] = $multicurrency_remaintopay;
 								$paiement->paiementid = $paiementid;
 								$paiement->note_private = $note_private;
 								$paiement_id = $paiement->create($user, 1, $facture->thirdparty);
