@@ -268,6 +268,21 @@ if (empty($action)) {
 		</div>';
 	}
 
+	// Form to upload a salary document
+	if (isModEnabled('tax')) {
+		$langs->load("taxes");
+		$uploadform .= '
+		<div id="userpayroll" class="flex-item flex-item-uploadfile">'.img_picto('', 'tax', 'class="fa-2x"').'<br>
+		<div>'.$langs->trans("SocialContribution").'<br><br>';
+
+		$uploadform .= '<br>';
+
+		$uploadform .= '<br>
+		<small class="opacitymedium">'.$langs->trans("OrClickToSelectAFile").'...</small>
+		</div>
+		</div>';
+	}
+
 	$uploadform .= '</div>';
 }
 
