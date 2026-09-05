@@ -646,16 +646,115 @@ if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 	if ($mode == "show_week" || $mode == "show_month" || empty($mode)) {
 		// Code to enable drag and drop
 		$s .= 'jQuery( "div.sortable" ).sortable({connectWith: ".sortable", placeholder: "ui-state-highlight", items: "div.movable", receive: function( event, ui ) {'."\n";
-		// Code to submit form
-		$s .= 'console.log("submit form to record new event");'."\n";
-		//$s.='console.log(event.target);';
+		// Code to persist the move via Ajax (no page reload)
+		$s .= 'var $item = ui.item;'."\n";
+		$s .= 'var $sender = ui.sender;'."\n";
+		$s .= 'function revertItem() {'."\n";
+		$s .= 'if ($sender && $sender.length) { $sender.append($item); }'."\n";
+		$s .= '}'."\n";
 		$s .= 'var newval = jQuery(event.target).closest("div.dayevent").attr("id");'."\n";
 		$s .= 'console.log("found parent div.dayevent with id = "+newval);'."\n";
-		$s .= 'var frm=jQuery("#searchFormList");'."\n";
-		$s .= 'var newurl = ui.item.find("a.cal_event").attr("href");'."\n";
-		$s .= 'console.log("Found url on href of a.cal_event"+newurl+", we submit form with actionmove=mupdate");'."\n";
-		$s .= 'frm.attr("action", newurl).children("#newdate").val(newval);frm.submit();}'."\n";
+		$s .= 'var newdate = String(newval || "").replace(/^dayevent_/, "");'."\n";
+		$s .= 'if (!/^[0-9]{8}$/.test(newdate)) {'."\n";
+		$s .= 'revertItem();'."\n";
+		$s .= 'Dolibarr.tools.setEventMessage(\''.dol_escape_js($langs->trans("Error")).'\', "errors");'."\n";
+		$s .= 'return;'."\n";
+		$s .= '}'."\n";
+		$s .= 'var newurl = $item.find("a.cal_event").attr("href");'."\n";
+		$s .= 'var idmatch = newurl ? newurl.match(/[?&]id=([0-9]+)/) : null;'."\n";
+		$s .= 'var eventid = idmatch ? idmatch[1] : 0;'."\n";
+		$s .= 'var token = jQuery("#searchFormList input[name=token]").val();'."\n";
+		$s .= 'console.log("Ajax call to move event id="+eventid+" to newdate="+newdate);'."\n";
+		$s .= 'jQuery.ajax({type: "POST", url: "'.DOL_URL_ROOT.'/comm/action/ajax/ajaxmoveevent.php", dataType: "json", data: {id: eventid, newdate: newdate, token: token}})'."\n";
+		$s .= '.done(function (data) {'."\n";
+		$s .= 'if (data.error) {'."\n";
+		$s .= 'revertItem();'."\n";
+		$s .= 'Dolibarr.tools.setEventMessage(data.message, "errors");'."\n";
+		$s .= '} else {'."\n";
+		$s .= 'Dolibarr.tools.setEventMessage(\''.dol_escape_js($langs->trans("RecordSaved")).'\', "mesgs");'."\n";
+		$s .= '}'."\n";
+		$s .= '}).fail(function () {'."\n";
+		// Transport failure (network drop, timeout): unlike a clean {error:1} response, we genuinely
+		// don't know if the server committed the change, so reload to show the real state rather than guessing
+		$s .= 'location.reload();'."\n";
 		$s .= '});'."\n";
+		$s .= '}'."\n";
+		$s .= '});'."\n";
+	}
+	if ($mode == 'show_day' || $mode == 'show_week') {
+		// Code to enable drag and drop in the hourly grid (changes start time, and for week view also the day, keeps duration)
+		$s .= 'jQuery( ".sortable-day-hour" ).sortable({connectWith: ".sortable-day-hour", placeholder: "ui-state-highlight", items: "div.movable", receive: function( event, ui ) {'."\n";
+		$s .= 'var $item = ui.item;'."\n";
+		$s .= 'var $sender = ui.sender;'."\n";
+		$s .= 'function revertItem() {'."\n";
+		$s .= 'if ($sender && $sender.length) { $sender.append($item); }'."\n";
+		$s .= '}'."\n";
+		$s .= 'var newval = jQuery(event.target).closest("div.sortable-day-hour").attr("id");'."\n";
+		$s .= 'console.log("found parent hourslot with id = "+newval);'."\n";
+		$s .= 'var newslot = String(newval || "").replace(/^hourslot_/, "");'."\n";
+		$s .= 'if (!/^[0-9]{12}$/.test(newslot)) {'."\n";
+		$s .= 'revertItem();'."\n";
+		$s .= 'Dolibarr.tools.setEventMessage(\''.dol_escape_js($langs->trans("Error")).'\', "errors");'."\n";
+		$s .= 'return;'."\n";
+		$s .= '}'."\n";
+		$s .= 'var newdatetime = newslot + "00";'."\n";
+		$s .= 'var newurl = $item.find("a.cal_event").attr("href");'."\n";
+		$s .= 'var idmatch = newurl ? newurl.match(/[?&]id=([0-9]+)/) : null;'."\n";
+		$s .= 'var eventid = idmatch ? idmatch[1] : 0;'."\n";
+		$s .= 'var token = jQuery("#searchFormList input[name=token]").val();'."\n";
+		$s .= 'console.log("Ajax call to move event id="+eventid+" to newdatetime="+newdatetime);'."\n";
+		$s .= 'jQuery.ajax({type: "POST", url: "'.DOL_URL_ROOT.'/comm/action/ajax/ajaxmovetimeevent.php", dataType: "json", data: {id: eventid, newdatetime: newdatetime, token: token}})'."\n";
+		$s .= '.done(function (data) {'."\n";
+		$s .= 'if (data.error) {'."\n";
+		$s .= 'revertItem();'."\n";
+		$s .= 'Dolibarr.tools.setEventMessage(data.message, "errors");'."\n";
+		$s .= '} else {'."\n";
+		$s .= 'Dolibarr.tools.setEventMessage(\''.dol_escape_js($langs->trans("RecordSaved")).'\', "mesgs");'."\n";
+		$s .= '}'."\n";
+		$s .= '}).fail(function () {'."\n";
+		$s .= 'location.reload();'."\n";
+		$s .= '});'."\n";
+		$s .= '}'."\n";
+		$s .= '});'."\n";
+	}
+	if (getDolGlobalString('AGENDA_AUTOREFRESH_ENABLED') && ($mode == 'show_day' || $mode == 'show_week' || $mode == 'show_month' || empty($mode))) {
+		// Code to periodically fetch and insert/refresh events created or updated since the last check,
+		// without a page reload. One remove-then-append per reported event handles creation, an in-place
+		// update, and a slot/day change alike - see ajax/ajaxrefreshevents.php for the server-side half.
+		$s .= 'var dolAgendaAutorefreshFilters = '.json_encode(array(
+			'filtert' => (string) $filtert,
+			'usergroup' => (string) $usergroup,
+			'resourceid' => (int) $resourceid,
+			'actioncode' => $actioncode,
+			'pid' => (int) $pid,
+			'socid' => (int) $socid,
+			'type' => (string) $type,
+			'status' => (string) $status,
+			'search_categ_cus' => (int) $search_categ_cus,
+		)).';'."\n";
+		$s .= 'var dolAgendaAutorefreshLastCheck = '.((int) dol_now()).';'."\n";
+		$s .= 'setInterval(function() {'."\n";
+		$s .= 'jQuery.ajax({type: "POST", url: "'.DOL_URL_ROOT.'/comm/action/ajax/ajaxrefreshevents.php", dataType: "json", data: {'."\n";
+		$s .= 'mode: '.json_encode($mode).', year: '.((int) $year).', month: '.((int) $month).', day: '.((int) $day).','."\n";
+		$s .= 'firstdaytoshow: '.((int) $firstdaytoshow).', lastdaytoshow: '.((int) $lastdaytoshow).','."\n";
+		$s .= 'since: dolAgendaAutorefreshLastCheck,'."\n";
+		$s .= 'filters: JSON.stringify(dolAgendaAutorefreshFilters),'."\n";
+		$s .= 'token: jQuery("#searchFormList input[name=token]").val()'."\n";
+		$s .= '}})'."\n";
+		$s .= '.done(function (data) {'."\n";
+		$s .= 'if (!data.error) {'."\n";
+		$s .= 'var missingtarget = false;'."\n";
+		$s .= 'jQuery.each(data.newevents, function(i, ev) { if (!jQuery(ev.targetselector).length) { missingtarget = true; } });'."\n";
+		$s .= 'if (missingtarget) { location.reload(); return; }'."\n";
+		$s .= 'dolAgendaAutorefreshLastCheck = data.checktime;'."\n";
+		$s .= 'var dolAgendaAutorefreshSeenIds = {};'."\n";
+		$s .= 'jQuery.each(data.newevents, function(i, ev) {'."\n";
+		$s .= 'if (!dolAgendaAutorefreshSeenIds[ev.eventid]) { jQuery(\'[data-agenda-event-id="\'+ev.eventid+\'"]\').remove(); dolAgendaAutorefreshSeenIds[ev.eventid] = true; }'."\n";
+		$s .= 'jQuery(ev.targetselector).append(ev.html);'."\n";
+		$s .= '});'."\n";
+		$s .= '}'."\n";
+		$s .= '});'."\n";
+		$s .= '}, '.((int) getDolGlobalInt('AGENDA_AUTOREFRESH_FREQUENCY', 60)).' * 1000);'."\n";
 	}
 	$s .= '});'."\n";
 	$s .= '</script>'."\n";
@@ -1267,7 +1366,10 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 	print_actions_filter($form, $canedit, $status, $year, $month, $day, $check_birthday, '', $filtert, '', $pid, $socid, $action, -1, $actioncode, $usergroupids, '', $resourceid, $search_categ_cus);
 	print '</div>';
 
-	print '<div class="div-table-responsive-no-min sectioncalendarbymonth maxscreenheightless300">';
+	// No maxscreenheightless300 here: its max-height, combined with the shared div-table-responsive-no-min
+	// rule's overflow-x:auto (which per the CSS spec forces overflow-y to auto too when only one axis is
+	// set to a non-visible value), produces an inner scrollbar instead of letting the page itself scroll.
+	print '<div class="div-table-responsive-no-min sectioncalendarbymonth">';
 	print '<table class="centpercent noborder nocellnopadd cal_pannel cal_month listwithfilterbefore">';
 	print ' <tr class="liste_titre sticky">';
 	// Column title of weeks numbers
@@ -1358,6 +1460,7 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 	print "</table>\n";
 	print '</div>';
 
+	// Legacy hidden fields kept for card.php's standalone actionmove=mupdate POST handler; the drag&drop UI itself now calls ajax/ajaxmoveevent.php and does not use these.
 	print '<input type="hidden" name="actionmove" value="mupdate">';
 	print '<input type="hidden" name="backtopage" value="'.dol_escape_htmltag($_SERVER['PHP_SELF']).'?mode=show_month&'.dol_escape_htmltag($_SERVER['QUERY_STRING']).'">';
 	print '<input type="hidden" name="newdate" id="newdate">';
@@ -1378,9 +1481,12 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 	print_actions_filter($form, $canedit, $status, $year, $month, $day, $check_birthday, '', $filtert, '', $pid, $socid, $action, -1, $actioncode, $usergroupids, '', $resourceid);
 	print '</div>';
 
-	print '<div class="div-table-responsive-no-min sectioncalendarbyweek maxscreenheightless300">';
+	// No maxscreenheightless300 here either, for consistency with month/day (see their comments): it forces
+	// an inner scrollbar via overflow-y:auto instead of letting the page itself scroll.
+	print '<div class="div-table-responsive-no-min sectioncalendarbyweek">';
 	print '<table class="centpercent noborder nocellnopadd cal_pannel cal_month listwithfilterbefore">';
 	print ' <tr class="liste_titre">';
+	print '  <td class="tdfordaytitle width100"></td>'."\n";
 	$i = 0;
 	while ($i < 7) {
 		echo '  <td class="center bold uppercase tdfordaytitle">'.$langs->trans("Day".(($i + (getDolGlobalInt('MAIN_START_WEEK', 1))) % 7))."</td>\n";
@@ -1388,7 +1494,15 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 	}
 	echo " </tr>\n";
 
-	echo ' <tr class="trcalweek">'."\n";
+	echo ' <tr>'."\n";
+	echo '  <td class="tdfordaytitle width100"></td>'."\n";
+
+	$weekdayinfo = array();
+	$weekhourlybuckets = array();
+	'@phan-var-force array<int,array<string,string[]>> $weekhourlybuckets';
+	/**
+	 * @var array<int,array<string,string[]>> $weekhourlybuckets
+	 */
 
 	for ($iter_day = 0; $iter_day < 7; $iter_day++) {
 		// Show days of the current week
@@ -1411,16 +1525,88 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 			$style = 'cal_today';
 		}
 
-		echo '  <td class="'.$style.'" width="14%" valign="top">';
+		$weekdayinfo[$iter_day] = array('day' => $tmpday, 'month' => $tmpmonth, 'year' => $tmpyear, 'style' => $style);
+		$weekhourlybuckets[$iter_day] = array();
+
+		echo '  <td class="'.$style.'" valign="top">';
 		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-		show_day_events($db, $tmpday, $tmpmonth, $tmpyear, $month, $style, $eventarray, 0, $maxnbofchar, $newparam, 1, 300, 0, $bookcalcalendars);
+		show_day_events($db, $tmpday, $tmpmonth, $tmpyear, $month, $style, $eventarray, 0, $maxnbofchar, $newparam, 1, 300, 0, $bookcalcalendars, $weekhourlybuckets[$iter_day]);
 		echo "  </td>\n";
 	}
 	echo " </tr>\n";
 
+	// All-day / multi-day / birthday / holiday events: one shared row, one cell per day of the week.
+	// Kept draggable between days (unlike the day view's fixed all-day row) using the same .sortable/
+	// dayevent_YYYYMMDD mechanism already used by month view - a cell's own id/class stand in for the
+	// "div.dayevent" ancestor the existing drag&drop JS looks for (jQuery .closest() matches the element
+	// itself, so no nesting inside show_day_events()'s own title-bar wrapper is required).
+	echo ' <tr>'."\n";
+	echo '  <td class="tdfordaytitle width100"></td>'."\n";
+	for ($iter_day = 0; $iter_day < 7; $iter_day++) {
+		$dateint = sprintf("%04d", $weekdayinfo[$iter_day]['year']).sprintf("%02d", $weekdayinfo[$iter_day]['month']).sprintf("%02d", $weekdayinfo[$iter_day]['day']);
+		echo '  <td class="'.$weekdayinfo[$iter_day]['style'].'" valign="top">';
+		print '<div id="dayevent_'.$dateint.'" class="dayevent sortable centpercent agendacell">';
+		if (!empty($weekhourlybuckets[$iter_day]['allday'])) {
+			foreach ($weekhourlybuckets[$iter_day]['allday'] as $eventhtml) {
+				print $eventhtml;
+			}
+		}
+		print '</div>';
+		echo "  </td>\n";
+	}
+	echo " </tr>\n";
+
+	// Shared hourly grid: slot range computed across the union of all 7 days, widened to include
+	// MAIN_DEFAULT_WORKING_HOURS - same logic as the day view, just applied to 7 bucket-sets instead of 1.
+	$tmp = explode('-', str_replace(' ', '', getDolGlobalString('MAIN_DEFAULT_WORKING_HOURS', '9-18')));
+	$begin_h = ((int) $tmp[0] >= 0 && (int) $tmp[0] <= 23) ? (int) $tmp[0] : 9;
+	$end_h = (isset($tmp[1]) && (int) $tmp[1] >= 1 && (int) $tmp[1] <= 24) ? (int) $tmp[1] : 18;
+	if ($end_h <= $begin_h) {
+		$end_h = $begin_h + 1;
+	}
+	for ($iter_day = 0; $iter_day < 7; $iter_day++) {
+		foreach ($weekhourlybuckets[$iter_day] as $slotkey => $slotevents) {
+			if ($slotkey === 'allday') {
+				continue;
+			}
+			$sloth = (int) substr($slotkey, 0, 2);
+			if ($sloth < $begin_h) {
+				$begin_h = $sloth;
+			}
+			if ($sloth >= $end_h) {
+				$end_h = $sloth + 1;
+			}
+		}
+	}
+
+	for ($h = $begin_h; $h < $end_h; $h++) {
+		foreach (array('00', '30') as $slotmin) {
+			$slotkey = sprintf('%02d', $h).$slotmin;
+			echo ' <tr>'."\n";
+			echo '  <td class="tdfordaytitle width100 tdtop">'.dol_print_date(($h * 3600) + ((int) $slotmin * 60), 'hour', 'gmt').'</td>'."\n";
+			for ($iter_day = 0; $iter_day < 7; $iter_day++) {
+				$dateint = sprintf("%04d", $weekdayinfo[$iter_day]['year']).sprintf("%02d", $weekdayinfo[$iter_day]['month']).sprintf("%02d", $weekdayinfo[$iter_day]['day']);
+				echo '  <td class="'.$weekdayinfo[$iter_day]['style'].'" valign="top">';
+				// No "tagtd" class here (unlike day view's equivalent div): this sits inside a real <td> already
+				// (week view uses a genuine HTML table), and display:table-cell with no table/row ancestor
+				// collapses an empty div to 0px width, which broke drag&drop onto free slots (see FIX commit history).
+				print '<div id="hourslot_'.$dateint.$slotkey.'" class="centpercent agendacell sortable-day-hour">';
+				if (!empty($weekhourlybuckets[$iter_day][$slotkey])) {
+					foreach ($weekhourlybuckets[$iter_day][$slotkey] as $eventhtml) {
+						print $eventhtml;
+					}
+				}
+				print '</div>';
+				echo "  </td>\n";
+			}
+			echo " </tr>\n";
+		}
+	}
+
 	print "</table>\n";
 	print '</div>';
 
+	// Legacy hidden fields kept for card.php's standalone actionmove=mupdate POST handler; the drag&drop UI itself now calls ajax/ajaxmoveevent.php and does not use these.
 	echo '<input type="hidden" name="actionmove" value="mupdate">';
 	echo '<input type="hidden" name="backtopage" value="'.dol_escape_htmltag($_SERVER['PHP_SELF']).'?mode=show_week&'.dol_escape_htmltag($_SERVER['QUERY_STRING']).'">';
 	echo '<input type="hidden" name="newdate" id="newdate">';
@@ -1446,7 +1632,11 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 	print_actions_filter($form, $canedit, $status, $year, $month, $day, $check_birthday, '', $filtert, '', $pid, $socid, $action, -1, $actioncode, $usergroupids, '', $resourceid);
 	print '</div>';
 
-	print '<div class="div-table-responsive-no-min sectioncalendarbyday maxscreenheightless300">';
+	// No maxscreenheightless300 here (unlike month/week): the hourly grid is much taller than the old flat
+	// list, and .maxscreenheightless300's max-height combined with the shared .div-table-responsive-no-min
+	// rule's overflow-x:auto forces overflow-y to auto too (per CSS spec, when only one axis is set to a
+	// non-visible value) - producing an inner scrollbar instead of letting the page itself scroll.
+	print '<div class="div-table-responsive-no-min sectioncalendarbyday">';
 	echo '<table class="tagtable centpercent noborder nocellnopadd cal_pannel cal_month listwithfilterbefore" style="margin-bottom: 10px !important;">';
 
 	echo ' <tr class="tagtr liste_titre">';
@@ -1464,56 +1654,75 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 
 	print '<tr class="trcalday"><td class="tdtop">';
 
-	/* WIP View per hour */
-	$useviewhour = 0;
-	if ($useviewhour) {
-		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
+	print '<div class="div-table-responsive-no-min">';
 
-		$maxheightwin = (isset($_SESSION["dol_screenheight"]) && $_SESSION["dol_screenheight"] > 500) ? ($_SESSION["dol_screenheight"] - 200) : 660; // Also into index.php file
+	$hourlybuckets = array();
+	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
+	show_day_events($db, $day, $month, $year, $month, $style, $eventarray, 0, $maxnbofchar, $newparam, 1, 300, 0, $bookcalcalendars, $hourlybuckets);
 
-		echo '<div style="max-height: '.$maxheightwin.'px;">';
-		echo '<div class="tagtable centpercent calendarviewcontainer">';
-
-		$maxnbofchar = 80;
-
-		$tmp = explode('-', getDolGlobalString('MAIN_DEFAULT_WORKING_HOURS'));
-		$minhour = round((float) $tmp[0], 0);
-		$maxhour = round((float) $tmp[1], 0);
-		if ($minhour > 23) {
-			$minhour = 23;
+	// All-day / multi-day / birthday / holiday events: fixed row, not draggable (no sortable class on its container).
+	// Wrapped in its own .tagtable: a .tagtr with a single .tagtd forms a 1-column table, while the hourly
+	// grid below is a 2-column table (label + slot) - mixing both column counts in one shared anonymous
+	// table (i.e. without this separate wrapper) breaks the browser's column-width negotiation for both.
+	// The .tagtable itself also needs "centpercent": with a single cell whose only width is its own
+	// centpercent (100%), a display:table with width:auto can't resolve that percentage (circular) and
+	// shrinks to content width instead - the hourly grid escapes this only because it has a second,
+	// fixed-width label cell giving the browser something concrete to size the table from.
+	// Always rendered (even with an empty bucket), with a stable "alldayevent_" id distinct from
+	// show_day_events()'s own "dayevent_YYYYMMDD" title-bar wrapper id, so the autorefresh polling
+	// endpoint always has a valid, unambiguous insertion point for a newly-polled all-day event.
+	$dateint = sprintf("%04d", $year).sprintf("%02d", $month).sprintf("%02d", $day);
+	print '<div class="tagtable centpercent">';
+	print '<div class="tagtr">';
+	print '<div id="alldayevent_'.$dateint.'" class="tagtd centpercent agendacell '.$style.'">';
+	if (!empty($hourlybuckets['allday'])) {
+		foreach ($hourlybuckets['allday'] as $eventhtml) {
+			print $eventhtml;
 		}
-		if ($maxhour < 1) {
-			$maxhour = 1;
-		}
-		if ($maxhour <= $minhour) {
-			$maxhour = $minhour + 1;
-		}
-
-		$i = 0;
-		$j = 0;
-		while ($i < 24) {
-			echo ' <div class="tagtr calendarviewcontainertr">'."\n";
-			echo '  <div class="tagtd width100 tdtop">'.dol_print_date($i * 3600, 'hour', 'gmt').'</div>';
-			echo '  <div class="tagtd '.$style.' tdtop"></div>'."\n";
-			echo ' </div>'."\n";
-			$i++;
-			$j++;
-		}
-
-		echo '</div></div>';
-
-		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-		show_day_events($db, $day, $month, $year, $month, $style, $eventarray, 0, $maxnbofchar, $newparam, 1, 300, 1, $bookcalcalendars);
-
-		print '</div>';
-	} else {
-		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
-
-		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-		show_day_events($db, $day, $month, $year, $month, $style, $eventarray, 0, $maxnbofchar, $newparam, 1, 300, 0, $bookcalcalendars);
-
-		print '</div>';
 	}
+	print '</div>';
+	print '</div>';
+	print '</div>';
+
+	// Working-hours range, widened to include any timed event that falls outside it
+	$tmp = explode('-', str_replace(' ', '', getDolGlobalString('MAIN_DEFAULT_WORKING_HOURS', '9-18')));
+	$begin_h = ((int) $tmp[0] >= 0 && (int) $tmp[0] <= 23) ? (int) $tmp[0] : 9;
+	$end_h = (isset($tmp[1]) && (int) $tmp[1] >= 1 && (int) $tmp[1] <= 24) ? (int) $tmp[1] : 18;
+	if ($end_h <= $begin_h) {
+		$end_h = $begin_h + 1;
+	}
+	foreach ($hourlybuckets as $slotkey => $slotevents) {
+		if ($slotkey === 'allday') {
+			continue;
+		}
+		$sloth = (int) substr($slotkey, 0, 2);
+		if ($sloth < $begin_h) {
+			$begin_h = $sloth;
+		}
+		if ($sloth >= $end_h) {
+			$end_h = $sloth + 1;
+		}
+	}
+
+	print '<div class="tagtable centpercent">'; // explicit, not left as an emergent property of the label cell's fixed width
+	for ($h = $begin_h; $h < $end_h; $h++) {
+		foreach (array('00', '30') as $slotmin) {
+			$slotkey = sprintf('%02d', $h).$slotmin;
+			print '<div class="tagtr">';
+			print '<div class="tagtd width100 tdtop '.$style.'">'.dol_print_date(($h * 3600) + ((int) $slotmin * 60), 'hour', 'gmt').'</div>';
+			print '<div id="hourslot_'.$dateint.$slotkey.'" class="tagtd centpercent agendacell sortable-day-hour">';
+			if (!empty($hourlybuckets[$slotkey])) {
+				foreach ($hourlybuckets[$slotkey] as $eventhtml) {
+					print $eventhtml;
+				}
+			}
+			print '</div>';
+			print '</div>';
+		}
+	}
+	print '</div>';
+
+	print '</div>';
 
 
 	print '</td></tr>';
@@ -1527,6 +1736,7 @@ print "\n".'</form>';
 // End of page
 llxFooter();
 $db->close();
+
 
 
 /**
