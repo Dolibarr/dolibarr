@@ -7835,6 +7835,7 @@ li.select2-selection__choice {
 	border-bottom: none;
 	box-shadow: none !important;
 }
+
 .select2-dropdown {
 	/*background-color: var(--colorbackvmenu1);
 	border: 1px solid var(--colorbackvmenu1); */
