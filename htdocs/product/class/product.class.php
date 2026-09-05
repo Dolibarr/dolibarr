@@ -3916,9 +3916,10 @@ class Product extends CommonObject
 	 * @param	string	$filtrestatut		Id of status to filter on status
 	 * @param	int		$forVirtualStock	Ignore rights filter for virtual stock calculation.
 	 * @param	int		$dateofvirtualstock	Date of virtual stock
+	 * @param	int		$dateofvirtualstockmin	Lower bound of the virtual stock window: ignore orders planned before this date
 	 * @return	int							Array of stats in $this->stats_commande_fournisseur, <0 if ko or >0 if ok
 	 */
-	public function load_stats_commande_fournisseur($socid = 0, $filtrestatut = '', $forVirtualStock = 0, $dateofvirtualstock = null)
+	public function load_stats_commande_fournisseur($socid = 0, $filtrestatut = '', $forVirtualStock = 0, $dateofvirtualstock = null, $dateofvirtualstockmin = null)
 	{
 		// phpcs:enable
 		global $user, $hookmanager, $action;
@@ -3942,7 +3943,17 @@ class Product extends CommonObject
 			$sql .= " AND c.fk_statut in (".$this->db->sanitize($filtrestatut).")"; // Peut valoir 0
 		}
 		if (!empty($dateofvirtualstock)) {
-			$sql .= " AND c.date_livraison <= '".$this->db->idate($dateofvirtualstock)."'";
+			// Window of the horizon. The lower bound, when set, drops the orders that did not arrive as planned: their date has
+			// passed, so they are no longer a credible supply. Orders with no planned delivery date fall outside the window as
+			// well, since their arrival is unknown, unless the option says to keep them.
+			$sqlwindow = "c.date_livraison <= '".$this->db->idate($dateofvirtualstock)."'";
+			if (!empty($dateofvirtualstockmin)) {
+				$sqlwindow = "c.date_livraison >= '".$this->db->idate($dateofvirtualstockmin)."' AND ".$sqlwindow;
+			}
+			if (getDolGlobalInt('STOCK_VIRTUAL_HORIZON_INCLUDE_UNDATED_ORDERS')) {
+				$sqlwindow .= " OR c.date_livraison IS NULL";
+			}
+			$sql .= " AND (".$sqlwindow.")";
 		}
 
 		$result = $this->db->query($sql);
@@ -4059,9 +4070,10 @@ class Product extends CommonObject
 	 * @param	string 	$filtrestatut    	Id status to filter on a status
 	 * @param	int    	$forVirtualStock 	Ignore rights filter for virtual stock calculation.
 	 * @param	int		$dateofvirtualstock	Date of virtual stock
+	 * @param	int		$dateofvirtualstockmin	Lower bound of the virtual stock window: ignore orders planned before this date
 	 * @return	int                   		Array of stats in $this->stats_reception, <0 if ko or >0 if ok
 	 */
-	public function load_stats_reception($socid = 0, $filtrestatut = '', $forVirtualStock = 0, $dateofvirtualstock = null)
+	public function load_stats_reception($socid = 0, $filtrestatut = '', $forVirtualStock = 0, $dateofvirtualstock = null, $dateofvirtualstockmin = null)
 	{
 		// phpcs:enable
 		global $user, $hookmanager, $action;
@@ -4086,6 +4098,16 @@ class Product extends CommonObject
 		}
 		if (!empty($dateofvirtualstock)) {
 			$sql .= " AND fd.datec <= '".$this->db->idate($dateofvirtualstock)."'";
+		}
+		if (!empty($dateofvirtualstockmin)) {
+			// Same window as the supplier order side: both halves of the subtraction must always run on the same population of
+			// orders, otherwise an order dropped from one half while its receptions are still subtracted in the other one would
+			// push the theoretical stock below the real stock.
+			$sqlwindow = "cf.date_livraison >= '".$this->db->idate($dateofvirtualstockmin)."' AND cf.date_livraison <= '".$this->db->idate($dateofvirtualstock)."'";
+			if (getDolGlobalInt('STOCK_VIRTUAL_HORIZON_INCLUDE_UNDATED_ORDERS')) {
+				$sqlwindow .= " OR cf.date_livraison IS NULL";
+			}
+			$sql .= " AND (".$sqlwindow.")";
 		}
 
 		$result = $this->db->query($sql);
@@ -4118,9 +4140,10 @@ class Product extends CommonObject
 	 * @param	int    	$forVirtualStock 	Ignore rights filter for virtual stock calculation.
 	 * @param	int		$dateofvirtualstock	Date of virtual stock
 	 * @param   int 	$warehouseid 		Filter by a warehouse. Warning: When a filter on a warehouse is set, it is not possible to calculate an accurate virtual stock because we can't know in which warehouse will be done virtual stock changes.
+	 * @param	int		$dateofvirtualstockmin	Lower bound of the virtual stock window: ignore manufacturing orders planned to end before this date
 	 * @return 	integer                 	Array of stats in $this->stats_mrptoproduce (nb=nb of order, qty=qty ordered), <0 if ko or >0 if ok
 	 */
-	public function load_stats_inproduction($socid = 0, $filtrestatut = '', $forVirtualStock = 0, $dateofvirtualstock = null, $warehouseid = 0)
+	public function load_stats_inproduction($socid = 0, $filtrestatut = '', $forVirtualStock = 0, $dateofvirtualstock = null, $warehouseid = 0, $dateofvirtualstockmin = null)
 	{
 		// phpcs:enable
 		global $user, $hookmanager, $action;
@@ -4145,7 +4168,14 @@ class Product extends CommonObject
 		if ($filtrestatut != '') {
 			$sql .= " AND m.status IN (".$this->db->sanitize($filtrestatut).")";
 		}
-		if (!empty($dateofvirtualstock)) {
+		if (!empty($dateofvirtualstockmin)) {
+			// Window of the horizon. Here the relevant date is the planned end of production, not the validation date: a
+			// manufacturing order validated months ago but never completed is no longer a credible source of goods, and its
+			// components are no longer a credible consumption either. The validation date is kept as a fallback for the
+			// orders that carry no planned end date.
+			$sql .= " AND COALESCE(m.date_end_planned, m.date_valid) >= '".$this->db->idate($dateofvirtualstockmin)."'";
+			$sql .= " AND COALESCE(m.date_end_planned, m.date_valid) <= '".$this->db->idate($dateofvirtualstock)."'";
+		} elseif (!empty($dateofvirtualstock)) {
 			$sql .= " AND m.date_valid <= '".$this->db->idate($dateofvirtualstock)."'"; // better date to code ? end of production ?
 		}
 		if (!$serviceStockIsEnabled) {
@@ -6546,6 +6576,16 @@ class Product extends CommonObject
 
 		//dol_syslog("load_virtual_stock");
 
+		// If the caller did not provide a date, apply the virtual stock horizon (option STOCK_VIRTUAL_HORIZON_IN_DAYS):
+		// incoming supply expected after this horizon is ignored, so the theoretical stock does not promise goods that are still far away.
+		// An empty option means no horizon at all (default). A value of 0 is a valid horizon: only supply already due is counted.
+		$horizoninDays = getDolGlobalString('STOCK_VIRTUAL_HORIZON_IN_DAYS');
+		$dateofvirtualstockmin = 0;
+		if (empty($dateofvirtualstock) && $horizoninDays !== '') {
+			$dateofvirtualstock = dol_time_plus_duree(dol_now(), max(0, (int) $horizoninDays), 'd');
+			$dateofvirtualstockmin = dol_get_first_hour(dol_now());	// The horizon is a window: supply expected before today did not arrive as planned
+		}
+
 		if (isModEnabled('order')) {
 			$result = $this->load_stats_commande(0, '1,2', 1);
 			if ($result < 0) {
@@ -6573,7 +6613,7 @@ class Product extends CommonObject
 			if (isset($includedraftpoforvirtual)) {
 				$filterStatus = '0,1,2,'.$filterStatus;	// 1,2 may have already been inside $filterStatus but it is better to have twice than missing $filterStatus does not include them
 			}
-			$result = $this->load_stats_commande_fournisseur(0, $filterStatus, 1, $dateofvirtualstock);
+			$result = $this->load_stats_commande_fournisseur(0, $filterStatus, 1, $dateofvirtualstock, $dateofvirtualstockmin);
 			if ($result < 0) {
 				dol_print_error($this->db, $this->error);
 			}
@@ -6585,7 +6625,7 @@ class Product extends CommonObject
 			if (isset($includedraftpoforvirtual)) {
 				$filterStatus = '0,'.$filterStatus;
 			}
-			$result = $this->load_stats_reception(0, $filterStatus, 1, $dateofvirtualstock);
+			$result = $this->load_stats_reception(0, $filterStatus, 1, $dateofvirtualstock, $dateofvirtualstockmin);
 			if ($result < 0) {
 				dol_print_error($this->db, $this->error);
 			}
@@ -6594,7 +6634,7 @@ class Product extends CommonObject
 		// Include manufacturing
 		if (isModEnabled('mrp')) {
 			$filterStatus = getDolGlobalString('MO_STATUS_FOR_VIRTUAL_STOCK', '1,2');
-			$result = $this->load_stats_inproduction(0, $filterStatus, 1, $dateofvirtualstock);
+			$result = $this->load_stats_inproduction(0, $filterStatus, 1, $dateofvirtualstock, 0, $dateofvirtualstockmin);
 			if ($result < 0) {
 				dol_print_error($this->db, $this->error);
 			}
@@ -6653,7 +6693,7 @@ class Product extends CommonObject
 		if (!empty($this->stock_warehouse) && getDolGlobalString('STOCK_ALLOW_VIRTUAL_STOCK_PER_WAREHOUSE')) {
 			foreach ($this->stock_warehouse as $warehouseid => $stockwarehouse) {
 				if (isModEnabled('mrp')) {
-					$result = $this->load_stats_inproduction(0, getDolGlobalString('MO_STATUS_FOR_VIRTUAL_STOCK', '1,2'), 1, $dateofvirtualstock, $warehouseid);
+					$result = $this->load_stats_inproduction(0, getDolGlobalString('MO_STATUS_FOR_VIRTUAL_STOCK', '1,2'), 1, $dateofvirtualstock, $warehouseid, $dateofvirtualstockmin);
 					if ($result < 0) {
 						dol_print_error($this->db, $this->error);
 					}
