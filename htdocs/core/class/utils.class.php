@@ -770,7 +770,7 @@ class Utils
 			$arrayofallowedcommand = array_map('trim', $arrayofallowedcommand);
 			if (!in_array(basename($command), $arrayofallowedcommand)) {
 				dol_syslog("files.lib.php::executeCLI canceled because target filename ".basename($command)." is not in the whitelist of allowed commands.", LOG_WARNING);
-				return false;
+				return array('result' => -1, 'output' => '', 'error' => 'Command '.basename($command).' is not in the whitelist of allowed commands');
 			}
 		}
 
