@@ -43,7 +43,7 @@ if (! defined('NOREQUIREUSER')) {
 	define('PHPUNIT_MODE', 1);
 }
 
-global $conf,$user,$langs,$db;
+global $conf, $user, $langs, $db;
 //define('TEST_DB_FORCE_TYPE','mysql'); // This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 
@@ -309,6 +309,8 @@ class AllTests
 		$suite->addTestSuite('EntrepotTest');
 		require_once dirname(__FILE__).'/MouvementStockTest.php';
 		$suite->addTestSuite('MouvementStockTest');
+		require_once dirname(__FILE__).'/StockTransferTest.php';
+		$suite->addTestSuite('StockTransferTest');
 		require_once dirname(__FILE__).'/InventoryTest.php';
 		$suite->addTestSuite('InventoryTest');
 
