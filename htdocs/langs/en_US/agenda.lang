@@ -184,6 +184,7 @@ ReminderTime=Reminder period before the event
 TimeType=Duration type
 ReminderType=Callback type
 AddReminder=Create an automatic reminder notification for this event
+AlsoRemindCustomer=Also send a reminder by email to the customer
 ErrorReminderActionCommCreation=Error creating the reminder notification for this event
 BrowserPush=Browser Popup Notification
 Reminders=Reminders
