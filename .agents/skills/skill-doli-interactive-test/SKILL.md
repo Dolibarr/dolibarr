@@ -36,7 +36,8 @@ Use this skill when you need to create a PHP script that:
 6. Output direct links with `target="_blank"` to view data
 7. Add teardown logic that deletes in reverse order of creation
 
-If you want to make an online test, you can find the URL of instance info file htdocs/conf/conf.php in parameter $dolibarr_main_url_root. You can ignore and bypass the warning about HTTPS certificate. 
+If you want to make an online test, you can find the URL of instance info file htdocs/conf/conf.php in parameter $dolibarr_main_url_root. 
+You can ignore and bypass the warning about HTTPS certificate. Ask the password if you need one without trying to get it from database. 
 
 ## Required Files
 
