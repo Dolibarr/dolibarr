@@ -543,7 +543,7 @@ if ($action == 'makepayment_confirm' && $user->hasRight('facture', 'paiement')) 
 						$totaldeposits = $facture->getSumDepositsUsed();
 
 						$totalallpayments = $paiementAmount + $totalcreditnotes + $totaldeposits;
-						$remaintopay = price2num($facture->total_ttc - $totalallpayments);
+						$remaintopay = (float) price2num($facture->total_ttc - $totalallpayments);
 
 						// Remain to pay in the invoice currency (may differ from $remaintopay when multicurrency is used)
 						$multicurrency_remaintopay = price2num($facture->multicurrency_total_ttc - $sommePaiement['alreadypaid_multicurrency']);
@@ -562,6 +562,9 @@ if ($action == 'makepayment_confirm' && $user->hasRight('facture', 'paiement')) 
 							$error++;
 							setEventMessages($facture->ref.' '.$langs->trans("ProcessingError"), $hookmanager->errors, 'errors');
 						}
+
+						// Remain to pay in the invoice currency (may differ from $remaintopay when multicurrency is used)
+						$multicurrency_remaintopay = (float) price2num($facture->multicurrency_total_ttc - $sommePaiement['alreadypaid_multicurrency']);
 
 						if ($remaintopay != 0) {
 							$resultBank = $facture->setBankAccount($bankid);
