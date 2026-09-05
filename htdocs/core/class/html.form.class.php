@@ -1831,6 +1831,8 @@ class Form
 			$out .= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		}
 
+		$out .= ajax_combobox('select_'.$htmlname);
+
 		if (empty($nooutput)) {
 			print $out;
 			return '';
