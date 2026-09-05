@@ -916,7 +916,7 @@ trait CommonSubtotal
 	/**
 	 * Retrieve the list of active predefined titles usable as description of a title line.
 	 *
-	 * @return array<string,string>	Array with the title label as both key and value, sorted alphabetically
+	 * @return array<int,string>	Array of title labels keyed by dictionary rowid, sorted alphabetically by label
 	 *
 	 * @phan-suppress PhanUndeclaredProperty
 	 * @phan-suppress PhanPluginUnknownObjectMethodCall
@@ -925,14 +925,14 @@ trait CommonSubtotal
 	{
 		$titles = array();
 
-		$sql = "SELECT label FROM ".MAIN_DB_PREFIX."c_subtotals_titles";
+		$sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."c_subtotals_titles";
 		$sql .= " WHERE active = 1 AND entity IN (".getEntity('c_subtotals_titles').")";
 		$sql .= " ORDER BY label ASC";
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			while ($obj = $this->db->fetch_object($resql)) {
-				$titles[dol_escape_htmltag($obj->label)] = $obj->label;
+				$titles[(int) $obj->rowid] = $obj->label;
 			}
 		}
 

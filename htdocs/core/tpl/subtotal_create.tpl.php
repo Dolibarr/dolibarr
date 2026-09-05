@@ -55,13 +55,14 @@ if ($type == 'title') {
 
 	$predefinedtitles = $object->getPredefinedTitles();
 	if (!empty($predefinedtitles)) {
+		print '<script>var subtotalPredefinedTitlesMap = ' . json_encode($predefinedtitles, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) . ';</script>';
 		$formquestion[] = array(
 			'type' => 'select',
 			'name' => 'subtotalpredefinedtitle',
 			'label' => $langs->trans("PredefinedTitle"),
 			'values' => $predefinedtitles,
 			'select_show_empty' => 1,
-			'moreattr' => 'onchange="var v = jQuery(this).val(); if (v && v != \'-1\') { jQuery(\'#subtotallinedesc\').val(v); }"',
+			'moreattr' => 'onchange="var v = subtotalPredefinedTitlesMap[jQuery(this).val()]; if (v !== undefined) { jQuery(\'#subtotallinedesc\').val(v); }"',
 		);
 	}
 
