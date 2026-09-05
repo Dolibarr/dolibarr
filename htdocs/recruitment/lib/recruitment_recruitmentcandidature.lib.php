@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) ---Put here your own copyright and developer email---
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -58,7 +58,7 @@ function recruitmentCandidaturePrepareHead($object)
 		if (!empty($object->note_public)) {
 			$nbNote++;
 		}
-		$head[$h][0] = DOL_URL_ROOT . '/recruitment/recruitmentcandidature_note.php?id=' . $object->id;
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/core/note.php', ['element' => 'recruitmentcandidature', 'id' => $object->id]);
 		$head[$h][1] = $langs->trans('Notes');
 		if ($nbNote > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbNote . '</span>';
