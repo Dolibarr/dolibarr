@@ -170,6 +170,8 @@ Before any modification, verify:
 - User rights enforcement (`$user->hasRight("module", "permission")` or `$user->hasRight("module", "objectname", "permission")`)
 - Multi-entity compatibility (add ` AND entity IN ('.getEntity("tablename").')`)
 
+If you want to make an online test, you can find the URL of instance info file htdocs/conf/conf.php in parameter $dolibarr_main_url_root. You can ignore and bypass the warning about HTTPS certificate. 
+
 If adding a unit test is requested:
 - If modifying the Dolibarr code project, add a PHPUnit test file into `test/phpunit/` and add the entry into file `test/phpunit/AllTests.php`.
 - If you need to validate code change or if it is explicitely requested, you can check code and dev syntax rules by running the following command on modified files (it takes a long time):
