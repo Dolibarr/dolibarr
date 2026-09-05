@@ -1436,6 +1436,87 @@ class DoliDBSqlite3 extends DoliDB
 		}
 	}
 
+	/**
+	 * Prepare a SQL statement for execution. Use '?' as the placeholder for every bound value.
+	 *
+	 * @param string $sql SQL query with '?' placeholders
+	 * @return SQLite3Stmt|false
+	 * @see execute()
+	 */
+	public function prepare($sql)
+	{
+		$sql = $this->convertSQLFromMysql($sql);
+
+		dol_syslog(get_class($this)."::prepare sql=".$sql, LOG_DEBUG);
+
+		try {
+			$stmt = $this->db->prepare($sql);
+		} catch (Throwable $e) {
+			$stmt = false;
+			$this->error = $e->getMessage();
+		}
+		if (!($stmt instanceof SQLite3Stmt)) {
+			$this->lasterror = $this->error ? $this->error : $this->db->lastErrorMsg();
+			$this->lastqueryerror = $sql;
+			return false;
+		}
+		// Keep the query text so num_rows()/affected_rows() can tell a SELECT from the rest
+		$this->queryString = $sql;
+
+		return $stmt;
+	}
+
+	/**
+	 * Execute a statement previously created with prepare().
+	 *
+	 * @param SQLite3Stmt      $stmt   Statement returned by prepare()
+	 * @param array<int,mixed> $params Ordered list of values for the '?' placeholders
+	 * @return SQLite3Result|bool      A SQLite3Result (usable with fetch_object()/num_rows()/free())
+	 *                                 for a SELECT, true for another successful statement, false on error
+	 * @see prepare()
+	 */
+	public function execute($stmt, $params = array())
+	{
+		if (!($stmt instanceof SQLite3Stmt)) {
+			$this->lasterror = 'execute() called with an invalid statement';
+			return false;
+		}
+
+		$this->lasterror = '';
+		$this->error = '';
+
+		$i = 1;
+		foreach (array_values($params) as $v) {
+			if (is_int($v) || is_bool($v)) {
+				$stmt->bindValue($i, (int) $v, SQLITE3_INTEGER);
+			} elseif (is_float($v)) {
+				$stmt->bindValue($i, $v, SQLITE3_FLOAT);
+			} elseif (is_null($v)) {
+				$stmt->bindValue($i, null, SQLITE3_NULL);
+			} else {
+				$stmt->bindValue($i, (string) $v, SQLITE3_TEXT);
+			}
+			$i++;
+		}
+
+		dol_syslog(get_class($this)."::execute (".($i - 1)." bound param(s))", LOG_DEBUG);
+
+		try {
+			$res = $stmt->execute();
+		} catch (Throwable $e) {
+			$res = false;
+			$this->error = $e->getMessage();
+		}
+		if (!($res instanceof SQLite3Result)) {
+			$this->lasterror = $this->error ? $this->error : $this->db->lastErrorMsg();
+			return false;
+		}
+
+		$this->_results = $res;
+
+		return ($res->numColumns() > 0) ? $res : true;
+	}
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/* Unused/commented
 	 * calc_daynr
