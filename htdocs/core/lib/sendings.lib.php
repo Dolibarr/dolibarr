@@ -108,7 +108,7 @@ function shipping_prepare_head($object)
 	if (!empty($object->note_public)) {
 		$nbNote++;
 	}
-	$head[$h][0] = DOL_URL_ROOT . "/expedition/note.php?id=" . $object->id;
+	$head[$h][0] = DOL_URL_ROOT . "/core/note.php?element=expedition&id=" . $object->id;
 	$head[$h][1] = $langs->trans("Notes");
 	if ($nbNote > 0) {
 		$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbNote . '</span>';
@@ -246,7 +246,7 @@ function delivery_prepare_head($object)
 	if (!empty($tmpobject->note_public)) {
 		$nbNote++;
 	}
-	$head[$h][0] = DOL_URL_ROOT . "/expedition/note.php?id=" . $tmpobject->id;
+	$head[$h][0] = DOL_URL_ROOT . "/core/note.php?element=expedition&id=" . $tmpobject->id;
 	$head[$h][1] = $langs->trans("Notes");
 	if ($nbNote > 0) {
 		$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbNote . '</span>';
