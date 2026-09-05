@@ -3052,7 +3052,7 @@ function dol_most_recent_file($dir, $regexfilter = '', $excludefilter = array('(
  * @param  	User|null	$fuser				User object (forced)
  * @param	string		$refname			Ref of object to check permission for external users (autodetect if not provided by taking the dirname of $original_file) or for hierarchy
  * @param   string  	$mode               Check permission for 'read' or 'write'
- * @return	mixed							Array with access information : 'accessallowed' & 'sqlprotectagainstexternals' & 'original_file' (as a full path name)
+ * @return	mixed							Array with access information : 'accessallowed' & 'sqlprotectagainstexternals' (a SQL to compare the fk_soc with the one of the user) & 'original_file' (as a full path name)
  * @see restrictedArea()
  */
 function dol_check_secure_access_document($modulepart, $original_file, $entity, $fuser = null, $refname = '', $mode = 'read')
@@ -3768,7 +3768,8 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$accessallowed = 1;
 		}
 		if (!isset($_SESSION['email_customer'])) {
-			$sqlprotectagainstexternals = '';
+			// Request to check socid for external users
+			$sqlprotectagainstexternals = "SELECT fk_soc FROM ".MAIN_DB_PREFIX."ticket WHERE ref='".$db->escape($refname)."' AND entity=".((int) $conf->entity);
 		} else {
 			$email_split = explode('@', $_SESSION['email_customer']);
 
@@ -3776,13 +3777,13 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$sqlprotectagainstexternals .= ' LEFT JOIN '.MAIN_DB_PREFIX.'element_contact ec ON ec.element_id = t.rowid';
 			$sqlprotectagainstexternals .= ' LEFT JOIN '.MAIN_DB_PREFIX.'socpeople c ON c.rowid = ec.fk_socpeople';
 			$sqlprotectagainstexternals .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact tc ON tc.element = "ticket" AND tc.rowid = ec.fk_c_type_contact';
-			$sqlprotectagainstexternals .= ' WHERE t.ref LIKE "'.$db->sanitize($refname).'"';
+			$sqlprotectagainstexternals .= " WHERE t.ref LIKE '".$db->sanitize($refname)."'";
 			$sqlprotectagainstexternals .= ' AND (';
 			$sqlprotectagainstexternals .= '   (';
 			$sqlprotectagainstexternals .= '     tc.rowid IS NOT NULL';
-			$sqlprotectagainstexternals .= '     AND c.email = "'.$db->sanitize($email_split[0]).'@'.$db->sanitize($email_split[1]).'"';
+			$sqlprotectagainstexternals .= "     AND c.email = '".$db->sanitize($email_split[0]).'@'.$db->sanitize($email_split[1])."'";
 			$sqlprotectagainstexternals .= '   )';
-			$sqlprotectagainstexternals .= '   OR t.origin_email = "'.$db->sanitize($email_split[0]).'@'.$db->sanitize($email_split[1]).'"';
+			$sqlprotectagainstexternals .= "   OR t.origin_email = '".$db->sanitize($email_split[0]).'@'.$db->sanitize($email_split[1])."'";
 			$sqlprotectagainstexternals .= ' )';
 		}
 		$original_file = $conf->ticket->multidir_output[$entity].'/'.$original_file;
