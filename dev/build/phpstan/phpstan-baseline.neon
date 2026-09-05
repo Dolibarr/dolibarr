@@ -7435,12 +7435,6 @@ parameters:
 			path: ../../../htdocs/public/recruitment/view.php
 
 		-
-			message: '#^Variable \$result might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/public/recruitment/view.php
-
-		-
 			message: '#^Variable \$suffix might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
