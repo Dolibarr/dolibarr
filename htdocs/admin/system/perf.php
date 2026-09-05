@@ -150,7 +150,7 @@ if ($test) {
 } else {
 	print $langs->trans("MemcachedNotAvailable");
 }
-print '</br>';
+print '<br />';
 print '</div>';
 
 // OPCode cache
