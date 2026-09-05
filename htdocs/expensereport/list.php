@@ -885,7 +885,7 @@ if ($num > 0) {
 				}
 				if (!empty($obj->note_private) || !empty($obj->note_public)) {
 					print ' <span class="note">';
-					print '<a href="'.DOL_URL_ROOT.'/expensereport/note.php?id='.$obj->rowid.'">'.img_picto($langs->trans("ViewPrivateNote"), 'object_generic').'</a>';
+					print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/core/note.php', ['element' => 'expensereport', 'id' => $obj->rowid]).'">'.img_picto($langs->trans("ViewPrivateNote"), 'object_generic').'</a>';
 					print '</span>';
 				}
 				$filename = dol_sanitizeFileName($obj->ref);

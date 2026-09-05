@@ -71,7 +71,7 @@ function supplier_proposal_prepare_head($object)
 		if (!empty($object->note_public)) {
 			$nbNote++;
 		}
-		$head[$h][0] = DOL_URL_ROOT.'/supplier_proposal/note.php?id='.$object->id;
+		$head[$h][0] = DOL_URL_ROOT.'/core/note.php?element=supplier_proposal&id='.$object->id;
 		$head[$h][1] = $langs->trans('Notes');
 		if ($nbNote > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
