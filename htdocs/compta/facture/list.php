@@ -546,7 +546,7 @@ if ($action == 'makepayment_confirm' && $user->hasRight('facture', 'paiement')) 
 						$remaintopay = (float) price2num($facture->total_ttc - $totalallpayments);
 
 						// Remain to pay in the invoice currency (may differ from $remaintopay when multicurrency is used)
-						$multicurrency_remaintopay = price2num($facture->multicurrency_total_ttc - $sommePaiement['alreadypaid_multicurrency']);
+						$multicurrency_remaintopay = (float) price2num($facture->multicurrency_total_ttc - $sommePaiement['alreadypaid_multicurrency']);
 
 						// hook to finalize the remaining amount, considering e.g. cash discount agreements
 						$parameters = array('remaintopay' => $remaintopay, 'multicurrency_remaintopay' => $multicurrency_remaintopay);
@@ -563,8 +563,6 @@ if ($action == 'makepayment_confirm' && $user->hasRight('facture', 'paiement')) 
 							setEventMessages($facture->ref.' '.$langs->trans("ProcessingError"), $hookmanager->errors, 'errors');
 						}
 
-						// Remain to pay in the invoice currency (may differ from $remaintopay when multicurrency is used)
-						$multicurrency_remaintopay = (float) price2num($facture->multicurrency_total_ttc - $sommePaiement['alreadypaid_multicurrency']);
 
 						if ($remaintopay != 0) {
 							$resultBank = $facture->setBankAccount($bankid);
