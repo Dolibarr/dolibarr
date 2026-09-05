@@ -764,6 +764,16 @@ class Utils
 		$output = '';
 		$error = '';
 
+		global $dolibarr_main_restrict_os_commands;
+		if (!empty($dolibarr_main_restrict_os_commands)) {
+			$arrayofallowedcommand = explode(',', $dolibarr_main_restrict_os_commands);
+			$arrayofallowedcommand = array_map('trim', $arrayofallowedcommand);
+			if (!in_array(basename($command), $arrayofallowedcommand)) {
+				dol_syslog("files.lib.php::executeCLI canceled because target filename ".basename($command)." is not in the whitelist of allowed commands.", LOG_WARNING);
+				return false;
+			}
+		}
+
 		if (empty($noescapecommand)) {
 			$command = escapeshellcmd($command);
 		}
@@ -835,7 +845,7 @@ class Utils
 	 */
 	public function generateDoc($module)
 	{
-		global $conf, $langs, $user, $mysoc;
+		global $langs, $user, $mysoc;
 		global $dirins;
 
 		$error = 0;
