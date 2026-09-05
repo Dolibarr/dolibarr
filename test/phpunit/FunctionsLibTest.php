@@ -2559,6 +2559,143 @@ class FunctionsLibTest extends CommonClassTest
 	}
 
 	/**
+	 * testDolStrlenDolSubstr
+	 *
+	 * @return void
+	 */
+	public function testDolStrlenDolSubstr()
+	{
+		$this->assertEquals(0, dol_strlen(null), 'dol_strlen(null) must be 0, not an error');
+		$this->assertEquals(0, dol_strlen(''));
+		$this->assertEquals(3, dol_strlen('abc'));
+		$this->assertEquals(2, dol_strlen('éà'), 'dol_strlen must count characters, not bytes');
+
+		$this->assertEquals('Hello', dol_substr('Hello World', 0, 5));
+		$this->assertEquals('World', dol_substr('Hello World', 6));
+		$this->assertEquals('éà', dol_substr('éàüö', 0, 2), 'dol_substr must cut on characters, not bytes');
+		// $trunconbytes=1: length is a max of bytes instead of a max of characters
+		$this->assertEquals('Hel', dol_substr('Hello', 0, 3, '', 1));
+	}
+
+	/**
+	 * testVatrate
+	 *
+	 * @return void
+	 */
+	public function testVatrate()
+	{
+		global $conf, $langs;
+
+		$oldlangs = $langs;
+		$newlangs = new Translate('', $conf);
+		$newlangs->setDefaultLang('en_US');
+		$newlangs->load('main');
+		$langs = $newlangs;
+
+		$this->assertEquals('20', vatrate('20'), 'No addpercent asked and no % in input');
+		$this->assertEquals('20%', vatrate('20', true), 'addpercent=true adds the % sign');
+		$this->assertEquals('20%', vatrate('20%'), 'A % already in the rate auto-enables addpercent');
+
+		// info_bits&1 (French NPR) with default usestarfornpr=0 still shows the '*'
+		$this->assertEquals('8.5% *', vatrate('8.5', true, 1));
+		// usestarfornpr=-1 means never show the star, even for a NPR rate
+		$this->assertEquals('8.5%', vatrate('8.5', true, 1, -1));
+
+		// A trailing '(CODE)' note is extracted and re-appended after formatting
+		$this->assertEquals('8.5 (NPR)', vatrate('8.5 (NPR)'));
+		// In HTML mode, the note is wrapped in a span
+		$this->assertEquals('8.5% <span class="opacitymedium small">(NPR)</span>', vatrate('8.5 (NPR)', true, 0, 0, 1));
+
+		// A rate with '/' (multiple combined rates) is never reformatted by price(), just passed through
+		$this->assertEquals('9/9/9', vatrate('9/9/9'));
+
+		$langs = $oldlangs;
+	}
+
+	/**
+	 * testYn
+	 *
+	 * @return void
+	 */
+	public function testYn()
+	{
+		global $conf, $langs;
+
+		$oldlangs = $langs;
+		$newlangs = new Translate('', $conf);
+		$newlangs->setDefaultLang('en_US');
+		$newlangs->load('main');
+		$langs = $newlangs;
+
+		// format=1 (default): capitalized Yes/No
+		$this->assertEquals('Yes', yn(1));
+		$this->assertEquals('No', yn(0));
+		// format=0: lowercase yes/no
+		$this->assertEquals('yes', yn(true, 0));
+		$this->assertEquals('no', yn(false, 0));
+		// String values 'yes'/'no' are also accepted
+		$this->assertEquals('Yes', yn('yes'));
+		$this->assertEquals('No', yn('no'));
+		// format=2: checkbox only
+		$this->assertEquals('<input type="checkbox" value="1" checked disabled>', yn(1, 2));
+		$this->assertEquals('<input type="checkbox" value="0" disabled>', yn(0, 2));
+		// format=3: checkbox + text
+		$this->assertEquals('<input type="checkbox" value="1" checked disabled> Yes', yn(1, 3));
+		// color=1: wrap in a <span> colored 'ok' or 'error'
+		$this->assertEquals('<span class="ok">Yes</span>', yn(1, 1, 1));
+		$this->assertEquals('<span class="error">No</span>', yn(0, 1, 1));
+		// color=2: always use 'ok' styling, even for a "No" value
+		$this->assertEquals('<span class="ok">No</span>', yn(0, 1, 2));
+		// format=4 (or non-numeric): use a picto instead of text
+		$this->assertStringContainsStringIgnoringCase('fa-check', yn(1, 4));
+		$this->assertStringContainsStringIgnoringCase('fa-times', yn(0, 4));
+
+		$langs = $oldlangs;
+	}
+
+	/**
+	 * testColorIsLight
+	 *
+	 * @return void
+	 */
+	public function testColorIsLight()
+	{
+		$this->assertEquals(-1, colorIsLight(''), 'Empty/invalid color must return -1');
+		$this->assertEquals(1, colorIsLight('FFFFFF'), 'White (hex) is light');
+		$this->assertEquals(0, colorIsLight('000000'), 'Black (hex) is dark');
+		$this->assertEquals(1, colorIsLight('255,255,255'), 'White (comma RGB) is light');
+		$this->assertEquals(0, colorIsLight('0,0,0'), 'Black (comma RGB) is dark');
+		$this->assertEquals(0, colorIsLight('123456'), 'A dark-ish arbitrary color');
+	}
+
+	/**
+	 * testGetExdir
+	 *
+	 * @return void
+	 */
+	public function testGetExdir()
+	{
+		// New usage: modulepart not in the legacy numeric-path list, ref is used directly (sanitized)
+		$obj = new stdClass();
+		$obj->ref = 'INV2024-0001';
+		$obj->id = 5;
+		$this->assertEquals('INV2024-0001', get_exdir(0, 0, 0, 1, $obj, 'facture'));
+		$this->assertEquals('INV2024-0001/', get_exdir(0, 0, 0, 0, $obj, 'facture'), 'withoutslash=0 adds a trailing slash');
+
+		// New usage, no ref: falls back to the object id
+		$obj2 = new stdClass();
+		$obj2->ref = '';
+		$obj2->id = 42;
+		$this->assertEquals('42', get_exdir(0, 0, 0, 1, $obj2, 'facture'));
+
+		// Legacy numeric path: 'mailing' is one of the modules using the old per-digit subdirectory split
+		$this->assertEquals('5/1/0/', get_exdir('015', 3, 0, 0, null, 'mailing'), 'Level 3 splits the last 3 digits into 3 subdirs');
+		$this->assertEquals('5/', get_exdir('015', 1, 0, 0, null, 'mailing'), 'Level 1 keeps only the last digit');
+		// Level not given (0): 'cheque' is in the legacy list and forces level=2 automatically
+		$this->assertEquals('5/1/', get_exdir('015', 0, 0, 0, null, 'cheque'));
+	}
+
+	/**
 	 * testDolPrintSize
 	 *
 	 * @return void
