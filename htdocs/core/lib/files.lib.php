@@ -3777,13 +3777,13 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$sqlprotectagainstexternals .= ' LEFT JOIN '.MAIN_DB_PREFIX.'element_contact ec ON ec.element_id = t.rowid';
 			$sqlprotectagainstexternals .= ' LEFT JOIN '.MAIN_DB_PREFIX.'socpeople c ON c.rowid = ec.fk_socpeople';
 			$sqlprotectagainstexternals .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact tc ON tc.element = "ticket" AND tc.rowid = ec.fk_c_type_contact';
-			$sqlprotectagainstexternals .= ' WHERE t.ref LIKE "'.$db->sanitize($refname).'"';
+			$sqlprotectagainstexternals .= " WHERE t.ref LIKE '".$db->escape($refname)."'";
 			$sqlprotectagainstexternals .= ' AND (';
 			$sqlprotectagainstexternals .= '   (';
 			$sqlprotectagainstexternals .= '     tc.rowid IS NOT NULL';
-			$sqlprotectagainstexternals .= '     AND c.email = "'.$db->sanitize($email_split[0]).'@'.$db->sanitize($email_split[1]).'"';
+			$sqlprotectagainstexternals .= "     AND c.email = '".$db->escape($email_split[0])."@".$db->escape($email_split[1])."'";
 			$sqlprotectagainstexternals .= '   )';
-			$sqlprotectagainstexternals .= '   OR t.origin_email = "'.$db->sanitize($email_split[0]).'@'.$db->sanitize($email_split[1]).'"';
+			$sqlprotectagainstexternals .= "   OR t.origin_email = '".$db->escape($email_split[0])."@".$db->escape($email_split[1])."'";
 			$sqlprotectagainstexternals .= ' )';
 		}
 		$original_file = $conf->ticket->multidir_output[$entity].'/'.$original_file;
