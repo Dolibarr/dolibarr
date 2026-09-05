@@ -3781,9 +3781,9 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$sqlprotectagainstexternals .= ' AND (';
 			$sqlprotectagainstexternals .= '   (';
 			$sqlprotectagainstexternals .= '     tc.rowid IS NOT NULL';
-			$sqlprotectagainstexternals .= "     AND c.email = '".$db->escape($email_split[0])."@".$db->escape($email_split[1])."'";
+			$sqlprotectagainstexternals .= "     AND c.email = CONCAT('".$db->escape($email_split[0])."', '@', '".$db->escape($email_split[1])."')";
 			$sqlprotectagainstexternals .= '   )';
-			$sqlprotectagainstexternals .= "   OR t.origin_email = '".$db->escape($email_split[0])."@".$db->escape($email_split[1])."'";
+			$sqlprotectagainstexternals .= "   OR t.origin_email = CONCAT('".$db->escape($email_split[0])."', '@', '".$db->escape($email_split[1])."')";
 			$sqlprotectagainstexternals .= ' )';
 		}
 		$original_file = $conf->ticket->multidir_output[$entity].'/'.$original_file;
