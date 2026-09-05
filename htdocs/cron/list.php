@@ -661,7 +661,7 @@ if ($num > 0) {
 		$object->datelastrun = $db->jdate($obj->datelastrun);
 		$object->datenextrun = $db->jdate($obj->datenextrun);
 
-		$datelastrun = $db->jdate($obj->datelastrun);
+		$datelastrun = (int)$db->jdate($obj->datelastrun);
 		$datelastresult = $db->jdate($obj->datelastresult);
 		$datefromto = (empty($datelastrun) ? '' : dol_print_date($datelastrun, 'dayhoursec', 'tzserver')).' - '.(empty($datelastresult) ? '' : dol_print_date($datelastresult, 'dayhoursec', 'tzserver'));
 
