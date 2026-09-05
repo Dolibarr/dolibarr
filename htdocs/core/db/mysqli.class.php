@@ -947,6 +947,16 @@ class DoliDBMysqli extends DoliDB
 		if ($this->query($sql)) {
 			return 1;
 		}
+		// A table where columns were added and dropped many times refuses any new one with "Row size too
+		// large" (error 1118), because the space the dropped columns took in the physical record is only
+		// given back by a rebuild. Rebuild once and retry, so that deleting an extrafield cannot make the
+		// next one impossible to create.
+		if ($this->lasterrno == 'DB_ERROR_1118') {
+			dol_syslog(get_class($this)."::DDLAddField row size limit reached on ".$table.", rebuilding it", LOG_WARNING);
+			if ($this->query("ALTER TABLE ".$table." FORCE") && $this->query($sql)) {
+				return 1;
+			}
+		}
 		return -1;
 	}
 
