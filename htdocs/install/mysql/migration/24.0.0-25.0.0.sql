@@ -130,4 +130,6 @@ ALTER TABLE llx_facture ADD INDEX idx_facture_situation_cycle_ref (situation_cyc
 
 
 
+ALTER TABLE llx_commande_fournisseur ADD COLUMN fk_warehouse integer DEFAULT NULL;
+
 -- end of migration - nothing after this line
