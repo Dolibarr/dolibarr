@@ -238,6 +238,9 @@ if (empty($action)) {
 		$uploadform .= $form->select_dolusers(GETPOSTINT('userexpensereportid') > 0 ? GETPOSTINT('userexpensereportid') : $user->id, 'userexpensereportid', $langs->transnoentitiesnoconv("User"), null, 0, 'hierarchyme', '', '', 0, 0, '', 0, '', 'maxwidth200 disableautoopen', 1);
 		//$uploadform .= '</span>';
 
+		$uploadform .= img_picto('', 'invoice', 'class="pictofixedwidth"');
+		$uploadform .= $form->select_type_fees(GETPOSTINT('feetypeid') > 0 ? GETPOSTINT('feetypeid') : -1, 'feetypeid', $langs->transnoentitiesnoconv("SocialContributionType"), 'maxwidth200 disableautoopen', 1, 1);
+
 		$uploadform .= '<br>';
 
 		$uploadform .= '<br>
@@ -254,11 +257,8 @@ if (empty($action)) {
 		<div id="userpayroll" class="flex-item flex-item-uploadfile">'.img_picto('', 'salary', 'class="fa-2x"').'<br>
 		<div>'.$langs->trans("UserPaySlip").'<br><br>';
 
-
 		$uploadform .= img_picto('', 'user', 'class="pictofixedwidth"');
-		//$uploadform .= '<span class="disableautoopen">';
 		$uploadform .= $form->select_dolusers(GETPOSTINT('usersalaryid') > 0 ? GETPOSTINT('usersalaryid') : $user->id, 'usersalaryid', $langs->transnoentitiesnoconv("Employee"), null, 0, 'hierarchyme', '', '', 0, 0, '', 0, '', 'maxwidth200 disableautoopen', 1);
-		//$uploadform .= '</span>';
 
 		$uploadform .= '<br>';
 
@@ -272,8 +272,14 @@ if (empty($action)) {
 	if (isModEnabled('tax')) {
 		$langs->load("taxes");
 		$uploadform .= '
-		<div id="userpayroll" class="flex-item flex-item-uploadfile">'.img_picto('', 'tax', 'class="fa-2x"').'<br>
+		<div id="userpayroll" class="flex-item flex-item-uploadfile">'.img_picto('', 'invoice', 'class="fa-2x"').'<br>
 		<div>'.$langs->trans("SocialContribution").'<br><br>';
+
+		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formsocialcontrib.class.php';
+		$formsocialcontrib = new FormSocialContrib($db);
+
+		$uploadform .= img_picto('', 'invoice', 'class="pictofixedwidth"');
+		$uploadform .= $formsocialcontrib->select_type_socialcontrib(GETPOST('socialcontrib', 'alpha') ? GETPOSTINT('socialcontrib') : 0, 'socialcontrib', 1, 0, 0, 'minwidth150 maxwidth200 disableautoopen', 0, 1);
 
 		$uploadform .= '<br>';
 
