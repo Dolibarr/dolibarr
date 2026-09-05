@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2006-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2012      JF FERRY             <jfefe@aternatik.fr>
- * Copyright (C) 2020-2024 Frédéric France		<frederic.france@free.fr>
+ * Copyright (C) 2020-2026  Frédéric France		<frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -372,7 +372,7 @@ function getProductOrService($authentication, $id = 0, $ref = '', $ref_ext = '',
 
 	dol_syslog("Function: getProductOrService login=".$authentication['login']." id=".$id." ref=".$ref." ref_ext=".$ref_ext);
 
-	$langcode = ($lang ? $lang : (!getDolGlobalString('MAIN_LANG_DEFAULT') ? 'auto' : $conf->global->MAIN_LANG_DEFAULT));
+	$langcode = ($lang ? $lang : (getDolGlobalString('MAIN_LANG_DEFAULT') ?: 'auto'));
 	$langs->setDefaultLang($langcode);
 
 	if ($authentication['entity']) {
@@ -393,7 +393,7 @@ function getProductOrService($authentication, $id = 0, $ref = '', $ref_ext = '',
 	}
 
 	if (!$error) {
-		$langcode = ($lang ? $lang : (!getDolGlobalString('MAIN_LANG_DEFAULT') ? 'auto' : $conf->global->MAIN_LANG_DEFAULT));
+		$langcode = ($lang ? $lang : (getDolGlobalString('MAIN_LANG_DEFAULT') ?: 'auto'));
 		$langs->setDefaultLang($langcode);
 
 		$fuser->loadRights();
@@ -990,7 +990,7 @@ function getProductsForCategory($authentication, $id, $lang = '')
 {
 	global $db, $conf, $langs;
 
-	$langcode = ($lang ? $lang : (!getDolGlobalString('MAIN_LANG_DEFAULT') ? 'auto' : $conf->global->MAIN_LANG_DEFAULT));
+	$langcode = ($lang ? $lang : (getDolGlobalString('MAIN_LANG_DEFAULT') ?: 'auto'));
 	$langs->setDefaultLang($langcode);
 
 	dol_syslog("Function: getProductsForCategory login=".$authentication['login']." id=".$id);
@@ -1015,7 +1015,7 @@ function getProductsForCategory($authentication, $id, $lang = '')
 
 
 	if (!$error) {
-		$langcode = ($lang ? $lang : (!getDolGlobalString('MAIN_LANG_DEFAULT') ? 'auto' : $conf->global->MAIN_LANG_DEFAULT));
+		$langcode = ($lang ? $lang : (getDolGlobalString('MAIN_LANG_DEFAULT') ?: 'auto'));
 		$langs->setDefaultLang($langcode);
 
 		$fuser->loadRights();
