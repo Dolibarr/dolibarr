@@ -2348,16 +2348,39 @@ class Ticket extends CommonObject
 	public function setCustomer($id)
 	{
 		if ($this->id) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX."ticket";
+			$this->db->begin();
+
+			$sql = "UPDATE ".$this->db->prefix()."ticket";
 			$sql .= " SET fk_soc = ".($id > 0 ? (int) $id : "null");
 			$sql .= " WHERE rowid = ".((int) $this->id);
 			dol_syslog(get_class($this).'::setCustomer sql='.$sql);
 			$resql = $this->db->query($sql);
-			if ($resql) {
-				return 1;
-			} else {
+			if (!$resql) {
+				$this->error = $this->db->lasterror();
+				dol_syslog(get_class($this).'::setCustomer '.$this->error, LOG_ERR);
+				$this->db->rollback();
+
 				return -1;
 			}
+
+			// The Agenda tab of a third party filters on actioncomm.fk_soc alone, so the events already recorded on
+			// the ticket must follow it, as Societe::mergeCompany() already does when two third parties are merged.
+			$sql = "UPDATE ".$this->db->prefix()."actioncomm";
+			$sql .= " SET fk_soc = ".($id > 0 ? (int) $id : "null");
+			$sql .= " WHERE elementtype = 'ticket' AND fk_element = ".((int) $this->id);
+			dol_syslog(get_class($this).'::setCustomer sql='.$sql);
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$this->error = $this->db->lasterror();
+				dol_syslog(get_class($this).'::setCustomer '.$this->error, LOG_ERR);
+				$this->db->rollback();
+
+				return -1;
+			}
+
+			$this->db->commit();
+
+			return 1;
 		} else {
 			return -1;
 		}
@@ -3126,7 +3149,7 @@ class Ticket extends CommonObject
 									$array_external = array(array('id' => -1, 'firstname' => '', 'lastname' => $object->origin_replyto, 'email' => $object->origin_replyto, 'libelle' => $langs->transnoentities('Customer'), 'socid' => 0));
 									$external_contacts = array_merge($external_contacts, $array_external);
 								} elseif (empty($object->fk_soc) && !empty($object->origin_email)) {
-									$array_external = array(array('id' => -1, 'firstname' => '', 'lastname' => $object->origin_email, 'email' => $object->thirdparty->email, 'libelle' => $langs->transnoentities('Customer'), 'socid' => $object->thirdparty->id));
+									$array_external = array(array('id' => -1, 'firstname' => '', 'lastname' => $object->origin_email, 'email' => $object->origin_email, 'libelle' => $langs->transnoentities('Customer'), 'socid' => 0)); // no fk_soc here, so $object->thirdparty was never fetched (mirrors the origin_replyto branch above)
 									$external_contacts = array_merge($external_contacts, $array_external);
 								}
 							}

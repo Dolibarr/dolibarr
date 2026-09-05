@@ -54,23 +54,27 @@ class FormSocialContrib
 	 *  Return list of social contributions.
 	 *  Use mysoc->country_id or mysoc->country_code so they must be defined.
 	 *
-	 *	@param	int			$selected       Preselected type
-	 *	@param  string		$htmlname       Name of field in form
-	 * 	@param	int<0,1>	$useempty		Set to 1 if we want an empty value
-	 * 	@param	int			$maxlen			Max length of text in combo box
-	 * 	@param	int<0,1>	$help			Add or not the admin help picto
-	 *  @param	string		$morecss		Add more CSS on select
-	 *  @param	int<0,1>	$noerrorifempty	No print error if list is empty for the country
-	 * 	@return	void
+	 *	@param	int				$selected       Preselected type
+	 *	@param  string			$htmlname       Name of field in form
+	 * 	@param	int<0,1>|string	$useempty		Set to 1 if we want an empty value or use a string to use it as empty label
+	 * 	@param	int				$maxlen			Max length of text in combo box
+	 * 	@param	int<0,1>		$help			Add or not the admin help picto
+	 *  @param	string			$morecss		Add more CSS on select
+	 *  @param	int<0,1>		$noerrorifempty	No print error if list is empty for the country
+	 *  @param	int<0,1>		$noout			Use 1 to return a string instead of output string
+	 * 	@return	string							Return '' or HTML component string
 	 */
-	public function select_type_socialcontrib($selected = 0, $htmlname = 'actioncode', $useempty = 0, $maxlen = 40, $help = 1, $morecss = 'minwidth300', $noerrorifempty = 0)
+	public function select_type_socialcontrib($selected = 0, $htmlname = 'actioncode', $useempty = 0, $maxlen = 40, $help = 1, $morecss = 'minwidth300', $noerrorifempty = 0, $noout = 0)
 	{
 		// phpcs:enable
-		global $conf, $db, $langs, $user, $mysoc;
+		global $conf, $langs, $user, $mysoc;
 
 		if (empty($mysoc->country_id) && empty($mysoc->country_code)) {
-			print $langs->trans("ErrorSetupOfCountryMustBeDone");
-			return;
+			$out = $langs->trans("ErrorSetupOfCountryMustBeDone");
+			if (empty($noout)) {
+				print $out;
+			}
+			return $out;
 		}
 
 		if (!empty($mysoc->country_id)) {
@@ -88,39 +92,54 @@ class FormSocialContrib
 		}
 
 		dol_syslog("Form::select_type_socialcontrib", LOG_DEBUG);
+
+		$out = '';
+
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 			if ($num) {
-				print '<select class="'.($morecss ? $morecss : '').'" id="'.$htmlname.'" name="'.$htmlname.'">';
+				$out .= '<select class="'.($morecss ? $morecss : '').'" id="'.$htmlname.'" name="'.$htmlname.'">';
 				$i = 0;
 
 				if ($useempty) {
-					print '<option value="0">&nbsp;</option>';
+					$out .= '<option value="0">';
+					if (!is_numeric($useempty)) {
+						$out .= $useempty;
+					} else {
+						$out .= '&nbsp;';
+					}
+					$out .= '</option>';
 				}
 				while ($i < $num) {
 					$obj = $this->db->fetch_object($resql);
-					print '<option value="'.$obj->id.'"';
+					$out .= '<option value="'.$obj->id.'"';
 					if ($obj->id == $selected) {
-						print ' selected';
+						$out .= ' selected';
 					}
-					print '>'.dol_trunc($obj->type, $maxlen);
+					$out .= '>'.dol_trunc($obj->type, $maxlen);
 					$i++;
 				}
-				print '</select>';
+				$out .= '</select>';
 				if ($user->admin && $help) {
-					print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+					$out .= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 				}
 				if (!empty($conf->use_javascript_ajax)) {
-					print ajax_combobox($htmlname);
+					$out .= ajax_combobox($htmlname);
 				}
 			} else {
 				if (empty($noerrorifempty)) {
-					print $langs->trans("ErrorNoSocialContributionForSellerCountry", $mysoc->country_code);
+					$out .= $langs->trans("ErrorNoSocialContributionForSellerCountry", $mysoc->country_code);
 				}
 			}
 		} else {
 			dol_print_error($this->db);
 		}
+
+		if (empty($noout)) {
+			print $out;
+		}
+
+		return $out;
 	}
 }

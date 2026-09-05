@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2026	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -798,7 +800,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 				$morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref"></div>';
 			} else {    // Show no photo link
 				$nophoto = '/public/theme/common/nophoto.png';
-				$morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref"><img class="photo' . $modulepart . ($cssclass ? ' ' . $cssclass : '') . '" title="' . dol_escape_htmltag($langs->trans("UploadAnImageToSeeAPhotoHere", $langs->transnoentitiesnoconv("Documents"))) . '" alt="No photo"' . ($width ? ' style="width: ' . $width . 'px"' : '') . ' src="' . DOL_URL_ROOT . $nophoto . '"></div>';
+				$morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref"><img class="photo' . $modulepart . ' ' . $cssclass . '" title="' . dol_escape_htmltag($langs->trans("UploadAnImageToSeeAPhotoHere", $langs->transnoentitiesnoconv("Documents"))) . '" alt="No photo" style="width: ' . $width . 'px" src="' . DOL_URL_ROOT . $nophoto . '"></div>';
 			}
 		}
 	} elseif ($object->element == 'category') {
@@ -819,7 +821,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 				$morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref"></div>';
 			} else {    // Show no photo link
 				$nophoto = '/public/theme/common/nophoto.png';
-				$morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref"><img class="photo' . $modulepart . ($cssclass ? ' ' . $cssclass : '') . '" title="' . dol_escape_htmltag($langs->trans("UploadAnImageToSeeAPhotoHere", $langs->transnoentitiesnoconv("Documents"))) . '" alt="No photo"' . ($width ? ' style="width: ' . $width . 'px"' : '') . ' src="' . DOL_URL_ROOT . $nophoto . '"></div>';
+				$morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref"><img class="photo' . $modulepart . ' ' . $cssclass . '" title="' . dol_escape_htmltag($langs->trans("UploadAnImageToSeeAPhotoHere", $langs->transnoentitiesnoconv("Documents"))) . '" alt="No photo" style="width: ' . $width . 'px" src="' . DOL_URL_ROOT . $nophoto . '"></div>';
 			}
 		}
 	} elseif ($object->element == 'bom') {
@@ -840,7 +842,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 				$morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref"></div>';
 			} else {    // Show no photo link
 				$nophoto = '/public/theme/common/nophoto.png';
-				$morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref"><img class="photo' . $modulepart . ($cssclass ? ' ' . $cssclass : '') . '" title="' . dol_escape_htmltag($langs->trans("UploadAnImageToSeeAPhotoHere", $langs->transnoentitiesnoconv("Documents"))) . '" alt="No photo"' . ($width ? ' style="width: ' . $width . 'px"' : '') . ' src="' . DOL_URL_ROOT . $nophoto . '"></div>';
+				$morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref"><img class="photo' . $modulepart . ' ' . $cssclass . '" title="' . dol_escape_htmltag($langs->trans("UploadAnImageToSeeAPhotoHere", $langs->transnoentitiesnoconv("Documents"))) . '" alt="No photo" style="width: ' . $width . 'px" src="' . DOL_URL_ROOT . $nophoto . '"></div>';
 			}
 		}
 	} elseif ($object->element == 'ticket') {
@@ -1370,7 +1372,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 			}
 			$moreatt = trim($moreatt);
 
-			$enabledisablehtml = '<span class="' . $faprefix . ' ' . $fakey . ($marginleftonlyshort ? ($marginleftonlyshort == 1 ? ' marginleftonlyshort' : ' marginleftonly') : '');
+			$enabledisablehtml = '<span class="' . $faprefix . ' ' . $fakey;
 			$enabledisablehtml .= ($morecss ? ' ' . $morecss : '') . '" style="' . ($fasize ? ('font-size: ' . $fasize . ';') : '') . ($facolor ? (' color: ' . $facolor . ';') : '') . ($morestyle ? ' ' . $morestyle : '') . '"' . (($notitle || empty($titlealt)) ? '' : ' title="' . dol_escape_htmltag($titlealt) . '"') . ($moreatt ? ' ' . $moreatt : '') . '>';
 			$enabledisablehtml .= '</span>';
 
@@ -2573,7 +2575,7 @@ function dol_print_error($db = null, $error = '', $errors = null)
 		}
 		$out .= $langs->trans("InformationToHelpDiagnose") . ":<br>\n";
 
-		$out .= "<b>" . $langs->trans("Date") . ":</b> " . dol_print_date(time(), 'dayhourlog') . "<br>\n";
+		$out .= "<b>" . $langs->trans("Date") . ":</b> " . dol_print_date(dol_now(), 'dayhourlog') . "<br>\n";
 		$out .= "<b>" . $langs->trans("Dolibarr") . ":</b> " . DOL_VERSION . " - https://www.dolibarr.org<br>\n";
 		if (isset($conf->global->MAIN_FEATURES_LEVEL)) {
 			$out .= "<b>" . $langs->trans("LevelOfFeature") . ":</b> " . getDolGlobalInt('MAIN_FEATURES_LEVEL') . "<br>\n";
@@ -4372,8 +4374,8 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
 		} else { // $displayMode >= 6
 			$return = $htmlLabel . ' ' . $htmlImg;
 		}
-	} elseif (!getDolGlobalString('MAIN_STATUS_USES_IMAGES') && !empty($displayMode)) {
-		// Use new badge
+	} elseif (!empty($displayMode)) {
+		// Use new badge (MAIN_STATUS_USES_IMAGES already handled by the previous branch)
 		$statusLabelShort = (empty($statusLabelShort) ? $statusLabel : $statusLabelShort);
 
 		$dolGetBadgeParams['attr']['class'] = 'badge-status';
@@ -4414,7 +4416,7 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
  * @param string    	$id         	Attribute id of action button. Example 'action-delete'. This can be used for full ajax confirm if this code is reused into the ->formconfirm() method.
  * @param bool|int		$userRight  	User action right. True or 1 of ok. Use 0 if user has no permission, it will add the message "No permission" on tooltip (if no other message explicitly provided). Use -1 to have button not allowed without adding the message (because an explicit label is already set).
  * // phpcs:disable
- * @param array{confirm?:array{url?:string,title?:string,content?:string,use_unsecured_unescapedattr?:bool|string[],action-btn-label?:string,cancel-btn-label?:string,modal?:bool},attr?:array<string,mixed>,areDropdownButtons?:bool,backtopage?:string,lang?:string,enabled?:bool,perm?:int<0,1>,label?:string,url?:string,isDropdown?:int<0,1>,isDropDown?:int<0,1>}	$params = [ // Various params for future : recommended rather than adding more function arguments
+ * @param array{confirm?:array{url?:string,title?:string,content?:string,use_unsecured_unescapedattr?:bool|string[],action-btn-label?:string,cancel-btn-label?:string,modal?:bool},attr?:array<string,mixed>,areDropdownButtons?:bool,forceDropdownButtons?:bool,backtopage?:string,lang?:string,enabled?:bool,perm?:int<0,1>,label?:string,url?:string,isDropdown?:int<0,1>,isDropDown?:int<0,1>}	$params = [ // Various params for future : recommended rather than adding more function arguments
  *                                                                                                                                                                                                                                                                                                                                      'attr' => [ // to add or override button attributes
  *                                                                                                                                                                                                                                                                                                                                      	'xxxxx' => '', // your xxxxx attribute you want
  *                                                                                                                                                                                                                                                                                                                                      	'class' => 'reposition', // to add more css class to the button class attribute
@@ -4466,7 +4468,7 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 			return $out;
 		}
 
-		if (count($url) > 1) {
+		if (count($url) > 1 || !empty($params["forceDropdownButtons"])) {
 			$out .= '<div class="dropdown inline-block dropdown-holder">';
 			$out .= '<a style="margin-right: auto;" class="dropdown-toggle classfortooltip butAction' . ($userRight ? '' : 'Refused') . '" title="' . dol_escape_htmltag($label) . '" data-toggle="dropdown">' . ($text ? $text : $label) . '</a>';
 			$out .= '<div class="dropdown-content">';
@@ -5290,9 +5292,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 				}
 			} elseif (is_object($filterobj) && get_class($filterobj) == 'Contact' && $filterobj->id) {
 				$sql .= " AND a.fk_contact = sp.rowid";
-				if ($filterobj->id) {
-					$sql .= " AND a.fk_contact = " . ((int) $filterobj->id);
-				}
+				$sql .= " AND a.fk_contact = " . ((int) $filterobj->id);
 			} elseif (is_object($filterobj) && get_class($filterobj) == 'Facture') {
 				$sql .= " AND a.fk_element = o.rowid";
 				if ($filterobj->id) {
@@ -5307,9 +5307,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 				if (is_object($filterobj) && !empty($filterobj->element) && !empty($filterobj->id) && array_key_exists('ref', $filterobj->fields)) {
 					$sql .= " AND a.fk_element = o.rowid";
 					$sql .= " AND a.elementtype = '" . $db->escape($filterobj->element) . "'";
-					if ($filterobj->id) {
-						$sql .= " AND a.fk_element = " . ((int) $filterobj->id);
-					}
+					$sql .= " AND a.fk_element = " . ((int) $filterobj->id);
 				}
 			}
 		} else {
@@ -5822,6 +5820,10 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 				$out .= '<div class="timeline-body wordbreak small">';
 				$truncateLines = getDolGlobalInt('MAIN_TRUNCATE_TIMELINE_MESSAGE', 3);
 				$truncatedText = dolGetFirstLineOfText($newmess, $truncateLines);
+				// dolGetFirstLineOfText() cuts on <br> without caring about tag balance, so a message wrapped in
+				// a block tag leaves the excerpt with an unclosed tag. The browser then nests the read more link
+				// and the full text inside the excerpt, and hiding the excerpt hides the whole message (#39035).
+				$truncatedText = dolCloseUnclosedHtmlTags($truncatedText);
 				if ($truncateLines > 0 && strlen($newmess) > strlen($truncatedText)) {
 					$out .= '<div class="readmore-block --closed" >';
 					$out .= '	<div class="readmore-block__excerpt">';
@@ -5850,13 +5852,14 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 				foreach ($histo[$key]['socpeopleassigned'] as $cid => $Tab) {
 					if (empty($conf->cache['contact'][$cid])) {
 						$contact = new Contact($db);
-						$contact->fetch($cid);
+						$result = $contact->fetch($cid);
 						$conf->cache['contact'][$cid] = $contact;
 					} else {
 						$contact = $conf->cache['contact'][$cid];
+						$result = ($contact instanceof Contact) ? $contact->id : 0;
 					}
 
-					if ($contact) {
+					if ($result > 0) {
 						$contactList .= !empty($contactList) ? ', ' : '';
 						$contactList .= $contact->getNomUrl(1);
 						if (isset($histo[$key]['acode']) && $histo[$key]['acode'] == 'AC_TEL') {

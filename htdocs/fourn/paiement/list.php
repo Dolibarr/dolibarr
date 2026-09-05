@@ -83,7 +83,6 @@ $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT('page');
 $toselect = GETPOST('toselect', 'array:int');
-$arrayofselected = is_array($toselect) ? $toselect : array();
 
 if (empty($page) || $page == -1) {
 	$page = 0; // If $page is not defined, or '' or -1
@@ -150,6 +149,8 @@ if ((!$user->hasRight("fournisseur", "facture", "lire") && !getDolGlobalString('
 	accessforbidden();
 }
 
+$arrayofselected = !empty($arrayofselected) ? $arrayofselected : array();
+
 
 /*
  * Actions
@@ -185,9 +186,11 @@ if (empty($reshook)) {
 	}
 }
 
+
 /*
  * View
  */
+
 $title = $langs->trans('ListPayment');
 $help_url = '';
 

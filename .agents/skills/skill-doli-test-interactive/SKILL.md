@@ -1,9 +1,10 @@
 ---
-name: skill-doli-test-interactive
-description:
-  Create interactive PHP test case scripts for Dolibarr ERP/CRM that allow users to setup test data, 
-  view results via direct links, and tear down (clean up) the data.
-  Use when asked to create test data for Dolibarr issues or when users need to verify bug fixes in the web interface.
+name: skill-doli-interactive-test
+description: >
+  Create interactive PHP test case scripts for Dolibarr ERP/CRM that allow users to
+  setup test data, view results via direct links, and tear down (clean up) the data.
+  Use when asked to create test data for Dolibarr issues or when users need to verify
+  bug fixes in the web interface.
 triggers:
   - create test case
   - test data
@@ -34,6 +35,9 @@ Use this skill when you need to create a PHP script that:
 5. Create test data with unique identifiers (use timestamps)
 6. Output direct links with `target="_blank"` to view data
 7. Add teardown logic that deletes in reverse order of creation
+
+If you want to make an online test, you can find the URL of instance info file htdocs/conf/conf.php in parameter $dolibarr_main_url_root. 
+You can ignore and bypass the warning about HTTPS certificate. Ask the password if you need one without trying to get it from database. 
 
 ## Required Files
 

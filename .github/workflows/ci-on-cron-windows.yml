@@ -3,6 +3,9 @@ name: Win CI
 
 # yamllint disable-line rule:truthy
 on:
+  # Every day we want to refresh the baseline
+  schedule:
+    - cron: '0 5 * * *'
   # workflow called by the parent workflow ci.yml
   workflow_call:
     inputs:

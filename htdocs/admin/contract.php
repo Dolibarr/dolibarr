@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2011-2013      Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2011-2018      Philippe Grand	    <philippe.grand@atoo-net.com>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -252,8 +252,8 @@ foreach ($dirmodels as $reldir) {
 		$handle = opendir($dir);
 		if (is_resource($handle)) {
 			while (($file = readdir($handle)) !== false) {
-				if (substr($file, 0, 13) == 'mod_contract_' && substr($file, dol_strlen($file) - 3, 3) == 'php') {
-					$file = substr($file, 0, dol_strlen($file) - 4);
+				if (dol_substr($file, 0, 13) == 'mod_contract_' && dol_substr($file, dol_strlen($file) - 3, 3) == 'php') {
+					$file = dol_substr($file, 0, dol_strlen($file) - 4);
 
 					require_once $dir.$file.'.php';
 					$module = new $file($db);
@@ -389,8 +389,8 @@ foreach ($dirmodels as $reldir) {
 				foreach ($filelist as $file) {
 					if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file)) {
 						if (file_exists($dir.'/'.$file)) {
-							$name = substr($file, 4, dol_strlen($file) - 16);
-							$classname = substr($file, 0, dol_strlen($file) - 12);
+							$name = dol_substr($file, 4, dol_strlen($file) - 16);
+							$classname = dol_substr($file, 0, dol_strlen($file) - 12);
 
 							require_once $dir.'/'.$file;
 							/** @var ModelePDFContract $module */
@@ -563,6 +563,16 @@ print '<td class="right">';
 print ajax_constantonoff('CONTRACT_ALLOW_EXTERNAL_DOWNLOAD', array(), null, 0, 0, 0, 2, 0, 1);
 print '</td>';
 print '</tr>';
+
+// Reminder by email before a contract service expires
+if (isModEnabled('cron')) {
+	print '<tr class="oddeven">';
+	print '<td>'.$langs->trans("SendReminderForExpiredServicesTitle").'</td>';
+	print '<td class="right">';
+	print '<a href="'.DOL_URL_ROOT.'cron/list.php?search_label=SendReminderForExpiredServicesTitle&status=-1">'.$langs->trans("ConfigureContractReminderCronjobToSetFrequency").'</a>';
+	print '</td>';
+	print '</tr>';
+}
 print '</table>';
 print '</div>';
 

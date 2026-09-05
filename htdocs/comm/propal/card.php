@@ -217,6 +217,10 @@ if (empty($reshook)) {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('IdThirdParty')), null, 'errors');
 		} else {
 			if ($object->id > 0) {
+				// We clone object to avoid to denaturate loaded object when setting some properties for clone or if createFromClone modifies the object.
+				$objectutil = dol_clone($object, 1);
+				'@phan-var-force Propal $objectutil';
+
 				if (getDolGlobalString('PROPAL_CLONE_DATE_DELIVERY')) {
 					//Get difference between old and new delivery date and change lines according to difference
 					$date_delivery = dol_mktime(
@@ -227,7 +231,7 @@ if (empty($reshook)) {
 						GETPOSTINT('date_deliveryday'),
 						GETPOSTINT('date_deliveryyear')
 					);
-					$date_delivery_old = $object->delivery_date;
+					$date_delivery_old = $objectutil->delivery_date;
 					if (!empty($date_delivery_old) && !empty($date_delivery)) {
 						//Attempt to get the date without possible hour rounding errors
 						$old_date_delivery = dol_mktime(
@@ -241,8 +245,8 @@ if (empty($reshook)) {
 						//Calculate the difference and apply if necessary
 						$difference = $date_delivery - $old_date_delivery;
 						if ($difference != 0) {
-							$object->delivery_date = $date_delivery;
-							foreach ($object->lines as $line) {
+							$objectutil->delivery_date = $date_delivery;
+							foreach ($objectutil->lines as $line) {
 								if (isset($line->date_start)) {
 									$line->date_start +=  $difference;
 								}
@@ -254,11 +258,11 @@ if (empty($reshook)) {
 					}
 				}
 
-				$result = $object->createFromClone($user, $socid, (GETPOSTISSET('entity') ? GETPOSTINT('entity') : null), (GETPOST('update_prices') == 'on'), (GETPOST('update_desc') == 'on'));
+				$result = $objectutil->createFromClone($user, $socid, (GETPOSTISSET('entity') ? GETPOSTINT('entity') : null), (GETPOST('update_prices') == 'on'), (GETPOST('update_desc') == 'on'));
 				if ($result > 0) {
 					$warningMsgLineList = array();
 					// check all product lines are to sell otherwise add a warning message for each product line is not to sell
-					foreach ($object->lines as $line) {
+					foreach ($objectutil->lines as $line) {
 						if (!is_object($line->product)) {
 							$line->fetch_product();
 						}
@@ -275,8 +279,8 @@ if (empty($reshook)) {
 					header("Location: " . $_SERVER['PHP_SELF'] . '?id=' . $result);
 					exit();
 				} else {
-					if (count($object->errors) > 0) {
-						setEventMessages($object->error, $object->errors, 'errors');
+					if (count($objectutil->errors) > 0) {
+						setEventMessages($objectutil->error, $objectutil->errors, 'errors');
 					}
 					$action = '';
 				}
@@ -944,7 +948,7 @@ if (empty($reshook)) {
 		$fromElementid = GETPOST('fromelementid');
 		$importLines = GETPOST('line_checkbox');
 
-		if (!empty($importLines) && is_array($importLines) && !empty($fromElement) && ctype_alpha($fromElement) && !empty($fromElementid)) {
+		if (!empty($importLines) && is_array($importLines) && !empty($fromElement) && preg_match('/^[a-zA-Z]+$/', $fromElement) && !empty($fromElementid)) {
 			if ($fromElement == 'commande') {
 				dol_include_once('/' . $fromElement . '/class/' . $fromElement . '.class.php');
 				$lineClassName = 'OrderLine';
@@ -2512,7 +2516,6 @@ if ($action == 'create') {
 
 		print '<td class="titlefieldcreate fieldrequired">' . $langs->trans('Customer') . '</td>';
 		$shipping_method_id = 0;
-		$warehouse_id = 0;
 
 		if ($socid > 0) {
 			print '<td class="valuefieldcreate">';
@@ -2648,7 +2651,7 @@ if ($action == 'create') {
 		print '<td class="valuefieldcreate">';
 		print img_picto('', 'action', 'class="pictofixedwidth"');
 		if (is_numeric(getDolGlobalString('DATE_LIVRAISON_WEEK_DELAY'))) {	// If value set to 0 or a num, not empty
-			$tmpdte = time() + (7 * getDolGlobalInt('DATE_LIVRAISON_WEEK_DELAY') * 24 * 60 * 60);
+			$tmpdte = dol_now() + (7 * getDolGlobalInt('DATE_LIVRAISON_WEEK_DELAY') * 24 * 60 * 60);
 			$syear = date("Y", $tmpdte);
 			$smonth = date("m", $tmpdte);
 			$sday = date("d", $tmpdte);

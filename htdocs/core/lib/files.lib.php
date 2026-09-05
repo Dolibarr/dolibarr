@@ -1082,7 +1082,7 @@ function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayrep
 		while ($file = readdir($dir_handle)) {
 			if ($file != "." && $file != ".." && !is_link($ossrcfile."/".$file)) {
 				if (is_dir($ossrcfile."/".$file)) {
-					if (empty($excludesubdir) || ($excludesubdir == 2 && strlen($file) == 2)) {
+					if (empty($excludesubdir) || ($excludesubdir == 2 && dol_strlen($file) == 2)) {
 						$newfile = $file;
 						// Replace destination filename with a new one
 						if (is_array($arrayreplacement)) {
@@ -1281,7 +1281,7 @@ function dol_move($srcfile, $destfile, $newmask = '0', $overwriteifexists = 1, $
 						$ecmfile->note_public = $moreinfo['note_public'];
 					}
 					if (!empty($moreinfo) && !empty($moreinfo['src_object_type'])) {
-						$ecmfile->src_object_type = $moreinfo['src_object_type'];
+						$ecmfile->src_object_type = $moreinfo['src_object_type'];		// Usually the $object->table_element
 					}
 					if (!empty($moreinfo) && !empty($moreinfo['src_object_id'])) {
 						$ecmfile->src_object_id = $moreinfo['src_object_id'];
@@ -1429,7 +1429,7 @@ function dol_unescapefile($filename)
  *
  * @param   string      $src_file       Source file to check
  * @param   string      $dest_file      Destination file name (to know the expected type)
- * @return  string[]                    Array of errors, or empty array if not virus found
+ * @return  string[]                    Array of errors (the translation key of the error is used as array key when the check has one), or empty array if not virus found
  */
 function dolCheckVirus($src_file, $dest_file = '')
 {
@@ -1459,7 +1459,7 @@ function dolCheckVirus($src_file, $dest_file = '')
  *
  * @param   string      $src_file       Source file to check
  * @param   string      $dest_file      Destination file name (to know the expected type)
- * @return  string[]                    Array of errors, or empty array if not virus found
+ * @return  string[]                    Array of errors (the translation key of the error is used as array key when the check has one), or empty array if not virus found
  */
 function dolCheckOnFileName($src_file, $dest_file = '')
 {
@@ -1469,7 +1469,7 @@ function dolCheckOnFileName($src_file, $dest_file = '')
 
 			$tmp = file_get_contents(trim($src_file));
 			if (preg_match('/[\n\s]+\/JavaScript[\n\s]+/m', $tmp)) {
-				return array('File is a PDF with javascript inside');
+				return array('ErrorFileIsAnInfectedPDFWithJSInside' => 'File is a PDF with javascript inside');
 			}
 		} else {
 			dol_syslog("dolCheckOnFileName Check js into pdf disabled");
@@ -1544,7 +1544,14 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 			$checkvirusarray = dolCheckVirus($src_file, $dest_file);
 			if (count($checkvirusarray)) {
 				dol_syslog('Files.lib::dol_move_uploaded_file File "'.$src_file.'" (target name "'.$dest_file.'") KO with antivirus: errors='.implode(',', $checkvirusarray), LOG_WARNING);
-				return 'ErrorFileIsInfectedWithAVirus: '.implode(',', $checkvirusarray);
+				// We return a translation key alone, so the caller can translate it. The technical message of the
+				// antivirus is not appended to it (that would break the translation), it is kept into the log only.
+				foreach (array_keys($checkvirusarray) as $errorkey) {
+					if (is_string($errorkey)) {	// A check that knows its own error key returns it as array key
+						return $errorkey;
+					}
+				}
+				return 'ErrorFileIsInfectedWithAVirus';
 			}
 		}
 
@@ -2195,7 +2202,7 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $updatesessionor
 				// Move file from source directory to final destination. Check for virus is also embedded and a .noexe may also be appended on file name.
 				$resupload = dol_move_uploaded_file($TFile['tmp_name'][$i], $destfull, $allowoverwrite, 0, $TFile['error'][$i], 0, $keyforsourcefile, $upload_dir, $mode);
 
-				if (is_numeric($resupload) && $resupload > 0) {   // $resupload can be 'ErrorFileAlreadyExists', 'ErrorFileIsInfectedWithAVirus...'
+				if (is_numeric($resupload) && $resupload > 0) {   // $resupload can be 'ErrorFileAlreadyExists', 'ErrorFileIsInfectedWithAVirus'
 					include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 
 					$tmparraysize = getDefaultImageSizes();
@@ -2255,13 +2262,7 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $updatesessionor
 					$langs->load("errors");
 					if (is_numeric($resupload) && $resupload < 0) {	// Unknown error
 						setEventMessages($langs->trans("ErrorFileNotUploaded"), null, 'errors');
-					} elseif (preg_match('/ErrorFileIsInfectedWithAVirus/', $resupload)) {	// Files infected by a virus
-						if (preg_match('/File is a PDF with javascript inside/', $resupload)) {
-							setEventMessages($langs->trans("ErrorFileIsAnInfectedPDFWithJSInside"), null, 'errors');
-						} else {
-							setEventMessages($langs->trans("ErrorFileIsInfectedWithAVirus").'<br>'.dolGetFirstLineOfText($resupload), null, 'errors');
-						}
-					} else { // Known error
+					} else { // Known error, $resupload is a translation key
 						setEventMessages($langs->trans($resupload), null, 'errors');
 					}
 				}
@@ -2707,7 +2708,7 @@ function dol_compress_file($inputfile, $outputfile, $mode = "gz", &$errorstring 
 						$fileName = $file->getFilename();
 						$fileFullRealPath = $file->getRealPath();	// the full path with name and transformed to use real path directory.
 
-						//$relativePath = substr($fileFullRealPath, strlen($rootPath) + 1);
+						//$relativePath = dol_substr($fileFullRealPath, strlen($rootPath) + 1);
 						$relativePath = substr(($filePath ? $filePath.'/' : '').$fileName, strlen($rootPath) + 1);
 
 						// Add current file to archive
@@ -2981,7 +2982,7 @@ function dol_compress_dir($inputdir, $outputfile, $mode = "zip", $excludefiles =
 						$fileName = $file->getFilename();
 						$fileFullRealPath = $file->getRealPath();	// the full path with name and transformed to use real path directory.
 
-						//$relativePath = ($rootdirinzip ? $rootdirinzip.'/' : '').substr($fileFullRealPath, strlen($inputdir) + 1);
+						//$relativePath = ($rootdirinzip ? $rootdirinzip.'/' : '').dol_substr($fileFullRealPath, strlen($inputdir) + 1);
 						$relativePath = ($rootdirinzip ? $rootdirinzip.'/' : '').substr(($filePath ? $filePath.'/' : '').$fileName, strlen($inputdir) + 1);
 
 						//var_dump($filePath);var_dump($fileFullRealPath);var_dump($relativePath);
@@ -3053,7 +3054,7 @@ function dol_most_recent_file($dir, $regexfilter = '', $excludefilter = array('(
  * @param  	User|null	$fuser				User object (forced)
  * @param	string		$refname			Ref of object to check permission for external users (autodetect if not provided by taking the dirname of $original_file) or for hierarchy
  * @param   string  	$mode               Check permission for 'read' or 'write'
- * @return	mixed							Array with access information : 'accessallowed' & 'sqlprotectagainstexternals' & 'original_file' (as a full path name)
+ * @return	mixed							Array with access information : 'accessallowed' & 'sqlprotectagainstexternals' (a SQL to compare the fk_soc with the one of the user) & 'original_file' (as a full path name)
  * @see restrictedArea()
  */
 function dol_check_secure_access_document($modulepart, $original_file, $entity, $fuser = null, $refname = '', $mode = 'read')
@@ -3780,7 +3781,8 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$accessallowed = 1;
 		}
 		if (!isset($_SESSION['email_customer'])) {
-			$sqlprotectagainstexternals = '';
+			// Request to check socid for external users
+			$sqlprotectagainstexternals = "SELECT fk_soc FROM ".MAIN_DB_PREFIX."ticket WHERE ref='".$db->escape($refname)."' AND entity=".((int) $conf->entity);
 		} else {
 			$email_split = explode('@', $_SESSION['email_customer']);
 
@@ -3788,13 +3790,13 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$sqlprotectagainstexternals .= ' LEFT JOIN '.MAIN_DB_PREFIX.'element_contact ec ON ec.element_id = t.rowid';
 			$sqlprotectagainstexternals .= ' LEFT JOIN '.MAIN_DB_PREFIX.'socpeople c ON c.rowid = ec.fk_socpeople';
 			$sqlprotectagainstexternals .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact tc ON tc.element = "ticket" AND tc.rowid = ec.fk_c_type_contact';
-			$sqlprotectagainstexternals .= ' WHERE t.ref LIKE "'.$db->sanitize($refname).'"';
+			$sqlprotectagainstexternals .= " WHERE t.ref LIKE '".$db->escape($refname)."'";
 			$sqlprotectagainstexternals .= ' AND (';
 			$sqlprotectagainstexternals .= '   (';
 			$sqlprotectagainstexternals .= '     tc.rowid IS NOT NULL';
-			$sqlprotectagainstexternals .= '     AND c.email = "'.$db->sanitize($email_split[0]).'@'.$db->sanitize($email_split[1]).'"';
+			$sqlprotectagainstexternals .= "     AND c.email = '".$db->escape($email_split[0]).'@'.$db->sanitize($email_split[1])."'";
 			$sqlprotectagainstexternals .= '   )';
-			$sqlprotectagainstexternals .= '   OR t.origin_email = "'.$db->sanitize($email_split[0]).'@'.$db->sanitize($email_split[1]).'"';
+			$sqlprotectagainstexternals .= "   OR t.origin_email = '".$db->escape($email_split[0]).'@'.$db->sanitize($email_split[1])."'";
 			$sqlprotectagainstexternals .= ' )';
 		}
 		$original_file = $conf->ticket->multidir_output[$entity].'/'.$original_file;
@@ -4298,7 +4300,9 @@ function dolDocToText($filetoprocess, $useFullTextIndexation = 'pdftotext', $opt
 		} else {
 			$params = '-htmlmeta';
 		}
-		$cmd = getDolGlobalString('MAIN_SAVE_FILE_CONTENT_AS_TEXT_PDFTOTEXT', 'pdftotext') . " " . $params ." '".escapeshellcmd($filetoprocess)."' - ";
+
+		// MAIN_SAVE_FILE_CONTENT_AS_TEXT_PDFTOTEXT can be for example: "/usr/bin/pdftotext"
+		$cmd = escapeshellcmd(dol_sanitizePathName(getDolGlobalString('MAIN_SAVE_FILE_CONTENT_AS_TEXT_PDFTOTEXT', 'pdftotext'))) . " " . $params ." '".escapeshellcmd($filetoprocess)."' - ";
 		$resultexec = $utils->executeCLI($cmd, $outputfile, 0, null, 1);
 
 		if (empty($resultexec['error'])) {
@@ -4330,7 +4334,8 @@ function dolDocToText($filetoprocess, $useFullTextIndexation = 'pdftotext', $opt
 
 		// We also exclude '/temp/' dir and 'documents/admin/documents'
 		// We make escapement here and call executeCLI without escapement because we don't want to have the '*.log' escaped.
-		$cmd = getDolGlobalString('MAIN_SAVE_FILE_CONTENT_AS_TEXT_DOCLING', 'docling')." --from pdf --to text '".escapeshellcmd($filetoprocess)."'";
+		// MAIN_SAVE_FILE_CONTENT_AS_TEXT_DOCLING can be for example: "/usr/bin/docling"
+		$cmd = escapeshellcmd(dol_sanitizePathName(getDolGlobalString('MAIN_SAVE_FILE_CONTENT_AS_TEXT_DOCLING', 'docling')))." --from pdf --to text '".escapeshellcmd($filetoprocess)."'";
 		$resultexec = $utils->executeCLI($cmd, $outputfile, 0, null, 1);
 
 		if (!$resultexec['error']) {

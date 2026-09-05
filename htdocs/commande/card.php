@@ -234,11 +234,11 @@ if (empty($reshook)) {
 				// We clone object to avoid to denaturate loaded object when setting some properties for clone or if createFromClone modifies the object.
 				$objectutil = dol_clone($object, 1);
 
-				$result = $objectutil->createFromClone($user, $socid);
+				$result = $objectutil->createFromClone($user, $socid, (GETPOSTISSET('entity') ? GETPOSTINT('entity') : null));
 				if ($result > 0) {
 					$warningMsgLineList = array();
 					// check all product lines are to sell otherwise add a warning message for each product line is not to sell
-					foreach ($object->lines as $line) {
+					foreach ($objectutil->lines as $line) {
 						if (!is_object($line->product)) {
 							$line->fetch_product();
 						}
@@ -400,26 +400,6 @@ if (empty($reshook)) {
 
 			// If creation from another object of another module (Example: origin=propal, originid=1)
 			if (!empty($origin) && !empty($originid)) {
-				// Parse element/subelement (ex: project_task)
-				$element = $subelement = $origin;
-				$regs = array();
-				if (preg_match('/^([^_]+)_([^_]+)/i', $origin, $regs)) {
-					$element = $regs[1];
-					$subelement = $regs[2];
-				}
-
-				// For compatibility
-				if ($element == 'order') {
-					$element = $subelement = 'commande';
-				}
-				if ($element == 'propal') {
-					$element = 'comm/propal';
-					$subelement = 'propal';
-				}
-				if ($element == 'contract') {
-					$element = $subelement = 'contrat';
-				}
-
 				$object->origin = $origin; // deprecated
 				$object->origin_type = $origin;
 				$object->origin_id = $originid;
@@ -435,16 +415,14 @@ if (empty($reshook)) {
 					$object_id = $object->create($user);
 
 					if ($object_id > 0) {
-						dol_include_once('/' . $element . '/class/' . $subelement . '.class.php');
-
-						$classname = ucfirst($subelement);
-						$srcobject = new $classname($db);
-						'@phan-var-force Commande|Propal|Contrat $srcobject';
-						/** @var Commande|Propal|Contrat $srcobject */
-
 						dol_syslog("Try to find source object origin=" . $object->origin . " originid=" . $object->origin_id . " to add lines");
-						$result = $srcobject->fetch($object->origin_id);
-						if ($result > 0) {
+
+						// Resolve and load the source object from its element type (propal, commande, contract, ...)
+						$srcobject = fetchObjectByElement($object->origin_id, $origin);
+
+						if (is_object($srcobject) && $srcobject->id > 0) {
+							'@phan-var-force Commande|Propal|Contrat $srcobject';
+							/** @var Commande|Propal|Contrat $srcobject */
 							$lines = $srcobject->lines;
 							if (empty($lines) && method_exists($srcobject, 'fetch_lines')) {
 								$srcobject->fetch_lines();
@@ -547,7 +525,12 @@ if (empty($reshook)) {
 								}
 							}
 						} else {
-							setEventMessages($srcobject->error, $srcobject->errors, 'errors');
+							if (is_object($srcobject) && !empty($srcobject->error)) {
+								setEventMessages($srcobject->error, $srcobject->errors, 'errors');
+							} else {
+								$langs->load("errors");
+								setEventMessages($langs->trans("ErrorRecordNotFound"), null, 'errors');
+							}
 							$error++;
 						}
 
@@ -577,7 +560,7 @@ if (empty($reshook)) {
 						}*/
 
 						// Hooks
-						$parameters = array('objFrom' => $srcobject);
+						$parameters = array('objFrom' => (is_object($srcobject) ? $srcobject : null));
 						// Note that $action and $object may be modified by hook
 						$reshook = $hookmanager->executeHooks('createFrom', $parameters, $object, $action);
 						if ($reshook < 0) {
@@ -2101,7 +2084,7 @@ if (empty($reshook)) {
 		$fromElementid = GETPOST('fromelementid');
 		$importLines = GETPOST('line_checkbox');
 
-		if (!empty($importLines) && is_array($importLines) && !empty($fromElement) && ctype_alpha($fromElement) && !empty($fromElementid)) {
+		if (!empty($importLines) && is_array($importLines) && !empty($fromElement) && preg_match('/^[a-zA-Z]+$/', $fromElement) && !empty($fromElementid)) {
 			if ($fromElement == 'commande') {
 				dol_include_once('/' . $fromElement . '/class/' . $fromElement . '.class.php');
 				$lineClassName = 'OrderLine';
@@ -2263,12 +2246,11 @@ if ($action == 'create' && $usercancreate) {
 	$fk_account = GETPOSTINT('fk_account');
 
 	if (!empty($origin) && !empty($originid)) {
-		// Parse element/subelement (ex: project_task)
-		$element = $subelement = $origin;
+		// Parse element (ex: project_task -> project) just to detect the 'project' origin handled below
+		$element = $origin;
 		$regs = array();
 		if (preg_match('/^([^_]+)_([^_]+)/i', $origin, $regs)) {
 			$element = $regs[1];
-			$subelement = $regs[2];
 		}
 
 		if ($element == 'project') {
@@ -2287,61 +2269,55 @@ if ($action == 'create' && $usercancreate) {
 				$remise_percent = $soc->remise_percent;
 			}
 		} else {
-			// For compatibility
-			if ($element == 'order' || $element == 'commande') {
-				$element = $subelement = 'commande';
-			} elseif ($element == 'propal') {
-				$element = 'comm/propal';
-				$subelement = 'propal';
-			} elseif ($element == 'contract') {
-				$element = $subelement = 'contrat';
-			}
+			// Resolve and load the source object from its element type (propal, commande, contract, ...)
+			$objectsrc = fetchObjectByElement($originid, $origin);
 
-			dol_include_once('/' . $element . '/class/' . $subelement . '.class.php');
+			if (is_object($objectsrc)) {
+				'@phan-var-force Commande|Propal|Contrat $objectsrc';  // Can possibly be other class but CommonObject is too general
+				$classname = get_class($objectsrc);
 
-			$classname = ucfirst($subelement);
-			$objectsrc = new $classname($db);
-			'@phan-var-force Commande|Propal|Contrat $objectsrc';  // Can possibly be other class but CommonObject is too general
-			$objectsrc->fetch($originid);
-			if (empty($objectsrc->lines) && method_exists($objectsrc, 'fetch_lines')) {
-				$objectsrc->fetch_lines();
-			}
-			$objectsrc->fetch_thirdparty();
-
-			// Replicate extrafields
-			$objectsrc->fetch_optionals();
-			$object->array_options = $objectsrc->array_options;
-
-			$projectid = (int) $objectsrc->fk_project;
-			$ref_client = (!empty($objectsrc->ref_client) ? $objectsrc->ref_client : '');
-
-			$soc = $objectsrc->thirdparty;
-			$cond_reglement_id	= (!empty($objectsrc->cond_reglement_id) ? $objectsrc->cond_reglement_id : (!empty($soc->cond_reglement_id) ? $soc->cond_reglement_id : 0));
-			$deposit_percent	= (!empty($objectsrc->deposit_percent) ? $objectsrc->deposit_percent : (!empty($soc->deposit_percent) ? $soc->deposit_percent : null));
-			$mode_reglement_id	= (!empty($objectsrc->mode_reglement_id) ? $objectsrc->mode_reglement_id : (!empty($soc->mode_reglement_id) ? $soc->mode_reglement_id : 0));
-			$fk_account         = (!empty($objectsrc->fk_account) ? $objectsrc->fk_account : (!empty($soc->fk_account) ? $soc->fk_account : 0));
-			$availability_id = (!empty($objectsrc->availability_id) ? $objectsrc->availability_id : 0);
-			$shipping_method_id = (!empty($objectsrc->shipping_method_id) ? $objectsrc->shipping_method_id : (!empty($soc->shipping_method_id) ? $soc->shipping_method_id : 0));
-			$warehouse_id = (!empty($objectsrc->warehouse_id) ? $objectsrc->warehouse_id : (!empty($soc->warehouse_id) ? $soc->warehouse_id : 0));
-			$demand_reason_id = (!empty($objectsrc->demand_reason_id) ? $objectsrc->demand_reason_id : (!empty($soc->demand_reason_id) ? $soc->demand_reason_id : 0));
-			$dateorder = getDolGlobalString('MAIN_AUTOFILL_DATE_ORDER') ? '' : -1;
-
-			$date_delivery = (!empty($objectsrc->delivery_date) ? $objectsrc->delivery_date : '');
-
-			if (isModEnabled("multicurrency")) {
-				if (!empty($objectsrc->multicurrency_code)) {
-					$currency_code = $objectsrc->multicurrency_code;
+				if (empty($objectsrc->lines) && method_exists($objectsrc, 'fetch_lines')) {
+					$objectsrc->fetch_lines();
 				}
-				if (getDolGlobalString('MULTICURRENCY_USE_ORIGIN_TX') && !empty($objectsrc->multicurrency_tx)) {
-					$currency_tx = $objectsrc->multicurrency_tx;
+				$objectsrc->fetch_thirdparty();
+
+				// Replicate extrafields
+				$objectsrc->fetch_optionals();
+				$object->array_options = $objectsrc->array_options;
+
+				$projectid = (int) $objectsrc->fk_project;
+				$ref_client = (!empty($objectsrc->ref_client) ? $objectsrc->ref_client : '');
+
+				$soc = $objectsrc->thirdparty;
+				$cond_reglement_id	= (!empty($objectsrc->cond_reglement_id) ? $objectsrc->cond_reglement_id : (!empty($soc->cond_reglement_id) ? $soc->cond_reglement_id : 0));
+				$deposit_percent	= (!empty($objectsrc->deposit_percent) ? $objectsrc->deposit_percent : (!empty($soc->deposit_percent) ? $soc->deposit_percent : null));
+				$mode_reglement_id	= (!empty($objectsrc->mode_reglement_id) ? $objectsrc->mode_reglement_id : (!empty($soc->mode_reglement_id) ? $soc->mode_reglement_id : 0));
+				$fk_account         = (!empty($objectsrc->fk_account) ? $objectsrc->fk_account : (!empty($soc->fk_account) ? $soc->fk_account : 0));
+				$availability_id = (!empty($objectsrc->availability_id) ? $objectsrc->availability_id : 0);
+				$shipping_method_id = (!empty($objectsrc->shipping_method_id) ? $objectsrc->shipping_method_id : (!empty($soc->shipping_method_id) ? $soc->shipping_method_id : 0));
+				$warehouse_id = (!empty($objectsrc->warehouse_id) ? $objectsrc->warehouse_id : (!empty($soc->warehouse_id) ? $soc->warehouse_id : 0));
+				$demand_reason_id = (!empty($objectsrc->demand_reason_id) ? $objectsrc->demand_reason_id : (!empty($soc->demand_reason_id) ? $soc->demand_reason_id : 0));
+				$dateorder = getDolGlobalString('MAIN_AUTOFILL_DATE_ORDER') ? '' : -1;
+
+				$date_delivery = (!empty($objectsrc->delivery_date) ? $objectsrc->delivery_date : '');
+
+				if (isModEnabled("multicurrency")) {
+					if (!empty($objectsrc->multicurrency_code)) {
+						$currency_code = $objectsrc->multicurrency_code;
+					}
+					if (getDolGlobalString('MULTICURRENCY_USE_ORIGIN_TX') && !empty($objectsrc->multicurrency_tx)) {
+						$currency_tx = $objectsrc->multicurrency_tx;
+					}
 				}
+
+				$note_private = $object->getDefaultCreateValueFor('note_private', (!empty($objectsrc->note_private) ? $objectsrc->note_private : null));
+				$note_public = $object->getDefaultCreateValueFor('note_public', (!empty($objectsrc->note_public) ? $objectsrc->note_public : null));
+
+				// Object source contacts list
+				$srccontactslist = $objectsrc->liste_contact(-1, 'external', 1);
+			} else {
+				$objectsrc = null;
 			}
-
-			$note_private = $object->getDefaultCreateValueFor('note_private', (!empty($objectsrc->note_private) ? $objectsrc->note_private : null));
-			$note_public = $object->getDefaultCreateValueFor('note_public', (!empty($objectsrc->note_public) ? $objectsrc->note_public : null));
-
-			// Object source contacts list
-			$srccontactslist = $objectsrc->liste_contact(-1, 'external', 1);
 		}
 	} else {
 		$cond_reglement_id  = empty($soc->cond_reglement_id) ? $cond_reglement_id : $soc->cond_reglement_id;

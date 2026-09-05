@@ -240,6 +240,11 @@ if (empty($action)) {
 
 		$uploadform .= '<br>';
 
+		$uploadform .= img_picto('', 'invoice', 'class="pictofixedwidth"');
+		$uploadform .= $form->select_type_fees(GETPOSTINT('feetypeid') > 0 ? GETPOSTINT('feetypeid') : -1, 'feetypeid', $langs->transnoentitiesnoconv("SocialContributionType"), 'maxwidth200 disableautoopen', 1, 1);
+
+		$uploadform .= '<br>';
+
 		$uploadform .= '<br>
 		<small class="opacitymedium">'.$langs->trans("OrClickToSelectAFile").'...</small>
 		</div>
@@ -254,13 +259,34 @@ if (empty($action)) {
 		<div id="userpayroll" class="flex-item flex-item-uploadfile">'.img_picto('', 'salary', 'class="fa-2x"').'<br>
 		<div>'.$langs->trans("UserPaySlip").'<br><br>';
 
-
 		$uploadform .= img_picto('', 'user', 'class="pictofixedwidth"');
-		//$uploadform .= '<span class="disableautoopen">';
 		$uploadform .= $form->select_dolusers(GETPOSTINT('usersalaryid') > 0 ? GETPOSTINT('usersalaryid') : $user->id, 'usersalaryid', $langs->transnoentitiesnoconv("Employee"), null, 0, 'hierarchyme', '', '', 0, 0, '', 0, '', 'maxwidth200 disableautoopen', 1);
-		//$uploadform .= '</span>';
 
 		$uploadform .= '<br>';
+
+		$uploadform .= '<br>
+		<small class="opacitymedium">'.$langs->trans("OrClickToSelectAFile").'...</small>
+		</div>
+		</div>';
+	}
+
+	// Form to upload a salary document
+	if (isModEnabled('tax')) {
+		$langs->load("taxes");
+		$uploadform .= '
+		<div id="userpayroll" class="flex-item flex-item-uploadfile">'.img_picto('', 'invoice', 'class="fa-2x"').'<br>
+		<div>'.$langs->trans("SocialContribution").'<br><br>';
+
+		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formsocialcontrib.class.php';
+		$formsocialcontrib = new FormSocialContrib($db);
+
+		$uploadform .= img_picto('', 'invoice', 'class="pictofixedwidth"');
+		$uploadform .= $formsocialcontrib->select_type_socialcontrib(GETPOST('socialcontrib', 'alpha') ? GETPOSTINT('socialcontrib') : 0, 'socialcontrib', 1, 0, 0, 'minwidth150 maxwidth200 disableautoopen', 0, 1);
+
+		$uploadform .= '<br>';
+
+		$uploadform .= img_picto('', 'user', 'class="pictofixedwidth"');
+		$uploadform .= $form->select_dolusers(GETPOSTINT('usertaxid') > 0 ? GETPOSTINT('usertaxid') : $user->id, 'usertaxid', $langs->transnoentitiesnoconv("Employee"), null, 0, 'hierarchyme', '', '', 0, 0, '', 0, '', 'maxwidth200 disableautoopen', 1);
 
 		$uploadform .= '<br>
 		<small class="opacitymedium">'.$langs->trans("OrClickToSelectAFile").'...</small>
@@ -429,12 +455,12 @@ if ($action == 'uploadfile' || $action == 'showsummary') {
 
 	print '<form class="" id="form-result" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
-	print '<input type="hidden" name="modulepart" value="'.$modulepart.'">';
 	print '<input type="hidden" name="action" value="showsummary">';
+	print '<input type="hidden" name="modulepart" value="'.$modulepart.'">';
 	print '<input type="hidden" name="socid" value="'.$socid.'">';
 	print '<input type="hidden" name="prodid" value="'.$prodid.'">';
 	print '<input type="hidden" name="originalfilename" value="'.$fullnewname.'">';
-	print '<input type="hidden" name="jsonstring" id="ajax-result" value="jsonstringtoreplace">';
+	print '<input type="hidden" name="jsonstring" id="ajax-result" value="jsonstringtoreplace">';	// Fill by the ajax answer
 	if ($action == 'uploadfile') {
 		print '<input type="submit" name="form-result-submit" class="" value="'.$langs->trans("Next").'">';		// TODO Hide.
 	}
@@ -443,31 +469,45 @@ if ($action == 'uploadfile' || $action == 'showsummary') {
 }
 
 if ($action == 'showsummary') {
-	print '<form class="" id="summary-result">';
+	print '<form class="" id="summary-result" method="POST">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="action" value="addobject">';
+	print '<input type="hidden" name="modulepart" value="'.$modulepart.'">';
+	print '<input type="hidden" name="socid" value="'.$socid.'">';
+	print '<input type="hidden" name="prodid" value="'.$prodid.'">';
+	print '<input type="hidden" name="originalfilename" value="'.$fullnewname.'">';
+	print '<input type="hidden" name="jsonstring" id="ajax-result" value="'.GETPOST('jsonstring', 'restricthtml').'">';
 	print '<br>';
 	print '<div class="neutral">';
 
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 
-	$json = json_decode(GETPOST('jsonstring', 'restricthtml'), true);
+	try {
+		$json = json_decode(GETPOST('jsonstring', 'restricthtml'), true);
+	} catch (Exception $e) {
+		print 'Failed to decode the result of the AI service. Error: '.$e->getMessage();
+		print '<br>';
+		print 'Result: '.GETPOST('jsonstring', 'restricthtml');
+		print '<br>';
+		print '<br>';
+	}
 
 	if ($modulepart == 'invoice_supplier') {
-		print '
-			<div id="supplierinvoice" class="">';
+		print '<div id="supplierinvoice" class="">';
 
-			//print '<div class="inline-block">'.img_picto('', 'bill', '').' '.$langs->trans("SupplierInvoice").'</div>';
-			//print '<br><br>';
+		//print '<div class="inline-block">'.img_picto('', 'bill', '').' '.$langs->trans("SupplierInvoice").'</div>';
+		//print '<br><br>';
 
-			$nameindoc = $json['vendor']['name'];
-			$addressindoc = $json['vendor']['address'];
-			$idprof1indoc = $json['professional_id']['siren'];
-			$idprof2indoc = $json['supplier']['siret'];
-			$emailindoc = $json['email'];
-			$vatnumberindoc = $json['vat_number'];
+		$nameindoc = $json['vendor']['name'];
+		$addressindoc = $json['vendor']['address'];
+		$idprof1indoc = $json['professional_id']['siren'];
+		$idprof2indoc = $json['supplier']['siret'];
+		$emailindoc = $json['email'];
+		$vatnumberindoc = $json['vat_number'];
 
-			// Thirdparty
-			$tmpthirdparty = new Societe($db);
-			print img_picto('', 'company', 'class="pictofixedwidth"').$langs->trans("ThirdParty").'<br>';
+		// Thirdparty
+		$tmpthirdparty = new Societe($db);
+		print img_picto('', 'company', 'class="pictofixedwidth"').$langs->trans("ThirdParty").'<br>';
 		if (GETPOSTINT('socid')) {
 			$tmpthirdparty->fetch(GETPOSTINT('socid'));
 			// TODO We can show a warning if we find a diff with autodetected value $nameindoc
@@ -480,9 +520,9 @@ if ($action == 'showsummary') {
 			}
 		}
 
-			print '<span class="opacitymedium">'.$langs->trans("FoundInDocument").' :</span> ';
-			print $nameindoc.', &nbsp;'.implode(', ', $addressindoc);
-			print '<br>';
+		print '<span class="opacitymedium">'.$langs->trans("FoundInDocument").' :</span> ';
+		print $nameindoc.', &nbsp;'.implode(', ', $addressindoc);
+		print '<br>';
 		if (empty($tmpthirdparty->id)) {
 			print '<span class="opacitymedium">'.$langs->trans("NotFoundInDatabase").'</span><br>';
 			print $langs->trans("ChooseTheThirdPartyTouse").' ';
@@ -495,18 +535,18 @@ if ($action == 'showsummary') {
 		}
 
 
-			print '<br><br>';
+		print '<br><br>';
 
 
-			$nameprodindoc = $json['items'][0]['description'];
+		$nameprodindoc = $json['items'][0]['description'];
 
 
-			// Product
-			$prodid = GETPOSTINT('prodid');
-			$prodtext = $langs->trans("RefOrLabel");
+		// Product
+		$prodid = GETPOSTINT('prodid');
+		$prodtext = $langs->trans("RefOrLabel");
 
-			$tmpproduct = new Product($db);
-			print img_picto('', 'product', 'class="pictofixedwidth"').$langs->trans("Product").'<br>';
+		$tmpproduct = new Product($db);
+		print img_picto('', 'product', 'class="pictofixedwidth"').$langs->trans("Product").'<br>';
 
 		if ($prodid) {
 			$tmpproduct->fetch($prodid);
@@ -515,12 +555,14 @@ if ($action == 'showsummary') {
 			//$tmpproduct->ref = $json['ref'];
 		}
 
-			print '<span class="opacitymedium">'.$langs->trans("FoundInDocument").' :</span> ';
-			print $nameprodindoc;
-			print '<br>';
+		print '<span class="opacitymedium">'.$langs->trans("FoundInDocument").' :</span> ';
+		print $nameprodindoc;
+		print '<br>';
 		if (empty($tmpproduct->id)) {
 			print $langs->trans("ChooseTheProductTouse").' ';
 			print $form->select_produits_fournisseurs(0, $prodid, 'prodid', '', '', array(), 1, 1, 'maxwidth200 disableautoopen', $prodtext, 1);
+
+			// TODO On selection of product, refresh next section with the product price ref
 		} else {
 			print $langs->trans("WillUse").' ';
 			print $tmpproduct->getNomUrl(1);
@@ -528,24 +570,38 @@ if ($action == 'showsummary') {
 		}
 
 
-			print '<br><br>';
+		print '<br><br>';
 
-			$tmpinvoice = new FactureFournisseur($db);
+		$tmpinvoice = new FactureFournisseur($db);
 
-			$invoiceindoc = $ai->decodeJsonIntoArray($json, 'supplier_invoice');
+		$invoiceindoc = $ai->decodeJsonIntoArray($json, 'supplier_invoice');
 
-			print img_picto('', 'supplier_invoice', 'class="pictofixedwidth"').$langs->trans("SupplierInvoice").'<br>';
+		print img_picto('', 'supplier_invoice', 'class="pictofixedwidth"').$langs->trans("SupplierInvoice").'<br>';
 
-			print '<span class="opacitymedium">'.$langs->trans("FoundInDocument").' :</span> ';
-			print $invoiceindoc['supplierref'].' - '.$invoiceindoc['due_date'].' - '.$invoiceindoc['issue_date'];
-			print ' - '.$invoiceindoc['currency_code'];
-			print '<br>';
+		print '<span class="opacitymedium">'.$langs->trans("FoundInDocument").' :</span> ';
+		print $invoiceindoc['supplierref'].' - '.$invoiceindoc['due_date'].' - '.$invoiceindoc['issue_date'];
+		print ' - '.$invoiceindoc['currency_code'];
+		print '<br>';
 
-			// Supplier invoice
+		// Supplier invoice
 		if (!empty($invoiceindoc['supplierref'])) {
 			// Try to find supplier invoice
-			// TODO Search using ref (see code of einvoicing module)
-			//$tmpinvoice->find...
+
+			// Exact match. Always tried first, and always enough on its own.
+			$sql = "SELECT rowid, total_ttc FROM " . $db->prefix() . "facture_fourn";
+			$sql .= " WHERE ref_supplier = '" . $db->escape($invoiceindoc['supplierref']) . "'";
+			$sql .= " AND fk_soc = " . ((int) $tmpthirdparty->id);
+			$sql .= " AND entity IN (" . getEntity('facture_fourn') . ")";
+			$sql .= " LIMIT 1";
+			$resql = $db->query($sql);
+			if (!$resql) {
+				dol_syslog(__METHOD__ . ' ' . $db->lasterror(), LOG_ERR);
+				return -1;
+			}
+			$obj = $db->fetch_object($resql);
+			if ($obj) {
+				$tmpinvoice->fetch($obj->rowid);
+			}
 		}
 
 		if (empty($tmpinvoice->id)) {
@@ -555,12 +611,11 @@ if ($action == 'showsummary') {
 			print '<input type="hidden name="invoiceid" value="'.$tmpinvoice->id.'">';
 		}
 
-			print '<br>
+		print '<br>
+		</div>
+		</div>';
 
-			</div>
-			</div>';
-
-			print '<center><input type="submit" name="submit" class="button" value="'.$langs->trans("Create").'"></center>';
+		print '<center><input type="submit" name="submit" class="button" value="'.$langs->trans("Create").'"></center>';
 	}
 
 	print '<input type="hidden" name="jsonstring" value="'.$json.'">';

@@ -5263,7 +5263,7 @@ tr.liste_sub_total, tr.liste_sub_total td {
 	border-bottom: 1px solid #aaa;
 }
 /* to avoid too much border on contract card */
-.tableforservicepart1 .impair, .tableforservicepart1 .pair, .tableforservicepart2 .impair, .tableforservicepart2 .pair {
+.tableforservicepart1 .impair, .tableforservicepart1 .pair, .tableforservicepart1 .oddeven, .tableforservicepart2 .impair, .tableforservicepart2 .pair, .tableforservicepart2 .oddeven {
 	background: #FFF;
 }
 .tableforservicepart1 tbody tr td, .tableforservicepart2 tbody tr td {
@@ -7835,6 +7835,7 @@ li.select2-selection__choice {
 	border-bottom: none;
 	box-shadow: none !important;
 }
+
 .select2-dropdown {
 	/*background-color: var(--colorbackvmenu1);
 	border: 1px solid var(--colorbackvmenu1); */

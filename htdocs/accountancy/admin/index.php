@@ -9,6 +9,7 @@
  * Copyright (C) 2017		Laurent Destailleur		<eldy@destailleur.fr>
  * Copyright (C) 2021		Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -621,13 +622,13 @@ foreach ($list_binding as $key) {
 	if ($key == 'ACCOUNTING_DATE_START_BINDING') {
 		print $form->selectDate((getDolGlobalInt($key) ? (int) getDolGlobalInt($key) : -1), $key, 0, 0, 1);
 	} elseif ($key == 'ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER') {
-		$array = array(0=>$langs->trans("PreviousMonth"), 1=>$langs->trans("CurrentMonth"), 2=>$langs->trans("Fiscalyear"));
+		$array = array(0 => $langs->trans("PreviousMonth"), 1 => $langs->trans("CurrentMonth"), 2 => $langs->trans("Fiscalyear"));
 		print $form->selectarray($key, $array, getDolGlobalInt('ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER', 0), 0, 0, 0, '', 0, 0, 0, '', 'onrightofpage width200');
 	} elseif ($key == 'ACCOUNTING_LABEL_OPERATION_ON_TRANSFER') {
 		$array = array(
-			0=>$langs->trans("ThirdPartyName") . ' - ' . $langs->trans("NumPiece") . ' - ' . $langs->trans("LabelAccount"),
-			1=>$langs->trans("ThirdPartyName") . ' - ' . $langs->trans("NumPiece"),
-			2=>$langs->trans("ThirdPartyName")
+			0 => $langs->trans("ThirdPartyName") . ' - ' . $langs->trans("NumPiece") . ' - ' . $langs->trans("LabelAccount"),
+			1 => $langs->trans("ThirdPartyName") . ' - ' . $langs->trans("NumPiece"),
+			2 => $langs->trans("ThirdPartyName")
 		);
 		print $form->selectarray($key, $array, getDolGlobalInt('ACCOUNTING_LABEL_OPERATION_ON_TRANSFER', 0), 0, 0, 0, '', 0, 0, 0, '', 'onrightofpage width300');
 	} else {
@@ -763,8 +764,8 @@ foreach ($dirmodels as $reldir) {
 		$handle = opendir($dir);
 		if (is_resource($handle)) {
 			while (($file = readdir($handle)) !== false) {
-				if (strpos($file, 'mod_bookkeeping_') === 0 && substr($file, dol_strlen($file) - 3, 3) == 'php') {
-					$file = substr($file, 0, dol_strlen($file) - 4);
+				if (strpos($file, 'mod_bookkeeping_') === 0 && dol_substr($file, dol_strlen($file) - 3, 3) == 'php') {
+					$file = dol_substr($file, 0, dol_strlen($file) - 4);
 
 					require_once $dir.$file.'.php';
 

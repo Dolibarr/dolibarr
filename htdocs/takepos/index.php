@@ -962,6 +962,8 @@ function Search2(keyCodeForEnter, moreorless) {
 function Edit(number) {
 	console.log("We click on PAD on key="+number);
 
+	invoiceid = $("#invoiceid").val();
+
 	if (typeof(selectedtext) == "undefined") {
 		return;	// We click on an action on the number pad but there is no line selected
 	}
@@ -978,7 +980,7 @@ function Edit(number) {
 		return;
 	} else if (number=='qty') {
 		if (editaction=='qty' && editnumber != '') {
-			$("#poslines").load("invoice.php?action=updateqty&token=<?php echo currentToken(); ?>&place="+place+"&idline="+selectedline+"&number="+editnumber, function() {
+			$("#poslines").load("invoice.php?action=updateqty&token=<?php echo currentToken(); ?>&place="+place+"&idline="+selectedline+"&number="+editnumber+"&invoiceid="+invoiceid, function() {
 				editnumber="";
 				//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
 				$("#qty").html("<?php echo $langs->trans("Qty"); ?>").removeClass('clicked');
@@ -992,7 +994,7 @@ function Edit(number) {
 		}
 	} else if (number=='p') {
 		if (editaction=='p' && editnumber!="") {
-			$("#poslines").load("invoice.php?action=updateprice&token=<?php echo currentToken(); ?>&place="+place+"&idline="+selectedline+"&number="+editnumber, function() {
+			$("#poslines").load("invoice.php?action=updateprice&token=<?php echo currentToken(); ?>&place="+place+"&idline="+selectedline+"&number="+editnumber+"&invoiceid="+invoiceid, function() {
 				editnumber="";
 				//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
 				$("#price").html("<?php echo $langs->trans("Price"); ?>").removeClass('clicked');
@@ -1006,7 +1008,7 @@ function Edit(number) {
 		}
 	} else if (number=='r') {
 		if (editaction=='r' && editnumber!="") {
-			$("#poslines").load("invoice.php?action=updatereduction&token=<?php echo currentToken(); ?>&place="+place+"&idline="+selectedline+"&number="+editnumber, function() {
+			$("#poslines").load("invoice.php?action=updatereduction&token=<?php echo currentToken(); ?>&place="+place+"&idline="+selectedline+"&number="+editnumber+"&invoiceid="+invoiceid, function() {
 				editnumber="";
 				//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
 				$("#reduction").html("<?php echo $langs->trans("LineDiscountShort"); ?>").removeClass('clicked');
@@ -1629,7 +1631,10 @@ if (getDolGlobalString('TAKEPOS_WEIGHING_SCALE')) {
 }
 
 // Button to delete (discard) the current sale
-$menus[$r++] = array('title' => '<span class="fa fa-trash-alt paddingrightonly"></span><div class="trunc">'.$langs->trans("DeleteSale").'</div>', 'action' => 'DeleteSale();', 'style' => 'background-color: #d9534f !important; color: #000 !important;');
+/* Hide this. This button must appear only if is_erasable() is true. So it must depend on open invoice. For this reason,
+ * the button could not be in this panel but must be on the left side inside the invoice.php file.
+$menus[$r++] = array('title' => '<span class="fa fa-trash-alt paddingrightonly"></span><div class="trunc truncdeletesale">'.$langs->trans("DeleteSale").'</div>', 'action' => 'DeleteSale();', 'class' => 'actionbuttondelete');
+*/
 
 $parameters = array('menus' => $menus);
 $reshook = $hookmanager->executeHooks('ActionButtons', $parameters);

@@ -835,7 +835,7 @@ class CodingPhpTest extends CommonClassTest
 			Note that $action and $object may have been modified by some hooks
 
 			if ($action == 'add' && $permissiontoadd) {
-			// aaa
+			// my code
 
 			EOT;
 			*/
@@ -1001,6 +1001,8 @@ class CodingPhpTest extends CommonClassTest
 
 	/**
 	 * Remove php comments from source string
+	 * Optimized with two regex passes for better performance
+	 * Using token_get_all is slower
 	 *
 	 * @param string $string The string from which the PHP comments are removed
 	 *
@@ -1008,27 +1010,20 @@ class CodingPhpTest extends CommonClassTest
 	 */
 	private function removePhpComments($string)
 	{
-		return preg_replace_callback(
-			'{(//.*?$)|(/\*.*?\*/)}ms',
-			static function ($match) {
-				if (isset($match[2])) {
-					// Count the number of newline characters in the comment
-					$num_newlines = substr_count($match[0], "\n");
-					// Generate whitespace equivalent to the number of newlines
-					if ($num_newlines == 0) {
-						// /* Comment on single line -> space
-						return " ";
-					} else {
-						// /* Comment on multiple lines -> new lines
-						return str_repeat("\n", $num_newlines);
-					}
-				} else {
-					// Double slash comment, just remove
-					return "";
-				}
+		// First, handle /* */ comments with callback to preserve newlines
+		$string = preg_replace_callback(
+			'/\/\*.*?\*\//s',
+			function ($match) {
+				$num_newlines = substr_count($match[0], "\n");
+				return $num_newlines > 0 ? str_repeat("\n", $num_newlines) : " ";
 			},
 			$string
 		);
+
+		// Then handle // comments - remove the comment but keep the newline
+		$string = preg_replace('/\/\/[^\n]*/m', '', $string);
+
+		return $string;
 	}
 
 	/**

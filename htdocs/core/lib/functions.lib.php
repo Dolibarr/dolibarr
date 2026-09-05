@@ -1387,6 +1387,10 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 		}
 	}
 
+	if ($paramname == 'hashp' && $out == 'shared') {
+		$out = ''; // We refuse to have hashp=shared as a parameter
+	}
+
 	return $out;
 }
 
@@ -2541,7 +2545,7 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
 			$ospid = sprintf("%7s", dol_trunc((string) getmypid(), 7, 'right', 'UTF-8', 1));
 			$osuser = " " . sprintf("%6s", dol_trunc(function_exists('posix_getuid') ? posix_getuid() : '', 6, 'right', 'UTF-8', 1));
 
-			$conf->logbuffer[] = dol_print_date(time(), "%Y-%m-%d %H:%M:%S") . " " . sprintf("%-7s", $logLevels[$level]) . " " . $ospid . " " . $osuser . " " . $message;
+			$conf->logbuffer[] = dol_print_date(dol_now(), "%Y-%m-%d %H:%M:%S") . " " . sprintf("%-7s", $logLevels[$level]) . " " . $ospid . " " . $osuser . " " . $message;
 		}
 
 		//TODO: Remove this. MAIN_ENABLE_LOG_INLINE_HTML should be deprecated and use a log handler dedicated to HTML output
@@ -5959,13 +5963,14 @@ function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, 
  *  This method is used for example by dol_htmlwithnojs() when option MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES is set to 1.
  *
  *	@param	string		$stringtoclean		String to clean
- *  @param	string[]	$allowed_attributes	Array of tags not allowed
+ *  @param	string[]|null	$allowed_attributes	Array of attributes to keep (null = default list)
+ *  @param	int|null	$ishtml				Use 1 if string is not an HTML content. 0 if it is, null if unknown.
  *	@return string	    					String cleaned
  *
  * 	@see	dol_htmlwithnojs() dol_escape_htmltag() strip_tags() dol_string_nohtmltag() dol_string_onlythesehtmltags() dol_string_neverthesehtmltags()
  * 	@phan-suppress PhanUndeclaredProperty
  */
-function dol_string_onlythesehtmlattributes($stringtoclean, $allowed_attributes = null)
+function dol_string_onlythesehtmlattributes($stringtoclean, $allowed_attributes = null, $ishtml = null)
 {
 	if (is_null($allowed_attributes)) {
 		$allowed_attributes = array(
@@ -6010,6 +6015,10 @@ function dol_string_onlythesehtmlattributes($stringtoclean, $allowed_attributes 
 	}
 
 	if (class_exists('DOMDocument') && !empty($stringtoclean)) {
+		if ($ishtml === 0) {
+			$stringtoclean = str_replace('&', '__AMPINTEXT__', $stringtoclean);	// Restore & char not entity
+		}
+
 		// Warning: loadHTML does not support HTML5 on old libxml versions.
 		$dom = new DOMDocument('', 'UTF-8');
 		// If $stringtoclean is wrong, it will generates warnings. So we disable warnings and restore them later.
@@ -6067,6 +6076,10 @@ function dol_string_onlythesehtmlattributes($stringtoclean, $allowed_attributes 
 			$return .= $dom->saveHTML($child);
 		}
 
+		if ($ishtml === 0) {
+			$return = str_replace('__AMPINTEXT__', '&', $return);	// Restore & char not entity
+		}
+
 		return trim($return);
 	} else {
 		return $stringtoclean;
@@ -6099,6 +6112,50 @@ function dol_string_neverthesehtmltags($stringtoclean, $disallowed_tags = array(
 	return $temp;
 }
 
+
+/**
+ *  Close the HTML tags left open in a truncated HTML string.
+ *  Truncating HTML on a separator can cut inside a block, and an unclosed tag makes the browser nest
+ *  everything that follows inside it. Only tags really left open are closed, in reverse order.
+ *
+ *  @param	string	$text		HTML string, possibly with unclosed tags
+ *  @return	string				Same string with the missing closing tags appended
+ *  @see dolGetFirstLineOfText()
+ */
+function dolCloseUnclosedHtmlTags($text)
+{
+	if (!is_string($text) || $text === '') {
+		return $text;
+	}
+
+	// Tags that never carry a closing tag
+	$selfclosing = array('br', 'hr', 'img', 'input', 'meta', 'link', 'source', 'col', 'area', 'base', 'embed', 'param', 'track', 'wbr');
+
+	$opened = array();
+	if (preg_match_all('/<\s*(\/?)([a-zA-Z][a-zA-Z0-9]*)[^>]*?(\/?)\s*>/', $text, $matches, PREG_SET_ORDER)) {
+		foreach ($matches as $match) {
+			$tag = strtolower($match[2]);
+			if (in_array($tag, $selfclosing) || !empty($match[3])) {
+				continue;
+			}
+			if (empty($match[1])) {
+				$opened[] = $tag;
+			} else {
+				// Close the most recent matching opened tag, ignore a stray closing tag
+				$idx = array_search($tag, array_reverse($opened, true), true);
+				if ($idx !== false) {
+					unset($opened[$idx]);
+				}
+			}
+		}
+	}
+
+	foreach (array_reverse($opened) as $tag) {
+		$text .= '</'.$tag.'>';
+	}
+
+	return $text;
+}
 
 /**
  * Return first line of text. Cut will depends if content is HTML or not.
@@ -6201,6 +6258,7 @@ function dol_nl2br($stringtoencode, $nl2brmode = 0, $forxml = false)
 /**
  * Sanitize a HTML to remove js, dangerous content and external links.
  * This function is used by dolPrintHTML... function for example.
+ * This function is tested by test/phpunit/SecurityTest.php
  *
  * @param	string	$stringtoencode				String to encode
  * @param	int     $nouseofiframesandbox		0=Default, 1=Allow use of option MAIN_SECURITY_USE_SANDBOX_FOR_HTMLWITHNOJS for html sanitizing (not yet working)
@@ -6218,8 +6276,16 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 	} else {
 		$out = $stringtoencode;
 
+		$antiinfinitloop = 0;
+
 		// First clean HTML content
 		do {
+			if ($antiinfinitloop >= 20) {
+				dol_print_error(null, "Infinite loop detected after ".$antiinfinitloop." iterations in dol_htmlwithnojs");
+				die;	// We must not break and we must not return a string for security issue. This should never happen.
+			}
+			$antiinfinitloop++;
+
 			$oldstringtoclean = $out;
 
 			$outishtml = 0;
@@ -6238,15 +6304,11 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 						libxml_disable_entity_loader(true);
 					}
 
-					$dom = new DOMDocument();
-					// Add a trick '<div class="tricktoremove">' to solve pb with text without parent tag
-					//  like '<h1>Foo</h1><p>bar</p>' that wrongly ends up, without the trick, with '<h1>Foo<p>bar</p></h1>'
-					//  like 'abc' that wrongly ends up, without the trick, with '<p>abc</p>'
-					// Add also a trick <html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"> to solve utf8 lost.
-					// I don't know what the xml encoding is the trick for
 					if (!$outishtml) {
-						$out = dol_nl2br($out);
+						$out = preg_replace('/&(?![a-zA-Z0-9#]+;)/', '__AMPINTEXT__', $out);
 					}
+
+					$dom = new DOMDocument();
 
 					// Note: <a href="https://__[aaa]__/aaa.html"> is transformed into <a href="https://__[aaa]__/aaa.html">
 					// We don't want that, so we protect __[xxx]__ by replacing [ and ] before loadHTML and restore them after saveHTML
@@ -6305,6 +6367,7 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 					foreach ($wrapper->childNodes as $child) {
 						$result .= $dom->saveHTML($child);
 					}
+
 					$out = trim($result);
 
 					// Restore [ and ] that were protected before loadHTML
@@ -6319,7 +6382,9 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 						},
 						$out
 					);
+
 					if (!$outishtml) {        // If $out was not HTML content we made before a dol_nl2br so we must do the opposite operation now
+						$out = str_replace('__AMPINTEXT__', '&', $out);	// Restore & char not entity
 						$out = preg_replace('/<br\s*\/?>/i', "\n", $out);
 					}
 				} catch (Exception $e) {
@@ -6361,7 +6426,7 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 						);
 
 						// Tidy
-						$locale = setlocale(LC_NUMERIC, '0');	// Tidy has a bug and is changing the PHP locale.So we save it to restore after.
+						$locale = setlocale(LC_NUMERIC, '0');	// Tidy has a bug and is changing the PHP locale. So we save it to restore it after.
 
 						$tidy = new tidy();
 						$out = $tidy->repairString($out, $config, 'utf8');
@@ -6423,7 +6488,7 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 
 			// Keep only some html attributes and exclude non expected HTML attributes and clean content of some attributes (keep only alt=, title=...).
 			if (getDolGlobalString('MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES')) {
-				$out = dol_string_onlythesehtmlattributes($out);
+				$out = dol_string_onlythesehtmlattributes($out, null, $outishtml);
 			}
 
 			// Restore entity &apos; into &#39; (restricthtml is for html content so we can use html entity) because it is
@@ -9857,6 +9922,10 @@ function dolIsAllowedForPreview($file)
 	if (getDolGlobalString('MAIN_ALLOW_SVG_FILES_AS_IMAGES')) {
 		$mime_preview[] = 'svg+xml';
 	}
+	if (getDolGlobalString('MAIN_ALLOW_XML_FILES_AS_PREVIEW')) {
+		$mime_preview[] = 'xml';
+	}
+
 	//$mime_preview[]='vnd.oasis.opendocument.presentation';
 	//$mime_preview[]='archive';
 	$num_mime = array_search(dol_mimetype($file, '', 1), $mime_preview);
@@ -10624,6 +10693,23 @@ function getElementProperties($elementType)
 		$module = 'product';
 		$subelement = 'product';
 		$table_element = 'product';
+	} elseif ($elementType == 'product_attribute') {
+		$module = 'variants';
+		$element = 'product_attribute';
+		$subelement = 'product_attribute';
+		$classpath = 'variants/class';
+		$classfile = 'ProductAttribute';
+		$classname = 'ProductAttribute';
+		$table_element = 'product_attribute';
+	} elseif ($elementType == 'product_attribute_value') {
+		$module = 'variants';
+		$element = 'product_attribute_value';
+		$subelement = 'product_attribute_value';
+		$classpath = 'variants/class';
+		$classfile = 'ProductAttributeValue';
+		$classname = 'ProductAttributeValue';
+		$table_element = 'product_attribute_value';
+		$parent_element = 'product_attribute';
 	} elseif ($elementType == 'salary') {
 		$classpath = 'salaries/class';
 		$module = 'salaries';
@@ -11384,7 +11470,7 @@ function dolForgeSQLCriteriaCallback($matches)
 	// Test that operand is not a forbidden search field
 	if (!empty($newforbiddenfields)) {
 		$operandwithoutprefix = preg_replace('/^[a-z0-9_]+\./i', '', $operand);	// Remove prefix like t. or o. or s. or u. or d. or ...
-		if (in_array($operandwithoutprefix, $newforbiddenfields)) {
+		if (in_array(strtolower($operandwithoutprefix), $newforbiddenfields)) {
 			return '1=1';
 		}
 	}
@@ -11420,7 +11506,8 @@ function dolForgeSQLCriteriaCallback($matches)
 			$tmpelem = trim($tmpelem);
 			if (preg_match('/^\'(.*)\'$/', $tmpelem, $reg)) {
 				$tmpelemarray[$tmpkey] = "'" . $db->escape($db->sanitize($reg[1], 2, 1, 1, 1)) . "'";
-			} elseif (ctype_digit((string) $tmpelem)) {	// if only 0-9 chars, no .
+				$tmpelemarray[$tmpkey] = "'".$db->escape($db->sanitize($reg[1], 2, 1, 1, 1))."'";
+			} elseif (preg_match('/^[0-9]+$/', (string) $tmpelem)) {	// if only 0-9 chars, no .
 				$tmpelemarray[$tmpkey] = (int) $tmpelem;
 			} elseif (is_numeric((string) $tmpelem)) {	// it can be a float with a .
 				$tmpelemarray[$tmpkey] = (float) $tmpelem;
@@ -11447,7 +11534,7 @@ function dolForgeSQLCriteriaCallback($matches)
 	} else {
 		if (strtoupper($tmpescaped) == 'NULL') {
 			$tmpescaped = 'NULL';
-		} elseif (ctype_digit((string) $tmpescaped)) {	// if only 0-9 chars, no .
+		} elseif (preg_match('/^[0-9]+$/', (string) $tmpescaped)) {	// if only 0-9 chars, no .
 			$tmpescaped = (int) $tmpescaped;
 		} elseif (is_numeric((string) $tmpescaped)) {	// it can be a float with a .
 			$tmpescaped = (float) $tmpescaped;

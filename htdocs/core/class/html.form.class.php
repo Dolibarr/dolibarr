@@ -293,6 +293,9 @@ class Form
 		if ($typeofdata == 'datetime') {
 			$typeofdata = 'dayhour';
 		}
+		if ($typeofdata == 'date') {
+			$typeofdata = 'day';
+		}
 		$reg = array();
 		if (preg_match('/^(\w+)\((\d+)\)$/', $typeofdata, $reg)) {
 			if ($reg[1] == 'varchar') {
@@ -1779,14 +1782,17 @@ class Form
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 
 	/**
-	 *    Return list of types of notes
+	 * Return list of types of notes
 	 *
-	 * @param string $selected Preselected type
-	 * @param string $htmlname Name of field in form
-	 * @param int $showempty Add an empty field
-	 * @return    void
+	 * @param 	string 		$selected 	Preselected type
+	 * @param 	string 		$htmlname 	Name of field in form
+	 * @param 	int|string	$showempty 	Add an empty field (Can be '1' or text to use on empty line like 'SelectSocialContributionType')
+	 * @param	string		$morecss	Add more CSS on HTML component
+	 * @param	int			$nooutput	Output mode (0=Print output, 1=Return string)
+	 * @param	int			$noadmin	Use 1 to hide admin tooltip
+	 * @return	string					Output
 	 */
-	public function select_type_fees($selected = '', $htmlname = 'type', $showempty = 0)
+	public function select_type_fees($selected = '', $htmlname = 'type', $showempty = 0, $morecss = '', $nooutput = 0, $noadmin = 0)
 	{
 		// phpcs:enable
 		global $user, $langs;
@@ -1795,29 +1801,44 @@ class Form
 
 		$this->load_cache_types_fees();
 
-		print '<select id="select_' . $htmlname . '" class="flat" name="' . $htmlname . '">';
+		$out = '';
+
+		$out .= '<select id="select_' . $htmlname . '" class="flat'.($morecss ? ' '.$morecss : '').'" name="' . $htmlname . '">';
 		if ($showempty) {
-			print '<option value="-1"';
-			if ($selected == -1) {
-				print ' selected';
+			$out .= '<option value="-1"';
+			if ($selected === -1) {
+				$out .= ' selected';
 			}
-			print '>&nbsp;</option>';
+			$out .= '>';
+			if (!$showempty) {
+				$out .= $showempty;
+			}
+			$out .= '</option>';
 		}
 
 		foreach ($this->cache_types_fees as $key => $value) {
-			print '<option value="' . $key . '"';
+			$out .= '<option value="' . $key . '"';
 			if ($key == $selected) {
-				print ' selected';
+				$out .= ' selected';
 			}
-			print '>';
-			print $value;
-			print '</option>';
+			$out .= '>';
+			$out .= $value;
+			$out .= '</option>';
 		}
 
-		print '</select>';
-		if ($user->admin) {
-			print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+		$out .= '</select>';
+		if ($user->admin && empty($noadmin)) {
+			$out .= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		}
+
+		$out .= ajax_combobox('select_'.$htmlname);
+
+		if (empty($nooutput)) {
+			print $out;
+			return '';
+		}
+
+		return $out;
 	}
 
 
@@ -3040,7 +3061,12 @@ class Form
 		$userstatic = new User($this->db);
 		$out = '';
 
-		if (!empty($_SESSION['assignedtouser'])) {
+		// The list of selected users is provided by the caller through $listofuserid (owner first).
+		// Fall back to the legacy global $_SESSION['assignedtouser'] only when no list is provided
+		// (comm/action/card.php now scopes that session bucket per event id and no longer feeds this key).
+		if (!empty($listofuserid)) {
+			$assignedtouser = $listofuserid;
+		} elseif (!empty($_SESSION['assignedtouser'])) {
 			$assignedtouser = json_decode($_SESSION['assignedtouser'], true);
 			if (!is_array($assignedtouser)) {
 				$assignedtouser = array();
@@ -5360,9 +5386,12 @@ class Form
 
 				// If a translation exists, we use is, otherwise, we take the label by default
 				$label = ($langs->transnoentitiesnoconv("PaymentTypeShort" . $obj->code) != "PaymentTypeShort" . $obj->code ? $langs->transnoentitiesnoconv("PaymentTypeShort" . $obj->code) : ($obj->label != '-' ? $obj->label : ''));
+				$shortlabel = $label; // TODO
+
 				$this->cache_types_paiements[(int) $obj->id]['id'] = (int) $obj->id;
 				$this->cache_types_paiements[(int) $obj->id]['code'] = (string) $obj->code;
 				$this->cache_types_paiements[(int) $obj->id]['label'] = (string) $label;
+				$this->cache_types_paiements[(int) $obj->id]['shortlabel'] = (string) $shortlabel;
 				$this->cache_types_paiements[(int) $obj->id]['type'] = (int) $obj->type;
 				$this->cache_types_paiements[(int) $obj->id]['entity'] = (int) $obj->entity;
 				$this->cache_types_paiements[(int) $obj->id]['active'] = (int) $obj->active;
@@ -5493,18 +5522,31 @@ class Form
 			$out .= '
 				<script nonce="' . getNonce() . '">
 					$(document).ready(function () {
-						$("#' . $htmlname . '").change(function () {
-							let $selected = $(this).find("option:selected");
-							let depositPercent = $selected.attr("data-deposit_percent");
+						let $select = $("#' . $htmlname . '");
+						let $container = $("#' . $htmlname . '_deposit_percent_container");
+						let $input = $("#' . $htmlname . '_deposit_percent");
+
+						function refreshDepositPercent(isInit) {
+							let depositPercent = $select.find("option:selected").attr("data-deposit_percent") || "";
 
 							if (depositPercent.length > 0) {
-								$("#' . $htmlname . '_deposit_percent_container").show().find("#' . $htmlname . '_deposit_percent").val(depositPercent);
+								$container.show();
+								// On page load, keep an existing (possibly customized) value; on user change use the payment term default
+								if (!isInit || !parseFloat($input.val())) {
+									$input.val(depositPercent);
+								}
 							} else {
-								$("#' . $htmlname . '_deposit_percent_container").hide();
+								$container.hide();
 							}
+						}
 
+						$select.change(function () {
+							refreshDepositPercent(false);
 							return true;
 						});
+
+						// Initialize on load so a default payment term with a deposit is reflected without a manual change
+						refreshDepositPercent(true);
 					});
 				</script>';
 		}
@@ -6682,9 +6724,9 @@ class Form
 						$more .= '<div class="tagtr"><div class="tagtd' . (empty($input['tdclass']) ? '' : (' ' . $input['tdclass'])) . '">' . ($input['label'] ?? '') . '</div><div class="tagtd"><input type="password" class="flat' . $morecss . '" id="' . dol_escape_htmltag($input['name']) . '" name="' . dol_escape_htmltag($input['name']) . '"' . $size . ' value="' . (empty($input['value']) ? '' : $input['value']) . '"' . $moreattr . ' /></div></div>' . "\n";
 					} elseif ($input['type'] == 'textarea') {
 						$moreonecolumn .= '<div class="margintoponly">';
-						$moreonecolumn .= $input['label'] . '<br>';
+						$moreonecolumn .= ($input['label'] ?? '') . '<br>';
 						$moreonecolumn .= '<textarea name="' . dol_escape_htmltag($input['name']) . '" id="' . dol_escape_htmltag($input['name']) . '" class="' . $morecss . '"' . $moreattr . '>';
-						$moreonecolumn .= $input['value'];
+						$moreonecolumn .= $input['value'] ?? '';	// 'value' is optional (blank textarea by default), like for the 'text' and 'password' types above
 						$moreonecolumn .= '</textarea>';
 						$moreonecolumn .= '</div>';
 					} elseif (in_array($input['type'], ['select', 'multiselect'])) {
@@ -6775,7 +6817,7 @@ class Form
 						$more .= '</div></div>' . "\n";
 					} elseif ($input['type'] == 'onecolumn') {
 						$moreonecolumn .= '<div class="margintoponly">';
-						$moreonecolumn .= $input['value'];
+						$moreonecolumn .= $input['value'] ?? '';
 						$moreonecolumn .= '</div>' . "\n";
 					} elseif ($input['type'] == 'hidden') {
 						// Do nothing more, already added by a previous loop
@@ -7157,7 +7199,7 @@ class Form
 					$out .= $label;
 				} else {
 					$langs->load('errors');
-					$out .= $langs->trans('ErrorNotInDictionaryPaymentConditions');
+					$out .= $langs->trans('ErrorNotInDictionaryPaymentConditions', $selected);
 				}
 			} else {
 				$out .= '&nbsp;';
@@ -7392,9 +7434,10 @@ class Form
 	 * @param 	int<0,1> 	$addempty 	1=Add empty entry
 	 * @param 	string 		$type 		Type ('direct-debit' or 'bank-transfer')
 	 * @param 	int<0,1> 	$nooutput 	1=Return string, no output
+	 * @param	int			$short		1=Use short version
 	 * @return	string                  HTML output or ''
 	 */
-	public function form_modes_reglement($page, $selected = '', $htmlname = 'mode_reglement_id', $filtertype = '', $active = 1, $addempty = 0, $type = '', $nooutput = 0)
+	public function form_modes_reglement($page, $selected = '', $htmlname = 'mode_reglement_id', $filtertype = '', $active = 1, $addempty = 0, $type = '', $nooutput = 0, $short = 0)
 	{
 		// phpcs:enable
 		global $langs;
@@ -7413,7 +7456,11 @@ class Form
 		} else {
 			if ((int) $selected) {
 				$this->load_cache_types_paiements();
-				$out .= $this->cache_types_paiements[(int) $selected]['label'] ?? '&nbsp;';
+				if ($short) {
+					$out .= $this->cache_types_paiements[(int) $selected]['shortlabel'] ?? '&nbsp;';
+				} else {
+					$out .= $this->cache_types_paiements[(int) $selected]['label'] ?? '&nbsp;';
+				}
 			} else {
 				$out .= "&nbsp;";
 			}
@@ -10625,6 +10672,11 @@ class Form
 			$out .= "\n" . '<!-- JS CODE TO ENABLE select for id ' . $htmlname . ', addjscombo=' . $addjscombo . ' -->';
 			$out .= "\n" . '<script nonce="' . getNonce() . '">' . "\n";
 			if ($addjscombo == 1) {
+				$moreselect2theme = ($morecss ? dol_escape_js(' '.$morecss) : '');
+				$moreselect2theme = preg_replace('/widthcentpercentminus[^\s]*/', '', $moreselect2theme);
+
+				$widthTypeOfAutocomplete = 'resolve';
+
 				$tmpplugin = getDolGlobalString('MAIN_USE_JQUERY_MULTISELECT', (defined('REQUIRE_JQUERY_MULTISELECT') ? constant('REQUIRE_JQUERY_MULTISELECT') : 'select2'));
 
 				// If property data-html set, we decode html entities and use this.
@@ -10645,6 +10697,11 @@ class Form
 				//$out .= 'console.log(\'addjscombo=1 for htmlname=' . dol_escape_js($htmlname) . '\');';
 				$out .= '$(document).ready(function () {
 							$(\'#' . dol_escape_js($htmlname) . '\').' . $tmpplugin . '({';
+					// when $morecss contains 'onrightofpage', the select2 component must also be inside a parent with class="parentonrightofpage"
+				if (preg_match('/onrightofpage/', $morecss)) {	// In this cas, htmlname must be an ID not a class.
+					$out .= ' dropdownAutoWidth: true, ';
+					$out .= ' dropdownParent: $(\'#'.$htmlname.'\').parent(), ';
+				}
 				if ($placeholder) {
 					$out .= '
 								placeholder: {
@@ -10653,8 +10710,11 @@ class Form
 								  },';
 				}
 				$out .= '		dir: \'ltr\',
-								containerCssClass: \':all:\',					/* Line to add class of origin SELECT propagated to the new <span class="select2-selection...> tag (ko with multiselect) */
-								dropdownCssClass: \'' . dol_escape_js($morecss) . '\',				/* Line to add class on the new <span class="select2-selection...> tag (ok with multiselect). Need full version of select2. */
+								width: \''.dol_escape_js($widthTypeOfAutocomplete).'\',		/* off or resolve */
+								theme: \'default' . dol_escape_js($moreselect2theme) . '\',		/* to add css on generated html components */
+								containerCssClass: \':all:\',		/* Line to add class of origin SELECT propagated to the new <span class="select2-selection...> tag (ko with multiselect) */
+								selectionCssClass: \':all:\',		/* Line to add class of origin SELECT propagated to the new <span class="select2-selection...> tag */
+								dropdownCssClass: \'dol-dropdown-dialog dol-dropdown-dialogmulti\',				/* Line to add class on the new <span class="select2-selection...> tag (ok with multiselect). Need full version of select2. */
 								// Specify format function for dropdown item
 								formatResult: formatResult,
 								templateResult: formatResult,		/* For 4.0 */
