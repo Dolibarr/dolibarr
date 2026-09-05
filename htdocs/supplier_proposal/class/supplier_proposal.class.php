@@ -2603,7 +2603,7 @@ class SupplierProposal extends CommonObject
 			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
 			$label = '';
 		} else {
-			$label = implode($this->getTooltipContentArray($params));
+			$label = $this->getTooltipContent($params);
 		}
 
 		if ($option == '') {
