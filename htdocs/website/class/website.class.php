@@ -1342,7 +1342,7 @@ class Website extends CommonObject
 
 
 		// Make replacement in htmlheader.html (replace dolSaveHtmlHeader)
-		$htmldeaderinsrcdir = $conf->website->dir_output.'/'.$object->ref.'/containers/htmlheader.html';
+		$htmldeaderinsrcdir = $conf->website->dir_temp.'/'.$object->ref.'/containers/htmlheader.html';
 		$result = dolReplaceInFile($htmldeaderinsrcdir, $arrayreplacement);
 
 		// Test if imported html page contains dynamic PHP content
