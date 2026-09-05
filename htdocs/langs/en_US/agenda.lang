@@ -221,3 +221,9 @@ STOCKTRANSFER_VALIDATEInDolibarr=Stock transfer %s validated.
 
 STOCKTRANSFER_UNVALIDATEInDolibarr=Stock transfer %s set back to draft.
 STOCKTRANSFER_MODIFYInDolibarr=Stock transfer %s modified.
+SupplierOrderDocumentUploaded=Document uploaded to supplier order %s: %s
+SupplierOrderDocumentStoredName=Stored file: %s
+SupplierOrderDocumentOriginalName=Original name: %s
+SupplierOrderDocumentSize=Size: %s bytes
+SupplierOrderDocumentMimeType=MIME type: %s
+SupplierOrderDocumentSha256=SHA-256: %s
