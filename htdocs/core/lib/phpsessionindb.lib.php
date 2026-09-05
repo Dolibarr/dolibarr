@@ -147,14 +147,6 @@ function dolSessionWrite($sess_id, $val)
 		$time_stamp = dol_now();
 
 		if (empty($sessionidfound)) {
-			if ((int) ini_get('session.gc_probability') == 0) {
-				// dolSessionGC will be never called
-				$max_lifetime = min(3600 * 24, max(getDolGlobalInt('MAIN_SESSION_TIMEOUT'), (int) ini_get('session.gc_maxlifetime')));
-				$delete_query = "DELETE FROM ".MAIN_DB_PREFIX."session";
-				$delete_query .= " WHERE last_accessed < '".$dbsession->idate($time_stamp - $max_lifetime)."'";
-				$dbsession->query($delete_query);
-			}
-
 			// No session found, insert a new one
 			$insert_query = "INSERT INTO ".MAIN_DB_PREFIX."session";
 			$insert_query .= "(session_id, session_variable, date_creation, last_accessed, fk_user, remote_ip, user_agent)";
@@ -202,6 +194,21 @@ function dolSessionWrite($sess_id, $val)
 			if (!$result) {
 				dol_print_error($dbsession);
 				return false;
+			}
+		}
+
+		// When session.gc_probability is 0 (or the save handler was registered after
+		// session_start(), so PHP never rolled the GC dice), dolSessionGC() is never
+		// triggered by PHP. Emulate a probabilistic garbage collection here, using
+		// session.gc_divisor as the odds, so the llx_session table does not grow unbounded.
+		// Run it after the insert/update above (every session write, not only new rows) so
+		// the purge still happens on sites where no new session is created for a long time,
+		// and so the row we just wrote (last_accessed = now) can never be its own target.
+		if ((int) ini_get('session.gc_probability') == 0) {
+			$gc_divisor = max(1, (int) ini_get('session.gc_divisor'));
+			if (mt_rand(1, $gc_divisor) == 1) {
+				$max_lifetime = min(3600 * 24, max(getDolGlobalInt('MAIN_SESSION_TIMEOUT'), (int) ini_get('session.gc_maxlifetime')));
+				dolSessionGC($max_lifetime);
 			}
 		}
 	}
@@ -264,6 +271,7 @@ function dolSessionGC($max_lifetime)
 	if ($resql) {
 		return true;
 	} else {
+		dol_syslog("dolSessionGC failed to purge expired sessions: ".$dbsession->lasterror(), LOG_WARNING);
 		return false;
 	}
 }
