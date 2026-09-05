@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -440,6 +440,14 @@ class SecurityTest extends CommonClassTest
 	{
 		global $conf;
 
+		// This test exercises the 'None' model, so make sure it is not forbidden on the install
+		// running the test suite (see isPasswordGenerationNoneForbidden()).
+		$savPattern = getDolGlobalString('USER_PASSWORD_GENERATED');
+		$savConst = getDolGlobalString('MAIN_SECURITY_DISABLE_PASSWORDGEN_NONE');
+		$savFile = isset($conf->file->restrict_password_generation_none) ? $conf->file->restrict_password_generation_none : null;
+		unset($conf->global->MAIN_SECURITY_DISABLE_PASSWORDGEN_NONE);
+		$conf->file->restrict_password_generation_none = 0;
+
 		$genpass1 = getRandomPassword(true);				// Should be a string return by dol_hash (if no option set, will be md5)
 		print __METHOD__." genpass1=".$genpass1."\n";
 		$this->assertEquals(strlen($genpass1), 32);
@@ -458,7 +466,86 @@ class SecurityTest extends CommonClassTest
 		print __METHOD__." genpass3=".$genpass3."\n";
 		$this->assertEquals(strlen($genpass3), 12);
 
+		// Restore context
+		$conf->global->USER_PASSWORD_GENERATED = $savPattern;
+		if ($savConst !== '') {
+			$conf->global->MAIN_SECURITY_DISABLE_PASSWORDGEN_NONE = $savConst;
+		}
+		if ($savFile === null) {
+			unset($conf->file->restrict_password_generation_none);
+		} else {
+			$conf->file->restrict_password_generation_none = $savFile;
+		}
+
 		return 0;
+	}
+
+	/**
+	 * testIsPasswordGenerationNoneForbidden
+	 *
+	 * @return void
+	 */
+	public function testIsPasswordGenerationNoneForbidden()
+	{
+		global $conf, $db, $langs, $user;
+
+		// Save context (backupGlobals is disabled for this test class)
+		$savPattern = getDolGlobalString('USER_PASSWORD_GENERATED');
+		$savPasswordPattern = getDolGlobalString('USER_PASSWORD_PATTERN');
+		$savConst = getDolGlobalString('MAIN_SECURITY_DISABLE_PASSWORDGEN_NONE');
+		$savFile = isset($conf->file->restrict_password_generation_none) ? $conf->file->restrict_password_generation_none : null;
+
+		// By default (no lock), the 'none' model is allowed
+		unset($conf->global->MAIN_SECURITY_DISABLE_PASSWORDGEN_NONE);
+		$conf->file->restrict_password_generation_none = 0;
+		$this->assertEquals(0, isPasswordGenerationNoneForbidden(), 'none model should be allowed by default');
+
+		// The database constant forbids it (soft lock a superadmin can toggle)
+		$conf->global->MAIN_SECURITY_DISABLE_PASSWORDGEN_NONE = 1;
+		$this->assertEquals(1, isPasswordGenerationNoneForbidden(), 'database constant must forbid the none model');
+
+		// With the lock on, an installation still configured with 'none' falls back to 'standard'
+		$conf->global->USER_PASSWORD_GENERATED = 'None';
+		$genpass = getRandomPassword(false);
+		print __METHOD__." genpass=".$genpass."\n";
+		$this->assertEquals(12, strlen($genpass), 'forbidden none model must fall back to the 12 chars standard generator');
+
+		// The conf.php variable forbids it even without the database constant (hard lock)
+		unset($conf->global->MAIN_SECURITY_DISABLE_PASSWORDGEN_NONE);
+		$conf->file->restrict_password_generation_none = 1;
+		$this->assertEquals(1, isPasswordGenerationNoneForbidden(), 'conf.php variable must forbid the none model');
+
+		// When the lock is on, the 'Perso' model minimum length is floored at 10
+		require_once DOL_DOCUMENT_ROOT.'/core/modules/security/generate/modGeneratePassPerso.class.php';
+
+		$conf->file->restrict_password_generation_none = 0;
+		$this->assertEquals(1, getPasswordPatternMinLength(), 'no floor on the Perso min length without the lock');
+
+		$conf->file->restrict_password_generation_none = 1;
+		$this->assertEquals(10, getPasswordPatternMinLength(), 'Perso min length floored at 10 with the lock');
+
+		// A stored pattern below the floor is clamped at generation/validation time
+		$conf->global->USER_PASSWORD_PATTERN = '8;1;1;0;3;1';
+		$modperso = new modGeneratePassPerso($db, $conf, $langs, $user);
+		$this->assertEquals(10, $modperso->length2, 'stored min length 8 must be clamped to 10 when the lock is on');
+
+		$conf->file->restrict_password_generation_none = 0;
+		$modperso = new modGeneratePassPerso($db, $conf, $langs, $user);
+		$this->assertEquals(8, $modperso->length2, 'stored min length 8 is kept as is without the lock');
+
+		// Restore context
+		$conf->global->USER_PASSWORD_GENERATED = $savPattern;
+		$conf->global->USER_PASSWORD_PATTERN = $savPasswordPattern;
+		if ($savConst !== '') {
+			$conf->global->MAIN_SECURITY_DISABLE_PASSWORDGEN_NONE = $savConst;
+		} else {
+			unset($conf->global->MAIN_SECURITY_DISABLE_PASSWORDGEN_NONE);
+		}
+		if ($savFile === null) {
+			unset($conf->file->restrict_password_generation_none);
+		} else {
+			$conf->file->restrict_password_generation_none = $savFile;
+		}
 	}
 
 	/**

@@ -24,6 +24,8 @@
  *		\brief      File with parent class for password generating classes
  */
 
+require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php'; // For isPasswordGenerationNoneForbidden()
+
 
 /**
  *  Parent class for password rules/management modules
@@ -167,6 +169,14 @@ abstract class ModeleGenPassword
 	{
 		if (empty($id)) {
 			return null;
+		}
+
+		// The 'none' model applies no rule at all. When it is forbidden (conf.php hard lock or
+		// database constant), transparently fall back to the always-available 'standard' model so
+		// an installation still configured with 'none' enforces a real rule at generation and
+		// validation time, without having to rewrite the stored USER_PASSWORD_GENERATED value.
+		if (strtolower($id) === 'none' && isPasswordGenerationNoneForbidden()) {
+			$id = 'standard';
 		}
 
 		$classname = 'modGeneratePass'.ucfirst($id);

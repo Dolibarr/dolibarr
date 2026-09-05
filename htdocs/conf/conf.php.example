@@ -388,6 +388,20 @@ $dolibarr_nocsrfcheck='0';
 //
 // $dolibarr_api_count_always_enabled='1';
 
+// dolibarr_main_restrict_password_generation_none
+// ===============================================
+// Set this value to 1 so the 'none' password generation model (the one that applies no rule at
+// all when validating passwords) can never be used. It is then hidden from the admin security
+// page and cannot be selected, even if the database constant MAIN_SECURITY_DISABLE_PASSWORDGEN_NONE
+// is removed. An installation still set to 'none' falls back to the 'standard' model.
+// It also forces a floor of 10 characters on the minimum length of the 'Perso' model.
+// Default value: 0
+// Possible values: 0 or 1
+// Examples:
+// $dolibarr_main_restrict_password_generation_none='1';
+//
+// $dolibarr_main_restrict_password_generation_none='1';
+
 // dolibarr_cron_allow_cli
 // =======================
 // If set to 1, you will be able to define some command line in the internal Job scheduler module.
