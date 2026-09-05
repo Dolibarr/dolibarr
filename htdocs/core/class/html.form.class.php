@@ -2657,10 +2657,12 @@ class Form
 	 * @param int<0,2>			$outputmode 	0=HTML select string, 1=Array, 2=Detailed array
 	 * @param bool 				$multiple 		add [] in the name of element and add 'multiple' attribute
 	 * @param int<0,1> 			$forcecombo 	Force the component to be a simple combo box without ajax
+	 * @param string 			$filterkey 		Natural search string to filter users on firstname, lastname or login (used by the user/ajax/users.php autocomplete endpoint)
+	 * @param int 				$limit 			Maximum number of rows to return (0 = no limit). Used by the user/ajax/users.php autocomplete endpoint.
 	 * @return string|array<int,string|array{id:int,label:string,labelhtml:string,color:string,picto:string}>	HTML select string
 	 * @see select_dolgroups()
 	 */
-	public function select_dolusers($userselected = '', $htmlname = 'userid', $show_empty = 0, $exclude = null, $disabled = 0, $include = '', $enableonly = '', $force_entity = '', $maxlength = 0, $showstatus = 0, $morefilter = '', $showalso = 0, $enableonlytext = '', $morecss = '', $notdisabled = 0, $outputmode = 0, $multiple = false, $forcecombo = 0)
+	public function select_dolusers($userselected = '', $htmlname = 'userid', $show_empty = 0, $exclude = null, $disabled = 0, $include = '', $enableonly = '', $force_entity = '', $maxlength = 0, $showstatus = 0, $morefilter = '', $showalso = 0, $enableonlytext = '', $morecss = '', $notdisabled = 0, $outputmode = 0, $multiple = false, $forcecombo = 0, $filterkey = '', $limit = 0)
 	{
 		// phpcs:enable
 		global $conf, $user, $langs, $hookmanager;
@@ -2729,6 +2731,86 @@ class Form
 		$out = '';
 		$outarray = array();
 		$outarray2 = array();
+
+		// If the ajax "search to select" mode is enabled for users (constant USER_USE_SEARCH_TO_SELECT), we output an
+		// autocomplete input calling user/ajax/users.php instead of loading the full list of users.
+		// This is limited to the plain single-select HTML output: multiple select, array output, forced combo,
+		// pseudo-entries (showalso) and per-line enabling (enableonly) keep the full-list behaviour.
+		if (!empty($conf->use_javascript_ajax) && getDolGlobalString('USER_USE_SEARCH_TO_SELECT') && !$forcecombo && !$multiple && empty($outputmode)
+			&& empty($showalso) && !(is_array($enableonly) && count($enableonly)) && $filterkey === '') {
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
+
+			$preselected = 0;
+			if (!empty($selected)) {
+				$firstval = reset($selected);
+				if (is_numeric($firstval) && (int) $firstval > 0) {
+					$preselected = (int) $firstval;
+				}
+			}
+
+			$selected_input_value = '';
+			if ($preselected > 0) {
+				$usertmpselect = new User($this->db);
+				if ($usertmpselect->fetch($preselected) > 0) {
+					$fullNameMode = getDolGlobalString('MAIN_FIRSTNAME_NAME_POSITION') ? 0 : 1;
+					$selected_input_value = $usertmpselect->getFullName($langs, $fullNameMode, -1, $maxlength);
+					if ($selected_input_value === '') {
+						$selected_input_value = $usertmpselect->login;
+					}
+				}
+				unset($usertmpselect);
+			}
+
+			// Propagate the filters to the ajax endpoint so it returns the same subset as the full combo would
+			$urloption = 'htmlname='.urlencode($htmlname).'&outjson=1';
+			if (is_array($exclude) && count($exclude)) {
+				$urloption .= '&exclude='.urlencode(implode(',', $exclude));
+			}
+			if (is_array($include) && count($include)) {
+				$urloption .= '&include='.urlencode(implode(',', $include));
+			} elseif (is_string($include) && $include !== '') {
+				$urloption .= '&include='.urlencode($include);
+			}
+			if ($force_entity !== '') {
+				$urloption .= '&force_entity='.urlencode((string) $force_entity);
+			}
+			if ($showstatus !== 0) {
+				$urloption .= '&showstatus='.((int) $showstatus);
+			}
+			if (!empty($notdisabled)) {
+				$urloption .= '&notdisabled=1';
+			}
+			if (!empty($maxlength)) {
+				$urloption .= '&maxlength='.((int) $maxlength);
+			}
+			// Note: $morefilter is deliberately NOT propagated to the ajax endpoint. It is a raw Universal
+			// Search Filter passed to forgeSQLFromUniversalSearchCriteria(); exposing it in the URL would let
+			// a client run arbitrary WHERE clauses on llx_user. The ajax list is therefore not narrowed by
+			// $morefilter, but the server-side save of the selected value still enforces its own checks.
+
+			// A non-numeric value ('infinite', so getDolGlobalInt() returns 0) means "infinite list": ajax mode but
+			// no minimum number of chars, the list opens as soon as the field gets the focus. ajax_autocompleter()
+			// forces minLength >= 1, so we pass 1 and relax the widget option to 0 with a small script below.
+			$isinfinitelist = (getDolGlobalInt('USER_USE_SEARCH_TO_SELECT') < 1);
+			$minlengthforajax = $isinfinitelist ? 1 : getDolGlobalInt('USER_USE_SEARCH_TO_SELECT');
+
+			$out .= ajax_autocompleter((string) $preselected, $htmlname, DOL_URL_ROOT.'/user/ajax/users.php', $urloption, $minlengthforajax, 0);
+			$out .= '<!-- force css to be higher than dialog popup --><style type="text/css">.ui-autocomplete { z-index: 1010; }</style>';
+			$out .= '<input type="text" class="'.dol_escape_htmltag($morecss).'"'.($disabled ? ' disabled="disabled"' : '').' name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.dol_escape_htmltag($selected_input_value).'" />';
+
+			if ($isinfinitelist) {
+				$htmlnamejs = str_replace('.', '\\\\.', $htmlname);
+				$out .= '<script nonce="'.getNonce().'">jQuery(function() {
+					var elem = jQuery("input#search_'.$htmlnamejs.'");
+					if (elem.length && elem.data("ui-autocomplete")) {
+						elem.autocomplete("option", "minLength", 0);
+						elem.on("focus", function() { if (jQuery(this).val() === "") { jQuery(this).autocomplete("search", ""); } });
+					}
+				});</script>';
+			}
+
+			return $out;
+		}
 
 		// Do we want to show the label of entity into the combo list ?
 		$showlabelofentity = isModEnabled('multicompany') && !getDolGlobalInt('MULTICOMPANY_TRANSVERSE_MODE') && $conf->entity == 1 && !empty($user->admin) && empty($user->entity) && !preg_match('/^search_/', $htmlname);
@@ -2800,10 +2882,37 @@ class Form
 			$sql .= $hookmanager->resPrint;
 		}
 
+		// Add criteria on the natural search string (used by the user/ajax/users.php autocomplete endpoint)
+		if ($filterkey !== '') {
+			$sql .= " AND (";
+			$prefix = getDolGlobalString('USER_DONOTSEARCH_ANYWHERE') ? '' : '%'; // Can use index if USER_DONOTSEARCH_ANYWHERE is on
+			// For natural search
+			$search_crit = explode(' ', $filterkey);
+			$i = 0;
+			if (count($search_crit) > 1) {
+				$sql .= "(";
+			}
+			foreach ($search_crit as $crit) {
+				if ($i > 0) {
+					$sql .= " AND ";
+				}
+				$sql .= "(u.firstname LIKE '".$this->db->escape($prefix.$crit)."%' OR u.lastname LIKE '".$this->db->escape($prefix.$crit)."%' OR u.login LIKE '".$this->db->escape($prefix.$crit)."%')";
+				$i++;
+			}
+			if (count($search_crit) > 1) {
+				$sql .= ")";
+			}
+			$sql .= ")";
+		}
+
 		if (!getDolGlobalString('MAIN_FIRSTNAME_NAME_POSITION')) {    // MAIN_FIRSTNAME_NAME_POSITION is 0 means firstname+lastname
 			$sql .= " ORDER BY u.statut DESC, u.firstname ASC, u.lastname ASC";
 		} else {
 			$sql .= " ORDER BY u.statut DESC, u.lastname ASC, u.firstname ASC";
+		}
+
+		if ($limit > 0) {
+			$sql .= $this->db->plimit($limit, 0);
 		}
 
 		dol_syslog(get_class($this) . "::select_dolusers", LOG_DEBUG);
@@ -3132,7 +3241,12 @@ class Form
 			$out .= '});';
 			$out .= '})</script>';
 			$out .= img_picto('', 'user', 'class="pictofixedwidth"');
-			$out .= $this->select_dolusers('', $htmlname, $show_empty, $exclude, $disabled, $include, $enableonly, $force_entity, $maxlength, $showstatus, $morefilter, 0, '', 'minwidth200');
+			// Force a real combo (forcecombo=1): this widget drives the "Add" button from the <option> elements of the
+			// select, so it must not be replaced by the ajax autocomplete of select_dolusers() (USER_USE_SEARCH_TO_SELECT).
+			$out .= $this->select_dolusers('', $htmlname, $show_empty, $exclude, $disabled, $include, $enableonly, $force_entity, $maxlength, $showstatus, $morefilter, 0, '', 'minwidth200', 0, 0, false, 1);
+			// select_dolusers() skips the select2 beautification when forcecombo is set, so re-apply it here.
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
+			$out .= ajax_combobox($htmlname);
 			$out .= ' <button type="submit" disabled class="button valignmiddle smallpaddingimp reposition butActionAdd" id="' . $action . 'assignedtouser" name="' . $action . 'assignedtouser" value="' . dol_escape_htmltag($langs->trans("Add")) . '">';
 			$out .= $langs->trans("Add").'</button>';
 			$out .= '</div>';
