@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2019	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2026       Alexandre Spangaro      <alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -589,6 +589,27 @@ if ($resql) {
 		}
 	} else {
 		print img_picto('', 'tick', 'class="pictofixedwidth"').' '.$langs->trans("NbOfObjectIsLowerThanNoPb", $nb, $langs->transnoentitiesnoconv("Contacts"));
+	}
+	print '<br>';
+	$db->free($resql);
+}
+// User combo list
+$sql = "SELECT COUNT(*) as nb";
+$sql .= " FROM ".MAIN_DB_PREFIX."user as s";
+$resql = $db->query($sql);
+if ($resql) {
+	$limitforoptim = 5000;
+	$num = $db->num_rows($resql);
+	$obj = $db->fetch_object($resql);
+	$nb = (int) $obj->nb;
+	if ($nb > $limitforoptim) {
+		if (!getDolGlobalString('USER_USE_SEARCH_TO_SELECT')) {
+			print img_picto('', 'warning', 'class="pictofixedwidth"').' '.$langs->trans("YouHaveXObjectUseComboOptim", $nb, $langs->transnoentitiesnoconv("Users"), 'USER_USE_SEARCH_TO_SELECT');
+		} else {
+			print img_picto('', 'tick', 'class="pictofixedwidth"').' '.$langs->trans("YouHaveXObjectAndSearchOptimOn", $nb, $langs->transnoentitiesnoconv("Users"), 'USER_USE_SEARCH_TO_SELECT', getDolGlobalString('USER_USE_SEARCH_TO_SELECT'));
+		}
+	} else {
+		print img_picto('', 'tick', 'class="pictofixedwidth"').' '.$langs->trans("NbOfObjectIsLowerThanNoPb", $nb, $langs->transnoentitiesnoconv("Users"));
 	}
 	print '<br>';
 	$db->free($resql);

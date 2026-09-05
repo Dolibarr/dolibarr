@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -148,5 +148,92 @@ class FormTest extends CommonClassTest
 		$this->assertStringNotContainsString('KEYWORD', $visibleText);
 		$this->assertStringContainsString('PVC Pipe 1/2" Standard Quality', $searchText);
 		$this->assertStringContainsString('KEYWORD', $searchText);
+	}
+
+	/**
+	 * testSelectDolusersFilterKey
+	 *
+	 * select_dolusers() must restrict the returned users to those whose
+	 * firstname, lastname or login matches the $filterkey search string
+	 * (used by the user/ajax/users.php autocomplete endpoint).
+	 *
+	 * @return void
+	 */
+	public function testSelectDolusersFilterKey()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$db->begin();
+
+		$uniq = 'zttestselusr'.dol_print_date(dol_now(), '%Y%m%d%H%M%S');
+
+		$tmpuser = new User($db);
+		$tmpuser->lastname = 'Zorglub'.$uniq;
+		$tmpuser->firstname = 'Filterkey';
+		$tmpuser->login = $uniq;
+		$tmpuser->email = $uniq.'@example.com';
+		$resultcreate = $tmpuser->create($user);
+		$this->assertGreaterThan(0, $resultcreate, 'Failed to create test user: '.$tmpuser->error);
+
+		$form = new Form($db);
+
+		// A matching key returns the user
+		$match = $form->select_dolusers(-1, 'userid', 0, null, 0, '', '', '', 0, 0, '', 0, '', '', 0, 2, false, 0, $uniq);
+		$this->assertIsArray($match);
+		$this->assertArrayHasKey($tmpuser->id, $match, 'select_dolusers did not return the user matching the filterkey');
+
+		// A non-matching key does not return the user
+		$nomatch = $form->select_dolusers(-1, 'userid', 0, null, 0, '', '', '', 0, 0, '', 0, '', '', 0, 2, false, 0, 'nobodyxyz'.$uniq);
+		$this->assertIsArray($nomatch);
+		$this->assertArrayNotHasKey($tmpuser->id, $nomatch, 'select_dolusers ignored the filterkey and returned a non-matching user');
+
+		$db->rollback();
+	}
+
+	/**
+	 * testSelectDolusersLimit
+	 *
+	 * select_dolusers() must cap the number of returned users to the $limit
+	 * argument (used by the user/ajax/users.php endpoint in "infinite list" mode).
+	 *
+	 * @return void
+	 */
+	public function testSelectDolusersLimit()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$db->begin();
+
+		$uniq = 'zttestlimusr'.dol_print_date(dol_now(), '%Y%m%d%H%M%S');
+		for ($i = 1; $i <= 3; $i++) {
+			$tmpuser = new User($db);
+			$tmpuser->lastname = 'Limit'.$i.$uniq;
+			$tmpuser->firstname = 'User';
+			$tmpuser->login = $uniq.$i;
+			$tmpuser->email = $uniq.$i.'@example.com';
+			$this->assertGreaterThan(0, $tmpuser->create($user), 'Failed to create test user: '.$tmpuser->error);
+		}
+
+		$form = new Form($db);
+
+		// Without limit: the 3 users match the filterkey
+		$all = $form->select_dolusers(-1, 'userid', 0, null, 0, '', '', '', 0, 0, '', 0, '', '', 0, 2, false, 0, $uniq, 0);
+		$this->assertIsArray($all);
+		$this->assertGreaterThanOrEqual(3, count($all), 'Expected at least the 3 created users without a limit');
+
+		// With limit=2: at most 2 rows are returned
+		$limited = $form->select_dolusers(-1, 'userid', 0, null, 0, '', '', '', 0, 0, '', 0, '', '', 0, 2, false, 0, $uniq, 2);
+		$this->assertIsArray($limited);
+		$this->assertLessThanOrEqual(2, count($limited), 'select_dolusers did not honour the $limit argument');
+
+		$db->rollback();
 	}
 }
