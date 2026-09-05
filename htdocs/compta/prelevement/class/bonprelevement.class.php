@@ -576,9 +576,9 @@ class BonPrelevement extends CommonObject
 					$error++;
 				}
 
-			/*
-			 * End of procedure
-			 */
+				/*
+				 * End of procedure
+				 */
 				if ($error == 0) {
 					$this->date_credit = $date;
 					$this->statut = self::STATUS_CREDITED;
