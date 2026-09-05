@@ -563,7 +563,6 @@ if ($action == 'makepayment_confirm' && $user->hasRight('facture', 'paiement')) 
 							setEventMessages($facture->ref.' '.$langs->trans("ProcessingError"), $hookmanager->errors, 'errors');
 						}
 
-
 						if ($remaintopay != 0) {
 							$resultBank = $facture->setBankAccount($bankid);
 							if ($resultBank < 0) {
