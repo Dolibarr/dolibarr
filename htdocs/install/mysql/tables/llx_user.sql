@@ -55,6 +55,8 @@ create table llx_user
   birth               date,                                   -- birth date
   birth_place         varchar(64),                            -- birth place (town)
   job                 varchar(128),
+  country_id_job      integer DEFAULT NULL,
+  departament_id_job  integer DEFAULT NULL,
   office_phone        varchar(30),
   office_fax          varchar(30),
   user_mobile         varchar(30),

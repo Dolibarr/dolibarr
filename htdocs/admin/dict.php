@@ -138,6 +138,7 @@ $pagenext = $page + 1;
 $search_country_id = GETPOST('search_country_id', 'int');
 $search_code = GETPOST('search_code', 'alpha');
 $search_active = GETPOST('search_active', 'alpha');
+$search_departement_id = GETPOST('search_departement_id', 'int');
 
 // Special case to set a default value for country according to dictionary
 if (!GETPOSTISSET('search_country_id') && $search_country_id == '' && ($id == DICT_DEPARTEMENTS || $id == DICT_REGIONS || $id == DICT_TVA)) {	// Not a so good idea to force on current country for all dictionaries. Some tables have entries that are for all countries, we must be able to see them, so this is done for dedicated dictionaries only.
@@ -316,7 +317,7 @@ $tabsql[DICT_HOLIDAY_TYPES] = "SELECT h.rowid as rowid, h.entity, h.code, h.labe
 $tabsql[DICT_LEAD_STATUS] = "SELECT t.rowid as rowid, t.code, t.label, percent, t.position, t.active FROM ".MAIN_DB_PREFIX."c_lead_status as t";
 $tabsql[DICT_FORMAT_CARDS] = "SELECT t.rowid, t.code, t.name, t.paper_size, t.orientation, t.metric, t.leftmargin, t.topmargin, t.nx, t.ny, t.spacex, t.spacey, t.width, t.height, t.font_size, t.custom_x, t.custom_y, t.active FROM ".MAIN_DB_PREFIX."c_format_cards as t";
 $tabsql[DICT_INVOICE_SUBTYPE] = "SELECT t.rowid, t.code, t.label, c.label as country, c.code as country_code, t.fk_country as country_id, t.active FROM ".MAIN_DB_PREFIX."c_invoice_subtype as t, ".MAIN_DB_PREFIX."c_country as c WHERE t.fk_country = c.rowid";
-$tabsql[DICT_HRM_PUBLIC_HOLIDAY] = "SELECT a.id    as rowid, a.entity, a.code, a.fk_country as country_id, c.code as country_code, c.label as country, a.dayrule, a.day, a.month, a.year, a.active FROM ".MAIN_DB_PREFIX."c_hrm_public_holiday as a LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON a.fk_country=c.rowid AND c.active=1 WHERE a.entity IN (".getEntity($tabname[DICT_HRM_PUBLIC_HOLIDAY]).")";
+$tabsql[DICT_HRM_PUBLIC_HOLIDAY] = "SELECT a.id as rowid, a.entity, a.code, a.fk_country as country_id, a.fk_departement as departement_id, d.nom as departement, c.code as country_code, c.label as country, a.dayrule, a.day, a.month, a.year, a.active FROM ".MAIN_DB_PREFIX."c_hrm_public_holiday as a LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON a.fk_country=c.rowid AND c.active=1 LEFT JOIN ".MAIN_DB_PREFIX."c_departements as d ON a.fk_departement=d.rowid WHERE a.entity IN (".getEntity($tabname[DICT_HRM_PUBLIC_HOLIDAY]).")";
 $tabsql[DICT_HRM_DEPARTMENT] = "SELECT t.rowid, t.pos, t.code, t.label, t.active FROM ".MAIN_DB_PREFIX."c_hrm_department as t";
 $tabsql[DICT_HRM_FUNCTION] = "SELECT t.rowid, t.pos, t.code, t.label, t.c_level, t.active FROM ".MAIN_DB_PREFIX."c_hrm_function as t";
 $tabsql[DICT_EXP_TAX_CAT] = "SELECT c.rowid, c.label, c.active, c.entity FROM ".MAIN_DB_PREFIX."c_exp_tax_cat as c";
@@ -410,7 +411,7 @@ $tabfield[DICT_HOLIDAY_TYPES] = "code,label,affect,delay,newbymonth,country_id,c
 $tabfield[DICT_LEAD_STATUS] = "code,label,percent,position";
 $tabfield[DICT_FORMAT_CARDS] = "code,name,paper_size,orientation,metric,leftmargin,topmargin,nx,ny,spacex,spacey,width,height,font_size,custom_x,custom_y";
 $tabfield[DICT_INVOICE_SUBTYPE] = "country_id,country,code,label";
-$tabfield[DICT_HRM_PUBLIC_HOLIDAY] = "code,dayrule,year,month,day,country_id,country";
+$tabfield[DICT_HRM_PUBLIC_HOLIDAY] = "code,dayrule,year,month,day,country,departement";
 $tabfield[DICT_HRM_DEPARTMENT] = "code,label";
 $tabfield[DICT_HRM_FUNCTION] = "code,label";
 $tabfield[DICT_EXP_TAX_CAT] = "label";
@@ -457,7 +458,7 @@ $tabfieldvalue[DICT_HOLIDAY_TYPES] = "code,label,affect,delay,newbymonth,country
 $tabfieldvalue[DICT_LEAD_STATUS] = "code,label,percent,position";
 $tabfieldvalue[DICT_FORMAT_CARDS] = "code,name,paper_size,orientation,metric,leftmargin,topmargin,nx,ny,spacex,spacey,width,height,font_size,custom_x,custom_y";
 $tabfieldvalue[DICT_INVOICE_SUBTYPE] = "country,code,label";
-$tabfieldvalue[DICT_HRM_PUBLIC_HOLIDAY] = "code,dayrule,day,month,year,country";
+$tabfieldvalue[DICT_HRM_PUBLIC_HOLIDAY] = "code,dayrule,day,month,year,country,departement";
 $tabfieldvalue[DICT_HRM_DEPARTMENT] = "code,label";
 $tabfieldvalue[DICT_HRM_FUNCTION] = "code,label";
 $tabfieldvalue[DICT_EXP_TAX_CAT] = "label";
@@ -504,7 +505,7 @@ $tabfieldinsert[DICT_HOLIDAY_TYPES] = "code,label,affect,delay,newbymonth,fk_cou
 $tabfieldinsert[DICT_LEAD_STATUS] = "code,label,percent,position";
 $tabfieldinsert[DICT_FORMAT_CARDS] = "code,name,paper_size,orientation,metric,leftmargin,topmargin,nx,ny,spacex,spacey,width,height,font_size,custom_x,custom_y";
 $tabfieldinsert[DICT_INVOICE_SUBTYPE] = "fk_country,code,label";
-$tabfieldinsert[DICT_HRM_PUBLIC_HOLIDAY] = "code,dayrule,day,month,year,fk_country,entity";
+$tabfieldinsert[DICT_HRM_PUBLIC_HOLIDAY] = "code,dayrule,day,month,year,fk_country,fk_departement,entity";
 $tabfieldinsert[DICT_HRM_DEPARTMENT] = "code,label";
 $tabfieldinsert[DICT_HRM_FUNCTION] = "code,label";
 $tabfieldinsert[DICT_EXP_TAX_CAT] = "label";
@@ -816,6 +817,7 @@ if ($reshook < 0) {
 
 if (GETPOST('button_removefilter', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter_x', 'alpha')) {
 	$search_country_id = '';
+	 $search_departement_id = '';
 	$search_code = '';
 	$search_active = '';
 }
@@ -1403,6 +1405,7 @@ if (empty($reshook)) {
 global $form, $formother; // Used in dictFieldList() below
 
 $form = new Form($db);
+$formcompany = new FormCompany($db);
 $formother = new FormOther($db);
 
 $title = $langs->trans("DictionarySetup");
@@ -1433,6 +1436,9 @@ if ($id == DICT_CHARGESOCIALES && GETPOST('from') == 'accountancy') {
 $param = '&id='.urlencode((string) ($id));
 if ($search_country_id || GETPOSTISSET('page') || GETPOST('button_removefilter', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter_x', 'alpha')) {
 	$param .= '&search_country_id='.urlencode((string) ($search_country_id ? $search_country_id : -1));
+}
+if ($search_departement_id > 0) {
+ $param .= '&search_departement_id='.urlencode((string) $search_departement_id);
 }
 if ($search_code != '') {
 	$param .= '&search_code='.urlencode($search_code);
@@ -1510,6 +1516,9 @@ if ($id > 0) {
 			$sql .= " AND c.rowid = ".((int) $search_country_id);
 		}
 	}
+	if ($search_departement_id > 0) {
+ 	$sql .= " AND (d.rowid = ".((int) $search_departement_id).")";
+ 	}
 	if ($search_code != '') {
 		$sql .= natural_search($tablecode, $search_code);
 	}
@@ -1994,7 +2003,12 @@ if ($id > 0) {
 					print $form->select_country($search_country_id, 'search_country_id', '', 28, 'minwidth100 maxwidth150 maxwidthonsmartphone', '', '&nbsp;');
 					print '</td>';
 					$colspan++;
-				} elseif ($value == 'code') {
+				} elseif ($value == 'departement') {
+					print '<td class="liste_titre">';
+					print $formcompany->select_state($search_departement_id, ($search_country_id > 0 ? $search_country_id : $mysoc->country_code), 'search_departement_id', 'minwidth100 maxwidth150 maxwidthonsmartphone');
+					print '</td>';
+					$colspan++;
+ 				} elseif ($value == 'code') {
 					print '<td class="liste_titre">';
 					print '<input type="text" class="maxwidth100" name="search_code" value="'.dol_escape_htmltag($search_code).'">';
 					print '</td>';
@@ -2463,6 +2477,10 @@ if ($id > 0) {
 					if (!is_null($withentity)) {
 						print '<input type="hidden" name="entity" value="'.$withentity.'">';
 					}
+					if ($search_departement_id > 0) {
+						print '<input type="hidden" name="search_departement_id" value="'.((int) $search_departement_id).'">';
+					}
+
 					print '<input type="submit" class="button button-edit smallpaddingimp" name="actionmodify" value="'.$langs->trans("Modify").'">';
 					print '<input type="submit" class="button button-cancel smallpaddingimp" name="actioncancel" value="'.$langs->trans("Cancel").'">';
 					print '</td>';
@@ -2964,7 +2982,14 @@ function dictFieldList($fieldlist, $obj = null, $tabname = '', $context = '')
 				print '<input type="hidden" name="'.$value.'" value="'.$department_buyer_id.'">';
 				print '</td>';
 			}
-		} elseif ($value == 'lang') {
+		} elseif ($value == 'departement') {
+			print '<td class="nowraponall">';
+			$country_code = (!empty($obj->country_code) ? $obj->country_code : '');
+			$departement_id = (!empty($obj->departement_id) ? (int) $obj->departement_id : (!empty($obj->fk_departement) ? (int) $obj->fk_departement : (!empty($obj->{$value}) ? (int) $obj->{$value} : 0)));
+			print $formcompany->select_state($departement_id, $country_code, $value, 'minwidth100 maxwidth150 maxwidthonsmartphone');
+			print '</td>';
+
+ 		} elseif ($value == 'lang') {
 			print '<td>';
 			print $formadmin->select_language(getDolGlobalString('MAIN_LANG_DEFAULT'), 'lang');
 			print '</td>';
