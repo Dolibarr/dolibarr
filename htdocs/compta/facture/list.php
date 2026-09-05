@@ -569,7 +569,7 @@ if ($action == 'makepayment_confirm' && $user->hasRight('facture', 'paiement')) 
 								$paiement = new Paiement($db);
 								$paiement->datepaye = $paiementdate;
 								$paiement->amounts[$facture->id] = $remaintopay; // Array with all payments dispatching with invoice id
-								$paiement->multicurrency_amounts[$facture->id] = $multicurrency_remaintopay;
+								$paiement->multicurrency_amounts[$facture->id] = (float) $multicurrency_remaintopay;
 								$paiement->paiementid = $paiementid;
 								$paiement->note_private = $note_private;
 								$paiement_id = $paiement->create($user, 1, $facture->thirdparty);
