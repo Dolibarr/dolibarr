@@ -403,7 +403,7 @@ print '<td>' . img_picto('', 'object_phoning_fax', 'class="pictofixedwidth"') . 
 print '</tr>';
 
 // Email / Web
-print '<tr><td>' . $form->editfieldkey('EMail', 'email', '', $object, 0, 'string', '', !getDolGlobalString('SOCIETE_EMAIL_MANDATORY') ? '' : $conf->global->SOCIETE_EMAIL_MANDATORY) . '</td>';
+print '<tr><td>' . $form->editfieldkey('EMail', 'email', '', $object, 0, 'string', '', getDolGlobalInt('SOCIETE_EMAIL_MANDATORY')) . '</td>';
 print '<td>' . img_picto('', 'object_email', 'class="pictofixedwidth"') . ' <input type="text" class="maxwidth200 widthcentpercentminusx" name="email" id="email" value="' . $object->email . '"></td>';
 if (isModEnabled('mailing') && getDolGlobalString('THIRDPARTY_SUGGEST_ALSO_ADDRESS_CREATION')) {
 	if ($conf->browser->layout == 'phone') {
