@@ -3,6 +3,7 @@
  * Copyright (C) 2013-2015 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Jose Martinez		<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -107,7 +108,7 @@ if ($action == 'convert') {
 			if ($vat_src_code_old) {
 				$sql .= " AND default_vat_code = '".$db->escape($vat_src_code_old)."'";
 			} else {
-				$sql .= " AND default_vat_code IS NULL";
+				$sql .= " AND (default_vat_code IS NULL OR default_vat_code = '')";
 			}
 
 			$resql = $db->query($sql);
@@ -197,6 +198,18 @@ if ($action == 'convert') {
 			} else {
 				dol_print_error($db);
 			}
+
+			// Sweep: updatePrice() above only reaches products that have a defined price. Set the target
+			// rate and VAT code directly on any product/price row still matching the old value (products
+			// without a price, and historical price rows), so the mass change is complete.
+			$sweepwhere = " AND tva_tx = '".$db->escape($oldvatrateclean)."'";
+			if ($vat_src_code_old) {
+				$sweepwhere .= " AND default_vat_code = '".$db->escape($vat_src_code_old)."'";
+			} else {
+				$sweepwhere .= " AND (default_vat_code IS NULL OR default_vat_code = '')";
+			}
+			$db->query("UPDATE ".MAIN_DB_PREFIX."product SET tva_tx = '".$db->escape($newvatrateclean)."', default_vat_code = '".$db->escape($vat_src_code_new)."' WHERE entity IN (".getEntity('product').")".$sweepwhere);
+			$db->query("UPDATE ".MAIN_DB_PREFIX."product_price SET tva_tx = '".$db->escape($newvatrateclean)."', default_vat_code = '".$db->escape($vat_src_code_new)."' WHERE 1 = 1".$sweepwhere);
 		}
 
 		$fourn = new Fournisseur($db);
@@ -209,7 +222,7 @@ if ($action == 'convert') {
 		if ($vat_src_code_old) {
 			$sql .= " AND default_vat_code = '".$db->escape($vat_src_code_old)."'";
 		} else {
-			$sql .= " AND default_vat_code IS NULL";
+			$sql .= " AND (default_vat_code IS NULL OR default_vat_code = '')";
 		}
 		$sql .= " AND s.fk_pays = ".((int) $country_id);
 
@@ -335,7 +348,21 @@ if (empty($mysoc->country_code)) {
 	print '<tr class="oddeven">'."\n";
 	print '<td>'.$langs->trans("OldVATRates").'</td>'."\n";
 	print '<td width="60" class="right">'."\n";
-	print $form->load_tva('oldvatrate', $oldvatrate, $mysoc, null, 0, 0, '', false, 1);
+	// Old VAT rate: distinct (rate, code) pairs present on products, with the count of products for
+	// each -- so the source to convert (including rates without a VAT code) is visible and quantified.
+	print '<select class="flat" name="oldvatrate" id="oldvatrate">';
+	$sqloldvat = "SELECT tva_tx, default_vat_code, COUNT(*) as nb FROM ".MAIN_DB_PREFIX."product";
+	$sqloldvat .= " WHERE entity IN (".getEntity('product').") AND tva_tx IS NOT NULL";
+	$sqloldvat .= " GROUP BY tva_tx, default_vat_code ORDER BY tva_tx DESC, default_vat_code";
+	$resqloldvat = $db->query($sqloldvat);
+	while ($resqloldvat && $objoldvat = $db->fetch_object($resqloldvat)) {
+		$rateclean = price2num($objoldvat->tva_tx);
+		$hascode = !empty($objoldvat->default_vat_code);
+		$optval = $rateclean.($hascode ? ' ('.$objoldvat->default_vat_code.')' : '');
+		$optlbl = vatrate($rateclean, true).($hascode ? ' ('.$objoldvat->default_vat_code.')' : ' ('.$langs->trans("WithoutVATCode").')').' ('.$objoldvat->nb.')';
+		print '<option value="'.dol_escape_htmltag($optval).'"'.((string) $oldvatrate === (string) $optval ? ' selected' : '').'>'.$optlbl.'</option>';
+	}
+	print '</select>';
 	print '</td>'."\n";
 	print '</tr>'."\n";
 
@@ -368,6 +395,17 @@ if (empty($mysoc->country_code)) {
 	print '</div>';
 
 	print '</form>';
+
+	// The conversion loops over every matching product with updatePrice(): on a large
+	// catalog the request runs for minutes with no feedback, which invites re-submits.
+	// Show the native blocking overlay (dolBlockUI + working.gif) while it runs.
+	print '<script>
+	jQuery(function() {
+		jQuery("#convert_vatrate").closest("form").on("submit", function() {
+			dolBlockUI("'.dol_escape_js($langs->transnoentities("MassConvertInProgress")).'");
+		});
+	});
+	</script>';
 }
 
 // End of page

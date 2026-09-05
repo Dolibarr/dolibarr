@@ -4599,8 +4599,8 @@ class Product extends CommonObject
 		}
 
 		if (empty($year)) {
-			$year = dol_print_date(time(), '%Y');
-			$month = dol_print_date(time(), '%m');
+			$year = dol_print_date(dol_now(), '%Y');
+			$month = dol_print_date(dol_now(), '%m');
 		} elseif ($year == -1) {
 			$year = '';
 			$month = 12; // We imagine we are at end of year, so we get last 12 month before, so all correct year.
@@ -4624,7 +4624,9 @@ class Product extends CommonObject
 			}
 			if ($month == 0) {
 				$month = 12;
-				$year -= 1;
+				if ($year !== '') { // $year is '' when we want stats for all years
+					$year -= 1;
+				}
 			}
 		}
 
@@ -6579,7 +6581,7 @@ class Product extends CommonObject
 		}
 		// Include reception lines
 		if (isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
-			$filterStatus = '4';
+			$filterStatus = getDolGlobalString('SUPPLIER_ORDER_STATUS_FOR_VIRTUAL_STOCK', '4');
 			if (isset($includedraftpoforvirtual)) {
 				$filterStatus = '0,'.$filterStatus;
 			}

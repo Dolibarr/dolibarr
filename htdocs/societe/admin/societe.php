@@ -379,8 +379,8 @@ foreach ($dirsociete as $dirroot) {
 	if (is_resource($handle)) {
 		// Loop on each module find in opened directory
 		while (($file = readdir($handle)) !== false) {
-			if (substr($file, 0, 15) == 'mod_codeclient_' && substr($file, -3) == 'php') {
-				$file = substr($file, 0, dol_strlen($file) - 4);
+			if (dol_substr($file, 0, 15) == 'mod_codeclient_' && dol_substr($file, -3) == 'php') {
+				$file = dol_substr($file, 0, dol_strlen($file) - 4);
 
 				try {
 					dol_include_once($dirroot.$file.'.php');
@@ -468,8 +468,8 @@ foreach ($dirsociete as $dirroot) {
 	$handle = @opendir($dir);
 	if (is_resource($handle)) {
 		while (($file = readdir($handle)) !== false) {
-			if (substr($file, 0, 15) == 'mod_codecompta_' && substr($file, -3) == 'php') {
-				$file = substr($file, 0, dol_strlen($file) - 4);
+			if (dol_substr($file, 0, 15) == 'mod_codecompta_' && dol_substr($file, -3) == 'php') {
+				$file = dol_substr($file, 0, dol_strlen($file) - 4);
 
 				try {
 					dol_include_once($dirroot.$file.'.php');
@@ -562,8 +562,8 @@ foreach ($dirsociete as $dirroot) {
 	if (is_resource($handle)) {
 		while (($file = readdir($handle)) !== false) {
 			if (preg_match('/\.modules\.php$/i', $file)) {
-				$name = substr($file, 4, dol_strlen($file) - 16);
-				$classname = substr($file, 0, dol_strlen($file) - 12);
+				$name = dol_substr($file, 4, dol_strlen($file) - 16);
+				$classname = dol_substr($file, 0, dol_strlen($file) - 12);
 
 				try {
 					dol_include_once($dirroot.'doc/'.$file);

@@ -338,7 +338,7 @@ foreach ($dirmodels as $reldir) {
 			while (($file = readdir($handle)) !== false) {
 				if (preg_match('/^(mod_.*)\.php$/i', $file, $reg)) {
 					$file = $reg[1];
-					$classname = substr($file, 4);
+					$classname = dol_substr($file, 4);
 
 					require_once $dir.$file.'.php';
 
@@ -437,7 +437,7 @@ if (!getDolGlobalString('PROJECT_HIDE_TASKS')) {
 				while (($file = readdir($handle)) !== false) {
 					if (preg_match('/^(mod_.*)\.php$/i', $file, $reg)) {
 						$file = $reg[1];
-						$classname = substr($file, 4);
+						$classname = dol_substr($file, 4);
 
 						require_once $dir.$file.'.php';
 
@@ -574,8 +574,8 @@ foreach ($dirmodels as $reldir) {
 				foreach ($filelist as $file) {
 					if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file)) {
 						if (file_exists($dir.'/'.$file)) {
-							$name = substr($file, 4, dol_strlen($file) - 16);
-							$classname = substr($file, 0, dol_strlen($file) - 12);
+							$name = dol_substr($file, 4, dol_strlen($file) - 16);
+							$classname = dol_substr($file, 0, dol_strlen($file) - 12);
 
 							require_once $dir.'/'.$file;
 							$module = new $classname($db);
@@ -723,8 +723,8 @@ if (!getDolGlobalString('PROJECT_HIDE_TASKS')) {
 					foreach ($filelist as $file) {
 						if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file)) {
 							if (file_exists($dir.'/'.$file)) {
-								$name = substr($file, 4, dol_strlen($file) - 16);
-								$classname = substr($file, 0, dol_strlen($file) - 12);
+								$name = dol_substr($file, 4, dol_strlen($file) - 16);
+								$classname = dol_substr($file, 0, dol_strlen($file) - 12);
 
 								require_once $dir.'/'.$file;
 								$module = new $classname($db);

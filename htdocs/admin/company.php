@@ -7,7 +7,7 @@
  * Copyright (C) 2015-2025	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2017		Rui Strecht					<rui.strecht@aliartalentos.com>
  * Copyright (C) 2023		Nick Fragoulis
- * Copyright (C) 2024-2025	Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -214,14 +214,10 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 					} else {
 						dol_syslog("ErrorImageFormatNotSupported", LOG_WARNING);
 					}
-				} elseif (preg_match('/^ErrorFileIsInfectedWithAVirus/', $result)) {
+				} elseif (!is_numeric($result)) {	// $result is a translation key
 					$error++;
 					$langs->load("errors");
-					$tmparray = explode(':', $result);
-					setEventMessages($langs->trans('ErrorFileIsInfectedWithAVirus', $tmparray[1]), null, 'errors');
-				} elseif (preg_match('/^ErrorFileSizeTooLarge/', $result)) {
-					$error++;
-					setEventMessages($langs->trans("ErrorFileSizeTooLarge"), null, 'errors');
+					setEventMessages($langs->trans($result), null, 'errors');
 				} else {
 					$error++;
 					setEventMessages($langs->trans("ErrorFailedToSaveFile"), null, 'errors');

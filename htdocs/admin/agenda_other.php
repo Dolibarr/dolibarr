@@ -5,7 +5,7 @@
  * Copyright (C) 2015		Jean-François Ferry	    <jfefe@aternatik.fr>
  * Copyright (C) 2016		Charlie Benke		    <charlie@patas-monkey.com>
  * Copyright (C) 2017       Open-DSI                <support@open-dsi.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -262,8 +262,8 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 			if (is_resource($handle)) {
 				while (($file = readdir($handle)) !== false) {
 					if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file)) {
-						$name = substr($file, 4, dol_strlen($file) - 16);
-						$classname = substr($file, 0, dol_strlen($file) - 12);
+						$name = dol_substr($file, 4, dol_strlen($file) - 16);
+						$classname = dol_substr($file, 0, dol_strlen($file) - 12);
 						require_once $dir.'/'.$file;
 						$module = new $classname($db, new ActionComm($db));
 

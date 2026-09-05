@@ -48,6 +48,7 @@ if (!is_readable("{$path}../../htdocs/config/config.php")) {
 }
 require_once $path.'../../htdocs/core/lib/files.lib.php';
 require_once $path.'../../htdocs/core/lib/functions.lib.php';
+require_once $path.'../../htdocs/core/lib/html.lib.php';
 require_once $path.'../../htdocs/core/lib/geturl.lib.php';
 
 print '***** '.constant('PRODUCT').' - '.constant('VERSION').' *****'."\n";

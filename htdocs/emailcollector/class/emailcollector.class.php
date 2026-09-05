@@ -1238,6 +1238,7 @@ class EmailCollector extends CommonObject
 					$expire = false;
 					if (is_object($tokenobj) && method_exists($tokenobj, 'getEndOfLife')) {
 						$endOfLife = $tokenobj->getEndOfLife();
+						// time() is used internally in token @phan-suppress-next-line DolibarrForbiddenFunctionPlugin
 						if ($endOfLife !== -9002 && $endOfLife !== -9001 && time() > ($endOfLife - 30)) {
 							$expire = true;
 						}
@@ -3112,7 +3113,6 @@ class EmailCollector extends CommonObject
 											if (!$errorforactions) {
 												// Search state by name or code (for country if defined)
 												if (!empty($contactstatic->state)) {
-													require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
 													$result = dol_getIdFromCode($this->db, $contactstatic->state, 'c_departements', 'nom', 'rowid');
 													if (empty($result)) {
 														$errorforactions++;
@@ -3126,7 +3126,6 @@ class EmailCollector extends CommonObject
 														$operationslog .= '<br>We set property state_id='.dol_escape_htmltag($result);
 													}
 												} elseif (!empty($contactstatic->state_code)) {
-													require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
 													$result = dol_getIdFromCode($this->db, $contactstatic->state_code, 'c_departements', 'code_departement', 'rowid');
 													if (empty($result)) {
 														$errorforactions++;

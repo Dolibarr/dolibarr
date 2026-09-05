@@ -126,9 +126,9 @@ print load_fiche_titre($titre, '', 'bill');
 print '<form method="post" action="rapport.php?year='.$year.'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="builddoc">';
-$cday = GETPOST("cday") ? GETPOST("cday") : date("d", time());
-$cmonth = GETPOST("remonth") ? GETPOST("remonth") : date("n", time());
-$syear = GETPOST("reyear") ? GETPOST("reyear") : date("Y", time());
+$cday = GETPOST("cday") ? GETPOST("cday") : (int) dol_print_date(dol_now(), "%d");
+$cmonth = GETPOST("remonth") ? GETPOST("remonth") : (int) dol_print_date(dol_now(), "%m");
+$syear = GETPOST("reyear") ? GETPOST("reyear") : (int) dol_print_date(dol_now(), "%Y");
 
 print $formother->selectDay($cday, 'cday', 1);
 

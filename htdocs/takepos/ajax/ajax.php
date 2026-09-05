@@ -239,7 +239,7 @@ if ($action == 'getProducts' && $user->hasRight('takepos', 'run')) {
 
 						$ig = '../public/theme/common/nophoto.png';
 						if (!getDolGlobalString('TAKEPOS_HIDE_PRODUCT_IMAGES')) {
-							$image = $objProd->show_photos('product', $conf->product->multidir_output[$objProd->entity], 'small', 1);
+							$image = $objProd->show_photos('product', $conf->product->multidir_output[(int) $objProd->entity], 'small', 1);
 
 							$match = array();
 							preg_match('@src="([^"]+)"@', $image, $match);
@@ -357,7 +357,7 @@ if ($action == 'getProducts' && $user->hasRight('takepos', 'run')) {
 		while ($obj = $db->fetch_object($resql)) {
 			$objProd = new Product($db);
 			$objProd->fetch($obj->rowid);
-			$image = $objProd->show_photos('product', $conf->product->multidir_output[$objProd->entity], 'small', 1);
+			$image = $objProd->show_photos('product', $conf->product->multidir_output[(int) $objProd->entity], 'small', 1);
 
 			$match = array();
 			preg_match('@src="([^"]+)"@', $image, $match);
@@ -449,11 +449,19 @@ if ($action == 'getProducts' && $user->hasRight('takepos', 'run')) {
 		$resultinccounter = 0;
 		$templateidtouse = 0;
 
+		/*
 		$url = DOL_URL_ROOT."/blockedlog/ajax/block-add.php?id=".((int) $object->id).'&element='.urlencode($object->element)."&action=DOC_PREVIEW&token=".newToken();
 
 		$result = getURLContent($url, 'GET', '', 1, array(), array('http', 'https'), 2);
 
 		if ((string) $result['http_code'] == '200') {
+		*/
+		// Increase of counter is managed by the file that generate the ticket, so "receipt.php"
+
+		// Call trigger to log the $action 'DOC_PREVIEW' or 'DOC_DOWNLOAD'
+		$result = $object->call_trigger('DOC_PREVIEW', $user);
+
+		if ($result >= 0) {
 			$resultinccounter++;
 			$object->pos_print_counter++;	// increase counter to match the change in database
 
@@ -464,7 +472,7 @@ if ($action == 'getProducts' && $user->hasRight('takepos', 'run')) {
 			// Send to printer
 			$printer->sendToPrinter($object, $templateidtouse, getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term));
 		} else {
-			print 'Failed to update print counter for object ID='.$object->id;
+			print 'Failed to update print counter for object ID='.$object->id.' so we refuse to print.';
 		}
 	}
 } elseif ($action == 'getInvoice' && $user->hasRight('takepos', 'run')) {

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2014-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		Charlene Benke			<charlene@patas-monkey.com>
  * Copyright (C) 2026		Lionel Vessiller		<lvessiller@open-dsi.fr>
  *
@@ -59,6 +59,7 @@ trait CommonSubtotal
 		'supplier_proposal',
 		'order_supplier',
 		'invoice_supplier',
+		'fichinter',
 	];
 
 
@@ -78,7 +79,7 @@ trait CommonSubtotal
 	 */
 	public function addSubtotalLine($langs, $desc, $depth, $options = array(), $parent_line = 0)
 	{
-		if (empty($desc)) {
+		if (!isset($desc) || trim((string) $desc) === '') {
 			$this->errors[] = $langs->trans("TitleNeedDesc");
 			return -1;
 		}
@@ -301,7 +302,14 @@ trait CommonSubtotal
 		}
 
 
-		if ($current_module != 'shipping') {
+		if ($current_module != 'shipping' && $result > 0) {
+			// SupplierProposal::addline() and Fichinter::addline() do not append the new line
+			// to $this->lines, so reload the lines before looking the new one up by id.
+			if ($current_module == 'supplier_proposal') {
+				$this->fetch($this->id);
+			} elseif ($current_module == 'fichinter') {
+				$this->fetch_lines();
+			}
 			foreach ($this->lines as $line) {
 				'@phan-var-force CommonObjectLine $line';
 				/** @var CommonObjectLine $line */
@@ -388,6 +396,10 @@ trait CommonSubtotal
 			$line = new SupplierInvoiceLine($this->db);
 			$line->id = $id;
 			$result = $line->delete();
+		} elseif ($current_module == 'fichinter') {
+			$line = new FichinterLigne($this->db);
+			$line->id = $id;
+			$result = $line->deleteLine($user);
 		}
 
 		return $result >= 0 ? $result : -1; // Return line ID or false
@@ -644,7 +656,7 @@ trait CommonSubtotal
 		$result = 0;
 		$linerang -= 1;
 
-		$nb_lines = count($this->lines)+1;
+		$nb_lines = count($this->lines);
 
 		for ($i = $linerang+1; $i < $nb_lines; $i++) {
 			if ($this->lines[$i]->special_code == SUBTOTALS_SPECIAL_CODE) {
@@ -692,8 +704,8 @@ trait CommonSubtotal
 						$this->lines[$i]->qty,
 						$mode == 'discount' ? $value : $this->lines[$i]->remise_percent,
 						$mode == 'tva' ? $value : $this->lines[$i]->tva_tx,
-						$this->lines[$i]->localtax1_rate,
-						$this->lines[$i]->localtax2_rate,
+						$this->lines[$i]->localtax1_tx,
+						$this->lines[$i]->localtax2_tx,
 						$line_price_base_type,
 						$this->lines[$i]->info_bits,
 						$this->lines[$i]->date_start,
@@ -719,8 +731,8 @@ trait CommonSubtotal
 						$this->lines[$i]->qty,
 						$mode == 'discount' ? $value : $this->lines[$i]->remise_percent,
 						$mode == 'tva' ? $value : $this->lines[$i]->tva_tx,
-						$this->lines[$i]->localtax1_rate,
-						$this->lines[$i]->localtax2_rate,
+						$this->lines[$i]->localtax1_tx,
+						$this->lines[$i]->localtax2_tx,
 						$this->lines[$i]->desc,
 						$line_price_base_type,
 						$this->lines[$i]->info_bits,
@@ -736,6 +748,57 @@ trait CommonSubtotal
 						$this->lines[$i]->array_options,
 						$this->lines[$i]->fk_unit,
 						$this->lines[$i]->multicurrency_subprice
+					);
+				} elseif ($current_module == 'supplier_proposal' && $this instanceof SupplierProposal) {
+					// Preserve the original entry mode of the line so the total is not drifted by rounding.
+					$line_price_base_type = $this->lines[$i]->getPriceBaseType();
+					$line_pu = ($line_price_base_type === 'TTC') ? $this->lines[$i]->subprice_ttc : $this->lines[$i]->subprice;
+					$result = $this->updateline(
+						$this->lines[$i]->id,
+						$line_pu,
+						$this->lines[$i]->qty,
+						$mode == 'discount' ? $value : $this->lines[$i]->remise_percent,
+						$mode == 'tva' ? $value : $this->lines[$i]->tva_tx,
+						$this->lines[$i]->localtax1_tx,
+						$this->lines[$i]->localtax2_tx,
+						$this->lines[$i]->desc,
+						$line_price_base_type,
+						$this->lines[$i]->info_bits,
+						$this->lines[$i]->special_code,
+						$this->lines[$i]->fk_parent_line,
+						0,
+						$this->lines[$i]->fk_fournprice,
+						$this->lines[$i]->pa_ht,
+						$this->lines[$i]->label,
+						$this->lines[$i]->product_type,
+						$this->lines[$i]->array_options,
+						$this->lines[$i]->ref_supplier,
+						(int) $this->lines[$i]->fk_unit,
+						$this->lines[$i]->multicurrency_subprice
+					);
+				} elseif ($current_module == 'order_supplier' && $this instanceof CommandeFournisseur) {
+					// Preserve the original entry mode of the line so the total is not drifted by rounding.
+					$line_price_base_type = $this->lines[$i]->getPriceBaseType();
+					$line_pu = ($line_price_base_type === 'TTC') ? $this->lines[$i]->subprice_ttc : $this->lines[$i]->subprice;
+					$result = $this->updateline(
+						$this->lines[$i]->id,
+						$this->lines[$i]->desc,
+						$line_pu,
+						$this->lines[$i]->qty,
+						$mode == 'discount' ? $value : $this->lines[$i]->remise_percent,
+						$mode == 'tva' ? $value : $this->lines[$i]->tva_tx,
+						$this->lines[$i]->localtax1_tx,
+						$this->lines[$i]->localtax2_tx,
+						$line_price_base_type,
+						$this->lines[$i]->info_bits,
+						$this->lines[$i]->product_type,
+						0,
+						$this->lines[$i]->date_start,
+						$this->lines[$i]->date_end,
+						$this->lines[$i]->array_options,
+						$this->lines[$i]->fk_unit,
+						$this->lines[$i]->multicurrency_subprice,
+						$this->lines[$i]->ref_supplier
 					);
 				}
 				if ($result < 0) {
@@ -843,11 +906,63 @@ trait CommonSubtotal
 	public function getPossibleLevels($langs)
 	{
 		$depth_array = array();
-		$max_depth = getDolGlobalString('SUBTOTAL_'.strtoupper($this->element).'_MAX_DEPTH', 2);
+		$max_depth = getDolGlobalInt('SUBTOTAL_'.strtoupper($this->element).'_MAX_DEPTH', 2);
 		for ($i = 0; $i < $max_depth; $i++) {
 			$depth_array[$i + 1] = $langs->trans("SubtotalLevel", $i + 1);
 		}
 		return $depth_array;
+	}
+
+	/**
+	 * Retrieve the list of active predefined titles usable as description of a title line.
+	 *
+	 * @return array<string,string>	Array with the title label as both key and value, sorted alphabetically
+	 *
+	 * @phan-suppress PhanUndeclaredProperty
+	 * @phan-suppress PhanPluginUnknownObjectMethodCall
+	 */
+	public function getPredefinedTitles()
+	{
+		$titles = array();
+
+		$sql = "SELECT label FROM ".MAIN_DB_PREFIX."c_subtotals_titles";
+		$sql .= " WHERE active = 1 AND entity IN (".getEntity('c_subtotals_titles').")";
+		$sql .= " ORDER BY label ASC";
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			while ($obj = $this->db->fetch_object($resql)) {
+				$titles[dol_escape_htmltag($obj->label)] = $obj->label;
+			}
+		}
+
+		return $titles;
+	}
+
+	/**
+	 * Retrieve the list of active predefined texts usable as content of a free-text line.
+	 *
+	 * @return array<int,array{label:string,content:string}>	Array keyed by rowid, each entry has a 'label' and 'content', sorted alphabetically by label
+	 *
+	 * @phan-suppress PhanUndeclaredProperty
+	 * @phan-suppress PhanPluginUnknownObjectMethodCall
+	 */
+	public function getPredefinedTexts()
+	{
+		$texts = array();
+
+		$sql = "SELECT rowid, label, content FROM ".MAIN_DB_PREFIX."c_subtotals_texts";
+		$sql .= " WHERE active = 1 AND entity IN (".getEntity('c_subtotals_texts').")";
+		$sql .= " ORDER BY label ASC";
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			while ($obj = $this->db->fetch_object($resql)) {
+				$texts[(int) $obj->rowid] = array('label' => $obj->label, 'content' => $obj->content);
+			}
+		}
+
+		return $texts;
 	}
 
 	/**
