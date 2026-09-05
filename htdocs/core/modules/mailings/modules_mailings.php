@@ -228,37 +228,43 @@ class MailingTargets // This can't be abstract as it is used for some method
 
 		// Insert emailing targets from array into database
 		$j = 0;
-		$num = count($cibles);
+
+		$sql = "INSERT INTO ".$this->db->prefix()."mailing_cibles";
+		$sql .= " (fk_mailing, fk_contact, lastname, firstname, email, other, source_url, source_id, tag, source_type)";
+		$sql .= " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+		$stmt = $this->db->prepare($sql);
+		if ($stmt === false) {
+			$this->error = $this->db->lasterror();
+			$this->db->rollback();
+			return -1;
+		}
+
 		foreach ($cibles as $targetarray) {
-			if (!empty($targetarray['email'])) { // avoid empty email address
-				$sql = "INSERT INTO ".$this->db->prefix()."mailing_cibles";
-				$sql .= " (fk_mailing,";
-				$sql .= " fk_contact,";
-				$sql .= " lastname, firstname, email, other, source_url, source_id,";
-				$sql .= " tag,";
-				$sql .= " source_type)";
-				$sql .= " VALUES (".((int) $mailing_id).",";
-				$sql .= (empty($targetarray['fk_contact']) ? '0' : (int) $targetarray['fk_contact']).",";
-				$sql .= "'".$this->db->escape($targetarray['lastname'])."',";
-				$sql .= "'".$this->db->escape($targetarray['firstname'])."',";
-				$sql .= "'".$this->db->escape($targetarray['email'])."',";
-				$sql .= "'".$this->db->escape($targetarray['other'])."',";
-				$sql .= "'".$this->db->escape($targetarray['source_url'])."',";
-				$sql .= (empty($targetarray['source_id']) ? 'null' : (int) $targetarray['source_id']).",";
-				$sql .= "'".$this->db->escape(dol_hash($conf->file->instance_unique_id.";".$targetarray['email'].";".$targetarray['lastname'].";".((int) $mailing_id).";".getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY'), 'md5'))."',";
-				$sql .= "'".$this->db->escape($targetarray['source_type'])."')";
-				dol_syslog(__METHOD__, LOG_DEBUG);
-				$result = $this->db->query($sql);
-				if ($result) {
-					$j++;
-				} else {
-					if ($this->db->errno() != 'DB_ERROR_RECORD_ALREADY_EXISTS') {
-						// If error other than duplicate
-						dol_syslog($this->db->error().' : '.$targetarray['email']);
-						$this->error = $this->db->error().' : '.$targetarray['email'];
-						$this->db->rollback();
-						return -1;
-					}
+			if (empty($targetarray['email'])) { // avoid empty email address
+				continue;
+			}
+			$tag = dol_hash($conf->file->instance_unique_id.";".$targetarray['email'].";".$targetarray['lastname'].";".((int) $mailing_id).";".getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY'), 'md5');
+			$result = $this->db->execute($stmt, array(
+				(int) $mailing_id,
+				empty($targetarray['fk_contact']) ? 0 : (int) $targetarray['fk_contact'],
+				$targetarray['lastname'],
+				$targetarray['firstname'],
+				$targetarray['email'],
+				$targetarray['other'],
+				$targetarray['source_url'],
+				empty($targetarray['source_id']) ? null : (int) $targetarray['source_id'],
+				$tag,
+				$targetarray['source_type'],
+			));
+			if ($result !== false) {
+				$j++;
+			} else {
+				if ($this->db->errno() != 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+					// If error other than duplicate
+					dol_syslog($this->db->error().' : '.$targetarray['email']);
+					$this->error = $this->db->error().' : '.$targetarray['email'];
+					$this->db->rollback();
+					return -1;
 				}
 			}
 		}

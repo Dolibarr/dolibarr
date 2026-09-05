@@ -9,7 +9,7 @@
  * Copyright (C) 2012		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1546,21 +1546,95 @@ class DoliDBPgsql extends DoliDB
 
 
 	/**
-	 * Prepare a SQL statement for execution (PostgreSQL prepared statement)
+	 * Prepare a SQL statement for execution (PostgreSQL prepared statement).
 	 *
-	 * @param string $sql The SQL query to prepare
+	 * The portable '?' placeholders are translated to PostgreSQL's $1, $2, ... form
+	 * (placeholders inside single-quoted string literals are left untouched).
+	 *
+	 * @param string $sql The SQL query with '?' placeholders
 	 * @return string|false The name of the prepared statement on success, or false on failure
+	 * @see execute()
 	 */
 	public function prepare($sql)
 	{
+		dol_syslog(get_class($this)."::prepare sql=".$sql, LOG_DEBUG);
+
+		// Translate '?' -> '$1', '$2', ... while skipping single-quoted string literals
+		$translated = '';
+		$num = 0;
+		$len = strlen($sql);
+		$inquote = false;
+		for ($i = 0; $i < $len; $i++) {
+			$c = $sql[$i];
+			if ($c === "'") {
+				if ($inquote && $i + 1 < $len && $sql[$i + 1] === "'") {
+					// '' is an escaped quote inside a literal
+					$translated .= "''";
+					$i++;
+					continue;
+				}
+				$inquote = !$inquote;
+				$translated .= $c;
+				continue;
+			}
+			if ($c === '?' && !$inquote) {
+				$num++;
+				$translated .= '$'.$num;
+				continue;
+			}
+			$translated .= $c;
+		}
+
 		$stmtname = 'dolipgstmt_' . bin2hex(random_bytes(8));	// Generate a unique identifier for the statement
 
-		$result = pg_prepare($this->db, $stmtname, $sql);
+		$result = @pg_prepare($this->db, $stmtname, $translated);
 		if (!$result) {
 			$this->lasterror = pg_last_error($this->db);
+			$this->lastqueryerror = $sql;
 			return false;
 		}
 
 		return $stmtname; // We just return the name of the prepared statement
+	}
+
+	/**
+	 * Execute a statement previously created with prepare().
+	 *
+	 * @param string           $stmt   Statement name returned by prepare()
+	 * @param array<int,mixed>  $params Ordered list of values for the '?' placeholders
+	 * @return PgSql\Result|resource|bool   A resultset (usable with fetch_object()/num_rows()/free())
+	 *                                  for a SELECT, true for another successful statement,
+	 *                                  false on error
+	 * @see prepare()
+	 */
+	public function execute($stmt, $params = array())
+	{
+		if (!is_string($stmt) || $stmt === '') {
+			$this->lasterror = 'execute() called with an invalid statement';
+			return false;
+		}
+
+		$this->lasterror = '';
+		$this->lastqueryerror = '';
+
+		// pg_execute() wants an ordered array of scalars; map bool -> 't'/'f', keep null as null
+		$values = array();
+		foreach (array_values($params) as $v) {
+			$values[] = is_bool($v) ? ($v ? 't' : 'f') : $v;
+		}
+
+		dol_syslog(get_class($this)."::execute ".$stmt." (".count($values)." bound param(s))", LOG_DEBUG);
+
+		$res = @pg_execute($this->db, $stmt, $values);
+		if ($res === false) {
+			$this->lasterror = pg_last_error($this->db);
+			$this->lastqueryerror = $stmt;
+			return false;
+		}
+
+		$this->_results = $res;
+
+		// A SELECT (or INSERT ... RETURNING) has fields to fetch; a plain DML statement does not.
+		return (pg_num_fields($res) > 0) ? $res : true;
 	}
 }
