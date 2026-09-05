@@ -1134,6 +1134,7 @@
 	 *      @param      User	$user       	Objet user
 	 *      @param      User	$user        	Objet user making change
 	 *      @param      User	$user       Objet user
+	 *      @param      User    $user           Objet user
 	 *      @param  User	$user       Objet user
 	 *      @param  string	$vatrate     		VAT rate (may contain the vat code too). Exemple: '1.23', '1.23 (ABC)', ...
 	 *      Build the conditionnal string from filter the query
@@ -1238,6 +1239,7 @@
 	 *  @param  integer	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount paid if you have it, 1 otherwise)
 	 *  @param  integer	$searchalt      Search also alernate language file
 	 *  @param  string	$filter         Optionnal filters criteras (example: 's.rowid <> x')
+	 *  @param  string      $method     method of transmision to bank (0=Internet, 1=Api...)
 	 *  @param array $params    array of additionals parameters
 	 *  @param int $showform Show form tags and submit button (recommanded is to use with value 0)
 	 *  @return	string          		chaine formate SQL
@@ -1279,6 +1281,7 @@
 	 *  Return clickable link of login (eventualy with picto)
 	 *  Return combo list of differents status of a orders
 	 *  Returns if a profid sould be verified to be unique
+	 *  Set withdrawal to transmited status
 	 *  Show 2 HTML widget to input a date or combo list for day, month, years and optionaly hours and minutes.
 	 *  Show a HTML widget to input a date or combo list for day, month, years and optionaly hours and minutes.
 	 *  Show top header of page. This include the logo, ref and address blocs
