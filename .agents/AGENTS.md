@@ -147,6 +147,14 @@ Before writing any code, the agent **must**:
 
 ---
 
+## Code Comments
+
+- Block and inline comments must be written in English.
+- Comments must be concise and clear (never more that 5 lines, never more than the number of lines code added or modified).
+- Block comments can reach 120 characters 
+
+---
+
 ## Logs & Debug
 
 - Use `dol_syslog()` for all logging (with appropriate log level: `LOG_DEBUG`, `LOG_WARNING`, `LOG_ERR`)
