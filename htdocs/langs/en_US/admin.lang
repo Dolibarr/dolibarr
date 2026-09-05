@@ -587,6 +587,7 @@ FilesAttachedToEmail=Attach file
 sendEmailsReminder=Send agenda reminder by emails
 SendEmailsReminders=Send agenda reminders by emails
 SendSmsReminders=Send agenda reminders by SMS
+PurgeDeletionLog=Purge the log of deleted objects older than the retention delay
 davDescription=Setup a WebDAV server
 DAVSetup=Setup of module DAV
 DAV_ALLOW_PRIVATE_DIR=Enable the generic private directory (WebDAV dedicated directory named "private" - login required)

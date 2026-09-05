@@ -9,7 +9,7 @@
  * Copyright (C) 2015       Bahfir Abbes            <bafbes@gmail.com>
  * Copyright (C) 2017       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -124,6 +124,7 @@ class modAgenda extends DolibarrModules
 		$this->cronjobs = array(
 			0 => array('label' => 'SendEmailsReminders', 'jobtype' => 'method', 'class' => 'comm/action/class/actioncomm.class.php', 'objectname' => 'ActionComm', 'method' => 'sendEmailsReminder', 'parameters' => '', 'comment' => 'SendEMailsReminder', 'frequency' => 5, 'unitfrequency' => 60, 'priority' => 10, 'status' => 1, 'test' => 'isModEnabled("agenda")', 'datestart' => $datestart),
 			1 => array('label' => 'SendSmsReminders', 'jobtype' => 'method', 'class' => 'comm/action/class/actioncomm.class.php', 'objectname' => 'ActionComm', 'method' => 'sendSmsReminder', 'parameters' => '', 'comment' => 'SendSmsReminder', 'frequency' => 5, 'unitfrequency' => 60, 'priority' => 10, 'status' => 1, 'test' => 'isModEnabled("agenda")', 'datestart' => $datestart),
+			2 => array('label' => 'PurgeDeletionLog', 'jobtype' => 'method', 'class' => 'core/class/deletionlog.class.php', 'objectname' => 'DeletionLog', 'method' => 'purgeDeletionLog', 'parameters' => '', 'comment' => 'PurgeDeletionLog', 'frequency' => 1, 'unitfrequency' => 3600 * 24, 'priority' => 50, 'status' => 1, 'test' => 'isModEnabled("agenda")', 'datestart' => $datestart),
 		);
 
 		// Rights
