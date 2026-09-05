@@ -1279,7 +1279,7 @@ while ($i < $imaxinloop) {
 			}
 			if (!empty($obj->note_private) || !empty($obj->note_public)) {
 				print ' <span class="note">';
-				print '<a href="'.DOL_URL_ROOT.'/contrat/note.php?id='.$obj->rowid.'&save_lastsearch_values=1">'.img_picto($langs->trans("ViewPrivateNote"), 'note').'</a>';
+				print '<a href="'.DOL_URL_ROOT.'/core/note.php?element=contrat&id='.$obj->rowid.'&save_lastsearch_values=1">'.img_picto($langs->trans("ViewPrivateNote"), 'note').'</a>';
 				print '</span>';
 			}
 
