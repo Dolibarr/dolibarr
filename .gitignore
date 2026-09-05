@@ -108,3 +108,5 @@ docs/superpowers/
 
 # Agent-managed git worktrees
 .worktrees/
+/cookies.txt
+/post_login.html
