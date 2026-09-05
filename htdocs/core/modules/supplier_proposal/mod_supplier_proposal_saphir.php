@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2007 Regis Houssin               <regis.houssin@inodbox.com>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -137,12 +137,12 @@ class mod_supplier_proposal_saphir extends ModeleNumRefSupplierProposal
 	 */
 	public function getNextValue($objsoc, $supplier_proposal)
 	{
-		global $db, $conf;
+		global $db;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		// On defini critere recherche compteur
-		$mask = !getDolGlobalString('SUPPLIER_PROPOSAL_SAPHIR_MASK') ? '' : $conf->global->SUPPLIER_PROPOSAL_SAPHIR_MASK;
+		$mask = getDolGlobalString('SUPPLIER_PROPOSAL_SAPHIR_MASK');
 
 		if (!$mask) {
 			$this->error = 'NotConfigured';
