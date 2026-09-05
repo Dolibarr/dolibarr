@@ -170,6 +170,7 @@ $conf->file->mailing_limit_sendbyday = empty($dolibarr_mailing_limit_sendbyday) 
 $conf->file->main_authentication = empty($dolibarr_main_authentication) ? 'dolibarr' : $dolibarr_main_authentication; // Identification mode
 $conf->file->main_force_https = empty($dolibarr_main_force_https) ? '' : $dolibarr_main_force_https; // Force https
 $conf->file->strict_mode = empty($dolibarr_strict_mode) ? '' : $dolibarr_strict_mode; // Force php strict mode (for debug)
+$conf->file->restrict_password_generation_none = empty($dolibarr_main_restrict_password_generation_none) ? 0 : $dolibarr_main_restrict_password_generation_none; // Hard lock forbidding the 'none' password generation model, even if the database constant is removed
 $conf->file->instance_unique_id = empty($dolibarr_main_instance_unique_id) ? (empty($dolibarr_main_cookie_cryptkey) ? '' : $dolibarr_main_cookie_cryptkey) : $dolibarr_main_instance_unique_id; // Unique id of instance
 $conf->file->dol_main_url_root = $dolibarr_main_url_root;	// Define url inside the config file
 $conf->file->dol_document_root = array('main' => (string) DOL_DOCUMENT_ROOT); // Define an array of document root directories ('/home/htdocs')

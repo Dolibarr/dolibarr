@@ -1524,9 +1524,11 @@ DocumentModules=Document models
 ##### Module password generation
 PasswordGenerationStandard=Return a password generated according to internal Dolibarr algorithm: %s characters containing shared numbers and characters.
 PasswordGenerationNone=Do not suggest a generated password. Password must be typed in manually.
+PasswordGenerationNoneDisabled=The password generation model without any rule ("none") has been disabled on this installation.
 PasswordGenerationPerso=Return a password according to your personally defined configuration.
 SetupPerso=According to your configuration
 PasswordPatternDesc=Password pattern description
+PasswordPatternMinLengthRestricted=On this installation, the minimum password length cannot be set below %s characters.
 ##### Users setup #####
 RuleForGeneratedPasswords=Rules to generate and validate passwords
 DisableForgetPasswordLinkOnLogonPage=Do not show the "Password Forgotten" link on the Login page
