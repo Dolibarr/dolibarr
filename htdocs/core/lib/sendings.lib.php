@@ -2,7 +2,7 @@
 /* Copyright (C) 2008-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -108,7 +108,7 @@ function shipping_prepare_head($object)
 	if (!empty($object->note_public)) {
 		$nbNote++;
 	}
-	$head[$h][0] = DOL_URL_ROOT . "/expedition/note.php?id=" . $object->id;
+	$head[$h][0] = DOL_URL_ROOT . "/core/note.php?element=expedition&id=" . $object->id;
 	$head[$h][1] = $langs->trans("Notes");
 	if ($nbNote > 0) {
 		$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbNote . '</span>';
@@ -246,7 +246,7 @@ function delivery_prepare_head($object)
 	if (!empty($tmpobject->note_public)) {
 		$nbNote++;
 	}
-	$head[$h][0] = DOL_URL_ROOT . "/expedition/note.php?id=" . $tmpobject->id;
+	$head[$h][0] = DOL_URL_ROOT . "/core/note.php?element=expedition&id=" . $tmpobject->id;
 	$head[$h][1] = $langs->trans("Notes");
 	if ($nbNote > 0) {
 		$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbNote . '</span>';

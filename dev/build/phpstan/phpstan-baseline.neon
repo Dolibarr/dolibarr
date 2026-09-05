@@ -4735,12 +4735,6 @@ parameters:
 			path: ../../../htdocs/fichinter/list.php
 
 		-
-			message: '#^Right side of && is always false\.$#'
-			identifier: booleanAnd.rightAlwaysFalse
-			count: 1
-			path: ../../../htdocs/fichinter/note.php
-
-		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 10
@@ -6814,7 +6808,7 @@ parameters:
 			message: '#^Call to function method_exists\(\) with Project and ''fetchComments'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
-			path: ../../../htdocs/projet/note.php
+			path: ../../../htdocs/core/lib/note.lib.php
 
 		-
 			message: '#^Call to function method_exists\(\) with Project and ''fetchComments'' will always evaluate to true\.$#'
@@ -8483,12 +8477,6 @@ parameters:
 			identifier: function.alreadyNarrowedType
 			count: 1
 			path: ../../../htdocs/user/messaging.php
-
-		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
-			count: 1
-			path: ../../../htdocs/user/note.php
 
 		-
 			message: '#^Call to function property_exists\(\) with User and ''admin'' will always evaluate to true\.$#'
