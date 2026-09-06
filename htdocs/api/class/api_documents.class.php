@@ -728,6 +728,7 @@ class Documents extends DolibarrApi
 	 * @param   string  $cover                  Cover info
 	 * @param   array   $array_options          Array for extrafields of ECM index table
 	 * @param	int		$generateThumbs			1=Will generate the small and mini thumbs if applicable
+	 * @param   int     $share                  1=Make the file public by generating a share key into the ECM table (0 by default)
 	 * @return  string
 	 *
 	 * @phan-param   array<string,string>   $array_options
@@ -740,7 +741,7 @@ class Documents extends DolibarrApi
 	 * @throws	RestException	404		Object not found
 	 * @throws	RestException	500		Error on file operation
 	 */
-	public function post($filename, $modulepart, $ref = '', $subdir = '', $filecontent = '', $fileencoding = '', $overwriteifexists = 0, $createdirifnotexists = 1, $position = 0, $cover = '', $array_options = [], $generateThumbs = 0)
+	public function post($filename, $modulepart, $ref = '', $subdir = '', $filecontent = '', $fileencoding = '', $overwriteifexists = 0, $createdirifnotexists = 1, $position = 0, $cover = '', $array_options = [], $generateThumbs = 0, $share = 0)
 	{
 		global $conf;
 
@@ -1050,6 +1051,10 @@ class Documents extends DolibarrApi
 		}
 		if (!empty($cover)) {
 			$moreinfo = array_merge($moreinfo, ["cover" => $cover]);
+		}
+		if (!empty($share)) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+			$moreinfo = array_merge($moreinfo, ["share" => getRandomPassword(true)]);
 		}
 		$moreinfo['gen_or_uploaded'] = 'api';
 

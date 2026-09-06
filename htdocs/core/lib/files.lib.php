@@ -1291,6 +1291,9 @@ function dol_move($srcfile, $destfile, $newmask = '0', $overwriteifexists = 1, $
 					if (!empty($moreinfo) && !empty($moreinfo['cover'])) {
 						$ecmfile->cover = $moreinfo['cover'];
 					}
+					if (!empty($moreinfo) && !empty($moreinfo['share'])) {
+						$ecmfile->share = $moreinfo['share'];
+					}
 					if (! empty($entity)) {
 						$ecmfile->entity = $entity;
 					}
