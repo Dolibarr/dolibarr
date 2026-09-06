@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2026	Jose Martinez			<jose.martinez@pichinov.com>
+ * Copyright (C) 2026	Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +29,7 @@
  *   2. converts their read methods into MCP tool definitions (JSON Schema built
  *      from reflection + docblock parsing), and
  *   3. executes calls IN-PROCESS on the API class (no HTTP self-call), behind a
- *      central authentication bridge (DolibarrApiAccess::$user = service user),
+ *      central authentication bridge (DolibarrApiAccess::$user = the acting user),
  *      catching RestException.
  *
  * Exposure model (per review feedback on the PR):
@@ -46,10 +47,10 @@
  *     only as a complement, never a full rewrite.
  *
  * Remaining WIP limitations (POC scope):
- *   - Endpoint map is a small explicit list; TODO generalize with the same
- *     dolGetModulesDirs()/getModuleDirForApiClass() scan used by api/index.php.
  *   - Schemas come from a light docblock parser; TODO reuse Restler's
- *     CommentParser/Routes metadata (what generates swagger.json) + cache them.
+ *     CommentParser/Routes metadata (what generates swagger.json).
+ *   - Tool definitions are rebuilt on every request; TODO cache them,
+ *     invalidated on module (de)activation.
  *
  * Disabled unless the constant AI_MCP_API_BRIDGE is set to 1.
  */
@@ -61,6 +62,44 @@
  */
 class ToolApiBridge extends McpTool
 {
+
+	/**
+	 * Endpoint key -> intent categories of the assistant's query classifier
+	 * (classifyIntentUniversal() in parse_intent.php: billing, commercial,
+	 * thirdparty, stock, project, reporting). On Latin-script queries the
+	 * classifier prefilters which tools the model sees, so bridge tools MUST
+	 * carry this vocabulary — anything else gets every bridge tool filtered
+	 * out of the prompt. Endpoints absent from this map (external modules)
+	 * fall back to all categories so they stay selectable.
+	 */
+	const ENDPOINT_CATEGORIES = array(
+		'thirdparties' => array('thirdparty', 'billing', 'commercial'),
+		'categories' => array('thirdparty', 'stock'),
+		'invoices' => array('billing', 'thirdparty'),
+		'proposals' => array('commercial', 'thirdparty'),
+		'orders' => array('commercial', 'thirdparty'),
+		'products' => array('stock', 'commercial'),
+		'stockmovements' => array('stock'),
+		'warehouses' => array('stock'),
+		'projects' => array('project'),
+		'tasks' => array('project'),
+		'agendaevents' => array('thirdparty', 'project'),
+		'interventions' => array('project', 'commercial'),
+		'contracts' => array('commercial', 'billing'),
+		'members' => array('thirdparty', 'billing'),
+		'subscriptions' => array('thirdparty', 'billing'),
+		'expensereports' => array('billing'),
+		'tickets' => array('thirdparty', 'project')
+	);
+
+	/**
+	 * Default and ceiling applied to list 'limit' parameters when called
+	 * through the bridge. API methods default to 100 full objects — too much
+	 * model context for a single call; everything stays reachable via 'page'.
+	 */
+	const BRIDGE_DEFAULT_LIMIT = 25;
+	const BRIDGE_MAX_LIMIT = 100;
+
 	/**
 	 * Generated tool definitions cache (per request).
 	 *
@@ -79,7 +118,7 @@ class ToolApiBridge extends McpTool
 	 * Endpoints found by discoverEndpoints(), keyed by name. Filled on the first
 	 * getDefinitions() call.
 	 *
-	 * @var array<string, array{module:string, path:string, class:string, label:string}>
+	 * @var array<string, array{module:string, path:string, candidate:string, class:string, label:string}>
 	 */
 	private $endpoints = [];
 
@@ -106,13 +145,93 @@ class ToolApiBridge extends McpTool
 			'label' => 'third parties (customers, prospects, suppliers)',
 			'methods' => [
 				'index' => [
-					'description' => "Use 'mode' to restrict to a nature of third party instead of filtering on names.",
+					'default_properties' => 'id,name,code_client,code_fournisseur,email,town,client,fournisseur,status',
+					'description' => "Use 'mode' to restrict to a nature of third party instead of filtering on names. To find one company by name use sqlfilters on t.nom (e.g. \"(t.nom:like:'%acme%')\"); other useful fields: t.name_alias, t.code_client, t.code_fournisseur, t.email, t.town, t.zip, t.fk_pays (country rowid), t.status (1=open, 0=closed). Prefer a small 'limit' and 'properties' (e.g. 'id,name,code_client,code_fournisseur,email,town,client,fournisseur,status') to keep answers short.",
 					'params' => [
 						'mode' => "Nature filter: 0=all (default), 1=customers/prospects, 2=prospects only, 3=neither customer nor prospect, 4=suppliers.",
-						'category' => "Rowid of a third-party category (tag) to restrict the list to."
+						'category' => "Rowid of a third-party category (tag) to restrict the list to.",
+						'pagination_data' => "Set to true to get {data, pagination:{total,page,page_count,limit}} instead of a bare list; use it to know the total count."
 					]
 				],
-				'get' => []
+				'get' => [
+					'description' => "Returns the full record: address, contact channels, customer/supplier codes, VAT number, default payment terms/modes, outstanding limit. In the result 'client' is 1=customer, 2=prospect, 3=both; 'fournisseur' is 1 when supplier."
+				],
+				'getByEmail' => [
+					'suffix' => 'get_by_email',
+					'description' => "Find one third party by its exact company email address (not contact emails).",
+					'params' => ['email' => "Exact email address of the company."]
+				],
+				'getOutStandingInvoices' => [
+					'suffix' => 'outstanding_invoices',
+					'description' => "Total amount still due on validated, unpaid invoices of one third party. Returns {opened: amount} in the company currency.",
+					'params' => ['mode' => "'customer' (default) for customer invoices, 'supplier' for supplier invoices."]
+				],
+				'getOutStandingOrder' => [
+					'suffix' => 'outstanding_orders',
+					'description' => "Total amount of open (not yet invoiced) orders of one third party. Returns {opened: amount}.",
+					'params' => ['mode' => "'customer' (default) for sales orders, 'supplier' for purchase orders."]
+				],
+				'getOutStandingProposals' => [
+					'suffix' => 'outstanding_proposals',
+					'description' => "Total amount of open commercial proposals of one third party. Returns {opened: amount}.",
+					'params' => ['mode' => "'customer' (default) or 'supplier'."]
+				]
+			]
+		],
+		'categories' => [
+			'label' => 'categories / tags',
+			'methods' => [
+				'index' => [
+					'description' => "Categories form a tree per type (fk_parent = parent rowid, 0 for root). Always pass 'type' to restrict to one kind of object. Search by name with sqlfilters on t.label.",
+					'params' => [
+						'type' => "Kind of object the category applies to: 'product', 'customer', 'supplier', 'contact', 'member', 'project', 'user', 'bank_account', 'warehouse', 'actioncomm', 'website_page', 'ticket', 'knowledgemanagement'."
+					]
+				],
+				'get' => [
+					'params' => ['include_childs' => "Set to true to also return the sub-categories (children). The parameter name 'include_childs' is fixed by the REST API."]
+				],
+				'getObjects' => [
+					'suffix' => 'objects_list',
+					'description' => "Objects tagged with one category (e.g. all products in category 12, all customers tagged 'VIP').",
+					'params' => [
+						'id' => "Rowid of the category.",
+						'type' => "Object type to list: 'product', 'customer', 'supplier', 'contact', 'member', 'project', 'user', 'warehouse', 'actioncomm', 'ticket'.",
+						'onlyids' => "1 to return only rowids (faster, use it for counting), 0 (default) for full objects."
+					]
+				]
+			]
+		],
+		'invoices' => [
+			'label' => 'customer invoices',
+			'methods' => [
+				'index' => [
+					'default_properties' => 'id,ref,socid,date,date_lim_reglement,total_ht,total_ttc,paye,remaintopay',
+					'description' => "Use 'status' for the usual questions (unpaid, paid, drafts). Oldest first: sortfield 't.datef' with sortorder 'ASC' (due-date order: 't.date_lim_reglement'). Set withLines=false for lists: lines are large and rarely needed. Amounts: total_ht (excl. tax), total_tva, total_ttc (incl. tax), paye (1=paid). Dates are unix timestamps: date (invoice date), date_lim_reglement (due date). Overdue unpaid invoices: status='unpaid' plus sqlfilters \"(t.date_lim_reglement:<:'YYYY-MM-DD')\". Useful sqlfilters fields: t.ref, t.datef, t.total_ttc, t.fk_soc, t.type (0=standard, 1=replacement, 2=credit note, 3=deposit, 4=proforma), t.fk_statut (0=draft, 1=validated, 2=paid, 3=abandoned).",
+					'params' => [
+						'thirdparty_ids' => "Comma-separated third-party rowids to restrict to (e.g. '1,5'). Look the rowid up with api_thirdparties_list first when only a name is known.",
+						'status' => "One of 'draft', 'unpaid' (validated and not fully paid), 'paid', 'cancelled'. Empty = all.",
+						'withLines' => "false to omit invoice lines from each record (recommended for lists).",
+						'loadlinkedobjects' => "1 to include linked objects (orders, proposals, shipments) — slower, default 0.",
+						'pagination_data' => "Set to true to get {data, pagination:{total,page,page_count,limit}}; use it to know how many invoices match."
+					]
+				],
+				'get' => [
+					'description' => "One invoice with its lines (product, qty, unit price, VAT rate, line totals), status, remaining amount to pay and linked contacts. Look the rowid up with api_invoices_list (sqlfilters on t.ref) when only the reference is known.",
+					'params' => [
+						'contact_list' => "0 = no contacts, 1 (default) = contact rowids, 2 = full contact records.",
+						'withLines' => "false to omit the lines."
+					]
+				],
+				'getByRef' => [
+					'suffix' => 'get_by_ref',
+					'description' => "One invoice by its exact reference (e.g. 'FA2401-0001').",
+					'params' => ['ref' => "Exact invoice reference.", 'contact_list' => "0 = no contacts, 1 (default) = contact rowids, 2 = full contact records."]
+				],
+				'getPayments' => [
+					'suffix' => 'payments_list',
+					'description' => "Payments already recorded on one invoice: amount, date, payment mode, bank reference.",
+					'params' => ['id' => "Rowid of the invoice."]
+				]
 			]
 		],
 		'proposals' => [
@@ -178,16 +297,52 @@ class ToolApiBridge extends McpTool
 		'products' => [
 			'label' => 'products and services catalog',
 			'methods' => [
-				'index' => [],
-				'get' => [],
+				'index' => [
+					'default_properties' => 'id,ref,label,type,price,price_ttc,tva_tx,status,status_buy',
+					'description' => "Search by name with sqlfilters on t.label, by reference on t.ref (e.g. \"(t.label:like:'%screw%')\"). Result fields: type (0=product, 1=service), price (sale price excl. tax), price_ttc, tva_tx (VAT rate), status (1=for sale), status_buy (1=for purchase), stock_reel (only with includestockdata=1). Prefer 'properties' (e.g. 'id,ref,label,type,price,price_ttc,tva_tx,status,status_buy') and a small 'limit'.",
+					'params' => [
+						'mode' => "0=all (default), 1=products only, 2=services only.",
+						'category' => "Rowid of a product category to restrict the list to.",
+						'variant_filter' => "0=all (default), 1=products without variants, 2=parents of variants only, 3=variants only.",
+						'ids_only' => "true to return only rowids (fast, use for counting).",
+						'includestockdata' => "1 to add stock_reel / stock_theorique per product (slower; requires the Stock module).",
+						'pagination_data' => "Set to true to get {data, pagination:{total,page,page_count,limit}}."
+					]
+				],
+				'get' => [
+					'description' => "Full product record: description, prices, VAT, barcode, weight/dimensions, accounting codes, optional stock and sub-products.",
+					'params' => [
+						'includestockdata' => "1 to load stock_reel, stock_theorique and per-warehouse stock (requires the Stock module).",
+						'includesubproducts' => "true to load the kit/BOM components (sub-products).",
+						'includeparentid' => "true to add fk_product_parent for a variant.",
+						'includetrans' => "true to load multilingual labels/descriptions."
+					]
+				],
+				'getByRef' => [
+					'suffix' => 'get_by_ref',
+					'description' => "One product by its exact reference (e.g. 'PROD-001'); same options as get.",
+					'params' => ['ref' => "Exact product reference."]
+				],
+				'getByBarcode' => [
+					'suffix' => 'get_by_barcode',
+					'description' => "One product by its barcode (EAN/UPC); same options as get.",
+					'params' => ['barcode' => "Barcode value as printed."]
+				],
+				'getPurchasePrices' => [
+					'suffix' => 'purchase_prices_list',
+					'description' => "Supplier prices of one product: for each supplier, the supplier reference, minimum quantity, unit purchase price and VAT. Identify the product by id, ref or barcode.",
+					'params' => ['id' => "Rowid of the product (use 0 when identifying by ref or barcode).", 'ref' => "Product reference, alternative to id.", 'barcode' => "Product barcode, alternative to id."]
+				],
 				'getAttributes' => [
 					'suffix' => 'attributes_list',
+					'module' => 'variants',
 					'description' => "Variant attributes (e.g. Size, Color) defined in the catalog."
 				],
 				'getVariants' => [
 					'suffix' => 'variants_list',
+					'module' => 'variants',
 					'description' => "Variants of one parent product.",
-					'params' => ['id' => 'Rowid of the PARENT product.']
+					'params' => ['id' => 'Rowid of the PARENT product.', 'includestock' => "1 to add stock data on each variant."]
 				]
 			]
 		],
@@ -217,7 +372,7 @@ class ToolApiBridge extends McpTool
 	 * 	Constructor
 	 *
 	 * 	@param	DoliDB		$db			Database handler
-	 * 	@param	User|null	$user		Service user provided by McpHandler
+	 * 	@param	User|null	$user		Acting user provided by McpHandler (the caller; tool calls run with this user's rights)
 	 * 	@param	Conf|null	$conf		Dolibarr config (optional)
 	 */
 	public function __construct($db, $user = null, $conf = null)
@@ -239,6 +394,7 @@ class ToolApiBridge extends McpTool
 	 */
 	private function loadApiRuntime()
 	{
+		require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';	// dolGetModulesDirs(), getModuleDirForApiClass() — main.inc.php loads this only conditionally; api/index.php requires it explicitly for the same reason
 		require_once DOL_DOCUMENT_ROOT . '/includes/restler/framework/Luracast/Restler/AutoLoader.php';
 		$loader = Luracast\Restler\AutoLoader::instance();
 		spl_autoload_register($loader);
@@ -265,7 +421,7 @@ class ToolApiBridge extends McpTool
 	 * "Agendaevents" and still matches the declared AgendaEvents. Reflection is
 	 * then used to recover the real spelling for display.
 	 *
-	 * @return array<string, array{module:string, path:string, class:string, label:string}> Endpoints keyed by name
+	 * @return array<string, array{module:string, path:string, candidate:string, class:string, label:string}> Endpoints keyed by name
 	 */
 	private function discoverEndpoints(): array
 	{
@@ -309,8 +465,8 @@ class ToolApiBridge extends McpTool
 				}
 
 				while (($file_searched = readdir($handle_part)) !== false) {
-					if ($file_searched == 'api_access.class.php') {
-						continue;	// Authentication plumbing, not an endpoint.
+					if (in_array($file_searched, ['api_access.class.php', 'api_setup.class.php', 'api_documents.class.php', 'api_login.class.php', 'api_status.class.php'], true)) {
+						continue;	// Framework plumbing, not business endpoints (setup/documents even require main.inc.php, fatal outside a web page).
 					}
 					$regapi = [];
 					if (!is_readable($dir_part.$file_searched) || !preg_match("/^api_(.*)\\.class\\.php$/i", $file_searched, $regapi)) {
@@ -322,28 +478,11 @@ class ToolApiBridge extends McpTool
 						continue;	// First module wins, as in the REST layer.
 					}
 
-					require_once $dir_part.$file_searched;
-					$candidate = str_replace('_', '', ucwords($regapi[1]));
-					$classname = '';
-					if (class_exists($candidate.'Api')) {
-						$classname = $candidate.'Api';
-					} elseif (class_exists($candidate)) {
-						$classname = $candidate;
-					}
-					if ($classname === '') {
-						continue;	// api_xxx file without the matching class.
-					}
-
-					try {
-						$classname = (new ReflectionClass($classname))->getName();
-					} catch (ReflectionException $e) {
-						continue;
-					}
-
 					$endpoints[$key] = [
 						'module' => $modulenameforenabled,
 						'path' => $dir_part.$file_searched,
-						'class' => $classname,
+						'candidate' => str_replace('_', '', ucwords($regapi[1])),
+						'class' => '',	// resolved lazily by resolveEndpointClass()
 						'label' => $this->enrichments[$key]['label'] ?? $key,
 					];
 				}
@@ -358,6 +497,48 @@ class ToolApiBridge extends McpTool
 	}
 
 	/**
+	 * Load an endpoint's api file and resolve its real class name (lazy, cached
+	 * in $this->endpoints). class_exists() is case-insensitive, so the candidate
+	 * "Agendaevents" matches the declared AgendaEvents; reflection then recovers
+	 * the real spelling.
+	 *
+	 * @param string $key Endpoint key
+	 * @return bool True when the class is resolved
+	 */
+	private function resolveEndpointClass(string $key): bool
+	{
+		if ($this->endpoints[$key]['class'] !== '') {
+			return true;
+		}
+		require_once $this->endpoints[$key]['path'];
+		$candidate = $this->endpoints[$key]['candidate'];
+		$classname = '';
+		if (class_exists($candidate.'Api')) {
+			$classname = $candidate.'Api';
+		} elseif (class_exists($candidate)) {
+			$classname = $candidate;
+		}
+		if ($classname === '') {
+			return false;	// api_xxx file without the matching class.
+		}
+		// $classname passed class_exists() above, so the constructor cannot throw.
+		$reflection = new ReflectionClass($classname);
+		$this->endpoints[$key]['class'] = $reflection->getName();
+
+		// A key-only label ("paiements") is poor guidance for the model; take
+		// the first line of the class docblock when no enrichment names it.
+		if ($this->endpoints[$key]['label'] === $key) {
+			$classdoc = (string) $reflection->getDocComment();
+			if (preg_match('/\*\s+([^@\s\/*][^\n]*)/', $classdoc, $mlabel)) {
+				// "API class for contacts" -> "contacts": keep the object, drop the boilerplate.
+				$this->endpoints[$key]['label'] = trim(preg_replace('/^API class (for|of)\s+(the\s+)?/i', '', trim($mlabel[1])));
+			}
+		}
+
+		return true;
+	}
+
+	/**
 	 * Methods exposed for an endpoint carrying no hand-written entry.
 	 *
 	 * Deliberately the read-only pair, per the review that merged this bridge
@@ -365,29 +546,30 @@ class ToolApiBridge extends McpTool
 	 * endpoints are reachable, never what may be done to them: a write method
 	 * still has to be whitelisted consciously, behind a confirmation gate.
 	 *
-	 * AI_MCP_API_BRIDGE_METHODS overrides the pair for administrators who want
-	 * a narrower surface — exposure stays configurable rather than implicit.
-	 *
 	 * @return array<string, array{}> Method name => empty enrichment
 	 */
 	private function defaultMethods(): array
 	{
-		$configured = getDolGlobalString('AI_MCP_API_BRIDGE_METHODS');
-		if ($configured !== '') {
-			$methods = [];
-			foreach (explode(',', $configured) as $method) {
-				$method = trim($method);
-				// Read-only only: the constant can restrict the default pair,
-				// never turn on a write method behind the whitelist's back.
-				if (in_array($method, ['index', 'get'], true)) {
-					$methods[$method] = [];
-				}
-			}
+		return ['index' => [], 'get' => []];
+	}
 
+	/**
+	 * Apply the AI_MCP_API_BRIDGE_METHODS restriction. Intersection only: the
+	 * constant can narrow what the whitelist exposes — on every endpoint,
+	 * enriched or not — but can never add a method to it, so it can never turn
+	 * on a write method behind the whitelist's back.
+	 *
+	 * @param array<string, array{suffix?:string, description?:string, params?:array<string,string>}> $methods Whitelisted methods
+	 * @return array<string, array{suffix?:string, description?:string, params?:array<string,string>}> Restricted methods
+	 */
+	private function applyMethodRestriction(array $methods): array
+	{
+		$configured = getDolGlobalString('AI_MCP_API_BRIDGE_METHODS');
+		if ($configured === '') {
 			return $methods;
 		}
-
-		return ['index' => [], 'get' => []];
+		$allowed = array_map('trim', explode(',', $configured));
+		return array_intersect_key($methods, array_flip($allowed));
 	}
 
 	/**
@@ -410,12 +592,32 @@ class ToolApiBridge extends McpTool
 		$this->endpoints = $this->discoverEndpoints();
 
 		foreach ($this->endpoints as $key => $ep) {
-			// Explicit whitelist: only the listed methods are exposed — nothing
-			// else, whatever reflection could find on the API class. Endpoints
-			// with no hand-written entry fall back to the read-only pair.
-			$methods = $this->enrichments[$key]['methods'] ?? $this->defaultMethods();
+			// Endpoint whitelist, per the review that merged the bridge in
+			// #39856 ("we should add a whitelist of api we think it is enable
+			// for ai"): a discovered endpoint is exposed only when it carries a
+			// hand-written $enrichments entry. Discovery decides what is
+			// reachable; the enrichment entry is the conscious line that makes
+			// it exposed. Removing this guard means auto-exposing every enabled
+			// module's endpoints — an explicit decision to make, not a default.
+			if (!isset($this->enrichments[$key])) {
+				continue;
+			}
+			// Method whitelist: only the listed methods are exposed — nothing
+			// else, whatever reflection could find on the API class. Enriched
+			// endpoints without a 'methods' key fall back to the read-only pair.
+			$methods = $this->applyMethodRestriction($this->enrichments[$key]['methods'] ?? $this->defaultMethods());
+			if (empty($methods) || !$this->resolveEndpointClass($key)) {
+				continue;	// nothing left to expose, or api file without its class
+			}
+			$ep = $this->endpoints[$key];	// re-read: 'class' is now resolved
 
 			foreach ($methods as $method => $meta) {
+				// A method may need an optional module beyond its endpoint's own
+				// (e.g. products getVariants needs Variants): skip when off, so
+				// the tool does not exist instead of failing opaquely.
+				if (!empty($meta['module']) && !isModEnabled($meta['module'])) {
+					continue;
+				}
 				if (!method_exists($ep['class'], $method)) {
 					continue;	// whitelisted method absent in this Dolibarr version
 				}
@@ -423,6 +625,7 @@ class ToolApiBridge extends McpTool
 				$toolname = 'api_' . $key . '_' . $suffix;
 				$def = $this->buildToolDefinition($ep, $key, $method, $toolname, $meta);
 				if ($def) {
+					$def['categories'] = self::ENDPOINT_CATEGORIES[$key] ?? array('billing', 'commercial', 'thirdparty', 'stock', 'project', 'reporting');
 					$this->defs[] = $def;
 					$this->routes[$toolname] = [$key, $method];
 				}
@@ -490,7 +693,7 @@ class ToolApiBridge extends McpTool
 			];
 			if ($p->isOptional()) {
 				try {
-					$prop['default'] = $p->getDefaultValue();
+					$prop['default'] = ($pname == 'limit') ? self::BRIDGE_DEFAULT_LIMIT : $p->getDefaultValue();
 				} catch (ReflectionException $e) {
 					// keep without default
 				}
@@ -552,11 +755,18 @@ class ToolApiBridge extends McpTool
 	 */
 	public function getCategories(): array
 	{
-		return ['thirdparty', 'commercial', 'billing', 'stock', 'reporting'];
-	}
+		// Union of the classifier categories of the whitelisted endpoints —
+		// derived so it cannot drift, expressed in the classifier vocabulary
+		// so query filtering keeps working (see ENDPOINT_CATEGORIES).
+		$all = array();
+		foreach (array_keys($this->enrichments) as $key) {
+			$all = array_merge($all, self::ENDPOINT_CATEGORIES[$key] ?? array());
+		}
 
+		return array_values(array_unique($all));
+	}
 	/**
-	 * Execute a bridged tool: authenticate the service user, call the API method
+	 * Execute a bridged tool: authenticate the acting user, call the API method
 	 * in-process with positional arguments, catch RestException.
 	 *
 	 * @param string $name The tool name (e.g. 'api_thirdparties_list').
@@ -576,11 +786,32 @@ class ToolApiBridge extends McpTool
 		list($key, $method) = $this->routes[$name];
 		$ep = $this->endpoints[$key];
 
+		// Server-side guarantee of compact list results: doc-strings recommend
+		// 'properties', but a model that ignores them would otherwise pull full
+		// ~130-column objects — unreadable in the chat table and in the PDF
+		// report. When the whitelist entry declares default_properties and the
+		// caller did not choose, the default applies; an explicit 'properties'
+		// from the model always wins.
+		$methodmeta = isset($this->enrichments[$key]['methods'][$method]) ? $this->enrichments[$key]['methods'][$method] : array();
+		if (!empty($methodmeta['default_properties']) && !array_key_exists('properties', $args)) {
+			$args['properties'] = $methodmeta['default_properties'];
+		}
+
 		// --- Authentication bridge (in-process replacement of DolibarrApiAccess::__isAllowed) ---
 		// The API endpoint methods read the authenticated user from DolibarrApiAccess::$user
 		// and their permission checks (hasRight) run against it. TODO: replicate entity
 		// switching for multicompany setups.
 		$this->loadApiRuntime();
+		// Establish the caller's permission context, the same way the REST entry
+		// point does in api_access.class.php ("Set also the global variable $user
+		// to the $user of API"): the API layer authenticates via
+		// DolibarrApiAccess::$user, and API/business code reads the global.
+		// Unlike a REST request, this runs in-process mid-request, so both are
+		// restored at the single exit point below — nothing after a tool call
+		// (hooks, triggers, log attribution, another handler) may inherit the
+		// tool's user.
+		$saveduserapi = DolibarrApiAccess::$user;
+		$saveduserglobal = empty($GLOBALS['user']) ? null : $GLOBALS['user'];
 		DolibarrApiAccess::$user = $this->user;
 		$GLOBALS['user'] = $this->user;
 
@@ -590,27 +821,47 @@ class ToolApiBridge extends McpTool
 		// Map named MCP args onto the method's positional signature.
 		$rm = new ReflectionMethod($ep['class'], $method);
 		$callArgs = [];
+		$output = null;
 		foreach ($rm->getParameters() as $p) {
 			$pname = $p->getName();
 			if (array_key_exists($pname, $args)) {
-				$callArgs[] = $args[$pname];
+				// Cap an explicit 'limit': one call must not pull thousands of full objects.
+				$callArgs[] = ($pname == 'limit') ? min((int) $args[$pname], self::BRIDGE_MAX_LIMIT) : $args[$pname];
 			} elseif ($p->isOptional()) {
-				$callArgs[] = $p->getDefaultValue();
+				// Bridge default for an omitted 'limit' is smaller than the API's 100.
+				$callArgs[] = ($pname == 'limit') ? self::BRIDGE_DEFAULT_LIMIT : $p->getDefaultValue();
 			} else {
-				return ["error" => "Missing required parameter '$pname'."];
+				$output = ["error" => "Missing required parameter '$pname'."];
+				break;
 			}
 		}
 
-		try {
-			$result = call_user_func_array([$api, $method], $callArgs);
-			// Serialize API return (cleaned objects) into plain arrays for the MCP client.
-			return json_decode(json_encode($result), true);
-		} catch (Throwable $e) {
-			$code = (int) $e->getCode();
-			return [
-				"error" => $e->getMessage(),
-				"http_status" => ($code > 0 ? $code : 500)
-			];
+		if ($output === null) {
+			try {
+				$result = call_user_func_array([$api, $method], $callArgs);
+				// Serialize API return (cleaned objects) into plain arrays for the MCP client.
+				$output = json_decode(json_encode($result), true);
+			} catch (Throwable $e) {
+				$code = (int) $e->getCode();
+				$message = $e->getMessage();
+				if ($message === '') {
+					// Core throws bare RestException(403) in places: give the model
+					// something to reason on instead of an empty string.
+					$message = 'Access denied or resource error (HTTP '.($code > 0 ? $code : 500).').';
+				}
+				$output = [
+					"error" => $message,
+					"http_status" => ($code > 0 ? $code : 500)
+				];
+			}
 		}
+
+		// Restore the caller's context (single exit point).
+		DolibarrApiAccess::$user = $saveduserapi;
+		if ($saveduserglobal !== null) {
+			$GLOBALS['user'] = $saveduserglobal;
+		}
+
+		return $output;
 	}
 }
