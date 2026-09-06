@@ -2216,10 +2216,13 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print '<tr class="nooddeven"><td>'.$langs->trans("LastConnexion").'</td>';
 				print '<td>';
 				if ($object->datepreviouslogin) {
-					print dol_print_date($object->datepreviouslogin, "dayhour", "tzuserrel").' <span class="opacitymedium">('.$langs->trans("Previous").')</span>, ';
+					print $form->textwithpicto(dol_print_date($object->datepreviouslogin, "dayhour", "tzuserrel"), $langs->trans("Previous"));
 				}
 				if ($object->datelastlogin) {
-					print dol_print_date($object->datelastlogin, "dayhour", "tzuserrel").' <span class="opacitymedium">('.$langs->trans("Currently").')</span>';
+					if ($object->datepreviouslogin) {
+						print ' &nbsp; &nbsp; ';
+					}
+					print $form->textwithpicto(dol_print_date($object->datelastlogin, "dayhour", "tzuserrel"), $langs->trans("Currently"));
 				}
 				print '</td>';
 				print "</tr>\n";
