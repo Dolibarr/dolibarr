@@ -1336,7 +1336,7 @@ class ExternalModules
 
 		$statusType = 'status4';
 		if ($status == 0) {
-			$statusType = 'status8';
+			$statusType = 'status3';
 		}
 
 		$labelStatus = [];
