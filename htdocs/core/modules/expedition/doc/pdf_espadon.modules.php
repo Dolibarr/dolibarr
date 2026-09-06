@@ -1126,7 +1126,7 @@ class pdf_espadon extends ModelePdfExpedition
 				$posy += 4;
 				$pdf->SetXY($posx, $posy);
 				$pdf->SetTextColor(0, 0, 60);
-				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Project")." : ".(empty($object->project->title) ? '' : dol_trunc($object->project->title, 50)), '', 'R');
+				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Project")." : ".(empty($object->project->title) ? '' : $this->pdfTruncateText($pdf, $object->project->title, 50)), '', 'R');
 			}
 		}
 

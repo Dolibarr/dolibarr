@@ -609,7 +609,7 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 		if ($expensereporttypecodetoshow == $expensereporttypecode) {
 			$expensereporttypecodetoshow = preg_replace('/^(EX_|TF_)/', '', $expensereporttypecodetoshow);
 		}
-		//$expensereporttypecodetoshow = dol_trunc($expensereporttypecodetoshow, 9);
+		//$expensereporttypecodetoshow = $this->pdfTruncateText($pdf, $expensereporttypecodetoshow, 9);
 
 		//$pdf->MultiCell($nextColumnPosX-$this->posxtype-0.8, 4, $expensereporttypecodetoshow, 0, 'C');
 

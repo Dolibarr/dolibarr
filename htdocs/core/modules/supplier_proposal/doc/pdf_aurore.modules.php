@@ -6,7 +6,7 @@
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2017      Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2024-2026  Frédéric France      <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024	   Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1254,7 +1254,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 			$posy += 4;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("RefSupplier")." : ".dol_trunc($outputlangs->convToOutputCharset($object->ref_fourn), 65), '', 'R');
+			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("RefSupplier")." : ".$this->pdfTruncateText($pdf, $outputlangs->convToOutputCharset($object->ref_fourn), 65), '', 'R');
 		}
 
 		if ($object->thirdparty->code_fournisseur) {
