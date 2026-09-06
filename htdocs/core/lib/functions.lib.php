@@ -1773,6 +1773,49 @@ function dol_buildpath($path, $type = 0, $returnemptyifnotfound = 0)
 }
 
 /**
+ * Return the full filesystem path of a file located in the currently selected theme directory.
+ * The standard theme directory (DOL_DOCUMENT_ROOT/theme/<theme>) is searched first, then the theme
+ * directories provided by modules (registered into $conf->modules_parts['theme']). This allows a
+ * theme shipped inside an external module to be found the same way as a native theme.
+ * When no module registers a theme directory (the usual case), the native path is returned as-is
+ * without any file_exists() check.
+ *
+ * @param	string	$file	Relative file name to look for into the theme directory (ex: 'theme_vars.inc.php')
+ * @param	string	$theme	Theme name to use. Default is $conf->theme.
+ * @return	string			Full filesystem path to the file, or '' if it was not found.
+ * @see dol_buildpath()
+ */
+function dol_getThemeFilePath($file, $theme = '')
+{
+	global $conf;
+
+	if (empty($theme)) {
+		$theme = $conf->theme;
+	}
+	$file = '/theme/'.$theme.'/'.preg_replace('/^\//', '', $file);
+
+	// No module registers a theme directory: the file can only be the native one.
+	// Return it directly without an extra file_exists() call, like the historical code.
+	if (empty($conf->modules_parts['theme'])) {
+		return DOL_DOCUMENT_ROOT.$file;
+	}
+
+	// A module may provide or override the theme: look into the native directory
+	// first, then into the module-provided theme directories.
+	if (file_exists(DOL_DOCUMENT_ROOT.$file)) {
+		return DOL_DOCUMENT_ROOT.$file;
+	}
+	foreach ($conf->modules_parts['theme'] as $reldir) {
+		$tmp = dol_buildpath($reldir.$file, 0, 1);
+		if ($tmp) {
+			return $tmp;
+		}
+	}
+
+	return '';
+}
+
+/**
  * Return path of url.
  *
  * @param	string							$url				Relative path to file
