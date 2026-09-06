@@ -723,7 +723,7 @@ class Documents extends DolibarrApi
 	 * @param   string  $filecontent        	File content (string with file content. An empty file will be created if this parameter is not provided)
 	 * @param   string  $fileencoding       	File encoding (''=no encoding, 'base64'=Base 64)
 	 * @param   int 	$overwriteifexists  	Overwrite file if exists (1 by default)
-	 * @param   int 	$createdirifnotexists  	Create subdirectories if the doesn't exists (1 by default)
+	 * @param   int 	$createdirifnotexists  	Create subdirectories if they doesn't exists (1 by default)
 	 * @param   int     $position               Position
 	 * @param   string  $cover                  Cover info
 	 * @param   array   $array_options          Array for extrafields of ECM index table
