@@ -670,7 +670,7 @@ class User extends CommonObject
 				$this->pass = $obj->pass;
 				$this->pass_temp = $obj->pass_temp;
 				$this->force_pass_change = $obj->force_pass_change;
-				$this->datelastpassvalidation = $obj->datelastpassvalidation;
+				$this->datelastpassvalidation = $this->db->jdate($obj->datelastpassvalidation);
 				$this->api_key = dolDecrypt($obj->api_key);
 
 				$this->address = $obj->address;
