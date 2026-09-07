@@ -1018,6 +1018,10 @@ class Commande extends CommonOrder
 			}
 		}
 
+		if ($this->checkRefClientIsFree((string) $this->ref_client, (int) $this->socid) < 0) {
+			return -1;
+		}
+
 		$soc = new Societe($this->db);
 		$result = $soc->fetch($this->socid);
 		if ($result < 0) {
@@ -2974,6 +2978,65 @@ class Commande extends CommonOrder
 		}
 	}
 
+	/**
+	 *	Refuse a customer ref already used by another customer order of the same third party
+	 *
+	 *	Disabled by default: existing installations may hold such duplicates. Enable it with
+	 *	ORDER_CHECK_DUPLICATE_REF_CLIENT, the same control supplier invoices get from their
+	 *	uk_facture_fourn_ref_supplier (ref_supplier, fk_soc, entity) unique index.
+	 *
+	 *	@param		string		$ref_client		Customer ref to check
+	 *	@param		int			$socid			Third party id
+	 *	@param		int			$excludeid		Customer order id to exclude from the check (0 on creation)
+	 *	@return		int							Return integer 0 if the customer ref is free, -1 if already used, -2 if the request failed
+	 */
+	public function checkRefClientIsFree(string $ref_client, int $socid, int $excludeid = 0): int
+	{
+		global $langs;
+
+		if (!getDolGlobalInt('ORDER_CHECK_DUPLICATE_REF_CLIENT')) {
+			return 0;
+		}
+
+		$ref_client = trim($ref_client);
+		if ($ref_client === '' || $socid <= 0) {
+			return 0;
+		}
+
+		$sql = "SELECT ref FROM ".$this->db->prefix()."commande";
+		$sql .= " WHERE ref_client = '".$this->db->escape($ref_client)."'";
+		$sql .= " AND fk_soc = ".((int) $socid);
+		$sql .= " AND entity IN (".getEntity('commande').")";
+		if ($excludeid > 0) {
+			$sql .= " AND rowid <> ".((int) $excludeid);
+		}
+		$sql .= " ORDER BY rowid ASC";
+		$sql .= $this->db->plimit(1);
+
+		dol_syslog(get_class($this)."::checkRefClientIsFree", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			$this->errors[] = $this->error;
+			dol_syslog(get_class($this)."::checkRefClientIsFree ".$this->error, LOG_ERR);
+			return -2;
+		}
+
+		$obj = $this->db->fetch_object($resql);
+		$this->db->free($resql);
+
+		if (!is_object($obj)) {
+			return 0;
+		}
+
+		$langs->load('orders');
+		$this->error = $langs->trans('ErrorRefCustomerAlreadyUsedOnOrder', $ref_client, $obj->ref);
+		$this->errors[] = $this->error;
+		dol_syslog(get_class($this)."::checkRefClientIsFree ref_client=".$ref_client." already used by ".$obj->ref, LOG_WARNING);
+
+		return -1;
+	}
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Set customer ref
@@ -2988,6 +3051,10 @@ class Commande extends CommonOrder
 		// phpcs:enable
 		if ($user->hasRight('commande', 'creer')) {
 			$error = 0;
+
+			if ($this->checkRefClientIsFree((string) $ref_client, (int) $this->socid, (int) $this->id) < 0) {
+				return -1;
+			}
 
 			$this->db->begin();
 
@@ -3438,6 +3505,9 @@ class Commande extends CommonOrder
 
 		// Check parameters
 		// Put here code to add control on parameters values
+		if ($this->checkRefClientIsFree((string) $this->ref_client, (int) $this->socid, (int) $this->id) < 0) {
+			return -1;
+		}
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
