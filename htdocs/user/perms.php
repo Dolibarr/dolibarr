@@ -786,7 +786,7 @@ foreach ($arrayofpermission as $i => $obj) {
 			print ' <span class="opacitymedium">('.$langs->trans("AdvancedModeOnly").')</span>';
 		}
 	}
-		// Special warning case for the permission "Allow to modify other users password"
+	// Special warning case for the permission "Allow to modify other users password"
 	if ($obj->module == 'user' && $obj->perms == 'user' && $obj->subperms == 'password') {
 		if ((!empty($object->admin) && !empty($objMod->rights_admin_allowed)) ||
 			in_array($obj->id, $permsuser) /* if edited user owns this permissions */ ||
@@ -794,7 +794,7 @@ foreach ($arrayofpermission as $i => $obj) {
 			print ' '.img_warning($langs->trans("AllowPasswordResetBySendingANewPassByEmail"));
 		}
 	}
-		// Special warning case for the permission "Create/modify other users, groups and permissions"
+	// Special warning case for the permission "Create/modify other users, groups and permissions"
 	if ($obj->module == 'user' && $obj->perms == 'user' && ($obj->subperms == 'creer' || $obj->subperms == 'create')) {
 		if ((!empty($object->admin) && !empty($objMod->rights_admin_allowed)) ||
 			in_array($obj->id, $permsuser) /* if edited user owns this permissions */ ||
@@ -802,7 +802,11 @@ foreach ($arrayofpermission as $i => $obj) {
 			print ' '.img_warning($langs->trans("AllowAnyPrivileges"));
 		}
 	}
-		// Special case for reading bank account when you have permission to manage Chart of account
+	// Special warning case for the permission "Create/modify and execute cron"
+	if ($obj->module == 'cron' && $obj->perms == 'create' ) {
+		print ' '.img_warning($langs->trans("YouAlsoNeedToBeAdminForThisPermission"), '', 'colorgrey');
+	}
+	// Special case for reading bank account when you have permission to manage Chart of account
 	if ($obj->module == 'banque' && $obj->perms == 'lire') {
 		if (isModEnabled("accounting") && $object->hasRight('accounting', 'chartofaccount')) {
 			print ' '.img_warning($langs->trans("WarningReadBankAlsoAllowedIfUserHasPermission"));
