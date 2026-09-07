@@ -103,7 +103,7 @@ class FormSocialContrib
 				$i = 0;
 
 				if ($useempty) {
-					$out .= '<option value="0">';
+					$out .= '<option value="-1">';
 					if (!is_numeric($useempty)) {
 						$out .= $useempty;
 					} else {
