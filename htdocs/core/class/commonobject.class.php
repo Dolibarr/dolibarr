@@ -5685,7 +5685,7 @@ abstract class CommonObject
 	 *	TODO Move this into an output class file (htmlline.class.php)
 	 *
 	 *	@param	string      		$action				GET/POST action
-	 *	@param  CommonObjectLine 	$line			    Selected object line to output
+	 *	@param  CommonObjectLine|CommonObject|stdClass 	$line			    Selected object line to output
 	 *	@param  ''		    		$var               	Not used
 	 *	@param  int		    		$num               	Number of line (0)
 	 *	@param  int		    		$i					I
@@ -5897,7 +5897,7 @@ abstract class CommonObject
 	 *  If lines are into a template, titles must also be into a template
 	 *  But for the moment we don't know if it's possible as we keep a method available on overloaded objects.
 	 *
-	 * 	@param	CommonObjectLine	$line				Line
+	 * 	@param	CommonObjectLine|CommonObject|stdClass	$line				Line
 	 * 	@param	string				$var				Not used
 	 *	@param	string				$restrictlist		''=All lines, 'services'=Restrict to services only (strike line if not)
 	 *  @param	string				$defaulttpldir		Directory where to find the template
