@@ -340,8 +340,8 @@ if (empty($mysoc->country_code)) {
 
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans("Parameters").'</td>'."\n";
-	print '<td class="right" width="60">'.$langs->trans("Value").'</td>'."\n";
+	print '<td>'.$langs->trans("Direction").'</td>'."\n";
+	print '<td class="right" width="60"></td>'."\n";
 	print '</tr>'."\n";
 
 
@@ -359,7 +359,7 @@ if (empty($mysoc->country_code)) {
 		$rateclean = price2num($objoldvat->tva_tx);
 		$hascode = !empty($objoldvat->default_vat_code);
 		$optval = $rateclean.($hascode ? ' ('.$objoldvat->default_vat_code.')' : '');
-		$optlbl = vatrate($rateclean, true).($hascode ? ' ('.$objoldvat->default_vat_code.')' : ' ('.$langs->trans("WithoutVATCode").')').' ('.$objoldvat->nb.')';
+		$optlbl = vatrate($rateclean, true).($hascode ? ' ('.$objoldvat->default_vat_code.')' : ' ('.$langs->trans("WithoutVATCode").')').' &nbsp; ['.$objoldvat->nb.' '.$langs->trans("Products").']';
 		print '<option value="'.dol_escape_htmltag($optval).'"'.((string) $oldvatrate === (string) $optval ? ' selected' : '').'>'.$optlbl.'</option>';
 	}
 	print '</select>';
