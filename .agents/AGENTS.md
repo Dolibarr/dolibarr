@@ -170,13 +170,24 @@ Before any modification, verify:
 - User rights enforcement (`$user->hasRight("module", "permission")` or `$user->hasRight("module", "objectname", "permission")`)
 - Multi-entity compatibility (add ` AND entity IN ('.getEntity("tablename").')`)
 
-If you want to make an online test, you can find the URL of instance info file htdocs/conf/conf.php in parameter $dolibarr_main_url_root. 
-You can ignore and bypass the warning about HTTPS certificate. Ask the password if you need one without trying to get it from database.
+### If adding a unit test was explicitely requested
 
-If adding a unit test is requested:
 - If modifying the Dolibarr code project, add a PHPUnit test file into `test/phpunit/` and add the entry into file `test/phpunit/AllTests.php`.
 - If you need to validate code change or if it is explicitely requested, you can check code and dev syntax rules by running the following command on modified files (it takes a long time):
 	`phan -k .phan/config.php -B dev/tools/phan/baseline.txt --analyze-twice --minimum-target-php-version 7.2 --exclude-directory-list=dev/tools,mymodule/test/,mymodule/vendor/ --output-mode=checkstyle filemodified1.php filemodified2.php ...`
+
+### Local Dolibarr Online test — Page Access
+
+You can find the URL of an online instance into file htdocs/conf/conf.php in parameter $dolibarr_main_url_root. 
+You can ignore and bypass the warning about HTTPS certificate. Ask the password if you need one without trying to get it from database.
+
+Dolibarr requires a CSRF token and a session cookie. To access any authenticated page:
+
+1. **GET the login page** (e.g. `index.php?mainmenu=home`) to obtain:
+   - The CSRF token: extract the `name="token" value="..."` field from the HTML.
+   - The session cookie: the `DOLSESSID_*` cookie set in the response headers.
+2. **POST the login form** to `index.php` with `token`, `username`, `password`, and `actionlogin=dologin`. Keep the cookie for subsequent requests.
+3. **Reuse the session cookie** on all subsequent page requests — the session is now authenticated.
 
 ---
 

@@ -558,19 +558,19 @@ if ($result >= 0) {
 
 	// Bank check number
 	print '<tr><td>'.$langs->trans('Numero');
-	print ' <em class="opacitymedium">('.$langs->trans("ChequeOrTransferNumber").')</em>';
+	print ' <em class="opacitymedium small">('.$langs->trans("ChequeOrTransferNumber").')</em>';
 	print '</td>';
 	print '<td><input name="num_paiement" type="text" class="maxwidth200" value="'.$paymentnum.'" spellcheck="false"></td></tr>';
 
 	// Check transmitter
 	print '<tr><td><span class="'.(GETPOST('paiementcode') == 'CHQ' ? 'fieldrequired ' : '').'fieldrequireddyn">'.$langs->trans('CheckTransmitter').'</span>';
-	print ' <em class="opacitymedium">('.$langs->trans("ChequeMaker").')</em>';
+	print ' <em class="opacitymedium small">('.$langs->trans("ChequeMaker").')</em>';
 	print '</td>';
 	print '<td><input id="fieldchqemetteur" class="maxwidth300" name="chqemetteur" type="text" value="'.GETPOST('chqemetteur', 'alphanohtml').'" spellcheck="false"></td></tr>';
 
 	// Bank name
 	print '<tr><td>'.$langs->trans('Bank');
-	print ' <em class="opacitymedium">('.$langs->trans("ChequeBank").')</em>';
+	print ' <em class="opacitymedium small">('.$langs->trans("ChequeBank").')</em>';
 	print '</td>';
 	print '<td><input name="chqbank" class="maxwidth300" type="text" value="'.GETPOST('chqbank', 'alphanohtml').'" spellcheck="false"></td></tr>';
 
@@ -686,15 +686,15 @@ if ($result >= 0) {
 				print '<td>' . $langs->trans('Type') . '</td>';
 			}
 			print '<td class="center">'.$langs->trans('Date').'</td>';
-			print '<td class="center">'.$langs->trans('DateMaxPayment').'</td>';
+			print '<td class="center">'.$langs->trans('DateDue').'</td>';
 			if (isModEnabled("multicurrency")) {
 				$langs->load("multicurrency");
-				$labeltoshow = '<span class="small nowraponall">'.$langs->trans("MulticurrencyOriginalCurrency").'</span>';
+				$labeltoshow = $langs->trans("MulticurrencyOriginalCurrency");
 				print '<td>'.$langs->trans('Currency').'</th>';
-				print '<td class="right">'.$langs->trans('AmountTTC').' <span class="opacitymedium">('.$labeltoshow.')</span></td>';
-				print '<td class="right">'.$multicurrencyalreadypayedlabel.' <span class="opacitymedium">('.$labeltoshow.')</span></td>';
-				print '<td class="right">'.$multicurrencyremaindertopay.' <span class="opacitymedium">('.$labeltoshow.')</span></td>';
-				print '<td class="center">'.$langs->trans('PaymentAmount').' <span class="opacitymedium">('.$labeltoshow.')</span></td>';
+				print '<td class="right">'.$langs->trans('AmountTTC').' <span class="opacitymedium small nowraponall">('.$labeltoshow.')</span></td>';
+				print '<td class="right">'.$multicurrencyalreadypayedlabel.' <span class="opacitymedium small nowraponall">('.$labeltoshow.')</span></td>';
+				print '<td class="right">'.$multicurrencyremaindertopay.' <span class="opacitymedium small nowraponall">('.$labeltoshow.')</span></td>';
+				print '<td class="center">'.$langs->trans('PaymentAmount').' <span class="opacitymedium small nowraponall">('.$labeltoshow.')</span></td>';
 			}
 			print '<td class="right">'.$langs->trans('AmountTTC').'</td>';
 			print '<td class="right">'.$alreadypayedlabel.'</td>';
@@ -814,6 +814,7 @@ if ($result >= 0) {
 
 					// Multicurrency Price
 					print '<td class="right">';
+					print '<span class="amount">';
 					if ($objp->multicurrency_code && $objp->multicurrency_code != $conf->currency) {
 						print price($sign * $multicurrency_payment);
 						if ($multicurrency_creditnotes) {
@@ -823,12 +824,13 @@ if ($result >= 0) {
 							print '+'.price($multicurrency_deposits);
 						}
 					}
+					print '</span>';
 					print '</td>';
 
 					// Multicurrency remain to pay
 					print '<td class="right">';
 					if ($objp->multicurrency_code && $objp->multicurrency_code != $conf->currency) {
-						print price($sign * (float) $multicurrency_remaintopay);
+						print '<span class="amount">'.price($sign * (float) $multicurrency_remaintopay).'</span>';
 					}
 					print '</td>';
 
@@ -878,7 +880,7 @@ if ($result >= 0) {
 
 				// Remain to take or to pay back
 				print '<td class="right">';
-				print price($sign * (float) $remaintopay);
+				print '<span class="amount">'.price($sign * (float) $remaintopay).'</span>';
 				if (isModEnabled('prelevement')) {
 					$numdirectdebitopen = 0;
 					$totaldirectdebit = 0;
