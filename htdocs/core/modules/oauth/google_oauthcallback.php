@@ -403,7 +403,10 @@ if (!GETPOST('code')) {
 			if ($forlogin) {
 				// _SESSION['googleoauth_receivedlogin'] has been set to the key to validate the next test by function_googleoauth(), so we can make the redirect
 				// $backtourl is a relative url like /mypage.php?param1=value1 but without param token and action. Part after the # should also have been removed when saving it.
-				$backtourl = DOL_MAIN_URL_ROOT.$backtourl;
+				// $backtourl comes from $_SERVER['REQUEST_URI'], so it already contains DOL_URL_ROOT.
+				// Prefixing it with DOL_MAIN_URL_ROOT, which also contains it, duplicated the
+				// subfolder on an install that is not at the root of the domain.
+				$backtourl = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', rtrim(DOL_MAIN_URL_ROOT, '/')).$backtourl;
 				$backtourl .= (preg_match('/\?/', $backtourl) ? '&' : '?').'actionlogin=login&afteroauthloginreturn=google&mainmenu=home'.($username ? '&username='.urlencode($username) : '').'&token='.newToken();
 				if (!empty($tmparray['entity'])) {
 					$backtourl .= '&entity='.$tmparray['entity'];
