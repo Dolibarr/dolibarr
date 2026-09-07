@@ -19,7 +19,7 @@ To report a vulnerability, for a private report, you can:
 - Or if you have permissions, use GitHub security advisory at [https://github.com/Dolibarr/dolibarr/security/advisories/new](https://github.com/Dolibarr/dolibarr/security/advisories/new)
 -->
 
-- Or send an email to security@dolibarr.org with clear textual description of the report along with steps to reproduce the issue, include attachments such as screenshots or proof of concept code as necessary (in such a case, the issue may be created by the developer that will fix the vulnerability or the Release Manager).
+- Or send an email to security@dolibarr.org with clear textual (txt or md format) description of the report along with steps to reproduce the issue, include attachments such as screenshots or proof of concept code as necessary (in such a case, the issue may be created by the developer that will fix the vulnerability or the Release Manager).
 
 NOTE: Both processes are private vulnerability report processes: Advisories are sent to application end users by our own live channel (RSS at https://cti.dolibarr.org/index-security.rss, you can subscribe to it with any RSS reader). We do not publish CVE reports ourselves (we have no CNA number), but you are free to do it yourself.
 

@@ -7,6 +7,7 @@
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2026       Jose Martinez               <jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -140,6 +141,18 @@ if ($action == 'warehouse') {
 	$res = dolibarr_set_const($db, "MAIN_DEFAULT_WAREHOUSE", $value, 'chaine', 0, '', $conf->entity);
 	if ($value == -1 || empty($value) && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE')) {
 		$res = dolibarr_del_const($db, "MAIN_DEFAULT_WAREHOUSE", $conf->entity);
+	}
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	if (GETPOSTISSET('STOCK_VIRTUAL_HORIZON_IN_DAYS')) {
+		$value = GETPOST('STOCK_VIRTUAL_HORIZON_IN_DAYS', 'alphanohtml');
+		if ($value === '') {	// An empty field disables the horizon. A 0 is a valid value, so it must be kept.
+			$res = dolibarr_del_const($db, "STOCK_VIRTUAL_HORIZON_IN_DAYS", $conf->entity);
+		} else {
+			$res = dolibarr_set_const($db, "STOCK_VIRTUAL_HORIZON_IN_DAYS", max(0, (int) $value), 'chaine', 0, '', $conf->entity);
+		}
 	}
 	if (!($res > 0)) {
 		$error++;
@@ -786,6 +799,34 @@ print $formproduct->selectWarehouses(getDolGlobalInt('MAIN_DEFAULT_WAREHOUSE', -
 print '<input type="submit" class="button button-edit smallpaddingimp" value="'.$langs->trans("Modify").'">';
 print "</td>";
 print "</tr>\n";
+
+// The horizon setup stays hidden by default until the feature is applied by every virtual stock
+// consumer (see review): it only shows up on experimental installs (MAIN_FEATURES_LEVEL >= 2) or
+// when the constant is already set (via Home - Setup - Other), so it can be inspected and cleared.
+// The save handler above is GETPOSTISSET-guarded, so hiding the field cannot wipe the value.
+if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2 || getDolGlobalString('STOCK_VIRTUAL_HORIZON_IN_DAYS') !== '') {
+	print '<tr class="oddeven">';
+	print '<td>'.$form->textwithpicto($langs->trans("VirtualStockHorizon"), $langs->trans("VirtualStockHorizonHelp")).'</td>';
+	print '<td class="right">';
+	print '<input type="number" min="0" step="1" class="width50 right" name="STOCK_VIRTUAL_HORIZON_IN_DAYS" value="'.dol_escape_htmltag(getDolGlobalString('STOCK_VIRTUAL_HORIZON_IN_DAYS')).'"> '.$langs->trans("days").' ';
+	print '<input type="submit" class="button button-edit smallpaddingimp" value="'.$langs->trans("Modify").'">';
+	print "</td>";
+	print "</tr>\n";
+
+	if (getDolGlobalString('STOCK_VIRTUAL_HORIZON_IN_DAYS') !== '') {
+		print '<tr class="oddeven">';
+		print '<td>'.$form->textwithpicto($langs->trans("VirtualStockHorizonKeepUndatedOrders"), $langs->trans("VirtualStockHorizonKeepUndatedOrdersHelp")).'</td>';
+		print '<td class="right">';
+		if ($conf->use_javascript_ajax) {
+			print ajax_constantonoff('STOCK_VIRTUAL_HORIZON_INCLUDE_UNDATED_ORDERS');
+		} else {
+			$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+			print $form->selectarray("STOCK_VIRTUAL_HORIZON_INCLUDE_UNDATED_ORDERS", $arrval, getDolGlobalString('STOCK_VIRTUAL_HORIZON_INCLUDE_UNDATED_ORDERS'));
+		}
+		print "</td>\n";
+		print "</tr>\n";
+	}
+}
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("UserDefaultWarehouse").'</td>';

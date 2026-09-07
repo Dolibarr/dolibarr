@@ -37,12 +37,6 @@ if (!defined('NOREQUIREAJAX')) {
 if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
 }
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', '1');
-}
-if (!defined('NOREQUIREHTML')) {
-	define('NOREQUIREHTML', '1');
-}
 
 // Load Dolibarr environment
 $res = 0;

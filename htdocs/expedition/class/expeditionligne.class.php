@@ -903,7 +903,8 @@ class ExpeditionLigne extends CommonObjectLine
 
 		if ($qty > $qty_remaining) {
 			$langs->load('errors');
-			$this->error = $langs->trans('ErrorExpeditionQtyTooHigh', $qty, max(0, $qty_remaining));
+			$product_ref = !empty($orderline->product_ref) ? $orderline->product_ref : $orderline->desc;
+			$this->error = $langs->trans('ErrorExpeditionQtyTooHigh', $qty, max(0, $qty_remaining), $product_ref);
 			return false;
 		}
 

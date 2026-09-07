@@ -1995,7 +1995,7 @@ if ($action == 'create') {
 	if (empty($reshook)) {
 		$params = array();
 		if ($user->socid == 0) {
-			if ($action != 'editdescription' && ($action != 'presend')) {
+			if ($action != 'editdescription' && $action != 'presend' && $action != 'editline') {
 				// Subtotal
 				if ($object->status == Fichinter::STATUS_DRAFT && isModEnabled('subtotals')
 					&& (getDolGlobalString('SUBTOTAL_TITLE_'.strtoupper($object->element)) || getDolGlobalString('SUBTOTAL_'.strtoupper($object->element)) || getDolGlobalString('SUBTOTAL_TEXT_'.strtoupper($object->element)))) {

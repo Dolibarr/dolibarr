@@ -1985,10 +1985,17 @@ function img_picto_common($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0
 		$path = DOL_URL_ROOT . '/theme/common/' . $picto;
 
 		if (getDolGlobalInt('MAIN_MODULE_CAN_OVERWRITE_COMMONICONS')) {
-			$themepath = DOL_DOCUMENT_ROOT . '/theme/' . $conf->theme . '/img/' . $picto;
+			$themeimg = '/theme/' . $conf->theme . '/img/' . $picto;
 
-			if (file_exists($themepath)) {
-				$path = $themepath;
+			if (file_exists(DOL_DOCUMENT_ROOT . $themeimg)) {
+				$path = DOL_URL_ROOT . $themeimg;
+			} elseif (!empty($conf->modules_parts['theme'])) {	// Using this feature slow down application
+				foreach ($conf->modules_parts['theme'] as $reldir) {
+					if (file_exists(dol_buildpath($reldir . $themeimg, 0))) {
+						$path = dol_buildpath($reldir . $themeimg, 1);
+						break;
+					}
+				}
 			}
 		}
 	}
