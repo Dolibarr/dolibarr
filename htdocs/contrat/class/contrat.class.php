@@ -1187,7 +1187,11 @@ class Contrat extends CommonObject
 				$this->db->commit();
 				return $this->id;
 			} else {
-				$this->error = "Failed to add contract";
+				// Keep the error reported by the failing step, it is the only actionable one.
+				// Only fall back to a generic message when nothing was set, as propal.class.php does.
+				if (empty($this->error) && empty($this->errors)) {
+					$this->error = "Failed to add contract";
+				}
 				dol_syslog(get_class($this)."::create - 20 - ".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -2;
