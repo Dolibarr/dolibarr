@@ -10679,6 +10679,14 @@ function getElementProperties($elementType)
 		$subelement = '';
 		$classname = 'FactureFournisseur';
 		$table_element = 'facture_fourn';
+	} elseif ($elementType == 'invoice_supplier_rec' || $elementType == 'supplier_invoice_rec' || $elementType == 'facture_fourn_rec') {
+		$classpath = 'fourn/class';
+		$module = 'fournisseur';
+		$classfile = 'fournisseur.facture-rec';
+		$element = 'invoice_supplier_rec';
+		$subelement = '';
+		$classname = 'FactureFournisseurRec';
+		$table_element = 'facture_fourn_rec';
 	} elseif ($elementType == 'facture_fourn_det') {
 		$classpath = 'fourn/class';
 		$module = 'fournisseur';
