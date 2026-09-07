@@ -13685,7 +13685,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0, $sqltoadd =
 						$tmps = '';
 
 						if ($isSellist && $key && $table && $label) {
-							$newres .= $field . " IN (SELECT t." . $db->sanitize($key) . " FROM " . $db->prefix() . $db->sanitize($table) . " AS t WHERE t." . $db->sanitize($label) . " LIKE '%" . $db->escape($tmpcrit2) . "%')";
+							$newres .= $field . " IN (SELECT t." . $db->sanitize((string) $key) . " FROM " . $db->prefix() . $db->sanitize((string) $table) . " AS t WHERE t." . $db->sanitize((string) $label) . " LIKE '%" . $db->escape($tmpcrit2) . "%')";
 						} else {
 							if (preg_match('/^!/', $tmpcrit)) {
 								$tmps .= $db->sanitize($field) . " NOT LIKE "; // ! as exclude character
