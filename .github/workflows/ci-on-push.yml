@@ -1,5 +1,6 @@
 name: "CI-PUSH"
 
+
 on:
   push:
     # Executer only on push of the main repository, not on fork.
@@ -7,6 +8,8 @@ on:
       - develop
       - master
       - '=.0'
+    paths-ignore:
+      - '.agents/**'
 
 jobs:
   pre-commit:
