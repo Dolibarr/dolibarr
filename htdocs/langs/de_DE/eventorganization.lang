@@ -48,6 +48,7 @@ ConferenceOrBoothTab = Konferenzbeitrag oder Stand
 AmountPaid = Bezahlter Betrag
 DateOfRegistration = Datum der Anmeldung
 ConferenceOrBoothAttendee = Referent eines Konferenzbeitrags oder Standinhaber
+ConferenceOrBoothAttendeesShort = Konferenz- oder Standbesucher
 ApplicantOrVisitor=Bewerber oder Besucher
 Speaker=Referent
 # Template Mail
@@ -81,8 +82,8 @@ ListOfAttendeesOfEvent=Teilnehmerliste der Veranstaltungsprojekte
 ListOfConfOrBoothOfEvent=Liste von Konferenzen oder Veranstaltungsständen Projekte
 DownloadICSLink=ICS-Datei herunterladen
 EVENTORGANIZATION_SECUREKEY=Seed, um den Schlüssel für die öffentliche Registrierungsseite zu sichern, die zum Vorschlagen eines Konferenzbeitrags dient
-SERVICE_BOOTH_LOCATION=Leistung, die für die Rechnungsposition über einen Stand verwendet wird
-SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION=Leistung, die für die Rechnungsposition über eine Teilnahmebuchung einer Veranstaltung verwendet wird
+SERVICE_BOOTH_LOCATION=Leistung zur Verwendung als Rechnungsposition für einen Stand.
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION=Leistung zur Verwendung als Rechnungsposition für die Teilnahmegebühren.
 NbVotes=Anzahl der Stimmen
 # Status
 EvntOrgDraft = Entwurf

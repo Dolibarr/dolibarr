@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2011       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2014       Cedric GROSS            <c.gross@kreiz-it.fr>
- * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2019-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -691,7 +691,7 @@ $resql = $db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql);
 
-	$MAXONSAMEPAGE = 10000; // Useless to have more. Protection to avoid memory overload when high number of event (for example after a mass import)
+	$MAXONSAMEPAGE = getDolGlobalInt('AGENDA_MAX_ON_SAME_PAGE', 5000); // Useless to have more. Protection to avoid memory overload when high number of event (for example after a mass import)
 	$i = 0;
 	while ($i < $num && $i < $MAXONSAMEPAGE) {
 		$obj = $db->fetch_object($resql);

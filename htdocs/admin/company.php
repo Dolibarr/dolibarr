@@ -7,7 +7,7 @@
  * Copyright (C) 2015-2025	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2017		Rui Strecht					<rui.strecht@aliartalentos.com>
  * Copyright (C) 2023		Nick Fragoulis
- * Copyright (C) 2024-2025	Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -74,6 +74,12 @@ $quality = $tmparraysize['quality'];
 $hookmanager->initHooks(array('admincompany', 'globaladmin'));
 
 $object = new Societe($db);
+
+if (!getDolGlobalString('MAIN_INFO_SOCIETE_NOM') || !getDolGlobalString('MAIN_INFO_SOCIETE_COUNTRY') || getDolGlobalString('MAIN_INFO_SOCIETE_SETUP_TODO_WARNING')) {
+	$setupcompanynotcomplete = 1;
+} else {
+	$setupcompanynotcomplete = 0;
+}
 
 
 /*
@@ -208,14 +214,10 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 					} else {
 						dol_syslog("ErrorImageFormatNotSupported", LOG_WARNING);
 					}
-				} elseif (preg_match('/^ErrorFileIsInfectedWithAVirus/', $result)) {
+				} elseif (!is_numeric($result)) {	// $result is a translation key
 					$error++;
 					$langs->load("errors");
-					$tmparray = explode(':', $result);
-					setEventMessages($langs->trans('ErrorFileIsInfectedWithAVirus', $tmparray[1]), null, 'errors');
-				} elseif (preg_match('/^ErrorFileSizeTooLarge/', $result)) {
-					$error++;
-					setEventMessages($langs->trans("ErrorFileSizeTooLarge"), null, 'errors');
+					setEventMessages($langs->trans($result), null, 'errors');
 				} else {
 					$error++;
 					setEventMessages($langs->trans("ErrorFailedToSaveFile"), null, 'errors');
@@ -263,6 +265,9 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 	}
 
 	dolibarr_set_const($db, "FACTURE_TVAOPTION", $usevat, 'chaine', 0, '', $conf->entity);
+
+	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_VAT_EXEMPTION_CODE", GETPOST('MAIN_INFO_SOCIETE_VAT_EXEMPTION_CODE'), 'chaine', 0, '', $conf->entity);
+
 	dolibarr_set_const($db, "FACTURE_LOCAL_TAX1_OPTION", $uselocaltax1, 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "FACTURE_LOCAL_TAX2_OPTION", $uselocaltax2, 'chaine', 0, '', $conf->entity);
 
@@ -444,8 +449,8 @@ $head = company_admin_prepare_head();
 
 print dol_get_fiche_head($head, 'company', '', -1, '');
 
-print '<span class="opacitymedium">'.$langs->trans("CompanyFundationDesc", $langs->transnoentities("Save"))."</span><br>\n";
-print "<br><br>\n";
+print '<div class="'.($setupcompanynotcomplete ? 'warning' : 'info').'">'.$langs->trans("CompanyFundationDesc", $langs->transnoentities("Save"))."</div>\n";
+print "<br>\n";
 
 
 // Edit parameters

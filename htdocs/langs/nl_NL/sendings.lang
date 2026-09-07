@@ -128,6 +128,7 @@ ShipmentDistribution=Zending distributie
 ErrorTooManyCombinationBatchcode=Geen verzending voor regel %s omdat er te veel combinaties van magazijn-, product- en batchcode zijn gevonden (%s).
 ErrorNoCombinationBatchcode=Kan de regel %s niet opslaan als de combinatie van magazijn-product-lot/serieel (%s, %s, %s) is niet gevonden in voorraad.
 ErrorTooMuchShipped=Het verzonden aantal mag niet groter zijn dan het bestelde aantal voor regel %s
+NoShipmentLineChangeDetected=Er is geen wijziging in de verzendlijn geconstateerd.
 ##### Types of contacts #####
 TypeContact_shipping_internal_SALESREPFOLL=Vertegenwoordiger die follow-up van verzending doet
 TypeContact_shipping_external_BILLING=Afnemersfactuurcontactpersoon

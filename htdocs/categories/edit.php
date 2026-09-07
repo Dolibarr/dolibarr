@@ -109,7 +109,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	// Action mise a jour d'une categorie
+	// Action update a category
 	if ($action == 'update' && $user->hasRight('categorie', 'creer')) {
 		$object->oldcopy = dol_clone($object, 2); // @phan-suppress-current-line PhanTypeMismatchProperty
 

@@ -1,29 +1,55 @@
-# Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Soldatapeko "erabiltzaileentzat" lehenespenez erabiltzen den kontua (Kontuen Planetik)
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Erabiltzaile-txartelean definitutako kontu dedikatua Kontabilitate Nagusirako soilik erabiliko da. Hau Kontabilitate Nagusirako erabiliko da, baina baita Kontabilitate Nagusiaren balio lehenetsi gisa ere, erabiltzailean kontabilitate-kontu dedikaturik definituta ez badago.
-SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Soldata-ordainketetarako kontabilitate-kontua lehenespenez
-CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=Berez, utzi hutsik "Ordainketa osoa automatikoki sortu" aukera Soldata bat sortzerakoan.
 Salary=Soldata
 Salaries=Soldatak
 NewSalary=Soldata berria
 AddSalary=Gehitu soldata
 NewSalaryPayment=Soldata txartel berria
 AddSalaryPayment=Gehitu soldata-ordainketa
-SalaryID=Soldata IDa
-SalaryAmount=Soldata zenbatekoa
 SalaryPayment=Soldata ordainketa
 SalariesPayments=Soldaten ordainketak
 SalariesPaymentsOf=%s-ren soldata-ordainketak
 ShowSalaryPayment=Soldataren ordainketa erakutsi
-THM=Batez besteko orduko tarifa
-TJM=Batez besteko eguneko tarifa
+SalaryID=Soldata IDa
+SalaryAmount=Soldata zenbatekoa
+SalaryDate=Salary date
+SalaryPaid=Salary paid
+SalaryNotPaid=Salary not paid
+
+SalarySlip=Salary slip
+StandardSalaryDocModel=Standard salary slip document
+
+BasicSalary=Basic salary
+Bonus=Bonus
+Allowance=Allowance
+Overtime=Overtime
+Deduction=Deduction
+Deductions=Deductions
+Earnings=Earnings
+TotalEarnings=Total earnings
+TotalDeductions=Total deductions
+NetPaid=Net paid
+
+# Accounting
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Soldatapeko "erabiltzaileentzat" lehenespenez erabiltzen den kontua (Kontuen Planetik)
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Erabiltzaile-txartelean definitutako kontu dedikatua Kontabilitate Nagusirako soilik erabiliko da. Hau Kontabilitate Nagusirako erabiliko da, baina baita Kontabilitate Nagusiaren balio lehenetsi gisa ere, erabiltzailean kontabilitate-kontu dedikaturik definituta ez badago.
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Soldata-ordainketetarako kontabilitate-kontua lehenespenez
+CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=Berez, utzi hutsik "Ordainketa osoa automatikoki sortu" aukera Soldata bat sortzerakoan.
+
+# Stats / Info
 CurrentSalary=Uneko soldata
-THMDescription=Balio hau erabil daiteke erabiltzaileek sartutako proiektu batean kontsumitutako denboraren kostua kalkulatzeko, baldin eta proiektu modulua erabiltzen bada.
-TJMDescription=Balio hau informaziorako baino ez da oraingoz eta ez da kalkuluetarako erabiltzen.
 LastSalaries=Azken %s soldatak
 AllSalaries=Soldata guztiak
 SalariesStatistics=Soldata-estatistikak
 SalariesAndPayments=Soldatak eta ordainketak
+UserPaySlip=Ordainagiria
+PayPeriod=Pay period
+
+# THM / TJM
+THM=Batez besteko orduko tarifa
+THMDescription=Balio hau erabil daiteke erabiltzaileek sartutako proiektu batean kontsumitutako denboraren kostua kalkulatzeko, baldin eta proiektu modulua erabiltzen bada.
+TJM=Batez besteko eguneko tarifa
+TJMDescription=Balio hau informaziorako baino ez da oraingoz eta ez da kalkuluetarako erabiltzen.
+
+# Other actions
 ConfirmDeleteSalaryPayment=Soldata-ordainketa hau ezabatu nahi duzu?
 FillFieldFirst=Bete lehenik langilearen eremua
 UpdateAmountWithLastSalary=Azken soldataren zenbatekoa ezarri
@@ -32,8 +58,10 @@ VirementOrder=Kreditu transferentzia eskaera
 WithdrawalReceipt=Kreditu-transferentzia agindua
 OrderWaiting=Eskaera zain
 FillEndOfMonth=Hilabete amaiera
+
+# Shortcuts
 PreviousMonthShort=Aurreko hilabetea
 CurrentMonthShort=Hilabete honetan
+NextMonthShort=Next month
 PreviousWeekShort=Aurreko astea
 CurrentWeekShort=Aste honetakoa
-UserPaySlip=Ordainagiria

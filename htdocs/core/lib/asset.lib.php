@@ -56,7 +56,7 @@ function assetAdminPrepareHead()
 	//); // to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'asset_admin');
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/asset/admin/asset_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'asset'));
 	$head[$h][1] = $langs->trans("ExtraFields");
 	$nbExtrafields = $extrafields->attributes['asset']['count'];
 	if ($nbExtrafields > 0) {
@@ -65,7 +65,7 @@ function assetAdminPrepareHead()
 	$head[$h][2] = 'asset_extrafields';
 	$h++;
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/asset/admin/assetmodel_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'asset_model'));
 	$head[$h][1] = $langs->trans("ExtraFieldsAssetModel");
 	$nbExtrafields = $extrafields->attributes['asset_model']['count'];
 	if ($nbExtrafields > 0) {

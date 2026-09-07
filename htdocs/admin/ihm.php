@@ -8,7 +8,7 @@
  * Copyright (C) 2021-2023	Anthony Berton				<anthony.berton@bb2a.fr>
  * Copyright (C) 2023		Eric Seigne					<eric.seigne@cap-rel.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France				<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -310,13 +310,13 @@ if ($action == 'update') {
 						dol_mkdir($dirforimage);
 					}
 					$result = dol_move_uploaded_file($_FILES[$varforimage]["tmp_name"], $dirforimage . $original_file, 1, 0, $_FILES[$varforimage]['error']);
-					if ($result > 0) {
+					// Note: a refused file is reported with a string, and in PHP 8 such a string is > 0, so we must test is_numeric() first
+					if (is_numeric($result) && $result > 0) {
 						dolibarr_set_const($db, "MAIN_LOGIN_BACKGROUND", $original_file, 'chaine', 0, '', $conf->entity);
-					} elseif (preg_match('/^ErrorFileIsInfectedWithAVirus/', $result)) {
+					} elseif (!is_numeric($result)) {	// $result is a translation key
 						$error++;
 						$langs->load("errors");
-						$tmparray = explode(':', $result);
-						setEventMessages($langs->trans('ErrorFileIsInfectedWithAVirus', $tmparray[1]), null, 'errors');
+						setEventMessages($langs->trans($result), null, 'errors');
 					} else {
 						$error++;
 						setEventMessages($langs->trans("ErrorFailedToSaveFile"), null, 'errors');
@@ -387,7 +387,7 @@ print load_fiche_titre($form->textwithpicto($langs->trans("GUISetup"), $langs->t
 // WYSIWYG Editor
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
-print '<form enctype="multipart/form-data" method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
+print '<form enctype="multipart/form-data" method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 print '<input type="hidden" name="page_y" value="">';

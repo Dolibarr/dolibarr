@@ -258,7 +258,7 @@ OtherFilteredTasks=កិច្ចការដែលបានត្រងផ្�
 NoAssignedTasks=រកមិនឃើញកិច្ចការដែលបានកំណត់ទេ (ផ្តល់គម្រោង/កិច្ចការដល់អ្នកប្រើប្រាស់បច្ចុប្បន្នពីប្រអប់ជ្រើសរើសកំពូល ដើម្បីបញ្ចូលពេលវេលានៅលើវា)
 ThirdPartyRequiredToGenerateIntervention=ភាគីទីបីត្រូវតែកំណត់លើគម្រោង ដើម្បីអាចបង្កើតអន្តរាគមន៍។
 ThirdPartyRequiredToGenerateInvoice=ភាគីទីបីត្រូវតែកំណត់លើគម្រោង ដើម្បីអាចចេញវិក្កយបត្របាន។
-ChooseANotYetAssignedTask=ជ្រើសរើសកិច្ចការដែលមិនទាន់ប្រគល់ឱ្យអ្នក។
+ChooseANotYetAssignedTask=Tasks not yet assigned to you
 # Comments trans
 AllowCommentOnTask=អនុញ្ញាតមតិរបស់អ្នកប្រើលើកិច្ចការ
 AllowCommentOnProject=អនុញ្ញាតឱ្យមតិអ្នកប្រើលើគម្រោង

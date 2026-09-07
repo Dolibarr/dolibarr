@@ -92,7 +92,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'inclu
 
 $permissiontoread = $user->hasRight('tax', 'charges', 'lire');
 $permissiontoadd = $user->hasRight('tax', 'charges', 'creer'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-$permissiontodelete = $user->rights->tax->charges->supprimer || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_UNPAID);
+$permissiontodelete = $user->hasRight('tax', 'charges', 'supprimer') || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_UNPAID);
 $permissionnote = $user->hasRight('tax', 'charges', 'creer'); // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $user->hasRight('tax', 'charges', 'creer'); // Used by the include of actions_dellink.inc.php
 $upload_dir = $conf->tax->multidir_output[isset($object->entity) ? $object->entity : 1].'/vat';
@@ -583,7 +583,7 @@ if ($id > 0) {
 		$formconfirm = $hookmanager->resPrint;
 	}
 
-	print dol_get_fiche_head($head, 'card', $langs->trans("VATPayment"), -1, 'payment', 0, '', '', 0, '', 1);
+	print dol_get_fiche_head($head, 'card', $langs->trans("VATPayment"), -1, 'payment', 0, '', '', 0, '', ($action == 'edit' ? 0 : 1));
 
 	// Print form confirm
 	print $formconfirm;

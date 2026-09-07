@@ -120,3 +120,6 @@ ShowClosedServices=Show Closed Services
 HideClosedServices=Hide Closed Services
 UserStartingService=User starting service
 UserClosingService=User closing service
+SendReminderForExpiredServicesTitle=Send reminder by email for expiring contract services
+SendReminderForExpiredServices=Send reminder by email to the customer when a running contract service is about to expire (parameter is number of days before end of service to send the reminder. It can be a list of days separated by a semicolon, for example '10;5;0;-5'). The template of email to send is defined in setup of contract module.
+DescCONTRACT_EMAIL_TEMPLATE_REMIND_EXPIRATION=Email template to use to send email reminder when a contract service is about to expire

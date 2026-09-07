@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2018	    Quentin Vial-Gouteyron      <quentin.vial-gouteyron@atm-consulting.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -157,8 +157,8 @@ if ($action == 'updateMask') {
 } elseif ($action == 'setdoc') {
 	// Set default model
 	if (dolibarr_set_const($db, "RECEPTION_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity)) {
-		// La constante qui a ete lue en avant du nouveau set
-		// on passe donc par une variable pour avoir un affichage coherent
+		// The constant that was read before the new set
+		// so we go through a variable to get a consistent display
 		$conf->global->RECEPTION_ADDON_PDF = $value;
 	}
 
@@ -215,8 +215,8 @@ foreach ($dirmodels as $reldir) {
 		$handle = opendir($dir);
 		if (is_resource($handle)) {
 			while (($file = readdir($handle)) !== false) {
-				if (substr($file, 0, 14) == 'mod_reception_' && substr($file, dol_strlen($file) - 3, 3) == 'php') {
-					$file = substr($file, 0, dol_strlen($file) - 4);
+				if (dol_substr($file, 0, 14) == 'mod_reception_' && dol_substr($file, dol_strlen($file) - 3, 3) == 'php') {
+					$file = dol_substr($file, 0, dol_strlen($file) - 4);
 
 					require_once $dir.'/'.$file.'.php';
 
@@ -303,7 +303,7 @@ print '<br>';
  */
 print load_fiche_titre($langs->trans("ReceptionsReceiptModel"), '', '');
 
-// Defini tableau def de modele invoice
+// Define array def of model invoice
 $type = "reception";
 $def = array();
 
@@ -358,8 +358,8 @@ foreach ($dirmodels as $reldir) {
 				foreach ($filelist as $file) {
 					if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file)) {
 						if (file_exists($dir.'/'.$file)) {
-							$name = substr($file, 4, dol_strlen($file) - 16);
-							$classname = substr($file, 0, dol_strlen($file) - 12);
+							$name = dol_substr($file, 4, dol_strlen($file) - 16);
+							$classname = dol_substr($file, 0, dol_strlen($file) - 12);
 
 							require_once $dir.'/'.$file;
 							$module = new $classname($db);

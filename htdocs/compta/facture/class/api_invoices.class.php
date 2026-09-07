@@ -24,6 +24,7 @@ use Luracast\Restler\RestException;
 
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 
 /**
@@ -243,9 +244,9 @@ class Invoices extends DolibarrApi
 		// Search on sale representative
 		if ($search_sale && $search_sale != '-1') {
 			if ($search_sale == -2) {
-				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc)";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', 0, 1);
 			} elseif ($search_sale > 0) {
-				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', (int) $search_sale);
 			}
 		}
 		// Filter by status
@@ -453,6 +454,12 @@ class Invoices extends DolibarrApi
 		$result = $order->fetch($orderid);
 		if (!$result) {
 			throw new RestException(404, 'Order not found');
+		}
+
+		// Refuse orders that cannot be billed, to mirror the GUI (order card "CreateBill" button and list mass action):
+		// this excludes draft and canceled orders, as well as orders already classified as billed.
+		if ($order->status <= Commande::STATUS_DRAFT || !empty($order->billed)) {
+			throw new RestException(405, 'Order '.$order->ref.' is not eligible for invoicing: its status does not allow creating an invoice');
 		}
 
 		$result = $this->invoice->createFromOrder($order, DolibarrApiAccess::$user);
@@ -2025,6 +2032,14 @@ class Invoices extends DolibarrApi
 
 		if (!$result) {
 			throw new RestException(404, 'Payment not found');
+		}
+
+		// Check all invoices of the payment to see if the user has permission on them for the object level permission test
+		$tmparray = $paymentobj->getBillsArray();
+		foreach ($tmparray as $tmpinvoiceid) {
+			if (!DolibarrApi::_checkAccessToResource('facture', $tmpinvoiceid)) {
+				throw new RestException(403, 'Payment is on invoices that are not all allowed for login '.DolibarrApiAccess::$user->login);
+			}
 		}
 
 		if (!empty($num_payment)) {

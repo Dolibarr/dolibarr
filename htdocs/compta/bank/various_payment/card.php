@@ -639,7 +639,7 @@ if ($id) {
 		print $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id]), $langs->trans('DeleteVariousPayment'), $text, 'confirm_delete', '', '', 2);
 	}
 
-	print dol_get_fiche_head($head, 'card', $langs->trans("VariousPayment"), -1, $object->picto);
+	print dol_get_fiche_head($head, 'card', $langs->trans("VariousPayment"), -1, $object->picto, 0, '', '', 0, '', 1);
 
 	$morehtmlref = '<div class="refidno">';
 	// Project
@@ -798,7 +798,7 @@ if ($id) {
 
 	// Clone
 	if ($permissiontoadd) {
-		print '<div class="inline-block divButAction"><a class="butAction butActionClone" href="' . dolBuildUrl(DOL_DOCUMENT_ROOT."/compta/bank/various_payment/card.php", ['id' => $object->id, 'action' => 'clone']).'">'.$langs->trans("ToClone") . "</a></div>";
+		print '<div class="inline-block divButAction"><a class="butAction butActionClone" href="' . dolBuildUrl(DOL_URL_ROOT."/compta/bank/various_payment/card.php", ['id' => $object->id, 'action' => 'clone']).'">'.$langs->trans("ToClone") . "</a></div>";
 	}
 
 	// Delete

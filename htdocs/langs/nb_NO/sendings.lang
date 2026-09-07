@@ -128,6 +128,7 @@ ShipmentDistribution=Forsendelsesdistribusjon
 ErrorTooManyCombinationBatchcode=Ingen utsendelse for linje %s da for mange kombinasjoner av lager, vare, batchkode ble funnet (%s).
 ErrorNoCombinationBatchcode=Kunne ikke lagre linjen %s da kombinasjonen av lager-parti/serienummer (%s, %s, %s) ikke ble funnet i beholdning.
 ErrorTooMuchShipped=Antall sendt skal ikke være større enn antall bestilt for linje %s
+NoShipmentLineChangeDetected=No shipment line change was detected.
 ##### Types of contacts #####
 TypeContact_shipping_internal_SALESREPFOLL=Representant for oppfølging av levering
 TypeContact_shipping_external_BILLING=Kundekontakt faktura

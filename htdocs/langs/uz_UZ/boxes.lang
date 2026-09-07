@@ -116,6 +116,7 @@ BoxLastCustomerShipments=Mijozlarning so'nggi jo'natmalari
 BoxTitleLastCustomerShipments=Oxirgi %s oʻzgartirilgan mijozlar joʻnatmalari
 BoxTitleLastLeaveRequests=Oxirgi %s oʻzgartirilgan taʼtil soʻrovlari
 NoRecordedShipments=Mijozlarni ro'yxatdan o'tkazish bo'yicha ro'yxatdan o'tkazilmagan
+NoUpcomingEvent=No upcoming events
 BoxCustomersOutstandingBillReached=Cheklovga yetmagan mijozlar
 BoxTitleLastFediverseInfos=%sdan oxirgi %s postlari
 BoxLastFediverseInfos=So'nggi Fediverse yangilanishlari: Yangiliklar va tendentsiyalar

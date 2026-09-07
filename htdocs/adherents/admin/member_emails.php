@@ -10,6 +10,7 @@
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,7 +52,7 @@ if (!$user->admin) {
 }
 
 
-$oldtypetonewone = array('texte'=>'text', 'chaine'=>'string'); // old type to new ones
+$oldtypetonewone = array('texte' => 'text', 'chaine' => 'string'); // old type to new ones
 
 $action = GETPOST('action', 'aZ09');
 
@@ -64,17 +65,17 @@ $helptext .= '__COMPANY__, __ADDRESS__, __ZIP__, __TOWN__, __COUNTRY__, __EMAIL_
 
 // Editing global variables not related to a specific theme
 $constantes = array(
-	'MEMBER_REMINDER_EMAIL'                         => array('type'=>'yesno', 'label' => $langs->trans('MEMBER_REMINDER_EMAIL', $langs->transnoentities("Module2300Name")), 'help' => $langs->trans('MEMBER_REMINDER_EMAILHelp', $langs->transnoentities("Module2300Name"))),
-	'ADHERENT_EMAIL_TEMPLATE_REMIND_EXPIRATION' 	=> array('type'=>'emailtemplate:member', 'label'=>''),
-	'ADHERENT_EMAIL_TEMPLATE_AUTOREGISTER'			=> array('type'=>'emailtemplate:member', 'label'=>''),
-	'ADHERENT_EMAIL_TEMPLATE_MEMBER_VALIDATION'		=> array('type'=>'emailtemplate:member', 'label'=>''),
-	'ADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION'			=> array('type'=>'emailtemplate:member', 'label'=>''),
-	'ADHERENT_EMAIL_TEMPLATE_CANCELATION'			=> array('type'=>'emailtemplate:member', 'label'=>''),
-	'ADHERENT_EMAIL_TEMPLATE_EXCLUSION'				=> array('type'=>'emailtemplate:member', 'label'=>''),
-	'ADHERENT_MAIL_FROM'							=> array('type'=>'string', 'label'=>''),
-	'ADHERENT_CC_MAIL_FROM'							=> array('type'=>'string', 'label'=>''),
-	'ADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT'		=> array('type'=>'string', 'label'=>''),
-	'ADHERENT_AUTOREGISTER_NOTIF_MAIL'				=> array('type'=>'html', 'tooltip' => $helptext, 'label' => '')
+	'MEMBER_REMINDER_EMAIL'                         => array('type' => 'yesno', 'label' => $langs->trans('MEMBER_REMINDER_EMAIL', $langs->transnoentities("Module2300Name")), 'help' => $langs->trans('MEMBER_REMINDER_EMAILHelp', $langs->transnoentities("Module2300Name"))),
+	'ADHERENT_EMAIL_TEMPLATE_REMIND_EXPIRATION' 	=> array('type' => 'emailtemplate:member', 'label' => ''),
+	'ADHERENT_EMAIL_TEMPLATE_AUTOREGISTER'			=> array('type' => 'emailtemplate:member', 'label' => ''),
+	'ADHERENT_EMAIL_TEMPLATE_MEMBER_VALIDATION'		=> array('type' => 'emailtemplate:member', 'label' => ''),
+	'ADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION'			=> array('type' => 'emailtemplate:member', 'label' => ''),
+	'ADHERENT_EMAIL_TEMPLATE_CANCELATION'			=> array('type' => 'emailtemplate:member', 'label' => ''),
+	'ADHERENT_EMAIL_TEMPLATE_EXCLUSION'				=> array('type' => 'emailtemplate:member', 'label' => ''),
+	'ADHERENT_MAIL_FROM'							=> array('type' => 'string', 'label' => ''),
+	'ADHERENT_CC_MAIL_FROM'							=> array('type' => 'string', 'label' => ''),
+	'ADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT'		=> array('type' => 'string', 'label' => ''),
+	'ADHERENT_AUTOREGISTER_NOTIF_MAIL'				=> array('type' => 'html', 'tooltip' => $helptext, 'label' => '')
 );
 
 
@@ -186,7 +187,7 @@ foreach ($tableau as $key => $const) {	// Loop on each param
 	$sql = "SELECT rowid, ".$db->decrypt('name')." as name, ".$db->decrypt('value')." as value, type, note";
 	$sql .= " FROM ".MAIN_DB_PREFIX."const";
 	$sql .= " WHERE ".$db->decrypt('name')." = '".$db->escape($const)."'";
-	$sql .= " AND entity IN (0, ".$conf->entity.")";
+	$sql .= " AND entity IN (0, ".((int) $conf->entity).")";
 	$sql .= " ORDER BY name ASC, entity DESC";
 	$resql = $db->query($sql);
 

@@ -701,7 +701,7 @@ if (!empty($id) && $action != 'edit') {
 	$hselected = 'card';
 
 	$head = donation_prepare_head($object);
-	print dol_get_fiche_head($head, $hselected, $langs->trans("Donation"), -1, 'donation');
+	print dol_get_fiche_head($head, $hselected, $langs->trans("Donation"), -1, 'donation', 0, '', '', 0, '', 1);
 
 	// Print form confirm
 	print $formconfirm;

@@ -57,3 +57,7 @@ donAnonymous=Dohaintza anonimoa
 AnonymousDonationTooltip=Markatu laukitxo hau zure dohaintza anonimoa izaten jarraitzea nahi baduzu. Zure informazio pertsonala ez da eskatuko.
 publicDonationFieldHelp=%s-ek nire dohaintza erregistro publikoan argitaratu dezake
 listOfPublicDonations=Jendaurreko dohaintzen zerrenda
+donationErrorMessageContactEmail=An error has occurred. To complete your donation, please contact us at %s
+descDonationLineInInvoice=Donation and contribution
+companyBusinessNumber=Business Registration Number
+companyTIN=Tax Identification Number

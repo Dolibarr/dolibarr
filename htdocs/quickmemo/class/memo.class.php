@@ -411,7 +411,7 @@ class Memo extends CommonObject
 			$sql .= " WHERE t.entity IN (".getEntity($this->element).")";
 		} elseif (preg_match('/^\w+@\w+$/', (string) $this->ismultientitymanaged)) {
 			$tmparray = explode('@', (string) $this->ismultientitymanaged);
-			$sql .= " LEFT JOIN ".$this->db->prefix().$tmparray[1]." as pt ON t.".$this->db->sanitize($tmparray[0])." = pt.rowid";
+			$sql .= " LEFT JOIN ".$this->db->prefix().$this->db->sanitize($tmparray[1])." as pt ON t.".$this->db->sanitize($tmparray[0])." = pt.rowid";
 			$sql .= " WHERE pt.entity IN (".getEntity($this->element).")";
 		} else {
 			$sql .= " WHERE 1 = 1";
@@ -684,14 +684,14 @@ class Memo extends CommonObject
 			if (preg_match('/^[\(]?PROV/i', $this->ref)) {
 				// Now we rename also files into index
 				$sql = 'UPDATE '.$this->db->prefix()."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'memo/".$this->db->escape($this->newref)."'";
-				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'memo/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'memo/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++;
 					$this->error = $this->db->lasterror();
 				}
 				$sql = 'UPDATE '.$this->db->prefix()."ecm_files set filepath = 'memo/".$this->db->escape($this->newref)."'";
-				$sql .= " WHERE filepath = 'memo/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$sql .= " WHERE filepath = 'memo/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++;
@@ -955,7 +955,7 @@ class Memo extends CommonObject
 				if (!empty($filename)) {
 					$pospoint = strpos($filearray[0]['name'], '.');
 
-					$pathtophoto = $class.'/'.$this->ref.'/thumbs/'.substr($filename, 0, $pospoint).'_mini'.substr($filename, $pospoint);
+					$pathtophoto = $class.'/'.$this->ref.'/thumbs/'.dol_substr($filename, 0, $pospoint).'_mini'.dol_substr($filename, $pospoint);
 					if (!getDolGlobalString(strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS')) {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$module.'" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div></div>';
 					} else {

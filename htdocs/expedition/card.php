@@ -824,6 +824,7 @@ if (empty($reshook)) {
 		setEventMessages($object->error, $object->errors, 'errors');
 	} elseif ($action == 'deleteline' && !empty($line_id) && $permissiontoadd) {
 		// delete a line
+		$error = 0;
 		$object->fetch($id);
 		$lines = $object->lines;
 		$line = new ExpeditionLigne($db);
@@ -832,7 +833,9 @@ if (empty($reshook)) {
 		$num_prod = count($lines);
 		for ($i = 0; $i < $num_prod; $i++) {
 			if ($lines[$i]->id == $line_id) {
-				if (count($lines[$i]->details_entrepot) > 1) {
+				// A standalone shipment (SHIPMENT_STANDALONE) loads its lines with fetch_lines_free(),
+				// which does not set details_entrepot, so count() must not be called on it blindly.
+				if (is_array($lines[$i]->details_entrepot) && count($lines[$i]->details_entrepot) > 1) {
 					// delete multi warehouse lines
 					foreach ($lines[$i]->details_entrepot as $details_entrepot) {
 						$line->id = $details_entrepot->line_id;
@@ -1902,6 +1905,7 @@ if ($action == 'create' && $usercancreate) {
 					if (!(getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES') || getDolGlobalString('STOCK_SUPPORTS_SERVICES'))) {
 						$title_lines_to_disable = $object->getDisabledShippmentSubtotalLines();
 					}
+					$selectedLines = GETPOST('subtotal_toselect', 'array:int');
 					foreach ($object->lines as $line) {
 						if ($line->special_code == SUBTOTALS_SPECIAL_CODE) {
 							$show_check_add_buttons = true;
@@ -2357,31 +2361,37 @@ if ($action == 'create' && $usercancreate) {
 									print '<!-- subj=' . $subj . '/' . $nbofsuggested . ' --><tr ' . ((($subj + 1) == $nbofsuggested) ? 'oddeven' : '') . '>';
 									print '<td colspan="3" ></td><td class="center"><!-- qty to ship (no lot management for product line indiceAsked=' . $indiceAsked . ') -->';
 									if ($line->product_type == Product::TYPE_PRODUCT || getDolGlobalString('STOCK_SUPPORTS_SERVICES') || getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES')) {
-										if (isset($alreadyQtySetted[$line->fk_product][intval($warehouse_id)])) {
-											$deliverableQty = min($quantityToBeDelivered, $stock - $alreadyQtySetted[$line->fk_product][intval($warehouse_id)]);
-										} else {
-											if (!isset($alreadyQtySetted[$line->fk_product])) {
-												$alreadyQtySetted[$line->fk_product] = array();
+										// For a virtual product (kit), $deliverableQty is already min($quantityToBeDelivered, $stock) computed above
+										// and the per-warehouse "stock" returned by loadStockForVirtualProduct() is $qtyWish, not a shared physical
+										// stock. The cross-line $alreadyQtySetted cap must not be applied for kits, otherwise the 2nd and next order
+										// lines of the same kit would be wrongly pre-filled with 0.
+										$tooltipClass = $tooltipTitle = '';
+										if ($productChildrenNb <= 0) {
+											if (isset($alreadyQtySetted[$line->fk_product][intval($warehouse_id)])) {
+												$deliverableQty = min($quantityToBeDelivered, $stock - $alreadyQtySetted[$line->fk_product][intval($warehouse_id)]);
+											} else {
+												if (!isset($alreadyQtySetted[$line->fk_product])) {
+													$alreadyQtySetted[$line->fk_product] = array();
+												}
+
+												$deliverableQty = min($quantityToBeDelivered, $stock);
 											}
 
-											$deliverableQty = min($quantityToBeDelivered, $stock);
+											if ($deliverableQty < 0) {
+												$deliverableQty = 0;
+											}
+
+											if (!empty($alreadyQtySetted[$line->fk_product][intval($warehouse_id)])) {
+												$tooltipClass = ' classfortooltip';
+												$tooltipTitle = $langs->trans('StockQuantitiesAlreadyAllocatedOnPreviousLines').' : '.$alreadyQtySetted[$line->fk_product][intval($warehouse_id)];
+											} else {
+												$alreadyQtySetted[$line->fk_product][intval($warehouse_id)] = 0;
+											}
+
+											$alreadyQtySetted[$line->fk_product][intval($warehouse_id)] = $deliverableQty + $alreadyQtySetted[$line->fk_product][intval($warehouse_id)];
 										}
 
-										if ($deliverableQty < 0) {
-											$deliverableQty = 0;
-										}
-
-										$tooltipClass = $tooltipTitle = '';
-										if (!empty($alreadyQtySetted[$line->fk_product][intval($warehouse_id)])) {
-											$tooltipClass = ' classfortooltip';
-											$tooltipTitle = $langs->trans('StockQuantitiesAlreadyAllocatedOnPreviousLines') . ' : ' . $alreadyQtySetted[$line->fk_product][intval($warehouse_id)];
-										} else {
-											$alreadyQtySetted[$line->fk_product][intval($warehouse_id)] = 0;
-										}
-
-										$alreadyQtySetted[$line->fk_product][intval($warehouse_id)] = $deliverableQty + $alreadyQtySetted[$line->fk_product][intval($warehouse_id)];
-
-										$inputName = 'qtyl' . $indiceAsked . '_' . $subj;
+										$inputName = 'qtyl'.$indiceAsked.'_'.$subj;
 										if (GETPOSTISSET($inputName)) {
 											$deliverableQty = GETPOSTINT($inputName);
 										}
@@ -2678,7 +2688,7 @@ if ($action == 'create' && $usercancreate) {
 	$res = $object->fetch_optionals();
 
 	$head = shipping_prepare_head($object);
-	print dol_get_fiche_head($head, 'shipping', $langs->trans("Shipment"), -1, $object->picto);
+	print dol_get_fiche_head($head, 'shipping', $langs->trans("Shipment"), -1, $object->picto, 0, '', '', 0, '', 1);
 
 	$formconfirm = '';
 
@@ -3272,9 +3282,22 @@ if ($action == 'create' && $usercancreate) {
 			}
 		}
 
+		$origin = (string) $origin;
+		if (empty($origin) || $origin == 'order') {
+			$origin = 'commande';
+		}
+
+		// List of allowed value of $origin
+		if (!in_array($origin, array('supplier_proposal', 'supplier_order', 'commande_fournisseur', 'facture_fourn', 'propal', 'commande', 'facture'))) {
+			dol_print_error($db, 'Bad value for parameter origin in expedition/card.php');
+			exit;
+		}
+
 		// Get list of products already sent for same source object into $alreadysent
 		$alreadysent = array();
 		if ($origin_id > 0) {
+			$tablenametouse = (($origin == 'supplier_order') ? 'commande_fournisseur' : (($origin == 'facture_fourn') ? 'facture_fourn_' : $origin));
+
 			$sql = "SELECT obj.rowid, obj.fk_product, obj.label, obj.description, obj.product_type as fk_product_type, obj.qty as qty_asked, obj.fk_unit, obj.date_start, obj.date_end, obj.special_code";
 			$sql .= ", ed.rowid as shipmentline_id, ed.qty as qty_shipped, ed.fk_expedition as expedition_id, ed.fk_elementdet, ed.fk_entrepot";
 			$sql .= ", e.rowid as shipment_id, e.ref as shipment_ref, e.date_creation, e.date_valid, e.date_delivery, e.date_expedition";
@@ -3282,7 +3305,7 @@ if ($action == 'create' && $usercancreate) {
 			$sql .= ', p.description as product_desc';
 			$sql .= " FROM " . MAIN_DB_PREFIX . "expeditiondet as ed";
 			$sql .= ", " . MAIN_DB_PREFIX . "expedition as e";
-			$sql .= ", " . MAIN_DB_PREFIX . $db->sanitize((string) $origin) . "det as obj";
+			$sql .= ", " . MAIN_DB_PREFIX . $db->sanitize($tablenametouse) . "det as obj";
 			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON obj.fk_product = p.rowid";
 			$sql .= " WHERE e.entity IN (" . getEntity('expedition') . ")";
 			$sql .= " AND obj.fk_" . $db->sanitize((string) $origin) . " = " . ((int) $origin_id);
@@ -3723,7 +3746,7 @@ if ($action == 'create' && $usercancreate) {
 					}
 					print '</td>';
 					// Display lines extrafields
-					if (!empty($rowExtrafieldsStart)) {
+					if (isset($rowExtrafieldsStart, $rowExtrafieldsView, $rowEnd)) {  // @phan-suppress-current-line PhanPluginUndeclaredVariableIsset
 						print $rowExtrafieldsStart;
 						print $rowExtrafieldsView;
 						print $rowEnd;

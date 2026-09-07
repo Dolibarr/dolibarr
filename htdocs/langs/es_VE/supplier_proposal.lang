@@ -31,7 +31,6 @@ SendAskRef=Enviando la solicitud de precio %s
 SupplierProposalCard=Tarjeta de solicitud
 ConfirmDeleteAsk=¿Seguro que desea borrar esta solicitud de precio <b>%s</b>?
 ActionsOnSupplierProposal=Eventos en solicitud de precio
-DocModelAuroreDescription=A complete template for a vendor quotation request template (old implementation of Sponge template)
 CommercialAsk=Solicitud de precio
 DefaultModelSupplierProposalToBill=Plantilla por defecto cuando cierra una solicitud de precio (aceptada)
 DefaultModelSupplierProposalClosed=Plantilla por defecto cuando cierra una solicitud de precio (rechazada)

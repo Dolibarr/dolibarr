@@ -2,6 +2,7 @@
 /* Copyright (C) 2026	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2026	Nick Fragoulis
  * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026	Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -131,6 +132,14 @@ if ($userId > 0) {
 
 	if ($result > 0) {
 		$serviceUser->loadRights();
+		// Promote the service user to the global $user so MCP tools that
+		// legitimately rely on the `global $user` pattern (Dolibarr core
+		// convention) see an authenticated user. Without this, there is
+		// no PHP web session in HTTP MCP context and any tool reading
+		// `global $user` would treat the request as unauthenticated even
+		// though authentication via X-API-Key/Bearer succeeded above.
+		global $user;
+		$user = $serviceUser;
 	} else {
 		http_response_code(500);
 		echo json_encode([

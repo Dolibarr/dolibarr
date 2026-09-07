@@ -195,7 +195,7 @@ function order_admin_prepare_head()
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'order_admin');
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/admin/order_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'commande'));
 	$head[$h][1] = $langs->trans("ExtraFields");
 	$nbExtrafields = $extrafields->attributes['commande']['count'];
 	if ($nbExtrafields > 0) {
@@ -204,7 +204,7 @@ function order_admin_prepare_head()
 	$head[$h][2] = 'attributes';
 	$h++;
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/admin/orderdet_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'commandedet'));
 	$head[$h][1] = $langs->trans("ExtraFieldsLines");
 	$nbExtrafields = $extrafields->attributes['commandedet']['count'];
 	if ($nbExtrafields > 0) {

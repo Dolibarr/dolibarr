@@ -7,7 +7,7 @@
  * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2019		Thibault FOUCART			<support@ptibogxiv.net>
  * Copyright (C) 2023		Waël Almoman				<info@almoman.com>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -123,6 +123,11 @@ if ($id > 0 || !empty($ref)) {
 
 // Define variables to determine what the current user can do on the members
 $permissiontoaddmember = $user->hasRight('adherent', 'creer');
+$permissiontoeditextra = $permissiontoaddmember;
+if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
+	// For action 'update_extras', is there a specific permission set for the attribute to update
+	$permissiontoeditextra = dol_eval((string) $extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
+}
 
 // Security check
 $result = restrictedArea($user, 'adherent', $object->id, '', '', 'socid', 'rowid', 0);
@@ -136,6 +141,28 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
+
+if (empty($reshook) && $action == 'update_extras' && $permissiontoeditextra) {
+	$error = 0;
+	$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
+	$attribute_name = GETPOST('attribute', 'aZ09');
+
+	// Fill array 'array_options' with data from update form
+	$ret = $extrafields->setOptionalsFromPost(null, $object, $attribute_name);
+	if ($ret < 0) {
+		$error++;
+	}
+	if (!$error) {
+		$result = $object->updateExtraField($attribute_name, 'MEMBER_MODIFY');
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+			$error++;
+		}
+	}
+	if ($error) {
+		$action = 'edit_extras';
+	}
 }
 
 // Create third party from a member
@@ -771,7 +798,7 @@ if ($action != 'createsubscription' && $action != 'create_thirdparty') {
 			}
 
 			print '<tr class="oddeven">';
-			print '<td>'.$subscriptionstatic->getNomUrl(1).'</td>';
+			print '<td class="tdoverflowmax150">'.$subscriptionstatic->getNomUrl(1).'</td>';
 			print '<td class="center nowraponall">'.dol_print_date($db->jdate($objp->datec), 'dayhour')."</td>\n";
 			print '<td class="center tdoverflowmax125">';
 			if ($typeid > 0) {
@@ -1031,7 +1058,7 @@ if (($action == 'createsubscription' || $action == 'create_thirdparty') && $user
 		print '<tr><td>'.$langs->trans("Note").'</td>';
 		print '<td><input name="label" type="text" size="32" value="';
 		if (!getDolGlobalString('MEMBER_NO_DEFAULT_LABEL')) {
-			print $langs->trans("Subscription").' '.dol_print_date(($datefrom ? $datefrom : time()), "%Y");
+			print $langs->trans("Subscription").' '.dol_print_date(($datefrom ? $datefrom : dol_now()), "%Y");
 		}
 		print '"></td></tr>';
 
@@ -1067,7 +1094,7 @@ if (($action == 'createsubscription' || $action == 'create_thirdparty') && $user
 						print img_warning($langs->trans("NoThirdPartyAssociatedToMember"));
 					}
 					print $langs->trans("NoThirdPartyAssociatedToMember");
-					print ' - <a href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&action=create_thirdparty">';
+					print ' - <a href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&action=create_thirdparty&token='.newToken().'">';
 					print $langs->trans("CreateDolibarrThirdParty");
 					print '</a>)';
 				}
@@ -1097,7 +1124,7 @@ if (($action == 'createsubscription' || $action == 'create_thirdparty') && $user
 						print img_warning($langs->trans("NoThirdPartyAssociatedToMember"));
 					}
 					print $langs->trans("NoThirdPartyAssociatedToMember");
-					print ' - <a href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&action=create_thirdparty">';
+					print ' - <a href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&action=create_thirdparty&token='.newToken().'">';
 					print $langs->trans("CreateDolibarrThirdParty");
 					print '</a>)';
 				}

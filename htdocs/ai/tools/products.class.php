@@ -2,6 +2,7 @@
 /* Copyright (C) 2026	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2026	Nick Fragoulis
  * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026	Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -165,6 +166,25 @@ class ToolProducts extends McpTool
 						["required" => ["product_name"]]
 					]
 				]
+			],
+			[
+				"name" => "create_product",
+				"description" => "Create a new product or service in the catalog. Use for 'create/add a product', 'référencer un article/service', or before adding a brand-new item to a document. To add an EXISTING product to a document, use add_line_item instead.",
+				"inputSchema" => [
+					"type" => "object",
+					"properties" => [
+						"label" => ["type" => "string", "description" => "Product or service name/label."],
+						"ref" => ["type" => "string", "description" => "Reference/code (optional; may be auto-generated if left empty and the product numbering module allows it)."],
+						"type" => ["type" => "string", "enum" => ["product", "service"], "default" => "product", "description" => "'product' = physical good managed in stock, 'service' = intangible."],
+						"price" => ["type" => "number", "description" => "Selling price."],
+						"price_base_type" => ["type" => "string", "enum" => ["HT", "TTC"], "default" => "HT", "description" => "Whether 'price' is tax-excluded (HT) or tax-included (TTC)."],
+						"vat_rate" => ["type" => "number", "description" => "VAT rate in percent (e.g. 20)."],
+						"cost_price" => ["type" => "number", "description" => "Buying/cost price (used for margins and as a default cost)."],
+						"barcode" => ["type" => "string", "description" => "Barcode (EAN13, UPC, ...)."],
+						"description" => ["type" => "string", "description" => "Optional long description."]
+					],
+					"required" => ["label"]
+				]
 			]
 		];
 	}
@@ -198,9 +218,74 @@ class ToolProducts extends McpTool
 				return $this->analyze($args);
 			case 'get_supplier_prices':
 				return $this->getSupplierPrices($args);
+			case 'create_product':
+				return $this->create($args);
 			default:
 				return ["error" => "Tool function '$name' not found."];
 		}
+	}
+
+	/**
+	 * Create a new product or service in the catalog.
+	 *
+	 * @param array{label?:string, ref?:string, type?:string, price?:float|int|string, price_base_type?:string, vat_rate?:float|int|string, cost_price?:float|int|string, barcode?:string, description?:string} $args   Tool arguments.
+	 * @return array{success:bool, id?:int, ref?:string, type?:string, url?:string, error?:string, errors?:string[]}
+	 */
+	private function create(array $args)
+	{
+		$isService = (isset($args['type']) && (string) $args['type'] === 'service');
+
+		// Product and service creation are guarded by their respective module rights.
+		$rightModule = $isService ? 'service' : 'produit';
+		if (!$this->user->hasRight($rightModule, 'creer')) {
+			return ["success" => false, "error" => "Permission Denied"];
+		}
+
+		$label = isset($args['label']) ? trim((string) $args['label']) : '';
+		if ($label === '') {
+			return ["success" => false, "error" => "The 'label' field is required."];
+		}
+
+		$product = new Product($this->db);
+		$product->label = $label;
+		$product->type = $isService ? Product::TYPE_SERVICE : Product::TYPE_PRODUCT;
+		$product->ref = isset($args['ref']) ? trim((string) $args['ref']) : '';
+		$product->status = 1;      // Exists / on sale
+		$product->status_buy = 1;  // Can be purchased
+
+		if (isset($args['price'])) {
+			$product->price = (float) $args['price'];
+			$product->price_base_type = (isset($args['price_base_type']) && strtoupper((string) $args['price_base_type']) === 'TTC') ? 'TTC' : 'HT';
+		}
+		if (isset($args['vat_rate'])) {
+			$product->tva_tx = (float) $args['vat_rate'];
+		}
+		if (isset($args['cost_price'])) {
+			$product->cost_price = (float) $args['cost_price'];
+		}
+		if (isset($args['barcode'])) {
+			$product->barcode = trim((string) $args['barcode']);
+		}
+		if (isset($args['description'])) {
+			$product->description = (string) $args['description'];
+		}
+
+		$result = $product->create($this->user);
+		if ($result <= 0) {
+			return [
+				"success" => false,
+				"error" => $product->error ?: "Product creation failed (a reference may be required).",
+				"errors" => $product->errors
+			];
+		}
+
+		return [
+			"success" => true,
+			"id" => (int) $product->id,
+			"ref" => $product->ref,
+			"type" => $isService ? "service" : "product",
+			"url" => "/product/card.php?id=" . (int) $product->id
+		];
 	}
 
 	/**

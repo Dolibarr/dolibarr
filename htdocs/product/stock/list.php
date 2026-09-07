@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2015       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2020       Tobias Sekan            <tobias.sekan@startmail.com>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -148,6 +148,10 @@ foreach ($object->fields as $key => $val) {
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
+// Add hook to complete $arrayfields
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
@@ -238,7 +242,10 @@ if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 $separatedPMP = false;
 if (getDolGlobalString('MULTICOMPANY_PRODUCT_SHARING_ENABLED') && getDolGlobalString('MULTICOMPANY_PMP_PER_ENTITY_ENABLED')) {
 	$separatedPMP = true;
-	$sql .= ", SUM(pa.pmp * ps.reel) as estimatedvalue, SUM(p.price * ps.reel) as sellvalue, SUM(ps.reel) as stockqty";
+	// COALESCE: a product may have no row yet in llx_product_perentity (rows are created on the
+	// first stock movement), so fall back on the global p.pmp like Product::fetch() does, instead
+	// of valuing such a product at 0.
+	$sql .= ", SUM(COALESCE(pa.pmp, p.pmp) * ps.reel) as estimatedvalue, SUM(p.price * ps.reel) as sellvalue, SUM(ps.reel) as stockqty";
 } else {
 	$sql .= ", SUM(p.pmp * ps.reel) as estimatedvalue, SUM(p.price * ps.reel) as sellvalue, SUM(ps.reel) as stockqty";
 }
@@ -288,10 +295,10 @@ foreach ($search as $key => $val) {
 			$columnName = preg_replace('/(_dtstart|_dtend)$/', '', $key);
 			if (preg_match('/^(date|timestamp|datetime)/', $object->fields[$columnName]['type'])) {
 				if (preg_match('/_dtstart$/', $key)) {
-					$sql .= " AND t.".$db->escape($columnName)." >= '".$db->idate((int) $search[$key])."'";
+					$sql .= " AND t.".$db->sanitize($columnName)." >= '".$db->idate((int) $search[$key])."'";
 				}
 				if (preg_match('/_dtend$/', $key)) {
-					$sql .= " AND t.".$db->escape($columnName)." <= '".$db->idate((int) $search[$key])."'";
+					$sql .= " AND t.".$db->sanitize($columnName)." <= '".$db->idate((int) $search[$key])."'";
 				}
 			}
 		}
@@ -340,7 +347,7 @@ $sql .= $hookmanager->resPrint;
 
 $sql .= " GROUP BY ";
 foreach ($object->fields as $key => $val) {
-	$sql .= "t.".$db->escape($key).", ";
+	$sql .= "t.".$db->sanitize($key).", ";
 }
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {

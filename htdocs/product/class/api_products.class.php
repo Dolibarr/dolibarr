@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2019		Cedric Ancelin			<icedo.anc@gmail.com>
- * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		William Mead			<william@m34d.com>
  * Copyright (C) 2025		Charlene Benke			<charlene@patas-monkey.com>
@@ -63,7 +63,7 @@ class Products extends DolibarrApi
 	 */
 	public function __construct()
 	{
-		global $db, $conf;
+		global $db;
 
 		$this->db = $db;
 		$this->product = new Product($this->db);
@@ -1102,7 +1102,6 @@ class Products extends DolibarrApi
 					$this->_cleanObjectDatas($tmpobj);
 				}
 
-				//var_dump($product_fourn_list->db);exit;
 				$obj_ret[$obj->rowid] = $product_fourn_list;
 
 				$i++;

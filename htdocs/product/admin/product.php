@@ -237,8 +237,8 @@ if ($action == 'del') {
 // Set default model
 if ($action == 'setdoc') {
 	if (dolibarr_set_const($db, "PRODUCT_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity)) {
-		// La constante qui a ete lue en avant du nouveau set
-		// on passe donc par une variable pour avoir un affichage coherent
+		// The constant that was read before the new set
+		// so we go through a variable to get a consistent display
 		$conf->global->PRODUCT_ADDON_PDF = $value;
 	}
 
@@ -339,8 +339,8 @@ foreach ($dirproduct as $dirroot) {
 	if (is_resource($handle)) {
 		// Loop on each module find in opened directory
 		while (($file = readdir($handle)) !== false) {
-			if (substr($file, 0, 16) == 'mod_codeproduct_' && substr($file, -3) == 'php') {
-				$file = substr($file, 0, dol_strlen($file) - 4);
+			if (dol_substr($file, 0, 16) == 'mod_codeproduct_' && dol_substr($file, -3) == 'php') {
+				$file = dol_substr($file, 0, dol_strlen($file) - 4);
 
 				try {
 					dol_include_once($dirroot.$file.'.php');
@@ -459,8 +459,8 @@ foreach ($dirmodels as $reldir) {
 				foreach ($filelist as $file) {
 					if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file)) {
 						if (file_exists($dir.'/'.$file)) {
-							$name = substr($file, 4, dol_strlen($file) - 16);
-							$classname = substr($file, 0, dol_strlen($file) - 12);
+							$name = dol_substr($file, 4, dol_strlen($file) - 16);
+							$classname = dol_substr($file, 0, dol_strlen($file) - 12);
 
 							require_once $dir.'/'.$file;
 							$module = new $classname($db);

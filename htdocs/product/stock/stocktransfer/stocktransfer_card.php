@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017 		Laurent Destailleur  	<eldy@users.sourceforge.net>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025-2026       Pierre Ardoin           <developpeur@lesmetiersdubatiment.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -548,7 +548,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	$head = stocktransferPrepareHead($object);
 
-	print dol_get_fiche_head($head, 'card', $langs->trans("StockTransfer"), -1, $object->picto);
+	print dol_get_fiche_head($head, 'card', $langs->trans("StockTransfer"), -1, $object->picto, 0, '', '', 0, '', 1);
 
 	$formconfirm = '';
 
@@ -621,7 +621,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Thirdparty
 	$morehtmlref .= empty($object->thirdparty) ? '' : $object->thirdparty->getNomUrl(1, 'customer');
 	if (!getDolGlobalInt('MAIN_DISABLE_OTHER_LINK') && !empty($object->thirdparty) && $object->thirdparty->id > 0) {
-		$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->thirdparty->id.'&search_societe='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherOrders").'</a>)';
+		$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->thirdparty->id.'">'.$langs->trans("OtherOrders").'</a>)';
 	}
 	// Project
 	if (isModEnabled('project')) {
@@ -671,7 +671,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print $langs->trans('IncotermLabel');
 		print '<td><td class="right">';
 		if ($permissiontoadd && $action != 'editincoterm') {
-			print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=editincoterm">'.img_edit().'</a>';
+			print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=editincoterm&token='.newToken().'">'.img_edit().'</a>';
 		} else {
 			print '&nbsp;';
 		}
@@ -884,7 +884,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				print '<input type="submit" class="button buttongen marginbottomonly" id="cancellinebutton" name="cancel" value="'.$langs->trans("Cancel").'"></td>';
 			} else {
 				print '<td class="right">';
-				print '<a class="editfielda reposition" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=editline&amp;lineid=' . $line->id . '#line_' . $line->id . '">';
+				print '<a class="editfielda reposition" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=editline&token='.newToken().'&lineid=' . $line->id . '#line_' . $line->id . '">';
 				print img_edit() . '</a>';
 				print '</td>';
 				print '<td class="right">';
@@ -899,12 +899,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			if ($num > 1 && $conf->browser->layout != 'phone' && empty($disablemove)) {
 				print '<td class="linecolmove tdlineupdown center">';
 				if ($i > 0) { ?>
-					<a class="lineupdown" href="<?php print $_SERVER["PHP_SELF"].'?id='.$id.'&amp;action=up&amp;rowid='.$line->id; ?>">
+					<a class="lineupdown" href="<?php print $_SERVER["PHP_SELF"].'?id='.$id.'&amp;action=up&amp;token='.newToken().'&amp;rowid='.$line->id; ?>">
 						<?php print img_up('default', 0, 'imgupforline'); ?>
 					</a>
 				<?php }
 				if ($i < $num - 1) { ?>
-					<a class="lineupdown" href="<?php print $_SERVER["PHP_SELF"].'?id='.$id.'&amp;action=down&amp;rowid='.$line->id; ?>">
+					<a class="lineupdown" href="<?php print $_SERVER["PHP_SELF"].'?id='.$id.'&amp;action=down&amp;token='.newToken().'&amp;rowid='.$line->id; ?>">
 						<?php print img_down('default', 0, 'imgdownforline'); ?>
 					</a>
 				<?php }
@@ -1024,21 +1024,21 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		if (empty($reshook)) {
 			// Send
 			if (empty($user->socid)) {
-				print dolGetButtonAction('', $langs->trans('SendMail'), 'email', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&token='.newToken().'&mode=init#formmailbeforetitle');
+				print dolGetButtonAction('', $langs->trans('SendMail'), 'email', dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'presend', 'mode' => 'init'], true).'#formmailbeforetitle');
 			}
 
 			// Back to draft
 			if ($object->status == $object::STATUS_VALIDATED) {
-				print dolGetButtonAction('', $langs->trans('SetToDraft'), 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_setdraft&confirm=yes&token='.newToken(), '', $permissiontoadd);
+				print dolGetButtonAction('', $langs->trans('SetToDraft'), 'default', dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'confirm_setdraft', 'confirm' => 'yes'], true), '', $permissiontoadd);
 			}
 
 			// Modify
-			print dolGetButtonAction('', $langs->trans('Modify'), 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken(), '', $permissiontoadd);
+			print dolGetButtonAction('', $langs->trans('Modify'), 'default', dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'edit'], true), '', $permissiontoadd);
 
 			// Validate
 			if ($object->status == $object::STATUS_DRAFT) {
 				if (empty($object->table_element_line) || (is_array($object->lines) && count($object->lines) > 0)) {
-					print dolGetButtonAction('', $langs->trans('Validate'), 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_validate&confirm=yes&token='.newToken(), '', $permissiontoadd);
+					print dolGetButtonAction('', $langs->trans('Validate'), 'default', dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id, 'action' => 'confirm_validate', 'confirm' => 'yes'], true), '', $permissiontoadd);
 				} else {
 					$langs->load("errors");
 					print dolGetButtonAction($langs->trans("ErrorAddAtLeastOneLineFirst"), $langs->trans("Validate"), 'default', '#', '', 0);
@@ -1054,29 +1054,29 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			// Clone
 			if ($permissiontoadd) {
-				print dolGetButtonAction('', $langs->trans('ToClone'), 'clone', $_SERVER['PHP_SELF'].'?id='.$object->id.(!empty($object->socid) ? '&socid='.$object->socid : '').'&action=clone&token='.newToken(), '', $permissiontoadd);
+				print dolGetButtonAction('', $langs->trans('ToClone'), 'clone', dolBuildUrl($_SERVER['PHP_SELF'], array_merge(['id' => $object->id], (!empty($object->socid) ? ['socid' => $object->socid] : []), ['action' => 'clone']), true), '', $permissiontoadd);
 			}
 
 			/*
 			if ($permissiontoadd) {
 				if ($object->status == $object::STATUS_ENABLED) {
-					print dolGetButtonAction('', $langs->trans('Disable'), 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=disable&token='.newToken(), '', $permissiontoadd);
+					print dolGetButtonAction('', $langs->trans('Disable'), 'default', dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id, 'action' => 'disable'], true), '', $permissiontoadd);
 				} else {
-					print dolGetButtonAction('', $langs->trans('Enable'), 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=enable&token='.newToken(), '', $permissiontoadd);
+					print dolGetButtonAction('', $langs->trans('Enable'), 'default', dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id, 'action' => 'enable'], true), '', $permissiontoadd);
 				}
 			}
 			if ($permissiontoadd) {
 				if ($object->status == $object::STATUS_VALIDATED) {
-					print dolGetButtonAction('', $langs->trans('Cancel'), 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=close&token='.newToken(), '', $permissiontoadd);
+					print dolGetButtonAction('', $langs->trans('Cancel'), 'default', dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id, 'action' => 'close'], true), '', $permissiontoadd);
 				} else {
-					print dolGetButtonAction('', $langs->trans('Re-Open'), 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=reopen&token='.newToken(), '', $permissiontoadd);
+					print dolGetButtonAction('', $langs->trans('Re-Open'), 'default', dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id, 'action' => 'reopen'], true), '', $permissiontoadd);
 				}
 			}
 
 			*/
 
 			// Delete (with preloaded confirm popup)
-			$deleteUrl = $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken();
+			$deleteUrl = dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'delete'], true);
 			$buttonId = 'action-delete-no-ajax';
 			if ($conf->use_javascript_ajax && empty($conf->dol_use_jmobile)) {	// We can use preloaded confirm if not jmobile
 				$deleteUrl = '';

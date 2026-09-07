@@ -2,7 +2,7 @@
 /*
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
  * Copyright (C) 2003-2010 Frederico Caldeira Knabben
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * == BEGIN LICENSE ==
@@ -515,7 +515,7 @@ function GetUrlFromPath($resourceType, $folderPath, $sCommand)
  */
 function RemoveExtension($fileName)
 {
-	return substr($fileName, 0, strrpos($fileName, '.'));
+	return dol_substr($fileName, 0, strrpos($fileName, '.'));
 }
 
 /**

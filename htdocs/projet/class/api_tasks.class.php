@@ -26,6 +26,7 @@ use Luracast\Restler\RestException;
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/timespent.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 /**
  * API class for projects
@@ -114,11 +115,12 @@ class Tasks extends DolibarrApi
 	 * @param	string			$sqlfilters			Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:>:'20160101')"
 	 * @param	string			$properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param	bool			$pagination_data	If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0
+	 * @param	int				$includetimespent	0=Return only task. 1=Include a summary of time spent, 2=Include details of time spent lines
 	 * @return	array								Array of project objects
 	 * @phan-return Task[]
 	 * @phpstan-return Task[]
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '', $pagination_data = false)
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '', $pagination_data = false, $includetimespent = 0)
 	{
 		global $db, $conf;
 
@@ -148,9 +150,9 @@ class Tasks extends DolibarrApi
 		// Search on sale representative
 		if ($search_sale && $search_sale != '-1') {
 			if ($search_sale == -2) {
-				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM " . MAIN_DB_PREFIX . "societe_commerciaux as sc WHERE sc.fk_soc = p.fk_soc)";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('p.fk_soc', 0, 1);
 			} elseif ($search_sale > 0) {
-				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM " . MAIN_DB_PREFIX . "societe_commerciaux as sc WHERE sc.fk_soc = p.fk_soc AND sc.fk_user = " . ((int) $search_sale) . ")";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('p.fk_soc', (int) $search_sale);
 			}
 		}
 		// Add sql filters
@@ -186,6 +188,12 @@ class Tasks extends DolibarrApi
 				$obj = $this->db->fetch_object($result);
 				$task_static = new Task($this->db);
 				if ($task_static->fetch($obj->rowid)) {
+					if ($includetimespent == 1) {
+						$task_static->getSummaryOfTimeSpent(0);
+					}
+					if ($includetimespent == 2) {
+						$task_static->fetchTimeSpentOnTask();
+					}
 					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($task_static), $properties);
 				}
 				$i++;
@@ -651,7 +659,7 @@ class Tasks extends DolibarrApi
 	 * @since	5.0.0	Initial implementation
 	 *
 	 * @param   int         	$id                 Task ID
-	 * @param   datetime|string	$date               Date (YYYY-MM-DD HH:MI:SS in GMT)
+	 * @param   datetime    	$date               Date (YYYY-MM-DD HH:MI:SS in GMT)
 	 * @phan-param string $date
 	 * @param   int         	$duration           Duration in seconds (3600 = 1h)
 	 * @param   int         	$product_id         The product id that is used, default is null

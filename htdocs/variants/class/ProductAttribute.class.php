@@ -529,10 +529,10 @@ class ProductAttribute extends CommonObject
 	/**
 	 * Load array lines
 	 *
-	 * @param	string		$filters	Filter on other fields
+	 * @param	string		$sql_filters	Filter on other fields
 	 * @return	int						    Return integer <0 if KO, >0 if OK
 	 */
-	public function fetch_lines($filters = '')
+	public function fetch_lines($sql_filters = '')
 	{
 		// phpcs:enable
 		global $langs;
@@ -559,8 +559,8 @@ class ProductAttribute extends CommonObject
 		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . $this->db->sanitize($this->table_element) . " AS t ON t.rowid = td." . $this->db->sanitize($this->fk_element);
 		$sql .= " WHERE t.rowid = " . ((int) $this->id);
 		$sql .= " AND t.entity IN (" . getEntity('product') . ")";
-		if ($filters) {
-			$sql .= $filters;
+		if ($sql_filters) {
+			$sql .= $sql_filters;
 		}
 		$sql .= $this->db->order("td.position", "asc");
 
@@ -1199,7 +1199,7 @@ class ProductAttribute extends CommonObject
 				if (!empty($filename)) {
 					$pospoint = strpos($filearray[0]['name'], '.');
 
-					$pathtophoto = $class . '/' . $this->ref . '/thumbs/' . substr($filename, 0, $pospoint) . '_mini' . substr($filename, $pospoint);
+					$pathtophoto = $class . '/' . $this->ref . '/thumbs/' . dol_substr($filename, 0, $pospoint) . '_mini' . dol_substr($filename, $pospoint);
 					if (!getDolGlobalString(strtoupper($module . '_' . $class) . '_FORMATLISTPHOTOSASUSERS')) {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo' . $module . '" alt="No photo" border="0" src="' . DOL_URL_ROOT . '/viewimage.php?modulepart=' . $module . '&entity=' . $conf->entity . '&file=' . urlencode($pathtophoto) . '"></div></div>';
 					} else {

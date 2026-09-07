@@ -128,6 +128,7 @@ ShipmentDistribution=出荷配信
 ErrorTooManyCombinationBatchcode=明細  %s は送達されない。ウェアハウス、製品、バッチ コード の多すぎる組合せ (%s) が見つかったため。
 ErrorNoCombinationBatchcode=行 %s を、warehouse-製品-lot/serial の組合せとして保存できず。( %s、%s、%s）は在庫に見つからない。
 ErrorTooMuchShipped=出荷される数量は、明細行 %s の注文数量を超えてはならない
+NoShipmentLineChangeDetected=出荷ラインの変更は検出されませんでした。
 ##### Types of contacts #####
 TypeContact_shipping_internal_SALESREPFOLL=代表的なフォローアップ出荷
 TypeContact_shipping_external_BILLING=顧客の請求書連絡先

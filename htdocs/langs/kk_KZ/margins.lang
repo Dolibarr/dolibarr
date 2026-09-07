@@ -31,9 +31,9 @@ UseDiscountOnTotal=Жиынтық бойынша
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Жаһандық жеңілдік өнім, қызмет немесе тек маржа есептеу үшін қосалқы жиын ретінде қарастырылатынын анықтайды.
 MARGIN_TYPE=Маржа есептеу үшін әдепкі бойынша ұсынылған сатып алу/өзіндік құн
 MargeType1=Ең жақсы сатушы бағасы бойынша маржа
-MargeType2=Орташа бағаның маржасы (WAP)
+MargeType2=Margin on Weighted Average Cost (WAC)
 MargeType3=Бағаның маржасы
-MarginTypeDesc=* Ең жақсы сатып алу бағасы бойынша маржа = Сату бағасы - Өнім картасында <br> анықталған ең жақсы сатушы бағасы * Орташа баға бойынша маржа (WAP) = Сату бағасы - Өнімнің орташа бағасы (WAP) немесе егер WAP әлі анықталмаған болса, ең жақсы сатушы бағасы <br> * Маржа Шығын бағасы бойынша = Сату бағасы - егер өнімнің бағасы анықталмаса, өнім картасында немесе WAP -те анықталған өзіндік құн немесе WAP әлі анықталмаған жағдайда ең жақсы сатушы бағасы.
+MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Cost (WAC) = Selling price - Product Weighted Average Price (WAP) or best vendor price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAC if cost price not defined, or best vendor price if WAC not yet defined
 CostPrice=Шығын бағасы
 UnitCharges=Бірлік төлемдері
 Charges=Төлемдер

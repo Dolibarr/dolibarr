@@ -29,6 +29,7 @@ ViewWeek=Weekweergave
 ViewPerUser=Per gebruiker weergave
 ViewPerType=Weergave per type
 AutoActions= Automatisch invullen van de agenda
+ManualActions=Handmatig gemaakt door een gebruiker
 AgendaAutoActionDesc= Hier kunt u gebeurtenissen definiëren die u Dolibarr automatisch in Agenda wilt laten maken. Als niets is aangevinkt, worden alleen handmatige acties opgenomen in logboeken en weergegeven in Agenda. Het automatisch volgen van zakelijke acties op objecten (validatie, statusverandering) zal niet plaatsvinden.
 AgendaSetupOtherDesc= Deze pagina biedt opties voor het exporteren van uw Dolibarr-evenementen naar een externe agenda (Thunderbird, Google Agenda, enz ...)
 AgendaExtSitesDesc=Op deze pagina kunt configureren externe agenda.
@@ -215,3 +216,8 @@ EventPartOfARecurringSerie=Gebeurtenis is onderdeel van een terugkerende reeks m
 BookCalSystem=Online boeken
 BookCalInitHelp=Om te beginnen, ga naar het menu om een nieuwe agenda met beschikbare tijden aan te maken...
 PublicLinkForBooking=Openbare link voor boekingen
+STOCKTRANSFER_CLOSEInDolibarr=voorraad overdracht %s voltooid.
+STOCKTRANSFER_VALIDATEInDolibarr=voorraad overdracht %s gevalideerd.
+
+STOCKTRANSFER_UNVALIDATEInDolibarr=voorraad overdracht %s terugzetten naar concept.
+STOCKTRANSFER_MODIFYInDolibarr=voorraad overdracht %s gewijzigd.

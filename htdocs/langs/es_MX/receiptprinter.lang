@@ -2,7 +2,6 @@
 TestSentToPrinter=Prueba enviada a la impresora %s
 CONNECTOR_DUMMY=Impresora ficticia
 CONNECTOR_FILE_PRINT=Impresora local
-CONNECTOR_DUMMY_HELP=Impresora falsa para la prueba, no hace nada
 CONNECTOR_NETWORK_PRINT_HELP=10.x.x.x: 9100
 CONNECTOR_FILE_PRINT_HELP=/dev/usb /lp0, /dev/ usb/lp1
 DOL_ALIGN_LEFT=Alinea el texto a la izquierda

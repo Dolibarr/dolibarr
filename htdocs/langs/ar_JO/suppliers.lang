@@ -5,7 +5,6 @@ SupplierInvoices=Vendor invoices
 ShowSupplierInvoice=Show Vendor Invoice
 NewSupplier=New vendor
 NewSupplierInvoice = New vendor invoice
-History=History
 ListOfSuppliers=List of vendors
 ShowSupplier=Show vendor
 BuyingPriceMin=Best buying price

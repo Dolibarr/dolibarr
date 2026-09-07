@@ -14,7 +14,7 @@ CronExplainHowToRunUnix=On Unix environment you should use the following crontab
 CronExplainHowToRunWin=On Microsoft(tm) Windows environment you can use Scheduled Task tools to run the command line each 5 minutes
 CronMethodDoesNotExists=Class %s does not contain any method %s
 CronMethodNotAllowed=Method %s of class %s is in blocklist of forbidden methods
-CronJobDefDesc=Cron job profiles are defined into the module descriptor file. When module is activated, they are loaded and available so you can administer the jobs from the admin tools menu %s.
+CronJobDefDesc=Cron job profiles are defined in the module descriptor file. When module is activated, they are loaded and available so you can administer the jobs from the admin tools menu %s.
 CronJobProfiles=List of predefined cron job profiles
 # Menu
 EnabledAndDisabled=Enabled and disabled
@@ -27,7 +27,7 @@ CronDelete=Delete scheduled jobs
 CronConfirmDelete=Are you sure you want to delete these scheduled jobs?
 CronExecute=Launch now
 CronConfirmExecute=Are you sure you want to execute these scheduled jobs now?
-CronInfo=Scheduled job module allows to schedule jobs to execute them automatically. Jobs can also be started manually.
+CronInfo=Scheduled job module allows you to schedule jobs to execute them automatically. Jobs can also be started manually.
 CronTask=Job
 CronNone=Next run of scheduled task
 CronNotYetRan=Never executed
@@ -79,7 +79,7 @@ CronType_command=Shell command
 CronCannotLoadClass=Cannot load class file %s (to use class %s)
 CronModuleNotEnabledInThisEntity=Cron module not enabled in this entity (to use %s method of %s object)
 CronCannotLoadObject=Class file %s was loaded, but object %s was not found into it
-UseMenuModuleToolsToAddCronJobs=Go into menu "<a href="%s">Home - Admin tools - Scheduled jobs</a>" to see and edit scheduled jobs.
+UseMenuModuleToolsToAddCronJobs=Go to menu "<a href="%s">Home - Admin tools - Scheduled jobs</a>" to see and edit scheduled jobs.
 JobDisabled=Job disabled
 MakeLocalDatabaseDumpShort=Local database backup
 MakeLocalDatabaseDump=Create a local database dump. Parameters are: compression ('gz' or 'bz' or 'none'), backup type ('mysql', 'pgsql', 'auto'), 1, 'auto' or filename to build, number of backup files to keep

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2011-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,13 +33,20 @@
  *
  * @var int $error
  * @var string $action
+ * @var ?string $pagekey
  * @var string $elementtype
  * @var string $value
  */
 '@phan-var-force int $error';
 '@phan-var-force string $action';
+'@phan-var-force ?string $pagekey';
 '@phan-var-force string $elementtype';
 '@phan-var-force string $value';
+
+// Prefer $pagekey (the whitelisted request key used by the unified admin/extrafields.php
+// controller) for self-referencing redirects; fall back to $elementtype for any other,
+// older-style caller of this shared include that only defines $elementtype.
+$pagekeyforredirect = isset($pagekey) ? $pagekey : $elementtype;
 
 $maxsizestring = 255;
 $maxsizeint = 10;
@@ -138,6 +145,17 @@ if ($action == 'add') {
 			$langs->load("errors");
 			$mesgs[] = $langs->trans("ErrorNoValueForLinkType");
 			$action = 'create';
+		}
+		if ($type == 'link' && $param) {
+			// $param is 'ObjectName:classPath'. Check the class file really exists, a wrong path
+			// makes the link render as a raw id later, with nothing shown to the user.
+			$tmplink = explode(':', $param);
+			if (empty($tmplink[1]) || !file_exists(dol_buildpath($tmplink[1]))) {
+				$error++;
+				$langs->load("errors");
+				$mesgs[] = $langs->trans("ErrorFileNotFound", empty($tmplink[1]) ? $param : $tmplink[1]);
+				$action = 'create';
+			}
 		}
 		if ($type == 'radio' && !$param) {
 			$error++;
@@ -252,7 +270,7 @@ if ($action == 'add') {
 				);
 				if ($result > 0) {
 					setEventMessages($langs->trans('SetupSaved'), null, 'mesgs');
-					header("Location: ".$_SERVER["PHP_SELF"]);
+					header("Location: ".$_SERVER["PHP_SELF"].(empty($pagekeyforredirect) ? '' : '?elementtype='.urlencode($pagekeyforredirect)));
 					exit;
 				} else {
 					$error++;
@@ -330,6 +348,17 @@ if ($action == 'update') {
 			$langs->load("errors");
 			$mesgs[] = $langs->trans("ErrorNoValueForRadioType");
 			$action = 'edit';
+		}
+		if ($type == 'link' && $param) {
+			// $param is 'ObjectName:classPath'. Check the class file really exists, a wrong path
+			// makes the link render as a raw id later, with nothing shown to the user.
+			$tmplink = explode(':', $param);
+			if (empty($tmplink[1]) || !file_exists(dol_buildpath($tmplink[1]))) {
+				$error++;
+				$langs->load("errors");
+				$mesgs[] = $langs->trans("ErrorFileNotFound", empty($tmplink[1]) ? $param : $tmplink[1]);
+				$action = 'edit';
+			}
 		}
 		if ((($type == 'radio') || ($type == 'checkbox')) && $param) {
 			// Construct array for parameter (value of select list)
@@ -440,7 +469,7 @@ if ($action == 'update') {
 				);
 				if ($result > 0) {
 					setEventMessages($langs->trans('SetupSaved'), null, 'mesgs');
-					header("Location: ".$_SERVER["PHP_SELF"]);
+					header("Location: ".$_SERVER["PHP_SELF"].(empty($pagekeyforredirect) ? '' : '?elementtype='.urlencode($pagekeyforredirect)));
 					exit;
 				} else {
 					$error++;
@@ -469,7 +498,7 @@ if ($action == 'confirm_delete' && $confirm == "yes") {
 		if ($result >= 0) {
 			setEventMessages($langs->trans("ExtrafieldsDeleted", $attributekey), null, 'mesgs');
 
-			header("Location: ".$_SERVER["PHP_SELF"]);
+			header("Location: ".$_SERVER["PHP_SELF"].(empty($pagekeyforredirect) ? '' : '?elementtype='.urlencode($pagekeyforredirect)));
 			exit;
 		} else {
 			$mesg = $extrafields->error;
@@ -521,7 +550,7 @@ if ($action == 'encrypt') {
 									$newpassword = dolEncrypt($pass);
 
 									$sqlupdate = "UPDATE ".MAIN_DB_PREFIX.$db->sanitize($arrayofelement['table_element']).'_extrafields';
-									$sqlupdate .= " SET ".$attributekey." = '".$db->escape($newpassword)."'";
+									$sqlupdate .= " SET ".$db->sanitize($attributekey)." = '".$db->escape($newpassword)."'";
 									$sqlupdate .= " WHERE rowid = ".((int) $id);
 
 									$resupdate = $db->query($sqlupdate);

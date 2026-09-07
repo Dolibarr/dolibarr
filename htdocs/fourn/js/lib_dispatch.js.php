@@ -46,6 +46,12 @@ if (!defined('NOREQUIREAJAX')) {
 session_cache_limiter('public');
 
 require_once '../../main.inc.php';
+/**
+ * @var Translate $langs
+ */
+
+// Load translation files required by the page
+$langs->loadLangs(array("productbatch"));
 
 // Define javascript type
 top_httphead('text/javascript; charset=UTF-8');
@@ -60,9 +66,11 @@ header('Cache-Control: max-age=10800, public, must-revalidate');
  * @param	index	int		index of product line. 0 = first product line
  * @param	type	string	type of dispatch ('batch' = batch dispatch, 'dispatch' = non batch dispatch)
  * @param	mode	string	'qtymissing' will create new line with qty missing, 'lessone' will keep 1 in old line and the rest in new one
+ * @param	lotnumber	string	If set, the new line is created with this lot/serial number and qty 1, and the qty of the previous line is kept unchanged
  */
-function addDispatchLine(index, type, mode) {
+function addDispatchLine(index, type, mode, lotnumber) {
 	mode = mode || 'qtymissing'
+	lotnumber = lotnumber || ''
 
 	console.log("fourn/js/lib_dispatch.js.php addDispatchLine Split line type="+type+" index="+index+" mode="+mode);
 
@@ -87,19 +95,21 @@ function addDispatchLine(index, type, mode) {
 	else {
 		qtyDispatched = parseFloat($("#qty_dispatched_0_" + index).val()) + qty;
 		// If user did not reduced the qty to dispatch on old line, we keep only 1 on old line and the rest on new line
-		if (qtyDispatched == qtyOrdered && qtyDispatched > 1) {
+		if (lotnumber === '' && qtyDispatched == qtyOrdered && qtyDispatched > 1) {
 			qtyDispatched = parseFloat($("#qty_dispatched_0_" + index).val()) + 1;
 			mode = 'lessone';
 		}
 	}
 	console.log("qtyDispatched=" + qtyDispatched + " qtyOrdered=" + qtyOrdered+ " qty=" + qty);
 
-	if (qty <= 1) {
+	if (qty <= 1 && lotnumber === '') {
 		window.alert("Remain quantity to dispatch is too low to be split");
 	} else {
 		var oldlineqty = qtyDispatched;
 		var newlineqty = qtyOrdered - qtyDispatched;
-		if (newlineqty <= 0) {
+		if (lotnumber !== '') {
+			newlineqty = 1;		// One serial number = one unit, previous line is kept unchanged
+		} else if (newlineqty <= 0) {
 			newlineqty = qty - 1;
 			oldlineqty = 1;
 			$("#qty_"+(nbrTrs - 1)+"_"+index).val(oldlineqty);
@@ -177,11 +187,87 @@ function addDispatchLine(index, type, mode) {
 		$("#lot_number_" + (nbrTrs) + "_" + index).focus();
 		//Clean bad values
 		$("tr[name^='" + type + "_'][name$='_" + index + "']:last").data("remove", "remove");
-		$("#lot_number_" + (nbrTrs) + "_" + index).val("")
+		$("#lot_number_" + (nbrTrs) + "_" + index).val(lotnumber)
 		$("#idline_" + (nbrTrs) + "_" + index).val("-1")
 		$("#qty_" + (nbrTrs) + "_" + index).data('expected', "0");
 		$("#lot_number_" + (nbrTrs) + "_" + index).removeAttr("disabled");
 	}
+}
+
+/**
+ * addDispatchLinesFromSerialList
+ * Open a dialog to enter several unique serial numbers at once (typed, pasted or scanned, one per line),
+ * then create one dispatch line with qty 1 for each of them using addDispatchLine().
+ * If the last line of the product is still empty, it is used for the first serial number.
+ *
+ * @param	index	int		index of product line. 0 = first product line
+ * @param	type	string	type of dispatch (always 'batch' for a product with unique serial numbers)
+ */
+function addDispatchLinesFromSerialList(index, type) {
+	console.log("fourn/js/lib_dispatch.js.php addDispatchLinesFromSerialList type="+type+" index="+index);
+
+	var $dialog = jQuery("#dialogforpopup");
+	var html = '<textarea id="seriallist" class="centpercent" rows="10" placeholder="<?php echo dol_escape_js(dol_escape_htmltag($langs->transnoentitiesnoconv("EnterOneSerialNumberPerLine"))); ?>"></textarea>';
+	html += '<div id="seriallistmessage" class="opacitymedium paddingtop"></div>';
+	$dialog.html(html);
+
+	// Return the list of non empty trimmed lines
+	var getSerialList = function() {
+		return jQuery("#seriallist").val().split(/\r\n|\r|\n/).map(function(s) { return s.trim(); }).filter(function(s) { return s !== ''; });
+	};
+
+	jQuery("#seriallist").on("input", function() {
+		jQuery("#seriallistmessage").removeClass("error").text('<?php echo dol_escape_js($langs->transnoentitiesnoconv("NbOfSerialNumbersDetected", "%s")); ?>'.replace('%s', getSerialList().length));
+	});
+
+	$dialog.dialog({
+		title: '<?php echo dol_escape_js($langs->transnoentitiesnoconv("EnterMultipleSerialNumbers")); ?>',
+		modal: true,
+		resizable: false,
+		width: 'auto',
+		buttons: [
+			{
+				text: '<?php echo dol_escape_js($langs->transnoentitiesnoconv("Apply")); ?>',
+				click: function() {
+					var serials = getSerialList();
+					if (serials.length == 0) {
+						return;
+					}
+					// Cheap early check of duplicates inside the list. Uniqueness in stock is still checked by MouvementStock.
+					var seen = {};
+					for (var n = 0; n < serials.length; n++) {
+						if (seen[serials[n]]) {
+							jQuery("#seriallistmessage").addClass("error").text('<?php echo dol_escape_js($langs->transnoentitiesnoconv("ErrorDuplicateSerialNumberInList", "%s")); ?>'.replace('%s', serials[n]));
+							return;
+						}
+						seen[serials[n]] = true;
+					}
+
+					var nbrTrs = $("tr[name^='"+type+"_'][name$='_"+index+"']").length;
+					var $lastlot = $("#lot_number_"+(nbrTrs - 1)+"_"+index);
+					var k = 0;
+					// Reuse the last line if it is still empty (not a saved line and no lot/serial entered yet)
+					if (!$lastlot.prop('disabled') && $lastlot.val().trim() === '') {
+						$lastlot.val(serials[0]);
+						$("#qty_"+(nbrTrs - 1)+"_"+index).val(1);
+						k = 1;
+					}
+					for (; k < serials.length; k++) {
+						addDispatchLine(index, type, 'qtymissing', serials[k]);
+					}
+
+					jQuery(this).dialog("close");
+				}
+			},
+			{
+				text: '<?php echo dol_escape_js($langs->transnoentitiesnoconv("Cancel")); ?>',
+				click: function() {
+					jQuery(this).dialog("close");
+				}
+			}
+		]
+	});
+	jQuery("#seriallist").focus();
 }
 
 /**

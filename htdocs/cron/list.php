@@ -3,7 +3,7 @@
  * Copyright (C) 2013		Florian Henry				<florian.henry@open-concept.pro>
  * Copyright (C) 2013-2021	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2019-2024	Frédéric France				<frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -118,6 +118,9 @@ $fieldstosearchall = array();
 // Definition of array of fields for columns from ->fields
 $tableprefix = 't';
 $arrayfields = array();
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 /*
 foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
@@ -179,8 +182,9 @@ if (empty($reshook)) {
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 		$search_label = '';
 		$search_status = -1;
+		$search_module_name = '';
 		$search_lastresult = '';
-		$search_all = '';
+		$search_module_name = '';
 		$toselect = array();
 		$search_array_options = array();
 	}
@@ -247,6 +251,15 @@ if (empty($reshook)) {
 			}
 			if ($search_label) {
 				$param .= '&search_label='.urlencode($search_label);
+			}
+			if ($search_module_name) {
+				$param .= '&search_module_name='.urlencode($search_module_name);
+			}
+			if ($search_lastresult) {
+				$param .= '&search_lastresult='.urlencode($search_lastresult);
+			}
+			if ($mode) {
+				$param .= '&mode='.urlencode($mode);
 			}
 			if ($optioncss != '') {
 				$param .= '&optioncss='.urlencode($optioncss);
@@ -347,7 +360,7 @@ $sql .= " t.nbrun,";
 $sql .= " t.libname,";
 $sql .= " t.test";
 $sql .= " FROM ".MAIN_DB_PREFIX."cronjob as t";
-$sql .= " WHERE entity IN (0,".$conf->entity.")";
+$sql .= " WHERE entity IN (0,".((int) $conf->entity).")";
 if (!empty($TTestNotAllowed)) {
 	$sql .= ' AND t.rowid NOT IN ('.$db->sanitize(implode(',', $TTestNotAllowed)).')';
 }
@@ -888,7 +901,7 @@ if ($num > 0) {
 		if ($user->hasRight('cron', 'execute')) {
 			if (!empty($obj->status)) {
 				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$obj->rowid.'&action=execute&token='.newToken();
-				print (!getDolGlobalString('CRON_KEY') ? '' : '&securitykey=' . getDolGlobalString('CRON_KEY'));
+				print(!getDolGlobalString('CRON_KEY') ? '' : '&securitykey=' . getDolGlobalString('CRON_KEY'));
 				print '&sortfield='.$sortfield;
 				print '&sortorder='.$sortorder;
 				print $param."\" title=\"".dol_escape_htmltag($langs->trans('CronExecute'))."\">".img_picto($langs->trans('CronExecute'), "play", '', 0, 0, 0, '', 'marginleftonly').'</a>';

@@ -253,9 +253,10 @@ if ($modecompta == "CREANCES-DETTES") {
 
 	$builddate = dol_now();
 } elseif ($modecompta == "BOOKKEEPING") {
-	// TODO
-} elseif ($modecompta == "BOOKKEEPINGCOLLECTED") {
-	// TODO
+	$name = $langs->trans("PurchaseTurnover").', '.$langs->trans("ByThirdParties");
+	$calcmode = $langs->trans("CalcModeBookkeeping");
+	$description = $langs->trans("RulesPurchaseTurnoverDue");
+	$builddate = dol_now();
 }
 
 $period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0, 0, '', '', '', '', 1, '', '', 'tzserver');
@@ -285,9 +286,9 @@ if (isModEnabled('accounting')) {
 		$sql = "SELECT b.rowid ";
 		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as b,";
 		$sql .= " ".MAIN_DB_PREFIX."accounting_account as aa";
-		$sql .= " WHERE b.entity = ".$conf->entity; // In module double party accounting, we never share entities
+		$sql .= " WHERE b.entity = ".((int) $conf->entity); // In module double party accounting, we never share entities
 		$sql .= " AND b.numero_compte = aa.account_number";
-		$sql .= " AND aa.entity = ".$conf->entity;
+		$sql .= " AND aa.entity = ".((int) $conf->entity);
 		$sql .= " AND aa.fk_pcg_version = '".$db->escape($pcgvercode)."'";
 		$sql .= $db->plimit(1);
 
@@ -363,6 +364,24 @@ if ($modecompta == 'CREANCES-DETTES') {
 		$sql .= ")";
 		$sql .= " AND cs.fk_categorie = c.rowid AND cs.fk_soc = s.rowid";
 	}
+} elseif ($modecompta == "BOOKKEEPING") {
+	// Purchase turnover computed from the accounting ledger. HT is the sum of postings on
+	// EXPENSE-type accounts; TTC is the amount posted on the supplier subledger line of the invoice.
+	// Thirdparty_code is set at transfer time from societe.code_fournisseur (see
+	// accountancy/journal/purchasesjournal.php).
+	$charofaccountstring = dol_getIdFromCode($db, getDolGlobalString('CHARTOFACCOUNTS'), 'accounting_system', 'rowid', 'pcg_version');
+
+	$sql = "SELECT s.rowid as socid, s.nom as name, s.zip, s.town, s.fk_pays,";
+	$sql .= " SUM(CASE WHEN b.subledger_account IS NOT NULL AND b.subledger_account != '' THEN b.credit - b.debit ELSE 0 END) as amount_ttc,";
+	$sql .= " SUM(CASE WHEN aa.pcg_type = 'EXPENSE' THEN b.debit - b.credit ELSE 0 END) as amount";
+	$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as b";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa ON aa.account_number = b.numero_compte AND aa.entity = b.entity AND aa.fk_pcg_version = '".$db->escape($charofaccountstring)."'";
+	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe as s ON s.code_fournisseur = b.thirdparty_code";
+	$sql .= " WHERE b.doc_type = 'supplier_invoice'";
+	$sql .= " AND b.thirdparty_code IS NOT NULL AND b.thirdparty_code != ''";
+	if ($date_start && $date_end) {
+		$sql .= " AND b.doc_date >= '".$db->idate($date_start)."' AND b.doc_date <= '".$db->idate($date_end)."'";
+	}
 }
 if (!empty($search_societe)) {
 	$sql .= natural_search('s.nom', $search_societe);
@@ -376,9 +395,16 @@ if (!empty($search_town)) {
 if ($search_country > 0) {
 	$sql .= ' AND s.fk_pays = '.((int) $search_country);
 }
-$sql .= " AND f.entity IN (".getEntity('supplier_invoice').")";
-if ($socid) {
-	$sql .= " AND f.fk_soc = ".((int) $socid);
+if ($modecompta == 'BOOKKEEPING') {
+	$sql .= " AND b.entity = ".((int) $conf->entity);
+	if ($socid) {
+		$sql .= " AND s.rowid = ".((int) $socid);
+	}
+} else {
+	$sql .= " AND f.entity IN (".getEntity('supplier_invoice').")";
+	if ($socid) {
+		$sql .= " AND f.fk_soc = ".((int) $socid);
+	}
 }
 $sql .= " GROUP BY s.rowid, s.nom, s.zip, s.town, s.fk_pays";
 $sql .= " ORDER BY s.rowid";
@@ -631,7 +657,7 @@ if (count($amount)) {
 
 		// Amount w/o VAT
 		print '<td class="right">';
-		if ($modecompta != 'CREANCES-DETTES') {
+		if ($modecompta == 'RECETTES-DEPENSES') {
 			if ($key > 0) {
 				print '<a href="'.DOL_URL_ROOT.'/fourn/facture/paiement/list.php?socid='.$key.'">';
 			} else {
@@ -649,7 +675,7 @@ if (count($amount)) {
 
 		// Amount with VAT
 		print '<td class="right">';
-		if ($modecompta != 'CREANCES-DETTES') {
+		if ($modecompta == 'RECETTES-DEPENSES') {
 			if ($key > 0) {
 				print '<a href="'.DOL_URL_ROOT.'/fourn/facture/paiement/list.php?socid='.$key.'">';
 			} else {
@@ -691,7 +717,7 @@ if (count($amount)) {
 	print '<td></td>';
 	print '<td></td>';
 	print '<td></td>';
-	if ($modecompta != 'CREANCES-DETTES') {
+	if ($modecompta == 'RECETTES-DEPENSES') {
 		print '<td></td>';
 	} else {
 		print '<td class="right">'.price($catotal_ht).'</td>';

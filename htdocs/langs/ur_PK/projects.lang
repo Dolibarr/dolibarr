@@ -258,7 +258,7 @@ OtherFilteredTasks=دیگر فلٹر شدہ کام
 NoAssignedTasks=کوئی تفویض کردہ کام نہیں ملے (موجودہ صارف کو اس پر وقت داخل کرنے کے لیے اوپر والے سلیکٹ باکس سے پروجیکٹ/ٹاسک تفویض کریں)
 ThirdPartyRequiredToGenerateIntervention=A third party must be defined on project to be able to create intervention.
 ThirdPartyRequiredToGenerateInvoice=انوائس کرنے کے قابل ہونے کے لیے پروجیکٹ پر کسی تیسرے فریق کی تعریف ہونی چاہیے۔
-ChooseANotYetAssignedTask=ایک کام کا انتخاب کریں جو ابھی تک آپ کو تفویض نہیں کیا گیا ہے۔
+ChooseANotYetAssignedTask=Tasks not yet assigned to you
 # Comments trans
 AllowCommentOnTask=کاموں پر صارف کے تبصروں کی اجازت دیں۔
 AllowCommentOnProject=منصوبوں پر صارف کے تبصرے کی اجازت دیں۔

@@ -332,6 +332,7 @@ a.top-menu-dropdown-link {
 
 #topmenu-tool,
 #topmenu-global-search-dropdown,
+#topmenu-ai-dropdown,
 #topmenu-quickadd-dropdown,
 #topmenu-bookmark-dropdown,
 #topmenu-uploadfile-dropdown,

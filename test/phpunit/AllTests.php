@@ -1,8 +1,9 @@
 <?php
 /* Copyright (C) 2010-2012  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2011-2012  Regis Houssin       <regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026       Lionel Vessiller        <lvessiller@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,11 +24,15 @@
  *      \file       test/phpunit/AllTests.php
  *      \ingroup    test
  *      \brief      This file is a test suite to run all unit tests
- *      \remarks    To run this script as CLI:  phpunit filename.php
+ *      \remarks    To run this script as CLI:
+ *      			phpunit filename.php
+ *      			phpunit --stop-on-failure filename.php
  */
 
 print "PHP Version: ".phpversion()."\n";
 print "Memory limit: ". ini_get('memory_limit')."\n";
+print "PHPUNIT_DISABLE_API: ". getenv('PHPUNIT_DISABLE_API')."\n";
+print "PHPUNIT_DISABLE_SOURCE_SCAN: ". getenv('PHPUNIT_DISABLE_SOURCE_SCAN')."\n";
 
 // Workaround for false security issue with main.inc.php on Windows in tests:
 if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
@@ -104,6 +109,9 @@ class AllTests
 	{
 		$suite = new PHPUnit\Framework\TestSuite('PHPUnit Framework');
 
+		$filter = isset($_SERVER['argv'][2]) ? $_SERVER['argv'][2] : '';
+
+
 		//require_once dirname(__FILE__).'/CoreTest.php';
 		//$suite->addTestSuite('CoreTest');
 		require_once dirname(__FILE__).'/AdminLibTest.php';
@@ -114,8 +122,10 @@ class AllTests
 		$suite->addTestSuite('DateLibTest');
 		require_once dirname(__FILE__).'/UtilsTest.php';
 		$suite->addTestSuite('UtilsTest');
+
 		require_once dirname(__FILE__).'/LesscTest.php';
 		$suite->addTestSuite('LesscTest');
+
 		//require_once dirname(__FILE__).'/DateLibTzFranceTest.php';
 		//$suite->addTestSuite('DateLibTzFranceTest');
 		require_once dirname(__FILE__).'/MarginsLibTest.php';
@@ -143,6 +153,7 @@ class AllTests
 
 		require_once dirname(__FILE__).'/SecurityTest.php';
 		$suite->addTestSuite('SecurityTest');
+
 		require_once dirname(__FILE__).'/SecurityGETPOSTTest.php';
 		$suite->addTestSuite('SecurityGETPOSTTest');
 
@@ -156,17 +167,27 @@ class AllTests
 
 		require_once dirname(__FILE__).'/NumberingModulesTest.php';
 		$suite->addTestSuite('NumberingModulesTest');
+
+		require_once dirname(__FILE__).'/CronjobTest.php';
+		$suite->addTestSuite('CronjobTest');
 		require_once dirname(__FILE__).'/PgsqlTest.php';
 		$suite->addTestSuite('PgsqlTest');
 		require_once dirname(__FILE__).'/PdfDocTest.php';
 		$suite->addTestSuite('PdfDocTest');
 		require_once dirname(__FILE__).'/BuildDocTest.php';
 		$suite->addTestSuite('BuildDocTest');
+		require_once dirname(__FILE__).'/CDavLibTest.php';
+		$suite->addTestSuite('CDavLibTest');
+		require_once dirname(__FILE__).'/DAVLibTest.php';
+		$suite->addTestSuite('DAVLibTest');
 		require_once dirname(__FILE__).'/CMailFileTest.php';
 		$suite->addTestSuite('CMailFileTest');
 
 		require_once dirname(__FILE__).'/CommonObjectTest.php';
 		$suite->addTestSuite('CommonObjectTest');
+
+		require_once dirname(__FILE__).'/ExtraFieldsTest.php';
+		$suite->addTestSuite('ExtraFieldsTest');
 
 		require_once dirname(__FILE__).'/ActionCommTest.php';
 		$suite->addTestSuite('ActionCommTest');
@@ -186,11 +207,29 @@ class AllTests
 
 		require_once dirname(__FILE__).'/PricesTest.php';
 		$suite->addTestSuite('PricesTest');
+
 		require_once dirname(__FILE__).'/DiscountTest.php';
 		$suite->addTestSuite('DiscountTest');
 
+		require_once dirname(__FILE__).'/MultiCurrencyTest.php';
+		$suite->addTestSuite('MultiCurrencyTest');
+
 		require_once dirname(__FILE__).'/BOMTest.php';
 		$suite->addTestSuite('BOMTest');
+		require_once dirname(__FILE__).'/MoTest.php';
+		$suite->addTestSuite('MoTest');
+
+		require_once dirname(__FILE__).'/MoTest.php';
+		$suite->addTestSuite('MoTest');
+
+		require_once dirname(__FILE__).'/DolresourceTest.php';
+		$suite->addTestSuite('DolresourceTest');
+
+		require_once dirname(__FILE__).'/WorkstationTest.php';
+		$suite->addTestSuite('WorkstationTest');
+
+		require_once dirname(__FILE__).'/OpensurveysondageTest.php';
+		$suite->addTestSuite('OpensurveysondageTest');
 
 		require_once dirname(__FILE__).'/ContratTest.php';
 		$suite->addTestSuite('ContratTest');
@@ -215,13 +254,20 @@ class AllTests
 		require_once dirname(__FILE__).'/CommonInvoiceTest.php';
 		$suite->addTestSuite('CommonInvoiceTest');
 		require_once dirname(__FILE__).'/FactureTest.php';
+
 		$suite->addTestSuite('FactureTest');
+		require_once dirname(__FILE__).'/PropalCommandeFactureWorkflowTest.php';
+		$suite->addTestSuite('PropalCommandeFactureWorkflowTest');
 		require_once dirname(__FILE__).'/FactureRecTest.php';
 		$suite->addTestSuite('FactureRecTest');
 		require_once dirname(__FILE__).'/FactureTestRounding.php';
 		$suite->addTestSuite('FactureTestRounding');
+		require_once dirname(__FILE__).'/TtcRoundingTest.php';
+		$suite->addTestSuite('TtcRoundingTest');
 		require_once dirname(__FILE__).'/PaiementTest.php';
 		$suite->addTestSuite('PaiementTest');
+		require_once dirname(__FILE__).'/RemiseChequeTest.php';
+		$suite->addTestSuite('RemiseChequeTest');
 		require_once dirname(__FILE__).'/FactureFournisseurTest.php';
 		$suite->addTestSuite('FactureFournisseurTest');
 
@@ -234,12 +280,30 @@ class AllTests
 
 		require_once dirname(__FILE__).'/ChargeSocialesTest.php';
 		$suite->addTestSuite('ChargeSocialesTest');
+		require_once dirname(__FILE__).'/TvaTest.php';
+		$suite->addTestSuite('TvaTest');
+		require_once dirname(__FILE__).'/SalaryTest.php';
+		$suite->addTestSuite('SalaryTest');
+		require_once dirname(__FILE__).'/PaymentSalaryTest.php';
+		$suite->addTestSuite('PaymentSalaryTest');
+		require_once dirname(__FILE__).'/DonTest.php';
+		$suite->addTestSuite('DonTest');
+		require_once dirname(__FILE__).'/PaymentDonationTest.php';
+		$suite->addTestSuite('PaymentDonationTest');
+		require_once dirname(__FILE__).'/PaymentVATTest.php';
+		$suite->addTestSuite('PaymentVATTest');
+		require_once dirname(__FILE__).'/LocaltaxTest.php';
+		$suite->addTestSuite('LocaltaxTest');
 		require_once dirname(__FILE__).'/HolidayTest.php';
 		$suite->addTestSuite('HolidayTest');
 		require_once dirname(__FILE__).'/ExpenseReportTest.php';
 		$suite->addTestSuite('ExpenseReportTest');
 		require_once dirname(__FILE__).'/LoanTest.php';
 		$suite->addTestSuite('LoanTest');
+		require_once dirname(__FILE__).'/LoanScheduleTest.php';
+		$suite->addTestSuite('LoanScheduleTest');
+		require_once dirname(__FILE__).'/PaymentLoanTest.php';
+		$suite->addTestSuite('PaymentLoanTest');
 
 		require_once dirname(__FILE__).'/EntrepotTest.php';
 		$suite->addTestSuite('EntrepotTest');
@@ -251,11 +315,19 @@ class AllTests
 		require_once dirname(__FILE__).'/CategorieTest.php';
 		$suite->addTestSuite('CategorieTest');
 
+		require_once dirname(__FILE__).'/LinkTest.php';
+		$suite->addTestSuite('LinkTest');
+
 		require_once dirname(__FILE__).'/ProjectTest.php';
 		$suite->addTestSuite('ProjectTest');
+		require_once dirname(__FILE__).'/CommentTest.php';
+		$suite->addTestSuite('CommentTest');
 
 		require_once dirname(__FILE__).'/KnowledgeRecordTest.php';
 		$suite->addTestSuite('KnowledgeRecordTest');
+
+		require_once dirname(__FILE__).'/MemoTest.php';
+		$suite->addTestSuite('MemoTest');
 
 		require_once dirname(__FILE__).'/AccountancySystemTest.php';
 		$suite->addTestSuite('AccountancySystemTest');
@@ -268,32 +340,36 @@ class AllTests
 		require_once dirname(__FILE__).'/BlockedLogAndLNETest.php';
 		$suite->addTestSuite('BlockedLogAndLNETest');
 
-		// Rest
-		require_once dirname(__FILE__).'/RestAPIUserTest.php';
-		$suite->addTestSuite('RestAPIUserTest');
-		require_once dirname(__FILE__).'/RestAPIContactTest.php';
-		$suite->addTestSuite('RestAPIContactTest');
-		require_once dirname(__FILE__).'/RestAPIDocumentTest.php';
-		$suite->addTestSuite('RestAPIDocumentTest');
-		require_once dirname(__FILE__).'/RestAPIMoTest.php';
-		$suite->addTestSuite('RestAPIMoTest');
+		if ($filter !== 'PHPUNIT_DISABLE_API' && !getenv('PHPUNIT_DISABLE_API')) {
+			print "Run test on APIs.\n";
 
-		// Test only with php7.2 or less
-		//if ((float) phpversion() < 7.3)
-		//{
-		require_once dirname(__FILE__).'/WebservicesProductsTest.php';
-		$suite->addTestSuite('WebservicesProductsTest');
-		require_once dirname(__FILE__).'/WebservicesInvoicesTest.php';
-		$suite->addTestSuite('WebservicesInvoicesTest');
-		require_once dirname(__FILE__).'/WebservicesOrdersTest.php';
-		$suite->addTestSuite('WebservicesOrdersTest');
-		require_once dirname(__FILE__).'/WebservicesOtherTest.php';
-		$suite->addTestSuite('WebservicesOtherTest');
-		require_once dirname(__FILE__).'/WebservicesThirdpartyTest.php';
-		$suite->addTestSuite('WebservicesThirdpartyTest');
-		require_once dirname(__FILE__).'/WebservicesUserTest.php';
-		$suite->addTestSuite('WebservicesUserTest');
-		//}
+			// Rest
+			require_once dirname(__FILE__).'/RestAPIUserTest.php';
+			$suite->addTestSuite('RestAPIUserTest');
+			require_once dirname(__FILE__).'/RestAPIContactTest.php';
+			$suite->addTestSuite('RestAPIContactTest');
+			require_once dirname(__FILE__).'/RestAPIDocumentTest.php';
+			$suite->addTestSuite('RestAPIDocumentTest');
+			require_once dirname(__FILE__).'/RestAPIMoTest.php';
+			$suite->addTestSuite('RestAPIMoTest');
+
+			// Old WS
+			require_once dirname(__FILE__).'/WebservicesProductsTest.php';
+			$suite->addTestSuite('WebservicesProductsTest');
+			require_once dirname(__FILE__).'/WebservicesInvoicesTest.php';
+			$suite->addTestSuite('WebservicesInvoicesTest');
+			require_once dirname(__FILE__).'/WebservicesOrdersTest.php';
+			$suite->addTestSuite('WebservicesOrdersTest');
+			require_once dirname(__FILE__).'/WebservicesOtherTest.php';
+			$suite->addTestSuite('WebservicesOtherTest');
+			require_once dirname(__FILE__).'/WebservicesThirdpartyTest.php';
+			$suite->addTestSuite('WebservicesThirdpartyTest');
+			require_once dirname(__FILE__).'/WebservicesUserTest.php';
+			$suite->addTestSuite('WebservicesUserTest');
+		} else {
+			print "Check on API has been disabled by parameter or env var 'PHPUNIT_DISABLE_API'.\n";
+		}
+
 
 		require_once dirname(__FILE__).'/ExportTest.php';
 		$suite->addTestSuite('ExportTest');
@@ -324,19 +400,28 @@ class AllTests
 		require_once dirname(__FILE__).'/WebsiteTest.php';
 		$suite->addTestSuite('WebsiteTest');
 
+		// Test /custom dir
+		require_once dirname(__FILE__).'/RepositoryTest.php';
+		$suite->addTestSuite('RepositoryTest');
+
+		// Test DDL functions
+		require_once dirname(__FILE__).'/DoliDBTest.php';
+		$suite->addTestSuite('DoliDBTest');
+
 		// --- At end because it's the longer
 
 		// Rules into source files content
-		require_once dirname(__FILE__).'/RepositoryTest.php';
-		$suite->addTestSuite('RepositoryTest');
-		require_once dirname(__FILE__).'/LangTest.php';
-		$suite->addTestSuite('LangTest');
-		require_once dirname(__FILE__).'/CodingSqlTest.php';
-		$suite->addTestSuite('CodingSqlTest');
-		require_once dirname(__FILE__).'/CodingPhpTest.php';
-		$suite->addTestSuite('CodingPhpTest');
-		require_once dirname(__FILE__).'/DoliDBTest.php';
-		$suite->addTestSuite('DoliDBTest');
+		if ($filter !== 'PHPUNIT_DISABLE_SOURCE_SCAN' && !getenv('PHPUNIT_DISABLE_SOURCE_SCAN')) {
+			print "Check on static source code is enabled, we run tests on source.\n";
+			require_once dirname(__FILE__).'/LangTest.php';
+			$suite->addTestSuite('LangTest');
+			require_once dirname(__FILE__).'/CodingSqlTest.php';
+			$suite->addTestSuite('CodingSqlTest');
+			require_once dirname(__FILE__).'/CodingPhpTest.php';
+			$suite->addTestSuite('CodingPhpTest');
+		} else {
+			print "Check on source code has been disabled by parameter or env var 'PHPUNIT_DISABLE_SOURCE_SCAN'.\n";
+		}
 
 		// --- At very end, the LAST ONE.
 
