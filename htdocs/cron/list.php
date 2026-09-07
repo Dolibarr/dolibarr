@@ -142,9 +142,10 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 
 
 $permissiontoread = $user->hasRight('cron', 'read');
-$permissiontoadd = $user->hasRight('cron', 'create') ? $user->hasRight('cron', 'create') : $user->hasRight('cron', 'write');
+// TODO Because the cron is run by an admin user, to allow write/run of con tasks without begin admin, we must first manage a field runner_user_id with ID of user to set who run the cron.
+$permissiontoadd = $user->hasRight('cron', 'write') && $user->admin;
+$permissiontoexecute = $user->hasRight('cron', 'write') && $user->admin;
 $permissiontodelete = $user->hasRight('cron', 'delete');
-$permissiontoexecute = $user->hasRight('cron', 'execute');
 
 // Security
 if (!$permissiontoread) {
@@ -470,7 +471,7 @@ $arrayofmassactions = array(
 	'enable' => img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("CronStatusActiveBtn"),
 	'disable' => img_picto('', 'uncheck', 'class="pictofixedwidth"').$langs->trans("CronStatusInactiveBtn"),
 );
-if ($user->hasRight('cron', 'delete')) {
+if ($permissiontodelete) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
 if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predelete'))) {
@@ -501,7 +502,7 @@ print '<input type="hidden" name="page_y" value="">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 // Line with explanation and button new
-$newcardbutton = dolGetButtonTitle($langs->trans('New'), $langs->trans('CronCreateJob'), 'fa fa-plus-circle', DOL_URL_ROOT.'/cron/card.php?action=create&backtopage='.urlencode($_SERVER['PHP_SELF'].'?mode=modulesetup'), '', $user->hasRight('cron', 'create'));
+$newcardbutton = dolGetButtonTitle($langs->trans('New'), $langs->trans('CronCreateJob'), 'fa fa-plus-circle', DOL_URL_ROOT.'/cron/card.php?action=create&backtopage='.urlencode($_SERVER['PHP_SELF'].'?mode=modulesetup'), '', $permissiontoadd);
 
 
 if ($mode == 'modulesetup') {
@@ -888,17 +889,17 @@ if ($num > 0) {
 		// Action
 		print '<td class="nowraponall right">';
 		$backtopage = urlencode($_SERVER["PHP_SELF"].'?'.$param.'&sortfield='.$sortfield.'&sortorder='.$sortorder);
-		if ($user->hasRight('cron', 'create')) {
+		if ($permissiontoadd) {
 			print '<a class="editfielda" href="'.DOL_URL_ROOT."/cron/card.php?id=".$obj->rowid.'&action=edit&token='.newToken().'&sortfield='.$sortfield.'&sortorder='.$sortorder.$param;
 			print "&backtopage=".$backtopage."\" title=\"".dol_escape_htmltag($langs->trans('Edit'))."\">".img_picto($langs->trans('Edit'), 'edit')."</a> &nbsp;";
 		}
-		if ($user->hasRight('cron', 'delete')) {
+		if ($permissiontodelete) {
 			print '<a class="reposition" href="'.$_SERVER["PHP_SELF"]."?id=".$obj->rowid.'&action=delete&token='.newToken().($page ? '&page='.$page : '').'&sortfield='.$sortfield.'&sortorder='.$sortorder.$param;
 			print '" title="'.dol_escape_htmltag($langs->trans('CronDelete')).'">'.img_picto($langs->trans('CronDelete'), 'delete', '', 0, 0, 0, '', 'marginleftonly').'</a> &nbsp; ';
 		} else {
 			print '<a href="#" title="'.dol_escape_htmltag($langs->trans('NotEnoughPermissions')).'">'.img_picto($langs->trans('NotEnoughPermissions'), 'delete', '', 0, 0, 0, '', 'marginleftonly').'</a> &nbsp; ';
 		}
-		if ($user->hasRight('cron', 'execute')) {
+		if ($permissiontoexecute) {
 			if (!empty($obj->status)) {
 				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$obj->rowid.'&action=execute&token='.newToken();
 				print(!getDolGlobalString('CRON_KEY') ? '' : '&securitykey=' . getDolGlobalString('CRON_KEY'));
