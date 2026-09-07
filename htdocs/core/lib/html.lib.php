@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2026	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1984,10 +1985,17 @@ function img_picto_common($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0
 		$path = DOL_URL_ROOT . '/theme/common/' . $picto;
 
 		if (getDolGlobalInt('MAIN_MODULE_CAN_OVERWRITE_COMMONICONS')) {
-			$themepath = DOL_DOCUMENT_ROOT . '/theme/' . $conf->theme . '/img/' . $picto;
+			$themeimg = '/theme/' . $conf->theme . '/img/' . $picto;
 
-			if (file_exists($themepath)) {
-				$path = $themepath;
+			if (file_exists(DOL_DOCUMENT_ROOT . $themeimg)) {
+				$path = DOL_URL_ROOT . $themeimg;
+			} elseif (!empty($conf->modules_parts['theme'])) {	// Using this feature slow down application
+				foreach ($conf->modules_parts['theme'] as $reldir) {
+					if (file_exists(dol_buildpath($reldir . $themeimg, 0))) {
+						$path = dol_buildpath($reldir . $themeimg, 1);
+						break;
+					}
+				}
 			}
 		}
 	}
@@ -2574,7 +2582,7 @@ function dol_print_error($db = null, $error = '', $errors = null)
 		}
 		$out .= $langs->trans("InformationToHelpDiagnose") . ":<br>\n";
 
-		$out .= "<b>" . $langs->trans("Date") . ":</b> " . dol_print_date(time(), 'dayhourlog') . "<br>\n";
+		$out .= "<b>" . $langs->trans("Date") . ":</b> " . dol_print_date(dol_now(), 'dayhourlog') . "<br>\n";
 		$out .= "<b>" . $langs->trans("Dolibarr") . ":</b> " . DOL_VERSION . " - https://www.dolibarr.org<br>\n";
 		if (isset($conf->global->MAIN_FEATURES_LEVEL)) {
 			$out .= "<b>" . $langs->trans("LevelOfFeature") . ":</b> " . getDolGlobalInt('MAIN_FEATURES_LEVEL') . "<br>\n";

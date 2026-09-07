@@ -354,31 +354,35 @@ class Interventions extends DolibarrApi
 	 *
 	 * @url	GET {id}/lines
 	 *
-	 * @return int
+	 * @return array
+	 * @phan-return FichinterLigne[]
+	 * @phpstan-return FichinterLigne[]
+	 *
+	 * @throws	RestException	403		Access denied
+	 * @throws	RestException	404		Intervention not found
 	 */
-	/* TODO
 	public function getLines($id)
 	{
-		if(! DolibarrApiAccess::$user->hasRight('ficheinter', 'lire')) {
+		if (!DolibarrApiAccess::$user->hasRight('ficheinter', 'lire')) {
 			throw new RestException(403);
 		}
 
 		$result = $this->fichinter->fetch($id);
-		if( ! $result ) {
+		if (!$result) {
 			throw new RestException(404, 'Intervention not found');
 		}
 
-		if( ! DolibarrApi::_checkAccessToResource('fichinter',$this->fichinter->id)) {
+		if (!DolibarrApi::_checkAccessToResource('fichinter', $this->fichinter->id)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
-		$this->fichinter->getLinesArray();
+
+		$this->fichinter->fetch_lines();
 		$result = array();
 		foreach ($this->fichinter->lines as $line) {
-			array_push($result,$this->_cleanObjectDatas($line));
+			$result[] = $this->_cleanObjectDatas($line);
 		}
 		return $result;
 	}
-	*/
 
 	/**
 	 * Add a line to an intervention
