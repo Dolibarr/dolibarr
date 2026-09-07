@@ -1151,7 +1151,8 @@ class Form
 
 		$sql = "SELECT rowid, code, label, phone_code, favorite, trunk_prefix";
 		$sql .= " FROM ".$this->db->prefix()."c_country";
-		$sql .= " WHERE active > 0 AND phone_code IS NOT NULL AND phone_code != ''";
+		// phone_code is an integer column, comparing it to an empty string fails on PostgreSQL
+		$sql .= " WHERE active > 0 AND phone_code IS NOT NULL AND phone_code != 0";
 
 		dol_syslog(get_class($this)."::selectPhoneCode", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -1784,7 +1785,7 @@ class Form
 	/**
 	 * Return list of types of notes
 	 *
-	 * @param 	string 		$selected 	Preselected type
+	 * @param 	int|string	$selected 	Preselected type
 	 * @param 	string 		$htmlname 	Name of field in form
 	 * @param 	int|string	$showempty 	Add an empty field (Can be '1' or text to use on empty line like 'SelectSocialContributionType')
 	 * @param	string		$morecss	Add more CSS on HTML component
@@ -1810,15 +1811,15 @@ class Form
 				$out .= ' selected';
 			}
 			$out .= '>';
-			if (!$showempty) {
-				$out .= $showempty;
+			if (!is_numeric($showempty)) {
+				$out .= $langs->trans($showempty);
 			}
 			$out .= '</option>';
 		}
 
 		foreach ($this->cache_types_fees as $key => $value) {
 			$out .= '<option value="' . $key . '"';
-			if ($key == $selected) {
+			if ($key == (string) $selected) {
 				$out .= ' selected';
 			}
 			$out .= '>';
