@@ -595,7 +595,7 @@ if ($action == 'showsummary') {
 			$sql .= " LIMIT 1";
 			$resql = $db->query($sql);
 			if (!$resql) {
-				dol_syslog(__METHOD__ . ' ' . $db->lasterror(), LOG_ERR);
+				dol_syslog("SQL Error " . $db->lasterror(), LOG_ERR);
 				return -1;
 			}
 			$obj = $db->fetch_object($resql);
