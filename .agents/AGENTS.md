@@ -171,7 +171,7 @@ Before any modification, verify:
 - Multi-entity compatibility (add ` AND entity IN ('.getEntity("tablename").')`)
 
 If you want to make an online test, you can find the URL of instance info file htdocs/conf/conf.php in parameter $dolibarr_main_url_root. 
-You can ignore and bypass the warning about HTTPS certificate. Ask the password if you need one without trying to get it from database.
+You can ignore and bypass the warning about HTTPS certificate when URL is localhost. Ask the password if you need one without trying to get it from database.
 
 If adding a unit test is requested:
 - If modifying the Dolibarr code project, add a PHPUnit test file into `test/phpunit/` and add the entry into file `test/phpunit/AllTests.php`.
