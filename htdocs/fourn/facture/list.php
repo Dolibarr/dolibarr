@@ -1815,7 +1815,7 @@ while ($i < $imaxinloop) {
 		$totalpay = price2num($facturestatic->total_ttc - $remaintopay);
 		$multicurrency_remaincreditnote = $discount->getAvailableDiscounts($thirdparty, null, 'rc.fk_facture_source='.$facturestatic->id, 0, 0, 1);
 		$multicurrency_remaintopay = -$multicurrency_remaincreditnote;
-		$multicurrency_totalpay = price2num($facturestatic->multicurrency_total_ttc - $multicurrency_remaintopay);
+		$multicurrency_totalpay = (float) price2num($facturestatic->multicurrency_total_ttc - $multicurrency_remaintopay);
 	}
 
 	$facturestatic->alreadypaid = ($paiement ? $paiement : 0);
