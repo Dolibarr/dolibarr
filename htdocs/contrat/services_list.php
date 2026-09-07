@@ -488,7 +488,7 @@ if ($search_id > 0) {
 	$param .= '&search_id='.urlencode($search_id);
 }
 if ($search_contract_id > 0) {
-	$param .= '&amp;search_contract_id='.urlencode($search_contract_id);
+	$param .= '&search_contract_id='.urlencode($search_contract_id);
 }
 if ($search_contract) {
 	$param .= '&amp;search_contract='.urlencode($search_contract);
