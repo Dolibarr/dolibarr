@@ -2692,7 +2692,8 @@ if ($action == 'create' && $permissiontoadd) {
 			print '</td>';
 
 			// Qty in other receptions (with reception and warehouse used)
-			if ($origin && $origin_id > 0) {
+			// Note: here $origin is always a non-empty string (normalized above), so only $origin_id needs to be tested
+			if ($origin_id > 0) {
 				print '<td class="center nowrap linecolqtyinotherreceptions">';
 				$htmltooltip = '';
 				$qtyalreadyreceived = 0;
