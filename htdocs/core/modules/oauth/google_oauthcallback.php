@@ -401,12 +401,15 @@ if (!GETPOST('code')) {
 
 			// If call back to this url was for a OAUTH2 login
 			if ($forlogin) {
+				// Define $urlwithroot
+				$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+				$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
+				//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+
 				// _SESSION['googleoauth_receivedlogin'] has been set to the key to validate the next test by function_googleoauth(), so we can make the redirect
 				// $backtourl is a relative url like /mypage.php?param1=value1 but without param token and action. Part after the # should also have been removed when saving it.
 				// $backtourl comes from $_SERVER['REQUEST_URI'], so it already contains DOL_URL_ROOT.
-				// Prefixing it with DOL_MAIN_URL_ROOT, which also contains it, duplicated the
-				// subfolder on an install that is not at the root of the domain.
-				$backtourl = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', rtrim(DOL_MAIN_URL_ROOT, '/')).$backtourl;
+				$backtourl = rtrim($urlwithouturlroot, '/').$backtourl;
 				$backtourl .= (preg_match('/\?/', $backtourl) ? '&' : '?').'actionlogin=login&afteroauthloginreturn=google&mainmenu=home'.($username ? '&username='.urlencode($username) : '').'&token='.newToken();
 				if (!empty($tmparray['entity'])) {
 					$backtourl .= '&entity='.$tmparray['entity'];
