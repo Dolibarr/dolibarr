@@ -1410,7 +1410,7 @@ class ExtraFields
 										search: params.term,
 										page: params.page || 1,
 										objecttype: '".$extrafieldsobjectkey."',
-										objectid: '".$object->id."',
+										objectid: '".$objectid."',
 										objectkey: '".$key."',
 										mode: '".$mode."',
 										value: '".$value."'
@@ -1497,6 +1497,10 @@ class ExtraFields
 						if (!empty($InfoFieldList[4]) && strpos($InfoFieldList[4], 'extra.') !== false) {
 							$keyList .= ', main.'.$parentField;
 						} else {
+							$keyList .= ', '.$parentField;
+						}
+						// Re-add parent field that was removed by keyList reset above
+						if (!empty($parentField)) {
 							$keyList .= ', '.$parentField;
 						}
 					}
@@ -1772,6 +1776,10 @@ class ExtraFields
 					if (!empty($InfoFieldList[4]) && strpos($InfoFieldList[4], 'extra.') !== false) {
 						$keyList .= ', main.'.$parentField;
 					} else {
+						$keyList .= ', '.$parentField;
+					}
+					// Re-add parent field that was removed by keyList reset above
+					if (!empty($parentField)) {
 						$keyList .= ', '.$parentField;
 					}
 				}
