@@ -241,7 +241,7 @@ if (empty($action)) {
 		$uploadform .= '<br>';
 
 		$uploadform .= img_picto('', 'invoice', 'class="pictofixedwidth"');
-		$uploadform .= $form->select_type_fees(GETPOSTINT('feetypeid') > 0 ? GETPOSTINT('feetypeid') : -1, 'feetypeid', $langs->transnoentitiesnoconv("SocialContributionType"), 'maxwidth200 disableautoopen', 1, 1);
+		$uploadform .= $form->select_type_fees(GETPOSTINT('feetypeid') > 0 ? GETPOSTINT('feetypeid') : -1, 'feetypeid', $langs->transnoentitiesnoconv("TypeFees"), 'maxwidth200 disableautoopen', 1, 1);
 
 		$uploadform .= '<br>';
 
@@ -281,12 +281,12 @@ if (empty($action)) {
 		$formsocialcontrib = new FormSocialContrib($db);
 
 		$uploadform .= img_picto('', 'invoice', 'class="pictofixedwidth"');
-		$uploadform .= $formsocialcontrib->select_type_socialcontrib(GETPOST('socialcontrib', 'alpha') ? GETPOSTINT('socialcontrib') : 0, 'socialcontrib', 1, 0, 0, 'minwidth150 maxwidth200 disableautoopen', 0, 1);
+		$uploadform .= $formsocialcontrib->select_type_socialcontrib(GETPOST('socialcontrib', 'alpha') ? GETPOSTINT('socialcontrib') : -1, 'socialcontrib', $langs->transnoentities("TypeContrib"), 0, 0, 'minwidth150 maxwidth200 disableautoopen', 0, 1);
 
 		$uploadform .= '<br>';
 
 		$uploadform .= img_picto('', 'user', 'class="pictofixedwidth"');
-		$uploadform .= $form->select_dolusers(GETPOSTINT('usertaxid') > 0 ? GETPOSTINT('usertaxid') : $user->id, 'usertaxid', $langs->transnoentitiesnoconv("Employee"), null, 0, 'hierarchyme', '', '', 0, 0, '', 0, '', 'maxwidth200 disableautoopen', 1);
+		$uploadform .= $form->select_dolusers(GETPOSTINT('usertaxid') > 0 ? GETPOSTINT('usertaxid') : -1, 'usertaxid', $langs->transnoentitiesnoconv("Employee"), null, 0, 'hierarchyme', '', '', 0, 0, '', 0, '', 'maxwidth200 disableautoopen', 1);
 
 		$uploadform .= '<br>
 		<small class="opacitymedium">'.$langs->trans("OrClickToSelectAFile").'...</small>
@@ -595,7 +595,7 @@ if ($action == 'showsummary') {
 			$sql .= " LIMIT 1";
 			$resql = $db->query($sql);
 			if (!$resql) {
-				dol_syslog(__METHOD__ . ' ' . $db->lasterror(), LOG_ERR);
+				dol_syslog("SQL Error " . $db->lasterror(), LOG_ERR);
 				return -1;
 			}
 			$obj = $db->fetch_object($resql);
