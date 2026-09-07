@@ -399,6 +399,7 @@ class AccountancyExport
 		$downloadFilePath = '';
 		$archiveFullName = '';
 		$archivePath = '';
+		/** @var array<string,array{name:string,path:string}> $archiveFileList */
 		$archiveFileList = array();
 		if ($withAttachment == 1) {
 			if ($downloadMode == 0) {
@@ -477,7 +478,7 @@ class AccountancyExport
 				}
 
 				if ($withAttachment == 1) {
-					$archiveFileList[0] = array(
+					$archiveFileList['0'] = array(
 						'path' => $exportFilePath,
 						'name' => $exportFileFullName,
 					);
@@ -910,7 +911,7 @@ class AccountancyExport
 	 */
 	public function exportQuadratus($objectLines, $exportFile = null, $archiveFileList = array(), $withAttachment = 0)
 	{
-		global $conf, $db;
+		global $conf;
 
 		$end_line = "\r\n";
 
