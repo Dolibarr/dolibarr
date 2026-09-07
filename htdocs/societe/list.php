@@ -1996,8 +1996,10 @@ while ($i < $imaxinloop) {
 			}
 		}
 		if (!empty($arrayfields['s.name_alias']['checked'])) {
-			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($companystatic->name_alias).'">';
-			print dol_escape_htmltag($companystatic->name_alias);
+			print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute($companystatic->name_alias).'">';
+			print '<span class="doltext opacitymedium">';
+			print dolPrintHTML($companystatic->name_alias);
+			print '</span>';
 			print "</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;

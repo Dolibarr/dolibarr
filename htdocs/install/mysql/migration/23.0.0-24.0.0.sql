@@ -573,7 +573,6 @@ UPDATE llx_const SET name = __ENCRYPT('ACCOUNTANCY_AUXACCOUNT_USE_SEARCH_TO_SELE
 
 ALTER TABLE llx_adherent MODIFY COLUMN societe VARCHAR(128);
 
-ALTER TABLE llx_user ADD COLUMN country_id_job integer DEFAULT NULL;
-ALTER TABLE llx_user ADD COLUMN departament_id_job integer DEFAULT NULL;
+DELETE FROM llx_rights_def WHERE module= 'cron' AND perms = 'execute';
 
 -- end of migration

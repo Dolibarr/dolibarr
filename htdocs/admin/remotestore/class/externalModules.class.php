@@ -324,9 +324,10 @@ class ExternalModules
 	 * Generate HTML for products.
 	 *
 	 * @param 	array<string,mixed> 	$options 	Options for the request
+	 * @param 	array<string,DolibarrModules>	$modules	Array of locally installed modules (keyed by module class name)
 	 * @return 	string|null 						HTML string representing the products.
 	 */
-	public function getProducts($options)
+	public function getProducts($options, $modules = array())
 	{
 		global $langs;
 
@@ -337,6 +338,18 @@ class ExternalModules
 		$dolibarrversiontouse = DOL_VERSION;	// full string with version
 
 		$this->products = array();
+
+		// Build a map of installed external module names to their versions (lowercase name => version)
+		$installedModules = array();
+		if (is_array($modules)) {
+			foreach ($modules as $objMod) {
+				if (is_object($objMod) && $objMod->isCoreOrExternalModule() != 'core') {
+					$moduleName = strtolower($objMod->name);
+					$moduleVersion = $objMod->getVersion(0);
+					$installedModules[$moduleName] = $moduleVersion;
+				}
+			}
+		}
 
 		$this->categorie = $options['categorie'] ?? 0;
 		$this->per_page  = $options['per_page'] ?? 11;
@@ -617,6 +630,24 @@ class ExternalModules
 						);
 					$installConfirmMessage .= $langs->trans("Path").' : '.$urldownload;
 
+					// Check if module is already installed locally to show "Upgrade" or "Re-install" instead of "Install"
+					$buttonLabel = $langs->trans("Install");
+					$remoteVersion = $product['module_version'] ?? '';
+					$remoteModuleName = strtolower(preg_replace('/@.*$/', '', $product['ref'] ?? ''));
+					// Remove "-" followed by current version at the end of the string if it exists
+					$remoteModuleName = preg_replace('/-' . preg_quote($remoteVersion, '/') . '$/', '', $remoteModuleName);
+					if (!empty($installedModules[$remoteModuleName]) && $remoteVersion && $remoteVersion != 'unknown') {
+						$localVersion = $installedModules[$remoteModuleName];
+						if ($localVersion && $localVersion != 'unknown') {
+							$versionDiff = $this->versionCompare($localVersion, $remoteVersion);
+							if ($versionDiff < 0) {
+								$buttonLabel = $langs->trans("Upgrade");
+							} elseif ($versionDiff == 0) {
+								$buttonLabel = $langs->trans("ReInstall");
+							}
+						}
+					}
+
 					$install_link = '<button class="valignmiddle ' . ($disableInstall ? 'butActionRefused' : 'butAction') . ' paddingleft paddingright"'
 						. ($disableInfo     ? ' title="' . dol_escape_htmltag($disableInfo) . '"' : '')
 						. (!$disableInstall ? ' data-confirm' : '')
@@ -624,7 +655,8 @@ class ExternalModules
 						. (!$disableInstall ? ' data-url="' . dol_escape_htmltag($this->url) . '"' : '')
 						. (!$disableInstall ? ' data-confirm-title="' . dol_escape_htmltag($langs->trans("extModuleConfirmInstallTitle")) . '"' : '')
 						. (!$disableInstall ? ' data-confirm-text="' . dol_escape_htmltag($installConfirmMessage) . '"' : '')
-						. '>' . $langs->trans("Install") . '</button>';
+						. (!$disableInstall ? ' data-confirm-label="' . dol_escape_htmltag($buttonLabel) . '"' : '')
+						. '>' . $buttonLabel . '</button>';
 				}
 			}
 
@@ -1334,7 +1366,7 @@ class ExternalModules
 
 		$statusType = 'status4';
 		if ($status == 0) {
-			$statusType = 'status8';
+			$statusType = 'status3';
 		}
 
 		$labelStatus = [];

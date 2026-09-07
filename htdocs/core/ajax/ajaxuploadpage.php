@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This file is a modified version of datepicker.php from phpBSM to fix some
  * bugs, to add new features and to dramatically increase speed.
@@ -229,7 +229,7 @@ if ($METHOD == 'converttotext') { // @phpstan-ignore-line
 	}
 
 	if ($fileContent) {
-		$prompt = 'This is the content of the document:'."\n\n".substr($fileContent, 0, 12000)."\n\nQuestion: ".$prompt;
+		$prompt = 'This is the content of the document:'."\n\n".dol_substr($fileContent, 0, 12000)."\n\nQuestion: ".$prompt;
 
 		$result = $ai->generateContent($prompt, 'auto', 'docparsing', '');
 		// $result is an array of error messages or a string with answer

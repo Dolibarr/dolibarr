@@ -1151,7 +1151,8 @@ class Form
 
 		$sql = "SELECT rowid, code, label, phone_code, favorite, trunk_prefix";
 		$sql .= " FROM ".$this->db->prefix()."c_country";
-		$sql .= " WHERE active > 0 AND phone_code IS NOT NULL AND phone_code != ''";
+		// phone_code is an integer column, comparing it to an empty string fails on PostgreSQL
+		$sql .= " WHERE active > 0 AND phone_code IS NOT NULL AND phone_code != 0";
 
 		dol_syslog(get_class($this)."::selectPhoneCode", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -1782,14 +1783,17 @@ class Form
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 
 	/**
-	 *    Return list of types of notes
+	 * Return list of types of notes
 	 *
-	 * @param string $selected Preselected type
-	 * @param string $htmlname Name of field in form
-	 * @param int $showempty Add an empty field
-	 * @return    void
+	 * @param 	int|string	$selected 	Preselected type
+	 * @param 	string 		$htmlname 	Name of field in form
+	 * @param 	int|string	$showempty 	Add an empty field (Can be '1' or text to use on empty line like 'SelectSocialContributionType')
+	 * @param	string		$morecss	Add more CSS on HTML component
+	 * @param	int			$nooutput	Output mode (0=Print output, 1=Return string)
+	 * @param	int			$noadmin	Use 1 to hide admin tooltip
+	 * @return	string					Output
 	 */
-	public function select_type_fees($selected = '', $htmlname = 'type', $showempty = 0)
+	public function select_type_fees($selected = '', $htmlname = 'type', $showempty = 0, $morecss = '', $nooutput = 0, $noadmin = 0)
 	{
 		// phpcs:enable
 		global $user, $langs;
@@ -1798,29 +1802,44 @@ class Form
 
 		$this->load_cache_types_fees();
 
-		print '<select id="select_' . $htmlname . '" class="flat" name="' . $htmlname . '">';
+		$out = '';
+
+		$out .= '<select id="select_' . $htmlname . '" class="flat'.($morecss ? ' '.$morecss : '').'" name="' . $htmlname . '">';
 		if ($showempty) {
-			print '<option value="-1"';
-			if ($selected == -1) {
-				print ' selected';
+			$out .= '<option value="-1"';
+			if ($selected === -1) {
+				$out .= ' selected';
 			}
-			print '>&nbsp;</option>';
+			$out .= '>';
+			if (!is_numeric($showempty)) {
+				$out .= $langs->trans($showempty);
+			}
+			$out .= '</option>';
 		}
 
 		foreach ($this->cache_types_fees as $key => $value) {
-			print '<option value="' . $key . '"';
-			if ($key == $selected) {
-				print ' selected';
+			$out .= '<option value="' . $key . '"';
+			if ($key == (string) $selected) {
+				$out .= ' selected';
 			}
-			print '>';
-			print $value;
-			print '</option>';
+			$out .= '>';
+			$out .= $value;
+			$out .= '</option>';
 		}
 
-		print '</select>';
-		if ($user->admin) {
-			print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+		$out .= '</select>';
+		if ($user->admin && empty($noadmin)) {
+			$out .= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		}
+
+		$out .= ajax_combobox('select_'.$htmlname);
+
+		if (empty($nooutput)) {
+			print $out;
+			return '';
+		}
+
+		return $out;
 	}
 
 
@@ -3043,7 +3062,12 @@ class Form
 		$userstatic = new User($this->db);
 		$out = '';
 
-		if (!empty($_SESSION['assignedtouser'])) {
+		// The list of selected users is provided by the caller through $listofuserid (owner first).
+		// Fall back to the legacy global $_SESSION['assignedtouser'] only when no list is provided
+		// (comm/action/card.php now scopes that session bucket per event id and no longer feeds this key).
+		if (!empty($listofuserid)) {
+			$assignedtouser = $listofuserid;
+		} elseif (!empty($_SESSION['assignedtouser'])) {
 			$assignedtouser = json_decode($_SESSION['assignedtouser'], true);
 			if (!is_array($assignedtouser)) {
 				$assignedtouser = array();
@@ -10649,6 +10673,11 @@ class Form
 			$out .= "\n" . '<!-- JS CODE TO ENABLE select for id ' . $htmlname . ', addjscombo=' . $addjscombo . ' -->';
 			$out .= "\n" . '<script nonce="' . getNonce() . '">' . "\n";
 			if ($addjscombo == 1) {
+				$moreselect2theme = ($morecss ? dol_escape_js(' '.$morecss) : '');
+				$moreselect2theme = preg_replace('/widthcentpercentminus[^\s]*/', '', $moreselect2theme);
+
+				$widthTypeOfAutocomplete = 'resolve';
+
 				$tmpplugin = getDolGlobalString('MAIN_USE_JQUERY_MULTISELECT', (defined('REQUIRE_JQUERY_MULTISELECT') ? constant('REQUIRE_JQUERY_MULTISELECT') : 'select2'));
 
 				// If property data-html set, we decode html entities and use this.
@@ -10669,6 +10698,11 @@ class Form
 				//$out .= 'console.log(\'addjscombo=1 for htmlname=' . dol_escape_js($htmlname) . '\');';
 				$out .= '$(document).ready(function () {
 							$(\'#' . dol_escape_js($htmlname) . '\').' . $tmpplugin . '({';
+					// when $morecss contains 'onrightofpage', the select2 component must also be inside a parent with class="parentonrightofpage"
+				if (preg_match('/onrightofpage/', $morecss)) {	// In this cas, htmlname must be an ID not a class.
+					$out .= ' dropdownAutoWidth: true, ';
+					$out .= ' dropdownParent: $(\'#'.$htmlname.'\').parent(), ';
+				}
 				if ($placeholder) {
 					$out .= '
 								placeholder: {
@@ -10677,8 +10711,11 @@ class Form
 								  },';
 				}
 				$out .= '		dir: \'ltr\',
-								containerCssClass: \':all:\',					/* Line to add class of origin SELECT propagated to the new <span class="select2-selection...> tag (ko with multiselect) */
-								dropdownCssClass: \'' . dol_escape_js($morecss) . '\',				/* Line to add class on the new <span class="select2-selection...> tag (ok with multiselect). Need full version of select2. */
+								width: \''.dol_escape_js($widthTypeOfAutocomplete).'\',		/* off or resolve */
+								theme: \'default' . dol_escape_js($moreselect2theme) . '\',		/* to add css on generated html components */
+								containerCssClass: \':all:\',		/* Line to add class of origin SELECT propagated to the new <span class="select2-selection...> tag (ko with multiselect) */
+								selectionCssClass: \':all:\',		/* Line to add class of origin SELECT propagated to the new <span class="select2-selection...> tag */
+								dropdownCssClass: \'dol-dropdown-dialog dol-dropdown-dialogmulti\',				/* Line to add class on the new <span class="select2-selection...> tag (ok with multiselect). Need full version of select2. */
 								// Specify format function for dropdown item
 								formatResult: formatResult,
 								templateResult: formatResult,		/* For 4.0 */
