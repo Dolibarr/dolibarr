@@ -9770,7 +9770,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0, $sqltoadd =
 						$tmps = '';
 
 						if ($isSellist) {
-							$newres .= $field . " IN (SELECT t." . $key . " FROM " . $db->prefix() . $table . " AS t WHERE t." . $label . " LIKE '%" . $db->escape($tmpcrit2) . "%')";
+							$newres .= $field . " IN (SELECT t." . $db->sanitize($key) . " FROM " . $db->prefix() . $db->sanitize($table) . " AS t WHERE t." . $db->sanitize($label) . " LIKE '%" . $db->escape($tmpcrit2) . "%')";
 						} else {
 							if (preg_match('/^!/', $tmpcrit)) {
 								$tmps .= $db->sanitize($field) . " NOT LIKE "; // ! as exclude character
@@ -9798,7 +9798,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0, $sqltoadd =
 							$newres .= $tmpafter;
 							$newres .= "'";
 							if ($tmpcrit2 == '' || preg_match('/^!/', $tmpcrit)) {
-								$newres .= " OR " . $field . " IS NULL)";
+								$newres .= " OR " . $db->sanitize($field) . " IS NULL)";
 							}
 						}
 					}
@@ -9811,7 +9811,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0, $sqltoadd =
 		}
 
 		if ($sqltoadd) {
-			$newres .= ($newres ? '' : ' OR ').str_replace('__KEYTOSEARCH__', $crit, $sqltoadd);
+			$newres .= ($newres ? '' : ' OR ').str_replace('__KEYTOSEARCH__', $db->escape($crit), $sqltoadd);
 		}
 
 		if ($newres) {
