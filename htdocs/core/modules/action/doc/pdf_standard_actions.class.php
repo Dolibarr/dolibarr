@@ -400,7 +400,7 @@ class pdf_standard_actions
 
 				// Description of event
 				$pdf->SetXY(106, $y);
-				$pdf->MultiCell(94, $height, $outputlangs->convToOutputCharset($this->pdfTruncateText($pdf, dol_string_nohtmltag($text, 0), 250, 'right', 'UTF-8', 0)), 0, 'L', false);
+				$pdf->MultiCell(94, $height, $outputlangs->convToOutputCharset($this->pdfTruncateText($pdf, dol_string_nohtmltag($text, 0), 250, 'right')), 0, 'L', false);
 				$y3 = $pdf->GetY();
 
 				$i++;
