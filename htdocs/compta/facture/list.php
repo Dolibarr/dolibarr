@@ -18,7 +18,7 @@
  * Copyright (C) 2023		Nick Fragoulis
  * Copyright (C) 2023		Joachim Kueter			<git-jk@bloxera.com>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024		Solution Libre SAS		<contact@solution-libre.fr>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  *
@@ -518,12 +518,15 @@ if ($action == 'makepayment_confirm' && $user->hasRight('facture', 'paiement')) 
 					$errorpayment++;
 				} else {
 					if ($facture->type != Facture::TYPE_CREDIT_NOTE && $facture->status == Facture::STATUS_VALIDATED && $facture->paye == 0) {
-						$paiementAmount = $facture->getSommePaiement();
+						// Get both the base-currency and invoice-currency paid amount in a single query
+						$sommePaiement = $facture->getSommePaiement(-1);
+						$paiementAmount = $sommePaiement['alreadypaid'];
+
 						$totalcreditnotes = $facture->getSumCreditNotesUsed();
 						$totaldeposits = $facture->getSumDepositsUsed();
 
 						$totalallpayments = $paiementAmount + $totalcreditnotes + $totaldeposits;
-						$remaintopay = price2num($facture->total_ttc - $totalallpayments);
+						$remaintopay = (float) price2num($facture->total_ttc - $totalallpayments);
 
 						// hook to finalize the remaining amount, considering e.g. cash discount agreements
 						$parameters = array('remaintopay' => $remaintopay);
@@ -537,6 +540,9 @@ if ($action == 'makepayment_confirm' && $user->hasRight('facture', 'paiement')) 
 							setEventMessages($facture->ref.' '.$langs->trans("ProcessingError"), $hookmanager->errors, 'errors');
 						}
 
+						// Remain to pay in the invoice currency (may differ from $remaintopay when multicurrency is used)
+						$multicurrency_remaintopay = (float) price2num($facture->multicurrency_total_ttc - $sommePaiement['alreadypaid_multicurrency']);
+
 						if ($remaintopay != 0) {
 							$resultBank = $facture->setBankAccount($bankid);
 							if ($resultBank < 0) {
@@ -546,7 +552,7 @@ if ($action == 'makepayment_confirm' && $user->hasRight('facture', 'paiement')) 
 								$paiement = new Paiement($db);
 								$paiement->datepaye = $paiementdate;
 								$paiement->amounts[$facture->id] = $remaintopay; // Array with all payments dispatching with invoice id
-								$paiement->multicurrency_amounts[$facture->id] = $remaintopay;
+								$paiement->multicurrency_amounts[$facture->id] = $multicurrency_remaintopay;
 								$paiement->paiementid = $paiementid;
 								$paiement_id = $paiement->create($user, 1, $facture->thirdparty);
 								if ($paiement_id < 0) {

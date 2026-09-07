@@ -73,7 +73,7 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 		// Check for type stars(NumberOfStars), NumberOfStars must be an integer between 1 and 10
 		$matches = array();
 		if (preg_match('/^stars\((.+)\)$/', $addfieldentry['type'], $matches)) {
-			if (!ctype_digit($matches[1]) || $matches[1] < 1 || $matches[1] > 10) {
+			if (!preg_match('/^[0-9]+$/', $matches[1]) || $matches[1] < 1 || $matches[1] > 10) {
 				setEventMessages($langs->trans('BadValueForType', $addfieldentry['type']), null, 'errors');
 				return -2;
 			}
