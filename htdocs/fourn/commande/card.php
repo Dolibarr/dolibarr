@@ -758,6 +758,9 @@ if (empty($reshook)) {
 				}
 
 				$ref_supplier = $productsupplier->ref_supplier;
+				if (empty($ref_supplier) && !empty(GETPOST('fourn_ref', 'alpha'))) {
+					$ref_supplier = GETPOST('fourn_ref', 'alpha');
+				}
 
 				// Get vat rate
 				$tva_npr = 0;
