@@ -213,7 +213,7 @@ if ($action == "set") {		// Test on permission not required. Already managed by 
 		// Sort list of sql files on alphabetical order (load order is important)
 		sort($tabledata);
 		foreach ($tabledata as $file) {
-			$name = substr($file, 0, dol_strlen($file) - 4);
+			$name = dol_substr($file, 0, dol_strlen($file) - 4);
 			$buffer = '';
 			$fp = fopen($dir.$file, "r");
 			if ($fp) {
@@ -311,7 +311,7 @@ if ($action == "set") {		// Test on permission not required. Already managed by 
 		// Sort list of sql files on alphabetical order (load order is important)
 		sort($tabledata);
 		foreach ($tabledata as $file) {
-			$name = substr($file, 0, dol_strlen($file) - 4);
+			$name = dol_substr($file, 0, dol_strlen($file) - 4);
 			//print "<tr><td>Creation of table $name</td>";
 			$buffer = '';
 			$fp = fopen($dir.$file, "r");
@@ -517,7 +517,7 @@ if ($action == "set") {		// Test on permission not required. Already managed by 
 		// Sort list of data files on alphabetical order (load order is important)
 		sort($tabledata);
 		foreach ($tabledata as $file) {
-			$name = substr($file, 0, dol_strlen($file) - 4);
+			$name = dol_substr($file, 0, dol_strlen($file) - 4);
 			$fp = fopen($dir.$file, "r");
 			dolibarr_install_syslog("step2: open data file ".$dir.$file." handle=".(is_bool($fp) ? json_encode($fp) : $fp));
 			if ($fp) {

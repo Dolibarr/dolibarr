@@ -7,7 +7,7 @@
  * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2019		Thibault FOUCART			<support@ptibogxiv.net>
  * Copyright (C) 2023		Waël Almoman				<info@almoman.com>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1058,7 +1058,7 @@ if (($action == 'createsubscription' || $action == 'create_thirdparty') && $user
 		print '<tr><td>'.$langs->trans("Note").'</td>';
 		print '<td><input name="label" type="text" size="32" value="';
 		if (!getDolGlobalString('MEMBER_NO_DEFAULT_LABEL')) {
-			print $langs->trans("Subscription").' '.dol_print_date(($datefrom ? $datefrom : time()), "%Y");
+			print $langs->trans("Subscription").' '.dol_print_date(($datefrom ? $datefrom : dol_now()), "%Y");
 		}
 		print '"></td></tr>';
 

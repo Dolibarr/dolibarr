@@ -32,7 +32,7 @@
  * @var string $extrafieldsobjectkey
  * @var string $search_options_pattern
  * @var string $extrafieldsobjectprefix
- * @var array $search_array_options
+ * @var array<string,mixed> $search_array_options
  */
 '
 @phan-var-force CommonObject $object

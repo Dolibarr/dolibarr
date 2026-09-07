@@ -604,7 +604,7 @@ function getWarningDelay($module, $parmlevel1, $parmlevel2 = '')
 function isDolTms($timestamp)
 {
 	if ($timestamp === '') {
-		dol_syslog('Using empty string for a timestamp is deprecated, prefer use of null when calling page ' . $_SERVER["PHP_SELF"] . getCallerInfoString(), LOG_NOTICE);
+		dol_syslog('Using empty string for a timestamp is deprecated, prefer use of null when calling page ' . $_SERVER["PHP_SELF"] . getCallerInfoString(), LOG_DEBUG);
 		return false;
 	}
 	if (is_null($timestamp) || !is_numeric($timestamp)) {
@@ -2545,7 +2545,7 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
 			$ospid = sprintf("%7s", dol_trunc((string) getmypid(), 7, 'right', 'UTF-8', 1));
 			$osuser = " " . sprintf("%6s", dol_trunc(function_exists('posix_getuid') ? posix_getuid() : '', 6, 'right', 'UTF-8', 1));
 
-			$conf->logbuffer[] = dol_print_date(time(), "%Y-%m-%d %H:%M:%S") . " " . sprintf("%-7s", $logLevels[$level]) . " " . $ospid . " " . $osuser . " " . $message;
+			$conf->logbuffer[] = dol_print_date(dol_now(), "%Y-%m-%d %H:%M:%S") . " " . sprintf("%-7s", $logLevels[$level]) . " " . $ospid . " " . $osuser . " " . $message;
 		}
 
 		//TODO: Remove this. MAIN_ENABLE_LOG_INLINE_HTML should be deprecated and use a log handler dedicated to HTML output
@@ -6281,7 +6281,7 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 		// First clean HTML content
 		do {
 			if ($antiinfinitloop >= 20) {
-				dol_print_error('', "Infinite loop detected after ".$antiinfinitloop." iterations in dol_htmlwithnojs");
+				dol_print_error(null, "Infinite loop detected after ".$antiinfinitloop." iterations in dol_htmlwithnojs");
 				die;	// We must not break and we must not return a string for security issue. This should never happen.
 			}
 			$antiinfinitloop++;
@@ -9769,8 +9769,8 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0, $sqltoadd =
 						$tmpafter = '%';
 						$tmps = '';
 
-						if ($isSellist) {
-							$newres .= $field . " IN (SELECT t." . $key . " FROM " . $db->prefix() . $table . " AS t WHERE t." . $label . " LIKE '%" . $db->escape($tmpcrit2) . "%')";
+						if ($isSellist && $key && $table && $label) {
+							$newres .= $field . " IN (SELECT t." . $db->sanitize($key) . " FROM " . $db->prefix() . $db->sanitize($table) . " AS t WHERE t." . $db->sanitize($label) . " LIKE '%" . $db->escape($tmpcrit2) . "%')";
 						} else {
 							if (preg_match('/^!/', $tmpcrit)) {
 								$tmps .= $db->sanitize($field) . " NOT LIKE "; // ! as exclude character
@@ -9798,7 +9798,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0, $sqltoadd =
 							$newres .= $tmpafter;
 							$newres .= "'";
 							if ($tmpcrit2 == '' || preg_match('/^!/', $tmpcrit)) {
-								$newres .= " OR " . $field . " IS NULL)";
+								$newres .= " OR " . $db->sanitize($field) . " IS NULL)";
 							}
 						}
 					}
@@ -9811,7 +9811,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0, $sqltoadd =
 		}
 
 		if ($sqltoadd) {
-			$newres .= ($newres ? '' : ' OR ').str_replace('__KEYTOSEARCH__', $crit, $sqltoadd);
+			$newres .= ($newres ? '' : ' OR ').str_replace('__KEYTOSEARCH__', $db->escape($crit), $sqltoadd);
 		}
 
 		if ($newres) {
@@ -11506,7 +11506,8 @@ function dolForgeSQLCriteriaCallback($matches)
 			$tmpelem = trim($tmpelem);
 			if (preg_match('/^\'(.*)\'$/', $tmpelem, $reg)) {
 				$tmpelemarray[$tmpkey] = "'" . $db->escape($db->sanitize($reg[1], 2, 1, 1, 1)) . "'";
-			} elseif (ctype_digit((string) $tmpelem)) {	// if only 0-9 chars, no .
+				$tmpelemarray[$tmpkey] = "'".$db->escape($db->sanitize($reg[1], 2, 1, 1, 1))."'";
+			} elseif (preg_match('/^[0-9]+$/', (string) $tmpelem)) {	// if only 0-9 chars, no .
 				$tmpelemarray[$tmpkey] = (int) $tmpelem;
 			} elseif (is_numeric((string) $tmpelem)) {	// it can be a float with a .
 				$tmpelemarray[$tmpkey] = (float) $tmpelem;
@@ -11533,7 +11534,7 @@ function dolForgeSQLCriteriaCallback($matches)
 	} else {
 		if (strtoupper($tmpescaped) == 'NULL') {
 			$tmpescaped = 'NULL';
-		} elseif (ctype_digit((string) $tmpescaped)) {	// if only 0-9 chars, no .
+		} elseif (preg_match('/^[0-9]+$/', (string) $tmpescaped)) {	// if only 0-9 chars, no .
 			$tmpescaped = (int) $tmpescaped;
 		} elseif (is_numeric((string) $tmpescaped)) {	// it can be a float with a .
 			$tmpescaped = (float) $tmpescaped;

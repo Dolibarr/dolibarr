@@ -4128,7 +4128,7 @@ class Commande extends CommonOrder
 		$this->specimen = 1;
 		$this->entity = $conf->entity;
 		$this->socid = 1;
-		$this->date = time();
+		$this->date = dol_now();
 		$this->date_lim_reglement = $this->date + 3600 * 24 * 30;
 		$this->cond_reglement_code = 'RECEP';
 		$this->mode_reglement_code = 'CHQ';

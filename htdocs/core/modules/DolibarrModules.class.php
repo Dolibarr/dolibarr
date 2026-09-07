@@ -7,6 +7,7 @@
  * Copyright (C) 2005-2024	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2014		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018		Josep Lluís Amador		<joseplluis@lliuretic.cat>
+ * Copyright (C) 2024		Lenin Rivas				<lenin.rivas777@gmail.com>
  * Copyright (C) 2019-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -118,6 +119,11 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 *		(0:name,1:type,2:val,3:note,4:visible,5:entity,6:deleteonunactive)
 	 */
 	public $const = array();
+
+	/**
+	 * @var array<string,string>	Module overwrite translations
+	 */
+	public $overwrite_translation = array();
 
 	/**
 	 * @var array<array{entity?:int,label?:string,jobtype?:string,class?:string,objectname?:string,method?:string,command?:string,parameters?:string,md5params?:string,comment?:string,frequency?:int,unitfrequency?:int,priority?:int,datestart?:int,dateend?:int,datenextrun?:string,status?:int,maxrun?:int,libname?:string,test?:string|bool}> Module cron jobs entries
@@ -576,6 +582,11 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		// Insert constant defined by modules (into llx_const) if no existing yet
 		if (!$err && !preg_match('/newboxdefonly/', $options)) {
 			$err += $this->insert_const(); // Test on newboxdefonly to avoid to erase value during upgrade
+		}
+
+		// Insert overwrite trans defined by modules (into llx_overwrite_trans)
+		if (!$err && !preg_match('/newboxdefonly/', $options)) {
+			$err += $this->insert_overwrite_translation(); // Test on newboxdefonly to avoid to erase value during upgrade
 		}
 
 		// Insert boxes def (into llx_boxes_def) and boxes setup (into llx_boxes)
@@ -1318,7 +1329,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 									//print 'File '.$file.' match suffix '.$onlywithsuffix.' so we keep it<br>'."\n";
 								}
 							}
-							if (preg_match('/\.sql$/i', $file) && !preg_match('/\.key\.sql$/i', $file) && substr($file, 0, 4) == 'llx_') {
+							if (preg_match('/\.sql$/i', $file) && !preg_match('/\.key\.sql$/i', $file) && dol_substr($file, 0, 4) == 'llx_') {
 								$result = run_sql($dir.$file, !getDolGlobalString('MAIN_DISPLAY_SQL_INSTALL_LOG') ? 1 : 0, 0, 1);
 								if ($result <= 0) {
 									$error++;
@@ -1343,7 +1354,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 									//print 'File '.$file.' match suffix '.$onlywithsuffix.' so we keep it<br>'."\n";
 								}
 							}
-							if (preg_match('/\.key\.sql$/i', $file) && substr($file, 0, 4) == 'llx_') {
+							if (preg_match('/\.key\.sql$/i', $file) && dol_substr($file, 0, 4) == 'llx_') {
 								$result = run_sql($dir.$file, !getDolGlobalString('MAIN_DISPLAY_SQL_INSTALL_LOG') ? 1 : 0, 0, 1);
 								if ($result <= 0) {
 									$error++;
@@ -1368,7 +1379,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 									//print 'File '.$file.' match suffix '.$onlywithsuffix.' so we keep it<br>'."\n";
 								}
 							}
-							if (preg_match('/\.sql$/i', $file) && !preg_match('/\.key\.sql$/i', $file) && substr($file, 0, 9) == 'functions') {
+							if (preg_match('/\.sql$/i', $file) && !preg_match('/\.key\.sql$/i', $file) && dol_substr($file, 0, 9) == 'functions') {
 								$result = run_sql($dir.$file, !getDolGlobalString('MAIN_DISPLAY_SQL_INSTALL_LOG') ? 1 : 0, 0, 1);
 								if ($result <= 0) {
 									$error++;
@@ -1393,7 +1404,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 									//print 'File '.$file.' match suffix '.$onlywithsuffix.' so we keep it<br>'."\n";
 								}
 							}
-							if (preg_match('/\.sql$/i', $file) && !preg_match('/\.key\.sql$/i', $file) && substr($file, 0, 4) == 'data') {
+							if (preg_match('/\.sql$/i', $file) && !preg_match('/\.key\.sql$/i', $file) && dol_substr($file, 0, 4) == 'data') {
 								$result = run_sql($dir.$file, !getDolGlobalString('MAIN_DISPLAY_SQL_INSTALL_LOG') ? 1 : 0, 0, 1);
 								if ($result <= 0) {
 									$error++;
@@ -1419,7 +1430,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 								}
 							}
 
-							if (preg_match('/\.sql$/i', $file) && !preg_match('/\.key\.sql$/i', $file) && substr($file, 0, 6) == 'update') {
+							if (preg_match('/\.sql$/i', $file) && !preg_match('/\.key\.sql$/i', $file) && dol_substr($file, 0, 6) == 'update') {
 								$result = run_sql($dir.$file, !getDolGlobalString('MAIN_DISPLAY_SQL_INSTALL_LOG') ? 1 : 0, 0, 1);
 								if ($result <= 0) {
 									$error++;
@@ -1977,6 +1988,69 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
+	 * Adds overwrite translations
+	 *
+	 * @return int Error count (0 if OK)
+	 */
+	public function insert_overwrite_translation()
+	{
+		// phpcs:enable
+		global $conf;
+
+		$err = 0;
+
+		if (empty($this->overwrite_translation)) {
+			return 0;
+		}
+
+		dol_syslog(get_class($this)."::insert_overwrite_translation", LOG_DEBUG);
+
+		foreach ($this->overwrite_translation as $key => $value) {
+			$arkey		= explode(':', $key);
+			$lang		= $arkey[0];
+			$transkey	= $arkey[1];
+			$transvalue	= $value;
+			$entity		= (!empty($arkey[3]) && $arkey[3] != 'current') ? 0 : $conf->entity;
+
+			// valid
+			if (empty($lang) || empty($transkey) || empty($transvalue)) {
+				continue;
+			}
+
+			$sql = "SELECT count(*) as nb";
+			$sql .= " FROM ".MAIN_DB_PREFIX."overwrite_trans";
+			$sql .= " WHERE ".$this->db->decrypt("transkey")." = '".$this->db->escape($transkey)."'";
+			$sql .= " AND entity = ".((int) $entity);
+
+			$result = $this->db->query($sql);
+			if ($result) {
+				$row = $this->db->fetch_row($result);
+
+				if ($row[0] == 0) {   // If not found
+					$sql = "INSERT INTO ".MAIN_DB_PREFIX."overwrite_trans (entity,lang,transkey,transvalue)";
+					$sql .= " VALUES (";
+					$sql .= (int) $entity;
+					$sql .= ",'".$this->db->escape($lang)."'";
+					$sql .= ",'".$this->db->escape($transkey)."'";
+					$sql .= ",'".$this->db->escape($transvalue)."'";
+					$sql .= ")";
+
+					if (!$this->db->query($sql)) {
+						$err++;
+					}
+				} else {
+					dol_syslog(get_class($this)."::insert_overwrite_translation overwrite trans for key $transkey already exists", LOG_DEBUG);
+				}
+			} else {
+				$err++;
+			}
+		}
+
+		return $err;
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
 	 * Adds access rights
 	 *
 	 * @param  int<0,1>	$reinitadminperms 	If 1, we also grant them to all admin users
@@ -2191,8 +2265,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 			$handle = @opendir(dol_osencode($dir));
 			if (is_resource($handle)) {
 				while (($file = readdir($handle)) !== false) {
-					if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod' && substr($file, dol_strlen($file) - 10) == '.class.php') {
-						$modName = substr($file, 0, dol_strlen($file) - 10);
+					if (is_readable($dir.$file) && dol_substr($file, 0, 3) == 'mod' && dol_substr($file, dol_strlen($file) - 10) == '.class.php') {
+						$modName = dol_substr($file, 0, dol_strlen($file) - 10);
 						if ($modName && $modName != get_class($this)) {
 							include_once $dir.$file;
 							if (class_exists($modName)) {
