@@ -141,8 +141,8 @@ $staticcontratligne = new ContratLigne($db);
 $companystatic = new Societe($db);
 
 $arrayfields = array(
-	'cd.rowid'=>array('label'=>"TechnicalID", 'position'=>1, 'checked'=>(getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID')), 'enabled'=>(getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID'))),
-	'c.rowid'=>array('label'=>"ContractID", 'position'=>2, 'checked'=>(getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID')), 'enabled'=>(getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID'))),
+	'cd.rowid' => array('label' => "TechnicalID", 'checked' => (string) getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID'), 'enabled' => (string) getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID'), 'position' => 1),
+	'c.rowid' => array('label' => "ContractID", 'checked' => (string) getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID'), 'enabled' => (string) getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID'), 'position' => 2),
 	'c.ref' => array('label' => "Contract", 'checked' => '1', 'position' => 80),
 	'p.description' => array('label' => "Service", 'checked' => '1', 'position' => 80),
 	's.nom' => array('label' => "ThirdParty", 'checked' => '1', 'position' => 90),
