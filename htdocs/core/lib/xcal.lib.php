@@ -589,6 +589,7 @@ function calEncode($line)
  *  @param      string  $str        String to convert
  *  @param      int     $forcal     (optional) 1 = For cal
  *  @return     string              String converted
+ *  @phan-suppress DolibarrForbiddenFunctionPlugin
  */
 function quotedPrintEncode($str, $forcal = 0)
 {
@@ -611,7 +612,7 @@ function quotedPrintEncode($str, $forcal = 0)
 
 			// Do not use dol_strlen here, we need number of bytes
 			if ((strlen($newpara) + strlen($char)) >= 76) {
-				// New line with carray-return (CR) and line-feed (LF)
+				// New line with carriage-return (CR) and line-feed (LF)
 				$out .= $newpara."=\r\n";
 
 				// extra space for cal

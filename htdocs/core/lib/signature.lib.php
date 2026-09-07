@@ -94,7 +94,7 @@ function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1, $o
 	}
 
 	global $dolibarr_main_instance_unique_id;
-	$defaultsalt = substr(dol_hash('dolibarr'.$dolibarr_main_instance_unique_id, 'sha256'), 0, 32);		// Fallback if no specific salt was set
+	$defaultsalt = substr(dol_hash('dolibarr'.$dolibarr_main_instance_unique_id, 'sha256'), 0, 32);		// Fallback if no specific salt was set  @phan-suppress-current-line DolibarrForbiddenFunctionPlugin
 
 	$securekeyseed = '';
 
