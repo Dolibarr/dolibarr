@@ -1625,7 +1625,7 @@ class pdf_azur extends ModelePDFPropales
 				$posy += 3;
 				$pdf->SetXY($posx, $posy);
 				$pdf->SetTextColor(0, 0, 60);
-				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Project")." : ". $this->pdfTruncateText($pdf, $object->project->title, 50), '', 'R');
+				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Project")." : ". pdf_truncate_text($pdf, $object->project->title, 50), '', 'R');
 			}
 		}
 

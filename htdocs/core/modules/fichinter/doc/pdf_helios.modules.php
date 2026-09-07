@@ -663,7 +663,7 @@ class pdf_helios extends ModelePDFFicheinter
 			$posy += 4;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("RefCustomer")." : ".$this->pdfTruncateText($pdf, $outputlangs->convToOutputCharset($object->ref_client), 65), '', 'R');
+			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("RefCustomer")." : ".pdf_truncate_text($pdf, $outputlangs->convToOutputCharset($object->ref_client), 65), '', 'R');
 		}
 
 		if (!getDolGlobalString('MAIN_PDF_HIDE_CUSTOMER_CODE') && $object->thirdparty->code_client) {

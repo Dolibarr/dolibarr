@@ -636,7 +636,7 @@ class pdf_soleil extends ModelePDFFicheinter
 			$posy += 4;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("RefCustomer") . " : " . $this->pdfTruncateText($pdf, $outputlangs->convToOutputCharset($object->ref_client), 65), '', 'R');
+			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("RefCustomer") . " : " . pdf_truncate_text($pdf, $outputlangs->convToOutputCharset($object->ref_client), 65), '', 'R');
 		}
 
 

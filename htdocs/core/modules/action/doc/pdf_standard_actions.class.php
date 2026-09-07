@@ -379,7 +379,7 @@ class pdf_standard_actions
 
 				// Third party
 				$pdf->SetXY(45, $y);
-				$pdf->MultiCell(28, $height, $this->pdfTruncateText($pdf, $outputlangs->convToOutputCharset($obj->thirdparty), 28), 0, 'L', false);
+				$pdf->MultiCell(28, $height, pdf_truncate_text($pdf, $outputlangs->convToOutputCharset($obj->thirdparty), 28), 0, 'L', false);
 				$y1 = $pdf->GetY();
 
 				// Action code
@@ -395,12 +395,12 @@ class pdf_standard_actions
 				$pdf->SetXY(73, $y);
 				$labelactiontype = $outputlangs->transnoentitiesnoconv("Action".$code);
 				$labelactiontypeshort = $outputlangs->transnoentitiesnoconv("Action".$code.'Short');
-				$pdf->MultiCell(32, $height, $this->pdfTruncateText($pdf, $outputlangs->convToOutputCharset($labelactiontypeshort == "Action".$code.'Short' ? $labelactiontype : $labelactiontypeshort), 32), 0, 'L', false);
+				$pdf->MultiCell(32, $height, pdf_truncate_text($pdf, $outputlangs->convToOutputCharset($labelactiontypeshort == "Action".$code.'Short' ? $labelactiontype : $labelactiontypeshort), 32), 0, 'L', false);
 				$y2 = $pdf->GetY();
 
 				// Description of event
 				$pdf->SetXY(106, $y);
-				$pdf->MultiCell(94, $height, $outputlangs->convToOutputCharset($this->pdfTruncateText($pdf, dol_string_nohtmltag($text, 0), 250, 'right')), 0, 'L', false);
+				$pdf->MultiCell(94, $height, $outputlangs->convToOutputCharset(pdf_truncate_text($pdf, dol_string_nohtmltag($text, 0), 250, 'right')), 0, 'L', false);
 				$y3 = $pdf->GetY();
 
 				$i++;

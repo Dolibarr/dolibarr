@@ -1685,7 +1685,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 			$posy += 4;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("RefCustomer")." : ".$this->pdfTruncateText($pdf, $outputlangs->convToOutputCharset((string) $object->ref_client), 65), '', 'R');
+			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("RefCustomer")." : ".pdf_truncate_text($pdf, $outputlangs->convToOutputCharset((string) $object->ref_client), 65), '', 'R');
 		}
 
 		if (getDolGlobalInt('PDF_SHOW_PROJECT_TITLE')) {
@@ -1694,7 +1694,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 				$posy += 3;
 				$pdf->SetXY($posx, $posy);
 				$pdf->SetTextColor(0, 0, 60);
-				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Project")." : ".(empty($object->project->title) ? '' : $this->pdfTruncateText($pdf, $object->project->title, 50)), '', 'R');
+				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Project")." : ".(empty($object->project->title) ? '' : pdf_truncate_text($pdf, $object->project->title, 50)), '', 'R');
 			}
 		}
 

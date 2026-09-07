@@ -7,7 +7,7 @@
  * Copyright (C) 2016-2025  Charlene Benke          <charlene@patas-monkey.com>
  * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020       Josep Lluís Amador      <joseplluis@lliuretic.cat>
- * Copyright (C) 2024-2026	MDW	                    <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW	                    <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Mélina Joum			    <melina.joum@altairis.fr>
  * Copyright (C) 2024	    Nick Fragoulis
  *
@@ -2048,84 +2048,6 @@ abstract class CommonDocGenerator
 	}
 
 
-	/**
-	 * Truncates text to fit a specified width in TCPDF, with configurable ellipsis position.
-	 *
-	 * @param TCPDF  $pdf           TCPDF instance.
-	 * @param string $text          Text to truncate.
-	 * @param float  $max_width     Maximum allowed width in user units.
-	 * @param int|'left'|'right'    $ellipsis_pos  Ellipsis position: 0 = none, < 0 = start, > 0 = end.
-	 * @param string $ellipsis      Ellipsis string (default: UTF-8 ellipsis '\u{2026}').
-	 * @return string Truncated text with ellipsis if necessary.
-	 */
-	public function pdfTruncateText($pdf, $text, $max_width, $ellipsis_pos = 1, $ellipsis = "\u{2026}")
-	{
-		if ($ellipsis_pos == 0) {
-			$ellipsis = '';
-		}
-		if ($ellipsis_pos == 'left') {
-			// Keep left part of the string
-			$ellipsis_pos = 1;
-		}
-		if ($ellipsis_pos == 'right') {
-			// Keep right part of the string
-			$ellipsis_pos = 0;
-		}
-
-		$ellipsis_width = $pdf->GetStringWidth($ellipsis);
-		$available_width = $max_width - $ellipsis_width;
-
-		if ($available_width <= 0) {
-			return ($ellipsis_pos <= 0) ? $ellipsis : '';
-		}
-
-		$text_width = $pdf->GetStringWidth($text);
-		if ($text_width <= $max_width) {
-			return $text;
-		}
-
-		if ($ellipsis_pos < 0) {
-			// Ellipsis at start: truncate from the beginning
-			$low = 0;
-			$high = dol_strlen($text, 'UTF-8');
-			$best = $high;
-
-			while ($low <= $high) {
-				$mid = (int) (($low + $high) / 2);
-				$substring = dol_substr($text, $mid, null, 'UTF-8');
-				$substring_width = $pdf->GetStringWidth($substring);
-
-				if ($substring_width <= $available_width) {
-					$best = $mid;
-					$high = $mid - 1;
-				} else {
-					$low = $mid + 1;
-				}
-			}
-
-			return $ellipsis . dol_substr($text, $best, null, 'UTF-8');
-		} else {
-			// Ellipsis at end (default)
-			$low = 0;
-			$high = dol_strlen($text, 'UTF-8');
-			$best = 0;
-
-			while ($low <= $high) {
-				$mid = (int) (($low + $high) / 2);
-				$substring = dol_substr($text, 0, $mid, 'UTF-8');
-				$substring_width = $pdf->GetStringWidth($substring);
-
-				if ($substring_width <= $available_width) {
-					$best = $mid;
-					$low = $mid + 1;
-				} else {
-					$high = $mid - 1;
-				}
-			}
-
-			return dol_substr($text, 0, $best, 'UTF-8') . $ellipsis;
-		}
-	}
 
 	/**
 	 *  Define Array Column Field for extrafields

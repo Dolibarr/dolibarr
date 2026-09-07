@@ -1254,7 +1254,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 			$posy += 4;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("RefSupplier")." : ".$this->pdfTruncateText($pdf, $outputlangs->convToOutputCharset($object->ref_fourn), 65), '', 'R');
+			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("RefSupplier")." : ".pdf_truncate_text($pdf, $outputlangs->convToOutputCharset($object->ref_fourn), 65), '', 'R');
 		}
 
 		if ($object->thirdparty->code_fournisseur) {

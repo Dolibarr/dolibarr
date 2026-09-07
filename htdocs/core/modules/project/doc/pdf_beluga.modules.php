@@ -662,7 +662,7 @@ class pdf_beluga extends ModelePDFProjects
 								} else {
 									$pdf->SetXY($this->posxamountht, $curY);
 									if ($key == 'agenda') {
-										$textforamount = $this->pdfTruncateText($pdf, $element->label, 26);
+										$textforamount = pdf_truncate_text($pdf, $element->label, 26);
 										$pdf->MultiCell($this->posxstatut - $this->posxamountht, 3, $textforamount, 1, 'L');
 									} else {
 										$pdf->MultiCell($this->posxstatut - $this->posxamountht, 3, "", 1, 'R');
