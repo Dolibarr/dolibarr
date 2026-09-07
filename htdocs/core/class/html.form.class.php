@@ -1810,8 +1810,8 @@ class Form
 				$out .= ' selected';
 			}
 			$out .= '>';
-			if (!$showempty) {
-				$out .= $showempty;
+			if (!is_numeric($showempty)) {
+				$out .= $langs->trans($showempty);
 			}
 			$out .= '</option>';
 		}
