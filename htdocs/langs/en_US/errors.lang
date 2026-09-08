@@ -482,4 +482,6 @@ SomeShipmentExists=Error, there is some shipment linked to the order. Deletion r
 WarningEvaluationEmptyValidate=Can't validate evaluation, levels on skills not defined
 ErrorBadParametersForDirectDebitFileCreate=Can't create bank transfer file: expected format parameter is not provided.
 ErrorBadParametersForDirectDebitFileCreateDids=Can't create bank transfer file: IDs of existing payment requests are not provided.
+ErrorFieldIsNotEditable = Error field is not editable
+FieldNotAllowedForEdit = Field not allowed for edit
 ErrorExpeditionQtyTooHigh=Shipped quantity (%s) exceeds the remaining quantity to deliver (%s) for product %s.
