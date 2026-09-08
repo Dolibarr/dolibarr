@@ -26,6 +26,18 @@ Use this skill when you need to create a PHP script that:
 - Allows users to tear down/clean up the test data
 - Uses Dolibarr's authentication and session system
 
+
+## Relationship with AGENTS.md
+
+The instructions in this file are **complementary to** the instructions defined in `AGENTS.md`.
+
+- `AGENTS.md` contains the general instructions and rules for the project.
+- `SKILLS.md` contains additional instructions specific to skills.
+- Unless explicitly stated otherwise, the instructions from both files apply.
+- `SKILLS.md` does not replace or override `AGENTS.md`.
+- If an instruction in `SKILLS.md` conflicts with `AGENTS.md`, follow the rules defined by `AGENTS.md`.
+
+
 ## Quick Start
 
 1. Read the Dolibarr issue to understand what data needs to be created
@@ -35,6 +47,9 @@ Use this skill when you need to create a PHP script that:
 5. Create test data with unique identifiers (use timestamps)
 6. Output direct links with `target="_blank"` to view data
 7. Add teardown logic that deletes in reverse order of creation
+
+If you want to make an online test, you can find the URL of instance info file htdocs/conf/conf.php in parameter $dolibarr_main_url_root. 
+You can ignore and bypass the warning about HTTPS certificate. Ask the password if you need one without trying to get it from database. 
 
 ## Required Files
 
