@@ -58,7 +58,7 @@ class BonPrelevement extends CommonObject
 	public $table_element = 'prelevement_bons';
 
 	/**
-	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 * @var string String with name of icon
 	 */
 	public $picto = 'payment';
 

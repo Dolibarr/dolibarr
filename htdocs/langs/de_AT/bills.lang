@@ -9,6 +9,7 @@ CardBill=Rechnungskarte
 BillShortStatusValidated=Bestätigt
 BillShortStatusClosedUnpaid=geschlossen
 ValidateBill=Validate Rechnung
+RecurringInvoiceSource=Source recurring invoice
 CreditNote=Gutschrift
 RelatedBill=Verwandte Rechnung
 PaymentTypeShortTRA=Entwurf

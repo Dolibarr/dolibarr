@@ -14,46 +14,46 @@
 # Module label 'ModuledatapolicyName'
 Module4100Name = سياسة خصوصية البيانات
 # Module description 'ModuledatapolicyDesc'
-Module4100Desc = نموذج لإدارة خصوصية البيانات (التوافق مع اللائحة العامة لحماية البيانات)
+Module4100Desc = وحدة لإدارة خصوصية البيانات والامتثال للائحة العامة لحماية البيانات (GDPR)
 # Administration page
-datapolicySetup = نموذج إعداد سياسة خصوصية البيانات
+datapolicySetup = إعداد وحدة سياسة خصوصية البيانات
 DataDeletion=حذف البيانات
 DataAnonymization=إخفاء هوية البيانات
-DataAnonymizationOrDeletion=Anonymization or deletion of data
-datapolicySetupPage = اعتمادًا على قوانين بلدك (مثلاً <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external"> المادة 5</a> من اللائحة العامة لحماية البيانات -GDPR-)، يجب الاحتفاظ بالبيانات الشخصية لفترة لا تتجاوز المدة اللازمة للبيانات للغرض الذي تم جمعها من أجله، باستثناء أغراض الأرشفة.<br> ستقوم هذه الوحدة بإجراء إخفاء الهوية تلقائيًا بعد مدة معينة بدون أحداث (المدة التي ستشير إليها أدناه) وإذا لم يكن للكائن أي علاقة أو عمل موجودين.
-NB_MONTHS = %s شهر
-ONE_YEAR = 1 سنة
-NB_YEARS = %s سنة
-DATAPOLICY_TIERS_CLIENT = العميل
-DATAPOLICY_TIERS_PROSPECT = فرصة
-DATAPOLICY_TIERS_PROSPECT_CLIENT = احتمال/العميل
-DATAPOLICY_TIERS_NIPROSPECT_NICLIENT = ولا احتمال/ ولا العميل
-DATAPOLICY_TIERS_FOURNISSEUR = المورد
-DATAPOLICY_CONTACT_CLIENT = العميل
-DATAPOLICY_CONTACT_PROSPECT = فرصة
-DATAPOLICY_CONTACT_PROSPECT_CLIENT = احتمال/العميل
-DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = ولا احتمال/ ولا العميل
-DATAPOLICY_CONTACT_FOURNISSEUR = المورد
+DataAnonymizationOrDeletion=إخفاء هوية البيانات أو حذفها
+datapolicySetupPage = وفقًا للقوانين السارية في بلدك، مثل <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">المادة 5</a> من اللائحة العامة لحماية البيانات (GDPR)، يجب ألا يُحتفظ بالبيانات الشخصية مدة تتجاوز الفترة اللازمة للغرض الذي جُمعت من أجله، باستثناء أغراض الأرشفة.<br>تُخفي هذه الوحدة هوية البيانات تلقائيًا بعد انقضاء مدة محددة من دون تسجيل أي أحداث، وفق المدة المحددة أدناه، بشرط ألا تكون هناك عناصر أعمال فرعية قائمة مرتبطة بالعنصر المعني.
+NB_MONTHS = %s أشهر
+ONE_YEAR = 1 سنة واحدة
+NB_YEARS = %s سنوات
+DATAPOLICY_TIERS_CLIENT = عميل
+DATAPOLICY_TIERS_PROSPECT = عميل محتمل
+DATAPOLICY_TIERS_PROSPECT_CLIENT = عميل محتمل/عميل
+DATAPOLICY_TIERS_NIPROSPECT_NICLIENT = ليس عميل محتمل/ ليس عميل
+DATAPOLICY_TIERS_FOURNISSEUR = مورد
+DATAPOLICY_CONTACT_CLIENT = عميل
+DATAPOLICY_CONTACT_PROSPECT = عميل محتمل
+DATAPOLICY_CONTACT_PROSPECT_CLIENT = عميل محتمل/عميل
+DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = ليس عميل محتمل/ ليس عميل
+DATAPOLICY_CONTACT_FOURNISSEUR = مورد
 DATAPOLICY_ADHERENT = عضو
-DATAPOLICY_RECRUITMENT_CANDIDATURE = Application
-DATAPOLICY_Tooltip_SETUP=The anonymization is done by the scheduled job "%s" ran by the module "%s", so this module must be enabled and be working correctly.
-SendAgreementText = يمكنك إرسال بريد إلكتروني بالقانون العام لحماية البيانات (GDPR) إلى جميع جهات الاتصال ذات الصلة (الذين لم يتلقوا بعد رسالة بريد إلكتروني و والتي لم تسجل أي شيء بشأن اتفاقية القانون العام لحماية البيانات الخاصة بهم). للقيام بذلك، استخدم الزر التالي.
+DATAPOLICY_RECRUITMENT_CANDIDATURE = طلب توظيف
+DATAPOLICY_Tooltip_SETUP=تُنفَّذ عملية إخفاء الهوية بواسطة المهمة المجدولة «%s» التي تشغّلها الوحدة «%s»؛ لذلك يجب تفعيل هذه الوحدة و التأكد من عملها بصورة صحيحة.
+SendAgreementText = يمكنك إرسال رسالة بريد إلكتروني بشأن اللائحة العامة لحماية البيانات GDPR إلى جميع جهات الاتصال المعنية (التي لم تتلقَّ الرسالة بعد، ولم تُسجَّل لها موافقة أو رفض بموجب اللائحة العامة لحماية البيانات GDPR بشأن معالجة بياناتها الشخصية). استخدم الزر الآتي لتنفيذ ذلك.
 SendAgreement = إرسال رسائل البريد الإلكتروني
-AllAgreementSend = تم إرسال كافة رسائل البريد الإلكتروني
-TXTLINKDATAPOLICYACCEPT = نص الرابط "الاتفاقية"
-TXTLINKDATAPOLICYREFUSE = نص الرابط "الخلاف"
-DelayForAnonymization=تأخير إخفاء الهوية
-DelayForDeletion=تأخير الحذف
+AllAgreementSend = تم إرسال جميع رسائل البريد الإلكتروني
+TXTLINKDATAPOLICYACCEPT = نص رابط «الموافقة»
+TXTLINKDATAPOLICYREFUSE = نص رابط «الرفض»
+DelayForAnonymization=المهلة قبل إخفاء الهوية
+DelayForDeletion=المهلة قبل الحذف
 # Extrafields
-DATAPOLICY_BLOCKCHECKBOX = اللائحة العامة لحماية البيانات: معالجة البيانات الشخصية
-DATAPOLICY_consentement = تم الحصول على الموافقة لمعالجة البيانات الشخصية
-DATAPOLICY_opposition_traitement = يعارض معالجة بياناته الشخصية
-DATAPOLICY_opposition_prospection = يعارض معالجة بياناته الشخصية لأغراض التنقيب
+DATAPOLICY_BLOCKCHECKBOX = اللائحة العامة لحماية البيانات (GDPR): معالجة البيانات الشخصية
+DATAPOLICY_consentement = تم الحصول على الموافقة على معالجة البيانات الشخصية
+DATAPOLICY_opposition_traitement = يعترض صاحب البيانات على معالجة بياناته الشخصية
+DATAPOLICY_opposition_prospection = يعترض صاحب البيانات على معالجة بياناته الشخصية لأغراض التسويق
 # Notes added during an anonymization
-DATAPOLICY_date = تاريخ الاتفاق/الخلاف الناتج المحلي الإجمالي
-DATAPOLICY_send = تاريخ إرسال البريد الإلكتروني للاتفاقية
-MailSent = تم ارسال البريد الالكتروني
+DATAPOLICY_date = تاريخ الموافقة أو الرفض وفق اللائحة العامة لحماية البيانات (GDPR)
+DATAPOLICY_send = تاريخ إرسال رسالة طلب الموافقة
+MailSent = تم إرسال رسالة البريد الإلكتروني
 NUMBER_MONTH_BEFORE_DELETION = عدد الأشهر قبل الحذف
-TheFollowingFieldsAreReplaceWith=Some fields will be replaced by a unique value:
-OtherFieldsAreReplaceWithStaticValues=Some other fields are replaced by a static value:
-QualifiedNumber=Qualified record count
+TheFollowingFieldsAreReplaceWith=ستُستبدل الحقول التالية بقيمة موحّدة:
+OtherFieldsAreReplaceWithStaticValues=ستُستبدل الحقول الأخرى بقيم ثابتة:
+QualifiedNumber=عدد السجلات المستوفية للشروط

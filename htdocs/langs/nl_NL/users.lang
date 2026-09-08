@@ -171,4 +171,4 @@ AtNextLogin=Bij de volgende afspraak
 UserDoesNotHaveRightsToChangeHisPassword=Deze gebruiker heeft niet de rechten om zijn eigen wachtwoord te wijzigen.
 NotPossible=Niet mogelijk
 NoPasswordGenerationRuleConfigured=De engine of regel voor het genereren van wachtwoorden is niet ingesteld of staat ingesteld op een leeg wachtwoord op de instellingenpagina.
-OnlyAdminUsersCanDeleteAdminUsers=Only admin users can delete admin users
+OnlyAdminUsersCanDeleteAdminUsers=Alleen beheerders kunnen beheerders verwijderen.

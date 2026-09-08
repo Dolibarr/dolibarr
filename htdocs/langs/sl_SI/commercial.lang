@@ -90,6 +90,7 @@ ThisIsInformationOnDocumentToSignFichinter=To je informacija o intervenciji v po
 ThisIsInformationOnDocumentToSignSociete_rib=To so informacije o mandatu SEPA za podpis
 ThisIsInformationOnDocumentToSignExpedition= This is information on shipment to sign
 SignatureProposalRef=Podpis ponudbe %s
+SignatureOrderRef=Signature of sale order %s
 SignatureContractRef=Podpis pogodbe %s
 SignatureFichinterRef=Podpis intervencije %s
 SignatureSociete_ribRef=Podpis mandata SEPA %s

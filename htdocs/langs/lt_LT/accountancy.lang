@@ -202,6 +202,7 @@ DiscountReceived=Discount received
 DONATION_ACCOUNTINGACCOUNT=Sąskaita (iš sąskaitų plano), naudojama aukoms registruoti (aukų modulis)
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Sąskaita (iš sąskaitų plano), naudojama narystės prenumeratoms registruoti (Narystės modulis – jei narystė užregistruota be sąskaitos faktūros)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Sąskaita (iš sąskaitų plano), kuri bus naudojama kaip numatytoji sąskaita klientų indėliams registruoti
+ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT_FOR_VAT=Account (from the Chart Of Account) to be used as the default account for VAT on customer deposit used in bindings
 UseAuxiliaryAccountOnCustomerDeposit=Išsaugoti kliento sąskaitą kaip individualią sąskaitą dukterinėje knygoje pradinio mokėjimo eilutėms (jei išjungta, individuali sąskaita pradinio mokėjimo eilutėms liks tuščia)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default account to register supplier deposit
 UseAuxiliaryAccountOnSupplierDeposit=Tiekėjo sąskaitą laikyti kaip individualią sąskaitą dukterinėje knygoje pradinio mokėjimo eilutėms (jei išjungta, individuali sąskaita pradinio mokėjimo eilutėms liks tuščia)

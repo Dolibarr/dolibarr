@@ -302,6 +302,10 @@ $arrayfields['p.note_private'] = array('label' => 'NotePrivate', 'position' => 3
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
+// Add hook to complete $arrayfields
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+
 $object->fields = dol_sort_array($object->fields, 'position');
 //$arrayfields['anotherfield'] = array('type'=>'integer', 'label'=>'AnotherField', 'checked'=>1, 'enabled'=>1, 'position'=>90, 'csslist'=>'right');
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -1646,7 +1650,7 @@ while ($i < $imaxinloop) {
 		// Show here line of result
 		print '<tr data-rowid="'.$object->id.'" class="oddeven row-with-select"';
 		if ($contextpage == 'poslist') {
-			print ' onclick="location.href=\'list.php?action=change&contextpage=poslist&idcustomer='.$obj->socid.'&idcontact='.$obj->rowid.'&place='.urlencode($place).'\'"';
+			print ' onclick="location.href=\'list.php?action=change&token='.newToken().'&contextpage=poslist&idcustomer='.$obj->socid.'&idcontact='.$obj->rowid.'&place='.urlencode($place).'\'"';
 		}
 		print '>';
 

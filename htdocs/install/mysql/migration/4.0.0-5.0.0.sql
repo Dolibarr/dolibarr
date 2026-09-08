@@ -251,7 +251,7 @@ DROP TABLE tmp_links_double;
 --select objectid, label, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_links where label is not null group by objectid, label having count(rowid) >= 2;
 CREATE TABLE tmp_links_double AS (SELECT objectid, label, MAX(rowid) AS max_rowid, COUNT(rowid) AS count_rowid FROM llx_links WHERE label IS NOT NULL GROUP BY objectid, label HAVING COUNT(rowid) >= 2);
 --select * from tmp_links_double;
-DELETE FROM llx_links WHERE (rowid, label) IN (SELECT max_rowid, label FROM tmp_links_double);	--update to avoid duplicate, delete to delete
+DELETE FROM llx_links WHERE (rowid, label) IN (SELECT max_rowid, label FROM tmp_links_double);	-- update to avoid duplicate, delete to delete
 DROP TABLE tmp_links_double;
 
 ALTER TABLE llx_links ADD UNIQUE INDEX uk_links (objectid,label);

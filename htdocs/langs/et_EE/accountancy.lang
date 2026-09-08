@@ -202,6 +202,7 @@ DiscountReceived=Discount received
 DONATION_ACCOUNTINGACCOUNT=Annetuste registreerimiseks kasutatav konto (kontoplaanist) (annetuste moodul)
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Konto (kontoplaanist), mida kasutatakse liikmelisuse registreerimiseks (liikmelisuse moodul - kui liikmelisus on registreeritud ilma arvet esitamata)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Konto (kontoplaanist), mida kasutatakse kliendi sissemakse registreerimiseks vaikimisi kontona
+ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT_FOR_VAT=Account (from the Chart Of Account) to be used as the default account for VAT on customer deposit used in bindings
 UseAuxiliaryAccountOnCustomerDeposit=Salvesta kliendikonto ettemaksu ridade jaoks tütarettevõtte pearaamatus individuaalse kontona (kui see on keelatud, jääb ettemaksu ridade individuaalne konto tühjaks)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default account to register supplier deposit
 UseAuxiliaryAccountOnSupplierDeposit=Salvesta tarnija konto ettemaksude ridade jaoks tütarettevõtte pearaamatus individuaalse kontona (kui see on keelatud, jääb ettemaksu ridade individuaalne konto tühjaks)

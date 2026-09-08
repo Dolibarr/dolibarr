@@ -202,6 +202,7 @@ DiscountReceived=Discount received
 DONATION_ACCOUNTINGACCOUNT=用於記錄捐款的會計科目(捐款模組)
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=用於記錄會員訂閱的會計科目(會員模組 - 若未以發票記錄會員費)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=用作記錄客戶預付款的預設會計科目(來自會計科目表)
+ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT_FOR_VAT=Account (from the Chart Of Account) to be used as the default account for VAT on customer deposit used in bindings
 UseAuxiliaryAccountOnCustomerDeposit=將客戶帳戶以個別帳戶形式儲存在預付款的明細分類帳中(若停用，預付款明細將不含個別帳戶)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default account to register supplier deposit
 UseAuxiliaryAccountOnSupplierDeposit=將供應商帳戶以個別帳戶形式儲存在預付款的明細分類帳中(若停用，預付款明細將不含個別帳戶)

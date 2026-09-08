@@ -315,6 +315,9 @@ if ($contextpage == 'lead') {
 	}
 }
 
+// Add hook to complete $arrayfields
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -1365,7 +1368,8 @@ $moreforfilter .= img_picto($tmptitle, 'contact', 'class="pictofixedwidth"').$fo
 
 $moreforfilter .= '</div>';
 
-// If the user can view thirdparties other than his'
+// If the user can view thirdparties other than his', we offer the filter assigned to
+// TODO This must be moved on the dedicated column "Assigned to".
 if ($user->hasRight('user', 'user', 'lire')) {
 	$langs->load("commercial");
 	$moreforfilter .= '<div class="divsearchfield">';
@@ -2121,7 +2125,9 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['p.title']['checked'])) {
 			print '<td class="" title="'.dolPrintHTMLForAttribute($obj->title).'">';
 			print '<div class="twolinesmax-normallineheight minwidth200onall">';
+			print '<span class="doltext opacitymedium">';
 			print dolPrintHTML($obj->title);
+			print '</span>';
 			print '</div>';
 			print '</td>';
 			if (!$i) {
@@ -2188,8 +2194,6 @@ while ($i < $imaxinloop) {
 			print '<td class="tdoverflowmax100">';
 			if ($obj->socid) {
 				print $companystatic->code_client;
-			} else {
-				print '&nbsp;';
 			}
 			print '</td>';
 			if (!$i) {
@@ -2201,8 +2205,6 @@ while ($i < $imaxinloop) {
 			print '<td class="tdoverflowmax100">';
 			if ($obj->socid) {
 				print $companystatic->code_fournisseur;
-			} else {
-				print '&nbsp;';
 			}
 			print '</td>';
 			if (!$i) {

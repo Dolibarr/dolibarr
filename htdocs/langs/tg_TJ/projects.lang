@@ -258,7 +258,7 @@ OtherFilteredTasks=Дигар вазифаҳои филтршуда
 NoAssignedTasks=Ҳеҷ гуна вазифаҳои таъиншуда ёфт нашуданд (лоиҳаи/вазифаҳоро ба корбари кунунӣ аз қуттии интихобии боло таъин кунед, то вақтро дар он дохил кунед)
 ThirdPartyRequiredToGenerateIntervention=Шахси сеюм бояд дар лоиҳа муайян карда шавад, то дахолатро эҷод кунад.
 ThirdPartyRequiredToGenerateInvoice=Дар лоиҳа бояд шахси сеюм муайян карда шавад, то тавонад ҳисобнома -фактура кунад.
-ChooseANotYetAssignedTask=Вазифаеро, ки ҳоло ба шумо таъин нашудааст, интихоб кунед
+ChooseANotYetAssignedTask=Tasks not yet assigned to you
 # Comments trans
 AllowCommentOnTask=Ба корбарон оид ба вазифаҳо шарҳ диҳед
 AllowCommentOnProject=Ба корбарон оид ба лоиҳаҳо шарҳ диҳед

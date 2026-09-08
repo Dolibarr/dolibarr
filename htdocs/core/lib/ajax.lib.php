@@ -470,10 +470,11 @@ function ajax_dialog($title, $message, $w = 350, $h = 150)
  * @param	'resolve'|'off'	$widthTypeOfAutocomplete	'resolve' or 'off'
  * @param	string		$idforemptyvalue			Defaults to '-1'
  * @param	string		$morecss					More css
+ * @param 	string 		$placeholder 				String to use as placeholder (Not yet tested !)
  * @return	string									Return html string to convert a select field into a combo, or '' if feature has been disabled for some reason.
  * @see selectArrayAjax() of html.form.class
  */
-function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 0, $forcefocus = 0, $widthTypeOfAutocomplete = 'resolve', $idforemptyvalue = '-1', $morecss = '')
+function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 0, $forcefocus = 0, $widthTypeOfAutocomplete = 'resolve', $idforemptyvalue = '-1', $morecss = '', $placeholder = '')
 {
 	global $conf;
 
@@ -503,13 +504,23 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
 	$moreselect2theme = preg_replace('/widthcentpercentminus[^\s]*/', '', $moreselect2theme);
 
 	$tmpplugin = 'select2';
+	$componentname = (preg_match('/^\./', $htmlname) ? $htmlname : '#'.$htmlname);	// To support when htmlname is not an ID but a class
 	$msg = "\n";
 	$msg .= '<!-- JS CODE TO ENABLE '.$tmpplugin.' for id = '.$htmlname.' -->'."\n";
 	$msg .= "<script>\n";
 	$msg .= '$(document).ready(function () {
-		$(\''.(dol_escape_js(preg_match('/^\./', $htmlname) ? $htmlname : '#'.$htmlname)).'\').'.$tmpplugin.'({';
-	if (preg_match('/onrightofpage/', $morecss)) {	// when $morecss contains 'onrightofpage', the select2 component must also be inside a parent with class="parentonrightofpage"
-		$msg .= ' dropdownAutoWidth: true, dropdownParent: $(\'#'.$htmlname.'\').parent(), '."\n";
+		$(\''.dol_escape_js($componentname).'\').'.$tmpplugin.'({';
+	// when $morecss contains 'onrightofpage', the select2 component must also be inside a parent with class="parentonrightofpage"
+	if (preg_match('/onrightofpage/', $morecss)) {	// In this cas, htmlname must be an ID not a class.
+		$msg .= ' dropdownAutoWidth: true, ';
+		$msg .= ' dropdownParent: $(\'#'.$htmlname.'\').parent(), ';
+	}
+	if ($placeholder) {
+		$msg .= '
+					placeholder: {
+					    id: \'-1\',
+					    text: \''.dol_escape_js($placeholder).'\'
+					  },';
 	}
 	$msg .= '
 			dir: \'ltr\',
@@ -541,7 +552,7 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
 			theme: \'default'.dol_escape_js($moreselect2theme).'\',		/* to add css on generated html components */
 			containerCssClass: \':all:\',		/* Line to add class of origin SELECT propagated to the new <span class="select2-selection...> tag */
 			selectionCssClass: \':all:\',		/* Line to add class of origin SELECT propagated to the new <span class="select2-selection...> tag */
-			dropdownCssClass: \'ui-dialog\',
+			dropdownCssClass: \'dol-dropdown-dialog dol-dropdown-dialogmono\',
 			templateResult: function (data, container) {	/* Format visible output into combo list */
  				/* Code to add class of origin OPTION propagated to the new select2 <li> tag */
 				if (data.element) { $(container).addClass($(data.element).attr("class")); }
