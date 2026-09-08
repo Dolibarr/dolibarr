@@ -2692,7 +2692,8 @@ if ($action == 'create' && $permissiontoadd) {
 			print '</td>';
 
 			// Qty in other receptions (with reception and warehouse used)
-			if ($origin && $origin_id > 0) {
+			// Note: here $origin is always a non-empty string (normalized above), so only $origin_id needs to be tested
+			if ($origin_id > 0) {
 				print '<td class="center nowrap linecolqtyinotherreceptions">';
 				$htmltooltip = '';
 				$qtyalreadyreceived = 0;
@@ -2760,7 +2761,7 @@ if ($action == 'create' && $permissiontoadd) {
 							print '<td class="nowraponall left"><input name="batch'.$line_id.'" id="batch'.$line_id.'" type="text" value="'.$lines[$i]->batch.'"><br>';
 							if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
 								print $langs->trans('SellByDate').' : ';
-								print $form->selectDate($lines[$i]->sellby, 'dlc'.$line_id, 0, 0, 1, "").'</br>';
+								print $form->selectDate($lines[$i]->sellby, 'dlc'.$line_id, 0, 0, 1, "").'<br>';
 							}
 							if (!getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
 								print $langs->trans('EatByDate').' : ';

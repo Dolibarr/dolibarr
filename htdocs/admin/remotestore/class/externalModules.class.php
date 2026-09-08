@@ -638,7 +638,8 @@ class ExternalModules
 					$remoteModuleName = preg_replace('/-' . preg_quote($remoteVersion, '/') . '$/', '', $remoteModuleName);
 					if (!empty($installedModules[$remoteModuleName]) && $remoteVersion && $remoteVersion != 'unknown') {
 						$localVersion = $installedModules[$remoteModuleName];
-						if ($localVersion && $localVersion != 'unknown') {
+						// $localVersion is guaranteed non-empty here (see !empty() test above), so only the 'unknown' value must be excluded
+						if ($localVersion != 'unknown') {
 							$versionDiff = $this->versionCompare($localVersion, $remoteVersion);
 							if ($versionDiff < 0) {
 								$buttonLabel = $langs->trans("Upgrade");

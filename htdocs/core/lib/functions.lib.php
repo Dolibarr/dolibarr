@@ -9770,7 +9770,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0, $sqltoadd =
 						$tmps = '';
 
 						if ($isSellist && $key && $table && $label) {
-							$newres .= $field . " IN (SELECT t." . $db->sanitize($key) . " FROM " . $db->prefix() . $db->sanitize($table) . " AS t WHERE t." . $db->sanitize($label) . " LIKE '%" . $db->escape($tmpcrit2) . "%')";
+							$newres .= $field . " IN (SELECT t." . $db->sanitize((string) $key) . " FROM " . $db->prefix() . $db->sanitize((string) $table) . " AS t WHERE t." . $db->sanitize((string) $label) . " LIKE '%" . $db->escape($tmpcrit2) . "%')";
 						} else {
 							if (preg_match('/^!/', $tmpcrit)) {
 								$tmps .= $db->sanitize($field) . " NOT LIKE "; // ! as exclude character
@@ -10679,6 +10679,14 @@ function getElementProperties($elementType)
 		$subelement = '';
 		$classname = 'FactureFournisseur';
 		$table_element = 'facture_fourn';
+	} elseif ($elementType == 'invoice_supplier_rec' || $elementType == 'supplier_invoice_rec' || $elementType == 'facture_fourn_rec') {
+		$classpath = 'fourn/class';
+		$module = 'fournisseur';
+		$classfile = 'fournisseur.facture-rec';
+		$element = 'invoice_supplier_rec';
+		$subelement = '';
+		$classname = 'FactureFournisseurRec';
+		$table_element = 'facture_fourn_rec';
 	} elseif ($elementType == 'facture_fourn_det') {
 		$classpath = 'fourn/class';
 		$module = 'fournisseur';

@@ -527,7 +527,7 @@ print '</tr>'."\n";
 print '</table>';
 print '</div>';
 
-print '</br>';
+print '<br>';
 
 if (count($echeances->lines) == 0) {
 	$label = $langs->trans("Create");

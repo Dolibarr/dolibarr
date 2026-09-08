@@ -7736,18 +7736,18 @@ class Form
 	/**
 	 *  Output html select to select thirdparty
 	 *
-	 * @param string 	$page 					Page
-	 * @param string 	$selected 				Id preselected
-	 * @param string 	$htmlname 				Name of HTML select
-	 * @param string	$filter 				Optional filter criteria. WARNING: To avoid SQL injection, only few chars [.a-z0-9 =<>()] are allowed here (example: 's.rowid <> x', 's.client IN (1,3)'). Do not use a filter coming from input of users.
-	 * @param string|int<0,1> 	$showempty 		Add an empty field (Can be '1' or text key to use on empty line like 'SelectThirdParty')
-	 * @param int<0,1>	$showtype 				Show third party type in combolist (customer, prospect or supplier)
-	 * @param int<0,1>	$forcecombo 			Force to use combo box
+	 * @param 	string 				$page 					Page
+	 * @param 	string 				$selected 				Id preselected
+	 * @param 	string 				$htmlname 				Name of HTML select
+	 * @param 	string				$filter 				Optional filter criteria. WARNING: To avoid SQL injection, only few chars [.a-z0-9 =<>()] are allowed here (example: 's.rowid <> x', 's.client IN (1,3)'). Do not use a filter coming from input of users.
+	 * @param 	string|int<0,1> 	$showempty 				Add an empty field (Can be '1' or text key to use on empty line like 'SelectThirdParty')
+	 * @param 	int<0,1>			$showtype 				Show third party type in combolist (customer, prospect or supplier)
+	 * @param 	int<0,1>			$forcecombo 			Force to use combo box
 	 * @param 	array<array{method:string,url:string,htmlname:string,params:array<string,string>}> 	$events 	Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
-	 * @param int<0,1>	$nooutput 				No print output. Return it only.
-	 * @param int[] 	$excludeids 			Exclude IDs from the select combo
-	 * @param string 	$textifnothirdparty 	Text to show if no thirdparty
-	 * @return    string                        HTML output or ''
+	 * @param 	int<0,1>			$nooutput 				No print output. Return it only.
+	 * @param 	array<int|string> 	$excludeids 			Exclude IDs from the select combo
+	 * @param 	string 				$textifnothirdparty 	Text to show if no thirdparty
+	 * @return	string              						HTML output or ''
 	 */
 	public function form_thirdparty($page, $selected = '', $htmlname = 'socid', $filter = '', $showempty = 0, $showtype = 0, $forcecombo = 0, $events = array(), $nooutput = 0, $excludeids = array(), $textifnothirdparty = '')
 	{
@@ -9424,22 +9424,22 @@ class Form
 	/**
 	 *  Return list of members in Ajax if Ajax activated or go to selectTicketsList
 	 *
-	 * @param string $selected Preselected tickets
-	 * @param string $htmlname Name of HTML select field (must be unique in page).
-	 * @param string $filtertype To add a filter
-	 * @param int $limit Limit on number of returned lines
-	 * @param int $status Ticket status
-	 * @param string $selected_input_value Value of preselected input text (for use with ajax)
-	 * @param int<0,3> $hidelabel Hide label (0=no, 1=yes, 2=show search icon before and placeholder, 3 search icon after)
-	 * @param array<string,string|string[]> $ajaxoptions Options for ajax_autocompleter
-	 * @param int $socid Thirdparty Id (to get also price dedicated to this customer)
-	 * @param string|int<0,1> $showempty '' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
-	 * @param int $forcecombo Force to use combo box
-	 * @param string $morecss Add more css on select
-	 * @param array<string,string> $selected_combinations Selected combinations. Format: array([attrid] => attrval, [...])
-	 * @param int<0,1>	$nooutput No print, return the output into a string
-	 * @param string[] 	$excludeids Exclude IDs from the select combo
-	 * @return        string
+	 * @param 	string 		$selected Preselected tickets
+	 * @param 	string 		$htmlname Name of HTML select field (must be unique in page).
+	 * @param 	string 		$filtertype To add a filter
+	 * @param 	int 		$limit Limit on number of returned lines
+	 * @param 	int 		$status Ticket status
+	 * @param 	string 		$selected_input_value Value of preselected input text (for use with ajax)
+	 * @param 	int<0,3> 	$hidelabel Hide label (0=no, 1=yes, 2=show search icon before and placeholder, 3 search icon after)
+	 * @param 	array<string,string|string[]> $ajaxoptions Options for ajax_autocompleter
+	 * @param 	int 		$socid Thirdparty Id (to get also price dedicated to this customer)
+	 * @param 	string|int<0,1> $showempty '' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
+	 * @param 	int 		$forcecombo Force to use combo box
+	 * @param 	string 		$morecss Add more css on select
+	 * @param 	array<string,string> $selected_combinations Selected combinations. Format: array([attrid] => attrval, [...])
+	 * @param 	int<0,1>	$nooutput No print, return the output into a string
+	 * @param 	string[] 	$excludeids Exclude IDs from the select combo
+	 * @return 	string
 	 */
 	public function selectMembers($selected = '', $htmlname = 'adherentid', $filtertype = '', $limit = 0, $status = 1, $selected_input_value = '', $hidelabel = 0, $ajaxoptions = array(), $socid = 0, $showempty = '1', $forcecombo = 0, $morecss = '', $selected_combinations = null, $nooutput = 0, $excludeids = array())
 	{
