@@ -2,6 +2,7 @@
 /* Copyright (C) 2019 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2025-2026	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Jose Martinez				<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -999,7 +1000,7 @@ if ($object->status == $object::STATUS_DRAFT || $object->status == $object::STAT
 } else {
 	// Actions or link to stock movement
 	print '<td class="right">';
-	//print $langs->trans("StockMovement");
+	print $langs->trans("StockMovement");
 	print '</td>';
 }
 print '</tr>';
@@ -1248,11 +1249,12 @@ if ($resql) {
 				print $obj->qty_view;	// qty found
 				print '</td>';
 			}
-			print '<td>';
+			print '<td class="right nowraponall">';
 			if ($obj->fk_movement > 0) {
 				$stockmovment = new MouvementStock($db);
 				$stockmovment->fetch($obj->fk_movement);
 				print $stockmovment->getNomUrl(1, 'movements');
+				print ' <span class="opacitymedium">('.dol_print_date($stockmovment->datem, 'dayhour').')</span>';
 			}
 			print '</td>';
 		}
