@@ -768,7 +768,11 @@ class Utils
 		if (!empty($dolibarr_main_restrict_os_commands)) {
 			$arrayofallowedcommand = explode(',', $dolibarr_main_restrict_os_commands);
 			$arrayofallowedcommand = array_map('trim', $arrayofallowedcommand);
-			if (!in_array(basename($command), $arrayofallowedcommand)) {
+			$newcommand = $command;
+			if (!empty($noescapecommand)) {
+				$newcommand = preg_replace('/\s.*$/', '', $newcommand);
+			}
+			if (!in_array(basename($newcommand), $arrayofallowedcommand)) {
 				dol_syslog("files.lib.php::executeCLI canceled because target filename ".basename($command)." is not in the whitelist of allowed commands.", LOG_WARNING);
 				return array('result' => -1, 'output' => '', 'error' => 'Command '.basename($command).' is not in the whitelist of allowed commands');
 			}
