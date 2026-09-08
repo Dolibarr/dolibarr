@@ -267,7 +267,7 @@ class CodingPhpTest extends CommonClassTest
 			//print "Analyze ajax page ".$file['relativename']."\n";
 			$ok = true;
 			$matches = array();
-			preg_match_all('/top_httphead/', $filecontent, $matches, PREG_SET_ORDER);
+			preg_match_all('/top_httphead|->output\(\)/', $filecontent, $matches, PREG_SET_ORDER);
 			if (count($matches) == 0) {
 				$ok = false;
 			}
