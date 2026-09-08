@@ -155,7 +155,7 @@ class mod_supplier_proposal_marbre extends ModeleNumRefSupplierProposal
 			return -1;
 		}
 
-		$date = time();
+		$date = dol_now();
 		$yymm = dol_print_date($date, "%y%m");
 
 		if ($max >= (pow(10, 4) - 1)) {

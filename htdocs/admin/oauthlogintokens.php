@@ -2,7 +2,7 @@
 /* Copyright (C) 2013-2016  Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2014-2024	Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2020		Nicolas ZABOURI      <info@inovea-conseil.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -152,6 +152,7 @@ if ($action == 'refreshtoken' && $user->admin) {
 		dol_syslog("oauthlogintokens.php: Read token for service ".$OAUTH_SERVICENAME);
 		$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
 
+		// tokenobj uses time() @phan-suppress-next-line DolibarrForbiddenFunctionPlugin
 		$expire = ($tokenobj->getEndOfLife() !== -9002 && $tokenobj->getEndOfLife() !== -9001 && time() > ($tokenobj->getEndOfLife() - 30));
 		// We have to save the refresh token in a memory variable because Google give it only once
 		$refreshtoken = $tokenobj->getRefreshToken();
@@ -358,6 +359,7 @@ if ($mode == 'setup' && $user->admin) {
 			$expire = false;
 			// Is token expired or will token expire in the next 30 seconds
 			if (is_object($tokenobj)) {
+				// tokenobj uses time() @phan-suppress-next-line DolibarrForbiddenFunctionPlugin
 				$expire = ($tokenobj->getEndOfLife() !== $tokenobj::EOL_NEVER_EXPIRES && $tokenobj->getEndOfLife() !== $tokenobj::EOL_UNKNOWN && time() > ($tokenobj->getEndOfLife() - 30));
 			}
 			if ($key[1] != '' && $key[2] != '') {

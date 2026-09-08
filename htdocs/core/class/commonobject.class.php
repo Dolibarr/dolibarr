@@ -265,6 +265,11 @@ abstract class CommonObject
 	public $linked_objects;
 
 	/**
+	 * @var array<string,int>|null		Array of external linked objects (set by hooks or external modules) to merge into $linked_objects during creation
+	 */
+	public $other_linked_objects;
+
+	/**
 	 * @var array<string,array<int,int>>	Array of linked objects ids. Loaded by ->fetchObjectLinked
 	 */
 	public $linkedObjectsIds;
@@ -4336,7 +4341,7 @@ abstract class CommonObject
 				'@phan-var-force Facture $this';
 				include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';  // Note: possibly useless as $this is normally already Facture, so the class file should be loaded
 				if ($this->type != Facture::TYPE_CREDIT_NOTE) {	// @phpstan-ignore-line
-					if (getDolGlobalInt('INVOICE_USE_SITUATION') != 2) {
+					if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
 						$prev_sits = $this->get_prev_sits();
 
 						foreach ($prev_sits as $sit) {                // $sit is an object Facture loaded with a fetch.
@@ -5685,7 +5690,7 @@ abstract class CommonObject
 	 *	TODO Move this into an output class file (htmlline.class.php)
 	 *
 	 *	@param	string      		$action				GET/POST action
-	 *	@param  CommonObjectLine 	$line			    Selected object line to output
+	 *	@param  CommonObjectLine|CommonObject|stdClass 	$line			    Selected object line to output
 	 *	@param  ''		    		$var               	Not used
 	 *	@param  int		    		$num               	Number of line (0)
 	 *	@param  int		    		$i					I
@@ -5897,7 +5902,7 @@ abstract class CommonObject
 	 *  If lines are into a template, titles must also be into a template
 	 *  But for the moment we don't know if it's possible as we keep a method available on overloaded objects.
 	 *
-	 * 	@param	CommonObjectLine	$line				Line
+	 * 	@param	CommonObjectLine|CommonObject|stdClass	$line				Line
 	 * 	@param	string				$var				Not used
 	 *	@param	string				$restrictlist		''=All lines, 'services'=Restrict to services only (strike line if not)
 	 *  @param	string				$defaulttpldir		Directory where to find the template
@@ -7212,7 +7217,11 @@ abstract class CommonObject
 
 							$obj = $this->db->getRow($sqlFetchObject);
 
-							if ($obj !== false) {
+							// getRow() returns an object on success, int 0 when the query succeeded but
+							// returned no row, and false on SQL failure. Testing "!== false" let the 0
+							// through as a success: $obj->rowid on an int is null, $res was set to 1 and
+							// null was stored in the column while a success was reported.
+							if (is_object($obj)) {
 								$objectId = $obj->rowid;
 								$res = 1;
 							} else {

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2008-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2008-2017  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -475,6 +475,7 @@ function encodedecode_dbpassconf($level = 0)
  * @param       int        		$length                	Length of random string (Used only if $generic is true)
  * @return		string		    						New value for password
  * @see dol_hash(), dolJSToSetRandomPassword()
+ * @phan-suppress DolibarrForbiddenFunctionPlugin
  */
 function getRandomPassword($generic = false, $replaceambiguouschars = null, $length = 32)
 {

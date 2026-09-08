@@ -5,7 +5,7 @@ DIRECTION=ltr
 # msungstdlight or cid0ct are for traditional Chinese zh_TW (traditional does not render with Ubuntu pdf reader)
 # stsongstdlight or cid0cs are for simplified Chinese zh_CN
 # To read Chinese pdf with Linux: sudo apt-get install poppler-data
-# cid0jp is for Japanish
+# cid0jp is for Japanese
 # cid0kr is for Korean
 # DejaVuSans is for some Eastern languages, some Asian languages and some Arabic languages
 # freemono is for ru_RU or uk_UA, uz_UZ
@@ -76,7 +76,7 @@ ErrorCantLoadUserFromDolibarrDatabase=Failed to find user <b>%s</b> in Dolibarr 
 ErrorNoVATRateDefinedForSellerCountry=Error, no vat rates defined for country '%s'.
 ErrorNoSocialContributionForSellerCountry=Error, no social/fiscal taxes type defined for country '%s'.
 ErrorFailedToSaveFile=Error, failed to save file.
-ErrorCannotAddThisParentWarehouse=You are trying to add a parent warehouse which is already a child of a existing warehouse
+ErrorCannotAddThisParentWarehouse=You are trying to add a parent warehouse which is already a child of an existing warehouse
 ErrorInvalidSubtype=Selected Subtype is not allowed
 ErrorDirIsNotWritable=Directory %s is not writable
 FieldCannotBeNegative=Field "%s" cannot be negative
@@ -138,7 +138,7 @@ TechnicalID=Technical ID
 LineID=Line ID
 NotePublic=Note (public)
 NotePrivate=Note (internal)
-PrecisionUnitIsLimitedToXDecimals=Dolibarr was setup to limit precision of unit prices to <b>%s</b> decimals.
+PrecisionUnitIsLimitedToXDecimals=Dolibarr was set up to limit precision of unit prices to <b>%s</b> decimals.
 DoTest=Test
 ToFilter=Filter
 NoFilter=No filter
@@ -1243,7 +1243,7 @@ ProjectRole=Role assigned on each project/opportunity
 TasksRole=Role assigned on each task (if used)
 ConfirmSetSupervisor=Bulk Supervisor Set
 ConfirmForcePasswordChange=Force Password Change
-ConfirmUpdatePrice=Choose a increase/decrease price rate
+ConfirmUpdatePrice=Choose an increase/decrease price rate
 ConfirmAffectTagQuestion=Are you sure you want to assign tags to the %s selected record(s)?
 ConfirmAffectUserQuestion=Are you sure you want to assign users to the %s selected record(s)?
 ConfirmSetSupervisorQuestion=Are you sure you want to set supervisor to the %s selected record(s)?
@@ -1350,7 +1350,7 @@ FillPageWithALayout=Fill page with a layout
 FillPageWithAIContent=Fill page with AI content
 EnterYourAIPromptHere=Enter your AI prompt here
 UseOrOperatorShort=or
-GoOnList=Go on list
+GoOnList=Go to list
 ShowSearchFields=Do a search
 MyUserCard=My user file
 PublicFile=Public file
