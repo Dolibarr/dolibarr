@@ -107,7 +107,8 @@ class modFacture extends DolibarrModules
 				0 => array('file' => 'box_factures_imp.php', 'enabledbydefaulton' => 'Home'),
 				1 => array('file' => 'box_factures.php', 'enabledbydefaulton' => 'Home'),
 				2 => array('file' => 'box_graph_invoices_permonth.php', 'enabledbydefaulton' => 'Home'),
-				3 => array('file' => 'box_customers_outstanding_bill_reached.php', 'enabledbydefaulton' => 'Home')
+				3 => array('file' => 'box_customers_outstanding_bill_reached.php', 'enabledbydefaulton' => 'Home'),
+				4 => array('file' => 'box_invoices_dispute.php', 'enabledbydefaulton' => 'Home')
 		);
 
 		// Cronjobs
@@ -275,17 +276,10 @@ class modFacture extends DolibarrModules
 			}
 			// Add extra fields
 			$import_extrafield_sample = array();
-			$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'facture' AND entity IN (0, ".((int) $conf->entity).")";
-			$resql = $this->db->query($sql);
-			if ($resql) {
-				while ($obj = $this->db->fetch_object($resql)) {
-					$fieldname = 'extra.'.$obj->name;
-					$fieldlabel = ucfirst($obj->label);
-					$this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
-					$import_extrafield_sample[$fieldname] = $fieldlabel;
-				}
-			}
-			// End add extra fields
+			$keyforselect = 'facture';
+			$keyforelement = 'bill';
+			$keyforaliasextra = 'extra';
+			include DOL_DOCUMENT_ROOT.'/core/extrafieldsinimport.inc.php';
 			$this->import_fieldshidden_array[$r] = array('extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'facture');
 			$this->import_regex_array[$r] = array('f.multicurrency_code' => 'code@'.MAIN_DB_PREFIX.'multicurrency');
 			$import_sample = array(
@@ -403,17 +397,10 @@ class modFacture extends DolibarrModules
 			}
 			// Add extra fields
 			$import_extrafield_sample = array();
-			$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'facture_det' AND entity IN (0, ".((int) $conf->entity).")";
-			$resql = $this->db->query($sql);
-			if ($resql) {
-				while ($obj = $this->db->fetch_object($resql)) {
-					$fieldname = 'extra.'.$obj->name;
-					$fieldlabel = ucfirst($obj->label);
-					$this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
-					$import_extrafield_sample[$fieldname] = $fieldlabel;
-				}
-			}
-			// End add extra fields
+			$keyforselect = 'facture_det';
+			$keyforelement = 'bill';
+			$keyforaliasextra = 'extra';
+			include DOL_DOCUMENT_ROOT.'/core/extrafieldsinimport.inc.php';
 			$this->import_fieldshidden_array[$r] = array('extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'facturedet');
 			$this->import_regex_array[$r] = array(
 				'fd.multicurrency_code' => 'code@'.MAIN_DB_PREFIX.'multicurrency'

@@ -440,6 +440,7 @@ WarningModuleAffiliatedToAReportedCompany=Advarsel, dette modul er blevet rappor
 WarningModuleAffiliatedToAPiratPlatform=Vær forsigtig, når du får et modul (betalt eller gratis) fra en mistænkelig ikke-officiel platform som %s
 WarningDNSServerNotAvailable=Advarsel, DNS-serveren er ikke tilgængelig
 WarningSecureKeyNotSet=Værdien for sikkerhedsnøglen må ikke være tom
+WarningFullPathWasNotFoundSoWeUseAnAlternativeValue=Bemærk: Den fulde sti blev ikke fundet, så vi brugte den alternative værdi <b>%s</b>
 
 SwissQrOnlyVIR = SwissQR-faktura kan kun tilføjes på fakturaer, der skal betales med kreditoverførselsbetalinger.
 SwissQrCreditorAddressInvalid = Kreditoradressen er ugyldig (er postnummer og by angivet? (%s)

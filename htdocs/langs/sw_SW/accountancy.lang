@@ -202,6 +202,7 @@ DiscountReceived=Discount received
 DONATION_ACCOUNTINGACCOUNT=Akaunti (kutoka Chati ya Akaunti) itakayotumika kusajili michango (moduli ya mchango)
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Akaunti (kutoka Chati ya Akaunti) itakayotumika kusajili usajili wa wanachama (Njia ya Uanachama - ikiwa uanachama umerekodiwa bila ankara)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Akaunti (kutoka Chati ya Akaunti) itatumika kama akaunti chaguo-msingi ya kusajili amana ya mteja
+ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT_FOR_VAT=Account (from the Chart Of Account) to be used as the default account for VAT on customer deposit used in bindings
 UseAuxiliaryAccountOnCustomerDeposit=Hifadhi akaunti ya mteja kama akaunti ya kibinafsi katika leja tanzu kwa njia za malipo ya chini (ikiwa imezimwa, akaunti ya mtu binafsi ya njia za malipo ya chini itasalia tupu)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default account to register supplier deposit
 UseAuxiliaryAccountOnSupplierDeposit=Hifadhi akaunti ya mtoa huduma kama akaunti ya mtu binafsi katika leja tanzu kwa njia za malipo ya chini (ikiwa imezimwa, akaunti ya mtu binafsi ya njia za malipo ya chini itasalia tupu)

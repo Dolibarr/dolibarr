@@ -202,6 +202,7 @@ DiscountReceived=Discount received
 DONATION_ACCOUNTINGACCOUNT=Rekening (dari Chart Of Account) yang akan digunakan untuk mendaftarkan donasi (Modul Donasi)
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Akun (dari Chart Of Account) yang akan digunakan untuk mendaftarkan langganan keanggotaan (Modul Keanggotaan - jika keanggotaan dicatat tanpa faktur)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Rekening (dari Chart Of Account) yang akan digunakan sebagai rekening default untuk mendaftarkan simpanan nasabah
+ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT_FOR_VAT=Account (from the Chart Of Account) to be used as the default account for VAT on customer deposit used in bindings
 UseAuxiliaryAccountOnCustomerDeposit=Simpan rekening pelanggan sebagai rekening perorangan dalam buku besar pembantu untuk jalur pembayaran uang muka (jika dinonaktifkan, rekening perorangan untuk jalur pembayaran uang muka akan tetap kosong)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default account to register supplier deposit
 UseAuxiliaryAccountOnSupplierDeposit=Simpan akun pemasok sebagai akun individual di buku besar pembantu untuk jalur pembayaran uang muka (jika dinonaktifkan, akun individual untuk jalur pembayaran uang muka akan tetap kosong)

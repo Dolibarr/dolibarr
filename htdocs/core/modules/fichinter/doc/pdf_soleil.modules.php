@@ -7,7 +7,7 @@
  * Copyright (C) 2013		Cédric Salvador				<csalvador@gpcsolutions.fr>
  * Copyright (C) 2015       Marcos García               <marcosgdf@gmail.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024	    Nick Fragoulis
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
@@ -311,18 +311,55 @@ class pdf_soleil extends ModelePDFFicheinter
 						// Description of product line
 						$curX = $this->posxdesc - 1;
 
-						// Description of product line
-						if (!getDolGlobalString('FICHINTER_DATE_WITHOUT_HOUR')) {
-							$txt = $outputlangs->transnoentities("Date")." : ".dol_print_date($objectligne->datei, 'dayhour', false, $outputlangs, true);
+						// Subtotals module: a title / subtotal / free-text line has no date nor duration,
+						// it is shown as a (possibly coloured) section band instead of a standard line.
+						$issubtotalline = (defined('SUBTOTALS_SPECIAL_CODE') && $objectligne->special_code == SUBTOTALS_SPECIAL_CODE);
+						$subtotalbgcolor = null;
+
+						if ($issubtotalline) {
+							$outputlangs->load('subtotals');
+							$level = (int) $objectligne->duration;	// For fichinter the subtotal depth is stored in the duree field
+							$linetext = $objectligne->desc;
+							if ($level < 0) {
+								// Closing "subtotal" line: an intervention PDF has no amount to sum, so it is only a section marker
+								$linetext = getDolGlobalString('SUBTOTAL_LINE_TEXT_DOES_NOT_INCLUDE_TITLE_TEXT') ? $outputlangs->transnoentities('SubTotal') : $outputlangs->transnoentities('SubtotalOf', $objectligne->desc);
+							}
+							$indent = str_repeat('&nbsp;', max(0, abs($level) - 1) * 4);
+							$txt = '';
+							$desc = $indent.($level != 0 ? '<strong>' : '').dol_htmlentitiesbr($linetext, 1).($level != 0 ? '</strong>' : '');
+							if ($level != 0) {
+								$subtotalbgcolor = colorStringToArray(getDolGlobalString('SUBTOTAL_BACK_COLOR_LEVEL_'.abs($level), 'ffffff'));
+							}
 						} else {
-							$txt = $outputlangs->transnoentities("Date")." : ".dol_print_date($objectligne->datei, 'day', false, $outputlangs, true);
+							// Description of product line
+							if (!getDolGlobalString('FICHINTER_DATE_WITHOUT_HOUR')) {
+								$txt = $outputlangs->transnoentities("Date")." : ".dol_print_date($objectligne->datei, 'dayhour', false, $outputlangs, true);
+							} else {
+								$txt = $outputlangs->transnoentities("Date")." : ".dol_print_date($objectligne->datei, 'day', false, $outputlangs, true);
+							}
+
+							if ($objectligne->duration > 0) {
+								$txt .= " - ".$outputlangs->transnoentities("Duration")." : ".convertSecondToTime($objectligne->duration);
+							}
+							$txt = '<strong>'.dol_htmlentitiesbr($txt, 1, $outputlangs->charset_output).'</strong>';
+							$desc = dol_htmlentitiesbr($objectligne->desc, 1);
 						}
 
-						if ($objectligne->duration > 0) {
-							$txt .= " - ".$outputlangs->transnoentities("Duration")." : ".convertSecondToTime($objectligne->duration);
+						// Paint the coloured band behind a title/subtotal line (measure its height first)
+						if ($issubtotalline && is_array($subtotalbgcolor)) {
+							$pdf->startTransaction();
+							$pdf->writeHTMLCell(0, 0, $curX, $curY + 1, dol_concatdesc($txt, $desc), 0, 1, false);
+							$subtotalh = $pdf->GetY() - $curY;
+							$subtotalpage = $pdf->getPage();
+							$pdf->rollbackTransaction(true);
+							if ($subtotalpage == $pageposbefore) {
+								$pdf->SetFillColor($subtotalbgcolor[0], $subtotalbgcolor[1], $subtotalbgcolor[2]);
+								$pdf->Rect($this->marge_gauche, $curY + 1, $this->page_largeur - $this->marge_gauche - $this->marge_droite, max(2, $subtotalh), 'F');
+								if (!colorIsLight(implode(',', $subtotalbgcolor))) {
+									$pdf->SetTextColor(255, 255, 255);
+								}
+							}
 						}
-						$txt = '<strong>'.dol_htmlentitiesbr($txt, 1, $outputlangs->charset_output).'</strong>';
-						$desc = dol_htmlentitiesbr($objectligne->desc, 1);
 
 						$pdf->startTransaction();
 						$pdf->writeHTMLCell(0, 0, $curX, $curY + 1, dol_concatdesc($txt, $desc), 0, 1, false);
@@ -350,6 +387,10 @@ class pdf_soleil extends ModelePDFFicheinter
 							}
 						} else { // No pagebreak
 							$pdf->commitTransaction();
+						}
+
+						if ($issubtotalline) {
+							$pdf->SetTextColor(0, 0, 0);
 						}
 
 						$nexY = $pdf->GetY();

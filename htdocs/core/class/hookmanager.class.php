@@ -58,12 +58,12 @@ class HookManager
 	public $contextarray = array();
 
 	/**
-	 * array<string,array<string,null|string|CommonHookActions>> 	Array with instantiated classes
+	 * @var array<string,array<string,null|string|CommonHookActions>> 	Array with instantiated classes
 	 */
 	public $hooks = array();
 
 	/**
-	 * array<string,array<string,null|string|CommonHookActions>> 	Array with instantiated classes sorted by hook priority
+	 * @var array<string,array<string,null|string|CommonHookActions>> 	Array with instantiated classes sorted by hook priority
 	 */
 	public $hooksSorted = array();
 

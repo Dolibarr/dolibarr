@@ -202,6 +202,7 @@ DiscountReceived=Discount received
 DONATION_ACCOUNTINGACCOUNT=חשבון (מתרשים החשבונות) שישמש לרישום תרומות (מודול תרומות)
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=חשבון (מתרשים החשבונות) שישמש לרישום מנויים לחברות (מודול חברות - אם החברות נרשמה ללא חשבונית)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=חשבון (מתרשים החשבונות) שישמש כחשבון ברירת המחדל לרישום הפקדת לקוח
+ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT_FOR_VAT=Account (from the Chart Of Account) to be used as the default account for VAT on customer deposit used in bindings
 UseAuxiliaryAccountOnCustomerDeposit=אחסן חשבון לקוח כחשבון בודד בפנקס הבת עבור שורות מקדמה (אם מושבת, חשבון בודד עבור שורות מקדמה יישאר ריק)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default account to register supplier deposit
 UseAuxiliaryAccountOnSupplierDeposit=אחסן חשבון ספק כחשבון בודד בפנקס הבת עבור שורות מקדמה (אם מושבת, חשבון בודד עבור שורות מקדמה יישאר ריק)

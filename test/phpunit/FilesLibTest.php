@@ -3,7 +3,7 @@
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2023		Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -597,6 +597,40 @@ class FilesLibTest extends CommonClassTest
 	}
 
 	/**
+	 * dol_move_uploaded_file() returns a translation key when it refuses a file, so the caller can
+	 * translate it. The virus branch must return a key alone: a key with the technical message of the
+	 * antivirus appended matches no entry of errors.lang and is shown untranslated to the user.
+	 *
+	 * @return void
+	 */
+	public function testDolMoveUploadedFileReturnsATranslationKeyOnVirus()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$langs->load("errors");
+
+		// A jpg renamed as a pdf, holding javascript: dolCheckOnFileName() refuses it
+		$srcfile = $conf->admin->dir_temp.'/uploadedvirus.tmp';
+		dol_copy(dirname(__FILE__).'/file_pdf_with_js.pdf.jpg', $srcfile, '0', 1);
+
+		$destfile = $conf->admin->dir_temp.'/uploadedvirus.pdf';
+		dol_delete_file($destfile, 0, 1);
+
+		$result = dol_move_uploaded_file($srcfile, $destfile, 1, 0, 0, 1);
+		print __METHOD__." result=".$result."\n";
+
+		$this->assertSame('ErrorFileIsAnInfectedPDFWithJSInside', $result, 'A pdf with js inside must be refused with its own translation key');
+		$this->assertNotSame($result, $langs->trans($result), 'The returned code must be a key that can be translated');
+		$this->assertFalse(file_exists($destfile), 'The refused file must not have been moved to its destination');
+
+		dol_delete_file($srcfile, 0, 1);
+	}
+
+	/**
 	 * testDolConvertFile
 	 *
 	 * @return void
@@ -629,6 +663,8 @@ class FilesLibTest extends CommonClassTest
 			$this->assertEquals(1, $result, 'Failed to convert PDF file into '.$fileimage.', error '.$result);
 		} else {
 			print __METHOD__." skipped because Imagick is not installed.\n";
+
+			$this->expectNotToPerformAssertions();
 		}
 	}
 }

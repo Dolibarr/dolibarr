@@ -7,7 +7,7 @@
  * Copyright (C) 2008       Raphael Bertrand (Resultic)     <raphael.bertrand@resultic.fr>
  * Copyright (C) 2011-2013  Juanjo Menent                   <jmenent@2byte.es>
  * Copyright (C) 2011-2018  Philippe Grand                  <philippe.grand@atoo-net.com>
- * Copyright (C) 2024-2025  MDW                             <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW                             <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France                 <frederic.france@free.fr>
  * Copyright (C) 2026       Alexandre Spangaro              <alexandre@inovea-conseil.com>
  *
@@ -136,8 +136,8 @@ if ($action == 'updateMask') {
 } elseif ($action == 'setdoc') {
 	// Set default model
 	if (dolibarr_set_const($db, "FICHEINTER_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity)) {
-		// La constante qui a ete lue en avant du nouveau set
-		// on passe donc par une variable pour avoir un affichage coherent
+		// The constant that was read before the new set
+		// so we go through a variable to get a consistent display
 		$conf->global->FICHEINTER_ADDON_PDF = $value;
 	}
 
@@ -297,7 +297,7 @@ foreach ($dirmodels as $reldir) {
 			while (($file = readdir($handle)) !== false) {
 				if (preg_match('/^(mod_.*)\.php$/i', $file, $reg)) {
 					$file = $reg[1];
-					$classname = substr($file, 4);
+					$classname = dol_substr($file, 4);
 
 					require_once $dir.$file.'.php';
 
@@ -383,7 +383,7 @@ print '<br>';
 
 print load_fiche_titre($langs->trans("TemplatePDFInterventions"), '', '');
 
-// Defini tableau def des modeles
+// Define array def of models
 $type = 'ficheinter';
 $def = array();
 $sql = "SELECT nom";
@@ -436,8 +436,8 @@ foreach ($dirmodels as $reldir) {
 			foreach ($filelist as $file) {
 				if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file)) {
 					if (file_exists($dir.'/'.$file)) {
-						$name = substr($file, 4, dol_strlen($file) - 16);
-						$classname = substr($file, 0, dol_strlen($file) - 12);
+						$name = dol_substr($file, 4, dol_strlen($file) - 16);
+						$classname = dol_substr($file, 0, dol_strlen($file) - 12);
 
 						require_once $dir.'/'.$file;
 						$module = new $classname($db);
@@ -545,7 +545,7 @@ foreach ($substitutionarray as $key => $val) {
 }
 $htmltext .= '</i>';
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set_FICHINTER_FREE_TEXT">';
 print '<tr class="oddeven"><td colspan="2">';
@@ -564,7 +564,7 @@ print "</td></tr>\n";
 print '</form>';
 
 //Use draft Watermark
-print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
+print '<form method="post" action="'.$_SERVER["PHP_SELF"].'" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print "<input type=\"hidden\" name=\"action\" value=\"set_FICHINTER_DRAFT_WATERMARK\">";
 print '<tr class="oddeven"><td>';

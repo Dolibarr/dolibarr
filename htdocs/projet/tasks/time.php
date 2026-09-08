@@ -1633,10 +1633,10 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 
 		$sql = "SELECT t.rowid, t.fk_element, t.element_date, t.element_datehour, t.element_date_withhour, t.element_duration, t.fk_user, t.note, t.thm,";
 		$sql .= " t.fk_product, t.invoice_line_id, t.import_key, t.datec, t.tms,";
-		$sql .= " pt.rowid as taskid, pt.ref, pt.label, pt.fk_projet,";
+		$sql .= " pt.rowid as taskid, pt.ref, pt.label, pt.fk_projet, pt.billable,";
 		$sql .= " u.lastname, u.firstname, u.login, u.photo, u.gender, u.statut as user_status,";
 		$sql .= " il.fk_facture as invoice_id, inv.fk_statut,";
-		$sql .= " p.fk_soc,s.name_alias,";
+		$sql .= " p.fk_soc, s.name_alias";
 		if (!empty($extrafields->attributes['projet_task']['label'])) {
 			foreach ($extrafields->attributes['projet_task']['label'] as $key => $val) {
 				$sql .= ($extrafields->attributes['projet_task']['type'][$key] != 'separate' ? ",efpt.".$key." as options_".$key : '');

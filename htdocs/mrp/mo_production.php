@@ -778,7 +778,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print dol_get_fiche_end();
 
 
-	if (!in_array($action, array('consumeorproduce', 'consumeandproduceall'))) {
+	if (!in_array($action, array('consumeorproduce', 'consumeandproduceall', 'editline'))) {
 		print '<div class="tabsAction">';
 
 		$parameters = array();

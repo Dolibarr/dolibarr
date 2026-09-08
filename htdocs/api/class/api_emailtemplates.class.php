@@ -20,7 +20,6 @@
 use Luracast\Restler\RestException;
 
 require_once DOL_DOCUMENT_ROOT.'/api/class/api.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/cemailtemplate.class.php';
 
 /**
@@ -55,6 +54,11 @@ class EmailTemplates extends DolibarrApi
 	 * @var CEmailTemplate {@type CEmailTemplate}
 	 */
 	public $email_template;
+
+	/**
+	 * @var string 	Name of element.
+	 */
+	public $element = 'email_templates';
 
 	/**
 	 * @var string 	Name of table without prefix where object is stored. This is also the key used for extrafields management (so extrafields know the link to the parent table).
@@ -92,9 +96,13 @@ class EmailTemplates extends DolibarrApi
 			throw new RestException(403, 'denied delete access to email templates');
 		}
 
-		$result = $this->email_template->apifetch($id, '');
+		$result = $this->email_template->apiFetch($id, '', DolibarrApiAccess::$user);
 		if (!$result || $id == 0) {
 			throw new RestException(404, 'Email Template with id '.$id.' not found');
+		}
+
+		if (!DolibarrApiAccess::$user->admin && (int) DolibarrApiAccess::$user->id != $this->email_template->fk_user) {
+			throw new RestException(403, 'denied delete access to email templates');
 		}
 
 		if (!$this->email_template->delete(DolibarrApiAccess::$user)) {
@@ -130,9 +138,13 @@ class EmailTemplates extends DolibarrApi
 			throw new RestException(403, 'denied delete access to email templates');
 		}
 
-		$result = $this->email_template->apifetch(0, $label);
+		$result = $this->email_template->apiFetch(0, $label, DolibarrApiAccess::$user);
 		if (!$result) {
 			throw new RestException(404, "Email Template with label ".$label." not found");
+		}
+
+		if (!DolibarrApiAccess::$user->admin && (int) DolibarrApiAccess::$user->id != $this->email_template->fk_user) {
+			throw new RestException(403, 'denied delete access to email templates');
 		}
 
 		if (!$this->email_template->delete(DolibarrApiAccess::$user)) {
@@ -196,7 +208,7 @@ class EmailTemplates extends DolibarrApi
 	 * @param string	$sortorder			Sort order
 	 * @param int		$limit				Limit for list
 	 * @param int		$page				Page number
-	 * @param string	$fk_user			User ids to filter email templates of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
+	 * @param string	$fk_user			User id to filter email templates of (example '1')
 	 * @param string	$sqlfilters			Other criteria to filter answers separated by a comma. Syntax example "(e.active:=:1) and (e.module:=:'adherent')"
 	 * @param string	$properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool		$pagination_data	If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
@@ -220,9 +232,12 @@ class EmailTemplates extends DolibarrApi
 
 		$sql = "SELECT e.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." AS e";
-		$sql .= " WHERE e.entity IN (".getEntity($this->table_element).")";
+		$sql .= " WHERE e.entity IN (".getEntity($this->element).")";
 		if (!$fk_user == '') {
 			$sql .= " AND e.fk_user = ".((int) $fk_user);
+		}
+		if (!DolibarrApiAccess::$user->admin) {
+			$sql .= " AND e.fk_user = ".((int) DolibarrApiAccess::$user->id);
 		}
 
 		// Add sql filters
@@ -258,7 +273,7 @@ class EmailTemplates extends DolibarrApi
 			while ($i < $min) {
 				$obj = $this->db->fetch_object($result);
 				$email_template_static = new CEmailTemplate($this->db);
-				if ($email_template_static->apifetch($obj->rowid, '') > 0) {
+				if ($email_template_static->apiFetch($obj->rowid, '', DolibarrApiAccess::$user) > 0) {
 					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($email_template_static), $properties);
 				}
 				$i++;
@@ -327,6 +342,11 @@ class EmailTemplates extends DolibarrApi
 			if ($field == 'tms') {
 				throw new RestException(400, 'Creating with tms field is forbidden');
 			}
+			if ($field == 'fk_user') {
+				if (!DolibarrApiAccess::$user->admin) {
+					$request_data[$field] = (int) DolibarrApiAccess::$user->id;		// Same rule than into admin/mails_templates.php
+				}
+			}
 
 			$this->email_template->$field = $this->_checkValForAPI($field, $value, $this->email_template);
 		}
@@ -365,7 +385,7 @@ class EmailTemplates extends DolibarrApi
 			throw new RestException(403, 'denied update access to email templates');
 		}
 
-		$result = $this->email_template->apifetch($id, '');
+		$result = $this->email_template->apiFetch($id, '', DolibarrApiAccess::$user);
 		if (!$result || $id == 0) {
 			throw new RestException(404, 'email template with id='.$id.' not found');
 		}
@@ -376,6 +396,11 @@ class EmailTemplates extends DolibarrApi
 			}
 			if ($field == 'datec') {
 				throw new RestException(400, 'Updating with datec field is forbidden');
+			}
+			if ($field == 'fk_user') {
+				if (!DolibarrApiAccess::$user->admin && (int) $value != $this->email_template->fk_user) {
+					throw new RestException(400, 'Updating with fk_user that is not yourself is not allowed if you are not admin');
+				}
 			}
 
 			if ($field === 'caller') {
@@ -420,7 +445,7 @@ class EmailTemplates extends DolibarrApi
 			throw new RestException(403, 'denied update access to email templates');
 		}
 
-		$result = $this->email_template->apifetch(0, $label);
+		$result = $this->email_template->apiFetch(0, $label, DolibarrApiAccess::$user);
 		if (!$result) {
 			throw new RestException(404, 'email template not found');
 		}
@@ -432,6 +457,11 @@ class EmailTemplates extends DolibarrApi
 			}
 			if ($field == 'datec') {
 				throw new RestException(400, 'Updating with datec field is forbidden');
+			}
+			if ($field == 'fk_user') {
+				if (!DolibarrApiAccess::$user->admin && (int) $value != $this->email_template->fk_user) {
+					throw new RestException(400, 'Updating with fk_user that is not yourself is not allowed if you are not admin');
+				}
 			}
 
 			if ($field == 'label') {
@@ -477,7 +507,7 @@ class EmailTemplates extends DolibarrApi
 			throw new RestException(403, 'denied read access to email templates');
 		}
 
-		$result = $this->email_template->apifetch($id, $label);
+		$result = $this->email_template->apiFetch($id, $label, DolibarrApiAccess::$user);
 		if ($result > 0) {
 			return $this->_cleanObjectDatas($this->email_template);
 		}

@@ -133,8 +133,8 @@ print load_fiche_titre($titre, '', 'supplier_invoice');
 print '<form method="post" action="rapport.php?year='.$year.'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="builddoc">';
-$cmonth = GETPOST("remonth") ? GETPOST("remonth") : date("n", time());
-$syear = GETPOST("reyear") ? GETPOST("reyear") : date("Y", time());
+$cmonth = GETPOST("remonth") ? GETPOST("remonth") : dol_print_date(dol_now(), '%m');
+$syear = GETPOST("reyear") ? GETPOST("reyear") : dol_print_date(dol_now(), '%Y');
 
 print $formother->select_month($cmonth, 'remonth');
 

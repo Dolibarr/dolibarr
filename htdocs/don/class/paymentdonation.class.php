@@ -639,7 +639,7 @@ class PaymentDonation extends CommonObject
 			);
 
 			// Update fk_bank in llx_paiement.
-			// On connait ainsi le paiement qui a genere l'ecriture bancaire
+			// This way we know the payment that generated the bank entry
 			if ($bank_line_id > 0) {
 				$result = $this->update_fk_bank($bank_line_id);
 				if ($result <= 0) {

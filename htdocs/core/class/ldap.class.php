@@ -1233,7 +1233,7 @@ class Ldap
 
 		$info = @ldap_get_entries($this->connection, $this->result);
 
-		// Warning: Dans info, les noms d'attributs sont en minuscule meme si passe
+		// Warning: In info, attribute names are lowercase even if passed
 		// a ldap_search en majuscule !!!
 		//print_r($info);
 
@@ -1321,7 +1321,7 @@ class Ldap
 			$entry = ldap_first_entry($this->connection, $ldapSearchResult);
 
 			if (!$entry) {
-				// Si pas de resultat on cherche dans le domaine
+				// If no result, search in the domain
 				$searchDN = $this->domain;
 				$i++;
 			} else {
@@ -1438,7 +1438,7 @@ class Ldap
 			}
 
 			if (!$result) {
-				// Si pas de resultat on cherche dans le domaine
+				// If no result, search in the domain
 				$searchDN = $this->domain;
 				$i++;
 			} else {
