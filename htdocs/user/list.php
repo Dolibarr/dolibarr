@@ -159,6 +159,9 @@ $arrayfields = array(
 	'u.import_key' => array('label' => "ImportId", 'checked' => '-1', 'position' => 800, 'enabled' => '1'),
 	'u.statut' => array('label' => "Status", 'checked' => '1', 'position' => 1000),
 );
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 if (getDolGlobalInt('MAIN_ENABLE_LOGINS_PRIVACY') == 0) {
 	$arrayfields['u.datelastlogin'] = array('label' => "LastConnexion", 'checked' => '1', 'position' => 100);
@@ -1057,7 +1060,6 @@ while ($i < $imaxinloop) {
 	$object->admin = $obj->admin;
 	$object->ref = (string) $obj->rowid;
 	$object->login = $obj->login;
-	$object->statut = (int) $obj->status;
 	$object->status = (int) $obj->status;
 	$object->office_phone = $obj->office_phone;
 	$object->user_mobile = $obj->user_mobile;
@@ -1208,7 +1210,6 @@ while ($i < $imaxinloop) {
 				$user2->user_mobile = $obj->user_mobile;
 				$user2->email = $obj->email2;
 				$user2->socid = $obj->fk_soc2;
-				$user2->statut = $obj->status2;
 				$user2->status = $obj->status2;
 				if (isModEnabled('multicompany') && $obj->admin2 && !$obj->entity2) {
 					print img_picto($langs->trans("SuperAdministratorDesc"), 'superadmin', 'class="valignmiddle paddingright"');
@@ -1248,7 +1249,8 @@ while ($i < $imaxinloop) {
 		// Email
 		if (!empty($arrayfields['u.email']['checked'])) {
 			$showinvalidemail = (int) !getDolGlobalInt('MAIN_SHOW_INVALID_EMAIL_IN_LIST'); // to avoid slow display
-			print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute($obj->email).'">'.dol_print_email($obj->email, $obj->rowid, $obj->fk_soc, 1, 0, $showinvalidemail, 1)."</td>\n";
+			$email = (string) $obj->email;
+			print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute($email).'">'.dol_print_email($email, $obj->rowid, $obj->fk_soc, 1, 0, $showinvalidemail, 1)."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

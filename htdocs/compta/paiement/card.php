@@ -291,7 +291,7 @@ $form = new Form($db);
 
 $head = payment_prepare_head($object);
 
-print dol_get_fiche_head($head, 'payment', $langs->trans("PaymentCustomerInvoice"), -1, 'payment');
+print dol_get_fiche_head($head, 'payment', $langs->trans("PaymentCustomerInvoice"), -1, 'payment', 0, '', '', 0, '', 1);
 
 // Confirmation of payment delete
 if ($action == 'delete') {

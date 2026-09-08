@@ -90,6 +90,7 @@ ThisIsInformationOnDocumentToSignFichinter=Hii ni habari juu ya kuingilia kati k
 ThisIsInformationOnDocumentToSignSociete_rib=This is information on SEPA Mandate to sign
 ThisIsInformationOnDocumentToSignExpedition= This is information on shipment to sign
 SignatureProposalRef=Saini ya pendekezo la nukuu/biashara %s
+SignatureOrderRef=Signature of sale order %s
 SignatureContractRef=Saini ya mkataba %s
 SignatureFichinterRef=Saini ya kuingilia kati %s
 SignatureSociete_ribRef=Signature of SEPA Mandate %s

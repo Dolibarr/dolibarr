@@ -158,7 +158,7 @@ if (empty($reshook)) {
 
 	// Create user from contact
 	if ($action == 'confirm_create_user' && $confirm == 'yes' && $user->hasRight('user', 'user', 'creer')) {
-		// Recuperation contact actuel
+		// Retrieve current contact
 		$result = $object->fetch($id);
 
 		if ($result > 0) {
@@ -353,6 +353,39 @@ if (empty($reshook)) {
 		}
 	}
 
+	// Merge a contact into the current one. As on the third party card, the confirmation popup submits
+	// with a GET, the request being protected by the CSRF token of main.inc.php. All the permission and
+	// perimeter checks on the two contacts are done by Contact::mergeContact() itself.
+	if ($action == 'confirm_merge' && $confirm == 'yes' && $permissiontoadd && $user->hasRight('societe', 'contact', 'supprimer')) {
+		$contact_origin_id = GETPOSTINT('contact_origin');
+
+		if ($contact_origin_id <= 0) {
+			$langs->load('errors');
+			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('MergeOriginContact')), null, 'errors');
+		} else {
+			// fetch() returns the id when found, 2 when several records were found, 0 when not found
+			// and -1 on error: a plain "<= 0" test would report an empty error on the not found case
+			$result = $object->fetch($id);
+			if ($result == 0) {
+				$langs->load('errors');
+				setEventMessages($langs->trans('ErrorRecordNotFound'), null, 'errors');
+			} elseif ($result != $id) {
+				$langs->load('errors');
+				setEventMessages($object->error ? $object->error : $langs->trans('ErrorBadParameters'), $object->errors, 'errors');
+			} elseif ($object->mergeContact($contact_origin_id) < 0) {
+				setEventMessages($object->error, $object->errors, 'errors');
+			} else {
+				setEventMessages($langs->trans('ContactsMergeSuccess'), null, 'mesgs');
+				// The merge is committed, but the files are moved afterwards and may have failed
+				if (!empty($object->warnings)) {
+					setEventMessages(null, $object->warnings, 'warnings');
+				}
+				header("Location: ".$_SERVER['PHP_SELF'].'?id='.$object->id);
+				exit;
+			}
+		}
+	}
+
 	if ($action == 'update' && empty($cancel) && $permissiontoadd) {
 		if (!GETPOST("lastname", 'alpha')) {
 			$error++;
@@ -396,7 +429,8 @@ if (empty($reshook)) {
 						$newfile = $dir.'/'.dol_sanitizeFileName($_FILES['photo']['name']);
 						$result = dol_move_uploaded_file($_FILES['photo']['tmp_name'], $newfile, 1);
 
-						if (!($result > 0)) {
+						// Note: $result is a string when the file was refused and, in PHP 8, such a string compares as greater than 0
+						if (!is_numeric($result) || $result <= 0) {
 							$errors[] = "ErrorFailedToSaveFile";
 						} else {
 							$object->photo = dol_sanitizeFileName($_FILES['photo']['name']);
@@ -600,6 +634,25 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		if ($action == 'delete') {
 			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id.($backtopage ? '&backtopage='.$backtopage : ''), $langs->trans("DeleteContact"), $langs->trans("ConfirmDeleteContact"), "confirm_delete", '', 0, 1);
 		}
+	}
+
+	// Confirm merging contact
+	if ($action == 'merge' && $permissiontoadd && $user->hasRight('societe', 'contact', 'supprimer')) {
+		// The current contact is excluded with the $filter parameter and not with $exclude, the latter
+		// being applied by selectcontacts() only when it receives an array while the ajax branch gives
+		// it a string. With CONTACT_USE_SEARCH_TO_SELECT the exclusion is lost anyway, contact/ajax
+		// /contact.php overwriting the filter it receives: merging a contact into itself is then refused
+		// by mergeContact() instead. The third party is shown to tell homonyms apart.
+		$formquestion = array(
+			array(
+				'name' => 'contact_origin',
+				'label' => $langs->trans("MergeOriginContact"),
+				'type' => 'other',
+				'value' => $form->select_contact(0, '', 'contact_origin', 1, '', '', 1, 'minwidth200', false, 1, 0, array(), '', '', '', '(sp.rowid:!=:'.((int) $id).')')
+			)
+		);
+
+		print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id, $langs->trans("MergeContacts"), $langs->trans("ConfirmMergeContacts"), "confirm_merge", $formquestion, 'no', 1, 300);
 	}
 
 	/*
@@ -1303,7 +1356,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		// Show errors
 		dol_htmloutput_errors(is_numeric($error) ? '' : $error, $errors);
 
-		print dol_get_fiche_head($head, 'card', $title, -1, 'contact');
+		print dol_get_fiche_head($head, 'card', $title, -1, 'contact', 0, '', '', 0, '', 1);
 
 		if ($action == 'create_user') {
 			// Full firstname and lastname separated with a dot : firstname.lastname
@@ -1566,6 +1619,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			// Desactiver
 			if ($object->status == 1 && $user->hasRight('societe', 'contact', 'creer')) {
 				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=disable&id='.$object->id.'&token='.newToken().'">'.$langs->trans("DisableUser").'</a>';
+			}
+
+			// Merge
+			if ($permissiontoadd && $user->hasRight('societe', 'contact', 'supprimer')) {
+				print dolGetButtonAction($langs->trans("MergeContacts"), $langs->trans("Merge"), 'danger', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=merge&token='.newToken(), '', $user->hasRight('societe', 'contact', 'supprimer'));
 			}
 
 			// Delete

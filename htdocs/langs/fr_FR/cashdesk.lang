@@ -198,3 +198,6 @@ CashLifetime=Perpétuel Espèce
 ChequeLifetime=Perpétuel Chèque
 CardLifetime=Perpétuel Carte
 DefaultCashPOSLabel=Compte Espèce pour point de vente
+
+TakeposValidateCreditNoteOnCreation=Valider l'avoir dès sa création
+TakeposValidateCreditNoteOnCreationDesc=Si activé, les avoirs créés dans TakePOS seront immédiatement validés. Si désactivé, ils resteront à l'état de brouillon pour permettre la modification des quantités avant paiement.

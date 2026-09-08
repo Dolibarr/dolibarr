@@ -155,9 +155,6 @@ ErrNoZipEngine=Δεν υπάρχει μηχανή για συμπίεση/απο
 ErrorFileMustBeADolibarrPackage=Το αρχείο %s πρέπει να είναι πακέτο zip Dolibarr
 ErrorModuleFileRequired=Πρέπει να επιλέξετε ένα αρχείο πακέτου ενότητας του Dolibarr
 ErrorFailToDownloadModuleFromSource=Αποτυχία λήψης της ενότητας από την πηγή. Ελέγξτε τη σύνδεσή σας στο διαδίκτυο ή τη διεύθυνση URL πηγής και προσπαθήστε ξανά.
-extModuleConfirmInstallTitle = Επιβεβαίωση εγκατάστασης ενότητας
-extModuleConfirmInstallText  = Πρόκειται να εγκαταστήσετε την ακόλουθη ενότητα:<br><br><b>Όνομα:</b> %s<br><b>Έκδοση:</b>%s<br><b>Αναφορά:</b>%s<br><b>Τελευταία ενημέρωση</b>%s<br><br>Αυτή η ενέργεια δεν είναι αναστρέψιμη. Επιβεβαιώνετε την εγκατάσταση αυτής της ενότητας;
-install=Εγκατάσταση
 ErrorPhpCurlNotInstalled=Το PHP CURL δεν είναι εγκατεστημένο, αυτό είναι απαραίτητο για να συνδεθείτε με το Paypal
 ErrorFailedToAddToMailmanList=Απέτυχε η προσθήκη της εγγραφής %s στη λίστα Mailman %s ή στη βάση SPIP
 ErrorFailedToRemoveToMailmanList=Απέτυχε η κατάργηση της εγγραφής %s από τη λίστα Mailman %s ή από τη βάση SPIP
@@ -443,6 +440,7 @@ WarningModuleAffiliatedToAReportedCompany=Προειδοποίηση, έχει �
 WarningModuleAffiliatedToAPiratPlatform=Να είστε προσεκτικοί όταν λαμβάνετε μια ενότητα (με πληρωμή ή δωρεάν) από μια ύποπτη μη επίσημη πλατφόρμα όπως η %s
 WarningDNSServerNotAvailable=Προειδοποίηση, ο διακομιστής DNS δεν είναι διαθέσιμος
 WarningSecureKeyNotSet=The value fo the securekey must not be empty
+WarningFullPathWasNotFoundSoWeUseAnAlternativeValue=Note: Full path was not found so we used the alternative value <b>%s</b>
 
 SwissQrOnlyVIR = Το SwissQR μπορεί να προστεθεί μόνο σε τιμολόγια που έχουν οριστεί για πληρωμή με πληρωμές μεταφοράς πίστωσης.
 SwissQrCreditorAddressInvalid = Η διεύθυνση του πιστωτή δεν είναι έγκυρη (Έχουν οριστεί ο ταχυδρομικός κώδικας και η πόλη; (%s)

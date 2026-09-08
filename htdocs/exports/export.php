@@ -942,7 +942,7 @@ if ($step == 3 && $datatoexport) {
 	 * Action bar
 	 */
 	print '<div class="tabsAction tabsActionNoBottom">';
-	// il n'est pas obligatoire de filtrer les champs
+	// it is not mandatory to filter the fields
 	print '<a class="butAction" href="javascript:FilterField.submit();">'.$langs->trans("NextStep").'</a>';
 	print '</div>';
 }
@@ -1139,10 +1139,10 @@ if ($step == 4 && $datatoexport) {
 		print $value.' ';
 		print '</td><td class="center nowraponall" width="40">';
 		if ($value < count($array_selected)) {
-			print '<a href="'.$_SERVER["PHP_SELF"].'?step='.$step.'&datatoexport='.$datatoexport.'&action=downfield&field='.$code.'" class="paddingleft paddingright">'.img_down().'</a>';
+			print '<a href="'.$_SERVER["PHP_SELF"].'?step='.$step.'&datatoexport='.$datatoexport.'&action=downfield&token='.newToken().'&field='.$code.'" class="paddingleft paddingright">'.img_down().'</a>';
 		}
 		if ($value > 1) {
-			print '<a href="'.$_SERVER["PHP_SELF"].'?step='.$step.'&datatoexport='.$datatoexport.'&action=upfield&field='.$code.'" class="paddingleft paddingright">'.img_up().'</a>';
+			print '<a href="'.$_SERVER["PHP_SELF"].'?step='.$step.'&datatoexport='.$datatoexport.'&action=upfield&token='.newToken().'&field='.$code.'" class="paddingleft paddingright">'.img_up().'</a>';
 		}
 		print '</td>';
 

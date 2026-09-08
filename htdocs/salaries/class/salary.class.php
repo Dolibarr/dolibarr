@@ -2,7 +2,7 @@
 /* Copyright (C) 2011-2022  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2014       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -301,7 +301,7 @@ class Salary extends CommonObject
 		/*$sql .= " datep='".$this->db->idate($this->datep)."',";
 		$sql .= " datev='".$this->db->idate($this->datev)."',";*/
 		$sql .= " amount=".price2num($this->amount).",";
-		$sql .= " fk_projet=".((int) $this->fk_project).",";
+		$sql .= " fk_projet=".($this->fk_project > 0 ? ((int) $this->fk_project) : "null").",";
 		$sql .= " fk_typepayment=".((int) $this->type_payment).",";
 		$sql .= " label='".$this->db->escape($this->label)."',";
 		$sql .= " datesp='".$this->db->idate($this->datesp)."',";
@@ -527,7 +527,7 @@ class Salary extends CommonObject
 		//$sql .= ", '".$this->db->idate($this->datep)."'";
 		//$sql .= ", '".$this->db->idate($this->datev)."'";
 		$sql .= ", ".((float) $this->amount);
-		$sql .= ", ".($this->fk_project > 0 ? ((int) $this->fk_project) : 0);
+		$sql .= ", ".($this->fk_project > 0 ? ((int) $this->fk_project) : "null");
 		$sql .= ", ".($this->salary > 0 ? ((float) $this->salary) : "null");
 		$sql .= ", ".($this->type_payment > 0 ? ((int) $this->type_payment) : 0);
 		$sql .= ", ".($this->accountid > 0 ? ((int) $this->accountid) : "null");

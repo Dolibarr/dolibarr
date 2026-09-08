@@ -615,6 +615,9 @@ print '<input type="hidden" name="action" value="updateinventorylines">';
 print '<input type="hidden" name="id" value="'.$object->id.'">';
 print '<input type="hidden" name="sortfield" value="' . $sortfield . '">';
 print '<input type="hidden" name="sortorder" value="' . $sortorder . '">';
+// Keep the same limit as the displayed page, otherwise the save reads a different page slice
+// (plimit($limit, $offset)) than the one shown and quantities of the extra rows are lost (#35207).
+print '<input type="hidden" name="limit" value="' . ((int) $limit) . '">';
 if ($backtopage) {
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 }
@@ -802,7 +805,7 @@ if ($action == 'updatebyscaning') {
 							console.log("We change #"+product.Id+"_input to match input in scanner box");
 							if(product.hasOwnProperty("reelqty")){
 								$.ajax({ url: \''.DOL_URL_ROOT.'/product/inventory/ajax/searchfrombarcode.php\',
-									data: { "token":"'.newToken().'", "action":"addnewlineproduct", "fk_entrepot":product.Warehouse, "batch":product.Batch, "fk_inventory":'.dol_escape_js((string) $object->id).', "fk_product":product.fk_product, "reelqty":product.reelqty},
+									data: { "token":"'.currentToken().'", "action":"addnewlineproduct", "fk_entrepot":product.Warehouse, "batch":product.Batch, "fk_inventory":'.dol_escape_js((string) $object->id).', "fk_product":product.fk_product, "reelqty":product.reelqty},
 									type: \'POST\',
 									async: false,
 									success: function(response) {
@@ -997,7 +1000,7 @@ if ($object->status == $object::STATUS_DRAFT || $object->status == $object::STAT
 } else {
 	// Actions or link to stock movement
 	print '<td class="right">';
-	//print $langs->trans("StockMovement");
+	print $langs->trans("StockMovement");
 	print '</td>';
 }
 print '</tr>';
@@ -1246,11 +1249,12 @@ if ($resql) {
 				print $obj->qty_view;	// qty found
 				print '</td>';
 			}
-			print '<td>';
+			print '<td class="right nowraponall">';
 			if ($obj->fk_movement > 0) {
 				$stockmovment = new MouvementStock($db);
 				$stockmovment->fetch($obj->fk_movement);
 				print $stockmovment->getNomUrl(1, 'movements');
+				print ' <span class="opacitymedium">('.dol_print_date($stockmovment->datem, 'dayhour').')</span>';
 			}
 			print '</td>';
 		}

@@ -2109,7 +2109,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				/*
 				if ($user->hasRight('adherent', 'creer')) {
 					if (Adherent::STATUS_VALIDATED == $object->status) {
-						if ($object->email) print '<a class="butAction" href="card.php?rowid='.$object->id.'&action=sendinfo">'.$langs->trans("SendCardByMail")."</a>\n";
+						if ($object->email) print '<a class="butAction" href="card.php?rowid='.$object->id.'&action=sendinfo&token='.newToken().'">'.$langs->trans("SendCardByMail")."</a>\n";
 						else print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NoEMail")).'">'.$langs->trans("SendCardByMail")."</a>\n";
 					} else {
 						print '<span class="butActionRefused classfortooltip" title="'.dol_escape_htmltag($langs->trans("ValidateBefore")).'">'.$langs->trans("SendCardByMail")."</span>";

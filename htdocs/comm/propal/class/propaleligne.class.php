@@ -511,6 +511,9 @@ class PropaleLigne extends CommonObjectLine
 		if (empty($this->total_localtax2)) {
 			$this->total_localtax2 = 0;
 		}
+		if (empty($this->subprice_ttc)) {
+			$this->subprice_ttc = 0;
+		}
 		if (empty($this->rang)) {
 			$this->rang = 0;
 		}
@@ -762,6 +765,9 @@ class PropaleLigne extends CommonObjectLine
 		}
 		if (empty($this->subprice)) {
 			$this->subprice = 0;
+		}
+		if (empty($this->subprice_ttc)) {
+			$this->subprice_ttc = 0;
 		}
 		if (empty($this->pa_ht)) {
 			$this->pa_ht = 0;

@@ -90,6 +90,7 @@ ThisIsInformationOnDocumentToSignFichinter=Ceci est une information sur l'interv
 ThisIsInformationOnDocumentToSignSociete_rib=Voici les informations sur le mandat SEPA à signer
 ThisIsInformationOnDocumentToSignExpedition= Il s'agit d'informations sur l'expédition à signer
 SignatureProposalRef=Signature du devis ou proposition commerciale %s
+SignatureOrderRef=Signature de vente commande %s
 SignatureContractRef=Signature du contrat %s
 SignatureFichinterRef=Signature de l'intervention %s
 SignatureSociete_ribRef=Signature du mandat SEPA %s

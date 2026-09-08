@@ -178,7 +178,7 @@ function propal_admin_prepare_head()
 	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'propal_admin');
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/comm/admin/propal_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'propal'));
 	$head[$h][1] = $langs->trans("ExtraFields");
 	$nbExtrafields = $extrafields->attributes['propal']['count'];
 	if ($nbExtrafields > 0) {
@@ -187,7 +187,7 @@ function propal_admin_prepare_head()
 	$head[$h][2] = 'attributes';
 	$h++;
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/comm/admin/propaldet_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'propaldet'));
 	$head[$h][1] = $langs->trans("ExtraFieldsLines");
 	$nbExtrafields = $extrafields->attributes['propaldet']['count'];
 	if ($nbExtrafields > 0) {
@@ -266,7 +266,10 @@ function getCustomerProposalPieChart($socid = 0)
 		$db->free($resql);
 
 		global $badgeStatus0, $badgeStatus1, $badgeStatus4, $badgeStatus6, $badgeStatus9;
-		include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+		$theme_vars_file = dol_getThemeFilePath('theme_vars.inc.php');
+		if ($theme_vars_file) {
+			include $theme_vars_file;
+		}
 
 		$result = '<div class="div-table-responsive-no-min">';
 		$result .= '<table class="noborder nohover centpercent">';

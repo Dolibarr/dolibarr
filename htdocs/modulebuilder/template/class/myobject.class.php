@@ -25,6 +25,7 @@
 
 // Put here all includes required by your class file
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
 //require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
@@ -47,7 +48,7 @@ class MyObject extends CommonObject
 	 * @var string		Prefix to check for any trigger code of any business class to prevent bad value for trigger code.
 	 * @see CommonTrigger::call_trigger()
 	 */
-	public $TRIGGER_PREFIX = 'MYMODULE_MYOBJECT';	// Will be used to build trgiger keys 'MYMODULE_MYOBJECT_MODIFY', ...
+	public $TRIGGER_PREFIX = 'MYMODULE_MYOBJECT';	// Will be used to build trigger keys 'MYMODULE_MYOBJECT_MODIFY', ...
 
 	/**
 	 * @var string 		Name of table without prefix where object is stored. This is also the key used for extrafields management (so extrafields know the link to the parent table).
@@ -119,6 +120,7 @@ class MyObject extends CommonObject
 	 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
 	 *	'validate' is 1 if you need to validate the field with $this->validateField(). Need MAIN_ACTIVATE_VALIDATION_RESULT.
 	 *  'copytoclipboard' is 1 or 2 to allow to add a picto to copy value into clipboard (1=picto after label, 2=picto after value)
+	 *  'description' is a description of the field. Can be used to help the MCP server.
 	 *
 	 *  Note: To have value dynamic, you can set value to 0 in definition and edit the value on the fly into the constructor.
 	 */
@@ -635,7 +637,7 @@ class MyObject extends CommonObject
 
 			if (!$error && !$notrigger) {
 				// Call trigger
-				$result = $this->call_trigger('MYOBJECT_VALIDATE', $user);
+				$result = $this->call_trigger('MYMODULE_MYOBJECT_VALIDATE', $user);
 				if ($result < 0) {
 					$error++;
 				}
@@ -649,7 +651,7 @@ class MyObject extends CommonObject
 			// Rename directory if dir was a temporary ref
 			if (preg_match('/^[\(]?PROV/i', $this->ref)) {
 				// Now we rename also files into index
-				$sql = 'UPDATE '.$this->db->prefix()."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'myobject/".$this->db->escape($this->newref)."'";
+				$sql = 'UPDATE '.$this->db->prefix()."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(dol_strlen($this->ref) + 1).")), filepath = 'myobject/".$this->db->escape($this->newref)."'";
 				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'myobject/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
@@ -895,8 +897,8 @@ class MyObject extends CommonObject
 				if (!empty($filename)) {
 					$pospoint = strpos($filearray[0]['name'], '.');
 
-					$pathtophoto = $class.'/'.$this->ref.'/thumbs/'.substr($filename, 0, $pospoint).'_mini'.substr($filename, $pospoint);
-					if (!getDolGlobalString(strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS')) {
+					$pathtophoto = $class.'/'.$this->ref.'/thumbs/'.dol_substr($filename, 0, $pospoint).'_mini'.dol_substr($filename, $pospoint);
+					if (!getDolGlobalString(dol_strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS')) {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$module.'" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div></div>';
 					} else {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><img class="photouserphoto userphoto" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div>';
@@ -1018,12 +1020,14 @@ class MyObject extends CommonObject
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("mymodule@mymodule");
-			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
-			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Enabled');
-			$this->labelStatus[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Disabled');
-			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
-			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Enabled');
-			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Disabled');
+			// Build status labels from the 'status' field arrayofkeyval so that the badge (LibStatut),
+			// the list filter and the select all show the same, configurable labels.
+			if (!empty($this->fields['status']['arrayofkeyval']) && is_array($this->fields['status']['arrayofkeyval'])) {
+				foreach ($this->fields['status']['arrayofkeyval'] as $statuskey => $statuslabel) {
+					$this->labelStatus[$statuskey] = $langs->transnoentitiesnoconv($statuslabel);
+					$this->labelStatusShort[$statuskey] = $langs->transnoentitiesnoconv($statuslabel);
+				}
+			}
 		}
 
 		$statusType = 'status'.$status;
@@ -1032,7 +1036,7 @@ class MyObject extends CommonObject
 			$statusType = 'status6';
 		}
 
-		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode, '', $paramsBadge);
+		return dolGetStatus($this->labelStatus[$status] ?? '', $this->labelStatusShort[$status] ?? '', '', $statusType, $mode, '', $paramsBadge);
 	}
 
 	/**

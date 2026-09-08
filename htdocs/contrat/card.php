@@ -12,7 +12,7 @@
  * Copyright (C) 2018-2026	Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2023-2026	Charlene Benke				<charlene@patas-monkey.com>
  * Copyright (C) 2023		Nick Fragoulis
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2025		William Mead				<william@m34d.com>
  * Copyright (C) 2026		Lionel Vessiller			<lvessiller@open-dsi.fr>
@@ -310,41 +310,10 @@ if (empty($reshook)) {
 			$object->ref = GETPOST('ref', 'alpha');
 			$object->ref_customer				= GETPOST('ref_customer', 'alpha');
 			$object->ref_supplier				= GETPOST('ref_supplier', 'alpha');
+			$object->fk_contract_type = GETPOSTINT('contract_type');
 
 			// If creation from another object of another module (Example: origin=propal, originid=1)
 			if (!empty($origin) && !empty($originid)) {
-				// Parse element/subelement (ex: project_task)
-				$element = $subelement = $origin;
-				if (preg_match('/^([^_]+)_([^_]+)/i', $origin, $regs)) {
-					$element = $regs[1];
-					$subelement = $regs[2];
-				}
-
-				// For compatibility
-				$classname = '';
-				if ($element == 'order') {
-					$element = $subelement = 'commande';
-				}
-				if ($element == 'propal') {
-					$element = 'comm/propal';
-					$subelement = 'propal';
-				}
-				if ($element == 'invoice' || $element == 'facture') {
-					$element = 'compta/facture';
-					$subelement = 'facture';
-				}
-				if ($element == 'facturerec' || $element == 'facture_rec') {
-					// FactureRec lives in compta/facture/class/facture-rec.class.php (#34775)
-					$element = 'compta/facture';
-					$subelement = 'facture-rec';
-					$classname = 'FactureRec';
-				}
-				if ($element == 'facture_fourn_rec' || $element == 'invoice_supplier_rec') {
-					$element = 'fourn';
-					$subelement = 'fournisseur.facture-rec';
-					$classname = 'FactureFournisseurRec';
-				}
-
 				$object->origin    = $origin;
 				$object->origin_id = $originid;
 
@@ -356,17 +325,13 @@ if (empty($reshook)) {
 
 				$id = $object->create($user);
 				if ($id > 0) {
-					dol_include_once('/'.$element.'/class/'.$subelement.'.class.php');
-
-					if (empty($classname)) {
-						$classname = ucfirst($subelement);
-					}
-					$srcobject = new $classname($db);
-					'@phan-var-force Commande|Propal|Facture $srcobject';  // Can be other class, but CommonObject is too Generic
-
 					dol_syslog("Try to find source object origin=".$object->origin." originid=".$object->origin_id." to add lines");
-					$result = $srcobject->fetch($object->origin_id);
-					if ($result > 0) {
+
+					// Resolve and load the source object from its element type (propal, commande, facture, facture_rec, invoice_supplier_rec, ...)
+					$srcobject = fetchObjectByElement($object->origin_id, $origin);
+
+					if (is_object($srcobject) && $srcobject->id > 0) {
+						'@phan-var-force Commande|Propal|Facture $srcobject';  // Can be other class, but CommonObject is too Generic
 						$srcobject->fetch_thirdparty();
 						$lines = $srcobject->lines;
 						if (empty($lines) && method_exists($srcobject, 'fetch_lines')) {
@@ -457,12 +422,18 @@ if (empty($reshook)) {
 							}
 						}
 					} else {
-						setEventMessages($srcobject->error, $srcobject->errors, 'errors');
+						if (is_object($srcobject) && !empty($srcobject->error)) {
+							$srcobjecterror = $srcobject->error;
+						} else {
+							$langs->load("errors");
+							$srcobjecterror = $langs->trans("ErrorRecordNotFound");
+						}
+						setEventMessages($srcobjecterror, (is_object($srcobject) ? $srcobject->errors : null), 'errors');
 						$error++;
 					}
 
 					// Hooks
-					$parameters = array('objFrom' => $srcobject);
+					$parameters = array('objFrom' => (is_object($srcobject) ? $srcobject : null));
 					$reshook = $hookmanager->executeHooks('createFrom', $parameters, $object, $action); // Note that $action and $object may have been
 					// modified by hook
 					if ($reshook < 0) {
@@ -1181,6 +1152,7 @@ if ($result > 0) {
 // Create
 if ($action == 'create') {
 	$objectsrc = null;
+	$projectid = GETPOSTINT('projectid');
 	print load_fiche_titre($langs->trans('NewContract'), '', 'contract');
 
 	$soc = new Societe($db);
@@ -1189,67 +1161,42 @@ if ($action == 'create') {
 	}
 
 	if (GETPOST('origin') && GETPOSTINT('originid')) {
-		// Parse element/subelement (ex: project_task)
+		// Parse element (ex: project_task -> project) just to detect the 'project' origin handled below
 		$regs = array();
-		$element = $subelement = GETPOST('origin');
+		$element = GETPOST('origin');
 		if (preg_match('/^([^_]+)_([^_]+)/i', GETPOST('origin'), $regs)) {
 			$element = $regs[1];
-			$subelement = $regs[2];
 		}
 
 		if ($element == 'project') {
 			$projectid = GETPOSTINT('originid');
 		} else {
-			// For compatibility
-			if ($element == 'order' || $element == 'commande') {
-				$element = $subelement = 'commande';
-			}
-			if ($element == 'propal') {
-				$element = 'comm/propal';
-				$subelement = 'propal';
-			}
-			if ($element == 'invoice' || $element == 'facture') {
-				$element = 'compta/facture';
-				$subelement = 'facture';
-			}
-			$classname = '';
-			if ($element == 'facturerec' || $element == 'facture_rec') {
-				$element = 'compta/facture';
-				$subelement = 'facture-rec';
-				$classname = 'FactureRec';
-			}
-			if ($element == 'facture_fourn_rec' || $element == 'invoice_supplier_rec') {
-				$element = 'fourn';
-				$subelement = 'fournisseur.facture-rec';
-				$classname = 'FactureFournisseurRec';
-			}
+			// Resolve and load the source object from its element type (propal, commande, facture, facture_rec, invoice_supplier_rec, ...)
+			$objectsrc = fetchObjectByElement($originid, $origin);
 
-			dol_include_once('/'.$element.'/class/'.$subelement.'.class.php');
+			if (is_object($objectsrc) && $objectsrc->id > 0) {
+				'@phan-var-force Commande|Propal|Facture $objectsrc';
+				if (empty($objectsrc->lines) && method_exists($objectsrc, 'fetch_lines')) {
+					$objectsrc->fetch_lines();
+				}
+				$objectsrc->fetch_thirdparty();
 
-			if (empty($classname)) {
-				$classname = ucfirst($subelement);
+				// Replicate extrafields
+				$objectsrc->fetch_optionals();
+				$object->array_options = $objectsrc->array_options;
+
+				$projectid = (int) $objectsrc->fk_project;
+
+				$soc = $objectsrc->thirdparty;
+
+				$note_private = (!empty($objectsrc->note_private) ? $objectsrc->note_private : '');
+				$note_public = (!empty($objectsrc->note_public) ? $objectsrc->note_public : '');
+
+				// Object source contacts list
+				$srccontactslist = $objectsrc->liste_contact(-1, 'external', 1);
+			} else {
+				$objectsrc = null;
 			}
-			$objectsrc = new $classname($db);
-			'@phan-var-force Commande|Propal|Facture $objectsrc';
-			$objectsrc->fetch($originid);
-			if (empty($objectsrc->lines) && method_exists($objectsrc, 'fetch_lines')) {
-				$objectsrc->fetch_lines();
-			}
-			$objectsrc->fetch_thirdparty();
-
-			// Replicate extrafields
-			$objectsrc->fetch_optionals();
-			$object->array_options = $objectsrc->array_options;
-
-			$projectid = (int) $objectsrc->fk_project;
-
-			$soc = $objectsrc->thirdparty;
-
-			$note_private = (!empty($objectsrc->note_private) ? $objectsrc->note_private : '');
-			$note_public = (!empty($objectsrc->note_public) ? $objectsrc->note_public : '');
-
-			// Object source contacts list
-			$srccontactslist = $objectsrc->liste_contact(-1, 'external', 1);
 		}
 	} else {
 		$projectid = GETPOSTINT('projectid');
@@ -1265,28 +1212,34 @@ if ($action == 'create') {
 	print '<input type="hidden" name="socid" value="'.$soc->id.'">'."\n";
 	print '<input type="hidden" name="remise_percent" value="0">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+	print '<input type="hidden" name="contract_type" value="'.GETPOSTINT('contract_type').'">';
 
 	print dol_get_fiche_head();
 
 	print '<table class="border centpercent">';
 
 	// Ref
-	print '<tr><td class="titlefield fieldrequired">'.$langs->trans('Ref').'</td><td>';
-	if (!empty($modCodeContract->code_auto)) {
-		$tmpcode = $langs->trans("Draft");
-	} else {
+	if (empty($modCodeContract->code_auto)) {
+		print '<tr><td class="titlefield fieldrequired">'.$langs->trans('Ref').'</td><td>';
+		//if (!empty($modCodeContract->code_auto)) {
+		//	$tmpcode = $langs->trans("Draft");
+		//} else {
 		$tmpcode = '<input name="ref" class="maxwidth100" maxlength="128" value="'.dol_escape_htmltag(GETPOST('ref', 'alpha')).'">';
+		//}
+		print $tmpcode;
+		print '</td></tr>';
 	}
-	print $tmpcode;
-	print '</td></tr>';
 
-	// Ref customer
-	print '<tr><td>'.$langs->trans('RefCustomer').'</td>';
-	print '<td><input type="text" class="maxwidth150" name="ref_customer" id="ref_customer" value="'.dol_escape_htmltag(GETPOST('ref_customer', 'alpha')).'"></td></tr>';
-
-	// Ref supplier
-	print '<tr><td>'.$langs->trans('RefSupplier').'</td>';
-	print '<td><input type="text" class="maxwidth150" name="ref_supplier" id="ref_supplier" value="'.dol_escape_htmltag(GETPOST('ref_supplier', 'alpha')).'"></td></tr>';
+	if (getDolGlobalString('COINTRACT_ASK_CONTRACT_REF_FOR_CUSTOMER_AT_CREATION')) {
+		// Ref customer
+		print '<tr><td>'.$langs->trans('RefCustomer').'</td>';
+		print '<td><input type="text" class="maxwidth150" name="ref_customer" id="ref_customer" value="'.dol_escape_htmltag(GETPOST('ref_customer', 'alpha')).'"></td></tr>';
+	}
+	if (getDolGlobalString('COINTRACT_ASK_CONTRACT_REF_FOR_SUPPLIER_AT_CREATION')) {
+		// Ref supplier
+		print '<tr><td>'.$langs->trans('RefSupplier').'</td>';
+		print '<td><input type="text" class="maxwidth150" name="ref_supplier" id="ref_supplier" value="'.dol_escape_htmltag(GETPOST('ref_supplier', 'alpha')).'"></td></tr>';
+	}
 
 	// Thirdparty
 	print '<tr>';
@@ -1449,7 +1402,7 @@ if ($action == 'create') {
 			);
 			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id, $langs->trans("ActivateAllOnContract"), $langs->trans("ConfirmActivateAllOnContract"), "confirm_activate", $formquestion, 'yes', 1, 300);
 		} elseif ($action == 'clone') {
-			$filter = '(s.client:IN:1,2,3)';
+			$filter = '(s.client:IN:1,2,3) OR (s.fournisseur:=:1)';
 			// Clone confirmation
 			$formquestion = array(array('type' => 'other', 'name' => 'socid', 'label' => $langs->trans("SelectThirdParty"), 'value' => $form->select_company(GETPOSTINT('socid'), 'socid', $filter)));
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneContract', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
@@ -1571,13 +1524,13 @@ if ($action == 'create') {
 		if ($object->thirdparty->remise_percent) {
 			print $langs->trans("CompanyHasRelativeDiscount", $object->thirdparty->remise_percent).'. ';
 		} else {
-			print '<span class="hideonsmartphone">'.$langs->trans("CompanyHasNoRelativeDiscount").'. </span>';
+			print '<span class="hideonsmartphone opacitymedium">'.$langs->trans("CompanyHasNoRelativeDiscount").'. </span>';
 		}
 		$absolute_discount = $object->thirdparty->getAvailableDiscounts();
 		if ($absolute_discount) {
 			print $langs->trans("CompanyHasAbsoluteDiscount", price($absolute_discount), $langs->trans("Currency".$conf->currency)).'.';
 		} else {
-			print '<span class="hideonsmartphone">'.$langs->trans("CompanyHasNoAbsoluteDiscount").'.</span>';
+			print '<span class="hideonsmartphone opacitymedium">'.$langs->trans("CompanyHasNoAbsoluteDiscount").'.</span>';
 		}
 		print '</td></tr>';
 
@@ -1588,6 +1541,12 @@ if ($action == 'create') {
 		print '</td><td>';
 		print $form->editfieldval("Date", 'date_contrat', $object->date_contrat, $object, $user->hasRight('contrat', 'creer'), 'datehourpicker');
 		print '</td>';
+		print '</tr>';
+
+		// Contract type (read-only)
+		$contractTypeLabels = array(0 => $langs->trans('CustomerContract'), 1 => $langs->trans('SupplierContract'));
+		print '<tr><td class="titlefield">'.$langs->trans('ContractType').'</td>';
+		print '<td>'.dol_escape_htmltag($contractTypeLabels[(int) $object->fk_contract_type] ?? $contractTypeLabels[0]).'</td>';
 		print '</tr>';
 
 		// Other attributes
@@ -1601,79 +1560,82 @@ if ($action == 'create') {
 		print '<!-- amounts -->'."\n";
 		print '<div class="underbanner clearboth"></div>';
 
-		print '<div class="div-table-responsive-no-min">';
-		print '<table class="border tableforfield centpercent">';
+		if (getDolGlobalString("CONTRACT_SHOW_SUMMARY_Of_AMOUNTS")) {
+			print '<div class="div-table-responsive-no-min">';
+			print '<table class="border tableforfield centpercent">';
 
-		// Qty by service status
-		print '<tr><td class="titlefield">'."".'</td>';
-		print '<td class=right>'.$langs->trans('Total').'</td>';
-		print '<td class=right>'.$staticcontractline->LibStatut(0, 5, 0).'</td>';
-		print '<td class=right>'.$staticcontractline->LibStatut(4, 5, 0).'</td>';
-		print '<td class=right>'.$staticcontractline->LibStatut(4, 5, 1).'</td>';
-		print '<td class=right>'.$staticcontractline->LibStatut(5, 5, 0).'</td>';
-		print '</tr>';
-
-		$all= $object->getTotalizedLines(-1, 0);
-		$draft= $object->getTotalizedLines(0, 0);
-		$enabled= $object->getTotalizedLines(4, 0);
-		$expired= $object->getTotalizedLines(4, 1);
-		$close= $object->getTotalizedLines(5, 0);
-
-		print '<tr><td class="titlefield">'.$langs->trans("Quantity").'</td>';
-		print '<td class="right nowrap">'.($all['total_qty'] ? price2num($all['total_qty']) : '<span class="opacitymedium">0</span>').'</td>';
-		print '<td class="right">'.($draft['total_qty'] ? price2num($draft['total_qty']) : '<span class="opacitymedium">0</span>').'</td>';
-		print '<td class="right">'.($enabled['total_qty'] ? price2num($enabled['total_qty']) : '<span class="opacitymedium">0</span>').'</td>';
-		print '<td class="right">'.($expired['total_qty'] ? price2num($expired['total_qty']) : '<span class="opacitymedium">0</span>').'</td>';
-		print '<td class="right">'.($close['total_qty'] ? price2num($close['total_qty']) : '<span class="opacitymedium">0</span>').'</td>';
-		print '</tr>';
-
-		print '<tr><td class="titlefield">'.$langs->trans("TotalHT").'</td>';
-		print '<td class="nowraponall amountcard right">'.($all['total_ht'] ? price($all['total_ht']) : '<span class="opacitymedium">0</span>').'</td>';
-		print '<td class="nowraponall amountcard right">'.($draft['total_ht'] ? price($draft['total_ht']) : '<span class="opacitymedium">0</span>').'</td>';
-		print '<td class="nowraponall amountcard right">'.($enabled['total_ht'] ? price($enabled['total_ht']) : '<span class="opacitymedium">0</span>').'</td>';
-		print '<td class="nowraponall amountcard right">'.($expired['total_ht'] ? price($expired['total_ht']) : '<span class="opacitymedium">0</span>').'</td>';
-		print '<td class="nowraponall amountcard right">'.($close['total_ht'] ? price($close['total_ht']) : '<span class="opacitymedium">0</span>').'</td>';
-		print '</tr>';
-
-		print '<tr><td class="titlefield">'.$langs->trans("TotalVAT").'</td>';
-		print '<td class="nowraponall amountcard right nowrap">'.($all['total_tva'] ? price($all['total_tva']) : '<span class="opacitymedium">0</span>').'</td>';
-		print '<td class="nowraponall amountcard right">'.($draft['total_tva'] ? price($draft['total_tva']) : '<span class="opacitymedium">0</span>').'</td>';
-		print '<td class="nowraponall amountcard right">'.($enabled['total_tva'] ? price($enabled['total_tva']) : '<span class="opacitymedium">0</span>').'</td>';
-		print '<td class="nowraponall amountcard right">'.($expired['total_tva'] ? price($expired['total_tva']) : '<span class="opacitymedium">0</span>').'</td>';
-		print '<td class="nowraponall amountcard right">'.($close['total_tva'] ? price($close['total_tva']) : '<span class="opacitymedium">0</span>').'</td>';
-		print '</tr>';
-
-		if ($mysoc->localtax1_assuj == "1" || $all['total_localtax1'] != 0) {
-			print '<tr><td class="titlefield">' . $langs->trans("TotalLT1") . '</td>';
-			print '<td class="nowraponall amountcard right nowrap">' . ($all['total_localtax1'] ? price($all['total_localtax1']) : '<span class="opacitymedium">0</span>') . '</td>';
-			print '<td class="nowraponall amountcard right">' . ($draft['total_localtax1'] ? price($draft['total_localtax1']) : '<span class="opacitymedium">0</span>') . '</td>';
-			print '<td class="nowraponall amountcard right">' . ($enabled['total_localtax1'] ? price($enabled['total_localtax1']) : '<span class="opacitymedium">0</span>') . '</td>';
-			print '<td class="nowraponall amountcard right">' . ($expired['total_localtax1'] ? price($expired['total_localtax1']) : '<span class="opacitymedium">0</span>') . '</td>';
-			print '<td class="nowraponall amountcard right">' . ($close['total_localtax1'] ? price($close['total_localtax1']) : '<span class="opacitymedium">0</span>') . '</td>';
+			// Qty by service status
+			print '<tr><td class="titlefield">'."".'</td>';
+			print '<td class=right>'.$langs->trans('Total').'</td>';
+			print '<td class=right>'.$staticcontractline->LibStatut(0, 5, 0).'</td>';
+			print '<td class=right>'.$staticcontractline->LibStatut(4, 5, 0).'</td>';
+			print '<td class=right>'.$staticcontractline->LibStatut(4, 5, 1).'</td>';
+			print '<td class=right>'.$staticcontractline->LibStatut(5, 5, 0).'</td>';
 			print '</tr>';
+
+			$all= $object->getTotalizedLines(-1, 0);
+			$draft= $object->getTotalizedLines(0, 0);
+			$enabled= $object->getTotalizedLines(4, 0);
+			$expired= $object->getTotalizedLines(4, 1);
+			$close= $object->getTotalizedLines(5, 0);
+
+			// Note that the line with qty is a duplicate of the same summary information reported in the status banner.
+			print '<tr><td class="titlefield">'.$langs->trans("Quantity").'</td>';
+			print '<td class="right nowrap">'.($all['total_qty'] ? price2num($all['total_qty']) : '<span class="opacitymedium">0</span>').'</td>';
+			print '<td class="right">'.($draft['total_qty'] ? price2num($draft['total_qty']) : '<span class="opacitymedium">0</span>').'</td>';
+			print '<td class="right">'.($enabled['total_qty'] ? price2num($enabled['total_qty']) : '<span class="opacitymedium">0</span>').'</td>';
+			print '<td class="right">'.($expired['total_qty'] ? price2num($expired['total_qty']) : '<span class="opacitymedium">0</span>').'</td>';
+			print '<td class="right">'.($close['total_qty'] ? price2num($close['total_qty']) : '<span class="opacitymedium">0</span>').'</td>';
+			print '</tr>';
+
+			print '<tr><td class="titlefield">'.$langs->trans("TotalHT").'</td>';
+			print '<td class="nowraponall amountcard right">'.($all['total_ht'] ? price($all['total_ht']) : '<span class="opacitymedium">0</span>').'</td>';
+			print '<td class="nowraponall amountcard right">'.($draft['total_ht'] ? price($draft['total_ht']) : '<span class="opacitymedium">0</span>').'</td>';
+			print '<td class="nowraponall amountcard right">'.($enabled['total_ht'] ? price($enabled['total_ht']) : '<span class="opacitymedium">0</span>').'</td>';
+			print '<td class="nowraponall amountcard right">'.($expired['total_ht'] ? price($expired['total_ht']) : '<span class="opacitymedium">0</span>').'</td>';
+			print '<td class="nowraponall amountcard right">'.($close['total_ht'] ? price($close['total_ht']) : '<span class="opacitymedium">0</span>').'</td>';
+			print '</tr>';
+
+			print '<tr><td class="titlefield">'.$langs->trans("TotalVAT").'</td>';
+			print '<td class="nowraponall amountcard right nowrap">'.($all['total_tva'] ? price($all['total_tva']) : '<span class="opacitymedium">0</span>').'</td>';
+			print '<td class="nowraponall amountcard right">'.($draft['total_tva'] ? price($draft['total_tva']) : '<span class="opacitymedium">0</span>').'</td>';
+			print '<td class="nowraponall amountcard right">'.($enabled['total_tva'] ? price($enabled['total_tva']) : '<span class="opacitymedium">0</span>').'</td>';
+			print '<td class="nowraponall amountcard right">'.($expired['total_tva'] ? price($expired['total_tva']) : '<span class="opacitymedium">0</span>').'</td>';
+			print '<td class="nowraponall amountcard right">'.($close['total_tva'] ? price($close['total_tva']) : '<span class="opacitymedium">0</span>').'</td>';
+			print '</tr>';
+
+			if ($mysoc->localtax1_assuj == "1" || $all['total_localtax1'] != 0) {
+				print '<tr><td class="titlefield">' . $langs->trans("TotalLT1") . '</td>';
+				print '<td class="nowraponall amountcard right nowrap">' . ($all['total_localtax1'] ? price($all['total_localtax1']) : '<span class="opacitymedium">0</span>') . '</td>';
+				print '<td class="nowraponall amountcard right">' . ($draft['total_localtax1'] ? price($draft['total_localtax1']) : '<span class="opacitymedium">0</span>') . '</td>';
+				print '<td class="nowraponall amountcard right">' . ($enabled['total_localtax1'] ? price($enabled['total_localtax1']) : '<span class="opacitymedium">0</span>') . '</td>';
+				print '<td class="nowraponall amountcard right">' . ($expired['total_localtax1'] ? price($expired['total_localtax1']) : '<span class="opacitymedium">0</span>') . '</td>';
+				print '<td class="nowraponall amountcard right">' . ($close['total_localtax1'] ? price($close['total_localtax1']) : '<span class="opacitymedium">0</span>') . '</td>';
+				print '</tr>';
+			}
+
+			if ($mysoc->localtax2_assuj == "1" || $all['total_localtax2'] != 0) {
+				print '<tr><td class="titlefield">' . $langs->trans("TotalLT2") . '</td>';
+				print '<td class="nowraponall amountcard right nowrap">' . ($all['total_localtax2'] ? price($all['total_localtax2']) : '<span class="opacitymedium">0</span>') . '</td>';
+				print '<td class="nowraponall amountcard right">' . ($draft['total_localtax2'] ? price($draft['total_localtax2']) : '<span class="opacitymedium">0</span>') . '</td>';
+				print '<td class="nowraponall amountcard right">' . ($enabled['total_localtax2'] ? price($enabled['total_localtax2']) : '<span class="opacitymedium">0</span>') . '</td>';
+				print '<td class="nowraponall amountcard right">' . ($expired['total_localtax2'] ? price($expired['total_localtax2']) : '<span class="opacitymedium">0</span>') . '</td>';
+				print '<td class="nowraponall amountcard right">' . ($close['total_localtax2'] ? price($close['total_localtax2']) : '<span class="opacitymedium">0</span>') . '</td>';
+				print '</tr>';
+			}
+
+			print '<tr><td class="titlefield">'.$langs->trans("TotalTTC").'</td>';
+			print '<td class="nowraponall amountcard right nowrap">'.($all['total_ttc'] ? price($all['total_ttc']): '<span class="opacitymedium">0</span>').'</td>';
+			print '<td class="nowraponall amountcard right">'.($draft['total_ttc'] ? price($draft['total_ttc']) : '<span class="opacitymedium">0</span>').'</td>';
+			print '<td class="nowraponall amountcard right">'.($enabled['total_ttc'] ? price($enabled['total_ttc']) : '<span class="opacitymedium">0</span>').'</td>';
+			print '<td class="nowraponall amountcard right">'.($expired['total_ttc'] ? price($expired['total_ttc']) : '<span class="opacitymedium">0</span>').'</td>';
+			print '<td class="nowraponall amountcard right">'.($close['total_ttc'] ? price($close['total_ttc']) : '<span class="opacitymedium">0</span>').'</td>';
+			print '</tr>';
+
+			print "</table>";
+			print '</div>';
 		}
 
-		if ($mysoc->localtax2_assuj == "1" || $all['total_localtax2'] != 0) {
-			print '<tr><td class="titlefield">' . $langs->trans("TotalLT2") . '</td>';
-			print '<td class="nowraponall amountcard right nowrap">' . ($all['total_localtax2'] ? price($all['total_localtax2']) : '<span class="opacitymedium">0</span>') . '</td>';
-			print '<td class="nowraponall amountcard right">' . ($draft['total_localtax2'] ? price($draft['total_localtax2']) : '<span class="opacitymedium">0</span>') . '</td>';
-			print '<td class="nowraponall amountcard right">' . ($enabled['total_localtax2'] ? price($enabled['total_localtax2']) : '<span class="opacitymedium">0</span>') . '</td>';
-			print '<td class="nowraponall amountcard right">' . ($expired['total_localtax2'] ? price($expired['total_localtax2']) : '<span class="opacitymedium">0</span>') . '</td>';
-			print '<td class="nowraponall amountcard right">' . ($close['total_localtax2'] ? price($close['total_localtax2']) : '<span class="opacitymedium">0</span>') . '</td>';
-			print '</tr>';
-		}
-
-		print '<tr><td class="titlefield">'.$langs->trans("TotalTTC").'</td>';
-		print '<td class="nowraponall amountcard right nowrap">'.($all['total_ttc'] ? price($all['total_ttc']): '<span class="opacitymedium">0</span>').'</td>';
-		print '<td class="nowraponall amountcard right">'.($draft['total_ttc'] ? price($draft['total_ttc']) : '<span class="opacitymedium">0</span>').'</td>';
-		print '<td class="nowraponall amountcard right">'.($enabled['total_ttc'] ? price($enabled['total_ttc']) : '<span class="opacitymedium">0</span>').'</td>';
-		print '<td class="nowraponall amountcard right">'.($expired['total_ttc'] ? price($expired['total_ttc']) : '<span class="opacitymedium">0</span>').'</td>';
-		print '<td class="nowraponall amountcard right">'.($close['total_ttc'] ? price($close['total_ttc']) : '<span class="opacitymedium">0</span>').'</td>';
-		print '</tr>';
-
-		print "</table>";
-
-		print '</div>';
 		print '</div>';
 		print '</div>';
 
@@ -2110,7 +2072,7 @@ if ($action == 'create') {
 						$arraycontractid[$contractcursor->id] = $contractcursor->ref;
 					}
 					//var_dump($arraycontractid);
-					// Cree un tableau formulaire
+					// Create a form array
 					$formquestion = array(
 						'text' => $langs->trans("ConfirmMoveToAnotherContractQuestion"),
 						0 => array('type' => 'select', 'name' => 'newcid', 'values' => $arraycontractid));
@@ -2199,7 +2161,7 @@ if ($action == 'create') {
 					if (GETPOST('remonth')) {
 						$dateactstart = dol_mktime(12, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
 					} elseif (!$dateactstart) {
-						$dateactstart = time();
+						$dateactstart = dol_now();
 					}
 
 					$dateactend = $objp->date_end;
@@ -2210,7 +2172,7 @@ if ($action == 'create') {
 							$product = new Product($db);
 							$product->fetch($objp->fk_product);
 							if (!empty($product->duration_value) && !empty($product->duration_unit)) {
-								$dateactend = dol_time_plus_duree(time(), $product->duration_value, $product->duration_unit);
+								$dateactend = dol_time_plus_duree(dol_now(), $product->duration_value, $product->duration_unit);
 							}
 						}
 					}
@@ -2256,7 +2218,7 @@ if ($action == 'create') {
 					if (GETPOST('remonth')) {
 						$dateactstart = dol_mktime(12, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
 					} elseif (!$dateactstart) {
-						$dateactstart = time();
+						$dateactstart = dol_now();
 					}
 
 					$dateactend = $objp->date_end_real;
@@ -2266,7 +2228,7 @@ if ($action == 'create') {
 						if ($objp->fk_product > 0) {
 							$product = new Product($db);
 							$product->fetch($objp->fk_product);
-							$dateactend = dol_time_plus_duree(time(), $product->duration_value, $product->duration_unit);
+							$dateactend = dol_time_plus_duree(dol_now(), $product->duration_value, $product->duration_unit);
 						}
 					}
 					$now = dol_now();
@@ -2466,9 +2428,9 @@ if ($action == 'create') {
 
 				if (getDolGlobalString('CONTRACT_HIDE_CLOSED_SERVICES_BY_DEFAULT') && $object->nbofservicesclosed > 0) {
 					if ($action == 'showclosedlines') {
-						print '<div class="inline-block divButAction"><a class="butAction" id="btnhideclosedlines" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=hideclosedlines">'.$langs->trans("HideClosedServices").'</a></div>';
+						print '<div class="inline-block divButAction"><a class="butAction" id="btnhideclosedlines" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=hideclosedlines&amp;token='.newToken().'">'.$langs->trans("HideClosedServices").'</a></div>';
 					} else {
-						print '<div class="inline-block divButAction"><a class="butAction" id="btnshowclosedlines" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=showclosedlines">'.$langs->trans("ShowClosedServices").'</a></div>';
+						print '<div class="inline-block divButAction"><a class="butAction" id="btnshowclosedlines" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=showclosedlines&amp;token='.newToken().'">'.$langs->trans("ShowClosedServices").'</a></div>';
 					}
 				}
 

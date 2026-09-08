@@ -99,7 +99,7 @@ function expedition_admin_prepare_head()
 		$head[$h][2] = 'shipment';
 		$h++;
 
-		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/expedition_extrafields.php');
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'expedition'));
 		$head[$h][1] = $langs->trans("ExtraFields");
 		$nbExtrafields = $extrafields->attributes['expedition']['count'];
 		if ($nbExtrafields > 0) {
@@ -108,7 +108,7 @@ function expedition_admin_prepare_head()
 		$head[$h][2] = 'attributes_shipment';
 		$h++;
 
-		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/expeditiondet_extrafields.php');
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'expeditiondet'));
 		$head[$h][1] = $langs->trans("ExtraFieldsLines");
 		$nbExtrafields = $extrafields->attributes['expeditiondet']['count'];
 		if ($nbExtrafields > 0) {
@@ -127,7 +127,7 @@ function expedition_admin_prepare_head()
 		$extrafields->fetch_name_optionals_label('delivery');
 		$extrafields->fetch_name_optionals_label('deliverydet');
 
-		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/delivery_extrafields.php');
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'delivery'));
 		$head[$h][1] = $langs->trans("ExtraFields");
 		$nbExtrafields = $extrafields->attributes['delivery']['count'];
 		if ($nbExtrafields > 0) {
@@ -136,7 +136,7 @@ function expedition_admin_prepare_head()
 		$head[$h][2] = 'attributes_receivings';
 		$h++;
 
-		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/deliverydet_extrafields.php');
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'deliverydet'));
 		$head[$h][1] = $langs->trans("ExtraFieldsLines");
 		$nbExtrafields = $extrafields->attributes['deliverydet']['count'];
 		if ($nbExtrafields > 0) {

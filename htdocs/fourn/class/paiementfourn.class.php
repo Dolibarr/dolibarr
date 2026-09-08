@@ -59,7 +59,7 @@ class PaiementFourn extends Paiement
 	 * @var int	Status of payment. 0 = unvalidated; 1 = validated
 	 */
 	public $statut;
-	// fk_paiement dans llx_paiement est l'id du type de paiement (7 pour CHQ, ...)
+	// fk_paiement in llx_paiement is the id of the payment type (7 for CHQ, ...)
 	// fk_paiement dans llx_paiement_facture is rowid of payment
 
 	/**
@@ -285,7 +285,7 @@ class PaiementFourn extends Paiement
 			if ($resql) {
 				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'paiementfourn');
 
-				// Insere tableau des montants / factures
+				// Insert array of amounts / invoices
 				foreach ($this->amounts as $key => $amount) {
 					$facid = $key;
 					if (is_numeric($amount) && $amount != 0) {
@@ -549,7 +549,7 @@ class PaiementFourn extends Paiement
 			}
 
 			if (!$notrigger) {
-				// Appel des triggers
+				// Call triggers
 				$result = $this->call_trigger('PAYMENT_SUPPLIER_DELETE', $user);
 				if ($result < 0) {
 					$this->db->rollback();
@@ -706,6 +706,43 @@ class PaiementFourn extends Paiement
 	 *  @param		string	$morecss		Add more CSS
 	 *	@return		string					String with URL
 	 */
+	/**
+	 * Return array with content of the tooltip, so the getNomUrl() tooltip becomes hookable
+	 * (a module can toggle, reorder or add entries through the getTooltipContent hook).
+	 *
+	 * @param  array<string,mixed>  $params  Params to construct tooltip data
+	 * @return array<string,string>          Data to show in tooltip
+	 */
+	public function getTooltipContentArray($params)
+	{
+		global $conf, $langs;
+
+		$reflabel = $params['reflabel'] ?? $this->ref;
+
+		$datas = array();
+		$datas['picto'] = img_picto('', $this->picto).' <u>'.$langs->trans("Payment").'</u>';
+		$datas['ref'] = '<br><strong>'.$langs->trans("Ref").':</strong> '.$reflabel;
+		$dateofpayment = ($this->datepaye ? $this->datepaye : $this->date);
+		if ($dateofpayment) {
+			$datas['date'] = '<br><strong>'.$langs->trans("Date").':</strong> '.dol_print_date($dateofpayment, 'dayhour', 'tzuser');
+		}
+		if ($this->amount) {
+			$datas['amount'] = '<br><strong>'.$langs->trans("Amount").':</strong> '.price($this->amount, 0, $langs, 1, -1, -1, $conf->currency);
+		}
+
+		return $datas;
+	}
+
+	/**
+	 *	Return clickable name (with picto eventually)
+	 *
+	 *	@param		int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
+	 *	@param		string	$option			What is the link pointing to
+	 *  @param		string  $mode           'withlistofinvoices'=Include list of invoices into tooltip
+	 *  @param		int  	$notooltip		1=Disable tooltip
+	 *  @param		string	$morecss		Add more CSS
+	 *	@return		string					String with URL
+	 */
 	public function getNomUrl($withpicto = 0, $option = '', $mode = 'withlistofinvoices', $notooltip = 0, $morecss = '')
 	{
 		global $langs, $conf, $hookmanager;
@@ -719,22 +756,15 @@ class PaiementFourn extends Paiement
 		$text = $this->ref; // Sometimes ref contains label
 		$reg = array();
 		if (preg_match('/^\((.*)\)$/i', $text, $reg)) {
-			// Label generique car entre parentheses. On l'affiche en le traduisant
+			// Generic label because it is in parentheses. We display it translated.
 			if ($reg[1] == 'paiement') {
 				$reg[1] = 'Payment';
 			}
 			$text = $langs->trans($reg[1]);
 		}
 
-		$label = img_picto('', $this->picto).' <u>'.$langs->trans("Payment").'</u><br>';
-		$label .= '<strong>'.$langs->trans("Ref").':</strong> '.$text;
-		$dateofpayment = ($this->datepaye ? $this->datepaye : $this->date);
-		if ($dateofpayment) {
-			$label .= '<br><strong>'.$langs->trans("Date").':</strong> '.dol_print_date($dateofpayment, 'dayhour', 'tzuser');
-		}
-		if ($this->amount) {
-			$label .= '<br><strong>'.$langs->trans("Amount").':</strong> '.price($this->amount, 0, $langs, 1, -1, -1, $conf->currency);
-		}
+		$params = array('reflabel' => $text);
+		$label = $this->getTooltipContent($params);
 
 		$linkclose = '';
 		if (empty($notooltip)) {
