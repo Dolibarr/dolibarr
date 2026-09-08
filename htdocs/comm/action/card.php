@@ -1983,7 +1983,7 @@ if ($action == 'create') {
 		// Also remind the customer by email
 		if (getDolGlobalString('AGENDA_REMINDER_EMAIL') && $socid > 0) {
 			print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("AlsoRemindCustomer").'</td><td colspan="3">';
-			print '<input type="checkbox" id="remindcustomer" name="remindcustomer"'.(empty(GETPOST('remindcustomer')) ? '' : ' checked').'>';
+			print '<input type="checkbox" id="remindcustomer" name="remindcustomer"'.(GETPOST('remindcustomer') ? ' checked' : '').'>';
 			print '</td></tr>';
 		}
 
