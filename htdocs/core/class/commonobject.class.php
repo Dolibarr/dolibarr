@@ -265,6 +265,11 @@ abstract class CommonObject
 	public $linked_objects;
 
 	/**
+	 * @var array<string,int>|null		Array of external linked objects (set by hooks or external modules) to merge into $linked_objects during creation
+	 */
+	public $other_linked_objects;
+
+	/**
 	 * @var array<string,array<int,int>>	Array of linked objects ids. Loaded by ->fetchObjectLinked
 	 */
 	public $linkedObjectsIds;

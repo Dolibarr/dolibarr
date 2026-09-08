@@ -768,9 +768,19 @@ class Utils
 		if (!empty($dolibarr_main_restrict_os_commands)) {
 			$arrayofallowedcommand = explode(',', $dolibarr_main_restrict_os_commands);
 			$arrayofallowedcommand = array_map('trim', $arrayofallowedcommand);
-			if (!in_array(basename($command), $arrayofallowedcommand)) {
-				dol_syslog("files.lib.php::executeCLI canceled because target filename ".basename($command)." is not in the whitelist of allowed commands.", LOG_WARNING);
-				return array('result' => -1, 'output' => '', 'error' => 'Command '.basename($command).' is not in the whitelist of allowed commands');
+
+			$commands = preg_split('/\|\||&&|\||&/', $command);
+			foreach ($commands as $newcommand) {
+				$newcommand = trim($newcommand);
+				$matches = array();
+				// If command is "'ab cd.exe' param1 param2" or '"ab cd.exe" param1 param2' or 'abcd.exe param1 param2', we must extract ab...cd.exe only.
+				if (preg_match('/^(?:\'([^\']*)\'|"([^"]*)"|(\S+))/', $newcommand, $matches)) {
+					$newcommand = $matches[1] ?: ($matches[2] ?: $matches[3]);
+				}
+				if (!in_array(basename($newcommand), $arrayofallowedcommand)) {
+					dol_syslog("files.lib.php::executeCLI canceled because target filename ".basename($newcommand)." is not in the whitelist of allowed commands.", LOG_WARNING);
+					return array('result' => -1, 'output' => '', 'error' => 'Command '.basename($newcommand).' is not in the whitelist of allowed commands');
+				}
 			}
 		}
 
