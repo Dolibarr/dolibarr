@@ -992,6 +992,7 @@ if ($object->id > 0) {
 			$tmpuser->email = $obj->email;
 			$tmpuser->lastname = $obj->lastname;
 			$tmpuser->firstname = $obj->firstname;
+			$tmpuser->statut = $obj->user_status;
 			$tmpuser->status = $obj->user_status;
 
 			print '<tr class="oddeven">';
@@ -1127,6 +1128,7 @@ if ($object->id > 0) {
 			$tmpuser->email = $obj->email;
 			$tmpuser->lastname = $obj->lastname;
 			$tmpuser->firstname = $obj->firstname;
+			$tmpuser->statut = $obj->user_status;
 			$tmpuser->status = $obj->user_status;
 			$tmpuser->photo = $obj->user_photo;
 
