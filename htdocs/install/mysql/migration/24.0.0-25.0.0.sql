@@ -127,6 +127,19 @@ ALTER TABLE llx_inventory ADD COLUMN last_main_doc varchar(255) DEFAULT NULL AFT
 ALTER TABLE llx_facturedet ADD INDEX idx_facturedet_fk_prev_id (fk_prev_id);
 ALTER TABLE llx_facture ADD INDEX idx_facture_situation_cycle_ref (situation_cycle_ref);
 
+-- Short-lived tombstone log of deleted objects (see llx_deletion_log.sql).
+CREATE TABLE llx_deletion_log(
+	rowid			integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+	entity			integer NOT NULL DEFAULT 1,
+	element_type	varchar(64) NOT NULL,
+	fk_object		integer NOT NULL,
+	date_deletion	datetime NOT NULL,
+	fk_user			integer NULL
+) ENGINE=innodb;
+
+ALTER TABLE llx_deletion_log ADD INDEX idx_deletion_log_element (element_type, entity, date_deletion);
+ALTER TABLE llx_deletion_log ADD INDEX idx_deletion_log_date_deletion (date_deletion);
+
 
 
 

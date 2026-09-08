@@ -1584,6 +1584,76 @@ class Invoices extends DolibarrApi
 	}
 
 	/**
+	 * Remove a discount (credit available) for a credit note or a deposit.
+	 *
+	 * @since	25.0.0	Initial implementation
+	 *
+	 * @param   int		$id				Invoice ID
+	 * @return	Object					Object with cleaned properties
+	 *
+	 * @url POST    {id}/unmarkAsCreditAvailable
+	 *
+	 * @throws RestException 304
+	 * @throws RestException 403
+	 * @throws RestException 404
+	 * @throws RestException 409
+	 * @throws RestException 500 System error
+	 */
+	public function unmarkAsCreditAvailable($id)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
+
+		if (!DolibarrApiAccess::$user->hasRight('facture', 'creer')) {
+			throw new RestException(403);
+		}
+
+
+		$result = $this->invoice->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Invoice not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('facture', $this->invoice->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+
+		$discountcheck = new DiscountAbsolute($this->db);
+		$result = $discountcheck->fetch(0, $this->invoice->id);
+
+		if ($result == 0) {
+			throw new RestException(404, 'Discount not found');
+		}
+		if ($result < 0) {
+			throw new RestException(500, $discountcheck->error);
+		}
+
+		if (!empty($discountcheck->fk_facture) || !empty($discountcheck->fk_facture_line)) {
+			throw new RestException(409, 'Credit used');
+		}
+
+		$this->db->begin();
+
+		$result = $discountcheck->delete(DolibarrApiAccess::$user);
+		if ($result <= 0) {
+			$this->db->rollback();
+			throw new RestException(500, 'Discount deletion error');
+		}
+
+		if ($this->invoice->type != Facture::TYPE_DEPOSIT) {
+			$result = $this->invoice->setUnpaid(DolibarrApiAccess::$user);
+			if ($result <= 0) {
+				$this->db->rollback();
+				throw new RestException(500, 'Could not set unpaid');
+			}
+		}
+
+		$this->db->commit();
+
+		return $this->_cleanObjectDatas($this->invoice);
+	}
+
+	/**
 	 * Add a discount line into an invoice (as an invoice line) using an existing absolute discount
 	 *
 	 * Note that this consume the discount.

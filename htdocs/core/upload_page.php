@@ -482,6 +482,7 @@ if ($action == 'showsummary') {
 
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 
+	$json = null;
 	try {
 		$json = json_decode(GETPOST('jsonstring', 'restricthtml'), true);
 	} catch (Exception $e) {
