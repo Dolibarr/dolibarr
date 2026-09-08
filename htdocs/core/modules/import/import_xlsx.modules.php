@@ -104,6 +104,11 @@ class ImportXlsx extends ModeleImports
 	 */
 	public $headers;
 
+	/**
+	 * @var int
+	 */
+	public $countcolumns = 0; // cached column count to avoid re-parsing the file on each row
+
 
 	/**
 	 *	Constructor
@@ -147,7 +152,7 @@ class ImportXlsx extends ModeleImports
 			return;
 		}
 		$this->label_lib = 'PhpSpreadSheet';
-		$this->version_lib = '1.8.0';
+		$this->version_lib = '1.12.0'; // No way to get info from library
 
 		$arrayofstreams = stream_get_wrappers();
 		if (!in_array('zip', $arrayofstreams)) {
@@ -339,9 +344,13 @@ class ImportXlsx extends ModeleImports
 		}
 		$array = array();
 
-		$xlsx = new Xlsx();
-		$info = $xlsx->listWorksheetinfo($this->file);
-		$countcolumns = $info[0]['totalColumns'];
+		if (empty($this->countcolumns)) {
+			$xlsx = new Xlsx();
+			$info = $xlsx->listWorksheetinfo($this->file);
+			$this->countcolumns = $info[0]['totalColumns'];
+			unset($xlsx);
+		}
+		$countcolumns = $this->countcolumns;
 
 		for ($col = 1; $col <= $countcolumns; $col++) {
 			$tmpcell = $this->workbook->getActiveSheet()->getCellByColumnAndRow($col, $this->record);
@@ -358,8 +367,6 @@ class ImportXlsx extends ModeleImports
 			$array[$col]['type'] = (dol_strlen($val) ? 1 : -1); // If empty we consider it null
 		}
 		$this->record++;
-
-		unset($xlsx);
 
 		return $array;
 	}

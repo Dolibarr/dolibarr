@@ -103,7 +103,13 @@ ConfirmCloneContract=እርግጠኛ ነህ ውሉን <b>%s</b>
 LowerDateEndPlannedShort=ዝቅተኛ የታቀዱ የንቁ አገልግሎቶች የመጨረሻ ቀን
 SendContractRef=የውል መረጃ __REF__
 OtherContracts=ሌሎች ኮንትራቶች
-##### Types de contacts #####
+##### Statistics #####
+ContractsStatistics=Contract's statistics
+NbOfContracts=Nb of contracts
+NumberOfContractsByMonth=Number of contracts by month
+AmountOfServices=Number of services
+AmountOfServicesByMonthHT=Number of services (excl. tax) by month
+##### Types of contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=የሽያጭ ተወካይ ውል መፈረም
 TypeContact_contrat_internal_SALESREPFOLL=የሽያጭ ተወካይ የክትትል ውል
 TypeContact_contrat_external_BILLING=የሂሳብ አከፋፈል ደንበኛ ግንኙነት

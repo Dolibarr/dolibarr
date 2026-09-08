@@ -3,7 +3,7 @@
  * Copyright (C) 2009-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2023		Charlene BENKE		<charlene@patas-monkey.com>
  * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -147,9 +147,8 @@ function contract_prepare_head(Contrat $object)
  */
 function contract_admin_prepare_head()
 {
-	global $langs, $conf, $db;
+	global $langs, $conf, $extrafields;
 
-	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('contrat');
 	$extrafields->fetch_name_optionals_label('contratdet');
 
@@ -167,7 +166,7 @@ function contract_admin_prepare_head()
 	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'contract_admin', 'add', 'core');
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/contrat/admin/contract_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'contrat'));
 	$head[$h][1] = $langs->trans("ExtraFields");
 	$nbExtrafields = $extrafields->attributes['contrat']['count'];
 	if ($nbExtrafields > 0) {
@@ -176,7 +175,7 @@ function contract_admin_prepare_head()
 	$head[$h][2] = 'attributes';
 	$h++;
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/contrat/admin/contractdet_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'contratdet'));
 	$head[$h][1] = $langs->trans("ExtraFieldsLines");
 	$nbExtrafields = $extrafields->attributes['contratdet']['count'];
 	if ($nbExtrafields > 0) {

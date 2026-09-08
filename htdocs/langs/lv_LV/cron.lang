@@ -77,6 +77,7 @@ CronType=Darba veids
 CronType_method=PHP klases izsaukšanas metode
 CronType_command=Shell komanda
 CronCannotLoadClass=Nevar ielādēt klases failu %s (izmantot klasi %s)
+CronModuleNotEnabledInThisEntity=Cron module not enabled in this entity (to use %s method of %s object)
 CronCannotLoadObject=Klases fails %s tika ielādēts, bet objekts %s tajā netika atrasts
 UseMenuModuleToolsToAddCronJobs=Lai redzētu un rediģētu ieplānotos darbus, dodieties uz izvēlni <a href="%s">Sākums - Administratora rīki - Plānotie darbi</a>.
 JobDisabled=Darbs ir atspējots

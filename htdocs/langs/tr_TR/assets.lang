@@ -17,7 +17,7 @@ AccountancyCodeAsset=Muhasebe kodu (varlık)
 AccountancyCodeDepreciationAsset=Muhasebe kodu (amortisman varlık hesabı)
 AccountancyCodeDepreciationExpense=Muhasebe kodu (amortisman gideri hesabı)
 AssetsLines=Varlıklar
-ConfirmValidateAsset=İstediğinizden emin misiniz ile doğrula arasındaki bu varlık, <b>%s</b> referansıyla mı?
+ConfirmValidateAsset=<b>%s</b> referanslı bu varlığı doğrulamak istediğinizden emin misiniz?
 DeleteType=Sil
 DeleteAnAssetType=Varlık modelini silme
 ConfirmDeleteAssetType=Bu varlık modelini silmek istediğinizden emin misiniz?
@@ -31,11 +31,11 @@ AssetSetup=Varlık kurulumu
 AssetSetupPage=Varlık kurulum sayfası
 ExtraFieldsAssetModel=Tamamlayıcı özellikler (Varlığın modeli)
 AssetsType=Varlık modeli
-AssetsTypeId=Öğe modeli kimliği
+AssetsTypeId=Varlık modeli kimliği
 AssetsTypeLabel=Varlık modeli etiketi
 AssetsTypes=Varlık modelleri
-ASSET_ACCOUNTANCY_CATEGORY=Sabit kıymet muhasebe grubu
-ASSET_DEPRECIATION_DURATION_PER_YEAR=Bir yıl üzerinden amortisman hesaplamak için gün cinsinden orantılı süre
+ASSET_ACCOUNTANCY_CATEGORY=Duran varlık muhasebe grubu
+ASSET_DEPRECIATION_DURATION_PER_YEAR=Bir yıl içindeki amortismanı hesaplamak için gün cinsinden orantılı süre
 # Menu
 MenuAssets=Varlıklar
 MenuNewAsset=Yeni varlık
@@ -69,9 +69,9 @@ AssetTypeFinancial=Parasal
 AssetNotDepreciated=Amortismana tabi tutulmamış
 AssetDisposal=İmha etmek
 AssetConfirmDisposalAsk=<b> %s</b> varlığını elden çıkarmak istediğinizden emin misiniz?
-AssetConfirmReOpenAsk=<b> %s</b> öğesini yeniden açmak istediğinizden emin misiniz?
+AssetConfirmReOpenAsk=<b> %s</b> varlığını yeniden açmak istediğinizden emin misiniz?
 # Asset status
-AssetInDraft=Ödeme emri
+AssetInDraft=Taslak
 AssetInProgress=Devam etmekte
 AssetDisposed=Bertaraf
 AssetRecorded=Hesaplandı
@@ -82,7 +82,7 @@ AssetDisposalType=Bertaraf türü
 AssetDisposalDepreciated=Transfer yılının amortismanı
 AssetDisposalSubjectToVat=İmha KDV'ye tabidir
 # Asset model
-AssetModel=Öğenin modeli
+AssetModel=Varlık modeli
 AssetModels=Varlık modelleri
 # Asset depreciation options
 AssetDepreciationOptionEconomic=Ekonomik amortisman

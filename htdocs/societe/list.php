@@ -11,7 +11,7 @@
  * Copyright (C) 2017       Juanjo Menent      	    <jmenent@2byte.es>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2020       Open-Dsi                <support@open-dsi.fr>
- * Copyright (C) 2021-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2021-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022       Anthony Berton          <anthony.berton@bb2a.fr>
  * Copyright (C) 2023       William Mead            <william.mead@manchenumerique.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
@@ -172,6 +172,7 @@ $diroutputmassaction = $conf->societe->dir_output.'/temp/massgeneration/'.$user-
 
 // Load variable for pagination
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
+
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
@@ -648,12 +649,12 @@ if (!empty($search_sale) && $search_sale != '-1') {
 	$search_sale_req = implode(',', $search_sale_req);
 
 	if (count($search_sale) == 1 && in_array('-2', $search_sale)) {
-		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = s.rowid)";
+		$sql .= " AND ".getSalesRepresentativeSqlFilter('s.rowid', 0, 1);
 	} elseif (count($search_sale) > 0 && !in_array('-2', $search_sale)) {
-		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = s.rowid AND sc.fk_user IN (".$db->sanitize($search_sale_req)."))";
+		$sql .= " AND ".getSalesRepresentativeSqlFilter('s.rowid', $db->sanitize($search_sale_req));
 	} elseif (count($search_sale) > 0 && in_array('-2', $search_sale)) {
-		$sql .= " AND (EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = s.rowid AND sc.fk_user IN (".$db->sanitize($search_sale_req)."))";
-		$sql .= " OR NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = s.rowid))";
+		$sql .= " AND (".getSalesRepresentativeSqlFilter('s.rowid', $db->sanitize($search_sale_req));
+		$sql .= " OR ".getSalesRepresentativeSqlFilter('s.rowid', 0, 1).")";
 	}
 }
 
@@ -1440,11 +1441,6 @@ if (!empty($arrayfields['s.address']['checked'])) {
 	print '<input class="flat searchstring maxwidth50imp" type="text" name="search_address" value="'.dol_escape_htmltag($search_address).'">';
 	print '</td>';
 }
-// Sales representatives
-if (!empty($arrayfields['sales.representative']['checked'])) {
-	print '<td class="liste_titre">';
-	print '</td>';
-}
 // Zip
 if (!empty($arrayfields['s.zip']['checked'])) {
 	print '<td class="liste_titre">';
@@ -1591,6 +1587,11 @@ if (!empty($arrayfields['customerorsupplier']['checked'])) {
 	}
 	print '</td>';
 }
+// Sales representatives
+if (!empty($arrayfields['sales.representative']['checked'])) {
+	print '<td class="liste_titre">';
+	print '</td>';
+}
 // Prospect level
 if (!empty($arrayfields['s.fk_prospectlevel']['checked'])) {
 	print '<td class="liste_titre center">';
@@ -1733,10 +1734,6 @@ if (!empty($arrayfields['s.address']['checked'])) {
 	print_liste_field_titre($arrayfields['s.address']['label'], $_SERVER['PHP_SELF'], 's.address', '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
-if (!empty($arrayfields['sales.representative']['checked'])) {
-	print_liste_field_titre($arrayfields['sales.representative']['label'], $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder);
-	$totalarray['nbfield']++;
-}
 if (!empty($arrayfields['s.zip']['checked'])) {
 	print_liste_field_titre($arrayfields['s.zip']['label'], $_SERVER["PHP_SELF"], "s.zip", "", $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
@@ -1828,6 +1825,10 @@ if (!empty($arrayfields['s.tva_intra']['checked'])) {
 }
 if (!empty($arrayfields['customerorsupplier']['checked'])) {
 	print_liste_field_titre($arrayfields['customerorsupplier']['label'], $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, 'center '); // type of customer
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['sales.representative']['checked'])) {
+	print_liste_field_titre($arrayfields['sales.representative']['label'], $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.fk_prospectlevel']['checked'])) {
@@ -1955,7 +1956,7 @@ while ($i < $imaxinloop) {
 		$j = 0;
 		print '<tr data-rowid="'.$companystatic->id.'" class="oddeven row-with-select"';
 		if ($contextpage == 'poslist') {
-			print ' onclick="location.href=\'list.php?action=change&contextpage=poslist&idcustomer='.$obj->rowid.'&place='.urlencode($place).'\'"';
+			print ' onclick="location.href=\'list.php?action=change&token='.newToken().'&contextpage=poslist&idcustomer='.$obj->rowid.'&place='.urlencode($place).'\'"';
 		}
 		print '>';
 
@@ -1995,8 +1996,10 @@ while ($i < $imaxinloop) {
 			}
 		}
 		if (!empty($arrayfields['s.name_alias']['checked'])) {
-			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($companystatic->name_alias).'">';
-			print dol_escape_htmltag($companystatic->name_alias);
+			print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute($companystatic->name_alias).'">';
+			print '<span class="doltext opacitymedium">';
+			print dolPrintHTML($companystatic->name_alias);
+			print '</span>';
 			print "</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -2049,46 +2052,6 @@ while ($i < $imaxinloop) {
 		// Address
 		if (!empty($arrayfields['s.address']['checked'])) {
 			print '<td class="tdoverflowmax250" title="'.dol_escape_htmltag($companystatic->address).'">'.dol_escape_htmltag($companystatic->address).'</td>';
-			if (!$i) {
-				$totalarray['nbfield']++;
-			}
-		}
-		// Sales Representative
-		if (!empty($arrayfields['sales.representative']['checked'])) {
-			print '<td class="nowraponall tdoverflowmax200">';
-			$listsalesrepresentatives = $companystatic->getSalesRepresentatives($user);
-			$nbofsalesrepresentative = count($listsalesrepresentatives);
-			if ($nbofsalesrepresentative > 6) {
-				// We print only number
-				print $nbofsalesrepresentative;
-			} elseif ($nbofsalesrepresentative > 0) {
-				$userstatic = new User($db);
-				$j = 0;
-				foreach ($listsalesrepresentatives as $val) {
-					$userstatic->id = $val['id'];
-					$userstatic->lastname = $val['lastname'];
-					$userstatic->firstname = $val['firstname'];
-					$userstatic->email = $val['email'];
-					$userstatic->entity = $val['entity'];
-					$userstatic->photo = $val['photo'];
-					$userstatic->login = $val['login'];
-					$userstatic->office_phone = $val['office_phone'];
-					$userstatic->office_fax = $val['office_fax'];
-					$userstatic->user_mobile = $val['user_mobile'];
-					$userstatic->job = $val['job'];
-					$userstatic->gender = $val['gender'];
-					$userstatic->statut = $val['statut'];
-					$userstatic->status = $val['statut'];
-					print ($nbofsalesrepresentative < 2) ? $userstatic->getNomUrl(-1, '', 0, 0, 12) : $userstatic->getNomUrl(-2);
-					$j++;
-					if ($j < $nbofsalesrepresentative) {
-						print ' ';
-					}
-				}
-			} else {
-				print '&nbsp;';
-			}
-			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -2182,7 +2145,8 @@ while ($i < $imaxinloop) {
 		}
 		// Email
 		if (!empty($arrayfields['s.email']['checked'])) {
-			print '<td class="tdoverflowmax150">'.dol_print_email($obj->email, $obj->rowid, $obj->rowid, 1, 0, 0, 1)."</td>\n";
+			$showinvalidemail = (int) !getDolGlobalInt('MAIN_SHOW_INVALID_EMAIL_IN_LIST'); // to avoid slow display
+			print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute($obj->email).'">'.dol_print_email($obj->email, $obj->rowid, $obj->rowid, 1, 0, $showinvalidemail, 1)."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -2272,6 +2236,46 @@ while ($i < $imaxinloop) {
 			$reshook = $hookmanager->executeHooks('getTypeUrl', array('client_type' => $obj->client));
 			if (empty($reshook)) {
 				print $companystatic->getTypeUrl(1);
+			}
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Sales Representative
+		if (!empty($arrayfields['sales.representative']['checked'])) {
+			print '<td class="nowraponall tdoverflowmax150">';
+			$listsalesrepresentatives = $companystatic->getSalesRepresentatives($user);
+			$nbofsalesrepresentative = count($listsalesrepresentatives);
+			if ($nbofsalesrepresentative > 6) {
+				// We print only number
+				print $nbofsalesrepresentative;
+			} elseif ($nbofsalesrepresentative > 0) {
+				$userstatic = new User($db);
+				$j = 0;
+				foreach ($listsalesrepresentatives as $val) {
+					$userstatic->id = $val['id'];
+					$userstatic->lastname = $val['lastname'];
+					$userstatic->firstname = $val['firstname'];
+					$userstatic->email = $val['email'];
+					$userstatic->entity = $val['entity'];
+					$userstatic->photo = $val['photo'];
+					$userstatic->login = $val['login'];
+					$userstatic->office_phone = $val['office_phone'];
+					$userstatic->office_fax = $val['office_fax'];
+					$userstatic->user_mobile = $val['user_mobile'];
+					$userstatic->job = $val['job'];
+					$userstatic->gender = $val['gender'];
+					$userstatic->statut = $val['statut'];
+					$userstatic->status = $val['statut'];
+					print ($nbofsalesrepresentative < 2) ? $userstatic->getNomUrl(-1, '', 0, 0, 12) : $userstatic->getNomUrl(-2);
+					$j++;
+					if ($j < $nbofsalesrepresentative) {
+						print ' ';
+					}
+				}
+			} else {
+				print '&nbsp;';
 			}
 			print '</td>';
 			if (!$i) {

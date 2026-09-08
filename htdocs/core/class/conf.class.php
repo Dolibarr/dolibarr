@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2017  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2006 	    Jean Heimburger         <jean@tiaris.info>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -119,7 +119,7 @@ class Conf extends stdClass
 	 */
 	public $modules;
 	/**
-	 * @var array<string,array<string,string|array>>  List of activated modules
+	 * @var array<string,array<string,mixed>>  List of activated modules
 	 */
 	public $modules_parts;
 
@@ -559,7 +559,7 @@ class Conf extends stdClass
 			$sql = "SELECT ".$db->decrypt('name')." as name,";
 			$sql .= " ".$db->decrypt('value')." as value, entity";
 			$sql .= " FROM ".$db->prefix()."const";
-			$sql .= " WHERE entity IN (0,".$this->entity.")";
+			$sql .= " WHERE entity IN (0,".((int) $this->entity).")";
 			$sql .= " ORDER BY entity"; // This is to have entity 0 first, then entity 1 that overwrite.
 
 			$resql = $db->query($sql);
@@ -1008,7 +1008,7 @@ class Conf extends stdClass
 				$this->global->THEME_SHOW_BORDER_ON_INPUT = 1;
 			}
 			if (!isset($this->global->THEME_ELDY_BORDER_RADIUS)) {
-				$this->global->THEME_ELDY_BORDER_RADIUS = 8;
+				$this->global->THEME_ELDY_BORDER_RADIUS = 10;
 			}
 
 			// By default, suppliers objects can be linked to all projects
@@ -1019,6 +1019,11 @@ class Conf extends stdClass
 			// By default we enable feature to bill time spent
 			if (!isset($this->global->PROJECT_BILL_TIME_SPENT)) {
 				$this->global->PROJECT_BILL_TIME_SPENT = 1;
+			}
+
+			// By default we enable feature to feature of layout for email
+			if (!isset($this->global->MAIN_EMAIL_USE_LAYOUT)) {
+				$this->global->MAIN_EMAIL_USE_LAYOUT = 1;
 			}
 
 			// MAIN_HTML_TITLE
@@ -1034,15 +1039,8 @@ class Conf extends stdClass
 			// This value can be overwritten by user choice in main.inc.php
 			$this->liste_limit = getDolGlobalInt('MAIN_SIZE_LISTE_LIMIT', 15);
 			if ((int) $this->liste_limit <= 0) {
-				// Mode automatic. Similar code than into main.inc.php
-				$this->liste_limit = 15;
-				if (!empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] < 700) {
-					$this->liste_limit = 8;
-				} elseif (!empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] < 910) {
-					$this->liste_limit = 10;
-				} elseif (!empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] > 1130) {
-					$this->liste_limit = 20;
-				}
+				// Mode automatic.
+				$this->liste_limit = getListLimitFromScreenHeight();
 			}
 
 			// Set PRODUIT_LIMIT_SIZE if never defined
@@ -1392,6 +1390,9 @@ class Conf extends stdClass
 			}
 			if (!isset($this->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY) && extension_loaded('tidy') && class_exists("tidy")) {
 				$this->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 1;
+			}
+			if (!isset($this->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES)) {
+				$this->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 0;	// TODO Move this to 1
 			}
 
 			if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {

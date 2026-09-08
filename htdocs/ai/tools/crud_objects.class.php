@@ -1,6 +1,9 @@
 <?php
 /* Copyright (C) 2026	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2026	Nick Fragoulis
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026	Jose Martinez			<jose.martinez@pichinov.com>
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,18 +31,30 @@ require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 
 /**
  * Tool class for CRUD operations on Dolibarr objects
+ * TODO Remove all tools in this file. Must be into the objectname.class.php
+ * to follow the same structure than APIs.
  */
 class ToolCrudObjects extends McpTool
 {
-
 	/**
 	 * 	Constructor
 	 *
+	 * 	Aligned with McpHandler's instantiation contract: new $className($db, $user, $conf).
+	 * 	Accepting $user via DI allows this tool to work in HTTP MCP context where no PHP
+	 * 	web session exists. Some sibling tool classes (ToolThirdParty, ToolCategories,
+	 * 	ToolProducts) already use this signature; this aligns ToolCrudObjects with them.
+	 *
 	 * 	@param	DoliDB		$db			Database handler
+	 * 	@param	User|null	$user		Service user provided by McpHandler (from AI_MCP_USER_ID)
+	 * 	@param	Conf|null	$conf		Dolibarr config (optional)
 	 */
-	public function __construct(DoliDB  $db)
+	public function __construct(DoliDB $db, $user = null, $conf = null)
 	{
 		$this->db = $db;
+		$this->user = $user;
+		if ($conf !== null) {
+			$this->conf = $conf;
+		}
 	}
 
 
@@ -141,10 +156,10 @@ class ToolCrudObjects extends McpTool
 			// Order tool
 			[
 				"name" => "create_sales_order",
-				"description" => "Create a CUSTOMER SALES ORDER. This is specifically for creating ORDERS that customers place with you. USE THIS TOOL whenever user mentions: 'order', 'sales order', 'customer order', 'new order'. This is NOT for invoices or supplier orders. Examples of when to use this tool:
+				"description" => "Create a CUSTOMER SALES ORDER. This is specifically for creating ORDERS that customers place with you. USE THIS TOOL whenever user mentions: 'create', 'new' or 'add' with 'order', 'customer order' or 'sales order'. This is NOT for invoices or supplier orders. Examples of when to use this tool:
 - 'create order for customer X'
 - 'new order for Y'
-- 'order from customer Z'
+- 'add order from customer Z'
 - 'add order for X with 5 items'
 If user says 'order' without any qualifier, they mean a SALES ORDER - use this tool.",
 				"inputSchema" => [
@@ -184,7 +199,7 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 			// Invoice tool
 			[
 				"name" => "create_customer_invoice",
-				"description" => "Create a customer invoice (bill). Do NOT use this for orders - use create_sales_order instead. Do NOT use this for payments - use pay_invoice instead. Examples: 'create invoice for customer X', 'bill customer Y'",
+				"description" => "Create a customer invoice (bill). Do NOT use this for orders - use create_sales_order instead. Do NOT use this for payments - use pay_invoice instead. Examples: 'create invoice for customer X', 'new bill customer Y'",
 				"inputSchema" => [
 					"type" => "object",
 					"properties" => [
@@ -320,13 +335,20 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 	 */
 	public function execute(string $name, array $args)
 	{
-		global $user, $langs, $conf, $mysoc;
+		global $langs, $conf, $mysoc;
 
-		// Ensure $this->user is the authenticated global user
-		$this->user = $user;
-
-		if (!$user->id) {
-			return ["error" => "User not authenticated."];
+		// Use the user injected via constructor (McpHandler). Fall back to global $user
+		// when running in a web session context (e.g. AI Assistant) where DI is not used.
+		// is_object() is used instead of empty() because the parent McpTool declares $user
+		// with a non-nullable type hint, which makes PHPStan flag empty($this->user) as
+		// unreachable code.
+		if (!is_object($this->user) || empty($this->user->id)) {
+			global $user;
+			if (is_object($user) && !empty($user->id)) {
+				$this->user = $user;
+			} else {
+				return ["error" => "User not authenticated."];
+			}
 		}
 
 		if (!is_object($mysoc) || empty($mysoc->id)) {
@@ -384,7 +406,6 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 	 *                                   } Arguments including type, header data, and optional lines.
 	 *
 	 * @return array<string, mixed>
-	 *
 	 */
 	private function createDocument(array $args)
 	{
@@ -508,11 +529,10 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 	 *                                   } Line arguments.
 	 *
 	 * @return array<string, mixed>
-	 *
 	 */
 	private function processAddLine(CommonObject $object, array $args)
 	{
-		global $mysoc, $conf;
+		global $mysoc;
 		// Check status (Dolibarr objects usually use 'statut' property, 0 = Draft)
 		if (isset($object->statut) && $object->statut != 0) {
 			return ["success" => false, "error" => "Document is not in draft status"];
@@ -525,8 +545,8 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 
 		// Get company default VAT
 		$companyDefaultVAT = 0.0;
-		if (! empty($conf->global->MAIN_VAT_DEFAULT)) {
-			$companyDefaultVAT = (float) $conf->global->MAIN_VAT_DEFAULT;
+		if (getDolGlobalString('MAIN_VAT_DEFAULT')) {
+			$companyDefaultVAT = getDolGlobalFloat('MAIN_VAT_DEFAULT');
 		}
 
 		// Normalize Inputs
@@ -600,7 +620,7 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 
 		// Product Unit handling
 		$fk_unit = 0;
-		if (! empty($conf->global->PRODUCT_USE_UNITS) && $prod && ! empty($prod->fk_unit)) {
+		if (getDolGlobalInt('PRODUCT_USE_UNITS') && $prod && ! empty($prod->fk_unit)) {
 			$fk_unit = (int) $prod->fk_unit;
 		}
 
@@ -659,7 +679,7 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 		// Update unit if needed (Logic for standard docs, Shipment/Reception handle units in addlinefree)
 		// Only trigger updateLineUnit for the standard commercial documents
 		$commercialDocs = ['invoice', 'order', 'proposal', 'supplier_invoice', 'supplier_order', 'supplier_proposal'];
-		if (in_array($docType, $commercialDocs, true) && $res > 0 && $fk_unit > 0 && ! empty($conf->global->PRODUCT_USE_UNITS)) {
+		if (in_array($docType, $commercialDocs, true) && $res > 0 && $fk_unit > 0 && getDolGlobalInt('PRODUCT_USE_UNITS')) {
 			$this->updateLineUnit($docType, $res, $fk_unit);
 		}
 
@@ -685,7 +705,6 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 	 * @param array{object_type:string,parent_id:int,product_id?:int,description?:string,quantity?:float|int,unit_price?:float|int,vat_rate?:float|int} $args Tool arguments for adding a line item
 	 *
 	 * @return array{success:bool,line_id?:int,error?:string}
-	 *
 	 */
 	private function addLineItem(array $args)
 	{
@@ -921,7 +940,7 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 	 * @param   int    $lineId Line RowID.
 	 * @param   int    $unitId Unit RowID.
 	 *
-	 * @return  void
+	 * @return  void			Only attempts to update the database, no result indication
 	 */
 	private function updateLineUnit(string $type, int $lineId, int $unitId): void
 	{
@@ -942,7 +961,7 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 
 		$table = $tableMap[$type];
 
-		$sql = "UPDATE " . MAIN_DB_PREFIX . $this->db->escape($table);
+		$sql = "UPDATE " . MAIN_DB_PREFIX . $this->db->sanitize($table);
 		$sql .= " SET fk_unit = " . (int) $unitId;
 		$sql .= " WHERE rowid = " . (int) $lineId;
 

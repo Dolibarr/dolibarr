@@ -348,9 +348,6 @@ if ((empty($paymentmethod) || $paymentmethod == 'paypal') && isModEnabled('paypa
 		exit;
 	}
 }
-//if ((empty($paymentmethod) || $paymentmethod == 'paybox') && isModEnabled('paybox')) {
-// No specific test for the moment
-//}
 if ((empty($paymentmethod) || $paymentmethod == 'stripe') && isModEnabled('stripe')) {
 	require_once DOL_DOCUMENT_ROOT.'/stripe/config.php'; // This include also /stripe/lib/stripe.lib.php, /includes/stripe/stripe-php/init.php, ...
 	/**
@@ -503,42 +500,6 @@ if ($action == 'dopayment') {	// Test on permission not required here (anonymous
 
 			// If we are here, it means the Paypal redirect was not done, so we show error message
 			$action = '';
-		}
-	}
-
-	if ($paymentmethod == 'paybox') {
-		$PRICE = price2num(GETPOST("newamount"), 'MT');
-		$email = getDolGlobalString('ONLINE_PAYMENT_SENDEMAIL');
-		$thirdparty_id = GETPOSTINT('thirdparty_id');
-
-		$origfulltag = GETPOST("fulltag", 'alpha');
-
-		// Securekey into back url useless for back url and we need an url lower than 150.
-		$urlok = preg_replace('/securekey=[^&]+&?/', '', $urlok);
-		$urlko = preg_replace('/securekey=[^&]+&?/', '', $urlko);
-
-		if (empty($PRICE) || !is_numeric($PRICE)) {
-			$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Amount"));
-		} elseif (empty($email)) {
-			$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ONLINE_PAYMENT_SENDEMAIL"));
-		} elseif (!isValidEmail($email)) {
-			$mesg = $langs->trans("ErrorBadEMail", $email);
-		} elseif (!$origfulltag) {
-			$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("PaymentCode"));
-		} elseif (dol_strlen($urlok) > 150) {
-			$mesg = 'Error urlok too long '.$urlok.' (Paybox requires 150, found '.strlen($urlok).')';
-		} elseif (dol_strlen($urlko) > 150) {
-			$mesg = 'Error urlko too long '.$urlko.' (Paybox requires 150, found '.strlen($urlok).')';
-		}
-
-		if (empty($mesg)) {
-			dol_syslog("newpayment.php call paybox api and do redirect", LOG_DEBUG, 0, '_payment');
-
-			include_once DOL_DOCUMENT_ROOT.'/paybox/lib/paybox.lib.php';
-			print_paybox_redirect((float) $PRICE, getDolCurrency(), $email, $urlok, $urlko, $FULLTAG);
-
-			session_destroy();
-			exit;
 		}
 	}
 
@@ -849,11 +810,33 @@ if ($action == 'charge' && isModEnabled('stripe')) {	// Test on permission not r
 			$action = '';
 		}
 
-		if ($paymentintent->status != 'succeeded') {
+		// Security: a succeeded PaymentIntent must not be reusable to record a payment on more than one Dolibarr object.
+		// Without this check, a PaymentIntent id obtained for one invoice/order/... could be resubmitted here with a
+		// different fulltag/ref to fraudulently record (and validate) a payment on a different object that was never
+		// really paid for, since Dolibarr never re-checks that a "succeeded" PaymentIntent is bound to a specific target.
+		$paymentintentalreadyused = 0;
+		if (!$error && is_object($paymentintent) && $paymentintent->status == 'succeeded') {
+			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."paiement";
+			$sql .= " WHERE ext_payment_id = '".$db->escape($paymentintent_id)."'";
+			$sql .= " OR ext_payment_id LIKE '".$db->escape($paymentintent_id).":%'";
+			$resql = $db->query($sql);
+			if ($resql) {
+				if ($db->num_rows($resql) > 0) {
+					$paymentintentalreadyused = 1;
+				}
+				$db->free($resql);
+			}
+		}
+
+		if ($paymentintent->status != 'succeeded' || $paymentintentalreadyused) {
 			$error++;
-			$errormessage = "StatusOfRetrievedIntent is not succeeded: ".$paymentintent->status;
+			if ($paymentintentalreadyused) {
+				$errormessage = "PaymentIntent ".$paymentintent_id." was already used to record a payment, it cannot be reused for another object";
+			} else {
+				$errormessage = "StatusOfRetrievedIntent is not succeeded: ".$paymentintent->status;
+			}
 			dol_syslog($errormessage, LOG_WARNING, 0, '_payment');
-			setEventMessages($paymentintent->status, null, 'errors');
+			setEventMessages($errormessage, null, 'errors');
 			$action = '';
 
 			$randomseckey = getRandomPassword(true, null, 20);		// TODO Generate a key including fulltag to avoid forging URL.
@@ -898,7 +881,7 @@ if ($action == 'charge' && isModEnabled('stripe')) {	// Test on permission not r
 	$_SESSION["currencyCodeType"] = $currency;		// currency really used for payment (coming from Stripe). Will be used for check in paymentok.php.
 	$_SESSION["paymentType"] = '';
 	$_SESSION['ipaddress'] = ($remoteip ? $remoteip : 'unknown'); // Payer ip
-	$_SESSION['TRANSACTIONID'] = (is_object($charge) ? $charge->id : (is_object($paymentintent) ? $paymentintent->id : ''));
+	$_SESSION['TRANSACTIONID'] = (($charge && is_object($charge)) ? $charge->id : (is_object($paymentintent) ? $paymentintent->id : ''));
 	$_SESSION['errormessage'] = $errormessage;
 	if (!getDolGlobalInt('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION')) {
 		$_SESSION['payerID'] = is_object($customer) ? $customer->id : '';
@@ -1062,9 +1045,6 @@ print '<!-- creditor = '.dol_escape_htmltag((string) $creditor).' -->'."\n";
 if (isModEnabled('paypal')) {
 	print '<!-- PAYPAL_API_SANDBOX = '.getDolGlobalString('PAYPAL_API_SANDBOX').' -->'."\n";
 	print '<!-- PAYPAL_API_INTEGRAL_OR_PAYPALONLY = '.getDolGlobalString('PAYPAL_API_INTEGRAL_OR_PAYPALONLY').' -->'."\n";
-}
-if (isModEnabled('paybox')) {
-	print '<!-- PAYBOX_CGI_URL = '.getDolGlobalString('PAYBOX_CGI_URL_V2').' -->'."\n";
 }
 if (isModEnabled('stripe')) {
 	print '<!-- STRIPE_LIVE = '.getDolGlobalString('STRIPE_LIVE').' -->'."\n";
@@ -2422,6 +2402,15 @@ if ($action != 'dopayment') {
 			print '<br><br><div class="amountpaymentcomplete size12x wrapimp">'.$langs->trans("OrderBilled").'</div>';
 		} elseif ($source == 'invoice' && $object->paye) {
 			print '<br><br><div class="amountpaymentcomplete size12x wrapimp">'.$langs->trans("InvoicePaid").'</div>';
+		} elseif ($source == 'invoice' && $object->status == Facture::STATUS_ABANDONED && ($object->close_code == Facture::CLOSECODE_REPLACED || getDolGlobalString('INVOICE_ONLINE_PAYMENT_REFUSED_WHATEVER_IS_ABANDON_REASON'))) {
+			// Only refuse the payment when the invoice was closed because it has been replaced: the amount is
+			// then claimed by the replacement invoice and paying this link would pay it twice. An invoice
+			// abandoned for any other reason, a bad debt for instance, keeps its link usable, since a customer
+			// paying it anyway is a good outcome.
+			// INVOICE_ONLINE_PAYMENT_REFUSED_WHATEVER_IS_ABANDON_REASON extends the refusal to every
+			// abandoned invoice, for jurisdictions where collecting is no longer allowed once a
+			// receivable has been written off or sent to collections (#39327).
+			print '<br><br><div class="amountpaymentcomplete size12x wrapimp">'.$langs->trans("Abandoned").'</div>';
 		} elseif ($source == 'donation' && $object->paid) {
 			print '<br><br><div class="amountpaymentcomplete size12x wrapimp">'.$langs->trans("DonationPaid").'</div>';
 		} else {
@@ -2447,25 +2436,6 @@ if ($action != 'dopayment') {
 				setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 			} elseif ($reshook >= 0) {
 				print $hookmanager->resPrint;
-			}
-
-			if ((empty($paymentmethod) || $paymentmethod == 'paybox') && isModEnabled('paybox')) {
-				print '<div class="button buttonpayment" id="div_dopayment_paybox"><span class="fa fa-credit-card"></span> <input class="" type="submit" id="dopayment_paybox" name="dopayment_paybox" value="'.$langs->trans("PayBoxDoPayment").'">';
-				print '<br>';
-				print '<span class="buttonpaymentsmall">'.$langs->trans("CreditOrDebitCard").'</span>';
-				print '</div>';
-				print '<script>
-						$( document ).ready(function() {
-							$("#div_dopayment_paybox").click(function(){
-								$("#dopayment_paybox").click();
-							});
-							$("#dopayment_paybox").click(function(e){
-								$("#div_dopayment_paybox").css( \'cursor\', \'wait\' );
-								e.stopPropagation();
-							});
-						});
-					  </script>
-				';
 			}
 
 			if ((empty($paymentmethod) || $paymentmethod == 'stripe') && isModEnabled('stripe')) {

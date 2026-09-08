@@ -113,6 +113,24 @@ class ToolConversation extends McpTool
 	}
 
 	/**
+	 * Conversation tools are system-level infrastructure.
+	 * They must always be available so the assistant can communicate with the
+	 * user (send replies, ask clarifying questions, request confirmation for
+	 * destructive actions, reject out-of-scope queries) regardless of which
+	 * tools are enabled or disabled in the admin allow-list.
+	 *
+	 * McpHandler reads this at runtime — no tool names are hardcoded there.
+	 * Any future tool class that provides similar infrastructure simply overrides
+	 * this method to return true; no other file needs to change.
+	 *
+	 * @return bool
+	 */
+	public function isSystem()
+	{
+		return true;
+	}
+
+	/**
 	 * Executes a conversational tool.
 	 * Since these tools don't perform backend actions, this method simply
 	 * packages the provided arguments into a structured array for the MCP server

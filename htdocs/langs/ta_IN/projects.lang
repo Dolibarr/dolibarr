@@ -258,7 +258,7 @@ OtherFilteredTasks=பிற வடிகட்டப்பட்ட பணி�
 NoAssignedTasks=ஒதுக்கப்பட்ட பணிகள் எதுவும் காணப்படவில்லை (தற்போதைய பயனருக்கு மேல் தேர்ந்தெடுக்கப்பட்ட பெட்டியில் இருந்து நேரத்தை உள்ளிடுவதற்கு திட்டம்/பணிகளை ஒதுக்கவும்)
 ThirdPartyRequiredToGenerateIntervention=A third party must be defined on project to be able to create intervention.
 ThirdPartyRequiredToGenerateInvoice=மூன்றாம் தரப்பினர் திட்டத்தில் விலைப்பட்டியல் செய்ய வரையறுக்கப்பட வேண்டும்.
-ChooseANotYetAssignedTask=இதுவரை உங்களுக்கு ஒதுக்கப்படாத பணியைத் தேர்வு செய்யவும்
+ChooseANotYetAssignedTask=Tasks not yet assigned to you
 # Comments trans
 AllowCommentOnTask=பணிகளில் பயனர் கருத்துகளை அனுமதிக்கவும்
 AllowCommentOnProject=திட்டங்களில் பயனர் கருத்துகளை அனுமதிக்கவும்

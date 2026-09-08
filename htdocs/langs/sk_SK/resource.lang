@@ -34,5 +34,6 @@ ResourceTypeCode=Kód typu zdroja
 ImportDataset_resource_1=Zdroje
 ErrorResourcesAlreadyInUse=Niektoré zdroje sa používajú
 ErrorResourceUseInEvent=%s použité v udalosti %s
-MaxUsers=Maximálny počet používateľov (miesta, miesta atď.)
+MaxUsers=Maximum number of users
+MaxUsersResourceDesc=If the resource can be used by several people at once (car, room, ...), you can enter here the maximum number of users allowed to use the resource at the same time (number of seats, places, ...).
 MaxUsersLabel=Maximálny počet používateľov

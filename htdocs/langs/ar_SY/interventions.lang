@@ -10,7 +10,6 @@ ActionsOnFicheInter=Actions on intervention
 LastInterventions=Latest %s interventions
 AllInterventions=All interventions
 CreateDraftIntervention=Create draft
-InterventionContact=Intervention contact
 DeleteIntervention=Delete intervention
 ValidateIntervention=Validate intervention
 SignIntervention=Sign intervention

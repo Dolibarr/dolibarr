@@ -78,7 +78,7 @@ if (!isModEnabled('opensurvey')) {
 
 $nbcolonnes = substr_count($object->sujet, ',') + 1;
 
-$listofvoters = explode(',', $_SESSION["savevoter"]);
+$listofvoters = explode(',', $_SESSION["savevoter"] ?? '');
 
 $error = 0;
 
@@ -148,7 +148,7 @@ if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x")) {		// bo
 		httponly_accessforbidden('ErrorForbidden');
 	}
 
-	//Si le nom est bien entré
+	// If the name is entered correctly
 	if (GETPOST('nom', 'alphanohtml')) {
 		$nouveauchoix = '';
 		for ($i = 0; $i < $nbcolonnes; $i++) {
@@ -413,8 +413,7 @@ if ($object->format == "D") {
 	//display of months
 	$colspan = 1;
 	for ($i = 0; $i < $nbofsujet; $i++) {
-		$cur = intval($toutsujet[$i]); // intval() est utiliser pour supprimer le suffixe @* qui déplaît logiquement à strftime()
-
+		$cur = intval($toutsujet[$i]);  // intval() is used to remove the @* suffix which logically belongs to strftime()
 		if (!isset($toutsujet[$i + 1])) {
 			$next = false;
 		} else {

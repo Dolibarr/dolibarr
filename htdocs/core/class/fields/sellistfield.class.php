@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2025 		Open-Dsi         <support@open-dsi.fr>
+ * Copyright (C) 2026		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +54,9 @@ class SellistField extends CommonSellistField
 
 		$moreCss = $this->getInputCss($fieldInfos, $moreCss);
 		$moreAttrib = trim((string) $moreAttrib);
-		if (empty($moreAttrib)) $moreAttrib = ' ' . $moreAttrib;
+		if (empty($moreAttrib)) {
+			$moreAttrib = ' ' . $moreAttrib;
+		}
 		$htmlName = $keyPrefix . $key . $keySuffix;
 
 		$optionsList = array();
@@ -83,9 +86,13 @@ class SellistField extends CommonSellistField
 
 		$moreCss = $this->getInputCss($fieldInfos, $moreCss);
 		$moreAttrib = trim((string) $moreAttrib);
-		if (empty($moreAttrib)) $moreAttrib = ' ' . $moreAttrib;
+		if (empty($moreAttrib)) {
+			$moreAttrib = ' ' . $moreAttrib;
+		}
 		$placeHolder = $fieldInfos->inputPlaceholder;
-		if (!empty($placeHolder)) $placeHolder = ' placeholder="' . dolPrintHTMLForAttribute($placeHolder) . '"';
+		if (!empty($placeHolder)) {
+			$placeHolder = ' placeholder="' . dolPrintHTMLForAttribute($placeHolder) . '"';
+		}
 		$autoFocus = $fieldInfos->inputAutofocus ? ' autofocus' : '';
 		$htmlName = $keyPrefix . $key . $keySuffix;
 		$selectedValue = is_null($value) || $this->isEmptyValue($fieldInfos, $value) ? '' : (string) $value;
@@ -274,8 +281,9 @@ class SellistField extends CommonSellistField
 			$alias = $fieldInfos->sqlAlias ?? 't.';
 			$field = $this->db->sanitize($alias . ($fieldInfos->nameInTable ?? $key));
 
-			$tmp = "'" . implode("','", array_map(array($this->db, 'escape'), $value)) . "'";
-			return " AND " . $field . " IN (" . $this->db->sanitize($tmp, 1) . ")";
+			$sanitizedSqlIn = "'" . implode("','", array_map(array($this->db, 'escape'), $value)) . "'";
+			$sqlPartialCond = " AND " . $field . " IN (" . $sanitizedSqlIn . ")";
+			return $sqlPartialCond;
 		}
 
 		return '';

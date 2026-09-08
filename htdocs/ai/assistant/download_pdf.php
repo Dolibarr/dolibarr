@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2026	Nick Fragoulis
+ * Copyright (C) 2026		MDW	<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +25,7 @@
 if (!defined('NOTOKENRENEWAL')) {
 	define('NOTOKENRENEWAL', 1);
 }
-if (!defined('NOCSRFCHECK')) {
+if (!defined('NOCSRFCHECK')) {		// TODO Enable the CSRF check
 	define('NOCSRFCHECK', 1);
 }
 
@@ -35,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/includes/tecnickcom/tcpdf/tcpdf.php';
 
 // Security check
-if (!isModEnabled('ai') || !getDolGlobalString('AI_MCP_ENABLED')) {
+if (!isModEnabled('ai') || !getDolGlobalString('AI_ASSISTANT_ENABLED')) {
 	accessforbidden('Module or feature not allowed');
 }
 
@@ -135,7 +136,7 @@ try {
 
 		// Sections (Invoices, Orders, etc)
 		foreach ($data['details'] as $section => $rows) {
-			$sectionTitle = dol_escape_htmltag(ucwords(str_replace('_', ' ', $section)));
+			$sectionTitle = dol_escape_htmltag(ucwords((string) str_replace('_', ' ', $section)));
 			$html .= '<h3>' . $sectionTitle . '</h3>';
 
 			if (empty($rows) || !is_array($rows)) {
@@ -143,9 +144,15 @@ try {
 			} else {
 				// Table Builder for List
 				$keys = array_keys($rows[0]);
-				$keys = array_filter($keys, function (string $k) {
-					return $k !== 'url' && $k !== 'rowid';
-				});
+				$keys = array_filter(
+					$keys,
+					/**
+					 * @return bool Select only fields other than url and rowid
+					 */
+					static function (string $k) {
+						return $k !== 'url' && $k !== 'rowid';
+					}
+				);
 
 				$html .= '<table cellpadding="4"><thead><tr>';
 				foreach ($keys as $k) {
@@ -174,9 +181,15 @@ try {
 	} elseif (isset($data[0]) && is_array($data[0])) {
 		// Simple list (e.g. search invoices)
 		$keys = array_keys($data[0]);
-		$keys = array_filter($keys, function (string $k) {
-			return $k !== 'url' && $k !== 'rowid';
-		});
+		$keys = array_filter(
+			$keys,
+			/**
+			 * @return bool Select only fields other than url and rowid
+			 */
+			static function (string $k) {
+				return $k !== 'url' && $k !== 'rowid';
+			}
+		);
 
 		$html .= '<table cellpadding="4"><thead><tr nobr="true">';
 		foreach ($keys as $key) {

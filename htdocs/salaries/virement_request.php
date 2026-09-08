@@ -5,7 +5,7 @@
  * Copyright (C) 2017-2019  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2021		Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -595,7 +595,6 @@ if ($resql) {
 			$tmpuser->email = $obj->email;
 			$tmpuser->lastname = $obj->lastname;
 			$tmpuser->firstname = $obj->firstname;
-			$tmpuser->statut = $obj->user_status;
 			$tmpuser->status = $obj->user_status;
 
 			print '<tr class="oddeven">';
@@ -713,7 +712,6 @@ if ($resql) {
 			$tmpuser->email = $obj->email;
 			$tmpuser->lastname = $obj->lastname;
 			$tmpuser->firstname = $obj->firstname;
-			$tmpuser->statut = $obj->user_status;
 			$tmpuser->status = $obj->user_status;
 
 			print '<tr class="oddeven">';

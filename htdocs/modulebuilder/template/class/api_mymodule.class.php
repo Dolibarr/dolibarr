@@ -20,6 +20,7 @@
 use Luracast\Restler\RestException;
 
 dol_include_once('/mymodule/class/myobject.class.php');
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 
 
@@ -101,7 +102,7 @@ class MyModuleApi extends DolibarrApi
 	 * @param 	string		   $sortorder			Sort order
 	 * @param 	int			   $limit				Limit for list
 	 * @param 	int			   $page				Page number
-	 * @param 	string         $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param 	string         $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:>:'20160101')"
 	 * @param 	string		   $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array                               Array of MyObject objects
 	 * @phan-return array<int,MyObject>
@@ -145,7 +146,7 @@ class MyModuleApi extends DolibarrApi
 			$sql .= " WHERE t.entity IN (".getEntity($tmpobject->element).")";
 		} elseif (preg_match('/^\w+@\w+$/', (string) $tmpobject->ismultientitymanaged)) {
 			$tmparray = explode('@', (string) $tmpobject->ismultientitymanaged);
-			$sql .= " LEFT JOIN ".$this->db->prefix().$tmparray[1]." as pt ON t.".$tmparray[0]." = pt.rowid";
+			$sql .= " LEFT JOIN ".$this->db->prefix().$this->db->sanitize($tmparray[1])." as pt ON t.".$this->db->sanitize($tmparray[0])." = pt.rowid";
 			$sql .= " WHERE pt.entity IN (".getEntity($tmpobject->element).")";
 		} else {
 			$sql .= " WHERE 1 = 1";
@@ -156,9 +157,9 @@ class MyModuleApi extends DolibarrApi
 		// Search on sale representative
 		if ($search_sale && $search_sale != '-1') {
 			if ($search_sale == -2) {
-				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".$this->db->prefix()."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc)";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', 0, 1);
 			} elseif ($search_sale > 0) {
-				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".$this->db->prefix()."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', (int) $search_sale);
 			}
 		}
 		// Add where from hooks and sqlfilters
@@ -416,7 +417,7 @@ class MyModuleApi extends DolibarrApi
 
 		unset($object->rowid);
 		unset($object->canvas);
-
+		//BEGIN MODULEBUILDER LINES
 		// If object has lines, remove $db property
 		if (isset($object->lines) && is_array($object->lines) && count($object->lines) > 0) {
 			$nboflines = count($object->lines);
@@ -427,7 +428,7 @@ class MyModuleApi extends DolibarrApi
 				unset($object->lines[$i]->note);
 			}
 		}
-
+		//END MODULEBUILDER LINES
 		return $object;
 	}
 }

@@ -7,6 +7,7 @@
  * Copyright (C) 2021-2024	Alexandre Spangaro		<alexandre@inovea-conseil.com>
  * Copyright (C) 2022-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -106,7 +107,8 @@ class modFacture extends DolibarrModules
 				0 => array('file' => 'box_factures_imp.php', 'enabledbydefaulton' => 'Home'),
 				1 => array('file' => 'box_factures.php', 'enabledbydefaulton' => 'Home'),
 				2 => array('file' => 'box_graph_invoices_permonth.php', 'enabledbydefaulton' => 'Home'),
-				3 => array('file' => 'box_customers_outstanding_bill_reached.php', 'enabledbydefaulton' => 'Home')
+				3 => array('file' => 'box_customers_outstanding_bill_reached.php', 'enabledbydefaulton' => 'Home'),
+				4 => array('file' => 'box_invoices_dispute.php', 'enabledbydefaulton' => 'Home')
 		);
 
 		// Cronjobs
@@ -274,17 +276,10 @@ class modFacture extends DolibarrModules
 			}
 			// Add extra fields
 			$import_extrafield_sample = array();
-			$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'facture' AND entity IN (0, ".$conf->entity.")";
-			$resql = $this->db->query($sql);
-			if ($resql) {
-				while ($obj = $this->db->fetch_object($resql)) {
-					$fieldname = 'extra.'.$obj->name;
-					$fieldlabel = ucfirst($obj->label);
-					$this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
-					$import_extrafield_sample[$fieldname] = $fieldlabel;
-				}
-			}
-			// End add extra fields
+			$keyforselect = 'facture';
+			$keyforelement = 'bill';
+			$keyforaliasextra = 'extra';
+			include DOL_DOCUMENT_ROOT.'/core/extrafieldsinimport.inc.php';
 			$this->import_fieldshidden_array[$r] = array('extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'facture');
 			$this->import_regex_array[$r] = array('f.multicurrency_code' => 'code@'.MAIN_DB_PREFIX.'multicurrency');
 			$import_sample = array(
@@ -402,17 +397,10 @@ class modFacture extends DolibarrModules
 			}
 			// Add extra fields
 			$import_extrafield_sample = array();
-			$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'facture_det' AND entity IN (0, ".$conf->entity.")";
-			$resql = $this->db->query($sql);
-			if ($resql) {
-				while ($obj = $this->db->fetch_object($resql)) {
-					$fieldname = 'extra.'.$obj->name;
-					$fieldlabel = ucfirst($obj->label);
-					$this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
-					$import_extrafield_sample[$fieldname] = $fieldlabel;
-				}
-			}
-			// End add extra fields
+			$keyforselect = 'facture_det';
+			$keyforelement = 'bill';
+			$keyforaliasextra = 'extra';
+			include DOL_DOCUMENT_ROOT.'/core/extrafieldsinimport.inc.php';
 			$this->import_fieldshidden_array[$r] = array('extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'facturedet');
 			$this->import_regex_array[$r] = array(
 				'fd.multicurrency_code' => 'code@'.MAIN_DB_PREFIX.'multicurrency'
@@ -466,7 +454,7 @@ class modFacture extends DolibarrModules
 			$this->import_updatekeys_array[$r] = array(
 				'fd.rowid' => 'Row Id',
 				'fd.fk_facture' => 'Invoice Id',
-				'fd.fk_product'=> 'ProductRef'
+				'fd.fk_product' => 'ProductRef'
 			);
 			$this->import_convertvalue_array[$r] = array(
 				'fd.fk_facture' => array(
@@ -477,11 +465,11 @@ class modFacture extends DolibarrModules
 					'element' => 'facture'
 				),
 				'fd.fk_product' => array(
-					'rule'=>'fetchidfromref',
-					'classfile'=>'/product/class/product.class.php',
-					'class'=>'Product',
-					'method'=>'fetch',
-					'element'=>'Product'
+					'rule' => 'fetchidfromref',
+					'classfile' => '/product/class/product.class.php',
+					'class' => 'Product',
+					'method' => 'fetch',
+					'element' => 'Product'
 				),
 				'fd.fk_projet' => array(
 					'rule' => 'fetchidfromref',
@@ -666,7 +654,7 @@ class modFacture extends DolibarrModules
 		$this->export_sql_end[$r] .= ' WHERE f.fk_soc = s.rowid AND f.rowid = fd.fk_facture';
 		$this->export_sql_end[$r] .= ' AND f.entity IN ('.getEntity('invoice').')';
 		if (!empty($user) && !$user->hasRight('societe', 'client', 'voir')) {
-			$this->export_sql_end[$r] .= ' AND sc.fk_user = '.(empty($user) ? 0 : $user->id);
+			$this->export_sql_end[$r] .= ' AND sc.fk_user = '.(empty($user) ? 0 : ((int) $user->id));
 		}
 		$r++;
 
@@ -758,7 +746,7 @@ class modFacture extends DolibarrModules
 		$this->export_sql_end[$r] .= ' WHERE f.fk_soc = s.rowid';
 		$this->export_sql_end[$r] .= ' AND f.entity IN ('.getEntity('invoice').')';
 		if (!empty($user) && !$user->hasRight('societe', 'client', 'voir')) {
-			$this->export_sql_end[$r] .= ' AND sc.fk_user = '.(empty($user) ? 0 : $user->id);
+			$this->export_sql_end[$r] .= ' AND sc.fk_user = '.(empty($user) ? 0 : ((int) $user->id));
 		}
 		$r++;
 	}

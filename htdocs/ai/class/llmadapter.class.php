@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2026		Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2026		Nick Fragoulis
+ * Copyright (C) 2026	Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,20 +68,25 @@ class UniversalLLMAdapter
 	/**
 	 * Generate a response using the configured LLM provider
 	 *
+	 * Attachments are sent as NATIVE multimodal parts — instead of inlining base64 into
+	 * the text prompt — which is what allows the provider to actually see the file
+	 * (vision/document understanding).
+	 *
 	 * @param string $system   The system prompt/instruction
 	 * @param string $userMsg  The specific user query
 	 * @param string $mode     'json' for strict JSON (MCP), 'text' for legacy (default)
+	 * @param array<int,array{mime:string,data:string}> $attachments Optional documents/images, each entry is array('mime' => 'image/png', 'data' => '<base64>')
 	 * @return string|null     The text response from the AI or null on failure
 	 */
-	public function generate(string $system, string $userMsg, string $mode = 'text'): ?string
+	public function generate(string $system, string $userMsg, string $mode = 'text', array $attachments = array()): ?string
 	{
 		switch ($this->type) {
 			case 'anthropic':
-				return $this->callAnthropic($system, $userMsg, $mode);
+				return $this->callAnthropic($system, $userMsg, $mode, $attachments);
 			case 'google':
-				return $this->callGoogle($system, $userMsg, $mode);
+				return $this->callGoogle($system, $userMsg, $mode, $attachments);
 			default:
-				return $this->callOpenAI($system, $userMsg, $mode);
+				return $this->callOpenAI($system, $userMsg, $mode, $attachments);
 		}
 	}
 
@@ -90,20 +96,34 @@ class UniversalLLMAdapter
 	 * @param string $sys System prompt
 	 * @param string $msg User message
 	 * @param string $mode 'json' or 'text'
+	 * @param array<int,array{mime:string,data:string}> $attachments Optional attachments sent as native multimodal parts
 	 * @return string|null Response content or null on failure
 	 */
-	private function callOpenAI(string $sys, string $msg, string $mode = 'text'): ?string
+	private function callOpenAI(string $sys, string $msg, string $mode = 'text', array $attachments = array()): ?string
 	{
 		$url = $this->baseUrl;
 		if (strpos($url, '/chat/completions') === false && strpos($url, '/generate') === false) {
 			$url .= '/chat/completions';
 		}
 
+		// With attachments, the user content becomes an array of typed parts
+		// (vision input); without, it stays a plain string (widest compatibility).
+		$userContent = $msg;
+		if (!empty($attachments)) {
+			$userContent = array(array("type" => "text", "text" => $msg));
+			foreach ($attachments as $att) {
+				$userContent[] = array(
+					"type" => "image_url",
+					"image_url" => array("url" => "data:".$att['mime'].";base64,".$att['data'])
+				);
+			}
+		}
+
 		$data = array(
 			"model" => $this->model,
 			"messages" => array(
 				array("role" => "system", "content" => $sys),
-				array("role" => "user", "content" => $msg)
+				array("role" => "user", "content" => $userContent)
 			),
 			"temperature" => 0.1
 		);
@@ -128,19 +148,36 @@ class UniversalLLMAdapter
 	 * @param string $sys System prompt
 	 * @param string $msg User message
 	 * @param string $mode Response mode (default: text)
+	 * @param array<int,array{mime:string,data:string}> $attachments Optional attachments sent as native multimodal parts
 	 *
 	 * @return string|null Response content or null on failure
 	 */
-	private function callAnthropic(string $sys, string $msg, string $mode = 'text')
+	private function callAnthropic(string $sys, string $msg, string $mode = 'text', array $attachments = array())
 	{
 
 		$url = $this->baseUrl . (strpos($this->baseUrl, '/messages') === false ? '/messages' : '');
 
+		// With attachments, content becomes an array of typed blocks: PDFs go as
+		// 'document' blocks, images as 'image' blocks (Anthropic native formats).
+		$userContent = $msg;
+		$maxTokens = 1024;
+		if (!empty($attachments)) {
+			$userContent = array();
+			foreach ($attachments as $att) {
+				$userContent[] = array(
+					"type" => ($att['mime'] === 'application/pdf' ? "document" : "image"),
+					"source" => array("type" => "base64", "media_type" => $att['mime'], "data" => $att['data'])
+				);
+			}
+			$userContent[] = array("type" => "text", "text" => $msg);
+			$maxTokens = 4096;	// document extraction answers are much longer than intent JSON
+		}
+
 		$data = array(
 			"model" => $this->model,
 			"system" => $sys,
-			"messages" => array(array("role" => "user", "content" => $msg)),
-			"max_tokens" => 1024
+			"messages" => array(array("role" => "user", "content" => $userContent)),
+			"max_tokens" => $maxTokens
 		);
 
 		$this->lastRequest = json_encode($data, JSON_PRETTY_PRINT);
@@ -154,10 +191,11 @@ class UniversalLLMAdapter
 	 * @param string $sys System prompt
 	 * @param string $msg User message
 	 * @param string $mode Response mode (default: text)
+	 * @param array<int,array{mime:string,data:string}> $attachments Optional attachments sent as native multimodal parts
 	 *
 	 * @return string|null Response content or null on failure
 	 */
-	private function callGoogle(string $sys, string $msg, string $mode = 'text')
+	private function callGoogle(string $sys, string $msg, string $mode = 'text', array $attachments = array())
 	{
 		$url = $this->baseUrl;
 
@@ -171,9 +209,17 @@ class UniversalLLMAdapter
 
 		$url .= "?key=" . $this->key;
 
+		// With attachments, prepend native inline_data parts (Gemini vision /
+		// document understanding) before the text part.
+		$parts = array();
+		foreach ($attachments as $att) {
+			$parts[] = array("inline_data" => array("mime_type" => $att['mime'], "data" => $att['data']));
+		}
+		$parts[] = array("text" => $sys . "\nUser: " . $msg);
+
 		$data = array(
 			"contents" => array(
-				array("parts" => array(array("text" => $sys . "\nUser: " . $msg)))
+				array("parts" => $parts)
 			),
 			"generationConfig" => array("temperature" => 0.1)
 		);
@@ -186,12 +232,12 @@ class UniversalLLMAdapter
 	/**
 	 * Execute HTTP Request via cURL
 	 *
-	 * @param string $url       Target API URL
-	 * @param array<string, mixed> $data      Request payload (keys are strings, values vary)
-	 * @param array<int, string>   $headers   List of HTTP headers (indexed array of strings)
-	 * @param bool   $isClaude  Flag to handle Anthropic response format
-	 * @param bool   $isGemini  Flag to handle Gemini response format
-	 * @return string|null      Returns the extracted text, an error message, or null
+	 * @param string 				$url       	Target API URL
+	 * @param array<string, mixed> 	$data      	Request payload (keys are strings, values vary)
+	 * @param array<int, string>   	$headers   	List of HTTP headers (indexed array of strings)
+	 * @param bool   				$isClaude  	Flag to handle Anthropic response format
+	 * @param bool   				$isGemini  	Flag to handle Gemini response format
+	 * @return string|null      				Returns the extracted text, an error message, or null
 	 */
 	private function curl(string $url, array $data, array $headers, bool $isClaude = false, bool $isGemini = false): ?string
 	{
@@ -213,9 +259,7 @@ class UniversalLLMAdapter
 		// Store an enriched payload so the admin Log Viewer ("VIEW LOGS" in the AI Server
 		// MCP setup page) shows something actionable when something goes wrong, not just
 		// a bare "Invalid JSON response from API." with an empty body.
-		$this->lastResponse = "HTTP " . $httpCode . " from " . $effectiveUrl
-			. "\n--- body (" . strlen($body) . " bytes) ---\n"
-			. $body;
+		$this->lastResponse = "HTTP " . $httpCode . " from " . $effectiveUrl . "\n--- body (" . strlen($body) . " bytes) ---\n"	. $body;
 
 		if (!empty($result['curl_error_no'])) {
 			return "Error: cURL #" . $result['curl_error_no'] . " " . $result['curl_error_msg'] . " (url=" . $effectiveUrl . ")";
@@ -228,9 +272,7 @@ class UniversalLLMAdapter
 			// from a proxy, gateway timeout, etc. Surface the HTTP code and a short
 			// body snippet so the admin can diagnose without re-running with curl.
 			$snippet = substr($body, 0, 500);
-			return "Error: Invalid JSON response from API (HTTP " . $httpCode . ", "
-				. strlen($body) . " bytes). Body snippet: "
-				. ($snippet !== '' ? $snippet : '<empty>');
+			return "Error: Invalid JSON response from API (HTTP " . $httpCode . ", " . strlen($body) . " bytes). Body snippet: " . ($snippet !== '' ? $snippet : '<empty>');
 		}
 
 		if (isset($json['error'])) {

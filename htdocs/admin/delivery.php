@@ -8,8 +8,8 @@
  * Copyright (C) 2011-2013 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2011-2018 Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2015	   Claudio Aschieri		<c.aschieri@19.coop>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -175,8 +175,8 @@ if ($action == 'del') {
 
 if ($action == 'setdoc') {
 	if (dolibarr_set_const($db, "DELIVERY_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity)) {
-		// La constante qui a ete lue en avant du nouveau set
-		// on passe donc par une variable pour avoir un affichage coherent
+		// The constant that was read before the new set
+		// so we go through a variable to get a consistent display
 		$conf->global->DELIVERY_ADDON_PDF = $value;
 	}
 
@@ -253,7 +253,7 @@ if (getDolGlobalString('MAIN_SUBMODULE_DELIVERY')) {
 			if (is_resource($handle)) {
 				while (($file = readdir($handle)) !== false) {
 					if (preg_match('/^mod_delivery_([a-z0-9_]*)\.php$/', $file)) {
-						$file = substr($file, 0, dol_strlen($file) - 4);
+						$file = dol_substr($file, 0, dol_strlen($file) - 4);
 
 						require_once $dir.$file.'.php';
 
@@ -336,7 +336,7 @@ if (getDolGlobalString('MAIN_SUBMODULE_DELIVERY')) {
 	print '<br>';
 	print load_fiche_titre($langs->trans("DeliveryOrderModel"), '', '');
 
-	// Defini tableau def de modele
+	// Define array def of model
 	$type = "delivery";
 	$def = array();
 
@@ -388,8 +388,8 @@ if (getDolGlobalString('MAIN_SUBMODULE_DELIVERY')) {
 				foreach ($filelist as $file) {
 					if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file)) {
 						if (file_exists($dir.'/'.$file)) {
-							$name = substr($file, 4, dol_strlen($file) - 16);
-							$classname = substr($file, 0, dol_strlen($file) - 12);
+							$name = dol_substr($file, 4, dol_strlen($file) - 16);
+							$classname = dol_substr($file, 0, dol_strlen($file) - 12);
 
 							require_once $dir.'/'.$file;
 							$module = new $classname($db);
@@ -449,7 +449,7 @@ if (getDolGlobalString('MAIN_SUBMODULE_DELIVERY')) {
 								// Preview
 								print '<td class="center">';
 								if ($module->type == 'pdf') {
-									print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
+									print '<a href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'specimen', 'module' => $name], true).'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
 								} else {
 									print img_object($langs->transnoentitiesnoconv("PreviewNotAvailable"), 'generic');
 								}
@@ -470,7 +470,7 @@ if (getDolGlobalString('MAIN_SUBMODULE_DELIVERY')) {
 	print "<br>";
 	print load_fiche_titre($langs->trans("OtherOptions"), '', '');
 
-	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" spellcheck="false">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="set_DELIVERY_FREE_TEXT">';
 

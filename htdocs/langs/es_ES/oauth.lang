@@ -31,8 +31,8 @@ OAUTH_URL_FOR_CREDENTIAL=Vaya a <a class="notasortlink" href="%s" target="_blank
 OAUTH_STRIPE_TEST_NAME=Stripe Test
 OAUTH_STRIPE_LIVE_NAME=Stripe en vivo
 OAUTH_ID=ID de cliente de OAuth
-OAUTH_SECRET=OAuth Secret
-OAUTH_TENANT=OAuth Tenant
+OAUTH_SECRET=Secreto de OAuth
+OAUTH_TENANT=Tenant de OAuth
 OAuthProviderAdded=Proveedor de OAuth agregado
 AOAuthEntryForThisProviderAndLabelAlreadyHasAKey=Ya existe una entrada de OAuth para este proveedor y etiqueta
 URLOfOAuthServiceEndpoints=URL base para puntos finales del servicio OAuth
@@ -40,7 +40,7 @@ URLOfOAuthServiceEndpointsExample=https://mastodon.example.com
 URLOfServiceForAuthorization=URL proporcionada por el servicio OAuth para la autenticación
 Scopes=Permisos (Ámbitos)
 ScopeUndefined=Permisos (Ámbitos) indefinidos (ver pestaña anterior)
-ScopesDesc=Example: "read", "write" with Mastodon or "none"
+ScopesDesc=Ejemplo: "read", "write" con Mastodon o "none"
 TokenRawValue=Token completo (objeto)
 AccessToken=Token de acceso
 TokenExpired=No al día
@@ -50,4 +50,4 @@ RefreshToken=Token de actualización
 RefreshTokenHelp=Utilice el token de actualización para obtener un nuevo token de acceso
 OldTokenWasExpiredItHasBeenRefresh=El token antiguo ha expirado y se ha actualizado.
 OldTokenWasNotExpiredButItHasBeenRefresh=El token antiguo no ha expirado, pero se ha actualizado.
-OAuthErrorStateDiffers=Value for state=%s differs from value in session. Code is refused.
+OAuthErrorStateDiffers=El valor para state=%s difiere del valor en la sesión. El código es rechazado.

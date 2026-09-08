@@ -28,6 +28,7 @@ use Luracast\Restler\RestException;
 
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 include_once DOL_DOCUMENT_ROOT."/fichinter/class/fichinterligne.class.php";
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 
 
@@ -132,7 +133,7 @@ class Interventions extends DolibarrApi
 	 * @param	int		$limit					Limit for list
 	 * @param	int		$page					Page number
 	 * @param	string	$thirdparty_ids			Thirdparty ids to filter orders of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
-	 * @param	string	$sqlfilters				Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param	string	$sqlfilters				Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:>:'20160101')"
 	 * @param	string	$properties				Restrict the data returned to these properties. Ignored if empty. Comma separated list of property names
 	 * @param	string	$contact_type			Type of contacts: thirdparty, internal or external
 	 * @param	bool	$pagination_data		If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
@@ -173,9 +174,9 @@ class Interventions extends DolibarrApi
 		// Search on sale representative
 		if ($search_sale && $search_sale != '-1') {
 			if ($search_sale == -2) {
-				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc)";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', 0, 1);
 			} elseif ($search_sale > 0) {
-				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', (int) $search_sale);
 			}
 		}
 
@@ -353,31 +354,35 @@ class Interventions extends DolibarrApi
 	 *
 	 * @url	GET {id}/lines
 	 *
-	 * @return int
+	 * @return array
+	 * @phan-return FichinterLigne[]
+	 * @phpstan-return FichinterLigne[]
+	 *
+	 * @throws	RestException	403		Access denied
+	 * @throws	RestException	404		Intervention not found
 	 */
-	/* TODO
 	public function getLines($id)
 	{
-		if(! DolibarrApiAccess::$user->hasRight('ficheinter', 'lire')) {
+		if (!DolibarrApiAccess::$user->hasRight('ficheinter', 'lire')) {
 			throw new RestException(403);
 		}
 
 		$result = $this->fichinter->fetch($id);
-		if( ! $result ) {
+		if (!$result) {
 			throw new RestException(404, 'Intervention not found');
 		}
 
-		if( ! DolibarrApi::_checkAccessToResource('fichinter',$this->fichinter->id)) {
+		if (!DolibarrApi::_checkAccessToResource('fichinter', $this->fichinter->id)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
-		$this->fichinter->getLinesArray();
+
+		$this->fichinter->fetch_lines();
 		$result = array();
 		foreach ($this->fichinter->lines as $line) {
-			array_push($result,$this->_cleanObjectDatas($line));
+			$result[] = $this->_cleanObjectDatas($line);
 		}
 		return $result;
 	}
-	*/
 
 	/**
 	 * Add a line to an intervention
@@ -831,10 +836,18 @@ class Interventions extends DolibarrApi
 		}
 		$request_data = (object) $request_data;
 
-		$request_data->desc = sanitizeVal($request_data->desc, 'restricthtml');
-		$request_data->date = sanitizeVal($request_data->date);
-		$request_data->duration = sanitizeVal($request_data->duration);
-		$request_data->rang = sanitizeVal($request_data->rang);
+		if (isset($request_data->desc) || isset($request_data->description)) {
+			$objectline->desc = sanitizeVal($request_data->desc ?? $request_data->description, 'restricthtml');
+		}
+		if (isset($request_data->date)) {
+			$objectline->date = (int) sanitizeVal($request_data->date);
+		}
+		if (isset($request_data->duration)) {
+			$objectline->duration = (int) sanitizeVal($request_data->duration);
+		}
+		if (isset($request_data->rang)) {
+			$objectline->rang = (int) sanitizeVal($request_data->rang);
+		}
 
 		$updateRes = $objectline->update(DolibarrApiAccess::$user);
 

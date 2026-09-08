@@ -57,3 +57,7 @@ donAnonymous=การบริจาคแบบไม่เปิดเผย�
 AnonymousDonationTooltip=ทำเครื่องหมายในช่องนี้หากคุณต้องการให้การบริจาคของคุณไม่เปิดเผยตัวตน ระบบจะไม่มีการขอข้อมูลส่วนบุคคลของคุณ
 publicDonationFieldHelp=%s สามารถเผยแพร่การบริจาคของฉันในทะเบียนสาธารณะได้
 listOfPublicDonations=รายชื่อผู้บริจาคจากประชาชน
+donationErrorMessageContactEmail=An error has occurred. To complete your donation, please contact us at %s
+descDonationLineInInvoice=Donation and contribution
+companyBusinessNumber=Business Registration Number
+companyTIN=Tax Identification Number

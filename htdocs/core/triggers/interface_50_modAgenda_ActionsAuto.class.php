@@ -186,18 +186,24 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			$object->sendtoid = array($object->id => $object->id);
 			// $object->socid = $object->socid;
 		} elseif ($action == 'CONTACT_MODIFY' && $object instanceof Contact) {
+			'@phan-var-force Contact $object';
 			// Load translation files required by the page
 			$langs->loadLangs(array("agenda", "other", "companies"));
 
 			if (empty($object->actionmsg2)) {
 				if (empty($object->context['actionmsg2'])) {
-					$object->actionmsg2 = $langs->transnoentities("CONTACT_MODIFYInDolibarr", (string) $object->name);
+					$object->actionmsg2 = $langs->transnoentities("CONTACT_MODIFYInDolibarr", $object->getFullName($langs));
 				} else {
 					$object->actionmsg2 = $object->context['actionmsg2'];
 				}
 			}
 			if (empty($object->actionmsg)) {
-				$object->actionmsg = $langs->transnoentities("CONTACT_MODIFYInDolibarr", (string) $object->name);
+				$object->actionmsg = $langs->transnoentities("CONTACT_MODIFYInDolibarr", $object->getFullName($langs));
+			}
+
+			// For merge event, we add a mention
+			if (!empty($object->context['mergefromname'])) {
+				$object->actionmsg = dol_concatdesc($object->actionmsg, $langs->transnoentities("DataFromWasMerged", $object->context['mergefromname'].' (id='.$object->context['mergefromid'].')'));
 			}
 
 			$object->sendtoid = array($object->id => $object->id);
@@ -530,8 +536,6 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			}
 
 			$object->sendtoid = array();
-			$object->fk_element = 0;
-			$object->elementtype = '';
 		} elseif ($action == 'FICHINTER_VALIDATE' && $object instanceof Fichinter) {
 			'@phan-var-force Fichinter $object';
 			// Load translation files required by the page
@@ -549,8 +553,6 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			}
 
 			$object->sendtoid = array();
-			$object->fk_element = 0;
-			$object->elementtype = '';
 		} elseif ($action == 'FICHINTER_MODIFY' && $object instanceof Fichinter) {
 			'@phan-var-force Fichinter $object';
 			// Load translation files required by the page
@@ -568,8 +570,6 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			}
 
 			$object->sendtoid = array();
-			$object->fk_element = 0;
-			$object->elementtype = '';
 		} elseif ($action == 'FICHINTER_SENTBYMAIL' && $object instanceof Fichinter) {
 			'@phan-var-force Fichinter $object';
 			// Load translation files required by the page
@@ -639,8 +639,6 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			}
 
 			$object->sendtoid = array();
-			$object->fk_element = 0;
-			$object->elementtype = '';
 		} elseif ($action == 'FICHINTER_DELETE' && $object instanceof Fichinter) {
 			'@phan-var-force Fichinter $object';
 			// Load translation files required by the page
@@ -658,8 +656,6 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			}
 
 			$object->sendtoid = array();
-			$object->fk_element = 0;
-			$object->elementtype = '';
 		} elseif ($action == 'SHIPPING_VALIDATE' && $object instanceof Expedition) {
 			'@phan-var-force Expedition $object';
 			// Load translation files required by the page
@@ -1142,9 +1138,10 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			}
 
 			$object->sendtoid = array();
+			/*
 			if (isset($object->fk_soc) && $object->fk_soc > 0) {
 				$object->socid = $object->fk_soc;
-			}
+			}*/
 		} elseif ($action == 'MEMBER_SUBSCRIPTION_MODIFY' && $object instanceof Subscription) {
 			'@phan-var-force Subscription $object';
 			// Load translation files required by the page
@@ -1173,9 +1170,10 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			}
 
 			$object->sendtoid = array();
+			/*
 			if (isset($object->fk_soc) && $object->fk_soc > 0) {
 				$object->socid = $object->fk_soc;
-			}
+			}*/
 		} elseif ($action == 'MEMBER_SUBSCRIPTION_DELETE' && $object instanceof Subscription) {
 			'@phan-var-force Subscription $object';
 			// Load translation files required by the page
@@ -1205,9 +1203,10 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			}
 
 			$object->sendtoid = array();
+			/*
 			if (isset($object->fk_soc) && $object->fk_soc > 0) {
 				$object->socid = $object->fk_soc;
-			}
+			}*/
 		} elseif ($action == 'MEMBER_RESILIATE' && $object instanceof Adherent) {
 			'@phan-var-force Adherent $object';
 			// Load translation files required by the page
@@ -1621,7 +1620,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		$actioncomm->datep       = $now;
 		$actioncomm->datef       = $now;
 		$actioncomm->durationp   = 0;
-		$actioncomm->percentage  = -1; // Not applicable
+		$actioncomm->percentage  = ($actioncomm->type_code === 'AC_EMAIL') ? 100 : -1; // 100 = Done for sent emails, -1 = Not applicable otherwise
 		$actioncomm->socid       = $societeforactionid;
 		$actioncomm->contact_id  = $contactforactionid; // deprecated, now managed by setting $actioncomm->socpeopleassigned later
 		$actioncomm->authorid    = $user->id; // User saving action
@@ -1631,9 +1630,12 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		if (!property_exists($object, 'email_fields_no_propagate_in_actioncomm') || empty($object->email_fields_no_propagate_in_actioncomm)) {
 			'@phan-var-force ActionComm $object';  // TODO: None of the dolibarr classes has all the fields, check class type or properties (email_date)
 			// If event is to record a message after an email received, we use the date of email as date of event.
-			if (!empty($object->email_date) && $actioncomm->type_code === 'AC_TICKET_CREATE') {
-				$actioncomm->datep         = $object->email_date;
-				$actioncomm->datef         = $object->email_date;
+			if ($actioncomm->type_code === 'AC_TICKET_CREATE') {
+				'@phan-var-force Ticket $object';
+				if (!empty($object->email_date)) {
+					$actioncomm->datep         = $object->email_date;
+					$actioncomm->datef         = $object->email_date;
+				}
 			}
 			$actioncomm->email_msgid   = empty($object->email_msgid) ? null : $object->email_msgid;
 			$actioncomm->email_from    = empty($object->email_from) ? null : $object->email_from;

@@ -1,37 +1,69 @@
+/* Copyright (C) 2026	Jose Martinez			<jose.martinez@pichinov.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ */
 /**
  * \file htdocs/ai/js/ai_assistant.js
  * \brief Frontend logic for the AI Assistant
  * \ingroup ai
  */
 
-document.addEventListener('DOMContentLoaded', () => {
+/**
+ * Initialize the AI Assistant chat on a given container (.ai-chat-container).
+ * Called explicitly by the topbar popover bootstrap (main.inc.php) after AJAX
+ * injection, or automatically for server-rendered containers carrying the
+ * data-ai-autoinit attribute (standalone page ai/assistant/index.php).
+ *
+ * @param {HTMLElement} container The .ai-chat-container element
+ */
+export function initAiAssistant(container) {
+    if (!container || container.dataset.aiInit) return;
+    container.dataset.aiInit = '1';
 
     // =========================================================================
     // CONFIGURATION & INITIALIZATION
     // =========================================================================
 
-    // 1. Load configuration passed from PHP
-    const config = window.AI_CONFIG || {};
+    // 1. Load configuration emitted by PHP (getAiChatAssistantConfig) as a data
+    // attribute: inline <script> config cannot travel inside an innerHTML fragment.
+    let config = {};
+    try {
+        config = JSON.parse(container.dataset.aiConfig || '{}');
+    } catch (e) {
+        console.error('AI Assistant: invalid data-ai-config attribute', e);
+    }
+    if (!config.labels && window.AI_CONFIG) config = window.AI_CONFIG; // Legacy fallback
     const CONFIG_MODE = config.mode || 'text';
     const aiLabels = config.labels || {};
 
     // Helper for safe translation retrieval
     const t = (key) => aiLabels[key] || key;
 
-    // 2. Select DOM Elements
-    const micBtn = document.getElementById('mic-btn');
-    const micWrapper = document.getElementById('mic-wrapper');
+    // Absolute endpoint URL: the chat may run injected into any Dolibarr page
+    // (topbar popover), so relative URLs would resolve against the wrong path.
+    const epUrl = (file) => (config.baseUrl || '') + file + (config.token ? '?token=' + encodeURIComponent(config.token) : '');
 
-    const uploadBtn = document.getElementById('upload-btn');
-    const uploadWrapper = document.getElementById('upload-wrapper');
-    const fileInput = document.getElementById('file-upload');
+    // 2. Select DOM Elements (scoped to the container so several chat instances
+    // can coexist on the same page, e.g. popover opened over the standalone page)
+    const micBtn = container.querySelector('#mic-btn');
+    const micWrapper = container.querySelector('#mic-wrapper');
 
-    const clearBtn = document.getElementById('clear-btn');
-    const engineSelect = document.getElementById('engine-select');
-    const input = document.getElementById('user-input');
-    const chat = document.getElementById('chat-history');
-    const statusBar = document.getElementById('status-bar');
-    const sendBtn = document.getElementById('send-btn');
+    const uploadBtn = container.querySelector('#upload-btn');
+    const uploadWrapper = container.querySelector('#upload-wrapper');
+    const fileInput = container.querySelector('#file-upload');
+    const chipArea = container.querySelector('#file-chip-area');
+
+    const clearBtn = container.querySelector('#clear-btn');
+    const engineSelect = container.querySelector('#engine-select');
+    const modelSelect = container.querySelector('#model-select');
+    const input = container.querySelector('#user-input');
+    const chat = container.querySelector('#chat-history');
+    const statusBar = container.querySelector('#status-bar');
+    const sendBtn = container.querySelector('#send-btn');
+    const welcome = container.querySelector('.chat-welcome'); // empty-state screen (full page only)
 
     // 3. Application State
     let isRecording = false;
@@ -44,6 +76,9 @@ document.addEventListener('DOMContentLoaded', () => {
     let lastResult = { data: null, tool: '', query: '' };
     let pendingIntent = null;     // Stores action waiting for confirmation
     let clarificationContext = null;
+    // Document attached via the paperclip: {name, payload}. Sent as context with
+    // the NEXT message; only a small chip (icon + name) is shown in the UI.
+    let attachedDoc = null;
 
     // Audio Hardware Context
     let audioContext, mediaStream, audioProcessor, audioChunks = [];
@@ -63,15 +98,42 @@ document.addEventListener('DOMContentLoaded', () => {
     // -------------------------------------------------------------------------
     // BOOTSTRAP
     // -------------------------------------------------------------------------
+    // Full page only: make the chat fill exactly from its top down to the
+    // viewport bottom, whatever the real top menu bar height is (no magic
+    // offset, so no scrollbar nor blank strip). The popover sizes itself.
+    if (!container.classList.contains('ai-in-popover')) {
+        const fitPageHeight = () => {
+            const top = container.getBoundingClientRect().top;
+            // clientHeight excludes any scrollbar, so the chat fits exactly
+            // without re-triggering a page scrollbar.
+            const vh = document.documentElement.clientHeight;
+            container.style.height = Math.max(420, vh - top) + 'px';
+        };
+        fitPageHeight();
+        window.addEventListener('resize', fitPageHeight);
+    }
+
     input.focus();
     engineSelect.value = CONFIG_MODE;
     updateInterfaceMode(CONFIG_MODE);
 
+    // Welcome screen quick cards: send the localized ready-made prompt on click
+    container.querySelectorAll('.ai-quick-card').forEach((card) => {
+        card.addEventListener('click', () => {
+            input.value = card.dataset.prompt || '';
+            handleQuery();
+        });
+    });
+
     // Initialize Doc Parsing UI Listeners
     initDocParsingUI();
 
+    // Initialize the model picker (presets + dynamic provider model list)
+    initModelPicker();
+
     // Listen for custom event to trigger PDF download from buttons
-    document.addEventListener('triggerPdf', () => {
+    // (scoped to the container: each chat instance reacts only to its own buttons)
+    container.addEventListener('triggerPdf', () => {
         if (lastResult.data) {
             downloadPdf(lastResult);
         } else {
@@ -84,7 +146,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // =========================================================================
 
     const autoResizeInput = () => {
-        const input = document.getElementById('user-input');
         if (!input) return;
 
         // 1. Reset height to 'auto' to shrink the box if text is deleted
@@ -124,13 +185,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // =========================================================================
 
     /**
-     * Update UI visibility based on selected engine
-     * @param {string} mode - 'text', 'cloud', 'whisper', 'local_docs', 'cloud_docs'
+     * Update UI visibility based on selected engine.
+     * The paperclip (uploadWrapper) is ALWAYS visible: documents can be attached
+     * in any mode, like in modern chat UIs. The legacy 'local_docs'/'cloud_docs'
+     * selector modes are gone — routing local/cloud is automatic on attach.
+     * @param {string} mode - 'text', 'cloud', 'whisper'
      */
     function updateInterfaceMode(mode) {
-        // Reset all wrappers
-        micWrapper.classList.add('hidden');
-        uploadWrapper.classList.add('hidden');
+        micWrapper.classList.add('ai-hidden');
 
         if (mode === 'text') {
             input.placeholder = t('TypeYourQuestion');
@@ -138,23 +200,23 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         else if (mode === 'cloud' || mode === 'whisper') {
             // Voice Modes
-            micWrapper.classList.remove('hidden');
+            micWrapper.classList.remove('ai-hidden');
             input.placeholder = 'Type or speak...';
             initEngine(mode);
-        }
-        else if (mode === 'local_docs' || mode === 'cloud_docs') {
-            // Document Modes
-            uploadWrapper.classList.remove('hidden');
-            input.placeholder = mode === 'local_docs'
-                ? t('UploadLocalDoc')
-                : t('UploadCloudDoc');
         }
     }
 
     // Clear Chat History
     clearBtn.addEventListener('click', () => {
         if (confirm(t('ClearChatHistoryTitle'))) {
-            chat.innerHTML = `<div class="msg system">${t('HistoryCleared')}</div>`;
+            // Remove conversation messages; keep the welcome element so it can be
+            // shown again on the full page (the popover has no welcome screen).
+            chat.querySelectorAll('.msg').forEach((n) => n.remove());
+            if (welcome) {
+                welcome.style.display = '';
+            } else {
+                chat.innerHTML = `<div class="msg system">${t('HistoryCleared')}</div>`;
+            }
             lastResult = { data: null, tool: '', query: '' };
             clarificationContext = null;
             input.focus();
@@ -199,15 +261,40 @@ document.addEventListener('DOMContentLoaded', () => {
             const file = e.target.files[0];
             if (!file) return;
 
-            const mode = engineSelect.value;
-            statusBar.innerText = t('ProcessingFile') + ` ${file.name} (${mode})...`;
+            renderChip(file.name, 'loading');
+            statusBar.innerText = t('ProcessingFile') + ` ${file.name}...`;
 
             try {
-                let contentPayload = "";
+                // Automatic routing: try the in-browser extraction first, then
+                // fall back to server-side cloud parsing (multimodal) when the
+                // local result is empty or too short to be useful — typically a
+                // photographed PDF with no text layer.
+                //
+                // Two guards keep the chip from spinning for minutes:
+                // - a large image goes straight to cloud parsing (browser OCR on a
+                //   multi-MB photo downloads Tesseract + a language model and can
+                //   take minutes for a poor result);
+                // - any local extraction is capped by a hard timeout, after which
+                //   we fall back to cloud parsing (the orphan extraction result,
+                //   if it ever completes, is simply ignored).
+                const LOCAL_EXTRACT_TIMEOUT_MS = 20000;
+                const LOCAL_IMAGE_MAX_BYTES = 1500000;
+                const isImage = file.type.startsWith('image/') || /\.(png|jpe?g|gif|bmp|webp)$/i.test(file.name);
 
-                if (mode === 'local_docs') {
-                    contentPayload = await processLocalFile(file);
-                } else if (mode === 'cloud_docs') {
+                let contentPayload = '';
+                if (!(isImage && file.size > LOCAL_IMAGE_MAX_BYTES)) {
+                    try {
+                        contentPayload = await Promise.race([
+                            processLocalFile(file),
+                            new Promise((resolve) => setTimeout(() => resolve(''), LOCAL_EXTRACT_TIMEOUT_MS))
+                        ]);
+                    } catch (errLocal) {
+                        contentPayload = '';
+                    }
+                }
+                const usefulChars = (contentPayload || '').replace(/\s+/g, '').length;
+                if (usefulChars < 120) {
+                    statusBar.innerText = t('ProcessingFile') + ` ${file.name} (cloud)...`;
                     contentPayload = await processCloudFile(file);
                 }
 
@@ -215,30 +302,165 @@ document.addEventListener('DOMContentLoaded', () => {
                     throw new Error(t('UnsupportedFileType'));
                 }
 
-                const docContext = `${t('DocContextIntro')}
-
-		${contentPayload}
-
-		--- ${t('DocContextOutro')} ---
-		`;
-
-                input.value = docContext;
-                setTimeout(autoResizeInput, 0); // Trigger resize so the text is visible
-
-                // Update placeholder to guide the user
-                //input.placeholder = "Document loaded. Ask something (e.g., 'Summarize this', 'Create an invoice for line 2')...";
-
-                // Focus input so user can type immediately
+                // The content NEVER goes into the input nor the conversation:
+                // it is kept aside and sent as context with the next message.
+                attachedDoc = { name: file.name, payload: contentPayload };
+                renderChip(file.name, 'ready');
+                statusBar.innerText = '';
                 input.focus();
-                statusBar.innerText = t('DocLoaded');
-
             } catch (err) {
                 console.error(err);
+                attachedDoc = null;
+                renderChip(file.name, 'error');
                 statusBar.innerText = t('Error') + ": " + err.message;
             }
 
             fileInput.value = '';
         });
+    }
+
+    /** Pick a FontAwesome icon class from a file name extension. */
+    function chipIcon(name) {
+        const ext = (String(name).split('.').pop() || '').toLowerCase();
+        if (ext === 'pdf') return 'fa-file-pdf';
+        if (['png', 'jpg', 'jpeg', 'gif', 'bmp', 'webp'].indexOf(ext) !== -1) return 'fa-file-image';
+        if (['xls', 'xlsx', 'ods'].indexOf(ext) !== -1) return 'fa-file-excel';
+        if (['doc', 'docx', 'odt'].indexOf(ext) !== -1) return 'fa-file-word';
+        return 'fa-file-alt';
+    }
+
+    /** Minimal HTML escaping (appendMsg uses innerHTML). */
+    function escapeHtml(s) {
+        return String(s).replace(/[&<>"']/g, (c) => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]));
+    }
+
+    /** Render the attached-file chip above the input pill. */
+    function renderChip(name, state) {
+        if (!chipArea) return;
+        chipArea.classList.remove('ai-hidden');
+        const stateClass = (state === 'error') ? ' chip-error' : '';
+        const icon = (state === 'loading') ? 'fa-spinner fa-spin' : chipIcon(name);
+        chipArea.innerHTML = '<span class="file-chip' + stateClass + '">'
+            + '<i class="fa ' + icon + ' chip-icon"></i>'
+            + '<span class="chip-name">' + escapeHtml(name) + '</span>'
+            + '<button type="button" class="chip-x" title="' + escapeHtml(t('Cancel')) + '">&times;</button>'
+            + '</span>';
+        chipArea.querySelector('.chip-x').addEventListener('click', clearChip);
+    }
+
+    /** Remove the chip and forget the attached document. */
+    function clearChip() {
+        attachedDoc = null;
+        if (chipArea) {
+            chipArea.innerHTML = '';
+            chipArea.classList.add('ai-hidden');
+        }
+    }
+
+    /** Inline (read-only) chip markup shown inside a sent user message. */
+    function chipHtmlFor(name) {
+        return '<span class="file-chip chip-inline"><i class="fa ' + chipIcon(name) + ' chip-icon"></i>'
+            + '<span class="chip-name">' + escapeHtml(name) + '</span></span>';
+    }
+
+    /**
+     * Light markdown rendering for free-text LLM answers: the models reply with
+     * markdown (bold, lists, line breaks) that innerHTML would otherwise flatten
+     * into one unreadable block with literal asterisks. HTML is escaped FIRST,
+     * so the LLM cannot inject markup.
+     * @param {string} text Raw model answer
+     * @return {string} Safe HTML
+     */
+    function renderMarkdownLite(text) {
+        let s = escapeHtml(String(text));
+        s = s.replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>');
+        s = s.replace(/(^|[\s(])\*([^*\n]+)\*(?=[\s).,;:!?]|$)/g, '$1<em>$2</em>');
+        s = s.replace(/`([^`\n]+)`/g, '<code>$1</code>');
+        // Numbered/bulleted list items get their own line even when the model
+        // packed them into a single paragraph ("… 5,20 € 2. **Référence** …").
+        s = s.replace(/\s(\d{1,2}\.\s)(?=<strong>|\S)/g, '<br>$1');
+        s = s.replace(/(^|\n)[-•]\s/g, '$1• ');
+        s = s.replace(/\n/g, '<br>');
+        return s;
+    }
+
+    // =========================================================================
+    // MODEL PICKER
+    // =========================================================================
+
+    let modelList = [];   // model ids fetched from the provider (via list_models.php)
+
+    /** Populate the model pill: Auto + presets, then the provider's model list. */
+    function initModelPicker() {
+        if (!modelSelect) return;
+        let saved = '';
+        try { saved = localStorage.getItem('aiModelChoice') || ''; } catch (e) { /* private mode */ }
+
+        const presets = [
+            ['preset:fast', '⚡ ' + t('AIModelFast')],
+            ['preset:balanced', '⚖️ ' + t('AIModelBalanced')],
+            ['preset:deep', '🧠 ' + t('AIModelDeep')]
+        ];
+        presets.forEach(([val, label]) => {
+            const o = document.createElement('option');
+            o.value = val; o.textContent = label;
+            modelSelect.appendChild(o);
+        });
+
+        const applySaved = () => {
+            if (saved && Array.prototype.some.call(modelSelect.options, (o) => o.value === saved)) {
+                modelSelect.value = saved;
+            }
+        };
+        applySaved();
+
+        fetch(epUrl('../ajax/list_models.php'))
+            .then((r) => r.json())
+            .then((j) => {
+                modelList = (j && j.models) || [];
+                if (modelList.length) {
+                    const grp = document.createElement('optgroup');
+                    grp.label = '──';
+                    modelList.forEach((id) => {
+                        const o = document.createElement('option');
+                        o.value = id; o.textContent = id;
+                        grp.appendChild(o);
+                    });
+                    modelSelect.appendChild(grp);
+                    // Saved model no longer offered by the provider: fall back to
+                    // Auto, forget the stale choice, and tell the user ONCE (so the
+                    // picker never looks silently ignored, cf. review on #39878).
+                    if (saved && saved.indexOf('preset:') !== 0 && modelList.indexOf(saved) < 0) {
+                        appendMsg('system', escapeHtml(t('AIModelSavedGone').replace('%s', saved)));
+                        try { localStorage.removeItem('aiModelChoice'); } catch (e) { /* ignore */ }
+                        saved = '';
+                    }
+                }
+                applySaved();
+            })
+            .catch(() => { /* provider unreachable: keep Auto + presets */ });
+
+        modelSelect.addEventListener('change', () => {
+            try { localStorage.setItem('aiModelChoice', modelSelect.value); } catch (e) { /* ignore */ }
+        });
+    }
+
+    /**
+     * Resolve the picker value to a concrete model id ('' = provider default).
+     * Presets map onto the dynamic list with a heuristic regex on the id.
+     */
+    function resolveModel() {
+        if (!modelSelect) return '';
+        const v = modelSelect.value;
+        if (!v) return '';
+        if (v.indexOf('preset:') === 0) {
+            const kind = v.substring(7);
+            const re = (kind === 'fast') ? /haiku|mini|flash|lite|instant/i
+                : ((kind === 'balanced') ? /sonnet|4o|medium|small/i : /opus|o1|pro|large/i);
+            const hit = modelList.find((id) => re.test(id));
+            return hit || '';
+        }
+        return v;
     }
 
     // =========================================================================
@@ -624,7 +846,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function processCloudFile(file) {
-        const base64 = await fileToBase64(file);
+        // fileToBase64 resolves the FULL data URL ("data:image/png;base64,AAAA…").
+        // Strip the prefix: the server-side extractor (parse_intent.php) expects
+        // pure base64 after '::' and hands it to the LLM as a native multimodal
+        // part — with the prefix left in, the marker is never recognized.
+        const base64 = String(await fileToBase64(file)).split(',').pop();
         return `__FILE_ATTACHMENT__[${file.type}]::${base64}`;
     }
 
@@ -662,7 +888,10 @@ document.addEventListener('DOMContentLoaded', () => {
             cloudRecognition.lang = navigator.language || 'en-US';
 
             cloudRecognition.onstart = () => { setMicState('listening'); statusBar.innerText = t('Listening'); };
-            cloudRecognition.onend = () => { if (isRecording && engineSelect.value === 'cloud') stopRecording(); };
+            // When recognition ends without a result (user stopped, or silence
+            // timeout), return to idle instead of looping on stopRecording (which
+            // left the button stuck in the orange 'processing' state).
+            cloudRecognition.onend = () => { if (engineSelect.value === 'cloud' && isRecording) { resetUI(); } };
             cloudRecognition.onerror = (event) => {
                 console.error('Speech recognition error:', event.error);
                 let errorMsg = t('Error') + ": " + event.error;
@@ -677,7 +906,7 @@ document.addEventListener('DOMContentLoaded', () => {
             cloudRecognition.onresult = (event) => {
                 const transcript = event.results[0][0].transcript;
                 input.value = transcript;
-                setMicState('idle');
+                resetUI(); // clears isRecording/isProcessing so onend won't re-fire a reset
                 statusBar.innerText = t('Transcribed');
                 handleQuery();
             };
@@ -883,7 +1112,7 @@ document.addEventListener('DOMContentLoaded', () => {
         micBtn.classList.remove('listening', 'processing', 'cancelling');
         micBtn.disabled = false;
         if (state === 'listening') { micBtn.classList.add('listening'); micBtn.innerHTML = '<span class="fa fa-microphone"></span>'; }
-        else if (state === 'processing') { micBtn.classList.add('processing'); micBtn.innerHTML = '<span class="fa fa-circle-o-notch fa-spin"></span>'; }
+        else if (state === 'processing') { micBtn.classList.add('processing'); micBtn.innerHTML = '<span class="fa fa-circle-notch fa-spin"></span>'; }
         else { micBtn.innerHTML = '<span class="fa fa-microphone"></span>'; micBtn.title = "Start Recording"; }
     }
 
@@ -891,32 +1120,73 @@ document.addEventListener('DOMContentLoaded', () => {
     // CHAT UI RENDERING
     // =========================================================================
 
+    // Build the contextual action buttons row (e.g. "Download PDF", "Open record")
+    function buildActions(actions) {
+        const actionsDiv = document.createElement('div');
+        actionsDiv.className = 'msg-actions';
+        actions.forEach(action => {
+            const btn = document.createElement('button');
+            btn.className = `msg-action-btn ${action.class || ''}`;
+            btn.innerHTML = action.icon ? `<span class="fa ${action.icon}"></span> ${action.text}` : action.text;
+            btn.onclick = action.onclick;
+            actionsDiv.appendChild(btn);
+        });
+        return actionsDiv;
+    }
+
+    // Build the avatar element shown next to user/bot messages
+    function buildAvatar(type) {
+        const avatar = document.createElement('div');
+        avatar.className = `msg-avatar ${type}`;
+        avatar.innerHTML = (type === 'bot')
+            ? '<span class="fa fa-robot"></span>'
+            : (config.userInitial || '<span class="fa fa-user"></span>');
+        return avatar;
+    }
+
     function appendMsg(type, html, actions = null) {
         const div = document.createElement('div');
         div.className = `msg ${type}`;
-        div.innerHTML = html;
-        if (actions) {
-            const actionsDiv = document.createElement('div'); actionsDiv.className = 'msg-actions';
-            actions.forEach(action => {
-                const btn = document.createElement('button');
-                btn.className = `msg-action-btn ${action.class || ''}`;
-                btn.innerHTML = action.icon ? `<span class="fa ${action.icon}"></span> ${action.text}` : action.text;
-                btn.onclick = action.onclick;
-                actionsDiv.appendChild(btn);
-            });
-            div.appendChild(actionsDiv);
+
+        if (type === 'user' || type === 'bot') {
+            // Row layout: avatar + bubble (CSS reverses the row for the user)
+            const bubble = document.createElement('div');
+            bubble.className = 'msg-bubble';
+            bubble.innerHTML = html;
+            if (actions) bubble.appendChild(buildActions(actions));
+            div.appendChild(buildAvatar(type));
+            div.appendChild(bubble);
+        } else {
+            // system / error / clarification / confirmation: flat, centered, no avatar
+            div.innerHTML = html;
+            if (actions) div.appendChild(buildActions(actions));
         }
+
         chat.appendChild(div);
         chat.scrollTop = chat.scrollHeight;
     }
 
+    // Animated three-dot "typing" bubble (avatar + dots) shown while waiting
+    function appendTyping() {
+        const div = document.createElement('div');
+        div.className = 'msg bot typing-indicator';
+        div.appendChild(buildAvatar('bot'));
+        const bubble = document.createElement('div');
+        bubble.className = 'msg-bubble';
+        bubble.innerHTML = '<span></span><span></span><span></span>';
+        div.appendChild(bubble);
+        chat.appendChild(div);
+        chat.scrollTop = chat.scrollHeight;
+        return div;
+    }
+
     function handleClarification(question, context) {
         clarificationContext = context;
-        let html = `<div><strong>${question}</strong></div><input type="text" id="clarification-input" placeholder="${t('TypeResponse')}" style="width:100%; margin-top:10px; padding:8px; border:1px solid #ccc; border-radius:4px;">`;
+        let html = `<div><strong>${renderMarkdownLite(question)}</strong></div><input type="text" id="clarification-input" placeholder="${t('TypeResponse')}" style="width:100%; margin-top:10px; padding:8px; border:1px solid #ccc; border-radius:4px;">`;
         const actions = [
             {
                 text: t('Submit'), class: 'primary', icon: 'fa-check', onclick: () => {
-                    const response = document.getElementById('clarification-input').value;
+                    const response = container.querySelector('#clarification-input').value;
                     if (response.trim()) {
                         const msg = chat.lastElementChild;
                         if (msg && msg.classList.contains('clarification')) msg.remove();
@@ -934,18 +1204,26 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         ];
         appendMsg('clarification', html, actions);
-        const clarInput = document.getElementById('clarification-input');
+        const clarInput = container.querySelector('#clarification-input');
         if (clarInput) clarInput.focus();
     }
 
     function handleResponse(message) {
         if (!message) message = t('EmptyAIResponse');
-        appendMsg('bot', message);
+        appendMsg('bot', renderMarkdownLite(message));
     }
 
     function handleConfirmation(action, details, originalIntent) {
-        pendingIntent = originalIntent.arguments.original_intent || originalIntent;
-        const toolName = pendingIntent.tool || 'unknown tool';
+		// original_intent must be provided by parse_intent.php.
+		// If missing, treat as a malformed confirmation and abort.
+		if (!originalIntent.arguments || !originalIntent.arguments.original_intent) {
+			appendMsg('error', t('AIError') + ': malformed confirmation response (missing original_intent). Please try again.');
+			input.disabled = false;
+			input.focus();
+			return;
+		}
+		pendingIntent = originalIntent.arguments.original_intent;
+		const toolName = pendingIntent.tool || 'unknown tool';
         let template = t('ConfirmAiAction');
         let messageHtml = template.replace('%1$s', `<strong>${action}</strong>`).replace('%2$s', `<strong>${toolName}</strong>`);
         let html = `<div class="confirmation-dialog"><div class="confirmation-header"><i class="fas fa-question-circle"></i><strong>${t('confirmation')}</strong></div><div class="confirmation-body"><p>${messageHtml}</p>${details ? `<p class="confirmation-details">${details}</p>` : ''}</div></div>`;
@@ -1005,7 +1283,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function showVoiceFeedback(message) {
-        const dialog = document.querySelector('.confirmation-dialog .confirmation-body');
+        const dialog = container.querySelector('.confirmation-dialog .confirmation-body');
         if (dialog) {
             let fb = dialog.querySelector('.voice-feedback');
             if (!fb) { fb = document.createElement('div'); fb.className = 'voice-feedback'; dialog.appendChild(fb); }
@@ -1022,8 +1300,19 @@ document.addEventListener('DOMContentLoaded', () => {
         appendMsg('system', `<span class="fa fa-circle-notch fa-spin"></span> ${t('ExecutingTool')} ${pendingIntent.tool || ''}...`);
         const loadingMsg = chat.lastElementChild;
         input.disabled = true;
+		// PendingIntent must be a real action tool, never a system tool.
+		// This catches the edge case where handleConfirmation stored the wrong intent.
+		const systemTools = ['ask_for_confirmation', 'ask_for_clarification', 'respond_to_user', 'reject_general_question'];
+		if (!pendingIntent || !pendingIntent.tool || systemTools.includes(pendingIntent.tool)) {
+			loadingMsg.remove();
+			appendMsg('error', t('AIError') + ': cannot execute system tool "' + (pendingIntent && pendingIntent.tool || 'unknown') + '" as an action. Please try again.');
+			pendingIntent = null;
+			input.disabled = false;
+			input.focus();
+			return;
+		}
         try {
-            const toolRes = await fetch('execute_tool.php', {
+            const toolRes = await fetch(epUrl('execute_tool.php'), {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(pendingIntent)
             });
@@ -1039,29 +1328,42 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function handleQuery() {
         const query = input.value.trim();
-        if (!query) return;
-        appendMsg('user', query);
+        if (!query && !attachedDoc) return;
+        if (welcome) welcome.style.display = 'none'; // leave the empty-state once a message is sent
+
+        // What is SENT = document context + question; what is DISPLAYED = chip + question.
+        let sentQuery = query;
+        let displayHtml = escapeHtml(query);
+        if (attachedDoc) {
+            const docContext = `${t('DocContextIntro')}\n\n${attachedDoc.payload}\n\n--- ${t('DocContextOutro')} ---\n`;
+            sentQuery = docContext + (query ? '\n' + query : '');
+            displayHtml = chipHtmlFor(attachedDoc.name) + (query ? '<br>' + displayHtml : '');
+        }
+
+        appendMsg('user', displayHtml);
+        clearChip();
         input.value = '';
         input.style.height = '44px';
         input.disabled = true;
-        appendMsg('system', '<span class="fa fa-circle-notch fa-spin"></span> Thinking...');
+        appendTyping();
         const loadingMsg = chat.lastElementChild;
         try {
-            const intentRes = await fetch('parse_intent.php', {
+            const chosenModel = resolveModel();
+            const intentRes = await fetch(epUrl('parse_intent.php'), {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ query: query })
+                body: JSON.stringify(chosenModel ? { query: sentQuery, model: chosenModel } : { query: sentQuery })
             });
             const intent = await intentRes.json();
             loadingMsg.remove();
             if (intent.error) { appendMsg('error', t('AIError') + ': ' + intent.error); input.disabled = false; input.focus(); return; }
 
             if (intent.tool === 'ask_for_clarification') { handleClarification(intent.arguments.question, query); input.disabled = false; input.focus(); return; }
-            if (intent.tool === 'respond_to_user' || intent.tool === 'reject_general_question') { const msg = (intent.arguments && intent.arguments.message) ? intent.arguments.message : t('EmptyAIResponse'); handleResponse(msg); input.disabled = false; input.focus(); return; }
+            if (intent.tool === 'respond_to_user' || intent.tool === 'reject_general_question') { const a = intent.arguments || {}; const msg = a.message || a.response || a.text || a.answer || a.content || a.reply || t('EmptyAIResponse'); handleResponse(msg); input.disabled = false; input.focus(); return; }
             if (intent.tool === 'ask_for_confirmation') { handleConfirmation(intent.arguments.action, intent.arguments.details, intent); input.disabled = false; input.focus(); return; }
             if (intent.tool === 'generate_navigation_url') {
                 appendMsg('system', t('GeneratingLink'));
                 const loadingNav = chat.lastElementChild;
-                const navRes = await fetch('execute_tool.php', {
+                const navRes = await fetch(epUrl('execute_tool.php'), {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(intent)
                 });
@@ -1074,7 +1376,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             appendMsg('system', t('FetchingData'));
             const loadingData = chat.lastElementChild;
-            const toolRes = await fetch('execute_tool.php', {
+            const toolRes = await fetch(epUrl('execute_tool.php'), {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(intent)
             });
@@ -1100,7 +1402,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else { reportTitle = resultObj.tool.replace(/_/g, ' '); }
         let filename = reportTitle.replace(/[\/\\:*?"<>|]/g, '_').substring(0, 50) + '_' + new Date().toISOString().slice(0, 10) + '.pdf';
         const form = document.createElement('form');
-        form.method = 'POST'; form.action = 'download_pdf.php'; form.target = '_blank';
+        form.method = 'POST'; form.action = epUrl('download_pdf.php'); form.target = '_blank';
         const addField = (name, val) => {
             const i = document.createElement('input'); i.type = 'hidden'; i.name = name; i.value = val; form.appendChild(i);
         };
@@ -1124,7 +1426,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (data.length === 0) return t('NoRecordFound');
             isArray = true;
             let keys = Object.keys(data[0]).filter(k => k !== 'url' && k !== 'rowid');
-            content += '<div style="overflow-x:auto;"><table class="chat-table"><thead><tr>';
+            content += '<div class="chat-table-wrap"><table class="chat-table"><thead><tr>';
             keys.forEach(k => content += `<th>${k.replace(/_/g, ' ').toUpperCase()}</th>`);
             content += '</tr></thead><tbody>';
             data.forEach(row => {
@@ -1132,7 +1434,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 keys.forEach(k => {
                     let val = row[k];
                     if (row.url && ['ref', 'name', 'nom', 'label', 'customer', 'supplier', 'subject'].includes(k)) {
-                        val = `<a href="${row.url}" target="_blank" style="color:#0055aa; text-decoration:none; font-weight:bold;">${val}</a>`;
+                        val = `<a href="${row.url}" target="_blank" class="chat-link">${val}</a>`;
                     }
                     content += `<td>${val}</td>`;
                 });
@@ -1143,7 +1445,7 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (typeof data === 'object') {
             isObject = true;
             objectUrl = data.url || null;
-            content += '<div style="background:#f9f9f9; padding:10px; border-radius:5px;"><ul style="padding-left:20px; margin:0;">';
+            content += '<div class="chat-object"><ul>';
             for (const [key, value] of Object.entries(data)) {
                 if (key === 'url') continue;
                 if (typeof value !== 'object') { content += `<li><strong>${key.replace(/_/g, ' ')}:</strong> ${value}</li>`; }
@@ -1155,12 +1457,24 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!isRecursive) {
             let toolbarContent = '';
             if (isArray) {
-                toolbarContent = `<button class="msg-action-btn" onclick="document.dispatchEvent(new CustomEvent('triggerPdf'))" title="${t('DownloadPdf')}"><span class="fa fa-file-pdf-o"></span> ${t('downloadPdf')}</button>`;
+                toolbarContent = `<button class="msg-action-btn" onclick="this.closest('.ai-chat-container').dispatchEvent(new CustomEvent('triggerPdf'))" title="${t('DownloadPdf')}"><span class="fa fa-file-pdf-o"></span> ${t('downloadPdf')}</button>`;
             } else if (isObject && objectUrl) {
-                toolbarContent = `<a href="${objectUrl}" target="_blank" class="msg-action-btn primary" style="display:inline-flex; align-items:center; gap:5px; text-decoration:none;" title="${t('OpenVerb')}"><span class="fa fa-external-link"></span> ${t('openRecord')}</a>`;
+                toolbarContent = `<a href="${objectUrl}" target="_blank" class="msg-action-btn primary" title="${t('OpenVerb')}"><span class="fa fa-external-link"></span> ${t('openRecord')}</a>`;
             }
-            if (toolbarContent) { content += `<div style="margin-top:8px; border-top:1px solid #eee; padding-top:5px; text-align:right;">${toolbarContent}</div>`; }
+            if (toolbarContent) { content += `<div class="msg-toolbar">${toolbarContent}</div>`; }
         }
         return content;
     }
-});
+}
+
+// Auto-init for server-rendered containers (standalone page mode). The topbar
+// popover path calls initAiAssistant() explicitly after the AJAX injection.
+// Module scripts are deferred, so the DOM may already be ready when this runs.
+function aiAutoInit() {
+    document.querySelectorAll('.ai-chat-container[data-ai-autoinit]').forEach((el) => initAiAssistant(el));
+}
+if (document.readyState !== 'loading') {
+    aiAutoInit();
+} else {
+    document.addEventListener('DOMContentLoaded', aiAutoInit);
+}

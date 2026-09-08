@@ -258,7 +258,7 @@ OtherFilteredTasks=Kazi zingine zilizochujwa
 NoAssignedTasks=Hakuna kazi zilizokabidhiwa zilizopatikana (peana mradi/kazi kwa mtumiaji wa sasa kutoka kwenye kisanduku teule cha juu ili kuweka muda juu yake)
 ThirdPartyRequiredToGenerateIntervention=A third party must be defined on project to be able to create intervention.
 ThirdPartyRequiredToGenerateInvoice=Mtu wa tatu lazima afafanuliwe kwenye mradi ili aweze kuuweka ankara.
-ChooseANotYetAssignedTask=Chagua kazi ambayo bado haujakabidhiwa
+ChooseANotYetAssignedTask=Tasks not yet assigned to you
 # Comments trans
 AllowCommentOnTask=Ruhusu maoni ya mtumiaji kuhusu majukumu
 AllowCommentOnProject=Ruhusu maoni ya watumiaji kwenye miradi

@@ -36,10 +36,18 @@ ActivateAllOnContract=Активирај ги сите услуги
 CloseAContract=Склучи Договор
 ConfirmDeleteAContract=Дали сте сигурни дека сакате да го избришете овој Договор и сите негови услуги?
 ConfirmValidateContract=Дали сте сигурни дека сакате да го потврдите овој Договор под името <b>%s</b> ?
+ConfirmSignContract=Are you sure you want to set this contract as signed ?
+ConfirmUnsignContract=Are you sure you want to set this contract as unsigned ?
 ConfirmActivateAllOnContract=Ова ќе ги активира сите услуги (сè уште не активни). Дали сте сигурни дека сакате да ги активирате сите услуги?
 ConfirmCloseContract=Ова ќе ги затвори сите услуги (истечени или не). Дали сте сигурни дека сакате да го затворите овој договор?
 ConfirmCloseService=Дали сте сигурни дека сакате да ја затворите оваа услуга со датумот <b>%s</b> ?
 ValidateAContract=Валидирајте договор
+UnsignContract=Unsign contract
+ContractSign=Set Signed
+ContractUnsign=Set Unsigned
+ContractSignedInDolibarr=Contract signed
+ContractSignedOnline=Contract signed online
+ContractUnsignedInDolibarr=Contract unsigned
 ActivateService=Активирајте услуга
 ConfirmActivateService=Дали сте сигурни дека сакате да ја активирате оваа услуга со датумот <b>%s</b> ?
 RefContract=Референца за договор
@@ -95,7 +103,13 @@ ConfirmCloneContract=Дали сте сигурни дека сакате да �
 LowerDateEndPlannedShort=Долг планиран датум на завршување на активните услуги
 SendContractRef=Информации за договорот __REF__
 OtherContracts=Други договори
-##### Types de contacts #####
+##### Statistics #####
+ContractsStatistics=Contract's statistics
+NbOfContracts=Nb of contracts
+NumberOfContractsByMonth=Number of contracts by month
+AmountOfServices=Number of services
+AmountOfServicesByMonthHT=Number of services (excl. tax) by month
+##### Types of contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Овластен претставник за продажба за потпишување на договор
 TypeContact_contrat_internal_SALESREPFOLL=Договор за последователна продажба на претставник за продажба
 TypeContact_contrat_external_BILLING=Контакт на  клиент за наплата

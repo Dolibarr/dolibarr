@@ -35,9 +35,10 @@ CREATE TABLE llx_eventorganization_conferenceorboothattendee(
 	fk_user_creat integer,
 	fk_user_modif integer,
 	last_main_doc varchar(255),
-	ip varchar(250),              --ip used to create record (for public submission page)
+	ip varchar(250),              -- ip used to create record (for public submission page)
 	import_key varchar(14),
 	model_pdf varchar(255),
-	status smallint NOT NULL
+	status smallint NOT NULL,
+	fk_replacement integer NULL
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;

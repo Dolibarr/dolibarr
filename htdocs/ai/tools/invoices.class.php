@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2026	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2026	Nick Fragoulis
+ * Copyright (C) 2026	Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,11 +41,36 @@ class ToolInvoices extends McpTool
 	/**
 	 * 	Constructor
 	 *
+	 * 	Aligned with McpHandler's instantiation contract: new $className($db, $user, $conf).
+	 *
 	 * 	@param	DoliDB		$db			Database handler
+	 * 	@param	User|null	$user		Service user provided by McpHandler (from AI_MCP_USER_ID)
+	 * 	@param	Conf|null	$conf		Dolibarr config (optional)
 	 */
-	public function __construct(DoliDB  $db)
+	public function __construct(DoliDB $db, $user = null, $conf = null)
 	{
 		$this->db = $db;
+		$this->user = $user;
+		if ($conf !== null) {
+			$this->conf = $conf;
+		}
+	}
+
+	/**
+	 * Return the authenticated user, preferring DI ($this->user) and falling back to global $user.
+	 * In HTTP MCP context there is no PHP web session — only the service user injected via DI.
+	 *
+	 * @return User|null
+	 */
+	private function getUser()
+	{
+		// is_object() instead of empty() to avoid PHPStan flagging empty() on a
+		// non-nullable typed parent property as unreachable.
+		if (is_object($this->user) && !empty($this->user->id)) {
+			return $this->user;
+		}
+		global $user;
+		return is_object($user) && !empty($user->id) ? $user : null;
 	}
 
 	/**
@@ -169,9 +195,17 @@ class ToolInvoices extends McpTool
 	 */
 	private function searchInvoices($args)
 	{
-		global $conf;
 		$limit = isset($args['limit']) ? (int) $args['limit'] : 10;
 		$status = isset($args['status']) ? $args['status'] : 'unpaid';
+
+		// Safety fallback
+		if ($limit <= 0) {
+			$limit = 5;
+		}
+		if ($limit > 1000) {
+			dol_syslog("Search DB Error: Too many record requested", LOG_ERR);
+			return ["error" => "DB Error"];
+		}
 
 		$sql = "SELECT f.rowid, f.ref, f.total_ttc, f.fk_statut, f.paye, f.datef, s.nom
 				FROM " . MAIN_DB_PREFIX . "facture as f
@@ -304,7 +338,10 @@ class ToolInvoices extends McpTool
 	 */
 	private function validateInvoice($args)
 	{
-		global $user;
+		$user = $this->getUser();
+		if ($user === null) {
+			return ["error" => "User not authenticated."];
+		}
 		$invoice = $this->findInvoice($args['invoice']);
 		if (is_array($invoice)) {
 			return $invoice;
@@ -343,7 +380,10 @@ class ToolInvoices extends McpTool
 	 */
 	private function payInvoice($args)
 	{
-		global $user;
+		$user = $this->getUser();
+		if ($user === null) {
+			return ["error" => "User not authenticated."];
+		}
 		$invoice = $this->findInvoice($args['invoice']);
 		if (is_array($invoice)) {
 			return $invoice;

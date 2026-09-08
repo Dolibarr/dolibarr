@@ -9,6 +9,7 @@
  * Copyright (C) 2017-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023       Nick Fragoulis
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026 Joris Le Blansch <ping@apio.systems>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -226,7 +227,7 @@ class FactureRec extends CommonInvoice
 
 	/**
 	 *  'type' if the field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
-	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
+	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'enabled' is a condition when the field must be managed.
 	 *  'position' is the sort order of field.
@@ -908,10 +909,10 @@ class FactureRec extends CommonInvoice
 		$error = 0;
 		$this->db->begin();
 
-		$main = MAIN_DB_PREFIX.'facturedet_rec';
-		$ef = $main."_extrafields";
+		$sql_main_table = MAIN_DB_PREFIX.'facturedet_rec';
+		$sql_ef_table = $sql_main_table."_extrafields";
 
-		$sqlef = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM ".$main." WHERE fk_facture = ".((int) $rowid).")";
+		$sqlef = "DELETE FROM $sql_ef_table WHERE fk_object IN (SELECT rowid FROM ".$sql_main_table." WHERE fk_facture = ".((int) $rowid).")";
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."facturedet_rec WHERE fk_facture = ".((int) $rowid);
 
 		if ($this->db->query($sqlef) && $this->db->query($sql)) {
@@ -980,9 +981,10 @@ class FactureRec extends CommonInvoice
 	 * 	@param		int|string|null	$fk_fournprice		Supplier price id (to calculate margin) or string
 	 * 	@param		float			$pa_ht				Buying price of line (to calculate margin) (Can be '' to keep AWP unchanged or a float value)
 	 *  @param		int				$fk_parent_line		Id of parent line
+	 *  @param		array<string,mixed>	$array_options		Extrafields array
 	 *	@return    	int             					Return integer <0 if KO, Id of line if OK
 	 */
-	public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $fk_product = 0, $remise_percent = 0, $price_base_type = 'HT', $info_bits = 0, $fk_remise_except = 0, $pu_ttc = 0, $type = 0, $rang = -1, $special_code = 0, $label = '', $fk_unit = null, $pu_ht_devise = 0, $date_start_fill = 0, $date_end_fill = 0, $fk_fournprice = null, $pa_ht = 0, $fk_parent_line = 0)
+	public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $fk_product = 0, $remise_percent = 0, $price_base_type = 'HT', $info_bits = 0, $fk_remise_except = 0, $pu_ttc = 0, $type = 0, $rang = -1, $special_code = 0, $label = '', $fk_unit = null, $pu_ht_devise = 0, $date_start_fill = 0, $date_end_fill = 0, $fk_fournprice = null, $pa_ht = 0, $fk_parent_line = 0, $array_options = array())
 	{
 		global $mysoc;
 
@@ -1132,7 +1134,7 @@ class FactureRec extends CommonInvoice
 		$sql .= ", ".price2num($total_ttc);
 		$sql .= ", ".(int) $date_start_fill;
 		$sql .= ", ".(int) $date_end_fill;
-		$sql .= ", ".($fk_fournprice > 0 ? $fk_fournprice : 'null');
+		$sql .= ", ".($fk_fournprice > 0 ? ((int) $fk_fournprice) : 'null');
 		$sql .= ", ".($pa_ht ? price2num($pa_ht) : 0);
 		$sql .= ", ".((int) $info_bits);
 		$sql .= ", ".((int) $ranktouse);
@@ -1151,6 +1153,18 @@ class FactureRec extends CommonInvoice
 			$lineId = $this->db->last_insert_id(MAIN_DB_PREFIX."facturedet_rec");
 			$this->id = $facid;
 			$this->update_price(1);
+
+			if (is_array($array_options) && count($array_options) > 0) {
+				$factureRecLine = new FactureLigneRec($this->db);
+				$factureRecLine->id = $lineId;
+				$factureRecLine->array_options = $array_options;
+				$result = $factureRecLine->insertExtraFields();
+				if ($result < 0) {
+					$this->errors[] = $factureRecLine->error;
+					return -2;
+				}
+			}
+
 			return $lineId;
 		} else {
 			$this->error = $this->db->lasterror();
@@ -1338,16 +1352,67 @@ class FactureRec extends CommonInvoice
 
 
 	/**
-	 * Return the next date of
+	 * Return the next date of execution
+	 * Handles end-of-month scenarios when day >= 28 for monthly recurring invoices.
+	 * If the original date is on day 28, 29, 30, or 31, the system will automatically
+	 * calculate the appropriate last day of the target month.
 	 *
-	 * @return  int|false   false if KO, timestamp if OK
+	 * @return  int|false   Timestamp of next date or false on error.
 	 */
 	public function getNextDate()
 	{
 		if (empty($this->date_when)) {
 			return false;
 		}
-		return dol_time_plus_duree($this->date_when, $this->frequency, $this->unit_frequency, 1);
+
+		// Get the original day of the month from date_when
+		$dateInfo = dol_getdate($this->date_when);
+		$originalDay = (int) $dateInfo['mday'];
+		$originalMonth = (int) $dateInfo['mon'];
+		$originalYear = (int) $dateInfo['year'];
+		$originalHour = (int) $dateInfo['hours'];
+		$originalMin = (int) $dateInfo['minutes'];
+		$originalSec = (int) $dateInfo['seconds'];
+
+		// Special handling for end-of-month: if day >= 28 and frequency is monthly
+		if ($originalDay >= 28 && $this->unit_frequency == 'm') {
+			// Get the last day of the original month to determine if this was an "end of month" date
+			$lastDayOfOriginalMonth = (int) date('t', $this->date_when);
+
+			// Calculate target month and year
+			$targetMonth = $originalMonth + (int) $this->frequency;
+			$targetYear = $originalYear;
+
+			// Handle year rollover
+			while ($targetMonth > 12) {
+				$targetMonth -= 12;
+				$targetYear++;
+			}
+			while ($targetMonth < 1) {
+				$targetMonth += 12;
+				$targetYear--;
+			}
+
+			// Get the last day of the target month
+			$lastDayOfTargetMonth = (int) date('t', dol_mktime(0, 0, 0, $targetMonth, 1, $targetYear));
+
+			// Determine the target day:
+			// If original was last day of month, OR original day >= 29, use end-of-month behavior
+			if ($originalDay >= $lastDayOfOriginalMonth || $originalDay >= 29) {
+				// End of month mode: use the last day of target month
+				$targetDay = $lastDayOfTargetMonth;
+			} else {
+				// Day is 28 but not end of month in a 30/31 day month
+				// Keep as 28 or use last day if target month is shorter (like February)
+				$targetDay = min($originalDay, $lastDayOfTargetMonth);
+			}
+
+			// Return the calculated date
+			return dol_mktime($originalHour, $originalMin, $originalSec, $targetMonth, $targetDay, $targetYear);
+		}
+
+		// For yearly frequency or days < 28, use standard calculation
+		return dol_time_plus_duree($this->date_when, $this->frequency, $this->unit_frequency);
 	}
 
 	/**
@@ -1415,6 +1480,9 @@ class FactureRec extends CommonInvoice
 			$sql .= ' AND rowid = '.((int) $restrictioninvoiceid);
 		}
 		$sql .= $this->db->order('entity', 'ASC');
+		if (getDolGlobalInt('NB_REC_FACT_CUSTOMER_GEN_BY_CALL')) {
+			$sql .= $this->db->plimit(getDolGlobalInt('NB_REC_FACT_CUSTOMER_GEN_BY_CALL'));
+		}
 		//print $sql;exit;
 		$parameters = array(
 			'restrictioninvoiceid' => $restrictioninvoiceid,
@@ -1582,11 +1650,11 @@ class FactureRec extends CommonInvoice
 							}
 
 							// Sender
-							$from = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
+							$email_from = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
 							if (!empty($arraymessage->email_from)) {	// If a sender is defined into template, we use it in priority
-								$from = (string) $arraymessage->email_from;
+								$email_from = (string) $arraymessage->email_from;
 							}
-							if (empty($from)) {
+							if (empty($email_from)) {
 								$errormesg = "Failed to get sender into global setup MAIN_MAIL_EMAIL_FROM";
 								$loopError++;
 							}
@@ -1626,7 +1694,7 @@ class FactureRec extends CommonInvoice
 								}
 
 								// Mail Creation
-								$cMailFile = new CMailFile($sendTopic, $to, $from, $sendContent, $joinFile, $joinFileMime, $joinFileName, $email_tocc, $email_tobcc, 0, 1, $errors_to, '', $trackid, '', $sendcontext, '');
+								$cMailFile = new CMailFile($sendTopic, $to, $email_from, $sendContent, $joinFile, $joinFileMime, $joinFileName, $email_tocc, $email_tobcc, 0, 1, $errors_to, '', $trackid, '', $sendcontext, '');
 
 								$resultsendmail = $cMailFile->sendfile();
 
@@ -1647,7 +1715,7 @@ class FactureRec extends CommonInvoice
 									$actioncomm->contact_id = 0;
 
 									$actioncomm->code = 'AC_EMAIL';
-									$actioncomm->label = $langs->trans('MailSentByTo', $from, $to);
+									$actioncomm->label = $langs->trans('MailSentByTo', $email_from, $to);
 									$actioncomm->note_private = $sendContent;
 									$actioncomm->fk_project = $facture->fk_project;
 									$actioncomm->datep = dol_now();
@@ -1658,7 +1726,7 @@ class FactureRec extends CommonInvoice
 									// Fields when action is an email (content should be added into note)
 									$actioncomm->email_msgid = $cMailFile->msgid;
 									$actioncomm->email_subject = $sendTopic;
-									$actioncomm->email_from = $from;
+									$actioncomm->email_from = $email_from;
 									$actioncomm->email_sender = '';
 									$actioncomm->email_to = $to;
 									//$actioncomm->email_tocc = $sendtocc;
@@ -1687,7 +1755,7 @@ class FactureRec extends CommonInvoice
 									$actioncomm->contact_id = 0;
 
 									$actioncomm->code = 'AC_EMAIL';
-									$actioncomm->label = $langs->trans('sendAutoEmailInvoiceKO', $from, $to);
+									$actioncomm->label = $langs->trans('sendAutoEmailInvoiceKO', $email_from, $to);
 									$actioncomm->note_private = $errormesg;
 									$actioncomm->fk_project = $facture->fk_project;
 									$actioncomm->datep = dol_now();
@@ -1698,7 +1766,7 @@ class FactureRec extends CommonInvoice
 									// Fields when action is an email (content should be added into note)
 									$actioncomm->email_msgid = $cMailFile->msgid;
 									$actioncomm->email_subject = $sendTopic;
-									$actioncomm->email_from = $from;
+									$actioncomm->email_from = $email_from;
 									$actioncomm->email_sender = '';
 									$actioncomm->email_to = $to;
 									//$actioncomm->email_tocc = $sendtocc;
@@ -2739,7 +2807,7 @@ class FactureLigneRec extends CommonInvoiceLine
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet_rec SET";
 		$sql .= " fk_facture = ".((int) $this->fk_facture);
-		$sql .= ", fk_parent_line=".($this->fk_parent_line > 0 ? $this->fk_parent_line : "null");
+		$sql .= ", fk_parent_line=".($this->fk_parent_line > 0 ? ((int) $this->fk_parent_line) : "null");
 		$sql .= ", label=".(!empty($this->label) ? "'".$this->db->escape($this->label)."'" : "null");
 		$sql .= ", description='".$this->db->escape($this->desc)."'";
 		$sql .= ", price=".price2num($this->price);
@@ -2750,7 +2818,7 @@ class FactureLigneRec extends CommonInvoiceLine
 		$sql .= ", localtax1_type='".$this->db->escape((string) $this->localtax1_type)."'";
 		$sql .= ", localtax2_tx=".price2num($this->localtax2_tx);
 		$sql .= ", localtax2_type='".$this->db->escape((string) $this->localtax2_type)."'";
-		$sql .= ", fk_product=".($this->fk_product > 0 ? $this->fk_product : "null");
+		$sql .= ", fk_product=".($this->fk_product > 0 ? ((int) $this->fk_product) : "null");
 		$sql .= ", product_type=".((int) $this->product_type);
 		$sql .= ", remise_percent=".price2num($this->remise_percent);
 		$sql .= ", subprice=".price2num($this->subprice);
@@ -2767,7 +2835,7 @@ class FactureLigneRec extends CommonInvoiceLine
 		$sql .= ", rang=".((int) $this->rang);
 		$sql .= ", special_code=".((int) $this->special_code);
 		$sql .= ", fk_unit=".($this->fk_unit ? "'".$this->db->escape((string) $this->fk_unit)."'" : "null");
-		$sql .= ", fk_contract_line=".($this->fk_contract_line ? $this->fk_contract_line : "null");
+		$sql .= ", fk_contract_line=".($this->fk_contract_line ? ((int) $this->fk_contract_line) : "null");
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$this->db->begin();

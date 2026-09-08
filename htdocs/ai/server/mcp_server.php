@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2026	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2026	Nick Fragoulis
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026	Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +22,7 @@
 /**
  * \file    htdocs/ai/server/mcp_server.php
  * \ingroup ai
- * \brief   File of class to manage MCP Server
+ * \brief   File of the MCP Server service
  */
 
 if (!defined('NOTOKENRENEWAL')) {
@@ -52,7 +54,7 @@ while (ob_get_level()) {
 	ob_end_clean();
 }
 
-// Security check
+// Security check (a test on api_key is also done later)
 if (!isModEnabled('ai') || !getDolGlobalString('AI_MCP_ENABLED')) {
 	http_response_code(503);
 	echo json_encode([
@@ -120,6 +122,7 @@ if (!$valid) {
 	exit;
 }
 
+
 // Load service user
 $userId = getDolGlobalInt('AI_MCP_USER_ID');
 $serviceUser = new User($db);
@@ -129,6 +132,14 @@ if ($userId > 0) {
 
 	if ($result > 0) {
 		$serviceUser->loadRights();
+		// Promote the service user to the global $user so MCP tools that
+		// legitimately rely on the `global $user` pattern (Dolibarr core
+		// convention) see an authenticated user. Without this, there is
+		// no PHP web session in HTTP MCP context and any tool reading
+		// `global $user` would treat the request as unauthenticated even
+		// though authentication via X-API-Key/Bearer succeeded above.
+		global $user;
+		$user = $serviceUser;
 	} else {
 		http_response_code(500);
 		echo json_encode([
@@ -157,11 +168,11 @@ require_once DOL_DOCUMENT_ROOT . '/ai/lib/ai.lib.php';
  * Only tools/call is logged -- lifecycle methods (initialize, ping,
  * notifications/initialized, tools/list, ...) are skipped to avoid noise.
  *
- * @param array<string,mixed> $req         The JSON-RPC request
- * @param mixed               $resp        The JSON-RPC response (null for notifications)
- * @param float               $tStart      microtime(true) captured before processing
- * @param string              $rawInput    Raw request body
- * @return void
+ * @param array<string,mixed>	$req		The JSON-RPC request
+ * @param ?mixed				$resp		The JSON-RPC response (null for notifications)
+ * @param float					$tStart		microtime(true) captured before processing
+ * @param string				$rawInput	Raw request body
+ * @return void								No return value, only logs the request
  */
 function mcp_log_request(array $req, $resp, float $tStart, string $rawInput): void
 {
@@ -242,6 +253,7 @@ try {
 
 		$responses = [];
 
+		// Answer to all MCP requests following the MCP protocol
 		foreach ($request as $req) {
 			if (!is_array($req)) {
 				continue;

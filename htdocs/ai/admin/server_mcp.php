@@ -166,6 +166,7 @@ if ($action == 'generate_key') {
 	}
 }
 
+
 /*
  * VIEW
  */
@@ -227,6 +228,7 @@ print '<br>';
 print '<br>';
 
 if (getDolGlobalString('AI_MCP_ENABLED')) {
+	/*
 	print load_fiche_titre($langs->trans("PrivateModeTitle"), '', 'fas fa-lock');
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
@@ -256,7 +258,7 @@ if (getDolGlobalString('AI_MCP_ENABLED')) {
 	print '<td>' . $langs->trans('ObfuscatePIIData') . '</td>';
 	print '<td>';
 	print ajax_constantonoff('AI_PRIVACY_REDACTION');
-	print ' <span class="opacitymedium">' . $langs->trans("RedactionHelp") . '</span>';
+	print ' &nbsp; <span class="opacitymedium">' . $langs->trans("RedactionHelp") . '</span>';
 	print '</td>';
 	print '</tr>';
 
@@ -278,7 +280,7 @@ if (getDolGlobalString('AI_MCP_ENABLED')) {
 	print '<td>' . $langs->trans('EnableLogging') . '</td>';
 	print '<td>';
 	print ajax_constantonoff('AI_LOG_REQUESTS');
-	print ' <a href="' . DOL_URL_ROOT . '/ai/admin/log_viewer.php" target="_blank" class="button" style="padding-top: 4px; padding-bottom: 4px;">View Logs</a>';
+	print ' &nbsp; <a href="' . DOL_URL_ROOT . '/ai/admin/log_viewer.php" target="_blank" style="padding-top: 4px; padding-bottom: 4px;">'.$langs->trans("ViewLogs").'</a>';
 	print '</td>';
 	print '</tr>';
 
@@ -306,7 +308,6 @@ if (getDolGlobalString('AI_MCP_ENABLED')) {
 	print '<br>';
 	print '<br>';
 
-
 	// AI Provider Config and Connection testing
 	$services = getListOfAIServices();
 	$currentService = getDolGlobalString('AI_API_SERVICE');
@@ -322,7 +323,7 @@ if (getDolGlobalString('AI_MCP_ENABLED')) {
 		print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("AIProvider").'</td><td>'.$services[$currentService]['label'].'</td></tr>';
 
 		$prefix = 'AI_API_'.strtoupper($currentService);
-		$modelVal = getDolGlobalString($prefix.'_MODEL', $services[$currentService]['textgeneration']);
+		$modelVal = getDolGlobalString($prefix.'_MODEL_TEXT', $services[$currentService]['textgeneration']['default']);
 
 		print '<tr class="oddeven"><td>'.$langs->trans("AI_API_MODEL").'</td><td>'.$modelVal.'</td></tr>';
 		print '</table></div>';
@@ -330,13 +331,14 @@ if (getDolGlobalString('AI_MCP_ENABLED')) {
 		print '<div class="center">';
 
 		if ($currentService && $currentService !== '-1') {
-			print ' <a href="'.$_SERVER["PHP_SELF"].'?action=test_provider&service_key='.$currentService.'" class="button">Test Connection</a>';
+			print ' <a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=test_provider&token='.newToken().'&service_key='.$currentService.'" class="button">Test Connection</a>';
 		}
 
 		print '</div>';
 	}
 
 	print '<br><br>';
+	*/
 
 	// External Access Configuration
 	print load_fiche_titre($langs->trans("AiMcpExternalAccess"), '', 'fas fa-lock-open');

@@ -3,6 +3,7 @@ IdAgenda=Evento de identificación
 ActionsOwnedBy=Evento propiedad de
 EventsNb=Cantidad de eventos
 ListOfActions=Lista de eventos
+Location=Ubicación
 EventOnFullDay=Evento todo el día (s)
 MenuToDoActions=Todos los eventos incompletos
 MenuDoneActions=Todos los eventos terminados
@@ -49,6 +50,7 @@ ORDER_SUPPLIER_DELETEInDolibarr=Orden de Compra %s borrada
 SupplierInvoiceSentByEMail=Factura del proveedor %s enviada por correo electrónico
 ShippingSentByEMail=Envío %s enviado por correo electrónico
 ShippingValidated=Envío %s validado
+InterventionSentByEMail=Intervención %s enviada por correo electrónico
 ProposalDeleted=Propuesta eliminada
 OrderDeleted=Orden eliminada
 InvoiceDeleted=Factura borrada
@@ -70,7 +72,6 @@ MRP_MO_DELETEInDolibarr=Orden de Fabricación borrada
 CANCELInDolibarr=Cancelado
 DateActionEnd=Fecha final
 AgendaUrlOptions1=También puede agregar los siguientes parámetros para filtrar la salida:
-AgendaUrlOptions3=<b>logina =%s</b> para restringir la salida a acciones propiedad de un usuario<b>%s</b>.
 AgendaUrlOptions4=<b>logint =%s</b> para restringir la salida a acciones asignadas al usuario <b>%s</b> (propietario y otros).
 AgendaUrlOptionsProject=<b> project = __ PROJECT_ID __ </ b> para restringir el resultado a acciones vinculadas al proyecto <b> __ PROJECT_ID __ </ b>.
 AgendaHideBirthdayEvents=Ocultar cumpleaños de contactos

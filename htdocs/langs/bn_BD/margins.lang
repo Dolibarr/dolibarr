@@ -31,9 +31,9 @@ UseDiscountOnTotal=On subtotal
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Defines if a global discount is treated as a product, a service, or only on subtotal for margin calculation.
 MARGIN_TYPE=Buying/Cost price suggested by default for margin calculation
 MargeType1=সেরা বিক্রেতা মূল্য মার্জিন
-MargeType2=Margin on Weighted Average Price (WAP)
+MargeType2=Margin on Weighted Average Cost (WAC)
 MargeType3=Margin on Cost Price
-MarginTypeDesc=* সর্বোত্তম ক্রয় মূল্যের মার্জিন = বিক্রয় মূল্য - পণ্য কার্ডে সংজ্ঞায়িত সেরা বিক্রেতার মূল্য<br>* ওজনযুক্ত গড় মূল্যের মার্জিন (WAP) = বিক্রয় মূল্য - পণ্যের ওজনযুক্ত গড় মূল্য (WAP) বা সেরা বিক্রেতার মূল্য যদি WAP এখনও সংজ্ঞায়িত না হয়<br>* খরচ মূল্যের মার্জিন = বিক্রয় মূল্য - মূল্য মূল্য পণ্য কার্ডে সংজ্ঞায়িত করা হয় বা WAP-এ সংজ্ঞায়িত করা হয় যদি খরচের মূল্য সংজ্ঞায়িত করা না হয়, অথবা সেরা বিক্রেতার মূল্য যদি WAP এখনও সংজ্ঞায়িত করা হয়নি
+MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Cost (WAC) = Selling price - Product Weighted Average Price (WAP) or best vendor price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAC if cost price not defined, or best vendor price if WAC not yet defined
 CostPrice=Cost price
 UnitCharges=Unit charges
 Charges=Charges

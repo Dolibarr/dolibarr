@@ -258,7 +258,7 @@ OtherFilteredTasks=其他篩選的任務
 NoAssignedTasks=未找到分配的任務（請從頂部的選擇框將項目/任務分配給當前用戶以輸入時間）
 ThirdPartyRequiredToGenerateIntervention=必須在項目上定義第三方才能創建干預。
 ThirdPartyRequiredToGenerateInvoice=必須在項目上定義第三方才能開具發票。
-ChooseANotYetAssignedTask=選擇尚未分配給您的任務
+ChooseANotYetAssignedTask=Tasks not yet assigned to you
 # Comments trans
 AllowCommentOnTask=允許用戶對任務進行評論
 AllowCommentOnProject=允許使用者對項目進行評論

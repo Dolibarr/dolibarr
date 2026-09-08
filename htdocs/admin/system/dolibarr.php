@@ -2,7 +2,7 @@
 /* Copyright (C) 2005-2020	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2007		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2007-2012	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -49,7 +49,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("install", "other", "admin"));
+$langs->loadLangs(array("blockedlog", "install", "other", "admin"));
 
 $action = GETPOST('action', 'aZ09');
 
@@ -61,7 +61,14 @@ $sfurl = '';
 $version = '0.0';
 
 // Version blockedlog
-$versionbadge = '<span class="badge-text badge-secondary">'.getBlockedLogVersionToShow().'</span>';
+$versionbadge = '<span class="badge-text badge-secondary">'.getBlockedLogVersionToShow();
+if ($mysoc->country_code == 'FR') {
+	$islne = isALNEQualifiedVersion(1, 1);
+	if (!$islne) {
+		$versionbadge .= ' - '.$langs->trans("NotCertified");
+	}
+}
+$versionbadge .= '</span>';
 
 
 /*
@@ -159,7 +166,7 @@ if (function_exists('curl_init')) {
 			print $langs->trans("LastStableVersion").' : <b>'.$langs->trans("UpdateServerOffline").'</b>';
 		}
 	} else {
-		print $langs->trans("LastStableVersion").' : <a href="'.$_SERVER["PHP_SELF"].'?action=getlastversion" class="butAction smallpaddingimp">'.$langs->trans("Check").'</a>';
+		print $langs->trans("LastStableVersion").' : <a href="'.$_SERVER["PHP_SELF"].'?action=getlastversion&token='.newToken().'" class="butAction smallpaddingimp">'.$langs->trans("Check").'</a>';
 	}
 }
 
@@ -181,10 +188,20 @@ if (getDolGlobalString('MAIN_VERSION_LAST_INSTALL')) {
 }
 print '</td></tr>'."\n";
 
+$showblockedlogversion = 0;
+if ($mysoc->country_code == 'FR') {
+	$showblockedlogversion = 1;
+}
 if (isALNERunningVersion()) {
+	$showblockedlogversion = 1;
+}
+if ($showblockedlogversion) {
 	print '<tr class="oddeven nohover">';
 	print '<td width="300">'.$langs->trans("VersionOfModule", $langs->transnoentitiesnoconv("BlockedLog")).'</td><td>';
 	print $versionbadge;
+
+	print ' &nbsp; <a href="'.DOL_URL_ROOT.'/blockedlog/admin/filecheck.php">'.img_picto('', 'url', 'class="pictofixedwidth"').$langs->trans("FileCheck").'</a>';
+
 	print '</td>';
 	print '</tr>';
 }
@@ -427,11 +444,13 @@ $configfileparameters = array(
 	'?dolibarr_font_DOL_DEFAULT_TTF_BOLD' => 'dolibarr_font_DOL_DEFAULT_TTF_BOLD',
 	'separator4' => '',
 	'dolibarr_main_restrict_os_commands' => 'Restrict CLI commands for backups',
+	'dolibarr_main_restrict_eval_methods' => 'Restrict php commands for dol_eval',
 	'dolibarr_main_restrict_ip' => 'Restrict access to some IPs only',
+	'?dolibarr_website_allow_custom_php' => 'Allow custom php code in website pages',
 	'?dolibarr_mailing_limit_sendbyweb' => 'Limit nb of email sent by page',
 	'?dolibarr_mailing_limit_sendbycli' => 'Limit nb of email sent by cli',
 	'?dolibarr_mailing_limit_sendbyday' => 'Limit nb of email sent per day',
-	'?dolibarr_strict_mode' => 'Strict mode is on/off',
+	'?dolibarr_strict_mode' => 'Strict mode for php syntax is on/off',
 	'?dolibarr_nocsrfcheck' => 'Disable CSRF security checks'
 );
 
@@ -497,11 +516,12 @@ foreach ($configfileparameters as $key => $value) {
 					++$i;
 				}
 			} elseif ($newkey == 'dolibarr_main_instance_unique_id') {
-				//print $conf->file->instance_unique_id;
-				global $dolibarr_main_cookie_cryptkey, $dolibarr_main_instance_unique_id;
-				$valuetoshow = $dolibarr_main_instance_unique_id ? $dolibarr_main_instance_unique_id : $dolibarr_main_cookie_cryptkey; // Use $dolibarr_main_instance_unique_id first then $dolibarr_main_cookie_cryptkey
+				$valuetoshow = $conf->file->instance_unique_id;
+				// $conf->file->instance_unique_id is defined into master.inc.php with:
+				// empty($dolibarr_main_instance_unique_id) ? (empty($dolibarr_main_cookie_cryptkey) ? '' : $dolibarr_main_cookie_cryptkey) : $dolibarr_main_instance_unique_id
+
 				if (empty($dolibarr_main_prod)) {
-					print '<!-- '.$dolibarr_main_instance_unique_id.' (this will not be visible if $dolibarr_main_prod = 1 -->';
+					print '<!-- '.$valuetoshow.' (this will not be visible if $dolibarr_main_prod = 1 -->';
 					print showValueWithClipboardCPButton($valuetoshow, 0, '********');
 					print ' &nbsp; &nbsp; <span class="opacitymedium">'.$langs->trans("ThisValueCanBeReadBecauseInstanceIsNotInProductionMode").'</span>';
 				} else {
@@ -512,7 +532,11 @@ foreach ($configfileparameters as $key => $value) {
 					print img_warning("EditConfigFileToAddEntry", 'dolibarr_main_instance_unique_id');
 				}
 				print '</td></tr>';
-				print '<tr class="oddeven"><td></td><td>&nbsp; => '.$langs->trans("HashForPing").'</td><td>'.md5('dolibarr'.$valuetoshow).'</td></tr>'."\n";
+
+				$algo = 'sha256';
+				$hash_unique_id = getHashUniqueIdOfRegistration($algo);
+
+				print '<tr class="oddeven"><td></td><td>&nbsp;<span title="Hash calculated with dol_hash(dolibarr.$dolibarr_main_instance_unique_id[.entity], sha256)"> => '.$langs->trans("HashForPing").'</span></td><td>'.$hash_unique_id.'</td></tr>'."\n";
 			} elseif ($newkey == 'dolibarr_main_prod') {
 				print ${$newkey};
 
@@ -573,11 +597,11 @@ $sql .= ", entity";
 $sql .= " FROM ".MAIN_DB_PREFIX."const";
 if (!isModEnabled('multicompany')) {
 	// If no multicompany mode, admins can see global and their constantes
-	$sql .= " WHERE entity IN (0,".$conf->entity.")";
+	$sql .= " WHERE entity IN (0,".((int) $conf->entity).")";
 } else {
 	// If multicompany mode, superadmin (user->entity=0) can see everything, admin are limited to their entities.
 	if ($user->entity) {
-		$sql .= " WHERE entity IN (".$db->sanitize($user->entity.",".$conf->entity).")";
+		$sql .= " WHERE entity IN (".$db->sanitize($user->entity.",".((int) $conf->entity)).")";
 	}
 }
 $sql .= " ORDER BY entity, name ASC";

@@ -129,3 +129,4 @@ WarningSomeDirectDebitOrdersAlreadyExists=Attention : il existe déjà des ordr
 WarningSomeCreditTransferAlreadyExists=Attention : il existe déjà une demande de virement bancaire en attente (%s) pour un montant de %s
 RefSalary=Salaires
 NoSalaryInvoiceToWithdraw=Aucun salaire en attente d'un '%s'. Allez sur l'onglet '%s' sur la fiche de salaire pour faire une demande.
+AmountRequestedAlreadyReachesTotal=Le montant total de la facture a déjà été demandé pour paiement.

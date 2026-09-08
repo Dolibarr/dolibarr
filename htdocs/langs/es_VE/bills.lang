@@ -4,6 +4,7 @@ CreateCreditNote=Crear factura de abono
 BillShortStatusConverted=Pagada
 ConfirmClassifyPaidPartiallyReasonProductReturned=Productos parcialmente devueltos
 CustomerBillsUnpaid=Facturas a clientes pendientes de cobro
+RecurringInvoiceSource=Source recurring invoice
 Statut=Estatuto
 PaymentConditionShortPT_ORDER=Pedido
 PaymentTypeShortTRA=A validar

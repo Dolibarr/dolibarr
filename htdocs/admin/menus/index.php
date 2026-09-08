@@ -3,7 +3,7 @@
  * Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2019-2025  Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -100,9 +100,9 @@ if ($action == 'up') {
 	// Menu before
 	$sql = "SELECT m.rowid, m.position";
 	$sql .= " FROM ".MAIN_DB_PREFIX."menu as m";
-	$sql .= " WHERE (m.position < ".($current['order'])." OR (m.position = ".($current['order'])." AND rowid < ".GETPOSTINT("menuId")."))";
+	$sql .= " WHERE (m.position < ".((int) $current['order'])." OR (m.position = ".((int) $current['order'])." AND rowid < ".GETPOSTINT("menuId")."))";
 	$sql .= " AND m.menu_handler='".$db->escape($menu_handler_to_search)."'";
-	$sql .= " AND m.entity = ".$conf->entity;
+	$sql .= " AND m.entity = ".((int) $conf->entity);
 	$sql .= " AND m.type = '".$db->escape($current['type'])."'";
 	$sql .= " AND m.fk_menu = '".$db->escape((string) $current['fk_menu'])."'";
 	$sql .= " ORDER BY m.position, m.rowid";
@@ -151,9 +151,9 @@ if ($action == 'up') {
 	// Menu after
 	$sql = "SELECT m.rowid, m.position";
 	$sql .= " FROM ".MAIN_DB_PREFIX."menu as m";
-	$sql .= " WHERE (m.position > ".($current['order'])." OR (m.position = ".($current['order'])." AND rowid > ".GETPOSTINT("menuId")."))";
+	$sql .= " WHERE (m.position > ".((int) $current['order'])." OR (m.position = ".((int) $current['order'])." AND rowid > ".GETPOSTINT("menuId")."))";
 	$sql .= " AND m.menu_handler='".$db->escape($menu_handler_to_search)."'";
-	$sql .= " AND m.entity = ".$conf->entity;
+	$sql .= " AND m.entity = ".((int) $conf->entity);
 	$sql .= " AND m.type = '".$db->escape($current['type'])."'";
 	$sql .= " AND m.fk_menu = '".$db->escape((string) $current['fk_menu'])."'";
 	$sql .= " ORDER BY m.position, m.rowid";
@@ -252,7 +252,7 @@ if ($user->admin) {
 	$newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/admin/menus/edit.php?menuId=0&action=create&menu_handler='.urlencode($menu_handler).'&backtopage='.urlencode($_SERVER['PHP_SELF']));
 }
 
-print '<form name="newmenu" class="nocellnopadd" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
+print '<form name="newmenu" class="nocellnopadd" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'" spellcheck="false">';
 print '<input type="hidden" action="change_menu_handler">';
 print $langs->trans("MenuHandler").': ';
 $formadmin->select_menu_families($menu_handler.(preg_match('/_menu/', $menu_handler) ? '' : '_menu'), 'menu_handler', array_merge($dirstandard, $dirsmartphone));
@@ -291,7 +291,7 @@ $data[] = array('rowid' => 0, 'fk_menu' => -1, 'title' => 'racine', 'mainmenu' =
 $sql = "SELECT m.rowid, m.titre, m.langs, m.mainmenu, m.leftmenu, m.fk_menu, m.fk_mainmenu, m.fk_leftmenu, m.position, m.module";
 $sql .= " FROM ".MAIN_DB_PREFIX."menu as m";
 $sql .= " WHERE menu_handler = '".$db->escape($menu_handler_to_search)."'";
-$sql .= " AND entity = ".$conf->entity;
+$sql .= " AND entity = ".((int) $conf->entity);
 //$sql.= " AND fk_menu >= 0";
 $sql .= " ORDER BY m.position, m.rowid"; // Order is position then rowid (because we need a sort criteria when position is same)
 

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016   Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025	William Mead			<william@m34d.com>
  * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
@@ -129,7 +129,7 @@ class Productlots extends DolibarrApi
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_lot_extrafields AS ple ON ple.fk_object = pl.rowid";
 		$sql .= " WHERE 1=1";
 
-		// Filtres universels
+		// Global filters
 		if ($sqlfilters) {
 			$errormessage = '';
 			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
@@ -138,7 +138,7 @@ class Productlots extends DolibarrApi
 			}
 		}
 
-		// Clone pour total (avant ORDER/LIMIT)
+		// Clone for total (before ORDER/LIMIT)
 		$sqlTotals = preg_replace('/^\s*SELECT\s+pl\.rowid/i', 'SELECT COUNT(pl.rowid) AS total', $sql);
 
 		// ORDER BY
@@ -180,7 +180,7 @@ class Productlots extends DolibarrApi
 				if ($row && isset($row->total)) $total = (int) $row->total;
 			}
 
-			// Evite division par zéro
+			// Avoid division by zero
 			$safeLimit  = ($limit > 0) ? (int) $limit : max(1, count($obj_ret));
 			$pageCount  = (int) ceil($total / $safeLimit);
 

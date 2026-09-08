@@ -173,14 +173,6 @@ function getValidOnlinePaymentMethods($paymentmethod = '', $mode = 0)
 			$validpaymentmethod['paypal'] = 'valid';
 		}
 	}
-	if ((empty($paymentmethod) || $paymentmethod == 'paybox') && isModEnabled('paybox')) {
-		$langs->load("stripe");
-		if ($mode) {
-			$validpaymentmethod['paybox'] = array('label' => 'PayBox', 'status' => 'valid');
-		} else {
-			$validpaymentmethod['paybox'] = 'valid';
-		}
-	}
 	if ((empty($paymentmethod) || $paymentmethod == 'stripe') && isModEnabled('stripe')) {
 		$langs->load("stripe");
 		if ($mode) {
@@ -287,7 +279,7 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = 0, $freetag = 'y
 	}
 
 	if ($type == 'free') {
-		$out = $urltouse.'/public/payment/newpayment.php?amount='.($mode ? '<span style="color: #666666">' : '').price2num($amount, 'MT').($mode ? '</span>' : '').'&tag='.($mode ? '<span style="color: #666666">' : '').$freetag.($mode ? '</span>' : '');
+		$out = $urltouse.'/public/payment/newpayment.php?amount='.($mode ? '<span style="color: #666666">' : '').price2num($amount, 'MT').($mode ? '</span>' : '').'&tag='.($mode ? '<span style="color: #666666">' : '').urlencode($freetag).($mode ? '</span>' : '');
 		if (getDolGlobalString('PAYMENT_SECURITY_TOKEN')) {
 			$out .= '&securekey='.urlencode(dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN'), 'sha1md5'));
 		}

@@ -12,7 +12,7 @@
  * Copyright (C) 2015-2024  Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Vincent Maury			<vmaury@timgroup.fr>
  * Copyright (C) 2025		Jon Bendtsen			<jon.bendtsen.github@jonb.dk>
  *
@@ -90,9 +90,6 @@ $acts[1] = "disable";
 $actl[0] = img_picto($langs->trans("Disabled"), 'switch_off', 'class="size15x"');
 $actl[1] = img_picto($langs->trans("Activated"), 'switch_on', 'class="size15x"');
 
-$listoffset = GETPOST('listoffset', 'alpha');
-$listlimit = GETPOST('listlimit', 'alpha') > 0 ? GETPOST('listlimit', 'alpha') : 1000;
-
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
@@ -100,7 +97,7 @@ $page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTI
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
-$offset = $listlimit * $page;
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
@@ -157,7 +154,7 @@ if ($rowid > 0) {
 $tabname = array();
 $tabname[25] = MAIN_DB_PREFIX."c_email_templates";
 
-// Nom des champs en resultat de select pour affichage du dictionnaire
+// Name of the fields in the result of select to display the dictionary
 // Names of fields in select results for dictionary display (AI translated)
 $tabfield = array();
 $tabfield[25] = "label,lang,type_template,fk_user,position,module,topic,joinfiles,defaultfortype,content";
@@ -165,18 +162,36 @@ if (getDolGlobalString('MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES')) {
 	$tabfield[25] .= ',content_lines';
 }
 
-// Nom des champs d'edition pour modification d'un enregistrement
+// Name of editing fields for record modification
 // Names of edit fields for modifying a record (AI translated)
 $tabfieldvalue = array();
 $tabfieldvalue[25] = "label,lang,type_template,fk_user,private,position,topic,email_from,joinfiles,defaultfortype,content";
+if (getDolGlobalString('MAIN_EMAIL_TEMPLATES_USE_TO')) {
+	$tabfieldvalue[25] .= ',email_to';
+}
+if (getDolGlobalString('MAIN_EMAIL_TEMPLATES_USE_TOCC')) {
+	$tabfieldvalue[25] .= ',email_tocc';
+}
+if (getDolGlobalString('MAIN_EMAIL_TEMPLATES_USE_TOBCC')) {
+	$tabfieldvalue[25] .= ',email_tobcc';
+}
 if (getDolGlobalString('MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES')) {
 	$tabfieldvalue[25] .= ',content_lines';
 }
 
-// Nom des champs dans la table pour insertion d'un enregistrement
+// Name of the fields in the table for inserting a record
 // Field names in the table for inserting a record (AI translated)
 $tabfieldinsert = array();
 $tabfieldinsert[25] = "label,lang,type_template,fk_user,private,position,topic,email_from,joinfiles,defaultfortype,content,datec";
+if (getDolGlobalString('MAIN_EMAIL_TEMPLATES_USE_TO')) {
+	$tabfieldvalue[25] .= ',email_to';
+}
+if (getDolGlobalString('MAIN_EMAIL_TEMPLATES_USE_TOCC')) {
+	$tabfieldvalue[25] .= ',email_tocc';
+}
+if (getDolGlobalString('MAIN_EMAIL_TEMPLATES_USE_TOBCC')) {
+	$tabfieldvalue[25] .= ',email_tobcc';
+}
 if (getDolGlobalString('MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES')) {
 	$tabfieldinsert[25] .= ',content_lines';
 }
@@ -223,6 +238,9 @@ $tabhelp[25] = array(
 	'position' => $langs->trans("PositionIntoComboList"),
 	'topic' => '<span class="small">'.$helpsubstit.'</span>',
 	'email_from' => $langs->trans('ForceEmailFrom'),
+	'email_to' => $langs->trans('MailTo'),
+	'email_tocc' => $langs->trans('MailCC'),
+	'email_tobcc' => $langs->trans('MailCCC'),
 	'joinfiles' => $langs->trans('AttachMainDocByDefault'),
 	'defaultfortype' => $langs->trans("DefaultForTypeDesc"),
 	'content' => '<span class="small">'.$helpsubstit.'</span>',
@@ -376,7 +394,7 @@ if (empty($reshook)) {
 		$ok = 1;
 		foreach ($listfield as $f => $value) {
 			// Not mandatory fields
-			if (in_array($value, ['joinfiles', 'defaultfortype', 'content', 'content_lines', 'module', 'tms', 'datec'])) {
+			if (in_array($value, ['joinfiles', 'defaultfortype', 'content', 'content_lines', 'module', 'tms', 'datec', 'email_to', 'email_tocc', 'email_tobcc'])) {
 				continue;
 			}
 
@@ -549,7 +567,16 @@ if (empty($reshook)) {
 						$_POST['content_lines'] = GETPOST('content_lines-'.$rowid, 'restricthtml');
 					}
 					if ($field == 'email_from') {
-						$_POST['email_from'] = GETPOST('email_from-'.$rowid, 'restricthtml');
+						$_POST['email_from'] = GETPOST('email_from-'.$rowid, 'email');
+					}
+					if ($field == 'email_to') {
+						$_POST['email_to'] = GETPOST('email_to-'.$rowid, 'email');
+					}
+					if ($field == 'email_tocc') {
+						$_POST['email_tocc'] = GETPOST('email_tocc-'.$rowid, 'email');
+					}
+					if ($field == 'email_tobcc') {
+						$_POST['email_tobcc'] = GETPOST('email_tobcc-'.$rowid, 'email');
 					}
 
 					if ($i) {
@@ -579,7 +606,7 @@ if (empty($reshook)) {
 					$i++;
 				}
 
-				$sql .= " WHERE ".$db->escape($rowidcol)." = ".((int) $rowid);
+				$sql .= " WHERE ".$db->sanitize($rowidcol)." = ".((int) $rowid);
 				if (!$user->admin) {	// A non admin user can only edit its own template
 					$sql .= " AND fk_user  = ".((int) $user->id);
 				}
@@ -664,7 +691,7 @@ if (!empty($user->admin) && (empty($_SESSION['leftmenu']) || $_SESSION['leftmenu
 $morejs = array();
 $morecss = array();
 
-$sql = "SELECT rowid as rowid, module, label, type_template, lang, fk_user, private, position, topic, email_from, joinfiles, defaultfortype,";
+$sql = "SELECT rowid as rowid, module, label, type_template, lang, fk_user, private, position, topic, email_from, email_to, email_tocc, email_tobcc, joinfiles, defaultfortype,";
 $sql .= " content_lines, content, enabled, active, tms, datec";
 $sql .= " FROM ".MAIN_DB_PREFIX."c_email_templates";
 $sql .= " WHERE entity IN (".getEntity('email_template').")";
@@ -690,6 +717,9 @@ if ($search_fk_user != '' && $search_fk_user != '-1') {
 if ($search_module) {
 	$sql .= natural_search('module', $search_module);
 }
+// Exclude disabled modules
+$listofmodules = implode(",", array_keys($conf->modules));
+$sql .= "AND (".natural_search('module', $listofmodules, 3, 1)." OR module IS NULL)";
 if ($search_topic) {
 	$sql .= natural_search('topic', $search_topic);
 }
@@ -698,7 +728,6 @@ if ($sortfield == 'country') {
 	$sortfield = 'country_code';
 }
 $sql .= $db->order($sortfield, $sortorder);
-$sql .= $db->plimit($listlimit + 1, $offset);
 //print $sql;
 
 // Output page
@@ -750,10 +779,74 @@ $newcardbutton = '';
 $newcardbutton .= dolGetButtonTitle($langs->trans('NewEMailTemplate'), '', 'fa fa-plus-circle', $url, '', (int) $permissiontoadd);
 
 
+$param = '';
+if ($search_label) {
+	$param .= '&search_label='.urlencode($search_label);
+}
+if (!empty($search_lang) && $search_lang != '-1') {
+	$param .= '&search_lang='.urlencode($search_lang);
+}
+if ($search_type_template != '-1') {
+	$param .= '&search_type_template='.urlencode($search_type_template);
+}
+if ($search_fk_user > 0) {
+	$param .= '&search_fk_user='.urlencode($search_fk_user);
+}
+if ($search_module) {
+	$param .= '&search_module='.urlencode($search_module);
+}
+if ($search_topic) {
+	$param .= '&search_topic='.urlencode($search_topic);
+}
+
+$paramwithsearch = $param;
+if ($sortorder) {
+	$paramwithsearch .= '&sortorder='.urlencode($sortorder);
+}
+if ($sortfield) {
+	$paramwithsearch .= '&sortfield='.urlencode($sortfield);
+}
+if ($limit) {
+	$paramwithsearch .= '&limit='.((int) $limit);
+}
+if (GETPOST('from', 'alpha')) {
+	$paramwithsearch .= '&from='.urlencode(GETPOST('from', 'alpha'));
+}
+
+$massactionbutton = '';
+
+
+// List of available record in database
+dol_syslog("htdocs/admin/mails_templates.php", LOG_DEBUG);
+
+$resql = $db->query($sql);
+if (!$resql) {
+	dol_print_error($db);
+	exit;
+}
+
+$nbtotalofrecords = $db->num_rows($resql);
+
+$sql .= $db->plimit($limit + 1, $offset);
+
+$resql = $db->query($sql);
+if (!$resql) {
+	dol_print_error($db);
+	exit;
+}
+
+$num = $db->num_rows($resql);
+
+if ($action != 'create') {
+	print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST" id="list_of_c_email_templates" spellcheck="false">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="from" value="'.dol_escape_htmltag(GETPOST('from', 'alpha')).'">';
+}
+
 if (!empty($user->admin) && (empty($_SESSION['leftmenu']) || $_SESSION['leftmenu'] != 'email_templates')) {
 	print load_fiche_titre($title, '', $titlepicto);
 } else {
-	print load_fiche_titre($title, $newcardbutton, $titlepicto);
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'tools', 0, $newcardbutton, '', $limit, 'limit', 0, 1);
 }
 
 if (!empty($user->admin) && (empty($_SESSION['leftmenu']) || $_SESSION['leftmenu'] != 'email_templates')) {
@@ -790,7 +883,7 @@ if ($action == 'create') {
 	$obj->content = GETPOST('content', 'restricthtml');
 
 	// Form to add a new line
-	print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST" id="create_c_email_template">';
+	print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST" id="create_c_email_template" spellcheck="false">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="from" value="'.dol_escape_htmltag(GETPOST('from', 'alpha')).'">';
@@ -897,8 +990,17 @@ if ($action == 'create') {
 
 	// Show fields for topic, join files and body
 	$fieldsforcontent = array('topic', 'email_from', 'joinfiles', 'content');
+	if (getDolGlobalString('MAIN_EMAIL_TEMPLATES_USE_TO')) {
+		$fieldsforcontent[] = 'email_to';
+	}
+	if (getDolGlobalString('MAIN_EMAIL_TEMPLATES_USE_TOCC')) {
+		$fieldsforcontent[] = 'email_tocc';
+	}
+	if (getDolGlobalString('MAIN_EMAIL_TEMPLATES_USE_TOBCC')) {
+		$fieldsforcontent[] = 'email_tobcc';
+	}
 	if (getDolGlobalString('MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES')) {
-		$fieldsforcontent = array('topic', 'email_from', 'joinfiles', 'content', 'content_lines');
+		$fieldsforcontent[] = 'content_lines';
 	}
 	foreach ($fieldsforcontent as $tmpfieldlist) {
 		print '<div class="inline-block lineformailtemplatefield paddingtop paddingbottom centpercent">';
@@ -908,6 +1010,15 @@ if ($action == 'create') {
 		}
 		if ($tmpfieldlist == 'email_from') {
 			print '<span class="minwidth150 inline-block">'.$form->textwithpicto($langs->trans("MailFrom"), $tabhelp[25][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'</span>';
+		}
+		if ($tmpfieldlist == 'email_to') {
+			print '<span class="minwidth150 inline-block">'.$form->textwithpicto($langs->trans("MailTo"), $tabhelp[25][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'</span>';
+		}
+		if ($tmpfieldlist == 'email_tocc') {
+			print '<span class="minwidth150 inline-block">'.$form->textwithpicto($langs->trans("MailCC"), $tabhelp[25][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'</span>';
+		}
+		if ($tmpfieldlist == 'email_tobcc') {
+			print '<span class="minwidth150 inline-block">'.$form->textwithpicto($langs->trans("MailCCC"), $tabhelp[25][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'</span>';
 		}
 		if ($tmpfieldlist == 'joinfiles') {
 			print '<span class="minwidth150 inline-block">'.$form->textwithpicto($langs->trans("FilesAttachedToEmail"), $tabhelp[25][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'</span>';
@@ -923,6 +1034,12 @@ if ($action == 'create') {
 		if ($tmpfieldlist == 'topic') {
 			print '<input type="text" class="flat minwidth500" name="'.$tmpfieldlist.'" value="'.(!empty($obj->$tmpfieldlist) ? $obj->$tmpfieldlist : '').'">';
 		} elseif ($tmpfieldlist == 'email_from') {
+			print '<input type="text" class="flat minwidth500" name="'.$tmpfieldlist.'" value="'.(!empty($obj->$tmpfieldlist) ? $obj->$tmpfieldlist : '').'" spellcheck="false">';
+		} elseif ($tmpfieldlist == 'email_to') {
+			print '<input type="text" class="flat minwidth500" name="'.$tmpfieldlist.'" value="'.(!empty($obj->$tmpfieldlist) ? $obj->$tmpfieldlist : '').'" spellcheck="false">';
+		} elseif ($tmpfieldlist == 'email_tocc') {
+			print '<input type="text" class="flat minwidth500" name="'.$tmpfieldlist.'" value="'.(!empty($obj->$tmpfieldlist) ? $obj->$tmpfieldlist : '').'" spellcheck="false">';
+		} elseif ($tmpfieldlist == 'email_tobcc') {
 			print '<input type="text" class="flat minwidth500" name="'.$tmpfieldlist.'" value="'.(!empty($obj->$tmpfieldlist) ? $obj->$tmpfieldlist : '').'" spellcheck="false">';
 		} elseif ($tmpfieldlist == 'joinfiles') {
 			print $form->selectyesno($tmpfieldlist, (isset($obj->$tmpfieldlist) ? $obj->$tmpfieldlist : '0'), 1, false, 0, 1);
@@ -955,63 +1072,20 @@ if ($action == 'create') {
 	print '<br><br><br>';
 }
 
-// List of available record in database
-dol_syslog("htdocs/admin/dict", LOG_DEBUG);
-$resql = $db->query($sql);
-if (!$resql) {
-	dol_print_error($db);
-	exit;
-}
-
-$num = $db->num_rows($resql);
-
-print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST" id="list_of_c_email_templates">';
-print '<input type="hidden" name="token" value="'.newToken().'">';
-print '<input type="hidden" name="from" value="'.dol_escape_htmltag(GETPOST('from', 'alpha')).'">';
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent" id="table_list_of_c_email_templates">';
 
 $i = 0;
 
-$param = '';
-if ($search_label) {
-	$param .= '&search_label='.urlencode($search_label);
-}
-if (!empty($search_lang) && $search_lang != '-1') {
-	$param .= '&search_lang='.urlencode($search_lang);
-}
-if ($search_type_template != '-1') {
-	$param .= '&search_type_template='.urlencode($search_type_template);
-}
-if ($search_fk_user > 0) {
-	$param .= '&search_fk_user='.urlencode($search_fk_user);
-}
-if ($search_module) {
-	$param .= '&search_module='.urlencode($search_module);
-}
-if ($search_topic) {
-	$param .= '&search_topic='.urlencode($search_topic);
-}
-
-$paramwithsearch = $param;
-if ($sortorder) {
-	$paramwithsearch .= '&sortorder='.urlencode($sortorder);
-}
-if ($sortfield) {
-	$paramwithsearch .= '&sortfield='.urlencode($sortfield);
-}
-if (GETPOST('from', 'alpha')) {
-	$paramwithsearch .= '&from='.urlencode(GETPOST('from', 'alpha'));
-}
-
 // There is several pages
-if ($num > $listlimit) {
+/*
+if ($num > $limit) {
 	print '<tr class="none"><td class="right" colspan="'.(3 + count($fieldlist)).'">';
-	print_fleche_navigation($page, $_SERVER["PHP_SELF"], $paramwithsearch, ($num > $listlimit ? 1 : 0), '<li class="pagination"><span>'.$langs->trans("Page").' '.($page + 1).'</span></li>');
+	print_fleche_navigation($page, $_SERVER["PHP_SELF"], $paramwithsearch, ($num > $limit ? 1 : 0), '<li class="pagination"><span>'.$langs->trans("Page").' '.($page + 1).'</span></li>');
 	print '</td></tr>';
 }
-
+*/
 
 // Title line with search boxes
 print '<tr class="liste_titre" id="Title line with search boxes">';
@@ -1155,11 +1229,11 @@ foreach ($fieldlist as $field => $value) {
 		if ($sortfieldtouse == 'type_template') {
 			$sortfieldtouse .= ',lang,position,label';
 		}
-		print getTitleFieldOfList($valuetoshow, 0, $_SERVER["PHP_SELF"], $sortfieldtouse, ($page ? 'page='.$page.'&' : ''), $param, '', $sortfield, $sortorder, $css.' ');
+		print getTitleFieldOfList($valuetoshow, 0, $_SERVER["PHP_SELF"], $sortfieldtouse, ($page ? 'page='.$page.'&' : ''), $paramwithsearch, '', $sortfield, $sortorder, $css.' ');
 	}
 }
 
-print getTitleFieldOfList($langs->trans("Status"), 0, $_SERVER["PHP_SELF"], "active", ($page ? 'page='.$page.'&' : ''), $param, '', $sortfield, $sortorder, 'center ');
+print getTitleFieldOfList($langs->trans("Status"), 0, $_SERVER["PHP_SELF"], "active", ($page ? 'page='.$page.'&' : ''), $paramwithsearch, '', $sortfield, $sortorder, 'center ');
 // Action column
 if (!$conf->main_checkbox_left_column) {
 	print getTitleFieldOfList('');
@@ -1215,7 +1289,16 @@ if ($num) {
 				}
 				print '<td colspan="'.($colspan - 1).'" class="" style="padding-left: 20px; padding-right: 20px;">';
 
-				$fieldsforcontent = array('topic', 'email_from','joinfiles', 'content');
+				$fieldsforcontent = array('topic', 'email_from', 'joinfiles', 'content');
+				if (getDolGlobalString('MAIN_EMAIL_TEMPLATES_USE_TO')) {
+					$fieldsforcontent[] = 'email_to';
+				}
+				if (getDolGlobalString('MAIN_EMAIL_TEMPLATES_USE_TOCC')) {
+					$fieldsforcontent[] = 'email_tocc';
+				}
+				if (getDolGlobalString('MAIN_EMAIL_TEMPLATES_USE_TOBCC')) {
+					$fieldsforcontent[] = 'email_tobcc';
+				}
 				if (getDolGlobalString('MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES')) {
 					$fieldsforcontent[] = 'content_lines';
 				}
@@ -1241,6 +1324,21 @@ if ($num) {
 						}
 						if ($tmpfieldlist == 'email_from') {
 							print '<div class="minwidth150 inline-block">'.$form->textwithpicto($langs->trans("MailFrom"), $tabhelp[25][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'</div> ';
+							print '<input type="text" class="flat minwidth500" name="'.$tmpfieldlist.'-'.$rowid.'" value="'.(!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : '').'"'.($action != 'edit' ? ' disabled' : '').' spellcheck="false">';
+							print '<br>'."\n";
+						}
+						if ($tmpfieldlist == 'email_to') {
+							print '<div class="minwidth150 inline-block">'.$form->textwithpicto($langs->trans("MailTo"), $tabhelp[25][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'</div> ';
+							print '<input type="text" class="flat minwidth500" name="'.$tmpfieldlist.'-'.$rowid.'" value="'.(!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : '').'"'.($action != 'edit' ? ' disabled' : '').' spellcheck="false">';
+							print '<br>'."\n";
+						}
+						if ($tmpfieldlist == 'email_tocc') {
+							print '<div class="minwidth150 inline-block">'.$form->textwithpicto($langs->trans("MailCC"), $tabhelp[25][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'</div> ';
+							print '<input type="text" class="flat minwidth500" name="'.$tmpfieldlist.'-'.$rowid.'" value="'.(!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : '').'"'.($action != 'edit' ? ' disabled' : '').' spellcheck="false">';
+							print '<br>'."\n";
+						}
+						if ($tmpfieldlist == 'email_tobcc') {
+							print '<div class="minwidth150 inline-block">'.$form->textwithpicto($langs->trans("MailCCC"), $tabhelp[25][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'</div> ';
 							print '<input type="text" class="flat minwidth500" name="'.$tmpfieldlist.'-'.$rowid.'" value="'.(!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : '').'"'.($action != 'edit' ? ' disabled' : '').' spellcheck="false">';
 							print '<br>'."\n";
 						}
@@ -1478,8 +1576,9 @@ if ($nbqualified == 0) {
 print '</table>';
 print '</div>';
 
-print '</form>';
-
+if ($action != 'create') {
+	print '</form>';
+}
 
 if (!empty($user->admin) && (empty($_SESSION['leftmenu']) || $_SESSION['leftmenu'] != 'email_templates')) {
 	print dol_get_fiche_end();

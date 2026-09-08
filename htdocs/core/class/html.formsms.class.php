@@ -27,10 +27,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
 
 /**
- *      Class permettant la generation du formulaire d'envoi de Sms
+ *      Class for generating the SMS sending form
  *      Usage: $formsms = new FormSms($db)
  *             $formsms->proprietes=1 or string or table of values
- *             $formsms->show_form() affiche le formulaire
+ *             $formsms->show_form() displays the form
  */
 class FormSms
 {

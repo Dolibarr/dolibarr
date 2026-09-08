@@ -9,8 +9,9 @@
  * Copyright (C) 2006 	   Andre Cianfarani     <andre.cianfarani@acdeveloppement.net>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015      Bahfir Abbes         <bafbes@gmail.com>
- * Copyright (C) 2024-2025 MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024      Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2026      Nathan Pixodeo       <nathan@pixodeo.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,8 +34,11 @@
  */
 
 
+
 require_once 'version.inc.php';		// Define the DOL_VERSION
 
+// Dolibarr must always work with numeric in english format when they are in memory (example: 1234.56)
+setlocale(LC_NUMERIC, 'C');
 
 // Define syslog constants
 if (!defined('LOG_DEBUG')) {
@@ -175,19 +179,6 @@ $result = @include_once $conffile; // Keep @ because with some error reporting m
  * @var ?string $dolibarr_lib_TCPDF_PATH
  * @var ?string $dolibarr_lib_TCPDI_PATH
  */
-'
-@phan-var-force ?string $dolibarr_font_DOL_DEFAULT_TTF
-@phan-var-force ?string $dolibarr_font_DOL_DEFAULT_TTF_BOLD
-@phan-var-force ?string $dolibarr_js_CKEDITOR
-@phan-var-force ?string $dolibarr_js_JQUERY
-@phan-var-force ?string $dolibarr_js_JQUERY_UI
-@phan-var-force ?string $dolibarr_lib_NUSOAP_PATH
-@phan-var-force ?string $dolibarr_lib_ODTPHP_PATH
-@phan-var-force ?string $dolibarr_lib_ODTPHP_PATHTOPCLZIP
-@phan-var-force ?string $dolibarr_lib_PHPEXCELNEW_PATH
-@phan-var-force ?string $dolibarr_lib_TCPDF_PATH
-@phan-var-force ?string $dolibarr_lib_TCPDI_PATH
-';
 
 /*
  * Redirect if install not done
@@ -308,12 +299,15 @@ if (empty($dolibarr_strict_mode)) {
 	$dolibarr_strict_mode = 0; // For debug in php strict mode
 }
 
-define('DOL_DOCUMENT_ROOT', $dolibarr_main_document_root); // Filesystem core php (htdocs)
+if (!defined('DOL_DOCUMENT_ROOT')) {
+	define('DOL_DOCUMENT_ROOT', $dolibarr_main_document_root); // Filesystem core php (htdocs)
+}
 
+// @phpstan-ignore-next-line if.alwaysTrue
 if (empty(DOL_DOCUMENT_ROOT) || !file_exists(DOL_DOCUMENT_ROOT."/core/lib/functions.lib.php")) {
 	print "Error: Dolibarr config file content seems to be not correctly defined";
 	if (empty($dolibarr_main_document_root)) {
-		print " (dolibarr_main_document_root can't be known).<br>\n";
+		print " (dolibarr_main_document_root can't be unknown).<br>\n";
 	} else {
 		print " (file ".DOL_DOCUMENT_ROOT."/core/lib/functions.lib.php not found).<br>\n";
 	}
@@ -324,7 +318,9 @@ if (empty(DOL_DOCUMENT_ROOT) || !file_exists(DOL_DOCUMENT_ROOT."/core/lib/functi
 
 // Included by default (must be before the CSRF check so wa can use the dol_syslog)
 include_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
+include_once DOL_DOCUMENT_ROOT.'/core/lib/html.lib.php';
 include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
+include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/securitycore.lib.php';
 //print memory_get_usage();
 
 
@@ -367,6 +363,9 @@ if (empty($dolibarr_main_url_root) && !defined('NOREQUIREVIRTUALURL')) {
 	die;
 }
 
+if (empty($dolibarr_main_url_root_alt)) {
+	$dolibarr_main_url_root_alt = '/custom';
+}
 if (empty($dolibarr_main_document_root_alt)) {
 	$dolibarr_main_document_root_alt = $dolibarr_main_document_root.'/custom';
 }

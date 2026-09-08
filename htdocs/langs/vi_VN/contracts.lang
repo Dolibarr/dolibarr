@@ -103,7 +103,13 @@ ConfirmCloneContract=Bạn có chắc chắn muốn sao chép hợp đồng <b>%
 LowerDateEndPlannedShort=Ngày kết thúc dự kiến thấp hơn ngày của các dịch vụ đang hoạt động
 SendContractRef=Thông tin hợp đồng __REF__
 OtherContracts=Hợp đồng khác
-##### Types de contacts #####
+##### Statistics #####
+ContractsStatistics=Contract's statistics
+NbOfContracts=Nb of contracts
+NumberOfContractsByMonth=Number of contracts by month
+AmountOfServices=Number of services
+AmountOfServicesByMonthHT=Number of services (excl. tax) by month
+##### Types of contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Đại diện bán hàng ký hợp đồng
 TypeContact_contrat_internal_SALESREPFOLL=Đại diện bán hàng theo dõi hợp đồng
 TypeContact_contrat_external_BILLING=Liên hệ để thanh toán của khách hàng

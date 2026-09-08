@@ -209,12 +209,19 @@ print '<td class="right">'.$langs->trans("AmountTotal").'</td>';
 print '<td class="right">'.$langs->trans("AmountAverage").'</td>';
 print '</tr>';
 
+$MAXLINES = 5;
+$nbline = 0;
 $oldyear = 0;
+$cssline = '';
 foreach ($data as $val) {
 	$year = (int) $val['year'];
 	while ($oldyear > $year + 1) {	// If we have empty year
 		$oldyear--;
-		print '<tr class="oddeven" height="24">';
+		$nbline++;
+		if ($nbline > $MAXLINES) {
+			$cssline = ' hidden';
+		}
+		print '<tr class="oddeven'.$cssline.'" height="24">';
 		print '<td class="center">';
 		//print '<a href="month.php?year='.$oldyear.'&mode='.$mode.'">';
 		print $oldyear;
@@ -225,7 +232,7 @@ foreach ($data as $val) {
 		print '<td class="right amount nowraponall">0</td>';
 		print '</tr>';
 	}
-	print '<tr class="oddeven" height="24">';
+	print '<tr class="oddeven'.$cssline.'" height="24">';
 	print '<td class="center">';
 	print '<a href="'.DOL_URL_ROOT.'/adherents/subscription/list.php?date_select='.((int) $year).'">'.$year.'</a>';
 	print '</td>';
@@ -234,6 +241,16 @@ foreach ($data as $val) {
 	print '<td class="right amount nowraponall"><span class="amount">'.price(price2num($val['avg'], 'MT'), 1).'</span></td>';
 	print '</tr>';
 	$oldyear = $year;
+	$nbline++;
+	if ($nbline > $MAXLINES) {
+		$cssline = ' hidden';
+	}
+}
+
+if ($nbline > $MAXLINES) {
+	print '<tr class="liste_total"><td colspan="4" class="center">';
+	print '<a href="#" class="showmoreoptions" onclick="javascript:$(\'.hidden\').toggle();$(this).toggle();">'.img_picto('', 'chevron-down', 'class="paddingright"').$langs->trans("More").'...</a>';
+	print '</td></tr>';
 }
 
 print '</table>';

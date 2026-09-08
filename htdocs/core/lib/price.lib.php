@@ -44,7 +44,7 @@
  *		@param 	float	$txtva                      0=do not apply VAT tax, VAT rate=apply (this is VAT rate only without text code, we don't need text code because we already have all tax info into $localtaxes_array)
  *		@param  float	$uselocaltax1_rate          0=do not use localtax1, >0=apply and get value from localtaxes_array (or database if empty), -1=autodetect according to seller if we must apply, get value from localtaxes_array (or database if empty). Try to always use -1.
  *		@param  float	$uselocaltax2_rate          0=do not use localtax2, >0=apply and get value from localtaxes_array (or database if empty), -1=autodetect according to seller if we must apply, get value from localtaxes_array (or database if empty). Try to always use -1.
- *		@param 	float	$remise_percent_global		0
+ *		@param 	int		$notused					0
  *		@param	string	$price_base_type 			'HT'=Unit price parameter $pu is HT, 'TTC'=Unit price parameter $pu is TTC (HT+VAT but not Localtax. TODO Add also mode 'INCT' when pu is price HT+VAT+LT1+LT2)
  *		@param	int		$info_bits					Miscellaneous information on line
  *		@param	int<0,1>	$type					0/1=Product/service
@@ -87,7 +87,7 @@
  *
  * @phan-suppress PhanTypeMismatchDefault
  */
-function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocaltax1_rate, $uselocaltax2_rate, $remise_percent_global, $price_base_type, $info_bits, $type, $seller = null, $localtaxes_array = [], $progress = 100, $multicurrency_tx = 1, $pu_devise = 0, $multicurrency_code = '') // @phpstan-ignore-line
+function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocaltax1_rate, $uselocaltax2_rate, $notused, $price_base_type, $info_bits, $type, $seller = null, $localtaxes_array = [], $progress = 100, $multicurrency_tx = 1, $pu_devise = 0, $multicurrency_code = '') // @phpstan-ignore-line
 {
 	global $conf, $mysoc, $db, $hookmanager;
 
@@ -118,7 +118,7 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 		dol_syslog("Price.lib::calcul_price_total Warning: function was called with a bad value for vat rate (should be often < 100, always < 1000). There is surely a bug.", LOG_ERR);
 	}
 	// Too verbose. Enable for debug only
-	// dol_syslog("Price.lib::calcul_price_total qty=".$qty." pu=".$pu." remiserpercent_ligne=".$remise_percent_ligne." txtva=".$txtva." uselocaltax1_rate=".$uselocaltax1_rate." uselocaltax2_rate=".$uselocaltax2_rate.' remise_percent_global='.$remise_percent_global.' price_base_type='.$ice_base_type.' type='.$type.' progress='.$progress);
+	// dol_syslog("Price.lib::calcul_price_total qty=".$qty." pu=".$pu." remiserpercent_ligne=".$remise_percent_ligne." txtva=".$txtva." uselocaltax1_rate=".$uselocaltax1_rate." uselocaltax2_rate=".$uselocaltax2_rate.' price_base_type='.$ice_base_type.' type='.$type.' progress='.$progress);
 
 	$countryid = $seller->country_id;
 
@@ -137,7 +137,7 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 	}
 
 	//var_dump($uselocaltax1_rate.' - '.$uselocaltax2_rate);
-	dol_syslog('Price.lib::calcul_price_total qty='.$qty.' pu='.$pu.' remise_percent_ligne='.$remise_percent_ligne.' txtva='.$txtva.' uselocaltax1_rate='.$uselocaltax1_rate.' uselocaltax2_rate='.$uselocaltax2_rate.' remise_percent_global='.$remise_percent_global.' price_base_type='.$price_base_type.' type='.$type.' progress='.$progress);
+	dol_syslog('Price.lib::calcul_price_total qty='.$qty.' pu='.$pu.' remise_percent_ligne='.$remise_percent_ligne.' txtva='.$txtva.' uselocaltax1_rate='.$uselocaltax1_rate.' uselocaltax2_rate='.$uselocaltax2_rate.' price_base_type='.$price_base_type.' type='.$type.' progress='.$progress);
 
 	// Now we search localtaxes information ourself (rates and types).
 	$localtax1_type = 0;
@@ -197,15 +197,18 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 		}
 	}
 
-	// initialize total (may be HT or TTC depending on price_base_type)
+	// Initialize total (may be HT or TTC depending on price_base_type)
+	// Note: For einvoice, we may need to have MAIN_APPLY_DISCOUNT_ON_UNIT_PRICE_THEN_ROUND_BEFORE_MULTIPLICATION_BY_QTY = 'MU' because, we must recalculate
+	// amounts using this rule when building a XML file.
 	if ($remise_percent_ligne && getDolGlobalString('MAIN_APPLY_DISCOUNT_ON_UNIT_PRICE_THEN_ROUND_BEFORE_MULTIPLICATION_BY_QTY')) {	// MAIN_APPLY_DISCOUNT_ON_UNIT_PRICE_THEN_ROUND_BEFORE_MULTIPLICATION_BY_QTY can be 'MU', 2, ...
 		$tot_sans_remise = $pu * $qty * ($progress / 100);
-		$tot_avec_remise_ligne = (float) price2num($pu * (1 - ((float) $remise_percent_ligne / 100)), getDolGlobalString('MAIN_APPLY_DISCOUNT_ON_UNIT_PRICE_THEN_ROUND_BEFORE_MULTIPLICATION_BY_QTY')) * $qty * ($progress / 100);
+		$pudiscount = (float) price2num($pu * ((float) $remise_percent_ligne / 100), getDolGlobalString('MAIN_APPLY_DISCOUNT_ON_UNIT_PRICE_THEN_ROUND_BEFORE_MULTIPLICATION_BY_QTY'));
+		$tot_avec_remise_ligne = (float) price2num($pu - $pudiscount, getDolGlobalString('MAIN_APPLY_DISCOUNT_ON_UNIT_PRICE_THEN_ROUND_BEFORE_MULTIPLICATION_BY_QTY')) * $qty * ($progress / 100);
 	} else {
 		$tot_sans_remise = $pu * $qty * ($progress / 100);
 		$tot_avec_remise_ligne = $tot_sans_remise * (1 - ((float) $remise_percent_ligne / 100));
 	}
-	$tot_avec_remise       = $tot_avec_remise_ligne * (1 - ((float) $remise_percent_global / 100));
+	$tot_avec_remise       = $tot_avec_remise_ligne;
 
 	// initialize result array
 	for ($i = 0; $i <= 15; $i++) {
@@ -420,7 +423,7 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 		}
 
 		// Recall function using the multicurrency price as reference price. We must set param $multicurrency_tx to 1 to avoid infinite loop.
-		$newresult = calcul_price_total($qty, $pu_devise, $remise_percent_ligne, $txtva, $uselocaltax1_rate, $uselocaltax2_rate, $remise_percent_global, $price_base_type, $info_bits, $type, $seller, $localtaxes_array, $progress, 1, 0, '');  // pu_devise is normally arg#15, here as arg#2 @phan-suppress-current-line PhanPluginSuspiciousParamPosition
+		$newresult = calcul_price_total($qty, $pu_devise, $remise_percent_ligne, $txtva, $uselocaltax1_rate, $uselocaltax2_rate, 0, $price_base_type, $info_bits, $type, $seller, $localtaxes_array, $progress, 1, 0, '');  // pu_devise is normally arg#15, here as arg#2 @phan-suppress-current-line PhanPluginSuspiciousParamPosition
 
 		if ($multicurrency_code) {
 			// Restore setup of currency accurency

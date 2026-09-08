@@ -172,3 +172,6 @@ SalaryWaitingWithdraw=ক্রেডিট ট্রান্সফারের
 RefSalary=বেতন
 NoSalaryInvoiceToWithdraw='%s'-এর জন্য কোনো বেতন অপেক্ষা করছে না। একটি অনুরোধ করতে বেতন কার্ডে '%s' ট্যাবে যান৷
 SalaryInvoiceWaitingWithdraw=ক্রেডিট ট্রান্সফারের মাধ্যমে পেমেন্টের অপেক্ষায় বেতন
+ErrorBankTransferNoPaymentRequestSelected=No payment request selected.
+AmountRequestedAlreadyReachesTotal=The total invoice amount has already been requested for payment
+AmountExceedsRemainingToRequest=The requested amount exceeds the remaining amount available for payment requests

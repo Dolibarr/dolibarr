@@ -240,7 +240,7 @@ if ($id) {
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/localtax/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', '');
+	dol_banner_tab($object, 'id', $linkback);
 
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';

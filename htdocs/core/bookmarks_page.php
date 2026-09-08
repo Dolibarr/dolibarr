@@ -117,6 +117,7 @@ if (!isModEnabled('bookmark')) {
 			$i++;
 		}
 		if ($i == 0) {
+			$langs->load("other");
 			$bookmarkList .= '<br><div class="opacitymedium center">'.$langs->trans("NoBookmarks").'</div>';
 			$bookmarkList .= '<br><br>';
 		}

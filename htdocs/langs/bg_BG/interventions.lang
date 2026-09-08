@@ -10,7 +10,6 @@ ActionsOnFicheInter=Свързани събития
 LastInterventions=Интервенции: %s последни
 AllInterventions=Всички интервенции
 CreateDraftIntervention=Създаване на чернова
-InterventionContact=Свързани контакти
 DeleteIntervention=Изтриване на интервенция
 ValidateIntervention=Валидиране на интервенция
 SignIntervention=Интервенция на знаци

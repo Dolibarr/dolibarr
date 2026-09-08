@@ -114,7 +114,7 @@ if ($action == "send" && $user->hasRight('takepos', 'run')) {
 
 	// From / To
 	$sendto = $email;
-	$from = $mysoc->email;
+	$email_from = $mysoc->email;
 
 	// Content
 	$msg = "<html>";
@@ -126,7 +126,7 @@ if ($action == "send" && $user->hasRight('takepos', 'run')) {
 	$msg .= "</html>";
 
 	// Send email
-	$mail = new CMailFile($subject, $sendto, $from, $msg, $joinFile, $joinFileMime, $joinFileName, '', '', 0, 1, '', '', '', '', '', '', DOL_DATA_ROOT.'/documents/takepos/temp');
+	$mail = new CMailFile($subject, $sendto, $email_from, $msg, $joinFile, $joinFileMime, $joinFileName, '', '', 0, 1, '', '', '', '', '', '', DOL_DATA_ROOT.'/documents/takepos/temp');
 
 	if ($mail->error || !empty($mail->errors)) {
 		setEventMessages($mail->error, $mail->errors, 'errors');
@@ -139,7 +139,7 @@ if ($action == "send" && $user->hasRight('takepos', 'run')) {
 		if ($result) {
 			$triggersendname = 'BILL_SENTBYMAIL';
 			$object = $invoice;
-			$object->context['email_from'] = $from;
+			$object->context['email_from'] = $email_from;
 			$object->context['email_to'] = $sendto;
 			$object->context['email_msgid'] = $mail->msgid;
 

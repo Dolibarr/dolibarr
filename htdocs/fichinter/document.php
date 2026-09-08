@@ -7,7 +7,7 @@
  * Copyright (C) 2011-2012  Juanjo Menent               <jmenent@2byte.es>
  * Copyright (C) 2013       Cédric Salvador             <csalvador@gpcsolutions.fr>
  * Copyright (C) 2017       Ferran Marcet               <fmarcet@2byte.es>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2025		MDW                         <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026       Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
@@ -58,8 +58,8 @@ $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
 // Security check
-if ($user->socid) {
-	$socid = $user->socid;
+if ($user->isExternalUser()) {
+	$socid = $user->isExternalUser();
 }
 $result = restrictedArea($user, 'ficheinter', $id, 'fichinter');
 

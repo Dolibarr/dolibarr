@@ -3,7 +3,8 @@
  * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2019		Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,9 +46,14 @@ class InfoBox
 				2 => 'MembersHome',
 				3 => 'ThirdpartiesHome',
 				4 => 'productindex',
+				6 => 'mrpindex',
+				8 => 'projectsindex',
+				9 => 'invoiceindex',
+				10 => 'hrmindex',
 				11 => 'TicketsHome',
 				20 => 'interventionindex',
-				27 => 'AccountancyHome'
+				27 => 'AccountancyHome',
+				28 => 'toolsindex'
 			);
 		} else {
 			return array(
@@ -78,7 +84,8 @@ class InfoBox
 				24 => 'expensereportindex',
 				25 => 'mailingindex',
 				26 => 'opensurveyindex',
-				27 => 'AccountancyHome'
+				27 => 'AccountancyHome',
+				28 => 'toolsindex'
 			);
 		}
 	}
@@ -105,12 +112,12 @@ class InfoBox
 			$sql .= " d.rowid as box_id, d.file, d.note, d.tms";
 			$sql .= " FROM ".$dbs->prefix()."boxes as b, ".$dbs->prefix()."boxes_def as d";
 			$sql .= " WHERE b.box_id = d.rowid";
-			$sql .= " AND b.entity IN (0,".$conf->entity.")";
+			$sql .= " AND b.entity IN (0,".((int) $conf->entity).")";
 			if ($zone >= 0) {
 				$sql .= " AND b.position = ".((int) $zone);
 			}
 			if (is_object($user)) {
-				$sql .= " AND b.fk_user IN (0,".$user->id.")";
+				$sql .= " AND b.fk_user IN (0,".((int) $user->id).")";
 			} else {
 				$sql .= " AND b.fk_user = 0";
 			}
@@ -118,7 +125,7 @@ class InfoBox
 		} else { // available
 			$sql = "SELECT d.rowid as box_id, d.file, d.note, d.tms";
 			$sql .= " FROM ".$dbs->prefix()."boxes_def as d";
-			$sql .= " WHERE d.entity IN (0, ".$conf->entity.")";
+			$sql .= " WHERE d.entity IN (0, ".((int) $conf->entity).")";
 		}
 
 		dol_syslog(self::class."::listBoxes get default box list for mode=".$mode." userid=".(is_object($user) ? $user->id : ''), LOG_DEBUG);
@@ -260,7 +267,7 @@ class InfoBox
 
 		// Delete all lines
 		$sql = "DELETE FROM ".$dbs->prefix()."boxes";
-		$sql .= " WHERE entity = ".$conf->entity;
+		$sql .= " WHERE entity = ".((int) $conf->entity);
 		$sql .= " AND fk_user = ".((int) $userid);
 		$sql .= " AND position = ".((int) $zone);
 

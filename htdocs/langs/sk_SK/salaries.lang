@@ -1,29 +1,55 @@
-# Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Účet (z účtového rozvrhu) používaný štandardne pre „používateľov“ v mzdách
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Vyhradený účet definovaný na karte používateľa sa bude používať iba na účtovníctvo vedľajšej knihy. Tento účet sa bude používať pre hlavnú knihu, ale aj ako predvolená hodnota účtovníctva vedľajšej knihy, ak u používateľa nie je definovaný žiadny vyhradený účtovný účet používateľa.
-SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Štandardne účtovný účet pre výplaty miezd
-CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=Štandardne ponechajte pri vytváraní Mzdy prázdnu možnosť „Automaticky vytvoriť celkovú platbu“.
 Salary=Mzda
 Salaries=Mzdy
 NewSalary=Nový plat
 AddSalary=Pridajte plat
 NewSalaryPayment=Nová platová karta
 AddSalaryPayment=Pridajte výplatu mzdy
-SalaryID=ID platu
-SalaryAmount=Výška platu
 SalaryPayment=Výplata mzdy
 SalariesPayments=Výplaty miezd
 SalariesPaymentsOf=Platby vo výške %s
 ShowSalaryPayment=Ukázať výplatu mzdy
-THM=Priemerná hodinová mzda
-TJM=priemerná denná mzda
+SalaryID=ID platu
+SalaryAmount=Výška platu
+SalaryDate=Salary date
+SalaryPaid=Salary paid
+SalaryNotPaid=Salary not paid
+
+SalarySlip=Salary slip
+StandardSalaryDocModel=Standard salary slip document
+
+BasicSalary=Basic salary
+Bonus=Bonus
+Allowance=Allowance
+Overtime=Overtime
+Deduction=Deduction
+Deductions=Deductions
+Earnings=Earnings
+TotalEarnings=Total earnings
+TotalDeductions=Total deductions
+NetPaid=Čisté platené
+
+# Accounting
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Účet (z účtového rozvrhu) používaný štandardne pre „používateľov“ v mzdách
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Vyhradený účet definovaný na karte používateľa sa bude používať iba na účtovníctvo vedľajšej knihy. Tento účet sa bude používať pre hlavnú knihu, ale aj ako predvolená hodnota účtovníctva vedľajšej knihy, ak u používateľa nie je definovaný žiadny vyhradený účtovný účet používateľa.
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Štandardne účtovný účet pre výplaty miezd
+CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=Štandardne ponechajte pri vytváraní Mzdy prázdnu možnosť „Automaticky vytvoriť celkovú platbu“.
+
+# Stats / Info
 CurrentSalary=Súčasná mzda
-THMDescription=Táto hodnota sa môže použiť na výpočet nákladov na čas spotrebovaný na projekte zadaný používateľmi, ak sa používa modulový projekt
-TJMDescription=Táto hodnota je momentálne len informatívna a nepoužíva sa na žiadny výpočet
 LastSalaries=Najnovšie platy %s
 AllSalaries=Všetky platy
 SalariesStatistics=Štatistika platov
 SalariesAndPayments=Platy a platby
+UserPaySlip=Výplatná páska
+PayPeriod=Pay period
+
+# THM / TJM
+THM=Priemerná hodinová mzda
+THMDescription=Táto hodnota sa môže použiť na výpočet nákladov na čas spotrebovaný na projekte zadaný používateľmi, ak sa používa modulový projekt
+TJM=priemerná denná mzda
+TJMDescription=Táto hodnota je momentálne len informatívna a nepoužíva sa na žiadny výpočet
+
+# Other actions
 ConfirmDeleteSalaryPayment=Chcete vymazať túto výplatu mzdy?
 FillFieldFirst=Najprv vyplňte pole zamestnanca
 UpdateAmountWithLastSalary=Stanovte výšku posledného platu
@@ -32,8 +58,10 @@ VirementOrder=Žiadosť o prevod kreditu
 WithdrawalReceipt=Príkaz na prevod kreditu
 OrderWaiting=Čaká na objednávku
 FillEndOfMonth=Koniec mesiaca
+
+# Shortcuts
 PreviousMonthShort=Predchádzajúci mesiac
 CurrentMonthShort=Aktuálny mesiac
+NextMonthShort=Next month
 PreviousWeekShort=Predchádzajúci týždeň
 CurrentWeekShort=Aktuálny týždeň
-UserPaySlip=Výplatná páska

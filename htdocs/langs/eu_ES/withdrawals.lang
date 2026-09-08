@@ -172,3 +172,6 @@ SalaryWaitingWithdraw=Kreditu-transferentzia bidez ordaintzeko zain dauden solda
 RefSalary=Soldata
 NoSalaryInvoiceToWithdraw=Ez dago soldatarik '%s' baten zain. Joan soldata-txarteleko '%s' fitxara eskaera bat egiteko.
 SalaryInvoiceWaitingWithdraw=Kreditu-transferentzia bidez ordaintzeko zain dauden soldatak
+ErrorBankTransferNoPaymentRequestSelected=No payment request selected.
+AmountRequestedAlreadyReachesTotal=The total invoice amount has already been requested for payment
+AmountExceedsRemainingToRequest=The requested amount exceeds the remaining amount available for payment requests

@@ -28,7 +28,7 @@ CantUseScheduleWithLoanStartedToPaid = Ni mogoče ustvariti časovnice za posoji
 CantModifyInterestIfScheduleIsUsed = Spremembe v načrtovanih dogodkih niso dovoljene
 # Admin
 ConfigLoan=Konfiguracija izposoje modula
-LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Account (from the Chart Of Account) to be used by default for capital (Loan module)
-LOAN_ACCOUNTING_ACCOUNT_INTEREST=Account (from the Chart Of Account) to be used by default for interest (Loan module)
-LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Account (from the Chart Of Account) to be used by default for insurance (Loan module)
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Račun (iz kontnega načrta), ki se privzeto uporablja za kapital (posojilni modul)
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Račun (iz kontnega načrta), ki se privzeto uporablja za obresti (posojilni modul)
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Račun (iz kontnega načrta), ki se privzeto uporablja za zavarovanje (posojilni modul)
 CreateCalcSchedule=Uredi finančno obveznost

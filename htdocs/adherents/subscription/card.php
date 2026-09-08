@@ -246,8 +246,8 @@ if ($user->hasRight('adherent', 'cotisation', 'creer') && $action == 'edit') {
 	print '<td class="valeur">';
 	print '<input type="text" class="flat width200" name="amount" value="'.price($object->amount).'"></td></tr>';
 
-	// Label
-	print '<tr><td>'.$langs->trans("Label").'</td>';
+	// Note
+	print '<tr><td>'.$langs->trans("Note").'</td>';
 	print '<td class="valeur">';
 	print '<input type="text" class="flat" name="note" value="'.$object->note_public.'"></td></tr>';
 
@@ -344,8 +344,8 @@ if ($rowid && $action != 'edit') {
 	// Amount
 	print '<tr><td>'.$langs->trans("Amount").'</td><td class="valeur"><span class="amount">'.price($object->amount).'</span></td></tr>';
 
-	// Label
-	print '<tr><td>'.$langs->trans("Label").'</td><td class="valeur sensiblehtmlcontent">'.dol_string_onlythesehtmltags(dol_htmlentitiesbr((string) $object->note_public)).'</td></tr>';
+	// Note
+	print '<tr><td>'.$langs->trans("Note").'</td><td class="valeur sensiblehtmlcontent">'.dolPrintHTML((string) $object->note_public).'</td></tr>';
 
 	// Bank line
 	if (isModEnabled("bank") && (getDolGlobalString('ADHERENT_BANK_USE') || $object->fk_bank)) {

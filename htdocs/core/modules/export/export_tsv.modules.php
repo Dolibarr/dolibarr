@@ -373,6 +373,12 @@ class ExportTsv extends ModeleExports
 			$newvalue = str_replace("\t", " ", $newvalue);
 		}
 
+		// Note: with TSV format, there is no standard to escape a value that contains a tabulation or a string
+		// so we add a ' char before.
+		if (preg_match('/^\s*[=+-@]/', $newvalue)) {
+			$newvalue = "'".$newvalue;
+		}
+
 		return $newvalue;
 	}
 }

@@ -2,7 +2,7 @@
 /* Copyright (C) 2008-2009  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2015-2017  Francis Appels          <francis.appels@yahoo.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -167,8 +167,8 @@ class FormProduct
 			}
 		}
 		$sortfield = implode(',', $arraysortfield);
-		$sortorder = implode(',', $arraysortorder);
-		$sql .= $this->db->order($sortfield, $sortorder);
+		$sortorder_unsanitized = implode(',', $arraysortorder); // $db->order sanitizes  @phan-suppress-current-line SqlInjection
+		$sql .= $this->db->order($sortfield, $sortorder_unsanitized);
 
 		dol_syslog(get_class($this).'::loadWarehouses', LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -626,18 +626,19 @@ class FormProduct
 				if ($mode == 1) {
 					$return .= $lines->short_label;
 				} elseif ($mode == 2) {
-					$return .= $lines->scale;
+					$return .= (int) $lines->scale;
 				} else {
 					$return .= $lines->id;
 				}
 				$return .= '"';
 				if ($mode == 1 && $lines->short_label == $selected) {
 					$return .= ' selected';
-				} elseif ($mode == 2 && $lines->scale == $selected) {
+				} elseif ($mode == 2 && (int) $lines->scale === (int) $selected) { // Careful null !== 0 !== '0' and when 0 is saved bdd store null
 					$return .= ' selected';
 				} elseif ($mode == 0 && $lines->id == $selected) {
 					$return .= ' selected';
 				}
+
 				$return .= '>';
 				if ($measuring_style == 'time') {
 					$return .= $langs->trans(ucfirst((string) $lines->label));

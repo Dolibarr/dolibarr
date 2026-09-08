@@ -44,7 +44,9 @@ $langs->loadLangs(array('companies', 'products', 'admin'));
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $currencycode = GETPOST('currencycode', 'alpha');
-
+if (empty($action)) {
+	$action = 'edit';
+}
 if (isModEnabled('multicompany') && getDolGlobalString('MULTICURRENCY_USE_LIMIT_BY_CURRENCY')) {
 	// When MULTICURRENCY_USE_LIMIT_BY_CURRENCY is on, we use always a defined currency code instead of '' even for default.
 	$currencycode = (!empty($currencycode) ? $currencycode : getDolCurrency());
@@ -118,6 +120,8 @@ if ($action == 'update' && !$cancel) {
 
 		dolibarr_set_const($db, $mainroundingruletot, $valmainroundingruletot, 'chaine', 0, '', $conf->entity);
 
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+
 		header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup".(!empty($currencycode) ? '&currencycode='.$currencycode : ''));
 		exit;
 	}
@@ -163,7 +167,7 @@ print '<span class="opacitymedium">'.$langs->trans("LimitsDesc")."</span><br>\n"
 print "<br>\n";
 
 if ($action == 'edit') {
-	print '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '">';
+	print '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '" spellcheck="false">';
 	print '<input type="hidden" name="token" value="' . newToken() . '">';
 	print '<input type="hidden" name="action" value="update">';
 	if (isModEnabled('multicompany') && getDolGlobalString('MULTICURRENCY_USE_LIMIT_BY_CURRENCY')) {
@@ -194,8 +198,10 @@ if ($action == 'edit') {
 
 	print '<div class="center">';
 	print '<input class="button button-save" type="submit" name="save" value="'.$langs->trans("Save").'">';
+	/*
 	print ' &nbsp; ';
 	print '<input class="button button-cancel" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
+	*/
 	print '</div>';
 	print '<br>';
 
@@ -242,6 +248,8 @@ if (empty($mysoc->country_code)) {
 } else {
 	// Show examples
 	print load_fiche_titre($langs->trans("ExamplesWithCurrentSetup"), '', '');
+
+	print '<div class="small">';
 
 	print '<span class="opacitymedium">'.$langs->trans("NumberFormatForATotalPrice", '1234.56789').':</span> '.price(price2num(1234.56789, 'MT'), 0, $langs, 1, -1, -1, $currencycode)."<br>\n";
 
@@ -355,6 +363,8 @@ if (empty($mysoc->country_code)) {
 		print ' - <span class="opacitymedium">'.$langs->trans("VAT").":</span> ".$vat.'%';
 		print ' &nbsp; -> &nbsp; <span class="opacitymedium">'.$langs->trans("TotalPriceAfterRounding").":</span> ".$tmparray[0].' / '.$tmparray[1].' / '.$tmparray[2]."<br>\n";
 	}
+
+	print '</div>';
 }
 
 // End of page

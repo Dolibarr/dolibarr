@@ -174,7 +174,7 @@ class SocieteTest extends CommonClassTest
 
 		$result = $localobject->update($localobject->id, $user);
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
-		$this->assertLessThan($result, 0);
+		$this->assertLessThan($result, 0, __METHOD__." id=".$localobject->id." result=".$result);
 
 		$result = $localobject->update_note($localobject->note_private, '_private');
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
@@ -225,10 +225,10 @@ class SocieteTest extends CommonClassTest
 		$localobject->country_code = 'FR';
 		$localobject->idprof1 = 493861496;
 		$localobject->idprof2 = 49386149600021;
-		$result = $localobject->id_prof_check(1, $localobject);    // Must be > 0
+		$result = $localobject->id_prof_check(1);    // Must be > 0
 		print __METHOD__." OK FR idprof1 result=".$result."\n";
 		$this->assertGreaterThanOrEqual(1, $result);
-		$result = $localobject->id_prof_check(2, $localobject);    // Must be > 0
+		$result = $localobject->id_prof_check(2);    // Must be > 0
 		print __METHOD__." OK FR idprof2 result=".$result."\n";
 		$this->assertGreaterThanOrEqual(1, $result);
 
@@ -236,17 +236,17 @@ class SocieteTest extends CommonClassTest
 		$localobject->country_code = 'FR';
 		$localobject->idprof1 = 'id1ko';
 		$localobject->idprof2 = 'id2ko';
-		$result = $localobject->id_prof_check(1, $localobject);    // Must be <= 0
+		$result = $localobject->id_prof_check(1);    // Must be <= 0
 		print __METHOD__." KO FR idprof1 result=".$result."\n";
 		$this->assertLessThan(1, $result);
-		$result = $localobject->id_prof_check(2, $localobject);    // Must be <= 0
+		$result = $localobject->id_prof_check(2);    // Must be <= 0
 		print __METHOD__." KO FR idprof2 result=".$result."\n";
 		$this->assertLessThan(1, $result);
 
 		// KO ES
 		$localobject->country_code = 'ES';
 		$localobject->idprof1 = 'id1ko';
-		$result = $localobject->id_prof_check(1, $localobject);    // Must be <= 0
+		$result = $localobject->id_prof_check(1);    // Must be <= 0
 		print __METHOD__." KO ES idprof1 result=".$result."\n";
 		$this->assertLessThan(1, $result);
 
@@ -254,10 +254,10 @@ class SocieteTest extends CommonClassTest
 		$localobject->country_code = 'AR';
 		$localobject->idprof1 = 'id1ko';
 		$localobject->idprof2 = 'id2ko';
-		$result = $localobject->id_prof_check(1, $localobject);    // Must be > 0
+		$result = $localobject->id_prof_check(1);    // Must be > 0
 		print __METHOD__." OK AR idprof1 result=".$result."\n";
 		$this->assertGreaterThanOrEqual(0, $result);
-		$result = $localobject->id_prof_check(2, $localobject);    // Must be > 0
+		$result = $localobject->id_prof_check(2);    // Must be > 0
 		print __METHOD__." OK AR idprof2 result=".$result."\n";
 		$this->assertGreaterThanOrEqual(1, $result);
 
@@ -567,5 +567,51 @@ class SocieteTest extends CommonClassTest
 
 		print __METHOD__." result=".$result."\n";
 		return $result;
+	}
+
+	/**
+	 * Test that Societe::setMysoc() always resolves country_code to an ISO country code.
+	 *
+	 * Regression test for issue #37826: when MAIN_INFO_SOCIETE_COUNTRY uses the legacy
+	 * "id:label" (2-token) syntax, the second token is a country label (e.g. 'France'),
+	 * not an ISO code. setMysoc() must not leave that label in country_code (it would break
+	 * code-based lookups such as VAT rates and force a 0% rate), but rebuild it from the id.
+	 *
+	 * @return void
+	 */
+	public function testSetMysocCountryCode()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		require_once dirname(__FILE__).'/../../htdocs/core/lib/company.lib.php';
+
+		$frid = (int) getCountry('FR', '3', $db);
+		$this->assertGreaterThan(0, $frid, 'Country FR must exist in dictionary c_country');
+
+		$savcountryconst = getDolGlobalString('MAIN_INFO_SOCIETE_COUNTRY');
+
+		// Canonical 3-token syntax "id:code:label".
+		$conf->global->MAIN_INFO_SOCIETE_COUNTRY = $frid.':FR:France';
+		$soc3 = new Societe($db);
+		$soc3->setMysoc($conf);
+
+		// Legacy 2-token syntax "id:label" (the #37826 case), second token is a label not a code.
+		$conf->global->MAIN_INFO_SOCIETE_COUNTRY = $frid.':France';
+		$soc2 = new Societe($db);
+		$soc2->setMysoc($conf);
+
+		// Restore the constant before asserting so a failure does not leak state to other tests.
+		$conf->global->MAIN_INFO_SOCIETE_COUNTRY = $savcountryconst;
+
+		$this->assertEquals('FR', $soc3->country_code, 'country_code must be the ISO code from a 3-token constant');
+		$this->assertEquals($frid, $soc3->country_id);
+		$this->assertEquals('FR', $soc2->country_code, 'country_code must be an ISO code, not a label, from a legacy 2-token constant (#37826)');
+		$this->assertEquals($frid, $soc2->country_id);
+
+		print __METHOD__." ok\n";
 	}
 }

@@ -80,6 +80,7 @@ INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUE
 
 UPDATE llx_accounting_system SET fk_country = 1 WHERE fk_country IS NULL;
 
+--noqa:disable=PRS
 UPDATE llx_const set value = __ENCRYPT('eldy')__ WHERE __DECRYPT('value')__ = 'auguria';
 UPDATE llx_const set value = __ENCRYPT('eldy')__ WHERE __DECRYPT('value')__ = 'bureau2crea';
 UPDATE llx_const set value = __ENCRYPT('eldy')__ WHERE __DECRYPT('value')__ = 'amarok';

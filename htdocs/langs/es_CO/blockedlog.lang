@@ -1,9 +1,6 @@
 # Dolibarr language file - Source file is en_US - blockedlog
 Fingerprints=Huellas digitales y eventos archivados
 CompanyInitialKey=Clave inicial de la empresa (hash del bloque génesis)
-KoCheckFingerprintValidity=La entrada de registro archivada no es válida. Significa que alguien (¿hacker?) ha modificado algunos datos de este registro después de que se registró, O ha borrado el registro archivado anterior (verifique que exista la línea con el número anterior) O ha modificado la suma de comprobación del registro anterior.
-OkCheckFingerprintValidity=El registro de registro archivado es válido. Los datos de esta línea no se modificaron y la entrada sigue a la anterior.
-OkCheckFingerprintValidityButChainIsKo=El registro archivado parece válido en comparación con el anterior, pero la cadena estaba dañada anteriormente.
 AddedByAuthority=Almacenado en una autoridad remota
 NotAddedByAuthorityYet=Aún no almacenado en una autoridad remota
 BlockedLogBillDownload=Descarga de la factura del cliente

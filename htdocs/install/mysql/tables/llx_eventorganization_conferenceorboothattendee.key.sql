@@ -26,3 +26,4 @@ ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD INDEX idx_evento
 -- Note if we add the entity, we want the ref numbering rule per entity, so we must add entity in constraint.
 ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD UNIQUE INDEX uk_eventorganization_confboothattendee (ref);
 ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD UNIQUE INDEX uk_eventorganization_conferenceorboothattendee(fk_project, email, fk_actioncomm);
+ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD UNIQUE INDEX uk_eventorganization_confboothattendee_replacement (fk_replacement);

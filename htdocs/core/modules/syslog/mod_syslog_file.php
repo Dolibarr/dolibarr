@@ -1,7 +1,10 @@
 <?php
-/* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  */
+
+// File ignore as individual 'suppress' is not extremely effective.
+// @phan-file-suppress PhanPluginDuplicateArrayKey
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/syslog/logHandler.php';
 
@@ -160,7 +163,6 @@ class mod_syslog_file extends LogHandler
 	 * @param	array{level:int,ip:string,ospid:string,osuser:string,message:string}	$content 	Array containing the info about the message
 	 * @param	string	$suffixinfilename	When output is a file, append this suffix into default log filename.
 	 * @return	void
-	 * @phan-suppress PhanPluginDuplicateArrayKey
 	 */
 	public function export($content, $suffixinfilename = '')
 	{

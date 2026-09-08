@@ -103,10 +103,6 @@ if (GETPOST('search_contact') != '') {
 	header("Location: ".DOL_URL_ROOT.'/contact/list.php?mode=search&sall='.urlencode(GETPOST('search_contact')));
 	exit;
 }
-if (GETPOST('search_deplacement') != '') {
-	header("Location: ".DOL_URL_ROOT.'/compta/deplacement/list.php?mode=search&sall='.urlencode(GETPOST('search_deplacement')));
-	exit;
-}
 if (GETPOST('search_expensereport') != '') {
 	header("Location: ".DOL_URL_ROOT.'/expensereport/list.php?mode=search&sall='.urlencode(GETPOST('search_expensereport')));
 	exit;

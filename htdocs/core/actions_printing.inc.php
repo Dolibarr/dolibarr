@@ -23,6 +23,8 @@
  *  \ingroup        core
  *  \brief          Code for actions print_file to print file (with calling trigger) when using the Direct Print feature.
  *  				The relative filename to print must be provided into GETPOST('file', 'alpha') parameter
+ *
+ *  				This file is no more used for certified version, direct print feature has been disabled.
  */
 
 
@@ -85,7 +87,7 @@ if ($action == 'print_file' && $user->hasRight('printing', 'read')) {
 							$db->query($sql);
 
 							//$tmpinvoice->pos_print_counter += 1;
-							//$tmpinvoice->update($user, 1);	// We disable trigger here because we already call the trigger $action = DOC_PREVIEW or DOC_DOWNLOAD just after
+							//$tmpinvoice->update($user, 1);			// We disable trigger here because we already call the trigger $action = DOC_PREVIEW or DOC_DOWNLOAD just after
 						}
 					}
 

@@ -253,7 +253,7 @@ if ($action == "dosubmit") {	// Test on permission not required here (anonymous 
 			}
 		}
 		if (!$error) {
-			$candidature->validate($user);
+			$result = $candidature->validate($user);
 			if ($result <= 0) {
 				$error++;
 				$errmsg .= implode('<br>', $candidature->errors);

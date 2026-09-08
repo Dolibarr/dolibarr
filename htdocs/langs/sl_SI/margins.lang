@@ -6,6 +6,7 @@ TotalMargin=Skupna marža
 MarginOnProducts=Marža / proizvod
 MarginOnServices=Marža / storitev
 MarginRate=Stopnja marže
+ModifyMarginRates=Spremenite stopnje marže
 MarkRate=Ciljna stopnja
 DisplayMarginRates=Prikaži stopnje marž
 DisplayMarkRates=Prikaži ciljne stopnje
@@ -30,9 +31,9 @@ UseDiscountOnTotal=V delni vsoti
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Določa, če se globalni popust smatra kot proizvod, storitev, ali samo delna vsota pri izračunu marže.
 MARGIN_TYPE=Privzeto predlagana nabavna cena s stroški za izračun marže
 MargeType1=Marža na najugodnejšo ceno
-MargeType2=Marža na uravnoteženo povprečno ceno (WAP)
+MargeType2=Margin on Weighted Average Cost (WAC)
 MargeType3=Marža na lastno ceno
-MarginTypeDesc=* Marža na najboljšo nakupno ceno = Prodajna cena – Cena najboljšega prodajalca, določena na kartici izdelka <br> * Marža na tehtano povprečno ceno (WAP) = Prodajna cena – Tehtana povprečna cena izdelka (WAP) ali cena najboljšega prodajalca, če WAP še ni določen <br> * Marža na Stroškovna cena = Prodajna cena - Stroška cena, določena na kartici izdelka ali WAP, če lastna cena ni določena, ali najboljša cena prodajalca, če WAP še ni določen
+MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Cost (WAC) = Selling price - Product Weighted Average Price (WAP) or best vendor price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAC if cost price not defined, or best vendor price if WAC not yet defined
 CostPrice=Stroškovna cena
 UnitCharges=Stroški po enoti
 Charges=Stroški

@@ -309,7 +309,7 @@ class Project extends CommonObject
 	 *  	'date', 'datetime', 'timestamp', 'duration',
 	 *  	'boolean', 'checkbox', 'radio', 'array',
 	 *  	'mail', 'phone', 'url', 'password', 'ip'
-	 *		Note: Filter must be a Dolibarr Universal Filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
+	 *		Note: Filter must be a Dolibarr Universal Filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'alias' the alias used into some old hard coded SQL requests
 	 *  'picto' is code of a picto to show before value in forms
@@ -517,7 +517,7 @@ class Project extends CommonObject
 		$sql .= ", ".($this->fk_project ? ((int) $this->fk_project) : "null");
 		$sql .= ", '".$this->db->escape($this->title)."'";
 		$sql .= ", '".$this->db->escape($this->description)."'";
-		$sql .= ", ".($this->socid > 0 ? $this->socid : "null");
+		$sql .= ", ".($this->socid > 0 ? ((int) $this->socid) : "null");
 		$sql .= ", ".((int) $user->id);
 		$sql .= ", ".(is_numeric($this->status) ? ((int) $this->status) : '0');
 		$sql .= ", ".((is_numeric($this->opp_status) && $this->opp_status > 0) ? ((int) $this->opp_status) : 'NULL');
@@ -630,10 +630,10 @@ class Project extends CommonObject
 			$sql .= ", fk_project=".($this->fk_project ? ((int) $this->fk_project) : "null");
 			$sql .= ", title = '".$this->db->escape($this->title)."'";
 			$sql .= ", description = '".$this->db->escape($this->description)."'";
-			$sql .= ", fk_soc = ".($this->socid > 0 ? $this->socid : "null");
+			$sql .= ", fk_soc = ".($this->socid > 0 ? ((int) $this->socid) : "null");
 			$sql .= ", fk_statut = ".((int) $this->status);
-			$sql .= ", fk_opp_status = ".((is_numeric($this->opp_status) && $this->opp_status > 0) ? $this->opp_status : 'null');
-			$sql .= ", opp_percent = ".((is_numeric($this->opp_percent) && $this->opp_percent != '') ? $this->opp_percent : 'null');
+			$sql .= ", fk_opp_status = ".((is_numeric($this->opp_status) && $this->opp_status > 0) ? ((int) $this->opp_status) : 'null');
+			$sql .= ", opp_percent = ".((is_numeric($this->opp_percent) && $this->opp_percent != '') ? ((float) $this->opp_percent) : 'null');
 			$sql .= ", public = ".($this->public ? 1 : 0);
 			$sql .= ", datec = ".($this->date_c != '' ? "'".$this->db->idate($this->date_c)."'" : 'null');
 			$sql .= ", dateo = ".($this->date_start != '' ? "'".$this->db->idate($this->date_start)."'" : 'null');
@@ -641,7 +641,7 @@ class Project extends CommonObject
 			$sql .= ", date_close = ".($this->date_close != '' ? "'".$this->db->idate($this->date_close)."'" : 'null');
 			$sql .= ", note_public = ".($this->note_public ? "'".$this->db->escape($this->note_public)."'" : "null");
 			$sql .= ", note_private = ".($this->note_private ? "'".$this->db->escape($this->note_private)."'" : "null");
-			$sql .= ", fk_user_close = ".($this->fk_user_close > 0 ? $this->fk_user_close : "null");
+			$sql .= ", fk_user_close = ".($this->fk_user_close > 0 ? ((int) $this->fk_user_close) : "null");
 			$sql .= ", opp_amount = ".(strcmp($this->opp_amount, '') ? price2num($this->opp_amount) : "null");
 			$sql .= ", budget_amount = ".(strcmp($this->budget_amount, '') ? price2num($this->budget_amount) : "null");
 			$sql .= ", fk_user_modif = ".((int) $user->id);
@@ -908,7 +908,7 @@ class Project extends CommonObject
 			if (empty($datefieldname)) {
 				return 'Error this object has no date field defined';
 			}
-			$sql .= " AND (".$datefieldname." >= '".$this->db->idate((int) $date_start)."' OR ".$datefieldname." IS NULL)";
+			$sql .= " AND (".$this->db->sanitize($datefieldname)." >= '".$this->db->idate((int) $date_start)."' OR ".$this->db->sanitize($datefieldname)." IS NULL)";
 		}
 
 		if (isDolTms($date_end) && $type == 'loan') {
@@ -920,7 +920,7 @@ class Project extends CommonObject
 			if (empty($datefieldname)) {
 				return 'Error this object has no date field defined';
 			}
-			$sql .= " AND (".$datefieldname." <= '".$this->db->idate((int) $date_end)."' OR ".$datefieldname." IS NULL)";
+			$sql .= " AND (".$this->db->sanitize($datefieldname)." <= '".$this->db->idate((int) $date_end)."' OR ".$this->db->sanitize($datefieldname)." IS NULL)";
 		}
 
 		$parameters = array(
@@ -1098,7 +1098,7 @@ class Project extends CommonObject
 		if (empty($error)) {
 			// We remove directory
 			$projectref = dol_sanitizeFileName($this->ref);
-			if ($conf->project->dir_output) {
+			if ($conf->project->dir_output && !empty($projectref)) {
 				$dir = $conf->project->dir_output."/".$projectref;
 				if (file_exists($dir)) {
 					$res = @dol_delete_dir_recursive($dir);
@@ -1703,7 +1703,7 @@ class Project extends CommonObject
 		if ($errormessage) {
 			$this->errors[] = $errormessage;
 			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
-			$sql .= $filter;
+			$sql .= $filter;  // @phan-suppress-current-line SqlInjection
 		}
 
 		$resql = $this->db->query($sql);
@@ -2144,7 +2144,7 @@ class Project extends CommonObject
 	 * @param 	int		$datestart		First day of week (use dol_get_first_day to find this date)
 	 * @param 	int		$taskid			Filter on a task id
 	 * @param 	int		$userid			Time spent by a particular user
-	 * @return 	1|-1					Return integer <0 if OK, >0 if KO
+	 * @return 	int						Return integer <0 if OK, >=0 if KO
 	 */
 	public function loadTimeSpent($datestart, $taskid = 0, $userid = 0)
 	{
@@ -2180,6 +2180,7 @@ class Project extends CommonObject
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
 				$day = $this->db->jdate($obj->element_date); // task_date is date without hours
+
 				if (empty($dayallreadyfound[$day])) {
 					$this->weekWorkLoad[$day] = (int) $obj->element_duration; // Float in db used as int
 					$this->weekWorkLoadPerTask[$day][$obj->fk_element] = (int) $obj->element_duration;
@@ -2191,7 +2192,7 @@ class Project extends CommonObject
 				$i++;
 			}
 			$this->db->free($resql);
-			return 1;
+			return $num;
 		} else {
 			$this->error = "Error ".$this->db->lasterror();
 			dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);

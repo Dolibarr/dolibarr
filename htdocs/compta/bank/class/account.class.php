@@ -331,7 +331,7 @@ class Account extends CommonObject
 
 	/**
 	 *  'type' if the field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
-	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
+	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'enabled' is a condition when the field must be managed.
 	 *  'position' is the sort order of field.
@@ -508,6 +508,22 @@ class Account extends CommonObject
 	public function add_url_line($line_id, $url_id, $url, $label, $type)
 	{
 		// phpcs:enable
+		// Avoid uk_bank_url collision when the same target (line_id, url_id, type) is linked twice
+		// e.g. two distinct credit transfers for the same employee dispatched on the same bank line.
+		$sqlcheck = "SELECT rowid FROM ".MAIN_DB_PREFIX."bank_url";
+		$sqlcheck .= " WHERE fk_bank = ".((int) $line_id);
+		$sqlcheck .= " AND url_id = ".((int) $url_id);
+		$sqlcheck .= " AND type = '".$this->db->escape($type)."'";
+		$resqlcheck = $this->db->query($sqlcheck);
+		if ($resqlcheck) {
+			$obj = $this->db->fetch_object($resqlcheck);
+			if ($obj) {
+				$this->db->free($resqlcheck);
+				return (int) $obj->rowid;
+			}
+			$this->db->free($resqlcheck);
+		}
+
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_url (";
 		$sql .= "fk_bank";
 		$sql .= ", url_id";
@@ -1070,8 +1086,8 @@ class Account extends CommonObject
 		$sql .= ",owner_zip = '".$this->db->escape($this->owner_zip)."'";
 		$sql .= ",owner_town = '".$this->db->escape($this->owner_town)."'";
 		$sql .= ",owner_country_id = ".($this->owner_country_id > 0 ? ((int) $this->owner_country_id) : "null");
-		$sql .= ",state_id = ".($this->state_id > 0 ? $this->state_id : "null");
-		$sql .= ",fk_pays = ".($this->country_id > 0 ? $this->country_id : "null");
+		$sql .= ",state_id = ".($this->state_id > 0 ? ((int) $this->state_id) : "null");
+		$sql .= ",fk_pays = ".($this->country_id > 0 ? ((int) $this->country_id) : "null");
 		$sql .= " WHERE rowid = ".((int) $this->id);
 		$sql .= " AND entity = ".((int) $conf->entity);
 
@@ -1364,7 +1380,7 @@ class Account extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."bank";
 		$sql .= " WHERE fk_account = ".((int) $this->id);
 		if ($option == 1) {
-			$sql .= " AND ".$this->db->escape($field)." <= '".(!empty($date_end) ? $this->db->idate($date_end) : $this->db->idate(dol_now()))."'";
+			$sql .= " AND ".$this->db->sanitize($field)." <= '".(!empty($date_end) ? $this->db->idate($date_end) : $this->db->idate(dol_now()))."'";
 		}
 
 		$resql = $this->db->query($sql);
@@ -2589,7 +2605,7 @@ class AccountLine extends CommonObjectLine
 				$sql .= "lineid";
 				$sql .= ", fk_categ";
 				$sql .= ") VALUES (";
-				$sql .= $this->id;
+				$sql .= ((int) $this->id);
 				$sql .= ", ".((int) $cat);
 				$sql .= ")";
 

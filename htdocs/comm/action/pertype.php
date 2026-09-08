@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2011       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2014       Cedric GROSS            <c.gross@kreiz-it.fr>
- * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2019-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -495,7 +495,7 @@ if ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda'
 	$newcardbutton .= dolGetButtonTitle($langs->trans("AddAction"), '', 'fa fa-plus-circle', $urltocreateaction);
 }
 
-print_barre_liste($langs->trans("Agenda"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, -1, 'object_action', 0, $nav.'<span class="marginleftonly"></span>'.$newcardbutton, '', $limit, 1, 0, 1, $viewmode);
+print_barre_liste($langs->trans("Agenda"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, -1, -1, 'object_action', 0, $nav.'<span class="marginleftonly"></span>'.$newcardbutton, '', $limit, 1, 0, 1, $viewmode);
 
 
 $link = '';
@@ -613,7 +613,7 @@ if ($search_sale && $search_sale != '-1') {
 	if ($search_sale == -2) {
 		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = a.fk_soc)";
 	} elseif ($search_sale > 0) {
-		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = a.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+		$sql .= " AND (a.fk_soc IS NULL OR EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = a.fk_soc AND sc.fk_user = ".((int) $search_sale)."))";
 	}
 }
 // Search on socid
@@ -691,7 +691,7 @@ $resql = $db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql);
 
-	$MAXONSAMEPAGE = 10000; // Useless to have more. Protection to avoid memory overload when high number of event (for example after a mass import)
+	$MAXONSAMEPAGE = getDolGlobalInt('AGENDA_MAX_ON_SAME_PAGE', 5000); // Useless to have more. Protection to avoid memory overload when high number of event (for example after a mass import)
 	$i = 0;
 	while ($i < $num && $i < $MAXONSAMEPAGE) {
 		$obj = $db->fetch_object($resql);
@@ -986,26 +986,26 @@ $db->close();
 
 
 /**
- * Show event line of a particular day for a user
+ * Show event line of a particular day for a type of event
  *
- * @param	string  $username		Login
- * @param   int		$day            Day
- * @param   int		$month          Month
- * @param   int		$year           Year
- * @param   int		$monthshown     Current month shown in calendar view
- * @param   string	$style          Style to use for this day
- * @param   array<int,ActionComm[]>	$eventarray      Array of events
- * @param   int		$maxprint       Nb of actions to show each day on month view (0 means no limit)
- * @param   int		$maxnbofchar    Nb of characters to show for event line
- * @param   string	$newparam       Parameters on current URL
- * @param   int		$showinfo       Add extended information (used by day view)
- * @param   int		$minheight      Minimum height for each event. 60px by default.
- * @param	bool	$showheader		Show header
- * @param	array<string,string>	$colorsbytype	Array with colors by type
- * @param	bool	$var			true or false for alternat style on tr/td
+ * @param	string  $typeofeventcode	Event type code
+ * @param   int		$day            	Day
+ * @param   int		$month          	Month
+ * @param   int		$year           	Year
+ * @param   int		$monthshown     	Current month shown in calendar view
+ * @param   string	$style          	Style to use for this day
+ * @param   array<int,ActionComm[]>		$eventarray      Array of events
+ * @param   int		$maxprint       	Nb of actions to show each day on month view (0 means no limit)
+ * @param   int		$maxnbofchar    	Nb of characters to show for event line
+ * @param   string	$newparam       	Parameters on current URL
+ * @param   int		$showinfo       	Add extended information (used by day view)
+ * @param   int		$minheight      	Minimum height for each event. 60px by default.
+ * @param	bool	$showheader			Show header
+ * @param	array<string,string>		$colorsbytype	Array with colors by type
+ * @param	bool	$var				true or false for alternat style on tr/td
  * @return	void
  */
-function show_day_events_pertype($username, $day, $month, $year, $monthshown, $style, &$eventarray, $maxprint = 0, $maxnbofchar = 16, $newparam = '', $showinfo = 0, $minheight = 60, $showheader = false, $colorsbytype = array(), $var = false)
+function show_day_events_pertype($typeofeventcode, $day, $month, $year, $monthshown, $style, &$eventarray, $maxprint = 0, $maxnbofchar = 16, $newparam = '', $showinfo = 0, $minheight = 60, $showheader = false, $colorsbytype = array(), $var = false)
 {
 	global $db;
 	global $user, $conf, $langs, $hookmanager, $action;
@@ -1034,11 +1034,11 @@ function show_day_events_pertype($username, $day, $month, $year, $monthshown, $s
 	$ymd = sprintf("%04d", $year).sprintf("%02d", $month).sprintf("%02d", $day);
 
 	$nextindextouse = count($colorindexused); // At first run, this is 0, so fist user has 0, next 1, ...
-	//if ($username->id && $day==1) {
+	//if ($typeofeventcode && $day==1) {
 	//var_dump($eventarray);
 	//}
 
-	// We are in a particular day for $username, now we scan all events
+	// We are in a particular day for $typeofeventcode, now we scan all events
 	foreach ($eventarray as $daykey => $notused) {
 		$annee = dol_print_date($daykey, '%Y', 'tzuserrel');
 		$mois =  dol_print_date($daykey, '%m', 'tzuserrel');
@@ -1051,10 +1051,9 @@ function show_day_events_pertype($username, $day, $month, $year, $monthshown, $s
 				//var_dump($event);
 
 				$keysofuserassigned = array_keys($event->userassigned);
-				if (!in_array($username->id, $keysofuserassigned)) {
-					continue; // We discard record if event is from another user than user we want to show
+				if ($event->type_code != $typeofeventcode) {
+					continue; // We discard record if event is from another type than type we want to show
 				}
-				//if ($username->id != $event->userownerid) continue;	// We discard record if event is from another user than user we want to show
 
 				$parameters = array();
 				$reshook = $hookmanager->executeHooks('formatEvent', $parameters, $event, $action); // Note that $action and $object may have been modified by some hooks
@@ -1115,7 +1114,7 @@ function show_day_events_pertype($username, $day, $month, $year, $monthshown, $s
 
 				// Define all rects with event (cases1 is first half hour, cases2 is second half hour)
 				for ($h = $begin_h; $h < $end_h; $h++) {
-					//if ($username->id == 1 && $day==1) print 'h='.$h;
+					//if ($typeofeventcode == 1 && $day==1) print 'h='.$h;
 					$newcolor = ''; //init
 					if (empty($event->fulldayevent)) {
 						$a = dol_mktime((int) $h, 0, 0, $month, $day, $year, 'tzuserrel', 0);
@@ -1321,9 +1320,9 @@ function show_day_events_pertype($username, $day, $month, $year, $monthshown, $s
 			$color2 = '222222';
 		}
 		print '<table class="nobordernopadding" width="100%">';
-		print '<tr><td '.($color1 ? 'style="background: #'.$color1.';"' : '').'class="'.($style1 ? $style1.' ' : '').'onclickopenref center'.($title1 ? ' cursorpointer' : '').'" ref="ref_'.$username->id.'_'.sprintf("%04d", $year).'_'.sprintf("%02d", $month).'_'.sprintf("%02d", $day).'_'.sprintf("%02d", $h).'_00_'.($ids1 ? $ids1 : 'none').'"'.($title1 ? ' title="'.$title1.'"' : '').'>';
+		print '<tr><td '.($color1 ? 'style="background: #'.$color1.';"' : '').'class="'.($style1 ? $style1.' ' : '').'onclickopenref center'.($title1 ? ' cursorpointer' : '').'" ref="ref_'.$typeofeventcode.'_'.sprintf("%04d", $year).'_'.sprintf("%02d", $month).'_'.sprintf("%02d", $day).'_'.sprintf("%02d", $h).'_00_'.($ids1 ? $ids1 : 'none').'"'.($title1 ? ' title="'.$title1.'"' : '').'>';
 		print $string1;
-		print '</td><td '.($color2 ? 'style="background: #'.$color2.';"' : '').'class="'.($style2 ? $style2.' ' : '').'onclickopenref center'.($title1 ? ' cursorpointer' : '').'" ref="ref_'.$username->id.'_'.sprintf("%04d", $year).'_'.sprintf("%02d", $month).'_'.sprintf("%02d", $day).'_'.sprintf("%02d", $h).'_30_'.($ids2 ? $ids2 : 'none').'"'.($title2 ? ' title="'.$title2.'"' : '').'>';
+		print '</td><td '.($color2 ? 'style="background: #'.$color2.';"' : '').'class="'.($style2 ? $style2.' ' : '').'onclickopenref center'.($title1 ? ' cursorpointer' : '').'" ref="ref_'.$typeofeventcode.'_'.sprintf("%04d", $year).'_'.sprintf("%02d", $month).'_'.sprintf("%02d", $day).'_'.sprintf("%02d", $h).'_30_'.($ids2 ? $ids2 : 'none').'"'.($title2 ? ' title="'.$title2.'"' : '').'>';
 		print $string2;
 		print '</td></tr>';
 		print '</table>';

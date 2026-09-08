@@ -38,6 +38,11 @@ class LignePrelevement
 	public $id;
 
 	/**
+	 * @var string String with name of icon
+	 */
+	public $picto = 'generic';
+
+	/**
 	 * @var float Amount
 	 */
 	public $amount;
@@ -49,8 +54,14 @@ class LignePrelevement
 
 	/**
 	 * @var int Status of the line
+	 * @deprcated use $status
 	 */
 	public $statut;
+
+	/**
+	 * @var int Status of the line
+	 */
+	public $status;
 
 	/**
 	 * @var string Ref of bon
@@ -86,7 +97,7 @@ class LignePrelevement
 	 */
 	public function __construct($db)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$this->db = $db;
 
@@ -111,12 +122,12 @@ class LignePrelevement
 		$error = 0;
 
 		$sql = "SELECT pl.rowid, pl.amount, p.ref, p.rowid as bon_rowid";
-		$sql .= ", pl.statut, pl.fk_soc";
+		$sql .= ", pl.statut as status, pl.fk_soc";
 		$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
 		$sql .= ", ".MAIN_DB_PREFIX."prelevement_bons as p";
 		$sql .= " WHERE pl.rowid=".((int) $rowid);
 		$sql .= " AND p.rowid = pl.fk_prelevement_bons";
-		$sql .= " AND p.entity = ".$conf->entity;
+		$sql .= " AND p.entity = ".((int) $conf->entity);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -126,7 +137,8 @@ class LignePrelevement
 				$this->id              = $obj->rowid;
 				$this->amount          = $obj->amount;
 				$this->socid           = $obj->fk_soc;
-				$this->statut          = $obj->statut;
+				$this->statut          = $obj->status;
+				$this->status          = $obj->status;
 				$this->bon_ref         = $obj->ref;
 				$this->bon_rowid       = $obj->bon_rowid;
 			} else {
@@ -152,7 +164,7 @@ class LignePrelevement
 	 */
 	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->statut, $mode);
+		return $this->LibStatut(isset($this->statut) ? $this->statut : $this->status, $mode);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -197,6 +209,50 @@ class LignePrelevement
 		}
 		// return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
 		return null;
+	}
+
+	/**
+	 *	Return clickable link of object (with eventually picto)
+	 *
+	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		?array<string,mixed>	$arraydata				Array of data
+	 *  @return		string											HTML Code for Kanban thumb.
+	 */
+	public function getKanbanView($option = '', $arraydata = null)
+	{
+		global $langs;
+
+		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
+
+		$return = '<div class="box-flex-item box-flex-grow-zero">';
+		$return .= '<div class="info-box info-box-sm">';
+		$return .= '<span class="info-box-icon bg-infobox-action">';
+		$return .= img_picto('', $this->picto);
+		$return .= '</span>';
+		$return .= '<div class="info-box-content">';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">' . $this->id . '</span>';
+		if ($selected >= 0) {
+			$return .= '<input id="cb' . $this->id . '" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="' . $this->id . '"' . ($selected ? ' checked="checked"' : '') . '>';
+		}
+		/*
+		if (isset($this->date_trans)) {
+			$return .= '<br><span class="opacitymedium">' . $langs->trans("TransData") . '</span> : <span class="info-box-label">' . dol_print_date($this->db->jdate($this->date_tans), 'day') . '</span>';
+		}
+		if (isset($this->date_credit)) {
+			$return .= '<br><span class="opacitymedium">' . $langs->trans("CreditDate") . '</span> : <span class="info-box-label">' . dol_print_date($this->db->jdate($this->date_credit), 'day') . '</span>';
+		}
+		if (isset($this->date_echeance)) {
+			$return .= '<br><span class="opacitymedium">' . $langs->trans("Date") . '</span> : <span class="info-box-label">' . dol_print_date($this->db->jdate($this->date_echeance), 'day') . '</span>';
+		}
+		*/
+		if (isset($this->amount)) {
+			$return .= '<br><span class="opacitymedium">' . $langs->trans("Amount") . '</span> : <span class="amount">' . price($this->amount) . '</span>';
+		}
+		$return .= '<br><div class="info-box-status">' . $this->getLibStatut(3) . '</div>';
+		$return .= '</div>';
+		$return .= '</div>';
+		$return .= '</div>';
+		return $return;
 	}
 
 	/**

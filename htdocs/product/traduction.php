@@ -91,7 +91,7 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 if (empty($reshook)) {
-	// retour a l'affichage des traduction si annulation
+	// return to translation display if cancelled
 	if ($cancel == $langs->trans("Cancel")) {
 		$action = '';
 	}
@@ -113,7 +113,7 @@ if (empty($reshook)) {
 			$object->description = dol_htmlcleanlastbr(GETPOST("desc", 'restricthtml'));
 			$object->other = dol_htmlcleanlastbr(GETPOST("other", 'restricthtml'));
 
-			$object->update($object->id, $user);
+			$object->update($object->id, $user, 1); // trigger will be called by setMultiLangs
 		} else {
 			$object->multilangs[GETPOST("forcelangprod")]["label"] = GETPOST("libelle");
 			$object->multilangs[GETPOST("forcelangprod")]["description"] = dol_htmlcleanlastbr(GETPOST("desc", 'restricthtml'));

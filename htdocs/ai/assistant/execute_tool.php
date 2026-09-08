@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2026	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2026	Nick Fragoulis
+ * Copyright (C) 2026	Anthony Damhet			<a.damhet@progiseize.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +35,7 @@ if (!defined('NOREQUIREHTML')) {
 if (!defined('NOREQUIREAJAX')) {
 	define('NOREQUIREAJAX', 1);
 }
-if (!defined('NOCSRFCHECK')) {
+if (!defined('NOCSRFCHECK')) {		// TODO Enable the CSRF check
 	define('NOCSRFCHECK', 1);
 }
 
@@ -42,11 +43,16 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/ai/class/mcp.class.php';
 
 // Security check
-if (!isModEnabled('ai') || !getDolGlobalString('AI_MCP_ENABLED')) {
+if (!isModEnabled('ai') || !getDolGlobalString('AI_ASSISTANT_ENABLED')) {
 	accessforbidden('Module or feature not allowed');
 }
 
-global $db, $user;
+global $db, $user, $conf;
+
+// Per-user gate: same right as the assistant page and parse_intent.php
+if (!$user->hasRight('ai', 'assistant', 'use')) {
+	accessforbidden();
+}
 
 top_httphead('application/json');
 
@@ -59,8 +65,9 @@ try {
 		throw new Exception("Invalid Request: No tool specified.");
 	}
 
-	// Initialize Handler
-	$mcp = new McpHandler($db, $user);
+	// Initialize Handler with the private assistant context so that the correct
+	// allow-list (AI_ASSISTANT_ALLOWED_TOOLS) is enforced on both schema and execution.
+	$mcp = new McpHandler($db, $user, $conf, McpHandler::CTX_ASSISTANT);
 
 	$result = $mcp->executeTool($input['tool'], $input['arguments'] ?? []);
 

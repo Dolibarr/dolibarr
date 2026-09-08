@@ -31,6 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/api_products.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/api_contacts.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/api_thirdparties.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/api_projects.class.php';
+require_once DOL_DOCUMENT_ROOT.'/ticket/class/api_tickets.class.php';
 
 /**
  * API class for categories
@@ -116,7 +117,7 @@ class Categories extends DolibarrApi
 	 * @param int		$limit		Limit for list
 	 * @param int		$page		Page number
 	 * @param string	$type		Type of category ('member', 'customer', 'supplier', 'product', 'contact', 'actioncomm')
-	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:>:'20160101')"
 	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return array                Array of category objects
 	 * @phan-return Categorie[]
@@ -745,6 +746,7 @@ class Categories extends DolibarrApi
 		$object = parent::_cleanObjectDatas($object);
 
 		// Remove fields not relevant to categories
+		unset($object->MAP_ID);
 		unset($object->MAP_CAT_FK);
 		unset($object->MAP_CAT_TABLE);
 		unset($object->MAP_OBJ_CLASS);
@@ -758,6 +760,15 @@ class Categories extends DolibarrApi
 		unset($object->total_localtax2);
 		unset($object->total_ttc);
 		unset($object->total_tva);
+
+		unset($object->multicurrency_tx);
+		unset($object->multicurrency_code);
+		unset($object->multicurrency_total_ht);
+		unset($object->multicurrency_total_localtax1);
+		unset($object->multicurrency_total_localtax2);
+		unset($object->multicurrency_total_ttc);
+		unset($object->multicurrency_total_tva);
+
 		unset($object->lines);
 		unset($object->civility_id);
 		unset($object->name);
@@ -765,6 +776,9 @@ class Categories extends DolibarrApi
 		unset($object->firstname);
 		unset($object->shipping_method_id);
 		unset($object->fk_delivery_address);
+		unset($object->demand_reason_id);
+		unset($object->transport_mode_id);
+		unset($object->shipping_method);
 		unset($object->cond_reglement);
 		unset($object->cond_reglement_id);
 		unset($object->mode_reglement_id);
@@ -785,6 +799,14 @@ class Categories extends DolibarrApi
 		unset($object->fk_project);
 		unset($object->note);
 		unset($object->statut);
+		unset($object->actiontypecode);
+		unset($object->date_cloture);
+		unset($object->user_closing_id);
+		unset($object->totalpaid);
+		unset($object->totalpaid_multicurrency);
+		unset($object->warehouse_id);
+		unset($object->state_id);
+		unset($object->region_id);
 
 		return $object;
 	}
@@ -863,6 +885,8 @@ class Categories extends DolibarrApi
 			$objects_api = new Contacts();
 		} elseif ($type == 'project') {
 			$objects_api = new Projects();
+		} elseif ($type == 'ticket') {
+			$objects_api = new Tickets();
 		}
 
 		if (is_object($objects_api)) {

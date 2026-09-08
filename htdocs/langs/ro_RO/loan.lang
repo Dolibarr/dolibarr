@@ -23,7 +23,7 @@ AddLoan=Creați împrumut
 FinancialCommitment=Angajament financiar
 InterestAmount=Dobândă
 CapitalRemain=Capital rămas de achitat
-TermPaidAllreadyPaid = Această rată este plătită deja
+TermPaidAllreadyPaid = Acest rată este deja plătită
 CantUseScheduleWithLoanStartedToPaid = Nu se poate genera un grafic de rambursare pentru un împrumut cu o plată începută
 CantModifyInterestIfScheduleIsUsed = Nu poţi modifica dobânda dacă foloseşti scadenţar
 # Admin

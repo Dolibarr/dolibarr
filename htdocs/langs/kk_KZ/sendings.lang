@@ -128,6 +128,7 @@ ShipmentDistribution=Жүкті бөлу
 ErrorTooManyCombinationBatchcode=%s жолына жөнелтілген жоқ, өйткені қойма, өнім, пакеттік кодтың тым көп тіркесімі табылды (%s).
 ErrorNoCombinationBatchcode=%s жолын қойма-өнім-топ/сериялық тіркесімі ретінде сақтау мүмкін болмады (%s, %s, %s) қоймада табылмады.
 ErrorTooMuchShipped=Жеткізу саны %s жолында тапсырыс берілген саннан көп болмауы керек.
+NoShipmentLineChangeDetected=No shipment line change was detected.
 ##### Types of contacts #####
 TypeContact_shipping_internal_SALESREPFOLL=Representative following-up shipping
 TypeContact_shipping_external_BILLING=Customer invoice contact

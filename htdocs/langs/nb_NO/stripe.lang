@@ -109,3 +109,4 @@ PAYBOX_PBX_SITE=Verdi for PBX SITE
 PAYBOX_PBX_RANG=Verdi for PBX Rang
 PAYBOX_PBX_IDENTIFIANT=Verdi for PBX ID
 PAYBOX_HMAC_KEY=HMAC-nøkkel
+FeatureNotUsedAccordingtoSetup=Feature not used according to your %s setup
