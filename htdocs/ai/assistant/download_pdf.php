@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2026	Nick Fragoulis
- * Copyright (C) 2026		MDW	<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026	MDW				<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,10 +41,66 @@ if (!isModEnabled('ai') || !getDolGlobalString('AI_ASSISTANT_ENABLED')) {
 }
 
 global $user, $langs;
-$langs->loadLangs(array('products', 'stocks', 'suppliers', 'companies', 'margins', 'reports@reports'));
+$langs->loadLangs(array('products', 'stocks', 'suppliers', 'companies', 'margins', 'bills', 'main', 'reports@reports'));
 
-// Input validation and sanitization
-$json = GETPOST('data', 'restricthtml');
+/**
+ * Translated header for a raw API field name (mirrors FIELD_LABELS in ai_assistant.js).
+ *
+ * @param string $k Raw field name
+ * @return string Translated header, or the prettified raw name
+ */
+function aiPdfFieldLabel($k)
+{
+	global $langs;
+
+	$map = array(
+		'ref' => 'Ref', 'label' => 'Label', 'name' => 'ThirdParty', 'socid' => 'Customer', 'fk_soc' => 'Customer',
+		'paye' => 'Paid', 'status' => 'Status', 'type' => 'Type', 'email' => 'Email', 'town' => 'Town',
+		'date' => 'DateInvoice', 'datef' => 'DateInvoice', 'date_lim_reglement' => 'DateMaxPayment',
+		'total_ht' => 'TotalHT', 'total_ttc' => 'TotalTTC', 'total_tva' => 'AmountVAT',
+		'remaintopay' => 'RemainderToPay', 'price' => 'Price', 'price_ttc' => 'PriceTTC', 'tva_tx' => 'VATRate',
+		'code_client' => 'CustomerCode', 'code_fournisseur' => 'SupplierCode', 'fournisseur' => 'Supplier'
+	);
+	if (isset($map[$k])) {
+		return $langs->trans($map[$k]);
+	}
+
+	return dol_ucfirst(str_replace('_', ' ', $k));
+}
+
+/**
+ * Localized display value for a raw API field (money, dates, flags); strips
+ * any HTML a report tool embedded.
+ *
+ * @param string $k Raw field name
+ * @param mixed $v Raw value
+ * @return string Display value
+ */
+function aiPdfFormatValue($k, $v)
+{
+	global $langs;
+
+	if ($v === null || $v === '') {
+		return '-';
+	}
+	if (is_array($v)) {
+		return (string) count($v);
+	}
+	$moneyfields = array('total_ht', 'total_ttc', 'total_tva', 'total_localtax1', 'total_localtax2', 'remaintopay', 'resteapayer', 'price', 'price_ttc', 'price_min', 'subprice', 'totalpaid');
+	if (in_array($k, $moneyfields, true) && is_numeric($v)) {
+		return price($v, 0, $langs, 1, -1, -1, 'auto');
+	}
+	if (($k == 'date' || $k == 'datef' || $k == 'tms' || preg_match('/(^|_)date($|_)|_date$|^date_/', $k)) && is_numeric($v) && (int) $v > 100000000 && (int) $v < 9999999999) {
+		return dol_print_date((int) $v, 'day');
+	}
+	if ($k == 'paye') {
+		return $langs->trans(((string) $v === '1') ? 'Yes' : 'No');
+	}
+
+	return dol_string_nohtmltag((string) $v);
+}
+
+$json = GETPOST('data', 'none');
 if (empty($json)) {
 	$json = file_get_contents('php://input');
 }
@@ -154,24 +210,22 @@ try {
 					}
 				);
 
+				// Defensive cap: a full API object carries ~130 columns and TCPDF
+				// renders that as illegible overlap. The bridge already sends
+				// compact rows (default_properties); this protects the report
+				// when a caller bypasses it.
+				$keys = array_slice(array_values($keys), 0, 12);
+
 				$html .= '<table cellpadding="4"><thead><tr>';
 				foreach ($keys as $k) {
-					$html .= '<th>' . dol_escape_htmltag(ucfirst($k)) . '</th>';
+					$html .= '<th>' . dol_escape_htmltag(aiPdfFieldLabel($k)) . '</th>';
 				}
 				$html .= '</tr></thead><tbody>';
 				foreach ($rows as $row) {
 					$html .= '<tr>';
 					foreach ($keys as $k) {
-						$val = isset($row[$k]) ? $row[$k] : '-';
-						if (is_array($val)) {
-							$val = count($val);
-						}
-
-						if (is_string($val) && strpos($val, '<a href') !== false) {
-							$html .= '<td>' . $val . '</td>';
-						} else {
-							$html .= '<td>' . dol_escape_htmltag($val) . '</td>';
-						}
+						$val = aiPdfFormatValue($k, isset($row[$k]) ? $row[$k] : null);
+						$html .= '<td>' . dol_escape_htmltag($val) . '</td>';
 					}
 					$html .= '</tr>';
 				}
@@ -191,23 +245,22 @@ try {
 			}
 		);
 
+		// Defensive cap: a full API object carries ~130 columns and TCPDF
+		// renders that as illegible overlap. The bridge already sends
+		// compact rows (default_properties); this protects the report
+		// when a caller bypasses it.
+		$keys = array_slice(array_values($keys), 0, 12);
+
 		$html .= '<table cellpadding="4"><thead><tr nobr="true">';
 		foreach ($keys as $key) {
-			$html .= '<th>' . dol_escape_htmltag(strtoupper(str_replace('_', ' ', $key))) . '</th>';
+			$html .= '<th>' . dol_escape_htmltag(aiPdfFieldLabel($key)) . '</th>';
 		}
 		$html .= '</tr></thead><tbody>';
 		foreach ($data as $row) {
 			$html .= '<tr nobr="true">';
 			foreach ($keys as $key) {
-				$val = isset($row[$key]) ? $row[$key] : '';
-				if (is_array($val)) {
-					$val = count($val) . ' items';
-				}
-				if (is_string($val) && strpos($val, '<a href') !== false) {
-					$html .= '<td>' . $val . '</td>';
-				} else {
-					$html .= '<td>' . dol_escape_htmltag($val) . '</td>';
-				}
+				$val = aiPdfFormatValue($key, isset($row[$key]) ? $row[$key] : null);
+				$html .= '<td>' . dol_escape_htmltag($val) . '</td>';
 			}
 			$html .= '</tr>';
 		}
