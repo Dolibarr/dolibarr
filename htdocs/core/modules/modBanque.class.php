@@ -1,9 +1,11 @@
 <?php
-/* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
- * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2008-2011 Regis Houssin        <regis.houssin@inodbox.com>
+/* Copyright (C) 2003-2005  Rodolphe Quiedeville        <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2008  Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2004       Sebastien Di Cintio         <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004       Benoit Mortier              <benoit.mortier@opensides.be>
+ * Copyright (C) 2008-2011  Regis Houssin               <regis.houssin@inodbox.com>
+ * Copyright (C) 2026       Solution Libre SAS          <contact@solution-libre.fr>
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,7 +62,7 @@ class modBanque extends DolibarrModules
 		$this->picto = 'account';
 
 		// Data directories to create when module is enabled
-		$this->dirs = array("/banque/temp");
+		$this->dirs = array("/bank/temp");
 
 		// Config pages
 		//-------------
@@ -84,49 +86,49 @@ class modBanque extends DolibarrModules
 		$r = 0;
 
 		$r++;
-		$this->rights[$r][0] = 111; // id de la permission
+		$this->rights[$r][0] = 111; // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Read bank account and transactions';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'lire';
 
 		$r++;
-		$this->rights[$r][0] = 112; // id de la permission
+		$this->rights[$r][0] = 112; // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Creer/modifier montant/supprimer ecriture bancaire';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'modifier';
 
 		$r++;
-		$this->rights[$r][0] = 113; // id de la permission
+		$this->rights[$r][0] = 113; // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Configurer les comptes bancaires (creer, gerer categories)';
 		$this->rights[$r][2] = 'a';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'configurer';
 
 		$r++;
-		$this->rights[$r][0] = 114; // id de la permission
+		$this->rights[$r][0] = 114; // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Rapprocher les ecritures bancaires';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'consolidate';
 
 		$r++;
-		$this->rights[$r][0] = 115; // id de la permission
+		$this->rights[$r][0] = 115; // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Exporter transactions et releves';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'export';
 
 		$r++;
-		$this->rights[$r][0] = 116; // id de la permission
+		$this->rights[$r][0] = 116; // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Virements entre comptes';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'transfer';
 
 		$r++;
-		$this->rights[$r][0] = 117; // id de la permission
+		$this->rights[$r][0] = 117; // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Gerer les envois de cheques';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
@@ -230,10 +232,16 @@ class modBanque extends DolibarrModules
 			'v.note'=>"payment", 'v.datec'=>"payment",
 			"p.ref"=>"project", "p.title"=>"project"
 		);
+		// Add extra fields
+		$keyforselect = 'payment_various';
+		$keyforelement = 'payment';
+		$keyforaliasextra = 'extra';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		$this->export_sql_start[$r] = 'SELECT ';
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'payment_various as v';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX."projet as p ON v.fk_projet = p.rowid";
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX."c_paiement as cp ON v.fk_typepayment = cp.id";
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'payment_various_extrafields as extra ON v.rowid = extra.fk_object';
 		$this->export_sql_end[$r] .= ' WHERE v.entity IN ('.getEntity('payment_various').')';
 		$this->export_sql_order[$r] = ' ORDER BY v.datep';
 	}

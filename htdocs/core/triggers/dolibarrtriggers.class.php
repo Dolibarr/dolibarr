@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2014		Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2023-2024	William Mead			<william.mead@manchenumerique.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,6 +72,12 @@ abstract class DolibarrTriggers
 	 * @var string[]
 	 */
 	public $errors;
+
+	/**
+	 * Warnings reported by the trigger
+	 * @var string[]
+	 */
+	public $warnings;
 
 	/**
 	 * @var string module is in development
@@ -163,16 +170,24 @@ abstract class DolibarrTriggers
 	/**
 	 * setErrorsFromObject
 	 *
-	 * @param	CommonObject	$object		Object
+	 * @param	CommonObject|BlockedLog	$object		Object
 	 * @return	void
 	 */
-	public function setErrorsFromObject(CommonObject $object)
+	public function setErrorsFromObject($object)
 	{
 		if (!empty($object->error)) {
-			$this->errors = array_merge($this->errors, array($object->error));
+			if (is_array($this->errors)) {
+				$this->errors = array_merge($this->errors, array($object->error));
+			} else {
+				$this->errors = array($object->error);
+			}
 		}
 		if (!empty($object->errors)) {
-			$this->errors = array_merge($this->errors, $object->errors);
+			if (is_array($this->errors)) {
+				$this->errors = array_merge($this->errors, $object->errors);
+			} else {
+				$this->errors = $object->errors;
+			}
 		}
 	}
 
@@ -181,10 +196,10 @@ abstract class DolibarrTriggers
 	 *  All functions "runTrigger" are triggered if file is inside directory htdocs/core/triggers or htdocs/module/code/triggers (and declared)
 	 *
 	 *  @param string       $action     Event action code
-	 *  @param Object       $object     Object
+	 *  @param CommonObject $object     CommonObject
 	 *  @param User         $user       Object user
 	 *  @param Translate    $langs      Object langs
-	 *  @param conf         $conf       Object conf
+	 *  @param Conf         $conf       Object conf
 	 *  @return int                     if KO: <0 || if no trigger ran: 0 || if OK: >0
 	 */
 	abstract public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf);

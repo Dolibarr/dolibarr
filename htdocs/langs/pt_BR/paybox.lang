@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - paybox
 PayBoxSetup=Configuração do módulo PayBox
-PayBoxDesc=Este módulo oferece uma página de pagamento atravé do fornecedor <a href
 PayBoxDoPayment=Pagar com Paybox
 YouWillBeRedirectedOnPayBox=Va a ser redirecionado a a página segura de  Paybox para indicar seu cartão de crédito
 SetupPayBoxToHavePaymentCreatedAutomatically=Configure seu Paybox com url <b> %s </ b> para que o pagamento seja criado automaticamente quando validado pelo Paybox.

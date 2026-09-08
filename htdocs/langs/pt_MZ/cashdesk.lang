@@ -25,7 +25,6 @@ Paymentnumpad=Tipo de Pad para inserir pagamento
 Numberspad=Números de Pad
 BillsCoinsPad=Almofada de moedas e notas
 DolistorePosCategory=Módulos TakePOS e outras soluções de PDV para Dolibarr
-TakeposNeedsAtLeastOnSubCategoryIntoParentCategory=TakePOS precisa de pelo menos 1 categoria de produto na categoria <b> %s </b> para funcionar
 CashDeskBankAccountFor=Conta padrão a ser usada para pagamentos em
 NoPaimementModesDefined=Nenhum modo de embalagem definido na configuração do TakePOS
 TicketVatGrouped=Agrupar IVA por taxa em tickets | recibos

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,6 @@
  *		\ingroup    core
  *		\brief      File with parent class for captcha generating classes
  */
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 
 
 /**
@@ -40,6 +39,11 @@ abstract class ModeleCaptcha
 	 * @var string
 	 */
 	public $version;
+
+	/**
+	 * @var int
+	 */
+	public $position = 50;
 
 	/**
 	 * @var string
@@ -92,6 +96,16 @@ abstract class ModeleCaptcha
 	{
 		global $langs;
 		return $langs->trans("NoDescription");
+	}
+
+	/**
+	 *		Return description of module
+	 *
+	 *      @return     string      Description of module
+	 */
+	public function getFieldInputTitle()
+	{
+		return "SecurityCode";
 	}
 
 	/**

@@ -10,6 +10,16 @@ if [ "${PHP_INI_DIR}" == "" ]; then
 	exit
 fi
 
+if [ "${HOST_USER_ID}" == "" ]; then
+	echo "Define HOST_USER_ID to your user ID before starting (example: www-data)"
+	exit 1
+fi
+if [ "${HOST_GROUP_ID}" == "" ]; then
+	echo "Define HOST_GROUP_ID to your group ID before starting (example: www-data)"
+	exit 1
+fi
+
+
 usermod -u "${HOST_USER_ID}" www-data
 groupmod -g "${HOST_GROUP_ID}" www-data
 
@@ -29,6 +39,7 @@ date.timezone = ${PHP_INI_DATE_TIMEZONE:-UTC}
 memory_limit = ${PHP_INI_MEMORY_LIMIT:-256M}
 EOF
 
-cp /var/www/html/install/install.forced.docker.php /var/www/html/install/install.forced.php
+echo cp /var/www/html/install/install.forced.sample.php /var/www/html/install/install.forced.php
+cp /var/www/html/install/install.forced.sample.php /var/www/html/install/install.forced.php
 
 exec apache2-foreground

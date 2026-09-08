@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2021 SuperAdmin
  * Copyright (C) 2024		MDW	<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,11 +30,10 @@
  */
 function knowledgemanagementAdminPrepareHead()
 {
-	global $langs, $conf, $db;
+	global $langs, $conf, $extrafields;
 
 	$langs->load("knowledgemanagement");
 
-	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('knowledgemanagement_knowledgerecord');
 
 	$h = 0;
@@ -45,7 +45,7 @@ function knowledgemanagementAdminPrepareHead()
 	$h++;
 
 
-	$head[$h][0] = DOL_URL_ROOT.'/admin/knowledgerecord_extrafields.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'knowledgemanagement_knowledgerecord'));
 	$head[$h][1] = $langs->trans("ExtraFields");
 	$nbExtrafields = $extrafields->attributes['knowledgemanagement_knowledgerecord']['count'];
 	if ($nbExtrafields > 0) {

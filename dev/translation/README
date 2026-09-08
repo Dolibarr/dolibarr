@@ -14,7 +14,7 @@ https://www.transifex.com/dolibarr-association/dolibarr/dashboard/
 Installation of Transifex Client:
 ---------------------------------
 for Linux OS
-to install or to update transifex client: 
+to install or to update transifex client:
 sudo pip install --upgrade transifex-client
 
 

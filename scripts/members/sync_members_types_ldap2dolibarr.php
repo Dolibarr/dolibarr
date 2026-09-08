@@ -43,17 +43,19 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 }
 
 require_once $path."../../htdocs/master.inc.php";
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functionscli.lib.php';
-require_once DOL_DOCUMENT_ROOT."/core/lib/date.lib.php";
-require_once DOL_DOCUMENT_ROOT."/core/class/ldap.class.php";
-require_once DOL_DOCUMENT_ROOT."/adherents/class/adherent_type.class.php";
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
  * @var HookManager $hookmanager
  * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $dolibarr_main_db_readonly
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functionscli.lib.php';
+require_once DOL_DOCUMENT_ROOT."/core/lib/date.lib.php";
+require_once DOL_DOCUMENT_ROOT."/core/class/ldap.class.php";
+require_once DOL_DOCUMENT_ROOT."/adherents/class/adherent_type.class.php";
 
 $langs->loadLangs(array("main", "errors"));
 
@@ -90,6 +92,7 @@ foreach ($argv as $key => $val) {
 	if ($val == 'commitiferror') {
 		$forcecommit = 1;
 	}
+	$reg = array();
 	if (preg_match('/--server=([^\s]+)$/', $val, $reg)) {
 		$conf->global->LDAP_SERVER_HOST = $reg[1];
 	}
@@ -107,7 +110,7 @@ if (!empty($dolibarr_main_db_readonly)) {
 }
 
 print "Mails sending disabled (useless in batch mode)\n";
-$conf->global->MAIN_DISABLE_ALL_MAILS = 1; // On bloque les mails
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1; // We block email sending
 print "\n";
 print "----- Synchronize all records from LDAP database:\n";
 print "host=" . getDolGlobalString('LDAP_SERVER_HOST')."\n";
@@ -140,8 +143,6 @@ if (!getDolGlobalString('LDAP_MEMBER_TYPE_DN')) {
 $ldap = new Ldap();
 $result = $ldap->connectBind();
 if ($result >= 0) {
-	$justthese = array();
-
 	// We disable synchro Dolibarr-LDAP
 	$conf->global->LDAP_MEMBER_TYPE_ACTIVE = 0;
 

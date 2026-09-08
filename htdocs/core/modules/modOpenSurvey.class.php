@@ -129,7 +129,7 @@ class modOpenSurvey extends DolibarrModules
 			'leftmenu' => 'opensurvey',
 			'url' => '/opensurvey/list.php?mainmenu=tools&leftmenu=opensurvey',
 			'langs' => 'opensurvey',
-			'position' => 200,
+			'position' => 30,
 			'enabled' => 'isModEnabled("opensurvey")', // Define condition to show or hide menu entry. Use '$conf->NewsSubmitter->enabled' if entry must be visible if module is enabled.
 			'perms' => '$user->hasRight("opensurvey", "read")',
 			'target' => '',
@@ -145,7 +145,7 @@ class modOpenSurvey extends DolibarrModules
 			'leftmenu' => 'opensurvey_new',
 			'url' => '/opensurvey/wizard/index.php',
 			'langs' => 'opensurvey',
-			'position' => 210,
+			'position' => 32,
 			'enabled' => 'isModEnabled("opensurvey")', // Define condition to show or hide menu entry. Use '$conf->NewsSubmitter->enabled' if entry must be visible if module is enabled.
 			'perms' => '$user->hasRight("opensurvey", "write")',
 			'target' => '',
@@ -161,7 +161,7 @@ class modOpenSurvey extends DolibarrModules
 			'leftmenu' => 'opensurvey_list',
 			'url' => '/opensurvey/list.php',
 			'langs' => 'opensurvey',
-			'position' => 220,
+			'position' => 34,
 			'enabled' => 'isModEnabled("opensurvey")', // Define condition to show or hide menu entry. Use '$conf->NewsSubmitter->enabled' if entry must be visible if module is enabled.
 			'perms' => '$user->hasRight("opensurvey", "read")',
 			'target' => '',

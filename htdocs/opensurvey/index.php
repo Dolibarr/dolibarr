@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
- * Copyright (C) 2019-2024  Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2019-2026  Frédéric France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,9 +25,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
-require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -35,6 +32,8 @@ require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
+require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
 
 // Load translation files required by the page
 $langs->load("opensurvey");
@@ -43,8 +42,6 @@ $langs->load("opensurvey");
 if (!$user->hasRight('opensurvey', 'read')) {
 	accessforbidden();
 }
-
-$hookmanager = new HookManager($db);
 
 // Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('opensurveyindex'));

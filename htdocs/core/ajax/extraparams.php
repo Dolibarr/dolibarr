@@ -18,7 +18,7 @@
  */
 
 /**
- *	\file       /htdocs/core/ajax/extraparams.php
+ *	\file       htdocs/core/ajax/extraparams.php
  *	\brief      File to make Ajax action on setting extra parameters of elements.
  *				Called bu bloc_showhide.tpl.php, itself called when MAIN_DISABLE_CONTACTS_TAB or MAIN_DISABLE_NOTES_TAB are set
  */

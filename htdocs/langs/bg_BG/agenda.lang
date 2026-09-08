@@ -2,6 +2,7 @@
 IdAgenda=Идентификатор на събитие
 Actions=Събития
 Agenda=Календар
+AgendaEvents=Събития в програмата
 TMenuAgenda=Календар
 Agendas=Календари
 LocalAgenda=Календар по подразбиране
@@ -28,11 +29,13 @@ ViewWeek=Седмичен изглед
 ViewPerUser=Изглед по потребител
 ViewPerType=Изглед по тип
 AutoActions= Автоматично попълване
+ManualActions=Created manually by a user
 AgendaAutoActionDesc= Тук може да дефинирате събития, които искате Dolibarr да създаде автоматично в календара. Ако нищо не е отметнато, в регистрите ще бъдат включени само ръчно добавените събития и ще се показват в календара. Автоматично проследяваните събития, извършени върху обекти (валидиране, промяна на състояние) няма да бъдат запазени.
 AgendaSetupOtherDesc= Тази страница предлага опции, позволяващи експортирането на вашите Dolibarr събития във външен календар (Thunderbird, Google Calendar и др.)
 AgendaExtSitesDesc=Тази страница позволява да се декларират външни източници на календари, за да се видят техните събития в календара на Dolibarr.
 ActionsEvents=Събития, за които Dolibarr ще създаде автоматично събитие в календара
 EventRemindersByEmailNotEnabled=Напомнянията за събития по имейл не са активирани в настройката на модул %s.
+EventRemindersBySmsNotEnabled=Event reminders by sms was not enabled into %s module setup.
 ##### Agenda event labels #####
 NewCompanyToDolibarr=Контрагент %s е създаден
 COMPANY_MODIFYInDolibarr=Трета страна %s модифицирана
@@ -44,6 +47,7 @@ PropalClosedRefusedInDolibarr=Предложение %s е отхвърлено
 PropalValidatedInDolibarr=Предложение %s е валидирано
 PropalBackToDraftInDolibarr=Предложение %s върнете се към състояние на чернова
 PropalClassifiedBilledInDolibarr=Предложение %s е фактурирано
+InvoiceCreatedInDolibarr=Фактура %s е създадена
 InvoiceValidatedInDolibarr=Фактура %s е валидирана
 InvoiceValidatedInDolibarrFromPos=Фактура %s е валидирана от ПОС
 InvoiceBackToDraftInDolibarr=Фактура %s е върната в статус на чернова
@@ -134,14 +138,14 @@ AgendaModelModule=Шаблони за събитие
 DateActionStart=Начална дата
 DateActionEnd=Крайна дата
 AgendaUrlOptions1=Може също да добавите следните параметри за филтриране на резултата:
-AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b> (use <b>logina=!%s</b> for events not owned by the user).
+AgendaUrlOptions3=<b>logina=%s</b> за ограничаване на изхода до действия, притежавани от потребител <b>%s</b> (използвайте <b>logina=!%s</b> за събития, които не са собственост на потребителя).
 AgendaUrlOptions4=<b>logint=%s</b>, за да ограничи показването до събития, които са възложени на потребител <b>%s</b> (като собственик и не).
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b>, за да ограничи показването до събития, които са свързани с проект <b>__PROJECT_ID__</b>.
-AgendaUrlOptionsType=<b>actiontype=%s</b> to get either automatic or manual events
-AgendaUrlOptionsCode=<b>actioncode=%s</b> to get only events with a given code
+AgendaUrlOptionsType=<b>actiontype=%s</b> за получаване на автоматични или ръчни събития
+AgendaUrlOptionsCode=<b>actioncode=%s</b> за да получите само събития с даден код
 AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b>, за да включи събитията с почивни дни.
-AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> to limit to events in the last %s days (default is %s).
-AgendaUrlOptionsLimit=<b>limit=50</b> to limit to the latest 50 events (default and max is %s).
+AgendaUrlOptionsLimitDays=<b>noolderthan=%s</b> за ограничаване до събития през последните %s дни (по подразбиране е %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> за ограничаване до последните 50 събития (по подразбиране и максимумът е %s).
 AgendaShowBirthdayEvents=Рождени дни на контакти
 AgendaHideBirthdayEvents=Скриване на рождени дни на контакти
 Busy=Зает
@@ -168,8 +172,10 @@ OnceOnly=Веднъж само
 EveryDay=Всеки ден
 EveryWeek=Всяка седмица
 EveryMonth=Всеки месец
+EveryYear=Every year
 DayOfMonth=Ден от месеца
 DayOfWeek=Ден от седмицата
+DayOfYear=Day of year
 DateStartPlusOne=Начална дата + 1 час
 SetAllEventsToTodo=Задаване на статус 'За извършване' за всички събития
 SetAllEventsToInProgress=Задаване на статус 'В процес' за всички събития
@@ -203,5 +209,15 @@ BookingSuccessfullyBooked=Вашата резервация е запазена
 BookingReservationHourAfter=Потвърждаваме резервацията за нашата среща на Дата %s
 BookcalBookingTitle=Онлайн среща
 Transparency = Прозрачност
-ReadMore = Read more
-ReadLess = Read less
+ReadMore = Прочетете още
+ReadLess = Прочетете по-малко
+RecurringEvent=Повтарящо се събитие
+EventPartOfARecurringSerie=Събитието е част от повтаряща се поредица с идентификатор %s
+BookCalSystem=Онлайн резервация
+BookCalInitHelp=To start, go into menu to create a new Calendar with availabilities...
+PublicLinkForBooking=Public link for booking
+STOCKTRANSFER_CLOSEInDolibarr=Stock transfer %s completed.
+STOCKTRANSFER_VALIDATEInDolibarr=Stock transfer %s validated.
+
+STOCKTRANSFER_UNVALIDATEInDolibarr=Stock transfer %s set back to draft.
+STOCKTRANSFER_MODIFYInDolibarr=Stock transfer %s modified.

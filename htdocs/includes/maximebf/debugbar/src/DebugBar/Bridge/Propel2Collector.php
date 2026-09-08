@@ -241,12 +241,12 @@ class Propel2Collector extends DataCollector implements Renderable, AssetProvide
             return false === $statement['is_success'];
         }));
         $accumulatedDuration = array_reduce($statements, function ($accumulatedDuration, $statement) {
-        
+
             $time = isset($statement['duration']) ? $statement['duration'] : 0;
             return $accumulatedDuration += $time;
         });
         $memoryUsage = array_reduce($statements, function ($memoryUsage, $statement) {
-        
+
             $time = isset($statement['memory']) ? $statement['memory'] : 0;
             return $memoryUsage += $time;
         });

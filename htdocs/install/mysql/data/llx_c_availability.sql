@@ -18,7 +18,7 @@
 --
 --
 
--- WARNING 
+-- WARNING
 -- Do not place a comment at the end of the line, this file is parsed during
 -- installation and all '--' symbols are removed.
 --

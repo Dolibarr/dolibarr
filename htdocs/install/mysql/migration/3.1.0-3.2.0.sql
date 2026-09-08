@@ -1,7 +1,7 @@
 --
 -- Be carefull to requests order.
 -- This file must be loaded by calling /install/index.php page
--- when current version is 3.1.0 or higher. 
+-- when current version is 3.1.0 or higher.
 --
 -- To rename a table:       ALTER TABLE llx_table RENAME TO llx_table_new;
 -- To add a column:         ALTER TABLE llx_table ADD COLUMN newcol varchar(60) NOT NULL DEFAULT '0' AFTER existingcol;
@@ -61,12 +61,12 @@ ALTER TABLE llx_societe ADD COLUMN idprof5 varchar(128);
 ALTER TABLE llx_societe MODIFY code_compta varchar(24);
 ALTER TABLE llx_societe MODIFY code_compta_fournisseur varchar(24);
 
-  
+
 ALTER TABLE llx_chargesociales ADD COLUMN tms                   timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
-ALTER TABLE llx_chargesociales ADD COLUMN date_creation         datetime; 
+ALTER TABLE llx_chargesociales ADD COLUMN date_creation         datetime;
 ALTER TABLE llx_chargesociales ADD COLUMN date_valid            datetime;
 
-  
+
 -- Europe
 INSERT INTO llx_c_paper_format (rowid, code, label, width, height, unit, active) VALUES (1,   'EU4A0',       'Format 4A0',                '1682', '2378', 'mm', 1);
 INSERT INTO llx_c_paper_format (rowid, code, label, width, height, unit, active) VALUES (2,   'EU2A0',       'Format 2A0',                '1189', '1682', 'mm', 1);
@@ -127,7 +127,7 @@ CREATE TABLE llx_localtax
 	fk_bank			integer			DEFAULT NULL,
 	fk_user_creat	integer			DEFAULT NULL,
 	fk_user_modif	integer			DEFAULT NULL
-	
+
 ) ENGINE=InnoDB;
 
 ALTER TABLE llx_propal MODIFY ref_int varchar(255);
@@ -308,7 +308,7 @@ INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'KHR'
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'CAD', '[36]', 1,				'Canada Dollar');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'KYD', '[36]', 1,				'Cayman Islands Dollar');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'CLP', '[36]', 1,				'Chile Peso');
-INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'CNY', '[165]', 1,				'China Yuan Renminbi'); 
+INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'CNY', '[165]', 1,				'China Yuan Renminbi');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'COP', '[36]', 1,				'Colombia Peso');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'CRC', '[8353]', 1,				'Costa Rica Colon');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'HRK', '[107,110]', 1,			'Croatia Kuna');
@@ -320,7 +320,7 @@ INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'XCD'
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'EGP', '[163]', 1,				'Egypt Pound');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'SVC', '[36]', 1,				'El Salvador Colon');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'EEK', '[107,114]', 1,			'Estonia Kroon');
-INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'EUR', '[8364]', 1,				'Euro Member Countries'); 
+INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'EUR', '[8364]', 1,				'Euro Member Countries');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'FKP', '[163]', 1,				'Falkland Islands (Malvinas) Pound');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'FJD', '[36]', 1,				'Fiji Dollar');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'GHC', '[162]', 1,				'Ghana Cedis');
@@ -332,7 +332,7 @@ INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'HNL'
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'HKD', '[36]', 1,				'Hong Kong Dollar');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'HUF', '[70,116]', 1,			'Hungary Forint');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'ISK', '[107,114]', 1,			'Iceland Krona');
-INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'INR', NULL, 1,					'India Rupee'); 
+INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'INR', NULL, 1,					'India Rupee');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'IDR', '[82,112]', 1,			'Indonesia Rupiah');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'IRR', '[65020]', 1,				'Iran Rial');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'IMP', '[163]', 1,				'Isle of Man Pound');
@@ -412,7 +412,7 @@ INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'ATS'
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'BEF', NULL, 0,	'Francs belges');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'DEM', NULL, 0,	'Deutsch mark');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'ESP', NULL, 0,	'Pesete');
-INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'FIM', NULL, 0,	'Mark finlandais'); 
+INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'FIM', NULL, 0,	'Mark finlandais');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'FRF', NULL, 0,	'Francs francais');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'GRD', NULL, 0,	'Drachme (grece)');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'IEP', NULL, 0,	'Livres irlandaises');
@@ -464,4 +464,3 @@ ALTER TABLE llx_c_barcode_type ADD UNIQUE INDEX uk_c_barcode_type(code, entity);
 -- To make migration script with version >= 3.3 working correctly
 ALTER TABLE llx_c_tva ADD COLUMN localtax1_type varchar(1) default '0' after localtax1;
 ALTER TABLE llx_c_tva ADD COLUMN localtax2_type varchar(1) default '0' after localtax2;
-

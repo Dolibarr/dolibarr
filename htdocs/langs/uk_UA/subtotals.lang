@@ -1,0 +1,54 @@
+# Dolibarr language file - Source file is en_US - subtotal
+
+#
+# Global
+#
+Subtotal=Проміжні підсумки
+SubTotalModuleDesc=Рядки проміжних підсумків та заголовків для певних документів
+#
+# Admin
+#
+SubtotalSetup=Налаштування модуля проміжних підсумків
+MaxSubtotalLevel=Максимальний рівень
+SubtotalLineBackColor=Колір фону рядків рівня %s
+NotSupportedByAllPDF=Працюватиме з новими PDF, але не зі старими %s
+
+#
+# Card
+#
+AddTitleLine=Додати рядок заголовка
+AddSubtotalLine=Додати рядок проміжного підсумку
+TitleNeedDesc=Ви повинні ввести коректний опис, щоб створити заголовок.
+TitleAddedLevelTooHigh=Рівень доданого заголовка завеликий (натомість додано з рівнем %s).
+TitleEditedLevelTooHigh=Рівень відредагованого заголовка завеликий (натомість відредаговано з рівнем %s).
+DeleteSubtotalLine=Видалити рядок проміжного підсумку
+ConfirmDeleteSubtotalLine=Ви впевнені, що хочете видалити цей рядок проміжного підсумку?
+DeleteTitleLine=Видалити рядок заголовка
+ConfirmDeleteTitleLine=Ви впевнені, що хочете видалити цей рядок заголовка?
+DeleteCorrespondingSubtotalLine=Видалити відповідний рядок проміжного підсумку?
+SubtotalLevel=Рівень %s
+SubtotalLineDesc=Опис рядка
+SubtotalLineLevel=Рівень рядка
+ShowUPOnPDF=Показувати ціну за одиницю в PDF
+ShowTotalExludingVATOnPDF=Показувати загальну суму без ПДВ у PDF
+ForcePageBreak=Примусовий розрив сторінки перед заголовком
+NoTitleError=У вас немає рядка заголовка або всі вони вже мають відповідний рядок проміжного підсумку
+CorrespondingTitleLine=Відповідний рядок заголовка
+SelectVATRate=Виберіть ставку ПДВ
+EnterRemisePercent=Введіть відсоток знижки
+ApplyVATForBlock=Застосувати ПДВ для цього блоку
+ApplyDiscountForBlock=Застосувати знижку для цього блоку
+TitleUnderSameLevelSTLine=Заголовок того самого рівня має бути під рядком проміжного підсумку попереднього заголовка.
+TitleUnderSameLevelOrGreater=Заголовок має бути під заголовком того самого рівня або вищого.
+TitleAfterStLineOfSameLevelTitle=Заголовок має бути після рядка проміжного підсумку попереднього заголовка.
+PreviousTitleLevelTooHigh=Попередній заголовок на два рівні або більше вищий за переміщений рядок.
+STLineUnderCorrespondingTitleDesc=Рядок проміжного підсумку має бути під заголовком того самого рівня, що має такий самий опис.
+STLineUnderCorrespondingTitle=Рядок проміжного підсумку має бути під заголовком того самого рівня та з таким самим описом.
+STLineUnderTitle=Рядок проміжного підсумку має бути під своїм заголовком
+UnsupportedModuleError=Ви не можете додати рядок проміжних підсумків у непідтримуваному модулі
+CorrespondingTitleNotFound=Відповідний заголовок не знайдено
+
+#
+# PDF
+#
+SubtotalOf=Проміжний підсумок %s:

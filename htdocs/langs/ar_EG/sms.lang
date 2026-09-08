@@ -1,2 +1,9 @@
 # Dolibarr language file - Source file is en_US - sms
+SmsTargets=الأهداف
+SmsRecipients=الأهداف
+SmsRecipient=الهدف
+SmsTo=الهدف
+SmsText=رسالة
 SmsStatusValidated=معتمد
+SmsStatusApproved=تمت الموافقة
+SmsStatusNotSent=لم يتم الإرسال

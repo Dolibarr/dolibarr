@@ -21,4 +21,3 @@ ALTER TABLE llx_stocktransfer_stocktransferline ADD INDEX idx_stocktransfer_stoc
 --ALTER TABLE llx_stocktransfer_stocktransferline ADD UNIQUE INDEX uk_stocktransfer_stocktransferline_fieldxy(fieldx, fieldy);
 
 --ALTER TABLE llx_stocktransfer_stocktransferline ADD CONSTRAINT llx_stocktransfer_stocktransferline_fk_field FOREIGN KEY (fk_field) REFERENCES llx_stocktransfer_myotherobject(rowid);
-

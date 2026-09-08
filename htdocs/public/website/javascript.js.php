@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2016-2023  Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -89,7 +89,11 @@ function llxFooter($comment = '', $zone = 'private', $disabledoutputofmessages =
 
 require '../../master.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Translate $langs
+ */
 
 $error = 0;
 $website = GETPOST('website', 'alpha');
@@ -158,8 +162,8 @@ if (!$accessallowed) {
 }
 
 // Security:
-// On interdit les remontees de repertoire ainsi que les pipe dans
-// les noms de fichiers.
+// We forbid directory traversal as well as pipes in
+// file names.
 if (preg_match('/\.\./', $original_file) || preg_match('/[<>|]/', $original_file)) {
 	dol_syslog("Refused to deliver file ".$original_file);
 	$file = basename($original_file); // Do no show plain path of original_file in shown error message

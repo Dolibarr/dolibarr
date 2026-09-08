@@ -106,4 +106,3 @@ interface iFormat
      */
     public function isWritable();
 }
-

@@ -8,13 +8,12 @@ Shipments=Göndərmələr
 ShowSending=Göndərmələri göstərin
 Receivings=Çatdırılma Qəbzləri
 SendingsArea=Göndərmə sahəsi
-ListOfSendings=Göndərmələrin siyahısı
 SendingMethod=Göndərmə üsulu
 LastSendings=Ən son %s göndərişləri
 StatisticsOfSendings=Göndərmə statistikası
 NbOfSendings=Göndərmələrin sayı
 NumberOfShipmentsByMonth=Aylar üzrə göndərişlərin sayı
-SendingCard=Göndərmə kartı
+SendingCard=Göndərmə
 NewSending=Yeni göndəriş
 CreateShipment=Göndərmə yaradın
 QtyShipped=Miqdar göndərildi
@@ -44,6 +43,7 @@ ConfirmCancelSending=Bu göndərişi ləğv etmək istədiyinizə əminsiniz?
 DocumentModelMerou=Merou A5 modeli
 WarningNoQtyLeftToSend=Xəbərdarlıq, göndərilməyi gözləyən heç bir məhsul yoxdur.
 StatsOnShipmentsOnlyValidated=Statistikalar yalnız təsdiqlənmiş göndərişlər üçündür. İstifadə olunan tarix göndərişin təsdiqlənmə tarixidir (planlaşdırılmış çatdırılma tarixi həmişə məlum deyil)
+DateShipping=Göndərmə tarixi
 DateDeliveryPlanned=Planlaşdırılmış çatdırılma tarixi
 RefDeliveryReceipt=Ref çatdırılma qəbzi
 StatusReceipt=Statusun çatdırılması qəbzi
@@ -51,9 +51,12 @@ DateReceived=Qəbul tarixi
 ClassifyReception=Qəbul edilənləri təsnif edin
 SendShippingByEMail=Göndərməni e-poçtla göndərin
 SendShippingRef=Göndərmə %s
+SendDeliveryRef=Submission of delivery %s
 ActionsOnShipping=Göndərmə zamanı hadisələr
 LinkToTrackYourPackage=Paketinizi izləmək üçün keçid
-ShipmentCreationIsDoneFromOrder=Hazırda yeni göndərişin yaradılması Satış Sifarişi qeydindən həyata keçirilir.
+ShipmentCreationIsDoneFromOrder=For the moment, creation of a new Shipment fully interconnected with other modules is done through the Sales Order module.
+CreateSimpleShipment=However, your Dolibarr administrator can enable the creation of a simple Shipment from Shipments module setup page.
+SHIPMENT_STANDALONE=For the moment, allow the creation of a simple Shipment not yet interconnected with other modules.
 ShipmentLine=Göndərmə xətti
 ProductQtyInCustomersOrdersRunning=Açıq satış sifarişlərindən məhsulun miqdarı
 ProductQtyInSuppliersOrdersRunning=Açıq satınalma sifarişlərindən məhsulun miqdarı
@@ -63,6 +66,50 @@ NoProductToShipFoundIntoStock=<b>%s</b> anbarında göndəriləcək məhsul tap�
 WeightVolShort=Çəki/Vol.
 ValidateOrderFirstBeforeShipment=Göndərmə həyata keçirməzdən əvvəl ilk növbədə sifarişi təsdiqləməlisiniz.
 NoLineGoOnTabToAddSome=Sətir yoxdur, əlavə etmək üçün "%s" tabına keçin
+CreateInvoiceForThisCustomerFromSendings=Hesablar yaradın
+IfValidateInvoiceIsNoSendingStayUnbilled=Faktura təsdiqi "Xeyr" olarsa, göndərmə faktura təsdiqlənənə qədər "Faturasız" statusunda qalacaq.
+OptionToSetSendingBilledNotEnabled=Faktura təsdiqləndikdə avtomatik olaraq "Faturalandırıldı"ya göndərilməsini təyin etmək üçün İş axını modulundan seçim aktiv deyil, ona görə də faktura yaradıldıqdan sonra göndərmələrin statusunu əl ilə "Faturalandırılıb" təyin etməli olacaqsınız.
+NoWarehouseInBase=Bazada anbar yoxdur
+ShipmentUpdated=Göndərmə uğurla yeniləndi
+ShipmentIncrementStockOnDelete = Silinmə ehtiyatını artırın
+ConfirmSignShipping=Confirm Sign Shipping
+ConfirmUnsignShipping=Confirm Unsign Shipping
+SignShipping=Sign Shipping
+UnsignShipping=Unsign Shipping
+
+# Deliveries
+Delivery=Delivery
+DeliveryRef=Ref Delivery
+DeliveryCard=Delivery receipt
+DeliveryOrder=Delivery receipt
+DeliveryDate=Delivery date
+CreateDeliveryOrder=Generate delivery receipt
+DeliveryStateSaved=Delivery state saved
+SetDeliveryDate=Set estimated delivery date
+SetShippingDate=Set shipping date
+ValidateDeliveryReceipt=Validate delivery receipt
+ValidateDeliveryReceiptConfirm=Are you sure you want to validate this delivery receipt?
+DeleteDeliveryReceipt=Delete delivery receipt
+DeleteDeliveryReceiptConfirm=Are you sure you want to delete delivery receipt <b>%s</b>?
+DeliveryMethod=Delivery method
+TrackingNumber=Tracking number
+DeliveryNotValidated=Delivery not validated
+StatusDeliveryCanceled=Canceled
+StatusDeliveryDraft=Draft
+StatusDeliveryValidated=Received
+NameAndSignature=Name and Signature:
+ToAndDate=To___________________________________ on ____/_____/__________
+GoodStatusDeclaration=Have received the goods above in good condition,
+Deliverer=Deliverer:
+Sender=Sender
+Recipient=Delivery recipient
+ErrorStockIsNotEnough=There's not enough stock
+Shippable=Shippable
+NonShippable=Not Shippable
+ShowShippableStatus=Show shippable status
+ShowReceiving=Show delivery receipt
+NonExistentOrder=Nonexistent order
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Stock quantities already allocated on previous lines
 
 # Sending methods
 # ModelDocument
@@ -71,16 +118,23 @@ DocumentModelStorm=Çatdırılma qəbzləri və əlavə sahələrə uyğunluq ü
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Daimi EXPEDITION_ADDON_NUMBER müəyyən edilməyib
 SumOfProductVolumes=Məhsul həcmlərinin cəmi
 SumOfProductWeights=Məhsul çəkilərinin cəmi
-
 # warehouse details
 DetailWarehouseNumber= Anbar təfərrüatları
 DetailWarehouseFormat= W:%s (Kəmiyyət: %d)
+DetailChildrenFormat=%s : %s (Məqsəd: >TXPROTECT-ecb2ec87TXEND49)
 SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Serial nömrəsi və ya partiya üçün göndərişin yaradılması zamanı anbara son giriş tarixini göstərin
 CreationOptions=Göndərmənin yaradılması zamanı mövcud seçimlər
-
 ShipmentDistribution=Göndərmə paylanması
-
 ErrorTooManyCombinationBatchcode=%s xətti üçün göndəriş yoxdur, çünki çoxlu anbar, məhsul, toplu kod kombinasiyası tapılıb (%s).
 ErrorNoCombinationBatchcode=%s sətrini anbar-məhsul lotu/seriya kombinasiyası kimi saxlamaq mümkün olmadı (%s, %s, %s) anbarda tapılmadı.
-
 ErrorTooMuchShipped=Göndərilən miqdar %s sətri üçün sifariş edilmiş miqdardan çox olmamalıdır.
+NoShipmentLineChangeDetected=No shipment line change was detected.
+##### Types of contacts #####
+TypeContact_shipping_internal_SALESREPFOLL=Nümayəndə göndərilməsini izləyir
+TypeContact_shipping_external_BILLING=Müştəri faktura əlaqəsi
+TypeContact_shipping_external_CUSTOMER=Göndərməni təqib edən müştəri ilə əlaqə
+TypeContact_shipping_external_SHIPPING=Göndərmə üçün müştəri əlaqəsi
+TypeContact_shipping_external_DELIVERY=Çatdırılma üçün müştəri əlaqəsi
+CloseShipment=Göndərməni bağlayın
+ConfirmCloseShipment=Yaxın göndərməni təsdiqləyin
+SHIPPING_SELL_EAT_BY_DATE_PRE_SELECT_EARLIEST=Göndərmə yaratarkən ən erkən satış/bitmə tarixi ilə partiya/seriya nömrəsini əvvəlcədən seçin

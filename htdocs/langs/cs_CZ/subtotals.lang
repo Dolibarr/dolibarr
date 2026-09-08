@@ -1,0 +1,54 @@
+# Dolibarr language file - Source file is en_US - subtotal
+
+#
+# Global
+#
+Subtotal=Mezisoučty
+SubTotalModuleDesc=Mezisoučty a nadpisové řádky pro určité dokumenty
+#
+# Admin
+#
+SubtotalSetup=Nastavení modulu mezisoučtů
+MaxSubtotalLevel=Maximální úroveň
+SubtotalLineBackColor=Level %s lines background color
+NotSupportedByAllPDF=Will work with newer PDF but not with old ones %s
+
+#
+# Card
+#
+AddTitleLine=Přidat nadpisový řádek
+AddSubtotalLine=Přidat řádek mezisoučtu
+TitleNeedDesc=You must enter a valid description to create a title.
+TitleAddedLevelTooHigh=Added title level too high (added with level %s instead).
+TitleEditedLevelTooHigh=Edited title level too high (edited with level %s instead).
+DeleteSubtotalLine=Smazat řádek mezisoučtu
+ConfirmDeleteSubtotalLine=Opravdu chcete smazat tento řádek mezisoučtu?
+DeleteTitleLine=Smazat nadpisový řádek
+ConfirmDeleteTitleLine=Opravdu chcete smazat tento nadpisový řádek?
+DeleteCorrespondingSubtotalLine=Delete the corresponding subtotal line ?
+SubtotalLevel=Level %s
+SubtotalLineDesc=Line description
+SubtotalLineLevel=Line level
+ShowUPOnPDF=Show unit price on PDF
+ShowTotalExludingVATOnPDF=Zobrazit celkovou částku bez DPH v PDF
+ForcePageBreak=Vynutit zalomení stránky před nadpisem
+NoTitleError=You have no title line or they already all have a corresponding subtotal line
+CorrespondingTitleLine=Corresponding title line
+SelectVATRate=Select VAT rate
+EnterRemisePercent=Enter discount percent
+ApplyVATForBlock=Apply VAT for this block
+ApplyDiscountForBlock=Apply discount for this block
+TitleUnderSameLevelSTLine=Title of the same level must be under the previous title's subtotal line.
+TitleUnderSameLevelOrGreater=Title must be under a title of the same level or greater.
+TitleAfterStLineOfSameLevelTitle=Title must be after the subtotal line of the previous title.
+PreviousTitleLevelTooHigh=Previous title is two level or more greater than moved line.
+STLineUnderCorrespondingTitleDesc=Subtotal line must be under a title with the same level that has the same description.
+STLineUnderCorrespondingTitle=Subtotal line must be under a title of the same level and the same description.
+STLineUnderTitle=Subtotal line must be under its title
+UnsupportedModuleError=You can't add a subtotals line in unsupported module
+CorrespondingTitleNotFound=The corresponding title was not found
+
+#
+# PDF
+#
+SubtotalOf=Mezisoučet za %s:

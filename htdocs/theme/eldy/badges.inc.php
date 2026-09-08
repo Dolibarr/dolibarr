@@ -3,8 +3,10 @@
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  */
 if (!defined('ISLOADEDBYSTEELSHEET')) {
-	die('Must be call by steelsheet');
+	die('Must be called by steelsheet');
 }
+
+// From theme_vars.inc, must be included by steelsheet
 /**
  * @var string $badgePrimary
  * @var string $badgeSecondary
@@ -50,13 +52,20 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 	box-sizing: border-box;
 }
 
+.badge-text {
+	padding: 3px;
+	padding-left: 5px;
+	padding-right: 5px;
+	border-radius: 5px;
+}
+
 .badge-status {
 	font-size: 0.95em;
 	padding: .19em .35em;			/* more than 0.19 generate a change into height of lines */
 }
 .tabBar .arearef .statusref .badge-status, .tabBar .arearefnobottom .statusref .badge-status {
 	font-size: 1.1em;
-	padding: .4em .4em;
+	padding: .4em .4em .3em .4em;
 }
 /* Force values for small screen 767 */
 @media only screen and (max-width: 767px)
@@ -67,10 +76,17 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 	}
 }
 
-.badge-pill, .tabs .badge {
+.tabs .badge {
 	padding-right: .5em;
 	padding-left: .5em;
 	border-radius: 0.25rem;
+}
+
+.badge-pill{
+	/* Use the .badge-pill modifier class to make badges more rounded (with a larger border-radius and additional horizontal padding). */
+	padding-right: .8em;
+	padding-left: 0.8em;
+	border-radius: 0.5rem;
 }
 
 .badge-dot {
@@ -96,7 +112,13 @@ span.badgeneutral {
 	border-radius: 10px;
 	white-space: nowrap;
 }
-
+span.badgeliketopmenu {
+	padding: 2px 7px 2px 7px;
+	background-color: var(--colorbackhmenu1);
+	color: var(--colorbackvmenu1);
+	border-radius: 10px;
+	white-space: nowrap;
+}
 
 /* PRIMARY */
 .badge-primary{
@@ -249,7 +271,7 @@ _createStatusBadgeCss('4b', '', "STATUS4b");
 /**
  * Create status badge
  *
- * @param string $statusName 			name of status
+ * @param string $statusName 			name of status ('1', '2', '4b', ...)
  * @param string $statusVarNamePrefix 	a prefix for var ${$statusVarNamePrefix.'badgeStatus'.$statusName}
  * @param string $commentLabel 			a comment label
  * @param string $cssPrefix 			a css prefix
@@ -262,7 +284,7 @@ function _createStatusBadgeCss($statusName, $statusVarNamePrefix = '', $commentL
 	global ${$statusVarNamePrefix.'badgeStatus'.$statusName}, ${$statusVarNamePrefix.'badgeStatus_textColor'.$statusName};
 
 	if (!empty(${$statusVarNamePrefix.'badgeStatus'.$statusName})) {
-		print "\n/* ".strtoupper($commentLabel)." */\n";
+		print "\n/* ".strtoupper($commentLabel)." - ".$statusName." */\n";
 
 		$thisBadgeBackgroundColor = $thisBadgeBorderColor = ${$statusVarNamePrefix.'badgeStatus'.$statusName};
 
@@ -274,11 +296,14 @@ function _createStatusBadgeCss($statusName, $statusVarNamePrefix = '', $commentL
 		}
 
 		if (in_array((string) $statusName, $TBadgeBorderOnly)) {
-			$thisBadgeTextColor = '#212529';
-			$thisBadgeBackgroundColor = "";
+			$thisBadgeTextColor = '#9c850b';
+			$thisBadgeBackgroundColor = "hsl(0, 0%, 0%, 0)";
 		}
 
-		if (in_array((string) $statusName, array('0', '5', '9'))) {
+		if (in_array((string) $statusName, array('4b', '7'))) {
+			$thisBadgeTextColor = '#25a580';
+		}
+		if (in_array((string) $statusName, array('0', '5', '9', '10'))) {
 			$thisBadgeTextColor = '#999999';
 		}
 		if (in_array((string) $statusName, array('6'))) {
@@ -302,15 +327,15 @@ function _createStatusBadgeCss($statusName, $statusVarNamePrefix = '', $commentL
 		}
 		print "}\n";
 
+		// badge-statusX:focus
+
 		print $cssPrefix.".badge-status".$statusName.".focus, ".$cssPrefix.".badge-status".$statusName.":focus {\n";
 		print "    outline: 0;\n";
 		print "    box-shadow: 0 0 0 0.2rem ".colorHexToRgb($thisBadgeBackgroundColor, 0.5)." !important;\n";
 		print "}\n";
 
-		// badge-statusX:focus
 		print $cssPrefix.".badge-status".$statusName.":focus, ".$cssPrefix.".badge-status".$statusName.":hover {\n";
 		print "    color: ".$thisBadgeTextColor." !important;\n";
-		//print "    background-color: " . colorDarker($thisBadgeBackgroundColor, 10) . ";\n";
 		if (in_array((string) $statusName, $TBadgeBorderOnly)) {
 			print "        border-color: ".colorDarker($thisBadgeBorderColor, 10)." !important;\n";
 		}

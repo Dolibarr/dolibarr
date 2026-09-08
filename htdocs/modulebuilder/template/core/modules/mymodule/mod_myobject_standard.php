@@ -24,6 +24,7 @@
  *  \ingroup    mymodule
  *  \brief      File of class to manage MyObject numbering rules standard
  */
+require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
 dol_include_once('/mymodule/core/modules/mymodule/modules_myobject.php');
 
 
@@ -52,6 +53,11 @@ class mod_myobject_standard extends ModeleNumRefMyObject
 	 * @var string name
 	 */
 	public $name = 'standard';
+
+	/**
+	 * @var int		Position
+	 */
+	public $position = 40;
 
 
 	/**
@@ -91,21 +97,23 @@ class mod_myobject_standard extends ModeleNumRefMyObject
 		$coyymm = '';
 		$max = '';
 
-		$posindice = strlen($this->prefix) + 6;
-		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
-		$sql .= " FROM ".$db->prefix()."mymodule_myobject";
-		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
+		$posindice = dol_strlen($this->prefix) + 6;
+		$sql = "SELECT MAX(CAST(SUBSTRING(t.ref FROM ".((int) $posindice).") AS SIGNED)) as max";
+		$sql .= " FROM ".$db->prefix()."mymodule_myobject as t";
+		$sql .= " WHERE t.ref LIKE '".$db->escape($this->prefix)."____-%'";
 		if ($object->ismultientitymanaged == 1) {
-			$sql .= " AND entity = ".$conf->entity;
-		} elseif ($object->ismultientitymanaged == 2) { // @phan-suppress-current-line PhanPluginEmptyStatementIf
-			// TODO
+			$sql .= " AND t.entity = ".((int) $conf->entity);
+		} elseif (preg_match('/^\w+@\w+$/', (string) $object->ismultientitymanaged)) {
+			$tmparray = explode('@', (string) $object->ismultientitymanaged);
+			$sql .= " LEFT JOIN ".$db->prefix().$db->sanitize($tmparray[1])." as pt ON t.".$db->sanitize($tmparray[0])." = pt.rowid";
+			$sql .= " WHERE pt.entity IN (".getEntity($object->element).")";
 		}
 
 		$resql = $db->query($sql);
 		if ($resql) {
 			$row = $db->fetch_row($resql);
 			if ($row) {
-				$coyymm = substr($row[0], 0, 6);
+				$coyymm = dol_substr($row[0], 0, 6);
 				$max = $row[0];
 			}
 		}
@@ -129,14 +137,16 @@ class mod_myobject_standard extends ModeleNumRefMyObject
 		global $db, $conf;
 
 		// first we get the max value
-		$posindice = strlen($this->prefix) + 6;
-		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
-		$sql .= " FROM ".$db->prefix()."mymodule_myobject";
-		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
+		$posindice = dol_strlen($this->prefix) + 6;
+		$sql = "SELECT MAX(CAST(SUBSTRING(t.ref FROM ".((int) $posindice).") AS SIGNED)) as max";
+		$sql .= " FROM ".$db->prefix()."mymodule_myobject as t";
+		$sql .= " WHERE t.ref LIKE '".$db->escape($this->prefix)."____-%'";
 		if ($object->ismultientitymanaged == 1) {
-			$sql .= " AND entity = ".$conf->entity;
-		} elseif ($object->ismultientitymanaged == 2) {
-			// TODO
+			$sql .= " AND t.entity = ".((int) $conf->entity);
+		} elseif (preg_match('/^\w+@\w+$/', (string) $object->ismultientitymanaged)) {
+			$tmparray = explode('@', (string) $object->ismultientitymanaged);
+			$sql .= " LEFT JOIN ".$db->prefix().$db->sanitize($tmparray[1])." as pt ON t.".$db->sanitize($tmparray[0])." = pt.rowid";
+			$sql .= " WHERE pt.entity IN (".getEntity($object->element).")";
 		}
 
 		$resql = $db->query($sql);

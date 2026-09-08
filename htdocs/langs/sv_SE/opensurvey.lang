@@ -62,3 +62,4 @@ EmailSomeoneVoted=% S har fyllt en rad. Du kan hitta din enkät på länken:% s
 ShowSurvey=Visa undersökning
 UserMustBeSameThanUserUsedToVote=Du måste ha rösta och använda samma användarnamn som den som röstat för att skicka en kommentar
 ListOfOpenSurveys=Lista över öppna undersökningar
+AddTheVote=Klicka för att lägga till rösten

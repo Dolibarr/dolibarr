@@ -22,4 +22,3 @@ create table llx_hrm_evaluation_extrafields
   fk_object                 integer NOT NULL,
   import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
-

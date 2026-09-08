@@ -4,6 +4,8 @@
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2026      Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2026	   Charlene Benke		<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,24 +74,35 @@ class modFicheinter extends DolibarrModules
 		// Config pages
 		$this->config_page_url = array("fichinter.php");
 
-		// Constants
-		$this->const = array();
-		$r = 0;
-
 		if (!isset($conf->ficheinter) || !isset($conf->ficheinter->enabled)) {
 			$conf->ficheinter = new stdClass();
 			$conf->ficheinter->enabled = 0;
 		}
 
-		$this->const[$r][0] = "FICHEINTER_ADDON_PDF";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "soleil";
-		$r++;
-
-		$this->const[$r][0] = "FICHEINTER_ADDON";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "pacific";
-		$r++;
+		// Constants
+		// 0:name
+		// 1:type
+		// 2:val
+		// 3:note
+		// 4:visible
+		// 5:entity
+		// 6:deleteonunactive
+		$this->const = [
+			[
+				"FICHEINTER_ADDON_PDF",
+				"chaine",
+				"soleil",
+				"",
+				0,
+			],
+			[
+				"FICHEINTER_ADDON",
+				"chaine",
+				"pacific",
+				"",
+				0,
+			],
+		];
 
 		// Boxes
 		$this->boxes = array(0=>array('file'=>'box_ficheinter.php', 'enabledbydefaulton'=>'Home'));
@@ -223,6 +236,11 @@ class modFicheinter extends DolibarrModules
 	public function init($options = '')
 	{
 		global $conf;
+
+		$result = $this->_load_tables('/install/mysql/', 'fichinter');
+		if ($result < 0) {
+			return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
+		}
 
 		// Permissions
 		$this->remove($options);

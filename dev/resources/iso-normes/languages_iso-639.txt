@@ -52,12 +52,12 @@ GUARANI         GN     AMERINDIAN
 GUJARATI        GU     INDIAN
 
 HAUSA           HA     NEGRO-AFRICAN
-HEBREW          HE     SEMITIC [*Changed 1989 from original ISO 639:1988, IW] 
+HEBREW          HE     SEMITIC [*Changed 1989 from original ISO 639:1988, IW]
 HINDI           HI     INDIAN
 HUNGARIAN       HU     FINNO-UGRIC
 
 ICELANDIC       IS     GERMANIC
-INDONESIAN      ID     OCEANIC/INDONESIAN [*Changed 1989 from original ISO 639:1988, IN] 
+INDONESIAN      ID     OCEANIC/INDONESIAN [*Changed 1989 from original ISO 639:1988, IN]
 INTERLINGUA     IA     INTERNATIONAL AUX.
 INTERLINGUE     IE     INTERNATIONAL AUX.
 INUKTITUT       IU     [        ]
@@ -159,7 +159,7 @@ WOLOF           WO     NEGRO-AFRICAN
 
 XHOSA           XH     NEGRO-AFRICAN
 
-YIDDISH         YI     GERMANIC [*Changed 1989 from original ISO 639:1988, JI] 
+YIDDISH         YI     GERMANIC [*Changed 1989 from original ISO 639:1988, JI]
 YORUBA          YO     NEGRO-AFRICAN
 
 ZHUANG          ZA     [       ]
@@ -211,7 +211,7 @@ GALICIAN        GL     ROMANCE
 GUARANI         GN     AMERINDIAN
 GUJARATI        GU     INDIAN
 HAUSA           HA     NEGRO-AFRICAN
-HEBREW          HE     SEMITIC [*Changed 1989 from original ISO 639:1988, IW] 
+HEBREW          HE     SEMITIC [*Changed 1989 from original ISO 639:1988, IW]
 HINDI           HI     INDIAN
 CROATIAN        HR     SLAVIC
 HUNGARIAN       HU     FINNO-UGRIC
@@ -219,7 +219,7 @@ ARMENIAN        HY     INDO-EUROPEAN (OTHER)
 INTERLINGUA     IA     INTERNATIONAL AUX.
 INTERLINGUE     IE     INTERNATIONAL AUX.
 INUPIAK         IK     ESKIMO
-INDONESIAN      ID     OCEANIC/INDONESIAN [*Changed 1989 from original ISO 639:1988, IN] 
+INDONESIAN      ID     OCEANIC/INDONESIAN [*Changed 1989 from original ISO 639:1988, IN]
 ICELANDIC       IS     GERMANIC
 ITALIAN         IT     ROMANCE
 INUKTITUT       IU     [        ]
@@ -304,7 +304,7 @@ VIETNAMESE      VI     ASIAN
 VOLAPUK         VO     INTERNATIONAL AUX.
 WOLOF           WO     NEGRO-AFRICAN
 XHOSA           XH     NEGRO-AFRICAN
-YIDDISH         YI     GERMANIC [*Changed 1989 from original ISO 639:1988, JI] 
+YIDDISH         YI     GERMANIC [*Changed 1989 from original ISO 639:1988, JI]
 YORUBA          YO     NEGRO-AFRICAN
 ZHUANG          ZA     [       ]
 CHINESE         ZH     ASIAN
@@ -362,7 +362,7 @@ GERMAN          DE      GERMANIC
 ICELANDIC       IS      GERMANIC
 NORWEGIAN       NO      GERMANIC
 SWEDISH         SV      GERMANIC
-YIDDISH         YI      GERMANIC [*Changed 1989 from original ISO 639:1988, JI] 
+YIDDISH         YI      GERMANIC [*Changed 1989 from original ISO 639:1988, JI]
 
 AFAN (OROMO)    OM      HAMITIC
 AFAR            AA      HAMITIC
@@ -420,7 +420,7 @@ YORUBA          YO      NEGRO-AFRICAN
 ZULU            ZU      NEGRO-AFRICAN
 
 FIJI            FJ      OCEANIC/INDONESIAN
-INDONESIAN      ID      OCEANIC/INDONESIAN [*Changed 1989 from original ISO 639:1988, IN] 
+INDONESIAN      ID      OCEANIC/INDONESIAN [*Changed 1989 from original ISO 639:1988, IN]
 JAVANESE        JV      OCEANIC/INDONESIAN
 MALAGASY        MG      OCEANIC/INDONESIAN
 MALAY           MS      OCEANIC/INDONESIAN
@@ -444,7 +444,7 @@ SPANISH         ES      ROMANCE
 
 AMHARIC         AM      SEMITIC
 ARABIC          AR      SEMITIC
-HEBREW          HE      SEMITIC [*Changed 1989 from original ISO 639:1988, IW] 
+HEBREW          HE      SEMITIC [*Changed 1989 from original ISO 639:1988, IW]
 MALTESE         MT      SEMITIC
 TIGRINYA        TI      SEMITIC
 

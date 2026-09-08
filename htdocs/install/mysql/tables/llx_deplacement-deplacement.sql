@@ -37,5 +37,5 @@ create table llx_deplacement
   note_private	    text,
   note_public       text,
   extraparams		varchar(255)					-- for stock other parameters with json format
-  
+
 )ENGINE=innodb;

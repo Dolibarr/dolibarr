@@ -35,6 +35,7 @@ if (empty($conf) || !is_object($conf)) {
 
 
 $object = $GLOBALS['objcanvas']->control->object;
+$socid = $object->id;
 
 
 print "<!-- BEGIN PHP TEMPLATE CARD_VIEW.TPL.PHP INDIVIDUAL -->\n";
@@ -56,13 +57,6 @@ if ($this->control->tpl['action_delete']) {
 	<td width="20%"><?php echo $langs->trans('Name'); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['showrefnav']; ?></td>
 </tr>
-
-<?php if (getDolGlobalString('SOCIETE_USEPREFIX')) { ?>
-<tr>
-	<td><?php echo $langs->trans('Prefix'); ?></td>
-	<td colspan="3"><?php echo $this->control->tpl['prefix_comm']; ?></td>
-</tr>
-<?php } ?>
 
 <?php if ($this->control->tpl['client']) { ?>
 <tr>
@@ -226,7 +220,7 @@ $urlsource = $_SERVER["PHP_SELF"]."?socid=".$socid;
 $genallowed = $user->hasRight('societe', 'lire');
 $delallowed = $user->hasRight('societe', 'creer');
 
-print $formfile->showdocuments('company', $socid, $filedir, $urlsource, $genallowed, $delallowed, '', 0, 0, 0, 28, 0, '', 0, '', $objcanvas->control->object->default_lang);
+print $formfile->showdocuments('company', $socid, $filedir, $urlsource, $genallowed, $delallowed, '', 0, 0, 0, 28, 0, '', 0, '', $object->default_lang);
 ?>
 
 </td>
@@ -244,6 +238,6 @@ $result = show_subsidiaries($conf, $langs, $db, $object);
 $result = show_contacts($conf, $langs, $db, $object);
 
 // Projects list
-$result = show_projects($conf, $langs, $db, $object);
+$result = show_projects($conf, $langs, $db, $object, $_SERVER["PHP_SELF"].'?socid='.$object->id, 1, '', '');
 
 print "<!-- END PHP TEMPLATE -->\n";

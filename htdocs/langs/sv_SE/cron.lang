@@ -29,8 +29,8 @@ CronExecute=Kör nu
 CronConfirmExecute=Är du säker på att du vill utföra dessa schemalagda jobb nu?
 CronInfo=Schemalagd arbetsmodul gör det möjligt att schemalägga jobb för att utföra dem automatiskt. Jobb kan också startas manuellt.
 CronTask=Jobb
-CronNone=Next run of scheduled task
-CronNotYetRan=Never executed
+CronNone=Nästa körning av schemalagd uppgift
+CronNotYetRan=Aldrig avrättad
 CronDtStart=Inte före
 CronDtEnd=Inte efter
 CronDtNextLaunch=Nästa exekvering
@@ -50,7 +50,7 @@ JobFinished=Job lanserad och klar
 Scheduled=Schemalagd
 #Page card
 CronAdd=Lägg till jobb
-CronEvery=Run job every
+CronEvery=Kör jobbet varje
 CronObject=Instans / Object för att skapa
 CronArgs=Parametrar
 CronSaveSucess=Spara framgångsrikt
@@ -77,6 +77,7 @@ CronType=Jobbtyp
 CronType_method=Samtalsmetod för en PHP-klass
 CronType_command=Skalkommando
 CronCannotLoadClass=Kan inte ladda klassfilen %s (för att använda klass %s)
+CronModuleNotEnabledInThisEntity=Cron-modulen är inte aktiverad i denna entitet (för att använda %s-metoden för %s-objektet)
 CronCannotLoadObject=Klassfilen %s laddades, men objektet %s kunde inte hittas i det
 UseMenuModuleToolsToAddCronJobs=Gå till menyn "<a href="%s">Hem - Adminverktyg - Schemalagda jobb</a>" för att se och redigera schemalagda jobb.
 JobDisabled=Jobb inaktiverat

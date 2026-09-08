@@ -28,7 +28,7 @@ create table llx_paiement
   tms              timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   datep            datetime,							-- payment date
   amount           double(24,8) DEFAULT 0,				-- amount paid in Dolibarr currency
-  multicurrency_amount double(24,8) DEFAULT 0,			-- amount paid in invoice currency	
+  multicurrency_amount double(24,8) DEFAULT 0,			-- amount paid in invoice currency
   fk_paiement      integer NOT NULL,					-- type of payment in llx_c_paiement
   num_paiement     varchar(50),
   note             text,

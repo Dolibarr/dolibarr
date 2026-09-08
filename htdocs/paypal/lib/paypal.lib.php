@@ -128,7 +128,7 @@ function print_paypal_redirect($paymentAmount, $currencyCodeType, $paymentType, 
 		$desc
 	);
 
-	dol_syslog("print_paypal_redirect resArray=".var_export($resArray, true), LOG_DEBUG);
+	dol_syslog("print_paypal_redirect resArray=".formatLogObject($resArray), LOG_DEBUG);
 
 	$ack = strtoupper($resArray["ACK"]);
 	if ($ack == "SUCCESS" || $ack == "SUCCESSWITHWARNING") {
@@ -459,7 +459,7 @@ function hash_call($methodName, $nvpStr)
 
 	// TODO problem with triggers
 	$API_version = "98.0";
-	if (getDolGlobalString('PAYPAL_API_SANDBOX') || GETPOST('forcesandbox', 'alpha')) {		// We can force sand box with param 'forcesandbox'
+	if (getDolGlobalString('PAYPAL_API_SANDBOX')/* || GETPOST('forcesandbox', 'alpha') */) {		// We can force sand box with param 'forcesandbox'
 		$API_Endpoint = "https://api-3t.sandbox.paypal.com/nvp";
 		$API_Url = "https://www.sandbox.paypal.com/webscr?cmd=_express-checkout&token=";
 	} else {
@@ -501,7 +501,7 @@ function hash_call($methodName, $nvpStr)
 
 	//turning off the server and peer verification(TrustManager Concept).
 	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, ($ssl_verifypeer ? true : false));
-	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, ($ssl_verifypeer ? true : false));
+	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, ($ssl_verifypeer ? 2 : 0));
 
 	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, getDolGlobalInt('MAIN_USE_CONNECT_TIMEOUT', 5));
 	curl_setopt($ch, CURLOPT_TIMEOUT, getDolGlobalInt('MAIN_USE_RESPONSE_TIMEOUT', 30));

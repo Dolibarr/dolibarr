@@ -1,5 +1,5 @@
 #!/usr/bin/bash -xv
-# Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+# Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
 # shellcheck disable=2050,2089,2090,2086
 
 ME=$(realpath "$0")
@@ -44,10 +44,10 @@ function save_db_cache() (
 	# DETERMINE VERSION
 	cd "${TRAVIS_BUILD_DIR}/htdocs/install" || exit 1
 
-	# Get the target version from the filefunc.inc.php file
-	target_version=$(sed -n "s/.*define('DOL_VERSION',[[:space:]]*'\\([0-9.]*\\).*/\\1/p" ../filefunc.inc.php) ; echo $target_version
+	# Get the target version from the version.inc.php file
+	target_version=$(sed -n "s/.*define('DOL_\\(MAJOR_\\)\\?VERSION',[[:space:]]*'\\([0-9.]*\\).*/\\2/p" ../version.inc.php) ; echo $target_version
 	# Default in case that failed
-	target_version=${target_version:=20.0.0}
+	target_version=${target_version:=23.0.0}
 
 	# Sequence of versions for upgrade process (to be completed)
 	VERSIONS=("3.5.0" "3.6.0" "3.7.0" "3.8.0" "3.9.0")
@@ -184,9 +184,9 @@ if [ "$DB" = 'mysql' ] || [ "$DB" = 'mariadb' ] || [ "$DB" = 'postgresql' ]; the
 	# Compute md5 based on install file contents, and on db prefix
 	# filefunc.inc.php holds the version, so include it"
 	# shellcheck disable=2046
-	sum=$(md5sum "$ME" $(find "${TRAVIS_BUILD_DIR}/htdocs/install" -type f ; echo "${TRAVIS_BUILD_DIR}/filefunc.inc.php" ) | md5sum)
+	sum=$(md5sum "$ME" $(find "${TRAVIS_BUILD_DIR}/htdocs/install" -type f -not -path "${TRAVIS_BUILD_DIR}/htdocs/install/doctemplates/*" ; echo "${TRAVIS_BUILD_DIR}/filefunc.inc.php" ) | md5sum)
 	# shellcheck disable=2046
-	cnt=$(md5sum "$ME" $(find "${TRAVIS_BUILD_DIR}/htdocs/install" -type f) | wc)
+	cnt=$(md5sum "$ME" $(find "${TRAVIS_BUILD_DIR}/htdocs/install" -type f -not -path "${TRAVIS_BUILD_DIR}/htdocs/install/doctemplates/*") | wc)
 	echo "MD5SUM $sum COUNT:$cnt"
 	load_cache=0
 	if [ -r "$DB_CACHE_FILE".md5 ] && [ -r "$DB_CACHE_FILE" ] && [ -x "$(which "${MYSQLDUMP}")" ] ; then

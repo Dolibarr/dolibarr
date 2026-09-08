@@ -5,8 +5,9 @@
  * Copyright (C) 2020		Stéphane Lesage			<stephane.lesage@ateis.com>
  * Copyright (C) 2022-2025	Solution Libre SAS		<contact@solution-libre.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2025		Alexandre Spangaro		<alexandre@inovea-conseil.com>
+ * Copyright (C) 2025		Charlene Benke		    <charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -92,24 +93,24 @@ class modCategorie extends DolibarrModules
 
 		$r = 0;
 
-		$this->rights[$r][0] = 241; // id de la permission
-		$this->rights[$r][1] = 'Lire les categories'; // libelle de la permission
-		$this->rights[$r][2] = 'r'; // type de la permission (deprecated)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][0] = 241; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Lire les categories'; // Permission label
+		$this->rights[$r][2] = 'r'; // Permission type (deprecated)
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'lire';
 		$r++;
 
-		$this->rights[$r][0] = 242; // id de la permission
-		$this->rights[$r][1] = 'Creer/modifier les categories'; // libelle de la permission
-		$this->rights[$r][2] = 'w'; // type de la permission (deprecated)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][0] = 242; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Creer/modifier les categories'; // Permission label
+		$this->rights[$r][2] = 'w'; // Permission type (deprecated)
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'creer';
 		$r++;
 
-		$this->rights[$r][0] = 243; // id de la permission
-		$this->rights[$r][1] = 'Supprimer les categories'; // libelle de la permission
-		$this->rights[$r][2] = 'd'; // type de la permission (deprecated)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][0] = 243; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Supprimer les categories'; // Permission label
+		$this->rights[$r][2] = 'd'; // Permission type (deprecated)
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'supprimer';
 		$r++;
 
@@ -176,6 +177,9 @@ class modCategorie extends DolibarrModules
 		}
 		if ((isModEnabled('fournisseur') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled('supplier_order'))) {
 			$typeexample .= ($typeexample ? " / " : "")."20=Supplier order";
+		}
+		if ((isModEnabled('fournisseur') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled('supplier_invoice'))) {
+			$typeexample .= ($typeexample ? " / " : "")."21=Supplier invoice";
 		}
 
 		// Definition of vars
@@ -354,7 +358,8 @@ class modCategorie extends DolibarrModules
 		}
 
 		// 4 Contacts
-		if (isModEnabled("contact")) {
+		// Contacts belong to the societe module, there is no "contact" module to enable
+		if (isModEnabled("societe")) {
 			$categcode = 'contact';
 			$r++;
 			$this->export_code[$r] = $this->rights_class.'_4_'.$categcode;
@@ -535,6 +540,24 @@ class modCategorie extends DolibarrModules
 			);
 		}
 
+		// 21 Supplier invoice
+		if ((isModEnabled('fournisseur') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled('supplier_invoice'))) {
+			++$r;
+			$this->exportTagLinks(
+				$r,
+				'supplier_invoice',
+				'invoice_supplier',
+				'(isModEnabled("fournisseur") && !getDolGlobalString("MAIN_USE_NEW_SUPPLIERMOD")) || (isModEnabled("supplier_invoice"))',
+				['fournisseur', 'facture', 'export'],
+				[
+					'rowid' => [
+						'name' => 'SupplierInvoiceID',
+						'type' => 'Numeric'
+					]
+				]
+			);
+		}
+
 		// Imports
 		//--------
 
@@ -551,7 +574,7 @@ class modCategorie extends DolibarrModules
 			'ca.label' => "Label*", 'ca.type' => "Type*", 'ca.description' => "Description",
 			'ca.fk_parent' => 'ParentCategory'
 		);
-		$this->import_regex_array[$r] = array('ca.type' => '^(0|1|2|3|4|5|6|7|8|9|10|11|16|17|20)$');
+		$this->import_regex_array[$r] = array('ca.type' => '^(0|1|2|3|4|5|6|7|8|9|10|11|16|17|20|21)$');
 		$this->import_convertvalue_array[$r] = array(
 			'ca.fk_parent' => array(
 				'rule'          => 'fetchidfromcodeandlabel',
@@ -579,7 +602,7 @@ class modCategorie extends DolibarrModules
 			$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
 			$this->import_tables_array[$r] = array('cp' => MAIN_DB_PREFIX.'categorie_product');
 			$this->import_fields_array[$r] = array('cp.fk_categorie' => "Category*", 'cp.fk_product' => "Product*");
-			$this->import_regex_array[$r] = array('cp.fk_categorie' => 'rowid@'.MAIN_DB_PREFIX.'categorie:type=0');
+			$this->import_regex_array[$r] = array('cp.fk_categorie' => 'rowid@'.MAIN_DB_PREFIX.'categorie:(type:=:0)');
 
 			$this->import_convertvalue_array[$r] = array(
 					'cp.fk_categorie' => array('rule' => 'fetchidfromref', 'classfile' => '/categories/class/categorie.class.php', 'class' => 'Categorie', 'method' => 'fetch', 'element' => 'category'),
@@ -641,9 +664,9 @@ class modCategorie extends DolibarrModules
 			$this->import_label[$r] = "CatMembersLinks"; // Translation key
 			$this->import_icon[$r] = $this->picto;
 			$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
-			$this->import_tables_array[$r] = array('cm' => MAIN_DB_PREFIX.'categorie_contact');
+			$this->import_tables_array[$r] = array('cm' => MAIN_DB_PREFIX.'categorie_member');
 			$this->import_fields_array[$r] = array('cm.fk_categorie' => "Category*", 'cm.fk_member' => "Member*");
-			$this->import_regex_array[$r] = array('cm.fk_categorie' => 'rowid@'.MAIN_DB_PREFIX.'categorie:type=3');
+			$this->import_regex_array[$r] = array('cm.fk_categorie' => 'rowid@'.MAIN_DB_PREFIX.'categorie:(type:=:3)');
 
 			$this->import_convertvalue_array[$r] = array(
 				'cs.fk_categorie' => array('rule' => 'fetchidfromref', 'classfile' => '/categories/class/categorie.class.php', 'class' => 'Categorie', 'method' => 'fetch', 'element' => 'category'),
@@ -686,7 +709,7 @@ class modCategorie extends DolibarrModules
 			$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
 			$this->import_tables_array[$r] = array('cp' => MAIN_DB_PREFIX.'categorie_project');
 			$this->import_fields_array[$r] = array('cp.fk_categorie' => "Category*", 'cp.fk_project' => "Project*");
-			$this->import_regex_array[$r] = array('cp.fk_categorie' => 'rowid@'.MAIN_DB_PREFIX.'categorie:type=6');
+			$this->import_regex_array[$r] = array('cp.fk_categorie' => 'rowid@'.MAIN_DB_PREFIX.'categorie:(type:=:6)');
 
 			$this->import_convertvalue_array[$r] = array(
 				'cs.fk_categorie' => array('rule' => 'fetchidfromref', 'classfile' => '/categories/class/categorie.class.php', 'class' => 'Categorie', 'method' => 'fetch', 'element' => 'category'),
@@ -705,7 +728,7 @@ class modCategorie extends DolibarrModules
 			$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
 			$this->import_tables_array[$r] = array('cu' => MAIN_DB_PREFIX.'categorie_user');
 			$this->import_fields_array[$r] = array('cu.fk_categorie' => "Category*", 'cu.fk_user' => "User*");
-			$this->import_regex_array[$r] = array('cu.fk_categorie' => 'rowid@'.MAIN_DB_PREFIX.'categorie:type=7');
+			$this->import_regex_array[$r] = array('cu.fk_categorie' => 'rowid@'.MAIN_DB_PREFIX.'categorie:(type:=:7)');
 
 			$this->import_convertvalue_array[$r] = array(
 				'cu.fk_categorie' => array('rule' => 'fetchidfromref', 'classfile' => '/categories/class/categorie.class.php', 'class' => 'Categorie', 'method' => 'fetch', 'element' => 'category'),
@@ -755,6 +778,18 @@ class modCategorie extends DolibarrModules
 				'/fourn/class/fournisseur.commande.class.php',
 				'CommandeFournisseur',
 				'CommandeFournisseur'
+			);
+		}
+
+		// 21 Supplier invoice
+		if ((isModEnabled('fournisseur') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled('supplier_invoice'))) {
+			++$r;
+			$this->importTagLinks(
+				$r,
+				'supplier_invoice',
+				'/fourn/class/fournisseur.facture.class.php',
+				'invoice_supplier',
+				'FactureFournisseur'
 			);
 		}
 	}
@@ -868,7 +903,7 @@ class modCategorie extends DolibarrModules
 			'ci.fk_categorie'  => 'Category*',
 			'ci.fk_'.$categcode => ucfirst($categcode).'*'
 		];
-		$this->import_regex_array[$r] = ['ci.fk_categorie' => 'rowid@'.MAIN_DB_PREFIX.'categorie:type='.$cat_id];
+		$this->import_regex_array[$r] = ['ci.fk_categorie' => 'rowid@'.MAIN_DB_PREFIX.'categorie:(type:=:'.$cat_id.')'];
 
 		$this->import_convertvalue_array[$r] = [
 			'ci.fk_categorie' =>
@@ -904,6 +939,16 @@ class modCategorie extends DolibarrModules
 	 */
 	public function init($options = '')
 	{
+		if (isModEnabled("invoice")) {
+			$this->_load_tables('/install/mysql/', 'facture');
+		}
+		if (isModEnabled("order")) {
+			$this->_load_tables('/install/mysql/', 'commande');
+		}
+		if (isModEnabled("propal")) {
+			$this->_load_tables('/install/mysql/', 'propal');
+		}
+
 		// Permissions
 		$this->remove($options);
 

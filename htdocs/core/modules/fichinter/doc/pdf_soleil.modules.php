@@ -7,7 +7,7 @@
  * Copyright (C) 2013		Cédric Salvador				<csalvador@gpcsolutions.fr>
  * Copyright (C) 2015       Marcos García               <marcosgdf@gmail.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024	    Nick Fragoulis
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
@@ -133,7 +133,7 @@ class pdf_soleil extends ModelePDFFicheinter
 	 *  @param		int<0,1>		$hidedetails		Do not show line details
 	 *  @param		int<0,1>		$hidedesc			Do not show desc
 	 *  @param		int<0,1>		$hideref			Do not show ref
-	 *  @return		int<0,1>							1=OK, 0=KO
+	 *  @return		int<-1,1>							1=OK,<=0 => KO
 	 */
 	public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
@@ -152,7 +152,7 @@ class pdf_soleil extends ModelePDFFicheinter
 		$outputlangs->loadLangs(array("main", "interventions", "dict", "companies", "compta"));
 
 		// Show Draft Watermark
-		if ($object->statut == $object::STATUS_DRAFT && (getDolGlobalString('FICHINTER_DRAFT_WATERMARK'))) {
+		if ($object->status == $object::STATUS_DRAFT && (getDolGlobalString('FICHINTER_DRAFT_WATERMARK'))) {
 			$this->watermark = getDolGlobalString('FICHINTER_DRAFT_WATERMARK');
 		}
 
@@ -219,7 +219,7 @@ class pdf_soleil extends ModelePDFFicheinter
 				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("InterventionCard"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
-				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
+				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getAnonymisableFullName($outputlangs)));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("InterventionCard"));
 				if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 					$pdf->SetCompression(false);
@@ -238,8 +238,8 @@ class pdf_soleil extends ModelePDFFicheinter
 				$pdf->SetFont('', '', $default_font_size - 1);
 				$pdf->SetTextColor(0, 0, 0);
 
-				$tab_top = 90;
-				$tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? 42 : 10);
+				$tab_top = 80 + $this->marge_haute;
+				$tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? 32 + $this->marge_haute : $this->marge_haute);
 
 				$tab_height = $this->page_hauteur - $tab_top - $heightforfooter - $heightforfreetext;
 
@@ -251,7 +251,7 @@ class pdf_soleil extends ModelePDFFicheinter
 					$notetoshow = make_substitutions($notetoshow, $substitutionarray, $outputlangs);
 					$notetoshow = convertBackOfficeMediasLinksToPublicLinks($notetoshow);
 
-					$tab_top = 88;
+					$tab_top = 78 + $this->marge_haute;
 
 					$pdf->SetFont('', '', $default_font_size - 1);
 					$pdf->writeHTMLCell(190, 3, $this->posxdesc - 1, $tab_top, dol_htmlentitiesbr($notetoshow), 0, 1);
@@ -311,18 +311,55 @@ class pdf_soleil extends ModelePDFFicheinter
 						// Description of product line
 						$curX = $this->posxdesc - 1;
 
-						// Description of product line
-						if (!getDolGlobalString('FICHINTER_DATE_WITHOUT_HOUR')) {
-							$txt = $outputlangs->transnoentities("Date")." : ".dol_print_date($objectligne->datei, 'dayhour', false, $outputlangs, true);
+						// Subtotals module: a title / subtotal / free-text line has no date nor duration,
+						// it is shown as a (possibly coloured) section band instead of a standard line.
+						$issubtotalline = (defined('SUBTOTALS_SPECIAL_CODE') && $objectligne->special_code == SUBTOTALS_SPECIAL_CODE);
+						$subtotalbgcolor = null;
+
+						if ($issubtotalline) {
+							$outputlangs->load('subtotals');
+							$level = (int) $objectligne->duration;	// For fichinter the subtotal depth is stored in the duree field
+							$linetext = $objectligne->desc;
+							if ($level < 0) {
+								// Closing "subtotal" line: an intervention PDF has no amount to sum, so it is only a section marker
+								$linetext = getDolGlobalString('SUBTOTAL_LINE_TEXT_DOES_NOT_INCLUDE_TITLE_TEXT') ? $outputlangs->transnoentities('SubTotal') : $outputlangs->transnoentities('SubtotalOf', $objectligne->desc);
+							}
+							$indent = str_repeat('&nbsp;', max(0, abs($level) - 1) * 4);
+							$txt = '';
+							$desc = $indent.($level != 0 ? '<strong>' : '').dol_htmlentitiesbr($linetext, 1).($level != 0 ? '</strong>' : '');
+							if ($level != 0) {
+								$subtotalbgcolor = colorStringToArray(getDolGlobalString('SUBTOTAL_BACK_COLOR_LEVEL_'.abs($level), 'ffffff'));
+							}
 						} else {
-							$txt = $outputlangs->transnoentities("Date")." : ".dol_print_date($objectligne->datei, 'day', false, $outputlangs, true);
+							// Description of product line
+							if (!getDolGlobalString('FICHINTER_DATE_WITHOUT_HOUR')) {
+								$txt = $outputlangs->transnoentities("Date")." : ".dol_print_date($objectligne->datei, 'dayhour', false, $outputlangs, true);
+							} else {
+								$txt = $outputlangs->transnoentities("Date")." : ".dol_print_date($objectligne->datei, 'day', false, $outputlangs, true);
+							}
+
+							if ($objectligne->duration > 0) {
+								$txt .= " - ".$outputlangs->transnoentities("Duration")." : ".convertSecondToTime($objectligne->duration);
+							}
+							$txt = '<strong>'.dol_htmlentitiesbr($txt, 1, $outputlangs->charset_output).'</strong>';
+							$desc = dol_htmlentitiesbr($objectligne->desc, 1);
 						}
 
-						if ($objectligne->duration > 0) {
-							$txt .= " - ".$outputlangs->transnoentities("Duration")." : ".convertSecondToTime($objectligne->duration);
+						// Paint the coloured band behind a title/subtotal line (measure its height first)
+						if ($issubtotalline && is_array($subtotalbgcolor)) {
+							$pdf->startTransaction();
+							$pdf->writeHTMLCell(0, 0, $curX, $curY + 1, dol_concatdesc($txt, $desc), 0, 1, false);
+							$subtotalh = $pdf->GetY() - $curY;
+							$subtotalpage = $pdf->getPage();
+							$pdf->rollbackTransaction(true);
+							if ($subtotalpage == $pageposbefore) {
+								$pdf->SetFillColor($subtotalbgcolor[0], $subtotalbgcolor[1], $subtotalbgcolor[2]);
+								$pdf->Rect($this->marge_gauche, $curY + 1, $this->page_largeur - $this->marge_gauche - $this->marge_droite, max(2, $subtotalh), 'F');
+								if (!colorIsLight(implode(',', $subtotalbgcolor))) {
+									$pdf->SetTextColor(255, 255, 255);
+								}
+							}
 						}
-						$txt = '<strong>'.dol_htmlentitiesbr($txt, 1, $outputlangs->charset_output).'</strong>';
-						$desc = dol_htmlentitiesbr($objectligne->desc, 1);
 
 						$pdf->startTransaction();
 						$pdf->writeHTMLCell(0, 0, $curX, $curY + 1, dol_concatdesc($txt, $desc), 0, 1, false);
@@ -350,6 +387,10 @@ class pdf_soleil extends ModelePDFFicheinter
 							}
 						} else { // No pagebreak
 							$pdf->commitTransaction();
+						}
+
+						if ($issubtotalline) {
+							$pdf->SetTextColor(0, 0, 0);
 						}
 
 						$nexY = $pdf->GetY();
@@ -427,9 +468,12 @@ class pdf_soleil extends ModelePDFFicheinter
 				$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 				global $action;
 				$reshook = $hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+				$this->warnings = $hookmanager->warnings;
 				if ($reshook < 0) {
 					$this->error = $hookmanager->error;
 					$this->errors = $hookmanager->errors;
+					dolChmod($file);
+					return -1;
 				}
 
 				dolChmod($file);
@@ -600,14 +644,14 @@ class pdf_soleil extends ModelePDFFicheinter
 			$posy += 4;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("CustomerCode")." : ".$outputlangs->transnoentities($object->thirdparty->code_client), '', 'R');
+			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("CustomerCode")." : ".$outputlangs->transnoentities((string) $object->thirdparty->code_client), '', 'R');
 		}
 
 		if (!getDolGlobalString('MAIN_PDF_HIDE_CUSTOMER_ACCOUNTING_CODE') && $object->thirdparty->code_compta_client) {
 			$posy += 4;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("CustomerAccountancyCode")." : ".$outputlangs->transnoentities($object->thirdparty->code_compta_client), '', 'R');
+			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("CustomerAccountancyCode")." : ".$outputlangs->transnoentities((string) $object->thirdparty->code_compta_client), '', 'R');
 		}
 
 		if ($showaddress) {
@@ -630,7 +674,7 @@ class pdf_soleil extends ModelePDFFicheinter
 			$carac_emetteur .= pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'source', $object);
 
 			// Show sender
-			$posy = 42;
+			$posy = 32 + $this->marge_haute;
 			$posx = $this->marge_gauche;
 			if (getDolGlobalString('MAIN_INVERT_SENDER_RECIPIENT')) {
 				$posx = $this->page_largeur - $this->marge_droite - 80;
@@ -686,7 +730,7 @@ class pdf_soleil extends ModelePDFFicheinter
 			if ($this->page_largeur < 210) {
 				$widthrecbox = 84; // To work with US executive format
 			}
-			$posy = 42;
+			$posy = 32 + $this->marge_haute;
 			$posx = $this->page_largeur - $this->marge_droite - $widthrecbox;
 			if (getDolGlobalString('MAIN_INVERT_SENDER_RECIPIENT')) {
 				$posx = $this->marge_gauche;

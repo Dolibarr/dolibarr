@@ -1,6 +1,7 @@
 -- ============================================================================
 -- Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2006-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2026      Vincent de Grandpré  <vincent@de-grandpre.quebec>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -28,8 +29,14 @@ create table llx_societe_remise_except
   datec						datetime,
   amount_ht					double(24,8) NOT NULL,
   amount_tva				double(24,8) DEFAULT 0 NOT NULL,
+  amount_localtax1	double(24,8) DEFAULT 0 NOT NULL,
+  amount_localtax2	double(24,8) DEFAULT 0 NOT NULL,
   amount_ttc				double(24,8) DEFAULT 0 NOT NULL,
   tva_tx					double(7,4)  DEFAULT 0 NOT NULL,
+  localtax1_tx			double(7,4)  DEFAULT 0 NOT NULL,
+  localtax1_type    varchar(10)  NULL,
+  localtax2_tx					double(7,4)  DEFAULT 0 NOT NULL,
+  localtax2_type    varchar(10)  NULL,
   vat_src_code				varchar(10)  DEFAULT '',				-- Vat code used as source of vat fields. Not strict foreign key here.
   fk_user					integer NOT NULL,
   fk_facture_line			integer,

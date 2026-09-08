@@ -121,7 +121,6 @@ ValideTrip=経費報告書を承認する
 ExpenseReportPayments=経費報告書支払
 TaxUndefinedForThisCategory = このカテゴリの税金は未定義
 errorComputeTtcOnMileageExpense=走行距離費用の計算エラー
-ErrorOnlyDraftStatusCanBeDeletedInMassAction=一括操作で削除できるのは下書き状態の要素のみ
 
 ## Dictionary
 EX_BRE=朝食
@@ -159,3 +158,4 @@ TF_TRAIN=列車
 TF_TRIP=交通
 FailedToSetPaid=支払済みとして設定できず
 FailedToSetToCancel=キャンセルできず
+NobodyHasPermissionToValidateExpenseReport=経費報告書を検証する権限がない

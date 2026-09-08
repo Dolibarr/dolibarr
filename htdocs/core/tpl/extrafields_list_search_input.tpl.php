@@ -1,5 +1,4 @@
 <?php
-
 /* Copyright (C) 2025		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -14,13 +13,19 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
- *
  */
 
 /**
  * @var Conf $conf
- * @var DoliDB $db
  * @var CommonObject $object
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ *
+ * @var array<string,mixed> $arrayfields
+ * @var ?string $extrafieldsobjectkey
+ * @var	?string $extrafieldsobjectprefix
+ * @var ?string $search_options_pattern
+ * @var array<string,mixed> $search_array_options
  */
 
 print '<!-- extrafields_list_search_input.tpl.php -->'."\n";

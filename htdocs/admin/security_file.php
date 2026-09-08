@@ -27,17 +27,18 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
+ *
+ * @var string $dolibarr_main_restrict_os_commands
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('users', 'admin', 'other'));
@@ -105,7 +106,10 @@ if ($action == 'updateform') {
 		$res5 = dolibarr_set_const($db, "MAIN_ANTIVIRUS_COMMAND", trim($antivircommand), 'chaine', 0, '', $conf->entity);
 		$res6 = dolibarr_set_const($db, "MAIN_ANTIVIRUS_PARAM", trim($antivirparam), 'chaine', 0, '', $conf->entity);
 		$res7 = dolibarr_set_const($db, "MAIN_FILE_EXTENSION_UPLOAD_RESTRICTION", GETPOST('MAIN_FILE_EXTENSION_UPLOAD_RESTRICTION', 'alpha'), 'chaine', 0, '', $conf->entity);
-		if ($res3 && $res4 && $res5 && $res6 && $res7) {
+
+		$res8 = dolibarr_set_const($db, "MAIN_SECURITY_MAXFILESIZE_DOWNLOADED", GETPOST('MAIN_SECURITY_MAXFILESIZE_DOWNLOADED', 'alpha'), 'chaine', 0, '', $conf->entity);
+
+		if ($res3 && $res4 && $res5 && $res6 && $res7 && $res8) {
 			setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
 		}
 	}
@@ -113,7 +117,7 @@ if ($action == 'updateform') {
 	// Delete file
 	$langs->load("other");
 	$file = $conf->admin->dir_temp.'/'.GETPOST('urlfile', 'alpha');
-	$ret = dol_delete_file($file);
+	$ret = dol_delete_file($file, 1);
 	if ($ret) {
 		setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile', 'alpha')), null, 'mesgs');
 	} else {
@@ -133,11 +137,10 @@ llxHeader('', $langs->trans("Files"), $wikihelp, '', 0, 0, '', '', '', 'mod-admi
 
 print load_fiche_titre($langs->trans("SecuritySetup"), '', 'title_setup');
 
-print '<span class="opacitymedium">'.$langs->trans("SecurityFilesDesc")."</span><br>\n";
-print "<br>\n";
+print '<div class="info">'.$langs->trans("SecurityFilesDesc")."</div>\n";
 
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="updateform">';
 
@@ -147,75 +150,62 @@ print dol_get_fiche_head($head, 'file', '', -1);
 
 print '<br>';
 
+// Download options
+
+print '<div class="div-table-responsive-no-min">';
+print '<table class="noborder centpercent nomarginbottom">';
+print '<tr class="liste_titre">';
+print '<td>'.img_picto('', 'download', 'class="pictofixedwidth"').$langs->trans("Download").'</td>';
+print '<td></td>';
+print '</tr>';
+
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("MAIN_SECURITY_MAXFILESIZE_DOWNLOADED").'<br>';
+//print '<span class="opacitymedium">'.$langs->trans("MAIN_SECURITY_MAXFILESIZE_DOWNLOADED").'</span>';
+print '</td>';
+print '<td>';
+print '<input type="text" name="MAIN_SECURITY_MAXFILESIZE_DOWNLOADED" class="width100 right" spellcheck="false" value="'.getDolGlobalString('MAIN_SECURITY_MAXFILESIZE_DOWNLOADED').'"> '.$langs->trans("Kb");
+print "</td>";
+print '</tr>';
+
+print '</table>';
+print '</div>';
+
+
+print '<br>';
+print '<br>';
+
+
 // Upload options
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent nomarginbottom">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Parameters").'</td>';
+print '<td>'.img_picto('', 'upload', 'class="pictofixedwidth"').$langs->trans("UploadName").'</td>';
 print '<td></td>';
 print '</tr>';
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("MaxSizeForUploadedFiles").'.';
 $max = @ini_get('upload_max_filesize');
-if (isset($max)) {
+if (!empty($max)) {
 	print '<br><span class="opacitymedium">'.$langs->trans("MustBeLowerThanPHPLimit", ((int) $max) * 1024, $langs->trans("Kb")).'.</span>';
 } else {
 	print ' '.$langs->trans("NoMaxSizeByPHPLimit").'.';
 }
 print '</td>';
 print '<td class="nowrap">';
-print '<input class="flat" name="MAIN_UPLOAD_DOC" type="text" size="6" value="'.dol_escape_htmltag(getDolGlobalString('MAIN_UPLOAD_DOC')).'"> '.$langs->trans("Kb");
+print '<input class="flat width75 right" name="MAIN_UPLOAD_DOC" type="text" spellcheck="false" value="'.dol_escape_htmltag(getDolGlobalString('MAIN_UPLOAD_DOC')).'"> '.$langs->trans("Kb");
 print '</td>';
 print '</tr>';
-
 
 print '<tr class="oddeven">';
 print '<td>';
 print $form->textwithpicto($langs->trans("UMask"), $langs->trans("UMaskExplanation"));
 print '</td>';
 print '<td class="nowrap">';
-print '<input class="flat" name="MAIN_UMASK" type="text" size="6" value="'.dol_escape_htmltag(getDolGlobalString('MAIN_UMASK')).'">';
+print '<input class="flat width75 right" name="MAIN_UMASK" type="text" spellcheck="false" value="'.dol_escape_htmltag(getDolGlobalString('MAIN_UMASK')).'">';
 print '</td>';
-print '</tr>';
-
-// Use anti virus
-
-print '<tr class="oddeven">';
-print '<td>'.$langs->trans("AntiVirusCommand").'<br>';
-print '<span class="opacitymedium">'.$langs->trans("AntiVirusCommandExample").'</span>';
-// Check command in inside safe_mode
-print '</td>';
-print '<td>';
-if (ini_get('safe_mode') && getDolGlobalString('MAIN_ANTIVIRUS_COMMAND')) {
-	$langs->load("errors");
-	$basedir = preg_replace('/"/', '', dirname($conf->global->MAIN_ANTIVIRUS_COMMAND));
-	$listdir = explode(';', ini_get('safe_mode_exec_dir'));
-	if (!in_array($basedir, $listdir)) {
-		print img_warning($langs->trans('WarningSafeModeOnCheckExecDir'));
-		dol_syslog("safe_mode is on, basedir is ".$basedir.", safe_mode_exec_dir is ".ini_get('safe_mode_exec_dir'), LOG_WARNING);
-	}
-}
-print '<input type="text" '.((defined('MAIN_ANTIVIRUS_COMMAND') && !defined('MAIN_ANTIVIRUS_BYPASS_COMMAND_AND_PARAM')) ? 'disabled ' : '').'name="MAIN_ANTIVIRUS_COMMAND" class="minwidth500imp" value="'.dol_escape_htmltag(GETPOSTISSET('MAIN_ANTIVIRUS_COMMAND') ? GETPOST('MAIN_ANTIVIRUS_COMMAND') : getDolGlobalString('MAIN_ANTIVIRUS_COMMAND')).'">';
-if (defined('MAIN_ANTIVIRUS_COMMAND') && !defined('MAIN_ANTIVIRUS_BYPASS_COMMAND_AND_PARAM')) {
-	print '<br><span class="opacitymedium">'.$langs->trans("ValueIsForcedBySystem").'</span>';
-}
-print "</td>";
-print '</tr>';
-
-// Use anti virus
-
-print '<tr class="oddeven">';
-print '<td>'.$langs->trans("AntiVirusParam").'<br>';
-print '<span class="opacitymedium">'.$langs->trans("AntiVirusParamExample").'</span>';
-print '</td>';
-print '<td>';
-print '<input type="text" '.(defined('MAIN_ANTIVIRUS_PARAM') ? 'disabled ' : '').'name="MAIN_ANTIVIRUS_PARAM" class="minwidth500imp" value="'.(getDolGlobalString('MAIN_ANTIVIRUS_PARAM') ? dol_escape_htmltag(getDolGlobalString('MAIN_ANTIVIRUS_PARAM')) : '').'">';
-if (defined('MAIN_ANTIVIRUS_PARAM')) {
-	print '<br><span class="opacitymedium">'.$langs->trans("ValueIsForcedBySystem").'</span>';
-}
-print "</td>";
 print '</tr>';
 
 print '<tr class="oddeven">';
@@ -223,12 +213,73 @@ print '<td>'.$langs->trans("UploadExtensionRestriction").'<br>';
 print '<span class="opacitymedium">'.$langs->trans("UploadExtensionRestrictionExemple").'</span>';
 print '</td>';
 print '<td>';
-print '<input type="text" name="MAIN_FILE_EXTENSION_UPLOAD_RESTRICTION" class="minwidth500imp" value="'.getDolGlobalString('MAIN_FILE_EXTENSION_UPLOAD_RESTRICTION', 'htm,html,shtml,js,php').'">';
+print '<input type="text" name="MAIN_FILE_EXTENSION_UPLOAD_RESTRICTION" class="minwidth500imp" spellcheck="false" value="'.getDolGlobalString('MAIN_FILE_EXTENSION_UPLOAD_RESTRICTION', implode(',', getExecutableContent())).'">';
 print "</td>";
 print '</tr>';
 
+
+// Use anti virus
+
+
+// Enable advanced perms
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("UseAntivirusOnUploadedFile").'</td>';
+print '<td class="">';
+if (defined('MAIN_ANTIVIRUS_UPLOAD_ON') && constant('MAIN_ANTIVIRUS_UPLOAD_ON')) {
+	print img_picto($langs->trans("Enabled")." - Can't be disabled (PHP constant MAIN_ANTIVIRUS_UPLOAD_ON is set)", 'switch_on', '', 0, 0, 0, '', 'opacitymedium');
+} else {
+	if (!empty($conf->use_javascript_ajax)) {
+		print ajax_constantonoff('MAIN_ANTIVIRUS_UPLOAD_ON', array(), null, 0, 0, 1);
+	} else {
+		if (!getDolGlobalString('MAIN_ANTIVIRUS_UPLOAD_ON')) {
+			print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_MAIN_ANTIVIRUS_UPLOAD_ON&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+		} else {
+			print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_MAIN_ANTIVIRUS_UPLOAD_ON&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+		}
+	}
+}
+print "</td></tr>";
+
+if (getDolGlobalString('MAIN_ANTIVIRUS_UPLOAD_ON')) {
+	print '<tr class="oddeven">';
+	print '<td><span class="fieldrequired">'.$langs->trans("AntiVirusCommand").'</span><br>';
+	print '<span class="opacitymedium">'.$langs->trans("AntiVirusCommandExample").'</span>';
+	print '</td>';
+	print '<td>';
+	// Check that command is inside safe_mode
+	if (ini_get('safe_mode') && getDolGlobalString('MAIN_ANTIVIRUS_COMMAND')) {
+		$langs->load("errors");
+		$basedir = preg_replace('/"/', '', dirname($conf->global->MAIN_ANTIVIRUS_COMMAND));
+		$listdir = explode(';', ini_get('safe_mode_exec_dir'));
+		if (!in_array($basedir, $listdir)) {
+			print img_warning($langs->trans('WarningSafeModeOnCheckExecDir'));
+			dol_syslog("safe_mode is on, basedir is ".$basedir.", safe_mode_exec_dir is ".ini_get('safe_mode_exec_dir'), LOG_WARNING);
+		}
+	}
+	print '<input type="text" '.((defined('MAIN_ANTIVIRUS_COMMAND') && !defined('MAIN_ANTIVIRUS_BYPASS_COMMAND_AND_PARAM')) ? 'disabled ' : '').'name="MAIN_ANTIVIRUS_COMMAND" class="minwidth500imp" spellcheck="false" value="'.dol_escape_htmltag(GETPOSTISSET('MAIN_ANTIVIRUS_COMMAND') ? GETPOST('MAIN_ANTIVIRUS_COMMAND') : getDolGlobalString('MAIN_ANTIVIRUS_COMMAND')).'">';
+	if (defined('MAIN_ANTIVIRUS_COMMAND') && !defined('MAIN_ANTIVIRUS_BYPASS_COMMAND_AND_PARAM')) {
+		print '<br><span class="opacitymedium">'.$langs->trans("ValueIsForcedBySystem").'</span>';
+	}
+	print "</td>";
+	print '</tr>';
+
+	// Anti virus param
+	print '<tr class="oddeven">';
+	print '<td>'.$langs->trans("AntiVirusParam").'<br>';
+	print '<span class="opacitymedium">'.$langs->trans("AntiVirusParamExample").'</span>';
+	print '</td>';
+	print '<td>';
+	print '<input type="text" '.(defined('MAIN_ANTIVIRUS_PARAM') ? 'disabled ' : '').'name="MAIN_ANTIVIRUS_PARAM" class="minwidth500imp" spellcheck="false" value="'.(getDolGlobalString('MAIN_ANTIVIRUS_PARAM') ? dol_escape_htmltag(getDolGlobalString('MAIN_ANTIVIRUS_PARAM')) : '').'">';
+	if (defined('MAIN_ANTIVIRUS_PARAM')) {
+		print '<br><span class="opacitymedium">'.$langs->trans("ValueIsForcedBySystem").'</span>';
+	}
+	print "</td>";
+	print '</tr>';
+}
+
 print '</table>';
 print '</div>';
+
 
 print dol_get_fiche_end();
 

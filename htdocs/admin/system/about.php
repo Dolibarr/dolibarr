@@ -210,7 +210,7 @@ print '<div class="clearboth"></div>';
 $showpromotemessage = 1;
 if ($showpromotemessage) {
 	$tmp = versiondolibarrarray();
-	if (is_numeric($tmp[2])) {    // Not alpha, beta or rc
+	if (is_numeric($tmp[2]) && !isset($tmp[3])) {    // Not alpha, beta or rc
 		print '<br>';
 		print '<br>';
 

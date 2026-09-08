@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2016-2017  Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -93,84 +93,15 @@ if (empty($action)) {
 	$action = 'preview';
 }
 
-$permissiontoadd = $user->hasRight('collab', 'read');
-$permissiontodelete = $user->hasRight('collab', 'delete');
+//$permissiontoadd = $user->hasRight('collab', 'read');
+//$permissiontodelete = $user->hasRight('collab', 'delete');
 
 
 /*
  * Actions
  */
 
-if (GETPOST('refreshsite')) {
-	$pageid = 0; // If we change the site, we reset the pageid.
-}
-if (GETPOST('refreshpage')) {
-	$action = 'preview';
-}
-
-
-// Add a collab page
-if ($action == 'add' && $permissiontoadd) {
-	$db->begin();
-
-	$objectpage->title = GETPOST('WEBSITE_TITLE');
-	$objectpage->pageurl = GETPOST('WEBSITE_PAGENAME');
-	$objectpage->description = GETPOST('WEBSITE_DESCRIPTION');
-	$objectpage->keywords = GETPOST('WEBSITE_KEYWORD');
-
-	if (empty($objectpage->title)) {
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("WEBSITE_PAGENAME")), null, 'errors');
-		$error++;
-	}
-
-	if (!$error) {
-		$res = $objectpage->create($user);
-		if ($res <= 0) {
-			$error++;
-			setEventMessages($objectpage->error, $objectpage->errors, 'errors');
-		}
-	}
-	if (!$error) {
-		$db->commit();
-		setEventMessages($langs->trans("PageAdded", $objectpage->pageurl), null, 'mesgs');
-		$action = '';
-	} else {
-		$db->rollback();
-	}
-
-	$action = 'preview';
-	$id = $objectpage->id;
-}
-
-// Update page
-if ($action == 'delete' && $permissiontodelete) {
-	$db->begin();
-
-	$res = $object->fetch(0, $website);
-
-	$res = $objectpage->fetch($pageid, $object->fk_website);
-
-	if ($res > 0) {
-		$res = $objectpage->delete($user);
-		if (!($res > 0)) {
-			$error++;
-			setEventMessages($objectpage->error, $objectpage->errors, 'errors');
-		}
-
-		if (!$error) {
-			$db->commit();
-			setEventMessages($langs->trans("PageDeleted", $objectpage->pageurl, $website), null, 'mesgs');
-
-			header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website);
-			exit;
-		} else {
-			$db->rollback();
-		}
-	} else {
-		dol_print_error($db);
-	}
-}
-
+// None
 
 
 /*
@@ -190,13 +121,6 @@ if ($action == 'create') {
 }
 
 
-// Add a margin under toolbar ?
-$style = '';
-if ($action != 'preview' && $action != 'editcontent') {
-	$style = ' margin-bottom: 5px;';
-}
-
-//var_dump($objectpage);exit;
 print '<div class="centpercent websitebar">';
 
 

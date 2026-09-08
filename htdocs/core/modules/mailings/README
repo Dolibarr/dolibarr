@@ -15,18 +15,16 @@ htdocs/core/modules/mailings/example.modules.php
 into
 htdocs/core/modules/mailings/myselector.modules.php
 
-You can choose value of your choice instead of "myselector" in name
-of new file.
+You can choose value of your choice instead of "myselector" in name of new file. The file name must NOT start with "mailing".
 
 
 ***** STEP 2 *****
 
 Edit this file myselector.modules.php and change following text:
 
-"class mailing_example"           into    "class mailing_myselector"
+"class mailing_example"           into    "class mailing_myselector"				# You must add the prefix "mailing_" here.
 "var $name='example';"            into    var $name='myselector';
 "var $desc='...';"                into    var $desc='A text to describe selector';
-"function mailing_example"        into    "function mailing_myselector"
 
 Then add code inside the "add_to_target" function. What you must do is simply
 fill the $target PHP array with one record for each email your selector must return.
@@ -43,7 +41,7 @@ $target[0]=array('email'=>'email_0','name'=>'name_0','firstname'=>'firstname_0',
 $target[n]=array('email'=>'email_n','name'=>'name_n','firstname'=>'firstname_n', 'other'=>'other_n');
 // ----- Your code end here -----
 
-and call the method 
+and call the method
 
 parent::addTargetsToDatabase($mailing_id, $target);
 
@@ -52,4 +50,3 @@ parent::addTargetsToDatabase($mailing_id, $target);
 
 Once this file has been edited, you can go to the Dolibarr emailing feature,
 you will see a new line selector in the "targets" editor of emailing tool.
-

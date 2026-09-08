@@ -17,6 +17,7 @@ AccountancyCodeAsset=Računovodstveni kod (imovina)
 AccountancyCodeDepreciationAsset=Računovodstvena šifra (račun amortizacije sredstava)
 AccountancyCodeDepreciationExpense=Računovodstvena šifra (konto troškova amortizacije)
 AssetsLines=Imovina
+ConfirmValidateAsset=Jeste li sigurni da želite za validaciju ove imovine s referencom <b>%s</b>?
 DeleteType=Obriši
 DeleteAnAssetType=Izbrišite model imovine
 ConfirmDeleteAssetType=Jeste li sigurni da želite izbrisati ovaj model imovine?
@@ -70,6 +71,7 @@ AssetDisposal=Raspolaganje
 AssetConfirmDisposalAsk=Jeste li sigurni da želite odustati od imovine <b> %s </b>?
 AssetConfirmReOpenAsk=Jeste li sigurni da želite ponovno otvoriti sredstvo <b> %s </b>?
 # Asset status
+AssetInDraft=Skica
 AssetInProgress=U postupku
 AssetDisposed=Odloženo
 AssetRecorded=Obračunato

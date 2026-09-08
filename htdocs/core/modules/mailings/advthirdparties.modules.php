@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2005-2010  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
 *
 * This file is an example to follow to add your own email selector inside
 * the Dolibarr email tool.
@@ -82,9 +82,7 @@ class mailing_advthirdparties extends MailingTargets
 	public function add_to_target_spec($mailing_id, $socid, $type_of_target, $contactid)
 	{
 		// phpcs:enable
-		global $conf, $langs;
-
-		dol_syslog(get_class($this)."::add_to_target_spec socid=".var_export($socid, true).' contactid='.var_export($contactid, true));
+		dol_syslog(get_class($this)."::add_to_target_spec socid=".formatLogObject($socid).' contactid='.formatLogObject($contactid));
 
 		$cibles = array();
 
@@ -92,12 +90,10 @@ class mailing_advthirdparties extends MailingTargets
 			// Select the third parties from category
 			if (count($socid) > 0) {
 				$sql = "SELECT s.rowid as id, s.email as email, s.nom as name, null as fk_contact";
-				$sql .= " FROM ".MAIN_DB_PREFIX."societe as s LEFT OUTER JOIN ".MAIN_DB_PREFIX."societe_extrafields se ON se.fk_object=s.rowid";
+				$sql .= " FROM ".MAIN_DB_PREFIX."societe as s LEFT JOIN ".MAIN_DB_PREFIX."societe_extrafields se ON se.fk_object=s.rowid";
 				$sql .= " WHERE s.entity IN (".getEntity('societe').")";
 				$sql .= " AND s.rowid IN (".$this->db->sanitize(implode(',', $socid)).")";
-				if (empty($this->evenunsubscribe)) {
-					$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = s.email and mu.entity = ".((int) $conf->entity).")";
-				}
+				$sql .= $this->getSqlToExcludeUnsubscribed('s.email');
 				$sql .= " ORDER BY email";
 
 				// Stock recipients emails into targets table
@@ -148,9 +144,7 @@ class mailing_advthirdparties extends MailingTargets
 				if (count($socid) > 0) {
 					$sql .= " AND socp.fk_soc IN (".$this->db->sanitize(implode(',', $socid)).")";
 				}
-				if (empty($this->evenunsubscribe)) {
-					$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = socp.email and mu.entity = ".((int) $conf->entity).")";
-				}
+				$sql .= $this->getSqlToExcludeUnsubscribed('socp.email');
 				$sql .= " ORDER BY email";
 
 				// Stock recipients emails into targets table
@@ -189,8 +183,7 @@ class mailing_advthirdparties extends MailingTargets
 			}
 		}
 
-
-		dol_syslog(get_class($this)."::add_to_target_spec mailing cibles=".var_export($cibles, true), LOG_DEBUG);
+		dol_syslog(get_class($this)."::add_to_target_spec mailing cibles=".formatLogObject($cibles), LOG_DEBUG);
 
 		return parent::addTargetsToDatabase($mailing_id, $cibles);
 	}
@@ -224,17 +217,13 @@ class mailing_advthirdparties extends MailingTargets
 	 */
 	public function getNbOfRecipients($sql = '')
 	{
-		global $conf;
-
 		$sql = "SELECT count(distinct(s.email)) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 		$sql .= " WHERE s.email != ''";
 		$sql .= " AND s.entity IN (".getEntity('societe').")";
-		if (empty($this->evenunsubscribe)) {
-			$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = s.email and mu.entity = ".((int) $conf->entity).")";
-		}
+		$sql .= $this->getSqlToExcludeUnsubscribed('s.email');
 
-		// La requete doit retourner un champ "nb" pour etre comprise par parent::getNbOfRecipients
+		// The query must return a field "nb" to be understood by parent::getNbOfRecipients
 		return parent::getNbOfRecipients($sql);
 	}
 
@@ -258,7 +247,7 @@ class mailing_advthirdparties extends MailingTargets
 		$sql .= " FROM ".MAIN_DB_PREFIX."categorie";
 		$sql .= " WHERE type in (1,2)"; // We keep only categories for suppliers and customers/prospects
 		// $sql.= " AND visible > 0";	// We ignore the property visible because third party's categories does not use this property (only products categories use it).
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " AND entity = ".((int) $conf->entity);
 		$sql .= " ORDER BY label";
 
 		//print $sql;
@@ -312,15 +301,23 @@ class mailing_advthirdparties extends MailingTargets
 	 */
 	public function url($id, $type)
 	{
+		$s = "";
 		if ($type == 'thirdparty') {
 			$companystatic = new Societe($this->db);
 			$companystatic->fetch($id);
-			return $companystatic->getNomUrl(0, '', 0, 1);
+			$s = $companystatic->getNomUrl(0, 'nolink', 32, 1, 0);
 		} elseif ($type == 'contact') {
 			$contactstatic = new Contact($this->db);
 			$contactstatic->fetch($id);
-			return $contactstatic->getNomUrl(0, '', 0, '', -1, 1);
+			$s = $contactstatic->getNomUrl(0, 'nolink', 1, '', 0, 32);
 		}
-		return "";
+
+		// When link is too long (for example because of hook in getNomUrl that complete the url), we return empty string.
+		// Link is still possible with new source_id and source_type in db llx_mailing_cibles.
+		if (strlen($s) > 255) {
+			$s = "";
+		}
+
+		return $s;
 	}
 }

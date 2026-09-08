@@ -1,0 +1,54 @@
+# Dolibarr language file - Source file is en_US - subtotal
+
+#
+# Global
+#
+Subtotal=Zwischensummen
+SubTotalModuleDesc=Zwischensumme und Titelzeilen für bestimmte Dokumente
+#
+# Admin
+#
+SubtotalSetup=Konfiguration für Modul Subtotal
+MaxSubtotalLevel=Maximale Anzahl Ebenen
+SubtotalLineBackColor=Hintergrundfarbe der Zeilen in Ebene  %s
+NotSupportedByAllPDF=Funktioniert mit neueren PDFs, aber nicht mit älteren %s
+
+#
+# Card
+#
+AddTitleLine=Titelzeile hinzufügen
+AddSubtotalLine=Zwischensummenzeile hinzufügen
+TitleNeedDesc=Sie müssen eine gültige Beschreibung eingeben, um einen Titel zu erstellen.
+TitleAddedLevelTooHigh=Hinzugefügter Titel mit zu hoher Ebene (stattdessen hinzugefügt auf Ebene %s).
+TitleEditedLevelTooHigh=Bearbeiteter Titel mit zu hoher Ebene (stattdessen bearbeitet mit Ebene %s).
+DeleteSubtotalLine=Zwischensummenzeile löschen
+ConfirmDeleteSubtotalLine=Sind Sie sicher, dass Sie diese Zwischensummenzeile löschen möchten?
+DeleteTitleLine=Titelzeile löschen
+ConfirmDeleteTitleLine=Sind Sie sicher, dass Sie diese Titelzeile löschen möchten?
+DeleteCorrespondingSubtotalLine=Zugehörige Zwischensummenzeile löschen?
+SubtotalLevel=Ebene %s
+SubtotalLineDesc=Beschreibung der Zeile
+SubtotalLineLevel=Ebene der Zeile
+ShowUPOnPDF=Stückpreis im PDF anzeigen
+ShowTotalExludingVATOnPDF=Gesamtbetrag ohne USt. im PDF anzeigen
+ForcePageBreak=Seitenumbruch vor dem Titel erzwingen
+NoTitleError=Sie haben keinen Titelzeilen oder sie haben bereits alle eine entsprechende Zwischensummenzeile
+CorrespondingTitleLine=Zugehörige Titelzeile
+SelectVATRate=USt.-Satz auswählen
+EnterRemisePercent=Rabatt in Prozent eingeben
+ApplyVATForBlock=USt. für diesen Block anwenden
+ApplyDiscountForBlock=Rabatt für diesen Block anwenden
+TitleUnderSameLevelSTLine=Titel auf derselben Ebene müssen sich unterhalb der Zwischensumme des vorherigen Titels befinden.
+TitleUnderSameLevelOrGreater=Der Titel muss unter einem Titel mit derselben oder höheren Ebene stehen.
+TitleAfterStLineOfSameLevelTitle=Der Titel muss nach der Zwischensummenzeile des vorherigen Titels stehen.
+PreviousTitleLevelTooHigh=Der vorherige Titel ist mindestens zwei Ebenen höher als die verschobene Zeile.
+STLineUnderCorrespondingTitleDesc=Die Zwischensummenzeile muss unter einem Titel auf derselben Ebene stehen, der dieselbe Beschreibung hat.
+STLineUnderCorrespondingTitle=Die Zwischensummenzeile muss unter einem Titel auf derselben Ebene und mit derselben Beschreibung stehen.
+STLineUnderTitle=Die Zwischensummenzeile muss unterhalb von ihrem Titel stehen
+UnsupportedModuleError=Sie können keine Zwischensummenzeile in einem nicht unterstützten Modul hinzufügen.
+CorrespondingTitleNotFound=Der zugehörige Titel wurde nicht gefunden
+
+#
+# PDF
+#
+SubtotalOf=Zwischensumme von %s:

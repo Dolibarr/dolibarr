@@ -5,7 +5,8 @@
  * Copyright (C) 2006		Yannick Warnier			<ywarnier@beeznest.org>
  * Copyright (C) 2014		Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2018-2024	Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Juan Pablo Farber		<jfarber55@hotmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +30,14 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -42,28 +51,30 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.php';
 
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Societe $mysoc
- * @var Translate $langs
- * @var User $user
- */
-
 // Load translation files required by the page
 $langs->loadLangs(array("other", "compta", "banks", "bills", "companies", "product", "trips", "admin"));
 
 include DOL_DOCUMENT_ROOT.'/compta/tva/initdatesforvat.inc.php';
+/**
+ * @var	int	$date_start
+ * @var int $date_end
+ * @var int $date_start_month
+ * @var int $date_start_year
+ * @var int $date_start_day
+ * @var int $date_end_month
+ * @var int $date_end_year
+ * @var int $date_end_day
+ * @var int $year_current
+ */
 '
 @phan-var-force int $date_start
 @phan-var-force int $date_end
-@phan-var-force string $date_start_month
-@phan-var-force string $date_start_year
-@phan-var-force string $date_start_day
-@phan-var-force string $date_end_month
-@phan-var-force string $date_end_year
-@phan-var-force string $date_end_day
+@phan-var-force int $date_start_month
+@phan-var-force int $date_start_year
+@phan-var-force int $date_start_day
+@phan-var-force int $date_end_month
+@phan-var-force int $date_end_year
+@phan-var-force int $date_end_day
 @phan-var-force int $year_current
 ';
 
@@ -114,10 +125,7 @@ foreach ($listofparams as $param) {
 	}
 }
 
-$special_report = false;
-if (isset($_REQUEST['extra_report']) && $_REQUEST['extra_report'] == 1) {
-	$special_report = true;
-}
+$special_report = (GETPOSTINT('extra_report') == 1);
 
 llxHeader('', $langs->trans("VATReport"), '', '', 0, 0, '', '', $morequerystring);
 
@@ -125,7 +133,7 @@ $fsearch = '<!-- hidden fields for form -->';
 $fsearch .= '<input type="hidden" name="token" value="'.newToken().'">';
 $fsearch .= '<input type="hidden" name="modetax" value="'.$modetax.'">';
 $fsearch .= $langs->trans("SalesTurnoverMinimum").': ';
-$fsearch .= '<input type="text" name="min" id="min" value="'.$min.'" size="6">';
+$fsearch .= '<input type="text" name="min" id="min" value="'.$min.'" class="width75 right">';
 
 // Show report header
 $name = $langs->trans("VATReportByThirdParties");
@@ -142,25 +150,10 @@ if ($modetax == 2) {
 $calcmode .= ' <span class="opacitymedium">('.$langs->trans("TaxModuleSetupToModifyRules", DOL_URL_ROOT.'/admin/taxes.php').')</span>';
 // Set period
 $period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
-$prevyear = $date_start_year;
-$q = 0;
-$prevquarter = $q;
-if ($prevquarter > 1) {
-	$prevquarter--;
-} else {
-	$prevquarter = 4;
-	$prevyear--;
-}
-$nextyear = $date_start_year;
-$nextquarter = $q;
-if ($nextquarter < 4) {
-	$nextquarter++;
-} else {
-	$nextquarter = 1;
-	$nextyear++;
-}
+
 $builddate = dol_now();
 
+$description = '';
 if (getDolGlobalString('TAX_MODE_SELL_PRODUCT') == 'invoice') {
 	$description = $langs->trans("RulesVATDueProducts");
 }
@@ -221,7 +214,7 @@ $vatsup = $langs->trans("VATPaid");
 
 // VAT Received
 print '<div class="div-table-responsive">';
-print "<table class=\"noborder\" width=\"100%\">";
+print '<table class="noborder centpercent">';
 
 $y = $year_current;
 $total = 0;
@@ -409,7 +402,6 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 	$x_paye_sum = 0;
 	$x_paye_ht = 0;
 
-	//print '<tr><td colspan="'.($span+1).'">'..')</td></tr>';
 
 	// Customers invoices
 	print '<tr class="liste_titre">';
@@ -431,6 +423,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 	print '</tr>';
 
 	$action = "tvadetail";
+	$parameters = array();
 	$parameters["mode"] = $modetax;
 	$parameters["start"] = $date_start;
 	$parameters["end"] = $date_end;
@@ -449,7 +442,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 			if (is_array($x_both[$thirdparty_id]['coll']['detail'])) {
 				// VAT Rate
 				print "<tr>";
-				print '<td class="tax_rate">';
+				print '<td class="tax_rate" colspan="2">';
 				if (is_numeric($thirdparty_id)) {
 					$company_static->fetch($thirdparty_id);
 					print $langs->trans("ThirdParty").': '.$company_static->getNomUrl(1);
@@ -458,15 +451,17 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 					$user_static->fetch($tmpid);
 					print $langs->trans("User").': '.$user_static->getNomUrl(1);
 				}
-				print '</td><td colspan="'.($span + 1).'"></td>';
+				print '</td><td colspan="'.$span.'"></td>';
 				print '</tr>'."\n";
 
 				foreach ($x_both[$thirdparty_id]['coll']['detail'] as $index => $fields) {
+					// Sort by payment date/invoice date
+					usort($x_both[$thirdparty_id]['coll']['detail'], 'cmp_fields_date');
+
 					// Define type
 					// We MUST use dtype (type in line). We can use something else, only if dtype is really unknown.
 					$type = (isset($fields['dtype']) ? $fields['dtype'] : $fields['ptype']);
-					// Try to enhance type detection using date_start and date_end for free lines where type
-					// was not saved.
+					// Try to enhance type detection using date_start and date_end for free lines where type was not saved.
 					if (!empty($fields['ddate_start'])) {
 						$type = 1;
 					}
@@ -653,11 +648,13 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 				print '</tr>'."\n";
 
 				foreach ($x_both[$thirdparty_id]['paye']['detail'] as $index => $fields) {
+					// Sort by payment date/invoice date
+					usort($x_both[$thirdparty_id]['paye']['detail'], 'cmp_fields_date');
+
 					// Define type
 					// We MUST use dtype (type in line). We can use something else, only if dtype is really unknown.
 					$type = (isset($fields['dtype']) ? $fields['dtype'] : $fields['ptype']);
-					// Try to enhance type detection using date_start and date_end for free lines where type
-					// was not saved.
+					// Try to enhance type detection using date_start and date_end for free lines where type was not saved.
 					if (!empty($fields['ddate_start'])) {
 						$type = 1;
 					}
@@ -682,7 +679,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 					}
 
 					// Company name
-					print '<td class="tdmaxoverflow150">';
+					print '<td class="tdoverflowmax150">';
 					print $fields['company_link'];
 					print '</td>';
 
@@ -702,6 +699,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 						} else {
 							$text = img_object($langs->trans('Product'), 'product');
 						}
+						$reg = array();
 						if (preg_match('/^\((.*)\)$/', $fields['descr'], $reg)) {
 							if ($reg[1] == 'DEPOSIT') {
 								$fields['descr'] = $langs->transnoentitiesnoconv('Deposit');
@@ -806,7 +804,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 
 	$diff = $x_coll_sum - $x_paye_sum;
 	print '<tr class="liste_total">';
-	print '<td class="liste_total" colspan="'.($span + 1).'">'.$langs->trans("TotalToPay").($q ? ', '.$langs->trans("Quadri").' '.$q : '').'</td>';
+	print '<td class="liste_total" colspan="'.($span + 1).'">'.$langs->trans("TotalToPay").'</td>';
 	print '<td class="liste_total nowrap right"><b>'.price(price2num($diff, 'MT'))."</b></td>\n";
 	print "</tr>\n";
 
@@ -819,3 +817,20 @@ print '</div>';
 llxFooter();
 
 $db->close();
+
+/**
+ * Helper compare function to sort lines by payment date first
+ *
+ * @param array{datep:int,datef:int}	$a	Left argument to compare
+ * @param array{datep:int,datef:int}	$b	Right argument to compare
+ * @return int<-1,1>  Indicates sort order between arguments
+ */
+function cmp_fields_date(&$a, &$b)
+{
+	// Compare payment date
+	if ($a['datep'] != $b['datep']) {
+		return $a['datep'] <=> $b['datep'];
+	}
+	// In case the payment date is the same, order by invoice date
+	return $a['datef'] <=> $b['datef'];
+}

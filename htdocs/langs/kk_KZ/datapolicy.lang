@@ -19,7 +19,8 @@ Module4100Desc = Деректер құпиялығын басқару модул
 datapolicySetup = Модуль деректерінің құпиялылық саясатын орнату
 DataDeletion=Deletion of data
 DataAnonymization=Anonymization of data
-datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>This module will make an anonymization automatically after a certain duration without events (the duration which you will have indicated below) and if the object has no existing business object children.
+DataAnonymizationOrDeletion=Anonymization or deletion of data
+datapolicySetupPage = Depending on the laws of your country (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>This module will make an anonymization automatically after a certain duration without events (the duration which you will have indicated below) and if the object has no existing business object children.
 NB_MONTHS = %s ай
 ONE_YEAR = 1 жыл
 NB_YEARS = %s жыл
@@ -34,7 +35,8 @@ DATAPOLICY_CONTACT_PROSPECT_CLIENT = Болашақ/Тұтынушы
 DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Не перспективалы/Не тұтынушы
 DATAPOLICY_CONTACT_FOURNISSEUR = Жеткізуші
 DATAPOLICY_ADHERENT = мүше
-DATAPOLICY_Tooltip_SETUP=The anonymization is done by the scheduled job "%s" ran by the module "%s", so this module must be enabled and working correctly.
+DATAPOLICY_RECRUITMENT_CANDIDATURE = Application
+DATAPOLICY_Tooltip_SETUP=The anonymization is done by the scheduled job "%s" ran by the module "%s", so this module must be enabled and be working correctly.
 SendAgreementText = Сіз GDPR электрондық поштасын барлық сәйкес контактілеріңізге (әлі электрондық поштаны алмаған және GDPR келісімі туралы ештеңе тіркемеген) жібере аласыз. Мұны істеу үшін келесі түймені пайдаланыңыз.
 SendAgreement = Электрондық хаттарды жіберу
 AllAgreementSend = Барлық электрондық хаттар жіберілді
@@ -52,3 +54,6 @@ DATAPOLICY_date = Келісу/келіспеу күні GDPR
 DATAPOLICY_send = Келісімнің электрондық поштасы жіберілген күн
 MailSent = Хат жіберілді
 NUMBER_MONTH_BEFORE_DELETION = Жоюға дейінгі айлар саны
+TheFollowingFieldsAreReplaceWith=Some fields will be replaced by a unique value:
+OtherFieldsAreReplaceWithStaticValues=Some other fields are replaced by a static value:
+QualifiedNumber=Qualified record count

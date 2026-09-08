@@ -2,6 +2,7 @@
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016   Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +21,7 @@
 use Luracast\Restler\RestException;
 
 require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 
 /**
@@ -126,7 +128,7 @@ class SupplierProposals extends DolibarrApi
 	public function post($request_data = null)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('supplier_proposal', 'creer')) {
-			throw new RestException(403, "Insuffisant rights");
+			throw new RestException(403, "Insufficiant rights");
 		}
 		// Check mandatory fields
 		$result = $this->_validate($request_data);
@@ -138,8 +140,17 @@ class SupplierProposals extends DolibarrApi
 				continue;
 			}
 
-			$this->supplier_proposal->$field = $value;
+			if ($field == 'array_options' && is_array($value)) {
+				$this->supplier_proposal->fetch_optionals();	// To force the load of the extrafields definition by fetch_name_optionals_label()
+
+				foreach ($value as $index => $val) {
+					$this->supplier_proposal->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->supplier_proposal);
+				}
+				continue;
+			}
+			$this->supplier_proposal->$field = $this->_checkValForAPI($field, $value, $this->supplier_proposal);
 		}
+
 		/*if (isset($request_data["lines"])) {
 		  $lines = array();
 		  foreach ($request_data["lines"] as $line) {
@@ -147,6 +158,7 @@ class SupplierProposals extends DolibarrApi
 		  }
 		  $this->propal->lines = $lines;
 		}*/
+
 		if ($this->supplier_proposal->create(DolibarrApiAccess::$user) < 0) {
 			throw new RestException(500, "Error creating supplier proposal", array_merge(array($this->supplier_proposal->error), $this->supplier_proposal->errors));
 		}
@@ -188,11 +200,11 @@ class SupplierProposals extends DolibarrApi
 			}
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->supplier_proposal->array_options[$index] = $val;
+					$this->supplier_proposal->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->supplier_proposal);
 				}
 				continue;
 			}
-			$this->supplier_proposal->$field = $value;
+			$this->supplier_proposal->$field = $this->_checkValForAPI($field, $value, $this->supplier_proposal);
 		}
 
 		// update end of validity date
@@ -238,7 +250,7 @@ class SupplierProposals extends DolibarrApi
 		$obj_ret = array();
 
 		// case of external user, $thirdparty_ids param is ignored and replaced by user's socid
-		$socids = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : $thirdparty_ids;
+		$socids = DolibarrApiAccess::$user->socid ?: $thirdparty_ids;
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
@@ -256,9 +268,9 @@ class SupplierProposals extends DolibarrApi
 		// Search on sale representative
 		if ($search_sale && $search_sale != '-1') {
 			if ($search_sale == -2) {
-				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc)";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', 0, 1);
 			} elseif ($search_sale > 0) {
-				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', (int) $search_sale);
 			}
 		}
 		// Add sql filters
@@ -348,9 +360,12 @@ class SupplierProposals extends DolibarrApi
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Clean sensible object datas
+	 * @phpstan-template T
 	 *
 	 * @param   Object  $object     Object to clean
 	 * @return  Object              Object with cleaned properties
+	 * @phpstan-param T $object
+	 * @phpstan-return T
 	 */
 	protected function _cleanObjectDatas($object)
 	{

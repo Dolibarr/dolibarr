@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2009-2013  Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -321,7 +321,7 @@ function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filte
 					dol_syslog("Merge PDF file for invoice ".$file);
 				}
 
-				// Charge un document PDF depuis un fichier.
+				// Load a PDF document from a file
 				$pagecount = $pdf->setSourceFile($file);
 				for ($i = 1; $i <= $pagecount; $i++) {
 					$tplidx = $pdf->importPage($i);

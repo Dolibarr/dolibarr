@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2006-2016  Laurent Destailleur         <eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -76,6 +76,7 @@ $server->soap_defencoding = 'UTF-8';
 $server->decode_utf8 = false;
 $ns = 'http://www.dolibarr.org/ns/';
 $server->configureWSDL('WebServicesDolibarrThirdParty', $ns);
+// @phan-suppress-next-line PhanUndeclaredProperty
 $server->wsdl->schemaTargetNamespace = $ns;
 
 
@@ -739,7 +740,7 @@ function getListOfThirdParties($authentication, $filterthirdparty)
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON s.fk_pays = c.rowid";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_extrafields as extra ON s.rowid=fk_object";
 
-		$sql .= " WHERE entity=".$conf->entity;
+		$sql .= " WHERE entity=".((int) $conf->entity);
 		foreach ($filterthirdparty as $key => $val) {
 			if ($key == 'name' && $val != '') {
 				$sql .= " AND s.name LIKE '%".$db->escape($val)."%'";

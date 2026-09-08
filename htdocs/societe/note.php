@@ -124,10 +124,6 @@ if ($object->id > 0) {
 	print $object->getTypeUrl(1);
 	print '</td></tr>';
 
-	if (getDolGlobalString('SOCIETE_USEPREFIX')) {  // Old not used prefix field
-		print '<tr><td class="'.$cssclass.'">'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
-	}
-
 	if ($object->client) {
 		print '<tr><td class="'.$cssclass.'">';
 		print $langs->trans('CustomerCode').'</td><td colspan="3">';

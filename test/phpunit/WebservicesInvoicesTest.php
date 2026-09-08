@@ -218,7 +218,10 @@ class WebservicesInvoicesTest extends CommonClassTest
 		try {
 			$result = $this->soapclient->call($WS_METHOD, $parameters, $this->ns, '');
 		} catch (SoapFault $exception) {
-			echo $exception;
+			echo $exception->getMessage();
+			$result = 0;
+		} catch (Exception $e) {
+			echo $e->getMessage();
 			$result = 0;
 		}
 		if (! $result || !empty($result['faultstring'])) {

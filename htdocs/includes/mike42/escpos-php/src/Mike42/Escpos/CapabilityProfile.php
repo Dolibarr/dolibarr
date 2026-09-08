@@ -83,13 +83,13 @@ class CapabilityProfile
      */
     protected $profileId;
 
-    
+
     /**
      * @var string $vendor
      *  Name of manufacturer.
      */
     protected $vendor;
-    
+
     /**
      *
      * @var array $encodings

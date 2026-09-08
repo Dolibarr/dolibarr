@@ -29,8 +29,8 @@ CronExecute=Uruchom teraz
 CronConfirmExecute=Jesteś pewien, że chcesz wykonać te zaplanowane zadania teraz?
 CronInfo=Moduł zaplanowanych zadań umożliwia planowanie zadań w celu ich automatycznego wykonania. Zadania można również uruchamiać ręcznie.
 CronTask=Zadanie
-CronNone=Next run of scheduled task
-CronNotYetRan=Never executed
+CronNone=Następne uruchomienie zaplanowanego zadania
+CronNotYetRan=Nigdy nie wykonano
 CronDtStart=Nie przed
 CronDtEnd=Nie po
 CronDtNextLaunch=Kolejne wykonanie
@@ -50,7 +50,7 @@ JobFinished=Zadania uruchomione i zakończone
 Scheduled=Planowy
 #Page card
 CronAdd=Dodaj zadanie
-CronEvery=Run job every
+CronEvery=Uruchom zadanie co
 CronObject=Instancja/Obiekt do utworzenia
 CronArgs=Parametry
 CronSaveSucess=Zapisano pomyślnie
@@ -77,6 +77,7 @@ CronType=Typ zadania
 CronType_method=Metoda wywołania klasy PHP
 CronType_command=Polecenie powłoki
 CronCannotLoadClass=Nie można załadować pliku klasy %s (aby użyć klasy %s)
+CronModuleNotEnabledInThisEntity=Moduł Cron nie jest włączony w tej jednostce (aby użyć metody %s obiektu %s)
 CronCannotLoadObject=Załadowano plik klasy %s, ale nie znaleziono w nim obiektu %s
 UseMenuModuleToolsToAddCronJobs=Przejdź do menu "<a href="%s"> Strona główna - Narzędzia administracyjne - Zaplanowane zadania </a>", aby wyświetlić i edytować zaplanowane zadania.
 JobDisabled=Zadanie wyłączone

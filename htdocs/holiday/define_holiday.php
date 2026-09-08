@@ -3,9 +3,9 @@
  * Copyright (C) 2011		Dimitri Mouillard			<dmouillard@teclib.com>
  * Copyright (C) 2013		Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2016		Regis Houssin				<regis.houssin@inodbox.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,16 +31,16 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
-require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 
 // Load translation files required by the page
 $langs->loadlangs(array('users', 'other', 'holiday', 'hrm'));
@@ -58,7 +58,7 @@ $search_supervisor = GETPOST('search_supervisor', "intcomma");
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
+$toselect   = GETPOST('toselect', 'array:int'); // Array of ids of elements selected into a list
 $confirm = GETPOST('confirm', 'alpha');
 
 $page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
@@ -78,7 +78,6 @@ if (!$sortorder) {
 
 // Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('defineholidaylist'));
-$extrafields = new ExtraFields($db);
 
 $holiday = new Holiday($db);
 
@@ -156,13 +155,13 @@ if (empty($reshook)) {
 
 		$typeleaves = $holiday->getTypes(1, 1);
 
-		$userID = array_keys(GETPOST('update_cp'));
-		$userID = $userID[0];
+		$userID = array_keys(GETPOST('update_cp', 'array:int'));
+		$userID = (int) $userID[0];
 
 		$db->begin();
 
 		foreach ($typeleaves as $key => $val) {
-			$userValue = GETPOST('nb_holiday_'.$val['rowid']);
+			$userValue = GETPOST('nb_holiday_'.$val['rowid'], 'array');
 			$userValue = $userValue[$userID];
 
 			if (!empty($userValue) || (string) $userValue == '0') {
@@ -255,7 +254,7 @@ if ($permissiontosetup) {
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 
-print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form method="POST" id="searchFormList" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 }
@@ -329,14 +328,14 @@ if (is_numeric($listUsers) && $listUsers < 0) {
 
 $i = 0;
 
-
-
 if (count($typeleaves) == 0) {
 	//print '<div class="info">';
 	print $langs->trans("NoLeaveWithCounterDefined")."<br>\n";
 	print $langs->trans("GoIntoDictionaryHolidayTypes");
 	//print '</div>';
 } else {
+	$listUsers = dol_sort_array($listUsers, $sortfield, $sortorder);
+
 	$canedit = 0;
 	if ($permissiontosetup) {
 		$canedit = 1;
@@ -347,7 +346,7 @@ if (count($typeleaves) == 0) {
 	$selectedfields = '';
 	if ($massactionbutton) {
 		$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-		$selectedfields .= ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) : ''); // This also change content of $arrayfields
+		$selectedfields .= ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column) : ''); // This also change content of $arrayfields
 		$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
 	}
 
@@ -357,7 +356,7 @@ if (count($typeleaves) == 0) {
 	print '<tr class="liste_titre_filter">';
 
 	// Action column
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		print '<td class="liste_titre maxwidthsearch center">';
 		$searchpicto = $form->showFilterButtons();
 		print $searchpicto;
@@ -390,9 +389,10 @@ if (count($typeleaves) == 0) {
 		print '<td class="liste_titre"></td>';
 	}
 	print '<td class="liste_titre"></td>';
+	print '<td class="liste_titre"></td>';
 
 	// Action column
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		print '<td class="liste_titre maxwidthsearch center">';
 		$searchpicto = $form->showFilterButtons();
 		print $searchpicto;
@@ -403,31 +403,32 @@ if (count($typeleaves) == 0) {
 
 	print '<tr class="liste_titre">';
 	// Action column
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	}
 	if (!empty($arrayfields['cp.rowid']['checked'])) {
-		print_liste_field_titre('Employee', $_SERVER["PHP_SELF"]);
+		print_liste_field_titre('Employee', $_SERVER["PHP_SELF"], 'rowid', '', '', '', $sortfield, $sortorder);
 	}
 	if (!empty($arrayfields['cp.fk_user']['checked'])) {
-		print_liste_field_titre('Supervisor', $_SERVER["PHP_SELF"]);
+		print_liste_field_titre('Supervisor', $_SERVER["PHP_SELF"], 'fk_user', '', '', '', $sortfield, $sortorder);
 	}
 	if (!empty($arrayfields['cp.nbHoliday']['checked'])) {
 		if (count($typeleaves)) {
 			foreach ($typeleaves as $key => $val) {
 				$labeltype = ($langs->trans($val['code']) != $val['code']) ? $langs->trans($val['code']) : $langs->trans($val['label']);
-				print_liste_field_titre($labeltype, $_SERVER["PHP_SELF"], '', '', '', '', '', '', 'center ');
+				print_liste_field_titre($labeltype, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center ');
 			}
 		} else {
-			print_liste_field_titre('NoLeaveWithCounterDefined', $_SERVER["PHP_SELF"], '', '', '', '');
+			print_liste_field_titre('NoLeaveWithCounterDefined', $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder);
 		}
 	}
 	if (!empty($arrayfields['cp.note_public']['checked'])) {
-		print_liste_field_titre($permissiontosetup ? 'Note' : '', $_SERVER["PHP_SELF"]);
+		print_liste_field_titre($permissiontosetup ? $langs->trans("ReasonForModification") : '', $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder);
 	}
 	print_liste_field_titre('');
+	print_liste_field_titre('');
 	// Action column
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	}
 	print '</tr>';
@@ -459,7 +460,7 @@ if (count($typeleaves) == 0) {
 		print '<tr class="oddeven">';
 
 		// Action column
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 
 			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
@@ -497,7 +498,7 @@ if (count($typeleaves) == 0) {
 					}
 
 					//var_dump($users['rowid'].' - '.$val['rowid']);
-					print '<td style="text-align:center">';
+					print '<td class="center">';
 					if ($canedit) {
 						print '<input type="text"'.($canedit ? '' : ' disabled="disabled"').' value="'.$nbtoshow.'" name="nb_holiday_'.$val['rowid'].'['.$users['rowid'].']" class="width75 center" />';
 					} else {
@@ -523,12 +524,16 @@ if (count($typeleaves) == 0) {
 		// Button modify
 		print '<td class="center">';
 		if ($permissiontosetup) {	// Allowed to set the balance of any user
-			print '<input type="submit" name="update_cp['.$users['rowid'].']" value="'.dol_escape_htmltag($langs->trans("Save")).'" class="button smallpaddingimp"/>';
+			print '<input type="submit" name="update_cp['.$users['rowid'].']" value="'.dol_escape_htmltag($langs->trans("Modify")).'" class="button smallpaddingimp"/>';
 		}
 		print '</td>'."\n";
 
+		print '<td class="center">';
+		print '<a href="'.DOL_URL_ROOT.'/holiday/view_log.php?search_employee='.((int) $users['rowid']).'">'.img_picto($langs->trans('MenuLogCP'), 'list-alt').'</a>';
+		print '</td>';
+
 		// Action column
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if (!$conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 
 			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined

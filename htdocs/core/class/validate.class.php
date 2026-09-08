@@ -130,11 +130,11 @@ class Validate
 	 */
 	public function isTimestamp($stamp)
 	{
-		if (!is_numeric($stamp) && (int) $stamp == $stamp) {
-			$this->error = $this->outputLang->trans('RequireValidDate');
-			return false;
+		if (preg_match('/^\d{9,}$/', (string) $stamp)) {
+			return true;
 		}
-		return true;
+		$this->error = $this->outputLang->trans('RequireValidDate');
+		return false;
 	}
 
 	/**
@@ -282,7 +282,8 @@ class Validate
 		}
 
 		foreach ($value_arr as $val) {
-			$sql = "SELECT ".$col." FROM ".$this->db->prefix().$table." WHERE ".$col." = '".$this->db->escape($val)."' LIMIT 1"; // more quick than count(*) to check existing of a row
+			$sql = "SELECT ".$this->db->sanitize($col)." FROM ".$this->db->prefix().$this->db->sanitize($table);
+			$sql .= " WHERE ".$this->db->sanitize($col)." = '".$this->db->escape($val)."' LIMIT 1"; // more quick than count(*) to check existing of a row
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$obj = $this->db->fetch_object($resql);

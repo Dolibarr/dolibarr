@@ -17,6 +17,7 @@ AccountancyCodeAsset=Kode akuntansi (aset)
 AccountancyCodeDepreciationAsset=Kode akuntansi (akun penyusutan aset)
 AccountancyCodeDepreciationExpense=Kode akuntansi (akun penyusutan pengeluaran)
 AssetsLines=Aset
+ConfirmValidateAsset=Apakah Anda yakin ingin memvalidasi aset ini dengan referensi <b>%s</b>?
 DeleteType=Hapus
 DeleteAnAssetType=Hapus model aset
 ConfirmDeleteAssetType=Anda yakin ingin menghapus aset model ini?
@@ -70,6 +71,7 @@ AssetDisposal=Pembuangan
 AssetConfirmDisposalAsk=Anda yakin ingin membuang aset <b> %s </b>?
 AssetConfirmReOpenAsk=Anda yakin ingin membuka kembali aset <b> %s </b> ?
 # Asset status
+AssetInDraft=Konsep
 AssetInProgress=Dalam proses
 AssetDisposed=Dibuang
 AssetRecorded=Diperhitungkan

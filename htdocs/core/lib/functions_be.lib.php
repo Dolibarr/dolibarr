@@ -64,7 +64,7 @@ function dolBECalculateStructuredCommunication($invoice_number, $invoice_type)
 	$controlKey = ($mod97 === 0) ? 97 : $mod97;
 
 	// Add the check digit at the end of the reference
-	$invoice_number .= $controlKey;
+	$invoice_number .= sprintf("%02d", $controlKey);
 
 	// Format reference as XXX/XXXX/XXXXX
 	$part1 = '+++'.substr($invoice_number, 0, 3);

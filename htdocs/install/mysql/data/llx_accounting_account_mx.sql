@@ -1,7 +1,7 @@
 --
 
 -- Description of chart of account Mexico SAT/24-2019
--- 
+--
 
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 526100000, 'SAT/24-2019', 'ACTIVO',  '100',  0,  'Activo',  1 );
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 526100010, 'SAT/24-2019', 'ACTIVO',  '100.01',  526100000,  'Activo a corto plazo',  1 );

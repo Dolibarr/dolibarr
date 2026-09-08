@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2008-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2008-2010 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+/* Copyright (C) 2008-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2008-2010  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,12 +28,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/ecm.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -40,6 +35,12 @@ require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
  * @var Translate $langs
  * @var User $user
  */
+
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/ecm.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('ecm', 'companies', 'other', 'users', 'orders', 'propal', 'bills', 'contracts'));
@@ -125,13 +126,22 @@ $websitekey = '';
  */
 
 $savbacktopage = $backtopage;
-$backtopage = $_SERVER["PHP_SELF"].'?file_manager=1&website='.urlencode((string) ($websitekey)).'&pageid='.urlencode((string) ($pageid)).(GETPOST('section_dir', 'alpha') ? '&section_dir='.urlencode((string) (GETPOST('section_dir', 'alpha'))) : ''); // used after a confirm_deletefile into actions_linkedfiles.inc.php
+// used after a confirm_deletefile into actions_linkedfiles.inc.php
+$paramsbacktopage = array(
+	'file_manager' => 1,
+	'website' => (string) $websitekey,
+	'pageid' => (string) $pageid,
+);
+if (GETPOST('section_dir', 'alpha')) {
+	$paramsbacktopage['section_dir'] = GETPOST('section_dir', 'alpha');
+}
 if ($sortfield) {
-	$backtopage .= '&sortfield='.urlencode($sortfield);
+	$paramsbacktopage['sortfield'] = $sortfield;
 }
 if ($sortorder) {
-	$backtopage .= '&sortorder='.urlencode($sortorder);
+	$paramsbacktopage['sortorder'] = $sortorder;
 }
+$backtopage = dolBuildUrl($_SERVER["PHP_SELF"], $paramsbacktopage);
 include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';	// This manage 'sendit', 'confirm_deletefile', 'renamefile' action when submitting new file.
 
 $backtopage = $savbacktopage;
@@ -143,9 +153,9 @@ if ($action == 'renamefile') {	// Test on permission not required here. Must be 
 
 // Add directory
 if ($action == 'add' && $permissiontouploadfile) {
-	$ecmdir->ref                = 'NOTUSEDYET';
-	$ecmdir->label              = GETPOST("label");
-	$ecmdir->description        = GETPOST("desc");
+	$ecmdir->ref = 'NOTUSEDYET';
+	$ecmdir->label = GETPOST("label");
+	$ecmdir->description = GETPOST("desc");
 
 	$id = $ecmdir->create($user);
 	if ($id > 0) {
@@ -183,16 +193,14 @@ if ($action == 'refreshmanual' && $permissiontoread) {
 	$disktree = dol_dir_list($conf->ecm->dir_output, 'directories', 1, '', '^temp$', '', 0, 0);
 
 	// Scan directory tree in database
-	$sqltree = $ecmdirstatic->get_full_arbo(0);
+	$treesqldir = $ecmdirstatic->get_full_arbo(0);
 
 	$adirwascreated = 0;
 
 	// Now we compare both trees to complete missing trees into database
-	//var_dump($disktree);
-	//var_dump($sqltree);
 	foreach ($disktree as $dirdesc) {    // Loop on tree onto disk
 		$dirisindatabase = 0;
-		foreach ($sqltree as $dirsqldesc) {
+		foreach ($treesqldir as $dirsqldesc) {
 			if ($conf->ecm->dir_output.'/'.$dirsqldesc['fullrelativename'] == $dirdesc['fullname']) {
 				$dirisindatabase = 1;
 				break;
@@ -202,7 +210,6 @@ if ($action == 'refreshmanual' && $permissiontoread) {
 		if (!$dirisindatabase) {
 			$txt = "Directory found on disk ".$dirdesc['fullname'].", not found into database so we add it";
 			dol_syslog($txt);
-			//print $txt."<br>\n";
 
 			// We must first find the fk_parent of directory to create $dirdesc['fullname']
 			$fk_parent = -1;
@@ -216,7 +223,7 @@ if ($action == 'refreshmanual' && $permissiontoread) {
 				dol_syslog($txt);
 				//print $txt." -> ";
 				$parentdirisindatabase = 0;
-				foreach ($sqltree as $dirsqldesc) {
+				foreach ($treesqldir as $dirsqldesc) {
 					if ($dirsqldesc['fullrelativename'] == $relativepathtosearchparent) {
 						$parentdirisindatabase = $dirsqldesc['id'];
 						break;
@@ -237,23 +244,24 @@ if ($action == 'refreshmanual' && $permissiontoread) {
 			}
 
 			if ($fk_parent >= 0) {
-				$ecmdirtmp->ref                = 'NOTUSEDYET';
-				$ecmdirtmp->label              = dol_basename($dirdesc['fullname']);
-				$ecmdirtmp->description        = '';
-				$ecmdirtmp->fk_parent          = $fk_parent;
+				$ecmdirtmp->ref = 'NOTUSEDYET';
+				$ecmdirtmp->label = dol_basename($dirdesc['fullname']);
+				$ecmdirtmp->description = '';
+				$ecmdirtmp->fk_parent = $fk_parent;
 
 				$txt = "We create directory ".$ecmdirtmp->label." with parent ".$fk_parent;
 				dol_syslog($txt);
 				//print $ecmdirtmp->cachenbofdoc."<br>\n";exit;
 				$id = $ecmdirtmp->create($user);
 				if ($id > 0) {
-					$newdirsql = array('id' => $id,
-									 'id_mere' => $ecmdirtmp->fk_parent,
-									 'label' => $ecmdirtmp->label,
-									 'description' => $ecmdirtmp->description,
-									 'fullrelativename' => $relativepathmissing);
-					$sqltree[] = $newdirsql; // We complete fulltree for following loops
-					//var_dump($sqltree);
+					$newsqldir = [
+						'id' => $id,
+						'id_mere' => $ecmdirtmp->fk_parent,
+						'label' => $ecmdirtmp->label,
+						'description' => $ecmdirtmp->description,
+						'fullrelativename' => $relativepathmissing,
+					];
+					$treesqldir[] = $newsqldir; // We complete fulltree for following loops
 					$adirwascreated = 1;
 				} else {
 					dol_syslog("Failed to create directory ".$ecmdirtmp->label, LOG_ERR);
@@ -261,13 +269,12 @@ if ($action == 'refreshmanual' && $permissiontoread) {
 			} else {
 				$txt = "Parent of ".$dirdesc['fullname']." not found";
 				dol_syslog($txt);
-				//print $txt."<br>\n";
 			}
 		}
 	}
 
 	// Loop now on each sql tree to check if dir exists
-	foreach ($sqltree as $dirdesc) {    // Loop on each sqltree to check dir is on disk
+	foreach ($treesqldir as $dirdesc) {    // Loop on each treesqldir to check dir is on disk
 		$dirtotest = $conf->ecm->dir_output.'/'.$dirdesc['fullrelativename'];
 		if (!dol_is_dir($dirtotest)) {
 			$ecmdirtmp->id = $dirdesc['id'];
@@ -283,7 +290,7 @@ if ($action == 'refreshmanual' && $permissiontoread) {
 	// If a directory was added, the fulltree array is not correctly completed and sorted, so we clean
 	// it to be sure that fulltree array is not used without reloading it.
 	if ($adirwascreated) {
-		$sqltree = null;
+		$treesqldir = null;
 	}
 }
 
@@ -300,15 +307,10 @@ $maxheightwin = (isset($_SESSION["dol_screenheight"]) && $_SESSION["dol_screenhe
 $moreheadcss = '';
 $moreheadjs = '';
 
-//$morejs=array();
-$morejs = array('includes/jquery/plugins/blockUI/jquery.blockUI.js', 'core/js/blockUI.js'); // Used by ecm/tpl/enabledfiletreeajax.tpl.pgp
+$morejs=array();
 if (!getDolGlobalString('MAIN_ECM_DISABLE_JS')) {
-	$morejs[] = "includes/jquery/plugins/jqueryFileTree/jqueryFileTree.js";
+	$morejs[] = "public/includes/jquery/plugins/jqueryFileTree/jqueryFileTree.js";
 }
-
-$moreheadjs .= '<script type="text/javascript">'."\n";
-$moreheadjs .= 'var indicatorBlockUI = \''.DOL_URL_ROOT."/theme/".$conf->theme."/img/working.gif".'\';'."\n";
-$moreheadjs .= '</script>'."\n";
 
 llxHeader($moreheadcss.$moreheadjs, $langs->trans("ECMArea"), '', '', 0, 0, $morejs, '', '', 'mod-ecm page-index_medias');
 

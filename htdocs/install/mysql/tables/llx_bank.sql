@@ -27,13 +27,13 @@ create table llx_bank
   amount          double(24,8) NOT NULL default 0,		-- amount in the currency of the bank account
   amount_main_currency double(24,8) NULL,				-- amount in the main currency of the company when payment done in a bank account with a different currency
   label           varchar(255),
-  fk_account      integer,
+  fk_account      integer,					 -- ID of bank account
   fk_user_author  integer,
   fk_user_rappro  integer,
   fk_type         varchar(6),                -- TIP,VIR,PRE,CB,CHQ,... (Code in llx_c_paiement)
   num_releve      varchar(50),
   num_chq         varchar(50),
-  numero_compte   varchar(32) NULL,		       -- FEC:CompteNum	| account number
+  numero_compte   varchar(32) NULL,		     -- FEC:CompteNum	| account number
   rappro          tinyint default 0,
   note            text,
   fk_bordereau    integer DEFAULT 0,

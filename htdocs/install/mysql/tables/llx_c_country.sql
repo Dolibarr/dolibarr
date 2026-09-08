@@ -3,6 +3,7 @@
 -- Copyright (C) 2004		Laurent Destailleur		<eldy@users.sourceforge.net>
 -- Copyright (C) 2014		Alexandre Spangaro		<aspangaro@open-dsi.fr>
 -- Copyright (C) 2022 	    Juanjo Menent           <jmenent@2byte.es>
+-- Copyright (C) 2026		Open-Dsi				<support@open-dsi.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -29,5 +30,7 @@ create table llx_c_country
   eec      		tinyint DEFAULT 0  NOT NULL,
   sepa     		tinyint DEFAULT 0  NOT NULL,
   active   		tinyint DEFAULT 1  NOT NULL,
-  favorite 		tinyint DEFAULT 0  NOT NULL
+  favorite 		tinyint DEFAULT 0  NOT NULL,
+  phone_code	integer,
+  trunk_prefix	varchar(5)
 )ENGINE=innodb;

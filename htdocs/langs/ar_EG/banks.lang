@@ -1,4 +1,7 @@
 # Dolibarr language file - Source file is en_US - banks
+PaymentByBankTransfer=الدفع عن طريق التحويل البنكي
 StatusAccountOpened=افتح
 StatusAccountClosed=مقفول
-SupplierInvoicePayment=دفعة مورد
+TransferFrom=من موقع
+BankMovements=الحركات
+VariousPayments=مدفوعات متنوعة

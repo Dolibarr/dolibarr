@@ -4,9 +4,10 @@
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016       Pierre-Henry Favre  <phf@atm-consulting.fr>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		William Mead				<william.mead@manchenumerique.fr>
+ * Copyright (C) 2024       Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
+ * Copyright (C) 2026		Lenin Rivas			<lenin.rivas777@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,7 +59,7 @@ class CurrencyRate extends CommonObjectLine
 	/**
 	 * @var double Rate Indirect
 	 */
-	public $rate_indirect;
+	public $rate_direct;
 
 	/**
 	 * @var integer    Date synchronisation
@@ -110,13 +111,13 @@ class CurrencyRate extends CommonObjectLine
 		// Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element."(";
 		$sql .= ' rate,';
-		$sql .= ' rate_indirect,';
+		$sql .= ' rate_direct,';
 		$sql .= ' date_sync,';
 		$sql .= ' fk_multicurrency,';
 		$sql .= ' entity';
 		$sql .= ') VALUES (';
 		$sql .= ' '.((float) $this->rate).',';
-		$sql .= ' '.((float) $this->rate_indirect).',';
+		$sql .= ' '.((float) $this->rate_direct).',';
 		$sql .= " '".$this->db->idate($now)."',";
 		$sql .= " ".((int) $fk_multicurrency).",";
 		$sql .= " ".((int) $this->entity);
@@ -166,7 +167,7 @@ class CurrencyRate extends CommonObjectLine
 	{
 		dol_syslog('CurrencyRate::fetch', LOG_DEBUG);
 
-		$sql = "SELECT cr.rowid, cr.rate, cr.rate_indirect, cr.date_sync, cr.fk_multicurrency, cr.entity";
+		$sql = "SELECT cr.rowid, cr.rate, cr.rate_direct, cr.date_sync, cr.fk_multicurrency, cr.entity";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." AS cr";
 		$sql .= " WHERE cr.rowid = ".((int) $id);
 
@@ -179,7 +180,7 @@ class CurrencyRate extends CommonObjectLine
 
 				$this->id = $obj->rowid;
 				$this->rate = $obj->rate;
-				$this->rate_indirect = $obj->rate_indirect;
+				$this->rate_direct = $obj->rate_direct;
 				$this->date_sync = $this->db->jdate($obj->date_sync);
 				$this->fk_multicurrency = $obj->fk_multicurrency;
 				$this->entity = $obj->entity;
@@ -217,6 +218,9 @@ class CurrencyRate extends CommonObjectLine
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
 		$sql .= "SET rate = ".((float) $this->rate);
+		if (!empty($this->rate_direct)) {
+			$sql .= ", rate_direct = ".((float) $this->rate_direct);
+		}
 		if (!empty($this->date_sync)) {
 			$sql .= ", date_sync = '".$this->db->idate($this->date_sync)."'";
 		}

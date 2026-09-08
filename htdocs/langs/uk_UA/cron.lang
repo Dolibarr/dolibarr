@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - cron
 # Permissions
-Permission23101 = Прочитайте заплановану роботу
+Permission23101 = Читати заплановану роботу
 Permission23102 = Створити/оновити заплановану роботу
 Permission23103 = Видалити заплановану роботу
 Permission23104 = Виконати заплановану роботу
@@ -29,8 +29,8 @@ CronExecute=Запустити
 CronConfirmExecute=Ви впевнені, що хочете виконати ці заплановані завдання зараз?
 CronInfo=Модуль запланованих завдань дозволяє планувати завдання для їх автоматичного виконання. Роботи також можна запускати вручну.
 CronTask=Робота
-CronNone=Next run of scheduled task
-CronNotYetRan=Never executed
+CronNone=Наступний запуск запланованого завдання
+CronNotYetRan=Ніколи не виконувалось
 CronDtStart=Не раніше
 CronDtEnd=Не після
 CronDtNextLaunch=Наступне виконання
@@ -40,17 +40,17 @@ CronFrequency=Частота
 CronClass=клас
 CronMethod=Метод
 CronModule=Модуль
-CronNoJobs=Вакансії не зареєстровані
+CronNoJobs=Завдання не зареєстровані
 CronPriority=Пріоритет
-CronLabel=Етикетка
+CronLabel=Мітка
 CronNbRun=Кількість запусків
 CronMaxRun=Максимальна кількість запусків
 CronEach=Кожен
 JobFinished=Робота запущена та завершена
 Scheduled=За розкладом
 #Page card
-CronAdd=Додайте вакансії
-CronEvery=Run job every
+CronAdd=Додати завдання
+CronEvery=Виконувати завдання кожні
 CronObject=Примірник/об’єкт для створення
 CronArgs=Параметри
 CronSaveSucess=Зберегти успішно
@@ -63,20 +63,21 @@ CronStatusInactiveBtn=Вимкнути
 CronTaskInactive=Це завдання вимкнено (не заплановано)
 CronId=id
 CronClassFile=Ім'я файлу з класом
-CronModuleHelp=Назва каталогу модуля Dolibarr (також робота із зовнішнім модулем Dolibarr). <BR> Наприклад, щоб викликати метод вибору продукту Dolibarr об’єкта /htdocs/ <u> product </u> /class/product.class.php, значення для модуля: a0342fccfda19bz78038018fcfda19b27bc03808fcfda19b27bc3e38
-CronClassFileHelp=Відносний шлях та ім’я файлу для завантаження (шлях відносно кореневого каталогу веб-сервера). <BR> Наприклад, щоб викликати метод отримання об'єкта Dolibarr Product htdocs/product/class/ <u> product.class.php </u> , значення для назви файлу класу a0342fccfda19bclass38fcfda19bclass19bclass38fcfda19bclass38
-CronObjectHelp=Ім'я об'єкта для завантаження. <BR> Наприклад, щоб викликати метод вибірки об'єкта Dolibarr Product /htdocs/product/class/product.class.php, значення для імені файлу класу: <br> <i> Product a0ae64758bac33z
-CronMethodHelp=Об'єктний метод для запуску. <BR> Наприклад, щоб викликати метод вибірки об'єкта Dolibarr Product /htdocs/product/class/product.class.php, значення для методу: <br> <i> fetch a0ae64758bac33z
+CronModuleHelp=Назва каталогу модуля Dolibarr (також працює із зовнішнім модулем Dolibarr). <BR> Наприклад, щоб викликати метод fetch об’єкта Dolibarr Product /htdocs/<u>product</u>/class/product.class.php, значення для модуля:<br><i>product</i>
+CronClassFileHelp=Відносний шлях та ім’я файлу для завантаження (шлях відносно кореневого каталогу веб-сервера). <BR> Наприклад, щоб викликати метод fetch об'єкта Dolibarr Product htdocs/product/class/<u>product.class.php</u>, значення для назви файлу класу:<br><i>product/class/product.class.php</i>
+CronObjectHelp=Ім'я об'єкта для завантаження. <BR> Наприклад, щоб викликати метод fetch об'єкта Dolibarr Product /htdocs/product/class/product.class.php, значення для імені файлу класу:<br><i>Product</i>
+CronMethodHelp=Об'єктний метод для запуску. <BR> Наприклад, щоб викликати метод fetch об'єкта Dolibarr Product /htdocs/product/class/product.class.php, значення для методу:<br><i>fetch</i>
 CronArgsHelp=Аргументи методу. <BR> Наприклад, щоб викликати метод вибірки об'єкта Dolibarr Product /htdocs/product/class/product.class.php, значення параметрів може бути <br> <i> 0, ProductRef </i>
 CronCommandHelp=Системний командний рядок для виконання.
 CronCreateJob=Створити нове завдання за розкладом
-CronFrom=Продавець
+CronFrom=Від
 # Info
 # Common
 CronType=Тип роботи
 CronType_method=Метод виклику класу PHP
 CronType_command=Команда оболонки
 CronCannotLoadClass=Не вдається завантажити файл класу %s (щоб використовувати клас %s)
+CronModuleNotEnabledInThisEntity=Модуль Cron не ввімкнено в цій сутності (використовувати метод %s об'єкта %s)
 CronCannotLoadObject=Файл класу %s завантажено, але об’єкт %s в ньому не знайдено
 UseMenuModuleToolsToAddCronJobs=Перейдіть до меню " <a href="%s"> Головна - Інструменти адміністратора - Заплановані завдання </a> ", щоб переглянути та відредагувати заплановані завдання.
 JobDisabled=Робота відключена
@@ -96,6 +97,6 @@ ErrorInBatch=Помилка під час виконання завдання %s
 
 # Cron Boxes
 LastExecutedScheduledJob=Остання виконана запланована робота
-NextScheduledJobExecute=Наступне заплановано завдання для виконання
+NextScheduledJobExecute=Наступне заплановане завдання для виконання
 NumberScheduledJobError=Кількість запланованих завдань з помилкою
 NumberScheduledJobNeverFinished=Кількість невиконаних запланованих завдань

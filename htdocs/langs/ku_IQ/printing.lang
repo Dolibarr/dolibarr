@@ -46,6 +46,10 @@ IPP_Color=Color
 IPP_Device=Device
 IPP_Media=Printer media
 IPP_Supported=Type of media
+STATE_IPP_idle=Idle printer
+STATE_IPP_none=هیچ کامیان
+IPP_COLOR_print-black=Black and White
+IPP_COLOR_print-color=Color
 DirectPrintingJobsDesc=This page lists printing jobs found for available printers.
 GoogleAuthNotConfigured=Google OAuth has not been setup. Enable module OAuth and set a Google ID/Secret.
 GoogleAuthConfigured=Google OAuth credentials were found into setup of module OAuth.
@@ -53,4 +57,4 @@ PrintingDriverDescprintgcp=Configuration variables for printing driver Google Cl
 PrintingDriverDescprintipp=Configuration variables for printing driver Cups.
 PrintTestDescprintgcp=List of Printers for Google Cloud Print.
 PrintTestDescprintipp=List of Printers for Cups.
-Testbbbb
+PrinterLocation=Printer location

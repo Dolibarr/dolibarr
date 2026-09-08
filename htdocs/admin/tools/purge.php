@@ -28,8 +28,6 @@ if (! defined('CSRFCHECK_WITH_TOKEN')) {
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -39,6 +37,8 @@ include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
  *
  * @var string $dolibarr_main_data_root
  */
+include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
 
 $langs->load("admin");
 
@@ -99,7 +99,7 @@ print '<span class="opacitymedium">'.$langs->trans("PurgeAreaDesc", $dolibarr_ma
 print '<br>';
 
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'" />';
 print '<input type="hidden" name="action" value="purge" />';
 

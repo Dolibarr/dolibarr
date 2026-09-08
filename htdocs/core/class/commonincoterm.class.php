@@ -91,6 +91,8 @@ trait CommonIncoterm
 	 */
 	public function getIncotermsForPDF()
 	{
+		global $langs;
+
 		$sql = "SELECT code FROM ".$this->db->prefix()."c_incoterms WHERE rowid = ".(int) $this->fk_incoterms;
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -98,7 +100,7 @@ trait CommonIncoterm
 			if ($num > 0) {
 				$res = $this->db->fetch_object($resql);
 				if ($res) {
-					return 'Incoterm : '.$res->code.' - '.$this->location_incoterms;
+					return $langs->trans("IncotermLabel").': '.$res->code.' - '.$this->location_incoterms;
 				} else {
 					return $res;
 				}

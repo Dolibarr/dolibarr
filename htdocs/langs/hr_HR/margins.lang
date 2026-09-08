@@ -6,6 +6,7 @@ TotalMargin=Ukupno marže
 MarginOnProducts=Marža / Proizvodi
 MarginOnServices=Marža / Usluge
 MarginRate=Stopa marže
+ModifyMarginRates=promjeni - izmjeni stope marže
 MarkRate=Označite stopu
 DisplayMarginRates=Prikaži stope marže
 DisplayMarkRates=Prikaži stope bodova
@@ -30,14 +31,14 @@ UseDiscountOnTotal=Na međuzbroju
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Definira ako je globalni rabat tretiran kao prozvod ili usluga, ili samo na međusumi za izračun marže.
 MARGIN_TYPE=Kupovno/troškovna cijena sugerirana za izračun marže
 MargeType1=Marža na cijenu najboljeg dobavljača
-MargeType2=Marža prema Procjenjenoj prosječnoj cijeni (PPC)
+MargeType2=Margin on Weighted Average Cost (WAC)
 MargeType3=Marža po cijeni troškova
-MarginTypeDesc=* Marža na najbolju kupovnu cijenu = Prodajna cijena - Najbolja cijena dobavljača definirana na kartici proizvoda <br> * Marža na ponderiranoj prosječnoj cijeni (WAP) = Prodajna cijena - Prosječna ponderirana cijena proizvoda (WAP) ili najbolja prodajna cijena ako WAP još nije definiran <br> * Marža na cijenu koštanja = prodajna cijena - cijena koštanja definirana na kartici proizvoda ili WAP-u ako cijena koštanja nije definirana, ili najbolja cijena dobavljača ako WAP još nije definiran
+MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Cost (WAC) = Selling price - Product Weighted Average Price (WAP) or best vendor price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAC if cost price not defined, or best vendor price if WAC not yet defined
 CostPrice=Cijena troška
 UnitCharges=Troškovi jedinice
 Charges=Troškovi
 AgentContactType=Vrsta kontakta komercijalnog agenta
-AgentContactTypeDetails=Definirajte koja će se vrsta kontakta (povezano na fakturama) koristiti za izvješće o marži po kontaktu/adresi. Imajte na umu da čitanje statistike o kontaktu nije pouzdano jer u većini slučajeva kontakt možda nije eksplicitno definiran na fakturama.
+AgentContactTypeDetails=Definirajte koja će se vrsta kontakta (povezana na fakturama) koristiti za izvješće o marži po kontaktu/adresi. Imajte na umu da čitanje statistike o kontaktu nije pouzdano jer u većini slučajeva kontakt možda nije eksplicitno definiran na fakturama.
 rateMustBeNumeric=Stopa mora biti brojčana vrijednost
 markRateShouldBeLesserThan100=Marža bi trebala biti niža od 100
 ShowMarginInfos=Prikaži infomacije o marži

@@ -3,7 +3,7 @@
  * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2015-2025  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2024      MDW                  <mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -72,7 +72,7 @@ class box_external_rss extends ModeleBoxes
 
 		$this->max = $max;
 
-		// On recupere numero de param de la boite
+		// Retrieve box param number
 		$reg = array();
 		preg_match('/^([0-9]+) /', $this->paramdef, $reg);
 		$site = $reg[1];

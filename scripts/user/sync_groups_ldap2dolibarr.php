@@ -4,7 +4,7 @@
  * Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2012 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2013 Maxime Kohlhaas <maxime@atm-consulting.fr>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -42,12 +42,6 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 }
 
 require_once $path."../../htdocs/master.inc.php";
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functionscli.lib.php';
-require_once DOL_DOCUMENT_ROOT."/core/lib/date.lib.php";
-require_once DOL_DOCUMENT_ROOT."/core/class/ldap.class.php";
-require_once DOL_DOCUMENT_ROOT."/user/class/user.class.php";
-require_once DOL_DOCUMENT_ROOT."/user/class/usergroup.class.php";
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -55,6 +49,11 @@ require_once DOL_DOCUMENT_ROOT."/user/class/usergroup.class.php";
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functionscli.lib.php';
+require_once DOL_DOCUMENT_ROOT."/core/lib/date.lib.php";
+require_once DOL_DOCUMENT_ROOT."/core/class/ldap.class.php";
+require_once DOL_DOCUMENT_ROOT."/user/class/user.class.php";
+require_once DOL_DOCUMENT_ROOT."/user/class/usergroup.class.php";
 
 $langs->loadLangs(array("main", "errors"));
 
@@ -103,7 +102,7 @@ foreach ($argv as $key => $val) {
 }
 
 print "Mails sending disabled (useless in batch mode)\n";
-$conf->global->MAIN_DISABLE_ALL_MAILS = 1; // On bloque les mails
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1; // We block email sending
 print "\n";
 print "----- Synchronize all records from LDAP database:\n";
 print "host=" . getDolGlobalString('LDAP_SERVER_HOST')."\n";
@@ -120,7 +119,7 @@ print "----- To Dolibarr database:\n";
 print "type=".$conf->db->type."\n";
 print "host=".$conf->db->host."\n";
 print "port=".$conf->db->port."\n";
-print "login=".$conf->db->user."\n";
+print "login=".(string) $conf->db->user."\n";
 print "database=".$conf->db->name."\n";
 print "----- Options:\n";
 print "commitiferror=".$forcecommit."\n";
@@ -152,7 +151,7 @@ if ($result >= 0) {
 		// Warning $ldapuser has a key in lowercase
 		foreach ($ldaprecords as $key => $ldapgroup) {
 			$group = new UserGroup($db);
-			$group->fetch(0, $ldapgroup[getDolGlobalString('LDAP_KEY_GROUPS')]);
+			$group->fetch(0, $ldapgroup[getDolGlobalString('LDAP_KEY_GROUPS')], true); // Fetch LDAP groups AND members
 			$group->name = $ldapgroup[getDolGlobalString('LDAP_GROUP_FIELD_FULLNAME')] ?? '';
 			$group->nom = $group->name; // For backward compatibility
 			$group->note = $ldapgroup[getDolGlobalString('LDAP_GROUP_FIELD_DESCRIPTION')] ?? '';
@@ -198,11 +197,11 @@ if ($result >= 0) {
 				if ($tmpkey === 'count') {	// @phpstan-ignore-line
 					continue;
 				}
-				if (empty($userList[$userdn])) { // Récupération de l'utilisateur
-					// Schéma rfc2307: les membres sont listés dans l'attribut memberUid sous form de login uniquement
+				if (empty($userList[$userdn])) { // Fetch the user
+					// rfc2307 schema: members are listed in the memberUid attribute as login names only
 					if (getDolGlobalString('LDAP_GROUP_FIELD_GROUPMEMBERS') === 'memberUid') {
 						$userKey = array($userdn);
-					} else { // Pour les autres schémas, les membres sont listés sous forme de DN completes
+					} else { // For other schemas, members are listed as full DNs
 						$userFilter = explode(',', $userdn);
 						$userKey = $ldap->getAttributeValues('('.$userFilter[0].')', getDolGlobalString('LDAP_KEY_USERS'));
 					}
@@ -213,9 +212,9 @@ if ($result >= 0) {
 					$fuser = new User($db);
 
 					if (getDolGlobalString('LDAP_KEY_USERS') == getDolGlobalString('LDAP_FIELD_SID')) {
-						$fuser->fetch(0, '', $userKey[0]); // Chargement du user concerné par le SID
+						$fuser->fetch(0, '', $userKey[0]); // Load the user matched by SID
 					} elseif (getDolGlobalString('LDAP_KEY_USERS') == getDolGlobalString('LDAP_FIELD_LOGIN')) {
-						$fuser->fetch(0, $userKey[0]); // Chargement du user concerné par le login
+						$fuser->fetch(0, $userKey[0]); // Load the user matched by login
 					}
 
 					$userList[$userdn] = $fuser;

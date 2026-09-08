@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,15 +17,23 @@
  */
 
 /**
+ * @var ?Conf $conf
+ * @var CommonObject $object
  * @var Form $form
  * @var Translate $langs
  *
+ * @var int $colwidth
+ * @var int $permission
+ * @var string $typeofdata
+ * @var string $moreparam
  * @var string $note_public
  * @var string $note_private
+ * @var string $value_public
+ * @var string $value_private
  */
 
 // Protection to avoid direct call of template
-if (empty($object) || !is_object($object)) {
+if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
 	exit(1);
 }

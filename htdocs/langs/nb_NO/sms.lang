@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - sms
 Sms=Sms
-SmsSetup=Sms oppsett
-SmsDesc=Denne siden lar deg definere globale SMS alternativer
+SmsSetup=SMS-oppsett
+SmsDesc=Denne siden lar deg definere globale alternativer for SMS-funksjoner
 SmsCard=SMS-kort
 AllSms=Alle SMS-kampanjer
 SmsTargets=Mål
@@ -10,7 +10,7 @@ SmsRecipient=Mål
 SmsTitle=Beskrivelse
 SmsFrom=Avsender
 SmsTo=Mål
-SmsTopic=SMS-emne 
+SmsTopic=SMS-emne
 SmsText=Melding
 SmsMessage=SMS
 ShowSms=Vis SMS
@@ -22,7 +22,7 @@ DeleteSms=Slett SMS kampanje
 DeleteASms=Fjern en SMS-kampanje
 PreviewSms=Forhåndsvis SMS
 PrepareSms=Forbered Sms
-CreateSms=SMS
+CreateSms=Opprett SMS
 SmsResult=Resultat av SMS-sending
 TestSms=Test SMS
 ValidSms=Valider SMS

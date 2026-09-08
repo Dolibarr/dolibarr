@@ -2,6 +2,7 @@
 IdAgenda=ID évènement
 Actions=Événements
 Agenda=Agenda
+AgendaEvents=Agenda des événements
 TMenuAgenda=Agenda
 Agendas=Agendas
 LocalAgenda=Calendrier par défaut
@@ -28,11 +29,13 @@ ViewWeek=Vue semaine
 ViewPerUser=Vue par utilisateur
 ViewPerType=Vue par type
 AutoActions= Alimentation automatique
+ManualActions=Créé manuellement par un utilisateur
 AgendaAutoActionDesc= Définissez ici les événements pour lesquels Dolibarr créera automatiquement une entrée dans l'agenda. Si aucun n'est coché, seules les actions manuelles seront affichées dans l'agenda. Les événements sur les objets (validation, changement de statut, modification) ne seront pas enregistrées.
 AgendaSetupOtherDesc= Cette page permet de configurer quelques options permettant d'exporter une vue de votre agenda Dolibarr vers un calendrier externe (thunderbird, google calendar, ...)
 AgendaExtSitesDesc=Cette page permet d'ajouter des sources de calendriers externes pour les visualiser au sein de l'agenda Dolibarr.
 ActionsEvents=Événements pour lesquels Dolibarr doit insérer un évènement dans l'agenda en automatique.
 EventRemindersByEmailNotEnabled=Les rappels d'événement par email n'ont pas été activés dans la configuration du module %s.
+EventRemindersBySmsNotEnabled=Les rappels d'événements par SMS n'étaient pas activés dans la configuration du module %s.
 ##### Agenda event labels #####
 NewCompanyToDolibarr=Tiers %s créé
 COMPANY_MODIFYInDolibarr=Tiers %s modifié
@@ -44,6 +47,7 @@ PropalClosedRefusedInDolibarr=Proposition %s refusée
 PropalValidatedInDolibarr=Proposition %s validée
 PropalBackToDraftInDolibarr=Proposition %s de retour au statut de brouillon
 PropalClassifiedBilledInDolibarr=Proposition %s classée facturée
+InvoiceCreatedInDolibarr=Facture %s créée
 InvoiceValidatedInDolibarr=Facture %s validée
 InvoiceValidatedInDolibarrFromPos=Facture %s validée depuis le Point de Vente
 InvoiceBackToDraftInDolibarr=Facture %s repassée en brouillon
@@ -137,7 +141,6 @@ AgendaUrlOptions1=Vous pouvez aussi ajouter les paramètres suivants pour filtre
 AgendaUrlOptions3=<b>logina=%s</b> pour limiter l'export aux actions dont l'utilisateur est propriétaire <b>%s</b> (utilisez <b>logina=!%s</b> pour les événements n'appartenant pas à l'utilisateur).
 AgendaUrlOptions4=<b>logint=%s</b>pour limiter l'export aux actions assignées à l'utilisateur <b>%s</b> (propriétaire et autres).
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> pour restreindre aux événements associés au projet <b>__PROJECT_ID__</b>.
-AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> pour exclure les événements automatiques.
 AgendaUrlOptionsType=<b>actiontype=%s</b> pour récupérer des événements automatiques ou manuels
 AgendaUrlOptionsCode=<b>actioncode=%s</b> pour récupérer uniquement les événements avec un code donné
 AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> pour inclure les événements de type congé.
@@ -169,8 +172,10 @@ OnceOnly=Une seule fois
 EveryDay=Chaque jour
 EveryWeek=Chaque semaine
 EveryMonth=Chaque mois
+EveryYear=Chaque année
 DayOfMonth=Jour du mois
 DayOfWeek=Jour de la semaine
+DayOfYear=Jour de l'année
 DateStartPlusOne=Date de début + 1 heure
 SetAllEventsToTodo=Réglez tous les événements à "A faire"
 SetAllEventsToInProgress=Définir tous les événements à "En cours"
@@ -206,3 +211,13 @@ BookcalBookingTitle=Rendez-vous en ligne
 Transparency = Transparence
 ReadMore = Lire plus
 ReadLess = Lire moins
+RecurringEvent=Événement récurrent
+EventPartOfARecurringSerie=L'événement fait partie d'une série récurrente avec l'ID %s
+BookCalSystem=Réservation en ligne
+BookCalInitHelp=Pour commencer, accédez au menu pour créer un nouveau calendrier avec les disponibilités...
+PublicLinkForBooking=Lien public pour la réservation
+STOCKTRANSFER_CLOSEInDolibarr=Transfert de stock %s terminé.
+STOCKTRANSFER_VALIDATEInDolibarr=Transfert de stock %s validé.
+
+STOCKTRANSFER_UNVALIDATEInDolibarr=Transfert de stock %s rétabli à Brouillon.
+STOCKTRANSFER_MODIFYInDolibarr=Transfert de stock %s modifié.

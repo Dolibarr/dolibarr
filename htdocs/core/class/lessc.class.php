@@ -1,6 +1,5 @@
 <?php
-
-/**
+/*
  * lessphp v0.8.0
  * http://leafo.net/lessphp
  *
@@ -40,7 +39,6 @@
  */
 class Lessc
 {
-
 	public static $VERSION = "v0.8.0";
 
 	public static $TRUE = array("keyword", "true");
@@ -768,7 +766,7 @@ class Lessc
 				$orderedArgs = array();
 				$keywordArgs = array();
 				foreach ((array) $args as $arg) {
-					$argval = null;
+					//$argval = null;
 					switch ($arg[0]) {
 						case "arg":
 							if (!isset($arg[2])) {
@@ -2248,7 +2246,9 @@ class Lessc
 		$this->importDir = $oldImport;
 
 		if ($outFname !== null) {
-			return file_put_contents($outFname, $out);
+			$res = file_put_contents($outFname, $out);
+			dolChmod($outFname);
+			return $res;
 		}
 
 		return $out;
@@ -3036,7 +3036,7 @@ class lessc_parser
 
 		while (true) {
 			$whiteBefore = isset($this->buffer[$this->count - 1]) &&
-				ctype_space($this->buffer[$this->count - 1]);
+				preg_match('/^\s$/', $this->buffer[$this->count - 1]);
 
 			// If there is whitespace before the operator, then we require
 			// whitespace after the operator for it to be an expression
@@ -3055,7 +3055,7 @@ class lessc_parser
 
 
 				$whiteAfter = isset($this->buffer[$this->count - 1]) &&
-					ctype_space($this->buffer[$this->count - 1]);
+					preg_match('/^\s$/', $this->buffer[$this->count - 1]);
 
 				if (!$this->value($rhs)) {
 					break;
@@ -3474,7 +3474,7 @@ class lessc_parser
 		// speed shortcut
 		if (isset($this->buffer[$this->count])) {
 			$char = $this->buffer[$this->count];
-			if (!ctype_digit($char) && $char != ".") {
+			if (!preg_match('/^[0-9]+$/', $char) && $char != ".") {
 				return false;
 			}
 		}

@@ -108,7 +108,7 @@ class FormOrder extends Form
 		$tmpsupplierorder = new Commande($this->db);
 
 		foreach ($statustohow as $value) {
-			$tmpsupplierorder->statut = $value;
+			$tmpsupplierorder->status = $value;
 			$options[$value] = $tmpsupplierorder->getLibStatut($short);
 		}
 

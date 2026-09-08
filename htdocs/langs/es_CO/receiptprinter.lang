@@ -1,17 +1,12 @@
 # Dolibarr language file - Source file is en_US - receiptprinter
-ReceiptPrinterSetup=Configuración del módulo ReceiptPrinter
 PrinterAdded=Se agregó la impresora %s
 TestSentToPrinter=Prueba enviada a la impresora %s
 ReceiptPrinter=Impresoras de recibos
-ReceiptPrinterDesc=Configuración de impresoras de recibos
-ReceiptPrinterProfileDesc=Descripción del perfil de la impresora de recibos
 ListPrinters=Lista de impresoras
-FromServerPointOfView=Desde el punto de vista del servidor web, este método debe ser accesible desde el servidor web en el que se aloja.
 SetupReceiptTemplate=Configuración de plantilla
 CONNECTOR_DUMMY=Impresora ficticia
 CONNECTOR_FILE_PRINT=Impresora local
 CONNECTOR_CUPS_PRINT=Impresora de tazas
-CONNECTOR_DUMMY_HELP=Impresora falsa para prueba, no hace nada
 CONNECTOR_NETWORK_PRINT_HELP=10.x.x.x: 9100
 CONNECTOR_FILE_PRINT_HELP=/ dev / usb / lp0, / dev / usb / lp1
 CONNECTOR_CUPS_PRINT_HELP=Nombre de la impresora CUPS, ejemplo: HPRT_TP805L

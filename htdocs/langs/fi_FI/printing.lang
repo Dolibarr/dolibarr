@@ -46,6 +46,10 @@ IPP_Color=Väri
 IPP_Device=Laite
 IPP_Media=Tulostusmateriaali
 IPP_Supported=Mediatyyppi
+STATE_IPP_idle=Idle printer
+STATE_IPP_none=Ei mitään
+IPP_COLOR_print-black=Black and White
+IPP_COLOR_print-color=Väri
 DirectPrintingJobsDesc=Tällä sivulla luetellaan käytettävissä oleville tulostimille löydetyt tulostustyöt.
 GoogleAuthNotConfigured=Google OAuthia ei ole määritetty. Ota käyttöön moduuli OAuth ja aseta Google-tunnus/salaisuus.
 GoogleAuthConfigured=Google OAuth -kirjautumistiedot löytyivät OAuth-moduulin asennuksesta.
@@ -53,4 +57,4 @@ PrintingDriverDescprintgcp=Tulostusohjaimen Google Cloud Printin määritysmuutt
 PrintingDriverDescprintipp=Konfiguraatiomuuttujat tulostinohjaimen kupit.
 PrintTestDescprintgcp=Luettelo Google Cloud Printin tulostimista.
 PrintTestDescprintipp=Luettelo kuppien tulostimista.
-Testbbbb
+PrinterLocation=Printer location

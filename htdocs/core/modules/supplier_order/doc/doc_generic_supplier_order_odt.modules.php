@@ -156,7 +156,7 @@ class doc_generic_supplier_order_odt extends ModelePDFSuppliersOrders
 
 		$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1, 3, $this->name);
 		$texte .= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
-		$texte .= '<textarea class="flat" cols="60" name="value1">';
+		$texte .= '<textarea class="flat textareafordir" spellcheck="false" cols="60" name="value1">';
 		$texte .= getDolGlobalString('SUPPLIER_ORDER_ADDON_PDF_ODT_PATH');
 		$texte .= '</textarea>';
 		$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
@@ -387,7 +387,7 @@ class doc_generic_supplier_order_odt extends ModelePDFSuppliersOrders
 
 				// retrieve the constant to apply a ratio for image size or set the ratio to 1
 				if (getDolGlobalString('MAIN_DOC_ODT_IMAGE_RATIO')) {
-					$ratio = floatval(getDolGlobalString('MAIN_DOC_ODT_IMAGE_RATIO'));
+					$ratio = (float) getDolGlobalString('MAIN_DOC_ODT_IMAGE_RATIO');
 				} else {
 					$ratio = 1;
 				}

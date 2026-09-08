@@ -194,8 +194,6 @@ class ExportCsv extends ModeleExports
 	public function write_title($array_export_fields_label, $array_selected_sorted, $outputlangs, $array_types)
 	{
 		// phpcs:enable
-		$outputlangs->charset_output = getDolGlobalString('EXPORT_CSV_FORCE_CHARSET');
-
 		$selectlabel = array();
 		foreach ($array_selected_sorted as $code => $value) {
 			if (strpos($code, ' as ') == 0) {
@@ -209,16 +207,26 @@ class ExportCsv extends ModeleExports
 			}
 
 			$newvalue = $array_export_fields_label[$code];
+			if ($newvalue) {
+				$newvalue = $outputlangs->transnoentitiesnoconv($newvalue);
+			}
+
+			// Label may be stored HTML encoded (for example extrafield labels saved through Translate::trans()),
+			// so decode entities and remove HTML to keep the header consistent with the data cells.
+			$newvalue = dol_string_nohtmltag($newvalue);
+			$decodedlabel = $newvalue;
 
 			// Clean data and add encloser if required (depending on value of USE_STRICT_CSV_RULES)
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-			$newvalue = csvClean($newvalue, $outputlangs->charset_output, $this->separator);
+			$newvalue = csvClean($newvalue, getDolGlobalString('EXPORT_CSV_FORCE_CHARSET'), $this->separator);
 
 			fwrite($this->handle, $newvalue.$this->separator);
 			$typefield = isset($array_types[$code]) ? $array_types[$code] : '';
 
 			if (preg_match('/^Select:/i', $typefield) && $typefield = substr($typefield, 7)) {
-				$selectlabel[$code."_label"] = $newvalue."_label";
+				// Append the "_label" suffix before cleaning so the derived column stays valid CSV
+				// even when the decoded label contains the separator or a quote.
+				$selectlabel[$code."_label"] = csvClean($decodedlabel."_label", $outputlangs->charset_output, $this->separator);
 			}
 		}
 

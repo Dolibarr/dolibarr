@@ -36,4 +36,3 @@ interface iValueObject
      */
     public function __toString();
 }
-

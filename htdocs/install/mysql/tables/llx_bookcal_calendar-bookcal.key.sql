@@ -26,4 +26,3 @@ ALTER TABLE llx_bookcal_calendar ADD INDEX idx_bookcal_calendar_status (status);
 --ALTER TABLE llx_bookcal_calendar ADD UNIQUE INDEX uk_bookcal_calendar_fieldxy(fieldx, fieldy);
 
 --ALTER TABLE llx_bookcal_calendar ADD CONSTRAINT llx_bookcal_calendar_fk_field FOREIGN KEY (fk_field) REFERENCES llx_bookcal_myotherobject(rowid);
-

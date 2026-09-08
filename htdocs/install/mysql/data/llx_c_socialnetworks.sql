@@ -36,9 +36,9 @@ INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES
 INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES (__ENTITY__, 'gifycat', 'Gificat', '{socialid}', '', 0);
 INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES (__ENTITY__, 'giphy', 'Giphy', '{socialid}', '', 0);
 INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES (__ENTITY__, 'github', 'GitHub', 'https://www.github.com/{socialid}', '', 0);
-INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES (__ENTITY__, 'instagram', 'Instagram', 'https://www.instagram.com/{socialid}', 'fa-instagram', 1);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES (__ENTITY__, 'instagram', 'Instagram', 'https://www.instagram.com/{socialid}', 'fa-instagram', 0);
 INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES (__ENTITY__, 'linkedin', 'LinkedIn', 'https://www.linkedin.com/in/{socialid}', 'fa-linkedin', 1);
-INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES (__ENTITY__, 'mastodon', 'Mastodon', '{socialid}', 'fa-mastodon', 0);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES (__ENTITY__, 'mastodon', 'Mastodon', '{socialid}', 'fa-mastodon', 1);
 INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES (__ENTITY__, 'meetup', 'Meetup', '{socialid}', 'fa-meetup', 0);
 INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES (__ENTITY__, 'periscope', 'Periscope', '{socialid}', '', 0);
 INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES (__ENTITY__, 'pinterest', 'Pinterest', '{socialid}', 'fa-pinterest', 0);
@@ -46,8 +46,8 @@ INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES
 INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES (__ENTITY__, 'quora', 'Quora', '{socialid}', '', 0);
 INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES (__ENTITY__, 'reddit', 'Reddit', '{socialid}', 'fa-reddit', 0);
 INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES (__ENTITY__, 'slack', 'Slack', '{socialid}', 'fa-slack', 0);
-INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES (__ENTITY__, 'snapchat', 'Snapchat', '{socialid}', 'fa-snapchat', 1);
-INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES (__ENTITY__, 'skype', 'Skype', 'https://www.skype.com/{socialid}', 'fa-skype', 1);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES (__ENTITY__, 'snapchat', 'Snapchat', '{socialid}', 'fa-snapchat', 0);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES (__ENTITY__, 'skype', 'Skype', 'https://www.skype.com/{socialid}', 'fa-skype', 0);
 INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES (__ENTITY__, 'tripadvisor', 'Tripadvisor', '{socialid}', '', 0);
 INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES (__ENTITY__, 'tumblr', 'Tumblr', 'https://www.tumblr.com/{socialid}', 'fa-tumblr', 0);
 INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES (__ENTITY__, 'twitch', 'Twitch', '{socialid}', '', 0);

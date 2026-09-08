@@ -73,7 +73,6 @@ OthersNotLinkedToThirdParty=Anderen, niet gebonden aan een Klant
 StatusProspect1=Contact opnemen
 StatusProspect2=Contact lopende
 ChangeToContact=Status veranderen naar 'Contact opnemen'
-ImportDataset_company_1=Derden en hun eigenschappen
 SupplierCategory=Categorie verkoper
 YouMustAssignUserMailFirst=U moet een e-mail voor deze gebruiker maken voordat u een e-mail melding kunt toevoegen.
 YouMustCreateContactFirst=U dient voor de Klant eerst contactpersonen met een e-mailadres in te stellen, voordat u kennisgevingen per e-mail kunt sturen.

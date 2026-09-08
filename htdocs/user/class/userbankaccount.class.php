@@ -6,7 +6,7 @@
  * Copyright (C) 2015	    Alexandre Spangaro	    <aspangaro@open-dsi.fr>
  * Copyright (C) 2016       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -96,7 +96,7 @@ class UserBankAccount extends Account
 		$now = dol_now();
 
 		$sql = "INSERT INTO ".$this->db->prefix()."user_rib (fk_user, datec)";
-		$sql .= " VALUES (".$this->userid.", '".$this->db->idate($now)."')";
+		$sql .= " VALUES (".((int) $this->userid).", '".$this->db->idate($now)."')";
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			if ($this->db->affected_rows($resql)) {

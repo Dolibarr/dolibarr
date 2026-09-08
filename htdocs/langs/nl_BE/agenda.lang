@@ -19,6 +19,7 @@ InvoiceSentByEMail=Klantfactuur %s per e-mail verzonden
 SupplierOrderSentByEMail=Bestelling %s per e-mail verzonden
 ORDER_SUPPLIER_DELETEInDolibarr=Aankooporder %s verwijderd
 ShippingSentByEMail=Verzending %s verzonden per e-mail
+InterventionSentByEMail=Interventie %s per e-mail verzonden
 ProposalDeleted=Offerte verwijderd
 HOLIDAY_CREATEInDolibarr=Verzoek om verlof %s gemaakt
 HOLIDAY_MODIFYInDolibarr=Verzoek om verlof %s gewijzigd

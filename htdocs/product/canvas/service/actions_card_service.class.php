@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2010-2018 Regis Houssin  <regis.houssin@inodbox.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -94,10 +94,14 @@ class ActionsCardService
 	 */
 	public $object;
 
-	//! Template container
+	/**
+	 * @var array<string,mixed> Template container
+	 */
 	public $tpl = array();
 
-	// List of fields for action=list
+	/**
+	 * @var array<int,array<string,bool|string>> List of fields for action=list
+	 */
 	public $field_list = array();
 
 	/**
@@ -230,12 +234,12 @@ class ActionsCardService
 			$this->tpl['showend'] = dol_get_fiche_end();
 
 			// Accountancy buy code
-			$this->tpl['accountancyBuyCodeKey'] = $form->editfieldkey("ProductAccountancyBuyCode", 'productaccountancycodesell', $this->accountancy_code_sell, $this, $user->rights->produit->creer);
-			$this->tpl['accountancyBuyCodeVal'] = $form->editfieldval("ProductAccountancyBuyCode", 'productaccountancycodesell', $this->accountancy_code_sell, $this, $user->rights->produit->creer);
+			$this->tpl['accountancyBuyCodeKey'] = $form->editfieldkey("ProductAccountancyBuyCode", 'productaccountancycodesell', $this->accountancy_code_sell, $this, $user->hasRight('produit', 'creer'));
+			$this->tpl['accountancyBuyCodeVal'] = $form->editfieldval("ProductAccountancyBuyCode", 'productaccountancycodesell', $this->accountancy_code_sell, $this, $user->hasRight('produit', 'creer'));
 
 			// Accountancy sell code
-			$this->tpl['accountancySellCodeKey'] = $form->editfieldkey("ProductAccountancySellCode", 'productaccountancycodebuy', $this->accountancy_code_buy, $this, $user->rights->produit->creer);
-			$this->tpl['accountancySellCodeVal'] = $form->editfieldval("ProductAccountancySellCode", 'productaccountancycodebuy', $this->accountancy_code_buy, $this, $user->rights->produit->creer);
+			$this->tpl['accountancySellCodeKey'] = $form->editfieldkey("ProductAccountancySellCode", 'productaccountancycodebuy', $this->accountancy_code_buy, $this, $user->hasRight('produit', 'creer'));
+			$this->tpl['accountancySellCodeVal'] = $form->editfieldval("ProductAccountancySellCode", 'productaccountancycodebuy', $this->accountancy_code_buy, $this, $user->hasRight('produit', 'creer'));
 		}
 
 		$this->tpl['finished'] = $this->object->finished;
@@ -270,7 +274,7 @@ class ActionsCardService
 			$this->tpl['note'] = $this->note;
 
 			// Duration unit
-			// TODO creer fonction
+			// TODO create function
 			$duration_unit = '<input name="duration_unit" type="radio" value="h"'.($this->object->duration_unit == 'h' ? ' checked' : '').'>'.$langs->trans("Hour");
 			$duration_unit .= '&nbsp; ';
 			$duration_unit .= '<input name="duration_unit" type="radio" value="d"'.($this->object->duration_unit == 'd' ? ' checked' : '').'>'.$langs->trans("Day");
@@ -286,8 +290,8 @@ class ActionsCardService
 		if ($action == 'view') {
 			// Photo
 			$this->tpl['nblines'] = 4;
-			if ($this->object->is_photo_available($conf->service->multidir_output[$this->object->entity])) {
-				$this->tpl['photos'] = $this->object->show_photos('product', $conf->service->multidir_output[$this->object->entity], 1, 1, 0, 0, 0, 80);
+			if ($this->object->is_photo_available($conf->service->multidir_output[(int) $this->object->entity])) {
+				$this->tpl['photos'] = $this->object->show_photos('product', $conf->service->multidir_output[(int) $this->object->entity], 1, 1, 0, 0, 0, 80);
 			}
 
 			// Duration
@@ -318,7 +322,7 @@ class ActionsCardService
 		$sql = "SELECT rowid, name, alias, title, align, sort, search, visible, enabled, rang";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_field_list";
 		$sql .= " WHERE element = '".$this->db->escape($this->fieldListName)."'";
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " AND entity = ".((int) $conf->entity);
 		$sql .= " ORDER BY rang ASC";
 
 		$resql = $this->db->query($sql);

@@ -2,7 +2,7 @@
 /* Module to manage locations, buildings, floors and rooms into Dolibarr ERP/CRM
  * Copyright (C) 2013       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016       Gilles Poirier          <gilles.poirier@netlogic.fr>
- * Copyright (C) 2023       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2023-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -37,7 +37,7 @@ function resource_prepare_head($object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = dol_buildpath('/resource/card.php', 1).'?id='.$object->id;
+	$head[$h][0] = DOL_URL_ROOT.'/resource/card.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("ResourceCard");
 	$head[$h][2] = 'resource';
 	$h++;
@@ -115,9 +115,8 @@ function resource_prepare_head($object)
  */
 function resource_admin_prepare_head()
 {
-	global $conf, $db, $langs, $user;
+	global $conf, $extrafields, $langs, $user;
 
-	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('resource');
 
 	$h = 0;
@@ -134,7 +133,7 @@ function resource_admin_prepare_head()
 	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'resource_admin');
 
-	$head[$h][0] = DOL_URL_ROOT.'/admin/resource_extrafields.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'resource'));
 	$head[$h][1] = $langs->trans("ExtraFields");
 	$nbExtrafields = $extrafields->attributes['resource']['count'];
 	if ($nbExtrafields > 0) {

@@ -32,7 +32,7 @@
  */
 function ldap_prepare_head()
 {
-	global $langs, $conf, $user;
+	global $langs, $conf;
 
 	$langs->load("ldap");
 
@@ -103,7 +103,7 @@ function ldap_prepare_head()
  */
 function show_ldap_test_button($butlabel, $testlabel, $key, $dn, $objectclass)
 {
-	global $langs, $conf, $user;
+	global $langs;
 	//print 'key='.$key.' dn='.$dn.' objectclass='.$objectclass;
 
 	print '<br>';

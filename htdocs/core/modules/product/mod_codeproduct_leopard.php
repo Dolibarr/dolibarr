@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2004       Rodolphe Quiedeville 	<rodolphe@quiedeville.org>
+ * Copyright (C) 2006-2009  Laurent Destailleur  	<eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 /**
  *       \file       htdocs/core/modules/product/mod_codeproduct_leopard.php
  *       \ingroup    product
- *       \brief      Fichier de la class des gestion leopard des codes produits
+ *       \brief      File of class to manage product code with leopard rule
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/product/modules_product.class.php';
@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/product/modules_product.class.php'
 
 /**
  *	\class 		mod_codeproduct_leopard
- *	\brief 		Class permettant la gestion leopard des codes produits
+ *	\brief 		Class to manage product code with leopard rule
  */
 class mod_codeproduct_leopard extends ModeleProductCode
 {
@@ -43,6 +43,12 @@ class mod_codeproduct_leopard extends ModeleProductCode
 	// variables inherited from ModelProductCode class
 	public $name = 'Leopard';
 	public $version = 'dolibarr';
+
+	/**
+	 * @var int		Position of module among others
+	 */
+	public $position = 10;
+
 
 	/**
 	 *	Constructor

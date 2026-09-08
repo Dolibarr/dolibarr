@@ -63,11 +63,7 @@ $langs->loadLangs(array("mrp"));
 // Define javascript type
 top_httphead('text/javascript; charset=UTF-8');
 // Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
-if (empty($dolibarr_nocache)) {
-	header('Cache-Control: max-age=10800, public, must-revalidate');
-} else {
-	header('Cache-Control: no-cache');
-}
+header('Cache-Control: max-age=10800, public, must-revalidate');
 
 ?>
 /**
@@ -170,7 +166,7 @@ function addDispatchLine(index, type, mode)
  * @param $row          object
  */
 function addDispatchTR(qtyOrdered, qtyDispatched, index, nbrTrs, warehouseId, inputId, type, qty, mode, $row) {
-	if (qtyOrdered <= 1) {
+	if (qtyOrdered <= 0) {
 		let errormsg = '<?php echo dol_escape_js($langs->trans('QtyCantBeSplit')); ?>';
 		$.jnotify(errormsg, 'error', true);
 		return -1;

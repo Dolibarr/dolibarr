@@ -38,4 +38,3 @@ ALTER TABLE llx_societe ADD INDEX idx_societe_shipping_method(fk_shipping_method
 -- ALTER TABLE llx_societe ADD INDEX idx_societe_warehouse(fk_warehouse);
 
 -- ALTER TABLE llx_societe ADD FOREIGN KEY fk_prospectlevel llx_c_prospectlevel(code);
-

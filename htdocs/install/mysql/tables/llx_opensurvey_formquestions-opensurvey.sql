@@ -21,4 +21,3 @@ CREATE TABLE llx_opensurvey_formquestions (
 	question TEXT,
     available_answers TEXT								-- List of available answers
 ) ENGINE=innodb;
-

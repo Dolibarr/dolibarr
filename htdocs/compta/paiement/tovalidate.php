@@ -99,7 +99,7 @@ $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -134,7 +134,7 @@ if ($resql) {
 		print '<td class="center">';
 
 		if ($objp->statut == 0) {
-			print '<a href="card.php?id='.$objp->rowid.'&amp;action=valide">'.$langs->trans("PaymentStatusToValidShort").'</a>';
+			print '<a href="card.php?id='.$objp->rowid.'&amp;action=valide&amp;token='.newToken().'">'.$langs->trans("PaymentStatusToValidShort").'</a>';
 		} else {
 			print "-";
 		}

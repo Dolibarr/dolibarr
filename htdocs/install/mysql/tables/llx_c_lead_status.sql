@@ -24,4 +24,3 @@ create table llx_c_lead_status
   percent     double(5,2),
   active      tinyint DEFAULT 1 NOT NULL
 )ENGINE=innodb;
-

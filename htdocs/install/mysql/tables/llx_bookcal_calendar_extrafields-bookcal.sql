@@ -20,4 +20,3 @@ create table llx_bookcal_calendar_extrafields
   fk_object                 integer NOT NULL,
   import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
-

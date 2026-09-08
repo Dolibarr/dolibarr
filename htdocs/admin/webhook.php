@@ -126,12 +126,6 @@ if ($action == 'updateMask') {
 			// We therefore requires a variable to have a coherent view
 			$conf->global->$constforval = $value;
 		}
-
-		// We disable/enable the document template (into llx_document_model table)
-		$ret = delDocumentModel($value, $type);
-		if ($ret > 0) {
-			$ret = addDocumentModel($value, $type, $label, $scandir);
-		}
 	}
 } elseif ($action == 'unsetdoc') {
 	$tmpobjectkey = GETPOST('object', 'aZ09');
@@ -153,7 +147,7 @@ $page_name = "WebhookSetup";
 llxHeader('', $langs->trans($page_name), $help_url, '', 0, 0, '', '', '', 'mod-admin page-webhook');
 
 // Subheader
-$linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1').'">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1').'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 
 print load_fiche_titre($langs->trans($page_name), $linkback, 'title_setup');
 

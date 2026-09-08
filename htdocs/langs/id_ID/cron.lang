@@ -77,6 +77,7 @@ CronType=Jenis pekerjaan
 CronType_method=Metode panggilan Kelas PHP
 CronType_command=Perintah shell
 CronCannotLoadClass=Tidak dapat memuat file kelas %s (untuk menggunakan kelas %s)
+CronModuleNotEnabledInThisEntity=Modul Cron tidak diaktifkan dalam entitas ini (untuk menggunakan metode %s dari objek %s)
 CronCannotLoadObject=File kelas %s dimuat, tetapi objek %s tidak ditemukan di dalamnya
 UseMenuModuleToolsToAddCronJobs=Buka menu "<a href="%s"> Beranda - Alat Admin - Pekerjaan terjadwal </a>" untuk melihat dan mengedit pekerjaan yang dijadwalkan.
 JobDisabled=Pekerjaan dinonaktifkan

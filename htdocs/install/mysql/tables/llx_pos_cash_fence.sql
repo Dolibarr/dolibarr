@@ -20,19 +20,32 @@ CREATE TABLE llx_pos_cash_fence(
 	ref VARCHAR(64),
 	label VARCHAR(255),
 	opening double(24,8) default 0,
+	-- amount
 	cash double(24,8) default 0,
 	card double(24,8) default 0,
 	cheque double(24,8) default 0,
+	-- amount declared
+	cash_declared double(24,8) default NULL,
+	card_declared double(24,8) default NULL,
+	cheque_declared double(24,8) default NULL,
+	-- lifetime amount (not used)
+	cash_lifetime double(24,8) default NULL,
+	card_lifetime double(24,8) default NULL,
+	cheque_lifetime double(24,8) default NULL,
+	lifetime_start datetime default NULL,
 	status INTEGER,
 	date_creation DATETIME NOT NULL,
 	date_valid DATETIME,
 	day_close INTEGER,
 	month_close INTEGER,
 	year_close INTEGER,
+	hour_close INTEGER DEFAULT null,
+	min_close INTEGER DEFAULT null,
+	sec_close INTEGER DEFAULT null,
 	posmodule VARCHAR(30),
 	posnumber VARCHAR(30),
 	fk_user_creat integer,
 	fk_user_valid integer,
-	tms TIMESTAMP,
+	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	import_key VARCHAR(14)
 ) ENGINE=innodb;

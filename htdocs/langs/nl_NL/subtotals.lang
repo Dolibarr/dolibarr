@@ -1,0 +1,54 @@
+# Dolibarr language file - Source file is en_US - subtotal
+
+#
+# Global
+#
+Subtotal=Subtotalen
+SubTotalModuleDesc=Subtotaal- en titelregels voor bepaalde documenten
+#
+# Admin
+#
+SubtotalSetup=Instellen van de subtotalenmodule
+MaxSubtotalLevel=Maximaal niveau
+SubtotalLineBackColor=Niveau %s lijnen achtergrondkleur
+NotSupportedByAllPDF=Werkt met nieuwere PDF-bestanden, maar niet met oude %s
+
+#
+# Card
+#
+AddTitleLine=Titelregel toevoegen
+AddSubtotalLine=Subtotaalregel toevoegen
+TitleNeedDesc=U moet een geldige beschrijving invoeren om een titel te kunnen maken.
+TitleAddedLevelTooHigh=Titelniveau is te hoog (in plaats daarvan toegevoegd met niveau %s).
+TitleEditedLevelTooHigh=Het titelniveau is te hoog (bewerkt met niveau %s in plaats daarvan).
+DeleteSubtotalLine=Subtotaalregel verwijderen
+ConfirmDeleteSubtotalLine=Weet u zeker dat u deze subtotaalregel wilt verwijderen?
+DeleteTitleLine=Titelregel verwijderen
+ConfirmDeleteTitleLine=Weet u zeker dat u deze titelregel wilt verwijderen?
+DeleteCorrespondingSubtotalLine=De overeenkomstige subtotaalregel verwijderen?
+SubtotalLevel=Niveau %s
+SubtotalLineDesc=Lijnbeschrijving
+SubtotalLineLevel=Lijnniveau
+ShowUPOnPDF=Toon eenheidsprijs op PDF
+ShowTotalExludingVATOnPDF=Toon het totaal exclusief BTW op de PDF
+ForcePageBreak=Forceer pagina-einde vóór titel
+NoTitleError=Je hebt geen titelregel of ze hebben allemaal al een bijbehorende subtotaalregel
+CorrespondingTitleLine=Overeenkomstige titelregel
+SelectVATRate=Selecteer BTW-tarief
+EnterRemisePercent=Voer het kortingspercentage in
+ApplyVATForBlock=BTW toepassen voor dit blok
+ApplyDiscountForBlock=Korting aanvragen voor dit blok
+TitleUnderSameLevelSTLine=Een titel van hetzelfde niveau moet onder de subtotaalregel van de vorige titel staan.
+TitleUnderSameLevelOrGreater=De titel moet onder een titel van hetzelfde niveau of hoger liggen.
+TitleAfterStLineOfSameLevelTitle=De titel moet na de subtotaalregel van de vorige titel komen.
+PreviousTitleLevelTooHigh=Vorige titel is twee niveaus of meer groter dan de verplaatste regel.
+STLineUnderCorrespondingTitleDesc=De subtotaalregel moet onder een titel staan met hetzelfde niveau en dezelfde beschrijving.
+STLineUnderCorrespondingTitle=De subtotaalregel moet onder een titel van hetzelfde niveau en dezelfde beschrijving staan.
+STLineUnderTitle=De subtotaalregel moet onder de titel staan
+UnsupportedModuleError=U kunt geen subtotalenregel toevoegen in een niet-ondersteunde module
+CorrespondingTitleNotFound=De overeenkomstige titel werd niet gevonden
+
+#
+# PDF
+#
+SubtotalOf=Subtotaal van %s:

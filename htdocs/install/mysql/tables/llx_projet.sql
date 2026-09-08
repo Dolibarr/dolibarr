@@ -20,8 +20,8 @@
 create table llx_projet
 (
   rowid            	integer AUTO_INCREMENT PRIMARY KEY,
-  fk_project        integer DEFAULT NULL,       -- parent project rowid
-  fk_soc           	integer,
+  fk_project        integer DEFAULT NULL,       -- parent project id
+  fk_soc           	integer,					-- parent thirdparty id
   datec            	datetime,					-- date creation project
   tms              	timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   dateo            	date,						-- date start project
@@ -44,7 +44,7 @@ create table llx_projet
   note_public      	text,
   email_msgid      	varchar(175),				-- if project or lead is created by email collector, we store here MSG ID. Do not use a too large value, it generates trouble with unique index
   email_date 		datetime,					-- if project or lead is created by email collector, we store here Date of message
-  --budget_days     real,                       -- budget in days is sum of field planned_workload of tasks
+  --budget_days     real,                       -- budget in days is the sum of the field planned_workload of llx_projet_task
   opp_amount       	double(24,8),
   budget_amount    	double(24,8),
   usage_opportunity    integer DEFAULT 0,		-- Set to 1 if project is used to follow an opportunity
@@ -55,7 +55,8 @@ create table llx_projet
   date_end_event   	datetime,					-- date end event
   location         	varchar(255),				-- location
   accept_conference_suggestions integer DEFAULT 0,		-- Set to 1 if you want to allow unknown people to suggest conferences
-  accept_booth_suggestions integer DEFAULT 0,	-- Set to 1 if you want to Allow unknown people to suggest booth
+  accept_booth_suggestions integer DEFAULT 0,			-- Set to 1 if you want to Allow unknown people to suggest booth
+  -- TODO accept_online_registration integer DEFAULT 0,	-- Set to 1 if you want to Allow unknown people to register online
   max_attendees     integer DEFAULT 0,
   price_registration    double(24,8),
   price_booth    	double(24,8),

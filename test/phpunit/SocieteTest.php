@@ -62,7 +62,7 @@ class SocieteTest extends CommonClassTest
 	{
 		global $conf,$user,$langs,$db;
 
-		if ($conf->global->SOCIETE_CODECLIENT_ADDON != 'mod_codeclient_monkey') {
+		if (getDolGlobalString('SOCIETE_CODECLIENT_ADDON') != 'mod_codeclient_monkey') {
 			print "\n".__METHOD__." third party ref checker must be setup to 'mod_codeclient_monkey' not to '" . getDolGlobalString('SOCIETE_CODECLIENT_ADDON')."'.\n";
 			die(1);
 		}
@@ -174,7 +174,7 @@ class SocieteTest extends CommonClassTest
 
 		$result = $localobject->update($localobject->id, $user);
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
-		$this->assertLessThan($result, 0);
+		$this->assertLessThan($result, 0, __METHOD__." id=".$localobject->id." result=".$result);
 
 		$result = $localobject->update_note($localobject->note_private, '_private');
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
@@ -225,10 +225,10 @@ class SocieteTest extends CommonClassTest
 		$localobject->country_code = 'FR';
 		$localobject->idprof1 = 493861496;
 		$localobject->idprof2 = 49386149600021;
-		$result = $localobject->id_prof_check(1, $localobject);    // Must be > 0
+		$result = $localobject->id_prof_check(1);    // Must be > 0
 		print __METHOD__." OK FR idprof1 result=".$result."\n";
 		$this->assertGreaterThanOrEqual(1, $result);
-		$result = $localobject->id_prof_check(2, $localobject);    // Must be > 0
+		$result = $localobject->id_prof_check(2);    // Must be > 0
 		print __METHOD__." OK FR idprof2 result=".$result."\n";
 		$this->assertGreaterThanOrEqual(1, $result);
 
@@ -236,17 +236,17 @@ class SocieteTest extends CommonClassTest
 		$localobject->country_code = 'FR';
 		$localobject->idprof1 = 'id1ko';
 		$localobject->idprof2 = 'id2ko';
-		$result = $localobject->id_prof_check(1, $localobject);    // Must be <= 0
+		$result = $localobject->id_prof_check(1);    // Must be <= 0
 		print __METHOD__." KO FR idprof1 result=".$result."\n";
 		$this->assertLessThan(1, $result);
-		$result = $localobject->id_prof_check(2, $localobject);    // Must be <= 0
+		$result = $localobject->id_prof_check(2);    // Must be <= 0
 		print __METHOD__." KO FR idprof2 result=".$result."\n";
 		$this->assertLessThan(1, $result);
 
 		// KO ES
 		$localobject->country_code = 'ES';
 		$localobject->idprof1 = 'id1ko';
-		$result = $localobject->id_prof_check(1, $localobject);    // Must be <= 0
+		$result = $localobject->id_prof_check(1);    // Must be <= 0
 		print __METHOD__." KO ES idprof1 result=".$result."\n";
 		$this->assertLessThan(1, $result);
 
@@ -254,10 +254,10 @@ class SocieteTest extends CommonClassTest
 		$localobject->country_code = 'AR';
 		$localobject->idprof1 = 'id1ko';
 		$localobject->idprof2 = 'id2ko';
-		$result = $localobject->id_prof_check(1, $localobject);    // Must be > 0
+		$result = $localobject->id_prof_check(1);    // Must be > 0
 		print __METHOD__." OK AR idprof1 result=".$result."\n";
 		$this->assertGreaterThanOrEqual(0, $result);
-		$result = $localobject->id_prof_check(2, $localobject);    // Must be > 0
+		$result = $localobject->id_prof_check(2);    // Must be > 0
 		print __METHOD__." OK AR idprof2 result=".$result."\n";
 		$this->assertGreaterThanOrEqual(1, $result);
 
@@ -477,8 +477,141 @@ class SocieteTest extends CommonClassTest
 		$result = $soc1->fetch($soc1_id);
 		$this->assertLessThanOrEqual($result, 0);
 
+		// Clean data for next tests
+		$soc1->delete($soc1_id);
+		$soc2->delete($soc2_id);
+
 		print __METHOD__." result=".$result."\n";
 
 		return $result;
+	}
+
+	/**
+	 * testFindNearest
+	 *
+	 * @return int
+	 */
+	public function testSocieteFindNearest()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+		$localobject = new Societe($db);
+
+		$soc1 = new Societe($db);
+		$soc1->initAsSpecimen();
+		$soc1->name = "Thirdparty Name Specimen";
+		$soc1->barcode = "123456";
+		$soc1->name_alias = "Thirdparty Name Specimen Alias";
+		$soc1->code_client = -1;
+		$soc1->code_fournisseur = -1;
+		$soc1_id = $soc1->create($user);
+
+		$result = $localobject->findNearest($soc1_id);
+		$this->assertEquals($soc1_id, $result);
+
+		// Test on bad values
+		$result = $localobject->findNearest(0, 'Bad REF', 'Bad REF EXT', 'bad idprof1', 'bad idprof2', 'bad idprof3', 'bad idprof4', 'bad idprof5', 'bad idprof6', 'bad email', 'BAD REF ALIAS', 0, 0);
+		$this->assertEquals(0, $result);
+
+		// Test on good values
+		$result = $localobject->findNearest(0, $soc1->name, $soc1->ref_ext, $soc1->barcode, $soc1->idprof1, $soc1->idprof2, $soc1->idprof3, $soc1->idprof4, $soc1->idprof5, $soc1->idprof6, $soc1->email, $soc1->name_alias, $soc1->client, $soc1->fournisseur);
+		$this->assertEquals($soc1_id, $result);
+
+		// Test with Barcode
+		$result = $localobject->findNearest(0, '', '', $soc1->barcode);
+		$this->assertEquals($soc1_id, $result);
+
+		// Test with profids
+		$result = $localobject->findNearest(0, '', '', '', $soc1->idprof1, 'bad idprof2', 'bad idprof3', 'bad idprof4', 'bad idprof5', 'bad idprof6', '', '', $soc1->client, $soc1->fournisseur);
+		$this->assertEquals($soc1_id, $result);
+		$result = $localobject->findNearest(0, '', '', '', 'bad idprof1', $soc1->idprof2, 'bad idprof3', 'bad idprof4', 'bad idprof5', 'bad idprof6', '', '', $soc1->client, $soc1->fournisseur);
+		$this->assertEquals($soc1_id, $result);
+		$result = $localobject->findNearest(0, '', '', '', 'bad idprof1', 'bad idprof2', $soc1->idprof3, 'bad idprof4', 'bad idprof5', 'bad idprof6', '', '', $soc1->client, $soc1->fournisseur);
+		$this->assertEquals($soc1_id, $result);
+		$result = $localobject->findNearest(0, '', '', '', 'bad idprof1', 'bad idprof2', 'bad idprof3', $soc1->idprof4, 'bad idprof5', 'bad idprof6', '', '', $soc1->client, $soc1->fournisseur);
+		$this->assertEquals($soc1_id, $result);
+		$result = $localobject->findNearest(0, '', '', '', 'bad idprof1', 'bad idprof2', 'bad idprof3', 'bad idprof4', $soc1->idprof5, 'bad idprof6', '', '', $soc1->client, $soc1->fournisseur);
+		$this->assertEquals($soc1_id, $result);
+		$result = $localobject->findNearest(0, '', '', '', 'bad idprof1', 'bad idprof2', 'bad idprof3', 'bad idprof4', 'bad idprof5', $soc1->idprof6, '', '', $soc1->client, $soc1->fournisseur);
+		$this->assertEquals($soc1_id, $result);
+
+		// Test with email
+		$result = $localobject->findNearest(0, '', '', '', '', '', '', '', '', '', $soc1->email, '', $soc1->client, $soc1->fournisseur);
+		$this->assertEquals($soc1_id, $result);
+
+		// Test with refs
+		$result = $localobject->findNearest(0, $soc1->name, 'Bad REF EXT', '', '', '', '', '', '', '', '', 'BAD REF ALIAS', $soc1->client, $soc1->fournisseur);
+		$this->assertEquals($soc1_id, $result);
+		$result = $localobject->findNearest(0, 'Bad REF', $soc1->ref_ext, '', '', '', '', '', '', '', '', 'BAD REF ALIAS', $soc1->client, $soc1->fournisseur);
+		$this->assertEquals($soc1_id, $result);
+		$result = $localobject->findNearest(0, 'Bad REF', 'Bad REF EXT', '', '', '', '', '', '', '', '', $soc1->name_alias, $soc1->client, $soc1->fournisseur);
+		$this->assertEquals($soc1_id, $result);
+
+		$soc2 = new Societe($db);
+		$soc2->initAsSpecimen();
+		$soc2->name = "Thirdparty Name Specimen";
+		$soc2->code_client = -1;
+		$soc2->code_fournisseur = -1;
+		$soc2_id = $soc2->create($user);
+
+		// Test on values not precise enough
+		$result = $localobject->findNearest(0, 'Thirdparty Name Specimen', '', '', '', '', '', '', '', '', '', $soc1->client, $soc1->fournisseur);
+		$this->assertEquals(-2, $result);
+
+		// Clean data for next tests
+		$soc1->delete($soc1_id);
+		$soc2->delete($soc2_id);
+
+		print __METHOD__." result=".$result."\n";
+		return $result;
+	}
+
+	/**
+	 * Test that Societe::setMysoc() always resolves country_code to an ISO country code.
+	 *
+	 * Regression test for issue #37826: when MAIN_INFO_SOCIETE_COUNTRY uses the legacy
+	 * "id:label" (2-token) syntax, the second token is a country label (e.g. 'France'),
+	 * not an ISO code. setMysoc() must not leave that label in country_code (it would break
+	 * code-based lookups such as VAT rates and force a 0% rate), but rebuild it from the id.
+	 *
+	 * @return void
+	 */
+	public function testSetMysocCountryCode()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		require_once dirname(__FILE__).'/../../htdocs/core/lib/company.lib.php';
+
+		$frid = (int) getCountry('FR', '3', $db);
+		$this->assertGreaterThan(0, $frid, 'Country FR must exist in dictionary c_country');
+
+		$savcountryconst = getDolGlobalString('MAIN_INFO_SOCIETE_COUNTRY');
+
+		// Canonical 3-token syntax "id:code:label".
+		$conf->global->MAIN_INFO_SOCIETE_COUNTRY = $frid.':FR:France';
+		$soc3 = new Societe($db);
+		$soc3->setMysoc($conf);
+
+		// Legacy 2-token syntax "id:label" (the #37826 case), second token is a label not a code.
+		$conf->global->MAIN_INFO_SOCIETE_COUNTRY = $frid.':France';
+		$soc2 = new Societe($db);
+		$soc2->setMysoc($conf);
+
+		// Restore the constant before asserting so a failure does not leak state to other tests.
+		$conf->global->MAIN_INFO_SOCIETE_COUNTRY = $savcountryconst;
+
+		$this->assertEquals('FR', $soc3->country_code, 'country_code must be the ISO code from a 3-token constant');
+		$this->assertEquals($frid, $soc3->country_id);
+		$this->assertEquals('FR', $soc2->country_code, 'country_code must be an ISO code, not a label, from a legacy 2-token constant (#37826)');
+		$this->assertEquals($frid, $soc2->country_id);
+
+		print __METHOD__." ok\n";
 	}
 }

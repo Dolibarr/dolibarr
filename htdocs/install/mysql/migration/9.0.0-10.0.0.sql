@@ -214,21 +214,21 @@ CREATE TABLE llx_bom_bom(
 	-- BEGIN MODULEBUILDER FIELDS
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	entity integer DEFAULT 1 NOT NULL,
-	ref varchar(128) NOT NULL, 
-	label varchar(255), 
-	description text, 
-	note_public text, 
-	note_private text, 
+	ref varchar(128) NOT NULL,
+	label varchar(255),
+	description text,
+	note_public text,
+	note_private text,
 	fk_product integer,
 	qty double(24,8),
 	efficiency double(8,4),
 	date_creation datetime NOT NULL,
 	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-	date_valid datetime, 
-	fk_user_creat integer NOT NULL, 
-	fk_user_modif integer, 
-	fk_user_valid integer, 
-	import_key varchar(14), 
+	date_valid datetime,
+	fk_user_creat integer NOT NULL,
+	fk_user_modif integer,
+	fk_user_valid integer,
+	import_key varchar(14),
 	status integer NOT NULL
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;
@@ -247,12 +247,12 @@ create table llx_bom_bom_extrafields
 
 CREATE TABLE llx_bom_bomline(
 	-- BEGIN MODULEBUILDER FIELDS
-	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
+	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	fk_bom integer NOT NULL,
 	fk_product integer NOT NULL,
 	fk_bom_child integer NULL,
 	description text,
-	import_key varchar(14), 
+	import_key varchar(14),
 	qty double(24,8) NOT NULL,
 	efficiency double(8,4) NOT NULL DEFAULT 1,
 	position integer NOT NULL
@@ -320,8 +320,8 @@ ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN maxemailpercollect inte
 DELETE FROM llx_const WHERE name = __ENCRYPT('THEME_ELDY_USE_HOVER')__ AND value = __ENCRYPT('0')__;
 DELETE FROM llx_const WHERE name = __ENCRYPT('THEME_ELDY_USE_CHECKED')__ AND value = __ENCRYPT('0')__;
 
-ALTER TABLE llx_inventorydet DROP COLUMN pmp; 
-ALTER TABLE llx_inventorydet DROP COLUMN pa; 
+ALTER TABLE llx_inventorydet DROP COLUMN pmp;
+ALTER TABLE llx_inventorydet DROP COLUMN pa;
 ALTER TABLE llx_inventorydet DROP COLUMN new_pmp;
 
 UPDATE llx_c_shipment_mode SET label = 'https://www.laposte.fr/outils/suivre-vos-envois?code={TRACKID}' WHERE code IN ('COLSUI');
@@ -406,4 +406,3 @@ ALTER TABLE llx_ticket_extrafields ADD INDEX idx_ticket_extrafields (fk_object);
 -- VMYSQL4.1 UPDATE llx_facturedet AS fd LEFT JOIN llx_facture AS f ON f.rowid = fd.fk_facture SET fd.special_code = 4 WHERE f.module_source = 'takepos' AND fd.special_code = 3;
 
 UPDATE llx_website_page set fk_user_creat = fk_user_modif WHERE fk_user_creat IS NULL and fk_user_modif IS NOT NULL;
-

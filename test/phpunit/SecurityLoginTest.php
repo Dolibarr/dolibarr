@@ -70,6 +70,8 @@ $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 /**
  * Class for PHPUnit tests
  *
+ * #LNE1-QU2507-0005
+ *
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
@@ -85,21 +87,24 @@ class SecurityLoginTest extends CommonClassTest
 	{
 		$login = checkLoginPassEntity('loginbidon', 'passwordbidon', 1, array('dolibarr'));
 		print __METHOD__." login=".$login."\n";
-		$this->assertEquals($login, '');
+		$this->assertEquals($login, '', 'Try with non existing login should return empty string');
 
 		$login = checkLoginPassEntity('admin', 'passwordbidon', 1, array('dolibarr'));
 		print __METHOD__." login=".$login."\n";
-		$this->assertEquals($login, '');
+		$this->assertEquals($login, '', 'Try with bad password should return empty string');
 
-		$login = checkLoginPassEntity('admin', 'admin', 1, array('dolibarr'));            // Should works because admin/admin exists
+		$login = getenv("DOL_CTI_ADMIN_LOGIN") ? getenv("DOL_CTI_ADMIN_LOGIN") : 'admin';
+		$password = getenv('DOL_CTI_ADMIN_PASSWORD') ? getenv('DOL_CTI_ADMIN_PASSWORD') : 'admin';
+
+		$login = checkLoginPassEntity($login, $password, 1, array('dolibarr'));            // Should works because admin/admin exists
 		print __METHOD__." login=".$login."\n";
 		$this->assertEquals($login, 'admin', 'The test to check if pass of user "admin" is "admin" has failed');
 
-		$login = checkLoginPassEntity('admin', 'admin', 1, array('http','dolibarr'));    // Should work because of second authentication method
+		$login = checkLoginPassEntity($login, $password, 1, array('http','dolibarr'));    // Should work because of second authentication method
 		print __METHOD__." login=".$login."\n";
 		$this->assertEquals($login, 'admin');
 
-		$login = checkLoginPassEntity('admin', 'admin', 1, array('forceuser'));
+		$login = checkLoginPassEntity($login, $password, 1, array('forceuser'));
 		print __METHOD__." login=".$login."\n";
 		$this->assertEquals('', $login, 'Error');    // Expected '' because should failed because login 'auto' does not exists
 	}

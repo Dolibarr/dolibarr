@@ -31,7 +31,7 @@ class Text
 			? strpos($haystack, $needle) !== false
 			: stripos($haystack, $needle) !== false;
 	}
-	
+
 	/**
 	 * Given haystack begins with the needle or not?
 	 *
@@ -45,7 +45,7 @@ class Text
 		$length = strlen($needle);
 		return (substr($haystack, 0, $length) === $needle);
 	}
-	
+
 	/**
 	 * Given haystack ends with the needle or not?
 	 *
@@ -60,14 +60,14 @@ class Text
 		if ($length == 0) {
 			return true;
 		}
-		
+
 		// @CHANGE LDR
 		if (!is_string($haystack)) return false;
-		
+
 		return (substr($haystack, -$length) === $needle);
 	}
-	
-	
+
+
 	/**
 	 * Convert camelCased or underscored string in to a title
 	 *
@@ -86,7 +86,7 @@ class Text
 				)
 			);
 	}
-	
+
 	/**
 	 * Convert given string to be used as a slug or css class
 	 *
@@ -97,4 +97,4 @@ class Text
 	{
 		return preg_replace('/[^a-zA-Z]+/', '-', strtolower(strip_tags($name)));
 	}
-} 
+}

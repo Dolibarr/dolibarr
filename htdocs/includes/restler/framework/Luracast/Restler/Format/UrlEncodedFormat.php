@@ -55,4 +55,3 @@ class UrlEncodedFormat extends Format
         return $data;
     }
 }
-
