@@ -105,6 +105,10 @@ html,body {
 	white-space: normal;
 }
 
+.bodytakepos div.login_block_user {
+	text-align: right;
+}
+
 .center {
 	text-align: center;
 }

@@ -1834,6 +1834,13 @@ if (isModEnabled('margin') && (
 	$with_margin_info = true;
 }
 
+$with_amount_invoiced_info = isModEnabled('invoice') && (
+	!empty($arrayfields['p.total_ht_invoiced']['checked'])
+	|| !empty($arrayfields['p.total_invoiced']['checked'])
+	|| !empty($arrayfields['p.multicurrency_total_ht_invoiced']['checked'])
+	|| !empty($arrayfields['p.multicurrency_total_invoiced']['checked'])
+);
+
 $total_ht = 0;
 $total_margin = 0;
 
@@ -1881,21 +1888,23 @@ while ($i < $imaxinloop) {
 	$multicurrency_totalInvoicedHT = 0;
 	$multicurrency_totalInvoicedTTC = 0;
 
-	$TInvoiceData = $object->InvoiceArrayList($object->id);
+	if ($with_amount_invoiced_info) {
+		$TInvoiceData = $object->InvoiceArrayList($object->id);
 
-	if (!empty($TInvoiceData)) {
-		foreach ($TInvoiceData as $invoiceData) {
-			$invoice = new Facture($db);
-			$invoice->fetch($invoiceData->facid);
+		if (!empty($TInvoiceData)) {
+			foreach ($TInvoiceData as $invoiceData) {
+				$invoice = new Facture($db);
+				$invoice->fetch($invoiceData->facid);
 
-			if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS') && $invoice->type == Facture::TYPE_DEPOSIT) {
-				continue;
+				if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS') && $invoice->type == Facture::TYPE_DEPOSIT) {
+					continue;
+				}
+
+				$totalInvoicedHT += $invoice->total_ht;
+				$totalInvoicedTTC += $invoice->total_ttc;
+				$multicurrency_totalInvoicedHT += $invoice->multicurrency_total_ht;
+				$multicurrency_totalInvoicedTTC += $invoice->multicurrency_total_ttc;
 			}
-
-			$totalInvoicedHT += $invoice->total_ht;
-			$totalInvoicedTTC += $invoice->total_ttc;
-			$multicurrency_totalInvoicedHT += $invoice->multicurrency_total_ht;
-			$multicurrency_totalInvoicedTTC += $invoice->multicurrency_total_ttc;
 		}
 	}
 

@@ -573,6 +573,8 @@ UPDATE llx_const SET name = __ENCRYPT('ACCOUNTANCY_AUXACCOUNT_USE_SEARCH_TO_SELE
 
 ALTER TABLE llx_adherent MODIFY COLUMN societe VARCHAR(128);
 
+DELETE FROM llx_rights_def WHERE module= 'cron' AND perms = 'execute';
+
 -- end of migration
 
 -- Add supplier ref on reception lines (standalone receptions)

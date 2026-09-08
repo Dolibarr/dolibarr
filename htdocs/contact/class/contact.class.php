@@ -59,7 +59,7 @@ class Contact extends CommonObject
 	 *               of the llx_mailing_unsubscribe table. photo is excluded on purpose: the file is
 	 *               moved once the transaction is committed and may be renamed on a name collision.
 	 */
-	public const MERGE_FIELDS_FILL_IF_EMPTY = array(
+	const MERGE_FIELDS_FILL_IF_EMPTY = array(
 		'civility_code', 'lastname', 'firstname', 'name_alias', 'address', 'zip', 'town',
 		'state_id', 'country_id', 'poste', 'phone_pro', 'phone_perso', 'phone_mobile', 'fax',
 		'email', 'socialnetworks', 'birthday', 'default_lang', 'ref_ext',
@@ -69,13 +69,13 @@ class Contact extends CommonObject
 	/**
 	 * @var string[] Properties concatenated when merging two contacts.
 	 */
-	public const MERGE_FIELDS_CONCAT = array('note_public', 'note_private');
+	const MERGE_FIELDS_CONCAT = array('note_public', 'note_private');
 
 	/**
 	 * @var int Maximum depth walked when looking for the ancestors of a contact, to avoid an
 	 *          infinite loop should the parent hierarchy already contain a cycle.
 	 */
-	public const MERGE_MAX_PARENT_DEPTH = 100;
+	const MERGE_MAX_PARENT_DEPTH = 100;
 
 	/**
 	 * @var string ID to identify managed object

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2026   Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2026	Nick Fragoulis
- * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -325,7 +325,9 @@ class McpHandler
 			foreach ($tool->getDefinitions() as $def) {
 				$def['is_system']  = $isSystem;
 				$def['class_name'] = $className;
-				$def['categories'] = $tool->getCategories();
+				if (empty($def['categories'])) {
+					$def['categories'] = $tool->getCategories();	// class-level fallback; a tool may set finer per-definition categories
+				}
 				$schema[] = $def;
 			}
 		}
@@ -362,7 +364,9 @@ class McpHandler
 					// for the validation check (executeTool must still be able to
 					// run respond_to_user, ask_for_clarification, etc.).
 					$def['is_system']  = true;
-					$def['categories'] = $tool->getCategories();
+					if (empty($def['categories'])) {
+						$def['categories'] = $tool->getCategories();	// class-level fallback; a tool may set finer per-definition categories
+					}
 					$schema[] = $def;
 					continue;
 				}
@@ -371,13 +375,17 @@ class McpHandler
 
 				if (empty($allowed)) {
 					// No restriction configured — include everything
-					$def['categories'] = $tool->getCategories();
+					if (empty($def['categories'])) {
+						$def['categories'] = $tool->getCategories();	// class-level fallback; a tool may set finer per-definition categories
+					}
 					$schema[] = $def;
 					continue;
 				}
 
 				if (in_array($name, $allowed, true)) {
-					$def['categories'] = $tool->getCategories();
+					if (empty($def['categories'])) {
+						$def['categories'] = $tool->getCategories();	// class-level fallback; a tool may set finer per-definition categories
+					}
 					$schema[] = $def;
 				}
 				// Not in $allowed — silently omitted; LLM never sees this tool
@@ -426,13 +434,17 @@ class McpHandler
 
 				if (empty($allowed)) {
 					// No restriction configured — include everything
-					$def['categories'] = $tool->getCategories();
+					if (empty($def['categories'])) {
+						$def['categories'] = $tool->getCategories();	// class-level fallback; a tool may set finer per-definition categories
+					}
 					$schema[] = $def;
 					continue;
 				}
 
 				if (in_array($name, $allowed, true)) {
-					$def['categories'] = $tool->getCategories();
+					if (empty($def['categories'])) {
+						$def['categories'] = $tool->getCategories();	// class-level fallback; a tool may set finer per-definition categories
+					}
 					$schema[] = $def;
 				}
 			}

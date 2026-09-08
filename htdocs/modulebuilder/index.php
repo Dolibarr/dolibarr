@@ -3909,7 +3909,7 @@ if ($module == 'initmodule') {
 				print '</td></tr>';
 
 				print '<tr><td><span class="fa fa-file"></span> '.$langs->trans("Index").' : <strong class="wordbreak">'.$pathtoindex.'</strong>';
-				print '</td><td><a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.urlencode($tab).'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=editfile&token='.newToken().'&format=markdown&file='.urlencode($pathtoindex).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+				print '</td><td><a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.urlencode($tab).'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=editfile&token='.newToken().'&format=php&file='.urlencode($pathtoindex).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
 				print '</td></tr>';
 
 				// List of setup pages

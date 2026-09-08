@@ -3,7 +3,7 @@
  * Copyright (C) 2016		Laurent Destailleur		<eldy@users.sourceforge.net>
 /* Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016	    Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2020-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2020-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025-2026	William Mead			<william@m34d.com>
  *
@@ -376,6 +376,13 @@ class DolibarrApi
 		unset($object->stats_reception);
 		unset($object->stats_mrptoconsume);
 		unset($object->stats_mrptoproduce);
+		unset($object->stats_bom);
+		unset($object->stats_mo);
+		unset($object->stats_expedition);
+		unset($object->stats_facturerec);
+		unset($object->stats_facture_fournisseur);
+		unset($object->stats_facturefournrec);
+		unset($object->stats_proposal_supplier);
 
 		unset($object->fieldsforcombobox);
 		unset($object->regeximgext);

@@ -165,7 +165,7 @@ function mrpCollapseBomManagement()
 {
 	?>
 
-	<script type="text/javascript" language="javascript">
+	<script type="text/javascript">
 
 		$(document).ready(function () {
 			function folderManage(element, onClose = 0) {

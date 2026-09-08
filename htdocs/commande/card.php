@@ -3607,15 +3607,15 @@ if ($action == 'create' && $usercancreate) {
 				// Valid
 				if ($object->status == Commande::STATUS_DRAFT && ($object->total_ttc >= 0 || getDolGlobalString('ORDER_ENABLE_NEGATIVE')) && $usercanvalidate) {
 					if ($numlines > 0) {
-						print dolGetButtonAction('', $langs->trans('Validate'), 'default', dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'validate', 'id' => $object->id], true), (string) $object->id, 1);
+						print dolGetButtonAction('', $langs->trans('Validate'), 'default', dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'validate', 'id' => $object->id], true), 'action-validate', 1);
 					} else {
 						$langs->load("errors");
-						print dolGetButtonAction($langs->trans("ErrorObjectMustHaveLinesToBeValidated", $object->ref), $langs->trans('Validate'), 'default', dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'validate', 'id' => $object->id], true), (string) $object->id, -1);
+						print dolGetButtonAction($langs->trans("ErrorObjectMustHaveLinesToBeValidated", $object->ref), $langs->trans('Validate'), 'default', dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'validate', 'id' => $object->id], true), 'action-validate', -1);
 					}
 				}
 				// Edit
 				if (($object->status == Commande::STATUS_VALIDATED || ($object->status == Commande::STATUS_SHIPMENTONPROCESS && getDolGlobalString('EDIT_ORDER_SHIPMENT_ON_PROCESS'))) && $usercancreate) {
-					print dolGetButtonAction('', $langs->trans('Modify'), 'default', dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'modif', 'id' => $object->id], true), '');
+					print dolGetButtonAction('', $langs->trans('Modify'), 'default', dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'modif', 'id' => $object->id], true), 'action-modif');
 				}
 
 				// Create a purchase order
