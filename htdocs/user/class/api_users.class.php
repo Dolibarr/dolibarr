@@ -380,7 +380,6 @@ class Users extends DolibarrApi
 			if ($field == 'pass') {
 				if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'password')) {		// In creation, users is always a different user than the one who create it.
 					throw new RestException(403, 'You are not allowed to modify/set password of other users');
-					continue;
 				}
 				if (!DolibarrApiAccess::$user->admin) {		// Only admin can set a password and knowing it. Others can reset with correct rights user->self->password but without knowing it.
 					throw new RestException(403, 'As a non admin user, you are not allowed to set a password from this API. Use the /setPassword endpoint for this.');
