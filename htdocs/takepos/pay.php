@@ -280,7 +280,7 @@ if ($invoice->id > 0) {
 $alreadypayed = (is_object($invoice) ? ($invoice->total_ttc - $remaintopay) : 0);
 
 $parameters = array();
-$reshook = $hookmanager->executeHooks('payActions', $parameters, $invoice, $action);
+$reshook = $hookmanager->executeHooks('takeposPayActions', $parameters, $invoice, $action);
 
 
 if (!getDolGlobalInt("TAKEPOS_NUMPAD")) {
