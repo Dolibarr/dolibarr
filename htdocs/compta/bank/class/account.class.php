@@ -117,6 +117,12 @@ class Account extends CommonObject
 	public $url;
 
 	/**
+	 * Third party ID (set by subclass CompanyBankAccount, used by getCountryCode())
+	 * @var int
+	 */
+	public $socid;
+
+	/**
 	 * Bank number. If in SEPA area, you should move to IBAN field
 	 * @var string
 	 */
