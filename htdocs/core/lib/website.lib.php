@@ -649,7 +649,7 @@ function includeContainer($containerref, $once = 0, $cachedelay = 0, $cachekey =
 			$lastModifiedTime = filemtime($fullpathcache);
 
 			// Get the current time
-			$currentTime = time();
+			$currentTime = dol_time();
 
 			// Check if the file is not older than X seconds
 			if (($currentTime - $lastModifiedTime) <= $cachedelay) {
@@ -679,7 +679,7 @@ function includeContainer($containerref, $once = 0, $cachedelay = 0, $cachekey =
 			$tmpoutput = preg_replace(array('/^.*<body[^>]*>/ims', '/<\/body>.*$/ims'), array('', ''), $tmpoutput);
 
 			// Save the content into cache file if content is lower than 10M
-			if ($fullpathcache && strlen($tmpoutput) < 10000000) {
+			if ($fullpathcache && strlen($tmpoutput) < 10000000) {  // @phan-suppress-current-line DolibarrForbiddenFunctionPlugin
 				file_put_contents($fullpathcache, $tmpoutput);
 				dolChmod($fullpathcache);
 			}
@@ -935,14 +935,14 @@ function getSocialNetworkHeaderCards($params = null)
 
 		$shortlangcode = '';
 		if ($websitepage->lang) {
-			$shortlangcode = substr($websitepage->lang, 0, 2); // en_US or en-US -> en
+			$shortlangcode = dol_substr($websitepage->lang, 0, 2); // en_US or en-US -> en
 		}
 		if (empty($shortlangcode)) {
-			$shortlangcode = substr($website->lang, 0, 2); // en_US or en-US -> en
+			$shortlangcode = dol_substr($website->lang, 0, 2); // en_US or en-US -> en
 		}
 
 		$fullurl = $website->virtualhost.'/'.$websitepage->pageurl.'.php';
-		$canonicalurl = $website->virtualhost.(($websitepage->id == $website->fk_default_home) ? '/' : (($shortlangcode != substr($website->lang, 0, 2) ? '/'.$shortlangcode : '').'/'.$websitepage->pageurl.'.php'));
+		$canonicalurl = $website->virtualhost.(($websitepage->id == $website->fk_default_home) ? '/' : (($shortlangcode != dol_substr($website->lang, 0, 2) ? '/'.$shortlangcode : '').'/'.$websitepage->pageurl.'.php'));
 		$hashtags = trim(implode(' #', array_map('trim', explode(',', $websitepage->keywords))));
 
 		// Open Graph

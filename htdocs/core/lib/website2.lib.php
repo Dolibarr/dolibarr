@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2017 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2026		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -164,11 +165,11 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 
 	$shortlangcode = '';
 	if ($objectpage->lang) {
-		$shortlangcode = substr($objectpage->lang, 0, 2); // en_US or en-US -> en
+		$shortlangcode = dol_substr($objectpage->lang, 0, 2); // en_US or en-US -> en
 	}
 	if (empty($shortlangcode)) {
 		// Take the language of website
-		$shortlangcode = substr($object->lang, 0, 2); // en_US or en-US -> en
+		$shortlangcode = dol_substr($object->lang, 0, 2); // en_US or en-US -> en
 	}
 
 	if (!empty($objectpage->type_container) && in_array($objectpage->type_container, array('library', 'service'))) {
@@ -208,7 +209,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 			$tplcontent .= "<!DOCTYPE html>\n";
 		}
 		// If a language was forced on page, we use it, else we use the lang of visitor else the lang of web site
-		$tplcontent .= '<html'.($objectpage->lang ? ' lang="'.substr($objectpage->lang, 0, 2).'"' : '<?php echo $weblangs->shortlang ? \' lang="\'.$weblangs->shortlang.\'"\' : \'\' ?>').'>'."\n";
+		$tplcontent .= '<html'.($objectpage->lang ? ' lang="'.dol_substr($objectpage->lang, 0, 2).'"' : '<?php echo $weblangs->shortlang ? \' lang="\'.$weblangs->shortlang.\'"\' : \'\' ?>').'>'."\n";
 		$tplcontent .= '<head>'."\n";
 		$tplcontent .= '<title>'.dol_string_nohtmltag($objectpage->title, 1, 'UTF-8').'</title>'."\n";
 		$tplcontent .= '<meta charset="utf-8">'."\n";
@@ -235,7 +236,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 			// Add the link of the canonical reference
 			$canonicalurladdidlang = '';
 			if ($objectpage->lang) {	// A language is forced on the page, it means we may have other language files with hard links into properties of page
-				$canonicalurl = (($objectpage->id == $object->fk_default_home) ? '/' : (($shortlangcode != substr($object->lang, 0, 2) ? '/'.$shortlangcode : '').'/'.$objectpage->pageurl.'.php'));
+				$canonicalurl = (($objectpage->id == $object->fk_default_home) ? '/' : (($shortlangcode != dol_substr($object->lang, 0, 2) ? '/'.$shortlangcode : '').'/'.$objectpage->pageurl.'.php'));
 			} else {					// No language forced, it means the canonical is the one with params making url unique
 				$canonicalurl = '/'.$objectpage->pageurl.'.php';
 
@@ -268,7 +269,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 								$tmpshortlangcode = preg_replace('/[_-].*$/', '', $object->lang); // en_US or en-US -> en
 							}
 							if ($tmpshortlangcode != $shortlangcode) {
-								$tplcontent .= '<link rel="alternate" hreflang="'.$tmpshortlangcode.'" href="<?php echo $website->virtualhost; ?>'.($object->fk_default_home == $tmppage->id ? '/' : (($tmpshortlangcode != substr($object->lang, 0, 2)) ? '/'.$tmpshortlangcode : '').'/'.$tmppage->pageurl.'.php').'" />'."\n";
+								$tplcontent .= '<link rel="alternate" hreflang="'.$tmpshortlangcode.'" href="<?php echo $website->virtualhost; ?>'.($object->fk_default_home == $tmppage->id ? '/' : (($tmpshortlangcode != dol_substr($object->lang, 0, 2)) ? '/'.$tmpshortlangcode : '').'/'.$tmppage->pageurl.'.php').'" />'."\n";
 							}
 						}
 					}
@@ -285,7 +286,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 									$tmpshortlangcode = preg_replace('/[_-].*$/', '', $obj->lang); // en_US or en-US -> en
 								}
 								if ($tmpshortlangcode != $shortlangcode) {
-									$tplcontent .= '<link rel="alternate" hreflang="'.$tmpshortlangcode.'" href="<?php echo $website->virtualhost; ?>'.($object->fk_default_home == $obj->id ? '/' : (($tmpshortlangcode != substr($object->lang, 0, 2) ? '/'.$tmpshortlangcode : '')).'/'.$obj->pageurl.'.php').'" />'."\n";
+									$tplcontent .= '<link rel="alternate" hreflang="'.$tmpshortlangcode.'" href="<?php echo $website->virtualhost; ?>'.($object->fk_default_home == $obj->id ? '/' : (($tmpshortlangcode != dol_substr($object->lang, 0, 2) ? '/'.$tmpshortlangcode : '')).'/'.$obj->pageurl.'.php').'" />'."\n";
 								}
 							}
 						}
@@ -294,8 +295,8 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 					}
 
 					// Add myself
-					$tplcontent .= '<?php if ($_SERVER["PHP_SELF"] == "'.(($object->fk_default_home == $objectpage->id) ? '/' : (($shortlangcode != substr($object->lang, 0, 2)) ? '/'.$shortlangcode : '')).'/'.$objectpage->pageurl.'.php") { ?>'."\n";
-					$tplcontent .= '<link rel="alternate" hreflang="'.$shortlangcode.'" href="<?php echo $website->virtualhost; ?>'.(($object->fk_default_home == $objectpage->id) ? '/' : (($shortlangcode != substr($object->lang, 0, 2)) ? '/'.$shortlangcode : '').'/'.$objectpage->pageurl.'.php').'" />'."\n";
+					$tplcontent .= '<?php if ($_SERVER["PHP_SELF"] == "'.(($object->fk_default_home == $objectpage->id) ? '/' : (($shortlangcode != dol_substr($object->lang, 0, 2)) ? '/'.$shortlangcode : '')).'/'.$objectpage->pageurl.'.php") { ?>'."\n";
+					$tplcontent .= '<link rel="alternate" hreflang="'.$shortlangcode.'" href="<?php echo $website->virtualhost; ?>'.(($object->fk_default_home == $objectpage->id) ? '/' : (($shortlangcode != dol_substr($object->lang, 0, 2)) ? '/'.$shortlangcode : '').'/'.$objectpage->pageurl.'.php').'" />'."\n";
 
 					$tplcontent .= '<?php } ?>'."\n";
 				} else {					// No language forced, it means the canonical is the one withparams making url unique
@@ -772,12 +773,12 @@ function showWebsiteTemplates(Website $website, int $refresh)
 		foreach ($dirthemes as $dir) {
 			$dirtheme = DOL_DATA_ROOT.$dir;
 
-			if (is_dir($dirtheme)) {
+			if (dol_is_dir($dirtheme)) {
 				$handle = opendir($dirtheme);
 				if (is_resource($handle)) {
 					while (($subdir = readdir($handle)) !== false) {	// Scan files of directory
 						//var_dump($dirtheme.'/'.$subdir);
-						if (dol_is_file($dirtheme."/".$subdir) && substr($subdir, 0, 1) != '.' && substr($subdir, 0, 3) != 'CVS' && preg_match('/\.zip$/i', $subdir)) {
+						if (dol_is_file($dirtheme."/".$subdir) && dol_substr($subdir, 0, 1) != '.' && dol_substr($subdir, 0, 3) != 'CVS' && preg_match('/\.zip$/i', $subdir)) {
 							$subdirwithoutzip = preg_replace('/\.zip$/i', '', $subdir);
 							$subdirwithoutzipwithoutver = preg_replace('/(_exp|_dev)$/i', '', $subdirwithoutzip);
 
@@ -898,12 +899,12 @@ function showWebsiteTemplates(Website $website, int $refresh)
 		foreach ($dirthemes as $dir) {
 			$dirtheme = DOL_DATA_ROOT.$dir;
 
-			if (is_dir($dirtheme)) {
+			if (dol_is_dir($dirtheme)) {
 				$handle = opendir($dirtheme);
 				if (is_resource($handle)) {
 					while (($subdir = readdir($handle)) !== false) {	// Scan files of directory
 						//var_dump($dirtheme.'/'.$subdir);
-						if (dol_is_file($dirtheme."/".$subdir) && substr($subdir, 0, 1) != '.' && substr($subdir, 0, 3) != 'CVS' && preg_match('/\.zip$/i', $subdir)) {
+						if (dol_is_file($dirtheme."/".$subdir) && dol_substr($subdir, 0, 1) != '.' && dol_substr($subdir, 0, 3) != 'CVS' && preg_match('/\.zip$/i', $subdir)) {
 							$subdirwithoutzip = preg_replace('/\.zip$/i', '', $subdir);
 							$subdirwithoutzipwithoutver = preg_replace('/(_exp|_dev)$/i', '', $subdirwithoutzip);
 

@@ -224,7 +224,7 @@ function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler
 								$qualified = 0;
 							}
 						} else { // This is a test on a constant. For example when we have -- VMYSQLUTF8UNICODE, we test constant $conf->global->UTF8UNICODE
-							$dbcollation = strtoupper(preg_replace('/_/', '', $conf->db->dolibarr_main_db_collation));
+							$dbcollation = dol_strtoupper(preg_replace('/_/', '', $conf->db->dolibarr_main_db_collation));
 							if (empty($conf->db->dolibarr_main_db_collation) || ($reg[2] != $dbcollation)) {
 								$qualified = 0;
 							}
@@ -336,7 +336,7 @@ function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler
 				$newsql = str_replace(array("\'"), '__BACKSLASHQUOTE__', $sql);	// Replace the \' char
 
 				// Remove all strings contents including the ' so we can analyse SQL instruction only later
-				$l = strlen($newsql);
+				$l = dol_strlen($newsql);
 				$is = 0;
 				$quoteopen = 0;
 				$newsqlclean = '';
@@ -1105,7 +1105,7 @@ function listOfSessions()
 		while (($file = @readdir($dh)) !== false) {
 			if (preg_match('/^sess_/i', $file) && $file != "." && $file != "..") {
 				$fullpath = $sessPath.$file;
-				if (!@is_dir($fullpath) && is_readable($fullpath)) {
+				if (!@dol_is_dir($fullpath) && is_readable($fullpath)) {
 					$sessValues = file_get_contents($fullpath); // get raw session data
 					// Example of possible value
 					//$sessValues = 'newtoken|s:32:"1239f7a0c4b899200fe9ca5ea394f307";dol_loginmesg|s:0:"";newtoken|s:32:"1236457104f7ae0f328c2928973f3cb5";dol_loginmesg|s:0:"";token|s:32:"123615ad8d650c5cc4199b9a1a76783f";
@@ -1123,9 +1123,9 @@ function listOfSessions()
 						if ($loginfound) {
 							$arrayofSessions[$idsess]["login"] = (string) $regs[1];
 						}
-						$arrayofSessions[$idsess]["age"] = time() - filectime($fullpath);
+						$arrayofSessions[$idsess]["age"] = dol_now() - filectime($fullpath);
 						$arrayofSessions[$idsess]["creation"] = filectime($fullpath);
-						$arrayofSessions[$idsess]["modification"] = filemtime($fullpath);
+						$arrayofSessions[$idsess]["modification"] = dol_filemtime($fullpath);
 						$arrayofSessions[$idsess]["user_agent"] = null;
 						$arrayofSessions[$idsess]["remote_ip"] = null;
 						$arrayofSessions[$idsess]["raw"] = $sessValues;
@@ -1159,7 +1159,7 @@ function purgeSessions($mysessionid)
 		while (($file = @readdir($dh)) !== false) {
 			if ($file != "." && $file != "..") {
 				$fullpath = $sessPath.$file;
-				if (!@is_dir($fullpath)) {
+				if (!@dol_is_dir($fullpath)) {
 					$sessValues = file_get_contents($fullpath); // get raw session data
 
 					if (preg_match('/dol_login/i', $sessValues) && // limit to dolibarr session
@@ -1389,8 +1389,8 @@ function unActivateModule($value, $requiredby = 1, $options = '')
 		include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 		$genericMod = new DolibarrModules($db);
 		$genericMod->name = preg_replace('/^mod/i', '', $modName);
-		$genericMod->rights_class = strtolower(preg_replace('/^mod/i', '', $modName));
-		$genericMod->const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i', '', $modName));
+		$genericMod->rights_class = dol_strtolower(preg_replace('/^mod/i', '', $modName));
+		$genericMod->const_name = 'MAIN_MODULE_'.dol_strtoupper(preg_replace('/^mod/i', '', $modName));
 		dol_syslog("modules::unActivateModule Failed to find module file, we use generic function with name ".$modName);
 		$genericMod->remove('');
 	}
@@ -1472,7 +1472,7 @@ function complete_dictionary_with_modules(&$taborder, &$tabname, &$tablib, &$tab
 						$modulequalified = 1;
 
 						// We discard modules according to features level (PS: if module is activated we always show it)
-						$const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i', '', get_class($objMod)));
+						$const_name = 'MAIN_MODULE_'.dol_strtoupper(preg_replace('/^mod/i', '', get_class($objMod)));
 						if ($objMod->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2 && !getDolGlobalString($const_name)) {
 							$modulequalified = 0;
 						}
@@ -1643,7 +1643,7 @@ function activateModulesRequiredByCountry($country_code)
 						$modulequalified = 1;
 
 						// We discard modules according to features level (PS: if module is activated we always show it)
-						$const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i', '', get_class($objMod)));
+						$const_name = 'MAIN_MODULE_'.dol_strtoupper(preg_replace('/^mod/i', '', get_class($objMod)));
 
 						if ($objMod->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 							$modulequalified = 0;
@@ -1726,7 +1726,7 @@ function complete_elementList_with_modules(&$elementList)
 						$modulequalified = 1;
 
 						// We discard modules according to features level (PS: if module is activated we always show it)
-						$const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i', '', get_class($objMod)));
+						$const_name = 'MAIN_MODULE_'.dol_strtoupper(preg_replace('/^mod/i', '', get_class($objMod)));
 						if ($objMod->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2 && getDolGlobalString($const_name)) {
 							$modulequalified = 0;
 						}
@@ -1978,7 +1978,7 @@ function showModulesExludedForExternal($modules)
 		$tmpmodules = dol_sort_array($modules, 'module_position');
 		foreach ($tmpmodules as $module) {		// Loop on array of modules
 			$moduleconst = $module->const_name;
-			$modulename = strtolower($module->name);
+			$modulename = dol_strtolower($module->name);
 			//print 'modulename='.$modulename;
 
 			//if (empty($conf->global->$moduleconst)) continue;

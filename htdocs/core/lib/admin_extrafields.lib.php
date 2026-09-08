@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2026  Frédéric France  <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW				<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -735,7 +736,7 @@ function getExtrafieldsAdminMap()
 			'headlabel'    => 'Invoices',
 			'textobject'   => function () {
 				global $langs;
-				return strtolower($langs->transnoentitiesnoconv("BillsCustomers"));
+				return dol_strtolower($langs->transnoentitiesnoconv("BillsCustomers"));
 			},
 			'headpicto'    => 'bill',
 			'title'        => 'BillsSetup',
@@ -749,7 +750,7 @@ function getExtrafieldsAdminMap()
 			'headlabel'    => 'Invoices',
 			'textobject'   => function () {
 				global $langs;
-				return strtolower($langs->transnoentitiesnoconv("BillsCustomers"));
+				return dol_strtolower($langs->transnoentitiesnoconv("BillsCustomers"));
 			},
 			'headpicto'    => 'bill',
 			'title'        => 'BillsSetup',
@@ -763,7 +764,7 @@ function getExtrafieldsAdminMap()
 			'headlabel'    => 'Invoices',
 			'textobject'   => function () {
 				global $langs;
-				return strtolower($langs->transnoentitiesnoconv("BillsCustomers"));
+				return dol_strtolower($langs->transnoentitiesnoconv("BillsCustomers"));
 			},
 			'headpicto'    => 'bill',
 			'title'        => 'BillsSetup',
@@ -777,7 +778,7 @@ function getExtrafieldsAdminMap()
 			'headlabel'    => 'Invoices',
 			'textobject'   => function () {
 				global $langs;
-				return strtolower($langs->transnoentitiesnoconv("BillsCustomers"));
+				return dol_strtolower($langs->transnoentitiesnoconv("BillsCustomers"));
 			},
 			'headpicto'    => 'bill',
 			'title'        => 'BillsSetup',

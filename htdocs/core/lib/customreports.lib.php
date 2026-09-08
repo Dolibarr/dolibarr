@@ -2,7 +2,7 @@
 
 /* Copyright (C) 2024       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -206,12 +206,12 @@ function fillArrayOfXAxis($object, $tablealias, $labelofobject, &$arrayofxaxis, 
 		$tablepath .= ','.$object->table_element.'='.$tablealias;
 	}
 
-	$YYYY = substr($langs->trans("Year"), 0, 1).substr($langs->trans("Year"), 0, 1).substr($langs->trans("Year"), 0, 1).substr($langs->trans("Year"), 0, 1);
-	$MM = substr($langs->trans("Month"), 0, 1).substr($langs->trans("Month"), 0, 1);
-	$DD = substr($langs->trans("Day"), 0, 1).substr($langs->trans("Day"), 0, 1);
-	$HH = substr($langs->trans("Hour"), 0, 1).substr($langs->trans("Hour"), 0, 1);
-	$MI = substr($langs->trans("Minute"), 0, 1).substr($langs->trans("Minute"), 0, 1);
-	$SS = substr($langs->trans("Second"), 0, 1).substr($langs->trans("Second"), 0, 1);
+	$YYYY = dol_substr($langs->trans("Year"), 0, 1).dol_substr($langs->trans("Year"), 0, 1).dol_substr($langs->trans("Year"), 0, 1).dol_substr($langs->trans("Year"), 0, 1);
+	$MM = dol_substr($langs->trans("Month"), 0, 1).dol_substr($langs->trans("Month"), 0, 1);
+	$DD = dol_substr($langs->trans("Day"), 0, 1).dol_substr($langs->trans("Day"), 0, 1);
+	$HH = dol_substr($langs->trans("Hour"), 0, 1).dol_substr($langs->trans("Hour"), 0, 1);
+	$MI = dol_substr($langs->trans("Minute"), 0, 1).dol_substr($langs->trans("Minute"), 0, 1);
+	$SS = dol_substr($langs->trans("Second"), 0, 1).dol_substr($langs->trans("Second"), 0, 1);
 
 	/*if ($level > 0) {
 	 var_dump($object->element.' '.$object->isextrafieldmanaged);
@@ -375,12 +375,12 @@ function fillArrayOfGroupBy($object, $tablealias, $labelofobject, &$arrayofgroup
 		$tablepath .= ','.$object->table_element.'='.$tablealias;
 	}
 
-	$YYYY = substr($langs->trans("Year"), 0, 1).substr($langs->trans("Year"), 0, 1).substr($langs->trans("Year"), 0, 1).substr($langs->trans("Year"), 0, 1);
-	$MM = substr($langs->trans("Month"), 0, 1).substr($langs->trans("Month"), 0, 1);
-	$DD = substr($langs->trans("Day"), 0, 1).substr($langs->trans("Day"), 0, 1);
-	$HH = substr($langs->trans("Hour"), 0, 1).substr($langs->trans("Hour"), 0, 1);
-	$MI = substr($langs->trans("Minute"), 0, 1).substr($langs->trans("Minute"), 0, 1);
-	$SS = substr($langs->trans("Second"), 0, 1).substr($langs->trans("Second"), 0, 1);
+	$YYYY = dol_substr($langs->trans("Year"), 0, 1).dol_substr($langs->trans("Year"), 0, 1).dol_substr($langs->trans("Year"), 0, 1).dol_substr($langs->trans("Year"), 0, 1);
+	$MM = dol_substr($langs->trans("Month"), 0, 1).dol_substr($langs->trans("Month"), 0, 1);
+	$DD = dol_substr($langs->trans("Day"), 0, 1).dol_substr($langs->trans("Day"), 0, 1);
+	$HH = dol_substr($langs->trans("Hour"), 0, 1).dol_substr($langs->trans("Hour"), 0, 1);
+	$MI = dol_substr($langs->trans("Minute"), 0, 1).dol_substr($langs->trans("Minute"), 0, 1);
+	$SS = dol_substr($langs->trans("Second"), 0, 1).dol_substr($langs->trans("Second"), 0, 1);
 
 	// Note: here $tablealias can be 't' or 't__fk_contract' or 't_fk_contract_fk_soc'
 

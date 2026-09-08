@@ -3,6 +3,7 @@
  * Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2015		Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -84,12 +85,12 @@ function show_skin($fuser, $edit = 0)
 		$dirskin = dol_buildpath($dir, 0); // This include loop on $conf->file->dol_document_root
 		$urltheme = dol_buildpath($dir, 1);
 
-		if (is_dir($dirskin)) {
+		if (dol_is_dir($dirskin)) {
 			$handle = opendir($dirskin);
 			if (is_resource($handle)) {
 				while (($subdir = readdir($handle)) !== false) {
-					if (is_dir($dirskin."/".$subdir) && substr($subdir, 0, 1) != '.'
-							&& substr($subdir, 0, 3) != 'CVS' && !preg_match('/common|phones/i', $subdir)) {
+					if (dol_is_dir($dirskin."/".$subdir) && dol_substr($subdir, 0, 1) != '.'
+							&& dol_substr($subdir, 0, 3) != 'CVS' && !preg_match('/common|phones/i', $subdir)) {
 						// Disable not stable themes (dir ends with _exp or _dev)
 						if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2 && preg_match('/_dev$/i', $subdir)) {
 							continue;
