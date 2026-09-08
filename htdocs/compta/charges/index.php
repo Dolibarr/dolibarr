@@ -65,7 +65,7 @@ $mode = GETPOST("mode", 'alpha');
 $year = GETPOSTINT("year");
 $filtre = GETPOST("filtre", 'alpha');
 if (!$year) {
-	$year = date("Y", time());
+	$year = (int) dol_print_date(dol_now(), "%Y");
 }
 $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 

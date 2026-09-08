@@ -247,7 +247,6 @@ EditHTMLSource=Modifier la source HTML
 SelectAction=Sélectionnez l'action
 SelectTargetUser=Sélectionnez l'utilisateur / employé cible
 ClickToCopyToClipboard=Cliquez pour copier dans le presse-papier
-AccountancyCodes=Codes comptables
 ShowTransaction=Afficher l'entrée sur le compte bancaire
 ShowIntervention=Afficher l'intervention
 ShowContract=Afficher le contrat

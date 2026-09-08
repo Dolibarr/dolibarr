@@ -3,7 +3,7 @@
  * Copyright (C) 2016       	Christophe Battarel 	<christophe@altairis.fr>
  * Copyright (C) 2022-2023  	Udo Tamm            	<dev@dolibit.de>
  * Copyright (C) 2023       	Alexandre Spangaro  	<aspangaro@easya.solutions>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025		Benjamin Falière		<benjamin.faliere@altairis.fr>
  *
@@ -327,7 +327,7 @@ foreach ($dirmodels as $reldir) {
 			while (($file = readdir($handle)) !== false) {
 				if (preg_match('/^(mod_.*)\.php$/i', $file, $reg)) {
 					$file = $reg[1];
-					$classname = substr($file, 4);
+					$classname = dol_substr($file, 4);
 
 					include_once $dir.'/'.$file.'.php';
 
@@ -465,8 +465,8 @@ foreach ($dirmodels as $reldir) {
 				foreach ($filelist as $file) {
 					if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file)) {
 						if (file_exists($dir.'/'.$file)) {
-							$name = substr($file, 4, dol_strlen($file) - 16);
-							$classname = substr($file, 0, dol_strlen($file) - 12);
+							$name = dol_substr($file, 4, dol_strlen($file) - 16);
+							$classname = dol_substr($file, 0, dol_strlen($file) - 12);
 
 							require_once $dir.'/'.$file;
 							$module = new $classname($db);
@@ -556,7 +556,7 @@ print '</table>';
 print '</div><br>';
 
 
-print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" enctype="multipart/form-data" >';
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" enctype="multipart/form-data"  spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="setvarworkflow">';
 print '<input type="hidden" name="page_y" value="">';
@@ -666,7 +666,7 @@ print load_fiche_titre($langs->trans("Notifications"), '', '');
 
 print '<table class="noborder centpercent">';
 
-print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" enctype="multipart/form-data" >';
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" enctype="multipart/form-data"  spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="setvar">';
 print '<input type="hidden" name="page_y" value="">';

@@ -155,9 +155,6 @@ ErrNoZipEngine=Nincs motor a %s fájl tömörítésére/kicsomagolására ebben 
 ErrorFileMustBeADolibarrPackage=A %s fájlnak Dolibarr zip csomagnak kell lennie
 ErrorModuleFileRequired=Ki kell választania egy Dolibarr modul csomagfájlt
 ErrorFailToDownloadModuleFromSource=Failed to download the module from the source. Please check your internet connection or the source URL and try again.
-extModuleConfirmInstallTitle = Confirm module installation
-extModuleConfirmInstallText  = You are about to install the following module:<br><br><b>Name:</b> %s<br><b>Version:</b> %s<br><b>Reference:</b> %s<br><b>Last update:</b> %s<br><br>This action is not reversible, Do you confirm the installation of this module?
-install=Install
 ErrorPhpCurlNotInstalled=A PHP CURL nincs telepítve, ez elengedhetetlen a Paypallal való beszélgetéshez
 ErrorFailedToAddToMailmanList=Nem sikerült hozzáadni a(z) %s rekordot a(z) %s levelezőlistához vagy a SPIP-bázishoz
 ErrorFailedToRemoveToMailmanList=Nem sikerült eltávolítani a(z) %s rekordot a(z) %s levelezőlistából vagy a SPIP-bázisból
@@ -443,6 +440,7 @@ WarningModuleAffiliatedToAReportedCompany=Warning, this module has been reported
 WarningModuleAffiliatedToAPiratPlatform=Legyen óvatos, amikor gyanús, nem hivatalos platformról, például a %s-ról szerez be modult (fizetős vagy ingyenes)
 WarningDNSServerNotAvailable=Warning, DNS server not available
 WarningSecureKeyNotSet=The value fo the securekey must not be empty
+WarningFullPathWasNotFoundSoWeUseAnAlternativeValue=Note: Full path was not found so we used the alternative value <b>%s</b>
 
 SwissQrOnlyVIR = A SwissQR számla csak átutalással fizetendő számlákhoz adható hozzá.
 SwissQrCreditorAddressInvalid = A hitelező címe érvénytelen (be van állítva a ZIP és a város? (%s)

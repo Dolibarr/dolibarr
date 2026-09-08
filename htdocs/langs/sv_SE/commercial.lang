@@ -90,6 +90,7 @@ ThisIsInformationOnDocumentToSignFichinter=Detta är information om intervention
 ThisIsInformationOnDocumentToSignSociete_rib=Detta är information om SEPA-mandatet att underteckna
 ThisIsInformationOnDocumentToSignExpedition= Detta är information om leveransen som ska signeras
 SignatureProposalRef=Underskrift av offert %s
+SignatureOrderRef=Signature of sale order %s
 SignatureContractRef=Underskrift av kontrakt %s
 SignatureFichinterRef=Underskrift av intervention %s
 SignatureSociete_ribRef=Underskrift av SEPA-mandat %s

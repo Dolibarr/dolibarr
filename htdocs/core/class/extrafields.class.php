@@ -801,7 +801,12 @@ class ExtraFields
 
 			if (is_object($hookmanager)) {
 				$hookmanager->initHooks(array('extrafieldsdao'));
-				$parameters = array('field_desc' => &$field_desc, 'table' => $table, 'attr_name' => $attrname, 'label' => $label, 'type' => $type, 'length' => $length, 'unique' => $unique, 'required' => $required, 'pos' => $pos, 'param' => $param, 'alwayseditable' => $alwayseditable, 'emptyonclone' => $emptyonclone, 'perms' => $perms, 'list' => $list, 'help' => $help, 'default' => $default, 'computed' => $computed, 'entity' => $entity, 'langfile' => $langfile, 'enabled' => $enabled, 'totalizable' => $totalizable, 'printable' => $printable, 'showintooltip' => $showintooltip, 'personal_data' => $personal_data);
+				$parameters = array(
+					'field_desc' => &$field_desc, 'table' => $table, 'attr_name' => $attrname, 'label' => $label, 'type' => $type, 'length' => $length,
+					'unique' => $unique, 'required' => $required, 'pos' => $pos, 'param' => $param, 'alwayseditable' => $alwayseditable, 'emptyonclone' => $emptyonclone,
+					'perms' => $perms, 'list' => $list, 'help' => $help, 'default' => $default, 'computed' => $computed, 'entity' => $entity,
+					'langfile' => $langfile, 'enabled' => $enabled, 'totalizable' => $totalizable, 'printable' => $printable, 'showintooltip' => $showintooltip, 'personal_data' => $personal_data
+				);
 				$reshook = $hookmanager->executeHooks('updateExtrafields', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 
 				if ($reshook < 0) {
@@ -2639,6 +2644,11 @@ class ExtraFields
 				$classpath = $InfoFieldList[1];
 				if (!empty($classpath)) {
 					dol_include_once($InfoFieldList[1]);
+					if (!$classname || !class_exists($classname)) {
+						// Without this, the raw id is printed with nothing telling why, which is very
+						// hard to diagnose. Most often the class path stored in the definition is wrong.
+						dol_syslog('Extrafields::showOutputField the class '.$classname.' of the link field '.$key.' could not be loaded from '.$classpath.', check the extrafield definition', LOG_WARNING);
+					}
 					if ($classname && class_exists($classname)) {
 						$tmpobject = new $classname($this->db);
 						'@phan-var-force CommonObject $tmpobject';
@@ -2736,7 +2746,7 @@ class ExtraFields
 									objectId: '.((int) $objectid).',
 									field: \''.dol_escape_js($key).'\',
 									value: selectedStars,
-									token: \''.newToken().'\'
+									token: \''.currentToken().'\'
 								},
 								success: function(response) {
 									var res = JSON.parse(response);

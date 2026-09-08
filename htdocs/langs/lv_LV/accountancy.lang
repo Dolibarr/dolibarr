@@ -202,6 +202,7 @@ DiscountReceived=Discount received
 DONATION_ACCOUNTINGACCOUNT=Konts (no konta plāna), kas jāizmanto ziedojumu reģistrēšanai (Ziedojumu modulis)
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Konts (no konta plāna), kas jāizmanto, lai reģistrētu dalības abonementus (Dalības modulis - ja dalība reģistrēta bez rēķina)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Konts (no konta plāna), kas jāizmanto kā noklusējuma konts klienta depozīta reģistrēšanai
+ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT_FOR_VAT=Account (from the Chart Of Account) to be used as the default account for VAT on customer deposit used in bindings
 UseAuxiliaryAccountOnCustomerDeposit=Saglabājiet klienta kontu kā individuālu kontu meitas virsgrāmatā pirmo iemaksu rindām (ja tas ir atspējots, individuālais konts pirmās iemaksas rindām paliks tukšs)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default account to register supplier deposit
 UseAuxiliaryAccountOnSupplierDeposit=Saglabājiet piegādātāja kontu kā individuālo kontu meitas virsgrāmatā pirmās iemaksas rindām (ja tas ir atspējots, individuālais konts pirmās iemaksas rindām paliks tukšs)

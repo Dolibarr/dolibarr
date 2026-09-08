@@ -253,6 +253,7 @@ ErrorCantUseRazInStartedYearIfNoYearMonthInMask=Error, no se puede usar la opci�
 UMask=Parámetro UMask para archivos nuevos en el sistema de archivos Unix / Linux / BSD / Mac.
 SeeWikiForAllTeam=Eche un vistazo a la página Wiki para obtener una lista de colaboradores y su organización.
 MinLength=Longitud mínima
+ExampleOfDirectoriesForModelGen=Examples of syntax:<br>c:\\myapp\\mydocumentdir\\mysubdir<br>/home/myapp/mydocumentdir/mysubdir<br>DOL_DATA_ROOT/ecm/ecmdir
 HideDescOnPDF=Ocultar descripción de productos
 String=Cadena
 String1Line=Cadena (1 línea)

@@ -1,11 +1,11 @@
 ModuleQuickMemoName = Korte notitie
-ModuleQuickMemoDesc = Allows adding quick notes (post-it) on screens or documents
+ModuleQuickMemoDesc = Hiermee kun je snel notities (post-it-briefjes) toevoegen aan schermen of documenten.
 QuickMemoSetup = QuickMemo-instellingen
 QUICKMEMO_COLORS_PRESET = Definieer hier uw aangepaste memokleuren.
-QUICKMEMO_DISABLE_AUTO_RESIZE_FONT_SIZE = Disable automatic text resizing based on note content density
-QUICKMEMO_AUTO_RESIZE_FONT_SIZE_SECTION = Automatic text resizing settings
-QUICKMEMO_AUTO_RESIZE_MIN_FONT_SIZE = Minimum text size
-QUICKMEMO_AUTO_RESIZE_MAX_FONT_SIZE = Maximum text size
+QUICKMEMO_DISABLE_AUTO_RESIZE_FONT_SIZE = Schakel automatische tekstaanpassing op basis van de inhoudsdichtheid van notities uit.
+QUICKMEMO_AUTO_RESIZE_FONT_SIZE_SECTION = Instellingen voor automatisch aanpassen van de tekstgrootte
+QUICKMEMO_AUTO_RESIZE_MIN_FONT_SIZE = Minimale tekstgrootte
+QUICKMEMO_AUTO_RESIZE_MAX_FONT_SIZE = Maximale tekstgrootte
 QuickMemoSetupPage = Configuratiepagina QuickMemo
 QuickMemoAbout = Over QuickMemo
 QuickMemoAboutPage = Startpagina van QuickMemo

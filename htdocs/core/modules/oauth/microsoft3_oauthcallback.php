@@ -32,6 +32,7 @@
 // Load Dolibarr environment
 require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -98,7 +99,9 @@ if ($state) {
 	$requestedpermissionsarray = explode(',', $state); // Example: 'user'. 'state' parameter is standard to retrieve some parameters back
 }
 if ($action != 'delete' && empty($requestedpermissionsarray)) {
-	print 'Error, parameter state is not defined';
+	$langs->load("oauth");
+	print $langs->trans("OAuthErrorNoScopeInState", 'OAUTH_'.$genericstring.($keyforprovider ? '-'.$keyforprovider : '').'_SCOPE');
+	print '<br>'.dol_escape_htmltag(getOauthSetupDiagnostic($genericstring, $keyforprovider));
 	exit;
 }
 
@@ -119,13 +122,13 @@ if (empty($apiService)) {
 $langs->load("oauth");
 
 if (!getDolGlobalString($keyforparamid)) {
-	accessforbidden('Setup of service is not complete. Customer ID is missing');
+	accessforbidden('Setup of service is not complete. Customer ID is missing ('.$keyforparamid.')');
 }
 if (!getDolGlobalString($keyforparamsecret)) {
-	accessforbidden('Setup of service is not complete. Secret key is missing');
+	accessforbidden('Setup of service is not complete. Secret key is missing ('.$keyforparamsecret.')');
 }
 if (!getDolGlobalString($keyforparamtenant)) {
-	accessforbidden('Setup of service is not complete. Tenant/Annuary ID key is missing');
+	accessforbidden('Setup of service is not complete. Tenant/Annuary ID key is missing ('.$keyforparamtenant.')');
 }
 
 /*
@@ -174,7 +177,10 @@ if (GETPOST('code') || GETPOST('error')) {     // We are coming from oauth provi
 		header('Location: '.$backtourl);
 		exit();
 	} catch (Exception $e) {
-		print $e->getMessage();
+		$diag = getOauthSetupDiagnostic($genericstring, $keyforprovider);
+		dol_syslog(basename(__FILE__).' requestAccessToken failed: '.$e->getMessage().' - '.$diag, LOG_ERR);
+		print $langs->trans("OAuthErrorTokenRequestFailed", dol_escape_htmltag($e->getMessage()));
+		print '<br>'.dol_escape_htmltag($diag);
 	}
 } else {
 	// If we enter this page without 'code' parameter, we arrive here. This is the case when we want to get the redirect

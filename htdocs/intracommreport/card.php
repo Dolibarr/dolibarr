@@ -284,7 +284,7 @@ if (($id || $ref) && $action == 'edit') {
 if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'))) {
 	$head = intracommreportPrepareHead($object);
 
-	print dol_get_fiche_head($head, 'card', $langs->trans("IntraCommReport"), -1, $object->picto, 0, '', '', 0, '', 1);
+	print dol_get_fiche_head($head, 'card', $langs->trans("IntraCommReport"), -1, $object->picto);
 
 	$formconfirm = '';
 
