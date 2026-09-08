@@ -15,7 +15,7 @@ Default **language here is English**. So please prepare your contributions in En
 3. Tell us the version you are using!   (look at  /htdocs/admin/system/dolibarr.php?  and check if you are using the latest version) 
 4. Write a report with as much detail as possible (Use [screenshots](https://help.github.com/articles/issue-attachments) or even screencasts and provide logging and debugging information whenever possible).
 5. One report per issue. If you have several issues, please create several reports.
-6. Delete unnecessary submissions.
+6. IMPORTANT: Report the process to reproduce the bug.
 7. **Check your Message at Preview before submitting.**
 
 
