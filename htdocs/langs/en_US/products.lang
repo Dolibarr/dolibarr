@@ -20,6 +20,7 @@ NewProduct=New product
 NewService=New service
 ProductVatMassChange=Global VAT Update
 ProductVatMassChangeDesc=This tool updates the VAT rate defined on <b><u>ALL</u></b> products and services!
+Direction=Direction
 MassBarcodeInit=Mass barcode init
 MassBarcodeInitDesc=This page can be used to initialize a barcode on objects that do not have a barcode defined. Check before that setup of module barcode is complete.
 ProductAccountancyBuyCode=Accounting code (purchase)
