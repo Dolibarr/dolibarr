@@ -284,13 +284,18 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				$object->fetchObjectLinked(0, 'order_supplier', $object->id, $object->element);
 				if (!empty($object->linkedObjects['order_supplier'])) {
 					$totalonlinkedelements = 0;
+					$totalonlinkedelements_multicurrency = 0;
+					$samemulticurrencycode = true;
 					foreach ($object->linkedObjects['order_supplier'] as $element) {
 						if ($element->statut == CommandeFournisseur::STATUS_ACCEPTED || $element->statut == CommandeFournisseur::STATUS_ORDERSENT || $element->statut == CommandeFournisseur::STATUS_RECEIVED_PARTIALLY || $element->statut == CommandeFournisseur::STATUS_RECEIVED_COMPLETELY) {
 							$totalonlinkedelements += $element->total_ht;
+							$totalonlinkedelements_multicurrency += $element->multicurrency_total_ht;
+							$samemulticurrencycode = $samemulticurrencycode && ($element->multicurrency_code == $object->multicurrency_code);
 						}
 					}
 					dol_syslog("Amount of linked orders = ".$totalonlinkedelements.", of invoice = ".$object->total_ht.", egality is ".json_encode($totalonlinkedelements == $object->total_ht));
-					if ($this->shouldClassify($conf, $totalonlinkedelements, $object->total_ht)) {
+					if ($this->shouldClassify($conf, $totalonlinkedelements, $object->total_ht)
+						|| ($samemulticurrencycode && !empty($object->multicurrency_total_ht) && $this->shouldClassify($conf, $totalonlinkedelements_multicurrency, $object->multicurrency_total_ht))) {
 						foreach ($object->linkedObjects['order_supplier'] as $element) {
 							$ret = $element->classifyBilled($user);
 							if ($ret < 0) {
