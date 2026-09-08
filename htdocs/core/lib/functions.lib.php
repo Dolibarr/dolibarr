@@ -3861,6 +3861,10 @@ function dol_print_phone($phone, $countrycode = '', $contactid = 0, $socid = 0, 
 				$newphone = substr($newphone, 0, 3) . $separ . substr($newphone, 3, 5) . $separ . substr($newphone, 8, 5);
 			}
 		}
+	} elseif (strtoupper($countrycode) == "CI") { //Côte d’Ivoire
+		if (dol_strlen($phone) == 14) { //ex : +225_AB_CD_EF_GH_IJ
+			$newphone = substr($newphone, 0, 4) . $separ.substr($newphone, 4, 2) . $separ.substr($newphone, 6, 2) . $separ.substr($newphone, 8, 2) . $separ.substr($newphone, 10, 2) . $separ.substr($newphone, 12, 2);
+		}
 	}
 
 	$newphoneastart = $newphoneaend = '';
