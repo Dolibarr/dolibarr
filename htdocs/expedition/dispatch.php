@@ -1391,7 +1391,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 				$out_js_line .= '}';
 				$out_js_line_list[] = $out_js_line;
 
-				$out_js = '<script type="text/javascript" language="javascript">';
+				$out_js = '<script type="text/javascript">';
 				$out_js .= 'jQuery(document).ready(function() {';
 				// when a warehouse is selected, only the lot/serial numbers that are available in it are offered
 				$out_js .= 'updateselectbatchbywarehouse();';
