@@ -2,7 +2,7 @@ name: "Close old PRs with one failing check"
 
 on:
   schedule:
-    - cron: "10 21 * * *"
+    - cron: "10 21 * * 2"
 
   workflow_dispatch:
 
