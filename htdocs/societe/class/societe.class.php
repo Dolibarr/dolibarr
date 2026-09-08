@@ -1261,7 +1261,7 @@ class Societe extends CommonObject
 		$this->errors = array();
 
 		$result = 0;
-		$this->name = trim($this->name);
+		$this->name = trim((string) $this->name);
 		$this->nom = $this->name; // For backward compatibility
 
 		if (!$this->name) {
@@ -1524,8 +1524,8 @@ class Societe extends CommonObject
 		$this->localtax1_assuj = (int) trim((string) $this->localtax1_assuj);
 		$this->localtax2_assuj = (int) trim((string) $this->localtax2_assuj);
 
-		$this->localtax1_value = trim($this->localtax1_value);
-		$this->localtax2_value = trim($this->localtax2_value);
+		$this->localtax1_value = trim((string) $this->localtax1_value);
+		$this->localtax2_value = trim((string) $this->localtax2_value);
 
 		$this->capital = (!is_null($this->capital) && (string) $this->capital != '') ? (float) price2num(trim((string) $this->capital)) : null;
 
@@ -2800,7 +2800,7 @@ class Societe extends CommonObject
 		global $conf, $langs;
 
 		// Parameter cleaning
-		$note = trim($note);
+		$note = trim((string) $note);
 		if (!$note) {
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("NoteReason"));
 			return -2;
@@ -2861,7 +2861,7 @@ class Societe extends CommonObject
 		global $conf, $langs;
 
 		// Parameter cleaning
-		$note = trim($note);
+		$note = trim((string) $note);
 		if (!$note) {
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("NoteReason"));
 			return -2;
@@ -2926,7 +2926,7 @@ class Societe extends CommonObject
 
 		// Clean parameters
 		$remise = (float) price2num($remise);
-		$desc = trim($desc);
+		$desc = trim((string) $desc);
 
 		// Check parameters
 		if (!($remise > 0)) {

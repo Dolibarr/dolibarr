@@ -3,7 +3,7 @@
 /* Copyright (C) 2008-2021  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2008-2021  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2020	    Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2026		William Mead			<william@m34d.com>
  *
@@ -40,19 +40,20 @@ include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/securitycore.lib.php';
  *	@param   string		$key		rule to use for delta ('0', '1' or 'myownkey')
  *	@return  string					encoded string with format 'passcrypted'
  *  @see dol_decode(), dolEncrypt()
+ *  @phan-suppress DolibarrForbiddenFunctionPlugin
  */
 function dol_encode($chain, $key = '1')
 {
 	if (is_numeric($key) && $key == '1') {	// rule 1 is offset of 17 for char
 		$output_tab = array();
-		$strlength = dol_strlen($chain);
+		$strlength = strlen($chain);
 		for ($i = 0; $i < $strlength; $i++) {
 			$output_tab[$i] = chr(ord(substr($chain, $i, 1)) + 17);
 		}
 		$chain = implode("", $output_tab);
 	} elseif ($key) {
 		$result = '';
-		$strlength = dol_strlen($chain);
+		$strlength = strlen($chain);
 		for ($i = 0; $i < $strlength; $i++) {
 			$keychar = substr($key, ($i % strlen($key)) - 1, 1);
 			$result .= chr(ord(substr($chain, $i, 1)) + (ord($keychar) - 65));
@@ -71,6 +72,7 @@ function dol_encode($chain, $key = '1')
  *	@param   string		$key		rule to use for delta ('0', '1' or 'myownkey')
  *	@return  string					decoded string
  *  @see dol_encode(), dolDecrypt
+ *  @phan-suppress DolibarrForbiddenFunctionPlugin
  */
 function dol_decode($chain, $key = '1')
 {
@@ -78,7 +80,7 @@ function dol_decode($chain, $key = '1')
 
 	if (is_numeric($key) && $key == '1') {	// rule 1 is offset of 17 for char
 		$output_tab = array();
-		$strlength = dol_strlen($chain);
+		$strlength = strlen($chain);
 		for ($i = 0; $i < $strlength; $i++) {
 			$output_tab[$i] = chr(ord(substr($chain, $i, 1)) - 17);
 		}
@@ -86,7 +88,7 @@ function dol_decode($chain, $key = '1')
 		$chain = implode("", $output_tab);
 	} elseif ($key) {
 		$result = '';
-		$strlength = dol_strlen($chain);
+		$strlength = strlen($chain);
 		for ($i = 0; $i < $strlength; $i++) {
 			$keychar = substr($key, ($i % strlen($key)) - 1, 1);
 			$result .= chr(ord(substr($chain, $i, 1)) - (ord($keychar) - 65));
@@ -118,6 +120,7 @@ function dolGetRandomBytes($length)
  * 	@param 		string		$password	Password to hash
  * 	@param		'md5'|'md5frommd5'|'smd5'|'sha'|'ssha'|'sha256'|'ssha256'|'sha384'|'ssha384'|'sha512'|'ssha512'|'crypt'|'clear'		$type		Type of hash
  * 	@return		string					Hash of password
+ *  @phan-suppress DolibarrForbiddenFunctionPlugin
  */
 function dolGetLdapPasswordHash($password, $type = 'md5')
 {
@@ -271,9 +274,9 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 	// if commonObjectLine : Using many2one related commonObject
 	// @see commonObjectLine::parentElement
 	if (in_array($features, ['commandedet', 'propaldet', 'facturedet', 'supplier_proposaldet', 'evaluationdet', 'skilldet', 'deliverydet', 'contratdet'])) {
-		$features = substr($features, 0, -3);
+		$features = substr($features, 0, -3);  // @phan-suppress-current-line  DolibarrForbiddenFunctionPlugin
 	} elseif (in_array($features, ['stocktransferline', 'inventoryline', 'bomline', 'expensereport_det', 'facture_fourn_det'])) {
-		$features = substr($features, 0, -4);
+		$features = substr($features, 0, -4);  // @phan-suppress-current-line  DolibarrForbiddenFunctionPlugin
 	} elseif ($features == 'commandefournisseurdispatch') {
 		$features = 'commandefournisseur';
 	} elseif ($features == 'invoice_supplier_det_rec') {
@@ -892,7 +895,9 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 				$sql .= " AND (sc.fk_user = ".((int) $user->id);
 				if (getDolGlobalInt('MAIN_SEE_SUBORDINATES')) {
 					$userschilds = $user->getAllChildIds();
-					if (!empty($userschilds)) $sql .= " OR sc.fk_user IN (".$db->sanitize(implode(',', $userschilds)).")";
+					if (!empty($userschilds)) {
+						$sql .= " OR sc.fk_user IN (".$db->sanitize(implode(',', $userschilds)).")";
+					}
 				}
 				$sql .= ")";
 				$sql .= " AND sc.fk_soc = s.rowid";
@@ -1006,7 +1011,9 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 					$sql .= " AND (sc.fk_user = ".((int) $user->id);
 					if (getDolGlobalInt('MAIN_SEE_SUBORDINATES')) {
 						$userschilds = $user->getAllChildIds();
-						if (!empty($userschilds)) $sql .= " OR sc.fk_user IN (".$db->sanitize(implode(',', $userschilds)).")";
+						if (!empty($userschilds)) {
+							$sql .= " OR sc.fk_user IN (".$db->sanitize(implode(',', $userschilds)).")";
+						}
 					}
 					$sql .= ')';
 				} else {
@@ -1277,6 +1284,7 @@ function getMaxFileSizeArray()
  * @param	string		$ip			IP address to check (ex: 192.168.0.50, 2001:db8:3333:4444::5555:6666)
  * @param	string		$cidr		Network IP CIDR notation (ex: 192.168.0.0/24, 2001:db8:3333:4444::/64)
  * @return	int						1 if IP is in CIDR range, 0 if IP out of CIDR range, -1 if check error
+ * @phan-suppress DolibarrForbiddenFunctionPlugin
  */
 function checkIPInCidr($ip, $cidr)
 {
@@ -1290,7 +1298,7 @@ function checkIPInCidr($ip, $cidr)
 	}
 
 	// Require same address IPvX family
-	if (strlen($ip_bin) !== strlen($net_bin)) {
+	if (strlen($ip_bin) !== strlen($net_bin)) {  // @phan-suppress-current-line  DolibarrForbiddenFunctionPlugin
 		return -1;
 	}
 
@@ -1302,7 +1310,7 @@ function checkIPInCidr($ip, $cidr)
 
 	// Compare full bytes and partial bytes
 	if ($full_bytes > 0) {
-		if (substr($ip_bin, 0, $full_bytes) !== substr($net_bin, 0, $full_bytes)) {
+		if (substr($ip_bin, 0, $full_bytes) !== substr($net_bin, 0, $full_bytes)) {  // @phan-suppress-current-line  DolibarrForbiddenFunctionPlugin
 			return 0;
 		}
 	}

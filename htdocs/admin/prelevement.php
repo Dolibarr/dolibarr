@@ -303,8 +303,8 @@ foreach ($dirmodels as $reldir)
 
 						if (file_exists($dir.'/'.$file))
 						{
-							$name = substr($file, 4, dol_strlen($file) -16);
-							$classname = substr($file, 0, dol_strlen($file) -12);
+							$name = dol_substr($file, 4, dol_strlen($file) -16);
+							$classname = dol_substr($file, 0, dol_strlen($file) -12);
 
 							require_once $dir.'/'.$file;
 							$module = new $classname($db);

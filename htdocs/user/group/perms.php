@@ -5,7 +5,7 @@
  * Copyright (C) 2004       Eric Seigne                 <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2017  Regis Houssin               <regis.houssin@inodbox.com>
  * Copyright (C) 2020       Tobias Sekan                <tobias.sekan@startmail.com>
- * Copyright (C) 2024       MDW                         <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW                         <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2026       Alexandre Spangaro          <alexandre@inovea-conseil.com>
  *
@@ -221,8 +221,8 @@ foreach ($modulesdir as $dir) {
 	$handle = @opendir(dol_osencode($dir));
 	if (is_resource($handle)) {
 		while (($file = readdir($handle)) !== false) {
-			if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod' && substr($file, dol_strlen($file) - 10) == '.class.php') {
-				$modName = substr($file, 0, dol_strlen($file) - 10);
+			if (is_readable($dir.$file) && dol_substr($file, 0, 3) == 'mod' && dol_substr($file, dol_strlen($file) - 10) == '.class.php') {
+				$modName = dol_substr($file, 0, dol_strlen($file) - 10);
 
 				if ($modName) {
 					// Exclude old/new supplier descriptors depending on MAIN_USE_NEW_SUPPLIERMOD

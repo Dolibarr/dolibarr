@@ -2,7 +2,7 @@ name: "Close old PRs with merge conflicts"
 
 on:
   schedule:
-    - cron: "20 21 * * *"
+    - cron: "20 21 * * 1"
 
   workflow_dispatch:
 

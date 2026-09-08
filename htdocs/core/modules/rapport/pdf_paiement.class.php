@@ -478,7 +478,7 @@ class pdf_paiement extends CommonDocGenerator
 		$pdf->SetFont('', '', $default_font_size);
 
 		$pdf->SetXY($this->posxdate, 16);
-		$pdf->MultiCell(80, 2, $outputlangs->transnoentities("DateBuild")." : ".dol_print_date(time(), "day", false, $outputlangs, true), 0, 'L');
+		$pdf->MultiCell(80, 2, $outputlangs->transnoentities("DateBuild")." : ".dol_print_date(dol_now(), "day", false, $outputlangs, true), 0, 'L');
 
 		$pdf->SetXY($this->posxdate + 100, 16);
 		$pdf->MultiCell(80, 2, $outputlangs->transnoentities("Page")." : ".$page, 0, 'R');
