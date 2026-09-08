@@ -779,7 +779,7 @@ class Holiday extends CommonObject
 			$balance = $this->getCPforUser($this->fk_user, $this->fk_type);
 			$daysAsked = num_open_day($this->date_debut, $this->date_fin, 0, 1, 0, '', $this->fk_user);
 
-			if (($balance - $daysAsked) < 0 && getDolGlobalString('HOLIDAY_DISALLOW_NEGATIVE_BALANCE')) {
+			if (($balance - $daysAsked) < 0) {
 				$this->error = 'LeaveRequestCreationBlockedBecauseBalanceIsNegative';
 				return -1;
 			}
@@ -903,7 +903,7 @@ class Holiday extends CommonObject
 			$balance = $this->getCPforUser($this->fk_user, $this->fk_type);
 			$daysAsked = num_open_day($this->date_debut, $this->date_fin, 0, 1, 0, '', $this->fk_user);
 
-			if (($balance - $daysAsked) < 0 && getDolGlobalString('HOLIDAY_DISALLOW_NEGATIVE_BALANCE')) {
+			if (($balance - $daysAsked) < 0) {
 				$this->error = 'LeaveRequestCreationBlockedBecauseBalanceIsNegative';
 				return -1;
 			}
@@ -1031,7 +1031,7 @@ class Holiday extends CommonObject
 			$balance = $this->getCPforUser($this->fk_user, $this->fk_type);
 			$daysAsked = num_open_day($this->date_debut, $this->date_fin, 0, 1, 0, '', $this->fk_user);
 
-			if (($balance - $daysAsked) < 0 && getDolGlobalString('HOLIDAY_DISALLOW_NEGATIVE_BALANCE')) {
+			if (($balance - $daysAsked) < 0) {
 				$this->error = 'LeaveRequestCreationBlockedBecauseBalanceIsNegative';
 				return -1;
 			}
