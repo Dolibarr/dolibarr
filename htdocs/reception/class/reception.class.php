@@ -217,6 +217,11 @@ class Reception extends CommonObject
 
 
 	/**
+	 * @var int Default warehouse for the reception lines
+	 */
+	public $fk_warehouse;
+
+	/**
 	 *	Constructor
 	 *
 	 *  @param		DoliDB		$db      Database handler
@@ -316,6 +321,15 @@ class Reception extends CommonObject
 
 		$this->db->begin();
 
+		// If there is only one active warehouse, use it as the default warehouse of the reception
+		if (empty($this->fk_warehouse)) {
+			$resqlwh = $this->db->query("SELECT rowid FROM ".MAIN_DB_PREFIX."entrepot WHERE entity IN (".getEntity('stock').") AND statut = 1");
+			if ($resqlwh && $this->db->num_rows($resqlwh) == 1) {
+				$objwh = $this->db->fetch_object($resqlwh);
+				$this->fk_warehouse = (int) $objwh->rowid;
+			}
+		}
+
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."reception (";
 		$sql .= "ref";
 		$sql .= ", entity";
@@ -326,6 +340,7 @@ class Reception extends CommonObject
 		$sql .= ", date_delivery";
 		$sql .= ", fk_soc";
 		$sql .= ", fk_projet";
+		$sql .= ", fk_warehouse";
 		$sql .= ", fk_shipping_method";
 		$sql .= ", tracking_number";
 		$sql .= ", weight";
@@ -348,6 +363,7 @@ class Reception extends CommonObject
 		$sql .= ", ".($this->date_delivery > 0 ? "'".$this->db->idate($this->date_delivery)."'" : "null");
 		$sql .= ", ".($this->socid > 0 ? ((int) $this->socid) : "null");
 		$sql .= ", ".($this->fk_project > 0 ? ((int) $this->fk_project) : "null");
+		$sql .= ", ".($this->fk_warehouse > 0 ? ((int) $this->fk_warehouse) : "null");
 		$sql .= ", ".($this->shipping_method_id > 0 ? ((int) $this->shipping_method_id) : "null");
 		$sql .= ", '".$this->db->escape($this->tracking_number)."'";
 		$sql .= ", ".(is_null($this->weight) ? "NULL" : ((float) $this->weight));
@@ -498,7 +514,7 @@ class Reception extends CommonObject
 			return -1;
 		}
 
-		$sql = "SELECT e.rowid, e.entity, e.ref, e.fk_soc as socid, e.date_creation, e.ref_supplier, e.ref_ext, e.fk_user_author, e.fk_statut as status, e.fk_projet as fk_project, e.billed";
+		$sql = "SELECT e.rowid, e.entity, e.ref, e.fk_soc as socid, e.date_creation, e.ref_supplier, e.ref_ext, e.fk_user_author, e.fk_statut as status, e.fk_projet as fk_project, e.billed, e.fk_warehouse";
 		$sql .= ", e.weight, e.weight_units, e.size, e.size_units, e.width, e.height";
 		$sql .= ", e.date_reception as date_reception, e.model_pdf, e.date_delivery, e.date_valid";
 		$sql .= ", e.fk_shipping_method, e.tracking_number";
@@ -536,6 +552,7 @@ class Reception extends CommonObject
 				$this->statut               = $obj->status;
 				$this->status               = $obj->status;
 				$this->billed               = $obj->billed;
+				$this->fk_warehouse = $obj->fk_warehouse;
 				$this->fk_project	    	= $obj->fk_project;
 				$this->user_author_id       = $obj->fk_user_author;
 				$this->date_creation        = $this->db->jdate($obj->date_creation);
@@ -1142,9 +1159,13 @@ class Reception extends CommonObject
 	 * @param 	string	$description					Description of line product
 	 * @param 	int		$notrigger					    disable line update trigger
 	 * @param	array<string,mixed>	$array_options		extrafields array
+	 * @param	float|string|null	$cost_price		Buying price of the line (null = do not change)
+	 * @param	string|null		$ref_fourn		Supplier ref of the product for this line (null = do not change)
+	 * @param	int				$fk_entrepot	Id of destination warehouse (-1 = do not change, 0 = clear)
+	 * @param	string|null		$batch			Batch/serial number (null = do not change)
 	 * @return	int										Return integer <0 if KO, >0 if OK
 	 */
-	public function updatelinefree($rowid, $qty, $element_type, $fk_product, $fk_unit, $rang, $description, $notrigger, $array_options = array())
+	public function updatelinefree($rowid, $qty, $element_type, $fk_product, $fk_unit, $rang, $description, $notrigger, $array_options = array(), $cost_price = null, $ref_fourn = null, $fk_entrepot = -1, $batch = null)
 	{
 		global $mysoc, $langs, $user;
 
@@ -1185,6 +1206,18 @@ class Reception extends CommonObject
 			$this->line->qty = $qty;
 			$this->line->fk_unit = $fk_unit;
 			$this->line->description = $description;
+			if ($cost_price !== null && $cost_price !== '') {
+				$this->line->cost_price = (float) $cost_price;
+			}
+			if ($ref_fourn !== null) {
+				$this->line->ref_fourn = trim((string) $ref_fourn);
+			}
+			if ((int) $fk_entrepot >= 0) {
+				$this->line->fk_entrepot = ((int) $fk_entrepot > 0 ? (int) $fk_entrepot : 0);	// 0 clears the destination warehouse
+			}
+			if ($batch !== null) {
+				$this->line->batch = trim((string) $batch);
+			}
 
 			if (is_array($array_options) && count($array_options) > 0) {
 				// We replace values in this->line->array_options only for entries defined into $array_options
