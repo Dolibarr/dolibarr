@@ -256,10 +256,15 @@ if (empty($reshook)) {
 
 			$object = new User($db);
 			$object->fetch($id);
+
 			if ($object->admin && empty($user->admin)) {
 				// If user to delete is an admin user and if logged user is not admin, we deny the operation.
 				$error++;
 				setEventMessages($langs->trans("OnlyAdminUsersCanDeleteAdminUsers"), null, 'errors');
+			} elseif ($object->admin && empty($object->entity) && !empty($user->entity)) {
+				// If user to delete is a superadmin user (admin + entity = 0) and logged user is not a superadmin, we deny the operation.
+				$error++;
+				setEventMessages($langs->trans("OnlySuperAdminUsersCanDeleteSuperAdminUsers"), null, 'errors');
 			} else {
 				$object->oldcopy = clone $object; // @phan-suppress-current-line PhanTypeMismatchProperty
 
@@ -686,7 +691,8 @@ if (empty($reshook)) {
 							$newfile = $dir.'/'.dol_sanitizeFileName($_FILES['photo']['name']);
 							$result = dol_move_uploaded_file($_FILES['photo']['tmp_name'], $newfile, 1, 0, $_FILES['photo']['error']);
 
-							if (!($result > 0)) {
+							// Note: $result is a string when the file was refused and, in PHP 8, such a string compares as greater than 0
+							if (!is_numeric($result) || $result <= 0) {
 								setEventMessages($langs->trans("ErrorFailedToSaveFile"), null, 'errors');
 							} else {
 								// Create thumbs
@@ -2210,10 +2216,13 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print '<tr class="nooddeven"><td>'.$langs->trans("LastConnexion").'</td>';
 				print '<td>';
 				if ($object->datepreviouslogin) {
-					print dol_print_date($object->datepreviouslogin, "dayhour", "tzuserrel").' <span class="opacitymedium">('.$langs->trans("Previous").')</span>, ';
+					print $form->textwithpicto(dol_print_date($object->datepreviouslogin, "dayhour", "tzuserrel"), $langs->trans("Previous"));
 				}
 				if ($object->datelastlogin) {
-					print dol_print_date($object->datelastlogin, "dayhour", "tzuserrel").' <span class="opacitymedium">('.$langs->trans("Currently").')</span>';
+					if ($object->datepreviouslogin) {
+						print ' &nbsp; &nbsp; ';
+					}
+					print $form->textwithpicto(dol_print_date($object->datelastlogin, "dayhour", "tzuserrel"), $langs->trans("Currently"));
 				}
 				print '</td>';
 				print "</tr>\n";
@@ -2307,7 +2316,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 					} elseif (($user->id != $id && $permissiontoeditpasswordandsee) && $object->login && !$object->ldap_sid &&
 					((!isModEnabled('multicompany') && $object->entity == $user->entity) || !$user->entity || ($object->entity == $conf->entity) || (getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && $object->entity == 1))) {
 						unset($params['attr']['title']);
-						print dolGetButtonAction($langs->trans('ReinitPassword'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=password&token='.newToken(), '', true, $params);
+						print dolGetButtonAction($langs->trans('ReinitPassword'), '', 'default', dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id, 'action' => 'password'], true), '', true, $params);
 					}
 
 					if ($object->status == $object::STATUS_DISABLED) {
@@ -2317,7 +2326,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 					((!isModEnabled('multicompany') && $object->entity == $user->entity) || !$user->entity || ($object->entity == $conf->entity) || (getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && $object->entity == 1))) {
 						if ($object->email) {
 							unset($params['attr']['title']);
-							print dolGetButtonAction($langs->trans('SendNewPassword'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=passwordsend&token='.newToken(), '', true, $params);
+							print dolGetButtonAction($langs->trans('SendNewPassword'), '', 'default', dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id, 'action' => 'passwordsend'], true), '', true, $params);
 						} else {
 							$params['attr']['title'] = $langs->trans('NoEMail');
 							print dolGetButtonAction($langs->trans('SendNewPassword'), '', 'default', $_SERVER['PHP_SELF'].'#', '', false, $params);
@@ -2328,13 +2337,13 @@ if ($action == 'create' || $action == 'adduserldap') {
 				if ($user->id != $id && $permissiontodisable && $object->status == User::STATUS_DISABLED &&
 				((!isModEnabled('multicompany') && $object->entity == $user->entity) || !$user->entity || ($object->entity == $conf->entity) || (getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && $object->entity == 1))) {
 					unset($params['attr']['title']);
-					print dolGetButtonAction($langs->trans('Reactivate'), '', 'default', $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=enable&token='.newToken(), '', true, $params);
+					print dolGetButtonAction($langs->trans('Reactivate'), '', 'default', dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id, 'action' => 'enable'], true), '', true, $params);
 				}
 				// Disable user
 				if ($user->id != $id && $permissiontodisable && $object->status == User::STATUS_ENABLED &&
 				((!isModEnabled('multicompany') && $object->entity == $user->entity) || !$user->entity || ($object->entity == $conf->entity) || (getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && $object->entity == 1))) {
 					unset($params['attr']['title']);
-					print dolGetButtonAction($langs->trans('DisableUser'), '', 'default', $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=disable&token='.newToken(), '', true, $params);
+					print dolGetButtonAction($langs->trans('DisableUser'), '', 'default', dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id, 'action' => 'disable'], true), '', true, $params);
 				} else {
 					if ($user->id == $id) {
 						$params['attr']['title'] = $langs->trans('CantDisableYourself');
@@ -2346,10 +2355,10 @@ if ($action == 'create' || $action == 'adduserldap') {
 				((!isModEnabled('multicompany') && $object->entity == $user->entity) || !$user->entity || ($object->entity == $conf->entity) || (getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && $object->entity == 1))) {
 					if ($user->admin || !$object->admin) { // If user edited is admin, delete is possible on for an admin
 						unset($params['attr']['title']);
-						print dolGetButtonAction($langs->trans('DeleteUser'), '', 'default', $_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&id='.$object->id, '', true, $params);
+						print dolGetButtonAction($langs->trans('DeleteUser'), '', 'default', dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'delete', 'id' => $object->id], true), '', true, $params);
 					} else {
 						$params['attr']['title'] = $langs->trans('MustBeAdminToDeleteOtherAdmin');
-						print dolGetButtonAction($langs->trans('DeleteUser'), '', 'default', $_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&id='.$object->id, '', false, $params);
+						print dolGetButtonAction($langs->trans('DeleteUser'), '', 'default', dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'delete', 'id' => $object->id], true), '', false, $params);
 					}
 				}
 			}
@@ -2585,8 +2594,6 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print '<td>';
 				$nbAdmin = $user->getNbOfUsers('active', '', 1);
 				$nbSuperAdmin = $user->getNbOfUsers('active', 'superadmin', 1);
-				//var_dump($nbAdmin);
-				//var_dump($nbSuperAdmin);
 				if ($user->admin								// Need to be admin to allow downgrade of an admin
 				&& ($user->id != $object->id)                   // Don't downgrade ourself
 				&& (

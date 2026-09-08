@@ -37,6 +37,7 @@
  * @var	string $forceFullTextIndexation
  */
 '
+@phan-var-force CommonObject $object
 @phan-var-force string $upload_dir
 @phan-var-force string $upload_dirold
 @phan-var-force string $confirm
@@ -224,7 +225,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes' && !empty($permissionto
 
 	$link = new Link($db);
 	$f = $link->fetch(GETPOSTINT('linkid'));
-	if ($f) {
+	if ($f > 0) {
 		$link->url = GETPOST('link', 'alpha');
 		if (substr($link->url, 0, 7) != 'http://'
 			&& substr($link->url, 0, 8) != 'https://'

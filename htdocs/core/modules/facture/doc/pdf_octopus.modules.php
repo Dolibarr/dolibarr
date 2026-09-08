@@ -1943,7 +1943,7 @@ class pdf_octopus extends ModelePDFFactures
 		$pdf->SetFont('', '', $default_font_size - 1);
 
 		// Output Rect
-		$this->printRoundedRect($pdf, $this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $tab_height, $this->corner_radius, $hidetop, $hidebottom, 'D');	// Rect prend une longueur en 3eme param et 4eme param
+		$this->printRoundedRect($pdf, $this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $tab_height, $this->corner_radius, $hidetop, $hidebottom, 'D');	// Rect takes a length as the 3rd param and 4th param
 
 		// situation invoice
 		$pdf->SetFont('', '', $default_font_size - 2);
@@ -1983,7 +1983,7 @@ class pdf_octopus extends ModelePDFFactures
 		$pdf->SetFont('', '', $default_font_size - 1);
 
 		if (empty($hidetop)) {
-			$pdf->line($this->marge_gauche, $tab_top + 5, $this->page_largeur - $this->marge_droite, $tab_top + 5);	// line prend une position y en 2eme param et 4eme param
+			$pdf->line($this->marge_gauche, $tab_top + 5, $this->page_largeur - $this->marge_droite, $tab_top + 5);	// line takes a y position as the 2nd param and 4th param
 		}
 	}
 
@@ -2026,31 +2026,11 @@ class pdf_octopus extends ModelePDFFactures
 		$pdf->SetXY($this->marge_gauche, $posy);
 
 		// Logo
-		if (!getDolGlobalInt('PDF_DISABLE_MYCOMPANY_LOGO')) {
-			if ($this->emetteur->logo) {
-				$logodir = $conf->mycompany->dir_output;
-				if (!empty($conf->mycompany->multidir_output[$object->entity ?? $conf->entity])) {
-					$logodir = $conf->mycompany->multidir_output[$object->entity ?? $conf->entity];
-				}
-				if (!getDolGlobalInt('MAIN_PDF_USE_LARGE_LOGO')) {
-					$logo = $logodir.'/logos/thumbs/'.$this->emetteur->logo_small;
-				} else {
-					$logo = $logodir.'/logos/'.$this->emetteur->logo;
-				}
-				if (is_readable($logo)) {
-					$height = pdf_getHeightForLogo($logo);
-					$pdf->Image($logo, $this->marge_gauche, $posy, 0, $height); // width=0 (auto)
-				} else {
-					$pdf->SetTextColor(200, 0, 0);
-					$pdf->SetFont('', 'B', $default_font_size - 2);
-					$pdf->MultiCell($w, 3, $outputlangs->transnoentities("ErrorLogoFileNotFound", $logo), 0, 'L');
-					$pdf->MultiCell($w, 3, $outputlangs->transnoentities("ErrorGoToGlobalSetup"), 0, 'L');
-				}
-			} else {
-				$text = $this->emetteur->name;
-				$pdf->MultiCell($w, 4, $outputlangs->convToOutputCharset($text), 0, $ltrdirection);
-			}
+		$logodir = $conf->mycompany->dir_output;
+		if (!empty($conf->mycompany->multidir_output[$object->entity ?? $conf->entity])) {
+			$logodir = $conf->mycompany->multidir_output[$object->entity ?? $conf->entity];
 		}
+		pdf_writeLogoOrCompanyName($pdf, $outputlangs, $this->emetteur, $logodir, $this->marge_gauche, $posy, $w, $default_font_size, $ltrdirection);
 
 		$pdf->SetFont('', 'B', $default_font_size + 3);
 		$pdf->SetXY($posx, $posy);
@@ -2134,7 +2114,7 @@ class pdf_octopus extends ModelePDFFactures
 				$posy += 3;
 				$pdf->SetXY($posx, $posy);
 				$pdf->SetTextColor(0, 0, 60);
-				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Project")." : ". $object->project->title, '', 'R');
+				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Project")." : ".dol_trunc($object->project->title, 50), '', 'R');
 			}
 		}
 
@@ -2145,7 +2125,7 @@ class pdf_octopus extends ModelePDFFactures
 				$posy += 3;
 				$pdf->SetXY($posx, $posy);
 				$pdf->SetTextColor(0, 0, 60);
-				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("RefProject")." : ". $object->project->ref, '', 'R');
+				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("RefProject")." : ".$object->project->ref, '', 'R');
 			}
 		}
 
@@ -2836,7 +2816,7 @@ class pdf_octopus extends ModelePDFFactures
 
 		// Output Rect
 		// KEEPTHIS => Display outer borders
-		$this->printRoundedRectBtp($pdf, $this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $tab_height, $this->corner_radius, $hidetop, $hidebottom, 'D');	// Rect prend une longueur en 3eme param et 4eme param
+		$this->printRoundedRectBtp($pdf, $this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $tab_height, $this->corner_radius, $hidetop, $hidebottom, 'D');	// Rect takes a length as the 3rd param and 4th param
 
 		$pdf->line($this->posx_cumul_anterieur - 1, $tab_top, $this->posx_cumul_anterieur - 1, $tab_top + $tab_height);
 		if (empty($hidetop)) {
@@ -3060,7 +3040,7 @@ class pdf_octopus extends ModelePDFFactures
 				$TDataSituation['cumul_anterieur']['TVA'] += $previousInvoice->total_tva;
 
 				// Read each line to
-				// 1. recalculer le total_ht pour chaque taux de TVA
+				// 1. recalculate total_ht for each VAT rate
 				// 2. recalculate the VAT associated with this net amount
 				// 3. If applicable, store this information as "travaux_sup" (additional work) if this line is not linked to a line from the previous situation.
 				foreach ($previousInvoice->lines as $k => $l) {
@@ -3493,7 +3473,7 @@ class pdf_octopus extends ModelePDFFactures
 
 				// Output Rect
 				$pdf->SetDrawColor(128, 128, 128);
-				//$this->printRect($pdf, $posx, $posy, $this->page_largeur - $this->marge_gauche - $this->marge_droite, 6);	// Rect prend une longueur en 3eme param et 4eme param
+				//$this->printRect($pdf, $posx, $posy, $this->page_largeur - $this->marge_gauche - $this->marge_droite, 6);	// Rect takes a length as the 3rd param and 4th param
 				$this->printRoundedRect($pdf, $posx, $posy, $this->page_largeur - $this->marge_gauche - $this->marge_droite, 6, $this->corner_radius, 0, 0, 'D'); // Rect takes a length in 3rd parameter and 4th parameter
 
 				$posy += 4;
@@ -3808,7 +3788,7 @@ class pdf_octopus extends ModelePDFFactures
 					foreach ($invoice->lines as $l) {
 						if ($l->fk_remise_except > 0) {
 							$discount = new DiscountAbsolute($this->db);
-							$result = $discount->fetch($l->fk_remise_except);
+							$result = $discount->fetch((int) $l->fk_remise_except);
 							if ($result > 0) {
 								$rem += $discount->total_ht;
 							}

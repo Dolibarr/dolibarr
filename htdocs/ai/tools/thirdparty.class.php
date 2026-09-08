@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2026	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2026	Nick Fragoulis
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -378,8 +379,6 @@ class ToolThirdParty extends McpTool
 	 */
 	private function create(array $args)
 	{
-		global $conf;
-
 		// Check permissions
 		if (!$this->user->hasRight('societe', 'creer')) {
 			return ["error" => "Permission Denied"];
@@ -417,8 +416,8 @@ class ToolThirdParty extends McpTool
 		}
 
 		// Fallback to default country if not set
-		if (empty($soc->country_id) && !empty($conf->global->MAIN_INFO_SOCIETE_COUNTRY)) {
-			$soc->country_id = (int) $conf->global->MAIN_INFO_SOCIETE_COUNTRY;
+		if (empty($soc->country_id) && getDolGlobalString('MAIN_INFO_SOCIETE_COUNTRY')) {
+			$soc->country_id = getDolGlobalInt('MAIN_INFO_SOCIETE_COUNTRY');
 		}
 
 		$type = $args['type'] ?? 'customer';

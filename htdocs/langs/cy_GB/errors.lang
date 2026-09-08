@@ -155,9 +155,6 @@ ErrNoZipEngine=Dim injan i zipio/dadsipio ffeil %s yn y PHP hwn
 ErrorFileMustBeADolibarrPackage=Rhaid i'r ffeil %s fod yn becyn zip Dolibarr
 ErrorModuleFileRequired=Rhaid i chi ddewis ffeil pecyn modiwl Dolibarr
 ErrorFailToDownloadModuleFromSource=Failed to download the module from the source. Please check your internet connection or the source URL and try again.
-extModuleConfirmInstallTitle = Confirm module installation
-extModuleConfirmInstallText  = You are about to install the following module:<br><br><b>Name:</b> %s<br><b>Version:</b> %s<br><b>Reference:</b> %s<br><b>Last update:</b> %s<br><br>This action is not reversible, Do you confirm the installation of this module?
-install=Install
 ErrorPhpCurlNotInstalled=Nid yw'r PHP CURL wedi'i osod, mae hyn yn hanfodol i siarad â Paypal
 ErrorFailedToAddToMailmanList=Wedi methu ychwanegu cofnod %s i restr Mailman %s neu sylfaen SPIP
 ErrorFailedToRemoveToMailmanList=Wedi methu tynnu cofnod %s i restr Mailman %s neu sylfaen SPIP
@@ -443,6 +440,7 @@ WarningModuleAffiliatedToAReportedCompany=Warning, this module has been reported
 WarningModuleAffiliatedToAPiratPlatform=Be careful when getting a module (paid or free) from a suspicious non official platform like %s
 WarningDNSServerNotAvailable=Warning, DNS server not available
 WarningSecureKeyNotSet=The value fo the securekey must not be empty
+WarningFullPathWasNotFoundSoWeUseAnAlternativeValue=Note: Full path was not found so we used the alternative value <b>%s</b>
 
 SwissQrOnlyVIR = Dim ond ar anfonebau a osodwyd i'w talu gyda thaliadau trosglwyddo credyd y gellir ychwanegu anfoneb SwissQR.
 SwissQrCreditorAddressInvalid = Cyfeiriad credydwr yn annilys (a yw ZIP a dinas wedi'u gosod? (%s)

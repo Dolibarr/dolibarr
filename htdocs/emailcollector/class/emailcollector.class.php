@@ -44,6 +44,7 @@ require_once DOL_DOCUMENT_ROOT .'/recruitment/class/recruitmentcandidature.class
 require_once DOL_DOCUMENT_ROOT .'/societe/class/societe.class.php';                      // Third-Party
 require_once DOL_DOCUMENT_ROOT .'/supplier_proposal/class/supplier_proposal.class.php';  // Supplier Proposal
 require_once DOL_DOCUMENT_ROOT .'/ticket/class/ticket.class.php';                        // Ticket
+require_once DOL_DOCUMENT_ROOT .'/adherents/class/adherent.class.php';             		 // Member/Adherent
 //require_once DOL_DOCUMENT_ROOT .'/expensereport/class/expensereport.class.php';        // Expense Report
 //require_once DOL_DOCUMENT_ROOT .'/holiday/class/holiday.class.php';                    // Holidays (leave request)
 
@@ -1238,6 +1239,7 @@ class EmailCollector extends CommonObject
 					$expire = false;
 					if (is_object($tokenobj) && method_exists($tokenobj, 'getEndOfLife')) {
 						$endOfLife = $tokenobj->getEndOfLife();
+						// time() is used internally in token @phan-suppress-next-line DolibarrForbiddenFunctionPlugin
 						if ($endOfLife !== -9002 && $endOfLife !== -9001 && time() > ($endOfLife - 30)) {
 							$expire = true;
 						}
@@ -3112,7 +3114,6 @@ class EmailCollector extends CommonObject
 											if (!$errorforactions) {
 												// Search state by name or code (for country if defined)
 												if (!empty($contactstatic->state)) {
-													require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
 													$result = dol_getIdFromCode($this->db, $contactstatic->state, 'c_departements', 'nom', 'rowid');
 													if (empty($result)) {
 														$errorforactions++;
@@ -3126,7 +3127,6 @@ class EmailCollector extends CommonObject
 														$operationslog .= '<br>We set property state_id='.dol_escape_htmltag($result);
 													}
 												} elseif (!empty($contactstatic->state_code)) {
-													require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
 													$result = dol_getIdFromCode($this->db, $contactstatic->state_code, 'c_departements', 'code_departement', 'rowid');
 													if (empty($result)) {
 														$errorforactions++;

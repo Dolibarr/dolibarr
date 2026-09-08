@@ -1235,6 +1235,11 @@ class Holiday extends CommonObject
 			//var_dump("old: ".dol_print_date($infos_CP['date_debut'],'dayhour').' '.dol_print_date($infos_CP['date_fin'],'dayhour').' '.$infos_CP['halfday']);
 			//var_dump("new: ".dol_print_date($dateStart,'dayhour').' '.dol_print_date($dateEnd,'dayhour').' '.$halfday);
 
+			// A new leave can fully contain an existing leave, so neither endpoint is inside the existing range.
+			if ($dateStart < $infos_CP['date_debut'] && $dateEnd > $infos_CP['date_fin']) {
+				return false;
+			}
+
 			if ($halfday == 0) {
 				if ($dateStart >= $infos_CP['date_debut'] && $dateStart <= $infos_CP['date_fin']) {
 					return false;
@@ -1690,6 +1695,12 @@ class Holiday extends CommonObject
 
 			// Get month of last update
 			$stringInDBForLastUpdate = $this->getConfCP('lastUpdate', dol_print_date($now, '%Y%m%d%H%M%S'));	// Example '20200101120000'
+			// The lastUpdate config row is created empty (value NULL) at install, so getConfCP() returns an empty value
+			// the first time. Treat an empty value as "start from now" (like define_holiday.php does) instead of a very
+			// old date, otherwise the catch-up loop below would credit every user with years of monthly accrual at once.
+			if (empty($stringInDBForLastUpdate)) {
+				$stringInDBForLastUpdate = dol_print_date($now, '%Y%m%d%H%M%S');
+			}
 			// Protection when $lastUpdate has a not valid value
 			if ($stringInDBForLastUpdate < '20000101000000') {
 				$stringInDBForLastUpdate = '20000101000000';
@@ -2751,12 +2762,15 @@ class Holiday extends CommonObject
 		foreach ($arrayfields as $key => $label) {
 			$outputarrayleaves .= '<td style="border-bottom:1px solid #b6b6b6;padding: 6px 10px 6px 12px;">';
 			$outputarrayleaves .= $outputlangs->trans($label);
+			if ($key == 'date_end') {
+				$outputarrayleaves .=" (".$langs->trans("Included").")";
+			}
 			$outputarrayleaves .= '</td>';
 		}
 		$outputarrayleaves .= '</tr>';
 
 		if (!empty($arrayleaves)) {
-			foreach ($arrayleaves as $key => $fields) {
+			foreach ($arrayleaves as $fields) {
 				$outputarrayleaves .= '<tr>';
 				foreach ($fields as $field => $value) {
 					$outputarrayleaves .= '<td style="border-bottom:1px solid #b6b6b6;padding: 6px 10px 6px 12px;" id="'.$field.'">';

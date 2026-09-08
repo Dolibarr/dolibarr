@@ -136,7 +136,7 @@ OnlyFromV2Help=Après la version v24, le montant excluant taxe pour un calcul ra
 NeedAThirdPartyStatement=Vous avez besoin d'une déclaration d'un tiers pour être en conformité avec la loi.
 ForPeriodAndFilters=Pour la période et filtres
 AddtionalInformation=Informations techniques supplémentaires
-StatusValid=Valider
+StatusValid=Valide
 NotCertified=Une déclaration de conformité est nécessaire (voir note ci-dessous).
 ## logTypes
 logBILL_DELETE=Suppression logique de la facture client

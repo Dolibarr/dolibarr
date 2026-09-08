@@ -202,6 +202,7 @@ DiscountReceived=Reducere primită
 DONATION_ACCOUNTINGACCOUNT=Cont contabil (din Planul de Conturi) care va fi utilizat pentru a înregistra donații (modulul Donații) 
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Cont contabil (din Planul de Conturi) care va fi utilizat pentru a înregistra abonamentele de membru (modulul de Membri - dacă calitatea de membru este înregistrată fără factură)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Contul contabil (din Planul de Conturi) va fi utilizat ca și cont implicit pentru a înregistra un depozit de la client 
+ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT_FOR_VAT=Account (from the Chart Of Account) to be used as the default account for VAT on customer deposit used in bindings
 UseAuxiliaryAccountOnCustomerDeposit=Stochează contul de client ca și cont contabil individual în registrul subsidiar pentru liniile de avans (dacă este dezactivat, contul individual pentru liniile de avans va rămâne gol)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Cont (din Planul de Conturi) care va fi utilizat ca și cont implicit pentru înregistrarea depozitului furnizor
 UseAuxiliaryAccountOnSupplierDeposit=Stocare cont furnizor ca și cont individual în registrul subsidiar pentru liniile de avans (dacă este dezactivat, contul individual pentru liniile de avans va rămâne gol) 

@@ -1051,4 +1051,85 @@ class Dolresource extends CommonObject
 			return -1;
 		}
 	}
+
+	/**
+	 * Look for an existing "busy" booking of a resource that overlaps a given date range, across
+	 * both agenda events (actioncomm) and interventions (fichinter). An intervention has no usable
+	 * date range of its own (its header dateo/datee columns are never populated by current code), so
+	 * its busy period is derived from the min/max of its lines' date + duration instead.
+	 *
+	 * Used to detect double-booking when RESOURCE_USED_IN_EVENT_CHECK is enabled (see
+	 * resource/element_resource.php and comm/action/card.php for the existing action-only version
+	 * of this check, which this method generalizes).
+	 *
+	 * @param	int			$resourceId			Id of resource (llx_resource.rowid)
+	 * @param	string		$resourceType		Resource type as stored in llx_element_resources.resource_type (e.g. 'dolresource')
+	 * @param	int			$dateStart			Start of the date range to check (Unix timestamp)
+	 * @param	int			$dateEnd			End of the date range to check (Unix timestamp)
+	 * @param	string		$excludeElementType	Element type to exclude from the search (e.g. 'action' or 'fichinter')
+	 * @param	int			$excludeElementId	Element id to exclude from the search (the booking being added/edited itself)
+	 * @return	array<int,array{element_type:string,element_id:int,ref:string}>|int	Array of conflicting bookings (empty if none), or -1 on SQL error (check ->error)
+	 */
+	public function getBookingConflicts($resourceId, $resourceType, $dateStart, $dateEnd, $excludeElementType = '', $excludeElementId = 0)
+	{
+		$conflicts = array();
+
+		// Conflicts against agenda events (actioncomm has a real date range: datep / datep2,
+		// exposed on the ActionComm object as the properties $datep / $datef). Skipped entirely
+		// if the Agenda module is disabled, since there is then nothing meaningful to check.
+		if (isModEnabled('agenda')) {
+			$sql = "SELECT ac.id as element_id, ac.label as ref";
+			$sql .= " FROM ".MAIN_DB_PREFIX."element_resources as er";
+			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm as ac ON ac.id = er.element_id AND er.element_type = 'action'";
+			$sql .= " WHERE er.resource_id = ".((int) $resourceId);
+			$sql .= " AND er.resource_type = '".$this->db->escape($resourceType)."'";
+			$sql .= " AND er.busy = 1";
+			if ($excludeElementType == 'action' && $excludeElementId > 0) {
+				$sql .= " AND ac.id <> ".((int) $excludeElementId);
+			}
+			$sql .= " AND ac.datep <= '".$this->db->idate($dateEnd)."'";
+			$sql .= " AND (ac.datep2 IS NULL OR ac.datep2 >= '".$this->db->idate($dateStart)."')";
+
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$this->error = $this->db->lasterror();
+				return -1;
+			}
+			while ($obj = $this->db->fetch_object($resql)) {
+				$conflicts[] = array('element_type' => 'action', 'element_id' => (int) $obj->element_id, 'ref' => $obj->ref);
+			}
+			$this->db->free($resql);
+		}
+
+		// Conflicts against interventions (fichinter has no usable header date range, so derive
+		// [min(line date), max(line date + duree)] from its lines instead). Skipped entirely if
+		// the Intervention module is disabled.
+		if (isModEnabled('intervention')) {
+			$sql = "SELECT f.rowid as element_id, f.ref as ref, MIN(fd.date) as dmin, MAX(fd.date + INTERVAL fd.duree SECOND) as dmax";
+			$sql .= " FROM ".MAIN_DB_PREFIX."element_resources as er";
+			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."fichinter as f ON f.rowid = er.element_id AND er.element_type = 'fichinter'";
+			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."fichinterdet as fd ON fd.fk_fichinter = f.rowid";
+			$sql .= " WHERE er.resource_id = ".((int) $resourceId);
+			$sql .= " AND er.resource_type = '".$this->db->escape($resourceType)."'";
+			$sql .= " AND er.busy = 1";
+			if ($excludeElementType == 'fichinter' && $excludeElementId > 0) {
+				$sql .= " AND f.rowid <> ".((int) $excludeElementId);
+			}
+			$sql .= " GROUP BY f.rowid, f.ref";
+			$sql .= " HAVING MIN(fd.date) <= '".$this->db->idate($dateEnd)."'";
+			$sql .= " AND MAX(fd.date + INTERVAL fd.duree SECOND) >= '".$this->db->idate($dateStart)."'";
+
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$this->error = $this->db->lasterror();
+				return -1;
+			}
+			while ($obj = $this->db->fetch_object($resql)) {
+				$conflicts[] = array('element_type' => 'fichinter', 'element_id' => (int) $obj->element_id, 'ref' => $obj->ref);
+			}
+			$this->db->free($resql);
+		}
+
+		return $conflicts;
+	}
 }

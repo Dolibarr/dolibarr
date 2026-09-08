@@ -202,6 +202,7 @@ DiscountReceived=Discount received
 DONATION_ACCOUNTINGACCOUNT=दान दर्ज करने के लिए उपयोग किया जाने वाला खाता (खाता चार्ट से) (दान मॉड्यूल)
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=खाता (खाते के चार्ट से) सदस्यता पंजीकरण के लिए उपयोग किया जाएगा (सदस्यता मॉड्यूल - यदि सदस्यता चालान के बिना दर्ज की गई है)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=खाता (खाता चार्ट से) ग्राहक जमा को पंजीकृत करने के लिए डिफ़ॉल्ट खाते के रूप में उपयोग किया जाना चाहिए
+ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT_FOR_VAT=Account (from the Chart Of Account) to be used as the default account for VAT on customer deposit used in bindings
 UseAuxiliaryAccountOnCustomerDeposit=ग्राहक खाते को डाउन पेमेंट की पंक्तियों के लिए सहायक खाता बही में व्यक्तिगत खाते के रूप में संग्रहीत करें (यदि अक्षम किया गया है, तो डाउन पेमेंट पंक्तियों के लिए व्यक्तिगत खाता खाली रहेगा)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default account to register supplier deposit
 UseAuxiliaryAccountOnSupplierDeposit=अग्रिम भुगतान की पंक्तियों के लिए सहायक खाता बही में आपूर्तिकर्ता खाते को व्यक्तिगत खाते के रूप में संग्रहीत करें (यदि अक्षम किया गया है, तो अग्रिम भुगतान पंक्तियों के लिए व्यक्तिगत खाता रिक्त रहेगा)
