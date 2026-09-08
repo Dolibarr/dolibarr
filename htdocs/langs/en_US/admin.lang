@@ -2610,6 +2610,7 @@ PasswordFieldEncrypted=%s new record have this field been encrypted
 ExtrafieldsDeleted=Extrafields %s has been deleted
 LargeModern=Large - Modern
 SpecialCharActivation=Enable the button to open a virtual keyboard to enter special characters
+AllowUploadMediaFiles=Allow upload of media files in WYSIWYG editor
 DeleteExtrafield=Delete extrafield
 ConfirmDeleteExtrafield=Do you confirm deletion of the field %s ? All data saved in this field will be definitely deleted
 ConfirmDeleteSetup=Are you sure you want to delete the setup for %s ?
