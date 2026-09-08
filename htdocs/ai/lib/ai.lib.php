@@ -4,7 +4,7 @@
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026		Anthony Damhet			<a.damhet@progiseize.fr>
  * Copyright (C) 2026		Nick Fragoulis
- * Copyright (C) 2026	Jose Martinez			<jose.martinez@pichinov.com>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -301,6 +301,61 @@ function testAIConnection(string $service, string $key, string $url): array
 	}
 }
 
+
+/**
+ * Validate chat attachments before they reach any LLM provider.
+ *
+ * The MIME type comes from the browser's File.type (client-controlled), so it
+ * is checked server-side against a strict allowlist of what every wired
+ * provider can natively consume (images and PDF). Size is bounded per
+ * attachment and in total: base64 travels inside the JSON POST body and is
+ * re-sent to the provider, so an unbounded payload is both a memory and a
+ * billing hazard. When the privacy redaction policy is enforced, attachments
+ * are refused entirely: text is masked by PrivacyGuard before a cloud call,
+ * but a document's content cannot be, so sending it would bypass the policy.
+ *
+ * @param array<int,array{mime:string,data:string}> $attachments Parsed attachments
+ * @param string $error Set to a client-safe message when validation fails
+ * @return bool True when all attachments may be sent
+ */
+function ai_validate_attachments(array $attachments, &$error)
+{
+	global $langs;
+
+	$error = '';
+	if (empty($attachments)) {
+		return true;
+	}
+	$langs->load("other");	// owns the AIAttachment* keys; callers load it later or not at all
+
+	if (getDolGlobalInt('AI_PRIVACY_REDACTION', 0)) {
+		$error = $langs->trans("AIAttachmentBlockedByPrivacy");
+
+		return false;
+	}
+
+	$allowedmimes = array('application/pdf', 'image/png', 'image/jpeg', 'image/gif', 'image/webp');
+	$maxbytes = getDolGlobalInt('AI_ATTACHMENT_MAX_MB', 10) * 1024 * 1024;
+	$totalbytes = 0;
+	foreach ($attachments as $att) {
+		if (!in_array($att['mime'], $allowedmimes, true)) {
+			$error = $langs->trans("AIAttachmentTypeNotAllowed", $att['mime']);
+
+			return false;
+		}
+		// 3/4 ratio: decoded size of a base64 payload without decoding it.
+		$bytes = (int) (strlen($att['data']) * 3 / 4);
+		$totalbytes += $bytes;
+		if ($bytes > $maxbytes || $totalbytes > $maxbytes) {
+			$error = $langs->trans("AIAttachmentTooLarge", (string) getDolGlobalInt('AI_ATTACHMENT_MAX_MB', 10));
+
+			return false;
+		}
+	}
+
+	return true;
+}
+
 /**
  * Log AI Request with Raw Payloads
  *
@@ -495,9 +550,16 @@ function getAiAssistantProviderLabel()
  */
 function getAiChatAssistantConfig()
 {
-	global $langs, $user;
+	global $conf, $langs, $user;
+
+	$langs->loadLangs(array('main', 'bills', 'companies', 'products', 'other'));
 
 	$keys = array(
+		// Table header labels for common API fields (see FIELD_LABELS in ai_assistant.js)
+		'AIAttachmentBlockedByPrivacy',
+		'Ref', 'Label', 'ThirdParty', 'Customer', 'Paid', 'Status', 'Type', 'Email', 'Town', 'Date',
+		'DateInvoice', 'DateMaxPayment', 'AmountHT', 'AmountTTC', 'AmountVAT', 'RemainderToPay',
+		'Price', 'PriceTTC', 'VATRate', 'CustomerCode', 'SupplierCode', 'Supplier', 'TotalHT', 'TotalTTC',
 		// General UI
 		'NoDataAvailable',
 		'Error',
@@ -513,8 +575,6 @@ function getAiChatAssistantConfig()
 
 		// Placeholders & Status
 		'TypeOrSpeak',
-		'UploadLocalDoc',
-		'UploadCloudDoc',
 		'DocLoaded',
 		'Listening',
 		'Transcribed',
@@ -605,6 +665,12 @@ function getAiChatAssistantConfig()
 	return array(
 		'mode' => getDolGlobalString('AI_DEFAULT_INPUT_MODE'),
 		'labels' => $ai_translations,
+		// Presentation context for tool results: money, date and label
+		// formatting happen client-side on raw API data.
+		'privacyRedaction' => getDolGlobalInt('AI_PRIVACY_REDACTION', 0),
+		'currency' => $conf->currency,
+		'locale' => str_replace('_', '-', $langs->getDefaultLang()),
+		'urlRoot' => DOL_URL_ROOT,
 		// Endpoints are called with absolute URLs so the chat also works when
 		// injected into another page (topbar popover) and not only when served
 		// from /ai/assistant/index.php.
