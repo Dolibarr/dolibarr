@@ -1076,7 +1076,6 @@ class FormFile
 					if (is_object($hookmanager)) {
 						$addcolumforpicto = ($delallowed || $printer || $morepicto);
 						$colspan = (4 + ($addcolumforpicto ? 1 : 0));
-						$colspanmore = 0;
 						$parameters = array('tmpout' => &$tmpout, 'colspan' => ($colspan + $colspanmore), 'socid' => (isset($GLOBALS['socid']) ? $GLOBALS['socid'] : ''), 'id' => (isset($GLOBALS['id']) ? $GLOBALS['id'] : ''), 'modulepart' => $modulepart, 'relativepath' => $relativepath);
 						$res = $hookmanager->executeHooks('formBuilddocLineOptions', $parameters, $file);
 						if (empty($res)) {
@@ -1113,13 +1112,18 @@ class FormFile
 					if ($delallowed || $printer || $morepicto) {
 						$out .= '<td></td>';
 					}
+					if ($colspanmore) {
+						$out .= '<td colspan="'.$colspanmore.'"></td>';
+					}
 					$out .= '</tr>'."\n";
 				}
 				$this->numoffiles++;
 			}
 
 			if (count($file_list) == 0 && count($link_list) == 0 && $headershown) {
-				$out .= '<tr><td colspan="'.(3 + ($addcolumforpicto ? 1 : 0)).'"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>'."\n";
+				$addcolumforpicto = ($delallowed || $printer || $morepicto);
+				$colspan = (4 + ($addcolumforpicto ? 1 : 0));
+				$out .= '<tr><td colspan="'.($colspan + $colspanmore).'"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>'."\n";
 			}
 		}
 
