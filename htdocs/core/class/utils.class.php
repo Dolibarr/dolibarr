@@ -776,8 +776,8 @@ class Utils
 				$newcommand = $matches[1] ?: ($matches[2] ?: $matches[3]);
 			}
 			if (!in_array(basename($newcommand), $arrayofallowedcommand)) {
-				dol_syslog("files.lib.php::executeCLI canceled because target filename ".basename($command)." is not in the whitelist of allowed commands.", LOG_WARNING);
-				return array('result' => -1, 'output' => '', 'error' => 'Command '.basename($command).' is not in the whitelist of allowed commands');
+				dol_syslog("files.lib.php::executeCLI canceled because target filename ".basename($newcommand)." is not in the whitelist of allowed commands.", LOG_WARNING);
+				return array('result' => -1, 'output' => '', 'error' => 'Command '.basename($newcommand).' is not in the whitelist of allowed commands');
 			}
 		}
 
