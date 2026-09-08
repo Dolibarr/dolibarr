@@ -289,12 +289,12 @@ class Commande extends CommonOrder
 	/**
 	 * @var array<int,float>	Array with lines of all shipments (qty)
 	 */
+	public $expeditions;
+
 	/**
 	 * @var int			counter used to track how many times the document was sent by email
 	 */
 	public $email_sent_counter = 0;
-
-	public $expeditions;
 
 	/**
 	 * @var string payment url
