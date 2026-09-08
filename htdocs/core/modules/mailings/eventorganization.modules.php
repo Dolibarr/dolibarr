@@ -33,7 +33,7 @@ class mailing_eventorganization extends MailingTargets
 	public $desc = "Attendees of an organized event";
 
 	/**
-	 * @var int
+	 * @var int<0,1>
 	 */
 	public $require_admin = 0;
 
