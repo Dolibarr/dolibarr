@@ -48,8 +48,9 @@ ConferenceOrBoothTab = Konference nebo stánek
 AmountPaid = Zaplacená částka
 DateOfRegistration = Datum registrace
 ConferenceOrBoothAttendee = Účastník konference nebo stánku
+ConferenceOrBoothAttendeesShort = Conf. or Booth Attendees
 ApplicantOrVisitor=Žadatel nebo návštěvník
-Speaker=Reproduktor
+Speaker=Řečník
 # Template Mail
 YourOrganizationEventConfRequestWasReceived = Vaše žádost o konferenci byla přijata
 YourOrganizationEventBoothRequestWasReceived = Vaše žádost o stánek byla přijata
@@ -59,7 +60,7 @@ EventOrganizationEmailBoothPayment = Platba vašeho stánku
 EventOrganizationEmailRegistrationPayment = Registrace na akci
 EventOrganizationMassEmailAttendees = Komunikace s účastníky
 EventOrganizationMassEmailSpeakers = Komunikace s řečníky
-ToSpeakers=K reproduktorům
+ToSpeakers=Řečníkům
 # Event
 AllowUnknownPeopleSuggestConf=Umožnit lidem navrhovat konference
 AllowUnknownPeopleSuggestConfHelp=Umožnit neznámým lidem navrhnout konferenci, kterou chtějí uspořádat

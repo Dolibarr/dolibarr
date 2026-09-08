@@ -27,16 +27,16 @@
  * @var Conf $conf
  * @var CommonObject $object
  *
- * @var array<string,float> $totalamountlifetime
- * @var array<string,float> $totalhtamountlifetime
+ * @var array<string,array<string,float>> $totalamountlifetime
+ * @var array<string,array<string,float>> $totalhtamountlifetime
  * @var int $foundoldformat
  * @var int $firstrecorddate
  * @var int $error
  * @var ?int $search_end
  * @var int $includebeforev2
  */
-'@phan-var-force array<string,float> $totalamountlifetime';
-'@phan-var-force array<string,float> $totalhtamountlifetime';
+'@phan-var-force array<string,array<string,float>> $totalamountlifetime';
+'@phan-var-force array<string,array<string,float>> $totalhtamountlifetime';
 '@phan-var-force int $error';
 global $foundoldformat, $firstrecorddate, $error;
 
@@ -84,18 +84,21 @@ if ($resql) {
 			$firstrecorddate = $db->jdate($obj->datemin, 'gmt');
 		}
 
-		if (!isset($totalamountlifetime[$obj->action])) {
-			$totalamountlifetime[$obj->action] = 0;
+		if (!isset($totalamountlifetime[$obj->action][$obj->module_source])) {
+			$totalamountlifetime[$obj->action][$obj->module_source] = 0;
+		}
+		if (!isset($totalhtamountlifetime[$obj->action][$obj->module_source])) {
+			$totalhtamountlifetime[$obj->action][$obj->module_source] = 0;
 		}
 
 		// Total per action code and module
-		$totalamountlifetime[$obj->action] += $obj->sumamounts;
+		$totalamountlifetime[$obj->action][$obj->module_source] += $obj->sumamounts;
 
 		// If format of line is old, the sumamounts_taxexcl was not recorded. So we flag this case.
 		if (empty($obj->object_format) || $obj->object_format === 'V1') {
 			$foundoldformat = 1;
 		} else {
-			$totalhtamountlifetime[$obj->action] += $obj->sumamounts_taxexcl;
+			$totalhtamountlifetime[$obj->action][$obj->module_source] += $obj->sumamounts_taxexcl;
 		}
 	}
 } else {

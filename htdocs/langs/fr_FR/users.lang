@@ -170,3 +170,5 @@ ForcePasswordChange=Forcer le changement de mot de passe à la prochaine connexi
 AtNextLogin=Au prochain raccordement
 UserDoesNotHaveRightsToChangeHisPassword=Ce utilisateur n'a pas les droits pour modifier son propre mot de passe
 NotPossible=Impossible
+NoPasswordGenerationRuleConfigured=Le moteur ou la règle de génération du mot de passe n'a pas été défini ou est configuré avec un mot de passe vide sur la page de configuration.
+OnlyAdminUsersCanDeleteAdminUsers=Seuls les utilisateurs de Administrateur peuvent supprimer Administrateur

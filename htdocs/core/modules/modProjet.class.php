@@ -7,7 +7,7 @@
  * Copyright (C) 2013	    Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2014	    Charles-Fr BENKE		<charles.fr@benke.fr>
  * Copyright (C) 2023       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -155,62 +155,62 @@ class modProjet extends DolibarrModules
 		$r = 0;
 
 		$r++;
-		$this->rights[$r][0] = 41; // id de la permission
-		$this->rights[$r][1] = "Read projects and tasks (shared projects or projects I am contact for)"; // libelle de la permission
-		$this->rights[$r][2] = 'r'; // type de la permission (deprecated)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][0] = 41; // Permission id (must not be already used)
+		$this->rights[$r][1] = "Read projects and tasks (shared projects or projects I am contact for)"; // Permission label
+		$this->rights[$r][2] = 'r'; // Permission type (deprecated)
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'lire';
 
 		$r++;
-		$this->rights[$r][0] = 42; // id de la permission
-		$this->rights[$r][1] = "Create/modify projects and tasks (shared projects or projects I am contact for)"; // libelle de la permission
-		$this->rights[$r][2] = 'w'; // type de la permission (deprecated)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][0] = 42; // Permission id (must not be already used)
+		$this->rights[$r][1] = "Create/modify projects and tasks (shared projects or projects I am contact for)"; // Permission label
+		$this->rights[$r][2] = 'w'; // Permission type (deprecated)
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'creer';
 
 		$r++;
-		$this->rights[$r][0] = 44; // id de la permission
-		$this->rights[$r][1] = "Delete project and tasks (shared projects or projects I am contact for)"; // libelle de la permission
-		$this->rights[$r][2] = 'd'; // type de la permission (deprecated)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][0] = 44; // Permission id (must not be already used)
+		$this->rights[$r][1] = "Delete project and tasks (shared projects or projects I am contact for)"; // Permission label
+		$this->rights[$r][2] = 'd'; // Permission type (deprecated)
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'supprimer';
 
 		$r++;
-		$this->rights[$r][0] = 45; // id de la permission
-		$this->rights[$r][1] = "Export projects"; // libelle de la permission
-		$this->rights[$r][2] = 'd'; // type de la permission (deprecated)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][0] = 45; // Permission id (must not be already used)
+		$this->rights[$r][1] = "Export projects"; // Permission label
+		$this->rights[$r][2] = 'd'; // Permission type (deprecated)
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'export';
 
 		$r++;
-		$this->rights[$r][0] = 141; // id de la permission
-		$this->rights[$r][1] = "Read all projects and tasks (also private projects I am not contact for)"; // libelle de la permission
-		$this->rights[$r][2] = 'r'; // type de la permission (deprecated)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][0] = 141; // Permission id (must not be already used)
+		$this->rights[$r][1] = "Read all projects and tasks (also private projects I am not contact for)"; // Permission label
+		$this->rights[$r][2] = 'r'; // Permission type (deprecated)
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'all';
 		$this->rights[$r][5] = 'lire';
 
 		$r++;
-		$this->rights[$r][0] = 142; // id de la permission
-		$this->rights[$r][1] = "Create/modify all projects and tasks (also private projects I am not contact for)"; // libelle de la permission
-		$this->rights[$r][2] = 'w'; // type de la permission (deprecated)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][0] = 142; // Permission id (must not be already used)
+		$this->rights[$r][1] = "Create/modify all projects and tasks (also private projects I am not contact for)"; // Permission label
+		$this->rights[$r][2] = 'w'; // Permission type (deprecated)
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'all';
 		$this->rights[$r][5] = 'creer';
 
 		$r++;
-		$this->rights[$r][0] = 144; // id de la permission
-		$this->rights[$r][1] = "Delete all projects and tasks (also private projects I am not contact for)"; // libelle de la permission
-		$this->rights[$r][2] = 'd'; // type de la permission (deprecated)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][0] = 144; // Permission id (must not be already used)
+		$this->rights[$r][1] = "Delete all projects and tasks (also private projects I am not contact for)"; // Permission label
+		$this->rights[$r][2] = 'd'; // Permission type (deprecated)
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'all';
 		$this->rights[$r][5] = 'supprimer';
 
 		$r++;
-		$this->rights[$r][0] = 145; // id de la permission
-		$this->rights[$r][1] = "Can enter time consumed on assigned tasks (timesheet)"; // libelle de la permission
-		$this->rights[$r][2] = 'w'; // type de la permission (deprecated)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][0] = 145; // Permission id (must not be already used)
+		$this->rights[$r][1] = "Can enter time consumed on assigned tasks (timesheet)"; // Permission label
+		$this->rights[$r][2] = 'w'; // Permission type (deprecated)
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'time';
 
 		// Menus
@@ -307,16 +307,10 @@ class modProjet extends DolibarrModules
 		$this->import_fields_array[$r] = array('t.ref' => 'ProjectRef*', 't.title' => 'Label*', 't.description' => "Description", 't.fk_soc' => 'ThirdPartyName', 't.public' => "Public", 't.fk_statut' => "Status");
 		$this->import_fields_array[$r] = array_merge($this->import_fields_array[$r], array('t.fk_opp_status' => "OpportunityStatus", 't.opp_percent' => "OpportunityProbability", 't.opp_amount' => "OpportunityAmount", 't.note_public' => "NotePublic", 't.note_private' => "NotePrivate", 't.budget_amount' => "Budget", 't.dateo' => "DateStart", 't.datee' => "DateEnd", 't.usage_opportunity' => "UsageOpportunity", 't.usage_task' => 'UsageTasks', 't.usage_bill_time' => 'UsageBillTimeShort'));
 		// Add extra fields
-		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type <> 'separate' AND elementtype = 'projet' AND entity IN (0,".$conf->entity.")";
-		$resql = $this->db->query($sql);
-		if ($resql) {    // This can fail when class is used on old database (during migration for example)
-			while ($obj = $this->db->fetch_object($resql)) {
-				$fieldname = 'extra.'.$obj->name;
-				$fieldlabel = ucfirst($obj->label);
-				$this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
-			}
-		}
-		// End add extra fields
+		$keyforselect = 'projet';
+		$keyforelement = 'project';
+		$keyforaliasextra = 'extra';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinimport.inc.php';
 		$this->import_fieldshidden_array[$r] = array('t.fk_user_creat' => 'user->id', 't.fk_user_modif' => 'user->id', 'extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'projet'); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
 		$this->import_convertvalue_array[$r] = array(
 			't.ref' => array(
@@ -353,16 +347,10 @@ class modProjet extends DolibarrModules
 			$this->import_tables_array[$r] = array('t' => MAIN_DB_PREFIX.'projet_task', 'extra' => MAIN_DB_PREFIX.'projet_task_extrafields'); // List of tables to insert into (insert done in same order)
 			$this->import_fields_array[$r] = array('t.fk_projet' => 'ProjectRef*', 't.ref' => 'RefTask*', 't.label' => 'LabelTask*', 't.dateo' => "DateStart", 't.datee' => "DateEnd", 't.planned_workload' => "PlannedWorkload", 't.progress' => "Progress", 't.note_private' => "NotePrivate", 't.note_public' => "NotePublic", 't.datec' => "DateCreation");
 			// Add extra fields
-			$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type <> 'separate' AND elementtype = 'projet_task' AND entity IN (0,".$conf->entity.")";
-			$resql = $this->db->query($sql);
-			if ($resql) {    // This can fail when class is used on old database (during migration for example)
-				while ($obj = $this->db->fetch_object($resql)) {
-					$fieldname = 'extra.'.$obj->name;
-					$fieldlabel = ucfirst($obj->label);
-					$this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
-				}
-			}
-			// End add extra fields
+			$keyforselect = 'projet_task';
+			$keyforelement = 'task';
+			$keyforaliasextra = 'extra';
+			include DOL_DOCUMENT_ROOT.'/core/extrafieldsinimport.inc.php';
 			$this->import_fieldshidden_array[$r] = array('t.fk_user_creat' => 'user->id', 'extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'projet_task'); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
 			$this->import_convertvalue_array[$r] = array(
 				't.fk_projet' => array('rule' => 'fetchidfromref', 'classfile' => '/projet/class/project.class.php', 'class' => 'Project', 'method' => 'fetch', 'element' => 'Project'),

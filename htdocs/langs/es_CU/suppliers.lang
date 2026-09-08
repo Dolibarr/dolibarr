@@ -24,7 +24,6 @@ AddSupplierOrder=Crear orden de compra
 ListOfSupplierProductForSupplier=Lista de productos y precios para el proveedor <b> %s </b>
 ListOfSupplierOrders=Lista de ordenes de compra
 MenuOrdersSupplierToBill=Órdenes de compra a facturar
-NbDaysToDelivery=Retraso en la entrega (días)
 DescNbDaysToDelivery=El mayor retraso en la entrega de los productos de este pedido
 ReferenceReputation=Reputación de referencia
 DoNotOrderThisProductToThisSupplier=no ordenar

@@ -90,7 +90,7 @@ class box_comptes extends ModeleBoxes
 			$sql .= ', aj.code as accountancy_journal';
 			$sql .= " FROM ".MAIN_DB_PREFIX."bank_account as b";
 			$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'accounting_journal as aj ON aj.rowid = b.fk_accountancy_journal';
-			$sql .= " WHERE b.entity = ".$conf->entity;
+			$sql .= " WHERE b.entity = ".((int) $conf->entity);
 			$sql .= " AND clos = 0";
 			$sql .= " ORDER BY label";
 

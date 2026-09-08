@@ -716,7 +716,7 @@ if (empty($reshook)) {
 			$newlang = GETPOST('lang_id', 'aZ09');
 		}
 		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
-			$newlang = $reception->thirdparty->default_lang;
+			$newlang = $object->thirdparty->default_lang;
 		}
 		if (!empty($newlang)) {
 			$outputlangs = new Translate("", $conf);
@@ -733,7 +733,7 @@ if (empty($reshook)) {
 
 		$upload_dir = $conf->reception->dir_output;
 		$file = $upload_dir.'/'.GETPOST('file');
-		$ret = dol_delete_file($file, 0, 0, 0, $object);
+		$ret = dol_delete_file($file, 1, 0, 0, $object);
 		if ($ret) {
 			setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
 		} else {
@@ -1305,9 +1305,8 @@ if ($action == 'create' && $permissiontoadd) {
 		// Here $object can be of an object Reception
 		$extrafields->fetch_name_optionals_label($object->table_element);
 		if (empty($reshook) && !empty($extrafields->attributes[$object->table_element]['label'])) {
-			// copy from order
-			if ($objectsrc->fetch_optionals() > 0) {
-				$recept->array_options = array_merge($recept->array_options, $objectsrc->array_options);
+			if ($object->fetch_optionals() > 0) {
+				$recept->array_options = array_merge($recept->array_options, $object->array_options);
 			}
 			print $recept->showOptionals($extrafields, 'create', $parameters);
 		}
@@ -1334,7 +1333,7 @@ if ($action == 'create' && $permissiontoadd) {
 		}
 
 		// Note Public
-		$htmltext ='';
+		$htmltext = '';
 		print '<tr>';
 		print '<td class="tdtop">';
 		print $form->textwithpicto($langs->trans('NotePublic'), $htmltext);
@@ -2012,7 +2011,7 @@ if ($action == 'create' && $permissiontoadd) {
 	$res = $object->fetch_optionals();
 
 	$head = reception_prepare_head($object);
-	print dol_get_fiche_head($head, 'reception', $langs->trans("Reception"), -1, 'dollyrevert');
+	print dol_get_fiche_head($head, 'reception', $langs->trans("Reception"), -1, 'dollyrevert', 0, '', '', 0, '', 1);
 
 	$formconfirm = '';
 
@@ -2573,11 +2572,20 @@ if ($action == 'create' && $permissiontoadd) {
 		// Get list of products already sent for same source object into $alreadysent
 		$alreadysent = array();
 
+		$origin = (string) $origin;
 		if (empty($origin) || $origin == 'order_supplier') {
 			$origin = 'supplier_order';
 		}
 
+		// List of allowed value of $origin
+		if (!in_array($origin, array('supplier_proposal', 'supplier_order', 'commande_fournisseur', 'facture_fourn', 'propal', 'commande', 'facture'))) {
+			dol_print_error($db, 'Bad value for parameter origin in reception/card.php');
+			exit;
+		}
+
 		if ($origin_id > 0) {
+			$tablenametouse = (($origin == 'supplier_order') ? 'commande_fournisseur' : (($origin == 'facture_fourn') ? 'facture_fourn_' : $origin));
+
 			$sql = "SELECT obj.rowid, obj.fk_product, obj.label, obj.description, obj.product_type as fk_product_type, obj.qty as qty_asked, obj.date_start, obj.date_end";
 			$sql .= ", ed.rowid as receptionline_id, ed.qty, ed.fk_reception as reception_id,  ed.fk_entrepot";
 			$sql .= ", e.rowid as reception_id, e.ref as reception_ref, e.date_creation, e.date_valid, e.date_delivery, e.date_reception";
@@ -2585,7 +2593,7 @@ if ($action == 'create' && $permissiontoadd) {
 			$sql .= ', p.description as product_desc';
 			$sql .= " FROM ".MAIN_DB_PREFIX."receptiondet_batch as ed";
 			$sql .= ", ".MAIN_DB_PREFIX."reception as e";
-			$sql .= ", ".MAIN_DB_PREFIX.(($origin == 'supplier_order') ? 'commande_fournisseur' : $origin)."det as obj";
+			$sql .= ", ".MAIN_DB_PREFIX.$db->sanitize($tablenametouse)."det as obj";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON obj.fk_product = p.rowid";
 			$sql .= " WHERE e.entity IN (".getEntity('reception').")";
 			$sql .= " AND obj.fk_commande = ".((int) $origin_id);
@@ -2684,7 +2692,8 @@ if ($action == 'create' && $permissiontoadd) {
 			print '</td>';
 
 			// Qty in other receptions (with reception and warehouse used)
-			if ($origin && $origin_id > 0) {
+			// Note: here $origin is always a non-empty string (normalized above), so only $origin_id needs to be tested
+			if ($origin_id > 0) {
 				print '<td class="center nowrap linecolqtyinotherreceptions">';
 				$htmltooltip = '';
 				$qtyalreadyreceived = 0;
@@ -2701,13 +2710,25 @@ if ($action == 'create' && $permissiontoadd) {
 								if ($j > 1) {
 									$htmltooltip .= '<br>';
 								}
-								$reception_static->fetch($receptionline_var['reception_id']);
+								if (empty($conf->cache['reception'][$receptionline_var['reception_id']])) {
+									$reception_static = new Reception($db);
+									$reception_static->fetch($receptionline_var['reception_id']);
+									$conf->cache['reception'][$receptionline_var['reception_id']] = $reception_static;
+								} else {
+									$reception_static = $conf->cache['reception'][$receptionline_var['reception_id']];
+								}
 								$htmltooltip .= $reception_static->getNomUrl(1, 'nolink', 0, 0, 1);
 								$htmltooltip .= ' - '.$receptionline_var['qty'];
 
 								$htmltext = $langs->trans("DateValidation").' : '.(empty($receptionline_var['date_valid']) ? $langs->trans("Draft") : dol_print_date($receptionline_var['date_valid'], 'dayhour'));
 								if (isModEnabled('stock') && $receptionline_var['warehouse'] > 0) {
-									$warehousestatic->fetch($receptionline_var['warehouse']);
+									if (empty($conf->cache['warehouse'][$receptionline_var['warehouse']])) {
+										$warehousestatic = new Entrepot($db);
+										$warehousestatic->fetch($receptionline_var['warehouse']);
+										$conf->cache['warehouse'][$receptionline_var['warehouse']] = $warehousestatic;
+									} else {
+										$warehousestatic = $conf->cache['warehouse'][$receptionline_var['warehouse']];
+									}
 									$htmltext .= '<br>'.$langs->trans("From").' : '.$warehousestatic->getNomUrl(1, '', 0, 1);
 								}
 								$htmltooltip .= ' '.$form->textwithpicto('', $htmltext, 1);
@@ -2740,7 +2761,7 @@ if ($action == 'create' && $permissiontoadd) {
 							print '<td class="nowraponall left"><input name="batch'.$line_id.'" id="batch'.$line_id.'" type="text" value="'.$lines[$i]->batch.'"><br>';
 							if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
 								print $langs->trans('SellByDate').' : ';
-								print $form->selectDate($lines[$i]->sellby, 'dlc'.$line_id, 0, 0, 1, "").'</br>';
+								print $form->selectDate($lines[$i]->sellby, 'dlc'.$line_id, 0, 0, 1, "").'<br>';
 							}
 							if (!getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
 								print $langs->trans('EatByDate').' : ';
@@ -2920,7 +2941,7 @@ if ($action == 'create' && $permissiontoadd) {
 	 *    Button actions
 	 */
 
-	if (($user->socid == 0) && ($action != 'presend')) {
+	if (($user->socid == 0) && ($action != 'presend') && ($action != 'editline')) {
 		print '<div class="tabsAction">';
 
 		$parameters = array();

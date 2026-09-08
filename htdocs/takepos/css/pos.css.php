@@ -5,6 +5,7 @@
  * Copyright (C) 2011		Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2012		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2026       Jose Martinez           <jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -90,6 +91,18 @@ html,body {
 	right:0;
 	overflow-y:auto;
 	max-height:calc(100vh-50px);
+}
+
+/* Fix dropdown user-header layout missing .side-nav-vert context under TakePOS */
+.bodytakepos #topmenu-login-dropdown .dropdown-menu {
+	line-height: 1.3em;
+}
+
+.bodytakepos #topmenu-login-dropdown .dropdown-menu > .user-header {
+	min-height: 100px;
+	padding: 10px;
+	text-align: center;
+	white-space: normal;
 }
 
 .center {
@@ -448,6 +461,14 @@ div.paymentbordline
 	font-size: 6px;
 	padding-top:10px;
 	padding-bottom:10px;
+}
+
+/* When the categories column is hidden (TAKEPOS_HIDE_CATEGORIES), index.php gives the
+ * products area the centpercent class so it takes the whole row, but the generic
+ * .centpercent rule of the theme loses against .div5 above, which is loaded later:
+ * make the intent explicit. */
+.div5.centpercent {
+	width: 100%;
 }
 
 .div1, .div2, .div3, .div4, .div5 {
@@ -891,7 +912,8 @@ div#moreinfo, div#infowarehouse {
 		margin-left: 2px;
 	}
 
-	.div4 .wrapper.divempty, .div4 img, .div4 .wrapper:nth-last-child(1), .div4 .wrapper:nth-last-child(2), #prodiv22, #prodiv23, .catwatermark {
+	<?php $maxproductgrid = getDolGlobalInt('TAKEPOS_NB_MAXPRODUCT', 24); ?>
+	.div4 .wrapper.divempty, .div4 img, .div4 .wrapper:nth-last-child(1), .div4 .wrapper:nth-last-child(2), #prodiv<?php echo $maxproductgrid - 2; ?>, #prodiv<?php echo $maxproductgrid - 1; ?>, .catwatermark {
 		display: none!important;
 	}
 

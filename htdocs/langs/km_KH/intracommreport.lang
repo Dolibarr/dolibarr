@@ -1,3 +1,6 @@
+IntraCommReport=Intracomm report
+IntraCommReports=Intracomm reports
+
 Module68000Name = របាយការណ៍ Intracomm
 Module68000Desc = ការគ្រប់គ្រងរបាយការណ៍ Intracomm (គាំទ្រទម្រង់ DEB/DES បារាំង)
 IntracommReportSetup = ការដំឡើងម៉ូឌុល Intracommreport
@@ -32,3 +35,4 @@ IntracommReportTypeDeclaration=ប្រភេទនៃសេចក្តីប�
 IntracommReportDownload=ទាញយកឯកសារ XML
 # Invoice
 IntracommReportTransportMode=របៀបដឹកជញ្ជូន
+DeleteIntraCommReport=Delete IntraComm report

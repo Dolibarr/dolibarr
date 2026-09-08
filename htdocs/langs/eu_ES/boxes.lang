@@ -116,6 +116,7 @@ BoxLastCustomerShipments=Azken bezeroen bidalketak
 BoxTitleLastCustomerShipments=Azken %s aldatutako bezeroen bidalketak
 BoxTitleLastLeaveRequests=Azken %s aldatutako baimen eskaerak
 NoRecordedShipments=Ez da bezeroaren bidalketa erregistraturik
+NoUpcomingEvent=No upcoming events
 BoxCustomersOutstandingBillReached=Muga gainditu duten bezeroak
 BoxTitleLastFediverseInfos=Azken %s mezuak %s-tik
 BoxLastFediverseInfos=Fediverse-ren azken eguneraketak: Berriak eta joerak

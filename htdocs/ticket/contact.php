@@ -3,7 +3,7 @@
  * Copyright (C) 2011      Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2016      Christophe Battarel <christophe@altairis.fr>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -118,7 +118,7 @@ if ($action == 'addcontact' && $user->hasRight('ticket', 'write')) {
 			$internal_contacts = $object->listeContact(-1, 'internal', 0, 'SUPPORTTEC');
 			foreach ($internal_contacts as $key => $contact) {
 				if ($contact['id'] !== $contactid) {
-					//print "user à effacer : ".$useroriginassign;
+					//print "user to delete: ".$useroriginassign;
 					$result = $object->delete_contact($contact['rowid']);
 					if ($result < 0) {
 						$error++;

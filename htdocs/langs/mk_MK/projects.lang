@@ -258,7 +258,7 @@ OtherFilteredTasks=Други филтрирани задачи
 NoAssignedTasks=Не се пронајдени доделени задачи (доделете проект/задачи на тековниот корисник од горното поле за избор за да внесете време на него)
 ThirdPartyRequiredToGenerateIntervention=Мора да се дефинира трета страна на проектот за да може да се создаде интервенција.
 ThirdPartyRequiredToGenerateInvoice=Трето лице мора да биде дефинирано на проектот за да може да го фактурира.
-ChooseANotYetAssignedTask=Изберете задача што сè уште не ви е доделена
+ChooseANotYetAssignedTask=Tasks not yet assigned to you
 # Comments trans
 AllowCommentOnTask=Дозволете коментари на корисникот за задачите
 AllowCommentOnProject=Дозволете коментари на корисниците за проектите

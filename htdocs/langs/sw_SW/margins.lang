@@ -31,9 +31,9 @@ UseDiscountOnTotal=Kwa jumla ndogo
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Inafafanua ikiwa punguzo la kimataifa linachukuliwa kama bidhaa, huduma, au kwa jumla ndogo kwa hesabu ya ukingo.
 MARGIN_TYPE=Bei ya Kununua/Gharama iliyopendekezwa kwa chaguomsingi kwa ukokotoaji wa ukingo
 MargeType1=Margin kwa Bei bora ya muuzaji
-MargeType2=Pambizo kwenye Bei ya Wastani Iliyopimwa (WAP)
+MargeType2=Margin on Weighted Average Cost (WAC)
 MargeType3=Pembe kwenye Bei ya Gharama
-MarginTypeDesc=* Upeo wa bei bora ya kununua = Bei ya kuuza - Bei bora zaidi ya muuzaji imefafanuliwa kwenye kadi ya bidhaa <br> * Upeo wa Bei ya Wastani Iliyopimwa (WAP) = Bei ya kuuza - Bei ya Wastani Iliyopimwa Bidhaa (WAP) au bei bora zaidi ya mchuuzi ikiwa WAP bado haijafafanuliwa <br> * Kiwango cha bei ya Gharama = Bei ya kuuza - Bei ya gharama imefafanuliwa kwenye kadi ya bidhaa au WAP ikiwa bei ya gharama haijafafanuliwa, au bei bora ya muuzaji ikiwa WAP bado haijafafanuliwa.
+MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Cost (WAC) = Selling price - Product Weighted Average Price (WAP) or best vendor price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAC if cost price not defined, or best vendor price if WAC not yet defined
 CostPrice=Bei ya gharama
 UnitCharges=Gharama za kitengo
 Charges=Malipo

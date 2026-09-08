@@ -347,7 +347,7 @@ class Opensurveysondage extends CommonObject
 		$sql .= " t.sujet,";
 		$sql .= " t.tms";
 		$sql .= " FROM ".MAIN_DB_PREFIX."opensurvey_sondage as t";
-		$sql .= " WHERE t.id_sondage = '".$this->db->escape($id ? $id : $numsurvey)."'";
+		$sql .= " WHERE t.id_sondage = '".$this->db->escape($id ? ((int) $id) : $numsurvey)."'";
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);

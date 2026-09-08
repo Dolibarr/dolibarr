@@ -884,7 +884,7 @@ abstract class CommonInvoice extends CommonObject
 
 			include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
 			if (isALNERunningVersion()) {
-				$this->error = 'Action not allowed on the certified version';
+				$this->error = 'Action not allowed on a certified version (or candidate for certification)';
 				return -7;
 			}
 
@@ -957,7 +957,7 @@ abstract class CommonInvoice extends CommonObject
 
 				include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
 				if (isALNERunningVersion()) {
-					$this->error = 'Action not allowed on the certified version';
+					$this->error = 'Action not allowed on the certified version (or candidate for certification)';
 					return -7;
 				}
 			}
@@ -1408,7 +1408,7 @@ abstract class CommonInvoice extends CommonObject
 				$mois += 1;
 			}
 			// We move at the beginning of the next month, and we take a day off
-			$datelim = dol_mktime(12, 0, 0, $mois, 1, $annee);
+			$datelim = dol_mktime(12, 0, 0, $mois, 1, $annee, 'gmt');
 			$datelim -= (3600 * 24);
 
 			$datelim += ($cdr_decalage * 3600 * 24);
@@ -1417,8 +1417,8 @@ abstract class CommonInvoice extends CommonObject
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 			$datelim = $this->date + ($cdr_nbjour * 3600 * 24);
 
-			$date_piece = dol_mktime(0, 0, 0, (int) date('m', $datelim), (int) date('d', $datelim), (int) date('Y', $datelim)); // Sans les heures minutes et secondes
-			$date_lim_current = dol_mktime(0, 0, 0, (int) date('m', $datelim), (int) $cdr_decalage, (int) date('Y', $datelim)); // Sans les heures minutes et secondes
+			$date_piece = dol_mktime(0, 0, 0, (int) date('m', $datelim), (int) date('d', $datelim), (int) date('Y', $datelim), 'gmt'); // without hours, minutes and seconds
+			$date_lim_current = dol_mktime(0, 0, 0, (int) date('m', $datelim), (int) $cdr_decalage, (int) date('Y', $datelim), 'gmt'); // without hours, minutes and seconds
 			$date_lim_next = dol_time_plus_duree((int) $date_lim_current, 1, 'm'); // Add 1 month
 
 			$diff = $date_piece - $date_lim_current;
@@ -1834,6 +1834,7 @@ abstract class CommonInvoice extends CommonObject
 								dol_syslog("makeStripeSepaRequest Current Saved Stripe environment is ".$savstripearrayofkeysbyenv[$servicestatus]['publishable_key']);
 
 								$foundalternativestripeaccount = '';
+								$stripearrayofkeys = array();
 
 								// Force stripe to another value (by default this value is empty)
 								if (! empty($forcestripe)) {
@@ -2364,13 +2365,13 @@ abstract class CommonInvoice extends CommonObject
 		$complementaryinfo = '';
 		/*
 		 Example: //S1/10/10201409/11/190512/20/1400.000-53/30/106017086/31/180508/32/7.7/40/2:10;0:30
-		 /10/ Numéro de facture – 10201409
-		 /11/ Date de facture – 12.05.2019
-		 /20/ Référence client – 1400.000-53
-		 /30/ Numéro IDE pour la TVA – CHE-106.017.086 TVA
-		 /31/ Date de la prestation pour la comptabilisation de la TVA – 08.05.2018
-		 /32/ Taux de TVA sur le montant total de la facture – 7.7%
-		 /40/ Conditions – 2% d’escompte à 10 jours, paiement net à 30 jours
+		 /10/ Invoice number -- 10201409
+		 /11/ Invoice date -- 12.05.2019
+		 /20/ Customer reference -- 1400.000-53
+		 /30/ VAT IDE number -- CHE-106.017.086 TVA
+		 /31/ Service date for VAT accounting -- 08.05.2018
+		 /32/ VAT rate on total invoice amount -- 7.7%
+		 /40/ Terms -- 2% discount at 10 days, net payment at 30 days
 		 */
 		$datestring = dol_print_date($this->date, '%y%m%d');
 		//$pricewithtaxstring = price($this->total_ttc, 0, $tmplang, 0, -1, 2);
@@ -2391,7 +2392,7 @@ abstract class CommonInvoice extends CommonObject
 		$s .= "SPC\n";
 		$s .= "0200\n";
 		$s .= "1\n";
-		// Info Seller ("Compte / Payable à")
+		// Info Seller ("Account / Payable to")
 		if ($this->fk_account > 0) {
 			// Bank BAN if country is LI or CH.  TODO Add a test to check than IBAN start with CH or LI
 			$bankaccount->fetch($this->fk_account);
@@ -2420,7 +2421,7 @@ abstract class CommonInvoice extends CommonObject
 			$s .= dol_trunc($mysoc->town, 35, 'right', 'UTF-8', 1)."\n";
 			$s .= dol_trunc($mysoc->country_code, 2, 'right', 'UTF-8', 1)."\n";
 		}
-		// Final seller (Ultimate seller) ("Créancier final" = "En faveur de")
+		// Final seller (Ultimate seller) ("Final creditor" = "In favour of")
 		$s .= "\n";
 		$s .= "\n";
 		$s .= "\n";
@@ -2583,11 +2584,10 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 	public $remise_percent;
 
 	/**
-	 * Fixed discount
-	 * @var float
-	 * @deprecated
+	 * Id of source discount in table llx_societe_remise_except
+	 * @var ?int
 	 */
-	public $remise;
+	public $fk_remise_except;
 
 	/**
 	 * Total amount before taxes
@@ -2697,6 +2697,7 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 	 * @var float 		Situation advance percentage (default 100 for standard invoices)
 	 */
 	public $situation_percent = 100;
+
 
 	/**
 	 * Check if a line is a deposit line

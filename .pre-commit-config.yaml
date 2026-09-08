@@ -139,6 +139,7 @@ repos:
         language: script
         entry: ./dev/tools/phpstan/allow_phpstan_in_precommit.sh
         pass_filenames: true
+        files: \.(php)$
         stages: [pre-commit]
       - id: phan
         name: Run local Phan
@@ -275,7 +276,8 @@ repos:
     rev: 4.2.0
     hooks:
       - id: sqlfluff-lint
-        stages: [pre-commit, manual]  # manual needed for ci
+        #stages: [pre-commit, manual]  # manual needed for ci
+        stages: [manual]  # manual needed for ci
         exclude: (?x)^
           (dev/initdemo/mysqldump_.*\.sql
           |htdocs/core/menus/init_menu_auguria\.sql

@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - blockedlog
-OkCheckFingerprintValidity=El registro de registro archivado es válido. Los datos en esta línea no se modificaron y la entrada sigue a la anterior.
 ListOfTrackedEvents=Lista de eventos rastreados
 TooManyRecordToScanRestrictFilters=Demasiados registros para escanear / analizar. Por favor restringe la lista con filtros más restrictivos.
 logBILL_SENTBYMAIL=Factura del cliente enviar por correo

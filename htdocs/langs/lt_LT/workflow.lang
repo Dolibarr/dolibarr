@@ -1,26 +1,39 @@
 # Dolibarr language file - Source file is en_US - workflow
 WorkflowSetup=Workflow modulio nustatymas
-WorkflowDesc=This module provides some automatic actions. By default, the workflow is open (you can do things in the order you want) but here you can activate some automatic actions.
-ThereIsNoWorkflowToModify=There is no workflow modifications available with the activated modules.
+WorkflowDesc=Šis modulis teikia kai kuriuos automatinius veiksmus. Pagal numatytuosius nustatymus darbo eiga yra atidaryta (galite atlikti veiksmus norima tvarka), tačiau čia galite aktyvuoti kai kuriuos automatinius veiksmus.
+ThereIsNoWorkflowToModify=Su aktyvuotais moduliais darbo eigos modifikacijų nėra.
 # Autocreate
-descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Automatically create a sales order after a commercial proposal is signed (the new order will have same amount as the proposal)
-descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Automatically create a customer invoice after a commercial proposal is signed (the new invoice will have same amount as the proposal)
-descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Automatically create a customer invoice after a contract is validated
-descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Automatically create a customer invoice after a sales order is closed (the new invoice will have same amount as the order)
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Automatiškai sukurti pardavimo užsakymą, kai pasirašomas komercinis pasiūlymas (naujo užsakymo suma bus tokia pati kaip ir pasiūlyme)
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Automatiškai sukurti kliento sąskaitą faktūrą po komercinio pasiūlymo pasirašymo (naujoje sąskaitoje faktūroje bus tokia pati suma kaip ir pasiūlyme)
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Automatiškai sukurti kliento sąskaitą faktūrą patvirtinus sutartį
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Automatiškai sukurti kliento sąskaitą faktūrą uždarius pardavimo užsakymą (naujoje sąskaitoje faktūroje bus tokia pati suma kaip ir užsakyme)
+descWORKFLOW_TICKET_CREATE_INTERVENTION=Sukūrus bilietą, automatiškai sukurti intervenciją.
 # Autoclassify customer proposal or order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classify linked source proposal as billed when sales order is set to billed (and if the amount of the order is the same as the total amount of the signed linked proposal)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classify linked source proposal as billed when customer invoice is validated (and if the amount of the invoice is the same as the total amount of the signed linked proposal)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classify linked source sales order as billed when customer invoice is validated (and if the amount of the invoice is the same as the total amount of the linked order)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source sales order as billed when customer invoice is set to paid (and if the amount of the invoice is the same as the total amount of the linked order)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classify linked source sales order as shipped when a shipment is validated (and if the quantity shipped by all shipments is the same as in the order to update)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Classify linked source sales order as shipped when a shipment is closed (and if the quantity shipped by all shipments is the same as in the order to update)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Kai pardavimo užsakymas nustatomas kaip apmokestintas, susieto šaltinio pasiūlymus klasifikuoti kaip apmokestintus (ir jei užsakymo suma yra tokia pati kaip bendra pasirašytų susietų pasiūlymų suma)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Kai kliento sąskaita faktūra patvirtinama, susietus šaltinio pasiūlymus klasifikuoti kaip apmokestintus (ir jei sąskaitos faktūros suma yra tokia pati kaip bendra pasirašytų susietų pasiūlymų suma)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Kai kliento sąskaita faktūra nustatoma kaip apmokėta, susietus šaltinio pardavimo užsakymus klasifikuokite kaip apmokėtus (ir jei sąskaitos faktūros suma yra tokia pati kaip susietų pardavimo užsakymų suma). Jei sugeneruosite 1 sąskaitą faktūrą n užsakymų, visi užsakymai taip pat gali būti nustatyti kaip apmokėti.
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Patvirtinus kliento sąskaitą faktūrą, visus susietus šaltinio pardavimo užsakymus klasifikuokite kaip apmokestintus (ir jei sąskaitos faktūros suma yra tokia pati kaip bendra susietų šaltinio pardavimo užsakymų suma). Jei sugeneruosite 1 bendrą sąskaitą faktūrą n užsakymų, visi šaltinio užsakymai gali būti nustatyti kaip apmokestinti.
+descWORKFLOW_SUM_INVOICES_AMOUNT_CLASSIFY_BILLED_ORDER=Patvirtinus kliento sąskaitą faktūrą, susietą pardavimo užsakymą (jei toks yra) klasifikuokite kaip apmokėtą, jei bendra susieto pardavimo užsakymo suma yra lygi visų iš jo išrašytų sąskaitų faktūrų sumai. Jei sugeneruojate n sąskaitų faktūrų vienam užsakymui, tai leidžia nustatyti užsakymą kaip apmokėtą, kai tik visos sąskaitos faktūros bus patvirtintos.
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Kai siunta patvirtinama, susietus šaltinio pardavimo užsakymus klasifikuoti kaip išsiųstus (ir jei visų siuntų išsiųstas kiekis yra toks pat kaip atnaujinamame užsakyme)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Kai siunta uždaroma, susieto šaltinio pardavimo užsakymą klasifikuoti kaip išsiųstą (ir jei visų siuntų išsiųstas kiekis yra toks pat kaip atnaujintame užsakyme)
+# Autoclassify purchase proposal
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Kai tiekėjo sąskaita faktūra patvirtinama, susieto šaltinio tiekėjo pasiūlymą klasifikuoti kaip apmokestintą (ir jei sąskaitos faktūros suma yra tokia pati kaip bendra susietų pasiūlymų suma)
 # Autoclassify purchase order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Classify linked source vendor proposal as billed when vendor invoice is validated (and if the amount of the invoice is the same as the total amount of the linked proposal)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Classify linked source purchase order as billed when vendor invoice is validated (and if the amount of the invoice is the same as the total amount of the linked order)
-descWORKFLOW_BILL_ON_RECEPTION=Classify receptions to "billed" when a linked supplier order is validated
-# Autoclose intervention
-descWORKFLOW_TICKET_CLOSE_INTERVENTION=Close all interventions linked to the ticket when a ticket is closed
-AutomaticCreation=Automatic creation
-AutomaticClassification=Automatic classification
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Patvirtinus tiekėjo sąskaitą faktūrą, susietą šaltinio pirkimo užsakymą klasifikuoti kaip apmokėtą (ir jei sąskaitos faktūros suma yra tokia pati kaip bendra susietų užsakymų suma)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Kai priėmimas patvirtinamas, susieto šaltinio pirkimo užsakymą klasifikuoti kaip gautą (ir jei visų priėmimų metu gautas kiekis yra toks pat kaip pirkimo užsakyme, atnaujinti).
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Kai priėmimas užbaigiamas, susietus šaltinio pirkimo užsakymus klasifikuoti kaip gautus (ir jei visų iš pirkimo užsakymo išduotų priėmimų gautas kiekis yra toks pat kaip pirkimo užsakyme, atnaujinti).
 # Autoclassify shipment
-descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Classify linked source shipment as closed when customer invoice is validated
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Kai kliento sąskaita faktūra patvirtinama, susietą šaltinio siuntą klasifikuoti kaip uždarytą (ir jei sąskaitos faktūros suma yra tokia pati kaip bendra susietų siuntų suma)
+descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=Patvirtinus kliento sąskaitą faktūrą, susietą šaltinio siuntą klasifikuoti kaip apmokestintą (ir jei sąskaitos faktūros suma yra tokia pati kaip bendra susietų siuntų suma)
+# Autoclassify receptions
+descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=Patvirtinus pirkimo sąskaitą faktūrą, susietus šaltinio priėmimus klasifikuoti kaip uždarytus (ir jei sąskaitos faktūros suma yra tokia pati kaip bendra susietų priėmimų suma)
+descWORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE=Patvirtinus pirkimo sąskaitą faktūrą, susietus šaltinio priėmimus klasifikuoti kaip apmokestintus (ir jei sąskaitos faktūros suma yra tokia pati kaip bendra susietų priėmimų suma)
+# Automatically link ticket to contract
+descWORKFLOW_TICKET_LINK_CONTRACT=Sukūrus bilietą, susieti jį su turimomis sutartimis, atitinkančiomis tą pačią trečiąją šalį kaip ir bilietas.
+descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=Automatiškai susiejant bilietą su sutartimis, ieškoti sutarčių tarp patronuojančių įmonių sutarčių
+# Autoclose intervention
+descWORKFLOW_TICKET_CLOSE_INTERVENTION=Uždaryti visas su bilietu susijusias intervencijas, kai bilietas uždaromas
+AutomaticCreation=Automatinis kūrimas
+AutomaticClassification=Automatinis klasifikavimas
+AutomaticClosing=Automatinis uždarymas
+AutomaticLinking=Automatinis susiejimas

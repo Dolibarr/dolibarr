@@ -65,7 +65,7 @@ class WebPortalFicheinter extends Fichinter
 		'datee' => array('type' => 'date', 'label' => 'WebPortalInterDateEnd', 'enabled' => 1, 'visible' => 2, 'position' => 62),
 		'datet' => array('type' => 'date', 'label' => 'WebPortalInterDateClose', 'enabled' => 1, 'visible' => 2, 'position' => 63),
 		'description' => array('type' => 'text', 'label' => 'Description', 'enabled' => 1, 'visible' => 2, 'position' => 80),
-		'fk_statut' => array('type' => 'smallint(6)', 'label' => 'Status', 'enabled' => 1, 'visible' => 2, 'position' => 500, 'arrayofkeyval' => self::ARRAY_STATUS_LABEL),
+		'fk_statut' => array('type' => 'smallint(6)', 'label' => 'Status', 'enabled' => 1, 'visible' => 2, 'notnull' => 1, 'position' => 500, 'arrayofkeyval' => self::ARRAY_STATUS_LABEL),
 	);
 
 	/**

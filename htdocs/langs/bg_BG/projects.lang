@@ -258,7 +258,7 @@ OtherFilteredTasks=Други филтрирани задачи
 NoAssignedTasks=Не са намерени възложени задачи (възложете проект / задачи на текущия потребител от най-горното поле за избор, за да въведете времето в него)
 ThirdPartyRequiredToGenerateIntervention=Трета страна трябва да бъде дефинирана в проекта, за да може да се създаде интервенция.
 ThirdPartyRequiredToGenerateInvoice=Трябва да бъде определен контрагент по проекта, за да може да генерирате фактура.
-ChooseANotYetAssignedTask=Изберете задача, която все още не ви е възложена
+ChooseANotYetAssignedTask=Tasks not yet assigned to you
 # Comments trans
 AllowCommentOnTask=Разрешаване на потребителски коментари в задачите
 AllowCommentOnProject=Разрешаване на потребителски коментари в проектите

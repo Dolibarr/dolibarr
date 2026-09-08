@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
 * This file is an example to follow to add your own email selector inside
 * the Dolibarr email tool.
@@ -101,7 +101,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
 	 */
 	public function add_to_target($mailing_id)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		// phpcs:enable
 		$productid = GETPOSTINT('productid');
@@ -126,9 +126,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
 		$sql .= " AND s.rowid = c.fk_soc AND cd.fk_contrat = c.rowid AND s.email != ''";
 		$sql .= " AND cd.statut= 4 AND cd.fk_product = p.rowid AND p.rowid = ".((int) $productid);
 		$sql .= " AND cd.date_fin_validite < '".$this->db->idate($now)."'";
-		if (empty($this->evenunsubscribe)) {
-			$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = s.email and mu.entity = ".((int) $conf->entity).")";
-		}
+		$sql .= $this->getSqlToExcludeUnsubscribed('s.email');
 		$sql .= " ORDER BY s.email";
 
 		// Save target emails
@@ -202,8 +200,6 @@ class mailing_thirdparties_services_expired extends MailingTargets
 	 */
 	public function getNbOfRecipients($sql = '')
 	{
-		global $conf;
-
 		$now = dol_now();
 
 		// Example: return parent::getNbOfRecipients("SELECT count(*) as nb from dolibarr_table");
@@ -218,9 +214,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
 			$sql .= " AND p.fk_product_type = 1"; // By default, only services
 		}
 		$sql .= " AND cd.date_fin_validite < '".$this->db->idate($now)."'";
-		if (empty($this->evenunsubscribe)) {
-			$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = s.email and mu.entity = ".((int) $conf->entity).")";
-		}
+		$sql .= $this->getSqlToExcludeUnsubscribed('s.email');
 
 		$a = parent::getNbOfRecipients($sql);
 

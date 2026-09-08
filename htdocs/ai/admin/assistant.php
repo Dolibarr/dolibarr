@@ -21,7 +21,7 @@
  */
 
 /**
- * \file htdocs/ai/admin/server_mcp.php
+ * \file htdocs/ai/admin/assistant.php
  * \ingroup ai
  * \brief MCP Server & Assistant Configuration Page
  */

@@ -413,10 +413,10 @@ class Categorie extends CommonObject
 					$mapCode = $mapList['code'];
 					//self::$MAP_ID_TO_CODE[$mapId] = $mapCode;
 					$this->MAP_ID[$mapCode] = $mapId;
-					$this->MAP_CAT_FK[$mapCode] = isset($mapList['cat_fk']) ? $mapList['cat_fk'] : null;
-					$this->MAP_CAT_TABLE[$mapCode] = isset($mapList['cat_table']) ? $mapList['cat_table'] : null;
-					$this->MAP_OBJ_CLASS[$mapCode] = $mapList['obj_class'];
-					$this->MAP_OBJ_TABLE[$mapCode] = $mapList['obj_table'];
+					$this->MAP_CAT_FK[$mapCode] = isset($mapList['cat_fk']) ? $mapList['cat_fk'] : null;  // @phan-suppress-current-line SqlInjection
+					$this->MAP_CAT_TABLE[$mapCode] = isset($mapList['cat_table']) ? $mapList['cat_table'] : null;  // @phan-suppress-current-line SqlInjection
+					$this->MAP_OBJ_CLASS[$mapCode] = $mapList['obj_class'];  // @phan-suppress-current-line SqlInjection
+					$this->MAP_OBJ_TABLE[$mapCode] = $mapList['obj_table'];  // @phan-suppress-current-line SqlInjection
 					self::$MAP_TYPE_TITLE_AREA[$mapCode] = isset($mapList['label']) ? $mapList['label'] : null;
 				}
 			}
@@ -607,7 +607,7 @@ class Categorie extends CommonObject
 		$sql .= "'".$this->db->escape($this->color)."', ";
 		$sql .= (int) $this->position.",";
 		if (getDolGlobalString('CATEGORY_ASSIGNED_TO_A_CUSTOMER')) {
-			$sql .= ($this->socid > 0 ? $this->socid : 'null').", ";
+			$sql .= ($this->socid > 0 ? ((int) $this->socid) : 'null').", ";
 		}
 		$sql .= "'".$this->db->escape((string) $this->visible)."', ";
 		$sql .= ((int) $type).", ";
@@ -682,6 +682,13 @@ class Categorie extends CommonObject
 		$this->fk_parent = ($this->fk_parent != "" ? intval($this->fk_parent) : 0);
 		$this->visible = ($this->visible != "" ? intval($this->visible) : 0);
 
+		if ($this->fk_parent > 0 && $this->fk_parent == $this->id) {
+			$langs->load('categories');
+			$this->error = $langs->trans("ErrorCategoryCannotBeItsOwnParent");
+			dol_syslog($this->error, LOG_WARNING);
+			return -1;
+		}
+
 		if ($this->already_exists()) {
 			$this->error = $langs->trans("ImpossibleUpdateCat");
 			$this->error .= " : ".$langs->trans("CategoryExistsAtSameLevel");
@@ -697,7 +704,7 @@ class Categorie extends CommonObject
 		$sql .= " color = '".$this->db->escape($this->color)."'";
 		$sql .= ", position = ".(int) $this->position;
 		if (getDolGlobalString('CATEGORY_ASSIGNED_TO_A_CUSTOMER')) {
-			$sql .= ", fk_soc = ".($this->socid > 0 ? $this->socid : 'null');
+			$sql .= ", fk_soc = ".($this->socid > 0 ? ((int) $this->socid) : 'null');
 		}
 		$sql .= ", visible = ".(int) $this->visible;
 		$sql .= ", fk_parent = ".(int) $this->fk_parent;
@@ -810,7 +817,7 @@ class Categorie extends CommonObject
 				if (empty($value['enabled'])) {
 					continue;
 				}
-				$sanitizedvalue = $value['field'];
+				$sanitizedvalue = $value['field'];  // From explicit array above @phan-suppress-current-line SqlInjection
 			}
 
 			$sql  = "DELETE FROM ".$this->db->sanitize(MAIN_DB_PREFIX.$key);
@@ -1044,6 +1051,15 @@ class Categorie extends CommonObject
 				$sql .= " AND o.rowid = ".((int) $user->socid);
 			}
 
+			// Add where from hooks (for example to restrict to objects an external module shares
+			// with the current entity by a granularity finer than this category's own)
+			global $hookmanager;
+			if (is_object($hookmanager)) {
+				$parameters = array('type' => $type, 'alias' => 'o');
+				$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $this);
+				$sql .= $hookmanager->resPrint;
+			}
+
 			$errormessage = '';
 			$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
 			if ($errormessage) {
@@ -1065,11 +1081,11 @@ class Categorie extends CommonObject
 					if ($onlyids) {
 						$objs[] = $rec['fk_object'];
 					} else {
-						$tmpobj->id = 0;
-						$tmpobj->fetch($rec['fk_object']);	// The fetch will erase $tmpobj->id only if it succeed.
+						$tmpobj = new $classnameforobj($this->db);
+						$tmpobj->fetch($rec['fk_object']);	// The fetch will set $tmpobj->id only if it succeed.
 						// @phpstan-ignore-next-line
 						if ($tmpobj->id > 0) {		// Failing fetch may happen for example when a category supplier was set and third party was moved as customer only. The object supplier can't be loaded.
-							$objs[] = clone $tmpobj;
+							$objs[] = $tmpobj;
 						}
 					}
 				}
@@ -1342,7 +1358,7 @@ class Categorie extends CommonObject
 
 		// Init $this->cats array
 		// Note: The DISTINCT reduces pb with old tables with duplicates but should not be used
-		$sql = "SELECT DISTINCT c.rowid, c.label, c.ref_ext, c.description, c.color, c.position, c.fk_parent, c.visible";
+		$sql = "SELECT DISTINCT c.rowid, c.label, c.ref_ext, c.description, c.color, c.position, c.fk_parent, c.visible, c.entity";
 		if (getDolGlobalInt('MAIN_MULTILANGS') && $current_lang !== 'none') {
 			$sql .= ", t.label as label_trans, t.description as description_trans";
 		}
@@ -1372,6 +1388,7 @@ class Categorie extends CommonObject
 						'position' => (string) $obj->position,
 						'visible' => (int) $obj->visible,
 						'ref_ext' => (string) $obj->ref_ext,
+						'entity' => (int) $obj->entity,
 						'picto' => 'category',
 						// fields are filled with buildPathFromId later
 						'fullpath' => '',
@@ -1383,6 +1400,17 @@ class Categorie extends CommonObject
 		} else {
 			dol_print_error($this->db);
 			return -1;
+		}
+
+		// Let external modules complete or filter the tree (for example to restrict categories
+		// coming from other entities according to a sharing granularity they manage)
+		global $hookmanager;
+		if (is_object($hookmanager)) {
+			$parameters = array('cats' => &$this->cats, 'motherof' => &$this->motherof, 'type' => $type);
+			$reshook = $hookmanager->executeHooks('completeCategoryFullTree', $parameters, $this);
+			if ($reshook < 0) {
+				setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+			}
 		}
 
 		// We add the fullpath property to each elements of first level (no parent exists)

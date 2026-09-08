@@ -407,7 +407,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 		$message_admin .= '<p>'.$langs->trans('Message').' : <br><br>'.$message.'</p><br>';
 		$message_admin .= '<p><a href="'.dol_buildpath('/ticket/card.php', 2).'?track_id='.$object->track_id.'">'.$langs->trans('SeeThisTicketIntomanagementInterface').'</a></p>';
 
-		$from = (getDolGlobalString('MAIN_INFO_SOCIETE_NOM') ? getDolGlobalString('MAIN_INFO_SOCIETE_NOM') . ' ' : '') . '<' . getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM').'>';
+		$email_from = (getDolGlobalString('MAIN_INFO_SOCIETE_NOM') ? getDolGlobalString('MAIN_INFO_SOCIETE_NOM') . ' ' : '') . '<' . getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM').'>';
 
 		$trackid = 'tic'.$object->id;
 
@@ -417,7 +417,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 			$conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
 		}
 		include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-		$mailfile = new CMailFile($subject, $sendto, $from, $message_admin, $filepaths, $mimetypes, $filenames, '', '', 0, -1, '', '', $trackid, '', 'ticket');
+		$mailfile = new CMailFile($subject, $sendto, $email_from, $message_admin, $filepaths, $mimetypes, $filenames, '', '', 0, -1, '', '', $trackid, '', 'ticket');
 		if ($mailfile->error) {
 			dol_syslog($mailfile->error, LOG_DEBUG);
 		} else {
@@ -497,7 +497,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 			$message_customer .= '<p>'.$langs->trans('TicketEmailPleaseDoNotReplyToThisEmailNoInterface').'</p>';
 		}
 
-		$from = (getDolGlobalString('MAIN_INFO_SOCIETE_NOM') ? getDolGlobalString('MAIN_INFO_SOCIETE_NOM') . ' ' : '').'<' . getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM').'>';
+		$email_from = (getDolGlobalString('MAIN_INFO_SOCIETE_NOM') ? getDolGlobalString('MAIN_INFO_SOCIETE_NOM') . ' ' : '').'<' . getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM').'>';
 
 		$trackid = 'tic'.$object->id;
 
@@ -508,7 +508,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 		}
 
 		include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-		$mailfile = new CMailFile($subject, $sendto, $from, $message_customer, $filepaths, $mimetypes, $filenames, '', '', 0, -1, '', '', $trackid, '', 'ticket');
+		$mailfile = new CMailFile($subject, $sendto, $email_from, $message_customer, $filepaths, $mimetypes, $filenames, '', '', 0, -1, '', '', $trackid, '', 'ticket');
 		if ($mailfile->error) {
 			dol_syslog($mailfile->error, LOG_DEBUG);
 		} else {
@@ -563,7 +563,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 		$message .= '<p>'.$langs->trans('Message').' : <br>'.$object->message.'</p>';
 		$message .= '<p><a href="'.dol_buildpath('/ticket/card.php', 2).'?track_id='.$object->track_id.'">'.$langs->trans($see_ticket).'</a></p>';
 
-		$from = dolGetFirstLastname($user->firstname, $user->lastname).'<'.$user->email.'>';
+		$email_from = dolGetFirstLastname($user->firstname, $user->lastname).'<'.$user->email.'>';
 
 		$message = dol_nl2br($message);
 
@@ -574,7 +574,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 		}
 
 		include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-		$mailfile = new CMailFile($subject, $sendto, $from, $message, $filepaths, $mimetypes, $filenames, '', '', 0, -1);
+		$mailfile = new CMailFile($subject, $sendto, $email_from, $message, $filepaths, $mimetypes, $filenames, '', '', 0, -1);
 		if ($mailfile->error) {
 			setEventMessages($mailfile->error, $mailfile->errors, 'errors');
 		} else {

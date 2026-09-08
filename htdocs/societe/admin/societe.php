@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2012  Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2024-2025  MDW                     <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW                     <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022-2026  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  *
@@ -161,7 +161,7 @@ if ($action == 'setdoc') {
 
 	dolibarr_set_const($db, "COMPANY_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity);
 
-	// On active le modele
+	// Enable the model
 	$type = 'company';
 	$ret = delDocumentModel(GETPOST('value', 'alpha'), $type);
 	if ($ret > 0) {
@@ -379,8 +379,8 @@ foreach ($dirsociete as $dirroot) {
 	if (is_resource($handle)) {
 		// Loop on each module find in opened directory
 		while (($file = readdir($handle)) !== false) {
-			if (substr($file, 0, 15) == 'mod_codeclient_' && substr($file, -3) == 'php') {
-				$file = substr($file, 0, dol_strlen($file) - 4);
+			if (dol_substr($file, 0, 15) == 'mod_codeclient_' && dol_substr($file, -3) == 'php') {
+				$file = dol_substr($file, 0, dol_strlen($file) - 4);
 
 				try {
 					dol_include_once($dirroot.$file.'.php');
@@ -468,8 +468,8 @@ foreach ($dirsociete as $dirroot) {
 	$handle = @opendir($dir);
 	if (is_resource($handle)) {
 		while (($file = readdir($handle)) !== false) {
-			if (substr($file, 0, 15) == 'mod_codecompta_' && substr($file, -3) == 'php') {
-				$file = substr($file, 0, dol_strlen($file) - 4);
+			if (dol_substr($file, 0, 15) == 'mod_codecompta_' && dol_substr($file, -3) == 'php') {
+				$file = dol_substr($file, 0, dol_strlen($file) - 4);
 
 				try {
 					dol_include_once($dirroot.$file.'.php');
@@ -529,7 +529,7 @@ $def = array();
 $sql = "SELECT nom";
 $sql .= " FROM ".MAIN_DB_PREFIX."document_model";
 $sql .= " WHERE type = 'company'";
-$sql .= " AND entity = ".$conf->entity;
+$sql .= " AND entity = ".((int) $conf->entity);
 $resql = $db->query($sql);
 if ($resql) {
 	$i = 0;
@@ -562,8 +562,8 @@ foreach ($dirsociete as $dirroot) {
 	if (is_resource($handle)) {
 		while (($file = readdir($handle)) !== false) {
 			if (preg_match('/\.modules\.php$/i', $file)) {
-				$name = substr($file, 4, dol_strlen($file) - 16);
-				$classname = substr($file, 0, dol_strlen($file) - 12);
+				$name = dol_substr($file, 4, dol_strlen($file) - 16);
+				$classname = dol_substr($file, 0, dol_strlen($file) - 12);
 
 				try {
 					dol_include_once($dirroot.'doc/'.$file);
@@ -813,7 +813,7 @@ print "<td>".$langs->trans("Parameters")."</td>\n";
 print '<td class="right" width="60"></td>'."\n";
 print '<td width="80">&nbsp;</td></tr>'."\n";
 
-// Utilisation formulaire Ajax sur choix societe
+// Use of Ajax form for thirdparty selection
 
 print '<tr class="oddeven">';
 print '<td width="80%">'.$form->textwithpicto($langs->trans("DelaiedFullListToSelectCompany"), $langs->trans('UseSearchToSelectCompanyTooltip'), 1).' </td>';
@@ -947,7 +947,7 @@ print '</a></td>';
 print '</tr>';
 
 if (!getDolGlobalString('SOCIETE_DISABLE_PROSPECTSCUSTOMERS')) {
-	// Default Prospect/Customer thirdparty type on customer création
+	// Default Prospect/Customer thirdparty type on customer creation
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("DefaultCustomerType", $langs->transnoentitiesnoconv("MenuNewThirdParty"), $langs->transnoentitiesnoconv("MenuNewCustomer")).'</td>';
 	print '<td>';

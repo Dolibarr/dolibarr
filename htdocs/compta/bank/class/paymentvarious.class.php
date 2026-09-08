@@ -261,7 +261,7 @@ class PaymentVarious extends CommonObject
 		$sql .= " accountancy_code='".$this->db->escape($this->accountancy_code)."',";
 		$sql .= " subledger_account='".$this->db->escape($this->subledger_account)."',";
 		$sql .= " fk_projet='".$this->db->escape((string) $this->fk_project)."',";
-		$sql .= " fk_bank=".($this->fk_bank > 0 ? $this->fk_bank : "null").",";
+		$sql .= " fk_bank=".($this->fk_bank > 0 ? ((int) $this->fk_bank) : "null").",";
 		$sql .= " fk_user_author=".(int) $this->fk_user_author.",";
 		$sql .= " fk_user_modif=".(int) $this->fk_user_modif;
 		$sql .= " WHERE rowid=".((int) $this->id);

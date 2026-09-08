@@ -258,7 +258,7 @@ OtherFilteredTasks=Andere gefilterte Aufgaben
 NoAssignedTasks=Keine zugewiesenen Aufgaben gefunden (dem aktuellen Benutzer über das obere Auswahlfeld Projekt / Aufgaben zuweisen, um die Zeit einzugeben)
 ThirdPartyRequiredToGenerateIntervention=Ein Geschäftspartner muss für das Projekt definiert werden, um einen Serviceauftrag erstellen zu können.
 ThirdPartyRequiredToGenerateInvoice=Für das Projekt muss ein Geschäftspartner definiert werden, um es in Rechnung stellen zu können.
-ChooseANotYetAssignedTask=Wählen Sie eine Aufgabe, die Ihnen noch nicht zugewiesen ist
+ChooseANotYetAssignedTask=Ihnen noch nicht zugewiesene Aufgaben
 # Comments trans
 AllowCommentOnTask=Alle Benutzerkommentare zur Aufgabe
 AllowCommentOnProject=Benutzer dürfen Projekte kommentieren

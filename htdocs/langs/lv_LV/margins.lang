@@ -31,9 +31,9 @@ UseDiscountOnTotal=Par starpsummu
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Nosaka, ja globālā atlaide tiek uzskatīts par produktu, pakalpojumu, vai tikai starpsumma starpības aprēķinu.
 MARGIN_TYPE=Buying/Cost price suggested by default for margin calculation
 MargeType1=Marža par labāko pārdevēja cenu
-MargeType2=Margin on Weighted Average Price (WAP)
+MargeType2=Margin on Weighted Average Cost (WAC)
 MargeType3=Ienesīguma cena
-MarginTypeDesc=* Marža par labāko iepirkuma cenu = Pārdošanas cena - Labākā pārdevēja cena, kas noteikta uz produkta kartes <br> * Maržināmais vidējais cena (WAP) = Pārdošanas cena - Produkta vidējā cena (WAP) vai labākā pārdevēja cena, ja WAP vēl nav definēts < br> * Marža par izmaksām = Pārdošanas cena - Izmaksas, kas noteiktas uz produkta kartes vai WAP, ja nav noteikta izmaksu cena vai labākā pārdevēja cena, ja WAP vēl nav definēts
+MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Cost (WAC) = Selling price - Product Weighted Average Price (WAP) or best vendor price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAC if cost price not defined, or best vendor price if WAC not yet defined
 CostPrice=Pašizmaksa
 UnitCharges=Vienības izmaksas
 Charges=Maksas

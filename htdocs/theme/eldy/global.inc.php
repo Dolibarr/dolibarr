@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2024	Laurent Destailleur			<eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Marc de Lima Lucio			<marc-dll@user.noreply.github.com>
  *
@@ -208,7 +208,7 @@ $borderradius = getDolGlobalString('THEME_ELDY_USEBORDERONTABLE') ? getDolGlobal
 	--colortextbacktab: #<?php print $colortextbacktab; ?>;
 	--colorboxiconbg: #eee;
 	--refidnocolor:#444;
-	--tableforfieldcolor:#888;
+	--tableforfieldcolor:#666;
 	--amountremaintopaycolor:#880000;
 	--amountpaymentcomplete:#008855;
 	--amountremaintopaybackcolor:none;
@@ -218,6 +218,7 @@ $borderradius = getDolGlobalString('THEME_ELDY_USEBORDERONTABLE') ? getDolGlobal
 	--tablevalidbgcolor: rgb(252, 248, 227);
 	--colorblack: #000;
 	--colorwhite: #fff;
+	--colorwhitelight: #eee;
 	--heightrow: <?php print $heightrow; ?>;
 }
 
@@ -274,6 +275,7 @@ if (getDolGlobalInt('THEME_DARKMODEENABLED')) {
 				--tablevalidbgcolor: rgb(80, 64, 33);
 				--colorblack: #fff;
 				--colorwhite: #000;
+				--colorwhitelight: #333;
 	      }
 
 		body, button {
@@ -394,11 +396,11 @@ span.massactionselect, input.inputsearch_dropdownselectedfields {
 	border: none;
 	border-style: solid;
 	border<?php echo getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '' : '-bottom'; ?>-width: 1px !important;
-	border-color: var(<?php echo getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '--colorbacktitle1' : '--inputbordercolor'; ?>) !important;
+	border-color: var(<?php echo (getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') && getDolGlobalString('THEME_ELDY_BACKTITLE1') != '255,255,255') ? '--colorbacktitle1' : '--inputbordercolor'; ?>) !important;
 }
 
 .divadvancedsearchfieldcompinput,
-div.tabBar input:not(.pageplusone), div.tabBar input.flat:not(.pageplusone), div.tabBar textarea, div.tabBar textarea.flat, div.tabBar form.flat select, div.tabBar select, div.tabBar select.flat, div.tabBar .dataTables_length label select
+div.tabBar input:not(.pageplusone), div.tabBar input.flat:not(.pageplusone), div.tabBar textarea:not(.cke_source), div.tabBar textarea.flat, div.tabBar form.flat select, div.tabBar select, div.tabBar select.flat, div.tabBar .dataTables_length label select
 {
 	border<?php echo getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '' : '-bottom'; ?>: solid 1px var(--inputbordercolor);
 	<?php if (getDolGlobalString('THEME_ADD_BACKGROUND_ON_INPUT')) { ?>
@@ -517,6 +519,7 @@ section.setupsection {
 	padding: 20px !important;
 	background-color: var(--colorbackgrey);
 	border-radius: 5px;
+	box-shadow: 0 0 4px rgb(0, 0, 0, 0.18);
 }
 section.setupsection:hover {
 	box-shadow: 0 0 5px #aaa;
@@ -913,7 +916,7 @@ input#onlinepaymenturl, input#directdownloadlink {
 	/* background: #f3f3f3; */
 
 	padding: 20px 20px 20px 20px;
-	border-radius: 8px;
+	border-radius: 5px;
 }
 .formborder {
 	border: solid 2px #444;
@@ -937,6 +940,7 @@ table.tableforfield .buttonDelete:not(.bordertransp):not(.buttonpayment) {
 }
 
 .button:not(.bordertransp):not(.buttonpayment),
+.buttonCancel:not(.bordertransp):not(.buttonpayment),
 .buttonDelete:not(.bordertransp):not(.buttonpayment) {
 	margin-bottom: 3px;
 	margin-top: 3px;
@@ -978,12 +982,6 @@ table.tableforfield .buttonDelete:not(.bordertransp):not(.buttonpayment) {
 	box-shadow: none;
 	cursor: auto;
 	text-decoration: none;
-}
-.buttonRefused {
-	pointer-events: none;
-	   cursor: default;
-	opacity: 0.4;
-	box-shadow: none;
 }
 .button_search, .button_removefilter {
 	border: unset;
@@ -2680,8 +2678,8 @@ td.showDragHandle {
 <?php } else { ?>
 	display: table-cell;
 <?php } ?>
-	border-<?php echo $right; ?>: 1px solid #ECECEC;
-	border-bottom: 1px solid #ECECEC;
+	border-<?php echo $right; ?>: 1px solid #F0F0F0;
+	border-bottom: 1px solid #F0F0F0;
 	box-shadow: 3px 0 6px -2px #eee;
 	background: var(--colorbackvmenu1);
 	transition: left 0.5s ease;
@@ -3073,12 +3071,12 @@ a.pictosubstatus:hover {
 }
 .pictofixedwidth {
 	text-align: start;
-	width: 22px;	/* Do not use em unit here */
+	width: 22px;	/* Do not use em unit here, it varies on font size */
 	/* padding-right: 0; */
 }
 img.pictofixedwidth {
-	width: 16px;	/* Do not use em unit here */
-	padding-right: 6px;		/* width of img + padding-right must be equal to width of .pictofixedwidth */
+	width: 16px;	/* Do not use em unit here, it varies on font size */
+	padding-right: 6px;		/* img width + img padding-right must be equal to width of .pictofixedwidth */
 	margin-right: 4px;
 }
 
@@ -3661,8 +3659,8 @@ if (getDolGlobalString('MAIN_LOGIN_BACKGROUND')) {
 }
 .login_table #tdpasswordlogin #togglepassword {
 	position: absolute;
-	top: 0.8em;
-	right: 11px;
+	top: 1.1em;
+	right: 20px;
 	background: none;
 	border: none;
 	opacity: 0.3;
@@ -4672,6 +4670,7 @@ table.nointerlines tr:not(:last-child) td {
 /* Management of border radius */
 table.noborder:not(.cal_month, .paymenttable) {
 	border-radius: <?php echo $borderradius; ?>px;
+	/* overflow: hidden; */ /* Firefox does not clip cell backgrounds to the table border-radius without this */
 }
 table.noborder.cal_month {
 	border-bottom-left-radius: <?php echo $borderradius; ?>px;
@@ -4713,6 +4712,7 @@ table.liste:not(.listwithfilterbefore) {
 table.liste {
 	border-bottom-left-radius: <?php echo $borderradius; ?>px;
 	border-bottom-right-radius: <?php echo $borderradius; ?>px;
+	/* overflow: hidden; */ /* Firefox does not clip cell backgrounds to the table border-radius without this */
 }
 table.liste:not(.listwithfilterbefore) tr.liste_titre_filter:first-child td:first-child,
 table.liste:not(.listwithfilterbefore) tr.liste_titre_filter:first-child th:first-child {
@@ -5041,7 +5041,8 @@ table.hidepaginationnext .paginationnext {
 
 
 /* Set the color for hover lines */
-.oddeven:hover:not(.nohover), .evenodd:hover:not(.nohover), .oddevenimport:hover:not(.nohover), .evenoddimport:hover:not(.nohover), .impair:hover:not(.nohover), .pair:hover:not(.nohover) {
+table.liste .oddeven:hover:not(.nohover), table.liste .evenodd:hover:not(.nohover), table.liste .oddevenimport:hover:not(.nohover), table.liste .evenoddimport:hover:not(.nohover),
+table.liste .impair:hover:not(.nohover), table.liste .pair:hover:not(.nohover) {
 	background: var(--colorbacklinepairhover) !important;		/* Must be background to be stronger than background of odd or even */
 }
 
@@ -5189,7 +5190,6 @@ tr.liste_titre th, tr.liste_titre td, th.liste_titre
 	border-bottom: 1px solid var(--colortopbordertitle1);
 }
 tr.liste_titre:first-child th, tr:first-child th.liste_titre {
-/*    border-bottom: 1px solid #ddd ! important; */
 	border-bottom: unset;
 }
 tr.liste_titre th, th.liste_titre, tr.liste_titre td, td.liste_titre, form.liste_titre div
@@ -5218,10 +5218,15 @@ tr.liste_titre_topborder td {
 .liste_titre td a.notasortlink:hover {
 	background: transparent;
 }
-tr.liste_titre:last-child th.liste_titre, tr.liste_titre:last-child th.liste_titre_sel, tr.liste_titre td.liste_titre, tr.liste_titre td.liste_titre_sel, form.liste_titre div.tagtd {				/* For last line of table headers only */
-	/* border-bottom: 1px solid #ddd; */
+
+/* For last line of table headers with no thead only */
+table > tr.liste_titre:last-child th.liste_titre, table > tr.liste_titre:last-child th.liste_titre_sel, table > tr.liste_titre td.liste_titre, table > tr.liste_titre td.liste_titre_sel,
+table > tbody > tr.liste_titre:last-child th.liste_titre, table > tbody > tr.liste_titre:last-child th.liste_titre_sel, table > tbody > tr.liste_titre td.liste_titre, table > tbody > tr.liste_titre td.liste_titre_sel,
+form.liste_titre div.tagtd {
 	border-bottom: unset;
 }
+
+
 
 div.liste_titre {
 	padding-left: 3px;
@@ -5258,7 +5263,7 @@ tr.liste_sub_total, tr.liste_sub_total td {
 	border-bottom: 1px solid #aaa;
 }
 /* to avoid too much border on contract card */
-.tableforservicepart1 .impair, .tableforservicepart1 .pair, .tableforservicepart2 .impair, .tableforservicepart2 .pair {
+.tableforservicepart1 .impair, .tableforservicepart1 .pair, .tableforservicepart1 .oddeven, .tableforservicepart2 .impair, .tableforservicepart2 .pair, .tableforservicepart2 .oddeven {
 	background: #FFF;
 }
 .tableforservicepart1 tbody tr td, .tableforservicepart2 tbody tr td {
@@ -5956,8 +5961,6 @@ table.table-fiche-title tr.toptitle, table.table-fiche-title tr.toptitle {
 div.titre {
 	font-size: 1.1em;
 	text-decoration: none;
-	/* padding-top: 5px;
-	padding-bottom: 5px; */
 	font-weight: 400;
 }
 div.titre.small {
@@ -5969,7 +5972,7 @@ div.fiche > table.table-fiche-title:first-of-type div, div.fiche > form > table.
 div.fiche > table.table-fiche-title:first-of-type div {
 	color: var(--colortexttitlenotab);
 }
-div.titre {
+div.titre, tr.liste_titre .print-barre-liste {
 	color: var(--colortexttitlenotab);
 }
 
@@ -6021,6 +6024,9 @@ div.backgreypublicpayment {
 	color: #222;
 	opacity: 0.3;
 }
+a.poweredbyhref {
+	text-decoration: none;
+}
 
 #dolpublictable {
 	min-width: 300px; font-size: 16px;
@@ -6036,7 +6042,7 @@ div.backgreypublicpayment {
 	width: 100%;
 	padding: 20px;
 	margin-bottom: 25px;
-	border-radius: 4px;
+	border-radius: 10px;
 }
 #tablepublicpayment .CTableRow1  { background-color: #F0F0F0 !important; }
 #tablepublicpayment tr.liste_total { border-bottom: 1px solid #CCCCCC !important; }
@@ -6246,7 +6252,7 @@ div.ui-tooltip.mytooltip {
 	border-radius: 4px;
 	margin: 2px;
 	font-stretch: condensed;
-	box-shadow:        0.5px 0.5px 4px 0px rgba(0, 0, 0, 0.5);
+	box-shadow: 0 0 12px rgba(0, 0, 0, 0.25);
 	filter: progid:DXImageTransform.Microsoft.Shadow(color=#656565, Direction=134, Strength=5);
 	background: var(--tooltipbgcolor) !important;
 	color: var(--tooltipfontcolor);
@@ -6594,11 +6600,11 @@ table.cal_month.cal_peruser td { padding-left: 0 !important; padding-right: 0 !i
 .cal_current_month { border-top: 0; border-left: solid 1px #E8E8E8; border-right: 0; border-bottom: solid 1px #E8E8E8; }
 .cal_current_month_peruserleft { border-top: 0; border-left: solid 2px #6C7C7B; border-right: 0; border-bottom: solid 1px #E8E8E8; }
 .cal_current_month_oneday { border-right: solid 1px #E8E8E8; }
-.cal_other_month   { border-top: 0; border-left: solid 1px #C0C0C0; border-right: 0; border-bottom: solid 1px #C0C0C0; }
+.cal_other_month   { border-top: 0; border-left: solid 1px #E8E8E8; border-right: 0; border-bottom: solid 1px #C0C0C0; }
 .cal_other_month_peruserleft { border-top: 0; border-left: solid 2px #6C7C7B !important; border-right: 0; }
 .cal_current_month_right { border-right: solid 1px #E8E8E8; }
 .cal_other_month_right   { border-right: solid 1px #C0C0C0; }
-.cal_other_month   { /* opacity: 0.6; */ background: #FAFAFA; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
+.cal_other_month   { /* opacity: 0.6; */ background: #FCFCFC; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_past_month    { /* opacity: 0.6; */ background: #EEEEEE; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_current_month { background: #FFFFFF; border-left: solid 1px #E8E8E8; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_current_month_peruserleft { background: #FFFFFF; border-left: solid 2px #6C7C7B; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
@@ -6614,6 +6620,7 @@ table.cal_month.cal_peruser td { padding-left: 0 !important; padding-right: 0 !i
 	background: -moz-linear-gradient(bottom, var(--colorbacklinepair2) 85%, var(--colorbacklinepair2) 100%);
 	background: -webkit-linear-gradient(bottom, var(--colorbacklinepair2) 85%, var(--colorbacklinepair2) 100%);
 }
+.cal_showmore      { opacity: 0.5 }
 .peruser_busy      { }
 .peruser_notbusy   { opacity: 0.5; }
 div.event { margin-left: 8px; margin-right: 8px; margin-bottom: 8px; margin-top: 4px; border-radius: 4px; box-shadow: 2px 2px 5px rgba(100, 100, 100, 0.2); }
@@ -7102,6 +7109,20 @@ button.tox-tbtn.tox-tbtn--select.tox-tbtn--bespoke[data-mce-name="fontsize"] {
 }
 .mce-content-body p {
 	margin: unset;
+}
+.tox .tox-button:hover:not(:disabled, .tox-button--secondary, .tox-button--naked) {
+	background-color: var(--butactionbg) !important;
+	border-color: var(--butactionbg) !important;
+}
+.tox .tox-button:not(.tox-button--secondary, .tox-button--naked) {
+	background-color: var(--butactionbg) !important;
+	border-color: var(--butactionbg) !important;
+}
+.tox .tox-custom-editor:focus-within, .tox .tox-listboxfield .tox-listbox--select:focus, .tox .tox-textarea-wrap:focus-within, .tox .tox-textarea:focus, .tox .tox-textfield:focus {
+	background-color: #fff;
+	border-color: var(--butactionbg) !important;
+	box-shadow: 0 0 0 1px var(--butactionbg) !important;
+	outline: 0;
 }
 
 
@@ -7743,7 +7764,7 @@ li.select2-selection__choice {
 }
 .liste_titre .select2-container--default .select2-selection--single:not(.selectwidget),
 .liste_titre .select2-container--default .select2-selection--multiple {
-	border<?php echo getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '' : '-bottom'; ?>: solid 1px var(--colorbacktitle1);
+	border<?php echo getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '' : '-bottom'; ?>: solid 1px var(<?php echo (getDolGlobalString('THEME_ELDY_BACKTITLE1') != '255,255,255') ? '--colorbacktitle1' : '--inputbordercolor' ?>);
 }
 
 
@@ -7814,12 +7835,14 @@ li.select2-selection__choice {
 	border-bottom: none;
 	box-shadow: none !important;
 }
+
 .select2-dropdown {
 	/*background-color: var(--colorbackvmenu1);
 	border: 1px solid var(--colorbackvmenu1); */
-	box-shadow: 1px 2px 10px #8884;
+	box-shadow: 0 2px 10px rgb(0, 0, 0, .3);
 	background-color: var(--colorbackbody);
 	color: var(--colortext);
+	border: unset;
 }
 .select2-dropdown-open {
 	background-color: var(--colorbackvmenu1);
@@ -7990,11 +8013,11 @@ span#select2-boxbookmark-container {
 }
 span.select2-dropdown--below {
 	margin-top: -1px;
-	min-width: 100px;
+	min-width: 200px;
 }
 span.select2-dropdown--above {
 	margin-bottom: -1px;
-	min-width: 100px;
+	min-width: 200px;
 }
 
 .parentonrightofpage {
@@ -8211,7 +8234,7 @@ dl.dropdown {
 }
 .dropdown dd ul {
 	background-color: var(--inputbackgroundcolor);
-	box-shadow: 1px 1px 10px #aaa;
+	box-shadow: 0 1px 10px rgb(0, 0, 0, 0.3);
 	display:none;
 	<?php echo $right; ?>:0px;						/* pop is align on right */
 	padding: 0 0 0 0;
@@ -8220,7 +8243,7 @@ dl.dropdown {
 	list-style:none;
 	max-height: 264px;
 	overflow: auto;
-	border-radius: 4px;
+	border-radius: 6px;
 	z-index: 1;
 }
 .dropdown dd ul.selectedfieldsleft {
@@ -9017,10 +9040,19 @@ div.clipboardCPValue.hidewithsize {
 
 .clipboardCPShowOnHover{
 	cursor: copy;
+	position: relative;
 }
 
 .clipboardCPShowOnHover .clipboardCPButton {
 	display: none;
+}
+
+.clipboardCPShowOnHover .clipboardCPButton,
+.clipboardCPShowOnHover .clipboardCPTick {
+	position: absolute;
+	right: 0;
+	top: 50%;
+	transform: translate(100%, -50%);
 }
 
 /* To make a div popup, we must use a position absolute inside a position relative */
@@ -9506,9 +9538,15 @@ table.jPicker {
 
 	.pictofixedwidth {
 		text-align: start;
-		width: 1.5em;
-		/* padding-right: 0; */
+		width: 1.2rem;	/* Do not use em unit here, it varies on font size */
+		padding-right: 0.2rem;
 	}
+	img.pictofixedwidth {
+		width: 1.2rem;	/* Do not use em unit here, it varies on font size */
+		padding-right: 0.2rem;	/* img width + img padding-right must be equal to width + padding-right of .pictofixedwidth */
+		margin-right: 4px;
+	}
+
 	 table.titlemodulehelp tr td img.widthpictotitle {
 		width: 1.5em;
 	}

@@ -87,9 +87,10 @@ class box_prospect extends ModeleBoxes
 			$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";
 			$sql .= ", s.code_client, s.code_compta, s.client";
 			$sql .= ", s.logo, s.email, s.entity";
-			$sql .= ", s.fk_stcomm";
+			$sql .= ", s.fk_stcomm, st.libelle as stcomm_label, st.picto as stcomm_picto";
 			$sql .= ", s.datec, s.tms, s.status";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_stcomm as st ON s.fk_stcomm = st.id";
 			if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
@@ -145,7 +146,7 @@ class box_prospect extends ModeleBoxes
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right" width="18"',
-						'text' => str_replace('img ', 'img height="14" ', $thirdpartystatic->LibProspCommStatut($objp->fk_stcomm, 3)),
+						'text' => str_replace('img ', 'img height="14" ', $thirdpartystatic->LibProspCommStatut($objp->fk_stcomm, 3, $objp->stcomm_label, $objp->stcomm_picto)),
 					);
 
 					$this->info_box_contents[$line][] = array(

@@ -909,10 +909,10 @@ class FactureRec extends CommonInvoice
 		$error = 0;
 		$this->db->begin();
 
-		$main = MAIN_DB_PREFIX.'facturedet_rec';
-		$ef = $main."_extrafields";
+		$sql_main_table = MAIN_DB_PREFIX.'facturedet_rec';
+		$sql_ef_table = $sql_main_table."_extrafields";
 
-		$sqlef = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM ".$main." WHERE fk_facture = ".((int) $rowid).")";
+		$sqlef = "DELETE FROM $sql_ef_table WHERE fk_object IN (SELECT rowid FROM ".$sql_main_table." WHERE fk_facture = ".((int) $rowid).")";
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."facturedet_rec WHERE fk_facture = ".((int) $rowid);
 
 		if ($this->db->query($sqlef) && $this->db->query($sql)) {
@@ -981,9 +981,10 @@ class FactureRec extends CommonInvoice
 	 * 	@param		int|string|null	$fk_fournprice		Supplier price id (to calculate margin) or string
 	 * 	@param		float			$pa_ht				Buying price of line (to calculate margin) (Can be '' to keep AWP unchanged or a float value)
 	 *  @param		int				$fk_parent_line		Id of parent line
+	 *  @param		array<string,mixed>	$array_options		Extrafields array
 	 *	@return    	int             					Return integer <0 if KO, Id of line if OK
 	 */
-	public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $fk_product = 0, $remise_percent = 0, $price_base_type = 'HT', $info_bits = 0, $fk_remise_except = 0, $pu_ttc = 0, $type = 0, $rang = -1, $special_code = 0, $label = '', $fk_unit = null, $pu_ht_devise = 0, $date_start_fill = 0, $date_end_fill = 0, $fk_fournprice = null, $pa_ht = 0, $fk_parent_line = 0)
+	public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $fk_product = 0, $remise_percent = 0, $price_base_type = 'HT', $info_bits = 0, $fk_remise_except = 0, $pu_ttc = 0, $type = 0, $rang = -1, $special_code = 0, $label = '', $fk_unit = null, $pu_ht_devise = 0, $date_start_fill = 0, $date_end_fill = 0, $fk_fournprice = null, $pa_ht = 0, $fk_parent_line = 0, $array_options = array())
 	{
 		global $mysoc;
 
@@ -1133,7 +1134,7 @@ class FactureRec extends CommonInvoice
 		$sql .= ", ".price2num($total_ttc);
 		$sql .= ", ".(int) $date_start_fill;
 		$sql .= ", ".(int) $date_end_fill;
-		$sql .= ", ".($fk_fournprice > 0 ? $fk_fournprice : 'null');
+		$sql .= ", ".($fk_fournprice > 0 ? ((int) $fk_fournprice) : 'null');
 		$sql .= ", ".($pa_ht ? price2num($pa_ht) : 0);
 		$sql .= ", ".((int) $info_bits);
 		$sql .= ", ".((int) $ranktouse);
@@ -1152,6 +1153,18 @@ class FactureRec extends CommonInvoice
 			$lineId = $this->db->last_insert_id(MAIN_DB_PREFIX."facturedet_rec");
 			$this->id = $facid;
 			$this->update_price(1);
+
+			if (is_array($array_options) && count($array_options) > 0) {
+				$factureRecLine = new FactureLigneRec($this->db);
+				$factureRecLine->id = $lineId;
+				$factureRecLine->array_options = $array_options;
+				$result = $factureRecLine->insertExtraFields();
+				if ($result < 0) {
+					$this->errors[] = $factureRecLine->error;
+					return -2;
+				}
+			}
+
 			return $lineId;
 		} else {
 			$this->error = $this->db->lasterror();
@@ -1467,6 +1480,9 @@ class FactureRec extends CommonInvoice
 			$sql .= ' AND rowid = '.((int) $restrictioninvoiceid);
 		}
 		$sql .= $this->db->order('entity', 'ASC');
+		if (getDolGlobalInt('NB_REC_FACT_CUSTOMER_GEN_BY_CALL')) {
+			$sql .= $this->db->plimit(getDolGlobalInt('NB_REC_FACT_CUSTOMER_GEN_BY_CALL'));
+		}
 		//print $sql;exit;
 		$parameters = array(
 			'restrictioninvoiceid' => $restrictioninvoiceid,
@@ -1634,11 +1650,11 @@ class FactureRec extends CommonInvoice
 							}
 
 							// Sender
-							$from = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
+							$email_from = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
 							if (!empty($arraymessage->email_from)) {	// If a sender is defined into template, we use it in priority
-								$from = (string) $arraymessage->email_from;
+								$email_from = (string) $arraymessage->email_from;
 							}
-							if (empty($from)) {
+							if (empty($email_from)) {
 								$errormesg = "Failed to get sender into global setup MAIN_MAIL_EMAIL_FROM";
 								$loopError++;
 							}
@@ -1678,7 +1694,7 @@ class FactureRec extends CommonInvoice
 								}
 
 								// Mail Creation
-								$cMailFile = new CMailFile($sendTopic, $to, $from, $sendContent, $joinFile, $joinFileMime, $joinFileName, $email_tocc, $email_tobcc, 0, 1, $errors_to, '', $trackid, '', $sendcontext, '');
+								$cMailFile = new CMailFile($sendTopic, $to, $email_from, $sendContent, $joinFile, $joinFileMime, $joinFileName, $email_tocc, $email_tobcc, 0, 1, $errors_to, '', $trackid, '', $sendcontext, '');
 
 								$resultsendmail = $cMailFile->sendfile();
 
@@ -1699,7 +1715,7 @@ class FactureRec extends CommonInvoice
 									$actioncomm->contact_id = 0;
 
 									$actioncomm->code = 'AC_EMAIL';
-									$actioncomm->label = $langs->trans('MailSentByTo', $from, $to);
+									$actioncomm->label = $langs->trans('MailSentByTo', $email_from, $to);
 									$actioncomm->note_private = $sendContent;
 									$actioncomm->fk_project = $facture->fk_project;
 									$actioncomm->datep = dol_now();
@@ -1710,7 +1726,7 @@ class FactureRec extends CommonInvoice
 									// Fields when action is an email (content should be added into note)
 									$actioncomm->email_msgid = $cMailFile->msgid;
 									$actioncomm->email_subject = $sendTopic;
-									$actioncomm->email_from = $from;
+									$actioncomm->email_from = $email_from;
 									$actioncomm->email_sender = '';
 									$actioncomm->email_to = $to;
 									//$actioncomm->email_tocc = $sendtocc;
@@ -1739,7 +1755,7 @@ class FactureRec extends CommonInvoice
 									$actioncomm->contact_id = 0;
 
 									$actioncomm->code = 'AC_EMAIL';
-									$actioncomm->label = $langs->trans('sendAutoEmailInvoiceKO', $from, $to);
+									$actioncomm->label = $langs->trans('sendAutoEmailInvoiceKO', $email_from, $to);
 									$actioncomm->note_private = $errormesg;
 									$actioncomm->fk_project = $facture->fk_project;
 									$actioncomm->datep = dol_now();
@@ -1750,7 +1766,7 @@ class FactureRec extends CommonInvoice
 									// Fields when action is an email (content should be added into note)
 									$actioncomm->email_msgid = $cMailFile->msgid;
 									$actioncomm->email_subject = $sendTopic;
-									$actioncomm->email_from = $from;
+									$actioncomm->email_from = $email_from;
 									$actioncomm->email_sender = '';
 									$actioncomm->email_to = $to;
 									//$actioncomm->email_tocc = $sendtocc;
@@ -2791,7 +2807,7 @@ class FactureLigneRec extends CommonInvoiceLine
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet_rec SET";
 		$sql .= " fk_facture = ".((int) $this->fk_facture);
-		$sql .= ", fk_parent_line=".($this->fk_parent_line > 0 ? $this->fk_parent_line : "null");
+		$sql .= ", fk_parent_line=".($this->fk_parent_line > 0 ? ((int) $this->fk_parent_line) : "null");
 		$sql .= ", label=".(!empty($this->label) ? "'".$this->db->escape($this->label)."'" : "null");
 		$sql .= ", description='".$this->db->escape($this->desc)."'";
 		$sql .= ", price=".price2num($this->price);
@@ -2802,7 +2818,7 @@ class FactureLigneRec extends CommonInvoiceLine
 		$sql .= ", localtax1_type='".$this->db->escape((string) $this->localtax1_type)."'";
 		$sql .= ", localtax2_tx=".price2num($this->localtax2_tx);
 		$sql .= ", localtax2_type='".$this->db->escape((string) $this->localtax2_type)."'";
-		$sql .= ", fk_product=".($this->fk_product > 0 ? $this->fk_product : "null");
+		$sql .= ", fk_product=".($this->fk_product > 0 ? ((int) $this->fk_product) : "null");
 		$sql .= ", product_type=".((int) $this->product_type);
 		$sql .= ", remise_percent=".price2num($this->remise_percent);
 		$sql .= ", subprice=".price2num($this->subprice);
@@ -2819,7 +2835,7 @@ class FactureLigneRec extends CommonInvoiceLine
 		$sql .= ", rang=".((int) $this->rang);
 		$sql .= ", special_code=".((int) $this->special_code);
 		$sql .= ", fk_unit=".($this->fk_unit ? "'".$this->db->escape((string) $this->fk_unit)."'" : "null");
-		$sql .= ", fk_contract_line=".($this->fk_contract_line ? $this->fk_contract_line : "null");
+		$sql .= ", fk_contract_line=".($this->fk_contract_line ? ((int) $this->fk_contract_line) : "null");
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$this->db->begin();

@@ -3,7 +3,7 @@
  * Copyright (C) 2022   	Open-Dsi				<support@open-dsi.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Benjamin Falière		<benjamin.faliere@altairis.fr>
- * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,16 +27,16 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttribute.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttribute.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("products", "other"));
@@ -70,7 +70,7 @@ $pagenext = $page + 1;
 
 // Initialize a technical objects
 $object = new ProductAttribute($db);
-$extrafields = new ExtraFields($db);
+
 $diroutputmassaction = $conf->variants->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('productattributelist')); // Note that conf->hooks_modules contains array
 
@@ -148,6 +148,9 @@ $arrayfields['nb_products'] = array(
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -828,10 +831,10 @@ while ($i < $imaxinloop) {
 		// Move
 		print '<td class="center linecolmove tdlineupdown">';
 		if ($i > 0) {
-			print '<a class="lineupdown" href="' . $_SERVER['PHP_SELF'] . '?action=up&amp;rowid=' . $obj->rowid . '">' . img_up('default', 0, 'imgupforline') . '</a>';
+			print '<a class="lineupdown" href="' . $_SERVER['PHP_SELF'] . '?action=up&amp;token='.newToken().'&amp;rowid=' . $obj->rowid . '">' . img_up('default', 0, 'imgupforline') . '</a>';
 		}
 		if ($i < $num - 1) {
-			print '<a class="lineupdown" href="' . $_SERVER['PHP_SELF'] . '?action=down&amp;rowid=' . $obj->rowid . '">' . img_down('default', 0, 'imgdownforline') . '</a>';
+			print '<a class="lineupdown" href="' . $_SERVER['PHP_SELF'] . '?action=down&amp;token='.newToken().'&amp;rowid=' . $obj->rowid . '">' . img_down('default', 0, 'imgdownforline') . '</a>';
 		}
 		print '</td>';
 		if (!$i) {

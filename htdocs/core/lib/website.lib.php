@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2017 Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1289,17 +1289,17 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 			$sql .= " AND wp.type_container IN (".$db->sanitize($typestring, 1).")";
 		}
 		$sql .= " AND (";
-		$searchalgo = '';
+		$sqlsearchalgo = '';
 		if (preg_match('/meta/', $algo)) {
 			// TODO Use a better way to scan keywords
-			$searchalgo .= "wp.title LIKE '%".$db->escape($db->escapeforlike($searchstring))."%' OR wp.description LIKE '%".$db->escape($db->escapeforlike($searchstring))."%'";
-			$searchalgo .= " OR wp.pageurl LIKE '%".$db->escape($db->escapeforlike($searchstring))."%' OR wp.aliasalt LIKE '%".$db->escape($db->escapeforlike($searchstring))."%'";
-			$searchalgo .= " OR wp.keywords LIKE '".$db->escape($db->escapeforlike($searchstring)).",%' OR wp.keywords LIKE '% ".$db->escape($db->escapeforlike($searchstring))."%'";
+			$sqlsearchalgo .= "wp.title LIKE '%".$db->escape($db->escapeforlike($searchstring))."%' OR wp.description LIKE '%".$db->escape($db->escapeforlike($searchstring))."%'";
+			$sqlsearchalgo .= " OR wp.pageurl LIKE '%".$db->escape($db->escapeforlike($searchstring))."%' OR wp.aliasalt LIKE '%".$db->escape($db->escapeforlike($searchstring))."%'";
+			$sqlsearchalgo .= " OR wp.keywords LIKE '".$db->escape($db->escapeforlike($searchstring)).",%' OR wp.keywords LIKE '% ".$db->escape($db->escapeforlike($searchstring))."%'";
 		}
 		if (preg_match('/content/', $algo)) {
-			$searchalgo .= ($searchalgo ? ' OR ' : '')."wp.content LIKE '%".$db->escape($db->escapeforlike($searchstring))."%'";
+			$sqlsearchalgo .= ($sqlsearchalgo ? ' OR ' : '')."wp.content LIKE '%".$db->escape($db->escapeforlike($searchstring))."%'";
 		}
-		$sql .= $searchalgo;
+		$sql .= $sqlsearchalgo;
 		if (is_array($otherfilters) && !empty($otherfilters['category'])) {
 			$sql .= ' AND cwp.fk_website_page = wp.rowid AND cwp.fk_categorie = '.((int) $otherfilters['category']);
 		}
@@ -1422,7 +1422,7 @@ function getImageFromHtmlContent($htmlContent, $imageNumber = 1)
 
 	// Check if nb of image is valid
 	if ($imageNumber > 0 && $imageNumber <= $images->length) {
-		// Récupère l'image correspondante (index - 1 car $imageNumber est 1-based)
+		// Get the corresponding image (index - 1 because $imageNumber is 1-based)
 		$img = $images->item($imageNumber - 1);
 		if ($img instanceof DOMElement) {
 			return $img->getAttribute('src');

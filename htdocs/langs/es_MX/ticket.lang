@@ -1,3 +1,4 @@
 # Dolibarr language file - Source file is en_US - ticket
+TypeContact_ticket_internal_CONTRIBUTOR=Colaborador
 TicketSettings=Configuraciónes
-KMFoundForTicketGroup=We found topics and FAQs that may answers your question, thanks to check them before submitting the ticket
+KMFoundForTicketGroup=Hemos encontrado temas y preguntas frecuentes que pueden responder a tu pregunta, agradeceremos que los revises antes de enviar tú ticket

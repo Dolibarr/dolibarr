@@ -4,7 +4,7 @@
  * Copyright (C) 2014		Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2016		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2016		ATM Consulting		<support@atm-consulting.fr>
- * Copyright (C) 2019-2025  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2019-2026  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -204,7 +204,6 @@ if ($date && $dateIsValid) {	// Avoid heavy sql if mandatory date is not defined
 	} else {
 		dol_print_error($db);
 	}
-	//var_dump($stock_prod_warehouse);
 } elseif ($action == 'filter') {	// Test on permissions not required here
 	setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
 }
@@ -272,8 +271,6 @@ if ($date && $dateIsValid) {
 		dol_print_error($db);
 	}
 }
-//var_dump($movements_prod_warehouse);
-//var_dump($movements_prod);
 
 
 /*
@@ -382,10 +379,10 @@ if ($date && $dateIsValid) {	// We avoid a heavy sql if mandatory parameter date
 	//print $sql;
 	if ($ext != 'csv') {
 		$sql .= $db->plimit($limit + 1, $offset);
-		$resql = $db->query($sql);
 	} else {
 		$limit = 0;
 	}
+	$resql = $db->query($sql);
 	if (empty($resql)) {
 		dol_print_error($db);
 		exit;

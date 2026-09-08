@@ -1029,10 +1029,12 @@ if (empty($action) || $action == "view" || $action == "close") {
 
 				print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.((int) $id).'&action=confirm_delete&token='.newToken().'">'.$langs->trans('Delete').'</a></div>';
 			} else {
-				if ($permissiontoreopen) {
-					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.((int) $id).'&action=reopen&token='.newToken().'">'.$langs->trans('ReOpen').'</a></div>';
-				} else {
-					print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dolPrintHTMLForAttribute($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('ReOpen').'</a></div>';
+				if (!isALNERunningVersion()) {
+					if ($permissiontoreopen) {
+						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.((int) $id).'&action=reopen&token='.newToken().'">'.$langs->trans('ReOpen').'</a></div>';
+					} else {
+						print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dolPrintHTMLForAttribute($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('ReOpen').'</a></div>';
+					}
 				}
 			}
 

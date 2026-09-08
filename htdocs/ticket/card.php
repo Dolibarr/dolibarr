@@ -7,7 +7,7 @@
  * Copyright (C) 2022-2023 Charlene Benke       <charlene@patas-monkey.com>
  * Copyright (C) 2023      Benjamin Falière		<benjamin.faliere@altairis.fr>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024	   Irvine FLEITH		<irvine.fleith@atm-consulting.fr>
+ * Copyright (C) 2024	    Irvine FLEITH		<irvine.fleith@atm-consulting.fr>
  * Copyright (C) 2026		Jon Bendtsen        <jon.bendtsen.github@jonb.dk>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -463,7 +463,7 @@ if (empty($reshook)) {
 			$object->context['contact_id'] = GETPOSTINT('contactid');
 		}
 
-		if ($object->close($user, ($action == "confirm_abandon" ? 1 : 0))) {	// Test on pemrission already done
+		if ($object->close($user, ($action == "confirm_abandon" ? 1 : 0)) > 0) {	// Test on pemrission already done
 			setEventMessages($langs->trans('TicketMarkedAsClosed'), null, 'mesgs');
 
 			$url = 'card.php?track_id=' . GETPOST('track_id', 'alpha');
@@ -480,13 +480,15 @@ if (empty($reshook)) {
 		if ($_SESSION['email_customer'] == $object->origin_email || $_SESSION['email_customer'] == $object->thirdparty->email) {
 			$object->context['contact_id'] = GETPOSTINT('contactid');
 
-			$object->close($user);
+			if ($object->close($user) > 0) {
+				setEventMessages('<div class="confirm">' . $langs->trans('TicketMarkedAsClosed') . '</div>', null, 'mesgs');
 
-			setEventMessages('<div class="confirm">' . $langs->trans('TicketMarkedAsClosed') . '</div>', null, 'mesgs');
-
-			$url = 'card.php?track_id=' . GETPOST('track_id', 'alpha');
-			header("Location: " . $url);
-			exit;
+				$url = 'card.php?track_id=' . GETPOST('track_id', 'alpha');
+				header("Location: " . $url);
+				exit;
+			}
+			setEventMessages($object->error, $object->errors, 'errors');
+			$action = '';
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 			$action = '';
@@ -708,6 +710,9 @@ if (empty($reshook)) {
 
 	$permissiondellink = $permissiontoadd;
 	include DOL_DOCUMENT_ROOT . '/core/actions_dellink.inc.php'; // Must be 'include', not 'include_once'
+
+	// Actions when printing a doc from card
+	include DOL_DOCUMENT_ROOT . '/core/actions_printing.inc.php';
 
 	// Actions to build doc
 	include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
@@ -1315,7 +1320,7 @@ if ($action == 'create' || $action == 'presend') {
 			print '<table class="nobordernopadding centpercent"><tr><td class="none">';
 			print $langs->trans("Categories");
 			if ($permissiontoadd && !in_array($object->status, [Ticket::STATUS_CLOSED, Ticket::STATUS_CANCELED]) && $action != 'categories' && !$user->socid) {
-				print '</td><td class="right"><a class="editfielda" href="'.$url_page_current.'?action=categories&track_id='.urlencode($object->track_id).'">'.img_edit($langs->trans('Modify')).'</a>';
+				print '</td><td class="right"><a class="editfielda" href="'.$url_page_current.'?action=categories&token='.newToken().'&track_id='.urlencode($object->track_id).'">'.img_edit($langs->trans('Modify')).'</a>';
 			}
 			print '</td>';
 			print '</table>';
@@ -1436,7 +1441,7 @@ if ($action == 'create' || $action == 'presend') {
 
 					print '<div class="tagtd center">';
 					if ($object->status >= 0) {
-						echo '<a href="contact.php?track_id='.$object->track_id.'&amp;action=swapstatut&amp;ligne='.$tab_i['rowid'].'">';
+						echo '<a href="contact.php?track_id='.$object->track_id.'&amp;action=swapstatut&amp;token='.newToken().'&amp;ligne='.$tab_i['rowid'].'">';
 					}
 
 					if ($tab_i['source'] == 'internal') {

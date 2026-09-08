@@ -411,7 +411,7 @@ class Memo extends CommonObject
 			$sql .= " WHERE t.entity IN (".getEntity($this->element).")";
 		} elseif (preg_match('/^\w+@\w+$/', (string) $this->ismultientitymanaged)) {
 			$tmparray = explode('@', (string) $this->ismultientitymanaged);
-			$sql .= " LEFT JOIN ".$this->db->prefix().$tmparray[1]." as pt ON t.".$this->db->sanitize($tmparray[0])." = pt.rowid";
+			$sql .= " LEFT JOIN ".$this->db->prefix().$this->db->sanitize($tmparray[1])." as pt ON t.".$this->db->sanitize($tmparray[0])." = pt.rowid";
 			$sql .= " WHERE pt.entity IN (".getEntity($this->element).")";
 		} else {
 			$sql .= " WHERE 1 = 1";
@@ -684,14 +684,14 @@ class Memo extends CommonObject
 			if (preg_match('/^[\(]?PROV/i', $this->ref)) {
 				// Now we rename also files into index
 				$sql = 'UPDATE '.$this->db->prefix()."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'memo/".$this->db->escape($this->newref)."'";
-				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'memo/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'memo/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++;
 					$this->error = $this->db->lasterror();
 				}
 				$sql = 'UPDATE '.$this->db->prefix()."ecm_files set filepath = 'memo/".$this->db->escape($this->newref)."'";
-				$sql .= " WHERE filepath = 'memo/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$sql .= " WHERE filepath = 'memo/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++;
@@ -955,7 +955,7 @@ class Memo extends CommonObject
 				if (!empty($filename)) {
 					$pospoint = strpos($filearray[0]['name'], '.');
 
-					$pathtophoto = $class.'/'.$this->ref.'/thumbs/'.substr($filename, 0, $pospoint).'_mini'.substr($filename, $pospoint);
+					$pathtophoto = $class.'/'.$this->ref.'/thumbs/'.dol_substr($filename, 0, $pospoint).'_mini'.dol_substr($filename, $pospoint);
 					if (!getDolGlobalString(strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS')) {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$module.'" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div></div>';
 					} else {
@@ -1049,10 +1049,6 @@ class Memo extends CommonObject
 
 			$return .= '	</div>';
 		}
-
-		$this->date_archived = dol_now();
-		$this->fk_user_archived = (int) $this->user->id;
-
 
 		$return .= '</div>';
 
@@ -1233,7 +1229,7 @@ class Memo extends CommonObject
 	}
 
 	/**
-	 * Vérifie si une couleur est un code hex valide
+	 * Checks if a color is a valid hex code
 	 *
 	 * @param mixed $color the color to check
 	 * @return bool
@@ -1247,7 +1243,7 @@ class Memo extends CommonObject
 		// Remove spaces at the beginning/end
 		$color = trim($color);
 
-		// Vérifie #fff ou #ffffff
+		// Checks for #fff or #ffffff
 		return preg_match('/^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/', $color) === 1;
 	}
 
@@ -1646,6 +1642,18 @@ class Memo extends CommonObject
 			return false;
 		}
 
+		$autoResizeFontMin = getDolGlobalFloat('QUICKMEMO_AUTO_RESIZE_MIN_FONT_SIZE', 1);
+		$autoResizeFontMax = getDolGlobalFloat('QUICKMEMO_AUTO_RESIZE_MAX_FONT_SIZE', 1.4);
+
+		// Apply safety limits
+		$autoResizeFontMin = max($autoResizeFontMin, 0.3);
+		$autoResizeFontMax = min($autoResizeFontMax, 5);
+
+		// Ensure min value is always lower than max value
+		if ($autoResizeFontMin >= $autoResizeFontMax) {
+			$autoResizeFontMin = max(0.3, $autoResizeFontMax - 0.1);
+		}
+
 		$defaultJsConfVars = [
 			'interfaceUrl' => dol_buildpath('quickmemo/interface.php', 1),
 			'archivesUrl' => dol_buildpath('quickmemo/memo_list.php', 1) . '?mode=kanban&search_status='.Memo::STATUS_ARCHIVED . ($jsConfVars['archivesUrlParams'] ?? ''),
@@ -1656,7 +1664,10 @@ class Memo extends CommonObject
 			'colors' => Memo::getColorPreset(),
 			'userReadRight' => $user->hasRight('quickmemo', 'memo', 'read'),
 			'userWriteRight' => $user->hasRight('quickmemo', 'memo', 'write'),
-			'userDeleteRight' => $user->hasRight('quickmemo', 'memo', 'delete')
+			'userDeleteRight' => $user->hasRight('quickmemo', 'memo', 'delete'),
+			'autoResizeFontSize' => !getDolGlobalInt('QUICKMEMO_DISABLE_AUTO_RESIZE_FONT_SIZE'),
+			'autoResizeFontMin' => $autoResizeFontMin,
+			'autoResizeFontMax' => $autoResizeFontMax,
 		];
 		$jsConfVars = array_merge($defaultJsConfVars, $jsConfVars);
 

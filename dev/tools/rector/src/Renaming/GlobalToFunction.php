@@ -1,4 +1,6 @@
 <?php
+/* Copyright (C) 2026		MDW	<mdeweerd@users.noreply.github.com>
+ */
 
 namespace Dolibarr\Rector\Renaming;
 
@@ -230,7 +232,7 @@ class GlobalToFunction extends AbstractRector
 
 		// If a && b and a or b is conf->global, we replace a or/and b
 		if ($node instanceof BooleanAnd) {
-			// Transformation sur le nœud gauche
+			// Transformation on the left node
 			$changedone = 0;
 			if ($this->isGlobalVar($node->left)) {
 				$constName = $this->getConstName($node->left);

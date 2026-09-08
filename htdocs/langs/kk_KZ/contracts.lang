@@ -36,10 +36,18 @@ ActivateAllOnContract=Барлық қызметтерді іске қосыңы�
 CloseAContract=Келісімшартты жабыңыз
 ConfirmDeleteAContract=Бұл келісімшартты және оның барлық қызметтерін шынымен жойғыңыз келе ме?
 ConfirmValidateContract=Бұл келісімшартты <b> %s </b> атымен растағыңыз келетініне сенімдісіз бе?
+ConfirmSignContract=Are you sure you want to set this contract as signed ?
+ConfirmUnsignContract=Are you sure you want to set this contract as unsigned ?
 ConfirmActivateAllOnContract=Бұл барлық қызметтерді ашады (әлі белсенді емес). Сіз барлық қызметтерді ашқыңыз келетініне сенімдісіз бе?
 ConfirmCloseContract=Бұл барлық қызметтерді жабады (мерзімі өткен немесе өтпеген). Осы келісімшартты шынымен жапқыңыз келе ме?
 ConfirmCloseService=Бұл қызметті <b> %s </b> күнімен жабу керек пе?
 ValidateAContract=Келісімшартты растау
+UnsignContract=Unsign contract
+ContractSign=Set Signed
+ContractUnsign=Set Unsigned
+ContractSignedInDolibarr=Contract signed
+ContractSignedOnline=Contract signed online
+ContractUnsignedInDolibarr=Contract unsigned
 ActivateService=Қызметті іске қосыңыз
 ConfirmActivateService=Бұл қызметті <b> %s </b> күнімен қосқыңыз келетініне сенімдісіз бе?
 RefContract=Шарт бойынша анықтама
@@ -95,7 +103,13 @@ ConfirmCloneContract=<b> %s </b> келісімшартты клондау ке�
 LowerDateEndPlannedShort=Белсенді қызметтердің жоспарланған аяқталу күні
 SendContractRef=Шарт туралы ақпарат __REF__
 OtherContracts=Басқа келісімшарттар
-##### Types de contacts #####
+##### Statistics #####
+ContractsStatistics=Contract's statistics
+NbOfContracts=Nb of contracts
+NumberOfContractsByMonth=Number of contracts by month
+AmountOfServices=Number of services
+AmountOfServicesByMonthHT=Number of services (excl. tax) by month
+##### Types of contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Сату өкілі келісімшартқа отырады
 TypeContact_contrat_internal_SALESREPFOLL=Сату өкілі кейінгі келісім-шарт
 TypeContact_contrat_external_BILLING=Есеп айырысу клиенттермен байланыс

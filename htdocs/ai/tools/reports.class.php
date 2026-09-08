@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2026	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2026	Nick Fragoulis
+ * Copyright (C) 2026	Jose Martinez			<jose.martinez@pichinov.com>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,15 +38,22 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
  */
 class ToolReports extends McpTool
 {
-
 	/**
 	 * 	Constructor
 	 *
+	 * 	Aligned with McpHandler's instantiation contract: new $className($db, $user, $conf).
+	 *
 	 * 	@param	DoliDB		$db			Database handler
+	 * 	@param	User|null	$user		Service user provided by McpHandler (from AI_MCP_USER_ID)
+	 * 	@param	Conf|null	$conf		Dolibarr config (optional)
 	 */
-	public function __construct(DoliDB  $db)
+	public function __construct(DoliDB $db, $user = null, $conf = null)
 	{
 		$this->db = $db;
+		$this->user = $user;
+		if ($conf !== null) {
+			$this->conf = $conf;
+		}
 	}
 
 	/**
@@ -204,10 +213,10 @@ class ToolReports extends McpTool
 		}
 
 		if (!empty($args['thirdparty_name'])) {
-			$name = $this->db->escape($args['thirdparty_name']);
+			$sqlName = $this->db->escape($args['thirdparty_name']);
 
 			$sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . "societe
-			WHERE nom LIKE '%" . $name . "%'
+			WHERE nom LIKE '%" . $sqlName . "%'
 			AND entity IN (" . getEntity('societe') . ")
 			LIMIT 1";
 
@@ -379,11 +388,11 @@ class ToolReports extends McpTool
 			return [[$langs->transnoentitiesnoconv("Error") => $langs->transnoentitiesnoconv("ErrorThirdPartyNotFound")]];
 		}
 
-		$queries = [];
+		$sqlQueries = [];
 
 		// Invoices
 		if ($type == 'all' || $type == 'invoices') {
-			$queries[] = "SELECT 'Invoice' as source_type, rowid, ref, total_ttc as amount, datef as date_entry, fk_statut
+			$sqlQueries[] = "SELECT 'Invoice' as source_type, rowid, ref, total_ttc as amount, datef as date_entry, fk_statut
 						  FROM " . MAIN_DB_PREFIX . "facture
 						  WHERE fk_soc = " . (int) $socid . " AND entity IN (" . getEntity('facture') . ")
 						  AND fk_statut IN (1, 2)";
@@ -391,7 +400,7 @@ class ToolReports extends McpTool
 
 		// Orders
 		if ($type == 'all' || $type == 'orders') {
-			$queries[] = "SELECT 'Order' as source_type, rowid, ref, total_ttc as amount, date_commande as date_entry, fk_statut
+			$sqlQueries[] = "SELECT 'Order' as source_type, rowid, ref, total_ttc as amount, date_commande as date_entry, fk_statut
 						  FROM " . MAIN_DB_PREFIX . "commande
 						  WHERE fk_soc = " . (int) $socid . " AND entity IN (" . getEntity('commande') . ")
 						  AND fk_statut > 0";
@@ -399,18 +408,18 @@ class ToolReports extends McpTool
 
 		// Proposals
 		if ($type == 'all' || $type == 'proposals') {
-			$queries[] = "SELECT 'Proposal' as source_type, rowid, ref, total_ttc as amount, datep as date_entry, fk_statut
+			$sqlQueries[] = "SELECT 'Proposal' as source_type, rowid, ref, total_ttc as amount, datep as date_entry, fk_statut
 						  FROM " . MAIN_DB_PREFIX . "propal
 						  WHERE fk_soc = " . (int) $socid . " AND entity IN (" . getEntity('propal') . ")
 						  AND fk_statut > 0";
 		}
 
-		if (empty($queries)) {
+		if (empty($sqlQueries)) {
 			return [[$langs->transnoentitiesnoconv("Error") => "Invalid transaction type"]];
 		}
 
 		$sql = "SELECT * FROM (";
-		$sql .= implode(" UNION ", $queries);
+		$sql .= implode(" UNION ", $sqlQueries);
 		$sql .= ") as combined_transactions ";
 		$whereParts = [];
 		if ($dateStart > 0) {

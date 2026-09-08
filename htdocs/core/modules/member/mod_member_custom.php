@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2025	Christophe Battarel	<christophe@altairis.fr>
- * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 /**
  * \file       htdocs/core/modules/member/mod_member_custom.php
  * \ingroup    member
- * \brief      Fichier contenant la class du modele de numerotation d'ahérent Custom
+ * \brief      File containing the class for the Custom member numbering model
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/member/modules_member.class.php';

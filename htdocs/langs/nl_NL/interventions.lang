@@ -10,7 +10,6 @@ ActionsOnFicheInter=Acties bij interventie
 LastInterventions=Laatste %s interventies
 AllInterventions=Alle interventies
 CreateDraftIntervention=Creëer conceptinterventie
-InterventionContact=Interventie contactpersoon
 DeleteIntervention=Interventie verwijderen
 ValidateIntervention=Interventie valideren
 SignIntervention=Tekeninterventie

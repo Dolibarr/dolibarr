@@ -10,7 +10,6 @@ PAYPAL_API_SIGNATURE=Signature de l'API
 PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Proposer le paiement « intégral » (Carte de crédit + PayPal) ou « PayPal » uniquement
 PaypalModeOnlyPaypal=PayPal uniquement
 ONLINE_PAYMENT_CSS_URL=URL facultative de la feuille de style CSS sur la page de paiement en ligne
-ThisIsTransactionId=Ceci est un identifiant de transaction: <b> %s</b>
 PAYPAL_ADD_PAYMENT_URL=Inclure l'URL de paiement PayPal lorsque vous envoyez un document par e-mail
 NewOnlinePaymentFailed=Nouveau paiement en ligne essayé mais échoué
 ONLINE_PAYMENT_SENDEMAIL=Adresse e-mail pour les notifications après chaque tentative de paiement (pour succès et échec)

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017       Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2022       Alice Adminson              <aadminson@example.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -121,8 +121,8 @@ class Availabilities extends CommonObject
 		'last_main_doc' => array('type' => 'varchar(255)', 'label' => 'LastMainDoc', 'enabled' => 1, 'position' => 600, 'notnull' => 0, 'visible' => 0,),
 		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'position' => 1000, 'notnull' => -1, 'visible' => -2,),
 		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'Model pdf', 'enabled' => 1, 'position' => 1010, 'notnull' => -1, 'visible' => 0,),
-		'start' => array('type' => 'date', 'label' => 'Start Date', 'enabled' => 1, 'position' => 40, 'notnull' => 1, 'visible' => 1, 'searchall' => 1,),
-		'end' => array('type' => 'date', 'label' => 'End Date', 'enabled' => 1, 'position' => 45, 'notnull' => 1, 'visible' => 1, 'searchall' => 1,),
+		'date_start' => array('type' => 'date', 'label' => 'Start Date', 'enabled' => 1, 'position' => 40, 'notnull' => 1, 'visible' => 1, 'searchall' => 1,),
+		'date_end' => array('type' => 'date', 'label' => 'End Date', 'enabled' => 1, 'position' => 45, 'notnull' => 1, 'visible' => 1, 'searchall' => 1,),
 		'duration' => array('type' => 'integer', 'label' => 'DurationOfRange', 'enabled' => 1, 'position' => 48, 'notnull' => 1, 'visible' => 1, 'default' => '30', 'css' => 'width50 right'),
 		'startHour' => array('type' => 'integer', 'label' => 'Start Hour', 'enabled' => 1, 'position' => 46, 'notnull' => 1, 'visible' => 1,),
 		'endHour' => array('type' => 'integer', 'label' => 'End Hour', 'enabled' => 1, 'position' => 47, 'notnull' => 1, 'visible' => 1,),
@@ -170,13 +170,13 @@ class Availabilities extends CommonObject
 	public $model_pdf;
 
 	/**
-	 * @var string
+	 * @var int|string
 	 */
-	public $start;
+	public $date_start;
 	/**
-	 * @var string
+	 * @var int|string
 	 */
-	public $end;
+	public $date_end;
 	/**
 	 * @var int
 	 */
@@ -550,14 +550,14 @@ class Availabilities extends CommonObject
 			if (preg_match('/^[\(]?PROV/i', $this->ref)) {
 				// Now we rename also files into index
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'availabilities/".$this->db->escape($this->newref)."'";
-				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'availabilities/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'availabilities/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++;
 					$this->error = $this->db->lasterror();
 				}
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'availabilities/".$this->db->escape($this->newref)."'";
-				$sql .= " WHERE filepath = 'availabilities/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$sql .= " WHERE filepath = 'availabilities/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++;
@@ -736,7 +736,7 @@ class Availabilities extends CommonObject
 				if (!empty($filename)) {
 					$pospoint = strpos($filearray[0]['name'], '.');
 
-					$pathtophoto = $class.'/'.$this->ref.'/thumbs/'.substr($filename, 0, $pospoint).'_mini'.substr($filename, $pospoint);
+					$pathtophoto = $class.'/'.$this->ref.'/thumbs/'.dol_substr($filename, 0, $pospoint).'_mini'.dol_substr($filename, $pospoint);
 					if (!getDolGlobalString(strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS')) {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$module.'" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div></div>';
 					} else {

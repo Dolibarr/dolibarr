@@ -6,6 +6,7 @@
  * Copyright (C) 2018-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Nicolas Barrouillet		<nicolas@pragma-tech.fr>
+ * Copyright (C) 2026       Jose Martinez       <jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -517,6 +518,10 @@ if (empty($reshook)) {
 					$result = $object->deleteMvtNum($object->piece_num);
 					if ($result > 0) {
 						$nbok++;
+					} elseif ($result == 0) {
+						setEventMessages($langs->trans("ErrorBookkeepingDocDateNotOnActiveFiscalPeriod"), null, 'errors');
+						$error += 1;
+						break;
 					} else {
 						setEventMessages($object->error, $object->errors, 'errors');
 						$error += 1;
@@ -603,6 +608,16 @@ if (empty($reshook)) {
 		if ($massaction == 'generalmatchingmanual' && $permissiontoadd) {
 			$lettering = new Lettering($db);
 			$result = $lettering->updateGeneralMatching($toselect);
+			if ($result < 0) {
+				setEventMessages('', $lettering->errors, 'errors');
+			} else {
+				setEventMessages($langs->trans($result == 0 ? 'AccountancyNoMachingModified' : 'AccountancyOneMatchingModifiedSuccessfully'), array(), 'mesgs');
+				header('Location: ' . $_SERVER['PHP_SELF'] . '?noreset=1' . $param);
+				exit;
+			}
+		} elseif ($massaction == 'generalmatchingpartial' && $permissiontoadd) {
+			$lettering = new Lettering($db);
+			$result = $lettering->updateGeneralMatching($toselect, true);
 			if ($result < 0) {
 				setEventMessages('', $lettering->errors, 'errors');
 			} else {
@@ -876,6 +891,7 @@ if (getDolGlobalInt('ACCOUNTING_ENABLE_LETTERING') && $user->hasRight('accountin
 	} else {
 		// General ledger matching only
 		$arrayofmassactions['generalmatchingmanual']    = img_picto('', 'check', 'class="pictofixedwidth"') . $langs->trans('GeneralMatchingManual');
+		$arrayofmassactions['generalmatchingpartial']    = img_picto('', 'check', 'class="pictofixedwidth"') . $langs->trans('GeneralMatchingPartial');
 		$arrayofmassactions['pregeneralunmatchingmanual'] = img_picto('', 'uncheck', 'class="pictofixedwidth"') . $langs->trans('GeneralUnmatchingManual');
 	}
 }
@@ -932,7 +948,7 @@ if (empty($reshook)) {
 			$newcardbutton .= dolGetButtonTitle($langs->trans('GroupBySubAccountAccounting'), '', 'fa fa-align-left vmirror paddingleft imgforviewmode', DOL_URL_ROOT . '/accountancy/bookkeeping/listbyaccount.php?type=sub&' . $url_param, '', 1, array('morecss' => 'marginleftonly'));
 		}
 	}
-	$newcardbutton .= dolGetButtonTitle($langs->trans('ExportToPdf'), '', 'fa fa-file-pdf paddingleft', $_SERVER['PHP_SELF'] . '?action=exporttopdf'.(!empty($type) ? '&type=sub' : '').'&' . $url_param, '', $permissiontoexport, array('morecss' => 'marginleftonly'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ExportToPdf'), '', 'fa fa-file-pdf paddingleft', $_SERVER['PHP_SELF'] . '?token=' . newToken() .'&action=exporttopdf'.(!empty($type) ? '&type=sub' : '').'&' . $url_param, '', $permissiontoexport, array('morecss' => 'marginleftonly'));
 
 	$newcardbutton .= dolGetButtonTitleSeparator();
 
@@ -1534,7 +1550,7 @@ while ($i < min($num, $limit)) {
 		} elseif ($line->doc_type == 'bank') {
 			print $objectstatic->getNomUrl(1);
 			$bank_ref = strstr($line->doc_ref, '-');
-			print " " . $bank_ref;
+			print ' <span class="classfortooltip" title="'.dol_escape_htmltag($line->doc_ref).'">'.dol_escape_htmltag($bank_ref).'</span>';
 		} else {
 			print $line->doc_ref;
 		}

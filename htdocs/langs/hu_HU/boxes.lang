@@ -116,6 +116,7 @@ BoxLastCustomerShipments=Utolsó ügyfélszállítások
 BoxTitleLastCustomerShipments=Legutóbbi %s módosított vevő szállítmány
 BoxTitleLastLeaveRequests=A legutóbbi %s módosított szabadság kérelem
 NoRecordedShipments=Nincs rögzített ügyfélszállítmány
+NoUpcomingEvent=No upcoming events
 BoxCustomersOutstandingBillReached=Elérte a kiugró limittel rendelkező ügyfeleket
 BoxTitleLastFediverseInfos=Utolsó %s bejegyzések a %s felhasználótól
 BoxLastFediverseInfos=Legfrissebb Fediverse frissítések: Hírek és trendek

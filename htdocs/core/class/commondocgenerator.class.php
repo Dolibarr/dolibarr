@@ -758,7 +758,7 @@ abstract class CommonDocGenerator
 			$array_key.'_remain_to_pay' => price2num($object->total_ttc - $already_payed_all, 'MT')
 		);
 
-		if (in_array($object->element, array('facture', 'invoice', 'supplier_invoice', 'facture_fournisseur'))) {
+		if (in_array($object->element, array('facture', 'invoice', 'supplier_invoice', 'facture_fournisseur', 'commande'))) {
 			$bank_account = null;
 
 			if (property_exists($object, 'fk_account') && $object->fk_account > 0) {
@@ -1763,6 +1763,7 @@ abstract class CommonDocGenerator
 
 		// Load extrafields if not already done
 		if (is_null($this->extrafieldsCache)) {
+			include_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 			$this->extrafieldsCache = new ExtraFields($this->db);
 		}
 		if (empty($this->extrafieldsCache->attributes[$object->table_element])) {

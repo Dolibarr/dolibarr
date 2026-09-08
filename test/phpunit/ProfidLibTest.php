@@ -176,26 +176,30 @@ class ProfidLibTest extends CommonClassTest
 		$this->assertFalse(isValidTinForBE("ABCD.123.123"));		// not digits only
 	}
 
-	// TODO
 	/**
 	 * testIsValidTinForES
 	 *
 	 * @return void
 	 */
-	/*
 	public function testIsValidTinForES()
 	{
 		// Tests for NIF
-		$this->assertEquals(1, isValidTinForES(""));			// valid NIF
-		$this->assertEquals(-1, isValidTinForES(""));			// valid regex, but invalid control key
+		$this->assertEquals(1, isValidTinForES("12345678Z"));		// valid NIF
+		$this->assertEquals(-1, isValidTinForES("12345678A"));		// valid regex, but invalid control key
 		// Tests for CIF
-		$this->assertEquals(2, isValidTinForES(""));			// valid CIF
-		$this->assertEquals(-2, isValidTinForES(""));			// valid regex, but invalid control key
-		// Tests for NIE
-		$this->assertEquals(3, isValidTinForES(""));			// valid NIE
-		$this->assertEquals(-3, isValidTinForES(""));			// valid regex, but invalid control key
+		$this->assertEquals(2, isValidTinForES("A58818501"));		// valid CIF
+		$this->assertEquals(-2, isValidTinForES("A58818502"));		// valid regex, but invalid control key
+		// Tests for NIE starting with X, Y or Z (they have a control key)
+		$this->assertEquals(3, isValidTinForES("X1234567L"));		// valid NIE
+		$this->assertEquals(3, isValidTinForES(" x 1234567 l "));	// valid NIE, formatted with spaces and lowercase
+		$this->assertEquals(-3, isValidTinForES("X1234567A"));		// valid regex, but invalid control key
+		// Tests for NIE starting with T (they have no control key, so the syntax check is enough)
+		$this->assertEquals(3, isValidTinForES("T1234567A"));		// valid NIE
+		$this->assertEquals(3, isValidTinForES("T1234567Z"));		// valid NIE
+		$this->assertEquals(3, isValidTinForES("T12345671"));		// valid NIE
 		// Tests for unknown error
-		$this->assertEquals(-4, isValidTinForES(""));			// invalid regex for both NIF, CIF and NIE
+		$this->assertEquals(-4, isValidTinForES("I1234567A"));		// valid regex, but first letter is not a known NIF, CIF or NIE prefix
+		// Tests for bad syntax
+		$this->assertEquals(0, isValidTinForES("12345"));			// invalid regex for both NIF, CIF and NIE
 	}
-	*/
 }
