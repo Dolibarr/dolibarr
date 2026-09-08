@@ -4,7 +4,7 @@
  * Copyright (C) 2021      Thibault FOUCART     <support@ptibogxiv.net>
  * Copyright (C) 2022      Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -393,7 +393,7 @@ if (getDolGlobalString('TAKEPOS_ADDON') == "terminal") {
 			$handle = opendir($dir);
 			if (is_resource($handle)) {
 				while (($file = readdir($handle)) !== false) {
-					if (!is_dir($dir.$file) || (substr($file, 0, 1) != '.' && substr($file, 0, 3) != 'CVS')) {
+					if (!is_dir($dir.$file) || (dol_substr($file, 0, 1) != '.' && dol_substr($file, 0, 3) != 'CVS')) {
 						$filebis = $file;
 						$classname = preg_replace('/\.php$/', '', $file);
 						// For compatibility
@@ -409,7 +409,7 @@ if (getDolGlobalString('TAKEPOS_ADDON') == "terminal") {
 						}
 
 						$classname = preg_replace('/\-.*$/', '', $classname);
-						if (!class_exists($classname) && is_readable($dir.$filebis) && (preg_match('/mod_/', $filebis) || preg_match('/mod_/', $classname)) && substr($filebis, dol_strlen($filebis) - 3, 3) == 'php') {
+						if (!class_exists($classname) && is_readable($dir.$filebis) && (preg_match('/mod_/', $filebis) || preg_match('/mod_/', $classname)) && dol_substr($filebis, dol_strlen($filebis) - 3, 3) == 'php') {
 							// Charging the numbering class
 							require_once $dir.$filebis;
 

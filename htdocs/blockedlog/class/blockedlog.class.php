@@ -23,6 +23,7 @@
 
 include_once DOL_DOCUMENT_ROOT.'/blockedlog/versionmod.inc.php';
 include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/securitycore.lib.php';
+include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
 
 
 /**

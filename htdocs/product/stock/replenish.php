@@ -278,6 +278,7 @@ if ($action == 'order' && GETPOST('valid') && $user->hasRight('fournisseur', 'co
 				$order->fetch($obj->rowid);
 				$order->fetch_thirdparty();
 
+				$result = 0;
 				foreach ($supplier['lines'] as $line) {
 					if (empty($line->remise_percent)) {
 						$line->remise_percent = (float) $order->thirdparty->remise_supplier_percent;
@@ -304,6 +305,9 @@ if ($action == 'order' && GETPOST('valid') && $user->hasRight('fournisseur', 'co
 						$line->fk_unit,
 						$line->multicurrency_subprice
 					);
+					if ($result < 0) {
+						break;
+					}
 				}
 				if ($result < 0) {
 					$fail++;
@@ -911,6 +915,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		}
 
 		// Force call prod->load_stats_xxx to choose status to count (otherwise it is loaded by load_stock function)
+		$result = null;
 		if (isset($draftchecked)) {
 			$result = $prod->load_stats_commande_fournisseur(0, '0,1,2,3,4');
 		} elseif (!$usevirtualstock) {

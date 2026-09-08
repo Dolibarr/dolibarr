@@ -864,8 +864,8 @@ if ($action == 'validate' && $permissiontoadd && $objectclass !== null) {
 		foreach ($toselect as $checked) {
 			if ($objecttmp->fetch($checked)) {
 				if ($objecttmp->status == $objecttmp::STATUS_DRAFT) {
-					if (!empty($objecttmp->fk_warehouse)) {
-						$idwarehouse = $objecttmp->fk_warehouse;
+					if (!empty($objecttmp->warehouse_id)) {
+						$idwarehouse = $objecttmp->warehouse_id;
 					} else {
 						$idwarehouse = 0;
 					}

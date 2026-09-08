@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2021 Gauthier VERDOL <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2021 SuperAdmin
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -208,8 +208,8 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 			$handle = opendir($dir);
 			if (is_resource($handle)) {
 				while (($file = readdir($handle)) !== false) {
-					if (strpos($file, 'mod_'.strtolower($myTmpObjectKey).'_') === 0 && substr($file, dol_strlen($file) - 3, 3) == 'php') {
-						$file = substr($file, 0, dol_strlen($file) - 4);
+					if (strpos($file, 'mod_'.strtolower($myTmpObjectKey).'_') === 0 && dol_substr($file, dol_strlen($file) - 3, 3) == 'php') {
+						$file = dol_substr($file, 0, dol_strlen($file) - 4);
 
 						require_once $dir.'/'.$file.'.php';
 
@@ -347,8 +347,8 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 					foreach ($filelist as $file) {
 						if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file)) {
 							if (file_exists($dir.'/'.$file)) {
-								$name = substr($file, 4, dol_strlen($file) - 16);
-								$classname = substr($file, 0, dol_strlen($file) - 12);
+								$name = dol_substr($file, 4, dol_strlen($file) - 16);
+								$classname = dol_substr($file, 0, dol_strlen($file) - 12);
 
 								require_once $dir.'/'.$file;
 								$module = new $classname($db);

@@ -132,7 +132,7 @@ class DoliDBMysqli extends DoliDB
 						// To upgrade database default, you can do: ALTER DATABASE databasename CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 						$this->db->set_charset($clientmustbe); // This set charset, but with a bad collation (colllation is forced later)
-					} catch (Exception $e) {
+					} catch (Throwable $e) {
 						print 'Failed to force character_set_client to '.$clientmustbe." (according to setup) to match the one of the server database.<br>\n";
 						print $e->getMessage();
 						print "<br>\n";
@@ -230,7 +230,7 @@ class DoliDBMysqli extends DoliDB
 		$result = false;
 		try {
 			$result = $this->db->select_db($database);
-		} catch (Exception $e) {
+		} catch (Throwable $e) {
 			// Nothing done on error
 		}
 		return $result;
@@ -265,7 +265,7 @@ class DoliDBMysqli extends DoliDB
 			} else {
 				$tmp = new mysqli($host, $login, $passwd, $name, $port);
 			}
-		} catch (Exception $e) {
+		} catch (Throwable $e) {
 			dol_syslog(get_class($this)."::connect failed", LOG_DEBUG);
 		}
 		return $tmp;
@@ -353,7 +353,7 @@ class DoliDBMysqli extends DoliDB
 
 		try {
 			$ret = $this->db->query($query, $result_mode);
-		} catch (Exception $e) {
+		} catch (Throwable $e) {
 			dol_syslog(get_class($this)."::query Exception in query instead of returning an error: ".$e->getMessage(), LOG_ERR);
 			$ret = false;
 		}

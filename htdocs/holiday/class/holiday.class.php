@@ -779,7 +779,7 @@ class Holiday extends CommonObject
 			$balance = $this->getCPforUser($this->fk_user, $this->fk_type);
 			$daysAsked = num_open_day($this->date_debut, $this->date_fin, 0, 1, 0, '', $this->fk_user);
 
-			if (($balance - $daysAsked) < 0 && getDolGlobalString('HOLIDAY_DISALLOW_NEGATIVE_BALANCE')) {
+			if (($balance - $daysAsked) < 0) {
 				$this->error = 'LeaveRequestCreationBlockedBecauseBalanceIsNegative';
 				return -1;
 			}
@@ -903,7 +903,7 @@ class Holiday extends CommonObject
 			$balance = $this->getCPforUser($this->fk_user, $this->fk_type);
 			$daysAsked = num_open_day($this->date_debut, $this->date_fin, 0, 1, 0, '', $this->fk_user);
 
-			if (($balance - $daysAsked) < 0 && getDolGlobalString('HOLIDAY_DISALLOW_NEGATIVE_BALANCE')) {
+			if (($balance - $daysAsked) < 0) {
 				$this->error = 'LeaveRequestCreationBlockedBecauseBalanceIsNegative';
 				return -1;
 			}
@@ -1031,7 +1031,7 @@ class Holiday extends CommonObject
 			$balance = $this->getCPforUser($this->fk_user, $this->fk_type);
 			$daysAsked = num_open_day($this->date_debut, $this->date_fin, 0, 1, 0, '', $this->fk_user);
 
-			if (($balance - $daysAsked) < 0 && getDolGlobalString('HOLIDAY_DISALLOW_NEGATIVE_BALANCE')) {
+			if (($balance - $daysAsked) < 0) {
 				$this->error = 'LeaveRequestCreationBlockedBecauseBalanceIsNegative';
 				return -1;
 			}
@@ -2762,12 +2762,15 @@ class Holiday extends CommonObject
 		foreach ($arrayfields as $key => $label) {
 			$outputarrayleaves .= '<td style="border-bottom:1px solid #b6b6b6;padding: 6px 10px 6px 12px;">';
 			$outputarrayleaves .= $outputlangs->trans($label);
+			if ($key == 'date_end') {
+				$outputarrayleaves .=" (".$langs->trans("Included").")";
+			}
 			$outputarrayleaves .= '</td>';
 		}
 		$outputarrayleaves .= '</tr>';
 
 		if (!empty($arrayleaves)) {
-			foreach ($arrayleaves as $key => $fields) {
+			foreach ($arrayleaves as $fields) {
 				$outputarrayleaves .= '<tr>';
 				foreach ($fields as $field => $value) {
 					$outputarrayleaves .= '<td style="border-bottom:1px solid #b6b6b6;padding: 6px 10px 6px 12px;" id="'.$field.'">';

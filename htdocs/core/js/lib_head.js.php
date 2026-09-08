@@ -1210,12 +1210,17 @@ function getParameterByName(name, valueifnotfound)
  */
 function dolSubmitConfirmForm(urljump, page, options, maxurllength)
 {
-	if (urljump.length <= maxurllength) {
+	// A double quote in a GET parameter is always refused by the WAF (waf.inc.php, type 1),
+	// while a POST body is checked with type 0 which does not apply that rule. So a value
+	// containing a double quote must be posted, whatever the url length is.
+	var hasquote = urljump.indexOf('%22') >= 0 || urljump.indexOf('"') >= 0;
+
+	if (urljump.length <= maxurllength && !hasquote) {
 		location.href = urljump;
 		return;
 	}
 
-	console.log("dolSubmitConfirmForm: url is "+urljump.length+" chars long, we submit a POST form instead of a GET");
+	console.log("dolSubmitConfirmForm: url is "+urljump.length+" chars long"+(hasquote ? " or contains a double quote" : "")+", we submit a POST form instead of a GET");
 
 	var form = document.createElement("form");
 	form.method = "POST";

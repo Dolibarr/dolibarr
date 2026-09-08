@@ -14,6 +14,18 @@ allowed-tools:
 
 This skill guides agents on developing, modifying, and debugging code within the Dolibarr ERP/CRM codebase while strictly adhering to professional standards, security guidelines, and the project's established architecture.
 
+
+## Relationship with AGENTS.md
+
+The instructions in this file are **complementary to** the instructions defined in `AGENTS.md`.
+
+- `AGENTS.md` contains the general instructions and rules for the project.
+- `SKILLS.md` contains additional instructions specific to skills.
+- Unless explicitly stated otherwise, the instructions from both files apply.
+- `SKILLS.md` does not replace or override `AGENTS.md`.
+- If an instruction in `SKILLS.md` conflicts with `AGENTS.md`, follow the rules defined by `AGENTS.md`.
+
+
 ## Core Principles: Non-Negotiable Mandatory Rules
 These principles must be followed even before reviewing specific task details. Violation of these principles results in failed suggestions.
 
@@ -32,7 +44,7 @@ These principles must be followed even before reviewing specific task details. V
     Do not apply rules 1-3 to existing code in backports (i.e., non-functional changes not applied to a (fork of) the develop branch.
 
 ### Workflow & Architecture
-1.  **PHP version:** 7.1+
+1.  **PHP version:** 7.1+ for core and bug-fix code. New external modules should target PHP 8.1+ and start every PHP file with `declare(strict_types=1)`.
 2.  **Action/View Separation:** Always clearly separate page action logic (executed on POST) from pure rendering (the HTML view).
 3.  **Hooks First:** Before implementing any logic that runs on a core lifecycle event (e.g., form save, object update), check if an existing Dolibarr hook can be used. Use the standard calling pattern: `$hookmanager->executeHooks('actionName', $parameters, $object, $action);`.
 
