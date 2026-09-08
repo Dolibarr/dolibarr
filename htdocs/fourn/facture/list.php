@@ -2202,26 +2202,33 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
+		$currencykey = !empty($obj->multicurrency_code) ? $obj->multicurrency_code : $conf->currency;
 		// Amount HT
 		if (!empty($arrayfields['f.multicurrency_total_ht']['checked'])) {
 			print '<td class="right nowrap"><span class="amount">'.price($obj->multicurrency_total_ht)."</span></td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
+				$totalarray['pospercurrency'][$totalarray['nbfield']] = 'f.multicurrency_total_ht';
 			}
+			$totalarray['valpercurrency'][$currencykey]['f.multicurrency_total_ht'] = ($totalarray['valpercurrency'][$currencykey]['f.multicurrency_total_ht'] ?? 0) + $obj->multicurrency_total_ht;
 		}
 		// Amount VAT
 		if (!empty($arrayfields['f.multicurrency_total_vat']['checked'])) {
 			print '<td class="right nowrap"><span class="amount">'.price($obj->multicurrency_total_vat)."</span></td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
+				$totalarray['pospercurrency'][$totalarray['nbfield']] = 'f.multicurrency_total_vat';
 			}
+			$totalarray['valpercurrency'][$currencykey]['f.multicurrency_total_vat'] = ($totalarray['valpercurrency'][$currencykey]['f.multicurrency_total_vat'] ?? 0) + $obj->multicurrency_total_vat;
 		}
 		// Amount TTC
 		if (!empty($arrayfields['f.multicurrency_total_ttc']['checked'])) {
 			print '<td class="right nowrap"><span class="amount">'.price($obj->multicurrency_total_ttc)."</span></td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
+				$totalarray['pospercurrency'][$totalarray['nbfield']] = 'f.multicurrency_total_ttc';
 			}
+			$totalarray['valpercurrency'][$currencykey]['f.multicurrency_total_ttc'] = ($totalarray['valpercurrency'][$currencykey]['f.multicurrency_total_ttc'] ?? 0) + $obj->multicurrency_total_ttc;
 		}
 		// Dynamic amount paid
 		if (!empty($arrayfields['multicurrency_dynamount_payed']['checked'])) {
