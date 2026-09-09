@@ -567,7 +567,7 @@ if ($id > 0) {
 				if ($action != 'classify') {
 					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.((int) $object->id).'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 				}
-				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (!getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') ? $object->socid : -1), (string) $object->fk_project, ($action == 'classify' ? 'fk_project' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, -1, (string) $object->fk_project, ($action == 'classify' ? 'fk_project' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 			} else {
 				if (!empty($object->fk_project)) {
 					$proj = new Project($db);
@@ -848,7 +848,6 @@ if ($id > 0) {
 			print "</div>";
 		}
 
-
 		// Select mail models is same action as presend
 		if (GETPOST('modelselected')) {
 			$action = 'presend';
@@ -859,7 +858,6 @@ if ($id > 0) {
 			print '<a name="builddoc"></a>'; // ancre
 
 			$includedocgeneration = 1;
-
 			// Documents
 			if ($includedocgeneration) {
 				$objref = dol_sanitizeFileName($object->ref);
@@ -874,7 +872,6 @@ if ($id > 0) {
 			// Show links to link elements
 			//$tmparray = $form->showLinkToObjectBlock($object, null, array('myobject'), 1);
 			//$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
-
 
 			print '</div><div class="fichehalfright">';
 
