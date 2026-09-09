@@ -604,11 +604,11 @@ class BonPrelevement extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Set withdrawal to transmited status
+	 *  Set withdrawal to transmitted status
 	 *
 	 *  @param  User        $user       id of user
-	 *  @param  int $date       date of action
-	 *  @param  string      $method     method of transmision to bank (0=Internet, 1=Api...)
+	 *  @param  int 		$date       date of action
+	 *  @param  string      $method     method of transmission to bank (0=Internet, 1=Api...)
 	 *  @return int                     >0 if OK, <0 if KO
 	 */
 	public function set_infotrans($user, $date, $method)
@@ -2474,7 +2474,7 @@ class BonPrelevement extends CommonObject
 	/**
 	 *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
-	 *      @param      User    $user           Objet user
+	 *      @param      User    $user           Object user
 	 *      @param      string  $mode           Mode 'direct_debit' or 'credit_transfer'
 	 *      @return     WorkboardResponse|int   <0 if KO, WorkboardResponse if OK
 	 */

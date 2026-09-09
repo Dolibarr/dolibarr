@@ -67,6 +67,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 		$this->db = $db;
 		$this->name = "ODT/ODS templates";
 		$this->description = $langs->trans("DocumentModelOdt");
+		$this->update_main_doc_field = 1; // Save the name of generated file as the main doc when generating a doc with this template
 		$this->scandir = 'FACTURE_ADDON_PDF_ODT_PATH'; // Name of constant that is used to save list of directories to scan
 
 		// Page size for A4 format
