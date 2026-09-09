@@ -164,6 +164,7 @@ $arrayfields = array(
 	'b.fk_bordereau' => array('label' => $langs->trans("ChequeNumber"), 'checked' => '0', 'position' => 65),
 	'bu.label' => array('label' => $langs->trans("ThirdParty").'/'.$langs->trans("User"), 'checked' => '1', 'position' => 70),
 	'ba.ref' => array('label' => $langs->trans("BankAccount"), 'checked' => (($id > 0 || !empty($ref)) ? '0' : '1'), 'position' => 80),
+	'ba.currency_code' => array('label' => $langs->trans("Currency"), 'checked' => (($id > 0 || !empty($ref)) ? '0' : '1'), 'position' => 85),
 	'b.debit' => array('label' => $langs->trans("Debit"), 'checked' => '1', 'position' => 90),
 	'b.credit' => array('label' => $langs->trans("Credit"), 'checked' => '1', 'position' => 100),
 	'balancebefore' => array('label' => $langs->trans("BalanceBefore"), 'checked' => '0', 'position' => 110),
@@ -1163,6 +1164,9 @@ if ($resql) {
 		$form->select_comptes($search_account, 'search_account', 0, '', 1, ($id > 0 || !empty($ref) ? ' disabled="disabled"' : ''), 0, 'maxwidth100');
 		print '</td>';
 	}
+	if (!empty($arrayfields['ba.currency_code']['checked'])) {
+		print '<td class="liste_titre"></td>';
+	}
 	// Debit
 	if (!empty($arrayfields['b.debit']['checked'])) {
 		print '<td class="liste_titre right">';
@@ -1260,6 +1264,10 @@ if ($resql) {
 	}
 	if (!empty($arrayfields['ba.ref']['checked'])) {
 		print_liste_field_titre($arrayfields['ba.ref']['label'], $_SERVER['PHP_SELF'], 'ba.ref', '', $param, '', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
+	}
+	if (!empty($arrayfields['ba.currency_code']['checked'])) {
+		print_liste_field_titre($arrayfields['ba.currency_code']['label'], $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder);
 		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['b.debit']['checked'])) {
@@ -1779,6 +1787,16 @@ if ($resql) {
 		if (!empty($arrayfields['ba.ref']['checked'])) {
 			print '<td class="nowrap">';
 			print $bankaccount->getNomUrl(1);
+			print "</td>\n";
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
+		// Currency of the bank account
+		if (!empty($arrayfields['ba.currency_code']['checked'])) {
+			print '<td class="nowrap">';
+			print dol_escape_htmltag($bankaccount->currency_code);
 			print "</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
