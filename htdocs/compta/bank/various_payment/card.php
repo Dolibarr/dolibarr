@@ -722,7 +722,7 @@ if ($id) {
 
 	// Clone
 	if ($permissiontoadd) {
-		print '<div class="inline-block divButAction"><a class="butAction" href="'.dol_buildpath("/compta/bank/various_payment/card.php", 1).'?id='.$object->id.'&amp;action=clone&amp;token='.newToken().'">'.$langs->trans("ToClone")."</a></div>";
+		print '<div class="inline-block divButAction"><a class="butAction" href="'.dol_buildpath("/compta/bank/various_payment/card.php", 1).'?id='.$object->id.'&action=clone&token='.newToken().'">'.$langs->trans("ToClone")."</a></div>";
 	}
 
 	// Delete
