@@ -795,8 +795,8 @@ $cacheusers = array();
 $theme_datacolor = array(array(120, 130, 150), array(200, 160, 180), array(190, 190, 220));
 
 // Define theme_datacolor array
-$color_file = DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/theme_vars.inc.php";
-if (is_readable($color_file)) {
+$color_file = dol_getThemeFilePath('theme_vars.inc.php');
+if ($color_file && is_readable($color_file)) {
 	include $color_file;
 	global $theme_datacolor;
 }

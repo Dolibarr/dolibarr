@@ -148,3 +148,52 @@ ALTER TABLE llx_contrat ADD COLUMN fk_contract_type tinyint DEFAULT 0 AFTER ref_
 ALTER TABLE llx_commande_fournisseur ADD COLUMN fk_warehouse integer DEFAULT NULL;
 
 -- end of migration - nothing after this line
+
+-- Variants: allow standard import/export of variants (attributes, values, combinations,
+-- attribute/value links and price levels). The import engine writes import_key
+-- unconditionally and resolves an existing record with a SELECT on the update keys.
+
+ALTER TABLE llx_product_attribute ADD COLUMN import_key varchar(14);
+ALTER TABLE llx_product_attribute_value ADD COLUMN import_key varchar(14);
+ALTER TABLE llx_product_attribute_combination ADD COLUMN import_key varchar(14);
+ALTER TABLE llx_product_attribute_combination2val ADD COLUMN import_key varchar(14);
+ALTER TABLE llx_product_attribute_combination_price_level ADD COLUMN import_key varchar(14);
+
+-- The columns were nullable, so existing rows may hold NULL and the MODIFY below would then
+-- be rejected in strict mode. Normalize before altering, never after.
+UPDATE llx_product_attribute_combination SET variation_price = 0 WHERE variation_price IS NULL;
+UPDATE llx_product_attribute_combination SET variation_weight = 0 WHERE variation_weight IS NULL;
+UPDATE llx_product_attribute_combination_price_level SET variation_price = 0 WHERE variation_price IS NULL;
+
+ALTER TABLE llx_product_attribute_combination MODIFY COLUMN variation_price DOUBLE(24,8) DEFAULT 0 NOT NULL;
+ALTER TABLE llx_product_attribute_combination MODIFY COLUMN variation_weight REAL DEFAULT 0 NOT NULL;
+ALTER TABLE llx_product_attribute_combination_price_level MODIFY COLUMN variation_price DOUBLE(24,8) DEFAULT 0 NOT NULL;
+
+-- Remove the dangling rows the foreign keys below would reject. These rows are already broken:
+-- they reference a parent product, a combination, an attribute or a value that no longer exists.
+-- fk_product_child = 0 is excluded: createProductCombination() fills the column after the insert,
+-- so 0 is a legitimate transient value and no foreign key is added on that column.
+DELETE FROM llx_product_attribute_combination WHERE fk_product_parent NOT IN (SELECT rowid FROM llx_product);
+DELETE FROM llx_product_attribute_combination WHERE fk_product_child <> 0 AND fk_product_child NOT IN (SELECT rowid FROM llx_product);
+DELETE FROM llx_product_attribute_value WHERE fk_product_attribute NOT IN (SELECT rowid FROM llx_product_attribute);
+DELETE FROM llx_product_attribute_combination2val WHERE fk_prod_combination NOT IN (SELECT rowid FROM llx_product_attribute_combination);
+DELETE FROM llx_product_attribute_combination2val WHERE fk_prod_attr NOT IN (SELECT rowid FROM llx_product_attribute);
+DELETE FROM llx_product_attribute_combination2val WHERE fk_prod_attr_val NOT IN (SELECT rowid FROM llx_product_attribute_value);
+DELETE FROM llx_product_attribute_combination_price_level WHERE fk_product_attribute_combination NOT IN (SELECT rowid FROM llx_product_attribute_combination);
+
+-- A combination must not carry twice the same attribute. No unique index ever protected this
+-- table, so existing databases may hold duplicated rows: remove them before adding the index.
+-- This runs after the cleanup above on purpose: a duplicated couple may hold one broken row and
+-- one sane row, and keeping the lowest rowid before the cleanup would destroy the sane one.
+-- When both rows are sane and carry different values, the row of lowest rowid is the one kept.
+DELETE FROM llx_product_attribute_combination2val WHERE rowid NOT IN (SELECT rowid FROM (SELECT MIN(rowid) as rowid FROM llx_product_attribute_combination2val GROUP BY fk_prod_combination, fk_prod_attr) as tmp);
+
+ALTER TABLE llx_product_attribute_combination2val ADD UNIQUE INDEX uk_product_att_com2v (fk_prod_combination, fk_prod_attr);
+
+ALTER TABLE llx_product_attribute_value ADD CONSTRAINT fk_product_attribute_value_fk_product_attribute FOREIGN KEY (fk_product_attribute) REFERENCES llx_product_attribute (rowid);
+ALTER TABLE llx_product_attribute_combination ADD CONSTRAINT fk_product_att_com_product_parent FOREIGN KEY (fk_product_parent) REFERENCES llx_product (rowid);
+ALTER TABLE llx_product_attribute_combination2val ADD CONSTRAINT fk_product_att_com2v_prod_combination FOREIGN KEY (fk_prod_combination) REFERENCES llx_product_attribute_combination (rowid);
+ALTER TABLE llx_product_attribute_combination2val ADD CONSTRAINT fk_product_att_com2v_prod_attr FOREIGN KEY (fk_prod_attr) REFERENCES llx_product_attribute (rowid);
+ALTER TABLE llx_product_attribute_combination2val ADD CONSTRAINT fk_product_att_com2v_prod_attr_val FOREIGN KEY (fk_prod_attr_val) REFERENCES llx_product_attribute_value (rowid);
+ALTER TABLE llx_product_attribute_combination_price_level ADD CONSTRAINT fk_prod_att_comb_price_level_combination FOREIGN KEY (fk_product_attribute_combination) REFERENCES llx_product_attribute_combination (rowid);
+

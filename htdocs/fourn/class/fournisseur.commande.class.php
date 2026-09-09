@@ -1095,7 +1095,7 @@ class CommandeFournisseur extends CommonOrder
 			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
 			$label = '';
 		} else {
-			$label = implode($this->getTooltipContentArray($params));
+			$label = $this->getTooltipContent($params);
 		}
 
 		$url = DOL_URL_ROOT.'/fourn/commande/card.php?id='.$this->id;

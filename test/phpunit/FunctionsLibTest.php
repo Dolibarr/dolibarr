@@ -736,6 +736,48 @@ class FunctionsLibTest extends CommonClassTest
 
 
 	/**
+	 * testDolGetThemeFilePath
+	 *
+	 * @return void
+	 */
+	public function testDolGetThemeFilePath()
+	{
+		global $conf;
+
+		$savtheme = $conf->theme;
+		$savmodulesparts = $conf->modules_parts;
+
+		// A file that exists in the native theme directory is found there
+		$conf->theme = 'eldy';
+		$conf->modules_parts['theme'] = array();
+		$result = dol_getThemeFilePath('theme_vars.inc.php');
+		print __METHOD__." result=".$result."\n";
+		$this->assertSame(DOL_DOCUMENT_ROOT.'/theme/eldy/theme_vars.inc.php', $result, 'Native theme file must be found under DOL_DOCUMENT_ROOT');
+
+		// An explicit theme name can be passed
+		$conf->theme = 'md';
+		$result = dol_getThemeFilePath('theme_vars.inc.php', 'eldy');
+		$this->assertSame(DOL_DOCUMENT_ROOT.'/theme/eldy/theme_vars.inc.php', $result, 'The $theme argument must take precedence over $conf->theme');
+
+		// With no module theme registered, the native path is returned as-is,
+		// without an existence check (historical behaviour, no extra I/O).
+		$conf->theme = 'eldy';
+		$conf->modules_parts['theme'] = array();
+		$result = dol_getThemeFilePath('afilethatdoesnotexist.inc.php');
+		$this->assertSame(DOL_DOCUMENT_ROOT.'/theme/eldy/afilethatdoesnotexist.inc.php', $result, 'With no module theme, the native path is returned unchecked');
+
+		// When a module registers a theme directory, a file missing from every
+		// candidate directory returns an empty string.
+		$conf->modules_parts['theme'] = array('/amodulethatdoesnotexist/');
+		$result = dol_getThemeFilePath('afilethatdoesnotexist.inc.php');
+		$this->assertSame('', $result, 'A missing theme file must return an empty string when a module theme is registered');
+
+		$conf->theme = $savtheme;
+		$conf->modules_parts = $savmodulesparts;
+	}
+
+
+	/**
 	 * testGetBrowserInfo
 	 *
 	 * @return void
