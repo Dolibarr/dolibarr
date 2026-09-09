@@ -1855,7 +1855,7 @@ class ExtraFields
 									objecttype: '".dol_escape_js($extrafieldsobjectkey)."',
 									objectid: '".dol_escape_js($object->id)."',
 									objectkey: '".dol_escape_js($key)."',
-									mode: '".dol_escape_js($mode)."',
+									mode: '".dol_escape_js((string) $mode)."',
 									value: '".dol_escape_js($value)."'
 								}
 								return query;
