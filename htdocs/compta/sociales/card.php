@@ -848,6 +848,7 @@ if ($id > 0) {
 			print "</div>";
 		}
 
+
 		// Select mail models is same action as presend
 		if (GETPOST('modelselected')) {
 			$action = 'presend';
@@ -858,6 +859,7 @@ if ($id > 0) {
 			print '<a name="builddoc"></a>'; // ancre
 
 			$includedocgeneration = 1;
+
 			// Documents
 			if ($includedocgeneration) {
 				$objref = dol_sanitizeFileName($object->ref);
@@ -872,6 +874,7 @@ if ($id > 0) {
 			// Show links to link elements
 			//$tmparray = $form->showLinkToObjectBlock($object, null, array('myobject'), 1);
 			//$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
+
 
 			print '</div><div class="fichehalfright">';
 
