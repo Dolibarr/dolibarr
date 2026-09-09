@@ -1893,10 +1893,9 @@ while ($i < $imaxinloop) {
 
 		if (!empty($TInvoiceData)) {
 			foreach ($TInvoiceData as $invoiceData) {
-				$invoiceDataObj = $invoiceData;
-				'@phan-var-force stdClass $invoiceDataObj';
+				'@phan-var-force stdClass $invoiceData';
 				$invoice = new Facture($db);
-				$invoice->fetch($invoiceDataObj->facid);
+				$invoice->fetch($invoiceData->facid);
 
 				if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS') && $invoice->type == Facture::TYPE_DEPOSIT) {
 					continue;
