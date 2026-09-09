@@ -1520,11 +1520,11 @@ class ExtraFields
 									var query = {
 										search: params.term,
 										page: params.page || 1,
-										objecttype: '".$extrafieldsobjectkey."',
-										objectid: '".$objectid."',
-										objectkey: '".$key."',
-										mode: '".$mode."',
-										value: '".$value."'
+										objecttype: '".dol_escape_js($extrafieldsobjectkey)."',
+										objectid: '".dol_escape_js($objectid)."',
+										objectkey: '".dol_escape_js($key)."',
+										mode: '".((int) $mode)."',
+										value: '".dol_escape_js($value)."'
 									}
 									return query;
 								}
@@ -1842,7 +1842,7 @@ class ExtraFields
 				$out .= "
 				<script>
 				$(document).ready(function () {
-					$('#".$keyprefix.$key.$keysuffix."').select2({
+					$('#".dol_escape_js($keyprefix.$key.$keysuffix)."').select2({
 						ajax: {
 							url: '".DOL_URL_ROOT.'/core/ajax/ajaxextrafield.php'."',
 							dataType: 'json',
@@ -1855,7 +1855,7 @@ class ExtraFields
 									objecttype: '".dol_escape_js($extrafieldsobjectkey)."',
 									objectid: '".dol_escape_js($object->id)."',
 									objectkey: '".dol_escape_js($key)."',
-									mode: '".dol_escape_js((string) $mode)."',
+									mode: '".((int) $mode)."',
 									value: '".dol_escape_js($value)."'
 								}
 								return query;
