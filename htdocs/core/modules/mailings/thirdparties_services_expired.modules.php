@@ -35,7 +35,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
 	public $desc = 'Third parties with expired contract\'s lines';
 
 	/**
-	 * @var int
+	 * @var int<0,1>
 	 */
 	public $require_admin = 0;
 

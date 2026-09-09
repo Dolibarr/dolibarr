@@ -2187,7 +2187,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print '<td>';
 				if (getDolGlobalString('API_IN_TOKEN_TABLE')) {
 					print '<div class="centpercent display-flex">';
-					print '<span class="badge badge-info">999</span>';
+					print '<span class="badge badge-info marginleftonly marginrightonly">0</span>';
 					/*print '<a href="'.DOL_URL_ROOT.'/user/api_token/list.php?id='.$object->id.'">';
 					print $langs->trans("APIKeys");
 					print '</a>';*/
@@ -2198,12 +2198,12 @@ if ($action == 'create' || $action == 'adduserldap') {
 					print '</div>';
 				} else {
 					if (!empty($object->api_key)) {
-						print '<span class="opacitymedium">';
+						print '<span class="opacitymedium marginrightonly">';
 						print showValueWithClipboardCPButton($object->api_key, 1, $langs->transnoentities("Hidden"));		// TODO Add an option to also reveal the hash, not only copy paste
 						print '</span>';
 					}
 					if ($object->api_key && (getDolGlobalString('API_ENABLE_COUNT_CALLS') || !empty($dolibarr_api_count_always_enabled))) {
-						print ' &nbsp; <span class="badge badge-info" title="'.$langs->trans("TotalAPICall").'">';
+						print '<span class="badge badge-info marginleftonly marginrightonly" title="'.$langs->trans("TotalAPICall").'">';
 						print getDolUserInt('API_COUNT_CALL');
 						print '</span>';
 					}

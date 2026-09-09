@@ -2975,7 +2975,7 @@ class FactureFournisseur extends CommonInvoice
 			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
 			$label = '';
 		} else {
-			$label = implode($this->getTooltipContentArray($params));
+			$label = $this->getTooltipContent($params);
 		}
 
 		$ref = $this->ref;

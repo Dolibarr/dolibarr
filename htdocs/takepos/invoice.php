@@ -3,7 +3,7 @@
  * Copyright (C) 2021    	Nicolas ZABOURI    		<info@inovea-conseil.com>
  * Copyright (C) 2022-2023	Christophe Battarel		<christophe.battarel@altairis.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2026       Jose Martinez           <jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -104,8 +104,8 @@ if (empty($takeposterminal)) {
 		$takeposterminal = $_SESSION["takeposterminal"];
 	} else {
 		print <<<SCRIPT
-<script language="javascript">
-	$( document ).ready(function() {
+<script type="text/javascript">
+	jQuery(function() {
 		ModalBox('ModalTerminal');
 	});
 </script>
@@ -1827,12 +1827,12 @@ function showPrintResultPopup(message, duration) {
 // Call url to generate a credit note (with same lines) from existing invoice
 var creditNoteParams="";
 function CreditNote() {
-    <?php
-    $parameters = array();
-    $reshook = $hookmanager->executeHooks('paramsForCreditNote', $parameters, $invoice, $action);?>
+	<?php
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('paramsForCreditNote', $parameters, $invoice, $action);?>
 	$("#poslines").load("<?php
-        print DOL_URL_ROOT; ?>/takepos/invoice.php?action=creditnote&token=<?php echo newToken() ?>&invoiceid="+placeid+creditNoteParams, function() {	});
-        return true;
+		print DOL_URL_ROOT; ?>/takepos/invoice.php?action=creditnote&token=<?php echo newToken() ?>&invoiceid="+placeid+creditNoteParams, function() {	});
+		return true;
 }
 
 // Call url to add notes

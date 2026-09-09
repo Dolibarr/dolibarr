@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/db/DoliDB.class.php';
  */
 class DoliDBMysqli extends DoliDB
 {
-	/** @var mysqli Database object */
+	/** @var false|mysqli Database object */
 	public $db;
 	//! Database type
 	public $type = 'mysqli';

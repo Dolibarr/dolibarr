@@ -14,8 +14,9 @@ Default **language here is English**. So please prepare your contributions in En
 2. [Create an issue](https://help.github.com/articles/creating-an-issue). Choose an appropriate title. Prepend appropriately with Bug or Feature Request.
 3. Tell us the version you are using!   (look at  /htdocs/admin/system/dolibarr.php?  and check if you are using the latest version) 
 4. Write a report with as much detail as possible (Use [screenshots](https://help.github.com/articles/issue-attachments) or even screencasts and provide logging and debugging information whenever possible).
-5. Delete unnecessary submissions.
-6. **Check your Message at Preview before submitting.**
+5. One report per issue. If you have several issues, please create several reports.
+6. IMPORTANT: Report the process to reproduce the bug.
+7. **Check your Message at Preview before submitting.**
 
 
 
@@ -109,11 +110,13 @@ In uppercase if you want to have the log comment appears into the generated Chan
 
 The keyword can be omitted if your commit does not fit in any of the following categories:
 
-- Fix/FIX: for a bug fix
+- Fix/FIX:     for a bug fix
 - Close/CLOSE: for closing a referenced feature request
-- New/NEW: for an unreferenced new feature (Opening a feature request and using close is preferred)
-- Perf/PERF: for a performance enhancement
-- Qual/QUAL: for quality code enhancement or re-engineering
+- New/NEW:     for an unreferenced new feature (Opening a feature request and using close is preferred)
+- Perf/PERF:   for a performance enhancement
+- Doc/DOC:     for documentation
+- Qual/QUAL:   for quality code enhancement or re-engineering
+- Sec/SEC:     for a security vulnerability fix
 
 #### Issuenum
 If your commit fixes a referenced bug or feature request.
