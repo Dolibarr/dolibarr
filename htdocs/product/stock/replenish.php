@@ -170,7 +170,15 @@ if ($action == 'order' && GETPOST('valid')) {
 				$supplierpriceid = GETPOST('fourn' . $i, 'int');
 				//get all the parameters needed to create a line
 				$qty = GETPOST('tobuy' . $i, 'int');
-				$idprod = $productsupplier->get_buyprice($supplierpriceid, $qty);
+				// Resolve the product and the supplier of the selected price line first. Without them,
+				// get_buyprice() falls back to a search with no product and no supplier filter, and can
+				// return a price row of another supplier for another product (see #40182).
+				$tmpprodfourn = new ProductFournisseur($db);
+				if ($tmpprodfourn->fetch_product_fournisseur_price($supplierpriceid) > 0) {
+					$idprod = $productsupplier->get_buyprice($supplierpriceid, $qty, $tmpprodfourn->product_id, 'none', $tmpprodfourn->fourn_id);
+				} else {
+					$idprod = $productsupplier->get_buyprice($supplierpriceid, $qty);
+				}
 				$res = $productsupplier->fetch($idprod);
 				if ($res && $idprod > 0) {
 					if ($qty) {
