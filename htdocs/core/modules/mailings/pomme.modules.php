@@ -48,7 +48,7 @@ class mailing_pomme extends MailingTargets
 	public $require_module = array();
 
 	/**
-	 * @var int Module mailing actif pour user admin ou non
+	 * @var int<0,1> Module mailing actif pour user admin ou non
 	 */
 	public $require_admin = 1;
 
