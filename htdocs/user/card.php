@@ -2752,12 +2752,14 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 			print '</table>';
 
+
 			print '<hr>';
+
 
 			print '<table class="border centpercent">';
 
 			// Date access validity
-			print '<tr><td>'.$langs->trans("RangeOfLoginValidity").'</td>';
+			print '<tr><td class="titlefieldcreate">'.$langs->trans("RangeOfLoginValidity").'</td>';
 			print '<td>';
 			if ($permissiontoedit) {
 				print $form->selectDate($datestartvalidity ? $datestartvalidity : $object->datestartvalidity, 'datestartvalidity', 0, 0, 1, 'formdatestartvalidity', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("from"));
@@ -2867,8 +2869,13 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print '</td></tr>';
 			}
 
-			print '</table><hr><table class="border centpercent">';
+			print '</table>';
 
+
+			print '<hr>';
+
+
+			print '<table class="border centpercent">';
 
 			// Address
 			print '<tr><td class="tdtop titlefieldcreate">'.$form->editfieldkey('Address', 'address', '', $object, 0).'</td>';
@@ -2996,12 +3003,17 @@ if ($action == 'create' || $action == 'adduserldap') {
 				}
 			}
 
-			print '</table><hr><table class="border centpercent">';
+			print '</table>';
 
+
+			print '<hr>';
+
+
+			print '<table class="border centpercent">';
 			// Default warehouse
 			if (isModEnabled('stock') && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE_USER')) {
-				print '<tr><td class="titlefield">'.$langs->trans("DefaultWarehouse").'</td><td>';
-				print $formproduct->selectWarehouses($object->fk_warehouse, 'fk_warehouse', 'warehouseopen', 1);
+				print '<tr><td class="titlefieldcreate">'.$langs->trans("DefaultWarehouse").'</td><td>';
+				print $formproduct->selectWarehouses($object->warehouse_id, 'fk_warehouse', 'warehouseopen', 1);
 				print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&token='.newToken().'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit&token='.newToken()).'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddWarehouse").'"></span></a>';
 				print '</td></tr>';
 			}
@@ -3148,8 +3160,8 @@ if ($action == 'create' || $action == 'adduserldap') {
 			}
 			print '</td></tr>';
 
-
 			print '</table>';
+
 
 			print '<hr>';
 
