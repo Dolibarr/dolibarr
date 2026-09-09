@@ -67,6 +67,7 @@ $passworduidhash = GETPOST('passworduidhash', 'aZ09');	// dolGetPasswordResetHas
 $setnewpassword = GETPOST('setnewpassword', 'aZ09');
 $newpass1 = GETPOST('newpass1', 'password');
 $newpass2 = GETPOST('newpass2', 'password');
+$passwordchanged = 0;
 
 $conf->entity = (GETPOSTINT('entity') ? GETPOSTINT('entity') : 1);
 
@@ -144,17 +145,21 @@ if (empty($reshook)) {
 						$message = '<div class="error">'.dol_escape_htmltag($edituser->error ? $edituser->error : $langs->trans("ErrorFailedToChangePassword")).'</div>';
 					} else {
 						unset($_SESSION['dol_login']);
-						$_SESSION['dol_loginmesg'] = '<!-- warning -->'.$langs->transnoentitiesnoconv("NewPasswordValidated");
 						dol_syslog("passwordforgotten.php new user-chosen password for user->id=".$edituser->id." set in database");
 
-						// Where to send the user once the password has been changed (setup may point to another front, ie a portal)
-						$urlafterchange = DOL_URL_ROOT.'/?username='.urlencode($edituser->login);
-						if (getDolGlobalString('URL_REDIRECTION_AFTER_CHANGEPASSWORD')) {
-							$urlafterchange = dol_sanitizeUrl(getDolGlobalString('URL_REDIRECTION_AFTER_CHANGEPASSWORD'), 0);
-						}
+						// Confirm on this page and let the user go to the login form. Redirecting to
+						// DOL_URL_ROOT.'/?username=' makes main.inc.php read that GET username as a login
+						// submit with an empty password, so the success message was replaced by a
+						// bad-credentials error.
+						$passwordchanged = 1;
+						$message = '<div class="ok">'.$langs->trans("NewPasswordValidated").'</div>';
 
-						header("Location: ".$urlafterchange);
-						exit;
+						// The setup may send the user to another front (ie a portal) instead
+						if (getDolGlobalString('URL_REDIRECTION_AFTER_CHANGEPASSWORD')) {
+							$_SESSION['dol_loginmesg'] = '<!-- warning -->'.$langs->transnoentitiesnoconv("NewPasswordValidated");
+							header("Location: ".dol_sanitizeUrl(getDolGlobalString('URL_REDIRECTION_AFTER_CHANGEPASSWORD'), 0));
+							exit;
+						}
 					}
 				}
 			}
