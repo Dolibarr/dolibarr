@@ -2774,6 +2774,21 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '</td>';
 			print "</tr>\n";
 
+			// Set checkbxo to update on next login (only on dolibarr auth mode)
+			$sforcepass = '';
+			$permissiontoselfeditpassword = $object->hasRight('user', 'self', 'password');
+			if ($permissiontoselfeditpassword) {
+				if ($permissiontoedit) {
+					$sforcepass .= '<input type="checkbox" name="forcepasswordchange" id="forcepasswordchange" value="1"'.($object->force_pass_change ? ' checked="checked"' : '').'>';
+					$sforcepass .= '<label class="opacitylow small" for="forcepasswordchange">'.$langs->trans("ForcePasswordChange").'</label>';
+				} else {
+					$sforcepass .= '<input type="checkbox" name="forcepasswordchange" class="colorgrey" disabled value="1"'.($object->force_pass_change ? ' checked="checked"' : '').'>';
+					$sforcepass .= '<span class="small">'.$langs->trans("ForcePasswordChange").'</small>';
+				}
+			} else {
+				$sforcepass .= '<input type="checkbox" name="forcepasswordchange" value="1" class="colorgrey" disabled>';
+				$sforcepass .= '<span class="opacitymedium small" title="'.$langs->trans("UserDoesNotHaveRightsToChangeHisPassword").'">'.$langs->trans("ForcePasswordChange").'</span>';
+			}
 
 			// Pass
 			print '<tr><td class="titlefieldcreate">'.$langs->trans("Password").'</td>';
@@ -2805,26 +2820,22 @@ if ($action == 'create' || $action == 'adduserldap') {
 			}
 
 			print $valuetoshow;
+			/*
+			if ($_SESSION["dol_authmode"] == 'dolibarr') {
+				print '<div class="inline-block marginleftonly paddingtop paddingbottom">'.$sforcepass.'</div>';
+			}*/
 			print "</td></tr>\n";
 
 			// Force update on next login only on dolibarr auth mode
 			if ($_SESSION["dol_authmode"] == 'dolibarr') {
-				print '<tr>';
-				print '<td></td><td>';
-				$permissiontoselfeditpassword = $object->hasRight('user', 'self', 'password');
-				if ($permissiontoselfeditpassword) {
-					if ($permissiontoedit) {
-						print '<input type="checkbox" name="forcepasswordchange" id="forcepasswordchange" value="1"'.($object->force_pass_change ? ' checked="checked"' : '').'>';
-						print '<label class="opacitylow" for="forcepasswordchange">'.$langs->trans("ForcePasswordChange").'</label>';
-					} else {
-						print '<input type="checkbox" name="forcepasswordchange" class="colorgrey" disabled value="1"'.($object->force_pass_change ? ' checked="checked"' : '').'>';
-						print $langs->trans("ForcePasswordChange");
-					}
+				print '<tr class="valigntop">';
+				if ($conf->dol_optimize_smallscreen) {
+					print '<td colspan="2">';
 				} else {
-					print '<input type="checkbox" name="forcepasswordchange" value="1" class="colorgrey" disabled>';
-					print '<span class="opacitymedium" title="'.$langs->trans("UserDoesNotHaveRightsToChangeHisPassword").'">'.$langs->trans("ForcePasswordChange").'</span>';
+					print '<td></td>';
+					print '<td>';
 				}
-
+				print $sforcepass;
 				print '</td></tr>';
 			}
 
