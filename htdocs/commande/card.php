@@ -2141,11 +2141,6 @@ if ($action == 'create' && $usercancreate) {
 
 		$formconfirm = '';
 
-		// Confirmation to delete
-		if ($action == 'delete') {
-			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteOrder'), $langs->trans('ConfirmDeleteOrder'), 'confirm_delete', '', 0, 1);
-		}
-
 		// Confirmation of validation
 		if ($action == 'validate') {
 			// We check that object has a temporary ref
@@ -2349,25 +2344,19 @@ if ($action == 'create' && $usercancreate) {
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('UnvalidateOrder'), $text, 'confirm_modif', $formquestion, "yes", 1, 220);
 		}
 
-		/*
-		 * Confirmation de la cloture
-		*/
+		// confirm to close / shipped
 		if ($action == 'shipped') {
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('CloseOrder'), $langs->trans('ConfirmCloseOrder'), 'confirm_shipped', '', 0, 1);
 		}
 
-		/*
-		 * Confirmation de l'annulation
-		 */
-		if ($action == 'cancel') {
+		// Confirmation to delete or cancel
+		if ($action == 'cancel' || $action == 'delete') {
 			$qualified_for_stock_change = 0;
 			if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
 				$qualified_for_stock_change = $object->hasProductsOrServices(2);
 			} else {
 				$qualified_for_stock_change = $object->hasProductsOrServices(1);
 			}
-
-			$text = $langs->trans('ConfirmCancelOrder', $object->ref);
 			$formquestion = array();
 			if (isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $qualified_for_stock_change) {
 				$langs->load("stocks");
@@ -2381,11 +2370,19 @@ if ($action == 'create' && $usercancreate) {
 					// 'text' => $langs->trans("ConfirmClone"),
 					// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),
 					// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' => 1),
-					array('type' => 'other', 'name' => 'idwarehouse', 'label' => $langs->trans("SelectWarehouseForStockIncrease"), 'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse') ?GETPOST('idwarehouse') : 'ifone', 'idwarehouse', '', 1, 0, 0, '', 0, $forcecombo))
+					array('type' => 'other', 'name' => 'idwarehouse', 'label' => $langs->trans("SelectWarehouseForStockIncrease"), 'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse') ? GETPOST('idwarehouse') : 'ifone', 'idwarehouse', '', 1, 0, 0, '', 0, $forcecombo))
 				);
 			}
-
-			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans("Cancel"), $text, 'confirm_cancel', $formquestion, 0, 1);
+			if ($action == 'cancel') {
+				$text = $langs->trans('ConfirmCancelOrder', $object->ref);
+				$title = $langs->trans("Cancel");
+				$action = 'confirm_cancel';
+			} else {
+				$text = $langs->trans('ConfirmDeleteOrder', $object->ref);
+				$title = $langs->trans("DeleteOrder");
+				$action = 'confirm_delete';
+			}
+			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $tile, $text, $action, $formquestion, 0, 1);
 		}
 
 		// Confirmation to delete line
