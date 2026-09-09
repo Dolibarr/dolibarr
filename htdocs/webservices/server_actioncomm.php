@@ -403,8 +403,8 @@ function getListActionCommType($authentication)
 			$result = $cactioncomm->liste_array('', 'code');
 			if ($result > 0) {
 				$resultarray = array();
-				foreach ($cactioncomm->liste_array as $code => $libeller) {
-					$resultarray[] = array('code' => $code, 'libelle' => $libeller);
+				foreach ($cactioncomm->liste_array as $code => $dataarray) {
+					$resultarray[] = array('code' => $code, 'data' => $dataarray);
 				}
 
 				$objectresp = array(

@@ -2,7 +2,7 @@
 /* Copyright (C) 2013-2014  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015-2016  Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -61,7 +61,7 @@ foreach ($session_var as $var) {
 	}
 }
 
-// On initialise également les autres variables
+// Also initialise the other variables
 $cocheplus = '';
 $cochemail = '';
 $champdatefin = 0;

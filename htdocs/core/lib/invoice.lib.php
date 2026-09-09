@@ -197,7 +197,7 @@ function invoice_admin_prepare_head()
 	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__'); to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'invoice_admin');
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/compta/facture/admin/invoice_cust_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'facture'));
 	$head[$h][1] = $langs->trans("ExtraFieldsCustomerInvoices");
 	$nbExtrafields = $extrafields->attributes['facture']['count'];
 	if ($nbExtrafields > 0) {
@@ -206,7 +206,7 @@ function invoice_admin_prepare_head()
 	$head[$h][2] = 'attributes';
 	$h++;
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/compta/facture/admin/invoicedet_cust_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'facturedet'));
 	$head[$h][1] = $langs->trans("ExtraFieldsLines");
 	$nbExtrafields = $extrafields->attributes['facturedet']['count'];
 	if ($nbExtrafields > 0) {
@@ -215,7 +215,7 @@ function invoice_admin_prepare_head()
 	$head[$h][2] = 'attributeslines';
 	$h++;
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/compta/facture/admin/invoice_rec_cust_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'facture_rec'));
 	$head[$h][1] = $langs->trans("ExtraFieldsCustomerInvoicesRec");
 	$nbExtrafields = $extrafields->attributes['facture_rec']['count'];
 	if ($nbExtrafields > 0) {
@@ -224,7 +224,7 @@ function invoice_admin_prepare_head()
 	$head[$h][2] = 'attributesrec';
 	$h++;
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/compta/facture/admin/invoicedet_rec_cust_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'facturedet_rec'));
 	$head[$h][1] = $langs->trans("ExtraFieldsLinesRec");
 	$nbExtrafields = $extrafields->attributes['facturedet_rec']['count'];
 	if ($nbExtrafields > 0) {
@@ -426,7 +426,10 @@ function getNumberInvoicesPieChart($mode)
 		|| ($mode == 'suppliers' && (isModEnabled('fournisseur') || isModEnabled('supplier_invoice')) && $user->hasRight('fournisseur', 'facture', 'lire'))
 	) {
 		global $badgeStatus1, $badgeStatus3, $badgeStatus4, $badgeStatus11;
-		include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+		$theme_vars_file = dol_getThemeFilePath('theme_vars.inc.php');
+		if ($theme_vars_file) {
+			include $theme_vars_file;
+		}
 
 		$now = date_create(date('Y-m-d', dol_now()));
 		$datenowsub30 = date_create(date('Y-m-d', dol_now()));
@@ -1303,7 +1306,7 @@ function getPurchaseInvoiceUnpaidOpenTable($maxCount = 500, $socid = 0)
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 		$sql .= " WHERE s.rowid = ff.fk_soc";
-		$sql .= " AND ff.entity = ".$conf->entity;
+		$sql .= " AND ff.entity = ".((int) $conf->entity);
 		$sql .= " AND ff.paye = 0";
 		$sql .= " AND ff.fk_statut = ".FactureFournisseur::STATUS_VALIDATED;
 		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {

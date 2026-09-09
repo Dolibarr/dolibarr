@@ -75,7 +75,7 @@ class box_accountancy_suspense_account extends ModeleBoxes
 				$sql = "SELECT COUNT(*) as nb_suspense_account";
 				$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as b";
 				$sql .= " WHERE b.numero_compte = '".$this->db->escape($suspenseAccount)."'";
-				$sql .= " AND b.entity = ".$conf->entity;
+				$sql .= " AND b.entity = ".((int) $conf->entity);
 
 				$result = $this->db->query($sql);
 				$nbSuspenseAccount = 0;

@@ -23,14 +23,11 @@
 
 /**
  *      \file       htdocs/admin/system/phpinfo.php
- *		\brief      Page des infos systeme de php
+ *		\brief      Page of PHP system information
  */
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -38,6 +35,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 $langs->loadLangs(array("admin", "install", "errors"));
 
@@ -153,6 +152,16 @@ print '<tr class="liste_titre">';
 print '<td class="titlefield">'.$langs->trans("Extension").'</td>';
 print '<td>'.$langs->trans("Test").'</td>';
 print '</tr>';
+
+if ($db->type == 'mysqli') {
+	$functions = ["mysqli_connect"];
+	$name      = "MySQLi";
+
+	print "<tr>";
+	print "<td>".$name."</td>";
+	print getResultColumn($name, $activatedExtensions, $loadedExtensions, $functions);
+	print "</tr>";
+}
 
 $functions = ["mb_check_encoding"];
 $name      = "MBString";

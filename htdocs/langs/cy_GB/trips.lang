@@ -72,7 +72,8 @@ ExpenseReportRulesDesc=Gallwch ddiffinio rheolau uchafswm ar gyfer adroddiadau t
 ExpenseReportWaitingForApproval=Mae adroddiad gwariant newydd wedi'i gyflwyno i'w gymeradwyo
 ExpenseReportWaitingForApprovalMessage=Mae adroddiad costau newydd wedi'i gyflwyno ac yn aros am gymeradwyaeth. <br> - Defnyddiwr: %s <br> - Cyfnod: %s <br> Cliciwch yma i ddilysu: %s
 ExpenseReportWaitingForReApproval=Mae adroddiad gwariant wedi'i gyflwyno i'w ail-gymeradwyo
-ExpenseReportWaitingForReApprovalMessage=Mae adroddiad gwariant wedi ei gyflwyno ac yn aros am ail gymeradwyaeth. <br> Yr %s, gwrthodasoch gymeradwyo'r adroddiad treuliau am y rheswm hwn: %s. <br> Mae fersiwn newydd wedi'i chynnig ac yn aros am eich cymeradwyaeth. <br> - Defnyddiwr: %s <br> - Cyfnod: %s <br> Cliciwch yma i ddilysu: %s
+ExpenseReportWaitingForReApprovalMessage=An expense report has been submitted and is waiting for re-approval.<br>The %s, you refused to approve the expense report for this reason: %s.<br>A new version has been proposed and waiting for your approval.<br> - User: %s<br> - Period: %s<br>
+ExpenseReportWaitingForReApprovalMessage2=Click here to validate: %s
 ExpenseReportsIk=Ffurfweddu taliadau milltiredd
 ExpenseReportsRules=Rheolau adroddiad treuliau
 ExpenseReportsToApprove=Adroddiadau treuliau i'w cymeradwyo
@@ -120,7 +121,6 @@ ValideTrip=Cymeradwyo adroddiad treuliau
 ExpenseReportPayments=Expense report payments
 TaxUndefinedForThisCategory = Tax is undefined for this category
 errorComputeTtcOnMileageExpense=Error on computing mileage expense
-ErrorOnlyDraftStatusCanBeDeletedInMassAction=Only elements in draft status can be deleted in mass action
 
 ## Dictionary
 EX_BRE=Brecwast
@@ -156,3 +156,6 @@ TF_PEAGE=Toll
 TF_TAXI=Tacsi
 TF_TRAIN=Tren
 TF_TRIP=Cludiant
+FailedToSetPaid=Failed to set as paid
+FailedToSetToCancel=Failed to cancel
+NobodyHasPermissionToValidateExpenseReport=Nobody has permission to validate expensereport

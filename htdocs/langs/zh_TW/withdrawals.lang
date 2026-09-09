@@ -172,3 +172,6 @@ SalaryWaitingWithdraw=薪資等待轉帳付款
 RefSalary=薪資
 NoSalaryInvoiceToWithdraw=無薪資符合「%s」。請至薪資卡片「%s」分頁提出申請。
 SalaryInvoiceWaitingWithdraw=薪資等待轉帳付款
+ErrorBankTransferNoPaymentRequestSelected=No payment request selected.
+AmountRequestedAlreadyReachesTotal=The total invoice amount has already been requested for payment
+AmountExceedsRemainingToRequest=The requested amount exceeds the remaining amount available for payment requests

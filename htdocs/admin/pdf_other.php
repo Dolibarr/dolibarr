@@ -255,7 +255,7 @@ $tooltipconcatpdf = ($maxfilesizearray['maxmin'] > 0) ? $langs->trans('MaxSize')
 $documenturl = getDolGlobalString('DOL_URL_ROOT_DOCUMENT_PHP', DOL_URL_ROOT.'/document.php');
 
 
-print '<form enctype="multipart/form-data" method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
+print '<form enctype="multipart/form-data" method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 

@@ -48,6 +48,7 @@ ConferenceOrBoothTab = 会议或展位
 AmountPaid = 支付金额
 DateOfRegistration = 注册日期
 ConferenceOrBoothAttendee = 会议或展位与会者
+ConferenceOrBoothAttendeesShort = Conf. or Booth Attendees
 ApplicantOrVisitor=申请人或访客
 Speaker=演讲者
 # Template Mail
@@ -81,8 +82,8 @@ ListOfAttendeesOfEvent=List of attendees of event projects
 ListOfConfOrBoothOfEvent=List of conferences or booths of event projects
 DownloadICSLink=Download ICS file
 EVENTORGANIZATION_SECUREKEY=用于确保推荐会议的公共注册页面的密钥安全种子
-SERVICE_BOOTH_LOCATION=用于有关展位位置的发票行的服务
-SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION=用于有关与会者订阅活动的发票行的服务
+SERVICE_BOOTH_LOCATION=Service to use on the invoice line for the sale of a booth.
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION=Service to use on the invoice line for the participation fees.
 NbVotes=票数
 # Status
 EvntOrgDraft = 草稿
@@ -122,7 +123,7 @@ NewSubscription=注册
 OrganizationEventConfRequestWasReceived=您对会议的推荐已收到
 OrganizationEventBoothRequestWasReceived=您的展位申请已收到
 OrganizationEventPaymentOfBoothWasReceived=您的展位付款已被记录
-OrganizationEventPaymentOfRegistrationWasReceived=您的活动注册付款已被记录
+OrganizationEventPaymentOfRegistrationWasReceived=Your payment for your registration to the event has been recorded
 OrganizationEventBulkMailToAttendees=这是关于您作为与会者参加活动的提醒
 OrganizationEventBulkMailToSpeakers=这是对您作为演讲者参加活动的提醒
 OrganizationEventLinkToThirdParty=链接到合作方（客户、供应商或合作伙伴）

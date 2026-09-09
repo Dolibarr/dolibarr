@@ -1,10 +1,8 @@
 # Dolibarr language file - Source file is en_US - mails
-MailRecipient=المستلم
-MailTitle=التسمية
 MailFrom=من موقع
 PhoneFrom=من موقع
+MailText=رسالة
 MailMessage=محتوى البريد الإلكتروني
-MailingStatusValidated=معتمد
 MailingStatusNotSent=لم يتم الإرسال
 MailingStatusRead=قراءة
 MailingModuleDescThirdPartiesByCategories=جهات خارجية

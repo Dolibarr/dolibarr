@@ -173,3 +173,5 @@ RefSalary=Salaris
 NoSalaryInvoiceToWithdraw=Geen salaris dat wacht op een '%s'. Ga naar het tabblad '%s' op de salariskaart om een verzoek in te dienen.
 SalaryInvoiceWaitingWithdraw=Salarissen die wachten op betaling via overschrijving
 ErrorBankTransferNoPaymentRequestSelected=Geen betalingsverzoek geselecteerd.
+AmountRequestedAlreadyReachesTotal=Het totale bedrag Factuur is reeds aangevraagd voor betaling.
+AmountExceedsRemainingToRequest=Het aangevraagde bedrag overschrijdt het resterende beschikbare bedrag voor betalingsverzoeken.

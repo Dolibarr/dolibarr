@@ -6,7 +6,7 @@
  * Copyright (C) 2004       Benoit Mortier              <benoit.mortier@opensides.be>
  * Copyright (C) 2010-2013  Juanjo Menent               <jmenent@2byte.es>
  * Copyright (C) 2011-2018  Philippe Grand              <philippe.grand@atoo-net.com>
- * Copyright (C) 2024-2025  MDW                         <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW                         <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2026       Pierre Ardoin               <developpeur@lesmetiersdubatiment.fr>
  * Copyright (C) 2026       Alexandre Spangaro          <alexandre@inovea-conseil.com>
@@ -152,8 +152,8 @@ if ($action == 'specimen') {  // For orders
 } elseif ($action == 'setdoc') {
 	// Set default model
 	if (dolibarr_set_const($db, "COMMANDE_SUPPLIER_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity)) {
-		// La constante qui a ete lue en avant du nouveau set
-		// on passe donc par une variable pour avoir un affichage coherent
+		// The constant that was read before the new set
+		// so we go through a variable to get a consistent display
 		$conf->global->COMMANDE_SUPPLIER_ADDON_PDF = $value;
 	}
 
@@ -269,8 +269,8 @@ foreach ($dirmodels as $reldir) {
 		$handle = opendir($dir);
 		if (is_resource($handle)) {
 			while (($file = readdir($handle)) !== false) {
-				if (substr($file, 0, 25) == 'mod_commande_fournisseur_' && substr($file, dol_strlen($file) - 3, 3) == 'php') {
-					$file = substr($file, 0, dol_strlen($file) - 4);
+				if (dol_substr($file, 0, 25) == 'mod_commande_fournisseur_' && dol_substr($file, dol_strlen($file) - 3, 3) == 'php') {
+					$file = dol_substr($file, 0, dol_strlen($file) - 4);
 
 					require_once $dir.$file.'.php';
 
@@ -354,7 +354,7 @@ print '</table></div><br>';
 
 print load_fiche_titre($langs->trans("OrdersModelModule"), '', '');
 
-// Defini tableau def de modele
+// Define array def of model
 $def = array();
 
 $sql = "SELECT nom";
@@ -399,8 +399,8 @@ foreach ($dirmodels as $reldir) {
 		if (is_resource($handle)) {
 			while (($file = readdir($handle)) !== false) {
 				if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file)) {
-					$name = substr($file, 4, dol_strlen($file) - 16);
-					$classname = substr($file, 0, dol_strlen($file) - 12);
+					$name = dol_substr($file, 4, dol_strlen($file) - 16);
+					$classname = dol_substr($file, 0, dol_strlen($file) - 12);
 
 					require_once $dir.'/'.$file;
 					$module = new $classname($db, new CommandeFournisseur($db));

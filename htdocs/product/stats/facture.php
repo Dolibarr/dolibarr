@@ -143,13 +143,17 @@ $result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product
 $toselect = GETPOST('toselect', 'array:int');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'invoicelist';
 $massaction = GETPOST('massaction', 'alpha');
-$diroutputmassaction = $conf->invoice->dir_output.'/temp/massgeneration/'.$user->id;
+$diroutputmassaction = isModEnabled('invoice') ? $conf->invoice->dir_output.'/temp/massgeneration/'.$user->id : '';
 
 if (GETPOST('cancel', 'alpha')) {
 	$action = 'list';
 	$massaction = '';
 }
 if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
+	$massaction = '';
+}
+if (!isModEnabled('invoice')) {
+	// The mass actions of this page rely on the invoice module (objects, permissions, upload directory)
 	$massaction = '';
 }
 $arrayfields = array(
@@ -170,9 +174,10 @@ $formother = new FormOther($db);
 
 
 
-$arrayofmassactions = array(
-	'presend' => img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
-);
+$arrayofmassactions = array();
+if (isModEnabled('invoice')) {
+	$arrayofmassactions['presend'] = img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail");
+}
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 $arrayofselected = is_array($toselect) ? $toselect : array();
 $selectedfields = (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
@@ -186,7 +191,7 @@ $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
-if (empty($reshook)) {
+if (empty($reshook) && isModEnabled('invoice')) {
 	$objectclass = 'Facture';
 	$objectlabel = 'Invoices';
 	$permissiontoread = $user->hasRight("facture", "lire");
@@ -473,12 +478,14 @@ if ($id > 0 || !empty($ref)) {
 				print '</div>';
 
 				$i = 0;
+				$colspan = 3;
 				print '<div class="div-table-responsive">';
-				print '<table class="tagtable liste listwithfilterbefore" width="100%">';
+				print '<table class="tagtable liste listwithfilterbefore centpercent">';
 				print '<tr class="liste_titre">';
 				// Action column
 				if ($conf->main_checkbox_left_column) {
 					print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
+					$colspan++;
 				}
 				print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "s.rowid", "", $option, '', $sortfield, $sortorder);
 				print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "s.nom", "", $option, '', $sortfield, $sortorder);
@@ -573,7 +580,7 @@ if ($id > 0 || !empty($ref)) {
 				} else {
 					print '<td>'.$form->textwithpicto($langs->trans("Total"), $langs->trans("Totalforthispage")).'</td>';
 				}
-				print '<td colspan="3"></td>';
+				print '<td colspan="'.$colspan.'"></td>';
 				print '<td class="center">'.$total_qty.'</td>';
 				print '<td class="right">'.price($total_ht).'</td>';
 				print '<td></td>';

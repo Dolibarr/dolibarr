@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2017 ATM Consulting <contact@atm-consulting.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2017 ATM Consulting	  <contact@atm-consulting.fr>
+ * Copyright (C) 2018 Destailleur Laurent <eldy@users.sourceforge.net>
+ * Copyright (C) 2024 MDW				  <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026 Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,8 +38,12 @@ function getBlockedLogVersionToShow()
 
 	// Protection if we used a past old version not yet certified, we change version shown.
 	if (!constant('CERTIF_LNE')) {	// Hard coded in version
-		$versionbadge = preg_replace('/^(\d)\./', '\1b.', $versionbadge);
-	};
+		// $versionbadge = preg_replace('/^(\d)\./', '\1b.', $versionbadge);	// Not yet required.
+	}
+
+	if (constant('DOLCERT_NAME') != 'BlockedLog') {		// Can add a prefix namevefore version text for clarity.
+		$versionbadge = constant('DOLCERT_NAME').'-'.$versionbadge;
+	}
 
 	return $versionbadge;
 }

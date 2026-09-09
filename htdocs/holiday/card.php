@@ -1096,7 +1096,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
        </script>'."\n";
 
 
-		// Formulaire de demande
+		// Leave request form
 		print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" name="demandeCP">'."\n";
 		print '<input type="hidden" name="token" value="'.newToken().'" />'."\n";
 		print '<input type="hidden" name="action" value="add" />'."\n";
@@ -1334,7 +1334,9 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 			if ($canread) {
 				$head = holiday_prepare_head($object);
 
-				if (($action == 'edit' && $object->status == Holiday::STATUS_DRAFT) || ($action == 'editvalidator')) {
+				$editmode = (($action == 'edit' && $object->status == Holiday::STATUS_DRAFT) || ($action == 'editvalidator'));
+
+				if ($editmode) {
 					if ($action == 'edit' && $object->status == Holiday::STATUS_DRAFT) {
 						$edit = true;
 					}
@@ -1345,7 +1347,9 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 					print '<input type="hidden" name="id" value="'.$object->id.'" />'."\n";
 				}
 
-				print dol_get_fiche_head($head, 'card', $langs->trans("CPTitreMenu"), -1, 'holiday');
+				// No drop area in edit mode: these tabs are printed inside the edit form, and dropping a file
+				// reloads the page, which would discard what the user is typing.
+				print dol_get_fiche_head($head, 'card', $langs->trans("CPTitreMenu"), -1, 'holiday', 0, '', '', 0, '', ($editmode ? 0 : 1));
 
 				$linkback = '<a href="'.DOL_URL_ROOT.'/holiday/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -1589,18 +1593,18 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 					print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("TitleToValidCP"), $langs->trans("ConfirmToValidCP"), "confirm_send", '', 1, 1);
 				}
 
-				// Si validation de la demande
+				// If validating the request
 				if ($action == 'valid') {
 					print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("TitleValidCP"), $langs->trans("ConfirmValidCP"), "confirm_valid", '', 1, 1);
 				}
 
-				// Si refus de la demande
+				// If refusing the request
 				if ($action == 'refuse') {
 					$array_input = array(array('type' => "text", 'label' => $langs->trans('DetailRefusCP'), 'name' => "detail_refuse", 'size' => "50", 'value' => ""));
 					print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id."&action=confirm_refuse", $langs->trans("TitleRefuseCP"), $langs->trans('ConfirmRefuseCP'), "confirm_refuse", $array_input, 1, 0);
 				}
 
-				// Si annulation de la demande
+				// If cancelling the request
 				if ($action == 'cancel') {
 					print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("TitleCancelCP"), $langs->trans("ConfirmCancelCP"), "confirm_cancel", '', 1, 1);
 				}

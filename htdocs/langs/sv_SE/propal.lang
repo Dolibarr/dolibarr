@@ -14,6 +14,7 @@ DeleteProp=Ta bort kommersiella förslag
 ValidateProp=Bekräfta kommersiella förslag
 CancelPropal=Avbryt
 AddProp=Skapa förslag
+AddRenewalProp=Create renewal proposal
 ConfirmDeleteProp=Är du säker på att du vill radera det här kommersiella förslaget?
 ConfirmValidateProp=Är du säker på att du vill bekräfta detta kommersiella förslag under namnet <b> %s </b>?
 ConfirmCancelPropal=Är du säker på att du vill avbryta kommersiella förslag <b>%s</b>?

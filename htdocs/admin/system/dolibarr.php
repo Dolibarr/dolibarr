@@ -2,7 +2,7 @@
 /* Copyright (C) 2005-2020	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2007		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2007-2012	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -49,7 +49,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("install", "other", "admin"));
+$langs->loadLangs(array("blockedlog", "install", "other", "admin"));
 
 $action = GETPOST('action', 'aZ09');
 
@@ -444,11 +444,13 @@ $configfileparameters = array(
 	'?dolibarr_font_DOL_DEFAULT_TTF_BOLD' => 'dolibarr_font_DOL_DEFAULT_TTF_BOLD',
 	'separator4' => '',
 	'dolibarr_main_restrict_os_commands' => 'Restrict CLI commands for backups',
+	'dolibarr_main_restrict_eval_methods' => 'Restrict php commands for dol_eval',
 	'dolibarr_main_restrict_ip' => 'Restrict access to some IPs only',
+	'?dolibarr_website_allow_custom_php' => 'Allow custom php code in website pages',
 	'?dolibarr_mailing_limit_sendbyweb' => 'Limit nb of email sent by page',
 	'?dolibarr_mailing_limit_sendbycli' => 'Limit nb of email sent by cli',
 	'?dolibarr_mailing_limit_sendbyday' => 'Limit nb of email sent per day',
-	'?dolibarr_strict_mode' => 'Strict mode is on/off',
+	'?dolibarr_strict_mode' => 'Strict mode for php syntax is on/off',
 	'?dolibarr_nocsrfcheck' => 'Disable CSRF security checks'
 );
 
@@ -595,11 +597,11 @@ $sql .= ", entity";
 $sql .= " FROM ".MAIN_DB_PREFIX."const";
 if (!isModEnabled('multicompany')) {
 	// If no multicompany mode, admins can see global and their constantes
-	$sql .= " WHERE entity IN (0,".$conf->entity.")";
+	$sql .= " WHERE entity IN (0,".((int) $conf->entity).")";
 } else {
 	// If multicompany mode, superadmin (user->entity=0) can see everything, admin are limited to their entities.
 	if ($user->entity) {
-		$sql .= " WHERE entity IN (".$db->sanitize($user->entity.",".$conf->entity).")";
+		$sql .= " WHERE entity IN (".$db->sanitize($user->entity.",".((int) $conf->entity)).")";
 	}
 }
 $sql .= " ORDER BY entity, name ASC";

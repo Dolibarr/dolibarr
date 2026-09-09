@@ -546,3 +546,5 @@ ALTER TABLE llx_mailing_advtarget CHANGE COLUMN tms tms timestamp DEFAULT CURREN
 ALTER TABLE llx_receptiondet_batch_extrafields CHANGE COLUMN tms tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 -- 19.0 -> 20.0 rename llx_commande_fournisseur_dispatch to llx_receptiondet_batch
 ALTER TABLE llx_receptiondet_batch CHANGE COLUMN tms tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+
+ALTER TABLE llx_adherent MODIFY COLUMN societe VARCHAR(128);

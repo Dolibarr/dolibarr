@@ -112,8 +112,24 @@ class Users extends DolibarrApi
 
 		// Add sql filters
 		if ($sqlfilters) {
+			// List of properties we can't filter on, whatever are permissions (to avoid guess by search binary attack)
+			$forbiddenfilterfields = array(
+				'pass',
+				'pass_crypted',
+				'pass_temp',
+				'api_key',
+				'openid'
+			);
+			$canreadsalary = ((isModEnabled('salaries') && DolibarrApiAccess::$user->hasRight('salaries', 'read')) || !isModEnabled('salaries'));
+			if (!$canreadsalary) {
+				$forbiddenfilterfields[] = 'salary';
+				$forbiddenfilterfields[] = 'salaryextra';
+				$forbiddenfilterfields[] = 'thm';
+				$forbiddenfilterfields[] = 'tjm';
+			}
+
 			$errormessage = '';
-			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage, 0, 0, 0, $forbiddenfilterfields);
 			if ($errormessage) {
 				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
@@ -171,7 +187,7 @@ class Users extends DolibarrApi
 			throw new RestException(400, 'No user with id=0 can exist');
 		}
 
-		if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'lire') && empty(DolibarrApiAccess::$user->admin) && $id != 0 && DolibarrApiAccess::$user->id != $id) {
+		if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'lire') && empty(DolibarrApiAccess::$user->admin) && DolibarrApiAccess::$user->id != $id) {
 			throw new RestException(403, 'Not allowed');
 		}
 
@@ -185,7 +201,7 @@ class Users extends DolibarrApi
 		}
 
 		if ($id > 0 && !DolibarrApi::_checkAccessToResource('user', $this->useraccount->id, 'user')) {
-			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access on this object not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		if ($includepermissions) {
@@ -228,7 +244,7 @@ class Users extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('user', $this->useraccount->id, 'user')) {
-			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access on this object not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		if ($includepermissions) {
@@ -271,7 +287,7 @@ class Users extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('user', $this->useraccount->id, 'user')) {
-			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access on this object not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		if ($includepermissions) {
@@ -310,7 +326,7 @@ class Users extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('user', $this->useraccount->id, 'user')) {
-			throw new RestException(403, 'Access not allowed to current logged user');
+			throw new RestException(403, 'Access on this object not allowed to current logged user');
 		}
 
 		if ($includepermissions) {
@@ -357,7 +373,7 @@ class Users extends DolibarrApi
 
 		//assign field values
 		foreach ($request_data as $field => $value) {
-			if (in_array($field, array('pass_crypted', 'pass_indatabase', 'pass_indatabase_crypted', 'pass_temp', 'api_key'))) {
+			if (in_array($field, array('pass_crypted', 'pass_indatabase', 'pass_indatabase_crypted', 'pass_temp', 'api_key', 'openid'))) {
 				// This properties can't be set/modified with API
 				throw new RestException(405, 'The property '.$field." can't be set/modified using the APIs");
 			}
@@ -368,6 +384,14 @@ class Users extends DolibarrApi
 				}
 			}
 			*/
+			$canreadsalary = ((isModEnabled('salaries') && DolibarrApiAccess::$user->hasRight('salaries', 'read')) || !isModEnabled('salaries'));
+			if (!$canreadsalary) {
+				if (in_array($field, array('salary', 'salaryextra', 'thm', 'tjm'))) {
+					// This properties can't be set/modified with API
+					throw new RestException(405, 'The property '.$field." can't be set/modified using the APIs with permission on salaries");
+				}
+			}
+
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->useraccount->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
@@ -435,14 +459,23 @@ class Users extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('user', $this->useraccount->id, 'user')) {
-			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access on this object not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		foreach ($request_data as $field => $value) {
-			if (in_array($field, array('pass_crypted', 'pass_indatabase', 'pass_indatabase_crypted', 'pass_temp', 'api_key'))) {
+			if (in_array($field, array('pass_crypted', 'pass_indatabase', 'pass_indatabase_crypted', 'pass_temp', 'api_key', 'openid'))) {
 				// This properties can't be set/modified with API
 				throw new RestException(405, 'The property '.$field." can't be set/modified using the APIs");
 			}
+
+			$canreadsalary = ((isModEnabled('salaries') && DolibarrApiAccess::$user->hasRight('salaries', 'read')) || !isModEnabled('salaries'));
+			if (!$canreadsalary) {
+				if (in_array($field, array('salary', 'salaryextra', 'thm', 'tjm'))) {
+					// This properties can't be set/modified with API
+					throw new RestException(405, 'The property '.$field." can't be set/modified using the APIs with permission on salaries");
+				}
+			}
+
 			if ($field == 'id') {
 				continue;
 			}
@@ -584,7 +617,10 @@ class Users extends DolibarrApi
 		$user = new User($this->db);
 		$result = $user->fetch($id);
 		if (!$result) {
-			throw new RestException(404, 'user not found');
+			throw new RestException(404, 'User not found');
+		}
+		if (!DolibarrApi::_checkAccessToResource('user', $user->id, 'user')) {
+			throw new RestException(403, 'Access on this object not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$usergroup = new UserGroup($this->db);
@@ -627,7 +663,7 @@ class Users extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('user', $this->useraccount->id, 'user')) {
-			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access on this object not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && !empty(DolibarrApiAccess::$user->admin) && empty(DolibarrApiAccess::$user->entity)) {
@@ -1016,7 +1052,7 @@ class Users extends DolibarrApi
 			throw new RestException(403);
 		}
 		if (!DolibarrApi::_checkAccessToResource('user', $id)) {
-			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access on this object not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		/**
@@ -1313,6 +1349,9 @@ class Users extends DolibarrApi
 		unset($object->ldap_sid);
 		unset($object->clicktodial_loaded);
 
+		unset($object->lines);
+		unset($object->model_pdf);
+
 		// List of properties never returned by API, whatever are permissions
 		unset($object->pass);
 		unset($object->pass_indatabase);
@@ -1322,11 +1361,7 @@ class Users extends DolibarrApi
 		unset($object->clicktodial_password);
 		unset($object->openid);
 
-		unset($object->lines);
-		unset($object->model_pdf);
-
 		$canreadsalary = ((isModEnabled('salaries') && DolibarrApiAccess::$user->hasRight('salaries', 'read')) || !isModEnabled('salaries'));
-
 		if (!$canreadsalary) {
 			unset($object->salary);
 			unset($object->salaryextra);

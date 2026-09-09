@@ -48,7 +48,7 @@ $langs->loadLangs(array("suppliers", "orders"));
 // Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('orderssuppliersindex'));
 
-$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
+$max = getDolUserInt('MAIN_SIZE_SHORTLIST_LIMIT', getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5));
 
 // Security check
 $orderid = GETPOST('orderid');
@@ -116,7 +116,10 @@ if ($resql) {
 	}
 	$db->free($resql);
 
-	include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+	$theme_vars_file = dol_getThemeFilePath('theme_vars.inc.php');
+	if ($theme_vars_file) {
+		include $theme_vars_file;
+	}
 	/**
 	 * @var string $badgeStatus0
 	 * @var string $badgeStatus1

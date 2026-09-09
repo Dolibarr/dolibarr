@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2019 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026	Jose MARTINEZ							<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -267,7 +268,7 @@ if (empty($reshook)) {
 						// is the accountancy-codes flag; using it to gate the pmp write here means we
 						// silently write into a row that fetch never looks at (#37773).
 						if (getDolGlobalString('MULTICOMPANY_PRODUCT_SHARING_ENABLED') && getDolGlobalString('MULTICOMPANY_PMP_PER_ENTITY_ENABLED')) {
-							$sqlpmp = 'UPDATE '.MAIN_DB_PREFIX.'product_perentity SET pmp = '.((float) $line->pmp_real).' WHERE fk_product = '.((int) $line->fk_product).' AND entity='.$conf->entity;
+							$sqlpmp = 'UPDATE '.MAIN_DB_PREFIX.'product_perentity SET pmp = '.((float) $line->pmp_real).' WHERE fk_product = '.((int) $line->fk_product).' AND entity='.((int) $conf->entity);
 							$resqlpmp = $db->query($sqlpmp);
 							if (! $resqlpmp) {
 								$error++;
@@ -614,6 +615,9 @@ print '<input type="hidden" name="action" value="updateinventorylines">';
 print '<input type="hidden" name="id" value="'.$object->id.'">';
 print '<input type="hidden" name="sortfield" value="' . $sortfield . '">';
 print '<input type="hidden" name="sortorder" value="' . $sortorder . '">';
+// Keep the same limit as the displayed page, otherwise the save reads a different page slice
+// (plimit($limit, $offset)) than the one shown and quantities of the extra rows are lost (#35207).
+print '<input type="hidden" name="limit" value="' . ((int) $limit) . '">';
 if ($backtopage) {
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 }
@@ -801,11 +805,11 @@ if ($action == 'updatebyscaning') {
 							console.log("We change #"+product.Id+"_input to match input in scanner box");
 							if(product.hasOwnProperty("reelqty")){
 								$.ajax({ url: \''.DOL_URL_ROOT.'/product/inventory/ajax/searchfrombarcode.php\',
-									data: { "token":"'.newToken().'", "action":"addnewlineproduct", "fk_entrepot":product.Warehouse, "batch":product.Batch, "fk_inventory":'.dol_escape_js((string) $object->id).', "fk_product":product.fk_product, "reelqty":product.reelqty},
+									data: { "token":"'.currentToken().'", "action":"addnewlineproduct", "fk_entrepot":product.Warehouse, "batch":product.Batch, "fk_inventory":'.dol_escape_js((string) $object->id).', "fk_product":product.fk_product, "reelqty":product.reelqty},
 									type: \'POST\',
 									async: false,
 									success: function(response) {
-										response = JSON.parse(response);
+										if (typeof response === "string") { response = JSON.parse(response); }
 										if(response.status == "success"){
 											console.log(response.message);
 											$("<input type=\'text\' value=\'"+product.Qty+"\' />")
@@ -876,7 +880,7 @@ if ($action == 'updatebyscaning') {
 					type: \'POST\',
 					async: false,
 					success: function(response) {
-						response = JSON.parse(response);
+						if (typeof response === "string") { response = JSON.parse(response); }
 						if (response.status == "success"){
 							console.log(response.message);
 							if(!newproductrow){
@@ -996,7 +1000,7 @@ if ($object->status == $object::STATUS_DRAFT || $object->status == $object::STAT
 } else {
 	// Actions or link to stock movement
 	print '<td class="right">';
-	//print $langs->trans("StockMovement");
+	print $langs->trans("StockMovement");
 	print '</td>';
 }
 print '</tr>';
@@ -1245,11 +1249,12 @@ if ($resql) {
 				print $obj->qty_view;	// qty found
 				print '</td>';
 			}
-			print '<td>';
+			print '<td class="right nowraponall">';
 			if ($obj->fk_movement > 0) {
 				$stockmovment = new MouvementStock($db);
 				$stockmovment->fetch($obj->fk_movement);
 				print $stockmovment->getNomUrl(1, 'movements');
+				print ' <span class="opacitymedium">('.dol_print_date($stockmovment->datem, 'dayhour').')</span>';
 			}
 			print '</td>';
 		}

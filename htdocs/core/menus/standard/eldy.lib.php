@@ -513,7 +513,10 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 			$url = $shorturl = $tmp[0];
 			$param = (isset($tmp[1]) ? $tmp[1] : '');
 
-			if ((!preg_match('/mainmenu/i', $param)) || !preg_match('/leftmenu/i', $param)) {
+			// Complete the url only when neither mainmenu nor leftmenu is already set, like print_left_eldy_menu() does.
+			// With a OR, a url already carrying only mainmenu got a second one, and a url already carrying only leftmenu
+			// got an empty leftmenu appended that overrode the real value.
+			if ((!preg_match('/mainmenu/i', $param)) && (!preg_match('/leftmenu/i', $param))) {
 				// @phan-suppress-next-line PhanTypeSuspiciousStringExpression
 				$param .= ($param ? '&' : '').'mainmenu='.$newTabMenu[$i]['mainmenu'].'&leftmenu=';
 			}
@@ -883,7 +886,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 			get_left_menu_members($mainmenu, $newmenu, $usemenuhider, $leftmenu, $type_user);
 		}
 
-		// Add personalized menus and modules menus
+		// Add personalized menus (from database setup) and modules menus
 		//var_dump($newmenu->liste);    //
 		$menuArbo = new Menubase($db, 'eldy');
 		$newmenu = $menuArbo->menuLeftCharger($newmenu, $mainmenu, $leftmenu, (empty($user->socid) ? 0 : 1), 'eldy', $tabMenu);
@@ -908,7 +911,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 	//var_dump($newmenu->liste);
 
 	// Build final $menu_array = $menu_array_before +$newmenu->liste + $menu_array_after
-	//var_dump($menu_array_before);exit;
+
 	//var_dump($menu_array_after);exit;
 	$menu_array = $newmenu->liste;
 	if (is_array($menu_array_before)) {
@@ -1063,7 +1066,12 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 					print '<div class="menu_titre">'.$tabstring;
 					print '<span class="vmenudisabled" title="'.dolPrintHTMLForAttribute($menu_array[$i]['titre']).'">';
 					if (!empty($menu_array[$i]['prefix'])) {
-						print $menu_array[$i]['prefix'];
+						$reg = array();
+						if (preg_match('/^(fa[rsb]? )?fa-/', $menu_array[$i]['prefix'], $reg)) {
+							print '<span class="'.(empty($reg[1]) ? 'fa ' : '').$menu_array[$i]['prefix'].' paddingright pictofixedwidth"></span>';
+						} else {
+							print $menu_array[$i]['prefix'];
+						}
 					}
 					print ucfirst($menu_array[$i]['titre']);
 					print '</span>';
@@ -1714,7 +1722,9 @@ function get_left_menu_billing($mainmenu, &$newmenu, $usemenuhider = 1, $leftmen
 				$newmenu->add("/salaries/card.php?leftmenu=tax_salary&action=create", $langs->trans("New"), 1, $user->hasRight('salaries', 'write'));
 				$newmenu->add("/salaries/list.php?leftmenu=tax_salary", $langs->trans("List"), 1, $user->hasRight('salaries', 'read'));
 				$newmenu->add("/salaries/payments.php?leftmenu=tax_salary", $langs->trans("Payments"), 1, $user->hasRight('salaries', 'read'));
-				$newmenu->add("/salaries/stats/index.php?leftmenu=tax_salary", $langs->trans("Statistics"), 1, $user->hasRight('salaries', 'read'));
+				if (getDolGlobalString('MAIN_STATISTICS_IN_MENU')) {
+					$newmenu->add("/salaries/stats/index.php?leftmenu=tax_salary", $langs->trans("Statistics"), 1, $user->hasRight('salaries', 'read'));
+				}
 			}
 		}
 
@@ -2185,7 +2195,9 @@ function get_left_menu_bank($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu =
 				$newmenu->add("/compta/prelevement/orders_list.php?mainmenu=bank", $langs->trans("List"), 1, $user->hasRight('prelevement', 'bons', 'lire'));
 				$newmenu->add("/compta/prelevement/list.php?mainmenu=bank", $langs->trans("WithdrawalsLines"), 1, $user->hasRight('prelevement', 'bons', 'lire'));
 				$newmenu->add("/compta/prelevement/rejets.php?mainmenu=bank", $langs->trans("Rejects"), 1, $user->hasRight('prelevement', 'bons', 'lire'));
-				$newmenu->add("/compta/prelevement/stats.php?mainmenu=bank", $langs->trans("Statistics"), 1, $user->hasRight('prelevement', 'bons', 'lire'));
+				if (getDolGlobalString('MAIN_STATISTICS_IN_MENU')) {
+					$newmenu->add("/compta/prelevement/stats.php?mainmenu=bank", $langs->trans("Statistics"), 1, $user->hasRight('prelevement', 'bons', 'lire'));
+				}
 			}
 		}
 
@@ -2199,7 +2211,9 @@ function get_left_menu_bank($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu =
 				$newmenu->add("/compta/prelevement/orders_list.php?type=bank-transfer&mainmenu=bank", $langs->trans("List"), 1, $user->hasRight('paymentbybanktransfer', 'read'));
 				$newmenu->add("/compta/prelevement/list.php?type=bank-transfer&mainmenu=bank", $langs->trans("PaymentByBankTransferLines"), 1, $user->hasRight('paymentbybanktransfer', 'read'));
 				$newmenu->add("/compta/prelevement/rejets.php?type=bank-transfer&mainmenu=bank", $langs->trans("Rejects"), 1, $user->hasRight('paymentbybanktransfer', 'read'));
-				$newmenu->add("/compta/prelevement/stats.php?type=bank-transfer&mainmenu=bank", $langs->trans("Statistics"), 1, $user->hasRight('paymentbybanktransfer', 'read'));
+				if (getDolGlobalString('MAIN_STATISTICS_IN_MENU')) {
+					$newmenu->add("/compta/prelevement/stats.php?type=bank-transfer&mainmenu=bank", $langs->trans("Statistics"), 1, $user->hasRight('paymentbybanktransfer', 'read'));
+				}
 			}
 		}
 
@@ -2207,7 +2221,7 @@ function get_left_menu_bank($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu =
 		if (!getDolGlobalString('BANK_DISABLE_CHECK_DEPOSIT') && isModEnabled('bank') && (isModEnabled('invoice') || getDolGlobalString('MAIN_MENU_CHEQUE_DEPOSIT_ON'))) {
 			$newmenu->add("/compta/paiement/cheque/index.php?leftmenu=checks&mainmenu=bank", $langs->trans("MenuChequeDeposits"), 0, $user->hasRight('banque', 'cheque'), '', $mainmenu, 'checks', 0, '', '', '', img_picto('', 'payment', 'class="paddingright pictofixedwidth"'));
 			if (preg_match('/checks/', $leftmenu)) {
-				$newmenu->add("/compta/paiement/cheque/card.php?leftmenu=checks_bis&action=new&mainmenu=bank", $langs->trans("NewChequeDeposit"), 1, $user->hasRight('banque', 'cheque'));
+				$newmenu->add("/compta/paiement/cheque/card.php?leftmenu=checks_bis&action=create2&mainmenu=bank", $langs->trans("NewChequeDeposit"), 1, $user->hasRight('banque', 'cheque'));
 				$newmenu->add("/compta/paiement/cheque/list.php?leftmenu=checks_bis&mainmenu=bank", $langs->trans("List"), 1, $user->hasRight('banque', 'cheque'));
 			}
 		}
@@ -2681,7 +2695,9 @@ function get_left_menu_members($mainmenu, &$newmenu, $usemenuhider = 1, $leftmen
 			$newmenu->add(dolBuildUrl('/adherents/list.php', ['leftmenu' => 'members', 'statut' => 1, 'filter' => 'outofdate']), $langs->trans("OutOfDate"), 3, $user->hasRight('adherent', 'read'));
 			$newmenu->add(dolBuildUrl('/adherents/list.php', ['leftmenu' => 'members', 'statut' => 0]), $langs->trans("MenuMembersResiliated"), 2, $user->hasRight('adherent', 'read'));
 			$newmenu->add(dolBuildUrl('/adherents/list.php', ['leftmenu' => 'members', 'statut' => -2]), $langs->trans("MenuMembersExcluded"), 2, $user->hasRight('adherent', 'read'));
-			$newmenu->add(dolBuildUrl('/adherents/stats/geo.php', ['leftmenu' => 'members']), $langs->trans("MenuMembersStats"), 1, $user->hasRight('adherent', 'read'));
+			if (getDolGlobalString('MAIN_STATISTICS_IN_MENU')) {
+				$newmenu->add(dolBuildUrl('/adherents/stats/geo.php', ['leftmenu' => 'members']), $langs->trans("MenuMembersStats"), 1, $user->hasRight('adherent', 'read'));
+			}
 
 			$newmenu->add(dolBuildUrl('/adherents/cartes/carte.php', ['leftmenu' => 'export']), $langs->trans("MembersCards"), 1, $user->hasRight('adherent', 'export'));
 
@@ -2693,7 +2709,9 @@ function get_left_menu_members($mainmenu, &$newmenu, $usemenuhider = 1, $leftmen
 			$newmenu->add(dolBuildUrl('/adherents/index.php', ['leftmenu' => 'members', 'mainmenu'=> 'members']), $langs->trans("Subscriptions"), 0, $user->hasRight('adherent', 'cotisation', 'read'), '', $mainmenu, 'members', 0, '', '', '', img_picto('', 'payment', 'class="paddingright pictofixedwidth"'));
 			$newmenu->add(dolBuildUrl('/adherents/list.php', ['leftmenu' => 'members', 'statut' => '-1,1', 'mainmenu' => 'members']), $langs->trans("NewMembership"), 1, $user->hasRight('adherent', 'cotisation', 'write'));
 			$newmenu->add(dolBuildUrl('/adherents/subscription/list.php', ['leftmenu' => 'members']), $langs->trans("List"), 1, $user->hasRight('adherent', 'cotisation', 'read'));
-			$newmenu->add(dolBuildUrl('/adherents/stats/index.php', ['leftmenu' => 'members']), $langs->trans("MenuMembersStats"), 1, $user->hasRight('adherent', 'read'));
+			if (getDolGlobalString('MAIN_STATISTICS_IN_MENU')) {
+				$newmenu->add(dolBuildUrl('/adherents/stats/index.php', ['leftmenu' => 'members']), $langs->trans("MenuMembersStats"), 1, $user->hasRight('adherent', 'read'));
+			}
 
 			// $newmenu->add(dolBuildUrl('/adherents/index.php', ['leftmenu' => 'export', 'mainmenu'=>'members']),$langs->trans("Tools"),0,$user->hasRight('adherent',  'export'), '', $mainmenu, 'export');
 			// if (isModEnabled('export') && ($usemenuhider || empty($leftmenu) || $leftmenu=="export")) $newmenu->add(dolBuildUrl('/exports/index.php', ['leftmenu' => 'export']),$langs->trans("Datas"),1,$user->hasRight('adherent',  'export'));

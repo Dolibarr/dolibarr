@@ -3,7 +3,8 @@
  * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,7 +46,7 @@ $langs->loadLangs(array("recruitment", "boxes"));
 $action = GETPOST('action', 'aZ09');
 
 $NBMAX = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
-$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
+$max = getDolUserInt('MAIN_SIZE_SHORTLIST_LIMIT', getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5));
 $now = dol_now();
 
 $socid = GETPOSTINT('socid');
@@ -106,7 +107,10 @@ if ($conf->use_javascript_ajax) {
 	 * @var string $badgeStatus8
 	 * @var string $badgeStatus9
 	 */
-	include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+	$theme_vars_file = dol_getThemeFilePath('theme_vars.inc.php');
+	if ($theme_vars_file) {
+		include $theme_vars_file;
+	}
 	if ($resql) {
 		$num = $db->num_rows($resql);
 		$i = 0;
@@ -354,7 +358,7 @@ if (isModEnabled('recruitment') && $user->hasRight('recruitment', 'recruitmentjo
 		$sql .= " AND s.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {
-		$sql .= " AND s.fk_soc = $socid";
+		$sql .= " AND s.fk_soc = ".((int) $socid);
 	}
 	$sql .= " GROUP BY s.rowid, s.ref, s.label, s.date_creation, s.tms, s.status";
 	$sql .= $db->order('s.tms', 'DESC');
@@ -425,7 +429,7 @@ if (isModEnabled('recruitment') && $user->hasRight('recruitment', 'recruitmentjo
 		$sql .= " AND s.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {
-		$sql .= " AND s.fk_soc = $socid";
+		$sql .= " AND s.fk_soc = ".((int) $socid);
 	}
 	$sql .= $db->order('rc.tms', 'DESC');
 	$sql .= $db->plimit($max, 0);

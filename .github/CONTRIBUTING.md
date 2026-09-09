@@ -14,8 +14,9 @@ Default **language here is English**. So please prepare your contributions in En
 2. [Create an issue](https://help.github.com/articles/creating-an-issue). Choose an appropriate title. Prepend appropriately with Bug or Feature Request.
 3. Tell us the version you are using!   (look at  /htdocs/admin/system/dolibarr.php?  and check if you are using the latest version) 
 4. Write a report with as much detail as possible (Use [screenshots](https://help.github.com/articles/issue-attachments) or even screencasts and provide logging and debugging information whenever possible).
-5. Delete unnecessary submissions.
-6. **Check your Message at Preview before submitting.**
+5. One report per issue. If you have several issues, please create several reports.
+6. IMPORTANT: Report the process to reproduce the bug.
+7. **Check your Message at Preview before submitting.**
 
 
 
@@ -78,6 +79,8 @@ If you push a bug fix on a very old version it is still going to be merged and p
 
 - As the Developer: Do not submit changes into files xx_XX/afile.lang. They are language files and are updated/synced automatically from Transifex. If you need to add a new language file, just add it for the en_US language.
 
+- As the Developor: For code contribution on stable branches (non develop), PR must contains 1 and only 1 bug fix at once.
+
 - As the Release Maintainer: The Release Maintainer will decide to make a new release as soon as the planning of the release is reached and the code in the branch to release reach the status of "No more known serious bugs". 
 
 
@@ -100,18 +103,20 @@ You can add it to your git configuration using:
 git config --local commit.template .gitmessage
 ```
 
-where
+with
 
 #### Keyword
 In uppercase if you want to have the log comment appears into the generated ChangeLog file.
 
 The keyword can be omitted if your commit does not fit in any of the following categories:
 
-- Fix/FIX: for a bug fix
+- Fix/FIX:     for a bug fix
 - Close/CLOSE: for closing a referenced feature request
-- New/NEW: for an unreferenced new feature (Opening a feature request and using close is preferred)
-- Perf/PERF: for a performance enhancement
-- Qual/QUAL: for quality code enhancement or re-engineering
+- New/NEW:     for an unreferenced new feature (Opening a feature request and using close is preferred)
+- Perf/PERF:   for a performance enhancement
+- Doc/DOC:     for documentation
+- Qual/QUAL:   for quality code enhancement or re-engineering
+- Sec/SEC:     for a security vulnerability fix
 
 #### Issuenum
 If your commit fixes a referenced bug or feature request.
@@ -153,7 +158,9 @@ Long description (Can span across multiple lines).
 Pull Request (PR) process is the process to submit a change (enhancement, bug fix, ...) into the code of the project. There is some rules to know and
 a process to follow to optimize the chance to have PRs merged efficiently...
 
-* A PR must be atomic. It means it must contains the lower possible changes for 1 need (1 bug fix or 1 new feature) without breaking usability of code. If a PR can be split into several PRs, it often means your PR is not atomic. For PR on maintenance versions, the modified code must be as low as possible and only the absolutely necessary changes are allowed (You must have the number of lines modified as low as possible to have the visible bug fixed (no refactoring, no perf, no quality, no renaming must be joined). This allow to reduce to the maximum the number of future conflicts (so the number of regressions) when merging fixes into higher version to reduce the time of any future impact analysis.
+* A PR must be atomic. It means it must contains the lower possible changes for 1 need (1 bug fix or 1 new feature) without breaking usability of code. If a PR can be split into several PRs, it often means your PR is not atomic. For PR on maintenance versions, the modified code must be as low as possible and only the absolutely necessary changes are allowed (You must have the number of lines modified as low as possible to have the visible bug fixed (no refactoring, no perf, no quality, no renaming must be joined). 
+This allow to reduce to the maximum the number of future conflicts (so the number of regressions) when merging fixes into higher version to reduce the time of any future impact analysis.
+WARNING: AI IS OFTEN DOING NON ATOMIC PR AND NON ATOMIC PR WILL BE REJECTED, SO BE CAREFULL IF USING AI.
 
 * Your Pull Request (PR) must pass the Continuous Integration checks and code quality checks.
 

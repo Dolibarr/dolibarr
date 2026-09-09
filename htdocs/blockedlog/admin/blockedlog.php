@@ -3,6 +3,7 @@
  * Copyright (C) 2017-2018  Laurent Destailleur <eldy@destailleur.fr>
  * Copyright (C) 2024-2026  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2026-2026  Laurent Magnin      <laurent.magnin@evarisk.com>
+ * Copyright (C) 2026		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -96,7 +97,7 @@ $block_static = new BlockedLog($db);
 $block_static->loadTrackedEvents();
 
 $title = $langs->trans("ModuleSetup").' '.$langs->trans('BlockedLog');
-$help_url="EN:Module_Unalterable_Archives_-_Logs|FR:Module_Archives_-_Logs_Inaltérable";
+$help_url = "EN:Module_Unalterable_Archives_-_Logs|FR:Module_Archives_-_Logs_Inaltérable";
 
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-blockedlog page-admin_blockedlog');
 
@@ -335,6 +336,7 @@ if (GETPOST('forcegetkeyobfuscation')) {
 
 	$block_static->entity = $conf->entity;
 
+	$hmac_encoded_secret_key = '';
 	try {
 		$hmac_encoded_secret_key = $block_static->getEncodedHMACSecretKey();
 		print "\n<!-- READ TO GET HMAC KEY RETURNED result: ".$hmac_encoded_secret_key." -->\n";

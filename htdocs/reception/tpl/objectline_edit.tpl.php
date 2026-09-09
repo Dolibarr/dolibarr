@@ -9,6 +9,7 @@
  * Copyright (C) 2024		    Vincent Maury		        <vmaury@timgroup.fr>
  * Copyright (C) 2024		    MDW						          <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		    Nick Fragoulis
+ * Copyright (C) 2026		Jose MARTINEZ			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -128,6 +129,12 @@ print '</td>';
 
 $coldisplay++;
 
+print '<td class="nobottom linecolrefsupplier">';
+print '<input id="fourn_ref" name="fourn_ref" class="flat minwidth50 maxwidth100" value="'.dol_escape_htmltag((string) (!empty($line->ref_fourn) ? $line->ref_fourn : '')).'">';
+print '</td>';
+print '<td class="nobottom linecolcostprice right">';
+print '<input size="6" type="text" class="flat right" name="cost_price" id="cost_price" value="'.(!empty($line->cost_price) ? price2num($line->cost_price) : '').'">';
+print '</td>';
 print '<td class="nobottom linecolqty right">';
 
 if (((int) $line->info_bits & 2) != 2) {
@@ -151,6 +158,16 @@ if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 	$coldisplay++;
 	print '<td class="left">';
 	print $form->selectUnits(GETPOSTISSET('units') ? GETPOST('units') : $line->fk_unit, "units", 0, $unit_type);
+	print '</td>';
+}
+print '<td class="nobottom linecolwarehouse right">';
+require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+$formproductline = new FormProduct($object->db);
+print $formproductline->selectWarehouses(!empty($line->fk_entrepot) ? $line->fk_entrepot : '', 'entrepot_id', '', 1, 0, (!empty($line->fk_product) ? $line->fk_product : 0), '', 1);
+print '</td>';
+if (isModEnabled('productbatch')) {
+	print '<td class="nobottom linecolbatch">';
+	print '<input size="8" type="text" class="flat" name="batch" id="batch" value="'.dol_escape_htmltag((string) (!empty($line->batch) ? $line->batch : '')).'">';
 	print '</td>';
 }
 

@@ -2,6 +2,7 @@
 /* Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2011-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -250,10 +251,10 @@ abstract class ActionsCardCommon
 			}
 
 			// Zip
-			$this->tpl['select_zip'] = $formcompany->select_ziptown($this->object->zip, 'zipcode', array('town', 'selectcountry_id', 'state_id'), 6);
+			$this->tpl['select_zip'] = $formcompany->select_ziptown((string) $this->object->zip, 'zipcode', array('town', 'selectcountry_id', 'state_id'), 6);
 
 			// Town
-			$this->tpl['select_town'] = $formcompany->select_ziptown($this->object->town, 'town', array('zipcode', 'selectcountry_id', 'state_id'));
+			$this->tpl['select_town'] = $formcompany->select_ziptown((string) $this->object->town, 'town', array('zipcode', 'selectcountry_id', 'state_id'));
 
 			// Country
 			$this->object->country_id = ($this->object->country_id ? $this->object->country_id : $mysoc->country_id);
@@ -278,7 +279,7 @@ abstract class ActionsCardCommon
 			}
 
 			// VAT
-			$this->tpl['yn_assujtva'] = $form->selectyesno('assujtva_value', $this->tpl['tva_assuj'], 1); // Assujeti par default en creation
+			$this->tpl['yn_assujtva'] = $form->selectyesno('assujtva_value', $this->tpl['tva_assuj'], 1); // Subject to VAT by default at creation
 
 			// Select users
 			$this->tpl['select_users'] = $form->select_dolusers($this->object->commercial_id, 'commercial_id', 1, null, 0, '', '', '0', 0, 0, '', 0, '', 'maxwidth300');
@@ -314,7 +315,7 @@ abstract class ActionsCardCommon
 
 			$this->tpl['checkcustomercode'] = $this->object->check_codeclient();
 			$this->tpl['checksuppliercode'] = $this->object->check_codefournisseur();
-			$this->tpl['address'] = dol_nl2br($this->object->address);
+			$this->tpl['address'] = dol_nl2br((string) $this->object->address);
 
 			$img = picto_from_langcode($this->object->country_code);
 			if ($this->object->isInEEC()) {
@@ -322,11 +323,11 @@ abstract class ActionsCardCommon
 			}
 			$this->tpl['country'] = ($img ? $img.' ' : '').$this->object->country;
 
-			$this->tpl['phone'] 	= dol_print_phone($this->object->phone, $this->object->country_code, 0, $this->object->id, 'AC_TEL');
-			$this->tpl['phone_mobile'] 	= dol_print_phone($this->object->phone_mobile, $this->object->country_code, 0, $this->object->id, 'AC_MOB');
-			$this->tpl['fax'] 		= dol_print_phone($this->object->fax, $this->object->country_code, 0, $this->object->id, 'AC_FAX');
-			$this->tpl['email'] 	= dol_print_email($this->object->email, 0, $this->object->id, 1);
-			$this->tpl['url'] 		= dol_print_url($this->object->url);
+			$this->tpl['phone'] 	= dol_print_phone((string) $this->object->phone, $this->object->country_code, 0, $this->object->id, 'AC_TEL');
+			$this->tpl['phone_mobile'] 	= dol_print_phone((string) $this->object->phone_mobile, $this->object->country_code, 0, $this->object->id, 'AC_MOB');
+			$this->tpl['fax'] 		= dol_print_phone((string) $this->object->fax, $this->object->country_code, 0, $this->object->id, 'AC_FAX');
+			$this->tpl['email'] 	= dol_print_email((string) $this->object->email, 0, $this->object->id, 1);
+			$this->tpl['url'] 		= dol_print_url((string) $this->object->url);
 
 			$this->tpl['tva_assuj'] = yn($this->object->tva_assuj);
 

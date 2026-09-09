@@ -2,7 +2,7 @@
 /* Copyright (C) 2002       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2022       Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -232,17 +232,17 @@ class PaymentSocialContribution extends CommonObject
 		if ($totalamount != 0) {
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiementcharge (fk_charge, datec, datep, amount,";
 			$sql .= " fk_typepaiement, num_paiement, note, fk_user_creat, fk_bank)";
-			$sql .= " VALUES ($this->chid, '".$this->db->idate($now)."',";
+			$sql .= " VALUES (".((int) $this->chid).", '".$this->db->idate($now)."',";
 			$sql .= " '".$this->db->idate($this->datepaye)."',";
 			$sql .= " ".((float) $totalamount).",";
-			$sql .= " ".((int) $this->paiementtype).", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note)."', ".$user->id.",";
+			$sql .= " ".((int) $this->paiementtype).", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note)."', ".((int) $user->id).",";
 			$sql .= " 0)";
 
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."paiementcharge");
 
-				// Insere tableau des montants / factures
+				// Insert amounts / invoices array
 				foreach ($this->amounts as $key => $amount) {
 					$contribid = $key;
 					if (is_numeric($amount) && $amount != 0) {
@@ -611,8 +611,8 @@ class PaymentSocialContribution extends CommonObject
 				$emetteur_banque
 			);
 
-			// Mise a jour fk_bank dans llx_paiement.
-			// On connait ainsi le paiement qui a genere l'ecriture bancaire
+			// Update fk_bank in llx_paiement.
+			// This way we know the payment that generated the bank entry
 			if ($bank_line_id > 0) {
 				$result = $this->update_fk_bank($bank_line_id);
 				if ($result <= 0) {
@@ -787,7 +787,7 @@ class PaymentSocialContribution extends CommonObject
 			$labeltoshow = $this->label;
 			$reg = array();
 			if (preg_match('/^\((.*)\)$/i', $this->label, $reg)) {
-				// Label generique car entre parentheses. On l'affiche en le traduisant
+				// Generic label because it is in parentheses. We display it translated.
 				if ($reg[1] == 'paiement') {
 					$reg[1] = 'Payment';
 				}

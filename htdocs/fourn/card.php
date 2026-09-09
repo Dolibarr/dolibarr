@@ -56,9 +56,12 @@ if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 }
+if (isModEnabled('contract')) {
+	require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
+}
 
 // Load translation files required by page
-$langs->loadLangs(array('accountancy', 'companies', 'suppliers', 'products', 'bills', 'orders', 'commercial'));
+$langs->loadLangs(array('accountancy', 'companies', 'suppliers', 'products', 'bills', 'orders', 'commercial', 'contracts'));
 
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
@@ -215,8 +218,21 @@ if ($id > 0 && empty($object->id)) {
 	// Load data of third party
 	$res = $object->fetch($id);
 	if ($object->id <= 0) {
-		dol_print_error($db, $object->error);
-		exit(1);
+		if ($object->error) {
+			dol_print_error($db, $object->error);
+			exit(1);
+		}
+		// Fournisseur::fetch() filters on s.fournisseur > 0, so a third party that exists but is no
+		// longer a vendor returns no row and no database error. Show a readable message with a link to
+		// the generic card instead of the technical error page (#39618).
+		$langs->load("errors");
+		llxHeader('', $langs->trans("ThirdParty").' - '.$langs->trans('Supplier'));
+		print '<div class="warning">'.$langs->trans("ErrorRecordNotFound").' ('.$langs->trans("Supplier").')';
+		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?socid='.((int) $id).'">'.$langs->trans("ThirdParty").'</a>';
+		print '</div>';
+		llxFooter();
+		$db->close();
+		exit(0);
 	}
 }
 
@@ -324,7 +340,7 @@ if ($object->id > 0) {
 	if (getDolGlobalString('ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE')) {
 		print '<tr>';
 		print '<td class="titlefield">';
-		print $form->textwithpicto($langs->trans('VATReverseChargeByDefault'), $langs->trans('VATReverseChargeByDefaultDesc'));
+		print $form->textwithpicto($langs->trans('VATReverseChargeByDefault'), $langs->trans('VATReverseChargeByDefaultDesc').'<br>'.$langs->trans('ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC'));
 		print '</td><td>';
 		print '<input type="checkbox" name="vat_reverse_charge" ' . ($object->vat_reverse_charge == '1' ? ' checked' : '') . ' disabled>';
 		print '</td>';
@@ -1030,6 +1046,82 @@ if ($object->id > 0) {
 		}
 	}
 
+	/*
+	 * Latest supplier contracts
+	 */
+	if (isModEnabled('contract') && $user->hasRight('contrat', 'lire')) {
+		$sql = "SELECT s.nom, s.rowid, c.rowid as id, c.ref as ref, c.fk_projet, c.statut as contract_status, c.datec as dc, c.date_contrat as dcon, c.ref_customer as refcus, c.ref_supplier as refsup, c.entity,";
+		$sql .= " c.last_main_doc, c.model_pdf";
+		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c";
+		$sql .= " WHERE c.fk_soc = s.rowid";
+		$sql .= " AND s.rowid = ".((int) $object->id);
+		$sql .= " AND c.fk_contract_type = 1";
+		$sql .= " AND c.entity IN (".getEntity('contract').")";
+		$sql .= " ORDER BY c.datec DESC";
+
+		$resql = $db->query($sql);
+		if ($resql) {
+			$contrat = new Contrat($db);
+
+			$num = $db->num_rows($resql);
+			if ($num > 0) {
+				print '<div class="div-table-responsive-no-min">';
+				print '<table class="noborder centpercent lastrecordtable">';
+
+				print '<tr class="liste_titre">';
+				print '<td colspan="5"><table class="centpercent nobordernopadding"><tr><td>'.$langs->trans("LastSupplierContracts", ($num <= $MAXLIST ? "" : $MAXLIST)).'</td>';
+				print '<td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/contrat/list.php?socid='.$object->id.'&search_type=1">'.$langs->trans("AllContracts").'<span class="badge marginleftonlyshort">'.$num.'</span></a></td>';
+				print '</tr></table></td>';
+				print '</tr>';
+			}
+
+			$i = 0;
+			while ($i < $num && $i < $MAXLIST) {
+				$objp = $db->fetch_object($resql);
+
+				$contrat->id = $objp->id;
+				$contrat->ref = $objp->ref ? $objp->ref : $objp->id;
+				$contrat->ref_customer = $objp->refcus;
+				$contrat->ref_supplier = $objp->refsup;
+				$contrat->fk_project = $objp->fk_projet;
+				$contrat->statut = $objp->contract_status;
+				$contrat->status = $objp->contract_status;
+				$contrat->last_main_doc = $objp->last_main_doc;
+				$contrat->model_pdf = $objp->model_pdf;
+
+				print '<tr class="oddeven">';
+				print '<td class="nowraponall">';
+				print $contrat->getNomUrl(1, 12);
+				print '</td>';
+				print '<td class="tdoverflowmax125">';
+				if ($contrat->fk_project > 0) {
+					require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+					$project = new Project($db);
+					$project->fetch($contrat->fk_project);
+					print $project->getNomUrl(1);
+				}
+				print "</td>\n";
+				print '<td class="nowrap">';
+				print dol_trunc($objp->refsup, 12);
+				print "</td>\n";
+				print '<td class="right" width="80px"><span title="'.$langs->trans("DateContract").'">'.dol_print_date($db->jdate($objp->dcon), 'day')."</span></td>\n";
+				print '<td class="nowraponall right">';
+				print $contrat->getLibStatut(4);
+				print "</td>\n";
+				print '</tr>';
+				$i++;
+			}
+			$db->free($resql);
+
+			if ($num > 0) {
+				print "</table>";
+				print '</div>';
+			}
+		} else {
+			dol_print_error($db);
+		}
+	}
+
 	// Allow external modules to add their own shortlist of recent objects
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('addMoreRecentObjects', $parameters, $object, $action);
@@ -1054,14 +1146,10 @@ if ($object->id > 0) {
 	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
 	// modified by hook
 	if (empty($reshook)) {
-		if ($object->status != 1) {
-			print dolGetButtonAction($langs->trans('ThirdPartyIsClosed'), $langs->trans('ThirdPartyIsClosed'), 'default', $_SERVER['PHP_SELF'].'#', '', false);
-		}
-
 		if (isModEnabled('supplier_proposal') && $user->hasRight("supplier_proposal", "creer")) {
 			$langs->load("supplier_proposal");
 			if ($object->status == 1) {
-				print dolGetButtonAction('', $langs->trans('AddSupplierProposal'), 'default', DOL_URL_ROOT.'/supplier_proposal/card.php?action=create&amp;socid='.$object->id, '');
+				print dolGetButtonAction('', $langs->trans('AddSupplierProposal'), 'default', DOL_URL_ROOT.'/supplier_proposal/card.php?action=create&socid='.$object->id, '');
 			} else {
 				print dolGetButtonAction($langs->trans('ThirdPartyIsClosed'), $langs->trans('AddSupplierProposal'), 'default', $_SERVER['PHP_SELF'].'#', '', false);
 			}
@@ -1070,29 +1158,39 @@ if ($object->id > 0) {
 		if ($user->hasRight('fournisseur', 'commande', 'creer') || $user->hasRight('supplier_order', 'creer')) {
 			$langs->load("orders");
 			if ($object->status == 1) {
-				print dolGetButtonAction('', $langs->trans('AddSupplierOrderShort'), 'default', DOL_URL_ROOT.'/fourn/commande/card.php?action=create&amp;token='.newToken().'&amp;socid='.$object->id, '');
+				print dolGetButtonAction('', $langs->trans('AddSupplierOrderShort'), 'default', DOL_URL_ROOT.'/fourn/commande/card.php?action=create&socid='.$object->id, '');
 			} else {
 				print dolGetButtonAction($langs->trans('ThirdPartyIsClosed'), $langs->trans('AddSupplierOrderShort'), 'default', $_SERVER['PHP_SELF'].'#', '', false);
 			}
+		}
+
+		if (isModEnabled('contract') && $user->hasRight('contrat', 'creer') && $object->status == 1) {
+			print dolGetButtonAction('', $langs->trans('AddContract'), 'default', DOL_URL_ROOT.'/contrat/card.php?action=create&amp;socid='.$object->id.'&amp;contract_type=1', '');
+		} elseif (isModEnabled('contract') && $user->hasRight('contrat', 'creer')) {
+			print dolGetButtonAction($langs->trans('ThirdPartyIsClosed'), $langs->trans('AddContract'), 'default', $_SERVER['PHP_SELF'].'#', '', false);
 		}
 
 		if ($user->hasRight('fournisseur', 'facture', 'creer') || $user->hasRight('supplier_invoice', 'creer')) {
 			if (!empty($orders2invoice) && $orders2invoice > 0) {
 				if ($object->status == 1) {
 					// Company is open
-					print dolGetButtonAction('', $langs->trans('CreateInvoiceForThisSupplier'), 'default', DOL_URL_ROOT.'/fourn/commande/list.php?socid='.$object->id.'&amp;search_billed=0&amp;autoselectall=1', '');
+					print dolGetButtonAction('', $langs->trans('CreateInvoiceForThisSupplier'), 'default', DOL_URL_ROOT.'/fourn/commande/list.php?socid='.$object->id.'&search_billed=0&autoselectall=1', '');
 				} else {
 					print dolGetButtonAction('', $langs->trans('CreateInvoiceForThisCustomer'), 'default', $_SERVER['PHP_SELF'].'#', '', false);
 				}
 			} else {
-				print dolGetButtonAction($langs->trans("NoOrdersToInvoice").' ('.$langs->trans("WithReceptionFinished").')', $langs->trans('CreateInvoiceForThisCustomer'), 'default', $_SERVER['PHP_SELF'].'#', '', false);
+				if ($object->status == 1) {
+					print dolGetButtonAction($langs->trans("NoOrdersToInvoice").' ('.$langs->trans("WithReceptionFinished").')', $langs->trans('CreateInvoiceForThisCustomer'), 'default', $_SERVER['PHP_SELF'].'#', '', false);
+				} else {
+					print dolGetButtonAction($langs->trans('ThirdPartyIsClosed'), $langs->trans('CreateInvoiceForThisCustomer'), 'default', $_SERVER['PHP_SELF'].'#', '', false);
+				}
 			}
 		}
 
 		if ($user->hasRight('fournisseur', 'facture', 'creer') || $user->hasRight('supplier_invoice', 'creer')) {
 			$langs->load("bills");
 			if ($object->status == 1) {
-				print dolGetButtonAction('', $langs->trans('AddBill'), 'default', DOL_URL_ROOT.'/fourn/facture/card.php?action=create&amp;socid='.$object->id, '');
+				print dolGetButtonAction('', $langs->trans('AddBill'), 'default', DOL_URL_ROOT.'/fourn/facture/card.php?action=create&socid='.$object->id, '');
 			} else {
 				print dolGetButtonAction($langs->trans('ThirdPartyIsClosed'), $langs->trans('AddBill'), 'default', $_SERVER['PHP_SELF'].'#', '', false);
 			}
@@ -1101,7 +1199,7 @@ if ($object->id > 0) {
 		// Add action
 		if (isModEnabled('agenda') && getDolGlobalString('MAIN_REPEATTASKONEACHTAB') && $object->status == 1) {
 			if ($user->hasRight("agenda", "myactions", "create")) {
-				print dolGetButtonAction('', $langs->trans('AddAction'), 'default', DOL_URL_ROOT.'/comm/action/card.php?action=create&amp;socid='.$object->id, '');
+				print dolGetButtonAction('', $langs->trans('AddAction'), 'default', DOL_URL_ROOT.'/comm/action/card.php?action=create&socid='.$object->id, '');
 			} else {
 				print dolGetButtonAction($langs->trans('NotAllowed'), $langs->trans('AddAction'), 'default', $_SERVER['PHP_SELF'].'#', '', false);
 			}

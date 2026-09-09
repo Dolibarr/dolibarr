@@ -97,6 +97,7 @@ WebPortalMemberCardAccessHelp=Habilitar el acceso al registro de membresía (Ocu
 WEBPORTAL_PARTNERSHIP_CARD_ACCESS=Habilitar el acceso al registro de socios
 WebPortalPartnerShipCardAccessHelp=Habilitar el acceso al registro de socios (Oculto/Visible o Editable)
 WEBPORTAL_PROPAL_LIST_ACCESS=Habilitar el acceso a las propuestas
+WebPortalInterDateEnd=Fecha final
 WebPortalUserLoggedHelp=Este usuario está acostumbrado a actualizar tarjetas.
 WebPortalPropalListMenu=Propuestas
 WebPortalPropalListTitle=Propuestas

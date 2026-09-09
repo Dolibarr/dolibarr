@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2008-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -123,7 +123,7 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
 			LOCATION:
 			SEQUENCE:0
 			STATUS:CONFIRMED
-			SUMMARY:Tâche 1 heure
+			SUMMARY:Task 1 hour
 			TRANSP:OPAQUE
 			END:VEVENT
 
@@ -139,7 +139,7 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
 			LOCATION:
 			SEQUENCE:0
 			STATUS:CONFIRMED
-			SUMMARY:Tâche 1 jour
+			SUMMARY:Task 1 day
 			TRANSP:TRANSPARENT
 			END:VEVENT
 			*/
@@ -374,7 +374,10 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 		}
 
 		// Add a tag for some readers (Google / Feed readers) to detect that this is a RSS feed and not a generic XML file
-		fwrite($fichier, '<atom:link href="'.$url.'" rel="self" type="application/rss+xml"/>'."\n");
+		// For Atom link, the & must be &amp; instead of &.
+		$urlforatomlink = $url;
+		$urlforatomlink = preg_replace('/&(?!amp;|lt;|gt;|quot;|apos;)/', '&amp;', $urlforatomlink);
+		fwrite($fichier, '<atom:link href="'.$urlforatomlink.'" rel="self" type="application/rss+xml"/>'."\n");
 
 		foreach ($events_array as $key => $event) {
 			$eventqualified = true;

@@ -40,7 +40,7 @@ class ExportCsvUtf8 extends ExportCsv
 	 */
 	public function __construct($db)
 	{
-		global $conf, $langs;
+		global $langs;
 		$this->db = $db;
 
 		$this->separator = ',';

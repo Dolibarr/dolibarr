@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2019		Cedric Ancelin			<icedo.anc@gmail.com>
- * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		William Mead			<william@m34d.com>
  * Copyright (C) 2025		Charlene Benke			<charlene@patas-monkey.com>
  *
@@ -63,7 +63,7 @@ class Products extends DolibarrApi
 	 */
 	public function __construct()
 	{
-		global $db, $conf;
+		global $db;
 
 		$this->db = $db;
 		$this->product = new Product($this->db);
@@ -91,7 +91,7 @@ class Products extends DolibarrApi
 	 */
 	public function get($id, $includestockdata = 0, $includesubproducts = false, $includeparentid = false, $includetrans = false)
 	{
-		if ($id < 1 ) {
+		if ($id < 1) {
 			throw new RestException(400, 'No Product with id<1 can exist');
 		}
 		return $this->_fetch($id, '', '', '', $includestockdata, $includesubproducts, $includeparentid, false, $includetrans);
@@ -399,7 +399,7 @@ class Products extends DolibarrApi
 	 */
 	public function put($id, $request_data = null)
 	{
-		if ($id < 1 ) {
+		if ($id < 1) {
 			throw new RestException(400, 'No Product with id<1 can exist');
 		}
 
@@ -570,7 +570,7 @@ class Products extends DolibarrApi
 	 */
 	public function delete($id)
 	{
-		if ($id < 1 ) {
+		if ($id < 1) {
 			throw new RestException(400, 'No Product with id<1 can exist');
 		}
 		if (!DolibarrApiAccess::$user->hasRight('produit', 'supprimer')) {
@@ -1102,7 +1102,6 @@ class Products extends DolibarrApi
 					$this->_cleanObjectDatas($tmpobj);
 				}
 
-				//var_dump($product_fourn_list->db);exit;
 				$obj_ret[$obj->rowid] = $product_fourn_list;
 
 				$i++;
@@ -2260,7 +2259,7 @@ class Products extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
 		}
 
-		// Récupérer les contacts externes et internes
+		// Retrieve external and internal contacts
 		$contacts = $this->product->liste_contact(-1, 'external', 0, $type);
 		$socpeoples = $this->product->liste_contact(-1, 'internal', 0, $type);
 
@@ -2434,6 +2433,49 @@ class Products extends DolibarrApi
 		}
 
 		unset($object->module);
+
+		// Document/line totals carried by CommonObject: always empty for a standalone product
+		unset($object->total_ht);
+		unset($object->total_tva);
+		unset($object->total_ttc);
+		unset($object->total_localtax1);
+		unset($object->total_localtax2);
+		unset($object->multicurrency_total_ht);
+		unset($object->multicurrency_total_tva);
+		unset($object->multicurrency_total_ttc);
+		unset($object->multicurrency_total_localtax1);
+		unset($object->multicurrency_total_localtax2);
+		unset($object->totalpaid);
+		unset($object->totalpaid_multicurrency);
+
+		// Validation/closure workflow fields: a product is never validated or closed
+		unset($object->date_validation);
+		unset($object->date_cloture);
+		unset($object->user_validation_id);
+		unset($object->user_closing_id);
+
+		// Supplier buying-price context: only filled after get_buyprice(), not by a plain read
+		// (complements fourn_pu / fourn_socid / ref_fourn / product_fourn_id already removed above)
+		unset($object->buyprice);
+		unset($object->fourn_qty);
+		unset($object->fourn_multicurrency_price);
+		unset($object->fourn_multicurrency_unitprice);
+		unset($object->fourn_multicurrency_tx);
+		unset($object->fourn_multicurrency_id);
+		unset($object->fourn_multicurrency_code);
+		unset($object->vatrate_supplier);
+		unset($object->desc_supplier);
+		unset($object->default_vat_code_supplier);
+		unset($object->product_fourn_price_id);
+
+		// Transient scaffolding not related to the product record
+		unset($object->specimen);
+		unset($object->canvas);
+		unset($object->res);
+		unset($object->other);
+		unset($object->warehouse);
+		unset($object->warehouse_id);
+
 		return $object;
 	}
 

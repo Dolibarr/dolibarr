@@ -515,6 +515,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 			$modCodeClient = new $module($db);
 			'@phan-var-force ModeleThirdPartyCode $modCodeClient';
 
+			$tmpcode = '';
 			if (empty($tmpcode) && !empty($modCodeClient->code_auto)) {
 				$tmpcode = $modCodeClient->getNextValue($thirdparty, 0);
 			}

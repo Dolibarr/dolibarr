@@ -31,9 +31,9 @@ UseDiscountOnTotal=在小计
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=定义全局折扣是被视为产品，服务还是仅作为保证金计算的小计。
 MARGIN_TYPE=默认情况下建议的购买/成本价格用于保证金计算
 MargeType1=最佳供应商价格的保证金
-MargeType2=加权平均价差 (WAP)
+MargeType2=Margin on Weighted Average Cost (WAC)
 MargeType3=成本价格保证金
-MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Price (WAP) = Selling price - Product Weighted Average Price (WAP) or best vendor price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAP if cost price not defined, or best vendor price if WAP not yet defined
+MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Cost (WAC) = Selling price - Product Weighted Average Price (WAP) or best vendor price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAC if cost price not defined, or best vendor price if WAC not yet defined
 CostPrice=成本价
 UnitCharges=费用单位
 Charges=费用

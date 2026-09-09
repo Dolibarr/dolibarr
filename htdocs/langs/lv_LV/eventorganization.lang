@@ -48,6 +48,7 @@ ConferenceOrBoothTab = Konference vai stends
 AmountPaid = Samaksātā summa
 DateOfRegistration = Reģistrācijas datums
 ConferenceOrBoothAttendee = Konferences vai stenda apmeklētājs
+ConferenceOrBoothAttendeesShort = Conf. or Booth Attendees
 ApplicantOrVisitor=Pretendents vai apmeklētājs
 Speaker=Skaļrunis
 # Template Mail
@@ -81,8 +82,8 @@ ListOfAttendeesOfEvent=Pasākuma projektu dalībnieku saraksts
 ListOfConfOrBoothOfEvent=Konferenču vai pasākumu projektu kabīņu saraksts
 DownloadICSLink=Download ICS file
 EVENTORGANIZATION_SECUREKEY=Sēklas, lai nodrošinātu atslēgu publiskajai reģistrācijas lapai, lai ieteiktu konferenci
-SERVICE_BOOTH_LOCATION=Pakalpojums, kas izmantots rēķinu rindai par kabīnes atrašanās vietu
-SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION=Pakalpojums, kas tiek izmantots rēķina rindai par pasākuma dalībnieka abonementu
+SERVICE_BOOTH_LOCATION=Service to use on the invoice line for the sale of a booth.
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION=Service to use on the invoice line for the participation fees.
 NbVotes=Balsu skaits
 # Status
 EvntOrgDraft = Melnraksts
@@ -122,7 +123,7 @@ NewSubscription=Reģistrācija
 OrganizationEventConfRequestWasReceived=Jūsu ieteikums par konferenci ir saņemts
 OrganizationEventBoothRequestWasReceived=Jūsu pieprasījums pēc stenda ir saņemts
 OrganizationEventPaymentOfBoothWasReceived=Jūsu maksājums par jūsu stendu ir reģistrēts
-OrganizationEventPaymentOfRegistrationWasReceived=Jūsu maksājums par jūsu notikuma reģistrāciju ir reģistrēts
+OrganizationEventPaymentOfRegistrationWasReceived=Your payment for your registration to the event has been recorded
 OrganizationEventBulkMailToAttendees=Šis ir atgādinājums par jūsu dalību pasākumā kā apmeklētājam
 OrganizationEventBulkMailToSpeakers=Šis ir atgādinājums par jūsu dalību pasākumā kā runātājam
 OrganizationEventLinkToThirdParty=Saite ar trešo pusi (klientu, piegādātāju vai partneri)

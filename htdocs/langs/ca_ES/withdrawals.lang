@@ -173,5 +173,5 @@ RefSalary=Sou
 NoSalaryInvoiceToWithdraw=Sense sou esperant un '%s'. Aneu a la pestanya '%s' de la targeta de sou per fer una sol·licitud.
 SalaryInvoiceWaitingWithdraw=Sous pendents de pagament per transferència de crèdit
 ErrorBankTransferNoPaymentRequestSelected=No s'ha seleccionat cap sol·licitud de pagament.
-AmountRequestedAlreadyReachesTotal=The total invoice amount has already been requested for payment
-AmountExceedsRemainingToRequest=The requested amount exceeds the remaining amount available for payment requests
+AmountRequestedAlreadyReachesTotal=L'import total de la factura ja s'ha sol·licitat per al pagament
+AmountExceedsRemainingToRequest=L'import sol·licitat supera l'import restant disponible per a sol·licituds de pagament

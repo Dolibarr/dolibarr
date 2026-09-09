@@ -192,7 +192,7 @@ if (!function_exists("ldap_connect")) {
 	setEventMessages($langs->trans("LDAPFunctionsNotAvailableOnPHP"), null, 'errors');
 }
 
-print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=setvalue&token='.newToken().'">';
+print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=setvalue&token='.newToken().'" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
 print dol_get_fiche_head($head, 'members', '', -1);
@@ -207,7 +207,7 @@ print '<tr class="liste_titre">';
 print '<td colspan="4">'.$langs->trans("LDAPSynchronizeMembers").'</td>';
 print "</tr>\n";
 
-// DN Pour les adherents
+// DN For the members
 print '<!-- LDAP_MEMBER_DN -->';
 print '<tr class="oddeven"><td><span class="fieldrequired">'.$langs->trans("LDAPMemberDn").'</span></td><td>';
 print '<input size="48" type="text" name="user" value="' . getDolGlobalString('LDAP_MEMBER_DN').'">';

@@ -1,6 +1,7 @@
 ---
 name: pre-commit
 
+
 on:
   # workflow called by the parent workflow ci.yml
   workflow_call:
@@ -8,18 +9,29 @@ on:
       gh_event:
         required: true
         type: string
+    outputs:
+      travis_changed:
+        description: >-
+          "false" when the changed files can not change the result of the
+          travis build (doc, images, styles, translations, tooling...).
+          Empty when it could not be computed (not a pull_request event).
+        value: ${{ jobs.pre-commit.outputs.travis_changed }}
   # can run job manually
   workflow_dispatch:
 
 concurrency:
   group: pre-commit-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
+
 env:
   gh_event: ${{ inputs.gh_event || github.event_name }}
 
 jobs:
   pre-commit:
     runs-on: ubuntu-latest
+    # Reused by the parent workflow to know if the travis build is required
+    outputs:
+      travis_changed: ${{ steps.changed-php.outputs.travis_changed }}
     env:
       RAW_LOG: pre-commit.log
       CS_XML: pre-commit.xml
@@ -59,7 +71,9 @@ jobs:
         run: ./.github/scripts/get_changed_php.sh
 
       - name: Print changed files
-        run: echo "Changed files are ${{ steps.changed-php.outputs.all_changed_files }}"
+        run: |-
+          echo "Changed files are ${{ steps.changed-php.outputs.all_changed_files }}"
+          echo "Travis build required = ${{ steps.changed-php.outputs.travis_changed }}"
 
       # Action setup-python needs a requirements.txt or pyproject.toml
       # This ensures one of them exists.
@@ -74,7 +88,7 @@ jobs:
       - run: python -m pip install pre-commit
 
       # Restore previous cache of precommit
-      - uses: actions/cache/restore@v5
+      - uses: actions/cache/restore@v6
         with:
           path: ~/.cache/pre-commit/
           key: pre-commit-4|${{ env.pythonLocation }}|${{ hashFiles('.pre-commit-config.yaml') }}
@@ -156,13 +170,13 @@ jobs:
           ls -l ~/.cache/pre-commit/
 
       - name: Convert Raw Log to Annotations
-        uses: mdeweerd/logToCheckStyle@v2025.11.2
+        uses: mdeweerd/logToCheckStyle@v2026.8.2
         if: ${{ failure() }}
         with:
           in: ${{ env.RAW_LOG }}
 
       # Save the precommit cache
-      - uses: actions/cache/save@v5
+      - uses: actions/cache/save@v6
         if: ${{ ! cancelled() }}
         with:
           path: ~/.cache/pre-commit/

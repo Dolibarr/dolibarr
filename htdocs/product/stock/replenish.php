@@ -57,8 +57,6 @@ if ($user->socid) {
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('stockreplenishlist'));
 
-$result = restrictedArea($user, 'produit|service');
-
 //checks if a product has been ordered
 
 $action = GETPOST('action', 'aZ09');
@@ -142,16 +140,27 @@ if ($mode == 'virtual') {
 	$usevirtualstock = 1;
 }
 
-$parameters = array();
-$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) {
-	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+$object = new CommandeFournisseur($db);
+
+if (!isModEnabled('stock')) {
+	accessforbidden("Module stock must be enabled to use this feature");
 }
+if (!$user->hasRight('stock', 'read')) {
+	accessforbidden("You need permission to read stock to access this feature");
+}
+
+restrictedArea($user, 'produit|service');
 
 
 /*
  * Actions
  */
+
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // Both test are required to be compatible with all browsers
 	$search_ref = '';
@@ -269,6 +278,7 @@ if ($action == 'order' && GETPOST('valid') && $user->hasRight('fournisseur', 'co
 				$order->fetch($obj->rowid);
 				$order->fetch_thirdparty();
 
+				$result = 0;
 				foreach ($supplier['lines'] as $line) {
 					if (empty($line->remise_percent)) {
 						$line->remise_percent = (float) $order->thirdparty->remise_supplier_percent;
@@ -295,6 +305,9 @@ if ($action == 'order' && GETPOST('valid') && $user->hasRight('fournisseur', 'co
 						$line->fk_unit,
 						$line->multicurrency_subprice
 					);
+					if ($result < 0) {
+						break;
+					}
 				}
 				if ($result < 0) {
 					$fail++;
@@ -902,6 +915,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		}
 
 		// Force call prod->load_stats_xxx to choose status to count (otherwise it is loaded by load_stock function)
+		$result = null;
 		if (isset($draftchecked)) {
 			$result = $prod->load_stats_commande_fournisseur(0, '0,1,2,3,4');
 		} elseif (!$usevirtualstock) {

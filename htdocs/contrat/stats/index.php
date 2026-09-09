@@ -109,9 +109,8 @@ $formcompany = new FormCompany($db);
 $formother = new FormOther($db);
 
 $picto = 'contract';
-$title = $langs->trans("ContractsStatistics");
+$title = $langs->trans("Contracts");
 $dir = $conf->contract->dir_temp;
-
 
 
 llxHeader('', $title, '', '', 0, 0, '', '', '', 'mod-contract page-stats');
@@ -226,8 +225,6 @@ if (!$mesg) {
 
 	$px2->draw($filenameamount, $fileurlamount);
 }
-
-
 
 
 

@@ -68,3 +68,4 @@ ApplyJobCandidature=Ansök om det här jobbet
 ErrorRecruitmmentCandidatureAlreadyExists= Rekryteringsansökan finns redan med e-postadressen %s
 RecruitmentCandidatureSaved=Rekryteringsansökan har sparats
 NoOpenJobOffer=Inga lediga jobberbjudanden just nu
+ShowPositionToBeFilled=Show Position to be filled
