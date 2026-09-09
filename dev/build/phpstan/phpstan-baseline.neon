@@ -4483,12 +4483,6 @@ parameters:
 			path: ../../../htdocs/emailcollector/class/emailcollector.class.php
 
 		-
-			message: '#^Ternary operator condition is always true\.$#'
-			identifier: ternary.alwaysTrue
-			count: 16
-			path: ../../../htdocs/emailcollector/class/emailcollector.class.php
-
-		-
 			message: '#^Call to function method_exists\(\) with Project and ''fetchComments'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
