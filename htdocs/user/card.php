@@ -2752,12 +2752,14 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 			print '</table>';
 
+
 			print '<hr>';
+
 
 			print '<table class="border centpercent">';
 
 			// Date access validity
-			print '<tr><td>'.$langs->trans("RangeOfLoginValidity").'</td>';
+			print '<tr><td class="titlefieldcreate">'.$langs->trans("RangeOfLoginValidity").'</td>';
 			print '<td>';
 			if ($permissiontoedit) {
 				print $form->selectDate($datestartvalidity ? $datestartvalidity : $object->datestartvalidity, 'datestartvalidity', 0, 0, 1, 'formdatestartvalidity', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("from"));
@@ -2774,6 +2776,21 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '</td>';
 			print "</tr>\n";
 
+			// Set checkbxo to update on next login (only on dolibarr auth mode)
+			$sforcepass = '';
+			$permissiontoselfeditpassword = $object->hasRight('user', 'self', 'password');
+			if ($permissiontoselfeditpassword) {
+				if ($permissiontoedit) {
+					$sforcepass .= '<input type="checkbox" name="forcepasswordchange" id="forcepasswordchange" value="1"'.($object->force_pass_change ? ' checked="checked"' : '').'>';
+					$sforcepass .= '<label class="opacitylow small" for="forcepasswordchange">'.$langs->trans("ForcePasswordChange").'</label>';
+				} else {
+					$sforcepass .= '<input type="checkbox" name="forcepasswordchange" class="colorgrey" disabled value="1"'.($object->force_pass_change ? ' checked="checked"' : '').'>';
+					$sforcepass .= '<span class="small">'.$langs->trans("ForcePasswordChange").'</small>';
+				}
+			} else {
+				$sforcepass .= '<input type="checkbox" name="forcepasswordchange" value="1" class="colorgrey" disabled>';
+				$sforcepass .= '<span class="opacitymedium small" title="'.$langs->trans("UserDoesNotHaveRightsToChangeHisPassword").'">'.$langs->trans("ForcePasswordChange").'</span>';
+			}
 
 			// Pass
 			print '<tr><td class="titlefieldcreate">'.$langs->trans("Password").'</td>';
@@ -2805,26 +2822,22 @@ if ($action == 'create' || $action == 'adduserldap') {
 			}
 
 			print $valuetoshow;
+			/*
+			if ($_SESSION["dol_authmode"] == 'dolibarr') {
+				print '<div class="inline-block marginleftonly paddingtop paddingbottom">'.$sforcepass.'</div>';
+			}*/
 			print "</td></tr>\n";
 
 			// Force update on next login only on dolibarr auth mode
 			if ($_SESSION["dol_authmode"] == 'dolibarr') {
-				print '<tr>';
-				print '<td></td><td>';
-				$permissiontoselfeditpassword = $object->hasRight('user', 'self', 'password');
-				if ($permissiontoselfeditpassword) {
-					if ($permissiontoedit) {
-						print '<input type="checkbox" name="forcepasswordchange" id="forcepasswordchange" value="1"'.($object->force_pass_change ? ' checked="checked"' : '').'>';
-						print '<label class="opacitylow" for="forcepasswordchange">'.$langs->trans("ForcePasswordChange").'</label>';
-					} else {
-						print '<input type="checkbox" name="forcepasswordchange" class="colorgrey" disabled value="1"'.($object->force_pass_change ? ' checked="checked"' : '').'>';
-						print $langs->trans("ForcePasswordChange");
-					}
+				print '<tr class="valigntop">';
+				if ($conf->dol_optimize_smallscreen) {
+					print '<td colspan="2">';
 				} else {
-					print '<input type="checkbox" name="forcepasswordchange" value="1" class="colorgrey" disabled>';
-					print '<span class="opacitymedium" title="'.$langs->trans("UserDoesNotHaveRightsToChangeHisPassword").'">'.$langs->trans("ForcePasswordChange").'</span>';
+					print '<td></td>';
+					print '<td>';
 				}
-
+				print $sforcepass;
 				print '</td></tr>';
 			}
 
@@ -2856,8 +2869,13 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print '</td></tr>';
 			}
 
-			print '</table><hr><table class="border centpercent">';
+			print '</table>';
 
+
+			print '<hr>';
+
+
+			print '<table class="border centpercent">';
 
 			// Address
 			print '<tr><td class="tdtop titlefieldcreate">'.$form->editfieldkey('Address', 'address', '', $object, 0).'</td>';
@@ -2985,12 +3003,17 @@ if ($action == 'create' || $action == 'adduserldap') {
 				}
 			}
 
-			print '</table><hr><table class="border centpercent">';
+			print '</table>';
 
+
+			print '<hr>';
+
+
+			print '<table class="border centpercent">';
 			// Default warehouse
 			if (isModEnabled('stock') && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE_USER')) {
-				print '<tr><td class="titlefield">'.$langs->trans("DefaultWarehouse").'</td><td>';
-				print $formproduct->selectWarehouses($object->fk_warehouse, 'fk_warehouse', 'warehouseopen', 1);
+				print '<tr><td class="titlefieldcreate">'.$langs->trans("DefaultWarehouse").'</td><td>';
+				print $formproduct->selectWarehouses($object->warehouse_id, 'fk_warehouse', 'warehouseopen', 1);
 				print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&token='.newToken().'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit&token='.newToken()).'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddWarehouse").'"></span></a>';
 				print '</td></tr>';
 			}
@@ -3137,8 +3160,8 @@ if ($action == 'create' || $action == 'adduserldap') {
 			}
 			print '</td></tr>';
 
-
 			print '</table>';
+
 
 			print '<hr>';
 
