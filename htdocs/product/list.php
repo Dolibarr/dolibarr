@@ -68,7 +68,7 @@ if (isModEnabled('category')) {
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array('products', 'stocks', 'suppliers', 'companies', 'margins'));
+$langs->loadLangs(array('products', 'stocks', 'suppliers', 'companies', 'margins', 'other'));
 if (isModEnabled('productbatch')) {
 	$langs->load("productbatch");
 }
@@ -649,7 +649,7 @@ if (isset($search_tobuy) && dol_strlen($search_tobuy) > 0 && $search_tobuy != -1
 	$sql .= " AND p.tobuy = ".((int) $search_tobuy);
 }
 if (isset($search_stockable_product) && dol_strlen($search_stockable_product) > 0 && $search_stockable_product != -1) {
-	$sql .= " AND p.stockable_product = '". ((int) $search_stockable_product) . "'";
+	$sql .= " AND p.stockable_product = ". ((int) $search_stockable_product);
 }
 if (isset($search_tobatch) && dol_strlen($search_tobatch) > 0 && $search_tobatch != -1) {
 	$sql .= " AND p.tobatch = ".((int) $search_tobatch);
@@ -1871,7 +1871,10 @@ while ($i < $imaxinloop) {
 
 		// Label
 		if (!empty($arrayfields['p.label']['checked'])) {
-			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($product_static->label).'">'.$product_static->label.'</td>';
+			print '<td class="tdoverflowmax200" title="'.dolPrintHTMLForAttribute($product_static->label).'">';
+			print '<span class="doltext opacitymedium">';
+			print dolPrintHTML($product_static->label);
+			print '</span>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

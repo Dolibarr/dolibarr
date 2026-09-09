@@ -51,9 +51,12 @@ DateReceived=डिलीवरी प्राप्त होने की त
 ClassifyReception=प्राप्त वर्गीकृत करें
 SendShippingByEMail=ईमेल द्वारा शिपमेंट भेजें
 SendShippingRef=शिपमेंट प्रस्तुत करना %s
+SendDeliveryRef=Submission of delivery %s
 ActionsOnShipping=शिपमेंट पर घटनाएँ
 LinkToTrackYourPackage=अपने पैकेज को ट्रैक करने के लिए लिंक
-ShipmentCreationIsDoneFromOrder=फिलहाल, नए शिपमेंट का निर्माण बिक्री ऑर्डर रिकॉर्ड से किया जाता है।
+ShipmentCreationIsDoneFromOrder=For the moment, creation of a new Shipment fully interconnected with other modules is done through the Sales Order module.
+CreateSimpleShipment=However, your Dolibarr administrator can enable the creation of a simple Shipment from Shipments module setup page.
+SHIPMENT_STANDALONE=For the moment, allow the creation of a simple Shipment not yet interconnected with other modules.
 ShipmentLine=शिपमेंट लाइन
 ProductQtyInCustomersOrdersRunning=खुले बिक्री ऑर्डर से उत्पाद की मात्रा
 ProductQtyInSuppliersOrdersRunning=खुले क्रय आदेशों से उत्पाद की मात्रा
@@ -69,6 +72,44 @@ OptionToSetSendingBilledNotEnabled=जब चालान मान्य हो
 NoWarehouseInBase=बेस में कोई गोदाम नहीं
 ShipmentUpdated=शिपमेंट सफलतापूर्वक अपडेट किया गया
 ShipmentIncrementStockOnDelete = हटाने पर स्टॉक बढ़ाएँ
+ConfirmSignShipping=Confirm Sign Shipping
+ConfirmUnsignShipping=Confirm Unsign Shipping
+SignShipping=Sign Shipping
+UnsignShipping=Unsign Shipping
+
+# Deliveries
+Delivery=Delivery
+DeliveryRef=Ref Delivery
+DeliveryCard=Delivery receipt
+DeliveryOrder=Delivery receipt
+DeliveryDate=Delivery date
+CreateDeliveryOrder=Generate delivery receipt
+DeliveryStateSaved=Delivery state saved
+SetDeliveryDate=Set estimated delivery date
+SetShippingDate=Set shipping date
+ValidateDeliveryReceipt=Validate delivery receipt
+ValidateDeliveryReceiptConfirm=Are you sure you want to validate this delivery receipt?
+DeleteDeliveryReceipt=Delete delivery receipt
+DeleteDeliveryReceiptConfirm=Are you sure you want to delete delivery receipt <b>%s</b>?
+DeliveryMethod=Delivery method
+TrackingNumber=Tracking number
+DeliveryNotValidated=Delivery not validated
+StatusDeliveryCanceled=Canceled
+StatusDeliveryDraft=Draft
+StatusDeliveryValidated=Received
+NameAndSignature=Name and Signature:
+ToAndDate=To___________________________________ on ____/_____/__________
+GoodStatusDeclaration=Have received the goods above in good condition,
+Deliverer=Deliverer:
+Sender=Sender
+Recipient=Delivery recipient
+ErrorStockIsNotEnough=There's not enough stock
+Shippable=Shippable
+NonShippable=Not Shippable
+ShowShippableStatus=Show shippable status
+ShowReceiving=Show delivery receipt
+NonExistentOrder=Nonexistent order
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Stock quantities already allocated on previous lines
 
 # Sending methods
 # ModelDocument
@@ -87,6 +128,7 @@ ShipmentDistribution=शिपमेंट वितरण
 ErrorTooManyCombinationBatchcode=%s लाइन के लिए कोई डिस्पैच नहीं किया गया क्योंकि वेयरहाउस, उत्पाद, बैच कोड के बहुत अधिक संयोजन पाए गए (%s)।
 ErrorNoCombinationBatchcode=%s पंक्ति को सहेजा नहीं जा सका, क्योंकि वेयरहाउस-प्रोडक्ट-लॉट/सीरियल (%s, %s, %s) का संयोजन स्टॉक में नहीं मिला।
 ErrorTooMuchShipped=शिप की गई मात्रा, लाइन %s के लिए ऑर्डर की गई मात्रा से अधिक नहीं होनी चाहिए
+NoShipmentLineChangeDetected=No shipment line change was detected.
 ##### Types of contacts #####
 TypeContact_shipping_internal_SALESREPFOLL=प्रतिनिधि अनुवर्ती शिपिंग
 TypeContact_shipping_external_BILLING=ग्राहक चालान संपर्क

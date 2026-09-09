@@ -31,9 +31,9 @@ UseDiscountOnTotal=Ar is-gyfanswm
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Yn diffinio a yw disgownt byd-eang yn cael ei drin fel cynnyrch, gwasanaeth, neu dim ond ar is-gyfanswm ar gyfer cyfrifo'r elw.
 MARGIN_TYPE=Awgrymir pris prynu/cost yn ddiofyn ar gyfer cyfrifo'r elw
 MargeType1=Gorswm ar y Pris Gwerthwr Gorau
-MargeType2=Elw ar Bris Cyfartalog Pwysol (WAP)
+MargeType2=Margin on Weighted Average Cost (WAC)
 MargeType3=Gorswm ar Bris Cost
-MarginTypeDesc=* Ymyl ar y pris prynu gorau = Pris gwerthu - Pris gwerthwr gorau wedi'i ddiffinio ar gerdyn cynnyrch <br> * Ymyl y Pris Cyfartalog Pwysol (WAP) = Pris gwerthu - Pris Cyfartalog Pwysoli Cynnyrch (WAP) neu'r pris gwerthwr gorau os nad yw WAP wedi'i ddiffinio eto <br> * Ymyl ar bris cost = pris gwerthu - pris cost wedi'i ddiffinio ar gerdyn cynnyrch neu WAP os nad yw'r pris cost wedi'i ddiffinio, neu'r pris gwerthwr gorau os nad yw WAP wedi'i ddiffinio eto
+MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Cost (WAC) = Selling price - Product Weighted Average Price (WAP) or best vendor price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAC if cost price not defined, or best vendor price if WAC not yet defined
 CostPrice=Pris cost
 UnitCharges=Costau uned
 Charges=Taliadau

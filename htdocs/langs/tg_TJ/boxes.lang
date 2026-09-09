@@ -116,6 +116,7 @@ BoxLastCustomerShipments=Интиқоли охирини муштариён
 BoxTitleLastCustomerShipments=Охирин %s интиқолҳои тағйирёфтаи муштариён
 BoxTitleLastLeaveRequests=Охирин дархостҳои рухсатии %s
 NoRecordedShipments=Интиқоли муштарӣ сабт нашудааст
+NoUpcomingEvent=No upcoming events
 BoxCustomersOutstandingBillReached=Мизоҷоне, ки ба ҳадди ниҳоӣ расидаанд
 BoxTitleLastFediverseInfos=Паёмҳои охирини %s аз %s
 BoxLastFediverseInfos=Навсозиҳои охирини Fediverse: Ахбор ва тамоюлҳо

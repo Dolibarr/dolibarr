@@ -90,6 +90,7 @@ ThisIsInformationOnDocumentToSignFichinter=Šī ir informācija par iejaukšanos
 ThisIsInformationOnDocumentToSignSociete_rib=Šī ir informācija par SEPA mandātu, kas jāparaksta
 ThisIsInformationOnDocumentToSignExpedition= Šī ir informācija par sūtījumu, kas jāparaksta
 SignatureProposalRef=Cenas / komerciālā piedāvājuma parakstīšana %s
+SignatureOrderRef=Signature of sale order %s
 SignatureContractRef=Līguma parakstīšana %s
 SignatureFichinterRef=Intervences paraksts %s
 SignatureSociete_ribRef=SEPA mandāta paraksts %s

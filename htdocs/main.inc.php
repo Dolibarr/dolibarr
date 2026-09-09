@@ -19,6 +19,7 @@
  * Copyright (C) 2023       Eric Seigne      		<eric.seigne@cap-rel.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026		William Mead			<william@m34d.com>
+ * Copyright (C) 2026		Jose MARTINEZ			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -376,8 +377,10 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 			'createsite',
 			'createcard',
 			'edit',
+			'editcss',
 			'editcontract',
 			'editfile',
+			'editsecurity',
 			'editvalidator',
 			'file_manager',
 			'getCategories',
@@ -398,12 +401,12 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 			$sensitiveget = true;
 		}
 	} elseif (getDolGlobalInt('MAIN_SECURITY_CSRF_WITH_TOKEN') >= 2) {
-		// Few GET actions coded with a &token into url are also processed as sensitive.
+		// We need a valid token for action that are strictly equals to these values.
 		$arrayofactiontoforcetokencheck = array(
 			'activate',
 			'doprev', 'donext', 'dvprev', 'dvnext',
 			'freezone', 'install',
-			'reopen'
+			'reopen', 'swapstatut'
 		);
 		if (in_array($tmpaction, $arrayofactiontoforcetokencheck)) {
 			$sensitiveget = true;
@@ -702,6 +705,12 @@ if (!defined('NOLOGIN')) {
 		// Here, we are not already logged
 		// TODO Remove use of $_COOKIE['login_dolibarr'] by replacing line with $usertotest = GETPOST("username", "alpha", $allowedmethodtopostusername); ?
 		$usertotest = (!empty($_COOKIE['login_dolibarr']) ? preg_replace('/[^a-zA-Z0-9_@\-\.]/', '', $_COOKIE['login_dolibarr']) : GETPOST("username", "alpha", $allowedmethodtopostusername));
+		if (!is_string($usertotest)) {
+			// An array-shaped username (ex: ?username[]=x) is not sanitized by GETPOST('alpha')
+			// (sanitizeVal only processes scalars for this check) and would otherwise flow unchanged into
+			// checkLoginPassEntity() -> User::fetch(), crashing on trim() with a TypeError (see user.class.php).
+			$usertotest = '';
+		}
 		$passwordtotest = GETPOST('password', 'password', $allowedmethodtopostusername);
 		$entitytotest = (GETPOSTINT('entity') ? GETPOSTINT('entity') : (!empty($conf->entity) ? $conf->entity : 1));
 
@@ -741,6 +750,18 @@ if (!defined('NOLOGIN')) {
 			// TODO Read option $dolibarr_main_no_leaked_credentials with value 1, 2, ... and return
 			//dol_syslog("--- Access to ".(empty($_SERVER["REQUEST_METHOD"]) ? '' : $_SERVER["REQUEST_METHOD"].' ').$_SERVER["PHP_SELF"].' refused by option $dolibarr_main_no_leaked_credentials='.$dolibarr_main_no_leaked_credentials, LOG_NOTICE);
 			dol_syslog('--- Security warning: credentials reported as leaked were used to try to login. HTTP_EXPOSED_CREDENTIAL_CHECK='.((int) $_SERVER['HTTP_EXPOSED_CREDENTIAL_CHECK']), LOG_NOTICE);
+		}
+
+		// Refuse a login submission that carries a password in a GET query string.
+		// This avoids the password ending up in web server access logs,
+		// the browser history, the Referrer header or any HTTP proxy log (CWE-598).
+		// OAuth callbacks legitimately use GET but use afteroauthloginreturn.
+		// Other external pluginn using login_hashin GET are also legitimate.
+		if (GETPOST('actionlogin', 'aZ09') == 'login' && !GETPOST('afteroauthloginreturn', 'alphanohtml', 1) && GETPOST('password', 'password', 1)) {
+			dol_syslog("--- Login submission with credentials in the query string refused for ".$_SERVER["PHP_SELF"], LOG_WARNING);
+			$langs->loadLangs(array('main', 'errors'));
+			$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("ErrorLoginMustBePostMethod");
+			$test = false;
 		}
 
 		// Validation of login/pass/entity
@@ -1084,10 +1105,13 @@ if (!defined('NOLOGIN')) {
 		$_SESSION["dol_company"] = getDolGlobalString("MAIN_INFO_SOCIETE_NOM");
 		$_SESSION["dol_entity"] = $conf->entity;
 		// Store value into session (values stored only if defined)
-		if (!empty($dol_hide_topmenu)) {
+		// Note: do not store the hide-menu flags when the login was done from inside a dialog popup iframe
+		// (dol_openinpopup set, for example after a session timeout inside a popup opened by
+		// dolButtonToOpenUrlInDialogPopup()), otherwise the whole session loses its menus.
+		if (!empty($dol_hide_topmenu) && !GETPOST('dol_openinpopup', 'aZ09')) {
 			$_SESSION['dol_hide_topmenu'] = $dol_hide_topmenu;
 		}
-		if (!empty($dol_hide_leftmenu)) {
+		if (!empty($dol_hide_leftmenu) && !GETPOST('dol_openinpopup', 'aZ09')) {
 			$_SESSION['dol_hide_leftmenu'] = $dol_hide_leftmenu;
 		}
 		if (!empty($dol_optimize_smallscreen)) {
@@ -1101,6 +1125,12 @@ if (!defined('NOLOGIN')) {
 		}
 
 		dol_syslog("This is a new started user session. _SESSION['dol_login']=".$_SESSION["dol_login"]." Session id=".session_id());
+
+		// Enforce the max number of concurrent sessions per user (only when sessions are stored in database).
+		// Opening this new session evicts the user's oldest sessions above the limit, logging those browsers out.
+		if (!empty($php_session_save_handler) && $php_session_save_handler == 'db' && !empty($conf->file->main_limit_sessions_per_user) && (int) $conf->file->main_limit_sessions_per_user > 0) {
+			dolSessionsLimitForUser($user->id, (int) $conf->file->main_limit_sessions_per_user, session_id());
+		}
 
 		$db->begin();
 
@@ -2795,6 +2825,13 @@ function top_menu_ai()
         jQuery(document).ready(function() {
 	        jQuery(document).on("click", function(event) {
 				if (jQuery("#topmenu-ai-popover").hasClass("open")) {
+					// A click on a node removed from the DOM while the event was bubbling
+					// (e.g. a chat action button like "Yes, continue" that removes its own
+					// message bubble) must not be mistaken for a click outside the popover:
+					// .closest() cannot reach the popover from a detached node.
+					if (event.target instanceof Element && !event.target.isConnected) {
+						return;
+					}
 		    		if (!$(event.target).closest("#topmenu-ai-toggle").length && !$(event.target).closest("#topmenu-ai-popover").length) {
 						console.log("click close ai dropdown - we click outside");
 		                // Hide the dropdown.

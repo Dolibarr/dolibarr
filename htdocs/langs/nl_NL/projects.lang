@@ -106,7 +106,7 @@ ListShippingAssociatedProject=Lijst van verzendingen gerelateerd aan het project
 ListFichinterAssociatedProject=Lijst van interventies gerelateerd aan het project
 ListExpenseReportsAssociatedProject=Lijst met onkostenrapporten gerelateerd aan het project
 ListDonationsAssociatedProject=Lijst van donaties gerelateerd aan het project
-ListVariousPaymentsAssociatedProject=List of manual journal entries related to the project
+ListVariousPaymentsAssociatedProject=Handmatige boekingen gerelateerd aan project
 ListSalariesAssociatedProject=Lijst met betalingen van salarissen gerelateerd aan het project
 ListActionsAssociatedProject=Lijst met evenementen gerelateerd aan het project
 ListMOAssociatedProject=Lijst van productieorders met betrekking tot het project
@@ -258,7 +258,7 @@ OtherFilteredTasks=Andere gefilterde taken
 NoAssignedTasks=Geen toegewezen taken gevonden (wijs project / taken toe aan de huidige gebruiker uit het bovenste selectievak om de tijd in te voeren)
 ThirdPartyRequiredToGenerateIntervention=Er moet een derde partij op het project worden gedefinieerd om interventie te kunnen creëren.
 ThirdPartyRequiredToGenerateInvoice=Er moet een derde partij in het project worden gedefinieerd om het te kunnen factureren.
-ChooseANotYetAssignedTask=Kies een taak die nog niet aan jou is toegewezen
+ChooseANotYetAssignedTask=Taken die nog niet aan u zijn toegewezen
 # Comments trans
 AllowCommentOnTask=Reacties van gebruikers op taken toestaan
 AllowCommentOnProject=Reacties van gebruikers op projecten toestaan

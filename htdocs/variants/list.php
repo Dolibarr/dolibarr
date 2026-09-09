@@ -148,6 +148,9 @@ $arrayfields['nb_products'] = array(
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -828,10 +831,10 @@ while ($i < $imaxinloop) {
 		// Move
 		print '<td class="center linecolmove tdlineupdown">';
 		if ($i > 0) {
-			print '<a class="lineupdown" href="' . $_SERVER['PHP_SELF'] . '?action=up&amp;rowid=' . $obj->rowid . '">' . img_up('default', 0, 'imgupforline') . '</a>';
+			print '<a class="lineupdown" href="' . $_SERVER['PHP_SELF'] . '?action=up&amp;token='.newToken().'&amp;rowid=' . $obj->rowid . '">' . img_up('default', 0, 'imgupforline') . '</a>';
 		}
 		if ($i < $num - 1) {
-			print '<a class="lineupdown" href="' . $_SERVER['PHP_SELF'] . '?action=down&amp;rowid=' . $obj->rowid . '">' . img_down('default', 0, 'imgdownforline') . '</a>';
+			print '<a class="lineupdown" href="' . $_SERVER['PHP_SELF'] . '?action=down&amp;token='.newToken().'&amp;rowid=' . $obj->rowid . '">' . img_down('default', 0, 'imgdownforline') . '</a>';
 		}
 		print '</td>';
 		if (!$i) {

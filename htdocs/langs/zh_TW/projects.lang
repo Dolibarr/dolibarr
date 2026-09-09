@@ -258,7 +258,7 @@ OtherFilteredTasks=其他篩選後的任務
 NoAssignedTasks=找不到指派的任務(請先將專案/任務指派給當前用戶以輸入工時)
 ThirdPartyRequiredToGenerateIntervention=必須在專案上定義合作方才能建立工作服務單。
 ThirdPartyRequiredToGenerateInvoice=必須在專案上定義合作方才能開立發票。
-ChooseANotYetAssignedTask=選擇尚未指派給你的任務
+ChooseANotYetAssignedTask=Tasks not yet assigned to you
 # Comments trans
 AllowCommentOnTask=允許用戶在任務上留言
 AllowCommentOnProject=允許用戶在專案上留言

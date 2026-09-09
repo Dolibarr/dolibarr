@@ -598,7 +598,7 @@ if ($id > 0 || !empty($ref)) {
 		$param = ($withproject ? '&withproject=1' : '');
 		$linkback = $withproject ? '<a href="'.DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.'&restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>' : '';
 
-		print dol_get_fiche_head($head, 'task_task', $langs->trans("Task"), -1, 'projecttask', 0, '', 'reposition');
+		print dol_get_fiche_head($head, 'task_task', $langs->trans("Task"), -1, 'projecttask', 0, '', 'reposition', 0, '', 1);
 
 		if ($action == 'clone') {
 			$formquestion = array(
@@ -778,6 +778,9 @@ if ($id > 0 || !empty($ref)) {
 					print '<a class="butAction classfortooltip reposition" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=reopen&token='.newToken().'&withproject='.((int) $withproject).'" title="'.$langs->trans("SetToDraft").'">'.$langs->trans('SetToDraft').'</a>';
 				} elseif ($object->status == $object::STATUS_DRAFT) {
 					print '<a class="butAction reposition" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=valid&token='.newToken().'&withproject='.((int) $withproject).'">'.$langs->trans('Validate').'</a>';
+				} elseif ($object->status == $object::STATUS_CLOSED) {
+					// A closed task had no way back, the reopen action above already accepts it
+					print '<a class="butAction reposition" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=reopen&token='.newToken().'&withproject='.((int) $withproject).'">'.$langs->trans('ReOpen').'</a>';
 				}
 				//if ($object->status != $object::STATUS_CLOSED) {
 				print '<a class="butAction reposition" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit&token='.newToken().'&withproject='.((int) $withproject).'">'.$langs->trans('Modify').'</a>';

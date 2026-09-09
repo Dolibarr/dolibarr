@@ -4,94 +4,75 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-ModulePartnershipName=合作夥伴關係管理
+ModulePartnershipName=合作夥伴管理
 PartnershipDescription=合作夥伴管理模組
-PartnershipDescriptionLong= 合作夥伴管理模組
-Partnership=合夥
-Partnerships=夥伴關係
-AddPartnership=增加合作夥伴
-CancelPartnershipForExpiredMembers=合作夥伴：取消訂閱過期會員的合作關係
-PartnershipCheckBacklink=合作夥伴：檢查參考反向連結
-
-#
+PartnershipDescriptionLong= 用於管理合作夥伴的模組
+Partnership=合作夥伴
+Partnerships=合作夥伴
+AddPartnership=新增合作夥伴
+CancelPartnershipForExpiredMembers=合作夥伴：取消已到期會員的合作資格
+PartnershipCheckBacklink=合作夥伴：檢查返回連結
 # Menu
-#
-NewPartnership=新合作夥伴
-NewPartnershipbyWeb=Your partnership request has been added successfully. We may contact you soon...
+NewPartnership=新增合作夥伴
+NewPartnershipbyWeb=您的合作夥伴申請已成功提交，我們將盡快與您聯絡...
 ListOfPartnerships=合作夥伴清單
-
-#
 # Admin page
-#
 PartnershipSetup=合作夥伴設定
 PartnershipAbout=關於合作夥伴
-PartnershipAboutPage=合作夥伴關於頁面
-partnershipforthirdpartyormember=Partner status must be set on a 'third party' or a 'member'
-PARTNERSHIP_IS_MANAGED_FOR=夥伴關係管理
-PARTNERSHIP_BACKLINKS_TO_CHECK=要檢查的反向連結
-PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb of days before canceling status of a partnership when a subscription has expired
-ReferingWebsiteCheck=檢查網站參考
-ReferingWebsiteCheckDesc=您可以啟用一項功能來檢查您的合作夥伴是否在他們自己的網站上增加了指向您網站網域的反向連結。
-PublicFormRegistrationPartnerDesc=Dolibarr can provide you a public URL/website to allow external visitors to request to be part of the partnership program.
-
-#
+PartnershipAboutPage=合作夥伴說明頁
+partnershipforthirdpartyormember=合作夥伴狀態必須設定於「合作方」或「會員」
+PARTNERSHIP_IS_MANAGED_FOR=合作適用對象
+PARTNERSHIP_BACKLINKS_TO_CHECK=需檢查的返回連結
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=會員到期後幾天取消合作資格
+ReferingWebsiteCheck=合作網站返回連結檢查
+ReferingWebsiteCheckDesc=可啟用此功能，檢查合作方網站是否已放置指向您網站的返回連結。
+PublicFormRegistrationPartnerDesc=Dolibarr 可提供公開網址，讓外部訪客申請加入合作夥伴計畫。
 # Object
-#
 DeletePartnership=刪除合作夥伴
-PartnershipDedicatedToThisThirdParty=致力於此合作方的合作夥伴
-PartnershipDedicatedToThisMember=致力於此會員的合作夥伴
+PartnershipDedicatedToThisThirdParty=此合作夥伴屬於此合作方
+PartnershipDedicatedToThisMember=此合作夥伴屬於此會員
 DatePartnershipStart=開始日期
 DatePartnershipEnd=結束日期
 ReasonDecline=拒絕原因
-ReasonDeclineOrCancel=Reason for refusal or cancellation
+ReasonDeclineOrCancel=拒絕或取消原因
 PartnershipAlreadyExist=合作夥伴已存在
 ManagePartnership=管理合作夥伴
-BacklinkNotFoundOnPartnerWebsite=在合作夥伴網站上找不到反向連結
-ConfirmClosePartnershipAsk=您確定要取消此合作關係嗎？
-PartnershipType=合作夥伴類型
+BacklinkNotFoundOnPartnerWebsite=合作方網站未找到返回連結
+ConfirmClosePartnershipAsk=您確定要取消此合作夥伴關係嗎？
+PartnershipType=合作類型
 PartnershipRefApproved=合作夥伴 %s 已核准
-KeywordToCheckInWebsite=如果您想檢查給定關鍵字是否出現在每個合作夥伴的網站中，請在此處定義此關鍵字
+KeywordToCheckInWebsite=若需檢查合作方網站是否包含特定關鍵字，請在此輸入
 PartnershipDraft=草稿
 PartnershipAccepted=已接受
 PartnershipRefused=已拒絕
 PartnershipCanceled=已取消
-PartnershipManagedFor=合作夥伴是
-
-#
+PartnershipManagedFor=適用對象
 # Template Mail
-#
-SendingEmailOnPartnershipWillSoonBeCanceled=合作關係即將取消
-SendingEmailOnPartnershipRefused=已拒絕合作
-SendingEmailOnPartnershipAccepted=已接受合作
-SendingEmailOnPartnershipCanceled=已取消合作夥伴
-
-YourPartnershipWillSoonBeCanceledTopic=合作關係即將取消
-YourPartnershipRefusedTopic=已拒絕合作
-YourPartnershipAcceptedTopic=已接受合作
-YourPartnershipCanceledTopic=已取消合作
-
-YourPartnershipWillSoonBeCanceledContent=We would like to inform you that our partnership will soon be canceled (we did not get renewal or a prerequisite for our partnership have not been met). Please contact us if you received this due to an error.
-YourPartnershipRefusedContent=We would like to inform you that your partnership request has been refused. Prerequisites have not been met. Please contact us if you need more information.
-YourPartnershipAcceptedContent=We would like to inform you that your partnership request has been accepted.
-YourPartnershipCanceledContent=We would like to inform you that our partnership has been canceled. Please contact us if you need more information.
-
-CountLastUrlCheckError=上次檢查網址的錯誤數量
-LastCheckBacklink=上次檢查網址的日期
-
-NewPartnershipRequest=New partnership request
-NewPartnershipRequestDesc=This form allows you to request to be part of one of our partnership program. If you need help to fill this form, please contact by email <b>%s</b>.
-ThisUrlMustContainsAtLeastOneLinkToWebsite=This page must contains at least one link to one of the following domain: %s
-
-IPOfApplicant=IP of applicant
+SendingEmailOnPartnershipWillSoonBeCanceled=合作夥伴即將取消
+SendingEmailOnPartnershipRefused=合作夥伴申請已拒絕
+SendingEmailOnPartnershipAccepted=合作夥伴申請已接受
+SendingEmailOnPartnershipCanceled=合作夥伴已取消
+YourPartnershipWillSoonBeCanceledTopic=合作夥伴即將取消
+YourPartnershipRefusedTopic=合作夥伴申請已拒絕
+YourPartnershipAcceptedTopic=合作夥伴申請已接受
+YourPartnershipCanceledTopic=合作夥伴已取消
+YourPartnershipWillSoonBeCanceledContent=我們通知您，您的合作夥伴資格即將被取消(可能因未續約或未符合合作條件)。若您認為此為錯誤，請與我們聯絡。
+YourPartnershipRefusedContent=我們通知您，您的合作夥伴申請已被拒絕，因未符合必要條件。如需更多資訊，請與我們聯絡。
+YourPartnershipAcceptedContent=我們通知您，您的合作夥伴申請已被接受。
+YourPartnershipCanceledContent=我們通知您，您的合作夥伴資格已被取消。如需更多資訊，請與我們聯絡。
+CountLastUrlCheckError=Number of URL check errors
+LastCheckBacklink=上次返回連結檢查日期
+NewPartnershipRequest=合作夥伴申請
+NewPartnershipRequestDesc=此表單可讓您申請加入我們的合作夥伴計畫。如需協助，請聯絡 <b>%s</b>。
+ThisUrlMustContainsAtLeastOneLinkToWebsite=此頁面必須至少包含一個指向以下網域的返回連結：%s
+IPOfApplicant=申請者 IP
+PartnershipToReopen=重新啟用
+PartnershipConfirmReOpenAsk=您確定要重新啟用合作夥伴 <b>%s</b> 嗎？

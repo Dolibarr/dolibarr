@@ -174,7 +174,7 @@ if (!empty($conf->use_javascript_ajax)) {
 	print '</script>'."\n";
 }
 
-print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'" name="form_index">';
+print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'" name="form_index" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 print '<input type="hidden" name="page_y" value="">';

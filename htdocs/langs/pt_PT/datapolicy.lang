@@ -56,3 +56,4 @@ MailSent = O e-mail foi enviado
 NUMBER_MONTH_BEFORE_DELETION = Número de meses antes da exclusão
 TheFollowingFieldsAreReplaceWith=Some fields will be replaced by a unique value:
 OtherFieldsAreReplaceWithStaticValues=Some other fields are replaced by a static value:
+QualifiedNumber=Qualified record count

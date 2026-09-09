@@ -109,3 +109,4 @@ PAYBOX_PBX_SITE=PBX SITE参数值
 PAYBOX_PBX_RANG=PBX Rang参数值
 PAYBOX_PBX_IDENTIFIANT=PBX ID参数值
 PAYBOX_HMAC_KEY=HMAC 密钥
+FeatureNotUsedAccordingtoSetup=Feature not used according to your %s setup

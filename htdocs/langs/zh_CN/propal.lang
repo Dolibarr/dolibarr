@@ -14,6 +14,7 @@ DeleteProp=删除报价单
 ValidateProp=验证报价单
 CancelPropal=取消
 AddProp=创建报价单
+AddRenewalProp=Create renewal proposal
 ConfirmDeleteProp=您确定要删除此报价单吗？
 ConfirmValidateProp=您确定要验证这个编码为 <b>%s</b> 的报价单吗？
 ConfirmCancelPropal=Are you sure you want to cancel commercial proposal <b>%s</b>?

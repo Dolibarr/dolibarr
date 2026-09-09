@@ -1,29 +1,55 @@
-# Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=conto (dalla tabella di conto) utilizzato da default per "utenti " su stipendi
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=La carta conto dedicata definita sulla scheda utente verrà utilizzata per sottoconto Contabilità. Questo verrà utilizzato per il valore libro contabile generale, ma anche come valore default di sottoconto Contabilità se non c'è utente dedicato Contabilità conto è definito su utente.
-SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Codice contabile predefinito per i pagamenti degli stipendi
-CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=Per impostazione predefinita, lascia vuota l'opzione "Crea automaticamente un pagamento totale" quando crei uno stipendio
 Salary=Stipendio
 Salaries=Stipendi
 NewSalary=Nuovo stipendio
 AddSalary=Aggiungi stipendio
 NewSalaryPayment=Nuovo stipendio
 AddSalaryPayment=Aggiungi pagamento stipendio
-SalaryID=stipendio ID
-SalaryAmount=stipendio importo
 SalaryPayment=Pagamento stipendio
 SalariesPayments=Pagamento stipendi
 SalariesPaymentsOf=Pagamenti degli stipendi di %s
 ShowSalaryPayment=Mostra i pagamenti stipendio
-THM=€/h
-TJM=€/g
+SalaryID=stipendio ID
+SalaryAmount=stipendio importo
+SalaryDate=Salary date
+SalaryPaid=Stipendio pagato
+SalaryNotPaid=Salary not paid
+
+SalarySlip=Salary slip
+StandardSalaryDocModel=Standard salary slip document
+
+BasicSalary=Basic salary
+Bonus=Bonus
+Allowance=Allowance
+Overtime=Overtime
+Deduction=Deduction
+Deductions=Deductions
+Earnings=Earnings
+TotalEarnings=Total earnings
+TotalDeductions=Total deductions
+NetPaid=Net paid
+
+# Accounting
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=conto (dalla tabella di conto) utilizzato da default per "utenti " su stipendi
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=La carta conto dedicata definita sulla scheda utente verrà utilizzata per sottoconto Contabilità. Questo verrà utilizzato per il valore libro contabile generale, ma anche come valore default di sottoconto Contabilità se non c'è utente dedicato Contabilità conto è definito su utente.
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Codice contabile predefinito per i pagamenti degli stipendi
+CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=Per impostazione predefinita, lascia vuota l'opzione "Crea automaticamente un pagamento totale" quando crei uno stipendio
+
+# Stats / Info
 CurrentSalary=Stipendio attuale
-THMDescription=This value may be used to calculate the cost of time consumed on a project entered by users if module project is used
-TJMDescription=This value is currently for information only and is not used for any calculation
 LastSalaries=Ultimi %s stipendi
 AllSalaries=Tutti gli stipendi
 SalariesStatistics=Statistiche stipendi
 SalariesAndPayments=Stipendi e pagamenti
+UserPaySlip=Busta paga
+PayPeriod=Pay period
+
+# THM / TJM
+THM=€/h
+THMDescription=This value may be used to calculate the cost of time consumed on a project entered by users if module project is used
+TJM=€/g
+TJMDescription=This value is currently for information only and is not used for any calculation
+
+# Other actions
 ConfirmDeleteSalaryPayment=Vuoi eliminare questo pagamento di stipendio?
 FillFieldFirst=Compila prima il campo dipendente
 UpdateAmountWithLastSalary=Imposta l'importo dell'ultimo stipendio
@@ -32,8 +58,10 @@ VirementOrder=Bonifico Richiesta
 WithdrawalReceipt=Ordine di trasferimento del credito
 OrderWaiting=In attesa ordine
 FillEndOfMonth=Fine del mese
+
+# Shortcuts
 PreviousMonthShort=mese precedente
 CurrentMonthShort=mese corrente
+NextMonthShort=Next month
 PreviousWeekShort=Settimana precedente
 CurrentWeekShort=Settimana corrente
-UserPaySlip=Busta paga

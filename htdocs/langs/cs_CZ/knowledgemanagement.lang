@@ -21,7 +21,7 @@ KnowledgeManagementSetup = Nastavení systému správy znalostí
 KnowledgeManagementSetupPage = Stránka nastavení systému správy znalostí
 # About page
 KnowledgeManagementAbout = O managementu znalostí
-KnowledgeManagementAboutPage = Správa znalostí o stránce
+KnowledgeManagementAboutPage = Stránka O správě znalostí
 KnowledgeManagementArea = Řízení znalostí
 MenuKnowledgeRecord = Znalostní báze
 MenuKnowledgeRecordShort = Znalostní báze
@@ -31,7 +31,7 @@ ValidateReply = Ověřit řešení
 KnowledgeRecords = Články
 KnowledgeRecord = Článek
 KnowledgeRecordExtraFields = Extrapole pro článek
-GroupOfTicket=Skupina vstupenek
+GroupOfTicket=Skupina tiketů
 YouCanLinkArticleToATicketCategory=Článek můžete propojit se skupinou tiketů (takže článek bude zvýrazněn na všech tiketech v této skupině).
 SuggestedForTicketsInGroup=Doporučení pro tvorbu tiketů
 SetObsolete=Nastavit jako zastaralé

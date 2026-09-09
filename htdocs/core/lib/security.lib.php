@@ -3,7 +3,7 @@
 /* Copyright (C) 2008-2021  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2008-2021  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2020	    Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2026		William Mead			<william@m34d.com>
  *
@@ -40,19 +40,20 @@ include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/securitycore.lib.php';
  *	@param   string		$key		rule to use for delta ('0', '1' or 'myownkey')
  *	@return  string					encoded string with format 'passcrypted'
  *  @see dol_decode(), dolEncrypt()
+ *  @phan-suppress DolibarrForbiddenFunctionPlugin
  */
 function dol_encode($chain, $key = '1')
 {
 	if (is_numeric($key) && $key == '1') {	// rule 1 is offset of 17 for char
 		$output_tab = array();
-		$strlength = dol_strlen($chain);
+		$strlength = strlen($chain);
 		for ($i = 0; $i < $strlength; $i++) {
 			$output_tab[$i] = chr(ord(substr($chain, $i, 1)) + 17);
 		}
 		$chain = implode("", $output_tab);
 	} elseif ($key) {
 		$result = '';
-		$strlength = dol_strlen($chain);
+		$strlength = strlen($chain);
 		for ($i = 0; $i < $strlength; $i++) {
 			$keychar = substr($key, ($i % strlen($key)) - 1, 1);
 			$result .= chr(ord(substr($chain, $i, 1)) + (ord($keychar) - 65));
@@ -71,6 +72,7 @@ function dol_encode($chain, $key = '1')
  *	@param   string		$key		rule to use for delta ('0', '1' or 'myownkey')
  *	@return  string					decoded string
  *  @see dol_encode(), dolDecrypt
+ *  @phan-suppress DolibarrForbiddenFunctionPlugin
  */
 function dol_decode($chain, $key = '1')
 {
@@ -78,7 +80,7 @@ function dol_decode($chain, $key = '1')
 
 	if (is_numeric($key) && $key == '1') {	// rule 1 is offset of 17 for char
 		$output_tab = array();
-		$strlength = dol_strlen($chain);
+		$strlength = strlen($chain);
 		for ($i = 0; $i < $strlength; $i++) {
 			$output_tab[$i] = chr(ord(substr($chain, $i, 1)) - 17);
 		}
@@ -86,7 +88,7 @@ function dol_decode($chain, $key = '1')
 		$chain = implode("", $output_tab);
 	} elseif ($key) {
 		$result = '';
-		$strlength = dol_strlen($chain);
+		$strlength = strlen($chain);
 		for ($i = 0; $i < $strlength; $i++) {
 			$keychar = substr($key, ($i % strlen($key)) - 1, 1);
 			$result .= chr(ord(substr($chain, $i, 1)) - (ord($keychar) - 65));
@@ -118,6 +120,7 @@ function dolGetRandomBytes($length)
  * 	@param 		string		$password	Password to hash
  * 	@param		'md5'|'md5frommd5'|'smd5'|'sha'|'ssha'|'sha256'|'ssha256'|'sha384'|'ssha384'|'sha512'|'ssha512'|'crypt'|'clear'		$type		Type of hash
  * 	@return		string					Hash of password
+ *  @phan-suppress DolibarrForbiddenFunctionPlugin
  */
 function dolGetLdapPasswordHash($password, $type = 'md5')
 {
@@ -209,54 +212,61 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 		$tableandshare = 'actioncomm&societe';
 		$feature2 = 'myactions|allactions';
 		$dbt_select = 'id';
-	}
-	if ($features == 'bank') {
+	} elseif ($features == 'bank') {
 		$features = 'banque';
-	}
-	if ($features == 'facturerec') {
+	} elseif ($features == 'facturerec') {
 		$features = 'facture';
-	}
-	if ($features == 'supplier_invoicerec') {
+	} elseif ($features == 'supplier_invoicerec') {
 		$features = 'fournisseur';
 		$feature2 = 'facture';
-	}
-	if ($features == 'mo') {
+	} elseif ($features == 'mo') {
 		$features = 'mrp';
-	}
-	if ($features == 'member') {
+	} elseif ($features == 'member') {
 		$features = 'adherent';
-	}
-	if ($features == 'subscription') {
+	} elseif ($features == 'subscription') {
 		$features = 'adherent';
 		$feature2 = 'cotisation';
-	}
-	if ($features == 'website' && is_object($object) && $object->element == 'websitepage') {
+	} elseif ($features == 'website' && is_object($object) && $object->element == 'websitepage') {
 		$parentfortableentity = 'fk_website@website';
-	}
-	if ($features == 'project') {
+	} elseif ($features == 'project') {
 		$features = 'projet';
-	}
-	if ($features == 'product') {
+	} elseif ($features == 'eventorganization' && is_object($object) && $object->element == 'conferenceorbooth') {
+		// The module of an event organization declares no permission of its own, on purpose, so a check on
+		// 'eventorganization' is refused to everyone, an administrator included. Check the parent project
+		// instead, which is what the card of the object does itself.
+		// The card refuses an external user before that check, and fk_project is nullable, so we must refuse
+		// both cases here too: with no parent project there is nothing left to check the access on, and
+		// granting it would be an access with no check at all.
+		if (!empty($user->socid) || empty($object->fk_project)) {
+			if ($mode) {
+				return 0;
+			} else {
+				accessforbidden();
+			}
+		}
+		$features = 'projet';
+		$tableandshare = 'projet&project';
+		$objectid = (int) $object->fk_project;
+		$object = $objectid;
+	} elseif ($features == 'product') {
 		$features = 'produit';
-	}
-	if ($features == 'productbatch') {
+	} elseif ($features == 'productbatch') {
 		$features = 'produit';
-	}
-	if ($features == 'tax') {
+	} elseif ($features == 'tax') {
 		$feature2 = 'charges';
-	}
-	if ($features == 'workstation') {
+	} elseif ($features == 'workstation') {
 		$feature2 = 'workstation';
-	}
-	if ($features == 'fournisseur') {	// When vendor invoice and purchase order are into module 'fournisseur'
-		$features = 'fournisseur';
+	} elseif ($features == 'hrm' && is_object($object) && in_array($object->element, array('job', 'position', 'skill'))) {
+		$feature2 = 'all';	// These 3 objects have no permission of their own, they share the level "all"
+	} elseif ($features == 'stocktransfer' && is_object($object) && $object->element == 'stocktransfer') {
+		$feature2 = 'stocktransfer';	// This module declares no permission at its first level, only this one
+	} elseif ($features == 'fournisseur') {	// When vendor invoice and purchase order are into module 'fournisseur'
 		if (is_object($object) && $object->element == 'invoice_supplier') {
 			$feature2 = 'facture';
 		} elseif (is_object($object) && $object->element == 'order_supplier') {
 			$feature2 = 'commande';
 		}
-	}
-	if ($features == 'payment_sc') {
+	} elseif ($features == 'payment_sc') {
 		$tableandshare = 'paiementcharge';
 		$parentfortableentity = 'fk_charge@chargesociales';
 	}
@@ -264,9 +274,9 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 	// if commonObjectLine : Using many2one related commonObject
 	// @see commonObjectLine::parentElement
 	if (in_array($features, ['commandedet', 'propaldet', 'facturedet', 'supplier_proposaldet', 'evaluationdet', 'skilldet', 'deliverydet', 'contratdet'])) {
-		$features = substr($features, 0, -3);
+		$features = substr($features, 0, -3);  // @phan-suppress-current-line  DolibarrForbiddenFunctionPlugin
 	} elseif (in_array($features, ['stocktransferline', 'inventoryline', 'bomline', 'expensereport_det', 'facture_fourn_det'])) {
-		$features = substr($features, 0, -4);
+		$features = substr($features, 0, -4);  // @phan-suppress-current-line  DolibarrForbiddenFunctionPlugin
 	} elseif ($features == 'commandefournisseurdispatch') {
 		$features = 'commandefournisseur';
 	} elseif ($features == 'invoice_supplier_det_rec') {
@@ -510,6 +520,11 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 				}
 			} elseif ($feature == 'payment') {
 				if (!$user->hasRight('facture', 'paiement')) {
+					$createok = 0;
+					$nbko++;
+				}
+			} elseif ($feature == 'payment_supplier') {	// Permission to write on a payment of an invoice is permission to edit an invoice.
+				if (!$user->hasRight('fournisseur', 'facture', 'creer')) {
 					$createok = 0;
 					$nbko++;
 				}
@@ -781,7 +796,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 		$checkonentitydone = 0;
 
 		// Array to define rules of checks to do
-		$check = array('adherent', 'banque', 'bom', 'don', 'mrp', 'user', 'usergroup', 'payment', 'payment_supplier', 'payment_sc', 'product', 'produit', 'service', 'produit|service', 'categorie', 'resource', 'expensereport', 'holiday', 'salaries', 'website', 'recruitment', 'chargesociales', 'knowledgemanagement', 'stock'); // Test on entity only (Objects with no link to company)
+		$check = array('adherent', 'banque', 'bom', 'don', 'mrp', 'user', 'usergroup', 'payment', 'payment_supplier', 'payment_sc', 'product', 'produit', 'service', 'produit|service', 'categorie', 'resource', 'expensereport', 'holiday', 'salaries', 'website', 'recruitment', 'chargesociales', 'knowledgemanagement', 'stock', 'stockmovement'); // Test on entity only (Objects with no link to company)
 		$checksoc = array('societe'); // Test for object Societe
 		$checkparentsoc = array('agenda', 'contact', 'contrat'); // Test on entity + link to third party on field $dbt_keyfield. Allowed if link is empty (Ex: contacts...).
 		$checkproject = array('projet', 'project'); // Test for project object
@@ -796,6 +811,30 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 		if (empty($dbtablename)) {
 			$dbtablename = $feature;
 			$sharedelement = (!empty($params[1]) ? $params[1] : $dbtablename); // We change dbtablename, so we set sharedelement too.
+		}
+
+		// The default rule reads the columns entity and $dbt_keyfield of the table, but some tables own neither of
+		// them. The sql was then built on columns that do not exist, so it always failed and the access was refused
+		// to the users that this rule applies to.
+		// The rule is selected on the table and not on the element of the object, because $object is an id and not
+		// an object for most of the callers, the card of an asset and the card of a workstation included.
+		if (!empty($objectid) && in_array($dbtablename, array('asset', 'paiement', 'paiementfourn', 'workstation_workstation', 'hrm_job', 'hrm_job_user', 'hrm_skill'))) {
+			// None of these objects is linked to a third party, so an external user can own none of them. The
+			// default rule refused him through a link that does not exist, we must refuse him explicitly instead,
+			// otherwise the rules below, which do not look at the third party of the user at all, would grant it.
+			if (!empty($user->socid)) {
+				return false;
+			}
+			if (in_array($dbtablename, array('hrm_job', 'hrm_job_user', 'hrm_skill'))) {
+				// These 3 tables have no entity column either, so no rule that reads the table can be run on them.
+				// The permission is still checked by restrictedArea(), and the $checkhierarchy rule below still runs.
+				// Note that these 3 objects are therefore not partitioned between entities at all, in the database
+				// itself: their cards already answer to a user of another entity, and their lists already show the
+				// records of all of them. This rule does not widen that, it aligns with it.
+				$nocheck[] = $feature;
+			} else {
+				$check[] = $feature;	// Test on the entity only, there is no third party to restrict on
+			}
 		}
 
 		// $objectid was already sanitized at begin of this method (can be an int or a list of int separated by comma).
@@ -837,6 +876,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 			}
 			$checkonentitydone = 1;
 		}
+
 		if (in_array($feature, $checksoc) && !empty($objectid)) {	// We check feature = checksoc. For $objectid = 0, no check
 			// If external user: Check permission for external users
 			if ($user->socid > 0) {
@@ -855,7 +895,9 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 				$sql .= " AND (sc.fk_user = ".((int) $user->id);
 				if (getDolGlobalInt('MAIN_SEE_SUBORDINATES')) {
 					$userschilds = $user->getAllChildIds();
-					if (!empty($userschilds)) $sql .= " OR sc.fk_user IN (".$db->sanitize(implode(',', $userschilds)).")";
+					if (!empty($userschilds)) {
+						$sql .= " OR sc.fk_user IN (".$db->sanitize(implode(',', $userschilds)).")";
+					}
 				}
 				$sql .= ")";
 				$sql .= " AND sc.fk_soc = s.rowid";
@@ -969,7 +1011,9 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 					$sql .= " AND (sc.fk_user = ".((int) $user->id);
 					if (getDolGlobalInt('MAIN_SEE_SUBORDINATES')) {
 						$userschilds = $user->getAllChildIds();
-						if (!empty($userschilds)) $sql .= " OR sc.fk_user IN (".$db->sanitize(implode(',', $userschilds)).")";
+						if (!empty($userschilds)) {
+							$sql .= " OR sc.fk_user IN (".$db->sanitize(implode(',', $userschilds)).")";
+						}
 					}
 					$sql .= ')';
 				} else {
@@ -1240,6 +1284,7 @@ function getMaxFileSizeArray()
  * @param	string		$ip			IP address to check (ex: 192.168.0.50, 2001:db8:3333:4444::5555:6666)
  * @param	string		$cidr		Network IP CIDR notation (ex: 192.168.0.0/24, 2001:db8:3333:4444::/64)
  * @return	int						1 if IP is in CIDR range, 0 if IP out of CIDR range, -1 if check error
+ * @phan-suppress DolibarrForbiddenFunctionPlugin
  */
 function checkIPInCidr($ip, $cidr)
 {
@@ -1253,7 +1298,7 @@ function checkIPInCidr($ip, $cidr)
 	}
 
 	// Require same address IPvX family
-	if (strlen($ip_bin) !== strlen($net_bin)) {
+	if (strlen($ip_bin) !== strlen($net_bin)) {  // @phan-suppress-current-line  DolibarrForbiddenFunctionPlugin
 		return -1;
 	}
 
@@ -1265,7 +1310,7 @@ function checkIPInCidr($ip, $cidr)
 
 	// Compare full bytes and partial bytes
 	if ($full_bytes > 0) {
-		if (substr($ip_bin, 0, $full_bytes) !== substr($net_bin, 0, $full_bytes)) {
+		if (substr($ip_bin, 0, $full_bytes) !== substr($net_bin, 0, $full_bytes)) {  // @phan-suppress-current-line  DolibarrForbiddenFunctionPlugin
 			return 0;
 		}
 	}

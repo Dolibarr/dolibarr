@@ -77,7 +77,7 @@ CronType=Job Typ
 CronType_method=Aufruf-Methode einer PHP-Klasse
 CronType_command=Shell-Befehl
 CronCannotLoadClass=Die Klassendatei %s kann nicht geladen werden (um die Klasse %s zu verwenden)
-CronModuleNotEnabledInThisEntity=Cron Modul ist in dieser Entität nicht aktiviert (um die Methode %s von %s Objekt zu verwenden)
+CronModuleNotEnabledInThisEntity=Cron-Modul ist in dieser Entität nicht aktiviert (um die Methode %s von %s Objekt zu verwenden)
 CronCannotLoadObject=Die Klassendatei %s wurde geladen, aber das Objekt %s wurde nicht gefunden
 UseMenuModuleToolsToAddCronJobs=Gehen Sie in das Menü "<a href="%s"> Home - Admin-Tools - Geplante Jobs </a>", um geplante Jobs anzuzeigen und zu bearbeiten.
 JobDisabled=Job deaktiviert

@@ -34,5 +34,6 @@ ResourceTypeCode=Codi de tipus de recurs
 ImportDataset_resource_1=Recursos
 ErrorResourcesAlreadyInUse=Alguns recursos estan en ús
 ErrorResourceUseInEvent=%s usat en %s esdeveniment
-MaxUsers=Màxim d'usuaris (places, seients, etc.)
+MaxUsers=Nombre màxim d'usuaris
+MaxUsersResourceDesc=Si el recurs pot ser utilitzat per diverses persones alhora (cotxe, habitació, ...), podeu introduir aquí el nombre màxim d'usuaris que poden utilitzar el recurs alhora (nombre de seients, places, ...).
 MaxUsersLabel=Màxim d'usuaris

@@ -94,8 +94,8 @@ class LangTest extends CommonClassTest
 	public function langDataProvider(): array
 	{
 		$langCodes = [];
-		$filesarray = scandir(DOL_DOCUMENT_ROOT.'/langs');
-		foreach ($filesarray as $key => $code) {
+		foreach (glob(DOL_DOCUMENT_ROOT.'/langs/[a-z]*_*') as $path) {
+			$code = basename($path);
 			if (! preg_match('/^[a-z]+_[A-Z]+$/', $code)) {
 				continue;
 			}
@@ -236,14 +236,11 @@ class LangTest extends CommonClassTest
 		unset($tmplangs);
 
 		print $prefix."Check syntax rules in the language files".PHP_EOL;
-		$filesarray2 = scandir(DOL_DOCUMENT_ROOT.'/langs/'.$code);
-		foreach ($filesarray2 as $key => $file) {
-			if (! preg_match('/\.lang$/', $file)) {
-				continue;
-			}
+		foreach (glob(DOL_DOCUMENT_ROOT.'/langs/'.$code.'/*.lang') as $fullpath) {
+			$file = basename($fullpath);
 
 			//print $prefix.'Check lang file '.$file.PHP_EOL;
-			$filecontent = file_get_contents(DOL_DOCUMENT_ROOT.'/langs/'.$code.'/'.$file);
+			$filecontent = file_get_contents($fullpath);
 
 			$result = preg_match('/=--$/m', $filecontent);	// A special % char we don't want. We want the common one.
 			//print $prefix."Result for checking we don't have bad percent char = ".$result.PHP_EOL;

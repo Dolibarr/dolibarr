@@ -52,7 +52,6 @@ CloseAllContracts=Cierre todas las líneas de contrato
 DeleteContractLine=Eliminar una línea de contrato
 ConfirmDeleteContractLine=¿Estás seguro de que deseas eliminar esta línea de contrato?
 MoveToAnotherContract=Mueva el servicio a otro contrato.
-ConfirmMoveToAnotherContract=Escogí un nuevo contrato objetivo y confirmo que deseo transferir este servicio a este contrato.
 ConfirmMoveToAnotherContractQuestion=Elija en qué contrato existente (del mismo tercero), desea mover este servicio?
 ExpiredSince=Fecha de caducidad
 NoExpiredServices=Sin servicios activos caducados

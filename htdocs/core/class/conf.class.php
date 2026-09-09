@@ -119,7 +119,7 @@ class Conf extends stdClass
 	 */
 	public $modules;
 	/**
-	 * @var array<string,array<string,string|array>>  List of activated modules
+	 * @var array<string,array<string,mixed>>  List of activated modules
 	 */
 	public $modules_parts;
 
@@ -1390,6 +1390,9 @@ class Conf extends stdClass
 			}
 			if (!isset($this->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY) && extension_loaded('tidy') && class_exists("tidy")) {
 				$this->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 1;
+			}
+			if (!isset($this->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES)) {
+				$this->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 0;	// TODO Move this to 1
 			}
 
 			if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {

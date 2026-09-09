@@ -258,7 +258,7 @@ OtherFilteredTasks=Tasgau eraill wedi'u hidlo
 NoAssignedTasks=Ni chanfuwyd unrhyw dasgau neilltuedig (rhowch brosiect/tasgau i'r defnyddiwr presennol o'r blwch dewis uchaf i nodi amser arno)
 ThirdPartyRequiredToGenerateIntervention=Rhaid diffinio trydydd parti ar brosiect i allu creu ymyrraeth.
 ThirdPartyRequiredToGenerateInvoice=Rhaid diffinio trydydd parti ar brosiect i allu ei anfonebu.
-ChooseANotYetAssignedTask=Dewiswch dasg nad yw wedi'i neilltuo i chi eto
+ChooseANotYetAssignedTask=Tasks not yet assigned to you
 # Comments trans
 AllowCommentOnTask=Caniatáu sylwadau defnyddwyr ar dasgau
 AllowCommentOnProject=Caniatáu sylwadau defnyddwyr ar brosiectau

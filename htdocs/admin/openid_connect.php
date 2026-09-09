@@ -24,10 +24,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/core/lib/openid_connect.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/core/class/html.form.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -37,6 +33,9 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/html.form.class.php';
  *
  * @var string $dolibarr_main_authentication
  */
+require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/openid_connect.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.form.class.php';
 
 $langs->loadLangs(array("users", "admin", "other"));
 
@@ -174,8 +173,7 @@ llxHeader('', $langs->trans("Miscellaneous"), $wikihelp, '', 0, 0, '', '', '', '
 
 print load_fiche_titre($langs->trans("SecuritySetup"), '', 'title_setup');
 
-print '<span class="opacitymedium">' . $langs->trans("OpenIDDesc") . "</span><br>\n";
-print "<br>\n";
+print '<div class="info">' . $langs->trans("OpenIDDesc") . "</div>\n";
 
 $head = security_prepare_head();
 
@@ -234,7 +232,7 @@ if (getDolGlobalString('MAIN_AUTHENTICATION_OIDC_ON')) {
 
 	print '<br>';
 
-	print '<form method="post" action="' . dolBuildUrl($_SERVER["PHP_SELF"]) . '">';
+	print '<form method="post" action="' . dolBuildUrl($_SERVER["PHP_SELF"]) . '" spellcheck="false">';
 	print '<input type="hidden" name="token" value="' . newToken() . '">';
 	print '<input type="hidden" name="action" value="set">';
 

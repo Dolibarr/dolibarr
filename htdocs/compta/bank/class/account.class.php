@@ -117,6 +117,12 @@ class Account extends CommonObject
 	public $url;
 
 	/**
+	 * Third party ID (set by subclass CompanyBankAccount, used by getCountryCode())
+	 * @var int
+	 */
+	public $socid;
+
+	/**
 	 * Bank number. If in SEPA area, you should move to IBAN field
 	 * @var string
 	 */
@@ -1380,7 +1386,7 @@ class Account extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."bank";
 		$sql .= " WHERE fk_account = ".((int) $this->id);
 		if ($option == 1) {
-			$sql .= " AND ".$this->db->escape($field)." <= '".(!empty($date_end) ? $this->db->idate($date_end) : $this->db->idate(dol_now()))."'";
+			$sql .= " AND ".$this->db->sanitize($field)." <= '".(!empty($date_end) ? $this->db->idate($date_end) : $this->db->idate(dol_now()))."'";
 		}
 
 		$resql = $this->db->query($sql);

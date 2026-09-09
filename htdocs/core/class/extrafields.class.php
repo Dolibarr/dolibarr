@@ -801,7 +801,12 @@ class ExtraFields
 
 			if (is_object($hookmanager)) {
 				$hookmanager->initHooks(array('extrafieldsdao'));
-				$parameters = array('field_desc' => &$field_desc, 'table' => $table, 'attr_name' => $attrname, 'label' => $label, 'type' => $type, 'length' => $length, 'unique' => $unique, 'required' => $required, 'pos' => $pos, 'param' => $param, 'alwayseditable' => $alwayseditable, 'emptyonclone' => $emptyonclone, 'perms' => $perms, 'list' => $list, 'help' => $help, 'default' => $default, 'computed' => $computed, 'entity' => $entity, 'langfile' => $langfile, 'enabled' => $enabled, 'totalizable' => $totalizable, 'printable' => $printable, 'showintooltip' => $showintooltip, 'personal_data' => $personal_data);
+				$parameters = array(
+					'field_desc' => &$field_desc, 'table' => $table, 'attr_name' => $attrname, 'label' => $label, 'type' => $type, 'length' => $length,
+					'unique' => $unique, 'required' => $required, 'pos' => $pos, 'param' => $param, 'alwayseditable' => $alwayseditable, 'emptyonclone' => $emptyonclone,
+					'perms' => $perms, 'list' => $list, 'help' => $help, 'default' => $default, 'computed' => $computed, 'entity' => $entity,
+					'langfile' => $langfile, 'enabled' => $enabled, 'totalizable' => $totalizable, 'printable' => $printable, 'showintooltip' => $showintooltip, 'personal_data' => $personal_data
+				);
 				$reshook = $hookmanager->executeHooks('updateExtrafields', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 
 				if ($reshook < 0) {
@@ -1186,9 +1191,10 @@ class ExtraFields
 	 * @param  int|CommonObject     $object       			Current object or object ID. Preferably, pass the object itself.
 	 * @param  string        		$extrafieldsobjectkey	The key to use to store retrieved data (commonly $object->table_element)
 	 * @param  int	         		$mode                  	1=Used for search filters
+	 * @param  int	         		$filteronparentvalue	1=Filter the values of a dependent list on the value currently saved for its parent list. Used when the field is edited alone (the parent list is not on the form, so the javascript that filters the list can't work).
 	 * @return string
 	 */
-	public function showInputField($key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '', $object = 0, $extrafieldsobjectkey = '', $mode = 0)
+	public function showInputField($key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '', $object = 0, $extrafieldsobjectkey = '', $mode = 0, $filteronparentvalue = 0)
 	{
 		global $conf, $langs, $form, $hookmanager;
 
@@ -1473,6 +1479,19 @@ class ExtraFields
 					if (!empty($valarray[1])) {
 						$parent = $valarray[1];
 					}
+					// When the field is edited alone (not into the whole form), the parent list is not on the page, so the
+					// javascript that filters a dependent list can't do its job. In this case, we filter the values here, on
+					// the value currently saved for the parent list. Note that the selected value is always kept, whatever the
+					// parent value is, so editing the field does not silently clear it.
+					if ($filteronparentvalue && !empty($parent) && (string) $value != (string) $key2) {
+						$tmpparent = explode(':', $parent, 2);
+						if (!empty($tmpparent[1]) && is_object($object)) {
+							$parentvalue = isset($object->array_options['options_'.$tmpparent[0]]) ? $object->array_options['options_'.$tmpparent[0]] : '';
+							if ((string) $parentvalue !== '' && (string) $parentvalue !== (string) $tmpparent[1]) {
+								continue;
+							}
+						}
+					}
 					$out .= '<option value="'.$key2.'"';
 					$out .= (((string) $value == (string) $key2) ? ' selected' : '');
 					$out .= (!empty($parent) ? ' parent="'.$parent.'"' : '');
@@ -1504,7 +1523,7 @@ class ExtraFields
 										search: params.term,
 										page: params.page || 1,
 										objecttype: '".$extrafieldsobjectkey."',
-										objectid: '".$object->id."',
+										objectid: '".$objectid."',
 										objectkey: '".$key."',
 										mode: '".$mode."',
 										value: '".$value."'
@@ -1593,6 +1612,10 @@ class ExtraFields
 						} else {
 							$keyList .= ', '.$parentField;
 						}
+						// Re-add parent field that was removed by keyList reset above
+						if (!empty($parentField)) {
+							$keyList .= ', '.$parentField;
+						}
 					}
 
 					$filter_categorie = false;
@@ -1639,12 +1662,12 @@ class ExtraFields
 							} elseif (substr($_SERVER["PHP_SELF"], -8) == 'list.php') {
 								// In filters of list views, we do not want $ID$ replaced by 0. So we remove the '=' condition.
 								// Do nothing if condition is using 'IN' keyword
-								// Replace 'column = $ID$' by "word"
-								$word = '#\b([a-zA-Z0-9-\.-_]+)\b *= *\$ID\$#';
-								$InfoFieldList[4] = preg_replace($word, '$1', $InfoFieldList[4]);
-								// Replace '$ID$ = column' by "word"
-								$word = '#\$ID\$ *= *\b([a-zA-Z0-9-\.-_]+)\b#';
-								$InfoFieldList[4] = preg_replace($word, '$1', $InfoFieldList[4]);
+								// Replace 'column = $any$' by "1=1"
+								$word = '#([a-zA-Z0-9._-]+):=:\$([A-Za-z0-9_]+)\$#';
+								$InfoFieldList[4] = preg_replace($word, '1:=:1', $InfoFieldList[4]);
+								// Replace '$any$ = column' by "1:=:1"
+								$word = '#\$([A-Za-z0-9_]+)\$:=:([A-Za-z0-9._-]+)#';
+								$InfoFieldList[4] = preg_replace($word, '1:=:1', $InfoFieldList[4]);
 							} else {
 								$InfoFieldList[4] = str_replace('$ID$', '0', $InfoFieldList[4]);
 							}
@@ -1803,7 +1826,7 @@ class ExtraFields
 			$out = '';
 			$selectedvalue = ((string) $value !== '' ? $value : $default);
 			foreach ($param['options'] as $keyopt => $val) {
-				$out .= '<input class="flat '.$morecss.'" type="radio" name="'.$keyprefix.$key.$keysuffix.'" '.($moreparam ? $moreparam : '');
+				$out .= '<input class="flat '.$morecss.'" type="radio" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.($moreparam ? $moreparam : '');
 				$out .= ' value="'.$keyopt.'"';
 				$out .= ' id="'.$keyprefix.$key.$keysuffix.'_'.$keyopt.'"';
 				$out .= ((string) $selectedvalue == (string) $keyopt ? ' checked' : '');
@@ -1817,6 +1840,7 @@ class ExtraFields
 				} else {
 					$value_arr = explode(',', $value);
 				}
+
 				$out .= "
 				<script>
 				$(document).ready(function () {
@@ -1830,11 +1854,11 @@ class ExtraFields
 								var query = {
 									search: params.term,
 									page: params.page || 1,
-									objecttype: '".$extrafieldsobjectkey."',
-									objectid: '".$object->id."',
-									objectkey: '".$key."',
-									mode: '".$mode."',
-									value: '".$value."'
+									objecttype: '".dol_escape_js($extrafieldsobjectkey)."',
+									objectid: '".dol_escape_js($object->id)."',
+									objectkey: '".dol_escape_js($key)."',
+									mode: '".dol_escape_js($mode)."',
+									value: '".dol_escape_js($value)."'
 								}
 								return query;
 							}
@@ -1907,9 +1931,9 @@ class ExtraFields
 							$InfoFieldList = array_merge($InfoFieldList, explode(':', $tmpafter));
 						}
 
-						// Fix better compatibility with some old extrafield syntax filter "(field=123)"
+						// Fix better compatibility with some old extrafield syntax filter "(field_name=123)"
 						$reg = array();
-						if (preg_match('/^\(?([a-z0-9]+)([=<>]+)(\d+)\)?$/i', $InfoFieldList[4], $reg)) {
+						if (preg_match('/^\(?([a-z0-9_]+)([=<>]+)(\d+)\)?$/i', $InfoFieldList[4], $reg)) {
 							$InfoFieldList[4] = '('.$reg[1].':'.$reg[2].':'.$reg[3].')';
 						}
 					}
@@ -1934,12 +1958,16 @@ class ExtraFields
 						} else {
 							$keyList .= ', '.$parentField;
 						}
+						// Re-add parent field that was removed by keyList reset above
+						if (!empty($parentField)) {
+							$keyList .= ', '.$parentField;
+						}
 					}
 
+					$InfoFieldList[5] = (string) ($InfoFieldList[5]??'');
 
 					$filter_categorie = false;
 					if (count($InfoFieldList) > 5 && ($InfoFieldList[5] != '')) {
-						$InfoFieldList[5] = (string) $InfoFieldList[5];
 						if ($InfoFieldList[0] == 'categorie') {
 							$filter_categorie = true;	// The combo list is a list of categories
 						} else {
@@ -2627,6 +2655,11 @@ class ExtraFields
 				$classpath = $InfoFieldList[1];
 				if (!empty($classpath)) {
 					dol_include_once($InfoFieldList[1]);
+					if (!$classname || !class_exists($classname)) {
+						// Without this, the raw id is printed with nothing telling why, which is very
+						// hard to diagnose. Most often the class path stored in the definition is wrong.
+						dol_syslog('Extrafields::showOutputField the class '.$classname.' of the link field '.$key.' could not be loaded from '.$classpath.', check the extrafield definition', LOG_WARNING);
+					}
 					if ($classname && class_exists($classname)) {
 						$tmpobject = new $classname($this->db);
 						'@phan-var-force CommonObject $tmpobject';
@@ -2724,7 +2757,7 @@ class ExtraFields
 									objectId: '.((int) $objectid).',
 									field: \''.dol_escape_js($key).'\',
 									value: selectedStars,
-									token: \''.newToken().'\'
+									token: \''.currentToken().'\'
 								},
 								success: function(response) {
 									var res = JSON.parse(response);

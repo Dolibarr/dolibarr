@@ -53,7 +53,6 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
@@ -602,7 +601,8 @@ if (empty($reshook)) {
 								$newfile = $dir.'/'.dol_sanitizeFileName($_FILES['photo']['name']);
 								$result = dol_move_uploaded_file($_FILES['photo']['tmp_name'], $newfile, 1);
 
-								if (!($result > 0)) {
+								// Note: $result is a string when the file was refused and, in PHP 8, such a string compares as greater than 0
+								if (!is_numeric($result) || $result <= 0) {
 									$errors[] = "ErrorFailedToSaveFile";
 								} else {
 									// Create thumbs
@@ -775,7 +775,8 @@ if (empty($reshook)) {
 							$newfile = $dir.'/'.dol_sanitizeFileName($_FILES['photo']['name']);
 							$result = dol_move_uploaded_file($_FILES['photo']['tmp_name'], $newfile, 1);
 
-							if (!($result > 0)) {
+							// Note: $result is a string when the file was refused and, in PHP 8, such a string compares as greater than 0
+							if (!is_numeric($result) || $result <= 0) {
 								$errors[] = "ErrorFailedToSaveFile";
 							} else {
 								// Create thumbs
@@ -1179,7 +1180,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					$newfile = $dir.'/'.dol_sanitizeFileName($_FILES['photo']['name']);
 					$result = dol_move_uploaded_file($_FILES['photo']['tmp_name'], $newfile, 1);
 
-					if (!($result > 0)) {
+					// Note: $result is a string when the file was refused and, in PHP 8, such a string compares as greater than 0
+					if (!is_numeric($result) || $result <= 0) {
 						$errors[] = "ErrorFailedToSaveFile";
 					} else {
 						// Create thumbs
@@ -1197,6 +1199,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			$object->country = $tmparray['label'];
 		}
 		$object->forme_juridique_code = GETPOSTINT('forme_juridique_code');
+		$object->birth = dol_mktime(0, 0, 0, GETPOSTINT('birthmonth'), GETPOSTINT('birthday'), GETPOSTINT('birthyear'));
 
 		// We set multicurrency_code if enabled
 		if (isModEnabled("multicurrency")) {
@@ -1839,7 +1842,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 			// VAT reverse charge by default
 			if (getDolGlobalString('ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE')) {
-				print '<tr><td><label for="vat_reverse_charge">' . $form->editfieldkey('VATReverseChargeByDefault', 'vat_reverse_charge', '', $object, 0) . '</label></td><td colspan="3">';
+				print '<tr><td><label for="vat_reverse_charge">' . $form->editfieldkey('VATReverseChargeByDefault', 'vat_reverse_charge', '', $object, 0, 'string', '', 0, 0, 'id', $langs->trans('ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC')) . '</label></td><td colspan="3">';
 				print '<input type="checkbox" name="vat_reverse_charge" id="vat_reverse_charge" '.($object->vat_reverse_charge == '1' ? ' checked' : '').'>';
 				print '</td></tr>';
 			}

@@ -10,7 +10,6 @@ ActionsOnFicheInter=Esdeveniments sobre l'intervenció
 LastInterventions=Últimes %s intervencions
 AllInterventions=Totes les intervencions
 CreateDraftIntervention=Crea esborrany
-InterventionContact=Contacte intervenció
 DeleteIntervention=Eliminar intervenció
 ValidateIntervention=Validar intervenció
 SignIntervention=Signar la intervenció

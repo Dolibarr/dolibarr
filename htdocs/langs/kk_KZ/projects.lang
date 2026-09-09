@@ -258,7 +258,7 @@ OtherFilteredTasks=Басқа сүзгіленген тапсырмалар
 NoAssignedTasks=Белгіленген тапсырмалар табылмады (уақытты енгізу үшін жоғарғы таңдау жолағынан ағымдағы пайдаланушыға жобаны/тапсырмаларды тағайындаңыз)
 ThirdPartyRequiredToGenerateIntervention=Интервенция жасай алу үшін жобада үшінші тарап анықталуы керек.
 ThirdPartyRequiredToGenerateInvoice=Шот -фактура жасау үшін үшінші тұлға жобада анықталуы керек.
-ChooseANotYetAssignedTask=Сізге әлі берілмеген тапсырманы таңдаңыз
+ChooseANotYetAssignedTask=Tasks not yet assigned to you
 # Comments trans
 AllowCommentOnTask=Пайдаланушыларға тапсырмалар бойынша түсініктеме беру
 AllowCommentOnProject=Пайдаланушыларға жобаларға түсініктеме беру

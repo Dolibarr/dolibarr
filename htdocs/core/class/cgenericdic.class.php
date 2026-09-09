@@ -258,7 +258,7 @@ class CGenericDic extends CommonDict
 				}
 			}
 			if (count($sqlwhere) > 0) {
-				$sql .= " WHERE ".implode(' '.$this->db->escape($filtermode).' ', $sqlwhere);
+				$sql .= " WHERE ".implode(' '.$this->db->sanitize($filtermode).' ', $sqlwhere);
 			}
 
 			$filter = '';

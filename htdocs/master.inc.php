@@ -51,6 +51,7 @@ require_once 'filefunc.inc.php';
  * @var string $dolibarr_main_db_cryptkey
  * @var string $dolibarr_main_document_root_alt
  * @var string $dolibarr_main_limit_users
+ * @var string $dolibarr_main_limit_sessions_per_user
  * @var string $dolibarr_mailing_limit_sendbyweb
  * @var string $dolibarr_mailing_limit_sendbycli
  * @var	string $dolibarr_mailing_limit_sendbyday
@@ -71,6 +72,7 @@ require_once 'filefunc.inc.php';
 @phan-var-force ?string $dolibarr_main_db_encryption
 @phan-var-force ?string $dolibarr_main_db_cryptkey
 @phan-var-force ?string $dolibarr_main_limit_users
+@phan-var-force ?string $dolibarr_main_limit_sessions_per_user
 @phan-var-force ?string $dolibarr_main_url_root_alt
 ';
 require_once DOL_DOCUMENT_ROOT.'/core/class/conf.class.php';
@@ -164,6 +166,7 @@ if (defined('TEST_DB_FORCE_TYPE')) {
 
 // Set properties specific to conf file
 $conf->file->main_limit_users = $dolibarr_main_limit_users;
+$conf->file->main_limit_sessions_per_user = empty($dolibarr_main_limit_sessions_per_user) ? 0 : $dolibarr_main_limit_sessions_per_user;
 $conf->file->mailing_limit_sendbyweb = empty($dolibarr_mailing_limit_sendbyweb) ? 0 : $dolibarr_mailing_limit_sendbyweb;
 $conf->file->mailing_limit_sendbycli = empty($dolibarr_mailing_limit_sendbycli) ? 0 : $dolibarr_mailing_limit_sendbycli;
 $conf->file->mailing_limit_sendbyday = empty($dolibarr_mailing_limit_sendbyday) ? 0 : $dolibarr_mailing_limit_sendbyday;

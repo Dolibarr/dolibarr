@@ -36,10 +36,18 @@ ActivateAllOnContract=Aktiver alle tjenester
 CloseAContract=Lukk kontrakt
 ConfirmDeleteAContract=Er du sikker på at du vil slette denne kontrakten og alle tilhørende tjenester?
 ConfirmValidateContract=Er du sikker på at du vil validere denne kontrakten med navnet <b>%s</b>?
+ConfirmSignContract=Er du sikker på at du vil angi denne kontrakten som signert?
+ConfirmUnsignContract=Er du sikker på at du vil angi denne kontrakten som usignert?
 ConfirmActivateAllOnContract=Dette åpner alle tjenester (ikke aktiv ennå). Er du sikker på at du vil åpne alle tjenestene?
 ConfirmCloseContract=Dette vil stenge alle tjenester (utløpt eller ikke). Er du sikker på at du vil avslutte denne kontrakten?
 ConfirmCloseService=Er du sikker på at du vil lukke denne tjenesten med dato <b>%s</b>?
 ValidateAContract=Valider en kontrakt
+UnsignContract=Avsigner kontrakt
+ContractSign=Sett Signert
+ContractUnsign=Sett til ikke signert
+ContractSignedInDolibarr=Kontrakt signert
+ContractSignedOnline=Kontrakt signert online
+ContractUnsignedInDolibarr=Kontrakt avsignert
 ActivateService=Aktiver tjeneste
 ConfirmActivateService=Er du sikker på at du vil aktivere denne tjenesten med dato <b>%s</b>?
 RefContract=Kontraktsreferanse
@@ -95,7 +103,13 @@ ConfirmCloneContract=Er du sikker på at du vil klone kontrakten <b>%s</b>?
 LowerDateEndPlannedShort=Nedre planlagt sluttdato for aktive tjenester
 SendContractRef=Kontraktsinformasjon __REF__
 OtherContracts=Andre kontrakter
-##### Types de contacts #####
+##### Statistics #####
+ContractsStatistics=Contract's statistics
+NbOfContracts=Nb of contracts
+NumberOfContractsByMonth=Number of contracts by month
+AmountOfServices=Number of services
+AmountOfServicesByMonthHT=Number of services (excl. tax) by month
+##### Types of contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Salgsrepresentant som signerer kontrakten
 TypeContact_contrat_internal_SALESREPFOLL=Salgsrepresentant som følger opp kontrakten
 TypeContact_contrat_external_BILLING=Kundekontakt faktura

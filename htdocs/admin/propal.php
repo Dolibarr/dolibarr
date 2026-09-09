@@ -7,7 +7,7 @@
  * Copyright (C) 2005-2012 Regis Houssin               <regis.houssin@inodbox.com>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  * Copyright (C) 2011-2013 Juanjo Menent			   <jmenent@2byte.es>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2025		William Mead				<william@m34d.com>
  *
@@ -61,6 +61,8 @@ $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
 $type = 'propal';
 
+$propal = new Propal($db);
+
 
 /*
  * Actions
@@ -91,7 +93,6 @@ if ($action == 'updateMask') {
 } elseif ($action == 'specimen') {
 	$modele = GETPOST('module', 'alpha');
 
-	$propal = new Propal($db);
 	$propal->initAsSpecimen();
 
 	// Search template files
@@ -295,8 +296,8 @@ foreach ($dirmodels as $reldir) {
 		$handle = opendir($dir);
 		if (is_resource($handle)) {
 			while (($file = readdir($handle)) !== false) {
-				if (substr($file, 0, 12) == 'mod_propale_' && substr($file, dol_strlen($file) - 3, 3) == 'php') {
-					$file = substr($file, 0, dol_strlen($file) - 4);
+				if (dol_substr($file, 0, 12) == 'mod_propale_' && dol_substr($file, dol_strlen($file) - 3, 3) == 'php') {
+					$file = dol_substr($file, 0, dol_strlen($file) - 4);
 
 					require_once $dir.'/'.$file.'.php';
 
@@ -348,7 +349,7 @@ foreach ($dirmodels as $reldir) {
 						$htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
 						$propal->type = 0;
 						$nextval = $module->getNextValue($mysoc, $propal);
-						if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
+						if ((string) $nextval != $langs->trans("NotAvailable")) {  // Keep " on nextval
 							$htmltooltip .= ''.$langs->trans("NextValue").': ';
 							if ($nextval) {
 								if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
@@ -434,8 +435,8 @@ foreach ($dirmodels as $reldir) {
 				foreach ($filelist as $file) {
 					if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file)) {
 						if (file_exists($dir.'/'.$file)) {
-							$name = substr($file, 4, dol_strlen($file) - 16);
-							$classname = substr($file, 0, dol_strlen($file) - 12);
+							$name = dol_substr($file, 4, dol_strlen($file) - 16);
+							$classname = dol_substr($file, 0, dol_strlen($file) - 12);
 
 							require_once $dir.'/'.$file;
 							$module = new $classname($db);
@@ -535,7 +536,7 @@ print '</div>';
 print '<br>';
 print load_fiche_titre($langs->trans("SuggestedPaymentModesIfNotDefinedInProposal"), '', '');
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'" />';
 
 print '<table class="noborder centpercent">';
@@ -636,7 +637,7 @@ print '<br>';
 
 print load_fiche_titre($langs->trans("OtherOptions"), '', '');
 
-print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
+print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="page_y" value="">';
 print '<input type="hidden" name="action" value="update">';
@@ -653,7 +654,7 @@ print '<td>';
 print "<input size=\"3\" class=\"flat\" type=\"text\" name=\"PROPALE_VALIDITY_DURATION\" value=\"" . getDolGlobalString('PROPALE_VALIDITY_DURATION')."\"></td>";
 print '</tr>';
 
-$substitutionarray = pdf_getSubstitutionArray($langs, null, null, 2);
+$substitutionarray = pdf_getSubstitutionArray($langs, null, $propal, 2);
 $substitutionarray['__(AnyTranslationKey)__'] = $langs->trans("Translation");
 $htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
 foreach ($substitutionarray as $key => $val) {

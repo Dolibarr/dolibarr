@@ -128,6 +128,11 @@ function dol_time_plus_duree($time, $duration_value, $duration_unit, $ruleforend
 	if (empty($duration_value)) {
 		return $time;
 	}
+	if (!in_array($duration_unit, array('s', 'i', 'mn', 'min', 'h', 'd', 'w', 'm', 'y'))) {
+		$errormsg = 'dol_time_plus_duree call to function with undefined or bad duration_unit : ' . $duration_unit;
+		dol_syslog($errormsg, LOG_ERR);
+		return $time;
+	}
 	if ($duration_unit == 's') {
 		return $time + (int) ($duration_value);
 	}
@@ -398,18 +403,18 @@ function dolSqlDateFilter($datefield, $day_date, $month_date, $year_date, $exclu
 			return " AND 1 = 2";
 		}
 		if ($year_date > 0 && empty($day_date)) {
-			$sqldate .= ($excludefirstand ? "" : " AND ").$sql_datefield." BETWEEN '".$db->idate(dol_get_first_day($year_date, $month_date, $gm));
-			$sqldate .= "' AND '".$db->idate(dol_get_last_day($year_date, $month_date, $gm))."'";
+			$sqldate .= ($excludefirstand ? "" : " AND ").$sql_datefield." BETWEEN '".$db->idate(dol_get_first_day($year_date, $month_date, $gm))."'";
+			$sqldate .= " AND '".$db->idate(dol_get_last_day($year_date, $month_date, $gm))."'";
 		} elseif ($year_date > 0 && !empty($day_date)) {
-			$sqldate .= ($excludefirstand ? "" : " AND ").$sql_datefield." BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month_date, $day_date, $year_date, $gm));
-			$sqldate .= "' AND '".$db->idate(dol_mktime(23, 59, 59, $month_date, $day_date, $year_date, $gm))."'";
+			$sqldate .= ($excludefirstand ? "" : " AND ").$sql_datefield." BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month_date, $day_date, $year_date, $gm))."'";
+			$sqldate .= " AND '".$db->idate(dol_mktime(23, 59, 59, $month_date, $day_date, $year_date, $gm))."'";
 		} else {
 			// This case is not reliable on TZ, but we should not need it.
 			$sqldate .= ($excludefirstand ? "" : " AND ")." date_format( ".$sql_datefield.", '%c') = '".$db->escape((string) $month_date)."'";
 		}
 	} elseif ($year_date > 0) {
-		$sqldate .= ($excludefirstand ? "" : " AND ").$sql_datefield." BETWEEN '".$db->idate(dol_get_first_day($year_date, 1, $gm));
-		$sqldate .= "' AND '".$db->idate(dol_get_last_day($year_date, 12, $gm))."'";
+		$sqldate .= ($excludefirstand ? "" : " AND ").$sql_datefield." BETWEEN '".$db->idate(dol_get_first_day($year_date, 1, $gm))."'";
+		$sqldate .= " AND '".$db->idate(dol_get_last_day($year_date, 12, $gm))."'";
 	}
 	return $sqldate;
 }

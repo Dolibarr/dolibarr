@@ -6,7 +6,7 @@
  * Copyright (C) 2003       Jean-Louis Bergamo          <jlb@j1b.org>
  * Copyright (C) 2004-2015  Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin               <regis.houssin@inodbox.com>
- * Copyright (C) 2019-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2019-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025       Joachim Kueter              <git-jk@bloxera.com>
  *
@@ -1162,6 +1162,7 @@ class CMailFile
 						$expire = false;
 						// Is token expired or will token expire in the next 30 seconds
 						if (is_object($tokenobj)) {
+							// time() is used in tokenobj @phan-suppress-next-line DolibarrForbiddenFunctionPlugin
 							$expire = ($tokenobj->getEndOfLife() !== -9002 && $tokenobj->getEndOfLife() !== -9001 && time() > ($tokenobj->getEndOfLife() - 30));
 						}
 						// Token expired so we refresh it
@@ -1172,6 +1173,9 @@ class CMailFile
 								getDolGlobalString('OAUTH_'.getDolGlobalString($keyforsmtpoauthservice).'_URLCALLBACK')
 							);
 							$serviceFactory = new \OAuth\ServiceFactory();
+
+							// Force the curl client, the default stream one uses file_get_contents() which
+							// fails to reach the token endpoint on many setups, so the token is never refreshed.
 							$httpClient = new \OAuth\Common\Http\Client\CurlClient();
 							$serviceFactory->setHttpClient($httpClient);
 							$oauthname = explode('-', $OAUTH_SERVICENAME);
@@ -1208,7 +1212,8 @@ class CMailFile
 						if (is_object($tokenobj)) {
 							$this->smtps->setToken($tokenobj->getAccessToken());
 						} else {
-							$this->error = "Token not found";
+							$this->error = "OAuth2 token not found for service '".$OAUTH_SERVICENAME."' (setup constant ".$keyforsmtpoauthservice.", send context '".$this->sendcontext."'). Compare it with the service column of llx_oauth_token.";
+							dol_syslog("CMailFile::sendfile: ".$this->error, LOG_ERR);
 						}
 					} catch (Exception $e) {
 						// Return an error if token not found
@@ -1349,6 +1354,7 @@ class CMailFile
 						$expire = false;
 						// Is token expired or will token expire in the next 30 seconds
 						if (is_object($tokenobj)) {
+							// time() is used in tokenobj @phan-suppress-next-line DolibarrForbiddenFunctionPlugin
 							$expire = ($tokenobj->getEndOfLife() !== -9002 && $tokenobj->getEndOfLife() !== -9001 && time() > ($tokenobj->getEndOfLife() - 30));
 						}
 						// Token expired so we refresh it
@@ -1359,6 +1365,9 @@ class CMailFile
 								getDolGlobalString('OAUTH_'.getDolGlobalString($keyforsmtpoauthservice).'_URLCALLBACK')
 							);
 							$serviceFactory = new \OAuth\ServiceFactory();
+
+							// Force the curl client, the default stream one uses file_get_contents() which
+							// fails to reach the token endpoint on many setups, so the token is never refreshed.
 							$httpClient = new \OAuth\Common\Http\Client\CurlClient();
 							$serviceFactory->setHttpClient($httpClient);
 							$oauthname = explode('-', $OAUTH_SERVICENAME);
@@ -1393,8 +1402,8 @@ class CMailFile
 							$this->transport->setAuthMode('XOAUTH2');
 							$this->transport->setPassword($tokenobj->getAccessToken());
 						} else {
-							$this->errors[] = "Token not found";
-							dol_syslog("CMailFile::sendfile: OAuth2 token object is not valid", LOG_ERR);
+							$this->errors[] = "OAuth2 token not found for service '".$OAUTH_SERVICENAME."' (setup constant ".$keyforsmtpoauthservice.", send context '".$this->sendcontext."'). Compare it with the service column of llx_oauth_token.";
+							dol_syslog("CMailFile::sendfile: ".end($this->errors), LOG_ERR);
 						}
 					} catch (Exception $e) {
 						// Return an error if token not found
@@ -1435,6 +1444,8 @@ class CMailFile
 
 				// send mail
 				$failedRecipients = array();
+
+				$result = false;
 				try {
 					$result = $this->mailer->send($this->message, $failedRecipients);
 				} catch (Exception $e) {
@@ -2171,7 +2182,7 @@ class CMailFile
 					if (!in_array($fullpath, $inline)) {
 						// Read image file
 						if ($image = file_get_contents($fullpath)) {
-							// On garde que le nom de l'image
+							// Keep only the image name
 							$regs = array();
 							preg_match('/([A-Za-z0-9_-]+[\.]?[A-Za-z0-9]+)?$/i', $img["name"], $regs);
 							$imgName = $regs[1];

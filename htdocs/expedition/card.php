@@ -824,6 +824,7 @@ if (empty($reshook)) {
 		setEventMessages($object->error, $object->errors, 'errors');
 	} elseif ($action == 'deleteline' && !empty($line_id) && $permissiontoadd) {
 		// delete a line
+		$error = 0;
 		$object->fetch($id);
 		$lines = $object->lines;
 		$line = new ExpeditionLigne($db);
@@ -832,7 +833,9 @@ if (empty($reshook)) {
 		$num_prod = count($lines);
 		for ($i = 0; $i < $num_prod; $i++) {
 			if ($lines[$i]->id == $line_id) {
-				if (count($lines[$i]->details_entrepot) > 1) {
+				// A standalone shipment (SHIPMENT_STANDALONE) loads its lines with fetch_lines_free(),
+				// which does not set details_entrepot, so count() must not be called on it blindly.
+				if (is_array($lines[$i]->details_entrepot) && count($lines[$i]->details_entrepot) > 1) {
 					// delete multi warehouse lines
 					foreach ($lines[$i]->details_entrepot as $details_entrepot) {
 						$line->id = $details_entrepot->line_id;
@@ -1902,6 +1905,7 @@ if ($action == 'create' && $usercancreate) {
 					if (!(getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES') || getDolGlobalString('STOCK_SUPPORTS_SERVICES'))) {
 						$title_lines_to_disable = $object->getDisabledShippmentSubtotalLines();
 					}
+					$selectedLines = GETPOST('subtotal_toselect', 'array:int');
 					foreach ($object->lines as $line) {
 						if ($line->special_code == SUBTOTALS_SPECIAL_CODE) {
 							$show_check_add_buttons = true;
@@ -2684,7 +2688,7 @@ if ($action == 'create' && $usercancreate) {
 	$res = $object->fetch_optionals();
 
 	$head = shipping_prepare_head($object);
-	print dol_get_fiche_head($head, 'shipping', $langs->trans("Shipment"), -1, $object->picto);
+	print dol_get_fiche_head($head, 'shipping', $langs->trans("Shipment"), -1, $object->picto, 0, '', '', 0, '', 1);
 
 	$formconfirm = '';
 
@@ -3278,9 +3282,22 @@ if ($action == 'create' && $usercancreate) {
 			}
 		}
 
+		$origin = (string) $origin;
+		if (empty($origin) || $origin == 'order') {
+			$origin = 'commande';
+		}
+
+		// List of allowed value of $origin
+		if (!in_array($origin, array('supplier_proposal', 'supplier_order', 'commande_fournisseur', 'facture_fourn', 'propal', 'commande', 'facture'))) {
+			dol_print_error($db, 'Bad value for parameter origin in expedition/card.php');
+			exit;
+		}
+
 		// Get list of products already sent for same source object into $alreadysent
 		$alreadysent = array();
 		if ($origin_id > 0) {
+			$tablenametouse = (($origin == 'supplier_order') ? 'commande_fournisseur' : (($origin == 'facture_fourn') ? 'facture_fourn_' : $origin));
+
 			$sql = "SELECT obj.rowid, obj.fk_product, obj.label, obj.description, obj.product_type as fk_product_type, obj.qty as qty_asked, obj.fk_unit, obj.date_start, obj.date_end, obj.special_code";
 			$sql .= ", ed.rowid as shipmentline_id, ed.qty as qty_shipped, ed.fk_expedition as expedition_id, ed.fk_elementdet, ed.fk_entrepot";
 			$sql .= ", e.rowid as shipment_id, e.ref as shipment_ref, e.date_creation, e.date_valid, e.date_delivery, e.date_expedition";
@@ -3288,7 +3305,7 @@ if ($action == 'create' && $usercancreate) {
 			$sql .= ', p.description as product_desc';
 			$sql .= " FROM " . MAIN_DB_PREFIX . "expeditiondet as ed";
 			$sql .= ", " . MAIN_DB_PREFIX . "expedition as e";
-			$sql .= ", " . MAIN_DB_PREFIX . $db->sanitize((string) $origin) . "det as obj";
+			$sql .= ", " . MAIN_DB_PREFIX . $db->sanitize($tablenametouse) . "det as obj";
 			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON obj.fk_product = p.rowid";
 			$sql .= " WHERE e.entity IN (" . getEntity('expedition') . ")";
 			$sql .= " AND obj.fk_" . $db->sanitize((string) $origin) . " = " . ((int) $origin_id);
@@ -3729,7 +3746,7 @@ if ($action == 'create' && $usercancreate) {
 					}
 					print '</td>';
 					// Display lines extrafields
-					if (!empty($rowExtrafieldsStart)) {
+					if (isset($rowExtrafieldsStart, $rowExtrafieldsView, $rowEnd)) {  // @phan-suppress-current-line PhanPluginUndeclaredVariableIsset
 						print $rowExtrafieldsStart;
 						print $rowExtrafieldsView;
 						print $rowEnd;
@@ -3764,7 +3781,7 @@ if ($action == 'create' && $usercancreate) {
 	 *    Boutons actions
 	 */
 
-	if (($user->socid == 0) && ($action != 'presend')) {
+	if (($user->socid == 0) && ($action != 'presend') && ($action != 'editline')) {
 		print '<div class="tabsAction">';
 
 		$parameters = array();

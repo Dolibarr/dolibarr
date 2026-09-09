@@ -313,7 +313,7 @@ function user_admin_prepare_head()
 	$head[$h][2] = 'usergroupcard';
 	$h++;
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/user/admin/user_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'user'));
 	$head[$h][1] = $langs->trans("ExtraFields")." (".$langs->trans("Users").")";
 	$nbExtrafields = $extrafields->attributes['user']['count'];
 	if ($nbExtrafields > 0) {
@@ -322,7 +322,7 @@ function user_admin_prepare_head()
 	$head[$h][2] = 'attributes';
 	$h++;
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/user/admin/group_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'usergroup'));
 	$head[$h][1] = $langs->trans("ExtraFields")." (".$langs->trans("Groups").")";
 	$nbExtrafields = $extrafields->attributes['usergroup']['count'];
 	if ($nbExtrafields > 0) {
@@ -503,8 +503,9 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 	$butactionbg = '';
 	$textbutaction = '';
 	// Set the variables with the default value
-	if (file_exists(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php')) {
-		include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+	$theme_vars_file = dol_getThemeFilePath('theme_vars.inc.php');
+	if ($theme_vars_file) {
+		include $theme_vars_file;
 	}
 
 	// Dark mode

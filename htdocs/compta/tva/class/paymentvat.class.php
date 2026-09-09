@@ -458,11 +458,13 @@ class PaymentVAT extends CommonObject
 
 		if ($this->bank_line > 0) {
 			$accline = new AccountLine($this->db);
-			$accline->fetch($this->bank_line);
-			$result = $accline->delete($user);
-			if ($result < 0) {
-				$this->errors[] = $accline->error;
-				$error++;
+			$result = $accline->fetch($this->bank_line);
+			if ($result > 0) {
+				$result = $accline->delete($user); // $result may be 0 if not found (when bank entry was deleted manually and fk_bank point to nothing)
+				if ($result < 0) {
+					$this->errors[] = $accline->error;
+					$error++;
+				}
 			}
 		}
 
@@ -767,7 +769,7 @@ class PaymentVAT extends CommonObject
 			$labeltoshow = $this->label;
 			$reg = array();
 			if (preg_match('/^\((.*)\)$/i', $this->label, $reg)) {
-				// Label generique car entre parentheses. On l'affiche en le traduisant
+				// Generic label because it is in parentheses. We display it translated.
 				if ($reg[1] == 'paiement') {
 					$reg[1] = 'Payment';
 				}

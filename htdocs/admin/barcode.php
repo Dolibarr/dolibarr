@@ -158,7 +158,7 @@ print '<br>';
  * Usage
  */
 
-print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
+print '<form method="post" action="'.$_SERVER["PHP_SELF"].'" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print "<input type=\"hidden\" name=\"action\" value=\"update\">";
 
@@ -220,7 +220,7 @@ foreach ($dirbarcode as $reldir) {
 	$handle = @opendir($newdir);
 	if (is_resource($handle)) {
 		while (($file = readdir($handle)) !== false) {
-			if (substr($file, 0, 1) != '.' && substr($file, 0, 3) != 'CVS') {
+			if (dol_substr($file, 0, 1) != '.' && dol_substr($file, 0, 3) != 'CVS') {
 				if (is_readable($newdir.$file)) {
 					$reg = array();
 					if (preg_match('/(.*)\.modules\.php$/i', $file, $reg)) {
@@ -276,7 +276,7 @@ if (getDolGlobalString('BARCODE_USE_ON_PRODUCT') && isModEnabled('product')) {
 		if (is_resource($handle)) {
 			while (($file = readdir($handle)) !== false) {
 				if (preg_match('/^mod_barcode_product_.*php$/', $file)) {
-					$file = substr($file, 0, dol_strlen($file) - 4);
+					$file = dol_substr($file, 0, dol_strlen($file) - 4);
 
 					try {
 						dol_include_once($dirroot.$file.'.php');
@@ -344,7 +344,7 @@ if (getDolGlobalString('BARCODE_USE_ON_THIRDPARTY') && isModEnabled('societe')) 
 		if (is_resource($handle)) {
 			while (($file = readdir($handle)) !== false) {
 				if (preg_match('/^mod_barcode_thirdparty_.*php$/', $file)) {
-					$file = substr($file, 0, dol_strlen($file) - 4);
+					$file = dol_substr($file, 0, dol_strlen($file) - 4);
 
 					try {
 						dol_include_once($dirroot.$file.'.php');
@@ -397,7 +397,7 @@ if (getDolGlobalString('BARCODE_USE_ON_PRODUCT') || getDolGlobalString('BARCODE_
 	print load_fiche_titre($langs->trans("BarcodeEncodeModule"), '', '');
 
 	if (empty($conf->use_javascript_ajax)) {
-		print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" id="form_engine">';
+		print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" id="form_engine" spellcheck="false">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="updateengine">';
 	}
@@ -502,7 +502,7 @@ if (getDolGlobalString('BARCODE_USE_ON_PRODUCT') || getDolGlobalString('BARCODE_
 if (getDolGlobalString('BARCODE_USE_ON_PRODUCT') || getDolGlobalString('BARCODE_USE_ON_THIRDPARTY')) {
 	print load_fiche_titre($langs->trans("OtherOptions"), '', '');
 
-	print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
+	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'" spellcheck="false">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print "<input type=\"hidden\" name=\"action\" value=\"update\">";
 

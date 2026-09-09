@@ -22,6 +22,7 @@
  * Copyright (C) 2022       Vincent de Grandpré     <vincent@de-grandpre.quebec>
  * Copyright (C) 2024-2026	MDW                     <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		William Mead			<william@m34d.com>
+ * Copyright (C) 2026		Jose MARTINEZ			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -119,6 +120,7 @@ $type = (GETPOSTISSET('type') ? GETPOSTINT('type') : Product::TYPE_PRODUCT);
 $action = (GETPOST('action', 'alpha') ? GETPOST('action', 'alpha') : 'view');
 $cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
+$dol_openinpopup = GETPOST('dol_openinpopup', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $socid = GETPOSTINT('socid');
 $duration_value = GETPOST('duration_value') === '' ? null : GETPOSTINT('duration_value');	// duration value can be an empty string
@@ -429,7 +431,6 @@ if (empty($reshook)) {
 							$dirlist = dol_dir_list($srcdir, 'files', 1);
 							foreach ($dirlist as $filetomove) {
 								$destfile = $destdir.'/'.$filetomove['relativename'];
-								//var_dump('Move file '.$filetomove['relativename'].' into '.$destfile);
 								dol_move($filetomove['fullname'], $destfile, '0', 0, 0, 1);
 							}
 							//exit;
@@ -756,6 +757,13 @@ if (empty($reshook)) {
 						$backtopage .= '&productid='.$object->id; // Old method
 					}
 
+					if (!empty($dol_openinpopup)) {
+						// Created from a popup dialog: reload the parent page instead (backtopage, with the new id substituted, can autoselect the product)
+						print '<script nonce="'.getNonce().'">';
+						print "window.parent.location.href = '".dol_escape_js($backtopage)."';";
+						print '</script>';
+						exit;
+					}
 					header("Location: ".$backtopage);
 					exit;
 				} else {
@@ -1482,6 +1490,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print '<input type="hidden" name="barcode_auto" value="1">';
 		}
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+		print '<input type="hidden" name="dol_openinpopup" value="'.dol_escape_htmltag($dol_openinpopup).'">';
 
 		if ($type == 1) {
 			$picto = 'service';
@@ -1611,8 +1620,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			}
 
 			if ($showbarcode) {
-				//var_dump($modBarCodeProduct); exit;
-
 				print '<tr><td>'.$langs->trans('BarcodeType').'</td><td>';
 				if (GETPOSTISSET('fk_barcode_type')) {
 					$fk_barcode_type = GETPOST('fk_barcode_type') ? GETPOST('fk_barcode_type') : 0;
@@ -2019,7 +2026,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 		print dol_get_fiche_end();
 
-		print $form->buttonsSaveCancel("Create");
+		print $form->buttonsSaveCancel("Create", "Cancel", array(), false, '', $dol_openinpopup);
 
 		print '</form>';
 	} elseif ($object->id > 0) {
@@ -2065,7 +2072,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			$head = product_prepare_head($object);
 			$titre = $langs->trans("CardProduct".$object->type);
 			$picto = ($object->type == Product::TYPE_SERVICE ? 'service' : 'product');
-			print dol_get_fiche_head($head, 'card', $titre, 0, $picto, 0, '', '', 0, '', 1);
+			print dol_get_fiche_head($head, 'card', $titre, 0, $picto, 0, '', '', 0, '', 0);	// No drag and drop on the edit form, dropping a file reloads the page and discards it
 
 			// Call Hook tabContentEditProduct
 			$parameters = array();
@@ -3154,7 +3161,7 @@ print $formconfirm;
  * Action bar
  */
 if ($action != 'create' && $action != 'edit') {
-	$cloneProductUrl = $_SERVER["PHP_SELF"].'?action=clone&token='.newToken();
+	$cloneProductUrl = dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'clone'], true);
 	$cloneButtonId = 'action-clone-no-ajax';
 
 	print "\n".'<div class="tabsAction">'."\n";
@@ -3164,11 +3171,11 @@ if ($action != 'create' && $action != 'edit') {
 	if (empty($reshook)) {
 		if ($usercancreate) {
 			if (!isset($hookmanager->resArray['no_button_edit']) || $hookmanager->resArray['no_button_edit'] != 1) {
-				print dolGetButtonAction('', $langs->trans('Modify'), 'default', $_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$object->id, '', $usercancreate);
+				print dolGetButtonAction('', $langs->trans('Modify'), 'default', dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'edit', 'id' => $object->id], true), '', $usercancreate);
 			}
 
 			//Send
-			print dolGetButtonAction('', $langs->trans('SendMail'), 'email', $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init&token=' . newToken() . '#formmailbeforetitle');
+			print dolGetButtonAction('', $langs->trans('SendMail'), 'email', dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'presend', 'mode' => 'init'], true).'#formmailbeforetitle');
 
 			if (!isset($hookmanager->resArray['no_button_copy']) || $hookmanager->resArray['no_button_copy'] != 1) {
 				if (!empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile)) {
@@ -3186,7 +3193,7 @@ if ($action != 'create' && $action != 'edit') {
 					if (!empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile)) {
 						print dolGetButtonAction($langs->trans('Delete'), '', 'delete', '#', 'action-delete', true);
 					} else {
-						print dolGetButtonAction('', $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id, '');
+						print dolGetButtonAction('', $langs->trans('Delete'), 'delete', dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'delete', 'id' => $object->id], true), '');
 					}
 				}
 			} else {

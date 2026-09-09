@@ -10,7 +10,6 @@ ActionsOnFicheInter=Hành động can thiệp vào
 LastInterventions=Can thiệp mới nhất %s
 AllInterventions=Tất cả các can thiệp
 CreateDraftIntervention=Tạo dự thảo
-InterventionContact=Liên lạc can thiệp
 DeleteIntervention=Xóa can thiệp
 ValidateIntervention=Xác nhận can thiệp
 SignIntervention=Dấu hiệu can thiệp

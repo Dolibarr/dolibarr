@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2008-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2008-2010  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -126,13 +126,22 @@ $websitekey = '';
  */
 
 $savbacktopage = $backtopage;
-$backtopage = $_SERVER["PHP_SELF"].'?file_manager=1&website='.urlencode((string) ($websitekey)).'&pageid='.urlencode((string) ($pageid)).(GETPOST('section_dir', 'alpha') ? '&section_dir='.urlencode((string) (GETPOST('section_dir', 'alpha'))) : ''); // used after a confirm_deletefile into actions_linkedfiles.inc.php
+// used after a confirm_deletefile into actions_linkedfiles.inc.php
+$paramsbacktopage = array(
+	'file_manager' => 1,
+	'website' => (string) $websitekey,
+	'pageid' => (string) $pageid,
+);
+if (GETPOST('section_dir', 'alpha')) {
+	$paramsbacktopage['section_dir'] = GETPOST('section_dir', 'alpha');
+}
 if ($sortfield) {
-	$backtopage .= '&sortfield='.urlencode($sortfield);
+	$paramsbacktopage['sortfield'] = $sortfield;
 }
 if ($sortorder) {
-	$backtopage .= '&sortorder='.urlencode($sortorder);
+	$paramsbacktopage['sortorder'] = $sortorder;
 }
+$backtopage = dolBuildUrl($_SERVER["PHP_SELF"], $paramsbacktopage);
 include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';	// This manage 'sendit', 'confirm_deletefile', 'renamefile' action when submitting new file.
 
 $backtopage = $savbacktopage;
