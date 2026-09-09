@@ -1693,12 +1693,6 @@ parameters:
 			path: ../../../htdocs/compta/bank/various_payment/card.php
 
 		-
-			message: '#^Call to function property_exists\(\) with PaymentVarious and ''socid'' will always evaluate to false\.$#'
-			identifier: function.impossibleType
-			count: 1
-			path: ../../../htdocs/compta/bank/various_payment/card.php
-
-		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 1
@@ -2581,12 +2575,6 @@ parameters:
 			path: ../../../htdocs/core/ajax/onlineSign.php
 
 		-
-			message: '#^Variable \$tva_tx in isset\(\) always exists and is not nullable\.$#'
-			identifier: isset.variable
-			count: 1
-			path: ../../../htdocs/core/ajax/price.php
-
-		-
 			message: '#^Left side of && is always true\.$#'
 			identifier: booleanAnd.leftAlwaysTrue
 			count: 1
@@ -2791,18 +2779,6 @@ parameters:
 			path: ../../../htdocs/core/class/commonobject.class.php
 
 		-
-			message: '#^Parameter \#1 \$line of method CommonObject\:\:printOriginLine\(\) expects CommonObjectLine, CommonObject\|stdClass given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/class/commonobject.class.php
-
-		-
-			message: '#^Parameter \#2 \$line of method CommonObject\:\:printObjectLine\(\) expects CommonObjectLine, CommonObject\|stdClass given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/class/commonobject.class.php
-
-		-
 			message: '#^Result of && is always false\.$#'
 			identifier: booleanAnd.alwaysFalse
 			count: 1
@@ -2847,12 +2823,6 @@ parameters:
 		-
 			message: '#^Call to function is_array\(\) with array will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/core/class/conf.class.php
-
-		-
-			message: '#^Property Conf\:\:\$modules_parts type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
 			count: 1
 			path: ../../../htdocs/core/class/conf.class.php
 
@@ -2971,18 +2941,6 @@ parameters:
 			path: ../../../htdocs/core/class/hookmanager.class.php
 
 		-
-			message: '#^Property HookManager\:\:\$hooks has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/class/hookmanager.class.php
-
-		-
-			message: '#^Property HookManager\:\:\$hooksSorted has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/class/hookmanager.class.php
-
-		-
 			message: '#^Call to function is_array\(\) with array\{\}\|array\{mixed\} will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 2
@@ -3004,12 +2962,6 @@ parameters:
 			message: '#^Loose comparison using \=\= between ''GET'' and ''GET'' will always evaluate to true\.$#'
 			identifier: equal.alwaysTrue
 			count: 2
-			path: ../../../htdocs/core/class/html.form.class.php
-
-		-
-			message: '#^Parameter \#15 \$excludeids of method Form\:\:select_company\(\) expects array\<string\>, array\<int\> given\.$#'
-			identifier: argument.type
-			count: 1
 			path: ../../../htdocs/core/class/html.form.class.php
 
 		-
@@ -3039,12 +2991,6 @@ parameters:
 		-
 			message: '#^Call to function is_array\(\) with array\<mixed\> will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/core/class/html.formcompany.class.php
-
-		-
-			message: '#^Parameter \#3 \$selected of method Form\:\:multiselectarray\(\) expects array\<string\>, array\<array\<string, int\>\|int\> given\.$#'
-			identifier: argument.type
 			count: 1
 			path: ../../../htdocs/core/class/html.formcompany.class.php
 
@@ -3265,12 +3211,6 @@ parameters:
 			path: ../../../htdocs/core/class/utils.class.php
 
 		-
-			message: '#^Parameter \#1 \$table of static method Diff\:\:generatePartialDiff\(\) expects array\<array\{string, int\<0, 2\>\}\>, array\<array\<int\>\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/class/utils_diff.class.php
-
-		-
 			message: '#^Call to function is_array\(\) with non\-empty\-array\<string, mixed\> will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -3287,12 +3227,6 @@ parameters:
 			identifier: greater.alwaysFalse
 			count: 2
 			path: ../../../htdocs/core/customreports.php
-
-		-
-			message: '#^Property DoliDBMysqli\:\:\$db \(mysqli\) in empty\(\) is not falsy\.$#'
-			identifier: empty.property
-			count: 1
-			path: ../../../htdocs/core/db/mysqli.class.php
 
 		-
 			message: '#^Variable \$_FILES in isset\(\) always exists and is not nullable\.$#'
@@ -8189,12 +8123,6 @@ parameters:
 			identifier: booleanAnd.rightAlwaysTrue
 			count: 3
 			path: ../../../htdocs/takepos/freezone.php
-
-		-
-			message: '#^Property CommonObjectLine\:\:\$product \(Product\) in empty\(\) is not falsy\.$#'
-			identifier: empty.property
-			count: 2
-			path: ../../../htdocs/takepos/invoice.php
 
 		-
 			message: '#^Variable \$body_ticket might not be defined\.$#'
