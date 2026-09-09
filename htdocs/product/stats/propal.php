@@ -242,7 +242,7 @@ if ($id > 0 || !empty($ref)) {
 				print $langs->trans('Period').' ('.$langs->trans("DatePropal").') - ';
 				print $langs->trans('Month').':<input class="flat" type="text" size="4" name="search_month" value="'.($search_month > 0 ? $search_month : '').'"> ';
 				print $langs->trans('Year').':'.$formother->selectyear(($search_year ? (string) $search_year : '-1'), 'search_year', 1, 20, 5);
-				print $langs->trans('Company').' : '.$form->select_company($search_company, 'search_company', '(s.client:in:1,2,3)', 1);
+				if (empty($socid)) print $langs->trans('Company').' : '.$form->select_company($search_company, 'search_company', '(s.client:in:1,2,3)', 1);
 				print '<div style="vertical-align: middle; display: inline-block">';
 				print '<input type="image" class="liste_titre reposition" name="button_search" src="'.img_picto($langs->trans("Search"), 'search.png', '', 0, 1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 				print '<input type="image" class="liste_titre reposition" name="button_removefilter" src="'.img_picto($langs->trans("Search"), 'searchclear.png', '', 0, 1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';

@@ -242,7 +242,7 @@ if ($id > 0 || !empty($ref)) {
 				print $langs->trans('Period').' ('.$langs->trans("DateInvoice").') - ';
 				print $langs->trans('Month').':<input class="flat" type="text" size="4" name="search_month" value="'.($search_month > 0 ? $search_month : '').'"> ';
 				print $langs->trans('Year').':'.$formother->selectyear(($search_year ? (string) $search_year : '-1'), 'search_year', 1, 20, 5);
-				print $langs->trans('Company').' : '.$form->select_company($search_company, 'search_company', '(s.fournisseur:=:1)', 1);
+				if (empty($socid)) print $langs->trans('Company').' : '.$form->select_company($search_company, 'search_company', '(s.fournisseur:=:1)', 1);
 				print $langs->trans('Type').' : ';
 				$listtype = array(
 					FactureFournisseur::TYPE_STANDARD => $langs->trans("InvoiceStandard"),

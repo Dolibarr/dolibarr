@@ -452,7 +452,7 @@ if ($id > 0 || !empty($ref)) {
 				print $langs->trans('Period').' ('.$langs->trans("DateInvoice").') - ';
 				print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 				print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
-				print $langs->trans('Company').' : '.$form->select_company($search_company, 'search_company', '(s.client:in:1,2,3)', 1);
+				if (empty($socid)) print $langs->trans('Company').' : '.$form->select_company($search_company, 'search_company', '(s.client:in:1,2,3)', 1);
 				print $langs->trans('Type').' : ';
 				$listtype = array(
 					Facture::TYPE_STANDARD => $langs->trans("InvoiceStandard"),
