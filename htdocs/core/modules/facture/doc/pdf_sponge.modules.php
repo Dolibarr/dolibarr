@@ -1584,7 +1584,7 @@ class pdf_sponge extends ModelePDFFactures
 					// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 					$bac->fetch(0, '', $object->thirdparty->id);
 					$iban = $bac->iban.(($bac->iban && $bac->bic) ? ' / ' : '').$bac->bic;
-					$lib_mode_reg .= ' '.$outputlangs->trans("PaymentTypePREdetails", pdf_truncate_text($pdf, $iban, 6, 'right'));
+					$lib_mode_reg .= ' '.$outputlangs->trans("PaymentTypePREdetails", pdf_truncate_text($pdf, $iban, 6, 'right', ''));
 				}
 
 				$pdf->MultiCell($posxend - $posxval, 5, $lib_mode_reg, 0, 'L');
