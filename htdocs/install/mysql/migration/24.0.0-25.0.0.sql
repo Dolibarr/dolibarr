@@ -145,6 +145,10 @@ ALTER TABLE llx_deletion_log ADD INDEX idx_deletion_log_date_deletion (date_dele
 -- Add contract type field (0=customer, 1=supplier)
 ALTER TABLE llx_contrat ADD COLUMN fk_contract_type tinyint DEFAULT 0 AFTER ref_ext;
 
+-- Human Resources Management(HRM): Add `country_job_id` and `state_job_id` to the `llx_user` table to store the workplace location, enabling vacation filtering by workplace.
+ALTER TABLE llx_user ADD COLUMN country_job_id integer DEFAULT NULL;
+ALTER TABLE llx_user ADD COLUMN state_job_id integer DEFAULT NULL;
+
 -- end of migration - nothing after this line
 
 -- Variants: allow standard import/export of variants (attributes, values, combinations,
