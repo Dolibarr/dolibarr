@@ -1126,6 +1126,12 @@ if (!defined('NOLOGIN')) {
 
 		dol_syslog("This is a new started user session. _SESSION['dol_login']=".$_SESSION["dol_login"]." Session id=".session_id());
 
+		// Enforce the max number of concurrent sessions per user (only when sessions are stored in database).
+		// Opening this new session evicts the user's oldest sessions above the limit, logging those browsers out.
+		if (!empty($php_session_save_handler) && $php_session_save_handler == 'db' && !empty($conf->file->main_limit_sessions_per_user) && (int) $conf->file->main_limit_sessions_per_user > 0) {
+			dolSessionsLimitForUser($user->id, (int) $conf->file->main_limit_sessions_per_user, session_id());
+		}
+
 		$db->begin();
 
 		$user->update_last_login_date();
