@@ -166,7 +166,9 @@ if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 			if ($line_type == 'title') {
 				$predefinedtitles = $this->getPredefinedTitles();  // @phan-suppress-current-line PhanUndeclaredMethod
 				if (!empty($predefinedtitles)) {
-					print $form->selectarray('line_predefinedtitle', $predefinedtitles, '', 1, 0, 0, 'onchange="var v = jQuery(this).val(); if (v && v != \'-1\') { jQuery(\'#line_desc\').val(v); }"', 0, 0, 0, '', 'minwidth100');
+					// The visible option label is exactly the title to insert, so read it from the selected
+					// option (already escaped by selectarray, decoded by the browser) instead of shipping a map.
+					print $form->selectarray('line_predefinedtitle', $predefinedtitles, '', 1, 0, 0, 'onchange="var o = this.options[this.selectedIndex]; if (o.value && o.value != \'-1\') { jQuery(\'#line_desc\').val(o.text); }"', 0, 0, 0, '', 'minwidth100');
 				}
 			}
 		}

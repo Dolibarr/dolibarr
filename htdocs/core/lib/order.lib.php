@@ -288,7 +288,10 @@ function getCustomerOrderPieChart($socid = 0)
 		$db->free($resql);
 
 		global $badgeStatus0, $badgeStatus1, $badgeStatus4, $badgeStatus6, $badgeStatus9;
-		include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+		$theme_vars_file = dol_getThemeFilePath('theme_vars.inc.php');
+		if ($theme_vars_file) {
+			include $theme_vars_file;
+		}
 
 		$result = '<div class="div-table-responsive-no-min">';
 		$result .= '<table class="noborder nohover centpercent">';
