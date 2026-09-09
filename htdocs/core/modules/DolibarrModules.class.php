@@ -384,6 +384,10 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 */
 	public $import_updatekeys_array;
 	/**
+	 * @var array<int,string[]>	Update keys preselected on the screen, as field aliases
+	 */
+	public $import_preselected_updatekeys_array;
+	/**
 	 * @var array<int,array<int,string>>
 	 */
 	public $import_run_sql_after_array;
