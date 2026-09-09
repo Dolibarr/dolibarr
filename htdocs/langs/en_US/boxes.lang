@@ -123,6 +123,7 @@ BoxLastFediverseInfos=Latest Fediverse Updates: News and Trends
 NoOpenedProjectsOpportunities=No open opportunities
 NoOpenedProjects=No open projects
 NoScheduledJobs=No Scheduled jobs
+BoxInvoicesDispute = Last disputed invoices
 # Pages
 UsersHome=Home users and groups
 MembersHome=Home Membership
