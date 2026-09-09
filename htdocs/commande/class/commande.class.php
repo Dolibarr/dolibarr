@@ -3455,9 +3455,10 @@ class Commande extends CommonOrder
 	 *
 	 *	@param	User	$user		User object
 	 *	@param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
+	 *	@param	int		$idwarehouse	Warehouse ID to move the stock back to (Used only if option STOCK_CALCULATE_ON_VALIDATE_ORDER is on). -1 = no stock change.
 	 * 	@return	int					<=0 if KO, >0 if OK
 	 */
-	public function delete($user, $notrigger = 0)
+	public function delete($user, $notrigger = 0, $idwarehouse = -1)
 	{
 		global $conf, $langs;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -3481,6 +3482,31 @@ class Commande extends CommonOrder
 		if ($this->countNbOfShipments() != 0) {
 			$this->errors[] = $langs->trans('SomeShipmentExists');
 			$error++;
+		}
+
+		// Restore stock, the validation had decreased it. Must be done before lines are deleted.
+		if (!$error && isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1 && $this->statut != self::STATUS_DRAFT && $idwarehouse != -1) {
+			require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
+			$langs->load("agenda");
+
+			$this->fetch_lines();
+
+			$num = count($this->lines);
+			for ($i = 0; $i < $num; $i++) {
+				if ($this->lines[$i]->fk_product > 0) {
+					$mouvP = new MouvementStock($this->db);
+					$mouvP->origin = &$this;
+					$mouvP->setOrigin($this->element, $this->id);
+					// We increment stock of product (and sub-products), we use 0 for price to not change the weighted average value
+					$result = $mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->trans("OrderDeletedInDolibarr", $this->ref));
+					if ($result < 0) {
+						$error++;
+						$this->error = $mouvP->error;
+						$this->errors = array_merge($this->errors, $mouvP->errors);
+						break;
+					}
+				}
+			}
 		}
 
 		// Delete extrafields of lines and lines
