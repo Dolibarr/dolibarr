@@ -1893,6 +1893,7 @@ while ($i < $imaxinloop) {
 
 		if (!empty($TInvoiceData)) {
 			foreach ($TInvoiceData as $invoiceData) {
+				'@phan-var-force stdClass $invoiceData';
 				$invoice = new Facture($db);
 				$invoice->fetch($invoiceData->facid);
 
