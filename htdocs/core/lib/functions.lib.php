@@ -14870,7 +14870,7 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 		if (!empty($params['use_unsecured_unescapedattr']) && is_array($params['use_unsecured_unescapedattr']) && in_array($key, $params['use_unsecured_unescapedattr'])) {
 			// Deprecated, forbidden.
 			$value = dol_htmlentities($value, ENT_QUOTES | ENT_SUBSTITUTE);
-		} elseif ($key == 'href') {
+		} elseif (in_array($key, ['href', 'data-confirm-url'])) {
 			$value = dolPrintHTMLForAttributeUrl($value);
 		} else {
 			$value = dolPrintHTMLForAttribute($value);

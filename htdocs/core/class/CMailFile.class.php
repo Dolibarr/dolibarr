@@ -1172,6 +1172,9 @@ class CMailFile
 								getDolGlobalString('OAUTH_'.getDolGlobalString($keyforsmtpoauthservice).'_URLCALLBACK')
 							);
 							$serviceFactory = new \OAuth\ServiceFactory();
+
+							// Force the curl client, the default stream one uses file_get_contents() which
+							// fails to reach the token endpoint on many setups, so the token is never refreshed.
 							$httpClient = new \OAuth\Common\Http\Client\CurlClient();
 							$serviceFactory->setHttpClient($httpClient);
 							$oauthname = explode('-', $OAUTH_SERVICENAME);
@@ -1359,6 +1362,9 @@ class CMailFile
 								getDolGlobalString('OAUTH_'.getDolGlobalString($keyforsmtpoauthservice).'_URLCALLBACK')
 							);
 							$serviceFactory = new \OAuth\ServiceFactory();
+
+							// Force the curl client, the default stream one uses file_get_contents() which
+							// fails to reach the token endpoint on many setups, so the token is never refreshed.
 							$httpClient = new \OAuth\Common\Http\Client\CurlClient();
 							$serviceFactory->setHttpClient($httpClient);
 							$oauthname = explode('-', $OAUTH_SERVICENAME);
