@@ -897,7 +897,7 @@ if ($object->id > 0) {
 		$sql .= ", p.total_tva";
 		$sql .= ", p.total_ttc";
 		$sql .= ", p.ref, p.ref_client, p.remise";
-		$sql .= ", p.datep as dp, p.fin_validite as date_limit, p.entity";
+		$sql .= ", p.datep as dp, p.fin_validite as date_limit, p.entity, p.last_main_doc";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c";
 		$sql .= " WHERE p.fk_soc = s.rowid AND p.fk_statut = c.id";
 		$sql .= " AND s.rowid = ".((int) $object->id);
@@ -934,33 +934,17 @@ if ($object->id > 0) {
 				$propal_static->total_ht = $objp->total_ht;
 				$propal_static->total_tva = $objp->total_tva;
 				$propal_static->total_ttc = $objp->total_ttc;
+				$propal_static->last_main_doc = $objp->last_main_doc;
+
 				print $propal_static->getNomUrl(1);
-
 				// Preview
-				$filedir = $conf->propal->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
-				$file_list = null;
-				if (!empty($filedir)) {
-					$file_list = dol_dir_list($filedir, 'files', 0, dol_sanitizeFileName($objp->ref).'.pdf', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
-				}
-				if (is_array($file_list) && !empty($file_list)) {
-					// Defined relative dir to DOL_DATA_ROOT
-					$relativedir = '';
-					if ($filedir) {
-						$relativedir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $filedir);
-						$relativedir = preg_replace('/^[\\/]/', '', $relativedir);
+				if (!empty($propal_static->last_main_doc)) {
+					$filedir = $conf->propal->multidir_output[$objp->entity] . '/' . dol_sanitizeFileName($objp->ref) . '/';
+					$filename = basename($propal_static->last_main_doc);
+					if (file_exists($filedir . $filename) && dol_is_file($filedir . $filename)) {
+						$relativepath = dol_sanitizeFileName($objp->ref) . '/' . $filename;
+						print $formfile->showPreview(array(), $propal_static->element, $relativepath, 0, 'entity=' . $objp->entity);
 					}
-					// Get list of files stored into database for same relative directory
-					if ($relativedir) {
-						completeFileArrayWithDatabaseInfo($file_list, $relativedir);
-						'@phan-var-force array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string,position_name:string,cover:string,keywords:string,acl:string,rowid:int,label:string,share:string}> $file_list';
-
-						//var_dump($sortfield.' - '.$sortorder);
-						if (!empty($sortfield) && !empty($sortorder)) {	// If $sortfield is for example 'position_name', we will sort on the property 'position_name' (that is concat of position+name)
-							$file_list = dol_sort_array($file_list, $sortfield, $sortorder);
-						}
-					}
-					$relativepath = dol_sanitizeFileName($objp->ref).'/'.dol_sanitizeFileName($objp->ref).'.pdf';
-					print $formfile->showPreview($file_list, $propal_static->element, $relativepath, 0, 'entity=' . $objp->entity);
 				}
 				print '</td><td class="tdoverflowmax125">';
 				if ($propal_static->fk_project > 0) {
@@ -1003,6 +987,7 @@ if ($object->id > 0) {
 		$sql .= ", c.ref, c.ref_client, c.fk_statut, c.facture";
 		$sql .= ", c.date_commande as dc";
 		$sql .= ", c.facture as billed";
+		$sql .= ", c.last_main_doc";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as c";
 		$sql .= " WHERE c.fk_soc = s.rowid ";
 		$sql .= " AND s.rowid = ".((int) $object->id);
@@ -1051,35 +1036,19 @@ if ($object->id > 0) {
 				$commande_static->total_tva = $objp->total_tva;
 				$commande_static->total_ttc = $objp->total_ttc;
 				$commande_static->billed = $objp->billed;
+				$commande_static->last_main_doc = $objp->last_main_doc;
 
 				print '<tr class="oddeven">';
 				print '<td class="nowraponall">';
 				print $commande_static->getNomUrl(1);
 				// Preview
-				$filedir = $conf->commande->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
-				$file_list = null;
-				if (!empty($filedir)) {
-					$file_list = dol_dir_list($filedir, 'files', 0, dol_sanitizeFileName($objp->ref).'.pdf', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
-				}
-				if (is_array($file_list) && !empty($file_list)) {
-					// Defined relative dir to DOL_DATA_ROOT
-					$relativedir = '';
-					if ($filedir) {
-						$relativedir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $filedir);
-						$relativedir = preg_replace('/^[\\/]/', '', $relativedir);
+				if (!empty($commande_static->last_main_doc)) {
+					$filedir = $conf->order->multidir_output[$objp->entity] . '/' . dol_sanitizeFileName($objp->ref) . '/';
+					$filename = basename($commande_static->last_main_doc);
+					if (file_exists($filedir . $filename) && dol_is_file($filedir . $filename)) {
+						$relativepath = dol_sanitizeFileName($objp->ref) . '/' . $filename;
+						print $formfile->showPreview(array(), $commande_static->element, $relativepath, 0, 'entity=' . $objp->entity);
 					}
-					// Get list of files stored into database for same relative directory
-					if ($relativedir) {
-						completeFileArrayWithDatabaseInfo($file_list, $relativedir);
-						'@phan-var-force array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string,position_name:string,cover:string,keywords:string,acl:string,rowid:int,label:string,share:string}> $file_list';
-
-						//var_dump($sortfield.' - '.$sortorder);
-						if (!empty($sortfield) && !empty($sortorder)) {	// If $sortfield is for example 'position_name', we will sort on the property 'position_name' (that is concat of position+name)
-							$file_list = dol_sort_array($file_list, $sortfield, $sortorder);
-						}
-					}
-					$relativepath = dol_sanitizeFileName($objp->ref).'/'.dol_sanitizeFileName($objp->ref).'.pdf';
-					print $formfile->showPreview($file_list, $commande_static->element, $relativepath, 0, 'entity=' . $objp->entity);
 				}
 				print '</td><td class="tdoverflowmax125">';
 				if ($commande_static->fk_project > 0) {
@@ -1118,6 +1087,7 @@ if ($object->id > 0) {
 		$sql .= ', e.ref, e.entity, e.fk_projet';
 		$sql .= ', e.date_creation';
 		$sql .= ', e.fk_statut as statut';
+		$sql .= ', e.last_main_doc';
 		$sql .= ', s.nom';
 		$sql .= ', s.rowid as socid';
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."expedition as e";
@@ -1156,36 +1126,19 @@ if ($object->id > 0) {
 				$sendingstatic->id = $objp->id;
 				$sendingstatic->ref = $objp->ref;
 				$sendingstatic->fk_project = $objp->fk_projet;
+				$sendingstatic->last_main_doc = $objp->last_main_doc;
 
 				print '<tr class="oddeven">';
 				print '<td class="nowraponall">';
 				print $sendingstatic->getNomUrl(1);
 				// Preview
-				$filedir = $conf->expedition->multidir_output[$objp->entity].'/sending/'.dol_sanitizeFileName($objp->ref);
-				$file_list = null;
-				if (!empty($filedir)) {
-					$file_list = dol_dir_list($filedir, 'files', 0, dol_sanitizeFileName($objp->ref).'.pdf', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
-				}
-				if (is_array($file_list) && !empty($file_list)) {
-					// Defined relative dir to DOL_DATA_ROOT
-					$relativedir = '';
-					if ($filedir) {
-						$relativedir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $filedir);
-						$relativedir = preg_replace('/^[\\/]/', '', $relativedir);
+				if (!empty($sendingstatic->last_main_doc)) {
+					$filedir = $conf->expedition->multidir_output[$objp->entity] . '/sending/' . dol_sanitizeFileName($objp->ref) . '/';
+					$filename = basename($sendingstatic->last_main_doc);
+					if (file_exists($filedir . $filename) && dol_is_file($filedir . $filename)) {
+						$relativepath = dol_sanitizeFileName($objp->ref) . '/' . $filename;
+						print $formfile->showPreview(array(), $sendingstatic->element, $relativepath, 0, 'entity=' . $objp->entity);
 					}
-					// Get list of files stored into database for same relative directory
-					if ($relativedir) {
-						completeFileArrayWithDatabaseInfo($file_list, $relativedir);
-						'@phan-var-force array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string,position_name:string,cover:string,keywords:string,acl:string,rowid:int,label:string,share:string}> $file_list';
-
-						//var_dump($sortfield.' - '.$sortorder);
-						if (!empty($sortfield) && !empty($sortorder)) {	// If $sortfield is for example 'position_name', we will sort on the property 'position_name' (that is concat of position+name)
-							$file_list = dol_sort_array($file_list, $sortfield, $sortorder);
-						}
-					}
-					$relativepath = dol_sanitizeFileName($objp->ref).'/'.dol_sanitizeFileName($objp->ref).'.pdf';
-
-					print $formfile->showPreview($file_list, $sendingstatic->element, $relativepath, 0, $param);
 				}
 				print '</td><td class="tdoverflowmax125">';
 				if ($sendingstatic->fk_project > 0) {
@@ -1274,32 +1227,13 @@ if ($object->id > 0) {
 				print '<tr class="oddeven">';
 				print '<td class="nowraponall">';
 				print $contrat->getNomUrl(1, 12);
-				if (!empty($contrat->model_pdf)) {
-					// Preview
-					$filedir = $conf->contract->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
-					$file_list = null;
-					if (!empty($filedir)) {
-						$file_list = dol_dir_list($filedir, 'files', 0, dol_sanitizeFileName($objp->ref).'.pdf', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
-					}
-					if (is_array($file_list) && !empty($file_list)) {
-						// Defined relative dir to DOL_DATA_ROOT
-						$relativedir = '';
-						if ($filedir) {
-							$relativedir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $filedir);
-							$relativedir = preg_replace('/^[\\/]/', '', $relativedir);
-						}
-						// Get list of files stored into database for same relative directory
-						if ($relativedir) {
-							completeFileArrayWithDatabaseInfo($file_list, $relativedir);
-							'@phan-var-force array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string,position_name:string,cover:string,keywords:string,acl:string,rowid:int,label:string,share:string}> $file_list';
-
-							//var_dump($sortfield.' - '.$sortorder);
-							if (!empty($sortfield) && !empty($sortorder)) {	// If $sortfield is for example 'position_name', we will sort on the property 'position_name' (that is concat of position+name)
-								$file_list = dol_sort_array($file_list, $sortfield, $sortorder);
-							}
-						}
-						$relativepath = dol_sanitizeFileName($objp->ref).'/'.dol_sanitizeFileName($objp->ref).'.pdf';
-						print $formfile->showPreview($file_list, $contrat->element, $relativepath, 0, 'entity=' . $objp->entity);
+				// Preview
+				if (!empty($contrat->last_main_doc)) {
+					$filedir = $conf->contract->multidir_output[$objp->entity] . '/' . dol_sanitizeFileName($objp->ref) . '/';
+					$filename = basename($contrat->last_main_doc);
+					if (file_exists($filedir . $filename) && dol_is_file($filedir . $filename)) {
+						$relativepath = dol_sanitizeFileName($objp->ref) . '/' . $filename;
+						print $formfile->showPreview(array(), $contrat->element, $relativepath, 0, 'entity=' . $objp->entity);
 					}
 				}
 				// $filename = dol_sanitizeFileName($objp->ref);
@@ -1341,6 +1275,7 @@ if ($object->id > 0) {
 	 */
 	if (isModEnabled('intervention') && $user->hasRight('ficheinter', 'lire')) {
 		$sql = "SELECT s.nom, s.rowid, f.rowid as id, f.ref, f.fk_projet, f.fk_statut, f.duree as duration, f.datei as startdate, f.entity";
+		$sql .= ', f.last_main_doc';
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."fichinter as f";
 		$sql .= " WHERE f.fk_soc = s.rowid";
 		$sql .= " AND s.rowid = ".((int) $object->id);
@@ -1372,35 +1307,19 @@ if ($object->id > 0) {
 				$fichinter_static->statut = $objp->fk_statut;	// deprecated
 				$fichinter_static->status = $objp->fk_statut;
 				$fichinter_static->fk_project = $objp->fk_projet;
+				$fichinter_static->last_main_doc = $objp->last_main_doc;
 
 				print '<tr class="oddeven">';
 				print '<td class="nowraponall">';
 				print $fichinter_static->getNomUrl(1);
 				// Preview
-				$filedir = $conf->ficheinter->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
-				$file_list = null;
-				if (!empty($filedir)) {
-					$file_list = dol_dir_list($filedir, 'files', 0, dol_sanitizeFileName($objp->ref).'.pdf', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
-				}
-				if (is_array($file_list) && !empty($file_list)) {
-					// Defined relative dir to DOL_DATA_ROOT
-					$relativedir = '';
-					if ($filedir) {
-						$relativedir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $filedir);
-						$relativedir = preg_replace('/^[\\/]/', '', $relativedir);
+				if (!empty($fichinter_static->last_main_doc)) {
+					$filedir = $conf->ficheinter->multidir_output[$objp->entity] . '/' . dol_sanitizeFileName($objp->ref) . '/';
+					$filename = basename($fichinter_static->last_main_doc);
+					if (file_exists($filedir . $filename) && dol_is_file($filedir . $filename)) {
+						$relativepath = dol_sanitizeFileName($objp->ref) . '/' . $filename;
+						print $formfile->showPreview(array(), $fichinter_static->element, $relativepath, 0, 'entity=' . $objp->entity);
 					}
-					// Get list of files stored into database for same relative directory
-					if ($relativedir) {
-						completeFileArrayWithDatabaseInfo($file_list, $relativedir);
-						'@phan-var-force array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string,position_name:string,cover:string,keywords:string,acl:string,rowid:int,label:string,share:string}> $file_list';
-
-						//var_dump($sortfield.' - '.$sortorder);
-						if (!empty($sortfield) && !empty($sortorder)) {	// If $sortfield is for example 'position_name', we will sort on the property 'position_name' (that is concat of position+name)
-							$file_list = dol_sort_array($file_list, $sortfield, $sortorder);
-						}
-					}
-					$relativepath = dol_sanitizeFileName($objp->ref).'/'.dol_sanitizeFileName($objp->ref).'.pdf';
-					print $formfile->showPreview($file_list, $fichinter_static->element, $relativepath, 0, 'entity=' . $objp->entity);
 				}
 				print '</td><td class="tdoverflowmax125">';
 				if ($fichinter_static->fk_project > 0) {
@@ -1546,6 +1465,7 @@ if ($object->id > 0) {
 		$sql .= ', f.total_tva';
 		$sql .= ', f.total_ttc';
 		$sql .= ', f.entity';
+		$sql .= ', f.last_main_doc';
 		$sql .= ', f.datef as df, f.date_lim_reglement as dl, f.datec as dc, f.paye as paye, f.fk_statut as status';
 		$sql .= ', s.nom, s.rowid as socid';
 		$sql .= ', SUM(pf.amount) as am';
@@ -1601,35 +1521,19 @@ if ($object->id > 0) {
 				$facturestatic->totalpaid = $objp->am;
 				$facturestatic->date = $db->jdate($objp->df);
 				$facturestatic->date_lim_reglement = $db->jdate($objp->dl);
+				$facturestatic->last_main_doc = $objp->last_main_doc;
 
 				print '<tr class="oddeven">';
 				print '<td class="nowraponall">';
 				print $facturestatic->getNomUrl(1);
 				// Preview
-				$filedir = $conf->invoice->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
-				$file_list = null;
-				if (!empty($filedir)) {
-					$file_list = dol_dir_list($filedir, 'files', 0, dol_sanitizeFileName($objp->ref).'.pdf', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
-				}
-				if (is_array($file_list) && !empty($file_list)) {
-					// Defined relative dir to DOL_DATA_ROOT
-					$relativedir = '';
-					if ($filedir) {
-						$relativedir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $filedir);
-						$relativedir = preg_replace('/^[\\/]/', '', $relativedir);
+				if (!empty($facturestatic->last_main_doc)) {
+					$filedir = $conf->invoice->multidir_output[$objp->entity] . '/' . dol_sanitizeFileName($objp->ref) . '/';
+					$filename = basename($facturestatic->last_main_doc);
+					if (file_exists($filedir . $filename) && dol_is_file($filedir . $filename)) {
+						$relativepath = dol_sanitizeFileName($objp->ref) . '/' . $filename;
+						print $formfile->showPreview(array(), $facturestatic->element, $relativepath, 0, 'entity=' . $objp->entity);
 					}
-					// Get list of files stored into database for same relative directory
-					if ($relativedir) {
-						completeFileArrayWithDatabaseInfo($file_list, $relativedir);
-						'@phan-var-force array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string,position_name:string,cover:string,keywords:string,acl:string,rowid:int,label:string,share:string}> $file_list';
-
-						//var_dump($sortfield.' - '.$sortorder);
-						if (!empty($sortfield) && !empty($sortorder)) {	// If $sortfield is for example 'position_name', we will sort on the property 'position_name' (that is concat of position+name)
-							$file_list = dol_sort_array($file_list, $sortfield, $sortorder);
-						}
-					}
-					$relativepath = dol_sanitizeFileName($objp->ref).'/'.dol_sanitizeFileName($objp->ref).'.pdf';
-					print $formfile->showPreview($file_list, $facturestatic->element, $relativepath, 0, 'entity=' . $objp->entity);
 				}
 				print '</td><td class="tdoverflowmax125">';
 				if ($facturestatic->fk_project > 0) {
