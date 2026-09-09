@@ -377,13 +377,15 @@ class Users extends DolibarrApi
 				// This properties can't be set/modified with API
 				throw new RestException(405, 'The property '.$field." can't be set/modified using the APIs");
 			}
-			/*if ($field == 'pass') {
-				if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'password')) {
+			if ($field == 'pass') {
+				if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'password')) {		// In creation, users is always a different user than the one who create it.
 					throw new RestException(403, 'You are not allowed to modify/set password of other users');
-					continue;
+				}
+				if (!DolibarrApiAccess::$user->admin) {		// Only admin can set a password and knowing it. Others can reset with correct rights user->self->password but without knowing it.
+					throw new RestException(403, 'As a non admin user, you are not allowed to set a password from this API. Use the /setPassword endpoint for this.');
 				}
 			}
-			*/
+
 			$canreadsalary = ((isModEnabled('salaries') && DolibarrApiAccess::$user->hasRight('salaries', 'read')) || !isModEnabled('salaries'));
 			if (!$canreadsalary) {
 				if (in_array($field, array('salary', 'salaryextra', 'thm', 'tjm'))) {
@@ -486,6 +488,9 @@ class Users extends DolibarrApi
 				if ($this->useraccount->id == DolibarrApiAccess::$user->id && !DolibarrApiAccess::$user->hasRight('user', 'self', 'password')) {
 					throw new RestException(403, 'You are not allowed to modify your own password');
 				}
+				if (!DolibarrApiAccess::$user->admin) {		// Only admin can set a password and knowing it. Others can reset with correct rights user->self->password but without knowing it.
+					throw new RestException(403, 'As a non admin user, you are not allowed to set a password from this API. Use the /setPassword endpoint for this.');
+				}
 			}
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
@@ -558,8 +563,11 @@ class Users extends DolibarrApi
 			throw new RestException(403, "Error: password reset APIs are disabled by default. To allow this, the option API_ALLOW_PASSWORD_RESET must be set.");
 		}
 
-		if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'creer') && empty(DolibarrApiAccess::$user->admin)) {
-			throw new RestException(403, "setPassword on user not allowed for login ".DolibarrApiAccess::$user->login);
+		if ($id != DolibarrApiAccess::$user->id && !DolibarrApiAccess::$user->hasRight('user', 'user', 'password')) {
+			throw new RestException(403, 'You are not allowed to modify password of other users');
+		}
+		if ($id == DolibarrApiAccess::$user->id && !DolibarrApiAccess::$user->hasRight('user', 'self', 'password')) {
+			throw new RestException(403, 'You are not allowed to modify your own password');
 		}
 
 		$result = $this->useraccount->fetch($id);
