@@ -255,6 +255,11 @@ div[aria-describedby="dialog-info"].ui-dialog .ui-dialog-buttonpane {
 	border-width: 0;
 }
 
+.takepos #search {
+	height: unset;
+	margin-bottom: 4px !important;
+}
+
 .takepospay {
 	font-size: 1.5em;
 	height: 40px !important;
