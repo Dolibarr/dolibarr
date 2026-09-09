@@ -195,3 +195,8 @@ ALTER TABLE llx_product_attribute_combination2val ADD CONSTRAINT fk_product_att_
 ALTER TABLE llx_product_attribute_combination2val ADD CONSTRAINT fk_product_att_com2v_prod_attr_val FOREIGN KEY (fk_prod_attr_val) REFERENCES llx_product_attribute_value (rowid);
 ALTER TABLE llx_product_attribute_combination_price_level ADD CONSTRAINT fk_prod_att_comb_price_level_combination FOREIGN KEY (fk_product_attribute_combination) REFERENCES llx_product_attribute_combination (rowid);
 
+-- llx_notify_def.entity was never written, every row kept its DEFAULT 1, so filtering the
+-- notification queries on it would hide the existing subscriptions. Give each row the entity of the
+-- third party or the user it belongs to. Rows tied to neither keep their current value.
+UPDATE llx_notify_def INNER JOIN llx_societe ON llx_notify_def.fk_soc = llx_societe.rowid SET llx_notify_def.entity = llx_societe.entity WHERE llx_notify_def.fk_soc > 0;
+UPDATE llx_notify_def INNER JOIN llx_user ON llx_notify_def.fk_user = llx_user.rowid SET llx_notify_def.entity = llx_user.entity WHERE llx_notify_def.fk_user > 0;
