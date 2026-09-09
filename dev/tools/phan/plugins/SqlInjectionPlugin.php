@@ -118,6 +118,7 @@ class SqlInjectionVisitor extends \Phan\PluginV3\PluginAwarePostAnalysisVisitor
 		'dolSqlDateFilter', // Partially safe datefield not checked/escaped
 		'dol_escape_json',
 		'dol_hash', // Returns string
+		'dol_natural_search_phone', // Calls natural_search() which escapes values
 		'dol_print_date', // Returns formatted string
 		'dol_sanitizeFileName', // Supposed ok for sql (?)
 		'dol_strlen', // Returns int
