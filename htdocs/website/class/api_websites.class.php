@@ -293,7 +293,7 @@ class Websites extends DolibarrApi
 	 *
 	 * @param   int     $id             ID of website
 	 * @param   int     $pageid         ID of page
-	 * @return  WebsitePage             Object with cleaned properties
+	 * @return  array|mixed             Object with cleaned properties
 	 * @phan-return WebsitePage
 	 * @phpstan-return WebsitePage
 	 *
@@ -341,7 +341,7 @@ class Websites extends DolibarrApi
 	 * @param   array   $request_data   Page data
 	 * @phan-param ?array<string,string> $request_data
 	 * @phpstan-param ?array<string,string> $request_data
-	 * @return  Object                  Object after update
+	 * @return  array|mixed				Object after update
 	 * @phan-return WebsitePage
 	 * @phpstan-return WebsitePage
 	 *
