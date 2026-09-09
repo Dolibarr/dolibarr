@@ -140,6 +140,7 @@ class DolGeoIP
 		try {
 			$databasetype = '';
 			if (is_object($this->gi) && method_exists($this->gi, 'metadata')) {
+				// @phan-suppress-next-line PhanUndeclaredClassProperty  MaxMind\Db\Reader\Metadata is provided by geoip2.phar and has no stub
 				$databasetype = (string) $this->gi->metadata()->databaseType;
 			}
 			if (strpos($databasetype, 'Country') === false && strpos($databasetype, 'City') !== false) {
