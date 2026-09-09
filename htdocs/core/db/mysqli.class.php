@@ -50,7 +50,8 @@ class DoliDBMysqli extends DoliDB
 
 	/**
 	 *	Constructor.
-	 *	This create an opened connection to a database server and eventually to a database
+	 *	This create an opened connection to a
+ database server and eventually to a database
 	 *
 	 *	@param      string	$type		Type of database (mysql, pgsql...). Not used.
 	 *	@param	    string	$host		Address of database server
@@ -95,15 +96,17 @@ class DoliDBMysqli extends DoliDB
 
 		// Try server connection
 		// We do not try to connect to database, only to server. Connect to database is done later in constructor
-		$this->db = $this->connect($host, $user, $pass, '', $port);
+		$db = $this->connect($host, $user, $pass, '', $port);
+		$this->db = $db;
 
-		if ($this->db && empty($this->db->connect_errno)) {
+		if ($db && empty($db->connect_errno)) {
 			$this->connected = true;
-			$this->ok = true;
+		
+	$this->ok = true;
 		} else {
 			$this->connected = false;
 			$this->ok = false;
-			$this->error = empty($this->db) ? 'Failed to connect' : $this->db->connect_error;
+			$this->error = !$db ? 'Failed to connect' : $db->connect_error;
 			dol_syslog(get_class($this)."::DoliDBMysqli Connect error: ".$this->error, LOG_ERR);
 		}
 
@@ -133,7 +136,8 @@ class DoliDBMysqli extends DoliDB
 
 						$this->db->set_charset($clientmustbe); // This set charset, but with a bad collation (colllation is forced later)
 					} catch (Throwable $e) {
-						print 'Failed to force character_set_client to '.$clientmustbe." (according to setup) to match the one of the server database.<br>\n";
+						print 'Failed to force character_set_client to '.$clientmustbe." (acco
+rding to setup) to match the one of the server database.<br>\n";
 						print $e->getMessage();
 						print "<br>\n";
 						if ($clientmustbe != 'utf8') {
@@ -197,7 +201,8 @@ class DoliDBMysqli extends DoliDB
 	 * @param	int		$mode			0=Use, 1=Force
 	 * @return	string					SQL string
 	 */
-	public function hintindex($nameofindex, $mode = 1)
+	
+public function hintindex($nameofindex, $mode = 1)
 	{
 		return " ".($mode == 1 ? 'FORCE' : 'USE')." INDEX(".preg_replace('/[^a-z0-9_]/', '', $nameofindex).")";
 	}
@@ -261,7 +266,8 @@ class DoliDBMysqli extends DoliDB
 				return false;
 			}
 			if (strpos($host, 'ssl://') === 0) {
-				$tmp = new mysqliDoli($host, $login, $passwd, $name, $port);
+				$tmp = new mysqliDoli
+($host, $login, $passwd, $name, $port);
 			} else {
 				$tmp = new mysqli($host, $login, $passwd, $name, $port);
 			}
@@ -329,7 +335,8 @@ class DoliDBMysqli extends DoliDB
 		$query = trim($query);
 
 
-		/*if ($usesavepoint && $this->transaction_opened) {
+		/*if ($usesavepoint && $th
+is->transaction_opened) {
 			dol_syslog(get_class($this)."::query SAVEPOINT mysavepoint", LOG_DEBUG); // Log of request was not yet done previously
 			$this->db->query('SAVEPOINT mysavepoint');
 		}*/
@@ -378,7 +385,8 @@ class DoliDBMysqli extends DoliDB
 			}*/
 
 			$this->lastquery = $query;
-			$this->_results = $ret;
+	
+		$this->_results = $ret;
 		}
 
 		return $ret;
@@ -453,6 +461,7 @@ class DoliDBMysqli extends DoliDB
 				$resultset = $this->_results;
 			}
 			return $resultset->fetch_row();
+
 		} else {
 			// If the cursor is a boolean, return 0
 			return 0;
@@ -528,7 +537,8 @@ class DoliDBMysqli extends DoliDB
 	/**
 	 *	Escape a string to insert data into a like
 	 *
-	 *	@param	string	$stringtoencode		String to escape
+	 *	@param	string	$stringtoenc
+ode		String to escape
 	 *	@return	string						String escaped
 	 */
 	public function escapeforlike($stringtoencode)
@@ -578,7 +588,8 @@ class DoliDBMysqli extends DoliDB
 				1217 => 'DB_ERROR_CHILD_EXISTS',
 				1396 => 'DB_ERROR_USER_ALREADY_EXISTS', // When creating a user that already existing
 				1451 => 'DB_ERROR_CHILD_EXISTS',
-				1824 => 'DB_ERROR_CANNOT_CREATE',		// When creating a constraint on a parent table that does not exists
+				1824 => 'DB_ERROR_CANNOT_CREATE',		// When creating a constraint
+ on a parent table that does not exists
 				1826 => 'DB_ERROR_KEY_NAME_ALREADY_EXISTS'
 			);
 
@@ -637,7 +648,8 @@ class DoliDBMysqli extends DoliDB
 		//Encryption key
 		$cryptKey = (!empty($conf->db->dolibarr_main_db_cryptkey) ? $conf->db->dolibarr_main_db_cryptkey : '');
 
-		$escapedstringwithquotes = ($withQuotes ? "'" : "").$this->escape($fieldorvalue).($withQuotes ? "'" : "");
+		$escap
+edstringwithquotes = ($withQuotes ? "'" : "").$this->escape($fieldorvalue).($withQuotes ? "'" : "");
 
 		if ($cryptType && !empty($cryptKey)) {
 			if ($cryptType == 2) {
@@ -705,7 +717,8 @@ class DoliDBMysqli extends DoliDB
 	 *	We force to create database with charset this->forcecharset and collate this->forcecollate
 	 *
 	 *	@param	string	$database		Database name to create
-	 * 	@param	string	$charset		Charset used to store data
+	 * 	@param	string	$charset		Charset used
+ to store data
 	 * 	@param	string	$collation		Charset used to sort data
 	 * 	@param	string	$owner			Username of database owner
 	 * 	@return	null|mysqli_result		Resource defined if OK, null if KO
@@ -773,7 +786,8 @@ class DoliDBMysqli extends DoliDB
 	 *  List tables into a database
 	 *
 	 *  @param	string		$database	Name of database
-	 *  @param	string		$table		Name of table filter ('xxx%')
+	 *  @p
+aram	string		$table		Name of table filter ('xxx%')
 	 *  @return	array<array{0:string,1:string}>		List of tables in an array
 	 */
 	public function DDLListTablesFull($database, $table = '')
@@ -831,7 +845,8 @@ class DoliDBMysqli extends DoliDB
 	 *	Create a table into database
 	 *
 	 *	@param	    string	$table 			Name of table
-	 *	@param	    array<string,array{type:string,label?:string,enabled?:int<0,2>|string,position?:int,notnull?:int,visible?:int<-2,5>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>}>	$fields 		Associative table [field name][table of descriptions]
+	 *	@param	    array<string,array{type:string,label?:string,enabled?:int<0,2>|string,position?:int,notnull?:int,visible?:int<-2,5>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>}>	$fields 		Associative
+ table [field name][table of descriptions]
 	 *	@param	    string	$primary_key 	Name of the field that will be the primary key
 	 *	@param	    string	$type 			Table type
 	 *	@param	    ?array<string,mixed>	$unique_keys 	Associative table: key=field, value=field value
@@ -875,7 +890,8 @@ class DoliDBMysqli extends DoliDB
 				if (in_array($field_desc['type'], array('tinyint', 'smallint', 'int', 'double'))) {
 					$sqlfields[$i] .= " DEFAULT ".((float) $field_desc['default']);
 				} elseif ($field_desc['default'] == 'null' || $field_desc['default'] == 'CURRENT_TIMESTAMP') {
-					$sqlfields[$i] .= " DEFAULT ".$this->sanitize($field_desc['default']);
+					$sqlfi
+elds[$i] .= " DEFAULT ".$this->sanitize($field_desc['default']);
 				} else {
 					$sqlfields[$i] .= " DEFAULT '".$this->escape($field_desc['default'])."'";
 				}
@@ -948,7 +964,8 @@ class DoliDBMysqli extends DoliDB
 	/**
 	 *	Return a pointer of line with description of a table or field
 	 *
-	 *	@param	string		$table	Name of table
+	 *	@param	string		$table	Nam
+e of table
 	 *	@param	string		$field	Optional: Name of field if we want description of field
 	 *	@return	bool|mysqli_result	Resultset x (x->Field, x->Type, ...)
 	 */
@@ -968,430 +985,6 @@ class DoliDBMysqli extends DoliDB
 	 *
 	 *	@param	string	$table 				Name of table
 	 *	@param	string	$field_name 		Name of field to add
-	 *	@param	array{type:string,label?:string,enabled?:int<0,2>|string,position?:int,notnull?:int,visible?:int,noteditable?:int,default?:string,extra?:string,null?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string} $field_desc 		Associative array of description of the field to insert [parameter name][parameter value]
-	 *	@param	string	$field_position 	Optional e.g.: "after some_field"
-	 *	@return	int							Return integer <0 if KO, >0 if OK
-	 */
-	public function DDLAddField($table, $field_name, $field_desc, $field_position = "")
-	{
-		// phpcs:enable
-		// keys looked up in the descriptions array (field_desc): type,value,attribute,null,default,extra
-		// ex. : $field_desc = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
-		$sql = "ALTER TABLE ".$this->sanitize($table)." ADD ".$this->sanitize($field_name)." ";
+	 *	@param	array{type:string,label?:string,enabled?:int<0,2>|string,position?:int,notnull?:
 
-		if ($field_desc['type'] !== 'datetimegmt') {
-			$sql .= $this->sanitize($field_desc['type']);
-		} else {
-			$sql .= 'datetime';
-		}
-
-		if (in_array($field_desc['type'], array('double', 'int', 'varchar')) && array_key_exists('value', $field_desc) && !empty($field_desc['value'])) {
-			$sql .= "(".$this->sanitize($field_desc['value']).")";
-		}
-		if (isset($field_desc['attribute']) && preg_match("/^[^\s]/i", $field_desc['attribute'])) {
-			$sql .= " ".$this->sanitize($field_desc['attribute']);
-		}
-		if (isset($field_desc['null']) && preg_match("/^[^\s]/i", $field_desc['null'])) {
-			if ($field_desc['null'] == 'NOT NULL') {
-				$sql .= " ".$this->sanitize($field_desc['null'], 0, 0, 1);
-			} else {
-				$sql .= " ".$this->sanitize($field_desc['null']);
-			}
-		}
-		if (isset($field_desc['default']) && preg_match("/^[^\s]/i", $field_desc['default'])) {
-			if (in_array($field_desc['type'], array('tinyint', 'smallint', 'int', 'double'))) {
-				$sql .= " DEFAULT ".((float) $field_desc['default']);
-			} elseif ($field_desc['default'] == 'null' || $field_desc['default'] == 'CURRENT_TIMESTAMP') {
-				$sql .= " DEFAULT ".$this->sanitize($field_desc['default']);
-			} else {
-				$sql .= " DEFAULT '".$this->escape($field_desc['default'])."'";
-			}
-		}
-		if (isset($field_desc['extra']) && preg_match("/^[^\s]/i", $field_desc['extra'])) {
-			$sql .= " ".$this->sanitize($field_desc['extra'], 0, 0, 1);
-		}
-		$sql .= " ".$this->sanitize($field_position, 0, 0, 1);
-
-		dol_syslog(get_class($this)."::DDLAddField ".$sql, LOG_DEBUG);
-		if ($this->query($sql)) {
-			return 1;
-		}
-		return -1;
-	}
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *	Update format of a field into a table
-	 *
-	 *	@param	string	$table 				Name of table
-	 *	@param	string	$field_name 		Name of field to modify
-	 *	@param	array{type:string,label?:string,enabled?:int<0,2>|string,position?:int,notnull?:int,visible?:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string,value?:string,null?:string}	$field_desc 	Array with description of field format
-	 *	@return	int							Return integer <0 if KO, >0 if OK
-	 */
-	public function DDLUpdateField($table, $field_name, $field_desc)
-	{
-		// phpcs:enable
-		$sql = "ALTER TABLE ".$this->sanitize($table);
-		$sql .= " MODIFY COLUMN ".$this->sanitize($field_name)." ";
-
-		if ($field_desc['type'] !== 'datetimegmt') {
-			$sql .= $this->sanitize($field_desc['type']);
-		} else {
-			$sql .= 'datetime';
-		}
-
-		if (in_array($field_desc['type'], array('double', 'int', 'varchar')) && array_key_exists('value', $field_desc) && !empty($field_desc['value'])) {
-			$sql .= "(".$this->sanitize($field_desc['value']).")";
-		}
-		if (isset($field_desc['null']) && ($field_desc['null'] == 'not null' || $field_desc['null'] == 'NOT NULL')) {
-			// We will try to change format of column to NOT NULL. To be sure the ALTER works, we try to update fields that are NULL
-			if ($field_desc['type'] == 'varchar' || $field_desc['type'] == 'text') {
-				$sqlbis = "UPDATE ".$this->sanitize($table)." SET ".$this->sanitize($field_name)." = '".$this->escape(isset($field_desc['default']) ? $field_desc['default'] : '')."' WHERE ".$this->sanitize($field_name)." IS NULL";
-				$this->query($sqlbis);
-			} elseif (in_array($field_desc['type'], array('tinyint', 'smallint', 'int', 'double'))) {
-				$sqlbis = "UPDATE ".$this->sanitize($table)." SET ".$this->sanitize($field_name)." = ".((float) $this->escape(isset($field_desc['default']) ? $field_desc['default'] : 0))." WHERE ".$this->sanitize($field_name)." IS NULL";
-				$this->query($sqlbis);
-			}
-
-			$sql .= " NOT NULL";
-		}
-
-		if (isset($field_desc['default']) && $field_desc['default'] != '') {
-			if (in_array($field_desc['type'], array('tinyint', 'smallint', 'int', 'double'))) {
-				$sql .= " DEFAULT ".((float) $field_desc['default']);
-			} elseif ($field_desc['type'] != 'text') {
-				$sql .= " DEFAULT '".$this->escape($field_desc['default'])."'"; // Default not supported on text fields
-			}
-		}
-
-		//print $sql;exit;
-		dol_syslog(get_class($this)."::DDLUpdateField ".$sql, LOG_DEBUG);
-		if (!$this->query($sql)) {
-			return -1;
-		} else {
-			return 1;
-		}
-	}
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *	Drop a field from table
-	 *
-	 *	@param	string	$table 			Name of table
-	 *	@param	string	$field_name 	Name of field to drop
-	 *	@return	int						Return integer <0 if KO, >0 if OK
-	 */
-	public function DDLDropField($table, $field_name)
-	{
-		// phpcs:enable
-		$tmp_field_name = preg_replace('/[^a-z0-9\.\-\_]/i', '', $field_name);
-
-		$sql = "ALTER TABLE ".$this->sanitize($table)." DROP COLUMN `".$this->sanitize($tmp_field_name)."`";
-		if ($this->query($sql)) {
-			return 1;
-		}
-		$this->error = $this->lasterror();
-		return -1;
-	}
-
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 * 	Create a user and privileges to connect to database (even if database does not exists yet)
-	 *
-	 *	@param	string	$dolibarr_main_db_host 		Ip server or '%'
-	 *	@param	string	$dolibarr_main_db_user 		Name of new user
-	 *	@param	string	$dolibarr_main_db_pass 		Password for the new user
-	 *	@param	string	$dolibarr_main_db_name		Database name where user must be granted
-	 *	@return	int									Return integer <0 if KO, >=0 if OK
-	 */
-	public function DDLCreateUser($dolibarr_main_db_host, $dolibarr_main_db_user, $dolibarr_main_db_pass, $dolibarr_main_db_name)
-	{
-		// phpcs:enable
-		$sql = "CREATE USER '".$this->escape($dolibarr_main_db_user)."' IDENTIFIED BY '".$this->escape($dolibarr_main_db_pass)."'";
-		dol_syslog(get_class($this)."::DDLCreateUser", LOG_DEBUG); // No sql to avoid password in log
-		$resql = $this->query($sql);
-		if (!$resql) {
-			if ($this->lasterrno != 'DB_ERROR_USER_ALREADY_EXISTS') {
-				return -1;
-			} else {
-				// If user already exists, we continue to set permissions
-				dol_syslog(get_class($this)."::DDLCreateUser sql=".$sql, LOG_WARNING);
-			}
-		}
-
-		// Redo with localhost forced (sometimes user is created on %)
-		$sql = "CREATE USER '".$this->escape($dolibarr_main_db_user)."'@'localhost' IDENTIFIED BY '".$this->escape($dolibarr_main_db_pass)."'";
-		$resql = $this->query($sql);
-
-		$sql = "GRANT ALL PRIVILEGES ON `".$this->sanitize($dolibarr_main_db_name)."`.* TO '".$this->escape($dolibarr_main_db_user)."'@'".$this->escape($dolibarr_main_db_host)."'";
-		dol_syslog(get_class($this)."::DDLCreateUser", LOG_DEBUG); // No sql to avoid password in log
-		$resql = $this->query($sql);
-		if (!$resql) {
-			$this->error = "Connected user not allowed to GRANT ALL PRIVILEGES ON ".$this->escape($dolibarr_main_db_name).".* TO '".$this->escape($dolibarr_main_db_user)."'@'".$this->escape($dolibarr_main_db_host)."'";
-			return -1;
-		}
-
-		$sql = "FLUSH Privileges";
-
-		dol_syslog(get_class($this)."::DDLCreateUser", LOG_DEBUG);
-		$resql = $this->query($sql);
-		if (!$resql) {
-			return -1;
-		}
-
-		return 1;
-	}
-
-	/**
-	 *	Return charset used to store data in current database
-	 *  Note: if we are connected to databasename, it is same result than using SELECT default_character_set_name FROM information_schema.SCHEMATA WHERE schema_name = "databasename";)
-	 *
-	 *	@return		string		Charset
-	 *  @see getDefaultCollationDatabase()
-	 */
-	public function getDefaultCharacterSetDatabase()
-	{
-		$resql = $this->query("SHOW VARIABLES LIKE 'character_set_database'");
-		if (!$resql) {
-			// version Mysql < 4.1.1
-			return $this->forcecharset;
-		}
-		$liste = $this->fetch_array($resql);
-		$tmpval = $liste['Value'];
-
-		return $tmpval;
-	}
-
-	/**
-	 *	Return list of available charset that can be used to store data in database
-	 *
-	 *	@return	?array<int,array{charset:string,description:string}>		List of Charset
-	 */
-	public function getListOfCharacterSet()
-	{
-		$resql = $this->query('SHOW CHARSET');
-		$liste = array();
-		if ($resql) {
-			$i = 0;
-			while ($obj = $this->fetch_object($resql)) {
-				$liste[$i]['charset'] = $obj->Charset;
-				$liste[$i]['description'] = $obj->Description;
-				$i++;
-			}
-			$this->free($resql);
-		} else {
-			// version Mysql < 4.1.1
-			return null;
-		}
-		return $liste;
-	}
-
-	/**
-	 *	Return collation used in current database
-	 *
-	 *	@return		string		Collation value
-	 *  @see getDefaultCharacterSetDatabase()
-	 */
-	public function getDefaultCollationDatabase()
-	{
-		$resql = $this->query("SHOW VARIABLES LIKE 'collation_database'");
-		if (!$resql) {
-			// version Mysql < 4.1.1
-			return $this->forcecollate;
-		}
-		$liste = $this->fetch_array($resql);
-		$tmpval = $liste['Value'];
-
-		return $tmpval;
-	}
-
-	/**
-	 *	Return list of available collation that can be used for database
-	 *
-	 *	@return		?array<int,array{collation:string}>		List of Collations
-	 */
-	public function getListOfCollation()
-	{
-		$resql = $this->query('SHOW COLLATION');
-		$liste = array();
-		if ($resql) {
-			$i = 0;
-			while ($obj = $this->fetch_object($resql)) {
-				$liste[$i]['collation'] = $obj->Collation;
-				$i++;
-			}
-			$this->free($resql);
-		} else {
-			// version Mysql < 4.1.1
-			return null;
-		}
-		return $liste;
-	}
-
-	/**
-	 *	Return full path of dump program
-	 *
-	 *	@return		string		Full path of dump program
-	 */
-	public function getPathOfDump()
-	{
-		$fullpathofdump = '/pathtomysqldump/mysqldump';
-
-		$resql = $this->query("SHOW VARIABLES LIKE 'basedir'");
-		if ($resql) {
-			$liste = $this->fetch_array($resql);
-			$basedir = $liste['Value'];
-			$fullpathofdump = $basedir.(preg_match('/\/$/', $basedir) ? '' : '/').'bin/mysqldump';
-		}
-		return $fullpathofdump;
-	}
-
-	/**
-	 *	Return full path of restore program
-	 *
-	 *	@return		string		Full path of restore program
-	 */
-	public function getPathOfRestore()
-	{
-		$fullpathofimport = '/pathtomysql/mysql';
-
-		$resql = $this->query("SHOW VARIABLES LIKE 'basedir'");
-		if ($resql) {
-			$liste = $this->fetch_array($resql);
-			$basedir = $liste['Value'];
-			$fullpathofimport = $basedir.(preg_match('/\/$/', $basedir) ? '' : '/').'bin/mysql';
-		}
-		return $fullpathofimport;
-	}
-
-	/**
-	 * Return value of server parameters
-	 *
-	 * @param	string	$filter			Filter list on a particular value
-	 * @return	array<string,string>	Array of key-values (key=>value)
-	 */
-	public function getServerParametersValues($filter = '')
-	{
-		$result = array();
-
-		$sql = 'SHOW VARIABLES';
-		if ($filter) {
-			$sql .= " LIKE '".$this->escape($filter)."'";
-		}
-		$resql = $this->query($sql);
-		if ($resql) {
-			while ($obj = $this->fetch_object($resql)) {
-				$result[$obj->Variable_name] = $obj->Value;
-			}
-		}
-
-		return $result;
-	}
-
-	/**
-	 * Return value of server status (current indicators on memory, cache...)
-	 *
-	 * @param	string	$filter			Filter list on a particular value
-	 * @return  array<string,string>	Array of key-values (key=>value)
-	 */
-	public function getServerStatusValues($filter = '')
-	{
-		$result = array();
-
-		$sql = 'SHOW STATUS';
-		if ($filter) {
-			$sql .= " LIKE '".$this->escape($filter)."'";
-		}
-		$resql = $this->query($sql);
-		if ($resql) {
-			while ($obj = $this->fetch_object($resql)) {
-				$result[$obj->Variable_name] = $obj->Value;
-			}
-		}
-
-		return $result;
-	}
-
-	/**
-	 * Get the last ID of an auto-increment field of a table
-	 *
-	 * @param 	string 		$table 	Name of table
-	 * @return 	int		 			Next ID or < 0 if error
-	 */
-	public function getNextAutoIncrementId($table)
-	{
-		// Request to get last status of table
-		$sql = "SHOW TABLE STATUS LIKE '".$this->escape($table)."'";
-		$result = $this->query($sql);
-
-		if ($result) {
-			$obj = $this->fetch_object($result);
-			if ($obj && isset($obj->Auto_increment)) {
-				return (int) $obj->Auto_increment;
-			}
-		}
-
-		return -1;
-	}
-
-	/**
-	 * Prepare a SQL statement for execution
-	 *
-	 * @param string $sql SQL query to prepare
-	 * @return false|mysqli_stmt
-	 */
-	public function prepare($sql)
-	{
-		if (!$this->connected) {
-			$this->lasterror = 'Not connected to database';
-			return false;
-		}
-		$stmt = $this->db->prepare($sql);
-		if ($stmt === false) {
-			$this->lasterror = $this->db->error;
-			$this->lastqueryerror = $sql;
-			return false;
-		}
-
-		return $stmt;
-	}
-}
-
-if (class_exists('mysqli')) {
-	/**
-	 * Class to make SSL connection
-	 */
-	class mysqliDoli extends mysqli
-	{
-		/**
-		 *	Constructor.
-		 *	This create an opened connection to a database server and eventually to a database
-		 *
-		 *	@param	    string	$host		Address of database server
-		 *	@param	    string	$user		Name of database user
-		 *	@param	    string	$pass		Password of database user
-		 *	@param	    string	$name		Name of database
-		 *	@param	    int		$port		Port of database server
-		 *	@param	    string	$socket		Socket
-		 */
-		public function __construct($host, $user, $pass, $name, $port = 0, $socket = "")  // @phpstan-ignore constructor.unusedParameter
-		{
-			$flags = 0;
-			if (PHP_VERSION_ID >= 80100) {
-				parent::__construct();
-			} else {
-				// @phan-suppress-next-line PhanDeprecatedFunctionInternal
-				parent::init();
-			}
-			if (strpos($host, 'ssl://') === 0) {
-				$host = substr($host, 6);
-				parent::options(MYSQLI_OPT_SSL_VERIFY_SERVER_CERT, 0);
-				// Suppress false positive @phan-suppress-next-line PhanTypeMismatchArgumentInternalProbablyReal
-				parent::ssl_set(null, null, "", null, null);
-				$flags = MYSQLI_CLIENT_SSL;
-			}
-			parent::real_connect($host, $user, $pass, $name, $port, $socket, $flags);
-		}
-	}
-}
+... [Content truncated]
