@@ -913,6 +913,9 @@ if ($search_status != '' && $search_status != '-1') {
 if ($search_option == 'late') {
 	$sql .= " AND cf.date_commande < '".$db->idate(dol_now() - $conf->order->fournisseur->warning_delay)."'";
 }
+if ($search_option == 'recv_late') {
+	$sql .= " AND cf.date_livraison < '".$db->idate(dol_now() - $conf->order->fournisseur->warning_delay)."'";
+}
 if ($search_date_order_start) {
 	$sql .= " AND cf.date_commande >= '".$db->idate($search_date_order_start)."'";
 }
