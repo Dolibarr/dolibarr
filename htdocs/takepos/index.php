@@ -376,14 +376,14 @@ function LoadProducts(position, issubcat) {
 			$("#proprice"+ishow).attr("class", "hidden");
 			$("#proprice"+ishow).html("");
 			<?php if (!getDolGlobalString('TAKEPOS_HIDE_PRODUCT_IMAGES')) { ?>
-			$("#proimg"+ishow).attr("src", "genimg/index.php?query=cat&id="+parent_cat);
+			$("#proimg"+ishow).attr("src", "img/back.png");
 			<?php } ?>
 			$("#prodiv"+ishow).data("rowid", parent_cat);
 			$("#prodiv"+ishow).attr("data-rowid", parent_cat);
 			$("#prodiv"+ishow).data("iscat", 1);
 			$("#prodiv"+ishow).attr("data-iscat", 1);
 			$("#prodiv"+ishow).removeClass("divempty");
-			$("#prowatermark"+ishow).show();
+			$("#prowatermark"+ishow).hide();
 			ishow++;
 		}
 
