@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2015  Jean-François FERRY     <hello@librethic.io>
  * Copyright (C) 2016       Christophe Battarel     <christophe@altairis.fr>
- * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2019-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2021       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2021       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2023-2025  Charlene Benke	        <charlene.r@patas-monkey.com>
@@ -1514,7 +1514,7 @@ class FormTicket
 		// Define output language
 		$outputlangs = $langs;
 		$newlang = '';
-		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && isset($this->param['langsmodels'])) {
+		if (getDolGlobalInt('MAIN_MULTILANGS') && isset($this->param['langsmodels'])) {
 			$newlang = $this->param['langsmodels'];
 		}
 		if (!empty($newlang)) {
@@ -1573,7 +1573,7 @@ class FormTicket
 		// Define output language
 		$outputlangs = $langs;
 		$newlang = '';
-		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && isset($this->param['langsmodels'])) {
+		if (getDolGlobalInt('MAIN_MULTILANGS') && isset($this->param['langsmodels'])) {
 			$newlang = $this->param['langsmodels'];
 		}
 		if (!empty($newlang)) {
