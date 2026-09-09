@@ -100,7 +100,7 @@ function aiPdfFormatValue($k, $v)
 	return dol_string_nohtmltag((string) $v);
 }
 
-$json = GETPOST('data', 'none');
+$json = GETPOST('content', 'none');
 if (empty($json)) {
 	$json = file_get_contents('php://input');
 }
