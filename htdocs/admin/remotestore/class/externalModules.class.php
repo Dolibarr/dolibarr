@@ -767,7 +767,7 @@ class ExternalModules
 			var confirmTitle = button.data("confirm-title");
 			var confirmText = button.data("confirm-text");
 			var buttons = {};
-			buttons[button.data("confirm-label")||"' . $confirmLabel . '"] = function(){
+			buttons[button.data("confirm-label")||\'' . $confirmLabel . '\'] = function(){
 				var form = $("<form method=\'POST\' style=\'display:none\'>").attr("action", button.data("url"));
 				$.each(button.data("fields"), function(name, value){
 					form.append($("<input type=\'hidden\'>").attr("name", name).val(value));
@@ -776,7 +776,7 @@ class ExternalModules
 				form.submit();
 				$(this).dialog("close");
 			};
-			buttons["' . $cancelLabel . '"] = function(){$(this).dialog("close");};
+			buttons[\'' . $cancelLabel . '\'] = function(){$(this).dialog("close");};
 			$("<div>").html(confirmText).dialog({
 				title: confirmTitle,
 				minWidth: 580,

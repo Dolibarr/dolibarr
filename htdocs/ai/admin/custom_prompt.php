@@ -279,7 +279,7 @@ if ($action == 'create') {
 	foreach ($arrayofaifeatures as $featurekey => $feature) {
 		$labelhtml = $langs->trans($arrayofaifeatures[$featurekey]['label']).($arrayofaifeatures[$featurekey]['status'] == 'notused' ? ' <span class="opacitymedium">('.$langs->trans("NotYetAvailable").')</span>' : "");
 		$labeltext = $langs->trans($arrayofaifeatures[$featurekey]['label']);
-		$out .= '<option value="'.dol_escape_js($featurekey).'" data-html="'.dol_escape_htmltag($labelhtml).'">'.dol_escape_htmltag($labeltext).'</option>';
+		$out .= '<option value="'.dolPrintHTMLForAttribute($featurekey).'" data-html="'.dolPrintHTMLForAttribute($labelhtml).'">'.dolPrintHTML($labeltext).'</option>';
 	}
 	$out .= '</select>';
 	$out .= ajax_combobox("functioncode");
@@ -291,10 +291,10 @@ if ($action == 'create') {
 				console.log(changedValue);
 				var arrayplaceholder = {';
 	foreach ($arrayofaifeatures as $featurekey => $feature) {
-		$out .= dol_escape_js($featurekey).': \''.dol_escape_js(empty($feature['placeholder']) ? '' : $feature['placeholder']).'\',';
+		$out .= dol_sanitizeKeyCode($featurekey).': \''.dol_escape_js(empty($feature['placeholder']) ? '' : $feature['placeholder']).'\',';
 	}
 	$out .= '}
-				jQuery("#prePromptInput'.dol_escape_js($key).'").val(arrayplaceholder[changedValue]);
+				jQuery("#prePromptInput'.dol_sanitizeKeyCode($key).'").val(arrayplaceholder[changedValue]);
 			});
 		});
 		</script>
@@ -478,7 +478,7 @@ fetch("'.dol_buildpath('/ai/ajax/list_models.php', 1).'").then(function (r) { re
 		if (i.value && j.models.indexOf(i.value) < 0) {
 			var w = document.createElement("span");
 			w.className = "fas fa-exclamation-triangle pictowarning paddingleft";
-			w.title = "'.dol_escape_js($langs->trans("AIModelNotInProviderList")).'";
+			w.title = \''.dol_escape_js($langs->trans("AIModelNotInProviderList")).'\';
 			i.insertAdjacentElement("afterend", w);
 		}
 	});
