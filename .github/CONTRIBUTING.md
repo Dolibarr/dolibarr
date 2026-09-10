@@ -60,7 +60,7 @@ As the Release Maintainer:
 8. A tag will be added to take a snapshot of the code with all the changes approved by PR Maintainers, when ready to do a release.
 
 
-Note: Project leader(Master Yoda and BDFL) retains all above roles and can directly commit to the project without a PR. Of course anyone can check commit history and comment!
+Note: Mainteners of a branch can directly commit to the project (in their branch) without a PR. Of course anyone can check commit history and comment!
 
 
 <span id="branches" name="branches"></span>
@@ -111,7 +111,7 @@ git config --local commit.template .gitmessage
 
 with
 
-#### Keyword
+#### KEYWORD
 In uppercase if you want to have the log comment appears into the generated ChangeLog file.
 
 The keyword can be omitted if your commit does not fit in any of the following categories:
@@ -124,26 +124,23 @@ The keyword can be omitted if your commit does not fit in any of the following c
 - Qual/QUAL:   for quality code enhancement or re-engineering
 - Sec/SEC:     for a security vulnerability fix
 
-#### Issuenum
+#### ISSUENUM
 If your commit fixes a referenced bug or feature request.
 
 In the form of a # followed by the GitHub issue number.
 
-#### Desc
-A short description of the commit content.
+#### DESC
+A short description of the commit content (ideally less than 50 characters).
+If fix a bug in an old version already fixed in a more recent version, please mention `backport of` followed by the commit ID you backport.
 
-This should ideally be less than 50 characters.
-
-#### LongDesc
+#### LONGDESC
 A long description of the commit content.
 
-You can really go to town here and explain in depth what you've been doing.
+You can really go to town here and explain in depth what you've been doing. This section can span multiple lines.
 
 Feel free to express technical details, use cases or anything relevant to the current commit.
 
-This section can span multiple lines.
-
-If your PR is a change on interface, you must also paste a screenshot showing the new screen.
+If your PR is a change on interface, you MUST also paste a screenshot showing the new screen.
 
 #### Examples
 <pre>
@@ -153,7 +150,7 @@ CLOSE|Close #456 Short description (where #456 is number of feature request, if 
 or
 NEW|New|QUAL|Qual|PERF|Perf Short description (In upper case to appear into ChangeLog, use this if you add a feature not tracked, otherwise use CLOSE #xxx)
 or
-Short description (when the commit is not introducing a feature nor closing a bug)
+Short description (only when the commit is not introducing a feature nor closing a bug)
 
 Long description (Can span across multiple lines).
 </pre>
