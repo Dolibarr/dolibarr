@@ -1697,6 +1697,43 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 }
 
 /**
+ *	Show a FontAwesome icon whatever its name (generic function).
+ *
+ *	This is img_picto() restricted to FontAwesome output. It accepts the same $picto
+ *	values as img_picto() does for icons (a Dolibarr picto key such as 'user', 'bill'
+ *	or 'project', or a FontAwesome code such as 'fa-user', 'fontawesome_user' or
+ *	'fa-star_far_#888_1.3em' with the 'fa-<name>_<style>_<color>_<size>' syntax) and
+ *	returns the very same <span> tag. Everything img_picto() does to load a png/gif/svg
+ *	file from disk is left out: a $picto that looks like an image path (it is not a
+ *	'fa-'/'fontawesome_' code and contains a '.', '/' or '@') is not supported and
+ *	returns an empty string.
+ *
+ *	@param      string		$titlealt         		Text on title tag for tooltip. Not used if param $notitle is set to 1.
+ *	@param      string		$picto       			Icon name: a Dolibarr picto key ('user', 'bill', ...) or a FontAwesome code
+ *													('fa-user', 'fontawesome_user', or 'fa-<name>_<style>_<color>_<size>').
+ *	@param		string		$moreatt				Add more attributes on the tag (For example 'class="pictofixedwidth"')
+ *  @param		int<0,1>	$notitle				1=Disable tag title. Use it if you add js tooltip, to avoid duplicate tooltip.
+ *  @param		string		$morecss				Add more class css on the tag (For example 'myclascss').
+ *  @param		int<0,2>	$marginleftonlyshort	1=Add a short left margin on picto, 2=Add a larger left margin on picto, 0=No margin left.
+ *  @return     string       				    	Return the <span> tag of the FontAwesome icon, or '' if $picto is not a supported icon name
+ *  @see        img_picto()
+ */
+function img_fa($titlealt, $picto, $moreatt = '', $notitle = 0, $morecss = '', $marginleftonlyshort = 2)
+{
+	$picto = (string) $picto;
+
+	$isexplicitfa = (strpos($picto, 'fa-') === 0 || strpos($picto, 'fontawesome_') === 0);
+	if (!$isexplicitfa && $picto !== '' && preg_match('/[.\/@]/', $picto)) {
+		// img_picto() would try to load this as a png/gif/svg file on disk. img_fa() only renders FontAwesome icons.
+		dol_syslog("img_fa: '" . $picto . "' is not a FontAwesome icon name (looks like an image path), returning an empty string", LOG_WARNING);
+		return '';
+	}
+
+	// img_picto() with $pictoisfullpath=0 and $srconly=0 always returns the FontAwesome <span> for such a $picto.
+	return img_picto($titlealt, $picto, $moreatt, 0, 0, $notitle, '', $morecss, $marginleftonlyshort);
+}
+
+/**
  * Get array to convert the Dolibarr picto keys into Font awesome keys
  *
  * @param	string		$mode		'fa' to get conversion array for Font-Awesome

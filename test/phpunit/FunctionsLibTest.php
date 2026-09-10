@@ -1604,6 +1604,43 @@ class FunctionsLibTest extends CommonClassTest
 	}
 
 	/**
+	 * testImgFa
+	 *
+	 * @return	void
+	 */
+	public function testImgFa()
+	{
+		// Dolibarr picto key -> FontAwesome <span>, no <img>
+		$s = img_fa('title', 'user');
+		print __METHOD__." s=".$s."\n";
+		$this->assertStringContainsStringIgnoringCase('fa-user', $s, 'testImgFa1');
+		$this->assertStringContainsStringIgnoringCase('<span', $s, 'testImgFa1');
+		$this->assertStringNotContainsStringIgnoringCase('<img', $s, 'testImgFa1');
+
+		// Picto key that goes through the getImgPictoConv() mapping
+		$s = img_fa('title', 'project');
+		print __METHOD__." s=".$s."\n";
+		$this->assertStringContainsStringIgnoringCase('fa-project-diagram', $s, 'testImgFa2');
+
+		// Explicit 'fa-<name>_<style>_<color>_<size>' code
+		$s = img_fa('title', 'fa-star_far_#888_1em');
+		print __METHOD__." s=".$s."\n";
+		$this->assertStringContainsStringIgnoringCase('far', $s, 'testImgFa3');
+		$this->assertStringContainsStringIgnoringCase('fa-star', $s, 'testImgFa3');
+		$this->assertStringContainsStringIgnoringCase('font-size: 1em', $s, 'testImgFa3');
+		$this->assertStringContainsStringIgnoringCase('color: #888', $s, 'testImgFa3');
+
+		// An image path is not a FontAwesome icon name -> empty string
+		$s = img_fa('title', 'img.png');
+		print __METHOD__." s=".$s."\n";
+		$this->assertEquals('', $s, 'testImgFa4');
+
+		$s = img_fa('title', '/fullpath/img.png');
+		print __METHOD__." s=".$s."\n";
+		$this->assertEquals('', $s, 'testImgFa5');
+	}
+
+	/**
 	 * testDolNow
 	 *
 	 * @return	void
