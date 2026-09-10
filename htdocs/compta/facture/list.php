@@ -1495,6 +1495,9 @@ if (isModEnabled('prelevement') && $user->hasRight('prelevement', 'bons', 'creer
 	$langs->load("withdrawals");
 	$arrayofmassactions['withdrawrequest'] = img_picto('', 'payment', 'class="pictofixedwidth"').$langs->trans("MakeWithdrawRequest");
 }
+if ($user->hasRight('facture', 'creer')) {
+	$arrayofmassactions['edit_extrafields'] = img_picto('', 'edit', 'class="pictofixedwidth"').$langs->trans("ModifyValueExtrafields");
+}
 if ($user->hasRight('facture', 'supprimer')) {
 	if (!getDolGlobalString('INVOICE_DIABLE_MASS_DELETION_ON_DRAFT_INVOICES')) {
 		$arrayofmassactions['predeletedraft'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Deletedraft");
@@ -1505,7 +1508,7 @@ if ($user->hasRight("facture", "creer")) {
 		$arrayofmassactions['precreatecreditnote'] = img_picto('', 'undo', 'class="pictofixedwidth"').$langs->trans("cancelByCreditNote");
 	}
 }
-if (in_array($massaction, array('presend', 'predelete', 'makepayment'))) {
+if (in_array($massaction, array('presend', 'predelete', 'makepayment', 'edit_extrafields'))) {
 	$arrayofmassactions = array();
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
