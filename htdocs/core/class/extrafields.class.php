@@ -1501,11 +1501,11 @@ class ExtraFields
 									var query = {
 										search: params.term,
 										page: params.page || 1,
-										objecttype: '".$extrafieldsobjectkey."',
-										objectid: '".$objectid."',
-										objectkey: '".$key."',
-										mode: '".$mode."',
-										value: '".$value."'
+										objecttype: '".dol_escape_js($extrafieldsobjectkey)."',
+										objectid: '".dol_escape_js($objectid)."',
+										objectkey: '".dol_escape_js($key)."',
+										mode: '".((int) $mode)."',
+										value: '".dol_escape_js($value)."'
 									}
 									return query;
 								}
@@ -1836,7 +1836,7 @@ class ExtraFields
 									objecttype: '".dol_escape_js($extrafieldsobjectkey)."',
 									objectid: '".dol_escape_js($object->id)."',
 									objectkey: '".dol_escape_js($key)."',
-									mode: '".dol_escape_js($mode)."',
+									mode: '".((int) $mode)."',
 									value: '".dol_escape_js($value)."'
 								}
 								return query;
