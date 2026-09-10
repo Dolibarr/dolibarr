@@ -490,6 +490,14 @@ print '</td><td>';
 print '<input class="flat minwidth200" type="text" name="SHIPPING_DRAFT_WATERMARK" value="'.dol_escape_htmltag(getDolGlobalString('SHIPPING_DRAFT_WATERMARK')).'">';
 print "</td></tr>\n";
 
+// shipping use its own contacts
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("ShippingUseItsOwnContacts");
+print '</td>';
+print '<td>';
+print ajax_constantonoff('SHIPPING_USE_ITS_OWN_CONTACTS', array(), null, 0, 0, 0, 2, 0, 1, '', '', 'inline-block', 0, '');
+print '</td></tr>';
+
 // Allow OnLine Sign
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("AllowOnLineSign");
