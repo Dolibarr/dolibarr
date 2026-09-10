@@ -261,17 +261,23 @@ class UniversalLLMAdapter
 
 		// Unanchored: base64 appears both as bare JSON string values (Anthropic,
 		// Google) and embedded inside data: URLs (OpenAI file/image_url parts).
-		return (string) preg_replace_callback(
-			'/([A-Za-z0-9+\/=]{512,})/',
+		$out = preg_replace_callback(
+			'~((?:[A-Za-z0-9+=]++|\\\\/)+)~',
 			/**
-			 * @param string[] $m Regex matches: [1] = base64 run
+			 * @param string[] $m Regex matches: [1] = base64-like run
 			 * @return string
 			 */
 			static function (array $m) {
+				if (strlen($m[1]) < 512) {
+					return $m[1];	// short runs (words, urls) stay as they are
+				}
+
 				return '[base64 elided, '.strlen($m[1]).' chars]';
 			},
 			$json
 		);
+
+		return ($out === null) ? $json : $out;
 	}
 
 	/**
@@ -291,7 +297,6 @@ class UniversalLLMAdapter
 		// By default, we accept only external endpoints ($dolibarr_ai_allow_local_endpoints is not set).
 		// To allow local endpoints, we must set $dolibarr_ai_allow_local_endpoints to 1 or 2 in conf.php.
 		global $dolibarr_ai_allow_local_endpoints;
-		global $dolibarr_ai_allow_local_endpoints;	// conf.php-level toggle; without this import the variable is a local null and the setting silently never works (local providers like Ollama were unusable)
 
 		$localurl = empty($dolibarr_ai_allow_local_endpoints) ? 0 : 2;
 
