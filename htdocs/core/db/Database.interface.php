@@ -6,7 +6,7 @@
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2014-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -542,4 +542,22 @@ interface Database
 	 */
 	public function select_db($database);
 	// phpcs:enable
+
+	/**
+	 * Prepare a SQL statement for execution. Use '?' as the placeholder for every bound value.
+	 *
+	 * @param	string	$sql	SQL query with '?' placeholders
+	 * @return	mixed			Driver-specific prepared statement handle, or false on failure
+	 */
+	public function prepare($sql);
+
+	/**
+	 * Execute a statement previously created with prepare().
+	 *
+	 * @param	mixed				$stmt	Statement handle returned by prepare()
+	 * @param	array<int,mixed>	$params	Ordered list of values for the '?' placeholders
+	 * @return	mixed						Resultset (SELECT) usable with fetch_object()/num_rows()/free(),
+	 *										true for another successful statement, false on failure
+	 */
+	public function execute($stmt, $params = array());
 }
