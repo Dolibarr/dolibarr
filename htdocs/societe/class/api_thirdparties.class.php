@@ -2,7 +2,7 @@
 /* Copyright (C) 2015   	Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2018   	Pierre Chéné            <pierre.chene44@gmail.com>
  * Copyright (C) 2019		Cedric Ancelin			<icedo.anc@gmail.com>
- * Copyright (C) 2020-2025  Frédéric France     	<frederic.france@free.fr>
+ * Copyright (C) 2020-2026  Frédéric France     	<frederic.france@free.fr>
  * Copyright (C) 2023       Alexandre Janniaux  	<alexandre.janniaux@gmail.com>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024      Jon Bendtsen             <jon.bendtsen.github@jonb.dk>
@@ -2171,8 +2171,8 @@ class Thirdparties extends DolibarrApi
 		$outputlangs = $langs;
 		$newlang = '';
 
-		//if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
-		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
+		//if (getDolGlobalInt('MAIN_MULTILANGS') && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
+		if (getDolGlobalInt('MAIN_MULTILANGS')) {
 			if (isset($this->company->thirdparty->default_lang)) {
 				$newlang = $this->company->thirdparty->default_lang; // for proposal, order, invoice, ...
 			} elseif (isset($this->company->default_lang)) {

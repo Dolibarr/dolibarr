@@ -176,8 +176,21 @@ class PrivacyGuard
 		// Phone numbers
 		$phonePatterns = [
 			[
+				'name' => 'Greek International Numbers',
+				// +30 / 0030 followed by exactly 10 national digits with the valid
+				// prefixes (2x landline, 69 mobile) — Greek numbers are 10 digits,
+				// so this is checked strictly; other countries fall through to the
+				// length-flexible generic pattern below.
+				'regex' => '/(?<![\w+])(?:\+30|0030)[\s.\-]?(?:2\d|69)(?:[\s.\-()]?\d){8}(?!\d)/',
+				'token' => 'PHONE'
+			],
+			[
 				'name' => 'Generic International Numbers',
-				'regex' => '/\b(?:\+|00)[0-9][0-9-.\s()]{8,}\b/',
+				// Counts DIGITS (9-14 after the prefix) with optional single separators
+				// between them; the old char-counting class broke on spaced formats.
+				// No \b before '+': space->'+' is not a word boundary, so that \b
+				// could never match and the pattern was dead for '+30 ...' numbers.
+				'regex' => '/(?<![\w+])(?:\+|00)\d{1,3}(?:[\s.\-()]?\d){8,13}(?!\d)/',
 				'token' => 'PHONE'
 			],
 			[
@@ -186,7 +199,13 @@ class PrivacyGuard
 				// Landlines: 10 digits starting with '2' (e.g., 210 123 4567).
 				// Mobiles: 10 digits starting with '69' (e.g., 698 123 4567).
 				// It matches numbers with optional separators like spaces, hyphens, or dots.
-				'regex' => '/\b(?:2[0-9-.\s()]{9}|69[0-9-.\s()]{8})\b/',
+				// Exactly 10 digits (landline 2x..., mobile 69...), separators optional
+				// BETWEEN digits. The old pattern counted characters: '210 2461234'
+				// (11 chars) overflowed {9} and slipped through unmasked, while
+				// '2026-09-07' (9 chars after the 2) was masked as a phone. The
+				// lookarounds forbid digit-adjacency, so it never fires inside longer
+				// digit runs (EAN barcodes, references).
+				'regex' => '/(?<!\d)(?:2\d|69)(?:[\s.\-()]?\d){8}(?!\d)/',
 				'token' => 'PHONE'
 			],
 			[
