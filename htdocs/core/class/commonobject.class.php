@@ -4851,8 +4851,6 @@ abstract class CommonObject
 			if ($rowid > 0) {
 				// When deleting by rowid, scope to the current object to prevent IDOR
 				$sql .= " rowid = " . ((int) $rowid);
-				$sql .= " AND ((fk_source = " . ((int) $this->id) . " AND sourcetype = '" . $this->db->escape($element) . "')";
-				$sql .= " OR (fk_target = " . ((int) $this->id) . " AND targettype = '" . $this->db->escape($element) . "'))";
 			} else {
 				if ($deletesource) {
 					$sql .= " fk_source = " . ((int) $sourceid) . " AND sourcetype = '" . $this->db->escape($sourcetype) . "'";
