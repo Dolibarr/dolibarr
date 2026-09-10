@@ -563,9 +563,41 @@ if (empty($reshook)) {
 		if (GETPOSTINT("remise_id")) {
 			$ret = $object->fetch($id);
 			if ($ret > 0) {
-				$result = $object->insert_discount(GETPOSTINT("remise_id"));
-				if ($result < 0) {
-					setEventMessages($object->error, $object->errors, 'errors');
+				$idremise = GETPOSTINT("remise_id");
+
+				// If the available credit is larger than what the invoice can still absorb, split it automatically:
+				// only the required part is inserted as a line, the rest stays available for another invoice.
+				$discount = new DiscountAbsolute($db);
+				if ($discount->fetch($idremise) > 0) {
+					$maxtoabsorb = (float) price2num($object->getRemainToPay(0), 'MT');
+					if ((float) price2num($discount->amount_ttc, 'MT') > $maxtoabsorb) {
+						if ($maxtoabsorb <= 0) {
+							// Nothing left to absorb: the credit cannot be used on this invoice at all
+							$error++;
+							setEventMessages($langs->trans("ErrorDiscountLargerThanRemainToPaySplitItBefore"), null, 'errors');
+						} else {
+							$splitparts = $discount->splitAmount($maxtoabsorb, (float) price2num((float) $discount->amount_ttc - $maxtoabsorb, 'MT'));
+							$discount->fk_facture_source = 0;
+							$discount->fk_invoice_supplier_source = 0;
+							$resdelete = $discount->delete($user);
+							$newidapply = $splitparts[0]->create($user);
+							$newidremain = $splitparts[1]->create($user);
+							if ($resdelete > 0 && $newidapply > 0 && $newidremain > 0) {
+								$idremise = $newidapply;
+								setEventMessages($langs->trans('DepositSplitAutomaticallyApplied', price($maxtoabsorb, 0, $langs, 1, -1, -1, $conf->currency), price((float) price2num((float) $discount->amount_ttc - $maxtoabsorb, 'MT'), 0, $langs, 1, -1, -1, $conf->currency)), null, 'warnings');
+							} else {
+								$error++;
+								setEventMessages($langs->trans("Error"), null, 'errors');
+							}
+						}
+					}
+				}
+
+				if (!$error) {
+					$result = $object->insert_discount($idremise);
+					if ($result < 0) {
+						setEventMessages($object->error, $object->errors, 'errors');
+					}
 				}
 			} else {
 				dol_print_error($db, $object->error);
