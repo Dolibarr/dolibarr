@@ -3,6 +3,7 @@
  * Copyright (C) 2010       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2019       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2026       Eric Seigne             <eric.seigne@cap-rel.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -228,33 +229,115 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 
 			// Unique index on code if COMPANY_DIGITARIA_UNIQUE_CODE is set to 1 or not set (default)
 			if (!isset($conf->global->COMPANY_DIGITARIA_UNIQUE_CODE) || !empty($conf->global->COMPANY_DIGITARIA_UNIQUE_CODE)) {
-				$disponibility = $this->checkIfAccountancyCodeIsAlreadyUsed($db, $this->code, $type);
+				// Resolve table and column holding the accountancy code, mirroring
+				// checkIfAccountancyCodeIsAlreadyUsed(): per-entity table when
+				// MAIN_COMPANY_PERENTITY_SHARED is enabled, otherwise the main societe table.
+				if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
+					$table = $db->prefix().'societe_perentity';
+					$column = ($type == 'supplier') ? 'accountancy_code_supplier' : 'accountancy_code_customer';
+				} else {
+					$table = $db->prefix().'societe';
+					$column = ($type == 'supplier') ? 'code_compta_fournisseur' : 'code_compta';
+				}
 
-				while ($disponibility <> 0 && $i < 1000) {
-					$widthsupplier = $this->supplieraccountancycodecharacternumber;
-					$widthcustomer = $this->customeraccountancycodecharacternumber;
+				// Depth-walking algorithm: keep as many letters of the company name as
+				// possible, appending a numeric counter only when needed to disambiguate.
+				// Total code length stays constant at strlen($prefix) + $width characters.
+				//
+				// Start at depth 0 (longest name, no counter). If the candidate code is
+				// taken (or, at deeper levels, the counter pool at this depth is exhausted),
+				// drop one trailing character from the name and retry at depth + 1.
+				//
+				// Counter ranges follow the historical Digitaria convention without leading
+				// zeros: depth 1 covers 0..9, depth 2 covers 10..99, depth d covers
+				// 10^(d-1)..10^d - 1. Each depth yields one SQL query in the worst case
+				// (none if the base code at depth 0 is free). Worst case overall is $width
+				// queries per insert; average case on a fresh prefix is 1 to 2 queries.
+				$nameTrunc = strtoupper(substr($codetouse, 0, $width));
+				$disponibility = -1;
+				while (true) {
+					$depth = $width - strlen($nameTrunc);
+					$candidateBase = $prefix.$nameTrunc;
 
-					if ($i <= 9) {
-						$a = 1;
-					}
-					if ($i >= 10 && $i <= 99) {
-						$a = 2;
-					}
-					if ($i >= 100 && $i <= 999) {
-						$a = 3;
+					if ($depth == 0) {
+						// Try the bare base code (no numeric suffix). Preserves the
+						// historical Digitaria behaviour: the first arrival on a given
+						// name root gets a human-readable code without a counter.
+						$this->code = $candidateBase;
+						if ($this->checkIfAccountancyCodeIsAlreadyUsed($db, $this->code, $type) == 0) {
+							$disponibility = 0;
+							break;
+						}
+					} else {
+						// At this depth, the counter has exactly $depth digits.
+						$minCounter = ($depth == 1) ? 0 : (10 ** ($depth - 1));
+						$maxCounter = (10 ** $depth) - 1;
+
+						// Fetch all codes of the right length sharing the candidate
+						// base prefix. We filter the suffix in PHP afterwards because
+						// LIKE has no portable way to constrain a wildcard to digits
+						// only (REGEXP syntax differs across MySQL / PostgreSQL / SQLite).
+						$sql = "SELECT ".$column." FROM ".$table
+							." WHERE ".$column." LIKE '".$db->escape($candidateBase)."%'"
+							." AND CHAR_LENGTH(".$column.") = ".(strlen($candidateBase) + $depth)
+							." AND entity IN (".getEntity('societe').")";
+						$resql = $db->query($sql);
+						if (!$resql) {
+							$this->error = $db->lasterror().' sql='.$sql;
+							dol_syslog("mod_codecompta_digitaria::get_code SQL error: ".$this->error, LOG_ERR);
+							return -2;
+						}
+						// Filter out rows whose suffix is not purely numeric. These
+						// belong to other name roots whose base code happens to land
+						// in the same length bucket (e.g. base '411COMMUNEDEP' matches
+						// LIKE '411COMMUNED%' at depth 2 with suffix 'EP', which is
+						// not a counter for our root).
+						$highest = -1;
+						while ($row = $db->fetch_row($resql)) {
+							$suffix = substr($row[0], strlen($candidateBase));
+							if (ctype_digit($suffix)) {
+								$val = (int) $suffix;
+								if ($val > $highest) {
+									$highest = $val;
+								}
+							}
+						}
+						$db->free($resql);
+
+						if ($highest < 0) {
+							// No numeric variant exists at this depth yet. Take the
+							// lowest valid counter for the current depth.
+							$newCounter = $minCounter;
+						} elseif ($highest < $maxCounter) {
+							$newCounter = $highest + 1;
+						} else {
+							// Counter pool exhausted at this depth. Drop one more
+							// letter from the name and walk one level deeper.
+							if (strlen($nameTrunc) == 0) {
+								dol_syslog("mod_codecompta_digitaria::get_code disambiguation space exhausted for prefix='".$prefix."' name='".$codetouse."' width=".$width, LOG_ERR);
+								$disponibility = -1;
+								break;
+							}
+							$nameTrunc = substr($nameTrunc, 0, -1);
+							continue;
+						}
+
+						$this->code = $candidateBase.$newCounter;
+						$disponibility = 0;
+						break;
 					}
 
-					if ($type == 'supplier') {
-						$this->code = $prefix.strtoupper(substr($codetouse, 0, $widthsupplier - $a)).$i;
-					} elseif ($type == 'customer') {
-						$this->code = $prefix.strtoupper(substr($codetouse, 0, $widthcustomer - $a)).$i;
+					// Reached when depth == 0 and the base code is already taken.
+					// Drop one letter from the name and retry one level deeper.
+					if (strlen($nameTrunc) == 0) {
+						dol_syslog("mod_codecompta_digitaria::get_code disambiguation space exhausted for prefix='".$prefix."' name='".$codetouse."' width=".$width, LOG_ERR);
+						$disponibility = -1;
+						break;
 					}
-					$disponibility = $this->checkIfAccountancyCodeIsAlreadyUsed($db, $this->code, $type);
-
-					$i++;
+					$nameTrunc = substr($nameTrunc, 0, -1);
 				}
 			} else {
-				$disponibility == 0;
+				$disponibility = 0;
 			}
 		}
 
