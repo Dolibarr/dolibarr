@@ -124,7 +124,14 @@ if (empty($reshook)) {
 			if (in_array($field_info['type'], array('text', 'html'))) {
 				print '<div class="longmessagecut">';
 			}
-			if ($field_key == 'lang') {
+			if ($field_key == 'rate') {
+				// The rate is computed by the module itself, in getRate(). Rendering it through the
+				// 'computed' property routes it to dol_eval(), which refuses getRate() because it is
+				// not in the white list of $dolibarr_main_restrict_eval_methods, so every asset shows
+				// "Bad string syntax to evaluate ..." instead of its rate. The 'computed' property is
+				// kept, showInputField() relies on it to display the field as read only on the form.
+				print $assetdepreciationoptions->getRate($mode_key);
+			} elseif ($field_key == 'lang') {
 				$langs->load("languages");
 				$labellang = ($value ? $langs->trans('Language_' . $value) : '');
 				print picto_from_langcode($value, 'class="paddingrightonly saturatemedium opacitylow"');
