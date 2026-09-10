@@ -901,6 +901,28 @@ class Asset extends CommonObject
 	}
 
 	/**
+	 * Return the timestamp of the GMT midnight of the calendar day of a timestamp read from a date
+	 * column with the timezone of the server.
+	 *
+	 * A date column carries no hour, so the only meaningful information of such a timestamp is its
+	 * calendar day. Re-anchoring it on GMT midnight makes every comparison and every calendar
+	 * decomposition of the depreciation plan independent from the timezone of the server.
+	 *
+	 * @param	int|string	$timestamp	Timestamp to re-anchor
+	 * @return	int|string				GMT midnight of the same day, input returned as is if not a timestamp
+	 */
+	protected function dateToGmtMidnight($timestamp)
+	{
+		if (!is_numeric($timestamp) || empty($timestamp)) {
+			return $timestamp;
+		}
+
+		$parts = dol_getdate((int) $timestamp);
+
+		return dol_mktime(0, 0, 0, $parts['mon'], $parts['mday'], $parts['year'], 'gmt');
+	}
+
+	/**
 	 * Calculation depreciation lines (reversal and future) for each mode
 	 *
 	 * @return	int							Return integer <0 if KO, Id of created object if OK
@@ -971,7 +993,18 @@ class Asset extends CommonObject
 			require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 			require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 			// @FIXME getCurrentPeriodOfFiscalYear return the first period found. What if there is several ? And what if not closed ? And what if end date not yet defined.
-			$dates = getCurrentPeriodOfFiscalYear($this->db, $conf, $this->date_start > $this->date_acquisition ? $this->date_start : $this->date_acquisition);
+			// The depreciation plan compares and decomposes dates that do not come from the same
+			// anchoring: the date fields of the asset are read from date columns with the timezone of
+			// the server, the fiscal periods after the first one are read with GMT
+			// (getNextFiscalYear() below), and the end of a fiscal period carries 23:59:59. Mixing them
+			// shifts a calendar day as soon as the UTC offset of the server is not zero, which prorates
+			// a partial period on the wrong number of days and, on a negative offset, makes the loop
+			// skip a whole fiscal period. Everything is therefore brought back to GMT midnight here.
+			$date_start = $this->dateToGmtMidnight($this->date_start);
+			$date_acquisition = $this->dateToGmtMidnight($this->date_acquisition);
+			$reversal_date = is_numeric($this->reversal_date) ? $this->dateToGmtMidnight($this->reversal_date) : $this->reversal_date;
+
+			$dates = getCurrentPeriodOfFiscalYear($this->db, $conf, $date_start > $date_acquisition ? $date_start : $date_acquisition, 'gmt');
 			$init_fiscal_period_start = $dates['date_start'];
 			$init_fiscal_period_end = $dates['date_end'];
 			if (empty($init_fiscal_period_start) || empty($init_fiscal_period_end)) {
@@ -1051,16 +1084,16 @@ class Asset extends CommonObject
 				}
 
 				// Get depreciation period
-				$depreciation_date_start = $this->date_start > $this->date_acquisition ? $this->date_start : $this->date_acquisition;
+				$depreciation_date_start = $date_start > $date_acquisition ? $date_start : $date_acquisition;
 				$depreciation_date_end = dol_time_plus_duree(dol_time_plus_duree((int) $depreciation_date_start, (float) $fields['duration'], $fields['duration_type'] == 1 ? 'm' : ($fields['duration_type'] == 2 ? 'd' : 'y')), -1, 'd');
 				$depreciation_amount = $fields['amount_base_depreciation_ht'];
 				if ($fields['duration_type'] == 2) { // Daily
 					$fiscal_period_start = $depreciation_date_start;
 					$fiscal_period_end = $depreciation_date_start;
 				} elseif ($fields['duration_type'] == 1) { // Monthly
-					$date_temp = dol_getdate((int) $depreciation_date_start);
-					$fiscal_period_start = dol_get_first_day($date_temp['year'], $date_temp['mon'], false);
-					$fiscal_period_end = dol_get_last_day($date_temp['year'], $date_temp['mon'], false);
+					$date_temp = dol_getdate((int) $depreciation_date_start, false, 'gmt');
+					$fiscal_period_start = dol_get_first_day($date_temp['year'], $date_temp['mon'], true);
+					$fiscal_period_end = dol_get_last_day($date_temp['year'], $date_temp['mon'], true);
 				} else { // Annually
 					$fiscal_period_start = $init_fiscal_period_start;
 					$fiscal_period_end = $init_fiscal_period_end;
@@ -1068,7 +1101,7 @@ class Asset extends CommonObject
 				$cumulative_depreciation_ht = (float) $last_cumulative_depreciation_ht;
 				$depreciation_period_amount = $depreciation_amount - (float) $this->reversal_amount_ht;
 				$start_date = $depreciation_date_start;
-				$disposal_date = isset($this->disposal_date) && $this->disposal_date !== "" ? $this->disposal_date : "";
+				$disposal_date = isset($this->disposal_date) && $this->disposal_date !== "" ? $this->dateToGmtMidnight($this->disposal_date) : "";
 				$finish_date = $disposal_date !== "" ? $disposal_date : $depreciation_date_end;
 				$accountancy_code_depreciation_debit_key = $accountancy_codes->accountancy_codes_fields[$mode_key]['depreciation_debit'];
 				$accountancy_code_depreciation_debit = $accountancy_codes->accountancy_codes[$mode_key][$accountancy_code_depreciation_debit_key];
@@ -1077,9 +1110,9 @@ class Asset extends CommonObject
 
 				// Reversal depreciation line
 				//-----------------------------------------------------
-				if ($last_depreciation_date === "" && ($depreciation_date_start < $fiscal_period_start || is_numeric($this->reversal_date))) {
-					if (is_numeric($this->reversal_date)) {
-						if ($this->reversal_date < $fiscal_period_start) {
+				if ($last_depreciation_date === "" && ($depreciation_date_start < $fiscal_period_start || is_numeric($reversal_date))) {
+					if (is_numeric($reversal_date)) {
+						if ($reversal_date < $fiscal_period_start) {
 							$this->errors[] = $langs->trans('AssetErrorReversalDateNotGreaterThanCurrentBeginFiscalDateForMode', $mode_key);
 							$error++;
 							break;
@@ -1091,7 +1124,7 @@ class Asset extends CommonObject
 							break;
 						}
 
-						$start_date = $this->reversal_date;
+						$start_date = $reversal_date;
 						$result = $this->addDepreciationLine($mode_key, '', $start_date, (float) $this->reversal_amount_ht, (float) $this->reversal_amount_ht, $accountancy_code_depreciation_debit, $accountancy_code_credit);
 						if ($result < 0) {
 							$error++;
@@ -1133,8 +1166,11 @@ class Asset extends CommonObject
 
 						$first_period_found = true;
 
-						$period_begin = dol_print_date($fiscal_period_start, $ref_date_format);
-						$period_end = dol_print_date($fiscal_period_end, $ref_date_format);
+						// The bounds are anchored on GMT midnight, so the label of the period must be
+						// rendered in GMT too, otherwise it names the previous day or month on a server
+						// whose UTC offset is negative.
+						$period_begin = dol_print_date($fiscal_period_start, $ref_date_format, 'gmt');
+						$period_end = dol_print_date($fiscal_period_end, $ref_date_format, 'gmt');
 						$ref = $period_begin . ($period_begin != $period_end ? ' - ' . $period_end : '');
 						if ($fiscal_period_start <= $disposal_date && $disposal_date <= $fiscal_period_end) {
 							$ref .= ' - ' . $langs->transnoentitiesnoconv('AssetDisposal');
@@ -1147,7 +1183,7 @@ class Asset extends CommonObject
 						} elseif ($fields['duration_type'] == 1) { // Monthly
 							$nb_days = min($nb_days_in_month, num_between_day($begin_date, $end_date, 1));
 							if ($nb_days >= 28) {
-								$date_temp = dol_getdate($begin_date);
+								$date_temp = dol_getdate($begin_date, false, 'gmt');
 								if ($date_temp['mon'] == 2) {
 									$nb_days = 30;
 								}
