@@ -967,6 +967,183 @@ class Products extends DolibarrApi
 	}
 
 	/**
+	 * Add/Update a sell price per currency for a product
+	 *
+	 * @since	24.0.0	Initial implementation
+	 *
+	 * @param	int			$id						Product ID
+	 * @param	string		$multicurrency_code		Currency code (example 'USD')
+	 * @param	float		$price					Price value
+	 * @param	string		$price_base_type		HT or TTC
+	 * @param	int			$level					Price level
+	 * @param	float		$vat_tx					VAT rate (For example 8.5. Should not be a string)
+	 * @param	float		$multicurrency_tx		Currency rate
+	 * @param	int			$socid					Customer id for a per-customer price, 0 for the catalog price
+	 *
+	 * @return int									ID of the sell price per currency record
+	 *
+	 * @throws RestException 500	System error
+	 * @throws RestException 404
+	 * @throws RestException 403
+	 *
+	 * @url POST {id}/sell_prices_currency
+	 */
+	public function addSellPriceCurrency($id, $multicurrency_code, $price, $price_base_type = 'HT', $level = 1, $vat_tx = 0, $multicurrency_tx = 1, $socid = 0)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('produit', 'creer') && !DolibarrApiAccess::$user->hasRight('service', 'creer')) {
+			throw new RestException(403);
+		}
+		if (!isModEnabled('multicurrency')) {
+			throw new RestException(400, 'API not available: the multicurrency module is not enabled');
+		}
+
+		$result = $this->product->fetch($id);
+		if ($result <= 0) {
+			throw new RestException(404, 'Product not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('product', $this->product->id)) {
+			throw new RestException(403, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
+		}
+
+		// Clean data
+		$multicurrency_code = strtoupper(sanitizeVal($multicurrency_code, 'alphanohtml'));
+
+		// Validate inputs
+		$price_base_type = strtoupper(trim((string) $price_base_type));
+		if (!in_array($price_base_type, array('HT', 'TTC'), true)) {
+			throw new RestException(400, "price_base_type must be 'HT' or 'TTC'");
+		}
+		if ((float) $price < 0) {
+			throw new RestException(400, 'price must be a positive value');
+		}
+		require_once DOL_DOCUMENT_ROOT . '/multicurrency/class/multicurrency.class.php';
+		if (MultiCurrency::getIdFromCode($this->db, $multicurrency_code) <= 0) {
+			throw new RestException(404, 'Currency ' . $multicurrency_code . ' not found or not enabled in this entity');
+		}
+		if ((int) $socid > 0) {
+			require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
+			$thirdparty = new Societe($this->db);
+			if ($thirdparty->fetch((int) $socid) <= 0) {
+				throw new RestException(404, 'Thirdparty not found');
+			}
+			// A per-customer price is thirdparty-scoped data: enforce the caller's thirdparty perimeter (issue #32379)
+			if (!DolibarrApi::_checkAccessToResource('societe', (int) $socid)) {
+				throw new RestException(403, 'Access to thirdparty ' . $socid . ' not allowed for login ' . DolibarrApiAccess::$user->login);
+			}
+		}
+
+		require_once DOL_DOCUMENT_ROOT . '/product/class/productpricecurrency.class.php';
+		$ppc = new ProductPriceCurrency($this->db);
+		$res = $ppc->setPriceCurrency($id, $multicurrency_code, (float) $price, $price_base_type, (float) $vat_tx, DolibarrApiAccess::$user, (int) $level, (float) $multicurrency_tx, (int) $socid);
+		if ($res <= 0) {
+			throw new RestException(500, 'Error : ' . $ppc->error);
+		}
+
+		return $res;
+	}
+
+	/**
+	 * Get sell prices per currency for a product
+	 *
+	 * @since	24.0.0	Initial implementation
+	 *
+	 * @param	int		$id			Product ID
+	 * @param	int		$socid		Customer id to read that customer's own fixed prices, 0 for the catalog prices
+	 *
+	 * @return array<int,mixed>			Array of sell prices per currency, indexed by [price_level][currency_code]
+	 *
+	 * @throws RestException 404
+	 * @throws RestException 403
+	 *
+	 * @url GET {id}/sell_prices_currency
+	 */
+	public function getSellPricesPerCurrency($id, $socid = 0)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('produit', 'lire')) {
+			throw new RestException(403);
+		}
+		if (!isModEnabled('multicurrency')) {
+			throw new RestException(400, 'API not available: the multicurrency module is not enabled');
+		}
+
+		$result = $this->product->fetch($id);
+		if ($result <= 0) {
+			throw new RestException(404, 'Product not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('product', $this->product->id)) {
+			throw new RestException(403, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
+		}
+
+		if ((int) $socid > 0) {
+			// A per-customer price is thirdparty-scoped data: enforce the caller's thirdparty perimeter (issue #32379)
+			if (!DolibarrApi::_checkAccessToResource('societe', (int) $socid)) {
+				throw new RestException(403, 'Access to thirdparty ' . $socid . ' not allowed for login ' . DolibarrApiAccess::$user->login);
+			}
+			require_once DOL_DOCUMENT_ROOT . '/product/class/productpricecurrency.class.php';
+			$ppc = new ProductPriceCurrency($this->db);
+			return $ppc->fetchAllForProduct((int) $id, (int) $socid);
+		}
+
+		return $this->product->multicurrency_prices;
+	}
+
+	/**
+	 * Delete a sell price per currency for a product
+	 *
+	 * @since	24.0.0	Initial implementation
+	 *
+	 * @param	int			$id						Product ID
+	 * @param	string		$multicurrency_code		Currency code (example 'USD')
+	 * @param	int			$level					Price level
+	 * @param	int			$socid					Customer id for a per-customer price, 0 for the catalog price
+	 *
+	 * @return int									1 if deleted, 0 if nothing to delete
+	 *
+	 * @throws RestException 500	System error
+	 * @throws RestException 404
+	 * @throws RestException 403
+	 *
+	 * @url DELETE {id}/sell_prices_currency/{multicurrency_code}
+	 */
+	public function deleteSellPriceCurrency($id, $multicurrency_code, $level = 1, $socid = 0)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('produit', 'supprimer') && !DolibarrApiAccess::$user->hasRight('service', 'supprimer')) {
+			throw new RestException(403);
+		}
+		if (!isModEnabled('multicurrency')) {
+			throw new RestException(400, 'API not available: the multicurrency module is not enabled');
+		}
+
+		$result = $this->product->fetch($id);
+		if ($result <= 0) {
+			throw new RestException(404, 'Product not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('product', $this->product->id)) {
+			throw new RestException(403, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
+		}
+
+		// A per-customer price is thirdparty-scoped data: enforce the caller's thirdparty perimeter (issue #32379)
+		if ((int) $socid > 0 && !DolibarrApi::_checkAccessToResource('societe', (int) $socid)) {
+			throw new RestException(403, 'Access to thirdparty ' . $socid . ' not allowed for login ' . DolibarrApiAccess::$user->login);
+		}
+
+		// Clean data
+		$multicurrency_code = strtoupper(sanitizeVal($multicurrency_code, 'alphanohtml'));
+
+		require_once DOL_DOCUMENT_ROOT . '/product/class/productpricecurrency.class.php';
+		$ppc = new ProductPriceCurrency($this->db);
+		$res = $ppc->deleteCurrencyPrice($id, (int) $level, $multicurrency_code, DolibarrApiAccess::$user, (int) $socid);
+		if ($res < 0) {
+			throw new RestException(500, 'Error : ' . $ppc->error);
+		}
+
+		return $res;
+	}
+
+	/**
 	 * Delete a purchase price for a product
 	 *
 	 * @since	11.0.0	Initial implementation

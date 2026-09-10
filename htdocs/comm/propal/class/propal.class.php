@@ -640,6 +640,7 @@ class Propal extends CommonObject
 	 * 		@param		float			$pu_ht_devise		Unit price in currency
 	 * 		@param		int    			$fk_remise_except	Id discount if line is from a discount
 	 *  	@param		int				$noupdateafterinsertline	No update after insert of line
+	 *  	@param		int				$multicurrency_subprice_source	Source of the currency unit price (1 = fixed per-currency product price, 0 = computed from the exchange rate)
 	 *    	@return    	int         		    			Return >0 if OK, <0 if KO
 	 *    	@see       	add_product()
 	 */
@@ -670,7 +671,8 @@ class Propal extends CommonObject
 		$origin_id = 0,
 		$pu_ht_devise = 0,
 		$fk_remise_except = 0,
-		$noupdateafterinsertline = 0
+		$noupdateafterinsertline = 0,
+		$multicurrency_subprice_source = 0
 	) {
 		global $mysoc, $langs;
 
@@ -840,6 +842,7 @@ class Propal extends CommonObject
 			$this->line->fk_multicurrency = $this->fk_multicurrency;
 			$this->line->multicurrency_code = $this->multicurrency_code;
 			$this->line->multicurrency_subprice		= (float) $pu_ht_devise;
+			$this->line->multicurrency_subprice_source = ($multicurrency_subprice_source === null ? null : (int) $multicurrency_subprice_source);
 			$this->line->multicurrency_total_ht 	= (float) $multicurrency_total_ht;
 			$this->line->multicurrency_total_tva 	= (float) $multicurrency_total_tva;
 			$this->line->multicurrency_total_ttc 	= (float) $multicurrency_total_ttc;
@@ -930,9 +933,10 @@ class Propal extends CommonObject
 	 * 	@param		float			$pu_ht_devise		Unit price in currency
 	 * 	@param		int				$notrigger			Disable line update trigger
 	 *	@param      int				$rang   			Line rank
+	 *	@param      int				$multicurrency_subprice_source	Source of the currency unit price (1 = fixed per-currency product price, 0 = computed from the exchange rate)
 	 *  @return     int     							Return 0 if OK, <0 if KO
 	 */
-	public function updateline($rowid, $pu, $qty, $remise_percent, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $desc = '', $price_base_type = 'HT', $info_bits = 0, $special_code = 0, $fk_parent_line = 0, $skip_update_total = 0, $fk_fournprice = 0, $pa_ht = 0, $label = '', $type = 0, $date_start = '', $date_end = '', $array_options = array(), $fk_unit = null, $pu_ht_devise = 0, $notrigger = 0, $rang = 0)
+	public function updateline($rowid, $pu, $qty, $remise_percent, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $desc = '', $price_base_type = 'HT', $info_bits = 0, $special_code = 0, $fk_parent_line = 0, $skip_update_total = 0, $fk_fournprice = 0, $pa_ht = 0, $label = '', $type = 0, $date_start = '', $date_end = '', $array_options = array(), $fk_unit = null, $pu_ht_devise = 0, $notrigger = 0, $rang = 0, $multicurrency_subprice_source = null)
 	{
 		global $mysoc, $langs;
 
@@ -1077,6 +1081,7 @@ class Propal extends CommonObject
 
 			// Multicurrency
 			$this->line->multicurrency_subprice		= (float) $pu_ht_devise;
+			$this->line->multicurrency_subprice_source = ($multicurrency_subprice_source === null ? null : (int) $multicurrency_subprice_source);
 			$this->line->multicurrency_total_ht 	= (float) $multicurrency_total_ht;
 			$this->line->multicurrency_total_tva 	= (float) $multicurrency_total_tva;
 			$this->line->multicurrency_total_ttc 	= (float) $multicurrency_total_ttc;
@@ -1960,7 +1965,7 @@ class Propal extends CommonObject
 		$sql .= ' p.weight, p.weight_units, p.volume, p.volume_units,';
 		$sql .= ' p.customcode, p.fk_country as country_id, c.code as country_code,';
 		$sql .= ' d.date_start, d.date_end, d.extraparams,';
-		$sql .= ' d.fk_multicurrency, d.multicurrency_code, d.multicurrency_subprice, d.multicurrency_total_ht, d.multicurrency_total_tva, d.multicurrency_total_ttc';
+		$sql .= ' d.fk_multicurrency, d.multicurrency_code, d.multicurrency_subprice, d.multicurrency_subprice_source, d.multicurrency_total_ht, d.multicurrency_total_tva, d.multicurrency_total_ttc';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element_line.' as d';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON (d.fk_product = p.rowid)';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON c.rowid = p.fk_country';
@@ -2050,6 +2055,7 @@ class Propal extends CommonObject
 				$line->fk_multicurrency = $objp->fk_multicurrency;
 				$line->multicurrency_code = $objp->multicurrency_code;
 				$line->multicurrency_subprice = $objp->multicurrency_subprice;
+				$line->multicurrency_subprice_source = $objp->multicurrency_subprice_source;
 				$line->multicurrency_total_ht = $objp->multicurrency_total_ht;
 				$line->multicurrency_total_tva = $objp->multicurrency_total_tva;
 				$line->multicurrency_total_ttc = $objp->multicurrency_total_ttc;

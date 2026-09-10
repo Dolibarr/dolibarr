@@ -426,6 +426,12 @@ class MultiCurrency extends CommonObject
 
 		$currencyRate = new CurrencyRate($this->db);
 		$currencyRate->rate = (float) price2num($rate);
+		// Pre-fill the inverse rate (1 foreign currency = rate_direct company currency) so the rate_direct
+		// display (MULTICURRENCY_USE_RATE_DIRECT) is meaningful for synced/automatic rates. The rate page
+		// sets rate_direct explicitly and does not go through addRate(), so manual input keeps priority.
+		if ($currencyRate->rate > 0) {
+			$currencyRate->rate_direct = (float) price2num(1 / $currencyRate->rate, 'MU');
+		}
 
 		if ($currencyRate->create($user, $this->id) > 0) {
 			$this->rate = $currencyRate;
@@ -570,6 +576,35 @@ class MultiCurrency extends CommonObject
 
 			return array(0, 1);
 		}
+	}
+
+	/**
+	 * Get the list of currencies enabled for the current entity (shared entities included).
+	 *
+	 * @param	DoliDB	$dbs	Database handler
+	 * @return	array<int,array{id:int,code:string,name:string}>	List of currencies ordered by code
+	 */
+	public static function getCurrencyList($dbs): array
+	{
+		$result = array();
+
+		$sql = "SELECT rowid, code, name FROM ".$dbs->prefix()."multicurrency";
+		$sql .= " WHERE entity IN (".getEntity('multicurrency').")";
+		$sql .= " ORDER BY code ASC";
+
+		dol_syslog(__METHOD__, LOG_DEBUG);
+		$resql = $dbs->query($sql);
+		if (!$resql) {
+			dol_syslog(__METHOD__.' '.$dbs->lasterror(), LOG_ERR);
+			return $result;
+		}
+
+		while ($obj = $dbs->fetch_object($resql)) {
+			$result[] = array('id' => (int) $obj->rowid, 'code' => $obj->code, 'name' => $obj->name);
+		}
+		$dbs->free($resql);
+
+		return $result;
 	}
 
 	/**
