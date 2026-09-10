@@ -279,7 +279,7 @@ class UniversalLLMAdapter
 			'message' => dol_trunc($msg, 300)
 		)), 'chaine', 0, '', $conf->entity);
 	}
-  
+
 	/**
 	 * JSON-encode a request for the log with base64 payloads removed, so the
 	 * 60k truncation in ai_log_request() never swallows the text prompt (for
