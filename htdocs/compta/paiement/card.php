@@ -204,7 +204,7 @@ if (empty($reshook)) {
 					$db->free($resql);
 				} else {
 					$error++;
-					setEventMessages($db->error, $db->errors, 'errors');
+					setEventMessages($db->error, null, 'errors');
 				}
 			}
 
