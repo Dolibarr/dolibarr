@@ -44,6 +44,7 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/phone.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("members", "companies", "categories"));
@@ -592,13 +593,13 @@ if ($search_state) {
 	$sql .= natural_search("state.nom", $search_state);
 }
 if ($search_phone) {
-	$sql .= natural_search("d.phone", $search_phone);
+	$sql .= dol_natural_search_phone($db, "d.phone", $search_phone);
 }
 if ($search_phone_perso) {
-	$sql .= natural_search("d.phone_perso", $search_phone_perso);
+	$sql .= dol_natural_search_phone($db, "d.phone_perso", $search_phone_perso);
 }
 if ($search_phone_mobile) {
-	$sql .= natural_search("d.phone_mobile", $search_phone_mobile);
+	$sql .= dol_natural_search_phone($db, "d.phone_mobile", $search_phone_mobile);
 }
 if ($search_country) {
 	$sql .= " AND d.country IN (".$db->sanitize($search_country).')';
@@ -1527,9 +1528,9 @@ while ($i < $imaxinloop) {
 		}
 		// EMail
 		if (!empty($arrayfields['d.email']['checked'])) {
-			print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute($obj->email).'">';
+			print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute((string) $obj->email).'">';
 			$showinvalidemail = getDolGlobalInt('MAIN_SHOW_INVALID_EMAIL_IN_LIST', 1); // in list, we check only syntax of emails
-			print dol_print_email($obj->email, 0, 0, 1, 64, $showinvalidemail, 1);
+			print dol_print_email((string) $obj->email, 0, 0, 1, 64, $showinvalidemail, 1);
 			print "</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
