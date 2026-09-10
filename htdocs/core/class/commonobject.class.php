@@ -4849,7 +4849,6 @@ abstract class CommonObject
 			$sql = "DELETE FROM " . $this->db->prefix() . "element_element";
 			$sql .= " WHERE";
 			if ($rowid > 0) {
-				// When deleting by rowid, scope to the current object to prevent IDOR
 				$sql .= " rowid = " . ((int) $rowid);
 			} else {
 				if ($deletesource) {
