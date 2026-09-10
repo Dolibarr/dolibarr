@@ -880,14 +880,14 @@ class ProductFournisseur extends Product
 						if ($price_result >= 0) {
 							$fourn_price = price2num($price_result, 'MU');
 							if ($record["quantity"] != 0) {
-								$fourn_unitprice = price2num($fourn_price / $record["quantity"], 'MU');
+								$fourn_unitprice = price2num((float) $fourn_price / $record["quantity"], 'MU');
 							} else {
 								$fourn_unitprice = $fourn_price;
 							}
-							$fourn_unitprice_with_discount = $fourn_unitprice * (1 - $record["remise_percent"] / 100);
+							$fourn_unitprice_with_discount = (float) $fourn_unitprice * (1 - $record["remise_percent"] / 100);
 						}
 					}
-					if ($fourn_unitprice < $min || $min == -1) {
+					if ($fourn_unitprice_with_discount < $min || $min == -1) {
 						$this->product_fourn_price_id   = $record["product_fourn_price_id"];
 						$this->ref_supplier             = $record["ref_fourn"];
 						$this->ref_fourn                = $record["ref_fourn"]; // deprecated
@@ -910,7 +910,7 @@ class ProductFournisseur extends Product
 						$this->fourn_multicurrency_tx          = $record["multicurrency_tx"];
 						$this->fourn_multicurrency_id          = $record["fk_multicurrency"];
 						$this->fourn_multicurrency_code        = $record["multicurrency_code"];
-						$min = $fourn_unitprice;
+						$min = $fourn_unitprice_with_discount;
 					}
 				}
 			}
