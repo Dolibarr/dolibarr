@@ -1356,6 +1356,8 @@ class ExtraFields
 			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" maxlength="'.$newsize.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').'>';
 		} elseif (preg_match('/varchar/', $type)) {
 			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" maxlength="'.$size.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').'>';
+		} elseif ($type == 'phone' && $mode != 1) {
+			$out = $form->showPhoneInput($value, $keyprefix.$key.$keysuffix, (is_object($object) && !empty($object->country_id)) ? $object->country_id : 0);
 		} elseif (in_array($type, array('email', 'mail', 'ip', 'phone', 'url'))) {
 			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').'>';
 		} elseif ($type == 'icon') {
@@ -1520,11 +1522,11 @@ class ExtraFields
 									var query = {
 										search: params.term,
 										page: params.page || 1,
-										objecttype: '".$extrafieldsobjectkey."',
-										objectid: '".$objectid."',
-										objectkey: '".$key."',
-										mode: '".$mode."',
-										value: '".$value."'
+										objecttype: '".dol_escape_js($extrafieldsobjectkey)."',
+										objectid: '".dol_escape_js($objectid)."',
+										objectkey: '".dol_escape_js($key)."',
+										mode: '".((int) $mode)."',
+										value: '".dol_escape_js($value)."'
 									}
 									return query;
 								}
@@ -1842,7 +1844,7 @@ class ExtraFields
 				$out .= "
 				<script>
 				$(document).ready(function () {
-					$('#".$keyprefix.$key.$keysuffix."').select2({
+					$('#".dol_escape_js($keyprefix.$key.$keysuffix)."').select2({
 						ajax: {
 							url: '".DOL_URL_ROOT.'/core/ajax/ajaxextrafield.php'."',
 							dataType: 'json',
@@ -1855,7 +1857,7 @@ class ExtraFields
 									objecttype: '".dol_escape_js($extrafieldsobjectkey)."',
 									objectid: '".dol_escape_js($object->id)."',
 									objectkey: '".dol_escape_js($key)."',
-									mode: '".dol_escape_js($mode)."',
+									mode: '".((int) $mode)."',
 									value: '".dol_escape_js($value)."'
 								}
 								return query;

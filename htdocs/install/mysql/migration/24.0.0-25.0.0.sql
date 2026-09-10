@@ -145,6 +145,10 @@ ALTER TABLE llx_deletion_log ADD INDEX idx_deletion_log_date_deletion (date_dele
 -- Add contract type field (0=customer, 1=supplier)
 ALTER TABLE llx_contrat ADD COLUMN fk_contract_type tinyint DEFAULT 0 AFTER ref_ext;
 
+-- Human Resources Management(HRM): Add `country_job_id` and `state_job_id` to the `llx_user` table to store the workplace location, enabling vacation filtering by workplace.
+ALTER TABLE llx_user ADD COLUMN country_job_id integer DEFAULT NULL;
+ALTER TABLE llx_user ADD COLUMN state_job_id integer DEFAULT NULL;
+
 -- end of migration - nothing after this line
 
 -- Variants: allow standard import/export of variants (attributes, values, combinations,
@@ -198,5 +202,5 @@ ALTER TABLE llx_product_attribute_combination_price_level ADD CONSTRAINT fk_prod
 -- llx_notify_def.entity was never written, every row kept its DEFAULT 1, so filtering the
 -- notification queries on it would hide the existing subscriptions. Give each row the entity of the
 -- third party or the user it belongs to. Rows tied to neither keep their current value.
-UPDATE llx_notify_def n SET n.entity = (SELECT s.entity FROM llx_societe s WHERE s.rowid = n.fk_soc) WHERE n.fk_soc > 0 AND EXISTS (SELECT 1 FROM llx_societe s WHERE s.rowid = n.fk_soc);
-UPDATE llx_notify_def n SET n.entity = (SELECT u.entity FROM llx_user u WHERE u.rowid = n.fk_user) WHERE n.fk_user > 0 AND EXISTS (SELECT 1 FROM llx_user u WHERE u.rowid = n.fk_user);
+UPDATE llx_notify_def INNER JOIN llx_societe ON llx_notify_def.fk_soc = llx_societe.rowid SET llx_notify_def.entity = llx_societe.entity WHERE llx_notify_def.fk_soc > 0;
+UPDATE llx_notify_def INNER JOIN llx_user ON llx_notify_def.fk_user = llx_user.rowid SET llx_notify_def.entity = llx_user.entity WHERE llx_notify_def.fk_user > 0;
