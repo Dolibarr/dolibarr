@@ -84,7 +84,10 @@ if ($id > 0 || !empty($ref)) {
 	}
 }
 
-// include comment actions
+// Security check - scoped to the specific project
+restrictedArea($user, 'projet', $object->id, 'projet&project');
+
+// include comment actions (after security check to prevent IDOR)
 include DOL_DOCUMENT_ROOT.'/core/actions_comments.inc.php';
 
 /*
