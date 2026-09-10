@@ -258,4 +258,92 @@ class ProjectTest extends CommonClassTest
 		$this->assertLessThan($result, 0);
 		return $result;
 	}
+
+	/**
+	 * The 'openedopp' and 'notopenedopp' statistics filters must be an exhaustive partition:
+	 * a LOST opportunity has to be reported by exactly one of them, and plain projects stay
+	 * on the 'notopenedopp' side.
+	 *
+	 * @return void
+	 */
+	public function testProjectStatsOpportunityPartition()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$idlost = (int) dol_getIdFromCode($db, 'LOST', 'c_lead_status', 'code', 'rowid');
+		$idprosp = (int) dol_getIdFromCode($db, 'PROSP', 'c_lead_status', 'code', 'rowid');
+		$this->assertGreaterThan(0, $idlost, 'Dictionary c_lead_status must provide the LOST status');
+		$this->assertGreaterThan(0, $idprosp, 'Dictionary c_lead_status must provide the PROSP status');
+
+		$idlostopp = $this->createProjectForOpportunityStats($db, $user, 1, $idlost);
+		$idopenopp = $this->createProjectForOpportunityStats($db, $user, 1, $idprosp);
+		$idproject = $this->createProjectForOpportunityStats($db, $user, 0, 0);
+
+		// A lost opportunity is not open any more, but it must not disappear from the statistics
+		$this->assertSame(0, $this->countProjectInStats($db, 'openedopp', $idlostopp));
+		$this->assertSame(1, $this->countProjectInStats($db, 'notopenedopp', $idlostopp));
+
+		// Unchanged behaviour for an open opportunity and for a plain project
+		$this->assertSame(1, $this->countProjectInStats($db, 'openedopp', $idopenopp));
+		$this->assertSame(0, $this->countProjectInStats($db, 'notopenedopp', $idopenopp));
+		$this->assertSame(0, $this->countProjectInStats($db, 'openedopp', $idproject));
+		$this->assertSame(1, $this->countProjectInStats($db, 'notopenedopp', $idproject));
+	}
+
+	/**
+	 * Create a project row dedicated to the opportunity statistics test
+	 *
+	 * @param	DoliDB	$db					Database handler
+	 * @param	User	$user				User doing the creation
+	 * @param	int		$usageopportunity	1 if the project is used to follow an opportunity
+	 * @param	int		$oppstatus			Opportunity status rowid (c_lead_status), 0 for none
+	 * @return	int							Id of the created project
+	 */
+	private function createProjectForOpportunityStats($db, $user, $usageopportunity, $oppstatus)
+	{
+		$project = new Project($db);
+		$project->initAsSpecimen();
+		$project->ref = 'PJSTAT'.$usageopportunity.$oppstatus.dol_print_date(dol_now(), '%Y%m%d%H%M%S');
+		$project->usage_opportunity = $usageopportunity;
+		$project->opp_status = $oppstatus;
+		$result = $project->create($user);
+
+		$this->assertGreaterThan(0, $result, 'Failed to create the project of the statistics test');
+
+		return (int) $result;
+	}
+
+	/**
+	 * Count how many times a given project is reported by one opportunity statistics filter
+	 *
+	 * @param	DoliDB	$db			Database handler
+	 * @param	string	$oppfilter	Value of ProjectStats::opp_status, 'openedopp' or 'notopenedopp'
+	 * @param	int		$id			Id of the project to look for
+	 * @return	int					Number of matching rows, 0 or 1
+	 */
+	private function countProjectInStats($db, $oppfilter, $id)
+	{
+		require_once dirname(__FILE__).'/../../htdocs/projet/class/projectstats.class.php';
+
+		$stats = new ProjectStats($db);
+		$stats->opp_status = $oppfilter;
+		$sqlwhere = $stats->buildWhere();
+
+		$sql = "SELECT COUNT(t.rowid) as nb";
+		$sql .= " FROM ".$db->prefix()."projet as t";
+		$sql .= $sqlwhere;
+		$sql .= " AND t.rowid = ".((int) $id);
+
+		$resql = $db->query($sql);
+		$this->assertNotFalse($resql, 'Statistics filter produced an invalid SQL request');
+		$obj = $db->fetch_object($resql);
+		$nb = (int) $obj->nb;
+		$db->free($resql);
+
+		return $nb;
+	}
 }
