@@ -917,6 +917,12 @@ IMG;
 			dol_syslog(get_class($this).'::exportAsAttachedPDF $ret_val='.$retval, LOG_DEBUG);
 			$filename=''; $linenum=0;
 
+			// The pdf is already written at this point, so remove the odt source before the download block:
+			// that block may throw when headers are already sent, and it also strips the extension from $name.
+			if (!empty($conf->global->MAIN_ODT_AS_PDF_DEL_SOURCE)) {
+				unlink($name);
+			}
+
 			if (php_sapi_name() != 'cli') {	// If we are in a web context (not into CLI context)
 				if (headers_sent($filename, $linenum)) {
 					throw new OdfException("headers already sent ($filename at $linenum)");
@@ -928,10 +934,6 @@ IMG;
 					header('Content-Disposition: attachment; filename="'.$name.'.pdf"');
 					readfile($name.".pdf");
 				}
-			}
-
-			if (!empty($conf->global->MAIN_ODT_AS_PDF_DEL_SOURCE)) {
-				unlink($name);
 			}
 		} else {
 			dol_syslog(get_class($this).'::exportAsAttachedPDF $ret_val='.$retval, LOG_DEBUG);
