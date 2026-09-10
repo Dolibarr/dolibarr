@@ -7039,12 +7039,6 @@ parameters:
 			path: ../../../htdocs/public/eventorganization/attendee_new.php
 
 		-
-			message: '#^Right side of \|\| is always false\.$#'
-			identifier: booleanOr.rightAlwaysFalse
-			count: 2
-			path: ../../../htdocs/public/eventorganization/attendee_new.php
-
-		-
 			message: '#^Call to function is_numeric\(\) with int will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -7243,12 +7237,6 @@ parameters:
 			path: ../../../htdocs/public/project/index.php
 
 		-
-			message: '#^Right side of \|\| is always false\.$#'
-			identifier: booleanOr.rightAlwaysFalse
-			count: 2
-			path: ../../../htdocs/public/project/index.php
-
-		-
 			message: '#^Call to function is_numeric\(\) with int will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -7264,12 +7252,6 @@ parameters:
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 1
-			path: ../../../htdocs/public/project/suggestbooth.php
-
-		-
-			message: '#^Right side of \|\| is always false\.$#'
-			identifier: booleanOr.rightAlwaysFalse
-			count: 2
 			path: ../../../htdocs/public/project/suggestbooth.php
 
 		-
@@ -7294,12 +7276,6 @@ parameters:
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 1
-			path: ../../../htdocs/public/project/suggestconference.php
-
-		-
-			message: '#^Right side of \|\| is always false\.$#'
-			identifier: booleanOr.rightAlwaysFalse
-			count: 2
 			path: ../../../htdocs/public/project/suggestconference.php
 
 		-
