@@ -28,9 +28,9 @@ Submit code
 This process describes how a Developer can submit code to the project so it can be analyzed and validated by the PR Maintainer (we call this a Pull Request).
 
 Definition:
-- Developer: is the human knowing the development language of the application that wants to change some part of the code by modifying the sources of the project.
-- PR Maintainer: is the human knowing the development language and code who checks that the code submitted for approbation is correct to validate it, in other words, the PR Maintainer is the approbator of commits. 
-- Release Maintainer: is the human that validates that a freeze/beta version is ok to be released officially as a stable version.
+- The Developer: is the human knowing the development language of the application that wants to change some part of the code by modifying the sources of the project.
+- The PR Maintainer: is the human knowing the development language and code who checks that the code submitted for approbation is correct to validate it, in other words, the PR Maintainer is the approbator of commits. 
+- The Release Maintainer: is the human that validates that a freeze/beta version is ok to be released officially as a stable version.
 
 
 ### Basic workflow
@@ -45,9 +45,15 @@ As the Developer:
 6. Commit and push your changes.
 7. [Make a pull request](https://help.github.com/articles/creating-a-pull-request).
 
+If a CI error is thrown, the developer must fix it (The maintener will not process it). This is true even if the CI error is reported an another line of code than the one you modified. This is the principle of solidarity of Dolibarr project.
+
+If a conflict is reported (so PR is not mergeable, status "Mergeable" appear on the PR itself), the developer must fix it too, also if the conflict is not the fault of yourself. Again the principle of solidarity rules.
+
+
 As the PR Maintainer:
 
-7. The PR Maintainer will check and decide if he approves or not the commits. During this step, the PR Maintainer can modify your own code to make it valid for approbation or ask you to make the change yourself. For this the PR Maintainer may add commits to a PR. Depending on the tools used (can be done from github directly or from an IDE), such commits may be done directly after validating your PR (for example to complete it).
+7. The PR Maintainer will check and decide if he approves or not the commits. During this step, the PR Maintainer can modify your own code to make it valid for approbation or ask you 
+to make the change yourself. For this the PR Maintainer may add commits to a PR. Depending on the tools used (can be done from github directly or from an IDE), such commits may be done directly after validating your PR (for example to complete it).
 
 As the Release Maintainer:
 
