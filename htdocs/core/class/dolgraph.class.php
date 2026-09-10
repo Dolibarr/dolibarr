@@ -223,8 +223,8 @@ class DolGraph
 		}
 
 		// Load color of the theme
-		$color_file = DOL_DOCUMENT_ROOT . '/theme/' . $conf->theme . '/theme_vars.inc.php';
-		if (is_readable($color_file)) {
+		$color_file = dol_getThemeFilePath('theme_vars.inc.php');
+		if ($color_file && is_readable($color_file)) {
 			include $color_file;
 			if (isset($theme_bordercolor)) {
 				$this->bordercolor = $theme_bordercolor;

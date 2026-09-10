@@ -448,7 +448,9 @@ if (empty($reshook)) {
 
 							if (@is_dir($dir)) {
 								$newfile = $dir.'/'.dol_sanitizeFileName($_FILES['photo']['name']);
-								if (!dol_move_uploaded_file($_FILES['photo']['tmp_name'], $newfile, 1, 0, $_FILES['photo']['error']) > 0) {
+								$resultupload = dol_move_uploaded_file($_FILES['photo']['tmp_name'], $newfile, 1, 0, $_FILES['photo']['error']);
+								// Note: $resultupload is a string when the file was refused and, in PHP 8, such a string compares as greater than 0
+								if (!is_numeric($resultupload) || $resultupload <= 0) {
 									setEventMessages($langs->trans("ErrorFailedToSaveFile"), null, 'errors');
 								} else {
 									// Create thumbs
@@ -1259,15 +1261,15 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// Pro phone
 		print '<tr><td>'.$langs->trans("PhonePro").'</td>';
-		print '<td>'.img_picto('', 'object_phoning', 'class="pictofixedwidth"').'<input type="text" name="phone" size="20" value="'.(GETPOSTISSET('phone') ? GETPOST('phone', 'alpha') : $soc->phone).'"></td></tr>';
+		print '<td>'.$form->showPhoneInput($soc->phone, 'phone', $soc->country_id, 'object_phoning', 'maxwidth150 widthcentpercentminusx').'</td></tr>';
 
 		// Personal phone
 		print '<tr><td>'.$langs->trans("PhonePerso").'</td>';
-		print '<td>'.img_picto('', 'object_phoning', 'class="pictofixedwidth"').'<input type="text" name="phone_perso" size="20" value="'.(GETPOSTISSET('phone_perso') ? GETPOST('phone_perso', 'alpha') : $object->phone_perso).'"></td></tr>';
+		print '<td>'.$form->showPhoneInput($object->phone_perso, 'phone_perso', $soc->country_id, 'object_phoning', 'maxwidth150 widthcentpercentminusx').'</td></tr>';
 
 		// Mobile phone
 		print '<tr><td>'.$langs->trans("PhoneMobile").'</td>';
-		print '<td>'.img_picto('', 'object_phoning_mobile', 'class="pictofixedwidth"').'<input type="text" name="phone_mobile" size="20" value="'.(GETPOSTISSET('phone_mobile') ? GETPOST('phone_mobile', 'alpha') : $object->phone_mobile).'"></td></tr>';
+		print '<td>'.$form->showPhoneInput($object->phone_mobile, 'phone_mobile', $soc->country_id, 'object_phoning_mobile', 'maxwidth150 widthcentpercentminusx').'</td></tr>';
 
 		if (isModEnabled('socialnetworks')) {
 			foreach ($socialnetworks as $key => $value) {
@@ -1512,15 +1514,15 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// Pro phone
 		print '<tr><td>'.$langs->trans("PhonePro").'</td>';
-		print '<td>'.img_picto('', 'object_phoning', 'class="pictofixedwidth"').'<input type="text" name="phone" value="'.(GETPOSTISSET("phone") ? GETPOST("phone") : $object->phone).'"></td></tr>';
+		print '<td>'.$form->showPhoneInput($object->phone, 'phone', $object->country_id, 'object_phoning', 'maxwidth150 widthcentpercentminusx').'</td></tr>';
 
 		// Personal phone
 		print '<tr><td>'.$langs->trans("PhonePerso").'</td>';
-		print '<td>'.img_picto('', 'object_phoning', 'class="pictofixedwidth"').'<input type="text" name="phone_perso" value="'.(GETPOSTISSET("phone_perso") ? GETPOST("phone_perso") : $object->phone_perso).'"></td></tr>';
+		print '<td>'.$form->showPhoneInput($object->phone_perso, 'phone_perso', $object->country_id, 'object_phoning', 'maxwidth150 widthcentpercentminusx').'</td></tr>';
 
 		// Mobile phone
 		print '<tr><td>'.$langs->trans("PhoneMobile").'</td>';
-		print '<td>'.img_picto('', 'object_phoning_mobile', 'class="pictofixedwidth"').'<input type="text" name="phone_mobile" value="'.(GETPOSTISSET("phone_mobile") ? GETPOST("phone_mobile") : $object->phone_mobile).'"></td></tr>';
+		print '<td>'.$form->showPhoneInput($object->phone_mobile, 'phone_mobile', $object->country_id, 'object_phoning_mobile', 'maxwidth150 widthcentpercentminusx').'</td></tr>';
 
 		if (isModEnabled('socialnetworks')) {
 			foreach ($socialnetworks as $key => $value) {

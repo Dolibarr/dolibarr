@@ -340,7 +340,7 @@ if (empty($mysoc->country_code)) {
 
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans("TypeMovement").'</td>'."\n";
+	print '<td>'.$langs->trans("From").'/'.$langs->trans("To").'</td>'."\n";
 	print '<td class="right" width="60"></td>'."\n";
 	print '</tr>'."\n";
 
