@@ -255,6 +255,13 @@ if (!class_exists('ZipArchive')) {
 	$extensionok[] = 'ZIP';
 }
 
+// Check if DOM is supported (used by dol_htmlwithnojs/DOMDocument, login.tpl.php fatals otherwise)
+if (!class_exists('DOMDocument')) {
+	$extensionko[] = 'DOM';
+} else {
+	$extensionok[] = 'DOM';
+}
+
 if (!empty($extensionok)) {
 	//print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle pictofixedwidth"> ';
 	print img_picto('', 'tick', 'class="pictofixedwidth"');
