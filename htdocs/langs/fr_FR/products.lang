@@ -472,3 +472,4 @@ NotSupportedOnKits=Non pris en charge sur les kits
 ProductLangExtrafieldsSetup=produit traductions Champs supplémentaires
 
 WithoutVATCode=Sans code de TVA
+MassConvertInProgress=Conversion en cours, merci de patienter. Sur un gros catalogue, elle peut durer plusieurs minutes.

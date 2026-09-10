@@ -93,7 +93,7 @@ $conditions = [
 $max_depth = 0;
 
 foreach ($modules as $const => $desc) {
-	$const_depth = getDolGlobalString('SUBTOTAL_' . $const . '_MAX_DEPTH', 2);
+	$const_depth = getDolGlobalInt('SUBTOTAL_' . $const . '_MAX_DEPTH', 2);
 
 	$constante_title = 'SUBTOTAL_TITLE_' . $const;
 	$constante_subtotal = 'SUBTOTAL_' . $const;
@@ -128,7 +128,7 @@ if (preg_match('/^SUBTOTAL_.*$/', $action)) {
 	}
 }
 
-if ($action == 'update_colors') {
+if ($action == 'update_colors' && !GETPOST('cancel', 'alpha')) {
 	foreach ($colors as $const => $color) {
 		$color_to_update = GETPOST($const, 'aZ09');
 		if ($color_to_update != $color['color']) {
@@ -210,7 +210,7 @@ if (empty($conf->use_javascript_ajax)) {
 		print '<input type="hidden" name="action" value="SUBTOTAL_' . $const . '_MAX_DEPTH">';
 		print '<input size="3" type="text" class="center"';
 		print $can_modify ? '' : ' disabled="disabled" ';
-		print 'name="SUBTOTAL_' . $const . '_MAX_DEPTH" value="' . getDolGlobalString('SUBTOTAL_' . $const . '_MAX_DEPTH', $can_modify ? 2 : 0) . '">';
+		print 'name="SUBTOTAL_' . $const . '_MAX_DEPTH" value="' . getDolGlobalInt('SUBTOTAL_' . $const . '_MAX_DEPTH', $can_modify ? 2 : 0) . '">';
 		print $can_modify ? '<input type="submit" class="button button-edit reposition smallpaddingimp" name="Button"value="' . $langs->trans("Modify") . '">' : '';
 		print '</form>';
 		print '</td>';
@@ -244,12 +244,14 @@ if (empty($conf->use_javascript_ajax)) {
 	}
 
 	print '</table>' . "\n";
-}
 
-print '<div class="center">';
-print '<input class="button button-save reposition buttonforacesave" type="submit" name="submit" value="' . $langs->trans("Save") . '">';
-print '<input class="button button-cancel reposition" type="submit" name="cancel" value="' . $langs->trans("Cancel") . '">';
-print '</div>';
+	print '<div class="center">';
+	print '<input class="button button-save reposition buttonforacesave" type="submit" name="submit" value="' . $langs->trans("Save") . '">';
+	print '<input class="button button-cancel reposition" type="submit" name="cancel" value="' . $langs->trans("Cancel") . '">';
+	print '</div>';
+
+	print '</form>';
+}
 
 // End of page
 llxFooter();

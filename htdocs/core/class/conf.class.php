@@ -119,7 +119,7 @@ class Conf extends stdClass
 	 */
 	public $modules;
 	/**
-	 * @var array<string,array<string,string|array>>  List of activated modules
+	 * @var array<string,array<string,mixed>>  List of activated modules
 	 */
 	public $modules_parts;
 

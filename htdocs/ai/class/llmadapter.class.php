@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2026		Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2026		Nick Fragoulis
- * Copyright (C) 2026	Jose Martinez			<jose.martinez@pichinov.com>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -112,10 +112,22 @@ class UniversalLLMAdapter
 		if (!empty($attachments)) {
 			$userContent = array(array("type" => "text", "text" => $msg));
 			foreach ($attachments as $att) {
-				$userContent[] = array(
-					"type" => "image_url",
-					"image_url" => array("url" => "data:".$att['mime'].";base64,".$att['data'])
-				);
+				if ($att['mime'] === 'application/pdf') {
+					// OpenAI compatible APIs reject non-image MIME inside image_url;
+					// PDFs use the dedicated 'file' content part.
+					$userContent[] = array(
+						"type" => "file",
+						"file" => array(
+							"filename" => "document.pdf",
+							"file_data" => "data:application/pdf;base64,".$att['data']
+						)
+					);
+				} else {
+					$userContent[] = array(
+						"type" => "image_url",
+						"image_url" => array("url" => "data:".$att['mime'].";base64,".$att['data'])
+					);
+				}
 			}
 		}
 
@@ -127,6 +139,9 @@ class UniversalLLMAdapter
 			),
 			"temperature" => 0.1
 		);
+		if (!empty($attachments)) {
+			$data["max_tokens"] = 4096;	// document extraction answers are much longer than intent JSON
+		}
 
 		// Only force JSON mode if explicitly requested
 		// This allows Email/Webpage generation to return raw HTML
@@ -137,7 +152,7 @@ class UniversalLLMAdapter
 			}
 		}
 
-		$this->lastRequest = json_encode($data, JSON_PRETTY_PRINT);
+		$this->lastRequest = $this->encodeRequestForLog($data);
 
 		return $this->curl($url, $data, array("Content-Type: application/json", "Authorization: Bearer " . $this->key));
 	}
@@ -166,6 +181,8 @@ class UniversalLLMAdapter
 			foreach ($attachments as $att) {
 				$userContent[] = array(
 					"type" => ($att['mime'] === 'application/pdf' ? "document" : "image"),
+					// Only application/pdf and image/* reach this point (see
+					// ai_validate_attachments()); anything else would 400.
 					"source" => array("type" => "base64", "media_type" => $att['mime'], "data" => $att['data'])
 				);
 			}
@@ -180,7 +197,7 @@ class UniversalLLMAdapter
 			"max_tokens" => $maxTokens
 		);
 
-		$this->lastRequest = json_encode($data, JSON_PRETTY_PRINT);
+		$this->lastRequest = $this->encodeRequestForLog($data);
 
 		return $this->curl($url, $data, array("content-type: application/json", "x-api-key: " . $this->key, "anthropic-version: 2023-06-01"), true);
 	}
@@ -221,10 +238,10 @@ class UniversalLLMAdapter
 			"contents" => array(
 				array("parts" => $parts)
 			),
-			"generationConfig" => array("temperature" => 0.1)
+			"generationConfig" => (empty($attachments) ? array("temperature" => 0.1) : array("temperature" => 0.1, "maxOutputTokens" => 4096))
 		);
 
-		$this->lastRequest = json_encode($data, JSON_PRETTY_PRINT);
+		$this->lastRequest = $this->encodeRequestForLog($data);
 
 		return $this->curl($url, $data, array("Content-Type: application/json"), false, true);
 	}
@@ -261,6 +278,40 @@ class UniversalLLMAdapter
 			'http_code' => $httpCode,
 			'message' => dol_trunc($msg, 300)
 		)), 'chaine', 0, '', $conf->entity);
+  }
+  
+  /**
+	 * JSON-encode a request for the log with base64 payloads removed, so the
+	 * 60k truncation in ai_log_request() never swallows the text prompt (for
+	 * Anthropic the document block precedes the text block) and document
+	 * contents never land in llx_ai_request_log.
+	 *
+	 * @param array<string,mixed> $data Request payload
+	 * @return string JSON with long base64 runs replaced by a placeholder
+	 */
+	private function encodeRequestForLog(array $data)
+	{
+		$json = json_encode($data);	// compact on purpose: the log budget is 60k chars, and core's json.lib.php polyfill makes 2-arg json_encode a phpstan error
+
+		// Unanchored: base64 appears both as bare JSON string values (Anthropic,
+		// Google) and embedded inside data: URLs (OpenAI file/image_url parts).
+		$out = preg_replace_callback(
+			'~((?:[A-Za-z0-9+=]++|\\\\/)+)~',
+			/**
+			 * @param string[] $m Regex matches: [1] = base64-like run
+			 * @return string
+			 */
+			static function (array $m) {
+				if (strlen($m[1]) < 512) {
+					return $m[1];	// short runs (words, urls) stay as they are
+				}
+
+				return '[base64 elided, '.strlen($m[1]).' chars]';
+			},
+			$json
+		);
+
+		return ($out === null) ? $json : $out;
 	}
 
 	/**
@@ -280,7 +331,8 @@ class UniversalLLMAdapter
 		// By default, we accept only external endpoints ($dolibarr_ai_allow_local_endpoints is not set).
 		// To allow local endpoints, we must set $dolibarr_ai_allow_local_endpoints to 1 or 2 in conf.php.
 		global $dolibarr_ai_allow_local_endpoints;
-		$localurl = $dolibarr_ai_allow_local_endpoints ?? 0;
+
+		$localurl = empty($dolibarr_ai_allow_local_endpoints) ? 0 : 2;
 
 		// Pass $this->timeout as the response timeout so the LLM-specific value configured
 		// at construction time is honored (getURLContent's $timeoutresponse is the 10th arg;

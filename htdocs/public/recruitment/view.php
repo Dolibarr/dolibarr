@@ -475,7 +475,7 @@ if ($action != 'dosubmit') {
 		print '</td></tr>'."\n";
 
 		print '<tr><td class="titlefieldcreate left">'.$langs->trans("Phone").'</td><td class="left">';
-		print img_picto("", "phone", 'class="pictofixedwidth"').'<input type="text" class="flat minwidth100 --success" name="phone" value="'.$phone.'">';
+		print $form->showPhoneInput($phone, 'phone', 0, 'phone', 'flat minwidth100 --success');
 		print '</td></tr>'."\n";
 
 		print '<tr><td class="titlefieldcreate left minwidth300">'.$langs->trans("DateOfBirth").'</td><td class="left">';
@@ -488,6 +488,7 @@ if ($action != 'dosubmit') {
 
 		// Other attributes
 		$object = new RecruitmentCandidature($db);
+		$parameters = array();
 		$parameters['tpl_context'] = 'public';	// define template context to public
 		$parameters['tdclass'] = 'left';
 		$extrafields->fetch_name_optionals_label("recruitment_recruitmentcandidature");

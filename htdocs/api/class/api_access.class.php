@@ -150,7 +150,7 @@ class DolibarrApiAccess implements iAuthenticate
 				}
 			} else {
 				if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && defined("DOLENTITY")) {
-					$sql = "SELECT DISTINCT u.login, u.datec, u.api_key as use_api, oat.tokenstring as api_key, oat.entity as token_entity, rowid as token_rowid,";
+					$sql = "SELECT DISTINCT u.login, u.datec, u.api_key as use_api, oat.tokenstring as api_key, oat.entity as token_entity, oat.rowid as token_rowid,";
 					$sql .= " oat.tms as date_modification,";
 					$sql .= " gu.entity";
 					$sql .= " FROM ".$this->db->prefix()."oauth_token AS oat";

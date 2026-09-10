@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2026	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1984,10 +1985,17 @@ function img_picto_common($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0
 		$path = DOL_URL_ROOT . '/theme/common/' . $picto;
 
 		if (getDolGlobalInt('MAIN_MODULE_CAN_OVERWRITE_COMMONICONS')) {
-			$themepath = DOL_DOCUMENT_ROOT . '/theme/' . $conf->theme . '/img/' . $picto;
+			$themeimg = '/theme/' . $conf->theme . '/img/' . $picto;
 
-			if (file_exists($themepath)) {
-				$path = $themepath;
+			if (file_exists(DOL_DOCUMENT_ROOT . $themeimg)) {
+				$path = DOL_URL_ROOT . $themeimg;
+			} elseif (!empty($conf->modules_parts['theme'])) {	// Using this feature slow down application
+				foreach ($conf->modules_parts['theme'] as $reldir) {
+					if (file_exists(dol_buildpath($reldir . $themeimg, 0))) {
+						$path = dol_buildpath($reldir . $themeimg, 1);
+						break;
+					}
+				}
 			}
 		}
 	}
@@ -2574,7 +2582,7 @@ function dol_print_error($db = null, $error = '', $errors = null)
 		}
 		$out .= $langs->trans("InformationToHelpDiagnose") . ":<br>\n";
 
-		$out .= "<b>" . $langs->trans("Date") . ":</b> " . dol_print_date(time(), 'dayhourlog') . "<br>\n";
+		$out .= "<b>" . $langs->trans("Date") . ":</b> " . dol_print_date(dol_now(), 'dayhourlog') . "<br>\n";
 		$out .= "<b>" . $langs->trans("Dolibarr") . ":</b> " . DOL_VERSION . " - https://www.dolibarr.org<br>\n";
 		if (isset($conf->global->MAIN_FEATURES_LEVEL)) {
 			$out .= "<b>" . $langs->trans("LevelOfFeature") . ":</b> " . getDolGlobalInt('MAIN_FEATURES_LEVEL') . "<br>\n";
@@ -4415,7 +4423,7 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
  * @param string    	$id         	Attribute id of action button. Example 'action-delete'. This can be used for full ajax confirm if this code is reused into the ->formconfirm() method.
  * @param bool|int		$userRight  	User action right. True or 1 of ok. Use 0 if user has no permission, it will add the message "No permission" on tooltip (if no other message explicitly provided). Use -1 to have button not allowed without adding the message (because an explicit label is already set).
  * // phpcs:disable
- * @param array{confirm?:array{url?:string,title?:string,content?:string,use_unsecured_unescapedattr?:bool|string[],action-btn-label?:string,cancel-btn-label?:string,modal?:bool},attr?:array<string,mixed>,areDropdownButtons?:bool,backtopage?:string,lang?:string,enabled?:bool,perm?:int<0,1>,label?:string,url?:string,isDropdown?:int<0,1>,isDropDown?:int<0,1>}	$params = [ // Various params for future : recommended rather than adding more function arguments
+ * @param array{confirm?:array{url?:string,title?:string,content?:string,use_unsecured_unescapedattr?:bool|string[],action-btn-label?:string,cancel-btn-label?:string,modal?:bool},attr?:array<string,mixed>,areDropdownButtons?:bool,forceDropdownButtons?:bool,backtopage?:string,lang?:string,enabled?:bool,perm?:int<0,1>,label?:string,url?:string,isDropdown?:int<0,1>,isDropDown?:int<0,1>}	$params = [ // Various params for future : recommended rather than adding more function arguments
  *                                                                                                                                                                                                                                                                                                                                      'attr' => [ // to add or override button attributes
  *                                                                                                                                                                                                                                                                                                                                      	'xxxxx' => '', // your xxxxx attribute you want
  *                                                                                                                                                                                                                                                                                                                                      	'class' => 'reposition', // to add more css class to the button class attribute
@@ -4467,7 +4475,7 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 			return $out;
 		}
 
-		if (count($url) > 1) {
+		if (count($url) > 1 || !empty($params["forceDropdownButtons"])) {
 			$out .= '<div class="dropdown inline-block dropdown-holder">';
 			$out .= '<a style="margin-right: auto;" class="dropdown-toggle classfortooltip butAction' . ($userRight ? '' : 'Refused') . '" title="' . dol_escape_htmltag($label) . '" data-toggle="dropdown">' . ($text ? $text : $label) . '</a>';
 			$out .= '<div class="dropdown-content">';
@@ -4617,7 +4625,7 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 		if (!empty($params['use_unsecured_unescapedattr']) && is_array($params['use_unsecured_unescapedattr']) && in_array($key, $params['use_unsecured_unescapedattr'])) {
 			// Deprecated, forbidden.
 			$value = dol_htmlentities($value, ENT_QUOTES | ENT_SUBSTITUTE);
-		} elseif ($key == 'href') {
+		} elseif (in_array($key, ['href', 'data-confirm-url'])) {
 			$value = dolPrintHTMLForAttributeUrl($value);
 		} else {
 			$value = dolPrintHTMLForAttribute($value);
@@ -4708,7 +4716,7 @@ function commonHtmlAttributeBuilder($attr, array $unescapedAttr = [])
 		if (!empty($unescapedAttr) && in_array($key, $unescapedAttr)) {
 			// Not recommended
 			$value = dol_htmlentities((string) $value, ENT_QUOTES | ENT_SUBSTITUTE);
-		} elseif ($key == 'href') {
+		} elseif (in_array($key, ['href', 'data-confirm-url'])) {
 			$value = dolPrintHTMLForAttributeUrl((string) $value);
 		} else {
 			$value = dolPrintHTMLForAttribute((string) $value);
@@ -5819,6 +5827,10 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 				$out .= '<div class="timeline-body wordbreak small">';
 				$truncateLines = getDolGlobalInt('MAIN_TRUNCATE_TIMELINE_MESSAGE', 3);
 				$truncatedText = dolGetFirstLineOfText($newmess, $truncateLines);
+				// dolGetFirstLineOfText() cuts on <br> without caring about tag balance, so a message wrapped in
+				// a block tag leaves the excerpt with an unclosed tag. The browser then nests the read more link
+				// and the full text inside the excerpt, and hiding the excerpt hides the whole message (#39035).
+				$truncatedText = dolCloseUnclosedHtmlTags($truncatedText);
 				if ($truncateLines > 0 && strlen($newmess) > strlen($truncatedText)) {
 					$out .= '<div class="readmore-block --closed" >';
 					$out .= '	<div class="readmore-block__excerpt">';
@@ -5847,17 +5859,20 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 				foreach ($histo[$key]['socpeopleassigned'] as $cid => $Tab) {
 					if (empty($conf->cache['contact'][$cid])) {
 						$contact = new Contact($db);
-						$contact->fetch($cid);
+						$result = $contact->fetch($cid);
 						$conf->cache['contact'][$cid] = $contact;
 					} else {
 						$contact = $conf->cache['contact'][$cid];
+						$result = ($contact instanceof Contact) ? $contact->id : 0;
 					}
 
-					$contactList .= !empty($contactList) ? ', ' : '';
-					$contactList .= $contact->getNomUrl(1);
-					if (isset($histo[$key]['acode']) && $histo[$key]['acode'] == 'AC_TEL') {
-						if (!empty($contact->phone_pro)) {
-							$contactList .= '(' . dol_print_phone($contact->phone_pro) . ')';
+					if ($result > 0) {
+						$contactList .= !empty($contactList) ? ', ' : '';
+						$contactList .= $contact->getNomUrl(1);
+						if (isset($histo[$key]['acode']) && $histo[$key]['acode'] == 'AC_TEL') {
+							if (!empty($contact->phone_pro)) {
+								$contactList .= '(' . dol_print_phone($contact->phone_pro) . ')';
+							}
 						}
 					}
 				}

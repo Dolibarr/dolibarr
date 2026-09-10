@@ -752,12 +752,12 @@ if (!defined('NOLOGIN')) {
 			dol_syslog('--- Security warning: credentials reported as leaked were used to try to login. HTTP_EXPOSED_CREDENTIAL_CHECK='.((int) $_SERVER['HTTP_EXPOSED_CREDENTIAL_CHECK']), LOG_NOTICE);
 		}
 
-		// Refuse a login submission that carries credentials in the query string.
-		// This avoids the username/password ending up in web server access logs,
+		// Refuse a login submission that carries a password in a GET query string.
+		// This avoids the password ending up in web server access logs,
 		// the browser history, the Referrer header or any HTTP proxy log (CWE-598).
-		// OAuth callbacks legitimately use GET and never carry "username" or
-		// "password" in the query string, so this does not affect them.
-		if (GETPOST('actionlogin', 'aZ09') == 'login' && (isset($_GET['username']) || isset($_GET['password']))) {
+		// OAuth callbacks legitimately use GET but use afteroauthloginreturn.
+		// Other external pluginn using login_hashin GET are also legitimate.
+		if (GETPOST('actionlogin', 'aZ09') == 'login' && !GETPOST('afteroauthloginreturn', 'alphanohtml', 1) && GETPOST('password', 'password', 1)) {
 			dol_syslog("--- Login submission with credentials in the query string refused for ".$_SERVER["PHP_SELF"], LOG_WARNING);
 			$langs->loadLangs(array('main', 'errors'));
 			$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("ErrorLoginMustBePostMethod");
@@ -1125,6 +1125,12 @@ if (!defined('NOLOGIN')) {
 		}
 
 		dol_syslog("This is a new started user session. _SESSION['dol_login']=".$_SESSION["dol_login"]." Session id=".session_id());
+
+		// Enforce the max number of concurrent sessions per user (only when sessions are stored in database).
+		// Opening this new session evicts the user's oldest sessions above the limit, logging those browsers out.
+		if (!empty($php_session_save_handler) && $php_session_save_handler == 'db' && !empty($conf->file->main_limit_sessions_per_user) && (int) $conf->file->main_limit_sessions_per_user > 0) {
+			dolSessionsLimitForUser($user->id, (int) $conf->file->main_limit_sessions_per_user, session_id());
+		}
 
 		$db->begin();
 

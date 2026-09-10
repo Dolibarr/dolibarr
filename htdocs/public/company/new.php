@@ -394,16 +394,16 @@ print '</td></tr>';
 
 // Phone / Fax
 print '<tr><td>' . $form->editfieldkey('Phone', 'phone', '', $object, 0) . '</td>';
-print '<td>' . img_picto('', 'object_phoning', 'class="pictofixedwidth"') . ' <input type="text" name="phone" id="phone" class="maxwidth200 widthcentpercentminusx" value="' . (GETPOSTISSET('phone') ? GETPOST('phone', 'alpha') : $object->phone) . '"></td>';
+print '<td>' . $form->showPhoneInput($object->phone, 'phone', $object->country_id, 'object_phoning', 'maxwidth200 widthcentpercentminusx') . '</td>';
 print '</tr>';
 
 print '<tr>';
 print '<td>' . $form->editfieldkey('Fax', 'fax', '', $object, 0) . '</td>';
-print '<td>' . img_picto('', 'object_phoning_fax', 'class="pictofixedwidth"') . ' <input type="text" name="fax" id="fax" class="maxwidth200 widthcentpercentminusx" value="' . (GETPOSTISSET('fax') ? GETPOST('fax', 'alpha') : $object->fax) . '"></td>';
+print '<td>' . $form->showPhoneInput($object->fax, 'fax', $object->country_id, 'object_phoning_fax', 'maxwidth200 widthcentpercentminusx') . '</td>';
 print '</tr>';
 
 // Email / Web
-print '<tr><td>' . $form->editfieldkey('EMail', 'email', '', $object, 0, 'string', '', !getDolGlobalString('SOCIETE_EMAIL_MANDATORY') ? '' : $conf->global->SOCIETE_EMAIL_MANDATORY) . '</td>';
+print '<tr><td>' . $form->editfieldkey('EMail', 'email', '', $object, 0, 'string', '', getDolGlobalInt('SOCIETE_EMAIL_MANDATORY')) . '</td>';
 print '<td>' . img_picto('', 'object_email', 'class="pictofixedwidth"') . ' <input type="text" class="maxwidth200 widthcentpercentminusx" name="email" id="email" value="' . $object->email . '"></td>';
 if (isModEnabled('mailing') && getDolGlobalString('THIRDPARTY_SUGGEST_ALSO_ADDRESS_CREATION')) {
 	if ($conf->browser->layout == 'phone') {

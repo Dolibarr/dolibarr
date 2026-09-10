@@ -342,7 +342,7 @@ class DoliDBSqlite3 extends DoliDB
 			//$this->db = new PDO("sqlite:".$dir.'/database_'.$name.'.sdb');
 			$this->db = new SQLite3($database_name);
 			//$this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-		} catch (Exception $e) {
+		} catch (Throwable $e) {
 			$this->error = self::LABEL.' '.$e->getMessage().' current dir='.$database_name;
 			return false;
 		}
@@ -481,7 +481,7 @@ class DoliDBSqlite3 extends DoliDB
 			if ($ret) {
 				$this->queryString = $query;
 			}
-		} catch (Exception $e) {
+		} catch (Throwable $e) {
 			$this->error = $this->db->lastErrorMsg();
 		}
 

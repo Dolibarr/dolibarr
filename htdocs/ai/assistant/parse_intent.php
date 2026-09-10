@@ -141,6 +141,19 @@ try {
 		}
 	}
 
+	// Server-side gate on what the browser sent: MIME allowlist, size caps,
+	// and the privacy-redaction policy (documents cannot be masked, so under
+	// enforced redaction they must not go to a cloud provider at all).
+	$attachmenterror = '';
+	if (!ai_validate_attachments($attachments, $attachmenterror)) {
+		ob_end_clean();
+		echo json_encode(array(
+			"tool" => "respond_to_user",
+			"arguments" => array("message" => $attachmenterror)
+		));
+		exit;
+	}
+
 	// Privacy (Name Resolution & Masking)
 	$langs->loadLangs(array("main", "bills", "orders", "propal", "supplier_invoice", "supplier_order", "projects", "other"));
 
@@ -276,6 +289,12 @@ try {
 	if ($doRedact && class_exists('PrivacyGuard')) {
 		$guard = new PrivacyGuard();
 		$query = $guard->mask($query);
+		// In-context reinforcement, adjacent to the placeholders themselves:
+		// weak models weigh nearby text far more than distant system rules, and
+		// the system-rule variant alone proved insufficient in the field.
+		if (strpos($query, '[[') !== false) {
+			$query .= "\n\n(Note: tokens like [[REF_1]] or [[ADDR_2]] above are privacy-masked real values. Use them verbatim as tool argument values - they are replaced with the real data before execution. Do not refuse the task because of them and do not ask the user to re-provide masked details.)";
+		}
 	}
 
 	// AI Execution
@@ -341,7 +360,19 @@ try {
 
 		$systemPrompt = $basePrompt . "\n\n";
 		$systemPrompt .= "Tools:\n" . json_encode($toolsForLLM, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-		$systemPrompt .= $systemRules . " Date: " . date('Y-m-d');
+		// When redaction is active, the model sees [[TYPE_N]] placeholders where
+		// PII was. Without this rule it refuses tasks needing those values
+		// with it, placeholders travel verbatim through tool arguments and are restored server-side
+		// (unmaskAiResponse on the raw intent JSON) before execution, so the
+		// cloud never sees the data and the task still completes.
+		if ($doRedact) {
+			$systemRules .= " Privacy masking is active: values like [[REF_1]], [[ADDR_2]], [[EMAIL_3]], [[PHONE_4]], [[ZIP_5]] are masked real data. Treat them as valid values: when a tool argument needs such a datum, pass the placeholder exactly as written — it is replaced by the real value before execution. Never refuse a task because values look masked, and never invent replacements for them.";
+		}
+
+		// A bare date is not enough for weaker models: state explicitly that
+		// relative periods are the assistant's job to resolve, not the user's.
+		$systemPrompt .= $systemRules . " Current date: " . date('Y-m-d') . " (" . date('l') . ").";
+		$systemPrompt .= " Resolve relative periods yourself from the current date — today, yesterday, this week, this month, last month, this quarter, this year — into explicit YYYY-MM-DD values for date parameters (e.g. this month = first day of the current month to the current date). Never ask the user for dates you can compute.";
 
 		// Get API configuration
 		$servicesList = getListOfAIServices();

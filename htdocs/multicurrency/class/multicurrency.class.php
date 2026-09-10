@@ -674,6 +674,7 @@ class MultiCurrency extends CommonObject
 			} else {
 				setEventMessages($langs->trans('Use of API for currency update is disabled by option MULTICURRENCY_DISABLE_SYNC_CURRENCYLAYER'), null, 'errors');
 			}
+			$this->errors[] = $langs->trans('Use of API for currency update is disabled by option MULTICURRENCY_DISABLE_SYNC_CURRENCYLAYER');
 			return -1;
 		}
 
@@ -736,11 +737,13 @@ class MultiCurrency extends CommonObject
 				dol_syslog("Failed to call endpoint ".$error_info_syslog, LOG_WARNING);
 
 				$this->output = $langs->trans('multicurrency_syncronize_error', $error_info);
+				$this->errors[] = $this->output;
 
 				return -1;
 			}
 		} else {
 			$this->output = $resget['curl_error_msg'];
+			$this->errors[] = $this->output;
 
 			return -1;
 		}

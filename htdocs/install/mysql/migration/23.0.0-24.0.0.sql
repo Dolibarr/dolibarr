@@ -573,4 +573,12 @@ UPDATE llx_const SET name = __ENCRYPT('ACCOUNTANCY_AUXACCOUNT_USE_SEARCH_TO_SELE
 
 ALTER TABLE llx_adherent MODIFY COLUMN societe VARCHAR(128);
 
+DELETE FROM llx_rights_def WHERE module= 'cron' AND perms = 'execute';
+
 -- end of migration
+
+-- Add supplier ref on reception lines (standalone receptions)
+ALTER TABLE llx_receptiondet_batch ADD COLUMN ref_fourn varchar(128) NULL AFTER cost_price;
+
+-- Default warehouse on receptions
+ALTER TABLE llx_reception ADD COLUMN fk_warehouse integer DEFAULT NULL AFTER fk_projet;

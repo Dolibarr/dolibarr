@@ -89,6 +89,8 @@ class CommandeTest extends CommonClassTest
 		$localobject = new Commande($db);
 		$param = array('tosell' => 1);
 		$localobject->initAsSpecimen($param);
+		// Persist a regular provisional order instead of keeping the specimen reference.
+		$localobject->ref = '';
 		$localobject->socid = $socid;
 		$result = $localobject->create($user);
 
@@ -273,10 +275,37 @@ class CommandeTest extends CommonClassTest
 		$langs = $this->savlangs;
 		$db = $this->savdb;
 
-		$result = $localobject->valid($user);
+		$oldref = dol_sanitizeFileName($localobject->ref);
+		$outputdir = getMultidirOutput($localobject);
+		$dirsource = $outputdir.'/'.$oldref;
+		$oldfile = $dirsource.'/'.$oldref.'.pdf';
+		$dirnew = '';
+		$newfile = '';
 
-		print __METHOD__." id=".$localobject->id." result=".$result."\n";
-		$this->assertLessThan($result, 0);
+		try {
+			$this->assertGreaterThanOrEqual(0, dol_mkdir($dirsource));
+			$this->assertNotFalse(file_put_contents($oldfile, 'Provisional order document'));
+
+			$result = $localobject->valid($user);
+
+			print __METHOD__." id=".$localobject->id." result=".$result."\n";
+			$this->assertLessThan($result, 0);
+
+			$newref = dol_sanitizeFileName($localobject->ref);
+			$dirnew = $outputdir.'/'.$newref;
+			$newfile = $dirnew.'/'.$newref.'.pdf';
+			$this->assertFileExists($newfile);
+			$this->assertFileNotExistsCompat($dirnew.'/'.$oldref.'.pdf');
+		} finally {
+			if ($newfile) {
+				@unlink($newfile);
+			}
+			@unlink($oldfile);
+			if ($dirnew) {
+				@rmdir($dirnew);
+			}
+			@rmdir($dirsource);
+		}
 
 		// Test everything is still the same as a freshly built specimen with the same mutation applied
 		// (catches unwanted field changes introduced by update()/valid())
