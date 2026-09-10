@@ -557,16 +557,24 @@ class Asset extends CommonObject
 
 		$this->db->begin();
 
+		// oldcopy is set by the caller before modifying the object (the card page does it), but nothing
+		// guarantees it: dispose() and reopen() call update() without it, and so does any programmatic
+		// caller (REST API, script, cron). Reading a property on null then emits a PHP 8 warning for
+		// every field compared below. When the previous values are unknown, keep the safe behaviour and
+		// consider the fields as modified, which is what reading null used to end up doing.
+		$oldcopy = (is_object($this->oldcopy) ? $this->oldcopy : null);
+
 		$result = $this->updateCommon($user, $notrigger);
-		if ($result > 0 && $this->fk_asset_model > 0 && $this->fk_asset_model != $this->oldcopy->fk_asset_model) {
+		if ($result > 0 && $this->fk_asset_model > 0 && (!$oldcopy || $this->fk_asset_model != $oldcopy->fk_asset_model)) {
 			$result = $this->setDataFromAssetModel($user, $notrigger);
 		}
 		if ($result > 0 && (
-			$this->date_start != $this->oldcopy->date_start ||
-				$this->acquisition_value_ht != $this->oldcopy->acquisition_value_ht ||
-				$this->reversal_date != $this->oldcopy->reversal_date ||
-				$this->reversal_amount_ht != $this->oldcopy->reversal_amount_ht ||
-				($this->fk_asset_model > 0 && $this->fk_asset_model != $this->oldcopy->fk_asset_model)
+			!$oldcopy ||
+				$this->date_start != $oldcopy->date_start ||
+				$this->acquisition_value_ht != $oldcopy->acquisition_value_ht ||
+				$this->reversal_date != $oldcopy->reversal_date ||
+				$this->reversal_amount_ht != $oldcopy->reversal_amount_ht ||
+				($this->fk_asset_model > 0 && $this->fk_asset_model != $oldcopy->fk_asset_model)
 		)
 		) {
 			$result = $this->calculationDepreciation();
