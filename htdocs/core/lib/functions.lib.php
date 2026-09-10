@@ -186,13 +186,13 @@ function getMultidirOutput($object, $module = '', $forobject = 0, $mode = 'outpu
 			// Same guard as the 'output' mode above, see the comment there
 			$entity = (int) (empty($object->entity) ? $conf->entity : $object->entity);
 			if (!isset($conf->$module->multidir_temp[$entity])) {
-				return 'error-dirtemp-not-defined-for-this-object='.$module;
+				return 'error-dirtemp-not-defined-for-this-entity-and-object='.$module;
 			}
 			return $conf->$module->multidir_temp[$entity];
 		} elseif (isset($conf->$module) && property_exists($conf->$module, 'dir_temp')) {
 			return $conf->$module->dir_temp;
 		} else {
-			return 'error-dirtemp-not-defined-for-this-object='.$module;
+			return 'error-dirtemp-not-defined-for-this-entity-and-object='.$module;
 		}
 	} else {
 		return 'error-bad-value-for-mode';
