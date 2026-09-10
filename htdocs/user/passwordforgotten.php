@@ -103,7 +103,11 @@ if (getDolGlobalString('MAIN_SECURITY_ENABLE_SENDPASSWORD')) {
 // Security graphical code. Same value is used to render the captcha on the form and to validate the submitted code.
 $captcha = '';
 if (!$disabled) {
-	$captcha = getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_HANDLER', 'standard');
+	// getDolGlobalString() tests isset(): its default does not apply to a constant stored empty.
+	$captcha = getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_HANDLER');
+	if ($captcha === '') {
+		$captcha = 'standard';
+	}
 }
 
 
@@ -169,11 +173,10 @@ if (empty($reshook)) {
 	// Action to set a temporary password and send email for reset
 	if ($action == 'buildnewpassword' && $username) {	// Test on permission not required here. This action is done anonymously.
 		// Validate the captcha code with the active captcha handler (the one that rendered the code on the form).
-		// $captcha is empty only when the setup disabled the captcha, in which case no code can be validated.
-		$ok = true;
+		// No handler means the feature is disabled, and there is then nothing to validate the code
+		// against: refuse, so that a forged anonymous POST cannot reach the reset below.
+		$ok = false;
 		if (!empty($captcha)) {
-			$ok = false;
-
 			// List of directories where we can find captcha handlers
 			$dirModCaptcha = array_merge(array('main' => '/core/modules/security/captcha/'), (isset($conf->modules_parts['captcha']) && is_array($conf->modules_parts['captcha'])) ? $conf->modules_parts['captcha'] : array());
 			$fullpathclassfile = '';
