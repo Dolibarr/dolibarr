@@ -2,7 +2,7 @@
 /* Copyright (C) 2006-2011	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2014		Teddy Andreotti		<125155@supinfo.com>
  * Copyright (C) 2017		Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -120,7 +120,10 @@ class modGeneratePassPerso extends ModeleGenPassword
 		$this->Ambi = array("1", "I", "l", "|", "O", "0");
 
 		$tabConf = explode(";", getDolGlobalString('USER_PASSWORD_PATTERN'));
-		$this->length2 = (int) $tabConf[0];
+		// When the 'none' model is forbidden on this installation, the Perso model cannot enforce a
+		// minimum length below the floor returned by getPasswordPatternMinLength(), even if the
+		// stored pattern still holds a lower value.
+		$this->length2 = max((int) $tabConf[0], getPasswordPatternMinLength());
 		$this->NbMaj = $tabConf[1];
 		$this->NbNum = $tabConf[2];
 		$this->NbSpe = $tabConf[3];
