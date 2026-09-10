@@ -75,10 +75,6 @@ if ($action == 'addcomment') {
 }
 if ($action === 'updatecomment') {
 	if ($comment->fetch($idcomment) >= 0) {
-		// Verify the comment belongs to the current object to prevent IDOR
-		if ($comment->fk_element != $id || $comment->element_type != $object->element) {
-			accessforbidden();
-		}
 		$comment->description = GETPOST('comment_description', 'restricthtml');
 		if ($comment->update($user) > 0) {
 			setEventMessages($langs->trans("CommentAdded"), null, 'mesgs');
@@ -92,10 +88,6 @@ if ($action === 'updatecomment') {
 }
 if ($action == 'deletecomment') {
 	if ($comment->fetch($idcomment) >= 0) {
-		// Verify the comment belongs to the current object to prevent IDOR
-		if ($comment->fk_element != $id || $comment->element_type != $object->element) {
-			accessforbidden();
-		}
 		if ($comment->delete($user) > 0) {
 			setEventMessages($langs->trans("CommentDeleted"), null, 'mesgs');
 			header('Location: '.$varpage.'?id='.$id.($withproject ? '&withproject=1' : ''));
