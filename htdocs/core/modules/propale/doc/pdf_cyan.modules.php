@@ -577,6 +577,10 @@ class pdf_cyan extends ModelePDFPropales
 					$linePosition = $i + 1;
 					$curY = $nexY;
 
+					// Option lines are excluded from the firm total. Resolved once here, at the top of the loop,
+					// because it drives both the muting of the amount columns below and the VAT breakdown further down.
+					$lineisoptionpdf = pdf_isoptionline($object, $i);
+
 					$sub_options = $object->lines[$i]->extraparams["subtotal"] ?? array();
 
 
@@ -704,6 +708,11 @@ class pdf_cyan extends ModelePDFPropales
 
 						$pdf->SetFont('', '', $default_font_size - 1); // We reposition the default font
 
+						// Mute the amount columns of an option line in grey so the figures do not read as part of
+						// the document total (the "Option" tag marks the line itself).
+						if ($lineisoptionpdf) {
+							$pdf->SetTextColor(128, 128, 128);
+						}
 
 						// # of line
 						if ($this->getColumnStatus('position')) {
@@ -763,6 +772,10 @@ class pdf_cyan extends ModelePDFPropales
 							$this->printStdColumnContent($pdf, $curY, 'totalincltax', $total_incl_tax);
 						}
 
+						if ($lineisoptionpdf) {
+							$pdf->SetTextColor(0, 0, 0);
+						}
+
 						// Extrafields
 						if (!empty($object->lines[$i]->array_options)) {
 							foreach ($object->lines[$i]->array_options as $extrafieldColKey => $extrafieldValue) {
@@ -802,6 +815,13 @@ class pdf_cyan extends ModelePDFPropales
 					$localtax1_type = $object->lines[$i]->localtax1_type;
 					$localtax2_type = $object->lines[$i]->localtax2_type;
 
+					// Option lines are excluded from the document totals, so exclude them from the VAT / local tax breakdown too
+					if ($lineisoptionpdf) {
+						$tvaligne = 0;
+						$localtax1ligne = 0;
+						$localtax2ligne = 0;
+					}
+
 					$vatrate = (string) $object->lines[$i]->tva_tx;
 
 					// Retrieve type from database for backward compatibility with old records
@@ -832,16 +852,18 @@ class pdf_cyan extends ModelePDFPropales
 						$vatrate .= '*';
 					}
 
-					// Fill $this->tva and $this->tva_array
-					if (!isset($this->tva[$vatrate])) {
-						$this->tva[$vatrate] = 0;
+					// Fill $this->tva and $this->tva_array (option lines excluded so the VAT breakdown matches the document totals)
+					if (!$lineisoptionpdf) {
+						if (!isset($this->tva[$vatrate])) {
+							$this->tva[$vatrate] = 0;
+						}
+						$this->tva[$vatrate] += $tvaligne;
+						$vatcode = $object->lines[$i]->vat_src_code;
+						if (empty($this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'])) {
+							$this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'] = 0;
+						}
+						$this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')] = array('vatrate' => $vatrate, 'vatcode' => $vatcode, 'amount' => $this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'] + $tvaligne);
 					}
-					$this->tva[$vatrate] += $tvaligne;
-					$vatcode = $object->lines[$i]->vat_src_code;
-					if (empty($this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'])) {
-						$this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'] = 0;
-					}
-					$this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')] = array('vatrate' => $vatrate, 'vatcode' => $vatcode, 'amount' => $this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'] + $tvaligne);
 
 
 					if (!$hidenextline) {
@@ -1557,6 +1579,34 @@ class pdf_cyan extends ModelePDFPropales
 
 					$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 					$pdf->MultiCell($largcol2, $tab2_hl, price($total_ttc_origin, 0, $outputlangs, 1, -1, -1, $mysoc->currency_code), $useborder, 'L', true);
+				}
+
+				// Totals including option lines (proposals only, shown only when at least one option line exists)
+				$optTotals = pdf_getTotalsIncludingOptions($object);
+				if (!empty($optTotals['hasoption'])) {
+					// Render the "including options" totals as a secondary, non-committing block in muted grey:
+					// the firm Total TTC above stays the single highlighted figure (the actual commitment).
+					$pdf->SetFont('', '', $default_font_size - 1);
+					$pdf->SetTextColor(128, 128, 128);
+					$pdf->SetFillColor(255, 255, 255);
+
+					$index++;
+					$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
+					$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("TotalHTIncludingOptions").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities("TotalHTIncludingOptions") : ''), 0, 'L', false);
+					$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
+					$pdf->MultiCell($largcol2, $tab2_hl, price($optTotals['ht'], 0, $outputlangs), 0, 'R', false);
+
+					$index++;
+					$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
+					$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("TotalVATIncludingOptions").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities("TotalVATIncludingOptions") : ''), 0, 'L', false);
+					$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
+					$pdf->MultiCell($largcol2, $tab2_hl, price($optTotals['tva'], 0, $outputlangs), 0, 'R', false);
+
+					$index++;
+					$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
+					$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("TotalTTCIncludingOptions").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities("TotalTTCIncludingOptions") : ''), 0, 'L', false);
+					$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
+					$pdf->MultiCell($largcol2, $tab2_hl, price($optTotals['ttc'], 0, $outputlangs), 0, 'R', false);
 				}
 			}
 		}

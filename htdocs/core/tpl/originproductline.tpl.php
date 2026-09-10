@@ -75,6 +75,10 @@ $selected = 1;
 if (!empty($selectedLines) && !in_array($this->tpl['id'], $selectedLines)) {
 	$selected = 0;
 }
+// Proposal option lines are unchecked by default (only on first display, i.e. when the user made no explicit selection yet)
+if (empty($selectedLines) && !empty($this->tpl['is_option'])) {
+	$selected = 0;
+}
 print '<td class="center">';
 print '<input id="cb'.$this->tpl['id'].'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$this->tpl['id'].'"'.($selected ? ' checked="checked"' : '').'>';
 print '</td>';

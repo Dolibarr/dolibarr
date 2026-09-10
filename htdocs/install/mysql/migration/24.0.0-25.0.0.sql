@@ -149,6 +149,12 @@ ALTER TABLE llx_contrat ADD COLUMN fk_contract_type tinyint DEFAULT 0 AFTER ref_
 ALTER TABLE llx_user ADD COLUMN country_job_id integer DEFAULT NULL;
 ALTER TABLE llx_user ADD COLUMN state_job_id integer DEFAULT NULL;
 
+-- Add is_option flag on proposal lines (option lines kept with a real quantity but excluded from document totals)
+ALTER TABLE llx_propaldet ADD COLUMN is_option integer NOT NULL DEFAULT 0 AFTER special_code;
+-- Backfill: migrate legacy option lines (special_code=3) to the new flag, then neutralize the legacy code on migrated lines only
+UPDATE llx_propaldet SET is_option = 1 WHERE special_code = 3;
+UPDATE llx_propaldet SET special_code = 0 WHERE special_code = 3 AND is_option = 1;
+
 -- end of migration - nothing after this line
 
 -- Variants: allow standard import/export of variants (attributes, values, combinations,

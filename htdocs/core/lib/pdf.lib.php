@@ -2332,6 +2332,13 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 	}
 	$labelproductservice = dol_htmlentitiesbr($labelproductservice, 1);
 
+	// Mark proposal option lines: the line keeps its real quantity/price but is excluded from the document total.
+	// Use a filled tag (not just bold text) so the status reads as distinct and survives black & white printing.
+	if (!empty($object->lines[$i]->is_option)) {
+		$optionlabel = dol_escape_htmltag($outputlangs->transnoentities('LineIsOption'));
+		$labelproductservice .= '<br><span style="background-color:#EAEAEA;color:#555555;font-size:7.5pt;"><b>&nbsp;'.$optionlabel.'&nbsp;</b></span>';
+	}
+
 	return $labelproductservice;
 }
 
@@ -2610,7 +2617,7 @@ function pdf_getlineqty($object, $i, $outputlangs, $hidedetails = 0)
 		}
 	}
 	if (empty($reshook)) {
-		if ($object->lines[$i]->special_code == 3) {
+		if (pdf_isoptionlinelegacy($object, $i)) {
 			return '';
 		}
 		if (empty($hidedetails) || $hidedetails > 1) {
@@ -2650,7 +2657,7 @@ function pdf_getlineqty_asked($object, $i, $outputlangs, $hidedetails = 0)
 		}
 	}
 	if (empty($reshook)) {
-		if ($object->lines[$i]->special_code == 3) {
+		if (pdf_isoptionlinelegacy($object, $i)) {
 			return '';
 		}
 		if (empty($hidedetails) || $hidedetails > 1) {
@@ -2690,7 +2697,7 @@ function pdf_getlineqty_shipped($object, $i, $outputlangs, $hidedetails = 0)
 		}
 	}
 	if (empty($reshook)) {
-		if ($object->lines[$i]->special_code == 3) {
+		if (pdf_isoptionlinelegacy($object, $i)) {
 			return '';
 		}
 		if (empty($hidedetails) || $hidedetails > 1) {
@@ -2730,7 +2737,7 @@ function pdf_getlineqty_keeptoship($object, $i, $outputlangs, $hidedetails = 0)
 		}
 	}
 	if (empty($reshook)) {
-		if ($object->lines[$i]->special_code == 3) {
+		if (pdf_isoptionlinelegacy($object, $i)) {
 			return '';
 		}
 		if (empty($hidedetails) || $hidedetails > 1) {
@@ -2815,7 +2822,7 @@ function pdf_getlineremisepercent($object, $i, $outputlangs, $hidedetails = 0)
 		}
 	}
 	if (empty($reshook)) {
-		if ($object->lines[$i]->special_code == 3) {
+		if (pdf_isoptionlinelegacy($object, $i)) {
 			return '';
 		}
 		if (empty($hidedetails) || $hidedetails > 1) {
@@ -2858,7 +2865,7 @@ function pdf_getlineprogress($object, $i, $outputlangs, $hidedetails = 0, $hookm
 		}
 	}
 	if (empty($reshook)) {
-		if ($object->lines[$i]->special_code == 3) {
+		if (pdf_isoptionlinelegacy($object, $i)) {
 			return '';
 		}
 		if (empty($hidedetails) || $hidedetails > 1) {
@@ -2907,6 +2914,76 @@ function pdf_getlineprogress($object, $i, $outputlangs, $hidedetails = 0, $hookm
 }
 
 /**
+ *	Return whether a document line must be rendered as an option.
+ *	Phase N: is_option is the source of truth (proposals), legacy special_code=3 is tolerated for backward compatibility.
+ *
+ *	@param	Commande|Facture|Propal|FactureFournisseur|CommandeFournisseur|SupplierProposal|Delivery	$object		Object
+ *	@param	int			$i					Current line number
+ *	@return	bool							True if the line is an option
+ */
+function pdf_isoptionline($object, $i)
+{
+	if (empty($object->lines[$i])) {
+		return false;
+	}
+	return !empty($object->lines[$i]->is_option) || (int) $object->lines[$i]->special_code === 3;
+}
+
+/**
+ *	Return whether a line is a LEGACY option (special_code=3 without the is_option flag).
+ *	Legacy option lines keep the old fully-masked rendering (no qty/price shown); new is_option
+ *	lines display their real quantity/price and are only marked with an "Option" label.
+ *
+ *	@param	Commande|Facture|Propal|FactureFournisseur|CommandeFournisseur|SupplierProposal|Delivery	$object		Object
+ *	@param	int			$i					Current line number
+ *	@return	bool							True if the line is a legacy (masked) option
+ */
+function pdf_isoptionlinelegacy($object, $i)
+{
+	if (empty($object->lines[$i])) {
+		return false;
+	}
+	return empty($object->lines[$i]->is_option) && (int) $object->lines[$i]->special_code === 3;
+}
+
+/**
+ *	Compute document totals including option lines (HT, VAT, TTC), honouring multicurrency.
+ *	Used to display a "including options" total block on proposal PDFs.
+ *	Starts from the document firm totals (option lines already excluded) and adds the option lines,
+ *	so the result stays consistent with the highlighted document Total shown just above and with the
+ *	card "including options" block (firm total + options), free of any per-line rounding drift.
+ *
+ *	@param	Propal|Commande|Facture		$object		Object with ->lines
+ *	@return	array{ht:float,tva:float,ttc:float,hasoption:bool}	Totals including options and whether at least one option line exists
+ */
+function pdf_getTotalsIncludingOptions($object)
+{
+	$optionht = 0.0;
+	$optiontva = 0.0;
+	$optionttc = 0.0;
+	$hasoption = false;
+
+	$usemulti = (isModEnabled('multicurrency') && isset($object->multicurrency_tx) && $object->multicurrency_tx != 1);
+
+	if (!empty($object->lines) && is_array($object->lines)) {
+		foreach ($object->lines as $i => $line) {
+			if (pdf_isoptionline($object, $i)) {
+				$hasoption = true;
+				$optionht  += (float) ($usemulti ? $line->multicurrency_total_ht  : $line->total_ht);
+				$optiontva += (float) ($usemulti ? $line->multicurrency_total_tva : $line->total_tva);
+				$optionttc += (float) ($usemulti ? $line->multicurrency_total_ttc : $line->total_ttc);
+			}
+		}
+	}
+
+	$baseht  = (float) ($usemulti ? $object->multicurrency_total_ht  : $object->total_ht);
+	$basetva = (float) ($usemulti ? $object->multicurrency_total_tva : $object->total_tva);
+	$basettc = (float) ($usemulti ? $object->multicurrency_total_ttc : $object->total_ttc);
+
+	return array('ht' => $baseht + $optionht, 'tva' => $basetva + $optiontva, 'ttc' => $basettc + $optionttc, 'hasoption' => $hasoption);
+}
+
+/**
  *	Return line total excluding tax
  *
  *	@param	Commande|Facture|Propal|FactureFournisseur|CommandeFournisseur|SupplierProposal	$object				Object
@@ -2941,7 +3018,7 @@ function pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails = 0)
 		}
 	}
 	if (empty($reshook)) {
-		if (!empty($object->lines[$i]) && $object->lines[$i]->special_code == 3) {
+		if (pdf_isoptionlinelegacy($object, $i)) {
 			$result .= $outputlangs->transnoentities("Option");
 		} elseif (empty($hidedetails) || $hidedetails > 1) {
 			$total_ht = (isModEnabled("multicurrency") && $object->multicurrency_tx != 1 ? $object->lines[$i]->multicurrency_total_ht : $object->lines[$i]->total_ht);
@@ -2991,7 +3068,7 @@ function pdf_getlinetotalwithtax($object, $i, $outputlangs, $hidedetails = 0)
 		}
 	}
 	if (empty($reshook)) {
-		if ($object->lines[$i]->special_code == 3) {
+		if (pdf_isoptionlinelegacy($object, $i)) {
 			$result .= $outputlangs->transnoentities("Option");
 		} elseif (empty($hidedetails) || $hidedetails > 1) {
 			$total_ttc = (isModEnabled("multicurrency") && $object->multicurrency_tx != 1 ? $object->lines[$i]->multicurrency_total_ttc : $object->lines[$i]->total_ttc);
@@ -3254,7 +3331,7 @@ function pdfGetLineTotalDiscountAmount($object, $i, $outputlangs, $hidedetails =
 	if (isset($object->type) && $object->type == 2 && getDolGlobalString('INVOICE_POSITIVE_CREDIT_NOTE')) {
 		$sign = -1;
 	}
-	if ($object->lines[$i]->special_code == 3) {
+	if (pdf_isoptionlinelegacy($object, $i)) {
 		// If option
 		return $outputlangs->transnoentities("Option");
 	} else {
