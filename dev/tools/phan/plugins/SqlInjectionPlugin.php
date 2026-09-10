@@ -84,6 +84,11 @@ class SqlInjectionVisitor extends \Phan\PluginV3\PluginAwarePostAnalysisVisitor
 	 */
 
 	/**
+	 * @var list<Node> - Parent node stack for accessing parent nodes
+	 */
+	protected $parent_node_list;
+
+	/**
 	 * List of method names considered safe for SQL values.
 	 *
 	 * @var string[]
@@ -144,6 +149,15 @@ class SqlInjectionVisitor extends \Phan\PluginV3\PluginAwarePostAnalysisVisitor
 	 * These characters don't need escaping and can appear in SQL string literals.
 	 */
 	private const SAFE_STRING_CHARS_REGEX = '/^[\w\d\/\-\s%_=<>!,\(\)]+$/';
+
+	/**
+	 * List of functions that require their output to be wrapped in single quotes.
+	 *
+	 * @var string[]
+	 */
+	private const FUNCTIONS_REQUIRING_SINGLE_QUOTES = [
+		'dol_escape_js',
+	];
 
 	/**
 	 * List of methods that require their output to be wrapped in quotes in SQL strings.
@@ -375,6 +389,482 @@ class SqlInjectionVisitor extends \Phan\PluginV3\PluginAwarePostAnalysisVisitor
 				$this->checkExpressionForUnsafeVariables($expr, $node);
 			}
 		}
+	}
+
+	/**
+	 * Check function calls requiring quote wrapping.
+	 * This is called via visitCall for all function calls in the codebase.
+	 *
+	 * @param Node $node The function call node
+	 * @return void
+	 */
+	public function visitCall(Node $node): void
+	{
+		$method = $node->children['expr'] ?? null;
+		if ($method instanceof Node && $method->kind === \ast\AST_NAME) {
+			$functionName = $method->children['name'] ?? null;
+			if (is_string($functionName) && in_array($functionName, self::FUNCTIONS_REQUIRING_SINGLE_QUOTES, true)) {
+				// Get the mode argument for dol_escape_js
+				$mode = $this->getDolEscapeJsMode($node);
+
+				// Determine the required quote type based on mode
+				// null means no requirement (mode 3)
+				$requiredQuote = $this->getRequiredQuoteForMode($mode);
+
+				// Only check if a specific quote is required
+				if ($requiredQuote !== null) {
+					// Get the parent node
+					$parentNodes = $this->parent_node_list;
+					$parent = end($parentNodes) ?: null;
+
+					// Check if in a BINARY_CONCAT context
+					if ($parent !== null && $parent->kind === \ast\AST_BINARY_OP && ($parent->flags ?? 0) === \ast\flags\BINARY_CONCAT) {
+						// Check if properly wrapped in the required quotes
+						if (!$this->isFunctionCallProperlyWrappedInQuotes($node, $parent, $requiredQuote)) {
+							$methodDisplay = $this->getNodeVarForMethodCall($node);
+							// @phpstan-ignore-next-line method.notFound
+							$this->emitPluginIssue(
+								$this->code_base, // @phpstan-ignore property.notFound
+								$this->context, // @phpstan-ignore property.notFound
+								'FunctionMissingSingleQuoteWrapping',
+								'Function %s output must be wrapped in %s quotes for mode %d',
+								[$methodDisplay, $requiredQuote === "'" ? 'single' : 'double', $mode]
+							);
+						}
+					} else {
+						// Standalone call - flag it as it needs wrapping
+						$methodDisplay = $this->getNodeVarForMethodCall($node);
+						// @phpstan-ignore-next-line method.notFound
+						$this->emitPluginIssue(
+							$this->code_base, // @phpstan-ignore property.notFound
+							$this->context, // @phpstan-ignore property.notFound
+							'FunctionMissingSingleQuoteWrapping',
+							'Function %s output must be wrapped in %s quotes for mode %d',
+							[$methodDisplay, $requiredQuote === "'" ? 'single' : 'double', $mode]
+						);
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Check if a function call is properly wrapped in the specified quote type.
+	 * The function call should have:
+	 * - An immediate left sibling that is a string ending with the specified quote
+	 * - An immediate right sibling that is a string starting with the specified quote
+	 *
+	 * @param Node $functionCall The function call node to check
+	 * @param Node|null $parent The immediate parent node
+	 * @param string $quote The quote character to check for (' or ")
+	 * @return bool True if properly wrapped in the specified quotes
+	 */
+	private function isFunctionCallProperlyWrappedInQuotes(Node $functionCall, ?Node $parent, string $quote): bool
+	{
+		// If parent is a BINARY_CONCAT, we can check the siblings directly
+		if ($parent !== null && $parent->kind === \ast\AST_BINARY_OP && ($parent->flags ?? 0) === \ast\flags\BINARY_CONCAT) {
+			// Get left and right siblings from the parent
+			$leftSibling = null;
+			$rightSibling = null;
+
+			if (($parent->children['left'] ?? null) === $functionCall) {
+				// Function call is on the left side
+				$leftSibling = null; // No left sibling in this context
+				$rightSibling = $parent->children['right'] ?? null;
+			} elseif (($parent->children['right'] ?? null) === $functionCall) {
+				// Function call is on the right side
+				$leftSibling = $parent->children['left'] ?? null;
+				$rightSibling = null; // No right sibling in this context
+			}
+
+			// But we also need to check if the parent itself has siblings
+			// For that, we need to get the grandparent
+			$grandparent = $this->getGrandparent($parent);
+
+			if ($grandparent !== null && $grandparent->kind === \ast\AST_BINARY_OP && ($grandparent->flags ?? 0) === \ast\flags\BINARY_CONCAT) {
+				if (($grandparent->children['left'] ?? null) === $parent) {
+					// Parent is on the left, so right sibling is grandparent's right
+					if ($rightSibling === null) {
+						$rightSibling = $grandparent->children['right'] ?? null;
+					}
+				} elseif (($grandparent->children['right'] ?? null) === $parent) {
+					// Parent is on the right, so left sibling is grandparent's left
+					if ($leftSibling === null) {
+						$leftSibling = $grandparent->children['left'] ?? null;
+					}
+				}
+			}
+
+			// Check if left sibling is a string ending with the specified quote
+			$leftOk = $this->isStringNodeEndingWithQuote($leftSibling, $quote);
+
+			// Check if right sibling is a string starting with the specified quote
+			$rightOk = $this->isStringNodeStartingWithQuote($rightSibling, $quote);
+
+
+
+			return $leftOk && $rightOk;
+		}
+
+		// Function call is not in a BINARY_CONCAT context, so it's not wrapped
+		return false;
+	}
+
+	/**
+	 * Get the mode argument from a dol_escape_js call.
+	 *
+	 * @param Node $node The CALL node for dol_escape_js
+	 * @return int|null The mode value, or null if not found (defaults to 0)
+	 */
+	private function getDolEscapeJsMode(Node $node): ?int
+	{
+		// Get the arguments of the function call
+		$args = $node->children['args'] ?? null;
+		if (!$args instanceof Node) {
+			return 0; // Default mode is 0
+		}
+
+		$argList = $args->children ?? [];
+		if (!is_array($argList) || count($argList) === 0) {
+			return 0; // Default mode is 0
+		}
+
+		// The first argument is $a (the string to escape)
+		// The second argument (if present) is $mode
+		$modeArg = $argList[1] ?? null;
+
+		if ($modeArg === null) {
+			return 0; // Default mode is 0
+		}
+
+		// Try to extract the value
+		if (is_int($modeArg)) {
+			return $modeArg;
+		}
+
+		if ($modeArg instanceof Node) {
+			// Could be a literal, variable, or expression
+			// For now, try to get the scalar value
+			$value = $modeArg->children['scalar'] ?? null;
+			if (is_int($value)) {
+				return $value;
+			}
+
+			// Check if it's a simple literal
+			if ($modeArg->kind === \ast\AST_SCALAR && is_int($modeArg->children['value'] ?? null)) {
+				return $modeArg->children['value'];
+			}
+
+			// If we can't determine the value, default to 0
+			// This means we'll check for single quotes by default
+		}
+
+		return 0; // Default mode is 0
+	}
+
+	/**
+	 * Get the required quote type for a given mode.
+	 *
+	 * @param int $mode The mode value from dol_escape_js
+	 * @return string|null The required quote character (' or "), or null if no specific requirement
+	 */
+	private function getRequiredQuoteForMode(int $mode): ?string
+	{
+		// Mode 0: Escape also \' and \" into \' - for usage into 'string'
+		// Mode 1: Escape \' but not \" - for usage into 'string'
+		// Both require single quotes
+		if ($mode === 0 || $mode === 1) {
+			return "'";
+		}
+
+		// Mode 2: Escape \" but not \' - for usage into "string"
+		// Requires double quotes
+		if ($mode === 2) {
+			return '"';
+		}
+
+		// Mode 3: Escape \' and " with \\
+		// No specific quote requirement (already escaped with backslash)
+		if ($mode === 3) {
+			return null; // No requirement
+		}
+
+		// Default to mode 0 behavior
+		return "'";
+	}
+
+	/**
+	 * Check if a function call has the required quote on both sides.
+	 *
+	 * @param mixed $leftSibling The left sibling (if function call is on right)
+	 * @param mixed $rightSibling The right sibling (if function call is on left)
+	 * @param string $requiredQuote The required quote character (' or ")
+	 * @return bool True if both sides have the required quote
+	 */
+	private function hasRequiredQuoteOnBothSides($leftSibling, $rightSibling, string $requiredQuote): bool
+	{
+		// Get the parent node list to find the grandparent
+		$parentNodes = $this->parent_node_list;
+		$parent = end($parentNodes) ?: null;
+
+		// Get grandparent
+		$grandparent = null;
+		if ($parent !== null) {
+			$index = array_search($parent, $parentNodes, true);
+			if ($index !== false && $index > 0) {
+				$grandparent = $parentNodes[$index - 1] ?? null;
+			}
+		}
+
+		// If we're on the left, we need to find the left sibling from the grandparent
+		if ($leftSibling === null && $grandparent !== null && $grandparent->kind === \ast\AST_BINARY_OP && ($grandparent->flags ?? 0) === \ast\flags\BINARY_CONCAT) {
+			if (($grandparent->children['right'] ?? null) === $parent) {
+				// Parent is on the right of grandparent, so left sibling is grandparent's left
+				$leftSibling = $grandparent->children['left'] ?? null;
+			}
+		}
+
+		// If we're on the right, we need to find the right sibling from the grandparent
+		if ($rightSibling === null && $grandparent !== null && $grandparent->kind === \ast\AST_BINARY_OP && ($grandparent->flags ?? 0) === \ast\flags\BINARY_CONCAT) {
+			if (($grandparent->children['left'] ?? null) === $parent) {
+				// Parent is on the left of grandparent, so right sibling is grandparent's right
+				$rightSibling = $grandparent->children['right'] ?? null;
+			}
+		}
+
+		// Check left sibling ends with required quote
+		$leftOk = false;
+		if ($leftSibling !== null) {
+			$leftOk = is_string($leftSibling) && substr($leftSibling, -1) === $requiredQuote;
+		}
+
+		// Check right sibling starts with required quote
+		$rightOk = false;
+		if ($rightSibling !== null) {
+			$rightOk = is_string($rightSibling) && strpos($rightSibling, $requiredQuote) === 0;
+		}
+
+		// Both sides must be OK
+		return $leftOk && $rightOk;
+	}
+
+	/**
+	 * Get the grandparent node from the parent node list.
+	 *
+	 * @param Node $parent The parent node
+	 * @return Node|null The grandparent node
+	 */
+	private function getGrandparent(Node $parent): ?Node
+	{
+		$parentNodes = $this->parent_node_list;
+		// Get the index of the parent in the stack
+		$index = array_search($parent, $parentNodes, true);
+		if ($index === false || $index === 0) {
+			return null;
+		}
+		// The grandparent is the previous element in the stack
+		return $parentNodes[$index - 1] ?? null;
+	}
+
+	/**
+	 * Get the immediate left sibling of a node in a concatenation chain.
+	 *
+	 * @param Node $node The node to find the left sibling of
+	 * @return mixed The left sibling node or string value, or null if not in a concatenation
+	 */
+	private function getImmediateLeftSibling(Node $node)
+	{
+		$parent = $node->parent ?? null;
+		if (!$parent instanceof Node) {
+			return null;
+		}
+
+		// If parent is BINARY_CONCAT and we're the right child, left sibling is parent's left child
+		if ($parent->kind === \ast\AST_BINARY_OP && ($parent->flags ?? 0) === \ast\flags\BINARY_CONCAT) {
+			if (($parent->children['right'] ?? null) === $node) {
+				return $parent->children['left'] ?? null;
+			}
+			// If we're the left child, need to go up another level
+			if (($parent->children['left'] ?? null) === $node) {
+				return $this->getImmediateLeftSibling($parent);
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Get the immediate right sibling of a node in a concatenation chain.
+	 *
+	 * @param Node $node The node to find the right sibling of
+	 * @return mixed The right sibling node or string value, or null if not in a concatenation
+	 */
+	private function getImmediateRightSibling(Node $node)
+	{
+		$parent = $node->parent ?? null;
+		if (!$parent instanceof Node) {
+			return null;
+		}
+
+		// If parent is BINARY_CONCAT and we're the left child, right sibling is parent's right child
+		if ($parent->kind === \ast\AST_BINARY_OP && ($parent->flags ?? 0) === \ast\flags\BINARY_CONCAT) {
+			if (($parent->children['left'] ?? null) === $node) {
+				return $parent->children['right'] ?? null;
+			}
+			// If we're the right child, need to go up another level
+			if (($parent->children['right'] ?? null) === $node) {
+				return $this->getImmediateRightSibling($parent);
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Check if a node is a string ending with the specified quote character.
+	 * Handles both string values directly and string nodes.
+	 *
+	 * @param mixed $node The node or value to check
+	 * @param string $quote The quote character to check for (' or ")
+	 * @return bool True if it's a string ending with the quote
+	 */
+	private function isStringNodeEndingWithQuote($node, string $quote): bool
+	{
+		if (is_string($node)) {
+			return substr($node, -1) === $quote;
+		}
+
+		if ($node instanceof Node) {
+			// In Phan's AST, string literals might be stored as scalar values
+			// or the node itself might represent a string
+			// Try to get the string value from various places
+			$value = null;
+			if (isset($node->children['scalar']) && is_string($node->children['scalar'])) {
+				$value = $node->children['scalar'];
+			} elseif (is_string($node->children['value'] ?? null)) {
+				$value = $node->children['value'];
+			}
+
+			if (is_string($value)) {
+				return substr($value, -1) === $quote;
+			}
+
+			// For concatenations, we need to check the rightmost part
+			if ($node->kind === \ast\AST_BINARY_OP && ($node->flags ?? 0) === \ast\flags\BINARY_CONCAT) {
+				$right = $node->children['right'] ?? null;
+				return $this->isStringNodeEndingWithQuote($right, $quote);
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Check if a node is a string starting with the specified quote character.
+	 * Handles both string values directly and string nodes.
+	 *
+	 * @param mixed $node The node or value to check
+	 * @param string $quote The quote character to check for (' or ")
+	 * @return bool True if it's a string starting with the quote
+	 */
+	private function isStringNodeStartingWithQuote($node, string $quote): bool
+	{
+		if (is_string($node)) {
+			return strpos($node, $quote) === 0;
+		}
+
+		if ($node instanceof Node) {
+			$value = null;
+			if (isset($node->children['scalar']) && is_string($node->children['scalar'])) {
+				$value = $node->children['scalar'];
+			} elseif (is_string($node->children['value'] ?? null)) {
+				$value = $node->children['value'];
+			}
+
+			if (is_string($value)) {
+				return strpos($value, $quote) === 0;
+			}
+
+			// For concatenations, we need to check the leftmost part
+			if ($node->kind === \ast\AST_BINARY_OP && ($node->flags ?? 0) === \ast\flags\BINARY_CONCAT) {
+				$left = $node->children['left'] ?? null;
+				return $this->isStringNodeStartingWithQuote($left, $quote);
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Get the leftmost node in a concatenation expression.
+	 *
+	 * @param Node $node The concatenation node
+	 * @return mixed The leftmost node
+	 */
+	private function getLeftMostNode(Node $node)
+	{
+		if ($node->kind !== \ast\AST_BINARY_OP || ($node->flags ?? 0) !== \ast\flags\BINARY_CONCAT) {
+			return $node;
+		}
+
+		$left = $node->children['left'] ?? null;
+		if ($left instanceof Node) {
+			return $this->getLeftMostNode($left);
+		}
+
+		return $left;
+	}
+
+	/**
+	 * Get the rightmost node in a concatenation expression.
+	 *
+	 * @param Node $node The concatenation node
+	 * @return mixed The rightmost node
+	 */
+	private function getRightMostNode(Node $node)
+	{
+		if ($node->kind !== \ast\AST_BINARY_OP || ($node->flags ?? 0) !== \ast\flags\BINARY_CONCAT) {
+			return $node;
+		}
+
+		$right = $node->children['right'] ?? null;
+		if ($right instanceof Node) {
+			return $this->getRightMostNode($right);
+		}
+
+		return $right;
+	}
+
+	/**
+	 * Check if a node is a string starting with the specified quote character.
+	 *
+	 * @param mixed $node The node to check
+	 * @param string $quote The quote character to check for (e.g., "'" or '"')
+	 * @return bool True if the node is a string starting with the quote
+	 */
+	private function isStringStartingWithQuote($node, string $quote): bool
+	{
+		if (is_string($node)) {
+			return strpos($node, $quote) === 0;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Check if a node is a string ending with the specified quote character.
+	 *
+	 * @param mixed $node The node to check
+	 * @param string $quote The quote character to check for (e.g., "'" or '"')
+	 * @return bool True if the node is a string ending with the quote
+	 */
+	private function isStringEndingWithQuote($node, string $quote): bool
+	{
+		if (is_string($node)) {
+			return substr($node, -1) === $quote;
+		}
+
+		return false;
 	}
 
 	/**
