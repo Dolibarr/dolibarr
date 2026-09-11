@@ -4,7 +4,7 @@
  * Copyright (C) 2010-2011	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2015-2017	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2015-2017	Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2018-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2022		Charlene Benke			<charlene@patas-monkey.com>
  * Copyright (C) 2023		Anthony Berton			<anthony.berton@bb2a.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
@@ -834,7 +834,7 @@ class FormMail extends Form
 			if (empty($reshook)) {
 				// To
 				if (!empty($this->withto) || is_array($this->withto)) {
-					$out .= $this->getHtmlForTo();
+					$out .= getDolGlobalString('MAIL_ENABLE_FREETAG_RECIPIENT_INPUT') ? $this->getHtmlForToNew() : $this->getHtmlForTo();
 				}
 
 				// To User
@@ -883,7 +883,7 @@ class FormMail extends Form
 
 				// CC
 				if (!empty($this->withtocc) || is_array($this->withtocc)) {
-					$out .= $this->getHtmlForCc();
+					$out .= getDolGlobalString('MAIL_ENABLE_FREETAG_RECIPIENT_INPUT') ? $this->getHtmlForCcNew() : $this->getHtmlForCc();
 				}
 
 				// To User cc
@@ -907,7 +907,7 @@ class FormMail extends Form
 
 				// CCC
 				if (!empty($this->withtoccc) || is_array($this->withtoccc)) {
-					$out .= $this->getHtmlForWithCcc();
+					$out .= getDolGlobalString('MAIL_ENABLE_FREETAG_RECIPIENT_INPUT') ? $this->getHtmlForWithCccNew() : $this->getHtmlForWithCcc();
 				}
 			}
 
@@ -1230,6 +1230,82 @@ class FormMail extends Form
 	}
 
 	/**
+	 * Build a select2 combo that accepts the existing thirdparty/contact/free entries of $sourcearray
+	 * and also lets the user create a new entry by typing a "Name <email>" or bare "email" value
+	 * (select2 "tags" mode). Used by the *New() variants of getHtmlForTo()/getHtmlForCc()/
+	 * getHtmlForWithCcc() when MAIL_ENABLE_FREETAG_RECIPIENT_INPUT is on.
+	 *
+	 * Unlike multiselectarray()'s own generic script (skipped here via $addjscombo=0), this select2
+	 * instance is not shared with other combos on the page: it needs its own tags/createTag options,
+	 * so it is initialized by its own dedicated <script>, and multiselectarray() itself is never
+	 * modified by this feature.
+	 *
+	 * @param   string                                          $htmlname       Name of the html field, also used as the <select> id
+	 * @param   array<int|string,string|array<string,mixed>>    $sourcearray    Same shape as $this->withto/withtocc/withtoccc: key=>label or key=>array('id'=>,'label'=>)
+	 * @param   string[]                                        $selected       Array of preselected keys
+	 * @return  string                                                          Html of the <select multiple> plus its dedicated select2 init script
+	 */
+	private function getHtmlForFreetagRecipient($htmlname, array $sourcearray, array $selected)
+	{
+		global $form;
+
+		$tmparray = array();
+		foreach ($sourcearray as $key => $val) {
+			$label = is_array($val) ? $val['label'] : $val;
+			$label = str_replace(array('<', '>'), array('(', ')'), $label);
+			// multiselect array convert html entities into options tags, even if we don't want this, so we encode them a second time
+			$tmparray[$key] = dol_htmlentities($label, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8', true);
+		}
+
+		$morecss = 'inline-block minwidth500';
+
+		// $addjscombo = 0: skip multiselectarray()'s generic select2 init script, we init it ourselves below with tags/createTag.
+		$out = $form->multiselectarray($htmlname, $tmparray, $selected, 0, 0, $morecss, 0, 0, '', '', '', 0);
+
+		$out .= "\n".'<script nonce="'.getNonce().'">'."\n";
+		$out .= '$(document).ready(function () {'."\n";
+		$out .= '	$(\''.dol_escape_js('#'.$htmlname).'\').select2({'."\n";
+		// Nowdoc for the static part of the select2 config (no PHP value is interpolated in here, so unlike
+		// a heredoc none of this JS's own '$(' / '$.' / trailing regex '$' anchors need checking against
+		// PHP's variable-interpolation rules): the two lines around it that need an escaped PHP value stay
+		// as plain concatenation, same as multiselectarray()'s own script-building style.
+		$out .= <<<'JS'
+				dir: 'ltr',
+				theme: 'default',
+				width: 'resolve',
+				language: (typeof select2arrayoflanguage === 'undefined') ? 'en' : select2arrayoflanguage,
+				tags: true,
+				createTag: function (params) {
+					var REGEX_EMAIL = "([a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)";
+					var term = $.trim(params.term);
+					if (term.indexOf("@") === -1) {
+						return null;
+					}
+					var matchwithname = term.match(new RegExp("^([^<]*)<" + REGEX_EMAIL + ">$", "i"));
+					if (matchwithname !== null) {
+						var valuewithname = $.trim(matchwithname[1]) + " <" + matchwithname[2] + ">";
+						return { id: valuewithname, text: valuewithname };
+					}
+					if (term.indexOf("<") >= 0 || term.indexOf(">") >= 0) {
+						return null;
+					}
+					var matchbare = term.match(new RegExp("^" + REGEX_EMAIL + "$", "i"));
+					if (matchbare !== null) {
+						return { id: matchbare[1], text: matchbare[1] };
+					}
+					return null;
+				}
+			});
+
+		JS;
+		$out .= '	$(\''.dol_escape_js('#'.$htmlname.' + .select2').'\').addClass(\''.dol_escape_js($morecss).'\');'."\n";
+		$out .= '});'."\n";
+		$out .= '</script>'."\n";
+
+		return $out;
+	}
+
+	/**
 	 * get html For To
 	 *
 	 * @return string html
@@ -1314,6 +1390,70 @@ class FormMail extends Form
 	}
 
 	/**
+	 * get html For To, using a single select2 combo that also accepts free-typed "Name <email>" tags
+	 * (used instead of getHtmlForTo() when MAIL_ENABLE_FREETAG_RECIPIENT_INPUT is on)
+	 *
+	 * @return string html
+	 */
+	public function getHtmlForToNew()
+	{
+		global $langs, $form;
+
+		$out = '<tr><td class="fieldrequired">';
+		if ($this->withtofree) {
+			$out .= $form->textwithpicto($langs->trans("MailTo"), $langs->trans("YouCanUseFreeEmailsForRecipients"));
+		} else {
+			$out .= $langs->trans("MailTo");
+		}
+		$out .= '</td><td>';
+
+		if ($this->withtoreadonly) {
+			if (!empty($this->toname) && !empty($this->tomail)) {
+				$out .= '<input type="hidden" id="toname" name="toname" value="'.$this->toname.'" />';
+				$out .= '<input type="hidden" id="tomail" name="tomail" value="'.$this->tomail.'" />';
+				if ($this->totype == 'thirdparty') {
+					$soc = new Societe($this->db);
+					$soc->fetch($this->toid);
+					$out .= $soc->getNomUrl(1);
+				} elseif ($this->totype == 'contact') {
+					$contact = new Contact($this->db);
+					$contact->fetch($this->toid);
+					$out .= $contact->getNomUrl(1);
+				} else {
+					$out .= $this->toname;
+				}
+				$out .= ' &lt;'.$this->tomail.'&gt;';
+				if ($this->withtofree) {
+					$out .= '<br>'.$langs->trans("and").' <input class="minwidth200" id="sendto" name="sendto" spellcheck="false" value="'.(!is_array($this->withto) && !is_numeric($this->withto) ? (GETPOSTISSET("sendto") ? GETPOST("sendto") : $this->withto) : "").'" />';
+				}
+			} else {
+				$out .= (!is_array($this->withto) && !is_numeric($this->withto)) ? $this->withto : "";
+			}
+			$out .= "</td></tr>\n";
+			return $out;
+		}
+
+		$tmparray = is_array($this->withto) ? $this->withto : array();
+		if (!empty($this->withtofree)) {
+			$keyval = (($this->withtofree && !is_numeric($this->withtofree)) ? $this->withtofree : (!is_array($this->withto) && !is_numeric($this->withto) ? (GETPOSTISSET("sendto") ? GETPOST("sendto") : $this->withto) : ""));
+			if ($keyval !== '' && !array_key_exists($keyval, $tmparray)) {
+				$tmparray[$keyval] = $keyval;
+			}
+		}
+
+		$withtoselected = GETPOST("receiver", 'array');
+		if (!getDolGlobalInt('MAIN_MAIL_NO_WITH_TO_SELECTED')) {
+			if (empty($withtoselected) && count($tmparray) == 1 && GETPOST('action', 'aZ09') == 'presend') {
+				$withtoselected = array_keys($tmparray);
+			}
+		}
+
+		$out .= $this->getHtmlForFreetagRecipient('receiver', $tmparray, $withtoselected);
+		$out .= "</td></tr>\n";
+		return $out;
+	}
+
+	/**
 	 * get html For CC
 	 *
 	 * @return string html
@@ -1357,6 +1497,39 @@ class FormMail extends Form
 				$out .= $form->multiselectarray("receivercc", $tmparray, $withtoccselected, 0, 0, 'inline-block minwidth500', 0, 0);
 			}
 		}
+		$out .= "</td></tr>\n";
+		return $out;
+	}
+
+	/**
+	 * get html For CC, using a single select2 combo that also accepts free-typed "Name <email>" tags
+	 * (used instead of getHtmlForCc() when MAIL_ENABLE_FREETAG_RECIPIENT_INPUT is on)
+	 *
+	 * @return string html
+	 */
+	public function getHtmlForCcNew()
+	{
+		global $langs, $form;
+
+		$out = '<tr><td>';
+		$out .= $form->textwithpicto($langs->trans("MailCC"), $langs->trans("YouCanUseFreeEmailsForRecipients"));
+		$out .= '</td><td>';
+
+		if ($this->withtoccreadonly) {
+			$out .= (!is_array($this->withtocc) && !is_numeric($this->withtocc)) ? $this->withtocc : "";
+			$out .= "</td></tr>\n";
+			return $out;
+		}
+
+		$tmparray = is_array($this->withtocc) ? $this->withtocc : array();
+		$keyval = (GETPOST("sendtocc", "alpha") ? GETPOST("sendtocc", "alpha") : ((!is_array($this->withtocc) && !is_numeric($this->withtocc)) ? $this->withtocc : ''));
+		if ($keyval !== '' && !array_key_exists($keyval, $tmparray)) {
+			$tmparray[$keyval] = $keyval;
+		}
+
+		$withtoccselected = GETPOST("receivercc", 'array');
+
+		$out .= $this->getHtmlForFreetagRecipient('receivercc', $tmparray, $withtoccselected);
 		$out .= "</td></tr>\n";
 		return $out;
 	}
@@ -1438,6 +1611,71 @@ class FormMail extends Form
 		if ($showinfobcc) {
 			$out .= ' + '.$showinfobcc;
 		}
+		$out .= "</td></tr>\n";
+		return $out;
+	}
+
+	/**
+	 * get html For WithCCC, using a single select2 combo that also accepts free-typed "Name <email>" tags
+	 * (used instead of getHtmlForWithCcc() when MAIL_ENABLE_FREETAG_RECIPIENT_INPUT is on)
+	 * This information is show when MAIN_EMAIL_USECCC is set.
+	 *
+	 * @return string html
+	 */
+	public function getHtmlForWithCccNew()
+	{
+		global $langs, $form;
+
+		$out = '<tr><td>';
+		$out .= $form->textwithpicto($langs->trans("MailCCC"), $langs->trans("YouCanUseFreeEmailsForRecipients"));
+		$out .= '</td><td>';
+
+		if (!empty($this->withtocccreadonly)) {
+			$out .= (!is_array($this->withtoccc) && !is_numeric($this->withtoccc)) ? $this->withtoccc : "";
+		} else {
+			$tmparray = is_array($this->withtoccc) ? $this->withtoccc : array();
+			$keyval = (GETPOSTISSET("sendtoccc") ? GETPOST("sendtoccc", "alpha") : ((!is_array($this->withtoccc) && !is_numeric($this->withtoccc)) ? $this->withtoccc : ''));
+			if ($keyval !== '' && !array_key_exists($keyval, $tmparray)) {
+				$tmparray[$keyval] = $keyval;
+			}
+
+			$withtocccselected = GETPOST("receiverccc", 'array');
+
+			$out .= $this->getHtmlForFreetagRecipient('receiverccc', $tmparray, $withtocccselected);
+		}
+
+		$showinfobcc = '';
+		if (getDolGlobalString('MAIN_MAIL_AUTOCOPY_PROPOSAL_TO') && !empty($this->param['models']) && $this->param['models'] == 'propal_send') {
+			$showinfobcc = getDolGlobalString('MAIN_MAIL_AUTOCOPY_PROPOSAL_TO');
+		}
+		if (getDolGlobalString('MAIN_MAIL_AUTOCOPY_ORDER_TO') && !empty($this->param['models']) && $this->param['models'] == 'order_send') {
+			$showinfobcc = getDolGlobalString('MAIN_MAIL_AUTOCOPY_ORDER_TO');
+		}
+		if (getDolGlobalString('MAIN_MAIL_AUTOCOPY_INVOICE_TO') && !empty($this->param['models']) && $this->param['models'] == 'facture_send') {
+			$showinfobcc = getDolGlobalString('MAIN_MAIL_AUTOCOPY_INVOICE_TO');
+		}
+		if (getDolGlobalString('MAIN_MAIL_AUTOCOPY_SUPPLIER_PROPOSAL_TO') && !empty($this->param['models']) && $this->param['models'] == 'supplier_proposal_send') {
+			$showinfobcc = getDolGlobalString('MAIN_MAIL_AUTOCOPY_SUPPLIER_PROPOSAL_TO');
+		}
+		if (getDolGlobalString('MAIN_MAIL_AUTOCOPY_SUPPLIER_ORDER_TO') && !empty($this->param['models']) && $this->param['models'] == 'order_supplier_send') {
+			$showinfobcc = getDolGlobalString('MAIN_MAIL_AUTOCOPY_SUPPLIER_ORDER_TO');
+		}
+		if (getDolGlobalString('MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO') && !empty($this->param['models']) && $this->param['models'] == 'invoice_supplier_send') {
+			$showinfobcc = getDolGlobalString('MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO');
+		}
+		if (getDolGlobalString('MAIN_MAIL_AUTOCOPY_PROJECT_TO') && !empty($this->param['models']) && $this->param['models'] == 'project') {	// don't know why there is not '_send' at end of this models name.
+			$showinfobcc = getDolGlobalString('MAIN_MAIL_AUTOCOPY_PROJECT_TO');
+		}
+		if (getDolGlobalString('MAIN_MAIL_AUTOCOPY_SHIPMENT_TO') && !empty($this->param['models']) && $this->param['models'] == 'shipping_send') {
+			$showinfobcc = getDolGlobalString('MAIN_MAIL_AUTOCOPY_SHIPMENT_TO');
+		}
+		if (getDolGlobalString('MAIN_MAIL_AUTOCOPY_RECEPTION_TO') && !empty($this->param['models']) && $this->param['models'] == 'reception_send') {
+			$showinfobcc = getDolGlobalString('MAIN_MAIL_AUTOCOPY_RECEPTION_TO');
+		}
+		if ($showinfobcc) {
+			$out .= ' + '.$showinfobcc;
+		}
+
 		$out .= "</td></tr>\n";
 		return $out;
 	}
