@@ -193,7 +193,9 @@ if ($action == 'order' && GETPOST('valid') && $user->hasRight('fournisseur', 'co
 				$box = $i;
 				$supplierpriceid = GETPOSTINT('fourn'.$i);
 				//get all the parameters needed to create a line
+
 				$qty = GETPOSTFLOAT('tobuy'.$i);
+
 				// Resolve the product and the supplier of the selected price line first. Without them,
 				// get_buyprice() falls back to a search with no product and no supplier filter, and can
 				// return a price row of another supplier for another product (see #40182).
@@ -203,8 +205,13 @@ if ($action == 'order' && GETPOST('valid') && $user->hasRight('fournisseur', 'co
 				} else {
 					$idprod = $productsupplier->get_buyprice($supplierpriceid, $qty);
 				}
+
 				$res = $productsupplier->fetch($idprod);
-				if ($res && $idprod > 0) {
+				if ($res && $idprod > 0 && $fk_supplier > 0 && (int) $productsupplier->fourn_socid !== (int) $fk_supplier) {
+					// Safety net: never let a line be attached to a supplier different from the one filtered on.
+					dol_syslog("replenish.php: get_buyprice returned fourn_socid=".$productsupplier->fourn_socid." for fk_product=".$idprod." instead of expected fk_supplier=".$fk_supplier." (line $i, product_fournisseur_price id $supplierpriceid, qty $qty)", LOG_WARNING);
+					$errorQty++;
+				} elseif ($res && $idprod > 0) {
 					if ($qty) {
 						//might need some value checks
 						$line = new CommandeFournisseurLigne($db);
