@@ -92,7 +92,8 @@ class ExternalModules
 
 	/**
 	 * @var string
-	 */
+	 *
+/
 	public $dolistoreApiError;
 
 	/**
@@ -175,7 +176,8 @@ class ExternalModules
 	{
 		// Check access to Community repo
 		if (getDolGlobalString('MAIN_ENABLE_EXTERNALMODULES_COMMUNITY')) {
-			$cachedelayforgithubrepo = getDolGlobalInt('MAIN_REMOTE_GITHUBREPO_CACHE_DELAY', 86400);
+			$cachedelay
+forgithubrepo = getDolGlobalInt('MAIN_REMOTE_GITHUBREPO_CACHE_DELAY', 86400);
 
 			$this->getRemoteYamlFile($this->file_source_url, $cachedelayforgithubrepo);
 
@@ -229,7 +231,8 @@ class ExternalModules
 		$body = 'Error';
 
 		if ($status_code == 200) {
-			$body = $response['content'];
+			$body = $respons
+e['content'];
 			$body = json_decode($body, true);
 			$returnarray = array(
 				'status_code' => $status_code,
@@ -303,7 +306,8 @@ class ExternalModules
 		foreach ($organized_tree as $key => $value) {
 			if ($value['label'] != "Versions" && $value['label'] != "Specials") {
 				$html .= '<li' . ($current == $value['rowid'] ? ' class="active"' : '') . '>';
-				$html .= '<a href="?mode=marketplace&categorie=' . $value['rowid'] . '">' . $value['label'] . '</a>';
+				$html .= '<a href="?mo
+de=marketplace&categorie=' . $value['rowid'] . '">' . $value['label'] . '</a>';
 				if (isset($value['children'])) {
 					$html .= '<ul>';
 					usort($value['children'], $this->buildSorter('position'));
@@ -358,7 +362,8 @@ class ExternalModules
 
 		$this->per_page = 11;	// We fix number of products per page to 11
 
-		// Length of $search must be at least 2 characters
+		// Length of $search must be at least 2 charact
+ers
 		if (!empty($this->search) && strlen(str_replace(' ', '', (string) $this->search)) < 2) {
 			$html .= '<tr class=""><td colspan="3" class="center">';
 			$html .= '<br><br>';
@@ -407,7 +412,8 @@ class ExternalModules
 				$dolistoreProductsTotal = 0;
 			} else {
 				$dolistoreProducts = $this->adaptData($getDolistoreProducts['response']['products'], 'dolistore');
-				$dolistoreProductsTotal = (int) $getDolistoreProducts['response']['total'];
+				$dolistoreProductsTotal = (int) $getD
+olistoreProducts['response']['total'];
 				$this->numberTotalOfProducts += $dolistoreProductsTotal;
 			}
 		}
@@ -462,7 +468,8 @@ class ExternalModules
 
 			// check updated ?
 			if ($newapp == '' && $last_month < strtotime($product['tms']) && $product["status"] != 'soon' && $product["status"] != 'development' && $product["status"] != 'experimental') {
-				$newapp .= '<span class="updatedApp" title="'.$product['tms'].'">'.$langs->trans('UpdatedRecently').'</span> ';
+				$newapp .=
+ '<span class="updatedApp" title="'.$product['tms'].'">'.$langs->trans('UpdatedRecently').'</span> ';
 			}
 
 			// add image or default ?
@@ -502,7 +509,8 @@ class ExternalModules
 			} else {
 				if ($product["dolibarr_min"] == 'auto' || $product["dolibarr_min"] != 'unknown') {
 					// Never compatible, module expired
-					$version = '<span class="warning">'.$langs->trans(
+			
+		$version = '<span class="warning">'.$langs->trans(
 						'NotCompatible',
 						$dolibarrversiontouse,
 						$product["dolibarr_min"],
@@ -548,6 +556,7 @@ class ExternalModules
 							$price = '<h3>'.$langs->trans('Unknown').'</h3>';
 						}
 					}
+
 				} else {
 					$price = '<h3>'.$langs->trans('Unknown').'</h3>';
 				}
@@ -580,7 +589,8 @@ class ExternalModules
 					$download_link .= img_picto('', 'url', 'class="size2x"');
 					$download_link .= '</a>';
 					$download_link .= '<a class="paddingleft paddingright" target="_blank" title="'.$langs->trans("Download").'" href="'.$urldownload.'" rel="noopener noreferrer">';
-					$download_link .= img_picto('', 'download', 'class="size2x paddingright"');
+					$downloa
+d_link .= img_picto('', 'download', 'class="size2x paddingright"');
 					$download_link .= '</a>';
 				}
 
@@ -618,7 +628,8 @@ class ExternalModules
 					$disableInfo = $disableInstall ? dol_string_nohtmltag($version) : '';
 					$fields = ['action' => 'install', 'token' => newToken()];
 					foreach ($product as $key => $value) {
-						$fields['producttoinstall['.$key.']'] = $value;
+						$fields['producttoinstall['.$key.']'] = $val
+ue;
 					}
 
 					$installConfirmMessage = $langs->transnoentities(
@@ -654,7 +665,8 @@ class ExternalModules
 						. (!$disableInstall ? ' data-confirm' : '')
 						. (!$disableInstall ? ' data-fields="' . dol_escape_htmltag(json_encode($fields)) . '"' : '')
 						. (!$disableInstall ? ' data-url="' . dol_escape_htmltag($this->url) . '"' : '')
-						. (!$disableInstall ? ' data-confirm-title="' . dol_escape_htmltag($langs->trans("extModuleConfirmInstallTitle")) . '"' : '')
+						. (!$disableInstall ? ' data-confirm-title="' . dol_escape_htmltag($
+langs->trans("extModuleConfirmInstallTitle")) . '"' : '')
 						. (!$disableInstall ? ' data-confirm-text="' . dol_escape_htmltag($installConfirmMessage) . '"' : '')
 						. (!$disableInstall ? ' data-confirm-label="' . dol_escape_htmltag($buttonLabel) . '"' : '')
 						. '>' . $buttonLabel . '</button>';
@@ -691,7 +703,8 @@ class ExternalModules
 				$html .= img_picto($langs->trans('DateCreation'), 'calendar', 'class="pictofixedwidth"').'<span class="opacitymedium"><span class="hideonsmartphone">'.$langs->trans("DateCreation").': </span>';
 				$html .= (!empty($product['datec']) ? dol_print_date(dol_stringtotime($product['datec']), 'day') : $langs->trans("Unknown")).'</span>';
 			} else {
-				$html .= img_picto($langs->trans('DateModification'), 'calendar', 'class="pictofixedwidth"').'<span class="opacitymedium">'.dol_print_date(dol_stringtotime($product['tms']), 'day').'</span>';
+				$html .= img_picto($langs->trans('DateModification'), 'calendar', 'class="pictofixedwidth"').'<span class="opacitymedium">'.dol_print_date(d
+ol_stringtotime($product['tms']), 'day').'</span>';
 			}
 			$html .= ' &nbsp; &nbsp; ';
 
@@ -729,7 +742,8 @@ class ExternalModules
 			// Price - do not load if display none
 			$html .= '<td class="margeCote center amount'.(getDolOptimizeSmallScreen() ? ' left" colspan="2"' : '"').'>';
 			$html .= $price;
-			if (($product['direct-download'] && in_array($product['direct-download'], array('yes', 'dolistore'))) || ($product['source'] === 'dolistore' && empty((float) $product['price_ht']))) {
+			if (($product['direct-download'] && in_array($product['direct-download'], array('yes', 'dolistore'))) || ($product['source'] === 'dolistore' && empty((float) $product['price_h
+t']))) {
 				if ($install_link) {
 					$html .= $install_link;
 				}
@@ -759,8 +773,8 @@ class ExternalModules
 		}
 
 		// JS for confirm install
-		$confirmLabel = dol_escape_js($langs->trans("Install"));
-		$cancelLabel = dol_escape_js($langs->trans("Cancel"));
+		$confirmLabel = 'dol_escape_js($langs->trans("Install"))';
+		$cancelLabel = 'dol_escape_js($langs->trans("Cancel"))';
 		$html .= '<script>
 		$(document).on("click","[data-confirm]",function(){
 			var button = $(this);
@@ -805,7 +819,8 @@ class ExternalModules
 		 * @param array<string, mixed> $b
 		 * @return int
 		 */
-		function (array $a, array $b) use ($key) {
+		function 
+(array $a, array $b) use ($key) {
 			$valA = isset($a[$key]) && is_scalar($a[$key]) ? (string) $a[$key] : '';
 			$valB = isset($b[$key]) && is_scalar($b[$key]) ? (string) $b[$key] : '';
 
@@ -876,7 +891,8 @@ class ExternalModules
 	public function get_next_link($text = '>>')
 	{
 		// phpcs:enable
-		return '<a href="'.$this->get_next_url().'" class="button">'.dol_escape_htmltag($text).'</a>';
+		return 
+'<a href="'.$this->get_next_url().'" class="button">'.dol_escape_htmltag($text).'</a>';
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -905,622 +921,6 @@ class ExternalModules
 		return $this->url."&".$param;
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 * get next url
-	 *
-	 * @return string    next url
-	 */
-	public function get_next_url()
-	{
-		// phpcs:enable
-		$param_array = array();
-		if ($this->products !== null && count($this->products) < $this->per_page) {
-			$add = 0;
-		} else {
-			$add = 1;
-		}
-		if (!empty($this->search)) {
-			$param_array['search_keyword'] = $this->search;
-		}
-		$param_array['no_page'] = $this->no_page + $add;
-		if ($this->categorie != 0) {
-			$param_array['categorie'] = $this->categorie;
-		}
-		$param = http_build_query($param_array);
-		return $this->url."&".$param;
-	}
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.Sc
 
-	/**
-	 * Generate pagination for navigating through pages of products.
-	 *
-	 * @return string HTML string representing the pagination.
-	 */
-	public function getPagination()
-	{
-
-		global $langs;
-
-		$page = $this->no_page;
-		$limit = $this->per_page;
-		$totalnboflines = $this->numberTotalOfProducts ?: 0;
-		$num = $this->numberOfProducts;
-
-		$html = "";
-
-		// Show navigation bar
-		$pagelist = '';
-		if ($page > 0 || $num > $limit) {
-			if ($totalnboflines) {
-				if ($limit > 0) {
-					$nbpages = $this->numberTotalOfPages;
-				} else {
-					$nbpages = 1;
-				}
-
-				// Show previous page
-				if ($page > 1) {
-					$pagelist .= '<li class="pagination paginationpage paginationpageleft"><a class="paginationprevious reposition" href="'.$this->get_previous_url().'"><i class="fa fa-chevron-left" title="'.dol_escape_htmltag($langs->trans("Previous")).'"></i></a></li>';
-				}
-
-				$pagelist .= '<li class="pagination">';
-				$pagelist .= '<label for="page_input">Page </label>';
-				if ($this->categorie != 0) {
-					$pagelist .= '<input type="hidden" name="categorie" value="' . $this->categorie . '">';
-				}
-				$pagelist .= '<input type="text" id="page_input" name="no_page" value="'.($page).'" min="1" max="'.$nbpages.'" class="width40 page_input right" oninput="if(this.value > '.$nbpages.') this.value='.$nbpages.'">';
-				$pagelist .= ' / '.$nbpages;
-				$pagelist .= '</li>';
-
-				// Show next page
-				if ($page < $nbpages) {
-					$pagelist .= '<li class="pagination paginationpage paginationpageright"><a class="paginationnext reposition" href="'.$this->get_next_url().'"><i class="fa fa-chevron-right" title="'.dol_escape_htmltag($langs->trans("Next")).'"></i></a></li>';
-				}
-			}
-		}
-
-		if ($limit || $pagelist) {
-			$html .= '<div class="pagination" style="padding: 7px;">';
-			$html .= '<ul>';
-			$html .= $pagelist;
-			$html .= '</ul>';
-			$html .= '</div>';
-		}
-
-		$html .= ajax_autoselect('.page_input');
-
-		return $html;
-	}
-
-	/**
-	 * Check the status code of the request
-	 *
-	 * @param array{status_code:int,response:null|string|array{curl_error_msg:string,errors:array{code:int,message:string}[]}} $request Response elements of CURL request
-	 * @return string|null
-	 */
-	protected function checkStatusCode($request)
-	{
-		// Define error messages
-		$error_messages = [
-			204 => 'No content',
-			400 => 'Bad Request',
-			401 => 'Unauthorized',
-			404 => 'Not Found',
-			405 => 'Method Not Allowed',
-			500 => 'Internal Server Error',
-		];
-
-		// If status code is 200 or 201, return an empty string
-		if ($request['status_code'] === 200 || $request['status_code'] === 201) {
-			return '';
-		}
-
-		// Get the predefined error message or use a default one
-		$error_message = $error_messages[$request['status_code']] ?? 'Unexpected HTTP status: ' . $request['status_code'];
-
-		// Append error details if available
-		if (!empty($request['response']) && isset($request['response']['errors']) && is_array($request['response']['errors'])) {
-			foreach ($request['response']['errors'] as $error) {
-				$error_message .= ' - (Code ' . $error['code'] . '): ' . $error['message'];
-			}
-		}
-
-		if (!empty($request['curl_error_msg'])) {
-			$error_message .= ' - ' . $request['curl_error_msg'];
-		}
-
-		// Return the formatted error message
-		return sprintf('This call to the API failed and returned an HTTP status of %d. That means: %s.', $request['status_code'], $error_message);
-	}
-
-	/**
-	 * Get YAML file from remote source and put it into the cache file
-	 *
-	 * @param 	string 		$file_source_url 	URL of the remote source
-	 * @param 	int 		$cache_time 		Cache time
-	 * @return 	bool|string 					File content
-	 */
-	public function getRemoteYamlFile($file_source_url, $cache_time)
-	{
-		$yaml = '';
-		$cache_file = $this->cache_file;
-		$cache_folder = dirname($cache_file);
-
-		// Check if cache directory exists
-		if (!dol_is_dir($cache_folder)) {
-			dol_mkdir($cache_folder, DOL_DATA_ROOT);
-		}
-
-		if (!file_exists($cache_file) || filemtime($cache_file) < (dol_now() - $cache_time)) {
-			// We get remote url
-			$addheaders = array();
-			$result = getURLContent($file_source_url, 'GET', '', 1, $addheaders);	// TODO Force timeout to 5 s on both connect and response.
-			if (!empty($result) && $result['http_code'] == 200) {
-				$yaml = $result['content'];
-				$result = file_put_contents($cache_file, $yaml);
-				if ($result === false) {
-					$this->error = 'Failed to create cache file: ' . $cache_file;
-				} else {
-					dolChmod($cache_file);
-				}
-			}
-		} else {
-			$yaml = file_get_contents($cache_file);
-		}
-
-		return $yaml;
-	}
-
-
-	/**
-	 * Read a YAML string and convert it to an array
-	 *
-	 * @param string $yaml YAML string
-	 * @return list<array<string, array<string, string|null>|string|null>> Parsed array representation
-	 */
-	public function readYaml($yaml)
-	{
-		$data = [];
-		$currentPackage = null;
-		$currentSection = null;
-
-		foreach (explode("\n", trim($yaml)) as $line) {
-			$trimmedLine = trim($line);
-
-			// Ignore empty lines and comments
-			if ($trimmedLine === '' || strpos($trimmedLine, '#') === 0) {
-				continue;
-			}
-
-			// Match a new package entry (e.g., "- modulename: 'helloasso'") - Found a break in file.
-			$matches = array();
-			if (preg_match('/^\s*-\s*modulename:\s*["\']?(.*?)["\']?$/', $trimmedLine, $matches)) {
-				if ($currentPackage !== null) {
-					// Add the package to $data
-					if (!empty($currentPackage['status']) && in_array($currentPackage['status'], array('enabled', 'soon'))) {
-						$data[] = $currentPackage;
-					}
-				}
-				$currentPackage = ['modulename' => $matches[1]];
-				$currentSection = null;
-				continue;
-			}
-
-			// If the key doesn't start with fr, en, es, it, de, treat it as a section
-			if (!preg_match('/^\s*(fr|en|es|it|de):\s*["\']?(.*?)["\']?$/', $trimmedLine)) {
-				$currentSection = null;
-			}
-
-			// Match a top-level key-value pair (e.g., "author: 'Dolicloud'")
-			if (preg_match('/^(\w[\w-]*):\s*["\']?(.*?)["\']?$/', $trimmedLine, $matches)) {
-				if ($currentPackage !== null) {
-					if ($currentSection) {
-						// Store in the sub section (language into label or description for example)
-						$currentPackage[$currentSection][$matches[1]] = $matches[2] === '' ? null : $matches[2];
-					} else {
-						// Store as a normal key-value pair
-						$currentPackage[$matches[1]] = $matches[2] === '' ? null : $matches[2];
-					}
-				}
-
-				// Match a nested section (e.g., "label:")
-				if (preg_match('/^\s*(label|description):\s*$/', $trimmedLine, $matches)) {
-					$currentSection = $matches[1];
-					$currentPackage[$currentSection] = []; // Initialize as an empty array for nested sections
-				}
-
-				continue;
-			}
-		}
-
-		// Add the last package if available
-		if ($currentPackage !== null) {
-			if (!empty($currentPackage['status']) && in_array($currentPackage['status'], array('enabled', 'soon'))) {
-				$data[] = $currentPackage;
-			}
-		}
-
-		return $data;
-	}
-
-	/**
-	 * Adapter data fetched from github remote source to the expected format
-	 *
-	 * @param array<string, mixed>|list<array<string, array<string, string|null>|string|null>> $data 	Data fetched from github remote source
-	 * @param string $source 	Source of the data
-	 * @return list<array<string, array<string, string|null>|string|null>> Data adapted to the expected format
-	 */
-	public function adaptData($data, $source)
-	{
-		$adaptedData = [];
-
-		if (!is_array($data) || empty($data) || empty($source)) {
-			return $adaptedData;
-		}
-
-		if ($source === 'githubcommunity') {
-			foreach ($data as $package) {
-				if (empty($package['modulename'])) {
-					continue;
-				}
-
-				// Check if there is a known ID
-				$reg = array();
-				$id = 0;
-				if (!empty($package['dolistore-download']) && preg_match('/www\.dolistore\.com\/product\.php\?id=(\d+)/', (string) $package['dolistore-download'], $reg)) {
-					$id = $reg[1];
-				}
-
-				$adaptedPackage = [
-					'id' => $id,
-					'ref' => str_replace(' ', '', $package['modulename'] . '-' . $package['current_version'] . '@' .
-						(array_key_exists('author', $package) ? $package['author'] : 'unkownauthor')),
-					'label' => !empty($package['label'][substr($this->lang, 0, 2)])
-						? $package['label'][substr($this->lang, 0, 2)]
-						: (!empty($package['label']['en']) ? $package['label']['en'] : $package['modulename']),
-					'description' => !empty($package['description'][substr($this->lang, 0, 2)])
-						? $package['description'][substr($this->lang, 0, 2)]
-						: (!empty($package['description']['en']) ? $package['description']['en'] : ''),
-					'datec' => (!empty($package['created_at']) && is_string($package['created_at']))
-						? date('Y-m-d H:i:s', strtotime($package['created_at']))
-						: '',
-					'tms' => (!empty($package['last_updated_at']) && is_string($package['last_updated_at']))
-						? date('Y-m-d H:i:s', strtotime($package['last_updated_at']))
-						: '',
-					'author' => array_key_exists('author', $package) ? $package['author'] : '',
-					'author_url' => array_key_exists('author_url', $package) ? $package['author_url'] : '',
-					'dolibarr_min' => !empty($package['dolibarrmin'])
-						? $package['dolibarrmin']
-						: 'unknown',
-					'dolibarr_max' => !empty($package['dolibarrmax'])
-						? $package['dolibarrmax']
-						: 'unknown',
-					'phpmin' => !empty($package['phpmin'])
-						? $package['phpmin']
-						: 'unknown',
-					'phpmax' => !empty($package['phpmax'])
-						? $package['phpmax']
-						: 'unknown',
-					'module_version' => !empty($package['current_version'])
-						? $package['current_version']
-						: 'unknown',
-					'cover_photo_url' => !empty($package['cover'])
-						? $package['cover']
-						: '#',
-					'category' => (!empty($package['category']) && is_string($package['category']))
-						? explode(',', str_replace(' ', '', (string) $package['category']))
-						: array(),
-					'link' => !empty($package['git'])
-						? $package['git']
-						: '#',
-					'source' => 'githubcommunity',
-					'status' => !empty($package['status']) ? $package['status'] : '',
-					'direct-download' => !empty($package['direct-download'])
-						? $package['direct-download']
-						: '',
-					'dolistore-download' => !empty($package['dolistore-download'])
-						? $package['dolistore-download']
-						: '',
-				];
-
-				// If a price entry exists
-				if (array_key_exists('price', $package) && $package['price'] != null) {
-					$adaptedPackage['price_ht'] = $package['price'];
-				}
-
-				$adaptedData[] = $adaptedPackage;
-			}
-		}
-
-		if ($source === 'dolistore') {
-			foreach ($data as $package) {
-				$urlphoto = $this->shop_url.$package['cover_photo_url'];
-
-				if (preg_match('/^\/?wrapper\.php\?hashp=/', $package['cover_photo_url']) && !preg_match('/attachment=/', $package['cover_photo_url'])) {
-					$urlphoto .= '&attachment=0';
-				}
-
-				$adaptedPackage = [
-					'id' => $package['id'],
-					'ref' => $package['ref'],
-					'label' => $package['label'],
-					'description' => $package['description'],
-					'datec' => $package['datec'],
-					'tms' => $package['tms'],
-					'author' => array_key_exists('author', $package) ? $package['author'] : '',
-					'author_url' => array_key_exists('author_url', $package) ? $package['author_url'] : '',
-					'price_ttc' => $package['price_ttc'],
-					'price_ht' => $package['price_ht'],
-					'dolibarr_min' => $package['dolibarr_min'],
-					'dolibarr_max' => $package['dolibarr_max'],
-					'phpmin' => empty($package['phpmin']) ? '' : $package['phpmin'],
-					'phpmax' => empty($package['phpmax']) ? '' : $package['phpmax'],
-					'module_version' => $package['module_version'],
-					'cover_photo_url' => $urlphoto,
-					'source' => 'dolistore',
-					'status' => empty($package['status']) ? '' : $package['status']
-				];
-
-				$adaptedData[$package['id']] = $adaptedPackage;
-			}
-		}
-
-		return $adaptedData;
-	}
-
-	/**
-	 * Apply filters to the data
-	 * @param list<array<string, mixed>> $list Data to filter
-	 * @param array<string, mixed> $options Options for the filter
-	 *
-	 * @return array{total:int, data:list<array<string, mixed>>} Filtered data
-	 */
-	public function applyFilters($list, $options)
-	{
-		$filteredData = $list;
-
-		// Sort products list by datec
-		usort(
-			$filteredData,
-			/**
-			 * Compare creation times
-			 * @param array<string, mixed> $a First product for comparison.
-			 * @param array<string, mixed> $b Second product for comparison.
-			 *
-			 * @return int
-			 */
-			static function ($a, $b) {
-				return strtotime($b['datec'] ?? '0') - strtotime($a['datec'] ?? '0');
-			}
-		);
-
-		if (!empty($options['search'])) {
-			$filteredData = array_filter(
-				$filteredData,
-				/**
-				 * Filter packages that have a label or description with the search string
-				 *
-				 * @param array<string, mixed> $package
-				 *
-				 * @return bool
-				 */
-				static function ($package) use ($options) {
-					return stripos($package['label'], $options['search']) !== false || stripos($package['description'], $options['search']) !== false;
-				}
-			);
-		}
-
-		if (!empty($options['categorieid'])) {
-			$filteredData = array_filter(
-				$filteredData,
-				/**
-				 * Filter the packages that belong to the filtered category
-				 *
-				 * @param array<string, mixed> $package
-				 *
-				 * @return bool
-				 */
-				static function ($package) use ($options) {
-					return in_array($options['categorieid'], $package['category']);
-				}
-			);
-		}
-
-		$total = count($filteredData);
-
-		// Pagination
-		$filteredData = array_values($filteredData);
-		$filteredData = array_slice($filteredData, ($options['page'] - 1) * $options['limit'], $options['limit']);
-
-		return ['total' => $total, 'data' => $filteredData];
-	}
-
-	/**
-	 * Check if an Dolistore API is up
-	 *
-	 * @return int
-	 */
-	public function checkApiStatus()
-	{
-		// Call remote API
-		$testRequest = $this->callApi('categories');
-
-		if (!isset($testRequest['response']) || !is_array($testRequest['response']) || ($testRequest['status_code'] != 200 && $testRequest['status_code'] != 201)) {
-			$this->dolistoreApiError = $this->checkStatusCode($testRequest);
-			return 0;
-		} else {
-			return 1;
-		}
-	}
-
-	/**
-	 * Retrieve the status icon
-	 *
-	 * @param 	mixed 	$status 	Status
-	 * @param 	mixed 	$mode		Mode
-	 * @param	string	$moretext	More text to show on tooltip
-	 * @return 	string
-	 */
-	public function libStatus($status, $mode = 3, $moretext = '')
-	{
-		global $langs;
-
-		$statusType = 'status4';
-		if ($status == 0) {
-			$statusType = 'status3';
-		}
-
-		$labelStatus = [];
-		$labelStatusShort = [];
-
-		$labelStatus[0] = $langs->transnoentitiesnoconv("NotConnected");
-		$labelStatus[1] = $langs->transnoentitiesnoconv("online");
-		$labelStatusShort[0] = $langs->transnoentitiesnoconv("NotConnected");
-		$labelStatusShort[1] = $langs->transnoentitiesnoconv("online");
-
-		return dolGetStatus($labelStatus[$status], $labelStatusShort[$status], '', $statusType, $mode, '', array('badgeParams' => array('attr' => array('class' => 'classfortooltip', 'title' => $labelStatusShort[$status].$moretext))));
-	}
-
-
-	/**
-	 * Download a Dolibarr module from a Git repository URL or Dolistore download URL.
-	 *
-	 * @param  array<string, mixed> 	$producttoinstall Product information array
-	 * @return string|false				Path to the final ZIP file, or false on error
-	 */
-	public function getModuleZIP($producttoinstall = array())
-	{
-		global $conf;
-
-		// Check if cURL is available
-		if (!function_exists('curl_init')) {
-			dol_syslog(__METHOD__ . ': cURL is not available', LOG_ERR);
-			return false;
-		}
-
-		// Check required fields
-		if (empty($producttoinstall['ref'])) {
-			dol_syslog(__METHOD__ . ': Missing producttoinstall', LOG_ERR);
-			return false;
-		}
-
-		$current_version = $producttoinstall['module_version'] ?? '';
-		$module_name = strtolower(preg_replace('/@.*$/', '', $producttoinstall['ref'] ?? ''));
-
-		// Remove "-" followed by current version at the end of the string if it exists
-		$module_name = preg_replace('/-' . preg_quote($current_version, '/') . '$/', '', $module_name);
-
-		if (empty($module_name) || empty($current_version) || $current_version == 'unknown') {
-			dol_syslog(__METHOD__ . ': Missing or unknown module name/version for product', LOG_ERR);
-			return false;
-		}
-
-		// Create a temporary directory for the download
-		$tmpdir = $conf->admin->dir_temp . '/remotestoredl';
-		dol_mkdir($tmpdir);
-
-		$downloaded = false;
-		switch ($producttoinstall['source']) {
-			case 'dolistore':
-				if ($producttoinstall['id'] > 0) {
-					$source_url = 'https://www.dolistore.com/_service_download.php?t=free&p=' . $producttoinstall['id'];
-					$downloaded = $this->_downloadFile($source_url, $tmpdir);
-					if (!$downloaded) {
-						dol_syslog(__METHOD__ . ': Dolistore download failed: ' . $source_url, LOG_ERR);
-						return false;
-					}
-				} else {
-					dol_syslog(__METHOD__ . ': Invalid product ID for Dolistore download: ' . $producttoinstall['id'], LOG_ERR);
-					return false;
-				}
-				break;
-			case 'githubcommunity':
-				if ($producttoinstall['direct-download'] && in_array($producttoinstall['direct-download'], array('yes', 'dolistore'))) {
-					$source_url = 'https://github.com/Dolibarr/dolibarr-community-modules/raw/refs/heads/main/dev/build/bin/module_' . $module_name . '-' . $current_version . '.zip';
-					$downloaded = $this->_downloadFile($source_url, $tmpdir);
-					if (!$downloaded) {
-						dol_syslog(__METHOD__ . ': GitHub community module download failed: ' . $source_url . ', Try to find a Dolistore link', LOG_WARNING);
-						if ($producttoinstall['id'] > 0) {
-							$source_url = 'https://www.dolistore.com/_service_download.php?t=free&p=' . $producttoinstall['id'];
-							$downloaded = $this->_downloadFile($source_url, $tmpdir);
-							if (!$downloaded) {
-								dol_syslog(__METHOD__ . ': Dolistore download failed: ' . $source_url, LOG_ERR);
-								return false;
-							}
-						} else {
-							dol_syslog(__METHOD__ . ': No direct download available for this GitHub community module', LOG_ERR);
-							return false;
-						}
-					}
-				} else {
-					dol_syslog(__METHOD__ . ': No direct download available for this GitHub community module', LOG_ERR);
-					return false;
-				}
-				break;
-			default:
-				dol_syslog(__METHOD__ . ': Unsupported source type: ' . $producttoinstall['source'], LOG_ERR);
-		}
-
-
-		dol_syslog(__METHOD__ . ': Module downloaded successfully to: ' . $downloaded, LOG_DEBUG);
-		return $downloaded;
-	}
-
-
-	/**
-	 * Download a remote URL to a local file using getURLContent (native Dolibarr).
-	 *
-	 * @param  string  $url         Remote URL to download
-	 * @param  string  $dest_path   Local path to write the downloaded file (directory, not including filename)
-	 * @return string|false         Full path of downloaded file on success, false on failure
-	 */
-	private function _downloadFile(string $url, string $dest_path)
-	{
-		// HEAD request to get real filename from Content-Disposition
-		$filename = '';
-		$head = getURLContent($url, 'HEAD');
-		// Try to extract filename from Content-Disposition header
-		if (!empty($head['header'])) {
-			if (preg_match_all('/Content-Disposition:.*filename=["\']?([^"\';\r\n]+)/i', $head['header'], $m)) {
-				$filename = trim(end($m[1]), " \t\"'");
-			}
-		}
-
-		// If filename is not found in headers, try to extract it from URL
-		if (empty($filename)) {
-			$filename = basename(parse_url($url, PHP_URL_PATH));
-		}
-
-		// If filename is still empty or file name ne match the expected pattern (module_modulename-version.zip), log error and return false
-		if (empty($filename) || !preg_match('/^module_[a-z0-9_]+-[0-9]+\.[0-9]+\.[0-9]+\.zip$/i', $filename)) {
-			dol_syslog(__METHOD__ . ': Cannot determine filename from URL: ' . $url, LOG_ERR);
-			return false;
-		}
-
-		// Download the file
-		$response = getURLContent($url, 'GET');
-		if (empty($response['content']) || (isset($response['http_code']) && $response['http_code'] !== 200)) {
-			dol_syslog(
-				__METHOD__ . ': Download failed — HTTP ' . ($response['http_code'] ?? 'unknown') . ' — ' . $url,
-				LOG_WARNING
-			);
-			return false;
-		}
-
-		// Write to destination
-		$dest_file = $dest_path . '/' . $filename;
-		if (file_exists(dol_osencode($dest_file))) { // If file already exists, try to delete it first
-			chmod(dol_osencode($dest_file), 0755);
-			@unlink(dol_osencode($dest_file));
-		}
-		$writtenfile = file_put_contents(dol_osencode($dest_file), $response['content']);
-		if ($writtenfile === false || $writtenfile === 0) {
-			dol_syslog(__METHOD__ . ': Cannot write file: ' . $dest_file, LOG_ERR);
-			@unlink(dol_osencode($dest_file));
-			return false;
-		}
-
-		dol_syslog(__METHOD__ . ': Downloaded successfully to: ' . $dest_file, LOG_DEBUG);
-		return $dest_file;
-	}
-}
+... [Content truncated]
