@@ -1419,8 +1419,8 @@ class Product extends CommonObject
 		}
 		$this->label = trim((string) $this->label);
 		$this->description = trim((string) $this->description);
-		$this->note_private = (isset($this->note_private) ? trim((string) $this->note_private) : null);
-		$this->note_public = (isset($this->note_public) ? trim((string) $this->note_public) : null);
+		$this->note_private = (isset($this->note_private) ? trim($this->note_private) : null);
+		$this->note_public = (isset($this->note_public) ? trim($this->note_public) : null);
 		$this->net_measure = price2num($this->net_measure);
 		$this->net_measure_units = (!is_numeric($this->net_measure_units) ? null : (int) $this->net_measure_units);
 		$this->weight = price2num($this->weight);
@@ -1501,10 +1501,10 @@ class Product extends CommonObject
 		}
 
 		// Barcode value
-		$this->barcode = (empty($this->barcode) ? '' : trim((string) $this->barcode));
+		$this->barcode = (empty($this->barcode) ? '' : trim($this->barcode));
 
 		$this->accountancy_code_buy = trim((string) $this->accountancy_code_buy);
-		$this->accountancy_code_buy_intra = (!empty($this->accountancy_code_buy_intra) ? trim((string) $this->accountancy_code_buy_intra) : '');
+		$this->accountancy_code_buy_intra = (!empty($this->accountancy_code_buy_intra) ? trim($this->accountancy_code_buy_intra) : '');
 		$this->accountancy_code_buy_export = trim((string) $this->accountancy_code_buy_export);
 		$this->accountancy_code_sell = trim((string) $this->accountancy_code_sell);
 		$this->accountancy_code_sell_intra = trim((string) $this->accountancy_code_sell_intra);
