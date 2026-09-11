@@ -761,15 +761,15 @@ class ExternalModules
 		}
 
 		// JS for confirm install
-		$confirmLabel = dol_escape_js($langs->trans("Install"));
-		$cancelLabel = dol_escape_js($langs->trans("Cancel"));
+		$confirmLabel = $langs->trans("Install");
+		$cancelLabel = $langs->trans("Cancel");
 		$html .= '<script>
 		$(document).on("click","[data-confirm]",function(){
 			var button = $(this);
 			var confirmTitle = button.data("confirm-title");
 			var confirmText = button.data("confirm-text");
 			var buttons = {};
-			buttons[button.data("confirm-label")||"' . $confirmLabel . '"] = function(){
+			buttons[button.data("confirm-label")||\'' . dol_escape_js($confirmLabel) . '\'] = function(){
 				var form = $("<form method=\'POST\' style=\'display:none\'>").attr("action", button.data("url"));
 				$.each(button.data("fields"), function(name, value){
 					form.append($("<input type=\'hidden\'>").attr("name", name).val(value));
@@ -778,7 +778,7 @@ class ExternalModules
 				form.submit();
 				$(this).dialog("close");
 			};
-			buttons["' . $cancelLabel . '"] = function(){$(this).dialog("close");};
+			buttons[\'' . dol_escape_js($cancelLabel) . '\'] = function(){$(this).dialog("close");};
 			$("<div>").html(confirmText).dialog({
 				title: confirmTitle,
 				minWidth: 580,
