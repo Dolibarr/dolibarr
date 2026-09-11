@@ -977,6 +977,8 @@ class FormCompany extends Form
 		// phpcs:enable
 		global $hookmanager;
 
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/profid.lib.php';
+
 		$formlength = 0;
 		if (!getDolGlobalString('MAIN_DISABLEPROFIDRULES')) {
 			if ($country_code == 'FR') {
@@ -1022,13 +1024,19 @@ class FormCompany extends Form
 			$maxlength = 128;
 		}
 
+		// Such an id is most often copy/pasted from an official document, where it is presented with its
+		// separator spaces (SIREN "849 943 618"). This attribute tells lib_head.js.php to remove them from
+		// the pasted text before it is inserted, so that maxlength applies to the id itself and not to its
+		// presentation: without it the browser silently truncates the paste.
+		$dataprofid = isProfIdWithoutSpace($idprof, $country_code) ? ' data-profidnospace="1"' : '';
+
 		$out = '';
 
 		// Execute hook getInputIdProf to complete or replace $out
 		$parameters = array('formlength' => $formlength, 'selected' => $preselected, 'idprof' => $idprof, 'htmlname' => $htmlname, 'country_code' => $country_code);
 		$reshook = $hookmanager->executeHooks('getInputIdProf', $parameters);
 		if (empty($reshook)) {
-			$out .= '<input type="text" ' . ($morecss ? 'class="' . $morecss . '" ' : '') . 'name="' . $htmlname . '" id="' . $htmlname . '" maxlength="' . $maxlength . '" value="' . $selected . '">';
+			$out .= '<input type="text" ' . ($morecss ? 'class="' . $morecss . '" ' : '') . 'name="' . $htmlname . '" id="' . $htmlname . '" maxlength="' . $maxlength . '"' . $dataprofid . ' value="' . $selected . '">';
 		}
 		$out .= $hookmanager->resPrint;
 
