@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025       Thomas Negre            <tnegre@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -88,8 +88,18 @@ class BonPrelevementTest extends CommonClassTest
 	protected static $fkBankAccount = 0;
 	/** @var string Error message collected in setUpBeforeClass() if a fixture failed to be created */
 	protected static $setUpError = '';
-	/** @var ?Societe Global $mysoc as it was before this test class forced it into a SEPA country */
-	protected static $savmysoc;
+	/**
+	 * @var ?string Global $mysoc->country_code as it was before this test class forced it into a SEPA
+	 *              country. Only the two scalar fields are saved (not a clone of $mysoc itself): $mysoc
+	 *              carries the live, shared DB connection in $mysoc->db, and PHPUnit's backupStaticAttributes
+	 *              round-trips every static property through serialize()/unserialize() between tests - which
+	 *              silently rebuilds a mysqli object as an empty, unusable shell (serialize() on a live
+	 *              mysqli does not throw, so PHPUnit has no way to know it must skip this value).
+	 *              Storing the object here previously corrupted $mysoc->db for the rest of the test suite.
+	 */
+	protected static $savmysoccountrycode;
+	/** @var ?int Global $mysoc->country_id as it was before this test class forced it into a SEPA country */
+	protected static $savmysoccountryid;
 
 	/**
 	 * setUpBeforeClass
@@ -113,7 +123,8 @@ class BonPrelevementTest extends CommonClassTest
 		// not restored between test classes by CommonClassTest). Some other test class run
 		// earlier in the same PHPUnit process (e.g. PricesTest) may have left it on a
 		// non-SEPA country, so force it here and restore it in tearDownAfterClass().
-		self::$savmysoc = clone $mysoc;
+		self::$savmysoccountrycode = $mysoc->country_code;
+		self::$savmysoccountryid = $mysoc->country_id;
 		$mysoc->country_code = 'FR';
 		$mysoc->country_id = 1;
 
@@ -229,7 +240,8 @@ class BonPrelevementTest extends CommonClassTest
 	public static function tearDownAfterClass(): void
 	{
 		global $mysoc;
-		$mysoc = self::$savmysoc;
+		$mysoc->country_code = self::$savmysoccountrycode;
+		$mysoc->country_id = self::$savmysoccountryid;
 
 		parent::tearDownAfterClass(); // Rolls back the parent transaction ($db->rollback())
 	}
