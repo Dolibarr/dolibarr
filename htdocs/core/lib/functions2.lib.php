@@ -2701,7 +2701,7 @@ function getModuleDirForApiClass($moduleobject)
 		$moduledirforclass = 'accountancy';
 	} elseif ($moduleobject == 'paiements') {
 		$moduledirforclass = 'compta/facture';
-	} elseif (in_array($moduleobject, array('products', 'expensereports', 'users', 'tickets', 'boms', 'receptions', 'partnerships', 'recruitments'))) {
+	} elseif (in_array($moduleobject, array('products', 'expensereports', 'users', 'tickets', 'boms', 'receptions', 'partnerships', 'recruitments', 'websites'))) {
 		$moduledirforclass = preg_replace('/s$/', '', $moduleobject);
 	} elseif ($moduleobject == 'paymentsalaries') {
 		$moduledirforclass = 'salaries';
@@ -2711,6 +2711,8 @@ function getModuleDirForApiClass($moduleobject)
 		$moduledirforclass = 'eventorganization';
 	} elseif ($moduleobject == 'holidays') {
 		$moduledirforclass = 'holiday';
+	} elseif ($moduleobject == 'resources' || $moduleobject == 'dolresources') {
+		$moduledirforclass = 'resource';
 	}
 
 	return $moduledirforclass;

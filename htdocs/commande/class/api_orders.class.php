@@ -63,9 +63,9 @@ class Orders extends DolibarrApi
 	 * Return an array with order information
 	 *
 	 * @since	4.0.0	Initial implementation
-	 * @param       int         $id            ID of order
-	 * @param       int         $contact_list  0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id, -1: Do not return contacts/adddesses
-	 * @return	array|mixed data without useless information
+	 * @param   int         $id            	ID of order
+	 * @param   int         $contact_list  	0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id, -1: Do not return contacts/adddesses
+	 * @return	array|mixed 				Properties of order
 	 *
 	 * @throws	RestException
 	 */
@@ -80,9 +80,9 @@ class Orders extends DolibarrApi
 	 * Return an array with order information
 	 *
 	 * @since	10.0.0	Initial implementation
-	 * @param       string		$ref			Ref of object
-	 * @param       int         $contact_list  0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id, -1: Do not return contacts/adddesses
-	 * @return	array|mixed data without useless information
+	 * @param   string		$ref			Ref of object
+	 * @param   int         $contact_list	0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id, -1: Do not return contacts/adddesses
+	 * @return	array|mixed 				Properties of order
 	 *
 	 * @url GET    ref/{ref}
 	 *
@@ -99,9 +99,9 @@ class Orders extends DolibarrApi
 	 * Return an array with order information
 	 *
 	 * @since	10.0.0	Initial implementation
-	 * @param       string		$ref_ext			External reference of object
-	 * @param       int         $contact_list  0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id, -1: Do not return contacts/adddesses
-	 * @return	array|mixed data without useless information
+	 * @param   string		$ref_ext		External reference of object
+	 * @param   int         $contact_list  	0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id, -1: Do not return contacts/adddesses
+	 * @return	array|mixed 				Properties of order
 	 *
 	 * @url GET    ref_ext/{ref_ext}
 	 *
@@ -548,6 +548,16 @@ class Orders extends DolibarrApi
 
 		$request_data->desc = sanitizeVal($request_data->desc, 'restricthtml');
 		$request_data->label = sanitizeVal($request_data->label);
+
+		$orderline = new OrderLine($this->db);
+		$result = $orderline->fetch($lineid);
+		if (!$result) {
+			throw new RestException(404, 'Order line not found');
+		}
+
+		if ($orderline->fk_commande != $id) {
+			throw new RestException(403, 'Line does not belong to this order');
+		}
 
 		$updateRes = $this->commande->updateline(
 			$lineid,
@@ -1204,6 +1214,10 @@ class Orders extends DolibarrApi
 			throw new RestException(404, 'Proposal not found');
 		}
 
+		if (!DolibarrApi::_checkAccessToResource('propal', $propal->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		$result = $this->commande->createFromProposal($propal, DolibarrApiAccess::$user);
 		if ($result < 0) {
 			throw new RestException(405, $this->commande->error);
@@ -1339,6 +1353,20 @@ class Orders extends DolibarrApi
 		unset($object->barcode_type_code);
 		unset($object->barcode_type_label);
 		unset($object->barcode_type_coder);
+		unset($object->fk_remise_except);
+		unset($object->line);
+		unset($object->user);
+		unset($object->country_id);
+		unset($object->country_code);
+		unset($object->state_id);
+		unset($object->region_id);
+		unset($object->name);
+		unset($object->lastname);
+		unset($object->firstname);
+		unset($object->civility_id);
+		unset($object->civility_code);
+		unset($object->tms);
+		unset($object->actiontypecode);
 
 		return $object;
 	}

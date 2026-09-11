@@ -231,10 +231,10 @@ function hideoptions(domelem) {
 
   	if (div.style.display === "none") {
     	div.style.display = "block";
-		domelem.innerText="'.dol_escape_js($langs->transnoentitiesnoconv("HideAdvancedoptions")).'";
+		domelem.innerText=\''.dol_escape_js($langs->transnoentitiesnoconv("HideAdvancedoptions")).'\';
   	} else {
     	div.style.display = "none";
-		domelem.innerText="'.dol_escape_js($langs->transnoentitiesnoconv("ShowAdvancedOptions")).'...";
+		domelem.innerText=\''.dol_escape_js($langs->transnoentitiesnoconv("ShowAdvancedOptions")).'...\';
 	}
 }
 </script>';

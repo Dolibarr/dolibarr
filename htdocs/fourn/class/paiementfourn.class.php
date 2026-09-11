@@ -419,7 +419,7 @@ class PaiementFourn extends Paiement
 							if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 								$newlang = '';
 								$outputlangs = $langs;
-								if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
+								if (getDolGlobalInt('MAIN_MULTILANGS')) {
 									$invoice->fetch_thirdparty();
 									$newlang = $invoice->thirdparty->default_lang;
 								}

@@ -31,6 +31,7 @@ global $conf,$user,$langs,$db;
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/admin.lib.php';
+require_once dirname(__FILE__).'/../../htdocs/core/lib/modulebuilder.lib.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
@@ -141,5 +142,60 @@ class AdminLibTest extends CommonClassTest
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals(1, $result, "Enable module modAPI");
 		$conf->setValues($db);
+	}
+
+	/**
+	 * testDolModuleBuilderSqlIdentifier
+	 *
+	 * @return  void
+	 */
+	public function testDolModuleBuilderSqlIdentifier()
+	{
+		// An identifier that fits in 64 characters is returned unchanged
+		$this->assertSame('idx_mymodule_myobject_fk_product_parent', dolModuleBuilderSqlIdentifier('idx_', 'MyModule', 'MyObject', 'fk_product_parent'));
+		$this->assertSame('llx_mymodule_myobject_fk_soc', dolModuleBuilderSqlIdentifier('llx_', 'MyModule', 'MyObject', 'fk_soc'));
+
+		// Only the module and the table are lowercased: the name of the field keeps its case, as a field
+		// declared in the module builder may hold uppercase characters, and its index must keep its name
+		$this->assertSame('idx_mymodule_myobject_fkSocType', dolModuleBuilderSqlIdentifier('idx_', 'MyModule', 'MyObject', 'fkSocType'));
+		$this->assertSame('llx_mymodule_myobject_dateValidation', dolModuleBuilderSqlIdentifier('llx_', 'MyModule', 'MyObject', 'dateValidation'));
+
+		// Two fields sharing their first characters keep two distinct identifiers as long as both fit
+		$this->assertNotSame(
+			dolModuleBuilderSqlIdentifier('idx_', 'MyModule', 'MyObject', 'fk_product_parent'),
+			dolModuleBuilderSqlIdentifier('idx_', 'MyModule', 'MyObject', 'fk_product_child')
+		);
+
+		// Beyond the limit each part is truncated: module 30, table 20, and the key takes the remaining budget,
+		// which gives exactly 64 characters whatever the prefix
+		$this->assertSame(
+			'idx_'.str_repeat('m', 30).'_'.str_repeat('t', 20).'_'.str_repeat('k', 8),
+			dolModuleBuilderSqlIdentifier('idx_', str_repeat('m', 40), str_repeat('t', 40), str_repeat('k', 40))
+		);
+		$this->assertSame(
+			'uk_'.str_repeat('m', 30).'_'.str_repeat('t', 20).'_'.str_repeat('k', 9),
+			dolModuleBuilderSqlIdentifier('uk_', str_repeat('m', 40), str_repeat('t', 40), str_repeat('k', 40))
+		);
+		$this->assertSame(
+			'llx_'.str_repeat('m', 30).'_'.str_repeat('t', 20).'_'.str_repeat('k', 8),
+			dolModuleBuilderSqlIdentifier('llx_', str_repeat('m', 40), str_repeat('t', 40), str_repeat('k', 40))
+		);
+		foreach (array('idx_', 'uk_', 'llx_') as $prefix) {
+			$name = dolModuleBuilderSqlIdentifier($prefix, str_repeat('m', 80), str_repeat('t', 80), str_repeat('k', 80));
+			$this->assertSame(64, dol_strlen($name), 'Identifier not truncated to 64 for prefix '.$prefix);
+		}
+
+		// The rule is deterministic: the same inputs always give the same name, with no hashed nor random part
+		$this->assertSame(
+			dolModuleBuilderSqlIdentifier('idx_', 'MyModule', 'MyObject', 'fk_soc'),
+			dolModuleBuilderSqlIdentifier('idx_', 'MyModule', 'MyObject', 'fk_soc')
+		);
+
+		// Residual limit of any truncation rule: past 64 characters, two keys sharing their first characters
+		// still give the same identifier, so the second ALTER TABLE of the generated .key.sql fails on error 1061
+		$this->assertSame(
+			dolModuleBuilderSqlIdentifier('idx_', str_repeat('m', 30), str_repeat('t', 20), 'fk_product_parent'),
+			dolModuleBuilderSqlIdentifier('idx_', str_repeat('m', 30), str_repeat('t', 20), 'fk_product_child')
+		);
 	}
 }

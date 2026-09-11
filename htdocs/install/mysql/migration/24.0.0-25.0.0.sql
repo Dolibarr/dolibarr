@@ -145,6 +145,27 @@ ALTER TABLE llx_deletion_log ADD INDEX idx_deletion_log_date_deletion (date_dele
 -- Add contract type field (0=customer, 1=supplier)
 ALTER TABLE llx_contrat ADD COLUMN fk_contract_type tinyint DEFAULT 0 AFTER ref_ext;
 
+-- Table to persist the data an online payment return page needs, server side, instead of relying
+-- on the PHP session, which is lost when the browser drops the cookie on the cross site return.
+create table llx_onlinepayment_session
+(
+  rowid             integer AUTO_INCREMENT PRIMARY KEY,
+  ext_payment_site  varchar(64) NOT NULL,
+  ext_payment_id    varchar(128),
+  data              text,
+  date_creation     datetime NOT NULL,
+  tms               timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  entity            integer DEFAULT 1 NOT NULL
+)ENGINE=innodb;
+
+ALTER TABLE llx_onlinepayment_session ADD INDEX idx_onlinepayment_session_ext_payment_id (ext_payment_id);
+ALTER TABLE llx_onlinepayment_session ADD INDEX idx_onlinepayment_session_date_creation (date_creation);
+ALTER TABLE llx_onlinepayment_session ADD INDEX idx_onlinepayment_session_entity (entity);
+
+-- Human Resources Management(HRM): Add `country_job_id` and `state_job_id` to the `llx_user` table to store the workplace location, enabling vacation filtering by workplace.
+ALTER TABLE llx_user ADD COLUMN country_job_id integer DEFAULT NULL;
+ALTER TABLE llx_user ADD COLUMN state_job_id integer DEFAULT NULL;
+
 -- end of migration - nothing after this line
 
 -- Variants: allow standard import/export of variants (attributes, values, combinations,
@@ -195,3 +216,8 @@ ALTER TABLE llx_product_attribute_combination2val ADD CONSTRAINT fk_product_att_
 ALTER TABLE llx_product_attribute_combination2val ADD CONSTRAINT fk_product_att_com2v_prod_attr_val FOREIGN KEY (fk_prod_attr_val) REFERENCES llx_product_attribute_value (rowid);
 ALTER TABLE llx_product_attribute_combination_price_level ADD CONSTRAINT fk_prod_att_comb_price_level_combination FOREIGN KEY (fk_product_attribute_combination) REFERENCES llx_product_attribute_combination (rowid);
 
+-- llx_notify_def.entity was never written, every row kept its DEFAULT 1, so filtering the
+-- notification queries on it would hide the existing subscriptions. Give each row the entity of the
+-- third party or the user it belongs to. Rows tied to neither keep their current value.
+UPDATE llx_notify_def INNER JOIN llx_societe ON llx_notify_def.fk_soc = llx_societe.rowid SET llx_notify_def.entity = llx_societe.entity WHERE llx_notify_def.fk_soc > 0;
+UPDATE llx_notify_def INNER JOIN llx_user ON llx_notify_def.fk_user = llx_user.rowid SET llx_notify_def.entity = llx_user.entity WHERE llx_notify_def.fk_user > 0;

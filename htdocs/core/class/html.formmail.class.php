@@ -4,7 +4,7 @@
  * Copyright (C) 2010-2011	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2015-2017	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2015-2017	Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2018-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2022		Charlene Benke			<charlene@patas-monkey.com>
  * Copyright (C) 2023		Anthony Berton			<anthony.berton@bb2a.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
@@ -2210,10 +2210,10 @@ class FormMail extends Form
 			$tmparray = getCommonSubstitutionArray($langs, 2, null, $object); // Note: On email template creation, this may be null because it is related to all type of objects
 			complete_substitutions_array($tmparray, $langs, null, $parameters);
 
-			if ($mode == 'formwithlines') {
+			if ($mode == 'formemailwithlines') {
 				$tmparray['__LINES__'] = '__LINES__'; // Will be set by the get_form function
 			}
-			if ($mode == 'formforlines') {
+			if ($mode == 'formemailforlines') {
 				$tmparray['__QUANTITY__'] = '__QUANTITY__'; // Will be set by the get_form function
 			}
 		}

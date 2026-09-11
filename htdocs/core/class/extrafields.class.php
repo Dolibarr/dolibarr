@@ -1356,6 +1356,8 @@ class ExtraFields
 			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" maxlength="'.$newsize.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').'>';
 		} elseif (preg_match('/varchar/', $type)) {
 			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" maxlength="'.$size.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').'>';
+		} elseif ($type == 'phone' && $mode != 1) {
+			$out = $form->showPhoneInput($value, $keyprefix.$key.$keysuffix, (is_object($object) && !empty($object->country_id)) ? $object->country_id : 0);
 		} elseif (in_array($type, array('email', 'mail', 'ip', 'phone', 'url'))) {
 			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').'>';
 		} elseif ($type == 'icon') {
@@ -1520,11 +1522,11 @@ class ExtraFields
 									var query = {
 										search: params.term,
 										page: params.page || 1,
-										objecttype: '".$extrafieldsobjectkey."',
-										objectid: '".$object->id."',
-										objectkey: '".$key."',
-										mode: '".$mode."',
-										value: '".$value."'
+										objecttype: '".dol_escape_js($extrafieldsobjectkey)."',
+										objectid: '".dol_escape_js($objectid)."',
+										objectkey: '".dol_escape_js($key)."',
+										mode: '".((int) $mode)."',
+										value: '".dol_escape_js($value)."'
 									}
 									return query;
 								}
@@ -1608,6 +1610,10 @@ class ExtraFields
 						if (!empty($InfoFieldList[4]) && strpos($InfoFieldList[4], 'extra.') !== false) {
 							$keyList .= ', main.'.$parentField;
 						} else {
+							$keyList .= ', '.$parentField;
+						}
+						// Re-add parent field that was removed by keyList reset above
+						if (!empty($parentField)) {
 							$keyList .= ', '.$parentField;
 						}
 					}
@@ -1820,7 +1826,7 @@ class ExtraFields
 			$out = '';
 			$selectedvalue = ((string) $value !== '' ? $value : $default);
 			foreach ($param['options'] as $keyopt => $val) {
-				$out .= '<input class="flat '.$morecss.'" type="radio" name="'.$keyprefix.$key.$keysuffix.'" '.($moreparam ? $moreparam : '');
+				$out .= '<input class="flat '.$morecss.'" type="radio" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.($moreparam ? $moreparam : '');
 				$out .= ' value="'.$keyopt.'"';
 				$out .= ' id="'.$keyprefix.$key.$keysuffix.'_'.$keyopt.'"';
 				$out .= ((string) $selectedvalue == (string) $keyopt ? ' checked' : '');
@@ -1834,10 +1840,11 @@ class ExtraFields
 				} else {
 					$value_arr = explode(',', $value);
 				}
+
 				$out .= "
 				<script>
 				$(document).ready(function () {
-					$('#".$keyprefix.$key.$keysuffix."').select2({
+					$('#".dol_escape_js($keyprefix.$key.$keysuffix)."').select2({
 						ajax: {
 							url: '".DOL_URL_ROOT.'/core/ajax/ajaxextrafield.php'."',
 							dataType: 'json',
@@ -1847,11 +1854,11 @@ class ExtraFields
 								var query = {
 									search: params.term,
 									page: params.page || 1,
-									objecttype: '".$extrafieldsobjectkey."',
-									objectid: '".$object->id."',
-									objectkey: '".$key."',
-									mode: '".$mode."',
-									value: '".$value."'
+									objecttype: '".dol_escape_js($extrafieldsobjectkey)."',
+									objectid: '".dol_escape_js($object->id)."',
+									objectkey: '".dol_escape_js($key)."',
+									mode: '".((int) $mode)."',
+									value: '".dol_escape_js($value)."'
 								}
 								return query;
 							}
@@ -1924,9 +1931,9 @@ class ExtraFields
 							$InfoFieldList = array_merge($InfoFieldList, explode(':', $tmpafter));
 						}
 
-						// Fix better compatibility with some old extrafield syntax filter "(field=123)"
+						// Fix better compatibility with some old extrafield syntax filter "(field_name=123)"
 						$reg = array();
-						if (preg_match('/^\(?([a-z0-9]+)([=<>]+)(\d+)\)?$/i', $InfoFieldList[4], $reg)) {
+						if (preg_match('/^\(?([a-z0-9_]+)([=<>]+)(\d+)\)?$/i', $InfoFieldList[4], $reg)) {
 							$InfoFieldList[4] = '('.$reg[1].':'.$reg[2].':'.$reg[3].')';
 						}
 					}
@@ -1951,12 +1958,16 @@ class ExtraFields
 						} else {
 							$keyList .= ', '.$parentField;
 						}
+						// Re-add parent field that was removed by keyList reset above
+						if (!empty($parentField)) {
+							$keyList .= ', '.$parentField;
+						}
 					}
 
+					$InfoFieldList[5] = (string) ($InfoFieldList[5]??'');
 
 					$filter_categorie = false;
 					if (count($InfoFieldList) > 5 && ($InfoFieldList[5] != '')) {
-						$InfoFieldList[5] = (string) $InfoFieldList[5];
 						if ($InfoFieldList[0] == 'categorie') {
 							$filter_categorie = true;	// The combo list is a list of categories
 						} else {

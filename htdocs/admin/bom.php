@@ -496,10 +496,11 @@ if (!$conf->use_javascript_ajax) {
 	print "</td>";
 } else {
 	print '<td>';
-	$arrval = array('0' => $langs->trans("No"),
-		'1' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 1).')',
-		'2' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 2).')',
-		'3' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 3).')',
+	$arrval = array(
+		0 => array('label' => $langs->trans("No")),
+		1 => array('label' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 1).')', 'labelhtml' => $langs->trans("Yes").' <span class="opacitymedium small">('.$langs->trans("NumberOfKeyToSearch", 1).')</span>'),
+		2 => array('label' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 2).')', 'labelhtml' => $langs->trans("Yes").' <span class="opacitymedium small">('.$langs->trans("NumberOfKeyToSearch", 2).')</span>'),
+		3 => array('label' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 3).')', 'labelhtml' => $langs->trans("Yes").' <span class="opacitymedium small">('.$langs->trans("NumberOfKeyToSearch", 3).')</span>'),
 	);
 	print $form->selectarray("activate_BOM_USE_SEARCH_TO_SELECT", $arrval, getDolGlobalString("BOM_USE_SEARCH_TO_SELECT")).'</td>';
 }

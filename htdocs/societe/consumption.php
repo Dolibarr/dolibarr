@@ -4,7 +4,7 @@
  * Copyright (C) 2013-2015 Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2015-2017 Ferran Marcet		<fmarcet@2byte.es>
- * Copyright (C) 2021-2024  Frédéric France		<frederic.france@free.fr>
+ * Copyright (C) 2021-2026  Frédéric France		<frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -628,7 +628,7 @@ if ($sql_select && $sql !== '') {
 
 				$outputlangs = $langs;
 				$newlang = '';
-				if (empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				if (GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
 				if (empty($newlang)) {

@@ -1018,6 +1018,10 @@ class Commande extends CommonOrder
 			}
 		}
 
+		if ($this->isRefClientAlreadyUsed((string) $this->ref_client, (int) $this->socid) != 0) {
+			return -1;
+		}
+
 		$soc = new Societe($this->db);
 		$result = $soc->fetch($this->socid);
 		if ($result < 0) {
@@ -1677,8 +1681,8 @@ class Commande extends CommonOrder
 			} else {
 				$pu = $pu_ttc;
 			}
-			$label = trim($label);
-			$desc = trim($desc);
+			$label = trim((string) $label);
+			$desc = trim((string) $desc);
 
 			// Check parameters
 			if ($type < 0) {
@@ -2974,6 +2978,65 @@ class Commande extends CommonOrder
 		}
 	}
 
+	/**
+	 *	Check if a customer ref is already used by another customer order of the same third party
+	 *
+	 *	Same control supplier invoices get from their uk_facture_fourn_ref_supplier
+	 *	(ref_supplier, fk_soc, entity) unique index. Can be disabled with
+	 *	ORDER_ALLOW_DUPLICATE_REF_CLIENT, for installations already holding such duplicates.
+	 *
+	 *	@param		string		$ref_client		Customer ref to check
+	 *	@param		int			$socid			Third party id
+	 *	@param		int			$excludeid		Customer order id to exclude from the check (0 on creation)
+	 *	@return		int							Return integer 1 if the customer ref is already used, 0 if free, -1 if the request failed
+	 */
+	public function isRefClientAlreadyUsed(string $ref_client, int $socid, int $excludeid = 0): int
+	{
+		global $langs;
+
+		if (getDolGlobalInt('ORDER_ALLOW_DUPLICATE_REF_CLIENT')) {
+			return 0;
+		}
+
+		$ref_client = trim($ref_client);
+		if ($ref_client === '' || $socid <= 0) {
+			return 0;
+		}
+
+		$sql = "SELECT ref FROM ".$this->db->prefix()."commande";
+		$sql .= " WHERE ref_client = '".$this->db->escape($ref_client)."'";
+		$sql .= " AND fk_soc = ".((int) $socid);
+		$sql .= " AND entity IN (".getEntity('commande').")";
+		if ($excludeid > 0) {
+			$sql .= " AND rowid <> ".((int) $excludeid);
+		}
+		$sql .= " ORDER BY rowid ASC";
+		$sql .= $this->db->plimit(1);
+
+		dol_syslog(get_class($this)."::isRefClientAlreadyUsed", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			$this->errors[] = $this->error;
+			dol_syslog(get_class($this)."::isRefClientAlreadyUsed ".$this->error, LOG_ERR);
+			return -1;
+		}
+
+		$obj = $this->db->fetch_object($resql);
+		$this->db->free($resql);
+
+		if (!is_object($obj)) {
+			return 0;
+		}
+
+		$langs->load('orders');
+		$this->error = $langs->trans('ErrorRefCustomerAlreadyUsedOnOrder', $ref_client, $obj->ref);
+		$this->errors[] = $this->error;
+		dol_syslog(get_class($this)."::isRefClientAlreadyUsed ref_client=".$ref_client." already used by ".$obj->ref, LOG_WARNING);
+
+		return 1;
+	}
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Set customer ref
@@ -2988,6 +3051,10 @@ class Commande extends CommonOrder
 		// phpcs:enable
 		if ($user->hasRight('commande', 'creer')) {
 			$error = 0;
+
+			if ($this->isRefClientAlreadyUsed((string) $ref_client, (int) $this->socid, (int) $this->id) != 0) {
+				return -1;
+			}
 
 			$this->db->begin();
 
@@ -3438,6 +3505,9 @@ class Commande extends CommonOrder
 
 		// Check parameters
 		// Put here code to add control on parameters values
+		if ($this->isRefClientAlreadyUsed((string) $this->ref_client, (int) $this->socid, (int) $this->id) != 0) {
+			return -1;
+		}
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
@@ -3518,9 +3588,10 @@ class Commande extends CommonOrder
 	 *
 	 *	@param	User	$user		User object
 	 *	@param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
+	 *	@param	int		$idwarehouse	Warehouse to move the stock back to (only when STOCK_CALCULATE_ON_VALIDATE_ORDER is on). -1 or 0 = no stock change.
 	 * 	@return	int					Return integer <=0 if KO, >0 if OK
 	 */
-	public function delete($user, $notrigger = 0)
+	public function delete($user, $notrigger = 0, $idwarehouse = -1)
 	{
 		global $conf, $langs;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -3544,6 +3615,33 @@ class Commande extends CommonOrder
 		if ($this->countNbOfShipments() != 0) {
 			$this->errors[] = $langs->trans('SomeShipmentExists');
 			$error++;
+		}
+
+		// Put the stock back, the validation had decreased it. Only when a warehouse was chosen, so
+		// deleting an order just to clean the database still leaves the stock alone.
+		// Must run before the lines are removed.
+		if (!$error && isModEnabled('stock') && getDolGlobalInt('STOCK_CALCULATE_ON_VALIDATE_ORDER') == 1 && $this->status != self::STATUS_DRAFT && $idwarehouse > 0) {
+			require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
+			$langs->load("agenda");
+
+			$this->fetch_lines();
+
+			$num = count($this->lines);
+			for ($i = 0; $i < $num; $i++) {
+				if ($this->lines[$i]->fk_product > 0) {
+					$mouvP = new MouvementStock($this->db);
+					$mouvP->origin = &$this;
+					$mouvP->setOrigin($this->element, $this->id);
+					// 0 as price so the weighted average value is not changed
+					$result = $mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->trans("OrderDeletedInDolibarr", $this->ref));
+					if ($result < 0) {
+						$error++;
+						$this->error = $mouvP->error;
+						$this->errors = array_merge($this->errors, $mouvP->errors);
+						break;
+					}
+				}
+			}
 		}
 
 		// Remove linked categories.
