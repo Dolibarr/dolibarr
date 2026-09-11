@@ -153,6 +153,7 @@ Busy=Busy
 ExportDataset_event1=List of agenda events
 DefaultWorkingDays=Default working days range in week (Example: 1-5, 1-6)
 DefaultWorkingHours=Default working hours in day (Example: 9-18)
+AGENDA_HIDE_AUTO_EVENTS=Disable display of automatically created events
 # External Sites ical
 ExportCal=Export calendar
 ExtSites=Import external calendars

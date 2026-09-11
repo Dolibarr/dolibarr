@@ -6,7 +6,8 @@
  * Copyright (C) 2016		Charlie Benke		    <charlie@patas-monkey.com>
  * Copyright (C) 2017       Open-DSI                <support@open-dsi.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2026		Anthony Berton			<anthony.berton@bb2a.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -420,6 +421,18 @@ print '<td>'.$langs->trans("AGENDA_DEFAULT_FILTER_STATUS").'</td>'."\n";
 print '<td class="center">&nbsp;</td>'."\n";
 print '<td class="right">'."\n";
 $formactions->form_select_status_action('agenda', getDolGlobalString('AGENDA_DEFAULT_FILTER_STATUS'), 1, 'AGENDA_DEFAULT_FILTER_STATUS', 1, 2, 'minwidth100');
+print '</td></tr>'."\n";
+
+// AGENDA_HIDE_AUTO_EVENTS
+print '<tr class="oddeven">'."\n";
+print '<td>'.$langs->trans("AGENDA_HIDE_AUTO_EVENTS").'</td>'."\n";
+print '<td class="center">&nbsp;</td>'."\n";
+print '<td class="right">'."\n";
+if (getDolGlobalString('AGENDA_HIDE_AUTO_EVENTS')) {
+	print '<a href="'.$_SERVER["PHP_SELF"].'?action=del_AGENDA_HIDE_AUTO_EVENTS&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'switch_on').'</a>';
+} else {
+	print '<a href="'.$_SERVER["PHP_SELF"].'?action=set_AGENDA_HIDE_AUTO_EVENTS&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+}
 print '</td></tr>'."\n";
 
 print '</table>';

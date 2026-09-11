@@ -4,6 +4,7 @@
  * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2022-2026  Frédéric France		<frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Anthony Berton		<anthony.berton@bb2a.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1380,6 +1381,29 @@ function agenda_build_eventarray($db, $hookmanager, $user, &$object, &$action, $
 
 			// Discard auto action if option is on
 			if (getDolGlobalString('AGENDA_ALWAYS_HIDE_AUTO') && $obj->type_code == 'AC_OTH_AUTO') {
+				$i++;
+				continue;
+			}
+
+			// Discard auto action if AGENDA_HIDE_AUTO_EVENTS is on
+			// But keep if user explicitly selected auto events in filter
+			$HIDE = getDolGlobalString('AGENDA_HIDE_AUTO_EVENTS');
+			$showAutoSelected = false;
+			if ($HIDE && !empty($actioncode)) {
+				if (is_array($actioncode)) {
+					foreach ($actioncode as $code) {
+						if ($code === 'AC_ALL_AUTO' || $code === 'AC_OTH_AUTO' || $code === 'systemauto') {
+							$showAutoSelected = true;
+							break;
+						}
+					}
+				} elseif (is_string($actioncode)) {
+					if ($actioncode === 'AC_ALL_AUTO' || $actioncode === 'AC_OTH_AUTO' || $actioncode === 'systemauto') {
+						$showAutoSelected = true;
+					}
+				}
+			}
+			if ($HIDE && !$showAutoSelected && $obj->type_type == 'systemauto') {
 				$i++;
 				continue;
 			}
