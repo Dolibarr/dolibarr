@@ -242,13 +242,13 @@ function getMultidirOutput($object, $module = '', $forobject = 0, $mode = 'outpu
 		if (isset($conf->$module) && property_exists($conf->$module, 'multidir_output')) {
 			$s = '';
 			if ($mode != 'outputrel') {
-				// An entity with no directory declared used to return an undefined index, so a relative path
-				// that made the caller read or write under the web root. Answer the error instead.
+				// An entity with no declared directory returned an undefined index, so an empty path that
+				// made the caller read or write a relative path under the web root. Answer the error instead.
 				$entity = (int) (empty($object->entity) ? $conf->entity : $object->entity);
 				if (!isset($conf->$module->multidir_output[$entity])) {
-					return 'error-diroutput-not-defined-for-this-object='.$module;
+					return 'error-diroutput-not-defined-for-this-entity-and-object='.$module;
 				}
-				$s = $conf->$module->multidir_output[$entity].$subdirectory;
+				$s = $conf->$module->multidir_output[$entity] . $subdirectory;
 			}
 			if ($forobject && $object->id > 0) {
 				$s .= ($mode != 'outputrel' ? '/' : '') . get_exdir(0, 0, 0, 0, $object);
@@ -264,20 +264,20 @@ function getMultidirOutput($object, $module = '', $forobject = 0, $mode = 'outpu
 			}
 			return dol_sanitizePathName($s);
 		} else {
-			return 'error-diroutput-not-defined-for-this-object=' . $module;
+			return 'error-diroutput-not-defined-for-this-entity-and-object='.$module;
 		}
 	} elseif ($mode == 'temp') {
 		if (isset($conf->$module) && property_exists($conf->$module, 'multidir_temp')) {
 			// Same guard as the 'output' mode above, see the comment there
 			$entity = (int) (empty($object->entity) ? $conf->entity : $object->entity);
 			if (!isset($conf->$module->multidir_temp[$entity])) {
-				return 'error-dirtemp-not-defined-for-this-object='.$module;
+				return 'error-dirtemp-not-defined-for-this-entity-and-object='.$module;
 			}
 			return dol_sanitizePathName($conf->$module->multidir_temp[$entity]);
 		} elseif (isset($conf->$module) && property_exists($conf->$module, 'dir_temp')) {
 			return dol_sanitizePathName($conf->$module->dir_temp);
 		} else {
-			return 'error-dirtemp-not-defined-for-this-object=' . $module;
+			return 'error-dirtemp-not-defined-for-this-entity-and-object='.$module;
 		}
 	} else {
 		return 'error-bad-value-for-mode';
@@ -1770,6 +1770,49 @@ function dol_buildpath($path, $type = 0, $returnemptyifnotfound = 0)
 	}
 
 	return $res;
+}
+
+/**
+ * Return the full filesystem path of a file located in the currently selected theme directory.
+ * The standard theme directory (DOL_DOCUMENT_ROOT/theme/<theme>) is searched first, then the theme
+ * directories provided by modules (registered into $conf->modules_parts['theme']). This allows a
+ * theme shipped inside an external module to be found the same way as a native theme.
+ * When no module registers a theme directory (the usual case), the native path is returned as-is
+ * without any file_exists() check.
+ *
+ * @param	string	$file	Relative file name to look for into the theme directory (ex: 'theme_vars.inc.php')
+ * @param	string	$theme	Theme name to use. Default is $conf->theme.
+ * @return	string			Full filesystem path to the file, or '' if it was not found.
+ * @see dol_buildpath()
+ */
+function dol_getThemeFilePath($file, $theme = '')
+{
+	global $conf;
+
+	if (empty($theme)) {
+		$theme = $conf->theme;
+	}
+	$file = '/theme/'.$theme.'/'.preg_replace('/^\//', '', $file);
+
+	// No module registers a theme directory: the file can only be the native one.
+	// Return it directly without an extra file_exists() call, like the historical code.
+	if (empty($conf->modules_parts['theme'])) {
+		return DOL_DOCUMENT_ROOT.$file;
+	}
+
+	// A module may provide or override the theme: look into the native directory
+	// first, then into the module-provided theme directories.
+	if (file_exists(DOL_DOCUMENT_ROOT.$file)) {
+		return DOL_DOCUMENT_ROOT.$file;
+	}
+	foreach ($conf->modules_parts['theme'] as $reldir) {
+		$tmp = dol_buildpath($reldir.$file, 0, 1);
+		if ($tmp) {
+			return $tmp;
+		}
+	}
+
+	return '';
 }
 
 /**
@@ -3860,6 +3903,10 @@ function dol_print_phone($phone, $countrycode = '', $contactid = 0, $socid = 0, 
 			} else { //ex: +91_ABCDE_FGHIJ
 				$newphone = substr($newphone, 0, 3) . $separ . substr($newphone, 3, 5) . $separ . substr($newphone, 8, 5);
 			}
+		}
+	} elseif (strtoupper($countrycode) == "CI") { //Ivory cost
+		if (dol_strlen($phone) == 14) { //ex : +225_AB_CD_EF_GH_IJ
+			$newphone = substr($newphone, 0, 4) . $separ.substr($newphone, 4, 2) . $separ.substr($newphone, 6, 2) . $separ.substr($newphone, 8, 2) . $separ.substr($newphone, 10, 2) . $separ.substr($newphone, 12, 2);
 		}
 	}
 
@@ -10865,6 +10912,31 @@ function getElementProperties($elementType)
 		$classname = 'RecruitmentJobPosition';
 		$subelement = 'recruitmentjobposition';
 		$subdir = '/recruitmentjobposition';
+	} elseif ($elementType == 'product_attribute_combination') {
+		$module = 'variants';
+		$classpath = 'variants/class';
+		$classfile = 'ProductCombination';
+		$classname = 'ProductCombination';
+		$element = 'productcombination';
+		$subelement = '';
+		$table_element = 'product_attribute_combination';
+	} elseif ($elementType == 'product_attribute_combination2val') {
+		$module = 'variants';
+		$classpath = 'variants/class';
+		$classfile = 'ProductCombination2ValuePair';
+		$classname = 'ProductCombination2ValuePair';
+		$element = 'productcombination2valuepair';
+		$subelement = '';
+		$table_element = 'product_attribute_combination2val';
+	} elseif ($elementType == 'product_attribute_combination_price_level') {
+		// Class ProductCombinationLevel is declared inside ProductCombination.class.php
+		$module = 'variants';
+		$classpath = 'variants/class';
+		$classfile = 'ProductCombination';
+		$classname = 'ProductCombinationLevel';
+		$element = 'productcombinationlevel';
+		$subelement = '';
+		$table_element = 'product_attribute_combination_price_level';
 	}
 
 
@@ -11013,10 +11085,24 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '', $us
 			return $conf->cache['fetchObjectByElement'][$element_type][$element_id];
 		}
 
-		dol_include_once('/' . $element_prop['classpath'] . '/' . $element_prop['classfile'] . '.class.php');
+		$includeresult = dol_include_once('/' . $element_prop['classpath'] . '/' . $element_prop['classfile'] . '.class.php');
+		if ($includeresult === false) {
+			dol_syslog('fetchObjectByElement: class file /' . $element_prop['classpath'] . '/' . $element_prop['classfile'] . '.class.php not found for element ' . $element_type, LOG_WARNING);
+		}
 
 		if (class_exists($element_prop['classname'])) {
 			$className = $element_prop['classname'];
+			// Never instantiate a PHP internal class: the name can only be a collision with a
+			// class of the language (for example an element resolved to the native 'Attribute').
+			try {
+				$isinternalclass = (new ReflectionClass($className))->isInternal();
+			} catch (ReflectionException $e) {
+				$isinternalclass = false;
+			}
+			if ($isinternalclass) {
+				dol_syslog('fetchObjectByElement: refuse to instantiate PHP internal class ' . $className . ' for element ' . $element_type, LOG_ERR);
+				return -1;
+			}
 			$objecttmp = new $className($db);
 			'@phan-var-force CommonObject $objecttmp';
 			/** @var CommonObject $objecttmp */

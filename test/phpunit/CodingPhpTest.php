@@ -168,23 +168,17 @@ class CodingPhpTest extends CommonClassTest
 			|| in_array($file['name'], array('modules_boxes.php', 'TraceableDB.php'))) {
 			// Check Class files
 			if (! in_array($file['name'], array(
-					'api.class.php',
 					'commonobject.class.php',
 					'conf.class.php',
-					'html.form.class.php',
 					'translate.class.php',
 					'utils.class.php',
-					'TraceableDB.php',
 					'multicurrency.class.php'
 				))) {
 				// Must not find $db->
 				$ok = true;
-				$matches = array();
 				// Check string $db-> inside a class.php file (it should be $this->db-> in such classes)
-				preg_match_all('/'.preg_quote('$db->', '/').'/', $filecontent, $matches, PREG_SET_ORDER);
-				foreach ($matches as $key => $val) {
+				if (strpos($filecontent, '$db->') !== false) {
 					$ok = false;
-					break;
 				}
 				//print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
 				$this->assertTrue($ok, 'Found string $db-> in a .class.php file in '.$file['relativename'].'. Inside a .class file, you should use $this->db-> instead.');
@@ -249,12 +243,9 @@ class CodingPhpTest extends CommonClassTest
 			))) {
 				// Must not found $this->db->
 				$ok = true;
-				$matches = array();
 				// Check string $this->db-> in a non class.php file (it should be $db-> in such classes)
-				preg_match_all('/'.preg_quote('$this->db->', '/').'/', $filecontent, $matches, PREG_SET_ORDER);
-				foreach ($matches as $key => $val) {
+				if (strpos($filecontent, '$this->db->') !== false) {
 					$ok = false;
-					break;
 				}
 				//print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
 				$this->assertTrue($ok, 'Found string "$this->db->" in '.$file['relativename']);

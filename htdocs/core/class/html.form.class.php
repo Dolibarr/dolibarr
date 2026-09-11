@@ -1295,6 +1295,11 @@ class Form
 		$selectedCode = $phonecode;
 		$numberValue = $parsed['number'];
 
+		// Remove country code
+		if (strpos($numberValue, $selectedCode) === 0) {
+			$numberValue = str_replace($selectedCode, '', $numberValue);
+		}
+
 		// Add back trunk prefix for display (e.g. "644986885" → "0644986885" for France)
 		if ($numberValue !== '' && $selectedCode !== '') {
 			$trunkPrefix = dol_get_trunk_prefix($this->db, $selectedCode);
@@ -2558,22 +2563,42 @@ class Form
 		// phpcs:enable
 		global $langs, $conf;
 
+		$showsourceinvoice = getDolGlobalString('MAIN_SHOW_FACNUMBER_IN_DISCOUNT_LIST');
+
 		// Search for the discounts
 		$sql = "SELECT re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc,";
-		$sql .= " re.description, re.fk_facture_source";
+		$sql .= " re.description, re.fk_facture_source, re.fk_invoice_supplier_source";
+		if ($showsourceinvoice) {
+			// Resolve the source invoice (customer or supplier) in the main query instead of one fetch per line
+			$sql .= ", f.ref as src_cust_ref, f.datef as src_cust_date";
+			$sql .= ", ff.ref as src_supp_ref, ff.datef as src_supp_date";
+		}
 		$sql .= " FROM " . $this->db->prefix() . "societe_remise_except as re";
+		if ($showsourceinvoice) {
+			$sql .= " LEFT JOIN " . $this->db->prefix() . "facture as f ON f.rowid = re.fk_facture_source";
+			$sql .= " LEFT JOIN " . $this->db->prefix() . "facture_fourn as ff ON ff.rowid = re.fk_invoice_supplier_source";
+		}
 		$sql .= " WHERE re.fk_soc = " . (int) $socid;
 		$sql .= " AND re.entity = " . ((int) $conf->entity);
 		if ($filter) {
 			$sanitizedfilter = $filter;  // @phan-suppress-current-line SqlInjection
+			if ($showsourceinvoice) {
+				// The joined tables also carry a fk_facture_source column: qualify unprefixed references of the caller filter
+				$sanitizedfilter = preg_replace('/(?<![a-zA-Z0-9_.])fk_facture_source\b/', 're.fk_facture_source', $sanitizedfilter);
+			}
 			$sql .= " AND " . $sanitizedfilter;
 		}
-		$sql .= " ORDER BY re.description ASC";
+		if ($showsourceinvoice) {
+			// When the source invoices are shown, their date is the natural order (oldest deposit first)
+			$sql .= " ORDER BY COALESCE(ff.datef, f.datef, re.datec) ASC, re.rowid ASC";
+		} else {
+			$sql .= " ORDER BY re.description ASC";
+		}
 
 		dol_syslog(get_class($this) . "::select_remises", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			print '<select id="select_' . $htmlname . '" class="flat maxwidth200onsmartphone" name="' . $htmlname . '">';
+			print '<select id="select_' . $htmlname . '" class="flat maxwidth300 maxwidth200onsmartphone" name="' . $htmlname . '">';
 			$num = $this->db->num_rows($resql);
 
 			$qualifiedlines = $num;
@@ -2608,10 +2633,14 @@ class Form
 						$disabled = ' disabled';
 					}
 
-					if (getDolGlobalString('MAIN_SHOW_FACNUMBER_IN_DISCOUNT_LIST') && !empty($obj->fk_facture_source)) {
-						$tmpfac = new Facture($this->db);
-						if ($tmpfac->fetch($obj->fk_facture_source) > 0) {
-							$desc = $desc . ' - ' . $tmpfac->ref;
+					if ($showsourceinvoice) {
+						$srcref = !empty($obj->src_supp_ref) ? $obj->src_supp_ref : (!empty($obj->src_cust_ref) ? $obj->src_cust_ref : '');
+						$srcdate = !empty($obj->src_supp_date) ? $obj->src_supp_date : (!empty($obj->src_cust_date) ? $obj->src_cust_date : '');
+						if ($srcref) {
+							$desc = $desc . ' - ' . $srcref;
+							if ($srcdate) {
+								$desc .= ' (' . dol_print_date($this->db->jdate($srcdate), 'day') . ')';
+							}
 						}
 					}
 
@@ -3870,8 +3899,12 @@ class Form
 			// include search in supplier ref
 			if (getDolGlobalString('MAIN_SEARCH_PRODUCT_BY_FOURN_REF')) {
 				$sql .= " OR EXISTS (SELECT pfp.fk_product FROM " . $this->db->prefix() . "product_fournisseur_price as pfp WHERE p.rowid = pfp.fk_product";
-				$sql .= " AND (";
+				$sql .= " AND ((";
 				$sql .= $sqlSupplierSearch;
+				$sql .= ")";
+				if (isModEnabled('barcode')) {
+					$sql .= " OR pfp.barcode LIKE '" . $this->db->escape($prefix . $filterkey) . "%'";
+				}
 				$sql .= "))";
 			}
 
@@ -10574,19 +10607,19 @@ class Form
 	/**
 	 * Show a multiselect form from an array. WARNING: Use this only for short lists.
 	 *
-	 * @param 	string 		$htmlname 		Name of select
+	 * @param 	string 			$htmlname 		Name of select
 	 * @param 	array<string|int,string|array<string,mixed>>	$array 			Array(key=>value) or Array(key=>array('id'=>key, 'label'=>value, 'labelhtml'=> , 'color'=> , 'picto'=> , ))
-	 * @param 	string[]	$selected 		Array of keys preselected
-	 * @param 	int<0,1>	$key_in_label 	1 to show key like in "[key] value"
-	 * @param 	int<0,1>	$value_as_key 	1 to use value as key
-	 * @param 	string 		$morecss 		Add more css style
-	 * @param 	int<0,1> 	$translate 		Translate and encode value
-	 * @param 	int|string 	$width 			Force width of select box. May be used only when using jquery couch. Example: 250, '95%'
-	 * @param 	string 		$moreattrib 	Add more options on select component. Example: 'disabled'
-	 * @param 	string 		$nu		 		Not used
-	 * @param 	string 		$placeholder 	String to use as placeholder
-	 * @param 	int<-1,1> 	$addjscombo 	Add js combo
-	 * @return 	string                      HTML multiselect string
+	 * @param 	string[]|int[]	$selected 		Array of keys preselected
+	 * @param 	int<0,1>		$key_in_label 	1 to show key like in "[key] value"
+	 * @param 	int<0,1>		$value_as_key 	1 to use value as key
+	 * @param 	string 			$morecss 		Add more css style
+	 * @param 	int<0,1> 		$translate 		Translate and encode value
+	 * @param 	int|string 		$width 			Force width of select box. May be used only when using jquery couch. Example: 250, '95%'
+	 * @param 	string 			$moreattrib 	Add more options on select component. Example: 'disabled'
+	 * @param 	string 			$nu		 		Not used
+	 * @param 	string 			$placeholder 	String to use as placeholder
+	 * @param 	int<-1,1> 		$addjscombo 	Add js combo
+	 * @return 	string          	            HTML multiselect string
 	 * @see selectarray(), selectArrayAjax(), selectArrayFilter()
 	 */
 	public static function multiselectarray($htmlname, $array, $selected = array(), $key_in_label = 0, $value_as_key = 0, $morecss = '', $translate = 0, $width = 0, $moreattrib = '', $nu = '', $placeholder = '', $addjscombo = -1)

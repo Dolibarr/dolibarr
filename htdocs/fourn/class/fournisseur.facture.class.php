@@ -516,7 +516,7 @@ class FactureFournisseur extends CommonInvoice
 			$outputlangs = $langs;
 			$newlang = '';
 
-			if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && isset($this->thirdparty->default_lang)) {
+			if (getDolGlobalInt('MAIN_MULTILANGS') && isset($this->thirdparty->default_lang)) {
 				$newlang = $this->thirdparty->default_lang; // for proposal, order, invoice, ...
 			}
 			if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && property_exists($this, 'default_lang') && isset($this->default_lang)) { // @phan-suppress-current-line PhanUndeclaredProperty
@@ -2975,7 +2975,7 @@ class FactureFournisseur extends CommonInvoice
 			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
 			$label = '';
 		} else {
-			$label = implode($this->getTooltipContentArray($params));
+			$label = $this->getTooltipContent($params);
 		}
 
 		$ref = $this->ref;
