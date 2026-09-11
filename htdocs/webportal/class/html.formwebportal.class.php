@@ -542,6 +542,14 @@ class FormWebPortal extends Form
 				$out = $this->inputType('tel', $htmlName, dol_escape_htmltag($value), $htmlId, $morecss, $moreparam);
 				break;
 
+			case 'phone':
+				if (preg_match('/^search_/', $keyprefix)) {
+					$out = $this->inputType('text', $htmlName, dol_escape_htmltag($value), $htmlId, $morecss, $moreparam);
+				} else {
+					$out = $this->showPhoneInput($value, $htmlName, !empty($object->country_id) ? $object->country_id : 0);
+				}
+				break;
+
 			case 'url':
 				$out = $this->inputType('url', $htmlName, dol_escape_htmltag($value), $htmlId, $morecss, $moreparam);
 				break;

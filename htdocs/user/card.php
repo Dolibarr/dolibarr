@@ -1378,36 +1378,36 @@ if ($action == 'create' || $action == 'adduserldap') {
 	// Tel
 	print '<tr><td>'.$langs->trans("PhonePro").'</td>';
 	print '<td>';
-	print img_picto('', 'object_phoning', 'class="pictofixedwidth"');
 	if (!empty($ldap_phone)) {
+		print img_picto('', 'object_phoning', 'class="pictofixedwidth"');
 		print '<input type="hidden" name="office_phone" value="'.dol_escape_htmltag($ldap_phone).'">';
 		print $ldap_phone;
 	} else {
-		print '<input class="maxwidth200 widthcentpercentminusx" type="text" name="office_phone" value="'.dol_escape_htmltag(GETPOST('office_phone', 'alphanohtml')).'">';
+		print $form->showPhoneInput($object->office_phone, 'office_phone', $object->country_id, 'object_phoning', 'maxwidth200 widthcentpercentminusx');
 	}
 	print '</td></tr>';
 
 	// Tel portable
 	print '<tr><td>'.$langs->trans("PhoneMobile").'</td>';
 	print '<td>';
-	print img_picto('', 'object_phoning_mobile', 'class="pictofixedwidth"');
 	if (!empty($ldap_mobile)) {
+		print img_picto('', 'object_phoning_mobile', 'class="pictofixedwidth"');
 		print '<input type="hidden" name="user_mobile" value="'.dol_escape_htmltag($ldap_mobile).'">';
 		print $ldap_mobile;
 	} else {
-		print '<input class="maxwidth200 widthcentpercentminusx" type="text" name="user_mobile" value="'.dol_escape_htmltag(GETPOST('user_mobile', 'alphanohtml')).'" spellcheck="false">';
+		print $form->showPhoneInput($object->user_mobile, 'user_mobile', $object->country_id, 'object_phoning_mobile', 'maxwidth200 widthcentpercentminusx');
 	}
 	print '</td></tr>';
 
 	// Fax
 	print '<tr><td>'.$langs->trans("Fax").'</td>';
 	print '<td>';
-	print img_picto('', 'object_phoning_fax', 'class="pictofixedwidth"');
 	if (!empty($ldap_fax)) {
+		print img_picto('', 'object_phoning_fax', 'class="pictofixedwidth"');
 		print '<input type="hidden" name="office_fax" value="'.dol_escape_htmltag($ldap_fax).'">';
 		print $ldap_fax;
 	} else {
-		print '<input class="maxwidth200 widthcentpercentminusx" type="text" name="office_fax" value="'.dol_escape_htmltag(GETPOST('office_fax', 'alphanohtml')).'">';
+		print $form->showPhoneInput($object->office_fax, 'office_fax', $object->country_id, 'object_phoning_fax', 'maxwidth200 widthcentpercentminusx');
 	}
 	print '</td></tr>';
 
@@ -2752,12 +2752,14 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 			print '</table>';
 
+
 			print '<hr>';
+
 
 			print '<table class="border centpercent">';
 
 			// Date access validity
-			print '<tr><td>'.$langs->trans("RangeOfLoginValidity").'</td>';
+			print '<tr><td class="titlefieldcreate">'.$langs->trans("RangeOfLoginValidity").'</td>';
 			print '<td>';
 			if ($permissiontoedit) {
 				print $form->selectDate($datestartvalidity ? $datestartvalidity : $object->datestartvalidity, 'datestartvalidity', 0, 0, 1, 'formdatestartvalidity', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("from"));
@@ -2774,6 +2776,21 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '</td>';
 			print "</tr>\n";
 
+			// Set checkbxo to update on next login (only on dolibarr auth mode)
+			$sforcepass = '';
+			$permissiontoselfeditpassword = $object->hasRight('user', 'self', 'password');
+			if ($permissiontoselfeditpassword) {
+				if ($permissiontoedit) {
+					$sforcepass .= '<input type="checkbox" name="forcepasswordchange" id="forcepasswordchange" value="1"'.($object->force_pass_change ? ' checked="checked"' : '').'>';
+					$sforcepass .= '<label class="opacitylow small" for="forcepasswordchange">'.$langs->trans("ForcePasswordChange").'</label>';
+				} else {
+					$sforcepass .= '<input type="checkbox" name="forcepasswordchange" class="colorgrey" disabled value="1"'.($object->force_pass_change ? ' checked="checked"' : '').'>';
+					$sforcepass .= '<span class="small">'.$langs->trans("ForcePasswordChange").'</small>';
+				}
+			} else {
+				$sforcepass .= '<input type="checkbox" name="forcepasswordchange" value="1" class="colorgrey" disabled>';
+				$sforcepass .= '<span class="opacitymedium small" title="'.$langs->trans("UserDoesNotHaveRightsToChangeHisPassword").'">'.$langs->trans("ForcePasswordChange").'</span>';
+			}
 
 			// Pass
 			print '<tr><td class="titlefieldcreate">'.$langs->trans("Password").'</td>';
@@ -2805,26 +2822,22 @@ if ($action == 'create' || $action == 'adduserldap') {
 			}
 
 			print $valuetoshow;
+			/*
+			if ($_SESSION["dol_authmode"] == 'dolibarr') {
+				print '<div class="inline-block marginleftonly paddingtop paddingbottom">'.$sforcepass.'</div>';
+			}*/
 			print "</td></tr>\n";
 
 			// Force update on next login only on dolibarr auth mode
 			if ($_SESSION["dol_authmode"] == 'dolibarr') {
-				print '<tr>';
-				print '<td></td><td>';
-				$permissiontoselfeditpassword = $object->hasRight('user', 'self', 'password');
-				if ($permissiontoselfeditpassword) {
-					if ($permissiontoedit) {
-						print '<input type="checkbox" name="forcepasswordchange" id="forcepasswordchange" value="1"'.($object->force_pass_change ? ' checked="checked"' : '').'>';
-						print '<label class="opacitylow" for="forcepasswordchange">'.$langs->trans("ForcePasswordChange").'</label>';
-					} else {
-						print '<input type="checkbox" name="forcepasswordchange" class="colorgrey" disabled value="1"'.($object->force_pass_change ? ' checked="checked"' : '').'>';
-						print $langs->trans("ForcePasswordChange");
-					}
+				print '<tr class="valigntop">';
+				if ($conf->dol_optimize_smallscreen) {
+					print '<td colspan="2">';
 				} else {
-					print '<input type="checkbox" name="forcepasswordchange" value="1" class="colorgrey" disabled>';
-					print '<span class="opacitymedium" title="'.$langs->trans("UserDoesNotHaveRightsToChangeHisPassword").'">'.$langs->trans("ForcePasswordChange").'</span>';
+					print '<td></td>';
+					print '<td>';
 				}
-
+				print $sforcepass;
 				print '</td></tr>';
 			}
 
@@ -2856,8 +2869,13 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print '</td></tr>';
 			}
 
-			print '</table><hr><table class="border centpercent">';
+			print '</table>';
 
+
+			print '<hr>';
+
+
+			print '<table class="border centpercent">';
 
 			// Address
 			print '<tr><td class="tdtop titlefieldcreate">'.$form->editfieldkey('Address', 'address', '', $object, 0).'</td>';
@@ -2918,10 +2936,10 @@ if ($action == 'create' || $action == 'adduserldap') {
 			// Tel pro
 			print "<tr>".'<td>'.$langs->trans("PhonePro").'</td>';
 			print '<td>';
-			print img_picto('', 'phoning', 'class="pictofixedwidth"');
 			if ($permissiontoedit && empty($object->ldap_sid)) {
-				print '<input type="text" name="office_phone" class="flat maxwidth200 widthcentpercentminusx" value="'.$object->office_phone.'">';
+				print $form->showPhoneInput($object->office_phone, 'office_phone', $object->country_id, 'phoning', 'maxwidth200 widthcentpercentminusx');
 			} else {
+				print img_picto('', 'phoning', 'class="pictofixedwidth"');
 				print '<input type="hidden" name="office_phone" value="'.$object->office_phone.'">';
 				print $object->office_phone;
 			}
@@ -2930,10 +2948,10 @@ if ($action == 'create' || $action == 'adduserldap') {
 			// Tel mobile
 			print "<tr>".'<td>'.$langs->trans("PhoneMobile").'</td>';
 			print '<td>';
-			print img_picto('', 'phoning_mobile', 'class="pictofixedwidth"');
 			if ($permissiontoedit && empty($object->ldap_sid)) {
-				   print '<input type="text" name="user_mobile" class="flat maxwidth200 widthcentpercentminusx" value="'.$object->user_mobile.'" spellcheck="false">';
+				print $form->showPhoneInput($object->user_mobile, 'user_mobile', $object->country_id, 'phoning_mobile', 'maxwidth200 widthcentpercentminusx');
 			} else {
+				print img_picto('', 'phoning_mobile', 'class="pictofixedwidth"');
 				print '<input type="hidden" name="user_mobile" value="'.$object->user_mobile.'">';
 				print $object->user_mobile;
 			}
@@ -2942,10 +2960,10 @@ if ($action == 'create' || $action == 'adduserldap') {
 			// Fax
 			print "<tr>".'<td>'.$langs->trans("Fax").'</td>';
 			print '<td>';
-			print img_picto('', 'phoning_fax', 'class="pictofixedwidth"');
 			if ($permissiontoedit && empty($object->ldap_sid)) {
-				print '<input type="text" name="office_fax" class="flat maxwidth200 widthcentpercentminusx" value="'.$object->office_fax.'">';
+				print $form->showPhoneInput($object->office_fax, 'office_fax', $object->country_id, 'phoning_fax', 'maxwidth200 widthcentpercentminusx');
 			} else {
+				print img_picto('', 'phoning_fax', 'class="pictofixedwidth"');
 				print '<input type="hidden" name="office_fax" value="'.$object->office_fax.'">';
 				print $object->office_fax;
 			}
@@ -2985,12 +3003,17 @@ if ($action == 'create' || $action == 'adduserldap') {
 				}
 			}
 
-			print '</table><hr><table class="border centpercent">';
+			print '</table>';
 
+
+			print '<hr>';
+
+
+			print '<table class="border centpercent">';
 			// Default warehouse
 			if (isModEnabled('stock') && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE_USER')) {
-				print '<tr><td class="titlefield">'.$langs->trans("DefaultWarehouse").'</td><td>';
-				print $formproduct->selectWarehouses($object->fk_warehouse, 'fk_warehouse', 'warehouseopen', 1);
+				print '<tr><td class="titlefieldcreate">'.$langs->trans("DefaultWarehouse").'</td><td>';
+				print $formproduct->selectWarehouses($object->warehouse_id, 'fk_warehouse', 'warehouseopen', 1);
 				print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&token='.newToken().'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit&token='.newToken()).'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddWarehouse").'"></span></a>';
 				print '</td></tr>';
 			}
@@ -3137,8 +3160,8 @@ if ($action == 'create' || $action == 'adduserldap') {
 			}
 			print '</td></tr>';
 
-
 			print '</table>';
+
 
 			print '<hr>';
 

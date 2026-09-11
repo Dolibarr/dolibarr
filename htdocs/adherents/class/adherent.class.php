@@ -2152,7 +2152,7 @@ class Adherent extends CommonObject
 			if (!$error) {
 				// Define output language
 				$outputlangs = $langs;
-				$newlang = '';
+				$newlang = $this->default_lang;
 				$lang_id = GETPOST('lang_id');
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && !empty($lang_id)) {
 					$newlang = $lang_id;
