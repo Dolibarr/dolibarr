@@ -145,6 +145,22 @@ class AssetDepreciationOptions extends CommonObject
 	 * @var int<0,1>
 	 */
 	public $accelerated_depreciation_option;
+	/**
+	 * @var float	Depreciation rate, computed by getRate() and not stored in database
+	 */
+	public $rate;
+	/**
+	 * @var float
+	 */
+	public $amount_base_depreciation_ht;
+	/**
+	 * @var float
+	 */
+	public $amount_base_deductible_ht;
+	/**
+	 * @var float
+	 */
+	public $total_amount_last_depreciation_ht;
 
 	/**
 	 * Constructor
