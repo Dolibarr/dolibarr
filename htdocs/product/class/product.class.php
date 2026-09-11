@@ -6582,6 +6582,7 @@ class Product extends CommonObject
 		$horizoninDays = getDolGlobalString('STOCK_VIRTUAL_HORIZON_IN_DAYS');
 		$dateofvirtualstockmin = 0;
 		if (empty($dateofvirtualstock) && $horizoninDays !== '') {
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';	// dol_time_plus_duree/dol_get_first_hour are not loaded in CLI/webservice contexts
 			$dateofvirtualstock = dol_time_plus_duree(dol_now(), max(0, (int) $horizoninDays), 'd');
 			$dateofvirtualstockmin = dol_get_first_hour(dol_now());	// The horizon is a window: supply expected before today did not arrive as planned
 		}
