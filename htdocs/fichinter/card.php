@@ -472,7 +472,12 @@ if (empty($reshook)) {
 									// Common part (predefined or free line)
 									$desc .= dol_htmlentitiesbr($lines[$i]->desc);
 									$desc .= '<br>';
-									$desc .= ' ('.$langs->trans('Quantity').': '.$lines[$i]->qty.')';
+									$unit_label = '';
+									if ($lines[$i]->fk_unit) {
+										$langs->load('measuring_units');
+										$unit_label = $langs->trans($lines[$i]->getLabelOfUnit('short'));
+									}
+									$desc .= ' ('.$langs->trans('Quantity').': '.$lines[$i]->qty.($unit_label ? ' '.$unit_label : '').')';
 
 									$timearray = dol_getdate(dol_now());
 									$date_intervention = dol_mktime(0, 0, 0, $timearray['mon'], $timearray['mday'], $timearray['year']);
