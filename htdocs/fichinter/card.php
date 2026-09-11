@@ -474,8 +474,9 @@ if (empty($reshook)) {
 									$desc .= '<br>';
 									$desc .= ' ('.$langs->trans('Quantity').': '.$lines[$i]->qty.')';
 
-									$timearray = dol_getdate(dol_now());
-									$date_intervention = dol_mktime(0, 0, 0, $timearray['mon'], $timearray['mday'], $timearray['year']);
+									$source_date = (!empty($srcobject->delivery_date) ? $srcobject->delivery_date : dol_now());
+									$timearray = dol_getdate($source_date);
+									$date_intervention = dol_mktime($timearray['hours'], $timearray['minutes'], 0, $timearray['mon'], $timearray['mday'], $timearray['year']);
 
 									if ($product_type == Product::TYPE_PRODUCT) {
 										$duration = 0;
