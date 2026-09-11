@@ -34,6 +34,7 @@
 '
 @phan-var-force ?Form $form
 @phan-var-force HookManager $hookmanager
+@phan-var-force array<string,mixed> $parameters
 @phan-var-force AssetDepreciationOptions $assetdepreciationoptions
 ';
 
