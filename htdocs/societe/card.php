@@ -2137,7 +2137,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				//Incoterms
 				if (isModEnabled('incoterm')) {
 					$object->fk_incoterms = GETPOSTINT('incoterm_id');
-					$object->location_incoterms = GETPOST('lcoation_incoterms', 'alpha');
+					$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 				}
 
 				//Local Taxes

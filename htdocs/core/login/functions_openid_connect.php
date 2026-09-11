@@ -109,12 +109,12 @@ function check_user_password_openid_connect($usertotest, $passwordtotest, $entit
 		$_SESSION["dol_loginmesg"] = "Error in OAuth 2.0 flow (".$token_response['content'].")";
 		dol_syslog("functions_openid_connect::check_user_password_openid_connect::".$token_response['content'], LOG_ERR);
 		return false;
-	} elseif ($token_content->error) {
+	} elseif (is_object($token_content) && $token_content->error) {
 		// Got token response but content is an error
 		$_SESSION["dol_loginmesg"] = "Error in OAuth 2.0 flow (".$token_content->error_description.")";
 		dol_syslog("functions_openid_connect::check_user_password_openid_connect::".$token_content->error_description, LOG_ERR);
 		return false;
-	} elseif (!property_exists($token_content, 'access_token')) {
+	} elseif (!is_object($token_content) || !property_exists($token_content, 'access_token')) {
 		// Other token request error
 		$_SESSION["dol_loginmesg"] = "Token request error (".$token_response['http_code'].")";
 		dol_syslog("functions_openid_connect::check_user_password_openid_connect::".$_SESSION["dol_loginmesg"], LOG_ERR);

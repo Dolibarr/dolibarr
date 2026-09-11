@@ -6,6 +6,7 @@
  * Copyright (C) 2016		ATM Consulting		<support@atm-consulting.fr>
  * Copyright (C) 2019-2024  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Jose MARTINEZ		<jose.martinez@pichinov.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -577,7 +578,7 @@ if ($ext == 'csv') {
 		$tooltiptext = $langs->trans("QtyAtDate").' x '.$langs->trans("SellingPrice").' ('.$langs->trans("Currently").')';
 		print_liste_field_titre("EstimatedStockValueSell", $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'right ', $tooltiptext, 1);
 		$tooltiptext = $langs->trans("MovementsSinceDate");
-		print_liste_field_titre('', $_SERVER["PHP_SELF"], '', '', $param, '', '', '', 'right ', $tooltiptext, 1);
+		print_liste_field_titre($langs->trans("Movements"), $_SERVER["PHP_SELF"], '', '', $param, '', '', '', 'right ', $tooltiptext, 1);
 		print_liste_field_titre('CurrentStock', $_SERVER["PHP_SELF"], $fieldtosortcurrentstock, '', $param, '', $sortfield, $sortorder, 'right ');
 	}
 

@@ -561,14 +561,13 @@ class Asset extends CommonObject
 		if ($result > 0 && $this->fk_asset_model > 0 && $this->fk_asset_model != $this->oldcopy->fk_asset_model) {
 			$result = $this->setDataFromAssetModel($user, $notrigger);
 		}
-		if ($result > 0 && (
+		if ($result > 0 && is_object($this->oldcopy) && (
 			$this->date_start != $this->oldcopy->date_start ||
-				$this->acquisition_value_ht != $this->oldcopy->acquisition_value_ht ||
-				$this->reversal_date != $this->oldcopy->reversal_date ||
-				$this->reversal_amount_ht != $this->oldcopy->reversal_amount_ht ||
-				($this->fk_asset_model > 0 && $this->fk_asset_model != $this->oldcopy->fk_asset_model)
-		)
-		) {
+			$this->acquisition_value_ht != $this->oldcopy->acquisition_value_ht ||
+			$this->reversal_date != $this->oldcopy->reversal_date ||
+			$this->reversal_amount_ht != $this->oldcopy->reversal_amount_ht ||
+			($this->fk_asset_model > 0 && $this->fk_asset_model != $this->oldcopy->fk_asset_model)
+		)) {
 			$result = $this->calculationDepreciation();
 		}
 
