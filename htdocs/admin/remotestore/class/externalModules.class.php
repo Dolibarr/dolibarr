@@ -92,8 +92,7 @@ class ExternalModules
 
 	/**
 	 * @var string
-	 *
-/
+	 */
 	public $dolistoreApiError;
 
 	/**
