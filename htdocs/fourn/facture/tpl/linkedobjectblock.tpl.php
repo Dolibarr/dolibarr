@@ -5,6 +5,7 @@
  * Copyright (C) 2016       Laurent Destailleur 	<eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026       Lenin Rivas      	    <lenin.rivas777@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +37,7 @@
  * @var int $showImportButton
  * @var FactureFournisseur[] $linkedObjectBlock
  */
+'@phan-var-force CommonObject $object';
 
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
@@ -79,9 +81,17 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 			if ($objectlink->status != 3) {
 				// If not abandoned
 				$total += $sign * $objectlink->total_ht;
-				echo price($objectlink->total_ht);
+				if (isModEnabled('multicurrency') && !empty($objectlink->multicurrency_code) && $objectlink->multicurrency_code != $conf->currency) {
+					echo price($objectlink->multicurrency_total_ht, 0, $langs, 1, -1, -1, $objectlink->multicurrency_code);
+				} else {
+					echo price($objectlink->total_ht);
+				}
 			} else {
-				echo '<strike>'.price($objectlink->total_ht).'</strike>';
+				if (isModEnabled('multicurrency') && !empty($objectlink->multicurrency_code) && $objectlink->multicurrency_code != $conf->currency) {
+					echo '<strike>'.price($objectlink->multicurrency_total_ht, 0, $langs, 1, -1, -1, $objectlink->multicurrency_code).'</strike>';
+				} else {
+					echo '<strike>'.price($objectlink->total_ht).'</strike>';
+				}
 			}
 		} ?></td>
 		<td class="right"><?php

@@ -6,6 +6,7 @@
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Noé Cendrier		<noe.cendrier@altairis.fr>
  * Copyright (C) 2026		Vincent de Grandpré	<vincent@de-grandpre.quebec>
+ * Copyright (C) 2026      Lenin Rivas      	<lenin.rivas777@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1019,17 +1020,28 @@ class DiscountAbsolute extends CommonObject
 			$this->total_ht = (float) price2num($this->total_ttc - $this->total_localtax1 - $this->total_localtax2 - $this->total_tva, 'MT');
 
 
-			$this->multicurrency_total_ttc = (float) price2num($amount * (float) $this->multicurrency_tx, 'MT');
-			$this->multicurrency_total_ht = (float) price2num((float) $amount / (1 + $tva_tx_pct) * (float) $this->multicurrency_tx, 'MT');
-			$this->multicurrency_total_tva = (float) price2num($this->multicurrency_total_ttc - $this->multicurrency_total_ht, 'MT');
+			if (getDolGlobalString('MULTICURRENCY_USE_RATE_DIRECT')) {
+				$this->multicurrency_total_ttc = (float) price2num((float) $this->multicurrency_tx ? $amount / (float) $this->multicurrency_tx : $amount, 'MT');
+				$this->multicurrency_total_ht = (float) price2num((float) $this->multicurrency_tx ? (float) $amount / (1 + $tva_tx_pct) / (float) $this->multicurrency_tx : (float) $amount / (1 + $tva_tx_pct), 'MT');
+				$this->multicurrency_total_tva = (float) price2num($this->multicurrency_total_ttc - $this->multicurrency_total_ht, 'MT');
+			} else {
+				$this->multicurrency_total_ttc = (float) price2num($amount * (float) $this->multicurrency_tx, 'MT');
+				$this->multicurrency_total_ht = (float) price2num((float) $amount / (1 + $tva_tx_pct) * (float) $this->multicurrency_tx, 'MT');
+				$this->multicurrency_total_tva = (float) price2num($this->multicurrency_total_ttc - $this->multicurrency_total_ht, 'MT');
+			}
 		} elseif ($amount_type == 0) {
 			// HT
 			$this->total_ht = (float) price2num($amount, 'MT');
 			$this->total_tva = (float) price2num((float) $this->total_ht * $tva_tx_pct, 'MT');
 			//$this->total_ttc = price2num((float) $this->total_ht + (float) $this->total_tva + ..., 'MT');		// Is set later
 
-			$this->multicurrency_total_ht = (float) price2num($amount * (float) $this->multicurrency_tx, 'MT');
-			$this->multicurrency_total_tva = (float) price2num(((float) $amount * $tva_tx_pct) * (float) $this->multicurrency_tx, 'MT');
+			if (getDolGlobalString('MULTICURRENCY_USE_RATE_DIRECT')) {
+				$this->multicurrency_total_ht = (float) price2num((float) $this->multicurrency_tx ? $amount / (float) $this->multicurrency_tx : $amount, 'MT');
+				$this->multicurrency_total_tva = (float) price2num((float) $this->multicurrency_tx ? ((float) $amount * $tva_tx_pct) / (float) $this->multicurrency_tx : (float) $amount * $tva_tx_pct, 'MT');
+			} else {
+				$this->multicurrency_total_ht = (float) price2num($amount * (float) $this->multicurrency_tx, 'MT');
+				$this->multicurrency_total_tva = (float) price2num(((float) $amount * $tva_tx_pct) * (float) $this->multicurrency_tx, 'MT');
+			}
 			//$this->multicurrency_total_ttc = price2num(((float) $this->total_ht + (float) $this->total_tva + ...) * (float) $this->multicurrency_tx, 'MT');	// Is set later
 
 			if ($localtax1_type2 == 0) {
