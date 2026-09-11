@@ -1059,25 +1059,27 @@ class ProductCustomerPrice extends CommonObject
 							}
 						}
 					} else {
-						// If line do not exits then create it
-						$prodsocpricenew = new ProductCustomerPrice($this->db);
-						$prodsocpricenew->fk_soc = $obj->rowid;
-						$prodsocpricenew->ref_customer = $this->ref_customer; // $obj only selects s.rowid (societe), ref_customer belongs to $this (the price line being propagated)
-						$prodsocpricenew->fk_product = $this->fk_product;
-						$prodsocpricenew->price = $this->price;
-						$prodsocpricenew->price_min = $this->price_min;
-						$prodsocpricenew->price_base_type = $this->price_base_type;
-						$prodsocpricenew->tva_tx = $this->tva_tx;
-						$prodsocpricenew->recuperableonly = $this->recuperableonly;
-						$prodsocpricenew->price_label = $this->price_label;
-						$prodsocpricenew->discount_percent = $this->discount_percent;
-						$prodsocpricenew->date_begin = $this->date_begin;
-						$prodsocpricenew->date_end = $this->date_end;
+						// If line does not exist, create it, but only if force update was requested
+						if (!empty($forceupdateaffiliate)) {
+							$prodsocpricenew = new ProductCustomerPrice($this->db);
+							$prodsocpricenew->fk_soc = $obj->rowid;
+							$prodsocpricenew->ref_customer = $this->ref_customer; // $obj only selects s.rowid (societe), ref_customer belongs to $this (the price line being propagated)
+							$prodsocpricenew->fk_product = $this->fk_product;
+							$prodsocpricenew->price = $this->price;
+							$prodsocpricenew->price_min = $this->price_min;
+							$prodsocpricenew->price_base_type = $this->price_base_type;
+							$prodsocpricenew->tva_tx = $this->tva_tx;
+							$prodsocpricenew->recuperableonly = $this->recuperableonly;
+							$prodsocpricenew->price_label = $this->price_label;
+							$prodsocpricenew->discount_percent = $this->discount_percent;
+							$prodsocpricenew->date_begin = $this->date_begin;
+							$prodsocpricenew->date_end = $this->date_end;
 
-						$resultupd = $prodsocpricenew->create($user, 0, $forceupdateaffiliate);
-						if ($resultupd < 0) {
-							$error++;
-							$this->error = $prodsocpricenew->error;
+							$resultupd = $prodsocpricenew->create($user, 0, $forceupdateaffiliate);
+							if ($resultupd < 0) {
+								$error++;
+								$this->error = $prodsocpricenew->error;
+							}
 						}
 					}
 				}
@@ -1100,9 +1102,10 @@ class ProductCustomerPrice extends CommonObject
 	 *
 	 * @param User $user that deletes
 	 * @param int $notrigger triggers after, 1=disable triggers
+	 * @param int $forceupdateaffiliate If set, also delete the price of this product on subsidiaries of the customer that have the same price line
 	 * @return int Return integer <0 if KO, >0 if OK
 	 */
-	public function delete($user, $notrigger = 0)
+	public function delete($user, $notrigger = 0, $forceupdateaffiliate = 0)
 	{
 		global $conf, $langs;
 		$error = 0;
@@ -1128,6 +1131,13 @@ class ProductCustomerPrice extends CommonObject
 			}
 		}
 
+		if (!$error && !empty($forceupdateaffiliate)) {
+			$result = $this->deletePriceOnAffiliateThirdparty($user);
+			if ($result < 0) {
+				$error++;
+			}
+		}
+
 		// Commit or rollback
 		if ($error) {
 			foreach ($this->errors as $errmsg) {
@@ -1139,6 +1149,70 @@ class ProductCustomerPrice extends CommonObject
 		} else {
 			$this->db->commit();
 			return 1;
+		}
+	}
+
+	/**
+	 * Delete the price of the same product on subsidiaries of the customer of this price line, when they carry
+	 * the same price (propagated the same way setPriceOnAffiliateThirdparty() creates or updates it).
+	 *
+	 * @param 	User 	$user 	Object user
+	 * @return 	int 			Return integer <0 if KO, >0 if OK
+	 */
+	public function deletePriceOnAffiliateThirdparty($user)
+	{
+		if (getDolGlobalString('PRODUCT_DISABLE_PROPAGATE_CUSTOMER_PRICES_ON_CHILD_COMPANIES')) {
+			return 0;
+		}
+
+		$error = 0;
+
+		// Find all subsidiaries
+		$sql = "SELECT s.rowid";
+		$sql .= " FROM ".$this->db->prefix()."societe as s";
+		$sql .= " WHERE s.parent = ".((int) $this->fk_soc);
+		$sql .= " AND s.entity IN (".getEntity('societe').")";
+
+		dol_syslog(get_class($this)."::deletePriceOnAffiliateThirdparty", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+
+		if ($resql) {
+			while (($obj = $this->db->fetch_object($resql)) && (empty($error))) {
+				// find the line(s) for this product on the subsidiary
+				$prodsocprice = new ProductCustomerPrice($this->db);
+
+				$filter = array(
+					't.fk_product' => (string) $this->fk_product, 't.fk_soc' => (string) $obj->rowid
+				);
+
+				$result = $prodsocprice->fetchAll('', '', 0, 0, $filter);
+				if ($result < 0) {
+					$error++;
+					$this->error = $prodsocprice->error;
+				} else {
+					foreach ($prodsocprice->lines as $line) {
+						$prodsocpricedel = new ProductCustomerPrice($this->db);
+						$prodsocpricedel->id = $line->id;
+						$resultdel = $prodsocpricedel->delete($user);
+						if ($resultdel < 0) {
+							$error++;
+							$this->error = $prodsocpricedel->error;
+						} else {
+							$this->db->query("DELETE FROM ".$this->db->prefix()."product_customer_price_extrafields WHERE fk_object = ".((int) $line->id));
+						}
+					}
+				}
+			}
+			$this->db->free($resql);
+
+			if (empty($error)) {
+				return 1;
+			} else {
+				return -1;
+			}
+		} else {
+			$this->error = "Error ".$this->db->lasterror();
+			return -1;
 		}
 	}
 
