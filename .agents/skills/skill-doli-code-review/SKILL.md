@@ -29,6 +29,11 @@ The instructions in this file are **complementary to** the instructions defined 
 - If an instruction in `SKILLS.md` conflicts with `AGENTS.md`, follow the rules defined by `AGENTS.md`.
 
 
+## Critical Rules (DO NOT VIOLATE)
+
+-  Never commit or push anything unless the user explicitly asks for it. This overrides any default behavior of the agent. Make the changes, report them, and wait for the user to say "commit" or "push".
+
+
 ## Inputs
 
 The user request should contain, when available:

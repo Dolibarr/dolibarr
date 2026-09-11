@@ -217,3 +217,6 @@ OrderStatusMakeOperationForbidden = Order status forbidden for this operation.
 CreateRemoteOrder=Create remote order
 SetWarehouse=Set warehouse
 SupplierOrderDefaultWarehouseHelp=Warehouse the goods are expected to be received into. It is only a default: the actual warehouse is chosen line by line when receiving.
+ErrorRefCustomerAlreadyUsedOnOrder=Customer order reference <b>%s</b> is already used by order <b>%s</b> of this customer.
+AllowDuplicateRefCustomerOnOrders=Allow a customer order reference already used
+AllowDuplicateRefCustomerOnOrdersHelp=Allow to save a customer order when its customer order reference is already used by another order of the same third party. Disabled by default, so the reference gets the same control as the one supplier invoices get from their unique index on the supplier reference.

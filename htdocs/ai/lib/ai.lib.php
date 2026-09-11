@@ -4,7 +4,7 @@
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026		Anthony Damhet			<a.damhet@progiseize.fr>
  * Copyright (C) 2026		Nick Fragoulis
- * Copyright (C) 2026	Jose Martinez			<jose.martinez@pichinov.com>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -301,6 +301,61 @@ function testAIConnection(string $service, string $key, string $url): array
 	}
 }
 
+
+/**
+ * Validate chat attachments before they reach any LLM provider.
+ *
+ * The MIME type comes from the browser's File.type (client-controlled), so it
+ * is checked server-side against a strict allowlist of what every wired
+ * provider can natively consume (images and PDF). Size is bounded per
+ * attachment and in total: base64 travels inside the JSON POST body and is
+ * re-sent to the provider, so an unbounded payload is both a memory and a
+ * billing hazard. When the privacy redaction policy is enforced, attachments
+ * are refused entirely: text is masked by PrivacyGuard before a cloud call,
+ * but a document's content cannot be, so sending it would bypass the policy.
+ *
+ * @param array<int,array{mime:string,data:string}> $attachments Parsed attachments
+ * @param string $error Set to a client-safe message when validation fails
+ * @return bool True when all attachments may be sent
+ */
+function ai_validate_attachments(array $attachments, &$error)
+{
+	global $langs;
+
+	$error = '';
+	if (empty($attachments)) {
+		return true;
+	}
+	$langs->load("other");	// owns the AIAttachment* keys; callers load it later or not at all
+
+	if (getDolGlobalInt('AI_PRIVACY_REDACTION', 0)) {
+		$error = $langs->trans("AIAttachmentBlockedByPrivacy");
+
+		return false;
+	}
+
+	$allowedmimes = array('application/pdf', 'image/png', 'image/jpeg', 'image/gif', 'image/webp');
+	$maxbytes = getDolGlobalInt('AI_ATTACHMENT_MAX_MB', 10) * 1024 * 1024;
+	$totalbytes = 0;
+	foreach ($attachments as $att) {
+		if (!in_array($att['mime'], $allowedmimes, true)) {
+			$error = $langs->trans("AIAttachmentTypeNotAllowed", $att['mime']);
+
+			return false;
+		}
+		// 3/4 ratio: decoded size of a base64 payload without decoding it.
+		$bytes = (int) (strlen($att['data']) * 3 / 4);
+		$totalbytes += $bytes;
+		if ($bytes > $maxbytes || $totalbytes > $maxbytes) {
+			$error = $langs->trans("AIAttachmentTooLarge", (string) getDolGlobalInt('AI_ATTACHMENT_MAX_MB', 10));
+
+			return false;
+		}
+	}
+
+	return true;
+}
+
 /**
  * Log AI Request with Raw Payloads
  *
@@ -488,6 +543,123 @@ function getAiAssistantProviderLabel()
 }
 
 /**
+ * Return the list of model ids offered by the configured AI provider, with a
+ * 1-hour cache in the constant AI_MODELS_LIST_CACHE (Anthropic GET /models,
+ * Google GET /models, OpenAI-compatible GET /models). Shared by the AJAX
+ * endpoint ai/ajax/list_models.php (datalists, chat picker) and by the
+ * model-availability warning banner of the admin models page.
+ *
+ * @param DoliDB $db           Database handler (to store the cache constant)
+ * @param bool   $forcerefresh True to bypass the cache and query the live list
+ * @return array{service:string,models:string[]} Active service key and its sorted model ids (empty list when the provider is not configured, offers no listing API, or the call fails)
+ */
+function getAiProviderModelList($db, $forcerefresh = false)
+{
+	global $conf;
+
+	$serviceKey = getDolGlobalString('AI_API_SERVICE');
+	if (empty($serviceKey) || $serviceKey == '-1') {
+		return array('service' => '', 'models' => array());
+	}
+
+	if (!$forcerefresh) {
+		$cacheraw = getDolGlobalString('AI_MODELS_LIST_CACHE');
+		if ($cacheraw) {
+			$cache = json_decode($cacheraw, true);
+			if (is_array($cache) && !empty($cache['service']) && $cache['service'] === $serviceKey
+				&& !empty($cache['ts']) && (dol_now() - (int) $cache['ts']) < 3600
+				&& !empty($cache['models']) && is_array($cache['models'])) {
+				return array('service' => $serviceKey, 'models' => $cache['models']);
+			}
+		}
+	}
+
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+
+	$servicesList = getListOfAIServices();
+	$adapterType = $servicesList[$serviceKey]['adapter_type'] ?? 'openai';
+	$defUrl = $servicesList[$serviceKey]['url'] ?? '';
+	$baseUrl = rtrim(getDolGlobalString('AI_API_'.strtoupper($serviceKey).'_URL') ?: $defUrl, '/');
+
+	$apiKey = getDolGlobalString('AI_API_'.strtoupper($serviceKey).'_KEY');
+	if (preg_match('/^crypt:/', $apiKey)) {
+		$apiKey = dolDecrypt($apiKey, $conf->file->instance_unique_id);
+	}
+	if (empty($apiKey) || empty($baseUrl)) {
+		return array('service' => $serviceKey, 'models' => array());
+	}
+
+	$models = array();
+	if ($adapterType === 'anthropic') {
+		$headers = array('x-api-key: '.$apiKey, 'anthropic-version: 2023-06-01');
+		$res = getURLContent($baseUrl.'/models?limit=100', 'GET', '', 1, $headers, array('http', 'https'), 2);
+		$json = json_decode($res['content'] ?? '', true);
+		foreach ((array) ($json['data'] ?? array()) as $m) {
+			if (!empty($m['id'])) {
+				$models[] = (string) $m['id'];
+			}
+		}
+	} elseif ($adapterType === 'google') {
+		$res = getURLContent($baseUrl.'/models?pageSize=200&key='.urlencode($apiKey), 'GET', '', 1, array(), array('http', 'https'), 2);
+		$json = json_decode($res['content'] ?? '', true);
+		foreach ((array) ($json['models'] ?? array()) as $m) {
+			if (!empty($m['name'])) {
+				$models[] = preg_replace('/^models\//', '', (string) $m['name']);
+			}
+		}
+	} else {
+		// OpenAI-compatible providers (OpenAI, Mistral, Groq, DeepSeek, custom...)
+		$headers = array('Authorization: Bearer '.$apiKey);
+		$res = getURLContent($baseUrl.'/models', 'GET', '', 1, $headers, array('http', 'https'), 2);
+		$json = json_decode($res['content'] ?? '', true);
+		foreach ((array) ($json['data'] ?? array()) as $m) {
+			if (!empty($m['id'])) {
+				$models[] = (string) $m['id'];
+			}
+		}
+	}
+
+	$models = array_values(array_unique($models));
+	sort($models);
+
+	if (count($models)) {
+		dolibarr_set_const($db, 'AI_MODELS_LIST_CACHE', json_encode(array('service' => $serviceKey, 'ts' => dol_now(), 'models' => $models)), 'chaine', 0, '', $conf->entity);
+	}
+
+	return array('service' => $serviceKey, 'models' => $models);
+}
+
+/**
+ * Suggest the closest available model id for a model that disappeared from the
+ * provider's list: same family first (shared leading token, e.g. 'gemini',
+ * 'gpt', 'claude'), then overall string similarity. Used by the warning banner
+ * of the admin models page to propose a replacement.
+ *
+ * @param string   $missing Configured model id that is no longer offered
+ * @param string[] $models  Model ids currently offered by the provider
+ * @return string Closest model id, or '' when nothing is similar enough to be a useful suggestion
+ */
+function aiSuggestClosestModel($missing, array $models)
+{
+	$best = '';
+	$bestScore = -1.0;
+	foreach ($models as $cand) {
+		$pct = 0.0;
+		similar_text(strtolower($missing), strtolower($cand), $pct);
+		$score = $pct;
+		if (strtok(strtolower($missing), '-') === strtok(strtolower($cand), '-')) {
+			$score += 15.0;	// same family beats a slightly closer string of another family
+		}
+		if ($score > $bestScore) {
+			$bestScore = $score;
+			$best = $cand;
+		}
+	}
+	return ($bestScore >= 50.0) ? $best : '';
+}
+
+/**
  * Build the configuration array consumed by the AI Assistant chat frontend (ai/js/ai_assistant.js).
  * It is serialized as JSON into the data-ai-config attribute of the chat container.
  *
@@ -495,9 +667,16 @@ function getAiAssistantProviderLabel()
  */
 function getAiChatAssistantConfig()
 {
-	global $langs, $user;
+	global $conf, $langs, $user;
+
+	$langs->loadLangs(array('main', 'bills', 'companies', 'products', 'other'));
 
 	$keys = array(
+		// Table header labels for common API fields (see FIELD_LABELS in ai_assistant.js)
+		'AIAttachmentBlockedByPrivacy',
+		'Ref', 'Label', 'ThirdParty', 'Customer', 'Paid', 'Status', 'Type', 'Email', 'Town', 'Date',
+		'DateInvoice', 'DateMaxPayment', 'AmountHT', 'AmountTTC', 'AmountVAT', 'RemainderToPay',
+		'Price', 'PriceTTC', 'VATRate', 'CustomerCode', 'SupplierCode', 'Supplier', 'TotalHT', 'TotalTTC',
 		// General UI
 		'NoDataAvailable',
 		'Error',
@@ -513,8 +692,6 @@ function getAiChatAssistantConfig()
 
 		// Placeholders & Status
 		'TypeOrSpeak',
-		'UploadLocalDoc',
-		'UploadCloudDoc',
 		'DocLoaded',
 		'Listening',
 		'Transcribed',
@@ -605,6 +782,12 @@ function getAiChatAssistantConfig()
 	return array(
 		'mode' => getDolGlobalString('AI_DEFAULT_INPUT_MODE'),
 		'labels' => $ai_translations,
+		// Presentation context for tool results: money, date and label
+		// formatting happen client-side on raw API data.
+		'privacyRedaction' => getDolGlobalInt('AI_PRIVACY_REDACTION', 0),
+		'currency' => $conf->currency,
+		'locale' => str_replace('_', '-', $langs->getDefaultLang()),
+		'urlRoot' => DOL_URL_ROOT,
 		// Endpoints are called with absolute URLs so the chat also works when
 		// injected into another page (topbar popover) and not only when served
 		// from /ai/assistant/index.php.
