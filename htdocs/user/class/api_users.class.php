@@ -980,6 +980,14 @@ class Users extends DolibarrApi
 		if (!DolibarrApi::_checkAccessToResource('user', $this->useraccount->id, 'user')) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
+
+		if ($this->useraccount->admin && empty(DolibarrApiAccess::$user->admin)) {
+			throw new RestException(403, 'Only admin users can delete admin users');
+		}
+		if ($this->useraccount->admin && empty($this->useraccount->entity) && !empty(DolibarrApiAccess::$user->entity)) {
+			throw new RestException(403, 'Only superadmin users can delete superadmin users');
+		}
+
 		$this->useraccount->oldcopy = clone $this->useraccount; // @phan-suppress-current-line PhanTypeMismatchProperty
 
 		if (!$this->useraccount->delete(DolibarrApiAccess::$user)) {

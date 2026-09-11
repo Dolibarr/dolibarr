@@ -509,7 +509,7 @@ fetch("'.dol_buildpath('/ai/ajax/list_models.php', 1).'").then(function (r) { re
 			w.className = "fas fa-exclamation-triangle pictowarning paddingleft";
 			w.title = \''.dol_escape_js($langs->trans("AIModelNotInProviderList")).'\';
 			if (best && bestlen >= 4) {
-				w.title += " '.dol_escape_js($langs->trans("AIModelClosestAvailable", '{m}')).'".replace("{m}", best);
+				w.title += \' \' + \''.dol_escape_js($langs->trans("AIModelClosestAvailable", '{m}')).'\'.replace("{m}", best);
 			}
 			i.insertAdjacentElement("afterend", w);
 		}
