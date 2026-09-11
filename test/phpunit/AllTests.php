@@ -193,6 +193,8 @@ class AllTests
 
 		require_once dirname(__FILE__).'/ActionCommTest.php';
 		$suite->addTestSuite('ActionCommTest');
+		require_once dirname(__FILE__).'/FormMailTest.php';
+		$suite->addTestSuite('FormMailTest');
 		require_once dirname(__FILE__).'/SocieteTest.php';
 		$suite->addTestSuite('SocieteTest');
 		require_once dirname(__FILE__).'/ExpeditionTest.php';
