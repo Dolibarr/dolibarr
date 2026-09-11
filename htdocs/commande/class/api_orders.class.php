@@ -549,6 +549,16 @@ class Orders extends DolibarrApi
 		$request_data->desc = sanitizeVal($request_data->desc, 'restricthtml');
 		$request_data->label = sanitizeVal($request_data->label);
 
+		$orderline = new OrderLine($this->db);
+		$result = $orderline->fetch($lineid);
+		if (!$result) {
+			throw new RestException(404, 'Order line not found');
+		}
+
+		if ($orderline->fk_commande != $id) {
+			throw new RestException(403, 'Line does not belong to this order');
+		}
+
 		$updateRes = $this->commande->updateline(
 			$lineid,
 			$request_data->desc,
@@ -1202,6 +1212,10 @@ class Orders extends DolibarrApi
 		$result = $propal->fetch($proposalid);
 		if (!$result) {
 			throw new RestException(404, 'Proposal not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('propal', $propal->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$result = $this->commande->createFromProposal($propal, DolibarrApiAccess::$user);
