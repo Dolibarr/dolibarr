@@ -16,6 +16,7 @@
  * Copyright (C) 2018-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2018		David Beniamine				<David.Beniamine@Tetras-Libre.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1613,8 +1614,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 	if ($id > 0) {
 		$res = $object->fetch($id, '', '', 1);
 		if ($res < 0) {
-			dol_print_error($db, $object->error);
-			exit;
+			recordNotFound('', 0);
 		}
 		$res = $object->fetch_optionals();
 
