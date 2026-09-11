@@ -272,9 +272,6 @@ table.listofchoices, table.listofchoices tr, table.listofchoices td {
 	line-height: 18px;
 }
 
-.listofchoicesdesc {
-	color: #999 !important;
-}
 .blinkwait {
 	font-weight: bold;
 	text-decoration:blink !important;
