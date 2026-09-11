@@ -2,7 +2,7 @@
 /* Copyright (C) 2005-2009	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2007		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -110,8 +110,8 @@ foreach ($modulesdir as $dir) {
 	$handle = @opendir(dol_osencode($dir));
 	if (is_resource($handle)) {
 		while (($file = readdir($handle)) !== false) {
-			if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod' && substr($file, dol_strlen($file) - 10) == '.class.php') {
-				$modName = substr($file, 0, dol_strlen($file) - 10);
+			if (is_readable($dir.$file) && dol_substr($file, 0, 3) == 'mod' && dol_substr($file, dol_strlen($file) - 10) == '.class.php') {
+				$modName = dol_substr($file, 0, dol_strlen($file) - 10);
 
 				if ($modName) {
 					//print 'xx'.$dir.$file.'<br>';
@@ -222,7 +222,7 @@ foreach ($modules as $key => $module) {
 
 llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-system_modules');
 print $info_admin;
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formulaire">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formulaire" spellcheck="false">';
 if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 }

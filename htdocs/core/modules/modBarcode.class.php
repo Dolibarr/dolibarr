@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,24 +79,24 @@ class modBarcode extends DolibarrModules
 		$this->rights_class = 'barcode';
 		$r = 0;
 
-		$this->rights[$r][0] = 301; // id de la permission
-		$this->rights[$r][1] = 'Generate PDF sheets of barcodes'; // libelle de la permission
-		$this->rights[$r][2] = 'r'; // type de la permission (deprecated)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][0] = 301; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Generate PDF sheets of barcodes'; // Permission label
+		$this->rights[$r][2] = 'r'; // Permission type (deprecated)
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'read';
 		$r++;
 
-		$this->rights[$r][0] = 304; // id de la permission
-		$this->rights[$r][1] = 'Read barcodes'; // libelle de la permission
-		$this->rights[$r][2] = 'r'; // type de la permission (deprecated)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][0] = 304; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Read barcodes'; // Permission label
+		$this->rights[$r][2] = 'r'; // Permission type (deprecated)
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'lire_advance';
 		$r++;
 
-		$this->rights[$r][0] = 305; // id de la permission
-		$this->rights[$r][1] = 'Create/modify barcodes'; // libelle de la permission
-		$this->rights[$r][2] = 'w'; // type de la permission (deprecated)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][0] = 305; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Create/modify barcodes'; // Permission label
+		$this->rights[$r][2] = 'w'; // Permission type (deprecated)
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'creer_advance';
 		$r++;
 

@@ -24,7 +24,6 @@
  *	\ingroup    export
  *	\brief      File of parent class for import file readers
  */
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 
 
 /**
@@ -1741,8 +1740,9 @@ class ModeleImports
 									if (!$importissimulation && $importtriggermode === 'strict_line') {
 										$restrigger = $this->triggerImportSqlOperation($tablename, 'update', is_numeric($lastinsertid) ? (int) $lastinsertid : 0, $importid, $user, $langs, $conf);
 										if ($restrigger < 0) {
-											$this->errors[$error]['lib'] = $langs->trans('ErrorFailedTriggerCall');
-											$this->errors[$error]['type'] = 'TRIGGER';
+											// Append: triggerImportSqlOperation() has already pushed the
+											// messages of the trigger, indexing on $error would overwrite them.
+											$this->errors[] = array('lib' => $langs->trans('ErrorFailedTriggerCall'), 'type' => 'TRIGGER');
 											$error++;
 										}
 									} elseif (!$importissimulation) {
@@ -1791,8 +1791,9 @@ class ModeleImports
 									$triggerrowid = (!$is_table_category_link && !empty($last_insert_id_array[$tablename])) ? (int) $last_insert_id_array[$tablename] : 0;
 									$restrigger = $this->triggerImportSqlOperation($tablename, 'insert', $triggerrowid, $importid, $user, $langs, $conf);
 									if ($restrigger < 0) {
-										$this->errors[$error]['lib'] = $langs->trans('ErrorFailedTriggerCall');
-										$this->errors[$error]['type'] = 'TRIGGER';
+										// Append: triggerImportSqlOperation() has already pushed the
+										// messages of the trigger, indexing on $error would overwrite them.
+										$this->errors[] = array('lib' => $langs->trans('ErrorFailedTriggerCall'), 'type' => 'TRIGGER');
 										$error++;
 									}
 								} elseif (!$importissimulation) {

@@ -45,7 +45,6 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/ai/class/mcp.class.php';
 require_once DOL_DOCUMENT_ROOT . '/ai/lib/ai.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/ai/class/llmadapter.class.php';
-require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/ai/class/privacy_guard.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/security2.lib.php';
 
@@ -110,6 +109,48 @@ try {
 	if (empty($query)) {
 		ob_end_clean();
 		echo json_encode(["status" => "ok"]);
+		exit;
+	}
+
+	// Extract file attachments sent by the chat (paperclip flow). The JS embeds
+	// cloud-parsed documents as "__FILE_ATTACHMENT__[mime]::<base64>" markers in
+	// the query. They MUST be stripped here, before the privacy/thirdparty
+	// candidate pipeline (which would run regexes over megabytes of base64), and
+	// are handed to the LLM adapter as NATIVE multimodal parts — inlining base64
+	// into the text prompt makes every provider fail or hallucinate.
+	$attachments = array();
+	if (strpos($query, '__FILE_ATTACHMENT__') !== false) {
+		$query = preg_replace_callback(
+			'/__FILE_ATTACHMENT__\[([^\]]*)\]::([A-Za-z0-9+\/=\r\n]+)/',
+			/**
+			 * @param string[] $m Regex matches: [1] = mime type, [2] = base64 payload
+			 * @return string
+			 */
+			static function (array $m) use (&$attachments) {
+				$attachments[] = array(
+					'mime' => ($m[1] !== '' ? $m[1] : 'application/octet-stream'),
+					'data' => preg_replace('/\s+/', '', $m[2])
+				);
+				return '[attached document]';
+			},
+			$query
+		);
+		$query = trim((string) $query);
+		if ($query === '' || $query === '[attached document]') {
+			$query = 'Analyze the attached document and describe its content.';
+		}
+	}
+
+	// Server-side gate on what the browser sent: MIME allowlist, size caps,
+	// and the privacy-redaction policy (documents cannot be masked, so under
+	// enforced redaction they must not go to a cloud provider at all).
+	$attachmenterror = '';
+	if (!ai_validate_attachments($attachments, $attachmenterror)) {
+		ob_end_clean();
+		echo json_encode(array(
+			"tool" => "respond_to_user",
+			"arguments" => array("message" => $attachmenterror)
+		));
 		exit;
 	}
 
@@ -248,6 +289,12 @@ try {
 	if ($doRedact && class_exists('PrivacyGuard')) {
 		$guard = new PrivacyGuard();
 		$query = $guard->mask($query);
+		// In-context reinforcement, adjacent to the placeholders themselves:
+		// weak models weigh nearby text far more than distant system rules, and
+		// the system-rule variant alone proved insufficient in the field.
+		if (strpos($query, '[[') !== false) {
+			$query .= "\n\n(Note: tokens like [[REF_1]] or [[ADDR_2]] above are privacy-masked real values. Use them verbatim as tool argument values - they are replaced with the real data before execution. Do not refuse the task because of them and do not ask the user to re-provide masked details.)";
+		}
 	}
 
 	// AI Execution
@@ -313,7 +360,19 @@ try {
 
 		$systemPrompt = $basePrompt . "\n\n";
 		$systemPrompt .= "Tools:\n" . json_encode($toolsForLLM, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-		$systemPrompt .= $systemRules . " Date: " . date('Y-m-d');
+		// When redaction is active, the model sees [[TYPE_N]] placeholders where
+		// PII was. Without this rule it refuses tasks needing those values
+		// with it, placeholders travel verbatim through tool arguments and are restored server-side
+		// (unmaskAiResponse on the raw intent JSON) before execution, so the
+		// cloud never sees the data and the task still completes.
+		if ($doRedact) {
+			$systemRules .= " Privacy masking is active: values like [[REF_1]], [[ADDR_2]], [[EMAIL_3]], [[PHONE_4]], [[ZIP_5]] are masked real data. Treat them as valid values: when a tool argument needs such a datum, pass the placeholder exactly as written — it is replaced by the real value before execution. Never refuse a task because values look masked, and never invent replacements for them.";
+		}
+
+		// A bare date is not enough for weaker models: state explicitly that
+		// relative periods are the assistant's job to resolve, not the user's.
+		$systemPrompt .= $systemRules . " Current date: " . date('Y-m-d') . " (" . date('l') . ").";
+		$systemPrompt .= " Resolve relative periods yourself from the current date — today, yesterday, this week, this month, last month, this quarter, this year — into explicit YYYY-MM-DD values for date parameters (e.g. this month = first day of the current month to the current date). Never ask the user for dates you can compute.";
 
 		// Get API configuration
 		$servicesList = getListOfAIServices();
@@ -353,6 +412,14 @@ try {
 		if (!is_string($model) || $model === '') {
 			$model = (string) $defModel;
 		}
+		// Optional per-request model override sent by the chat model picker.
+		// Sanitized to the provider model-id charset; empty/invalid = keep default.
+		if (!empty($data['model']) && is_string($data['model'])) {
+			$reqModel = preg_replace('/[^a-zA-Z0-9._:\/-]/', '', $data['model']);
+			if ($reqModel !== '' && strlen($reqModel) <= 100) {
+				$model = $reqModel;
+			}
+		}
 		$adapterType = $servicesList[$serviceKey]['adapter_type'] ?? 'openai';
 
 
@@ -364,7 +431,7 @@ try {
 
 			dol_syslog("parse_intent.php Call AI API", LOG_DEBUG);
 
-			$rawResponse = $adapter->generate($systemPrompt, $query);
+			$rawResponse = $adapter->generate($systemPrompt, $query, 'text', $attachments);
 
 			// $rawResponse should be a json string with format '{"tool":..., "arguments":{text answer}}' but sometimes it is just 'text answer'
 			dol_syslog('rawResponse='.$rawResponse, LOG_DEBUG);

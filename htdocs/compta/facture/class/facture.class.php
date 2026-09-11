@@ -179,6 +179,12 @@ class Facture extends CommonInvoice
 	 * @var ?string 	key of POS terminal ('0', '1', ...)
 	 */
 	public $pos_source;
+
+	/**
+	 * @var ?string Increment (to track the number of generated invoices when generated from recurring invoices)
+	 */
+	public $increment;
+
 	/**
 	 * @var int			counter used to track how many times the ticket was printed.
 	 */
@@ -744,7 +750,7 @@ class Facture extends CommonInvoice
 		$sql .= "'(PROV)'";
 		$sql .= ", ".(int) $this->entity;
 		$sql .= ", ".($this->ref_ext ? "'".$this->db->escape($this->ref_ext)."'" : "null");
-		$sql .= ", '".$this->db->escape((string) $this->type)."'";
+		$sql .= ", ".((int) $this->type);
 		$sql .= ", ".(isset($this->subtype) ? (int) $this->subtype : "null");
 		$sql .= ", ".((int) $socid);
 		$sql .= ", '".$this->db->idate($this->date_creation)."'";
@@ -1419,7 +1425,7 @@ class Facture extends CommonInvoice
 		if (!$error) {
 			// Hook of thirdparty module
 			if (is_object($hookmanager)) {
-				$parameters = array('objFrom' => $objFrom);
+				$parameters = array('objFrom' => $objFrom, 'clonedObj' => $object);
 				$action = '';
 				$reshook = $hookmanager->executeHooks('createFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) {
@@ -1662,20 +1668,20 @@ class Facture extends CommonInvoice
 		$this->fk_account = $object->fk_account;
 		$this->cond_reglement_id    = $object->cond_reglement_id;
 		$this->mode_reglement_id    = $object->mode_reglement_id;
-		$this->availability_id      = $object->availability_id;
+		//$this->availability_id      = $object->availability_id;
 		$this->demand_reason_id     = $object->demand_reason_id;
-		$this->delivery_date        = $object->delivery_date;
-		$this->fk_delivery_address  = $object->fk_delivery_address; // deprecated
+		//$this->delivery_date        = $object->delivery_date;
 		$this->contact_id           = $object->contact_id;
-		$this->ref_client           = $object->ref_client;
+		$this->ref_customer         = $object->ref_customer;
+		$this->ref_client           = $object->ref_customer;
 
 		if (!getDolGlobalString('MAIN_DISABLE_PROPAGATE_NOTES_FROM_ORIGIN')) {
 			$this->note_private = $object->note_private;
 			$this->note_public = $object->note_public;
 		}
 
-		$this->module_source = $object->module_source;
-		$this->pos_source = $object->pos_source;
+		//$this->module_source = $object->module_source;
+		//$this->pos_source = $object->pos_source;
 
 		$this->origin = $object->element;
 		$this->origin_id = $object->id;
@@ -2817,19 +2823,20 @@ class Facture extends CommonInvoice
 		}
 
 		// Update request
+		// TODO Use the invoice->update() method.
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facture SET";
 		$sql .= " ref=".(isset($this->ref) ? "'".$this->db->escape($this->ref)."'" : "null").",";
 		$sql .= " ref_ext=".(isset($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "null").",";
-		$sql .= " type=".(isset($this->type) ? $this->db->escape((string) $this->type) : "null").",";
+		$sql .= " type=".(isset($this->type) ? ((int) $this->type) : "null").",";
 		$sql .= " subtype=".(isset($this->subtype) ? (int) $this->subtype : "null").",";
 		$sql .= " ref_client=".(!empty($this->ref_customer) ? "'".$this->db->escape($this->ref_customer)."'" : (isset($this->ref_client) ? "'".$this->db->escape($this->ref_client)."'" : "null")).",";
 		$sql .= " increment=".(isset($this->increment) ? "'".$this->db->escape($this->increment)."'" : "null").",";
-		$sql .= " fk_soc=".(isset($this->socid) ? $this->db->escape((string) $this->socid) : "null").",";
+		$sql .= " fk_soc=".(isset($this->socid) ? ((int) $this->socid) : "null").",";
 		$sql .= " datec=".(strval($this->date_creation) != '' ? "'".$this->db->idate($this->date_creation)."'" : 'null').",";
 		$sql .= " datef=".(strval($this->date) != '' ? "'".$this->db->idate($this->date)."'" : 'null').",";
 		$sql .= " date_pointoftax=".(strval($this->date_pointoftax) != '' ? "'".$this->db->idate($this->date_pointoftax)."'" : 'null').",";
 		$sql .= " date_valid=".(strval($this->date_validation) != '' ? "'".$this->db->idate($this->date_validation)."'" : 'null').",";
-		$sql .= " paye=".(isset($this->paye) ? $this->db->escape((string) $this->paye) : 0).",";
+		$sql .= " paye=".(isset($this->paye) ? ((int) $this->paye) : 0).",";
 		$sql .= " close_code=".(isset($this->close_code) ? "'".$this->db->escape($this->close_code)."'" : "null").",";
 		$sql .= " close_note=".(isset($this->close_note) ? "'".$this->db->escape($this->close_note)."'" : "null").",";
 		$sql .= " total_tva=".((float) $this->total_tva).",";
@@ -2937,8 +2944,8 @@ class Facture extends CommonInvoice
 			$facligne->tva_tx = $remise->tva_tx;
 			$facligne->localtax1_tx = $remise->localtax1_tx;
 			$facligne->localtax1_type = (int) $remise->localtax1_type;
-			$facligne->localtax2_tx = $remise->localtax1_tx;
-			$facligne->localtax2_type = (int) $remise->localtax1_type;
+			$facligne->localtax2_tx = $remise->localtax2_tx;
+			$facligne->localtax2_type = (int) $remise->localtax2_type;
 			$facligne->subprice = -(float) $remise->total_ht;
 			$facligne->fk_product = 0; // Predefined Product ID
 			$facligne->qty = 1;

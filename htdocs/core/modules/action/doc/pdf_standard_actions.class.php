@@ -154,7 +154,7 @@ class pdf_standard_actions
 
 		$this->db = $db;
 		$this->description = "";
-		$this->date_edition = time();
+		$this->date_edition = dol_now();
 		$this->month = $month;
 		$this->year = $year;
 		$this->corner_radius = getDolGlobalInt('MAIN_PDF_FRAME_CORNER_RADIUS', 0);

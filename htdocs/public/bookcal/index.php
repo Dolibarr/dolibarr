@@ -421,8 +421,8 @@ if ($action == 'afteradd') {
 			setEventMessages($availability->error, $availability->errors, 'errors');
 		} else {
 			foreach ($arrayofavailabilities as $key => $value) {
-				$startarray = dol_getdate((int) $value->start);
-				$endarray = dol_getdate((int) $value->end);
+				$startarray = dol_getdate((int) $value->date_start);
+				$endarray = dol_getdate((int) $value->date_end);
 				for ($i = $startarray['mday']; $i <= $endarray['mday']; $i++) {
 					if ($todayarray['mon'] >= $startarray['mon'] && $todayarray['mon'] <= $endarray['mon']) {
 						$arrayofavailabledays[dol_mktime(0, 0, 0, $todayarray['mon'], $i, $todayarray['year'])] = dol_mktime(0, 0, 0, $todayarray['mon'], $i, $todayarray['year']);

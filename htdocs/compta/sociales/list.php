@@ -114,6 +114,9 @@ $arrayfields = array(
 	'cs.amount'		=> array('label' => "Amount", 'checked' => '1', 'position' => 100),
 	'cs.paye'		=> array('label' => "Status", 'checked' => '1', 'position' => 110),
 );
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 if (isModEnabled("bank")) {
 	$arrayfields['cs.fk_account'] = array('checked' => -1, 'position' => 90, 'label' => "DefaultBankAccount");

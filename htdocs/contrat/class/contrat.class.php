@@ -9,11 +9,10 @@
  * Copyright (C) 2013       Florian Henry             <florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2015-2018  Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2024       William Mead            <william.mead@manchenumerique.fr>
- * Copyright (C) 2024-2026  MDW                     <mdeweerd@users.noreply.github.com>
- * Copyright (C) 2026       Charlene Benke          <charlene@patas-monkey.com>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2015-2018	Ferran Marcet			<fmarcet@2byte.es>
+ * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026       Alexandre Spangaro      <alexandre@inovea-conseil.com
  * Copyright (C) 2026		Lionel Vessiller		<lvessiller@open-dsi.fr>
  *
@@ -105,6 +104,12 @@ class Contrat extends CommonObject
 	 * @var ?string
 	 */
 	public $ref_supplier;
+
+	/**
+	 * Type of contract (0=customer, 1=supplier)
+	 * @var int
+	 */
+	public $fk_contract_type = 0;
 
 	/**
 	 * Client id linked to the contract
@@ -268,6 +273,7 @@ class Contrat extends CommonObject
 		'ref_ext' => array('type' => 'varchar(255)', 'label' => 'RefExt', 'enabled' => 1, 'visible' => 0, 'position' => 20),
 		'ref_customer' => array('type' => 'varchar(50)', 'label' => 'RefCustomer', 'enabled' => 1, 'visible' => -1, 'position' => 25, 'searchall' => 1),
 		'ref_supplier' => array('type' => 'varchar(50)', 'label' => 'RefSupplier', 'enabled' => 1, 'visible' => -1, 'position' => 26, 'searchall' => 1),
+		'fk_contract_type' => array('type' => 'smallint(6)', 'label' => 'ContractType', 'enabled' => 1, 'visible' => -1, 'position' => 27, 'default' => '0', 'arrayofkeyval' => array(0 => 'CustomerContract', 1 => 'SupplierContract')),
 		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => '1', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 30, 'index' => 1),
 		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 35),
 		'datec' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -1, 'position' => 40),
@@ -729,7 +735,7 @@ class Contrat extends CommonObject
 		$sql .= " fk_user_author,";
 		$sql .= " fk_projet as fk_project,";
 		$sql .= " fk_commercial_signature, fk_commercial_suivi,";
-		$sql .= " note_private, note_public, model_pdf, last_main_doc, extraparams";
+		$sql .= " note_private, note_public, model_pdf, last_main_doc, extraparams, fk_contract_type";
 		$sql .= " FROM ".MAIN_DB_PREFIX."contrat";
 		if (!$id) {
 			$sql .= " WHERE entity IN (".getEntity('contract').")";
@@ -788,6 +794,7 @@ class Contrat extends CommonObject
 					$this->fk_soc = $obj->thirdpartyid;
 					$this->last_main_doc = $obj->last_main_doc;
 					$this->extraparams = (isset($obj->extraparams) ? (array) json_decode($obj->extraparams, true) : null);
+					$this->fk_contract_type = (int) $obj->fk_contract_type;
 
 					$this->db->free($resql);
 
@@ -1051,7 +1058,7 @@ class Contrat extends CommonObject
 		// Insert contract
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."contrat (datec, fk_soc, fk_user_author, date_contrat,";
 		$sql .= " fk_commercial_signature, fk_commercial_suivi, fk_projet,";
-		$sql .= " ref, entity, signed_status, note_private, note_public, ref_customer, ref_supplier, ref_ext)";
+		$sql .= " ref, entity, signed_status, note_private, note_public, ref_customer, ref_supplier, ref_ext, fk_contract_type)";
 		$sql .= " VALUES ('".$this->db->idate($now)."', ".((int) $this->socid).", ".((int) $user->id);
 		$sql .= ", ".(dol_strlen($this->date_contrat) != 0 ? "'".$this->db->idate($this->date_contrat)."'" : "NULL");
 		$sql .= ",".($this->commercial_signature_id > 0 ? ((int) $this->commercial_signature_id) : "NULL");
@@ -1065,6 +1072,7 @@ class Contrat extends CommonObject
 		$sql .= ", ".(!empty($this->ref_customer) ? ("'".$this->db->escape($this->ref_customer)."'") : "NULL");
 		$sql .= ", ".(!empty($this->ref_supplier) ? ("'".$this->db->escape($this->ref_supplier)."'") : "NULL");
 		$sql .= ", ".(!empty($this->ref_ext) ? ("'".$this->db->escape($this->ref_ext)."'") : "NULL");
+		$sql .= ", ".((int) $this->fk_contract_type);
 		$sql .= ")";
 		$resql = $this->db->query($sql);
 
@@ -1191,7 +1199,11 @@ class Contrat extends CommonObject
 				$this->db->commit();
 				return $this->id;
 			} else {
-				$this->error = "Failed to add contract";
+				// Keep the error reported by the failing step, it is the only actionable one.
+				// Only fall back to a generic message when nothing was set, as propal.class.php does.
+				if (empty($this->error) && empty($this->errors)) {
+					$this->error = "Failed to add contract";
+				}
 				dol_syslog(get_class($this)."::create - 20 - ".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -2;
@@ -1413,6 +1425,7 @@ class Contrat extends CommonObject
 		$sql .= " note_private=".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
 		$sql .= " note_public=".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
 		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null").",";
+		$sql .= " fk_user_modif=".(isset($user->id) ? ((int) $user->id) : "null").",";
 		$sql .= " extraparams=".(isset($extraparams) ? "'".$this->db->escape($extraparams)."'" : "null");
 		$sql .= " WHERE rowid=".((int) $this->id);
 
@@ -1449,6 +1462,9 @@ class Contrat extends CommonObject
 			$this->db->rollback();
 			return -1 * $error;
 		} else {
+			if (isset($user->id)) {
+				$this->fk_user_modif = (int) $user->id;
+			}
 			$this->db->commit();
 			return 1;
 		}
@@ -1592,7 +1608,7 @@ class Contrat extends CommonObject
 				}
 			}
 
-			// Insertion dans la base
+			// Insert into database
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."contratdet";
 			$sql .= " (fk_contrat, label, description, fk_product, qty, tva_tx, vat_src_code,";
 			$sql .= " localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, remise_percent, subprice, subprice_ttc,";
@@ -1619,7 +1635,7 @@ class Contrat extends CommonObject
 			$sql .= " '".$this->db->escape($localtax2_type)."',";
 			$sql .= " ".price2num($remise_percent).",";
 			$sql .= " ".price2num($pu_ht).",";
-			$sql .= " ".($price_base_type === 'TTC' ? price2num($pu_ttc) : "0").",";
+			$sql .= " ".($price_base_type === 'TTC' ? (float) price2num($pu_ttc) : 0).",";
 			$sql .= " ".price2num($total_ht).",".price2num($total_tva).",".price2num($total_localtax1).",".price2num($total_localtax2).",".price2num($total_ttc).",";
 			$sql .= " ".((int) $info_bits).",";
 			if (isset($fk_fournprice)) {
@@ -1907,6 +1923,18 @@ class Contrat extends CommonObject
 				if ($result < 0) {
 					$error++;
 					$this->error = "Error ".get_class($this)."::deleteline deleteExtraFields error -4 ".$contractline->error;
+				}
+			}
+
+			if (!$error) {
+				// Renumber remaining lines so rang stays a contiguous 1..N sequence.
+				// Without this, a deleted line leaves a permanent gap that breaks
+				// the up/down swap logic (updateLineUp/updateLineDown) for any pair
+				// of lines that no longer sit at an exact rang+/-1 from each other.
+				$result = $this->line_order(true, 'ASC', false);
+				if ($result < 0) {
+					$error++;
+					$this->error = "Error ".get_class($this)."::deleteline line_order error";
 				}
 			}
 
@@ -3019,5 +3047,199 @@ class Contrat extends CommonObject
 	public function setSignedStatus(User $user, int $status = 0, int $notrigger = 0, $triggercode = ''): int
 	{
 		return $this->setSignedStatusCommon($user, $status, $notrigger, $triggercode);
+	}
+
+	/**
+	 * Send reminders by email before a running contract service expires.
+	 * CAN BE A CRON TASK
+	 *
+	 * Modeled on Adherent::sendReminderForExpiredSubscription(): for each requested delay, it looks
+	 * for contract lines whose end date falls on that one exact day (today + delay), so a line is
+	 * only ever matched once per delay value and running the job daily does not resend the same
+	 * reminder. Each successful send is logged as an agenda event on the contract, same as other
+	 * automated reminder emails in the application.
+	 *
+	 * @param	string		$daysbeforeendlist		Nb of days before end of service (negative number = after end). Can be a list of delays, separated by a semicolon, for example '10;5;0;-5'
+	 * @param	int			$fk_product				Restrict to lines of this product/service (0 = no restriction)
+	 * @return	int									0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
+	 */
+	public function sendReminderForExpiredServices($daysbeforeendlist = '10', $fk_product = 0)
+	{
+		global $conf, $langs, $mysoc, $user;
+
+		$error = 0;
+		$this->output = '';
+		$this->error = '';
+
+		$blockingerrormsg = '';
+
+		if (!isModEnabled('contract')) { // Should not happen. If module disabled, cron job should not be visible.
+			$langs->load("agenda");
+			$this->output = $langs->trans('ModuleNotEnabled', $langs->transnoentitiesnoconv("Contract"));
+			return 0;
+		}
+
+		$now = dol_now();
+		$nbok = 0;
+		$nbko = 0;
+
+		$listoflinesok = array();
+		$listoflinesko = array();
+
+		$arraydaysbeforeend = explode(';', $daysbeforeendlist);
+		foreach ($arraydaysbeforeend as $daysbeforeend) { // Loop on each delay
+			dol_syslog(__METHOD__.' - Process delta = '.$daysbeforeend, LOG_DEBUG);
+
+			if (!is_numeric($daysbeforeend)) {
+				$blockingerrormsg = "Value for delta is not a numeric value";
+				$nbko++;
+				break;
+			}
+
+			$tmp = dol_getdate($now);
+			$datetosearchfor = dol_time_plus_duree(dol_mktime(0, 0, 0, $tmp['mon'], $tmp['mday'], $tmp['year'], 'tzserver'), (int) $daysbeforeend, 'd');
+			$datetosearchforend = dol_time_plus_duree(dol_mktime(23, 59, 59, $tmp['mon'], $tmp['mday'], $tmp['year'], 'tzserver'), (int) $daysbeforeend, 'd');
+
+			$sql = "SELECT cd.rowid, cd.fk_contrat";
+			$sql .= " FROM ".MAIN_DB_PREFIX."contratdet as cd";
+			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."contrat as c ON c.rowid = cd.fk_contrat";
+			$sql .= " WHERE c.entity = ".((int) $conf->entity); // Do not use getEntity('contract') here, we want the batch to be on its entity only
+			$sql .= " AND cd.statut = ".((int) ContratLigne::STATUS_OPEN);
+			$sql .= " AND cd.date_fin_validite >= '".$this->db->idate($datetosearchfor)."'";
+			$sql .= " AND cd.date_fin_validite <= '".$this->db->idate($datetosearchforend)."'";
+			if ((int) $fk_product > 0) {
+				$sql .= " AND cd.fk_product = ".((int) $fk_product);
+			}
+
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				$num_rows = $this->db->num_rows($resql);
+
+				include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+				include_once DOL_DOCUMENT_ROOT.'/contrat/class/contratligne.class.php';
+				$formmail = new FormMail($this->db);
+
+				$i = 0;
+				while ($i < $num_rows) {
+					$obj = $this->db->fetch_object($resql);
+
+					$contractline = new ContratLigne($this->db);
+					$contractline->fetch($obj->rowid);
+
+					$contractstatic = new Contrat($this->db);
+					$contractstatic->fetch($obj->fk_contrat);
+					$thirdpartyres = $contractstatic->fetch_thirdparty();
+
+					if ($thirdpartyres <= 0 || empty($contractstatic->thirdparty->email)) {
+						$nbko++;
+						$listoflinesko[$contractline->id] = $contractline->id;
+					} else {
+						$languagefromcountrycode = getLanguageCodeFromCountryCode($contractstatic->thirdparty->country_code);
+						$languagecodetouse = (empty($contractstatic->thirdparty->default_lang) ? ($languagefromcountrycode ? $languagefromcountrycode : $mysoc->default_lang) : $contractstatic->thirdparty->default_lang);
+
+						$outputlangs = new Translate('', $conf);
+						$outputlangs->setDefaultLang($languagecodetouse);
+						$outputlangs->loadLangs(array("main", "contracts"));
+						dol_syslog("sendReminderForExpiredServices Language for thirdparty id ".$contractstatic->thirdparty->id." set to ".$outputlangs->defaultlang." mysoc->default_lang=".$mysoc->default_lang);
+
+						$arraydefaultmessage = null;
+						$labeltouse = getDolGlobalString('CONTRACT_EMAIL_TEMPLATE_REMIND_EXPIRATION');
+
+						if (!empty($labeltouse)) {
+							$arraydefaultmessage = $formmail->getEMailTemplate($this->db, 'contrat', $user, $outputlangs, 0, 1, $labeltouse);
+						}
+
+						if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
+							$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $contractstatic);
+							complete_substitutions_array($substitutionarray, $outputlangs, $contractstatic);
+							$substitutionarray['__CONTRACT_LINE_LABEL__'] = ($contractline->label ? $contractline->label : $contractline->description);
+							$substitutionarray['__CONTRACT_LINE_DATE_END__'] = dol_print_date($contractline->date_end, 'day', 'tzuserrel', $outputlangs);
+
+							$subject = make_substitutions($arraydefaultmessage->topic, $substitutionarray, $outputlangs);
+							$msg = make_substitutions($arraydefaultmessage->content, $substitutionarray, $outputlangs);
+							$email_from = getDolGlobalString('CONTRACT_MAIL_FROM', $conf->email_from);
+							$to = (string) $contractstatic->thirdparty->email;
+							$cc = getDolGlobalString('CONTRACT_CC_MAIL_FROM');
+
+							$trackid = 'con'.$contractstatic->id;
+							$moreinheader = 'X-Dolibarr-Info: sendReminderForExpiredServices'."\r\n";
+
+							include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+							$cmail = new CMailFile($subject, $to, $email_from, $msg, array(), array(), array(), $cc, '', 0, 1, '', '', $trackid, $moreinheader);
+							$result = $cmail->sendfile();
+							if (!$result) {
+								$error++;
+								$this->error .= $cmail->error.' ';
+								if (!is_null($cmail->errors)) {
+									$this->errors = array_merge($this->errors, $cmail->errors);
+								}
+								$nbko++;
+								$listoflinesko[$contractline->id] = $contractline->id;
+							} else {
+								$nbok++;
+								$listoflinesok[$contractline->id] = $contractline->id;
+
+								// Insert record of email sent, as an agenda event on the contract (same convention as other automated reminder emails)
+								require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+
+								$actioncomm = new ActionComm($this->db);
+								$actioncomm->type_code = 'AC_OTH_AUTO';
+								$actioncomm->code = 'AC_EMAIL';
+								$actioncomm->label = $langs->transnoentities('MailSentByTo', CMailFile::getValidAddress($email_from, 4, 0, 1), CMailFile::getValidAddress($to, 4, 0, 1));
+								$actioncomm->note_private = $msg;
+								$actioncomm->fk_project = 0;
+								$actioncomm->datep = $now;
+								$actioncomm->datef = $now;
+								$actioncomm->percentage = -1; // Not applicable
+								$actioncomm->socid = $contractstatic->thirdparty->id;
+								$actioncomm->contact_id = 0;
+								$actioncomm->authorid = $user->id;
+								$actioncomm->userownerid = $user->id;
+								$actioncomm->email_msgid = $cmail->msgid;
+								$actioncomm->email_from = $email_from;
+								$actioncomm->email_sender = '';
+								$actioncomm->email_to = $to;
+								$actioncomm->email_subject = $subject;
+
+								$actioncomm->fk_element = $contractstatic->id;
+								$actioncomm->elementid = $contractstatic->id;
+								$actioncomm->elementtype = $contractstatic->element;
+
+								$actioncomm->create($user);
+							}
+						} else {
+							$error++;
+							$this->error .= "Can't find email template with label=".$labeltouse.", to use for the reminding email ";
+
+							$nbko++;
+							$listoflinesko[$contractline->id] = $contractline->id;
+
+							break;
+						}
+					}
+
+					$i++;
+				}
+			} else {
+				$this->error = $this->db->lasterror();
+				return 1;
+			}
+		}
+
+		if ($blockingerrormsg) {
+			$this->error = $blockingerrormsg;
+			return 1;
+		} else {
+			$this->output = 'Found '.($nbok + $nbko).' contract lines to send reminder for.';
+			$this->output .= ' Sent email successfully for '.$nbok.' lines';
+			if ($nbko) {
+				$this->output .= ' - Canceled for '.$nbko.' line(s) (no thirdparty email, missing template, or send error)';
+			}
+		}
+
+		if ($error) {
+			return 1;
+		}
+		return 0;
 	}
 }

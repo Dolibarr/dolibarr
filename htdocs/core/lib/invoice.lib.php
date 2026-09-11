@@ -426,7 +426,10 @@ function getNumberInvoicesPieChart($mode)
 		|| ($mode == 'suppliers' && (isModEnabled('fournisseur') || isModEnabled('supplier_invoice')) && $user->hasRight('fournisseur', 'facture', 'lire'))
 	) {
 		global $badgeStatus1, $badgeStatus3, $badgeStatus4, $badgeStatus11;
-		include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+		$theme_vars_file = dol_getThemeFilePath('theme_vars.inc.php');
+		if ($theme_vars_file) {
+			include $theme_vars_file;
+		}
 
 		$now = date_create(date('Y-m-d', dol_now()));
 		$datenowsub30 = date_create(date('Y-m-d', dol_now()));

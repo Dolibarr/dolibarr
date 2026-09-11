@@ -5,7 +5,7 @@
  * Copyright (C) 2010-2013  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2019       Markus Welters          <markus@welters.de>
  * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2025       MDW                     <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026	MDW                     <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026       Alexandre Spangaro      <alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -129,7 +129,7 @@ if ($action == "set") {
 
 if ($action == "addnotif") {
 	$bon = new BonPrelevement($db);
-	$bon->addNotification($db, GETPOSTINT('user'), $action);
+	$bon->addNotification($db, GETPOSTINT('user'), GETPOST('notifaction', 'int'));
 
 	header("Location: ".$_SERVER["PHP_SELF"]);
 	exit;
@@ -159,7 +159,7 @@ $linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore
 print load_fiche_titre($langs->trans("CreditTransferSetup"), $linkback, 'title_setup');
 print '<br>';
 
-print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=set&token='.newToken().'">';
+print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=set&token='.newToken().'" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
 print '<table class="noborder centpercent">';
@@ -290,8 +290,8 @@ foreach ($dirmodels as $reldir)
 
 						if (file_exists($dir.'/'.$file))
 						{
-							$name = substr($file, 4, dol_strlen($file) -16);
-							$classname = substr($file, 0, dol_strlen($file) -12);
+							$name = dol_substr($file, 4, dol_strlen($file) -16);
+							$classname = dol_substr($file, 0, dol_strlen($file) -12);
 
 							require_once $dir.'/'.$file;
 							$module = new $classname($db);
@@ -443,7 +443,7 @@ if (isModEnabled('notification'))
 	}
 
 
-	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=addnotif&token='.newToken().'">';
+	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=addnotif&token='.newToken().'" spellcheck="false">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
@@ -457,7 +457,7 @@ if (isModEnabled('notification'))
 	print '</td>';
 
 	print '<td>';
-	print $form->selectarray('action',$actions);//  select_dolusers(0,'user',0);
+	print $form->selectarray('notifaction', $actions);
 	print '</td>';
 
 	print '<td class="right"><input type="submit" class="button button-add" value="'.$langs->trans("Add").'"></td></tr>';

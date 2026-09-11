@@ -348,7 +348,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	}
 	print '</div>'; ?>
 
-		<script type="text/javascript" language="javascript">
+		<script type="text/javascript">
 			$(document).ready(function() {
 
 				function folderManage(element) {

@@ -345,7 +345,7 @@ class pdf_espadon extends ModelePdfExpedition
 					$notetoshow = dol_concatdesc($notetoshow, $extranote);
 				}
 
-				if (!empty($notetoshow) || !empty($object->tracking_number)) {
+				if (!empty($notetoshow) || !empty($object->tracking_number) || $object->shipping_method_id > 0) {
 					$tab_top -= 2;
 					$tab_topbeforetrackingnumber = $tab_top;
 					$height_trackingnumber = 0;
@@ -383,6 +383,14 @@ class pdf_espadon extends ModelePdfExpedition
 						if ($height_trackingnumber < 4) {
 							$height_trackingnumber = 4;
 						}
+					}
+
+					// Shipping method, even when no tracking number is set
+					if (empty($object->tracking_number) && $object->shipping_method_id > 0) {
+						$code = $outputlangs->getLabelFromKey($this->db, (string) $object->shipping_method_id, 'c_shipment_mode', 'rowid', 'code');
+						$pdf->SetFont('', 'B', $default_font_size - 2);
+						$pdf->writeHTMLCell(90, 4, $this->posxdesc - 1, $tab_top - 1, $outputlangs->trans("SendingMethod").": ".$outputlangs->trans("SendingMethod".strtoupper($code)), 0, 1, false, true, 'L');
+						$tab_top = $pdf->GetY();
 					}
 
 					// Notes
@@ -1118,7 +1126,7 @@ class pdf_espadon extends ModelePdfExpedition
 				$posy += 4;
 				$pdf->SetXY($posx, $posy);
 				$pdf->SetTextColor(0, 0, 60);
-				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Project")." : ".(empty($object->project->title) ? '' : $object->project->title), '', 'R');
+				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Project")." : ".(empty($object->project->title) ? '' : dol_trunc($object->project->title, 50)), '', 'R');
 			}
 		}
 

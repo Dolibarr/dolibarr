@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW				<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026		Vincent de Grandpré	<vincent@de-grandpre.quebec>
  *
@@ -44,6 +44,7 @@ require_once DOL_DOCUMENT_ROOT .'/recruitment/class/recruitmentcandidature.class
 require_once DOL_DOCUMENT_ROOT .'/societe/class/societe.class.php';                      // Third-Party
 require_once DOL_DOCUMENT_ROOT .'/supplier_proposal/class/supplier_proposal.class.php';  // Supplier Proposal
 require_once DOL_DOCUMENT_ROOT .'/ticket/class/ticket.class.php';                        // Ticket
+require_once DOL_DOCUMENT_ROOT .'/adherents/class/adherent.class.php';             		 // Member/Adherent
 //require_once DOL_DOCUMENT_ROOT .'/expensereport/class/expensereport.class.php';        // Expense Report
 //require_once DOL_DOCUMENT_ROOT .'/holiday/class/holiday.class.php';                    // Holidays (leave request)
 
@@ -1238,6 +1239,7 @@ class EmailCollector extends CommonObject
 					$expire = false;
 					if (is_object($tokenobj) && method_exists($tokenobj, 'getEndOfLife')) {
 						$endOfLife = $tokenobj->getEndOfLife();
+						// time() is used internally in token @phan-suppress-next-line DolibarrForbiddenFunctionPlugin
 						if ($endOfLife !== -9002 && $endOfLife !== -9001 && time() > ($endOfLife - 30)) {
 							$expire = true;
 						}
@@ -1648,34 +1650,34 @@ class EmailCollector extends CommonObject
 					$tmprulevaluearray = explode('*', $rule['rulevalue']);	// Search on abc*def means searching on 'abc' and on 'def'
 					if (count($tmprulevaluearray) >= 2) {
 						foreach ($tmprulevaluearray as $tmprulevalue) {
-							$search .= ($search ? ' ' : '').$not.'FROM "'.str_replace('"', '', $tmprulevalue).'"';
+							$search .= ' '.$not.'FROM "'.str_replace('"', '', $tmprulevalue).'"';
 						}
 					} else {
-						$search .= ($search ? ' ' : '').$not.'FROM "'.str_replace('"', '', $rule['rulevalue']).'"';
+						$search .= ' '.$not.'FROM "'.str_replace('"', '', $rule['rulevalue']).'"';
 					}
 				}
 				if ($rule['type'] == 'to') {
 					$tmprulevaluearray = explode('*', $rule['rulevalue']);	// Search on abc*def means searching on 'abc' and on 'def'
 					if (count($tmprulevaluearray) >= 2) {
 						foreach ($tmprulevaluearray as $tmprulevalue) {
-							$search .= ($search ? ' ' : '').$not.'TO "'.str_replace('"', '', $tmprulevalue).'"';
+							$search .= ' '.$not.'TO "'.str_replace('"', '', $tmprulevalue).'"';
 						}
 					} else {
-						$search .= ($search ? ' ' : '').$not.'TO "'.str_replace('"', '', $rule['rulevalue']).'"';
+						$search .= ' '.$not.'TO "'.str_replace('"', '', $rule['rulevalue']).'"';
 					}
 				}
 				if ($rule['type'] == 'bcc') {
-					$search .= ($search ? ' ' : '').$not.'BCC';
+					$search .= ' '.$not.'BCC';
 				}
 				if ($rule['type'] == 'cc') {
-					$search .= ($search ? ' ' : '').$not.'CC';
+					$search .= ' '.$not.'CC';
 				}
 				if ($rule['type'] == 'subject') {
 					if ($not) {
 						//$search .= ($search ? ' ' : '').'NOT BODY "'.str_replace('"', '', $rule['rulevalue']).'"';
 						$searchfilterexcludesubjectarray[] = $rule['rulevalue'];
 					} else {
-						$search .= ($search ? ' ' : '').'SUBJECT "'.str_replace('"', '', $rule['rulevalue']).'"';
+						$search .= ' SUBJECT "'.str_replace('"', '', $rule['rulevalue']).'"';
 					}
 				}
 				if ($rule['type'] == 'body') {
@@ -1684,11 +1686,11 @@ class EmailCollector extends CommonObject
 						$searchfilterexcludebodyarray[] = $rule['rulevalue'];
 					} else {
 						// Warning: Google doesn't implement IMAP properly, and only matches whole words,
-						$search .= ($search ? ' ' : '').'BODY "'.str_replace('"', '', $rule['rulevalue']).'"';
+						$search .= ' BODY "'.str_replace('"', '', $rule['rulevalue']).'"';
 					}
 				}
 				if ($rule['type'] == 'header') {
-					$search .= ($search ? ' ' : '').$not.'HEADER '.$rule['rulevalue'];
+					$search .= ' '.$not.'HEADER '.$rule['rulevalue'];
 				}
 
 				/* seems not used */
@@ -1701,22 +1703,22 @@ class EmailCollector extends CommonObject
 				 }*/
 
 				if ($rule['type'] == 'seen') {
-					$search .= ($search ? ' ' : '').$not.'SEEN';
+					$search .= ' '.$not.'SEEN';
 				}
 				if ($rule['type'] == 'unseen') {
-					$search .= ($search ? ' ' : '').$not.'UNSEEN';
+					$search .= ' '.$not.'UNSEEN';
 				}
 				if ($rule['type'] == 'unanswered') {
-					$search .= ($search ? ' ' : '').$not.'UNANSWERED';
+					$search .= ' '.$not.'UNANSWERED';
 				}
 				if ($rule['type'] == 'answered') {
-					$search .= ($search ? ' ' : '').$not.'ANSWERED';
+					$search .= ' '.$not.'ANSWERED';
 				}
 				if ($rule['type'] == 'smaller') {
-					$search .= ($search ? ' ' : '').$not.'SMALLER "'.str_replace('"', '', $rule['rulevalue']).'"';
+					$search .= ' '.$not.'SMALLER "'.str_replace('"', '', $rule['rulevalue']).'"';
 				}
 				if ($rule['type'] == 'larger') {
-					$search .= ($search ? ' ' : '').$not.'LARGER "'.str_replace('"', '', $rule['rulevalue']).'"';
+					$search .= ' '.$not.'LARGER "'.str_replace('"', '', $rule['rulevalue']).'"';
 				}
 
 				// Rules to filter after the search imap
@@ -1760,7 +1762,7 @@ class EmailCollector extends CommonObject
 				}
 				if ($fromdate > 0) {
 					// IMAP SINCE works by day; keep a 1-day overlap so we don't miss emails left unprocessed (e.g. discarded by filters).
-					$search .= ($search ? ' ' : '').'SINCE '.date('j-M-Y', $fromdate - 86400); // SENTSINCE not supported. Date must be X-Abc-9999 (X on 1 digit if < 10)
+					$search .= ' SINCE '.date('j-M-Y', $fromdate - 86400); // SENTSINCE not supported. Date must be X-Abc-9999 (X on 1 digit if < 10)
 				}
 				//$search.=($search?' ':'').'SINCE 8-Apr-2018';
 			}
@@ -3112,7 +3114,6 @@ class EmailCollector extends CommonObject
 											if (!$errorforactions) {
 												// Search state by name or code (for country if defined)
 												if (!empty($contactstatic->state)) {
-													require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
 													$result = dol_getIdFromCode($this->db, $contactstatic->state, 'c_departements', 'nom', 'rowid');
 													if (empty($result)) {
 														$errorforactions++;
@@ -3126,7 +3127,6 @@ class EmailCollector extends CommonObject
 														$operationslog .= '<br>We set property state_id='.dol_escape_htmltag($result);
 													}
 												} elseif (!empty($contactstatic->state_code)) {
-													require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
 													$result = dol_getIdFromCode($this->db, $contactstatic->state_code, 'c_departements', 'code_departement', 'rowid');
 													if (empty($result)) {
 														$errorforactions++;

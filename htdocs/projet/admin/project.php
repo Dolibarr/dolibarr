@@ -210,8 +210,8 @@ if ($action == 'updateMaskTask') {
 	dolibarr_del_const($db, "PROJECT_ADDON_PDF", $conf->entity);
 } elseif ($action == 'setdoctask') {
 	if (dolibarr_set_const($db, "PROJECT_TASK_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity)) {
-		// La constante qui a ete lue en avant du nouveau set
-		// on passe donc par une variable pour avoir un affichage coherent
+		// The constant that was read before the new set
+		// so we go through a variable to get a consistent display
 		$conf->global->PROJECT_TASK_ADDON_PDF = $value;
 	}
 
@@ -338,7 +338,7 @@ foreach ($dirmodels as $reldir) {
 			while (($file = readdir($handle)) !== false) {
 				if (preg_match('/^(mod_.*)\.php$/i', $file, $reg)) {
 					$file = $reg[1];
-					$classname = substr($file, 4);
+					$classname = dol_substr($file, 4);
 
 					require_once $dir.$file.'.php';
 
@@ -437,7 +437,7 @@ if (!getDolGlobalString('PROJECT_HIDE_TASKS')) {
 				while (($file = readdir($handle)) !== false) {
 					if (preg_match('/^(mod_.*)\.php$/i', $file, $reg)) {
 						$file = $reg[1];
-						$classname = substr($file, 4);
+						$classname = dol_substr($file, 4);
 
 						require_once $dir.$file.'.php';
 
@@ -520,7 +520,7 @@ if (!getDolGlobalString('PROJECT_HIDE_TASKS')) {
 
 print load_fiche_titre($langs->trans("ProjectsModelModule"), '', '');
 
-// Defini tableau def de modele
+// Define array def of model
 $type = 'project';
 $def = array();
 // TODO Replace with $def = getListOfModels($db, $type);
@@ -574,8 +574,8 @@ foreach ($dirmodels as $reldir) {
 				foreach ($filelist as $file) {
 					if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file)) {
 						if (file_exists($dir.'/'.$file)) {
-							$name = substr($file, 4, dol_strlen($file) - 16);
-							$classname = substr($file, 0, dol_strlen($file) - 12);
+							$name = dol_substr($file, 4, dol_strlen($file) - 16);
+							$classname = dol_substr($file, 0, dol_strlen($file) - 12);
 
 							require_once $dir.'/'.$file;
 							$module = new $classname($db);
@@ -670,7 +670,7 @@ if (!getDolGlobalString('PROJECT_HIDE_TASKS')) {
 
 	print load_fiche_titre($langs->trans("TaskModelModule"), '', '');
 
-	// Defini tableau def de modele
+	// Define array def of model
 	$type = 'project_task';
 	$def = array();
 
@@ -723,8 +723,8 @@ if (!getDolGlobalString('PROJECT_HIDE_TASKS')) {
 					foreach ($filelist as $file) {
 						if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file)) {
 							if (file_exists($dir.'/'.$file)) {
-								$name = substr($file, 4, dol_strlen($file) - 16);
-								$classname = substr($file, 0, dol_strlen($file) - 12);
+								$name = dol_substr($file, 4, dol_strlen($file) - 16);
+								$classname = dol_substr($file, 0, dol_strlen($file) - 12);
 
 								require_once $dir.'/'.$file;
 								$module = new $classname($db);
@@ -787,7 +787,7 @@ if (!getDolGlobalString('PROJECT_HIDE_TASKS')) {
 									// Preview
 									print '<td class="center">';
 									if ($module->type == 'pdf') {
-										print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimentask&module='.$name.'">'.img_object($langs->trans("Preview"), 'bill').'</a>';
+										print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimentask&token='.newToken().'&module='.$name.'">'.img_object($langs->trans("Preview"), 'bill').'</a>';
 									} else {
 										print img_object($langs->transnoentitiesnoconv("PreviewNotAvailable"), 'generic');
 									}
@@ -833,10 +833,11 @@ if (!$conf->use_javascript_ajax) {
 	print "</td>";
 } else {
 	print '<td class="right">';
-	$arrval = array('0' => $langs->trans("No"),
-		'1' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 1).')',
-		'2' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 2).')',
-		'3' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 3).')',
+	$arrval = array(
+		0 => array('label' => $langs->trans("No")),
+		1 => array('label' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 1).')', 'labelhtml' => $langs->trans("Yes").' <span class="opacitymedium small">('.$langs->trans("NumberOfKeyToSearch", 1).')</span>'),
+		2 => array('label' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 2).')', 'labelhtml' => $langs->trans("Yes").' <span class="opacitymedium small">('.$langs->trans("NumberOfKeyToSearch", 2).')</span>'),
+		3 => array('label' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 3).')', 'labelhtml' => $langs->trans("Yes").' <span class="opacitymedium small">('.$langs->trans("NumberOfKeyToSearch", 3).')</span>'),
 	);
 	print $form->selectarray("activate_PROJECT_USE_SEARCH_TO_SELECT", $arrval, getDolGlobalString("PROJECT_USE_SEARCH_TO_SELECT"));
 	print '<input type="submit" class="button small reposition" name="PROJECT_USE_SEARCH_TO_SELECT" value="'.$langs->trans("Modify").'">';

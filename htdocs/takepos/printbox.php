@@ -48,9 +48,6 @@ require '../main.inc.php'; // Load $user and permissions
  * @var Translate $langs
  * @var User $user
  */
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
-
-global $langs, $db;
 
 $langs->loadLangs(array("bills", "cashdesk"));
 
