@@ -23,6 +23,7 @@ use Luracast\Restler\RestException;
 
 require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT . '/fourn/class/paiementfourn.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 /**
  * API class for supplier invoices
@@ -148,9 +149,9 @@ class SupplierInvoices extends DolibarrApi
 		// Search on sale representative
 		if ($search_sale && $search_sale != '-1') {
 			if ($search_sale == -2) {
-				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc)";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', 0, 1);
 			} elseif ($search_sale > 0) {
-				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', (int) $search_sale);
 			}
 		}
 		// Add sql filters
@@ -562,7 +563,15 @@ class SupplierInvoices extends DolibarrApi
 		$amounts[$id] = $paymentamount;
 
 		// Multicurrency
-		$newvalue = (float) price2num($this->invoice->multicurrency_total_ttc, 'MT');
+		// getWay() switches the payment to the invoice currency as soon as a multicurrency amount is set, so
+		// this value must match the partial amount, not always the full invoice TTC. When a partial amount was
+		// requested, convert it at the invoice rate (multicurrency_total_ttc / total_ttc); otherwise use the
+		// full multicurrency TTC (full payment).
+		if (null !== $amount && $amount > 0 && !empty($this->invoice->total_ttc)) {
+			$newvalue = (float) price2num($paymentamount * $this->invoice->multicurrency_total_ttc / $this->invoice->total_ttc, 'MT');
+		} else {
+			$newvalue = (float) price2num($this->invoice->multicurrency_total_ttc, 'MT');
+		}
 		$multicurrency_amounts[$id] = $newvalue;
 
 		// Creation of payment line

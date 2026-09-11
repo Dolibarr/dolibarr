@@ -173,6 +173,9 @@ $arrayfields = array(
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -578,7 +581,7 @@ if ($id > 0 || !empty($ref)) {
 	print dol_get_fiche_end();
 }
 
-$sql = "SELECT b.rowid, b.dateo as do, b.datev as dv, b.amount, b.label, b.rappro as conciliated, b.num_releve, b.num_chq,";
+$sql = "SELECT b.rowid, b.dateo as do, b.datev as dv, b.amount, b.amount_main_currency, b.label, b.rappro as conciliated, b.num_releve, b.num_chq,";
 $sql .= " b.fk_account, b.fk_type, b.fk_bordereau,";
 $sql .= " ba.rowid as bankid, ba.ref as bankref";
 // Add fields from extrafields
@@ -1608,7 +1611,7 @@ if ($resql) {
 					// Show link with label $links[$key]['label']
 					print '<a href="'.$links[$key]['url'].$links[$key]['url_id'].'">';
 					if (preg_match('/^\((.*)\)$/i', $links[$key]['label'], $reg)) {
-						// Label generique car entre parentheses. On l'affiche en le traduisant
+						// Generic label because it is in parentheses. We display it translated.
 						if ($reg[1] == 'paiement') {
 							$reg[1] = 'Payment';
 						}
@@ -1782,12 +1785,19 @@ if ($resql) {
 			}
 		}
 
+		$currencykey = $bankaccount->currency_code;
+		if (!isset($totalarray['totalpercurrency'][$currencykey])) {
+			$totalarray['totalpercurrency'][$currencykey] = array('deb' => 0, 'cred' => 0);
+		}
+		$amountmaincurrency = empty($objp->amount_main_currency) ? $objp->amount : $objp->amount_main_currency;
+
 		// Debit
 		if (!empty($arrayfields['b.debit']['checked'])) {
 			print '<td class="nowraponall right"><span class="amount">';
 			if ($objp->amount < 0) {
 				print price($objp->amount * -1);
-				$totalarray['totaldeb'] += $objp->amount;
+				$totalarray['totaldeb'] += $amountmaincurrency;
+				$totalarray['totalpercurrency'][$currencykey]['deb'] += $objp->amount;
 			}
 			print "</span></td>\n";
 			if (!$i) {
@@ -1803,7 +1813,8 @@ if ($resql) {
 			print '<td class="nowraponall right"><span class="amount">';
 			if ($objp->amount > 0) {
 				print price($objp->amount);
-				$totalarray['totalcred'] += $objp->amount;
+				$totalarray['totalcred'] += $amountmaincurrency;
+				$totalarray['totalpercurrency'][$currencykey]['cred'] += $objp->amount;
 			}
 			print "</span></td>\n";
 			if (!$i) {
@@ -1966,6 +1977,27 @@ if ($resql) {
 			}
 		}
 		print '</tr>';
+
+		// Show one line per currency when the list holds accounts in several currencies
+		if (count($totalarray['totalpercurrency']) > 1) {
+			foreach ($totalarray['totalpercurrency'] as $currencycode => $totalpercurrency) {
+				print '<tr class="liste_total">';
+				$i = 0;
+				while ($i < $totalarray['nbfield']) {
+					$i++;
+					if ($i == 1) {
+						print '<td class="left">'.$langs->trans("Total").' '.dol_escape_htmltag($currencycode).'</td>';
+					} elseif (isset($totalarray['totaldebfield']) && $totalarray['totaldebfield'] == $i) {
+						print '<td class="right"><span class="amount">'.price(-1 * $totalpercurrency['deb']).'</span></td>';
+					} elseif (isset($totalarray['totalcredfield']) && $totalarray['totalcredfield'] == $i) {
+						print '<td class="right"><span class="amount">'.price($totalpercurrency['cred']).'</span></td>';
+					} else {
+						print '<td></td>';
+					}
+				}
+				print '</tr>';
+			}
+		}
 	}
 
 	// If no record found

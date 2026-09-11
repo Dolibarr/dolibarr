@@ -567,7 +567,7 @@ class Utils
 			} elseif ($compression == 'bz') {
 				$handle = bzopen($outputfile, 'r');
 			} elseif ($compression == 'zstd') {
-				$handle = fopen($outputfile, 'r');
+				$handle = fopen("compress.zstd://" . $outputfile, "rb");
 			}
 			if ($handle) {
 				// Get 2048 first chars of error message.
@@ -591,7 +591,7 @@ class Utils
 					//print "$outputfile -> $outputerror";
 					@dol_delete_file($outputerror, 1, 0, 0, null, false, 0);
 					@dol_move($outputfile, $outputerror, '0', 1, 0, 0);
-					// Si safe_mode on et command hors du parameter exec, on a un fichier out vide donc errormsg vide
+					// If safe_mode is on and command is outside the exec parameter, we get an empty out file so errormsg is empty
 					if (!$errormsg) {
 						$langs->load("errors");
 						$errormsg = $langs->trans("ErrorFailedToRunExternalCommand");
@@ -764,6 +764,26 @@ class Utils
 		$output = '';
 		$error = '';
 
+		global $dolibarr_main_restrict_os_commands;
+		if (!empty($dolibarr_main_restrict_os_commands)) {
+			$arrayofallowedcommand = explode(',', $dolibarr_main_restrict_os_commands);
+			$arrayofallowedcommand = array_map('trim', $arrayofallowedcommand);
+
+			$commands = preg_split('/\|\||&&|\||&/', $command);
+			foreach ($commands as $newcommand) {
+				$newcommand = trim($newcommand);
+				$matches = array();
+				// If command is "'ab cd.exe' param1 param2" or '"ab cd.exe" param1 param2' or 'abcd.exe param1 param2', we must extract ab...cd.exe only.
+				if (preg_match('/^(?:\'([^\']*)\'|"([^"]*)"|(\S+))/', $newcommand, $matches)) {
+					$newcommand = $matches[1] ?: ($matches[2] ?: $matches[3]);
+				}
+				if (!in_array(basename($newcommand), $arrayofallowedcommand)) {
+					dol_syslog("files.lib.php::executeCLI canceled because target filename ".basename($newcommand)." is not in the whitelist of allowed commands.", LOG_WARNING);
+					return array('result' => -1, 'output' => '', 'error' => 'Command '.basename($newcommand).' is not in the whitelist of allowed commands');
+				}
+			}
+		}
+
 		if (empty($noescapecommand)) {
 			$command = escapeshellcmd($command);
 		}
@@ -835,7 +855,7 @@ class Utils
 	 */
 	public function generateDoc($module)
 	{
-		global $conf, $langs, $user, $mysoc;
+		global $langs, $user, $mysoc;
 		global $dirins;
 
 		$error = 0;

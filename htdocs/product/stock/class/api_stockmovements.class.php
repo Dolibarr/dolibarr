@@ -87,6 +87,10 @@ class StockMovements extends DolibarrApi
 			throw new RestException(404, 'stock movement not found');
 		}
 
+		if (! DolibarrApi::_checkAccessToResource('stockmovement', $this->stockmovement, 'stock_mouvement', '', '', 'rowid', 'fk_entrepot@entrepot')) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		return $this->_cleanObjectDatas($this->stockmovement);
 	}
 
@@ -117,10 +121,11 @@ class StockMovements extends DolibarrApi
 		}
 
 		$sql = "SELECT t.rowid";
-		$sql .= " FROM ".MAIN_DB_PREFIX."stock_mouvement AS t LEFT JOIN ".MAIN_DB_PREFIX."stock_mouvement_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
+		$sql .= " FROM ".MAIN_DB_PREFIX."stock_mouvement AS t";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."entrepot as e ON t.fk_entrepot = e.rowid";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."stock_mouvement_extrafields AS ef ON (ef.fk_object = t.rowid)";
+		$sql .= " WHERE e.entity IN (".getEntity('stock').")";
 
-		//$sql.= ' WHERE t.entity IN ('.getEntity('stock').')';
-		$sql .= ' WHERE 1 = 1';
 		// Add sql filters
 		if ($sqlfilters) {
 			$errormessage = '';
@@ -263,7 +268,7 @@ class StockMovements extends DolibarrApi
 			throw new RestException(404, 'stock movement not found');
 		}
 
-		if( ! DolibarrApi::_checkAccessToResource('stock',$this->stockmovement->id)) {
+		if( ! DolibarrApi::_checkAccessToResource('stock', $this->stockmovement)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -296,7 +301,7 @@ class StockMovements extends DolibarrApi
 			throw new RestException(404, 'stock movement not found');
 		}
 
-		if (! DolibarrApi::_checkAccessToResource('stock',$this->stockmovement->id)) {
+		if (! DolibarrApi::_checkAccessToResource('stock', $this->stockmovement)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 

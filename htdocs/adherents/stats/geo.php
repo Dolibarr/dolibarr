@@ -252,8 +252,8 @@ if (!count($data)) {
 // Show graphics
 if (getDolGlobalString("GOOGLE_SHOW_COUNTRY_GRAPH") && $mode == 'memberbycountry') {
 	global $theme_bordercolor, $theme_datacolor, $theme_bgcolor, $theme_bgcoloronglet;
-	$color_file = DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
-	if (is_readable($color_file)) {
+	$color_file = dol_getThemeFilePath('theme_vars.inc.php');
+	if ($color_file && is_readable($color_file)) {
 		include $color_file;
 	}
 

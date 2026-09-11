@@ -819,7 +819,7 @@ class Mo extends CommonObject
 
 		$quantity /= $bom->qty;
 		foreach ($bom->lines as $line) {
-			$quantity_line = !$line->qty_frozen ? $line->qty * $quantity / (!empty($line->efficiency) ? $line->efficiency : 1) : 1;
+			$quantity_line = !$line->qty_frozen ? $line->qty * $quantity / (!empty($line->efficiency) ? $line->efficiency : 1) : $line->qty;
 
 			$tmpproduct = new Product($this->db);
 			$tmpproduct->fetch($line->fk_product);
@@ -946,6 +946,18 @@ class Mo extends CommonObject
 			$result = $this->cancelConsumedAndProducedLines($user, 0, false, $notrigger);
 			if ($result < 0) {
 				$error++;
+			}
+		}
+
+		// Remove linked categories.
+		if (!$error) {
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_mo";
+			$sql .= " WHERE fk_mo = ".((int) $this->id);
+
+			$result = $this->db->query($sql);
+			if (!$result) {
+				$error++;
+				$this->errors[] = $this->db->lasterror();
 			}
 		}
 

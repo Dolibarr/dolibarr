@@ -1540,6 +1540,12 @@ class SecurityTest extends CommonClassTest
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($s, $result, 'Test for restricthtmlallowlinkscript');
 
+
+		$s= "Test with LF.\nNext line";
+		$result = dol_htmlwithnojs($s);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($s, $result, 'Test for default, on a string with a LF inside');
+
 		return 0;
 	}
 }

@@ -1348,7 +1348,10 @@ class Cronjob extends CommonObject
 		$cronjobpid = (int) $this->pid;
 		$dbs = $this->db;
 		register_shutdown_function(static function () use ($cronjobid, $cronjobpid, $dbs) {
-			if (empty($cronjobid) || empty($dbs)) {
+			// The job may have closed the connection before ending, and a shutdown handler runs after that.
+			// Querying a closed mysqli connection raises an Error, not an Exception, so it would escape the
+			// try/catch below and turn into a fatal error at every run (#39801).
+			if (empty($cronjobid) || empty($dbs) || empty($dbs->connected)) {
 				return;
 			}
 

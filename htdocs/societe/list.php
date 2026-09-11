@@ -11,7 +11,7 @@
  * Copyright (C) 2017       Juanjo Menent      	    <jmenent@2byte.es>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2020       Open-Dsi                <support@open-dsi.fr>
- * Copyright (C) 2021-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2021-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022       Anthony Berton          <anthony.berton@bb2a.fr>
  * Copyright (C) 2023       William Mead            <william.mead@manchenumerique.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
@@ -52,6 +52,7 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/phone.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 if (isModEnabled('category')) {
@@ -649,12 +650,12 @@ if (!empty($search_sale) && $search_sale != '-1') {
 	$search_sale_req = implode(',', $search_sale_req);
 
 	if (count($search_sale) == 1 && in_array('-2', $search_sale)) {
-		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = s.rowid)";
+		$sql .= " AND ".getSalesRepresentativeSqlFilter('s.rowid', 0, 1);
 	} elseif (count($search_sale) > 0 && !in_array('-2', $search_sale)) {
-		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = s.rowid AND sc.fk_user IN (".$db->sanitize($search_sale_req)."))";
+		$sql .= " AND ".getSalesRepresentativeSqlFilter('s.rowid', $db->sanitize($search_sale_req));
 	} elseif (count($search_sale) > 0 && in_array('-2', $search_sale)) {
-		$sql .= " AND (EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = s.rowid AND sc.fk_user IN (".$db->sanitize($search_sale_req)."))";
-		$sql .= " OR NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = s.rowid))";
+		$sql .= " AND (".getSalesRepresentativeSqlFilter('s.rowid', $db->sanitize($search_sale_req));
+		$sql .= " OR ".getSalesRepresentativeSqlFilter('s.rowid', 0, 1).")";
 	}
 }
 
@@ -778,13 +779,13 @@ if ($search_noemail) {
 	$sql .= " AND EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = '".$db->escape($search_email)."' AND unsubscribegroup = '' AND entity IN (".getEntity('societe')."))";
 }
 if (strlen($search_phone)) {
-	$sql .= natural_search("s.phone", $search_phone);
+	$sql .= dol_natural_search_phone($db, "s.phone", $search_phone);
 }
 if (strlen($search_phone_mobile)) {
-	$sql .= natural_search("s.phone_mobile", $search_phone_mobile);
+	$sql .= dol_natural_search_phone($db, "s.phone_mobile", $search_phone_mobile);
 }
 if (strlen($search_fax)) {
-	$sql .= natural_search("s.fax", $search_fax);
+	$sql .= dol_natural_search_phone($db, "s.fax", $search_fax);
 }
 if ($search_url) {
 	$sql .= natural_search("s.url", $search_url);
@@ -1956,7 +1957,7 @@ while ($i < $imaxinloop) {
 		$j = 0;
 		print '<tr data-rowid="'.$companystatic->id.'" class="oddeven row-with-select"';
 		if ($contextpage == 'poslist') {
-			print ' onclick="location.href=\'list.php?action=change&contextpage=poslist&idcustomer='.$obj->rowid.'&place='.urlencode($place).'\'"';
+			print ' onclick="location.href=\'list.php?action=change&token='.newToken().'&contextpage=poslist&idcustomer='.$obj->rowid.'&place='.urlencode($place).'\'"';
 		}
 		print '>';
 
@@ -1996,8 +1997,10 @@ while ($i < $imaxinloop) {
 			}
 		}
 		if (!empty($arrayfields['s.name_alias']['checked'])) {
-			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($companystatic->name_alias).'">';
-			print dol_escape_htmltag($companystatic->name_alias);
+			print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute($companystatic->name_alias).'">';
+			print '<span class="doltext opacitymedium">';
+			print dolPrintHTML($companystatic->name_alias);
+			print '</span>';
 			print "</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -2144,7 +2147,7 @@ while ($i < $imaxinloop) {
 		// Email
 		if (!empty($arrayfields['s.email']['checked'])) {
 			$showinvalidemail = (int) !getDolGlobalInt('MAIN_SHOW_INVALID_EMAIL_IN_LIST'); // to avoid slow display
-			print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute($obj->email).'">'.dol_print_email($obj->email, $obj->rowid, $obj->rowid, 1, 0, $showinvalidemail, 1)."</td>\n";
+			print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute((string) $obj->email).'">'.dol_print_email((string) $obj->email, $obj->rowid, $obj->rowid, 1, 0, $showinvalidemail, 1)."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

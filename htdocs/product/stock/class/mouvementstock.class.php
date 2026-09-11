@@ -5,6 +5,7 @@
  * Copyright (C) 2014	   Cedric GROSS	        <c.gross@kreiz-it.fr>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -664,7 +665,16 @@ class MouvementStock extends CommonObject
 				// having a lot1/qty=X and lot2/qty=-X, so 0 but we must not loose repartition of different lot.
 				$sql = "DELETE FROM ".$this->db->prefix()."product_stock WHERE reel = 0 AND rowid NOT IN (SELECT fk_product_stock FROM ".$this->db->prefix()."product_batch as pb)";
 				$resql = $this->db->query($sql);
-				// We do not test error, it can fails if there is child in batch details
+				// The NOT IN clause already excludes rows still referenced by product_batch (the only child FK on
+				// product_stock), so this DELETE cannot fail on a child constraint. Any failure is therefore a real
+				// error, in particular a deadlock (1213) that rolls back the whole transaction including the movement
+				// just inserted; if we swallowed it, _create() would commit an empty transaction and return the
+				// movement id as a success, so the caller (and the REST API) would think the movement was saved while
+				// it was lost.
+				if (!$resql) {
+					$this->errors[] = $this->db->lasterror();
+					$error++;
+				}
 			}
 		}
 
@@ -1057,7 +1067,9 @@ class MouvementStock extends CommonObject
 					$classname = $origin_type_array[0];
 					$modulename = empty($origin_type_array[1]) ? strtolower($classname) : $origin_type_array[1];
 
-					$result = dol_include_once('/'.$modulename.'/class/'.$classname.'.class.php');
+					// Dolibarr names its class files in lowercase, so use a lowercase file name whatever
+					// the case of the class name (class names themselves are case insensitive in PHP).
+					$result = dol_include_once('/'.$modulename.'/class/'.strtolower($classname).'.class.php');
 
 					if ($result) {
 						$classname = ucfirst($classname);

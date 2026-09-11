@@ -535,19 +535,28 @@ if ($action == 'makepayment_confirm' && $user->hasRight('facture', 'paiement')) 
 					$errorpayment++;
 				} else {
 					if ($facture->type != Facture::TYPE_CREDIT_NOTE && $facture->status == Facture::STATUS_VALIDATED && $facture->paye == 0) {
-						$paiementAmount = $facture->getSommePaiement();
+						// Get both the base-currency and invoice-currency paid amount in a single query
+						$sommePaiement = $facture->getSommePaiement(-1);
+						$paiementAmount = $sommePaiement['alreadypaid'];
+
 						$totalcreditnotes = $facture->getSumCreditNotesUsed();
 						$totaldeposits = $facture->getSumDepositsUsed();
 
 						$totalallpayments = $paiementAmount + $totalcreditnotes + $totaldeposits;
-						$remaintopay = price2num($facture->total_ttc - $totalallpayments);
+						$remaintopay = (float) price2num($facture->total_ttc - $totalallpayments);
+
+						// Remain to pay in the invoice currency (may differ from $remaintopay when multicurrency is used)
+						$multicurrency_remaintopay = (float) price2num($facture->multicurrency_total_ttc - $sommePaiement['alreadypaid_multicurrency']);
 
 						// hook to finalize the remaining amount, considering e.g. cash discount agreements
-						$parameters = array('remaintopay' => $remaintopay);
+						$parameters = array('remaintopay' => $remaintopay, 'multicurrency_remaintopay' => $multicurrency_remaintopay);
 						$reshook = $hookmanager->executeHooks('finalizeAmountOfInvoice', $parameters, $facture, $action); // Note that $action and $object may have been modified by some hooks
 						if ($reshook > 0) {
-							if (!empty($remain = $hookmanager->resArray['remaintopay'])) {
+							if (!empty($remain = (float) $hookmanager->resArray['remaintopay'])) {
 								$remaintopay = $remain;
+							}
+							if (!empty($multicurrency_remain = $hookmanager->resArray['multicurrency_remaintopay'])) {
+								$multicurrency_remaintopay = $multicurrency_remain;
 							}
 						} elseif ($reshook < 0) {
 							$error++;
@@ -563,7 +572,7 @@ if ($action == 'makepayment_confirm' && $user->hasRight('facture', 'paiement')) 
 								$paiement = new Paiement($db);
 								$paiement->datepaye = $paiementdate;
 								$paiement->amounts[$facture->id] = $remaintopay; // Array with all payments dispatching with invoice id
-								$paiement->multicurrency_amounts[$facture->id] = $remaintopay;
+								$paiement->multicurrency_amounts[$facture->id] = (float) $multicurrency_remaintopay;
 								$paiement->paiementid = $paiementid;
 								$paiement->note_private = $note_private;
 								$paiement_id = $paiement->create($user, 1, $facture->thirdparty);
@@ -1061,9 +1070,9 @@ if ($search_user > 0) {
 // Search on sale representative
 if ($search_sale && $search_sale != '-1') {
 	if ($search_sale == -2) {
-		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = f.fk_soc)";
+		$sql .= " AND ".getSalesRepresentativeSqlFilter('f.fk_soc', 0, 1);
 	} elseif ($search_sale > 0) {
-		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = f.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+		$sql .= " AND ".getSalesRepresentativeSqlFilter('f.fk_soc', (int) $search_sale);
 	}
 }
 
@@ -1992,7 +2001,7 @@ if (!empty($arrayfields['f.fk_statut']['checked'])) {
 		'3' => $langs->trans("BillShortStatusCanceled")
 	);
 	// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
-	print $form->multiselectarray('search_status', $liststatus, $search_status, 0, 0, 'minwidth125', 1, 0);
+	print $form->multiselectarray('search_status', $liststatus, $search_status, 0, 0, 'search_status width100 onrightofpage', 1, 0);
 	print '</td>';
 }
 // Action column
@@ -2370,7 +2379,7 @@ if ($num > 0) {
 		$remaintopay = price2num($facturestatic->total_ttc - $totalallpayments);
 
 		$multicurrency_totalpay = $multicurrency_paiement + $multicurrency_totalcreditnotes + $multicurrency_totaldeposits;
-		$multicurrency_remaintopay = price2num($facturestatic->multicurrency_total_ttc - $multicurrency_totalpay);
+		$multicurrency_remaintopay = (float) price2num($facturestatic->multicurrency_total_ttc - $multicurrency_totalpay);
 
 		if ($facturestatic->status == Facture::STATUS_CLOSED) {
 			$remaintopay = 0;
@@ -2382,7 +2391,7 @@ if ($num > 0) {
 			$totalallpayments = price2num($facturestatic->total_ttc - $remaintopay);
 			$multicurrency_remaincreditnote = $discount->getAvailableDiscounts($companystatic, null, 'rc.fk_facture_source='.$facturestatic->id, 0, 0, 1);
 			$multicurrency_remaintopay = -$multicurrency_remaincreditnote;
-			$multicurrency_totalpay = price2num($facturestatic->multicurrency_total_ttc - $multicurrency_remaintopay);
+			$multicurrency_totalpay = (float) price2num($facturestatic->multicurrency_total_ttc - $multicurrency_remaintopay);
 		}
 
 		$facturestatic->alreadypaid = $paiement;
@@ -2491,7 +2500,9 @@ if ($num > 0) {
 			if (!empty($arrayfields['f.ref_client']['checked'])) {
 				$tdcss = (getDolGlobalInt('MAIN_SHOW_GLOBAL_REF_CUSTOMER_SUPPLIER') ? 'class="minwidth400 maxwidth400"' : 'class="nowrap tdoverflowmax200"');
 				print '<td title="'.dolPrintHTMLForAttribute($obj->ref_client).'" '.$tdcss.'>';
-				print dol_escape_htmltag($obj->ref_client);
+				print '<span class="doltext opacitymedium">';
+				print dolPrintHTML($obj->ref_client);
+				print '</span>';
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -2942,32 +2953,39 @@ if ($num > 0) {
 			// Currency rate
 			if (!empty($arrayfields['f.multicurrency_tx']['checked'])) {
 				print '<td class="nowraponall">';
-				$form->form_multicurrency_rate($_SERVER['PHP_SELF'].'?id='.$obj->rowid, $obj->multicurrency_tx, 'none', $obj->multicurrency_code);
+				$form->form_multicurrency_rate($_SERVER['PHP_SELF'].'?id='.$obj->id, $obj->multicurrency_tx, 'none', $obj->multicurrency_code);
 				print "</td>\n";
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
 			}
+			$currencykey = !empty($obj->multicurrency_code) ? $obj->multicurrency_code : $conf->currency;
 			// Amount HT
 			if (!empty($arrayfields['f.multicurrency_total_ht']['checked'])) {
 				print '<td class="right nowraponall amount">'.price($obj->multicurrency_total_ht)."</td>\n";
 				if (!$i) {
 					$totalarray['nbfield']++;
+					$totalarray['pospercurrency'][$totalarray['nbfield']] = 'f.multicurrency_total_ht';
 				}
+				$totalarray['valpercurrency'][$currencykey]['f.multicurrency_total_ht'] = ($totalarray['valpercurrency'][$currencykey]['f.multicurrency_total_ht'] ?? 0) + $obj->multicurrency_total_ht;
 			}
 			// Amount VAT
 			if (!empty($arrayfields['f.multicurrency_total_vat']['checked'])) {
 				print '<td class="right nowraponall amount">'.price($obj->multicurrency_total_vat)."</td>\n";
 				if (!$i) {
 					$totalarray['nbfield']++;
+					$totalarray['pospercurrency'][$totalarray['nbfield']] = 'f.multicurrency_total_vat';
 				}
+				$totalarray['valpercurrency'][$currencykey]['f.multicurrency_total_vat'] = ($totalarray['valpercurrency'][$currencykey]['f.multicurrency_total_vat'] ?? 0) + $obj->multicurrency_total_vat;
 			}
 			// Amount TTC
 			if (!empty($arrayfields['f.multicurrency_total_ttc']['checked'])) {
 				print '<td class="right nowraponall amount">'.price($obj->multicurrency_total_ttc)."</td>\n";
 				if (!$i) {
 					$totalarray['nbfield']++;
+					$totalarray['pospercurrency'][$totalarray['nbfield']] = 'f.multicurrency_total_ttc';
 				}
+				$totalarray['valpercurrency'][$currencykey]['f.multicurrency_total_ttc'] = ($totalarray['valpercurrency'][$currencykey]['f.multicurrency_total_ttc'] ?? 0) + $obj->multicurrency_total_ttc;
 			}
 			// Dyn amount
 			if (!empty($arrayfields['multicurrency_dynamount_payed']['checked'])) {

@@ -660,7 +660,7 @@ if ($id) {
 				$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 				$morehtmlref .= '</form>';
 			} else {
-				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (property_exists($object, 'socid') ? $object->socid : 0), (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (int) $object->socid, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 			}
 		} else {
 			if (!empty($object->fk_project)) {
@@ -798,7 +798,7 @@ if ($id) {
 
 	// Clone
 	if ($permissiontoadd) {
-		print '<div class="inline-block divButAction"><a class="butAction butActionClone" href="' . dolBuildUrl(DOL_DOCUMENT_ROOT."/compta/bank/various_payment/card.php", ['id' => $object->id, 'action' => 'clone']).'">'.$langs->trans("ToClone") . "</a></div>";
+		print '<div class="inline-block divButAction"><a class="butAction butActionClone" href="' . dolBuildUrl(DOL_URL_ROOT."/compta/bank/various_payment/card.php", ['id' => $object->id, 'action' => 'clone'], true).'">'.$langs->trans("ToClone") . "</a></div>";
 	}
 
 	// Delete
