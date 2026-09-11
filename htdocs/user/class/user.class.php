@@ -12,7 +12,7 @@
  * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2018		charlene Benke			<charlie@patas-monkey.com>
  * Copyright (C) 2018-2021	Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2019-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2019-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2019		Abbes Bahfir			<dolipar@dolipar.org>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Lenin Rivas				<lenin.rivas777@gmail.com>
@@ -661,7 +661,7 @@ class User extends CommonObject
 				$this->pass_indatabase_crypted = $obj->pass_crypted;
 				$this->pass = $obj->pass;
 				$this->pass_temp = $obj->pass_temp;
-				$this->datelastpassvalidation = $obj->datelastpassvalidation;
+				$this->datelastpassvalidation = $this->db->jdate($obj->datelastpassvalidation);
 				$this->api_key = dolDecrypt($obj->api_key);
 
 				$this->address = $obj->address;

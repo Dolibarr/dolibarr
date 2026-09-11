@@ -7,7 +7,7 @@
  * Copyright (C) 2009-2017	Regis Houssin				<regis.houssin@inodbox.com>
  * Copyright (C) 2014-2018	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2015		Marcos García				<marcosgdf@gmail.com>
- * Copyright (C) 2015-2025  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2015-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2015		Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016		Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2018-2019	Thibault FOUCART			<support@ptibogxiv.net>
@@ -810,6 +810,10 @@ class Adherent extends CommonObject
 		// Clean parameters
 		$this->lastname = trim($this->lastname) ? trim($this->lastname) : trim($this->lastname);
 		$this->firstname = trim($this->firstname) ? trim($this->firstname) : trim($this->firstname);
+		// civility_code is the reference property. Fall back to the deprecated civility_id alias only when civility_code was not set by the caller.
+		if (empty($this->civility_code) && !empty($this->civility_id)) {
+			$this->civility_code = $this->civility_id;
+		}
 		if (isset($this->gender)) {
 			$this->gender = trim($this->gender);
 		}
@@ -835,7 +839,7 @@ class Adherent extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET";
 		$sql .= " ref = '".$this->db->escape($this->ref)."'";
 		$sql .= ", ref_ext = ".(empty($this->ref_ext) ? "null" : "'".$this->db->escape($this->ref_ext)."'");
-		$sql .= ", civility = ".($this->civility_id ? "'".$this->db->escape($this->civility_id)."'" : "null");
+		$sql .= ", civility = ".($this->civility_code ? "'".$this->db->escape($this->civility_code)."'" : "null");
 		$sql .= ", firstname = ".($this->firstname ? "'".$this->db->escape($this->firstname)."'" : "null");
 		$sql .= ", lastname = ".($this->lastname ? "'".$this->db->escape($this->lastname)."'" : "null");
 		$sql .= ", gender = ".($this->gender != -1 ? "'".$this->db->escape($this->gender)."'" : "null"); // 'man' or 'woman'
@@ -961,7 +965,7 @@ class Adherent extends CommonObject
 						}
 
 						$luser->ref = $this->ref;
-						$luser->civility_id = $this->civility_id;
+						$luser->civility_code = $this->civility_code;
 						$luser->firstname = $this->firstname;
 						$luser->lastname = $this->lastname;
 						$luser->gender = $this->gender;
