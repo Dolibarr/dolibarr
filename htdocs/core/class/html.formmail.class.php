@@ -883,7 +883,7 @@ class FormMail extends Form
 
 				// CC
 				if (!empty($this->withtocc) || is_array($this->withtocc)) {
-					$out .= $this->getHtmlForCc();
+					$out .= getDolGlobalString('MAIL_ENABLE_FREETAG_RECIPIENT_INPUT') ? $this->getHtmlForCcNew() : $this->getHtmlForCc();
 				}
 
 				// To User cc
@@ -1488,6 +1488,39 @@ class FormMail extends Form
 				$out .= $form->multiselectarray("receivercc", $tmparray, $withtoccselected, 0, 0, 'inline-block minwidth500', 0, 0);
 			}
 		}
+		$out .= "</td></tr>\n";
+		return $out;
+	}
+
+	/**
+	 * get html For CC, using a single select2 combo that also accepts free-typed "Name <email>" tags
+	 * (used instead of getHtmlForCc() when MAIL_ENABLE_FREETAG_RECIPIENT_INPUT is on)
+	 *
+	 * @return string html
+	 */
+	public function getHtmlForCcNew()
+	{
+		global $langs, $form;
+
+		$out = '<tr><td>';
+		$out .= $form->textwithpicto($langs->trans("MailCC"), $langs->trans("YouCanUseFreeEmailsForRecipients"));
+		$out .= '</td><td>';
+
+		if ($this->withtoccreadonly) {
+			$out .= (!is_array($this->withtocc) && !is_numeric($this->withtocc)) ? $this->withtocc : "";
+			$out .= "</td></tr>\n";
+			return $out;
+		}
+
+		$tmparray = is_array($this->withtocc) ? $this->withtocc : array();
+		$keyval = (GETPOST("sendtocc", "alpha") ? GETPOST("sendtocc", "alpha") : ((!is_array($this->withtocc) && !is_numeric($this->withtocc)) ? $this->withtocc : ''));
+		if ($keyval !== '' && !array_key_exists($keyval, $tmparray)) {
+			$tmparray[$keyval] = $keyval;
+		}
+
+		$withtoccselected = GETPOST("receivercc", 'array');
+
+		$out .= $this->getHtmlForFreetagRecipient('receivercc', $tmparray, $withtoccselected);
 		$out .= "</td></tr>\n";
 		return $out;
 	}

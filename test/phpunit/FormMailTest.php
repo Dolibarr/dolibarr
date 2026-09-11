@@ -82,4 +82,26 @@ class FormMailTest extends CommonClassTest
 
 		$this->assertStringNotContainsString('createTag', $out, 'testGetHtmlForToOldHasNoFreetagScript1');
 	}
+
+	/**
+	 * testGetHtmlForCcNewRendersFreetagSelect2
+	 *
+	 * @return void
+	 */
+	public function testGetHtmlForCcNewRendersFreetagSelect2()
+	{
+		global $db, $form;
+		$db = $this->savdb;
+		$form = new Form($db);
+
+		$fm = new FormMail($db);
+		$fm->withtocc = array(7 => 'Bob Roe <bob@example.com>');
+
+		$out = $fm->getHtmlForCcNew();
+		print __METHOD__." out=".$out."\n";
+
+		$this->assertStringContainsString('name="receivercc[]"', $out, 'testGetHtmlForCcNewRendersFreetagSelect21');
+		$this->assertStringContainsString('tags: true', $out, 'testGetHtmlForCcNewRendersFreetagSelect22');
+		$this->assertStringContainsString('Bob Roe (bob@example.com)', $out, 'testGetHtmlForCcNewRendersFreetagSelect23');
+	}
 }
