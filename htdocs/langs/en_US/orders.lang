@@ -216,5 +216,5 @@ SupplierOrderDeletion = Supplier order %s Deletion
 OrderStatusMakeOperationForbidden = Order status forbidden for this operation.
 CreateRemoteOrder=Create remote order
 ErrorRefCustomerAlreadyUsedOnOrder=Customer order reference <b>%s</b> is already used by order <b>%s</b> of this customer.
-CheckDuplicateRefCustomerOnOrders=Refuse a customer order reference already used
-CheckDuplicateRefCustomerOnOrdersHelp=Refuse to save a customer order when its customer order reference is already used by another order of the same third party. Same control as the one supplier invoices get from their unique index on the supplier reference.
+AllowDuplicateRefCustomerOnOrders=Allow a customer order reference already used
+AllowDuplicateRefCustomerOnOrdersHelp=Allow to save a customer order when its customer order reference is already used by another order of the same third party. Disabled by default, so the reference gets the same control as the one supplier invoices get from their unique index on the supplier reference.

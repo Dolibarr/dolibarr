@@ -714,11 +714,11 @@ if (isModEnabled('invoice')) {
 	print '</td></tr>';
 }
 
-// Refuse a customer reference already used by another order of the same third party
-print '<tr class="oddeven"><td>'.$langs->trans("CheckDuplicateRefCustomerOnOrders").'&nbsp;';
-print $form->textwithpicto('', $langs->trans("CheckDuplicateRefCustomerOnOrdersHelp"), 1, 'help').'</td>';
+// Allow a customer reference already used by another order of the same third party
+print '<tr class="oddeven"><td>'.$langs->trans("AllowDuplicateRefCustomerOnOrders").'&nbsp;';
+print $form->textwithpicto('', $langs->trans("AllowDuplicateRefCustomerOnOrdersHelp"), 1, 'help').'</td>';
 print '<td class="left" colspan="2">';
-print ajax_constantonoff('ORDER_CHECK_DUPLICATE_REF_CLIENT');
+print ajax_constantonoff('ORDER_ALLOW_DUPLICATE_REF_CLIENT');
 print '</td></tr>';
 
 // Notifications
