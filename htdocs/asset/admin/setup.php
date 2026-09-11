@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2017  Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2024  Alexandre Spangaro   <alexandre@inovea-conseil.com>
  * Copyright (C) 2024-2026	MDW                  <mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France      <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,6 +65,9 @@ foreach (getAssetDepreciationDayCountConventions() as $conventioncode => $conven
 	$arrayofdaycountconventions[$conventioncode] = $langs->trans($conventionlabelkey);
 }
 
+/**
+ * @var array<string,array{type:string,enabled:int,arrayofkeyval?:array<int|string,string>,default?:string,css?:string}> $arrayofparameters
+ */
 $arrayofparameters = array(
 	'ASSET_ACCOUNTANCY_CATEGORY' => array('type' => 'accountancy_category', 'enabled' => 1),
 	'ASSET_DEPRECIATION_DAY_COUNT_CONVENTION' => array('type' => 'select', 'arrayofkeyval' => $arrayofdaycountconventions, 'default' => getAssetDepreciationDayCountConvention(), 'css' => 'minwidth300', 'enabled' => 1),
