@@ -1345,16 +1345,16 @@ class Form
 	 */
 	private function getPhoneInputFieldJs($htmlname, $codename)
 	{
-		$hiddenId = dol_escape_js($htmlname);
-		$inputId = dol_escape_js($htmlname).'_input';
-		$selectId = 'select'.dol_escape_js($codename);
+		$hiddenId = dol_escape_js($htmlname);  // TODO: Not the correct method
+		$inputId = dol_escape_js($htmlname).'_input';  // Correctly quoted with '' below @phan-suppress-current-line FunctionMissingSingleQuoteWrapping
+		$selectId = 'select'.dol_escape_js($codename);  // Correctly quoted with '' below @phan-suppress-current-line FunctionMissingSingleQuoteWrapping
 
 		$out = "\n".'<script type="text/javascript">'."\n";
 		$out .= 'jQuery(document).ready(function() {'."\n";
 		$out .= '	function syncPhoneField_'.$hiddenId.'() {'."\n";
-		$out .= '		var selectEl = jQuery("#'.$selectId.'");'."\n";
+		$out .= '		var selectEl = jQuery(\'#'.$selectId.'\');'."\n";
 		$out .= '		var code = selectEl.val() || "";'."\n";
-		$out .= '		var number = (jQuery("#'.$inputId.'").val() || "").replace(/[^0-9]/g, "");'."\n";
+		$out .= '		var number = (jQuery(\'#'.$inputId.'\').val() || "").replace(/[^0-9]/g, "");'."\n";
 		$out .= '		if (code && number) {'."\n";
 		$out .= '			var selOpt = selectEl[0] && selectEl[0].selectedOptions && selectEl[0].selectedOptions[0];'."\n";
 		$out .= '			var trunkPrefix = selOpt ? (selOpt.getAttribute("data-trunk-prefix") || "") : "";'."\n";
@@ -1368,8 +1368,8 @@ class Form
 		$out .= '			jQuery("#'.$hiddenId.'").val("");'."\n";
 		$out .= '		}'."\n";
 		$out .= '	}'."\n";
-		$out .= '	jQuery("#'.$selectId.'").on("change", function() { syncPhoneField_'.$hiddenId.'(); });'."\n";
-		$out .= '	jQuery("#'.$inputId.'").on("input change", function() { syncPhoneField_'.$hiddenId.'(); });'."\n";
+		$out .= '	jQuery(\'#'.$selectId.'\').on("change", function() { syncPhoneField_'.$hiddenId.'(); });'."\n";
+		$out .= '	jQuery(\'#'.$inputId.'\').on("input change", function() { syncPhoneField_'.$hiddenId.'(); });'."\n";
 		$out .= '});'."\n";
 		$out .= '</script>'."\n";
 
@@ -1394,7 +1394,7 @@ class Form
 
 		$out = "\n".'<script type="text/javascript">'."\n";
 		$out .= 'jQuery(document).ready(function() {'."\n";
-		$out .= '	jQuery("#'.dol_escape_js($countrySelectorId).'").on("change", function() {'."\n";
+		$out .= '	jQuery(\'#'.dol_escape_js($countrySelectorId).'\').on("change", function() {'."\n";
 		$out .= '		var country_id = jQuery(this).val();'."\n";
 		$out .= '		if (country_id) {'."\n";
 		$out .= '			jQuery.getJSON("'.DOL_URL_ROOT.'/core/ajax/getphonecode.php", {country_id: country_id, token: "'.currentToken().'"}, function(data) {'."\n";
@@ -6963,7 +6963,7 @@ class Form
 					modal: true,
 					closeOnEscape: false,
 					buttons: {
-						"' . dol_escape_js($langs->transnoentities($labelbuttonyes)) . '": function() {
+						\'' . dol_escape_js($langs->transnoentities($labelbuttonyes)) . '\': function() {
 							var options = "token=' . urlencode(newToken()) . '";
 							var inputok = ' . json_encode($inputok) . ';	/* List of fields into form */
 							var page = \'' . dol_escape_js(!empty($page) ? $page : '') . '\';
@@ -7001,11 +7001,11 @@ class Form
 							}
 							$(this).dialog("close");
 						},
-						"' . dol_escape_js($langs->transnoentities($labelbuttonno)) . '": function() {
+						\'' . dol_escape_js($langs->transnoentities($labelbuttonno)) . '\': function() {
 							var options = "token=' . urlencode(newToken()) . '";
 							var inputko = ' . json_encode($inputko) . ';	/* List of fields into form */
-							var page = "' . dol_escape_js(!empty($page) ? $page : '') . '";
-							var pageno="' . dol_escape_js(!empty($pageno) ? $pageno : '') . '";
+							var page = \'' . dol_escape_js(!empty($page) ? $page : '') . '\';
+							var pageno=\'' . dol_escape_js(!empty($pageno) ? $pageno : '') . '\';
 							if (inputko.length > 0) {
 								$.each(inputko, function(i, inputname) {
 									var more = "";
@@ -8578,7 +8578,7 @@ class Form
 						}
 						// Note: We don't need monthNames, monthNamesShort, dayNames, dayNamesShort, dayNamesMin, they are set globally on datepicker component in lib_head.js.php
 						if (!getDolGlobalString('MAIN_POPUP_CALENDAR_ON_FOCUS')) {
-							$buttonImage = $calendarpicto ?: DOL_URL_ROOT . "/theme/" . dol_escape_js($conf->theme) . "/img/object_calendarday.png";
+							$buttonImage = $calendarpicto ?: DOL_URL_ROOT . "/theme/" . dol_escape_js($conf->theme) . "/img/object_calendarday.png";  // Correctly wrapped in '' below @phan-suppress-curren-line FunctionMissingSingleQuoteWrapping
 							$retstring .= "
 								showOn: 'button',	/* both has problem with autocompletion */
 								buttonImage: '" . $buttonImage . "',
@@ -12946,7 +12946,7 @@ class Form
 		$ret .= '<script>
 			$(document).ready(function() {
 				$("#value-selector").select2({
-					placeholder: "' . dol_escape_js($langs->trans('Value')) . '"
+					placeholder: \'' . dol_escape_js($langs->trans('Value')) . '\'
 				});
 				$("#value-selector").hide();
 				$("#value-selector").next(".select2-container").hide();

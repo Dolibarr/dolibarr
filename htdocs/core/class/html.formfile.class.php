@@ -9,7 +9,7 @@
  * Copyright (C) 2015		Bahfir Abbes		<bafbes@gmail.com>
  * Copyright (C) 2016-2017	Ferran Marcet		<fmarcet@2byte.es>
  * Copyright (C) 2019-2025  Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -536,13 +536,13 @@ class FormFile
 						{
 							jQuery(\'#'.$modulepart.'_table\').hide();
 							jQuery(\'#togglemassfilesarea\').attr("ref", "hidden");
-							jQuery(\'#togglemassfilesarea\').text("('.dol_escape_js($langs->trans("Show")).')");
+							jQuery(\'#togglemassfilesarea\').text(\'('.dol_escape_js($langs->trans("Show")).')\');
 						}
 						else
 						{
 							jQuery(\'#'.$modulepart.'_table\').show();
 							jQuery(\'#togglemassfilesarea\').attr("ref","shown");
-							jQuery(\'#togglemassfilesarea\').text("('.dol_escape_js($langs->trans("Hide")).')");
+							jQuery(\'#togglemassfilesarea\').text(\'('.dol_escape_js($langs->trans("Hide")).')\');
 						}
 						return false;
 					});

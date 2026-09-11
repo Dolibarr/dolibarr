@@ -317,7 +317,7 @@ class DolEditor
 
 													/* If we found the attribute required on source div, we remove it (not compatible with ckeditor) */
 													/* Disabled, because attribute "required" should never be used on fields for doleditor */
-													/* jQuery("#'.dol_escape_js($this->htmlname).'").attr("required", false); */
+													/* jQuery(\''.dol_escape_js($this->htmlname).'\').attr("required", false); */
 
                                                     // Output paragraphs as <p>Text</p>.
                                                     this.dataProcessor.writer.setRules( \'p\', {
@@ -365,16 +365,16 @@ class DolEditor
 				$out .= '		console.error("TinyMCE library not loaded. Check that .../includes/tinymce/tinymce/tinymce.min.js exists and FCKEDITOR_EDITORNAME=tinymce.");'."\n";
 				$out .= '		return;'."\n";
 				$out .= '	}'."\n";
-				$out .= '	var toolbarName = "'.dol_escape_js($this->toolbarname).'";'."\n";
+				$out .= '	var toolbarName = \"'.dol_escape_js($this->toolbarname).'\';'."\n";
 				$out .= '	var toolbars = (window.dolTinymceToolbars || {});'."\n";
 				$out .= '	var toolbarStr = toolbars[toolbarName] || toolbars["dolibarr_details"] || "undo redo | bold italic | link | code";'."\n";
 				$out .= '	var pluginsStr = (typeof window.dolTinymcePluginsFor === "function") ? window.dolTinymcePluginsFor(toolbarName) : "advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen table help wordcount";'."\n";
 				if (!getDolGlobalString('FCKEDITOR_ENABLE_SPECIALCHAR')) {
 					$out .= 'pluginsStr = pluginsStr.replace(\' charmap\', \'\');'."\n";
 				}
-				$out .= '	var tinyLang = "'.dol_escape_js($langs->defaultlang).'";'."\n";
+				$out .= '	var tinyLang = \''.dol_escape_js($langs->defaultlang).'\';'."\n";
 				$out .= '	var tinyConf = {'."\n";
-				$out .= '		selector: "textarea#'.dol_escape_js($this->htmlname).'",'."\n";
+				$out .= '		selector: \'textarea#'.dol_escape_js($this->htmlname).'\','."\n";
 				$out .= '		toolbar: toolbarStr,'."\n";
 				$out .= '		plugins: pluginsStr,'."\n";
 				$out .= '		menubar: false,'."\n";
@@ -387,9 +387,9 @@ class DolEditor
 				$out .= '		readonly: '.($this->readonly ? 'true' : 'false').','."\n";
 				$out .= '		height: '.((int) $this->height + 80).','."\n";
 				if ($this->width) {
-					$out .= '		width: "'.dol_escape_js($this->width).'",'."\n";
+					$out .= '		width: \''.dol_escape_js($this->width).'\','."\n";
 				}
-				$out .= '		directionality: "'.dol_escape_js(strtolower($langs->trans("DIRECTION")) === 'rtl' ? 'rtl' : 'ltr').'",'."\n";
+				$out .= '		directionality: \''.dol_escape_js(strtolower($langs->trans("DIRECTION")) === 'rtl' ? 'rtl' : 'ltr').'\','."\n";
 				$out .= '		forced_root_block: false,'."\n";		// equivalent of CKEDITOR.ENTER_BR
 				$out .= '		convert_urls: false,'."\n";
 				$out .= '		relative_urls: false,'."\n";
@@ -417,7 +417,7 @@ class DolEditor
 				}
 				$out .= '		setup: function (editor) {'."\n";
 				$out .= '			editor.on("init", function () {'."\n";
-				$out .= '				console.log("tinymce '.dol_escape_js($this->htmlname).' instanceReady");'."\n";
+				$out .= '				console.log(\'tinymce '.dol_escape_js($this->htmlname).' instanceReady\');'."\n";
 				$out .= '			});'."\n";
 				$out .= '		}'."\n";
 				$out .= '	};'."\n";
@@ -532,19 +532,19 @@ class DolEditor
 
 			$out .= 'jQuery(document).ready(function() {';
 			$out .= '	jQuery(".buttonforacesave").click(function() {
-        					console.log("We click on button (with class .buttonforacesave) that must fill ace fields for component '.dol_escape_js($this->htmlname).'");
-        					var aceEditor = window.ace.edit("'.dol_escape_js($this->htmlname).'aceeditorid");
+        					console.log(\'We click on button (with class .buttonforacesave) that must fill ace fields for component '.dol_escape_js($this->htmlname).'\');
+        					var aceEditor = window.ace.edit(\''.dol_escape_js($this->htmlname).'aceeditorid\');
 							if (aceEditor) {
 								var cursorPos = aceEditor.getCursorPosition();
 								//console.log(cursorPos);
 								if (cursorPos) {
-									jQuery("#'.dol_escape_js($this->htmlname).'_x").val(cursorPos.column);
-									jQuery("#'.dol_escape_js($this->htmlname).'_y").val(cursorPos.row);
+									jQuery(\'#'.dol_escape_js($this->htmlname).'_x\').val(cursorPos.column);
+									jQuery(\'#'.dol_escape_js($this->htmlname).'_y\').val(cursorPos.row);
 								}
 								//console.log(aceEditor.getSession().getValue());
 								// Inject content of editor into the original HTML field.
-								jQuery("#'.dol_escape_js($this->htmlname).'").val(aceEditor.getSession().getValue());
-								/*if (jQuery("#'.dol_escape_js($this->htmlname).'").html().length > 0) return true;
+								jQuery(\'#'.dol_escape_js($this->htmlname).'\').val(aceEditor.getSession().getValue());
+								/*if (jQuery(\'#'.dol_escape_js($this->htmlname).'\').html().length > 0) return true;
 								else return false;*/
 								return true;
 							} else {
