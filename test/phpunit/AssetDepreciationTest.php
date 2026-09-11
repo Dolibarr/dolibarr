@@ -351,18 +351,18 @@ class AssetDepreciationTest extends CommonClassTest
 			$conf->global->ASSET_DEPRECIATION_DAY_COUNT_CONVENTION = 'ACT_ACT';
 			$conf->global->ASSET_DEPRECIATION_DURATION_PER_YEAR = '360';
 			$this->assertEquals('ACT_ACT', getAssetDepreciationDayCountConvention());
-	
+
 			// An unknown value is ignored
 			$conf->global->ASSET_DEPRECIATION_DAY_COUNT_CONVENTION = 'ACT_360';
 			$this->assertEquals('THIRTY_360', getAssetDepreciationDayCountConvention());
-	
+
 			// Backward compatibility with the deprecated setup
 			$conf->global->ASSET_DEPRECIATION_DAY_COUNT_CONVENTION = '';
 			$conf->global->ASSET_DEPRECIATION_DURATION_PER_YEAR = '360';
 			$this->assertEquals('THIRTY_360', getAssetDepreciationDayCountConvention());
 			$conf->global->ASSET_DEPRECIATION_DURATION_PER_YEAR = '365';
 			$this->assertEquals('ACT_365', getAssetDepreciationDayCountConvention());
-	
+
 			// Nothing set up: the country of the company decides
 			$conf->global->ASSET_DEPRECIATION_DURATION_PER_YEAR = '';
 			$mysoc->country_code = 'FR';
