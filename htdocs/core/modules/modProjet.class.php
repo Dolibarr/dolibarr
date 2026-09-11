@@ -125,6 +125,13 @@ class modProjet extends DolibarrModules
 				"",
 				0,
 			],
+			[
+				"PROJECT_LEAD_ADDON",
+				"chaine",
+				"mod_lead_simple",
+				"Addon to manage opportunity (lead) reference numbering",
+				0,
+			],
 		];
 
 		// Boxes

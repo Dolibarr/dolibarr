@@ -196,7 +196,7 @@ if (empty($reshook)) {
 			$error++;
 		}
 		if (!GETPOST('title')) {
-			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("ProjectLabel")), null, 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
 			$error++;
 		}
 
@@ -311,7 +311,7 @@ if (empty($reshook)) {
 		}
 		if (!GETPOST("title")) {
 			$error++;
-			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("ProjectLabel")), null, 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
 		}
 
 		$db->begin();
@@ -409,7 +409,7 @@ if (empty($reshook)) {
 
 		// Check if we must change status of project
 		if (GETPOST('closeproject')) {
-			$resclose = $object->setClose($user);
+			$resclose = $object->setClose($user, (int) $object->opp_status);
 			if ($resclose < 0) {
 				$error++;
 				setEventMessages($langs->trans("FailedToCloseProject").':'.$object->error, $object->errors, 'errors');
@@ -534,9 +534,10 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'confirm_close' && $confirm == 'yes' && $permissiontoadd) {
-		$result = $object->setClose($user);
+		$result = $object->setClose($user, GETPOSTINT('opp_status'));
 		if ($result <= 0) {
-			setEventMessages($object->error, $object->errors, 'errors');
+			$langs->load("errors");
+			setEventMessages($langs->trans($object->error), $object->errors, 'errors');
 		}
 	}
 
@@ -684,6 +685,12 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 
 	$defaultref = '';
 	$modele = getDolGlobalString('PROJECT_ADDON', 'mod_project_simple');
+	// Suggest an opportunity reference (OPP) when the opportunity flag is on. Mirror the usage_opportunity
+	// checkbox default below (checked unless the request explicitly passes a falsy value).
+	$usageopportunityforref = GETPOSTISSET('usage_opportunity') ? GETPOSTINT('usage_opportunity') : 1;
+	if (getDolGlobalInt('PROJECT_USE_OPPORTUNITIES') >= 1 && $usageopportunityforref) {
+		$modele = getDolGlobalString('PROJECT_LEAD_ADDON', 'mod_lead_simple');
+	}
 
 	// Search template files
 	$file = '';
@@ -748,14 +755,19 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 						if (jQuery("#usage_opportunity").prop("checked")) {
 							console.log("Show opportunities fields");
 							jQuery(".classuseopportunity").show();
+							jQuery(".classnotuseopportunity").hide();
 						} else {
 							console.log("Hide opportunities fields "+jQuery("#usage_opportunity").prop("checked"));
 							jQuery(".classuseopportunity").hide();
+							jQuery(".classnotuseopportunity").show();
 						}
 					});
 					';
 			if (GETPOSTISSET('usage_opportunity') && !GETPOST('usage_opportunity')) {
 				print 'jQuery(".classuseopportunity").hide();';
+			}
+			if (GETPOST('usage_opportunity')) {
+				print 'jQuery(".classnotuseopportunity").hide();';
 			}
 			print '});';
 			print '</script>';
@@ -894,7 +906,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 	}
 
 	// Budget
-	print '<tr><td>'.$langs->trans("Budget").'</td>';
+	print '<tr class="classnotuseopportunity"><td>'.$langs->trans("Budget").'</td>';
 	print '<td><input class="width75 right" type="text" name="budget_amount" value="'.dol_escape_htmltag(GETPOSTISSET('budget_amount') ? GETPOST('budget_amount') : '').'">';
 	print ' '.$langs->getCurrencySymbol($conf->currency);
 	print '</td>';
@@ -1039,7 +1051,18 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 	// Confirmation close
 	if ($action == 'close') {
 		$text = $langs->trans("ConfirmCloseAProject");
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("CloseAProject"), $text, "confirm_close", '', '', 1);
+		$formquestion = array();
+		// An opportunity must be marked WON or LOST on close: only offer those two statuses, with no
+		// preselection so the user makes an explicit choice (the server also enforces this in setClose()).
+		if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES') && !empty($object->usage_opportunity)) {
+			$formquestion[] = array(
+				'type' => 'other',
+				'name' => 'opp_status',
+				'label' => $langs->trans("OpportunityStatus"),
+				'value' => $formproject->selectOpportunityStatus('opp_status', -1, 1, 0, 0, 0, '', 0, 0, 1)
+			);
+		}
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("CloseAProject"), $text, "confirm_close", $formquestion, '', 1);
 	}
 	// Confirmation reopen
 	if ($action == 'reopen') {
@@ -1300,12 +1323,14 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 			print '</tr>';
 		}
 
-		// Budget
-		print '<tr><td>'.$langs->trans("Budget").'</td>';
-		print '<td><input class="width75 right marginright2" type="text" name="budget_amount" value="'.(GETPOSTISSET('budget_amount') ? GETPOST('budget_amount') : (strcmp($object->budget_amount, '') ? price2num($object->budget_amount) : '')).'">';
-		print '<span class="opacitymedium">'.$langs->getCurrencySymbol($conf->currency).'</span>';
-		print '</td>';
-		print '</tr>';
+		// Budget (not relevant for opportunities)
+		if (empty($object->usage_opportunity)) {
+			print '<tr><td>'.$langs->trans("Budget").'</td>';
+			print '<td><input class="width75 right marginright2" type="text" name="budget_amount" value="'.(GETPOSTISSET('budget_amount') ? GETPOST('budget_amount') : (strcmp($object->budget_amount, '') ? price2num($object->budget_amount) : '')).'">';
+			print '<span class="opacitymedium">'.$langs->getCurrencySymbol($conf->currency).'</span>';
+			print '</td>';
+			print '</tr>';
+		}
 
 		// Date project
 		print '<tr><td>'.$langs->trans("Date").(isModEnabled('eventorganization') ? ' <span class="classuseorganizeevent">('.$langs->trans("Project").')</span>' : '').'</td><td>';
@@ -1486,12 +1511,14 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 			print '</td></tr>';
 		}
 
-		// Budget
-		print '<tr><td>'.$langs->trans("Budget").'</td><td>';
-		if (!is_null($object->budget_amount) && strcmp($object->budget_amount, '')) {
-			print '<span class="amount">'.price($object->budget_amount, 0, $langs, 1, 0, 0, $conf->currency).'</span>';
+		// Budget (not relevant for opportunities)
+		if (empty($object->usage_opportunity)) {
+			print '<tr><td>'.$langs->trans("Budget").'</td><td>';
+			if (!is_null($object->budget_amount) && strcmp($object->budget_amount, '')) {
+				print '<span class="amount">'.price($object->budget_amount, 0, $langs, 1, 0, 0, $conf->currency).'</span>';
+			}
+			print '</td></tr>';
 		}
-		print '</td></tr>';
 
 		// Date start - end project
 		print '<tr><td>'.$langs->trans("Dates").'</td><td>';
@@ -1724,8 +1751,12 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 			// Close
 			if ($object->status == Project::STATUS_VALIDATED && $user->hasRight('projet', 'creer')) {
 				if ($userWrite > 0) {
-					//print dolGetButtonAction('', $langs->trans('Close'), 'default', $_SERVER["PHP_SELF"].'?action=close&amp;token='.newToken().'&amp;id='.$object->id, '');
-					print dolGetButtonAction('', $langs->trans('Close'), 'default', $_SERVER["PHP_SELF"].'?action=confirm_close&confirm=yes&token='.newToken().'&id='.$object->id, '');
+					// Opportunities go through the close dialog to pick the final WON/LOST status; plain projects close directly.
+					if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES') && !empty($object->usage_opportunity)) {
+						print dolGetButtonAction('', $langs->trans('Close'), 'default', $_SERVER["PHP_SELF"].'?action=close&token='.newToken().'&id='.$object->id, '');
+					} else {
+						print dolGetButtonAction('', $langs->trans('Close'), 'default', $_SERVER["PHP_SELF"].'?action=confirm_close&confirm=yes&token='.newToken().'&id='.$object->id, '');
+					}
 				} else {
 					print dolGetButtonAction($langs->trans('NotOwnerOfProject'), $langs->trans('Close'), 'default', $_SERVER['PHP_SELF']. '#', '', false);
 				}
