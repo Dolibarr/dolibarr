@@ -55,9 +55,19 @@ $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
 $type = 'asset';
 
+// Day count conventions available to compute the prorata temporis of a depreciation.
+// Note: the deprecated setup ASSET_DEPRECIATION_DURATION_PER_YEAR is not editable anymore. It let a
+// count of real calendar days be divided by 360, which is not a convention but a calculation error
+// (it overestimates every partial period by about 1.39%). It is still read to deduce the convention
+// of an installation that has never saved this page (see getAssetDepreciationDayCountConvention()).
+$arrayofdaycountconventions = array();
+foreach (getAssetDepreciationDayCountConventions() as $conventioncode => $conventionlabelkey) {
+	$arrayofdaycountconventions[$conventioncode] = $langs->trans($conventionlabelkey);
+}
+
 $arrayofparameters = array(
 	'ASSET_ACCOUNTANCY_CATEGORY' => array('type' => 'accountancy_category', 'enabled' => 1),
-	'ASSET_DEPRECIATION_DURATION_PER_YEAR' => array('type' => 'string', 'css' => 'minwidth200', 'enabled' => 1),
+	'ASSET_DEPRECIATION_DAY_COUNT_CONVENTION' => array('type' => 'select', 'arrayofkeyval' => $arrayofdaycountconventions, 'default' => getAssetDepreciationDayCountConvention(), 'css' => 'minwidth300', 'enabled' => 1),
 	//'ASSET_MYPARAM2'=>array('type'=>'textarea','enabled'=>1),
 	//'ASSET_MYPARAM3'=>array('type'=>'category:'.Categorie::TYPE_CUSTOMER, 'enabled'=>1),
 	//'ASSET_MYPARAM4'=>array('type'=>'emailtemplate:thirdparty', 'enabled'=>1),
@@ -479,7 +489,15 @@ if ($action == 'edit') {
 			print '<span id="helplink'.$constname.'" class="spanforparamtooltip">'.$form->textwithpicto($langs->trans($constname), $tooltiphelp, 1, 'info', '', 0, 3, 'tootips'.$constname).'</span>';
 			print '</td><td>';
 
-			if ($val['type'] == 'textarea') {
+			if ($val['type'] == 'select') {
+				$selected = getDolGlobalString($constname, isset($val['default']) ? $val['default'] : '');
+				if (!isset($val['arrayofkeyval'][$selected])) {
+					// A value stored outside the list (forged post, deprecated setup) must show the value
+					// really in use, not silently the first entry of the list
+					$selected = isset($val['default']) ? $val['default'] : '';
+				}
+				print $form->selectarray($constname, $val['arrayofkeyval'], $selected, 0, 0, 0, '', 0, 0, 0, '', (empty($val['css']) ? 'minwidth200' : $val['css']));
+			} elseif ($val['type'] == 'textarea') {
 				print '<textarea class="flat" name="'.$constname.'" id="'.$constname.'" cols="50" rows="5" wrap="soft">' . "\n";
 				print getDolGlobalString($constname);
 				print "</textarea>\n";
@@ -593,7 +611,10 @@ if ($action == 'edit') {
 				print $form->textwithpicto($langs->trans($constname), $tooltiphelp);
 				print '</td><td>';
 
-				if ($val['type'] == 'textarea') {
+				if ($val['type'] == 'select') {
+					$selected = getDolGlobalString($constname, isset($val['default']) ? $val['default'] : '');
+					print isset($val['arrayofkeyval'][$selected]) ? $val['arrayofkeyval'][$selected] : dol_escape_htmltag($selected);
+				} elseif ($val['type'] == 'textarea') {
 					print dol_nl2br(getDolGlobalString($constname));
 				} elseif ($val['type'] == 'html') {
 					print getDolGlobalString($constname);
