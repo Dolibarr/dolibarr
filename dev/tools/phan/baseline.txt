@@ -31,6 +31,7 @@ return [
     'file_suppressions' => [
         'htdocs/admin/remotestore/class/externalModules.class.php' => ['FunctionMissingSingleQuoteWrapping'],
         'htdocs/admin/tools/dolibarr_export.php' => ['FunctionMissingSingleQuoteWrapping'],
+        'htdocs/asset/tpl/depreciation_options_view.tpl.php' => ['PhanUndeclaredGlobalVariable'],
         'htdocs/barcode/codeinit.php' => ['FunctionMissingSingleQuoteWrapping'],
         'htdocs/blockedlog/admin/filecheck.php' => ['FunctionMissingSingleQuoteWrapping'],
         'htdocs/bom/bom_net_needs.php' => ['FunctionMissingSingleQuoteWrapping'],
