@@ -907,7 +907,7 @@ class FormMail extends Form
 
 				// CCC
 				if (!empty($this->withtoccc) || is_array($this->withtoccc)) {
-					$out .= $this->getHtmlForWithCcc();
+					$out .= getDolGlobalString('MAIL_ENABLE_FREETAG_RECIPIENT_INPUT') ? $this->getHtmlForWithCccNew() : $this->getHtmlForWithCcc();
 				}
 			}
 
@@ -1602,6 +1602,71 @@ class FormMail extends Form
 		if ($showinfobcc) {
 			$out .= ' + '.$showinfobcc;
 		}
+		$out .= "</td></tr>\n";
+		return $out;
+	}
+
+	/**
+	 * get html For WithCCC, using a single select2 combo that also accepts free-typed "Name <email>" tags
+	 * (used instead of getHtmlForWithCcc() when MAIL_ENABLE_FREETAG_RECIPIENT_INPUT is on)
+	 * This information is show when MAIN_EMAIL_USECCC is set.
+	 *
+	 * @return string html
+	 */
+	public function getHtmlForWithCccNew()
+	{
+		global $langs, $form;
+
+		$out = '<tr><td>';
+		$out .= $form->textwithpicto($langs->trans("MailCCC"), $langs->trans("YouCanUseFreeEmailsForRecipients"));
+		$out .= '</td><td>';
+
+		if (!empty($this->withtocccreadonly)) {
+			$out .= (!is_array($this->withtoccc) && !is_numeric($this->withtoccc)) ? $this->withtoccc : "";
+		} else {
+			$tmparray = is_array($this->withtoccc) ? $this->withtoccc : array();
+			$keyval = (GETPOSTISSET("sendtoccc") ? GETPOST("sendtoccc", "alpha") : ((!is_array($this->withtoccc) && !is_numeric($this->withtoccc)) ? $this->withtoccc : ''));
+			if ($keyval !== '' && !array_key_exists($keyval, $tmparray)) {
+				$tmparray[$keyval] = $keyval;
+			}
+
+			$withtocccselected = GETPOST("receiverccc", 'array');
+
+			$out .= $this->getHtmlForFreetagRecipient('receiverccc', $tmparray, $withtocccselected);
+		}
+
+		$showinfobcc = '';
+		if (getDolGlobalString('MAIN_MAIL_AUTOCOPY_PROPOSAL_TO') && !empty($this->param['models']) && $this->param['models'] == 'propal_send') {
+			$showinfobcc = getDolGlobalString('MAIN_MAIL_AUTOCOPY_PROPOSAL_TO');
+		}
+		if (getDolGlobalString('MAIN_MAIL_AUTOCOPY_ORDER_TO') && !empty($this->param['models']) && $this->param['models'] == 'order_send') {
+			$showinfobcc = getDolGlobalString('MAIN_MAIL_AUTOCOPY_ORDER_TO');
+		}
+		if (getDolGlobalString('MAIN_MAIL_AUTOCOPY_INVOICE_TO') && !empty($this->param['models']) && $this->param['models'] == 'facture_send') {
+			$showinfobcc = getDolGlobalString('MAIN_MAIL_AUTOCOPY_INVOICE_TO');
+		}
+		if (getDolGlobalString('MAIN_MAIL_AUTOCOPY_SUPPLIER_PROPOSAL_TO') && !empty($this->param['models']) && $this->param['models'] == 'supplier_proposal_send') {
+			$showinfobcc = getDolGlobalString('MAIN_MAIL_AUTOCOPY_SUPPLIER_PROPOSAL_TO');
+		}
+		if (getDolGlobalString('MAIN_MAIL_AUTOCOPY_SUPPLIER_ORDER_TO') && !empty($this->param['models']) && $this->param['models'] == 'order_supplier_send') {
+			$showinfobcc = getDolGlobalString('MAIN_MAIL_AUTOCOPY_SUPPLIER_ORDER_TO');
+		}
+		if (getDolGlobalString('MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO') && !empty($this->param['models']) && $this->param['models'] == 'invoice_supplier_send') {
+			$showinfobcc = getDolGlobalString('MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO');
+		}
+		if (getDolGlobalString('MAIN_MAIL_AUTOCOPY_PROJECT_TO') && !empty($this->param['models']) && $this->param['models'] == 'project') {	// don't know why there is not '_send' at end of this models name.
+			$showinfobcc = getDolGlobalString('MAIN_MAIL_AUTOCOPY_PROJECT_TO');
+		}
+		if (getDolGlobalString('MAIN_MAIL_AUTOCOPY_SHIPMENT_TO') && !empty($this->param['models']) && $this->param['models'] == 'shipping_send') {
+			$showinfobcc = getDolGlobalString('MAIN_MAIL_AUTOCOPY_SHIPMENT_TO');
+		}
+		if (getDolGlobalString('MAIN_MAIL_AUTOCOPY_RECEPTION_TO') && !empty($this->param['models']) && $this->param['models'] == 'reception_send') {
+			$showinfobcc = getDolGlobalString('MAIN_MAIL_AUTOCOPY_RECEPTION_TO');
+		}
+		if ($showinfobcc) {
+			$out .= ' + '.$showinfobcc;
+		}
+
 		$out .= "</td></tr>\n";
 		return $out;
 	}

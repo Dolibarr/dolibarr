@@ -104,4 +104,28 @@ class FormMailTest extends CommonClassTest
 		$this->assertStringContainsString('tags: true', $out, 'testGetHtmlForCcNewRendersFreetagSelect22');
 		$this->assertStringContainsString('Bob Roe (bob@example.com)', $out, 'testGetHtmlForCcNewRendersFreetagSelect23');
 	}
+
+	/**
+	 * testGetHtmlForWithCccNewRendersFreetagSelect2
+	 *
+	 * @return void
+	 */
+	public function testGetHtmlForWithCccNewRendersFreetagSelect2()
+	{
+		global $db, $form, $conf;
+		$db = $this->savdb;
+		$conf = $this->savconf;
+		$form = new Form($db);
+
+		$fm = new FormMail($db);
+		$fm->withtoccc = array(9 => 'Ada King <ada@example.com>');
+		$fm->param = array();
+
+		$out = $fm->getHtmlForWithCccNew();
+		print __METHOD__." out=".$out."\n";
+
+		$this->assertStringContainsString('name="receiverccc[]"', $out, 'testGetHtmlForWithCccNewRendersFreetagSelect21');
+		$this->assertStringContainsString('tags: true', $out, 'testGetHtmlForWithCccNewRendersFreetagSelect22');
+		$this->assertStringContainsString('Ada King (ada@example.com)', $out, 'testGetHtmlForWithCccNewRendersFreetagSelect23');
+	}
 }
