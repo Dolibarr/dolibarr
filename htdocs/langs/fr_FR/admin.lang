@@ -2921,3 +2921,4 @@ InitEndFlagFile=Initialisation du flag .end pour protéger la fin de la chaîne 
 extModuleConfirmInstallTitle = Confirmer l'installation du module
 extModuleConfirmInstallText=Vous êtes sur le point d'installer le module suivant : :<br><br>%s<br><br><b>Version:</b> %s<br><b>Référence:</b> %s<br><b>Dernière mise à jour:</b> %s<br>
 Install=Installer
+ReInstall=Réinstaller

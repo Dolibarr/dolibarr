@@ -637,12 +637,12 @@ class FunctionsLibTest extends CommonClassTest
 		print __METHOD__." ".$input." result=".$result."\n";
 		$this->assertEquals(0, $result);
 
-		// Note: intentionally not a .mil domain (some CI network environments filter/block .mil DNS
-		// resolution intermittently, which made this assertion flaky without any actual code issue).
-		$input = "microsoft.com";
+		/* Disabled as .mil is blocked on some CI networks
+		$input = "usace.army.mil";
 		$result = isValidMXRecord($input);
 		print __METHOD__." ".$input." result=".$result."\n";
 		$this->assertEquals(1, $result);
+		*/
 	}
 
 	/**
@@ -732,6 +732,48 @@ class FunctionsLibTest extends CommonClassTest
 		$result = dol_buildpath('/google/oauth2callback.php', 3);
 		print __METHOD__." dol_buildpath result=".$result."\n";
 		$this->assertStringStartsWith('http', $result);
+	}
+
+
+	/**
+	 * testDolGetThemeFilePath
+	 *
+	 * @return void
+	 */
+	public function testDolGetThemeFilePath()
+	{
+		global $conf;
+
+		$savtheme = $conf->theme;
+		$savmodulesparts = $conf->modules_parts;
+
+		// A file that exists in the native theme directory is found there
+		$conf->theme = 'eldy';
+		$conf->modules_parts['theme'] = array();
+		$result = dol_getThemeFilePath('theme_vars.inc.php');
+		print __METHOD__." result=".$result."\n";
+		$this->assertSame(DOL_DOCUMENT_ROOT.'/theme/eldy/theme_vars.inc.php', $result, 'Native theme file must be found under DOL_DOCUMENT_ROOT');
+
+		// An explicit theme name can be passed
+		$conf->theme = 'md';
+		$result = dol_getThemeFilePath('theme_vars.inc.php', 'eldy');
+		$this->assertSame(DOL_DOCUMENT_ROOT.'/theme/eldy/theme_vars.inc.php', $result, 'The $theme argument must take precedence over $conf->theme');
+
+		// With no module theme registered, the native path is returned as-is,
+		// without an existence check (historical behaviour, no extra I/O).
+		$conf->theme = 'eldy';
+		$conf->modules_parts['theme'] = array();
+		$result = dol_getThemeFilePath('afilethatdoesnotexist.inc.php');
+		$this->assertSame(DOL_DOCUMENT_ROOT.'/theme/eldy/afilethatdoesnotexist.inc.php', $result, 'With no module theme, the native path is returned unchecked');
+
+		// When a module registers a theme directory, a file missing from every
+		// candidate directory returns an empty string.
+		$conf->modules_parts['theme'] = array('/amodulethatdoesnotexist/');
+		$result = dol_getThemeFilePath('afilethatdoesnotexist.inc.php');
+		$this->assertSame('', $result, 'A missing theme file must return an empty string when a module theme is registered');
+
+		$conf->theme = $savtheme;
+		$conf->modules_parts = $savmodulesparts;
 	}
 
 
@@ -2308,6 +2350,35 @@ class FunctionsLibTest extends CommonClassTest
 
 		$this->assertTrue(is_object($result));
 
+		$hasvariantsmodule = array_key_exists('variants', $conf->modules);
+		$originalvariantsmodule = $hasvariantsmodule ? $conf->modules['variants'] : null;
+
+		try {
+			$conf->modules['variants'] = 1;
+
+			$productattribute = getElementProperties('product_attribute');
+			$this->assertSame('variants', $productattribute['module']);
+			$this->assertSame('variants/class', $productattribute['classpath']);
+			$this->assertSame('ProductAttribute', $productattribute['classfile']);
+			$this->assertSame('ProductAttribute', $productattribute['classname']);
+
+			$productattributevalue = getElementProperties('product_attribute_value');
+			$this->assertSame('variants', $productattributevalue['module']);
+			$this->assertSame('variants/class', $productattributevalue['classpath']);
+			$this->assertSame('ProductAttributeValue', $productattributevalue['classfile']);
+			$this->assertSame('ProductAttributeValue', $productattributevalue['classname']);
+			$this->assertSame('product_attribute', $productattributevalue['parent_element']);
+
+			$this->assertInstanceOf(ProductAttribute::class, fetchObjectByElement(0, 'product_attribute'));
+			$this->assertInstanceOf(ProductAttributeValue::class, fetchObjectByElement(0, 'product_attribute_value'));
+		} finally {
+			if ($hasvariantsmodule) {
+				$conf->modules['variants'] = $originalvariantsmodule;
+			} else {
+				unset($conf->modules['variants']);
+			}
+		}
+
 		return true;
 	}
 
@@ -2712,5 +2783,63 @@ class FunctionsLibTest extends CommonClassTest
 		$this->assertEquals('comm/action/class', $properties['classpath']);
 		$this->assertEquals('actioncomm', $properties['classfile']);
 		$this->assertEquals('Actioncomm', $properties['classname']);
+
+		// Variants elements: the 2nd segment ('attribute') collides with the PHP 8 native
+		// Attribute class, so a wrong resolution here is a fatal TypeError, not a soft failure.
+		$properties = getElementProperties('product_attribute');
+		$this->assertEquals('variants', $properties['module'], 'product_attribute module');
+		$this->assertEquals('variants/class', $properties['classpath'], 'product_attribute classpath');
+		$this->assertEquals('ProductAttribute', $properties['classfile'], 'product_attribute classfile');
+		$this->assertEquals('ProductAttribute', $properties['classname'], 'product_attribute classname');
+		$this->assertEquals('product_attribute', $properties['table_element'], 'product_attribute table_element');
+
+		$properties = getElementProperties('product_attribute_value');
+		$this->assertEquals('ProductAttributeValue', $properties['classname'], 'product_attribute_value classname');
+		$this->assertEquals('variants/class', $properties['classpath'], 'product_attribute_value classpath');
+
+		$properties = getElementProperties('product_attribute_combination');
+		$this->assertEquals('ProductCombination', $properties['classname'], 'product_attribute_combination classname');
+		$this->assertEquals('variants/class', $properties['classpath'], 'product_attribute_combination classpath');
+
+		$properties = getElementProperties('product_attribute_combination2val');
+		$this->assertEquals('ProductCombination2ValuePair', $properties['classname'], 'combination2val classname');
+
+		// The price level class lives inside ProductCombination.class.php
+		$properties = getElementProperties('product_attribute_combination_price_level');
+		$this->assertEquals('ProductCombination', $properties['classfile'], 'price level classfile');
+		$this->assertEquals('ProductCombinationLevel', $properties['classname'], 'price level classname');
+	}
+
+	/**
+	 * testFetchObjectByElementNeverInstantiatesInternalClass
+	 *
+	 * @return void
+	 */
+	public function testFetchObjectByElementNeverInstantiatesInternalClass()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$savmodules = $conf->modules;
+		$conf->modules['variants'] = 'variants';
+
+		// Before the fix, this resolved to the native PHP 8 'Attribute' class and raised
+		// TypeError: Attribute::__construct(): Argument #1 ($flags) must be of type int.
+		$object = fetchObjectByElement(0, 'product_attribute_combination');
+		$this->assertInstanceOf('ProductCombination', $object, 'fetchObjectByElement product_attribute_combination');
+
+		$object = fetchObjectByElement(0, 'product_attribute');
+		$this->assertInstanceOf('ProductAttribute', $object, 'fetchObjectByElement product_attribute');
+
+		// Any unknown element whose subelement is the name of a PHP class reaches the same trap:
+		// the default rules of getElementProperties() build classname from the subelement, so
+		// 'product_error' resolves to the native 'Error' class of an enabled module.
+		$this->assertEquals('Error', getElementProperties('product_error')['classname'], 'product_error resolves to a PHP internal class');
+		$this->assertEquals(-1, fetchObjectByElement(0, 'product_error'), 'a PHP internal class is never instantiated');
+
+		$conf->modules = $savmodules;
 	}
 }

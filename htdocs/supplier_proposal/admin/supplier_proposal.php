@@ -8,7 +8,7 @@
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  * Copyright (C) 2011-2013 Juanjo Menent               <jmenent@2byte.es>
  * Copyright (C) 2015      Jean-François Ferry		   <jfefe@aternatik.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -276,8 +276,8 @@ foreach ($dirmodels as $reldir) {
 		$handle = opendir($dir);
 		if (is_resource($handle)) {
 			while (($file = readdir($handle)) !== false) {
-				if (substr($file, 0, 22) == 'mod_supplier_proposal_' && substr($file, dol_strlen($file) - 3, 3) == 'php') {
-					$file = substr($file, 0, dol_strlen($file) - 4);
+				if (dol_substr($file, 0, 22) == 'mod_supplier_proposal_' && dol_substr($file, dol_strlen($file) - 3, 3) == 'php') {
+					$file = dol_substr($file, 0, dol_strlen($file) - 4);
 
 					require_once $dir.'/'.$file.'.php';
 
@@ -412,8 +412,8 @@ foreach ($dirmodels as $reldir) {
 				foreach ($filelist as $file) {
 					if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file)) {
 						if (file_exists($dir.'/'.$file)) {
-							$name = substr($file, 4, dol_strlen($file) - 16);
-							$classname = substr($file, 0, dol_strlen($file) - 12);
+							$name = dol_substr($file, 4, dol_strlen($file) - 16);
+							$classname = dol_substr($file, 0, dol_strlen($file) - 12);
 
 							require_once $dir.'/'.$file;
 							$module = new $classname($db);

@@ -2131,7 +2131,7 @@ class Expedition extends CommonObject
 
 					// We delete PDFs
 					$ref = dol_sanitizeFileName($this->ref);
-					if (!empty($conf->expedition->dir_output)) {
+					if (!empty($conf->expedition->dir_output) && !empty($ref)) {
 						$dir = $conf->expedition->dir_output . '/sending/' . $ref;
 						$file = $dir . '/' . $ref . '.pdf';
 						if (file_exists($file)) {
@@ -3133,7 +3133,17 @@ class Expedition extends CommonObject
 				// having a lot1/qty=X and lot2/qty=-X, so 0 but we must not loose repartition of different lot.
 				$sqldelete = "DELETE FROM ".$this->db->prefix()."product_stock WHERE reel = 0 AND rowid NOT IN (SELECT fk_product_stock FROM ".$this->db->prefix()."product_batch as pb)";
 				$resqldelete = $this->db->query($sqldelete);
-				// We do not test error, it can fails if there is child in batch details
+				// The NOT IN clause already excludes the rows still referenced by product_batch (the only child FK on
+				// product_stock), so this DELETE can not fail on a child constraint. Any failure is a real error, in
+				// particular a deadlock (1213) that rolls back the whole transaction including the stock movements just
+				// recorded; if we swallowed it, the caller would commit an empty transaction and report a success while
+				// the movements were lost.
+				if (!$resqldelete) {
+					$this->error = $this->db->lasterror();
+					$this->errors[] = $this->db->lasterror();
+					$error++;
+					break;
+				}
 			}
 		} else {
 			$this->error = $this->db->lasterror();
@@ -3240,7 +3250,7 @@ class Expedition extends CommonObject
 				$langs->load("agenda");
 
 				// Loop on each product line to add a stock movement
-				// TODO possibilite d'expedier a partir d'une propale ou autre origine
+				// TODO possibility to ship from a proposal or other origin
 				$sql = "SELECT cd.fk_product, cd.subprice,";
 				$sql .= " ed.rowid, ed.qty, ed.fk_entrepot,";
 				$sql .= " edb.rowid as edbrowid, edb.eatby, edb.sellby, edb.batch, edb.qty as edbqty, edb.fk_origin_stock";

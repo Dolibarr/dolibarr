@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
  * Copyright (C) 2019		Nicolas ZABOURI				<info@inovea-conseil.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2026		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -125,7 +125,10 @@ if ($resql) {
 	 * @var string $badgeStatus8
 	 * @var string $badgeStatus9
 	 */
-	include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+	$theme_vars_file = dol_getThemeFilePath('theme_vars.inc.php');
+	if ($theme_vars_file) {
+		include $theme_vars_file;
+	}
 
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';

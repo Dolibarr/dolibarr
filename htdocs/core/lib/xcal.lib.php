@@ -374,7 +374,10 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 		}
 
 		// Add a tag for some readers (Google / Feed readers) to detect that this is a RSS feed and not a generic XML file
-		fwrite($fichier, '<atom:link href="'.$url.'" rel="self" type="application/rss+xml"/>'."\n");
+		// For Atom link, the & must be &amp; instead of &.
+		$urlforatomlink = $url;
+		$urlforatomlink = preg_replace('/&(?!amp;|lt;|gt;|quot;|apos;)/', '&amp;', $urlforatomlink);
+		fwrite($fichier, '<atom:link href="'.$urlforatomlink.'" rel="self" type="application/rss+xml"/>'."\n");
 
 		foreach ($events_array as $key => $event) {
 			$eventqualified = true;

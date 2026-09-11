@@ -9,7 +9,7 @@
  * Copyright (C) 2015-2024  Alexandre Spangaro          <alexandre@inovea-conseil.com>
  * Copyright (C) 2021       Gauthier VERDOL             <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2026       Charlene Benke              <charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -396,7 +396,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	print '<table class="border centpercent tableforfield">';
 
 	print '<tr><td class="titlefieldmiddle">'.$langs->trans("Login").'</td>';
-	if (!empty($object->ldap_sid) && $object->statut == 0) {
+	if (!empty($object->ldap_sid) && $object->status == 0) {
 		print '<td class="error">';
 		print $langs->trans("LoginAccountDisableInDolibarr");
 		print '</td>';

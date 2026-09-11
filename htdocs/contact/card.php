@@ -158,7 +158,7 @@ if (empty($reshook)) {
 
 	// Create user from contact
 	if ($action == 'confirm_create_user' && $confirm == 'yes' && $user->hasRight('user', 'user', 'creer')) {
-		// Recuperation contact actuel
+		// Retrieve current contact
 		$result = $object->fetch($id);
 
 		if ($result > 0) {
@@ -429,7 +429,8 @@ if (empty($reshook)) {
 						$newfile = $dir.'/'.dol_sanitizeFileName($_FILES['photo']['name']);
 						$result = dol_move_uploaded_file($_FILES['photo']['tmp_name'], $newfile, 1);
 
-						if (!($result > 0)) {
+						// Note: $result is a string when the file was refused and, in PHP 8, such a string compares as greater than 0
+						if (!is_numeric($result) || $result <= 0) {
 							$errors[] = "ErrorFailedToSaveFile";
 						} else {
 							$object->photo = dol_sanitizeFileName($_FILES['photo']['name']);

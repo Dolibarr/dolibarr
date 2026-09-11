@@ -516,7 +516,7 @@ class FactureFournisseur extends CommonInvoice
 			$outputlangs = $langs;
 			$newlang = '';
 
-			if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && isset($this->thirdparty->default_lang)) {
+			if (getDolGlobalInt('MAIN_MULTILANGS') && isset($this->thirdparty->default_lang)) {
 				$newlang = $this->thirdparty->default_lang; // for proposal, order, invoice, ...
 			}
 			if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && property_exists($this, 'default_lang') && isset($this->default_lang)) { // @phan-suppress-current-line PhanUndeclaredProperty
@@ -1367,7 +1367,7 @@ class FactureFournisseur extends CommonInvoice
 	public function insert_discount($idremise)
 	{
 		// phpcs:enable
-		global $conf, $langs;
+		global $langs;
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 		include_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
@@ -2031,7 +2031,7 @@ class FactureFournisseur extends CommonInvoice
 	public function setDraft($user, $idwarehouse = -1, $notrigger = 0)
 	{
 		// phpcs:enable
-		global $conf, $langs;
+		global $langs;
 
 		$error = 0;
 
@@ -2786,7 +2786,7 @@ class FactureFournisseur extends CommonInvoice
 			$now = dol_now();
 
 			$response = new WorkboardResponse();
-			$response->warning_delay = $conf->facture->fournisseur->warning_delay / 60 / 60 / 24;
+			$response->warning_delay = $conf->warning_delays['supplier_invoice'] / 60 / 60 / 24;
 			$response->label = $langs->trans("SupplierBillsToPay");
 			$response->labelShort = $langs->trans("StatusToPay");
 
@@ -2797,7 +2797,6 @@ class FactureFournisseur extends CommonInvoice
 
 			while ($obj = $this->db->fetch_object($resql)) {
 				$facturestatic->date_echeance = $this->db->jdate($obj->datefin);
-				$facturestatic->statut = $obj->status;	// For backward compatibility
 				$facturestatic->status = $obj->status;
 
 				$response->nbtodo++;
@@ -2976,7 +2975,7 @@ class FactureFournisseur extends CommonInvoice
 			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
 			$label = '';
 		} else {
-			$label = implode($this->getTooltipContentArray($params));
+			$label = $this->getTooltipContent($params);
 		}
 
 		$ref = $this->ref;
@@ -3056,7 +3055,7 @@ class FactureFournisseur extends CommonInvoice
 	 */
 	public function getNextNumRef($soc, $mode = 'next')
 	{
-		global $db, $langs, $conf;
+		global $langs, $conf;
 		$langs->load("orders");
 
 		// Clean parameters (if not defined or using deprecated value)
@@ -3245,7 +3244,7 @@ class FactureFournisseur extends CommonInvoice
 	 */
 	public function createFromClone(User $user, $fromid, $invertdetail = 0)
 	{
-		global $conf, $langs, $hookmanager;
+		global $langs, $hookmanager;
 
 		$error = 0;
 

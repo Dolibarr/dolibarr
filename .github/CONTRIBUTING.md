@@ -14,8 +14,9 @@ Default **language here is English**. So please prepare your contributions in En
 2. [Create an issue](https://help.github.com/articles/creating-an-issue). Choose an appropriate title. Prepend appropriately with Bug or Feature Request.
 3. Tell us the version you are using!   (look at  /htdocs/admin/system/dolibarr.php?  and check if you are using the latest version) 
 4. Write a report with as much detail as possible (Use [screenshots](https://help.github.com/articles/issue-attachments) or even screencasts and provide logging and debugging information whenever possible).
-5. Delete unnecessary submissions.
-6. **Check your Message at Preview before submitting.**
+5. One report per issue. If you have several issues, please create several reports.
+6. IMPORTANT: Report the process to reproduce the bug.
+7. **Check your Message at Preview before submitting.**
 
 
 
@@ -27,9 +28,9 @@ Submit code
 This process describes how a Developer can submit code to the project so it can be analyzed and validated by the PR Maintainer (we call this a Pull Request).
 
 Definition:
-- Developer: is the human knowing the development language of the application that wants to change some part of the code by modifying the sources of the project.
-- PR Maintainer: is the human knowing the development language and code who checks that the code submitted for approbation is correct to validate it, in other words, the PR Maintainer is the approbator of commits. 
-- Release Maintainer: is the human that validates that a freeze/beta version is ok to be released officially as a stable version.
+- The Developer: is the human knowing the development language of the application that wants to change some part of the code by modifying the sources of the project.
+- The PR Maintainer: is the human knowing the development language and code who checks that the code submitted for approbation is correct to validate it, in other words, the PR Maintainer is the approbator of commits. 
+- The Release Maintainer: is the human that validates that a freeze/beta version is ok to be released officially as a stable version.
 
 
 ### Basic workflow
@@ -44,16 +45,22 @@ As the Developer:
 6. Commit and push your changes.
 7. [Make a pull request](https://help.github.com/articles/creating-a-pull-request).
 
+If a CI error is thrown, the developer must fix it (The maintener will not process it). This is true even if the CI error is reported an another line of code than the one you modified. This is the principle of solidarity of Dolibarr project.
+
+If a conflict is reported (so PR is not mergeable, status "Mergeable" appear on the PR itself), the developer must fix it too, also if the conflict is not the fault of yourself. Again the principle of solidarity rules.
+
+
 As the PR Maintainer:
 
-7. The PR Maintainer will check and decide if he approves or not the commits. During this step, the PR Maintainer can modify your own code to make it valid for approbation or ask you to make the change yourself. For this the PR Maintainer may add commits to a PR. Depending on the tools used (can be done from github directly or from an IDE), such commits may be done directly after validating your PR (for example to complete it).
+7. The PR Maintainer will check and decide if he approves or not the commits. During this step, the PR Maintainer can modify your own code to make it valid for approbation or ask you 
+to make the change yourself. For this the PR Maintainer may add commits to a PR. Depending on the tools used (can be done from github directly or from an IDE), such commits may be done directly after validating your PR (for example to complete it).
 
 As the Release Maintainer:
 
 8. A tag will be added to take a snapshot of the code with all the changes approved by PR Maintainers, when ready to do a release.
 
 
-Note: Project leader(Master Yoda and BDFL) retains all above roles and can directly commit to the project without a PR. Of course anyone can check commit history and comment!
+Note: Mainteners of a branch can directly commit to the project (in their branch) without a PR. Of course anyone can check commit history and comment!
 
 
 <span id="branches" name="branches"></span>
@@ -78,6 +85,8 @@ If you push a bug fix on a very old version it is still going to be merged and p
 
 - As the Developer: Do not submit changes into files xx_XX/afile.lang. They are language files and are updated/synced automatically from Transifex. If you need to add a new language file, just add it for the en_US language.
 
+- As the Developor: For code contribution on stable branches (non develop), PR must contains 1 and only 1 bug fix at once.
+
 - As the Release Maintainer: The Release Maintainer will decide to make a new release as soon as the planning of the release is reached and the code in the branch to release reach the status of "No more known serious bugs". 
 
 
@@ -100,39 +109,38 @@ You can add it to your git configuration using:
 git config --local commit.template .gitmessage
 ```
 
-where
+with
 
-#### Keyword
+#### KEYWORD
 In uppercase if you want to have the log comment appears into the generated ChangeLog file.
 
-The keyword can be omitted if your commit does not fit in any of the following categories:
+The keyword can be omitted only if your commit does not fit in any of the following categories:
 
-- Fix/FIX: for a bug fix
+- Fix/FIX:     for a bug fix
 - Close/CLOSE: for closing a referenced feature request
-- New/NEW: for an unreferenced new feature (Opening a feature request and using close is preferred)
-- Perf/PERF: for a performance enhancement
-- Qual/QUAL: for quality code enhancement or re-engineering
+- New/NEW:     for an unreferenced new feature (Opening a feature request and using close is preferred)
+- Perf/PERF:   for a performance enhancement
+- Doc/DOC:     for documentation
+- Qual/QUAL:   for quality code enhancement or re-engineering
+- Sec/SEC:     for a security vulnerability fix
 
-#### Issuenum
+#### ISSUENUM
 If your commit fixes a referenced bug or feature request.
 
 In the form of a # followed by the GitHub issue number.
 
-#### Desc
-A short description of the commit content.
+#### DESC
+A short description of the commit content (ideally less than 50 characters).
+If fix a bug in an old version already fixed in a more recent version, please mention `backport of` followed by the commit ID you backport.
 
-This should ideally be less than 50 characters.
-
-#### LongDesc
+#### LONGDESC
 A long description of the commit content.
 
-You can really go to town here and explain in depth what you've been doing.
+You can really go to town here and explain in depth what you've been doing. This section can span multiple lines.
 
 Feel free to express technical details, use cases or anything relevant to the current commit.
 
-This section can span multiple lines.
-
-If your PR is a change on interface, you must also paste a screenshot showing the new screen.
+If your PR is a change on interface, you MUST also paste a screenshot showing the new screen.
 
 #### Examples
 <pre>
@@ -142,7 +150,7 @@ CLOSE|Close #456 Short description (where #456 is number of feature request, if 
 or
 NEW|New|QUAL|Qual|PERF|Perf Short description (In upper case to appear into ChangeLog, use this if you add a feature not tracked, otherwise use CLOSE #xxx)
 or
-Short description (when the commit is not introducing a feature nor closing a bug)
+Short description (only when the commit is not introducing a feature nor closing a bug)
 
 Long description (Can span across multiple lines).
 </pre>

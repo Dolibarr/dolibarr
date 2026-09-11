@@ -124,7 +124,10 @@ if ($resql) {
 	}
 	$db->free($resql);
 
-	include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+	$theme_vars_file = dol_getThemeFilePath('theme_vars.inc.php');
+	if ($theme_vars_file) {
+		include $theme_vars_file;
+	}
 	/**
 	 * @var string $badgeStatus0
 	 * @var string $badgeStatus1

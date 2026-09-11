@@ -155,8 +155,8 @@ if ($action == 'updateMaskLot') {
 } elseif ($action == 'setdoc') {
 	// Set default model
 	if (dolibarr_set_const($db, "PRODUCT_BATCH_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity)) {
-		// La constante qui a ete lue en avant du nouveau set
-		// on passe donc par une variable pour avoir un affichage coherent
+		// The constant that was read before the new set
+		// so we go through a variable to get a consistent display
 		$conf->global->PRODUCT_BATCH_ADDON_PDF = $value;
 	}
 
@@ -210,8 +210,8 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 			$handle = opendir($dir);
 			if (is_resource($handle)) {
 				while (($file = readdir($handle)) !== false) {
-					if (substr($file, 0, 8) == 'mod_lot_' && substr($file, dol_strlen($file) - 3, 3) == 'php') {
-						$file = substr($file, 0, dol_strlen($file) - 4);
+					if (dol_substr($file, 0, 8) == 'mod_lot_' && dol_substr($file, dol_strlen($file) - 3, 3) == 'php') {
+						$file = dol_substr($file, 0, dol_strlen($file) - 4);
 
 						require_once $dir.$file.'.php';
 
@@ -312,8 +312,8 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 			$handle = opendir($dir);
 			if (is_resource($handle)) {
 				while (($file = readdir($handle)) !== false) {
-					if (substr($file, 0, 7) == 'mod_sn_' && substr($file, dol_strlen($file) - 3, 3) == 'php') {
-						$file = substr($file, 0, dol_strlen($file) - 4);
+					if (dol_substr($file, 0, 7) == 'mod_sn_' && dol_substr($file, dol_strlen($file) - 3, 3) == 'php') {
+						$file = dol_substr($file, 0, dol_strlen($file) - 4);
 
 						require_once $dir.$file.'.php';
 
@@ -447,8 +447,8 @@ if (!empty($def)) {
 					foreach ($filelist as $file) {
 						if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file)) {
 							if (file_exists($dir . '/' . $file)) {
-								$name = substr($file, 4, dol_strlen($file) - 16);
-								$classname = substr($file, 0, dol_strlen($file) - 12);
+								$name = dol_substr($file, 4, dol_strlen($file) - 16);
+								$classname = dol_substr($file, 0, dol_strlen($file) - 12);
 
 								require_once $dir . '/' . $file;
 								$module = new $classname($db);
