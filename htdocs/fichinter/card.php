@@ -444,6 +444,12 @@ if (empty($reshook)) {
 
 										if ($prod->duration_value && getDolGlobalString('FICHINTER_USE_SERVICE_DURATION')) {
 											switch ($prod->duration_unit) {
+												case 's':
+													$mult = 1;
+													break;
+												case 'mn':
+													$mult = 60;
+													break;
 												default:
 												case 'h':
 													$mult = 3600;
@@ -461,7 +467,7 @@ if (empty($reshook)) {
 													$mult = 3600 * 24 * 365;
 													break;
 											}
-											$duration = (int) $prod->duration_value * $mult * $lines[$i]->qty;
+											$duration = (int) round(((float) $prod->duration_value) * $mult * $lines[$i]->qty);
 										}
 
 										$desc = $lines[$i]->product_ref;
