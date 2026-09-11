@@ -1203,6 +1203,10 @@ class Orders extends DolibarrApi
 			throw new RestException(404, 'Proposal not found');
 		}
 
+		if (!DolibarrApi::_checkAccessToResource('propal', $propal->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		$result = $this->commande->createFromProposal($propal, DolibarrApiAccess::$user);
 		if ($result < 0) {
 			throw new RestException(405, $this->commande->error);
