@@ -490,14 +490,15 @@ if (!file_exists($conffile)) {
 		$choice .= '<td class="nowrap center firstcolumn"><b>'.$langs->trans("FreshInstall").'</b>';
 		$choice .= '</td>';
 		$choice .= '<td class="listofchoicesdesc">';
-		$choice .= $langs->trans("FreshInstallDesc");
 		if (empty($dolibarr_main_db_host)) {	// This means install process was not run
-			$choice .= '<br>';
 			//print $langs->trans("InstallChoiceRecommanded",DOL_VERSION,$conf->global->MAIN_VERSION_LAST_UPGRADE);
-			$choice .= '<div class="><br>';
+			$choice .= '<div class=">';
 			$choice .= '<div class="ok suggestedchoice">'.$langs->trans("InstallChoiceSuggested").'</div>';
 			$choice .= '</div>';
+			$choice .= '<br><br>';
 		}
+
+		$choice .= '<span class="opacitymedium">'.$langs->trans("FreshInstallDesc").'</span>';
 
 		$choice .= '</td>';
 		$choice .= '<td class="center lastcolumn">';
@@ -589,18 +590,22 @@ if (!file_exists($conffile)) {
 			$choice .= '<tr'.($recommended_choice ? ' class="choiceselected"' : '').'>';
 			$choice .= '<td class="nowrap center firstcolumn"><span class="opacitymedium">'.$langs->trans("Upgrade").'</span><br><b>'.$newversionfrom.$newversionfrombis.' -> '.$newversionto.'</b></td>';
 			$choice .= '<td class="listofchoicesdesc">';
-			$choice .= $langs->trans("UpgradeDesc");
 
+			$descwithopacity = 0;
 			if ($recommended_choice) {
-				$choice .= '<br>';
 				//print $langs->trans("InstallChoiceRecommanded",DOL_VERSION,$conf->global->MAIN_VERSION_LAST_UPGRADE);
-				$choice .= '<div class=""><br>';
+				$choice .= '<div class="">';
 				$choice .= '<div class="ok suggestedchoice">'.$langs->trans("InstallChoiceSuggested").'</div>';
 				if ($count < count($migarray)) {	// There are other choices after
 					print $langs->trans("MigrateIsDoneStepByStep", DOL_VERSION);
 				}
-				$choice .= '</div>';
+				$choice .= '</div><br>';
+				$descwithopacity = 1;
 			}
+
+			$choice .= '<span class="opacitymedium">';
+			$choice .= $langs->trans("UpgradeDesc");
+			$choice .= '</span>';
 
 			$choice .= '</td>';
 			$choice .= '<td class="center lastcolumn">';
@@ -647,7 +652,7 @@ if (!file_exists($conffile)) {
 		// Array of install choices
 		krsort($available_choices, SORT_NATURAL);
 		print"\n";
-		print '<table width="100%" class="listofchoices">';
+		print '<table class="centpercent listofchoices">';
 		foreach ($available_choices as $choice) {
 			print $choice;
 		}
