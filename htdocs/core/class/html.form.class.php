@@ -11496,12 +11496,11 @@ class Form
 			$out .= 'if (typeof initCheckForSelect == \'function\') { initCheckForSelect(0, "' . $massactionname . '", "' . $cssclass . '"); } else { console.log("No function initCheckForSelect found. Call won\'t be done."); }';
 		}
 		$out .= '         });
-/*
         	        $(".' . $cssclass . '").change(function() {
 						console.log("We check and change the tr class highlight after a change on .'.$cssclass.'");
 						var $row = $(this).closest("tr");
 						if ($row.length) {
-	    					var anyChecked = $row.find(\'input[type="checkbox"].checkforselect:checked\').length > 0;
+	    					var anyChecked = $row.find(\'input[type="checkbox"].' . $cssclass . ':checked\').length > 0;
 							console.log("anychecked="+anyChecked);
 							if (!anyChecked) {
 								$row.removeClass("highlight");
@@ -11510,7 +11509,6 @@ class Form
 							}
 						}
 					});
-*/
 		 	});
     	</script>';
 
