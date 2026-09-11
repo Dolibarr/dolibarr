@@ -481,6 +481,64 @@ class CUnits extends CommonDict
 	}
 
 	/**
+	 * Convert a value into another unit of the same unit type. Unlike unitConverter(), the value is
+	 * returned unrounded and the conversion is refused when both units are not comparable.
+	 *
+	 * @param	float|string	$value			Value to convert
+	 * @param	?int			$fk_unit		Id of the unit $value is expressed in
+	 * @param	?int			$fk_new_unit	Id of the unit to convert the value into
+	 * @return	float|false						Converted value, or false if the 2 units are not comparable
+	 * @see unitConverter()
+	 */
+	public function unitConverterSameType($value, $fk_unit, $fk_new_unit)
+	{
+		$value = (float) price2num($value);
+		$fk_unit = (int) $fk_unit;
+		$fk_new_unit = (int) $fk_new_unit;
+
+		if ($fk_unit <= 0 || $fk_new_unit <= 0) {
+			return false;
+		}
+		if ($fk_unit == $fk_new_unit) {
+			return $value;
+		}
+
+		$sql = "SELECT rowid, scale, unit_type FROM ".$this->db->prefix()."c_units";
+		$sql .= " WHERE rowid IN (".$fk_unit.", ".$fk_new_unit.")";
+
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			return false;
+		}
+
+		$unitsofconversion = array();
+		while ($obj = $this->db->fetch_object($resql)) {
+			$unitsofconversion[(int) $obj->rowid] = $obj;
+		}
+
+		if (!isset($unitsofconversion[$fk_unit]) || !isset($unitsofconversion[$fk_new_unit])) {
+			return false;
+		}
+		if ($unitsofconversion[$fk_unit]->unit_type != $unitsofconversion[$fk_new_unit]->unit_type) {
+			return false;
+		}
+		foreach ($unitsofconversion as $unitofconversion) {
+			// Out of the time unit type, a scale is an exponent of ten. Values like 88, 89, 97, 98 and 99 are
+			// placeholders for units having no metric scale (imperial units, litre, gallon): they can't be converted.
+			if ($unitofconversion->unit_type != 'time' && abs((float) $unitofconversion->scale) >= 10) {
+				return false;
+			}
+		}
+
+		$scaleofnewunit = $this->scaleOfUnitPow($fk_new_unit);
+		if (empty($scaleofnewunit)) {
+			return false;
+		}
+
+		return $value * $this->scaleOfUnitPow($fk_unit) / $scaleofnewunit;
+	}
+
+	/**
 	 * Get scale of unit factor
 	 *
 	 * @param 	int 		$id 	Id of unit in dictionary

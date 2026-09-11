@@ -153,6 +153,9 @@ class AllTests
 		require_once dirname(__FILE__).'/CMailFileTest.php';
 		$suite->addTestSuite('CMailFileTest');
 
+		require_once dirname(__FILE__).'/CUnitsTest.php';
+		$suite->addTestSuite('CUnitsTest');
+
 		require_once dirname(__FILE__).'/CommonObjectTest.php';
 		$suite->addTestSuite('CommonObjectTest');
 
