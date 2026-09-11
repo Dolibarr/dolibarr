@@ -11,6 +11,7 @@
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025       Josep Lluís Amador      <joseplluis@lliuretic.cat>
+ * Copyright (C) 2025       Lenin Rivas             <lenin.rivas777@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -187,6 +188,7 @@ if (empty($reshook)) {
 			$companybankaccount->code_banque     = GETPOST('code_banque', 'alpha');
 			$companybankaccount->code_guichet    = GETPOST('code_guichet', 'alpha');
 			$companybankaccount->number          = GETPOST('number', 'alpha');
+			$companybankaccount->cci             = GETPOST('cci', 'alpha');
 			$companybankaccount->cle_rib         = GETPOST('cle_rib', 'alpha');
 			$companybankaccount->bic             = GETPOST('bic', 'alpha');
 			$companybankaccount->iban            = GETPOST('iban', 'alpha');
@@ -324,6 +326,7 @@ if (empty($reshook)) {
 			$companybankaccount->code_banque     = GETPOST('code_banque', 'alpha');
 			$companybankaccount->code_guichet    = GETPOST('code_guichet', 'alpha');
 			$companybankaccount->number          = GETPOST('number', 'alpha');
+			$companybankaccount->cci             = GETPOST('cci', 'alpha');
 			$companybankaccount->cle_rib         = GETPOST('cle_rib', 'alpha');
 			$companybankaccount->bic             = GETPOST('bic', 'alpha');
 			$companybankaccount->iban            = GETPOST('iban', 'alpha');
@@ -1586,6 +1589,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		print_liste_field_titre($form->textwithpicto($langs->trans('ExternalSystemID'), $langs->trans("IDOfPaymentInAnExternalSystem")));		// external system ID
 		//print_liste_field_titre("Bank");
 		print_liste_field_titre("RIB");
+		print_liste_field_titre("CCI");
 		print_liste_field_titre("IBAN");
 		print_liste_field_titre("BIC");
 		if (isModEnabled('prelevement')) {
@@ -1669,6 +1673,10 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			print $string;
 			print '</td>';
 
+			// CCI
+			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($rib->cci).'">';
+			print dol_escape_htmltag($rib->cci);
+			print '</td>';
 			// IBAN
 			print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($rib->iban).'">';
 			if (!empty($rib->iban)) {
@@ -2069,6 +2077,10 @@ if ($socid && $action == 'edit' && $permissiontoaddupdatepaymentinformation) {
 		print '<td><input size="'.$size.'" type="text" class="flat" name="'.$name.'" value="'.$content.'"></td>';
 		print '</tr>';
 	}
+  
+  print '<tr><td>'.$langs->trans("CCI").'</td>';
+	print '<td><input class="minwidth150" type="text" name="cci" value="'.$companybankaccount->cci.'"></td></tr>';
+	print "</td></tr>\n";
 
 	// Currency
 	print '<tr><td class="fieldrequired">'.$langs->trans("Currency").'</td>';
@@ -2298,6 +2310,10 @@ if ($socid && $action == 'create' && $permissiontoaddupdatepaymentinformation) {
 		print '</tr>';
 	}
 
+  print '<tr><td>'.$langs->trans("CCI").'</td>';
+	print '<td><input class="minwidth150" type="text" name="cci" value="'.GETPOST('cci').'"></td></tr>';
+	print "</td></tr>\n";
+  
 	// Currency
 	print '<tr><td class="fieldrequired">'.$langs->trans("Currency").'</td>';
 	print '<td>';
