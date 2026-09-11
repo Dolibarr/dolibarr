@@ -59,6 +59,7 @@ create table llx_commande
 
   note_private				text,
   note_public				text,
+  email_sent_counter	integer DEFAULT 0,				-- counter used to track how many times the document was sent by email
   model_pdf					varchar(255),
   last_main_doc				varchar(255),					-- relative filepath+filename of last main generated document
 

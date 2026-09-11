@@ -487,16 +487,18 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 
 						// Call of triggers (you should have set $triggersendname to execute trigger.
 						if (!empty($triggersendname)) {
-							if ($triggersendname == 'BILL_SENTBYMAIL' && $object instanceof Facture) {
-								/* @var Facture $object */
-
-								// If sending email for invoice, we increase the counter of invoices sent by email
-								$sql = "UPDATE ".MAIN_DB_PREFIX."facture SET email_sent_counter = email_sent_counter + 1";
+							// An object that declares email_sent_counter keeps a denormalized count of the
+							// emails it was sent with. Drive it from the property, so adding the counter to
+							// another object is a column plus a property, with nothing to change here.
+							if (property_exists($object, 'email_sent_counter') && !empty($object->table_element) && $object->id > 0) {
+								$sql = "UPDATE ".$db->prefix().$object->table_element." SET email_sent_counter = email_sent_counter + 1";
 								$sql .= " WHERE rowid = ".((int) $object->id);
 
 								$resql = $db->query($sql);
 								if ($resql) {
 									$object->email_sent_counter += 1;
+								} else {
+									dol_syslog("Failed to increase email_sent_counter for ".$object->element." id ".$object->id.": ".$db->lasterror(), LOG_ERR);
 								}
 							}
 
