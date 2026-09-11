@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2026	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2026	Nick Fragoulis
- * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026	Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -260,7 +260,10 @@ try {
 			}
 
 			$reqStart = microtime(true);
-			$res = $server->handleRequest($req);
+			$res = $server->validateTransportHeaders($headers, $req);
+			if ($res === null) {
+				$res = $server->handleRequest($req);
+			}
 
 			if ($res !== null) {
 				$responses[] = $res;
@@ -277,7 +280,14 @@ try {
 			throw new Exception("Invalid request format");
 		}
 
-		$response = $server->handleRequest($request);
+		$response = $server->validateTransportHeaders($headers, $request);
+		if ($response === null) {
+			$response = $server->handleRequest($request);
+		}
+
+		if ($server->getHttpStatus() !== 200) {
+			http_response_code($server->getHttpStatus());
+		}
 
 		if ($response !== null) {
 			echo json_encode($response);
