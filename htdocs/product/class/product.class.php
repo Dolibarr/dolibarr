@@ -935,17 +935,17 @@ class Product extends CommonObject
 	public function check()
 	{
 		if (getDolGlobalInt('MAIN_SECURITY_ALLOW_UNSECURED_REF_LABELS')) {
-			$this->ref = trim($this->ref);
+			$this->ref = trim((string) $this->ref);
 		} else {
 			$this->ref = dol_sanitizeFileName(stripslashes($this->ref));
 		}
 
 		$err = 0;
-		if (dol_strlen(trim($this->ref)) == 0) {
+		if (dol_strlen(trim((string) $this->ref)) == 0) {
 			$err++;
 		}
 
-		if (dol_strlen(trim($this->label)) == 0) {
+		if (dol_strlen(trim((string) $this->label)) == 0) {
 			$err++;
 		}
 
@@ -971,16 +971,16 @@ class Product extends CommonObject
 
 		// Clean parameters
 		if (getDolGlobalInt('MAIN_SECURITY_ALLOW_UNSECURED_REF_LABELS')) {
-			$this->ref = trim($this->ref);
+			$this->ref = trim((string) $this->ref);
 		} else {
-			$this->ref = dol_sanitizeFileName(dol_string_nospecial(trim($this->ref)));
+			$this->ref = dol_sanitizeFileName(dol_string_nospecial(trim((string) $this->ref)));
 		}
-		$this->label = trim($this->label);
+		$this->label = trim((string) $this->label);
 		$this->price_ttc = (float) price2num($this->price_ttc);
 		$this->price = (float) price2num($this->price);
 		$this->price_min_ttc = (float) price2num($this->price_min_ttc);
 		$this->price_min = (float) price2num($this->price_min);
-		$this->price_label = trim($this->price_label);
+		$this->price_label = trim((string) $this->price_label);
 		if (empty($this->tva_tx)) {
 			$this->tva_tx = 0;
 		}
@@ -1075,7 +1075,7 @@ class Product extends CommonObject
 		}
 
 		// Barcode value
-		$this->barcode = trim($this->barcode);
+		$this->barcode = trim((string) $this->barcode);
 		$this->mandatory_period = empty($this->mandatory_period) ? 0 : $this->mandatory_period;
 		// Check parameters
 		if (empty($this->label)) {
@@ -1316,7 +1316,7 @@ class Product extends CommonObject
 		$this->errors = array();
 
 		$result = 0;
-		$this->ref = trim($this->ref);
+		$this->ref = trim((string) $this->ref);
 
 		if (!$this->ref) {
 			$this->errors[] = 'ErrorBadRef';
@@ -1413,14 +1413,14 @@ class Product extends CommonObject
 
 		// Clean parameters
 		if (getDolGlobalInt('MAIN_SECURITY_ALLOW_UNSECURED_REF_LABELS')) {
-			$this->ref = trim($this->ref);
+			$this->ref = trim((string) $this->ref);
 		} else {
-			$this->ref = dol_string_nospecial(trim($this->ref));
+			$this->ref = dol_string_nospecial(trim((string) $this->ref));
 		}
-		$this->label = trim($this->label);
-		$this->description = trim($this->description);
-		$this->note_private = (isset($this->note_private) ? trim($this->note_private) : null);
-		$this->note_public = (isset($this->note_public) ? trim($this->note_public) : null);
+		$this->label = trim((string) $this->label);
+		$this->description = trim((string) $this->description);
+		$this->note_private = (isset($this->note_private) ? trim((string) $this->note_private) : null);
+		$this->note_public = (isset($this->note_public) ? trim((string) $this->note_public) : null);
 		$this->net_measure = price2num($this->net_measure);
 		$this->net_measure_units = (!is_numeric($this->net_measure_units) ? null : (int) $this->net_measure_units);
 		$this->weight = price2num($this->weight);
@@ -1501,14 +1501,14 @@ class Product extends CommonObject
 		}
 
 		// Barcode value
-		$this->barcode = (empty($this->barcode) ? '' : trim($this->barcode));
+		$this->barcode = (empty($this->barcode) ? '' : trim((string) $this->barcode));
 
-		$this->accountancy_code_buy = trim($this->accountancy_code_buy);
-		$this->accountancy_code_buy_intra = (!empty($this->accountancy_code_buy_intra) ? trim($this->accountancy_code_buy_intra) : '');
-		$this->accountancy_code_buy_export = trim($this->accountancy_code_buy_export);
-		$this->accountancy_code_sell = trim($this->accountancy_code_sell);
-		$this->accountancy_code_sell_intra = trim($this->accountancy_code_sell_intra);
-		$this->accountancy_code_sell_export = trim($this->accountancy_code_sell_export);
+		$this->accountancy_code_buy = trim((string) $this->accountancy_code_buy);
+		$this->accountancy_code_buy_intra = (!empty($this->accountancy_code_buy_intra) ? trim((string) $this->accountancy_code_buy_intra) : '');
+		$this->accountancy_code_buy_export = trim((string) $this->accountancy_code_buy_export);
+		$this->accountancy_code_sell = trim((string) $this->accountancy_code_sell);
+		$this->accountancy_code_sell_intra = trim((string) $this->accountancy_code_sell_intra);
+		$this->accountancy_code_sell_export = trim((string) $this->accountancy_code_sell_export);
 
 		// Normalize the accountancy codes the way the admin dropdown does it, so an API client that
 		// sends '606111000' ends up with the same '606111' value the GUI stores (see issue #32343).
