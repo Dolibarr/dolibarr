@@ -309,6 +309,15 @@ div.info, div.warning, div.error, div.green, div.neutral, section.neutral {
     border-radius: 5px;
 }
 
+div.info, div.warning, div.neutral, div.green {
+    box-shadow: 1px 1px 6px #d4d4d4;
+    margin: 1em 0em 1.2em 0em;
+}
+
+div.warning, div.warningborder, section.warning, section.warningborder {
+    border-left: solid 5px #f2cf87;
+}
+
 /* Neutral message */
 div.neutral, section.neutral {
     background: #f8f8f8;
