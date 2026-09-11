@@ -25,13 +25,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-
-// Class
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/resource.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/resource/class/html.formresource.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -39,6 +32,10 @@ require_once DOL_DOCUMENT_ROOT.'/resource/class/html.formresource.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/resource.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/resource/class/html.formresource.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "resource"));
@@ -103,10 +100,10 @@ if (empty($conf->use_javascript_ajax)) {
 } else {
 	print '<td width="60" class="right">';
 	$arrval = array(
-		$langs->trans("No"),
-		$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 1).')',
-		$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 2).')',
-		$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 3).')',
+		0 => array('label' => $langs->trans("No")),
+		1 => array('label' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 1).')', 'labelhtml' => $langs->trans("Yes").' <span class="opacitymedium small">('.$langs->trans("NumberOfKeyToSearch", 1).')</span>'),
+		2 => array('label' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 2).')', 'labelhtml' => $langs->trans("Yes").' <span class="opacitymedium small">('.$langs->trans("NumberOfKeyToSearch", 2).')</span>'),
+		3 => array('label' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 3).')', 'labelhtml' => $langs->trans("Yes").' <span class="opacitymedium small">('.$langs->trans("NumberOfKeyToSearch", 3).')</span>'),
 	);
 	print $form->selectarray("activate_RESOURCE_USE_SEARCH_TO_SELECT", $arrval, getDolGlobalInt('RESOURCE_USE_SEARCH_TO_SELECT'));
 	print '</td>';

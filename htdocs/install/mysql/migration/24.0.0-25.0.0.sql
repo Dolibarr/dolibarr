@@ -162,6 +162,10 @@ ALTER TABLE llx_onlinepayment_session ADD INDEX idx_onlinepayment_session_ext_pa
 ALTER TABLE llx_onlinepayment_session ADD INDEX idx_onlinepayment_session_date_creation (date_creation);
 ALTER TABLE llx_onlinepayment_session ADD INDEX idx_onlinepayment_session_entity (entity);
 
+-- Human Resources Management(HRM): Add `country_job_id` and `state_job_id` to the `llx_user` table to store the workplace location, enabling vacation filtering by workplace.
+ALTER TABLE llx_user ADD COLUMN country_job_id integer DEFAULT NULL;
+ALTER TABLE llx_user ADD COLUMN state_job_id integer DEFAULT NULL;
+
 -- end of migration - nothing after this line
 
 -- Variants: allow standard import/export of variants (attributes, values, combinations,
@@ -212,3 +216,8 @@ ALTER TABLE llx_product_attribute_combination2val ADD CONSTRAINT fk_product_att_
 ALTER TABLE llx_product_attribute_combination2val ADD CONSTRAINT fk_product_att_com2v_prod_attr_val FOREIGN KEY (fk_prod_attr_val) REFERENCES llx_product_attribute_value (rowid);
 ALTER TABLE llx_product_attribute_combination_price_level ADD CONSTRAINT fk_prod_att_comb_price_level_combination FOREIGN KEY (fk_product_attribute_combination) REFERENCES llx_product_attribute_combination (rowid);
 
+-- llx_notify_def.entity was never written, every row kept its DEFAULT 1, so filtering the
+-- notification queries on it would hide the existing subscriptions. Give each row the entity of the
+-- third party or the user it belongs to. Rows tied to neither keep their current value.
+UPDATE llx_notify_def INNER JOIN llx_societe ON llx_notify_def.fk_soc = llx_societe.rowid SET llx_notify_def.entity = llx_societe.entity WHERE llx_notify_def.fk_soc > 0;
+UPDATE llx_notify_def INNER JOIN llx_user ON llx_notify_def.fk_user = llx_user.rowid SET llx_notify_def.entity = llx_user.entity WHERE llx_notify_def.fk_user > 0;
