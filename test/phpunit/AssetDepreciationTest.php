@@ -347,29 +347,28 @@ class AssetDepreciationTest extends CommonClassTest
 		$savcountrycode = $mysoc->country_code;
 
 		try {
-		// The new setup always wins
-		$conf->global->ASSET_DEPRECIATION_DAY_COUNT_CONVENTION = 'ACT_ACT';
-		$conf->global->ASSET_DEPRECIATION_DURATION_PER_YEAR = '360';
-		$this->assertEquals('ACT_ACT', getAssetDepreciationDayCountConvention());
+			// The new setup always wins
+			$conf->global->ASSET_DEPRECIATION_DAY_COUNT_CONVENTION = 'ACT_ACT';
+			$conf->global->ASSET_DEPRECIATION_DURATION_PER_YEAR = '360';
+			$this->assertEquals('ACT_ACT', getAssetDepreciationDayCountConvention());
 
-		// An unknown value is ignored
-		$conf->global->ASSET_DEPRECIATION_DAY_COUNT_CONVENTION = 'ACT_360';
-		$this->assertEquals('THIRTY_360', getAssetDepreciationDayCountConvention());
+			// An unknown value is ignored
+			$conf->global->ASSET_DEPRECIATION_DAY_COUNT_CONVENTION = 'ACT_360';
+			$this->assertEquals('THIRTY_360', getAssetDepreciationDayCountConvention());
 
-		// Backward compatibility with the deprecated setup
-		$conf->global->ASSET_DEPRECIATION_DAY_COUNT_CONVENTION = '';
-		$conf->global->ASSET_DEPRECIATION_DURATION_PER_YEAR = '360';
-		$this->assertEquals('THIRTY_360', getAssetDepreciationDayCountConvention());
-		$conf->global->ASSET_DEPRECIATION_DURATION_PER_YEAR = '365';
-		$this->assertEquals('ACT_365', getAssetDepreciationDayCountConvention());
+			// Backward compatibility with the deprecated setup
+			$conf->global->ASSET_DEPRECIATION_DAY_COUNT_CONVENTION = '';
+			$conf->global->ASSET_DEPRECIATION_DURATION_PER_YEAR = '360';
+			$this->assertEquals('THIRTY_360', getAssetDepreciationDayCountConvention());
+			$conf->global->ASSET_DEPRECIATION_DURATION_PER_YEAR = '365';
+			$this->assertEquals('ACT_365', getAssetDepreciationDayCountConvention());
 
-		// Nothing set up: the country of the company decides
-		$conf->global->ASSET_DEPRECIATION_DURATION_PER_YEAR = '';
-		$mysoc->country_code = 'FR';
-		$this->assertEquals('THIRTY_360', getAssetDepreciationDayCountConvention());
-		$mysoc->country_code = 'US';
-		$this->assertEquals('ACT_365', getAssetDepreciationDayCountConvention());
-
+			// Nothing set up: the country of the company decides
+			$conf->global->ASSET_DEPRECIATION_DURATION_PER_YEAR = '';
+			$mysoc->country_code = 'FR';
+			$this->assertEquals('THIRTY_360', getAssetDepreciationDayCountConvention());
+			$mysoc->country_code = 'US';
+			$this->assertEquals('ACT_365', getAssetDepreciationDayCountConvention());
 		} finally {
 			// Restore the global state even when an assertion above fails, so that the rest of the
 			// suite does not inherit a modified country or a stale setup

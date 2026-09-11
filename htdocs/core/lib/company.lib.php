@@ -1984,6 +1984,8 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 			$sql .= ", o.ref";
 		} elseif (is_object($filterobj) && get_class($filterobj) == 'Contrat') {
 			$sql .= ", o.ref";
+		} elseif (is_object($filterobj) && get_class($filterobj) == 'Holiday') {
+			$sql .= ", o.ref";
 		} elseif (is_object($filterobj) && get_class($filterobj) == 'Expedition') {
 			$sql .= ", s.ref";
 		} elseif (is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid']) && $filterobj->table_element && $filterobj->element) {
@@ -2057,6 +2059,8 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 			$sql .= ", " . MAIN_DB_PREFIX . "bom_bom as o";
 		} elseif (is_object($filterobj) && get_class($filterobj) == 'Contrat') {
 			$sql .= ", " . MAIN_DB_PREFIX . "contrat as o";
+		} elseif (is_object($filterobj) && get_class($filterobj) == 'Holiday') {
+			$sql .= ", " . MAIN_DB_PREFIX . "holiday as o";
 		} elseif (is_object($filterobj) && get_class($filterobj) == 'Expedition') {
 			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "expedition as s ON a.fk_element = s.rowid AND a.elementtype = 'shipping'"; // JOIN on the shipping tame using the 'ON' constraint
 		} elseif (is_object($filterobj) && get_class($filterobj) == 'Propal') {
@@ -2119,6 +2123,11 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 				}
 			} elseif (is_object($filterobj) && get_class($filterobj) == 'Contrat') {
 				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = 'contract'";
+				if ($filterobj->id) {
+					$sql .= " AND a.fk_element = " . ((int) $filterobj->id);
+				}
+			} elseif (is_object($filterobj) && get_class($filterobj) == 'Holiday') {
+				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = 'holiday'";
 				if ($filterobj->id) {
 					$sql .= " AND a.fk_element = " . ((int) $filterobj->id);
 				}
