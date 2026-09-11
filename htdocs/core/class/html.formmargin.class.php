@@ -109,9 +109,7 @@ class FormMargin
 
 			$pa = $line->qty * $pa_ht;
 
-			$situationmode = getDolGlobalInt('INVOICE_USE_SITUATION');	// 0 = disabled, 1 = cumulative, 2 = progress
-
-			if (($situationmode == 1 || $situationmode == 2) && $object->element == 'facture') {
+			if (getDolGlobalInt('INVOICE_USE_SITUATION') && $object->element == 'facture') {
 				'@phan-var-force Facture $object';
 				/** @var Facture $object */
 				if ($object->type == $object::TYPE_SITUATION
