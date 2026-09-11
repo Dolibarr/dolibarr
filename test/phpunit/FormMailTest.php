@@ -128,4 +128,56 @@ class FormMailTest extends CommonClassTest
 		$this->assertStringContainsString('tags: true', $out, 'testGetHtmlForWithCccNewRendersFreetagSelect22');
 		$this->assertStringContainsString('Ada King (ada@example.com)', $out, 'testGetHtmlForWithCccNewRendersFreetagSelect23');
 	}
+
+	/**
+	 * testGetFormDispatchesToFreetagRenderersWhenConstantIsOn
+	 *
+	 * get_form() itself contains the ternaries that pick between the old and new To/CC/CCC
+	 * renderers based on MAIL_ENABLE_FREETAG_RECIPIENT_INPUT. The 4 tests above only call the
+	 * individual getHtmlForTo()/getHtmlForToNew()/... methods directly and never exercise that
+	 * dispatch logic. This test drives it through the real get_form() call.
+	 *
+	 * @return void
+	 */
+	public function testGetFormDispatchesToFreetagRenderersWhenConstantIsOn()
+	{
+		global $db, $form, $conf;
+		$db = $this->savdb;
+		$conf = $this->savconf;
+		$form = new Form($db);
+
+		$savedvalue = getDolGlobalString('MAIL_ENABLE_FREETAG_RECIPIENT_INPUT');
+
+		try {
+			// Off: the dispatch ternaries must pick the old renderers, which never emit createTag.
+			$conf->global->MAIL_ENABLE_FREETAG_RECIPIENT_INPUT = 0;
+
+			$fmoff = new FormMail($db);
+			$fmoff->param = array('models' => 'none', 'returnurl' => '');
+			$fmoff->withtoccc = 1;
+			$fmoff->withtopic = 0; // Avoid an unrelated pre-existing issue: with no template ($arraydefaultmessage stays -1), getHtmlForTopic() dereferences it as an object.
+			$fmoff->withbody = 0; // Same pre-existing issue as withtopic, for the body/content section.
+
+			$outoff = $fmoff->get_form();
+			print __METHOD__." outoff=".$outoff."\n";
+
+			$this->assertStringNotContainsString('createTag', $outoff, 'testGetFormDispatchesToFreetagRenderersWhenConstantIsOn1');
+
+			// On: the dispatch ternaries must pick the new *New() renderers, which do emit createTag.
+			$conf->global->MAIL_ENABLE_FREETAG_RECIPIENT_INPUT = 1;
+
+			$fmon = new FormMail($db);
+			$fmon->param = array('models' => 'none', 'returnurl' => '');
+			$fmon->withtoccc = 1;
+			$fmon->withtopic = 0; // Avoid an unrelated pre-existing issue: with no template ($arraydefaultmessage stays -1), getHtmlForTopic() dereferences it as an object.
+			$fmon->withbody = 0; // Same pre-existing issue as withtopic, for the body/content section.
+
+			$outon = $fmon->get_form();
+			print __METHOD__." outon=".$outon."\n";
+
+			$this->assertStringContainsString('createTag', $outon, 'testGetFormDispatchesToFreetagRenderersWhenConstantIsOn2');
+		} finally {
+			$conf->global->MAIL_ENABLE_FREETAG_RECIPIENT_INPUT = $savedvalue;
+		}
+	}
 }

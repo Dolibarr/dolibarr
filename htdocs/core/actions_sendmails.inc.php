@@ -265,7 +265,7 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 					$tmparray[] = $thirdparty->contact_get_property((int) $val, 'email');
 					$sendtoid[] = ((int) $val);
 				} elseif ($val !== '') {	// $val is a free-typed "Name <email>" or "email" tag
-					$tmparray[] = $val;
+					$tmparray[] = sanitizeVal($val, 'alphawithlgt');
 				}
 			}
 		}
@@ -309,7 +309,7 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 					$tmparray[] = $thirdparty->contact_get_property((int) $val, 'email');
 					//$sendtoid[] = ((int) $val);  TODO Add also id of contact in CC ?
 				} elseif ($val !== '') {	// $val is a free-typed "Name <email>" or "email" tag
-					$tmparray[] = $val;
+					$tmparray[] = sanitizeVal($val, 'alphawithlgt');
 				}
 			}
 		}
@@ -400,7 +400,7 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 				} elseif (is_numeric($val) && $val > 0) {	// $val is the Id of a contact
 					$tmparrayccc[] = $thirdparty->contact_get_property((int) $val, 'email');
 				} elseif ($val !== '') {	// $val is a free-typed "Name <email>" or "email" tag
-					$tmparrayccc[] = $val;
+					$tmparrayccc[] = sanitizeVal($val, 'alphawithlgt');
 				}
 			}
 			$sendtobcc = implode(',', $tmparrayccc);
