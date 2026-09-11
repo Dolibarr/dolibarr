@@ -114,7 +114,7 @@ with
 #### KEYWORD
 In uppercase if you want to have the log comment appears into the generated ChangeLog file.
 
-The keyword can be omitted if your commit does not fit in any of the following categories:
+The keyword can be omitted only if your commit does not fit in any of the following categories:
 
 - Fix/FIX:     for a bug fix
 - Close/CLOSE: for closing a referenced feature request
