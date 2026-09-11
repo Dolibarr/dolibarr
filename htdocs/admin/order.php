@@ -714,13 +714,6 @@ if (isModEnabled('invoice')) {
 	print '</td></tr>';
 }
 
-// Allow a customer reference already used by another order of the same third party
-print '<tr class="oddeven"><td>'.$langs->trans("AllowDuplicateRefCustomerOnOrders").'&nbsp;';
-print $form->textwithpicto('', $langs->trans("AllowDuplicateRefCustomerOnOrdersHelp"), 1, 'help').'</td>';
-print '<td class="left" colspan="2">';
-print ajax_constantonoff('ORDER_ALLOW_DUPLICATE_REF_CLIENT');
-print '</td></tr>';
-
 // Notifications
 print '<tr class="oddeven">';
 print '<td>'.img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("Notifications").'</td>';
