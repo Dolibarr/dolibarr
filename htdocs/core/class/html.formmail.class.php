@@ -1257,39 +1257,48 @@ class FormMail extends Form
 			$tmparray[$key] = dol_htmlentities($label, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8', true);
 		}
 
+		$morecss = 'inline-block minwidth500';
+
 		// $addjscombo = 0: skip multiselectarray()'s generic select2 init script, we init it ourselves below with tags/createTag.
-		$out = $form->multiselectarray($htmlname, $tmparray, $selected, 0, 0, 'inline-block minwidth500', 0, 0, '', '', '', 0);
+		$out = $form->multiselectarray($htmlname, $tmparray, $selected, 0, 0, $morecss, 0, 0, '', '', '', 0);
 
 		$out .= "\n".'<script nonce="'.getNonce().'">'."\n";
 		$out .= '$(document).ready(function () {'."\n";
 		$out .= '	$(\''.dol_escape_js('#'.$htmlname).'\').select2({'."\n";
-		$out .= '		dir: \'ltr\','."\n";
-		$out .= '		theme: \'default\','."\n";
-		$out .= '		width: \'resolve\','."\n";
-		$out .= '		language: (typeof select2arrayoflanguage === \'undefined\') ? \'en\' : select2arrayoflanguage,'."\n";
-		$out .= '		tags: true,'."\n";
-		$out .= '		createTag: function (params) {'."\n";
-		$out .= '			var REGEX_EMAIL = "([a-z0-9!#$%&\'*+/=?^_`{|}~-]+(?:\\\\.[a-z0-9!#$%&\'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)";'."\n";
-		$out .= '			var term = $.trim(params.term);'."\n";
-		$out .= '			if (term.indexOf("@") === -1) {'."\n";
-		$out .= '				return null;'."\n";
-		$out .= '			}'."\n";
-		$out .= '			var matchwithname = term.match(new RegExp("^([^<]*)<" + REGEX_EMAIL + ">$", "i"));'."\n";
-		$out .= '			if (matchwithname !== null) {'."\n";
-		$out .= '				var valuewithname = $.trim(matchwithname[1]) + " <" + matchwithname[2] + ">";'."\n";
-		$out .= '				return { id: valuewithname, text: valuewithname };'."\n";
-		$out .= '			}'."\n";
-		$out .= '			if (term.indexOf("<") >= 0 || term.indexOf(">") >= 0) {'."\n";
-		$out .= '				return null;'."\n";
-		$out .= '			}'."\n";
-		$out .= '			var matchbare = term.match(new RegExp("^" + REGEX_EMAIL + "$", "i"));'."\n";
-		$out .= '			if (matchbare !== null) {'."\n";
-		$out .= '				return { id: matchbare[1], text: matchbare[1] };'."\n";
-		$out .= '			}'."\n";
-		$out .= '			return null;'."\n";
-		$out .= '		}'."\n";
-		$out .= '	});'."\n";
-		$out .= '	$(\''.dol_escape_js('#'.$htmlname.' + .select2').'\').addClass(\''.dol_escape_js('inline-block minwidth500').'\');'."\n";
+		// Nowdoc for the static part of the select2 config (no PHP value is interpolated in here, so unlike
+		// a heredoc none of this JS's own '$(' / '$.' / trailing regex '$' anchors need checking against
+		// PHP's variable-interpolation rules): the two lines around it that need an escaped PHP value stay
+		// as plain concatenation, same as multiselectarray()'s own script-building style.
+		$out .= <<<'JS'
+				dir: 'ltr',
+				theme: 'default',
+				width: 'resolve',
+				language: (typeof select2arrayoflanguage === 'undefined') ? 'en' : select2arrayoflanguage,
+				tags: true,
+				createTag: function (params) {
+					var REGEX_EMAIL = "([a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)";
+					var term = $.trim(params.term);
+					if (term.indexOf("@") === -1) {
+						return null;
+					}
+					var matchwithname = term.match(new RegExp("^([^<]*)<" + REGEX_EMAIL + ">$", "i"));
+					if (matchwithname !== null) {
+						var valuewithname = $.trim(matchwithname[1]) + " <" + matchwithname[2] + ">";
+						return { id: valuewithname, text: valuewithname };
+					}
+					if (term.indexOf("<") >= 0 || term.indexOf(">") >= 0) {
+						return null;
+					}
+					var matchbare = term.match(new RegExp("^" + REGEX_EMAIL + "$", "i"));
+					if (matchbare !== null) {
+						return { id: matchbare[1], text: matchbare[1] };
+					}
+					return null;
+				}
+			});
+
+		JS;
+		$out .= '	$(\''.dol_escape_js('#'.$htmlname.' + .select2').'\').addClass(\''.dol_escape_js($morecss).'\');'."\n";
 		$out .= '});'."\n";
 		$out .= '</script>'."\n";
 
