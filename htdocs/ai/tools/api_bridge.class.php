@@ -528,11 +528,11 @@ class ToolApiBridge extends McpTool
 	 * @var array<string, string>
 	 */
 	private $commonParamDocs = [
-		'sortfield' => "Field to sort on, prefixed with 't.' (e.g. 't.rowid', 't.ref', 't.datec').",
+		'sortfield' => "Field to sort on, prefixed with 't.' (e.g. 't.rowid', 't.ref', 't.datec'). Use the SQL column names: creation date is 't.datec' (NEVER 'date_creation') and last modification 't.tms' (never 'date_modification').",
 		'sortorder' => "Sort direction: 'ASC' or 'DESC'.",
 		'limit' => "Maximum number of records to return.",
 		'page' => "Zero-based page index for pagination.",
-		'sqlfilters' => "Universal search filter. Example: \"(t.ref:like:'PR%') and (t.datec:>=:'2026-01-01')\". Field names are prefixed with 't.'; operators: =, !=, <, <=, >, >=, like, is; combine clauses with 'and'/'or' and parentheses.",
+		'sqlfilters' => "Universal search filter. Syntax: (t.field:operator:'value'); operators: =, !=, <, <=, >, >=, like, is; combine clauses with 'and'/'or' and parentheses. Example: \"(t.ref:like:'PR%') and (t.datec:>=:'2026-01-01')\". 'like' is case-insensitive; the IN operator is NOT supported (use 'or'); dates as 'YYYY-MM-DD'.",
 		'properties' => "Comma-separated list of properties to include in the response, to reduce its size (e.g. 'id,ref,label').",
 		'id' => "Rowid (numeric technical id) of the record."
 	];
@@ -849,10 +849,18 @@ class ToolApiBridge extends McpTool
 			$ptype = isset($paramDocs[$pname]) ? $this->docTypeToJson($paramDocs[$pname]['type']) : 'string';
 			// Parameter doc priority: hand-written per-method enrichment, then the
 			// description guessed from the docblock, then the shared common docs.
+			// Exception for the two syntax-bearing params (sqlfilters, sortfield):
+			// their API docblocks carry a thin per-endpoint example that would win
+			// over — and hide — the full syntax contract (operators, and/or, the
+			// unsupported IN, the datec/tms column names), so there the common doc
+			// is APPENDED to the docblock description instead of being shadowed.
 			if (isset($meta['params'][$pname])) {
 				$pdesc = $meta['params'][$pname];
 			} elseif (!empty($paramDocs[$pname]['desc'])) {
 				$pdesc = $paramDocs[$pname]['desc'];
+				if (in_array($pname, ['sqlfilters', 'sortfield'], true) && !empty($this->commonParamDocs[$pname])) {
+					$pdesc = rtrim($pdesc, '. ').'. '.$this->commonParamDocs[$pname];
+				}
 			} else {
 				$pdesc = $this->commonParamDocs[$pname] ?? '';
 			}
