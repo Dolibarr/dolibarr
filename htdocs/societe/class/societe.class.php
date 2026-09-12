@@ -211,6 +211,7 @@ class Societe extends CommonObject
 		'idprof6' => array('type' => 'varchar(128)', 'label' => 'Idprof6', 'enabled' => 1, 'visible' => -1, 'position' => 207),
 		'tva_intra' => array('type' => 'varchar(20)', 'label' => 'Tva intra', 'enabled' => 1, 'visible' => -1, 'position' => 210),
 		'capital' => array('type' => 'double(24,8)', 'label' => 'Capital', 'enabled' => 1, 'visible' => -1, 'position' => 215),
+		'capital_currency' => array('type' => 'varchar(3)', 'label' => 'CapitalCurrency', 'enabled' => 1, 'visible' => -1, 'position' => 216),
 		'fk_stcomm' => array('type' => 'integer', 'label' => 'CommercialStatus', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 220),
 		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 225),
 		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 230),
@@ -538,6 +539,11 @@ class Societe extends CommonObject
 	 * @var float Capital
 	 */
 	public $capital;
+
+	/**
+	 * @var string Currency code for capital amount
+	 */
+	public $capital_currency;
 
 	/**
 	 * @var int Type thirdparty
@@ -1529,6 +1535,7 @@ class Societe extends CommonObject
 		$this->localtax2_value = trim($this->localtax2_value);
 
 		$this->capital = ($this->capital != '') ? (float) price2num(trim((string) $this->capital)) : null;
+		$this->capital_currency = trim((string) $this->capital_currency);
 
 		$this->effectif_id = (int) $this->effectif_id;
 		$this->forme_juridique_code = (int) $this->forme_juridique_code;
@@ -1694,6 +1701,7 @@ class Societe extends CommonObject
 			}
 
 			$sql .= ",capital = ".($this->capital === null ? "null" : $this->capital);
+			$sql .= ",capital_currency = ".(!empty($this->capital_currency) ? "'".$this->db->escape($this->capital_currency)."'" : "null");
 
 			$sql .= ",prefix_comm = ".(!empty($this->prefix_comm) ? "'".$this->db->escape($this->prefix_comm)."'" : "null");
 
@@ -1938,7 +1946,7 @@ class Societe extends CommonObject
 		$sql .= ', s.socialnetworks';
 		$sql .= ', s.url, s.zip, s.town, s.note_private, s.note_public, s.client, s.fournisseur';
 		$sql .= ', s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4, s.idprof5, s.idprof6';
-		$sql .= ', s.capital, s.tva_intra';
+		$sql .= ', s.capital, s.capital_currency, s.tva_intra';
 		$sql .= ', s.fk_typent as typent_id';
 		$sql .= ', s.fk_effectif as effectif_id';
 		$sql .= ', s.fk_forme_juridique as forme_juridique_code';
@@ -2104,6 +2112,7 @@ class Societe extends CommonObject
 				$this->idprof6		= $obj->idprof6;
 
 				$this->capital = $obj->capital;
+				$this->capital_currency = $obj->capital_currency;
 
 				$this->code_client = $obj->code_client;
 				$this->code_fournisseur = $obj->code_fournisseur;
