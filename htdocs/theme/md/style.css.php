@@ -4716,7 +4716,7 @@ table.nointerlines tr:not(:last-child) td {
 <?php $borderradius = getDolGlobalString('THEME_ELDY_USEBORDERONTABLE') ? getDolGlobalInt('THEME_ELDY_BORDER_RADIUS', 6) : 0; ?>
 table.noborder:not(.cal_month, .paymenttable, .margintable) {
 	border-radius: <?php echo $borderradius; ?>px;
-	/* overflow: hidden; */ /* Firefox does not clip cell backgrounds to the table border-radius without this */
+	overflow: hidden; /* Firefox does not clip cell backgrounds to the table border-radius without this. Only applied to table.noborder (not table.liste): table.liste can contain the column-selector dropdown (multiSelectArrayWithCheckbox), an absolutely positioned popup that overflow:hidden would clip on short tables. */
 }
 table.noborder.cal_month {
 	border-bottom-left-radius: <?php echo $borderradius; ?>px;
