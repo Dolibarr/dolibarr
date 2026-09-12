@@ -213,7 +213,8 @@ class AssetDepreciationOptions extends CommonObject
 				// Unset required option (notnull) if field disabled
 				if (!empty($field_info['enabled_field'])) {
 					$info = explode(':', $field_info['enabled_field']);
-					if (!empty($this->deprecation_options[$info[0]][$info[1]]) && $this->deprecation_options[$info[0]][$info[1]] != $info[2] && isset($this->fields[$field_key]['notnull'])) {
+					// Use isset() + strict string compare, not empty(), because the gating value can legitimately be '0' (e.g. depreciation_type=0 for Linear)
+					if (isset($this->deprecation_options[$info[0]][$info[1]]) && (string) $this->deprecation_options[$info[0]][$info[1]] !== (string) $info[2] && isset($this->fields[$field_key]['notnull'])) {
 						unset($this->fields[$field_key]['notnull']);
 					}
 				}
@@ -285,6 +286,16 @@ class AssetDepreciationOptions extends CommonObject
 
 			$this->setInfosForMode($mode_key, $class_type);
 
+			// Is this whole mode currently enabled (e.g. 'accelerated_depreciation' only when accelerated_depreciation_option=1)?
+			// Its fields are still rendered (hidden via JS) and submitted even when the mode is disabled, so their own
+			// 'notnull'/'required' must not block the save in that case (the mode gets discarded further down anyway).
+			$mode_is_enabled = true;
+			if (!empty($mode_info['enabled_field'])) {
+				$mode_enable_info = explode(':', $mode_info['enabled_field']);
+				$mode_enable_value = $deprecation_options[$mode_enable_info[0]][$mode_enable_info[1]] ?? null;
+				$mode_is_enabled = (isset($mode_enable_value) && (string) $mode_enable_value === (string) $mode_enable_info[2]);
+			}
+
 			foreach ($mode_info['fields'] as $field_key => $field_info) {
 				if (!empty($field_info['computed'])) {
 					continue;
@@ -346,12 +357,23 @@ class AssetDepreciationOptions extends CommonObject
 
 				//var_dump($field_key.' '.$value.' '.$field_info['type']);
 				$field_value = $value;
+
+				// A field can be conditionally required via 'enabled_field' (only required when another field of the
+				// same mode equals a given value, e.g. degressive_coefficient only when depreciation_type=1). Check
+				// that condition against the value actually being submitted right now, not a stale/previous value.
+				$field_is_enabled = $mode_is_enabled;
+				if ($field_is_enabled && !empty($field_info['enabled_field'])) {
+					$enable_info = explode(':', $field_info['enabled_field']);
+					$enable_value = $deprecation_options[$enable_info[0]][$enable_info[1]] ?? null;
+					$field_is_enabled = (isset($enable_value) && (string) $enable_value === (string) $enable_info[2]);
+				}
+
 				if ($field_info['notnull'] > 0 && $field_value == '' && !is_null($field_info['default']) && $field_info['default'] == '(PROV)') {
 					$field_value = '(PROV)';
 				} elseif ((!empty($field_info['required']) || $field_info['notnull'] > 0) && $field_value == '' && !empty($field_info['default'])) {
 					$field_value = $field_info['default'];
 				}
-				if ($field_info['notnull'] > 0 && $field_value == '' && is_null($field_info['default'])) {
+				if ($field_is_enabled && $field_info['notnull'] > 0 && $field_value == '' && is_null($field_info['default'])) {
 					$error++;
 					setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv($field_info['label'])), null, 'errors');
 				}
@@ -359,7 +381,7 @@ class AssetDepreciationOptions extends CommonObject
 
 				// Validation of fields values
 				if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1 || getDolGlobalString('MAIN_ACTIVATE_VALIDATION_RESULT')) {
-					if (!$error && !empty($field_info['validate']) && is_callable(array($this, 'validateField'))) {
+					if ($field_is_enabled && !$error && !empty($field_info['validate']) && is_callable(array($this, 'validateField'))) {
 						if (!$this->validateField($mode_info['fields'], $field_key, $value)) {
 							$error++;
 						}
@@ -444,7 +466,8 @@ class AssetDepreciationOptions extends CommonObject
 		foreach ($this->deprecation_options_fields as $mode_key => $mode_info) {
 			if (!empty($mode_info['enabled_field'])) {
 				$info = explode(':', $mode_info['enabled_field']);
-				if (!empty($deprecation_options[$info[0]][$info[1]]) && $deprecation_options[$info[0]][$info[1]] != $info[2]) {
+				// Use isset() + strict string compare, not empty(), because the gating value can legitimately be '0' (e.g. accelerated_depreciation_option=0)
+				if (isset($deprecation_options[$info[0]][$info[1]]) && (string) $deprecation_options[$info[0]][$info[1]] !== (string) $info[2]) {
 					unset($deprecation_options[$mode_key]);
 				}
 			}
