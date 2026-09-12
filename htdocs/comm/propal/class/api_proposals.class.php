@@ -610,6 +610,10 @@ class Proposals extends DolibarrApi
 			throw new RestException(404, 'Proposal line not found');
 		}
 
+		if ($propalline->fk_propal != $id) {
+			throw new RestException(403, 'Line does not belong to this proposal');
+		}
+
 		$updateRes = $this->propal->updateline(
 			$lineid,
 			isset($request_data->subprice) ? $request_data->subprice : $propalline->subprice,
