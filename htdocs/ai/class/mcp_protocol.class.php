@@ -163,12 +163,20 @@ class MCPServer
 	 */
 	public function handleRequest(array $request): ?array
 	{
-		// Spec: JSON-RPC 2.0 check (allowing for broader compatibility)
-		if (!isset($request['jsonrpc']) || $request['jsonrpc'] !== '2.0' || !isset($request['method']) || !is_string($request['method'])) {
-			return $this->errorResponse(-32600, 'Invalid Request');
-		}
-
 		$this->requestId = $request['id'] ?? null;
+
+		// Spec: JSON-RPC 2.0 check. Per JSON-RPC 2.0, an Invalid Request gets
+		// an error response with the request id, or id null when it cannot be
+		// determined - never silence (id is captured above so errorResponse
+		// does not suppress; a null id is emitted explicitly here).
+		if (!isset($request['jsonrpc']) || $request['jsonrpc'] !== '2.0' || !isset($request['method']) || !is_string($request['method'])) {
+			$err = $this->errorResponse(-32600, 'Invalid Request');
+			if ($err === null) {
+				$err = ["jsonrpc" => "2.0", "id" => null, "error" => ["code" => -32600, "message" => "Invalid Request"]];
+			}
+
+			return $err;
+		}
 		$method = $request['method'] ?? '';
 		$params = $request['params'] ?? [];
 
