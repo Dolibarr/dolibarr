@@ -1745,7 +1745,7 @@ if ($action == "search") {
 function SendTicket(id)
 {
 	console.log("Open box to select the Print/Send form");
-	$.colorbox({href:"send.php?facid="+id, width:"70%", height:"30%", transition:"none", iframe:"true", title:'<?php echo dol_escape_js($langs->trans("SendTicket")); ?>'});
+	$.colorbox({href:"send.php?facid="+id, width:"70%", height:"30%", transition:"none", iframe:"true", title:<?php echo "'".dol_escape_js($langs->trans("SendTicket"))."'" ; ?>});
 	return true;
 }
 
@@ -1759,7 +1759,7 @@ function PrintBox(id, action) {
 /* Open the popup of the receipt to allow printing */
 function PrintByBrowser(id, gift) {
 	console.log("Call PrintByBrowser() to generate the receipt.");
-	$.colorbox({href:"receipt.php?facid="+id+"&gift="+gift, width:"40%", height:"90%", transition:"none", iframe:"true", title:'<?php echo dol_escape_js($langs->trans("PrintTicket")); ?>'});
+	$.colorbox({href:"receipt.php?facid="+id+"&gift="+gift, width:"40%", height:"90%", transition:"none", iframe:"true", title:<?php echo "'".dol_escape_js($langs->trans("PrintTicket"))."'" ; ?>});
 	return true;
 }
 
@@ -1804,10 +1804,10 @@ function PrintByESCPOS(id) {
 		data: { token: '<?php echo currentToken(); ?>' },
 		url: "<?php print DOL_URL_ROOT.'/takepos/ajax/ajax.php?action=printinvoiceticket&token='.currentToken().'&term='.urlencode(isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '').'&id='; ?>" + id,
 		success: function(){
-				showPrintResultPopup('<?php echo dol_escape_js($langs->trans("SentToPrinter").' '.$nameOfPrinter); ?>', 2000);
+				showPrintResultPopup(<?php echo "'".dol_escape_js($langs->trans("SentToPrinter").' '.$nameOfPrinter)."'" ; ?>, 2000);
 			},
 		error: function(){
-				showPrintResultPopup("<?php echo dol_escape_js($langs->trans("FailedToSendToPrinter")); ?>", 2000);
+				showPrintResultPopup(<?php echo "'".dol_escape_js($langs->trans("FailedToSendToPrinter"))."'" ; ?>, 2000);
 		}
 	});
 	return true;
@@ -1831,7 +1831,7 @@ function CreditNote() {
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('paramsForCreditNote', $parameters, $invoice, $action);?>
 	$("#poslines").load("<?php
-		print DOL_URL_ROOT; ?>/takepos/invoice.php?action=creditnote&token=<?php echo newToken() ?>&invoiceid="+placeid+creditNoteParams, function() {	});
+	print DOL_URL_ROOT; ?>/takepos/invoice.php?action=creditnote&token=<?php echo newToken() ?>&invoiceid="+placeid+creditNoteParams, function() {	});
 		return true;
 }
 
@@ -1989,7 +1989,7 @@ $( document ).ready(function() {
 		$s .= '</span>';
 	}
 	?>
-	$("#moreinfo").html('<?php print dol_escape_js($s); ?>');
+	$("#moreinfo").html(<?php print "'".dol_escape_js($s)."'" ; ?>);
 
 });
 
