@@ -536,9 +536,12 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 					if (count($found) == 1) {
 						$args['header']['socid'] = (int) array_key_first($found);
 					} elseif (count($found) > 1) {
-						return ["error" => "Several thirdparties match '".$custName."': ".implode(', ', array_map(function ($k, $v) {
-							return $v." (id ".$k.")";
-						}, array_keys($found), $found)).". Ask the user which one, then retry with that socid."];
+						$candidatesTxt = array();
+						foreach ($found as $fid => $fname) {
+							$candidatesTxt[] = $fname." (id ".((int) $fid).")";
+						}
+
+						return ["error" => "Several thirdparties match '".$custName."': ".implode(', ', $candidatesTxt).". Ask the user which one, then retry with that socid."];
 					}
 				}
 			}
