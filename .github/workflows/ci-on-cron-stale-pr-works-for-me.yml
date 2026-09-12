@@ -54,7 +54,7 @@ jobs:
             LABELS=$(echo "$PR" | jq -r '[.labels[].name] | join(", ")')
             echo "Labels: $LABELS"
 
-            HAS_LABEL=$(echo "$PR" | jq -r '[.labels[].name] | any(.[]; . == "Works for me / Can't reproduce")')
+            HAS_LABEL=$(echo "$PR" | jq -r '[.labels[].name] | any(.[]; . == "Works for me / Can\'t reproduce")')
 
             if [ "$HAS_LABEL" = "true" ]; then
 
