@@ -382,7 +382,7 @@ class DiscountAbsolute extends CommonObject
 		$sql .= " (entity, datec, fk_soc, discount_type, fk_user, description,";
 		$sql .= " amount_ht, amount_tva, amount_localtax1, amount_localtax2, amount_ttc, tva_tx, localtax1_tx, localtax1_type, localtax2_tx, localtax2_type, vat_src_code,";
 		$sql .= " multicurrency_amount_ht, multicurrency_amount_tva, multicurrency_amount_ttc,";
-		$sql .= " fk_facture_source, fk_invoice_supplier_source, multicurrency_code, multicurrency_tx";
+		$sql .= " fk_facture_line, fk_facture, fk_facture_source, fk_invoice_supplier_line, fk_invoice_supplier, fk_invoice_supplier_source, multicurrency_code, multicurrency_tx";
 		$sql .= ")";
 		$sql .= " VALUES (".((int) $conf->entity).", '".$this->db->idate($this->datec != '' ? $this->datec : dol_now())."', ".((int) $this->socid).", ".(empty($this->discount_type) ? 0 : intval($this->discount_type)).", ".((int) $userid).", '".$this->db->escape($this->description)."',";
 		$sql .= " ".price2num($this->amount_ht).", ".price2num($this->amount_tva).", ";
@@ -391,7 +391,11 @@ class DiscountAbsolute extends CommonObject
 		$sql .= " ".($this->localtax2_tx ? price2num($this->localtax2_tx) : 0).", ".($this->localtax2_type ? price2num($this->localtax2_type) : 0).", '".$this->db->escape($this->vat_src_code)."',";
 		$sql .= " ".price2num($this->multicurrency_amount_ht).", ".price2num($this->multicurrency_amount_tva).", ";
 		$sql .= " ".price2num($this->multicurrency_amount_ttc).", ";
+		$sql .= " ".($this->fk_facture_line ? ((int) $this->fk_facture_line) : "null").",";
+		$sql .= " ".($this->fk_facture ? ((int) $this->fk_facture) : "null").",";
 		$sql .= " ".($this->fk_facture_source ? ((int) $this->fk_facture_source) : "null").",";
+		$sql .= " ".($this->fk_invoice_supplier_line ? ((int) $this->fk_invoice_supplier_line) : "null").",";
+		$sql .= " ".($this->fk_invoice_supplier ? ((int) $this->fk_invoice_supplier) : "null").",";
 		$sql .= " ".($this->fk_invoice_supplier_source ? ((int) $this->fk_invoice_supplier_source) : "null").",";
 		$sql .= " ".($this->multicurrency_code ? "'".$this->db->escape($this->multicurrency_code)."'" : "null").",";
 		$sql .= " ".($this->multicurrency_tx ? price2num($this->multicurrency_tx) : "null");
@@ -604,15 +608,15 @@ class DiscountAbsolute extends CommonObject
 					$sqlcheck = "SELECT 1";
 					$sqlcheck .= " FROM ".$this->db->prefix()."element_element";
 					$sqlcheck .= " WHERE fk_source = ".((int) $sourceinvoiceid);
-					$sqlcheck .= " AND sourcetype = '".$this->db->escape($sourcetype)."'";
+					$sqlcheck .= " AND sourcetype = '" . $this->db->escape($sourcetype) . "'";
 					$sqlcheck .= " AND fk_target = ".((int) $rowidinvoice);
-					$sqlcheck .= " AND targettype = '".$this->db->escape($targettype)."'";
+					$sqlcheck .= " AND targettype = '" . $this->db->escape($targettype) . "'";
 					$sqlcheck .= $this->db->plimit(1);
 
 					$rescheck = $this->db->query($sqlcheck);
 					if ($rescheck && $this->db->num_rows($rescheck) === 0) {
 						$sqladd = "INSERT INTO ".$this->db->prefix()."element_element (fk_source, sourcetype, fk_target, targettype)";
-						$sqladd .= " VALUES (".((int) $sourceinvoiceid).", '".$this->db->escape($sourcetype)."', ".((int) $rowidinvoice).", '".$this->db->escape($targettype)."')";
+						$sqladd .= " VALUES (".((int) $sourceinvoiceid).", '" . $this->db->escape($sourcetype) . "', ".((int) $rowidinvoice).", '" . $this->db->escape($targettype) . "')";
 						$this->db->query($sqladd); // Best-effort: do not fail discount link if object link can't be created.
 					}
 				}
