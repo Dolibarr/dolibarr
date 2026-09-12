@@ -98,9 +98,9 @@ class ActionsAi
 	 * whitelist, fetch, user rights, entity) before any of it reaches the
 	 * prompt.
 	 *
-	 * @param array<string,mixed> $parameters  Hook parameters
-	 * @param CommonObject        $object      The page's main object (may be empty)
-	 * @param string              $action      Current action
+	 * @param array<string,mixed> $parameters Hook parameters
+	 * @param CommonObject|null   $object     Current object, when the page sets one
+	 * @param string              $action     Current action
 	 * @return int 0 on success
 	 */
 	public function printCommonFooter($parameters, &$object, &$action)
@@ -175,7 +175,8 @@ class ActionsAi
 				// match on '/index.php' would hit every module index for the
 				// home entry.
 				$self = (string) ($_SERVER['PHP_SELF'] ?? '');
-				$rel = (DOL_URL_ROOT !== '' && strpos($self, DOL_URL_ROOT) === 0) ? substr($self, strlen(DOL_URL_ROOT)) : $self;
+				$urlRoot = (string) constant('DOL_URL_ROOT');
+				$rel = ($urlRoot !== '' && strpos($self, $urlRoot) === 0) ? substr($self, strlen($urlRoot)) : $self;
 				if (isset($dashboards[$rel])) {
 					print "\n".'<script nonce="'.getNonce().'">window.aiPageContext = '.json_encode(array('dashboard' => $dashboards[$rel])).';</script>'."\n";
 
@@ -197,7 +198,7 @@ class ActionsAi
 			'element' => (string) $pageObject->element,
 			'id' => (int) $pageObject->id,
 			'ref' => (string) ($pageObject->ref ?? ''),
-			'socid' => (int) ($pageObject->socid ?? 0)
+			'socid' => (property_exists($pageObject, 'socid') ? (int) $pageObject->socid : 0)
 		);
 
 		// printCommonFooter output convention: print directly (the caller does
