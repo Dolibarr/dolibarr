@@ -234,7 +234,7 @@ function hideoptions(domelem) {
 		domelem.innerText=\''.dol_escape_js($langs->transnoentitiesnoconv("HideAdvancedoptions")).'\';
   	} else {
     	div.style.display = "none";
-		domelem.innerText=\''.dol_escape_js($langs->transnoentitiesnoconv("ShowAdvancedOptions")).'...\';
+		domelem.innerText=\''.dol_escape_js($langs->transnoentitiesnoconv("ShowAdvancedOptions").'...').'\';
 	}
 }
 </script>';
