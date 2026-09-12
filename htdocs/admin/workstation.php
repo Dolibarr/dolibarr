@@ -286,7 +286,7 @@ print "</table><br>\n";
 
 if (getDolGlobalInt('WORKSTATION_INCLUDE_DOC_GENERATION')) {
 	// Document templates generators
-	printDocumentModelList($db, $langs, $form, $dirmodels, $type, $moduledir, 'WORKSTATION_WORKSTATION_ADDON', $langs->trans("DocumentModules", 'Workstation'), array(
+	printDocumentModelList($db, $langs, $form, $dirmodels, $type, $moduledir, 'WORKSTATION_ADDON_PDF', $langs->trans("DocumentModules", 'Workstation'), array(
 		'Logo' => 'option_logo',
 		'MultiLanguage' => 'option_multilang',
 	), false, 'mod_workstation_standard');
