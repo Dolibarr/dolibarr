@@ -300,6 +300,106 @@ if (empty($reshook) && (GETPOST('addassignedtouser') || GETPOST('updateassignedt
 	$listUserAssignedUpdated = true;
 }
 
+// Add users from selected group to assigned list
+if (empty($reshook) && (GETPOST('addassignedtogroup') || GETPOST('updateassignedtogroup'))) {
+	$groups = GETPOST('assignedtogroup', 'array');
+	if (!is_array($groups)) {
+		$groups = [GETPOSTINT('assignedtogroup')];
+	}
+	$groupids = array_filter(
+		array_map('intval', $groups),
+		static function ($id) {
+			return $id > 0;
+		}
+	);
+	if (!empty($groupids)) {
+		$assignedtouser = [];
+		if (!empty($_SESSION['assignedtouser'])) {
+			$assignedtouser = json_decode($_SESSION['assignedtouser'], true);
+		}
+		$transparency = GETPOST('transparency') ? GETPOST('transparency') : 1;
+		$sql = sprintf(
+			"SELECT ug.fk_user FROM %susergroup_user as ug INNER JOIN %suser as u ON u.rowid = ug.fk_user WHERE ug.fk_usergroup IN (%s) AND u.statut <> 0",
+			MAIN_DB_PREFIX,
+			MAIN_DB_PREFIX,
+			$db->sanitize(implode(',', $groupids))
+		);
+		if (isModEnabled('multicompany') && $conf->entity == 1 && $user->admin && !$user->entity) {
+			$sql .= " AND u.entity IS NOT NULL";
+		} else {
+			$sql .= " AND u.entity IN (0," . $conf->entity . ")";
+		}
+
+		$resql = $db->query($sql);
+		if ($resql) {
+			while ($obj = $db->fetch_object($resql)) {
+				$assignedtouser[$obj->fk_user] = array('id' => $obj->fk_user, 'transparency' => $transparency, 'mandatory' => 1);
+			}
+		}
+		$_SESSION['assignedtouser'] = json_encode($assignedtouser);
+	}
+
+	$donotclearsession = 1;
+	if ($action == 'add' && $usercancreate) {
+		$action = 'create';
+	}
+	if ($action == 'update' && $usercancreate) {
+		$action = 'edit';
+	}
+
+	$listUserAssignedUpdated = true;
+}
+
+// Add users from selected tag categories to assigned list
+if (empty($reshook) && (GETPOST('addassignedtousertags') || GETPOST('updateassignedtousertags'))) {
+	$tagids = GETPOST('assignedtousertags', 'array');
+	if (!is_array($tagids)) {
+		$tagids = [GETPOSTINT('assignedtousertags')];
+	}
+	$tagids = array_filter(
+		array_map('intval', $tagids),
+		static function ($id) {
+			return $id > 0;
+		}
+	);
+	if (!empty($tagids)) {
+		$assignedtouser = [];
+		if (!empty($_SESSION['assignedtouser'])) {
+			$assignedtouser = json_decode($_SESSION['assignedtouser'], true);
+		}
+		$transparency = GETPOST('transparency') ? GETPOST('transparency') : 1;
+		$sql = sprintf(
+			"SELECT cu.fk_user FROM %scategorie_user as cu INNER JOIN %suser as u ON u.rowid = cu.fk_user WHERE cu.fk_categorie IN (%s) AND u.statut <> 0",
+			MAIN_DB_PREFIX,
+			MAIN_DB_PREFIX,
+			$db->sanitize(implode(',', $tagids))
+		);
+		if (isModEnabled('multicompany') && $conf->entity == 1 && $user->admin && !$user->entity) {
+			$sql .= " AND u.entity IS NOT NULL";
+		} else {
+			$sql .= " AND u.entity IN (0," . $conf->entity . ")";
+		}
+
+		$resql = $db->query($sql);
+		if ($resql) {
+			while ($obj = $db->fetch_object($resql)) {
+				$assignedtouser[$obj->fk_user] = array('id' => $obj->fk_user, 'transparency' => $transparency, 'mandatory' => 1);
+			}
+		}
+		$_SESSION['assignedtouser'] = json_encode($assignedtouser);
+	}
+
+	$donotclearsession = 1;
+	if ($action == 'add' && $usercancreate) {
+		$action = 'create';
+	}
+	if ($action == 'update' && $usercancreate) {
+		$action = 'edit';
+	}
+
+	$listUserAssignedUpdated = true;
+}
+
 // Add resource to assigned list
 if (empty($reshook) && (GETPOST('addassignedtoresource') || GETPOST('updateassignedtoresource'))) {
 	// Add a new user
@@ -1626,6 +1726,24 @@ if ($action == 'create') {
 	print '<!-- list of user to assign -->'."\n";
 	print '<div class="assignedtouser">';
 	print $form->select_dolusers_forevent(($action == 'create' ? 'add' : 'update'), 'assignedtouser', 1, [], 0, '', [], '0', 0, 0, 'u.statut:<>:0', 1, $listofuserid, $listofcontactid, $listofotherid);
+	print '</div>';
+	print '</td></tr>';
+
+	print '<tr><td class="nowrap titlefieldcreate"><span>' . $langs->trans('UserGroups') . '</span></td><td>';
+	print img_picto('', 'users', 'class="pictofixedwidth"');
+	print '<div class="divaddgroup">';
+	print $form->select_dolgroups([], 'assignedtogroup', 1, '', 0, '', array(), '0', true, 'minwidth200');
+	print '<script nonce="' . getNonce() . '" type="text/javascript">jQuery(document).ready(function() { jQuery("#assignedtogroup").on("change", function() { var value = jQuery(this).val(); if (value && (Array.isArray(value) ? value.length : value > 0)) { jQuery("#' . ($action == 'create' ? 'add' : 'update') . 'assignedtogroup").attr("disabled", false); } else { jQuery("#' . ($action == 'create' ? 'add' : 'update') . 'assignedtogroup").attr("disabled", true); } }); });</script>';
+	print ' <input type="submit" disabled class="button valignmiddle smallpaddingimp reposition" id="'.($action == 'create' ? 'add' : 'update').'assignedtogroup" name="'.($action == 'create' ? 'add' : 'update').'assignedtogroup" value="'.dol_escape_htmltag($langs->trans('Add')).'">';
+	print '</div>';
+	print '</td></tr>';
+
+	print '<tr><td class="nowrap titlefieldcreate"><span>' . $langs->trans('AddUserByTags') . '</span></td><td>';
+	print img_picto('', 'tags', 'class="pictofixedwidth"');
+	print '<div class="divaddgroup">';
+	print $form->selectCategories(Categorie::TYPE_USER, 'assignedtousertags', null);
+	print '<script nonce="' . getNonce() . '" type="text/javascript">jQuery(document).ready(function() { jQuery("#assignedtousertags").on("change", function() { var value = jQuery(this).val(); if (value && (Array.isArray(value) ? value.length : value > 0)) { jQuery("#' . ($action == 'create' ? 'add' : 'update') . 'assignedtousertags").attr("disabled", false); } else { jQuery("#' . ($action == 'create' ? 'add' : 'update') . 'assignedtousertags").attr("disabled", true); } }); });</script>';
+	print ' <input type="submit" disabled class="button valignmiddle smallpaddingimp reposition" id="'.($action == 'create' ? 'add' : 'update').'assignedtousertags" name="'.($action == 'create' ? 'add' : 'update').'assignedtousertags" value="'.dol_escape_htmltag($langs->trans('Add')).'">';
 	print '</div>';
 	print '</td></tr>';
 
