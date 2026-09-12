@@ -257,8 +257,7 @@ class AssetDepreciationOptions extends CommonObject
 			$mode_is_enabled = true;
 			if (!empty($mode_info['enabled_field'])) {
 				$mode_enable_info = explode(':', $mode_info['enabled_field']);
-				$mode_enable_html_name = $mode_enable_info[0] . '_' . $mode_enable_info[1];
-				$mode_enable_value = GETPOSTISSET($mode_enable_html_name) ? GETPOST($mode_enable_html_name, 'alphanohtml') : ($this->deprecation_options[$mode_enable_info[0]][$mode_enable_info[1]] ?? null);
+				$mode_enable_value = $deprecation_options[$mode_enable_info[0]][$mode_enable_info[1]] ?? null;
 				$mode_is_enabled = (isset($mode_enable_value) && (string) $mode_enable_value === (string) $mode_enable_info[2]);
 			}
 
@@ -325,8 +324,7 @@ class AssetDepreciationOptions extends CommonObject
 				$field_is_enabled = $mode_is_enabled;
 				if ($field_is_enabled && !empty($field_info['enabled_field'])) {
 					$enable_info = explode(':', $field_info['enabled_field']);
-					$enable_html_name = $enable_info[0] . '_' . $enable_info[1];
-					$enable_value = GETPOSTISSET($enable_html_name) ? GETPOST($enable_html_name, 'alphanohtml') : ($this->deprecation_options[$enable_info[0]][$enable_info[1]] ?? null);
+					$enable_value = $deprecation_options[$enable_info[0]][$enable_info[1]] ?? null;
 					$field_is_enabled = (isset($enable_value) && (string) $enable_value === (string) $enable_info[2]);
 				}
 
