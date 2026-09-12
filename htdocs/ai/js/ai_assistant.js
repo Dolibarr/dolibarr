@@ -1366,7 +1366,30 @@ export function initAiAssistant(container) {
             const chosenModel = resolveModel();
             const intentRes = await fetch(epUrl('parse_intent.php'), {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(chosenModel ? { query: sentQuery, model: chosenModel } : { query: sentQuery })
+                // Page context (set by the printCommonFooter hook on card pages)
+                // lets the server resolve "this invoice" - it re-validates the
+                // ids against the user's rights before trusting them.
+                body: JSON.stringify(Object.assign(
+                    chosenModel ? { query: sentQuery, model: chosenModel } : { query: sentQuery },
+                    (function () {
+                        const ctx = window.aiPageContext;
+                        if (!ctx || (!ctx.id && !ctx.list && !ctx.dashboard)) return {};
+                        // On list pages, the mass-action checkboxes carry the row
+                        // ids: checked ones are the user's live selection.
+                        if (ctx.list) {
+                            // The mass-action checkboxes carry rowids by core
+                            // convention on every list - a uniform source that
+                            // sidesteps the per-list SQL alias zoo server-side.
+                            const all = Array.from(document.querySelectorAll('.checkforselect'))
+                                .map(cb => parseInt(cb.value, 10)).filter(n => n > 0);
+                            if ((!ctx.ids || !ctx.ids.length) && all.length) ctx.ids = all.slice(0, 100);
+                            const sel = Array.from(document.querySelectorAll('.checkforselect:checked'))
+                                .map(cb => parseInt(cb.value, 10)).filter(n => n > 0).slice(0, 25);
+                            if (sel.length) ctx.selected = sel;
+                        }
+                        return { context: ctx };
+                    })()
+                ))
             });
             const intent = await intentRes.json();
             loadingMsg.remove();

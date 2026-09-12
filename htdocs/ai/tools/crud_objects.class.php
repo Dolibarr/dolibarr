@@ -1,9 +1,9 @@
 <?php
 /* Copyright (C) 2026	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2026	Nick Fragoulis
- * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026	Jose Martinez			<jose.martinez@pichinov.com>
- * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026   Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -494,6 +494,83 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 	 */
 	private function createDocument(array $args)
 	{
+		// Normalize the argument shapes LLMs actually produce. Models emit
+		// top-level socid instead of header.socid and line keys like
+		// ref/qty/price - accept the common aliases instead of failing the
+		// whole create over naming (field-observed with gemini-2.5-flash).
+		if (empty($args['header']) && !empty($args['socid'])) {
+			$args['header'] = ['socid' => (int) $args['socid']];
+			unset($args['socid']);
+		}
+		// Customer given by NAME (models do this when no id is on screen; the
+		// single-shot architecture cannot chain find_customer -> create, so
+		// the create resolves names itself): exact match, then unique LIKE.
+		// Ambiguity returns the candidates instead of guessing.
+		if (empty($args['header']['socid'])) {
+			$custName = '';
+			foreach (array('customer', 'customer_name', 'thirdparty', 'company', 'name') as $ck) {
+				if (!empty($args['header'][$ck]) && is_string($args['header'][$ck])) {
+					$custName = trim($args['header'][$ck]);
+					break;
+				}
+				if (!empty($args[$ck]) && is_string($args[$ck])) {
+					$custName = trim($args[$ck]);
+					break;
+				}
+			}
+			if ($custName !== '' && !is_numeric($custName)) {
+				if (empty($args['header']) || !is_array($args['header'])) {
+					$args['header'] = array();
+				}
+				$sqlc = "SELECT rowid, nom FROM ".MAIN_DB_PREFIX."societe WHERE entity IN (".getEntity('societe').") AND nom = '".$this->db->escape($custName)."'";
+				$resc = $this->db->query($sqlc);
+				if ($resc && $this->db->num_rows($resc) == 1) {
+					$args['header']['socid'] = (int) $this->db->fetch_object($resc)->rowid;
+				} else {
+					$sqlc = "SELECT rowid, nom FROM ".MAIN_DB_PREFIX."societe WHERE entity IN (".getEntity('societe').") AND nom LIKE '%".$this->db->escape($custName)."%' LIMIT 6";
+					$resc = $this->db->query($sqlc);
+					$found = array();
+					while ($resc && ($oc = $this->db->fetch_object($resc))) {
+						$found[$oc->rowid] = $oc->nom;
+					}
+					if (count($found) == 1) {
+						$args['header']['socid'] = (int) array_key_first($found);
+					} elseif (count($found) > 1) {
+						$candidatesTxt = array();
+						foreach ($found as $fid => $fname) {
+							$candidatesTxt[] = $fname." (id ".((int) $fid).")";
+						}
+
+						return ["error" => "Several thirdparties match '".$custName."': ".implode(', ', $candidatesTxt).". Ask the user which one, then retry with that socid."];
+					}
+				}
+			}
+		}
+		if (!empty($args['lines']) && is_array($args['lines'])) {
+			$aliases = ['ref' => 'product_ref', 'product' => 'product_ref', 'sku' => 'product_ref', 'qty' => 'quantity', 'price' => 'unit_price', 'unitprice' => 'unit_price', 'price_ht' => 'unit_price', 'vat' => 'vat_rate'];
+			foreach ($args['lines'] as $k => $line) {
+				if (!is_array($line)) {
+					continue;
+				}
+				foreach ($aliases as $from => $to) {
+					if (isset($line[$from]) && !isset($line[$to])) {
+						$args['lines'][$k][$to] = $line[$from];
+						unset($args['lines'][$k][$from]);
+					}
+				}
+				// 'label' means the PRODUCT NAME when no product is otherwise
+				// identified (resolution degrades to free text on a miss
+				// anyway); it means the line description when one is.
+				if (isset($line['label'])) {
+					$to = (empty($line['product_ref']) && empty($line['product_id'])) ? 'product_ref' : 'description';
+					if (!isset($args['lines'][$k][$to])) {
+						$args['lines'][$k][$to] = $line['label'];
+					}
+					unset($args['lines'][$k]['label']);
+				}
+			}
+		}
+
 		global $conf;
 
 		$type = (string) $args['object_type'];
@@ -552,6 +629,15 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 				LOG_WARNING
 			);
 			return ["error" => "Access denied to this thirdparty."];
+		}
+
+		// The thirdparty must exist: without this check a nonexistent socid
+		// reaches the INSERT and surfaces as a raw SQL foreign-key error in
+		// the chat (observed in the field on #39433).
+		require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+		$ctrlSoc = new Societe($this->db);
+		if ($ctrlSoc->fetch((int) $header['socid']) <= 0) {
+			return ["error" => "Thirdparty with id ".((int) $header['socid'])." does not exist. Use find/search to resolve the thirdparty first."];
 		}
 
 		// Instantiate the specific Dolibarr class (Propal, Commande, etc.)
