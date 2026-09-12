@@ -232,13 +232,6 @@ Dolibarr requires a CSRF token and a session cookie. To access any authenticated
 
 ---
 
-## Key Principle
-
- Always prioritize:
-**extension > modification**
-
----
-
 ## In Case of Doubt
 
 - Keep it simple
