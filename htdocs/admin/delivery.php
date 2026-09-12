@@ -232,102 +232,10 @@ print '<br>';
 if (getDolGlobalString('MAIN_SUBMODULE_DELIVERY')) {
 	// Delivery numbering model
 
-	print load_fiche_titre($langs->trans("DeliveryOrderNumberingModules"), '', '');
+	$delivery = new Delivery($db);
+	$delivery->initAsSpecimen();
 
-	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre">';
-	print '<td width="100">'.$langs->trans("Name").'</td>';
-	print '<td>'.$langs->trans("Description").'</td>';
-	print '<td class="nowrap">'.$langs->trans("Example").'</td>';
-	print '<td align="center" width="60">'.$langs->trans("Status").'</td>';
-	print '<td align="center" width="16">'.$langs->trans("ShortInfo").'</td>';
-	print '</tr>'."\n";
-
-	clearstatcache();
-
-	foreach ($dirmodels as $reldir) {
-		$dir = dol_buildpath($reldir."core/modules/delivery/");
-
-		if (is_dir($dir)) {
-			$handle = opendir($dir);
-			if (is_resource($handle)) {
-				while (($file = readdir($handle)) !== false) {
-					if (preg_match('/^mod_delivery_([a-z0-9_]*)\.php$/', $file)) {
-						$file = dol_substr($file, 0, dol_strlen($file) - 4);
-
-						require_once $dir.$file.'.php';
-
-						$module = new $file();
-
-						'@phan-var-force ModeleNumRefDeliveryOrder $module';
-
-						if ($module->isEnabled()) {
-							// Show modules according to features level
-							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
-								continue;
-							}
-							if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
-								continue;
-							}
-
-							print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
-							print $module->info($langs);
-							print '</td>';
-
-							// Show example of numbering module
-							print '<td class="nowrap">';
-							$tmp = $module->getExample();
-							if (preg_match('/^Error/', $tmp)) {
-								$langs->load("errors");
-								print '<div class="error">'.$langs->trans($tmp).'</div>';
-							} elseif ($tmp == 'NotConfigured') {
-								print '<span class="opacitymedium">'.$langs->trans($tmp).'</span>';
-							} else {
-								print $tmp;
-							}
-							print '</td>'."\n";
-
-							print '<td class="center">';
-							if (getDolGlobalString('DELIVERY_ADDON_NUMBER') == "$file") {
-								print img_picto($langs->trans("Activated"), 'switch_on');
-							} else {
-								print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&value='.urlencode($file).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
-							}
-							print '</td>';
-
-							$delivery = new Delivery($db);
-							$delivery->initAsSpecimen();
-
-							// Info
-							$htmltooltip = '';
-							$htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
-							$nextval = $module->getNextValue($mysoc, $delivery);
-							if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
-								$htmltooltip .= ''.$langs->trans("NextValue").': ';
-								if ($nextval) {
-									if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
-										$nextval = $langs->trans($nextval);
-									}
-									$htmltooltip .= $nextval.'<br>';
-								} else {
-									$htmltooltip .= $langs->trans($module->error).'<br>';
-								}
-							}
-
-							print '<td class="center">';
-							print $form->textwithpicto('', $htmltooltip, 1, 'info');
-							print '</td>';
-
-							print '</tr>';
-						}
-					}
-				}
-				closedir($handle);
-			}
-		}
-	}
-
-	print '</table>';
+	printNumberingModuleList($db, $langs, $form, $dirmodels, 'delivery', 'mod_delivery_', 'DELIVERY_ADDON_NUMBER', $langs->trans("DeliveryOrderNumberingModules"), $delivery);
 
 
 	/*

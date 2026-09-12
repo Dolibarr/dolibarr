@@ -304,105 +304,10 @@ print dol_get_fiche_end();
  * Tickets numbering model
  */
 
-print load_fiche_titre($langs->trans("TicketNumberingModules"), '', '');
+$ticket = new Ticket($db);
+$ticket->initAsSpecimen();
 
-print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder centpercent">';
-print '<tr class="liste_titre">';
-print '<td width="100">'.$langs->trans("Name").'</td>';
-print '<td>'.$langs->trans("Description").'</td>';
-print '<td>'.$langs->trans("Example").'</td>';
-print '<td align="center" width="60">'.$langs->trans("Activated").'</td>';
-print '<td align="center" width="40">'.$langs->trans("ShortInfo").'</td>';
-print "</tr>\n";
-
-clearstatcache();
-
-foreach ($dirmodels as $reldir) {
-	$dir = dol_buildpath($reldir."core/modules/ticket");
-
-	if (is_dir($dir)) {
-		$handle = opendir($dir);
-		if (is_resource($handle)) {
-			while (($file = readdir($handle)) !== false) {
-				if (preg_match('/^(mod_.*)\.php$/i', $file, $reg)) {
-					$file = $reg[1];
-					$classname = dol_substr($file, 4);
-
-					include_once $dir.'/'.$file.'.php';
-
-					$module = new $file();
-					'@phan-var-force ModeleNumRefTicket $module';
-					/** @var ModeleNumRefTicket $module */
-
-					// Show modules according to features level
-					if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
-						continue;
-					}
-
-					if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
-						continue;
-					}
-
-					if ($module->isEnabled()) {
-						print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
-						print $module->info($langs);
-						print '</td>';
-
-						// Show example of numbering model
-						print '<td class="nowrap">';
-						$tmp = $module->getExample();
-						if (preg_match('/^Error/', $tmp)) {
-							$langs->load("errors");
-							print '<div class="error">'.$langs->trans($tmp).'</div>';
-						} elseif ($tmp == 'NotConfigured') {
-							print '<span class="opacitymedium">'.$langs->trans($tmp).'</span>';
-						} else {
-							print $tmp;
-						}
-
-						print '</td>'."\n";
-
-						print '<td class="center">';
-						if (getDolGlobalString('TICKET_ADDON') == 'mod_'.$classname) {
-							print img_picto($langs->trans("Activated"), 'switch_on');
-						} else {
-							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;token='.newToken().'&amp;value=mod_'.$classname.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
-						}
-						print '</td>';
-
-						$ticket = new Ticket($db);
-						$ticket->initAsSpecimen();
-
-						// Info
-						$htmltooltip = '';
-						$htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
-						$nextval = $module->getNextValue($mysoc, $ticket);
-						if ("$nextval" != $langs->trans("NotAvailable")) { // Keep " on nextval
-							$htmltooltip .= ''.$langs->trans("NextValue").': ';
-							if ($nextval) {
-								$htmltooltip .= $nextval.'<br>';
-							} else {
-								$htmltooltip .= $langs->trans($module->error).'<br>';
-							}
-						}
-
-						print '<td class="center">';
-						print $formcategory->textwithpicto('', $htmltooltip, 1, '0');
-						print '</td>';
-
-						print '</tr>';
-					}
-				}
-			}
-			closedir($handle);
-		}
-	}
-}
-
-print '</table>';
-print '</div>';
-print '<br>';
+printNumberingModuleList($db, $langs, $formcategory, $dirmodels, 'ticket', 'mod_ticket_', 'TICKET_ADDON', $langs->trans("TicketNumberingModules"), $ticket);
 
 
 

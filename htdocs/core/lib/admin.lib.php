@@ -2242,6 +2242,129 @@ function printDocumentModelList($db, $langs, $form, array $dirmodels, $type, $mo
 
 
 /**
+ *	Print the "Numbering module" admin table: list of ref-numbering modules available for a given
+ *	document type, with activate action and an info tooltip showing the version and next value. This
+ *	factorizes the block that was historically copy-pasted into most module setup pages, alongside
+ *	printDocumentModelList().
+ *
+ *	@param	DoliDB				$db					Database handler
+ *	@param	Translate			$langs				Language object
+ *	@param	Form				$form				Form object (used to show the info tooltip picto)
+ *	@param	string[]			$dirmodels			Array of dirmodel roots (see $conf->modules_parts['models'])
+ *	@param	string				$moduledir			Directory name under core/modules/ to scan for numbering module classes (e.g. 'propale', 'reception')
+ *	@param	string				$prefix				Filename prefix of numbering module classes to scan for (e.g. 'mod_propale_', 'mod_reception_')
+ *	@param	string				$constname			Name of the conf constant storing the active module (e.g. 'PROPALE_ADDON', 'RECEPTION_ADDON_NUMBER')
+ *	@param	string				$title				Already translated title printed above the table
+ *	@param	CommonObject		$specimenobject		Object instance (already ->initAsSpecimen()'d) to pass to getNextValue()
+ *	@param	string				$actionname			Name of the action that activates a module (default 'setmod')
+ *	@return	void
+ */
+function printNumberingModuleList($db, $langs, $form, array $dirmodels, $moduledir, $prefix, $constname, $title, $specimenobject, $actionname = 'setmod')
+{
+	global $mysoc;
+
+	print load_fiche_titre($title, '', '');
+
+	print '<div class="div-table-responsive-no-min">';
+	print '<table class="noborder centpercent">';
+	print '<tr class="liste_titre">';
+	print '<td>'.$langs->trans("Name").'</td>';
+	print '<td>'.$langs->trans("Description").'</td>';
+	print '<td class="nowrap">'.$langs->trans("Example").'</td>';
+	print '<td class="center" width="60">'.$langs->trans("Status").'</td>';
+	print '<td class="center" width="60">'.$langs->trans("ShortInfo").'</td>';
+	print "</tr>\n";
+
+	clearstatcache();
+
+	foreach ($dirmodels as $reldir) {
+		$dir = dol_buildpath($reldir."core/modules/".$moduledir);
+
+		if (is_dir($dir)) {
+			$handle = opendir($dir);
+			if (is_resource($handle)) {
+				while (($file = readdir($handle)) !== false) {
+					if (dol_substr($file, 0, dol_strlen($prefix)) == $prefix && dol_substr($file, dol_strlen($file) - 3, 3) == 'php') {
+						$file = dol_substr($file, 0, dol_strlen($file) - 4);
+
+						require_once $dir.'/'.$file.'.php';
+
+						$module = new $file();
+						'@phan-var-force CommonNumRefGenerator $module';
+						/** @var CommonNumRefGenerator $module */
+
+						if ($module->isEnabled()) {
+							// Show modules according to features level
+							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
+								continue;
+							}
+							if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
+								continue;
+							}
+
+							print '<tr class="oddeven"><td>'.$module->getName($langs)."</td>\n";
+							print '<td>';
+							print $module->info($langs);
+							print '</td>';
+
+							// Show example of numbering module
+							print '<td class="nowrap">';
+							$tmp = $module->getExample();  // @phan-suppress-current-line PhanUndeclaredMethod
+							if (preg_match('/^Error/', $tmp)) {
+								$langs->load("errors");
+								print '<div class="error">'.$langs->trans($tmp).'</div>';
+							} elseif ($tmp == 'NotConfigured') {
+								print '<span class="opacitymedium">'.$langs->trans($tmp).'</span>';
+							} else {
+								print $tmp;
+							}
+							print '</td>'."\n";
+
+							print '<td class="center">';
+							if (getDolGlobalString($constname) == $file) {
+								print img_picto($langs->trans("Activated"), 'switch_on');
+							} else {
+								print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action='.$actionname.'&token='.newToken().'&value='.urlencode($file).'">';
+								print img_picto($langs->trans("Disabled"), 'switch_off');
+								print '</a>';
+							}
+							print '</td>';
+
+							// Info
+							$htmltooltip = '';
+							$htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
+							$nextval = $module->getNextValue($mysoc, $specimenobject);  // @phan-suppress-current-line PhanUndeclaredMethod
+							if ((string) $nextval != $langs->trans("NotAvailable")) {  // Keep " on nextval
+								$htmltooltip .= ''.$langs->trans("NextValue").': ';
+								if ($nextval) {
+									if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
+										$nextval = $langs->trans($nextval);
+									}
+									$htmltooltip .= $nextval.'<br>';
+								} else {
+									$htmltooltip .= $langs->trans($module->error).'<br>';
+								}
+							}
+
+							print '<td class="center">';
+							print $form->textwithpicto('', $htmltooltip, 1, 'info');
+							print '</td>';
+
+							print '</tr>';
+						}
+					}
+				}
+				closedir($handle);
+			}
+		}
+	}
+
+	print '</table>';
+	print '</div>';
+}
+
+
+/**
  *	Return the php_info into an array
  *
  *	@return	array<string,array<string,string|array{local:string,master:string}>>	Array with PHP info

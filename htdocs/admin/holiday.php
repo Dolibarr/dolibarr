@@ -188,106 +188,10 @@ print dol_get_fiche_head($head, 'holiday', $langs->trans("Holidays"), -1, 'holid
  * Holiday Numbering model
  */
 
-print load_fiche_titre($langs->trans("HolidaysNumberingModules"), '', '');
+$holiday = new Holiday($db);
+$holiday->initAsSpecimen();
 
-print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder centpercent">';
-print '<tr class="liste_titre">';
-print '<td width="100">'.$langs->trans("Name").'</td>';
-print '<td>'.$langs->trans("Description").'</td>';
-print '<td>'.$langs->trans("Example").'</td>';
-print '<td align="center" width="60">'.$langs->trans("Status").'</td>';
-print '<td align="center" width="16">'.$langs->trans("ShortInfo").'</td>';
-print '</tr>'."\n";
-
-clearstatcache();
-
-foreach ($dirmodels as $reldir) {
-	$dir = dol_buildpath($reldir."core/modules/holiday/");
-
-	if (is_dir($dir)) {
-		$handle = opendir($dir);
-		if (is_resource($handle)) {
-			while (($file = readdir($handle)) !== false) {
-				if (dol_substr($file, 0, 12) == 'mod_holiday_' && dol_substr($file, dol_strlen($file) - 3, 3) == 'php') {
-					$file = dol_substr($file, 0, dol_strlen($file) - 4);
-
-					require_once $dir.$file.'.php';
-
-					$module = new $file($db);
-
-					'@phan-var-force ModelNumRefHolidays $module';
-
-					// Show modules according to features level
-					if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
-						continue;
-					}
-					if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
-						continue;
-					}
-
-					if ($module->isEnabled()) {
-						print '<tr class="oddeven"><td>'.$module->getName($langs)."</td><td>\n";
-						print $module->info($langs);
-						print '</td>';
-
-						// Show example of numbering model
-						print '<td class="nowrap">';
-						$tmp = $module->getExample();
-						if (preg_match('/^Error/', $tmp)) {
-							$langs->load("errors");
-							print '<div class="error">'.$langs->trans($tmp).'</div>';
-						} elseif ($tmp == 'NotConfigured') {
-							print '<span class="opacitymedium">'.$langs->trans($tmp).'</span>';
-						} else {
-							print $tmp;
-						}
-						print '</td>'."\n";
-
-						print '<td class="center">';
-						if (getDolGlobalString('HOLIDAY_ADDON') == "$file") {
-							print img_picto($langs->trans("Activated"), 'switch_on');
-						} else {
-							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&value='.urlencode($file).'">';
-							print img_picto($langs->trans("Disabled"), 'switch_off');
-							print '</a>';
-						}
-						print '</td>';
-
-						$holiday = new Holiday($db);
-						$holiday->initAsSpecimen();
-
-						// Info
-						$htmltooltip = '';
-						$htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
-						$nextval = $module->getNextValue($mysoc, $holiday);
-						if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
-							$htmltooltip .= ''.$langs->trans("NextValue").': ';
-							if ($nextval) {
-								if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
-									$nextval = $langs->trans($nextval);
-								}
-								$htmltooltip .= $nextval.'<br>';
-							} else {
-								$htmltooltip .= $langs->trans($module->error).'<br>';
-							}
-						}
-
-						print '<td class="center">';
-						print $form->textwithpicto('', $htmltooltip, 1, 'info');
-						print '</td>';
-
-						print '</tr>';
-					}
-				}
-			}
-			closedir($handle);
-		}
-	}
-}
-
-print '</table>';
-print '</div>';
+printNumberingModuleList($db, $langs, $form, $dirmodels, 'holiday', 'mod_holiday_', 'HOLIDAY_ADDON', $langs->trans("HolidaysNumberingModules"), $holiday);
 
 print '<br>';
 

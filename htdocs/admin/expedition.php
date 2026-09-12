@@ -188,104 +188,12 @@ print dol_get_fiche_head($head, 'shipment', $langs->trans("Sendings"), -1, 'ship
 
 // Shipment numbering model
 
-print load_fiche_titre($langs->trans("SendingsNumberingModules"), '', '');
+$expedition = new Expedition($db);
+$expedition->initAsSpecimen();
 
-print '<table class="noborder centpercent">';
-print '<tr class="liste_titre">';
-print '<td width="100">'.$langs->trans("Name").'</td>';
-print '<td>'.$langs->trans("Description").'</td>';
-print '<td>'.$langs->trans("Example").'</td>';
-print '<td class="center" width="60">'.$langs->trans("Status").'</td>';
-print '<td class="center" width="80">'.$langs->trans("ShortInfo").'</td>';
-print "</tr>\n";
+printNumberingModuleList($db, $langs, $form, $dirmodels, 'expedition', 'mod_expedition_', 'EXPEDITION_ADDON_NUMBER', $langs->trans("SendingsNumberingModules"), $expedition, 'setmodel');
 
-clearstatcache();
-
-foreach ($dirmodels as $reldir) {
-	$dir = dol_buildpath($reldir."core/modules/expedition/");
-
-	if (is_dir($dir)) {
-		$handle = opendir($dir);
-		if (is_resource($handle)) {
-			while (($file = readdir($handle)) !== false) {
-				if (preg_match('/^mod_expedition_([a-z0-9_]*)\.php$/', $file)) {
-					$file = dol_substr($file, 0, dol_strlen($file) - 4);
-
-					require_once $dir.$file.'.php';
-
-					$module = new $file();
-					'@phan-var-force ModelNumRefExpedition $module';
-
-					if ($module->isEnabled()) {
-						// Show modules according to features level
-						if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
-							continue;
-						}
-						if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
-							continue;
-						}
-
-						print '<tr><td>'.$module->name."</td>\n";
-						print '<td>';
-						print $module->info($langs);
-						print '</td>';
-
-						// Show example of numbering module
-						print '<td class="nowrap">';
-						$tmp = $module->getExample();
-						if (preg_match('/^Error/', $tmp)) {
-							$langs->load("errors");
-							print '<div class="error">'.$langs->trans($tmp).'</div>';
-						} elseif ($tmp == 'NotConfigured') {
-							print '<span class="opacitymedium">'.$langs->trans($tmp).'</span>';
-						} else {
-							print $tmp;
-						}
-						print '</td>'."\n";
-
-						print '<td class="center">';
-						if (getDolGlobalString('EXPEDITION_ADDON_NUMBER') == "$file") {
-							print img_picto($langs->trans("Activated"), 'switch_on');
-						} else {
-							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmodel&token='.newToken().'&value='.urlencode($file).'&label='.urlencode($module->name).'">';
-							print img_picto($langs->trans("Disabled"), 'switch_off');
-							print '</a>';
-						}
-						print '</td>';
-
-						$expedition = new Expedition($db);
-						$expedition->initAsSpecimen();
-
-						// Info
-						$htmltooltip = '';
-						$htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
-						$nextval = $module->getNextValue($mysoc, $expedition);
-						if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
-							$htmltooltip .= ''.$langs->trans("NextValue").': ';
-							if ($nextval) {
-								if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
-									$nextval = $langs->trans($nextval);
-								}
-								$htmltooltip .= $nextval.'<br>';
-							} else {
-								$htmltooltip .= $langs->trans($module->error).'<br>';
-							}
-						}
-
-						print '<td class="center">';
-						print $form->textwithpicto('', $htmltooltip, 1, 'info');
-						print '</td>';
-
-						print '</tr>';
-					}
-				}
-			}
-			closedir($handle);
-		}
-	}
-}
-
-print '</table><br>';
+print '<br>';
 
 
 /*

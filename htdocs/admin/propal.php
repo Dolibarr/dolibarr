@@ -275,105 +275,11 @@ print dol_get_fiche_head($head, 'general', $langs->trans("Proposals"), -1, 'prop
 /*
  *  Module numerotation
  */
-print load_fiche_titre($langs->trans("ProposalsNumberingModules"), '', '');
+$propal = new Propal($db);
+$propal->initAsSpecimen();
+$propal->type = 0;
 
-print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder centpercent">';
-print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Name")."</td>\n";
-print '<td>'.$langs->trans("Description")."</td>\n";
-print '<td class="nowrap">'.$langs->trans("Example")."</td>\n";
-print '<td align="center" width="60">'.$langs->trans("Status").'</td>';
-print '<td align="center" width="16">'.$langs->trans("ShortInfo").'</td>';
-print '</tr>'."\n";
-
-clearstatcache();
-
-foreach ($dirmodels as $reldir) {
-	$dir = dol_buildpath($reldir."core/modules/propale");
-
-	if (is_dir($dir)) {
-		$handle = opendir($dir);
-		if (is_resource($handle)) {
-			while (($file = readdir($handle)) !== false) {
-				if (dol_substr($file, 0, 12) == 'mod_propale_' && dol_substr($file, dol_strlen($file) - 3, 3) == 'php') {
-					$file = dol_substr($file, 0, dol_strlen($file) - 4);
-
-					require_once $dir.'/'.$file.'.php';
-
-					$module = new $file();
-
-					'@phan-var-force ModeleNumRefPropales $module';
-
-					// Show modules according to features level
-					if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
-						continue;
-					}
-					if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
-						continue;
-					}
-
-					if ($module->isEnabled()) {
-						print '<tr class="oddeven"><td>'.$module->getName($langs)."</td><td>\n";
-						print $module->info($langs);
-						print '</td>';
-
-						// Show example of numbering module
-						print '<td class="nowrap">';
-						$tmp = $module->getExample();
-						if (preg_match('/^Error/', $tmp)) {
-							$langs->load("errors");
-							print '<div class="error">'.$langs->trans($tmp).'</div>';
-						} elseif ($tmp == 'NotConfigured') {
-							print '<span class="opacitymedium">'.$langs->trans($tmp).'</span>';
-						} else {
-							print $tmp;
-						}
-						print '</td>'."\n";
-
-						print '<td class="center">';
-						if (getDolGlobalString('PROPALE_ADDON') == "$file") {
-							print img_picto($langs->trans("Activated"), 'switch_on');
-						} else {
-							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&value='.urlencode($file).'">';
-							print img_picto($langs->trans("Disabled"), 'switch_off');
-							print '</a>';
-						}
-						print '</td>';
-
-						$propal = new Propal($db);
-						$propal->initAsSpecimen();
-
-						// Info
-						$htmltooltip = '';
-						$htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
-						$propal->type = 0;
-						$nextval = $module->getNextValue($mysoc, $propal);
-						if ((string) $nextval != $langs->trans("NotAvailable")) {  // Keep " on nextval
-							$htmltooltip .= ''.$langs->trans("NextValue").': ';
-							if ($nextval) {
-								if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
-									$nextval = $langs->trans($nextval);
-								}
-								$htmltooltip .= $nextval.'<br>';
-							} else {
-								$htmltooltip .= $langs->trans($module->error).'<br>';
-							}
-						}
-
-						print '<td class="center">';
-						print $form->textwithpicto('', $htmltooltip, 1, 'info');
-						print '</td>';
-
-						print "</tr>\n";
-					}
-				}
-			}
-			closedir($handle);
-		}
-	}
-}
-print "</table></div><br>\n";
+printNumberingModuleList($db, $langs, $form, $dirmodels, 'propale', 'mod_propale_', 'PROPALE_ADDON', $langs->trans("ProposalsNumberingModules"), $propal);
 
 
 /*

@@ -7,7 +7,7 @@
  * Copyright (C) 2010-2013  Juanjo Menent               <jmenent@2byte.es>
  * Copyright (C) 2011-2018  Philippe Grand              <philippe.grand@atoo-net.com>
  * Copyright (C) 2024-2026	MDW                         <mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2026       Pierre Ardoin               <developpeur@lesmetiersdubatiment.fr>
  * Copyright (C) 2026       Alexandre Spangaro          <alexandre@inovea-conseil.com>
  *
@@ -230,104 +230,12 @@ print dol_get_fiche_head($head, 'invoice', $langs->trans("Suppliers"), -1, 'comp
 
 // Supplier invoice numbering module
 
-print load_fiche_titre($langs->trans("SuppliersInvoiceNumberingModel"), '', '');
+$invoice = new FactureFournisseur($db);
+$invoice->initAsSpecimen();
 
-print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder centpercent">';
-print '<tr class="liste_titre">';
-print '<td width="100">'.$langs->trans("Name").'</td>';
-print '<td>'.$langs->trans("Description").'</td>';
-print '<td>'.$langs->trans("Example").'</td>';
-print '<td align="center" width="60">'.$langs->trans("Status").'</td>';
-print '<td align="center" width="16">'.$langs->trans("ShortInfo").'</td>';
-print "</tr>\n";
+printNumberingModuleList($db, $langs, $form, $dirmodels, 'supplier_invoice', 'mod_facture_fournisseur_', 'INVOICE_SUPPLIER_ADDON_NUMBER', $langs->trans("SuppliersInvoiceNumberingModel"), $invoice);
 
-clearstatcache();
-
-foreach ($dirmodels as $reldir) {
-	$dir = dol_buildpath($reldir."core/modules/supplier_invoice");
-
-	if (is_dir($dir)) {
-		$handle = opendir($dir);
-		if (is_resource($handle)) {
-			while (($file = readdir($handle)) !== false) {
-				if (dol_substr($file, 0, 24) == 'mod_facture_fournisseur_' && dol_substr($file, dol_strlen($file) - 3, 3) == 'php') {
-					$file = dol_substr($file, 0, dol_strlen($file) - 4);
-
-					require_once $dir.'/'.$file.'.php';
-
-					$module = new $file();
-
-					'@phan-var-force ModeleNumRefSuppliersInvoices $module';
-
-					if ($module->isEnabled()) {
-						// Show modules according to features level
-						if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
-							continue;
-						}
-						if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
-							continue;
-						}
-
-
-						print '<tr class="oddeven"><td>'.$module->getName($langs)."</td><td>\n";
-						print $module->info($langs);
-						print '</td>';
-
-						// Show example of numbering module
-						print '<td class="nowrap">';
-						$tmp = $module->getExample();
-						if (preg_match('/^Error/', $tmp)) {
-							$langs->load("errors");
-							print '<div class="error">'.$langs->trans($tmp).'</div>';
-						} elseif ($tmp == 'NotConfigured') {
-							print '<span class="opacitymedium">'.$langs->trans($tmp).'</span>';
-						} else {
-							print $tmp;
-						}
-						print '</td>'."\n";
-
-						print '<td class="center">';
-						if (getDolGlobalString('INVOICE_SUPPLIER_ADDON_NUMBER') == "$file") {
-							print img_picto($langs->trans("Activated"), 'switch_on');
-						} else {
-							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&value='.urlencode($file).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
-						}
-						print '</td>';
-
-						$invoice = new FactureFournisseur($db);
-						$invoice->initAsSpecimen();
-
-						// Info
-						$htmltooltip = '';
-						$htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
-						$nextval = $module->getNextValue($mysoc, $invoice);
-						if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
-							$htmltooltip .= ''.$langs->trans("NextValue").': ';
-							if ($nextval) {
-								if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
-									$nextval = $langs->trans($nextval);
-								}
-								$htmltooltip .= $nextval.'<br>';
-							} else {
-								$htmltooltip .= $langs->trans($module->error).'<br>';
-							}
-						}
-
-						print '<td class="center">';
-						print $form->textwithpicto('', $htmltooltip, 1, 'info');
-						print '</td>';
-
-						print '</tr>';
-					}
-				}
-			}
-			closedir($handle);
-		}
-	}
-}
-
-print '</table></div><br>';
+print '<br>';
 
 
 
