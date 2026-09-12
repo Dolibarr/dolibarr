@@ -3,7 +3,7 @@
  * Copyright (C) 2021 Gauthier VERDOL <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2021 SuperAdmin
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -293,146 +293,10 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 	// Document templates generators
 	$type = strtolower($myTmpObjectKey);
 
-	print load_fiche_titre($langs->trans("DocumentModules", $myTmpObjectKey), '', '');
-
-	// Load array def with activated templates
-	$def = array();
-	$sql = "SELECT nom";
-	$sql .= " FROM ".MAIN_DB_PREFIX."document_model";
-	$sql .= " WHERE type = '".$db->escape($type)."'";
-	$sql .= " AND entity = ".((int) $conf->entity);
-	$resql = $db->query($sql);
-	if ($resql) {
-		$i = 0;
-		$num_rows = $db->num_rows($resql);
-		while ($i < $num_rows) {
-			$array = $db->fetch_array($resql);
-			if (is_array($array)) {
-				array_push($def, $array[0]);
-			}
-			$i++;
-		}
-	} else {
-		dol_print_error($db);
-	}
-
-	print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
-	print '<table class="noborder centpercent">'."\n";
-	print '<tr class="liste_titre">'."\n";
-	print '<td>'.$langs->trans("Name").'</td>';
-	print '<td>'.$langs->trans("Description").'</td>';
-	print '<td class="center" width="60">'.$langs->trans("Status")."</td>\n";
-	print '<td class="center" width="60">'.$langs->trans("Default")."</td>\n";
-	print '<td class="center" width="38">'.$langs->trans("ShortInfo").'</td>';
-	print '<td class="center" width="38">'.$langs->trans("Preview").'</td>';
-	print "</tr>\n";
-
-	clearstatcache();
-
-	foreach ($dirmodels as $reldir) {
-		foreach (array('', '/doc') as $valdir) {
-			$realpath = $reldir."core/modules/".$moduledir.$valdir;
-			$dir = dol_buildpath($realpath);
-
-			if (is_dir($dir)) {
-				$handle = opendir($dir);
-				if (is_resource($handle)) {
-					$filelist = array();
-					while (($file = readdir($handle)) !== false) {
-						$filelist[] = $file;
-					}
-					closedir($handle);
-					arsort($filelist);
-
-					foreach ($filelist as $file) {
-						if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file)) {
-							if (file_exists($dir.'/'.$file)) {
-								$name = dol_substr($file, 4, dol_strlen($file) - 16);
-								$classname = dol_substr($file, 0, dol_strlen($file) - 12);
-
-								require_once $dir.'/'.$file;
-								$module = new $classname($db);
-
-								'@phan-var-force ModelePDFStockTransfer $module';
-
-								$modulequalified = 1;
-								if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
-									$modulequalified = 0;
-								}
-								if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
-									$modulequalified = 0;
-								}
-
-								if ($modulequalified) {
-									print '<tr class="oddeven"><td>';
-									print(empty($module->name) ? $name : $module->name);
-									print "</td><td>\n";
-									if (method_exists($module, 'info')) {
-										print $module->info($langs);  // @phan-suppress-current-line PhanUndeclaredMethod
-									} else {
-										print $module->description;
-									}
-									print '</td>';
-
-									// Active
-									if (in_array($name, $def)) {
-										print '<td class="center">'."\n";
-										print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&value='.urlencode($name).'&token='.newToken().'">';
-										print img_picto($langs->trans("Enabled"), 'switch_on');
-										print '</a>';
-										print '</td>';
-									} else {
-										print '<td class="center">'."\n";
-										print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
-										print "</td>";
-									}
-
-									// Default
-									print '<td class="center">';
-									$constforvar = strtoupper($myTmpObjectKey).'_ADDON_PDF';
-									if (getDolGlobalString($constforvar) == $name) {
-										print img_picto($langs->trans("Default"), 'on');
-									} else {
-										print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&object='.urlencode($myTmpObjectKey).'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
-									}
-									print '</td>';
-
-									// Info
-									$htmltooltip = ''.$langs->trans("Name").': '.$module->name;
-									$htmltooltip .= '<br>'.$langs->trans("Type").': '.($module->type ? $module->type : $langs->trans("Unknown"));
-									if ($module->type == 'pdf') {
-										$htmltooltip .= '<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
-									}
-									$htmltooltip .= '<br>'.$langs->trans("Path").': '.preg_replace('/^\//', '', $realpath).'/'.$file;
-
-									$htmltooltip .= '<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
-									$htmltooltip .= '<br>'.$langs->trans("Logo").': '.yn($module->option_logo, 1, 1);
-									$htmltooltip .= '<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang, 1, 1);
-
-									print '<td class="center">';
-									print $form->textwithpicto('', $htmltooltip, 1, 'info');
-									print '</td>';
-
-									// Preview
-									print '<td class="center">';
-									if ($module->type == 'pdf') {
-										print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'&object='.$myTmpObjectKey.'">'.img_object($langs->trans("Preview"), 'generic').'</a>';
-									} else {
-										print img_object($langs->transnoentitiesnoconv("PreviewNotAvailable"), 'generic');
-									}
-									print '</td>';
-
-									print "</tr>\n";
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-
-	print '</table></div>';
+	printDocumentModelList($db, $langs, $form, $dirmodels, $type, $moduledir, strtoupper($myTmpObjectKey).'_ADDON_PDF', $langs->trans("DocumentModules", $myTmpObjectKey), array(
+		'Logo' => 'option_logo',
+		'MultiLanguage' => 'option_multilang',
+	));
 }
 
 

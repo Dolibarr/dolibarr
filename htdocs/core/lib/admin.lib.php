@@ -2072,6 +2072,176 @@ function delDocumentModel($name, $type)
 
 
 /**
+ *	Print the "Document templates generators" admin table: list of PDF/ODT models available for a
+ *	given document type, with enable/disable, set as default and preview actions. This factorizes the
+ *	block that was historically copy-pasted into most module setup pages (invoice.php, order.php,
+ *	reception_setup.php, ...).
+ *
+ *	@param	DoliDB					$db				Database handler
+ *	@param	Translate				$langs			Language object
+ *	@param	Form					$form			Form object (used to show the info tooltip picto)
+ *	@param	string[]				$dirmodels		Array of dirmodel roots (see $conf->modules_parts['models'])
+ *	@param	string					$type			Value of document_model.type and root of the ADDON_PDF conf constant (e.g. 'invoice', 'reception')
+ *	@param	string					$moduledir		Directory name under core/modules/ to scan for model classes (e.g. 'facture', 'reception'); may differ from $type
+ *	@param	string					$constpdf		Name of the conf constant storing the default model name (e.g. 'FACTURE_ADDON_PDF')
+ *	@param	string					$title			Already translated title printed above the table
+ *	@param	array<string,string>	$features		Ordered list of extra tooltip feature rows to show, as array('TranslationKey' => 'option_property')
+ *	@param	bool					$excludedisabled	If true, hide modules with version == 'disabled'
+ *	@param	string					$constpdfdefault	Default value to assume for $constpdf when the conf constant is not set
+ *	@return	void
+ */
+function printDocumentModelList($db, $langs, $form, array $dirmodels, $type, $moduledir, $constpdf, $title, array $features, $excludedisabled = false, $constpdfdefault = '')
+{
+	global $conf;
+
+	print load_fiche_titre($title, '', '');
+
+	$def = array();
+	$sql = "SELECT nom";
+	$sql .= " FROM ".MAIN_DB_PREFIX."document_model";
+	$sql .= " WHERE type = '".$db->escape($type)."'";
+	$sql .= " AND entity = ".((int) $conf->entity);
+	$resql = $db->query($sql);
+	if ($resql) {
+		$i = 0;
+		$num_rows = $db->num_rows($resql);
+		while ($i < $num_rows) {
+			$array = $db->fetch_array($resql);
+			if (is_array($array)) {
+				array_push($def, $array[0]);
+			}
+			$i++;
+		}
+	} else {
+		dol_print_error($db);
+	}
+
+	print '<div class="div-table-responsive-no-min">';
+	print '<table class="noborder centpercent">';
+	print '<tr class="liste_titre">';
+	print '<td>'.$langs->trans("Name").'</td>';
+	print '<td>'.$langs->trans("Description").'</td>';
+	print '<td class="center" width="60">'.$langs->trans("Status").'</td>';
+	print '<td class="center" width="60">'.$langs->trans("Default").'</td>';
+	print '<td class="center" width="60">'.$langs->trans("ShortInfo").'</td>';
+	print '<td class="center" width="60">'.$langs->trans("Preview").'</td>';
+	print "</tr>\n";
+
+	clearstatcache();
+
+	foreach ($dirmodels as $reldir) {
+		foreach (array('', '/doc') as $valdir) {
+			$realpath = $reldir."core/modules/".$moduledir.$valdir;
+			$dir = dol_buildpath($realpath);
+
+			if (is_dir($dir)) {
+				$handle = opendir($dir);
+				if (is_resource($handle)) {
+					$filelist = array();
+					while (($file = readdir($handle)) !== false) {
+						$filelist[] = $file;
+					}
+					closedir($handle);
+					arsort($filelist);
+
+					foreach ($filelist as $file) {
+						if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file)) {
+							if (file_exists($dir.'/'.$file)) {
+								$name = dol_substr($file, 4, dol_strlen($file) - 16);
+								$classname = dol_substr($file, 0, dol_strlen($file) - 12);
+
+								require_once $dir.'/'.$file;
+								$module = new $classname($db);
+
+								'@phan-var-force CommonDocGenerator $module';
+								/** @var CommonDocGenerator $module */
+
+								$modulequalified = 1;
+								if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
+									$modulequalified = 0;
+								}
+								if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
+									$modulequalified = 0;
+								}
+								if ($excludedisabled && $module->version == 'disabled') {
+									$modulequalified = 0;
+								}
+
+								if ($modulequalified) {
+									print '<tr class="oddeven"><td>';
+									print(empty($module->name) ? $name : $module->name);
+									print "</td><td>\n";
+									if (method_exists($module, 'info')) {
+										print $module->info($langs);  // @phan-suppress-current-line PhanUndeclaredMethod
+									} else {
+										print $module->description;
+									}
+									print '</td>';
+
+									// Active
+									if (in_array($name, $def)) {
+										print '<td class="center">'."\n";
+										print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=del&token='.newToken().'&value='.urlencode($name).'">';
+										print img_picto($langs->trans("Enabled"), 'switch_on');
+										print '</a>';
+										print '</td>';
+									} else {
+										print '<td class="center">'."\n";
+										print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=set&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+										print "</td>";
+									}
+
+									// Default
+									print '<td class="center">';
+									if (getDolGlobalString($constpdf, $constpdfdefault) == (string) $name) {
+										print img_picto($langs->trans("Default"), 'on');
+									} else {
+										print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+									}
+									print '</td>';
+
+									// Info
+									$htmltooltip = ''.$langs->trans("Name").': '.$module->name;
+									$htmltooltip .= '<br>'.$langs->trans("Type").': '.($module->type ? $module->type : $langs->trans("Unknown"));
+									if ($module->type == 'pdf') {
+										$htmltooltip .= '<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
+									}
+									$htmltooltip .= '<br>'.$langs->trans("Path").': '.preg_replace('/^\//', '', $realpath).'/'.$file;
+
+									$htmltooltip .= '<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
+									foreach ($features as $key => $property) {
+										$htmltooltip .= '<br>'.$langs->trans($key).': '.yn($module->$property, 1, 1);
+									}
+
+									print '<td class="center">';
+									print $form->textwithpicto('', $htmltooltip, 1, 'info');
+									print '</td>';
+
+									// Preview
+									print '<td class="center">';
+									if ($module->type == 'pdf') {
+										print '<a href="'.dolBuildUrl($_SERVER["PHP_SELF"], array('action' => 'specimen', 'module' => $name), true).'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
+									} else {
+										print img_object($langs->transnoentitiesnoconv("PreviewNotAvailable"), 'generic');
+									}
+									print '</td>';
+
+									print "</tr>\n";
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	print '</table>';
+	print '</div>';
+}
+
+
+/**
  *	Return the php_info into an array
  *
  *	@return	array<string,array<string,string|array{local:string,master:string}>>	Array with PHP info
