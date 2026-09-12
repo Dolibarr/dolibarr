@@ -640,9 +640,6 @@ function CreateServerFolder($folderPath, $lastFolder = null)
  */
 function GetRootPath()
 {
-	if (!isset($_SERVER)) {
-		global $_SERVER;  // @phan-suppress-current-line PhanPluginConstantVariableNull
-	}
 	$sRealPath = realpath('./');
 	// #2124 ensure that no slash is at the end
 	$sRealPath = rtrim($sRealPath, "\\/");
