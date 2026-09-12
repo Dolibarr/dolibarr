@@ -71,6 +71,7 @@ $opp_status = GETPOSTINT('opp_status');
 $opp_percent = price2num(GETPOST('opp_percent', 'alphanohtml'));
 $objcanvas = GETPOST("objcanvas", "alphanohtml");
 $comefromclone = GETPOST("comefromclone", "alphanohtml");
+$targetstatus = GETPOSTINT('targetstatus');
 $date_start = dol_mktime(0, 0, 0, GETPOSTINT('projectstartmonth'), GETPOSTINT('projectstartday'), GETPOSTINT('projectstartyear'));
 $date_end = dol_mktime(0, 0, 0, GETPOSTINT('projectendmonth'), GETPOSTINT('projectendday'), GETPOSTINT('projectendyear'));
 $date_start_event = dol_mktime(GETPOSTINT('date_start_eventhour'), GETPOSTINT('date_start_eventmin'), GETPOSTINT('date_start_eventsec'), GETPOSTINT('date_start_eventmonth'), GETPOSTINT('date_start_eventday'), GETPOSTINT('date_start_eventyear'), 'tzuserrel');
@@ -324,7 +325,7 @@ if (empty($reshook)) {
 			$object->ref          = GETPOST('ref', 'alpha');
 			$object->fk_project   = GETPOSTINT('fk_project');
 			$object->title        = GETPOST('title', 'alphanohtml'); // Do not use 'alpha' here, we want field as it is
-			$object->status       = GETPOSTINT('status');
+			$object->status       = GETPOSTISSET('status') ? GETPOSTINT('status') : $object->oldcopy->status;
 			$object->socid        = GETPOSTINT('socid');
 			$object->description  = GETPOST('description', 'restricthtml'); // Do not use 'alpha' here, we want field as it is
 			$object->public       = GETPOSTINT('public') ? 1 : 0;
@@ -533,8 +534,21 @@ if (empty($reshook)) {
 		}
 	}
 
+	if ($action == 'confirm_status' && $confirm == 'yes' && $permissiontoadd && getDolGlobalInt('PROJECT_EXTENDED_STATES')) {
+		$result = $object->setValid($user, 0, $targetstatus);
+		if ($result <= 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		} else {
+			header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id);
+			exit;
+		}
+	}
+
 	if ($action == 'confirm_close' && $confirm == 'yes' && $permissiontoadd) {
-		$result = $object->setClose($user);
+		if (GETPOST('close_note')) {
+			$object->close_note = GETPOST('close_note');
+		}
+		$result = $object->setClose($user, 0, $targetstatus ?: Project::STATUS_CLOSED);
 		if ($result <= 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -1031,6 +1045,24 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 
 	$formconfirm = "" ;
 
+	// Confirmation status change (extended states)
+	if ($action == 'status' && getDolGlobalInt('PROJECT_EXTENDED_STATES')) {
+		$formquestion = array(
+			array('type' => 'select', 'name' => 'targetstatus', 'label' => '<span class="fieldrequired">'.$langs->trans("ChangeStatusTo").'</span>',
+				'values' => array(
+					$object::STATUS_DRAFT      => $object->LibStatut($object::STATUS_DRAFT),
+					$object::STATUS_VALIDATED  => $object->LibStatut($object::STATUS_VALIDATED),
+					$object::STATUS_INPROGRESS => $object->LibStatut($object::STATUS_INPROGRESS),
+				),
+			),
+		);
+		unset($formquestion[0]['values'][$object->status]);
+		if (getDolGlobalString('MAIN_DISABLEDRAFTSTATUS') || getDolGlobalString('MAIN_DISABLEDRAFTSTATUS_PROJECT')) {
+			unset($formquestion[0]['values'][$object::STATUS_DRAFT]);
+		}
+		print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("ProjectStatusChange"), $langs->trans("ChangeStatusToDesc"), "confirm_status", $formquestion, '', 1);
+	}
+
 	// Confirmation validation
 	if ($action == 'validate') {
 		$text = $langs->trans('ConfirmValidateProject');
@@ -1039,7 +1071,14 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 	// Confirmation close
 	if ($action == 'close') {
 		$text = $langs->trans("ConfirmCloseAProject");
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("CloseAProject"), $text, "confirm_close", '', '', 1);
+		$formquestion = '';
+		if (getDolGlobalInt('PROJECT_EXTENDED_STATES')) {
+			$formquestion = array(
+				array('type' => 'select', 'name' => 'targetstatus', 'label' => '<span class="fieldrequired">'.$langs->trans("ProjectCloseAs").'</span>', 'values' => array($object::STATUS_CLOSED => $object->LibStatut($object::STATUS_CLOSED), $object::STATUS_CANCELED => $object->LibStatut($object::STATUS_CANCELED))),
+				array('type' => 'text', 'name' => 'close_note', 'label' => $langs->trans("Note"), 'value' => ''),
+			);
+		}
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("CloseAProject"), $text, "confirm_close", $formquestion, '', 1);
 	}
 	// Confirmation reopen
 	if ($action == 'reopen') {
@@ -1673,7 +1712,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 
 			// Send
 			if (empty($user->socid)) {
-				if ($object->status != Project::STATUS_CLOSED) {
+				if (!in_array($object->status, array(Project::STATUS_CLOSED, Project::STATUS_CANCELED))) {
 					print dolGetButtonAction('', $langs->trans('SendMail'), 'email', $_SERVER["PHP_SELF"].'?action=presend&token='.newToken().'&id='.$object->id.'&mode=init#formmailbeforetitle', '');
 				}
 			}
@@ -1702,8 +1741,15 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 				}
 			}
 
+			// Change status (only shown when extended states are enabled)
+			if (getDolGlobalInt('PROJECT_EXTENDED_STATES')) {
+				if (in_array($object->status, array(Project::STATUS_DRAFT, Project::STATUS_VALIDATED, Project::STATUS_INPROGRESS)) && $user->hasRight('projet', 'creer')) {
+					print dolGetButtonAction('', $langs->trans('ProjectStatusChange'), 'default', $_SERVER["PHP_SELF"].'?action=status&amp;token='.newToken().'&amp;id='.$object->id, '');
+				}
+			}
+
 			// Modify
-			if ($object->status != Project::STATUS_CLOSED && $user->hasRight('projet', 'creer')) {
+			if (!in_array($object->status, array(Project::STATUS_CLOSED, Project::STATUS_CANCELED)) && $user->hasRight('projet', 'creer')) {
 				if ($userWrite > 0) {
 					print dolGetButtonAction('', $langs->trans('Modify'), 'default', $_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$object->id, '');
 				} else {
@@ -1722,17 +1768,20 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 			}
 
 			// Close
-			if ($object->status == Project::STATUS_VALIDATED && $user->hasRight('projet', 'creer')) {
+			if (in_array($object->status, array(Project::STATUS_VALIDATED, Project::STATUS_INPROGRESS)) && $user->hasRight('projet', 'creer')) {
 				if ($userWrite > 0) {
-					//print dolGetButtonAction('', $langs->trans('Close'), 'default', $_SERVER["PHP_SELF"].'?action=close&amp;token='.newToken().'&amp;id='.$object->id, '');
-					print dolGetButtonAction('', $langs->trans('Close'), 'default', $_SERVER["PHP_SELF"].'?action=confirm_close&confirm=yes&token='.newToken().'&id='.$object->id, '');
+					if (getDolGlobalInt('PROJECT_EXTENDED_STATES')) {
+						print dolGetButtonAction('', $langs->trans('Close'), 'default', $_SERVER["PHP_SELF"].'?action=close&amp;token='.newToken().'&amp;id='.$object->id, '');
+					} else {
+						print dolGetButtonAction('', $langs->trans('Close'), 'default', $_SERVER["PHP_SELF"].'?action=confirm_close&confirm=yes&token='.newToken().'&id='.$object->id, '');
+					}
 				} else {
 					print dolGetButtonAction($langs->trans('NotOwnerOfProject'), $langs->trans('Close'), 'default', $_SERVER['PHP_SELF']. '#', '', false);
 				}
 			}
 
 			// Reopen
-			if ($object->status == Project::STATUS_CLOSED && $user->hasRight('projet', 'creer')) {
+			if (in_array($object->status, array(Project::STATUS_CLOSED, Project::STATUS_CANCELED)) && $user->hasRight('projet', 'creer')) {
 				if ($userWrite > 0) {
 					print dolGetButtonAction('', $langs->trans('ReOpen'), 'default', $_SERVER["PHP_SELF"].'?action=reopen&amp;token='.newToken().'&amp;id='.$object->id, '');
 				} else {

@@ -231,7 +231,7 @@ class FormProjets extends Form
 					if ($socid > 0 && (empty($obj->fk_soc) || $obj->fk_soc == $socid) && !$user->hasRight('societe', 'lire')) {
 						// Do nothing
 					} else {
-						if ($discard_closed == 1 && $obj->fk_statut == 2 && $obj->rowid != $selected) { // We discard closed except if selected
+						if ($discard_closed == 1 && in_array($obj->fk_statut, array(2, 6)) && $obj->rowid != $selected) { // We discard closed/canceled except if selected
 							$i++;
 							continue;
 						}
@@ -251,7 +251,7 @@ class FormProjets extends Form
 						if ($obj->fk_statut == 0) {
 							$disabled = 1;
 							$labeltoshow .= ' - ' . $langs->trans("Draft");
-						} elseif ($obj->fk_statut == 2) {
+						} elseif (in_array($obj->fk_statut, array(2, 6))) {
 							if ($discard_closed == 2) {
 								$disabled = 1;
 							}
@@ -781,26 +781,18 @@ class FormProjets extends Form
 	{
 		$options = array();
 
-		// 7 is same label than 6. 8 does not exists (billed is another field)
-		$statustohow = array(
-			'0' => '0',
-			'1' => '1',
-			'2' => '2',
-		);
-
 		require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 		$tmpproject = new Project($this->db);
 
-		foreach ($statustohow as $key => $value) {
-			$tmpproject->statut = $key;	// deprecated
+		foreach ($tmpproject->labelStatusShort as $key => $value) {
 			$tmpproject->status = $key;
-			$options[$value] = $tmpproject->getLibStatut($short);
+			$options[$key] = $tmpproject->getLibStatut($short);
 		}
 
 		if (is_array($selected)) {
 			$selectedarray = $selected;
 		} elseif ($selected == 99) {
-			$selectedarray = array(0,1);
+			$selectedarray = getDolGlobalInt('PROJECT_EXTENDED_STATES') ? array(0, 1, 3) : array(0, 1);
 		} else {
 			$selectedarray = explode(',', $selected);
 		}
