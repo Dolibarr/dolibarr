@@ -68,27 +68,25 @@ Before writing any code, the agent **must**:
 - Use Dolibarr database functions exclusively — never use PDO or MySQLi directly
     - In pages: use global `$db`
     - In classes: use `$this->db`
--  SQL forged by PHP must escaped fields with `db->escape()`, `db->sanitize()`, or by casting values to `(int)` or `(float)`
--  Always use `$db->query()` followed by `$db->fetch_object()` or `$db->fetch_array()` to retrieve results
--  Convert timestamps and SQL datetime with `$db->idate()` (PHP timestamp -> SQL) and `$db->jdate()` (SQL -> PHP timestamp); use `dol_now()` instead of `time()`, `dol_print_date()` instead of `date()`, `dol_mktime()` instead of `mktime()`
--  SQL scripts for table and index creation must be placed in `htdocs/install/mysql/tables/` (see existing files for examples)
--  Build list-filter `WHERE` clauses with `natural_search($fields, $value, $mode)` rather than assembling `LIKE` conditions by hand
+- SQL forged by PHP must escaped fields with `db->escape()`, `db->sanitize()`, or by casting values to `(int)` or `(float)`
+- Always use `$db->query()` followed by `$db->fetch_object()` or `$db->fetch_array()` to retrieve results
+- SQL scripts for table and index creation must be placed in `htdocs/install/mysql/tables/` (see existing files for examples)
+- Build list-filter `WHERE` clauses with `natural_search($fields, $value, $mode)` rather than assembling `LIKE` conditions by hand
+
+---
+
+## Date management
+
+- When a date with time is stored in PHP memory variable, it is always a UTC date. 
+- When the date is coming from a user input, we can convert it into an UTC date with `$datetimevar = GETPOSTDATE('datefieldname', '', 'tzuserrel')` or `$datetimevar = GETPOSTDATE('datefieldname', 'getpost', 'tzuserrel')` if user entered only the day, month and year;
+- The date is stored in database into the sever timezone but this conversion is done by using `$db->idate()` (PHP timestamp -> SQL) to forge write SQL or `$db->jdate()` (SQL -> PHP timestamp) to forge read SQL.
+- Use `dol_now()` instead of `time()`, `dol_print_date()` instead of `date()`, `dol_mktime()` instead of `mktime()`.
 
 ---
 
 ## Hooks & Extensions
 
-- Prioritize hooks over direct code overrides
-- Before creating a new hook, verify it does not already exist:
-  ```
-  grep -r "executeHooks" htdocs/ | grep 'hookName'
-  ```
-- Call hooks using the standard pattern:
-  ```php
-  $hookmanager->executeHooks('actionName', $parameters, $object, $action);
-  ```
-- Never call $hookmanager->initHooks() in class or function. This is done only once in the main parent page.
-- Name hooks clearly and descriptively (e.g., `formObjectOptions`, `addMoreActionsButtons`)
+- Hooks are designed for external modules. Try to not use them for core code.
 
 ---
 

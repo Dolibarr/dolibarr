@@ -11,7 +11,7 @@
  * Copyright (C) 2018-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2018-2024	Anthony Berton			<anthony.berton@bb2a.fr>
  * Copyright (C) 2022-2025	Alexandre Spangaro		<alexandre@inovea-conseil.com>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Nick Fragoulis
  * Copyright (C) 2024       Franck Moreau
  *
@@ -1584,7 +1584,7 @@ class pdf_sponge extends ModelePDFFactures
 					// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 					$bac->fetch(0, '', $object->thirdparty->id);
 					$iban = $bac->iban.(($bac->iban && $bac->bic) ? ' / ' : '').$bac->bic;
-					$lib_mode_reg .= ' '.$outputlangs->trans("PaymentTypePREdetails", dol_trunc($iban, 6, 'right', 'UTF-8', 1));
+					$lib_mode_reg .= ' '.$outputlangs->trans("PaymentTypePREdetails", pdf_truncate_text($pdf, $iban, 6, 'right', ''));
 				}
 
 				$pdf->MultiCell($posxend - $posxval, 5, $lib_mode_reg, 0, 'L');
@@ -2312,7 +2312,7 @@ class pdf_sponge extends ModelePDFFactures
 			$posy += 4;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("RefCustomer")." : ".dol_trunc($outputlangs->convToOutputCharset($object->ref_customer), 65), '', 'R');
+			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("RefCustomer")." : ".pdf_truncate_text($pdf, $outputlangs->convToOutputCharset($object->ref_customer), 65), '', 'R');
 		}
 
 		if (getDolGlobalString('PDF_SHOW_PROJECT_TITLE')) {
@@ -2321,7 +2321,7 @@ class pdf_sponge extends ModelePDFFactures
 				$posy += 3;
 				$pdf->SetXY($posx, $posy);
 				$pdf->SetTextColor(0, 0, 60);
-				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Project")." : ".dol_trunc($object->project->title, 50), '', 'R');
+				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Project")." : ".pdf_truncate_text($pdf, $object->project->title, 50), '', 'R');
 			}
 		}
 

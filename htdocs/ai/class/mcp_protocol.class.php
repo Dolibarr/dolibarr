@@ -86,6 +86,7 @@ class MCPServer
 		// External clients (Claude Desktop, Cursor, etc.) will only see and be able to
 		// call tools that the admin has explicitly allowed for this context.
 		$this->mcpHandler = new McpHandler($this->db, $this->user, $this->conf, McpHandler::CTX_MCP_SERVER);
+		$this->loadTools();
 	}
 
 	/**
