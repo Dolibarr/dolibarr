@@ -143,6 +143,25 @@ try {
 			'shipping' => array('/expedition/class/expedition.class.php', 'Expedition', 'shipment', 'expedition', 'lire'),
 			'reception' => array('/reception/class/reception.class.php', 'Reception', 'reception', 'reception', 'lire'),
 			'project' => array('/projet/class/project.class.php', 'Project', 'project', 'projet', 'lire'),
+			'project_task' => array('/projet/class/task.class.php', 'Task', 'project task', 'projet', 'lire'),
+			'contrat' => array('/contrat/class/contrat.class.php', 'Contrat', 'contract', 'contrat', 'lire'),
+			'fichinter' => array('/fichinter/class/fichinter.class.php', 'Fichinter', 'intervention', 'ficheinter', 'lire'),
+			'ticket' => array('/ticket/class/ticket.class.php', 'Ticket', 'support ticket', 'ticket', 'read'),
+			'member' => array('/adherents/class/adherent.class.php', 'Adherent', 'member', 'adherent', 'lire'),
+			'expensereport' => array('/expensereport/class/expensereport.class.php', 'ExpenseReport', 'expense report', 'expensereport', 'lire'),
+			'holiday' => array('/holiday/class/holiday.class.php', 'Holiday', 'leave request', 'holiday', 'read'),
+			'don' => array('/don/class/don.class.php', 'Don', 'donation', 'don', 'lire'),
+			'action' => array('/comm/action/class/actioncomm.class.php', 'ActionComm', 'agenda event', 'agenda', 'myactions', 'read'),
+			'bom' => array('/bom/class/bom.class.php', 'BOM', 'bill of materials', 'bom', 'read'),
+			'mo' => array('/mrp/class/mo.class.php', 'Mo', 'manufacturing order', 'mrp', 'read'),
+			'stock' => array('/product/stock/class/entrepot.class.php', 'Entrepot', 'warehouse', 'stock', 'lire'),
+			'contact' => array('/contact/class/contact.class.php', 'Contact', 'contact', 'societe', 'contact', 'lire'),
+			'bank_account' => array('/compta/bank/class/account.class.php', 'Account', 'bank account', 'banque', 'lire'),
+			'category' => array('/categories/class/categorie.class.php', 'Categorie', 'category (tag)', 'categorie', 'lire'),
+			'knowledgerecord' => array('/knowledgemanagement/class/knowledgerecord.class.php', 'KnowledgeRecord', 'knowledge article', 'knowledgemanagement', 'knowledgerecord', 'read'),
+			'recruitmentjobposition' => array('/recruitment/class/recruitmentjobposition.class.php', 'RecruitmentJobPosition', 'job position', 'recruitment', 'recruitmentjobposition', 'read'),
+			// Deliberately absent: user and salary (privacy/SEC precedent
+			// #40313) - personal data cards never feed the prompt.
 		);
 		$ctxExtra = getDolGlobalString('AI_ASSISTANT_CONTEXT_ELEMENTS');
 		if ($ctxExtra) {
@@ -1022,22 +1041,28 @@ function classifyIntentUniversal(string $query, Translate $langs)
 
 	$intentMap = [
 		'billing' => [
-			'keys'     => ['Bill', 'Invoice', 'Payment', 'Cheque', 'VAT', 'BillStatusUnpaid', 'BillStatusPaid', 'BillStatusDraft']
+			'keys'     => ['Bill', 'Invoice', 'Payment', 'Cheque', 'VAT', 'BillStatusUnpaid', 'BillStatusPaid', 'BillStatusDraft'],
+			'synonyms' => ['paid', 'unpaid', 'pay', 'money', 'cost', 'amount', 'overdue']
 		],
 		'commercial' => [
-			'keys'     => ['Order', 'Proposal', 'Quote', 'SupplierOrder', 'OrderStatusDraft']
+			'keys'     => ['Order', 'Proposal', 'Quote', 'SupplierOrder', 'OrderStatusDraft'],
+			'synonyms' => ['sale', 'buy', 'purchase', 'contract', 'shipping', 'quote']
 		],
 		'thirdparty' => [
-			'keys'     => ['ThirdParty', 'Customer', 'Supplier', 'Contact', 'Company']
+			'keys'     => ['ThirdParty', 'Customer', 'Supplier', 'Contact', 'Company'],
+			'synonyms' => ['client', 'partner', 'address', 'phone', 'vendor']
 		],
 		'stock' => [
-			'keys'     => ['Product', 'Service', 'Stock', 'Warehouse']
+			'keys'     => ['Product', 'Service', 'Stock', 'Warehouse'],
+			'synonyms' => ['item', 'inventory', 'sku', 'location', 'qty', 'warehouse']
 		],
 		'project' => [
-			'keys'     => ['Project', 'Task']
+			'keys'     => ['Project', 'Task'],
+			'synonyms' => ['task', 'team', 'deadline', 'planning', 'milestone']
 		],
 		'reporting' => [
-			'keys'     => ['Report', 'Statistics', 'Turnover', 'Revenue', 'Income']
+			'keys'     => ['Report', 'Statistics', 'Turnover', 'Revenue', 'Income'],
+			'synonyms' => ['report', 'statistics', 'analytics', 'chart', 'total', 'turnover']
 		]
 	];
 
@@ -1070,6 +1095,14 @@ function classifyIntentUniversal(string $query, Translate $langs)
 				}
 				$keywords[] = $trans;
 			}
+		}
+		$keywords = array_unique($keywords);
+
+		// Hardcoded English colloquialisms (words no UI key carries) - words no
+		// UI key carries; translated vocabulary already arrives through the
+		// dual-language keys above.
+		foreach ((array) ($data['synonyms'] ?? array()) as $syn) {
+			$keywords[] = $isLatin ? strtolower(dol_string_unaccent($syn)) : $syn;
 		}
 		$keywords = array_unique($keywords);
 
