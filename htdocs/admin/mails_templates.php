@@ -841,6 +841,13 @@ if ($action != 'create') {
 	print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST" id="list_of_c_email_templates" spellcheck="false">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="from" value="'.dol_escape_htmltag(GETPOST('from', 'alpha')).'">';
+} else {
+	// Form to add a new line
+	print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST" id="create_c_email_template" spellcheck="false">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="action" value="add">';
+	print '<input type="hidden" name="from" value="'.dol_escape_htmltag(GETPOST('from', 'alpha')).'">';
+	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 }
 
 if (!empty($user->admin) && (empty($_SESSION['leftmenu']) || $_SESSION['leftmenu'] != 'email_templates')) {
@@ -881,13 +888,6 @@ if ($action == 'create') {
 	$obj->joinfiles = GETPOST('joinfiles');
 	$obj->defaultfortype = GETPOST('defaultfortype') ? 1 : 0;
 	$obj->content = GETPOST('content', 'restricthtml');
-
-	// Form to add a new line
-	print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST" id="create_c_email_template" spellcheck="false">';
-	print '<input type="hidden" name="token" value="'.newToken().'">';
-	print '<input type="hidden" name="action" value="add">';
-	print '<input type="hidden" name="from" value="'.dol_escape_htmltag(GETPOST('from', 'alpha')).'">';
-	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent" id="table_create_c_email_template">';
@@ -1024,7 +1024,24 @@ if ($action == 'create') {
 			print '<span class="minwidth150 inline-block">'.$form->textwithpicto($langs->trans("FilesAttachedToEmail"), $tabhelp[25][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'</span>';
 		}
 		if ($tmpfieldlist == 'content') {
-			print '<span class="minwidth150 inline-block margintoponly">'.$form->textwithpicto($langs->trans("Content"), $tabhelp[25][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'</span><br>';
+			print '<span class="minwidth150 inline-block margintoponly">'.$form->textwithpicto($langs->trans("Content"), $tabhelp[25][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'</span>';
+
+			// Add layout and AI tools for content
+			$out = '';
+			if (!is_object($formmail)) {
+				$formmail = new FormMail($db);
+				$formmail->withlayout = 'email';
+				$formmail->withaiprompt = 'textgenerationemail';
+				$formmail->withfckeditor = true;
+			}
+			$showlinktolayout = (getDolGlobalInt('MAIN_EMAIL_USE_LAYOUT') ? $formmail->withlayout : '');
+			$showlinktolayoutlabel = $langs->trans("FillMessageWithALayout");
+			$showlinktoai = ($formmail->withaiprompt && isModEnabled('ai') ? 'textgenerationemail' : '');
+			$showlinktoailabel = $langs->trans("FillMessageWithAIContent");
+			$htmlname = 'content';
+			include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';
+			print $out;
+			print '<br>';
 		}
 		if ($tmpfieldlist == 'content_lines') {
 			print '<span class="minwidth150 inline-block">'.$form->textwithpicto($langs->trans("ContentForLines"), $tabhelp[25][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'</span><br>';
@@ -1072,511 +1089,527 @@ if ($action == 'create') {
 	print '<br><br><br>';
 }
 
+if ($action != 'create') {
+	print '<div class="div-table-responsive-no-min">';
+	print '<table class="noborder centpercent" id="table_list_of_c_email_templates">';
 
-print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder centpercent" id="table_list_of_c_email_templates">';
+	$i = 0;
 
-$i = 0;
-
-// There is several pages
-/*
-if ($num > $limit) {
-	print '<tr class="none"><td class="right" colspan="'.(3 + count($fieldlist)).'">';
-	print_fleche_navigation($page, $_SERVER["PHP_SELF"], $paramwithsearch, ($num > $limit ? 1 : 0), '<li class="pagination"><span>'.$langs->trans("Page").' '.($page + 1).'</span></li>');
-	print '</td></tr>';
-}
-*/
-
-// Title line with search boxes
-print '<tr class="liste_titre" id="Title line with search boxes">';
-// Action column
-if ($conf->main_checkbox_left_column) {
-	print '<td class="liste_titre center" width="64">';
-	$searchpicto = $form->showFilterButtons();
-	print $searchpicto;
-	print '</td>';
-}
-foreach ($fieldlist as $field => $value) {
-	if ($value == 'module') {
-		print '<td class="liste_titre"><input type="text" name="search_module" class="maxwidth75" value="'.dol_escape_htmltag($search_module).'" spellcheck="false"></td>';
-	} elseif ($value == 'label') {
-		print '<td class="liste_titre"><input type="text" name="search_label" class="maxwidth75" value="'.dol_escape_htmltag($search_label).'" spellcheck="false"></td>';
-	} elseif ($value == 'lang') {
-		print '<td class="liste_titre">';
-		print $formadmin->select_language($search_lang, 'search_lang', 0, array(), 1, 0, 0, 'maxwidth100');
-		print '</td>';
-	} elseif ($value == 'fk_user') {
-		print '<td class="liste_titre">';
-		print $form->select_dolusers($search_fk_user, 'search_fk_user', 1, null, 0, ($user->admin ? '' : 'hierarchyme'), array(), '0', 0, 0, '', 0, '', 'maxwidth100', 1);
-		print '</td>';
-	} elseif ($value == 'topic') {
-		print '<td class="liste_titre"><input type="text" class="maxwidth150" name="search_topic" value="'.dol_escape_htmltag($search_topic).'" spellcheck="false"></td>';
-	} elseif ($value == 'type_template') {
-		print '<td class="liste_titre center">';
-		// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
-		print $form->selectarray('search_type_template', $elementList, $search_type_template, 1, 0, 0, '', 0, 0, 0, '', 'minwidth100 maxwidth125', 1, '', 0, 1);
-		print '</td>';
-	} elseif (!in_array($value, array('content', 'content_lines'))) {
-		print '<td class="liste_titre"></td>';
-	}
-}
-/*if (empty($conf->global->MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES)) {
-	print '<td class="liste_titre"></td>';
-}*/
-// Status
-print '<td></td>';
-
-// Have to expand the id="Title line with search boxes" with 2 extra fields because the line below id="Title of lines" are 2 fields longer
-if (!empty($arrayfields['t.tms']['checked'])) {
-	print '<td></td>'; // tms / Modif. date
-}
-if (!empty($arrayfields['t.datec']['checked'])) {
-	print '<td></td>'; // datec / Date creation
-}
-// Action column
-if (!$conf->main_checkbox_left_column) {
-	print '<td class="liste_titre center" width="64">';
-	$searchpicto = $form->showFilterButtons();
-	print $searchpicto;
-	print '</td>';
-}
-print '</tr>';
-
-// Title of lines
-print '<tr class="liste_titre" id="Title of lines">';
-// Action column
-if ($conf->main_checkbox_left_column) {
-	print getTitleFieldOfList('');
-}
-array_push($fieldlist, "tms", "datec");
-foreach ($fieldlist as $field => $value) {
-	$showfield = 1; // By default
-	$css = "left";
-	$sortable = 1;
-	$valuetoshow = '';
-	$forcenowrap = 1;
+	// There is several pages
 	/*
-	$tmparray=getLabelOfField($fieldlist[$field]);
-	$showfield=$tmp['showfield'];
-	$valuetoshow=$tmp['valuetoshow'];
-	$css=$tmp['align'];
-	$sortable=$tmp['sortable'];
+	if ($num > $limit) {
+		print '<tr class="none"><td class="right" colspan="'.(3 + count($fieldlist)).'">';
+		print_fleche_navigation($page, $_SERVER["PHP_SELF"], $paramwithsearch, ($num > $limit ? 1 : 0), '<li class="pagination"><span>'.$langs->trans("Page").' '.($page + 1).'</span></li>');
+		print '</td></tr>';
+	}
 	*/
-	$valuetoshow = ucfirst($fieldlist[$field]); // By default
-	$valuetoshow = $langs->trans($valuetoshow); // try to translate
-	if ($fieldlist[$field] == 'module') {
-		$css = 'tdoverflowmax100';
-	}
-	if ($fieldlist[$field] == 'fk_user') {
-		$valuetoshow = $langs->trans("Owner");
-	}
-	if ($fieldlist[$field] == 'lang') {
-		$valuetoshow = $langs->trans("Language");
-	}
-	if ($fieldlist[$field] == 'type') {
-		$valuetoshow = $langs->trans("Type");
-	}
-	if ($fieldlist[$field] == 'libelle' || $fieldlist[$field] == 'label') {
-		$valuetoshow = $langs->trans("Label");
-	}
-	if ($fieldlist[$field] == 'type_template') {
-		$css = 'center';
-		$valuetoshow = $langs->trans("TypeOfTemplate");
-	}
-	if ($fieldlist[$field] == 'private') {
-		$css = 'center';
-	}
-	if ($fieldlist[$field] == 'position') {
-		$css = 'center';
-	}
-	if ($fieldlist[$field] == 'tms') {
-		$valuetoshow = 'Modif. date';
-	}
-	if ($fieldlist[$field] == 'datec') {
-		$valuetoshow = 'Date creation';
-	}
 
-	if ($fieldlist[$field] == 'joinfiles') {
-		$valuetoshow = $langs->trans("FilesAttachedToEmail");
-		$css = 'center';
-		$forcenowrap = 0;
+	// Title line with search boxes
+	print '<tr class="liste_titre" id="Title line with search boxes">';
+	// Action column
+	if ($conf->main_checkbox_left_column) {
+		print '<td class="liste_titre center" width="64">';
+		$searchpicto = $form->showFilterButtons();
+		print $searchpicto;
+		print '</td>';
 	}
-	if ($fieldlist[$field] == 'content') {
-		$valuetoshow = $langs->trans("Content");
-		$showfield = 0;
-	}
-	if ($fieldlist[$field] == 'content_lines') {
-		$valuetoshow = $langs->trans("ContentForLines");
-		$showfield = 0;
-	}
-	if ($value == 'tms' && empty($arrayfields['t'.$value]['checked'])) {
-		$showfield = 0;
-	}
-	if ($value == 'datec' && empty($arrayfields['t.'.$value]['checked'])) {
-		$showfield = 0;
-	}
-
-	// Show fields
-	if ($showfield) {
-		if (!empty($tabhelp[25][$value])) {
-			if (in_array($value, array('topic'))) {
-				$valuetoshow = $form->textwithpicto($valuetoshow, $tabhelp[25][$value], 1, 'help', '', 0, 2, 'tooltip'.$value, $forcenowrap); // Tooltip on click
-			} else {
-				$valuetoshow = $form->textwithpicto($valuetoshow, $tabhelp[25][$value], 1, 'help', '', 0, 2, '', $forcenowrap); // Tooltip on hover
-			}
+	foreach ($fieldlist as $field => $value) {
+		if ($value == 'module') {
+			print '<td class="liste_titre"><input type="text" name="search_module" class="maxwidth75" value="'.dol_escape_htmltag($search_module).'" spellcheck="false"></td>';
+		} elseif ($value == 'label') {
+			print '<td class="liste_titre"><input type="text" name="search_label" class="maxwidth75" value="'.dol_escape_htmltag($search_label).'" spellcheck="false"></td>';
+		} elseif ($value == 'lang') {
+			print '<td class="liste_titre">';
+			print $formadmin->select_language($search_lang, 'search_lang', 0, array(), 1, 0, 0, 'maxwidth100');
+			print '</td>';
+		} elseif ($value == 'fk_user') {
+			print '<td class="liste_titre">';
+			print $form->select_dolusers($search_fk_user, 'search_fk_user', 1, null, 0, ($user->admin ? '' : 'hierarchyme'), array(), '0', 0, 0, '', 0, '', 'maxwidth100', 1);
+			print '</td>';
+		} elseif ($value == 'topic') {
+			print '<td class="liste_titre"><input type="text" class="maxwidth150" name="search_topic" value="'.dol_escape_htmltag($search_topic).'" spellcheck="false"></td>';
+		} elseif ($value == 'type_template') {
+			print '<td class="liste_titre center">';
+			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
+			print $form->selectarray('search_type_template', $elementList, $search_type_template, 1, 0, 0, '', 0, 0, 0, '', 'minwidth100 maxwidth125', 1, '', 0, 1);
+			print '</td>';
+		} elseif (!in_array($value, array('content', 'content_lines'))) {
+			print '<td class="liste_titre"></td>';
 		}
-		$sortfieldtouse = ($sortable ? $fieldlist[$field] : '');
-		if ($sortfieldtouse == 'type_template') {
-			$sortfieldtouse .= ',lang,position,label';
-		}
-		print getTitleFieldOfList($valuetoshow, 0, $_SERVER["PHP_SELF"], $sortfieldtouse, ($page ? 'page='.$page.'&' : ''), $paramwithsearch, '', $sortfield, $sortorder, $css.' ');
 	}
-}
+	/*if (empty($conf->global->MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES)) {
+		print '<td class="liste_titre"></td>';
+	}*/
+	// Status
+	print '<td></td>';
 
-print getTitleFieldOfList($langs->trans("Status"), 0, $_SERVER["PHP_SELF"], "active", ($page ? 'page='.$page.'&' : ''), $paramwithsearch, '', $sortfield, $sortorder, 'center ');
-// Action column
-if (!$conf->main_checkbox_left_column) {
-	print getTitleFieldOfList('');
-}
-print '</tr>';
+	// Have to expand the id="Title line with search boxes" with 2 extra fields because the line below id="Title of lines" are 2 fields longer
+	if (!empty($arrayfields['t.tms']['checked'])) {
+		print '<td></td>'; // tms / Modif. date
+	}
+	if (!empty($arrayfields['t.datec']['checked'])) {
+		print '<td></td>'; // datec / Date creation
+	}
+	// Action column
+	if (!$conf->main_checkbox_left_column) {
+		print '<td class="liste_titre center" width="64">';
+		$searchpicto = $form->showFilterButtons();
+		print $searchpicto;
+		print '</td>';
+	}
+	print '</tr>';
 
-$nbqualified = 0;
-if ($num) {
-	// Lines with values
-	while ($i < $num) {
-		$obj = $db->fetch_object($resql);
+	// Title of lines
+	print '<tr class="liste_titre" id="Title of lines">';
+	// Action column
+	if ($conf->main_checkbox_left_column) {
+		print getTitleFieldOfList('');
+	}
+	array_push($fieldlist, "tms", "datec");
+	foreach ($fieldlist as $field => $value) {
+		$showfield = 1; // By default
+		$css = "left";
+		$sortable = 1;
+		$valuetoshow = '';
+		$forcenowrap = 1;
+		/*
+		$tmparray=getLabelOfField($fieldlist[$field]);
+		$showfield=$tmp['showfield'];
+		$valuetoshow=$tmp['valuetoshow'];
+		$css=$tmp['align'];
+		$sortable=$tmp['sortable'];
+		*/
+		$valuetoshow = ucfirst($fieldlist[$field]); // By default
+		$valuetoshow = $langs->trans($valuetoshow); // try to translate
+		if ($fieldlist[$field] == 'module') {
+			$css = 'tdoverflowmax100';
+		}
+		if ($fieldlist[$field] == 'fk_user') {
+			$valuetoshow = $langs->trans("Owner");
+		}
+		if ($fieldlist[$field] == 'lang') {
+			$valuetoshow = $langs->trans("Language");
+		}
+		if ($fieldlist[$field] == 'type') {
+			$valuetoshow = $langs->trans("Type");
+		}
+		if ($fieldlist[$field] == 'libelle' || $fieldlist[$field] == 'label') {
+			$valuetoshow = $langs->trans("Label");
+		}
+		if ($fieldlist[$field] == 'type_template') {
+			$css = 'center';
+			$valuetoshow = $langs->trans("TypeOfTemplate");
+		}
+		if ($fieldlist[$field] == 'private') {
+			$css = 'center';
+		}
+		if ($fieldlist[$field] == 'position') {
+			$css = 'center';
+		}
+		if ($fieldlist[$field] == 'tms') {
+			$valuetoshow = 'Modif. date';
+		}
+		if ($fieldlist[$field] == 'datec') {
+			$valuetoshow = 'Date creation';
+		}
 
-		if ($obj) {
-			if (($action == 'edit' || $action == 'preview') && ($rowid == (!empty($obj->rowid) ? $obj->rowid : $obj->code))) {
-				// TODO Move this 2 lines into a popup
-				print '<tr class="nohover oddeven noborderbottom" id="rowid-'.$obj->rowid.'" name="'.(!empty($obj->rowid) ? $obj->rowid : $obj->code).'">';
+		if ($fieldlist[$field] == 'joinfiles') {
+			$valuetoshow = $langs->trans("FilesAttachedToEmail");
+			$css = 'center';
+			$forcenowrap = 0;
+		}
+		if ($fieldlist[$field] == 'content') {
+			$valuetoshow = $langs->trans("Content");
+			$showfield = 0;
+		}
+		if ($fieldlist[$field] == 'content_lines') {
+			$valuetoshow = $langs->trans("ContentForLines");
+			$showfield = 0;
+		}
+		if ($value == 'tms' && empty($arrayfields['t'.$value]['checked'])) {
+			$showfield = 0;
+		}
+		if ($value == 'datec' && empty($arrayfields['t.'.$value]['checked'])) {
+			$showfield = 0;
+		}
 
-				$tmpaction = 'edit';
-				if ($action == 'edit') {
-					// do not show tms and datec
-					$fieldlist = explode(',', $tabfield[25]);
-					$parameters = array('fieldlist' => $fieldlist, 'tabname' => $tabname[25]);
+		// Show fields
+		if ($showfield) {
+			if (!empty($tabhelp[25][$value])) {
+				if (in_array($value, array('topic'))) {
+					$valuetoshow = $form->textwithpicto($valuetoshow, $tabhelp[25][$value], 1, 'help', '', 0, 2, 'tooltip'.$value, $forcenowrap); // Tooltip on click
 				} else {
-					$parameters = array('fieldlist' => $fieldlist, 'tabname' => $tabname[25]);
+					$valuetoshow = $form->textwithpicto($valuetoshow, $tabhelp[25][$value], 1, 'help', '', 0, 2, '', $forcenowrap); // Tooltip on hover
 				}
-				$reshook = $hookmanager->executeHooks('editEmailTemplateFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
-				$error = $hookmanager->error;
-				$errors = $hookmanager->errors;
+			}
+			$sortfieldtouse = ($sortable ? $fieldlist[$field] : '');
+			if ($sortfieldtouse == 'type_template') {
+				$sortfieldtouse .= ',lang,position,label';
+			}
+			print getTitleFieldOfList($valuetoshow, 0, $_SERVER["PHP_SELF"], $sortfieldtouse, ($page ? 'page='.$page.'&' : ''), $paramwithsearch, '', $sortfield, $sortorder, $css.' ');
+		}
+	}
 
-				$colspan = 0;
+	print getTitleFieldOfList($langs->trans("Status"), 0, $_SERVER["PHP_SELF"], "active", ($page ? 'page='.$page.'&' : ''), $paramwithsearch, '', $sortfield, $sortorder, 'center ');
+	// Action column
+	if (!$conf->main_checkbox_left_column) {
+		print getTitleFieldOfList('');
+	}
+	print '</tr>';
 
-				// Action column
-				if ($conf->main_checkbox_left_column) {
-					print '<td class="center">';
-					print '</td>';
-					$colspan++;
-				}
-				// Show main fields
-				if (empty($reshook)) {
-					$colspan += fieldList($fieldlist, $obj, $tabname[25], $action);
-				}
-				// Action column
-				if (!$conf->main_checkbox_left_column) {
-					print '<td class="center">';
-					print '</td>';
-					$colspan++;
-				}
-				print "</tr>\n";
+	$nbqualified = 0;
+	if ($num) {
+		// Lines with values
+		while ($i < $num) {
+			$obj = $db->fetch_object($resql);
 
-				print '<tr class="oddeven nohover" id="tr-aaa-'.$rowid.'">';
-				if ($conf->main_checkbox_left_column) {
-					print '<td class="center"></td>';
-				}
-				print '<td colspan="'.($colspan - 1).'" class="" style="padding-left: 20px; padding-right: 20px;">';
+			if ($obj) {
+				if (($action == 'edit' || $action == 'preview') && ($rowid == (!empty($obj->rowid) ? $obj->rowid : $obj->code))) {
+					// TODO Move this 2 lines into a popup
+					print '<tr class="nohover oddeven noborderbottom" id="rowid-'.$obj->rowid.'" name="'.(!empty($obj->rowid) ? $obj->rowid : $obj->code).'">';
 
-				$fieldsforcontent = array('topic', 'email_from', 'joinfiles', 'content');
-				if (getDolGlobalString('MAIN_EMAIL_TEMPLATES_USE_TO')) {
-					$fieldsforcontent[] = 'email_to';
-				}
-				if (getDolGlobalString('MAIN_EMAIL_TEMPLATES_USE_TOCC')) {
-					$fieldsforcontent[] = 'email_tocc';
-				}
-				if (getDolGlobalString('MAIN_EMAIL_TEMPLATES_USE_TOBCC')) {
-					$fieldsforcontent[] = 'email_tobcc';
-				}
-				if (getDolGlobalString('MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES')) {
-					$fieldsforcontent[] = 'content_lines';
-				}
-
-				$parameters = array('fieldsforcontent' => &$fieldsforcontent, 'tabname' => $tabname[25]);
-				$hookmanager->executeHooks('editEmailTemplateFieldsForContent', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
-
-				print '<div class="lineformailtemplatefield centpercent">';
-				foreach ($fieldsforcontent as $tmpfieldlist) {
-					$showfield = 1;
-					$css = "left";
-					$valuetoshow = $obj->$tmpfieldlist;
-
-					$class = 'tddict';
-					// Show value for field
-					if ($showfield) {
-						print '<div class="inline-block lineformailtemplatefield paddingtop paddingbottom centpercent">';
-						// Show line for topic, joinfiles and content
-						if ($tmpfieldlist == 'topic') {
-							print '<div class="minwidth150 inline-block bold">'.$form->textwithpicto($langs->trans("Topic"), $tabhelp[25][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'</div> ';
-							print '<input type="text" class="flat minwidth500" name="'.$tmpfieldlist.'-'.$rowid.'" value="'.(!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : '').'"'.($action != 'edit' ? ' disabled' : '').'>';
-							print '<br>'."\n";
-						}
-						if ($tmpfieldlist == 'email_from') {
-							print '<div class="minwidth150 inline-block">'.$form->textwithpicto($langs->trans("MailFrom"), $tabhelp[25][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'</div> ';
-							print '<input type="text" class="flat minwidth500" name="'.$tmpfieldlist.'-'.$rowid.'" value="'.(!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : '').'"'.($action != 'edit' ? ' disabled' : '').' spellcheck="false">';
-							print '<br>'."\n";
-						}
-						if ($tmpfieldlist == 'email_to') {
-							print '<div class="minwidth150 inline-block">'.$form->textwithpicto($langs->trans("MailTo"), $tabhelp[25][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'</div> ';
-							print '<input type="text" class="flat minwidth500" name="'.$tmpfieldlist.'-'.$rowid.'" value="'.(!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : '').'"'.($action != 'edit' ? ' disabled' : '').' spellcheck="false">';
-							print '<br>'."\n";
-						}
-						if ($tmpfieldlist == 'email_tocc') {
-							print '<div class="minwidth150 inline-block">'.$form->textwithpicto($langs->trans("MailCC"), $tabhelp[25][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'</div> ';
-							print '<input type="text" class="flat minwidth500" name="'.$tmpfieldlist.'-'.$rowid.'" value="'.(!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : '').'"'.($action != 'edit' ? ' disabled' : '').' spellcheck="false">';
-							print '<br>'."\n";
-						}
-						if ($tmpfieldlist == 'email_tobcc') {
-							print '<div class="minwidth150 inline-block">'.$form->textwithpicto($langs->trans("MailCCC"), $tabhelp[25][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'</div> ';
-							print '<input type="text" class="flat minwidth500" name="'.$tmpfieldlist.'-'.$rowid.'" value="'.(!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : '').'"'.($action != 'edit' ? ' disabled' : '').' spellcheck="false">';
-							print '<br>'."\n";
-						}
-						if ($tmpfieldlist == 'joinfiles') {
-							print '<div class="minwidth150 inline-block">'.$form->textwithpicto($langs->trans("FilesAttachedToEmail"), $tabhelp[25][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'</div> ';
-							print $form->selectyesno($tmpfieldlist.'-'.$rowid, (isset($obj->$tmpfieldlist) ? $obj->$tmpfieldlist : '0'), 1, ($action != 'edit'), 0, 1);
-							print '<br>'."\n";
-						}
-
-						if ($tmpfieldlist == 'content') {
-							print $form->textwithpicto($langs->trans("Content"), $tabhelp[25][$tmpfieldlist], 1, 'help', 'margintoponly', 0, 2, $tmpfieldlist).'<br>';
-							$okforextended = true;
-							if (!getDolGlobalString('FCKEDITOR_ENABLE_MAIL')) {
-								$okforextended = false;
-							}
-							$doleditor = new DolEditor($tmpfieldlist.'-'.$rowid, (!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : ''), '', 450, 'dolibarr_mailings', 'In', false, $acceptlocallinktomedia, $okforextended, ROWS_6, '80%', ($action != 'edit' ? 1 : 0));
-							print $doleditor->Create(1);
-						}
-						if ($tmpfieldlist == 'content_lines') {
-							print '<br>'."\n";
-							print $form->textwithpicto($langs->trans("ContentForLines"), $tabhelp[25][$tmpfieldlist], 1, 'help', 'margintoponly', 0, 2, $tmpfieldlist).'<br>';
-							$okforextended = true;
-							if (!getDolGlobalString('FCKEDITOR_ENABLE_MAIL')) {
-								$okforextended = false;
-							}
-							$doleditor = new DolEditor($tmpfieldlist.'-'.$rowid, (!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : ''), '', 140, 'dolibarr_mailings', 'In', false, $acceptlocallinktomedia, $okforextended, ROWS_6, '80%');
-							print $doleditor->Create(1);
-						}
-						print '</div>';
-					}
-				}
-				print '</div>';
-				print '<center><input type="hidden" name="page" value="'.$page.'">';
-				print '<input type="hidden" name="rowid" value="'.$rowid.'">';
-				if ($action == 'edit') {
-					print '<input type="submit" class="button buttongen button-save" name="actionmodify" value="'.$langs->trans("Save").'">';
-				}
-				print '<input type="submit" class="button buttongen button-cancel" name="actioncancel" value="'.$langs->trans("Cancel").'">';
-				print '</center>';
-				print '</td>';
-
-				if (!$conf->main_checkbox_left_column) {
-					print '<td class="center"></td>';
-				}
-
-				print '</tr>';
-
-				$nbqualified++;
-			} else {
-				// If template is for a module, check module is enabled.
-				if ($obj->module) {
-					$tempmodulekey = $obj->module;
-					if (empty($conf->$tempmodulekey) || !isModEnabled($tempmodulekey)) {
-						$i++;
-						continue;
-					}
-				}
-
-				$keyforobj = 'type_template';
-				if (!in_array($obj->$keyforobj, array_keys($elementList))) {
-					$i++;
-					continue; // It means this is a type of template not into elementList (may be because enabled condition of this type is false because module is not enabled)
-				}
-				// Test on 'enabled'
-				if (! (int) dol_eval((string) $obj->enabled, 1, 1, '1')) {
-					$i++;
-					continue; // Email template not qualified
-				}
-
-				$nbqualified++;
-
-				// Can an entry be erased or disabled ?
-				$iserasable = 1;
-				$canbedisabled = 1;
-				$canbemodified = 1; // true by default
-				if (!$user->admin && $obj->fk_user != $user->id) {
-					$iserasable = 0;
-					$canbedisabled = 0;
-					$canbemodified = 0;
-				}
-
-				$url = $_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.(!empty($obj->rowid) ? $obj->rowid : (!empty($obj->code) ? $obj->code : '')).(!empty($obj->code) ? '&code='.urlencode($obj->code) : '');
-				if ($param) {
-					$url .= '&'.$param;
-				}
-
-				print '<tr class="oddeven" id="rowid-'.$obj->rowid.'">';
-
-				// Action column - Modify link / Delete link
-				if ($conf->main_checkbox_left_column) {
-					print '<td class="center nowraponall" width="64">';
-					if ($canbemodified) {
-						print '<a class="reposition editfielda" href="'.$url.'&action=edit&token='.newToken().'">'.img_edit().'</a>';
+					$tmpaction = 'edit';
+					if ($action == 'edit') {
+						// do not show tms and datec
+						$fieldlist = explode(',', $tabfield[25]);
+						$parameters = array('fieldlist' => $fieldlist, 'tabname' => $tabname[25]);
 					} else {
-						print '<a class="reposition editfielda" href="'.$url.'&action=preview&token='.newToken().'">'.img_view().'</a>';
+						$parameters = array('fieldlist' => $fieldlist, 'tabname' => $tabname[25]);
 					}
-					if ($iserasable) {
-						print '<a class="reposition marginleftonly" href="'.$url.'&action=delete&token='.newToken().$param.'">'.img_delete().'</a>';
+					$reshook = $hookmanager->executeHooks('editEmailTemplateFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
+					$error = $hookmanager->error;
+					$errors = $hookmanager->errors;
+
+					$colspan = 0;
+
+					// Action column
+					if ($conf->main_checkbox_left_column) {
+						print '<td class="center">';
+						print '</td>';
+						$colspan++;
 					}
-					print '</td>';
-				}
+					// Show main fields
+					if (empty($reshook)) {
+						$colspan += fieldList($fieldlist, $obj, $tabname[25], $action);
+					}
+					// Action column
+					if (!$conf->main_checkbox_left_column) {
+						print '<td class="center">';
+						print '</td>';
+						$colspan++;
+					}
+					print "</tr>\n";
 
-				$tmpaction = 'view';
-				$parameters = array('fieldlist' => $fieldlist, 'tabname' => $tabname[25]);
-				$reshook = $hookmanager->executeHooks('viewEmailTemplateFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
+					print '<tr class="oddeven nohover" id="tr-aaa-'.$rowid.'">';
+					if ($conf->main_checkbox_left_column) {
+						print '<td class="center"></td>';
+					}
+					print '<td colspan="'.($colspan - 1).'" class="" style="padding-left: 20px; padding-right: 20px;">';
 
-				$error = $hookmanager->error;
-				$errors = $hookmanager->errors;
+					$fieldsforcontent = array('topic', 'email_from', 'joinfiles', 'content');
+					if (getDolGlobalString('MAIN_EMAIL_TEMPLATES_USE_TO')) {
+						$fieldsforcontent[] = 'email_to';
+					}
+					if (getDolGlobalString('MAIN_EMAIL_TEMPLATES_USE_TOCC')) {
+						$fieldsforcontent[] = 'email_tocc';
+					}
+					if (getDolGlobalString('MAIN_EMAIL_TEMPLATES_USE_TOBCC')) {
+						$fieldsforcontent[] = 'email_tobcc';
+					}
+					if (getDolGlobalString('MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES')) {
+						$fieldsforcontent[] = 'content_lines';
+					}
 
-				if (empty($reshook)) {
-					foreach ($fieldlist as $field => $value) {
-						if (in_array($fieldlist[$field], array('content', 'content_lines'))) {
-							continue;
-						}
+					$parameters = array('fieldsforcontent' => &$fieldsforcontent, 'tabname' => $tabname[25]);
+					$hookmanager->executeHooks('editEmailTemplateFieldsForContent', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
+
+					print '<div class="lineformailtemplatefield centpercent">';
+					foreach ($fieldsforcontent as $tmpfieldlist) {
 						$showfield = 1;
-						$css = "";
-						$class = "tddict";
-						$title = '';
-						$tmpvar = $fieldlist[$field];
-						$valuetoshow = $obj->$tmpvar;
-						if ($value == 'label' || $value == 'topic') {
-							if ($langs->trans($valuetoshow) != $valuetoshow) {
-								$valuetoshow = $langs->trans($valuetoshow);
-							}
-							$valuetoshow = dol_escape_htmltag($valuetoshow);
-						}
-						if ($value == 'label') {
-							$class .= ' tdoverflowmax200';
-						}
-						if ($value == 'topic') {
-							$class .= ' tdoverflowmax200 small';
-						}
-						if ($value == 'type_template') {
-							$valuetoshow = isset($elementList[$valuetoshow]) ? $elementList[$valuetoshow] : $valuetoshow;
-							$css = "center tdoverflowmax150";
-						}
-						if ($value == 'lang' && $valuetoshow) {
-							$valuetoshow = $valuetoshow.' - '.$langs->trans("Language_".$valuetoshow);
-							$class .= ' tdoverflowmax100';
-						}
-						if ($value == 'fk_user') {
-							if ($valuetoshow > 0) {
-								$fuser = new User($db);
-								$fuser->fetch($valuetoshow);
-								$valuetoshow = $fuser->getNomUrl(-1);
+						$css = "left";
+						$valuetoshow = $obj->$tmpfieldlist;
 
-								if ($obj->private) {
-									$valuetoshow = img_picto($langs->transnoentitiesnoconv("Private"), 'lock', 'class="pictofixedwidth"').$valuetoshow;
-								}
-
-								$class .= ' tdoverflowmax100';
-							}
-						}
-						if ($value == 'private') {
-							$css = "center";
-							if ($valuetoshow) {
-								$valuetoshow = yn($valuetoshow);
-							} else {
-								$valuetoshow = '';
-							}
-						}
-						if ($value == 'position') {
-							$css = "center";
-						}
-						if (in_array($value, array('joinfiles', 'defaultfortype'))) {
-							$css = "center";
-							if ($valuetoshow) {
-								//$valuetoshow = yn(1);
-								$valuetoshow = '<input type="checkbox" checked="checked" disabled>';
-							} else {
-								$valuetoshow = '';
-							}
-						}
-						if ($css) {
-							$class .= ' '.$css;
-						}
-
-						if ($value == 'tms' && empty($arrayfields['t'.$value]['checked'])) {
-							$showfield = 0;
-						}
-						if ($value == 'datec' && empty($arrayfields['t.'.$value]['checked'])) {
-							$showfield = 0;
-						}
-
+						$class = 'tddict';
 						// Show value for field
 						if ($showfield) {
-							print '<!-- '.$fieldlist[$field].' -->';
-							print '<td class="'.$class.'"';
-							if (in_array($value, array('code', 'label', 'topic'))) {
-								print ' title="'.dol_escape_htmltag($valuetoshow).'"';
+							print '<div class="inline-block lineformailtemplatefield paddingtop paddingbottom centpercent">';
+							// Show line for topic, joinfiles and content
+							if ($tmpfieldlist == 'topic') {
+								print '<div class="minwidth150 inline-block bold">'.$form->textwithpicto($langs->trans("Topic"), $tabhelp[25][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'</div> ';
+								print '<input type="text" class="flat minwidth500" name="'.$tmpfieldlist.'-'.$rowid.'" value="'.(!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : '').'"'.($action != 'edit' ? ' disabled' : '').'>';
+								print '<br>'."\n";
 							}
-							print '>';
-							print $valuetoshow;
-							print '</td>';
+							if ($tmpfieldlist == 'email_from') {
+								print '<div class="minwidth150 inline-block">'.$form->textwithpicto($langs->trans("MailFrom"), $tabhelp[25][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'</div> ';
+								print '<input type="text" class="flat minwidth500" name="'.$tmpfieldlist.'-'.$rowid.'" value="'.(!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : '').'"'.($action != 'edit' ? ' disabled' : '').' spellcheck="false">';
+								print '<br>'."\n";
+							}
+							if ($tmpfieldlist == 'email_to') {
+								print '<div class="minwidth150 inline-block">'.$form->textwithpicto($langs->trans("MailTo"), $tabhelp[25][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'</div> ';
+								print '<input type="text" class="flat minwidth500" name="'.$tmpfieldlist.'-'.$rowid.'" value="'.(!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : '').'"'.($action != 'edit' ? ' disabled' : '').' spellcheck="false">';
+								print '<br>'."\n";
+							}
+							if ($tmpfieldlist == 'email_tocc') {
+								print '<div class="minwidth150 inline-block">'.$form->textwithpicto($langs->trans("MailCC"), $tabhelp[25][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'</div> ';
+								print '<input type="text" class="flat minwidth500" name="'.$tmpfieldlist.'-'.$rowid.'" value="'.(!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : '').'"'.($action != 'edit' ? ' disabled' : '').' spellcheck="false">';
+								print '<br>'."\n";
+							}
+							if ($tmpfieldlist == 'email_tobcc') {
+								print '<div class="minwidth150 inline-block">'.$form->textwithpicto($langs->trans("MailCCC"), $tabhelp[25][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'</div> ';
+								print '<input type="text" class="flat minwidth500" name="'.$tmpfieldlist.'-'.$rowid.'" value="'.(!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : '').'"'.($action != 'edit' ? ' disabled' : '').' spellcheck="false">';
+								print '<br>'."\n";
+							}
+							if ($tmpfieldlist == 'joinfiles') {
+								print '<div class="minwidth150 inline-block">'.$form->textwithpicto($langs->trans("FilesAttachedToEmail"), $tabhelp[25][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'</div> ';
+								print $form->selectyesno($tmpfieldlist.'-'.$rowid, (isset($obj->$tmpfieldlist) ? $obj->$tmpfieldlist : '0'), 1, ($action != 'edit'), 0, 1);
+								print '<br>'."\n";
+							}
+
+							if ($tmpfieldlist == 'content') {
+								print '<div class="minwidth150 inline-block">'.$form->textwithpicto($langs->trans("Content"), $tabhelp[25][$tmpfieldlist], 1, 'help', 'margintoponly', 0, 2, $tmpfieldlist).'</div>';
+
+								// Add layout and AI tools for content
+								$out = '';
+								if (!is_object($formmail)) {
+									$formmail = new FormMail($db);
+									$formmail->withlayout = 'email';
+									$formmail->withaiprompt = 'textgenerationemail';
+									$formmail->withfckeditor = true;
+								}
+								$showlinktolayout = (getDolGlobalInt('MAIN_EMAIL_USE_LAYOUT') ? $formmail->withlayout : '');
+								$showlinktolayoutlabel = $langs->trans("FillMessageWithALayout");
+								$showlinktoai = ($formmail->withaiprompt && isModEnabled('ai') ? 'textgenerationemail' : '');
+								$showlinktoailabel = $langs->trans("FillMessageWithAIContent");
+								$htmlname = 'content_'.$rowid;
+								include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';
+								print $out;
+
+								$okforextended = true;
+								if (!getDolGlobalString('FCKEDITOR_ENABLE_MAIL')) {
+									$okforextended = false;
+								}
+								$doleditor = new DolEditor($tmpfieldlist.'-'.$rowid, (!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : ''), '', 450, 'dolibarr_mailings', 'In', false, $acceptlocallinktomedia, $okforextended, ROWS_6, '80%', ($action != 'edit' ? 1 : 0));
+								print $doleditor->Create(1);
+							}
+							if ($tmpfieldlist == 'content_lines') {
+								print '<br>'."\n";
+								print $form->textwithpicto($langs->trans("ContentForLines"), $tabhelp[25][$tmpfieldlist], 1, 'help', 'margintoponly', 0, 2, $tmpfieldlist).'<br>';
+								$okforextended = true;
+								if (!getDolGlobalString('FCKEDITOR_ENABLE_MAIL')) {
+									$okforextended = false;
+								}
+								$doleditor = new DolEditor($tmpfieldlist.'-'.$rowid, (!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : ''), '', 140, 'dolibarr_mailings', 'In', false, $acceptlocallinktomedia, $okforextended, ROWS_6, '80%');
+								print $doleditor->Create(1);
+							}
+							print '</div>';
 						}
 					}
-				}
-
-				// Status / Active
-				print '<td class="center nowrap">';
-				if ($canbedisabled) {
-					print '<a class="reposition" href="'.$url.'&action='.$acts[$obj->active].'&token='.newToken().'">'.$actl[$obj->active].'</a>';
-				} else {
-					print '<span class="opacitymedium">'.$actl[$obj->active].'</span>';
-				}
-				print "</td>";
-
-				// Action column - Modify link / Delete link
-				if (!$conf->main_checkbox_left_column) {
-					print '<td class="center nowraponall" width="64">';
-					if ($canbemodified) {
-						print '<a class="reposition editfielda" href="'.$url.'&action=edit&token='.newToken().'">'.img_edit().'</a>';
+					print '</div>';
+					print '<center><input type="hidden" name="page" value="'.$page.'">';
+					print '<input type="hidden" name="rowid" value="'.$rowid.'">';
+					if ($action == 'edit') {
+						print '<input type="submit" class="button buttongen button-save" name="actionmodify" value="'.$langs->trans("Save").'">';
 					}
-					if ($iserasable) {
-						print '<a class="reposition marginleftonly" href="'.$url.'&action=delete&token='.newToken().'">'.img_delete().'</a>';
-						//else print '<a href="#">'.img_delete().'</a>';    // Some dictionary can be edited by other profile than admin
-					}
+					print '<input type="submit" class="button buttongen button-cancel" name="actioncancel" value="'.$langs->trans("Cancel").'">';
+					print '</center>';
 					print '</td>';
+
+					if (!$conf->main_checkbox_left_column) {
+						print '<td class="center"></td>';
+					}
+
+					print '</tr>';
+
+					$nbqualified++;
+				} else {
+					// If template is for a module, check module is enabled.
+					if ($obj->module) {
+						$tempmodulekey = $obj->module;
+						if (empty($conf->$tempmodulekey) || !isModEnabled($tempmodulekey)) {
+							$i++;
+							continue;
+						}
+					}
+
+					$keyforobj = 'type_template';
+					if (!in_array($obj->$keyforobj, array_keys($elementList))) {
+						$i++;
+						continue; // It means this is a type of template not into elementList (may be because enabled condition of this type is false because module is not enabled)
+					}
+					// Test on 'enabled'
+					if (! (int) dol_eval((string) $obj->enabled, 1, 1, '1')) {
+						$i++;
+						continue; // Email template not qualified
+					}
+
+					$nbqualified++;
+
+					// Can an entry be erased or disabled ?
+					$iserasable = 1;
+					$canbedisabled = 1;
+					$canbemodified = 1; // true by default
+					if (!$user->admin && $obj->fk_user != $user->id) {
+						$iserasable = 0;
+						$canbedisabled = 0;
+						$canbemodified = 0;
+					}
+
+					$url = $_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.(!empty($obj->rowid) ? $obj->rowid : (!empty($obj->code) ? $obj->code : '')).(!empty($obj->code) ? '&code='.urlencode($obj->code) : '');
+					if ($param) {
+						$url .= '&'.$param;
+					}
+
+					print '<tr class="oddeven" id="rowid-'.$obj->rowid.'">';
+
+					// Action column - Modify link / Delete link
+					if ($conf->main_checkbox_left_column) {
+						print '<td class="center nowraponall" width="64">';
+						if ($canbemodified) {
+							print '<a class="reposition editfielda" href="'.$url.'&action=edit&token='.newToken().'">'.img_edit().'</a>';
+						} else {
+							print '<a class="reposition editfielda" href="'.$url.'&action=preview&token='.newToken().'">'.img_view().'</a>';
+						}
+						if ($iserasable) {
+							print '<a class="reposition marginleftonly" href="'.$url.'&action=delete&token='.newToken().$param.'">'.img_delete().'</a>';
+						}
+						print '</td>';
+					}
+
+					$tmpaction = 'view';
+					$parameters = array('fieldlist' => $fieldlist, 'tabname' => $tabname[25]);
+					$reshook = $hookmanager->executeHooks('viewEmailTemplateFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
+
+					$error = $hookmanager->error;
+					$errors = $hookmanager->errors;
+
+					if (empty($reshook)) {
+						foreach ($fieldlist as $field => $value) {
+							if (in_array($fieldlist[$field], array('content', 'content_lines'))) {
+								continue;
+							}
+							$showfield = 1;
+							$css = "";
+							$class = "tddict";
+							$title = '';
+							$tmpvar = $fieldlist[$field];
+							$valuetoshow = $obj->$tmpvar;
+							if ($value == 'label' || $value == 'topic') {
+								if ($langs->trans($valuetoshow) != $valuetoshow) {
+									$valuetoshow = $langs->trans($valuetoshow);
+								}
+								$valuetoshow = dol_escape_htmltag($valuetoshow);
+							}
+							if ($value == 'label') {
+								$class .= ' tdoverflowmax200';
+							}
+							if ($value == 'topic') {
+								$class .= ' tdoverflowmax200 small';
+							}
+							if ($value == 'type_template') {
+								$valuetoshow = isset($elementList[$valuetoshow]) ? $elementList[$valuetoshow] : $valuetoshow;
+								$css = "center tdoverflowmax150";
+							}
+							if ($value == 'lang' && $valuetoshow) {
+								$valuetoshow = $valuetoshow.' - '.$langs->trans("Language_".$valuetoshow);
+								$class .= ' tdoverflowmax100';
+							}
+							if ($value == 'fk_user') {
+								if ($valuetoshow > 0) {
+									$fuser = new User($db);
+									$fuser->fetch($valuetoshow);
+									$valuetoshow = $fuser->getNomUrl(-1);
+
+									if ($obj->private) {
+										$valuetoshow = img_picto($langs->transnoentitiesnoconv("Private"), 'lock', 'class="pictofixedwidth"').$valuetoshow;
+									}
+
+									$class .= ' tdoverflowmax100';
+								}
+							}
+							if ($value == 'private') {
+								$css = "center";
+								if ($valuetoshow) {
+									$valuetoshow = yn($valuetoshow);
+								} else {
+									$valuetoshow = '';
+								}
+							}
+							if ($value == 'position') {
+								$css = "center";
+							}
+							if (in_array($value, array('joinfiles', 'defaultfortype'))) {
+								$css = "center";
+								if ($valuetoshow) {
+									//$valuetoshow = yn(1);
+									$valuetoshow = '<input type="checkbox" checked="checked" disabled>';
+								} else {
+									$valuetoshow = '';
+								}
+							}
+							if ($css) {
+								$class .= ' '.$css;
+							}
+
+							if ($value == 'tms' && empty($arrayfields['t'.$value]['checked'])) {
+								$showfield = 0;
+							}
+							if ($value == 'datec' && empty($arrayfields['t.'.$value]['checked'])) {
+								$showfield = 0;
+							}
+
+							// Show value for field
+							if ($showfield) {
+								print '<!-- '.$fieldlist[$field].' -->';
+								print '<td class="'.$class.'"';
+								if (in_array($value, array('code', 'label', 'topic'))) {
+									print ' title="'.dol_escape_htmltag($valuetoshow).'"';
+								}
+								print '>';
+								print $valuetoshow;
+								print '</td>';
+							}
+						}
+					}
+
+					// Status / Active
+					print '<td class="center nowrap">';
+					if ($canbedisabled) {
+						print '<a class="reposition" href="'.$url.'&action='.$acts[$obj->active].'&token='.newToken().'">'.$actl[$obj->active].'</a>';
+					} else {
+						print '<span class="opacitymedium">'.$actl[$obj->active].'</span>';
+					}
+					print "</td>";
+
+					// Action column - Modify link / Delete link
+					if (!$conf->main_checkbox_left_column) {
+						print '<td class="center nowraponall" width="64">';
+						if ($canbemodified) {
+							print '<a class="reposition editfielda" href="'.$url.'&action=edit&token='.newToken().'">'.img_edit().'</a>';
+						}
+						if ($iserasable) {
+							print '<a class="reposition marginleftonly" href="'.$url.'&action=delete&token='.newToken().'">'.img_delete().'</a>';
+							//else print '<a href="#">'.img_delete().'</a>';    // Some dictionary can be edited by other profile than admin
+						}
+						print '</td>';
+					}
+
+					print "</tr>\n";
 				}
-
-				print "</tr>\n";
 			}
+
+			$i++;
 		}
-
-		$i++;
 	}
-}
 
-// If no record found
-if ($nbqualified == 0) {
-	$colspan = 12;
-	print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
-}
+	// If no record found
+	if ($nbqualified == 0) {
+		$colspan = 12;
+		print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
+	}
 
-print '</table>';
-print '</div>';
+	print '</table>';
+	print '</div>';
 
-if ($action != 'create') {
 	print '</form>';
 }
 

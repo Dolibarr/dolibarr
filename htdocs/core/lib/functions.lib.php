@@ -242,13 +242,13 @@ function getMultidirOutput($object, $module = '', $forobject = 0, $mode = 'outpu
 		if (isset($conf->$module) && property_exists($conf->$module, 'multidir_output')) {
 			$s = '';
 			if ($mode != 'outputrel') {
-				// An entity with no directory declared used to return an undefined index, so a relative path
-				// that made the caller read or write under the web root. Answer the error instead.
+				// An entity with no declared directory returned an undefined index, so an empty path that
+				// made the caller read or write a relative path under the web root. Answer the error instead.
 				$entity = (int) (empty($object->entity) ? $conf->entity : $object->entity);
 				if (!isset($conf->$module->multidir_output[$entity])) {
-					return 'error-diroutput-not-defined-for-this-object='.$module;
+					return 'error-diroutput-not-defined-for-this-entity-and-object='.$module;
 				}
-				$s = $conf->$module->multidir_output[$entity].$subdirectory;
+				$s = $conf->$module->multidir_output[$entity] . $subdirectory;
 			}
 			if ($forobject && $object->id > 0) {
 				$s .= ($mode != 'outputrel' ? '/' : '') . get_exdir(0, 0, 0, 0, $object);
@@ -264,20 +264,20 @@ function getMultidirOutput($object, $module = '', $forobject = 0, $mode = 'outpu
 			}
 			return dol_sanitizePathName($s);
 		} else {
-			return 'error-diroutput-not-defined-for-this-object=' . $module;
+			return 'error-diroutput-not-defined-for-this-entity-and-object='.$module;
 		}
 	} elseif ($mode == 'temp') {
 		if (isset($conf->$module) && property_exists($conf->$module, 'multidir_temp')) {
 			// Same guard as the 'output' mode above, see the comment there
 			$entity = (int) (empty($object->entity) ? $conf->entity : $object->entity);
 			if (!isset($conf->$module->multidir_temp[$entity])) {
-				return 'error-dirtemp-not-defined-for-this-object='.$module;
+				return 'error-dirtemp-not-defined-for-this-entity-and-object='.$module;
 			}
 			return dol_sanitizePathName($conf->$module->multidir_temp[$entity]);
 		} elseif (isset($conf->$module) && property_exists($conf->$module, 'dir_temp')) {
 			return dol_sanitizePathName($conf->$module->dir_temp);
 		} else {
-			return 'error-dirtemp-not-defined-for-this-object=' . $module;
+			return 'error-dirtemp-not-defined-for-this-entity-and-object='.$module;
 		}
 	} else {
 		return 'error-bad-value-for-mode';
@@ -623,14 +623,15 @@ function isDolTms($timestamp)
  * @param	string	$pass		Password (clear)
  * @param	string	$name		Name of database
  * @param	int		$port		Port of database server
+ * @param	bool	$forcenew	Force opening of a genuinely new connection instead of reusing one already opened to the same server/database in this process (only meaningful for drivers, like pgsql, that may otherwise transparently reuse a matching connection)
  * @return	DoliDB				A DoliDB instance
  */
-function getDoliDBInstance($type, $host, $user, $pass, $name, $port)
+function getDoliDBInstance($type, $host, $user, $pass, $name, $port, $forcenew = false)
 {
 	require_once DOL_DOCUMENT_ROOT . "/core/db/" . $type . '.class.php';
 
 	$class = 'DoliDB' . ucfirst($type);
-	$db = new $class($type, $host, $user, $pass, $name, $port);
+	$db = new $class($type, $host, $user, $pass, $name, $port, $forcenew);
 	return $db;
 }
 
@@ -7934,7 +7935,7 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null, $con
 	foreach ($substitutionarray as $key => $value) {
 		$lazy_load_arr = array();
 		if (preg_match('/(__[A-Z\_]+__)@lazyload$/', $key, $lazy_load_arr)) {
-			if (isset($lazy_load_arr[1]) && !empty($lazy_load_arr[1])) {
+			if (!empty($lazy_load_arr[1])) {
 				$key_to_substitute = $lazy_load_arr[1];
 				if (preg_match('/' . preg_quote($key_to_substitute, '/') . '/', $text)) {
 					$param_arr = explode(':', (string) $value);
@@ -7959,7 +7960,7 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null, $con
 						}
 
 						// fetch object and set substitution
-						if (isset($memory_object_list[$class]) && isset($memory_object_list[$class]['list'])) {
+						if (isset($memory_object_list[$class]['list'])) {
 							if (method_exists($class, $method)) {
 								if (!isset($memory_object_list[$class]['list'][$id])) {
 									$tmpobj = new $class($db);

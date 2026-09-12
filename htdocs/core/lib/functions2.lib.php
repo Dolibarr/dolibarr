@@ -2711,6 +2711,8 @@ function getModuleDirForApiClass($moduleobject)
 		$moduledirforclass = 'eventorganization';
 	} elseif ($moduleobject == 'holidays') {
 		$moduledirforclass = 'holiday';
+	} elseif ($moduleobject == 'resources' || $moduleobject == 'dolresources') {
+		$moduledirforclass = 'resource';
 	}
 
 	return $moduledirforclass;

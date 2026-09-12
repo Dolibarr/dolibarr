@@ -26,6 +26,7 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/asset.lib.php';
 
 /**
  * Class for Asset
@@ -564,14 +565,13 @@ class Asset extends CommonObject
 		if ($result > 0 && $this->fk_asset_model > 0 && $this->fk_asset_model != $this->oldcopy->fk_asset_model) {
 			$result = $this->setDataFromAssetModel($user, $notrigger);
 		}
-		if ($result > 0 && (
+		if ($result > 0 && is_object($this->oldcopy) && (
 			$this->date_start != $this->oldcopy->date_start ||
-				$this->acquisition_value_ht != $this->oldcopy->acquisition_value_ht ||
-				$this->reversal_date != $this->oldcopy->reversal_date ||
-				$this->reversal_amount_ht != $this->oldcopy->reversal_amount_ht ||
-				($this->fk_asset_model > 0 && $this->fk_asset_model != $this->oldcopy->fk_asset_model)
-		)
-		) {
+			$this->acquisition_value_ht != $this->oldcopy->acquisition_value_ht ||
+			$this->reversal_date != $this->oldcopy->reversal_date ||
+			$this->reversal_amount_ht != $this->oldcopy->reversal_amount_ht ||
+			($this->fk_asset_model > 0 && $this->fk_asset_model != $this->oldcopy->fk_asset_model)
+		)) {
 			$result = $this->calculationDepreciation();
 		}
 
@@ -1096,7 +1096,7 @@ class Asset extends CommonObject
 
 				// futures depreciation lines
 				//-----------------------------------------------------
-				$nb_days_in_year = getDolGlobalInt('ASSET_DEPRECIATION_DURATION_PER_YEAR', 360);
+				$day_count_convention = getAssetDepreciationDayCountConvention();
 				$nb_days_in_month = getDolGlobalInt('ASSET_DEPRECIATION_DURATION_PER_MONTH', 30);
 				$period_amount = (float) ($fields['duration'] > 0 ? price2num($depreciation_period_amount / $fields['duration'], 'MT') : 0);
 				$first_period_found = false;
@@ -1145,13 +1145,33 @@ class Asset extends CommonObject
 							}
 							$depreciation_ht = (float) price2num($period_amount * $nb_days / $nb_days_in_month, 'MT');
 						} else { // Annually, taking care for adjustments to shortened or extended periods (e.g., fiscal years of 9 or 15 months)
-							$nb_days_real = num_between_day($begin_date, $end_date, 1);
-							if (($nb_days_real > 366) || (num_between_day($fiscal_period_start, $fiscal_period_end, 1) < $nb_days_in_year)) { // FY Period changed
-								$nb_days = $nb_days_real;
+							// A standard fiscal year lasts 365 days, or 366 when it covers a leap day. Anything else
+							// is a shortened or an extended fiscal year (e.g. 9 or 15 months), whose depreciation is
+							// prorated with no upper limit.
+							$nb_days_fiscal_period = num_between_day($fiscal_period_start, $fiscal_period_end, 1);
+							$is_standard_fiscal_period = ($nb_days_fiscal_period >= 365 && $nb_days_fiscal_period <= 366);
+
+							if ($is_standard_fiscal_period && $begin_date <= $fiscal_period_start && $end_date >= $fiscal_period_end) {
+								// The asset is depreciated over the whole fiscal year: full annuity, whatever the
+								// convention. Computing a prorata here would give slightly less than a full annuity
+								// with THIRTY_360 when the fiscal year ends in February (a 30/360 count ending on
+								// Feb 28th or 29th is 358 or 359 days instead of 360).
+								$period_fraction = 1;
 							} else {
-								$nb_days = min($nb_days_in_year, $nb_days_real);
+								// The count of the days and the number of days of a full year must always come from
+								// the same day count convention, otherwise every partial period (so the first and the
+								// last year of every asset) is over or under evaluated. Counting the real calendar
+								// days then dividing them by 360 overestimated every prorata by about 1.39% (365/360).
+								// The bounds are anchored on GMT midnight, so the calendar decomposition of
+								// THIRTY_360 and ACT_ACT must be read in GMT too, otherwise a partial period is
+								// prorated on a day shifted by the UTC offset of the server.
+								$period_fraction = getAssetDepreciationPeriodFraction($begin_date, $end_date, $day_count_convention, 'gmt');
+								if ($is_standard_fiscal_period) {
+									// Never more than a full annuity on a standard fiscal year
+									$period_fraction = min(1, $period_fraction);
+								}
 							}
-							$depreciation_ht = (float) price2num($period_amount * $nb_days / $nb_days_in_year, 'MT');
+							$depreciation_ht = (float) price2num($period_amount * $period_fraction, 'MT');
 						}
 						if (getDolGlobalInt('ASSET_ROUND_INTEGER_NUMBER_UPWARDS') == 1) {
 							if ($idx_loop < $max_loop) { // avoid last depreciation value
