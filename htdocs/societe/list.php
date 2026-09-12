@@ -299,7 +299,7 @@ $checkstcomm = (in_array($contextpage, array('prospectlist')) ? '1' : '0');
 $arrayfields = array(
 	's.rowid' => array('label' => "TechnicalID", 'position' => 1, 'checked' => '-1', 'enabled' => '1'),
 	's.nom' => array('label' => "ThirdPartyName", 'position' => 2, 'checked' => '1'),
-	's.name_alias' => array('label' => "AliasNameShort", 'position' => 3, 'checked' => '1'),
+	's.name_alias' => array('label' => "AliasNameShort", 'position' => 3, 'checked' => '0'),
 	's.ref_ext' => array('label' => "RefExt", 'position' => 4, 'checked' => '-1', 'enabled' => (string) getDolGlobalInt('MAIN_LIST_SHOW_REF_EXT')),
 	's.barcode' => array('label' => "Gencod", 'position' => 5, 'checked' => '1', 'enabled' => (string) (int) isModEnabled('barcode')),
 	's.code_client' => array('label' => "CustomerCodeShort", 'position' => 10, 'checked' => $checkedcustomercode),
@@ -1259,7 +1259,7 @@ if (empty($reshook)) {
 	$newcardbutton = $hookmanager->resPrint;
 }
 
-print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'" name="formfilter" autocomplete="off">'."\n";
+print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'" name="formfilter" autocomplete="off" spellcheck="false">'."\n";
 if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 }
@@ -1985,12 +1985,17 @@ while ($i < $imaxinloop) {
 			}
 		}
 		if (!empty($arrayfields['s.nom']['checked'])) {
-			print '<td'.(getDolGlobalString('MAIN_SOCIETE_SHOW_COMPLETE_NAME') ? '' : ' class="tdoverflowmax200"').' data-key="ref">';
+			print '<td class="tdfieldname tdoverflowmax200 tdlineheightsmall" data-key="ref">';
+			print '<div class="inline-block lineheightsmall">';
 			if ($contextpage == 'poslist') {
-				print dol_escape_htmltag($companystatic->name);
+				print dolPrintHTML($companystatic->name);
 			} else {
-				print $companystatic->getNomUrl(1, '', 100, 0, 1, empty($arrayfields['s.name_alias']['checked']) ? 0 : 1);
+				print $companystatic->getNomUrl(1, '', 100, 0, 1, 1);
+				if (empty($arrayfields['s.name_alias']['checked'])) {
+					print '<br><span class="spantitle">'.dolPrintHTML($companystatic->name_alias).'</span>';
+				}
 			}
+			print '</div>';
 			print "</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1998,7 +2003,7 @@ while ($i < $imaxinloop) {
 		}
 		if (!empty($arrayfields['s.name_alias']['checked'])) {
 			print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute($companystatic->name_alias).'">';
-			print '<span class="doltext opacitymedium">';
+			print '<span class="spantitle">';
 			print dolPrintHTML($companystatic->name_alias);
 			print '</span>';
 			print "</td>\n";
@@ -2008,8 +2013,8 @@ while ($i < $imaxinloop) {
 		}
 		// Ref ext
 		if (!empty($arrayfields['s.ref_ext']['checked'])) {
-			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($companystatic->ref_ext).'">';
-			print dol_escape_htmltag($companystatic->ref_ext);
+			print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute($companystatic->ref_ext).'">';
+			print dolPrintHTML($companystatic->ref_ext);
 			print "</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -2017,14 +2022,14 @@ while ($i < $imaxinloop) {
 		}
 		// Barcode
 		if (!empty($arrayfields['s.barcode']['checked'])) {
-			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($companystatic->barcode).'">'.dol_escape_htmltag($companystatic->barcode).'</td>';
+			print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute($companystatic->barcode).'">'.dolPrintHTML($companystatic->barcode).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 		// Customer code
 		if (!empty($arrayfields['s.code_client']['checked'])) {
-			print '<td class="nowraponall">'.dol_escape_htmltag($companystatic->code_client).'</td>';
+			print '<td class="nowraponall">'.dolPrintHTML($companystatic->code_client).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -2038,49 +2043,49 @@ while ($i < $imaxinloop) {
 		}
 		// Account customer code
 		if (!empty($arrayfields['s.code_compta']['checked'])) {
-			print '<td>'.dol_escape_htmltag($companystatic->code_compta_client).'</td>';
+			print '<td>'.dolPrintHTML($companystatic->code_compta_client).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 		// Account supplier code
 		if (!empty($arrayfields['s.code_compta_fournisseur']['checked'])) {
-			print '<td>'.dol_escape_htmltag($companystatic->code_compta_fournisseur).'</td>';
+			print '<td>'.dolPrintHTML($companystatic->code_compta_fournisseur).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 		// Address
 		if (!empty($arrayfields['s.address']['checked'])) {
-			print '<td class="tdoverflowmax250" title="'.dol_escape_htmltag($companystatic->address).'">'.dol_escape_htmltag($companystatic->address).'</td>';
+			print '<td class="tdoverflowmax250" title="'.dolPrintHTMLForAttribute($companystatic->address).'">'.dolPrintHTML($companystatic->address).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 		// Zip
 		if (!empty($arrayfields['s.zip']['checked'])) {
-			print "<td>".dol_escape_htmltag($companystatic->zip)."</td>\n";
+			print "<td>".dolPrintHTML($companystatic->zip)."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 		// Town
 		if (!empty($arrayfields['s.town']['checked'])) {
-			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($companystatic->town).'">'.dol_escape_htmltag($companystatic->town)."</td>\n";
+			print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute($companystatic->town).'">'.dolPrintHTML($companystatic->town)."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 		// State
 		if (!empty($arrayfields['state.nom']['checked'])) {
-			print "<td>".dol_escape_htmltag($obj->state_name)."</td>\n";
+			print "<td>".dolPrintHTML($obj->state_name)."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 		// Region
 		if (!empty($arrayfields['region.nom']['checked'])) {
-			print "<td>".dol_escape_htmltag($obj->region_name)."</td>\n";
+			print "<td>".dolPrintHTML($obj->region_name)."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -2100,8 +2105,8 @@ while ($i < $imaxinloop) {
 			$typenArray = $formcompany->typent_array(1);
 			$labeltypeofcompany = empty($typenArray[$obj->typent_code]) ? '' : $typenArray[$obj->typent_code];
 
-			print '<td class="center tdoverflowmax125" title="'.dol_escape_htmltag($labeltypeofcompany).'">';
-			print dol_escape_htmltag($labeltypeofcompany);
+			print '<td class="center tdoverflowmax125" title="'.dolPrintHTMLForAttribute($labeltypeofcompany).'">';
+			print dolPrintHTML($labeltypeofcompany);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

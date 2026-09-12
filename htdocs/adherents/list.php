@@ -1193,7 +1193,7 @@ if (!empty($arrayfields['d.login']['checked'])) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['d.morphy']['checked'])) {
-	print_liste_field_titre($arrayfields['d.morphy']['label'], $_SERVER["PHP_SELF"], 'd.morphy', '', $param, '', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['d.morphy']['label'], $_SERVER["PHP_SELF"], 'd.morphy', '', $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['t.libelle']['checked'])) {
