@@ -645,6 +645,10 @@ class Thirdparties extends DolibarrApi
 			throw new RestException(404, 'Thirdparty not found');
 		}
 
+		if (!DolibarrApi::_checkAccessToResource('societe', $id)) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		$categories = new Categorie($this->db);
 
 		$arrayofcateg = $categories->getListForItem($id, 'customer', $sortfield, $sortorder, $limit, $page);
@@ -757,6 +761,10 @@ class Thirdparties extends DolibarrApi
 		$result = $this->company->fetch($id);
 		if (!$result) {
 			throw new RestException(404, 'Thirdparty not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('societe', $id)) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$categories = new Categorie($this->db);
@@ -1255,6 +1263,11 @@ class Thirdparties extends DolibarrApi
 		if ($this->company->fetch($id) <= 0) {
 			throw new RestException(404, 'Error creating Company Bank account, Company doesn\'t exists');
 		}
+
+		if (!DolibarrApi::_checkAccessToResource('societe', $id)) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		$account = new CompanyBankAccount($this->db);
 
 		$account->socid = $id;
@@ -1300,6 +1313,11 @@ class Thirdparties extends DolibarrApi
 		if ($this->company->fetch($id) <= 0) {
 			throw new RestException(404, 'Error creating Company Bank account, Company doesn\'t exists');
 		}
+
+		if (!DolibarrApi::_checkAccessToResource('societe', $id)) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		$account = new CompanyBankAccount($this->db);
 
 		$account->fetch($bankaccount_id, $id, -1, '');
@@ -1343,12 +1361,16 @@ class Thirdparties extends DolibarrApi
 			throw new RestException(401);
 		}
 
+		if (!DolibarrApi::_checkAccessToResource('societe', $id)) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		$account = new CompanyBankAccount($this->db);
 
 		$account->fetch($bankaccount_id);
 
-		if (!$account->socid == $id) {
-			throw new RestException(401);
+		if ((int) $account->socid != $id) {
+			throw new RestException(401, "Not allowed due to bad consistency of input data");
 		}
 
 		return $account->delete(DolibarrApiAccess::$user);
@@ -1376,6 +1398,10 @@ class Thirdparties extends DolibarrApi
 
 		if (!DolibarrApiAccess::$user->rights->societe->creer) {
 			throw new RestException(401);
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('societe', $id)) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$this->company->setDocModel(DolibarrApiAccess::$user, $model);
@@ -1539,6 +1565,10 @@ class Thirdparties extends DolibarrApi
 			throw new RestException(401);
 		}
 
+		if (!DolibarrApi::_checkAccessToResource('societe', $id)) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		if (!isset($request_data['site'])) {
 			throw new RestException(422, 'Unprocessable Entity: You must pass the site attribute in your request data !');
 		}
@@ -1595,6 +1625,10 @@ class Thirdparties extends DolibarrApi
 	{
 		if (!DolibarrApiAccess::$user->rights->societe->creer) {
 			throw new RestException(401);
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('societe', $id)) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$sql = "SELECT rowid, fk_user_creat, date_creation FROM ".MAIN_DB_PREFIX."societe_account WHERE fk_soc = $id AND site = '".$this->db->escape($site)."'";
@@ -1679,6 +1713,10 @@ class Thirdparties extends DolibarrApi
 			throw new RestException(401);
 		}
 
+		if (!DolibarrApi::_checkAccessToResource('societe', $id)) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_account WHERE fk_soc = ".((int) $id)." AND site = '".$this->db->escape($site)."'";
 		$result = $this->db->query($sql);
 
@@ -1732,6 +1770,10 @@ class Thirdparties extends DolibarrApi
 			throw new RestException(401);
 		}
 
+		if (!DolibarrApi::_checkAccessToResource('societe', $id)) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_account WHERE fk_soc  = $id AND site = '".$this->db->escape($site)."'";
 		$result = $this->db->query($sql);
 
@@ -1764,6 +1806,10 @@ class Thirdparties extends DolibarrApi
 	{
 		if (!DolibarrApiAccess::$user->rights->societe->creer) {
 			throw new RestException(401);
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('societe', $id)) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		/**
@@ -1831,6 +1877,8 @@ class Thirdparties extends DolibarrApi
 		unset($object->thirdparty);
 
 		unset($object->fk_delivery_address); // deprecated feature
+
+		unset($object->pass_crypted); // SocieteAccount password hash must never be exposed by the API
 
 		return $object;
 	}
