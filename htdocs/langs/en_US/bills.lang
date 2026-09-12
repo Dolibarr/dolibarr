@@ -753,3 +753,16 @@ CreditNoteNotCreatedErrorOnDiscount=Credit note for <b>%s</b> not created: error
 CreditNoteNotCreatedAlreadyConverted=Credit note for <b>%s</b> not created: invoice already converted
 CreditNotesCreated=%s credit note(s) created
 ThisMassActionIsOnlyForInvoices=This mass action is only available for invoices
+
+# Multicurrency exchange difference on consumption (option MULTICURRENCY_PAYMENT_USE_REAL_AMOUNTS)
+ExchangeGain=Exchange gain
+ExchangeLoss=Exchange loss
+RealignInvoiceRateOnRealRate=Align the invoice exchange rate on the real rate
+RealignInvoiceRateShort=Align
+ConfirmRealignInvoiceRate=The invoice exchange rate will be changed from %s to %s and the invoice amounts recomputed accordingly, so the exchange difference is absorbed. Recorded payments and bank entries are kept unchanged. Do you confirm?
+InvoiceRateRealigned=Invoice exchange rate aligned on the real rate (%s)
+ErrorCannotRealignRateInvoiceTransferredInAccountancy=Cannot align the exchange rate: this invoice is already recorded in accountancy.
+RevertInvoiceRateRealign=Restore the previous exchange rate
+RevertInvoiceRateShort=Restore
+ConfirmRevertInvoiceRate=The invoice exchange rate will be restored to its previous value (%s) and the invoice amounts recomputed accordingly. Do you confirm?
+InvoiceRateReverted=Invoice exchange rate restored to its previous value (%s)

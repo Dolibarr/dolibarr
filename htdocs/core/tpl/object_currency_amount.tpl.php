@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2024       Laurent Destailleur	    <eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		José MARTINEZ		<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -109,6 +110,10 @@ if (isModEnabled('multicurrency')) {
 				print '</a>';
 				print '</div>';
 			}
+		}
+		// Extra content next to the rate (e.g. the multicurrency rate re-alignment buttons), set by the calling page
+		if (!empty($morehtmlmulticurrencyrate)) {
+			print $morehtmlmulticurrencyrate;
 		}
 		print '</td></tr>';
 	}

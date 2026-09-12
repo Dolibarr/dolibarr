@@ -760,6 +760,56 @@ if (empty($reshook)) {
 		}
 		header('Location: '.dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $id]));
 		exit();
+	} elseif ($action == 'confirm_realignmulticurrencyrate' && $confirm == 'yes' && $usercancreate) {
+		// Align the invoice multicurrency rate on the real effective rate so the exchange difference is absorbed (option MULTICURRENCY_PAYMENT_USE_REAL_AMOUNTS)
+		$object->fetch($id);
+		$object->fetch_thirdparty();
+		$object->fetch_lines();
+		if (!getDolGlobalInt('MULTICURRENCY_PAYMENT_USE_REAL_AMOUNTS') || !isModEnabled('multicurrency') || empty($object->multicurrency_code) || $object->multicurrency_code == $conf->currency) {
+			setEventMessages($langs->trans('NotAvailable'), null, 'errors');
+		} elseif ($object->getVentilExportCompta() != 0) {
+			setEventMessages($langs->trans('ErrorCannotRealignRateInvoiceTransferredInAccountancy'), null, 'errors');
+		} else {
+			$realeurpaid = (float) $object->getSommePaiement(0) + (float) $object->getSumCreditNotesUsed(0) + (float) $object->getSumDepositsUsed(0);
+			$foreignpaid = (float) $object->getSommePaiement(1) + (float) $object->getSumCreditNotesUsed(1) + (float) $object->getSumDepositsUsed(1);
+			if ($realeurpaid != 0 && $foreignpaid != 0) {
+				$neweffectivetx = (float) round($foreignpaid / $realeurpaid, 8); // 8 = max precision of multicurrency_tx column, to minimize the residual exchange difference
+				$db->begin();
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+				// Keep the rate before re-alignment to allow restoring it later
+				dolibarr_set_const($db, 'MULTICURRENCY_REALIGN_BACKUP_invoice_supplier_'.$object->id, (string) $object->multicurrency_tx, 'chaine', 0, '', $conf->entity);
+				$result = $object->setMulticurrencyRate($neweffectivetx, 1);
+				if ($result > 0) {
+					$db->commit();
+					setEventMessages($langs->trans('InvoiceRateRealigned', price2num($neweffectivetx, 'MU')), null, 'mesgs');
+				} else {
+					$db->rollback();
+					setEventMessages($object->error, $object->errors, 'errors');
+				}
+			} else {
+				setEventMessages($langs->trans('NotAvailable'), null, 'warnings');
+			}
+		}
+		$action = '';
+	} elseif ($action == 'confirm_revertmulticurrencyrate' && $confirm == 'yes' && $usercancreate) {
+		// Restore the invoice multicurrency rate to its value before the last re-alignment (option MULTICURRENCY_PAYMENT_USE_REAL_AMOUNTS)
+		$object->fetch($id);
+		$object->fetch_lines();
+		$backuptx = getDolGlobalString('MULTICURRENCY_REALIGN_BACKUP_invoice_supplier_'.$object->id);
+		if ($backuptx !== '' && $object->getVentilExportCompta() == 0) {
+			$db->begin();
+			$result = $object->setMulticurrencyRate((float) $backuptx, 1);
+			if ($result > 0) {
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+				dolibarr_del_const($db, 'MULTICURRENCY_REALIGN_BACKUP_invoice_supplier_'.$object->id, $conf->entity);
+				$db->commit();
+				setEventMessages($langs->trans('InvoiceRateReverted', price2num($backuptx, 'MU')), null, 'mesgs');
+			} else {
+				$db->rollback();
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
+		}
+		$action = '';
 	} elseif ($action == 'confirm_converttoreduc' && $confirm == 'yes' && $usercancreate) {
 		// Convertir en reduc
 		$object->fetch($id);
@@ -3319,6 +3369,20 @@ if ($action == 'create') {
 
 		$formconfirm = '';
 
+		// Confirmation of the multicurrency rate re-alignment on the real effective rate (option MULTICURRENCY_PAYMENT_USE_REAL_AMOUNTS)
+		if ($action == 'realignmulticurrencyrate') {
+			$realeurpaidtmp = (float) $object->getSommePaiement(0) + (float) $object->getSumCreditNotesUsed(0) + (float) $object->getSumDepositsUsed(0);
+			$foreignpaidtmp = (float) $object->getSommePaiement(1) + (float) $object->getSumCreditNotesUsed(1) + (float) $object->getSumDepositsUsed(1);
+			$neweffectivetxtmp = ($realeurpaidtmp != 0) ? round($foreignpaidtmp / $realeurpaidtmp, 8) : 0;
+			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?facid='.$object->id, $langs->trans('RealignInvoiceRateOnRealRate'), $langs->trans('ConfirmRealignInvoiceRate', price2num($object->multicurrency_tx, 'MU'), $neweffectivetxtmp), 'confirm_realignmulticurrencyrate', '', 'yes', 1);
+		}
+
+		// Confirmation of the multicurrency rate restore to its previous value (option MULTICURRENCY_PAYMENT_USE_REAL_AMOUNTS)
+		if ($action == 'revertmulticurrencyrate') {
+			$backuptxtmp = getDolGlobalString('MULTICURRENCY_REALIGN_BACKUP_invoice_supplier_'.$object->id);
+			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?facid='.$object->id, $langs->trans('RevertInvoiceRateRealign'), $langs->trans('ConfirmRevertInvoiceRate', price2num($backuptxtmp, 'MU')), 'confirm_revertmulticurrencyrate', '', 'yes', 1);
+		}
+
 		// Confirmation de la conversion de l'avoir en reduc
 		if ($action == 'converttoreduc') {
 			$type_fac = '';
@@ -3925,6 +3989,28 @@ if ($action == 'create') {
 
 			print '<table class="border tableforfield centpercent">';
 
+			// Build the exchange gain/loss info and the rate re-alignment buttons shown next to the rate (option MULTICURRENCY_PAYMENT_USE_REAL_AMOUNTS)
+			$morehtmlmulticurrencyrate = '';
+			if (getDolGlobalInt('MULTICURRENCY_PAYMENT_USE_REAL_AMOUNTS') && isModEnabled('multicurrency')
+				&& !empty($object->multicurrency_code) && $object->multicurrency_code != $conf->currency) {
+				$realeurpaidtmp = (float) $object->getSommePaiement(0) + (float) $object->getSumCreditNotesUsed(0) + (float) $object->getSumDepositsUsed(0);
+				$foreignpaidtmp = (float) $object->getSommePaiement(1) + (float) $object->getSumCreditNotesUsed(1) + (float) $object->getSumDepositsUsed(1);
+				$exchangedifftmp = (!empty($object->multicurrency_tx)) ? price2num(($foreignpaidtmp / $object->multicurrency_tx) - $realeurpaidtmp, 'MT') : 0;
+				$canrealign = ($usercancreate && ($object->status == FactureFournisseur::STATUS_VALIDATED || !empty($object->paye)) && $object->getVentilExportCompta() == 0);
+				if ($foreignpaidtmp != 0 && (float) $exchangedifftmp != 0) {
+					// Exchange gain/loss amount, next to the rate
+					$morehtmlmulticurrencyrate .= '<div class="inline-block paddingleft opacitymedium">'.$langs->trans((float) $exchangedifftmp >= 0 ? 'ExchangeGain' : 'ExchangeLoss').' : '.price($exchangedifftmp, 0, $langs, 1, -1, -1, $conf->currency).'</div>';
+					// Short "Align" button with an info tooltip explaining what it does
+					if ($canrealign) {
+						$morehtmlmulticurrencyrate .= '<div class="inline-block paddingleft"><a class="button smallpaddingimp" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&action=realignmulticurrencyrate&token='.newToken().'">'.dol_escape_htmltag($langs->trans('RealignInvoiceRateShort')).'</a> '.$form->textwithpicto('', $langs->trans('RealignInvoiceRateOnRealRate')).'</div>';
+					}
+				}
+				$backuptxtmp = getDolGlobalString('MULTICURRENCY_REALIGN_BACKUP_invoice_supplier_'.$object->id);
+				if ($canrealign && $backuptxtmp !== '') {
+					$morehtmlmulticurrencyrate .= '<div class="inline-block paddingleft"><a class="button smallpaddingimp" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&action=revertmulticurrencyrate&token='.newToken().'">'.dol_escape_htmltag($langs->trans('RevertInvoiceRateShort')).'</a> '.$form->textwithpicto('', $langs->trans('RevertInvoiceRateRealign')).'</div>';
+				}
+			}
+
 			include DOL_DOCUMENT_ROOT.'/core/tpl/object_currency_amount.tpl.php';
 
 			print '<tr>';
@@ -4296,6 +4382,21 @@ if ($action == 'create') {
 					//print '<td></td>';
 					print '<td class="right'.($resteapayeraffiche ? ' amountremaintopaynoresize' : (' '.$cssforamountpaymentcomplete)).'">'.price(price2num($multicurrency_resteapayer, 'MT'), 0, $langs, 1, -1, -1, $object->multicurrency_code).'</td>';
 					print '</tr>';
+				}
+				// Exchange gain/loss line, right after "Remainder to pay, original currency" - red on loss, orange on gain, nothing if zero (option MULTICURRENCY_PAYMENT_USE_REAL_AMOUNTS)
+				if (getDolGlobalInt('MULTICURRENCY_PAYMENT_USE_REAL_AMOUNTS') && isModEnabled('multicurrency')
+						&& !empty($object->multicurrency_code) && $object->multicurrency_code != $conf->currency) {
+						$realeurpaidexch = (float) $object->getSommePaiement(0) + (float) $object->getSumCreditNotesUsed(0) + (float) $object->getSumDepositsUsed(0);
+						$foreignpaidexch = (float) $object->getSommePaiement(1) + (float) $object->getSumCreditNotesUsed(1) + (float) $object->getSumDepositsUsed(1);
+						$exchangediffline = (!empty($object->multicurrency_tx)) ? price2num(($foreignpaidexch / $object->multicurrency_tx) - $realeurpaidexch, 'MT') : 0;
+					if ($foreignpaidexch != 0 && (float) $exchangediffline != 0) {
+							$exchangecolor = ((float) $exchangediffline >= 0) ? '#e67e22' : '#c0392b'; // orange = exchange gain, red = exchange loss
+							print '<tr><td colspan="'.($nbcols + 1).'" class="right">';
+							print '<span style="color: '.$exchangecolor.';">'.$langs->trans((float) $exchangediffline >= 0 ? 'ExchangeGain' : 'ExchangeLoss').'</span>';
+							print '</td>';
+							print '<td class="right nowrap" style="color: '.$exchangecolor.';">'.price($exchangediffline, 0, $langs, 1, -1, -1, $conf->currency).'</td>';
+							print '</tr>';
+					}
 				}
 			} else { // Credit note
 				$cssforamountpaymentcomplete = 'amountpaymentneutral';
