@@ -266,7 +266,7 @@ class ToolInvoices extends McpTool
 				}
 			}
 			if (!empty($onlyIds)) {
-				$sql .= " AND f.rowid IN (".implode(',', $onlyIds).")";
+				$sql .= " AND f.rowid IN (".$this->db->sanitize(implode(',', $onlyIds)).")";
 				$status = 'ids';
 			}
 		}
@@ -544,12 +544,12 @@ class ToolInvoices extends McpTool
 				}
 			}
 			if (!empty($onlyIds)) {
-				$sql .= " AND f.rowid IN (".implode(',', $onlyIds).")";
+				$sql .= " AND f.rowid IN (".$this->db->sanitize(implode(',', $onlyIds)).")";
 			}
 		}
 		if ($query !== '') {
 			$q = $this->db->escape($this->db->escapeforlike($query));
-			$sql .= " AND (f.ref LIKE '%".$q."%' OR f.ref_supplier LIKE '%".$q."%' OR s.nom LIKE '%".$q."%')";
+			$sql .= " AND (f.ref LIKE '%".$this->db->escape($q)."%' OR f.ref_supplier LIKE '%".$this->db->escape($q)."%' OR s.nom LIKE '%".$this->db->escape($q)."%')";
 		}
 		if ($status === 'draft') {
 			$sql .= " AND f.fk_statut = 0";
