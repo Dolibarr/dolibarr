@@ -124,9 +124,10 @@ class ActionsAi
 		// additionally requires the URL to actually address the object (card
 		// pages always carry id or ref), so a list page whose template object
 		// carries a stray id can never masquerade as a card.
-		$urlIds = array((int) GETPOST('id', 'int'), (int) GETPOST('facid', 'int'), (int) GETPOST('socid', 'int'));
+		$urlIds = array((int) ($_GET['id'] ?? $_POST['id'] ?? 0), (int) ($_GET['facid'] ?? $_POST['facid'] ?? 0), (int) ($_GET['socid'] ?? $_POST['socid'] ?? 0));
+		$urlRef = dol_string_nohtmltag((string) ($_GET['ref'] ?? $_POST['ref'] ?? ''));
 		$looksLikeCard = is_object($pageObject) && !empty($pageObject->id)
-			&& (in_array((int) $pageObject->id, $urlIds, true) || (GETPOST('ref', 'alphanohtml') !== '' && GETPOST('ref', 'alphanohtml') == ($pageObject->ref ?? '')));
+			&& (in_array((int) $pageObject->id, $urlIds, true) || ($urlRef !== '' && $urlRef == ($pageObject->ref ?? '')));
 		if ($this->listPageSeen || !empty($this->listRowIds) || !$looksLikeCard || empty($pageObject->element)) {
 			// List/dashboard pages: no single object, but the user's own active
 			// filters are context enough - emitted uninterpreted, the model
