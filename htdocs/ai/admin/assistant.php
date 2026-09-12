@@ -184,7 +184,7 @@ print load_fiche_titre($langs->trans($title), $linkback, 'title_setup');
 $head = aiAdminPrepareHead();
 print dol_get_fiche_head($head, 'assistant', "MCP Server", -1, "ai");
 
-print '<span class="opacitymedium">' . $langs->trans("ConfigAssistantHelp") . '</span><br><br>';
+//print '<span class="opacitymedium">' . $langs->trans("ConfigAssistantHelp") . '</span><br><br>';
 
 $form = new Form($db);
 

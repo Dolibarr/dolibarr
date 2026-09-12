@@ -127,6 +127,9 @@ foreach ($object->fields as $key => $val) {
 	}
 }
 
+// Technical ID
+$arrayfields['d.rowid'] = array('label' => 'TechnicalID', 'checked' => -1, 'enabled' => 1, 'position' => 1);
+
 $object->fields = dol_sort_array($object->fields, 'position');
 //$arrayfields['anotherfield'] = array('type'=>'integer', 'label'=>'AnotherField', 'checked'=>1, 'enabled'=>1, 'position'=>90, 'csslist'=>'right');
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -366,6 +369,11 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 			print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch actioncolumn ');
 			$totalarray['nbfield']++;
 		}
+		// Technical ID
+		if (!empty($arrayfields['d.rowid']['checked'])) {
+			print '<th class="center">'.$langs->trans("ID").'</th>';
+			$totalarray['nbfield']++;
+		}
 		if (!empty($arrayfields['t.rowid']['checked'])) {
 			print '<th>'.$langs->trans("Ref").'</th>';
 			$totalarray['nbfield']++;
@@ -461,6 +469,10 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 					if ($user->hasRight('adherent', 'configurer')) {
 						print '<td class="center"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
 					}
+				}
+				// Technical ID
+				if (!empty($arrayfields['d.rowid']['checked'])) {
+					print '<td class="center" data-key="id">'.dolPrintHTML($objp->rowid).'</td>';
 				}
 				if (!empty($arrayfields['t.rowid']['checked'])) {
 					print '<td class="nowraponall">';

@@ -54,13 +54,13 @@ class McpHandler
 	/**
 	 * @var McpTool[] Array of loaded tool instances, keyed by their base filename or class name.
 	 */
-	private $loadedTools = [];
+	public $loadedTools = [];
 
 	/**
 	 * @var McpTool[] Associative array mapping tool *names* (from schema) to their instances.
 	 * This provides O(1) lookup for execution.
 	 */
-	private $toolsByName = [];
+	public $toolsByName = [];
 
 
 	/**
@@ -90,8 +90,6 @@ class McpHandler
 		$this->conf = $conf_obj;
 
 		$this->toolcontext = (!empty($toolcontext)) ? $toolcontext : self::CTX_ASSISTANT;
-
-		$this->loadTools();
 	}
 
 	/**
@@ -131,7 +129,7 @@ class McpHandler
 			$constName = 'AI_ASSISTANT_ALLOWED_TOOLS';
 		}
 
-		$raw = getDolGlobalString($constName);
+		$raw = getDolGlobalString($constName);		// Return the list (separated by coma) of all enabled tools
 
 		if ($raw === '') {
 			// Constant not yet configured — allow everything
@@ -173,13 +171,14 @@ class McpHandler
 	 *
 	 * This method scans the ai/tools directory for native tools and executes the
 	 * 'addMcpTools' hook to allow external modules to register their own tools.
+	 * This fill array ->loadedTools and ->toolsByName
 	 *
 	 * @return void
 	 */
-	private function loadTools()
+	public function loadTools()
 	{
-		$this->loadNativeTools();
-		$this->loadExternalTools();
+		$this->loadNativeTools();		// Tools found into directory ai/tools/
+		$this->loadExternalTools();		// Tools provided by external module and hook addMcpTools
 	}
 
 	/**
@@ -349,7 +348,7 @@ class McpHandler
 	 */
 	public function getToolsSchema(): array
 	{
-		$allowed = $this->getAllowedToolsList();
+		$allowed = $this->getAllowedToolsList();	// Return list of "allowed" tools for the current context $this->toolcontext (Chat or MCP)
 		$schema  = [];
 
 		foreach ($this->loadedTools as $tool) {

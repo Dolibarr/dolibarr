@@ -206,6 +206,8 @@ class AllTests
 
 		require_once dirname(__FILE__).'/ProductTest.php';
 		$suite->addTestSuite('ProductTest');
+		require_once dirname(__FILE__).'/VariantsTest.php';
+		$suite->addTestSuite('VariantsTest');
 
 		require_once dirname(__FILE__).'/PricesTest.php';
 		$suite->addTestSuite('PricesTest');

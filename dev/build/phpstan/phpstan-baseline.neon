@@ -6271,8 +6271,8 @@ parameters:
 			path: ../../../htdocs/product/price.php
 
 		-
-			message: '#^Loose comparison using \=\= between ''edit_customer_price'' and ''edit_price'' will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
+			message: '#^Loose comparison using \=\= between ''edit_customer_price'' and ''edit_customer_price'' will always evaluate to true\.$#'
+			identifier: equal.alwaysTrue
 			count: 2
 			path: ../../../htdocs/product/price.php
 
@@ -7951,8 +7951,8 @@ parameters:
 			path: ../../../htdocs/societe/price.php
 
 		-
-			message: '#^Loose comparison using \=\= between ''edit_customer_price'' and ''edit_price'' will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
+			message: '#^Loose comparison using \=\= between ''edit_customer_price'' and ''edit_customer_price'' will always evaluate to true\.$#'
+			identifier: equal.alwaysTrue
 			count: 2
 			path: ../../../htdocs/societe/price.php
 

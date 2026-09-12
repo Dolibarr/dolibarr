@@ -2,7 +2,7 @@
 /* Copyright (C) 2010-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2018  Charlene Benke          <charlie@patas-monkey.com>
  * Copyright (C) 2018       Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024	    Nick Fragoulis
  *
@@ -662,7 +662,7 @@ class pdf_beluga extends ModelePDFProjects
 								} else {
 									$pdf->SetXY($this->posxamountht, $curY);
 									if ($key == 'agenda') {
-										$textforamount = dol_trunc($element->label, 26);
+										$textforamount = pdf_truncate_text($pdf, $element->label, 26);
 										$pdf->MultiCell($this->posxstatut - $this->posxamountht, 3, $textforamount, 1, 'L');
 									} else {
 										$pdf->MultiCell($this->posxstatut - $this->posxamountht, 3, "", 1, 'R');

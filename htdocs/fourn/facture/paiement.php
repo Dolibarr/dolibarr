@@ -710,7 +710,8 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 							print '<span data-field="ref">';
 							print $invoicesupplierstatic->getNomUrl(1);
 							print '</span> ';
-							print '<br class="paiement-line-break-for-ref"><span class="opacitymedium small" data-field="ref-supplier" title="'.$langs->trans("RefSupplier").'">';
+							print '<br class="paiement-line-break-for-ref">';
+							print '<span class="spantitle" data-field="ref-supplier" title="'.$langs->trans("RefSupplier").'">';
 							print showValueWithClipboardCPButton($objp->ref_supplier);
 							print '</span>';
 							print '</div>';

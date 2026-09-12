@@ -23,6 +23,7 @@
  * \file    htdocs/ai/assistant/parse_intent.php
  * \ingroup ai
  * \brief   File to handle MCP (Model Context Protocol) Intent Parsing
+ * 			This service receive a prompt, format and complete it with list of tools, send it to AI service and return the answer
  */
 
 if (!defined('NOTOKENRENEWAL')) {
@@ -37,7 +38,9 @@ if (!defined('NOREQUIREHTML')) {
 if (!defined('NOREQUIREAJAX')) {
 	define('NOREQUIREAJAX', 1);
 }
-if (!defined('NOCSRFCHECK')) {		// TODO Enable the CSRF check
+// The payload is read from the raw php://input body, so the CSRF token cannot be checked by
+// main.inc.php. It is checked explicitly below by aiCheckCsrfToken().
+if (!defined('NOCSRFCHECK')) {
 	define('NOCSRFCHECK', 1);
 }
 
@@ -61,6 +64,10 @@ global $db, $user, $conf, $langs;
 if (!$user->hasRight('ai', 'assistant', 'use')) {
 	accessforbidden();
 }
+
+// This endpoint sends data to the LLM provider on behalf of the user and can chain tool
+// executions, so it must not be reachable from another site.
+aiCheckCsrfToken('ai/assistant/parse_intent.php');
 
 ob_start();
 top_httphead('application/json');
@@ -105,6 +112,11 @@ try {
 	$raw_input = file_get_contents('php://input');
 	$data = json_decode($raw_input, true);
 	$query = isset($data['query']) ? trim($data['query']) : '';
+
+	// This is to allow easy test of the parse_intent.php by calling the URL with param query=test
+	if (empty($query) && GETPOST('query', 'alphanohtml') == 'testdebug') {
+		$query = 'testdebug';
+	}
 
 	if (empty($query)) {
 		ob_end_clean();
@@ -305,18 +317,33 @@ try {
 	if ($serviceKey && $serviceKey !== '-1') {
 		$providerUsed = $serviceKey;
 		$mcp = new McpHandler($db, $user, $conf, McpHandler::CTX_ASSISTANT);
+		$mcp->loadTools();		// This fill array ->loadedTools and ->toolsByName from tools found into ai/tools/
 
 		// Two schemas are maintained:
-		//   $allToolsSchema  — full list including system tools; used ONLY for post-LLM validation.
-		//   $llmToolsBase   — system tools excluded (is_system=>true filtered out in McpHandler);
-		//                     used for category filtering and as the LLM tool list.
-		// This separation guarantees ask_for_confirmation, respond_to_user, etc. are
-		// never visible to the model, preventing the LLM from calling them directly.
+		//   $allToolsSchema: full list including system tools; used ONLY for post-LLM validation.
+		//   $llmToolsBase:   list excluding system tools (is_system=>true filtered out in McpHandler);
+		//                    used for category filtering and as the LLM tool list.
+		// This separation guarantees that ask_for_confirmation, respond_to_user, etc. are never visible to the model, preventing the LLM from calling them directly.
 		$allToolsSchema = $mcp->getToolsSchema();
 		$llmToolsBase   = $mcp->getToolsSchemaForLLM();
 
 		// Detect if query is in a Non-Latin language (Russian, Greek, Chinese, Arabic, etc.)
 		$isComplex = isComplexScript($query);
+
+		// Special case we ask debug info
+		if ($query == 'testdebug') {
+			print '----- loadedTools'."\n";
+			print '<pre>' . json_encode($mcp->loadedTools, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . '</pre>';
+			print "\n";
+			print "\n";
+			print '----- toolsByName'."\n";
+			print '<pre>' . json_encode($mcp->loadedTools, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . '</pre>';
+			print "\n";
+			print "\n";
+			print '----- allToolsSchema (non system + system)'."\n";
+			print '<pre>' . json_encode($allToolsSchema, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . '</pre>';
+			exit;
+		}
 
 		$toolsSchema = [];
 
