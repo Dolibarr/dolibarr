@@ -886,7 +886,7 @@ class FormFile
 
 			if (!empty($hookmanager->hooks['formfile'])) {
 				foreach ($hookmanager->hooks['formfile'] as $module) {
-					if (method_exists($module, 'formBuilddocLineOptions')) {
+					if (is_object($module) && method_exists($module, 'formBuilddocLineOptions')) {
 						$colspanmore++;
 						$out .= '<th></th>';
 					}
