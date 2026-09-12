@@ -123,7 +123,7 @@ class FormOther
 		$out .= 'console.log("select choice");';
 		$out .= 'jQuery("#scantoolmessage").text("");';
 		$out .= '});'."\n";
-		$out .= '$("#exec'.dol_escape_js($jstoexecuteonadd).'").click(function(){
+		$out .= '$(\'#exec'.dol_escape_js($jstoexecuteonadd).'\').click(function(){
 			console.log("We call js to execute \''.dol_escape_js($jstoexecuteonadd).'\'");
 			'.dol_escape_js($jstoexecuteonadd).'();
 			return false;	/* We want to stay on the scan tool */
@@ -926,7 +926,7 @@ class FormOther
 		                  }
 				        },
 						function(color, context) { console.log("close color selector"); },
-						function(color, context) { var hex = color.val(\'hex\'); console.log("new color selected in jpicker "+hex+" setpropertyonselect='.dol_escape_js($setpropertyonselect).'");';
+						function(color, context) { var hex = color.val(\'hex\'); console.log("new color selected in jpicker "+hex+\' setpropertyonselect='.dol_escape_js($setpropertyonselect).'\');';
 				if ($setpropertyonselect) {
 					$out .= 'if (originalhex == null) {';
 					$out .= ' 	originalhex = getComputedStyle(document.querySelector(":root")).getPropertyValue(\'--'.dol_escape_js($setpropertyonselect).'\');';
@@ -959,7 +959,7 @@ class FormOther
 					var originalhex = null;
 					jQuery("#colorpicker'.$prefix.'").on(\'change\', function() {
 						var hex = jQuery("#colorpicker'.$prefix.'").val();
-						console.log("new color selected in input color "+hex+" setpropertyonselect='.dol_escape_js($setpropertyonselect).'");';
+						console.log("new color selected in input color "+hex+\' setpropertyonselect='.dol_escape_js($setpropertyonselect).'\');';
 				if ($setpropertyonselect) {
 					$out .= 'if (originalhex == null) {';
 					$out .= ' 	originalhex = getComputedStyle(document.querySelector(":root")).getPropertyValue(\'--'.dol_escape_js($setpropertyonselect).'\');';

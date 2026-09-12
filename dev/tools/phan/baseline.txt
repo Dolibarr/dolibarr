@@ -9,7 +9,7 @@
  */
 return [
     // # Issue statistics:
-    // FunctionMissingSingleQuoteWrapping : 340+ occurrences
+    // FunctionMissingSingleQuoteWrapping : 320+ occurrences
     // PhanUndeclaredProperty : 290+ occurrences
     // PhanTypeMismatchArgument : 20+ occurrences
     // PhanTypeMismatchProperty : 15+ occurrences
@@ -31,6 +31,7 @@ return [
     'file_suppressions' => [
         'htdocs/admin/remotestore/class/externalModules.class.php' => ['FunctionMissingSingleQuoteWrapping'],
         'htdocs/admin/tools/dolibarr_export.php' => ['FunctionMissingSingleQuoteWrapping'],
+        'htdocs/ai/admin/custom_prompt.php' => ['FunctionMissingSingleQuoteWrapping'],
         'htdocs/barcode/codeinit.php' => ['FunctionMissingSingleQuoteWrapping'],
         'htdocs/blockedlog/admin/filecheck.php' => ['FunctionMissingSingleQuoteWrapping'],
         'htdocs/bom/bom_net_needs.php' => ['FunctionMissingSingleQuoteWrapping'],
@@ -51,18 +52,16 @@ return [
         'htdocs/core/class/conf.class.php' => ['PhanTypeMismatchProperty'],
         'htdocs/core/class/ctyperesource.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/class/doleditor.class.php' => ['FunctionMissingSingleQuoteWrapping'],
-        'htdocs/core/class/dolgraph.class.php' => ['FunctionMissingSingleQuoteWrapping', 'PhanUndeclaredProperty'],
+        'htdocs/core/class/dolgraph.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/class/emailsenderprofile.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/class/extrafields.class.php' => ['FunctionMissingSingleQuoteWrapping'],
         'htdocs/core/class/html.form.class.php' => ['FunctionMissingSingleQuoteWrapping', 'PhanParamTooMany', 'PhanPluginSuspiciousParamPosition', 'PhanTypeMismatchArgument'],
         'htdocs/core/class/html.formaccounting.class.php' => ['FunctionMissingSingleQuoteWrapping'],
-        'htdocs/core/class/html.formactions.class.php' => ['FunctionMissingSingleQuoteWrapping'],
         'htdocs/core/class/html.formai.class.php' => ['FunctionMissingSingleQuoteWrapping'],
         'htdocs/core/class/html.formcompany.class.php' => ['FunctionMissingSingleQuoteWrapping', 'PhanUndeclaredProperty'],
         'htdocs/core/class/html.formfile.class.php' => ['FunctionMissingSingleQuoteWrapping'],
         'htdocs/core/class/html.formmail.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/class/html.formother.class.php' => ['FunctionMissingSingleQuoteWrapping'],
-        'htdocs/core/class/html.formticket.class.php' => ['FunctionMissingSingleQuoteWrapping'],
         'htdocs/core/class/timespent.class.php' => ['PhanUndeclaredMethod', 'PhanUndeclaredProperty'],
         'htdocs/core/js/lib_foot.js.php' => ['FunctionMissingSingleQuoteWrapping'],
         'htdocs/core/js/lib_head.js.php' => ['FunctionMissingSingleQuoteWrapping'],
