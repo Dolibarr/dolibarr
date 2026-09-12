@@ -198,7 +198,7 @@ class ActionsAi
 			'element' => (string) $pageObject->element,
 			'id' => (int) $pageObject->id,
 			'ref' => (string) ($pageObject->ref ?? ''),
-			'socid' => (property_exists($pageObject, 'socid') ? (int) $pageObject->socid : 0)
+			'socid' => (int) (get_object_vars($pageObject)['socid'] ?? 0)
 		);
 
 		// printCommonFooter output convention: print directly (the caller does
