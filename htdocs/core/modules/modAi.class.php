@@ -111,14 +111,7 @@ class modAi extends DolibarrModules
 				//   '/ai/js/ai.js.php',
 			),
 			// Set here all hooks context managed by module. To find available hook context, make a "grep -r '>initHooks(' *" on source code. You can also set hook context to 'all'
-			'hooks' => array(
-				// 'all': the page-context hook (printCommonFooter) must fire on
-				// every page - it self-filters on module/permission/object.
-				'data' => array(
-					'all',
-				),
-				//   'entity' => '0',
-			),
+			'hooks' => array('all'),
 			// Set this to 1 if features of module are opened to external users
 			'moduleforexternal' => 0,
 		);
