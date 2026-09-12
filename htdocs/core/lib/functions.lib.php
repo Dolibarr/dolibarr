@@ -7960,7 +7960,7 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null, $con
 						}
 
 						// fetch object and set substitution
-						if (isset($memory_object_list[$class])) {
+						if (isset($memory_object_list[$class]['list'])) {
 							if (method_exists($class, $method)) {
 								if (!isset($memory_object_list[$class]['list'][$id])) {
 									$tmpobj = new $class($db);
