@@ -3,7 +3,7 @@
 /* Copyright (C) 2017 	Laurent Destailleur <eldy@stocks.sourceforge.net>
  * Copyright (C) 2022 	Ferran Marcet       <fmarcet@2byte.es>
  * Copyright (C) 2022 	Nicolas Silobre     <nsilobre@ns-info90.fr>
- * Copyright (C) 2024-2025	MDW				<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW				<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024   Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024	Nick Fragoulis
  *
@@ -397,7 +397,7 @@ class pdf_standard_stock extends ModelePDFStock
 
 						// Label
 						$pdf->SetXY($this->posxlabel + 0.8, $curY);
-						$pdf->MultiCell($this->posxqty - $this->posxlabel - 0.8, 3, dol_trunc($productstatic->label, 24), 0, 'L');
+						$pdf->MultiCell($this->posxqty - $this->posxlabel - 0.8, 3, pdf_truncate_text($pdf, $productstatic->label, 24), 0, 'L');
 
 						// Quantity
 						$valtoshow = price2num($objp->value, 'MS');
