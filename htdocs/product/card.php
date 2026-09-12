@@ -993,7 +993,10 @@ if (empty($reshook)) {
 
 						if (!$error && isModEnabled('bom') && $user->hasRight('bom', 'write')) {
 							$defbomidac = 0; // to avoid cloning same BOM twice
-							if (GETPOST('clone_defbom') && $object->fk_default_bom > 0) {
+
+							$clone_defbom_raw = GETPOST('clone_defbom', 'alpha');
+							$clone_defbom = (!empty($clone_defbom_raw) && $clone_defbom_raw !== '0') ? 1 : 0;
+							if ($clone_defbom && $object->fk_default_bom > 0) {
 								$bomstatic = new BOM($db);
 								$bomclone = $bomstatic->createFromClone($user, $object->fk_default_bom);
 								if ((int) $bomclone < 0) {
@@ -1007,8 +1010,14 @@ if (empty($reshook)) {
 									$bomclone->update($user);
 									$bomclone->validate($user);
 								}
+							} else {
+								// Checkbox not checked: unlink default BOM
+								if (!empty($clone->fk_default_bom)) {
+									$clone->fk_default_bom = 0;
+									$clone->update($id, $user);
+								}
 							}
-							if (GETPOST('clone_otherboms')) {
+							if (GETPOSTINT('clone_otherboms')) {
 								$bomstatic = new BOM($db);
 								$bomlist = $bomstatic->fetchAll("", "", 0, 0, 'fk_product:=:'.(int) $object->id);
 								if (is_array($bomlist)) {
@@ -3014,7 +3023,7 @@ if (($action == 'clone' && (empty($conf->use_javascript_ajax) || !empty($conf->d
 	}
 	if (isModEnabled('bom') && $user->hasRight('bom', 'write')) {
 		if ($object->fk_default_bom > 0) {
-			$formquestionclone[] = array('type' => 'checkbox', 'name' => 'clone_defbom', 'label' => $langs->trans("CloneDefBomProduct"), 'value' => getDolGlobalInt('BOM_CLONE_DEFBOM'));
+			$formquestionclone[] = array('type' => 'checkbox', 'name' => 'clone_defbom', 'label' => $langs->trans("CloneDefBomProduct"), 'value' => '1');
 		}
 		$bomstatic = new BOM($db);
 		$bomlist = $bomstatic->fetchAll("", "", 0, 0, 'fk_product:=:'.(int) $object->id);
