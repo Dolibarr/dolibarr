@@ -4,7 +4,7 @@
  * Copyright (C) 2022-2023  	Udo Tamm            	<dev@dolibit.de>
  * Copyright (C) 2023       	Alexandre Spangaro  	<aspangaro@easya.solutions>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025		Benjamin Falière		<benjamin.faliere@altairis.fr>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -304,105 +304,10 @@ print dol_get_fiche_end();
  * Tickets numbering model
  */
 
-print load_fiche_titre($langs->trans("TicketNumberingModules"), '', '');
+$ticket = new Ticket($db);
+$ticket->initAsSpecimen();
 
-print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder centpercent">';
-print '<tr class="liste_titre">';
-print '<td width="100">'.$langs->trans("Name").'</td>';
-print '<td>'.$langs->trans("Description").'</td>';
-print '<td>'.$langs->trans("Example").'</td>';
-print '<td align="center" width="60">'.$langs->trans("Activated").'</td>';
-print '<td align="center" width="40">'.$langs->trans("ShortInfo").'</td>';
-print "</tr>\n";
-
-clearstatcache();
-
-foreach ($dirmodels as $reldir) {
-	$dir = dol_buildpath($reldir."core/modules/ticket");
-
-	if (is_dir($dir)) {
-		$handle = opendir($dir);
-		if (is_resource($handle)) {
-			while (($file = readdir($handle)) !== false) {
-				if (preg_match('/^(mod_.*)\.php$/i', $file, $reg)) {
-					$file = $reg[1];
-					$classname = dol_substr($file, 4);
-
-					include_once $dir.'/'.$file.'.php';
-
-					$module = new $file();
-					'@phan-var-force ModeleNumRefTicket $module';
-					/** @var ModeleNumRefTicket $module */
-
-					// Show modules according to features level
-					if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
-						continue;
-					}
-
-					if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
-						continue;
-					}
-
-					if ($module->isEnabled()) {
-						print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
-						print $module->info($langs);
-						print '</td>';
-
-						// Show example of numbering model
-						print '<td class="nowrap">';
-						$tmp = $module->getExample();
-						if (preg_match('/^Error/', $tmp)) {
-							$langs->load("errors");
-							print '<div class="error">'.$langs->trans($tmp).'</div>';
-						} elseif ($tmp == 'NotConfigured') {
-							print '<span class="opacitymedium">'.$langs->trans($tmp).'</span>';
-						} else {
-							print $tmp;
-						}
-
-						print '</td>'."\n";
-
-						print '<td class="center">';
-						if (getDolGlobalString('TICKET_ADDON') == 'mod_'.$classname) {
-							print img_picto($langs->trans("Activated"), 'switch_on');
-						} else {
-							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;token='.newToken().'&amp;value=mod_'.$classname.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
-						}
-						print '</td>';
-
-						$ticket = new Ticket($db);
-						$ticket->initAsSpecimen();
-
-						// Info
-						$htmltooltip = '';
-						$htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
-						$nextval = $module->getNextValue($mysoc, $ticket);
-						if ("$nextval" != $langs->trans("NotAvailable")) { // Keep " on nextval
-							$htmltooltip .= ''.$langs->trans("NextValue").': ';
-							if ($nextval) {
-								$htmltooltip .= $nextval.'<br>';
-							} else {
-								$htmltooltip .= $langs->trans($module->error).'<br>';
-							}
-						}
-
-						print '<td class="center">';
-						print $formcategory->textwithpicto('', $htmltooltip, 1, '0');
-						print '</td>';
-
-						print '</tr>';
-					}
-				}
-			}
-			closedir($handle);
-		}
-	}
-}
-
-print '</table>';
-print '</div>';
-print '<br>';
+printNumberingModuleList('ticket', 'mod_ticket_', 'TICKET_ADDON', $langs->trans("TicketNumberingModules"), $ticket);
 
 
 
@@ -410,150 +315,11 @@ print '<br>';
  * Document templates generators
  */
 
-print load_fiche_titre($langs->trans("TicketsModelModule"), '', '');
-
-// Load array def with activated templates
-$def = array();
-$sql = "SELECT nom";
-$sql .= " FROM ".MAIN_DB_PREFIX."document_model";
-$sql .= " WHERE type = '".$db->escape($type)."'";
-$sql .= " AND entity = ".((int) $conf->entity);
-$resql = $db->query($sql);
-if ($resql) {
-	$i = 0;
-	$num_rows = $db->num_rows($resql);
-	while ($i < $num_rows) {
-		$array = $db->fetch_array($resql);
-		if (is_array($array)) {
-			array_push($def, $array[0]);
-		}
-		$i++;
-	}
-} else {
-	dol_print_error($db);
-}
-
-
-print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder cenpercent">'."\n";
-print '<tr class="liste_titre">'."\n";
-print '<td>'.$langs->trans("Name").'</td>';
-print '<td>'.$langs->trans("Description").'</td>';
-print '<td class="center" width="60">'.$langs->trans("Status")."</td>\n";
-print '<td class="center" width="60">'.$langs->trans("Default")."</td>\n";
-print '<td class="center" width="50">'.$langs->trans("Preview").'</td>';
-print '<td class="center" width="40">'.$langs->trans("ShortInfo").'</td>';
-print "</tr>\n";
-
-clearstatcache();
-
-foreach ($dirmodels as $reldir) {
-	foreach (array('', '/doc') as $valdir) {
-		$realpath = $reldir."core/modules/ticket".$valdir;
-		$dir = dol_buildpath($realpath);
-
-		if (is_dir($dir)) {
-			$handle = opendir($dir);
-			if (is_resource($handle)) {
-				$filelist = array();
-				while (($file = readdir($handle)) !== false) {
-					$filelist[] = $file;
-				}
-				closedir($handle);
-				arsort($filelist);
-
-				foreach ($filelist as $file) {
-					if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file)) {
-						if (file_exists($dir.'/'.$file)) {
-							$name = dol_substr($file, 4, dol_strlen($file) - 16);
-							$classname = dol_substr($file, 0, dol_strlen($file) - 12);
-
-							require_once $dir.'/'.$file;
-							$module = new $classname($db);
-							'@phan-var-force ModelePDFTicket $module';
-
-							$modulequalified = 1;
-							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
-								$modulequalified = 0;
-							}
-							if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
-								$modulequalified = 0;
-							}
-
-							if ($modulequalified) {
-								print '<tr class="oddeven"><td width="100">';
-								print(empty($module->name) ? $name : $module->name);
-								print "</td><td>\n";
-								if (method_exists($module, 'info')) {
-									print $module->info($langs);  // @phan-suppress-current-line PhanUndeclaredMethod
-								} else {
-									print $module->description;
-								}
-								print '</td>';
-
-								// Active / Status
-								if (in_array($name, $def)) {
-									print '<td class="center">'."\n";
-									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=del&token='.newToken().'&value='.urlencode($name).'">';
-									print img_picto($langs->trans("Enabled"), 'switch_on');
-									print '</a>';
-									print '</td>';
-								} else {
-									print '<td class="center">'."\n";
-									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=set&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
-									print "</td>";
-								}
-
-								// Default Template
-								print '<td class="center">';
-								if (getDolGlobalString("TICKET_ADDON_PDF") == $name) {
-									print img_picto($langs->trans("Default"), 'on');
-								} else {
-									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
-								}
-								print '</td>';
-
-								// Preview
-								print '<td class="center">';
-								if ($module->type == 'pdf') {
-									print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.urlencode($name).'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
-								} else {
-									print img_object($langs->transnoentitiesnoconv("PreviewNotAvailable"), 'generic');
-								}
-								print '</td>';
-
-								// Info
-								$htmltooltip = ''.$langs->trans("Name").': '.$module->name;
-								$htmltooltip .= '<br>'.$langs->trans("Type").': '.($module->type ? $module->type : $langs->trans("Unknown"));
-								if ($module->type == 'pdf') {
-									$htmltooltip .= '<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
-								}
-								$htmltooltip .= '<br>'.$langs->trans("Path").': '.preg_replace('/^\//', '', $realpath).'/'.$file;
-
-								$htmltooltip .= '<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
-								$htmltooltip .= '<br>'.$langs->trans("Logo").': '.yn($module->option_logo, 1, 1);
-								$htmltooltip .= '<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang, 1, 1);
-								//$htmltooltip .= '<br>'.$langs->trans("Discounts").': '.yn($module->option_escompte,1,1);
-								//$htmltooltip .= '<br>'.$langs->trans("CreditNote").': '.yn($module->option_credit_note,1,1);
-								//$htmltooltip .= '<br>'.$langs->trans("WatermarkOnDraftOrders").': '.yn($module->option_draft_watermark, 1, 1);
-
-
-								print '<td class="center">';
-								print $formcategory->textwithpicto('', $htmltooltip, 1, '0');
-								print '</td>';
-
-								print "</tr>\n";
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-}
-
-print '</table>';
-print '</div><br>';
+printDocumentModelList($type, 'ticket', 'TICKET_ADDON_PDF', $langs->trans("TicketsModelModule"), array(
+	'Logo' => 'option_logo',
+	'MultiLanguage' => 'option_multilang',
+));
+print '<br>';
 
 
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" enctype="multipart/form-data"  spellcheck="false">';
