@@ -1017,8 +1017,8 @@ if ($action == 'create') {
 			$out = '';
 			$formmail = new FormMail($db);
 			$formmail->withlayout = 'email';
-			$formmail->withaiprompt = 'textgenerationemail';
-			$formmail->withfckeditor = true;
+			$formmail->withaiprompt = 'html';
+			$formmail->withfckeditor = 1;
 
 			$showlinktolayout = (getDolGlobalInt('MAIN_EMAIL_USE_LAYOUT') ? $formmail->withlayout : '');
 			$showlinktolayoutlabel = $langs->trans("FillMessageWithALayout");
@@ -1359,8 +1359,8 @@ if ($action != 'create') {
 
 								$formmail = new FormMail($db);
 								$formmail->withlayout = 'email';
-								$formmail->withaiprompt = 'textgenerationemail';
-								$formmail->withfckeditor = true;
+								$formmail->withaiprompt = 'html';
+								$formmail->withfckeditor = 1;
 
 								$showlinktolayout = (getDolGlobalInt('MAIN_EMAIL_USE_LAYOUT') ? $formmail->withlayout : '');
 								$showlinktolayoutlabel = $langs->trans("FillMessageWithALayout");
