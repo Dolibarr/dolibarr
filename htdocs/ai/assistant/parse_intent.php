@@ -197,7 +197,7 @@ try {
 					}
 				}
 				if (empty($doRedact) && $ctxElement === 'societe' && !empty($ctxObj->name)) {
-					$ctxThirdpartyName = " (".dol_string_nohtmltag($ctxObj->name).")";
+					$ctxThirdpartyName = " (".dol_string_nohtmltag((string) $ctxObj->name).")";
 				}
 				// Under redaction, elements whose ref IS a personal/company name
 				// (societe: ref = company name) must not leak it - the privacy
@@ -1100,7 +1100,7 @@ function classifyIntentUniversal(string $query, Translate $langs)
 		// Hardcoded English colloquialisms (words no UI key carries) - words no
 		// UI key carries; translated vocabulary already arrives through the
 		// dual-language keys above.
-		foreach ((array) ($data['synonyms'] ?? array()) as $syn) {
+		foreach ($data['synonyms'] as $syn) {
 			$keywords[] = $isLatin ? strtolower(dol_string_unaccent($syn)) : $syn;
 		}
 		$keywords = array_unique($keywords);
@@ -1119,7 +1119,8 @@ function classifyIntentUniversal(string $query, Translate $langs)
 				// Inflection-tolerant: stem the keyword, normalize the query,
 				// then substring-match. Natural-word translations work as-is.
 				$stem = aiNormalizeForMatch($word, true);
-				if ($stem !== '' && mb_strpos($normalizedQuery, $stem) !== false) {
+				$needleStem = $stem;
+				if ($needleStem !== '' && mb_strpos($normalizedQuery, $needleStem) !== false) {
 					$detectedCategories[] = $category;
 					break;
 				}
