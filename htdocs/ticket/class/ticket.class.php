@@ -1075,15 +1075,15 @@ class Ticket extends CommonObject
 		}
 
 		if (isset($this->type_code)) {
-			$this->timing = trim($this->type_code);
+			$this->type_code = trim($this->type_code);
 		}
 
 		if (isset($this->category_code)) {
-			$this->timing = trim($this->category_code);
+			$this->category_code = trim($this->category_code);
 		}
 
 		if (isset($this->severity_code)) {
-			$this->timing = trim($this->severity_code);
+			$this->severity_code = trim($this->severity_code);
 		}
 		if (isset($this->model_pdf)) {
 			$this->model_pdf = trim($this->model_pdf);
