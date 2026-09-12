@@ -1019,7 +1019,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
 			// @phan-suppress-next-line PhanUndeclaredProperty
-			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("RefCustomer")." : ".dol_trunc($outputlangs->convToOutputCharset($object->ref_client), 65), '', 'R');
+			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("RefCustomer")." : ".pdf_truncate_text($pdf, $outputlangs->convToOutputCharset($object->ref_client), 65), '', 'R');
 		}
 
 		if (getDolGlobalInt('PDF_SHOW_PROJECT_TITLE')) {

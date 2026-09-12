@@ -250,7 +250,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $dictionaries = array();
 
 	/**
-	 * @var array<string|array{data:string,entity:int}> tabs description
+	 * @var array<string|array{data:string,entity?:int}> tabs description
 	 */
 	public $tabs;
 
