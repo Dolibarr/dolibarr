@@ -175,7 +175,8 @@ if ($action == 'apply_preset' && !empty($toolcontext) && !empty($mode)) {
 
 $help_url = '';
 $title = 'AiSetup';
-llxHeader('', $langs->trans($title), '', '', 0, 0, array(dol_buildpath('/ai/js/ai.js', 1)), array(dol_buildpath('/ai/css/ai.css', 1)), '', 'mod-ai page-admin');
+
+llxHeader('', $langs->trans($title), '', '', 0, 0, array('/ai/js/ai.js'), array('/ai/css/ai.css'), '', 'mod-ai page-admin');
 
 $linkback = '<a href="' . ($backtopage ? $backtopage : DOL_URL_ROOT . '/admin/modules.php?restore_lastsearch_values=1') . '">' . img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"') . '<span class="hideonsmartphone">' . $langs->trans("BackToModuleList") . '</span></a>';
 
@@ -184,9 +185,10 @@ print load_fiche_titre($langs->trans($title), $linkback, 'title_setup');
 $head = aiAdminPrepareHead();
 print dol_get_fiche_head($head, 'tools', 'MCP Server', -1, 'ai');
 
+print '<!-- Tools quick setup -->';
 print '<span class="opacitymedium">' . $langs->trans("ToolAccessControlHelp") . '</span><br><br>';
 
-print '<div class="marginleftonly" style="display:flex; flex-wrap:wrap; gap:40px; margin-top:15px; padding-top:15px; border-top:1px solid #ddd;">';
+print '<div class="marginleftonly" style="display:flex; flex-wrap:wrap; gap:40px; margin-top:15px; padding-top:15px;">';
 
 // Presets For Chat Assistant
 print '<div>';
@@ -206,14 +208,15 @@ print '</div>';
 
 print '</div>';
 
+print '<br>';
 
 // Tools table
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent" id="toolsTable">';
 print '<tr class="liste_titre">';
 print '<td class="tdoverflowmax200" style="min-width: 130px;">' . $langs->trans('Tool') . '</td>';
-print '<td class="center" style="min-width: 60px;">' . $langs->trans('ToolActionType') . '</td>';
 print '<td class="hideonsmartphone">' . $langs->trans('ToolDescription') . '</td>';
+print '<td class="center" style="min-width: 60px;">' . $langs->trans('ToolActionType') . '</td>';
 print '<td class="center nowraponall">' . $langs->trans('ChatAssistant') . '</td>';
 print '<td class="center nowraponall">' . $langs->trans('McpServer') . '</td>';
 print '</tr>';
@@ -227,7 +230,7 @@ if (empty($groupedNormalTools) && empty($groupedSystemTools)) {
 	foreach ($finalGroupsList as $categoryName => $definitions) {
 		$groupId++;
 
-		print '<tr class="trgroup" data-group="group-' . $groupId . '">';
+		print '<tr class="trgroup trforbreaknobg" data-group="group-' . $groupId . '">';
 		print '<td colspan="5" class="mcp-trigger-collapse" style="cursor:pointer;">';
 		print '<span class="toggle-icon">▼</span> ' . dol_escape_htmltag($categoryName);
 		print '</td>';
@@ -259,11 +262,12 @@ if (empty($groupedNormalTools) && empty($groupedSystemTools)) {
 			}
 			print '</td>';
 
+			// Tool Description (hidden on mobile)
+			print '<td class="small opacitymedium hideonsmartphone">' . dol_escape_htmltag($desc) . '</td>';
+
 			// Type Badge
 			print '<td class="center">' . $typeBadge . '</td>';
 
-			// Tool Description (hidden on mobile)
-			print '<td class="small opacitymedium hideonsmartphone">' . dol_escape_htmltag($desc) . '</td>';
 
 			$lockCssClass = $isSystem ? ' opacitymedium disabled' : '';
 
