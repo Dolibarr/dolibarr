@@ -456,7 +456,12 @@ if (empty($reshook)) {
 				// CONTENT
 				$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
 				$link = '<a href="'.$link.'">'.$link.'</a>';
-				$message = $langs->transnoentities("ExpenseReportWaitingForApprovalMessage", $expediteur->getFullName($langs), get_date_range($object->date_debut, $object->date_fin, '', $langs), $link);
+				$summary = $object->getSummary();
+				$message = '';
+				if ($summary !== '') {
+					$message .= $langs->transnoentities("Summary").': '.dol_escape_htmltag($summary).'<br>';
+				}
+				$message .= $langs->transnoentities("ExpenseReportWaitingForApprovalMessage", $expediteur->getFullName($langs), get_date_range($object->date_debut, $object->date_fin, '', $langs), $link);
 
 				// Rebuild pdf
 				/*
@@ -1786,6 +1791,10 @@ if ($action == 'create') {
 			$linkback = '<a href="'.DOL_URL_ROOT.'/expensereport/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
 			$morehtmlref = '<div class="refidno">';
+			$summary = $object->getSummary();
+			if ($summary !== '') {
+				$morehtmlref .= $langs->trans('Summary').': '.dol_escape_htmltag($summary);
+			}
 			$morehtmlref .= '</div>';
 
 			dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
