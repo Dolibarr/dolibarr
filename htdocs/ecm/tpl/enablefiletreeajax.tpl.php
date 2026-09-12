@@ -73,7 +73,7 @@ $dirtreeurl = dolBuildUrl(DOL_URL_ROOT.'/core/ajax/ajaxdirtree.php', $paramsdirt
 $(document).ready(function() {
 
 	$('#filetree').fileTree({
-		root: '<?php print dol_escape_js($openeddir); ?>',
+		root: <?php print "'".dol_escape_js($openeddir)."'"; ?>,
 		// Ajax called if we click to expand a dir (not a file). Parameter 'dir' is provided as a POST parameter by fileTree code to this following URL.
 		script: '<?php echo $dirtreeurl; ?>',
 		folderEvent: 'click',	// 'dblclick'

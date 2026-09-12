@@ -336,7 +336,7 @@ if ($action == 'uploadfile' || $action == 'showsummary') {
 	if (!empty($ajaxFileUrl)) {
 		print '<script>
 		$(document).ready(function() {
-			console.log("Call ajaxFileUrl: '.dol_escape_js($ajaxFileUrl).'");
+			console.log(\'Call ajaxFileUrl: '.dol_escape_js($ajaxFileUrl).'\');
 			$.ajax({
 				url: \''.dol_escape_js($ajaxFileUrl).'\',
 				type: "GET",

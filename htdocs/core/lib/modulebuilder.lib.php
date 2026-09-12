@@ -178,7 +178,7 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 				$texttoinsert .= ' "enabled" => "'.($val['enabled'] !== '' ? dol_escape_php($val['enabled']) : 1).'",';
 				$texttoinsert .= " 'position' => ".($val['position'] !== '' ? (int) $val['position'] : 50).",";
 				$texttoinsert .= " 'notnull' => ".(empty($val['notnull']) ? 0 : (int) $val['notnull']).",";
-				$texttoinsert .= ' "visible" => "'.($val['visible'] !== '' ? dol_escape_js($val['visible']) : -1).'",';
+				$texttoinsert .= ' "visible" => \''.dol_escape_js($val['visible'] !== '' ? $val['visible'] : -1).'\',';
 				if (!empty($val['noteditable'])) {
 					$texttoinsert .= ' "noteditable" => "'.dol_escape_php((string) $val['noteditable']).'",';
 				}
