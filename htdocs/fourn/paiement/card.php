@@ -6,6 +6,7 @@
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		Vincent Maury				<vmaury@timgroup.fr>
+ * Copyright (C) 2026		José MARTINEZ		<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,6 +80,8 @@ if ($socid && $socid != $object->thirdparty->id) {
 $permissiontoadd = ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "write"));
 $permissiontovalidate = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "write"))) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight("fournisseur", "supplier_invoice_advance", "validate")));
 $permissiontodelete = ($user->hasRight("fournisseur", "facture", "supprimer") || $user->hasRight("supplier_invoice", "delete"));
+// Editing the foreign-currency amount of a payment afterwards is gated behind a hidden constant (off by default) and restricted to admins
+$caneditmcamount = (getDolGlobalInt('MULTICURRENCY_PAYMENT_ALLOW_EDIT_REAL_AMOUNT') && !empty($user->admin));
 
 
 /*
@@ -147,6 +150,37 @@ if ($action == 'setdatep' && GETPOST('datepday') && $permissiontoadd) {
 	} else {
 		setEventMessages($langs->trans('PaymentDateUpdateFailed'), null, 'errors');
 	}
+}
+
+// Set the foreign-currency amount that was forgotten at entry (e.g. payment imported from bank / Banking4Dolibarr), option MULTICURRENCY_PAYMENT_USE_REAL_AMOUNTS
+if ($action == 'setmulticurrencyamount' && $caneditmcamount && getDolGlobalInt('MULTICURRENCY_PAYMENT_USE_REAL_AMOUNTS') && isModEnabled('multicurrency')) {
+	$object->fetch($id);
+	$newmcamount = (float) price2num(GETPOST('multicurrency_amount', 'alpha'));
+	// Only for a payment that settles a single foreign-currency supplier invoice
+	$sql = "SELECT pf.amount, ff.multicurrency_code FROM ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf";
+	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."facture_fourn as ff ON ff.rowid = pf.fk_facturefourn";
+	$sql .= " WHERE pf.fk_paiementfourn = ".((int) $object->id);
+	$resql = $db->query($sql);
+	$nblink = $resql ? $db->num_rows($resql) : 0;
+	if ($nblink == 1) {
+		$objp = $db->fetch_object($resql);
+		$mccode = $objp->multicurrency_code;
+		$pfamount = (float) $objp->amount;
+		$newtx = ($pfamount != 0) ? (float) price2num($newmcamount / $pfamount, 'MU') : 1;
+		$db->begin();
+		$ok = $db->query("UPDATE ".MAIN_DB_PREFIX."paiementfourn SET multicurrency_amount = ".((float) $newmcamount)." WHERE rowid = ".((int) $object->id));
+		$ok = $ok && $db->query("UPDATE ".MAIN_DB_PREFIX."paiementfourn_facturefourn SET multicurrency_amount = ".((float) $newmcamount).", multicurrency_code = ".($mccode ? "'".$db->escape($mccode)."'" : "null").", multicurrency_tx = ".((float) $newtx)." WHERE fk_paiementfourn = ".((int) $object->id));
+		if ($ok) {
+			$db->commit();
+			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
+		} else {
+			$db->rollback();
+			setEventMessages($langs->trans('Error'), null, 'errors');
+		}
+	} else {
+		setEventMessages($langs->trans('NotAvailable'), null, 'warnings');
+	}
+	$action = '';
 }
 
 // Build document
@@ -233,6 +267,52 @@ if ($result > 0) {
 	// Amount
 	print '<tr><td>'.$langs->trans('Amount').'</td>';
 	print '<td><span class="amount">'.price($object->amount, 0, $langs, 0, 0, -1, $conf->currency).'</span></td></tr>';
+
+	// Amount in the invoice currency and derived rate (option MULTICURRENCY_PAYMENT_USE_REAL_AMOUNTS)
+	// Foreign-currency amount of the payment, editable to fill a value forgotten at entry (e.g. payment imported from bank / Banking4Dolibarr), option MULTICURRENCY_PAYMENT_USE_REAL_AMOUNTS
+	if (getDolGlobalInt('MULTICURRENCY_PAYMENT_USE_REAL_AMOUNTS') && isModEnabled('multicurrency')) {
+		$mccodepay = '';
+		$mctxpay = 0;
+		$nblinkpay = 0;
+		$sqlmc = "SELECT ff.multicurrency_code, ff.multicurrency_tx FROM ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf";
+		$sqlmc .= " INNER JOIN ".MAIN_DB_PREFIX."facture_fourn as ff ON ff.rowid = pf.fk_facturefourn";
+		$sqlmc .= " WHERE pf.fk_paiementfourn = ".((int) $object->id);
+		$resmc = $db->query($sqlmc);
+		if ($resmc) {
+			$nblinkpay = $db->num_rows($resmc);
+			if ($nblinkpay == 1) {
+				$objmc = $db->fetch_object($resmc);
+				$mccodepay = $objmc->multicurrency_code;
+				$mctxpay = (float) $objmc->multicurrency_tx;
+			}
+		}
+		if ($nblinkpay == 1 && !empty($mccodepay) && $mccodepay != $conf->currency) {
+			$langs->load("multicurrency");
+			print '<tr><td>'.$langs->trans('MulticurrencyPaymentAmount').'</td><td>';
+			if ($action == 'editmulticurrencyamount' && $caneditmcamount) {
+				print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
+				print '<input type="hidden" name="token" value="'.newToken().'">';
+				print '<input type="hidden" name="action" value="setmulticurrencyamount">';
+				print '<input type="text" class="flat right maxwidth100" name="multicurrency_amount" value="'.((float) $object->multicurrency_amount != 0 ? price2num($object->multicurrency_amount, 'MT') : ($mctxpay > 0 ? price2num((float) $object->amount * $mctxpay, 'MT') : '')).'"> '.dol_escape_htmltag($mccodepay);
+				print ' <input type="submit" class="button smallpaddingimp" value="'.dol_escape_htmltag($langs->trans('Save')).'">';
+				print '</form>';
+			} else {
+				if ((float) $object->multicurrency_amount != 0) {
+					print '<span class="amount">'.price($object->multicurrency_amount, 0, $langs, 1, -1, 2).'</span> '.dol_escape_htmltag($mccodepay);
+				} else {
+					print '<span class="opacitymedium">'.$langs->trans('NotDefined').'</span>';
+				}
+				if ($caneditmcamount) {
+					print ' <a class="editfielda paddingleft" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=editmulticurrencyamount&token='.newToken().'">'.img_edit().'</a>';
+				}
+			}
+			print '</td></tr>';
+			if ((float) $object->multicurrency_amount != 0 && (float) $object->amount != 0) {
+				print '<tr><td>'.$langs->trans('CurrencyRate').'</td>';
+				print '<td>'.price2num((float) $object->multicurrency_amount / (float) $object->amount, 'MU').'</td></tr>';
+			}
+		}
+	}
 
 	// Status of validation of payment
 	if (getDolGlobalString('BILL_ADD_PAYMENT_VALIDATION')) {

@@ -753,3 +753,7 @@ CreditNoteNotCreatedErrorOnDiscount=Credit note for <b>%s</b> not created: error
 CreditNoteNotCreatedAlreadyConverted=Credit note for <b>%s</b> not created: invoice already converted
 CreditNotesCreated=%s credit note(s) created
 ThisMassActionIsOnlyForInvoices=This mass action is only available for invoices
+
+# Multicurrency payment entered with real amounts (option MULTICURRENCY_PAYMENT_USE_REAL_AMOUNTS)
+WarningPaymentDerivedRateFarFromInvoiceRate=For invoice %s, the exchange rate %s derived from the amounts entered differs by more than 50%% from the invoice rate %s. Please check that the two amounts have not been swapped.
+ErrorPaymentRealAmountsMustHaveSameSign=For invoice %s, the amount in the invoice currency and the real amount in the company currency must have the same sign.
