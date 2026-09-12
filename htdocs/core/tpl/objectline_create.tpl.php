@@ -666,8 +666,8 @@ if ((isModEnabled("service") || ($object->element == 'contrat')) && $dateSelecto
 		?>
 		function prefill_service_dates()
 		{
-			$('#date_start').val("<?php echo dol_escape_js(dol_print_date($date_start_prefill, 'day')); ?>").trigger('change');
-			$('#date_end').val("<?php echo dol_escape_js(dol_print_date($date_end_prefill, 'day')); ?>").trigger('change');
+			$('#date_start').val(<?php echo "'".dol_escape_js(dol_print_date($date_start_prefill, 'day'))."'"; ?>).trigger('change');
+			$('#date_end').val(<?php echo "'".dol_escape_js(dol_print_date($date_end_prefill, 'day'))."'"; ?>).trigger('change');
 
 			return false; // Prevent default link behaviour (which is go to href URL)
 		}
