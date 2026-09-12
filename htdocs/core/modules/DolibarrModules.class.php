@@ -1837,7 +1837,9 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 				if (is_array($value)) {
 					$newvalue = $value['data'];
-					$entity = $value['entity'];
+					if (isset($value['entity'])) {
+						$entity = $value['entity'];
+					}
 				}
 
 				if ($newvalue) {
