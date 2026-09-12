@@ -391,7 +391,7 @@ print "</table></div><br>\n";
  * Document templates generators
  */
 
-printDocumentModelList($db, $langs, $form, $dirmodels, $type, 'commande', 'COMMANDE_ADDON_PDF', $langs->trans("OrdersModelModule"), array(
+printDocumentModelList($type, 'commande', 'COMMANDE_ADDON_PDF', $langs->trans("OrdersModelModule"), array(
 	'Logo' => 'option_logo',
 	'PaymentMode' => 'option_modereg',
 	'PaymentConditions' => 'option_condreg',

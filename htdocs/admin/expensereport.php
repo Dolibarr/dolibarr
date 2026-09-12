@@ -316,7 +316,7 @@ print "</table></div><br>\n";
  *  Documents models for ExpenseReport
  */
 
-printDocumentModelList($db, $langs, $form, $dirmodels, 'expensereport', 'expensereport', 'EXPENSEREPORT_ADDON_PDF', $langs->trans("TemplatePDFExpenseReports"), array(
+printDocumentModelList('expensereport', 'expensereport', 'EXPENSEREPORT_ADDON_PDF', $langs->trans("TemplatePDFExpenseReports"), array(
 	'Logo' => 'option_logo',
 	'PaymentMode' => 'option_modereg',
 	'PaymentConditions' => 'option_condreg',

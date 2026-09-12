@@ -233,7 +233,7 @@ print dol_get_fiche_head($head, 'invoice', $langs->trans("Suppliers"), -1, 'comp
 $invoice = new FactureFournisseur($db);
 $invoice->initAsSpecimen();
 
-printNumberingModuleList($db, $langs, $form, $dirmodels, 'supplier_invoice', 'mod_facture_fournisseur_', 'INVOICE_SUPPLIER_ADDON_NUMBER', $langs->trans("SuppliersInvoiceNumberingModel"), $invoice);
+printNumberingModuleList('supplier_invoice', 'mod_facture_fournisseur_', 'INVOICE_SUPPLIER_ADDON_NUMBER', $langs->trans("SuppliersInvoiceNumberingModel"), $invoice);
 
 print '<br>';
 

@@ -260,7 +260,7 @@ print dol_get_fiche_head($head, 'general', $langs->trans("CommRequests"), -1, 's
 $supplier_proposal = new SupplierProposal($db);
 $supplier_proposal->initAsSpecimen();
 
-printNumberingModuleList($db, $langs, $form, $dirmodels, 'supplier_proposal', 'mod_supplier_proposal_', 'SUPPLIER_PROPOSAL_ADDON', $langs->trans("SupplierProposalNumberingModules"), $supplier_proposal);
+printNumberingModuleList('supplier_proposal', 'mod_supplier_proposal_', 'SUPPLIER_PROPOSAL_ADDON', $langs->trans("SupplierProposalNumberingModules"), $supplier_proposal);
 
 print '<br>';
 

@@ -197,14 +197,14 @@ print dol_get_fiche_head($head, 'reception', $langs->trans("Receptions"), -1, 'r
 $reception = new Reception($db);
 $reception->initAsSpecimen();
 
-printNumberingModuleList($db, $langs, $form, $dirmodels, 'reception', 'mod_reception_', 'RECEPTION_ADDON_NUMBER', $langs->trans("ReceptionsNumberingModules"), $reception, 'setmodel');
+printNumberingModuleList('reception', 'mod_reception_', 'RECEPTION_ADDON_NUMBER', $langs->trans("ReceptionsNumberingModules"), $reception, 'setmodel');
 
 print '<br>';
 
 /*
  *  Documents models for Receptions Receipt
  */
-printDocumentModelList($db, $langs, $form, $dirmodels, 'reception', 'reception', 'RECEPTION_ADDON_PDF', $langs->trans("ReceptionsReceiptModel"), array(
+printDocumentModelList('reception', 'reception', 'RECEPTION_ADDON_PDF', $langs->trans("ReceptionsReceiptModel"), array(
 	'Logo' => 'option_logo',
 	'PaymentMode' => 'option_modereg',
 	'PaymentConditions' => 'option_condreg',

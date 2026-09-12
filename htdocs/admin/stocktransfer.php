@@ -293,7 +293,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 	// Document templates generators
 	$type = strtolower($myTmpObjectKey);
 
-	printDocumentModelList($db, $langs, $form, $dirmodels, $type, $moduledir, strtoupper($myTmpObjectKey).'_ADDON_PDF', $langs->trans("DocumentModules", $myTmpObjectKey), array(
+	printDocumentModelList($type, $moduledir, strtoupper($myTmpObjectKey).'_ADDON_PDF', $langs->trans("DocumentModules", $myTmpObjectKey), array(
 		'Logo' => 'option_logo',
 		'MultiLanguage' => 'option_multilang',
 	));

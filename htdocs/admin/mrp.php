@@ -303,7 +303,7 @@ print "</table><br>\n";
  * Document templates generators
  */
 
-printDocumentModelList($db, $langs, $form, $dirmodels, $type, 'mrp', 'MRP_MO_ADDON_PDF', $langs->trans("MOsModelModule"), array(
+printDocumentModelList($type, 'mrp', 'MRP_MO_ADDON_PDF', $langs->trans("MOsModelModule"), array(
 	'MultiLanguage' => 'option_multilang',
 	'WatermarkOnDraftMOs' => 'option_draft_watermark',
 ));

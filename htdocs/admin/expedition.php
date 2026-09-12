@@ -191,7 +191,7 @@ print dol_get_fiche_head($head, 'shipment', $langs->trans("Sendings"), -1, 'ship
 $expedition = new Expedition($db);
 $expedition->initAsSpecimen();
 
-printNumberingModuleList($db, $langs, $form, $dirmodels, 'expedition', 'mod_expedition_', 'EXPEDITION_ADDON_NUMBER', $langs->trans("SendingsNumberingModules"), $expedition, 'setmodel');
+printNumberingModuleList('expedition', 'mod_expedition_', 'EXPEDITION_ADDON_NUMBER', $langs->trans("SendingsNumberingModules"), $expedition, 'setmodel');
 
 print '<br>';
 
@@ -199,7 +199,7 @@ print '<br>';
 /*
  *  Documents models for Sendings Receipt
  */
-printDocumentModelList($db, $langs, $form, $dirmodels, 'shipping', 'expedition', 'EXPEDITION_ADDON_PDF', $langs->trans("SendingsReceiptModel"), array(
+printDocumentModelList('shipping', 'expedition', 'EXPEDITION_ADDON_PDF', $langs->trans("SendingsReceiptModel"), array(
 	'Logo' => 'option_logo',
 	'PaymentMode' => 'option_modereg',
 	'PaymentConditions' => 'option_condreg',

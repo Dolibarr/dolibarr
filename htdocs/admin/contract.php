@@ -234,7 +234,7 @@ print dol_get_fiche_head($head, 'contract', $langs->trans("Contracts"), -1, 'con
 $contract = new Contrat($db);
 $contract->initAsSpecimen();
 
-printNumberingModuleList($db, $langs, $form, $dirmodels, 'contract', 'mod_contract_', 'CONTRACT_ADDON', $langs->trans("ContractsNumberingModules"), $contract);
+printNumberingModuleList('contract', 'mod_contract_', 'CONTRACT_ADDON', $langs->trans("ContractsNumberingModules"), $contract);
 
 print '<br>';
 

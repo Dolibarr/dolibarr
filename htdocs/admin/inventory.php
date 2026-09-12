@@ -258,7 +258,7 @@ foreach ($dirmodels as $reldir) {
 print "</table></div><br>\n";
 
 // Document templates generators
-printDocumentModelList($db, $langs, $form, $dirmodels, 'inventory', 'inventory', 'INVENTORY_ADDON_PDF', $langs->trans("DocumentModules", $langs->transnoentities("Inventory")), array(
+printDocumentModelList('inventory', 'inventory', 'INVENTORY_ADDON_PDF', $langs->trans("DocumentModules", $langs->transnoentities("Inventory")), array(
 	'Logo' => 'option_logo',
 	'MultiLanguage' => 'option_multilang',
 ));

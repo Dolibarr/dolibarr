@@ -279,14 +279,14 @@ $propal = new Propal($db);
 $propal->initAsSpecimen();
 $propal->type = 0;
 
-printNumberingModuleList($db, $langs, $form, $dirmodels, 'propale', 'mod_propale_', 'PROPALE_ADDON', $langs->trans("ProposalsNumberingModules"), $propal);
+printNumberingModuleList('propale', 'mod_propale_', 'PROPALE_ADDON', $langs->trans("ProposalsNumberingModules"), $propal);
 
 
 /*
  * Document templates generators
  */
 
-printDocumentModelList($db, $langs, $form, $dirmodels, $type, 'propale', 'PROPALE_ADDON_PDF', $langs->trans("ProposalsPDFModules"), array(
+printDocumentModelList($type, 'propale', 'PROPALE_ADDON_PDF', $langs->trans("ProposalsPDFModules"), array(
 	'Logo' => 'option_logo',
 	'PaymentMode' => 'option_modereg',
 	'PaymentConditions' => 'option_condreg',

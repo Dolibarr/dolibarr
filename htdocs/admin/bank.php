@@ -296,7 +296,7 @@ print '<br><br>';
  * Document templates generators
  */
 
-printDocumentModelList($db, $langs, $form, $dirmodels, $type, 'bank', 'BANKADDON_PDF', $langs->trans("BankAccountModelModule"), array(
+printDocumentModelList($type, 'bank', 'BANKADDON_PDF', $langs->trans("BankAccountModelModule"), array(
 	'Logo' => 'option_logo',
 	'MultiLanguage' => 'option_multilang',
 ));

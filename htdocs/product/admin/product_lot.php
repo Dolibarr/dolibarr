@@ -193,7 +193,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 	$batch = new Productlot($db);
 	$batch->initAsSpecimen();
 
-	printNumberingModuleList($db, $langs, $form, $dirmodels, 'product_batch', 'mod_lot_', 'PRODUCTBATCH_LOT_ADDON', $langs->trans("BatchLotNumberingModules"), $batch, 'setmodlot');
+	printNumberingModuleList('product_batch', 'mod_lot_', 'PRODUCTBATCH_LOT_ADDON', $langs->trans("BatchLotNumberingModules"), $batch, 'setmodlot');
 
 	print '<br>';
 
@@ -204,7 +204,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 	$batch = new Productlot($db);
 	$batch->initAsSpecimen();
 
-	printNumberingModuleList($db, $langs, $form, $dirmodels, 'product_batch', 'mod_sn_', 'PRODUCTBATCH_SN_ADDON', $langs->trans("BatchSerialNumberingModules"), $batch, 'setmodsn');
+	printNumberingModuleList('product_batch', 'mod_sn_', 'PRODUCTBATCH_SN_ADDON', $langs->trans("BatchSerialNumberingModules"), $batch, 'setmodsn');
 
 	print '<br>';
 }

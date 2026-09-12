@@ -381,7 +381,7 @@ print '<br>';
  *  Documents models for Interventions
  */
 
-printDocumentModelList($db, $langs, $form, $dirmodels, 'ficheinter', 'fichinter', 'FICHEINTER_ADDON_PDF', $langs->trans("TemplatePDFInterventions"), array(
+printDocumentModelList('ficheinter', 'fichinter', 'FICHEINTER_ADDON_PDF', $langs->trans("TemplatePDFInterventions"), array(
 	'Logo' => 'option_logo',
 	'PaymentMode' => 'option_modereg',
 	'PaymentConditions' => 'option_condreg',

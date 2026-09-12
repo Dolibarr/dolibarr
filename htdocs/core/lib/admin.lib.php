@@ -2077,10 +2077,6 @@ function delDocumentModel($name, $type)
  *	block that was historically copy-pasted into most module setup pages (invoice.php, order.php,
  *	reception_setup.php, ...).
  *
- *	@param	DoliDB					$db				Database handler
- *	@param	Translate				$langs			Language object
- *	@param	Form					$form			Form object (used to show the info tooltip picto)
- *	@param	string[]				$dirmodels		Array of dirmodel roots (see $conf->modules_parts['models'])
  *	@param	string					$type			Value of document_model.type and root of the ADDON_PDF conf constant (e.g. 'invoice', 'reception')
  *	@param	string					$moduledir		Directory name under core/modules/ to scan for model classes (e.g. 'facture', 'reception'); may differ from $type
  *	@param	string					$constpdf		Name of the conf constant storing the default model name (e.g. 'FACTURE_ADDON_PDF')
@@ -2090,9 +2086,12 @@ function delDocumentModel($name, $type)
  *	@param	string					$constpdfdefault	Default value to assume for $constpdf when the conf constant is not set
  *	@return	void
  */
-function printDocumentModelList($db, $langs, $form, array $dirmodels, $type, $moduledir, $constpdf, $title, array $features, $excludedisabled = false, $constpdfdefault = '')
+function printDocumentModelList($type, $moduledir, $constpdf, $title, array $features, $excludedisabled = false, $constpdfdefault = '')
 {
-	global $conf;
+	global $db, $langs, $conf;
+
+	$form = new Form($db);
+	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 	print load_fiche_titre($title, '', '');
 
@@ -2247,10 +2246,6 @@ function printDocumentModelList($db, $langs, $form, array $dirmodels, $type, $mo
  *	factorizes the block that was historically copy-pasted into most module setup pages, alongside
  *	printDocumentModelList().
  *
- *	@param	DoliDB				$db					Database handler
- *	@param	Translate			$langs				Language object
- *	@param	Form				$form				Form object (used to show the info tooltip picto)
- *	@param	string[]			$dirmodels			Array of dirmodel roots (see $conf->modules_parts['models'])
  *	@param	string				$moduledir			Directory name under core/modules/ to scan for numbering module classes (e.g. 'propale', 'reception')
  *	@param	string				$prefix				Filename prefix of numbering module classes to scan for (e.g. 'mod_propale_', 'mod_reception_')
  *	@param	string				$constname			Name of the conf constant storing the active module (e.g. 'PROPALE_ADDON', 'RECEPTION_ADDON_NUMBER')
@@ -2259,9 +2254,12 @@ function printDocumentModelList($db, $langs, $form, array $dirmodels, $type, $mo
  *	@param	string				$actionname			Name of the action that activates a module (default 'setmod')
  *	@return	void
  */
-function printNumberingModuleList($db, $langs, $form, array $dirmodels, $moduledir, $prefix, $constname, $title, $specimenobject, $actionname = 'setmod')
+function printNumberingModuleList($moduledir, $prefix, $constname, $title, $specimenobject, $actionname = 'setmod')
 {
-	global $mysoc;
+	global $db, $langs, $conf, $mysoc;
+
+	$form = new Form($db);
+	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 	print load_fiche_titre($title, '', '');
 

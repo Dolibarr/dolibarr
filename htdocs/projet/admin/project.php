@@ -318,7 +318,7 @@ print '<br>';
 $project = new Project($db);
 $project->initAsSpecimen();
 
-printNumberingModuleList($db, $langs, $form, $dirmodels, 'project', 'mod_project_', 'PROJECT_ADDON', $langs->trans("ProjectsNumberingModules"), $project);
+printNumberingModuleList('project', 'mod_project_', 'PROJECT_ADDON', $langs->trans("ProjectsNumberingModules"), $project);
 
 print '<br>';
 
@@ -327,7 +327,7 @@ if (!getDolGlobalString('PROJECT_HIDE_TASKS')) {
 	$project = new Project($db);
 	$project->initAsSpecimen();
 
-	printNumberingModuleList($db, $langs, $form, $dirmodels, 'project/task', 'mod_task_', 'PROJECT_TASK_ADDON', $langs->trans("TasksNumberingModules"), $project, 'setmodtask');
+	printNumberingModuleList('project/task', 'mod_task_', 'PROJECT_TASK_ADDON', $langs->trans("TasksNumberingModules"), $project, 'setmodtask');
 
 	print '<br>';
 }

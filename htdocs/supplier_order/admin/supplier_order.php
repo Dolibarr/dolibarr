@@ -251,7 +251,7 @@ print dol_get_fiche_head($head, 'order', $langs->trans("Suppliers"), -1, 'compan
 $commande = new CommandeFournisseur($db);
 $commande->initAsSpecimen();
 
-printNumberingModuleList($db, $langs, $form, $dirmodels, 'supplier_order', 'mod_commande_fournisseur_', 'COMMANDE_SUPPLIER_ADDON_NUMBER', $langs->trans("OrdersNumberingModules"), $commande);
+printNumberingModuleList('supplier_order', 'mod_commande_fournisseur_', 'COMMANDE_SUPPLIER_ADDON_NUMBER', $langs->trans("OrdersNumberingModules"), $commande);
 
 print '<br>';
 

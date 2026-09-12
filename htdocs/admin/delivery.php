@@ -235,14 +235,14 @@ if (getDolGlobalString('MAIN_SUBMODULE_DELIVERY')) {
 	$delivery = new Delivery($db);
 	$delivery->initAsSpecimen();
 
-	printNumberingModuleList($db, $langs, $form, $dirmodels, 'delivery', 'mod_delivery_', 'DELIVERY_ADDON_NUMBER', $langs->trans("DeliveryOrderNumberingModules"), $delivery);
+	printNumberingModuleList('delivery', 'mod_delivery_', 'DELIVERY_ADDON_NUMBER', $langs->trans("DeliveryOrderNumberingModules"), $delivery);
 
 
 	/*
 	 *  Documents Models for delivery
 	 */
 	print '<br>';
-	printDocumentModelList($db, $langs, $form, $dirmodels, 'delivery', 'delivery', 'DELIVERY_ADDON_PDF', $langs->trans("DeliveryOrderModel"), array(
+	printDocumentModelList('delivery', 'delivery', 'DELIVERY_ADDON_PDF', $langs->trans("DeliveryOrderModel"), array(
 		'Logo' => 'option_logo',
 	));
 

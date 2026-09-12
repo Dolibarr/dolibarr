@@ -308,7 +308,7 @@ print "</div>";
  */
 
 print "<br>\n";
-printDocumentModelList($db, $langs, $form, $dirmodels, $type, 'bom', 'BOM_ADDON_PDF', $langs->trans("BOMsModelModule"), array(
+printDocumentModelList($type, 'bom', 'BOM_ADDON_PDF', $langs->trans("BOMsModelModule"), array(
 	'MultiLanguage' => 'option_multilang',
 	'WatermarkOnDraftBOMs' => 'option_draft_watermark',
 ));

@@ -632,7 +632,7 @@ print '</form>';
  * Document templates generators
  */
 
-printDocumentModelList($db, $langs, $form, $dirmodels, $type, 'stock', 'STOCK_ADDON_PDF', $langs->trans("WarehouseModelModules"), array(
+printDocumentModelList($type, 'stock', 'STOCK_ADDON_PDF', $langs->trans("WarehouseModelModules"), array(
 	'Logo' => 'option_logo',
 	'MultiLanguage' => 'option_multilang',
 ));

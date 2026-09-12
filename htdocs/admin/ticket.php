@@ -307,7 +307,7 @@ print dol_get_fiche_end();
 $ticket = new Ticket($db);
 $ticket->initAsSpecimen();
 
-printNumberingModuleList($db, $langs, $formcategory, $dirmodels, 'ticket', 'mod_ticket_', 'TICKET_ADDON', $langs->trans("TicketNumberingModules"), $ticket);
+printNumberingModuleList('ticket', 'mod_ticket_', 'TICKET_ADDON', $langs->trans("TicketNumberingModules"), $ticket);
 
 
 
@@ -315,7 +315,7 @@ printNumberingModuleList($db, $langs, $formcategory, $dirmodels, 'ticket', 'mod_
  * Document templates generators
  */
 
-printDocumentModelList($db, $langs, $formcategory, $dirmodels, $type, 'ticket', 'TICKET_ADDON_PDF', $langs->trans("TicketsModelModule"), array(
+printDocumentModelList($type, 'ticket', 'TICKET_ADDON_PDF', $langs->trans("TicketsModelModule"), array(
 	'Logo' => 'option_logo',
 	'MultiLanguage' => 'option_multilang',
 ));

@@ -498,7 +498,7 @@ print '</div>';
  */
 
 print '<br>';
-printDocumentModelList($db, $langs, $form, $dirmodels, 'invoice', 'facture', 'FACTURE_ADDON_PDF', $langs->trans("BillsPDFModules"), array(
+printDocumentModelList('invoice', 'facture', 'FACTURE_ADDON_PDF', $langs->trans("BillsPDFModules"), array(
 	'Logo' => 'option_logo',
 	'PaymentMode' => 'option_modereg',
 	'PaymentConditions' => 'option_condreg',

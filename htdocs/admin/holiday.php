@@ -191,7 +191,7 @@ print dol_get_fiche_head($head, 'holiday', $langs->trans("Holidays"), -1, 'holid
 $holiday = new Holiday($db);
 $holiday->initAsSpecimen();
 
-printNumberingModuleList($db, $langs, $form, $dirmodels, 'holiday', 'mod_holiday_', 'HOLIDAY_ADDON', $langs->trans("HolidaysNumberingModules"), $holiday);
+printNumberingModuleList('holiday', 'mod_holiday_', 'HOLIDAY_ADDON', $langs->trans("HolidaysNumberingModules"), $holiday);
 
 print '<br>';
 
@@ -201,7 +201,7 @@ print '<br>';
  */
 
 if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
-	printDocumentModelList($db, $langs, $form, $dirmodels, $type, 'holiday', 'HOLIDAY_ADDON_PDF', $langs->trans("TemplatePDFHolidays"), array(
+	printDocumentModelList($type, 'holiday', 'HOLIDAY_ADDON_PDF', $langs->trans("TemplatePDFHolidays"), array(
 		'Logo' => 'option_logo',
 		'PaymentMode' => 'option_modereg',
 		'PaymentConditions' => 'option_condreg',
