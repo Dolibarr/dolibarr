@@ -56,6 +56,17 @@ class MCPServer
 	/** @var string Server version */
 	private $version = '1.0.0';
 
+	/**
+	 * MCP protocol versions this server speaks, newest first. 2026-07-28 adds
+	 * server/discover and per-request _meta negotiation; 2025-11-25 keeps the
+	 * initialize handshake for legacy clients (dual-stack, #38356 roadmap).
+	 * @var string[]
+	 */
+	const PROTOCOL_VERSIONS = array('2026-07-28', '2025-11-25');
+
+	/** @var int HTTP status the transport should send for the last handled request (spec: -32020/-32022 require 400) */
+	private $httpStatus = 200;
+
 	/** @var mixed|null The ID from the current JSON-RPC request */
 	private $requestId = null;
 
@@ -80,6 +91,69 @@ class MCPServer
 	}
 
 	/**
+	 * HTTP status code the transport must use for the last handled request.
+	 *
+	 * @return int 200, or 400 for HeaderMismatchError / UnsupportedProtocolVersionError
+	 */
+	public function getHttpStatus(): int
+	{
+		return $this->httpStatus;
+	}
+
+	/**
+	 * Validate the spec 2026-07-28 transport headers against the request body.
+	 *
+	 * Enforcement is presence-based for backward compatibility: a 2025-11-25
+	 * client sending no Mcp-* headers is untouched, but any header that IS
+	 * present must agree with the body (HeaderMismatchError -32020, HTTP 400)
+	 * and any protocol version named must be one we support
+	 * (UnsupportedProtocolVersionError -32022, HTTP 400). This is also the
+	 * enforcement point the Rate Limiting roadmap item keys on: proxies can
+	 * throttle per-tool on Mcp-Method/Mcp-Name without parsing bodies, because
+	 * we guarantee here that the headers never lie about the body.
+	 *
+	 * @param array<string, string> $headers HTTP request headers (any case)
+	 * @param array<string, mixed>  $request Decoded JSON-RPC request body
+	 * @return array{jsonrpc: string, id: int|string, error: array{code: int, message: string, data?: mixed}}|null Error response to emit, or null when valid
+	 */
+	public function validateTransportHeaders(array $headers, array $request): ?array
+	{
+		$this->requestId = $request['id'] ?? null;
+		$h = array_change_key_case($headers, CASE_LOWER);
+		$params = (isset($request['params']) && is_array($request['params'])) ? $request['params'] : array();
+		$meta = (isset($params['_meta']) && is_array($params['_meta'])) ? $params['_meta'] : array();
+
+		// MCP-Protocol-Version header: must be supported, and must match the
+		// per-request _meta value when both are present (schema: RequestMetaObject).
+		if (isset($h['mcp-protocol-version'])) {
+			$hver = trim($h['mcp-protocol-version']);
+			if (!in_array($hver, self::PROTOCOL_VERSIONS)) {
+				$this->httpStatus = 400;
+				return $this->errorResponse(-32022, 'Unsupported protocol version', array('requested' => $hver, 'supported' => self::PROTOCOL_VERSIONS));
+			}
+			$mver = isset($meta['io.modelcontextprotocol/protocolVersion']) ? (string) $meta['io.modelcontextprotocol/protocolVersion'] : null;
+			if ($mver !== null && $mver !== $hver) {
+				$this->httpStatus = 400;
+				return $this->errorResponse(-32020, 'MCP-Protocol-Version header does not match request _meta');
+			}
+		}
+
+		// Mcp-Method: when present, must equal the JSON-RPC method.
+		if (isset($h['mcp-method']) && trim($h['mcp-method']) !== (string) ($request['method'] ?? '')) {
+			$this->httpStatus = 400;
+			return $this->errorResponse(-32020, 'Mcp-Method header does not match request body method');
+		}
+
+		// Mcp-Name: when present, must equal params.name (tools/call, prompts/get).
+		if (isset($h['mcp-name']) && trim($h['mcp-name']) !== (string) ($params['name'] ?? '')) {
+			$this->httpStatus = 400;
+			return $this->errorResponse(-32020, 'Mcp-Name header does not match request body params.name');
+		}
+
+		return null;
+	}
+
+	/**
 	 * JSON-RPC 2.0 Router.
 	 *
 	 * Routes incoming requests to the appropriate handler method.
@@ -90,12 +164,20 @@ class MCPServer
 	 */
 	public function handleRequest(array $request): ?array
 	{
-		// Spec: JSON-RPC 2.0 check (allowing for broader compatibility)
-		if (!isset($request['jsonrpc']) || $request['jsonrpc'] !== '2.0' || !isset($request['method']) || !is_string($request['method'])) {
-			return $this->errorResponse(-32600, 'Invalid Request');
-		}
-
 		$this->requestId = $request['id'] ?? null;
+
+		// Spec: JSON-RPC 2.0 check. Per JSON-RPC 2.0, an Invalid Request gets
+		// an error response with the request id, or id null when it cannot be
+		// determined - never silence (id is captured above so errorResponse
+		// does not suppress; a null id is emitted explicitly here).
+		if (!isset($request['jsonrpc']) || $request['jsonrpc'] !== '2.0' || !isset($request['method']) || !is_string($request['method'])) {
+			$err = $this->errorResponse(-32600, 'Invalid Request');
+			if ($err === null) {
+				$err = ["jsonrpc" => "2.0", "id" => null, "error" => ["code" => -32600, "message" => "Invalid Request"]];
+			}
+
+			return $err;
+		}
 		$method = $request['method'] ?? '';
 		$params = $request['params'] ?? [];
 
@@ -105,9 +187,21 @@ class MCPServer
 			return null;
 		}
 
+		// Per-request negotiation (2026-07-28): an unsupported _meta protocol
+		// version is refused before dispatch. Absent _meta = legacy client, allowed.
+		if (is_array($params) && isset($params['_meta']['io.modelcontextprotocol/protocolVersion'])) {
+			$reqVer = (string) $params['_meta']['io.modelcontextprotocol/protocolVersion'];
+			if (!in_array($reqVer, self::PROTOCOL_VERSIONS)) {
+				$this->httpStatus = 400;
+				return $this->errorResponse(-32022, 'Unsupported protocol version', array('requested' => $reqVer, 'supported' => self::PROTOCOL_VERSIONS));
+			}
+		}
+
 		try {
 			switch ($method) {
 				// --- LIFECYCLE ---
+				case 'server/discover':
+					return $this->successResponse($this->handleDiscover());
 				case 'initialize':
 					return $this->successResponse($this->handleInitialize($params));
 				case 'notifications/initialized':
@@ -146,22 +240,58 @@ class MCPServer
 	 * Handles the 'initialize' request.
 	 *
 	 * @param array<string, mixed> $params Initialization parameters from the client.
-	 * @return array{protocolVersion: string, capabilities: array{tools: array{listChanged: bool}, resources: array{subscribe: bool, listChanged: bool}, prompts: array{listChanged: bool}, logging: object}, serverInfo: array{name: string, version: string}} Server capabilities and info.
+	 * @return array{protocolVersion: string, capabilities: array{tools: array{listChanged: bool}, resources: array{subscribe: bool, listChanged: bool}, prompts: array{listChanged: bool}}, serverInfo: array{name: string, version: string}} Server capabilities and info.
 	 */
 	private function handleInitialize(array $params): array
 	{
+		// Dual-stack: echo the client's requested version when we support it,
+		// otherwise answer with our newest (spec: client then decides).
+		$requested = isset($params['protocolVersion']) ? (string) $params['protocolVersion'] : '';
+		$negotiated = in_array($requested, self::PROTOCOL_VERSIONS) ? $requested : self::PROTOCOL_VERSIONS[0];
+
 		return [
-			'protocolVersion' => '2025-11-25',
-			'capabilities' => [
-				'tools' => ['listChanged' => false],
-				'resources' => ['subscribe' => false, 'listChanged' => false],
-				'prompts' => ['listChanged' => false],
-				'logging' => (object) []
-			],
+			'protocolVersion' => $negotiated,
+			'capabilities' => $this->serverCapabilities(),
 			'serverInfo' => [
 				'name' => 'Dolibarr MCP Server',
 				'version' => $this->version
 			]
+		];
+	}
+
+	/**
+	 * Capabilities shared by initialize and server/discover.
+	 * The 'logging' capability was dropped (deprecated in spec 2026-07-28 and
+	 * this server never emitted notifications/message).
+	 *
+	 * @return array{tools: array{listChanged: bool}, resources: array{subscribe: bool, listChanged: bool}, prompts: array{listChanged: bool}}
+	 */
+	private function serverCapabilities(): array
+	{
+		return [
+			'tools' => ['listChanged' => false],
+			'resources' => ['subscribe' => false, 'listChanged' => false],
+			'prompts' => ['listChanged' => false]
+		];
+	}
+
+	/**
+	 * Handles the 'server/discover' request (spec 2026-07-28, mandatory).
+	 * All fields below are required by the DiscoverResult schema; resultType
+	 * is injected by successResponse() like on every other result.
+	 *
+	 * @return array{supportedVersions: string[], capabilities: array<string, mixed>, cacheScope: string, ttlMs: int, instructions: string}
+	 */
+	private function handleDiscover(): array
+	{
+		return [
+			'supportedVersions' => self::PROTOCOL_VERSIONS,
+			'capabilities' => $this->serverCapabilities(),
+			// The advertised surface only changes with admin configuration or an
+			// upgrade: safe to cache, but it is per-installation, not user-specific.
+			'cacheScope' => 'public',
+			'ttlMs' => 3600000,
+			'instructions' => 'Dolibarr ERP/CRM MCP server. Tools are permission-filtered per authenticated user; lists honor Dolibarr entity and rights.'
 		];
 	}
 
@@ -372,6 +502,13 @@ class MCPServer
 	{
 		if ($this->requestId === null) {
 			return null;
+		}
+
+		// Spec 2026-07-28: every Result carries resultType. Everything this
+		// server returns today is final content; input_required arrives with
+		// the MRTR write-safety gate (#38356 design note).
+		if (is_array($result) && !isset($result['resultType'])) {
+			$result['resultType'] = 'complete';
 		}
 
 		return [
