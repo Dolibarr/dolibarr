@@ -2124,7 +2124,7 @@ while ($i < $imaxinloop) {
 		// Project title
 		if (!empty($arrayfields['p.title']['checked'])) {
 			print '<td class="" title="'.dolPrintHTMLForAttribute($obj->title).'">';
-			print '<div class="twolinesmax-normallineheight minwidth200onall">';
+			print '<div class="twolinesmax-normallineheight minwidth200onall spantitle">';
 			print dolPrintHTML($obj->title);
 			print '</div>';
 			print '</td>';

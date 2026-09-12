@@ -963,6 +963,10 @@ input.pageplusone {
 .opacitytransp {
 	opacity: 0;
 }
+.spantitle {
+	opacity: 0.5;
+	font-size: 0.95em;
+}
 .noopacity {
 	opacity: unset !important;
 }
@@ -1250,6 +1254,10 @@ textarea.centpercent {
 .select2-results__option .smallincombo {
 	font-size: 95%;
 	font-weight: bold;
+}
+.tdlineheightsmall {
+	padding-top: 0 !important;
+	padding-bottom: 0 !important;
 }
 .lineheightsmall {
 	line-height: 1.2em;

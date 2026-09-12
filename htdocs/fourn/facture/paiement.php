@@ -644,7 +644,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 							print '<th class="center">' . $langs->trans('Type') . '</th>';
 						}
 						print '<th class="center">'.$langs->trans('Date').'</th>';
-						print '<th class="center">'.$langs->trans('DateMaxPayment').'</th>';
+						print '<th class="center">'.$langs->trans('DateDue').'</th>';
 						if (isModEnabled("multicurrency")) {
 							$langs->load("multicurrency");
 							$labeltoshow = '<span class="small nowraponall">'.$langs->trans("MulticurrencyOriginalCurrency").'</span>';
@@ -706,7 +706,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 							print '<td data-col="object-name" class="nowraponall">';
 							print '<div class="inline-block lineheightsmall">';
 							print $invoicesupplierstatic->getNomUrl(1);
-							print '<br><span class="opacitymedium small" title="'.$langs->trans("RefSupplier").'">';
+							print '<br><span class="opacitymedium spantitle" title="'.$langs->trans("RefSupplier").'">';
 							print dolPrintHTML($objp->ref_supplier);
 							print '</span>';
 							print '</div>';
