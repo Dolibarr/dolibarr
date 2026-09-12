@@ -1186,6 +1186,7 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 				print '<td>' . $langs->trans("Name") . '</td>';
 				print '<td class="center">' . $langs->trans("DateStart") . '</td>';
 				print '<td class="center">' . $langs->trans("DateEnd") . '</td>';
+				print '<td class="right">' . $langs->trans("Budget") . '</td>';
 				print '<td class="right">' . $langs->trans("OpportunityAmountShort") . '</td>';
 				print '<td class="center">' . $langs->trans("OpportunityStatusShort") . '</td>';
 				print '<td class="right">' . $langs->trans("OpportunityProbabilityShort") . '</td>';
@@ -1220,6 +1221,12 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 							print '<td class="center">' . dol_print_date($db->jdate($obj->do), "day") . '</td>';
 							// Date end
 							print '<td class="center">' . dol_print_date($db->jdate($obj->de), "day") . '</td>';
+							// Budget amount
+							print '<td class="right">';
+							if ($obj->budget_amount) {
+								print '<span class="amount">' . price($obj->budget_amount, 1, '', 1, -1, -1, '') . '</span>';
+							}
+							print '</td>';
 							// Opp amount
 							print '<td class="right">';
 							if ($obj->opp_status_code) {
