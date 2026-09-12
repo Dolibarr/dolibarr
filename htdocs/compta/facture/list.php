@@ -2381,7 +2381,7 @@ if ($num > 0) {
 		$multicurrency_totalpay = $multicurrency_paiement + $multicurrency_totalcreditnotes + $multicurrency_totaldeposits;
 		$multicurrency_remaintopay = (float) price2num($facturestatic->multicurrency_total_ttc - $multicurrency_totalpay);
 
-		if ($facturestatic->status == Facture::STATUS_CLOSED) {
+		if (in_array($facturestatic->status, [Facture::STATUS_CLOSED, Facture::STATUS_ABANDONED])) {
 			$remaintopay = 0;
 			$multicurrency_remaintopay = 0;
 		}
