@@ -234,11 +234,13 @@ class ProjectStats extends Stats
 			if ($this->opp_status == 'all') {
 				$sqlwhere[] = " (t.fk_opp_status IS NOT NULL AND t.fk_opp_status <> -1)";
 			}
+			// Both filters use the same partition helper, so a LOST opportunity is reported by
+			// 'notopenedopp' instead of being missing from both filters.
 			if ($this->opp_status == 'openedopp') {
-				$sqlwhere[] = " (t.fk_opp_status IS NOT NULL AND t.fk_opp_status <> -1 AND t.fk_opp_status NOT IN (SELECT rowid FROM ".MAIN_DB_PREFIX."c_lead_status WHERE code IN ('WON','LOST')))";
+				$sqlwhere[] = $object->getViewFilterSQL('lead', 't');
 			}
 			if ($this->opp_status == 'notopenedopp') {
-				$sqlwhere[] = " (t.fk_opp_status IS NULL OR t.fk_opp_status = -1 OR t.fk_opp_status IN (SELECT rowid FROM ".MAIN_DB_PREFIX."c_lead_status WHERE code = 'WON'))";
+				$sqlwhere[] = $object->getViewFilterSQL('project', 't');
 			}
 			if ($this->opp_status == 'none') {
 				$sqlwhere[] = " (t.fk_opp_status IS NULL OR t.fk_opp_status = -1)";
