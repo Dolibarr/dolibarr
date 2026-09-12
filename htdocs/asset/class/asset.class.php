@@ -870,7 +870,10 @@ class Asset extends CommonObject
 		$sql .= " " . (int) $this->id;
 		$sql .= ", '" . $this->db->escape($mode) . "'";
 		$sql .= ", '" . $this->db->escape($ref) . "'";
-		$sql .= ", '" . $this->db->idate($depreciation_date) . "'";
+		// The period bounds are anchored on GMT midnight, so the date must be written in GMT too.
+		// Formatting it in the server timezone would store the next calendar day for any server
+		// east of UTC, since the bound is the last second of the period.
+		$sql .= ", '" . $this->db->idate($depreciation_date, 'gmt') . "'";
 		$sql .= ", " . (float) $depreciation_ht;
 		$sql .= ", " . (float) $cumulative_depreciation_ht;
 		$sql .= ", '" . $this->db->escape($accountancy_code_debit) . "'";
