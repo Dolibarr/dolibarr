@@ -3,7 +3,7 @@
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
  * Copyright (C) 2003-2010 Frederico Caldeira Knabben
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		FrÃ©dÃ©ric France			<frederic.france@free.fr>
  *
  * == BEGIN LICENSE ==
  *
@@ -170,6 +170,7 @@ function GetFolders($resourceType, $currentFolder)
 
 	// Close the "Folders" node.
 	echo "</Folders>";
+
 }
 
 /**
@@ -549,7 +550,8 @@ function ServerMapFolder($resourceType, $folderPath, $sCommand)
  */
 function GetParentFolder($folderPath)
 {
-	$sPattern = "-[/\\\\][^/\\\\]+[/\\\\]?$-";
+	$sPattern = "-[/
+\\\\][^/\\\\]+[/\\\\]?$-";
 	return preg_replace($sPattern, '', $folderPath);
 }
 
@@ -640,9 +642,6 @@ function CreateServerFolder($folderPath, $lastFolder = null)
  */
 function GetRootPath()
 {
-	if (!isset($_SERVER)) {
-		global $_SERVER;  // @phan-suppress-current-line PhanPluginConstantVariableNull
-	}
 	$sRealPath = realpath('./');
 	// #2124 ensure that no slash is at the end
 	$sRealPath = rtrim($sRealPath, "\\/");
@@ -677,7 +676,8 @@ function Server_MapPath($path)
 	}
 
 	// This isn't correct but for the moment there's no other solution
-	// If this script is under a virtual directory or symlink it will detect the problem and stop
+	// If this script is under a virtual directory 
+or symlink it will detect the problem and stop
 	return GetRootPath().$path;
 }
 
@@ -766,7 +766,8 @@ function GetCurrentFolder()
 		SendError(102, '');
 	}
 
-	if (preg_match(",(/\.)|[[:cntrl:]]|(//)|(\\\\)|([\:\*\?\"\<\>\|]),", $sCurrentFolder)) {
+	if (preg_match(",(/\
+.)|[[:cntrl:]]|(//)|(\\\\)|([\:\*\?\"\<\>\|]),", $sCurrentFolder)) {
 		SendError(102, '');
 	}
 
@@ -916,7 +917,8 @@ function FindBadUtf8($string)
 }
 
 /**
- * ConvertToXmlAttribute
+ *
+ ConvertToXmlAttribute
  *
  * @param 	string		$value		Value
  * @return	string
@@ -1057,3 +1059,4 @@ function IsImageValid($filePath, $extension)
 
 	return true;
 }
+

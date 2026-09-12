@@ -3,7 +3,7 @@
  * Copyright (C) 2013-2026  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2014       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2019       Eric Seigne             <eric.seigne@cap-rel.fr>
- * Copyright (C) 2021-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2021-2026  FrÃ©dÃ©ric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -38,7 +38,7 @@
  */
 function is_empty($var, $allow_false = false, $allow_ws = false)
 {
-	if (is_null($var) || !isset($var) || ($allow_ws == false && trim($var) == "" && !is_bool($var)) || ($allow_false === false && $var === false) || (is_array($var) && empty($var))) {
+	if (is_null($var) || ($allow_ws == false && trim($var) == "" && !is_bool($var)) || ($allow_false == false && $var === false) || (is_array($var) && empty($var))) {
 		return true;
 	}
 	return false;
@@ -96,7 +96,8 @@ function accounting_transaction_prepare_head(BookKeeping $object, $mode = '', $t
 
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
-	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__'); to add new tab
+	// $this->
+tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__'); to add new tab
 	// $this->tabs = array('entity:-tabname); to remove a tab
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'accounting_transaction');
 
@@ -441,7 +442,8 @@ function getDefaultDatesForTransfer()
  * 	@param 	?int 		$from_time			[=null] Get current time or set time to find fiscal period
  *	@param	'tzserver'|'gmt'	$gm			'gmt' => we return GMT timestamp (recommended), 'tzserver' => we return in the PHP server timezone
  * 	@param	int			$withenddateonly	Do not return period if end date is not defined
- * 	@return array{date_start:int,date_end:int}	Period of fiscal year : [date_start, date_end]
+ * 	@return
+ array{date_start:int,date_end:int}	Period of fiscal year : [date_start, date_end]
  */
 function getCurrentPeriodOfFiscalYear($db, $conf, $from_time = null, $gm = 'tzserver', $withenddateonly = 1)
 {
@@ -506,7 +508,8 @@ function getCurrentPeriodOfFiscalYear($db, $conf, $from_time = null, $gm = 'tzse
 /**
  * Get next fiscal year period after a given date
  *
- * @param  DoliDB   $db             Database handler
+ * @param  DoliDB   $db             Database
+ handler
  * @param  int      $after_date     Get fiscal period that starts after this date
  * @param  'tzserver'|'gmt' $gm     'gmt' => we return GMT timestamp, 'tzserver' => PHP server timezone
  * @return array{date_start:int,date_end:int}|null Period of next fiscal year or null if not found
@@ -536,3 +539,4 @@ function getNextFiscalYear($db, $after_date, $gm = 'tzserver')
 
 	return null;  // No next fiscal year found
 }
+
