@@ -316,29 +316,29 @@ class Don extends CommonObject
 		$err = 0;
 		$amount_invalid = 0;
 
-		if (dol_strlen(trim($this->societe)) == 0) {
-			if ((dol_strlen(trim($this->lastname)) + dol_strlen(trim($this->firstname))) == 0) {
+		if (dol_strlen(trim((string) $this->societe)) == 0) {
+			if ((dol_strlen(trim((string) $this->lastname)) + dol_strlen(trim((string) $this->firstname))) == 0) {
 				$error_string[] = $langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Company').'/'.$langs->transnoentitiesnoconv('Firstname').'-'.$langs->transnoentitiesnoconv('Lastname'));
 				$err++;
 			}
 		}
 
-		if (dol_strlen(trim($this->address)) == 0) {
+		if (dol_strlen(trim((string) $this->address)) == 0) {
 			$error_string[] = $langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Address'));
 			$err++;
 		}
 
-		if (dol_strlen(trim($this->zip)) == 0) {
+		if (dol_strlen(trim((string) $this->zip)) == 0) {
 			$error_string[] = $langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Zip'));
 			$err++;
 		}
 
-		if (dol_strlen(trim($this->town)) == 0) {
+		if (dol_strlen(trim((string) $this->town)) == 0) {
 			$error_string[] = $langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Town'));
 			$err++;
 		}
 
-		if (dol_strlen(trim($this->email)) == 0) {
+		if (dol_strlen(trim((string) $this->email)) == 0) {
 			$error_string[] = $langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('EMail'));
 			$err++;
 		}
@@ -543,9 +543,9 @@ class Don extends CommonObject
 		$sql .= ", note_public=".(!empty($this->note_public) ? ("'".$this->db->escape($this->note_public)."'") : "NULL");
 		$sql .= ", datedon='".$this->db->idate($this->date)."'";
 		$sql .= ", date_valid=".($this->date_valid ? "'".$this->db->idate($this->date)."'" : "null");
-		$sql .= ", email='".$this->db->escape(trim($this->email))."'";
-		$sql .= ", phone='".$this->db->escape(trim($this->phone))."'";
-		$sql .= ", phone_mobile='".$this->db->escape(trim($this->phone_mobile))."'";
+		$sql .= ", email='".$this->db->escape(trim((string) $this->email))."'";
+		$sql .= ", phone='".$this->db->escape(trim((string) $this->phone))."'";
+		$sql .= ", phone_mobile='".$this->db->escape(trim((string) $this->phone_mobile))."'";
 		$sql .= ", fk_statut=".((int) $this->status);
 		$sql .= " WHERE rowid = ".((int) $this->id);
 

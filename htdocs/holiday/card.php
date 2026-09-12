@@ -1725,9 +1725,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 
 			$MAXEVENT = 10;
 
-			// TODO Add the page holiday_agenda.php
-			//$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/holiday/holiday_agenda.php?id='.$object->id);
-			$morehtmlcenter = '';
+			$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/holiday/holiday_agenda.php?id='.$object->id);
 
 			// List of actions on element
 			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';

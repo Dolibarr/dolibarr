@@ -306,7 +306,7 @@ print '<br>';
 // Example 1 : Adding jquery code
 print '<script type="text/javascript">
 function confirm_erase() {
-	return confirm("'.dol_escape_js($langs->trans("ConfirmEraseAllCurrentBarCode")).'");
+	return confirm(\''.dol_escape_js($langs->trans("ConfirmEraseAllCurrentBarCode")).'\');
 }
 </script>';
 

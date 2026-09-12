@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2026	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2026	Nick Fragoulis
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,6 +76,7 @@ class MCPServer
 		// External clients (Claude Desktop, Cursor, etc.) will only see and be able to
 		// call tools that the admin has explicitly allowed for this context.
 		$this->mcpHandler = new McpHandler($this->db, $this->user, $this->conf, McpHandler::CTX_MCP_SERVER);
+		$this->mcpHandler->loadTools();
 	}
 
 	/**
