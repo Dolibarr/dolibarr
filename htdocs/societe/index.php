@@ -67,7 +67,7 @@ if (!isset($form) || !is_object($form)) {
 // Load $resultboxes
 $resultboxes = FormOther::getBoxesArea($user, "3");
 
-if (GETPOST('addbox')) {
+if (GETPOST('addbox', 'alpha')) {
 	// Add box (when submit is done from a form when ajax disabled)
 	require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
 	$zone = GETPOSTINT('areacode');
@@ -421,10 +421,13 @@ $sql .= ", s.canvas";
 $sql .= ", s.status as status";
 $sql .= ", GREATEST(sp.tms, spef.tms) as date_modification, sp.statut as cstatus";
 $sql .= ", sp.rowid as cid, sp.canvas as ccanvas, sp.email as cemail, sp.firstname, sp.lastname";
-$sql .= ", sp.address as caddress, sp.phone as cphone";
+$sql .= ", sp.address as caddress, sp.zip as czip, sp.town as ctown, sp.fk_pays as ccountry_id, sp.fk_departement as cstate_id, sp.use_thirdparty_address, sp.phone as cphone";
+$sql .= ", cco.label as ccountry, cco.code as ccountry_code, cstate.nom as cstate, cstate.code_departement as cstate_code";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= " INNER JOIN ".MAIN_DB_PREFIX."socpeople as sp ON sp.fk_soc = s.rowid AND ((sp.fk_user_creat = ".((int) $user->id)." AND sp.priv = 1) OR sp.priv = 0)";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "socpeople_extrafields as spef ON spef.fk_object = sp.rowid";
+$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_country as cco ON cco.rowid = sp.fk_pays";
+$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_departements as cstate ON cstate.rowid = sp.fk_departement";
 if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_perentity as spe ON spe.fk_soc = s.rowid AND spe.entity = " . ((int) $conf->entity);
 }
@@ -503,9 +506,19 @@ if ($result) {
 			$contact_static->lastname = $objp->lastname;
 			$contact_static->email = $objp->cemail;
 			$contact_static->socid = $objp->rowid;
+			$contact_static->fk_soc = $objp->rowid;
 			$contact_static->canvas = $objp->ccanvas;
 			$contact_static->phone_pro = $objp->cphone;
 			$contact_static->address = $objp->caddress;
+			$contact_static->zip = $objp->czip;
+			$contact_static->town = $objp->ctown;
+			$contact_static->country_id = $objp->ccountry_id;
+			$contact_static->country = $objp->ccountry;
+			$contact_static->country_code = $objp->ccountry_code;
+			$contact_static->state_id = $objp->cstate_id;
+			$contact_static->state = $objp->cstate;
+			$contact_static->state_code = $objp->cstate_code;
+			$contact_static->use_thirdparty_address = isset($objp->use_thirdparty_address) && !is_null($objp->use_thirdparty_address) ? (int) $objp->use_thirdparty_address : null;
 
 			$lastmodifiedcontact .= '<tr class="oddeven">';
 			// Contact

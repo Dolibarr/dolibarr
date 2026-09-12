@@ -1486,10 +1486,10 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 	$extrafieldsobjectkey = $contactstatic->table_element;
 	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_list_search_param.tpl.php';
 
-	$sql = "SELECT t.rowid, t.entity, t.lastname, t.firstname, t.fk_pays as country_id, t.civility, t.poste,";
+	$sql = "SELECT t.rowid, t.entity, t.lastname, t.firstname, t.fk_pays as country_id, t.fk_departement as state_id, t.civility, t.poste,";
 	$sql .= " t.phone as phone_pro, t.phone_mobile, t.phone_perso, t.fax, t.email, t.socialnetworks, t.statut, t.photo, t.fk_soc,";
 	$sql .= " t.civility as civility_id, t.address, t.zip, t.town, t.birthday,";
-	$sql .= " t.note_private";
+	$sql .= " t.note_private, t.use_thirdparty_address";
 	$sql .= " FROM " . MAIN_DB_PREFIX . "socpeople as t";
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "socpeople_extrafields as ef on (t.rowid = ef.fk_object)";
 	$sql .= " WHERE t.fk_soc = " . ((int) $object->id);
@@ -1648,7 +1648,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 
 	$i = -1;
 
-	if ($num || (GETPOST('button_search') || GETPOST('button_search.x') || GETPOST('button_search_x'))) {
+	if ($num || GETPOST('button_search', 'alpha') || GETPOST('button_search.x', 'alpha') || GETPOST('button_search_x', 'alpha')) {
 		$i = 0;
 
 		while ($i < $num) {
@@ -1663,9 +1663,14 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 			$contactstatic->civility_id = $obj->civility_id;
 			$contactstatic->civility_code = $obj->civility_id;
 			$contactstatic->poste = $obj->poste;
+			$contactstatic->socid = $obj->fk_soc;
+			$contactstatic->fk_soc = $obj->fk_soc;
 			$contactstatic->address = $obj->address;
 			$contactstatic->zip = $obj->zip;
 			$contactstatic->town = $obj->town;
+			$contactstatic->country_id = $obj->country_id;
+			$contactstatic->state_id = $obj->state_id;
+			$contactstatic->use_thirdparty_address = isset($obj->use_thirdparty_address) && !is_null($obj->use_thirdparty_address) ? (int) $obj->use_thirdparty_address : null;
 			$contactstatic->phone_pro = $obj->phone_pro;
 			$contactstatic->phone_mobile = $obj->phone_mobile;
 			$contactstatic->phone_perso = $obj->phone_perso;
@@ -1691,6 +1696,8 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 					$obj->$key = $val;
 				}
 			}
+
+			$effectiveaddressobject = $contactstatic->getEffectiveAddressObject($object);
 
 			print '<tr class="oddeven">';
 
