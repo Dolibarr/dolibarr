@@ -2,6 +2,7 @@
 /* Copyright (C) 2017-2019  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026       Jose Martinez           <jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -551,9 +552,9 @@ if ($action == 'confirm_deleteline' && $confirm == 'yes' && !empty($permissionto
 
 // Action validate object
 if ($action == 'confirm_validate' && $confirm == 'yes' && $permissiontoadd) {
-	if ($object->element == 'inventory' && !empty($include_sub_warehouse)) {
-		// Can happen when the conf INVENTORY_INCLUDE_SUB_WAREHOUSE is set
-		$result = $object->validate($user, false, $include_sub_warehouse);
+	if ($object->element == 'inventory') {
+		// $include_sub_warehouse can be set when the conf INVENTORY_INCLUDE_SUB_WAREHOUSE is set, $no_prefill to start an empty inventory
+		$result = $object->validate($user, false, (empty($include_sub_warehouse) ? 0 : $include_sub_warehouse), (empty($no_prefill) ? 0 : 1));
 	} else {
 		$result = $object->validate($user);
 	}
