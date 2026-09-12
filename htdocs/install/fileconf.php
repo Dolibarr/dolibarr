@@ -6,7 +6,7 @@
  * Copyright (C) 2004       Sebastien DiCintio      <sdicintio@ressource-toi.org>
  * Copyright (C) 2005-2011  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025  		Charlene Benke          <charlene@patas-monkey.com>
  *
@@ -708,45 +708,45 @@ function jscheckparam()
 	if (document.forminstall.main_dir.value == '')
 	{
 		ok=false;
-		alert('<?php echo dol_escape_js($langs->transnoentities("ErrorFieldRequired", $langs->transnoentitiesnoconv("WebPagesDirectory"))); ?>');
+		alert(<?php echo "'".dol_escape_js($langs->transnoentities("ErrorFieldRequired", $langs->transnoentitiesnoconv("WebPagesDirectory")))."'" ; ?>);
 	}
 	else if (document.forminstall.main_data_dir.value == '')
 	{
 		ok=false;
-		alert('<?php echo dol_escape_js($langs->transnoentities("ErrorFieldRequired", $langs->transnoentitiesnoconv("DocumentsDirectory"))); ?>');
+		alert(<?php echo "'".dol_escape_js($langs->transnoentities("ErrorFieldRequired", $langs->transnoentitiesnoconv("DocumentsDirectory")))."'" ; ?>);
 	}
 	else if (document.forminstall.main_url.value == '')
 	{
 		ok=false;
-		alert('<?php echo dol_escape_js($langs->transnoentities("ErrorFieldRequired", $langs->transnoentitiesnoconv("URLRoot"))); ?>');
+		alert(<?php echo "'".dol_escape_js($langs->transnoentities("ErrorFieldRequired", $langs->transnoentitiesnoconv("URLRoot")))."'" ; ?>);
 	}
 	else if (document.forminstall.db_host.value == '')
 	{
 		ok=false;
-		alert('<?php echo dol_escape_js($langs->transnoentities("ErrorFieldRequired", $langs->transnoentitiesnoconv("Server"))); ?>');
+		alert(<?php echo "'".dol_escape_js($langs->transnoentities("ErrorFieldRequired", $langs->transnoentitiesnoconv("Server")))."'" ; ?>);
 	}
 	else if (document.forminstall.db_name.value == '')
 	{
 		ok=false;
-		alert('<?php echo dol_escape_js($langs->transnoentities("ErrorFieldRequired", $langs->transnoentitiesnoconv("DatabaseName"))); ?>');
+		alert(<?php echo "'".dol_escape_js($langs->transnoentities("ErrorFieldRequired", $langs->transnoentitiesnoconv("DatabaseName")))."'" ; ?>);
 	}
 	else if (! checkDatabaseName(document.forminstall.db_name.value))
 	{
 		ok=false;
-		alert('<?php echo dol_escape_js($langs->transnoentities("ErrorFieldCanNotContainSpecialCharacters", $langs->transnoentitiesnoconv("DatabaseName"))); ?>');
+		alert(<?php echo "'".dol_escape_js($langs->transnoentities("ErrorFieldCanNotContainSpecialCharacters", $langs->transnoentitiesnoconv("DatabaseName")))."'" ; ?>);
 	}
 	// If create database asked
 	else if (document.forminstall.db_create_database.checked == true && (document.forminstall.db_user_root.value == ''))
 	{
 		ok=false;
-		alert('<?php echo dol_escape_js($langs->transnoentities("YouAskToCreateDatabaseSoRootRequired")); ?>');
+		alert(<?php echo "'".dol_escape_js($langs->transnoentities("YouAskToCreateDatabaseSoRootRequired"))."'" ; ?>);
 		init_needroot();
 	}
 	// If create user asked
 	else if (document.forminstall.db_create_user.checked == true && (document.forminstall.db_user_root.value == ''))
 	{
 		ok=false;
-		alert('<?php echo dol_escape_js($langs->transnoentities("YouAskToCreateDatabaseUserSoRootRequired")); ?>');
+		alert(<?php echo "'".dol_escape_js($langs->transnoentities("YouAskToCreateDatabaseUserSoRootRequired"))."'" ; ?>);
 		init_needroot();
 	}
 

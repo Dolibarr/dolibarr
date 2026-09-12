@@ -17,7 +17,7 @@
  * Copyright (C) 2021       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2023       Joachim Küter      		<git-jk@bloxera.com>
  * Copyright (C) 2023       Eric Seigne      		<eric.seigne@cap-rel.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026		William Mead			<william@m34d.com>
  * Copyright (C) 2026		Jose MARTINEZ			<jose.martinez@pichinov.com>
  *
@@ -4028,7 +4028,7 @@ if (!function_exists("llxFooter")) {
 									id: <?php echo $object->id; ?>
 									, element: '<?php echo dol_escape_js($object->element) ?>'
 									, action: 'DOC_PREVIEW'
-									, lang: '<?php echo dol_escape_js($langs->defaultlang); ?>'
+									, lang: <?php echo "'".dol_escape_js($langs->defaultlang))."'" ; ?>
 									, token: '<?php echo currentToken(); ?>'
 								}
 						);
@@ -4040,7 +4040,7 @@ if (!function_exists("llxFooter")) {
 									id: <?php echo $object->id; ?>
 									, element: '<?php echo dol_escape_js($object->element) ?>'
 									, action: 'DOC_DOWNLOAD'
-									, lang: '<?php echo dol_escape_js($langs->defaultlang); ?>'
+									, lang: <?php echo "'".dol_escape_js($langs->defaultlang))."'" ; ?>
 									, token: '<?php echo currentToken(); ?>'
 								}
 						);
