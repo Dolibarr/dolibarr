@@ -978,8 +978,7 @@ function isComplexScript(string $text)
  *
  * Translators translate UI keys as natural dictionary
  * words - as they should. Inflected languages then break exact substring
- * matching ("ÏÎ¹Î¼Î¿Î»ÏÎ³Î¹Î¿" never appears inside "ÏÎ¹Î¼Î¿Î»Î¿Î³Î¯ÏÎ½"),
- * so the code derives a match-friendly form instead of asking humans for
+ * matching so the code derives a match-friendly form instead of asking humans for
  * stems: lowercase, strip combining accents (Unicode NFD marks, when the
  * intl Normalizer is available), and for keywords drop the trailing
  * inflection-bearing characters. No language is special-cased.
