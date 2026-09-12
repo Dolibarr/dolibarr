@@ -96,6 +96,21 @@ class modSupplierOrder extends DolibarrModules
 				"Name of the supplier invoice numbering manager",
 				0,
 			],
+			// Add Ability to set Shipping ShippingMethod and Tracking Info (AWB)
+			[
+				"COMMANDE_SUPPLIER_ADDON_SHIPPING_METHOD_ENABLED",
+				"bool",
+				"",
+				"Enable selection of shipping carrier for supplier orders.",
+				0,
+			],
+			[
+				"COMMANDE_SUPPLIER_ADDON_TRACKING_STATUS",
+				"chaine",
+				"DOL_DATA_ROOT" . ($conf->entity > 1 ? '/' . ((int) $conf->entity) : '') . "/doctemplates/supplier_orders",
+				"",
+				0,
+			],
 			// Add ability ODT for Supplier orders
 			[
 				"SUPPLIER_ORDER_ADDON_PDF_ODT_PATH",
@@ -163,19 +178,18 @@ class modSupplierOrder extends DolibarrModules
 		$this->rights[$r][4] = 'receptionner';
 
 		$r++;
-		$this->rights[$r][0] = 1159;
-		$this->rights[$r][1] = 'Check/Uncheck a supplier order reception';
-		$this->rights[$r][2] = 'w';
-		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'supplier_order_advance';
-		$this->rights[$r][5] = 'check';
-
-		$r++;
 		$this->rights[$r][0] = 1158;
 		$this->rights[$r][1] = 'Delete a purchase order';
 		$this->rights[$r][2] = 'd';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'supprimer';
+
+		$r++;
+		$this->rights[$r][0] = 1159;
+		$this->rights[$r][1] = 'Check/Uncheck a supplier order reception';
+		$this->rights[$r][2] = 'w';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'supplier_order_advance';
 
 		if (getDolGlobalString('SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED')) {
 			$r++;
@@ -192,6 +206,14 @@ class modSupplierOrder extends DolibarrModules
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'export';
+
+		$r++;
+		$this->rights[$r][0] = 1162;
+		$this->rights[$r][1] = 'Manage shipping and tracking info'; // New: Required permission for tracking/shipping details.
+		$this->rights[$r][2] = 'w';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'manage_shipping_tracking';
+
 
 		// Menus
 		//-------
