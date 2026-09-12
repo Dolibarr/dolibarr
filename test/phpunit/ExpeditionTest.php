@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2023       Alexandre Janniaux      <alexandre.janniaux@gmail.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026       Marukome0743
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +30,7 @@ global $conf,$user,$langs,$db;
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/societe/class/societe.class.php';
 require_once dirname(__FILE__).'/../../htdocs/expedition/class/expedition.class.php';
+require_once dirname(__FILE__).'/../../htdocs/product/stock/class/mouvementstock.class.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 $langs->load("dict");
@@ -49,6 +51,133 @@ $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
  */
 class ExpeditionTest extends CommonClassTest
 {
+	/**
+	 * Check that deleting a shipment restores the stock of sub-products.
+	 *
+	 * @return void
+	 */
+	public function testDeleteRestoresSubProductStock()
+	{
+		global $conf, $db, $user;
+
+		$oldStockEnabled = $conf->stock->enabled;
+		$oldSubProducts = getDolGlobalString('PRODUIT_SOUSPRODUITS');
+		$oldIndependentStock = getDolGlobalString('INDEPENDANT_SUBPRODUCT_STOCK');
+		$oldCalculateOnShipment = getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT');
+		$oldParentStockMove = getDolGlobalString('PRODUIT_SOUSPRODUITS_ALSO_ENABLE_PARENT_STOCK_MOVE');
+
+		$conf->stock->enabled = 1;
+		$conf->global->PRODUIT_SOUSPRODUITS = 1;
+		$conf->global->INDEPENDANT_SUBPRODUCT_STOCK = 0;
+		$conf->global->STOCK_CALCULATE_ON_SHIPMENT = 1;
+		$conf->global->PRODUIT_SOUSPRODUITS_ALSO_ENABLE_PARENT_STOCK_MOVE = 0;
+
+		$suffix = dol_print_date(dol_now(), '%Y%m%d%H%M%S').'-'.mt_rand(1000, 9999);
+		$parentId = 0;
+		$childId = 0;
+		$warehouseId = 0;
+		$shipmentId = 0;
+		$thirdpartyId = 0;
+
+		try {
+			$thirdparty = new Societe($db);
+			$thirdparty->name = 'Expedition stock restore '.$suffix;
+			$thirdpartyId = $thirdparty->create($user);
+			$this->assertGreaterThan(0, $thirdpartyId, $thirdparty->errorsToString());
+
+			$sql = "INSERT INTO ".$db->prefix()."entrepot (ref, datec, entity, statut)";
+			$sql .= " VALUES ('".$db->escape('WH-'.$suffix)."', '".$db->idate(dol_now())."', ".((int) $conf->entity).", 1)";
+			$this->assertTrue((bool) $db->query($sql), (string) $db->lasterror());
+			$warehouseId = $db->last_insert_id($db->prefix().'entrepot');
+
+			$sql = "INSERT INTO ".$db->prefix()."product (ref, entity, label, fk_product_type, tosell, tobuy, datec)";
+			$sql .= " VALUES ('".$db->escape('PARENT-'.$suffix)."', ".((int) $conf->entity).", 'Parent', 0, 1, 0, '".$db->idate(dol_now())."')";
+			$this->assertTrue((bool) $db->query($sql), (string) $db->lasterror());
+			$parentId = $db->last_insert_id($db->prefix().'product');
+
+			$sql = "INSERT INTO ".$db->prefix()."product (ref, entity, label, fk_product_type, tosell, tobuy, datec)";
+			$sql .= " VALUES ('".$db->escape('CHILD-'.$suffix)."', ".((int) $conf->entity).", 'Child', 0, 1, 0, '".$db->idate(dol_now())."')";
+			$this->assertTrue((bool) $db->query($sql), (string) $db->lasterror());
+			$childId = $db->last_insert_id($db->prefix().'product');
+
+			$sql = "INSERT INTO ".$db->prefix()."product_association (fk_product_pere, fk_product_fils, qty, incdec, rang)";
+			$sql .= " VALUES (".((int) $parentId).", ".((int) $childId).", 3, 1, 1)";
+			$this->assertTrue((bool) $db->query($sql), (string) $db->lasterror());
+
+			$sql = "INSERT INTO ".$db->prefix()."product_stock (fk_product, fk_entrepot, reel) VALUES";
+			$sql .= " (".((int) $parentId).", ".((int) $warehouseId).", 10),";
+			$sql .= " (".((int) $childId).", ".((int) $warehouseId).", 10)";
+			$this->assertTrue((bool) $db->query($sql), (string) $db->lasterror());
+
+			$sql = "INSERT INTO ".$db->prefix()."expedition";
+			$sql .= " (ref, entity, fk_soc, date_creation, date_valid, fk_user_author, fk_user_valid, fk_statut)";
+			$sql .= " VALUES ('".$db->escape('SHIP-'.$suffix)."', ".((int) $conf->entity).", ".((int) $thirdpartyId).",";
+			$sql .= " '".$db->idate(dol_now())."', '".$db->idate(dol_now())."', ".((int) $user->id).", ".((int) $user->id).", 1)";
+			$this->assertTrue((bool) $db->query($sql), (string) $db->lasterror());
+			$shipmentId = $db->last_insert_id($db->prefix().'expedition');
+
+			$sql = "INSERT INTO ".$db->prefix()."expeditiondet";
+			$sql .= " (fk_expedition, element_type, fk_product, qty, fk_entrepot, rang)";
+			$sql .= " VALUES (".((int) $shipmentId).", 'commande', ".((int) $parentId).", 2, ".((int) $warehouseId).", 1)";
+			$this->assertTrue((bool) $db->query($sql), (string) $db->lasterror());
+
+			$movement = new MouvementStock($db);
+			$result = $movement->livraison($user, $parentId, $warehouseId, 2, 0, 'ExpeditionTest validation');
+			$this->assertGreaterThanOrEqual(0, $result, $movement->errorsToString());
+			$this->assertEquals(4.0, $this->getProductStock($childId, $warehouseId));
+
+			$shipment = new Expedition($db);
+			$this->assertGreaterThan(0, $shipment->fetch($shipmentId));
+			$result = $shipment->delete($user);
+			$this->assertGreaterThan(0, $result, $shipment->errorsToString());
+			$this->assertEquals(10.0, $this->getProductStock($childId, $warehouseId));
+		} finally {
+			if ($shipmentId > 0) {
+				$db->query("DELETE FROM ".$db->prefix()."expeditiondet WHERE fk_expedition = ".((int) $shipmentId));
+				$db->query("DELETE FROM ".$db->prefix()."expedition WHERE rowid = ".((int) $shipmentId));
+			}
+			if ($parentId > 0 || $childId > 0) {
+				$db->query("DELETE FROM ".$db->prefix()."product_stock WHERE fk_product IN (".((int) $parentId).", ".((int) $childId).")");
+				$db->query("DELETE FROM ".$db->prefix()."product_association WHERE fk_product_pere = ".((int) $parentId));
+				$db->query("DELETE FROM ".$db->prefix()."product WHERE rowid IN (".((int) $parentId).", ".((int) $childId).")");
+			}
+			if ($warehouseId > 0) {
+				$db->query("DELETE FROM ".$db->prefix()."entrepot WHERE rowid = ".((int) $warehouseId));
+			}
+			if ($thirdpartyId > 0) {
+				$thirdparty = new Societe($db);
+				$thirdparty->fetch($thirdpartyId);
+				$thirdparty->delete($thirdpartyId, $user);
+			}
+
+			$conf->stock->enabled = $oldStockEnabled;
+			$conf->global->PRODUIT_SOUSPRODUITS = $oldSubProducts;
+			$conf->global->INDEPENDANT_SUBPRODUCT_STOCK = $oldIndependentStock;
+			$conf->global->STOCK_CALCULATE_ON_SHIPMENT = $oldCalculateOnShipment;
+			$conf->global->PRODUIT_SOUSPRODUITS_ALSO_ENABLE_PARENT_STOCK_MOVE = $oldParentStockMove;
+		}
+	}
+
+	/**
+	 * Return the real stock for a product in a warehouse.
+	 *
+	 * @param int $productId Product ID
+	 * @param int $warehouseId Warehouse ID
+	 * @return float
+	 */
+	private function getProductStock($productId, $warehouseId)
+	{
+		global $db;
+
+		$sql = "SELECT reel FROM ".$db->prefix()."product_stock";
+		$sql .= " WHERE fk_product = ".((int) $productId)." AND fk_entrepot = ".((int) $warehouseId);
+		$result = $db->query($sql);
+		$this->assertTrue((bool) $result, (string) $db->lasterror());
+		$row = $db->fetch_object($result);
+
+		return (float) $row->reel;
+	}
+
 	/**
 	 * testExpeditionCreate
 	 *
