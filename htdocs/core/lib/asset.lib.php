@@ -337,3 +337,51 @@ function getAssetDepreciationPeriodFraction($timestampStart, $timestampEnd, $con
 	// ACT_365
 	return num_between_day($timestampStart, $timestampEnd, 1) / 365;
 }
+
+/**
+ * Return the fraction of a month covered by a period, for the given day count convention.
+ *
+ * The monthly depreciation used to count the real calendar days of the period then divide them by
+ * ASSET_DEPRECIATION_DURATION_PER_MONTH, a conventional month of 30 days. Numerator and denominator
+ * came from two different systems, so the depreciation of a partial month depended on the length of
+ * that month: placed in service on the 3rd, a 31 day month gave 29/30 of the monthly amount while a
+ * 30 day month gave 28/30.
+ *
+ * @param	int		$timestampStart		Start of the period
+ * @param	int		$timestampEnd		End of the period
+ * @param	string	$convention			'THIRTY_360', 'ACT_365' or 'ACT_ACT'. Empty to use the setup.
+ * @param	string	$forcetimezone		'' to use the server timezone, 'gmt' to read the dates in GMT
+ * @return	float						Fraction of a month, between 0 and 1
+ */
+function getAssetDepreciationMonthFraction($timestampStart, $timestampEnd, $convention = '', $forcetimezone = '')
+{
+	if ($convention === '' || !array_key_exists($convention, getAssetDepreciationDayCountConventions())) {
+		$convention = getAssetDepreciationDayCountConvention();
+	}
+	if ($timestampStart > $timestampEnd) {
+		return 0.0;
+	}
+
+	$start = dol_getdate((int) $timestampStart, false, $forcetimezone);
+	$end = dol_getdate((int) $timestampEnd, false, $forcetimezone);
+
+	if ($convention == 'THIRTY_360') {
+		// Every month is 30 days long, so the last day of a month counts as its 30th. Without that
+		// rule a full February would be worth 28/30 of a monthly amount instead of a whole one.
+		$lastdayofendmonth = dol_getdate(dol_get_last_day($end['year'], $end['mon'], true), false, $forcetimezone);
+		$dayend = ($end['mday'] >= $lastdayofendmonth['mday'] ? 30 : min($end['mday'], 30));
+		$daystart = min($start['mday'], 30);
+
+		return max(0.0, min(1.0, ($dayend - $daystart + 1) / 30));
+	}
+
+	// ACT_365 and ACT_ACT: real days divided by the real length of the month, so that both sides of
+	// the ratio belong to the same system.
+	$lastdayofstartmonth = dol_getdate(dol_get_last_day($start['year'], $start['mon'], true), false, $forcetimezone);
+	$nbdaysinmonth = (int) $lastdayofstartmonth['mday'];
+	if ($nbdaysinmonth <= 0) {
+		return 0.0;
+	}
+
+	return min(1.0, num_between_day($timestampStart, $timestampEnd, 1) / $nbdaysinmonth);
+}

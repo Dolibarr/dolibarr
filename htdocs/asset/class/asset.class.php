@@ -1097,7 +1097,6 @@ class Asset extends CommonObject
 				// futures depreciation lines
 				//-----------------------------------------------------
 				$day_count_convention = getAssetDepreciationDayCountConvention();
-				$nb_days_in_month = getDolGlobalInt('ASSET_DEPRECIATION_DURATION_PER_MONTH', 30);
 				$period_amount = (float) ($fields['duration'] > 0 ? price2num($depreciation_period_amount / $fields['duration'], 'MT') : 0);
 				$first_period_found = false;
 
@@ -1136,14 +1135,13 @@ class Asset extends CommonObject
 						if ($fields['duration_type'] == 2) { // Daily
 							$depreciation_ht = $period_amount;
 						} elseif ($fields['duration_type'] == 1) { // Monthly
-							$nb_days = min($nb_days_in_month, num_between_day($begin_date, $end_date, 1));
-							if ($nb_days >= 28) {
-								$date_temp = dol_getdate($begin_date);
-								if ($date_temp['mon'] == 2) {
-									$nb_days = 30;
-								}
-							}
-							$depreciation_ht = (float) price2num($period_amount * $nb_days / $nb_days_in_month, 'MT');
+							// Same rule as the annual branch: the count of the days and the length of a full
+							// month must come from the same day count convention. Counting the real calendar
+							// days then dividing them by a conventional month of 30 made the depreciation of a
+							// partial month depend on the length of that month, and required a special case to
+							// give a full February a whole monthly amount.
+							$period_fraction = getAssetDepreciationMonthFraction($begin_date, $end_date, $day_count_convention, 'gmt');
+							$depreciation_ht = (float) price2num($period_amount * $period_fraction, 'MT');
 						} else { // Annually, taking care for adjustments to shortened or extended periods (e.g., fiscal years of 9 or 15 months)
 							// A standard fiscal year lasts 365 days, or 366 when it covers a leap day. Anything else
 							// is a shortened or an extended fiscal year (e.g. 9 or 15 months), whose depreciation is
