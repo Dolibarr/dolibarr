@@ -4,6 +4,7 @@
  * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
+ * Copyright (C) 2026		Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -111,10 +112,11 @@ class modAi extends DolibarrModules
 			),
 			// Set here all hooks context managed by module. To find available hook context, make a "grep -r '>initHooks(' *" on source code. You can also set hook context to 'all'
 			'hooks' => array(
-				//   'data' => array(
-				//       'hookcontext1',
-				//       'hookcontext2',
-				//   ),
+				// 'all': the page-context hook (printCommonFooter) must fire on
+				// every page - it self-filters on module/permission/object.
+				'data' => array(
+					'all',
+				),
 				//   'entity' => '0',
 			),
 			// Set this to 1 if features of module are opened to external users
