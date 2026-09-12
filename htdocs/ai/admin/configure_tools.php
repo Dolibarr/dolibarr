@@ -73,6 +73,8 @@ $backtopage = GETPOST('backtopage', 'alpha');
 
 // Load unfiltered schema
 $mcpHandler = new McpHandler($db, $user, $conf, McpHandler::CTX_ASSISTANT);
+$mcpHandler->loadTools();
+
 $unfilteredSchema = $mcpHandler->getToolsSchemaUnfiltered();
 
 // Build grouped lists from the schema metadata set by getToolsSchemaUnfiltered()
