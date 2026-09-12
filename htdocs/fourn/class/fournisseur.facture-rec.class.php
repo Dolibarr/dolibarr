@@ -1166,7 +1166,7 @@ class FactureFournisseurRec extends CommonInvoice
 	 * @param int 			$info_bits 			Bits of type of lines
 	 * @param int 			$special_code 		Special code
 	 * @param int 			$rang 				Position of line
-	 * @param string 		$fk_unit 			Unit
+	 * @param ?int 			$fk_unit 			Unit
 	 * @param float			$pu_ht_devise 		Unit price in currency
 	 * @param float			$pu_ttc             Unit price TTC (> 0 even for credit note)
 	 * @return int  			                Return integer <0 if KO, Id of line if OK
@@ -1273,7 +1273,7 @@ class FactureFournisseurRec extends CommonInvoice
 		$sql .= ', info_bits = ' . (int) $info_bits;
 		$sql .= ', special_code = ' . (int) $special_code;
 		$sql .= ', rang = ' . (int) $rang;
-		$sql .= ', fk_unit = ' . ($fk_unit ? "'" . $this->db->escape($fk_unit) . "'" : 'null');
+		$sql .= ', fk_unit = ' . ($fk_unit ? (int) $fk_unit : 'null');
 		$sql .= ', fk_user_modif = ' . (int) $user->id;
 		$sql .= ', multicurrency_subprice = '.price2num($pu_ht_devise);
 		$sql .= ', multicurrency_total_ht = '.price2num($multicurrency_total_ht);

@@ -698,7 +698,7 @@ if (empty($reshook)) {
 				setEventMessages($mesg, null, 'errors');
 			} else {
 				// Insert line
-				$result = $object->addline($idprod, (string) $ref_fournisseur, $label, $desc, $pu_ht, $pu_ttc, (float) $qty, $remise_percent, (string) $tva_tx, $localtax1_tx, $localtax2_tx, $price_base_type, $type, $date_start_fill, $date_end_fill, $info_bits, $special_code, -1, $fk_unit);
+				$result = $object->addline($idprod, (string) $ref_fournisseur, $label, $desc, $pu_ht, $pu_ttc, (float) $qty, $remise_percent, (string) $tva_tx, $localtax1_tx, $localtax2_tx, $price_base_type, $type, $date_start_fill, $date_end_fill, $info_bits, $special_code, -1, $fk_unit, (float) $price_ht_devise);
 
 				if ($result > 0) {
 					$object->fetch($object->id); // Reload lines
@@ -845,7 +845,7 @@ if (empty($reshook)) {
 
 		// Update line
 		if (! $error) {
-			$result = $object->updateline(GETPOSTINT('lineid'), GETPOSTINT('productid'), $ref_fourn, $label, $description, (float) $pu_ht, (float) $qty, (float) $remise_percent, $vat_rate, $localtax1_rate, $localtax1_rate, 'HT', $type, $date_start_fill, $date_end_fill, $info_bits, $special_code, -1);
+			$result = $object->updateline(GETPOSTINT('lineid'), GETPOSTINT('productid'), $ref_fourn, $label, $description, (float) $pu_ht, (float) $qty, (float) $remise_percent, $vat_rate, $localtax1_rate, $localtax2_rate, 'HT', $type, $date_start_fill, $date_end_fill, $info_bits, $special_code, -1, $objectline->fk_unit, (float) $pu_ht_devise);
 			if ($result >= 0) {
 				$object->fetch($object->id); // Reload lines
 
