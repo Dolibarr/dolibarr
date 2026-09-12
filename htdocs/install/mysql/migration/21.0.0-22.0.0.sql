@@ -241,10 +241,10 @@ ALTER TABLE llx_accounting_account ADD COLUMN centralized tinyint DEFAULT 0 NOT 
 UPDATE llx_accounting_account as acc SET acc.centralized = 1 WHERE acc.account_number in (SELECT value  FROM llx_const WHERE name IN (__ENCRYPT('ACCOUNTING_ACCOUNT_CUSTOMER')__,__ENCRYPT('ACCOUNTING_ACCOUNT_SUPPLIER')__,__ENCRYPT('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT')__,__ENCRYPT('ACCOUNTING_ACCOUNT_EXPENSEREPORT')__));
 
 -- invert constant STOCK_ALLOW_NEGATIVE_TRANSFER because it was automatically set to 1, deleting the user config.
-INSERT INTO llx_const (name, entity, value, type, visible, note) SELECT DISTINCT 'STOCK_DISALLOW_NEGATIVE_TRANSFER', entity, '1', 'chaine', 0, '' FROM llx_const as c1 WHERE NOT EXISTS (SELECT rowid FROM llx_const as c2 WHERE c2.name = 'STOCK_ALLOW_NEGATIVE_TRANSFER' AND c2.value = '1' AND c2.entity = c1.entity);
-UPDATE llx_const SET name = 'STOCK_DISALLOW_NEGATIVE_TRANSFER', value = '1' WHERE name = 'STOCK_ALLOW_NEGATIVE_TRANSFER' AND value = '0';
--- Do not delete this const, otherwise the 'INSERT INTO...' will be triggered on next update
--- DELETE FROM llx_const WHERE name = 'STOCK_ALLOW_NEGATIVE_TRANSFER' AND value = '1';
+UPDATE llx_const as c1 LEFT JOIN llx_const as c2 ON c2.name = 'STOCK_DISALLOW_NEGATIVE_TRANSFER' AND c2.entity = c1.entity SET c1.name = 'STOCK_DISALLOW_NEGATIVE_TRANSFER', c1.value = '1' WHERE c1.name = 'STOCK_ALLOW_NEGATIVE_TRANSFER' AND c1.value = '0' AND c2.rowid IS NULL;
+UPDATE llx_const as c1 LEFT JOIN llx_const as c2 ON c2.name = 'STOCK_DISALLOW_NEGATIVE_TRANSFER' AND c2.entity = c1.entity SET c1.name = 'STOCK_DISALLOW_NEGATIVE_TRANSFER', c1.value = '0' WHERE c1.name = 'STOCK_ALLOW_NEGATIVE_TRANSFER' AND c1.value = '1' AND c2.rowid IS NULL;
+DELETE c1 FROM llx_const as c1 INNER JOIN llx_const as c2 ON c2.name = 'STOCK_DISALLOW_NEGATIVE_TRANSFER' AND c2.entity = c1.entity WHERE c1.name = 'STOCK_ALLOW_NEGATIVE_TRANSFER';
+INSERT INTO llx_const (name, entity, value, type, visible, note) SELECT DISTINCT 'STOCK_DISALLOW_NEGATIVE_TRANSFER', entity, '1', 'chaine', 0, '' FROM llx_const as c1 WHERE NOT EXISTS (SELECT rowid FROM llx_const as c2 WHERE c2.name IN ('STOCK_ALLOW_NEGATIVE_TRANSFER', 'STOCK_DISALLOW_NEGATIVE_TRANSFER') AND c2.entity = c1.entity);
 
 ALTER TABLE llx_links ADD COLUMN  share varchar(128) NULL AFTER objectid;
 ALTER TABLE llx_links ADD COLUMN  share_pass varchar(32) NULL AFTER share;
