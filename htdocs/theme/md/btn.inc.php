@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -316,7 +316,7 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 }
 
 .butActionLogin {
-	background-color: rgb(<?php echo $colorbackhmenu1; ?>);
+	background-color: var(--butactionbg);
 }
 
 
