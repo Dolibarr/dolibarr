@@ -261,6 +261,14 @@ class McpHandler
 			}
 
 			foreach ($hookmanager->resArray as $moduleTools) {
+				if ($moduleTools instanceof McpTool) {
+					// Tolerance: a module that set results = array($tool)
+					// instead of array(array($tool)) still works - the
+					// HookManager flattens results into resArray, so bare
+					// instances are the natural mistake to make.
+					$this->registerTool(get_class($moduleTools), $moduleTools);
+					continue;
+				}
 				if (!is_array($moduleTools)) {
 					continue;
 				}
@@ -466,7 +474,30 @@ class McpHandler
 	public function executeTool(string $toolName, array $args): array
 	{
 		if (!isset($this->toolsByName[$toolName])) {
-			return ["error" => "Tool '{$toolName}' not found."];
+			// LLMs routinely emit near-miss tool names (create_invoice for
+			// create_customer_invoice). Recover when the real name is
+			// UNAMBIGUOUS: same action verb (segment before the first '_')
+			// and every underscore token of the requested name appears in the
+			// candidate. Exactly one match executes (logged); zero or several
+			// keep the clean error - never guess between candidates.
+			$reqTokens = explode('_', dol_strtolower($toolName));
+			$verb = $reqTokens[0];
+			$candidates = array();
+			foreach (array_keys($this->toolsByName) as $realName) {
+				if (strpos($realName, $verb.'_') !== 0 || $this->isSystemTool($this->toolsByName[$realName])) {
+					continue;
+				}
+				$realTokens = explode('_', $realName);
+				if (!array_diff($reqTokens, $realTokens)) {
+					$candidates[] = $realName;
+				}
+			}
+			if (count($candidates) === 1) {
+				dol_syslog("[McpHandler] Tool name '".$toolName."' recovered to '".$candidates[0]."'.", LOG_INFO);
+				$toolName = $candidates[0];
+			} else {
+				return ["error" => "Tool '{$toolName}' not found."];
+			}
 		}
 
 		$toolInstance = $this->toolsByName[$toolName];
