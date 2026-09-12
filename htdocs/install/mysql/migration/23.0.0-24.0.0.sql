@@ -110,8 +110,9 @@ ALTER TABLE llx_categorie_mo ADD CONSTRAINT fk_categorie_mo_categorie_rowid FORE
 ALTER TABLE llx_categorie_mo ADD CONSTRAINT fk_categorie_mo_fk_mo_rowid FOREIGN KEY (fk_mo) REFERENCES llx_mrp_mo (rowid);
 
 ALTER TABLE llx_facture ADD COLUMN fk_thirdparty_rib_id integer NULL;
-ALTER TABLE llx_facture_fourn ADD COLUMN fk_thirdparty_rib_id integer NULL;
+ALTER TABLE llx_facture ADD COLUMN amount_price_review double(24,8) DEFAULT 0 NOT NULL AFTER amount_prorata_account;
 
+ALTER TABLE llx_facture_fourn ADD COLUMN fk_thirdparty_rib_id integer NULL;
 ALTER TABLE llx_facture_fourn ADD COLUMN payment_reference varchar(25);
 ALTER TABLE llx_facture_fourn ADD COLUMN dispute_status	integer DEFAULT 0;
 
