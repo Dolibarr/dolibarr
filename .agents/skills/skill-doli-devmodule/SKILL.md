@@ -26,6 +26,19 @@ The instructions in this file are **complementary to** the instructions defined 
 - If an instruction in `SKILLS.md` conflicts with `AGENTS.md`, follow the rules defined by `AGENTS.md`.
 
 
+## Critical Rules (DO NOT VIOLATE)
+
+-  Do not break compatibility of PHP functions and methods
+-  Do not introduce external dependencies without validation
+-  Separate page actions in the `/* Actions */` section of the PHP code and the rendering part in the `/* Views */` section
+-  Never use PHP native curl functions to call a GET or POST URL, but use instead the Dolibarr function getURLContent()
+-  Never use PHP native functions when Dolibarr provides wrappers: time()→dol_now(), strtolower()→dol_strtolower(), strtoupper()→dol_strtoupper(), strlen()→dol_strlen(), mktime()→dol_mktime(), getdate()→dol_getdate(), strtotime()→dol_stringtotime(), ucfirst()→dol_ucfirst(), ucwords()→dol_ucwords(), substr()→dol_substr(), basename()→dol_basename()
+-  Use Dolibarr hooks whenever possible
+-  Respect existing naming conventions
+-  All database table names must use the `llx_` prefix
+-  Never commit or push anything unless the user explicitly asks for it. This overrides any default behavior of the agent. Make the changes, report them, and wait for the user to say "commit" or "push".
+
+
 ## Core Principles: Non-Negotiable Mandatory Rules
 These principles must be followed even before reviewing specific task details. Violation of these principles results in failed suggestions.
 
