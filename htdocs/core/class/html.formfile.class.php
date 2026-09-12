@@ -1310,7 +1310,16 @@ class FormFile
 
 
 					// File name
+					$editline = (GETPOST('action', 'aZ09') == 'editfile' && $file['name'] == basename(GETPOST('urlfile', 'alpha'))) ? 1 : 0;
+					$imgpreview = $editline ? '' : $this->showPreview($file, $modulepart, $filepath, 0, '&entity='.(!empty($object->entity) ? $object->entity : $conf->entity));
 					print '<td class="minwith200 tdoverflowmax500">';
+					// The preview picto is printed in the same cell, so reserve room for it, otherwise the
+					// ellipsis of the cell truncates the picto instead of the file name (see #39730).
+					if ($imgpreview) {
+						print '<span class="spanoverflow widthcentpercentminusx valignmiddle">';
+					} else {
+						print '<span class="spanoverflow">';
+					}
 
 					// Show file name with link to download
 					//print "XX".$file['name'];	//$file['name'] must be utf8
@@ -1343,9 +1352,11 @@ class FormFile
 						print dol_escape_htmltag(dol_trunc($filenametoshow, 200));
 						print '</a>';
 					}
+					print '</span>';
+
 					// Preview link
 					if (!$editline) {
-						print $this->showPreview($file, $modulepart, $filepath, 0, '&entity='.(!empty($object->entity) ? $object->entity : $conf->entity));
+						print $imgpreview;
 					}
 
 					print "</td>\n";
