@@ -2229,8 +2229,16 @@ class Project extends CommonObject
 		$sql .= " WHERE ptt.fk_element = pt.rowid";
 		$sql .= " AND ptt.elementtype = 'task'";
 		$sql .= " AND pt.fk_projet = ".((int) $this->id);
+		// Note: we must not compute the month end with dol_time_plus_duree($datestart, 1, 'm') - 1.
+		// dol_time_plus_duree() forces UTC before adding the month, which shifts the "start of month"
+		// instant backward by the server TZ offset (e.g. -2h for CEST). For a month directly following
+		// a shorter one (May, July, October), that shift lands the +1 month calendar arithmetic one
+		// calendar day short (e.g. Jul 1 00:00 Europe/Berlin = Jun 30 22:00 UTC; +1 month from June 30
+		// is July 30, not July 31/Aug 1), silently excluding the last day of the month from this query.
+		$tmpdatestart = dol_getdate($datestart);
+		$tmpmonthend = dol_mktime(23, 59, 59, $tmpdatestart['mon'], (int) cal_days_in_month(CAL_GREGORIAN, $tmpdatestart['mon'], $tmpdatestart['year']), $tmpdatestart['year']);
 		$sql .= " AND (ptt.element_date >= '".$this->db->idate($datestart)."' ";
-		$sql .= " AND ptt.element_date <= '".$this->db->idate(dol_time_plus_duree($datestart, 1, 'm') - 1)."')";
+		$sql .= " AND ptt.element_date <= '".$this->db->idate($tmpmonthend)."')";
 		if ($taskid) {
 			$sql .= " AND ptt.fk_element=".((int) $taskid);
 		}
