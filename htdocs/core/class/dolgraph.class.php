@@ -1131,7 +1131,7 @@ class DolGraph
 				if (isset($this->type[$i]) && ($this->type[$i] == 'lines' || $this->type[$i] == 'linesnopoint')) {
 					$this->stringtoshow .= 'lines: { show: true, fill: false }, points: { show: ' . ($this->type[$i] == 'linesnopoint' ? 'false' : 'true') . ' }, ';
 				}
-				$this->stringtoshow .= 'color: "#' . $color . '", label: "' . (isset($this->Legend[$i]) ? dol_escape_js($this->Legend[$i]) : '') . '", data: d' . $i . ' }';
+				$this->stringtoshow .= 'color: "#' . $color . '", label: \'' . dol_escape_js(isset($this->Legend[$i]) ? $this->Legend[$i] : '') . '\', data: d' . $i . ' }';
 				$i++;
 			}
 			// shadowSize: 0 -> Drawing is faster without shadows
