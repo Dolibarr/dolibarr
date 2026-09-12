@@ -551,7 +551,7 @@ class SqlInjectionVisitor extends \Phan\PluginV3\PluginAwarePostAnalysisVisitor
 			}
 
 			// Check if it's a simple literal
-			if ($modeArg->kind === \ast\AST_SCALAR && is_int($modeArg->children['value'] ?? null)) {
+			if (is_int($modeArg->children['value'] ?? null)) {
 				return $modeArg->children['value'];
 			}
 
@@ -723,15 +723,25 @@ class SqlInjectionVisitor extends \Phan\PluginV3\PluginAwarePostAnalysisVisitor
 	/**
 	 * Check if a node is a string ending with the specified quote character.
 	 * Handles both string values directly and string nodes.
+	 * Also checks for quote followed by safe characters (for cases like 'text ' with escaped quote).
 	 *
 	 * @param mixed $node The node or value to check
 	 * @param string $quote The quote character to check for (' or ")
-	 * @return bool True if it's a string ending with the quote
+	 * @return bool True if it's a string ending with the quote or has unclosed quote with safe chars
 	 */
 	private function isStringNodeEndingWithQuote($node, string $quote): bool
 	{
 		if (is_string($node)) {
-			return substr($node, -1) === $quote;
+			// Check if ends with quote
+			if (substr($node, -1) === $quote) {
+				return true;
+			}
+			// Check if contains quote followed by safe characters at the end
+			$lastQuotePos = strrpos($node, $quote);
+			if ($lastQuotePos !== false && $this->quoteFollowedBySafeChars($node, $lastQuotePos)) {
+				return true;
+			}
+			return false;
 		}
 
 		if ($node instanceof Node) {
@@ -746,7 +756,16 @@ class SqlInjectionVisitor extends \Phan\PluginV3\PluginAwarePostAnalysisVisitor
 			}
 
 			if (is_string($value)) {
-				return substr($value, -1) === $quote;
+				// Check if ends with quote
+				if (substr($value, -1) === $quote) {
+					return true;
+				}
+				// Check if contains quote followed by safe characters at the end
+				$lastQuotePos = strrpos($value, $quote);
+				if ($lastQuotePos !== false && $this->quoteFollowedBySafeChars($value, $lastQuotePos)) {
+					return true;
+				}
+				return false;
 			}
 
 			// For concatenations, we need to check the rightmost part
@@ -762,15 +781,29 @@ class SqlInjectionVisitor extends \Phan\PluginV3\PluginAwarePostAnalysisVisitor
 	/**
 	 * Check if a node is a string starting with the specified quote character.
 	 * Handles both string values directly and string nodes.
+	 * Also checks for quotes preceded by safe characters.
 	 *
 	 * @param mixed $node The node or value to check
 	 * @param string $quote The quote character to check for (' or ")
-	 * @return bool True if it's a string starting with the quote
+	 * @return bool True if it's a string starting with the quote or has quote preceded by safe chars
 	 */
 	private function isStringNodeStartingWithQuote($node, string $quote): bool
 	{
 		if (is_string($node)) {
-			return strpos($node, $quote) === 0;
+			// Check if starts with quote
+			if (strpos($node, $quote) === 0) {
+				return true;
+			}
+			// Check if contains quote preceded by safe characters
+			$firstQuotePos = strpos($node, $quote);
+			if ($firstQuotePos !== false) {
+				// Check if characters before the quote are safe
+				$beforeQuote = substr($node, 0, $firstQuotePos);
+				if ($beforeQuote === '' || preg_match('/^[\w\d\/\-\s%_=<>!,()]+$/', $beforeQuote)) {
+					return true;
+				}
+			}
+			return false;
 		}
 
 		if ($node instanceof Node) {
@@ -782,7 +815,20 @@ class SqlInjectionVisitor extends \Phan\PluginV3\PluginAwarePostAnalysisVisitor
 			}
 
 			if (is_string($value)) {
-				return strpos($value, $quote) === 0;
+				// Check if starts with quote
+				if (strpos($value, $quote) === 0) {
+					return true;
+				}
+				// Check if contains quote preceded by safe characters
+				$firstQuotePos = strpos($value, $quote);
+				if ($firstQuotePos !== false) {
+					// Check if characters before the quote are safe
+					$beforeQuote = substr($value, 0, $firstQuotePos);
+					if ($beforeQuote === '' || preg_match('/^[\w\d\/\-\s%_=<>!,()]+$/', $beforeQuote)) {
+						return true;
+					}
+				}
+				return false;
 			}
 
 			// For concatenations, we need to check the leftmost part

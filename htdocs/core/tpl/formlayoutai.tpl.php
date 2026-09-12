@@ -22,6 +22,7 @@
  * @var DoliDB $db
  * @var CommonObject 	$object
  * @var Translate 		$langs
+ *
  * @var ?FormMail 		$formmail
  * @var ?FormWebsite 	$formwebsite
  * @var ?FormAI 		$formai
@@ -34,6 +35,7 @@
  * @var ?string			$out
  * @var	?string			$aiprompt
  * @var ?string			$morecss
+ * @var int				$onlyenhancements
  */
 
 //Protection to avoid direct call of template
@@ -50,10 +52,6 @@ if (empty($htmlname)) {
 	print 'Parameter htmlname not defined.';
 	exit(1);
 }
-
-?>
-<!-- BEGIN PHP TEMPLATE htdocs/core/tpl/formlayoutai.tpl.php -->
-<?php
 
 '
 @phan-var-force ?FormWebSite 	$formwebsite
@@ -77,6 +75,9 @@ if (!isset($morecss)) {	// Init to empty string if not defined
 if (!isset($aiprompt)) {	// Init to empty string if not defined
 	$aiprompt = '';
 }
+
+$out .= '<!-- BEGIN PHP TEMPLATE htdocs/core/tpl/formlayoutai.tpl.php -->'."\n";
+
 // Add link to add layout
 if (!empty($showlinktolayout)) {	// May be set only if MAIN_EMAIL_USE_LAYOUT is set
 	$out .= '<a href="#" id="linkforlayouttemplates" class="notasortlink inline-block alink marginrightonly">';
@@ -174,7 +175,7 @@ if (!empty($showlinktoai)) {
 		$aiprompt = make_substitutions($aiprompt, $formai->substit);
 	}
 	$format = '';
-	if (is_object($formmail) && !empty($formmail->withaiprompt)) {
+	if (is_object($formmail) && !empty($formmail->withaiprompt)) {		// $formmail->withaiprompt is set to 'text' or 'html'
 		$format = $formmail->withaiprompt;
 	}
 	$out .= $formai->getSectionForAIEnhancement($showlinktoai, $format, $htmlname, $onlyenhancements, $aiprompt);
@@ -182,5 +183,4 @@ if (!empty($showlinktoai)) {
 	$out .= '<!-- No link to the AI feature, $formmail->withaiprompt must be set to the ai feature and module ai must be enabled -->';
 }
 
-?>
-<!-- END PHP TEMPLATE htdocs/core/tpl/formlayoutai.tpl.php -->
+$out .= '<!-- END PHP TEMPLATE htdocs/core/tpl/formlayoutai.tpl.php -->'."\n";

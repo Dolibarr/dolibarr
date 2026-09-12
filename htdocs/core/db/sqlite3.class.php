@@ -66,8 +66,9 @@ class DoliDBSqlite3 extends DoliDB
 	 *  @param	    string	$pass		Password
 	 *  @param	    string	$name		Nom de la database
 	 *  @param	    int		$port		Port of database server
+	 *  @param	    bool	$forcenew	Not used by this driver: sqlite3 always opens a genuinely new connection. Kept for signature parity with the Database interface.
 	 */
-	public function __construct($type, $host, $user, $pass, $name = '', $port = 0)  // @phpstan-ignore constructor.unusedParameter
+	public function __construct($type, $host, $user, $pass, $name = '', $port = 0, $forcenew = false)  // @phpstan-ignore constructor.unusedParameter
 	{
 		global $conf;
 
@@ -321,10 +322,11 @@ class DoliDBSqlite3 extends DoliDB
 	 *	@param	    string			$passwd		password
 	 *	@param		string			$name		name of database (not used for mysql, used for pgsql)
 	 *	@param		integer			$port		Port of database server
+	 *	@param		bool			$forcenew	Not used by this driver: sqlite3 always opens a genuinely new connection. Kept for signature parity with the Database interface.
 	 *	@return		SQLite3|false				Database access handler
 	 *	@see		close()
 	 */
-	public function connect($host, $login, $passwd, $name, $port = 0)
+	public function connect($host, $login, $passwd, $name, $port = 0, $forcenew = false)
 	{
 		global $main_data_dir;
 

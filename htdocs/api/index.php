@@ -368,10 +368,20 @@ if (!empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/swagger.json' && 
 	if ($moduleobject == 'interventions') {
 		$classfile = 'interventions';
 	}
+	if ($moduleobject == 'resources') {
+		// The API class is named Dolresources because "resources" is already used by the API explorer itself
+		$classfile = 'dolresources';
+	}
 
 	$dir_part_file = dol_buildpath('/'.$moduledirforclass.'/class/api_'.$classfile.'.class.php', 0, 2);
 
 	$classname = ucwords($moduleobject);
+	if ($moduleobject == 'resources') {
+		// Force the class name, because ucwords() would give Resources, which is the name of
+		// the class of the API explorer itself (Luracast\Restler\Resources) and is autoloadable,
+		// so the wrong class would be dispatched.
+		$classname = 'Dolresources';
+	}
 
 	// Test rules on endpoints. For example:
 	// $conf->global->API_ENDPOINT_RULES = 'endpoint1:1,endpoint2:1,...'
@@ -423,10 +433,15 @@ if (!empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/swagger.json' && 
 	// names (see line ~308). Without the Api suffix branch, a module file named
 	// api_mymodule.class.php exposing class MyModuleApi cannot be dispatched
 	// even though the api explorer lists it (#37282).
+	// When the class name does not match the called endpoint (for example the endpoint /resources
+	// served by the class Dolresources), the endpoint must be given to Restler as the resource path,
+	// because Restler builds its routes from the class name and would answer 404 otherwise.
+	$resourcepath = (strtolower($classname) != $moduleobject) ? $moduleobject : null;
+
 	if (class_exists($classname.'Api')) {
-		$api->r->addAPIClass($classname.'Api');
+		$api->r->addAPIClass($classname.'Api', $resourcepath);
 	} elseif (class_exists($classname)) {
-		$api->r->addAPIClass($classname);
+		$api->r->addAPIClass($classname, $resourcepath);
 	}
 }
 

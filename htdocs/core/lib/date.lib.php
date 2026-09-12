@@ -1306,7 +1306,7 @@ function listPublicHoliday($timestampStart, $timestampEnd, $countryCodeOrId = ''
  *	@param	   int			$timestampEnd       Timestamp end UTC
  *	@param     int			$lastday            Last day is included, 0: no, 1:yes
  *	@return    int								Number of days
- *  @see num_public_holiday(), num_open_day()
+ *  @see num_public_holiday(), num_open_day(), num_between_day_30_360()
  */
 function num_between_day($timestampStart, $timestampEnd, $lastday = 0)
 {
@@ -1322,6 +1322,62 @@ function num_between_day($timestampStart, $timestampEnd, $lastday = 0)
 	}
 	//print ($timestampEnd - $timestampStart) - $lastday;
 	return $nbjours;
+}
+
+/**
+ *	Function to return number of days between two dates using the 30/360 day count convention:
+ *  every month counts for 30 days and every year for 360 days.
+ *  Example: 2022-03-10 2023-07-31 => 500 if lastday=0, 501 if lastday=1
+ *
+ *  This convention is the one applied by most accounting firms (and the usual one in France) to
+ *  compute the prorata temporis of a depreciation. The returned value must always be divided by
+ *  360 to get a fraction of year: dividing a count of real calendar days by 360 instead mixes two
+ *  conventions and overestimates every partial period by about 1.39% (365/360).
+ *
+ *  WARNING: this function uses the PHP server timezone by default because it works on the calendar
+ *  representation of the dates. Force $forcetimezone to 'gmt' when the timestamps are UTC dates.
+ *
+ *	@param	   int			$timestampStart     Timestamp start
+ *	@param	   int			$timestampEnd       Timestamp end
+ *	@param     int			$lastday            Last day is included, 0: no, 1:yes
+ *	@param	   string		$forcetimezone		'' to use the PHP server timezone, or 'gmt', 'Europe/Paris', ...
+ *	@return    int								Number of days on a 30/360 basis
+ *  @see num_between_day()
+ */
+function num_between_day_30_360($timestampStart, $timestampEnd, $lastday = 0, $forcetimezone = '')
+{
+	if ($timestampStart > $timestampEnd) {
+		return 0;
+	}
+
+	$start = dol_getdate((int) $timestampStart, false, $forcetimezone);
+	$end = dol_getdate((int) $timestampEnd, false, $forcetimezone);
+
+	// The 31st of a month is brought back to the 30th, so that every month counts for 30 days
+	$daystart = min($start['mday'], 30);
+	$dayend = min($end['mday'], 30);
+
+	$nbdays = ($dayend - $daystart) + 30 * ($end['mon'] - $start['mon']) + 360 * ($end['year'] - $start['year']);
+	if ($lastday == 1) {
+		$nbdays++;
+	}
+
+	return max(0, $nbdays);
+}
+
+/**
+ *	Function to return the real number of days of a year (365, or 366 for a leap year).
+ *
+ *	@param	   int			$year				Year on 4 digits
+ *	@return    int								365 or 366
+ *  @see num_between_day(), num_between_day_30_360()
+ */
+function num_days_in_year($year)
+{
+	$year = (int) $year;
+	$isleapyear = (($year % 4 == 0 && $year % 100 != 0) || $year % 400 == 0);
+
+	return $isleapyear ? 366 : 365;
 }
 
 /**
