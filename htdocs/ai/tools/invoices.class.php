@@ -644,11 +644,12 @@ class ToolInvoices extends McpTool
 
 		$lines = [];
 		foreach ($inv->lines as $l) {
+			$lvars = get_object_vars($l);
 			$lines[] = [
 				"product" => !empty($l->product_ref) ? $l->product_ref : '',
 				"desc" => dol_html_entity_decode(strip_tags((string) $l->description), ENT_QUOTES),
 				"qty" => (float) $l->qty,
-				"price" => price($l->pu_ht),
+				"price" => price($lvars['pu_ht'] ?? $lvars['subprice'] ?? 0),
 				"total_line" => price($l->total_ht),
 				"vat" => $l->tva_tx."%"
 			];
