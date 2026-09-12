@@ -1024,7 +1024,24 @@ if ($action == 'create') {
 			print '<span class="minwidth150 inline-block">'.$form->textwithpicto($langs->trans("FilesAttachedToEmail"), $tabhelp[25][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'</span>';
 		}
 		if ($tmpfieldlist == 'content') {
-			print '<span class="minwidth150 inline-block margintoponly">'.$form->textwithpicto($langs->trans("Content"), $tabhelp[25][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'</span><br>';
+			print '<span class="minwidth150 inline-block margintoponly">'.$form->textwithpicto($langs->trans("Content"), $tabhelp[25][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'</span>';
+
+			// Add layout and AI tools for content
+			$out = '';
+			if (!is_object($formmail)) {
+				$formmail = new FormMail($db);
+				$formmail->withlayout = 'email';
+				$formmail->withaiprompt = 'textgenerationemail';
+				$formmail->withfckeditor = true;
+			}
+			$showlinktolayout = (getDolGlobalInt('MAIN_EMAIL_USE_LAYOUT') ? $formmail->withlayout : '');
+			$showlinktolayoutlabel = $langs->trans("FillMessageWithALayout");
+			$showlinktoai = ($formmail->withaiprompt && isModEnabled('ai') ? 'textgenerationemail' : '');
+			$showlinktoailabel = $langs->trans("FillMessageWithAIContent");
+			$htmlname = 'content';
+			include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';
+			print $out;
+			print '<br>';
 		}
 		if ($tmpfieldlist == 'content_lines') {
 			print '<span class="minwidth150 inline-block">'.$form->textwithpicto($langs->trans("ContentForLines"), $tabhelp[25][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'</span><br>';
@@ -1349,7 +1366,24 @@ if ($action != 'create') {
 							}
 
 							if ($tmpfieldlist == 'content') {
-								print $form->textwithpicto($langs->trans("Content"), $tabhelp[25][$tmpfieldlist], 1, 'help', 'margintoponly', 0, 2, $tmpfieldlist).'<br>';
+								print '<div class="minwidth150 inline-block">'.$form->textwithpicto($langs->trans("Content"), $tabhelp[25][$tmpfieldlist], 1, 'help', 'margintoponly', 0, 2, $tmpfieldlist).'</div>';
+
+								// Add layout and AI tools for content
+								$out = '';
+								if (!is_object($formmail)) {
+									$formmail = new FormMail($db);
+									$formmail->withlayout = 'email';
+									$formmail->withaiprompt = 'textgenerationemail';
+									$formmail->withfckeditor = true;
+								}
+								$showlinktolayout = (getDolGlobalInt('MAIN_EMAIL_USE_LAYOUT') ? $formmail->withlayout : '');
+								$showlinktolayoutlabel = $langs->trans("FillMessageWithALayout");
+								$showlinktoai = ($formmail->withaiprompt && isModEnabled('ai') ? 'textgenerationemail' : '');
+								$showlinktoailabel = $langs->trans("FillMessageWithAIContent");
+								$htmlname = 'content_'.$rowid;
+								include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';
+								print $out;
+
 								$okforextended = true;
 								if (!getDolGlobalString('FCKEDITOR_ENABLE_MAIL')) {
 									$okforextended = false;

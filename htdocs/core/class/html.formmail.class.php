@@ -172,12 +172,12 @@ class FormMail extends Form
 	public $withlayout;
 
 	/**
-	 * @var string	'text' or 'html' to add a button "Fill with AI generation"
+	 * @var string					'text' or 'html' to add a button "Fill with AI generation"
 	 */
 	public $withaiprompt;
 
 	/**
-	 * @var int<-1,1> 1=Add a checkbox "Attach also main document" for mass actions (checked by default), -1=Add checkbox (not checked by default)
+	 * @var int<-1,1> 				1=Add a checkbox "Attach also main document" for mass actions (checked by default), -1=Add checkbox (not checked by default)
 	 */
 	public $withmaindocfile;
 	/**
