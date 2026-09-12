@@ -563,6 +563,10 @@ if ($type == 'f' && (empty($search_type) || ($search_type == '4'))) {
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 
 
+$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
+
+
 // Select every potentials, and note each potentials which fit in search parameters
 $tab_level = array();
 $sql = "SELECT code, label, sortorder";
@@ -730,7 +734,6 @@ if (empty($arrayfields['s.name_alias']['checked']) && $search_nom) {
 	if ($search_nom) {
 		$sql .= natural_search("s.nom", $search_nom);
 	}
-
 	if ($search_alias) {
 		$sql .= natural_search("s.name_alias", $search_alias);
 	}
@@ -1364,8 +1367,6 @@ if (!empty($moreforfilter)) {
 	print '</div>';
 }
 
-$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
 $selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= ((count($arrayofmassactions) && $contextpage != 'poslist') ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
@@ -1984,7 +1985,7 @@ while ($i < $imaxinloop) {
 			}
 		}
 		if (!empty($arrayfields['s.nom']['checked'])) {
-			print '<td class="tdfieldname tdoverflowmax200 tdlineheightsmall" data-key="ref">';
+			print '<td class="tdoverflowmax200 tdlineheightsmall" data-key="ref">';
 			print '<div class="inline-block lineheightsmall">';
 			if ($contextpage == 'poslist') {
 				print dolPrintHTML($companystatic->name);

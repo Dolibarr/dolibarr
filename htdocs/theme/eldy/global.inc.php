@@ -1114,9 +1114,11 @@ textarea.centpercent {
 .tdlineheightsmall {
 	padding-top: 0 !important;
 	padding-bottom: 0 !important;
+	vertical-align: middle;
 }
 .lineheightsmall {
 	line-height: 1.2em;
+	vertical-align: middle;
 }
 .lineheightmedium {
 	line-height: 1.5em;
