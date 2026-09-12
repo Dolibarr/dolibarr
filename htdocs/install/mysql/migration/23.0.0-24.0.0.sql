@@ -564,6 +564,26 @@ ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_max_participants (max_partic
 ALTER TABLE llx_c_tva ADD COLUMN einvoice_vatex	varchar(32);
 
 
+-- Backfill n-n links for existing expense report payments
+INSERT INTO llx_paymentexpensereport_expensereport
+	(fk_payment, fk_expensereport, amount, multicurrency_code, multicurrency_tx, multicurrency_amount)
+SELECT
+	pe.rowid AS fk_payment,
+	pe.fk_expensereport,
+	pe.amount,
+	NULL AS multicurrency_code,
+	1 AS multicurrency_tx,
+	pe.amount AS multicurrency_amount
+FROM llx_payment_expensereport AS pe
+WHERE pe.fk_expensereport IS NOT NULL
+	AND pe.fk_expensereport > 0
+	AND NOT EXISTS (
+		SELECT 1
+		FROM llx_paymentexpensereport_expensereport AS per
+		WHERE per.fk_payment = pe.rowid
+			AND per.fk_expensereport = pe.fk_expensereport
+	);
+
 -- SQL with disabled check must be at end
 --noqa:disable=PRS
 DELETE FROM llx_const WHERE __DECRYPT('name')__ = 'MAIN_MENU_BARRETOP';

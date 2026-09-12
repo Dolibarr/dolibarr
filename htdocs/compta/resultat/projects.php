@@ -756,16 +756,22 @@ if (isModEnabled('invoice') && ($modecompta == 'CREANCES-DETTES' || $modecompta 
 			$sql .= " AND e.fk_statut >= 5";
 
 			$column = 'e.date_valid';
+			$groupby = " GROUP BY ed.rowid, ed.fk_projet, p.rowid, p.ref";
 		} else {
-			$sql = "SELECT ed.rowid as rowid, ed.fk_projet, p.rowid as project_rowid, p.ref as project_ref, sum(DISTINCT pe.amount) as amount_ht, sum(DISTINCT pe.amount) as amount_ttc";
+			// Distribute each payment proportionally between the expense report lines/projects.
+			$sql = "SELECT p.rowid as rowid, p.rowid as project_rowid, p.ref as project_ref,";
+			$sql .= " SUM(CASE WHEN e.total_ttc <> 0 THEN per.amount * ed.total_ttc / e.total_ttc ELSE 0 END) as amount_ht,";
+			$sql .= " SUM(CASE WHEN e.total_ttc <> 0 THEN per.amount * ed.total_ttc / e.total_ttc ELSE 0 END) as amount_ttc";
 			$sql .= " FROM ".MAIN_DB_PREFIX."expensereport_det as ed";
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."expensereport as e ON ed.fk_expensereport = e.rowid";
-			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."payment_expensereport as pe ON pe.fk_expensereport = e.rowid";
+			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."paymentexpensereport_expensereport as per ON per.fk_expensereport = e.rowid";
+			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."payment_expensereport as pe ON pe.rowid = per.fk_payment";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON ed.fk_projet = p.rowid";
 			$sql .= " WHERE e.entity IN (".getEntity('expensereport').")";
 			$sql .= " AND e.fk_statut >= 5";
 
 			$column = 'pe.datep';
+			$groupby = " GROUP BY p.rowid, p.ref";
 		}
 		if (!empty($date_start)) {
 			$sql .= " AND ".$db->sanitize($column)." >= '".$db->idate($date_start)."'";
@@ -774,7 +780,7 @@ if (isModEnabled('invoice') && ($modecompta == 'CREANCES-DETTES' || $modecompta 
 			$sql .= " AND ".$db->sanitize($column)." <= '".$db->idate($date_end)."'";
 		}
 
-		$sql .= " GROUP BY ed.rowid, ed.fk_projet, p.rowid, p.ref";
+		$sql .= $groupby;
 		$sqlNewSortField = $sortfield;  // @phan-suppress-current-line SqlInjection
 		if ($sqlNewSortField == 's.nom, s.rowid') {
 			$sqlNewSortField = 'project_ref';

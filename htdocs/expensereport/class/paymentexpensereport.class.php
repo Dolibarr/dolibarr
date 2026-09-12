@@ -26,6 +26,7 @@
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 
 
 /**
@@ -54,7 +55,7 @@ class PaymentExpenseReport extends CommonObject
 	public $rowid;
 
 	/**
-	 * @var int ID
+	 * @var int Legacy expense report ID kept for backward compatibility
 	 */
 	public $fk_expensereport;
 
@@ -72,9 +73,9 @@ class PaymentExpenseReport extends CommonObject
 	 */
 	public $amount; // Total amount of payment
 	/**
-	 * @var array<float|int>
+	 * @var array<int,float|int> Array of amounts indexed by expense report ID
 	 */
-	public $amounts = array(); // Array of amounts
+	public $amounts = array();
 
 	/**
 	 * @var int ID
@@ -139,8 +140,8 @@ class PaymentExpenseReport extends CommonObject
 	}
 
 	/**
-	 *  Create payment of expense report into database.
-	 *  Use this->amounts to have list of lines for the payment
+	 *  Create an expense report payment in database.
+	 *  Uses $this->amounts as an array indexed by expense report ID.
 	 *
 	 *  @param      User		$user   User making payment
 	 *  @return     int     			Return integer <0 if KO, id of payment if OK
@@ -189,7 +190,7 @@ class PaymentExpenseReport extends CommonObject
 		}
 
 		$totalamount = 0;
-		foreach ($this->amounts as $key => $value) {  // How payment is dispatch
+		foreach ($this->amounts as $key => $value) {  // Amount allocated to each expense report
 			$newvalue = (float) price2num($value, 'MT');
 			$this->amounts[$key] = $newvalue;
 			$totalamount += $newvalue;
@@ -217,6 +218,47 @@ class PaymentExpenseReport extends CommonObject
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."payment_expensereport");
+
+				// Insert links between this payment and each expense report.
+				foreach ($this->amounts as $expensereportid => $amount) {
+					$expensereportid = (int) $expensereportid;
+					$amount = (float) price2num($amount, 'MT');
+
+					if ($amount == 0) {
+						continue;
+					}
+
+					if ($expensereportid <= 0) {
+						$this->error = 'ErrorBadExpenseReportId';
+						$error++;
+						break;
+					}
+
+					$sql = "INSERT INTO ".MAIN_DB_PREFIX."paymentexpensereport_expensereport";
+					$sql .= " (fk_payment, fk_expensereport, amount,";
+					$sql .= " multicurrency_code, multicurrency_tx, multicurrency_amount)";
+					$sql .= " VALUES (";
+					$sql .= ((int) $this->id).",";
+					$sql .= ((int) $expensereportid).",";
+					$sql .= price2num($amount).",";
+					$sql .= " NULL,";
+					$sql .= " 1,";
+					$sql .= price2num($amount);
+					$sql .= ")";
+
+					dol_syslog(
+						get_class($this)."::create link payment ".$this->id.
+						" to expense report ".$expensereportid,
+						LOG_DEBUG
+					);
+
+					$resql2 = $this->db->query($sql);
+					if (!$resql2) {
+						$this->error = $this->db->lasterror();
+						$error++;
+						break;
+					}
+				}
 			} else {
 				$error++;
 			}
@@ -227,7 +269,9 @@ class PaymentExpenseReport extends CommonObject
 			$this->db->commit();
 			return $this->id;
 		} else {
-			$this->error = $this->db->error();
+			if (empty($this->error)) {
+				$this->error = $this->db->error();
+			}
 			$this->db->rollback();
 			return -1;
 		}
@@ -405,6 +449,18 @@ class PaymentExpenseReport extends CommonObject
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_url";
 			$sql .= " WHERE type='payment_expensereport' AND url_id=".((int) $this->id);
+
+			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$error++;
+				$this->errors[] = "Error ".$this->db->lasterror();
+			}
+		}
+
+		if (!$error) {
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."paymentexpensereport_expensereport";
+			$sql .= " WHERE fk_payment=".((int) $this->id);
 
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -611,13 +667,29 @@ class PaymentExpenseReport extends CommonObject
 					}
 				}
 
-				// Add link 'user' in bank_url between user and bank transaction
-				if (!$error) {
-					foreach ($this->amounts as $key => $value) {  // We should have always same user but we loop in case of.
-						if ($mode == 'payment_expensereport') {
-							$fuser = new User($this->db);
-							$fuser->fetch($key);
+				// Add links to related users in bank_url.
+				if (!$error && $mode == 'payment_expensereport') {
+					$linkaddedforuser = array();
 
+					foreach ($this->amounts as $expensereportid => $value) {
+						$expensereport = new ExpenseReport($this->db);
+						$result = $expensereport->fetch((int) $expensereportid);
+						if ($result <= 0) {
+							$this->error = $expensereport->error;
+							$error++;
+							break;
+						}
+
+						$fuser = new User($this->db);
+						$result = $fuser->fetch((int) $expensereport->fk_user_author);
+						if ($result <= 0) {
+							$this->error = $fuser->error;
+							$error++;
+							break;
+						}
+
+						// Several expense reports may belong to the same user.
+						if (!isset($linkaddedforuser[$fuser->id])) {
 							$result = $acc->add_url_line(
 								$bank_line_id,
 								$fuser->id,
@@ -627,9 +699,12 @@ class PaymentExpenseReport extends CommonObject
 							);
 							if ($result <= 0) {
 								$this->error = $this->db->lasterror();
-								dol_syslog(get_class($this).'::addPaymentToBank '.$this->error);
+								dol_syslog(get_class($this).'::addPaymentToBank '.$this->error, LOG_ERR);
 								$error++;
+								break;
 							}
+
+							$linkaddedforuser[$fuser->id] = true;
 						}
 					}
 				}
