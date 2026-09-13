@@ -25,4 +25,4 @@ fi
 echo "Running as $USER_NAME ($USER_ID:$GROUP_ID)"
 
 # Execute order
-exec runuser -u "$USER_NAME" -- "$@"
+exec runuser -u "$USER_NAME" -- "$@" --rcfile /etc/bash.bashrc -i

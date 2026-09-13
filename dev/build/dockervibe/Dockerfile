@@ -18,7 +18,7 @@ RUN apt-get update \
 WORKDIR /workspace
 
 # Prompt
-RUN cat >> /root/.bashrc <<'EOF'
+RUN cat >> /etc/bash.bashrc <<'EOF'
 
 git_branch() {
     git branch --show-current 2>/dev/null
