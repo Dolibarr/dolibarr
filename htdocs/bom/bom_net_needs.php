@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2019-2026  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -357,7 +357,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 					if(element.html().indexOf('folder-open') <= 0) {
 						$('[parentid="'+ id_bom_line +'"]').show();
-						element.html('<?php echo dol_escape_js(img_picto('', 'folder-open')); ?>');
+						element.html(<?php echo "'".dol_escape_js(img_picto('', 'folder-open'))."'" ; ?>);
 					}
 					else {
 						for (let i = 0; i < TSubLines.length; i++) {
@@ -367,7 +367,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							}
 						}
 						TSubLines.hide();
-						element.html('<?php echo dol_escape_js(img_picto('', 'folder')); ?>');
+						element.html(<?php echo "'".dol_escape_js(img_picto('', 'folder'))."'" ; ?>);
 					}
 				}
 
@@ -381,7 +381,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				$("#show_all").click(function() {
 					console.log("We click on show all");
 					$("[class^=sub_bom_lines]").show();
-					$("[class^=collapse_bom]").html('<?php echo dol_escape_js(img_picto('', 'folder-open')); ?>');
+					$("[class^=collapse_bom]").html(<?php echo "'".dol_escape_js(img_picto('', 'folder-open'))."'" ; ?>);
 					return false;
 				});
 
@@ -389,7 +389,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				$("#hide_all").click(function() {
 					console.log("We click on hide all");
 					$("[class^=sub_bom_lines]").hide();
-					$("[class^=collapse_bom]").html('<?php echo dol_escape_js(img_picto('', 'folder')); ?>');
+					$("[class^=collapse_bom]").html(<?php echo "'".dol_escape_js(img_picto('', 'folder'))."'" ; ?>);
 					return false;
 				});
 
