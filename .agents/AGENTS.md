@@ -121,6 +121,40 @@ Before writing any code, the agent **must**:
 
 ---
 
+## HTML Rendering Functions (html.lib.php)
+
+*Use Dolibarr HTML functions instead of raw echo/print. `htdocs/core/lib/html.lib.php` has in 6 categories with @example tags.*
+
+### Quick Reference
+
+| Category | Function | Example from @example tag |
+|----------|----------|---------------------------|
+| **Text Output** | `dolPrintLabel($s)` | `<span><?php echo dolPrintLabel($object->name); ?></span>` |
+| **Text Output** | `dolPrintText($s)` | `<div class="description"><?php echo dolPrintText($object->description); ?></div>` |
+| **HTML Output** | `dolPrintHTML($s)` | `<div class="rich-text"><?php echo dolPrintHTML($object->note); ?></div>` |
+| **Attributes** | `dolPrintHTMLForAttribute($s)` | `<span title="<?php echo dolPrintHTMLForAttribute($tooltip); ?>">?</span>` |
+| **Textarea** | `dolPrintHTMLForTextArea($s)` | `<textarea><?php echo dolPrintHTMLForTextArea($content); ?></textarea>` |
+| **Icons** | `img_picto($alt, $picto)` | `<?php echo img_picto('Edit', 'edit'); ?>` |
+| **Icons** | `img_edit($alt)` | `<?php echo img_edit('Modify'); ?>` |
+| **Icons** | `img_delete($alt)` | `<?php echo img_delete('Remove'); ?>` |
+| **Buttons** | `dolGetButtonAction($label, $text, $type)` | `<?php echo dolGetButtonAction('Save', '', 'default'); ?>` |
+| **Messages** | `setEventMessage($msg)` | `setEventMessage('Saved successfully')` |
+| **Messages** | `dol_htmloutput_events()` | Call after setEventMessage() |
+| **Formatted** | `yn($yesno)` | `<?php echo yn($obj->active); ?>` |
+| **Formatted** | `dolOutputDates($start, $end)` | `<?php echo dolOutputDates($date_start, $date_end); ?>` |
+
+### When to Use
+
+- **dolPrintLabel**: Single-line plain text (names, labels)
+- **dolPrintText**: Multi-line plain text (descriptions)
+- **dolPrintHTML**: Rich text with allowed HTML tags
+- **dolPrintHTMLForAttribute**: Any HTML attribute value
+- **img_* functions**: Always use instead of raw `<i>` or `<img>` tags
+- **dolGetButton***: For consistent button styling
+- **setEventMessage**: For user feedback messages
+
+---
+
 ## Security
 
 - Guard page access with `restrictedArea($user, 'module', $id, 'table')` or a specific test that deny access with `accessforbidden()`
