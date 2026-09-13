@@ -374,12 +374,12 @@ function dolButtonToOpenExportDialog($name, $label, $buttonstring, $exportSiteNa
 	$out .= '      modal: true,';
 	$out .= '      height: 290,';
 	$out .= '      width: "40%",';
-	$out .= '      title: "' . dol_escape_js($label) . '",';
+	$out .= '      title: \'' . dol_escape_js($label) . '\',';
 	$out .= '    });';
 
 	// Simulate a click on the original "submit" input to export the site.
 	$out .= '    jQuery("#export-site-' . $name . '").click(function () {';
-	$out .= '      console.log("Clic on exportsite.");';
+	$out .= '      console.log("Click on exportsite.");';
 	$out .= '      var target = jQuery("input[name=\'' . dol_escape_js($exportSiteName) . '\']");';
 	$out .= '      console.log("element founded:", target.length > 0);';
 	$out .= '      if (target.length > 0) { target.click(); }';
