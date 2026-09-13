@@ -136,6 +136,9 @@ if (empty($reshook)) {
 				if ($result <= 0) {
 					dol_print_error($db);
 				}
+				// The id comes from the name of a POST field, so it can name an invoice other than the
+				// one restrictedArea() was called on above. Check the user is allowed on that one too.
+				restrictedArea($user, 'facture', $tmpinvoice->id, '', '', 'fk_soc', 'rowid', (($tmpinvoice->status == Facture::STATUS_DRAFT) ? 1 : 0));
 				$amountsresttopay[$cursorfacid] = price2num($tmpinvoice->total_ttc - $tmpinvoice->getSommePaiement(0));
 				if ($amounts[$cursorfacid]) {
 					// Check amount
@@ -163,6 +166,9 @@ if (empty($reshook)) {
 				if ($result <= 0) {
 					dol_print_error($db);
 				}
+				// The id comes from the name of a POST field, so it can name an invoice other than the
+				// one restrictedArea() was called on above. Check the user is allowed on that one too.
+				restrictedArea($user, 'facture', $tmpinvoice->id, '', '', 'fk_soc', 'rowid', (($tmpinvoice->status == Facture::STATUS_DRAFT) ? 1 : 0));
 				$multicurrency_amountsresttopay[$cursorfacid] = price2num($tmpinvoice->multicurrency_total_ttc - $tmpinvoice->getSommePaiement(1));
 				if ($multicurrency_amounts[$cursorfacid]) {
 					// Check amount
