@@ -128,7 +128,7 @@ function loadandshowpreview(filedirname,section)
 
 	$('#ecmfileview').empty();
 
-	var url = '<?php echo dol_escape_js(dolBuildUrl(dol_buildpath('/core/ajax/ajaxdirpreview.php', 1), array('action' => 'preview', 'module' => $module))); ?>&section='+urlencode(section)+'&file='+urlencode(filedirname)<?php echo (empty($paramwithoutsection) ? '' : "+'".dol_escape_js($paramwithoutsection)."'"); ?>;
+	var url = <?php echo "'".dol_escape_js(dolBuildUrl(dol_buildpath('/core/ajax/ajaxdirpreview.php', 1), array('action' => 'preview', 'module' => $module)))."&section=\'"; ?>+urlencode(section)+'&file='+urlencode(filedirname)<?php echo (empty($paramwithoutsection) ? '' : "+'".dol_escape_js($paramwithoutsection)."'"); ?>;
 	$.get(url, function(data) {
 		//alert('Load of url '+url+' was performed : '+data);
 		pos=data.indexOf("TYPE=directory",0);
