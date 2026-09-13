@@ -306,7 +306,7 @@ class DolEditor
                             		toolbar: \''.dol_escape_js($this->toolbarname).'\',
             						toolbarStartupExpanded: '.($this->toolbarstartexpanded ? 'true' : 'false').',
             						width: '.($this->width ? '\''.dol_escape_js($this->width).'\'' : '\'\'').',
-            						height: '.dol_escape_js((string) $this->height).',
+									height: \''.dol_escape_js((string) $this->height).'\',
                                     skin: \''.dol_escape_js($skin).'\',
                                     '.$scaytautostartup.'
                                     language: \''.dol_escape_js($langs->defaultlang).'\',
