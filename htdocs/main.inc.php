@@ -2875,7 +2875,7 @@ function top_menu_ai()
 				})
 				.catch(function (e) {
 					console.error("AI Assistant popover load failed", e);
-					body.innerHTML = "<div class=\"ai-popover-loading\">'.dol_escape_js($langs->trans('Error')).'</div>";
+					body.innerHTML = \'<div class="ai-popover-loading">'.dol_escape_js($langs->trans('Error')).'</div>\';
 				})
 				.finally(function () { loading = false; });
 		}

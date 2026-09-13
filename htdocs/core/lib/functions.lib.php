@@ -7840,7 +7840,7 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null, $con
 				// convert $newval into HTML is necessary
 				$text = preg_replace('/__\(' . preg_quote($reg[1], '/') . '\)__/', $msgishtml ? dol_htmlentitiesbr($value) : $value, $text);
 			} else {
-				if (preg_match('/__\(' . preg_quote($reg[1], '/') . '\)__/')) {		// If found, so replacement will be done later
+				if (preg_match('/__\(' . preg_quote($reg[1], '/') . '\)__/', $text)) {		// If found, so replacement will be done later
 					if (! $msgishtml) {
 						$valueishtml = dol_textishtml($value, 1);
 						//var_dump("valueishtml=".$valueishtml);
@@ -7879,7 +7879,7 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null, $con
 			// convert $newval into HTML is necessary
 			$text = preg_replace('/__\[' . preg_quote($originalkeyfound, '/') . '\]__/', $msgishtml ? dol_htmlentitiesbr($value) : $value, $text);
 		} else {
-			if (preg_match('/__\[' . preg_quote($reg[1], '/') . '\]__/')) {		// If found, so replacement will be done later
+			if (preg_match('/__\[' . preg_quote($reg[1], '/') . '\]__/', $text)) {		// If found, so replacement will be done later
 				if (! $msgishtml) {
 					$valueishtml = dol_textishtml($value, 1);
 
