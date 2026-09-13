@@ -602,6 +602,8 @@ class Dolresources extends DolibarrApi
 		// Only the agenda event carries a usable period on the object itself. The other elements
 		// are linked without a booking check, as the interface does.
 		if ($element->element == 'action') {
+			/** @var ActionComm $element */
+			'@phan-var-force ActionComm $element';
 			$date_start = empty($element->datep) ? 0 : $element->datep;
 			$date_end = empty($element->datef) ? $date_start : $element->datef;
 			if ($date_start && !empty($element->fulldayevent)) {
