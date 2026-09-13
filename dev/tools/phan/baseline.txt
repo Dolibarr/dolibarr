@@ -29,9 +29,6 @@ return [
 
     // Currently, file_suppressions and directory_suppressions are the only supported suppressions
     'file_suppressions' => [
-        'htdocs/admin/remotestore/class/externalModules.class.php' => ['FunctionMissingSingleQuoteWrapping'],
-        'htdocs/admin/tools/dolibarr_export.php' => ['FunctionMissingSingleQuoteWrapping'],
-        'htdocs/barcode/codeinit.php' => ['FunctionMissingSingleQuoteWrapping'],
         'htdocs/blockedlog/admin/filecheck.php' => ['FunctionMissingSingleQuoteWrapping'],
         'htdocs/bom/bom_net_needs.php' => ['FunctionMissingSingleQuoteWrapping'],
         'htdocs/bom/lib/bom.lib.php' => ['FunctionMissingSingleQuoteWrapping'],
@@ -53,7 +50,6 @@ return [
         'htdocs/core/class/doleditor.class.php' => ['FunctionMissingSingleQuoteWrapping'],
         'htdocs/core/class/dolgraph.class.php' => ['FunctionMissingSingleQuoteWrapping', 'PhanUndeclaredProperty'],
         'htdocs/core/class/emailsenderprofile.class.php' => ['PhanUndeclaredProperty'],
-        'htdocs/core/class/extrafields.class.php' => ['FunctionMissingSingleQuoteWrapping'],
         'htdocs/core/class/html.form.class.php' => ['FunctionMissingSingleQuoteWrapping', 'PhanParamTooMany', 'PhanPluginSuspiciousParamPosition', 'PhanTypeMismatchArgument'],
         'htdocs/core/class/html.formaccounting.class.php' => ['FunctionMissingSingleQuoteWrapping'],
         'htdocs/core/class/html.formactions.class.php' => ['FunctionMissingSingleQuoteWrapping'],
@@ -180,7 +176,6 @@ return [
         'htdocs/product/stock/stocktransfer/class/stocktransferline.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/product/stock/tpl/stockcorrection.tpl.php' => ['FunctionMissingSingleQuoteWrapping', 'PhanUndeclaredProperty'],
         'htdocs/projet/admin/project.php' => ['PhanTypeMismatchArgumentProbablyReal'],
-        'htdocs/projet/card.php' => ['FunctionMissingSingleQuoteWrapping'],
         'htdocs/projet/element.php' => ['FunctionMissingSingleQuoteWrapping'],
         'htdocs/projet/jsgantt_language.js.php' => ['FunctionMissingSingleQuoteWrapping'],
         'htdocs/projet/tasks/time.php' => ['PhanTypeInvalidDimOffset', 'PhanUndeclaredProperty'],
