@@ -4055,7 +4055,7 @@ function printCommonFooter($zone = 'private')
 function dol_set_focus($selector)
 {
 	print "\n" . '<!-- Set focus onto a specific field -->' . "\n";
-	print '<script nonce="' . getNonce() . '">jQuery(document).ready(function() { console.log("Force focus by dol_set_focus"); jQuery("' . dol_escape_js($selector) . '").focus(); });</script>' . "\n";
+	print '<script nonce="' . getNonce() . '">jQuery(document).ready(function() { console.log("Force focus by dol_set_focus"); jQuery(\'' . dol_escape_js($selector) . '\').focus(); });</script>' . "\n";
 }
 
 

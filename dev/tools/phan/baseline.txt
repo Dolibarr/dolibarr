@@ -51,7 +51,7 @@ return [
         'htdocs/core/class/conf.class.php' => ['PhanTypeMismatchProperty'],
         'htdocs/core/class/ctyperesource.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/class/doleditor.class.php' => ['FunctionMissingSingleQuoteWrapping'],
-        'htdocs/core/class/dolgraph.class.php' => ['FunctionMissingSingleQuoteWrapping', 'PhanUndeclaredProperty'],
+        'htdocs/core/class/dolgraph.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/class/emailsenderprofile.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/class/extrafields.class.php' => ['FunctionMissingSingleQuoteWrapping'],
         'htdocs/core/class/html.form.class.php' => ['FunctionMissingSingleQuoteWrapping', 'PhanParamTooMany', 'PhanPluginSuspiciousParamPosition', 'PhanTypeMismatchArgument'],

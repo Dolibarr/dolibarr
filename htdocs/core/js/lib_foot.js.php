@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2017       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -247,6 +248,7 @@ print '
 
 // Code to manage Copy To Clipboard click
 print "\n/* JS CODE TO ENABLE ClipBoard copy paste */\n";
+// Suppress because dol_escape_js is wrapped in '' @phan-suppress-next-line FunctionMissingSingleQuoteWrapping
 print '
 	jQuery(document).ready(function() {
 				jQuery(\'.clipboardCPShowOnHover\').hover(
