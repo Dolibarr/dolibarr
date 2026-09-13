@@ -148,15 +148,34 @@ class SqlInjectionVisitor extends \Phan\PluginV3\PluginAwarePostAnalysisVisitor
 	 * Regex pattern for safe SQL string characters that can appear after an unclosed quote.
 	 * These characters don't need escaping and can appear in SQL string literals.
 	 */
-	private const SAFE_STRING_CHARS_REGEX = '/^[\w\d\/\-\s%_=<>!,\(\)]+$/';
+	private const SAFE_STRING_CHARS_REGEX = '/^[\w\d\/\-\s%_=<>@`+.!,:;#\(\)]+$/';
 
 	/**
-	 * List of functions that require their output to be wrapped in single quotes.
+	 * List of functions that require their output to be wrapped in quotes.
+	 * Format: 'function_name' => ['quoteArg' => 'param_name', 'defaultQuote' => 'quote_char', 'quoteMap' => [param_value => 'quote_char', ...]]
+	 * where param_name determines the quote type, quote_char is the default quote, and quoteMap maps parameter values to quotes.
 	 *
-	 * @var string[]
+	 * @var array<string, array<string, mixed>>
 	 */
-	private const FUNCTIONS_REQUIRING_SINGLE_QUOTES = [
-		'dol_escape_js',
+	private const FUNCTIONS_REQUIRING_QUOTES = [
+		'dol_escape_js' => [
+			'quoteArg' => 'mode',
+			'defaultQuote' => "'",
+			'quoteMap' => [
+				0 => "'",
+				1 => "'",
+				2 => '"',
+				3 => null
+			]
+		],
+		'dol_escape_php' => [
+			'quoteArg' => 'stringforquotes',
+			'defaultQuote' => '"',
+			'quoteMap' => [
+				1 => "'",
+				2 => '"'
+			]
+		],
 	];
 
 	/**
@@ -255,8 +274,31 @@ class SqlInjectionVisitor extends \Phan\PluginV3\PluginAwarePostAnalysisVisitor
 	 */
 	private function quoteFollowedBySafeChars(string $str, int $quotePos): bool
 	{
+		// Check if the quote is escaped (preceded by backslash)
+		// In PHP string literals, backslash before a quote means it's escaped
+		if ($quotePos > 0 && substr($str, $quotePos - 1, 1) === '\\') {
+			return false;
+		}
+
 		$afterQuote = substr($str, $quotePos + 1);
 		return $afterQuote !== '' && preg_match(self::SAFE_STRING_CHARS_REGEX, $afterQuote);
+	}
+
+	/**
+	 * Check if a quote at the given position is preceded by safe SQL characters.
+	 * Safe characters don't need escaping and can appear in SQL string literals.
+	 *
+	 * @param string $str The string to check
+	 * @param int $quotePos The position of the quote in the string
+	 * @return bool True if the quote is preceded by safe characters
+	 */
+	private function quotePrecededBySafeChars(string $str, int $quotePos): bool
+	{
+		$beforeQuote = substr($str, 0, $quotePos);
+		if (!preg_match(self::SAFE_STRING_CHARS_REGEX, $beforeQuote)) {
+			$this->debug("BEFORE '$beforeQuote' not matched in '$str'");
+		}
+		return $beforeQuote !== '' && preg_match(self::SAFE_STRING_CHARS_REGEX, $beforeQuote);
 	}
 
 	/**
@@ -403,13 +445,20 @@ class SqlInjectionVisitor extends \Phan\PluginV3\PluginAwarePostAnalysisVisitor
 		$method = $node->children['expr'] ?? null;
 		if ($method instanceof Node && $method->kind === \ast\AST_NAME) {
 			$functionName = $method->children['name'] ?? null;
-			if (is_string($functionName) && in_array($functionName, self::FUNCTIONS_REQUIRING_SINGLE_QUOTES, true)) {
-				// Get the mode argument for dol_escape_js
-				$mode = $this->getDolEscapeJsMode($node);
+			if (is_string($functionName) && isset(self::FUNCTIONS_REQUIRING_QUOTES[$functionName])) {
+				// Get the function configuration
+				$functionConfig = self::FUNCTIONS_REQUIRING_QUOTES[$functionName];
+				$paramName = $functionConfig['quoteArg'] ?? null;
+				$defaultQuote = $functionConfig['defaultQuote'] ?? null;
+				$quoteMap = $functionConfig['quoteMap'] ?? [];
 
-				// Determine the required quote type based on mode
-				// null means no requirement (mode 3)
-				$requiredQuote = $this->getRequiredQuoteForMode($mode);
+				// Get the parameter value that determines the required quote
+				$paramValue = $this->getFunctionParamValue($node, $paramName);
+
+				// Determine the required quote type based on parameter value and quote map
+				// Cast to int to handle string representations of numbers
+				$paramValue = $paramValue !== null ? (int) $paramValue : null;
+				$requiredQuote = array_key_exists($paramValue, $quoteMap) ? $quoteMap[$paramValue] : $defaultQuote;
 
 				// Only check if a specific quote is required
 				if ($requiredQuote !== null) {
@@ -417,7 +466,8 @@ class SqlInjectionVisitor extends \Phan\PluginV3\PluginAwarePostAnalysisVisitor
 					$parentNodes = $this->parent_node_list;
 					$parent = end($parentNodes) ?: null;
 
-					// Check if in a BINARY_CONCAT context
+					// Check if properly wrapped in the required quotes
+					// For standalone calls, parent will be null
 					if ($parent !== null && $parent->kind === \ast\AST_BINARY_OP && ($parent->flags ?? 0) === \ast\flags\BINARY_CONCAT) {
 						// Check if properly wrapped in the required quotes
 						if (!$this->isFunctionCallProperlyWrappedInQuotes($node, $parent, $requiredQuote)) {
@@ -427,22 +477,25 @@ class SqlInjectionVisitor extends \Phan\PluginV3\PluginAwarePostAnalysisVisitor
 								$this->code_base, // @phpstan-ignore property.notFound
 								$this->context, // @phpstan-ignore property.notFound
 								'FunctionMissingSingleQuoteWrapping',
-								'Function %s output must be wrapped in %s quotes for mode %d',
-								[$methodDisplay, $requiredQuote === "'" ? 'single' : 'double', $mode]
+								'Function %s output must be wrapped in %s quotes',
+								[$methodDisplay, $requiredQuote === "'" ? 'single' : 'double']
 							);
 						}
 					} else {
-						// Standalone call - flag it as it needs wrapping
+						// Standalone call - always flag it as it needs wrapping
 						$methodDisplay = $this->getNodeVarForMethodCall($node);
 						// @phpstan-ignore-next-line method.notFound
 						$this->emitPluginIssue(
 							$this->code_base, // @phpstan-ignore property.notFound
 							$this->context, // @phpstan-ignore property.notFound
 							'FunctionMissingSingleQuoteWrapping',
-							'Function %s output must be wrapped in %s quotes for mode %d',
-							[$methodDisplay, $requiredQuote === "'" ? 'single' : 'double', $mode]
+							'Function %s output must be wrapped in %s quotes',
+							[$methodDisplay, $requiredQuote === "'" ? 'single' : 'double']
 						);
 					}
+				} else {
+					// No quote requirement (e.g., mode 3 for dol_escape_js), so don't flag
+					// This can happen when the function parameter indicates no wrapping is needed
 				}
 			}
 		}
@@ -511,86 +564,63 @@ class SqlInjectionVisitor extends \Phan\PluginV3\PluginAwarePostAnalysisVisitor
 	}
 
 	/**
-	 * Get the mode argument from a dol_escape_js call.
+	 * Get the parameter value from a function call by parameter name.
 	 *
-	 * @param Node $node The CALL node for dol_escape_js
-	 * @return int|null The mode value, or null if not found (defaults to 0)
+	 * @param Node $node The CALL node
+	 * @param string|null $paramName The name of the parameter to extract
+	 * @return int|null The parameter value, or null if not found
 	 */
-	private function getDolEscapeJsMode(Node $node): ?int
+	private function getFunctionParamValue(Node $node, ?string $paramName): ?int
 	{
+		if ($paramName === null) {
+			return null;
+		}
+
 		// Get the arguments of the function call
 		$args = $node->children['args'] ?? null;
 		if (!$args instanceof Node) {
-			return 0; // Default mode is 0
+			return null;
 		}
 
 		$argList = $args->children ?? [];
 		if (!is_array($argList) || count($argList) === 0) {
-			return 0; // Default mode is 0
+			return null;
 		}
 
-		// The first argument is $a (the string to escape)
-		// The second argument (if present) is $mode
-		$modeArg = $argList[1] ?? null;
-
-		if ($modeArg === null) {
-			return 0; // Default mode is 0
+		// Determine which argument index corresponds to the parameter name
+		$paramIndex = null;
+		if ($paramName === 'mode') {
+			$paramIndex = 1; // mode is the second argument
+		} elseif ($paramName === 'stringforquotes') {
+			$paramIndex = 1; // stringforquotes is the second argument
 		}
 
-		// Try to extract the value
-		if (is_int($modeArg)) {
-			return $modeArg;
+		if ($paramIndex === null || !isset($argList[$paramIndex])) {
+			return null;
 		}
 
-		if ($modeArg instanceof Node) {
+		$arg = $argList[$paramIndex];
+
+		// Try to extract the integer value
+		if (is_int($arg)) {
+			return $arg;
+		}
+
+		if ($arg instanceof Node) {
 			// Could be a literal, variable, or expression
 			// For now, try to get the scalar value
-			$value = $modeArg->children['scalar'] ?? null;
+			$value = $arg->children['scalar'] ?? null;
 			if (is_int($value)) {
 				return $value;
 			}
 
 			// Check if it's a simple literal
-			if (is_int($modeArg->children['value'] ?? null)) {
-				return $modeArg->children['value'];
+			if (is_int($arg->children['value'] ?? null)) {
+				return $arg->children['value'];
 			}
-
-			// If we can't determine the value, default to 0
-			// This means we'll check for single quotes by default
 		}
 
-		return 0; // Default mode is 0
-	}
-
-	/**
-	 * Get the required quote type for a given mode.
-	 *
-	 * @param int $mode The mode value from dol_escape_js
-	 * @return string|null The required quote character (' or "), or null if no specific requirement
-	 */
-	private function getRequiredQuoteForMode(int $mode): ?string
-	{
-		// Mode 0: Escape also \' and \" into \' - for usage into 'string'
-		// Mode 1: Escape \' but not \" - for usage into 'string'
-		// Both require single quotes
-		if ($mode === 0 || $mode === 1) {
-			return "'";
-		}
-
-		// Mode 2: Escape \" but not \' - for usage into "string"
-		// Requires double quotes
-		if ($mode === 2) {
-			return '"';
-		}
-
-		// Mode 3: Escape \' and " with \\
-		// No specific quote requirement (already escaped with backslash)
-		if ($mode === 3) {
-			return null; // No requirement
-		}
-
-		// Default to mode 0 behavior
-		return "'";
+		return null;
 	}
 
 	/**
@@ -749,7 +779,10 @@ class SqlInjectionVisitor extends \Phan\PluginV3\PluginAwarePostAnalysisVisitor
 			// or the node itself might represent a string
 			// Try to get the string value from various places
 			$value = null;
-			if (isset($node->children['scalar']) && is_string($node->children['scalar'])) {
+			// Try to get the raw string value which includes quotes
+			if (isset($node->children['raw']) && is_string($node->children['raw'])) {
+				$value = $node->children['raw'];
+			} elseif (isset($node->children['scalar']) && is_string($node->children['scalar'])) {
 				$value = $node->children['scalar'];
 			} elseif (is_string($node->children['value'] ?? null)) {
 				$value = $node->children['value'];
@@ -799,7 +832,7 @@ class SqlInjectionVisitor extends \Phan\PluginV3\PluginAwarePostAnalysisVisitor
 			if ($firstQuotePos !== false) {
 				// Check if characters before the quote are safe
 				$beforeQuote = substr($node, 0, $firstQuotePos);
-				if ($beforeQuote === '' || preg_match('/^[\w\d\/\-\s%_=<>!,()]+$/', $beforeQuote)) {
+				if ($beforeQuote === '' || preg_match(self::SAFE_STRING_CHARS_REGEX, $beforeQuote)) {
 					return true;
 				}
 			}
@@ -808,7 +841,10 @@ class SqlInjectionVisitor extends \Phan\PluginV3\PluginAwarePostAnalysisVisitor
 
 		if ($node instanceof Node) {
 			$value = null;
-			if (isset($node->children['scalar']) && is_string($node->children['scalar'])) {
+			// Try to get the raw string value which includes quotes
+			if (isset($node->children['raw']) && is_string($node->children['raw'])) {
+				$value = $node->children['raw'];
+			} elseif (isset($node->children['scalar']) && is_string($node->children['scalar'])) {
 				$value = $node->children['scalar'];
 			} elseif (is_string($node->children['value'] ?? null)) {
 				$value = $node->children['value'];
@@ -824,7 +860,7 @@ class SqlInjectionVisitor extends \Phan\PluginV3\PluginAwarePostAnalysisVisitor
 				if ($firstQuotePos !== false) {
 					// Check if characters before the quote are safe
 					$beforeQuote = substr($value, 0, $firstQuotePos);
-					if ($beforeQuote === '' || preg_match('/^[\w\d\/\-\s%_=<>!,()]+$/', $beforeQuote)) {
+					if ($beforeQuote === '' || preg_match(self::SAFE_STRING_CHARS_REGEX, $beforeQuote)) {
 						return true;
 					}
 				}
