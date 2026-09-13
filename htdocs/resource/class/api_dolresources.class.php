@@ -297,6 +297,206 @@ class Dolresources extends DolibarrApi
 		);
 	}
 
+	/**
+	 * Get the resources linked to an element
+	 *
+	 * Return the links stored in llx_element_resources for an element, so the endpoint works for
+	 * any element type that can carry resources (agenda events, interventions, ...) and not only
+	 * for one module.
+	 *
+	 * @param	string	$element_type	Type of the element, as stored in element_type (for example "action" for an agenda event)
+	 * @param	int		$element_id		ID of the element
+	 * @return	array					Array of links
+	 * @phan-return array<int,array{id:int,resource_id:int,resource_type:string,busy:int,mandatory:int,resource:array<string,mixed>|null}>
+	 * @phpstan-return array<int,array{id:int,resource_id:int,resource_type:string,busy:int,mandatory:int,resource:array<string,mixed>|null}>
+	 *
+	 * @url	GET {element_type}/{element_id}/resources
+	 *
+	 * @throws RestException 403 Access denied
+	 * @throws RestException 404 Element not found
+	 */
+	public function getElementResources($element_type, $element_id)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('resource', 'read')) {
+			throw new RestException(403);
+		}
+
+		$element = $this->_fetchElement($element_type, $element_id);
+
+		$result = array();
+		foreach ($this->resource->getElementResources($element->element, $element->id) as $link) {
+			$result[] = $this->_formatLink($link);
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Link a resource to an element
+	 *
+	 * @param	string	$element_type	Type of the element, as stored in element_type (for example "action" for an agenda event)
+	 * @param	int		$element_id		ID of the element
+	 * @param	array	$request_data	Request data. Mandatory: resource_id. Optional: busy, mandatory
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
+	 * @return	array					The created link
+	 * @phan-return array{id:int,resource_id:int,resource_type:string,busy:int,mandatory:int,resource:array<string,mixed>|null}
+	 * @phpstan-return array{id:int,resource_id:int,resource_type:string,busy:int,mandatory:int,resource:array<string,mixed>|null}
+	 *
+	 * @url	POST {element_type}/{element_id}/resources
+	 *
+	 * @throws RestException 400 Mandatory field missing
+	 * @throws RestException 403 Access denied
+	 * @throws RestException 404 Element or resource not found
+	 * @throws RestException 409 Resource already linked to this element, or already busy on the period
+	 * @throws RestException 500 Error when creating the link
+	 */
+	public function postElementResources($element_type, $element_id, $request_data = null)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('resource', 'write')) {
+			throw new RestException(403);
+		}
+
+		if ($request_data === null) {
+			$request_data = array();
+		}
+		if (!isset($request_data['resource_id'])) {
+			throw new RestException(400, "resource_id field missing");
+		}
+
+		$element = $this->_fetchElement($element_type, $element_id);
+
+		$resource_id = (int) $request_data['resource_id'];
+		if ($this->resource->fetch($resource_id) <= 0) {
+			throw new RestException(404, 'Resource not found');
+		}
+
+		$busy = empty($request_data['busy']) ? 0 : 1;
+		$mandatory = empty($request_data['mandatory']) ? 0 : 1;
+
+		// The unique index of llx_element_resources rejects a duplicate, so the case is detected
+		// here to answer 409 instead of letting the insert fail with a 500.
+		foreach ($this->resource->getElementResources($element->element, $element->id) as $existing) {
+			if ((int) $existing['resource_id'] == $resource_id && $existing['resource_type'] == $this->resource->element) {
+				throw new RestException(409, 'Resource already linked to this element');
+			}
+		}
+
+		// A busy link books the resource, so the same double booking check as the interface is
+		// applied. getBookingConflicts() returns -1 on SQL error, an array otherwise.
+		if ($busy) {
+			$conflicts = $this->_getBookingConflicts($element, $resource_id);
+			if (!empty($conflicts)) {
+				throw new RestException(409, 'Resource already used on this period by: '.$this->_describeConflicts($conflicts));
+			}
+		}
+
+		if ($element->add_element_resource($resource_id, $this->resource->element, $busy, $mandatory) <= 0) {
+			throw new RestException(500, 'Error when linking resource: '.$element->error);
+		}
+
+		foreach ($this->resource->getElementResources($element->element, $element->id) as $link) {
+			if ((int) $link['resource_id'] == $resource_id && $link['resource_type'] == $this->resource->element) {
+				return $this->_formatLink($link);
+			}
+		}
+
+		throw new RestException(500, 'Link created but not found back');
+	}
+
+	/**
+	 * Unlink a resource from an element
+	 *
+	 * @param	string	$element_type	Type of the element, as stored in element_type (for example "action" for an agenda event)
+	 * @param	int		$element_id		ID of the element
+	 * @param	int		$id				ID of the link to delete (the id returned by the GET, not the id of the resource)
+	 * @return	array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
+	 *
+	 * @url	DELETE {element_type}/{element_id}/resources/{id}
+	 *
+	 * @throws RestException 403 Access denied
+	 * @throws RestException 404 Element or link not found
+	 * @throws RestException 500 Error when deleting the link
+	 */
+	public function deleteElementResources($element_type, $element_id, $id)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('resource', 'delete')) {
+			throw new RestException(403);
+		}
+
+		$element = $this->_fetchElement($element_type, $element_id);
+
+		// delete_resource() deletes by rowid without checking the row belongs to the element, so
+		// the link is looked up on the element first to not allow deleting the link of another one.
+		$found = false;
+		foreach ($this->resource->getElementResources($element->element, $element->id) as $link) {
+			if ((int) $link['rowid'] == (int) $id) {
+				$found = true;
+				break;
+			}
+		}
+		if (!$found) {
+			throw new RestException(404, 'Link not found for this element');
+		}
+
+		if ($element->delete_resource($id, $element->element) <= 0) {
+			throw new RestException(500, 'Error when unlinking resource: '.$element->error);
+		}
+
+		return array(
+			'success' => array(
+				'code' => 200,
+				'message' => 'Resource unlinked'
+			)
+		);
+	}
+
+	/**
+	 * Get the bookings that conflict with a period for a resource
+	 *
+	 * Answers the availability question without having to create a link first. Only the links
+	 * flagged busy are considered, as in the interface.
+	 *
+	 * @param	int		$id				ID of resource
+	 * @param	string	$date_start		Start of the period, format YYYY-MM-DD HH:MM:SS or a Unix timestamp
+	 * @param	string	$date_end		End of the period, format YYYY-MM-DD HH:MM:SS or a Unix timestamp
+	 * @return	array					Conflicting bookings, empty if the resource is free
+	 * @phan-return array<int,array{element_type:string,element_id:int,ref:string}>
+	 * @phpstan-return array<int,array{element_type:string,element_id:int,ref:string}>
+	 *
+	 * @url	GET {id}/bookingconflicts
+	 *
+	 * @throws RestException 400 Bad date
+	 * @throws RestException 403 Access denied
+	 * @throws RestException 404 Resource not found
+	 * @throws RestException 500 Error when searching the conflicts
+	 */
+	public function getBookingConflicts($id, $date_start, $date_end)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('resource', 'read')) {
+			throw new RestException(403);
+		}
+
+		if ($this->resource->fetch($id) <= 0) {
+			throw new RestException(404, 'Resource not found');
+		}
+
+		$start = $this->_toTimestamp($date_start, 'date_start');
+		$end = $this->_toTimestamp($date_end, 'date_end');
+		if ($end < $start) {
+			throw new RestException(400, 'date_end is before date_start');
+		}
+
+		$conflicts = $this->resource->getBookingConflicts($this->resource->id, $this->resource->element, $start, $end);
+		if (!is_array($conflicts)) {
+			throw new RestException(500, 'Error when searching the conflicts: '.$this->resource->error);
+		}
+
+		return $conflicts;
+	}
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Clean sensible object datas
@@ -324,6 +524,142 @@ class Dolresources extends DolibarrApi
 		unset($object->fulldayevent);
 
 		return $object;
+	}
+
+	/**
+	 * Load the element carrying the resources and check the access to it
+	 *
+	 * @param	string	$element_type	Type of the element, as stored in element_type
+	 * @param	int		$element_id		ID of the element
+	 * @return	CommonObject			The loaded element
+	 *
+	 * @throws RestException 400 Bad element type
+	 * @throws RestException 403 Access denied
+	 * @throws RestException 404 Element not found
+	 */
+	private function _fetchElement($element_type, $element_id)
+	{
+		$element_type = (string) $element_type;
+		if ($element_type === '' || !preg_match('/^[a-z0-9_]+$/i', $element_type)) {
+			throw new RestException(400, 'Bad value for parameter element_type');
+		}
+		if ((int) $element_id <= 0) {
+			throw new RestException(400, 'Bad value for parameter element_id');
+		}
+
+		$element = fetchObjectByElement((int) $element_id, $element_type);
+		if (!is_object($element) || empty($element->id)) {
+			throw new RestException(404, 'Element '.$element_type.' not found');
+		}
+
+		// Linking a resource writes on the element, so the access to the element itself is checked
+		// and not only the permissions on the resources.
+		if (!DolibarrApi::_checkAccessToResource($element_type, $element->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		return $element;
+	}
+
+	/**
+	 * Format a link of llx_element_resources for the answer
+	 *
+	 * @param	array<string,mixed>	$link	Link as returned by getElementResources()
+	 * @return	array<string,mixed>			Formatted link
+	 */
+	private function _formatLink($link)
+	{
+		$resource = null;
+		$resource_static = new Dolresource($this->db);
+		if ($resource_static->fetch((int) $link['resource_id']) > 0) {
+			$resource = $this->_cleanObjectDatas($resource_static);
+		}
+
+		return array(
+			'id' => (int) $link['rowid'],
+			'resource_id' => (int) $link['resource_id'],
+			'resource_type' => $link['resource_type'],
+			'busy' => (int) $link['busy'],
+			'mandatory' => (int) $link['mandatory'],
+			'resource' => $resource
+		);
+	}
+
+	/**
+	 * Return the bookings conflicting with the period of an element for a resource
+	 *
+	 * @param	CommonObject	$element		Element being linked
+	 * @param	int				$resource_id	ID of resource
+	 * @return	array<int,array{element_type:string,element_id:int,ref:string}>	Conflicting bookings, empty if none or if the element has no usable period
+	 *
+	 * @throws RestException 500 Error when searching the conflicts
+	 */
+	private function _getBookingConflicts($element, $resource_id)
+	{
+		$date_start = 0;
+		$date_end = 0;
+
+		// Only the agenda event carries a usable period on the object itself. The other elements
+		// are linked without a booking check, as the interface does.
+		if ($element->element == 'action') {
+			$date_start = empty($element->datep) ? 0 : $element->datep;
+			$date_end = empty($element->datef) ? $date_start : $element->datef;
+			if ($date_start && !empty($element->fulldayevent)) {
+				$parts = dol_getdate((int) $date_start);
+				$date_start = dol_mktime(0, 0, 0, $parts['mon'], $parts['mday'], $parts['year']);
+				$date_end = dol_mktime(23, 59, 59, $parts['mon'], $parts['mday'], $parts['year']);
+			}
+		}
+
+		if (empty($date_start)) {
+			return array();
+		}
+
+		$conflicts = $this->resource->getBookingConflicts($resource_id, $this->resource->element, $date_start, $date_end, $element->element, $element->id);
+		if (!is_array($conflicts)) {
+			throw new RestException(500, 'Error when searching the conflicts: '.$this->resource->error);
+		}
+
+		return $conflicts;
+	}
+
+	/**
+	 * Describe conflicting bookings for an error message
+	 *
+	 * @param	array<int,array{element_type:string,element_id:int,ref:string}>	$conflicts	Conflicting bookings
+	 * @return	string															Description
+	 */
+	private function _describeConflicts($conflicts)
+	{
+		$out = array();
+		foreach ($conflicts as $conflict) {
+			$out[] = $conflict['element_type'].' '.$conflict['element_id'].(empty($conflict['ref']) ? '' : ' ('.$conflict['ref'].')');
+		}
+
+		return implode(', ', $out);
+	}
+
+	/**
+	 * Convert a date given to the API into a timestamp
+	 *
+	 * @param	string	$value	Date, format YYYY-MM-DD HH:MM:SS or a Unix timestamp
+	 * @param	string	$name	Name of the parameter, for the error message
+	 * @return	int				Timestamp
+	 *
+	 * @throws RestException 400 Bad date
+	 */
+	private function _toTimestamp($value, $name)
+	{
+		if (is_numeric($value)) {
+			return (int) $value;
+		}
+
+		$timestamp = dol_stringtotime((string) $value);
+		if (empty($timestamp)) {
+			throw new RestException(400, 'Bad value for parameter '.$name);
+		}
+
+		return (int) $timestamp;
 	}
 
 	/**
