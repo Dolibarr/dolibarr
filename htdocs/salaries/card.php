@@ -7,7 +7,7 @@
  * Copyright (C) 2021		Gauthier VERDOL				<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2023		Maxime Nicolas				<maxime@oarces.com>
  * Copyright (C) 2023		Benjamin GREMBI				<benjamin@oarces.com>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025	Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
@@ -764,7 +764,7 @@ if ($action == 'create' && $permissiontoadd) {
 						);
 
 					} else {
-						alert("'.dol_escape_js($langs->transnoentitiesnoconv("FillFieldFirst")).'");
+						alert(\''.dol_escape_js($langs->transnoentitiesnoconv("FillFieldFirst")).'\');
 					}
 		});
 

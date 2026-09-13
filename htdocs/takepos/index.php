@@ -989,10 +989,10 @@ function Search2(keyCodeForEnter, moreorless) {
 				}
 				if (eventKeyCode == keyCodeForEnter){
 					if (data.length == 0) {
-						$('#search').val('<?php
+						$('#search').val(<?php
 						$langs->load('errors');
-						echo dol_escape_js($langs->transnoentitiesnoconv("ErrorRecordNotFoundShort"));
-						?> ('+search_term+')');
+						echo "'".dol_escape_js($langs->transnoentitiesnoconv("ErrorRecordNotFoundShort"))." ('";
+						?>+search_term+')');
 						$('#search').select();
 					}
 					else ClearSearch(false);
