@@ -11050,7 +11050,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
  *  @param	string		$text	      					Source string in which we must do substitution
  *  @param  array<string,null|string|float|int>	$substitutionarray	Array with key->val to substitute. Example: array('__MYKEY__' => 'MyVal', ...)
  *  @param	?Translate	$outputlangs					Output language
- *  @param	int<0,1>	$converttextinhtmlifnecessary	0=Convert only value into HTML if text is already in HTML
+ *  @param	int<0,1>	$converttextinhtmlifnecessary	0=Convert the substitution value into HTML if the original text is already in HTML
  *  													1=Will also convert initial $text into HTML if we try to insert one value that is HTML
  * 	@return string  		    						Output string after substitutions
  *  @see	complete_substitutions_array(), getCommonSubstitutionArray()
@@ -11089,18 +11089,19 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null, $con
 				// convert $newval into HTML is necessary
 				$text = preg_replace('/__\(' . preg_quote($reg[1], '/') . '\)__/', $msgishtml ? dol_htmlentitiesbr($value) : $value, $text);
 			} else {
-				if (! $msgishtml) {
-					$valueishtml = dol_textishtml($value, 1);
-					//var_dump("valueishtml=".$valueishtml);
+				if (preg_match('/__\(' . preg_quote($reg[1], '/') . '\)__/')) {		// If found, so replacement will be done later
+					if (! $msgishtml) {
+						$valueishtml = dol_textishtml($value, 1);
+						//var_dump("valueishtml=".$valueishtml);
 
-					if ($valueishtml) {
-						$text = dol_htmlentitiesbr($text);
-						$msgishtml = 1;
+						if ($valueishtml) {
+							$text = dol_htmlentitiesbr($text);
+							$msgishtml = 1;
+						}
+					} else {
+						$value = dol_nl2br((string) $value);
 					}
-				} else {
-					$value = dol_nl2br((string) $value);
 				}
-
 				$text = preg_replace('/__\(' . preg_quote($reg[1], '/') . '\)__/', $value, $text);
 			}
 		}
@@ -11127,17 +11128,18 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null, $con
 			// convert $newval into HTML is necessary
 			$text = preg_replace('/__\[' . preg_quote($originalkeyfound, '/') . '\]__/', $msgishtml ? dol_htmlentitiesbr($value) : $value, $text);
 		} else {
-			if (! $msgishtml) {
-				$valueishtml = dol_textishtml($value, 1);
+			if (preg_match('/__\[' . preg_quote($reg[1], '/') . '\]__/')) {		// If found, so replacement will be done later
+				if (! $msgishtml) {
+					$valueishtml = dol_textishtml($value, 1);
 
-				if ($valueishtml) {
-					$text = dol_htmlentitiesbr($text);
-					$msgishtml = 1;
+					if ($valueishtml) {
+						$text = dol_htmlentitiesbr($text);
+						$msgishtml = 1;
+					}
+				} else {
+					$value = dol_nl2br((string) $value);
 				}
-			} else {
-				$value = dol_nl2br((string) $value);
 			}
-
 			$text = preg_replace('/__\[' . preg_quote($originalkeyfound, '/') . '\]__/', $value, $text);
 		}
 	}
@@ -11151,21 +11153,22 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null, $con
 		if (getDolGlobalString('MAIN_MAIL_DO_NOT_USE_SIGN') && ($key == '__USER_SIGNATURE__' || $key == '__SENDEREMAIL_SIGNATURE__')) {
 			$value = ''; // Protection
 		}
-
 		if (empty($converttextinhtmlifnecessary)) {
 			$text = str_replace((string) $key, (string) $value, $text); // Cast to string is needed when value is 123.5 for example
 		} else {
-			if (! $msgishtml) {
-				$valueishtml = dol_textishtml($value, 1);
+			if (strpos($text, (string) $key) !== false) {		// If found, so replacement will be done later
+				if (! $msgishtml) {
+					$valueishtml = dol_textishtml($value, 1);
 
-				if ($valueishtml) {
-					$text = dol_htmlentitiesbr($text);
-					$msgishtml = 1;
+					if ($valueishtml) {
+						$text = dol_htmlentitiesbr($text);
+						$msgishtml = 1;
+					}
+				} else {
+					$value = dol_nl2br((string) $value);
 				}
-			} else {
-				$value = dol_nl2br((string) $value);
 			}
-			$text = str_replace((string) $key, (string) $value, $text); // Cast to string is needed 123.5 for example
+			$text = str_replace((string) $key, (string) $value, $text); // Cast to string is needed, for 123.5 for example
 		}
 	}
 
