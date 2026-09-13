@@ -14,7 +14,7 @@ So now when running the container, the .vibe/.env file has your paid key that wi
 
 ## You can add an alias into your /etc/bash.bashrc the line
 ````
-alias vibes='dev/build/dockervibe/runvibe.sh'
+alias vibes='dev/build/dockervibe/vibes.sh'
 ````
  
 
