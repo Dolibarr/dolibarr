@@ -123,6 +123,17 @@ class FormMargin
 				} else {
 					$pa = $line->qty * $pa_ht;
 				}
+			} elseif (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {	// New situation mode
+				'@phan-var-force Facture $object';
+				/** @var Facture $object */
+				if (($object->element == 'facture' && $object->type == $object::TYPE_SITUATION)
+					|| ($object->element == 'facture' && $object->type == $object::TYPE_CREDIT_NOTE && getDolGlobalInt('INVOICE_USE_SITUATION_CREDIT_NOTE') && $object->situation_counter > 0)) {
+					// In new situation mode, situation_percent and total_ht already store only this invoice's share (the delta).
+					// Selling price ($pv = total_ht) is therefore already correct; we only need to scale the buy price to the same percent.
+					$pa = $line->qty * $pa_ht * ($line->situation_percent / 100);
+				} else {
+					$pa = $line->qty * $pa_ht;
+				}
 			} else {
 				$pa = $line->qty * $pa_ht;
 			}
