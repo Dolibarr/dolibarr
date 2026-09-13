@@ -16,6 +16,7 @@ So now when running the container, the .vibe/.env file has your paid key that wi
 ## Run vibe into a container
 dev/build/dockervibe/runvibe.sh
 
+This script will build the docker image, and then run it with the current directory mounted into the container and launch vibe.
 
 ### Build (or rebuild) image of the container. 
 sudo docker build -dev/build/dockervibe -t dockervibe --no-cache

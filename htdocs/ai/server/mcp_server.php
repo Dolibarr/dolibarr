@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2026	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2026	Nick Fragoulis
- * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026	Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -253,6 +253,30 @@ try {
 
 		$responses = [];
 
+		// Transport headers describe the HTTP request, not individual batch
+		// items: if a Mcp-* / MCP-Protocol-Version header disagrees with ANY
+		// item, the header lies about the request and the WHOLE batch fails
+		// with a single error and HTTP 400 (review finding on #40356). This
+		// also keeps the rate-limiting contract simple: a proxy trusting the
+		// headers never lets a mismatching batch through as 200.
+		foreach ($request as $precheck) {
+			if (!is_array($precheck)) {
+				continue;
+			}
+			$headerError = $server->validateTransportHeaders($headers, $precheck);
+			if ($headerError !== null || $server->getHttpStatus() !== 200) {
+				http_response_code($server->getHttpStatus());
+				if ($headerError === null) {
+					// The offending item was a notification (no id): the error
+					// response was suppressed per JSON-RPC, but the transport
+					// status must still tell the truth.
+					$headerError = ["jsonrpc" => "2.0", "id" => null, "error" => ["code" => -32020, "message" => "Transport header does not match a batch item"]];
+				}
+				echo json_encode($headerError);
+				exit;
+			}
+		}
+
 		// Answer to all MCP requests following the MCP protocol
 		foreach ($request as $req) {
 			if (!is_array($req)) {
@@ -277,7 +301,20 @@ try {
 			throw new Exception("Invalid request format");
 		}
 
-		$response = $server->handleRequest($request);
+		$response = $server->validateTransportHeaders($headers, $request);
+		if ($response === null && $server->getHttpStatus() === 200) {
+			$response = $server->handleRequest($request);
+		}
+
+		if ($server->getHttpStatus() !== 200) {
+			http_response_code($server->getHttpStatus());
+			if ($response === null) {
+				// The offending request was a notification (no id): the error
+				// response body was suppressed per JSON-RPC, but a 400 must
+				// not go out empty - same handling as the batch path.
+				$response = ["jsonrpc" => "2.0", "id" => null, "error" => ["code" => -32020, "message" => "Transport header does not match the request"]];
+			}
+		}
 
 		if ($response !== null) {
 			echo json_encode($response);
