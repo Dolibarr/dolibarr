@@ -9,6 +9,7 @@
  * Copyright (C) 2023		Benjamin GREMBI				<benjamin@oarces.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025	Nick Fragoulis
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -495,8 +496,7 @@ llxHeader('', $title, $help_url);
 if ($id > 0) {
 	$result = $object->fetch($id);
 	if ($result <= 0) {
-		dol_print_error($db);
-		exit;
+		recordNotFound('', 0);
 	}
 }
 
