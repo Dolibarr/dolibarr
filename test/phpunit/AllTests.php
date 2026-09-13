@@ -148,6 +148,8 @@ class AllTests
 		$suite->addTestSuite('FunctionsBELibTest');
 		require_once dirname(__FILE__).'/ProfidLibTest.php';
 		$suite->addTestSuite('ProfidLibTest');
+		require_once dirname(__FILE__).'/EmailSignatureLibTest.php';
+		$suite->addTestSuite('EmailSignatureLibTest');
 		require_once dirname(__FILE__).'/XCalLibTest.php';
 		$suite->addTestSuite('XCalLibTest');
 		require_once dirname(__FILE__).'/PhpSessionInDbTest.php';
