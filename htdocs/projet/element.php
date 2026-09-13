@@ -9,7 +9,7 @@
  * Copyright (C) 2021-2023  Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2021       Noé Cendrier            <noe.cendrier@altairis.fr>
  * Copyright (C) 2023-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Günter Lukas			<github@gl.co.at>
  * Copyright (C) 2026		Joachim Kueter       <git-jk@bloxera.com>
  * Copyright (C) 2026  		Ferran Marcet           <fmarcet@2byte.es>
@@ -1300,13 +1300,13 @@ foreach ($listofreferent as $key => $value) {
 							if (typeof attr !== "undefined" && attr !== false) {
 								console.log("Show canceled");
 								$(".tr_canceled").show();
-								$("#textBtnShow").text("'.dol_escape_js($langs->transnoentitiesnoconv("CanceledShown")).'");
+								$("#textBtnShow").text(\''.dol_escape_js($langs->transnoentitiesnoconv("CanceledShown")).'\');
 								$("#btnShow").removeAttr("data-canceledarehidden");
 								$("#minus-circle").removeClass("fa-eye-slash").addClass("fa-eye");
 							} else {
 								console.log("Hide canceled");
 								$(".tr_canceled").hide();
-								$("#textBtnShow").text("'.dol_escape_js($langs->transnoentitiesnoconv("CanceledHidden")).'");
+								$("#textBtnShow").text(\''.dol_escape_js($langs->transnoentitiesnoconv("CanceledHidden")).'\');
 								$("#btnShow").attr("data-canceledarehidden", 1);
 								$("#minus-circle").removeClass("fa-eye").addClass("fa-eye-slash");
 							}
@@ -1323,13 +1323,13 @@ foreach ($listofreferent as $key => $value) {
 							if (typeof attr !== "undefined" && attr !== false) {
 								console.log("Show paid");
 								$(".tr_paid").show();
-								$("#textBtnShowPaid").text("'.dol_escape_js($langs->transnoentitiesnoconv("PaidShown")).'");
+								$("#textBtnShowPaid").text(\''.dol_escape_js($langs->transnoentitiesnoconv("PaidShown")).'\');
 								$("#btnShowPaid").removeAttr("data-paidarehidden");
 								$("#minus-circle-paid").removeClass("fa-eye-slash").addClass("fa-eye");
 							} else {
 								console.log("Hide paid");
 								$(".tr_paid").hide();
-								$("#textBtnShowPaid").text("'.dol_escape_js($langs->transnoentitiesnoconv("PaidHidden")).'");
+								$("#textBtnShowPaid").text(\''.dol_escape_js($langs->transnoentitiesnoconv("PaidHidden")).'\');
 								$("#btnShowPaid").attr("data-paidarehidden", 1);
 								$("#minus-circle-paid").removeClass("fa-eye").addClass("fa-eye-slash");
 							}
