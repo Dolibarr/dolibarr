@@ -2,7 +2,7 @@
 /* Copyright (C) 2012	   Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2013-2015 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026		Jose Martinez		<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -402,7 +402,7 @@ if (empty($mysoc->country_code)) {
 	print '<script>
 	jQuery(function() {
 		jQuery("#convert_vatrate").closest("form").on("submit", function() {
-			dolBlockUI("'.dol_escape_js($langs->transnoentities("MassConvertInProgress")).'");
+			dolBlockUI(\''.dol_escape_js($langs->transnoentities("MassConvertInProgress")).'\');
 		});
 	});
 	</script>';
