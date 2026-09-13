@@ -135,11 +135,8 @@ Before writing any code, the agent **must**:
 | **Attributes** | `dolPrintHTMLForAttribute($s)` | `<span title="<?php echo dolPrintHTMLForAttribute($tooltip); ?>">?</span>` |
 | **Textarea** | `dolPrintHTMLForTextArea($s)` | `<textarea><?php echo dolPrintHTMLForTextArea($content); ?></textarea>` |
 | **Icons** | `img_picto($alt, $picto)` | `<?php echo img_picto('Edit', 'edit'); ?>` |
-| **Icons** | `img_edit($alt)` | `<?php echo img_edit('Modify'); ?>` |
-| **Icons** | `img_delete($alt)` | `<?php echo img_delete('Remove'); ?>` |
 | **Buttons** | `dolGetButtonAction($label, $text, $type)` | `<?php echo dolGetButtonAction('Save', '', 'default'); ?>` |
-| **Messages** | `setEventMessage($msg)` | `setEventMessage('Saved successfully')` |
-| **Messages** | `dol_htmloutput_events()` | Call after setEventMessage() |
+| **Messages** | `setEventMessages($msg, $msgs)` | `setEventMessages('Saved successfully', array('Message 1', 'Message 2'))` |
 | **Formatted** | `yn($yesno)` | `<?php echo yn($obj->active); ?>` |
 | **Formatted** | `dolOutputDates($start, $end)` | `<?php echo dolOutputDates($date_start, $date_end); ?>` |
 
@@ -151,7 +148,7 @@ Before writing any code, the agent **must**:
 - **dolPrintHTMLForAttribute**: Any HTML attribute value
 - **img_* functions**: Always use instead of raw `<i>` or `<img>` tags
 - **dolGetButton***: For consistent button styling
-- **setEventMessage**: For user feedback messages
+- **setEventMessages**: For user feedback messages
 
 ---
 
