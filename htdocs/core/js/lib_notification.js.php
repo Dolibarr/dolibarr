@@ -3,6 +3,7 @@
  * Copyright (C) 2017	   Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2020-2023 Destailleur Laurent  <eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -168,7 +169,7 @@ function check_events() {
 						if (value.type == 'agenda')
 						{
 							url = '<?php print DOL_URL_ROOT.'/comm/action/card.php?id='; ?>' + value.id_agenda;
-							title = '<?php print dol_escape_js($langs->transnoentities('EventReminder')) ?>';
+							title = <?php print "'".dol_escape_js($langs->transnoentities('EventReminder'))."'"; ?>;
 						}
 
 						if (methodfornotification == "jsnotification") {
@@ -203,7 +204,7 @@ function check_events() {
 							var extra = {
 								icon: icon,
 								body: body,
-								lang: '<?php print dol_escape_js($langs->getDefaultLang(1)); ?>',
+								lang: <?php print "'".dol_escape_js($langs->getDefaultLang(1))."'"; ?>,
 								tag: value.id_agenda,
 								requireInteraction: true	/* wait that the user click or close the notification */
 								/* "actions:" parameter is only supported for persistent notification shown using ServiceWorkerRegistration.showNotification() so disabled */
