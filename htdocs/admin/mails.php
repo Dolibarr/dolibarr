@@ -4,7 +4,7 @@
  * Copyright (C) 2013		Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2016		Jonathan TISSEAU			<jonathan.tisseau@86dev.fr>
  * Copyright (C) 2023		Anthony Berton				<anthony.berton@bb2a.fr>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026		Anthony Berton				<anthony.berton@bb2a.fr>
 
@@ -104,6 +104,7 @@ if ($action == 'update' && !$cancel) {
 		dolibarr_set_const($db, "MAIN_MAIL_FORCE_SENDTO", GETPOST("MAIN_MAIL_FORCE_SENDTO", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 		dolibarr_set_const($db, "MAIN_MAIL_ENABLED_USER_DEST_SELECT", GETPOSTINT("MAIN_MAIL_ENABLED_USER_DEST_SELECT"), 'chaine', 0, '', $conf->entity);
 		dolibarr_set_const($db, 'MAIN_MAIL_NO_WITH_TO_SELECTED', GETPOSTINT('MAIN_MAIL_NO_WITH_TO_SELECTED'), 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, 'MAIL_ENABLE_FREETAG_RECIPIENT_INPUT', GETPOSTINT('MAIL_ENABLE_FREETAG_RECIPIENT_INPUT'), 'chaine', 0, '', $conf->entity);
 		dolibarr_set_const($db, 'MAIN_MAIL_DEFAULT_SIGNATURE_FOR_ALL_USERS', GETPOST('MAIN_MAIL_DEFAULT_SIGNATURE_FOR_ALL_USERS', 'restricthtml'), 'chaine', 0, '', $conf->entity);
 
 
@@ -675,6 +676,10 @@ if ($action == 'edit') {
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_NO_WITH_TO_SELECTED").'</td><td>';
 	print $form->selectyesno('MAIN_MAIL_NO_WITH_TO_SELECTED', getDolGlobalString('MAIN_MAIL_NO_WITH_TO_SELECTED'), 1);
 	print '</td></tr>';
+	// Merge free text input and recipient combo into a single field
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIL_ENABLE_FREETAG_RECIPIENT_INPUT").'</td><td>';
+	print $form->selectyesno('MAIL_ENABLE_FREETAG_RECIPIENT_INPUT', getDolGlobalString('MAIL_ENABLE_FREETAG_RECIPIENT_INPUT'), 1);
+	print '</td></tr>';
 	// Global signature for all users employees
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 	$doleditor = new DolEditor('MAIN_MAIL_DEFAULT_SIGNATURE_FOR_ALL_USERS', getDolGlobalString('MAIN_MAIL_DEFAULT_SIGNATURE_FOR_ALL_USERS'), '', 138, 'dolibarr_notes', 'In', true, true, !getDolGlobalString('FCKEDITOR_ENABLE_USERSIGN') ? 0 : 1, 0, '90%');
@@ -1010,6 +1015,8 @@ if ($action == 'edit') {
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_ENABLED_USER_DEST_SELECT").'</td><td>'.yn(getDolGlobalString('MAIN_MAIL_ENABLED_USER_DEST_SELECT')).'</td></tr>';
 	//Disable autoselect to
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_NO_WITH_TO_SELECTED").'</td><td>'.yn(getDolGlobalString('MAIN_MAIL_NO_WITH_TO_SELECTED')).'</td></tr>';
+	//Merge free text input and recipient combo into a single field
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIL_ENABLE_FREETAG_RECIPIENT_INPUT").'</td><td>'.yn(getDolGlobalString('MAIL_ENABLE_FREETAG_RECIPIENT_INPUT')).'</td></tr>';
 	// Global signature for all users employees
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 	$doleditor = new DolEditor('MAIN_MAIL_DEFAULT_SIGNATURE_FOR_ALL_USERS', getDolGlobalString('MAIN_MAIL_DEFAULT_SIGNATURE_FOR_ALL_USERS'), '', 138, 'dolibarr_notes', 'In', true, true, !getDolGlobalString('FCKEDITOR_ENABLE_USERSIGN') ? 0 : 1, 0, '90%', 1);
