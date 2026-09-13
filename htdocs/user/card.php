@@ -56,6 +56,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/emailsignature.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
@@ -2037,6 +2038,9 @@ if ($action == 'create' || $action == 'adduserldap') {
 			// Signature
 			print '<tr><td class="tdtop">'.$langs->trans('Signature').'</td><td class="wordbreak">';
 			print dol_htmlentitiesbr($object->signature);
+			if (!empty($object->signature)) {
+				print dolGetSignatureQualityBadge($object->signature, $langs);
+			}
 			print "</td></tr>\n";
 
 			print "</table>\n";
@@ -3157,6 +3161,9 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print $doleditor->Create(1);
 			} else {
 				print dol_htmlentitiesbr($object->signature);
+				if (!empty($object->signature)) {
+					print dolGetSignatureQualityBadge($object->signature, $langs);
+				}
 			}
 			print '</td></tr>';
 

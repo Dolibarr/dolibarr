@@ -2875,7 +2875,7 @@ function top_menu_ai()
 				})
 				.catch(function (e) {
 					console.error("AI Assistant popover load failed", e);
-					body.innerHTML = "<div class=\"ai-popover-loading\">'.dol_escape_js($langs->trans('Error')).'</div>";
+					body.innerHTML = \'<div class="ai-popover-loading">'.dol_escape_js($langs->trans('Error')).'</div>\';
 				})
 				.finally(function () { loading = false; });
 		}
@@ -4028,7 +4028,7 @@ if (!function_exists("llxFooter")) {
 									id: <?php echo $object->id; ?>
 									, element: '<?php echo dol_escape_js($object->element) ?>'
 									, action: 'DOC_PREVIEW'
-									, lang: '<?php echo dol_escape_js($langs->defaultlang); ?>'
+									, lang: <?php echo "'".dol_escape_js($langs->defaultlang))."'" ; ?>
 									, token: '<?php echo currentToken(); ?>'
 								}
 						);
@@ -4040,7 +4040,7 @@ if (!function_exists("llxFooter")) {
 									id: <?php echo $object->id; ?>
 									, element: '<?php echo dol_escape_js($object->element) ?>'
 									, action: 'DOC_DOWNLOAD'
-									, lang: '<?php echo dol_escape_js($langs->defaultlang); ?>'
+									, lang: <?php echo "'".dol_escape_js($langs->defaultlang))."'" ; ?>
 									, token: '<?php echo currentToken(); ?>'
 								}
 						);

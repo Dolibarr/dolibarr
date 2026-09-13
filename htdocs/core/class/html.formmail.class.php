@@ -1898,27 +1898,27 @@ class FormMail extends Form
 						// Special case to use this->withbody as content
 						$defaultmessage = (string) $this->withbody;
 					} elseif ($type_template == 'facture_send' || $type_template == 'facture' || $type_template == 'facture_relance') {
-						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendInvoice");
+						$defaultmessage = $outputlangs->transnoentitiesnoconv("PredefinedMailContentSendInvoice");
 					} elseif ($type_template == 'propal_send' || $type_template == 'propal') {
-						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendProposal");
+						$defaultmessage = $outputlangs->transnoentitiesnoconv("PredefinedMailContentSendProposal");
 					} elseif ($type_template == 'supplier_proposal_send' || $type_template == 'supplier_proposal') {
-						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendSupplierProposal");
+						$defaultmessage = $outputlangs->transnoentitiesnoconv("PredefinedMailContentSendSupplierProposal");
 					} elseif ($type_template == 'order_send' || $type_template == 'order') {
-						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendOrder");
+						$defaultmessage = $outputlangs->transnoentitiesnoconv("PredefinedMailContentSendOrder");
 					} elseif ($type_template == 'order_supplier_send' || $type_template == 'order_supplier') {
-						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendSupplierOrder");
+						$defaultmessage = $outputlangs->transnoentitiesnoconv("PredefinedMailContentSendSupplierOrder");
 					} elseif ($type_template == 'invoice_supplier_send' || $type_template == 'invoice_supplier') {
-						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendSupplierInvoice");
+						$defaultmessage = $outputlangs->transnoentitiesnoconv("PredefinedMailContentSendSupplierInvoice");
 					} elseif ($type_template == 'shipping_send' || $type_template == 'shipping') {
-						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendShipping");
+						$defaultmessage = $outputlangs->transnoentitiesnoconv("PredefinedMailContentSendShipping");
 					} elseif ($type_template == 'reception_send' || $type_template == 'reception') {
-						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendReception");
+						$defaultmessage = $outputlangs->transnoentitiesnoconv("PredefinedMailContentSendReception");
 					} elseif ($type_template == 'fichinter_send' || $type_template == 'fichinter') {
-						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendFichInter");
+						$defaultmessage = $outputlangs->transnoentitiesnoconv("PredefinedMailContentSendFichInter");
 					} elseif ($type_template == 'actioncomm_send' || $type_template == 'actioncomm') {
-						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendActionComm");
+						$defaultmessage = $outputlangs->transnoentitiesnoconv("PredefinedMailContentSendActionComm");
 					} elseif (!empty($type_template)) {
-						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentGeneric");
+						$defaultmessage = $outputlangs->transnoentitiesnoconv("PredefinedMailContentGeneric");
 					}
 
 					$ret->label = 'default';

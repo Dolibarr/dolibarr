@@ -533,7 +533,7 @@ if (empty($error) && !empty($xml)) {
 		$out .= '		var colspan = row.children("td").length;'."\n";
 		$out .= '		var newrow = jQuery(\'<tr class="filediffrow"><td colspan="\'+colspan+\'"><div class="filediffcontent opacitymedium">'.dol_escape_js($langs->trans("Loading").'...').'</div></td></tr>\');'."\n";
 		$out .= '		row.after(newrow);'."\n";
-		$out .= '		jQuery.get(\''.dol_escape_js(DOL_URL_ROOT).'/blockedlog/admin/filecheck_diff.php\', { file: link.attr("data-file"), algo: link.attr("data-algo"), expectedhash: link.attr("data-hash"), token: "'.newToken().'" }, function(data) {'."\n";
+		$out .= '		jQuery.get(\''.dol_escape_js(DOL_URL_ROOT.'/blockedlog/admin/filecheck_diff.php').'\', { file: link.attr("data-file"), algo: link.attr("data-algo"), expectedhash: link.attr("data-hash"), token: \''.newToken().'\' }, function(data) {'."\n";
 		$out .= '			newrow.find(".filediffcontent").removeClass("opacitymedium").html(data);'."\n";
 		$out .= '		}).fail(function() {'."\n";
 		$out .= '			newrow.find(".filediffcontent").html(\''.dol_escape_js($langs->trans("Error")).'\');'."\n";

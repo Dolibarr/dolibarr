@@ -104,7 +104,7 @@ Before writing any code, the agent **must**:
 ## Internationalisation
 
 - Never hardcode user-facing strings — always use `$langs->trans('Key')`
-- Use `$langs->trans()` for direct HTML output; use `$langs->transnoentities()` when the result is used into HTMLescaped functions
+- Use `$langs->trans()` for direct HTML output; use `$langs->transnoentities()` when the result is used into HTML escaped functions
 - Language files must be placed in `mymodule/langs/en_US/` (and other locales as needed)
 - All code comments and variables or functions names must be in English
 - Language key names must use PascalCase (e.g., `MyModuleLabel`, not `monLibelléModule`)
@@ -118,6 +118,37 @@ Before writing any code, the agent **must**:
 - Reuse existing components (buttons, forms, tables) from `htdocs/core/tpl/`
 - No overly complex inline JS
 - Place JavaScript in separate files under `mymodule/js/`
+
+---
+
+## HTML Rendering Functions (html.lib.php)
+
+*Use Dolibarr HTML functions instead of raw echo/print. `htdocs/core/lib/html.lib.php` has in 6 categories with @example tags.*
+
+### Quick Reference
+
+| Category | Function | Example from @example tag |
+|----------|----------|---------------------------|
+| **Text Output** | `dolPrintLabel($s)` | `<span><?php echo dolPrintLabel($object->name); ?></span>` |
+| **Text Output** | `dolPrintText($s)` | `<div class="description"><?php echo dolPrintText($object->description); ?></div>` |
+| **HTML Output** | `dolPrintHTML($s)` | `<div class="rich-text"><?php echo dolPrintHTML($object->note); ?></div>` |
+| **Attributes** | `dolPrintHTMLForAttribute($s)` | `<span title="<?php echo dolPrintHTMLForAttribute($tooltip); ?>">?</span>` |
+| **Textarea** | `dolPrintHTMLForTextArea($s)` | `<textarea><?php echo dolPrintHTMLForTextArea($content); ?></textarea>` |
+| **Icons** | `img_picto($alt, $picto)` | `<?php echo img_picto('Edit', 'edit'); ?>` |
+| **Buttons** | `dolGetButtonAction($label, $text, $type)` | `<?php echo dolGetButtonAction('Save', '', 'default'); ?>` |
+| **Messages** | `setEventMessages($msg, $msgs)` | `setEventMessages('Saved successfully', array('Message 1', 'Message 2'))` |
+| **Formatted** | `yn($yesno)` | `<?php echo yn($obj->active); ?>` |
+| **Formatted** | `dolOutputDates($start, $end)` | `<?php echo dolOutputDates($date_start, $date_end); ?>` |
+
+### When to Use
+
+- **dolPrintLabel**: Single-line plain text (names, labels)
+- **dolPrintText**: Multi-line plain text (descriptions)
+- **dolPrintHTML**: Rich text with allowed HTML tags
+- **dolPrintHTMLForAttribute**: Any HTML attribute value
+- **img_* functions**: Always use instead of raw `<i>` or `<img>` tags
+- **dolGetButton***: For consistent button styling
+- **setEventMessages**: For user feedback messages
 
 ---
 
