@@ -24,5 +24,7 @@ fi
 
 echo "Running as $USER_NAME ($USER_ID:$GROUP_ID)"
 
+ln -fs /dolibarr_dev /dolibarr 2>/dev/null
+
 # Execute order
 exec runuser -u "$USER_NAME" -- "$@" --rcfile /etc/bash.bashrc -i
