@@ -1297,7 +1297,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 				$out_js_line .= '		var product_element_name = selectwarehouse.attr("name").replace("entrepot", "productbatch");';
 				$out_js_line .= '		jQuery.ajax({';
 				$out_js_line .= '			type: "POST",';
-				$out_js_line .= '			url: "'.dol_escape_js(dol_buildpath('/expedition/ajax/interface.php', 1)).'",';
+				$out_js_line .= '			url: \''.dol_escape_js(dol_buildpath('/expedition/ajax/interface.php', 1)).'\',';
 				$out_js_line .= '			data: {';
 				$out_js_line .= '				action: "updateselectbatchbywarehouse",';
 				$out_js_line .= '				warehouse_id: jQuery(this).val(),';
@@ -1320,15 +1320,15 @@ if ($object->id > 0 || !empty($object->ref)) {
 				$out_js_line .= '				var dataSellByDate = objBatch.sellbydate;';
 				$out_js_line .= '				var optionLabel = key+" (";';
 				$out_js_line .= '				if (selectwarehouse.val() == -1) {';
-				$out_js_line .= '					optionLabel += "'.dol_escape_js($langs->trans('TotalStock')).': "+objBatch.qty;';
+				$out_js_line .= '					optionLabel += \''.dol_escape_js($langs->trans('TotalStock')).': \'+objBatch.qty;';
 				$out_js_line .= '				} else {';
-				$out_js_line .= '					 optionLabel += "'.dol_escape_js($langs->trans('Stock')).': "+objBatch.qty;';
+				$out_js_line .= '					 optionLabel += \''.dol_escape_js($langs->trans('Stock')).': \'+objBatch.qty;';
 				$out_js_line .= '				}';
 				$out_js_line .= '				if (dataEatByDate != "") {';
-				$out_js_line .= '					optionLabel += " - '.dol_escape_js($langs->trans('EatByDate')).': "+dataEatByDate;';
+				$out_js_line .= '					optionLabel += \' - '.dol_escape_js($langs->trans('EatByDate')).': \'+dataEatByDate;';
 				$out_js_line .= '				}';
 				$out_js_line .= '				if (dataSellByDate != "") {';
-				$out_js_line .= '					optionLabel += " - '.dol_escape_js($langs->trans('SellByDate')).': "+dataSellByDate;';
+				$out_js_line .= '					optionLabel += \' - '.dol_escape_js($langs->trans('SellByDate')).': \'+dataSellByDate;';
 				$out_js_line .= '				}';
 				$out_js_line .= '				optionLabel += ")";';
 				$out_js_line .= '				var option = "<option data-eatbydate=\""+dataEatByDate+"\" data-sellbydate=\""+dataSellByDate+"\" value=\""+key+"\"";';
@@ -1369,7 +1369,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 				$out_js_line .= '		var product_element_name = selectbatch.attr("name").replace("lot_number", "productbatch");';
 				$out_js_line .= '		jQuery.ajax({';
 				$out_js_line .= '			type: "POST",';
-				$out_js_line .= '			url: "'.dol_escape_js(dol_buildpath('/expedition/ajax/interface.php', 1)).'",';
+				$out_js_line .= '			url: \''.dol_escape_js(dol_buildpath('/expedition/ajax/interface.php', 1)).'\',';
 				$out_js_line .= '			data: {';
 				$out_js_line .= '				action: "updateselectwarehousebybatch",';
 				$out_js_line .= '				batch: jQuery(this).val(),';
@@ -1595,33 +1595,33 @@ if ($object->id > 0 || !empty($object->ref)) {
 								}
 							}
 						});
-						jQuery("#scantoolmessage").text("'.dol_escape_js($langs->transnoentities("QtyWasAddedToTheScannedBarcode")).'\n");
+						jQuery("#scantoolmessage").text(\''.dol_escape_js($langs->transnoentities("QtyWasAddedToTheScannedBarcode")).'\'+"\n");
 						/* document.forms["formrecord"].submit(); */
 					} else {
 						let stringerror = "";
 						if (Object.keys(errortab1).length > 0) {
-							stringerror += "<br>'.dol_escape_js($langs->transnoentities('ErrorSameBatchNumber')).': ";
+							stringerror += \'<br>'.dol_escape_js($langs->transnoentities('ErrorSameBatchNumber')).': \';
 							errortab1.forEach(element => {
 								stringerror += (element + ", ")
 							});
 							stringerror = stringerror.slice(0, -2);	/* Remove last ", " */
 						}
 						if (Object.keys(errortab2).length > 0) {
-							stringerror += "<br>'.dol_escape_js($langs->transnoentities('ErrorCantFindCodeInInventory')).': ";
+							stringerror += \'<br>'.dol_escape_js($langs->transnoentities('ErrorCantFindCodeInInventory')).': \';
 							errortab2.forEach(element => {
 								stringerror += (element + ", ")
 							});
 							stringerror = stringerror.slice(0, -2);	/* Remove last ", " */
 						}
 						if (Object.keys(errortab3).length > 0) {
-							stringerror += "<br>'.dol_escape_js($langs->transnoentities('ErrorCodeScannedIsBothProductAndSerial')).': ";
+							stringerror += \'<br>'.dol_escape_js($langs->transnoentities('ErrorCodeScannedIsBothProductAndSerial')).': \';
 							errortab3.forEach(element => {
 								stringerror += (element + ", ")
 							});
 							stringerror = stringerror.slice(0, -2);	/* Remove last ", " */
 						}
 						if (Object.keys(errortab4).length > 0) {
-							stringerror += "<br>'.dol_escape_js($langs->transnoentities('ErrorBarcodeNotFoundForProductWarehouse')).': ";
+							stringerror += \'<br>'.dol_escape_js($langs->transnoentities('ErrorBarcodeNotFoundForProductWarehouse')).': \';
 							errortab4.forEach(element => {
 								stringerror += (element + ", ")
 							});
@@ -1629,7 +1629,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 						}
 
 						jQuery("#scantoolmessage").html(\''.dol_escape_js($langs->transnoentities("ErrorOnElementsInventory")).'\' + stringerror);
-						//alert("'.dol_escape_js($langs->trans("ErrorOnElementsInventory")).' :\n" + stringerror);
+						//alert(\''.dol_escape_js($langs->trans("ErrorOnElementsInventory")).'\'+" :\n" + stringerror);
 					}
 				}
 

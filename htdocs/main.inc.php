@@ -17,7 +17,7 @@
  * Copyright (C) 2021       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2023       Joachim Küter      		<git-jk@bloxera.com>
  * Copyright (C) 2023       Eric Seigne      		<eric.seigne@cap-rel.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026		William Mead			<william@m34d.com>
  * Copyright (C) 2026		Jose MARTINEZ			<jose.martinez@pichinov.com>
  *
@@ -2865,7 +2865,7 @@ function top_menu_ai()
 				})
 				.then(function (htmlcontent) {
 					body.innerHTML = htmlcontent;
-					return import("'.dol_escape_js($aijsurl).'").then(function (mod) {
+					return import(\''.dol_escape_js($aijsurl).'\').then(function (mod) {
 						mod.initAiAssistant(body.querySelector(".ai-chat-container"));
 					});
 				})

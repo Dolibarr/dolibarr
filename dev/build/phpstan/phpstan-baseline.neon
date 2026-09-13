@@ -3039,7 +3039,7 @@ parameters:
 		-
 			message: '#^Left side of && is always true\.$#'
 			identifier: booleanAnd.leftAlwaysTrue
-			count: 1
+			count: 2
 			path: ../../../htdocs/core/class/html.formmail.class.php
 
 		-

@@ -456,19 +456,19 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 		                 return true;
 		               }
 		               else {
-		                 alert("'.dol_escape_js($langs->transnoentities('InvalidValidatorCP')).'");
+		                 alert(\''.dol_escape_js($langs->transnoentities('InvalidValidatorCP')).'\');
 		                 return false;
 		               }
 		            }
 		            else
 		            {
-		              alert("'.dol_escape_js($langs->transnoentities('NoDateFin')).'");
+		              alert(\''.dol_escape_js($langs->transnoentities('NoDateFin')).'\');
 		              return false;
 		            }
 		        }
 		        else
 		        {
-		           alert("'.dol_escape_js($langs->transnoentities('NoDateDebut')).'");
+		           alert(\''.dol_escape_js($langs->transnoentities('NoDateDebut')).'\');
 		           return false;
 		        }
 	       	})
