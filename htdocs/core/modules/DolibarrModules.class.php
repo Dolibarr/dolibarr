@@ -2836,7 +2836,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				$versionTitle .= '<br>'.$langs->trans('ModuleUpdateAvailable').' : '.$this->lastVersion;
 			}
 
-			$return .=  '<span class="info-box-icon-version'.($versiontrans ? ' '.$versiontrans : '').' classfortooltip" title="'.dol_escape_js($versionTitle).'" >';
+			$return .=  '<span class="info-box-icon-version'.($versiontrans ? ' '.$versiontrans : '').' classfortooltip" title="'.dolPrintHTMLForAttribute($versionTitle).'" >';
 			$return .=  $this->getVersion(1);
 			$return .=  '</span>';
 		}

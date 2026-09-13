@@ -189,7 +189,7 @@ function check_events() {
 							if (value.type == 'agenda' && (value.event_date_start_formated != null || value.event_date_start_formated['event_date_start'] != '')) {
 								body += ' '+value.event_date_start_formated;
 							}
-							body += ' - <a href="'+url+'"><?php echo img_picto("", "url", 'class="pictofixedwidth"').dol_escape_js($langs->trans("ShowDetails")); ?></a>';
+							body += ' - <a href="'+url+'"><?php echo img_picto("", "url", 'class="pictofixedwidth"').dol_escape_js($langs->trans("ShowDetails")); ?></a>';  // Suppress - dol_escape_js is in '' @phan-suppress-current-line FunctionMissingSingleQuoteWrapping
 							body += '<br>'+value.label;
 							if (value.type == 'agenda' && value.location != null && value.location != '') {
 								body += '<br>' + value.location;
