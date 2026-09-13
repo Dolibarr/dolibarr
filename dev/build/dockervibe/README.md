@@ -12,6 +12,11 @@ MISTRAL_API_KEY='<your_api_key>'
 ````
 So now when running the container, the .vibe/.env file has your paid key that will be used to set the environment variable MISTRAL_API_KEY.
 
+## You can add an alias into your /etc/bash.bashrc the line
+````
+alias vibes='dev/build/dockervibe/runvibe.sh'
+````
+ 
 
 ## Run vibe into a container
 dev/build/dockervibe/runvibe.sh
