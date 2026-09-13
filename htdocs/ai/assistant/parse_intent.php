@@ -23,6 +23,7 @@
  * \file    htdocs/ai/assistant/parse_intent.php
  * \ingroup ai
  * \brief   File to handle MCP (Model Context Protocol) Intent Parsing
+ *			This service receive a prompt, format and complete it with list of tools, send it to AI service and return the answer
  */
 
 if (!defined('NOTOKENRENEWAL')) {
@@ -474,6 +475,10 @@ try {
 		// Two schemas are maintained:
 		//   $allToolsSchema  — full list including system tools; used ONLY for post-LLM validation.
 		//   $llmToolsBase   — system tools excluded (is_system=>true filtered out in McpHandler);
+		// This separation guarantees ask_for_confirmation, respond_to_user, etc. are
+		// never visible to the model, preventing the LLM from calling them directly.
+		$allToolsSchema = $mcp->getToolsSchema();
+		$llmToolsBase   = $mcp->getToolsSchemaForLLM();
 
 		// Special case we ask debug info
 		if ($query == 'testdebug') {
@@ -482,19 +487,13 @@ try {
 			print "\n";
 			print "\n";
 			print '----- toolsByName'."\n";
-			print '<pre>' . json_encode($mcp->loadedTools, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . '</pre>';
+			print '<pre>' . json_encode($mcp->toolsByName, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . '</pre>';
 			print "\n";
 			print "\n";
 			print '----- allToolsSchema (non system + system)'."\n";
 			print '<pre>' . json_encode($allToolsSchema, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . '</pre>';
 			exit;
 		}
-
-		//                     used for category filtering and as the LLM tool list.
-		// This separation guarantees ask_for_confirmation, respond_to_user, etc. are
-		// never visible to the model, preventing the LLM from calling them directly.
-		$allToolsSchema = $mcp->getToolsSchema();
-		$llmToolsBase   = $mcp->getToolsSchemaForLLM();
 
 		// Detect if query is in a Non-Latin language (Russian, Greek, Chinese, Arabic, etc.)
 		$isComplex = isComplexScript($query);
