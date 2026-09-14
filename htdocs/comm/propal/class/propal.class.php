@@ -335,6 +335,11 @@ class Propal extends CommonObject
 	 */
 	public $line;
 
+	/**
+	 * @var int			counter used to track how many times the document was sent by email
+	 */
+	public $email_sent_counter = 0;
+
 	public $labelStatus = array();
 	public $labelStatusShort = array();
 
@@ -1690,6 +1695,7 @@ class Propal extends CommonObject
 		$sql .= ", p.fk_warehouse";
 		$sql .= ", p.fk_incoterms, p.location_incoterms";
 		$sql .= ", p.fk_multicurrency, p.multicurrency_code, p.multicurrency_tx, p.multicurrency_total_ht, p.multicurrency_total_tva, p.multicurrency_total_ttc";
+		$sql .= ", p.email_sent_counter";
 		$sql .= ", p.tms as date_modification";
 		$sql .= ", i.libelle as label_incoterms";
 		$sql .= ", c.label as statut_label";
@@ -1745,6 +1751,7 @@ class Propal extends CommonObject
 				$this->project = null; // Clear if another value was already set by fetchProject
 
 				$this->model_pdf = $obj->model_pdf;
+				$this->email_sent_counter = (int) $obj->email_sent_counter;
 				$this->last_main_doc = $obj->last_main_doc;
 				$this->note                 = $obj->note_private; // TODO deprecated
 				$this->note_private         = $obj->note_private;
