@@ -1269,35 +1269,34 @@ class FormMail extends Form
 		// a heredoc none of this JS's own '$(' / '$.' / trailing regex '$' anchors need checking against
 		// PHP's variable-interpolation rules): the two lines around it that need an escaped PHP value stay
 		// as plain concatenation, same as multiselectarray()'s own script-building style.
-		$out .= <<<'JS'
+		$out .= "
 				dir: 'ltr',
 				theme: 'default',
 				width: 'resolve',
 				language: (typeof select2arrayoflanguage === 'undefined') ? 'en' : select2arrayoflanguage,
 				tags: true,
 				createTag: function (params) {
-					var REGEX_EMAIL = "([a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)";
+					var REGEX_EMAIL = '([a-z0-9!#$%&\'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&\'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)';
 					var term = $.trim(params.term);
-					if (term.indexOf("@") === -1) {
+					if (term.indexOf('@') === -1) {
 						return null;
 					}
-					var matchwithname = term.match(new RegExp("^([^<]*)<" + REGEX_EMAIL + ">$", "i"));
+					var matchwithname = term.match(new RegExp('^([^<]*)<' + REGEX_EMAIL + '>$', 'i'));
 					if (matchwithname !== null) {
-						var valuewithname = $.trim(matchwithname[1]) + " <" + matchwithname[2] + ">";
+						var valuewithname = $.trim(matchwithname[1]) + ' <' + matchwithname[2] + '>';
 						return { id: valuewithname, text: valuewithname };
 					}
-					if (term.indexOf("<") >= 0 || term.indexOf(">") >= 0) {
+					if (term.indexOf('<') >= 0 || term.indexOf('>') >= 0) {
 						return null;
 					}
-					var matchbare = term.match(new RegExp("^" + REGEX_EMAIL + "$", "i"));
+					var matchbare = term.match(new RegExp('^' + REGEX_EMAIL + '$', 'i'));
 					if (matchbare !== null) {
 						return { id: matchbare[1], text: matchbare[1] };
 					}
 					return null;
 				}
 			});
-
-		JS;
+		";
 		$out .= '	$(\''.dol_escape_js('#'.$htmlname.' + .select2').'\').addClass(\''.dol_escape_js($morecss).'\');'."\n";
 		$out .= '});'."\n";
 		$out .= '</script>'."\n";
