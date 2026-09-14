@@ -1003,6 +1003,9 @@ class Orders extends DolibarrApi
 		if (!DolibarrApiAccess::$user->rights->expedition->lire) {
 			throw new RestException(401);
 		}
+		if (!DolibarrApi::_checkAccessToResource('commande', $id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
 		$obj_ret = array();
 		$sql = "SELECT e.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."expedition as e";
@@ -1065,6 +1068,9 @@ class Orders extends DolibarrApi
 		$result = $this->commande->fetch($id);
 		if (!$result) {
 			throw new RestException(404, 'Order not found');
+		}
+		if (!DolibarrApi::_checkAccessToResource('commande', $this->commande->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 		$shipment = new Expedition($this->db);
 		$shipment->socid = $this->commande->socid;
