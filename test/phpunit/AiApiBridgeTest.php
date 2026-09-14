@@ -97,6 +97,9 @@ class AiApiBridgeTest extends CommonClassTest
 	public function testBridgeExposesWhitelistedReadTools()
 	{
 		$names = $this->getToolNames($this->getHandler());
+		if (empty(preg_grep('/^api_/', $names))) {
+			$this->markTestSkipped('The API bridge exposed no tool on this installation (REST API classes unavailable).');
+		}
 
 		$this->assertContains('api_thirdparties_list', $names, 'thirdparties index must be bridged');
 		$this->assertContains('api_thirdparties_get', $names, 'thirdparties get must be bridged');
@@ -239,14 +242,26 @@ class AiApiBridgeTest extends CommonClassTest
 	 */
 	public function testBridgeExecutionReturnsRows()
 	{
+		if (getenv('PHPUNIT_DISABLE_API')) {
+			$this->markTestSkipped("Execution tests call the API classes in-process: disabled by 'PHPUNIT_DISABLE_API'.");
+		}
+
 		$handler = $this->getHandler();
 
-		$res = $handler->executeTool('api_thirdparties_list', array('limit' => 5));
+		try {
+			$res = $handler->executeTool('api_thirdparties_list', array('limit' => 5));
+		} catch (Throwable $e) {
+			$this->fail('api_thirdparties_list threw: '.get_class($e).': '.$e->getMessage());
+		}
 		$this->assertIsArray($res);
 		$this->assertArrayNotHasKey('error', $res, 'thirdparties list errored: '.json_encode($res));
 
 		// Oversized limit is clamped server-side, never rejected.
-		$res = $handler->executeTool('api_thirdparties_list', array('limit' => 5000));
+		try {
+			$res = $handler->executeTool('api_thirdparties_list', array('limit' => 5000));
+		} catch (Throwable $e) {
+			$this->fail('oversized limit threw: '.get_class($e).': '.$e->getMessage());
+		}
 		$this->assertIsArray($res);
 		$this->assertArrayNotHasKey('error', $res, 'oversized limit must be clamped, not rejected');
 	}
@@ -260,9 +275,17 @@ class AiApiBridgeTest extends CommonClassTest
 	 */
 	public function testNonWhitelistedExecutionRefused()
 	{
+		if (getenv('PHPUNIT_DISABLE_API')) {
+			$this->markTestSkipped("Execution tests call the API classes in-process: disabled by 'PHPUNIT_DISABLE_API'.");
+		}
+
 		$handler = $this->getHandler();
 
-		$res = $handler->executeTool('api_thirdparties_delete', array('id' => 1));
+		try {
+			$res = $handler->executeTool('api_thirdparties_delete', array('id' => 1));
+		} catch (Throwable $e) {
+			$this->fail('fabricated tool name threw instead of returning an error: '.get_class($e).': '.$e->getMessage());
+		}
 		$this->assertIsArray($res);
 		$this->assertArrayHasKey('error', $res, 'fabricated write tool name must be refused');
 	}
