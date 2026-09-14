@@ -1986,8 +1986,8 @@ while ($i < $imaxinloop) {
 			}
 		}
 		if (!empty($arrayfields['s.nom']['checked'])) {
-			print '<td class="tdoverflowmax200 tdlineheightsmall" data-key="ref">';
-			print '<div class="inline-block lineheightsmall">';
+			print '<td class="tdlineheightsmall" data-key="ref">';
+			print '<div class="tdoverflowmax200 inline-block lineheightsmall">';
 			if ($contextpage == 'poslist') {
 				print dolPrintHTML($companystatic->name);
 			} else {

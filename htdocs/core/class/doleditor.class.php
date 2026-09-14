@@ -282,7 +282,7 @@ class DolEditor
 					$pluginstodisable .= ',scayt';
 				}
 
-				$htmlencode_force = preg_match('/_encoded$/', $this->toolbarname) ? 'true' : 'false';
+				$htmlencode_force = preg_match('/_encoded$/', $this->toolbarname);
 
 				$out .= '<!-- Output ckeditor disallowAnyContent='.dol_escape_htmltag((string) $restrictContent).' toolbarname='.dol_escape_htmltag($this->toolbarname).' -->'."\n";
 				//$out .= '<style>#cke_1_top { height: 34px !important; }</style>';
@@ -298,7 +298,7 @@ class DolEditor
 									removePlugins: \''.dol_escape_js($pluginstodisable).'\',
 									versionCheck: false,
             						readOnly: '.($this->readonly ? 'true' : 'false').',
-                            		htmlEncodeOutput: \''.dol_escape_js($htmlencode_force).'\',
+                            		htmlEncodeOutput: '.($htmlencode_force ? 'true' : 'false').',
             						allowedContent: '.($restrictContent ? 'false' : 'true').',			/* Advanced Content Filter (ACF) is on when allowedContent is false */
             						extraAllowedContent: \''.dol_escape_js($extraAllowedContent).'\',	/* Allow a tag with attribute target, allow section tag and allow the style float and display into div to default other allowed tags */
 									disallowedContent: \'\',											/* Tags that are not allowed */
@@ -355,7 +355,7 @@ class DolEditor
 					define('REQUIRE_TINYMCE', '1');
 				}
 
-				$htmlencode_force = preg_match('/_encoded$/', $this->toolbarname) ? 'true' : 'false';
+				$htmlencode_force = preg_match('/_encoded$/', $this->toolbarname);
 				$pickerenabled = $this->uselocalbrowser ? 'true' : 'false';
 
 				$out .= '<!-- Output tinymce toolbarname='.dol_escape_htmltag($this->toolbarname).' -->'."\n";
@@ -405,7 +405,7 @@ class DolEditor
 				$out .= '		toolbar_mode: "sliding",'."\n";
 				$out .= '		browser_spellcheck: '.(getDolGlobalString('CKEDITOR_NATIVE_SPELLCHECKER') ? 'true' : 'false').','."\n";
 				$out .= '		language: (tinyLang && tinyLang.indexOf("en") === 0) ? "en" : tinyLang,'."\n";
-				$out .= '		htmlEncodeOutput: \''.dol_escape_js($htmlencode_force).'\','."\n";
+				$out .= '		htmlEncodeOutput: '.($htmlencode_force ? 'true' : 'false').','."\n";
 				if ($pickerenabled === 'true') {
 					$out .= '		file_picker_types: "file image media",'."\n";
 					$out .= '		file_picker_callback: function (cb, value, meta) {'."\n";
