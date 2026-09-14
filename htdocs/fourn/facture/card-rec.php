@@ -386,7 +386,7 @@ if (empty($reshook)) {
 		$line->id = $lineid;
 
 		if ($line->delete($user) > 0) {
-			$result = $object->update_price(1);
+			$result = $object->update_price(1, 'none', 0, $object->thirdparty);
 
 			if ($result > 0) {
 				$db->commit();

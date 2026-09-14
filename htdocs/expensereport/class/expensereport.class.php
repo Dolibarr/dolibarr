@@ -419,7 +419,11 @@ class ExpenseReport extends CommonObject
 			}
 
 			if (!$error) {
-				$result = $this->update_price(1);
+				// We don't know seller and buyer for expense reports
+				global $mysoc;
+				$seller = $mysoc;			// We use same than current company (expense report are often done in same country)
+				$seller->tva_assuj = 1;		// Most seller uses vat
+				$result = $this->update_price(1, 'none', 0, $seller);
 				if ($result > 0) {
 					if (!$notrigger) {
 						// Call trigger
@@ -1962,7 +1966,11 @@ class ExpenseReport extends CommonObject
 
 			$result = $this->line->insert(0, true);
 			if ($result > 0) {
-				$result = $this->update_price(1); // This method is designed to add line from user input so total calculation must be done using 'auto' mode.
+				// We don't know seller and buyer for expense reports
+				global $mysoc;
+				$seller = $mysoc;			// We use same than current company (expense report are often done in same country)
+				$seller->tva_assuj = 1;		// Most seller uses vat
+				$result = $this->update_price(1, 'none', 0, $seller); // This method is designed to add line from user input so total calculation must be done using 'auto' mode.
 				if ($result > 0) {
 					$this->db->commit();
 					return $this->line->id;
@@ -2323,7 +2331,11 @@ class ExpenseReport extends CommonObject
 			return -1;
 		}
 
-		$this->update_price(1);
+		// We don't know seller and buyer for expense reports
+		global $mysoc;
+		$seller = $mysoc;			// We use same than current company (expense report are often done in same country)
+		$seller->tva_assuj = 1;		// Most seller uses vat
+		$this->update_price(1, 'none', 0, $seller);
 
 		$this->db->commit();
 
@@ -3064,9 +3076,14 @@ class ExpenseReportLine extends CommonObjectLine
 
 
 			if (!$fromaddline) {
+				// We don't know seller and buyer for expense reports
+				global $mysoc;
+				$seller = $mysoc;			// We use same than current company (expense report are often done in same country)
+				$seller->tva_assuj = 1;		// Most seller uses vat
+
 				$tmpparent = new ExpenseReport($this->db);
 				$tmpparent->fetch($this->fk_expensereport);
-				$result = $tmpparent->update_price(1);
+				$result = $tmpparent->update_price(1, 'none', 0, $seller);
 				if ($result < 0) {
 					$error++;
 					$this->error = $tmpparent->error;
@@ -3193,7 +3210,11 @@ class ExpenseReportLine extends CommonObjectLine
 			$tmpparent = new ExpenseReport($this->db);
 			$result = $tmpparent->fetch($this->fk_expensereport);
 			if ($result > 0) {
-				$result = $tmpparent->update_price(1);
+				// We don't know seller and buyer for expense reports
+				global $mysoc;
+				$seller = $mysoc;			// We use same than current company (expense report are often done in same country)
+				$seller->tva_assuj = 1;		// Most seller uses vat
+				$result = $tmpparent->update_price(1, 'none', 0, $seller);
 				if ($result < 0) {
 					$error++;
 					$this->error = $tmpparent->error;
