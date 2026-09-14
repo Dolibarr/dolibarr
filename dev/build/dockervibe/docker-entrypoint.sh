@@ -4,7 +4,7 @@
 USER_ID="${HOST_UID:-1000}"
 GROUP_ID="${HOST_GID:-1000}"
 USER_NAME="${HOST_USER:-developer}"
-
+GROUP_NAME="${HOST_GROUP:-developer}"
 
 # Create group
 EXISTING_GROUP=$(getent group "$GROUP_ID" | cut -d: -f1)
