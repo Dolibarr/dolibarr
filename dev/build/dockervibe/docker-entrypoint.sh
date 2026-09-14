@@ -1,19 +1,43 @@
 #!/bin/bash
 # desktop-entrypoint.sh
 
-USER_ID="${HOST_UID:-100}"
+USER_ID="${HOST_UID:-1000}"
 GROUP_ID="${HOST_GID:-1000}"
 USER_NAME="${HOST_USER:-developer}"
 
-echo "Add user $USER_NAME with uid $USER_ID and gid $GROUP_ID"
 
 # Create group
-if ! getent group "$GROUP_ID" >/dev/null; then
-    groupadd --gid "$GROUP_ID" "$USER_NAME"
+EXISTING_GROUP=$(getent group "$GROUP_ID" | cut -d: -f1)
+
+if [ -n "$EXISTING_GROUP" ]; then
+    echo "GID $GROUP_ID already belongs to $EXISTING_GROUP"
+else
+    echo "Creating group $GROUP_NAME with GID $GROUP_ID"
+
+    groupadd \
+        --gid "$GROUP_ID" \
+        "$GROUP_NAME"
+
+    EXISTING_GROUP="$GROUP_NAME"
 fi
 
+
 # Create user
-if ! getent passwd "$USER_ID" >/dev/null; then
+EXISTING_USER=$(getent passwd "$USER_ID" | cut -d: -f1)
+
+if [ -n "$EXISTING_USER" ]; then
+    echo "UID $USER_ID already belongs to $EXISTING_USER"
+
+    if [ "$EXISTING_USER" != "$USER_NAME" ]; then
+        usermod \
+            --login "$USER_NAME" \
+            --home "/home/$USER_NAME" \
+            --move-home \
+            "$EXISTING_USER"
+    fi
+else
+    echo "Creating user $USER_NAME with UID $USER_ID"
+
     useradd \
         --uid "$USER_ID" \
         --gid "$GROUP_ID" \
@@ -22,9 +46,11 @@ if ! getent passwd "$USER_ID" >/dev/null; then
         "$USER_NAME"
 fi
 
+
 echo "Running as $USER_NAME ($USER_ID:$GROUP_ID)"
 
 ln -fs /dolibarr_dev /dolibarr 2>/dev/null
 
 # Execute order
-exec runuser -u "$USER_NAME" -- "$@" --rcfile /etc/bash.bashrc -i
+exec runuser -u "$USER_NAME" -- "$@" --rcfile /etc/bash.bashrc -i -c 'vibe; exec bash'
+#exec "$@"

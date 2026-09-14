@@ -7,7 +7,7 @@
  * Copyright (C) 2015       Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2018		Ferran Marcet		<fmarcet@2byte.es>
  * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -315,201 +315,20 @@ print '<br>';
  * Projects Numbering model
  */
 
-print load_fiche_titre($langs->trans("ProjectsNumberingModules"), '', '');
+$project = new Project($db);
+$project->initAsSpecimen();
 
-print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
-print '<table class="noborder centpercent">';
-print '<tr class="liste_titre">';
-print '<td width="100">'.$langs->trans("Name").'</td>';
-print '<td>'.$langs->trans("Description").'</td>';
-print '<td>'.$langs->trans("Example").'</td>';
-print '<td class="center" width="60">'.$langs->trans("Activated").'</td>';
-print '<td class="center" width="80">'.$langs->trans("ShortInfo").'</td>';
-print "</tr>\n";
+printNumberingModuleList('project', 'mod_project_', 'PROJECT_ADDON', $langs->trans("ProjectsNumberingModules"), $project);
 
-clearstatcache();
-
-foreach ($dirmodels as $reldir) {
-	$dir = dol_buildpath($reldir."core/modules/project/");
-
-	if (is_dir($dir)) {
-		$handle = opendir($dir);
-		if (is_resource($handle)) {
-			while (($file = readdir($handle)) !== false) {
-				if (preg_match('/^(mod_.*)\.php$/i', $file, $reg)) {
-					$file = $reg[1];
-					$classname = dol_substr($file, 4);
-
-					require_once $dir.$file.'.php';
-
-					$module = new $file();
-					'@phan-var-force ModeleNumRefProjects $module';
-
-					// Show modules according to features level
-					if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
-						continue;
-					}
-					if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
-						continue;
-					}
-
-					if ($module->isEnabled()) {
-						print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
-						print $module->info($langs);
-						print '</td>';
-
-						// Show example of numbering model
-						print '<td class="nowrap">';
-						$tmp = $module->getExample();
-						if (preg_match('/^Error/', $tmp)) {
-							$langs->load("errors");
-							print '<div class="error">'.$langs->trans($tmp).'</div>';
-						} elseif ($tmp == 'NotConfigured') {
-							print $langs->trans($tmp);
-						} else {
-							print $tmp;
-						}
-						print '</td>'."\n";
-
-						print '<td class="center">';
-						if (getDolGlobalString('PROJECT_ADDON') == 'mod_'.$classname) {
-							print img_picto($langs->trans("Activated"), 'switch_on');
-						} else {
-							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&value=mod_'.$classname.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
-						}
-						print '</td>';
-
-						$project = new Project($db);
-						$project->initAsSpecimen();
-
-						// Info
-						$htmltooltip = '';
-						$htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
-						$nextval = $module->getNextValue($mysoc, $project);
-						if ((string) $nextval != $langs->trans("NotAvailable")) {
-							$htmltooltip .= ''.$langs->trans("NextValue").': ';
-							if ($nextval) {
-								$htmltooltip .= $nextval.'<br>';
-							} else {
-								$htmltooltip .= $langs->trans($module->error).'<br>';
-							}
-						}
-
-						print '<td class="center">';
-						print $form->textwithpicto('', $htmltooltip, 1, 'info');
-						print '</td>';
-
-						print '</tr>';
-					}
-				}
-			}
-			closedir($handle);
-		}
-	}
-}
-
-print '</table>';
-print '</div>';
 print '<br>';
 
 if (!getDolGlobalString('PROJECT_HIDE_TASKS')) {
 	// Task numbering module
-	print load_fiche_titre($langs->trans("TasksNumberingModules"), '', '');
+	$project = new Project($db);
+	$project->initAsSpecimen();
 
-	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
-	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre">';
-	print '<td width="100">'.$langs->trans("Name").'</td>';
-	print '<td>'.$langs->trans("Description").'</td>';
-	print '<td>'.$langs->trans("Example").'</td>';
-	print '<td class="center" width="60">'.$langs->trans("Activated").'</td>';
-	print '<td class="center" width="80">'.$langs->trans("ShortInfo").'</td>';
-	print "</tr>\n";
+	printNumberingModuleList('project/task', 'mod_task_', 'PROJECT_TASK_ADDON', $langs->trans("TasksNumberingModules"), $project, 'setmodtask');
 
-	clearstatcache();
-
-	foreach ($dirmodels as $reldir) {
-		$dir = dol_buildpath($reldir."core/modules/project/task/");
-
-		if (is_dir($dir)) {
-			$handle = opendir($dir);
-			if (is_resource($handle)) {
-				while (($file = readdir($handle)) !== false) {
-					if (preg_match('/^(mod_.*)\.php$/i', $file, $reg)) {
-						$file = $reg[1];
-						$classname = dol_substr($file, 4);
-
-						require_once $dir.$file.'.php';
-
-						$module = new $file();
-						'@phan-var-force ModeleNumRefTask $module';
-						/** @var ModeleNumRefTask $module */
-
-						// Show modules according to features level
-						if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
-							continue;
-						}
-						if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
-							continue;
-						}
-
-						if ($module->isEnabled()) {
-							print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
-							print $module->info($langs);
-							print '</td>';
-
-							// Show example of numbering module
-							print '<td class="nowrap">';
-							$tmp = $module->getExample();
-							if (preg_match('/^Error/', $tmp)) {
-								$langs->load("errors");
-								print '<div class="error">'.$langs->trans($tmp).'</div>';
-							} elseif ($tmp == 'NotConfigured') {
-								print $langs->trans($tmp);
-							} else {
-								print $tmp;
-							}
-							print '</td>'."\n";
-
-							print '<td class="center">';
-							if (getDolGlobalString("PROJECT_TASK_ADDON") == 'mod_'.$classname) {
-								print img_picto($langs->trans("Activated"), 'switch_on');
-							} else {
-								print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmodtask&token='.newToken().'&value=mod_'.$classname.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
-							}
-							print '</td>';
-
-							$project = new Project($db);
-							$project->initAsSpecimen();
-
-							// Info
-							$htmltooltip = '';
-							$htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
-							$nextval = $module->getNextValue($mysoc, $project);
-							if ("$nextval" != $langs->trans("NotAvailable")) {	// Keep " on nextval
-								$htmltooltip .= ''.$langs->trans("NextValue").': ';
-								if ($nextval) {
-									$htmltooltip .= $nextval.'<br>';
-								} else {
-									$htmltooltip .= $langs->trans($module->error).'<br>';
-								}
-							}
-
-							print '<td class="center">';
-							print $form->textwithpicto('', $htmltooltip, 1, 'info');
-							print '</td>';
-
-							print '</tr>';
-						}
-					}
-				}
-				closedir($handle);
-			}
-		}
-	}
-
-	print '</table>';
-	print '</div>';
 	print '<br>';
 }
 

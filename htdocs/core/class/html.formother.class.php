@@ -123,9 +123,9 @@ class FormOther
 		$out .= 'console.log("select choice");';
 		$out .= 'jQuery("#scantoolmessage").text("");';
 		$out .= '});'."\n";
-		// TODO: dol_escape_js($jstoexecuteonadd) seems wrong for execution itself, verify, fix
+		// $jstoexecuteonadd is a name of a js function
 		$out .= '$(\'#exec'.dol_escape_js($jstoexecuteonadd).'\').click(function(){
-			console.log(\'We call js to execute `'.dol_escape_js($jstoexecuteonadd).'`\');
+			console.log(\'We call js to execute '.dol_escape_js($jstoexecuteonadd).'\');
 			'.dol_escape_js($jstoexecuteonadd).'();
 			return false;	/* We want to stay on the scan tool */
 		})';
