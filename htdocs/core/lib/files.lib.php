@@ -3279,6 +3279,28 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			}
 		}
 		$original_file = $conf->holiday->dir_output.'/'.$original_file;
+	} elseif (($modulepart == 'salaries') && !empty($conf->salaries->dir_output)) {
+		// Wrapping for salaries. The subdirectory is the id of the salary, see salaries/document.php.
+		if ($fuser->hasRight('salaries', $read) || $fuser->hasRight('salaries', 'readall') || preg_match('/^specimen/i', $original_file)) {
+			$accessallowed = 1;
+			// The 'read' permission is labelled "yours only" and salaries/list.php enforces it on fk_user.
+			// checkUserAccessToObject() only tests the entity for this feature, so the ownership has to be
+			// checked here: without it any holder of salaries->read downloads every payslip.
+			if ($refname && !$fuser->hasRight('salaries', 'readall') && !preg_match('/^specimen/i', $original_file)) {
+				include_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
+				$tmpsalary = new Salary($db);
+				$accessallowed = 0;
+				if ($tmpsalary->fetch((int) $refname) > 0) {
+					if ($fuser->hasRight('salaries', 'readchild')) {
+						// Same rule as the list: the employee and the users below them in the hierarchy
+						$accessallowed = in_array($tmpsalary->fk_user, $fuser->getAllChildIds(1)) ? 1 : 0;
+					} else {
+						$accessallowed = ($tmpsalary->fk_user == $fuser->id) ? 1 : 0;
+					}
+				}
+			}
+		}
+		$original_file = $conf->salaries->dir_output.'/'.$original_file;
 	} elseif (($modulepart == 'expensereport') && !empty($conf->expensereport->dir_output)) {
 		if ($fuser->hasRight('expensereport', $lire) || $fuser->hasRight('expensereport', 'readall') || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
