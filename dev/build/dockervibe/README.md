@@ -4,7 +4,7 @@
 With the payment mode of Mistral, the credential is stored into the OS system and not into the .vibe/.env directory so is not available into another docker container.
 So you must first get it from your OS system keystore with:
 ````
-secret-tool lookup xdg:schema org.freedesktop.Secret.Generic
+secret-tool search --all xdg:schema org.freedesktop.Secret.Generic
 ````
 And then copy the value in entry "secret" for section "MISTRAL_API_KEY" into the .vibe/.env file
 ````
@@ -12,6 +12,11 @@ MISTRAL_API_KEY='<your_api_key>'
 ````
 So now when running the container, the .vibe/.env file has your paid key that will be used to set the environment variable MISTRAL_API_KEY.
 
+## You can add an alias into your /etc/bash.bashrc the line
+````
+alias vibes='dev/build/dockervibe/vibes.sh'
+````
+ 
 
 ## Run vibe into a container
 dev/build/dockervibe/runvibe.sh

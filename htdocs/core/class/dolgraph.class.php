@@ -937,7 +937,7 @@ class DolGraph
 			if (isset($this->type[$firstlot]) && in_array($this->type[$firstlot], array('pie', 'piesemicircle', 'polar'))) {
 				foreach ($values as $x => $y) {
 					if (isset($y)) {
-						$series[$i] .= 'd' . $i . '.push({"label":"' . dol_escape_js($legends[$x]) . '", "data":' . $y . '});' . "\n";
+						$series[$i] .= 'd' . $i . '.push({"label":\'' . dol_escape_js($legends[$x]) . '\', "data":' . $y . '});' . "\n";
 					}
 				}
 			} else {
