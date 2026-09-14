@@ -273,7 +273,7 @@ if ($object->id > 0) {
 		print showValueWithClipboardCPButton(dol_escape_htmltag($object->code_fournisseur));
 		$tmpcheck = $object->check_codefournisseur();
 		if ($tmpcheck != 0 && $tmpcheck != -5) {
-			print ' <span class="error">('.$langs->trans("WrongSupplierCode").')</span>';
+			print ' <span class="paddingleftimp error inline-block valignmiddle" title="'.$object->error.'">('.$langs->trans("WrongSupplierCode").')</span>';
 		}
 		print '</td>';
 		print '</tr>';

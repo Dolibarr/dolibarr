@@ -8578,7 +8578,7 @@ class Form
 						}
 						// Note: We don't need monthNames, monthNamesShort, dayNames, dayNamesShort, dayNamesMin, they are set globally on datepicker component in lib_head.js.php
 						if (!getDolGlobalString('MAIN_POPUP_CALENDAR_ON_FOCUS')) {
-							$buttonImage = $calendarpicto ?: DOL_URL_ROOT . "/theme/" . dol_escape_js($conf->theme) . "/img/object_calendarday.png";  // Correctly wrapped in '' below @phan-suppress-curren-line FunctionMissingSingleQuoteWrapping
+							$buttonImage = $calendarpicto ?: DOL_URL_ROOT . "/theme/" . dol_escape_js($conf->theme) . "/img/object_calendarday.png";  // Correctly wrapped in '' below @phan-suppress-current-line FunctionMissingSingleQuoteWrapping
 							$retstring .= "
 								showOn: 'button',	/* both has problem with autocompletion */
 								buttonImage: '" . $buttonImage . "',
@@ -10731,7 +10731,7 @@ class Form
 				//$out .= 'console.log(\'addjscombo=1 for htmlname=' . dol_escape_js($htmlname) . '\');';
 				$out .= '$(document).ready(function () {
 							$(\'#' . dol_escape_js($htmlname) . '\').' . $tmpplugin . '({';
-					// when $morecss contains 'onrightofpage', the select2 component must also be inside a parent with class="parentonrightofpage"
+				// when $morecss contains 'onrightofpage', the select2 component must also be inside a parent with class="parentonrightofpage"
 				if (preg_match('/onrightofpage/', $morecss)) {	// In this cas, htmlname must be an ID not a class.
 					$out .= ' dropdownAutoWidth: true, ';
 					$out .= ' dropdownParent: $(\'#'.$htmlname.'\').parent(), ';
